@@ -54,6 +54,10 @@ wayfinder → grill-with-docs → CONTEXT.md → to-spec → 核准
 
 `RequirementChangeLog` 是已確認變更的旁路追溯，不取代 Context、SPEC、tickets、TDD 或任一核准閘門。
 
+## P0：文件忽略要求
+
+- 本檔案於任何專案內都應處於 `.gitignore` 項目範圍。
+
 ## 專案啟用與唯一來源
 
 在任何實作前，專案負責人應指定下列唯一來源。未指定時，不得直接進入實作。
