@@ -8,9 +8,11 @@
 - 以 Enum 與不可變事件表示付款、退款、對帳與訂閱狀態。
 - 用穩定 idempotency key 與 append-only audit 防止重複副作用。
 
-## 公開模組規劃
+## 公開模組
 
-- `payment_contracts/`、`subscription_ledger/`、`provider_ports/` 與 `reconciliation/` 將分別由已核准工單建立。
+- `payment_contracts/`：整數最小貨幣單位、付款意圖、idempotency key 與付款狀態契約。
+- `subscription_ledger/`：付款確認、訂閱授與、取消、退款與到期的不可變 append-only 事件帳本。
+- `provider_ports/` 與 `reconciliation/`：尚待後續已核准工單建立；只會提供 fake provider 邊界與對帳規則。
 
 ## 來源追溯
 
