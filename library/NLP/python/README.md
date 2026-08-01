@@ -8,9 +8,11 @@
 - 在輸入邊界驗證動態文字資料，轉換後才交給規則或 provider port。
 - 保持相同輸入、設定與 fixture 下的結果可重現。
 
-## 公開模組規劃
+## 公開模組
 
-- `text_contracts/`、`rule_parser/` 與 `provider_ports/` 將分別由已核准工單建立。
+- `text_contracts/`：驗證與正規化文字、分類及欄位 DTO，以及具名拒絕結果。
+- `rule_parser/`：以固定標記與分隔符擷取欄位，保留完整、不完整、歧義或拒絕理由，且不跨 frame 補值。
+- `provider_ports/`：尚待後續已核准工單建立；只會定義 provider 邊界與 fake adapter。
 
 ## 來源追溯
 
