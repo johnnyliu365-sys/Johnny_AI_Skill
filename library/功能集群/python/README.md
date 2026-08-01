@@ -5,7 +5,9 @@
 ## 責任
 
 - 提供 `reliability_core/` 的不可變 outbox、單一 claim、版本化狀態保護、fake sender 與緊急停止稽核。
-- 後續可建立 `line_transport/`、`identity_resolution/`、`event_timeline_audit/` 與 `engagement_rules/`，但不得越過本目錄的本地／fake 邊界。
+- 提供 `line_transport/` 的明確 scope／identity 訊息 request、redacted failure 與 deterministic fake transport。
+- 提供 `identity_resolution/` 的穩定 identity、顯示名稱 fallback 與未知 identity fail-closed 解析。
+- 後續可建立 `event_timeline_audit/` 與 `engagement_rules/`，但不得越過本目錄的本地／fake 邊界。
 - 將 outbox、worker、狀態轉換、停止控制與 identity display 等能力維持在無特定租戶／Provider 的邊界。
 
 ## 來源追溯
