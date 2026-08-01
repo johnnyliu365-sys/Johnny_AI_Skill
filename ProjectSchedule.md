@@ -29,4 +29,5 @@
 - `04-python-nlp-provider-boundaries`：`DONE`（commit `02fa06f`；起始 rollback tag `rollback/ticket-04-start-20260801`）。
 - `05-python-payment-contracts-ledger`：`DONE`（commit `17ed764`）。
 - `06-python-payment-provider-reconciliation`：`DONE`（commit `6c7d9dc`）。
-- 下一張候選：`07-python-reliability-core`；必須等待使用者明確確認後才可開始。
+- `07-python-reliability-core`：`DONE`（commit `7b56135`）。
+- 下一張候選：`08-python-line-transport-identity`；必須等待使用者明確確認後才可開始。

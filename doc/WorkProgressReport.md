@@ -76,3 +76,14 @@
 - Ticket commit：`6c7d9dc`（`feat: add fake payment reconciliation`）。
 - 未修改邊界：SourceProjectA、來源專案B、來源專案C `來源專案C` 與 來源專案D 的所有檔案、原始碼、資料、設定與外部 Provider 均未觸及。
 - 下一張候選：`07-python-reliability-core`；必須等待使用者明確確認後才可開始。
+
+## PRG-20260802-002｜Ticket 07 Python 可靠性核心
+
+- 狀態：`DONE`，等待使用者確認下一張工單。
+- 對應：`SPEC-AI-WORKFLOW-REUSABLE-MODULE-LIBRARY-20260801-01KYYV8YJFZ467BC1RGDNY64QP`／`07-python-reliability-core`。
+- 實際內容：在 `library/功能集群/python/reliability_core/` 建立不可變 in-memory outbox 快照、scope 與 idempotency guard、單一 worker claim、`JobVersion` 預期狀態檢查、fake sender、audit 與 emergency stop；沒有外部訊息或持久化。
+- 驗證：紅燈為找不到尚未建立的 `reliability_core` 模組；綠燈 `python -m unittest discover -s tests`（29 passed）；`python -m mypy --strict library ...`（34 source files 無問題）；`python -m py_compile ...` 與 `OutboxWorker`＋fake sender smoke test（`completed`、3 audit entries）均通過。
+- Review：`APPROVED`，`doc/reviews/reusable-module-library/07-python-reliability-core-code-review.md`。
+- Ticket commit：`7b56135`（`feat: add local reliability core`）。
+- 未修改邊界：SourceProjectA、來源專案B、來源專案C `來源專案C` 與 來源專案D 的所有檔案、原始碼、資料、設定與外部 Provider 均未觸及。
+- 下一張候選：`08-python-line-transport-identity`；必須等待使用者明確確認後才可開始。
