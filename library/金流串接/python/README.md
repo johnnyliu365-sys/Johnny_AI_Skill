@@ -12,7 +12,8 @@
 
 - `payment_contracts/`：整數最小貨幣單位、付款意圖、idempotency key 與付款狀態契約。
 - `subscription_ledger/`：付款確認、訂閱授與、取消、退款與到期的不可變 append-only 事件帳本。
-- `provider_ports/` 與 `reconciliation/`：尚待後續已核准工單建立；只會提供 fake provider 邊界與對帳規則。
+- `provider_ports/`：付款授權、確認、退款結果與失敗分類；只提供不連網 fake provider。
+- `reconciliation/`：依 provider event ID、交易最終狀態與既有帳本判定套用、重播或人工審查的不可變對帳狀態機。
 
 ## 來源追溯
 
