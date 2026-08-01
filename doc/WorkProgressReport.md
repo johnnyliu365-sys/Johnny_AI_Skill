@@ -31,3 +31,14 @@
 - Ticket commit：`88fbfc0`（`feat: add typed NLP text contracts`）。
 - 未修改邊界：SourceProjectA、來源專案B、來源專案C `來源專案C` 與 來源專案D 的所有檔案、原始碼、資料、設定與外部 Provider 均未觸及。
 - 下一張候選：`03-python-nlp-rule-parsers`；必須等待使用者明確確認後才可開始。
+
+## PRG-20260801-004｜Ticket 03 Python NLP 規則式欄位抽取器
+
+- 狀態：`DONE`，等待使用者確認下一張工單。
+- 對應：`SPEC-AI-WORKFLOW-REUSABLE-MODULE-LIBRARY-20260801-01KYYV8YJFZ467BC1RGDNY64QP`／`03-python-nlp-rule-parsers`。
+- 實際內容：在 `library/NLP/python/rule_parser/` 新增固定規則、frame 位置、解析理由與結果 DTO；從同一 frame 擷取實際標記值，不跨 frame 合併或補造資料。
+- 驗證：紅燈為找不到尚未建立的 `rule_parser` 模組；綠燈 `python -m unittest discover -s tests`（12 passed）；`python -m mypy --strict library tests/test_nlp_rule_parser.py tests/test_nlp_text_contracts.py tests/test_library_readme_catalog.py`（11 source files 無問題）；`python -m py_compile ...` 與跨 frame 拒絕 smoke test 皆通過。
+- Review：`APPROVED`，`doc/reviews/reusable-module-library/03-python-nlp-rule-parsers-code-review.md`。
+- Ticket commit：`d03880e`（`feat: add deterministic NLP rule parser`）。
+- 未修改邊界：SourceProjectA、來源專案B、來源專案C `來源專案C` 與 來源專案D 的所有檔案、原始碼、資料、設定與外部 Provider 均未觸及。
+- 下一張候選：`04-python-nlp-provider-boundaries`；必須等待使用者明確確認後才可開始。

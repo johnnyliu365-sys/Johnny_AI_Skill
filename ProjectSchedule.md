@@ -25,4 +25,5 @@
 
 - `01-library-root-and-readmes`：`DONE`（commit `9b218a9`）。
 - `02-python-nlp-contracts`：`DONE`（commit `88fbfc0`）。
-- 下一張候選：`03-python-nlp-rule-parsers`；必須等待使用者明確確認後才可開始。
+- `03-python-nlp-rule-parsers`：`DONE`（commit `d03880e`）。
+- 下一張候選：`04-python-nlp-provider-boundaries`；必須等待使用者明確確認後才可開始。
