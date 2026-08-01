@@ -32,4 +32,5 @@
 - `07-python-reliability-core`：`DONE`（commit `7b56135`）。
 - `08-python-line-transport-identity`：`DONE`（commit `fd5187b`）。
 - `09-python-event-timeline-audit`：`DONE`（commit `655f09d`）。
-- 下一張候選：`10-python-engagement-rules`；必須等待使用者明確確認後才可開始。
+- `10-python-engagement-rules`：`DONE`（commit `f0a4bfc`）。
+- 下一張候選：`11-kotlin-offline-geo-resolution`；必須等待使用者明確確認後才可開始。

@@ -109,3 +109,14 @@
 - Ticket commit：`655f09d`（`feat: add deterministic timeline audit`）。
 - 未修改邊界：SourceProjectA、來源專案B、來源專案C `來源專案C` 與 來源專案D 的所有檔案、原始碼、資料、設定與外部 Provider 均未觸及。
 - 下一張候選：`10-python-engagement-rules`；必須等待使用者明確確認後才可開始。
+
+## PRG-20260802-005｜Ticket 10 Python 推薦、獎勵與任務純規則核心
+
+- 狀態：`DONE`，等待使用者確認下一張工單。
+- 對應：`SPEC-AI-WORKFLOW-REUSABLE-MODULE-LIBRARY-20260801-01KYYV8YJFZ467BC1RGDNY64QP`／`10-python-engagement-rules`。
+- 實際內容：在 `library/功能集群/python/engagement_rules/` 建立可設定資格門檻、進度目標、獎勵允許上限、不可變 state、stable event key 去重與未知／不可能 state fail-closed 結果；不含真實點數、會員或權益。
+- 驗證：紅燈為找不到尚未建立的 `engagement_rules` 模組；綠燈 `python -m unittest discover -s tests`（41 passed）；`python -m mypy --strict library ...`（46 source files 無問題）；`python -m py_compile ...` 與本地資格→進度→允許規則 smoke test（`reward_permitted`、1）均通過。
+- Review：`APPROVED`，`doc/reviews/reusable-module-library/10-python-engagement-rules-code-review.md`。
+- Ticket commit：`f0a4bfc`（`feat: add engagement rules core`）。
+- 未修改邊界：SourceProjectA、來源專案B、來源專案C `來源專案C` 與 來源專案D 的所有檔案、原始碼、資料、設定與外部 Provider 均未觸及。
+- 下一張候選：`11-kotlin-offline-geo-resolution`；必須等待使用者明確確認後才可開始。
