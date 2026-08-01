@@ -27,4 +27,5 @@
 - `02-python-nlp-contracts`：`DONE`（commit `88fbfc0`）。
 - `03-python-nlp-rule-parsers`：`DONE`（commit `d03880e`）。
 - `04-python-nlp-provider-boundaries`：`DONE`（commit `02fa06f`；起始 rollback tag `rollback/ticket-04-start-20260801`）。
-- 下一張候選：`05-python-payment-contracts-ledger`；必須等待使用者明確確認後才可開始。
+- `05-python-payment-contracts-ledger`：`DONE`（commit `17ed764`）。
+- 下一張候選：`06-python-payment-provider-reconciliation`；必須等待使用者明確確認後才可開始。
