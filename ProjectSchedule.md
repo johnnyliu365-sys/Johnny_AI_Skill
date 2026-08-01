@@ -21,7 +21,8 @@
 4. Kotlin 地理解析候選集群。
 5. C# 遊戲規則候選集群。
 
-## Ticket 01 Handoff
+## Ticket Handoff
 
 - `01-library-root-and-readmes`：`DONE`（commit `9b218a9`）。
-- 下一張候選：`02-python-nlp-contracts`；必須等待使用者明確確認後才可開始。
+- `02-python-nlp-contracts`：`DONE`（commit `88fbfc0`）。
+- 下一張候選：`03-python-nlp-rule-parsers`；必須等待使用者明確確認後才可開始。

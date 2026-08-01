@@ -4,7 +4,7 @@
 | --- | --- |
 | 功能集群 | `reusable-module-library` |
 | Agent／worktree | `Codex／目前工作區` |
-| 共同基準 | `待 docs-only commit` |
+| 共同基準 | `88fbfc0`（Ticket 02 實作）與本次 handoff docs-only commit |
 | 狀態 | `AWAITING_TICKET_CONFIRMATION` |
 | 責任邊界 | 本專案的通用模組、測試與 README 設計 |
 | 禁止修改 | 四個來源專案、外部服務、資料、秘密與部署 |
@@ -12,7 +12,7 @@
 ## 共用 Context 引用
 
 - `CONTEXT.md`：`已確認事實與共同邊界`
-- 共用基準 commit：待文件基準提交。
+- 共用基準實作 commit：`88fbfc0`（`feat: add typed NLP text contracts`）。
 
 ## 已確認事實與約束
 
@@ -23,5 +23,5 @@
 ## 待決事項與跨集群依賴
 
 - D-01：使用者已核准 `library/` 為通用程式碼根目錄，與 `modules/element/` 的索引職責分離。
-- D-02：使用者已核准 Python、Kotlin 與 C# 的範圍；各 ticket 的實作順序待第二次核准。
-- Ticket 01 已完成並建立 `library/` README 基準；下一張 Ticket 02 仍須使用者明確確認。
+- D-02：使用者已核准 Python、Kotlin 與 C# 的範圍；每一張 ticket 的實作仍須在開始前取得明確確認。
+- Ticket 01 與 Ticket 02 已完成；下一張 `03-python-nlp-rule-parsers` 仍須使用者明確確認。
