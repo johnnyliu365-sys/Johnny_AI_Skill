@@ -1,0 +1,2 @@
+# Development-time static type checking required by AGENTS.md P0.
+mypy==2.3.0
