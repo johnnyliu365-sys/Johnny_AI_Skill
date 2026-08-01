@@ -98,3 +98,14 @@
 - Ticket commit：`fd5187b`（`feat: add fake message transport identity`）。
 - 未修改邊界：SourceProjectA、來源專案B、來源專案C `來源專案C` 與 來源專案D 的所有檔案、原始碼、資料、設定與外部 Provider 均未觸及。
 - 下一張候選：`09-python-event-timeline-audit`；必須等待使用者明確確認後才可開始。
+
+## PRG-20260802-004｜Ticket 09 Python 可重播事件時間線與 Audit
+
+- 狀態：`DONE`，等待使用者確認下一張工單。
+- 對應：`SPEC-AI-WORKFLOW-REUSABLE-MODULE-LIBRARY-20260801-01KYYV8YJFZ467BC1RGDNY64QP`／`09-python-event-timeline-audit`。
+- 實際內容：在 `library/功能集群/python/event_timeline_audit/` 建立有限通用事件、不可變 timeline state／audit、unknown unresolved、非法順序／重複 ID conflict，以及 deterministic SHA-256 output hash；不含 raw payload、log 或來源領域資料。
+- 驗證：紅燈為找不到尚未建立的 `event_timeline_audit` 模組；綠燈 `python -m unittest discover -s tests`（37 passed）；`python -m mypy --strict library ...`（43 source files 無問題）；`python -m py_compile ...` 與兩次同 input replay 得到相同 hash 的 smoke test（`active`、unresolved 1）均通過。
+- Review：`APPROVED`，`doc/reviews/reusable-module-library/09-python-event-timeline-audit-code-review.md`。
+- Ticket commit：`655f09d`（`feat: add deterministic timeline audit`）。
+- 未修改邊界：SourceProjectA、來源專案B、來源專案C `來源專案C` 與 來源專案D 的所有檔案、原始碼、資料、設定與外部 Provider 均未觸及。
+- 下一張候選：`10-python-engagement-rules`；必須等待使用者明確確認後才可開始。

@@ -4,7 +4,7 @@
 | --- | --- |
 | 對應規格 ID | `SPEC-AI-WORKFLOW-REUSABLE-MODULE-LIBRARY-20260801-01KYYV8YJFZ467BC1RGDNY64QP`（§功能集群／事件時間線） |
 | 需求變更 | `CHG-20260801-001` |
-| 狀態 | `PLANNED` |
+| 狀態 | `DONE` |
 | 環境 | `LOCAL` |
 | 責任邊界 | 通用事件、狀態、replay、不可變 audit 與 deterministic comparison |
 | 禁止修改 | Dispatch 的派單規則、raw event、報表、租戶資料與自動化 |
@@ -23,3 +23,10 @@
 1. 正常：合法事件可進行狀態遷移並留下 audit。
 2. 違規：未知事件與不合法順序回傳 unresolved／conflict。
 3. 回歸：固定 input 必得 deterministic output hash。
+
+## 完成紀錄
+
+- 實作提交：`655f09d`（`feat: add deterministic timeline audit`）。
+- 驗證：`python -m unittest discover -s tests`（37 passed）、`python -m mypy --strict ...`（43 source files 無問題）、`py_compile` 與 deterministic replay smoke test 均通過。
+- Review：`APPROVED`，`doc/reviews/reusable-module-library/09-python-event-timeline-audit-code-review.md`。
+- 邊界確認：四個來源專案與所有外部服務均未修改、搬移、刪除、新增或啟動。
