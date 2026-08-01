@@ -5,7 +5,7 @@
 | 功能集群 | `reusable-module-library` |
 | Agent／worktree | `Codex／目前工作區` |
 | 共同基準 | `待 docs-only commit` |
-| 狀態 | `TICKETING` |
+| 狀態 | `AWAITING_TICKET_CONFIRMATION` |
 | 責任邊界 | 本專案的通用模組、測試與 README 設計 |
 | 禁止修改 | 四個來源專案、外部服務、資料、秘密與部署 |
 
@@ -24,3 +24,4 @@
 
 - D-01：使用者已核准 `library/` 為通用程式碼根目錄，與 `modules/element/` 的索引職責分離。
 - D-02：使用者已核准 Python、Kotlin 與 C# 的範圍；各 ticket 的實作順序待第二次核准。
+- Ticket 01 已完成並建立 `library/` README 基準；下一張 Ticket 02 仍須使用者明確確認。

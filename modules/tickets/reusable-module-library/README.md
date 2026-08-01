@@ -16,7 +16,7 @@
 
 | 工單 | 責任邊界 | 交接狀態 |
 | --- | --- | --- |
-| `01-library-root-and-readmes` | 建立實作根目錄與導覽 README | `PLANNED` |
+| `01-library-root-and-readmes` | 建立實作根目錄與導覽 README | `DONE` |
 | `02-python-nlp-contracts` | 文字處理的強型別契約與正規化 | `PLANNED` |
 | `03-python-nlp-rule-parsers` | 可解釋規則式欄位抽取 | `PLANNED` |
 | `04-python-nlp-provider-boundaries` | 多模態／LLM provider port 與 fail-closed 結果 | `PLANNED` |

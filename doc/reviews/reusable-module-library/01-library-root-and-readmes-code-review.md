@@ -4,6 +4,7 @@
 | --- | --- |
 | 功能集群 | `reusable-module-library` |
 | 共同基準 | `d174d7a` |
+| 受審 commit | `9b218a9` |
 | 受審範圍 | `library/**/*.md`、`tests/test_library_readme_catalog.py` |
 | 審閱者 | Codex／目前工作區 |
 | 結論 | `APPROVED` |

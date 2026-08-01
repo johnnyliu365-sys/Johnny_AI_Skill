@@ -3,7 +3,7 @@
 ## 現行階段
 
 - 日期：2026-08-01（Asia/Taipei）
-- 階段：`SPECIFYING`
+- 階段：`AWAITING_TICKET_CONFIRMATION`
 - 目前功能集群：`reusable-module-library`
 - 唯一工作流程：`Workflow.md`
 
@@ -20,3 +20,8 @@
 3. Python 可靠性與 LINE transport 集群。
 4. Kotlin 地理解析候選集群。
 5. C# 遊戲規則候選集群。
+
+## Ticket 01 Handoff
+
+- `01-library-root-and-readmes`：`DONE`（commit `9b218a9`）。
+- 下一張候選：`02-python-nlp-contracts`；必須等待使用者明確確認後才可開始。
