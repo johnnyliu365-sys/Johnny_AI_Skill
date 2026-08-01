@@ -42,3 +42,15 @@
 - Ticket commit：`d03880e`（`feat: add deterministic NLP rule parser`）。
 - 未修改邊界：SourceProjectA、來源專案B、來源專案C `來源專案C` 與 來源專案D 的所有檔案、原始碼、資料、設定與外部 Provider 均未觸及。
 - 下一張候選：`04-python-nlp-provider-boundaries`；必須等待使用者明確確認後才可開始。
+
+## PRG-20260801-005｜Ticket 04 Python NLP Provider 邊界
+
+- 狀態：`DONE`，等待使用者確認下一張工單。
+- 對應：`SPEC-AI-WORKFLOW-REUSABLE-MODULE-LIBRARY-20260801-01KYYV8YJFZ467BC1RGDNY64QP`／`04-python-nlp-provider-boundaries`。
+- 實際內容：在 `library/NLP/python/provider_ports/` 新增請求／成功／失敗 DTO、Provider Protocol、retryability、唯一 raw payload validator 與無網路的 fake provider；不含實體 provider、HTTP、影像資料或憑證。
+- 回滾點：開始前建立 checkpoint `76c9cbd` 與本地 tag `rollback/ticket-04-start-20260801`；Ticket 實作另有獨立 commit。
+- 驗證：紅燈為找不到尚未建立的 `provider_ports` 模組；綠燈 `python -m unittest discover -s tests`（16 passed）；`python -m mypy --strict library tests/test_nlp_provider_ports.py tests/test_nlp_rule_parser.py tests/test_nlp_text_contracts.py tests/test_library_readme_catalog.py`（16 source files 無問題）；`python -m py_compile ...` 與未知 payload 拒絕 smoke test 皆通過。
+- Review：`APPROVED`，`doc/reviews/reusable-module-library/04-python-nlp-provider-boundaries-code-review.md`。
+- Ticket commit：`02fa06f`（`feat: add typed NLP provider boundary`）。
+- 未修改邊界：SourceProjectA、來源專案B、來源專案C `來源專案C` 與 來源專案D 的所有檔案、原始碼、資料、設定與外部 Provider 均未觸及。
+- 下一張候選：`05-python-payment-contracts-ledger`；必須等待使用者明確確認後才可開始。

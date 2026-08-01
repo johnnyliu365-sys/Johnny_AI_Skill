@@ -26,4 +26,5 @@
 - `01-library-root-and-readmes`：`DONE`（commit `9b218a9`）。
 - `02-python-nlp-contracts`：`DONE`（commit `88fbfc0`）。
 - `03-python-nlp-rule-parsers`：`DONE`（commit `d03880e`）。
-- 下一張候選：`04-python-nlp-provider-boundaries`；必須等待使用者明確確認後才可開始。
+- `04-python-nlp-provider-boundaries`：`DONE`（commit `02fa06f`；起始 rollback tag `rollback/ticket-04-start-20260801`）。
+- 下一張候選：`05-python-payment-contracts-ledger`；必須等待使用者明確確認後才可開始。
