@@ -2,7 +2,7 @@
 
 ## 現行階段
 
-- 日期：2026-08-01（Asia/Taipei）
+- 日期：2026-08-02（Asia/Taipei）
 - 階段：`AWAITING_TICKET_CONFIRMATION`
 - 目前功能集群：`reusable-module-library`
 - 唯一工作流程：`Workflow.md`
@@ -28,4 +28,5 @@
 - `03-python-nlp-rule-parsers`：`DONE`（commit `d03880e`）。
 - `04-python-nlp-provider-boundaries`：`DONE`（commit `02fa06f`；起始 rollback tag `rollback/ticket-04-start-20260801`）。
 - `05-python-payment-contracts-ledger`：`DONE`（commit `17ed764`）。
-- 下一張候選：`06-python-payment-provider-reconciliation`；必須等待使用者明確確認後才可開始。
+- `06-python-payment-provider-reconciliation`：`DONE`（commit `6c7d9dc`）。
+- 下一張候選：`07-python-reliability-core`；必須等待使用者明確確認後才可開始。

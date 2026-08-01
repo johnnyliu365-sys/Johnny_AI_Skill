@@ -65,3 +65,14 @@
 - Ticket commit：`17ed764`（`feat: add payment contracts and ledger`）。
 - 未修改邊界：SourceProjectA、來源專案B、來源專案C `來源專案C` 與 來源專案D 的所有檔案、原始碼、資料、設定與外部 Provider 均未觸及。
 - 下一張候選：`06-python-payment-provider-reconciliation`；必須等待使用者明確確認後才可開始。
+
+## PRG-20260802-001｜Ticket 06 Python 金流 Fake Provider 與對帳狀態機
+
+- 狀態：`DONE`，等待使用者確認下一張工單。
+- 對應：`SPEC-AI-WORKFLOW-REUSABLE-MODULE-LIBRARY-20260801-01KYYV8YJFZ467BC1RGDNY64QP`／`06-python-payment-provider-reconciliation`。
+- 實際內容：在 `library/金流串接/python/provider_ports/` 建立強型別授權、確認、退款結果與無網路 fake provider；在 `reconciliation/` 建立不可變 journal、重播保護與人工審查狀態機。
+- 驗證：紅燈為找不到尚未建立的 provider／reconciliation 模組；綠燈 `python -m unittest discover -s tests`（25 passed）；`python -m mypy --strict library tests/test_payment_provider_reconciliation.py tests/test_payment_contracts_ledger.py tests/test_nlp_provider_ports.py tests/test_nlp_rule_parser.py tests/test_nlp_text_contracts.py tests/test_library_readme_catalog.py`（29 source files 無問題）；`python -m py_compile ...` 與 provider event 重播不產生第二筆權益 smoke test 均通過。
+- Review：`APPROVED`，`doc/reviews/reusable-module-library/06-python-payment-provider-reconciliation-code-review.md`。
+- Ticket commit：`6c7d9dc`（`feat: add fake payment reconciliation`）。
+- 未修改邊界：SourceProjectA、來源專案B、來源專案C `來源專案C` 與 來源專案D 的所有檔案、原始碼、資料、設定與外部 Provider 均未觸及。
+- 下一張候選：`07-python-reliability-core`；必須等待使用者明確確認後才可開始。
