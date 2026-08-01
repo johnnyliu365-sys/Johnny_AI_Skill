@@ -30,4 +30,5 @@
 - `05-python-payment-contracts-ledger`：`DONE`（commit `17ed764`）。
 - `06-python-payment-provider-reconciliation`：`DONE`（commit `6c7d9dc`）。
 - `07-python-reliability-core`：`DONE`（commit `7b56135`）。
-- 下一張候選：`08-python-line-transport-identity`；必須等待使用者明確確認後才可開始。
+- `08-python-line-transport-identity`：`DONE`（commit `fd5187b`）。
+- 下一張候選：`09-python-event-timeline-audit`；必須等待使用者明確確認後才可開始。

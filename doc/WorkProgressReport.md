@@ -87,3 +87,14 @@
 - Ticket commit：`7b56135`（`feat: add local reliability core`）。
 - 未修改邊界：SourceProjectA、來源專案B、來源專案C `來源專案C` 與 來源專案D 的所有檔案、原始碼、資料、設定與外部 Provider 均未觸及。
 - 下一張候選：`08-python-line-transport-identity`；必須等待使用者明確確認後才可開始。
+
+## PRG-20260802-003｜Ticket 08 Python 訊息 Transport 與身份解析
+
+- 狀態：`DONE`，等待使用者確認下一張工單。
+- 對應：`SPEC-AI-WORKFLOW-REUSABLE-MODULE-LIBRARY-20260801-01KYYV8YJFZ467BC1RGDNY64QP`／`08-python-line-transport-identity`。
+- 實際內容：在 `library/功能集群/python/line_transport/` 建立具名 request／result port、受限的 redacted failure 與無網路 fake transport；在 `identity_resolution/` 建立不可變 stable identity directory、顯示名稱 fallback 與未知 identity fail-closed 結果。
+- 驗證：紅燈為找不到尚未建立的 `identity_resolution` 模組；綠燈 `python -m unittest discover -s tests`（33 passed）；`python -m mypy --strict library ...`（40 source files 無問題）；`python -m py_compile ...` 與 fallback identity＋fake provider failure smoke test（`Unknown`、`provider_unavailable`）均通過。
+- Review：`APPROVED`，`doc/reviews/reusable-module-library/08-python-line-transport-identity-code-review.md`。
+- Ticket commit：`fd5187b`（`feat: add fake message transport identity`）。
+- 未修改邊界：SourceProjectA、來源專案B、來源專案C `來源專案C` 與 來源專案D 的所有檔案、原始碼、資料、設定與外部 Provider 均未觸及。
+- 下一張候選：`09-python-event-timeline-audit`；必須等待使用者明確確認後才可開始。
