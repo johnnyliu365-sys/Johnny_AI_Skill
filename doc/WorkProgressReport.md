@@ -150,6 +150,14 @@
 - Ticket commits：`e91f5c5`（`feat: add Kotlin offline geo resolution`）、`c255720`（`fix: reject invalid offline geo index entries`）。
 - 未修改邊界：SourceProjectA、來源專案B、來源專案C `來源專案C` 與 來源專案D 未被修改、搬移、刪除或新增任何檔案；沒有啟動 Android、外部 Provider、網路、資料庫、Secret 或部署。
 
+## PRG-20260803-001｜C# 遊戲候選 ticket 核准等待
+
+- 狀態：`AWAITING_TICKET_APPROVAL`。
+- 對應：`12-csharp-card-rules-engine`、`13-csharp-camouflage-state`。
+- 決定：兩張候選 ticket 單獨不足以構成完整遊戲模組集群，因此維持 `PLANNED`／核准狀態 `PENDING`，不進入 implement。
+- 未執行：沒有建立或修改 C# 原始碼、測試、模組、element 索引、review、Unity 專案、資產或任何參照專案檔案。
+- 重新評估條件：專案負責人定義完整集群範圍、必要 tickets、依賴與驗收條件後，重走 `grill-with-docs → to-spec → to-tickets` 並取得明確核准。
+
 ## PRG-20260802-009｜Johnny AI Skill private Git plugin
 
 - 狀態：`DONE`。

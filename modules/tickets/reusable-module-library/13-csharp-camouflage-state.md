@@ -5,6 +5,7 @@
 | 對應規格 ID | `SPEC-AI-WORKFLOW-REUSABLE-MODULE-LIBRARY-20260801-01KYYV8YJFZ467BC1RGDNY64QP`（§功能集群／C#） |
 | 需求變更 | `CHG-20260801-001` |
 | 狀態 | `PLANNED` |
+| 核准狀態 | `PENDING` |
 | 環境 | `LOCAL` |
 | 責任邊界 | 純 C# 顏色／匹配／衰退／捕獲狀態機 |
 | 禁止修改 | CamouflageHideSeek、Unity MonoBehaviour、場景、角色、輸入、資產與建置 |
@@ -23,3 +24,9 @@
 1. 正常：套色、衰退、匹配更新。
 2. 錯誤：非法強度、負時間與無顏色狀態有明確結果。
 3. 回歸：相同輸入序列得到相同狀態。
+
+## 核准等待
+
+- 此 ticket 單獨不足以構成完整遊戲模組集群；目前沒有實作授權。
+- 不得建立或修改 C# 原始碼、測試、Unity 專案、資產、設定、review 或 element 索引。
+- 重新評估條件：專案負責人定義完整遊戲模組集群的範圍、必要 tickets、依賴與驗收條件後，依 `grill-with-docs → to-spec → to-tickets` 重新取得核准。
