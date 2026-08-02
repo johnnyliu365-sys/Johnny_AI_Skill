@@ -1,5 +1,11 @@
 # Kotlin 其他功能集群
 
+## 已交付模組
+
+- `offline_geo_resolution/` 已交付：可注入的地址 key policy 與座標驗證器、離線 exact-first lookup、唯一放寬解析及歧義拒絕。詳見 [offline_geo_resolution/README.md](offline_geo_resolution/README.md)。
+
+本項交付取代本文件中將 Kotlin 一概視為「尚未交付」的規劃性敘述；其餘候選仍須另行走規格、工單與核准流程。
+
 此目錄保存與 Android／Kotlin 生態相容、但不依賴 Android Runtime 的通用能力。
 
 ## 責任

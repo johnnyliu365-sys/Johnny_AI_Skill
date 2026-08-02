@@ -1,5 +1,13 @@
 # 可重用模組選擇卡
 
+## 已交付更新（2026-08-02）
+
+| ID | 功能集群 | 公開 import／package | 依賴 | 就緒條件 |
+| --- | --- | --- | --- | --- |
+| `kotlin-offline-geo-resolution` | 離線 key 至座標的保守解析：精確優先、唯一放寬、歧義拒絕 | `reusable.offlinegeo.OfflineGeoResolver` | Kotlin/JVM 標準函式庫 | `READY`：README、強型別 core、可執行 TDD test 與 element 索引已交付 |
+
+此卡片取代本文件中對此 Kotlin 模組的候選／未交付描述；其餘 Kotlin 與 C# 候選仍不可採用。
+
 這是 AI 的最小載入入口。先以需求關鍵字選擇卡片，再讀取該卡的 README、公開 `__init__.py` 與必要契約；不得先讀完整 `library/`、所有測試或未命中的同族模組。
 
 | ID | 命中需求 | 公開 import | 直接相依 | 最小閱讀路徑 |
