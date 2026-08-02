@@ -17,13 +17,13 @@
 - 值型別：`RawAddressKey`、`NormalizedAddressKey`、`RelaxedAddressKey`、`GeoCoordinate`。
 - Policy：`AddressKeyPolicy`、`CoordinateValidator`、`FiniteCoordinateValidator`。
 - Resolver：`OfflineGeoResolver.fromEntries()`、`OfflineGeoResolver.empty()`、`OfflineGeoResolver.resolve()`。
-- 結果：`GeoResolutionResult` sealed interface 與 `GeoMatchKind` enum。
+- 結果：`OfflineGeoIndexBuildResult`、`OfflineGeoIndexRejectionReason`、`GeoResolutionResult` sealed interface 與 `GeoMatchKind` enum。
 
 ## 驗證證據
 
 TDD 紅燈：只有測試存在時，Kotlin compiler 因上述正式型別尚未建立而以 exit code 1 失敗。
 
-綠燈：Kotlin 2.3.21 以 `-Werror` 編譯正式原始碼與測試，執行 `OfflineGeoResolverTest` 成功。測試覆蓋正規化精確命中、唯一放寬命中、歧義拒絕、無效 key／座標，以及重複精確 key 的第一筆穩定性。
+綠燈：Kotlin 2.3.21 以 `-Werror` 編譯正式原始碼與測試，執行 `OfflineGeoResolverTest` 成功。測試覆蓋正規化精確命中、唯一放寬命中、歧義拒絕，以及空白 key、無效座標與重複精確 key 的建表拒絕。
 
 ## 來源隔離
 

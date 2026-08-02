@@ -53,6 +53,18 @@ sealed interface GeoResolutionResult {
     data object AmbiguousRelaxedKey : GeoResolutionResult
 }
 
+enum class OfflineGeoIndexRejectionReason {
+    INVALID_ADDRESS_KEY,
+    INVALID_COORDINATE,
+    DUPLICATE_EXACT_KEY,
+}
+
+sealed interface OfflineGeoIndexBuildResult {
+    data class Built(val resolver: OfflineGeoResolver) : OfflineGeoIndexBuildResult
+
+    data class Rejected(val reason: OfflineGeoIndexRejectionReason) : OfflineGeoIndexBuildResult
+}
+
 private sealed interface RelaxedLookup {
     data class Unique(val coordinate: GeoCoordinate) : RelaxedLookup
 
@@ -96,20 +108,29 @@ class OfflineGeoResolver private constructor(
             entries: Iterable<OfflineGeoEntry>,
             addressKeyPolicy: AddressKeyPolicy,
             coordinateValidator: CoordinateValidator,
-        ): OfflineGeoResolver {
+        ): OfflineGeoIndexBuildResult {
             val exactCoordinates = linkedMapOf<NormalizedAddressKey, GeoCoordinate>()
             val relaxedCandidates = linkedMapOf<RelaxedAddressKey, LinkedHashSet<GeoCoordinate>>()
 
             for (entry: OfflineGeoEntry in entries) {
                 if (!coordinateValidator.accepts(entry.coordinate)) {
-                    continue
+                    return OfflineGeoIndexBuildResult.Rejected(
+                        OfflineGeoIndexRejectionReason.INVALID_COORDINATE,
+                    )
                 }
 
                 val normalizedKey = addressKeyPolicy.normalize(entry.rawKey)
                     ?.takeIf { it.value.isNotBlank() }
-                    ?: continue
+                    ?: return OfflineGeoIndexBuildResult.Rejected(
+                        OfflineGeoIndexRejectionReason.INVALID_ADDRESS_KEY,
+                    )
 
-                exactCoordinates.putIfAbsent(normalizedKey, entry.coordinate)
+                if (exactCoordinates.containsKey(normalizedKey)) {
+                    return OfflineGeoIndexBuildResult.Rejected(
+                        OfflineGeoIndexRejectionReason.DUPLICATE_EXACT_KEY,
+                    )
+                }
+                exactCoordinates[normalizedKey] = entry.coordinate
 
                 val relaxedKey = addressKeyPolicy.relaxedKey(normalizedKey)
                     ?.takeIf { it.value.isNotBlank() }
@@ -125,10 +146,12 @@ class OfflineGeoResolver private constructor(
                 }
             }
 
-            return OfflineGeoResolver(
-                exactCoordinates = exactCoordinates.toMap(),
-                relaxedCoordinates = relaxedCoordinates.toMap(),
-                addressKeyPolicy = addressKeyPolicy,
+            return OfflineGeoIndexBuildResult.Built(
+                OfflineGeoResolver(
+                    exactCoordinates = exactCoordinates.toMap(),
+                    relaxedCoordinates = relaxedCoordinates.toMap(),
+                    addressKeyPolicy = addressKeyPolicy,
+                ),
             )
         }
 

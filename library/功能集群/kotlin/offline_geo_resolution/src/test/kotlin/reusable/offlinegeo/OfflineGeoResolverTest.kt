@@ -22,20 +22,25 @@ private object TestAddressKeyPolicy : AddressKeyPolicy {
     }
 }
 
-private fun assertCondition(condition: Boolean, message: String): Unit {
-    check(condition) { message }
-}
-
 private fun <ValueType> assertEquals(expected: ValueType, actual: ValueType, message: String): Unit {
     check(expected == actual) { "$message: expected=$expected actual=$actual" }
 }
 
-private fun resolverOf(vararg entries: OfflineGeoEntry): OfflineGeoResolver {
+private fun buildOf(vararg entries: OfflineGeoEntry): OfflineGeoIndexBuildResult {
     return OfflineGeoResolver.fromEntries(
         entries = entries.asList(),
         addressKeyPolicy = TestAddressKeyPolicy,
         coordinateValidator = FiniteCoordinateValidator,
     )
+}
+
+private fun resolverOf(vararg entries: OfflineGeoEntry): OfflineGeoResolver {
+    return when (val buildResult = buildOf(*entries)) {
+        is OfflineGeoIndexBuildResult.Built -> buildResult.resolver
+        is OfflineGeoIndexBuildResult.Rejected -> {
+            error("expected a valid offline geo index, but got ${buildResult.reason}")
+        }
+    }
 }
 
 private fun entry(rawKey: String, latitude: Double, longitude: Double): OfflineGeoEntry {
@@ -92,35 +97,29 @@ private fun ambiguousRelaxedKeyNeverChoosesCandidate(): Unit {
     )
 }
 
-private fun malformedKeyAndInvalidCoordinateAreRejected(): Unit {
-    val resolver = resolverOf(
-        entry("region-a|subregion-a|route-1|unit-1", Double.NaN, 21.0),
-    )
-
+private fun blankKeyAndInvalidCoordinateAreRejected(): Unit {
     assertEquals(
-        GeoResolutionResult.InvalidAddressKey,
-        resolver.resolve(RawAddressKey("   ")),
-        "a blank address key must be rejected",
+        OfflineGeoIndexBuildResult.Rejected(OfflineGeoIndexRejectionReason.INVALID_ADDRESS_KEY),
+        buildOf(entry("   ", 11.0, 21.0)),
+        "a blank address key must reject index construction",
     )
     assertEquals(
-        GeoResolutionResult.UnknownAddressKey,
-        resolver.resolve(RawAddressKey("region-a|route-1|unit-1")),
-        "an invalid coordinate must not enter the offline index",
+        OfflineGeoIndexBuildResult.Rejected(OfflineGeoIndexRejectionReason.INVALID_COORDINATE),
+        buildOf(entry("region-a|subregion-a|route-1|unit-1", Double.NaN, 21.0)),
+        "an invalid coordinate must reject index construction",
     )
 }
 
-private fun firstExactCoordinateIsStable(): Unit {
-    val firstCoordinate = GeoCoordinate(latitude = 11.0, longitude = 21.0)
-    val resolver = resolverOf(
+private fun duplicateExactKeyIsRejected(): Unit {
+    val result = buildOf(
         entry("region-a|subregion-a|route-1|unit-1", 11.0, 21.0),
         entry("region-a|subregion-a|route-1|unit-1", 12.0, 22.0),
     )
 
-    val result = resolver.resolve(RawAddressKey("region-a|subregion-a|route-1|unit-1"))
-
-    assertCondition(
-        result == GeoResolutionResult.Resolved(firstCoordinate, GeoMatchKind.EXACT),
-        "the first exact coordinate must remain stable",
+    assertEquals(
+        OfflineGeoIndexBuildResult.Rejected(OfflineGeoIndexRejectionReason.DUPLICATE_EXACT_KEY),
+        result,
+        "a duplicate normalized exact key must reject index construction",
     )
 }
 
@@ -130,7 +129,7 @@ object OfflineGeoResolverTest {
         normalizedKeyUsesExactFixture()
         uniqueRelaxedKeyResolvesWithoutGuessing()
         ambiguousRelaxedKeyNeverChoosesCandidate()
-        malformedKeyAndInvalidCoordinateAreRejected()
-        firstExactCoordinateIsStable()
+        blankKeyAndInvalidCoordinateAreRejected()
+        duplicateExactKeyIsRejected()
     }
 }

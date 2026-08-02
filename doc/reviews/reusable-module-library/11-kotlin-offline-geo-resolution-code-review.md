@@ -17,12 +17,12 @@
 | --- | --- | --- |
 | 清晰易懂與 P0 強型別 | 通過 | key、座標、entry 皆為具名 value type／data class；成功、無效、未知與歧義以 `GeoResolutionResult` sealed interface 表達；比對種類以 `GeoMatchKind` enum 表達。正式原始碼與測試均無 `Any` 或未驗證動態資料。 |
 | 編碼規範與分層 | 通過 | `OfflineGeoResolver` 為純 domain core；正規化與放寬語法由 `AddressKeyPolicy` 注入，座標接受範圍由 `CoordinateValidator` 注入。沒有將來源專案的 Android、地名或地區商業規則帶入核心。 |
-| 邏輯正確 | 通過 | 實作先查 exact key；未命中才查 policy 明確給出的 relaxed key；唯一候選成功、多候選回傳 `AmbiguousRelaxedKey`。重複 exact key 使用 `putIfAbsent` 保留第一筆，與參照 resolver 一致。 |
-| 邊界與異常 | 通過 | 空白／無法正規化 key 回傳 `InvalidAddressKey`；不存在 key 回傳 `UnknownAddressKey`；`FiniteCoordinateValidator` 排除 `NaN` 與無限值；建表時被拒絕座標不進入索引。 |
+| 邏輯正確 | 通過 | 實作先查 exact key；未命中才查 policy 明確給出的 relaxed key；唯一候選成功、多候選回傳 `AmbiguousRelaxedKey`。索引建立成功時才可解析；重複正規化 exact key 以具名結果拒絕。 |
+| 邊界與異常 | 通過 | 空白／無法正規化 entry key、`NaN`／無限座標與重複 exact key 都使 `fromEntries()` 回傳具名 `Rejected(reason)`，不產生部分索引；空白 query 回傳 `InvalidAddressKey`，不存在 key 回傳 `UnknownAddressKey`。 |
 | 安全與效能 | 通過 | 不讀寫檔案、asset、資料庫、網路、GPS、Provider 或使用者位置；不含真實地址、座標、國界或 secret。索引建置只使用本地 LinkedHashMap／LinkedHashSet，查詢為 map lookup。 |
-| 測試覆蓋與 smoke test | 通過 | 可執行測試覆蓋正規化 exact fixture、唯一 relaxed、relaxed 歧義拒絕、空白 key、無效座標，以及重複 exact key 第一筆穩定性。Kotlin 2.3.21 以 `-Werror` 編譯並執行 test JAR 成功；同一 test JAR 執行作為主要查詢路徑 smoke test 成功。 |
+| 測試覆蓋與 smoke test | 通過 | 可執行測試覆蓋正規化 exact fixture、唯一 relaxed、relaxed 歧義拒絕、空白 key、無效座標與重複 exact key 的 fail-closed 建表拒絕。Kotlin 2.3.21 以 `-Werror` 編譯並執行 test JAR 成功；同一 test JAR 執行作為主要查詢路徑 smoke test 成功。 |
 | 依賴合理 | 通過 | 未新增 Gradle、Android、JUnit、網路或執行期第三方相依；模組僅使用 Kotlin/JVM 標準函式庫。Kotlin compiler 2.3.21 以官方 SHA-256 驗證後安裝為開發期工具。 |
-| 專案規格符合性 | 通過 | 實作位於 Ticket 指定的 Kotlin 目錄；行為唯讀參照 來源專案C `OfflineAddressResolver` 與其測試意圖。排除 `OptionalOfflineAddressPack`、Android `Context`、asset、Provider 與所有來源資料；四個來源專案沒有被此 ticket 寫入。 |
+| 專案規格符合性 | 通過 | 實作位於 Ticket 指定的 Kotlin 目錄；查詢行為唯讀參照 來源專案C `OfflineAddressResolver` 與其測試意圖。Ticket 明定的建表 fail-closed 拒絕優先於來源的寬鬆資料載入行為。排除 `OptionalOfflineAddressPack`、Android `Context`、asset、Provider 與所有來源資料；四個來源專案沒有被此 ticket 寫入。 |
 
 ## 可重跑命令
 
