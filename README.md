@@ -1,104 +1,104 @@
 # Johnny AI Skill
 
-Johnny AI Skill is a detachable, user-scoped workflow plugin for taking over a new, inherited, or in-progress software project. It supplies the same two skills to Codex and Claude Code while keeping the target project independent.
+這是一套可隨時安裝或拔除的「個人 Agent workflow 外掛」。它用來接管新專案、既有專案或做到一半的專案，並把同一份 skill 同時提供給 Codex 與 Claude Code。
 
-It is not a runtime service, MCP server, hook, CI dependency, Git submodule, symlink, package dependency, or source-code import. Removing it therefore never changes how a company project builds, tests, deploys, or runs.
+它不是公司專案的 runtime service、MCP server、hook、CI 依賴、Git submodule、symlink、package dependency 或原始碼 import。因此拔除後，公司的建置、測試、部署與既有程式不會受影響。
 
-## What is installed
+## 內含哪些 skill
 
-| Skill | Purpose |
+| Skill | 用途 |
 | --- | --- |
-| `johnny-project-takeover` | Enter Wayfinder, follow the router and workflow, then use the target project's own rules and evidence. |
-| `apply-reusable-modules` | Select the smallest suitable `READY` module from `library/MODULE_CATALOG.md`; never copy it automatically. |
+| `johnny-project-takeover` | 先進入 Wayfinder，再依 Router 與 Workflow 收斂下一步，並以目標專案自身規範為優先。 |
+| `apply-reusable-modules` | 從 `library/MODULE_CATALOG.md` 選擇最小且適合的 `READY` 模組；不會自動複製模組。 |
 
-The skills share the repository's `Workflow.md`, `Defined_wayfinder.md`, router POC, and module catalog. Only the platform-specific plugin manifests differ; there is one shared `skills/` source of truth.
+兩個平台共用此 repo 根目錄唯一的 `skills/`。Workflow、Defined Wayfinder、Router POC 與 module catalog 也都是同一份；差別只在各自的外掛描述檔。
 
-## Before using it at a company
+## 在公司使用前先知道的事
 
-Install this plugin in your personal Codex or Claude Code user scope, outside the company repository. Then open the company repository normally and invoke the skill in that task.
+把外掛安裝在你「個人」的 Codex 或 Claude Code 使用者範圍，**不要**複製或安裝到公司 repository。之後照常開啟公司專案，在 task 裡呼叫 skill 即可。
 
-The target repository remains the authority for its own `AGENTS.md`, `Workflow.md`, security rules, tests, and Git policy. Johnny AI Skill is an external control plane: it helps the agent choose the next safe step, but does not overwrite or add a dependency to the target project.
+公司 repo 裡自己的 `AGENTS.md`、`Workflow.md`、安全規範、測試與 Git 政策仍是最高優先。Johnny AI Skill 只是外部控制平面，協助 Agent 判斷安全的下一步；它不會覆寫公司規範，也不會替公司專案增加依賴。
 
-You need GitHub access that can clone the private repository. Authenticate Git/SSH before installing; do not place a personal access token in a command, config file, or project repository.
+你的 GitHub 帳號必須能 clone 此 private repo。先讓 Git 或 SSH 完成正常登入；不要把 personal access token 寫進指令、設定檔或公司 repo。
 
-## Codex
+## Codex 使用方式
 
-### Install once
+### 只需安裝一次
 
-In a personal terminal, not inside the company project:
+在個人終端機、且不在公司專案資料夾內執行：
 
 ```powershell
 codex plugin marketplace add johnnyliu365-sys/Johnny_AI_Skill --ref main
 ```
 
-Restart Codex (or refresh its Plugins Directory), find **Johnny AI Skill**, and install `johnny-ai-skill` from the marketplace. No files are copied to the company repository.
+重新啟動 Codex（或重新整理 Plugins Directory），找到 **Johnny AI Skill** marketplace，安裝 `johnny-ai-skill`。這個動作不會把任何檔案複製到公司 repo。
 
-### Use in a company project
+### 接管公司專案
 
-1. Open the company repository in a new Codex task.
-2. Give the takeover instruction:
+1. 正常開啟公司 repository 的新 Codex task。
+2. 輸入：
 
    ```text
    Use $johnny-project-takeover to take over this project safely.
    ```
 
-3. When implementation could reuse a catalogued capability, give:
+3. 只有在要評估現有通用功能時，再輸入：
 
    ```text
    Use $apply-reusable-modules to select the smallest safe module set.
    ```
 
-The first skill reads the target project's local instructions first. If they do not establish a workflow, it uses this plugin's workflow as the fallback process.
+第一個 skill 會先讀取目標專案本地規範；只有在目標專案未建立流程時，才以本外掛的 Workflow 當作備援流程。
 
-### Update or remove
+### 更新或拔除
 
 ```powershell
 codex plugin marketplace upgrade johnny-ai-skill
 codex plugin marketplace remove johnny-ai-skill
 ```
 
-Removing the marketplace/plugin removes only the skills and their guidance from your Codex environment. It leaves every company repository untouched.
+拔除的只有你 Codex 環境中的 skill 與指引；公司 repository 不會被修改。
 
-## Claude Code
+## Claude Code 使用方式
 
-Claude Code reads the same root `skills/` directory through `.claude-plugin/plugin.json`; the skills appear under the `johnny-ai-skill` namespace.
+Claude Code 透過 `.claude-plugin/plugin.json` 讀取同一個根目錄 `skills/`，因此 skill 會有 `johnny-ai-skill` 命名空間。
 
-### Install once
+### 只需安裝一次
 
-In a personal terminal, not inside the company project:
+在個人終端機、且不在公司專案資料夾內執行：
 
 ```powershell
 claude plugin marketplace add johnnyliu365-sys/Johnny_AI_Skill
 claude plugin install johnny-ai-skill@johnny-ai-skill --scope user
 ```
 
-If the private repository cannot be read, first ensure the same user can clone it with Git or SSH. For GitHub CLI authentication, a safe setup is:
+若 private repo 無法讀取，先確認同一帳號可用 Git 或 SSH clone。使用 GitHub CLI 時可安全地執行：
 
 ```powershell
 gh auth login
 gh auth setup-git
 ```
 
-Start a new Claude Code session, or run `/reload-plugins` in an active one.
+重新開啟 Claude Code session，或在既有 session 輸入 `/reload-plugins`。
 
-### Use in a company project
+### 接管公司專案
 
-1. Open the company repository with Claude Code as usual.
-2. Invoke the project takeover skill:
+1. 如常用 Claude Code 開啟公司 repository。
+2. 輸入：
 
    ```text
    /johnny-ai-skill:johnny-project-takeover
    ```
 
-3. Invoke module selection only when it is relevant:
+3. 需要選擇通用模組時才輸入：
 
    ```text
    /johnny-ai-skill:apply-reusable-modules
    ```
 
-You can add the project goal after either command. Claude Code receives the shared skill instructions, then must respect the company repository's own rules before acting.
+接著補上本次專案目標即可。Claude Code 先取得此共用 skill，但在採取任何動作前仍必須遵守公司專案的本地規範。
 
-### Update, test, or remove
+### 更新、驗證或拔除
 
 ```powershell
 claude plugin marketplace update johnny-ai-skill
@@ -107,15 +107,15 @@ claude plugin uninstall johnny-ai-skill@johnny-ai-skill --scope user
 claude plugin marketplace remove johnny-ai-skill --scope user
 ```
 
-For a local smoke test of a clone of this repository, run:
+若要在本 repo 的 clone 根目錄進行一次 Claude Code 煙霧測試：
 
 ```powershell
 claude plugin validate .
 claude --plugin-dir .
 ```
 
-`plugin.json` deliberately has no Claude version field. Claude Code can therefore use the Git commit SHA as the installed version, so a new commit is visible as an update without a duplicate version change.
+Claude 的 `plugin.json` 故意不寫版本號，讓它以 Git commit SHA 辨識版本；每次新 commit 都可以被視為可更新版本，不需要重複維護第二份版本號。
 
-## Detach guarantee
+## 拔除保證
 
-The plugin is installed per user, not committed into the target project. To detach completely, run the relevant removal command above and close/reopen the agent session. The company project keeps its exact checkout, source, dependencies, CI, deployment configuration, and Git history; only the optional workflow skills are gone.
+這個外掛只裝在使用者範圍，不會被 commit 到目標專案。要完全拔除時，執行上方對應平台的移除命令，然後重新開啟 Agent session。公司專案會保留完全相同的 checkout、原始碼、依賴、CI、部署設定與 Git history；消失的只有這套可選的 workflow skill。
