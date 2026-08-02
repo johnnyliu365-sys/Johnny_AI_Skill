@@ -26,4 +26,4 @@
 
 ## Handoff
 
-Static repository gates passed. `PENDING_FEATURE_COMMIT`: update this ticket and its review after the feature commit is created.
+Static repository gates passed. Feature commit: `d662993` (`feat: add Claude Code plugin distribution`).

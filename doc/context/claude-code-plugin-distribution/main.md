@@ -31,4 +31,4 @@
 
 ## Owner-backlink status
 
-`PENDING_FEATURE_COMMIT`: replace with the feature commit SHA after the implementation is committed.
+Feature implementation committed as `d662993` (`feat: add Claude Code plugin distribution`).

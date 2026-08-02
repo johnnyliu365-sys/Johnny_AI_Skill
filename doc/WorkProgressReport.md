@@ -160,3 +160,16 @@
 - Review：`APPROVED`，`doc/reviews/plugin-distribution/01-private-git-plugin-code-review.md`。
 - Ticket commit：`cb2b3e4`（`feat: package detachable project takeover plugin`）。
 - 未修改邊界：沒有安裝 plugin、寫入 `~/.codex`、修改公司專案、啟動 MCP／App／hook、使用 Secret、呼叫外部 Provider 或部署。
+
+## PRG-20260802-005 — Claude Code Plugin Distribution POC
+
+| Field | Value |
+| --- | --- |
+| State | `DONE` |
+| Feature commit | `d662993` — `feat: add Claude Code plugin distribution` |
+| Specification | `SPEC-AI-WORKFLOW-CLAUDE-CODE-PLUGIN-DISTRIBUTION-20260802-01KZ4C6D8E0F2G4H6J8K0M2N4P` |
+| Ticket | `modules/tickets/claude-code-plugin-distribution/01-claude-code-plugin.md` |
+| Delivered | Root Claude plugin manifest, root marketplace catalog, one shared `skills/` source, and Codex/Claude Code user-scope operating instructions. |
+| Validation | Claude JSON contract, two skill validators, Codex plugin validator, `git diff --check`, 48 unit tests, and strict type checking across 54 source files all passed. |
+| External follow-up | `claude` is absent from this workspace. After private-repo installation in Claude Code, run `claude plugin validate .` once; no claim of that local CLI validation is made here. |
+| Detach guarantee | No company repository file or configuration was changed. Removing the user-scoped plugin removes only the agent workflow skills. |

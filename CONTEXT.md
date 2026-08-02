@@ -66,4 +66,4 @@
 - Worktree Context: `doc/context/claude-code-plugin-distribution/main.md`
 - Scope: provide a Claude Code marketplace entry while retaining one shared `skills/` source and zero target-project dependency.
 - PRD / change: `PRD.md §9`; `CHG-20260802-005`.
-- Handoff state: static validation pending; a live `claude plugin validate .` run requires a Claude Code installation.
+- Handoff state: static validation passed in feature commit `d662993`; a live `claude plugin validate .` run requires a Claude Code installation.
