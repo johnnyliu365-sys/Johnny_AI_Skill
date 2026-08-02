@@ -4,7 +4,7 @@
 | --- | --- |
 | 對應規格 ID | `SPEC-AI-WORKFLOW-REUSABLE-MODULE-LIBRARY-20260801-01KYYV8YJFZ467BC1RGDNY64QP`（§功能集群／Kotlin） |
 | 需求變更 | `CHG-20260801-001` |
-| 狀態 | `PLANNED` |
+| 狀態 | `DONE` |
 | 環境 | `LOCAL` |
 | 責任邊界 | 地址 key 正規化、離線表 lookup 與座標範圍驗證 |
 | 禁止修改 | 來源專案C Android app、資產、位置資料、地圖 provider 與網路呼叫 |
@@ -23,3 +23,12 @@
 1. 正常：正規化 key 命中手工 fixture。
 2. 錯誤：空 key、重複 key、越界／無效座標遭拒。
 3. 回歸：輸入集合的解析結果可重現。
+
+## 完成回寫
+
+- 實際程式碼：`library/功能集群/kotlin/offline_geo_resolution/`。
+- 行為：精確命中優先、唯一放寬命中、放寬歧義拒絕；空白／無法正規化 key、無效座標與重複正規化 exact key 均以具名建表結果 fail-closed 拒絕。
+- TDD／型別／Smoke：Kotlin 2.3.21 以 `-Werror` 編譯並執行可執行測試通過；Python 全專案回歸 `48 passed`；`mypy --strict library tests` 通過。
+- Review：`APPROVED`，`doc/reviews/reusable-module-library/11-kotlin-offline-geo-resolution-code-review.md`。
+- Commit：`e91f5c5`（初始模組）及 `c255720`（Ticket 明定的 fail-closed 建表修正）。
+- 來源隔離：四個參照專案未被修改；來源專案C 僅唯讀參照 `OfflineAddressResolver` 與測試意圖，未讀取／複製 optional address pack 或任何地理資料。

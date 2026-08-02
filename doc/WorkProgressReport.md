@@ -138,3 +138,14 @@
 - 實際內容：建立 `library/MODULE_CATALOG.md`、`skills/apply-reusable-modules/`、library 最小載入入口與新專案版本化引用指引。
 - 驗證：skill creator `quick_validate.py` 輸出 `Skill is valid!`；沒有 TODO；`git diff --check` 通過。
 - 限制：未打包、未全域安裝、未移動既有模組，亦未對任何新專案執行寫入。
+
+## PRG-20260802-008｜Ticket 11 Kotlin 離線地理解析
+
+- 狀態：`DONE`，功能集群 `READY_TO_MERGE`。
+- 對應：`SPEC-AI-WORKFLOW-REUSABLE-MODULE-LIBRARY-20260801-01KYYV8YJFZ467BC1RGDNY64QP`／`11-kotlin-offline-geo-resolution`／`CHG-20260801-001`。
+- 實際內容：在 `library/功能集群/kotlin/offline_geo_resolution/` 建立純 Kotlin offline key resolver。公開型別包含 key／coordinate 值型別、`AddressKeyPolicy`、`CoordinateValidator`、建表 `Built`／`Rejected(reason)` 結果，以及查詢 `Resolved`／invalid／unknown／ambiguous 結果。
+- 來源依據：唯讀參照 來源專案C `OfflineAddressResolver` 的 exact-first、unique-relaxed 與 ambiguous-reject 行為；沒有複製程式、地址、座標、Android asset 或 Provider。正式 ticket 對空 key、無效座標與重複 exact key 的 fail-closed 要求優先於來源的寬鬆建表策略。
+- 驗證：初始 API 缺失與 fail-closed 契約各有一輪 TDD 紅燈；Kotlin 2.3.21 `-Werror` 編譯與 test JAR smoke 通過；`python -m unittest discover -s tests` 為 48 passed；`python -m mypy --strict library tests` 為 54 source files 無問題；`git diff --check` 通過。
+- Review：`APPROVED`，`doc/reviews/reusable-module-library/11-kotlin-offline-geo-resolution-code-review.md`。
+- Ticket commits：`e91f5c5`（`feat: add Kotlin offline geo resolution`）、`c255720`（`fix: reject invalid offline geo index entries`）。
+- 未修改邊界：SourceProjectA、來源專案B、來源專案C `來源專案C` 與 來源專案D 未被修改、搬移、刪除或新增任何檔案；沒有啟動 Android、外部 Provider、網路、資料庫、Secret 或部署。
