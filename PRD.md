@@ -69,3 +69,29 @@
 - 每個 READY 模組有用途、公開 import、相依及最小閱讀順序。
 - `$apply-reusable-modules` 強制先選卡，再讀取命中的最少檔案。
 - 未交付模組不可被選擇；模組命中不能繞過目標專案的流程與核准。
+
+## 8. Johnny AI Skill Plugin Distribution POC
+
+### 目標
+
+把本 repository 發行為可從 private GitHub marketplace 安裝的 Codex plugin，讓使用者可在不同公司專案開啟或接管時掛載整套 workflow；停用或移除時，公司專案仍完全獨立運作。
+
+### POC 範圍
+
+- `.codex-plugin/plugin.json`：穩定 plugin 身分與 `skills/` 入口。
+- `.agents/plugins/marketplace.json`：以 repository-root Git URL 與 `main` 提供可安裝來源。
+- `$johnny-project-takeover`：先讀取目標專案規範，再經 Router、Wayfinder、Grill、SPEC、ticket、review 與 handoff 的最小入口。
+- 根目錄 README：私有安裝、使用、更新與拔除步驟，以及不耦合公司專案的契約。
+
+### 不做範圍
+
+- 不自動安裝到任何使用者帳號、不修改 `~/.codex`、不寫入公司專案。
+- 不建立 runtime package、MCP server、App、hook、CI integration、Provider、Secret 或部署。
+- 不把 plugin cache、checkout、Git submodule、symlink 或相對 import 視為公司專案的依賴管理。
+
+### 成功標準
+
+1. plugin manifest、marketplace JSON 與兩個 bundled skills 均通過結構驗證。
+2. repository 可作為 Git marketplace 來源，且 plugin source 指向 repository root。
+3. README 明確區分 plugin 控制平面與公司專案交付物，並提供無破壞性的拔除流程。
+4. plugin 不宣告 MCP、App、hook 或其他會在公司專案外自動執行的元件。

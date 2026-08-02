@@ -44,3 +44,8 @@
 
 1. `01-module-catalog-skill`：`DONE`；已建立 READY 模組選擇卡、可攜 Codex skill 和新專案最小載入指引。
 2. 後續套件發行或全域 skill 安裝必須由新的 CHG、SPEC 與 ticket 處理；目前只交付可版控的 repo 內來源。
+
+## Plugin Distribution POC
+
+1. `01-private-git-plugin`：`DONE`；已建立 repository-root plugin manifest、private Git marketplace catalog、接管 skill 與可拔除契約 README。
+2. 個人 Codex 環境的實際安裝、啟用、停用與 marketplace 移除由使用者自行選擇；不得當作公司專案的 runtime 或 CI 依賴。

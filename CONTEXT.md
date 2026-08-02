@@ -49,3 +49,13 @@
 - 責任範圍：可攜 skill、選擇卡與新專案模板入口；不含套件發行或任何專案寫入。
 - PRD／需求變更：`PRD.md §7`／`CHG-20260802-003`
 - 回掛狀態：POC 已完成並通過 skill validator 與 code review。
+
+### `SPEC-AI-WORKFLOW-PLUGIN-DISTRIBUTION-20260802-01KZ3N5P7R9T1V3X5Z7B9D1F3H`｜Johnny AI Skill Plugin Distribution POC
+
+- 規格路徑：`modules/spec/plugin-distribution.md`
+- 專屬 Context：`doc/context/plugin-distribution/main.md`
+- 原引用章節：`Workflow.md §0 流程 Router`、`skills/` 與 `library/MODULE_CATALOG.md`
+- 收斂結果摘要：以 Git marketplace 安裝 repository-root plugin；plugin 僅提供 AI 控制平面，已核准的公司專案變更則由公司 repository 自主持有。
+- 責任範圍：manifest、marketplace catalog、接管 skill 與 README；不含目標專案寫入、全域設定寫入、runtime、MCP、hook 或部署。
+- PRD／需求變更：`PRD.md §8`／`CHG-20260802-004`
+- 回掛狀態：POC 已完成靜態驗證與 code review；安裝至個人 Codex 環境為使用者後續選擇。

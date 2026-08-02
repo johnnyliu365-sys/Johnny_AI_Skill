@@ -67,3 +67,22 @@
 ### 決策
 
 以短卡片和 `$apply-reusable-modules` 取代全量模組閱讀。卡片只提供選擇與最小閱讀路徑；採用、實作與外部操作仍受目標專案 Workflow 控制。
+
+## CHG-20260802-004｜將 Johnny AI Skill 發行為可拔除的 private Git plugin POC
+
+- 日期：2026-08-02（Asia/Taipei）
+- 版本：`v0.4-plugin-distribution-poc`
+- 狀態：已由使用者核准實作
+- PRD 索引：`PRD.md §8`
+- 規格索引：`SPEC-AI-WORKFLOW-PLUGIN-DISTRIBUTION-20260802-01KZ3N5P7R9T1V3X5Z7B9D1F3H`（`APPROVED`）
+
+### 決策
+
+將此 private GitHub repository 的 workflow、Wayfinder、Router 與既有 skills 包裝為 Git marketplace 可安裝的 Codex plugin。plugin 是外部控制平面；公司專案不可以它作為 runtime、CI、設定或來源碼依賴，拔除後只失去這套 AI 流程能力。
+
+### 影響與控制
+
+- 新增 plugin manifest、Git marketplace catalog、主接管 skill 與根目錄 README。
+- marketplace 指向 repository root 的 Git URL 與 `main`；使用者可在自己的 Codex 環境安裝、停用或移除，這次不寫入任何使用者設定或公司專案。
+- 不新增 MCP、App、hook、Secret、Provider、runtime service 或部署。
+- 任何經公司專案核准採用的功能，必須成為公司專案自己的版本化、測試與 commit；禁止 symlink、Git submodule、cache import 或其他反向依賴。
