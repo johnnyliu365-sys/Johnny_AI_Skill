@@ -8,6 +8,10 @@
 - 對每個模組記錄公開契約、相依、測試命令、來源追溯與適用限制。
 - 讓後續工單在獨立資料夾內實作強型別、可測試的通用能力。
 
+## AI 最小載入入口
+
+新 Agent 不得先讀完整 `library/`。先讀取 [MODULE_CATALOG.md](MODULE_CATALOG.md) 的選擇卡，只載入命中卡片指定的 README、公開 `__init__.py` 與必要契約；正式採用仍須走目標專案自己的 Wayfinder、Grill、SPEC 與 ticket。
+
 ## 目錄
 
 - `NLP/`：規則式文字理解、欄位抽取與模型 provider 邊界。

@@ -12,10 +12,12 @@
 
 ```mermaid
 flowchart TD
-    A[需求／正式 UI／Bug] --> B{需求與邊界已明確？}
-    B -- 否 --> C[wayfinder]
-    C --> D[grill-with-docs]
-    B -- 是 --> D
+    A[新專案／接管專案／需求／正式 UI／Bug] --> RT[Router：解析狀態、最小 context 與能力]
+    RT --> C[wayfinder]
+    C --> V{GO？}
+    V -- NO-GO --> Z[停止流程並列出重新評估條件]
+    V -- GO --> AR[Architecture]
+    AR --> D[grill-with-docs]
     D --> E[更新共同 Context]
     D -. 已確認變更：旁路登錄 .-> F[RequirementChangeLog]
     E --> G[to-spec]
@@ -35,9 +37,9 @@ flowchart TD
     Y -- 否 --> M
     Y -- 是 --> P[該 worktree commit]
     P --> Q[WorkProgressReport 與 docs-only commit]
-    Q --> R{功能集群所有 ticket 完成？}
-    R -- 否 --> L
-    R -- 是 --> S[code-review]
+    Q --> FC{功能集群所有 ticket 完成？}
+    FC -- 否 --> L
+    FC -- 是 --> S[code-review]
     S --> T{審閱全數通過？}
     T -- 否 --> L
     T -- 是 --> U[handoff／UAT／部署授權]
@@ -46,11 +48,13 @@ flowchart TD
 主線不可跳過：
 
 ```text
-wayfinder → grill-with-docs → CONTEXT.md → to-spec → 核准
-→ 回掛 Context／CHG → to-tickets → 核准
+流程事件 → Router → wayfinder → GO → Architecture → grill-with-docs → CONTEXT.md → to-spec → 核准
+→ 旁路引用映射／已確認變更回掛 Context／CHG → to-tickets → 核准
 → implement（單一 ticket 的 TDD）→ commit → progress 記錄
 → code-review → handoff／UAT／部署授權
 ```
+
+`wayfinder` 輸出 `NO-GO` 時停止流程，僅可在重新評估後由 `wayfinder` 重啟。
 
 `RequirementChangeLog` 是已確認變更的旁路追溯，不取代 Context、SPEC、tickets、TDD 或任一核准閘門。
 
@@ -65,6 +69,7 @@ wayfinder → grill-with-docs → CONTEXT.md → to-spec → 核准
 | 類別 | 唯一位置 | 用途 |
 | --- | --- | --- |
 | 工作流程 | `Workflow.md` | 工作順序、授權閘門與交付規則。 |
+| 流程 Router | `Workflow.md#workflow-router` | 依流程狀態解析最小 context 視圖、skill／Agent 能力與唯一合法下一步。 |
 | Agent 入口 | `AGENTS.md` | 索引與啟動規則。 |
 | Code Review 規則 | `CodeReview.md` | Code Review 的唯一實際驗證標準與結論依據。 |
 | 需求變更 | `doc/RequirementChangeLog.md` | 已確認需求／正式 UI 的變更歷程。 |
@@ -78,21 +83,157 @@ wayfinder → grill-with-docs → CONTEXT.md → to-spec → 核准
 
 完整文件結構僅能在取得明確授權後依 `template/README.md` 建立；固定正式位置是 `modules/spec/`、`modules/tickets/` 與 `modules/element/`，不得建立 `doc/specs/`、`doc/tickets/` 或平行來源。
 
+<a id="workflow-router"></a>
+
+## 0. 流程 Router：事件驅動的閉迴路控制
+
+Router 是 `Workflow.md` 的控制層，不是新的工作流程、事實來源或授權者。它在 intake、產物完成、驗證結果、核准結果與需求變更等事件後，依目前狀態重新解析「下一個唯一合法動作」。已取得初始授權的自動轉移可以持續運轉；任何需要人類承擔決策的關卡仍必須停下等待明確授權。
+
+```mermaid
+flowchart LR
+    E[流程事件] --> R[Router]
+    R --> CV[Context Resolver]
+    R --> SR[Skill／Agent Resolver]
+    CV --> A[受限工作指令]
+    SR --> A
+    A --> V[驗證／審閱／核准]
+    V -- 通過或失敗事件 --> E
+    V -- 人類決策或阻塞 --> H[Fail-Closed：等待授權／修正]
+```
+
+### 0.1 強型別 Router 契約
+
+Router 的輸入與輸出必須是具名、可檢查的契約；不得以聊天摘要、未驗證動態物件或字串慣例猜測目前流程。
+
+```text
+ProcessStage = INTAKE | WAYFINDER | ARCHITECTURE | GRILL | CONTEXT | SPEC | TICKETS
+             | IMPLEMENT | SMOKE_TEST | REVIEW | HANDOFF | BLOCKED | STOPPED
+
+RouterEvent = INTAKE | WAYFINDER_GO | WAYFINDER_NO_GO | ACTION_COMPLETED
+            | VALIDATION_PASSED | VALIDATION_FAILED
+            | APPROVAL_GRANTED | APPROVAL_DENIED | REQUIREMENT_CHANGED
+            | CONTEXT_REFERENCE_CLOSED | EXTERNAL_DECISION_REQUIRED
+
+RouterState = {
+  project_id: ProjectId,
+  stage: ProcessStage,
+  authority_state: APPROVED | PENDING | DENIED | NOT_REQUIRED,
+  delivery_stage: POC | MVP | COMMERCIAL,
+  artifact_refs: ArtifactRef[]
+}
+
+ProjectWorkflowProfile = {
+  profile_id: ProfileId,
+  profile_version: Version,
+  delivery_stage: POC | MVP | COMMERCIAL,
+  transition_rules: (current_stage, event) ->
+    (outcome, next_stage, required_authority, required_source_kinds, eligible_capabilities)
+}
+
+RouterDecision = {
+  outcome: ADVANCE | RETRY | SUSPEND | STOP,
+  next_stage: ProcessStage | null,
+  required_sources: ArtifactRef[],
+  context_view: ContextView | null,
+  eligible_capabilities: CapabilityRef[],
+  blockers: Blocker[]
+}
+
+ContextReference = {
+  source_context: ArtifactRef,
+  source_revision: RevisionRef,
+  source_span: ContextSpanRef,
+  side_context_id: SideContextId,
+  consumer_fingerprint: ConsumerFingerprint,
+  target_artifact: ArtifactRef,
+  status: OPEN | CLOSED | INVALIDATED
+}
+```
+
+`ArtifactRef` 只可指向既有的唯一正式來源；`ContextView` 是一次工作所需的短暫、可重建視圖，不是第二份 `CONTEXT.md`。`CapabilityRef` 表示可被 router 選擇的 skill、Agent profile 或工具能力，並非授予未核准權限。`ContextReference` 是一次旁路引用的追溯邊，不是內容回寫或另一份 Context。
+
+### 0.2 專案 Profile 與交付成熟度
+
+Router 核心是固定的流程執行器；每個專案的合法轉移、來源需求、核准門檻與 capability allowlist 都必須由一份已驗證的 `ProjectWorkflowProfile` 宣告。核心不得把任一產品的商業規則寫死。
+
+`POC`、`MVP` 與 `COMMERCIAL` 是正常交付成熟度，不是跳過 `wayfinder`、Architecture、Grill、SPEC 或 ticket 的捷徑：
+
+1. 使用者給出目標後，以 `POC` 作為初始 `delivery_stage`。POC 只驗證最小假設、可行性與明確的 GO／NO-GO；它不是可直接營運的產品。
+2. POC 的證據足以支持後續投資時，專案負責人以 `REQUIREMENT_CHANGED` 提出「升級至 MVP」的目標，建立 CHG，將目標 Profile 切換為 `MVP`，再由 `WAYFINDER` 重新收斂 MVP 的使用者價值、風險、邊界和驗收條件。其後仍依序經過 Architecture、Grill、Context、SPEC、tickets 與實作門檻。
+3. MVP 驗證後，如要承諾正式營運、安全、支援、可觀測性、資料治理、法規或服務等級，同樣以 `REQUIREMENT_CHANGED` 進入 `COMMERCIAL` Profile，並從 `WAYFINDER` 重走受影響的關卡。商用標準是該專案 Profile 的可驗收承諾，不由 Router 自行推論。
+4. `RouterState.delivery_stage` 必須和正在使用的 Profile 相符。未有核准的 CHG、對應證據或適用 Profile 時，Router 必須 `SUSPEND`，不得把 POC 結果當成 MVP 或商用結論。
+
+### 0.3 Context 與能力解析規則
+
+1. Router 先讀取 `RouterState` 與其 `artifact_refs`，再以目前 `stage`、`event`、`delivery_stage` 與授權狀態選擇最小必要來源；不得將完整共用 Context、聊天記錄或無關歷史直接複製進工作指令。
+2. `ContextView` 是可持久化的 descriptor，只標明目的、來源引用、適用關卡、內容預算與失效事件；它不得含引用原文。MCP／來源 adapter 讀取出的原文只可存在於當次 `ContextPacket` 與引用 Agent 自己的 worktree，不得寫入 LangGraph state 或 checkpoint、Temporal input／history、Router state、citation ledger 或共用 Context。
+3. Router 只向 Agent 顯示與當前工作相關的 capability catalog；完整 skill 內容僅在命中適用條件後載入。catalog 篩選用於降低 context 雜訊，不可單獨作為安全權限邊界。
+4. Agent 的寫入、執行、外部存取與 delegation 權限，仍由其工作角色、worktree、使用者授權與安全規則決定；router 不得藉由選擇 capability 繞過這些限制。
+5. 需要採用既有通用原始碼時，先以 [MODULE_CATALOG.md](library/MODULE_CATALOG.md) 或 `$apply-reusable-modules` 選擇最少 READY 模組；卡片只決定閱讀範圍，實際採用仍須在本流程的 Grill、SPEC 與 ticket 中核准。
+
+### 0.4 旁路引用與掛回映射
+
+旁路引用的掛回只記錄「誰在何時以哪一個一次性引用 ID，使用哪個版本的哪段 Context，支援哪一份 Grill、SPEC 或 ticket」；不得將旁路輸出、聊天紀錄或引用原文回寫、合併或複製進共用 Context。原始 Context 與正式產物仍各自維持唯一來源。
+
+1. 每一個新的 Router event 所建立的旁路引用都必須有新的 `side_context_id`；即使是同一 Agent 再次引用同一來源段落，也不得重用先前 ID。同一 event 的重試是同一次引用，必須保留相同 ID，避免重試製造假的兩次使用紀錄。
+2. `consumer_fingerprint` 必須可辨識引用者的 Agent profile／版本、worktree 與執行實例，但不得包含 Secret 或完整提示內容。`source_revision` 與 `source_span` 必須足以定位當時的原文版本與段落。
+3. 引用 Agent 只可在自己的 worktree 保存本次引用過的原文段落，以及其來源、版本與 `side_context_id`；此本地紀錄是引用證據，不是正式 Context，亦不得成為其他 Agent 的共用輸入。
+4. 引用結束時，Router 收到 `CONTEXT_REFERENCE_CLOSED`，以 `ContextReference` 建立或更新可重建的映射投影：`source_context + revision + span → side_context_id → consumer_fingerprint → target_artifact`。`target_artifact` 必須指向本次實際使用的 Grill、SPEC 或 ticket。
+5. 該映射只保存引用關係，不授權實作、不確認事實，也不取代變更控制。若旁路工作導致事實、決策或需求改變，仍必須走 `REQUIREMENT_CHANGED`、`grill-with-docs` 與既有核准閘門。
+6. 來源更新、需求改變或核准撤回時，既有引用應標示 `INVALIDATED`；下次引用必須解析新來源並產生新的 `side_context_id`，不得假定舊引用仍適用。
+
+```text
+CTX-WF-001@4#poc.cost-assumption
+  ├─ SCX-20260802-001 → AGF-architecture-v2/worktree-A → GRILL-POC-001
+  └─ SCX-20260802-002 → AGF-spec-v1/worktree-B         → SPEC-MVP-001
+```
+
+### 0.5 關卡路由表
+
+| 關卡 | Router 最小必要來源 | 可選能力類型 | 合法輸出事件 |
+| --- | --- | --- | --- |
+| `INTAKE` | 使用者目標、唯一正式 Project Goal 與適用 Profile | 目標正規化、Profile 選擇 | `INTAKE` → `WAYFINDER` 或 `SUSPEND` |
+| `WAYFINDER` | `Defined_wayfinder.md`、使用者授權與已確認產品事實 | 產品、商業、可行性評估 | `WAYFINDER_GO`／`WAYFINDER_NO_GO` |
+| `ARCHITECTURE` | 已 `GO` 的 Wayfinder Shared Context、限制與風險 | 架構、成本、安全邊界 | 高階架構完成或阻塞 |
+| `GRILL` | 與本次 scope 有關的需求、架構、契約、風險與既有產物 | 領域、資料、API、UI、Provider、安全分析 | 已確認事實或變更事件 |
+| `CONTEXT`／`SPEC`／`TICKETS` | 當前 scope 的有效 Context、CHG、架構與核准狀態 | 規格、切片、驗收、責任分派 | 草案、核准等待或核准結果 |
+| `IMPLEMENT`／`SMOKE_TEST` | 已核准 ticket、其 SPEC 章節、直接依賴契約與必要安全規則 | 強型別實作、TDD、測試、Smoke Test | 驗證通過或失敗 |
+| `REVIEW`／`HANDOFF` | 完成證據、實際 diff、有效 ticket／SPEC／CHG 與 review 規則 | Code Review、交接、UAT | `APPROVED`、修正回授或等待部署授權 |
+
+### 0.6 執行節點與 Fail-Closed
+
+| 節點 | 唯一責任 | 可持久化資料 | 不可做的事 |
+| --- | --- | --- | --- |
+| Pydantic contract | 驗證 `RouterState`、`RouterEvent`、Profile、Decision 與引用映射的型別及不變量 | 強型別 descriptor | 接受未驗證的動態資料或原文進入共享狀態 |
+| LangGraph | 將已驗證的 transition 組成封閉節點與 `RouterDecision`／`ContextView` descriptor | Graph state／checkpoint 的 descriptor | 讓 Agent 指定任意下一個節點，或保存 `ContextPacket` |
+| OpenAI Agents SDK | 將 allowlisted `CapabilityRef` 解析為實際 Agent／skill | Capability 定義與執行結果引用 | 以 handoff 或 prompt 繞過 Router allowlist |
+| Temporal | 處理 typed signal、query、人類核准等待、重試與故障恢復 | 已驗證的 event、state 與 decision descriptor | 在 durable workflow 內執行非決定性 I/O，或保存原文 |
+| MCP | 只依 `required_sources` 讀取已指向的正式 URI，並在邊界正規化為 typed snippet | 來源引用與 revision | 掃描未宣告資源、以模糊搜尋補齊 Context，或把原文回寫共享狀態 |
+
+POC 實作必須使用各框架的公開介面；不得依賴 LangGraph Pregel 私有迴圈。非決定性 I/O 一律留在 adapter／Temporal Activity 邊界，Graph 與 Temporal 的可重播狀態只保存 descriptor。
+
+Router 可在下列條件都成立時自動發出下一個工作指令：前一關產物完整、驗證證據有效、下一關不需要新的人類授權，且 `ContextView` 與 capability 都可被完整解析。每個工作指令只可覆蓋單一合法關卡與明確 scope；完成後必須以新的 `RouterEvent` 回饋 Router，不得自行跨關卡推進。
+
+Router 必須輸出 `SUSPEND` 或 `STOP`，而非猜測或降級繼續，當發生任一情況：
+
+- `NO-GO`、`APPROVAL_DENIED`、未授權的外部動作，或明確要求人類決策；
+- 必要正式來源、完整引用、有效核准、role／worktree owner 或能力不存在；
+- 需求、權限、資料契約、安全邊界、Provider、成本上限或風險狀態衝突；
+- TDD、型別檢查、Smoke Test、Code Review 或其他必要驗證失敗。
+
+在 Bootstrap 期間，Router 僅能根據目前存在的文件輸出 route proposal；缺少正式產物時必須依本檔的唯一來源規則標示 `BLOCKED`，不得自行新增平行 context、spec、ticket 或報告。
+
 <a id="discovery"></a>
 
 ## 1. 需求釐清：`wayfinder` 與 `grill-with-docs`
 
-### 1.1 `wayfinder`
+<a id="workflow-wayfinder"></a>
 
-當產品目標、商業規則、優先順序、使用者流程、技術邊界或資料所有權尚不清楚時，先收斂並記錄：
+### 1.1 `wayfinder`：流程第一關
 
-1. 目標使用者、成功標準與本期不做範圍。
-2. 已確認決策、限制、授權條件與既有事實。
-3. 可立即決定的問題。
-4. 未決問題、決策者、影響範圍與阻塞條件。
-5. 需要的文件、資料、測試或外部確認。
+所有新專案與接管專案都必須先執行 `wayfinder`；所有 Agent 都必須依 `Defined_wayfinder.md` 的規範執行其實際工作內容。該文件是 Wayfinder 的唯一詳細定義，包含評估項目、Strict Veto、`GO`／`NO-GO` 決策、Required Output、handoff 與重跑條件；本檔只定義它在整體工作流程中的關卡位置。
 
-`wayfinder` 只收斂問題，不授權實作。
+未依 `Defined_wayfinder.md` 產出決策前，不得進入 Architecture、`grill-with-docs`、SPEC、ticket 或實作。`NO-GO` 必須停止流程；`GO` 才可交付 Wayfinder Shared Context 給 Architecture Agent 建立高階架構，之後進入 `grill-with-docs`。正式 `CONTEXT.md` 仍只可依本流程的授權與唯一來源規則建立或更新。
 
 ### 1.2 `grill-with-docs`
 

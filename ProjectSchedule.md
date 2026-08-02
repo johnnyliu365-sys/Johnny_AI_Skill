@@ -3,8 +3,8 @@
 ## 現行階段
 
 - 日期：2026-08-02（Asia/Taipei）
-- 階段：`AWAITING_TICKET_CONFIRMATION`
-- 目前功能集群：`reusable-module-library`
+- 階段：`ROUTER_FRAMEWORK_POC_DONE`
+- 目前功能集群：`router-framework`；`reusable-module-library` 維持既有完成狀態，不與本 POC 混合。
 - 唯一工作流程：`Workflow.md`
 
 ## 順序
@@ -34,3 +34,13 @@
 - `09-python-event-timeline-audit`：`DONE`（commit `655f09d`）。
 - `10-python-engagement-rules`：`DONE`（commit `f0a4bfc`）。
 - 下一張候選：`11-kotlin-offline-geo-resolution`；必須等待使用者明確確認後才可開始。
+
+## Router Framework POC
+
+1. `01-poc-router-core`：`DONE`；已建立 Profile 驅動的路由核心、Context 引用映射與四個框架接點，並完成測試與 review。
+2. POC 完成後，才依證據決定是否擴充為能接管真實專案的 MVP；不得自動升級。
+
+## Module Application Skill POC
+
+1. `01-module-catalog-skill`：`DONE`；已建立 READY 模組選擇卡、可攜 Codex skill 和新專案最小載入指引。
+2. 後續套件發行或全域 skill 安裝必須由新的 CHG、SPEC 與 ticket 處理；目前只交付可版控的 repo 內來源。

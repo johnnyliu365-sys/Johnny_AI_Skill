@@ -120,3 +120,21 @@
 - Ticket commit：`f0a4bfc`（`feat: add engagement rules core`）。
 - 未修改邊界：SourceProjectA、來源專案B、來源專案C `來源專案C` 與 來源專案D 的所有檔案、原始碼、資料、設定與外部 Provider 均未觸及。
 - 下一張候選：`11-kotlin-offline-geo-resolution`；必須等待使用者明確確認後才可開始。
+
+## PRG-20260802-006｜Router framework POC 核心
+
+- 狀態：`DONE`。
+- 對應：`SPEC-AI-WORKFLOW-ROUTER-FRAMEWORK-20260802-01KZ2M4P6R8T0V2X4Z6B8D0F2H`／`01-poc-router-core`／`CHG-20260802-002`。
+- 實際內容：建立 Pydantic Router 契約、Profile transition、最小 Context descriptor／本地 packet 分離、metadata-only citation ledger、LangGraph 封閉分支、OpenAI Agents SDK capability adapter、Temporal human-wait skeleton 與 MCP resource adapter。
+- 流程改變：`Workflow.md §0` 現在以 Profile 控制 `POC → MVP → COMMERCIAL`，升級一律經 `REQUIREMENT_CHANGED → WAYFINDER`；AGENTS 只保留該規則的索引。
+- 驗證：TDD 紅燈為 `library.workflow_router` 不存在；綠燈 `python -m unittest discover -s tests`（48 passed）、`python -m mypy --strict library tests`（54 source files 無問題）、`python -m py_compile ...` 與無外部服務 smoke 均通過。
+- Review：`APPROVED`，`doc/reviews/router-framework/01-poc-router-core-code-review.md`。
+- 未修改邊界：沒有啟動模型、Temporal worker、MCP server、網路、資料庫、Secret、Provider 或被接管專案；未建立 commit 或 push。
+
+## PRG-20260802-007｜Module catalog 與可攜 skill
+
+- 狀態：`DONE`。
+- 對應：`SPEC-AI-WORKFLOW-MODULE-APPLICATION-SKILL-20260802-01KZ2Q8V4N6R9T1X3Z5B7C9D1F3H`／`01-module-catalog-skill`／`CHG-20260802-003`。
+- 實際內容：建立 `library/MODULE_CATALOG.md`、`skills/apply-reusable-modules/`、library 最小載入入口與新專案版本化引用指引。
+- 驗證：skill creator `quick_validate.py` 輸出 `Skill is valid!`；沒有 TODO；`git diff --check` 通過。
+- 限制：未打包、未全域安裝、未移動既有模組，亦未對任何新專案執行寫入。

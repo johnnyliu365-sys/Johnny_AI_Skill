@@ -32,6 +32,8 @@
 
 | 目前情境 | 必讀章節 | 允許的下一步 |
 | --- | --- | --- |
+| 流程事件、交付階段、context 或 skill／Agent 選擇 | [流程 Router](Workflow.md#workflow-router) | 讀取 Profile，解析最小 Context 視圖與唯一合法的下一步 |
+| 尋找可重用原始碼模組 | [模組選擇卡](library/MODULE_CATALOG.md)／`$apply-reusable-modules` | 先選最少 READY 模組，再回到本流程取得採用與實作授權 |
 | 需求、Bug、正式 UI 或邊界不清楚 | [需求釐清](Workflow.md#discovery) | `wayfinder → grill-with-docs` |
 | 需求、UI、資料契約或權限已改變 | [變更控制](Workflow.md#change-control) | 影響分析、更新 Context、重走核准閘門 |
 | 準備定義可驗收功能 | [規格](Workflow.md#specification) | 建立／修訂 SPEC，等待核准 |

@@ -1,2 +1,7 @@
 # Development-time static type checking required by AGENTS.md P0.
 mypy==2.3.0
+pydantic>=2.12.2,<3
+langgraph>=1.2.10,<2
+temporalio>=1.30.0,<2
+openai-agents>=0.19.2,<1
+mcp>=1.19.0,<2

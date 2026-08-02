@@ -30,3 +30,42 @@
 - 每個已交付模組只依賴其 README 列出的公開契約與套件。
 - 每個模組有正常、輸入錯誤、外部失敗／fail-closed 與回歸測試。
 - 可從 README 判斷是否適用、不可用於何種情境，以及原始參考來源。
+
+## 6. 專案流程 Router 框架 POC
+
+### 目標
+
+建立可套用於不同專案的流程引擎；引擎不內建個別產品規則，而是以強型別 Profile 控制 `POC → MVP → COMMERCIAL` 的關卡、核准與能力選擇。
+
+### POC 範圍
+
+- 驗證 `RouterState`、`RouterEvent`、`RouterDecision`、`ContextView` 與引用映射的強型別契約。
+- 以 LangGraph 執行封閉的 transition graph，禁止 LLM 或任意字串決定下一個節點。
+- 將 `CapabilityRef` 解析為 OpenAI Agents SDK Agent 定義；本 POC 不呼叫模型。
+- 以 Temporal workflow／signal／query 類別表達可持久化的人類等待；本 POC 不連接 Temporal server。
+- 以 MCP resource URI 與 source port 表達 `required_sources`；本 POC 只使用本機 fake adapter。
+- 每次旁路引用都產生新的 ID，映射到 Grill、SPEC 或 ticket，且原文不進共享 Context、checkpoint 或 ledger。
+
+### 不做範圍
+
+- 真實 LLM、付費 Provider、外部 MCP server、Temporal worker、資料庫、部署、Secret 或正式專案資料。
+- 替任何被接管專案決定其 POC、MVP 或商用的商業門檻。
+
+### POC 成功標準
+
+1. 受驗證的 Profile 能將 `INTAKE` 路由到 `WAYFINDER`，並將已核准的 `WAYFINDER_GO` 路由到 `ARCHITECTURE`。
+2. 相同來源段落的兩次真實引用產生不同 `side_context_id`；retry 不產生第二筆同一引用。
+3. 來源 revision 改變後，相關引用可被標示為 `INVALIDATED`。
+4. 已關閉引用能由 Context 反查使用它的 Grill、SPEC 或 ticket；中央映射不保存原文。
+
+## 7. 可重用模組選擇 Skill POC
+
+### 目標
+
+將已交付的通用模組整理為最小選擇卡與可攜 skill，讓 AI 不需讀取整個 library 就能找到正確公開契約。
+
+### 成功標準
+
+- 每個 READY 模組有用途、公開 import、相依及最小閱讀順序。
+- `$apply-reusable-modules` 強制先選卡，再讀取命中的最少檔案。
+- 未交付模組不可被選擇；模組命中不能繞過目標專案的流程與核准。

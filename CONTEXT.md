@@ -29,3 +29,23 @@
 - 責任範圍：本機通用模組庫與 README；不含任何來源專案、部署、外部 provider、真實資料或憑證操作。
 - PRD／需求變更：`PRD.md §1`／`CHG-20260801-001`
 - 回掛 commit：待文件基準提交；工單待第二次核准。
+
+### `SPEC-AI-WORKFLOW-ROUTER-FRAMEWORK-20260802-01KZ2M4P6R8T0V2X4Z6B8D0F2H`｜專案流程 Router 框架 POC
+
+- 規格路徑：`modules/spec/router-framework.md`
+- 專屬 Context：`doc/context/router-framework/main.md`
+- 原引用章節：`Workflow.md §0 流程 Router`
+- 收斂結果摘要：固定引擎只處理強型別狀態、關卡轉移、最小 Context 引用與能力 allowlist；個別專案以 Profile 定義 POC、MVP 與商用關卡條件。
+- 責任範圍：本機 Python POC；Pydantic、LangGraph、OpenAI Agents SDK、Temporal 與 MCP 的可測接點；不執行真實 LLM、Temporal server、外部 MCP server 或部署。
+- PRD／需求變更：`PRD.md §6`／`CHG-20260802-002`
+- 回掛狀態：POC 實作、48 項測試、嚴格型別檢查與 code review 已完成；交付索引為 `modules/element/python/router-framework/01-poc-router-core/README.md`。後續任何真實專案升級仍須以新 CHG 重走 Workflow。
+
+### `SPEC-AI-WORKFLOW-MODULE-APPLICATION-SKILL-20260802-01KZ2Q8V4N6R9T1X3Z5B7C9D1F3H`｜可重用模組選擇 Skill POC
+
+- 規格路徑：`modules/spec/module-application-skill.md`
+- 專屬 Context：`doc/context/module-application-skill/main.md`
+- 原引用章節：`library/MODULE_CATALOG.md`
+- 收斂結果摘要：先選擇最少 READY 模組，再載入其 README、公開 API 與精確契約；不再預設讀取整個 library。
+- 責任範圍：可攜 skill、選擇卡與新專案模板入口；不含套件發行或任何專案寫入。
+- PRD／需求變更：`PRD.md §7`／`CHG-20260802-003`
+- 回掛狀態：POC 已完成並通過 skill validator 與 code review。
