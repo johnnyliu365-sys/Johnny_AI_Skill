@@ -49,3 +49,12 @@
 
 1. `01-private-git-plugin`：`DONE`；已建立 repository-root plugin manifest、private Git marketplace catalog、接管 skill 與可拔除契約 README。
 2. 個人 Codex 環境的實際安裝、啟用、停用與 marketplace 移除由使用者自行選擇；不得當作公司專案的 runtime 或 CI 依賴。
+
+## Claude Code Plugin Distribution POC
+
+| Milestone | State | Evidence |
+| --- | --- | --- |
+| Wayfinder and specification | DONE | `SPEC-AI-WORKFLOW-CLAUDE-CODE-PLUGIN-DISTRIBUTION-20260802-01KZ4C6D8E0F2G4H6J8K0M2N4P` |
+| Shared-skill Claude manifest and marketplace entry | DONE | `modules/tickets/claude-code-plugin-distribution/01-claude-code-plugin.md` |
+| Static validation and code review | DONE | JSON, skill/plugin validation, 48 tests, 54 strict type-checked source files, and diff check |
+| Live Claude Code smoke test | USER_ENVIRONMENT | `claude plugin validate .` after cloning with private-repository access |

@@ -1,7 +1,7 @@
 {
   "name": "johnny-ai-skill",
-  "version": "0.1.0",
-  "description": "A detachable project-takeover workflow and reusable-module selector for Codex.",
+  "version": "0.2.0",
+  "description": "A detachable project-takeover workflow and reusable-module selector for Codex with shared Claude Code skills.",
   "author": {
     "name": "Johnny AI Skill",
     "url": "https://github.com/johnnyliu365-sys"

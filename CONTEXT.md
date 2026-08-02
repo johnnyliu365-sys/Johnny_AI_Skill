@@ -59,3 +59,11 @@
 - 責任範圍：manifest、marketplace catalog、接管 skill 與 README；不含目標專案寫入、全域設定寫入、runtime、MCP、hook 或部署。
 - PRD／需求變更：`PRD.md §8`／`CHG-20260802-004`
 - 回掛狀態：POC 已完成靜態驗證與 code review；安裝至個人 Codex 環境為使用者後續選擇。
+
+### `SPEC-AI-WORKFLOW-CLAUDE-CODE-PLUGIN-DISTRIBUTION-20260802-01KZ4C6D8E0F2G4H6J8K0M2N4P` — Claude Code Plugin Distribution POC
+
+- Specification: `modules/spec/claude-code-plugin-distribution.md`
+- Worktree Context: `doc/context/claude-code-plugin-distribution/main.md`
+- Scope: provide a Claude Code marketplace entry while retaining one shared `skills/` source and zero target-project dependency.
+- PRD / change: `PRD.md §9`; `CHG-20260802-005`.
+- Handoff state: static validation pending; a live `claude plugin validate .` run requires a Claude Code installation.

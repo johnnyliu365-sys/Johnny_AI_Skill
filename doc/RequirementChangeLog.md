@@ -86,3 +86,16 @@
 - marketplace 指向 repository root 的 Git URL 與 `main`；使用者可在自己的 Codex 環境安裝、停用或移除，這次不寫入任何使用者設定或公司專案。
 - 不新增 MCP、App、hook、Secret、Provider、runtime service 或部署。
 - 任何經公司專案核准採用的功能，必須成為公司專案自己的版本化、測試與 commit；禁止 symlink、Git submodule、cache import 或其他反向依賴。
+
+## CHG-20260802-005 — Add Claude Code private plugin distribution
+
+| Field | Value |
+| --- | --- |
+| Date | `2026-08-02` |
+| Requested by | Project owner |
+| Change | Make the existing detachable Johnny AI Skill usable from Claude Code in addition to Codex. |
+| Decision | Add root Claude plugin and marketplace metadata that discovers the same `skills/` source; document user-scope install, update, invocation, and removal. |
+| In scope | `.claude-plugin/`, shared README instructions, and compatible Codex manifest metadata. |
+| Out of scope | Target-project changes, copied skills, runtime dependencies, hooks, MCP, services, and secrets. |
+| Linked specification | `modules/spec/claude-code-plugin-distribution.md` |
+| Acceptance | Static repository validation must pass; `claude plugin validate .` remains an explicit user-environment smoke test because Claude Code is absent from this workspace. |

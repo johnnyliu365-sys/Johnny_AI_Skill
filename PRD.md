@@ -95,3 +95,11 @@
 2. repository 可作為 Git marketplace 來源，且 plugin source 指向 repository root。
 3. README 明確區分 plugin 控制平面與公司專案交付物，並提供無破壞性的拔除流程。
 4. plugin 不宣告 MCP、App、hook 或其他會在公司專案外自動執行的元件。
+
+## 9. Claude Code Plugin Distribution POC
+
+The detachable Johnny AI Skill workflow must be available in Claude Code from the same private GitHub repository and the same root `skills/` source used by Codex. Installation is per-user and external to a company project; removal must leave that project's checkout, runtime, dependencies, CI, and deployment unchanged. The POC consists only of Claude plugin/marketplace metadata and clear operator instructions. It does not introduce MCP, hooks, a service, secrets, package imports, or target-repository files.
+
+- Change: `CHG-20260802-005`
+- Specification: `modules/spec/claude-code-plugin-distribution.md`
+- External smoke test: `claude plugin validate .` runs only where Claude Code is installed.

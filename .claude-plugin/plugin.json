@@ -1,0 +1,12 @@
+{
+  "name": "johnny-ai-skill",
+  "description": "A detachable project-takeover workflow and reusable-module selector for Claude Code.",
+  "author": {
+    "name": "Johnny AI Skill",
+    "url": "https://github.com/johnnyliu365-sys"
+  },
+  "homepage": "https://github.com/johnnyliu365-sys/Johnny_AI_Skill",
+  "repository": "https://github.com/johnnyliu365-sys/Johnny_AI_Skill.git",
+  "license": "Proprietary",
+  "keywords": ["workflow", "project-takeover", "router", "reusable-modules"]
+}
