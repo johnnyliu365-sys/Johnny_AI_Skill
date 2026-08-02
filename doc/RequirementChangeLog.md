@@ -99,3 +99,16 @@
 | Out of scope | Target-project changes, copied skills, runtime dependencies, hooks, MCP, services, and secrets. |
 | Linked specification | `modules/spec/claude-code-plugin-distribution.md` |
 | Acceptance | Static repository validation must pass; `claude plugin validate .` remains an explicit user-environment smoke test because Claude Code is absent from this workspace. |
+
+## CHG-20260803-006 — Add Router context-load telemetry
+
+| Field | Value |
+| --- | --- |
+| Date | `2026-08-03` |
+| Requested by | Project owner |
+| Change | Add local, metadata-only telemetry so matched baseline and Router runs can prove or reject a claim of reduced Agent context. |
+| Decision | Extend the Router POC with strict JSONL evidence records, source fingerprints instead of raw text/URIs, provider usage capture fields, and fail-closed pair validation. |
+| In scope | `library/workflow_router/`, Router tests, local usage guide, and formal evidence documents. |
+| Out of scope | Company repository telemetry commits, raw prompt/source capture, secrets, external telemetry services, and a production supervisor. |
+| Linked specification | `modules/spec/context-load-telemetry.md` |
+| Acceptance | Only comparable provider-reported input-token pairs may report reduction; all invalid evidence fails closed. |

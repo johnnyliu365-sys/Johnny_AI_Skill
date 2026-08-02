@@ -58,3 +58,11 @@
 | Shared-skill Claude manifest and marketplace entry | DONE | `modules/tickets/claude-code-plugin-distribution/01-claude-code-plugin.md` |
 | Static validation and code review | DONE | JSON, skill/plugin validation, 48 tests, 54 strict type-checked source files, and diff check |
 | Live Claude Code smoke test | USER_ENVIRONMENT | `claude plugin validate .` after cloning with private-repository access |
+
+## Context Load Telemetry POC
+
+| Milestone | State | Evidence |
+| --- | --- | --- |
+| Wayfinder, change, specification, and ticket | DONE | `SPEC-AI-WORKFLOW-CONTEXT-LOAD-TELEMETRY-20260803-01KZ5E7F9G1H3J5K7M9N1P3Q5R` |
+| Metadata-only telemetry and validator | DONE | `modules/tickets/context-load-telemetry/01-metadata-only-telemetry.md` |
+| Test, type-check, and review | DONE | 55 tests, strict type checking across 56 source files, compile check, and review |

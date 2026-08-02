@@ -103,3 +103,10 @@ The detachable Johnny AI Skill workflow must be available in Claude Code from th
 - Change: `CHG-20260802-005`
 - Specification: `modules/spec/claude-code-plugin-distribution.md`
 - External smoke test: `claude plugin validate .` runs only where Claude Code is installed.
+
+## 10. Context Load Telemetry POC
+
+The Router POC must produce local, metadata-only evidence for whether its selected ContextPacket reduces Agent input context without degrading acceptance quality. Each comparison uses matched baseline and router runs from the same project snapshot, provider, model, scenario, and attempt. Only provider-reported input-token counts may substantiate a reduction claim; estimates are used solely for ContextView budget observation. Evidence must contain no source text, prompt, URI, secret, or company code.
+
+- Change: `CHG-20260803-006`
+- Specification: `modules/spec/context-load-telemetry.md`

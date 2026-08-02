@@ -67,3 +67,11 @@
 - Scope: provide a Claude Code marketplace entry while retaining one shared `skills/` source and zero target-project dependency.
 - PRD / change: `PRD.md §9`; `CHG-20260802-005`.
 - Handoff state: static validation passed in feature commit `d662993`; a live `claude plugin validate .` run requires a Claude Code installation.
+
+### `SPEC-AI-WORKFLOW-CONTEXT-LOAD-TELEMETRY-20260803-01KZ5E7F9G1H3J5K7M9N1P3Q5R` — Context Load Telemetry POC
+
+- Specification: `modules/spec/context-load-telemetry.md`
+- Worktree Context: `doc/context/context-load-telemetry/main.md`
+- Scope: produce metadata-only evidence for baseline/router context-load comparison; no raw ContextPacket text is persisted.
+- PRD / change: `PRD.md §10`; `CHG-20260803-006`.
+- Handoff state: implementation and static validation passed; feature commit pending.

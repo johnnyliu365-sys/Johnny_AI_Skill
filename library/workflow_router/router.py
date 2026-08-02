@@ -151,7 +151,7 @@ class ContextResolver:
     ) -> ResolvedContext:
         """Resolve minimum sources into a non-persistent packet plus metadata descriptor."""
 
-        snippets = tuple(self._source_gateway.read(source) for source in required_sources)
+        snippets = tuple(self._read_declared_source(source=source) for source in required_sources)
         references = tuple(
             self._reference_for(
                 event_id=event_id,
@@ -175,6 +175,14 @@ class ContextResolver:
             ),
         )
         return ResolvedContext(view=view, packet=ContextPacket(snippets=snippets))
+
+    def _read_declared_source(self, *, source: ArtifactRef) -> SourceSnippet:
+        """Reject a source adapter that returns content for a different source reference."""
+
+        snippet = self._source_gateway.read(source)
+        if snippet.source != source:
+            raise ValueError("source gateway returned an undeclared source")
+        return snippet
 
     def _reference_for(
         self,
