@@ -16,3 +16,4 @@ private GitHub repository 可作為 Codex marketplace 來源，並安裝 reposit
 - `.agents/plugins/marketplace.json` 以 repository-root Git URL、`main` 和完整 policy 提供同名 plugin。
 - 兩份 skill 均通過 UTF-8 模式的 standard validator；plugin validator、JSON parse 與 `git diff --check` 均通過。
 - 未建立或宣告 MCP、App、hook、runtime service、使用者設定或公司專案檔案。
+- 功能 commit：`cb2b3e4`（`feat: package detachable project takeover plugin`）。

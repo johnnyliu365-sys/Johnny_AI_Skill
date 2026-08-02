@@ -149,3 +149,14 @@
 - Review：`APPROVED`，`doc/reviews/reusable-module-library/11-kotlin-offline-geo-resolution-code-review.md`。
 - Ticket commits：`e91f5c5`（`feat: add Kotlin offline geo resolution`）、`c255720`（`fix: reject invalid offline geo index entries`）。
 - 未修改邊界：SourceProjectA、來源專案B、來源專案C `來源專案C` 與 來源專案D 未被修改、搬移、刪除或新增任何檔案；沒有啟動 Android、外部 Provider、網路、資料庫、Secret 或部署。
+
+## PRG-20260802-009｜Johnny AI Skill private Git plugin
+
+- 狀態：`DONE`。
+- 對應：`SPEC-AI-WORKFLOW-PLUGIN-DISTRIBUTION-20260802-01KZ3N5P7R9T1V3X5Z7B9D1F3H`／`01-private-git-plugin`／`CHG-20260802-004`。
+- 實際內容：建立 repository-root `.codex-plugin/plugin.json`、private Git marketplace catalog、`$johnny-project-takeover` 與根目錄 README；既有 `$apply-reusable-modules` 一併由 plugin 載入。
+- 拔除邊界：公司專案不得依賴 plugin checkout／cache、symlink、Git submodule、相對 import、package／CI dependency 或 hook；任何核准採用結果須由公司 repository 自有、測試與 commit，因此停用或移除 plugin 後公司專案仍可獨立運行。
+- 驗證：兩個 skill 的 UTF-8 validator 均輸出 `Skill is valid!`；plugin validator、JSON parse、`git diff --check` 通過；`python -m unittest discover -s tests` 為 48 passed；`python -m mypy --strict library tests` 為 54 source files 無問題。
+- Review：`APPROVED`，`doc/reviews/plugin-distribution/01-private-git-plugin-code-review.md`。
+- Ticket commit：`cb2b3e4`（`feat: package detachable project takeover plugin`）。
+- 未修改邊界：沒有安裝 plugin、寫入 `~/.codex`、修改公司專案、啟動 MCP／App／hook、使用 Secret、呼叫外部 Provider 或部署。
