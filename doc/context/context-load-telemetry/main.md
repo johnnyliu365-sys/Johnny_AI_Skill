@@ -33,4 +33,4 @@
 
 ## Owner-backlink status
 
-`PENDING_FEATURE_COMMIT`: implementation and static validation are complete; replace after the feature commit.
+Feature implementation committed as `319ae97` (`feat: add router context load telemetry`).

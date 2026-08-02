@@ -74,4 +74,4 @@
 - Worktree Context: `doc/context/context-load-telemetry/main.md`
 - Scope: produce metadata-only evidence for baseline/router context-load comparison; no raw ContextPacket text is persisted.
 - PRD / change: `PRD.md §10`; `CHG-20260803-006`.
-- Handoff state: implementation and static validation passed; feature commit pending.
+- Handoff state: implementation and static validation passed in feature commit `319ae97`; docs-only handoff pending.

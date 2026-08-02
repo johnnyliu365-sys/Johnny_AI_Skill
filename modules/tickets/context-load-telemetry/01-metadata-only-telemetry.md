@@ -26,4 +26,4 @@
 
 ## Handoff
 
-Static validation passed. `PENDING_FEATURE_COMMIT`: replace after the feature commit.
+Static validation passed. Feature commit: `319ae97` (`feat: add router context load telemetry`).

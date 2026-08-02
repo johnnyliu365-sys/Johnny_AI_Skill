@@ -4,7 +4,7 @@
 | --- | --- |
 | Feature | `context-load-telemetry` |
 | Ticket | `01-metadata-only-telemetry` |
-| Commit | `PENDING_FEATURE_COMMIT` |
+| Commit | `319ae97` |
 | Reviewer | `root/main` |
 | Conclusion | `APPROVED` |
 

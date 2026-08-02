@@ -181,3 +181,16 @@
 | Validation | Claude JSON contract, two skill validators, Codex plugin validator, `git diff --check`, 48 unit tests, and strict type checking across 54 source files all passed. |
 | External follow-up | `claude` is absent from this workspace. After private-repo installation in Claude Code, run `claude plugin validate .` once; no claim of that local CLI validation is made here. |
 | Detach guarantee | No company repository file or configuration was changed. Removing the user-scoped plugin removes only the agent workflow skills. |
+
+## PRG-20260803-006 — Context Load Telemetry POC
+
+| Field | Value |
+| --- | --- |
+| State | `DONE` |
+| Feature commit | `319ae97` — `feat: add router context load telemetry` |
+| Specification | `SPEC-AI-WORKFLOW-CONTEXT-LOAD-TELEMETRY-20260803-01KZ5E7F9G1H3J5K7M9N1P3Q5R` |
+| Ticket | `modules/tickets/context-load-telemetry/01-metadata-only-telemetry.md` |
+| Delivered | Strict telemetry schema, source fingerprints, metadata-only JSONL store, matched baseline/router validator, local CLI, and source-gateway mismatch guard. |
+| Safety | Output structurally excludes `SourceSnippet.text` and source URIs. Missing provider usage, a guard violation, incomplete pair, or quality regression fails the reduction claim. |
+| Validation | 55 unit tests, strict type checking across 56 source files, compile check, and diff check passed. |
+| Operator handoff | Create ignored `.johnny-router/router-usage.jsonl`, append paired records after each completed run, then run `python -m library.workflow_router.telemetry_cli .johnny-router/router-usage.jsonl --minimum-reduction-bps 5000`. |
