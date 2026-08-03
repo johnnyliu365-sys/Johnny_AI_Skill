@@ -5,7 +5,7 @@
 | Feature cluster | `private-router-saas` |
 | Agent / worktree | Codex / current worktree |
 | Shared baseline | `cbdfa7751c21c0355cb3aaaae5b7f045d9e84154` |
-| State | `TICKETING` |
+| State | `TICKET_PLAN_PENDING_OWNER_APPROVAL` |
 | Responsibility boundary | Private Router SaaS POC contracts, local privacy boundary, private-decision architecture, and user-facing terminology mapping |
 | Prohibited changes | No production billing, model hosting, raw-content upload, company-project runtime dependency, external deployment, or change to existing approved Router POC behaviour |
 
@@ -146,9 +146,17 @@ flowchart LR
 ## Pending Cross-Cluster Decisions
 
 - MVP must select a payment provider, OAuth identity provider, database/hosting region, retention period, deletion process, and a legally reviewed privacy/refund policy. These are blocked pending a new MVP Wayfinder and change.
-- The owner must explicitly approve `modules/spec/private-router-saas.md` before tickets or implementation are created.
+- The specification is approved and the ticket plan exists. The owner must explicitly approve `01-private-router-metadata-gate` before source or test changes begin.
 
 ## Derived Specification Index
+
+## Ticket Plan
+
+- Ticket set: [modules/tickets/private-router-saas/README.md](../../../modules/tickets/private-router-saas/README.md)
+- Only implementation ticket: [01-private-router-metadata-gate](../../../modules/tickets/private-router-saas/01-private-router-metadata-gate.md)
+- Ticket status: `PENDING_OWNER_APPROVAL`
+- Baseline: `d378076` (`docs: approve private router saas specification`)
+- Approval required before source or test changes: explicit approval of ticket `01-private-router-metadata-gate`.
 
 ### `SPEC-AI-WORKFLOW-PRIVATE-ROUTER-SAAS-20260804-01KZ49YM6HA658QF7ME2A5BR26`｜Private Router SaaS POC
 
@@ -158,4 +166,4 @@ flowchart LR
 - Convergence: private typed Router decision service with source-local Context resolution; no billing, raw-content transfer, model hosting, or production deployment in the POC.
 - Responsibility boundary: POC contracts and in-process/private-transport validation only; no target-project change or commercial operation.
 - PRD / change: `PRD.md §12` / `CHG-20260804-008`
-- Shared Context backlink state: `SPEC_APPROVED_PENDING_DOCS_BASELINE`
+- Shared Context backlink state: `TICKET_PLAN_PENDING_OWNER_APPROVAL`

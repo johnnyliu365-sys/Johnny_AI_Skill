@@ -84,5 +84,5 @@
 | Wayfinder, Architecture, Grill, and ADR | DONE | `doc/context/private-router-saas/main.md`; `doc/adr/ADR-20260804-001-private-router-saas.md` |
 | Change and specification draft | DONE | `CHG-20260804-008`; `modules/spec/private-router-saas.md` |
 | Product-owner specification approval | DONE | Owner approved `SPEC-AI-WORKFLOW-PRIVATE-ROUTER-SAAS-20260804-01KZ49YM6HA658QF7ME2A5BR26` on `2026-08-04` |
-| Ticket planning and second approval | IN_PROGRESS | Create vertical tickets; implementation remains blocked until the owner approves the ticket plan |
+| Ticket planning and second approval | PENDING_OWNER_APPROVAL | `01-private-router-metadata-gate` is planned; implementation remains blocked until the owner explicitly approves it |
 | Implementation, test, review, and release | BLOCKED | May begin only after the second ticket approval |

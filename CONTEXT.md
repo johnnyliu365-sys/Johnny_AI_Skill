@@ -93,4 +93,4 @@
 - Worktree Context: `doc/context/private-router-saas/main.md`.
 - Scope: private typed Router control plane, source-local Context resolution, private policy/Profile logic, user-facing terminology abstraction, and fake entitlement validation. No model hosting, raw-content transfer, real OAuth/payment, database, or production deployment.
 - PRD / change: `PRD.md §12`; `CHG-20260804-008`.
-- Handoff state: Wayfinder `GO`, Architecture, Grill, ADR, and SPEC are approved; ticket planning is pending a second project-owner approval.
+- Handoff state: Wayfinder `GO`, Architecture, Grill, ADR, and SPEC are approved; `01-private-router-metadata-gate` is planned and awaits the second project-owner approval.
