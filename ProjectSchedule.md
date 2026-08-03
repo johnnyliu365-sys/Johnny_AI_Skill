@@ -74,4 +74,5 @@
 | Change, specification, and release ticket | DONE | `SPEC-AI-WORKFLOW-PLUGIN-RELEASE-TELEMETRY-20260803-01KZ6F8G0H2J4K6M8N0P2Q4R6S` |
 | Manifest and shared-skill packaging | DONE | `modules/tickets/plugin-release-telemetry/01-package-current-skill.md` |
 | Validation and review | DONE | Plugin/skill validation, 55 tests, strict type checking across 56 source files, and diff check |
-| Commit and push | IN_PROGRESS | Feature release commit pending |
+| Commit | DONE | `368d513` (`release: package plugin version 0.3.0`) |
+| Push | IN_PROGRESS | Push the reviewed release and its documentation handoff to `origin/main` |

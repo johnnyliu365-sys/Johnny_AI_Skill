@@ -82,4 +82,4 @@
 - Worktree Context: `doc/context/plugin-release-telemetry/main.md`
 - Scope: package the current Router telemetry and TDD/Code Review source in the existing shared Codex/Claude Code plugin.
 - PRD / change: `PRD.md §11`; `CHG-20260803-007`.
-- Handoff state: metadata update and static validation passed; feature commit pending.
+- Handoff state: metadata update and static validation passed in feature commit `368d513`; release ready to push.

@@ -6,7 +6,7 @@
 | Owner | `root/main` |
 | Context | `doc/context/plugin-release-telemetry/main.md` |
 | Change | `CHG-20260803-007` |
-| State | `READY_FOR_COMMIT` |
+| State | `DONE` |
 | Environment | `LOCAL` |
 | In scope | Plugin manifests, README, shared skill release instruction, validation, review, and GitHub push. |
 | Out of scope | Target-project modification, runtime telemetry interception, third-party release publishing, secrets, MCP, or hooks. |
@@ -20,4 +20,4 @@
 
 ## Handoff
 
-Static validation passed; feature commit pending.
+Feature commit: `368d513` (`release: package plugin version 0.3.0`).

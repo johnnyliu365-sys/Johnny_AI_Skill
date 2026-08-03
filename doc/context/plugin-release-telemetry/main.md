@@ -4,7 +4,7 @@
 | --- | --- |
 | Feature | `plugin-release-telemetry` |
 | Worktree | `root/main` |
-| State | `READY_FOR_COMMIT` |
+| State | `DONE` |
 | In scope | Release the current shared skills, Router telemetry, TDD/Code Review rules, and templates through the existing Codex and Claude Code plugin metadata. |
 | Out of scope | A ZIP artifact, a new marketplace, a runtime service, plugin installation in a target project, hooks, MCP, secrets, or external release publishing. |
 
@@ -24,4 +24,4 @@
 
 ## Owner-backlink status
 
-Static validation passed; feature commit pending.
+Feature commit: `368d513` (`release: package plugin version 0.3.0`).

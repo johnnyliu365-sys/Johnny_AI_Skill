@@ -194,3 +194,16 @@
 | Safety | Output structurally excludes `SourceSnippet.text` and source URIs. Missing provider usage, a guard violation, incomplete pair, or quality regression fails the reduction claim. |
 | Validation | 55 unit tests, strict type checking across 56 source files, compile check, and diff check passed. |
 | Operator handoff | Create ignored `.johnny-router/router-usage.jsonl`, append paired records after each completed run, then run `python -m library.workflow_router.telemetry_cli .johnny-router/router-usage.jsonl --minimum-reduction-bps 5000`. |
+
+## Plugin Release 0.3.0
+
+| Field | Value |
+| --- | --- |
+| State | `DONE` |
+| Feature commit | `368d513` (`release: package plugin version 0.3.0`) |
+| Specification | `SPEC-AI-WORKFLOW-PLUGIN-RELEASE-TELEMETRY-20260803-01KZ6F8G0H2J4K6M8N0P2Q4R6S` |
+| Ticket | `modules/tickets/plugin-release-telemetry/01-package-current-skill.md` |
+| Delivered | Codex plugin `0.3.0`, updated Claude Code metadata, shared takeover-skill release guidance, and README instructions for the Router telemetry evidence boundary. |
+| Validation | Both skill validators, the Codex plugin validator, all plugin JSON parsing, 55 unit tests, strict type checking across 56 source files, and `git diff --check` passed. |
+| Detach guarantee | The plugin remains user-scoped and contains no target-project file, runtime dependency, hook, MCP service, or secret. |
+| Operator handoff | Update Codex or Claude Code from the private Git marketplace, then restart or reload the plugin. Collect Router reduction evidence only through local metadata-only JSONL and the validator. |

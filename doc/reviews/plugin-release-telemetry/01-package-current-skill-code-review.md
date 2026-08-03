@@ -4,7 +4,7 @@
 | --- | --- |
 | Feature | `plugin-release-telemetry` |
 | Ticket | `01-package-current-skill` |
-| Commit | `PENDING_FEATURE_COMMIT` |
+| Commit | `368d513` (`release: package plugin version 0.3.0`) |
 | Reviewer | `root/main` |
 | Conclusion | `APPROVED` |
 

@@ -2,4 +2,4 @@
 
 | Ticket | State | Scope |
 | --- | --- | --- |
-| `01-package-current-skill` | `READY_FOR_COMMIT` | Update plugin metadata and shared skill release guidance, validate, commit, and push. |
+| `01-package-current-skill` | `DONE` | Updated plugin metadata and shared skill release guidance; static validation passed in `368d513`; release ready to push. |
