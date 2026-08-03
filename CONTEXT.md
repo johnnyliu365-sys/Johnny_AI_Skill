@@ -11,6 +11,9 @@
 - `來源專案D` 的 ML 訓練產物僅可作為離線分類／品質分析的參考，不能成為對外訊息、派單或付款決策的權威。
 - SourceProjectA 金流原始碼受其 P0／P1 部署與驗證閘門限制；本專案只抽取可測試的付款契約、idempotency、帳本與 provider adapter 模式，不能宣稱相容或可啟用既有正式收款。
 - 每個實作模組資料夾都必須有 README，說明責任、公開契約、相依、禁止用途、來源追溯與驗證命令。
+- `private-router-saas` 是新的獨立 POC 集群：客戶端只傳遞嚴格驗證的假名化 metadata、帳號範圍 revision digest、階段事件與結構化 redacted 摘要；原始碼、原始文件、提示詞、路徑、URI、Secret、PII 與 ContextPacket 不得離開客戶端。
+- Private Router SaaS 是控制平面，不代跑模型、不代付 token、不作為客戶專案 runtime、CI、建置或部署相依。使用者停用或移除 plugin 後，客戶專案必須仍可運作。
+- 商業假設僅適用未來 SaaS MVP：第一個登記專案免費；第二個專案起標準方案為每月 NT$690；一個進行中半成品稽核方案為每月 NT$2,000。標準／稽核方案的直接月成本上限分別為 NT$207／NT$600，目標毛利率為 70%。POC 不處理真實收費。
 
 ## 識別碼登錄
 
@@ -83,3 +86,11 @@
 - Scope: package the current Router telemetry and TDD/Code Review source in the existing shared Codex/Claude Code plugin.
 - PRD / change: `PRD.md §11`; `CHG-20260803-007`.
 - Handoff state: metadata update and static validation passed in feature commit `368d513`; release ready to push.
+
+### `SPEC-AI-WORKFLOW-PRIVATE-ROUTER-SAAS-20260804-01KZ49YM6HA658QF7ME2A5BR26` — Private Router SaaS POC
+
+- Specification: `modules/spec/private-router-saas.md` (`APPROVED`).
+- Worktree Context: `doc/context/private-router-saas/main.md`.
+- Scope: private typed Router control plane, source-local Context resolution, private policy/Profile logic, user-facing terminology abstraction, and fake entitlement validation. No model hosting, raw-content transfer, real OAuth/payment, database, or production deployment.
+- PRD / change: `PRD.md §12`; `CHG-20260804-008`.
+- Handoff state: Wayfinder `GO`, Architecture, Grill, ADR, and SPEC are approved; ticket planning is pending a second project-owner approval.

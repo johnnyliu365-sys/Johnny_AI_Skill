@@ -117,3 +117,15 @@ The versioned Johnny AI Skill source must be released through its existing priva
 
 - Change: `CHG-20260803-007`
 - Specification: `modules/spec/plugin-release-telemetry.md`
+
+## 12. Private Router SaaS POC
+
+Build a private Router control plane for non-engineering vibe-coding users. The product guides a new project, inherited-project audit, repair path, or deployment preparation through user-facing product actions while private Profile, policy, scoring, and transition logic stay on the service.
+
+The user supplies their own Codex or Claude subscription and model usage. The SaaS does not host or pay for a model. Source code, document text, prompt, path, URI, secret, PII, ContextPacket, and local telemetry remain on the user's machine. The service accepts only strict pseudonymous metadata, account-scoped salted revision digests, typed stage events, entitlement mode, and finite structured redacted-summary claims.
+
+The commercial hypothesis is: one registered project is free; the standard route costs NT$690/month from the second project; one active inherited-project audit route costs NT$2,000/month. The direct monthly cost ceiling is 30% of each plan's revenue, preserving a 70% gross-margin target. Commercial validation requires five active paid users and at least three second-cycle renewals. These prices and all real billing are excluded from the POC.
+
+- Change: `CHG-20260804-008`
+- Specification: `modules/spec/private-router-saas.md`
+- Architectural decision: `doc/adr/ADR-20260804-001-private-router-saas.md`

@@ -125,3 +125,20 @@
 | Out of scope | Target-project files, ZIP artifacts, runtime service, automatic provider telemetry, hooks, MCP, or secrets. |
 | Linked specification | `modules/spec/plugin-release-telemetry.md` |
 | Acceptance | Both platform manifests and skills validate; tests/type checks remain green; release remains detachable and target-project independent. |
+
+## CHG-20260804-008 — Add private Router SaaS POC control plane
+
+| Field | Value |
+| --- | --- |
+| Date | `2026-08-04` |
+| Requested by | Project owner |
+| Previous rule | Johnny AI Skill is a static, detachable private Git plugin. Its local skill and Router POC have no remote service, entitlement check, or protected decision logic. |
+| Changed rule | Introduce a separate private Router SaaS POC. A thin local plugin submits only typed pseudonymous metadata, account-scoped salted revision digests, stage events, entitlement mode, and finite structured redacted-summary claims. A private Router returns typed decisions and user-facing action labels; core Profiles and policy logic remain private. |
+| Reason | A static delivered skill exposes its core logic and cannot safely provide a controlled, commercial Router path. The owner selected a private Router SaaS while prohibiting customer raw-content transfer and model hosting. |
+| In scope | POC contracts, test-only private service port, fake entitlement, local privacy validation, complete POC transitions, terminology mapping, Architecture/Grill/specification, and later approved tests. |
+| Out of scope | Raw source/document/prompt/path/URI upload, model hosting or payment, real OAuth/payment/webhook/database/production deployment, SLA, target-project dependency, and a claim of platform-wide enforcement. |
+| PRD | `PRD.md §12` |
+| Context | `doc/context/private-router-saas/main.md`; `CONTEXT.md §衍生 SPEC 索引` |
+| ADR | `doc/adr/ADR-20260804-001-private-router-saas.md` |
+| Linked specification | `SPEC-AI-WORKFLOW-PRIVATE-ROUTER-SAAS-20260804-01KZ49YM6HA658QF7ME2A5BR26` (`APPROVED` on `2026-08-04`) |
+| Impact and controls | Existing approved Router, telemetry, and plugin POCs remain unchanged. All missing entitlement, metadata, approval, capability, service, or contract conditions fail closed. Source and ContextPacket content are structurally excluded from service contracts and persistence. |

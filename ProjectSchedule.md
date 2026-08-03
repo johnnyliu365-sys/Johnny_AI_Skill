@@ -2,9 +2,9 @@
 
 ## 現行階段
 
-- 日期：2026-08-02（Asia/Taipei）
-- 階段：`ROUTER_FRAMEWORK_POC_DONE`
-- 目前功能集群：`router-framework`；`reusable-module-library` 維持既有完成狀態，不與本 POC 混合。
+- 日期：2026-08-04（Asia/Taipei）
+- 階段：`PRIVATE_ROUTER_SAAS_POC_SPEC_DRAFT`
+- 目前功能集群：`private-router-saas` 正在規格化；`router-framework`、`context-load-telemetry` 與 `reusable-module-library` 維持既有完成狀態，不與本 POC 混合。
 - 唯一工作流程：`Workflow.md`
 
 ## 順序
@@ -76,3 +76,13 @@
 | Validation and review | DONE | Plugin/skill validation, 55 tests, strict type checking across 56 source files, and diff check |
 | Commit | DONE | `368d513` (`release: package plugin version 0.3.0`) |
 | Push | IN_PROGRESS | Push the reviewed release and its documentation handoff to `origin/main` |
+
+## Private Router SaaS POC
+
+| Milestone | State | Evidence |
+| --- | --- | --- |
+| Wayfinder, Architecture, Grill, and ADR | DONE | `doc/context/private-router-saas/main.md`; `doc/adr/ADR-20260804-001-private-router-saas.md` |
+| Change and specification draft | DONE | `CHG-20260804-008`; `modules/spec/private-router-saas.md` |
+| Product-owner specification approval | DONE | Owner approved `SPEC-AI-WORKFLOW-PRIVATE-ROUTER-SAAS-20260804-01KZ49YM6HA658QF7ME2A5BR26` on `2026-08-04` |
+| Ticket planning and second approval | IN_PROGRESS | Create vertical tickets; implementation remains blocked until the owner approves the ticket plan |
+| Implementation, test, review, and release | BLOCKED | May begin only after the second ticket approval |
