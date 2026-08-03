@@ -4,6 +4,12 @@
 
 它不是公司專案的 runtime service、MCP server、hook、CI 依賴、Git submodule、symlink、package dependency 或原始碼 import。因此拔除後，公司的建置、測試、部署與既有程式不會受影響。
 
+## 目前發行：0.3.0
+
+本版包含 Router 的 metadata-only context-load telemetry。它可在本機比對 baseline 與 Router run 的 provider input token、ContextView 預算、來源宣告與驗收品質；資料只寫入你指定的 ignored JSONL，絕不輸出原文、prompt、來源 URI 或 Secret。
+
+它不會自動截取 Codex 或 Claude Code 的 token。只有 Agent runner 回填 provider 實際 input token，且 JSONL 配對驗證通過時，才可宣稱 Router 真的降低了 context 負載。
+
 ## 內含哪些 skill
 
 | Skill | 用途 |
@@ -49,6 +55,8 @@ codex plugin marketplace add johnnyliu365-sys/Johnny_AI_Skill --ref main
    ```
 
 第一個 skill 會先讀取目標專案本地規範；只有在目標專案未建立流程時，才以本外掛的 Workflow 當作備援流程。
+
+若要驗證 Router 是否降低 context，依 `library/workflow_router/README.md` 在本機 ignored `.johnny-router/router-usage.jsonl` 保存配對資料，再執行 telemetry CLI；不要把公司原文或 prompt 交給外掛。
 
 ### 更新或拔除
 
@@ -97,6 +105,8 @@ gh auth setup-git
    ```
 
 接著補上本次專案目標即可。Claude Code 先取得此共用 skill，但在採取任何動作前仍必須遵守公司專案的本地規範。
+
+Context-load telemetry 同樣由本機 Agent runner 建立 JSONL 證據；Claude Code plugin 本身不攔截 token，也不把公司內容上傳或寫進 repo。
 
 ### 更新、驗證或拔除
 

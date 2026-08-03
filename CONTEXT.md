@@ -75,3 +75,11 @@
 - Scope: produce metadata-only evidence for baseline/router context-load comparison; no raw ContextPacket text is persisted.
 - PRD / change: `PRD.md §10`; `CHG-20260803-006`.
 - Handoff state: implementation and static validation passed in feature commit `319ae97`; docs-only handoff pending.
+
+### `SPEC-AI-WORKFLOW-PLUGIN-RELEASE-TELEMETRY-20260803-01KZ6F8G0H2J4K6M8N0P2Q4R6S` — Plugin Release 0.3.0
+
+- Specification: `modules/spec/plugin-release-telemetry.md`
+- Worktree Context: `doc/context/plugin-release-telemetry/main.md`
+- Scope: package the current Router telemetry and TDD/Code Review source in the existing shared Codex/Claude Code plugin.
+- PRD / change: `PRD.md §11`; `CHG-20260803-007`.
+- Handoff state: metadata update and static validation passed; feature commit pending.

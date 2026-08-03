@@ -112,3 +112,16 @@
 | Out of scope | Company repository telemetry commits, raw prompt/source capture, secrets, external telemetry services, and a production supervisor. |
 | Linked specification | `modules/spec/context-load-telemetry.md` |
 | Acceptance | Only comparable provider-reported input-token pairs may report reduction; all invalid evidence fails closed. |
+
+## CHG-20260803-007 — Package current skill as plugin release 0.3.0
+
+| Field | Value |
+| --- | --- |
+| Date | `2026-08-03` |
+| Requested by | Project owner |
+| Change | Package the latest workflow source, including Router telemetry and updated TDD/Code Review rules, as the existing Codex and Claude Code plugin. |
+| Decision | Release the shared-skill source through the existing marketplace identity; increment only the Codex semantic manifest version to `0.3.0` and keep Claude Code commit-SHA versioning. |
+| In scope | Plugin metadata, shared skill/README release guidance, validation, review, commit, and push. |
+| Out of scope | Target-project files, ZIP artifacts, runtime service, automatic provider telemetry, hooks, MCP, or secrets. |
+| Linked specification | `modules/spec/plugin-release-telemetry.md` |
+| Acceptance | Both platform manifests and skills validate; tests/type checks remain green; release remains detachable and target-project independent. |

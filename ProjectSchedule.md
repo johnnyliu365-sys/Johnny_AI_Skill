@@ -66,3 +66,12 @@
 | Wayfinder, change, specification, and ticket | DONE | `SPEC-AI-WORKFLOW-CONTEXT-LOAD-TELEMETRY-20260803-01KZ5E7F9G1H3J5K7M9N1P3Q5R` |
 | Metadata-only telemetry and validator | DONE | `modules/tickets/context-load-telemetry/01-metadata-only-telemetry.md` |
 | Test, type-check, and review | DONE | 55 tests, strict type checking across 56 source files, compile check, and review |
+
+## Plugin Release 0.3.0
+
+| Milestone | State | Evidence |
+| --- | --- | --- |
+| Change, specification, and release ticket | DONE | `SPEC-AI-WORKFLOW-PLUGIN-RELEASE-TELEMETRY-20260803-01KZ6F8G0H2J4K6M8N0P2Q4R6S` |
+| Manifest and shared-skill packaging | DONE | `modules/tickets/plugin-release-telemetry/01-package-current-skill.md` |
+| Validation and review | DONE | Plugin/skill validation, 55 tests, strict type checking across 56 source files, and diff check |
+| Commit and push | IN_PROGRESS | Feature release commit pending |

@@ -1,6 +1,6 @@
 {
   "name": "johnny-ai-skill",
-  "description": "A detachable project-takeover workflow and reusable-module selector for Claude Code.",
+  "description": "A detachable project-takeover workflow, context-load telemetry, and reusable-module selector for Claude Code.",
   "author": {
     "name": "Johnny AI Skill",
     "url": "https://github.com/johnnyliu365-sys"

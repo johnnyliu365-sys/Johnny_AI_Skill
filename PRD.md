@@ -110,3 +110,10 @@ The Router POC must produce local, metadata-only evidence for whether its select
 
 - Change: `CHG-20260803-006`
 - Specification: `modules/spec/context-load-telemetry.md`
+
+## 11. Plugin Release 0.3.0
+
+The versioned Johnny AI Skill source must be released through its existing private Git marketplaces after a coherent update to the workflow, review rules, Router telemetry, templates, or reusable skills. Release metadata must describe the capability boundary accurately: context-load telemetry is local evidence collection and validation, not automatic provider token interception or a target-project dependency. Codex uses explicit manifest versioning; Claude Code remains commit-SHA versioned.
+
+- Change: `CHG-20260803-007`
+- Specification: `modules/spec/plugin-release-telemetry.md`

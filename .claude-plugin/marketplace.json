@@ -4,12 +4,12 @@
     "name": "Johnny AI Skill",
     "url": "https://github.com/johnnyliu365-sys"
   },
-  "description": "Detachable project-takeover workflow and reusable-module skills.",
+  "description": "Detachable project-takeover workflow, context-load telemetry, and reusable-module skills.",
   "plugins": [
     {
       "name": "johnny-ai-skill",
       "source": "./",
-      "description": "A detachable project-takeover workflow and reusable-module selector.",
+      "description": "A detachable project-takeover workflow, context-load telemetry, and reusable-module selector.",
       "author": {
         "name": "Johnny AI Skill",
         "url": "https://github.com/johnnyliu365-sys"

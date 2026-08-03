@@ -1,7 +1,7 @@
 {
   "name": "johnny-ai-skill",
-  "version": "0.2.0",
-  "description": "A detachable project-takeover workflow and reusable-module selector for Codex with shared Claude Code skills.",
+  "version": "0.3.0",
+  "description": "A detachable project-takeover workflow, context-load telemetry, and reusable-module selector for Codex with shared Claude Code skills.",
   "author": {
     "name": "Johnny AI Skill",
     "url": "https://github.com/johnnyliu365-sys"
@@ -14,13 +14,14 @@
   "interface": {
     "displayName": "Johnny AI Skill",
     "shortDescription": "Detachable workflow for safe project takeover",
-    "longDescription": "Guide project takeover with a staged router, Wayfinder, Context controls, and reusable-module selection without creating a runtime dependency in the target project.",
+    "longDescription": "Guide project takeover with a staged router, Wayfinder, Context controls, metadata-only context-load telemetry, and reusable-module selection without creating a runtime dependency in the target project.",
     "developerName": "Johnny AI Skill",
     "category": "Productivity",
     "capabilities": ["Read", "Write"],
     "defaultPrompt": [
       "Use Johnny AI Skill to take over this project safely.",
-      "Use Johnny AI Skill to select the smallest reusable module set."
+      "Use Johnny AI Skill to select the smallest reusable module set.",
+      "Use Johnny AI Skill to validate whether routed Context reduced Agent input load."
     ]
   }
 }

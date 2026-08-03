@@ -13,6 +13,7 @@ Treat this plugin as an external control plane. It supplies workflow guidance an
 2. Read `../../Workflow.md` to locate the router stage, then the applicable complete section. For `WAYFINDER`, read `../../Defined_wayfinder.md` as the detailed work standard.
 3. Treat the delivery stage as `POC` unless an approved target-project artifact establishes `MVP` or `COMMERCIAL`. Do not upgrade stages from chat inference alone.
 4. Resolve only the current stage's required sources and capabilities. Keep shared Context small; use the router's side-context reference rules for a bounded, traceable source-span read.
+5. When the user asks whether routing reduced context load, follow `../../library/workflow_router/README.md`. Record only metadata in a local ignored JSONL file and do not claim reduction unless matched baseline/router runs contain provider-reported input-token usage and pass the telemetry validator.
 
 ## Takeover flow
 
