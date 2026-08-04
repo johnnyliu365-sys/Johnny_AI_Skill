@@ -129,3 +129,12 @@ The commercial hypothesis is: one registered project is free; the standard route
 - Change: `CHG-20260804-008`
 - Specification: `modules/spec/private-router-saas.md`
 - Architectural decision: `doc/adr/ADR-20260804-001-private-router-saas.md`
+
+## 13. Continuous Workflow Governance POC
+
+The Johnny AI Skill control plane must treat a completed action, including a documentation or implementation commit, as evidence for a new Router event rather than as the end of the active task. It must re-evaluate the Profile and automatically continue through the next safe declared stage. It may wait only at a declared human-authority gate, and must fail closed on a missing source, denied authority, invalid decision, or unavailable required capability.
+
+The control-plane Agent owns Wayfinder, Grill, Context, specification, ticket drafting, implementation handoff, review, and handoff. A separately named implementation owner performs approved source, test, migration, deployment, verification, and implementation-commit work. A formal frontend ticket must define composition-first boundaries and dependency injection before implementation. The POC defines this contract and its documentation/skill enforcement; it does not add a target-project runtime, background worker, external Agent dispatcher, or a mechanism to bypass host approval controls.
+
+- Change: `CHG-20260805-009`
+- Draft specification: `modules/spec/workflow-governance.md`

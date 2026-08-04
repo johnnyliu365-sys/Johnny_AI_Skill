@@ -86,3 +86,11 @@
 | Product-owner specification approval | DONE | Owner approved `SPEC-AI-WORKFLOW-PRIVATE-ROUTER-SAAS-20260804-01KZ49YM6HA658QF7ME2A5BR26` on `2026-08-04` |
 | Ticket planning and second approval | DONE | Project owner approved `01-private-router-metadata-gate` on `2026-08-04` |
 | Implementation, test, review, and release | DONE | 64 tests, strict type check, compile, plugin validation, Code Review, and handoff completed for `01-private-router-metadata-gate` |
+
+## Continuous Workflow Governance POC
+
+| Milestone | State | Evidence |
+| --- | --- | --- |
+| Requirement change and Grill | DONE | `CHG-20260805-009`; `doc/context/workflow-governance/main.md` |
+| Specification | PENDING_OWNER_APPROVAL | `modules/spec/workflow-governance.md` (`DRAFT`) |
+| Ticket plan, named implementation owner, and second approval | NOT_STARTED | Must follow specification approval; the control-plane Agent cannot implement the resulting policy ticket. |

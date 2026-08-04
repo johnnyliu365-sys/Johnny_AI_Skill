@@ -14,6 +14,8 @@
 - `private-router-saas` 是新的獨立 POC 集群：客戶端只傳遞嚴格驗證的假名化 metadata、帳號範圍 revision digest、階段事件與結構化 redacted 摘要；原始碼、原始文件、提示詞、路徑、URI、Secret、PII 與 ContextPacket 不得離開客戶端。
 - Private Router SaaS 是控制平面，不代跑模型、不代付 token、不作為客戶專案 runtime、CI、建置或部署相依。使用者停用或移除 plugin 後，客戶專案必須仍可運作。
 - 商業假設僅適用未來 SaaS MVP：第一個登記專案免費；第二個專案起標準方案為每月 NT$690；一個進行中半成品稽核方案為每月 NT$2,000。標準／稽核方案的直接月成本上限分別為 NT$207／NT$600，目標毛利率為 70%。POC 不處理真實收費。
+- 工作流程的 commit 只是可追溯的完成證據，必須轉為 `ACTION_COMPLETED` 並重新交由 Router 判定下一步；除 Profile 宣告的權限閘門外，不得因 commit、docs-only commit 或單一工作階段完成而停止。缺少必要來源、具名 owner、權限、能力或有效決策時必須 fail-closed，而不是假裝等待或自行繼續。
+- 控制面 Agent 僅負責 Wayfinder、Grill、Context、SPEC、ticket、實作前 handoff、review 與 handoff。正式實作必須由另一位具名 implementation owner 完成；該 owner 如遇需求、公開契約、架構、前端組合或驗收變更，必須以 `REQUIREMENT_CHANGED` 回交控制面重新收斂。
 
 ## 識別碼登錄
 
@@ -94,3 +96,11 @@
 - Scope: private typed Router control plane, source-local Context resolution, private policy/Profile logic, user-facing terminology abstraction, and fake entitlement validation. No model hosting, raw-content transfer, real OAuth/payment, database, or production deployment.
 - PRD / change: `PRD.md §12`; `CHG-20260804-008`.
 - Handoff state: `01-private-router-metadata-gate` is complete and reviewed. The POC now has metadata-only requests, a fail-closed service boundary, local Context gating, and automatic continuation limited to declared safe transitions; real SaaS infrastructure remains a later MVP change.
+
+### `SPEC-AI-WORKFLOW-WORKFLOW-GOVERNANCE-20260805-01KZ6T8V2R4Y6B8D0F2H4J6M8P` — Continuous Workflow Governance POC
+
+- Specification: `modules/spec/workflow-governance.md` (`DRAFT`).
+- Worktree Context: `doc/context/workflow-governance/main.md`.
+- Scope: make `ACTION_COMPLETED` post-commit routing explicit; define automatic-continuation, human-wait, and fail-closed boundaries; require separate implementation ownership and frontend composition/DI handoff evidence.
+- PRD / change: `PRD.md §13`; `CHG-20260805-009`.
+- Handoff state: Grill complete and specification draft prepared. No ticket, source/test/deployment change, or implementation owner assignment exists yet; explicit specification approval is the next human-authority gate.

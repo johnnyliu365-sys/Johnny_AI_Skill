@@ -142,3 +142,19 @@
 | ADR | `doc/adr/ADR-20260804-001-private-router-saas.md` |
 | Linked specification | `SPEC-AI-WORKFLOW-PRIVATE-ROUTER-SAAS-20260804-01KZ49YM6HA658QF7ME2A5BR26` (`APPROVED` on `2026-08-04`) |
 | Impact and controls | Existing approved Router, telemetry, and plugin POCs remain unchanged. All missing entitlement, metadata, approval, capability, service, or contract conditions fail closed. Source and ContextPacket content are structurally excluded from service contracts and persistence. |
+
+## CHG-20260805-009 — Govern post-commit continuation and separated frontend implementation
+
+| Field | Value |
+| --- | --- |
+| Date | `2026-08-05` |
+| Requested by | Project owner |
+| Previous rule | The Router and takeover skill describe safe automatic continuation, while the control/implementation split and frontend composition/DI requirements were documented in commit `7769710`. The documentation did not make a completed commit an explicit non-terminal Router event or define the return contract between a control-plane Agent and a separate implementation owner. |
+| Changed rule | A commit is evidence for `ACTION_COMPLETED`, never an implicit terminal state. The Router must immediately classify the next declared transition as `AUTO_CONTINUE`, `WAIT_FOR_HUMAN`, or `HALT`. Future formal frontend tickets must carry a composition and dependency-injection handoff; every implementation owner must return evidence or a typed change event to the control plane. |
+| Reason | The owner observed an avoidable workflow stop after a commit and requires the loop to continue without ceremonial confirmation. Role separation also needs a concrete handoff/return boundary so frontend design remains testable and no Agent silently changes approved architecture. |
+| In scope | Workflow/skill/template policy, Router event and handoff contract, frontend composition/DI requirements, Context/PRD/specification/ticket traceability, and static validation in a future approved ticket. |
+| Out of scope | Target-project runtime dependency, automatic creation of a new host-model turn, external Agent dispatcher, background worker, bypassing platform approvals, source/test/deployment implementation in this control-plane task, or retroactive changes to completed tickets. |
+| PRD | `PRD.md §13` |
+| Context | `doc/context/workflow-governance/main.md`; `CONTEXT.md §衍生 SPEC 索引` |
+| Linked specification | `SPEC-AI-WORKFLOW-WORKFLOW-GOVERNANCE-20260805-01KZ6T8V2R4Y6B8D0F2H4J6M8P` (`DRAFT`) |
+| Acceptance | The approved future policy must make post-commit re-routing observable, distinguish legitimate approval waits from failures, require a named separate implementation owner before implementation, and block formal frontend tickets that lack composition-root and DI evidence. |
