@@ -5,7 +5,7 @@
 | Field | Value |
 | --- | --- |
 | ID | `01-enforce-continuation-and-handoff` |
-| State | `IN_PROGRESS` — owner-approved on `2026-08-05`; implementation begins only after the assigned worktree fast-forwards to `main` |
+| State | `IN_PROGRESS` — corrective implementation is committed; renewed control-plane Code Review is pending |
 | Type | POC / vertical policy slice |
 | Implementation language | Python 3.11 for Router contracts/tests; Markdown for workflow, skill, and template policy artifacts |
 | Control-plane owner | Codex / current worktree |
@@ -124,12 +124,14 @@ Additionally run a source/privacy sentinel scan proving new contracts do not ser
 - Red (typed Router contract): `python -m unittest discover -s tests -p 'test_workflow_router.py'` failed before the implementation with `ImportError: cannot import name 'CompletionActionKind' from 'library.workflow_router'`.
 - Red (Private Router return adapter): `python -m unittest discover -s tests -p 'test_private_router_metadata_gate.py'` failed before the implementation with the same missing-contract import error.
 - Red (policy/template drift): the first documentation-contract run of `test_workflow_router.py` failed 11 assertions because `Workflow.md`, `AGENTS.md`, the shared skill, and templates lacked the required completion/handoff terms.
-- Green: `python -m unittest discover -s tests` — 68 tests passed.
+- Red (P1 direct-core bypass): `test_blocked_implementation_return_halts_the_direct_router_entrypoint` failed with expected `RouterOutcome.SUSPEND` but actual `RouterOutcome.ADVANCE`, proving that `RouterEngine` bypassed the Private Router's blocked-return guard.
+- Green: `python -m unittest discover -s tests` — 69 tests passed after the core Router fail-closed correction.
 - Strict types: `python -m mypy --strict library tests` — no issues in 58 source files.
 - Compile: the ticket's literal `python -m py_compile library/workflow_router/*.py` failed on Windows PowerShell with `[Errno 22] Invalid argument` because the shell passed `*.py` literally. Control plane approved the equivalent `Get-ChildItem -LiteralPath 'library/workflow_router' -Filter '*.py' -File | ForEach-Object { python -m py_compile $_.FullName }`; it passed for the same module set.
-- Smoke/privacy: metadata-only `CompletionEvidence` rerouted `ARCHITECTURE → GRILL` with exactly one `confirm_assumptions` action; the targeted handoff-contract field sentinel found no raw source/path/URI/prompt/secret/PII field declarations.
+- Smoke/privacy: metadata-only `CompletionEvidence` rerouted `ARCHITECTURE → GRILL` with exactly one `confirm_assumptions` action; direct `BLOCKED` `ImplementationReturn` now returns `SUSPEND + HALT` with no source/capability/context grant; the targeted handoff-contract field sentinel found no raw source/path/URI/prompt/secret/PII field declarations.
 - Formatting: `git diff --check` — passed.
 - Scope: implementation worktree only; no target-project runtime, network, persistence, secret, or raw Context transfer added.
+- Corrective implementation commit: `eb4bb8f` (`fix: halt blocked implementation returns`). Earlier `d7e40cf` / `8bd984c` / `423c41b` were externally advanced during the first provenance audit; this correction is independently authored in the assigned implementation worktree.
 
 ## Completion definition and handoff
 

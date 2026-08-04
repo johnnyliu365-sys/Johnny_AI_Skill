@@ -217,9 +217,9 @@
 | Ticket | `01-enforce-continuation-and-handoff` |
 | Change / Context | `CHG-20260805-009` / `doc/context/workflow-governance/main.md` |
 | Implementation owner / worktree | Codex implementation Agent / `codex/implementation-private-router-saas-01` |
-| Implementation commit | `d7e40cf` (`feat: enforce workflow implementation handoff`) |
-| Delivered | Typed `CompletionEvidence`, `ImplementationHandoff`, `ImplementationReturn`, explicit human-wait reasons, fail-closed return routing, frontend composition/DI template requirements, and continuous `ACTION_COMPLETED` policy guidance. |
-| TDD red evidence | New completion/handoff tests initially failed at import with `ImportError: cannot import name 'CompletionActionKind'` before the implementation. |
-| Validation | `python -m unittest discover -s tests` — 68 passed; `python -m mypy --strict library tests` — 58 source files clean; `python -m py_compile library/workflow_router/*.py` — passed; `git diff --check` — passed. |
-| Smoke / privacy | `python -m unittest tests.test_private_router_metadata_gate -v` — 8 passed; continuation, fail-closed, and source/URI/prompt sentinel cases passed. |
-| Review / merge | Independent control-plane review and main integration remain pending; no main worktree was modified by the implementation commit. |
+| Implementation commits | `d7e40cf` (`feat: enforce workflow implementation handoff`, externally advanced/indeterminate provenance) and `eb4bb8f` (`fix: halt blocked implementation returns`, assigned implementation owner). |
+| Delivered | Typed `CompletionEvidence`, `ImplementationHandoff`, `ImplementationReturn`, explicit human-wait reasons, fail-closed return routing at both Private Router and direct `RouterEngine` entrypoints, frontend composition/DI template requirements, and continuous `ACTION_COMPLETED` policy guidance. |
+| TDD red evidence | Initial completion/handoff tests failed at import with `ImportError: cannot import name 'CompletionActionKind'`; P1 direct-core test then failed because a `BLOCKED` return produced `RouterOutcome.ADVANCE` instead of `SUSPEND`. |
+| Validation | `python -m unittest discover -s tests` — 69 passed; `python -m mypy --strict library tests` — 58 source files clean; the literal Windows PowerShell `python -m py_compile library/workflow_router/*.py` failed with `[Errno 22] Invalid argument` because `*.py` was not expanded; control plane approved `Get-ChildItem -LiteralPath 'library/workflow_router' -Filter '*.py' -File | ForEach-Object { python -m py_compile $_.FullName }`, which passed for the same module set; `git diff --check` passed. |
+| Smoke / privacy | Metadata-only `CompletionEvidence` rerouted `ARCHITECTURE → GRILL`; direct `BLOCKED` `ImplementationReturn` produced `SUSPEND + HALT`, no next stage, source, capability, or Context grant; the targeted contract field sentinel found no raw source/path/URI/prompt/secret/PII declaration. |
+| Review / merge | Control-plane review requested and received the P1 correction; renewed independent review and main integration remain pending. No main worktree was modified by the assigned implementation-owner commit. |
