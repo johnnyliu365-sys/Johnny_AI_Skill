@@ -103,4 +103,4 @@
 - Worktree Context: `doc/context/workflow-governance/main.md`.
 - Scope: make `ACTION_COMPLETED` post-commit routing explicit; define automatic-continuation, human-wait, and fail-closed boundaries; require separate implementation ownership and frontend composition/DI handoff evidence.
 - PRD / change: `PRD.md §13`; `CHG-20260805-009`.
-- Handoff state: specification approved; ticket plan is `PLANNED`. Implementation is assigned to `workflow-implementation` / `codex/implementation-private-router-saas-01`; Codex control-plane is reviewer. The implementation worktree must first fast-forward from `7769710` to `main`. Explicit ticket approval is the remaining human-authority gate; no source/test/deployment change has started.
+- Handoff state: specification and ticket are approved; `01-enforce-continuation-and-handoff` is `IN_PROGRESS`. Implementation is assigned to `workflow-implementation` / `codex/implementation-private-router-saas-01`; Codex control-plane is reviewer. The implementation worktree must first fast-forward from `7769710` to `main`; then it may begin Python 3.11 TDD. No source/test/deployment change has started in the control-plane worktree.

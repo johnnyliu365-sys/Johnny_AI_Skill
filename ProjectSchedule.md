@@ -93,4 +93,5 @@
 | --- | --- | --- |
 | Requirement change and Grill | DONE | `CHG-20260805-009`; `doc/context/workflow-governance/main.md` |
 | Specification | DONE | `modules/spec/workflow-governance.md` (`APPROVED` on `2026-08-05`) |
-| Ticket plan, named implementation owner, and second approval | PENDING_OWNER_APPROVAL | `modules/tickets/workflow-governance/`; implementation worktree assigned, ticket approval still required; the control-plane Agent cannot implement the resulting policy ticket. |
+| Ticket plan, named implementation owner, and second approval | DONE | `01-enforce-continuation-and-handoff` approved on `2026-08-05`; implementation worktree assigned and reviewer recorded. |
+| Implementation, verification, review, and handoff | IN_PROGRESS | Implementation worktree must fast-forward from `7769710` to `main`, then perform the approved Python 3.11 / Markdown policy slice under TDD. |

@@ -5,8 +5,9 @@
 | Field | Value |
 | --- | --- |
 | ID | `01-enforce-continuation-and-handoff` |
-| State | `PLANNED` — implementation blocked pending explicit ticket approval |
+| State | `IN_PROGRESS` — owner-approved on `2026-08-05`; implementation begins only after the assigned worktree fast-forwards to `main` |
 | Type | POC / vertical policy slice |
+| Implementation language | Python 3.11 for Router contracts/tests; Markdown for workflow, skill, and template policy artifacts |
 | Control-plane owner | Codex / current worktree |
 | Implementation owner | Codex implementation Agent / `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` / branch `codex/implementation-private-router-saas-01` |
 | Reviewer | Codex control-plane / `C:\Users\<user>\Desktop\AI控制工作workflow` / branch `main` |
@@ -130,4 +131,6 @@ Additionally run a source/privacy sentinel scan proving new contracts do not ser
 
 ## Approval gate
 
-The specification was approved on `2026-08-05`. The project owner assigned the separate implementation worktree and Codex control-plane reviewer on `2026-08-05`. Before implementation, the project owner must explicitly approve `01-enforce-continuation-and-handoff`. Until that approval is recorded, this ticket remains `PLANNED` and no implementation is authorised.
+The specification was approved on `2026-08-05`. The project owner assigned the separate implementation worktree and Codex control-plane reviewer on `2026-08-05`, then explicitly approved `01-enforce-continuation-and-handoff` on `2026-08-05`.
+
+Implementation is authorised only in the named implementation worktree after it fast-forwards to `main` and confirms this approval, the approved specification, and the ticket are present. The control-plane Agent remains prohibited from making this ticket's source/test/implementation commit.

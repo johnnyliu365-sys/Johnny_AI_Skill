@@ -10,6 +10,7 @@
 | Requirement change | `CHG-20260805-009` |
 | Shared Context backlink | `CONTEXT.md §衍生 SPEC 索引` |
 | Delivery stage | `POC` |
+| Implementation language | Python 3.11 for `library/workflow_router`; Markdown for workflow/skill/template policy artifacts |
 
 ## Problem, Goal, and Non-goals
 
