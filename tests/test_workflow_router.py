@@ -280,6 +280,46 @@ class WorkflowRouterTests(unittest.TestCase):
         self.assertEqual(RouterOutcome.ADVANCE, decision.outcome)
         self.assertEqual(ProcessStage.GRILL, decision.next_stage)
 
+    def test_blocked_implementation_return_halts_the_direct_router_entrypoint(self) -> None:
+        ticket = ArtifactRef(
+            kind=ArtifactKind.TICKET,
+            identifier="workflow-governance-ticket-01",
+            uri="ticket://workflow-governance/01",
+            revision="1",
+        )
+        blocked_return = ImplementationReturn(
+            ticket_reference="ticket-workflow-governance-01",
+            status=ImplementationReturnStatus.BLOCKED,
+            evidence_references=("evidence-implementation-blocked-01",),
+            verification_references=("verification-implementation-blocked-01",),
+            evidence_digest="sha256_0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+            emitted_event=RouterEventKind.ACTION_COMPLETED,
+        )
+
+        decision = self.engine.decide(
+            state=RouterState(
+                project_id="router-framework-poc",
+                stage=ProcessStage.IMPLEMENT,
+                authority_state=AuthorityState.NOT_REQUIRED,
+                delivery_stage=DeliveryStage.POC,
+                artifact_refs=(ticket,),
+            ),
+            event=RouterEvent(
+                event_id="evt-implementation-blocked-001",
+                kind=RouterEventKind.ACTION_COMPLETED,
+                implementation_return=blocked_return,
+            ),
+            profile=self.profile,
+        )
+
+        self.assertEqual(RouterOutcome.SUSPEND, decision.outcome)
+        self.assertEqual("halt", decision.continuation.value)
+        self.assertIsNone(decision.next_stage)
+        self.assertEqual((), decision.required_sources)
+        self.assertEqual((), decision.eligible_capabilities)
+        self.assertIsNone(decision.context_view)
+        self.assertEqual("implementation_return_blocked", decision.blockers[0].code.value)
+
     def test_policy_documents_and_templates_keep_completion_and_handoff_contract_in_sync(self) -> None:
         root = Path(__file__).resolve().parents[1]
         required_terms = {

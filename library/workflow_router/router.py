@@ -19,6 +19,7 @@ from .contracts import (
     ContextReference,
     ContextView,
     HumanWaitReason,
+    ImplementationReturnStatus,
     NonBlankText,
     PositiveTokenBudget,
     ReferenceStatus,
@@ -75,6 +76,14 @@ class RouterEngine:
                     f"state delivery stage {state.delivery_stage.value} does not match "
                     f"profile delivery stage {profile.delivery_stage.value}"
                 ),
+            )
+        if (
+            event.implementation_return is not None
+            and event.implementation_return.status is ImplementationReturnStatus.BLOCKED
+        ):
+            return self._suspend(
+                code=BlockerCode.IMPLEMENTATION_RETURN_BLOCKED,
+                detail="implementation owner returned a blocked result",
             )
         rule = profile.rule_for(current_stage=state.stage, event_kind=event.kind)
         if rule is None:
