@@ -121,11 +121,13 @@ Additionally run a source/privacy sentinel scan proving new contracts do not ser
 
 ## Implementation evidence (2026-08-05)
 
-- Red: `python -m unittest tests.test_workflow_router.WorkflowRouterTests.test_completion_evidence_and_implementation_handoff_are_typed_and_fail_closed tests.test_workflow_router.WorkflowRouterTests.test_requirement_change_from_implementation_routes_back_to_grill tests.test_private_router_metadata_gate.PrivateRouterMetadataGateTests.test_completion_evidence_re_routes_once_and_implementation_return_change_reenters_grill -v` failed before the implementation with `ImportError: cannot import name 'CompletionActionKind'` from `library.workflow_router`.
+- Red (typed Router contract): `python -m unittest discover -s tests -p 'test_workflow_router.py'` failed before the implementation with `ImportError: cannot import name 'CompletionActionKind' from 'library.workflow_router'`.
+- Red (Private Router return adapter): `python -m unittest discover -s tests -p 'test_private_router_metadata_gate.py'` failed before the implementation with the same missing-contract import error.
+- Red (policy/template drift): the first documentation-contract run of `test_workflow_router.py` failed 11 assertions because `Workflow.md`, `AGENTS.md`, the shared skill, and templates lacked the required completion/handoff terms.
 - Green: `python -m unittest discover -s tests` — 68 tests passed.
 - Strict types: `python -m mypy --strict library tests` — no issues in 58 source files.
-- Compile: `python -m py_compile library/workflow_router/*.py` — passed.
-- Smoke/privacy: `python -m unittest tests.test_private_router_metadata_gate -v` — 8 tests passed, including continuation, fail-closed, and source/URI/prompt sentinel checks.
+- Compile: the ticket's literal `python -m py_compile library/workflow_router/*.py` failed on Windows PowerShell with `[Errno 22] Invalid argument` because the shell passed `*.py` literally. Control plane approved the equivalent `Get-ChildItem -LiteralPath 'library/workflow_router' -Filter '*.py' -File | ForEach-Object { python -m py_compile $_.FullName }`; it passed for the same module set.
+- Smoke/privacy: metadata-only `CompletionEvidence` rerouted `ARCHITECTURE → GRILL` with exactly one `confirm_assumptions` action; the targeted handoff-contract field sentinel found no raw source/path/URI/prompt/secret/PII field declarations.
 - Formatting: `git diff --check` — passed.
 - Scope: implementation worktree only; no target-project runtime, network, persistence, secret, or raw Context transfer added.
 
