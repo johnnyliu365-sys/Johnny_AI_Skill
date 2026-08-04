@@ -156,5 +156,5 @@
 | Out of scope | Target-project runtime dependency, automatic creation of a new host-model turn, external Agent dispatcher, background worker, bypassing platform approvals, source/test/deployment implementation in this control-plane task, or retroactive changes to completed tickets. |
 | PRD | `PRD.md §13` |
 | Context | `doc/context/workflow-governance/main.md`; `CONTEXT.md §衍生 SPEC 索引` |
-| Linked specification | `SPEC-AI-WORKFLOW-WORKFLOW-GOVERNANCE-20260805-01KZ6T8V2R4Y6B8D0F2H4J6M8P` (`DRAFT`) |
+| Linked specification | `SPEC-AI-WORKFLOW-WORKFLOW-GOVERNANCE-20260805-01KZ6T8V2R4Y6B8D0F2H4J6M8P` (`APPROVED` on `2026-08-05`) |
 | Acceptance | The approved future policy must make post-commit re-routing observable, distinguish legitimate approval waits from failures, require a named separate implementation owner before implementation, and block formal frontend tickets that lack composition-root and DI evidence. |

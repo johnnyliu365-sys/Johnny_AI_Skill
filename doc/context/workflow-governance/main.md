@@ -57,4 +57,10 @@ The handoff packet contains only approved artifact references, acceptance criter
 
 ## Convergence
 
-The Grill result is **GO to specification**. The complete scope has one formal draft: `modules/spec/workflow-governance.md`. No ticket may be created until the project owner explicitly approves that specification. The previous commit remains valid as the initial documentation baseline; any follow-up enforcement edit must be made by the future separately named implementation owner under an approved ticket.
+The Grill result is **GO to specification**. The project owner approved `SPEC-AI-WORKFLOW-WORKFLOW-GOVERNANCE-20260805-01KZ6T8V2R4Y6B8D0F2H4J6M8P` on `2026-08-05`; its one ticket plan is [workflow-governance](../../../modules/tickets/workflow-governance/README.md). The previous commit remains valid as the initial documentation baseline; any follow-up enforcement edit must be made by the future separately named implementation owner under a separately approved ticket.
+
+## Ticket-plan handoff
+
+- Ticket: [01-enforce-continuation-and-handoff](../../../modules/tickets/workflow-governance/01-enforce-continuation-and-handoff.md).
+- State: `PLANNED`; no implementation authority exists.
+- Exact next authority: the project owner must approve the ticket and name a separate implementation owner and reviewer. The owner may explicitly reassign a role for this one ticket, but the override must be recorded in the ticket before implementation starts.

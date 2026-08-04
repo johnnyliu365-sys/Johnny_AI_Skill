@@ -99,8 +99,8 @@
 
 ### `SPEC-AI-WORKFLOW-WORKFLOW-GOVERNANCE-20260805-01KZ6T8V2R4Y6B8D0F2H4J6M8P` — Continuous Workflow Governance POC
 
-- Specification: `modules/spec/workflow-governance.md` (`DRAFT`).
+- Specification: `modules/spec/workflow-governance.md` (`APPROVED` on `2026-08-05`).
 - Worktree Context: `doc/context/workflow-governance/main.md`.
 - Scope: make `ACTION_COMPLETED` post-commit routing explicit; define automatic-continuation, human-wait, and fail-closed boundaries; require separate implementation ownership and frontend composition/DI handoff evidence.
 - PRD / change: `PRD.md §13`; `CHG-20260805-009`.
-- Handoff state: Grill complete and specification draft prepared. No ticket, source/test/deployment change, or implementation owner assignment exists yet; explicit specification approval is the next human-authority gate.
+- Handoff state: specification approved; ticket plan is `PLANNED`. No source/test/deployment change or implementation owner assignment exists yet; explicit ticket approval with separate named implementation owner and reviewer is the next human-authority gate.

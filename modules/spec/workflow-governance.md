@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-WORKFLOW-GOVERNANCE-20260805-01KZ6T8V2R4Y6B8D0F2H4J6M8P` |
-| Specification state | `DRAFT` |
+| Specification state | `APPROVED` |
 | Authoring AI / baseline | Codex control plane / current worktree / `7769710` |
 | Investigation Context | `doc/context/workflow-governance/main.md` |
 | PRD reference | `PRD.md §13` |
@@ -145,9 +145,10 @@ The future implementation ticket must begin red and include the following explic
 | Date | AI / baseline SHA | Summary |
 | --- | --- | --- |
 | 2026-08-05 | Codex control plane / `7769710` | Initial draft after the owner-directed post-commit Grill. |
+| 2026-08-05 | Project owner / `04146af` | Approved the POC specification and authorised ticket planning only. |
 
 ## Approval Record
 
 - Decision maker: project owner.
-- Status: pending explicit approval of this specification.
-- Approval scope when granted: permission to create the ticket plan only. No source, test, migration, deployment, or implementation commit is authorised until a second explicit ticket approval and a separate implementation owner are recorded.
+- Date: `2026-08-05 (Asia/Taipei)`.
+- Approval scope: Continuous Workflow Governance POC specification. Ticket planning is authorised. No source, test, migration, deployment, or implementation commit is authorised until a second explicit ticket approval and a separate named implementation owner are recorded.
