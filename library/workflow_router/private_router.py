@@ -23,6 +23,7 @@ from .contracts import (
     ContinuationDirective,
     DeliveryStage,
     HumanWaitReason,
+    ImplementationHandoff,
     ImplementationReturn,
     ImplementationReturnStatus,
     NonBlankText,
@@ -127,6 +128,7 @@ class RouterRequestEnvelope(RouterModel):
     client_version: ClientVersion
     completion_evidence: CompletionEvidence | None = None
     implementation_return: ImplementationReturn | None = None
+    implementation_handoff: ImplementationHandoff | None = None
 
     @model_validator(mode="after")
     def has_minimum_metadata_without_locations(self) -> RouterRequestEnvelope:
@@ -147,6 +149,14 @@ class RouterRequestEnvelope(RouterModel):
                 raise ValueError("completion evidence and implementation return cannot share a request")
             if self.router_event_kind is not self.implementation_return.emitted_event:
                 raise ValueError("implementation return event must match router_event_kind")
+        if self.implementation_handoff is not None:
+            if self.completion_evidence is not None or self.implementation_return is not None:
+                raise ValueError("implementation handoff cannot share a request with completion or return")
+            if (
+                self.workflow_stage is not ProcessStage.TICKETS
+                or self.router_event_kind is not RouterEventKind.APPROVAL_GRANTED
+            ):
+                raise ValueError("implementation handoff requires ticket approval")
         return self
 
 
@@ -302,6 +312,7 @@ class FakePrivateRouterService:
                 kind=request.router_event_kind,
                 completion_evidence=request.completion_evidence,
                 implementation_return=request.implementation_return,
+                implementation_handoff=request.implementation_handoff,
             ),
             profile=self._profile,
         )

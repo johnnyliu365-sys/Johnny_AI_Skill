@@ -32,6 +32,7 @@ class TransitionRule(RouterModel):
     requires_human_approval: bool = False
     wait_reason: HumanWaitReason | None = None
     accepted_completion_actions: tuple[CompletionActionKind, ...] = ()
+    requires_implementation_handoff: bool = False
 
     @model_validator(mode="after")
     def human_gate_is_a_declared_wait(self) -> TransitionRule:
@@ -51,6 +52,15 @@ class TransitionRule(RouterModel):
             raise ValueError("stop rules must target stopped")
         if self.event_kind is not RouterEventKind.ACTION_COMPLETED and self.accepted_completion_actions:
             raise ValueError("only action_completed rules may accept completion actions")
+        if self.requires_implementation_handoff and (
+            self.current_stage is not ProcessStage.TICKETS
+            or self.event_kind is not RouterEventKind.APPROVAL_GRANTED
+            or self.outcome is not RouterOutcome.ADVANCE
+            or self.next_stage is not ProcessStage.IMPLEMENT
+        ):
+            raise ValueError(
+                "implementation handoff is valid only for ticket approval advancing to implement"
+            )
         return self
 
 
@@ -230,6 +240,7 @@ def build_router_poc_profile() -> ProjectWorkflowProfile:
                 required_authority=AuthorityState.APPROVED,
                 required_source_kinds=(ArtifactKind.TICKET,),
                 eligible_capabilities=(implementation,),
+                requires_implementation_handoff=True,
             ),
             TransitionRule(
                 current_stage=ProcessStage.IMPLEMENT,

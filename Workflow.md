@@ -358,7 +358,7 @@ implementation owner 是 ticket 具名指定的另一位 Agent／worktree，負�
 
 實作完成後，implementation owner 必須以 `ImplementationReturn` 回交控制面；只有 `ACTION_COMPLETED` 經 Router 重新分類後，才可進入 Smoke Test、Review 或 Handoff。
 
-實作前的 `ImplementationHandoff` 必須引用已核准的 SPEC／ticket／Context／TDD 與角色 ID；implementation owner 回傳 `ImplementationReturn`。`COMPLETED` 產生 `ACTION_COMPLETED` 並進入既定驗證／review，`BLOCKED` fail-closed，`CHANGE_DETECTED` 只能產生 `REQUIREMENT_CHANGED` 回到 Grill。任何 owner 例外必須在 ticket 的 **Owner override record** 記錄專案負責人的明確範圍化改派；未記錄不得覆蓋分離責任。
+實作前的 `ImplementationHandoff` 必須引用已核准的 SPEC／ticket／Context／TDD 與角色 ID；Profile 只有在已宣告的 `TICKETS + APPROVAL_GRANTED → IMPLEMENT` transition 才可要求並接受它。該 transition 缺少有效 handoff 時必須 `HALT`，不可授予 source、Context、capability 或 implementation；未宣告 transition 收到 handoff 也必須 `HALT`。implementation owner 回傳 `ImplementationReturn`。`COMPLETED` 產生 `ACTION_COMPLETED` 並進入既定驗證／review，`BLOCKED` fail-closed，`CHANGE_DETECTED` 只能產生 `REQUIREMENT_CHANGED` 回到 Grill。任何 owner 例外必須在 ticket 的 **Owner override record** 記錄專案負責人的明確範圍化改派；未記錄不得覆蓋分離責任。
 
 一次只能實作一張已核准的 ticket。每個新行為依序：
 

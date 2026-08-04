@@ -99,6 +99,16 @@ class RouterEngine:
                     f"{rule.required_authority.value} authority"
                 ),
             )
+        if rule.requires_implementation_handoff and event.implementation_handoff is None:
+            return self._suspend(
+                code=BlockerCode.IMPLEMENTATION_HANDOFF_REQUIRED,
+                detail="this declared ticket approval requires an implementation handoff",
+            )
+        if not rule.requires_implementation_handoff and event.implementation_handoff is not None:
+            return self._suspend(
+                code=BlockerCode.IMPLEMENTATION_HANDOFF_UNDECLARED,
+                detail="implementation handoff is not declared for this profile transition",
+            )
         if event.completion_evidence is not None:
             if event.completion_evidence.action_kind not in rule.accepted_completion_actions:
                 return self._suspend(

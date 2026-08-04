@@ -321,6 +321,95 @@ class WorkflowRouterTests(unittest.TestCase):
         self.assertIsNone(decision.context_view)
         self.assertEqual("implementation_return_blocked", decision.blockers[0].code.value)
 
+    def test_ticket_approval_requires_a_valid_handoff_at_the_direct_router_entrypoint(self) -> None:
+        ticket = ArtifactRef(
+            kind=ArtifactKind.TICKET,
+            identifier="workflow-governance-ticket-01",
+            uri="ticket://workflow-governance/01",
+            revision="1",
+        )
+        state = RouterState(
+            project_id="router-framework-poc",
+            stage=ProcessStage.TICKETS,
+            authority_state=AuthorityState.APPROVED,
+            delivery_stage=DeliveryStage.POC,
+            artifact_refs=(ticket,),
+        )
+        bare = self.engine.decide(
+            state=state,
+            event=RouterEvent(
+                event_id="evt-ticket-approval-bare-001",
+                kind=RouterEventKind.APPROVAL_GRANTED,
+            ),
+            profile=self.profile,
+        )
+        self.assertEqual(RouterOutcome.SUSPEND, bare.outcome)
+        self.assertEqual("halt", bare.continuation.value)
+        self.assertIsNone(bare.next_stage)
+        self.assertEqual((), bare.required_sources)
+        self.assertEqual((), bare.eligible_capabilities)
+        self.assertIsNone(bare.context_view)
+        self.assertEqual("implementation_handoff_required", bare.blockers[0].code.value)
+
+        handoff = ImplementationHandoff(
+            ticket_reference="ticket-workflow-governance-01",
+            approved_spec_reference="spec-workflow-governance-01",
+            context_references=(
+                HandoffArtifactReference(
+                    artifact_id="context-workflow-governance",
+                    revision_digest="rev-0123456789abcdef",
+                    source_span_id="span-ticket-handoff",
+                    side_context_id="scx-ticket-handoff-01",
+                    consumer_fingerprint=HandoffConsumerFingerprint(
+                        agent_profile_id="agent-control-plane-v1",
+                        profile_version="profile-v1",
+                        worktree_fingerprint="worktree-control-01",
+                        execution_fingerprint="execution-handoff-01",
+                    ),
+                ),
+            ),
+            acceptance_references=("acceptance-ticket-handoff-01",),
+            tdd_references=("tdd-ticket-handoff-01",),
+            scope=TicketScope.NON_FRONTEND,
+            non_frontend_reason="router policy has no formal UI boundary",
+            control_owner_id="actor-controlplane-01",
+            implementation_owner_id="actor-implementation-01",
+            reviewer_id="actor-reviewer-01",
+        )
+        granted = self.engine.decide(
+            state=state,
+            event=RouterEvent(
+                event_id="evt-ticket-approval-handoff-001",
+                kind=RouterEventKind.APPROVAL_GRANTED,
+                implementation_handoff=handoff,
+            ),
+            profile=self.profile,
+        )
+        self.assertEqual(RouterOutcome.ADVANCE, granted.outcome)
+        self.assertEqual(ProcessStage.IMPLEMENT, granted.next_stage)
+
+        frontend_payload = handoff.model_dump()
+        frontend_payload.update(
+            {
+                "scope": TicketScope.FRONTEND,
+                "non_frontend_reason": None,
+                "frontend_composition": {
+                    "component_boundaries": "screen composes approval components",
+                    "dependency_scope": "screen-scoped injected ports",
+                    "injected_interfaces": ("router-client-port",),
+                    "production_bindings": "production client binding",
+                    "test_doubles": "fake client",
+                    "state_acceptance": "loading and error are asserted",
+                },
+            }
+        )
+        with self.assertRaises(ValidationError):
+            ImplementationHandoff.model_validate(frontend_payload)
+        with self.assertRaises(ValidationError):
+            ImplementationHandoff.model_validate(
+                {**handoff.model_dump(), "implementation_owner_id": handoff.control_owner_id}
+            )
+
     def test_legacy_action_completed_rule_routes_without_new_evidence_but_rejects_it_when_undeclared(self) -> None:
         legacy_profile = ProjectWorkflowProfile(
             profile_id="legacy-router-profile",

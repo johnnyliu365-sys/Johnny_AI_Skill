@@ -149,6 +149,8 @@ class BlockerCode(str, Enum):
     CAPABILITY_UNAVAILABLE = "capability_unavailable"
     INVALID_COMPLETION_EVIDENCE = "invalid_completion_evidence"
     IMPLEMENTATION_RETURN_BLOCKED = "implementation_return_blocked"
+    IMPLEMENTATION_HANDOFF_REQUIRED = "implementation_handoff_required"
+    IMPLEMENTATION_HANDOFF_UNDECLARED = "implementation_handoff_undeclared"
 
 
 class ReferenceStatus(str, Enum):
@@ -285,6 +287,7 @@ class RouterEvent(RouterModel):
     kind: RouterEventKind
     completion_evidence: CompletionEvidence | None = None
     implementation_return: ImplementationReturn | None = None
+    implementation_handoff: ImplementationHandoff | None = None
 
     @model_validator(mode="after")
     def completion_metadata_matches_event(self) -> RouterEvent:
@@ -294,6 +297,11 @@ class RouterEvent(RouterModel):
             raise ValueError("completion_evidence is valid only for action_completed")
         if self.completion_evidence is not None and self.implementation_return is not None:
             raise ValueError("completion_evidence and implementation_return cannot share an event")
+        if self.implementation_handoff is not None:
+            if self.completion_evidence is not None or self.implementation_return is not None:
+                raise ValueError("implementation_handoff cannot share an event with completion or return")
+            if self.kind is not RouterEventKind.APPROVAL_GRANTED:
+                raise ValueError("implementation_handoff requires approval_granted")
         if self.implementation_return is not None and self.implementation_return.emitted_event is not self.kind:
             raise ValueError("implementation_return event must match router event kind")
         return self
