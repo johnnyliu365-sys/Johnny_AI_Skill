@@ -49,10 +49,7 @@ class TransitionRule(RouterModel):
             raise ValueError("suspending rules must not declare a next stage")
         if self.outcome is RouterOutcome.STOP and self.next_stage is not ProcessStage.STOPPED:
             raise ValueError("stop rules must target stopped")
-        if self.event_kind is RouterEventKind.ACTION_COMPLETED:
-            if not self.accepted_completion_actions:
-                raise ValueError("action_completed rules require accepted completion actions")
-        elif self.accepted_completion_actions:
+        if self.event_kind is not RouterEventKind.ACTION_COMPLETED and self.accepted_completion_actions:
             raise ValueError("only action_completed rules may accept completion actions")
         return self
 

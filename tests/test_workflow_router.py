@@ -46,6 +46,7 @@ from library.workflow_router import (
     build_router_poc_profile,
 )
 from library.workflow_router.graph import RouterGraphState
+from library.workflow_router.profile import ProjectWorkflowProfile, TransitionRule
 from library.workflow_router.telemetry_cli import main as telemetry_main
 
 
@@ -319,6 +320,175 @@ class WorkflowRouterTests(unittest.TestCase):
         self.assertEqual((), decision.eligible_capabilities)
         self.assertIsNone(decision.context_view)
         self.assertEqual("implementation_return_blocked", decision.blockers[0].code.value)
+
+    def test_legacy_action_completed_rule_routes_without_new_evidence_but_rejects_it_when_undeclared(self) -> None:
+        legacy_profile = ProjectWorkflowProfile(
+            profile_id="legacy-router-profile",
+            profile_version="1",
+            delivery_stage=DeliveryStage.POC,
+            transition_rules=(
+                TransitionRule(
+                    current_stage=ProcessStage.ARCHITECTURE,
+                    event_kind=RouterEventKind.ACTION_COMPLETED,
+                    outcome=RouterOutcome.ADVANCE,
+                    next_stage=ProcessStage.GRILL,
+                    required_source_kinds=(ArtifactKind.ARCHITECTURE,),
+                ),
+            ),
+        )
+        architecture = ArtifactRef(
+            kind=ArtifactKind.ARCHITECTURE,
+            identifier="legacy-architecture",
+            uri="architecture://legacy/poc",
+            revision="1",
+        )
+        state = RouterState(
+            project_id="legacy-router-poc",
+            stage=ProcessStage.ARCHITECTURE,
+            authority_state=AuthorityState.NOT_REQUIRED,
+            delivery_stage=DeliveryStage.POC,
+            artifact_refs=(architecture,),
+        )
+        legacy = self.engine.decide(
+            state=state,
+            event=RouterEvent(
+                event_id="evt-legacy-action-completed-001",
+                kind=RouterEventKind.ACTION_COMPLETED,
+            ),
+            profile=legacy_profile,
+        )
+        self.assertEqual(RouterOutcome.ADVANCE, legacy.outcome)
+        self.assertEqual(ProcessStage.GRILL, legacy.next_stage)
+
+        completion_evidence = CompletionEvidence(
+            completion_id="cmp-doc-legacy-0001",
+            action_kind=CompletionActionKind.DOCUMENTATION,
+            artifact_references=(
+                HandoffArtifactReference(
+                    artifact_id="architecture-legacy-poc",
+                    revision_digest="rev-0123456789abcdef",
+                    source_span_id="span-architecture-summary",
+                    side_context_id="scx-architecture-legacy-01",
+                    consumer_fingerprint=HandoffConsumerFingerprint(
+                        agent_profile_id="agent-control-plane-v1",
+                        profile_version="profile-v1",
+                        worktree_fingerprint="worktree-control-01",
+                        execution_fingerprint="execution-legacy-01",
+                    ),
+                ),
+            ),
+            verification_references=("verification-legacy-action-01",),
+            evidence_digest="sha256_0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+        )
+        rejected = self.engine.decide(
+            state=state,
+            event=RouterEvent(
+                event_id="evt-legacy-action-completed-002",
+                kind=RouterEventKind.ACTION_COMPLETED,
+                completion_evidence=completion_evidence,
+            ),
+            profile=legacy_profile,
+        )
+        self.assertEqual(RouterOutcome.SUSPEND, rejected.outcome)
+        self.assertEqual("halt", rejected.continuation.value)
+        self.assertEqual("invalid_completion_evidence", rejected.blockers[0].code.value)
+
+    def test_handoff_contracts_reject_locator_and_empty_boundary_inputs(self) -> None:
+        consumer = HandoffConsumerFingerprint(
+            agent_profile_id="agent-control-plane-v1",
+            profile_version="profile-v1",
+            worktree_fingerprint="worktree-control-01",
+            execution_fingerprint="execution-boundary-01",
+        )
+        reference = HandoffArtifactReference(
+            artifact_id="architecture-router-poc",
+            revision_digest="rev-0123456789abcdef",
+            source_span_id="span-architecture-summary",
+            side_context_id="scx-architecture-boundary-01",
+            consumer_fingerprint=consumer,
+        )
+        reference_payload = reference.model_dump()
+        forbidden_locator_forms = (
+            "C:/handoff/reference",
+            "C:/handoff/reference-x",
+            "C:/handoff/reference/",
+            "c:/HANDOFF/REFERENCE",
+            "C%3A%2Fhandoff%2Freference",
+            "../handoff/reference",
+            "",
+        )
+        for source_path in forbidden_locator_forms:
+            with self.subTest(source_path=source_path):
+                with self.assertRaises(ValidationError):
+                    HandoffArtifactReference.model_validate(
+                        {**reference_payload, "source_path": source_path}
+                    )
+
+        completion = CompletionEvidence(
+            completion_id="cmp-doc-boundary-01",
+            action_kind=CompletionActionKind.DOCUMENTATION,
+            artifact_references=(reference,),
+            verification_references=("verification-boundary-01",),
+            evidence_digest="sha256_0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+        )
+        invalid_boundary_collections: tuple[object, ...] = (None, (), [], {})
+        for invalid_id in (None, "", "   "):
+            with self.subTest(completion_id=invalid_id):
+                with self.assertRaises(ValidationError):
+                    CompletionEvidence.model_validate(
+                        {**completion.model_dump(), "completion_id": invalid_id}
+                    )
+        for invalid_collection in invalid_boundary_collections:
+            with self.subTest(completion_artifacts=invalid_collection):
+                with self.assertRaises(ValidationError):
+                    CompletionEvidence.model_validate(
+                        {**completion.model_dump(), "artifact_references": invalid_collection}
+                    )
+            with self.subTest(completion_evidence=invalid_collection):
+                with self.assertRaises(ValidationError):
+                    CompletionEvidence.model_validate(
+                        {**completion.model_dump(), "verification_references": invalid_collection}
+                    )
+
+        handoff = ImplementationHandoff(
+            ticket_reference="ticket-workflow-governance-01",
+            approved_spec_reference="spec-workflow-governance-01",
+            context_references=(reference,),
+            acceptance_references=("acceptance-boundary-01",),
+            tdd_references=("tdd-boundary-01",),
+            scope=TicketScope.NON_FRONTEND,
+            non_frontend_reason="router policy has no formal UI boundary",
+            control_owner_id="actor-controlplane-01",
+            implementation_owner_id="actor-implementation-01",
+            reviewer_id="actor-reviewer-01",
+        )
+        for invalid_owner in (None, "", "   "):
+            with self.subTest(control_owner_id=invalid_owner):
+                with self.assertRaises(ValidationError):
+                    ImplementationHandoff.model_validate(
+                        {**handoff.model_dump(), "control_owner_id": invalid_owner}
+                    )
+
+        implementation_return = ImplementationReturn(
+            ticket_reference=handoff.ticket_reference,
+            status=ImplementationReturnStatus.COMPLETED,
+            evidence_references=("evidence-boundary-01",),
+            verification_references=("verification-return-boundary-01",),
+            evidence_digest=completion.evidence_digest,
+            emitted_event=RouterEventKind.ACTION_COMPLETED,
+        )
+        for invalid_status in (None, "", "   "):
+            with self.subTest(status=invalid_status):
+                with self.assertRaises(ValidationError):
+                    ImplementationReturn.model_validate(
+                        {**implementation_return.model_dump(), "status": invalid_status}
+                    )
+        for invalid_collection in invalid_boundary_collections:
+            with self.subTest(return_evidence=invalid_collection):
+                with self.assertRaises(ValidationError):
+                    ImplementationReturn.model_validate(
+                        {**implementation_return.model_dump(), "evidence_references": invalid_collection}
+                    )
 
     def test_policy_documents_and_templates_keep_completion_and_handoff_contract_in_sync(self) -> None:
         root = Path(__file__).resolve().parents[1]
