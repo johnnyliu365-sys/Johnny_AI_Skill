@@ -207,3 +207,19 @@
 | Validation | Both skill validators, the Codex plugin validator, all plugin JSON parsing, 55 unit tests, strict type checking across 56 source files, and `git diff --check` passed. |
 | Detach guarantee | The plugin remains user-scoped and contains no target-project file, runtime dependency, hook, MCP service, or secret. |
 | Operator handoff | Update Codex or Claude Code from the private Git marketplace, then restart or reload the plugin. Collect Router reduction evidence only through local metadata-only JSONL and the validator. |
+
+## PRG-20260805-001｜Workflow governance continuation and implementation handoff
+
+| Field | Value |
+| --- | --- |
+| State | `IMPLEMENTATION_COMMITTED_PENDING_REVIEW` |
+| Specification | `SPEC-AI-WORKFLOW-WORKFLOW-GOVERNANCE-20260805-01KZ6T8V2R4Y6B8D0F2H4J6M8P` |
+| Ticket | `01-enforce-continuation-and-handoff` |
+| Change / Context | `CHG-20260805-009` / `doc/context/workflow-governance/main.md` |
+| Implementation owner / worktree | Codex implementation Agent / `codex/implementation-private-router-saas-01` |
+| Implementation commit | `d7e40cf` (`feat: enforce workflow implementation handoff`) |
+| Delivered | Typed `CompletionEvidence`, `ImplementationHandoff`, `ImplementationReturn`, explicit human-wait reasons, fail-closed return routing, frontend composition/DI template requirements, and continuous `ACTION_COMPLETED` policy guidance. |
+| TDD red evidence | New completion/handoff tests initially failed at import with `ImportError: cannot import name 'CompletionActionKind'` before the implementation. |
+| Validation | `python -m unittest discover -s tests` — 68 passed; `python -m mypy --strict library tests` — 58 source files clean; `python -m py_compile library/workflow_router/*.py` — passed; `git diff --check` — passed. |
+| Smoke / privacy | `python -m unittest tests.test_private_router_metadata_gate -v` — 8 passed; continuation, fail-closed, and source/URI/prompt sentinel cases passed. |
+| Review / merge | Independent control-plane review and main integration remain pending; no main worktree was modified by the implementation commit. |
