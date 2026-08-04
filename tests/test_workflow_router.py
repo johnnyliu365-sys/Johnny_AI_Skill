@@ -388,6 +388,46 @@ class WorkflowRouterTests(unittest.TestCase):
         self.assertEqual(RouterOutcome.ADVANCE, granted.outcome)
         self.assertEqual(ProcessStage.IMPLEMENT, granted.next_stage)
 
+        specification = ArtifactRef(
+            kind=ArtifactKind.SPEC,
+            identifier="workflow-governance-spec-01",
+            uri="spec://workflow-governance/01",
+            revision="1",
+        )
+        undeclared = self.engine.decide(
+            state=RouterState(
+                project_id="router-framework-poc",
+                stage=ProcessStage.SPEC,
+                authority_state=AuthorityState.APPROVED,
+                delivery_stage=DeliveryStage.POC,
+                artifact_refs=(specification,),
+            ),
+            event=RouterEvent(
+                event_id="evt-specification-approval-handoff-001",
+                kind=RouterEventKind.APPROVAL_GRANTED,
+                implementation_handoff=handoff,
+            ),
+            profile=self.profile,
+        )
+        self.assertEqual(RouterOutcome.SUSPEND, undeclared.outcome)
+        self.assertEqual("halt", undeclared.continuation.value)
+        self.assertEqual("implementation_handoff_undeclared", undeclared.blockers[0].code.value)
+
+        with self.assertRaisesRegex(ValidationError, "cannot share an event"):
+            RouterEvent(
+                event_id="evt-ticket-approval-conflict-001",
+                kind=RouterEventKind.APPROVAL_GRANTED,
+                implementation_handoff=handoff,
+                implementation_return=ImplementationReturn(
+                    ticket_reference=handoff.ticket_reference,
+                    status=ImplementationReturnStatus.COMPLETED,
+                    evidence_references=("evidence-handoff-conflict-01",),
+                    verification_references=("verification-handoff-conflict-01",),
+                    evidence_digest="sha256_0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+                    emitted_event=RouterEventKind.ACTION_COMPLETED,
+                ),
+            )
+
         frontend_payload = handoff.model_dump()
         frontend_payload.update(
             {
