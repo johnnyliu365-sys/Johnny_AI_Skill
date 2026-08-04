@@ -212,7 +212,7 @@
 
 | Field | Value |
 | --- | --- |
-| State | `IMPLEMENTATION_COMMITTED_PENDING_REVIEW` |
+| State | `DONE` |
 | Specification | `SPEC-AI-WORKFLOW-WORKFLOW-GOVERNANCE-20260805-01KZ6T8V2R4Y6B8D0F2H4J6M8P` |
 | Ticket | `01-enforce-continuation-and-handoff` |
 | Change / Context | `CHG-20260805-009` / `doc/context/workflow-governance/main.md` |
@@ -222,4 +222,4 @@
 | TDD red evidence | Initial completion/handoff tests failed at import with `ImportError: cannot import name 'CompletionActionKind'`; the P1 direct-core test then failed because a `BLOCKED` return produced `RouterOutcome.ADVANCE` instead of `SUSPEND`; the legacy profile test then failed because empty `accepted_completion_actions` was rejected. The handoff P1 test then proved bare approved `TICKETS` events advanced to `IMPLEMENT` instead of suspending, and the private-request boundary initially rejected `implementation_handoff` as an extra field. Locator/null/empty boundary cases were newly added but passed on the first run because strict `extra="forbid"`, opaque IDs, and `min_length` had already implemented the required protection; no false red output is claimed. |
 | Validation | `python -m unittest discover -s tests` — 73 passed; `python -m mypy --strict library tests` — 58 source files clean; the literal Windows PowerShell `python -m py_compile library/workflow_router/*.py` failed with `[Errno 22] Invalid argument` because `*.py` was not expanded; control plane approved `Get-ChildItem -LiteralPath 'library/workflow_router' -Filter '*.py' -File | ForEach-Object { python -m py_compile $_.FullName }`, which passed for the same module set; `git diff --check` passed. |
 | Smoke / privacy | Metadata-only `CompletionEvidence` rerouted `ARCHITECTURE → GRILL`; direct `BLOCKED` `ImplementationReturn` produced `SUSPEND + HALT`, no next stage, source, capability, or Context grant; bare approved ticket events halt on both direct and Private Router paths, while an allowlisted metadata-only handoff advances to `IMPLEMENT`. Handoffs are rejected on undeclared transitions, when paired with a return, without a frontend Composition Root reference, or with colliding control/implementation owners. The targeted contract field sentinel found no raw source/path/URI/prompt/secret/PII declaration. |
-| Review / merge | Control-plane review requested and received the P1 correction; renewed independent review and main integration remain pending. No main worktree was modified by the assigned implementation-owner commit. |
+| Review / merge | Independent control-plane review is `APPROVED`: `doc/reviews/workflow-governance/01-enforce-continuation-and-handoff-code-review.md`. Review reran 73 tests, strict typing for 58 source files, syntax compilation, whitespace checks, and a disposable-worktree mutation proof. Reviewed implementation was integrated into `main` by `2f545c8`; no push was performed. |

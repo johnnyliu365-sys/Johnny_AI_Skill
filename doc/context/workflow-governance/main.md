@@ -62,6 +62,6 @@ The Grill result is **GO to specification**. The project owner approved `SPEC-AI
 ## Ticket-plan handoff
 
 - Ticket: [01-enforce-continuation-and-handoff](../../../modules/tickets/workflow-governance/01-enforce-continuation-and-handoff.md).
-- State: `IN_PROGRESS`; project owner approved `01-enforce-continuation-and-handoff` on `2026-08-05`.
-- Assigned implementation worktree: `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` / `codex/implementation-private-router-saas-01`; it is clean but at `7769710`, so it must fast-forward to `main` before the first red test. Reviewer: Codex control-plane/current `main` worktree.
-- Implementation authority: only the named implementation worktree may begin, and only after fast-forwarding to `main`. The control-plane Agent remains reviewer. Any role override must be recorded in the ticket before implementation starts.
+- State: `DONE`; project owner approved `01-enforce-continuation-and-handoff` on `2026-08-05`, the named implementation worktree completed it at `a94e207`, and the control-plane review is `APPROVED`.
+- Assigned implementation worktree: `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` / `codex/implementation-private-router-saas-01`. Reviewer: Codex control-plane/current `main` worktree. Reviewed implementation was integrated by `2f545c8`.
+- Handoff: `doc/reviews/workflow-governance/01-enforce-continuation-and-handoff-code-review.md` records validation, mutation proof, known POC limits, and the next legal Router stage (`HANDOFF`). Any role override remains ticket-scoped and requires a project-owner record before implementation.

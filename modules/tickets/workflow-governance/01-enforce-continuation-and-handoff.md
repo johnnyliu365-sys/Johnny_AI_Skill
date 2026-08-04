@@ -5,7 +5,7 @@
 | Field | Value |
 | --- | --- |
 | ID | `01-enforce-continuation-and-handoff` |
-| State | `IN_PROGRESS` — corrective implementation is committed; renewed control-plane Code Review is pending |
+| State | `DONE` — review approved and implementation integrated into `main` |
 | Type | POC / vertical policy slice |
 | Implementation language | Python 3.11 for Router contracts/tests; Markdown for workflow, skill, and template policy artifacts |
 | Control-plane owner | Codex / current worktree |
@@ -18,7 +18,7 @@
 
 ### Worktree synchronization
 
-The assigned implementation worktree is a clean, separate Git worktree but is currently at `7769710`, behind this approved specification and ticket plan. Before writing the first red test, its implementation owner must fast-forward it to `main` and verify that the approved specification, ticket, and this assignment are present. It may not cherry-pick only source files or begin from the old baseline.
+The assigned implementation worktree fast-forwarded from `7769710` before TDD, finished at `a94e207`, and was integrated by reviewed merge commit `2f545c8`. It did not cherry-pick a partial source subset or begin implementation from the old baseline.
 
 ## User-observable outcome
 
@@ -140,13 +140,13 @@ Additionally run a source/privacy sentinel scan proving new contracts do not ser
 
 ## Completion definition and handoff
 
-- [ ] Every AC and TDD cut maps to a retained red test and green verification result.
-- [ ] `ACTION_COMPLETED` is processed before task completion; no safe next stage stops ceremonially.
-- [ ] Only declared authority gates wait; all failure cases halt without fallback.
-- [ ] Completion/handoff contracts are strongly typed and contain no raw Context data.
-- [ ] Future frontend tickets are blocked without all composition/DI evidence; non-frontend tickets require explicit `N/A` rationale.
-- [ ] Separate implementation owner and reviewer are recorded; the implementation commit is made in the implementation owner’s worktree.
-- [ ] Code Review §2.1 evidence and smoke test are complete; existing regression suites are green.
+- [x] Every AC and TDD cut maps to a retained test and green verification result; all changed fail-closed behaviours retain red evidence. The pre-existing Pydantic boundary protections passed first run and are explicitly recorded as a non-fabricated-red limitation.
+- [x] `ACTION_COMPLETED` is processed before task completion; no safe next stage stops ceremonially.
+- [x] Only declared authority gates wait; all failure cases halt without fallback.
+- [x] Completion/handoff contracts are strongly typed and contain no raw Context data.
+- [x] Future frontend tickets are blocked without all composition/DI evidence; non-frontend tickets require explicit `N/A` rationale.
+- [x] Separate implementation owner and reviewer are recorded; the implementation commit is made in the implementation owner’s worktree.
+- [x] Code Review §2.1 evidence and smoke test are complete; 73-test regression suite and strict typing are green. Review: `doc/reviews/workflow-governance/01-enforce-continuation-and-handoff-code-review.md` (`APPROVED`).
 
 ## Approval gate
 
