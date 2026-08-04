@@ -11,6 +11,10 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 NonBlankText = Annotated[str, Field(min_length=1)]
 PositiveTokenBudget = Annotated[int, Field(gt=0)]
+OpaqueMetadataId = Annotated[str, Field(pattern=r"^[a-z][a-z0-9-]{2,127}$")]
+RevisionDigest = Annotated[str, Field(pattern=r"^rev-[0-9a-f]{16,64}$")]
+EvidenceDigest = Annotated[str, Field(pattern=r"^sha256_[0-9a-f]{64}$")]
+CommitDigest = Annotated[str, Field(pattern=r"^git_[0-9a-f]{12,64}$")]
 
 
 class RouterModel(BaseModel):
@@ -87,6 +91,38 @@ class ContinuationDirective(str, Enum):
     HALT = "halt"
 
 
+class HumanWaitReason(str, Enum):
+    """The finite human decisions that may produce a non-error wait."""
+
+    SPECIFICATION_APPROVAL_REQUIRED = "specification_approval_required"
+    TICKET_APPROVAL_REQUIRED = "ticket_approval_required"
+    IMPLEMENTATION_OWNER_ASSIGNMENT_REQUIRED = "implementation_owner_assignment_required"
+
+
+class CompletionActionKind(str, Enum):
+    """The completed action classes that may be recorded as metadata-only evidence."""
+
+    DOCUMENTATION = "documentation"
+    IMPLEMENTATION = "implementation"
+    REVIEW = "review"
+    HANDOFF = "handoff"
+
+
+class TicketScope(str, Enum):
+    """Whether a ticket changes a formal UI boundary."""
+
+    FRONTEND = "frontend"
+    NON_FRONTEND = "non_frontend"
+
+
+class ImplementationReturnStatus(str, Enum):
+    """The finite results an implementation owner may return to the control plane."""
+
+    COMPLETED = "completed"
+    BLOCKED = "blocked"
+    CHANGE_DETECTED = "change_detected"
+
+
 class ArtifactKind(str, Enum):
     """Kinds of official sources and products that may be referenced."""
 
@@ -111,6 +147,10 @@ class BlockerCode(str, Enum):
     NO_DECLARED_TRANSITION = "no_declared_transition"
     SOURCE_UNAVAILABLE = "source_unavailable"
     CAPABILITY_UNAVAILABLE = "capability_unavailable"
+    INVALID_COMPLETION_EVIDENCE = "invalid_completion_evidence"
+    IMPLEMENTATION_RETURN_BLOCKED = "implementation_return_blocked"
+    IMPLEMENTATION_HANDOFF_REQUIRED = "implementation_handoff_required"
+    IMPLEMENTATION_HANDOFF_UNDECLARED = "implementation_handoff_undeclared"
 
 
 class ReferenceStatus(str, Enum):
@@ -136,11 +176,135 @@ class ArtifactRef(RouterModel):
         return (self.kind, self.identifier, self.uri)
 
 
+class HandoffConsumerFingerprint(RouterModel):
+    """Opaque consumer identity suitable for handoff metadata, never a local path or prompt."""
+
+    agent_profile_id: OpaqueMetadataId
+    profile_version: OpaqueMetadataId
+    worktree_fingerprint: OpaqueMetadataId
+    execution_fingerprint: OpaqueMetadataId
+
+
+class HandoffArtifactReference(RouterModel):
+    """An opaque source/revision/span mapping without URI, path, or source text."""
+
+    artifact_id: OpaqueMetadataId
+    revision_digest: RevisionDigest
+    source_span_id: OpaqueMetadataId
+    side_context_id: OpaqueMetadataId
+    consumer_fingerprint: HandoffConsumerFingerprint
+
+
+class CompletionEvidence(RouterModel):
+    """Typed completion metadata; a commit digest is evidence and never a route decision."""
+
+    completion_id: OpaqueMetadataId
+    action_kind: CompletionActionKind
+    artifact_references: tuple[HandoffArtifactReference, ...] = Field(min_length=1)
+    verification_references: tuple[OpaqueMetadataId, ...] = Field(min_length=1)
+    evidence_digest: EvidenceDigest
+    commit_digest: CommitDigest | None = None
+    emitted_event: RouterEventKind = RouterEventKind.ACTION_COMPLETED
+
+    @model_validator(mode="after")
+    def emits_only_completion(self) -> CompletionEvidence:
+        """Prevent a completed action from smuggling an unrelated workflow event."""
+
+        if self.emitted_event is not RouterEventKind.ACTION_COMPLETED:
+            raise ValueError("completion evidence must emit action_completed")
+        return self
+
+
+class FrontendCompositionContract(RouterModel):
+    """The required, explicit UI composition and dependency-injection handoff surface."""
+
+    component_boundaries: NonBlankText
+    composition_root_reference: OpaqueMetadataId
+    dependency_scope: NonBlankText
+    injected_interfaces: tuple[OpaqueMetadataId, ...] = Field(min_length=1)
+    production_bindings: NonBlankText
+    test_doubles: NonBlankText
+    state_acceptance: NonBlankText
+
+
+class ImplementationHandoff(RouterModel):
+    """Approved implementation input with opaque references and separated responsibilities."""
+
+    ticket_reference: OpaqueMetadataId
+    approved_spec_reference: OpaqueMetadataId
+    context_references: tuple[HandoffArtifactReference, ...] = Field(min_length=1)
+    acceptance_references: tuple[OpaqueMetadataId, ...] = Field(min_length=1)
+    tdd_references: tuple[OpaqueMetadataId, ...] = Field(min_length=1)
+    scope: TicketScope
+    frontend_composition: FrontendCompositionContract | None = None
+    non_frontend_reason: NonBlankText | None = None
+    control_owner_id: OpaqueMetadataId
+    implementation_owner_id: OpaqueMetadataId
+    reviewer_id: OpaqueMetadataId
+
+    @model_validator(mode="after")
+    def enforces_role_separation_and_frontend_contract(self) -> ImplementationHandoff:
+        """Reject owner collisions and incomplete frontend/non-frontend declarations."""
+
+        if self.control_owner_id == self.implementation_owner_id:
+            raise ValueError("control_owner_id and implementation_owner_id must be different")
+        if self.reviewer_id == self.implementation_owner_id:
+            raise ValueError("reviewer_id and implementation_owner_id must be different")
+        if self.scope is TicketScope.FRONTEND:
+            if self.frontend_composition is None or self.non_frontend_reason is not None:
+                raise ValueError("frontend handoffs require composition data and no non-frontend reason")
+        elif self.frontend_composition is not None or self.non_frontend_reason is None:
+            raise ValueError("non-frontend handoffs require an N/A reason and no frontend composition")
+        return self
+
+
+class ImplementationReturn(RouterModel):
+    """Metadata-only return from an implementation owner; changes re-enter Grill."""
+
+    ticket_reference: OpaqueMetadataId
+    status: ImplementationReturnStatus
+    evidence_references: tuple[OpaqueMetadataId, ...] = Field(min_length=1)
+    verification_references: tuple[OpaqueMetadataId, ...] = Field(min_length=1)
+    evidence_digest: EvidenceDigest
+    emitted_event: RouterEventKind
+
+    @model_validator(mode="after")
+    def status_matches_the_only_legal_return_event(self) -> ImplementationReturn:
+        """Keep scope changes on the requirement-change route rather than silent patching."""
+
+        if self.status is ImplementationReturnStatus.CHANGE_DETECTED:
+            if self.emitted_event is not RouterEventKind.REQUIREMENT_CHANGED:
+                raise ValueError("change_detected must emit requirement_changed")
+        elif self.emitted_event is not RouterEventKind.ACTION_COMPLETED:
+            raise ValueError("completed and blocked returns must emit action_completed")
+        return self
+
+
 class RouterEvent(RouterModel):
     """A unique, validated request to re-evaluate the workflow."""
 
     event_id: NonBlankText
     kind: RouterEventKind
+    completion_evidence: CompletionEvidence | None = None
+    implementation_return: ImplementationReturn | None = None
+    implementation_handoff: ImplementationHandoff | None = None
+
+    @model_validator(mode="after")
+    def completion_metadata_matches_event(self) -> RouterEvent:
+        """Allow legacy action events while rejecting completion evidence on unrelated events."""
+
+        if self.completion_evidence is not None and self.kind is not RouterEventKind.ACTION_COMPLETED:
+            raise ValueError("completion_evidence is valid only for action_completed")
+        if self.completion_evidence is not None and self.implementation_return is not None:
+            raise ValueError("completion_evidence and implementation_return cannot share an event")
+        if self.implementation_handoff is not None:
+            if self.completion_evidence is not None or self.implementation_return is not None:
+                raise ValueError("implementation_handoff cannot share an event with completion or return")
+            if self.kind is not RouterEventKind.APPROVAL_GRANTED:
+                raise ValueError("implementation_handoff requires approval_granted")
+        if self.implementation_return is not None and self.implementation_return.emitted_event is not self.kind:
+            raise ValueError("implementation_return event must match router event kind")
+        return self
 
 
 class RouterState(RouterModel):
@@ -217,6 +381,7 @@ class RouterDecision(RouterModel):
     context_view: ContextView | None = None
     eligible_capabilities: tuple[CapabilityRef, ...]
     blockers: tuple[RouterBlocker, ...] = ()
+    wait_reason: HumanWaitReason | None = None
 
     @model_validator(mode="after")
     def decision_shape_is_consistent(self) -> RouterDecision:
@@ -245,6 +410,13 @@ class RouterDecision(RouterModel):
             raise ValueError("stop decisions must target stopped")
         if self.outcome is RouterOutcome.STOP and self.continuation is not ContinuationDirective.HALT:
             raise ValueError("stop decisions must halt")
+        if self.continuation is ContinuationDirective.WAIT_FOR_HUMAN:
+            if self.outcome is not RouterOutcome.SUSPEND or self.wait_reason is None:
+                raise ValueError("human waits require a suspended decision and a precise wait reason")
+            if self.required_sources or self.eligible_capabilities or self.context_view is not None:
+                raise ValueError("human waits cannot grant Context or capabilities")
+        elif self.wait_reason is not None:
+            raise ValueError("only human waits may declare a wait reason")
         return self
 
 

@@ -26,6 +26,9 @@
 - 流程／Grill／ticket owner：`<AI／worktree>`；負責需求收斂、SPEC／ticket、實作前 handoff 與 review，不得實作此 ticket。
 - implementation owner：`<另一位 AI／worktree>`；負責 TDD、正式原始碼、測試、驗證與 commit。
 - reviewer：`<AI／worktree>`；不得與 implementation owner 共用 worktree。
+- **Owner override record**：`N/A`／`<專案負責人、日期、單張 ticket、例外範圍與原因>`；未有明確記錄不得由同一 Agent 承擔控制面與 implementation owner。
+- `ImplementationHandoff`：`<approved SPEC/ticket/Context/TDD 引用、角色 ID、前端組合引用（如適用）>`；只存 metadata reference，不可保存原文、prompt、path、URI、Secret 或 PII。
+- `ImplementationReturn`：`COMPLETED → ACTION_COMPLETED`／`BLOCKED → HALT`／`CHANGE_DETECTED → REQUIREMENT_CHANGED → Grill`；實作者不得靜默修改需求、公開契約、架構或 UI/DI 邊界。
 
 ### 前端組合與依賴注入（僅正式前端 ticket 必填）
 
@@ -35,7 +38,7 @@
 - production binding 與 test fake／stub：`<bindings>`
 - 元件輸入／輸出、loading／empty／error、權限與可存取性驗收：`<acceptance>`
 
-非前端 ticket 必須明記 `N/A` 與原因。禁止元件內建立全域 singleton、直接讀取環境，或隱式存取外部服務。
+非前端 ticket 必須填寫 **N/A reason**：`<為何不觸及正式 UI 邊界>`。禁止元件內建立全域 singleton、直接讀取環境，或隱式存取外部服務。
 
 - element 路徑：`modules/element/<language>/<feature>/<ticket-id>/`
 - 實際原始碼路徑：`<paths>`

@@ -8,7 +8,9 @@ from .contracts import (
     ArtifactKind,
     AuthorityState,
     CapabilityRef,
+    CompletionActionKind,
     DeliveryStage,
+    HumanWaitReason,
     NonBlankText,
     ProcessStage,
     RouterEventKind,
@@ -28,6 +30,9 @@ class TransitionRule(RouterModel):
     required_source_kinds: tuple[ArtifactKind, ...] = ()
     eligible_capabilities: tuple[CapabilityRef, ...] = ()
     requires_human_approval: bool = False
+    wait_reason: HumanWaitReason | None = None
+    accepted_completion_actions: tuple[CompletionActionKind, ...] = ()
+    requires_implementation_handoff: bool = False
 
     @model_validator(mode="after")
     def human_gate_is_a_declared_wait(self) -> TransitionRule:
@@ -35,12 +40,27 @@ class TransitionRule(RouterModel):
 
         if self.requires_human_approval and self.outcome is not RouterOutcome.SUSPEND:
             raise ValueError("human approval gates must suspend")
+        if self.requires_human_approval and self.wait_reason is None:
+            raise ValueError("human approval gates require a precise wait reason")
+        if not self.requires_human_approval and self.wait_reason is not None:
+            raise ValueError("only human approval gates may declare a wait reason")
         if self.outcome in (RouterOutcome.ADVANCE, RouterOutcome.RETRY) and self.next_stage is None:
             raise ValueError("advancing and retry rules require next_stage")
         if self.outcome is RouterOutcome.SUSPEND and self.next_stage is not None:
             raise ValueError("suspending rules must not declare a next stage")
         if self.outcome is RouterOutcome.STOP and self.next_stage is not ProcessStage.STOPPED:
             raise ValueError("stop rules must target stopped")
+        if self.event_kind is not RouterEventKind.ACTION_COMPLETED and self.accepted_completion_actions:
+            raise ValueError("only action_completed rules may accept completion actions")
+        if self.requires_implementation_handoff and (
+            self.current_stage is not ProcessStage.TICKETS
+            or self.event_kind is not RouterEventKind.APPROVAL_GRANTED
+            or self.outcome is not RouterOutcome.ADVANCE
+            or self.next_stage is not ProcessStage.IMPLEMENT
+        ):
+            raise ValueError(
+                "implementation handoff is valid only for ticket approval advancing to implement"
+            )
         return self
 
 
@@ -163,6 +183,7 @@ def build_router_poc_profile() -> ProjectWorkflowProfile:
                 next_stage=ProcessStage.GRILL,
                 required_source_kinds=(ArtifactKind.ARCHITECTURE,),
                 eligible_capabilities=(grill,),
+                accepted_completion_actions=(CompletionActionKind.DOCUMENTATION,),
             ),
             TransitionRule(
                 current_stage=ProcessStage.GRILL,
@@ -171,6 +192,7 @@ def build_router_poc_profile() -> ProjectWorkflowProfile:
                 next_stage=ProcessStage.CONTEXT,
                 required_source_kinds=(ArtifactKind.GRILL,),
                 eligible_capabilities=(context,),
+                accepted_completion_actions=(CompletionActionKind.DOCUMENTATION,),
             ),
             TransitionRule(
                 current_stage=ProcessStage.CONTEXT,
@@ -179,6 +201,7 @@ def build_router_poc_profile() -> ProjectWorkflowProfile:
                 next_stage=ProcessStage.SPEC,
                 required_source_kinds=(ArtifactKind.CONTEXT,),
                 eligible_capabilities=(specification,),
+                accepted_completion_actions=(CompletionActionKind.DOCUMENTATION,),
             ),
             TransitionRule(
                 current_stage=ProcessStage.SPEC,
@@ -187,6 +210,8 @@ def build_router_poc_profile() -> ProjectWorkflowProfile:
                 next_stage=None,
                 required_source_kinds=(ArtifactKind.SPEC,),
                 requires_human_approval=True,
+                wait_reason=HumanWaitReason.SPECIFICATION_APPROVAL_REQUIRED,
+                accepted_completion_actions=(CompletionActionKind.DOCUMENTATION,),
             ),
             TransitionRule(
                 current_stage=ProcessStage.SPEC,
@@ -204,6 +229,8 @@ def build_router_poc_profile() -> ProjectWorkflowProfile:
                 next_stage=None,
                 required_source_kinds=(ArtifactKind.TICKET,),
                 requires_human_approval=True,
+                wait_reason=HumanWaitReason.TICKET_APPROVAL_REQUIRED,
+                accepted_completion_actions=(CompletionActionKind.DOCUMENTATION,),
             ),
             TransitionRule(
                 current_stage=ProcessStage.TICKETS,
@@ -213,6 +240,7 @@ def build_router_poc_profile() -> ProjectWorkflowProfile:
                 required_authority=AuthorityState.APPROVED,
                 required_source_kinds=(ArtifactKind.TICKET,),
                 eligible_capabilities=(implementation,),
+                requires_implementation_handoff=True,
             ),
             TransitionRule(
                 current_stage=ProcessStage.IMPLEMENT,
@@ -221,6 +249,7 @@ def build_router_poc_profile() -> ProjectWorkflowProfile:
                 next_stage=ProcessStage.SMOKE_TEST,
                 required_source_kinds=(ArtifactKind.TICKET,),
                 eligible_capabilities=(smoke_test,),
+                accepted_completion_actions=(CompletionActionKind.IMPLEMENTATION,),
             ),
             TransitionRule(
                 current_stage=ProcessStage.SMOKE_TEST,
@@ -245,6 +274,7 @@ def build_router_poc_profile() -> ProjectWorkflowProfile:
                 next_stage=ProcessStage.HANDOFF,
                 required_source_kinds=(ArtifactKind.TICKET,),
                 eligible_capabilities=(handoff,),
+                accepted_completion_actions=(CompletionActionKind.REVIEW,),
             ),
             TransitionRule(
                 current_stage=ProcessStage.HANDOFF,
@@ -252,6 +282,15 @@ def build_router_poc_profile() -> ProjectWorkflowProfile:
                 outcome=RouterOutcome.STOP,
                 next_stage=ProcessStage.STOPPED,
                 required_source_kinds=(ArtifactKind.TICKET,),
+                accepted_completion_actions=(CompletionActionKind.HANDOFF,),
+            ),
+            TransitionRule(
+                current_stage=ProcessStage.IMPLEMENT,
+                event_kind=RouterEventKind.REQUIREMENT_CHANGED,
+                outcome=RouterOutcome.ADVANCE,
+                next_stage=ProcessStage.GRILL,
+                required_source_kinds=(ArtifactKind.CHANGE,),
+                eligible_capabilities=(grill,),
             ),
         ),
     )

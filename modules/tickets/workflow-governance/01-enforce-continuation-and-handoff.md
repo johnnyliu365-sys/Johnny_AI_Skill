@@ -5,7 +5,7 @@
 | Field | Value |
 | --- | --- |
 | ID | `01-enforce-continuation-and-handoff` |
-| State | `IN_PROGRESS` — owner-approved on `2026-08-05`; implementation begins only after the assigned worktree fast-forwards to `main` |
+| State | `IN_PROGRESS` — corrective implementation is committed; renewed control-plane Code Review is pending |
 | Type | POC / vertical policy slice |
 | Implementation language | Python 3.11 for Router contracts/tests; Markdown for workflow, skill, and template policy artifacts |
 | Control-plane owner | Codex / current worktree |
@@ -118,6 +118,25 @@ git diff --check
 ```
 
 Additionally run a source/privacy sentinel scan proving new contracts do not serialize raw ContextPacket/source/prompt/path/URI/secret/PII values, and a documentation-link/template contract check. Any unavailable tool or changed command must be returned to the control plane before substitution.
+
+## Implementation evidence (2026-08-05)
+
+- Red (typed Router contract): `python -m unittest discover -s tests -p 'test_workflow_router.py'` failed before the implementation with `ImportError: cannot import name 'CompletionActionKind' from 'library.workflow_router'`.
+- Red (Private Router return adapter): `python -m unittest discover -s tests -p 'test_private_router_metadata_gate.py'` failed before the implementation with the same missing-contract import error.
+- Red (policy/template drift): the first documentation-contract run of `test_workflow_router.py` failed 11 assertions because `Workflow.md`, `AGENTS.md`, the shared skill, and templates lacked the required completion/handoff terms.
+- Red (P1 direct-core bypass): `test_blocked_implementation_return_halts_the_direct_router_entrypoint` failed with expected `RouterOutcome.SUSPEND` but actual `RouterOutcome.ADVANCE`, proving that `RouterEngine` bypassed the Private Router's blocked-return guard.
+- Red (P1 ticket-approval handoff bypass, direct Router): `test_ticket_approval_requires_a_valid_handoff_at_the_direct_router_entrypoint` failed before the correction with expected `RouterOutcome.SUSPEND` but actual `RouterOutcome.ADVANCE`. This proved that the default POC `TICKETS + APPROVAL_GRANTED -> IMPLEMENT` rule could be entered with a bare `RouterEvent` and no named-owner/Composition Root handoff.
+- Red (P1 ticket-approval handoff boundary, Private Router): the new `implementation_handoff` field passed by the private-path test helper was rejected as `Extra inputs are not permitted` by `RouterRequestEnvelope`; all nine private-router tests consequently errored before the metadata-only request boundary was extended.
+- Red (legacy profile compatibility): `test_legacy_action_completed_rule_routes_without_new_evidence_but_rejects_it_when_undeclared` first failed while constructing `TransitionRule` with `Value error, action_completed rules require accepted completion actions`.
+- Boundary baseline (not a fabricated red): the new seven-form forbidden `source_path` and required-value Pydantic boundary tests passed on their first execution because the existing `RouterModel(extra="forbid", strict=True)`, opaque-ID validation, and collection `min_length` already rejected them. The protected equivalences are: empty and whitespace owner/ID values are both invalid; `None`, empty tuple, empty list, and empty dict collections are all invalid.
+- Green: `python -m unittest discover -s tests` — 71 tests passed after the core Router fail-closed and legacy-profile corrections.
+- Green (P1 correction): `python -m unittest discover -s tests` passed 73 tests after adding the Profile-declared handoff requirement and the direct/indirect path tests. A bare approved ticket event now returns `SUSPEND + HALT` with `implementation_handoff_required` (direct) or `ROUTER_POLICY_BLOCKED` (private projection); a valid non-frontend metadata-only handoff advances exactly to `IMPLEMENT`.
+- Strict types: `python -m mypy --strict library tests` — no issues in 58 source files.
+- Compile: the ticket's literal `python -m py_compile library/workflow_router/*.py` failed on Windows PowerShell with `[Errno 22] Invalid argument` because the shell passed `*.py` literally. Control plane approved the equivalent `Get-ChildItem -LiteralPath 'library/workflow_router' -Filter '*.py' -File | ForEach-Object { python -m py_compile $_.FullName }`; it passed for the same module set.
+- Smoke/privacy: metadata-only `CompletionEvidence` rerouted `ARCHITECTURE → GRILL` with exactly one `confirm_assumptions` action; direct `BLOCKED` `ImplementationReturn` now returns `SUSPEND + HALT` with no source/capability/context grant; a legacy empty-action-tuple rule advances only for legacy `ACTION_COMPLETED` and halts when new evidence is supplied. Direct `RouterEngine` and indirect `PrivateRouterClient` ticket-approval paths both reach the same Profile-gated decision: bare requests halt without grants, while a declared metadata-only handoff advances. Handoffs are rejected when attached to an undeclared `SPEC` transition, when paired with an implementation return, when a frontend handoff lacks its Composition Root reference, or when control/implementation owner IDs collide. The targeted handoff/event/request field sentinel found no raw source/path/URI/prompt/secret/PII field declarations.
+- Formatting: `git diff --check` — passed.
+- Scope: implementation worktree only; no target-project runtime, network, persistence, secret, or raw Context transfer added.
+- Corrective implementation commits: `eb4bb8f` (`fix: halt blocked implementation returns`), `7faa590` (`fix: preserve legacy completion rules`), `af6bf43` (`fix: require ticket implementation handoff`), and `a17bec3` (`test: cover implementation handoff shape`). Earlier `d7e40cf` / `8bd984c` / `423c41b` were externally advanced during the first provenance audit; these corrections are independently authored in the assigned implementation worktree.
 
 ## Completion definition and handoff
 

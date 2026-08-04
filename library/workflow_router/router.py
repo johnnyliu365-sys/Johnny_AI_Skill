@@ -18,6 +18,8 @@ from .contracts import (
     ContextPacket,
     ContextReference,
     ContextView,
+    HumanWaitReason,
+    ImplementationReturnStatus,
     NonBlankText,
     PositiveTokenBudget,
     ReferenceStatus,
@@ -75,6 +77,14 @@ class RouterEngine:
                     f"profile delivery stage {profile.delivery_stage.value}"
                 ),
             )
+        if (
+            event.implementation_return is not None
+            and event.implementation_return.status is ImplementationReturnStatus.BLOCKED
+        ):
+            return self._suspend(
+                code=BlockerCode.IMPLEMENTATION_RETURN_BLOCKED,
+                detail="implementation owner returned a blocked result",
+            )
         rule = profile.rule_for(current_stage=state.stage, event_kind=event.kind)
         if rule is None:
             return self._suspend(
@@ -89,6 +99,25 @@ class RouterEngine:
                     f"{rule.required_authority.value} authority"
                 ),
             )
+        if rule.requires_implementation_handoff and event.implementation_handoff is None:
+            return self._suspend(
+                code=BlockerCode.IMPLEMENTATION_HANDOFF_REQUIRED,
+                detail="this declared ticket approval requires an implementation handoff",
+            )
+        if not rule.requires_implementation_handoff and event.implementation_handoff is not None:
+            return self._suspend(
+                code=BlockerCode.IMPLEMENTATION_HANDOFF_UNDECLARED,
+                detail="implementation handoff is not declared for this profile transition",
+            )
+        if event.completion_evidence is not None:
+            if event.completion_evidence.action_kind not in rule.accepted_completion_actions:
+                return self._suspend(
+                    code=BlockerCode.INVALID_COMPLETION_EVIDENCE,
+                    detail=(
+                        f"{state.stage.value}/{event.kind.value} does not accept "
+                        f"{event.completion_evidence.action_kind.value} completion evidence"
+                    ),
+                )
         required_sources, missing, ambiguous = self._resolve_required_sources(
             artifacts=state.artifact_refs,
             required_kinds=rule.required_source_kinds,
@@ -110,6 +139,7 @@ class RouterEngine:
                 code=BlockerCode.AUTHORITY_REQUIRED,
                 detail="this declared workflow gate requires an explicit human approval",
                 continuation=ContinuationDirective.WAIT_FOR_HUMAN,
+                wait_reason=rule.wait_reason,
             )
         return RouterDecision(
             outcome=rule.outcome,
@@ -150,6 +180,7 @@ class RouterEngine:
         code: BlockerCode,
         detail: str,
         continuation: ContinuationDirective = ContinuationDirective.HALT,
+        wait_reason: HumanWaitReason | None = None,
     ) -> RouterDecision:
         """Build a fail-closed decision without inventing a next stage."""
 
@@ -160,6 +191,7 @@ class RouterEngine:
             required_sources=(),
             eligible_capabilities=(),
             blockers=(RouterBlocker(code=code, detail=detail),),
+            wait_reason=wait_reason,
         )
 
 
