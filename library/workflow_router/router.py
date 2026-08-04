@@ -14,10 +14,12 @@ from .contracts import (
     AuthorityState,
     BlockerCode,
     ConsumerFingerprint,
+    ContinuationDirective,
     ContextPacket,
     ContextReference,
     ContextView,
     NonBlankText,
+    PositiveTokenBudget,
     ReferenceStatus,
     ResolvedContext,
     RouterBlocker,
@@ -87,7 +89,7 @@ class RouterEngine:
                     f"{rule.required_authority.value} authority"
                 ),
             )
-        required_sources, missing = self._resolve_required_sources(
+        required_sources, missing, ambiguous = self._resolve_required_sources(
             artifacts=state.artifact_refs,
             required_kinds=rule.required_source_kinds,
         )
@@ -97,8 +99,25 @@ class RouterEngine:
                 code=BlockerCode.MISSING_REQUIRED_SOURCE,
                 detail=f"missing required source kinds: {missing_names}",
             )
+        if ambiguous:
+            ambiguous_names = ", ".join(kind.value for kind in ambiguous)
+            return self._suspend(
+                code=BlockerCode.AMBIGUOUS_REQUIRED_SOURCE,
+                detail=f"multiple declared sources match required kinds: {ambiguous_names}",
+            )
+        if rule.requires_human_approval:
+            return self._suspend(
+                code=BlockerCode.AUTHORITY_REQUIRED,
+                detail="this declared workflow gate requires an explicit human approval",
+                continuation=ContinuationDirective.WAIT_FOR_HUMAN,
+            )
         return RouterDecision(
             outcome=rule.outcome,
+            continuation=(
+                ContinuationDirective.AUTO_CONTINUE
+                if rule.outcome in (RouterOutcome.ADVANCE, RouterOutcome.RETRY)
+                else ContinuationDirective.HALT
+            ),
             next_stage=rule.next_stage,
             required_sources=required_sources,
             eligible_capabilities=rule.eligible_capabilities,
@@ -109,25 +128,34 @@ class RouterEngine:
         *,
         artifacts: tuple[ArtifactRef, ...],
         required_kinds: tuple[ArtifactKind, ...],
-    ) -> tuple[tuple[ArtifactRef, ...], tuple[ArtifactKind, ...]]:
-        """Select only sources declared by the matching profile rule."""
+    ) -> tuple[tuple[ArtifactRef, ...], tuple[ArtifactKind, ...], tuple[ArtifactKind, ...]]:
+        """Select one exact source per kind or fail closed rather than inflating Context."""
 
         selected: list[ArtifactRef] = []
         missing: list[ArtifactKind] = []
+        ambiguous: list[ArtifactKind] = []
         for required_kind in required_kinds:
             matching = tuple(artifact for artifact in artifacts if artifact.kind is required_kind)
             if not matching:
                 missing.append(required_kind)
+            elif len(matching) > 1:
+                ambiguous.append(required_kind)
             else:
-                selected.extend(matching)
-        return (tuple(selected), tuple(missing))
+                selected.append(matching[0])
+        return (tuple(selected), tuple(missing), tuple(ambiguous))
 
     @staticmethod
-    def _suspend(*, code: BlockerCode, detail: str) -> RouterDecision:
+    def _suspend(
+        *,
+        code: BlockerCode,
+        detail: str,
+        continuation: ContinuationDirective = ContinuationDirective.HALT,
+    ) -> RouterDecision:
         """Build a fail-closed decision without inventing a next stage."""
 
         return RouterDecision(
             outcome=RouterOutcome.SUSPEND,
+            continuation=continuation,
             next_stage=None,
             required_sources=(),
             eligible_capabilities=(),
@@ -148,10 +176,14 @@ class ContextResolver:
         required_sources: tuple[ArtifactRef, ...],
         target_artifact: ArtifactRef,
         consumer: ConsumerFingerprint,
+        token_budget: PositiveTokenBudget = 1_000,
     ) -> ResolvedContext:
         """Resolve minimum sources into a non-persistent packet plus metadata descriptor."""
 
         snippets = tuple(self._read_declared_source(source=source) for source in required_sources)
+        estimated_packet_tokens = sum(self._estimate_tokens(snippet.text) for snippet in snippets)
+        if estimated_packet_tokens > token_budget:
+            raise ValueError("declared ContextPacket exceeds its Router token budget")
         references = tuple(
             self._reference_for(
                 event_id=event_id,
@@ -167,7 +199,7 @@ class ContextResolver:
             view_id=view_id,
             purpose=f"source view for {target_artifact.kind.value}:{target_artifact.identifier}",
             references=references,
-            token_budget=1_000,
+            token_budget=token_budget,
             invalidation_events=(
                 RouterEventKind.REQUIREMENT_CHANGED,
                 RouterEventKind.APPROVAL_DENIED,
@@ -223,6 +255,12 @@ class ContextResolver:
             consumer_fingerprint=consumer,
             target_artifact=target_artifact,
         )
+
+    @staticmethod
+    def _estimate_tokens(text: NonBlankText) -> int:
+        """Return a deterministic local ceiling check; this is not a provider usage claim."""
+
+        return (len(text.encode("utf-8")) + 3) // 4
 
     @staticmethod
     def _stable_id(*, prefix: str, parts: Sequence[str]) -> str:

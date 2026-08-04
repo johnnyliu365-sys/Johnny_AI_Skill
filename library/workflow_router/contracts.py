@@ -79,6 +79,14 @@ class RouterOutcome(str, Enum):
     STOP = "stop"
 
 
+class ContinuationDirective(str, Enum):
+    """The sole safe disposition after a Router decision."""
+
+    AUTO_CONTINUE = "auto_continue"
+    WAIT_FOR_HUMAN = "wait_for_human"
+    HALT = "halt"
+
+
 class ArtifactKind(str, Enum):
     """Kinds of official sources and products that may be referenced."""
 
@@ -99,6 +107,7 @@ class BlockerCode(str, Enum):
     AUTHORITY_REQUIRED = "authority_required"
     DELIVERY_STAGE_MISMATCH = "delivery_stage_mismatch"
     MISSING_REQUIRED_SOURCE = "missing_required_source"
+    AMBIGUOUS_REQUIRED_SOURCE = "ambiguous_required_source"
     NO_DECLARED_TRANSITION = "no_declared_transition"
     SOURCE_UNAVAILABLE = "source_unavailable"
     CAPABILITY_UNAVAILABLE = "capability_unavailable"
@@ -202,6 +211,7 @@ class RouterDecision(RouterModel):
     """The only legal output of the pure router engine."""
 
     outcome: RouterOutcome
+    continuation: ContinuationDirective
     next_stage: ProcessStage | None
     required_sources: tuple[ArtifactRef, ...]
     context_view: ContextView | None = None
@@ -212,12 +222,29 @@ class RouterDecision(RouterModel):
     def decision_shape_is_consistent(self) -> RouterDecision:
         """Ensure advance and fail-closed outcomes cannot be represented ambiguously."""
 
-        if self.outcome is RouterOutcome.ADVANCE and self.next_stage is None:
-            raise ValueError("advance decisions require next_stage")
+        if self.outcome in (RouterOutcome.ADVANCE, RouterOutcome.RETRY) and self.next_stage is None:
+            raise ValueError("advancing and retry decisions require next_stage")
+        if (
+            self.outcome is RouterOutcome.ADVANCE
+            and self.continuation is not ContinuationDirective.AUTO_CONTINUE
+        ):
+            raise ValueError("advance decisions must auto-continue")
+        if (
+            self.outcome is RouterOutcome.RETRY
+            and self.continuation is not ContinuationDirective.AUTO_CONTINUE
+        ):
+            raise ValueError("retry decisions must auto-continue")
         if self.outcome is RouterOutcome.SUSPEND and self.next_stage is not None:
             raise ValueError("suspend decisions must not invent a next_stage")
+        if (
+            self.outcome is RouterOutcome.SUSPEND
+            and self.continuation is ContinuationDirective.AUTO_CONTINUE
+        ):
+            raise ValueError("suspend decisions must wait or halt")
         if self.outcome is RouterOutcome.STOP and self.next_stage is not ProcessStage.STOPPED:
             raise ValueError("stop decisions must target stopped")
+        if self.outcome is RouterOutcome.STOP and self.continuation is not ContinuationDirective.HALT:
+            raise ValueError("stop decisions must halt")
         return self
 
 

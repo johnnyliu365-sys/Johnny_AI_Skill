@@ -5,7 +5,7 @@
 | Feature cluster | `private-router-saas` |
 | Agent / worktree | Codex / current worktree |
 | Shared baseline | `cbdfa7751c21c0355cb3aaaae5b7f045d9e84154` |
-| State | `TICKET_PLAN_PENDING_OWNER_APPROVAL` |
+| State | `HANDOFF_COMPLETE` |
 | Responsibility boundary | Private Router SaaS POC contracts, local privacy boundary, private-decision architecture, and user-facing terminology mapping |
 | Prohibited changes | No production billing, model hosting, raw-content upload, company-project runtime dependency, external deployment, or change to existing approved Router POC behaviour |
 
@@ -157,6 +157,13 @@ flowchart LR
 - Ticket status: `PENDING_OWNER_APPROVAL`
 - Baseline: `d378076` (`docs: approve private router saas specification`)
 - Approval required before source or test changes: explicit approval of ticket `01-private-router-metadata-gate`.
+
+## Implementation Evidence
+
+- Ticket approval: project owner approved `01-private-router-metadata-gate` on `2026-08-04`.
+- Source boundary: `library/workflow_router/private_router.py` adds strict metadata envelopes, fake entitlement/service ports, replay checking, Context gating, and a bounded automatic continuation runner.
+- Continuation contract: `AUTO_CONTINUE` proceeds only with a valid typed grant; `WAIT_FOR_HUMAN` is limited to declared specification/ticket approval gates; all invalid, denied, unavailable, mismatched, replayed, undeclared, or budget-exceeded cases `HALT`.
+- Verification complete: 64 tests, strict type checking, bytecode compilation, privacy sentinel checks, and [Code Review §2.1 traceability](../../reviews/private-router-saas/01-private-router-metadata-gate-code-review.md).
 
 ### `SPEC-AI-WORKFLOW-PRIVATE-ROUTER-SAAS-20260804-01KZ49YM6HA658QF7ME2A5BR26`｜Private Router SaaS POC
 

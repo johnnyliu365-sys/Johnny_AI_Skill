@@ -8,6 +8,8 @@ from io import StringIO
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
+from pydantic import ValidationError
+
 from library.workflow_router import (
     ArtifactKind,
     ArtifactRef,
@@ -87,21 +89,28 @@ class WorkflowRouterTests(unittest.TestCase):
         self.assertEqual(RouterOutcome.ADVANCE, go.outcome)
         self.assertEqual(ProcessStage.ARCHITECTURE, go.next_stage)
 
-    def test_missing_approval_and_no_go_fail_closed(self) -> None:
+    def test_human_approval_wait_and_no_go_are_explicit(self) -> None:
+        specification = ArtifactRef(
+            kind=ArtifactKind.SPEC,
+            identifier="SPEC-ROUTER-POC-001",
+            uri="spec://router-framework/poc-001",
+            revision="1",
+        )
         pending_state = RouterState(
             project_id="router-framework-poc",
-            stage=ProcessStage.WAYFINDER,
+            stage=ProcessStage.SPEC,
             authority_state=AuthorityState.PENDING,
             delivery_stage=DeliveryStage.POC,
-            artifact_refs=(self.wayfinder_output,),
+            artifact_refs=(specification,),
         )
         suspended = self.engine.decide(
             state=pending_state,
-            event=RouterEvent(event_id="evt-go-pending", kind=RouterEventKind.WAYFINDER_GO),
+            event=RouterEvent(event_id="evt-spec-pending", kind=RouterEventKind.ACTION_COMPLETED),
             profile=self.profile,
         )
         self.assertEqual(RouterOutcome.SUSPEND, suspended.outcome)
         self.assertIsNone(suspended.next_stage)
+        self.assertEqual("wait_for_human", suspended.continuation.value)
 
         no_go = self.engine.decide(
             state=RouterState(
@@ -131,6 +140,27 @@ class WorkflowRouterTests(unittest.TestCase):
         )
         self.assertEqual(RouterOutcome.SUSPEND, decision.outcome)
         self.assertEqual("delivery_stage_mismatch", decision.blockers[0].code.value)
+
+    def test_ambiguous_required_source_kind_fails_closed_instead_of_loading_all_matches(self) -> None:
+        alternate_goal = ArtifactRef(
+            kind=ArtifactKind.PROJECT_GOAL,
+            identifier="router-framework-goal-alternate",
+            uri="project://router-framework/goal-alternate",
+            revision="1",
+        )
+        decision = self.engine.decide(
+            state=RouterState(
+                project_id="router-framework-poc",
+                stage=ProcessStage.INTAKE,
+                authority_state=AuthorityState.NOT_REQUIRED,
+                delivery_stage=DeliveryStage.POC,
+                artifact_refs=(self.goal, alternate_goal),
+            ),
+            event=RouterEvent(event_id="evt-ambiguous-source-001", kind=RouterEventKind.INTAKE),
+            profile=self.profile,
+        )
+        self.assertEqual(RouterOutcome.SUSPEND, decision.outcome)
+        self.assertEqual("ambiguous_required_source", decision.blockers[0].code.value)
 
     def test_each_new_reference_has_a_new_id_but_retry_is_idempotent(self) -> None:
         source = ArtifactRef(
@@ -238,7 +268,7 @@ class WorkflowRouterTests(unittest.TestCase):
         )
         self.assertEqual(ReferenceStatus.INVALIDATED, invalidated[0].status)
 
-    def test_langgraph_routes_advance_to_complete_and_suspend_to_blocked(self) -> None:
+    def test_langgraph_routes_auto_continue_human_wait_and_failure_separately(self) -> None:
         graph = build_router_graph(engine=self.engine)
         completed = RouterGraphState.model_validate(
             graph.invoke(
@@ -257,7 +287,7 @@ class WorkflowRouterTests(unittest.TestCase):
         )
         assert completed.decision is not None
         self.assertEqual(RouterOutcome.ADVANCE, completed.decision.outcome)
-        self.assertEqual("complete", completed.graph_terminal)
+        self.assertEqual("continue", completed.graph_terminal)
 
         blocked = RouterGraphState.model_validate(
             graph.invoke(
@@ -271,7 +301,7 @@ class WorkflowRouterTests(unittest.TestCase):
                     ),
                     router_event=RouterEvent(
                         event_id="evt-graph-002",
-                        kind=RouterEventKind.WAYFINDER_GO,
+                        kind=RouterEventKind.ACTION_COMPLETED,
                     ),
                     profile=self.profile,
                 )
@@ -279,7 +309,33 @@ class WorkflowRouterTests(unittest.TestCase):
         )
         assert blocked.decision is not None
         self.assertEqual(RouterOutcome.SUSPEND, blocked.decision.outcome)
-        self.assertEqual("blocked", blocked.graph_terminal)
+        self.assertEqual("halted", blocked.graph_terminal)
+
+        specification = ArtifactRef(
+            kind=ArtifactKind.SPEC,
+            identifier="SPEC-ROUTER-POC-001",
+            uri="spec://router-framework/poc-001",
+            revision="1",
+        )
+        waiting = RouterGraphState.model_validate(
+            graph.invoke(
+                RouterGraphState(
+                    router_state=RouterState(
+                        project_id="router-framework-poc",
+                        stage=ProcessStage.SPEC,
+                        authority_state=AuthorityState.PENDING,
+                        delivery_stage=DeliveryStage.POC,
+                        artifact_refs=(specification,),
+                    ),
+                    router_event=RouterEvent(
+                        event_id="evt-graph-003",
+                        kind=RouterEventKind.ACTION_COMPLETED,
+                    ),
+                    profile=self.profile,
+                )
+            )
+        )
+        self.assertEqual("waiting", waiting.graph_terminal)
 
     def test_agents_mcp_and_temporal_adapters_load_without_external_services(self) -> None:
         from library.workflow_router.integrations import (
@@ -331,6 +387,26 @@ class WorkflowRouterTests(unittest.TestCase):
             )
         )
         self.assertEqual(RouterOutcome.ADVANCE, activity_decision.outcome)
+
+    def test_temporal_approval_signal_requires_matching_authority_state(self) -> None:
+        from library.workflow_router.temporal_runtime import ApprovalSignal
+
+        granted = ApprovalSignal(
+            router_event=RouterEvent(
+                event_id="evt-approval-001",
+                kind=RouterEventKind.APPROVAL_GRANTED,
+            ),
+            authority_state=AuthorityState.APPROVED,
+        )
+        self.assertEqual(AuthorityState.APPROVED, granted.authority_state)
+        with self.assertRaises(ValidationError):
+            ApprovalSignal(
+                router_event=RouterEvent(
+                    event_id="evt-approval-002",
+                    kind=RouterEventKind.APPROVAL_GRANTED,
+                ),
+                authority_state=AuthorityState.PENDING,
+            )
 
 
 class ContextLoadTelemetryTests(unittest.TestCase):
@@ -519,50 +595,21 @@ class ContextLoadTelemetryTests(unittest.TestCase):
         self.assertFalse(report.reduction_verified)
         self.assertEqual("undeclared_source", report.issues[0].code.value)
 
-    def test_budget_breach_rejects_reduction_claim(self) -> None:
+    def test_budget_breach_is_rejected_before_context_packet_creation(self) -> None:
         oversized_snippet = SourceSnippet(
             source=self.goal,
             span="goal.oversized",
             text="x" * 4_004,
         )
-        oversized_resolved = ContextResolver(
-            source_gateway=InMemorySourceGateway(snippets=(oversized_snippet,))
-        ).resolve(
-            event_id=self.event.event_id,
-            required_sources=self.decision.required_sources,
-            target_artifact=self.target,
-            consumer=self.agent.consumer,
-        )
-        baseline = ContextUsageRecord.from_baseline(
-            run_id="baseline-run-004",
-            comparison_group_id="wayfinder-poc",
-            attempt=1,
-            project_snapshot_id="snapshot-001",
-            stage=ProcessStage.INTAKE,
-            delivery_stage=DeliveryStage.POC,
-            source_snippets=(oversized_snippet,),
-            agent=self.agent.model_copy(update={"provider_input_tokens": 4_000}),
-            acceptance=RunAcceptance.PASSED,
-            human_correction_required=False,
-        )
-        router = ContextUsageRecord.from_router(
-            run_id="router-run-004",
-            comparison_group_id="wayfinder-poc",
-            attempt=1,
-            project_snapshot_id="snapshot-001",
-            state=self.state,
-            event=self.event,
-            profile=self.profile,
-            decision=self.decision,
-            resolved_context=oversized_resolved,
-            agent=self.agent,
-            acceptance=RunAcceptance.PASSED,
-            human_correction_required=False,
-        )
-        report = ContextUsageValidator().validate(records=(baseline, router))
-        self.assertTrue(router.context.budget_exceeded)
-        self.assertFalse(report.evidence_valid)
-        self.assertEqual("context_budget_exceeded", report.issues[0].code.value)
+        with self.assertRaisesRegex(ValueError, "exceeds its Router token budget"):
+            ContextResolver(
+                source_gateway=InMemorySourceGateway(snippets=(oversized_snippet,))
+            ).resolve(
+                event_id=self.event.event_id,
+                required_sources=self.decision.required_sources,
+                target_artifact=self.target,
+                consumer=self.agent.consumer,
+            )
 
     def test_cli_accepts_only_a_verified_local_jsonl(self) -> None:
         baseline = ContextUsageRecord.from_baseline(

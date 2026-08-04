@@ -15,6 +15,16 @@ Treat this plugin as an external control plane. It supplies workflow guidance an
 4. Resolve only the current stage's required sources and capabilities. Keep shared Context small; use the router's side-context reference rules for a bounded, traceable source-span read.
 5. When the user asks whether routing reduced context load, follow `../../library/workflow_router/README.md`. Record only metadata in a local ignored JSONL file and do not claim reduction unless matched baseline/router runs contain provider-reported input-token usage and pass the telemetry validator.
 
+## Safe automatic continuation
+
+After each completed action, classify the next Router decision before replying. Do not stop merely because one stage has completed.
+
+1. **`AUTO_CONTINUE`** — when the required evidence is present, the next stage is declared, exactly one capability is selected, and no new human authority is needed, immediately read only that next stage's minimum sources and continue the workflow in the same task. Complete one legal action at a time, emit its new event, and re-evaluate. Do not ask the user for a ceremonial “continue?” confirmation.
+2. **`WAIT_FOR_HUMAN`** — pause only at a Profile-declared approval or user-decision gate, or before an irreversible external side effect. State the precise approval or decision required; do not describe it as a generic block.
+3. **`HALT`** — invalid or missing source, unavailable capability, denied authority, validation failure, security/privacy issue, failed external boundary, or an undeclared transition stops the routed path. Do not guess a next stage, reuse a local fallback Profile, or wait indefinitely.
+
+This skill can guide a currently active Codex or Claude task to continue through safe stages. It cannot independently create a new model turn, bypass the host's approval system, or prevent users from disabling the plugin. The local Router runner's safety ceiling remains authoritative.
+
 ## Takeover flow
 
 Follow this closed loop:
@@ -24,7 +34,7 @@ INTAKE → WAYFINDER → ARCHITECTURE → GRILL → CONTEXT → SPEC → TICKETS
       → IMPLEMENT → SMOKE_TEST → REVIEW → HANDOFF
 ```
 
-- A Wayfinder `NO-GO`, denied approval, invalid source, or missing required authority stops or suspends the loop.
+- A Wayfinder `NO-GO`, denied approval, invalid source, unavailable capability, or missing required authority halts the loop. Only an explicitly declared approval gate waits for a human.
 - A requirement change returns the work to change control and the relevant earlier gate; it does not patch an already-approved ticket in place.
 - Read only the section and capability selected by the router. Do not load the full library, every module, or unrelated skill into shared Context.
 

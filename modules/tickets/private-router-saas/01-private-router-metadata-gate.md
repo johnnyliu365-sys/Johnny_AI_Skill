@@ -5,7 +5,7 @@
 | 欄位 | 內容 |
 | --- | --- |
 | ID | `01-private-router-metadata-gate` |
-| 狀態 | `PENDING_OWNER_APPROVAL` |
+| 狀態 | `DONE` |
 | 類型 | POC／垂直切片 |
 | Owner | Codex（目前 worktree） |
 | Reviewer | 專案負責人指定的 reviewer |
@@ -20,6 +20,12 @@
 
 只要資料缺失、輸入無效、entitlement 不足、服務回應無效或 fake transport 失敗，流程停止於明確的 fail-closed 結果，不能猜測下一步、不能讀取原文，也不能呼叫下游 Agent／Skill。
 
+## 核准後補充：安全自動接續
+
+工單已於 `2026-08-04` 由專案負責人核准，並追加以下已核准行為：Router 必須把每次決策分類為 `AUTO_CONTINUE`、`WAIT_FOR_HUMAN` 或 `HALT`。只有一個合法 capability、足夠的 metadata、有效 entitlement、有效 response 與明確 Context grant 同時成立時，local runner 才能自動接續下一動作。
+
+一般工作節點不得因為普通 `SUSPEND` 而無限等待；只有明確的 specification／ticket 人工核准閘門可得到 `WAIT_FOR_HUMAN`。缺資料、授權拒絕、服務失敗、response mismatch／replay、未宣告 transition、預算超限與執行 safety ceiling 一律 `HALT`，不以本機 Profile 猜測或 fallback。
+
 ## 範圍
 
 ### In scope
@@ -30,6 +36,7 @@
 4. 實作 POC fake transport 與 fake entitlement provider，讓測試可模擬允許、未授權、服務故障與不合法回應，不建立實際網路連線或儲存。
 5. 回傳使用者可理解的外部行動標籤與穩定錯誤碼；private policy、profile 細節與核心路由演算法不得透過契約、錯誤或 log 外洩。
 6. 補齊 TDD、嚴格型別、隱私與 regression 測試及可重現證據。
+7. 提供 bounded local continuation runner 與 test-only executor port；POC 不執行模型，但可自動消化一連串已核發的 metadata-only next-event，直到真正的人類核准閘門或 fail-closed 終點。
 
 ### Out of scope
 
@@ -104,19 +111,16 @@ python -m py_compile library/workflow_router/*.py
 
 ## 完成定義
 
-- [ ] 所有 AC-1～AC-7 與本工單不變量有測試對應與綠燈結果。
-- [ ] 已保留每一類新行為的紅燈 → 最小實作 → 綠燈證據。
-- [ ] schema 拒絕未知與敏感欄位；strict type check 通過。
-- [ ] entitlement、服務故障、不合法 response、correlation mismatch 全部 fail-closed，且不建立 Context。
-- [ ] captured request、log／error 與 fixture 不含原文或禁止資料。
-- [ ] Code Review §2.1 七類逐項完成，並產生正式 review 證據。
-- [ ] 使用者可按外部行動標籤理解狀態，但不能由介面或錯誤推導 private routing algorithm。
-- [ ] 未增加真實網路、儲存、OAuth、付款或 runtime dependency。
+- [x] 所有 AC-1～AC-7 與本工單不變量有測試對應與綠燈結果。
+- [x] 已驗證 `AUTO_CONTINUE` 不會在非人類節點中斷，且只在明確核准閘門回傳 `WAIT_FOR_HUMAN`。
+- [x] 已保留每一類新行為的紅燈 → 最小實作 → 綠燈證據。
+- [x] schema 拒絕未知與敏感欄位；strict type check 通過。
+- [x] entitlement、服務故障、不合法 response、correlation mismatch 全部 fail-closed，且不建立 Context。
+- [x] captured request、log／error 與 fixture 不含原文或禁止資料。
+- [x] Code Review §2.1 七類逐項完成，並產生正式 review 證據。
+- [x] 使用者可按外部行動標籤理解狀態，但不能由介面或錯誤推導 private routing algorithm。
+- [x] 未增加真實網路、儲存、OAuth、付款或 runtime dependency。
 
 ## 核准閘門
 
-本工單尚未獲實作核准。專案負責人需明確回覆：
-
-> 核准 `01-private-router-metadata-gate`
-
-取得此核准前，只能維護本工單與其 Context／規格，不得修改原始碼、測試、插件或部署設定。
+專案負責人已於 `2026-08-04` 明確核准本工單。實作、全量驗證與正式 review 均完成；結論見 [Code Review](../../../doc/reviews/private-router-saas/01-private-router-metadata-gate-code-review.md)。

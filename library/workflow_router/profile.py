@@ -27,6 +27,21 @@ class TransitionRule(RouterModel):
     required_authority: AuthorityState | None = None
     required_source_kinds: tuple[ArtifactKind, ...] = ()
     eligible_capabilities: tuple[CapabilityRef, ...] = ()
+    requires_human_approval: bool = False
+
+    @model_validator(mode="after")
+    def human_gate_is_a_declared_wait(self) -> TransitionRule:
+        """Keep human waits explicit rather than treating every suspend as an approval wait."""
+
+        if self.requires_human_approval and self.outcome is not RouterOutcome.SUSPEND:
+            raise ValueError("human approval gates must suspend")
+        if self.outcome in (RouterOutcome.ADVANCE, RouterOutcome.RETRY) and self.next_stage is None:
+            raise ValueError("advancing and retry rules require next_stage")
+        if self.outcome is RouterOutcome.SUSPEND and self.next_stage is not None:
+            raise ValueError("suspending rules must not declare a next stage")
+        if self.outcome is RouterOutcome.STOP and self.next_stage is not ProcessStage.STOPPED:
+            raise ValueError("stop rules must target stopped")
+        return self
 
 
 class ProjectWorkflowProfile(RouterModel):
@@ -78,6 +93,41 @@ def build_router_poc_profile() -> ProjectWorkflowProfile:
         version="1",
         agent_profile="grill",
     )
+    context = CapabilityRef(
+        capability_id="cap-context",
+        version="1",
+        agent_profile="context",
+    )
+    specification = CapabilityRef(
+        capability_id="cap-specification",
+        version="1",
+        agent_profile="specification",
+    )
+    tickets = CapabilityRef(
+        capability_id="cap-tickets",
+        version="1",
+        agent_profile="tickets",
+    )
+    implementation = CapabilityRef(
+        capability_id="cap-implementation",
+        version="1",
+        agent_profile="implementation",
+    )
+    smoke_test = CapabilityRef(
+        capability_id="cap-smoke-test",
+        version="1",
+        agent_profile="smoke-test",
+    )
+    review = CapabilityRef(
+        capability_id="cap-review",
+        version="1",
+        agent_profile="review",
+    )
+    handoff = CapabilityRef(
+        capability_id="cap-handoff",
+        version="1",
+        agent_profile="handoff",
+    )
     return ProjectWorkflowProfile(
         profile_id="router-framework-poc",
         profile_version="1",
@@ -96,7 +146,6 @@ def build_router_poc_profile() -> ProjectWorkflowProfile:
                 event_kind=RouterEventKind.WAYFINDER_GO,
                 outcome=RouterOutcome.ADVANCE,
                 next_stage=ProcessStage.ARCHITECTURE,
-                required_authority=AuthorityState.APPROVED,
                 required_source_kinds=(ArtifactKind.WAYFINDER_OUTPUT,),
                 eligible_capabilities=(architecture,),
             ),
@@ -114,6 +163,95 @@ def build_router_poc_profile() -> ProjectWorkflowProfile:
                 next_stage=ProcessStage.GRILL,
                 required_source_kinds=(ArtifactKind.ARCHITECTURE,),
                 eligible_capabilities=(grill,),
+            ),
+            TransitionRule(
+                current_stage=ProcessStage.GRILL,
+                event_kind=RouterEventKind.ACTION_COMPLETED,
+                outcome=RouterOutcome.ADVANCE,
+                next_stage=ProcessStage.CONTEXT,
+                required_source_kinds=(ArtifactKind.GRILL,),
+                eligible_capabilities=(context,),
+            ),
+            TransitionRule(
+                current_stage=ProcessStage.CONTEXT,
+                event_kind=RouterEventKind.ACTION_COMPLETED,
+                outcome=RouterOutcome.ADVANCE,
+                next_stage=ProcessStage.SPEC,
+                required_source_kinds=(ArtifactKind.CONTEXT,),
+                eligible_capabilities=(specification,),
+            ),
+            TransitionRule(
+                current_stage=ProcessStage.SPEC,
+                event_kind=RouterEventKind.ACTION_COMPLETED,
+                outcome=RouterOutcome.SUSPEND,
+                next_stage=None,
+                required_source_kinds=(ArtifactKind.SPEC,),
+                requires_human_approval=True,
+            ),
+            TransitionRule(
+                current_stage=ProcessStage.SPEC,
+                event_kind=RouterEventKind.APPROVAL_GRANTED,
+                outcome=RouterOutcome.ADVANCE,
+                next_stage=ProcessStage.TICKETS,
+                required_authority=AuthorityState.APPROVED,
+                required_source_kinds=(ArtifactKind.SPEC,),
+                eligible_capabilities=(tickets,),
+            ),
+            TransitionRule(
+                current_stage=ProcessStage.TICKETS,
+                event_kind=RouterEventKind.ACTION_COMPLETED,
+                outcome=RouterOutcome.SUSPEND,
+                next_stage=None,
+                required_source_kinds=(ArtifactKind.TICKET,),
+                requires_human_approval=True,
+            ),
+            TransitionRule(
+                current_stage=ProcessStage.TICKETS,
+                event_kind=RouterEventKind.APPROVAL_GRANTED,
+                outcome=RouterOutcome.ADVANCE,
+                next_stage=ProcessStage.IMPLEMENT,
+                required_authority=AuthorityState.APPROVED,
+                required_source_kinds=(ArtifactKind.TICKET,),
+                eligible_capabilities=(implementation,),
+            ),
+            TransitionRule(
+                current_stage=ProcessStage.IMPLEMENT,
+                event_kind=RouterEventKind.ACTION_COMPLETED,
+                outcome=RouterOutcome.ADVANCE,
+                next_stage=ProcessStage.SMOKE_TEST,
+                required_source_kinds=(ArtifactKind.TICKET,),
+                eligible_capabilities=(smoke_test,),
+            ),
+            TransitionRule(
+                current_stage=ProcessStage.SMOKE_TEST,
+                event_kind=RouterEventKind.VALIDATION_PASSED,
+                outcome=RouterOutcome.ADVANCE,
+                next_stage=ProcessStage.REVIEW,
+                required_source_kinds=(ArtifactKind.TICKET,),
+                eligible_capabilities=(review,),
+            ),
+            TransitionRule(
+                current_stage=ProcessStage.SMOKE_TEST,
+                event_kind=RouterEventKind.VALIDATION_FAILED,
+                outcome=RouterOutcome.RETRY,
+                next_stage=ProcessStage.IMPLEMENT,
+                required_source_kinds=(ArtifactKind.TICKET,),
+                eligible_capabilities=(implementation,),
+            ),
+            TransitionRule(
+                current_stage=ProcessStage.REVIEW,
+                event_kind=RouterEventKind.ACTION_COMPLETED,
+                outcome=RouterOutcome.ADVANCE,
+                next_stage=ProcessStage.HANDOFF,
+                required_source_kinds=(ArtifactKind.TICKET,),
+                eligible_capabilities=(handoff,),
+            ),
+            TransitionRule(
+                current_stage=ProcessStage.HANDOFF,
+                event_kind=RouterEventKind.ACTION_COMPLETED,
+                outcome=RouterOutcome.STOP,
+                next_stage=ProcessStage.STOPPED,
+                required_source_kinds=(ArtifactKind.TICKET,),
             ),
         ),
     )

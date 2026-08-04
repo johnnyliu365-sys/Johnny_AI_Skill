@@ -23,6 +23,7 @@ This POC validates a private Router control plane. A local thin plugin submits o
 - A private policy/Profile abstraction separated from local public contracts.
 - A test-only private Router transport and fake entitlement port, with no real network, OAuth, payment, database, or secret.
 - A complete POC Profile route from intake through handoff, including a fail-closed result for every undeclared state/event pair.
+- An explicit continuation directive: safe declared transitions auto-continue, declared human gates wait, and invalid or unavailable paths halt without a local fallback.
 - Local preflight validation that rejects unredacted, free-form, unknown, or oversized request data before transport.
 - User-facing action labels that do not disclose internal Router stage names or private Profile logic.
 - TDD, strict typing, source-leak sentinel tests, compatibility tests for existing Router and telemetry behaviour, and documentation.
@@ -41,7 +42,7 @@ The user sees only product-language actions. The local plugin retains the intern
 
 1. The user starts one of four entry modes: new project, inherited-project audit, repair, or deployment preparation.
 2. The local plugin constructs and validates a metadata-only request. A first-project, standard, or audit entitlement is represented by a fake typed entitlement in this POC.
-3. The private Router emits exactly one of: a permitted user-facing next action, an explicit user approval wait, or a fail-closed block.
+3. The private Router emits exactly one of: a permitted user-facing next action with `AUTO_CONTINUE`, an explicit user approval wait with `WAIT_FOR_HUMAN`, or a fail-closed `HALT`.
 4. Only after an allowed action may the local Context resolver read locally declared source spans into a temporary `ContextPacket`.
 5. The local runtime records its existing metadata-only telemetry locally; the POC does not transmit that telemetry to the service.
 
@@ -54,6 +55,7 @@ Acceptance criteria:
 5. The same event retry preserves its correlation identifier; a different event produces a new opaque reference identifier. No persistent record contains a raw span or source text.
 6. The external action label is one of the declared product labels and contains no internal stage name, Profile ID, policy version, or scoring detail.
 7. Existing local Router and telemetry tests remain green; no existing approved POC behaviour silently changes.
+8. A local continuation runner automatically invokes only the one action granted by a valid `AUTO_CONTINUE` decision and runs until it reaches a declared human approval gate, a fail-closed result, or its configured safety ceiling. It must not wait merely because a source, entitlement, service, or validation condition failed.
 
 ## Domain Model, Data Flow, and Responsibility Boundaries
 
@@ -146,6 +148,7 @@ Each implementation ticket must start with a failing test and cover these observ
 3. **Authorization failure:** denied, expired, or mode-incompatible entitlement prevents Context resolution and returns a material blocker.
 4. **External/service failure:** unavailable private service, malformed response, replayed correlation ID, or unavailable capability fails closed and does not fall back to local private rules.
 5. **Regression and privacy:** current Router/telemetry behavior remains valid; source/prompt/URI/path sentinels never appear in serialised data, logs, or persistent projections.
+6. **Continuity classification:** a POC flow auto-runs across the declared intake → discovery → design → evidence → context → specification path, pauses only at the specification approval gate, and halts rather than waits for invalid metadata, denied entitlement, service failure, response mismatch, replay, or an undeclared transition.
 
 ## Risks, Compatibility, Rollback, and Deployment Preconditions
 

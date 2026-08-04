@@ -4,9 +4,18 @@ from __future__ import annotations
 
 from datetime import timedelta
 
+from pydantic import model_validator
 from temporalio import activity, workflow
 
-from .contracts import RouterDecision, RouterEvent, RouterModel, RouterOutcome, RouterState
+from .contracts import (
+    AuthorityState,
+    ContinuationDirective,
+    RouterDecision,
+    RouterEvent,
+    RouterEventKind,
+    RouterModel,
+    RouterState,
+)
 from .profile import ProjectWorkflowProfile
 from .router import RouterEngine
 
@@ -23,6 +32,19 @@ class ApprovalSignal(RouterModel):
     """A validated event supplied by a human approval interface."""
 
     router_event: RouterEvent
+    authority_state: AuthorityState
+
+    @model_validator(mode="after")
+    def authority_matches_approval_event(self) -> ApprovalSignal:
+        """Reject signals that would grant or deny authority without the matching event."""
+
+        expected = {
+            RouterEventKind.APPROVAL_GRANTED: AuthorityState.APPROVED,
+            RouterEventKind.APPROVAL_DENIED: AuthorityState.DENIED,
+        }.get(self.router_event.kind)
+        if expected is None or self.authority_state is not expected:
+            raise ValueError("approval signal event and authority state must match")
+        return self
 
 
 @activity.defn(name="router-framework-route-round")
@@ -65,7 +87,7 @@ class RouterApprovalWorkflow:
             input,
             start_to_close_timeout=timedelta(seconds=30),
         )
-        if first.outcome is not RouterOutcome.SUSPEND:
+        if first.continuation is not ContinuationDirective.WAIT_FOR_HUMAN:
             return first
         self._pending = first
         await workflow.wait_condition(lambda: self._approval is not None)
@@ -75,7 +97,9 @@ class RouterApprovalWorkflow:
         return await workflow.execute_activity(
             route_round,
             RouterRoundInput(
-                router_state=input.router_state,
+                router_state=input.router_state.model_copy(
+                    update={"authority_state": approval.authority_state}
+                ),
                 router_event=approval.router_event,
                 profile=input.profile,
             ),

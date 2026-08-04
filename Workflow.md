@@ -132,6 +132,7 @@ ProjectWorkflowProfile = {
 
 RouterDecision = {
   outcome: ADVANCE | RETRY | SUSPEND | STOP,
+  continuation: AUTO_CONTINUE | WAIT_FOR_HUMAN | HALT,
   next_stage: ProcessStage | null,
   required_sources: ArtifactRef[],
   context_view: ContextView | null,
@@ -151,6 +152,16 @@ ContextReference = {
 ```
 
 `ArtifactRef` 只可指向既有的唯一正式來源；`ContextView` 是一次工作所需的短暫、可重建視圖，不是第二份 `CONTEXT.md`。`CapabilityRef` 表示可被 router 選擇的 skill、Agent profile 或工具能力，並非授予未核准權限。`ContextReference` 是一次旁路引用的追溯邊，不是內容回寫或另一份 Context。
+
+### 0.1.1 自動接續與人類等待的唯一規則
+
+Router 不得因為任何 `SUSPEND` 一律進入長等待。每個 Decision 必須輸出唯一 `continuation`：
+
+1. `AUTO_CONTINUE`：僅限已宣告的 `ADVANCE`／`RETRY`、完整最低來源、有效驗證、唯一 allowlisted capability 與不需要新的人類授權的情況。執行器可自動接續該單一動作，完成後以新的 `RouterEvent` 再次路由。
+2. `WAIT_FOR_HUMAN`：僅限 Profile 明確標記的核准關卡、使用者決策或不可逆外部副作用。等待的 UI 必須顯示所需核准，不得偽裝成一般故障。
+3. `HALT`：缺資料、未授權、驗證失敗、服務／Provider 不可用、回應或 correlation 不合法／重播、來源超出 Context grant、預算超限、未宣告 transition、`NO-GO` 或拒絕核准時，必須停止；不得 fallback 到本機規則、猜測下一步或無限等待。
+
+自動接續必須有明確步數／時間 safety ceiling；達上限也是 `HALT`。這只控制本流程的 capability path，不能宣稱可阻止使用者停用插件或改用其他工具。
 
 ### 0.2 專案 Profile 與交付成熟度
 

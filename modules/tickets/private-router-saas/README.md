@@ -12,7 +12,7 @@
 
 | 工單 | 垂直能力 | 狀態 | 前置條件 |
 | --- | --- | --- |
-| [01-private-router-metadata-gate](01-private-router-metadata-gate.md) | metadata-only 決策閘門與本機 context gate | `PENDING_OWNER_APPROVAL` | 規格已核准；仍需本工單的第二次明確核准 |
+| [01-private-router-metadata-gate](01-private-router-metadata-gate.md) | metadata-only 決策閘門、本機 context gate 與安全自動接續 | `DONE` | 實作、驗證、review 與 handoff 已完成 |
 
 ## 共同基準
 

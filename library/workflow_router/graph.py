@@ -7,7 +7,13 @@ from typing import Literal
 from langgraph.graph import END, START, StateGraph
 from langgraph.graph.state import CompiledStateGraph
 
-from .contracts import RouterDecision, RouterEvent, RouterModel, RouterOutcome, RouterState
+from .contracts import (
+    ContinuationDirective,
+    RouterDecision,
+    RouterEvent,
+    RouterModel,
+    RouterState,
+)
 from .profile import ProjectWorkflowProfile
 from .router import RouterEngine
 
@@ -19,7 +25,7 @@ class RouterGraphState(RouterModel):
     router_event: RouterEvent
     profile: ProjectWorkflowProfile
     decision: RouterDecision | None = None
-    graph_terminal: Literal["complete", "blocked"] | None = None
+    graph_terminal: Literal["continue", "waiting", "halted"] | None = None
 
 
 def build_router_graph(
@@ -42,32 +48,43 @@ def build_router_graph(
         )
         return state.model_copy(update={"decision": decision})
 
-    def select_terminal(state: RouterGraphState) -> Literal["complete", "blocked"]:
-        """Prevent unbounded node names by mapping outcomes to two declared branches."""
+    def select_terminal(state: RouterGraphState) -> Literal["continue", "waiting", "halted"]:
+        """Route only declared auto, human-wait, and halt dispositions."""
 
-        if state.decision is not None and state.decision.outcome is RouterOutcome.ADVANCE:
-            return "complete"
-        return "blocked"
+        if state.decision is None:
+            return "halted"
+        if state.decision.continuation is ContinuationDirective.AUTO_CONTINUE:
+            return "continue"
+        if state.decision.continuation is ContinuationDirective.WAIT_FOR_HUMAN:
+            return "waiting"
+        return "halted"
 
-    def complete(state: RouterGraphState) -> RouterGraphState:
-        """Mark a legal advance decision as terminal for this graph invocation."""
+    def continue_(state: RouterGraphState) -> RouterGraphState:
+        """Mark a legal automatic continuation for this graph invocation."""
 
-        return state.model_copy(update={"graph_terminal": "complete"})
+        return state.model_copy(update={"graph_terminal": "continue"})
 
-    def blocked(state: RouterGraphState) -> RouterGraphState:
+    def waiting(state: RouterGraphState) -> RouterGraphState:
+        """Mark an explicit human gate without conflating it with a failure."""
+
+        return state.model_copy(update={"graph_terminal": "waiting"})
+
+    def halted(state: RouterGraphState) -> RouterGraphState:
         """Mark a fail-closed result as terminal for this graph invocation."""
 
-        return state.model_copy(update={"graph_terminal": "blocked"})
+        return state.model_copy(update={"graph_terminal": "halted"})
 
     graph.add_node("decide", decide)
-    graph.add_node("complete", complete)
-    graph.add_node("blocked", blocked)
+    graph.add_node("continue", continue_)
+    graph.add_node("waiting", waiting)
+    graph.add_node("halted", halted)
     graph.add_edge(START, "decide")
     graph.add_conditional_edges(
         "decide",
         select_terminal,
-        {"complete": "complete", "blocked": "blocked"},
+        {"continue": "continue", "waiting": "waiting", "halted": "halted"},
     )
-    graph.add_edge("complete", END)
-    graph.add_edge("blocked", END)
+    graph.add_edge("continue", END)
+    graph.add_edge("waiting", END)
+    graph.add_edge("halted", END)
     return graph.compile()
