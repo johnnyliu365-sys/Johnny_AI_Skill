@@ -19,6 +19,16 @@
 
 ## API／事件、資料庫、快取、Provider、權限與維運
 
+## 前端組合與依賴注入（適用時必填）
+
+- UI 組合層級與元件責任：`<screen / layout / components>`
+- Composition Root、依賴 scope 與裝配位置：`<path / lifecycle>`
+- 可注入介面與 production binding：`<API / state / navigation / clock / feature flag / analytics / i18n / permission>`
+- test fake／stub 與替換方式：`<test composition>`
+- loading／empty／error、權限與可存取性驗收：`<criteria>`
+
+不得把業務規則或外部依賴隱藏於 UI 元件；無前端影響時，必須明記 `N/A`。
+
 ## 測試切點與 TDD 設計
 
 ## 風險、相容性、回滾與部署前提

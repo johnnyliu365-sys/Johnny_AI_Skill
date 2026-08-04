@@ -25,6 +25,14 @@ After each completed action, classify the next Router decision before replying. 
 
 This skill can guide a currently active Codex or Claude task to continue through safe stages. It cannot independently create a new model turn, bypass the host's approval system, or prevent users from disabling the plugin. The local Router runner's safety ceiling remains authoritative.
 
+## Role boundary and frontend handoff
+
+This skill's control-plane Agent owns Wayfinder, Grill, Context, SPEC, ticket drafting, implementation handoff, review, and handoff. It does not implement approved ticket source, tests, migrations, deployment, or implementation commits unless the project owner explicitly reassigns that ticket.
+
+Every ticket must name a separate implementation owner. That owner follows the approved ticket; it must return ambiguous requirements, architecture, public-contract, or acceptance changes to this control-plane Agent for `grill-with-docs → to-spec → to-tickets`.
+
+For any formal frontend ticket, require composition-first design and dependency injection before implementation: name the screen/layout/component boundaries, Composition Root, scoped interfaces and bindings, production dependencies, test fakes, and loading/empty/error/accessibility acceptance. A component must not instantiate a global singleton, read environment configuration, or access an external service implicitly.
+
 ## Takeover flow
 
 Follow this closed loop:

@@ -4,7 +4,9 @@
 
 它不是公司專案的 runtime service、MCP server、hook、CI 依賴、Git submodule、symlink、package dependency 或原始碼 import。因此拔除後，公司的建置、測試、部署與既有程式不會受影響。
 
-## 目前發行：0.3.0
+## 目前發行：0.3.2
+
+0.3.2 將前端的組合式設計與依賴注入列為 SPEC／ticket 的阻擋規則，並將控制面 Agent 固定為 Wayfinder／Grill／ticket／review；正式實作必須交給另一位具名 implementation owner。
 
 本版包含 Router 的 metadata-only context-load telemetry。它可在本機比對 baseline 與 Router run 的 provider input token、ContextView 預算、來源宣告與驗收品質；資料只寫入你指定的 ignored JSONL，絕不輸出原文、prompt、來源 URI 或 Secret。
 

@@ -21,6 +21,22 @@
 
 ## 實作範圍、依賴與 ticket elements
 
+### 角色指派（必填）
+
+- 流程／Grill／ticket owner：`<AI／worktree>`；負責需求收斂、SPEC／ticket、實作前 handoff 與 review，不得實作此 ticket。
+- implementation owner：`<另一位 AI／worktree>`；負責 TDD、正式原始碼、測試、驗證與 commit。
+- reviewer：`<AI／worktree>`；不得與 implementation owner 共用 worktree。
+
+### 前端組合與依賴注入（僅正式前端 ticket 必填）
+
+- UI 組合邊界（screen／layout／component）：`<composition>`
+- Composition Root 與依賴生命週期：`<path / scope>`
+- 注入的具名介面（API、state、navigation、clock、feature flag、analytics、i18n、權限等）：`<interfaces>`
+- production binding 與 test fake／stub：`<bindings>`
+- 元件輸入／輸出、loading／empty／error、權限與可存取性驗收：`<acceptance>`
+
+非前端 ticket 必須明記 `N/A` 與原因。禁止元件內建立全域 singleton、直接讀取環境，或隱式存取外部服務。
+
 - element 路徑：`modules/element/<language>/<feature>/<ticket-id>/`
 - 實際原始碼路徑：`<paths>`
 - 公開契約／資料模型：`<types and ports>`

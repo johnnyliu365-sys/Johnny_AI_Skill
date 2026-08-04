@@ -308,9 +308,30 @@ SPEC 核准且共同 Context 回掛完成後，才可建立 `modules/tickets/<fe
 
 工單與責任必須再次經明確核准。未核准前，不得修改正式程式、測試或 migration。
 
+### 4.1 前端組合與依賴注入規則
+
+只要 ticket 觸及正式前端、Web UI、行動 UI、元件庫、畫面狀態或 UI 對外存取，SPEC 與 ticket 必須明確記錄下列設計，而不是只交付畫面描述：
+
+1. **組合式設計**：頁面／screen／layout 只負責組合可替換元件；業務規則、資料轉換與副作用不可藏在難以測試的 UI 元件中。元件須有明確輸入、輸出、狀態與責任邊界。
+2. **依賴注入**：API client、repository、state store、navigation、clock、feature flag、analytics、i18n、權限與其他外部能力，必須透過具名介面、props、constructor／factory 或框架等價的 composition root 注入。禁止元件內直接建立全域 singleton、直接讀取環境或隱式存取外部服務。
+3. **Composition Root**：ticket 必須指出組合根的位置、依賴生命週期／scope、production binding 與 test fake／stub 的替換方式。跨畫面的共享依賴只可在 composition root 或其明確子樹裝配。
+4. **驗收與 TDD**：ticket 必須列出元件組合、注入替換、失敗／loading／empty state、權限與可存取性行為；測試應能以 fake dependency 驗證 UI，不依賴真實網路、全域 state 或時間。
+
+缺少上述任一項的正式前端 ticket 不得進入 `implement`；審閱結論為 `BLOCKED`。純視覺探索或未核准 wireframe 不構成正式前端實作。
+
 <a id="implementation"></a>
 
 ## 5. `implement`：逐張 ticket 的 TDD
+
+<a id="role-boundary"></a>
+
+### 5.1 角色邊界：Wayfinder／Grill／ticket 與實作分離
+
+除非專案負責人對單一 ticket 明確改派，控制面 Agent 的責任止於 `WAYFINDER`、Architecture／`grill-with-docs`、Context、SPEC、ticket、實作前 handoff、Code Review 與交接；它不得代替 implementation owner 修改正式原始碼、測試、migration、部署或該 ticket 的實作 commit。
+
+implementation owner 是 ticket 具名指定的另一位 Agent／worktree，負責依已核准 SPEC、ticket 與 TDD 設計完成原始碼、測試、驗證與自己的 commit。它不得自行改寫需求、架構、前端設計邊界、公開契約或 acceptance criteria；遇到缺口、衝突或需求變更，必須回交控制面 Agent 重走 `grill-with-docs → to-spec → to-tickets`。
+
+每張 ticket 必須同時標示控制面 owner、implementation owner 與 reviewer。缺任一 owner 或同一 Agent 未經明確改派同時承擔兩者時，不得進入 `implement`。
 
 一次只能實作一張已核准的 ticket。每個新行為依序：
 

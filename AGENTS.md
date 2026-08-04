@@ -44,6 +44,10 @@
 | 涉及 Secret、正式 Log、權限或外部 Provider | [安全](Workflow.md#security) | 先確認安全邊界與授權 |
 | 工單或功能集群完成 | [審閱與交接](Workflow.md#review-handoff) | commit、驗證、review、handoff／UAT |
 
+## 預設角色邊界
+
+除非專案負責人對單一 ticket 明確改派，使用本指引的控制面 Agent 只負責 Wayfinder、Grill、SPEC、ticket、實作前 handoff 與 review；正式原始碼與測試實作必須交給另一位具名 implementation owner。唯一詳細規則以 [Workflow.md §5.1](Workflow.md#role-boundary) 為準。
+
 ## 唯一來源與未建立文件
 
 完整專案啟用後，需求、事實、規格、工單、進度、安全與審閱必須各有唯一正式來源，路徑與內容規格由 `Workflow.md` 定義。
