@@ -22,6 +22,6 @@ Deliver one control-plane policy vertical slice: completion evidence must re-ent
 
 ## Authority and handoff
 
-Codex/current worktree is the control-plane owner. The implementation owner and reviewer are deliberately `UNASSIGNED`: the project owner must name both and explicitly approve this ticket before any source, test, migration, deployment, or implementation commit begins. The implementation owner must use a separate Agent/worktree unless the project owner records an explicit single-ticket role override.
+Codex/current worktree is the control-plane owner and reviewer. The implementation owner is the separate `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` worktree on branch `codex/implementation-private-router-saas-01`. It is currently based on `7769710` and must fast-forward to `main` before the first red test. The project owner must still explicitly approve this ticket before any source, test, migration, deployment, or implementation commit begins.
 
 The implementation handoff consists of the approved specification, this ticket, Context references, TDD cuts, exact target paths, and the return-event rules. A completion returns evidence for review; a requirement, architecture, public-contract, frontend composition/DI, or acceptance change returns `REQUIREMENT_CHANGED` to Grill.

@@ -93,4 +93,4 @@
 | --- | --- | --- |
 | Requirement change and Grill | DONE | `CHG-20260805-009`; `doc/context/workflow-governance/main.md` |
 | Specification | DONE | `modules/spec/workflow-governance.md` (`APPROVED` on `2026-08-05`) |
-| Ticket plan, named implementation owner, and second approval | PENDING_OWNER_APPROVAL | `modules/tickets/workflow-governance/`; the control-plane Agent cannot implement the resulting policy ticket. |
+| Ticket plan, named implementation owner, and second approval | PENDING_OWNER_APPROVAL | `modules/tickets/workflow-governance/`; implementation worktree assigned, ticket approval still required; the control-plane Agent cannot implement the resulting policy ticket. |

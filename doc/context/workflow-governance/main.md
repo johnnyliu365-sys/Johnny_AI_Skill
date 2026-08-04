@@ -63,4 +63,5 @@ The Grill result is **GO to specification**. The project owner approved `SPEC-AI
 
 - Ticket: [01-enforce-continuation-and-handoff](../../../modules/tickets/workflow-governance/01-enforce-continuation-and-handoff.md).
 - State: `PLANNED`; no implementation authority exists.
-- Exact next authority: the project owner must approve the ticket and name a separate implementation owner and reviewer. The owner may explicitly reassign a role for this one ticket, but the override must be recorded in the ticket before implementation starts.
+- Assigned implementation worktree: `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` / `codex/implementation-private-router-saas-01`; it is clean but at `7769710`, so it must fast-forward to `main` before the first red test. Reviewer: Codex control-plane/current `main` worktree.
+- Exact next authority: the project owner must approve the ticket. The owner may explicitly reassign a role for this one ticket, but the override must be recorded in the ticket before implementation starts.

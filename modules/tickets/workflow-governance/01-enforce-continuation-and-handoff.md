@@ -5,15 +5,19 @@
 | Field | Value |
 | --- | --- |
 | ID | `01-enforce-continuation-and-handoff` |
-| State | `PLANNED` — implementation blocked pending explicit approval and role assignment |
+| State | `PLANNED` — implementation blocked pending explicit ticket approval |
 | Type | POC / vertical policy slice |
 | Control-plane owner | Codex / current worktree |
-| Implementation owner | `UNASSIGNED` — project owner must name a separate Agent/worktree before implementation |
-| Reviewer | `UNASSIGNED` — must be named before implementation and must not be the implementation owner |
+| Implementation owner | Codex implementation Agent / `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` / branch `codex/implementation-private-router-saas-01` |
+| Reviewer | Codex control-plane / `C:\Users\<user>\Desktop\AI控制工作workflow` / branch `main` |
 | Delivery environment | Local Python Router POC and detachable Codex/Claude guidance source |
 | Baseline commit | `04146af` |
 | Specification | [workflow-governance.md](../../spec/workflow-governance.md) — AC-1 through AC-8 |
 | Requirement / Context | `CHG-20260805-009`; [workflow-governance/main.md](../../../doc/context/workflow-governance/main.md) |
+
+### Worktree synchronization
+
+The assigned implementation worktree is a clean, separate Git worktree but is currently at `7769710`, behind this approved specification and ticket plan. Before writing the first red test, its implementation owner must fast-forward it to `main` and verify that the approved specification, ticket, and this assignment are present. It may not cherry-pick only source files or begin from the old baseline.
 
 ## User-observable outcome
 
@@ -126,4 +130,4 @@ Additionally run a source/privacy sentinel scan proving new contracts do not ser
 
 ## Approval gate
 
-The specification was approved on `2026-08-05`. Before implementation, the project owner must explicitly approve `01-enforce-continuation-and-handoff` and name a separate implementation owner and reviewer. Until both facts are recorded, this ticket remains `PLANNED` and no implementation is authorised.
+The specification was approved on `2026-08-05`. The project owner assigned the separate implementation worktree and Codex control-plane reviewer on `2026-08-05`. Before implementation, the project owner must explicitly approve `01-enforce-continuation-and-handoff`. Until that approval is recorded, this ticket remains `PLANNED` and no implementation is authorised.
