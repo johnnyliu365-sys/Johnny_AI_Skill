@@ -140,6 +140,23 @@ RouterDecision = {
   blockers: Blocker[]
 }
 
+CompletionEvidence = {
+  completion_id, action_kind: DOCUMENTATION | IMPLEMENTATION | REVIEW | HANDOFF,
+  artifact_references, verification_references, evidence_digest, commit_digest?,
+  emitted_event: ACTION_COMPLETED
+}
+
+ImplementationHandoff = {
+  ticket_ref, approved_spec_ref, context_reference_metadata, acceptance_refs, tdd_refs,
+  frontend_composition_ref?, control_owner, implementation_owner, reviewer
+}
+
+ImplementationReturn = {
+  ticket_ref, status: COMPLETED | BLOCKED | CHANGE_DETECTED,
+  evidence_refs, verification_refs, evidence_digest,
+  emitted_event: ACTION_COMPLETED | REQUIREMENT_CHANGED
+}
+
 ContextReference = {
   source_context: ArtifactRef,
   source_revision: RevisionRef,
@@ -153,15 +170,19 @@ ContextReference = {
 
 `ArtifactRef` 只可指向既有的唯一正式來源；`ContextView` 是一次工作所需的短暫、可重建視圖，不是第二份 `CONTEXT.md`。`CapabilityRef` 表示可被 router 選擇的 skill、Agent profile 或工具能力，並非授予未核准權限。`ContextReference` 是一次旁路引用的追溯邊，不是內容回寫或另一份 Context。
 
+`CompletionEvidence` 與 `ImplementationHandoff`／`ImplementationReturn` 只可保存不透明識別碼、revision／span、side-context ID、consumer fingerprint、驗證引用與 digest；不得保存 raw ContextPacket、原文、prompt、路徑、URI、Secret 或 PII。commit digest 只是完成證據，不能自行決定下一關。
+
 ### 0.1.1 自動接續與人類等待的唯一規則
 
 Router 不得因為任何 `SUSPEND` 一律進入長等待。每個 Decision 必須輸出唯一 `continuation`：
 
 1. `AUTO_CONTINUE`：僅限已宣告的 `ADVANCE`／`RETRY`、完整最低來源、有效驗證、唯一 allowlisted capability 與不需要新的人類授權的情況。執行器可自動接續該單一動作，完成後以新的 `RouterEvent` 再次路由。
-2. `WAIT_FOR_HUMAN`：僅限 Profile 明確標記的核准關卡、使用者決策或不可逆外部副作用。等待的 UI 必須顯示所需核准，不得偽裝成一般故障。
+2. `WAIT_FOR_HUMAN`：僅限 Profile 明確標記的核准關卡、使用者決策或不可逆外部副作用。等待的 UI 必須顯示所需核准的精確原因，不得偽裝成一般故障。
 3. `HALT`：缺資料、未授權、驗證失敗、服務／Provider 不可用、回應或 correlation 不合法／重播、來源超出 Context grant、預算超限、未宣告 transition、`NO-GO` 或拒絕核准時，必須停止；不得 fallback 到本機規則、猜測下一步或無限等待。
 
 自動接續必須有明確步數／時間 safety ceiling；達上限也是 `HALT`。這只控制本流程的 capability path，不能宣稱可阻止使用者停用插件或改用其他工具。
+
+任何完成行為（包括正式原始碼 commit 或 docs-only commit）都必須先產生 `CompletionEvidence` 與 `ACTION_COMPLETED`，再由 Router 輸出唯一 Decision。Agent 在完成這次 re-route 前不得以 commit 當作任務終點或回覆終態；合法 `AUTO_CONTINUE` 僅執行一個下一關動作後重新路由。缺失或無效證據、來源、權限、owner、capability、回應或 transition 一律為 `HALT`，不是一般等待。
 
 ### 0.2 專案 Profile 與交付成熟度
 
@@ -233,6 +254,8 @@ Router 必須輸出 `SUSPEND` 或 `STOP`，而非猜測或降級繼續，當發�
 - TDD、型別檢查、Smoke Test、Code Review 或其他必要驗證失敗。
 
 在 Bootstrap 期間，Router 僅能根據目前存在的文件輸出 route proposal；缺少正式產物時必須依本檔的唯一來源規則標示 `BLOCKED`，不得自行新增平行 context、spec、ticket 或報告。
+
+完成事件與實作交接使用具名契約：`CompletionEvidence` 附著於 `ACTION_COMPLETED`，`ImplementationHandoff` 只攜帶核准引用、角色與證據識別，`ImplementationReturn` 只能回傳 `COMPLETED`、`BLOCKED` 或 `CHANGE_DETECTED`。後者必須發出 `REQUIREMENT_CHANGED` 並回到 Grill；commit 本身不是完成或路由決策。
 
 <a id="discovery"></a>
 
@@ -332,6 +355,10 @@ SPEC 核准且共同 Context 回掛完成後，才可建立 `modules/tickets/<fe
 implementation owner 是 ticket 具名指定的另一位 Agent／worktree，負責依已核准 SPEC、ticket 與 TDD 設計完成原始碼、測試、驗證與自己的 commit。它不得自行改寫需求、架構、前端設計邊界、公開契約或 acceptance criteria；遇到缺口、衝突或需求變更，必須回交控制面 Agent 重走 `grill-with-docs → to-spec → to-tickets`。
 
 每張 ticket 必須同時標示控制面 owner、implementation owner 與 reviewer。缺任一 owner 或同一 Agent 未經明確改派同時承擔兩者時，不得進入 `implement`。
+
+實作完成後，implementation owner 必須以 `ImplementationReturn` 回交控制面；只有 `ACTION_COMPLETED` 經 Router 重新分類後，才可進入 Smoke Test、Review 或 Handoff。
+
+實作前的 `ImplementationHandoff` 必須引用已核准的 SPEC／ticket／Context／TDD 與角色 ID；implementation owner 回傳 `ImplementationReturn`。`COMPLETED` 產生 `ACTION_COMPLETED` 並進入既定驗證／review，`BLOCKED` fail-closed，`CHANGE_DETECTED` 只能產生 `REQUIREMENT_CHANGED` 回到 Grill。任何 owner 例外必須在 ticket 的 **Owner override record** 記錄專案負責人的明確範圍化改派；未記錄不得覆蓋分離責任。
 
 一次只能實作一張已核准的 ticket。每個新行為依序：
 

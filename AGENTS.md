@@ -30,6 +30,8 @@
 
 ## Workflow 導覽
 
+Router anchor: `#workflow-router`; implementation role anchor: `#role-boundary`.
+
 | 目前情境 | 必讀章節 | 允許的下一步 |
 | --- | --- | --- |
 | 流程事件、交付階段、context 或 skill／Agent 選擇 | [流程 Router](Workflow.md#workflow-router) | 讀取 Profile，解析最小 Context 視圖與唯一合法的下一步 |
@@ -47,6 +49,10 @@
 ## 預設角色邊界
 
 除非專案負責人對單一 ticket 明確改派，使用本指引的控制面 Agent 只負責 Wayfinder、Grill、SPEC、ticket、實作前 handoff 與 review；正式原始碼與測試實作必須交給另一位具名 implementation owner。唯一詳細規則以 [Workflow.md §5.1](Workflow.md#role-boundary) 為準。
+
+完成的 implementation 必須以 typed `ACTION_COMPLETED` 回到 Router；`ImplementationReturn` 的 `CHANGE_DETECTED` 必須回到 `REQUIREMENT_CHANGED`，不得由控制面猜測或靜默擴張範圍。
+
+任何工作或 commit 完成後，控制面 Agent 必須依 [流程 Router](Workflow.md#workflow-router) 產生 `ACTION_COMPLETED` 並先取得唯一 continuation；commit 不是可自行結束 task 的理由。`AUTO_CONTINUE`、`WAIT_FOR_HUMAN` 與 `HALT` 的唯一實際規則仍以 `Workflow.md` 為準。
 
 ## 唯一來源與未建立文件
 

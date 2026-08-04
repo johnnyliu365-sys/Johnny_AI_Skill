@@ -29,6 +29,12 @@
 
 不得把業務規則或外部依賴隱藏於 UI 元件；無前端影響時，必須明記 `N/A`。
 
+## 實作交接與回傳契約
+
+- `ImplementationHandoff`：列出已核准 SPEC／ticket／Context／AC／TDD 的 metadata-only 引用、控制面 owner、implementation owner、reviewer，以及適用前端的 Composition Root／DI 引用。
+- `ImplementationReturn`：明確列出 `COMPLETED → ACTION_COMPLETED`、`BLOCKED → HALT`、`CHANGE_DETECTED → REQUIREMENT_CHANGED → Grill`；不得以回傳事件靜默變更需求、架構、公開契約、驗收或 UI/DI 邊界。
+- 禁止在交接或回傳保存 raw ContextPacket、原始來源、prompt、path、URI、Secret 或 PII；只能保存不透明 ID、revision/span、side-context ID、consumer fingerprint 與 evidence digest。
+
 ## 測試切點與 TDD 設計
 
 ## 風險、相容性、回滾與部署前提

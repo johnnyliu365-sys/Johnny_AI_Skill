@@ -18,6 +18,7 @@ from .contracts import (
     ContextPacket,
     ContextReference,
     ContextView,
+    HumanWaitReason,
     NonBlankText,
     PositiveTokenBudget,
     ReferenceStatus,
@@ -89,6 +90,15 @@ class RouterEngine:
                     f"{rule.required_authority.value} authority"
                 ),
             )
+        if event.completion_evidence is not None:
+            if event.completion_evidence.action_kind not in rule.accepted_completion_actions:
+                return self._suspend(
+                    code=BlockerCode.INVALID_COMPLETION_EVIDENCE,
+                    detail=(
+                        f"{state.stage.value}/{event.kind.value} does not accept "
+                        f"{event.completion_evidence.action_kind.value} completion evidence"
+                    ),
+                )
         required_sources, missing, ambiguous = self._resolve_required_sources(
             artifacts=state.artifact_refs,
             required_kinds=rule.required_source_kinds,
@@ -110,6 +120,7 @@ class RouterEngine:
                 code=BlockerCode.AUTHORITY_REQUIRED,
                 detail="this declared workflow gate requires an explicit human approval",
                 continuation=ContinuationDirective.WAIT_FOR_HUMAN,
+                wait_reason=rule.wait_reason,
             )
         return RouterDecision(
             outcome=rule.outcome,
@@ -150,6 +161,7 @@ class RouterEngine:
         code: BlockerCode,
         detail: str,
         continuation: ContinuationDirective = ContinuationDirective.HALT,
+        wait_reason: HumanWaitReason | None = None,
     ) -> RouterDecision:
         """Build a fail-closed decision without inventing a next stage."""
 
@@ -160,6 +172,7 @@ class RouterEngine:
             required_sources=(),
             eligible_capabilities=(),
             blockers=(RouterBlocker(code=code, detail=detail),),
+            wait_reason=wait_reason,
         )
 
 

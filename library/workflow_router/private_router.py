@@ -18,9 +18,13 @@ from .contracts import (
     ArtifactKind,
     ArtifactRef,
     AuthorityState,
+    CompletionEvidence,
     ConsumerFingerprint,
     ContinuationDirective,
     DeliveryStage,
+    HumanWaitReason,
+    ImplementationReturn,
+    ImplementationReturnStatus,
     NonBlankText,
     PositiveTokenBudget,
     ProcessStage,
@@ -121,6 +125,8 @@ class RouterRequestEnvelope(RouterModel):
     revision_digests: tuple[RevisionDigest, ...]
     structured_redacted_summary: RedactedSummary
     client_version: ClientVersion
+    completion_evidence: CompletionEvidence | None = None
+    implementation_return: ImplementationReturn | None = None
 
     @model_validator(mode="after")
     def has_minimum_metadata_without_locations(self) -> RouterRequestEnvelope:
@@ -134,6 +140,13 @@ class RouterRequestEnvelope(RouterModel):
             raise ValueError("available_source_kinds must not repeat")
         if len(set(self.revision_digests)) != len(self.revision_digests):
             raise ValueError("revision_digests must not repeat")
+        if self.completion_evidence is not None and self.router_event_kind is not RouterEventKind.ACTION_COMPLETED:
+            raise ValueError("completion_evidence requires action_completed")
+        if self.implementation_return is not None:
+            if self.completion_evidence is not None:
+                raise ValueError("completion evidence and implementation return cannot share a request")
+            if self.router_event_kind is not self.implementation_return.emitted_event:
+                raise ValueError("implementation return event must match router_event_kind")
         return self
 
 
@@ -150,6 +163,7 @@ class RouterResponseEnvelope(RouterModel):
     required_source_kinds: tuple[ArtifactKind, ...]
     context_budget: PositiveTokenBudget | None
     error_code: RouterServiceErrorCode | None = None
+    wait_reason: HumanWaitReason | None = None
 
     @model_validator(mode="after")
     def response_shape_is_safe_and_unambiguous(self) -> RouterResponseEnvelope:
@@ -164,6 +178,8 @@ class RouterResponseEnvelope(RouterModel):
                 raise ValueError("automatic continuation must grant exactly its displayed action")
             if self.error_code is not None:
                 raise ValueError("automatic continuation cannot carry an error code")
+            if self.wait_reason is not None:
+                raise ValueError("automatic continuation cannot carry a human wait reason")
         elif self.continuation is ContinuationDirective.WAIT_FOR_HUMAN:
             if self.outcome is not RouterOutcome.SUSPEND:
                 raise ValueError("human waits must be suspensions")
@@ -171,6 +187,8 @@ class RouterResponseEnvelope(RouterModel):
                 raise ValueError("human waits must expose only the approval action")
             if self.allowed_action_labels or self.context_budget is not None or self.error_code is not None:
                 raise ValueError("human waits cannot grant execution or report a service failure")
+            if self.wait_reason is None:
+                raise ValueError("human waits require a precise wait reason")
         else:
             if self.allowed_action_labels or self.context_budget is not None:
                 raise ValueError("halted responses cannot grant capabilities or Context")
@@ -178,6 +196,8 @@ class RouterResponseEnvelope(RouterModel):
                 raise ValueError("halted responses cannot invent a next action")
             if self.error_code is None:
                 raise ValueError("halted responses require a stable error code")
+            if self.wait_reason is not None:
+                raise ValueError("halted responses cannot carry a human wait reason")
         return self
 
 
@@ -259,6 +279,16 @@ class FakePrivateRouterService:
                 outcome=RouterOutcome.SUSPEND,
                 error_code=RouterServiceErrorCode.ROUTER_ENTITLEMENT_DENIED,
             )
+        if (
+            request.implementation_return is not None
+            and request.implementation_return.status is ImplementationReturnStatus.BLOCKED
+        ):
+            return self._halted_response(
+                request_id=request.request_id,
+                decision_id=decision_id,
+                outcome=RouterOutcome.SUSPEND,
+                error_code=RouterServiceErrorCode.ROUTER_POLICY_BLOCKED,
+            )
         decision = RouterEngine().decide(
             state=RouterState(
                 project_id=request.opaque_project_id,
@@ -267,7 +297,12 @@ class FakePrivateRouterService:
                 delivery_stage=request.delivery_stage,
                 artifact_refs=self._private_artifact_refs(request=request),
             ),
-            event=RouterEvent(event_id=request.event_correlation_id, kind=request.router_event_kind),
+            event=RouterEvent(
+                event_id=request.event_correlation_id,
+                kind=request.router_event_kind,
+                completion_evidence=request.completion_evidence,
+                implementation_return=request.implementation_return,
+            ),
             profile=self._profile,
         )
         if decision.continuation is ContinuationDirective.AUTO_CONTINUE:
@@ -283,6 +318,7 @@ class FakePrivateRouterService:
                 allowed_action_labels=(action_label,),
                 required_source_kinds=tuple(source.kind for source in decision.required_sources),
                 context_budget=self._context_budget,
+                wait_reason=None,
             )
         if decision.continuation is ContinuationDirective.WAIT_FOR_HUMAN:
             return RouterResponseEnvelope(
@@ -295,6 +331,7 @@ class FakePrivateRouterService:
                 allowed_action_labels=(),
                 required_source_kinds=(),
                 context_budget=None,
+                wait_reason=decision.wait_reason,
             )
         return self._halted_response(
             request_id=request.request_id,
@@ -356,6 +393,7 @@ class FakePrivateRouterService:
             required_source_kinds=(),
             context_budget=None,
             error_code=error_code,
+            wait_reason=None,
         )
 
     @staticmethod
@@ -402,6 +440,7 @@ class ContinuationPlan(RouterModel):
     context_budget: PositiveTokenBudget | None
     error_code: RouterServiceErrorCode | None
     response: RouterResponseEnvelope | None = None
+    wait_reason: HumanWaitReason | None = None
 
     @model_validator(mode="after")
     def plan_shape_is_safe(self) -> ContinuationPlan:
@@ -412,13 +451,22 @@ class ContinuationPlan(RouterModel):
                 raise ValueError("automatic plans require a validated Router response and Context budget")
             if self.error_code is not None:
                 raise ValueError("automatic plans cannot have an error")
+            if self.wait_reason is not None:
+                raise ValueError("automatic plans cannot have a wait reason")
         elif self.mode is ContinuationMode.WAIT_FOR_HUMAN:
             if self.action_label is not ProductActionLabel.REQUEST_APPROVAL:
                 raise ValueError("human waits require the approval action")
             if self.required_source_kinds or self.context_budget is not None or self.error_code is not None:
                 raise ValueError("human waits cannot grant Context or report a transport error")
-        elif self.action_label is not None or self.required_source_kinds or self.context_budget is not None:
-            raise ValueError("halted plans cannot grant a local action or Context")
+            if self.response is None or self.wait_reason is None:
+                raise ValueError("human waits require a validated response and precise reason")
+        elif (
+            self.action_label is not None
+            or self.required_source_kinds
+            or self.context_budget is not None
+            or self.wait_reason is not None
+        ):
+            raise ValueError("halted plans cannot grant a local action, Context, or wait reason")
         return self
 
 
@@ -460,6 +508,7 @@ class PrivateRouterClient:
                 context_budget=response.context_budget,
                 error_code=None,
                 response=response,
+                wait_reason=None,
             )
         if response.continuation is ContinuationDirective.WAIT_FOR_HUMAN:
             return ContinuationPlan(
@@ -469,6 +518,7 @@ class PrivateRouterClient:
                 context_budget=None,
                 error_code=None,
                 response=response,
+                wait_reason=response.wait_reason,
             )
         return self._halt(code=response.error_code or RouterServiceErrorCode.ROUTER_RESPONSE_INVALID)
 
@@ -505,6 +555,7 @@ class PrivateRouterClient:
             required_source_kinds=(),
             context_budget=None,
             error_code=code,
+            wait_reason=None,
         )
 
 

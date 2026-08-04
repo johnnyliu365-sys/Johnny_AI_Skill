@@ -8,10 +8,16 @@ from library.workflow_router import (
     ArtifactKind,
     ArtifactRef,
     AuthorityState,
+    CompletionActionKind,
+    CompletionEvidence,
     ConsumerFingerprint,
     ContinuationDirective,
     DeliveryStage,
+    HandoffArtifactReference,
+    HandoffConsumerFingerprint,
     InMemorySourceGateway,
+    ImplementationReturn,
+    ImplementationReturnStatus,
     ProcessStage,
     RouterEventKind,
     RouterOutcome,
@@ -277,6 +283,78 @@ class PrivateRouterMetadataGateTests(unittest.TestCase):
         self.assertEqual(ProductActionLabel.REQUEST_APPROVAL, ticket_wait.action_label)
         self.assertIsNone(ticket_wait.error_code)
 
+    def test_completion_evidence_re_routes_once_and_implementation_return_change_reenters_grill(self) -> None:
+        completion = CompletionEvidence(
+            completion_id="cmp-doc-00000002",
+            action_kind=CompletionActionKind.DOCUMENTATION,
+            artifact_references=(
+                HandoffArtifactReference(
+                    artifact_id="architecture-router-poc",
+                    revision_digest="rev-0123456789abcdef",
+                    source_span_id="span-architecture-summary",
+                    side_context_id="scx-architecture-0002",
+                    consumer_fingerprint=HandoffConsumerFingerprint(
+                        agent_profile_id="agent-control-plane-v1",
+                        profile_version="profile-v1",
+                        worktree_fingerprint="worktree-control-01",
+                        execution_fingerprint="execution-0002",
+                    ),
+                ),
+            ),
+            verification_references=("verification-completion-01",),
+            evidence_digest="sha256_0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+            commit_digest="git_0123456789abcdef",
+        )
+        completed = self.client.route(
+            raw_request=self.request_for(
+                stage=ProcessStage.ARCHITECTURE,
+                event=RouterEventKind.ACTION_COMPLETED,
+                event_id="evt_00000000000000000000000000000046",
+                source_kinds=(ArtifactKind.ARCHITECTURE,),
+                completion_evidence=completion,
+            ).model_dump()
+        )
+        self.assertEqual(ContinuationMode.AUTO_RUN, completed.mode)
+        self.assertEqual(ProductActionLabel.CONFIRM_ASSUMPTIONS, completed.action_label)
+
+        return_event = ImplementationReturn(
+            ticket_reference="ticket-workflow-governance-01",
+            status=ImplementationReturnStatus.CHANGE_DETECTED,
+            evidence_references=("evidence-change-01",),
+            verification_references=("verification-change-01",),
+            evidence_digest=completion.evidence_digest,
+            emitted_event=RouterEventKind.REQUIREMENT_CHANGED,
+        )
+        changed = self.client.route(
+            raw_request=self.request_for(
+                stage=ProcessStage.IMPLEMENT,
+                event=RouterEventKind.REQUIREMENT_CHANGED,
+                event_id="evt_00000000000000000000000000000047",
+                source_kinds=(ArtifactKind.CHANGE,),
+                implementation_return=return_event,
+            ).model_dump()
+        )
+        self.assertEqual(ContinuationMode.AUTO_RUN, changed.mode)
+        self.assertEqual(ProductActionLabel.CONFIRM_ASSUMPTIONS, changed.action_label)
+
+        blocked_return = return_event.model_copy(
+            update={
+                "status": ImplementationReturnStatus.BLOCKED,
+                "emitted_event": RouterEventKind.ACTION_COMPLETED,
+            }
+        )
+        blocked = self.client.route(
+            raw_request=self.request_for(
+                stage=ProcessStage.IMPLEMENT,
+                event=RouterEventKind.ACTION_COMPLETED,
+                event_id="evt_00000000000000000000000000000048",
+                source_kinds=(ArtifactKind.TICKET,),
+                implementation_return=blocked_return,
+            ).model_dump()
+        )
+        self.assertEqual(ContinuationMode.HALT, blocked.mode)
+        self.assertEqual(RouterServiceErrorCode.ROUTER_POLICY_BLOCKED, blocked.error_code)
+
     def request_for(
         self,
         *,
@@ -284,6 +362,8 @@ class PrivateRouterMetadataGateTests(unittest.TestCase):
         event: RouterEventKind,
         event_id: str,
         source_kinds: tuple[ArtifactKind, ...],
+        completion_evidence: CompletionEvidence | None = None,
+        implementation_return: ImplementationReturn | None = None,
     ) -> RouterRequestEnvelope:
         return RouterRequestEnvelope(
             request_id=f"req_{event_id.removeprefix('evt_')}",
@@ -306,6 +386,8 @@ class PrivateRouterMetadataGateTests(unittest.TestCase):
                 source_count_bucket=1,
             ),
             client_version="v1",
+            completion_evidence=completion_evidence,
+            implementation_return=implementation_return,
         )
 
 

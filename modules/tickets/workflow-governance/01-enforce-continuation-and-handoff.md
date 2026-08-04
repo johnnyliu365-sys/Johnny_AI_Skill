@@ -119,6 +119,16 @@ git diff --check
 
 Additionally run a source/privacy sentinel scan proving new contracts do not serialize raw ContextPacket/source/prompt/path/URI/secret/PII values, and a documentation-link/template contract check. Any unavailable tool or changed command must be returned to the control plane before substitution.
 
+## Implementation evidence (2026-08-05)
+
+- Red: `python -m unittest tests.test_workflow_router.WorkflowRouterTests.test_completion_evidence_and_implementation_handoff_are_typed_and_fail_closed tests.test_workflow_router.WorkflowRouterTests.test_requirement_change_from_implementation_routes_back_to_grill tests.test_private_router_metadata_gate.PrivateRouterMetadataGateTests.test_completion_evidence_re_routes_once_and_implementation_return_change_reenters_grill -v` failed before the implementation with `ImportError: cannot import name 'CompletionActionKind'` from `library.workflow_router`.
+- Green: `python -m unittest discover -s tests` — 68 tests passed.
+- Strict types: `python -m mypy --strict library tests` — no issues in 58 source files.
+- Compile: `python -m py_compile library/workflow_router/*.py` — passed.
+- Smoke/privacy: `python -m unittest tests.test_private_router_metadata_gate -v` — 8 tests passed, including continuation, fail-closed, and source/URI/prompt sentinel checks.
+- Formatting: `git diff --check` — passed.
+- Scope: implementation worktree only; no target-project runtime, network, persistence, secret, or raw Context transfer added.
+
 ## Completion definition and handoff
 
 - [ ] Every AC and TDD cut maps to a retained red test and green verification result.

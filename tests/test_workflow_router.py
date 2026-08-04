@@ -16,12 +16,21 @@ from library.workflow_router import (
     AgentUsage,
     AuthorityState,
     CitationLedger,
+    CompletionActionKind,
+    CompletionEvidence,
     ConsumerFingerprint,
     ContextResolver,
     ContextUsageRecord,
     ContextUsageValidator,
     DeliveryStage,
+    FrontendCompositionContract,
+    HandoffArtifactReference,
+    HandoffConsumerFingerprint,
+    HumanWaitReason,
     InMemorySourceGateway,
+    ImplementationHandoff,
+    ImplementationReturn,
+    ImplementationReturnStatus,
     JsonlContextUsageStore,
     ProcessStage,
     ReferenceStatus,
@@ -32,6 +41,7 @@ from library.workflow_router import (
     RouterState,
     RunAcceptance,
     SourceSnippet,
+    TicketScope,
     build_router_graph,
     build_router_poc_profile,
 )
@@ -111,6 +121,7 @@ class WorkflowRouterTests(unittest.TestCase):
         self.assertEqual(RouterOutcome.SUSPEND, suspended.outcome)
         self.assertIsNone(suspended.next_stage)
         self.assertEqual("wait_for_human", suspended.continuation.value)
+        self.assertEqual(HumanWaitReason.SPECIFICATION_APPROVAL_REQUIRED, suspended.wait_reason)
 
         no_go = self.engine.decide(
             state=RouterState(
@@ -125,6 +136,185 @@ class WorkflowRouterTests(unittest.TestCase):
         )
         self.assertEqual(RouterOutcome.STOP, no_go.outcome)
         self.assertEqual(ProcessStage.STOPPED, no_go.next_stage)
+
+    def test_completion_evidence_and_implementation_handoff_are_typed_and_fail_closed(self) -> None:
+        architecture = ArtifactRef(
+            kind=ArtifactKind.ARCHITECTURE,
+            identifier="router-poc-architecture",
+            uri="architecture://router-framework/poc",
+            revision="1",
+        )
+        evidence = CompletionEvidence(
+            completion_id="cmp-doc-00000001",
+            action_kind=CompletionActionKind.DOCUMENTATION,
+            artifact_references=(
+                HandoffArtifactReference(
+                    artifact_id="architecture-router-poc",
+                    revision_digest="rev-0123456789abcdef",
+                    source_span_id="span-architecture-summary",
+                    side_context_id="scx-architecture-0001",
+                    consumer_fingerprint=HandoffConsumerFingerprint(
+                        agent_profile_id="agent-control-plane-v1",
+                        profile_version="profile-v1",
+                        worktree_fingerprint="worktree-control-01",
+                        execution_fingerprint="execution-0001",
+                    ),
+                ),
+            ),
+            verification_references=("verification-router-green-01",),
+            evidence_digest="sha256_0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+            commit_digest="git_0123456789abcdef",
+        )
+        decision = self.engine.decide(
+            state=RouterState(
+                project_id="router-framework-poc",
+                stage=ProcessStage.ARCHITECTURE,
+                authority_state=AuthorityState.NOT_REQUIRED,
+                delivery_stage=DeliveryStage.POC,
+                artifact_refs=(architecture,),
+            ),
+            event=RouterEvent(
+                event_id="evt-completion-001",
+                kind=RouterEventKind.ACTION_COMPLETED,
+                completion_evidence=evidence,
+            ),
+            profile=self.profile,
+        )
+        self.assertEqual(RouterOutcome.ADVANCE, decision.outcome)
+        self.assertEqual(ProcessStage.GRILL, decision.next_stage)
+
+        handoff = ImplementationHandoff(
+            ticket_reference="ticket-workflow-governance-01",
+            approved_spec_reference="spec-workflow-governance-01",
+            context_references=evidence.artifact_references,
+            acceptance_references=("acceptance-ac-01",),
+            tdd_references=("tdd-cut-normal-continuation",),
+            scope=TicketScope.NON_FRONTEND,
+            non_frontend_reason="router policy has no formal UI boundary",
+            control_owner_id="actor-controlplane-01",
+            implementation_owner_id="actor-implementation-01",
+            reviewer_id="actor-reviewer-01",
+        )
+        self.assertEqual(TicketScope.NON_FRONTEND, handoff.scope)
+        change_return = ImplementationReturn(
+            ticket_reference=handoff.ticket_reference,
+            status=ImplementationReturnStatus.CHANGE_DETECTED,
+            evidence_references=("evidence-contract-change-01",),
+            verification_references=("verification-contract-change-01",),
+            evidence_digest=evidence.evidence_digest,
+            emitted_event=RouterEventKind.REQUIREMENT_CHANGED,
+        )
+        self.assertEqual(RouterEventKind.REQUIREMENT_CHANGED, change_return.emitted_event)
+
+        with self.assertRaises(ValidationError):
+            CompletionEvidence(
+                completion_id="",
+                action_kind=CompletionActionKind.DOCUMENTATION,
+                artifact_references=(),
+                verification_references=(),
+                evidence_digest="sha256_0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+            )
+        with self.assertRaises(ValidationError):
+            HandoffArtifactReference(
+                artifact_id="context://raw-source-must-not-transfer",
+                revision_digest="rev-0123456789abcdef",
+                source_span_id="span-source",
+                side_context_id="scx-source-0001",
+                consumer_fingerprint=evidence.artifact_references[0].consumer_fingerprint,
+            )
+        with self.assertRaises(ValidationError):
+            ImplementationHandoff(
+                ticket_reference="ticket-workflow-governance-01",
+                approved_spec_reference="spec-workflow-governance-01",
+                context_references=evidence.artifact_references,
+                acceptance_references=("acceptance-ac-01",),
+                tdd_references=("tdd-cut-normal-continuation",),
+                scope=TicketScope.FRONTEND,
+                control_owner_id="actor-same-owner-01",
+                implementation_owner_id="actor-same-owner-01",
+                reviewer_id="actor-reviewer-01",
+            )
+        frontend_handoff = ImplementationHandoff(
+            ticket_reference="ticket-frontend-contract-01",
+            approved_spec_reference="spec-frontend-contract-01",
+            context_references=evidence.artifact_references,
+            acceptance_references=("acceptance-frontend-01",),
+            tdd_references=("tdd-frontend-01",),
+            scope=TicketScope.FRONTEND,
+            frontend_composition=FrontendCompositionContract(
+                component_boundaries="screen composes status panel and approval action",
+                composition_root_reference="composition-root-router-ui",
+                dependency_scope="screen-scoped injected ports",
+                injected_interfaces=("router-client-port", "clock-port"),
+                production_bindings="production-router-client binding",
+                test_doubles="fake-router-client and fake-clock",
+                state_acceptance="loading empty error permission and accessibility states are asserted",
+            ),
+            control_owner_id="actor-controlplane-01",
+            implementation_owner_id="actor-implementation-01",
+            reviewer_id="actor-reviewer-01",
+        )
+        self.assertIsNotNone(frontend_handoff.frontend_composition)
+
+    def test_requirement_change_from_implementation_routes_back_to_grill(self) -> None:
+        change = ArtifactRef(
+            kind=ArtifactKind.CHANGE,
+            identifier="CHG-ROUTER-RETURN-001",
+            uri="change://router-framework/return-001",
+            revision="1",
+        )
+        decision = self.engine.decide(
+            state=RouterState(
+                project_id="router-framework-poc",
+                stage=ProcessStage.IMPLEMENT,
+                authority_state=AuthorityState.NOT_REQUIRED,
+                delivery_stage=DeliveryStage.POC,
+                artifact_refs=(change,),
+            ),
+            event=RouterEvent(
+                event_id="evt-change-return-001",
+                kind=RouterEventKind.REQUIREMENT_CHANGED,
+            ),
+            profile=self.profile,
+        )
+        self.assertEqual(RouterOutcome.ADVANCE, decision.outcome)
+        self.assertEqual(ProcessStage.GRILL, decision.next_stage)
+
+    def test_policy_documents_and_templates_keep_completion_and_handoff_contract_in_sync(self) -> None:
+        root = Path(__file__).resolve().parents[1]
+        required_terms = {
+            "Workflow.md": (
+                "commit",
+                "ACTION_COMPLETED",
+                "ImplementationHandoff",
+                "ImplementationReturn",
+                "WAIT_FOR_HUMAN",
+                "HALT",
+            ),
+            "AGENTS.md": ("#workflow-router", "#role-boundary", "ACTION_COMPLETED"),
+            "skills/johnny-project-takeover/SKILL.md": (
+                "ACTION_COMPLETED",
+                "ImplementationReturn",
+                "REQUIREMENT_CHANGED",
+            ),
+            "modules/tickets/TEMPLATE.md": (
+                "ImplementationReturn",
+                "Owner override record",
+                "N/A reason",
+                "Composition Root",
+            ),
+            "modules/spec/TEMPLATE.md": (
+                "ImplementationHandoff",
+                "ImplementationReturn",
+                "Composition Root",
+            ),
+        }
+        for relative_path, terms in required_terms.items():
+            with self.subTest(path=relative_path):
+                document = (root / relative_path).read_text(encoding="utf-8")
+                for term in terms:
+                    with self.subTest(term=term):
+                        self.assertIn(term, document)
 
     def test_delivery_stage_must_match_the_approved_profile(self) -> None:
         decision = self.engine.decide(

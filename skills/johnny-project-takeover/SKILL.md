@@ -19,6 +19,8 @@ Treat this plugin as an external control plane. It supplies workflow guidance an
 
 After each completed action, classify the next Router decision before replying. Do not stop merely because one stage has completed.
 
+An implementation or docs-only commit returns through the typed `ACTION_COMPLETED` / `ImplementationReturn` contract. A `CHANGE_DETECTED` return emits `REQUIREMENT_CHANGED` and re-enters Grill; it is never silently patched in place.
+
 1. **`AUTO_CONTINUE`** — when the required evidence is present, the next stage is declared, exactly one capability is selected, and no new human authority is needed, immediately read only that next stage's minimum sources and continue the workflow in the same task. Complete one legal action at a time, emit its new event, and re-evaluate. Do not ask the user for a ceremonial “continue?” confirmation.
 2. **`WAIT_FOR_HUMAN`** — pause only at a Profile-declared approval or user-decision gate, or before an irreversible external side effect. State the precise approval or decision required; do not describe it as a generic block.
 3. **`HALT`** — invalid or missing source, unavailable capability, denied authority, validation failure, security/privacy issue, failed external boundary, or an undeclared transition stops the routed path. Do not guess a next stage, reuse a local fallback Profile, or wait indefinitely.
@@ -30,6 +32,8 @@ This skill can guide a currently active Codex or Claude task to continue through
 This skill's control-plane Agent owns Wayfinder, Grill, Context, SPEC, ticket drafting, implementation handoff, review, and handoff. It does not implement approved ticket source, tests, migrations, deployment, or implementation commits unless the project owner explicitly reassigns that ticket.
 
 Every ticket must name a separate implementation owner. That owner follows the approved ticket; it must return ambiguous requirements, architecture, public-contract, or acceptance changes to this control-plane Agent for `grill-with-docs → to-spec → to-tickets`.
+
+The control-plane handoff records an `ImplementationHandoff` containing only approved artifact references, source revision/span metadata, side-context IDs, consumer fingerprints, and evidence digests. The implementation owner returns `ImplementationReturn`: `COMPLETED` emits `ACTION_COMPLETED`, `BLOCKED` halts fail-closed, and `CHANGE_DETECTED` emits `REQUIREMENT_CHANGED` for Grill. Neither record may contain raw ContextPacket text, source text, prompts, paths, URIs, secrets, or PII.
 
 For any formal frontend ticket, require composition-first design and dependency injection before implementation: name the screen/layout/component boundaries, Composition Root, scoped interfaces and bindings, production dependencies, test fakes, and loading/empty/error/accessibility acceptance. A component must not instantiate a global singleton, read environment configuration, or access an external service implicitly.
 
