@@ -158,3 +158,20 @@
 | Context | `doc/context/workflow-governance/main.md`; `CONTEXT.md §衍生 SPEC 索引` |
 | Linked specification | `SPEC-AI-WORKFLOW-WORKFLOW-GOVERNANCE-20260805-01KZ6T8V2R4Y6B8D0F2H4J6M8P` (`APPROVED` on `2026-08-05`) |
 | Acceptance | The approved future policy must make post-commit re-routing observable, distinguish legitimate approval waits from failures, require a named separate implementation owner before implementation, and block formal frontend tickets that lack composition-root and DI evidence. |
+
+## CHG-20260805-010 — Reposition to non-commercial autonomous multi-AI collaboration
+
+| Field | Value |
+| --- | --- |
+| Date | `2026-08-05` |
+| Requested by | Project owner |
+| Previous rule | The active direction included a private Router SaaS POC, commercial pricing/validation language, and a single project-stage Router that moved a ticket directly toward implementation after approval. The workflow did not model a user-confirmed ticket dispatch followed by concurrent planning and ticket-execution lanes. |
+| Changed rule | The active direction is a non-commercial, detachable multi-AI collaboration and audit workflow. After a ticket is approved and committed, the control plane asks whether it has been delivered to its named implementation owner. No response is `WAIT_FOR_HUMAN`; a confirmed dispatch starts the ticket execution lane and immediately routes the planning lane to the next Grill. Branch/worktree provisioning, integration and Grill audit must proceed automatically when their typed evidence is valid. |
+| Reason | The owner wants a complete autonomous workflow with no non-essential pauses, not a commercial SaaS. The flow must support one or two collaborating coding Agents while retaining explicit human authority only for real approvals and ticket-dispatch confirmation. |
+| In scope | Repositioning documents; collaboration topology selection; project and ticket Router lanes; typed dispatch confirmation; worktree/branch lifecycle; guarded integration; post-integration Grill audit; fixed ready/handoff response; Router/profile/skill/template/test changes in a later approved ticket. |
+| Out of scope | SaaS, pricing, billing, customer accounts, entitlements, hosting, private Router service, model hosting, target-project runtime coupling, automatic host-model-turn creation, bypassing platform approvals, and source/test implementation before ticket approval. |
+| Historical treatment | `CHG-20260804-008`, `modules/spec/private-router-saas.md`, ADR-20260804-001 and their completed POC remain historical evidence. They are superseded for future direction, not deleted or retroactively rewritten. |
+| PRD | `PRD.md §12` (historical) and `PRD.md §14` (active) |
+| Context | `doc/context/autonomous-collaboration-audit/main.md`; `CONTEXT.md §衍生 SPEC 索引` |
+| Linked specification | `SPEC-AI-WORKFLOW-AUTONOMOUS-COLLABORATION-AUDIT-20260805-01KZ7A2C4E6G8J0L2N4P6R8T` (`DRAFT`) |
+| Acceptance | The approved specification must define exact waits, typed events, parallel-lane ownership, safe Git integration, audit/rework return behavior, host capability limits, and the fixed project-owner response format. |

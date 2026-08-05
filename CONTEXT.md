@@ -11,9 +11,9 @@
 - `來源專案D` 的 ML 訓練產物僅可作為離線分類／品質分析的參考，不能成為對外訊息、派單或付款決策的權威。
 - SourceProjectA 金流原始碼受其 P0／P1 部署與驗證閘門限制；本專案只抽取可測試的付款契約、idempotency、帳本與 provider adapter 模式，不能宣稱相容或可啟用既有正式收款。
 - 每個實作模組資料夾都必須有 README，說明責任、公開契約、相依、禁止用途、來源追溯與驗證命令。
-- `private-router-saas` 是新的獨立 POC 集群：客戶端只傳遞嚴格驗證的假名化 metadata、帳號範圍 revision digest、階段事件與結構化 redacted 摘要；原始碼、原始文件、提示詞、路徑、URI、Secret、PII 與 ContextPacket 不得離開客戶端。
-- Private Router SaaS 是控制平面，不代跑模型、不代付 token、不作為客戶專案 runtime、CI、建置或部署相依。使用者停用或移除 plugin 後，客戶專案必須仍可運作。
-- 商業假設僅適用未來 SaaS MVP：第一個登記專案免費；第二個專案起標準方案為每月 NT$690；一個進行中半成品稽核方案為每月 NT$2,000。標準／稽核方案的直接月成本上限分別為 NT$207／NT$600，目標毛利率為 70%。POC 不處理真實收費。
+- `private-router-saas` 是已完成、僅供追溯的 metadata-only Router POC；`CHG-20260805-010` 已撤銷其 SaaS、支付、entitlement、價格、商業化與服務部署方向。既有 POC 原始碼在獨立 cleanup ticket 前保留，不得視為現行產品承諾。
+- 現行目標是本機、可拔除的多 AI 協作／稽核控制平面：使用者保有模型與專案；plugin 不作為客戶專案 runtime、CI、建置或部署相依。停用或移除 plugin 後，客戶專案必須仍可運作。
+- 每張已核准工單在交付給具名 implementation owner 前，必須停在精確的 dispatch-confirmation 人類閘門；確認交付後，planning lane 自動進入下一個 Grill，ticket execution lane 在獨立 branch/worktree 持續執行、回傳、受控整合與稽核。
 - 工作流程的 commit 只是可追溯的完成證據，必須轉為 `ACTION_COMPLETED` 並重新交由 Router 判定下一步；除 Profile 宣告的權限閘門外，不得因 commit、docs-only commit 或單一工作階段完成而停止。缺少必要來源、具名 owner、權限、能力或有效決策時必須 fail-closed，而不是假裝等待或自行繼續。
 - 控制面 Agent 僅負責 Wayfinder、Grill、Context、SPEC、ticket、實作前 handoff、review 與 handoff。正式實作必須由另一位具名 implementation owner 完成；該 owner 如遇需求、公開契約、架構、前端組合或驗收變更，必須以 `REQUIREMENT_CHANGED` 回交控制面重新收斂。
 
@@ -104,3 +104,11 @@
 - Scope: make `ACTION_COMPLETED` post-commit routing explicit; define automatic-continuation, human-wait, and fail-closed boundaries; require separate implementation ownership and frontend composition/DI handoff evidence.
 - PRD / change: `PRD.md §13`; `CHG-20260805-009`.
 - Handoff state: `01-enforce-continuation-and-handoff` is `DONE`. The named implementation worktree finished at `a94e207`; independent control-plane review is `APPROVED` in `doc/reviews/workflow-governance/01-enforce-continuation-and-handoff-code-review.md`, and reviewed implementation was integrated by `2f545c8`. The next declared Router stage is `HANDOFF`; only a new requirement may return to Grill.
+
+### `SPEC-AI-WORKFLOW-AUTONOMOUS-COLLABORATION-AUDIT-20260805-01KZ7A2C4E6G8J0L2N4P6R8T` — Autonomous Multi-AI Collaboration and Audit POC
+
+- Specification: `modules/spec/autonomous-collaboration-audit.md` (`DRAFT`).
+- Worktree Context: `doc/context/autonomous-collaboration-audit/main.md`.
+- Scope: non-commercial positioning, collaboration-topology selection, dispatch-confirmation wait, parallel planning/ticket lanes, guarded branch/worktree provisioning, integration, Grill audit, and fixed handoff response format.
+- PRD / change: `PRD.md §14`; `CHG-20260805-010`.
+- Handoff state: Grill is complete to draft SPEC. Awaiting project-owner specification approval; no source/test/runtime implementation is authorised.

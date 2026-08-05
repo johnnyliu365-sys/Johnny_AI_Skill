@@ -118,17 +118,11 @@ The versioned Johnny AI Skill source must be released through its existing priva
 - Change: `CHG-20260803-007`
 - Specification: `modules/spec/plugin-release-telemetry.md`
 
-## 12. Private Router SaaS POC
+## 12. Historical Private Router POC
 
-Build a private Router control plane for non-engineering vibe-coding users. The product guides a new project, inherited-project audit, repair path, or deployment preparation through user-facing product actions while private Profile, policy, scoring, and transition logic stay on the service.
+`CHG-20260804-008` and `modules/spec/private-router-saas.md` remain an auditable record of the completed metadata-only Router experiment. They no longer define future product direction: no SaaS, payment, entitlement, hosting, customer pricing, commercial success metric, or private service deployment is planned under this repository's current objective.
 
-The user supplies their own Codex or Claude subscription and model usage. The SaaS does not host or pay for a model. Source code, document text, prompt, path, URI, secret, PII, ContextPacket, and local telemetry remain on the user's machine. The service accepts only strict pseudonymous metadata, account-scoped salted revision digests, typed stage events, entitlement mode, and finite structured redacted-summary claims.
-
-The commercial hypothesis is: one registered project is free; the standard route costs NT$690/month from the second project; one active inherited-project audit route costs NT$2,000/month. The direct monthly cost ceiling is 30% of each plan's revenue, preserving a 70% gross-margin target. Commercial validation requires five active paid users and at least three second-cycle renewals. These prices and all real billing are excluded from the POC.
-
-- Change: `CHG-20260804-008`
-- Specification: `modules/spec/private-router-saas.md`
-- Architectural decision: `doc/adr/ADR-20260804-001-private-router-saas.md`
+The completed POC source is retained until a separately approved cleanup ticket decides which non-commercial Router contracts remain useful. It must not be represented as an active commercial roadmap.
 
 ## 13. Continuous Workflow Governance POC
 
@@ -138,3 +132,12 @@ The control-plane Agent owns Wayfinder, Grill, Context, specification, ticket dr
 
 - Change: `CHG-20260805-009`
 - Draft specification: `modules/spec/workflow-governance.md`
+
+## 14. Autonomous Multi-AI Collaboration and Audit POC
+
+The active project objective is a detachable, non-commercial multi-AI control plane for Codex and Claude Code. It must continuously route only declared safe actions, minimize Context, create isolated implementation branches/worktrees, and audit returned work without ceremonial pauses.
+
+After a ticket is approved and committed, the control plane asks exactly whether it has been delivered to its named implementation owner. No answer is a precise `WAIT_FOR_HUMAN`; confirmation provisions the implementation lane and immediately routes the planning lane to the next Grill. A ticket execution lane later returns its tested commit for automatic, guarded main integration and Grill audit. The plugin does not itself create a host model turn or choose a host model; it presents the required topology question and uses only the capabilities that the host/user makes available.
+
+- Change: `CHG-20260805-010`
+- Draft specification: `modules/spec/autonomous-collaboration-audit.md`

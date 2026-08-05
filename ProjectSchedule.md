@@ -77,7 +77,7 @@
 | Commit | DONE | `368d513` (`release: package plugin version 0.3.0`) |
 | Push | IN_PROGRESS | Push the reviewed release and its documentation handoff to `origin/main` |
 
-## Private Router SaaS POC
+## Historical Private Router POC
 
 | Milestone | State | Evidence |
 | --- | --- | --- |
@@ -87,6 +87,8 @@
 | Ticket planning and second approval | DONE | Project owner approved `01-private-router-metadata-gate` on `2026-08-04` |
 | Implementation, test, review, and release | DONE | 64 tests, strict type check, compile, plugin validation, Code Review, and handoff completed for `01-private-router-metadata-gate` |
 
+| Future commercialisation / deployment | SUPERSEDED | `CHG-20260805-010` changes the active objective to non-commercial multi-AI collaboration automation. |
+
 ## Continuous Workflow Governance POC
 
 | Milestone | State | Evidence |
@@ -95,3 +97,11 @@
 | Specification | DONE | `modules/spec/workflow-governance.md` (`APPROVED` on `2026-08-05`) |
 | Ticket plan, named implementation owner, and second approval | DONE | `01-enforce-continuation-and-handoff` approved on `2026-08-05`; implementation worktree assigned and reviewer recorded. |
 | Implementation, verification, review, and handoff | DONE | Implementation worktree completed at `a94e207`; independent 73-test / strict-type review is `APPROVED` in `doc/reviews/workflow-governance/01-enforce-continuation-and-handoff-code-review.md`; integrated by `2f545c8`. |
+
+## Autonomous Multi-AI Collaboration and Audit POC
+
+| Milestone | State | Evidence |
+| --- | --- | --- |
+| Requirement change and Grill | DONE | `CHG-20260805-010`; `doc/context/autonomous-collaboration-audit/main.md` |
+| Specification | AWAITING_APPROVAL | `modules/spec/autonomous-collaboration-audit.md` (`DRAFT`) |
+| Ticket plan, implementation, review, and handoff | PENDING | Begins only after explicit specification and ticket approval. |
