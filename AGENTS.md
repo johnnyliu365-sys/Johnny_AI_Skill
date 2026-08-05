@@ -39,7 +39,7 @@ Router anchor: `#workflow-router`; implementation role anchor: `#role-boundary`.
 | 需求、Bug、正式 UI 或邊界不清楚 | [需求釐清](Workflow.md#discovery) | `wayfinder → grill-with-docs` |
 | 需求、UI、資料契約或權限已改變 | [變更控制](Workflow.md#change-control) | 影響分析、更新 Context、重走核准閘門 |
 | 準備定義可驗收功能 | [規格](Workflow.md#specification) | 建立／修訂 SPEC，等待核准 |
-| 規格已核准，準備分工 | [工單](Workflow.md#tickets) | 垂直切片、指定責任與等待核准 |
+| 規格已核准，準備分工 | [工單](Workflow.md#tickets) | 垂直切片、指定責任；依唯一交付確認開立 ticket lane |
 | 已核准單張工單 | [實作](Workflow.md#implementation) | 逐行為 TDD：紅燈 → 最小實作 → 綠燈 |
 | 進行或交付 Code Review | [Code Review 標準](CodeReview.md) | 唯一驗證項目、證據與審閱結論 |
 | 多 Agent 或多 worktree | [協作](Workflow.md#collaboration) | 讀共同基準、確認 owner 與衝突 |

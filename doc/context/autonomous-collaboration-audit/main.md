@@ -118,3 +118,11 @@ The Architecture stage is supplied by [ADR-20260805-002](../../adr/ADR-20260805-
 The submitted implementation `9b4d5cb` and docs-only handoff `7a8df21` were reviewed in [01-topology-dispatch-lanes-code-review.md](../../reviews/autonomous-collaboration-audit/01-topology-dispatch-lanes-code-review.md). Result: `CHANGES_REQUESTED`.
 
 The review found that the old `APPROVAL_GRANTED → IMPLEMENT` route remains a direct and indirect dispatch-confirmation bypass; Router state also loses the selected implementation capability/reviewer, the required opened-ticket `IN_PROGRESS` model is absent, and ticket-specific red/edge/mutation evidence is incomplete. Ticket 01 remains `IN_PROGRESS` in its named implementation worktree and returns to implementation. This is not a requirement change, so the planning lane does not re-enter Grill or open ticket 02.
+
+### Correction review — `2e4f13e` / `f295c22`
+
+The correction closes the original legacy-approval bypass, adds the `TicketProposal` `PLANNED → IN_PROGRESS` operation, and preserves the named implementation capability/reviewer in the Router state and ticket lane. Full regression (`84` tests), strict typing (`60` files) and whitespace validation passed against review baseline `8108cd9`.
+
+It is nevertheless still `CHANGES_REQUESTED`. A positive receipt can be sent directly to a fresh Router state, yielding a ticket `IMPLEMENT` lane and planning `GRILL` lane without a persisted opened proposal, one dispatch-question record, or bound human confirmation. The Profile also retains `TICKETS + ACTION_COMPLETED → TICKET_APPROVAL_REQUIRED`, which is the removed ceremonial second wait, and the only valid dispatch path cannot carry and bind the reviewed `ImplementationHandoff`. The formal evidence and required corrections are in [the review report](../../reviews/autonomous-collaboration-audit/01-topology-dispatch-lanes-code-review.md).
+
+Ticket 01 remains `IN_PROGRESS` and returns automatically to its named implementation owner. The control plane has aligned the sole workflow policy in the same review commit; the implementation owner must synchronize that baseline before the corrected return is reviewed again. This is not a requirement change; ticket 02 remains `PLANNED` and no integration, handoff, push, deployment or dependent implementation is authorized.

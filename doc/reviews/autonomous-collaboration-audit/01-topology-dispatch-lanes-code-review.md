@@ -99,3 +99,75 @@ Passing regression and type checks do not override the authorization and accepta
 `9b4d5cb` must not be merged into `main`. Ticket 01 remains `IN_PROGRESS` and returns to its named implementation owner for the corrections above. The owner must synchronize the current control-plane documentation baseline in its own worktree, record new red evidence, implement only the approved ticket scope, rerun verification, and submit a new implementation commit plus docs-only handoff.
 
 This is a normal `CHANGES_REQUESTED → IMPLEMENT` return, not `REQUIREMENT_CHANGED`: no product requirement or ticket scope was changed. Ticket 02 remains a dependent `PLANNED` candidate and cannot be opened. No push, deployment, handoff or next-ticket implementation is authorized.
+
+---
+
+## Correction review — `2e4f13e` / `f295c22`
+
+| Field | Value |
+| --- | --- |
+| Review result | `CHANGES_REQUESTED` |
+| Reviewed implementation | `2672d62` → `2e4f13e` (`fix: close dispatch approval bypass`) |
+| Docs-only handoff | `082a120` → `f295c22` (`docs: return dispatch correction handoff`) |
+| Required baseline | `8108cd9` on control-plane `main` |
+| Branch / owner | `codex/implementation-private-router-saas-01` / Codex implementation Agent |
+| Review date | `2026-08-06 (Asia/Taipei)` |
+
+### Verified corrections
+
+- The submitted branch has merge-base `8108cd9`; it contains neither a merge commit nor reset-based history rewrite.
+- The direct and Private Router legacy `TICKETS + APPROVAL_GRANTED + ImplementationHandoff` route now returns `SUSPEND + HALT` with no source, Context, capability, lane or worktree grant.
+- `TicketProposal.open()` makes the selected proposal `IN_PROGRESS` once and requires one dispatch-question ID.
+- `RouterState` retains a typed `CollaborationTopologyPlan`; the confirmed ticket lane contains the selected implementation capability and reviewer.
+- The committed worktree is clean. `python -B -m unittest discover -s tests` passed (`84` tests), `python -m mypy --strict library tests` passed (`60` source files), and `git diff --check 8108cd9 2e4f13e` passed.
+
+### Remaining findings
+
+#### CR-05 — A positive receipt can still bypass the opened proposal and the one delivery question
+
+**Impact:** `IMPLEMENTATION_DISPATCH_CONFIRMED` currently grants the planning Grill route and the ticket-lane `IMPLEMENT` capability from a receipt alone. `RouterState` has no pending/opened proposal or dispatch-question record, and the confirmation event does not carry or verify one. A caller can therefore skip `TICKET_DISPATCH_REQUIRED`, its `IN_PROGRESS` transition, and the required named human delivery question while still receiving an execution plan. This violates SPEC AC-3 through AC-5 and the ticket's single ticket-scoped authority rule.
+
+**Evidence:** `tests/test_autonomous_collaboration.py` deliberately calls `RouterEngine.decide()` with a fresh `_ticket_state()` and only `IMPLEMENTATION_DISPATCH_CONFIRMED` plus a positive receipt; it asserts `AUTO_CONTINUE`, a planning `GRILL` lane and a ticket `IMPLEMENT` lane. Neither `RouterState` nor `TicketDispatchReceipt` contains a prior dispatch-question/proposal correlation. `router.py` validates ticket, owner, topology and current event correlation, but has no persisted pending-dispatch validation.
+
+**Required correction:** Persist a metadata-only pending-dispatch descriptor in Router-controlled state/checkpoint after the opened proposal produces its one question. Confirmed dispatch must match that descriptor's ticket, named owner, question/correlation and reviewed-handoff reference; a receipt without it, a duplicate confirmation, or any mismatch must `HALT` with no grant. Add direct and Private Router regression tests for every bypass form.
+
+#### CR-06 — The Profile still exposes the obsolete ticket-completion approval wait
+
+**Impact:** The user-approved flow opens a selected committed ticket immediately and asks only the delivery-confirmation question. `build_router_poc_profile()` still declares `TICKETS + ACTION_COMPLETED` as `WAIT_FOR_HUMAN` with `TICKET_APPROVAL_REQUIRED`. An Agent that correctly reports ticket-document completion to the Router is therefore sent to the ceremonial approval gate the specification explicitly removes.
+
+**Evidence:** `profile.py` retains the `ProcessStage.TICKETS` / `RouterEventKind.ACTION_COMPLETED` rule with `requires_human_approval=True` and `HumanWaitReason.TICKET_APPROVAL_REQUIRED`. No correction test submits that event and proves it cannot become a second human wait.
+
+**Required correction:** Remove or fail-close this obsolete transition and make the control-plane ticket-opening path emit the validated `TICKET_DISPATCH_REQUIRED` event directly. Add a regression test proving ticket completion cannot produce `TICKET_APPROVAL_REQUIRED` or any implementation grant.
+
+#### CR-07 — The reviewed implementation handoff is not usable or bound on the only legal dispatch path
+
+**Impact:** `ImplementationHandoff` is still accepted only with `APPROVAL_GRANTED`, which is now deliberately blocked. The confirmed-dispatch path accepts only an opaque `handoff_reference` in a receipt and never validates it against a reviewed `ImplementationHandoff`, the opened proposal, or Router-controlled pending state. Consequently the required SPEC/ticket/Context/TDD/role handoff has no valid, verified place in the legal dispatch sequence.
+
+**Evidence:** `contracts.py` and `private_router.py` reject any `ImplementationHandoff` unless its event is legacy `APPROVAL_GRANTED`; `RouterEventKind.IMPLEMENTATION_DISPATCH_CONFIRMED` accepts a receipt without that object. The dispatch tests construct the confirmation directly with an arbitrary receipt handoff ID, so no binding is exercised.
+
+**Required correction:** Move the metadata-only handoff validation to the legal dispatch lifecycle, give it a stable opaque reference, and bind the later receipt to the pending reviewed handoff before granting either lane. Cover direct and Private Router mismatch, omitted-handoff and legacy-event cases.
+
+#### CR-08 — The sole governing workflow text still documents the removed legacy transition
+
+**Impact:** `Workflow.md` is the declared sole workflow standard. Its role-boundary section still says the Profile may accept `TICKETS + APPROVAL_GRANTED → IMPLEMENT` with an `ImplementationHandoff`, directly contradicting the corrected Router guard and the approved SPEC. Following the document would reintroduce the bypass.
+
+**Evidence:** `Workflow.md:361`; ticket 01 explicitly includes the policy text necessary for the dispatch behaviours.
+
+**Disposition:** The control plane has corrected this policy in the same review record: it now defines open proposal → one dispatch question → pending metadata descriptor → positive bound receipt → two lanes, explicitly rejects the legacy transition, and states that `TICKETS + ACTION_COMPLETED` is not a second approval wait. The implementation owner must synchronize that committed control-plane baseline before the next review.
+
+### Mandatory Code Review checklist
+
+| Area | Result | Basis |
+| --- | --- | --- |
+| Strong types / clarity | `CHANGES_REQUESTED` | New values are strongly typed, but pending authorization state and handoff binding are absent. |
+| Coding and architecture rules | `CHANGES_REQUESTED` | Receipt confirmation is evaluated independently of the preceding Router decision. |
+| Logic and authorization | `CHANGES_REQUESTED` | CR-05 permits an execution grant without the mandated delivery question. |
+| Boundary / exception handling | `CHANGES_REQUESTED` | Missing, duplicate and mismatched pending-dispatch/handoff states are untested. |
+| Security / privacy | `CHANGES_REQUESTED` | Metadata-only design remains sound; unbound receipt authority is not. |
+| Tests / smoke | `CHANGES_REQUESTED` | Regression/type checks pass, but required bypass and legacy-completion tests are absent. |
+| Dependencies | `APPROVED` | No dependency change was introduced. |
+| SPEC / ticket / Context compliance | `CHANGES_REQUESTED` | CR-05 through CR-08 conflict with AC-3 through AC-5 and the governing workflow. |
+
+### Return and continuation
+
+`2e4f13e` must not be merged into `main`. Ticket 01 remains `IN_PROGRESS` and returns to its named implementation owner for CR-05 through CR-07; CR-08 policy alignment is complete in the control-plane review commit. This remains `CHANGES_REQUESTED → IMPLEMENT`, not `REQUIREMENT_CHANGED`: the approved requirement is unchanged. Ticket 02 remains `PLANNED`; no integration, push, handoff, deployment or dependent implementation is authorized.

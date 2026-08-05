@@ -25,9 +25,11 @@ flowchart TD
     H -- 否 --> G
     H -- 是 --> I[回掛共同 Context 與關聯 CHG]
     I --> J[to-tickets]
-    J --> K{產品負責人核准工單與責任？}
-    K -- 否 --> J
-    K -- 是 --> L[選定一張 ticket 進入 implement]
+    J --> K[選定一張已提交 ticket：PLANNED → IN_PROGRESS]
+    K --> DQ{是否已交付給具名 implementation owner？}
+    DQ -- 未答／否 --> DW[WAIT_FOR_HUMAN：只等待此張交付確認]
+    DW --> DQ
+    DQ -- 是 --> L[confirmed dispatch：ticket lane 進入 implement；planning lane 進入下一個 Grill]
     L --> M[TDD：先寫並執行紅燈測試]
     M --> N[最小實作]
     N --> O{測試／型別／品質全綠？}
@@ -49,8 +51,8 @@ flowchart TD
 
 ```text
 流程事件 → Router → wayfinder → GO → Architecture → grill-with-docs → CONTEXT.md → to-spec → 核准
-→ 旁路引用映射／已確認變更回掛 Context／CHG → to-tickets → 核准
-→ implement（單一 ticket 的 TDD）→ commit → progress 記錄
+→ 旁路引用映射／已確認變更回掛 Context／CHG → to-tickets → 開立一張 ticket 為 IN_PROGRESS
+→ 單一交付確認 → ticket lane implement（單一 ticket 的 TDD）＋ planning lane 下一個 Grill → commit → progress 記錄
 → code-review → handoff／UAT／部署授權
 ```
 
@@ -113,13 +115,16 @@ RouterEvent = INTAKE | WAYFINDER_GO | WAYFINDER_NO_GO | ACTION_COMPLETED
             | VALIDATION_PASSED | VALIDATION_FAILED
             | APPROVAL_GRANTED | APPROVAL_DENIED | REQUIREMENT_CHANGED
             | CONTEXT_REFERENCE_CLOSED | EXTERNAL_DECISION_REQUIRED
+            | TICKET_DISPATCH_REQUIRED | IMPLEMENTATION_DISPATCH_CONFIRMED
 
 RouterState = {
   project_id: ProjectId,
   stage: ProcessStage,
   authority_state: APPROVED | PENDING | DENIED | NOT_REQUIRED,
   delivery_stage: POC | MVP | COMMERCIAL,
-  artifact_refs: ArtifactRef[]
+  artifact_refs: ArtifactRef[],
+  collaboration_plan?: CollaborationTopologyPlan,
+  pending_dispatch?: PendingDispatchDescriptor
 }
 
 ProjectWorkflowProfile = {
@@ -147,8 +152,18 @@ CompletionEvidence = {
 }
 
 ImplementationHandoff = {
-  ticket_ref, approved_spec_ref, context_reference_metadata, acceptance_refs, tdd_refs,
+  handoff_ref, ticket_ref, approved_spec_ref, context_reference_metadata, acceptance_refs, tdd_refs,
   frontend_composition_ref?, control_owner, implementation_owner, reviewer
+}
+
+TicketProposal = {
+  ticket_ref, state: PLANNED | IN_PROGRESS, implementation_owner, proposal_revision,
+  dispatch_question_id
+}
+
+PendingDispatchDescriptor = {
+  ticket_ref, proposal_revision, dispatch_question_id, implementation_owner,
+  reviewed_handoff_ref, event_correlation_id
 }
 
 ImplementationReturn = {
@@ -170,7 +185,7 @@ ContextReference = {
 
 `ArtifactRef` 只可指向既有的唯一正式來源；`ContextView` 是一次工作所需的短暫、可重建視圖，不是第二份 `CONTEXT.md`。`CapabilityRef` 表示可被 router 選擇的 skill、Agent profile 或工具能力，並非授予未核准權限。`ContextReference` 是一次旁路引用的追溯邊，不是內容回寫或另一份 Context。
 
-`CompletionEvidence` 與 `ImplementationHandoff`／`ImplementationReturn` 只可保存不透明識別碼、revision／span、side-context ID、consumer fingerprint、驗證引用與 digest；不得保存 raw ContextPacket、原文、prompt、路徑、URI、Secret 或 PII。commit digest 只是完成證據，不能自行決定下一關。
+`CompletionEvidence` 與 `ImplementationHandoff`／`ImplementationReturn`、`TicketProposal` 與 `PendingDispatchDescriptor` 只可保存不透明識別碼、revision／span、side-context ID、consumer fingerprint、驗證引用與 digest；不得保存 raw ContextPacket、原文、prompt、路徑、URI、Secret 或 PII。commit digest 只是完成證據，不能自行決定下一關。
 
 ### 0.1.1 自動接續與人類等待的唯一規則
 
@@ -329,7 +344,7 @@ SPEC 核准且共同 Context 回掛完成後，才可建立 `modules/tickets/<fe
 
 `modules/element/<language>/<feature>/<ticket-id>/` 是索引與證據，不得複製正式原始碼；必須連結實際原始碼、領域型別、公開契約、TDD 與驗證結果。
 
-工單與責任必須再次經明確核准。未核准前，不得修改正式程式、測試或 migration。
+SPEC 核准範圍內的 ticket 規劃可由控制面建立；ticket 文件 commit 不是實作授權。當控制面選定一張已提交 ticket、具名 implementation owner、reviewer 與 handoff 後，該 proposal 必須立即由 `PLANNED` 變為 `IN_PROGRESS`，並只發出一次 `TICKET_DISPATCH_REQUIRED` 的具名交付問題。未答或否定時，只能 `WAIT_FOR_HUMAN`，不得授予 source、Context、capability、branch、worktree 或實作權限。正面確認是該張 ticket 唯一、範圍化的實作授權；不得再詢問第二次「工單核准」。未選定或依賴尚未滿足的 ticket 維持 `PLANNED`。
 
 ### 4.1 前端組合與依賴注入規則
 
@@ -358,7 +373,9 @@ implementation owner 是 ticket 具名指定的另一位 Agent／worktree，負�
 
 實作完成後，implementation owner 必須以 `ImplementationReturn` 回交控制面；只有 `ACTION_COMPLETED` 經 Router 重新分類後，才可進入 Smoke Test、Review 或 Handoff。
 
-實作前的 `ImplementationHandoff` 必須引用已核准的 SPEC／ticket／Context／TDD 與角色 ID；Profile 只有在已宣告的 `TICKETS + APPROVAL_GRANTED → IMPLEMENT` transition 才可要求並接受它。該 transition 缺少有效 handoff 時必須 `HALT`，不可授予 source、Context、capability 或 implementation；未宣告 transition 收到 handoff 也必須 `HALT`。implementation owner 回傳 `ImplementationReturn`。`COMPLETED` 產生 `ACTION_COMPLETED` 並進入既定驗證／review，`BLOCKED` fail-closed，`CHANGE_DETECTED` 只能產生 `REQUIREMENT_CHANGED` 回到 Grill。任何 owner 例外必須在 ticket 的 **Owner override record** 記錄專案負責人的明確範圍化改派；未記錄不得覆蓋分離責任。
+實作前的 `ImplementationHandoff` 必須帶有唯一 `handoff_ref`，並引用已核准的 SPEC／ticket／Context／TDD 與角色 ID。控制面開立 `IN_PROGRESS` proposal 時，Router 必須驗證 handoff，建立 metadata-only `PendingDispatchDescriptor`，再以該 descriptor 的 ticket 與 implementation owner 顯示唯一交付問題。只有稍後的正面 `IMPLEMENTATION_DISPATCH_CONFIRMED` receipt 同時匹配 pending descriptor 的 ticket、owner、question／correlation、reviewed `handoff_ref` 與 expected base revision，才可建立兩條彼此隔離的 lane：ticket lane 取得具名 implementation capability 並進入 `IMPLEMENT`；planning lane 自動進入下一個 Grill。receipt 缺失、重播、無 pending descriptor、proposal 未 `IN_PROGRESS`、handoff／owner／correlation 不符或任何來源未驗證時一律 `HALT`，不得授予 source、Context、capability、worktree 或 implementation。`TICKETS + ACTION_COMPLETED` 不得成為第二次人工核准等待；`TICKETS + APPROVAL_GRANTED → IMPLEMENT` 是已淘汰的 legacy transition，必須 `HALT`。
+
+implementation owner 回傳 `ImplementationReturn`。`COMPLETED` 產生 `ACTION_COMPLETED` 並進入既定驗證／review，`BLOCKED` fail-closed，`CHANGE_DETECTED` 只能產生 `REQUIREMENT_CHANGED` 回到 Grill。任何 owner 例外必須在 ticket 的 **Owner override record** 記錄專案負責人的明確範圍化改派；未記錄不得覆蓋分離責任。
 
 一次只能實作一張已核准的 ticket。每個新行為依序：
 
