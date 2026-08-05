@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| Context state | `GRILL_COMPLETE_TO_SPEC` |
+| Context state | `SPEC_APPROVED_TO_TICKETS` |
 | Router event | `REQUIREMENT_CHANGED` after completion of the previous workflow-governance POC |
 | Delivery stage | `POC` |
 | Requirement change | `CHG-20260805-010` |
@@ -74,4 +74,4 @@ After a Grill-to-SPEC approval has generated committed ticket and handoff artifa
 
 ## Convergence
 
-Grill result: **GO to specification**. This context defines the only active positioning for the change. The next permitted action is to approve or revise `modules/spec/autonomous-collaboration-audit.md`; no source/test implementation is authorised yet.
+Grill result: **GO to specification**. The project owner approved `SPEC-AI-WORKFLOW-AUTONOMOUS-COLLABORATION-AUDIT-20260805-01KZ7A2C4E6G8J0L2N4P6R8T` on `2026-08-05`; the planned ticket set is `modules/tickets/autonomous-collaboration-audit/`. The next permitted action is the separate ticket/topology approval gate; no source/test implementation is authorised yet.

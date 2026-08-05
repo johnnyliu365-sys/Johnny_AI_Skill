@@ -103,5 +103,6 @@
 | Milestone | State | Evidence |
 | --- | --- | --- |
 | Requirement change and Grill | DONE | `CHG-20260805-010`; `doc/context/autonomous-collaboration-audit/main.md` |
-| Specification | AWAITING_APPROVAL | `modules/spec/autonomous-collaboration-audit.md` (`DRAFT`) |
-| Ticket plan, implementation, review, and handoff | PENDING | Begins only after explicit specification and ticket approval. |
+| Specification | DONE | `modules/spec/autonomous-collaboration-audit.md` (`APPROVED` on `2026-08-05`) |
+| Ticket plan | AWAITING_APPROVAL | `01-topology-dispatch-lanes`, `02-guarded-integration-audit`, `03-plugin-policy-and-response`; requires topology selection and named owners. |
+| Implementation, review, and handoff | PENDING | Begins only after separate ticket approval. |

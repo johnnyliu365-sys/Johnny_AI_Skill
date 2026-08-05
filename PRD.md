@@ -140,4 +140,4 @@ The active project objective is a detachable, non-commercial multi-AI control pl
 After a ticket is approved and committed, the control plane asks exactly whether it has been delivered to its named implementation owner. No answer is a precise `WAIT_FOR_HUMAN`; confirmation provisions the implementation lane and immediately routes the planning lane to the next Grill. A ticket execution lane later returns its tested commit for automatic, guarded main integration and Grill audit. The plugin does not itself create a host model turn or choose a host model; it presents the required topology question and uses only the capabilities that the host/user makes available.
 
 - Change: `CHG-20260805-010`
-- Draft specification: `modules/spec/autonomous-collaboration-audit.md`
+- Approved specification: `modules/spec/autonomous-collaboration-audit.md`

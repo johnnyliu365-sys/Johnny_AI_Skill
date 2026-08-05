@@ -107,8 +107,8 @@
 
 ### `SPEC-AI-WORKFLOW-AUTONOMOUS-COLLABORATION-AUDIT-20260805-01KZ7A2C4E6G8J0L2N4P6R8T` — Autonomous Multi-AI Collaboration and Audit POC
 
-- Specification: `modules/spec/autonomous-collaboration-audit.md` (`DRAFT`).
+- Specification: `modules/spec/autonomous-collaboration-audit.md` (`APPROVED` on `2026-08-05`).
 - Worktree Context: `doc/context/autonomous-collaboration-audit/main.md`.
 - Scope: non-commercial positioning, collaboration-topology selection, dispatch-confirmation wait, parallel planning/ticket lanes, guarded branch/worktree provisioning, integration, Grill audit, and fixed handoff response format.
 - PRD / change: `PRD.md §14`; `CHG-20260805-010`.
-- Handoff state: Grill is complete to draft SPEC. Awaiting project-owner specification approval; no source/test/runtime implementation is authorised.
+- Handoff state: SPEC is approved and ticket planning is complete. `01-topology-dispatch-lanes`, `02-guarded-integration-audit`, and `03-plugin-policy-and-response` await topology selection, named owners and separate ticket approval; no source/test/runtime implementation is authorised.

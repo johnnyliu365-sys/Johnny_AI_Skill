@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-AUTONOMOUS-COLLABORATION-AUDIT-20260805-01KZ7A2C4E6G8J0L2N4P6R8T` |
-| Status | `DRAFT` |
+| Status | `APPROVED` |
 | Author / baseline | Codex control plane / `main` / `4feeb94` |
 | Context | `doc/context/autonomous-collaboration-audit/main.md` |
 | PRD | `PRD.md §14` |
@@ -85,16 +85,18 @@ The approved implementation ticket must first produce executable red evidence fo
 ## Convergence and backlinks
 
 - Shared Context: `CONTEXT.md`, this SPEC, PRD §14 and `CHG-20260805-010`.
-- Grill result: `GO to specification`; no source/test implementation is authorised while this SPEC is `DRAFT`.
-- Required approval: project owner approval of this exact SPEC, followed by a separate approval for named tickets and implementation owners.
+- Grill result: `GO to specification`; ticket planning is authorised.
+- Required approval: project owner approved this exact SPEC on `2026-08-05`; source/test implementation still requires a separate approval for named tickets and implementation owners.
 
 ## Revision signatures
 
 | Date | Author / baseline | Summary |
 | --- | --- | --- |
 | 2026-08-05 | Codex control plane / `4feeb94` | Initial non-commercial multi-AI collaboration and audit draft. |
+| 2026-08-05 | Project owner | Approved the SPEC and authorised ticket planning only. |
 
 ## Approval record
 
-- Decision maker: pending project owner approval.
-- Approval scope: pending. Source, test, migration, deployment and implementation commits are not authorised by this draft.
+- Decision maker: project owner.
+- Date: `2026-08-05 (Asia/Taipei)`.
+- Approval scope: this SPEC and ticket planning. Source, test, migration, deployment and implementation commits are not authorised until named tickets, owners and worktrees receive a separate approval.
