@@ -336,10 +336,10 @@ class PrivateRouterMetadataGateTests(unittest.TestCase):
                 implementation_handoff=handoff,
             ).model_dump()
         )
-        self.assertEqual(ContinuationMode.AUTO_RUN, granted.mode)
-        self.assertEqual(ProductActionLabel.BUILD_AND_TEST, granted.action_label)
-        assert granted.response is not None
-        self.assertEqual(ProcessStage.IMPLEMENT, granted.response.next_stage)
+        self.assertEqual(ContinuationMode.HALT, granted.mode)
+        self.assertEqual(RouterServiceErrorCode.ROUTER_POLICY_BLOCKED, granted.error_code)
+        self.assertIsNone(granted.action_label)
+        self.assertEqual((), granted.required_source_kinds)
 
         malformed_frontend = handoff.model_dump()
         malformed_frontend.update(

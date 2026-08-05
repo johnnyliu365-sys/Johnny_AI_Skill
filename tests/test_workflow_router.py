@@ -349,7 +349,7 @@ class WorkflowRouterTests(unittest.TestCase):
         self.assertEqual((), bare.required_sources)
         self.assertEqual((), bare.eligible_capabilities)
         self.assertIsNone(bare.context_view)
-        self.assertEqual("implementation_handoff_required", bare.blockers[0].code.value)
+        self.assertEqual("legacy_ticket_approval_blocked", bare.blockers[0].code.value)
 
         handoff = ImplementationHandoff(
             ticket_reference="ticket-workflow-governance-01",
@@ -385,8 +385,10 @@ class WorkflowRouterTests(unittest.TestCase):
             ),
             profile=self.profile,
         )
-        self.assertEqual(RouterOutcome.ADVANCE, granted.outcome)
-        self.assertEqual(ProcessStage.IMPLEMENT, granted.next_stage)
+        self.assertEqual(RouterOutcome.SUSPEND, granted.outcome)
+        self.assertEqual("halt", granted.continuation.value)
+        self.assertIsNone(granted.next_stage)
+        self.assertEqual("legacy_ticket_approval_blocked", granted.blockers[0].code.value)
 
         specification = ArtifactRef(
             kind=ArtifactKind.SPEC,
