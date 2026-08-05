@@ -13,6 +13,8 @@ from .contracts import (
     ArtifactRef,
     AuthorityState,
     BlockerCode,
+    CollaborationDispatchPlan,
+    CollaborationTopology,
     ConsumerFingerprint,
     ContinuationDirective,
     ContextPacket,
@@ -20,6 +22,8 @@ from .contracts import (
     ContextView,
     HumanWaitReason,
     ImplementationReturnStatus,
+    PlanningLaneState,
+    ProcessStage,
     NonBlankText,
     PositiveTokenBudget,
     ReferenceStatus,
@@ -31,6 +35,10 @@ from .contracts import (
     RouterOutcome,
     RouterState,
     SourceSnippet,
+    TicketDispatchConfirmation,
+    TicketDispatchReceipt,
+    TicketLaneState,
+    TicketDispatchState,
 )
 from .profile import ProjectWorkflowProfile
 
@@ -118,6 +126,28 @@ class RouterEngine:
                         f"{event.completion_evidence.action_kind.value} completion evidence"
                     ),
                 )
+        if rule.requires_dispatch_receipt:
+            receipt = event.dispatch_receipt
+            if state.topology is None:
+                return self._suspend(
+                    code=BlockerCode.TOPOLOGY_REQUIRED,
+                    detail="confirmed dispatch requires a selected collaboration topology",
+                )
+            if receipt is None:
+                return self._suspend(
+                    code=BlockerCode.DISPATCH_RECEIPT_REQUIRED,
+                    detail="confirmed dispatch requires a typed receipt",
+                )
+            if event.dispatch_confirmation is not TicketDispatchConfirmation.POSITIVE:
+                return self._suspend(
+                    code=BlockerCode.INVALID_DISPATCH_RECEIPT,
+                    detail="confirmed dispatch requires positive confirmation",
+                )
+            if receipt.correlation_id != event.event_id:
+                return self._suspend(
+                    code=BlockerCode.INVALID_DISPATCH_RECEIPT,
+                    detail="dispatch receipt correlation does not match the event",
+                )
         required_sources, missing, ambiguous = self._resolve_required_sources(
             artifacts=state.artifact_refs,
             required_kinds=rule.required_source_kinds,
@@ -141,6 +171,29 @@ class RouterEngine:
                 continuation=ContinuationDirective.WAIT_FOR_HUMAN,
                 wait_reason=rule.wait_reason,
             )
+        if rule.requires_dispatch_receipt:
+            assert event.dispatch_receipt is not None
+            assert state.topology is not None
+            assert len(required_sources) == 1
+            if event.dispatch_receipt.ticket_reference != required_sources[0].identifier:
+                return self._suspend(
+                    code=BlockerCode.INVALID_DISPATCH_RECEIPT,
+                    detail="dispatch receipt ticket does not match the declared ticket source",
+                )
+            return RouterDecision(
+                outcome=rule.outcome,
+                continuation=ContinuationDirective.AUTO_CONTINUE,
+                next_stage=rule.next_stage,
+                required_sources=required_sources,
+                eligible_capabilities=rule.eligible_capabilities,
+                dispatch_plan=self._dispatch_plan(
+                    state=state,
+                    event=event,
+                    receipt=event.dispatch_receipt,
+                    topology=state.topology,
+                    ticket=required_sources[0],
+                ),
+            )
         return RouterDecision(
             outcome=rule.outcome,
             continuation=(
@@ -151,6 +204,51 @@ class RouterEngine:
             next_stage=rule.next_stage,
             required_sources=required_sources,
             eligible_capabilities=rule.eligible_capabilities,
+        )
+
+    @staticmethod
+    def _dispatch_plan(
+        *,
+        state: RouterState,
+        event: RouterEvent,
+        receipt: TicketDispatchReceipt,
+        topology: CollaborationTopology,
+        ticket: ArtifactRef,
+    ) -> CollaborationDispatchPlan:
+        """Create two immutable lane descriptors with disjoint correlation metadata."""
+
+        dispatch_receipt = receipt
+        seed = f"{state.project_id}:{event.event_id}:{ticket.identifier}"
+        planning_suffix = uuid5(NAMESPACE_URL, f"planning:{seed}").hex[:20]
+        ticket_suffix = uuid5(NAMESPACE_URL, f"ticket:{seed}").hex[:20]
+        planning_lane = PlanningLaneState(
+            project_id=state.project_id,
+            stage=ProcessStage.GRILL,
+            topology=topology,
+            artifact_refs=(ticket,),
+            active_ticket_refs=(ticket.identifier,),
+            context_view_id=f"cvw-planning-{planning_suffix}",
+            side_context_id=f"scx-planning-{planning_suffix}",
+            event_id=f"evt-planning-{planning_suffix}",
+            safety_ceiling=10,
+        )
+        ticket_lane = TicketLaneState(
+            ticket_id=ticket.identifier,
+            dispatch_state=TicketDispatchState.CONFIRMED,
+            execution_stage=ProcessStage.IMPLEMENT,
+            expected_main_revision=dispatch_receipt.expected_main_revision,
+            source_grants=(ArtifactKind.TICKET,),
+            context_view_id=f"cvw-ticket-{ticket_suffix}",
+            side_context_id=f"scx-ticket-{ticket_suffix}",
+            event_id=f"evt-ticket-{ticket_suffix}",
+            worktree_fingerprint=dispatch_receipt.worktree_fingerprint,
+            branch_fingerprint=dispatch_receipt.branch_fingerprint,
+            safety_ceiling=10,
+        )
+        return CollaborationDispatchPlan(
+            receipt=dispatch_receipt,
+            planning_lane=planning_lane,
+            ticket_lane=ticket_lane,
         )
 
     @staticmethod

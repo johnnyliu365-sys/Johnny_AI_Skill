@@ -18,6 +18,8 @@ from .contracts import (
     ArtifactKind,
     ArtifactRef,
     AuthorityState,
+    CollaborationDispatchPlan,
+    CollaborationTopology,
     CompletionEvidence,
     ConsumerFingerprint,
     ContinuationDirective,
@@ -27,6 +29,7 @@ from .contracts import (
     ImplementationReturn,
     ImplementationReturnStatus,
     NonBlankText,
+    OpaqueMetadataId,
     PositiveTokenBudget,
     ProcessStage,
     ResolvedContext,
@@ -35,6 +38,8 @@ from .contracts import (
     RouterModel,
     RouterOutcome,
     RouterState,
+    TicketDispatchConfirmation,
+    TicketDispatchReceipt,
 )
 from .profile import ProjectWorkflowProfile
 from .router import ContextResolver, RouterEngine
@@ -129,6 +134,10 @@ class RouterRequestEnvelope(RouterModel):
     completion_evidence: CompletionEvidence | None = None
     implementation_return: ImplementationReturn | None = None
     implementation_handoff: ImplementationHandoff | None = None
+    topology: CollaborationTopology | None = None
+    ticket_reference: OpaqueMetadataId | None = None
+    dispatch_confirmation: TicketDispatchConfirmation | None = None
+    dispatch_receipt: TicketDispatchReceipt | None = None
 
     @model_validator(mode="after")
     def has_minimum_metadata_without_locations(self) -> RouterRequestEnvelope:
@@ -157,6 +166,17 @@ class RouterRequestEnvelope(RouterModel):
                 or self.router_event_kind is not RouterEventKind.APPROVAL_GRANTED
             ):
                 raise ValueError("implementation handoff requires ticket approval")
+        if self.dispatch_confirmation is not None or self.dispatch_receipt is not None:
+            if self.router_event_kind not in (
+                RouterEventKind.TICKET_DISPATCH_REQUIRED,
+                RouterEventKind.IMPLEMENTATION_DISPATCH_CONFIRMED,
+            ):
+                raise ValueError("dispatch metadata requires a ticket dispatch event")
+        if (
+            self.dispatch_receipt is not None
+            and self.router_event_kind is not RouterEventKind.IMPLEMENTATION_DISPATCH_CONFIRMED
+        ):
+            raise ValueError("dispatch receipts require confirmed dispatch")
         return self
 
 
@@ -174,6 +194,7 @@ class RouterResponseEnvelope(RouterModel):
     context_budget: PositiveTokenBudget | None
     error_code: RouterServiceErrorCode | None = None
     wait_reason: HumanWaitReason | None = None
+    dispatch_plan: CollaborationDispatchPlan | None = None
 
     @model_validator(mode="after")
     def response_shape_is_safe_and_unambiguous(self) -> RouterResponseEnvelope:
@@ -199,6 +220,8 @@ class RouterResponseEnvelope(RouterModel):
                 raise ValueError("human waits cannot grant execution or report a service failure")
             if self.wait_reason is None:
                 raise ValueError("human waits require a precise wait reason")
+            if self.dispatch_plan is not None:
+                raise ValueError("human waits cannot grant a dispatch plan")
         else:
             if self.allowed_action_labels or self.context_budget is not None:
                 raise ValueError("halted responses cannot grant capabilities or Context")
@@ -208,6 +231,8 @@ class RouterResponseEnvelope(RouterModel):
                 raise ValueError("halted responses require a stable error code")
             if self.wait_reason is not None:
                 raise ValueError("halted responses cannot carry a human wait reason")
+            if self.dispatch_plan is not None:
+                raise ValueError("halted responses cannot grant a dispatch plan")
         return self
 
 
@@ -306,6 +331,7 @@ class FakePrivateRouterService:
                 authority_state=request.authority_state,
                 delivery_stage=request.delivery_stage,
                 artifact_refs=self._private_artifact_refs(request=request),
+                topology=request.topology,
             ),
             event=RouterEvent(
                 event_id=request.event_correlation_id,
@@ -313,6 +339,8 @@ class FakePrivateRouterService:
                 completion_evidence=request.completion_evidence,
                 implementation_return=request.implementation_return,
                 implementation_handoff=request.implementation_handoff,
+                dispatch_confirmation=request.dispatch_confirmation,
+                dispatch_receipt=request.dispatch_receipt,
             ),
             profile=self._profile,
         )
@@ -330,6 +358,7 @@ class FakePrivateRouterService:
                 required_source_kinds=tuple(source.kind for source in decision.required_sources),
                 context_budget=self._context_budget,
                 wait_reason=None,
+                dispatch_plan=decision.dispatch_plan,
             )
         if decision.continuation is ContinuationDirective.WAIT_FOR_HUMAN:
             return RouterResponseEnvelope(
@@ -362,7 +391,11 @@ class FakePrivateRouterService:
         return tuple(
             ArtifactRef(
                 kind=kind,
-                identifier=f"available-{kind.value}",
+                identifier=(
+                    request.ticket_reference
+                    if kind is ArtifactKind.TICKET and request.ticket_reference is not None
+                    else f"available-{kind.value}"
+                ),
                 uri=f"private://availability/{kind.value}",
                 revision="metadata-only",
             )
@@ -452,6 +485,7 @@ class ContinuationPlan(RouterModel):
     error_code: RouterServiceErrorCode | None
     response: RouterResponseEnvelope | None = None
     wait_reason: HumanWaitReason | None = None
+    dispatch_plan: CollaborationDispatchPlan | None = None
 
     @model_validator(mode="after")
     def plan_shape_is_safe(self) -> ContinuationPlan:
@@ -464,6 +498,8 @@ class ContinuationPlan(RouterModel):
                 raise ValueError("automatic plans cannot have an error")
             if self.wait_reason is not None:
                 raise ValueError("automatic plans cannot have a wait reason")
+            if self.dispatch_plan != self.response.dispatch_plan:
+                raise ValueError("automatic plans must preserve the validated dispatch plan")
         elif self.mode is ContinuationMode.WAIT_FOR_HUMAN:
             if self.action_label is not ProductActionLabel.REQUEST_APPROVAL:
                 raise ValueError("human waits require the approval action")
@@ -471,11 +507,14 @@ class ContinuationPlan(RouterModel):
                 raise ValueError("human waits cannot grant Context or report a transport error")
             if self.response is None or self.wait_reason is None:
                 raise ValueError("human waits require a validated response and precise reason")
+            if self.dispatch_plan is not None:
+                raise ValueError("human waits cannot grant a dispatch plan")
         elif (
             self.action_label is not None
             or self.required_source_kinds
             or self.context_budget is not None
             or self.wait_reason is not None
+            or self.dispatch_plan is not None
         ):
             raise ValueError("halted plans cannot grant a local action, Context, or wait reason")
         return self
@@ -520,6 +559,7 @@ class PrivateRouterClient:
                 error_code=None,
                 response=response,
                 wait_reason=None,
+                dispatch_plan=response.dispatch_plan,
             )
         if response.continuation is ContinuationDirective.WAIT_FOR_HUMAN:
             return ContinuationPlan(
@@ -530,6 +570,7 @@ class PrivateRouterClient:
                 error_code=None,
                 response=response,
                 wait_reason=response.wait_reason,
+                dispatch_plan=None,
             )
         return self._halt(code=response.error_code or RouterServiceErrorCode.ROUTER_RESPONSE_INVALID)
 
@@ -567,6 +608,7 @@ class PrivateRouterClient:
             context_budget=None,
             error_code=code,
             wait_reason=None,
+            dispatch_plan=None,
         )
 
 

@@ -33,6 +33,7 @@ class TransitionRule(RouterModel):
     wait_reason: HumanWaitReason | None = None
     accepted_completion_actions: tuple[CompletionActionKind, ...] = ()
     requires_implementation_handoff: bool = False
+    requires_dispatch_receipt: bool = False
 
     @model_validator(mode="after")
     def human_gate_is_a_declared_wait(self) -> TransitionRule:
@@ -60,6 +61,15 @@ class TransitionRule(RouterModel):
         ):
             raise ValueError(
                 "implementation handoff is valid only for ticket approval advancing to implement"
+            )
+        if self.requires_dispatch_receipt and (
+            self.current_stage is not ProcessStage.TICKETS
+            or self.event_kind is not RouterEventKind.IMPLEMENTATION_DISPATCH_CONFIRMED
+            or self.outcome is not RouterOutcome.ADVANCE
+            or self.next_stage is not ProcessStage.GRILL
+        ):
+            raise ValueError(
+                "dispatch receipts are valid only for confirmed ticket dispatch advancing to grill"
             )
         return self
 
@@ -241,6 +251,25 @@ def build_router_poc_profile() -> ProjectWorkflowProfile:
                 required_source_kinds=(ArtifactKind.TICKET,),
                 eligible_capabilities=(implementation,),
                 requires_implementation_handoff=True,
+            ),
+            TransitionRule(
+                current_stage=ProcessStage.TICKETS,
+                event_kind=RouterEventKind.TICKET_DISPATCH_REQUIRED,
+                outcome=RouterOutcome.SUSPEND,
+                next_stage=None,
+                required_source_kinds=(ArtifactKind.TICKET,),
+                requires_human_approval=True,
+                wait_reason=HumanWaitReason.TICKET_DISPATCH_CONFIRMATION_REQUIRED,
+            ),
+            TransitionRule(
+                current_stage=ProcessStage.TICKETS,
+                event_kind=RouterEventKind.IMPLEMENTATION_DISPATCH_CONFIRMED,
+                outcome=RouterOutcome.ADVANCE,
+                next_stage=ProcessStage.GRILL,
+                required_authority=AuthorityState.APPROVED,
+                required_source_kinds=(ArtifactKind.TICKET,),
+                eligible_capabilities=(grill,),
+                requires_dispatch_receipt=True,
             ),
             TransitionRule(
                 current_stage=ProcessStage.IMPLEMENT,
