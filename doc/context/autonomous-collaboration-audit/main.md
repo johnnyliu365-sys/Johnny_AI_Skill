@@ -2,14 +2,14 @@
 
 | Field | Value |
 | --- | --- |
-| Context state | `TICKET_01_DISPATCHED_PLANNING_GRILL` |
-| Router event | `REQUIREMENT_CHANGED` after completion of the previous workflow-governance POC |
+| Context state | `ARCHITECTURE_READY_FOR_GRILL` |
+| Router event | `ACTION_COMPLETED` for the missing Architecture handoff |
 | Delivery stage | `POC` |
 | Requirement change | `CHG-20260805-010` |
 | Baseline | `4feeb94` (`docs: complete workflow governance handoff`) |
 | Control-plane owner | Codex / current `main` worktree |
 | Implementation owner | Codex implementation Agent / existing `workflow-implementation` worktree for ticket 01 |
-| Required sources read | `AGENTS.md`, `Workflow.md` (Router, Grill, change control, specification, tickets, role boundary), `Defined_wayfinder.md`, `PRD.md`, `CONTEXT.md`, `ProjectSchedule.md`, `RequirementChangeLog.md`, completed Router/Workflow Governance POCs |
+| Required sources read | `AGENTS.md`, `Workflow.md` (Router, Grill, change control, specification, tickets, role boundary), `Defined_wayfinder.md`, `PRD.md`, `CONTEXT.md`, `ProjectSchedule.md`, `RequirementChangeLog.md`, completed Router/Workflow Governance POCs, `ADR-20260805-002` |
 
 ## Confirmed positioning
 
@@ -36,7 +36,9 @@ The project owner selected `1` available coding Agent on `2026-08-05`:
 | Required action | Implementation owner synchronizes this dispatch-record main commit in its own worktree, then records its first red test before source implementation. |
 | Planning-lane result | `AUTO_CONTINUE → GRILL` for ticket 02; it does not alter ticket 01's approved scope. |
 
-## Grill decisions
+## Historical pre-Architecture working constraints
+
+> The following are owner-confirmed operating constraints, not a completed Grill decision. They are architecture inputs and must be challenged by the next Grill.
 
 | Question | Confirmed decision |
 | --- | --- |
@@ -93,10 +95,8 @@ After a Grill-to-SPEC approval has generated committed ticket and handoff artifa
 - A planning lane may Grill unrelated next scope while a ticket is executing. It must not alter an already approved ticket, consume the ticket's private ContextPacket, or start dependent implementation before audit approval.
 - No SaaS, price, billing, customer account, entitlement, remote Router, network service, provider credential, raw-content transfer, target-project dependency or deployment is in this POC.
 
-## Convergence
+## Architecture handoff — pending Grill
 
-### Planning lane Grill — ticket 02 integration and audit
+The Architecture stage is now supplied by [ADR-20260805-002](../../adr/ADR-20260805-002-autonomous-collaboration-control-plane.md). It introduces the two-lane control-plane design, metadata-only Context boundary, injected external capabilities, `PENDING_AUDIT` isolation, and the specific questions that Grill must answer.
 
-The main control-plane lane has moved to Grill while ticket 01 executes. Ticket 02 is a `PLANNED` candidate, not an opened ticket: opening it later must immediately mark it `IN_PROGRESS` and issue its own one dispatch question. Its externally observable outcome, fake-port boundary, no-real-Git restriction, stale/dirty/conflict/duplicate/lock fail-closed cases, `PENDING_AUDIT` isolation, and correction route are already bounded in the approved SPEC and candidate draft. It depends on ticket 01's eventual public lane/dispatch contracts, so it cannot be opened or receive delivery authority until ticket 01 returns reviewed evidence. This is an automatic event dependency, not a human wait or scope change.
-
-Grill result: **GO — retain ticket 02 scope unchanged and automatically re-evaluate it when ticket 01 returns public contracts.** The planning lane has completed its next legal Grill action and is in an automatic event wait, not a human wait. No additional user decision is required at this point.
+No outcome has been assigned yet. The next legal action is `grill-with-docs` against the ADR, the active SPEC and ticket 01's approved scope. Ticket 01 remains `IN_PROGRESS` in its separate implementation worktree; this architecture handoff neither expands its authority nor treats uncommitted implementation work as evidence.
