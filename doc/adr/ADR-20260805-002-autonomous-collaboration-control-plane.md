@@ -1,9 +1,9 @@
 # ADR-20260805-002｜Autonomous multi-AI collaboration control-plane architecture
 
 - 日期：`2026-08-05（Asia/Taipei）`
-- 狀態：`PROPOSED — input to Grill`
+- 狀態：`ACCEPTED — Grill converged`
 - 架構產出者：Codex control plane
-- 決策授權：`CHG-20260805-010`；尚未經 Grill 收斂
+- 決策授權：`CHG-20260805-010`；Grill 已於 `2026-08-05` 收斂
 - 關聯規格：`SPEC-AI-WORKFLOW-AUTONOMOUS-COLLABORATION-AUDIT-20260805-01KZ7A2C4E6G8J0L2N4P6R8T`
 - 關聯需求變更：`CHG-20260805-010`
 - 共同 Context：`doc/context/autonomous-collaboration-audit/main.md`
@@ -117,3 +117,4 @@ valid completed return
 ## 修訂／淘汰紀錄
 
 - 初版：補足 `CHG-20260805-010` 被跳過的 Architecture handoff，等待 Grill。
+- `2026-08-05`：Grill 確認兩 lane、metadata-only Context、injected external ports 與 audit-before-review 的方向；AC-11 event wake 與 Code Review gate 由 ticket 02 承接。既有 ticket 01 範圍不擴張。

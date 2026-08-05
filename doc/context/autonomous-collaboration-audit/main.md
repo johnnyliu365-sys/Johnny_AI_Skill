@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| Context state | `ARCHITECTURE_READY_FOR_GRILL` |
-| Router event | `ACTION_COMPLETED` for the missing Architecture handoff |
+| Context state | `GRILL_CONVERGED_TO_CONTEXT` |
+| Router event | `ACTION_COMPLETED` for Architecture, then Grill |
 | Delivery stage | `POC` |
 | Requirement change | `CHG-20260805-010` |
 | Baseline | `4feeb94` (`docs: complete workflow governance handoff`) |
@@ -95,8 +95,20 @@ After a Grill-to-SPEC approval has generated committed ticket and handoff artifa
 - A planning lane may Grill unrelated next scope while a ticket is executing. It must not alter an already approved ticket, consume the ticket's private ContextPacket, or start dependent implementation before audit approval.
 - No SaaS, price, billing, customer account, entitlement, remote Router, network service, provider credential, raw-content transfer, target-project dependency or deployment is in this POC.
 
-## Architecture handoff — pending Grill
+## Architecture handoff and Grill convergence
 
-The Architecture stage is now supplied by [ADR-20260805-002](../../adr/ADR-20260805-002-autonomous-collaboration-control-plane.md). It introduces the two-lane control-plane design, metadata-only Context boundary, injected external capabilities, `PENDING_AUDIT` isolation, and the specific questions that Grill must answer.
+The Architecture stage is supplied by [ADR-20260805-002](../../adr/ADR-20260805-002-autonomous-collaboration-control-plane.md). It defines the two-lane control plane, metadata-only Context boundary, injected external capabilities, `PENDING_AUDIT` isolation, and audit-before-review order.
 
-No outcome has been assigned yet. The next legal action is `grill-with-docs` against the ADR, the active SPEC and ticket 01's approved scope. Ticket 01 remains `IN_PROGRESS` in its separate implementation worktree; this architecture handoff neither expands its authority nor treats uncommitted implementation work as evidence.
+### Grill findings
+
+| ID | Question and evidence | Result / disposition |
+| --- | --- | --- |
+| G-01 | Can the existing Router express isolated planning and ticket lanes? `RouterState` has one `stage`; `profile.py` still binds implementation handoff to `TICKETS + APPROVAL_GRANTED → IMPLEMENT`. | The new lane/event public contracts are required. This is within ticket 01's approved scope; its direct and Private Router tests must remove the second approval path rather than preserve it as an alternative. |
+| G-02 | Is every approved behaviour owned by a ticket? AC-11 requires a typed implementation return to wake the planning lane, but ticket 01 only covers dispatch and ticket 02 previously listed AC-6 through AC-8. | Ticket 02 now owns AC-11 through an injected event-source fake and dependent-proposal re-evaluation. It remains a `PLANNED` candidate until ticket 01 has reviewed public contracts. |
+| G-03 | Does audit approval preserve the mandatory Code Review gate? Ticket 02 previously allowed `APPROVED` audit to permit handoff evidence. | Corrected: audit approval can route only to Code Review. Handoff, push, deployment and dependent work remain blocked until the existing review/handoff flow completes. |
+| G-04 | Does the POC falsely promise background host or Git autonomy? `AutomaticContinuationRunner` runs only supplied local actions; `temporal_runtime.py` waits only for a human approval signal. | The POC models automatic routing only after an injected typed return arrives. A real host wake-up, model dispatch, physical worktree or Git operation remains out of scope and must be an explicit future adapter capability. |
+| G-05 | Does the Architecture change the authority of ticket 01 already being implemented? | No. Ticket 01 stays `IN_PROGRESS` in its separate worktree and is judged only against its approved dispatch/lane scope. Uncommitted work was not read or used as Grill evidence. |
+
+### Grill decision
+
+**GO to Context with controlled ticket-plan corrections.** No product requirement, delivery stage, owner authority or active ticket 01 scope changed, so no `CHG` or additional human approval is required. Ticket 02 was corrected while still `PLANNED`; it will be automatically re-evaluated only after ticket 01 returns reviewed public-contract evidence. The next legal planning action is to retain this Context and await that automatic event, not to issue another user question.
