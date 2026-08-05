@@ -11,8 +11,8 @@ Deliver a non-commercial, detachable workflow control plane that selects a colla
 | Ticket | User-observable capability | State | Dependency |
 | --- | --- | --- |
 | [01-topology-dispatch-lanes](01-topology-dispatch-lanes.md) | Capability-count question and typed dispatch wait/receipt with parallel lane isolation | `IN_PROGRESS` | Delivered to named implementation owner |
-| [02-guarded-integration-audit](02-guarded-integration-audit.md) | Valid implementation return reaches a guarded local main integration and automatic Grill audit | `PLANNED` | 01 contracts |
-| [03-plugin-policy-and-response](03-plugin-policy-and-response.md) | Codex/Claude guidance and fixed `工單 ready` / `文件交接` response | `PLANNED` | 01 events; may run after 01 review |
+| [02-guarded-integration-audit](02-guarded-integration-audit.md) | Valid implementation return reaches a guarded local main integration and automatic Grill audit | `PLANNED` candidate | 01 contracts |
+| [03-plugin-policy-and-response](03-plugin-policy-and-response.md) | Codex/Claude guidance and fixed `工單 ready` / `文件交接` response | `PLANNED` candidate | 01 events; may run after 01 review |
 
 ## Mandatory approval data
 
@@ -34,8 +34,10 @@ The named implementation owner is Codex implementation Agent in `C:\Users\<user>
 
 ## Common delivery rules
 
+- A `PLANNED` candidate becomes an opened ticket only when the control plane selects it. Opening immediately changes it to `IN_PROGRESS` and emits exactly one named dispatch question; it never waits for a second ticket-approval message.
 - The `main` owner, not an implementation worktree, performs any guarded integration while holding the exclusive integration lock.
 - The user-facing dispatch question follows a ticket approval and ticket docs commit: `工單 <ticket-id> 是否已交付給 implementation owner <owner-id>？`
 - No reply or negative reply is `WAIT_FOR_HUMAN`; it grants no worktree, Context, capability or implementation permission.
 - Positive dispatch starts the ticket lane and routes only the planning lane to the next Grill. It does not change any active ticket scope.
 - A pre-audit local main merge is `PENDING_AUDIT`; it must not push, deploy, hand off or start dependent implementation until audit approval.
+- A pending dependency waits for its typed implementation/audit event through the monitor; it is not `WAIT_FOR_HUMAN` and must automatically resume the next Grill when evidence arrives.

@@ -174,4 +174,4 @@
 | PRD | `PRD.md §12` (historical) and `PRD.md §14` (active) |
 | Context | `doc/context/autonomous-collaboration-audit/main.md`; `CONTEXT.md §衍生 SPEC 索引` |
 | Linked specification | `SPEC-AI-WORKFLOW-AUTONOMOUS-COLLABORATION-AUDIT-20260805-01KZ7A2C4E6G8J0L2N4P6R8T` (`APPROVED` on `2026-08-05`) |
-| Acceptance | The approved specification must define exact waits, typed events, parallel-lane ownership, safe Git integration, audit/rework return behavior, host capability limits, and the fixed project-owner response format. |
+| Acceptance | The approved specification must define that an opened ticket immediately becomes `IN_PROGRESS` and asks its one dispatch question; exact human versus automatic-event waits; typed events; parallel-lane ownership; safe Git integration; audit/rework return behavior; host capability limits; and the fixed project-owner response format. |
