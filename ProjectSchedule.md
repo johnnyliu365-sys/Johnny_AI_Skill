@@ -104,5 +104,6 @@
 | --- | --- | --- |
 | Requirement change and Grill | DONE | `CHG-20260805-010`; `doc/context/autonomous-collaboration-audit/main.md` |
 | Specification | DONE | `modules/spec/autonomous-collaboration-audit.md` (`APPROVED` on `2026-08-05`) |
-| Ticket plan | AWAITING_APPROVAL | Owner selected `ONE_IMPLEMENTATION_AGENT`; `01-topology-dispatch-lanes` is selected for separate approval. Tickets 02–03 remain planned. |
-| Implementation, review, and handoff | PENDING | Begins only after separate ticket approval. |
+| Ticket 01 dispatch | IN_PROGRESS | Owner selected `ONE_IMPLEMENTATION_AGENT` and confirmed `01-topology-dispatch-lanes` as delivered to the named existing implementation worktree; planning lane moved to Grill for ticket 02. |
+| Ticket 02 / 03 | PLANNED | Ticket 02 is in planning-lane Grill; ticket 03 remains planned. Each receives authority only from its own future delivery confirmation. |
+| Implementation, review, and handoff | IN_PROGRESS | Ticket 01 implementation owner synchronizes its own worktree, performs TDD and returns typed evidence. |

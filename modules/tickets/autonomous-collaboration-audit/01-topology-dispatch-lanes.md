@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-AUTONOMOUS-COLLABORATION-AUDIT-20260805-01KZ7A2C4E6G8J0L2N4P6R8T` / AC-1 through AC-5 |
 | Context / change | `doc/context/autonomous-collaboration-audit/main.md` / `CHG-20260805-010` |
-| State | `AWAITING_TICKET_APPROVAL` — topology and named owners recorded; separate ticket approval required |
+| State | `IN_PROGRESS` — owner confirmed delivery (`已轉交`) on `2026-08-05`; implementation authority is active |
 | Language | Python 3.11 and Markdown |
 | Baseline | `2372f1e` |
 | Control-plane owner / reviewer | Codex / current `main` worktree |
@@ -13,7 +13,7 @@
 
 ## User-observable outcome
 
-The plugin asks whether one or two coding Agents are available. After an approved ticket's docs commit, it asks whether that exact ticket has been delivered to its named implementation owner. An unanswered/negative dispatch is a precise wait without grants; confirmed dispatch creates separate planning and ticket-execution descriptors so the planning lane can enter its next Grill without mutating the ticket lane.
+The plugin asks whether one or two coding Agents are available. After a committed ticket names an implementation owner, it asks whether that exact ticket has been delivered. An unanswered/negative dispatch is a precise wait without grants; a positive delivery confirmation is the ticket-scoped approval and creates separate planning/ticket-execution descriptors so the planning lane can enter its next Grill without mutating the ticket lane.
 
 ## Scope and boundary
 
@@ -26,7 +26,7 @@ Frontend composition / DI: `N/A` — no formal UI boundary. Reason: typed local 
 ## Handoff and role assignment
 
 - Control-plane owner: Codex/current `main` worktree.
-- Implementation owner: Codex implementation Agent / existing `workflow-implementation` worktree. It must synchronize from the approved main base after this ticket approval and before its first red test.
+- Implementation owner: Codex implementation Agent / existing `workflow-implementation` worktree. The project owner confirmed `已轉交` on `2026-08-05`; it must synchronize this dispatch-record main base before its first red test.
 - Reviewer: Codex/current `main` worktree; it does not share the implementation worktree.
 - Owner override: `N/A`.
 - `ImplementationHandoff`: approved SPEC/ticket/Context/TDD metadata references, expected baseline and named role IDs only.
@@ -42,4 +42,4 @@ Frontend composition / DI: `N/A` — no formal UI boundary. Reason: typed local 
 ## Completion evidence
 
 - Required: red-test names/reasons, affected regression suite, `mypy --strict`, no-bytecode compile, privacy/source-field sentinel, smoke path, and `git diff --check`.
-- Ticket docs commit is evidence only; after its approval the dispatch question is the next human gate.
+- Ticket docs commit is evidence only; delivery confirmation is the single ticket-scoped approval and dispatch gate.

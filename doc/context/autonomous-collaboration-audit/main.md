@@ -2,13 +2,13 @@
 
 | Field | Value |
 | --- | --- |
-| Context state | `SPEC_APPROVED_TO_TICKETS` |
+| Context state | `TICKET_01_DISPATCHED_PLANNING_GRILL` |
 | Router event | `REQUIREMENT_CHANGED` after completion of the previous workflow-governance POC |
 | Delivery stage | `POC` |
 | Requirement change | `CHG-20260805-010` |
 | Baseline | `4feeb94` (`docs: complete workflow governance handoff`) |
 | Control-plane owner | Codex / current `main` worktree |
-| Implementation owner | Unassigned until a future ticket is approved |
+| Implementation owner | Codex implementation Agent / existing `workflow-implementation` worktree for ticket 01 |
 | Required sources read | `AGENTS.md`, `Workflow.md` (Router, Grill, change control, specification, tickets, role boundary), `Defined_wayfinder.md`, `PRD.md`, `CONTEXT.md`, `ProjectSchedule.md`, `RequirementChangeLog.md`, completed Router/Workflow Governance POCs |
 
 ## Confirmed positioning
@@ -22,7 +22,19 @@ The project owner selected `1` available coding Agent on `2026-08-05`:
 - Control-plane / planning / integration / reviewer: Codex, current `main` worktree.
 - Implementation owner: Codex implementation Agent, existing `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` worktree on `codex/implementation-private-router-saas-01`.
 - Current implementation worktree HEAD: `a94e207`, confirmed as an ancestor of the current main ticket baseline `2372f1e` with five commits to synchronize. Only the implementation owner may perform that synchronization in its own worktree after ticket approval.
-- Selected ticket: `01-topology-dispatch-lanes`. It is not implementation-authorised until the project owner separately approves it.
+- Selected ticket: `01-topology-dispatch-lanes`. The owner replied `已轉交` on `2026-08-05`; this is the ticket-scoped approval and dispatch receipt. The implementation owner may synchronize its own worktree from this dispatch record, then start TDD.
+
+## Ticket 01 dispatch receipt
+
+| Field | Value |
+| --- | --- |
+| Ticket | `01-topology-dispatch-lanes` |
+| Confirmation | Project owner: `已轉交` (`2026-08-05`) |
+| Authority | Scoped approval plus delivery confirmation; no separate ticket-approval wait |
+| Implementation owner | Codex implementation Agent / `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` / `codex/implementation-private-router-saas-01` |
+| Control-plane / reviewer | Codex / current `main` worktree |
+| Required action | Implementation owner synchronizes this dispatch-record main commit in its own worktree, then records its first red test before source implementation. |
+| Planning-lane result | `AUTO_CONTINUE → GRILL` for ticket 02; it does not alter ticket 01's approved scope. |
 
 ## Grill decisions
 
@@ -31,7 +43,7 @@ The project owner selected `1` available coding Agent on `2026-08-05`:
 | What must start after plugin application? | Ask the user how many coding Agents are available: one implementation Agent with a separate implementation conversation/worktree, or two collaborating Agents with a named control-plane and implementation role. The plugin cannot itself create a host conversation or select a model; it only resolves the required capability/topology. |
 | What does one-Agent availability mean? | It still uses two role-isolated sessions: the existing main control-plane session for Wayfinder/Grill/SPEC/tickets/audit and one newly provisioned implementation session/worktree. Host/model suggestions are capability preferences, not enforceable Router authority. |
 | What does two-Agent availability mean? | A recommended topology is Claude as control-plane/main and Codex as implementation owner. Equivalent named capabilities are permitted if they satisfy the same role and worktree separation. |
-| When does ticket dispatch wait? | After the ticket is approved and its docs commit exists, the control plane asks: `工單 <ticket-id> 是否已交付給 implementation owner <owner-id>？` No answer (or a negative answer) remains a precise dispatch wait; it is not a failure and does not start implementation. |
+| When does ticket dispatch wait? | After a committed ticket names an implementation owner, the control plane asks: `工單 <ticket-id> 是否已交付給 implementation owner <owner-id>？` No answer (or a negative answer) remains a precise dispatch wait; it is not a failure and does not start implementation. A positive confirmation is that ticket's scoped approval and delivery authority. |
 | What follows confirmed dispatch? | Record a typed dispatch receipt, provision the ticket branch/worktree, supply the existing `ImplementationHandoff`, and route the planning lane immediately to the next Grill. The active ticket execution lane proceeds independently. |
 | Why are two lanes necessary? | A single `ProjectRouter` stage cannot truthfully be both `GRILL` and `IMPLEMENT`. A project planning lane and one ticket-execution lane per dispatched ticket must have separate typed state, event correlation, ContextView, ownership and safety ceiling. |
 | Who merges to `main`? | The `main` owner/integration capability performs an automatic guarded merge after a valid implementation return. The implementation owner never writes another Agent's checked-out `main` worktree. This preserves Git's one-worktree/one-owner invariant while retaining the requested no-human-pause behavior. |
@@ -45,7 +57,7 @@ plugin applied
   -> typed topology + named role/worktree plan
   -> Wayfinder → Architecture → Grill → Context → SPEC → approval → tickets → approval
 
-approved ticket + docs commit
+committed ticket + named implementation owner
   -> TICKET_DISPATCH_REQUIRED
   -> WAIT_FOR_HUMAN: confirm ticket was delivered to named implementation owner
   -> IMPLEMENTATION_DISPATCH_CONFIRMED
@@ -61,7 +73,7 @@ valid completed ticket return
 
 ## Fixed human-facing response
 
-After a Grill-to-SPEC approval has generated committed ticket and handoff artifacts, the control plane responds only in this shape before the dispatch question:
+After a Grill-to-SPEC approval has generated committed ticket and handoff artifacts, the control plane responds only in this shape before the dispatch question. A positive delivery response is the ticket-scoped approval; no second approval question follows:
 
 ```text
 工單 ready
@@ -83,4 +95,8 @@ After a Grill-to-SPEC approval has generated committed ticket and handoff artifa
 
 ## Convergence
 
-Grill result: **GO to specification**. The project owner approved `SPEC-AI-WORKFLOW-AUTONOMOUS-COLLABORATION-AUDIT-20260805-01KZ7A2C4E6G8J0L2N4P6R8T` on `2026-08-05`; the planned ticket set is `modules/tickets/autonomous-collaboration-audit/`. Topology selection is complete. The next permitted action is the separate approval of `01-topology-dispatch-lanes`; no source/test implementation is authorised yet.
+### Planning lane Grill — ticket 02 integration and audit
+
+The main control-plane lane has moved to Grill while ticket 01 executes. Ticket 02's externally observable outcome, fake-port boundary, no-real-Git restriction, stale/dirty/conflict/duplicate/lock fail-closed cases, `PENDING_AUDIT` isolation, and correction route are already bounded in the approved SPEC and ticket draft. It depends on ticket 01's eventual public lane/dispatch contracts, so it cannot receive delivery authority or modify those contracts until ticket 01 returns reviewed evidence. This is a normal dependency boundary, not a human wait or scope change.
+
+Grill result: **GO — retain ticket 02 scope unchanged and await ticket 01's returned public contracts before ticket-02 delivery.** The planning lane has completed its next legal Grill action. No additional user decision is required at this point.

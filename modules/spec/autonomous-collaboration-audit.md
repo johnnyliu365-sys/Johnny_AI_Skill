@@ -23,8 +23,8 @@ Out of scope: SaaS, pricing, billing, user accounts, entitlements, remote/privat
 
 1. On plugin application/takeover, before implementation planning, the control plane asks for the available coding-Agent count: `1` or `2`. It records only a typed topology and named capabilities; it does not claim to create a host thread or select a model itself.
 2. For `1`, the topology reserves the existing main session for control-plane work and requires a separate implementation session/worktree. For `2`, it supports a named control-plane/main Agent and named implementation Agent; Claude-control/Codex-implementation is a recommendation, not a hard-coded vendor requirement.
-3. After SPEC approval, ticket creation and ticket approval, every ticket is committed and then emits `TICKET_DISPATCH_REQUIRED`. The displayed question names the ticket and its implementation owner. No reply or a negative reply produces only `WAIT_FOR_HUMAN` with no branch, Context, capability or implementation grant.
-4. A confirmed dispatch requires a typed receipt that references the approved ticket, named implementation owner, reviewed handoff, expected base revision and correlation ID. It provisions one isolated branch/worktree and emits `IMPLEMENTATION_DISPATCH_CONFIRMED`.
+3. After SPEC approval and committed ticket creation, every ticket emits `TICKET_DISPATCH_REQUIRED`. The displayed question names the ticket and its implementation owner. A positive delivery confirmation is that ticket's scoped approval and dispatch authority; no reply or a negative reply produces only `WAIT_FOR_HUMAN` with no branch, Context, capability or implementation grant.
+4. A confirmed dispatch requires a typed receipt that references the committed ticket, named implementation owner, reviewed handoff, expected base revision and correlation ID. It provisions one isolated branch/worktree and emits `IMPLEMENTATION_DISPATCH_CONFIRMED`.
 5. The receipt simultaneously sends the planning lane to the next declared Grill and the ticket lane to `IMPLEMENT`. Their state, ContextView, source grants, consumer fingerprint, event IDs and safety ceilings are independent. Planning cannot change an approved active ticket.
 6. The implementation owner starts from the approved main base, follows TDD, verification and commit rules, and returns only typed completion/block/change evidence. It cannot write the main control-plane worktree.
 7. A valid completed ticket return with matching base revision, clean integration state and passing required checks triggers exactly one guarded local `main` integration by the main-owner capability, then immediately routes a Grill audit. Integration does not mean deploy, push, handoff, or permission to start dependent work.
@@ -53,7 +53,7 @@ The control-plane/main owner owns Wayfinder, Architecture, Grill, Context, SPEC,
 
 This POC extends local typed Router/Profile/skill/template contracts only. It adds no network API, database, cache, provider, credential or deployment. A local persistence adapter may save only validated descriptors required to resume lane state; raw Context stays ephemeral and local to the consuming Agent worktree.
 
-`WAIT_FOR_HUMAN` is allowed only for topology selection, existing SPEC/ticket approvals, the ticket dispatch question and irreversible external actions. `HALT` is required for invalid, unavailable or unsafe technical conditions. The host's own conversation/model/worktree permissions remain authoritative.
+`WAIT_FOR_HUMAN` is allowed only for topology selection, SPEC approval, the ticket dispatch question and irreversible external actions. Dispatch confirmation is the ticket-scoped approval; it must not be split into a second ceremonial approval. `HALT` is required for invalid, unavailable or unsafe technical conditions. The host's own conversation/model/worktree permissions remain authoritative.
 
 ## Frontend composition and dependency injection
 
@@ -86,7 +86,7 @@ The approved implementation ticket must first produce executable red evidence fo
 
 - Shared Context: `CONTEXT.md`, this SPEC, PRD §14 and `CHG-20260805-010`.
 - Grill result: `GO to specification`; ticket planning is authorised.
-- Required approval: project owner approved this exact SPEC on `2026-08-05`; source/test implementation still requires a separate approval for named tickets and implementation owners.
+- Required approval: project owner approved this exact SPEC on `2026-08-05`. For each named ticket, a positive dispatch confirmation is the separate, ticket-scoped implementation authority.
 
 ## Revision signatures
 
@@ -94,9 +94,10 @@ The approved implementation ticket must first produce executable red evidence fo
 | --- | --- | --- |
 | 2026-08-05 | Codex control plane / `4feeb94` | Initial non-commercial multi-AI collaboration and audit draft. |
 | 2026-08-05 | Project owner | Approved the SPEC and authorised ticket planning only. |
+| 2026-08-05 | Project owner | Clarified that `已轉交` is the named ticket's approval and dispatch confirmation, not a second approval after delivery. |
 
 ## Approval record
 
 - Decision maker: project owner.
 - Date: `2026-08-05 (Asia/Taipei)`.
-- Approval scope: this SPEC and ticket planning. Source, test, migration, deployment and implementation commits are not authorised until named tickets, owners and worktrees receive a separate approval.
+- Approval scope: this SPEC and ticket planning. A ticket's source/test implementation is authorised only when a named implementation owner/worktree receives the ticket and the project owner confirms dispatch; no separate ceremonial ticket approval is required.
