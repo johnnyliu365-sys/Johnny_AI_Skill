@@ -4,11 +4,11 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-AUTONOMOUS-COLLABORATION-AUDIT-20260805-01KZ7A2C4E6G8J0L2N4P6R8T` / AC-1 through AC-5 |
 | Context / change | `doc/context/autonomous-collaboration-audit/main.md` / `CHG-20260805-010` |
-| State | `PLANNED` — awaiting topology selection, named owners and separate ticket approval |
+| State | `AWAITING_TICKET_APPROVAL` — topology and named owners recorded; separate ticket approval required |
 | Language | Python 3.11 and Markdown |
-| Baseline | `5cc5519` |
+| Baseline | `2372f1e` |
 | Control-plane owner / reviewer | Codex / current `main` worktree |
-| Implementation owner / worktree | Pending owner-selected topology; required before approval |
+| Implementation owner / worktree | Codex implementation Agent / `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` / `codex/implementation-private-router-saas-01` |
 | Environment | Local Router POC; no Git mutation, network, target-project or host-thread creation |
 
 ## User-observable outcome
@@ -26,8 +26,8 @@ Frontend composition / DI: `N/A` — no formal UI boundary. Reason: typed local 
 ## Handoff and role assignment
 
 - Control-plane owner: Codex/current `main` worktree.
-- Implementation owner: pending user topology selection; cannot be the control-plane owner without a ticket-scoped override.
-- Reviewer: pending user topology selection; cannot share the implementation worktree.
+- Implementation owner: Codex implementation Agent / existing `workflow-implementation` worktree. It must synchronize from the approved main base after this ticket approval and before its first red test.
+- Reviewer: Codex/current `main` worktree; it does not share the implementation worktree.
 - Owner override: `N/A`.
 - `ImplementationHandoff`: approved SPEC/ticket/Context/TDD metadata references, expected baseline and named role IDs only.
 - `ImplementationReturn`: `COMPLETED → ACTION_COMPLETED`; `BLOCKED → HALT`; `CHANGE_DETECTED → REQUIREMENT_CHANGED → Grill`.

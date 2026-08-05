@@ -8,7 +8,7 @@
 | Language | Python 3.11 and Markdown |
 | Baseline | Ticket 01 approved integration contract |
 | Control-plane owner / reviewer | Codex / current `main` worktree |
-| Implementation owner / worktree | Pending owner-selected topology; required before approval |
+| Implementation owner / worktree | Codex implementation Agent / existing `workflow-implementation` / `codex/implementation-private-router-saas-01`; ticket remains unselected |
 | Environment | Local fake Git/integration port only; no real push, deployment, target-project or external provider |
 
 ## User-observable outcome
@@ -24,8 +24,8 @@ Frontend composition / DI: `N/A` — no formal UI; the fake Git/integration port
 ## Handoff and role assignment
 
 - Control-plane/main integration owner: Codex/current `main` worktree.
-- Implementation owner: pending user topology selection; owns only its ticket branch/worktree.
-- Reviewer / Grill audit owner: pending topology selection; must not share the implementation worktree.
+- Implementation owner: Codex implementation Agent; owns only its ticket branch/worktree once this planned ticket is separately approved.
+- Reviewer / Grill audit owner: Codex/current `main` worktree; does not share the implementation worktree.
 - Owner override: `N/A`.
 - Handoff must include ticket/branch opaque reference, expected main revision, verification evidence, dispatch receipt and audit requirements. It must never contain paths, raw Git output, source text, prompt, URI, Secret or PII.
 

@@ -111,4 +111,4 @@
 - Worktree Context: `doc/context/autonomous-collaboration-audit/main.md`.
 - Scope: non-commercial positioning, collaboration-topology selection, dispatch-confirmation wait, parallel planning/ticket lanes, guarded branch/worktree provisioning, integration, Grill audit, and fixed handoff response format.
 - PRD / change: `PRD.md §14`; `CHG-20260805-010`.
-- Handoff state: SPEC is approved and ticket planning is complete. `01-topology-dispatch-lanes`, `02-guarded-integration-audit`, and `03-plugin-policy-and-response` await topology selection, named owners and separate ticket approval; no source/test/runtime implementation is authorised.
+- Handoff state: the owner selected `ONE_IMPLEMENTATION_AGENT` on `2026-08-05`. Control-plane/reviewer remains Codex/current `main`; the existing separate implementation worktree is `workflow-implementation` / `codex/implementation-private-router-saas-01`. `01-topology-dispatch-lanes` is selected and awaits separate ticket approval; tickets 02–03 remain planned. The implementation worktree is five commits behind the current main ticket baseline and must synchronize itself before any authorised source/test work.

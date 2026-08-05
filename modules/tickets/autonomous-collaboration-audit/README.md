@@ -10,29 +10,26 @@ Deliver a non-commercial, detachable workflow control plane that selects a colla
 
 | Ticket | User-observable capability | State | Dependency |
 | --- | --- | --- |
-| [01-topology-dispatch-lanes](01-topology-dispatch-lanes.md) | Capability-count question and typed dispatch wait/receipt with parallel lane isolation | `PLANNED` | First vertical slice |
+| [01-topology-dispatch-lanes](01-topology-dispatch-lanes.md) | Capability-count question and typed dispatch wait/receipt with parallel lane isolation | `AWAITING_TICKET_APPROVAL` | First vertical slice |
 | [02-guarded-integration-audit](02-guarded-integration-audit.md) | Valid implementation return reaches a guarded local main integration and automatic Grill audit | `PLANNED` | 01 contracts |
 | [03-plugin-policy-and-response](03-plugin-policy-and-response.md) | Codex/Claude guidance and fixed `工單 ready` / `文件交接` response | `PLANNED` | 01 events; may run after 01 review |
 
 ## Mandatory approval data
 
-Before approving any ticket, the project owner must select the collaboration topology that the plugin will record:
+The project owner selected this topology on `2026-08-05`:
 
 ```text
-目前有幾個 AI 可同時協作 coding？
-
-1：main control-plane session + separate implementation session/worktree
-2：named control-plane/main Agent + named implementation Agent
+1：main control-plane session + existing separate implementation session/worktree
 ```
 
-For every approved ticket, record the resulting named implementation owner/worktree and reviewer. The default control-plane owner is Codex/current `main` worktree. No ticket may enter `IMPLEMENT` while the topology, owner, worktree or reviewer is pending.
+The named implementation owner is Codex implementation Agent in `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` on `codex/implementation-private-router-saas-01`; the control-plane/reviewer is Codex/current `main` worktree. No ticket may enter `IMPLEMENT` until separately approved. Ticket 01 is the only selected ticket; tickets 02–03 remain `PLANNED`.
 
 ## Shared baseline
 
 - SPEC: `SPEC-AI-WORKFLOW-AUTONOMOUS-COLLABORATION-AUDIT-20260805-01KZ7A2C4E6G8J0L2N4P6R8T`
 - Change: `CHG-20260805-010`
 - Context: [autonomous-collaboration-audit/main.md](../../../doc/context/autonomous-collaboration-audit/main.md)
-- Documentation baseline: `5cc5519` (`docs: draft autonomous collaboration workflow`)
+- Documentation baseline: `2372f1e` (`docs: plan autonomous collaboration tickets`)
 - Environment: local Python workflow-router POC and detachable Codex/Claude guidance. No SaaS, service deployment, model host, target-project dependency or external provider is in scope.
 
 ## Common delivery rules

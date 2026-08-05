@@ -15,6 +15,15 @@
 
 The repository is a non-commercial, detachable multi-AI workflow and audit control plane. It is not a SaaS, payment product, hosted private Router, model host, target-project runtime, CI dependency, or deployment service. The previously completed private Router POC remains historical technical evidence only.
 
+## Collaboration topology selection
+
+The project owner selected `1` available coding Agent on `2026-08-05`:
+
+- Control-plane / planning / integration / reviewer: Codex, current `main` worktree.
+- Implementation owner: Codex implementation Agent, existing `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` worktree on `codex/implementation-private-router-saas-01`.
+- Current implementation worktree HEAD: `a94e207`, confirmed as an ancestor of the current main ticket baseline `2372f1e` with five commits to synchronize. Only the implementation owner may perform that synchronization in its own worktree after ticket approval.
+- Selected ticket: `01-topology-dispatch-lanes`. It is not implementation-authorised until the project owner separately approves it.
+
 ## Grill decisions
 
 | Question | Confirmed decision |
@@ -74,4 +83,4 @@ After a Grill-to-SPEC approval has generated committed ticket and handoff artifa
 
 ## Convergence
 
-Grill result: **GO to specification**. The project owner approved `SPEC-AI-WORKFLOW-AUTONOMOUS-COLLABORATION-AUDIT-20260805-01KZ7A2C4E6G8J0L2N4P6R8T` on `2026-08-05`; the planned ticket set is `modules/tickets/autonomous-collaboration-audit/`. The next permitted action is the separate ticket/topology approval gate; no source/test implementation is authorised yet.
+Grill result: **GO to specification**. The project owner approved `SPEC-AI-WORKFLOW-AUTONOMOUS-COLLABORATION-AUDIT-20260805-01KZ7A2C4E6G8J0L2N4P6R8T` on `2026-08-05`; the planned ticket set is `modules/tickets/autonomous-collaboration-audit/`. Topology selection is complete. The next permitted action is the separate approval of `01-topology-dispatch-lanes`; no source/test implementation is authorised yet.

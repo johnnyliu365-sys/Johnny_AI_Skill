@@ -8,7 +8,7 @@
 | Language | Markdown, policy contract tests, and any approved Python formatter contract |
 | Baseline | Ticket 01 approved public contract |
 | Control-plane owner / reviewer | Codex / current `main` worktree |
-| Implementation owner / worktree | Pending owner-selected topology; required before approval |
+| Implementation owner / worktree | Codex implementation Agent / existing `workflow-implementation` / `codex/implementation-private-router-saas-01`; ticket remains unselected |
 | Environment | Local plugin/skill source only; no host configuration, target-project file, remote service or deployment |
 
 ## User-observable outcome
@@ -24,7 +24,7 @@ Frontend composition / DI: `N/A` — documentation and deterministic formatter p
 ## Handoff and role assignment
 
 - Control-plane owner: Codex/current `main` worktree.
-- Implementation owner / reviewer: pending user topology selection and separate ticket approval.
+- Implementation owner: Codex implementation Agent / existing `workflow-implementation` worktree, once this planned ticket is separately approved. Reviewer: Codex/current `main` worktree.
 - Owner override: `N/A`.
 - Handoff/return follow the approved metadata-only contracts. This ticket may not silently rename an event introduced by ticket 01; a contract change returns to Grill.
 
