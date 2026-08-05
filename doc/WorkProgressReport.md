@@ -239,3 +239,20 @@
 | Validation | `python -m unittest discover -s tests` — 78 passed; `python -m mypy --strict library tests` — 60 source files clean; workflow-router module enumeration compile passed; `git diff --check` passed. |
 | Smoke / privacy | Direct and Private Router dispatch waits expose `WAIT_FOR_HUMAN` with no source, capability, Context, worktree or dispatch grant; positive receipt routes planning to `GRILL` and ticket execution to `IMPLEMENT`; malformed locator/correlation and receipt mismatches halt; metadata sentinel found no raw Context/source/path/URI/prompt/secret/PII fields. |
 | Review / merge | Independent control-plane review is pending. Main remains untouched after the implementation fast-forward base `b6cf8f8`; no integration or push performed. |
+
+## PRG-20260805-002 correction handoff after review 8108cd9
+
+| Field | Value |
+| --- | --- |
+| State | `IMPLEMENTATION_COMMITTED_PENDING_REVIEW` |
+| Review return | `CHANGES_REQUESTED -> IMPLEMENT`; review report `8108cd9` / `doc/reviews/autonomous-collaboration-audit/01-topology-dispatch-lanes-code-review.md` |
+| Ticket / context | `01-topology-dispatch-lanes` / `CHG-20260805-010` |
+| Rebase evidence | Original implementation `9b4d5cb` and handoff `7a8df21` were replayed without reset or merge commit; rebased commits are `2672d62` and `082a120` on review baseline `8108cd9`. |
+| Implementation owner | Codex implementation Agent / `codex/implementation-private-router-saas-01` |
+| Implementation commit | `2e4f13e` (`fix: close dispatch approval bypass`) |
+| TDD red evidence | Before source correction: `test_legacy_ticket_approval_with_handoff_is_blocked_until_dispatch` returned `ADVANCE` instead of `SUSPEND`; `test_private_router_legacy_ticket_approval_with_handoff_is_blocked` returned `AUTO_RUN` instead of `HALT`; `test_dispatch_requires_an_opened_in_progress_ticket_proposal` returned `WAIT_FOR_HUMAN` without a proposal instead of `HALT`; `test_ticket_lane_retains_named_implementation_capability_and_reviewer` could not find the named lane fields. |
+| Delivered correction | Removed the default legacy ticket-approval transition and fail-closed both direct and Private Router bypasses; added typed `TicketProposal` planned-to-open transition with exactly one dispatch-question ID; retained topology, implementation capability and reviewer in Router state/lane descriptors; granted implementation capability only to the confirmed ticket lane; rejected mismatched topology/owner, locator, null/empty/container and adapter-boundary inputs without grants. |
+| Validation | `python -B -m unittest discover -s tests` — 84 passed; `python -B -m unittest tests.test_autonomous_collaboration -v` — 11 passed; `python -B -m unittest tests.test_private_router_metadata_gate -v` — 9 passed; `python -m mypy --strict library tests` — 60 source files clean; workflow-router enumeration compile passed; `git diff --check` passed. |
+| Boundary / mutation evidence | Metadata-gate tests found no raw source/Context/path/URI/prompt/secret/PII fields. A controlled in-memory reversal of the legacy guard caused both direct and indirect guard tests to fail (`failures=2`), proving the tests detect the bypass mutation. Adapter exceptions remain raised at the source boundary and cannot become a grant. |
+| Docs-only handoff | This entry is the docs-only handoff commit for `2e4f13e`; independent review is required before any integration. |
+| Review / merge | `main` remains untouched at the review baseline; no self-approval, merge, push or dependent ticket work performed. |
