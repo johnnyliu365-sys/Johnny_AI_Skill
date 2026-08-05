@@ -112,3 +112,9 @@ The Architecture stage is supplied by [ADR-20260805-002](../../adr/ADR-20260805-
 ### Grill decision
 
 **GO to Context with controlled ticket-plan corrections.** No product requirement, delivery stage, owner authority or active ticket 01 scope changed, so no `CHG` or additional human approval is required. Ticket 02 was corrected while still `PLANNED`; it will be automatically re-evaluated only after ticket 01 returns reviewed public-contract evidence. The next legal planning action is to retain this Context and await that automatic event, not to issue another user question.
+
+## Ticket 01 review return
+
+The submitted implementation `9b4d5cb` and docs-only handoff `7a8df21` were reviewed in [01-topology-dispatch-lanes-code-review.md](../../reviews/autonomous-collaboration-audit/01-topology-dispatch-lanes-code-review.md). Result: `CHANGES_REQUESTED`.
+
+The review found that the old `APPROVAL_GRANTED → IMPLEMENT` route remains a direct and indirect dispatch-confirmation bypass; Router state also loses the selected implementation capability/reviewer, the required opened-ticket `IN_PROGRESS` model is absent, and ticket-specific red/edge/mutation evidence is incomplete. Ticket 01 remains `IN_PROGRESS` in its named implementation worktree and returns to implementation. This is not a requirement change, so the planning lane does not re-enter Grill or open ticket 02.
