@@ -12,6 +12,8 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 NonBlankText = Annotated[str, Field(min_length=1)]
 PositiveTokenBudget = Annotated[int, Field(gt=0)]
 OpaqueMetadataId = Annotated[str, Field(pattern=r"^[a-z][a-z0-9-]{2,127}$")]
+WorktreeFingerprint = Annotated[str, Field(pattern=r"^worktree-[a-z0-9]+-[0-9]{2}$")]
+BranchFingerprint = Annotated[str, Field(pattern=r"^branch-[a-z0-9]+-[0-9]{2}$")]
 RevisionDigest = Annotated[str, Field(pattern=r"^rev-[0-9a-f]{16,64}$")]
 EvidenceDigest = Annotated[str, Field(pattern=r"^sha256_[0-9a-f]{64}$")]
 CommitDigest = Annotated[str, Field(pattern=r"^git_[0-9a-f]{12,64}$")]
@@ -86,6 +88,13 @@ class TicketDispatchState(str, Enum):
 
     REQUIRED = "required"
     CONFIRMED = "confirmed"
+
+
+class TicketProposalState(str, Enum):
+    """The opened-ticket lifecycle before and after dispatch confirmation."""
+
+    PLANNED = "planned"
+    IN_PROGRESS = "in_progress"
 
 
 class TicketEvent(str, Enum):
@@ -192,6 +201,9 @@ class BlockerCode(str, Enum):
     TOPOLOGY_REQUIRED = "topology_required"
     DISPATCH_RECEIPT_REQUIRED = "dispatch_receipt_required"
     INVALID_DISPATCH_RECEIPT = "invalid_dispatch_receipt"
+    LEGACY_TICKET_APPROVAL_BLOCKED = "legacy_ticket_approval_blocked"
+    TICKET_PROPOSAL_REQUIRED = "ticket_proposal_required"
+    INVALID_TICKET_PROPOSAL = "invalid_ticket_proposal"
 
 
 class ReferenceStatus(str, Enum):
@@ -225,8 +237,8 @@ class TicketDispatchReceipt(RouterModel):
     handoff_reference: OpaqueMetadataId
     expected_main_revision: RevisionDigest
     correlation_id: NonBlankText
-    worktree_fingerprint: OpaqueMetadataId
-    branch_fingerprint: OpaqueMetadataId
+    worktree_fingerprint: WorktreeFingerprint
+    branch_fingerprint: BranchFingerprint
 
     @model_validator(mode="after")
     def correlation_is_metadata_only(self) -> TicketDispatchReceipt:
@@ -254,6 +266,39 @@ class TicketDispatchReceipt(RouterModel):
         """Expose the spec terminology without storing a second field."""
 
         return self.handoff_reference
+
+
+class TicketProposal(RouterModel):
+    """A selected ticket opened in progress before its single dispatch question."""
+
+    ticket_reference: OpaqueMetadataId
+    state: TicketProposalState
+    implementation_owner_id: OpaqueMetadataId
+    dispatch_question_id: OpaqueMetadataId | None = None
+    proposal_revision: RevisionDigest
+
+    @model_validator(mode="after")
+    def question_matches_open_state(self) -> TicketProposal:
+        """Require exactly one question identifier only after the proposal is opened."""
+
+        if self.state is TicketProposalState.PLANNED and self.dispatch_question_id is not None:
+            raise ValueError("planned ticket proposals cannot carry a dispatch question")
+        if self.state is TicketProposalState.IN_PROGRESS and self.dispatch_question_id is None:
+            raise ValueError("opened ticket proposals require one dispatch question")
+        return self
+
+    def open(self, *, dispatch_question_id: OpaqueMetadataId) -> TicketProposal:
+        """Open one planned proposal and emit its single named dispatch question."""
+
+        if self.state is not TicketProposalState.PLANNED:
+            raise ValueError("only planned ticket proposals may be opened")
+        return TicketProposal(
+            ticket_reference=self.ticket_reference,
+            state=TicketProposalState.IN_PROGRESS,
+            implementation_owner_id=self.implementation_owner_id,
+            dispatch_question_id=dispatch_question_id,
+            proposal_revision=self.proposal_revision,
+        )
 
 
 class HandoffConsumerFingerprint(RouterModel):
@@ -360,6 +405,35 @@ class ImplementationReturn(RouterModel):
         return self
 
 
+class CapabilityRef(RouterModel):
+    """An allowlisted capability, not an authority grant."""
+
+    capability_id: NonBlankText
+    version: NonBlankText
+    agent_profile: NonBlankText
+
+
+class CollaborationTopologyPlan(RouterModel):
+    """A finite topology and its named capabilities, never a host-thread grant."""
+
+    topology: CollaborationTopology
+    control_plane: CapabilityRef
+    implementation_owner: CapabilityRef
+    reviewer: CapabilityRef
+    host_thread_references: tuple[OpaqueMetadataId, ...] = ()
+
+    @model_validator(mode="after")
+    def roles_are_distinct(self) -> CollaborationTopologyPlan:
+        """Prevent the implementation capability from colliding with either reviewer role."""
+
+        if self.implementation_owner.capability_id in (
+            self.control_plane.capability_id,
+            self.reviewer.capability_id,
+        ):
+            raise ValueError("implementation capability must be role-isolated")
+        return self
+
+
 class RouterEvent(RouterModel):
     """A unique, validated request to re-evaluate the workflow."""
 
@@ -372,6 +446,7 @@ class RouterEvent(RouterModel):
     dispatch_receipt: TicketDispatchReceipt | None = None
     lane_kind: LaneKind | None = None
     lane_id: OpaqueMetadataId | None = None
+    ticket_proposal: TicketProposal | None = None
 
     @model_validator(mode="after")
     def completion_metadata_matches_event(self) -> RouterEvent:
@@ -399,6 +474,8 @@ class RouterEvent(RouterModel):
             and self.kind is not RouterEventKind.IMPLEMENTATION_DISPATCH_CONFIRMED
         ):
             raise ValueError("dispatch receipts require confirmed dispatch")
+        if self.ticket_proposal is not None and self.kind is not RouterEventKind.TICKET_DISPATCH_REQUIRED:
+            raise ValueError("ticket proposals require a dispatch-required event")
         if self.lane_kind is None and self.lane_id is not None:
             raise ValueError("lane_id requires lane_kind")
         if self.lane_kind is not None and self.lane_id is None:
@@ -415,23 +492,7 @@ class RouterState(RouterModel):
     delivery_stage: DeliveryStage
     artifact_refs: tuple[ArtifactRef, ...]
     topology: CollaborationTopology | None = None
-
-
-class CapabilityRef(RouterModel):
-    """An allowlisted capability, not an authority grant."""
-
-    capability_id: NonBlankText
-    version: NonBlankText
-    agent_profile: NonBlankText
-
-
-class CollaborationTopologyPlan(RouterModel):
-    """A finite topology and its named capabilities, never a host-thread grant."""
-
-    topology: CollaborationTopology
-    control_plane: CapabilityRef
-    implementation_owner: CapabilityRef
-    host_thread_references: tuple[OpaqueMetadataId, ...] = ()
+    collaboration_plan: CollaborationTopologyPlan | None = None
 
 
 class PlanningLaneState(RouterModel):
@@ -459,9 +520,11 @@ class TicketLaneState(RouterModel):
     context_view_id: OpaqueMetadataId
     side_context_id: OpaqueMetadataId
     event_id: OpaqueMetadataId
-    worktree_fingerprint: OpaqueMetadataId
-    branch_fingerprint: OpaqueMetadataId
+    worktree_fingerprint: WorktreeFingerprint
+    branch_fingerprint: BranchFingerprint
     safety_ceiling: PositiveTokenBudget
+    implementation_capability: CapabilityRef
+    reviewer: CapabilityRef
 
 
 class CollaborationDispatchPlan(RouterModel):
@@ -546,6 +609,8 @@ class RouterDecision(RouterModel):
     blockers: tuple[RouterBlocker, ...] = ()
     wait_reason: HumanWaitReason | None = None
     dispatch_plan: CollaborationDispatchPlan | None = None
+    ticket_lane_capabilities: tuple[CapabilityRef, ...] = ()
+    ticket_proposal: TicketProposal | None = None
 
     @model_validator(mode="after")
     def decision_shape_is_consistent(self) -> RouterDecision:
@@ -581,10 +646,18 @@ class RouterDecision(RouterModel):
                 raise ValueError("human waits cannot grant Context or capabilities")
             if self.dispatch_plan is not None:
                 raise ValueError("human waits cannot grant dispatch plans")
+            if self.ticket_lane_capabilities:
+                raise ValueError("human waits cannot grant ticket-lane capabilities")
+        elif self.ticket_proposal is not None:
+            raise ValueError("automatic or halted decisions cannot carry an opened proposal")
         elif self.wait_reason is not None:
             raise ValueError("only human waits may declare a wait reason")
         if self.continuation is ContinuationDirective.HALT and self.dispatch_plan is not None:
             raise ValueError("halted decisions cannot grant dispatch plans")
+        if self.continuation is ContinuationDirective.HALT and self.ticket_lane_capabilities:
+            raise ValueError("halted decisions cannot grant ticket-lane capabilities")
+        if self.continuation is ContinuationDirective.HALT and self.ticket_proposal is not None:
+            raise ValueError("halted decisions cannot carry an opened proposal")
         return self
 
 

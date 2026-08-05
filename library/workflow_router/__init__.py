@@ -33,6 +33,8 @@ from .contracts import (
     TicketDispatchState,
     TicketEvent,
     TicketLaneState,
+    TicketProposal,
+    TicketProposalState,
     LaneKind,
     TicketScope,
 )
@@ -131,6 +133,8 @@ __all__ = (
     "TicketDispatchState",
     "TicketEvent",
     "TicketLaneState",
+    "TicketProposal",
+    "TicketProposalState",
     "LaneKind",
     "TelemetryIssueCode",
     "TelemetryMode",

@@ -15,6 +15,7 @@ from .contracts import (
     BlockerCode,
     CollaborationDispatchPlan,
     CollaborationTopology,
+    CollaborationTopologyPlan,
     ConsumerFingerprint,
     ContinuationDirective,
     ContextPacket,
@@ -39,6 +40,8 @@ from .contracts import (
     TicketDispatchReceipt,
     TicketLaneState,
     TicketDispatchState,
+    TicketProposal,
+    TicketProposalState,
 )
 from .profile import ProjectWorkflowProfile
 
@@ -86,12 +89,25 @@ class RouterEngine:
                 ),
             )
         if (
+            state.collaboration_plan is not None
+            and state.topology is not state.collaboration_plan.topology
+        ):
+            return self._suspend(
+                code=BlockerCode.TOPOLOGY_REQUIRED,
+                detail="router state topology does not match its capability plan",
+            )
+        if (
             event.implementation_return is not None
             and event.implementation_return.status is ImplementationReturnStatus.BLOCKED
         ):
             return self._suspend(
                 code=BlockerCode.IMPLEMENTATION_RETURN_BLOCKED,
                 detail="implementation owner returned a blocked result",
+            )
+        if state.stage is ProcessStage.TICKETS and event.kind is RouterEventKind.APPROVAL_GRANTED:
+            return self._suspend(
+                code=BlockerCode.LEGACY_TICKET_APPROVAL_BLOCKED,
+                detail="ticket implementation requires confirmed dispatch",
             )
         rule = profile.rule_for(current_stage=state.stage, event_kind=event.kind)
         if rule is None:
@@ -164,6 +180,37 @@ class RouterEngine:
                 code=BlockerCode.AMBIGUOUS_REQUIRED_SOURCE,
                 detail=f"multiple declared sources match required kinds: {ambiguous_names}",
             )
+        if event.kind is RouterEventKind.TICKET_DISPATCH_REQUIRED:
+            proposal = event.ticket_proposal
+            if proposal is None:
+                return self._suspend(
+                    code=BlockerCode.TICKET_PROPOSAL_REQUIRED,
+                    detail="dispatch question requires an opened ticket proposal",
+                )
+            if (
+                proposal.state is not TicketProposalState.IN_PROGRESS
+                or len(required_sources) != 1
+                or proposal.ticket_reference != required_sources[0].identifier
+                or state.collaboration_plan is None
+                or proposal.implementation_owner_id
+                not in (
+                    state.collaboration_plan.implementation_owner.capability_id,
+                    state.collaboration_plan.implementation_owner.agent_profile,
+                )
+            ):
+                return self._suspend(
+                    code=BlockerCode.INVALID_TICKET_PROPOSAL,
+                    detail="opened ticket proposal does not match the selected owner and ticket",
+                )
+            return RouterDecision(
+                outcome=RouterOutcome.SUSPEND,
+                continuation=ContinuationDirective.WAIT_FOR_HUMAN,
+                next_stage=None,
+                required_sources=(),
+                eligible_capabilities=(),
+                wait_reason=rule.wait_reason,
+                ticket_proposal=proposal,
+            )
         if rule.requires_human_approval:
             return self._suspend(
                 code=BlockerCode.AUTHORITY_REQUIRED,
@@ -180,18 +227,33 @@ class RouterEngine:
                     code=BlockerCode.INVALID_DISPATCH_RECEIPT,
                     detail="dispatch receipt ticket does not match the declared ticket source",
                 )
+            if state.collaboration_plan is None or state.collaboration_plan.topology is not state.topology:
+                return self._suspend(
+                    code=BlockerCode.TOPOLOGY_REQUIRED,
+                    detail="confirmed dispatch requires the selected capability plan",
+                )
+            if event.dispatch_receipt.implementation_owner_id not in (
+                state.collaboration_plan.implementation_owner.capability_id,
+                state.collaboration_plan.implementation_owner.agent_profile,
+            ):
+                return self._suspend(
+                    code=BlockerCode.INVALID_DISPATCH_RECEIPT,
+                    detail="dispatch receipt owner does not match the selected implementation capability",
+                )
             return RouterDecision(
                 outcome=rule.outcome,
                 continuation=ContinuationDirective.AUTO_CONTINUE,
                 next_stage=rule.next_stage,
                 required_sources=required_sources,
                 eligible_capabilities=rule.eligible_capabilities,
+                ticket_lane_capabilities=(state.collaboration_plan.implementation_owner,),
                 dispatch_plan=self._dispatch_plan(
                     state=state,
                     event=event,
                     receipt=event.dispatch_receipt,
                     topology=state.topology,
                     ticket=required_sources[0],
+                    collaboration_plan=state.collaboration_plan,
                 ),
             )
         return RouterDecision(
@@ -214,6 +276,7 @@ class RouterEngine:
         receipt: TicketDispatchReceipt,
         topology: CollaborationTopology,
         ticket: ArtifactRef,
+        collaboration_plan: CollaborationTopologyPlan,
     ) -> CollaborationDispatchPlan:
         """Create two immutable lane descriptors with disjoint correlation metadata."""
 
@@ -244,6 +307,8 @@ class RouterEngine:
             worktree_fingerprint=dispatch_receipt.worktree_fingerprint,
             branch_fingerprint=dispatch_receipt.branch_fingerprint,
             safety_ceiling=10,
+            implementation_capability=collaboration_plan.implementation_owner,
+            reviewer=collaboration_plan.reviewer,
         )
         return CollaborationDispatchPlan(
             receipt=dispatch_receipt,

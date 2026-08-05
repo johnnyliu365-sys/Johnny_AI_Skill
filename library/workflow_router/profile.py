@@ -244,16 +244,6 @@ def build_router_poc_profile() -> ProjectWorkflowProfile:
             ),
             TransitionRule(
                 current_stage=ProcessStage.TICKETS,
-                event_kind=RouterEventKind.APPROVAL_GRANTED,
-                outcome=RouterOutcome.ADVANCE,
-                next_stage=ProcessStage.IMPLEMENT,
-                required_authority=AuthorityState.APPROVED,
-                required_source_kinds=(ArtifactKind.TICKET,),
-                eligible_capabilities=(implementation,),
-                requires_implementation_handoff=True,
-            ),
-            TransitionRule(
-                current_stage=ProcessStage.TICKETS,
                 event_kind=RouterEventKind.TICKET_DISPATCH_REQUIRED,
                 outcome=RouterOutcome.SUSPEND,
                 next_stage=None,

@@ -12,10 +12,16 @@ from library.workflow_router import (
     AuthorityState,
     CapabilityRef,
     CollaborationTopology,
+    CollaborationTopologyPlan,
     CollaborationTopologyResolver,
     ContinuationDirective,
+    ConsumerFingerprint,
+    ContextResolver,
     DeliveryStage,
     HumanWaitReason,
+    HandoffArtifactReference,
+    HandoffConsumerFingerprint,
+    ImplementationHandoff,
     LaneKind,
     PlanningLaneState,
     ProcessStage,
@@ -24,9 +30,13 @@ from library.workflow_router import (
     RouterEventKind,
     RouterOutcome,
     RouterState,
+    SourceSnippet,
     TicketDispatchConfirmation,
     TicketDispatchReceipt,
     TicketDispatchState,
+    TicketProposal,
+    TicketProposalState,
+    TicketScope,
     build_router_poc_profile,
 )
 from library.workflow_router.private_router import (
@@ -64,6 +74,11 @@ class AutonomousCollaborationTests(unittest.TestCase):
             version="1",
             agent_profile="implementation-owner",
         )
+        self.reviewer = CapabilityRef(
+            capability_id="cap-reviewer",
+            version="1",
+            agent_profile="reviewer",
+        )
 
     def test_topology_selection_rejects_unknown_count_or_unavailable_capability(self) -> None:
         resolver = CollaborationTopologyResolver()
@@ -87,6 +102,21 @@ class AutonomousCollaborationTests(unittest.TestCase):
                 control_plane=self.control,
                 implementation_owner=self.implementation,
                 available_capabilities=(self.control,),
+            )
+        with self.assertRaises(ValueError):
+            resolver.select(
+                available_agent_count=1,
+                control_plane=self.control,
+                implementation_owner=self.implementation,
+                reviewer=self.reviewer,
+                available_capabilities=(self.control, self.implementation),
+            )
+        with self.assertRaises(ValueError):
+            resolver.select(
+                available_agent_count=1,
+                control_plane=self.control,
+                implementation_owner=self.implementation,
+                available_capabilities=(),
             )
 
         one = resolver.select(
@@ -112,6 +142,7 @@ class AutonomousCollaborationTests(unittest.TestCase):
                 event_id="dispatch-required-0001",
                 kind=RouterEventKind.TICKET_DISPATCH_REQUIRED,
                 dispatch_confirmation=confirmation,
+                ticket_proposal=self._proposal(),
             )
             decision = self.engine.decide(state=state, event=event, profile=self.profile)
             self.assertEqual(RouterOutcome.SUSPEND, decision.outcome)
@@ -122,7 +153,97 @@ class AutonomousCollaborationTests(unittest.TestCase):
             )
             self.assertEqual((), decision.required_sources)
             self.assertEqual((), decision.eligible_capabilities)
+            self.assertEqual((), decision.ticket_lane_capabilities)
+            self.assertEqual(self._proposal(), decision.ticket_proposal)
             self.assertIsNone(decision.dispatch_plan)
+
+    def test_legacy_ticket_approval_with_handoff_is_blocked_until_dispatch(self) -> None:
+        decision = self.engine.decide(
+            state=self._ticket_state(),
+            event=RouterEvent(
+                event_id="legacy-approval-bypass-0001",
+                kind=RouterEventKind.APPROVAL_GRANTED,
+                implementation_handoff=self._handoff(),
+            ),
+            profile=self.profile,
+        )
+        self.assertEqual(RouterOutcome.SUSPEND, decision.outcome)
+        self.assertEqual(ContinuationDirective.HALT, decision.continuation)
+        self.assertIsNone(decision.next_stage)
+        self.assertEqual((), decision.required_sources)
+        self.assertEqual((), decision.eligible_capabilities)
+        self.assertEqual((), decision.ticket_lane_capabilities)
+        self.assertIsNone(decision.dispatch_plan)
+
+    def test_dispatch_requires_an_opened_in_progress_ticket_proposal(self) -> None:
+        planned_proposal = TicketProposal(
+            ticket_reference=self.ticket.identifier,
+            state=TicketProposalState.PLANNED,
+            implementation_owner_id=self.implementation.agent_profile,
+            proposal_revision="rev-0123456789abcdef",
+        )
+        opened_proposal = planned_proposal.open(dispatch_question_id="dispatch-question-0001")
+        self.assertEqual(TicketProposalState.IN_PROGRESS, opened_proposal.state)
+        self.assertEqual("dispatch-question-0001", opened_proposal.dispatch_question_id)
+        with self.assertRaises(ValueError):
+            opened_proposal.open(dispatch_question_id="dispatch-question-0002")
+        decision = self.engine.decide(
+            state=self._ticket_state(),
+            event=RouterEvent(
+                event_id="dispatch-without-proposal-0001",
+                kind=RouterEventKind.TICKET_DISPATCH_REQUIRED,
+            ),
+            profile=self.profile,
+        )
+        self.assertEqual(RouterOutcome.SUSPEND, decision.outcome)
+        self.assertEqual(ContinuationDirective.HALT, decision.continuation)
+        self.assertIsNone(decision.next_stage)
+        planned = self.engine.decide(
+            state=self._ticket_state(),
+            event=RouterEvent(
+                event_id="dispatch-planned-proposal-0001",
+                kind=RouterEventKind.TICKET_DISPATCH_REQUIRED,
+                ticket_proposal=self._proposal().model_copy(
+                    update={"state": TicketProposalState.PLANNED, "dispatch_question_id": None}
+                ),
+            ),
+            profile=self.profile,
+        )
+        self.assertEqual(RouterOutcome.SUSPEND, planned.outcome)
+        self.assertEqual(ContinuationDirective.HALT, planned.continuation)
+
+    def test_ticket_lane_retains_named_implementation_capability_and_reviewer(self) -> None:
+        receipt = self._receipt()
+        decision = self.engine.decide(
+            state=self._ticket_state(),
+            event=RouterEvent(
+                event_id=receipt.correlation_id,
+                kind=RouterEventKind.IMPLEMENTATION_DISPATCH_CONFIRMED,
+                dispatch_confirmation=TicketDispatchConfirmation.POSITIVE,
+                dispatch_receipt=receipt,
+            ),
+            profile=self.profile,
+        )
+        self.assertIsNotNone(decision.dispatch_plan)
+        assert decision.dispatch_plan is not None
+        self.assertTrue(hasattr(decision.dispatch_plan.ticket_lane, "implementation_capability"))
+        self.assertTrue(hasattr(decision.dispatch_plan.ticket_lane, "reviewer"))
+        self.assertTrue(decision.ticket_lane_capabilities)
+        mismatched_state = self._ticket_state().model_copy(
+            update={"topology": CollaborationTopology.TWO_COLLABORATING_AGENTS}
+        )
+        halted = self.engine.decide(
+            state=mismatched_state,
+            event=RouterEvent(
+                event_id=receipt.correlation_id,
+                kind=RouterEventKind.IMPLEMENTATION_DISPATCH_CONFIRMED,
+                dispatch_confirmation=TicketDispatchConfirmation.POSITIVE,
+                dispatch_receipt=receipt,
+            ),
+            profile=self.profile,
+        )
+        self.assertEqual(RouterOutcome.SUSPEND, halted.outcome)
+        self.assertEqual("topology_required", halted.blockers[0].code.value)
 
     def test_positive_receipt_creates_one_ticket_plan_and_planning_grill_route(self) -> None:
         receipt = self._receipt()
@@ -179,6 +300,24 @@ class AutonomousCollaborationTests(unittest.TestCase):
                 worktree_fingerprint=receipt.worktree_fingerprint,
                 branch_fingerprint=receipt.branch_fingerprint,
             )
+        with self.assertRaises(ValidationError):
+            TicketDispatchReceipt.model_validate({})
+        for invalid_worktree in (
+            "worktree-implementation-01/",
+            "worktree-implementation-01\\suffix",
+            "WORKTREE-IMPLEMENTATION-01",
+            "worktree-implementation-01%2fencoded",
+            "worktree-implementation-01-../traversal",
+            "",
+            None,
+        ):
+            with self.subTest(invalid_worktree=invalid_worktree), self.assertRaises(ValidationError):
+                TicketDispatchReceipt.model_validate(
+                    {
+                        **receipt.model_dump(),
+                        "worktree_fingerprint": invalid_worktree,
+                    }
+                )
         decision = self.engine.decide(
             state=self._ticket_state(),
             event=RouterEvent(
@@ -193,6 +332,71 @@ class AutonomousCollaborationTests(unittest.TestCase):
         self.assertEqual(ContinuationDirective.HALT, decision.continuation)
         self.assertIsNone(decision.dispatch_plan)
         self.assertEqual((), decision.eligible_capabilities)
+        owner_mismatch = self.engine.decide(
+            state=self._ticket_state(),
+            event=RouterEvent(
+                event_id=receipt.correlation_id,
+                kind=RouterEventKind.IMPLEMENTATION_DISPATCH_CONFIRMED,
+                dispatch_confirmation=TicketDispatchConfirmation.POSITIVE,
+                dispatch_receipt=receipt.model_copy(
+                    update={"implementation_owner_id": "other-implementation-owner"}
+                ),
+            ),
+            profile=self.profile,
+        )
+        self.assertEqual(RouterOutcome.SUSPEND, owner_mismatch.outcome)
+        self.assertEqual(ContinuationDirective.HALT, owner_mismatch.continuation)
+        self.assertEqual("invalid_dispatch_receipt", owner_mismatch.blockers[0].code.value)
+
+    def test_null_empty_and_container_dispatch_inputs_fail_closed(self) -> None:
+        receipt = self._receipt()
+        for field_name, invalid_value in (
+            ("worktree_fingerprint", None),
+            ("worktree_fingerprint", ""),
+            ("worktree_fingerprint", " "),
+            ("branch_fingerprint", {}),
+            ("branch_fingerprint", []),
+        ):
+            with self.subTest(field_name=field_name, invalid_value=invalid_value), self.assertRaises(
+                ValidationError
+            ):
+                TicketDispatchReceipt.model_validate(
+                    {**receipt.model_dump(), field_name: invalid_value}
+                )
+        with self.assertRaises(ValidationError):
+            CollaborationTopologyPlan.model_validate(
+                {
+                    "topology": None,
+                    "control_plane": self.control.model_dump(),
+                    "implementation_owner": self.implementation.model_dump(),
+                    "reviewer": self.reviewer.model_dump(),
+                }
+            )
+        with self.assertRaises(ValueError):
+            CollaborationTopologyResolver().select(
+                available_agent_count=1,
+                control_plane=self.control,
+                implementation_owner=self.implementation,
+                available_capabilities=None,  # type: ignore[arg-type]
+            )
+
+    def test_dispatch_source_adapter_exception_is_not_converted_to_a_grant(self) -> None:
+        class ExplodingSourceGateway:
+            def read(self, source: ArtifactRef) -> SourceSnippet:
+                raise RuntimeError("adapter unavailable")
+
+        with self.assertRaisesRegex(RuntimeError, "adapter unavailable"):
+            ContextResolver(source_gateway=ExplodingSourceGateway()).resolve(
+                event_id="dispatch-adapter-exception-0001",
+                required_sources=(self.ticket,),
+                target_artifact=self.ticket,
+                consumer=ConsumerFingerprint(
+                    agent_profile="implementation-owner",
+                    profile_version="profile-v1",
+                    worktree_id="worktree-implementation-01",
+                    execution_id="execution-ticket-01",
+                ),
+            )
 
     def test_private_router_dispatch_wait_and_receipt_preserve_lane_plan(self) -> None:
         account = "acct_0123456789abcdef"
@@ -220,6 +424,8 @@ class AutonomousCollaborationTests(unittest.TestCase):
         self.assertEqual(ContinuationMode.WAIT_FOR_HUMAN, waiting.mode)
         self.assertEqual(ProductActionLabel.REQUEST_APPROVAL, waiting.action_label)
         self.assertIsNone(waiting.dispatch_plan)
+        self.assertEqual(self._proposal(), waiting.ticket_proposal)
+        self.assertEqual((), waiting.ticket_lane_capabilities)
 
         receipt = self._receipt()
         confirmed = self._private_request(
@@ -245,6 +451,35 @@ class AutonomousCollaborationTests(unittest.TestCase):
         assert plan.dispatch_plan is not None
         self.assertEqual(ProcessStage.IMPLEMENT, plan.dispatch_plan.ticket_lane.execution_stage)
         self.assertEqual(ProcessStage.GRILL, plan.dispatch_plan.planning_lane.stage)
+        self.assertEqual((self.implementation,), plan.ticket_lane_capabilities)
+
+    def test_private_router_legacy_ticket_approval_with_handoff_is_blocked(self) -> None:
+        account = "acct_0123456789abcdef"
+        project = "prj_fedcba9876543210"
+        service = FakePrivateRouterService(
+            profile=self.profile,
+            entitlement_provider=FakeEntitlementProvider(
+                grants=(
+                    EntitlementGrant(
+                        account_subject_id=account,
+                        opaque_project_id=project,
+                        permitted_modes=(EntitlementMode.FIRST_PROJECT_FREE,),
+                    ),
+                )
+            ),
+        )
+        plan = PrivateRouterClient(service=service).route(
+            raw_request=self._private_request(
+                account=account,
+                project=project,
+                event=RouterEventKind.APPROVAL_GRANTED,
+                event_id="evt_00000000000000000000000000000063",
+                implementation_handoff=self._handoff(),
+            ).model_dump()
+        )
+        self.assertEqual(ContinuationMode.HALT, plan.mode)
+        self.assertEqual((), plan.required_source_kinds)
+        self.assertIsNone(plan.dispatch_plan)
 
     def _ticket_state(self) -> RouterState:
         return RouterState(
@@ -254,12 +489,54 @@ class AutonomousCollaborationTests(unittest.TestCase):
             delivery_stage=DeliveryStage.POC,
             artifact_refs=(self.ticket,),
             topology=CollaborationTopology.ONE_IMPLEMENTATION_AGENT,
+            collaboration_plan=CollaborationTopologyPlan(
+                topology=CollaborationTopology.ONE_IMPLEMENTATION_AGENT,
+                control_plane=self.control,
+                implementation_owner=self.implementation,
+                reviewer=self.reviewer,
+            ),
+        )
+
+    def _proposal(self) -> TicketProposal:
+        planned = TicketProposal(
+            ticket_reference=self.ticket.identifier,
+            state=TicketProposalState.PLANNED,
+            implementation_owner_id=self.implementation.agent_profile,
+            proposal_revision="rev-0123456789abcdef",
+        )
+        return planned.open(dispatch_question_id="dispatch-question-0001")
+
+    def _handoff(self) -> ImplementationHandoff:
+        return ImplementationHandoff(
+            ticket_reference=self.ticket.identifier,
+            approved_spec_reference="spec-autonomous-collaboration-01",
+            context_references=(
+                HandoffArtifactReference(
+                    artifact_id="context-autonomous-collaboration",
+                    revision_digest="rev-0123456789abcdef",
+                    source_span_id="span-ticket-dispatch",
+                    side_context_id="side-ticket-dispatch",
+                    consumer_fingerprint=HandoffConsumerFingerprint(
+                        agent_profile_id="agent-control-plane-v1",
+                        profile_version="profile-v1",
+                        worktree_fingerprint="worktree-control-01",
+                        execution_fingerprint="execution-ticket-01",
+                    ),
+                ),
+            ),
+            acceptance_references=("acceptance-ac-1",),
+            tdd_references=("tdd-dispatch-lanes",),
+            scope=TicketScope.NON_FRONTEND,
+            non_frontend_reason="no formal UI boundary",
+            control_owner_id="actor-control-plane",
+            implementation_owner_id="actor-implementation-owner",
+            reviewer_id="actor-reviewer",
         )
 
     def _receipt(self) -> TicketDispatchReceipt:
         return TicketDispatchReceipt(
             ticket_reference=self.ticket.identifier,
-            implementation_owner_id="agent-implementation-owner",
+            implementation_owner_id="implementation-owner",
             handoff_reference="handoff-topology-dispatch-01",
             expected_main_revision="rev-0123456789abcdef",
             correlation_id="dispatch-confirmed-0001",
@@ -276,6 +553,7 @@ class AutonomousCollaborationTests(unittest.TestCase):
         event_id: str,
         dispatch_confirmation: TicketDispatchConfirmation | None = None,
         dispatch_receipt: TicketDispatchReceipt | None = None,
+        implementation_handoff: ImplementationHandoff | None = None,
     ) -> RouterRequestEnvelope:
         return RouterRequestEnvelope(
             request_id=f"req_{event_id.removeprefix('evt_')}",
@@ -297,9 +575,21 @@ class AutonomousCollaborationTests(unittest.TestCase):
             ),
             client_version="v1",
             topology=CollaborationTopology.ONE_IMPLEMENTATION_AGENT,
+            collaboration_plan=CollaborationTopologyPlan(
+                topology=CollaborationTopology.ONE_IMPLEMENTATION_AGENT,
+                control_plane=self.control,
+                implementation_owner=self.implementation,
+                reviewer=self.reviewer,
+            ),
             ticket_reference=self.ticket.identifier,
+            implementation_handoff=implementation_handoff,
             dispatch_confirmation=dispatch_confirmation,
             dispatch_receipt=dispatch_receipt,
+            ticket_proposal=(
+                self._proposal()
+                if event is RouterEventKind.TICKET_DISPATCH_REQUIRED
+                else None
+            ),
         )
 
 
