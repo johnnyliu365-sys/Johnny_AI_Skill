@@ -63,6 +63,43 @@ class RouterEventKind(str, Enum):
     REQUIREMENT_CHANGED = "requirement_changed"
     CONTEXT_REFERENCE_CLOSED = "context_reference_closed"
     EXTERNAL_DECISION_REQUIRED = "external_decision_required"
+    TICKET_DISPATCH_REQUIRED = "ticket_dispatch_required"
+    IMPLEMENTATION_DISPATCH_CONFIRMED = "implementation_dispatch_confirmed"
+
+
+class CollaborationTopology(str, Enum):
+    """The only supported role-isolated collaboration topologies."""
+
+    ONE_IMPLEMENTATION_AGENT = "one_implementation_agent"
+    TWO_COLLABORATING_AGENTS = "two_collaborating_agents"
+
+
+class TicketDispatchConfirmation(str, Enum):
+    """The ticket-scoped human dispatch response."""
+
+    NEGATIVE = "negative"
+    POSITIVE = "positive"
+
+
+class TicketDispatchState(str, Enum):
+    """The finite lifecycle of a dispatched ticket lane."""
+
+    REQUIRED = "required"
+    CONFIRMED = "confirmed"
+
+
+class TicketEvent(str, Enum):
+    """Events emitted by the typed ticket dispatch lane."""
+
+    TICKET_DISPATCH_REQUIRED = "ticket_dispatch_required"
+    IMPLEMENTATION_DISPATCH_CONFIRMED = "implementation_dispatch_confirmed"
+
+
+class LaneKind(str, Enum):
+    """The two independent state lanes created by a confirmed dispatch."""
+
+    PLANNING = "planning"
+    TICKET = "ticket"
 
 
 class AuthorityState(str, Enum):
@@ -97,6 +134,7 @@ class HumanWaitReason(str, Enum):
     SPECIFICATION_APPROVAL_REQUIRED = "specification_approval_required"
     TICKET_APPROVAL_REQUIRED = "ticket_approval_required"
     IMPLEMENTATION_OWNER_ASSIGNMENT_REQUIRED = "implementation_owner_assignment_required"
+    TICKET_DISPATCH_CONFIRMATION_REQUIRED = "ticket_dispatch_confirmation_required"
 
 
 class CompletionActionKind(str, Enum):
@@ -151,6 +189,9 @@ class BlockerCode(str, Enum):
     IMPLEMENTATION_RETURN_BLOCKED = "implementation_return_blocked"
     IMPLEMENTATION_HANDOFF_REQUIRED = "implementation_handoff_required"
     IMPLEMENTATION_HANDOFF_UNDECLARED = "implementation_handoff_undeclared"
+    TOPOLOGY_REQUIRED = "topology_required"
+    DISPATCH_RECEIPT_REQUIRED = "dispatch_receipt_required"
+    INVALID_DISPATCH_RECEIPT = "invalid_dispatch_receipt"
 
 
 class ReferenceStatus(str, Enum):
@@ -174,6 +215,45 @@ class ArtifactRef(RouterModel):
         """Return the identity that remains stable across revisions."""
 
         return (self.kind, self.identifier, self.uri)
+
+
+class TicketDispatchReceipt(RouterModel):
+    """Metadata-only proof that one approved ticket was delivered to its owner."""
+
+    ticket_reference: OpaqueMetadataId
+    implementation_owner_id: OpaqueMetadataId
+    handoff_reference: OpaqueMetadataId
+    expected_main_revision: RevisionDigest
+    correlation_id: NonBlankText
+    worktree_fingerprint: OpaqueMetadataId
+    branch_fingerprint: OpaqueMetadataId
+
+    @model_validator(mode="after")
+    def correlation_is_metadata_only(self) -> TicketDispatchReceipt:
+        """Reject locators and sensitive labels at the dispatch boundary."""
+
+        lowered = self.correlation_id.lower()
+        if any(marker in lowered for marker in ("://", "\\", "/", "prompt", "secret")):
+            raise ValueError("correlation_id must be metadata-only")
+        return self
+
+    @property
+    def ticket_ref(self) -> str:
+        """Expose the spec terminology without storing a second field."""
+
+        return self.ticket_reference
+
+    @property
+    def implementation_owner(self) -> str:
+        """Expose the spec terminology without storing a second field."""
+
+        return self.implementation_owner_id
+
+    @property
+    def handoff_ref(self) -> str:
+        """Expose the spec terminology without storing a second field."""
+
+        return self.handoff_reference
 
 
 class HandoffConsumerFingerprint(RouterModel):
@@ -288,6 +368,10 @@ class RouterEvent(RouterModel):
     completion_evidence: CompletionEvidence | None = None
     implementation_return: ImplementationReturn | None = None
     implementation_handoff: ImplementationHandoff | None = None
+    dispatch_confirmation: TicketDispatchConfirmation | None = None
+    dispatch_receipt: TicketDispatchReceipt | None = None
+    lane_kind: LaneKind | None = None
+    lane_id: OpaqueMetadataId | None = None
 
     @model_validator(mode="after")
     def completion_metadata_matches_event(self) -> RouterEvent:
@@ -304,6 +388,21 @@ class RouterEvent(RouterModel):
                 raise ValueError("implementation_handoff requires approval_granted")
         if self.implementation_return is not None and self.implementation_return.emitted_event is not self.kind:
             raise ValueError("implementation_return event must match router event kind")
+        if self.dispatch_confirmation is not None or self.dispatch_receipt is not None:
+            if self.kind not in (
+                RouterEventKind.TICKET_DISPATCH_REQUIRED,
+                RouterEventKind.IMPLEMENTATION_DISPATCH_CONFIRMED,
+            ):
+                raise ValueError("dispatch metadata requires a ticket dispatch event")
+        if (
+            self.dispatch_receipt is not None
+            and self.kind is not RouterEventKind.IMPLEMENTATION_DISPATCH_CONFIRMED
+        ):
+            raise ValueError("dispatch receipts require confirmed dispatch")
+        if self.lane_kind is None and self.lane_id is not None:
+            raise ValueError("lane_id requires lane_kind")
+        if self.lane_kind is not None and self.lane_id is None:
+            raise ValueError("lane_kind requires lane_id")
         return self
 
 
@@ -315,6 +414,7 @@ class RouterState(RouterModel):
     authority_state: AuthorityState
     delivery_stage: DeliveryStage
     artifact_refs: tuple[ArtifactRef, ...]
+    topology: CollaborationTopology | None = None
 
 
 class CapabilityRef(RouterModel):
@@ -323,6 +423,69 @@ class CapabilityRef(RouterModel):
     capability_id: NonBlankText
     version: NonBlankText
     agent_profile: NonBlankText
+
+
+class CollaborationTopologyPlan(RouterModel):
+    """A finite topology and its named capabilities, never a host-thread grant."""
+
+    topology: CollaborationTopology
+    control_plane: CapabilityRef
+    implementation_owner: CapabilityRef
+    host_thread_references: tuple[OpaqueMetadataId, ...] = ()
+
+
+class PlanningLaneState(RouterModel):
+    """Independent planning-lane state created by a confirmed ticket dispatch."""
+
+    project_id: NonBlankText
+    stage: ProcessStage
+    topology: CollaborationTopology
+    artifact_refs: tuple[ArtifactRef, ...]
+    active_ticket_refs: tuple[OpaqueMetadataId, ...]
+    context_view_id: OpaqueMetadataId
+    side_context_id: OpaqueMetadataId
+    event_id: OpaqueMetadataId
+    safety_ceiling: PositiveTokenBudget
+
+
+class TicketLaneState(RouterModel):
+    """Independent ticket-execution state with no mutable planning-lane handle."""
+
+    ticket_id: OpaqueMetadataId
+    dispatch_state: TicketDispatchState
+    execution_stage: ProcessStage
+    expected_main_revision: RevisionDigest
+    source_grants: tuple[ArtifactKind, ...]
+    context_view_id: OpaqueMetadataId
+    side_context_id: OpaqueMetadataId
+    event_id: OpaqueMetadataId
+    worktree_fingerprint: OpaqueMetadataId
+    branch_fingerprint: OpaqueMetadataId
+    safety_ceiling: PositiveTokenBudget
+
+
+class CollaborationDispatchPlan(RouterModel):
+    """The immutable pair of planning and ticket lanes from one receipt."""
+
+    receipt: TicketDispatchReceipt
+    planning_lane: PlanningLaneState
+    ticket_lane: TicketLaneState
+
+    def with_planning_progress(
+        self,
+        *,
+        stage: ProcessStage,
+        event_id: OpaqueMetadataId,
+    ) -> CollaborationDispatchPlan:
+        """Advance only the planning descriptor while preserving ticket execution state."""
+
+        return self.model_copy(
+            update={
+                "planning_lane": self.planning_lane.model_copy(
+                    update={"stage": stage, "event_id": event_id}
+                )
+            }
+        )
 
 
 class RouterBlocker(RouterModel):
@@ -382,6 +545,7 @@ class RouterDecision(RouterModel):
     eligible_capabilities: tuple[CapabilityRef, ...]
     blockers: tuple[RouterBlocker, ...] = ()
     wait_reason: HumanWaitReason | None = None
+    dispatch_plan: CollaborationDispatchPlan | None = None
 
     @model_validator(mode="after")
     def decision_shape_is_consistent(self) -> RouterDecision:
@@ -415,8 +579,12 @@ class RouterDecision(RouterModel):
                 raise ValueError("human waits require a suspended decision and a precise wait reason")
             if self.required_sources or self.eligible_capabilities or self.context_view is not None:
                 raise ValueError("human waits cannot grant Context or capabilities")
+            if self.dispatch_plan is not None:
+                raise ValueError("human waits cannot grant dispatch plans")
         elif self.wait_reason is not None:
             raise ValueError("only human waits may declare a wait reason")
+        if self.continuation is ContinuationDirective.HALT and self.dispatch_plan is not None:
+            raise ValueError("halted decisions cannot grant dispatch plans")
         return self
 
 
