@@ -223,3 +223,19 @@
 | Validation | `python -m unittest discover -s tests` — 73 passed; `python -m mypy --strict library tests` — 58 source files clean; the literal Windows PowerShell `python -m py_compile library/workflow_router/*.py` failed with `[Errno 22] Invalid argument` because `*.py` was not expanded; control plane approved `Get-ChildItem -LiteralPath 'library/workflow_router' -Filter '*.py' -File | ForEach-Object { python -m py_compile $_.FullName }`, which passed for the same module set; `git diff --check` passed. |
 | Smoke / privacy | Metadata-only `CompletionEvidence` rerouted `ARCHITECTURE → GRILL`; direct `BLOCKED` `ImplementationReturn` produced `SUSPEND + HALT`, no next stage, source, capability, or Context grant; bare approved ticket events halt on both direct and Private Router paths, while an allowlisted metadata-only handoff advances to `IMPLEMENT`. Handoffs are rejected on undeclared transitions, when paired with a return, without a frontend Composition Root reference, or with colliding control/implementation owners. The targeted contract field sentinel found no raw source/path/URI/prompt/secret/PII declaration. |
 | Review / merge | Independent control-plane review is `APPROVED`: `doc/reviews/workflow-governance/01-enforce-continuation-and-handoff-code-review.md`. Review reran 73 tests, strict typing for 58 source files, syntax compilation, whitespace checks, and a disposable-worktree mutation proof. Reviewed implementation was integrated into `main` by `2f545c8`; no push was performed. |
+
+## PRG-20260805-002｜Autonomous collaboration topology and dispatch lanes
+
+| Field | Value |
+| --- | --- |
+| State | `IMPLEMENTATION_COMMITTED_PENDING_REVIEW` |
+| Specification | `SPEC-AI-WORKFLOW-AUTONOMOUS-COLLABORATION-AUDIT-20260805-01KZ7A2C4E6G8J0L2N4P6R8T` |
+| Ticket | `01-topology-dispatch-lanes` |
+| Dispatch / Context | `b6cf8f8` / `CHG-20260805-010` / `doc/context/autonomous-collaboration-audit/main.md` |
+| Implementation owner / worktree | Codex implementation Agent / `codex/implementation-private-router-saas-01` |
+| Implementation commit | `9b4d5cb` (`feat: add collaboration dispatch lanes`) |
+| Delivered | Typed `CollaborationTopology`, topology resolver, ticket dispatch confirmation/receipt, isolated planning and ticket lane descriptors, direct Router transitions, Private Router metadata boundary, immutable planning progress, and fail-closed receipt/capability handling. |
+| TDD red evidence | `python -m unittest tests.test_autonomous_collaboration -v` initially failed during import with `ImportError: cannot import name 'CapabilityRef' from 'library.workflow_router'` before the new topology and dispatch contracts existed. |
+| Validation | `python -m unittest discover -s tests` — 78 passed; `python -m mypy --strict library tests` — 60 source files clean; workflow-router module enumeration compile passed; `git diff --check` passed. |
+| Smoke / privacy | Direct and Private Router dispatch waits expose `WAIT_FOR_HUMAN` with no source, capability, Context, worktree or dispatch grant; positive receipt routes planning to `GRILL` and ticket execution to `IMPLEMENT`; malformed locator/correlation and receipt mismatches halt; metadata sentinel found no raw Context/source/path/URI/prompt/secret/PII fields. |
+| Review / merge | Independent control-plane review is pending. Main remains untouched after the implementation fast-forward base `b6cf8f8`; no integration or push performed. |
