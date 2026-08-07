@@ -614,6 +614,82 @@ class AutonomousCollaborationTests(unittest.TestCase):
         self.assertIsNone(plan.dispatch_plan)
         self.assertEqual((), plan.ticket_lane_capabilities)
 
+    def test_private_router_rejects_second_pending_question_for_ticket_and_allows_reopen_after_consume(self) -> None:
+        account = "acct_0123456789abcdef"
+        project = "prj_fedcba9876543210"
+        service = FakePrivateRouterService(
+            profile=self.profile,
+            entitlement_provider=FakeEntitlementProvider(
+                grants=(
+                    EntitlementGrant(
+                        account_subject_id=account,
+                        opaque_project_id=project,
+                        permitted_modes=(EntitlementMode.FIRST_PROJECT_FREE,),
+                    ),
+                )
+            ),
+        )
+        client = PrivateRouterClient(service=service)
+        first_event_id = "evt_00000000000000000000000000000065"
+        second_event_id = "evt_00000000000000000000000000000066"
+        reopened_event_id = "evt_00000000000000000000000000000067"
+        first_wait = client.route(
+            raw_request=self._private_request(
+                account=account,
+                project=project,
+                event=RouterEventKind.TICKET_DISPATCH_REQUIRED,
+                event_id=first_event_id,
+            ).model_dump()
+        )
+        self.assertEqual(ContinuationMode.WAIT_FOR_HUMAN, first_wait.mode)
+
+        duplicate_wait = client.route(
+            raw_request=self._private_request(
+                account=account,
+                project=project,
+                event=RouterEventKind.TICKET_DISPATCH_REQUIRED,
+                event_id=second_event_id,
+            ).model_dump()
+        )
+        self.assertEqual(ContinuationMode.HALT, duplicate_wait.mode)
+        self.assertIsNone(duplicate_wait.dispatch_plan)
+        self.assertEqual((), duplicate_wait.ticket_lane_capabilities)
+
+        first_receipt = self._receipt().model_copy(update={"correlation_id": first_event_id})
+        first_confirmation = client.route(
+            raw_request=self._private_request(
+                account=account,
+                project=project,
+                event=RouterEventKind.IMPLEMENTATION_DISPATCH_CONFIRMED,
+                event_id="evt_00000000000000000000000000000068",
+                dispatch_confirmation=TicketDispatchConfirmation.POSITIVE,
+                dispatch_receipt=first_receipt,
+            ).model_dump()
+        )
+        self.assertEqual(ContinuationMode.AUTO_RUN, first_confirmation.mode)
+
+        reopened_wait = client.route(
+            raw_request=self._private_request(
+                account=account,
+                project=project,
+                event=RouterEventKind.TICKET_DISPATCH_REQUIRED,
+                event_id=reopened_event_id,
+            ).model_dump()
+        )
+        self.assertEqual(ContinuationMode.WAIT_FOR_HUMAN, reopened_wait.mode)
+        reopened_receipt = self._receipt().model_copy(update={"correlation_id": reopened_event_id})
+        reopened_confirmation = client.route(
+            raw_request=self._private_request(
+                account=account,
+                project=project,
+                event=RouterEventKind.IMPLEMENTATION_DISPATCH_CONFIRMED,
+                event_id="evt_00000000000000000000000000000069",
+                dispatch_confirmation=TicketDispatchConfirmation.POSITIVE,
+                dispatch_receipt=reopened_receipt,
+            ).model_dump()
+        )
+        self.assertEqual(ContinuationMode.AUTO_RUN, reopened_confirmation.mode)
+
     def test_expected_main_revision_is_separate_from_proposal_revision(self) -> None:
         receipt = self._receipt()
         self.assertNotEqual(self._pending().proposal_revision, self._pending().expected_main_revision)
