@@ -252,3 +252,16 @@ The scheduling queue is an automatic operational wait, not `WAIT_FOR_HUMAN`, a l
 | Continuation | `CHANGES_REQUESTED → IMPLEMENT` in the existing separate ticket-02 worktree; no merge, push, deployment, handoff completion or Ticket-03 start |
 
 The successful generic checks are evidence of local syntax and existing regression compatibility only; they do not override the reproduced authorization and pending-audit isolation failures. Ticket 02 retains its approved scope and must correct against a reviewed source baseline containing Ticket-01 public contracts. This is not a requirement change.
+
+## Ticket 03 independent review return
+
+| Field | Value |
+| --- | --- |
+| Reviewed implementation / handoff | `4d68938` / `9eda250` |
+| Review baseline | `ad70448` / submitted branch clean |
+| Result | `BLOCKED` — review report `03-plugin-policy-and-response-code-review.md` |
+| Independent checks | `80` tests, strict `mypy` for `60` files, in-memory compile for `11` Router modules and diff check passed |
+| Blocking findings | CR-16 raw policy document text is exposed in a Router model; CR-17 fixed response and executable Router dispatch are detached; CR-18 implementation began while Ticket-02 correction was the active ticket |
+| Continuation | Subscribe only to the typed Ticket-02 correction return; after independent approval, re-evaluate Ticket 03 against that reviewed source baseline before a fresh implementation handoff |
+
+The Ticket-03 result is not a user decision wait and grants no merge, push, installation, deployment, or implementation continuation. The submitted commit is retained solely as committed review evidence and must not be used as a policy baseline.

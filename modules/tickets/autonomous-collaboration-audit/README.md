@@ -12,7 +12,7 @@ Deliver a non-commercial, detachable workflow control plane that selects a colla
 | --- | --- | --- |
 | [01-topology-dispatch-lanes](01-topology-dispatch-lanes.md) | Capability-count question and typed dispatch wait/receipt with parallel lane isolation | `READY_TO_MERGE` | Independent review approved; guarded local integration remains owned by ticket 02 |
 | [02-guarded-integration-audit](02-guarded-integration-audit.md) | Valid implementation return reaches a guarded local main integration and automatic Grill audit | `IN_PROGRESS` | Independent review `CHANGES_REQUESTED`; correction return active in its separate ticket worktree |
-| [03-plugin-policy-and-response](03-plugin-policy-and-response.md) | Codex/Claude guidance and fixed `工單 ready` / `文件交接` response | `IN_PROGRESS` | Delivery confirmed; queued by the named owner under the one-active-ticket rule |
+| [03-plugin-policy-and-response](03-plugin-policy-and-response.md) | Codex/Claude guidance and fixed `工單 ready` / `文件交接` response | `BLOCKED` | Submitted out of order while Ticket 02 correction is active; independent review also returned CR-16 through CR-18 |
 
 ## Mandatory approval data
 
