@@ -223,3 +223,17 @@
 | Validation | `python -m unittest discover -s tests` — 73 passed; `python -m mypy --strict library tests` — 58 source files clean; the literal Windows PowerShell `python -m py_compile library/workflow_router/*.py` failed with `[Errno 22] Invalid argument` because `*.py` was not expanded; control plane approved `Get-ChildItem -LiteralPath 'library/workflow_router' -Filter '*.py' -File | ForEach-Object { python -m py_compile $_.FullName }`, which passed for the same module set; `git diff --check` passed. |
 | Smoke / privacy | Metadata-only `CompletionEvidence` rerouted `ARCHITECTURE → GRILL`; direct `BLOCKED` `ImplementationReturn` produced `SUSPEND + HALT`, no next stage, source, capability, or Context grant; bare approved ticket events halt on both direct and Private Router paths, while an allowlisted metadata-only handoff advances to `IMPLEMENT`. Handoffs are rejected on undeclared transitions, when paired with a return, without a frontend Composition Root reference, or with colliding control/implementation owners. The targeted contract field sentinel found no raw source/path/URI/prompt/secret/PII declaration. |
 | Review / merge | Independent control-plane review is `APPROVED`: `doc/reviews/workflow-governance/01-enforce-continuation-and-handoff-code-review.md`. Review reran 73 tests, strict typing for 58 source files, syntax compilation, whitespace checks, and a disposable-worktree mutation proof. Reviewed implementation was integrated into `main` by `2f545c8`; no push was performed. |
+
+## PRG-20260807-003 — Plugin policy and fixed dispatch response implementation handoff
+
+| Field | Value |
+| --- | --- |
+| State | `IMPLEMENTATION_COMMITTED_PENDING_REVIEW` |
+| Ticket / baseline | `03-plugin-policy-and-response` / ticket docs `b84c2a5`, handoff `c569056`, clean main baseline `ad70448`; reviewed Ticket-01 dependency `67b049a` |
+| Implementation owner / branch | Codex implementation Agent / `codex/implementation-plugin-policy-and-response-03` |
+| Implementation commit | `4d68938` — `feat: enforce plugin policy and dispatch response` |
+| Delivered | Typed metadata-only fixed response contract and formatter; stable document/formatter failure results; topology question; one named dispatch confirmation; `AUTO_CONTINUE`／`WAIT_FOR_HUMAN`／`HALT` policy; historical-only commercial boundary; shared Workflow, AGENTS index, README, skill and bootstrap template guidance. |
+| TDD red evidence | Before the formatter module existed, `python -B -m unittest tests.test_plugin_policy_and_response -v` failed at import with `ModuleNotFoundError: No module named 'library.workflow_router.policy_response'`. |
+| Validation | `python -B -m unittest discover -s tests` — 80 passed; `python -m mypy --strict library tests` — 60 source files clean; in-memory compilation — 60 Python modules; four plugin metadata JSON files parsed; `git diff --check` passed. |
+| Smoke / privacy / mutation | Fixed response smoke and metadata-only privacy sentinel passed. Seven path/URI forms, null/empty/container values, direct/indirect untyped bypass, document/formatter absence and exceptions are covered. In-memory mutations removing a response label or `WAIT_FOR_HUMAN` policy marker were both detected by tests. No raw Context, source, prompt, path, URI, Secret, PII or production data was persisted. |
+| Review / integration | Independent control-plane review is pending. Main, Ticket 01 and Ticket 02 worktrees were not modified; no merge, push, installation or deployment was performed. |
