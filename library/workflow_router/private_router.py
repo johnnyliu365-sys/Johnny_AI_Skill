@@ -33,6 +33,7 @@ from .contracts import (
     NonBlankText,
     OpaqueMetadataId,
     PositiveTokenBudget,
+    PendingDispatchDescriptor,
     ProcessStage,
     ResolvedContext,
     RouterEvent,
@@ -143,6 +144,7 @@ class RouterRequestEnvelope(RouterModel):
     dispatch_confirmation: TicketDispatchConfirmation | None = None
     dispatch_receipt: TicketDispatchReceipt | None = None
     ticket_proposal: TicketProposal | None = None
+    pending_dispatch: PendingDispatchDescriptor | None = None
 
     @model_validator(mode="after")
     def has_minimum_metadata_without_locations(self) -> RouterRequestEnvelope:
@@ -168,9 +170,13 @@ class RouterRequestEnvelope(RouterModel):
                 raise ValueError("implementation handoff cannot share a request with completion or return")
             if (
                 self.workflow_stage is not ProcessStage.TICKETS
-                or self.router_event_kind is not RouterEventKind.APPROVAL_GRANTED
+                or self.router_event_kind
+                not in (
+                    RouterEventKind.APPROVAL_GRANTED,
+                    RouterEventKind.TICKET_DISPATCH_REQUIRED,
+                )
             ):
-                raise ValueError("implementation handoff requires ticket approval")
+                raise ValueError("implementation handoff requires a ticket dispatch lifecycle event")
         if self.dispatch_confirmation is not None or self.dispatch_receipt is not None:
             if self.router_event_kind not in (
                 RouterEventKind.TICKET_DISPATCH_REQUIRED,
@@ -184,6 +190,8 @@ class RouterRequestEnvelope(RouterModel):
             raise ValueError("dispatch receipts require confirmed dispatch")
         if self.ticket_proposal is not None and self.router_event_kind is not RouterEventKind.TICKET_DISPATCH_REQUIRED:
             raise ValueError("ticket proposals require a dispatch-required event")
+        if self.pending_dispatch is not None and self.router_event_kind is not RouterEventKind.IMPLEMENTATION_DISPATCH_CONFIRMED:
+            raise ValueError("pending dispatch requires confirmed dispatch")
         return self
 
 
@@ -204,6 +212,7 @@ class RouterResponseEnvelope(RouterModel):
     dispatch_plan: CollaborationDispatchPlan | None = None
     ticket_lane_capabilities: tuple[CapabilityRef, ...] = ()
     ticket_proposal: TicketProposal | None = None
+    pending_dispatch: PendingDispatchDescriptor | None = None
 
     @model_validator(mode="after")
     def response_shape_is_safe_and_unambiguous(self) -> RouterResponseEnvelope:
@@ -222,6 +231,8 @@ class RouterResponseEnvelope(RouterModel):
                 raise ValueError("automatic continuation cannot carry a human wait reason")
             if self.ticket_proposal is not None:
                 raise ValueError("automatic continuation cannot carry an opened proposal")
+            if self.pending_dispatch is not None:
+                raise ValueError("automatic continuation cannot carry pending dispatch state")
             if self.dispatch_plan is None and self.ticket_lane_capabilities:
                 raise ValueError("ticket-lane capabilities require a dispatch plan")
         elif self.continuation is ContinuationDirective.WAIT_FOR_HUMAN:
@@ -237,6 +248,20 @@ class RouterResponseEnvelope(RouterModel):
                 raise ValueError("human waits cannot grant a dispatch plan")
             if self.ticket_lane_capabilities:
                 raise ValueError("human waits cannot grant ticket-lane capabilities")
+            if self.pending_dispatch is not None and self.ticket_proposal is None:
+                raise ValueError("pending dispatch state requires its opened ticket proposal")
+            if (
+                self.pending_dispatch is not None
+                and self.ticket_proposal is not None
+                and (
+                    self.pending_dispatch.ticket_reference != self.ticket_proposal.ticket_reference
+                    or self.pending_dispatch.proposal_revision != self.ticket_proposal.proposal_revision
+                    or self.pending_dispatch.dispatch_question_id != self.ticket_proposal.dispatch_question_id
+                    or self.pending_dispatch.implementation_owner_id
+                    != self.ticket_proposal.implementation_owner_id
+                )
+            ):
+                raise ValueError("pending dispatch state must match its opened ticket proposal")
         else:
             if self.allowed_action_labels or self.context_budget is not None:
                 raise ValueError("halted responses cannot grant capabilities or Context")
@@ -252,6 +277,8 @@ class RouterResponseEnvelope(RouterModel):
                 raise ValueError("halted responses cannot grant ticket-lane capabilities")
             if self.ticket_proposal is not None:
                 raise ValueError("halted responses cannot carry an opened proposal")
+            if self.pending_dispatch is not None:
+                raise ValueError("halted responses cannot carry pending dispatch state")
         return self
 
 
@@ -352,6 +379,7 @@ class FakePrivateRouterService:
                 artifact_refs=self._private_artifact_refs(request=request),
                 topology=request.topology,
                 collaboration_plan=request.collaboration_plan,
+                pending_dispatch=request.pending_dispatch,
             ),
             event=RouterEvent(
                 event_id=request.event_correlation_id,
@@ -381,6 +409,7 @@ class FakePrivateRouterService:
                 wait_reason=None,
                 dispatch_plan=decision.dispatch_plan,
                 ticket_lane_capabilities=decision.ticket_lane_capabilities,
+                pending_dispatch=None,
             )
         if decision.continuation is ContinuationDirective.WAIT_FOR_HUMAN:
             return RouterResponseEnvelope(
@@ -395,6 +424,7 @@ class FakePrivateRouterService:
                 context_budget=None,
                 wait_reason=decision.wait_reason,
                 ticket_proposal=decision.ticket_proposal,
+                pending_dispatch=decision.pending_dispatch,
             )
         return self._halted_response(
             request_id=request.request_id,
@@ -511,6 +541,7 @@ class ContinuationPlan(RouterModel):
     dispatch_plan: CollaborationDispatchPlan | None = None
     ticket_lane_capabilities: tuple[CapabilityRef, ...] = ()
     ticket_proposal: TicketProposal | None = None
+    pending_dispatch: PendingDispatchDescriptor | None = None
 
     @model_validator(mode="after")
     def plan_shape_is_safe(self) -> ContinuationPlan:
@@ -529,6 +560,8 @@ class ContinuationPlan(RouterModel):
                 raise ValueError("automatic plans must preserve ticket-lane capabilities")
             if self.ticket_proposal is not None:
                 raise ValueError("automatic plans cannot carry an open proposal")
+            if self.pending_dispatch is not None:
+                raise ValueError("automatic plans cannot carry pending dispatch state")
         elif self.mode is ContinuationMode.WAIT_FOR_HUMAN:
             if self.action_label is not ProductActionLabel.REQUEST_APPROVAL:
                 raise ValueError("human waits require the approval action")
@@ -540,6 +573,22 @@ class ContinuationPlan(RouterModel):
                 raise ValueError("human waits cannot grant a dispatch plan")
             if self.ticket_lane_capabilities:
                 raise ValueError("human waits cannot grant ticket-lane capabilities")
+            if self.pending_dispatch is not None and self.ticket_proposal is None:
+                raise ValueError("pending dispatch state requires its opened ticket proposal")
+            if (
+                self.pending_dispatch is not None
+                and self.ticket_proposal is not None
+                and (
+                    self.pending_dispatch.ticket_reference != self.ticket_proposal.ticket_reference
+                    or self.pending_dispatch.proposal_revision != self.ticket_proposal.proposal_revision
+                    or self.pending_dispatch.dispatch_question_id != self.ticket_proposal.dispatch_question_id
+                    or self.pending_dispatch.implementation_owner_id
+                    != self.ticket_proposal.implementation_owner_id
+                )
+            ):
+                raise ValueError("pending dispatch state must match its opened ticket proposal")
+            if self.pending_dispatch != self.response.pending_dispatch:
+                raise ValueError("human waits must preserve pending dispatch state")
         elif (
             self.action_label is not None
             or self.required_source_kinds
@@ -548,6 +597,7 @@ class ContinuationPlan(RouterModel):
             or self.dispatch_plan is not None
             or self.ticket_lane_capabilities
             or self.ticket_proposal is not None
+            or self.pending_dispatch is not None
         ):
             raise ValueError("halted plans cannot grant a local action, Context, or wait reason")
         return self
@@ -608,6 +658,7 @@ class PrivateRouterClient:
                 dispatch_plan=None,
                 ticket_lane_capabilities=(),
                 ticket_proposal=response.ticket_proposal,
+                pending_dispatch=response.pending_dispatch,
             )
         return self._halt(code=response.error_code or RouterServiceErrorCode.ROUTER_RESPONSE_INVALID)
 
@@ -648,6 +699,7 @@ class PrivateRouterClient:
             dispatch_plan=None,
             ticket_lane_capabilities=(),
             ticket_proposal=None,
+            pending_dispatch=None,
         )
 
 

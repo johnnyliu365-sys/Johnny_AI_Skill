@@ -274,7 +274,7 @@ class PrivateRouterMetadataGateTests(unittest.TestCase):
         self.assertEqual(1_000, resolved.view.token_budget)
         self.assertNotIn("minimal local source", resolved.view.model_dump_json())
 
-    def test_ticket_completion_is_an_explicit_human_gate_not_an_unbounded_suspend(self) -> None:
+    def test_ticket_completion_does_not_open_a_second_manual_approval_wait(self) -> None:
         ticket_wait = self.client.route(
             raw_request=self.request_for(
                 stage=ProcessStage.TICKETS,
@@ -283,9 +283,9 @@ class PrivateRouterMetadataGateTests(unittest.TestCase):
                 source_kinds=(ArtifactKind.TICKET,),
             ).model_dump()
         )
-        self.assertEqual(ContinuationMode.WAIT_FOR_HUMAN, ticket_wait.mode)
-        self.assertEqual(ProductActionLabel.REQUEST_APPROVAL, ticket_wait.action_label)
-        self.assertIsNone(ticket_wait.error_code)
+        self.assertEqual(ContinuationMode.HALT, ticket_wait.mode)
+        self.assertEqual(RouterServiceErrorCode.ROUTER_POLICY_BLOCKED, ticket_wait.error_code)
+        self.assertEqual((), ticket_wait.required_source_kinds)
 
     def test_ticket_approval_requires_metadata_handoff_on_the_indirect_client_path(self) -> None:
         bare = self.client.route(
@@ -302,6 +302,7 @@ class PrivateRouterMetadataGateTests(unittest.TestCase):
         self.assertEqual((), bare.required_source_kinds)
 
         handoff = ImplementationHandoff(
+            handoff_reference="handoff-workflow-governance-01",
             ticket_reference="ticket-workflow-governance-01",
             approved_spec_reference="spec-workflow-governance-01",
             context_references=(
