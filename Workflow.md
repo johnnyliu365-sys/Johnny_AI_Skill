@@ -282,6 +282,8 @@ Router 必須輸出 `SUSPEND` 或 `STOP`，而非猜測或降級繼續，當發�
 
 所有新專案與接管專案都必須先執行 `wayfinder`；所有 Agent 都必須依 `Defined_wayfinder.md` 的規範執行其實際工作內容。該文件是 Wayfinder 的唯一詳細定義，包含評估項目、Strict Veto、`GO`／`NO-GO` 決策、Required Output、handoff 與重跑條件；本檔只定義它在整體工作流程中的關卡位置。
 
+Wayfinder 的輸出順序固定為「產品定位 → 可驗收前端功能切片 → 由每個切片反推後端 capability／資料管線 → 組合式設計與依賴注入邊界」。`GO` 的 Shared Context 必須包含此 Functional Architecture Brief；Architecture 只可在該輸入上選擇高階結構與技術邊界，不得由技術偏好倒推或省略使用者功能、資料 owner、UI state、Composition Root 或依賴注入替換點。
+
 未依 `Defined_wayfinder.md` 產出決策前，不得進入 Architecture、`grill-with-docs`、SPEC、ticket 或實作。`NO-GO` 必須停止流程；`GO` 才可交付 Wayfinder Shared Context 給 Architecture Agent 建立高階架構，之後進入 `grill-with-docs`。正式 `CONTEXT.md` 仍只可依本流程的授權與唯一來源規則建立或更新。
 
 ### 1.2 `grill-with-docs`
@@ -289,9 +291,10 @@ Router 必須輸出 `SUSPEND` 或 `STOP`，而非猜測或降級繼續，當發�
 新功能、跨模組變更、需求重定義或正式 UI 變更前，必須閱讀相關需求、既有規格、程式、測試、Context 與變更紀錄，並確認：
 
 - 使用者可觀察結果、例外情境與驗收方式。
+- 每個核心前端功能切片是否可追溯到唯一後端 use case、資料 owner／管線、讀取 projection 與回傳 UI state；任一斷點都必須列為缺口而非由 Agent 猜測。
 - 領域術語、資料所有權、資料流、保存與刪除限制。
 - UI、API、背景工作、快取、資料庫、Provider、權限、成本與維運影響。
-- 模組責任、依賴方向、Composition Root 與不可修改邊界。
+- 模組責任、依賴方向、Composition Root、具名依賴注入、生命週期、test fake 與不可修改邊界。
 - 替代方案、風險、回滾／forward-fix 與不做範圍。
 
 完成後更新共同 `CONTEXT.md`；重大且難以回復的決策另以 ADR 留存。沒有明確授權時，只能提出草案或缺口，不能新增正式產物。
