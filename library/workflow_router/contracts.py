@@ -67,6 +67,9 @@ class RouterEventKind(str, Enum):
     EXTERNAL_DECISION_REQUIRED = "external_decision_required"
     TICKET_DISPATCH_REQUIRED = "ticket_dispatch_required"
     IMPLEMENTATION_DISPATCH_CONFIRMED = "implementation_dispatch_confirmed"
+    IMPLEMENTATION_RETURNED = "implementation_returned"
+    INTEGRATION_COMPLETED = "integration_completed"
+    AUDIT_COMPLETED = "audit_completed"
 
 
 class CollaborationTopology(str, Enum):
@@ -144,6 +147,7 @@ class HumanWaitReason(str, Enum):
     TICKET_APPROVAL_REQUIRED = "ticket_approval_required"
     IMPLEMENTATION_OWNER_ASSIGNMENT_REQUIRED = "implementation_owner_assignment_required"
     TICKET_DISPATCH_CONFIRMATION_REQUIRED = "ticket_dispatch_confirmation_required"
+    INTEGRATION_AUDIT_REQUIRED = "integration_audit_required"
 
 
 class CompletionActionKind(str, Enum):
@@ -435,7 +439,10 @@ class ImplementationReturn(RouterModel):
         if self.status is ImplementationReturnStatus.CHANGE_DETECTED:
             if self.emitted_event is not RouterEventKind.REQUIREMENT_CHANGED:
                 raise ValueError("change_detected must emit requirement_changed")
-        elif self.emitted_event is not RouterEventKind.ACTION_COMPLETED:
+        elif self.emitted_event not in (
+            RouterEventKind.ACTION_COMPLETED,
+            RouterEventKind.IMPLEMENTATION_RETURNED,
+        ):
             raise ValueError("completed and blocked returns must emit action_completed")
         return self
 

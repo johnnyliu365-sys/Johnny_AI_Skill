@@ -51,7 +51,10 @@ class TransitionRule(RouterModel):
             raise ValueError("suspending rules must not declare a next stage")
         if self.outcome is RouterOutcome.STOP and self.next_stage is not ProcessStage.STOPPED:
             raise ValueError("stop rules must target stopped")
-        if self.event_kind is not RouterEventKind.ACTION_COMPLETED and self.accepted_completion_actions:
+        if self.event_kind not in (
+            RouterEventKind.ACTION_COMPLETED,
+            RouterEventKind.IMPLEMENTATION_RETURNED,
+        ) and self.accepted_completion_actions:
             raise ValueError("only action_completed rules may accept completion actions")
         if self.requires_implementation_handoff and (
             self.current_stage is not ProcessStage.TICKETS
@@ -251,6 +254,33 @@ def build_router_poc_profile() -> ProjectWorkflowProfile:
                 required_source_kinds=(ArtifactKind.TICKET,),
                 eligible_capabilities=(grill,),
                 requires_dispatch_receipt=True,
+            ),
+            TransitionRule(
+                current_stage=ProcessStage.IMPLEMENT,
+                event_kind=RouterEventKind.IMPLEMENTATION_RETURNED,
+                outcome=RouterOutcome.ADVANCE,
+                next_stage=ProcessStage.SMOKE_TEST,
+                required_source_kinds=(ArtifactKind.TICKET,),
+                eligible_capabilities=(smoke_test,),
+                accepted_completion_actions=(CompletionActionKind.IMPLEMENTATION,),
+            ),
+            TransitionRule(
+                current_stage=ProcessStage.GRILL,
+                event_kind=RouterEventKind.INTEGRATION_COMPLETED,
+                outcome=RouterOutcome.SUSPEND,
+                next_stage=None,
+                required_source_kinds=(ArtifactKind.TICKET,),
+                requires_human_approval=True,
+                wait_reason=HumanWaitReason.INTEGRATION_AUDIT_REQUIRED,
+            ),
+            TransitionRule(
+                current_stage=ProcessStage.GRILL,
+                event_kind=RouterEventKind.AUDIT_COMPLETED,
+                outcome=RouterOutcome.ADVANCE,
+                next_stage=ProcessStage.REVIEW,
+                required_authority=AuthorityState.APPROVED,
+                required_source_kinds=(ArtifactKind.TICKET,),
+                eligible_capabilities=(review,),
             ),
             TransitionRule(
                 current_stage=ProcessStage.IMPLEMENT,

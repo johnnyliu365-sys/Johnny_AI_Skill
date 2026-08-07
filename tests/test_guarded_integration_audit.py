@@ -7,10 +7,20 @@ import unittest
 from pydantic import ValidationError
 
 from library.workflow_router import (
+    ArtifactKind,
+    CapabilityRef,
+    CollaborationDispatchPlan,
+    CollaborationTopology,
+    CollaborationTopologyPlan,
     CompletionActionKind,
     ImplementationReturn,
     ImplementationReturnStatus,
     RouterEventKind,
+    PlanningLaneState,
+    ProcessStage,
+    TicketDispatchReceipt,
+    TicketDispatchState,
+    TicketLaneState,
 )
 from library.workflow_router.guarded_integration import (
     AuditDecision,
@@ -141,7 +151,9 @@ class GuardedIntegrationAuditTests(unittest.TestCase):
         integration: FakeIntegrationPort | None = None,
         lock: FakeIntegrationLock | None = None,
         snapshot: MainSnapshot | None = None,
+        event: ImplementationReturnEvent | None = None,
     ) -> GuardedIntegrationCoordinator:
+        bound_event = event or self._event()
         return GuardedIntegrationCoordinator(
             integration_port=integration or self.integration,
             integration_lock=lock or self.lock,
@@ -149,6 +161,54 @@ class GuardedIntegrationAuditTests(unittest.TestCase):
             main_snapshot=snapshot
             or MainSnapshot(revision=self.main_revision, is_clean=True),
             dependent_proposals=self.proposals,
+            dispatch_plans=(self._dispatch_plan(bound_event),),
+        )
+
+    def _dispatch_plan(self, event: ImplementationReturnEvent) -> CollaborationDispatchPlan:
+        assert event.dispatch_receipt is not None
+        implementation = CapabilityRef(
+            capability_id=event.implementation_owner_id,
+            version="1",
+            agent_profile="implementation-owner",
+        )
+        reviewer = CapabilityRef(
+            capability_id=event.reviewer_id,
+            version="1",
+            agent_profile="reviewer",
+        )
+        control = CapabilityRef(
+            capability_id="control-plane-02",
+            version="1",
+            agent_profile="control-plane",
+        )
+        return CollaborationDispatchPlan(
+            receipt=event.dispatch_receipt,
+            planning_lane=PlanningLaneState(
+                project_id="project-guarded-integration-02",
+                stage=ProcessStage.GRILL,
+                topology=CollaborationTopology.TWO_COLLABORATING_AGENTS,
+                artifact_refs=(),
+                active_ticket_refs=(event.ticket_reference,),
+                context_view_id=event.planning_context_view_id,
+                side_context_id="side-planning-guarded-02",
+                event_id=event.planning_event_id,
+                safety_ceiling=100,
+            ),
+            ticket_lane=TicketLaneState(
+                ticket_id=event.ticket_reference,
+                dispatch_state=TicketDispatchState.CONFIRMED,
+                execution_stage=ProcessStage.IMPLEMENT,
+                expected_main_revision=event.expected_main_revision,
+                source_grants=(ArtifactKind.TICKET,),
+                context_view_id=event.ticket_context_view_id,
+                side_context_id="side-ticket-guarded-02",
+                event_id=event.ticket_event_id,
+                worktree_fingerprint=event.worktree_fingerprint,
+                branch_fingerprint=event.branch_fingerprint,
+                safety_ceiling=100,
+                implementation_capability=implementation,
+                reviewer=reviewer,
+            ),
         )
 
     def _event(
@@ -171,6 +231,16 @@ class GuardedIntegrationAuditTests(unittest.TestCase):
             ticket_context_view_id="ctx-ticket-ticket-02",
             planning_event_id="evt-planning-ticket-02",
             ticket_event_id="evt-ticket-ticket-02",
+            dispatch_receipt=TicketDispatchReceipt(
+                ticket_reference=self.ticket,
+                implementation_owner_id="implementation-owner",
+                handoff_reference="handoff-ticket-02",
+                expected_main_revision=self.main_revision,
+                correlation_id=correlation_id,
+                dispatch_question_id="dispatch-question-ticket-02",
+                worktree_fingerprint="worktree-ticket-02",
+                branch_fingerprint="branch-ticket-02",
+            ),
             implementation_return=ImplementationReturn(
                 ticket_reference=self.ticket,
                 status=ImplementationReturnStatus.COMPLETED,
@@ -235,13 +305,13 @@ class GuardedIntegrationAuditTests(unittest.TestCase):
             self._event(correlation_id="return-correlation-02", event_id="event-return-02")
         )
         self.assertEqual(CoordinatorOutcome.HALT, active.outcome)
-        self.assertEqual(GuardedIntegrationError.PENDING_AUDIT_ACTIVE, active.error)
+        self.assertEqual(GuardedIntegrationError.DISPATCH_NOT_BOUND, active.error)
         self.assertEqual(1, len(self.integration.requests))
         replayed_with_new_correlation = self.coordinator.handle_return(
             self._event(correlation_id="return-correlation-03")
         )
         self.assertEqual(CoordinatorOutcome.HALT, replayed_with_new_correlation.outcome)
-        self.assertEqual(GuardedIntegrationError.DUPLICATE_RETURN, replayed_with_new_correlation.error)
+        self.assertEqual(GuardedIntegrationError.DISPATCH_NOT_BOUND, replayed_with_new_correlation.error)
         self.assertEqual(1, len(self.integration.requests))
 
         missing = self._coordinator().handle_return(None)
@@ -310,23 +380,28 @@ class GuardedIntegrationAuditTests(unittest.TestCase):
         failed = self.coordinator.consume_return(RaisingReturnSource())
         self.assertEqual(CoordinatorOutcome.HALT, failed.outcome)
         self.assertEqual(GuardedIntegrationError.ADAPTER_FAILURE, failed.error)
-        delivered = self.coordinator.consume_return(FakeReturnSource(self._event(correlation_id="return-source-01")))
+        source_event = self._event(correlation_id="return-source-01")
+        delivered = self._coordinator(event=source_event).consume_return(FakeReturnSource(source_event))
         self.assertEqual(CoordinatorOutcome.PENDING_AUDIT, delivered.outcome)
         self.assertEqual(1, len(self.integration.requests))
 
+        integration_event = self._event(correlation_id="return-integration-failure-01")
         integration_failed = self._coordinator(
             integration=RaisingIntegrationPort(),  # type: ignore[arg-type]
-        ).handle_return(self._event(correlation_id="return-integration-failure-01"))
+            event=integration_event,
+        ).handle_return(integration_event)
         self.assertEqual(CoordinatorOutcome.HALT, integration_failed.outcome)
         self.assertEqual(GuardedIntegrationError.ADAPTER_FAILURE, integration_failed.error)
 
+        audit_event = self._event(correlation_id="return-audit-failure-01")
         audit_failed = GuardedIntegrationCoordinator(
             integration_port=self.integration,
             integration_lock=self.lock,
             audit_sink=RaisingAuditSink(),
             main_snapshot=MainSnapshot(revision=self.main_revision, is_clean=True),
             dependent_proposals=self.proposals,
-        ).handle_return(self._event(correlation_id="return-audit-failure-01"))
+            dispatch_plans=(self._dispatch_plan(audit_event),),
+        ).handle_return(audit_event)
         self.assertEqual(CoordinatorOutcome.HALT, audit_failed.outcome)
         self.assertEqual(GuardedIntegrationError.ADAPTER_FAILURE, audit_failed.error)
 

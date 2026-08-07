@@ -10,12 +10,19 @@ from pydantic import Field, model_validator
 from .contracts import (
     ImplementationReturn,
     ImplementationReturnStatus,
+    CollaborationDispatchPlan,
     NonBlankText,
     OpaqueMetadataId,
     ProcessStage,
     RevisionDigest,
+    LaneKind,
+    RouterEvent,
     RouterEventKind,
     RouterModel,
+    TicketDispatchState,
+    TicketDispatchReceipt,
+    WorktreeFingerprint,
+    BranchFingerprint,
 )
 
 
@@ -67,6 +74,7 @@ class GuardedIntegrationError(str, Enum):
     ADAPTER_FAILURE = "adapter_failure"
     INVALID_AUDIT = "invalid_audit"
     PENDING_AUDIT_ACTIVE = "pending_audit_active"
+    DISPATCH_NOT_BOUND = "dispatch_not_bound"
 
 
 class MainSnapshot(RouterModel):
@@ -97,22 +105,35 @@ class ImplementationReturnEvent(RouterModel):
     implementation_owner_id: OpaqueMetadataId
     reviewer_id: OpaqueMetadataId
     expected_main_revision: RevisionDigest
-    worktree_fingerprint: OpaqueMetadataId
-    branch_fingerprint: OpaqueMetadataId
+    worktree_fingerprint: WorktreeFingerprint
+    branch_fingerprint: BranchFingerprint
     planning_context_view_id: OpaqueMetadataId
     ticket_context_view_id: OpaqueMetadataId
     planning_event_id: OpaqueMetadataId
     ticket_event_id: OpaqueMetadataId
+    dispatch_receipt: TicketDispatchReceipt | None = None
     implementation_return: ImplementationReturn
 
     @model_validator(mode="after")
     def return_is_bound_to_one_ticket_and_two_lanes(self) -> ImplementationReturnEvent:
         """Reject mismatched event contracts before any integration side effect."""
 
-        if self.event_kind is not RouterEventKind.ACTION_COMPLETED:
-            raise ValueError("implementation return events must be action_completed")
+        if self.event_kind not in (
+            RouterEventKind.ACTION_COMPLETED,
+            RouterEventKind.IMPLEMENTATION_RETURNED,
+        ):
+            raise ValueError("implementation return events must be a return event")
         if self.implementation_return.ticket_reference != self.ticket_reference:
             raise ValueError("implementation return ticket does not match its event")
+        if self.dispatch_receipt is not None and (
+            self.dispatch_receipt.ticket_reference != self.ticket_reference
+            or self.dispatch_receipt.correlation_id != self.correlation_id
+            or self.dispatch_receipt.implementation_owner_id != self.implementation_owner_id
+            or self.dispatch_receipt.expected_main_revision != self.expected_main_revision
+            or self.dispatch_receipt.worktree_fingerprint != self.worktree_fingerprint
+            or self.dispatch_receipt.branch_fingerprint != self.branch_fingerprint
+        ):
+            raise ValueError("dispatch receipt does not match the return event")
         if self.implementation_owner_id == self.reviewer_id:
             raise ValueError("implementation owner and reviewer must remain distinct")
         if self.planning_context_view_id == self.ticket_context_view_id:
@@ -322,15 +343,32 @@ class GuardedIntegrationCoordinator:
         audit_sink: AuditSink,
         main_snapshot: MainSnapshot,
         dependent_proposals: tuple[DependentProposal, ...],
+        dispatch_plans: tuple[CollaborationDispatchPlan, ...] = (),
     ) -> None:
         self._integration_port = integration_port
         self._integration_lock = integration_lock
         self._audit_sink = audit_sink
         self._main_snapshot = main_snapshot
         self._dependent_proposals = dependent_proposals
+        self._dispatch_plans = dispatch_plans
+        plan_tickets = tuple(plan.receipt.ticket_reference for plan in dispatch_plans)
+        if len(plan_tickets) != len(set(plan_tickets)):
+            raise ValueError("one dispatch plan is permitted per ticket")
         self._seen_correlations: set[str] = set()
         self._seen_event_ids: set[str] = set()
         self._pending_audit: PendingAudit | None = None
+
+    @property
+    def main_snapshot(self) -> MainSnapshot:
+        """Expose the current metadata-only main revision for Router composition."""
+
+        return self._main_snapshot
+
+    @property
+    def pending_audit(self) -> PendingAudit | None:
+        """Expose the single active audit state without exposing adapter internals."""
+
+        return self._pending_audit
 
     def consume_return(self, source: ReturnEventSource | None) -> GuardedIntegrationDecision:
         """Read only an injected event; adapter absence or exceptions halt safely."""
@@ -357,12 +395,11 @@ class GuardedIntegrationCoordinator:
             return self._halt(GuardedIntegrationError.INVALID_RETURN)
         if event.implementation_return.status is not ImplementationReturnStatus.COMPLETED:
             return self._halt(GuardedIntegrationError.INVALID_RETURN)
+        if not self._matches_trusted_dispatch(event):
+            return self._halt(GuardedIntegrationError.DISPATCH_NOT_BOUND)
         if event.correlation_id in self._seen_correlations or event.event_id in self._seen_event_ids:
             return self._halt(GuardedIntegrationError.DUPLICATE_RETURN)
-        if (
-            self._pending_audit is not None
-            and self._pending_audit.ticket_reference == event.ticket_reference
-        ):
+        if self._pending_audit is not None:
             return self._halt(GuardedIntegrationError.PENDING_AUDIT_ACTIVE)
         self._seen_correlations.add(event.correlation_id)
         self._seen_event_ids.add(event.event_id)
@@ -409,6 +446,11 @@ class GuardedIntegrationCoordinator:
         if integration_status is not IntegrationStatus.COMPLETED:
             return self._halt(self._error_for_integration(integration_status))
         assert integration_result.integrated_main_revision is not None
+        self._main_snapshot = MainSnapshot(
+            revision=integration_result.integrated_main_revision,
+            is_clean=True,
+            has_conflict=False,
+        )
         pending_audit = PendingAudit(
             ticket_reference=event.ticket_reference,
             correlation_id=event.correlation_id,
@@ -479,6 +521,40 @@ class GuardedIntegrationCoordinator:
         self._dependent_proposals = tuple(next_proposals)
         return tuple(awakened)
 
+    def _matches_trusted_dispatch(self, event: ImplementationReturnEvent) -> bool:
+        """Require an exact match with one Router-owned Ticket 01 dispatch plan."""
+
+        receipt = event.dispatch_receipt
+        if receipt is None:
+            return False
+        for plan in self._dispatch_plans:
+            trusted = plan.receipt
+            lane = plan.ticket_lane
+            reviewer_ids = (lane.reviewer.capability_id, lane.reviewer.agent_profile)
+            owner_ids = (
+                trusted.implementation_owner_id,
+                lane.implementation_capability.capability_id,
+                lane.implementation_capability.agent_profile,
+            )
+            if (
+                receipt != trusted
+                or event.ticket_reference != lane.ticket_id
+                or event.implementation_owner_id not in owner_ids
+                or event.reviewer_id not in reviewer_ids
+                or event.expected_main_revision != lane.expected_main_revision
+                or event.worktree_fingerprint != lane.worktree_fingerprint
+                or event.branch_fingerprint != lane.branch_fingerprint
+                or event.planning_context_view_id != plan.planning_lane.context_view_id
+                or event.ticket_context_view_id != lane.context_view_id
+                or event.planning_event_id != plan.planning_lane.event_id
+                or event.ticket_event_id != lane.event_id
+                or lane.dispatch_state is not TicketDispatchState.CONFIRMED
+                or event.ticket_reference not in plan.planning_lane.active_ticket_refs
+            ):
+                continue
+            return True
+        return False
+
     @staticmethod
     def _error_for_integration(status: IntegrationStatus) -> GuardedIntegrationError:
         """Map adapter results to stable internal errors without leaking adapter details."""
@@ -496,3 +572,43 @@ class GuardedIntegrationCoordinator:
         """Build the only halted shape; it grants no source, lane, or delivery effect."""
 
         return GuardedIntegrationDecision(outcome=CoordinatorOutcome.HALT, error=error)
+
+
+class GuardedIntegrationRouterAdapter:
+    """Translate coordinator outcomes into the reviewed Router event vocabulary."""
+
+    def __init__(self, *, coordinator: GuardedIntegrationCoordinator) -> None:
+        self._coordinator = coordinator
+
+    def handle_return(
+        self,
+        event: ImplementationReturnEvent | None,
+    ) -> tuple[GuardedIntegrationDecision, RouterEvent | None]:
+        """Return the coordinator result and, only on success, an integration event."""
+
+        decision = self._coordinator.handle_return(event)
+        pending = decision.pending_audit
+        if decision.outcome is not CoordinatorOutcome.PENDING_AUDIT or pending is None:
+            return decision, None
+        return decision, RouterEvent(
+            event_id=pending.audit_event_id,
+            kind=RouterEventKind.INTEGRATION_COMPLETED,
+            lane_kind=LaneKind.TICKET,
+            lane_id=pending.ticket_reference,
+        )
+
+    def handle_audit(
+        self,
+        decision: AuditDecision,
+    ) -> tuple[GuardedIntegrationDecision, RouterEvent | None]:
+        """Return an audit-completed Router event only for the approved review path."""
+
+        result = self._coordinator.handle_audit(decision)
+        if result.outcome is not CoordinatorOutcome.CODE_REVIEW:
+            return result, None
+        return result, RouterEvent(
+            event_id=f"audit-completed-{decision.correlation_id}",
+            kind=RouterEventKind.AUDIT_COMPLETED,
+            lane_kind=LaneKind.TICKET,
+            lane_id=decision.ticket_reference,
+        )
