@@ -277,3 +277,40 @@ This is a normal `CHANGES_REQUESTED → IMPLEMENT` return, not `REQUIREMENT_CHAN
 ### Return and continuation
 
 `0639db6` must not be merged into `main`. Ticket 01 remains `IN_PROGRESS` and returns automatically to its named implementation owner for CR-11. This is `CHANGES_REQUESTED → IMPLEMENT`, not `REQUIREMENT_CHANGED`: the approved ticket already owns this dispatch-lifecycle invariant. Ticket 02 remains `PLANNED`; no integration, push, deployment, handoff or dependent implementation is authorized.
+
+---
+
+## Correction review — `67b049a` / `3fa2270`
+
+| Field | Value |
+| --- | --- |
+| Review result | `APPROVED` |
+| Reviewed implementation | `67b049a` (`fix: enforce one pending dispatch per ticket`) |
+| Docs-only handoff | `3fa2270` |
+| Required baseline | `3cf17c1` on control-plane `main` |
+| Branch / owner | `codex/implementation-private-router-saas-01` / Codex implementation Agent |
+| Review date | `2026-08-07 (Asia/Taipei)` |
+
+### Verified result
+
+- The branch remains based on `3cf17c1`, without a merge commit or reset-based history rewrite; the reviewed implementation worktree was clean.
+- CR-09 and CR-10 remain closed: the Private Router owns pending state, rejects raw client pending metadata, consumes a successful confirmation once, and compares a distinct `expected_main_revision` rather than proposal revision.
+- CR-11 is closed. The service now indexes each pending question both by opaque correlation and by account/project/ticket. A second dispatch-required request for the same live ticket with a different correlation halts without a plan or ticket capability. A successful confirmation removes both entries and a later ticket reopen succeeds.
+- Independent verification passed: `python -B -m unittest discover -s tests` (`90` tests), `python -m mypy --strict library tests` (`60` files), in-memory compilation of `11` workflow-router modules, and `git diff --check 3cf17c1 67b049a`. The implementation worktree remains free of untracked `pycache` output.
+
+### Mandatory Code Review checklist
+
+| Area | Result | Basis |
+| --- | --- | --- |
+| Strong types / clarity | `APPROVED` | Pending records, keys and expected-main baseline remain named typed values. |
+| Coding and architecture rules | `APPROVED` | Private Router owns both correlation and ticket-level pending lifecycle. |
+| Logic and authorization | `APPROVED` | Duplicate correlation and duplicate ticket dispatch both fail closed; consume/reopen behaviour is covered. |
+| Boundary / exception handling | `APPROVED` | Raw pending input, forged confirmation, replay, mismatch and changed-correlation forms halt without grants. |
+| Security / privacy | `APPROVED` | The boundary remains metadata-only and adds no raw source, Context, path, URI, prompt, Secret or PII. |
+| Tests / smoke | `APPROVED` | Full regression, strict typing, in-memory compilation and diff check passed. |
+| Dependencies | `APPROVED` | No dependency change was introduced. |
+| SPEC / ticket / Context compliance | `APPROVED` | AC-1 through AC-5 and the one-question/one-pending invariant are satisfied. |
+
+### Continuation
+
+Ticket 01 is `READY_TO_MERGE`. Its source is not directly integrated here: the required guarded local-main integration and audit behavior belongs to ticket 02. The control plane must emit `ACTION_COMPLETED` and continue the planning lane to Grill; no push, deployment or external handoff is authorized.

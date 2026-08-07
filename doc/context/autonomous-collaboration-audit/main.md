@@ -138,3 +138,9 @@ The next correction must make pending dispatch state Router-controlled: persist 
 CR-09 and CR-10 are now closed: the Private Router owns the pending descriptor, rejects raw caller-supplied pending data, consumes an accepted confirmation once, and uses a distinct expected-main baseline. Independent regression, strict typing, compilation and diff checks passed.
 
 Ticket 01 remains `IN_PROGRESS` because CR-11 remains. The current service indexes pending state only by account/project/correlation, letting the same ticket issue a second dispatch question under a new correlation before the first is answered. Both correlations can then be confirmed and grant `IMPLEMENT`. The implementation owner must enforce one live pending question per ticket and atomically clear that ticket-level record on a successful confirmation. This is a same-ticket correction, not a requirement change; the formal return is [the review report](../../reviews/autonomous-collaboration-audit/01-topology-dispatch-lanes-code-review.md).
+
+### Correction review — `67b049a` / `3fa2270`
+
+Ticket 01 is now `READY_TO_MERGE`. Independent review approved the ticket-level pending index: a changed-correlation duplicate dispatch now halts with no grant, while successful confirmation clears both correlation and ticket indexes and permits a later reopen. The full regression (`90` tests), strict typing (`60` files), in-memory compilation and diff check passed; the implementation worktree is clean.
+
+This completes ticket 01's approved dispatch/lane scope. It does not directly merge source into local `main`, push, deploy or hand off: guarded integration and its Grill audit are ticket 02's declared scope. The Router continuation is `ACTION_COMPLETED → planning Grill`, where the already planned ticket 02 can be evaluated against the reviewed public contracts.

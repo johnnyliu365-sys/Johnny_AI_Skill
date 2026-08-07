@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-AUTONOMOUS-COLLABORATION-AUDIT-20260805-01KZ7A2C4E6G8J0L2N4P6R8T` / AC-1 through AC-5 |
 | Context / change | `doc/context/autonomous-collaboration-audit/main.md` / `CHG-20260805-010` |
-| State | `IN_PROGRESS` — owner confirmed delivery (`已轉交`) on `2026-08-05`; implementation authority is active |
+| State | `READY_TO_MERGE` — independent review approved `67b049a`; guarded local integration remains owned by ticket 02 |
 | Language | Python 3.11 and Markdown |
 | Baseline | `2372f1e` |
 | Control-plane owner / reviewer | Codex / current `main` worktree |
