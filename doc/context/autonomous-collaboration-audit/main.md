@@ -177,3 +177,18 @@ This completes ticket 01's approved dispatch/lane scope. It does not directly me
 | Forbidden content | raw source/Context, prompt, path, URI, Git output, Secret and PII |
 
 The pending Router event is `TICKET_DISPATCH_REQUIRED`. No Context, capability, branch, worktree or implementation grant exists until the project owner confirms delivery to the named implementation owner.
+
+## Ticket 02 dispatch receipt
+
+| Field | Value |
+| --- | --- |
+| Ticket | `02-guarded-integration-audit` / AC-6 through AC-8, AC-11 |
+| Confirmation | Project owner: `已交付` (`2026-08-07`) |
+| Ticket / handoff baseline | Ticket selection `911218d`; planning-Grill handoff `1d4292a` |
+| Authority | Ticket-scoped implementation authority; no second approval or confirmation is required |
+| Implementation owner | Codex implementation Agent / a separate ticket-02 worktree; it must not write the control-plane `main` worktree |
+| Control-plane / reviewer | Codex / current `main` worktree |
+| Execution lane | `IMPLEMENT` — start TDD and return a typed `ACTION_COMPLETED` only with the ticket's required evidence |
+| Planning lane | `AUTO_CONTINUE → GRILL` — evaluate the next independently eligible planned ticket without consuming ticket-02 Context |
+
+The receipt activates Ticket 02 only. It grants no physical integration, merge, push, deployment, handoff completion, or authority for any other ticket. Those effects remain guarded by Ticket 02's required evidence and review path.

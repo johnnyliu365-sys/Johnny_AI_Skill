@@ -4,11 +4,11 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-AUTONOMOUS-COLLABORATION-AUDIT-20260805-01KZ7A2C4E6G8J0L2N4P6R8T` / AC-6 through AC-8, AC-11 |
 | Context / change | `doc/context/autonomous-collaboration-audit/main.md` / `CHG-20260805-010` |
-| State | `IN_PROGRESS` — selected after independent review of ticket 01; awaiting its one named dispatch-confirmation question |
+| State | `IN_PROGRESS` — delivery confirmed on `2026-08-07`; implementation authority is active in a separate ticket-02 worktree |
 | Language | Python 3.11 and Markdown |
 | Baseline | Reviewed ticket 01 public contracts: `67b049a`; the dispatch handoff must record the clean expected `main` revision before worktree provisioning |
 | Control-plane owner / reviewer | Codex / current `main` worktree |
-| Implementation owner / worktree | Codex implementation Agent / separate ticket-02 worktree to be provisioned after confirmed delivery; it must not share the control-plane `main` worktree |
+| Implementation owner / worktree | Codex implementation Agent / separate ticket-02 worktree provisioned under the confirmed delivery authority; it must not share the control-plane `main` worktree |
 | Environment | Local fake Git/integration port only; no real push, deployment, target-project or external provider |
 
 ## User-observable outcome

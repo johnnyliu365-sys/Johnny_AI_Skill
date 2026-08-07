@@ -11,7 +11,7 @@ Deliver a non-commercial, detachable workflow control plane that selects a colla
 | Ticket | User-observable capability | State | Dependency |
 | --- | --- | --- |
 | [01-topology-dispatch-lanes](01-topology-dispatch-lanes.md) | Capability-count question and typed dispatch wait/receipt with parallel lane isolation | `READY_TO_MERGE` | Independent review approved; guarded local integration remains owned by ticket 02 |
-| [02-guarded-integration-audit](02-guarded-integration-audit.md) | Valid implementation return reaches a guarded local main integration and automatic Grill audit | `IN_PROGRESS` | Selected after ticket 01 review; awaiting one named delivery confirmation |
+| [02-guarded-integration-audit](02-guarded-integration-audit.md) | Valid implementation return reaches a guarded local main integration and automatic Grill audit | `IN_PROGRESS` | Delivery confirmed; implementation authority active in its separate ticket worktree |
 | [03-plugin-policy-and-response](03-plugin-policy-and-response.md) | Codex/Claude guidance and fixed `工單 ready` / `文件交接` response | `PLANNED` candidate | 01 events; may run after 01 review |
 
 ## Mandatory approval data
@@ -22,7 +22,7 @@ The project owner selected this topology on `2026-08-05`:
 1：main control-plane session + existing separate implementation session/worktree
 ```
 
-The named implementation owner is Codex implementation Agent in `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` on `codex/implementation-private-router-saas-01`; the control-plane/reviewer is Codex/current `main` worktree. A positive delivery confirmation is the ticket-scoped approval and implementation authority; no second approval is requested. Ticket 01 was delivered on `2026-08-05`; ticket 02 is in planning-lane Grill and ticket 03 remains `PLANNED`.
+The named implementation owner is Codex implementation Agent in `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` on `codex/implementation-private-router-saas-01`; the control-plane/reviewer is Codex/current `main` worktree. A positive delivery confirmation is the ticket-scoped approval and implementation authority; no second approval is requested. Ticket 01 was delivered on `2026-08-05`; Ticket 02 was delivered on `2026-08-07` and is active in its execution lane. The planning lane proceeds to Grill independently; ticket 03 remains `PLANNED` until selected.
 
 ## Shared baseline
 
