@@ -290,3 +290,20 @@
 | Boundary / mutation evidence | Raw pending input is rejected by the closed request schema; the private metadata/source sentinel remains green. A controlled in-memory removal of one-time pending consumption made the replay assertion fail, proving the replay guard is exercised. No raw ContextPacket, source text, path, URI, prompt, secret or PII was added. |
 | Docs-only handoff | This entry is the docs-only handoff for `0639db6`; it records evidence only and does not self-approve review. |
 | Review / merge | Independent control-plane review is required. The implementation owner did not modify or merge `main`; no push, deployment or dependent ticket work performed. |
+
+## PRG-20260808-001 correction handoff for one pending dispatch per ticket
+
+| Field | Value |
+| --- | --- |
+| State | `IMPLEMENTATION_COMMITTED_PENDING_REVIEW` |
+| Review return | `CHANGES_REQUESTED -> IMPLEMENT`; control-plane review commit `39a587b`; CR-09 and CR-10 are closed; CR-11 remains in scope. |
+| Ticket / baseline | `01-topology-dispatch-lanes` / required implementation baseline `3cf17c1` |
+| Implementation owner / branch | Codex implementation Agent / `codex/implementation-private-router-saas-01` |
+| TDD red evidence | Before the source correction, a Private Router dispatch-required request for the same ticket with a new correlation returned a second `WAIT_FOR_HUMAN` instead of `HALT`; the new changed-correlation duplicate test failed at that assertion. |
+| Implementation commit | `67b049a` (`fix: enforce one pending dispatch per ticket`) |
+| Delivered correction | Added a Router-owned pending index by account/project/ticket alongside the opaque correlation index; dispatch-required lookup now rejects any live pending question for that ticket regardless of correlation; successful confirmation removes both indexes, allowing a later valid reopen only after consumption. Failed confirmations clear the pending question unless the Profile explicitly declares a retry outcome; the current dispatch-confirmation rule declares no retry. |
+| Tests / fail-closed coverage | Added Private Router duplicate-correlation, no-duplicate-lane, consume-and-reopen regression; direct Router duplicate pending coverage remains green. Existing forged, replay, one-time, revision mismatch, owner, question, handoff, locator, null/empty/container and negative-confirmation guards remain green. |
+| Validation | `python -B -m unittest discover -s tests` — 90 passed; `python -B -m unittest tests.test_private_router_metadata_gate -v` — 9 passed; `python -m mypy --strict library tests` — 60 source files clean; in-memory compilation — 11 workflow-router modules; `git diff --check` passed. |
+| Boundary / mutation evidence | A controlled in-memory removal of the ticket-level pending lookup made the changed-correlation duplicate test fail, proving CR-11 protection is exercised. No raw ContextPacket, source text, path, URI, prompt, secret or PII was added. |
+| Docs-only handoff | This entry is the docs-only handoff for `67b049a`; it records evidence only and does not self-approve review. |
+| Review / merge | Independent review is required. The implementation owner did not modify or merge `main`; no push, deployment or dependent ticket work performed. |
