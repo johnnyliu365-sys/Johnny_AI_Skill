@@ -118,6 +118,17 @@ class FirstAuditFailureSink:
             raise RuntimeError("audit request unavailable")
 
 
+class AlwaysAuditFailureSink:
+    """Keep every retry in the declared retryable delivery state."""
+
+    def __init__(self) -> None:
+        self.requests: list[object] = []
+
+    def request_audit(self, request: object) -> None:
+        self.requests.append(request)
+        raise RuntimeError("audit request unavailable")
+
+
 class ReentrantAuditSink:
     """Invoke one retry while delivery is in flight, optionally failing first."""
 
@@ -566,6 +577,77 @@ class ReceiptBoundCorrectionTests(unittest.TestCase):
         self.assertIsNotNone(retry_result[0][1])
         self.assertEqual(1, len(self.integration.requests))
         self.assertEqual(2, len(sink.requests))
+
+    def test_failed_initial_delivery_cannot_consume_audit_decisions(self) -> None:
+        for disposition in (AuditDisposition.APPROVED, AuditDisposition.CHANGES_REQUESTED):
+            with self.subTest(disposition=disposition):
+                event = self._event(
+                    correlation=f"return-audit-undelivered-{disposition.value.replace('_', '-')}-02",
+                    event_id=f"event-audit-undelivered-{disposition.value.replace('_', '-')}-02",
+                )
+                sink = AlwaysAuditFailureSink()
+                integration = FakeIntegrationPort(result=self.integration.result)
+                coordinator = GuardedIntegrationCoordinator(
+                    integration_port=integration,
+                    integration_lock=FakeIntegrationLock(),
+                    audit_sink=sink,
+                    main_snapshot=MainSnapshot(revision=self.revision, is_clean=True),
+                    dependent_proposals=(),
+                    dispatch_plans=(self._plan(event),),
+                )
+                adapter = GuardedIntegrationRouterAdapter(coordinator=coordinator)
+                failed, failed_event = adapter.handle_return(event)
+                self.assertEqual(GuardedIntegrationError.ADAPTER_FAILURE, failed.error)
+                self.assertIsNone(failed_event)
+                result, audit_event = adapter.handle_audit(
+                    AuditDecision(
+                        ticket_reference=event.ticket_reference,
+                        correlation_id=event.correlation_id,
+                        disposition=disposition,
+                    )
+                )
+                self.assertEqual(GuardedIntegrationError.AUDIT_NOT_DELIVERED, result.error)
+                self.assertIsNone(audit_event)
+                self.assertIsNotNone(coordinator.pending_audit)
+                self.assertEqual(1, len(integration.requests))
+                self.assertEqual(1, len(sink.requests))
+
+    def test_failed_retry_delivery_cannot_consume_audit_decisions(self) -> None:
+        for disposition in (AuditDisposition.APPROVED, AuditDisposition.CHANGES_REQUESTED):
+            with self.subTest(disposition=disposition):
+                event = self._event(
+                    correlation=f"return-audit-retry-undelivered-{disposition.value.replace('_', '-')}-02",
+                    event_id=f"event-audit-retry-undelivered-{disposition.value.replace('_', '-')}-02",
+                )
+                sink = AlwaysAuditFailureSink()
+                integration = FakeIntegrationPort(result=self.integration.result)
+                coordinator = GuardedIntegrationCoordinator(
+                    integration_port=integration,
+                    integration_lock=FakeIntegrationLock(),
+                    audit_sink=sink,
+                    main_snapshot=MainSnapshot(revision=self.revision, is_clean=True),
+                    dependent_proposals=(),
+                    dispatch_plans=(self._plan(event),),
+                )
+                adapter = GuardedIntegrationRouterAdapter(coordinator=coordinator)
+                failed, failed_event = adapter.handle_return(event)
+                self.assertEqual(GuardedIntegrationError.ADAPTER_FAILURE, failed.error)
+                self.assertIsNone(failed_event)
+                retry, retry_event = adapter.retry_pending_audit()
+                self.assertEqual(GuardedIntegrationError.ADAPTER_FAILURE, retry.error)
+                self.assertIsNone(retry_event)
+                result, audit_event = adapter.handle_audit(
+                    AuditDecision(
+                        ticket_reference=event.ticket_reference,
+                        correlation_id=event.correlation_id,
+                        disposition=disposition,
+                    )
+                )
+                self.assertEqual(GuardedIntegrationError.AUDIT_NOT_DELIVERED, result.error)
+                self.assertIsNone(audit_event)
+                self.assertIsNotNone(coordinator.pending_audit)
+                self.assertEqual(1, len(integration.requests))
+                self.assertEqual(2, len(sink.requests))
 
     def test_pending_audit_is_global_and_revision_advances_after_integration(self) -> None:
         first = self._event()

@@ -82,6 +82,7 @@ class GuardedIntegrationError(str, Enum):
     ADAPTER_UNAVAILABLE = "adapter_unavailable"
     ADAPTER_FAILURE = "adapter_failure"
     AUDIT_DELIVERY_ACTIVE = "audit_delivery_active"
+    AUDIT_NOT_DELIVERED = "audit_not_delivered"
     INVALID_AUDIT = "invalid_audit"
     PENDING_AUDIT_ACTIVE = "pending_audit_active"
     DISPATCH_NOT_BOUND = "dispatch_not_bound"
@@ -552,6 +553,8 @@ class GuardedIntegrationCoordinator:
                 return self._halt(GuardedIntegrationError.INVALID_AUDIT)
             if self._audit_delivery_state is AuditDeliveryState.DELIVERING:
                 return self._halt(GuardedIntegrationError.AUDIT_DELIVERY_ACTIVE)
+            if self._audit_delivery_state is not AuditDeliveryState.DELIVERED:
+                return self._halt(GuardedIntegrationError.AUDIT_NOT_DELIVERED)
             self._pending_audit = None
             self._audit_delivery_state = AuditDeliveryState.RETRYABLE
         if decision.disposition is AuditDisposition.APPROVED:
