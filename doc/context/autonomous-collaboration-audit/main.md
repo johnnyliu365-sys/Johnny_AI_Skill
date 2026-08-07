@@ -306,3 +306,36 @@ The active pending audit remains the correct global integration lock, but the au
 | Continuation | `CHANGES_REQUESTED → IMPLEMENT` in the existing Ticket-02 worktree; Ticket 03 remains blocked and no merge/push/deploy is authorized |
 
 Delivery state now prevents duplicate requests, but audit consumption must additionally require a successful `DELIVERED` transition. This correction is automatic implementation work, not a requirement change or a human gate.
+
+## Ticket 02 final review and guarded integration
+
+| Field | Value |
+| --- | --- |
+| Reviewed correction / handoff | `906679a` / `90e9191` |
+| Review baseline | `0beac6d`; submitted branch clean and rebased to current `main` |
+| Result | `APPROVED` — review report `02-guarded-integration-audit-fourth-correction-code-review.md` |
+| Independent checks | `113` unit tests, `113` pytest tests with `115` subtests, strict `mypy` for `63` files, in-memory compile for `12` Router modules, and diff check passed |
+| Integration | `90e9191` fast-forwarded to `main`; no merge commit, reset, push, deployment, or external provider action |
+| Continuation | `ACTION_COMPLETED → AUTO_CONTINUE → planning Grill` |
+
+Ticket 02's source is now the reviewed control-plane baseline. Its audit delivery permits a decision only after `DELIVERED`; undelivered decisions retain pending state and halt.
+
+## Planning Grill — Ticket 03 dependency-corrected re-entry
+
+| Field | Value |
+| --- | --- |
+| Trigger | Ticket-02 independent approval and fast-forward integration at `90e9191` |
+| Required sources | Approved SPEC AC-1, AC-3, AC-9 and AC-10; Ticket 03; Ticket-03 blocked review CR-16 through CR-18; reviewed current Router contracts on `main`; current Context |
+| Decision | `GO → IMPLEMENT` — no requirement, architecture, security, ownership, UI, data, or authority change; only the declared dependency has become valid |
+| Ticket state | `IN_PROGRESS` under the existing scoped Ticket-03 dispatch receipt; no second dispatch question or user approval |
+| Implementation owner | Codex implementation Agent / existing Ticket-03 worktree, synchronized to current `main` before TDD |
+| Reviewer | Codex control-plane / current `main` worktree |
+| Rejected source | `4d68938` / `9eda250`; it is blocked review evidence only and supplies no active baseline, policy, formatter, or test authority |
+
+### Fresh implementation handoff
+
+- Preserve the reviewed Ticket-01 dispatch contracts; the retired direct ticket approval route is already fail-closed and must remain so.
+- Do not persist, return, log, format, serialize, or place raw policy document text in Router state. Prefer static plugin guidance; any necessary source inspection is ephemeral and returns only typed non-content metadata.
+- Bind the fixed `工單 ready` / `文件交接` response to a Private-Router-owned pending-dispatch result from the current Router contracts. Arbitrary caller strings or descriptors must not render a response or grant capability.
+- Start a new TDD cycle on the current baseline, including CR-16/17 regressions and the Ticket 03 §2.1 cases. CR-18 is closed only by this dependency-corrected re-entry.
+- This handoff grants no push, deployment, host configuration, target-project write, Secret, provider, or other-ticket implementation.

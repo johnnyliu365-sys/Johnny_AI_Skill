@@ -4,9 +4,9 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-AUTONOMOUS-COLLABORATION-AUDIT-20260805-01KZ7A2C4E6G8J0L2N4P6R8T` / AC-1, AC-3, AC-9, AC-10 |
 | Context / change | `doc/context/autonomous-collaboration-audit/main.md` / `CHG-20260805-010` |
-| State | `BLOCKED` — independent review of `4d68938` / `9eda250` found a metadata-boundary failure, an executable dispatch-policy mismatch, and out-of-order implementation while Ticket 02 correction remains active |
+| State | `IN_PROGRESS` — Ticket 02 is independently approved and integrated; this ticket resumes under its existing scoped dispatch receipt with a fresh implementation handoff. `4d68938` / `9eda250` remain blocked historical review evidence and must not be reused |
 | Language | Markdown, policy contract tests, and any approved Python formatter contract |
-| Baseline | Ticket 01 public contract `67b049a`, independently reviewed and approved at `d620463`; Ticket 02 execution is not an input to this ticket |
+| Baseline | Reviewed and integrated Router contracts at `90e9191`, including Ticket 01 dispatch lanes and Ticket 02 guarded audit; implementation must synchronize to the current control-plane `main` before TDD |
 | Control-plane owner / reviewer | Codex / current `main` worktree |
 | Implementation owner / worktree | Codex implementation Agent / accepted into its scheduling queue; provision a separate ticket-03 worktree when scheduled, never the control-plane `main` worktree |
 | Environment | Local plugin/skill source only; no host configuration, target-project file, remote service or deployment |
@@ -24,16 +24,18 @@ Frontend composition / DI: `N/A` — documentation and deterministic formatter p
 ## Handoff and role assignment
 
 - Control-plane owner: Codex/current `main` worktree.
-- Implementation owner: Codex implementation Agent / existing `workflow-implementation` worktree, once this planned ticket is separately approved. Reviewer: Codex/current `main` worktree.
+- Implementation owner: Codex implementation Agent / existing ticket-03 worktree. Its prior blocked source must be discarded from the active implementation baseline; synchronize to the current control-plane `main` before TDD. Reviewer: Codex/current `main` worktree.
 - Owner override: `N/A`.
 - Handoff/return follow the approved metadata-only contracts. This ticket may not silently rename an event introduced by ticket 01; a contract change returns to Grill.
 
 ## TDD and defect checks
 
-1. Red: required topology prompt and fixed Chinese response fields are absent/misordered; green asserts ticket docs commit, ticket reference, handoff docs commit, named owner and exact dispatch question.
-2. Red: policy describes a generic wait or implementation-before-dispatch path; green checks each wait/HALT/auto-continue rule against the approved contract.
-3. Red: commercial wording is still presented as active direction; green differentiates historical POC references from active objective.
-4. CodeReview §2.1: path/URI leakage in generated response uses seven boundary forms; null/empty field formats; direct/indirect response bypass; token N/A scan; stable formatting error; file/formatter exception; mutation proof of required labels/fields.
+1. Red: required topology prompt and fixed Chinese response fields are absent/misordered; green asserts ticket docs commit, ticket reference, handoff docs commit, named owner and the exact dispatch question.
+2. Red: any public Router model, error, telemetry output, formatter output, or response can contain a unique synthetic policy-document sentinel; green proves the sentinel cannot cross the ephemeral source-check boundary. Do not add a raw policy-document reader when static plugin guidance is sufficient.
+3. Red: arbitrary regex-valid ticket/commit/owner strings, a forged pending descriptor, an absent descriptor, a replayed descriptor, or the retired `TICKETS + APPROVAL_GRANTED → IMPLEMENT` route can render a dispatch response or grant implementation; green proves only a Private-Router-owned pending-dispatch result from the reviewed current contracts can produce the fixed response, and all other forms halt with no response or grant.
+4. Red: policy describes a generic wait or implementation-before-dispatch path; green checks each declared wait/HALT/auto-continue rule against the approved contract.
+5. Red: commercial wording is still presented as active direction; green differentiates historical POC references from active objective.
+6. CodeReview §2.1: path/URI leakage in generated response uses seven boundary forms; null/empty field formats; direct/indirect response bypass; token N/A scan; stable formatting error; source/formatter exception; and mutation proof of required labels/fields and the delivered pending-dispatch guard.
 
 ## Completion evidence
 
