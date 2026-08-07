@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-AUTONOMOUS-COLLABORATION-AUDIT-20260805-01KZ7A2C4E6G8J0L2N4P6R8T` / AC-6 through AC-8, AC-11 |
 | Context / change | `doc/context/autonomous-collaboration-audit/main.md` / `CHG-20260805-010` |
-| State | `IN_PROGRESS` — independent second correction review of `67745a3` / `2d218d2` returned `CHANGES_REQUESTED` for CR-23; correction authority remains active in the separate ticket-02 worktree |
+| State | `IN_PROGRESS` — independent third correction review of `8b3109a` / `c3f7337` returned `CHANGES_REQUESTED` for CR-24; correction authority remains active in the separate ticket-02 worktree |
 | Language | Python 3.11 and Markdown |
 | Baseline | Reviewed ticket 01 public contracts: `67b049a`; the dispatch handoff must record the clean expected `main` revision before worktree provisioning |
 | Control-plane owner / reviewer | Codex / current `main` worktree |

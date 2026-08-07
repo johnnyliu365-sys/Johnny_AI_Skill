@@ -292,3 +292,17 @@ The passing generic checks do not override the reproduced identity, atomicity, a
 | Continuation | `CHANGES_REQUESTED → IMPLEMENT` in the existing Ticket-02 worktree; Ticket 03 remains blocked and no merge/push/deploy is authorized |
 
 The active pending audit remains the correct global integration lock, but the audit adapter needs a distinct delivery-in-flight admission state. The correction is automatic implementation work, not a requirement change or a human gate.
+
+## Ticket 02 third correction review return
+
+| Field | Value |
+| --- | --- |
+| Reviewed correction / handoff | `8b3109a` / `c3f7337` |
+| Review baseline | `ae888f9` / submitted branch clean and rebased to current `main` |
+| Result | `CHANGES_REQUESTED` — review report `02-guarded-integration-audit-third-correction-code-review.md` |
+| Independent checks | `111` unit tests, `111` pytest tests with `111` subtests, strict `mypy` for `63` files, in-memory compile for `12` Router modules, and diff check passed |
+| Closed finding | CR-23 audit-delivery re-entry and concurrent-delivery isolation |
+| Blocking finding | CR-24: a failed or never-delivered Grill audit can be accepted directly from `RETRYABLE` and route to Code Review |
+| Continuation | `CHANGES_REQUESTED → IMPLEMENT` in the existing Ticket-02 worktree; Ticket 03 remains blocked and no merge/push/deploy is authorized |
+
+Delivery state now prevents duplicate requests, but audit consumption must additionally require a successful `DELIVERED` transition. This correction is automatic implementation work, not a requirement change or a human gate.
