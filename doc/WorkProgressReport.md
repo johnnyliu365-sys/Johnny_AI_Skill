@@ -268,3 +268,17 @@
 | TDD red evidence | The pre-correction direct reviewer-profile forgery reached `PENDING_AUDIT`; a reentrant second ticket reached a second pending path after lock release; an audit-sink failure left no pending guard; and the profile returned a human wait for normal audit. Each new regression test failed before the correction and passes afterward. |
 | Validation | `python -m pytest -q` ??107 passed / 111 subtests; `python -m mypy --strict library` ??48 source files clean; `python -m compileall -q library` ??48 modules; metadata-only model-field privacy sentinel passed; CR-21 retry smoke passed; `git diff --check` passed. No repository lint or formatter configuration is declared. |
 | Review / integration | No merge, push, deployment, external provider, main-worktree mutation, or other-ticket mutation was performed. Independent control-plane review is required before any fast-forward integration. |
+
+## PRG-20260808-004 ??Ticket 02 correction handoff (CR-23)
+
+| Field | Value |
+| --- | --- |
+| State | `IMPLEMENTATION_COMMITTED_PENDING_REVIEW` |
+| Ticket / review return | `02-guarded-integration-audit` / `ae888f9` (`CHANGES_REQUESTED ??IMPLEMENT`) |
+| Reviewed baseline | `ae888f9`; the implementation branch was rebased to this current main baseline before the CR-23 validation rerun. |
+| Implementation owner / branch | Codex implementation Agent / `codex/implementation-guarded-integration-audit-02` |
+| Implementation commit | `8b3109a` (`fix: guard audit delivery reentry`) |
+| CR-23 correction | Pending audit delivery is a coordinator-owned typed state machine: `RETRYABLE`, `DELIVERING`, and `DELIVERED`. Admission is marked `DELIVERING` before the injected sink call; a re-entrant or concurrent retry returns `AUDIT_DELIVERY_ACTIVE` with no sink request or Router event. Sink failure resets only to `RETRYABLE`; success transitions once to `DELIVERED`, wakes dependents once, and emits one integration event. A delivered sequential retry is idempotent and emits no duplicate event. |
+| TDD red evidence | Independent review reproduced two audit requests and two equivalent events when the sink re-entered before the old delivered flag was written; the failure-plus-retry path reproduced three requests. Committed tests now cover initial and post-failure re-entry plus deterministic concurrent delivery, with one integration, one successful audit delivery, and one event. |
+| Validation | `python -B -m unittest discover -s tests` ??111 passed; `python -m pytest -q` ??111 passed / 111 subtests; `python -m mypy --strict --no-incremental library tests` ??63 source files clean; `python -m compileall -q library` ??48 Python files; metadata-only model-field privacy sentinel passed; CR-23 re-entry/concurrency smoke passed; `git diff --check` passed. |
+| Review / integration | No merge, push, deployment, external provider, main-worktree mutation, or other-ticket mutation was performed. Independent control-plane review is required before any fast-forward integration. |
