@@ -144,3 +144,36 @@ Ticket 01 remains `IN_PROGRESS` because CR-11 remains. The current service index
 Ticket 01 is now `READY_TO_MERGE`. Independent review approved the ticket-level pending index: a changed-correlation duplicate dispatch now halts with no grant, while successful confirmation clears both correlation and ticket indexes and permits a later reopen. The full regression (`90` tests), strict typing (`60` files), in-memory compilation and diff check passed; the implementation worktree is clean.
 
 This completes ticket 01's approved dispatch/lane scope. It does not directly merge source into local `main`, push, deploy or hand off: guarded integration and its Grill audit are ticket 02's declared scope. The Router continuation is `ACTION_COMPLETED → planning Grill`, where the already planned ticket 02 can be evaluated against the reviewed public contracts.
+
+## Planning Grill — ticket 02 selection
+
+| Field | Value |
+| --- | --- |
+| Trigger | Ticket 01 review `APPROVED` at `d620463` |
+| Required sources | Approved SPEC AC-6 through AC-8 and AC-11; accepted ADR-20260805-002; ticket 02; reviewed ticket-01 public contracts `67b049a`; current Context |
+| Decision | `GO → TICKETS` — no requirement, architecture, UI, security or authority change detected |
+| Selected ticket | `02-guarded-integration-audit` (`911218d`) |
+| State | `IN_PROGRESS`, awaiting only its named delivery confirmation |
+| Implementation owner | Codex implementation Agent; a separate ticket-02 worktree is provisioned only after confirmation |
+| Reviewer / integration owner | Codex control-plane / current `main` worktree |
+
+### Grill checks
+
+- The reviewed ticket-01 contracts now supply the typed topology, pending-dispatch, receipt, ticket-lane and isolated planning-lane surface required by ticket 02; no speculative interface is needed.
+- Ticket 02 owns the missing guarded local-main integration, lock, audit and typed implementation-return behaviour. Its injected fake integration port is a named composition-boundary dependency; it creates no real Git action, host turn, deployment or target-project write.
+- No direct source integration is authorized by ticket 01's review. Ticket 02 must model `PENDING_AUDIT` and block push, deployment, handoff and dependent implementation until its audit/review rules are satisfied.
+- The ticket selection does not alter ticket 01's approved scope. Its only human gate is the one dispatch-confirmation question below; no second ticket-approval question is permitted.
+
+## Ticket 02 dispatch handoff
+
+| Field | Value |
+| --- | --- |
+| Ticket docs commit | `911218d` |
+| Ticket | `02-guarded-integration-audit` / AC-6 through AC-8, AC-11 |
+| Reviewed dependency | Ticket-01 implementation `67b049a`, review approved at `d620463` |
+| Owner | Codex implementation Agent / separate ticket-02 worktree after confirmation |
+| Reviewer / integration capability | Codex control-plane / current `main` worktree |
+| Required handoff metadata | clean expected-main revision, opaque ticket/branch reference, delivery receipt, verification references, Context references and audit requirements |
+| Forbidden content | raw source/Context, prompt, path, URI, Git output, Secret and PII |
+
+The pending Router event is `TICKET_DISPATCH_REQUIRED`. No Context, capability, branch, worktree or implementation grant exists until the project owner confirms delivery to the named implementation owner.
