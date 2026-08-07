@@ -253,3 +253,18 @@
 | TDD red evidence | New correction tests initially failed because `IMPLEMENTATION_RETURNED` was absent from the reviewed contracts; after contract/profile/registry implementation, direct and injected unregistered returns, lane mismatches, seven locator forms, cross-ticket pending audit, revision advancement, and Router composition pass fail-closed. |
 | Validation | `python -B -m unittest discover -s tests` — 102 passed; `python -m pytest -q` — 102 passed / 105 subtests; `python -m mypy --strict --no-incremental library tests` — 63 source files clean; in-memory compilation of all 11 `workflow_router` modules; `git diff --check` clean; metadata-only privacy/source sentinel clean aside from intentional marker strings in validation code. |
 | Docs-only handoff | This entry is the docs-only handoff commit following `b53cc55`; no raw Context, source text, prompt, path, URI, Secret, PII, production data, merge, push, or deployment was recorded. Independent review is required before any integration. |
+
+## PRG-20260808-003 ??Ticket 02 correction handoff (CR-19 through CR-22)
+
+| Field | Value |
+| --- | --- |
+| State | `IMPLEMENTATION_COMMITTED_PENDING_REVIEW` |
+| Ticket / review return | `02-guarded-integration-audit` / `79aa649` (`CHANGES_REQUESTED ??IMPLEMENT`) |
+| Implementation owner / branch | Codex implementation Agent / `codex/implementation-guarded-integration-audit-02` |
+| Implementation commit | `67745a3` (`fix: close guarded integration audit corrections`) |
+| CR-19 correction | Actor authority is now the exact named `capability_id` at proposal, handoff, pending-dispatch, receipt, coordinator, and return boundaries. A descriptive `agent_profile` cannot equal a capability ID or substitute for control, implementation-owner, or reviewer identity. Direct and injected forged owner/reviewer returns halt before integration or audit side effects. |
+| CR-20 / CR-21 correction | A completed integration creates the trusted `PENDING_AUDIT` state and advances the trusted revision before the fallible audit sink is called; the exclusive section is released only afterward. The retained pending state blocks every later ticket and supports idempotent audit retry without another integration. The adapter emits the reviewed integration event only after a successful initial delivery or retry. |
+| CR-22 correction | `GRILL + INTEGRATION_COMPLETED` now advances automatically to the declared Grill capability and carries no human-wait reason. Approved and correction audit dispositions retain their reviewed continuation routes. |
+| TDD red evidence | The pre-correction direct reviewer-profile forgery reached `PENDING_AUDIT`; a reentrant second ticket reached a second pending path after lock release; an audit-sink failure left no pending guard; and the profile returned a human wait for normal audit. Each new regression test failed before the correction and passes afterward. |
+| Validation | `python -m pytest -q` ??107 passed / 111 subtests; `python -m mypy --strict library` ??48 source files clean; `python -m compileall -q library` ??48 modules; metadata-only model-field privacy sentinel passed; CR-21 retry smoke passed; `git diff --check` passed. No repository lint or formatter configuration is declared. |
+| Review / integration | No merge, push, deployment, external provider, main-worktree mutation, or other-ticket mutation was performed. Independent control-plane review is required before any fast-forward integration. |
