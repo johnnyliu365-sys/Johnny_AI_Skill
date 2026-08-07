@@ -223,3 +223,18 @@
 | Validation | `python -m unittest discover -s tests` — 73 passed; `python -m mypy --strict library tests` — 58 source files clean; the literal Windows PowerShell `python -m py_compile library/workflow_router/*.py` failed with `[Errno 22] Invalid argument` because `*.py` was not expanded; control plane approved `Get-ChildItem -LiteralPath 'library/workflow_router' -Filter '*.py' -File | ForEach-Object { python -m py_compile $_.FullName }`, which passed for the same module set; `git diff --check` passed. |
 | Smoke / privacy | Metadata-only `CompletionEvidence` rerouted `ARCHITECTURE → GRILL`; direct `BLOCKED` `ImplementationReturn` produced `SUSPEND + HALT`, no next stage, source, capability, or Context grant; bare approved ticket events halt on both direct and Private Router paths, while an allowlisted metadata-only handoff advances to `IMPLEMENT`. Handoffs are rejected on undeclared transitions, when paired with a return, without a frontend Composition Root reference, or with colliding control/implementation owners. The targeted contract field sentinel found no raw source/path/URI/prompt/secret/PII declaration. |
 | Review / merge | Independent control-plane review is `APPROVED`: `doc/reviews/workflow-governance/01-enforce-continuation-and-handoff-code-review.md`. Review reran 73 tests, strict typing for 58 source files, syntax compilation, whitespace checks, and a disposable-worktree mutation proof. Reviewed implementation was integrated into `main` by `2f545c8`; no push was performed. |
+
+## PRG-20260807-002 — Guarded integration audit implementation handoff
+
+| Field | Value |
+| --- | --- |
+| State | `IMPLEMENTATION_COMMITTED_PENDING_REVIEW` |
+| Ticket / baseline | `02-guarded-integration-audit` / ticket docs `911218d`, handoff `1d4292a`, reviewed ticket-01 dependency `67b049a` |
+| Implementation owner / branch | Codex implementation Agent / `codex/implementation-guarded-integration-audit-02` |
+| Implementation commit | `afa6da8` — `feat: add guarded integration audit coordinator` |
+| Docs-only handoff commit | This docs-only handoff commit — `docs: hand off guarded integration audit` |
+| Delivered | Typed metadata-only implementation-return event validation; independent planning/ticket lane IDs; clean expected-main revision and conflict guards; exclusive injected integration lock/port; duplicate correlation/event replay and one-active-`PENDING_AUDIT` guards; dependent proposal wake-up; one Grill audit request; `APPROVED → REVIEW` only; `CHANGES_REQUESTED → correction_worktree`; no handoff, push, deploy or dependent implementation grants. |
+| TDD red evidence | Before the implementation module existed, `python -B -m unittest tests.test_guarded_integration_audit -v` failed at import with `ModuleNotFoundError: No module named 'library.workflow_router.guarded_integration'`. |
+| Validation | `python -B -m unittest discover -s tests` — 80 passed; `python -m mypy --strict library tests` — 60 source files clean; in-memory compilation — 11 `workflow_router` modules; `git diff --check` passed. |
+| Smoke / privacy / mutation | Metadata-only privacy sentinel and approved/correction smoke passed. Temporary in-memory mutations that bypassed the revision or lock guard were both detected by the guarded-integration tests. No raw Context, source, prompt, path, URI, Secret, PII or production data was persisted. |
+| Review / integration | Independent control-plane review is pending. Main and Ticket-01 worktrees were not modified; no merge, push or deployment was performed. |
