@@ -43,6 +43,20 @@ from .private_router import (
     RouterResponseEnvelope,
     RouterServiceErrorCode,
 )
+from .policy_response import (
+    DispatchResponseFormatter,
+    DocumentError,
+    DocumentOutcome,
+    FixedDispatchResponse,
+    FormatterError,
+    PolicyDocumentResult,
+    PolicyDocumentSource,
+    RenderOutcome,
+    RenderedDispatchResponse,
+    ResponseFormatter,
+    read_policy_document,
+    render_dispatch_response,
+)
 from .router import CitationLedger, ContextResolver, InMemorySourceGateway, RouterEngine
 from .telemetry import (
     AgentUsage,
@@ -78,6 +92,11 @@ __all__ = (
     "ContextUsageRecord",
     "ContextUsageValidator",
     "DeliveryStage",
+    "DispatchResponseFormatter",
+    "DocumentError",
+    "DocumentOutcome",
+    "FixedDispatchResponse",
+    "FormatterError",
     "FrontendCompositionContract",
     "HandoffArtifactReference",
     "HandoffConsumerFingerprint",
@@ -95,8 +114,13 @@ __all__ = (
     "LocalMetadataNormalizer",
     "ProcessStage",
     "PrivateRouterClient",
+    "PolicyDocumentResult",
+    "PolicyDocumentSource",
     "ProductActionLabel",
     "RedactedSummary",
+    "RenderOutcome",
+    "RenderedDispatchResponse",
+    "ResponseFormatter",
     "ReferenceStatus",
     "RouterEngine",
     "RouterEvent",
@@ -113,4 +137,6 @@ __all__ = (
     "TicketScope",
     "build_router_graph",
     "build_router_poc_profile",
+    "read_policy_document",
+    "render_dispatch_response",
 )

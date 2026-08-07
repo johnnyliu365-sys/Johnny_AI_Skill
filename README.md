@@ -4,6 +4,25 @@
 
 它不是公司專案的 runtime service、MCP server、hook、CI 依賴、Git submodule、symlink、package dependency 或原始碼 import。因此拔除後，公司的建置、測試、部署與既有程式不會受影響。
 
+## 現行 policy 與固定交付回應
+
+目前目標是 `non-commercial`、可拔除的多 AI 協作／稽核控制平面。既有 private Router SaaS、價格、entitlement 或服務化文字都是歷史 POC 記錄，不是現行產品承諾。
+
+套用 plugin 時先詢問 `可用 coding Agent 數量為 1 或 2？`；在 ticket 與文件交接完成後，控制面只輸出一次固定回應，再提出唯一的 dispatch-confirmation 問題：
+
+```text
+工單 ready
+- commit：<ticket docs commit>
+- 工單：<ticket reference>
+
+文件交接
+- commit：<handoff docs commit>
+- implementation owner：<named owner>
+- 工單 <ticket reference> 是否已交付給 implementation owner <named owner>？
+```
+
+未收到這個精確交付確認前，不授予 branch、worktree、source、Context 或 implementation capability；`WAIT_FOR_HUMAN` 只表示這個決策，其他未授權、無效或不可用狀況一律 `HALT`。
+
 ## 目前發行：0.3.2
 
 0.3.2 將前端的組合式設計與依賴注入列為 SPEC／ticket 的阻擋規則，並將控制面 Agent 固定為 Wayfinder／Grill／ticket／review；正式實作必須交給另一位具名 implementation owner。

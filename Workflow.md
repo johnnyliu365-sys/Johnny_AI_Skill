@@ -60,6 +60,27 @@ flowchart TD
 
 `RequirementChangeLog` 是已確認變更的旁路追溯，不取代 Context、SPEC、tickets、TDD 或任一核准閘門。
 
+### Plugin policy and fixed dispatch response
+
+Plugin application or takeover must first ask exactly: `可用 coding Agent 數量為 1 或 2？` The answer records only the typed collaboration topology; it does not create a host turn, select a model, or grant implementation access.
+
+After the committed ticket and handoff are available, the control plane emits this fixed metadata-only response before the one named dispatch question:
+
+```text
+工單 ready
+- commit：<ticket docs commit>
+- 工單：<ticket reference>
+
+文件交接
+- commit：<handoff docs commit>
+- implementation owner：<named owner>
+- 工單 <ticket reference> 是否已交付給 implementation owner <named owner>？
+```
+
+Only that dispatch confirmation is a human wait. `AUTO_CONTINUE` is reserved for declared safe transitions with no new authority; `WAIT_FOR_HUMAN` names the precise dispatch decision; invalid, unavailable, malformed, replayed or unauthorized input is `HALT`. A ticket cannot receive a branch, worktree, source, Context or implementation capability before the confirmation, and `TICKETS + APPROVAL_GRANTED` is a disallowed legacy transition rather than a second approval path.
+
+The active objective is a detachable, non-commercial collaboration control plane. Commercial or SaaS Router records are historical evidence only and are not active product, pricing, entitlement, hosting or deployment commitments.
+
 ## P0：文件忽略要求
 
 - 本檔案於任何專案內都應處於 `.gitignore` 項目範圍。
@@ -376,7 +397,7 @@ implementation owner 是 ticket 具名指定的另一位 Agent／worktree，負�
 
 實作完成後，implementation owner 必須以 `ImplementationReturn` 回交控制面；只有 `ACTION_COMPLETED` 經 Router 重新分類後，才可進入 Smoke Test、Review 或 Handoff。
 
-實作前的 `ImplementationHandoff` 必須帶有唯一 `handoff_ref`，並引用已核准的 SPEC／ticket／Context／TDD 與角色 ID。控制面開立 `IN_PROGRESS` proposal 時，Router 必須驗證 handoff，建立 metadata-only `PendingDispatchDescriptor`，再以該 descriptor 的 ticket 與 implementation owner 顯示唯一交付問題。只有稍後的正面 `IMPLEMENTATION_DISPATCH_CONFIRMED` receipt 同時匹配 pending descriptor 的 ticket、owner、question／correlation、reviewed `handoff_ref` 與 expected base revision，才可建立兩條彼此隔離的 lane：ticket lane 取得具名 implementation capability 並進入 `IMPLEMENT`；planning lane 自動進入下一個 Grill。receipt 缺失、重播、無 pending descriptor、proposal 未 `IN_PROGRESS`、handoff／owner／correlation 不符或任何來源未驗證時一律 `HALT`，不得授予 source、Context、capability、worktree 或 implementation。`TICKETS + ACTION_COMPLETED` 不得成為第二次人工核准等待；`TICKETS + APPROVAL_GRANTED → IMPLEMENT` 是已淘汰的 legacy transition，必須 `HALT`。
+實作前的 `ImplementationHandoff` 必須帶有唯一 `handoff_ref`，並引用已核准的 SPEC／ticket／Context／TDD 與角色 ID。控制面開立 `IN_PROGRESS` proposal 時，Router 必須驗證 handoff，建立 metadata-only `PendingDispatchDescriptor`，再以該 descriptor 的 ticket 與 implementation owner 顯示唯一交付問題。只有稍後的正面 `IMPLEMENTATION_DISPATCH_CONFIRMED` receipt 同時匹配 pending descriptor 的 ticket、owner、question／correlation、reviewed `handoff_ref` 與 expected base revision，才可建立兩條彼此隔離的 lane：ticket lane 取得具名 implementation capability 並進入 `IMPLEMENT`；planning lane 自動進入下一個 Grill。receipt 缺失、重播、無 pending descriptor、proposal 未 `IN_PROGRESS`、handoff／owner／correlation 不符或任何來源未驗證時一律 `HALT`，不得授予 source、Context、capability、worktree 或 implementation。`TICKETS + ACTION_COMPLETED` 不得成為第二次人工核准等待；帶有 `TICKETS + APPROVAL_GRANTED` 的 legacy transition 若目標是 `IMPLEMENT`，必須 `HALT`。
 
 implementation owner 回傳 `ImplementationReturn`。`COMPLETED` 產生 `ACTION_COMPLETED` 並進入既定驗證／review，`BLOCKED` fail-closed，`CHANGE_DETECTED` 只能產生 `REQUIREMENT_CHANGED` 回到 Grill。任何 owner 例外必須在 ticket 的 **Owner override record** 記錄專案負責人的明確範圍化改派；未記錄不得覆蓋分離責任。
 

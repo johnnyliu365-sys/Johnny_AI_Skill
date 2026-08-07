@@ -32,6 +32,8 @@
 
 Router anchor: `#workflow-router`; implementation role anchor: `#role-boundary`.
 
+Plugin policy anchor: `Workflow.md#workflow-flow` is the sole source for the topology question, the fixed `工單 ready`／`文件交接` response, the one named dispatch confirmation, and the `AUTO_CONTINUE`／`WAIT_FOR_HUMAN`／`HALT` boundaries. This index never adds a second approval or a generic wait.
+
 | 目前情境 | 必讀章節 | 允許的下一步 |
 | --- | --- | --- |
 | 流程事件、交付階段、context 或 skill／Agent 選擇 | [流程 Router](Workflow.md#workflow-router) | 讀取 Profile，解析最小 Context 視圖與唯一合法的下一步 |

@@ -27,6 +27,25 @@ An implementation or docs-only commit returns through the typed `ACTION_COMPLETE
 
 This skill can guide a currently active Codex or Claude task to continue through safe stages. It cannot independently create a new model turn, bypass the host's approval system, or prevent users from disabling the plugin. The local Router runner's safety ceiling remains authoritative.
 
+## Plugin policy and fixed dispatch response
+
+At plugin application or takeover, ask exactly `可用 coding Agent 數量為 1 或 2？` and record only the typed topology. Do not create a host turn, choose a model, or grant implementation access from that answer.
+
+After committed ticket and handoff artifacts exist, use this fixed metadata-only response and then ask the one named dispatch question:
+
+```text
+工單 ready
+- commit：<ticket docs commit>
+- 工單：<ticket reference>
+
+文件交接
+- commit：<handoff docs commit>
+- implementation owner：<named owner>
+- 工單 <ticket reference> 是否已交付給 implementation owner <named owner>？
+```
+
+Before that confirmation, no branch, worktree, source, Context or implementation capability may be granted. `AUTO_CONTINUE` covers only declared safe transitions; `WAIT_FOR_HUMAN` names this exact delivery decision; malformed, unavailable, replayed or unauthorized input is `HALT`. Commercial or SaaS Router material is historical POC context only, not active product direction.
+
 ## Role boundary and frontend handoff
 
 This skill's control-plane Agent owns Wayfinder, Grill, Context, SPEC, ticket drafting, implementation handoff, review, and handoff. It does not implement approved ticket source, tests, migrations, deployment, or implementation commits unless the project owner explicitly reassigns that ticket.
