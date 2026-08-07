@@ -228,3 +228,52 @@ This is a normal `CHANGES_REQUESTED → IMPLEMENT` return, not `REQUIREMENT_CHAN
 ### Return and continuation
 
 `43657a0` must not be merged into `main`. Ticket 01 remains `IN_PROGRESS` and returns automatically to its named implementation owner for CR-09 and CR-10. This is `CHANGES_REQUESTED → IMPLEMENT`, not `REQUIREMENT_CHANGED`: approved scope and intent are unchanged. The planning lane may continue Grill work that is independent of Ticket 01, but Ticket 02 remains `PLANNED` and no integration, push, deployment, handoff or dependent implementation is authorized.
+
+---
+
+## Correction review — `0639db6` / `e97cdcc`
+
+| Field | Value |
+| --- | --- |
+| Review result | `CHANGES_REQUESTED` |
+| Reviewed implementation | `0639db6` (`fix: keep pending dispatch in private router`) |
+| Docs-only handoff | `e97cdcc` |
+| Required baseline | `3cf17c1` on control-plane `main` |
+| Branch / owner | `codex/implementation-private-router-saas-01` / Codex implementation Agent |
+| Review date | `2026-08-07 (Asia/Taipei)` |
+
+### Verified corrections
+
+- The submitted branch still has merge-base `3cf17c1`; review found neither a merge commit nor reset-based history rewrite in the submitted range. The implementation worktree was clean when reviewed.
+- CR-09 is closed at the Private Router boundary. `pending_dispatch` is removed from `RouterRequestEnvelope`; the service stores the descriptor internally, loads it by account/project/dispatch correlation for confirmation, and consumes it after a successful confirmation. A fresh client with fabricated raw pending input halts.
+- CR-10 is closed. `ImplementationHandoff` and `PendingDispatchDescriptor` carry a distinct strongly typed `expected_main_revision`; receipt matching compares that value instead of `proposal_revision`. Tests prove a valid proposal/main revision difference succeeds and a changed receipt baseline halts.
+- Independent verification passed: `python -B -m unittest discover -s tests` (`89` tests), `python -m mypy --strict library tests` (`60` files), compilation of the `11` workflow-router modules, and `git diff --check 3cf17c1 0639db6`.
+
+### Remaining finding
+
+#### CR-11 — Private Router permits two outstanding dispatch questions for one ticket
+
+**Impact:** Pending metadata is keyed only by `(account, project, correlation)`. While a first dispatch question for a ticket remains unanswered, the client may submit the same `TICKET_DISPATCH_REQUIRED` request with a different event correlation. The service cannot find the existing pending record, so it creates and stores a second question. Each record can subsequently be confirmed, producing two `IMPLEMENT` plans for the same ticket. This violates the ticket/SPEC requirement that an opened ticket has exactly one dispatch question and the Router rule that a ticket may have only one pending dispatch.
+
+**Independent reproduction:** Against `0639db6`, the same entitled account/project and same ticket sent dispatch-required events with two distinct valid correlations. Both returned `WAIT_FOR_HUMAN`. Each matching positive confirmation subsequently returned `AUTO_RUN` with ticket-lane stage `IMPLEMENT`.
+
+**Evidence:** `library/workflow_router/private_router.py:476-483` indexes pending state only by account, project and correlation. `_pending_dispatch_for()` loads only the key derived from the current request/receipt correlation, so a new correlation hides an existing pending record. The direct Router test covers a caller-provided `RouterState.pending_dispatch`, but `tests/test_autonomous_collaboration.py:513-582` has no Private Router regression for a second dispatch-required event before confirmation.
+
+**Required correction:** Maintain a Router-owned outstanding-pending index at least by account, project and ticket reference in addition to the opaque correlation lookup. Before accepting dispatch-required, reject any live pending record for that ticket with `HALT` and no Context/capability/dispatch/worktree grant. On a successful confirmation, atomically remove both indexes; failed confirmation must retain the pending question only when a retry is explicitly permitted by the Profile. Add direct and Private Router regressions for duplicate dispatch-required with a new correlation, successful consume followed by a valid later reopen, and no duplicate ticket lane plan.
+
+### Mandatory Code Review checklist
+
+| Area | Result | Basis |
+| --- | --- | --- |
+| Strong types / clarity | `APPROVED` | Expected main baseline is now separate from proposal revision. |
+| Coding and architecture rules | `CHANGES_REQUESTED` | Router-owned state lacks the ticket-level outstanding-pending invariant. |
+| Logic and authorization | `CHANGES_REQUESTED` | CR-11 can issue two implementation plans for one active ticket. |
+| Boundary / exception handling | `CHANGES_REQUESTED` | A changed correlation bypasses the duplicate-pending guard at the Private Router boundary. |
+| Security / privacy | `APPROVED` | Values remain metadata-only and raw caller pending state is rejected. |
+| Tests / smoke | `CHANGES_REQUESTED` | General verification passes; the changed-correlation duplicate-dispatch regression is absent. |
+| Dependencies | `APPROVED` | No dependency change was introduced. |
+| SPEC / ticket / Context compliance | `CHANGES_REQUESTED` | CR-11 conflicts with the one-question/one-pending ticket invariant. |
+
+### Return and continuation
+
+`0639db6` must not be merged into `main`. Ticket 01 remains `IN_PROGRESS` and returns automatically to its named implementation owner for CR-11. This is `CHANGES_REQUESTED → IMPLEMENT`, not `REQUIREMENT_CHANGED`: the approved ticket already owns this dispatch-lifecycle invariant. Ticket 02 remains `PLANNED`; no integration, push, deployment, handoff or dependent implementation is authorized.
