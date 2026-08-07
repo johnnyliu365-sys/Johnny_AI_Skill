@@ -239,3 +239,16 @@ The pending Router event is `TICKET_DISPATCH_REQUIRED`. Until confirmed, Ticket 
 | Planning lane | `AUTO_CONTINUE → GRILL` — no remaining `PLANNED` ticket is eligible; subscribe only to typed return events from active tickets |
 
 The scheduling queue is an automatic operational wait, not `WAIT_FOR_HUMAN`, a lost dispatch receipt, or an extra implementation grant. It neither changes Ticket 02's active scope nor permits Ticket 03 to read Ticket 02 Context. The next planning event is an eligible typed implementation return; on arrival the Router must re-evaluate only the proposals whose declared dependencies are satisfied.
+
+## Ticket 02 independent review return
+
+| Field | Value |
+| --- | --- |
+| Reviewed implementation / handoff | `afa6da8` / `fd17efa` |
+| Review baseline | `ad70448` / submitted branch clean |
+| Result | `CHANGES_REQUESTED` — review report `02-guarded-integration-audit-code-review.md` |
+| Independent checks | `80` tests, strict `mypy` for `60` files, in-memory compile for `11` Router modules and diff check passed |
+| Blocking findings | CR-12 unregistered completed return can integrate; CR-13 a different ticket can integrate while an audit is pending; CR-14 Ticket-01/Profile contracts are not composed; CR-15 required TDD/CR evidence is incomplete |
+| Continuation | `CHANGES_REQUESTED → IMPLEMENT` in the existing separate ticket-02 worktree; no merge, push, deployment, handoff completion or Ticket-03 start |
+
+The successful generic checks are evidence of local syntax and existing regression compatibility only; they do not override the reproduced authorization and pending-audit isolation failures. Ticket 02 retains its approved scope and must correct against a reviewed source baseline containing Ticket-01 public contracts. This is not a requirement change.
