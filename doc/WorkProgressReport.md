@@ -238,3 +238,18 @@
 | Validation | `python -B -m unittest discover -s tests` — 80 passed; `python -m mypy --strict library tests` — 60 source files clean; in-memory compilation — 11 `workflow_router` modules; `git diff --check` passed. |
 | Smoke / privacy / mutation | Metadata-only privacy sentinel and approved/correction smoke passed. Temporary in-memory mutations that bypassed the revision or lock guard were both detected by the guarded-integration tests. No raw Context, source, prompt, path, URI, Secret, PII or production data was persisted. |
 | Review / integration | Independent control-plane review is pending. Main and Ticket-01 worktrees were not modified; no merge, push or deployment was performed. |
+
+## PRG-20260808-002 — Ticket 02 correction handoff (CR-12 through CR-15)
+
+| Field | Value |
+| --- | --- |
+| State | `IMPLEMENTATION_COMMITTED_PENDING_REVIEW` |
+| Ticket / review return | `02-guarded-integration-audit` / `c78af90` (`CHANGES_REQUESTED → IMPLEMENT`) |
+| Reviewed source baseline | Ticket 01 public contracts replayed as complete reviewed commits through `67b049a`; current main was rebased first; no source-only cherry-pick was used. |
+| Implementation owner / branch | Codex implementation Agent / `codex/implementation-guarded-integration-audit-02` |
+| Implementation commit | `b53cc55` (`fix: bind guarded integration to reviewed ticket lanes`) |
+| CR-12 / CR-13 correction | Guarded integration now requires an exact immutable `CollaborationDispatchPlan` receipt/lane match (ticket, positive confirmed state, handoff, owner, reviewer, worktree, branch, correlation, expected main revision, and planning/ticket Context/event IDs); missing, forged, replayed, or mismatched returns halt before integration, audit, or wake. Any active `PENDING_AUDIT` blocks every other ticket, and the trusted main snapshot advances only at the completed integration boundary. |
+| CR-14 correction | Reviewed Router contracts now declare `IMPLEMENTATION_RETURNED`, `INTEGRATION_COMPLETED`, and `AUDIT_COMPLETED`; the POC Profile declares return → smoke, integration → audit wait, and approved audit → review transitions. `GuardedIntegrationRouterAdapter` emits only those typed Router events; changes-requested emits no delivery event. |
+| TDD red evidence | New correction tests initially failed because `IMPLEMENTATION_RETURNED` was absent from the reviewed contracts; after contract/profile/registry implementation, direct and injected unregistered returns, lane mismatches, seven locator forms, cross-ticket pending audit, revision advancement, and Router composition pass fail-closed. |
+| Validation | `python -B -m unittest discover -s tests` — 102 passed; `python -m pytest -q` — 102 passed / 105 subtests; `python -m mypy --strict --no-incremental library tests` — 63 source files clean; in-memory compilation of all 11 `workflow_router` modules; `git diff --check` clean; metadata-only privacy/source sentinel clean aside from intentional marker strings in validation code. |
+| Docs-only handoff | This entry is the docs-only handoff commit following `b53cc55`; no raw Context, source text, prompt, path, URI, Secret, PII, production data, merge, push, or deployment was recorded. Independent review is required before any integration. |
