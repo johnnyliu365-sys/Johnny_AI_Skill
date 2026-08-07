@@ -343,6 +343,9 @@ class FakePrivateRouterService:
         self._context_budget = context_budget
         self._captured_requests: list[RouterRequestEnvelope] = []
         self._pending_dispatches: dict[tuple[str, str, str], PendingDispatchDescriptor] = {}
+        self._pending_dispatches_by_ticket: dict[
+            tuple[str, str, str], PendingDispatchDescriptor
+        ] = {}
         self.request_count = 0
 
     def decide(self, request: RouterRequestEnvelope) -> RouterResponseEnvelope:
@@ -414,10 +417,10 @@ class FakePrivateRouterService:
             )
         if decision.continuation is ContinuationDirective.WAIT_FOR_HUMAN:
             if decision.pending_dispatch is not None:
-                self._pending_dispatches[self._pending_key(
+                self._store_pending_dispatch(
                     request=request,
-                    correlation_id=decision.pending_dispatch.event_correlation_id,
-                )] = decision.pending_dispatch
+                    pending_dispatch=decision.pending_dispatch,
+                )
             return RouterResponseEnvelope(
                 request_id=request.request_id,
                 decision_id=decision_id,
@@ -432,6 +435,11 @@ class FakePrivateRouterService:
                 ticket_proposal=decision.ticket_proposal,
                 pending_dispatch=decision.pending_dispatch,
             )
+        if (
+            request.router_event_kind is RouterEventKind.IMPLEMENTATION_DISPATCH_CONFIRMED
+            and not self._dispatch_confirmation_retry_permitted(request=request)
+        ):
+            self._discard_pending_dispatch(request=request)
         return self._halted_response(
             request_id=request.request_id,
             decision_id=decision_id,
@@ -447,6 +455,16 @@ class FakePrivateRouterService:
         """Load pending dispatch only from the Router-owned metadata store."""
 
         if request.router_event_kind is RouterEventKind.TICKET_DISPATCH_REQUIRED:
+            ticket_reference = self._ticket_reference_for_request(request=request)
+            if ticket_reference is not None:
+                pending_by_ticket = self._pending_dispatches_by_ticket.get(
+                    self._pending_ticket_key(
+                        request=request,
+                        ticket_reference=ticket_reference,
+                    )
+                )
+                if pending_by_ticket is not None:
+                    return pending_by_ticket
             correlation_id = request.event_correlation_id
         elif (
             request.router_event_kind is RouterEventKind.IMPLEMENTATION_DISPATCH_CONFIRMED
@@ -459,18 +477,115 @@ class FakePrivateRouterService:
             self._pending_key(request=request, correlation_id=correlation_id)
         )
 
+    def _store_pending_dispatch(
+        self,
+        *,
+        request: RouterRequestEnvelope,
+        pending_dispatch: PendingDispatchDescriptor,
+    ) -> None:
+        """Index one live pending question by both its correlation and ticket identity."""
+
+        self._pending_dispatches[
+            self._pending_key(
+                request=request,
+                correlation_id=pending_dispatch.event_correlation_id,
+            )
+        ] = pending_dispatch
+        self._pending_dispatches_by_ticket[
+            self._pending_ticket_key(
+                request=request,
+                ticket_reference=pending_dispatch.ticket_reference,
+            )
+        ] = pending_dispatch
+
     def _consume_pending_dispatch(self, *, request: RouterRequestEnvelope) -> None:
         """Consume the accepted confirmation exactly once."""
 
         if request.dispatch_receipt is None:
             return
-        self._pending_dispatches.pop(
+        pending_dispatch = self._pending_dispatches.pop(
             self._pending_key(
                 request=request,
                 correlation_id=request.dispatch_receipt.correlation_id,
             ),
             None,
         )
+        if pending_dispatch is not None:
+            ticket_key = self._pending_ticket_key(
+                request=request,
+                ticket_reference=pending_dispatch.ticket_reference,
+            )
+            if self._pending_dispatches_by_ticket.get(ticket_key) == pending_dispatch:
+                self._pending_dispatches_by_ticket.pop(ticket_key, None)
+
+    def _discard_pending_dispatch(self, *, request: RouterRequestEnvelope) -> None:
+        """Fail closed by clearing a failed confirmation when the Profile permits no retry."""
+
+        pending_dispatch: PendingDispatchDescriptor | None = None
+        if request.dispatch_receipt is not None:
+            pending_dispatch = self._pending_dispatches.get(
+                self._pending_key(
+                    request=request,
+                    correlation_id=request.dispatch_receipt.correlation_id,
+                )
+            )
+            if pending_dispatch is None:
+                pending_dispatch = self._pending_dispatches_by_ticket.get(
+                    self._pending_ticket_key(
+                        request=request,
+                        ticket_reference=request.dispatch_receipt.ticket_reference,
+                    )
+                )
+        if pending_dispatch is None:
+            ticket_reference = self._ticket_reference_for_request(request=request)
+            if ticket_reference is not None:
+                pending_dispatch = self._pending_dispatches_by_ticket.get(
+                    self._pending_ticket_key(
+                        request=request,
+                        ticket_reference=ticket_reference,
+                    )
+                )
+        if pending_dispatch is None:
+            return
+        self._pending_dispatches.pop(
+            self._pending_key(
+                request=request,
+                correlation_id=pending_dispatch.event_correlation_id,
+            ),
+            None,
+        )
+        ticket_key = self._pending_ticket_key(
+            request=request,
+            ticket_reference=pending_dispatch.ticket_reference,
+        )
+        if self._pending_dispatches_by_ticket.get(ticket_key) == pending_dispatch:
+            self._pending_dispatches_by_ticket.pop(ticket_key, None)
+
+    def _dispatch_confirmation_retry_permitted(
+        self,
+        *,
+        request: RouterRequestEnvelope,
+    ) -> bool:
+        """Derive retry permission from the Profile instead of assuming failed receipt retries."""
+
+        rule = self._profile.rule_for(
+            current_stage=request.workflow_stage,
+            event_kind=request.router_event_kind,
+        )
+        return rule is not None and rule.outcome is RouterOutcome.RETRY
+
+    @staticmethod
+    def _ticket_reference_for_request(
+        *,
+        request: RouterRequestEnvelope,
+    ) -> str | None:
+        """Resolve the ticket identity without accepting pending state from the caller."""
+
+        if request.ticket_reference is not None:
+            return request.ticket_reference
+        if request.ticket_proposal is not None:
+            return request.ticket_proposal.ticket_reference
+        return None
 
     @staticmethod
     def _pending_key(
@@ -481,6 +596,16 @@ class FakePrivateRouterService:
         """Scope one pending dispatch to its private account, project and correlation."""
 
         return (request.account_subject_id, request.opaque_project_id, correlation_id)
+
+    @staticmethod
+    def _pending_ticket_key(
+        *,
+        request: RouterRequestEnvelope,
+        ticket_reference: str,
+    ) -> tuple[str, str, str]:
+        """Scope the live-question invariant to one private account, project and ticket."""
+
+        return (request.account_subject_id, request.opaque_project_id, ticket_reference)
 
     def captured_requests_json(self) -> str:
         """Expose POC test evidence only; it serializes no local source or ContextPacket."""
