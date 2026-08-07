@@ -165,11 +165,6 @@ class RouterEngine:
                     code=BlockerCode.INVALID_DISPATCH_RECEIPT,
                     detail="confirmed dispatch requires positive confirmation",
                 )
-            if receipt.correlation_id != event.event_id:
-                return self._suspend(
-                    code=BlockerCode.INVALID_DISPATCH_RECEIPT,
-                    detail="dispatch receipt correlation does not match the event",
-                )
         required_sources, missing, ambiguous = self._resolve_required_sources(
             artifacts=state.artifact_refs,
             required_kinds=rule.required_source_kinds,
@@ -247,6 +242,7 @@ class RouterEngine:
             pending_dispatch = PendingDispatchDescriptor(
                 ticket_reference=proposal.ticket_reference,
                 proposal_revision=proposal.proposal_revision,
+                expected_main_revision=handoff.expected_main_revision,
                 dispatch_question_id=dispatch_question_id,
                 implementation_owner_id=proposal.implementation_owner_id,
                 reviewed_handoff_reference=handoff.handoff_reference,
@@ -287,11 +283,10 @@ class RouterEngine:
             if (
                 event.dispatch_receipt.ticket_reference != required_sources[0].identifier
                 or pending.ticket_reference != required_sources[0].identifier
-                or event.event_id != pending.event_correlation_id
                 or event.dispatch_receipt.correlation_id != pending.event_correlation_id
                 or event.dispatch_receipt.dispatch_question_id != pending.dispatch_question_id
                 or event.dispatch_receipt.handoff_reference != pending.reviewed_handoff_reference
-                or event.dispatch_receipt.expected_main_revision != pending.proposal_revision
+                or event.dispatch_receipt.expected_main_revision != pending.expected_main_revision
                 or pending.implementation_owner_id
                 not in (
                     state.collaboration_plan.implementation_owner.capability_id,

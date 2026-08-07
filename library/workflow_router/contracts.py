@@ -309,6 +309,7 @@ class PendingDispatchDescriptor(RouterModel):
 
     ticket_reference: OpaqueMetadataId
     proposal_revision: RevisionDigest
+    expected_main_revision: RevisionDigest
     dispatch_question_id: OpaqueMetadataId
     implementation_owner_id: OpaqueMetadataId
     reviewed_handoff_reference: OpaqueMetadataId
@@ -384,6 +385,7 @@ class ImplementationHandoff(RouterModel):
     handoff_reference: OpaqueMetadataId
     ticket_reference: OpaqueMetadataId
     approved_spec_reference: OpaqueMetadataId
+    expected_main_revision: RevisionDigest
     context_references: tuple[HandoffArtifactReference, ...] = Field(min_length=1)
     acceptance_references: tuple[OpaqueMetadataId, ...] = Field(min_length=1)
     tdd_references: tuple[OpaqueMetadataId, ...] = Field(min_length=1)
