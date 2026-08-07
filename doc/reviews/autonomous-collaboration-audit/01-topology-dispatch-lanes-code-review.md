@@ -171,3 +171,60 @@ This is a normal `CHANGES_REQUESTED → IMPLEMENT` return, not `REQUIREMENT_CHAN
 ### Return and continuation
 
 `2e4f13e` must not be merged into `main`. Ticket 01 remains `IN_PROGRESS` and returns to its named implementation owner for CR-05 through CR-07; CR-08 policy alignment is complete in the control-plane review commit. This remains `CHANGES_REQUESTED → IMPLEMENT`, not `REQUIREMENT_CHANGED`: the approved requirement is unchanged. Ticket 02 remains `PLANNED`; no integration, push, handoff, deployment or dependent implementation is authorized.
+
+---
+
+## Correction review — `43657a0` / `5871ec9`
+
+| Field | Value |
+| --- | --- |
+| Review result | `CHANGES_REQUESTED` |
+| Reviewed implementation | `43657a0` (`fix: bind dispatch receipt to pending handoff`) |
+| Docs-only handoff | `5871ec9` |
+| Required baseline | `3cf17c1` on control-plane `main` |
+| Branch / owner | `codex/implementation-private-router-saas-01` / Codex implementation Agent |
+| Review date | `2026-08-07 (Asia/Taipei)` |
+
+### Verified corrections
+
+- The submitted branch has merge-base `3cf17c1`. Review found no merge commit or reset-based history rewrite in the submitted range.
+- The legacy ticket approval path is fail-closed, and the obsolete `TICKETS + ACTION_COMPLETED` approval wait is no longer a declared Profile transition.
+- The legal dispatch-required path carries a reviewed `ImplementationHandoff`; its returned pending descriptor and a receipt bind ticket, owner, question, correlation and handoff reference.
+- The implementation handoff reports `87` passing unit tests, strict `mypy` for `60` files, compile and metadata smoke checks. Independent review reran `python -B -m unittest discover -s tests` (`87` passing), `python -m mypy --strict library tests` (`60` files clean), and `git diff --check 3cf17c1 43657a0` (passed).
+
+### Remaining findings
+
+#### CR-09 — Private Router accepts caller-forged pending dispatch state
+
+**Impact:** The pending descriptor is supplied in the raw `RouterRequestEnvelope` for `IMPLEMENTATION_DISPATCH_CONFIRMED`, then copied directly into `RouterState`. It is not loaded from a Router-controlled continuation/checkpoint. A fresh Private Router client can therefore construct a matching descriptor and receipt and obtain an automatic ticket `IMPLEMENT` lane without first creating the required dispatch question. This violates the CR-05 correction requirement and the Router's fail-closed ownership boundary.
+
+**Independent reproduction:** Against `43657a0`, a fresh `PrivateRouterClient` was sent only `IMPLEMENTATION_DISPATCH_CONFIRMED` with a valid entitlement, a constructed `PendingDispatchDescriptor` and matching `TicketDispatchReceipt`. It returned `AUTO_RUN`, no error, a dispatch plan, and ticket lane stage `IMPLEMENT`. No prior `TICKET_DISPATCH_REQUIRED` request was made to that client.
+
+**Evidence:** `library/workflow_router/private_router.py:147` exposes `pending_dispatch` in the client request envelope; `:382` assigns that client value directly to `RouterState`. The confirmation guard in `router.py:276-305` verifies only the supplied values. `tests/test_autonomous_collaboration.py:513-580` similarly creates a second pending descriptor for confirmation instead of consuming the descriptor returned by its preceding wait.
+
+**Required correction:** Make the private service/orchestrator own pending-dispatch lifecycle keyed by the exact opaque dispatch correlation. It must create and persist the descriptor from a successful dispatch-required decision, load it internally for a later confirmation, clear or invalidate it after use, and reject client-supplied pending state. The direct pure Router may accept an explicitly trusted state fixture, but the Private Router boundary must not. Add regressions proving a fresh client plus any crafted descriptor/receipt halts with no plan or ticket capability, while the real wait-response-to-confirmation sequence succeeds exactly once.
+
+#### CR-10 — Expected main baseline is conflated with proposal revision
+
+**Impact:** `TicketDispatchReceipt.expected_main_revision` is compared with `PendingDispatchDescriptor.proposal_revision`. The first identifies the exact approved `main` baseline for guarded integration; the second identifies the ticket proposal document revision. They are distinct domain values. The pending descriptor does not retain an expected-main baseline, so the Router cannot prove that a receipt names the reviewed integration base. Tests set both values to the same fixture string and conceal the mismatch.
+
+**Evidence:** `PendingDispatchDescriptor` in `library/workflow_router/contracts.py:307-315` has `proposal_revision` but no `expected_main_revision`; `router.py:294` compares `receipt.expected_main_revision` to `pending.proposal_revision`. `tests/test_autonomous_collaboration.py:627-684` gives both values `rev-0123456789abcdef`.
+
+**Required correction:** Add a distinct strongly typed `expected_main_revision` to the pending descriptor (or an equivalently named reviewed-handoff base field) and populate it only from the trusted approved handoff/dispatch state. Compare the receipt against that field. Add tests where proposal and main revisions differ legitimately, and where an altered receipt base halts with no grant.
+
+### Mandatory Code Review checklist
+
+| Area | Result | Basis |
+| --- | --- | --- |
+| Strong types / clarity | `CHANGES_REQUESTED` | CR-10 aliases two different domain revisions under a comparison that happens to pass in fixtures. |
+| Coding and architecture rules | `CHANGES_REQUESTED` | The private boundary lets the caller supply Router-owned lifecycle state. |
+| Logic and authorization | `CHANGES_REQUESTED` | CR-09 permits a confirmation-only execution grant. |
+| Boundary / exception handling | `CHANGES_REQUESTED` | Crafted and replayed pending-state input is accepted instead of fail-closed. |
+| Security / privacy | `CHANGES_REQUESTED` | The data remains metadata-only, but authority is not provenance-bound. |
+| Tests / smoke | `CHANGES_REQUESTED` | General checks pass; the required fresh-client forged-state and revision-separation regressions are missing. |
+| Dependencies | `APPROVED` | No dependency change was introduced. |
+| SPEC / ticket / Context compliance | `CHANGES_REQUESTED` | CR-09 and CR-10 conflict with AC-3 through AC-5 and the Router-controlled pending-state requirement. |
+
+### Return and continuation
+
+`43657a0` must not be merged into `main`. Ticket 01 remains `IN_PROGRESS` and returns automatically to its named implementation owner for CR-09 and CR-10. This is `CHANGES_REQUESTED → IMPLEMENT`, not `REQUIREMENT_CHANGED`: approved scope and intent are unchanged. The planning lane may continue Grill work that is independent of Ticket 01, but Ticket 02 remains `PLANNED` and no integration, push, deployment, handoff or dependent implementation is authorized.
