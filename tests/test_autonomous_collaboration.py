@@ -24,6 +24,7 @@ from library.workflow_router import (
     ImplementationHandoff,
     LaneKind,
     PlanningLaneState,
+    PendingDispatchDescriptor,
     ProcessStage,
     RouterEngine,
     RouterEvent,
@@ -142,6 +143,7 @@ class AutonomousCollaborationTests(unittest.TestCase):
                 event_id="dispatch-required-0001",
                 kind=RouterEventKind.TICKET_DISPATCH_REQUIRED,
                 dispatch_confirmation=confirmation,
+                implementation_handoff=self._handoff(),
                 ticket_proposal=self._proposal(),
             )
             decision = self.engine.decide(state=state, event=event, profile=self.profile)
@@ -155,7 +157,116 @@ class AutonomousCollaborationTests(unittest.TestCase):
             self.assertEqual((), decision.eligible_capabilities)
             self.assertEqual((), decision.ticket_lane_capabilities)
             self.assertEqual(self._proposal(), decision.ticket_proposal)
+            self.assertEqual(
+                self._pending().model_copy(update={"event_correlation_id": "dispatch-required-0001"}),
+                decision.pending_dispatch,
+            )
             self.assertIsNone(decision.dispatch_plan)
+
+    def test_positive_receipt_requires_pending_proposal_question_and_reviewed_handoff(self) -> None:
+        receipt = self._receipt()
+        bypass = self.engine.decide(
+            state=self._ticket_state(),
+            event=RouterEvent(
+                event_id=receipt.correlation_id,
+                kind=RouterEventKind.IMPLEMENTATION_DISPATCH_CONFIRMED,
+                dispatch_confirmation=TicketDispatchConfirmation.POSITIVE,
+                dispatch_receipt=receipt,
+            ),
+            profile=self.profile,
+        )
+        self.assertEqual(RouterOutcome.SUSPEND, bypass.outcome)
+        self.assertEqual(ContinuationDirective.HALT, bypass.continuation)
+        self.assertEqual("pending_dispatch_required", bypass.blockers[0].code.value)
+
+        pending_state = self._ticket_state().model_copy(update={"pending_dispatch": self._pending()})
+        accepted = self.engine.decide(
+            state=pending_state,
+            event=RouterEvent(
+                event_id=receipt.correlation_id,
+                kind=RouterEventKind.IMPLEMENTATION_DISPATCH_CONFIRMED,
+                dispatch_confirmation=TicketDispatchConfirmation.POSITIVE,
+                dispatch_receipt=receipt,
+            ),
+            profile=self.profile,
+        )
+        self.assertEqual(RouterOutcome.ADVANCE, accepted.outcome)
+        self.assertEqual((self.implementation,), accepted.ticket_lane_capabilities)
+
+        for mismatch in (
+            {"handoff_reference": "handoff-other-01"},
+            {"dispatch_question_id": "dispatch-question-other-01"},
+            {"correlation_id": "dispatch-correlation-other-01"},
+            {"ticket_reference": "ticket-other-01"},
+        ):
+            with self.subTest(mismatch=mismatch):
+                mismatched = self.engine.decide(
+                    state=pending_state,
+                    event=RouterEvent(
+                        event_id=receipt.correlation_id,
+                        kind=RouterEventKind.IMPLEMENTATION_DISPATCH_CONFIRMED,
+                        dispatch_confirmation=TicketDispatchConfirmation.POSITIVE,
+                        dispatch_receipt=receipt.model_copy(update=mismatch),
+                    ),
+                    profile=self.profile,
+                )
+                self.assertEqual(RouterOutcome.SUSPEND, mismatched.outcome)
+                self.assertEqual(ContinuationDirective.HALT, mismatched.continuation)
+
+        duplicate = self.engine.decide(
+            state=pending_state.model_copy(update={"pending_dispatch": None}),
+            event=RouterEvent(
+                event_id=receipt.correlation_id,
+                kind=RouterEventKind.IMPLEMENTATION_DISPATCH_CONFIRMED,
+                dispatch_confirmation=TicketDispatchConfirmation.POSITIVE,
+                dispatch_receipt=receipt,
+            ),
+            profile=self.profile,
+        )
+        self.assertEqual(RouterOutcome.SUSPEND, duplicate.outcome)
+        self.assertEqual(ContinuationDirective.HALT, duplicate.continuation)
+
+    def test_dispatch_question_requires_reviewed_handoff_and_cannot_repeat(self) -> None:
+        missing_handoff = self.engine.decide(
+            state=self._ticket_state(),
+            event=RouterEvent(
+                event_id="dispatch-handoff-missing-0001",
+                kind=RouterEventKind.TICKET_DISPATCH_REQUIRED,
+                ticket_proposal=self._proposal(),
+            ),
+            profile=self.profile,
+        )
+        self.assertEqual(RouterOutcome.SUSPEND, missing_handoff.outcome)
+        self.assertEqual(ContinuationDirective.HALT, missing_handoff.continuation)
+        self.assertEqual("implementation_handoff_required", missing_handoff.blockers[0].code.value)
+
+        pending_state = self._ticket_state().model_copy(update={"pending_dispatch": self._pending()})
+        repeated = self.engine.decide(
+            state=pending_state,
+            event=RouterEvent(
+                event_id="dispatch-question-repeat-0001",
+                kind=RouterEventKind.TICKET_DISPATCH_REQUIRED,
+                implementation_handoff=self._handoff(),
+                ticket_proposal=self._proposal(),
+            ),
+            profile=self.profile,
+        )
+        self.assertEqual(RouterOutcome.SUSPEND, repeated.outcome)
+        self.assertEqual(ContinuationDirective.HALT, repeated.continuation)
+        self.assertEqual("invalid_pending_dispatch", repeated.blockers[0].code.value)
+
+    def test_ticket_documentation_completion_does_not_open_a_second_approval_wait(self) -> None:
+        decision = self.engine.decide(
+            state=self._ticket_state(),
+            event=RouterEvent(
+                event_id="ticket-docs-completed-0001",
+                kind=RouterEventKind.ACTION_COMPLETED,
+            ),
+            profile=self.profile,
+        )
+        self.assertEqual(RouterOutcome.SUSPEND, decision.outcome)
+        self.assertEqual(ContinuationDirective.HALT, decision.continuation)
+        self.assertEqual("no_declared_transition", decision.blockers[0].code.value)
 
     def test_legacy_ticket_approval_with_handoff_is_blocked_until_dispatch(self) -> None:
         decision = self.engine.decide(
@@ -215,7 +326,7 @@ class AutonomousCollaborationTests(unittest.TestCase):
     def test_ticket_lane_retains_named_implementation_capability_and_reviewer(self) -> None:
         receipt = self._receipt()
         decision = self.engine.decide(
-            state=self._ticket_state(),
+            state=self._ticket_state().model_copy(update={"pending_dispatch": self._pending()}),
             event=RouterEvent(
                 event_id=receipt.correlation_id,
                 kind=RouterEventKind.IMPLEMENTATION_DISPATCH_CONFIRMED,
@@ -248,7 +359,7 @@ class AutonomousCollaborationTests(unittest.TestCase):
     def test_positive_receipt_creates_one_ticket_plan_and_planning_grill_route(self) -> None:
         receipt = self._receipt()
         decision = self.engine.decide(
-            state=self._ticket_state(),
+            state=self._ticket_state().model_copy(update={"pending_dispatch": self._pending()}),
             event=RouterEvent(
                 event_id=receipt.correlation_id,
                 kind=RouterEventKind.IMPLEMENTATION_DISPATCH_CONFIRMED,
@@ -297,6 +408,7 @@ class AutonomousCollaborationTests(unittest.TestCase):
                 handoff_reference=receipt.handoff_reference,
                 expected_main_revision=receipt.expected_main_revision,
                 correlation_id="https://raw-context.invalid",
+                dispatch_question_id=receipt.dispatch_question_id,
                 worktree_fingerprint=receipt.worktree_fingerprint,
                 branch_fingerprint=receipt.branch_fingerprint,
             )
@@ -333,7 +445,7 @@ class AutonomousCollaborationTests(unittest.TestCase):
         self.assertIsNone(decision.dispatch_plan)
         self.assertEqual((), decision.eligible_capabilities)
         owner_mismatch = self.engine.decide(
-            state=self._ticket_state(),
+            state=self._ticket_state().model_copy(update={"pending_dispatch": self._pending()}),
             event=RouterEvent(
                 event_id=receipt.correlation_id,
                 kind=RouterEventKind.IMPLEMENTATION_DISPATCH_CONFIRMED,
@@ -346,7 +458,7 @@ class AutonomousCollaborationTests(unittest.TestCase):
         )
         self.assertEqual(RouterOutcome.SUSPEND, owner_mismatch.outcome)
         self.assertEqual(ContinuationDirective.HALT, owner_mismatch.continuation)
-        self.assertEqual("invalid_dispatch_receipt", owner_mismatch.blockers[0].code.value)
+        self.assertEqual("invalid_pending_dispatch", owner_mismatch.blockers[0].code.value)
 
     def test_null_empty_and_container_dispatch_inputs_fail_closed(self) -> None:
         receipt = self._receipt()
@@ -420,6 +532,16 @@ class AutonomousCollaborationTests(unittest.TestCase):
             event=RouterEventKind.TICKET_DISPATCH_REQUIRED,
             event_id="evt_00000000000000000000000000000061",
         )
+        missing_handoff = client.route(
+            raw_request=self._private_request(
+                account=account,
+                project=project,
+                event=RouterEventKind.TICKET_DISPATCH_REQUIRED,
+                event_id="evt_00000000000000000000000000000060",
+                include_dispatch_handoff=False,
+            ).model_dump()
+        )
+        self.assertEqual(ContinuationMode.HALT, missing_handoff.mode)
         waiting = client.route(raw_request=wait_request.model_dump())
         self.assertEqual(ContinuationMode.WAIT_FOR_HUMAN, waiting.mode)
         self.assertEqual(ProductActionLabel.REQUEST_APPROVAL, waiting.action_label)
@@ -440,8 +562,12 @@ class AutonomousCollaborationTests(unittest.TestCase):
                 handoff_reference=receipt.handoff_reference,
                 expected_main_revision=receipt.expected_main_revision,
                 correlation_id="evt_00000000000000000000000000000062",
+                dispatch_question_id=receipt.dispatch_question_id,
                 worktree_fingerprint=receipt.worktree_fingerprint,
                 branch_fingerprint=receipt.branch_fingerprint,
+            ),
+            pending_dispatch=self._pending().model_copy(
+                update={"event_correlation_id": "evt_00000000000000000000000000000062"}
             ),
         )
         plan = client.route(raw_request=confirmed.model_dump())
@@ -495,6 +621,17 @@ class AutonomousCollaborationTests(unittest.TestCase):
                 implementation_owner=self.implementation,
                 reviewer=self.reviewer,
             ),
+            pending_dispatch=None,
+        )
+
+    def _pending(self) -> PendingDispatchDescriptor:
+        return PendingDispatchDescriptor(
+            ticket_reference=self.ticket.identifier,
+            proposal_revision="rev-0123456789abcdef",
+            dispatch_question_id="dispatch-question-0001",
+            implementation_owner_id=self.implementation.agent_profile,
+            reviewed_handoff_reference="handoff-topology-dispatch-01",
+            event_correlation_id="dispatch-confirmed-0001",
         )
 
     def _proposal(self) -> TicketProposal:
@@ -508,6 +645,7 @@ class AutonomousCollaborationTests(unittest.TestCase):
 
     def _handoff(self) -> ImplementationHandoff:
         return ImplementationHandoff(
+            handoff_reference="handoff-topology-dispatch-01",
             ticket_reference=self.ticket.identifier,
             approved_spec_reference="spec-autonomous-collaboration-01",
             context_references=(
@@ -528,9 +666,9 @@ class AutonomousCollaborationTests(unittest.TestCase):
             tdd_references=("tdd-dispatch-lanes",),
             scope=TicketScope.NON_FRONTEND,
             non_frontend_reason="no formal UI boundary",
-            control_owner_id="actor-control-plane",
-            implementation_owner_id="actor-implementation-owner",
-            reviewer_id="actor-reviewer",
+            control_owner_id="control-plane",
+            implementation_owner_id="implementation-owner",
+            reviewer_id="reviewer",
         )
 
     def _receipt(self) -> TicketDispatchReceipt:
@@ -540,6 +678,7 @@ class AutonomousCollaborationTests(unittest.TestCase):
             handoff_reference="handoff-topology-dispatch-01",
             expected_main_revision="rev-0123456789abcdef",
             correlation_id="dispatch-confirmed-0001",
+            dispatch_question_id="dispatch-question-0001",
             worktree_fingerprint="worktree-implementation-01",
             branch_fingerprint="branch-implementation-01",
         )
@@ -554,6 +693,8 @@ class AutonomousCollaborationTests(unittest.TestCase):
         dispatch_confirmation: TicketDispatchConfirmation | None = None,
         dispatch_receipt: TicketDispatchReceipt | None = None,
         implementation_handoff: ImplementationHandoff | None = None,
+        pending_dispatch: PendingDispatchDescriptor | None = None,
+        include_dispatch_handoff: bool = True,
     ) -> RouterRequestEnvelope:
         return RouterRequestEnvelope(
             request_id=f"req_{event_id.removeprefix('evt_')}",
@@ -582,7 +723,14 @@ class AutonomousCollaborationTests(unittest.TestCase):
                 reviewer=self.reviewer,
             ),
             ticket_reference=self.ticket.identifier,
-            implementation_handoff=implementation_handoff,
+            implementation_handoff=(
+                implementation_handoff
+                if implementation_handoff is not None
+                else self._handoff()
+                if event is RouterEventKind.TICKET_DISPATCH_REQUIRED and include_dispatch_handoff
+                else None
+            ),
+            pending_dispatch=pending_dispatch,
             dispatch_confirmation=dispatch_confirmation,
             dispatch_receipt=dispatch_receipt,
             ticket_proposal=(

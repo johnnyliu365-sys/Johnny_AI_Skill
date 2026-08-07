@@ -204,6 +204,8 @@ class BlockerCode(str, Enum):
     LEGACY_TICKET_APPROVAL_BLOCKED = "legacy_ticket_approval_blocked"
     TICKET_PROPOSAL_REQUIRED = "ticket_proposal_required"
     INVALID_TICKET_PROPOSAL = "invalid_ticket_proposal"
+    PENDING_DISPATCH_REQUIRED = "pending_dispatch_required"
+    INVALID_PENDING_DISPATCH = "invalid_pending_dispatch"
 
 
 class ReferenceStatus(str, Enum):
@@ -237,6 +239,7 @@ class TicketDispatchReceipt(RouterModel):
     handoff_reference: OpaqueMetadataId
     expected_main_revision: RevisionDigest
     correlation_id: NonBlankText
+    dispatch_question_id: OpaqueMetadataId
     worktree_fingerprint: WorktreeFingerprint
     branch_fingerprint: BranchFingerprint
 
@@ -301,6 +304,29 @@ class TicketProposal(RouterModel):
         )
 
 
+class PendingDispatchDescriptor(RouterModel):
+    """Metadata-only authorization state created by one opened dispatch question."""
+
+    ticket_reference: OpaqueMetadataId
+    proposal_revision: RevisionDigest
+    dispatch_question_id: OpaqueMetadataId
+    implementation_owner_id: OpaqueMetadataId
+    reviewed_handoff_reference: OpaqueMetadataId
+    event_correlation_id: NonBlankText
+
+    @property
+    def ticket_ref(self) -> str:
+        """Expose the specification terminology without duplicating state."""
+
+        return self.ticket_reference
+
+    @property
+    def reviewed_handoff_ref(self) -> str:
+        """Expose the reviewed handoff reference as an opaque metadata ID."""
+
+        return self.reviewed_handoff_reference
+
+
 class HandoffConsumerFingerprint(RouterModel):
     """Opaque consumer identity suitable for handoff metadata, never a local path or prompt."""
 
@@ -355,6 +381,7 @@ class FrontendCompositionContract(RouterModel):
 class ImplementationHandoff(RouterModel):
     """Approved implementation input with opaque references and separated responsibilities."""
 
+    handoff_reference: OpaqueMetadataId
     ticket_reference: OpaqueMetadataId
     approved_spec_reference: OpaqueMetadataId
     context_references: tuple[HandoffArtifactReference, ...] = Field(min_length=1)
@@ -381,6 +408,12 @@ class ImplementationHandoff(RouterModel):
         elif self.frontend_composition is not None or self.non_frontend_reason is None:
             raise ValueError("non-frontend handoffs require an N/A reason and no frontend composition")
         return self
+
+    @property
+    def handoff_ref(self) -> str:
+        """Expose the specification terminology without storing a second field."""
+
+        return self.handoff_reference
 
 
 class ImplementationReturn(RouterModel):
@@ -459,8 +492,11 @@ class RouterEvent(RouterModel):
         if self.implementation_handoff is not None:
             if self.completion_evidence is not None or self.implementation_return is not None:
                 raise ValueError("implementation_handoff cannot share an event with completion or return")
-            if self.kind is not RouterEventKind.APPROVAL_GRANTED:
-                raise ValueError("implementation_handoff requires approval_granted")
+            if self.kind not in (
+                RouterEventKind.APPROVAL_GRANTED,
+                RouterEventKind.TICKET_DISPATCH_REQUIRED,
+            ):
+                raise ValueError("implementation_handoff requires a ticket dispatch lifecycle event")
         if self.implementation_return is not None and self.implementation_return.emitted_event is not self.kind:
             raise ValueError("implementation_return event must match router event kind")
         if self.dispatch_confirmation is not None or self.dispatch_receipt is not None:
@@ -493,6 +529,7 @@ class RouterState(RouterModel):
     artifact_refs: tuple[ArtifactRef, ...]
     topology: CollaborationTopology | None = None
     collaboration_plan: CollaborationTopologyPlan | None = None
+    pending_dispatch: PendingDispatchDescriptor | None = None
 
 
 class PlanningLaneState(RouterModel):
@@ -611,6 +648,7 @@ class RouterDecision(RouterModel):
     dispatch_plan: CollaborationDispatchPlan | None = None
     ticket_lane_capabilities: tuple[CapabilityRef, ...] = ()
     ticket_proposal: TicketProposal | None = None
+    pending_dispatch: PendingDispatchDescriptor | None = None
 
     @model_validator(mode="after")
     def decision_shape_is_consistent(self) -> RouterDecision:
@@ -648,8 +686,22 @@ class RouterDecision(RouterModel):
                 raise ValueError("human waits cannot grant dispatch plans")
             if self.ticket_lane_capabilities:
                 raise ValueError("human waits cannot grant ticket-lane capabilities")
-        elif self.ticket_proposal is not None:
-            raise ValueError("automatic or halted decisions cannot carry an opened proposal")
+            if self.pending_dispatch is not None and self.ticket_proposal is None:
+                raise ValueError("pending dispatch state requires its opened ticket proposal")
+            if (
+                self.pending_dispatch is not None
+                and self.ticket_proposal is not None
+                and (
+                    self.pending_dispatch.ticket_reference != self.ticket_proposal.ticket_reference
+                    or self.pending_dispatch.proposal_revision != self.ticket_proposal.proposal_revision
+                    or self.pending_dispatch.dispatch_question_id != self.ticket_proposal.dispatch_question_id
+                    or self.pending_dispatch.implementation_owner_id
+                    != self.ticket_proposal.implementation_owner_id
+                )
+            ):
+                raise ValueError("pending dispatch state must match its opened ticket proposal")
+        elif self.ticket_proposal is not None or self.pending_dispatch is not None:
+            raise ValueError("automatic or halted decisions cannot carry pending dispatch state")
         elif self.wait_reason is not None:
             raise ValueError("only human waits may declare a wait reason")
         if self.continuation is ContinuationDirective.HALT and self.dispatch_plan is not None:

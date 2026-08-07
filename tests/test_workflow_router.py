@@ -185,6 +185,7 @@ class WorkflowRouterTests(unittest.TestCase):
         self.assertEqual(ProcessStage.GRILL, decision.next_stage)
 
         handoff = ImplementationHandoff(
+            handoff_reference="handoff-workflow-governance-01",
             ticket_reference="ticket-workflow-governance-01",
             approved_spec_reference="spec-workflow-governance-01",
             context_references=evidence.artifact_references,
@@ -225,6 +226,7 @@ class WorkflowRouterTests(unittest.TestCase):
             )
         with self.assertRaises(ValidationError):
             ImplementationHandoff(
+                handoff_reference="handoff-frontend-invalid-01",
                 ticket_reference="ticket-workflow-governance-01",
                 approved_spec_reference="spec-workflow-governance-01",
                 context_references=evidence.artifact_references,
@@ -236,6 +238,7 @@ class WorkflowRouterTests(unittest.TestCase):
                 reviewer_id="actor-reviewer-01",
             )
         frontend_handoff = ImplementationHandoff(
+            handoff_reference="handoff-frontend-contract-01",
             ticket_reference="ticket-frontend-contract-01",
             approved_spec_reference="spec-frontend-contract-01",
             context_references=evidence.artifact_references,
@@ -352,6 +355,7 @@ class WorkflowRouterTests(unittest.TestCase):
         self.assertEqual("legacy_ticket_approval_blocked", bare.blockers[0].code.value)
 
         handoff = ImplementationHandoff(
+            handoff_reference="handoff-workflow-governance-approval-01",
             ticket_reference="ticket-workflow-governance-01",
             approved_spec_reference="spec-workflow-governance-01",
             context_references=(
@@ -582,6 +586,7 @@ class WorkflowRouterTests(unittest.TestCase):
                     )
 
         handoff = ImplementationHandoff(
+            handoff_reference="handoff-workflow-governance-boundary-01",
             ticket_reference="ticket-workflow-governance-01",
             approved_spec_reference="spec-workflow-governance-01",
             context_references=(reference,),

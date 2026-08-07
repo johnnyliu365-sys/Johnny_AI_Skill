@@ -55,12 +55,12 @@ class TransitionRule(RouterModel):
             raise ValueError("only action_completed rules may accept completion actions")
         if self.requires_implementation_handoff and (
             self.current_stage is not ProcessStage.TICKETS
-            or self.event_kind is not RouterEventKind.APPROVAL_GRANTED
-            or self.outcome is not RouterOutcome.ADVANCE
-            or self.next_stage is not ProcessStage.IMPLEMENT
+            or self.event_kind is not RouterEventKind.TICKET_DISPATCH_REQUIRED
+            or self.outcome is not RouterOutcome.SUSPEND
+            or self.next_stage is not None
         ):
             raise ValueError(
-                "implementation handoff is valid only for ticket approval advancing to implement"
+                "implementation handoff is valid only for the ticket dispatch question"
             )
         if self.requires_dispatch_receipt and (
             self.current_stage is not ProcessStage.TICKETS
@@ -234,22 +234,13 @@ def build_router_poc_profile() -> ProjectWorkflowProfile:
             ),
             TransitionRule(
                 current_stage=ProcessStage.TICKETS,
-                event_kind=RouterEventKind.ACTION_COMPLETED,
-                outcome=RouterOutcome.SUSPEND,
-                next_stage=None,
-                required_source_kinds=(ArtifactKind.TICKET,),
-                requires_human_approval=True,
-                wait_reason=HumanWaitReason.TICKET_APPROVAL_REQUIRED,
-                accepted_completion_actions=(CompletionActionKind.DOCUMENTATION,),
-            ),
-            TransitionRule(
-                current_stage=ProcessStage.TICKETS,
                 event_kind=RouterEventKind.TICKET_DISPATCH_REQUIRED,
                 outcome=RouterOutcome.SUSPEND,
                 next_stage=None,
                 required_source_kinds=(ArtifactKind.TICKET,),
                 requires_human_approval=True,
                 wait_reason=HumanWaitReason.TICKET_DISPATCH_CONFIRMATION_REQUIRED,
+                requires_implementation_handoff=True,
             ),
             TransitionRule(
                 current_stage=ProcessStage.TICKETS,

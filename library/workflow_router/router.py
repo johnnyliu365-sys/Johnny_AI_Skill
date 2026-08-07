@@ -24,6 +24,7 @@ from .contracts import (
     HumanWaitReason,
     ImplementationReturnStatus,
     PlanningLaneState,
+    PendingDispatchDescriptor,
     ProcessStage,
     NonBlankText,
     PositiveTokenBudget,
@@ -154,6 +155,11 @@ class RouterEngine:
                     code=BlockerCode.DISPATCH_RECEIPT_REQUIRED,
                     detail="confirmed dispatch requires a typed receipt",
                 )
+            if state.pending_dispatch is None:
+                return self._suspend(
+                    code=BlockerCode.PENDING_DISPATCH_REQUIRED,
+                    detail="confirmed dispatch requires a pending opened proposal",
+                )
             if event.dispatch_confirmation is not TicketDispatchConfirmation.POSITIVE:
                 return self._suspend(
                     code=BlockerCode.INVALID_DISPATCH_RECEIPT,
@@ -182,10 +188,27 @@ class RouterEngine:
             )
         if event.kind is RouterEventKind.TICKET_DISPATCH_REQUIRED:
             proposal = event.ticket_proposal
+            handoff = event.implementation_handoff
             if proposal is None:
                 return self._suspend(
                     code=BlockerCode.TICKET_PROPOSAL_REQUIRED,
                     detail="dispatch question requires an opened ticket proposal",
+                )
+            if handoff is None:
+                return self._suspend(
+                    code=BlockerCode.IMPLEMENTATION_HANDOFF_REQUIRED,
+                    detail="dispatch question requires the reviewed implementation handoff",
+                )
+            if state.pending_dispatch is not None:
+                return self._suspend(
+                    code=BlockerCode.INVALID_PENDING_DISPATCH,
+                    detail="one ticket may have only one pending dispatch question",
+                )
+            dispatch_question_id = proposal.dispatch_question_id
+            if dispatch_question_id is None:
+                return self._suspend(
+                    code=BlockerCode.INVALID_TICKET_PROPOSAL,
+                    detail="opened ticket proposal must name its dispatch question",
                 )
             if (
                 proposal.state is not TicketProposalState.IN_PROGRESS
@@ -202,6 +225,33 @@ class RouterEngine:
                     code=BlockerCode.INVALID_TICKET_PROPOSAL,
                     detail="opened ticket proposal does not match the selected owner and ticket",
                 )
+            assert state.collaboration_plan is not None
+            if (
+                handoff.ticket_reference != proposal.ticket_reference
+                or handoff.implementation_owner_id
+                not in (
+                    state.collaboration_plan.implementation_owner.capability_id,
+                    state.collaboration_plan.implementation_owner.agent_profile,
+                    proposal.implementation_owner_id,
+                )
+                or handoff.reviewer_id
+                not in (
+                    state.collaboration_plan.reviewer.capability_id,
+                    state.collaboration_plan.reviewer.agent_profile,
+                )
+            ):
+                return self._suspend(
+                    code=BlockerCode.INVALID_TICKET_PROPOSAL,
+                    detail="reviewed handoff does not match the selected ticket roles",
+                )
+            pending_dispatch = PendingDispatchDescriptor(
+                ticket_reference=proposal.ticket_reference,
+                proposal_revision=proposal.proposal_revision,
+                dispatch_question_id=dispatch_question_id,
+                implementation_owner_id=proposal.implementation_owner_id,
+                reviewed_handoff_reference=handoff.handoff_reference,
+                event_correlation_id=event.event_id,
+            )
             return RouterDecision(
                 outcome=RouterOutcome.SUSPEND,
                 continuation=ContinuationDirective.WAIT_FOR_HUMAN,
@@ -210,6 +260,7 @@ class RouterEngine:
                 eligible_capabilities=(),
                 wait_reason=rule.wait_reason,
                 ticket_proposal=proposal,
+                pending_dispatch=pending_dispatch,
             )
         if rule.requires_human_approval:
             return self._suspend(
@@ -222,15 +273,36 @@ class RouterEngine:
             assert event.dispatch_receipt is not None
             assert state.topology is not None
             assert len(required_sources) == 1
-            if event.dispatch_receipt.ticket_reference != required_sources[0].identifier:
+            pending = state.pending_dispatch
+            if pending is None:
                 return self._suspend(
-                    code=BlockerCode.INVALID_DISPATCH_RECEIPT,
-                    detail="dispatch receipt ticket does not match the declared ticket source",
+                    code=BlockerCode.PENDING_DISPATCH_REQUIRED,
+                    detail="confirmed dispatch requires a pending opened proposal",
                 )
             if state.collaboration_plan is None or state.collaboration_plan.topology is not state.topology:
                 return self._suspend(
                     code=BlockerCode.TOPOLOGY_REQUIRED,
                     detail="confirmed dispatch requires the selected capability plan",
+                )
+            if (
+                event.dispatch_receipt.ticket_reference != required_sources[0].identifier
+                or pending.ticket_reference != required_sources[0].identifier
+                or event.event_id != pending.event_correlation_id
+                or event.dispatch_receipt.correlation_id != pending.event_correlation_id
+                or event.dispatch_receipt.dispatch_question_id != pending.dispatch_question_id
+                or event.dispatch_receipt.handoff_reference != pending.reviewed_handoff_reference
+                or event.dispatch_receipt.expected_main_revision != pending.proposal_revision
+                or pending.implementation_owner_id
+                not in (
+                    state.collaboration_plan.implementation_owner.capability_id,
+                    state.collaboration_plan.implementation_owner.agent_profile,
+                )
+                or event.dispatch_receipt.implementation_owner_id
+                not in (pending.implementation_owner_id, state.collaboration_plan.implementation_owner.agent_profile)
+            ):
+                return self._suspend(
+                    code=BlockerCode.INVALID_PENDING_DISPATCH,
+                    detail="dispatch receipt does not match the pending proposal and reviewed handoff",
                 )
             if event.dispatch_receipt.implementation_owner_id not in (
                 state.collaboration_plan.implementation_owner.capability_id,
