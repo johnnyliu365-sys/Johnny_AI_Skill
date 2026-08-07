@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from enum import Enum
+from threading import RLock
 from typing import Protocol
 
 from pydantic import Field, model_validator
@@ -50,6 +51,14 @@ class AuditDisposition(str, Enum):
     CHANGES_REQUESTED = "changes_requested"
 
 
+class AuditDeliveryState(str, Enum):
+    """Coordinator-owned admission state for one pending audit delivery."""
+
+    RETRYABLE = "retryable"
+    DELIVERING = "delivering"
+    DELIVERED = "delivered"
+
+
 class CoordinatorOutcome(str, Enum):
     """Safe outcomes emitted by the ticket-02 coordinator."""
 
@@ -72,6 +81,7 @@ class GuardedIntegrationError(str, Enum):
     LOCK_FAILURE = "lock_failure"
     ADAPTER_UNAVAILABLE = "adapter_unavailable"
     ADAPTER_FAILURE = "adapter_failure"
+    AUDIT_DELIVERY_ACTIVE = "audit_delivery_active"
     INVALID_AUDIT = "invalid_audit"
     PENDING_AUDIT_ACTIVE = "pending_audit_active"
     DISPATCH_NOT_BOUND = "dispatch_not_bound"
@@ -244,6 +254,7 @@ class GuardedIntegrationDecision(RouterModel):
     pending_audit: PendingAudit | None = None
     audit_request: AuditRequest | None = None
     correction_route: CorrectionRoute | None = None
+    emit_integration_event: bool = False
     handoff_allowed: bool = False
     push_allowed: bool = False
     deploy_allowed: bool = False
@@ -261,6 +272,7 @@ class GuardedIntegrationDecision(RouterModel):
                 or self.pending_audit is not None
                 or self.audit_request is not None
                 or self.correction_route is not None
+                or self.emit_integration_event
             ):
                 raise ValueError("halt decisions cannot wake proposals or create an audit")
         if self.outcome is CoordinatorOutcome.PENDING_AUDIT:
@@ -360,7 +372,8 @@ class GuardedIntegrationCoordinator:
         self._seen_correlations: set[str] = set()
         self._seen_event_ids: set[str] = set()
         self._pending_audit: PendingAudit | None = None
-        self._pending_audit_delivered = False
+        self._audit_delivery_state = AuditDeliveryState.RETRYABLE
+        self._audit_delivery_admission = RLock()
 
     @property
     def main_snapshot(self) -> MainSnapshot:
@@ -373,6 +386,12 @@ class GuardedIntegrationCoordinator:
         """Expose the single active audit state without exposing adapter internals."""
 
         return self._pending_audit
+
+    @property
+    def audit_delivery_state(self) -> AuditDeliveryState:
+        """Expose only the typed delivery state, never sink internals."""
+
+        return self._audit_delivery_state
 
     def consume_return(self, source: ReturnEventSource | None) -> GuardedIntegrationDecision:
         """Read only an injected event; adapter absence or exceptions halt safely."""
@@ -459,13 +478,14 @@ class GuardedIntegrationCoordinator:
                             correlation_id=event.correlation_id,
                             pending_audit=pending_audit,
                         )
-                        self._pending_audit = pending_audit
                         self._main_snapshot = MainSnapshot(
                             revision=integration_result.integrated_main_revision,
                             is_clean=True,
                             has_conflict=False,
                         )
-                        self._pending_audit_delivered = False
+                        with self._audit_delivery_admission:
+                            self._pending_audit = pending_audit
+                            self._audit_delivery_state = AuditDeliveryState.RETRYABLE
                         result_decision = self.retry_pending_audit()
         finally:
             try:
@@ -479,26 +499,40 @@ class GuardedIntegrationCoordinator:
     def retry_pending_audit(self) -> GuardedIntegrationDecision:
         """Retry the trusted pending audit without reopening integration admission."""
 
-        pending = self._pending_audit
-        if pending is None:
-            return self._halt(GuardedIntegrationError.INVALID_AUDIT)
-        audit_request = AuditRequest(
-            ticket_reference=pending.ticket_reference,
-            correlation_id=pending.correlation_id,
-            pending_audit=pending,
-        )
-        if not self._pending_audit_delivered:
-            try:
-                self._audit_sink.request_audit(audit_request)
-            except Exception:
-                return self._halt(GuardedIntegrationError.ADAPTER_FAILURE)
-            self._pending_audit_delivered = True
+        with self._audit_delivery_admission:
+            pending = self._pending_audit
+            if pending is None:
+                return self._halt(GuardedIntegrationError.INVALID_AUDIT)
+            audit_request = AuditRequest(
+                ticket_reference=pending.ticket_reference,
+                correlation_id=pending.correlation_id,
+                pending_audit=pending,
+            )
+            delivery_state = self._audit_delivery_state
+            if delivery_state is AuditDeliveryState.DELIVERING:
+                return self._halt(GuardedIntegrationError.AUDIT_DELIVERY_ACTIVE)
+            if delivery_state is AuditDeliveryState.DELIVERED:
+                return GuardedIntegrationDecision(
+                    outcome=CoordinatorOutcome.PENDING_AUDIT,
+                    pending_audit=pending,
+                    audit_request=audit_request,
+                )
+            self._audit_delivery_state = AuditDeliveryState.DELIVERING
+        try:
+            self._audit_sink.request_audit(audit_request)
+        except Exception:
+            with self._audit_delivery_admission:
+                self._audit_delivery_state = AuditDeliveryState.RETRYABLE
+            return self._halt(GuardedIntegrationError.ADAPTER_FAILURE)
+        with self._audit_delivery_admission:
+            self._audit_delivery_state = AuditDeliveryState.DELIVERED
         awakened = self._wake_dependents(ticket_reference=pending.ticket_reference)
         return GuardedIntegrationDecision(
             outcome=CoordinatorOutcome.PENDING_AUDIT,
             awakened_proposal_ids=awakened,
             pending_audit=pending,
             audit_request=audit_request,
+            emit_integration_event=True,
         )
 
     def handle_audit(self, decision: AuditDecision) -> GuardedIntegrationDecision:
@@ -508,15 +542,18 @@ class GuardedIntegrationCoordinator:
             decision = AuditDecision.model_validate(decision.model_dump())
         except Exception:
             return self._halt(GuardedIntegrationError.INVALID_AUDIT)
-        pending = self._pending_audit
-        if (
-            pending is None
-            or pending.ticket_reference != decision.ticket_reference
-            or pending.correlation_id != decision.correlation_id
-        ):
-            return self._halt(GuardedIntegrationError.INVALID_AUDIT)
-        self._pending_audit = None
-        self._pending_audit_delivered = False
+        with self._audit_delivery_admission:
+            pending = self._pending_audit
+            if (
+                pending is None
+                or pending.ticket_reference != decision.ticket_reference
+                or pending.correlation_id != decision.correlation_id
+            ):
+                return self._halt(GuardedIntegrationError.INVALID_AUDIT)
+            if self._audit_delivery_state is AuditDeliveryState.DELIVERING:
+                return self._halt(GuardedIntegrationError.AUDIT_DELIVERY_ACTIVE)
+            self._pending_audit = None
+            self._audit_delivery_state = AuditDeliveryState.RETRYABLE
         if decision.disposition is AuditDisposition.APPROVED:
             return GuardedIntegrationDecision(
                 outcome=CoordinatorOutcome.CODE_REVIEW,
@@ -625,7 +662,11 @@ class GuardedIntegrationRouterAdapter:
         """Emit the one reviewed integration event only for a pending audit."""
 
         pending = decision.pending_audit
-        if decision.outcome is not CoordinatorOutcome.PENDING_AUDIT or pending is None:
+        if (
+            decision.outcome is not CoordinatorOutcome.PENDING_AUDIT
+            or pending is None
+            or not decision.emit_integration_event
+        ):
             return None
         return RouterEvent(
             event_id=pending.audit_event_id,

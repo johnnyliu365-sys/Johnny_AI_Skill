@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import unittest
 from collections.abc import Callable
+from threading import Event, Thread
 
 from library.workflow_router import (
     ArtifactKind,
@@ -31,6 +32,7 @@ from library.workflow_router import (
 )
 from library.workflow_router.guarded_integration import (
     AuditDecision,
+    AuditDeliveryState,
     AuditDisposition,
     CoordinatorOutcome,
     GuardedIntegrationCoordinator,
@@ -113,6 +115,42 @@ class FirstAuditFailureSink:
     def request_audit(self, request: object) -> None:
         self.requests.append(request)
         if len(self.requests) == 1:
+            raise RuntimeError("audit request unavailable")
+
+
+class ReentrantAuditSink:
+    """Invoke one retry while delivery is in flight, optionally failing first."""
+
+    def __init__(self, *, fail_first: bool = False) -> None:
+        self.requests: list[object] = []
+        self.fail_first = fail_first
+        self.callback: Callable[[], tuple[GuardedIntegrationDecision, object | None]] | None = None
+        self.reentrant_result: GuardedIntegrationDecision | None = None
+
+    def request_audit(self, request: object) -> None:
+        self.requests.append(request)
+        if self.callback is not None:
+            self.reentrant_result, _ = self.callback()
+        if self.fail_first and len(self.requests) == 1:
+            raise RuntimeError("audit request unavailable")
+
+
+class BlockingAuditSink:
+    """Pause delivery so a second thread can probe the in-flight admission state."""
+
+    def __init__(self, *, fail_first: bool = False) -> None:
+        self.requests: list[object] = []
+        self.entered = Event()
+        self.release = Event()
+        self.fail_first = fail_first
+
+    def request_audit(self, request: object) -> None:
+        self.requests.append(request)
+        attempt = len(self.requests)
+        self.entered.set()
+        if not self.release.wait(timeout=5):
+            raise RuntimeError("audit request did not release")
+        if self.fail_first and attempt == 1:
             raise RuntimeError("audit request unavailable")
 
 
@@ -396,12 +434,138 @@ class ReceiptBoundCorrectionTests(unittest.TestCase):
         self.assertEqual(RouterEventKind.INTEGRATION_COMPLETED, integration_event.kind)
         duplicate_retry, duplicate_event = adapter.retry_pending_audit()
         self.assertEqual(CoordinatorOutcome.PENDING_AUDIT, duplicate_retry.outcome)
-        self.assertEqual(integration_event, duplicate_event)
+        self.assertIsNone(duplicate_event)
         blocked, blocked_event = adapter.handle_return(second)
         self.assertEqual(GuardedIntegrationError.PENDING_AUDIT_ACTIVE, blocked.error)
         self.assertIsNone(blocked_event)
         self.assertEqual(1, len(integration.requests))
         self.assertEqual(2, len(audit.requests))
+
+    def test_initial_audit_delivery_reentry_is_admitted_once(self) -> None:
+        event = self._event(correlation="return-audit-reentrant-02", event_id="event-audit-reentrant-02")
+        sink = ReentrantAuditSink()
+        adapter = GuardedIntegrationRouterAdapter(
+            coordinator=GuardedIntegrationCoordinator(
+                integration_port=self.integration,
+                integration_lock=self.lock,
+                audit_sink=sink,
+                main_snapshot=MainSnapshot(revision=self.revision, is_clean=True),
+                dependent_proposals=(),
+                dispatch_plans=(self._plan(event),),
+            )
+        )
+        sink.callback = adapter.retry_pending_audit
+        decision, integration_event = adapter.handle_return(event)
+        self.assertEqual(CoordinatorOutcome.PENDING_AUDIT, decision.outcome)
+        self.assertIsNotNone(integration_event)
+        self.assertEqual(AuditDeliveryState.DELIVERED, adapter._coordinator.audit_delivery_state)
+        self.assertIsNotNone(sink.reentrant_result)
+        assert sink.reentrant_result is not None
+        self.assertEqual(GuardedIntegrationError.AUDIT_DELIVERY_ACTIVE, sink.reentrant_result.error)
+        self.assertEqual(1, len(self.integration.requests))
+        self.assertEqual(1, len(sink.requests))
+
+    def test_failed_audit_retry_reentry_resets_then_delivers_once(self) -> None:
+        event = self._event(correlation="return-audit-retry-reentrant-02", event_id="event-audit-retry-reentrant-02")
+        sink = ReentrantAuditSink(fail_first=True)
+        adapter = GuardedIntegrationRouterAdapter(
+            coordinator=GuardedIntegrationCoordinator(
+                integration_port=self.integration,
+                integration_lock=self.lock,
+                audit_sink=sink,
+                main_snapshot=MainSnapshot(revision=self.revision, is_clean=True),
+                dependent_proposals=(),
+                dispatch_plans=(self._plan(event),),
+            )
+        )
+        sink.callback = adapter.retry_pending_audit
+        failed, failed_event = adapter.handle_return(event)
+        self.assertEqual(GuardedIntegrationError.ADAPTER_FAILURE, failed.error)
+        self.assertIsNone(failed_event)
+        self.assertEqual(AuditDeliveryState.RETRYABLE, adapter._coordinator.audit_delivery_state)
+        retry, retry_event = adapter.retry_pending_audit()
+        self.assertEqual(CoordinatorOutcome.PENDING_AUDIT, retry.outcome)
+        self.assertIsNotNone(retry_event)
+        self.assertEqual(AuditDeliveryState.DELIVERED, adapter._coordinator.audit_delivery_state)
+        self.assertIsNotNone(sink.reentrant_result)
+        assert sink.reentrant_result is not None
+        self.assertEqual(GuardedIntegrationError.AUDIT_DELIVERY_ACTIVE, sink.reentrant_result.error)
+        self.assertEqual(1, len(self.integration.requests))
+        self.assertEqual(2, len(sink.requests))
+        duplicate, duplicate_event = adapter.retry_pending_audit()
+        self.assertEqual(CoordinatorOutcome.PENDING_AUDIT, duplicate.outcome)
+        self.assertIsNone(duplicate_event)
+        self.assertEqual(2, len(sink.requests))
+
+    def test_initial_audit_delivery_concurrency_is_admitted_once(self) -> None:
+        event = self._event(correlation="return-audit-concurrent-02", event_id="event-audit-concurrent-02")
+        sink = BlockingAuditSink()
+        adapter = GuardedIntegrationRouterAdapter(
+            coordinator=GuardedIntegrationCoordinator(
+                integration_port=self.integration,
+                integration_lock=self.lock,
+                audit_sink=sink,
+                main_snapshot=MainSnapshot(revision=self.revision, is_clean=True),
+                dependent_proposals=(),
+                dispatch_plans=(self._plan(event),),
+            )
+        )
+        result: list[tuple[GuardedIntegrationDecision, RouterEvent | None]] = []
+        worker = Thread(target=lambda: result.append(adapter.handle_return(event)), daemon=True)
+        worker.start()
+        self.assertTrue(sink.entered.wait(timeout=5))
+        concurrent, concurrent_event = adapter.retry_pending_audit()
+        self.assertEqual(GuardedIntegrationError.AUDIT_DELIVERY_ACTIVE, concurrent.error)
+        self.assertIsNone(concurrent_event)
+        sink.release.set()
+        worker.join(timeout=5)
+        self.assertFalse(worker.is_alive())
+        self.assertEqual(1, len(result))
+        self.assertEqual(CoordinatorOutcome.PENDING_AUDIT, result[0][0].outcome)
+        self.assertIsNotNone(result[0][1])
+        self.assertEqual(1, len(self.integration.requests))
+        self.assertEqual(1, len(sink.requests))
+
+    def test_failed_audit_retry_concurrency_is_retryable_and_single_delivery(self) -> None:
+        event = self._event(
+            correlation="return-audit-concurrent-retry-02",
+            event_id="event-audit-concurrent-retry-02",
+        )
+        sink = BlockingAuditSink(fail_first=True)
+        adapter = GuardedIntegrationRouterAdapter(
+            coordinator=GuardedIntegrationCoordinator(
+                integration_port=self.integration,
+                integration_lock=self.lock,
+                audit_sink=sink,
+                main_snapshot=MainSnapshot(revision=self.revision, is_clean=True),
+                dependent_proposals=(),
+                dispatch_plans=(self._plan(event),),
+            )
+        )
+        initial_result: list[tuple[GuardedIntegrationDecision, RouterEvent | None]] = []
+        initial_worker = Thread(target=lambda: initial_result.append(adapter.handle_return(event)), daemon=True)
+        initial_worker.start()
+        self.assertTrue(sink.entered.wait(timeout=5))
+        sink.release.set()
+        initial_worker.join(timeout=5)
+        self.assertFalse(initial_worker.is_alive())
+        self.assertEqual(GuardedIntegrationError.ADAPTER_FAILURE, initial_result[0][0].error)
+        sink.entered.clear()
+        sink.release.clear()
+        retry_result: list[tuple[GuardedIntegrationDecision, RouterEvent | None]] = []
+        retry_worker = Thread(target=lambda: retry_result.append(adapter.retry_pending_audit()), daemon=True)
+        retry_worker.start()
+        self.assertTrue(sink.entered.wait(timeout=5))
+        concurrent, concurrent_event = adapter.retry_pending_audit()
+        self.assertEqual(GuardedIntegrationError.AUDIT_DELIVERY_ACTIVE, concurrent.error)
+        self.assertIsNone(concurrent_event)
+        sink.release.set()
+        retry_worker.join(timeout=5)
+        self.assertFalse(retry_worker.is_alive())
+        self.assertEqual(CoordinatorOutcome.PENDING_AUDIT, retry_result[0][0].outcome)
+        self.assertIsNotNone(retry_result[0][1])
+        self.assertEqual(1, len(self.integration.requests))
+        self.assertEqual(2, len(sink.requests))
 
     def test_pending_audit_is_global_and_revision_advances_after_integration(self) -> None:
         first = self._event()

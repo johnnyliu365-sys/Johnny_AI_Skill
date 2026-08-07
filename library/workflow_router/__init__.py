@@ -42,6 +42,7 @@ from .contracts import (
 from .graph import build_router_graph
 from .guarded_integration import (
     AuditDecision,
+    AuditDeliveryState,
     AuditDisposition,
     AuditRequest,
     CoordinatorOutcome,
@@ -98,6 +99,7 @@ __all__ = (
     "AgentUsage",
     "AuthorityState",
     "AuditDecision",
+    "AuditDeliveryState",
     "AuditDisposition",
     "AuditRequest",
     "CapabilityRef",
