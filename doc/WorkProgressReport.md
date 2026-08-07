@@ -269,6 +269,20 @@
 | Validation | `python -m pytest -q` ??107 passed / 111 subtests; `python -m mypy --strict library` ??48 source files clean; `python -m compileall -q library` ??48 modules; metadata-only model-field privacy sentinel passed; CR-21 retry smoke passed; `git diff --check` passed. No repository lint or formatter configuration is declared. |
 | Review / integration | No merge, push, deployment, external provider, main-worktree mutation, or other-ticket mutation was performed. Independent control-plane review is required before any fast-forward integration. |
 
+## PRG-20260808-005 ??Ticket 02 correction handoff (CR-24)
+
+| Field | Value |
+| --- | --- |
+| State | `IMPLEMENTATION_COMMITTED_PENDING_REVIEW` |
+| Ticket / review return | `02-guarded-integration-audit` / `0beac6d` (`CHANGES_REQUESTED ??IMPLEMENT`) |
+| Reviewed baseline | `0beac6d`; the implementation branch was rebased to this current main baseline before the CR-24 red-test and validation cycle. |
+| Implementation owner / branch | Codex implementation Agent / `codex/implementation-guarded-integration-audit-02` |
+| Implementation commit | `906679a` (`fix: require delivered audit decisions`) |
+| CR-24 correction | `handle_audit()` now consumes a matching decision only from coordinator-owned `DELIVERED` state. `RETRYABLE` halts with `AUDIT_NOT_DELIVERED`; `DELIVERING` remains `AUDIT_DELIVERY_ACTIVE`. Both paths preserve pending state and emit no review, correction, or Router completion event. |
+| TDD red evidence | Before the correction, failed initial and failed retry delivery tests reached the missing non-delivery transition and allowed the old audit-consumption path; the independent review reproduced `APPROVED → CODE_REVIEW` without a successful sink delivery. Committed tests cover both `APPROVED` and `CHANGES_REQUESTED` after each failed delivery path, including pending retention, zero additional integration, and no Router event. |
+| Validation | `python -B -m unittest discover -s tests` ??113 passed; `python -m pytest -q` ??113 passed / 115 subtests; `python -m mypy --strict --no-incremental library tests` ??63 source files clean; `python -m compileall -q library` ??48 Python files; metadata-only model-field privacy sentinel passed; CR-24 and retained CR-23 smoke tests passed; `git diff --check` passed. |
+| Review / integration | No merge, push, deployment, external provider, main-worktree mutation, or other-ticket mutation was performed. Independent control-plane review is required before any fast-forward integration. |
+
 ## PRG-20260808-004 ??Ticket 02 correction handoff (CR-23)
 
 | Field | Value |
