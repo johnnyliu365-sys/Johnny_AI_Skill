@@ -225,3 +225,17 @@ The receipt activates Ticket 02 only. It grants no physical integration, merge, 
 | Forbidden content | raw source/Context, prompt, path, URI, Git output, Secret and PII |
 
 The pending Router event is `TICKET_DISPATCH_REQUIRED`. Until confirmed, Ticket 03 cannot receive a worktree, ContextPacket, capability grant or implementation permission. A positive receipt activates only Ticket 03's execution lane and automatically returns the planning lane to the next Grill.
+
+## Ticket 03 dispatch receipt and queue state
+
+| Field | Value |
+| --- | --- |
+| Ticket | `03-plugin-policy-and-response` / AC-1, AC-3, AC-9, AC-10 |
+| Confirmation | Project owner: `已交付，在該 worktree 排程佇列中` (`2026-08-07`) |
+| Ticket / handoff baseline | Ticket selection `b84c2a5`; dispatch handoff `c569056` |
+| Authority | Ticket-scoped implementation authority; no second approval or confirmation is required |
+| Implementation owner | Codex implementation Agent; it accepted the ticket into its scheduling queue |
+| Ticket lane | `IMPLEMENT` authority is active. The owner must execute only one ticket at a time, so Ticket 03 starts TDD only when scheduled and then uses its own ticket-03 worktree rather than control-plane `main` |
+| Planning lane | `AUTO_CONTINUE → GRILL` — no remaining `PLANNED` ticket is eligible; subscribe only to typed return events from active tickets |
+
+The scheduling queue is an automatic operational wait, not `WAIT_FOR_HUMAN`, a lost dispatch receipt, or an extra implementation grant. It neither changes Ticket 02's active scope nor permits Ticket 03 to read Ticket 02 Context. The next planning event is an eligible typed implementation return; on arrival the Router must re-evaluate only the proposals whose declared dependencies are satisfied.

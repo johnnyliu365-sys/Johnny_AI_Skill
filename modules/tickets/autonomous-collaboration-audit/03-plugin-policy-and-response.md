@@ -4,11 +4,11 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-AUTONOMOUS-COLLABORATION-AUDIT-20260805-01KZ7A2C4E6G8J0L2N4P6R8T` / AC-1, AC-3, AC-9, AC-10 |
 | Context / change | `doc/context/autonomous-collaboration-audit/main.md` / `CHG-20260805-010` |
-| State | `IN_PROGRESS` — selected after an independent planning Grill; awaiting its one named dispatch-confirmation question |
+| State | `IN_PROGRESS` — delivery confirmed on `2026-08-07`; queued by the named implementation owner while Ticket 02 is active; it begins TDD only when scheduled |
 | Language | Markdown, policy contract tests, and any approved Python formatter contract |
 | Baseline | Ticket 01 public contract `67b049a`, independently reviewed and approved at `d620463`; Ticket 02 execution is not an input to this ticket |
 | Control-plane owner / reviewer | Codex / current `main` worktree |
-| Implementation owner / worktree | Codex implementation Agent / separate ticket-03 worktree only after confirmed delivery; it must not share the control-plane `main` worktree |
+| Implementation owner / worktree | Codex implementation Agent / accepted into its scheduling queue; provision a separate ticket-03 worktree when scheduled, never the control-plane `main` worktree |
 | Environment | Local plugin/skill source only; no host configuration, target-project file, remote service or deployment |
 
 ## User-observable outcome
