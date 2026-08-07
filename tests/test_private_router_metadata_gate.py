@@ -305,6 +305,7 @@ class PrivateRouterMetadataGateTests(unittest.TestCase):
             handoff_reference="handoff-workflow-governance-01",
             ticket_reference="ticket-workflow-governance-01",
             approved_spec_reference="spec-workflow-governance-01",
+            expected_main_revision="rev-0123456789abcdef",
             context_references=(
                 HandoffArtifactReference(
                     artifact_id="context-workflow-governance",

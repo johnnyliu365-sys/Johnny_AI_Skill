@@ -144,7 +144,6 @@ class RouterRequestEnvelope(RouterModel):
     dispatch_confirmation: TicketDispatchConfirmation | None = None
     dispatch_receipt: TicketDispatchReceipt | None = None
     ticket_proposal: TicketProposal | None = None
-    pending_dispatch: PendingDispatchDescriptor | None = None
 
     @model_validator(mode="after")
     def has_minimum_metadata_without_locations(self) -> RouterRequestEnvelope:
@@ -190,8 +189,6 @@ class RouterRequestEnvelope(RouterModel):
             raise ValueError("dispatch receipts require confirmed dispatch")
         if self.ticket_proposal is not None and self.router_event_kind is not RouterEventKind.TICKET_DISPATCH_REQUIRED:
             raise ValueError("ticket proposals require a dispatch-required event")
-        if self.pending_dispatch is not None and self.router_event_kind is not RouterEventKind.IMPLEMENTATION_DISPATCH_CONFIRMED:
-            raise ValueError("pending dispatch requires confirmed dispatch")
         return self
 
 
@@ -345,6 +342,7 @@ class FakePrivateRouterService:
         self._entitlement_provider = entitlement_provider
         self._context_budget = context_budget
         self._captured_requests: list[RouterRequestEnvelope] = []
+        self._pending_dispatches: dict[tuple[str, str, str], PendingDispatchDescriptor] = {}
         self.request_count = 0
 
     def decide(self, request: RouterRequestEnvelope) -> RouterResponseEnvelope:
@@ -370,6 +368,7 @@ class FakePrivateRouterService:
                 outcome=RouterOutcome.SUSPEND,
                 error_code=RouterServiceErrorCode.ROUTER_POLICY_BLOCKED,
             )
+        pending_dispatch = self._pending_dispatch_for(request=request)
         decision = RouterEngine().decide(
             state=RouterState(
                 project_id=request.opaque_project_id,
@@ -379,7 +378,7 @@ class FakePrivateRouterService:
                 artifact_refs=self._private_artifact_refs(request=request),
                 topology=request.topology,
                 collaboration_plan=request.collaboration_plan,
-                pending_dispatch=request.pending_dispatch,
+                pending_dispatch=pending_dispatch,
             ),
             event=RouterEvent(
                 event_id=request.event_correlation_id,
@@ -394,6 +393,8 @@ class FakePrivateRouterService:
             profile=self._profile,
         )
         if decision.continuation is ContinuationDirective.AUTO_CONTINUE:
+            if request.router_event_kind is RouterEventKind.IMPLEMENTATION_DISPATCH_CONFIRMED:
+                self._consume_pending_dispatch(request=request)
             assert decision.next_stage is not None
             action_label = self._action_for(stage=decision.next_stage)
             return RouterResponseEnvelope(
@@ -412,6 +413,11 @@ class FakePrivateRouterService:
                 pending_dispatch=None,
             )
         if decision.continuation is ContinuationDirective.WAIT_FOR_HUMAN:
+            if decision.pending_dispatch is not None:
+                self._pending_dispatches[self._pending_key(
+                    request=request,
+                    correlation_id=decision.pending_dispatch.event_correlation_id,
+                )] = decision.pending_dispatch
             return RouterResponseEnvelope(
                 request_id=request.request_id,
                 decision_id=decision_id,
@@ -432,6 +438,49 @@ class FakePrivateRouterService:
             outcome=decision.outcome,
             error_code=RouterServiceErrorCode.ROUTER_POLICY_BLOCKED,
         )
+
+    def _pending_dispatch_for(
+        self,
+        *,
+        request: RouterRequestEnvelope,
+    ) -> PendingDispatchDescriptor | None:
+        """Load pending dispatch only from the Router-owned metadata store."""
+
+        if request.router_event_kind is RouterEventKind.TICKET_DISPATCH_REQUIRED:
+            correlation_id = request.event_correlation_id
+        elif (
+            request.router_event_kind is RouterEventKind.IMPLEMENTATION_DISPATCH_CONFIRMED
+            and request.dispatch_receipt is not None
+        ):
+            correlation_id = request.dispatch_receipt.correlation_id
+        else:
+            return None
+        return self._pending_dispatches.get(
+            self._pending_key(request=request, correlation_id=correlation_id)
+        )
+
+    def _consume_pending_dispatch(self, *, request: RouterRequestEnvelope) -> None:
+        """Consume the accepted confirmation exactly once."""
+
+        if request.dispatch_receipt is None:
+            return
+        self._pending_dispatches.pop(
+            self._pending_key(
+                request=request,
+                correlation_id=request.dispatch_receipt.correlation_id,
+            ),
+            None,
+        )
+
+    @staticmethod
+    def _pending_key(
+        *,
+        request: RouterRequestEnvelope,
+        correlation_id: str,
+    ) -> tuple[str, str, str]:
+        """Scope one pending dispatch to its private account, project and correlation."""
+
+        return (request.account_subject_id, request.opaque_project_id, correlation_id)
 
     def captured_requests_json(self) -> str:
         """Expose POC test evidence only; it serializes no local source or ContextPacket."""

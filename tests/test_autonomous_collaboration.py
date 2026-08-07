@@ -561,13 +561,10 @@ class AutonomousCollaborationTests(unittest.TestCase):
                 implementation_owner_id=receipt.implementation_owner_id,
                 handoff_reference=receipt.handoff_reference,
                 expected_main_revision=receipt.expected_main_revision,
-                correlation_id="evt_00000000000000000000000000000062",
+                correlation_id="evt_00000000000000000000000000000061",
                 dispatch_question_id=receipt.dispatch_question_id,
                 worktree_fingerprint=receipt.worktree_fingerprint,
                 branch_fingerprint=receipt.branch_fingerprint,
-            ),
-            pending_dispatch=self._pending().model_copy(
-                update={"event_correlation_id": "evt_00000000000000000000000000000062"}
             ),
         )
         plan = client.route(raw_request=confirmed.model_dump())
@@ -578,6 +575,73 @@ class AutonomousCollaborationTests(unittest.TestCase):
         self.assertEqual(ProcessStage.IMPLEMENT, plan.dispatch_plan.ticket_lane.execution_stage)
         self.assertEqual(ProcessStage.GRILL, plan.dispatch_plan.planning_lane.stage)
         self.assertEqual((self.implementation,), plan.ticket_lane_capabilities)
+
+        replay = client.route(raw_request=confirmed.model_dump())
+        self.assertEqual(ContinuationMode.HALT, replay.mode)
+        self.assertIsNone(replay.dispatch_plan)
+        self.assertEqual((), replay.ticket_lane_capabilities)
+
+    def test_private_router_rejects_forged_pending_dispatch_from_fresh_client(self) -> None:
+        account = "acct_0123456789abcdef"
+        project = "prj_fedcba9876543210"
+        service = FakePrivateRouterService(
+            profile=self.profile,
+            entitlement_provider=FakeEntitlementProvider(
+                grants=(
+                    EntitlementGrant(
+                        account_subject_id=account,
+                        opaque_project_id=project,
+                        permitted_modes=(EntitlementMode.FIRST_PROJECT_FREE,),
+                    ),
+                )
+            ),
+        )
+        client = PrivateRouterClient(service=service)
+        receipt = self._receipt().model_copy(
+            update={"correlation_id": "evt_00000000000000000000000000000064"}
+        )
+        forged = self._private_request(
+            account=account,
+            project=project,
+            event=RouterEventKind.IMPLEMENTATION_DISPATCH_CONFIRMED,
+            event_id="evt_00000000000000000000000000000064",
+            dispatch_confirmation=TicketDispatchConfirmation.POSITIVE,
+            dispatch_receipt=receipt,
+        ).model_dump()
+        forged["pending_dispatch"] = self._pending().model_dump()
+        plan = client.route(raw_request=forged)
+        self.assertEqual(ContinuationMode.HALT, plan.mode)
+        self.assertIsNone(plan.dispatch_plan)
+        self.assertEqual((), plan.ticket_lane_capabilities)
+
+    def test_expected_main_revision_is_separate_from_proposal_revision(self) -> None:
+        receipt = self._receipt()
+        self.assertNotEqual(self._pending().proposal_revision, self._pending().expected_main_revision)
+        decision = self.engine.decide(
+            state=self._ticket_state().model_copy(update={"pending_dispatch": self._pending()}),
+            event=RouterEvent(
+                event_id=receipt.correlation_id,
+                kind=RouterEventKind.IMPLEMENTATION_DISPATCH_CONFIRMED,
+                dispatch_confirmation=TicketDispatchConfirmation.POSITIVE,
+                dispatch_receipt=receipt,
+            ),
+            profile=self.profile,
+        )
+        self.assertEqual(ContinuationDirective.AUTO_CONTINUE, decision.continuation)
+        mismatched = self.engine.decide(
+            state=self._ticket_state().model_copy(update={"pending_dispatch": self._pending()}),
+            event=RouterEvent(
+                event_id=receipt.correlation_id,
+                kind=RouterEventKind.IMPLEMENTATION_DISPATCH_CONFIRMED,
+                dispatch_confirmation=TicketDispatchConfirmation.POSITIVE,
+                dispatch_receipt=receipt.model_copy(
+                    update={"expected_main_revision": "rev-ffffffffffffffff"}
+                ),
+            ),
+            profile=self.profile,
+        )
+        self.assertEqual(ContinuationDirective.HALT, mismatched.continuation)
+        self.assertEqual("invalid_pending_dispatch", mismatched.blockers[0].code.value)
 
     def test_private_router_legacy_ticket_approval_with_handoff_is_blocked(self) -> None:
         account = "acct_0123456789abcdef"
@@ -628,6 +692,7 @@ class AutonomousCollaborationTests(unittest.TestCase):
         return PendingDispatchDescriptor(
             ticket_reference=self.ticket.identifier,
             proposal_revision="rev-0123456789abcdef",
+            expected_main_revision="rev-abcdef0123456789",
             dispatch_question_id="dispatch-question-0001",
             implementation_owner_id=self.implementation.agent_profile,
             reviewed_handoff_reference="handoff-topology-dispatch-01",
@@ -648,6 +713,7 @@ class AutonomousCollaborationTests(unittest.TestCase):
             handoff_reference="handoff-topology-dispatch-01",
             ticket_reference=self.ticket.identifier,
             approved_spec_reference="spec-autonomous-collaboration-01",
+            expected_main_revision="rev-abcdef0123456789",
             context_references=(
                 HandoffArtifactReference(
                     artifact_id="context-autonomous-collaboration",
@@ -676,7 +742,7 @@ class AutonomousCollaborationTests(unittest.TestCase):
             ticket_reference=self.ticket.identifier,
             implementation_owner_id="implementation-owner",
             handoff_reference="handoff-topology-dispatch-01",
-            expected_main_revision="rev-0123456789abcdef",
+            expected_main_revision="rev-abcdef0123456789",
             correlation_id="dispatch-confirmed-0001",
             dispatch_question_id="dispatch-question-0001",
             worktree_fingerprint="worktree-implementation-01",
@@ -693,7 +759,6 @@ class AutonomousCollaborationTests(unittest.TestCase):
         dispatch_confirmation: TicketDispatchConfirmation | None = None,
         dispatch_receipt: TicketDispatchReceipt | None = None,
         implementation_handoff: ImplementationHandoff | None = None,
-        pending_dispatch: PendingDispatchDescriptor | None = None,
         include_dispatch_handoff: bool = True,
     ) -> RouterRequestEnvelope:
         return RouterRequestEnvelope(
@@ -730,7 +795,6 @@ class AutonomousCollaborationTests(unittest.TestCase):
                 if event is RouterEventKind.TICKET_DISPATCH_REQUIRED and include_dispatch_handoff
                 else None
             ),
-            pending_dispatch=pending_dispatch,
             dispatch_confirmation=dispatch_confirmation,
             dispatch_receipt=dispatch_receipt,
             ticket_proposal=(
