@@ -278,3 +278,17 @@ The Ticket-03 result is not a user decision wait and grants no merge, push, inst
 | Continuation | `CHANGES_REQUESTED → IMPLEMENT` in the existing Ticket-02 worktree; Ticket 03 remains blocked and no merge/push/deploy is authorized |
 
 The passing generic checks do not override the reproduced identity, atomicity, audit-recovery, and automatic-continuation failures. This is not a requirement change or a user wait; the named Ticket-02 implementation owner must provide a new committed correction and docs-only handoff.
+
+## Ticket 02 second correction review return
+
+| Field | Value |
+| --- | --- |
+| Reviewed correction / handoff | `67745a3` / `2d218d2` |
+| Review baseline | `79aa649` / submitted branch clean |
+| Result | `CHANGES_REQUESTED` — review report `02-guarded-integration-audit-second-correction-code-review.md` |
+| Independent checks | `107` unit tests, `107` pytest tests with `111` subtests, strict `mypy` for `63` files, in-memory compile for `12` Router modules, and diff check passed |
+| Closed findings | CR-19 named-identity binding, CR-20 lock/re-entry ordering, CR-21 pending-audit retention, and CR-22 automatic Grill continuation |
+| Blocking finding | CR-23: re-entrant audit delivery can queue duplicate audit requests and emit the same integration event twice |
+| Continuation | `CHANGES_REQUESTED → IMPLEMENT` in the existing Ticket-02 worktree; Ticket 03 remains blocked and no merge/push/deploy is authorized |
+
+The active pending audit remains the correct global integration lock, but the audit adapter needs a distinct delivery-in-flight admission state. The correction is automatic implementation work, not a requirement change or a human gate.
