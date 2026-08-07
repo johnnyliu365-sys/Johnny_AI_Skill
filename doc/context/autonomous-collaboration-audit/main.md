@@ -192,3 +192,36 @@ The pending Router event is `TICKET_DISPATCH_REQUIRED`. No Context, capability, 
 | Planning lane | `AUTO_CONTINUE → GRILL` — evaluate the next independently eligible planned ticket without consuming ticket-02 Context |
 
 The receipt activates Ticket 02 only. It grants no physical integration, merge, push, deployment, handoff completion, or authority for any other ticket. Those effects remain guarded by Ticket 02's required evidence and review path.
+
+## Planning Grill — ticket 03 selection
+
+| Field | Value |
+| --- | --- |
+| Trigger | Ticket-02 dispatch receipt recorded at `56ac6a1`; planning lane auto-continuation |
+| Required sources | Approved SPEC AC-1, AC-3, AC-9 and AC-10; accepted ADR-20260805-002; ticket 03; reviewed ticket-01 public contract `67b049a` and approval `d620463`; current Context |
+| Decision | `GO → TICKETS` — no requirement, Architecture, UI, security, owner or dependency change detected |
+| Selected ticket | `03-plugin-policy-and-response` (`b84c2a5`) |
+| State | `IN_PROGRESS`, awaiting only its named delivery confirmation |
+| Implementation owner | Codex implementation Agent; a separate ticket-03 worktree is provisioned only after confirmation |
+| Reviewer | Codex control-plane / current `main` worktree |
+
+### Grill checks
+
+- Ticket 03 needs the reviewed Ticket-01 event and receipt surface, which is available without reading Ticket-02 execution Context or waiting for Ticket-02 integration/audit.
+- Its only implementation surface is local workflow/skill/template policy, deterministic formatter contract and tests. It has no host configuration, target-project write, runtime service, deployment, payment or provider scope.
+- The fixed response must preserve the single named dispatch question and cannot add a second ticket approval or generic wait. It must retain the metadata-only boundary and must not rename Ticket-01 public events.
+- Opening Ticket 03 does not alter Ticket 02's active scope or authority. Ticket 03 receives no worktree, ContextPacket or implementation capability until the project owner confirms delivery.
+
+## Ticket 03 dispatch handoff
+
+| Field | Value |
+| --- | --- |
+| Ticket docs commit | `b84c2a5` |
+| Ticket | `03-plugin-policy-and-response` / AC-1, AC-3, AC-9, AC-10 |
+| Reviewed dependency | Ticket-01 implementation `67b049a`, approved review `d620463` |
+| Owner | Codex implementation Agent / separate ticket-03 worktree after confirmation |
+| Reviewer | Codex control-plane / current `main` worktree |
+| Required handoff metadata | opaque ticket/branch reference, expected main revision, delivery receipt, verification references, Context references and fixed-response policy contract |
+| Forbidden content | raw source/Context, prompt, path, URI, Git output, Secret and PII |
+
+The pending Router event is `TICKET_DISPATCH_REQUIRED`. Until confirmed, Ticket 03 cannot receive a worktree, ContextPacket, capability grant or implementation permission. A positive receipt activates only Ticket 03's execution lane and automatically returns the planning lane to the next Grill.
