@@ -265,3 +265,16 @@ The successful generic checks are evidence of local syntax and existing regressi
 | Continuation | Subscribe only to the typed Ticket-02 correction return; after independent approval, re-evaluate Ticket 03 against that reviewed source baseline before a fresh implementation handoff |
 
 The Ticket-03 result is not a user decision wait and grants no merge, push, installation, deployment, or implementation continuation. The submitted commit is retained solely as committed review evidence and must not be used as a policy baseline.
+
+## Ticket 02 correction review return
+
+| Field | Value |
+| --- | --- |
+| Reviewed correction / handoff | `b53cc55` / `1a19183` |
+| Review baseline | `d164fa4` / submitted branch clean |
+| Result | `CHANGES_REQUESTED` — review report `02-guarded-integration-audit-correction-code-review.md` |
+| Independent checks | `102` unit tests, `102` pytest tests with `105` subtests, strict `mypy` for `63` files, in-memory compile for `11` Router modules, and diff check passed |
+| Blocking findings | CR-19 generic capability profiles can substitute named identities; CR-20 lock release opens a second-integration window; CR-21 audit-sink failure loses `PENDING_AUDIT`; CR-22 normal Grill audit waits for a human |
+| Continuation | `CHANGES_REQUESTED → IMPLEMENT` in the existing Ticket-02 worktree; Ticket 03 remains blocked and no merge/push/deploy is authorized |
+
+The passing generic checks do not override the reproduced identity, atomicity, audit-recovery, and automatic-continuation failures. This is not a requirement change or a user wait; the named Ticket-02 implementation owner must provide a new committed correction and docs-only handoff.
