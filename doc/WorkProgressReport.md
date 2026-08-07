@@ -256,3 +256,19 @@
 | Boundary / mutation evidence | Metadata-gate tests found no raw source/Context/path/URI/prompt/secret/PII fields. A controlled in-memory reversal of the legacy guard caused both direct and indirect guard tests to fail (`failures=2`), proving the tests detect the bypass mutation. Adapter exceptions remain raised at the source boundary and cannot become a grant. |
 | Docs-only handoff | This entry is the docs-only handoff commit for `2e4f13e`; independent review is required before any integration. |
 | Review / merge | `main` remains untouched at the review baseline; no self-approval, merge, push or dependent ticket work performed. |
+
+## PRG-20260807-001 correction handoff for CR-05 through CR-07
+
+| Field | Value |
+| --- | --- |
+| State | `IMPLEMENTATION_COMMITTED_PENDING_REVIEW` |
+| Review return | `CHANGES_REQUESTED -> IMPLEMENT`; correction report baseline `3cf17c1`; CR-08 policy alignment is already present in the control-plane report. |
+| Ticket / context | `01-topology-dispatch-lanes` / `CHG-20260805-010` |
+| Rebase evidence | The implementation worktree replayed its prior commits onto `3cf17c1` without reset or merge commit: `d892aa3`, `ad7337d`, `0be6763`, and `d884f65` are the rebased predecessors. |
+| Implementation commit | `43657a0` (`fix: bind dispatch receipt to pending handoff`) |
+| TDD red evidence | Before source correction, the new dispatch tests failed because `PendingDispatchDescriptor` was absent; existing private ticket-completion coverage returned `WAIT_FOR_HUMAN` instead of the required halt; handoff constructors rejected the new stable reference; and a positive receipt on fresh state returned `ADVANCE` instead of `SUSPEND + HALT`. |
+| Delivered correction | Added metadata-only `PendingDispatchDescriptor` to Router state, decision and Private Router continuation; require one opened `IN_PROGRESS` proposal and reviewed handoff before emitting the dispatch question; require the confirmed receipt to match pending ticket, owner, question ID, correlation, reviewed handoff reference and proposal/base revision; reject duplicate/open-without-handoff and all mismatch or missing-pending cases; removed the ticket `ACTION_COMPLETED` approval wait; added the stable handoff reference to the legal dispatch lifecycle. |
+| Validation | `python -B -m unittest discover -s tests` — 87 passed; `python -B -m unittest tests.test_autonomous_collaboration -v` — 14 passed; `python -B -m unittest tests.test_private_router_metadata_gate -v` — 9 passed; `python -m mypy --strict library tests` — 60 source files clean; workflow-router enumeration compile passed; `git diff --check` passed. |
+| Boundary / mutation evidence | Metadata-gate tests passed for the private boundary and source-field sentinel. A controlled in-memory reversal of pending-dispatch and obsolete-completion guards caused 2 guard tests to fail, proving the mutation is detected. No raw ContextPacket, source text, path, URI, prompt, secret or PII was added. |
+| Docs-only handoff | This entry is the docs-only handoff commit for `43657a0`; it is metadata-only and does not self-approve review. |
+| Review / merge | Ticket 01 remains `IN_PROGRESS`. Independent review is pending; `main` remains untouched at `3cf17c1`; no merge, push, deployment or dependent ticket work performed. |
