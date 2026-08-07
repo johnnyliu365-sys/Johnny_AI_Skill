@@ -4,11 +4,11 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-AUTONOMOUS-COLLABORATION-AUDIT-20260805-01KZ7A2C4E6G8J0L2N4P6R8T` / AC-6 through AC-8, AC-11 |
 | Context / change | `doc/context/autonomous-collaboration-audit/main.md` / `CHG-20260805-010` |
-| State | `PLANNED` candidate — automatic dependency on reviewed ticket 01 public contracts; opening it immediately changes it to `IN_PROGRESS` and asks its one dispatch-confirmation question |
+| State | `IN_PROGRESS` — selected after independent review of ticket 01; awaiting its one named dispatch-confirmation question |
 | Language | Python 3.11 and Markdown |
-| Baseline | Ticket 01 approved integration contract |
+| Baseline | Reviewed ticket 01 public contracts: `67b049a`; the dispatch handoff must record the clean expected `main` revision before worktree provisioning |
 | Control-plane owner / reviewer | Codex / current `main` worktree |
-| Implementation owner / worktree | Codex implementation Agent / existing `workflow-implementation` / `codex/implementation-private-router-saas-01`; ticket remains unselected |
+| Implementation owner / worktree | Codex implementation Agent / separate ticket-02 worktree to be provisioned after confirmed delivery; it must not share the control-plane `main` worktree |
 | Environment | Local fake Git/integration port only; no real push, deployment, target-project or external provider |
 
 ## User-observable outcome
@@ -24,10 +24,11 @@ Frontend composition / DI: `N/A` — no formal UI; the fake Git/integration port
 ## Handoff and role assignment
 
 - Control-plane/main integration owner: Codex/current `main` worktree.
-- Implementation owner: selected only when this planned candidate is opened and its dispatch is confirmed; that owner owns only its ticket branch/worktree.
+- Implementation owner: Codex implementation Agent, after the project owner confirms this ticket has been delivered; that owner owns only its ticket branch/worktree.
 - Reviewer / Grill audit owner: Codex/current `main` worktree; does not share the implementation worktree.
 - Owner override: `N/A`.
 - Handoff must include ticket/branch opaque reference, expected main revision, verification evidence, dispatch receipt and audit requirements. It must never contain paths, raw Git output, source text, prompt, URI, Secret or PII.
+- The approved ticket-01 public contract is a reviewed dependency, not permission to integrate it directly into `main`; the ticket-02 fake integration port owns the guarded integration behaviour.
 
 ## TDD and defect checks
 
