@@ -22,7 +22,7 @@ The project owner selected this topology on `2026-08-05`:
 1：main control-plane session + existing separate implementation session/worktree
 ```
 
-The named implementation owner is Codex implementation Agent in `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` on `codex/implementation-private-router-saas-01`; the control-plane/reviewer is Codex/current `main` worktree. A positive delivery confirmation is the ticket-scoped approval and implementation authority; no second approval is requested. Ticket 01 was delivered on `2026-08-05`; Ticket 02 was delivered on `2026-08-07` and is active in its execution lane. The planning lane proceeds to Grill independently; ticket 03 remains `PLANNED` until selected.
+The named implementation owner is Codex implementation Agent; the control-plane/reviewer is Codex/current `main` worktree. A positive delivery confirmation is the ticket-scoped approval and implementation authority; no second approval is requested. Ticket 02 is integrated and its allocation is released. Ticket 03's existing receipt now holds the sole active implementation allocation in its existing Ticket-03 worktree; the previous Ticket-03 branch remains review evidence and the owner must create the recorded fresh branch from the approved main base.
 
 ## Shared baseline
 

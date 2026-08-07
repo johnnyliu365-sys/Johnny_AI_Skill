@@ -432,6 +432,19 @@ implementation owner 回傳 `ImplementationReturn`。`COMPLETED` 產生 `ACTION_
 - Composition Root、migration、共享契約或同一設定檔有衝突時，建立先行整合 ticket，或由指定整合者串行處理。
 - handoff／merge 前，必須核對 Context、tickets、elements、資料模型、API／事件、Provider、快取、測試與實際 diff；任一衝突未解即為 `BLOCKED`。
 
+### 6.1 已確認 ticket 的 implementation allocation 切換
+
+同一 implementation owner 同時只能持有一條 active implementation lane。控制面在收到已整合 ticket 的 `ACTION_COMPLETED` 後，必須先釋放其 allocation，再依 Router 的唯一 continuation 指派下一張已具有效 dispatch receipt 的 ticket；不得把已結束 ticket 的 worktree 視為後續 ticket 的預設 owner。
+
+切換 allocation 時，控制面必須在 ticket、共同 Context 與進度交接中記錄：
+
+1. 已釋放 ticket、其 worktree／branch reference 與已整合 revision；該 worktree 轉為只讀歷史證據。
+2. 唯一新 active ticket、具名 implementation owner、既有或新建的 ticket worktree reference、有效 receipt 與 expected control-plane baseline。
+3. 若舊 ticket branch 被 review 結論封鎖，必須明示為歷史證據；implementation owner 只能從 recorded baseline 建立新的 ticket branch 重新做 TDD，不得 reset、覆寫、cherry-pick 或重用被封鎖的來源。
+4. 已知的可再生產物可由新 owner 在自己的 worktree 清除；控制面與其他 Agent 不得跨 worktree 代為修改。
+
+allocation record 完成後，新的 ticket lane 自動進入 `IMPLEMENT`，不得再次要求使用者確認已交付的同一 receipt。唯一允許等待的是缺少有效 receipt、owner／worktree 尚未被指定，或 Router 的規格化 `HALT`；其餘情況必須開始 fresh handoff 與 TDD。
+
 <a id="security"></a>
 
 ## 7. 安全、Secret 與正式 Log

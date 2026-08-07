@@ -339,3 +339,18 @@ Ticket 02's source is now the reviewed control-plane baseline. Its audit deliver
 - Bind the fixed `工單 ready` / `文件交接` response to a Private-Router-owned pending-dispatch result from the current Router contracts. Arbitrary caller strings or descriptors must not render a response or grant capability.
 - Start a new TDD cycle on the current baseline, including CR-16/17 regressions and the Ticket 03 §2.1 cases. CR-18 is closed only by this dependency-corrected re-entry.
 - This handoff grants no push, deployment, host configuration, target-project write, Secret, provider, or other-ticket implementation.
+
+## Ticket 03 implementation allocation switch
+
+| Field | Value |
+| --- | --- |
+| Router continuation | Ticket-02 `ACTION_COMPLETED → AUTO_CONTINUE → planning Grill →` existing Ticket-03 dispatch receipt `→ IMPLEMENT` |
+| Released allocation | Ticket 02 / `worktree-ticket-02` / `codex/implementation-guarded-integration-audit-02` at integrated revision `90e9191`; it is read-only review and integration evidence |
+| Sole active allocation | Ticket 03 / `worktree-ticket-03` / Codex implementation Agent |
+| Receipt / handoff | Existing receipt `c569056` remains valid; fresh handoff `handoff-ticket-03-resume-20260808-01`; no second user confirmation is permitted |
+| Expected source baseline | `0d52903` — reviewed control-plane main after Ticket-02 integration and dependency-corrected Grill re-entry |
+| Fresh branch | `codex/implementation-plugin-policy-and-response-03-rework`, created by the assigned owner inside the existing Ticket-03 worktree from the expected source baseline |
+| Blocked historical branch | `codex/implementation-plugin-policy-and-response-03` at `9eda250`; retain as CR-16 through CR-18 evidence only. Do not reset, overwrite, cherry-pick, or reuse it as implementation input |
+| Owner preflight | Remove only the known test-generated Python bytecode cache in the assigned Ticket-03 worktree, then create the fresh branch and begin the specified red/green TDD cycle |
+
+This allocation replaces the previous Ticket-02 scheduling lock. It introduces no requirement, architecture, security, UI, data, authority, deployment, host, target-project, Secret, provider, merge, or push change. The implementation owner alone may mutate its assigned worktree; all other worktrees remain outside this handoff.

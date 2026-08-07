@@ -296,3 +296,17 @@
 | TDD red evidence | Independent review reproduced two audit requests and two equivalent events when the sink re-entered before the old delivered flag was written; the failure-plus-retry path reproduced three requests. Committed tests now cover initial and post-failure re-entry plus deterministic concurrent delivery, with one integration, one successful audit delivery, and one event. |
 | Validation | `python -B -m unittest discover -s tests` ??111 passed; `python -m pytest -q` ??111 passed / 111 subtests; `python -m mypy --strict --no-incremental library tests` ??63 source files clean; `python -m compileall -q library` ??48 Python files; metadata-only model-field privacy sentinel passed; CR-23 re-entry/concurrency smoke passed; `git diff --check` passed. |
 | Review / integration | No merge, push, deployment, external provider, main-worktree mutation, or other-ticket mutation was performed. Independent control-plane review is required before any fast-forward integration. |
+
+## PRG-20260808-006 — Ticket 03 implementation allocation switch
+
+| Field | Value |
+| --- | --- |
+| State | `IN_PROGRESS → IMPLEMENT` — no human wait; Ticket-03 has an existing valid dispatch receipt |
+| Trigger | Ticket-02 independent approval and fast-forward integration (`906679a` / `90e9191`), followed by dependency-corrected planning Grill at `0d52903` |
+| Released allocation | Ticket 02 / `worktree-ticket-02` / `codex/implementation-guarded-integration-audit-02`; read-only historical integration evidence |
+| Active allocation | Ticket 03 / `worktree-ticket-03` / Codex implementation Agent; this is the sole active implementation lane |
+| Receipt / fresh handoff | Existing receipt `c569056`; `handoff-ticket-03-resume-20260808-01`; no second dispatch confirmation or approval is allowed |
+| Required branch | Owner creates `codex/implementation-plugin-policy-and-response-03-rework` from reviewed main baseline `0d52903` inside the assigned Ticket-03 worktree, then begins a fresh red/green TDD cycle |
+| Blocked evidence | `codex/implementation-plugin-policy-and-response-03` at `9eda250` remains CR-16 through CR-18 historical evidence only; no reset, overwrite, cherry-pick, or source reuse |
+| Owner preflight | Owner may remove only the known test-generated Python bytecode cache in its own Ticket-03 worktree before creating the branch. No other worktree may be mutated. |
+| Scope / integration | This record changes allocation only. It grants no merge, push, deployment, host configuration, target-project mutation, Secret, provider, or other-ticket authority. |
