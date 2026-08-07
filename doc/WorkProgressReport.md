@@ -272,3 +272,21 @@
 | Boundary / mutation evidence | Metadata-gate tests passed for the private boundary and source-field sentinel. A controlled in-memory reversal of pending-dispatch and obsolete-completion guards caused 2 guard tests to fail, proving the mutation is detected. No raw ContextPacket, source text, path, URI, prompt, secret or PII was added. |
 | Docs-only handoff | This entry is the docs-only handoff commit for `43657a0`; it is metadata-only and does not self-approve review. |
 | Review / merge | Ticket 01 remains `IN_PROGRESS`. Independent review is pending; `main` remains untouched at `3cf17c1`; no merge, push, deployment or dependent ticket work performed. |
+
+## PRG-20260807-002 correction handoff for Router-owned pending dispatch and revision separation
+
+| Field | Value |
+| --- | --- |
+| State | `IMPLEMENTATION_COMMITTED_PENDING_REVIEW` |
+| Review return | `CHANGES_REQUESTED -> IMPLEMENT`; correction report baseline `3cf17c1`; ticket remains `IN_PROGRESS`. |
+| Ticket / context | `01-topology-dispatch-lanes` / `CHG-20260805-010` |
+| Implementation owner / branch | Codex implementation Agent / `codex/implementation-private-router-saas-01` |
+| Rebase evidence | This correction remains based on the requested `3cf17c1` implementation baseline; no reset or merge commit was created. |
+| Implementation commit | `0639db6` (`fix: keep pending dispatch in private router`) |
+| TDD red evidence | Before production changes, the new tests failed because `PendingDispatchDescriptor` and `ImplementationHandoff` rejected the newly required `expected_main_revision`; the pending/replay and forged-state cases therefore could not complete until the typed contract and Router-owned lifecycle were implemented. |
+| Delivered correction | Added independent `expected_main_revision` to the reviewed `ImplementationHandoff` and Router-owned `PendingDispatchDescriptor`; compare receipts only with the pending expected-main baseline, never `proposal_revision`; removed `pending_dispatch` from the client request envelope; persist pending metadata inside `FakePrivateRouterService` by account/project/dispatch correlation, retrieve it for confirmation, and consume it once after a successful confirmation; reject fresh-client fabricated pending state and halt replayed confirmations. |
+| Tests / fail-closed coverage | Added direct revision-separation and mismatch tests; Private Router fresh-client forged-pending, wait-to-confirm, replay/one-time-consumption tests; existing missing, duplicate, owner, question, correlation, handoff, locator, null/empty/container and negative-confirmation guards remain green. |
+| Validation | `python -B -m unittest discover -s tests` — 89 passed; targeted autonomous collaboration — 16 passed; Private Router metadata gate — 9 passed; `python -m mypy --strict library tests` — 60 source files clean; in-memory compilation — 11 workflow-router modules; `git diff --check` passed. |
+| Boundary / mutation evidence | Raw pending input is rejected by the closed request schema; the private metadata/source sentinel remains green. A controlled in-memory removal of one-time pending consumption made the replay assertion fail, proving the replay guard is exercised. No raw ContextPacket, source text, path, URI, prompt, secret or PII was added. |
+| Docs-only handoff | This entry is the docs-only handoff for `0639db6`; it records evidence only and does not self-approve review. |
+| Review / merge | Independent control-plane review is required. The implementation owner did not modify or merge `main`; no push, deployment or dependent ticket work performed. |
