@@ -211,10 +211,7 @@ class RouterEngine:
                 or proposal.ticket_reference != required_sources[0].identifier
                 or state.collaboration_plan is None
                 or proposal.implementation_owner_id
-                not in (
-                    state.collaboration_plan.implementation_owner.capability_id,
-                    state.collaboration_plan.implementation_owner.agent_profile,
-                )
+                != state.collaboration_plan.implementation_owner.capability_id
             ):
                 return self._suspend(
                     code=BlockerCode.INVALID_TICKET_PROPOSAL,
@@ -223,17 +220,12 @@ class RouterEngine:
             assert state.collaboration_plan is not None
             if (
                 handoff.ticket_reference != proposal.ticket_reference
+                or handoff.control_owner_id
+                != state.collaboration_plan.control_plane.capability_id
                 or handoff.implementation_owner_id
-                not in (
-                    state.collaboration_plan.implementation_owner.capability_id,
-                    state.collaboration_plan.implementation_owner.agent_profile,
-                    proposal.implementation_owner_id,
-                )
-                or handoff.reviewer_id
-                not in (
-                    state.collaboration_plan.reviewer.capability_id,
-                    state.collaboration_plan.reviewer.agent_profile,
-                )
+                != state.collaboration_plan.implementation_owner.capability_id
+                or handoff.implementation_owner_id != proposal.implementation_owner_id
+                or handoff.reviewer_id != state.collaboration_plan.reviewer.capability_id
             ):
                 return self._suspend(
                     code=BlockerCode.INVALID_TICKET_PROPOSAL,
@@ -288,20 +280,17 @@ class RouterEngine:
                 or event.dispatch_receipt.handoff_reference != pending.reviewed_handoff_reference
                 or event.dispatch_receipt.expected_main_revision != pending.expected_main_revision
                 or pending.implementation_owner_id
-                not in (
-                    state.collaboration_plan.implementation_owner.capability_id,
-                    state.collaboration_plan.implementation_owner.agent_profile,
-                )
+                != state.collaboration_plan.implementation_owner.capability_id
                 or event.dispatch_receipt.implementation_owner_id
-                not in (pending.implementation_owner_id, state.collaboration_plan.implementation_owner.agent_profile)
+                != pending.implementation_owner_id
             ):
                 return self._suspend(
                     code=BlockerCode.INVALID_PENDING_DISPATCH,
                     detail="dispatch receipt does not match the pending proposal and reviewed handoff",
                 )
-            if event.dispatch_receipt.implementation_owner_id not in (
-                state.collaboration_plan.implementation_owner.capability_id,
-                state.collaboration_plan.implementation_owner.agent_profile,
+            if (
+                event.dispatch_receipt.implementation_owner_id
+                != state.collaboration_plan.implementation_owner.capability_id
             ):
                 return self._suspend(
                     code=BlockerCode.INVALID_DISPATCH_RECEIPT,

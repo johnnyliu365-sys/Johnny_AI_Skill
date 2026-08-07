@@ -350,13 +350,17 @@ class GuardedIntegrationCoordinator:
         self._audit_sink = audit_sink
         self._main_snapshot = main_snapshot
         self._dependent_proposals = dependent_proposals
-        self._dispatch_plans = dispatch_plans
-        plan_tickets = tuple(plan.receipt.ticket_reference for plan in dispatch_plans)
+        self._dispatch_plans = tuple(
+            CollaborationDispatchPlan.model_validate(plan.model_dump())
+            for plan in dispatch_plans
+        )
+        plan_tickets = tuple(plan.receipt.ticket_reference for plan in self._dispatch_plans)
         if len(plan_tickets) != len(set(plan_tickets)):
             raise ValueError("one dispatch plan is permitted per ticket")
         self._seen_correlations: set[str] = set()
         self._seen_event_ids: set[str] = set()
         self._pending_audit: PendingAudit | None = None
+        self._pending_audit_delivered = False
 
     @property
     def main_snapshot(self) -> MainSnapshot:
@@ -415,6 +419,7 @@ class GuardedIntegrationCoordinator:
             return self._halt(GuardedIntegrationError.LOCK_FAILURE)
         if not acquired:
             return self._halt(GuardedIntegrationError.LOCK_CONTENDED)
+        result_decision = self._halt(GuardedIntegrationError.ADAPTER_FAILURE)
         release_failed = False
         try:
             try:
@@ -430,7 +435,38 @@ class GuardedIntegrationCoordinator:
                     )
                 )
             except Exception:
-                return self._halt(GuardedIntegrationError.ADAPTER_FAILURE)
+                result_decision = self._halt(GuardedIntegrationError.ADAPTER_FAILURE)
+            else:
+                try:
+                    integration_result = IntegrationResult.model_validate(integration_result.model_dump())
+                except Exception:
+                    result_decision = self._halt(GuardedIntegrationError.ADAPTER_FAILURE)
+                else:
+                    if integration_result.status is not IntegrationStatus.COMPLETED:
+                        result_decision = self._halt(
+                            self._error_for_integration(integration_result.status)
+                        )
+                    else:
+                        assert integration_result.integrated_main_revision is not None
+                        pending_audit = PendingAudit(
+                            ticket_reference=event.ticket_reference,
+                            correlation_id=event.correlation_id,
+                            integrated_main_revision=integration_result.integrated_main_revision,
+                            audit_event_id=f"audit-{event.correlation_id}",
+                        )
+                        audit_request = AuditRequest(
+                            ticket_reference=event.ticket_reference,
+                            correlation_id=event.correlation_id,
+                            pending_audit=pending_audit,
+                        )
+                        self._pending_audit = pending_audit
+                        self._main_snapshot = MainSnapshot(
+                            revision=integration_result.integrated_main_revision,
+                            is_clean=True,
+                            has_conflict=False,
+                        )
+                        self._pending_audit_delivered = False
+                        result_decision = self.retry_pending_audit()
         finally:
             try:
                 self._integration_lock.release()
@@ -438,40 +474,30 @@ class GuardedIntegrationCoordinator:
                 release_failed = True
         if release_failed:
             return self._halt(GuardedIntegrationError.LOCK_FAILURE)
-        try:
-            integration_result = IntegrationResult.model_validate(integration_result.model_dump())
-        except Exception:
-            return self._halt(GuardedIntegrationError.ADAPTER_FAILURE)
-        integration_status = integration_result.status
-        if integration_status is not IntegrationStatus.COMPLETED:
-            return self._halt(self._error_for_integration(integration_status))
-        assert integration_result.integrated_main_revision is not None
-        self._main_snapshot = MainSnapshot(
-            revision=integration_result.integrated_main_revision,
-            is_clean=True,
-            has_conflict=False,
-        )
-        pending_audit = PendingAudit(
-            ticket_reference=event.ticket_reference,
-            correlation_id=event.correlation_id,
-            integrated_main_revision=integration_result.integrated_main_revision,
-            audit_event_id=f"audit-{event.correlation_id}",
-        )
+        return result_decision
+
+    def retry_pending_audit(self) -> GuardedIntegrationDecision:
+        """Retry the trusted pending audit without reopening integration admission."""
+
+        pending = self._pending_audit
+        if pending is None:
+            return self._halt(GuardedIntegrationError.INVALID_AUDIT)
         audit_request = AuditRequest(
-            ticket_reference=event.ticket_reference,
-            correlation_id=event.correlation_id,
-            pending_audit=pending_audit,
+            ticket_reference=pending.ticket_reference,
+            correlation_id=pending.correlation_id,
+            pending_audit=pending,
         )
-        try:
-            self._audit_sink.request_audit(audit_request)
-        except Exception:
-            return self._halt(GuardedIntegrationError.ADAPTER_FAILURE)
-        self._pending_audit = pending_audit
-        awakened = self._wake_dependents(ticket_reference=event.ticket_reference)
+        if not self._pending_audit_delivered:
+            try:
+                self._audit_sink.request_audit(audit_request)
+            except Exception:
+                return self._halt(GuardedIntegrationError.ADAPTER_FAILURE)
+            self._pending_audit_delivered = True
+        awakened = self._wake_dependents(ticket_reference=pending.ticket_reference)
         return GuardedIntegrationDecision(
             outcome=CoordinatorOutcome.PENDING_AUDIT,
             awakened_proposal_ids=awakened,
-            pending_audit=pending_audit,
+            pending_audit=pending,
             audit_request=audit_request,
         )
 
@@ -490,6 +516,7 @@ class GuardedIntegrationCoordinator:
         ):
             return self._halt(GuardedIntegrationError.INVALID_AUDIT)
         self._pending_audit = None
+        self._pending_audit_delivered = False
         if decision.disposition is AuditDisposition.APPROVED:
             return GuardedIntegrationDecision(
                 outcome=CoordinatorOutcome.CODE_REVIEW,
@@ -530,17 +557,13 @@ class GuardedIntegrationCoordinator:
         for plan in self._dispatch_plans:
             trusted = plan.receipt
             lane = plan.ticket_lane
-            reviewer_ids = (lane.reviewer.capability_id, lane.reviewer.agent_profile)
-            owner_ids = (
-                trusted.implementation_owner_id,
-                lane.implementation_capability.capability_id,
-                lane.implementation_capability.agent_profile,
-            )
             if (
                 receipt != trusted
                 or event.ticket_reference != lane.ticket_id
-                or event.implementation_owner_id not in owner_ids
-                or event.reviewer_id not in reviewer_ids
+                or event.implementation_owner_id != trusted.implementation_owner_id
+                or event.implementation_owner_id
+                != lane.implementation_capability.capability_id
+                or event.reviewer_id != lane.reviewer.capability_id
                 or event.expected_main_revision != lane.expected_main_revision
                 or event.worktree_fingerprint != lane.worktree_fingerprint
                 or event.branch_fingerprint != lane.branch_fingerprint
@@ -587,10 +610,24 @@ class GuardedIntegrationRouterAdapter:
         """Return the coordinator result and, only on success, an integration event."""
 
         decision = self._coordinator.handle_return(event)
+        return decision, self._integration_event_for(decision)
+
+    def retry_pending_audit(self) -> tuple[GuardedIntegrationDecision, RouterEvent | None]:
+        """Resume a retained audit request without attempting another integration."""
+
+        decision = self._coordinator.retry_pending_audit()
+        return decision, self._integration_event_for(decision)
+
+    @staticmethod
+    def _integration_event_for(
+        decision: GuardedIntegrationDecision,
+    ) -> RouterEvent | None:
+        """Emit the one reviewed integration event only for a pending audit."""
+
         pending = decision.pending_audit
         if decision.outcome is not CoordinatorOutcome.PENDING_AUDIT or pending is None:
-            return decision, None
-        return decision, RouterEvent(
+            return None
+        return RouterEvent(
             event_id=pending.audit_event_id,
             kind=RouterEventKind.INTEGRATION_COMPLETED,
             lane_kind=LaneKind.TICKET,

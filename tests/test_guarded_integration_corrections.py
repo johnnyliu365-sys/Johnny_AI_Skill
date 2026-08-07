@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import unittest
+from collections.abc import Callable
 
 from library.workflow_router import (
     ArtifactKind,
@@ -12,6 +13,7 @@ from library.workflow_router import (
     CollaborationDispatchPlan,
     CollaborationTopology,
     CollaborationTopologyPlan,
+    ContinuationDirective,
     ImplementationReturn,
     ImplementationReturnStatus,
     PlanningLaneState,
@@ -32,6 +34,7 @@ from library.workflow_router.guarded_integration import (
     AuditDisposition,
     CoordinatorOutcome,
     GuardedIntegrationCoordinator,
+    GuardedIntegrationDecision,
     GuardedIntegrationError,
     GuardedIntegrationRouterAdapter,
     ImplementationReturnEvent,
@@ -69,6 +72,48 @@ class FakeAuditSink:
 
     def request_audit(self, request: object) -> None:
         self.requests.append(request)
+
+
+class ReentrantReleaseLock:
+    """Deliver one second return exactly when the first critical section releases."""
+
+    def __init__(self) -> None:
+        self.callback: Callable[[], GuardedIntegrationDecision] | None = None
+        self.reentrant_result: GuardedIntegrationDecision | None = None
+        self.release_count = 0
+
+    def try_acquire(self) -> bool:
+        return True
+
+    def release(self) -> None:
+        self.release_count += 1
+        if self.release_count == 1 and self.callback is not None:
+            self.reentrant_result = self.callback()
+
+
+class SequencedIntegrationPort:
+    """Return deterministic distinct main revisions for two attempted integrations."""
+
+    def __init__(self, *, results: tuple[IntegrationResult, ...]) -> None:
+        self._results = results
+        self.requests: list[object] = []
+
+    def integrate(self, request: object) -> IntegrationResult:
+        index = len(self.requests)
+        self.requests.append(request)
+        return self._results[index]
+
+
+class FirstAuditFailureSink:
+    """Fail the first post-integration audit request and retain later calls as evidence."""
+
+    def __init__(self) -> None:
+        self.requests: list[object] = []
+
+    def request_audit(self, request: object) -> None:
+        self.requests.append(request)
+        if len(self.requests) == 1:
+            raise RuntimeError("audit request unavailable")
 
 
 class ReceiptBoundCorrectionTests(unittest.TestCase):
@@ -255,6 +300,109 @@ class ReceiptBoundCorrectionTests(unittest.TestCase):
                         event.model_dump() | {"worktree_fingerprint": locator}
                     )
 
+    def test_generic_actor_profiles_cannot_substitute_named_owner_or_reviewer(self) -> None:
+        event = self._event()
+        plan = self._plan(event)
+        for field_name, generic_profile in (
+            ("implementation_owner_id", "implementation-owner"),
+            ("reviewer_id", "reviewer"),
+        ):
+            with self.subTest(field=field_name):
+                substituted = event.model_copy(update={field_name: generic_profile})
+                decision = self._coordinator(plans=(plan,)).handle_return(substituted)
+                self.assertIn(
+                    decision.error,
+                    (GuardedIntegrationError.INVALID_RETURN, GuardedIntegrationError.DISPATCH_NOT_BOUND),
+                )
+                self.assertEqual((), tuple(self.integration.requests))
+                self.assertEqual((), tuple(self.audit.requests))
+
+                class Source:
+                    def next_return(self) -> ImplementationReturnEvent:
+                        return substituted
+
+                injected = self._coordinator(plans=(plan,)).consume_return(Source())
+                self.assertIn(
+                    injected.error,
+                    (GuardedIntegrationError.INVALID_RETURN, GuardedIntegrationError.DISPATCH_NOT_BOUND),
+                )
+                self.assertEqual((), tuple(self.integration.requests))
+                self.assertEqual((), tuple(self.audit.requests))
+
+    def test_lock_release_cannot_admit_a_second_ticket_before_pending_audit(self) -> None:
+        first = self._event(correlation="return-lock-first-02", event_id="event-lock-first-02")
+        second = self._event(
+            ticket="ticket-guarded-lock-other",
+            correlation="return-lock-second-02",
+            event_id="event-lock-second-02",
+        )
+        reentrant_lock = ReentrantReleaseLock()
+        coordinator = GuardedIntegrationCoordinator(
+            integration_port=self.integration,
+            integration_lock=reentrant_lock,
+            audit_sink=self.audit,
+            main_snapshot=MainSnapshot(revision=self.revision, is_clean=True),
+            dependent_proposals=(),
+            dispatch_plans=(self._plan(first), self._plan(second)),
+        )
+        reentrant_lock.callback = lambda: coordinator.handle_return(second)
+        initial = coordinator.handle_return(first)
+        self.assertEqual(CoordinatorOutcome.PENDING_AUDIT, initial.outcome)
+        self.assertIsNotNone(reentrant_lock.reentrant_result)
+        assert reentrant_lock.reentrant_result is not None
+        self.assertEqual(GuardedIntegrationError.PENDING_AUDIT_ACTIVE, reentrant_lock.reentrant_result.error)
+        self.assertEqual(1, len(self.integration.requests))
+        self.assertEqual(1, len(self.audit.requests))
+
+    def test_audit_sink_failure_retains_pending_audit_and_blocks_later_ticket(self) -> None:
+        first_revision = "rev-1111111111111111"
+        second_revision = "rev-2222222222222222"
+        first = self._event(correlation="return-audit-failure-02", event_id="event-audit-failure-02")
+        second = self._event(
+            ticket="ticket-guarded-audit-other",
+            correlation="return-audit-second-02",
+            event_id="event-audit-second-02",
+            expected_revision=first_revision,
+        )
+        integration = SequencedIntegrationPort(
+            results=(
+                IntegrationResult(
+                    status=IntegrationStatus.COMPLETED,
+                    integrated_main_revision=first_revision,
+                ),
+                IntegrationResult(
+                    status=IntegrationStatus.COMPLETED,
+                    integrated_main_revision=second_revision,
+                ),
+            )
+        )
+        audit = FirstAuditFailureSink()
+        adapter = GuardedIntegrationRouterAdapter(coordinator=GuardedIntegrationCoordinator(
+            integration_port=integration,
+            integration_lock=FakeIntegrationLock(),
+            audit_sink=audit,
+            main_snapshot=MainSnapshot(revision=self.revision, is_clean=True),
+            dependent_proposals=(),
+            dispatch_plans=(self._plan(first), self._plan(second)),
+        ))
+        failed, failed_event = adapter.handle_return(first)
+        self.assertEqual(GuardedIntegrationError.ADAPTER_FAILURE, failed.error)
+        self.assertIsNone(failed_event)
+        retry, integration_event = adapter.retry_pending_audit()
+        self.assertEqual(CoordinatorOutcome.PENDING_AUDIT, retry.outcome)
+        self.assertIsNotNone(retry.pending_audit)
+        self.assertIsNotNone(integration_event)
+        assert integration_event is not None
+        self.assertEqual(RouterEventKind.INTEGRATION_COMPLETED, integration_event.kind)
+        duplicate_retry, duplicate_event = adapter.retry_pending_audit()
+        self.assertEqual(CoordinatorOutcome.PENDING_AUDIT, duplicate_retry.outcome)
+        self.assertEqual(integration_event, duplicate_event)
+        blocked, blocked_event = adapter.handle_return(second)
+        self.assertEqual(GuardedIntegrationError.PENDING_AUDIT_ACTIVE, blocked.error)
+        self.assertIsNone(blocked_event)
+        self.assertEqual(1, len(integration.requests))
+        self.assertEqual(2, len(audit.requests))
+
     def test_pending_audit_is_global_and_revision_advances_after_integration(self) -> None:
         first = self._event()
         second = self._event(
@@ -345,7 +493,10 @@ class ReceiptBoundCorrectionTests(unittest.TestCase):
             event=RouterEvent(event_id="integration-completed-02", kind=RouterEventKind.INTEGRATION_COMPLETED),
             profile=profile,
         )
-        self.assertEqual(RouterOutcome.SUSPEND, integrated.outcome)
+        self.assertEqual(RouterOutcome.ADVANCE, integrated.outcome)
+        self.assertEqual(ContinuationDirective.AUTO_CONTINUE, integrated.continuation)
+        self.assertEqual(ProcessStage.GRILL, integrated.next_stage)
+        self.assertIsNone(integrated.wait_reason)
         audited = RouterEngine().decide(
             state=audit_state,
             event=RouterEvent(event_id="audit-completed-02", kind=RouterEventKind.AUDIT_COMPLETED),

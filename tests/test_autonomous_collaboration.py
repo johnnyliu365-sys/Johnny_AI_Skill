@@ -136,6 +136,14 @@ class AutonomousCollaborationTests(unittest.TestCase):
         self.assertEqual(CollaborationTopology.TWO_COLLABORATING_AGENTS, two.topology)
         self.assertEqual((), one.host_thread_references)
 
+    def test_capability_id_cannot_be_a_descriptive_agent_profile(self) -> None:
+        with self.assertRaises(ValidationError):
+            CapabilityRef(
+                capability_id="reviewer",
+                version="1",
+                agent_profile="reviewer",
+            )
+
     def test_dispatch_without_or_with_negative_confirmation_waits_without_grants(self) -> None:
         state = self._ticket_state()
         for confirmation in (None, TicketDispatchConfirmation.NEGATIVE):
@@ -255,6 +263,79 @@ class AutonomousCollaborationTests(unittest.TestCase):
         self.assertEqual(ContinuationDirective.HALT, repeated.continuation)
         self.assertEqual("invalid_pending_dispatch", repeated.blockers[0].code.value)
 
+    def test_dispatch_rejects_generic_actor_profile_substitutions(self) -> None:
+        substitutions = (
+            (
+                "proposal-owner",
+                RouterEvent(
+                    event_id="dispatch-profile-proposal-owner-0001",
+                    kind=RouterEventKind.TICKET_DISPATCH_REQUIRED,
+                    implementation_handoff=self._handoff(),
+                    ticket_proposal=self._proposal().model_copy(
+                        update={"implementation_owner_id": self.implementation.agent_profile}
+                    ),
+                ),
+            ),
+            (
+                "handoff-control",
+                RouterEvent(
+                    event_id="dispatch-profile-control-owner-0001",
+                    kind=RouterEventKind.TICKET_DISPATCH_REQUIRED,
+                    implementation_handoff=self._handoff().model_copy(
+                        update={"control_owner_id": self.control.agent_profile}
+                    ),
+                    ticket_proposal=self._proposal(),
+                ),
+            ),
+            (
+                "handoff-owner",
+                RouterEvent(
+                    event_id="dispatch-profile-implementation-owner-0001",
+                    kind=RouterEventKind.TICKET_DISPATCH_REQUIRED,
+                    implementation_handoff=self._handoff().model_copy(
+                        update={"implementation_owner_id": self.implementation.agent_profile}
+                    ),
+                    ticket_proposal=self._proposal(),
+                ),
+            ),
+            (
+                "handoff-reviewer",
+                RouterEvent(
+                    event_id="dispatch-profile-reviewer-0001",
+                    kind=RouterEventKind.TICKET_DISPATCH_REQUIRED,
+                    implementation_handoff=self._handoff().model_copy(
+                        update={"reviewer_id": self.reviewer.agent_profile}
+                    ),
+                    ticket_proposal=self._proposal(),
+                ),
+            ),
+        )
+        for name, event in substitutions:
+            with self.subTest(substitution=name):
+                decision = self.engine.decide(
+                    state=self._ticket_state(),
+                    event=event,
+                    profile=self.profile,
+                )
+                self.assertEqual(RouterOutcome.SUSPEND, decision.outcome)
+                self.assertEqual(ContinuationDirective.HALT, decision.continuation)
+                self.assertEqual((), decision.ticket_lane_capabilities)
+
+        receipt_decision = self.engine.decide(
+            state=self._ticket_state().model_copy(update={"pending_dispatch": self._pending()}),
+            event=RouterEvent(
+                event_id="dispatch-profile-receipt-owner-0001",
+                kind=RouterEventKind.IMPLEMENTATION_DISPATCH_CONFIRMED,
+                dispatch_confirmation=TicketDispatchConfirmation.POSITIVE,
+                dispatch_receipt=self._receipt().model_copy(
+                    update={"implementation_owner_id": self.implementation.agent_profile}
+                ),
+            ),
+            profile=self.profile,
+        )
+        self.assertEqual(RouterOutcome.SUSPEND, receipt_decision.outcome)
+        self.assertEqual(ContinuationDirective.HALT, receipt_decision.continuation)
+
     def test_ticket_documentation_completion_does_not_open_a_second_approval_wait(self) -> None:
         decision = self.engine.decide(
             state=self._ticket_state(),
@@ -290,7 +371,7 @@ class AutonomousCollaborationTests(unittest.TestCase):
         planned_proposal = TicketProposal(
             ticket_reference=self.ticket.identifier,
             state=TicketProposalState.PLANNED,
-            implementation_owner_id=self.implementation.agent_profile,
+            implementation_owner_id=self.implementation.capability_id,
             proposal_revision="rev-0123456789abcdef",
         )
         opened_proposal = planned_proposal.open(dispatch_question_id="dispatch-question-0001")
@@ -770,7 +851,7 @@ class AutonomousCollaborationTests(unittest.TestCase):
             proposal_revision="rev-0123456789abcdef",
             expected_main_revision="rev-abcdef0123456789",
             dispatch_question_id="dispatch-question-0001",
-            implementation_owner_id=self.implementation.agent_profile,
+            implementation_owner_id=self.implementation.capability_id,
             reviewed_handoff_reference="handoff-topology-dispatch-01",
             event_correlation_id="dispatch-confirmed-0001",
         )
@@ -779,7 +860,7 @@ class AutonomousCollaborationTests(unittest.TestCase):
         planned = TicketProposal(
             ticket_reference=self.ticket.identifier,
             state=TicketProposalState.PLANNED,
-            implementation_owner_id=self.implementation.agent_profile,
+            implementation_owner_id=self.implementation.capability_id,
             proposal_revision="rev-0123456789abcdef",
         )
         return planned.open(dispatch_question_id="dispatch-question-0001")
@@ -808,15 +889,15 @@ class AutonomousCollaborationTests(unittest.TestCase):
             tdd_references=("tdd-dispatch-lanes",),
             scope=TicketScope.NON_FRONTEND,
             non_frontend_reason="no formal UI boundary",
-            control_owner_id="control-plane",
-            implementation_owner_id="implementation-owner",
-            reviewer_id="reviewer",
+            control_owner_id=self.control.capability_id,
+            implementation_owner_id=self.implementation.capability_id,
+            reviewer_id=self.reviewer.capability_id,
         )
 
     def _receipt(self) -> TicketDispatchReceipt:
         return TicketDispatchReceipt(
             ticket_reference=self.ticket.identifier,
-            implementation_owner_id="implementation-owner",
+            implementation_owner_id=self.implementation.capability_id,
             handoff_reference="handoff-topology-dispatch-01",
             expected_main_revision="rev-abcdef0123456789",
             correlation_id="dispatch-confirmed-0001",

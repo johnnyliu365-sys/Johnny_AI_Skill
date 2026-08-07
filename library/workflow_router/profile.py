@@ -267,11 +267,10 @@ def build_router_poc_profile() -> ProjectWorkflowProfile:
             TransitionRule(
                 current_stage=ProcessStage.GRILL,
                 event_kind=RouterEventKind.INTEGRATION_COMPLETED,
-                outcome=RouterOutcome.SUSPEND,
-                next_stage=None,
+                outcome=RouterOutcome.ADVANCE,
+                next_stage=ProcessStage.GRILL,
                 required_source_kinds=(ArtifactKind.TICKET,),
-                requires_human_approval=True,
-                wait_reason=HumanWaitReason.INTEGRATION_AUDIT_REQUIRED,
+                eligible_capabilities=(grill,),
             ),
             TransitionRule(
                 current_stage=ProcessStage.GRILL,

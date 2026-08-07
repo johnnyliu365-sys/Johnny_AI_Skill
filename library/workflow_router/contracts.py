@@ -454,6 +454,14 @@ class CapabilityRef(RouterModel):
     version: NonBlankText
     agent_profile: NonBlankText
 
+    @model_validator(mode="after")
+    def capability_id_is_not_a_descriptive_profile(self) -> CapabilityRef:
+        """Keep an authority-bearing opaque capability separate from its description."""
+
+        if self.capability_id == self.agent_profile:
+            raise ValueError("capability ID must not equal an agent profile")
+        return self
+
 
 class CollaborationTopologyPlan(RouterModel):
     """A finite topology and its named capabilities, never a host-thread grant."""
@@ -579,6 +587,22 @@ class CollaborationDispatchPlan(RouterModel):
     receipt: TicketDispatchReceipt
     planning_lane: PlanningLaneState
     ticket_lane: TicketLaneState
+
+    @model_validator(mode="after")
+    def has_one_exact_named_ticket_lane(self) -> CollaborationDispatchPlan:
+        """Bind the receipt to named actor identities, never descriptive profiles."""
+
+        if (
+            self.receipt.ticket_reference != self.ticket_lane.ticket_id
+            or self.receipt.expected_main_revision != self.ticket_lane.expected_main_revision
+            or self.receipt.worktree_fingerprint != self.ticket_lane.worktree_fingerprint
+            or self.receipt.branch_fingerprint != self.ticket_lane.branch_fingerprint
+            or self.receipt.implementation_owner_id
+            != self.ticket_lane.implementation_capability.capability_id
+            or self.receipt.ticket_reference not in self.planning_lane.active_ticket_refs
+        ):
+            raise ValueError("dispatch receipt must bind one exact named ticket lane")
+        return self
 
     def with_planning_progress(
         self,
