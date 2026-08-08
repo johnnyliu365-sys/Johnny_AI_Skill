@@ -119,8 +119,8 @@ boundary: Do not treat the POC's fake adapters as real host/Git operations. Do n
 ## Ticket 01 selection and accepted dispatch
 
 - Ticket: `01-owned-install-lifecycle`, selected from the committed ticket set `afee39d`.
-- Handoff: `hnd_local_orchestration_install_01_20260808`; receipt: `rcpt_local_orchestration_install_01_20260808`; implementation owner is the named Codex implementation Agent in `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` / `codex/implementation-private-router-saas-01`; reviewer/control plane is Codex/current `main`.
-- State: the project owner confirmed `已交付` on `2026-08-08`; Ticket 01 may now begin TDD only in the named implementation worktree. The prior path with an extra separator was corrected before its first red test; no second confirmation is required.
+- Handoff: original `hnd_local_orchestration_install_01_20260808` is superseded only for stale allocation. Fresh `hnd_local_orchestration_install_01_fresh_20260808` / allocation `aln_local_orchestration_install_01_20260808` retain receipt `rcpt_local_orchestration_install_01_20260808`, ticket and owner while moving the execution to branch `codex/implementation-local-install-lifecycle-01` in `C:\Users\<user>\Desktop\AI控制工作workflow-implementation`; reviewer/control plane is Codex/current `main`.
+- State: the project owner confirmed `已交付` on `2026-08-08`. Historical `codex/implementation-private-router-saas-01@3fa2270` cannot rebase cleanly and is retained untouched as evidence. The implementation owner must create the fresh recorded branch directly from this fresh handoff's `main` commit, then begin first-red-test TDD. No second confirmation is required.
 - Planning continuation: Ticket-01 execution now runs independently while the planning lane enters the Ticket-02 Grill. No second ticket-approval question is valid.
 
 ## Ticket 02 Grill convergence

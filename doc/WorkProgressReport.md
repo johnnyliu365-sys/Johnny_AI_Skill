@@ -482,3 +482,14 @@
 | Ticket 02 Grill | `GO → DEPENDENCY_WAIT`: existing public Router contracts/patterns are reusable, raw Context remains excluded, temporary repos are required, and exact registry/lock/clean-base/fast-forward guards remain mandatory. No new CHG/SPEC/ADR is required. |
 | Planning state | Ticket 02 stays `PLANNED` and has no dispatch receipt until Ticket 01 is independently reviewed and integrated. Ticket 03/04 remain untouched. |
 | Continuation | Ticket lane: `IMPLEMENT`. Planning lane: waits for typed Ticket-01 integration evidence, then automatically resumes Grill/dispatch eligibility. |
+
+## PRG-20260808-020 — Ticket 01 stale-branch recovery and fresh allocation
+
+| Field | Value |
+| --- | --- |
+| Trigger | The implementation owner reported clean historical worktree `codex/implementation-private-router-saas-01@3fa2270` cannot rebase to `main@863c76d`; conflicts occur in previous Router collaboration/contract/private-router source and tests. Rebase was correctly aborted; no source was changed. |
+| Verification | `git merge-base --is-ancestor 3fa2270 863c76d` exits `1`: the old branch is not an ancestor of current main. Its clean HEAD and history are retained as historical evidence. |
+| Classification | Allocation/branch-history conflict only — no requirements, SPEC, ticket scope, architecture, dependency, security boundary or acceptance criterion changed. `REQUIREMENT_CHANGED` is not emitted. |
+| Fresh handoff / allocation | `hnd_local_orchestration_install_01_fresh_20260808` / `aln_local_orchestration_install_01_20260808`: same ticket, owner, reviewer, user receipt and TDD; fresh branch name `codex/implementation-local-install-lifecycle-01` starts directly from this docs-only control-plane handoff commit. |
+| Required owner action | In the existing owner worktree only, with clean status: create the fresh branch at the recorded current `main` handoff baseline. Do not merge, rebase, reset, cherry-pick, overwrite or reuse the historical branch. Then write/run Ticket-01 first red test. |
+| Authority / continuation | Receipt `rcpt_local_orchestration_install_01_20260808` remains valid by allocation continuation; no second delivery question is permitted. Ticket lane returns to `IMPLEMENT`; planning lane remains at Ticket-02 `DEPENDENCY_WAIT`. |

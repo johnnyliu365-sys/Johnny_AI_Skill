@@ -24,7 +24,7 @@ Deliver a Windows per-user local control plane that owns every installed compone
 ## Roles and allocation
 
 - Control-plane owner / reviewer: Codex / current `main` worktree.
-- Named implementation capability: Codex implementation Agent / existing `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` worktree, branch `codex/implementation-private-router-saas-01` after it synchronizes the selected ticket's handoff baseline in its own worktree.
+- Named implementation capability: Codex implementation Agent / existing `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` worktree. Historical branch `codex/implementation-private-router-saas-01` remains untouched; Ticket 01 has a fresh allocation branch `codex/implementation-local-install-lifecycle-01` from the control-plane handoff baseline.
 - One implementation lane is active at a time. The implementation owner must not modify this control-plane worktree; the reviewer must not modify the implementation worktree.
 
 ## Dispatch and continuation rules
@@ -32,4 +32,5 @@ Deliver a Windows per-user local control plane that owns every installed compone
 - Every ticket stays `PLANNED` until the control plane selects it. Selection changes only that ticket to `IN_PROGRESS`, creates a metadata-only `ImplementationHandoff`, and asks exactly one delivery-confirmation question.
 - A positive delivery reply is the only implementation authority for the selected ticket. It starts that ticket lane and automatically returns the planning lane to Grill; there is no second ticket-approval wait.
 - A host or build-tool limitation discovered during implementation returns `BLOCKED` or `CHANGE_DETECTED → REQUIREMENT_CHANGED → Grill`; it never permits an undocumented host-config edit or a weaker uninstaller.
+- If a historical implementation branch cannot fast-forward/rebase cleanly to the selected baseline, control plane records a fresh branch allocation for the same ticket/owner/receipt. The old branch stays historical evidence; the existing receipt continues without a second delivery question.
 - Reuse is source-local: selected public patterns may be adapted into this repository's own versioned/tested source. No target project receives an import, symlink, submodule or runtime dependency on this repository.
