@@ -311,7 +311,7 @@
 | Owner preflight | Owner may remove only the known test-generated Python bytecode cache in its own Ticket-03 worktree before creating the branch. No other worktree may be mutated. |
 | Scope / integration | This record changes allocation only. It grants no merge, push, deployment, host configuration, target-project mutation, Secret, provider, or other-ticket authority. |
 
-## PRG-20260808-006 — Ticket 03 fresh implementation handoff (CR-16 through CR-18)
+## PRG-20260808-007 — Ticket 03 fresh implementation handoff (CR-16 through CR-18)
 
 | Field | Value |
 | --- | --- |
@@ -326,36 +326,7 @@
 | Validation | `python -B -m unittest discover -s tests` — 122 passed; `python -m pytest -q` — 122 passed / 115 subtests; `python -m mypy --strict --no-incremental library tests` — 65 source files clean; `python -m compileall -q library/workflow_router` — 13 modules; metadata-only privacy/source sentinel, smoke and `git diff --check` passed. |
 | Review / integration | No merge, push, deployment, external provider, main-worktree mutation or other-ticket mutation was performed. Independent control-plane review is required before any fast-forward integration. |
 
-## PRG-20260808-010 — Ticket 03 project-scope registry correction handoff
-
-| Field | Value |
-| --- | --- |
-| State | `IMPLEMENTATION_COMMITTED_PENDING_REVIEW` |
-| Ticket / review return | `03-plugin-policy-and-response` / `1bcfebf` (`CHANGES_REQUESTED → IMPLEMENT`) |
-| Receipt / baseline | `c569056` remains valid; the complete rework branch was rebased onto current control-plane `main` at `1bcfebf` before this cycle. |
-| Implementation owner / branch | Codex implementation Agent / `codex/implementation-plugin-policy-and-response-03-rework` |
-| Implementation commit | `46347a6` (`fix: bind dispatch artifacts to project identity`) |
-| Project-scope correction | `ApprovedDispatchArtifactRegistry` identity is now `(project_id, ticket_reference, handoff_reference, implementation_owner_id)`; both direct Router and Private Router resolve and compare the project before creating pending state or granting a lane. Cross-project valid-shaped requests halt closed. |
-| TDD red/green evidence | Added direct and private cross-project regressions using an otherwise exact reviewed handoff; the alternate project cannot reuse the registered artifact record and produces no pending descriptor or implementation lane. Existing forged identity, commit, omission, replay and path/URI regressions remain active. |
-| Validation | `python -B -m unittest discover -s tests` — 130 passed; `python -B -m pytest -q -p no:cacheprovider` — 130 passed / 161 subtests; `python -B -m mypy --strict --no-incremental library tests` — 65 source files clean; `python -B -m compileall -q library/workflow_router` — 13 modules; metadata-only privacy/source sentinel, plugin dispatch smoke and `git diff --check` passed. |
-| Docs-only handoff | This entry is the docs-only handoff following `46347a6`; no raw Context, source text, prompt, path, URI, Secret, PII, production data, merge, push, or deployment was recorded. Independent review is required before integration. |
-
-## PRG-20260808-009 — Ticket 03 correction handoff (CR-29 through CR-31)
-
-| Field | Value |
-| --- | --- |
-| State | `IMPLEMENTATION_COMMITTED_PENDING_REVIEW` |
-| Ticket / review return | `03-plugin-policy-and-response` / `870013c` (`CHANGES_REQUESTED → IMPLEMENT`) |
-| Receipt / baseline | `c569056` remains valid; the complete rework branch was rebased onto current control-plane `main` at `870013c` before handoff. |
-| Implementation owner / branch | Codex implementation Agent / `codex/implementation-plugin-policy-and-response-03-rework` |
-| Implementation commits | `0dda8fc` (`fix: require approved dispatch artifact registry`) and `95bf7cf` (`test: cover omitted dispatch commit values`) |
-| CR-29 correction | Private Router and direct Router admission now require an injected typed `ApprovedDispatchArtifactRegistry`. It resolves exact ticket, reviewed handoff, and named implementation-owner identity, then requires both incoming commit references to equal the registered reviewed commits. Missing or substituted ticket, handoff, owner, or valid-shaped commit metadata halts before question, pending descriptor, receipt acceptance, rendering, or implementation lane. Duplicate registry identities are rejected. |
-| CR-30 correction | TDD covers both commit fields independently for omission, `None`, empty, whitespace, `[]`, `{}`, and the seven path/URI boundary forms; private-boundary regressions verify no pending descriptor or lane is created. |
-| TDD red evidence | Before registry injection, valid-shaped raw handoff commit substitutions reached the pending/render path. Before the expanded boundary matrix, the test used a literal `undefined` marker and tuple-only empty-container coverage. New direct/private tests now fail closed for registered-identity, ticket, handoff, owner, omission, null, whitespace, empty-container, replay and path/URI substitutions. |
-| Validation | `python -B -m unittest discover -s tests` — 129 passed; `python -B -m pytest -q -p no:cacheprovider` — 129 passed / 161 subtests; `python -B -m mypy --strict --no-incremental library tests` — 65 source files clean; `python -B -m compileall -q library/workflow_router` — 13 modules; metadata-only privacy/source sentinel and plugin dispatch smoke passed; `git diff --check` clean. |
-| Docs-only handoff | This entry and the Workflow registry rule are the docs-only handoff following `95bf7cf`; no raw Context, source text, prompt, path, URI, Secret, PII, production data, merge, push, or deployment was recorded. Independent review is required before integration. |
-
-## PRG-20260808-007 — Ticket 03 correction handoff (CR-25 and CR-26)
+## PRG-20260808-008 — Ticket 03 correction handoff (CR-25 and CR-26)
 
 | Field | Value |
 | --- | --- |
@@ -370,7 +341,7 @@
 | Validation | `python -B -m unittest discover -s tests` — 125 passed; `python -B -m pytest -q -p no:cacheprovider` — 125 passed / 122 subtests; `python -B -m mypy --strict --no-incremental library tests` — 65 source files clean; `python -B -m compileall -q library/workflow_router` — 13 modules; privacy/source sentinel, smoke and `git diff --check` passed. |
 | Review / integration | No merge, push, deployment, external provider, main-worktree mutation or other-ticket mutation was performed. Independent control-plane review is required before any fast-forward integration. |
 
-## PRG-20260808-008 — Ticket 03 correction handoff (CR-27 and CR-28)
+## PRG-20260808-009 — Ticket 03 correction handoff (CR-27 and CR-28)
 
 | Field | Value |
 | --- | --- |
@@ -384,3 +355,48 @@
 | TDD red evidence | Before the admission guard, missing reviewed commits returned `WAIT_FOR_HUMAN` and a matching dispatch could advance; before the expanded boundary cases, only alternative locator strings were covered. New direct/private regressions fail before pending state or lane creation. |
 | Validation | `python -B -m unittest discover -s tests` — 127 passed; `python -B -m pytest -q -p no:cacheprovider` — 127 passed / 130 subtests; `python -B -m mypy --strict --no-incremental library tests` — 65 source files clean; `python -B -m compileall -q library/workflow_router` — 13 modules; privacy/source sentinel, smoke and `git diff --check` passed. |
 | Review / integration | No merge, push, deployment, external provider, main-worktree mutation or other-ticket mutation was performed. Independent control-plane review is required before any fast-forward integration. |
+
+## PRG-20260808-010 — Ticket 03 correction handoff (CR-29 through CR-31)
+
+| Field | Value |
+| --- | --- |
+| State | `IMPLEMENTATION_COMMITTED_PENDING_REVIEW` |
+| Ticket / review return | `03-plugin-policy-and-response` / `870013c` (`CHANGES_REQUESTED → IMPLEMENT`) |
+| Receipt / baseline | `c569056` remains valid; the complete rework branch was rebased onto current control-plane `main` at `870013c` before handoff. |
+| Implementation owner / branch | Codex implementation Agent / `codex/implementation-plugin-policy-and-response-03-rework` |
+| Implementation commits | `0dda8fc` (`fix: require approved dispatch artifact registry`) and `95bf7cf` (`test: cover omitted dispatch commit values`) |
+| CR-29 correction | Private Router and direct Router admission now require an injected typed `ApprovedDispatchArtifactRegistry`. It resolves exact ticket, reviewed handoff, and named implementation-owner identity, then requires both incoming commit references to equal the registered reviewed commits. Missing or substituted ticket, handoff, owner, or valid-shaped commit metadata halts before question, pending descriptor, receipt acceptance, rendering, or implementation lane. Duplicate registry identities are rejected. |
+| CR-30 correction | TDD covers both commit fields independently for omission, `None`, empty, whitespace, `[]`, `{}`, and the seven path/URI boundary forms; private-boundary regressions verify no pending descriptor or lane is created. |
+| TDD red evidence | Before registry injection, valid-shaped raw handoff commit substitutions reached the pending/render path. Before the expanded boundary matrix, the test used a literal `undefined` marker and tuple-only empty-container coverage. New direct/private tests now fail closed for registered-identity, ticket, handoff, owner, omission, null, whitespace, empty-container, replay and path/URI substitutions. |
+| Validation | `python -B -m unittest discover -s tests` — 129 passed; `python -B -m pytest -q -p no:cacheprovider` — 129 passed / 161 subtests; `python -B -m mypy --strict --no-incremental library tests` — 65 source files clean; `python -B -m compileall -q library/workflow_router` — 13 modules; metadata-only privacy/source sentinel and plugin dispatch smoke passed; `git diff --check` clean. |
+| Docs-only handoff | This entry and the Workflow registry rule are the docs-only handoff following `95bf7cf`; no raw Context, source text, prompt, path, URI, Secret, PII, production data, merge, push, or deployment was recorded. Independent review is required before integration. |
+
+## PRG-20260808-011 — Ticket 03 project-scope registry correction handoff
+
+| Field | Value |
+| --- | --- |
+| State | `IMPLEMENTATION_COMMITTED_PENDING_REVIEW` |
+| Ticket / review return | `03-plugin-policy-and-response` / `1bcfebf` (`CHANGES_REQUESTED → IMPLEMENT`) |
+| Receipt / baseline | `c569056` remains valid; the complete rework branch was rebased onto current control-plane `main` at `1bcfebf` before this cycle. |
+| Implementation owner / branch | Codex implementation Agent / `codex/implementation-plugin-policy-and-response-03-rework` |
+| Implementation commit | `46347a6` (`fix: bind dispatch artifacts to project identity`) |
+| Project-scope correction | `ApprovedDispatchArtifactRegistry` identity is now `(project_id, ticket_reference, handoff_reference, implementation_owner_id)`; both direct Router and Private Router resolve and compare the project before creating pending state or granting a lane. Cross-project valid-shaped requests halt closed. |
+| TDD red/green evidence | Added direct and private cross-project regressions using an otherwise exact reviewed handoff; the alternate project cannot reuse the registered artifact record and produces no pending descriptor or implementation lane. Existing forged identity, commit, omission, replay and path/URI regressions remain active. |
+| Validation | `python -B -m unittest discover -s tests` — 130 passed; `python -B -m pytest -q -p no:cacheprovider` — 130 passed / 161 subtests; `python -B -m mypy --strict --no-incremental library tests` — 65 source files clean; `python -B -m compileall -q library/workflow_router` — 13 modules; metadata-only privacy/source sentinel, plugin dispatch smoke and `git diff --check` passed. |
+| Docs-only handoff | This entry is the docs-only handoff following `46347a6`; no raw Context, source text, prompt, path, URI, Secret, PII, production data, merge, push, or deployment was recorded. Independent review is required before integration. |
+
+## PRG-20260808-012 — Ticket 03 evidence and opaque-project correction handoff
+
+| Field | Value |
+| --- | --- |
+| State | `IMPLEMENTATION_COMMITTED_PENDING_REVIEW` |
+| Ticket / review return | `03-plugin-policy-and-response` / `46fe254` (`CHANGES_REQUESTED → IMPLEMENT`) |
+| Receipt / baseline | `c569056` remains valid; the complete rework branch was rebased onto current control-plane `main` at `46fe254` before this cycle. |
+| Implementation owner / branch | Codex implementation Agent / `codex/implementation-plugin-policy-and-response-03-rework` |
+| Implementation commit | `f6b9c32` (`fix: validate project scoped dispatch identity`) |
+| CR-33 correction | Ticket-03 records now form the unique chronological sequence PRG-006 through PRG-012. Erratum mapping: the former duplicate fresh-handoff PRG-006 is PRG-007; former PRG-007, PRG-008, PRG-009 and PRG-010 are respectively PRG-008, PRG-009, PRG-010 and PRG-011. Historical validation facts and commit references are unchanged. |
+| CR-34 correction | The private cross-project regression now grants the same account both projects, retains an approved-artifact record only for the original project, proves dispatch admission halts before service/pending/rendering, and proves a forged confirmation receipt obtains no response or ticket-lane capability. |
+| CR-35 correction | One named `ProjectId` type validates approved-artifact registration, registry resolution, private requests and entitlement grants. Omission, null, empty, whitespace, empty containers, all seven locator variants, URI, traversal and arbitrary nonblank values fail closed; current opaque project IDs remain valid. |
+| TDD red evidence | `test_approved_artifact_project_id_rejects_non_opaque_boundary_values` initially failed for eight accepted path, URI, traversal and arbitrary-nonblank cases. CR-34 was an evidence-strengthening correction over already-working project equality; the committed two-entitlement test adds a service-call mutation assertion and makes no false red claim. |
+| Validation | `python -B -m unittest discover -s tests` — 131 passed; `python -B -m pytest -q -p no:cacheprovider` — 131 passed / 175 subtests; `python -B -m mypy --strict --no-incremental library tests` — 65 source files clean; `python -B -m compileall -q library/workflow_router` — 13 modules; metadata-only privacy/source sentinel, plugin dispatch smoke and `git diff --check` passed. |
+| Docs-only handoff | This entry is the docs-only handoff following `f6b9c32`; no raw Context, source text, prompt, path, URI, Secret, PII, production data, merge, push or deployment was recorded. Independent review is required before integration. |
