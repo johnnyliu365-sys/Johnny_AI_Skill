@@ -4,9 +4,9 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01, AC-03, AC-06, AC-07, AC-08 |
 | Context / change | `doc/context/local-orchestration-installer/main.md` / `CHG-20260808-011` |
-| State | `PLANNED` |
+| State | `IN_PROGRESS` — selected by control plane; `TICKET_DISPATCH_REQUIRED` awaits one positive delivery confirmation |
 | Language | Python 3.11, Pydantic strict models and standard-library filesystem test fakes |
-| Baseline | Ticket-set documentation commit (to be recorded in selected handoff) |
+| Baseline | `afee39d` (`docs: plan local orchestration installer tickets`) |
 | Control-plane owner / reviewer | Codex / current `main` worktree |
 | Implementation owner / worktree | Codex implementation Agent / `workflow-implementation` / `codex/implementation-private-router-saas-01` after explicit dispatch |
 | Environment | Local Windows user-scope test sandbox only; no actual host configuration, target-project write or installer binary |
@@ -27,7 +27,7 @@ Frontend composition / DI: the equivalent command/UI is `InstallControlPlane` / 
 
 - Control-plane owner: Codex/current `main`; implementation owner: named Codex implementation Agent in the stated separate worktree; reviewer: Codex/current `main`.
 - Owner override: `N/A`.
-- `ImplementationHandoff`: created only when this ticket is selected; it must carry the approved SPEC/ticket/Context references, dedicated `handoff_ref`, TDD reference, role IDs and the selected docs baseline. It stores no raw payload, Context, path, URI, Secret or PII.
+- `ImplementationHandoff`: `hnd_local_orchestration_install_01_20260808`; approved SPEC/ticket/Context/TDD references, role IDs and reviewed source baseline `afee39d`. The dispatch-record commit that introduces this handoff must also be synchronized by the implementation owner before its first red test. It stores no raw payload, Context, path, URI, Secret or PII.
 - `ImplementationReturn`: `COMPLETED → ACTION_COMPLETED`; `BLOCKED → HALT`; `CHANGE_DETECTED → REQUIREMENT_CHANGED → Grill`.
 
 ## TDD and defect checks
@@ -44,3 +44,13 @@ Frontend composition / DI: the equivalent command/UI is `InstallControlPlane` / 
 
 - Required: first red evidence for every behavior; unit tests; strict mypy; compile; metadata/raw-content sentinel; local smoke of fake install/uninstall; target-repository snapshots; `git diff --check`; review report; WorkProgress and docs-only handoff commit.
 - Formal-environment migration: N/A — this ticket is local test infrastructure, no migration, environment variable, deployment or target-project operation.
+
+## Selected dispatch record
+
+| Field | Value |
+| --- | --- |
+| Proposal selection | Control plane selected this first unblocked vertical ticket after `afee39d`. |
+| Handoff reference | `hnd_local_orchestration_install_01_20260808` |
+| Required implementation baseline | The implementation owner synchronizes this docs-only dispatch-record `main` commit in its own worktree; `afee39d` is the reviewed source/test baseline. |
+| Single human question | `工單 01-owned-install-lifecycle 是否已交付給 implementation owner Codex implementation Agent？` |
+| Pending state | No positive answer yet. No source, Context, capability, branch/worktree operation or implementation is granted. |

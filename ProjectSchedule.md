@@ -114,4 +114,5 @@
 | --- | --- | --- |
 | Requirement change, Wayfinder, Architecture and Grill | DONE | `CHG-20260808-011`; `doc/context/local-orchestration-installer/main.md`; `doc/adr/ADR-20260808-003-local-orchestration-installer.md` |
 | Specification | DONE | `modules/spec/local-orchestration-installer.md` was approved by the owner on `2026-08-08`. |
-| Tickets / implementation | TICKETING | Ticket planning is authorized. A selected ticket still needs its own delivery-confirmation receipt before source, test, installer artifact, host configuration or target-project action. |
+| Ticket 01 dispatch | WAIT_FOR_HUMAN | `01-owned-install-lifecycle` is selected and `IN_PROGRESS`; it has exactly one pending delivery-confirmation question. |
+| Tickets 02–04 / implementation | PLANNED | They remain unselected. Ticket 01 receives source/test authority only from its own positive delivery receipt. |

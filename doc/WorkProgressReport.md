@@ -459,3 +459,15 @@
 | Role topology | Control-plane/reviewer is Codex/current `main`; named implementation capability remains Codex implementation Agent in the existing separate `workflow-implementation` worktree. No ticket is yet selected, so no implementation allocation or source/test authority exists. |
 | Capability discovery | `codex.exe` is discoverable but this session's direct `codex plugin --help` returned access denied; `claude` is absent. These are not substituted with hidden config edits. Ticket 03 must independently verify any claimed host lifecycle. |
 | Continuation | `ACTION_COMPLETED → AUTO_CONTINUE → select Ticket 01 and prepare its docs-only handoff`, then one dispatch-confirmation wait. |
+
+## PRG-20260808-018 — Ticket 01 selected; dispatch confirmation pending
+
+| Field | Value |
+| --- | --- |
+| State | `IN_PROGRESS / AWAITING_DISPATCH_CONFIRMATION` |
+| Ticket / baseline | `01-owned-install-lifecycle` / reviewed ticket-set baseline `afee39d` |
+| Handoff | `hnd_local_orchestration_install_01_20260808`; the current docs-only dispatch record is the required synchronization point before the implementation owner's first red test. |
+| Roles | Control-plane/reviewer: Codex/current `main`. Implementation owner: named Codex implementation Agent in the separate `workflow-implementation` worktree. |
+| Authority | No positive delivery confirmation has been received. The Router grants no source, Context, capability, branch/worktree mutation or implementation. |
+| Single pending question | `工單 01-owned-install-lifecycle 是否已交付給 implementation owner Codex implementation Agent？` |
+| Continuation | Positive `IMPLEMENTATION_DISPATCH_CONFIRMED` starts Ticket 01 and automatically routes the planning lane to the next Grill. Silence/negative remains `WAIT_FOR_HUMAN`; no second approval question exists. |

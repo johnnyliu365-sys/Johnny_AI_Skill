@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| Context state | `SPEC_APPROVED_TO_TICKETS` |
-| Router event | `SPEC_APPROVED → TICKETS` |
+| Context state | `TICKET_01_AWAITING_DISPATCH_CONFIRMATION` |
+| Router event | `SPEC_APPROVED → TICKETS → TICKET_DISPATCH_REQUIRED` |
 | Delivery stage | `POC` |
 | Requirement change | `CHG-20260808-011` |
 | Baseline | `e04c2be` (`docs: close autonomous workflow planning grill`) |
@@ -115,3 +115,10 @@ boundary: Do not treat the POC's fake adapters as real host/Git operations. Do n
 - Scope: installer-owned Windows local control plane and clean owned uninstall; no target-project dependency.
 - PRD / change: `PRD.md §15` / `CHG-20260808-011`.
 - Common Context backlink: published by `d94d8d5`; ticket-set backlink pending the next docs-only commit.
+
+## Ticket 01 selection and pending dispatch
+
+- Ticket: `01-owned-install-lifecycle`, selected from the committed ticket set `afee39d`.
+- Handoff: `hnd_local_orchestration_install_01_20260808`; implementation owner is the named Codex implementation Agent in its separate worktree; reviewer/control plane is Codex/current `main`.
+- State: `IN_PROGRESS` only as a pending proposal. Until the owner positively confirms delivery, it cannot receive source, Context, capability, branch/worktree action or implementation authority.
+- Planning continuation: once the receipt is positive, the Ticket-01 execution lane begins and the planning lane automatically returns to the next Grill. No second ticket-approval question is valid.
