@@ -400,3 +400,15 @@
 | TDD red evidence | `test_approved_artifact_project_id_rejects_non_opaque_boundary_values` initially failed for eight accepted path, URI, traversal and arbitrary-nonblank cases. CR-34 was an evidence-strengthening correction over already-working project equality; the committed two-entitlement test adds a service-call mutation assertion and makes no false red claim. |
 | Validation | `python -B -m unittest discover -s tests` — 131 passed; `python -B -m pytest -q -p no:cacheprovider` — 131 passed / 175 subtests; `python -B -m mypy --strict --no-incremental library tests` — 65 source files clean; `python -B -m compileall -q library/workflow_router` — 13 modules; metadata-only privacy/source sentinel, plugin dispatch smoke and `git diff --check` passed. |
 | Docs-only handoff | This entry is the docs-only handoff following `f6b9c32`; no raw Context, source text, prompt, path, URI, Secret, PII, production data, merge, push or deployment was recorded. Independent review is required before integration. |
+
+## PRG-20260808-013 — Ticket 03 rebase and fresh handoff
+
+| Field | Value |
+| --- | --- |
+| State | `IMPLEMENTATION_COMMITTED_PENDING_REVIEW` |
+| Ticket / receipt | `03-plugin-policy-and-response` / `c569056` (receipt remains valid; no second confirmation) |
+| Rebase baseline | The implementation worktree was clean and the complete rework branch was rebased without merge commit or reset onto `main@b34e59e`, which records the independent final review approval. |
+| Implementation owner / branch | Codex implementation Agent / `codex/implementation-plugin-policy-and-response-03-rework` |
+| Implementation commit | `0a5b757` (`fix: validate project scoped dispatch identity`) — the rebased equivalent of the reviewed implementation; no source or test scope was changed by the rebase. |
+| Revalidation | `python -B -m unittest discover -s tests` — 131 passed; `python -B -m pytest -q -p no:cacheprovider` — 131 passed / 175 subtests; `python -B -m mypy --strict --no-incremental library tests` — 65 source files clean; in-memory compilation — 13 `workflow_router` modules; metadata-only privacy/source sentinel, plugin dispatch smoke and `git diff --check` passed. |
+| Handoff | This docs-only handoff records the rebased commit for independent control-plane review. No merge, push, deployment, external provider, main-worktree mutation, raw Context, source text, prompt, path, URI, Secret, PII or production data was recorded. |
