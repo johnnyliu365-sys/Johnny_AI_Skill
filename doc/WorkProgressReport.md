@@ -434,3 +434,16 @@
 | Scope decision | A real host wake-up, physical worktree, real Git, Temporal worker or MCP adapter remains out of scope for this local POC. It is deferred, not treated as a hidden implementation failure; any expansion must begin with `REQUIREMENT_CHANGED -> WAYFINDER`. |
 | Grill decision | `GO -> HANDOFF`. No proposal is `PLANNED`, no valid new dispatch authority exists, and no new ticket is created. |
 | Continuation / boundary | `ACTION_COMPLETED -> AUTO_CONTINUE -> HANDOFF`. No user wait, correction worktree, push, deployment or external action is granted. |
+
+## PRG-20260808-016 — Local orchestration installer Wayfinder, Architecture and Grill
+
+| Field | Value |
+| --- | --- |
+| State | `SPEC_DRAFT_AWAITING_OWNER_APPROVAL` |
+| Trigger | Project owner requested a detachable installer whose normal one-click uninstaller removes plugin content rather than leaving local residue. |
+| Change / baseline | `CHG-20260808-011` / `e04c2be` |
+| Wayfinder | `GO`: Windows per-user install, runtime status and one-click owned removal have concrete observable interaction states, derived use cases, data owners and DI composition roots. |
+| Architecture | `ADR-20260808-003` separates installer-owned root, metadata-only runner, receipt-based host lifecycle adapters and a runtime-only guarded Git port. It explicitly denies target-project and host-turn authority. |
+| Grill | Normal uninstall may remove only digest/ledger-verified descendants and receipt-matched host registration. A foreign/tampered/failed lifecycle result is `UNINSTALL_BLOCKED`, never broad deletion or a false success. |
+| Evidence / limitation | Workspace has Python 3.11 but no `iscc`/Inno Setup or NSIS compiler. The Codex manual helper could not run because Node.js is absent and this session exposes no OpenAI Docs MCP; consequently no undocumented host lifecycle command is assumed. |
+| Continuation | `ACTION_COMPLETED → WAIT_FOR_HUMAN: SPEC_APPROVAL`. No ticket, source/test implementation, host configuration, installer binary, project mutation, merge, push or deployment is authorized yet. |

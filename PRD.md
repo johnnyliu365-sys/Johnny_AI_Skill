@@ -141,3 +141,32 @@ After a ticket is approved and committed, the control plane asks exactly whether
 
 - Change: `CHG-20260805-010`
 - Approved specification: `modules/spec/autonomous-collaboration-audit.md`
+
+## 15. Local Orchestration Adapter and Detachable Installer POC
+
+### Goal
+
+Turn the existing detachable workflow plugin into a Windows per-user control-plane installation that can be installed and removed with one user action. Installation places the runtime, plugin payload, queue/checkpoints and ownership ledger in an installer-owned user directory. A successful uninstall stops the runtime, removes only host registrations created by that installation, then deletes the entire owned directory. Removing it must leave every company or target project immediately runnable and unchanged.
+
+### POC scope
+
+- A self-contained Windows `Setup.exe` and its matching uninstaller, built with a version-pinned installer toolchain; no administrator or system-wide installation.
+- Strongly typed local adapter contracts for metadata-only Router events, durable local queue/checkpoints, process lifecycle, installer ownership, supported-host registration and guarded local Git operations.
+- Injected Codex and Claude host adapters that first prove the supported per-user install/remove lifecycle. An unavailable, unauthenticated, conflicting or non-removable host must fail closed before a successful installation receipt is issued.
+- An ownership ledger containing only install identity, artifact digests, owned relative paths, host-registration receipts and state needed to retry a safe uninstall. It contains no raw ContextPacket, source text, prompt, target-project path, URI, Secret, PII or company code.
+- Install, update, status and uninstall flows expressed as equivalent local command/installer UI boundaries with production bindings and test fakes.
+
+### Non-goals
+
+- No target-project file, `AGENTS.md`, `Workflow.md`, repository configuration, Git history, CI, build, deployment or runtime dependency.
+- No forced Codex/Claude turn, model execution, host-login bypass, secret storage, remote service, MCP server, Temporal server, database, SaaS or background process outside the installed user's owned directory.
+- No removal or alteration of an existing marketplace/plugin registration unless its signed/typed receipt proves this installer created it.
+
+### Success criteria
+
+1. A clean supported user profile can select at least one supported host, install a verified payload below `%LOCALAPPDATA%\\JohnnyAIWorkflow`, and receive a typed receipt only after every selected host registration succeeds.
+2. The local adapter stores and processes only validated metadata; it resumes an interrupted operation from its own checkpoint and fails closed on missing, malformed or foreign state.
+3. The installer cannot register an unverified target repository or execute a Git action outside a recorded project root and expected clean base.
+4. One normal uninstaller invocation stops the owned runtime, unregisters each owned host integration, and deletes all installer-owned payload, ledger, queue, checkpoint and launcher files. A second invocation reports `NOT_INSTALLED` without error or target-project mutation.
+5. If process stop, ownership verification or host unregistration fails, uninstall reports `UNINSTALL_BLOCKED`, retains only its own state for retry, and never claims success or deletes unknown host/project content.
+6. Automated tests prove an install/uninstall cycle leaves representative existing and empty target repositories byte-for-byte and Git-status unchanged.

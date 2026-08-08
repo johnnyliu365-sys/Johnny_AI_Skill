@@ -16,6 +16,7 @@
 - 每張已核准工單在交付給具名 implementation owner 前，必須停在精確的 dispatch-confirmation 人類閘門；確認交付後，planning lane 自動進入下一個 Grill，ticket execution lane 在獨立 branch/worktree 持續執行、回傳、受控整合與稽核。
 - 工作流程的 commit 只是可追溯的完成證據，必須轉為 `ACTION_COMPLETED` 並重新交由 Router 判定下一步；除 Profile 宣告的權限閘門外，不得因 commit、docs-only commit 或單一工作階段完成而停止。缺少必要來源、具名 owner、權限、能力或有效決策時必須 fail-closed，而不是假裝等待或自行繼續。
 - 控制面 Agent 僅負責 Wayfinder、Grill、Context、SPEC、ticket、實作前 handoff、review 與 handoff。正式實作必須由另一位具名 implementation owner 完成；該 owner 如遇需求、公開契約、架構、前端組合或驗收變更，必須以 `REQUIREMENT_CHANGED` 回交控制面重新收斂。
+- `local-orchestration-installer` 是已開始規格化的 Windows 使用者層級 POC：目標是在 Agent UI 外建立由安裝器擁有的本機控制面、插件 payload 與 metadata-only runtime，並以一鍵解除安裝移除**僅由該安裝器建立**的內容。它不得寫入、刪除或成為任何目標／公司專案的 runtime、CI、版本控制或檔案依賴；現有手動 marketplace 安裝若非本安裝器所有，必須視為 foreign installation，不得覆寫或移除。
 
 ## 識別碼登錄
 
@@ -112,3 +113,11 @@
 - Scope: non-commercial positioning, collaboration-topology selection, dispatch-confirmation wait, parallel planning/ticket lanes, guarded branch/worktree provisioning, integration, Grill audit, and fixed handoff response format.
 - PRD / change: `PRD.md §14`; `CHG-20260805-010`.
 - Handoff state: the owner selected `ONE_IMPLEMENTATION_AGENT` and confirmed delivery of `01-topology-dispatch-lanes` on `2026-08-05`. This confirmation is the ticket-scoped implementation authority. Control-plane/reviewer remains Codex/current `main`; the existing separate implementation worktree is `workflow-implementation` / `codex/implementation-private-router-saas-01`. The implementation owner must synchronize this dispatch-record main commit before its first red test. Planning has automatically entered Grill for ticket 02; ticket 03 remains planned.
+
+### `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` — Local Orchestration Adapter and Detachable Installer POC
+
+- Specification: `modules/spec/local-orchestration-installer.md` (`DRAFT`; no implementation authority).
+- Worktree Context: `doc/context/local-orchestration-installer/main.md`.
+- Scope: Windows per-user installer/uninstaller, owned-install ledger, metadata-only local orchestration adapter, injected host registration adapters, and a guarded local Git port. The installer deletes only its recorded, verified owned payload and state; it never changes target projects.
+- PRD / change: `PRD.md §15`; `CHG-20260808-011`.
+- Handoff state: Wayfinder, Architecture and Grill have converged to a `DRAFT` specification. Actual Codex/Claude host registration commands remain a capability contract to be validated in an approved implementation ticket; absent or non-removable host capability is an install-time fail-closed result, not a silent partial install.

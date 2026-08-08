@@ -2,9 +2,9 @@
 
 ## 現行階段
 
-- 日期：2026-08-04（Asia/Taipei）
-- 階段：`PRIVATE_ROUTER_SAAS_POC_SPEC_DRAFT`
-- 目前功能集群：`private-router-saas` 正在規格化；`router-framework`、`context-load-telemetry` 與 `reusable-module-library` 維持既有完成狀態，不與本 POC 混合。
+- 日期：2026-08-08（Asia/Taipei）
+- 階段：`LOCAL_ORCHESTRATION_INSTALLER_POC_SPEC_DRAFT`
+- 目前功能集群：`local-orchestration-installer` 正在規格化；既有 `autonomous-collaboration-audit` POC 已收斂至 handoff，`router-framework`、`context-load-telemetry` 與 `reusable-module-library` 維持既有完成狀態，不混入本 POC。
 - 唯一工作流程：`Workflow.md`
 
 ## 順序
@@ -107,3 +107,11 @@
 | Ticket 01 dispatch | IN_PROGRESS | Owner selected `ONE_IMPLEMENTATION_AGENT` and confirmed `01-topology-dispatch-lanes` as delivered to the named existing implementation worktree; planning lane moved to Grill for ticket 02. |
 | Ticket 02 / 03 | PLANNED | Ticket 02 is in planning-lane Grill; ticket 03 remains planned. Each receives authority only from its own future delivery confirmation. |
 | Implementation, review, and handoff | IN_PROGRESS | Ticket 01 implementation owner synchronizes its own worktree, performs TDD and returns typed evidence. |
+
+## Local Orchestration Adapter and Detachable Installer POC
+
+| Milestone | State | Evidence |
+| --- | --- | --- |
+| Requirement change, Wayfinder, Architecture and Grill | DONE | `CHG-20260808-011`; `doc/context/local-orchestration-installer/main.md`; `doc/adr/ADR-20260808-003-local-orchestration-installer.md` |
+| Specification | WAIT_FOR_HUMAN | `modules/spec/local-orchestration-installer.md` is `DRAFT`; it needs the owner's explicit specification approval. |
+| Tickets / implementation | NOT_STARTED | No source, test, installer artifact, host configuration or target-project change is permitted until SPEC approval and ticket dispatch. |

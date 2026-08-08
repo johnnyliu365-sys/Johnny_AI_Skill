@@ -175,3 +175,21 @@
 | Context | `doc/context/autonomous-collaboration-audit/main.md`; `CONTEXT.md §衍生 SPEC 索引` |
 | Linked specification | `SPEC-AI-WORKFLOW-AUTONOMOUS-COLLABORATION-AUDIT-20260805-01KZ7A2C4E6G8J0L2N4P6R8T` (`APPROVED` on `2026-08-05`) |
 | Acceptance | The approved specification must define that an opened ticket immediately becomes `IN_PROGRESS` and asks its one dispatch question; exact human versus automatic-event waits; typed events; parallel-lane ownership; safe Git integration; audit/rework return behavior; host capability limits; and the fixed project-owner response format. |
+
+## CHG-20260808-011 — Add local orchestration adapter and one-click detachable installer
+
+| Field | Value |
+| --- | --- |
+| Date | `2026-08-08` |
+| Requested by | Project owner |
+| Previous rule | The active workflow is a detachable plugin and local Router POC. It has no real user-scope runtime, physical installer/uninstaller, durable local orchestration adapter, host lifecycle adapter or guarded real-Git port. Manual Codex/Claude marketplace installation remains separate from a company project. |
+| Changed rule | Add a Windows-first, per-user Local Orchestration Adapter and matching one-click installer/uninstaller POC. Its normal uninstall must remove the installed plugin payload, runner, queue, checkpoints, ledger, launcher and only the Codex/Claude registrations it created; no target/company project may be touched. |
+| Reason | The owner requires a detachable plugin that is useful as a local automation control plane but can be cleanly removed in one action. A plugin that leaves its runtime or host registration behind is not acceptable. |
+| In scope | Typed metadata-only local runtime; owned-install ledger; runtime lifecycle; local queue/checkpoint; injected host lifecycle adapters; strict project registry and guarded Git port; user-scope Windows setup/uninstall package; install/update/status/remove tests and documentation. |
+| Out of scope | Target-project modifications or dependencies; forced model turns or host-login bypass; raw Context/source/prompt/path/URI/Secret/PII capture; remote Router/SaaS/MCP/Temporal service/database; system-wide/admin install; network deployment; removal of foreign/manual plugins; automatic push or deploy. |
+| Host capability boundary | A host is supported only when a tested adapter can detect, create and remove a registration with an installer-owned receipt. Missing CLI, user authentication, host policy, incompatible lifecycle or a pre-existing foreign registration is `INSTALL_BLOCKED`; the installer must clean up its staging area and never report a partial success. |
+| PRD | `PRD.md §15` |
+| Context | `doc/context/local-orchestration-installer/main.md`; `CONTEXT.md §已確認事實與共同邊界` and `§衍生 SPEC 索引` |
+| ADR | `doc/adr/ADR-20260808-003-local-orchestration-installer.md` |
+| Linked specification | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` (`DRAFT`) |
+| Acceptance | The approved specification must demonstrate a one-click normal uninstall that removes all verified owned components, an idempotent absence result, fail-closed foreign/tampered state, and proof that target repositories are untouched. |
