@@ -310,3 +310,18 @@
 | Blocked evidence | `codex/implementation-plugin-policy-and-response-03` at `9eda250` remains CR-16 through CR-18 historical evidence only; no reset, overwrite, cherry-pick, or source reuse |
 | Owner preflight | Owner may remove only the known test-generated Python bytecode cache in its own Ticket-03 worktree before creating the branch. No other worktree may be mutated. |
 | Scope / integration | This record changes allocation only. It grants no merge, push, deployment, host configuration, target-project mutation, Secret, provider, or other-ticket authority. |
+
+## PRG-20260808-006 — Ticket 03 fresh implementation handoff (CR-16 through CR-18)
+
+| Field | Value |
+| --- | --- |
+| State | `IMPLEMENTATION_COMMITTED_PENDING_REVIEW` |
+| Ticket / receipt | `03-plugin-policy-and-response` / `c569056` (fresh handoff; no second confirmation) |
+| Reviewed source baseline | `0d52903`; old blocked implementation `4d68938` and handoff `9eda250` were not reused. |
+| Implementation owner / branch | Codex implementation Agent / `codex/implementation-plugin-policy-and-response-03-rework` |
+| Implementation commit | `a2c82d7` (`feat: bind plugin response to pending dispatch`) |
+| CR-16 correction | Policy source reads return only typed metadata or a stable halt error. Raw source text, prompts, paths, URIs, secrets, PII and exception detail cannot enter a Router model, formatter, telemetry or error. |
+| CR-17 correction | Fixed response rendering is available only through the same Private Router's live pending-plan identity. Ticket, reviewed handoff, commit references and named owner must match; forged, replayed, absent, mismatched or formatter-mutated input halts. The executable `TICKETS + APPROVAL_GRANTED -> IMPLEMENT` path remains fail-closed in the reviewed baseline. |
+| TDD red evidence | Before `policy_response.py` existed, `python -m pytest -q tests/test_plugin_policy_and_response.py` failed during collection with `ModuleNotFoundError: No module named 'library.workflow_router.policy_response'`. Fresh tests cover raw sentinel rejection, private-plan ownership, exact response fields/question, formatter exceptions/mutation, absent/mismatched/replayed dispatch and legacy direct/private routing. |
+| Validation | `python -B -m unittest discover -s tests` — 122 passed; `python -m pytest -q` — 122 passed / 115 subtests; `python -m mypy --strict --no-incremental library tests` — 65 source files clean; `python -m compileall -q library/workflow_router` — 13 modules; metadata-only privacy/source sentinel, smoke and `git diff --check` passed. |
+| Review / integration | No merge, push, deployment, external provider, main-worktree mutation or other-ticket mutation was performed. Independent control-plane review is required before any fast-forward integration. |
