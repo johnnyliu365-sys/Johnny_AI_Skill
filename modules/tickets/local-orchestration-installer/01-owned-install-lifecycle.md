@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01, AC-03, AC-06, AC-07, AC-08 |
 | Context / change | `doc/context/local-orchestration-installer/main.md` / `CHG-20260808-011` |
-| State | `IN_PROGRESS` — selected by control plane; `TICKET_DISPATCH_REQUIRED` awaits one positive delivery confirmation |
+| State | `IN_PROGRESS` — dispatch receipt `rcpt_local_orchestration_install_01_20260808` accepted; implementation owner may synchronize the corrected dispatch record and begin TDD |
 | Language | Python 3.11, Pydantic strict models and standard-library filesystem test fakes |
 | Baseline | `afee39d` (`docs: plan local orchestration installer tickets`) |
 | Control-plane owner / reviewer | Codex / current `main` worktree |
@@ -51,6 +51,7 @@ Frontend composition / DI: the equivalent command/UI is `InstallControlPlane` / 
 | --- | --- |
 | Proposal selection | Control plane selected this first unblocked vertical ticket after `afee39d`. |
 | Handoff reference | `hnd_local_orchestration_install_01_20260808` |
-| Required implementation baseline | The implementation owner synchronizes this docs-only dispatch-record `main` commit in its own worktree; `afee39d` is the reviewed source/test baseline. |
-| Single human question | `工單 01-owned-install-lifecycle 是否已交付給 implementation owner Codex implementation Agent？` |
-| Pending state | No positive answer yet. No source, Context, capability, branch/worktree operation or implementation is granted. |
+| Required implementation baseline | The implementation owner synchronizes the corrected docs-only dispatch-record `main` commit in its own worktree; `afee39d` is the reviewed source/test baseline. |
+| Delivery receipt | `rcpt_local_orchestration_install_01_20260808` — project owner confirmed `已交付` on `2026-08-08`. |
+| Granted scope | Only this ticket's TDD, source, tests, verification and implementation/docs-only commits in the named implementation worktree. |
+| Explicitly not granted | Any target-project write, host configuration, installer binary release, Ticket 02+ implementation, merge/push/deploy, source outside ticket scope or silent requirements change. |

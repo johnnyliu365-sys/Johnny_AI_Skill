@@ -16,7 +16,7 @@ Deliver a Windows per-user local control plane that owns every installed compone
 
 | Ticket | User-observable capability | State | Dependency |
 | --- | --- | --- | --- |
-| [01-owned-install-lifecycle](01-owned-install-lifecycle.md) | A typed local install/remove engine creates and removes exactly its owned files and fake host receipts, while rejecting foreign/tampered state. | `IN_PROGRESS` — one dispatch confirmation pending | Approved SPEC |
+| [01-owned-install-lifecycle](01-owned-install-lifecycle.md) | A typed local install/remove engine creates and removes exactly its owned files and fake host receipts, while rejecting foreign/tampered state. | `IN_PROGRESS` — delivery receipt `rcpt_local_orchestration_install_01_20260808` | Approved SPEC |
 | [02-metadata-runtime-and-guarded-git](02-metadata-runtime-and-guarded-git.md) | A local metadata-only event can resume safely and a registered temporary Git project is guarded by exact ownership/base/lock rules. | `PLANNED` | Ticket 01 |
 | [03-reversible-agent-host-lifecycle](03-reversible-agent-host-lifecycle.md) | A host is reported supported only after its user-scope registration and exact cleanup proof can be verified. | `PLANNED` | Ticket 01 |
 | [04-windows-setup-and-uninstaller-package](04-windows-setup-and-uninstaller-package.md) | One Windows setup/uninstall invocation packages the owned lifecycle with at least one verified host, leaving target repositories untouched. | `PLANNED` | Tickets 01, 02 and 03; available pinned Inno Setup toolchain |
@@ -24,7 +24,7 @@ Deliver a Windows per-user local control plane that owns every installed compone
 ## Roles and allocation
 
 - Control-plane owner / reviewer: Codex / current `main` worktree.
-- Named implementation capability: Codex implementation Agent / existing `C:\Users\<user>\Desktop\AI控制工作\workflow-implementation` worktree, branch `codex/implementation-private-router-saas-01` after it synchronizes the selected ticket's handoff baseline in its own worktree.
+- Named implementation capability: Codex implementation Agent / existing `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` worktree, branch `codex/implementation-private-router-saas-01` after it synchronizes the selected ticket's handoff baseline in its own worktree.
 - One implementation lane is active at a time. The implementation owner must not modify this control-plane worktree; the reviewer must not modify the implementation worktree.
 
 ## Dispatch and continuation rules

@@ -464,10 +464,21 @@
 
 | Field | Value |
 | --- | --- |
-| State | `IN_PROGRESS / AWAITING_DISPATCH_CONFIRMATION` |
+| State | Superseded by `PRG-20260808-019` after the positive dispatch receipt. |
 | Ticket / baseline | `01-owned-install-lifecycle` / reviewed ticket-set baseline `afee39d` |
 | Handoff | `hnd_local_orchestration_install_01_20260808`; the current docs-only dispatch record is the required synchronization point before the implementation owner's first red test. |
 | Roles | Control-plane/reviewer: Codex/current `main`. Implementation owner: named Codex implementation Agent in the separate `workflow-implementation` worktree. |
 | Authority | No positive delivery confirmation has been received. The Router grants no source, Context, capability, branch/worktree mutation or implementation. |
 | Single pending question | `工單 01-owned-install-lifecycle 是否已交付給 implementation owner Codex implementation Agent？` |
 | Continuation | Positive `IMPLEMENTATION_DISPATCH_CONFIRMED` starts Ticket 01 and automatically routes the planning lane to the next Grill. Silence/negative remains `WAIT_FOR_HUMAN`; no second approval question exists. |
+
+## PRG-20260808-019 — Ticket 01 dispatch receipt and Ticket 02 planning Grill
+
+| Field | Value |
+| --- | --- |
+| Ticket 01 receipt | `rcpt_local_orchestration_install_01_20260808` — project owner replied `已交付` on `2026-08-08`; no second ticket approval was requested or required. |
+| Granted Ticket-01 lane | The named Codex implementation Agent may synchronize the corrected dispatch-record `main` commit in `C:\Users\<user>\Desktop\AI控制工作workflow-implementation`, perform only Ticket-01 TDD/source/test/verification work, and return typed completion evidence. |
+| Handoff correction | The former textual path `...AI控制工作\workflow-implementation` did not exist; it was corrected to the actual worktree before first-red-test work. Receipt scope, reviewed source baseline `afee39d`, owner, ticket and requirements are unchanged. |
+| Ticket 02 Grill | `GO → DEPENDENCY_WAIT`: existing public Router contracts/patterns are reusable, raw Context remains excluded, temporary repos are required, and exact registry/lock/clean-base/fast-forward guards remain mandatory. No new CHG/SPEC/ADR is required. |
+| Planning state | Ticket 02 stays `PLANNED` and has no dispatch receipt until Ticket 01 is independently reviewed and integrated. Ticket 03/04 remain untouched. |
+| Continuation | Ticket lane: `IMPLEMENT`. Planning lane: waits for typed Ticket-01 integration evidence, then automatically resumes Grill/dispatch eligibility. |

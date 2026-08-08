@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| Context state | `TICKET_01_AWAITING_DISPATCH_CONFIRMATION` |
-| Router event | `SPEC_APPROVED → TICKETS → TICKET_DISPATCH_REQUIRED` |
+| Context state | `TICKET_01_IMPLEMENTING / PLANNING_GRILL_TICKET_02` |
+| Router event | `IMPLEMENTATION_DISPATCH_CONFIRMED → IMPLEMENT (Ticket 01) + GRILL (planning lane, Ticket 02)` |
 | Delivery stage | `POC` |
 | Requirement change | `CHG-20260808-011` |
 | Baseline | `e04c2be` (`docs: close autonomous workflow planning grill`) |
@@ -116,9 +116,21 @@ boundary: Do not treat the POC's fake adapters as real host/Git operations. Do n
 - PRD / change: `PRD.md §15` / `CHG-20260808-011`.
 - Common Context backlink: published by `d94d8d5`; ticket-set backlink pending the next docs-only commit.
 
-## Ticket 01 selection and pending dispatch
+## Ticket 01 selection and accepted dispatch
 
 - Ticket: `01-owned-install-lifecycle`, selected from the committed ticket set `afee39d`.
-- Handoff: `hnd_local_orchestration_install_01_20260808`; implementation owner is the named Codex implementation Agent in its separate worktree; reviewer/control plane is Codex/current `main`.
-- State: `IN_PROGRESS` only as a pending proposal. Until the owner positively confirms delivery, it cannot receive source, Context, capability, branch/worktree action or implementation authority.
-- Planning continuation: once the receipt is positive, the Ticket-01 execution lane begins and the planning lane automatically returns to the next Grill. No second ticket-approval question is valid.
+- Handoff: `hnd_local_orchestration_install_01_20260808`; receipt: `rcpt_local_orchestration_install_01_20260808`; implementation owner is the named Codex implementation Agent in `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` / `codex/implementation-private-router-saas-01`; reviewer/control plane is Codex/current `main`.
+- State: the project owner confirmed `已交付` on `2026-08-08`; Ticket 01 may now begin TDD only in the named implementation worktree. The prior path with an extra separator was corrected before its first red test; no second confirmation is required.
+- Planning continuation: Ticket-01 execution now runs independently while the planning lane enters the Ticket-02 Grill. No second ticket-approval question is valid.
+
+## Ticket 02 Grill convergence
+
+| Grill question | Finding / bounded decision |
+| --- | --- |
+| Does Ticket 02 duplicate or silently widen Ticket 01? | No. Ticket 01 owns only installation ownership/lifecycle fakes. Ticket 02 begins only after its reviewed integration and owns runtime event/checkpoint, project registry and guarded Git ports. |
+| Can existing Router contracts be reused without importing fake external behavior? | Yes. Reuse public `ProjectId`, `RouterEvent`, completion/return and Context descriptor types plus the guarded-integration error pattern. The existing fake integration adapter remains a reference only. |
+| Is a real target project or path persisted / required? | No. Tests must use temporary repositories. Runtime persistence is installation-bound metadata; the injected registry resolves any local root only at its effect boundary and never serializes it. |
+| Is real Git authority constrained enough? | Only with opaque project identity, explicit registration, per-project lock, clean expected base and fast-forward-only operation. Missing or stale state, conflicts, dirty tree, replay or cross-project request halts before Git. |
+| Is a new SPEC/ADR/CHG needed? | No. These are already accepted AC-04/05/08 boundaries. Changing them, adding push/deploy/reset/merge commit, or carrying raw source would be `REQUIREMENT_CHANGED`. |
+
+**Planning Grill result: `GO → wait for Ticket 01 integration dependency`.** Ticket 02 remains `PLANNED`; it receives no dispatch or implementation authority until the Ticket-01 execution/review/integration return arrives.
