@@ -394,3 +394,17 @@ This is a fail-closed technical correction, not a requirement change or user wai
 | Continuation | Existing receipt `c569056`: `CHANGES_REQUESTED → IMPLEMENT` in the same rebased Ticket-03 worktree; no human confirmation is permitted |
 
 The next correction must inject a typed approved-artifact registry that validates incoming handoff commit metadata before Router admission; it must add all required missing-value negative cases and submit a new exact validation record. This is a technical correction only. No merge, push, deployment, installation, host configuration, target-project change, Secret, provider or other-ticket action is authorized.
+
+## Ticket 03 artifact-registry correction review return
+
+| Field | Value |
+| --- | --- |
+| Reviewed implementation / handoff | `0dda8fc`, `95bf7cf` / `5d71067` |
+| Review baseline | `870013c`; submitted branch is clean and its merge-base is the current control-plane baseline |
+| Result | `CHANGES_REQUESTED` — review report `03-plugin-policy-and-response-artifact-registry-code-review.md` |
+| Closed findings | CR-29 registry-approved commit binding, CR-30 omission/null/empty-container boundary coverage, and CR-31 exact validation count |
+| Blocking finding | CR-32: `ApprovedDispatchArtifactRegistry` keys omit opaque `project_id`; a second entitled project can reuse otherwise identical reviewed metadata and receive a pending dispatch |
+| Documentation correction | The WorkProgress handoff has duplicate `PRG-20260808-006` labels and places PRG-009 before PRG-007/008; its next docs-only handoff must preserve the historic evidence while restoring an unambiguous chronological audit sequence |
+| Continuation | Existing receipt `c569056`: `CHANGES_REQUESTED → IMPLEMENT` in the same Ticket-03 worktree after rebase to this control-plane return; no human confirmation is permitted |
+
+The implementation owner must add opaque-project identity to the typed approved-artifact record, registry uniqueness and resolve key, and both private-client and Router admission calls. A regression must grant the same account a second project entitlement, reuse every other valid artifact value, and prove that it `HALT`s before pending state, rendering, receipt acceptance or lane grant. This is a fail-closed ticket correction, not a requirement change or user wait. No merge, push, deployment, installation, host configuration, target-project change, Secret, provider or other-ticket action is authorized.

@@ -23,7 +23,7 @@ Out of scope: SaaS, pricing, billing, user accounts, entitlements, remote/privat
 
 1. On plugin application/takeover, before implementation planning, the control plane asks for the available coding-Agent count: `1` or `2`. It records only a typed topology and named capabilities; it does not claim to create a host thread or select a model itself.
 2. For `1`, the topology reserves the existing main session for control-plane work and requires a separate implementation session/worktree. For `2`, it supports a named control-plane/main Agent and named implementation Agent; Claude-control/Codex-implementation is a recommendation, not a hard-coded vendor requirement.
-3. A `PLANNED` ticket proposal is not yet an opened ticket. When the control plane formally opens one committed ticket, it immediately becomes `IN_PROGRESS` and emits `TICKET_DISPATCH_REQUIRED`. The displayed question names the ticket and its implementation owner. A positive delivery confirmation is that ticket's scoped approval and dispatch authority; no reply or a negative reply produces only `WAIT_FOR_HUMAN` with no branch, Context, capability or implementation grant.
+3. A `PLANNED` ticket proposal is not yet an opened ticket. When the control plane formally opens one committed ticket, it immediately becomes `IN_PROGRESS` and emits `TICKET_DISPATCH_REQUIRED`. The displayed question names the ticket and its implementation owner. A positive delivery confirmation is that ticket's scoped approval and dispatch authority. Its reviewed ticket/handoff artifact identity is also bound to the opaque project ID, so an otherwise identical record from another authorized project cannot dispatch or render. No reply or a negative reply produces only `WAIT_FOR_HUMAN` with no branch, Context, capability or implementation grant.
 4. A confirmed dispatch requires a typed receipt that references the committed ticket, named implementation owner, reviewed handoff, expected base revision and correlation ID. It provisions one isolated branch/worktree and emits `IMPLEMENTATION_DISPATCH_CONFIRMED`.
 5. The receipt simultaneously sends the planning lane to the next declared Grill and the ticket lane to `IMPLEMENT`. Their state, ContextView, source grants, consumer fingerprint, event IDs and safety ceilings are independent. Planning cannot change an approved active ticket.
 6. The implementation owner starts from the approved main base, follows TDD, verification and commit rules, and returns only typed completion/block/change evidence. It cannot write the main control-plane worktree.
@@ -43,6 +43,9 @@ TicketLaneState = { ticket_id, dispatch_state, execution_stage, expected_main_re
                     implementation_owner, reviewer, artifact_refs }
 TicketDispatchReceipt = { ticket_ref, implementation_owner, handoff_ref,
                           expected_main_revision, event_id, acknowledgement }
+ApprovedDispatchArtifact = { project_id, ticket_ref, handoff_ref,
+                              implementation_owner, ticket_docs_commit,
+                              handoff_docs_commit }
 TicketEvent = TICKET_DISPATCH_REQUIRED | IMPLEMENTATION_DISPATCH_CONFIRMED
             | IMPLEMENTATION_RETURNED | INTEGRATION_COMPLETED | AUDIT_COMPLETED
 ```
@@ -76,7 +79,7 @@ The approved implementation ticket must first produce executable red evidence fo
 5. Audit tests prove valid integration emits one audit action; changes requested create a correction route without handoff/push/deploy.
 6. Fixed response tests assert the required Chinese labels and commit/ticket/owner references.
 7. A ticket-open event changes only the selected proposal to `IN_PROGRESS`, emits its dispatch question once, and an implementation return wakes dependent proposals without a human prompt.
-8. CodeReview.md §2.1: seven locator forms for any worktree/path boundary, null/empty values, direct/indirect authorization bypass, N/A token scan, stable error mapping, adapter exceptions, and reverse/mutation proof for dispatch and integration guards.
+8. CodeReview.md §2.1: seven locator forms for any worktree/path boundary, null/empty values, direct/indirect authorization bypass, N/A token scan, stable error mapping, adapter exceptions, and reverse/mutation proof for dispatch and integration guards. Dispatch authorization tests include a second entitled opaque project with otherwise identical ticket/handoff/owner/commit values; it must halt before pending state, rendering, receipt acceptance or lane grant.
 
 ## Risks, compatibility, rollback and deployment
 

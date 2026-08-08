@@ -166,6 +166,11 @@ PendingDispatchDescriptor = {
   reviewed_handoff_ref, event_correlation_id
 }
 
+ApprovedDispatchArtifact = {
+  project_id, ticket_ref, reviewed_handoff_ref, implementation_owner,
+  ticket_docs_commit, handoff_docs_commit
+}
+
 ImplementationReturn = {
   ticket_ref, status: COMPLETED | BLOCKED | CHANGE_DETECTED,
   evidence_refs, verification_refs, evidence_digest,
@@ -185,7 +190,7 @@ ContextReference = {
 
 `ArtifactRef` 只可指向既有的唯一正式來源；`ContextView` 是一次工作所需的短暫、可重建視圖，不是第二份 `CONTEXT.md`。`CapabilityRef` 表示可被 router 選擇的 skill、Agent profile 或工具能力，並非授予未核准權限。`ContextReference` 是一次旁路引用的追溯邊，不是內容回寫或另一份 Context。
 
-`CompletionEvidence` 與 `ImplementationHandoff`／`ImplementationReturn`、`TicketProposal` 與 `PendingDispatchDescriptor` 只可保存不透明識別碼、revision／span、side-context ID、consumer fingerprint、驗證引用與 digest；不得保存 raw ContextPacket、原文、prompt、路徑、URI、Secret 或 PII。commit digest 只是完成證據，不能自行決定下一關。
+`CompletionEvidence` 與 `ImplementationHandoff`／`ImplementationReturn`、`TicketProposal`、`PendingDispatchDescriptor` 與 `ApprovedDispatchArtifact` 只可保存不透明識別碼、revision／span、side-context ID、consumer fingerprint、驗證引用與 digest；不得保存 raw ContextPacket、原文、prompt、路徑、URI、Secret 或 PII。commit digest 只是完成證據，不能自行決定下一關。
 
 ### 0.1.1 自動接續與人類等待的唯一規則
 
@@ -376,7 +381,7 @@ implementation owner 是 ticket 具名指定的另一位 Agent／worktree，負�
 
 實作完成後，implementation owner 必須以 `ImplementationReturn` 回交控制面；只有 `ACTION_COMPLETED` 經 Router 重新分類後，才可進入 Smoke Test、Review 或 Handoff。
 
-實作前的 `ImplementationHandoff` 必須帶有唯一 `handoff_ref`，並引用已核准的 SPEC／ticket／Context／TDD 與角色 ID。控制面開立 `IN_PROGRESS` proposal 時，Router 必須驗證 handoff，建立 metadata-only `PendingDispatchDescriptor`，再以該 descriptor 的 ticket 與 implementation owner 顯示唯一交付問題。只有稍後的正面 `IMPLEMENTATION_DISPATCH_CONFIRMED` receipt 同時匹配 pending descriptor 的 ticket、owner、question／correlation、reviewed `handoff_ref` 與 expected base revision，才可建立兩條彼此隔離的 lane：ticket lane 取得具名 implementation capability 並進入 `IMPLEMENT`；planning lane 自動進入下一個 Grill。receipt 缺失、重播、無 pending descriptor、proposal 未 `IN_PROGRESS`、handoff／owner／correlation 不符或任何來源未驗證時一律 `HALT`，不得授予 source、Context、capability、worktree 或 implementation。`TICKETS + ACTION_COMPLETED` 不得成為第二次人工核准等待；`TICKETS + APPROVAL_GRANTED → IMPLEMENT` 是已淘汰的 legacy transition，必須 `HALT`。
+實作前的 `ImplementationHandoff` 必須帶有唯一 `handoff_ref`，並引用已核准的 SPEC／ticket／Context／TDD 與角色 ID。控制面開立 `IN_PROGRESS` proposal 時，Router 必須驗證 handoff，建立 metadata-only `PendingDispatchDescriptor`，再以該 descriptor 的 ticket 與 implementation owner 顯示唯一交付問題。Dispatch admission 必須注入 typed `ApprovedDispatchArtifactRegistry`，以 `(project_id, ticket_ref, reviewed_handoff_ref, implementation_owner)` 精確解析已審核的 ticket 與 handoff commit；Router 只能把 caller 帶入的 handoff commit 當作與該記錄比較的 assertion，不得視為授權來源。registry 缺少精確記錄、identity 或任一 commit 不一致，或記錄屬於另一個 project 時，必須在建立問題、pending、receipt、render 或 implementation lane 前 `HALT`。只有稍後的正面 `IMPLEMENTATION_DISPATCH_CONFIRMED` receipt 同時匹配 pending descriptor 的 ticket、owner、question／correlation、reviewed `handoff_ref` 與 expected base revision，才可建立兩條彼此隔離的 lane：ticket lane 取得具名 implementation capability 並進入 `IMPLEMENT`；planning lane 自動進入下一個 Grill。receipt 缺失、重播、無 pending descriptor、proposal 未 `IN_PROGRESS`、handoff／owner／correlation 不符或任何來源未驗證時一律 `HALT`，不得授予 source、Context、capability、worktree 或 implementation。`TICKETS + ACTION_COMPLETED` 不得成為第二次人工核准等待；`TICKETS + APPROVAL_GRANTED → IMPLEMENT` 是已淘汰的 legacy transition，必須 `HALT`。
 
 implementation owner 回傳 `ImplementationReturn`。`COMPLETED` 產生 `ACTION_COMPLETED` 並進入既定驗證／review，`BLOCKED` fail-closed，`CHANGE_DETECTED` 只能產生 `REQUIREMENT_CHANGED` 回到 Grill。任何 owner 例外必須在 ticket 的 **Owner override record** 記錄專案負責人的明確範圍化改派；未記錄不得覆蓋分離責任。
 
