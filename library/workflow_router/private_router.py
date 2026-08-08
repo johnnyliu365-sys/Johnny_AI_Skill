@@ -46,6 +46,12 @@ from .contracts import (
     TicketProposal,
 )
 from .profile import ProjectWorkflowProfile
+from .policy_response import (
+    CommittedDispatchArtifacts,
+    DispatchResponseFormatter,
+    RenderedDispatchResponse,
+    render_trusted_dispatch_response,
+)
 from .router import ContextResolver, RouterEngine
 
 
@@ -785,6 +791,7 @@ class PrivateRouterClient:
         self._decision_for_event: dict[str, str] = {}
         self._event_for_decision: dict[str, str] = {}
         self._request_for_event: dict[str, str] = {}
+        self._pending_dispatch_plans: dict[str, ContinuationPlan] = {}
 
     def route(self, *, raw_request: Mapping[str, object]) -> ContinuationPlan:
         """Return one validated plan; every boundary error becomes an explicit halt."""
@@ -793,6 +800,10 @@ class PrivateRouterClient:
             request = LocalMetadataNormalizer.normalize(raw_request=raw_request)
         except (TypeError, ValueError):
             return self._halt(code=RouterServiceErrorCode.ROUTER_INPUT_INVALID)
+        if request.dispatch_receipt is not None:
+            # A confirmation attempt closes the local rendering capability even if
+            # the service later rejects the receipt.  This makes the response one-shot.
+            self._pending_dispatch_plans.pop(request.dispatch_receipt.correlation_id, None)
         try:
             raw_response = self._service.decide(request)
         except Exception:
@@ -821,7 +832,7 @@ class PrivateRouterClient:
                 ticket_proposal=None,
             )
         if response.continuation is ContinuationDirective.WAIT_FOR_HUMAN:
-            return ContinuationPlan(
+            plan = ContinuationPlan(
                 mode=ContinuationMode.WAIT_FOR_HUMAN,
                 action_label=ProductActionLabel.REQUEST_APPROVAL,
                 required_source_kinds=(),
@@ -834,7 +845,35 @@ class PrivateRouterClient:
                 ticket_proposal=response.ticket_proposal,
                 pending_dispatch=response.pending_dispatch,
             )
+            if plan.pending_dispatch is not None:
+                self._pending_dispatch_plans[plan.pending_dispatch.event_correlation_id] = plan
+            return plan
         return self._halt(code=response.error_code or RouterServiceErrorCode.ROUTER_RESPONSE_INVALID)
+
+    def owns_pending_dispatch_plan(self, plan: object) -> bool:
+        """Prove object-identity ownership of a live pending dispatch plan."""
+
+        if not isinstance(plan, ContinuationPlan) or plan.pending_dispatch is None:
+            return False
+        return (
+            self._pending_dispatch_plans.get(plan.pending_dispatch.event_correlation_id)
+            is plan
+        )
+
+    def render_dispatch_response(
+        self,
+        *,
+        plan: ContinuationPlan,
+        artifacts: CommittedDispatchArtifacts,
+        formatter: DispatchResponseFormatter | None = None,
+    ) -> RenderedDispatchResponse:
+        """Render a fixed response through this client-owned pending capability."""
+        return render_trusted_dispatch_response(
+            client=self,
+            plan=plan,
+            artifacts=artifacts,
+            formatter=formatter,
+        )
 
     def _accept_correlation(
         self,

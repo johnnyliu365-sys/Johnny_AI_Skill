@@ -192,6 +192,21 @@ ContextReference = {
 
 `CompletionEvidence` 與 `ImplementationHandoff`／`ImplementationReturn`、`TicketProposal`、`PendingDispatchDescriptor` 與 `ApprovedDispatchArtifact` 只可保存不透明識別碼、revision／span、side-context ID、consumer fingerprint、驗證引用與 digest；不得保存 raw ContextPacket、原文、prompt、路徑、URI、Secret 或 PII。commit digest 只是完成證據，不能自行決定下一關。
 
+### Metadata-only policy 與固定交付回應
+
+Policy document 是 ephemeral source boundary。source 只能回傳 typed
+`PolicyDocumentMetadata`（source ID、revision、evidence digest）；原文、
+prompt、path、URI、secret、PII 與 exception detail 不得進入可序列化 Router
+model、formatter、telemetry 或 error。
+
+固定 dispatch response 不得由公開字串 builder 任意產生。Private Router
+必須保留同一個 live `PendingDispatchDescriptor`，並將 reviewed ticket／
+handoff 的 commit、reference 與具名 implementation-owner ID 綁定在該
+descriptor 上；只有該 Router-owned pending plan 能產生固定回應與交付問題。
+複製或偽造 plan、任意 regex-valid identifier、缺失／replay／mismatch
+descriptor、formatter exception 或輸出變更一律 `HALT`，不得產生回應或
+capability。淘汰的 `TICKETS + APPROVAL_GRANTED -> IMPLEMENT` 仍為 `HALT`。
+
 ### 0.1.1 自動接續與人類等待的唯一規則
 
 Router 不得因為任何 `SUSPEND` 一律進入長等待。每個 Decision 必須輸出唯一 `continuation`：

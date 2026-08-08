@@ -1,0 +1,387 @@
+"""Fresh TDD contracts for metadata-only policy reads and trusted dispatch output."""
+
+from __future__ import annotations
+
+import unittest
+from pathlib import Path
+from typing import cast
+
+from library.workflow_router import (
+    ArtifactKind,
+    AuthorityState,
+    CapabilityRef,
+    CollaborationTopology,
+    CollaborationTopologyPlan,
+    DeliveryStage,
+    FakeEntitlementProvider,
+    FakePrivateRouterService,
+    HandoffArtifactReference,
+    HandoffConsumerFingerprint,
+    ImplementationHandoff,
+    PendingDispatchDescriptor,
+    PrivateRouterClient,
+    ProcessStage,
+    RedactedSummary,
+    RouterEventKind,
+    RouterRequestEnvelope,
+    TicketDispatchConfirmation,
+    TicketDispatchReceipt,
+    TicketProposal,
+    TicketProposalState,
+    TicketScope,
+    build_router_poc_profile,
+)
+from library.workflow_router.policy_response import (
+    CommittedDispatchArtifacts,
+    DispatchResponseFormatter,
+    FixedDispatchResponse,
+    PolicyDocumentMetadata,
+    PolicyDocumentResult,
+    PolicyReadError,
+    PolicyReadOutcome,
+    render_dispatch_response,
+    read_policy_document,
+)
+from library.workflow_router.private_router import (
+    ContinuationPlan,
+    EntitlementGrant,
+    EntitlementMode,
+)
+
+
+class _RawPolicySource:
+    def __init__(self, value: str) -> None:
+        self.value = value
+
+    def read(self) -> str:
+        return self.value
+
+
+class _FailingPolicySource:
+    def read(self) -> PolicyDocumentMetadata:
+        raise RuntimeError("raw source failure must not cross the boundary")
+
+
+class _MetadataPolicySource:
+    def read(self) -> PolicyDocumentMetadata:
+        return PolicyDocumentMetadata(
+            source_id="policy-source-01",
+            revision="rev-0123456789abcdef",
+            evidence_digest="sha256_0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+        )
+
+
+class _MutatingFormatter(DispatchResponseFormatter):
+    def format(self, response: FixedDispatchResponse) -> str:
+        del response
+        return "工單 ready\n/path/to/secret"
+
+
+class _RaisingFormatter(DispatchResponseFormatter):
+    def format(self, response: FixedDispatchResponse) -> str:
+        del response
+        raise RuntimeError("formatter detail must not escape")
+
+
+class PluginPolicyAndResponseTests(unittest.TestCase):
+    """Prove policy text and dispatch authority stay outside public Router models."""
+
+    def setUp(self) -> None:
+        self.account = "acct_0123456789abcdef"
+        self.project = "prj_fedcba9876543210"
+        self.ticket_reference = "ticket-plugin-policy-03"
+        self.control = CapabilityRef(
+            capability_id="cap-control-plane",
+            version="1",
+            agent_profile="control-plane",
+        )
+        self.implementation = CapabilityRef(
+            capability_id="cap-plugin-implementation",
+            version="1",
+            agent_profile="implementation-owner",
+        )
+        self.reviewer = CapabilityRef(
+            capability_id="cap-plugin-reviewer",
+            version="1",
+            agent_profile="reviewer",
+        )
+        self.handoff = ImplementationHandoff(
+            handoff_reference="handoff-plugin-policy-03",
+            ticket_reference=self.ticket_reference,
+            approved_spec_reference="spec-plugin-policy-03",
+            expected_main_revision="rev-0123456789abcdef",
+            context_references=(
+                HandoffArtifactReference(
+                    artifact_id="context-plugin-policy-03",
+                    revision_digest="rev-0123456789abcdef",
+                    source_span_id="span-plugin-policy-03",
+                    side_context_id="side-plugin-policy-03",
+                    consumer_fingerprint=HandoffConsumerFingerprint(
+                        agent_profile_id="agent-control-plane-v1",
+                        profile_version="profile-v1",
+                        worktree_fingerprint="worktree-control-03",
+                        execution_fingerprint="execution-plugin-03",
+                    ),
+                ),
+            ),
+            acceptance_references=("acceptance-ac-1",),
+            tdd_references=("tdd-plugin-policy-03",),
+            scope=TicketScope.NON_FRONTEND,
+            non_frontend_reason="no formal UI boundary",
+            control_owner_id=self.control.capability_id,
+            implementation_owner_id=self.implementation.capability_id,
+            reviewer_id=self.reviewer.capability_id,
+        )
+        service = FakePrivateRouterService(
+            profile=build_router_poc_profile(),
+            entitlement_provider=FakeEntitlementProvider(
+                grants=(
+                    EntitlementGrant(
+                        account_subject_id=self.account,
+                        opaque_project_id=self.project,
+                        permitted_modes=(EntitlementMode.FIRST_PROJECT_FREE,),
+                    ),
+                )
+            ),
+        )
+        self.client = PrivateRouterClient(service=service)
+
+    def _proposal(self) -> TicketProposal:
+        return TicketProposal(
+            ticket_reference=self.ticket_reference,
+            state=TicketProposalState.IN_PROGRESS,
+            implementation_owner_id=self.implementation.capability_id,
+            dispatch_question_id="dispatch-question-plugin-03",
+            proposal_revision="rev-0123456789abcdef",
+        )
+
+    def _request(
+        self,
+        *,
+        event: RouterEventKind,
+        event_id: str,
+        receipt: TicketDispatchReceipt | None = None,
+        confirmation: TicketDispatchConfirmation | None = None,
+    ) -> RouterRequestEnvelope:
+        return RouterRequestEnvelope(
+            request_id=f"req_{event_id.removeprefix('evt_')}",
+            account_subject_id=self.account,
+            opaque_project_id=self.project,
+            project_entry_mode="new_project",
+            entitlement_mode=EntitlementMode.FIRST_PROJECT_FREE,
+            workflow_stage=ProcessStage.TICKETS,
+            authority_state=AuthorityState.APPROVED,
+            delivery_stage=DeliveryStage.POC,
+            router_event_kind=event,
+            event_correlation_id=event_id,
+            available_source_kinds=(ArtifactKind.TICKET,),
+            revision_digests=(
+                "rev_0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+            ),
+            structured_redacted_summary=RedactedSummary(
+                evidence_codes=("goal_captured",),
+                risk_codes=(),
+                source_count_bucket=1,
+            ),
+            client_version="v1",
+            topology=CollaborationTopology.ONE_IMPLEMENTATION_AGENT,
+            collaboration_plan=CollaborationTopologyPlan(
+                topology=CollaborationTopology.ONE_IMPLEMENTATION_AGENT,
+                control_plane=self.control,
+                implementation_owner=self.implementation,
+                reviewer=self.reviewer,
+            ),
+            ticket_reference=self.ticket_reference,
+            implementation_handoff=self.handoff if event is RouterEventKind.TICKET_DISPATCH_REQUIRED else None,
+            dispatch_confirmation=confirmation,
+            dispatch_receipt=receipt,
+            ticket_proposal=self._proposal() if event is RouterEventKind.TICKET_DISPATCH_REQUIRED else None,
+        )
+
+    def _waiting_plan(self) -> ContinuationPlan:
+        return self.client.route(
+            raw_request=self._request(
+                event=RouterEventKind.TICKET_DISPATCH_REQUIRED,
+                event_id="evt_00000000000000000000000000000071",
+            ).model_dump()
+        )
+
+    def _artifacts(self, *, ticket: str | None = None) -> CommittedDispatchArtifacts:
+        return CommittedDispatchArtifacts(
+            ticket_docs_commit="b84c2a5",
+            ticket_reference=ticket or self.ticket_reference,
+            handoff_docs_commit="c569056",
+            handoff_reference=self.handoff.handoff_reference,
+        )
+
+    def test_raw_policy_sentinel_is_rejected_and_never_serialized(self) -> None:
+        sentinel = "SYNTHETIC_POLICY_SENTINEL_03"
+        result = read_policy_document(_RawPolicySource(sentinel))
+        self.assertEqual(PolicyReadOutcome.HALT, result.outcome)
+        self.assertEqual(PolicyReadError.INVALID_DOCUMENT, result.error)
+        self.assertIsNone(result.metadata)
+        self.assertNotIn(sentinel, result.model_dump_json())
+        self.assertNotIn(sentinel, str(result))
+        self.assertNotIn("text", result.model_dump())
+
+    def test_policy_source_failure_and_metadata_success_are_stable(self) -> None:
+        failed = read_policy_document(_FailingPolicySource())
+        self.assertEqual(PolicyReadOutcome.HALT, failed.outcome)
+        self.assertEqual(PolicyReadError.SOURCE_FAILURE, failed.error)
+        loaded = read_policy_document(_MetadataPolicySource())
+        self.assertEqual(PolicyReadOutcome.LOADED, loaded.outcome)
+        self.assertIsNotNone(loaded.metadata)
+        self.assertNotIn("text", loaded.model_dump())
+
+    def test_only_private_router_owned_pending_plan_can_render_exact_response(self) -> None:
+        waiting = self._waiting_plan()
+        self.assertIsNotNone(waiting.pending_dispatch)
+        pending = cast(PendingDispatchDescriptor, waiting.pending_dispatch)
+        rendered = self.client.render_dispatch_response(
+            plan=waiting,
+            artifacts=self._artifacts(),
+            formatter=DispatchResponseFormatter(),
+        )
+        self.assertEqual("rendered", rendered.outcome.value)
+        self.assertIsNotNone(rendered.text)
+        text = cast(str, rendered.text)
+        self.assertIn("工單 ready", text)
+        self.assertIn("- commit：b84c2a5", text)
+        self.assertIn(f"- 工單：{pending.ticket_reference}", text)
+        self.assertIn("文件交接", text)
+        self.assertIn("- commit：c569056", text)
+        self.assertIn(f"- implementation owner：{pending.implementation_owner_id}", text)
+        self.assertIn(
+            f"- 工單 {pending.ticket_reference} 是否已交付給 implementation owner {pending.implementation_owner_id}？",
+            text,
+        )
+
+    def test_forged_response_and_mismatched_artifacts_halt(self) -> None:
+        waiting = self._waiting_plan()
+        pending = cast(PendingDispatchDescriptor, waiting.pending_dispatch)
+        forged = FixedDispatchResponse(
+            pending_dispatch=pending,
+            ticket_docs_commit="b84c2a5",
+            ticket_reference=pending.ticket_reference,
+            handoff_docs_commit="c569056",
+            handoff_reference=pending.reviewed_handoff_reference,
+            implementation_owner_id=pending.implementation_owner_id,
+        )
+        direct = render_dispatch_response(forged, DispatchResponseFormatter())
+        self.assertEqual("halt", direct.outcome.value)
+        self.assertIsNone(direct.text)
+        mismatch = self.client.render_dispatch_response(
+            plan=waiting,
+            artifacts=self._artifacts(ticket="ticket-forged-03"),
+            formatter=DispatchResponseFormatter(),
+        )
+        self.assertEqual("halt", mismatch.outcome.value)
+        self.assertIsNone(mismatch.text)
+
+    def test_confirmation_consumes_pending_response_and_replay_halts(self) -> None:
+        waiting = self._waiting_plan()
+        pending = cast(PendingDispatchDescriptor, waiting.pending_dispatch)
+        receipt = TicketDispatchReceipt(
+            ticket_reference=pending.ticket_reference,
+            implementation_owner_id=pending.implementation_owner_id,
+            handoff_reference=pending.reviewed_handoff_reference,
+            expected_main_revision=pending.expected_main_revision,
+            correlation_id=pending.event_correlation_id,
+            dispatch_question_id=pending.dispatch_question_id,
+            worktree_fingerprint="worktree-plugin-03",
+            branch_fingerprint="branch-plugin-03",
+        )
+        self.client.route(
+            raw_request=self._request(
+                event=RouterEventKind.IMPLEMENTATION_DISPATCH_CONFIRMED,
+                event_id="evt_00000000000000000000000000000072",
+                receipt=receipt,
+                confirmation=TicketDispatchConfirmation.POSITIVE,
+            ).model_dump()
+        )
+        replay = self.client.render_dispatch_response(
+            plan=waiting,
+            artifacts=self._artifacts(),
+            formatter=DispatchResponseFormatter(),
+        )
+        self.assertEqual("halt", replay.outcome.value)
+        self.assertIsNone(replay.text)
+
+    def test_formatter_mutation_exception_and_invalid_commit_fail_closed(self) -> None:
+        waiting = self._waiting_plan()
+        mutated = self.client.render_dispatch_response(
+            plan=waiting,
+            artifacts=self._artifacts(),
+            formatter=_MutatingFormatter(),
+        )
+        self.assertEqual("halt", mutated.outcome.value)
+        self.assertIsNone(mutated.text)
+        failed = self.client.render_dispatch_response(
+            plan=waiting,
+            artifacts=self._artifacts(),
+            formatter=_RaisingFormatter(),
+        )
+        self.assertEqual("halt", failed.outcome.value)
+        self.assertIsNone(failed.text)
+        with self.assertRaises(ValueError):
+            CommittedDispatchArtifacts(
+                ticket_docs_commit="C:/secret/path",
+                ticket_reference=self.ticket_reference,
+                handoff_docs_commit="c569056",
+                handoff_reference=self.handoff.handoff_reference,
+            )
+
+    def test_absent_pending_descriptor_and_mismatched_fixed_model_halt(self) -> None:
+        halted = self.client.route(
+            raw_request=self._request(
+                event=RouterEventKind.APPROVAL_GRANTED,
+                event_id="evt_00000000000000000000000000000074",
+            ).model_dump()
+        )
+        absent = self.client.render_dispatch_response(
+            plan=halted,
+            artifacts=self._artifacts(),
+            formatter=DispatchResponseFormatter(),
+        )
+        self.assertEqual("halt", absent.outcome.value)
+        self.assertIsNone(absent.text)
+        waiting = self._waiting_plan()
+        pending = cast(PendingDispatchDescriptor, waiting.pending_dispatch)
+        with self.assertRaises(ValueError):
+            FixedDispatchResponse(
+                pending_dispatch=pending,
+                ticket_docs_commit="b84c2a5",
+                ticket_reference="ticket-forged-03",
+                handoff_docs_commit="c569056",
+                handoff_reference=pending.reviewed_handoff_reference,
+                implementation_owner_id=pending.implementation_owner_id,
+            )
+
+    def test_legacy_approval_route_is_not_a_dispatch_response(self) -> None:
+        legacy = self.client.route(
+            raw_request=self._request(
+                event=RouterEventKind.APPROVAL_GRANTED,
+                event_id="evt_00000000000000000000000000000073",
+            ).model_dump()
+        )
+        self.assertEqual("halt", legacy.mode.value)
+        self.assertIsNone(legacy.pending_dispatch)
+
+    def test_workflow_skill_template_and_readme_publish_the_same_boundary(self) -> None:
+        root = Path(__file__).resolve().parents[1]
+        workflow = (root / "Workflow.md").read_text(encoding="utf-8")
+        agents = (root / "AGENTS.md").read_text(encoding="utf-8")
+        readme = (root / "README.md").read_text(encoding="utf-8")
+        skill = (root / "skills" / "johnny-project-takeover" / "SKILL.md").read_text(
+            encoding="utf-8"
+        )
+        template = (root / "template" / "README.md").read_text(encoding="utf-8")
+        for document in (workflow, agents, readme, skill, template):
+            self.assertIn("metadata", document.lower())
+            self.assertIn("pending", document.lower())
+        self.assertIn("TICKETS + APPROVAL_GRANTED", workflow)
+        self.assertIn("active product objective", readme)
+
+
+if __name__ == "__main__":
+    unittest.main()

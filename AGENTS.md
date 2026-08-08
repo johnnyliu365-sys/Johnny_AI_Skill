@@ -28,6 +28,13 @@
 - 使用的語言或工具必須啟用其可用的嚴格型別檢查；具體執行與分層規則依 [實作流程](Workflow.md#implementation) 辦理。
 - 本檔案於任何專案內都應處於 `.gitignore` 項目範圍。
 
+Policy／response P0：政策讀取只能在 ephemeral boundary 產生 metadata-only
+結果，不得把原文放進 Router model、formatter、telemetry 或 error。固定
+dispatch response 必須由同一個 Private Router 的 live pending descriptor
+綁定 ticket、reviewed handoff、commit 與具名 implementation owner；複製、
+偽造、replay、mismatch 或舊 `APPROVAL_GRANTED -> IMPLEMENT` 路徑一律
+`HALT`，只有 Router-owned plan 可以產生固定回應。
+
 ## Workflow 導覽
 
 Router anchor: `#workflow-router`; implementation role anchor: `#role-boundary`.

@@ -62,3 +62,14 @@ INTAKE → WAYFINDER → ARCHITECTURE → GRILL → CONTEXT → SPEC → TICKETS
 Removing or disabling this plugin removes only its skills, workflow references, and module catalog access. It must not remove target-project source, configuration, CI, data, or formal artifacts.
 
 Before detaching, ensure any approved target-project work is committed and its verification command passes. Future agents then follow the target project's own guidance; they no longer receive Johnny AI Skill routing or module-selection instructions.
+
+## Policy and dispatch response boundary
+
+Read policy files through an ephemeral metadata-only boundary. Never put policy
+text into a serializable Router model, formatter, telemetry record or error.
+Emit a fixed dispatch response only from the same Private Router that owns the
+live pending descriptor, after the reviewed ticket/handoff commits, receipt and
+named implementation owner match. Forged, replayed, absent or mismatched
+descriptors, formatter failures and the retired `TICKETS + APPROVAL_GRANTED ->
+IMPLEMENT` route halt without output or capability. `POC` is the default;
+`MVP`/`COMMERCIAL` require an approved project Profile and change record.

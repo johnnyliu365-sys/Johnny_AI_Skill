@@ -131,3 +131,16 @@ Claude 的 `plugin.json` 故意不寫版本號，讓它以 Git commit SHA 辨識
 ## 拔除保證
 
 這個外掛只裝在使用者範圍，不會被 commit 到目標專案。要完全拔除時，執行上方對應平台的移除命令，然後重新開啟 Agent session。公司專案會保留完全相同的 checkout、原始碼、依賴、CI、部署設定與 Git history；消失的只有這套可選的 workflow skill。
+
+## Metadata-only policy 與 dispatch response
+
+這個 plugin 是 local POC control plane。Policy source 只能在 ephemeral
+boundary 以 typed metadata 通過；Router 不會保存或回傳 policy 原文。
+固定 dispatch response 只能由同一個 Private Router 所擁有的 live pending
+descriptor 產生，並綁定 reviewed ticket、handoff receipt、commits 與具名
+implementation owner。偽造、replay、缺失或 mismatch descriptor 一律
+fail-closed，不產生回應或 capability。
+
+`MVP` 與 `COMMERCIAL` 是歷史／Profile-gated delivery stage，不是 plugin
+自行推論的 active product objective；在核准的 project artifact 與 change
+record 另行宣告前，預設仍是 `POC`。
