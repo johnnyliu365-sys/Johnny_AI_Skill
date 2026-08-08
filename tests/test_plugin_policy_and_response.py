@@ -40,6 +40,7 @@ from library.workflow_router.policy_response import (
     PolicyReadError,
     PolicyReadOutcome,
     render_dispatch_response,
+    render_trusted_dispatch_response,
     read_policy_document,
 )
 from library.workflow_router.private_router import (
@@ -81,6 +82,12 @@ class _RaisingFormatter(DispatchResponseFormatter):
     def format(self, response: FixedDispatchResponse) -> str:
         del response
         raise RuntimeError("formatter detail must not escape")
+
+
+class _FakePendingPlanOwner:
+    def owns_pending_dispatch_plan(self, plan: object) -> bool:
+        del plan
+        return True
 
 
 class PluginPolicyAndResponseTests(unittest.TestCase):
@@ -128,6 +135,8 @@ class PluginPolicyAndResponseTests(unittest.TestCase):
             tdd_references=("tdd-plugin-policy-03",),
             scope=TicketScope.NON_FRONTEND,
             non_frontend_reason="no formal UI boundary",
+            ticket_docs_commit="b84c2a5",
+            handoff_docs_commit="c569056",
             control_owner_id=self.control.capability_id,
             implementation_owner_id=self.implementation.capability_id,
             reviewer_id=self.reviewer.capability_id,
@@ -239,7 +248,6 @@ class PluginPolicyAndResponseTests(unittest.TestCase):
         pending = cast(PendingDispatchDescriptor, waiting.pending_dispatch)
         rendered = self.client.render_dispatch_response(
             plan=waiting,
-            artifacts=self._artifacts(),
             formatter=DispatchResponseFormatter(),
         )
         self.assertEqual("rendered", rendered.outcome.value)
@@ -255,28 +263,109 @@ class PluginPolicyAndResponseTests(unittest.TestCase):
             f"- 工單 {pending.ticket_reference} 是否已交付給 implementation owner {pending.implementation_owner_id}？",
             text,
         )
+        asserted_artifacts = self.client.render_dispatch_response(
+            plan=waiting,
+            artifacts=self._artifacts(),
+            formatter=DispatchResponseFormatter(),
+        )
+        self.assertEqual("rendered", asserted_artifacts.outcome.value)
+        self.assertEqual(text, asserted_artifacts.text)
 
     def test_forged_response_and_mismatched_artifacts_halt(self) -> None:
         waiting = self._waiting_plan()
         pending = cast(PendingDispatchDescriptor, waiting.pending_dispatch)
         forged = FixedDispatchResponse(
             pending_dispatch=pending,
-            ticket_docs_commit="b84c2a5",
+            ticket_docs_commit=pending.ticket_docs_commit or "b84c2a5",
             ticket_reference=pending.ticket_reference,
-            handoff_docs_commit="c569056",
+            handoff_docs_commit=pending.handoff_docs_commit or "c569056",
             handoff_reference=pending.reviewed_handoff_reference,
             implementation_owner_id=pending.implementation_owner_id,
         )
         direct = render_dispatch_response(forged, DispatchResponseFormatter())
         self.assertEqual("halt", direct.outcome.value)
         self.assertIsNone(direct.text)
+        forged_plan = waiting.model_copy(
+            update={
+                "pending_dispatch": pending.model_copy(
+                    update={"ticket_reference": "ticket-forged-03"}
+                )
+            }
+        )
         mismatch = self.client.render_dispatch_response(
-            plan=waiting,
-            artifacts=self._artifacts(ticket="ticket-forged-03"),
+            plan=forged_plan,
             formatter=DispatchResponseFormatter(),
         )
         self.assertEqual("halt", mismatch.outcome.value)
         self.assertIsNone(mismatch.text)
+
+    def test_indirect_fake_owner_copied_plan_and_alternate_client_halt(self) -> None:
+        waiting = self._waiting_plan()
+        fake_owner = render_trusted_dispatch_response(
+            client=_FakePendingPlanOwner(),
+            plan=waiting,
+            artifacts=self._artifacts(),
+            formatter=DispatchResponseFormatter(),
+        )
+        self.assertEqual("halt", fake_owner.outcome.value)
+        self.assertIsNone(fake_owner.text)
+        copied = type(waiting).model_validate(waiting.model_dump())
+        copied_result = self.client.render_dispatch_response(
+            plan=copied,
+            formatter=DispatchResponseFormatter(),
+        )
+        self.assertEqual("halt", copied_result.outcome.value)
+        self.assertIsNone(copied_result.text)
+        alternate = PrivateRouterClient(service=self.client._service)
+        alternate_result = alternate.render_dispatch_response(
+            plan=waiting,
+            formatter=DispatchResponseFormatter(),
+        )
+        self.assertEqual("halt", alternate_result.outcome.value)
+        self.assertIsNone(alternate_result.text)
+
+    def test_valid_shaped_forged_commits_and_handoff_halt(self) -> None:
+        waiting = self._waiting_plan()
+        forged_commits = self._artifacts().model_copy(
+            update={"ticket_docs_commit": "deadbee", "handoff_docs_commit": "cafe123"}
+        )
+        forged_result = self.client.render_dispatch_response(
+            plan=waiting,
+            artifacts=forged_commits,
+            formatter=DispatchResponseFormatter(),
+        )
+        self.assertEqual("halt", forged_result.outcome.value)
+        self.assertIsNone(forged_result.text)
+        forged_handoff = self._artifacts().model_copy(
+            update={"handoff_reference": "handoff-forged-03"}
+        )
+        handoff_result = self.client.render_dispatch_response(
+            plan=waiting,
+            artifacts=forged_handoff,
+            formatter=DispatchResponseFormatter(),
+        )
+        self.assertEqual("halt", handoff_result.outcome.value)
+        self.assertIsNone(handoff_result.text)
+
+    def test_each_path_and_uri_boundary_is_rejected_at_artifact_boundary(self) -> None:
+        boundary_values = (
+            r"C:\repo\ticket.md",
+            "C:/repo/ticket.md",
+            "/repo/ticket.md",
+            r"\\server\share\ticket.md",
+            "file:///repo/ticket.md",
+            "https://example.test/ticket.md",
+            "../relative/ticket.md",
+        )
+        for boundary in boundary_values:
+            with self.subTest(boundary=boundary):
+                with self.assertRaises(ValueError):
+                    CommittedDispatchArtifacts(
+                        ticket_docs_commit=boundary,
+                        ticket_reference=self.ticket_reference,
+                        handoff_docs_commit="c569056",
+                        handoff_reference=self.handoff.handoff_reference,
+                    )
 
     def test_confirmation_consumes_pending_response_and_replay_halts(self) -> None:
         waiting = self._waiting_plan()
@@ -301,7 +390,6 @@ class PluginPolicyAndResponseTests(unittest.TestCase):
         )
         replay = self.client.render_dispatch_response(
             plan=waiting,
-            artifacts=self._artifacts(),
             formatter=DispatchResponseFormatter(),
         )
         self.assertEqual("halt", replay.outcome.value)
@@ -311,14 +399,12 @@ class PluginPolicyAndResponseTests(unittest.TestCase):
         waiting = self._waiting_plan()
         mutated = self.client.render_dispatch_response(
             plan=waiting,
-            artifacts=self._artifacts(),
             formatter=_MutatingFormatter(),
         )
         self.assertEqual("halt", mutated.outcome.value)
         self.assertIsNone(mutated.text)
         failed = self.client.render_dispatch_response(
             plan=waiting,
-            artifacts=self._artifacts(),
             formatter=_RaisingFormatter(),
         )
         self.assertEqual("halt", failed.outcome.value)
@@ -340,7 +426,6 @@ class PluginPolicyAndResponseTests(unittest.TestCase):
         )
         absent = self.client.render_dispatch_response(
             plan=halted,
-            artifacts=self._artifacts(),
             formatter=DispatchResponseFormatter(),
         )
         self.assertEqual("halt", absent.outcome.value)
@@ -355,6 +440,15 @@ class PluginPolicyAndResponseTests(unittest.TestCase):
                 handoff_docs_commit="c569056",
                 handoff_reference=pending.reviewed_handoff_reference,
                 implementation_owner_id=pending.implementation_owner_id,
+            )
+        with self.assertRaises(ValueError):
+            FixedDispatchResponse(
+                pending_dispatch=pending,
+                ticket_docs_commit=pending.ticket_docs_commit or "b84c2a5",
+                ticket_reference=pending.ticket_reference,
+                handoff_docs_commit=pending.handoff_docs_commit or "c569056",
+                handoff_reference=pending.reviewed_handoff_reference,
+                implementation_owner_id="cap-forged-owner",
             )
 
     def test_legacy_approval_route_is_not_a_dispatch_response(self) -> None:

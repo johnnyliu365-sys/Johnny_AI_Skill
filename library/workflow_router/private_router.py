@@ -49,8 +49,10 @@ from .profile import ProjectWorkflowProfile
 from .policy_response import (
     CommittedDispatchArtifacts,
     DispatchResponseFormatter,
+    FixedDispatchResponse,
+    RenderError,
+    RenderOutcome,
     RenderedDispatchResponse,
-    render_trusted_dispatch_response,
 )
 from .router import ContextResolver, RouterEngine
 
@@ -864,16 +866,69 @@ class PrivateRouterClient:
         self,
         *,
         plan: ContinuationPlan,
-        artifacts: CommittedDispatchArtifacts,
+        artifacts: CommittedDispatchArtifacts | None = None,
         formatter: DispatchResponseFormatter | None = None,
     ) -> RenderedDispatchResponse:
-        """Render a fixed response through this client-owned pending capability."""
-        return render_trusted_dispatch_response(
-            client=self,
-            plan=plan,
-            artifacts=artifacts,
-            formatter=formatter,
-        )
+        """Render from Router state; optional artifacts are equality assertions only."""
+        if not self.owns_pending_dispatch_plan(plan):
+            return RenderedDispatchResponse(
+                outcome=RenderOutcome.HALT,
+                error=RenderError.UNTRUSTED_RESPONSE,
+            )
+        try:
+            pending = plan.pending_dispatch
+            proposal = plan.ticket_proposal
+            response = plan.response
+            if artifacts is not None and (
+                pending is None
+                or pending.ticket_docs_commit is None
+                or pending.handoff_docs_commit is None
+                or artifacts.ticket_docs_commit != pending.ticket_docs_commit
+                or artifacts.ticket_reference != pending.ticket_reference
+                or artifacts.handoff_docs_commit != pending.handoff_docs_commit
+                or artifacts.handoff_reference != pending.reviewed_handoff_reference
+            ):
+                return RenderedDispatchResponse(
+                    outcome=RenderOutcome.HALT,
+                    error=RenderError.ARTIFACT_MISMATCH,
+                )
+            if (
+                plan.mode is not ContinuationMode.WAIT_FOR_HUMAN
+                or pending is None
+                or proposal is None
+                or response is None
+                or pending.ticket_docs_commit is None
+                or pending.handoff_docs_commit is None
+                or response.pending_dispatch != pending
+                or proposal.ticket_reference != pending.ticket_reference
+            ):
+                return RenderedDispatchResponse(
+                    outcome=RenderOutcome.HALT,
+                    error=RenderError.INVALID_RESPONSE,
+                )
+            candidate = FixedDispatchResponse(
+                pending_dispatch=pending,
+                ticket_docs_commit=pending.ticket_docs_commit,
+                ticket_reference=pending.ticket_reference,
+                handoff_docs_commit=pending.handoff_docs_commit,
+                handoff_reference=pending.reviewed_handoff_reference,
+                implementation_owner_id=pending.implementation_owner_id,
+            )
+            deterministic = DispatchResponseFormatter()
+            expected = deterministic.format(candidate)
+            selected = formatter or deterministic
+            rendered = selected.format(candidate)
+            if rendered != expected:
+                return RenderedDispatchResponse(
+                    outcome=RenderOutcome.HALT,
+                    error=RenderError.FORMATTER_OUTPUT_INVALID,
+                )
+            return RenderedDispatchResponse(outcome=RenderOutcome.RENDERED, text=rendered)
+        except Exception:
+            return RenderedDispatchResponse(
+                outcome=RenderOutcome.HALT,
+                error=RenderError.FORMATTER_FAILURE,
+            )
 
     def _accept_correlation(
         self,

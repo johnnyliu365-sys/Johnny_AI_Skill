@@ -9,9 +9,9 @@ same :class:`PrivateRouterClient` that received the pending dispatch.
 from __future__ import annotations
 
 from enum import Enum
-from typing import TYPE_CHECKING, Annotated, Protocol
+from typing import Protocol
 
-from pydantic import Field, model_validator
+from pydantic import model_validator
 
 from .contracts import (
     EvidenceDigest,
@@ -19,13 +19,11 @@ from .contracts import (
     OpaqueMetadataId,
     PendingDispatchDescriptor,
     RevisionDigest,
+    ReviewedCommitReference,
     RouterModel,
 )
 
-if TYPE_CHECKING:
-    from .private_router import ContinuationPlan
-
-CommitReference = Annotated[str, Field(pattern=r"^[0-9a-f]{7,64}$")]
+CommitReference = ReviewedCommitReference
 
 
 class PolicyReadOutcome(str, Enum):
@@ -56,13 +54,6 @@ class PolicyDocumentSource(Protocol):
 
     def read(self) -> object:
         """Read a document transiently without returning its text to the Router."""
-
-
-class PendingDispatchPlanOwner(Protocol):
-    """The narrow authority surface needed by the trusted formatter."""
-
-    def owns_pending_dispatch_plan(self, plan: object) -> bool:
-        """Return true only for the exact live plan object retained by the client."""
 
 
 class PolicyDocumentResult(RouterModel):
@@ -149,9 +140,13 @@ class FixedDispatchResponse(RouterModel):
 
         pending = self.pending_dispatch
         if (
-            self.ticket_reference != pending.ticket_reference
+            pending.ticket_docs_commit is None
+            or pending.handoff_docs_commit is None
+            or self.ticket_reference != pending.ticket_reference
             or self.handoff_reference != pending.reviewed_handoff_reference
             or self.implementation_owner_id != pending.implementation_owner_id
+            or self.ticket_docs_commit != pending.ticket_docs_commit
+            or self.handoff_docs_commit != pending.handoff_docs_commit
         ):
             raise ValueError("fixed response must match the pending dispatch descriptor")
         return self
@@ -210,48 +205,12 @@ def render_dispatch_response(
 
 def render_trusted_dispatch_response(
     *,
-    client: PendingDispatchPlanOwner,
-    plan: ContinuationPlan,
-    artifacts: CommittedDispatchArtifacts,
+    client: object,
+    plan: object,
+    artifacts: CommittedDispatchArtifacts | None = None,
     formatter: DispatchResponseFormatter | None = None,
 ) -> RenderedDispatchResponse:
-    """Render only when the client proves object-identity ownership of the plan."""
+    """Reject indirect rendering; ownership is checked inside PrivateRouterClient."""
 
-    if not client.owns_pending_dispatch_plan(plan):
-        return _halt(RenderError.UNTRUSTED_RESPONSE)
-    try:
-        from .private_router import ContinuationMode, ContinuationPlan
-
-        if not isinstance(plan, ContinuationPlan):
-            return _halt(RenderError.INVALID_RESPONSE)
-        pending = plan.pending_dispatch
-        proposal = plan.ticket_proposal
-        response = plan.response
-        if (
-            plan.mode is not ContinuationMode.WAIT_FOR_HUMAN
-            or pending is None
-            or proposal is None
-            or response is None
-            or response.pending_dispatch != pending
-            or proposal.ticket_reference != pending.ticket_reference
-            or artifacts.ticket_reference != pending.ticket_reference
-            or artifacts.handoff_reference != pending.reviewed_handoff_reference
-        ):
-            return _halt(RenderError.INVALID_RESPONSE)
-        candidate = FixedDispatchResponse(
-            pending_dispatch=pending,
-            ticket_docs_commit=artifacts.ticket_docs_commit,
-            ticket_reference=artifacts.ticket_reference,
-            handoff_docs_commit=artifacts.handoff_docs_commit,
-            handoff_reference=artifacts.handoff_reference,
-            implementation_owner_id=pending.implementation_owner_id,
-        )
-        deterministic = DispatchResponseFormatter()
-        expected = deterministic.format(candidate)
-        selected = formatter or deterministic
-        rendered = selected.format(candidate)
-        if rendered != expected:
-            return _halt(RenderError.FORMATTER_OUTPUT_INVALID)
-        return RenderedDispatchResponse(outcome=RenderOutcome.RENDERED, text=rendered)
-    except Exception:
-        return _halt(RenderError.FORMATTER_FAILURE)
+    del client, plan, artifacts, formatter
+    return _halt(RenderError.UNTRUSTED_RESPONSE)

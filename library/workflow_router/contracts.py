@@ -17,6 +17,7 @@ BranchFingerprint = Annotated[str, Field(pattern=r"^branch-[a-z0-9]+-[0-9]{2}$")
 RevisionDigest = Annotated[str, Field(pattern=r"^rev-[0-9a-f]{16,64}$")]
 EvidenceDigest = Annotated[str, Field(pattern=r"^sha256_[0-9a-f]{64}$")]
 CommitDigest = Annotated[str, Field(pattern=r"^git_[0-9a-f]{12,64}$")]
+ReviewedCommitReference = Annotated[str, Field(pattern=r"^[0-9a-f]{7,64}$")]
 
 
 class RouterModel(BaseModel):
@@ -318,6 +319,8 @@ class PendingDispatchDescriptor(RouterModel):
     implementation_owner_id: OpaqueMetadataId
     reviewed_handoff_reference: OpaqueMetadataId
     event_correlation_id: NonBlankText
+    ticket_docs_commit: ReviewedCommitReference | None = None
+    handoff_docs_commit: ReviewedCommitReference | None = None
 
     @property
     def ticket_ref(self) -> str:
@@ -399,6 +402,8 @@ class ImplementationHandoff(RouterModel):
     control_owner_id: OpaqueMetadataId
     implementation_owner_id: OpaqueMetadataId
     reviewer_id: OpaqueMetadataId
+    ticket_docs_commit: ReviewedCommitReference | None = None
+    handoff_docs_commit: ReviewedCommitReference | None = None
 
     @model_validator(mode="after")
     def enforces_role_separation_and_frontend_contract(self) -> ImplementationHandoff:

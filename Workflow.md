@@ -163,7 +163,8 @@ TicketProposal = {
 
 PendingDispatchDescriptor = {
   ticket_ref, proposal_revision, dispatch_question_id, implementation_owner,
-  reviewed_handoff_ref, event_correlation_id
+  reviewed_handoff_ref, ticket_docs_commit, handoff_docs_commit,
+  event_correlation_id
 }
 
 ApprovedDispatchArtifact = {

@@ -239,6 +239,8 @@ class RouterEngine:
                 implementation_owner_id=proposal.implementation_owner_id,
                 reviewed_handoff_reference=handoff.handoff_reference,
                 event_correlation_id=event.event_id,
+                ticket_docs_commit=handoff.ticket_docs_commit,
+                handoff_docs_commit=handoff.handoff_docs_commit,
             )
             return RouterDecision(
                 outcome=RouterOutcome.SUSPEND,
