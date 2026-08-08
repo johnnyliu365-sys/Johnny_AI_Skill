@@ -10,7 +10,7 @@ Deliver a non-commercial, detachable workflow control plane that selects a colla
 
 | Ticket | User-observable capability | State | Dependency |
 | --- | --- | --- |
-| [01-topology-dispatch-lanes](01-topology-dispatch-lanes.md) | Capability-count question and typed dispatch wait/receipt with parallel lane isolation | `READY_TO_MERGE` | Independent review approved; guarded local integration remains owned by ticket 02 |
+| [01-topology-dispatch-lanes](01-topology-dispatch-lanes.md) | Capability-count question and typed dispatch wait/receipt with parallel lane isolation | `INTEGRATED` | Approved `67b049a` is patch-equivalent to rebased `0dc4da5`, which is in `main` through Ticket 02's reviewed integration baseline |
 | [02-guarded-integration-audit](02-guarded-integration-audit.md) | Valid implementation return reaches a guarded local main integration and automatic Grill audit | `INTEGRATED` | Fourth correction review approved `906679a`; source fast-forwarded to `main` at `90e9191` |
 | [03-plugin-policy-and-response](03-plugin-policy-and-response.md) | Codex/Claude guidance and fixed `工單 ready` / `文件交接` response | `INTEGRATED` | Rebased reviewed implementation `0a5b757` / `43033bf` fast-forwarded from `b34e59e`; the post-integration Grill audit found no new scope or correction route |
 
@@ -22,7 +22,7 @@ The project owner selected this topology on `2026-08-05`:
 1：main control-plane session + existing separate implementation session/worktree
 ```
 
-The named implementation owner is Codex implementation Agent; the control-plane/reviewer is Codex/current `main` worktree. A positive delivery confirmation is the ticket-scoped approval and implementation authority; no second approval is requested. Ticket 02 is integrated and its allocation is released. Ticket 03's existing receipt now holds the sole active implementation allocation in its existing Ticket-03 worktree; the previous Ticket-03 branch remains review evidence and the owner must create the recorded fresh branch from the approved main base.
+The named implementation owner is Codex implementation Agent; the control-plane/reviewer is Codex/current `main` worktree. A positive delivery confirmation is the ticket-scoped approval and implementation authority; no second approval is requested. Tickets 01 through 03 are integrated and there is no active implementation lane. Ticket 03's receipt and blocked branch remain historical audit evidence only; they grant no further worktree, Context, capability or implementation authority.
 
 ## Shared baseline
 

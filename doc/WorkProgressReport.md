@@ -423,3 +423,14 @@
 | Post-integration Grill | `APPROVED -> REVIEW`; the approved source snapshot is unchanged by the rebase, and the existing final independent code review remains the review gate. No requirement, architecture, security, ownership, UI, data, authority or delivery change was found. |
 | Independent verification | `python -B -m unittest discover -s tests` — 131 passed; `python -B -m pytest -q -p no:cacheprovider` — 131 passed / 175 subtests; `python -B -m mypy --strict --no-incremental library tests` — 65 source files clean; in-memory compilation — 13 Router modules; `git diff --check` passed. |
 | Continuation / boundary | `ACTION_COMPLETED -> AUTO_CONTINUE -> HANDOFF`. No correction route, new ticket, dispatch question, user wait, push, deployment or external action is granted by this record. |
+
+## PRG-20260808-015 — POC convergence planning Grill
+
+| Field | Value |
+| --- | --- |
+| State | `HANDOFF` — no implementation ticket is opened |
+| Trigger | Ticket 03 is integrated and its post-integration Grill completed at `43033bf` / `f3519ab`. |
+| Traceability correction | Stable patch IDs prove approved Ticket-01 `67b049a` and rebased on-main `0dc4da5` are identical; Ticket 01 is therefore integrated through Ticket 02's reviewed baseline. Ticket-ledger states and obsolete active-allocation language are reconciled accordingly. |
+| Scope decision | A real host wake-up, physical worktree, real Git, Temporal worker or MCP adapter remains out of scope for this local POC. It is deferred, not treated as a hidden implementation failure; any expansion must begin with `REQUIREMENT_CHANGED -> WAYFINDER`. |
+| Grill decision | `GO -> HANDOFF`. No proposal is `PLANNED`, no valid new dispatch authority exists, and no new ticket is created. |
+| Continuation / boundary | `ACTION_COMPLETED -> AUTO_CONTINUE -> HANDOFF`. No user wait, correction worktree, push, deployment or external action is granted. |
