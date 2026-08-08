@@ -35,7 +35,7 @@ Frontend composition / DI: `N/A` — documentation and deterministic formatter p
 3. Red: arbitrary regex-valid ticket/commit/owner strings, a forged pending descriptor, an absent descriptor, a replayed descriptor, or the retired `TICKETS + APPROVAL_GRANTED → IMPLEMENT` route can render a dispatch response or grant implementation; green proves only a Private-Router-owned pending-dispatch result from the reviewed current contracts can produce the fixed response, and all other forms halt with no response or grant.
 4. Red: policy describes a generic wait or implementation-before-dispatch path; green checks each declared wait/HALT/auto-continue rule against the approved contract.
 5. Red: commercial wording is still presented as active direction; green differentiates historical POC references from active objective.
-6. CodeReview §2.1: path/URI leakage in generated response uses seven boundary forms; null/empty field formats; direct/indirect response bypass; token N/A scan; stable formatting error; source/formatter exception; and mutation proof of required labels/fields and the delivered pending-dispatch guard.
+6. CodeReview §2.1: generated-response path/URI leakage must individually test exactly equal, one-extra-character prefix, trailing-slash variant, casing variant, URL-encoded variant, `..` traversal variant and empty value; test null/empty field formats; direct/indirect response bypass; token N/A scan; stable formatting error; source/formatter exception; and mutation proof of required labels/fields and the delivered pending-dispatch guard.
 
 ## Completion evidence
 
