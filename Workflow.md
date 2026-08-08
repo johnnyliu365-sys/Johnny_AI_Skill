@@ -204,6 +204,11 @@ model、formatter、telemetry 或 error。
 必須保留同一個 live `PendingDispatchDescriptor`，並將 reviewed ticket／
 handoff 的 commit、reference 與具名 implementation-owner ID 綁定在該
 descriptor 上；只有該 Router-owned pending plan 能產生固定回應與交付問題。
+Dispatch admission 必須注入 typed `ApprovedDispatchArtifactRegistry`，以
+ticket／handoff／implementation-owner identity 精確解析已審核的 ticket 與
+handoff commit；Router 不得信任 caller 帶入的 raw handoff commit。registry
+缺少精確記錄、identity 或任一 commit 不一致時，必須在建立問題、pending、
+receipt 或 implementation lane 前 `HALT`。
 複製或偽造 plan、任意 regex-valid identifier、缺失／replay／mismatch
 descriptor、formatter exception 或輸出變更一律 `HALT`，不得產生回應或
 capability。淘汰的 `TICKETS + APPROVAL_GRANTED -> IMPLEMENT` 仍為 `HALT`。

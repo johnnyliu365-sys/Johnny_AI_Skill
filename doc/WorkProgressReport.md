@@ -326,6 +326,21 @@
 | Validation | `python -B -m unittest discover -s tests` — 122 passed; `python -m pytest -q` — 122 passed / 115 subtests; `python -m mypy --strict --no-incremental library tests` — 65 source files clean; `python -m compileall -q library/workflow_router` — 13 modules; metadata-only privacy/source sentinel, smoke and `git diff --check` passed. |
 | Review / integration | No merge, push, deployment, external provider, main-worktree mutation or other-ticket mutation was performed. Independent control-plane review is required before any fast-forward integration. |
 
+## PRG-20260808-009 — Ticket 03 correction handoff (CR-29 through CR-31)
+
+| Field | Value |
+| --- | --- |
+| State | `IMPLEMENTATION_COMMITTED_PENDING_REVIEW` |
+| Ticket / review return | `03-plugin-policy-and-response` / `870013c` (`CHANGES_REQUESTED → IMPLEMENT`) |
+| Receipt / baseline | `c569056` remains valid; the complete rework branch was rebased onto current control-plane `main` at `870013c` before handoff. |
+| Implementation owner / branch | Codex implementation Agent / `codex/implementation-plugin-policy-and-response-03-rework` |
+| Implementation commits | `0dda8fc` (`fix: require approved dispatch artifact registry`) and `95bf7cf` (`test: cover omitted dispatch commit values`) |
+| CR-29 correction | Private Router and direct Router admission now require an injected typed `ApprovedDispatchArtifactRegistry`. It resolves exact ticket, reviewed handoff, and named implementation-owner identity, then requires both incoming commit references to equal the registered reviewed commits. Missing or substituted ticket, handoff, owner, or valid-shaped commit metadata halts before question, pending descriptor, receipt acceptance, rendering, or implementation lane. Duplicate registry identities are rejected. |
+| CR-30 correction | TDD covers both commit fields independently for omission, `None`, empty, whitespace, `[]`, `{}`, and the seven path/URI boundary forms; private-boundary regressions verify no pending descriptor or lane is created. |
+| TDD red evidence | Before registry injection, valid-shaped raw handoff commit substitutions reached the pending/render path. Before the expanded boundary matrix, the test used a literal `undefined` marker and tuple-only empty-container coverage. New direct/private tests now fail closed for registered-identity, ticket, handoff, owner, omission, null, whitespace, empty-container, replay and path/URI substitutions. |
+| Validation | `python -B -m unittest discover -s tests` — 129 passed; `python -B -m pytest -q -p no:cacheprovider` — 129 passed / 161 subtests; `python -B -m mypy --strict --no-incremental library tests` — 65 source files clean; `python -B -m compileall -q library/workflow_router` — 13 modules; metadata-only privacy/source sentinel and plugin dispatch smoke passed; `git diff --check` clean. |
+| Docs-only handoff | This entry and the Workflow registry rule are the docs-only handoff following `95bf7cf`; no raw Context, source text, prompt, path, URI, Secret, PII, production data, merge, push, or deployment was recorded. Independent review is required before integration. |
+
 ## PRG-20260808-007 — Ticket 03 correction handoff (CR-25 and CR-26)
 
 | Field | Value |
