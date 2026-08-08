@@ -515,3 +515,14 @@
 | Scope | Repeat fresh red → minimal typed implementation → green for only CR-36 typed proof validation, CR-37 verified removal absence, and CR-38 durable recovery state. No target project, host configuration, installer package, Ticket 02+, merge/push/deploy or requirements change is permitted. |
 | Receipt | `rcpt_local_orchestration_install_01_20260808` remains the sole positive dispatch authority. This is a corrected implementation allocation, not a new ticket approval/dispatch. |
 | Required return | implementation commit plus docs-only handoff, first-red evidence for every CR, regression/type/compile/privacy/smoke evidence, then `COMPLETED → ACTION_COMPLETED → REVIEW`. |
+
+## PRG-20260808-025 — Ticket 01 second independent review
+
+| Field | Value |
+| --- | --- |
+| State | `REVIEW / CHANGES_REQUESTED` |
+| Reviewed range | Baseline `f297d4f`; implementation `fd429fd`, `a222d89`; final docs-only handoff `8e39c99`; branch `codex/implementation-local-install-lifecycle-01-rework`. |
+| Passing corrections | CR-36 runtime proof typing and CR-37 typed absence validation pass focused reverse verification. Full regression, strict mypy, compile, diff and privacy checks also pass. |
+| Blocking findings | CR-38 remains open because persisted recovery is never loaded/resumed; CR-39 host verification failure propagates `ValidationError`; CR-40 mandatory TDD cases and behavior-specific red evidence are incomplete. Reproduction and exact evidence are in `doc/reviews/local-orchestration-installer/01-owned-install-lifecycle-code-review.md`. |
+| Scope classification | Implementation/evidence corrections only. Approved requirements, SPEC, ticket acceptance, architecture and delivery stage do not change; no `REQUIREMENT_CHANGED` event. |
+| Continuation | Mark this branch historical and create another fresh allocation from the next docs-only control-plane handoff. Receipt `rcpt_local_orchestration_install_01_20260808` continues; Ticket 02 remains `DEPENDENCY_WAIT`. |
