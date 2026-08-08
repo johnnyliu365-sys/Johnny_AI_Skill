@@ -408,3 +408,16 @@ The next correction must inject a typed approved-artifact registry that validate
 | Continuation | Existing receipt `c569056`: `CHANGES_REQUESTED → IMPLEMENT` in the same Ticket-03 worktree after rebase to this control-plane return; no human confirmation is permitted |
 
 The implementation owner must add opaque-project identity to the typed approved-artifact record, registry uniqueness and resolve key, and both private-client and Router admission calls. A regression must grant the same account a second project entitlement, reuse every other valid artifact value, and prove that it `HALT`s before pending state, rendering, receipt acceptance or lane grant. This is a fail-closed ticket correction, not a requirement change or user wait. No merge, push, deployment, installation, host configuration, target-project change, Secret, provider or other-ticket action is authorized.
+
+## Ticket 03 project-scope correction review return
+
+| Field | Value |
+| --- | --- |
+| Reviewed implementation / handoff | `46347a6` / `f5e60cf` |
+| Review baseline | `1bcfebf`; submitted branch is clean and rebased to the current control-plane baseline |
+| Result | `CHANGES_REQUESTED` — review report `03-plugin-policy-and-response-project-scope-code-review.md` |
+| Closed finding | CR-32: direct and private Router admission now use project as part of registry identity; an independent second-entitled-project reproduction halts before pending state or lane grant |
+| Blocking findings | CR-33 remains: WorkProgress order is `010 → 009 → 007 → 008`; CR-34: committed private regression does not create a second entitlement; CR-35: registry `project_id` remains unconstrained `NonBlankText` and accepts a path string |
+| Continuation | Existing receipt `c569056`: `CHANGES_REQUESTED → IMPLEMENT` in the same Ticket-03 worktree after rebase to this control-plane return; no human confirmation is permitted |
+
+The implementation owner must preserve the working project-scoped code, add a private-boundary regression with two entitlements, and use a named, validated opaque `ProjectId` for every approved-artifact registry record and resolve key. The artifact boundary must reject null, empty, whitespace, path, URI and traversal project inputs. Its next docs-only handoff must retain prior validation evidence while presenting a unique chronological `PRG` sequence. This is a fail-closed ticket correction, not a requirement change or user wait. No merge, push, deployment, installation, host configuration, target-project change, Secret, provider or other-ticket action is authorized.
