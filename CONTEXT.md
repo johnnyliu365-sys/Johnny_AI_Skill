@@ -116,8 +116,8 @@
 
 ### `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` — Local Orchestration Adapter and Detachable Installer POC
 
-- Specification: `modules/spec/local-orchestration-installer.md` (`DRAFT`; no implementation authority).
+- Specification: `modules/spec/local-orchestration-installer.md` (`APPROVED` on `2026-08-08`; ticket-specific dispatch is still required for implementation authority).
 - Worktree Context: `doc/context/local-orchestration-installer/main.md`.
 - Scope: Windows per-user installer/uninstaller, owned-install ledger, metadata-only local orchestration adapter, injected host registration adapters, and a guarded local Git port. The installer deletes only its recorded, verified owned payload and state; it never changes target projects.
 - PRD / change: `PRD.md §15`; `CHG-20260808-011`.
-- Handoff state: Wayfinder, Architecture and Grill have converged to a `DRAFT` specification. Actual Codex/Claude host registration commands remain a capability contract to be validated in an approved implementation ticket; absent or non-removable host capability is an install-time fail-closed result, not a silent partial install.
+- Handoff state: owner-approved specification is ready for ticket planning. Actual Codex/Claude host registration commands remain a capability contract to be validated in an approved implementation ticket; absent or non-removable host capability is an install-time fail-closed result, not a silent partial install.

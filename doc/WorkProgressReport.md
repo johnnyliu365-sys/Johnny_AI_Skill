@@ -447,3 +447,15 @@
 | Grill | Normal uninstall may remove only digest/ledger-verified descendants and receipt-matched host registration. A foreign/tampered/failed lifecycle result is `UNINSTALL_BLOCKED`, never broad deletion or a false success. |
 | Evidence / limitation | Workspace has Python 3.11 but no `iscc`/Inno Setup or NSIS compiler. The Codex manual helper could not run because Node.js is absent and this session exposes no OpenAI Docs MCP; consequently no undocumented host lifecycle command is assumed. |
 | Continuation | `ACTION_COMPLETED → WAIT_FOR_HUMAN: SPEC_APPROVAL`. No ticket, source/test implementation, host configuration, installer binary, project mutation, merge, push or deployment is authorized yet. |
+
+## PRG-20260808-017 — Local orchestration installer SPEC approval and ticket plan
+
+| Field | Value |
+| --- | --- |
+| State | `TICKETS_PLANNED` |
+| Approval | The project owner approved `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` on `2026-08-08 (Asia/Taipei)`. |
+| Reuse selection | `workflow-router-poc@d94d8d5` only: public metadata/ProjectId/return contracts and guarded-integration pattern. Existing fake adapters are not treated as production host/Git capability; all unrelated modules are rejected. |
+| Ticket plan | Four sequential vertical tickets: owned lifecycle, metadata runtime/guarded Git, reversible Agent host lifecycle, then Windows setup/uninstaller package. The first three are code/test work; the final package requires an available pinned Inno Setup compiler and at least one independently reversible host adapter. |
+| Role topology | Control-plane/reviewer is Codex/current `main`; named implementation capability remains Codex implementation Agent in the existing separate `workflow-implementation` worktree. No ticket is yet selected, so no implementation allocation or source/test authority exists. |
+| Capability discovery | `codex.exe` is discoverable but this session's direct `codex plugin --help` returned access denied; `claude` is absent. These are not substituted with hidden config edits. Ticket 03 must independently verify any claimed host lifecycle. |
+| Continuation | `ACTION_COMPLETED → AUTO_CONTINUE → select Ticket 01 and prepare its docs-only handoff`, then one dispatch-confirmation wait. |

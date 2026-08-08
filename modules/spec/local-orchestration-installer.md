@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` |
-| Status | `DRAFT` |
+| Status | `APPROVED` |
 | Author | Codex / current `main` worktree / baseline `e04c2be` |
 | Context | `doc/context/local-orchestration-installer/main.md` |
 | PRD | `PRD.md §15` |
@@ -119,9 +119,10 @@ The ticket set must begin each listed behavior with a red test and retain its fi
 | Date | Author / worktree / baseline | Summary |
 | --- | --- | --- |
 | 2026-08-08 | Codex / current `main` / `e04c2be` | Initial Wayfinder, Architecture and Grill convergence to draft specification. |
+| 2026-08-08 | Project owner / current `main` | Approved the complete POC scope, including owned one-click uninstall and fail-closed host lifecycle boundary. |
 
 ## Approval record
 
-- Decision maker: pending project owner
-- Date: pending
-- Approval scope: pending
+- Decision maker: Project owner
+- Date: `2026-08-08 (Asia/Taipei)`
+- Approval scope: Full `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X`; tickets may now be planned, but each implementation still requires its own delivery-confirmation receipt.

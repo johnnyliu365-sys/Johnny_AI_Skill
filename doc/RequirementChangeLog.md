@@ -191,5 +191,5 @@
 | PRD | `PRD.md §15` |
 | Context | `doc/context/local-orchestration-installer/main.md`; `CONTEXT.md §已確認事實與共同邊界` and `§衍生 SPEC 索引` |
 | ADR | `doc/adr/ADR-20260808-003-local-orchestration-installer.md` |
-| Linked specification | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` (`DRAFT`) |
+| Linked specification | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` (`APPROVED` on `2026-08-08`) |
 | Acceptance | The approved specification must demonstrate a one-click normal uninstall that removes all verified owned components, an idempotent absence result, fail-closed foreign/tampered state, and proof that target repositories are untouched. |

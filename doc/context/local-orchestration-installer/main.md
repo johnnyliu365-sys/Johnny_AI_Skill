@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| Context state | `GRILL_CONVERGED_TO_SPEC_DRAFT` |
-| Router event | `REQUIREMENT_CHANGED → WAYFINDER_GO → ARCHITECTURE → GRILL → CONTEXT → SPEC_DRAFT` |
+| Context state | `SPEC_APPROVED_TO_TICKETS` |
+| Router event | `SPEC_APPROVED → TICKETS` |
 | Delivery stage | `POC` |
 | Requirement change | `CHG-20260808-011` |
 | Baseline | `e04c2be` (`docs: close autonomous workflow planning grill`) |
@@ -94,12 +94,24 @@ The runner is not a hidden model executor. It consumes validated metadata events
 - The Codex manual helper could not run because Node.js is absent, and no OpenAI Docs MCP was exposed in this session. Therefore no undocumented Codex lifecycle command is assumed. The host-adapter ticket must use a live supported host and record its verified lifecycle behavior before declaring it supported.
 - The owner must explicitly approve the draft SPEC before ticket planning. A host limitation discovered after approval is `BLOCKED` or `REQUIREMENT_CHANGED → Grill`, not a silent scope expansion.
 
+## Approved SPEC and smallest reusable-module selection
+
+The owner approved this SPEC on `2026-08-08`. Ticket planning is now authorized; source/test implementation is not authorized until a selected ticket receives its own dispatch receipt.
+
+```text
+selected: workflow-router-poc@d94d8d5
+why: The local runtime needs existing strong types for Router events, completion/implementation returns, opaque ProjectId and metadata-only Context, plus the guarded-integration fail-closed pattern.
+read: library/workflow_router/README.md → library/workflow_router/__init__.py → library/workflow_router/contracts.py (ProjectId, RouterEvent, ContextView, CompletionEvidence, ImplementationHandoff, ImplementationReturn) → library/workflow_router/guarded_integration.py
+dependency: Pydantic, LangGraph, Temporal, MCP; this POC uses only the public typed contracts/patterns selected by each ticket.
+boundary: Do not treat the POC's fake adapters as real host/Git operations. Do not import unrelated reliability, event, payment, identity or messaging modules.
+```
+
 ## Derived SPEC index
 
 ### `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` — Local Orchestration Adapter and Detachable Installer POC
 
-- Specification: `modules/spec/local-orchestration-installer.md` (`DRAFT`).
+- Specification: `modules/spec/local-orchestration-installer.md` (`APPROVED` on `2026-08-08`).
 - Context: `doc/context/local-orchestration-installer/main.md`.
 - Scope: installer-owned Windows local control plane and clean owned uninstall; no target-project dependency.
 - PRD / change: `PRD.md §15` / `CHG-20260808-011`.
-- Common Context backlink: pending this docs-only commit.
+- Common Context backlink: published by `d94d8d5`; ticket-set backlink pending the next docs-only commit.

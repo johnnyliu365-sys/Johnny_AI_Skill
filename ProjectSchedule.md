@@ -113,5 +113,5 @@
 | Milestone | State | Evidence |
 | --- | --- | --- |
 | Requirement change, Wayfinder, Architecture and Grill | DONE | `CHG-20260808-011`; `doc/context/local-orchestration-installer/main.md`; `doc/adr/ADR-20260808-003-local-orchestration-installer.md` |
-| Specification | WAIT_FOR_HUMAN | `modules/spec/local-orchestration-installer.md` is `DRAFT`; it needs the owner's explicit specification approval. |
-| Tickets / implementation | NOT_STARTED | No source, test, installer artifact, host configuration or target-project change is permitted until SPEC approval and ticket dispatch. |
+| Specification | DONE | `modules/spec/local-orchestration-installer.md` was approved by the owner on `2026-08-08`. |
+| Tickets / implementation | TICKETING | Ticket planning is authorized. A selected ticket still needs its own delivery-confirmation receipt before source, test, installer artifact, host configuration or target-project action. |
