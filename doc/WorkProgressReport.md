@@ -412,3 +412,14 @@
 | Implementation commit | `0a5b757` (`fix: validate project scoped dispatch identity`) — the rebased equivalent of the reviewed implementation; no source or test scope was changed by the rebase. |
 | Revalidation | `python -B -m unittest discover -s tests` — 131 passed; `python -B -m pytest -q -p no:cacheprovider` — 131 passed / 175 subtests; `python -B -m mypy --strict --no-incremental library tests` — 65 source files clean; in-memory compilation — 13 `workflow_router` modules; metadata-only privacy/source sentinel, plugin dispatch smoke and `git diff --check` passed. |
 | Handoff | This docs-only handoff records the rebased commit for independent control-plane review. No merge, push, deployment, external provider, main-worktree mutation, raw Context, source text, prompt, path, URI, Secret, PII or production data was recorded. |
+
+## PRG-20260808-014 — Ticket 03 guarded integration and Grill audit
+
+| Field | Value |
+| --- | --- |
+| State | `INTEGRATED` |
+| Trigger / completed return | Ticket-03 rebase handoff `0a5b757` / `43033bf`, preserving receipt `c569056` and the final independent review evidence |
+| Guarded integration | The control-plane worktree fast-forwarded clean `main` from `b34e59e` to `43033bf`. No merge commit, reset, push, deployment, external provider, host configuration or target-project write occurred. |
+| Post-integration Grill | `APPROVED -> REVIEW`; the approved source snapshot is unchanged by the rebase, and the existing final independent code review remains the review gate. No requirement, architecture, security, ownership, UI, data, authority or delivery change was found. |
+| Independent verification | `python -B -m unittest discover -s tests` — 131 passed; `python -B -m pytest -q -p no:cacheprovider` — 131 passed / 175 subtests; `python -B -m mypy --strict --no-incremental library tests` — 65 source files clean; in-memory compilation — 13 Router modules; `git diff --check` passed. |
+| Continuation / boundary | `ACTION_COMPLETED -> AUTO_CONTINUE -> HANDOFF`. No correction route, new ticket, dispatch question, user wait, push, deployment or external action is granted by this record. |

@@ -435,3 +435,17 @@ The implementation owner must preserve the working project-scoped code, add a pr
 | Router continuation | The existing receipt `c569056` remains valid. The next integration action requires the workflow's typed completed implementation return and is an automatic control-plane event, not another human approval |
 
 The review grants no new project scope. It confirms only the committed Ticket-03 artifact set. Raw policy/source content remains outside Router models; invalid project, identity, commit, receipt and replay paths fail closed before implementation authority.
+
+## Ticket 03 guarded integration and post-integration Grill
+
+| Field | Value |
+| --- | --- |
+| Completed return / reviewed rebase | `0a5b757` / `43033bf`; the completed Ticket-03 return remained bound to receipt `c569056` and was rebased without reset or merge commit onto `main@b34e59e` |
+| Guarded local integration | Control-plane `main` fast-forwarded from `b34e59e` to `43033bf`; no merge commit, push, deployment, external provider, host configuration or target-project operation occurred |
+| Required sources | Approved SPEC AC-1, AC-3, AC-9 and AC-10; Ticket 03; final independent review; rebased WorkProgress handoff; current Router contracts; current Context |
+| Post-integration verification | `131` unit tests; pytest `131` tests / `175` subtests; strict mypy for `65` source files; in-memory compilation of `13` Router modules; `git diff --check` passed |
+| Grill decision | `APPROVED -> REVIEW` — the rebased `library/` and `tests/` snapshot is unchanged from the approved source, so the final independent review remains the Code Review gate. No requirement, architecture, ownership, security, UI, data, authority or delivery change was detected |
+| Ticket state | `INTEGRATED`; no correction route, new ticket, additional dispatch question or user wait is created |
+| Continuation | `ACTION_COMPLETED -> AUTO_CONTINUE -> HANDOFF`; this documentation completion records the integrated state only and grants no push, deployment or external action |
+
+The audit retains the POC boundary: policy reads are metadata-only, fixed dispatch responses require a Router-owned pending descriptor with exact project-scoped approved artifacts, and invalid/replayed metadata fails closed before a response or implementation lane is granted.
