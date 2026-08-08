@@ -231,6 +231,11 @@ class RouterEngine:
                     code=BlockerCode.INVALID_TICKET_PROPOSAL,
                     detail="reviewed handoff does not match the selected ticket roles",
                 )
+            if handoff.ticket_docs_commit is None or handoff.handoff_docs_commit is None:
+                return self._suspend(
+                    code=BlockerCode.INVALID_TICKET_PROPOSAL,
+                    detail="reviewed ticket and handoff commits are required before dispatch",
+                )
             pending_dispatch = PendingDispatchDescriptor(
                 ticket_reference=proposal.ticket_reference,
                 proposal_revision=proposal.proposal_revision,

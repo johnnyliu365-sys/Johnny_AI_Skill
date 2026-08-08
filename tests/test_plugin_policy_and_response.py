@@ -7,11 +7,13 @@ from pathlib import Path
 from typing import cast
 
 from library.workflow_router import (
+    ArtifactRef,
     ArtifactKind,
     AuthorityState,
     CapabilityRef,
     CollaborationTopology,
     CollaborationTopologyPlan,
+    ContinuationDirective,
     DeliveryStage,
     FakeEntitlementProvider,
     FakePrivateRouterService,
@@ -22,8 +24,11 @@ from library.workflow_router import (
     PrivateRouterClient,
     ProcessStage,
     RedactedSummary,
+    RouterEngine,
     RouterEventKind,
+    RouterEvent,
     RouterRequestEnvelope,
+    RouterState,
     TicketDispatchConfirmation,
     TicketDispatchReceipt,
     TicketProposal,
@@ -169,6 +174,7 @@ class PluginPolicyAndResponseTests(unittest.TestCase):
         *,
         event: RouterEventKind,
         event_id: str,
+        handoff: ImplementationHandoff | None = None,
         receipt: TicketDispatchReceipt | None = None,
         confirmation: TicketDispatchConfirmation | None = None,
     ) -> RouterRequestEnvelope:
@@ -201,7 +207,11 @@ class PluginPolicyAndResponseTests(unittest.TestCase):
                 reviewer=self.reviewer,
             ),
             ticket_reference=self.ticket_reference,
-            implementation_handoff=self.handoff if event is RouterEventKind.TICKET_DISPATCH_REQUIRED else None,
+            implementation_handoff=(
+                handoff or self.handoff
+                if event is RouterEventKind.TICKET_DISPATCH_REQUIRED
+                else None
+            ),
             dispatch_confirmation=confirmation,
             dispatch_receipt=receipt,
             ticket_proposal=self._proposal() if event is RouterEventKind.TICKET_DISPATCH_REQUIRED else None,
@@ -349,23 +359,93 @@ class PluginPolicyAndResponseTests(unittest.TestCase):
 
     def test_each_path_and_uri_boundary_is_rejected_at_artifact_boundary(self) -> None:
         boundary_values = (
-            r"C:\repo\ticket.md",
-            "C:/repo/ticket.md",
-            "/repo/ticket.md",
-            r"\\server\share\ticket.md",
-            "file:///repo/ticket.md",
-            "https://example.test/ticket.md",
-            "../relative/ticket.md",
+            ("exact_equal", r"C:\repo\ticket.md"),
+            ("one_extra_character_prefix", r"xC:\repo\ticket.md"),
+            ("trailing_slash", "C:\\repo\\ticket.md\\"),
+            ("casing_variant", r"c:\REPO\Ticket.MD"),
+            ("url_encoded_variant", "C:%5Crepo%5Cticket.md"),
+            ("traversal_variant", r"C:\repo\..\ticket.md"),
+            ("empty_value", ""),
         )
-        for boundary in boundary_values:
-            with self.subTest(boundary=boundary):
+        for label, boundary in boundary_values:
+            for field in ("ticket_docs_commit", "handoff_docs_commit"):
+                with self.subTest(boundary=f"{label}:{field}"):
+                    payload: dict[str, object] = {
+                        "ticket_docs_commit": "b84c2a5",
+                        "ticket_reference": self.ticket_reference,
+                        "handoff_docs_commit": "c569056",
+                        "handoff_reference": self.handoff.handoff_reference,
+                    }
+                    payload[field] = boundary
+                    with self.assertRaises(ValueError):
+                        CommittedDispatchArtifacts.model_validate(payload)
+
+    def test_null_undefined_whitespace_and_empty_container_values_halt(self) -> None:
+        invalid_values: tuple[object, ...] = (None, "undefined", "", "   ", ())
+        for value in invalid_values:
+            with self.subTest(value=repr(value)):
                 with self.assertRaises(ValueError):
-                    CommittedDispatchArtifacts(
-                        ticket_docs_commit=boundary,
-                        ticket_reference=self.ticket_reference,
-                        handoff_docs_commit="c569056",
-                        handoff_reference=self.handoff.handoff_reference,
+                    CommittedDispatchArtifacts.model_validate(
+                        {
+                            "ticket_docs_commit": value,
+                            "ticket_reference": self.ticket_reference,
+                            "handoff_docs_commit": "c569056",
+                            "handoff_reference": self.handoff.handoff_reference,
+                        }
                     )
+
+    def test_missing_reviewed_commits_halt_direct_and_private_before_pending_or_lane(self) -> None:
+        missing_ticket = self.handoff.model_copy(update={"ticket_docs_commit": None})
+        missing_handoff = self.handoff.model_copy(update={"handoff_docs_commit": None})
+        missing_both = self.handoff.model_copy(
+            update={"ticket_docs_commit": None, "handoff_docs_commit": None}
+        )
+        for label, handoff in (
+            ("missing_ticket", missing_ticket),
+            ("missing_handoff", missing_handoff),
+            ("missing_both", missing_both),
+        ):
+            with self.subTest(case=label):
+                request = self._request(
+                    event=RouterEventKind.TICKET_DISPATCH_REQUIRED,
+                    event_id=f"evt_000000000000000000000000000000{80 + len(label):02d}",
+                    handoff=handoff,
+                )
+                private_plan = self.client.route(raw_request=request.model_dump())
+                self.assertEqual("halt", private_plan.mode.value)
+                self.assertIsNone(private_plan.pending_dispatch)
+                direct = RouterEngine().decide(
+                    state=RouterState(
+                        project_id=self.project,
+                        stage=ProcessStage.TICKETS,
+                        authority_state=AuthorityState.APPROVED,
+                        delivery_stage=DeliveryStage.POC,
+                        artifact_refs=(
+                            ArtifactRef(
+                                kind=ArtifactKind.TICKET,
+                                identifier=self.ticket_reference,
+                                uri="ticket://plugin-policy-03",
+                                revision="b84c2a5",
+                            ),
+                        ),
+                        topology=CollaborationTopology.ONE_IMPLEMENTATION_AGENT,
+                        collaboration_plan=CollaborationTopologyPlan(
+                            topology=CollaborationTopology.ONE_IMPLEMENTATION_AGENT,
+                            control_plane=self.control,
+                            implementation_owner=self.implementation,
+                            reviewer=self.reviewer,
+                        ),
+                    ),
+                    event=RouterEvent(
+                        event_id=request.event_correlation_id,
+                        kind=RouterEventKind.TICKET_DISPATCH_REQUIRED,
+                        implementation_handoff=handoff,
+                        ticket_proposal=self._proposal(),
+                    ),
+                    profile=build_router_poc_profile(),
+                )
+                self.assertEqual(ContinuationDirective.HALT, direct.continuation)
+                self.assertIsNone(direct.pending_dispatch)
 
     def test_confirmation_consumes_pending_response_and_replay_halts(self) -> None:
         waiting = self._waiting_plan()

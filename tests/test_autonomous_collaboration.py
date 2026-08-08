@@ -854,6 +854,8 @@ class AutonomousCollaborationTests(unittest.TestCase):
             implementation_owner_id=self.implementation.capability_id,
             reviewed_handoff_reference="handoff-topology-dispatch-01",
             event_correlation_id="dispatch-confirmed-0001",
+            ticket_docs_commit="b84c2a5",
+            handoff_docs_commit="c569056",
         )
 
     def _proposal(self) -> TicketProposal:
@@ -889,6 +891,8 @@ class AutonomousCollaborationTests(unittest.TestCase):
             tdd_references=("tdd-dispatch-lanes",),
             scope=TicketScope.NON_FRONTEND,
             non_frontend_reason="no formal UI boundary",
+            ticket_docs_commit="b84c2a5",
+            handoff_docs_commit="c569056",
             control_owner_id=self.control.capability_id,
             implementation_owner_id=self.implementation.capability_id,
             reviewer_id=self.reviewer.capability_id,
