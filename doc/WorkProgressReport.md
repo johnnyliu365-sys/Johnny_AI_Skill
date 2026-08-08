@@ -325,3 +325,18 @@
 | TDD red evidence | Before `policy_response.py` existed, `python -m pytest -q tests/test_plugin_policy_and_response.py` failed during collection with `ModuleNotFoundError: No module named 'library.workflow_router.policy_response'`. Fresh tests cover raw sentinel rejection, private-plan ownership, exact response fields/question, formatter exceptions/mutation, absent/mismatched/replayed dispatch and legacy direct/private routing. |
 | Validation | `python -B -m unittest discover -s tests` — 122 passed; `python -m pytest -q` — 122 passed / 115 subtests; `python -m mypy --strict --no-incremental library tests` — 65 source files clean; `python -m compileall -q library/workflow_router` — 13 modules; metadata-only privacy/source sentinel, smoke and `git diff --check` passed. |
 | Review / integration | No merge, push, deployment, external provider, main-worktree mutation or other-ticket mutation was performed. Independent control-plane review is required before any fast-forward integration. |
+
+## PRG-20260808-007 — Ticket 03 correction handoff (CR-25 and CR-26)
+
+| Field | Value |
+| --- | --- |
+| State | `IMPLEMENTATION_COMMITTED_PENDING_REVIEW` |
+| Ticket / review return | `03-plugin-policy-and-response` / `9215546` (`CHANGES_REQUESTED → IMPLEMENT`) |
+| Receipt / baseline | `c569056` remains valid; implementation reworked from `0d52903` without reusing `4d68938` or `9eda250`. |
+| Implementation owner / branch | Codex implementation Agent / `codex/implementation-plugin-policy-and-response-03-rework` |
+| Implementation commit | `fb0d94d` (`fix: bind dispatch response to router artifacts`) |
+| CR-25 correction | Module-level trusted rendering is now fail-closed and cannot accept a structural fake owner. Exact live-plan identity is checked only inside `PrivateRouterClient`; copied plans, alternate clients, absent/replayed plans and indirect helper calls produce no text. |
+| CR-26 correction | Reviewed ticket/handoff commit references are carried into the Router-created `PendingDispatchDescriptor` from the validated handoff. Rendering uses only those immutable pending values; caller artifacts are equality assertions and forged valid-shaped commits, ticket, handoff or owner values halt. |
+| TDD red evidence | Before correction, a fake `PendingDispatchPlanOwner` rendered and `deadbee`/`cafe123` artifact commits rendered. New regressions cover fake owner, copied/alternate plan, valid-shaped forged commits, ticket/handoff/owner mismatch, replay and all seven path/URI boundary forms. |
+| Validation | `python -B -m unittest discover -s tests` — 125 passed; `python -B -m pytest -q -p no:cacheprovider` — 125 passed / 122 subtests; `python -B -m mypy --strict --no-incremental library tests` — 65 source files clean; `python -B -m compileall -q library/workflow_router` — 13 modules; privacy/source sentinel, smoke and `git diff --check` passed. |
+| Review / integration | No merge, push, deployment, external provider, main-worktree mutation or other-ticket mutation was performed. Independent control-plane review is required before any fast-forward integration. |
