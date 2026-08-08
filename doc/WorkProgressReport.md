@@ -340,3 +340,18 @@
 | TDD red evidence | Before correction, a fake `PendingDispatchPlanOwner` rendered and `deadbee`/`cafe123` artifact commits rendered. New regressions cover fake owner, copied/alternate plan, valid-shaped forged commits, ticket/handoff/owner mismatch, replay and all seven path/URI boundary forms. |
 | Validation | `python -B -m unittest discover -s tests` — 125 passed; `python -B -m pytest -q -p no:cacheprovider` — 125 passed / 122 subtests; `python -B -m mypy --strict --no-incremental library tests` — 65 source files clean; `python -B -m compileall -q library/workflow_router` — 13 modules; privacy/source sentinel, smoke and `git diff --check` passed. |
 | Review / integration | No merge, push, deployment, external provider, main-worktree mutation or other-ticket mutation was performed. Independent control-plane review is required before any fast-forward integration. |
+
+## PRG-20260808-008 — Ticket 03 correction handoff (CR-27 and CR-28)
+
+| Field | Value |
+| --- | --- |
+| State | `IMPLEMENTATION_COMMITTED_PENDING_REVIEW` |
+| Ticket / review return | `03-plugin-policy-and-response` / `5d55586` (`CHANGES_REQUESTED → IMPLEMENT`) |
+| Receipt / baseline | `c569056` remains valid; branch was rebased onto current control-plane `main` at `5d55586` before this red/green cycle. |
+| Implementation owner / branch | Codex implementation Agent / `codex/implementation-plugin-policy-and-response-03-rework` |
+| Implementation commit | `ea556b0` (`fix: halt dispatch without reviewed artifacts`) |
+| CR-27 correction | Router admission now requires both reviewed ticket and handoff commit references before creating a pending dispatch. Missing either or both values halt in direct Router and Private Router paths with no pending descriptor, receipt acceptance or implementation lane. |
+| CR-28 correction | TDD now individually asserts exact, one-extra-character prefix, trailing slash, casing, URL-encoded, traversal and empty path/URI variants for both commit fields, plus null, undefined-equivalent, empty, whitespace and empty-container values. |
+| TDD red evidence | Before the admission guard, missing reviewed commits returned `WAIT_FOR_HUMAN` and a matching dispatch could advance; before the expanded boundary cases, only alternative locator strings were covered. New direct/private regressions fail before pending state or lane creation. |
+| Validation | `python -B -m unittest discover -s tests` — 127 passed; `python -B -m pytest -q -p no:cacheprovider` — 127 passed / 130 subtests; `python -B -m mypy --strict --no-incremental library tests` — 65 source files clean; `python -B -m compileall -q library/workflow_router` — 13 modules; privacy/source sentinel, smoke and `git diff --check` passed. |
+| Review / integration | No merge, push, deployment, external provider, main-worktree mutation or other-ticket mutation was performed. Independent control-plane review is required before any fast-forward integration. |
