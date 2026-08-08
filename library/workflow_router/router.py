@@ -45,6 +45,11 @@ from .contracts import (
     TicketProposalState,
 )
 from .profile import ProjectWorkflowProfile
+from .policy_response import (
+    ApprovedDispatchArtifactRegistry,
+    StaticApprovedDispatchArtifactRegistry,
+    resolve_approved_dispatch_artifact,
+)
 
 
 class SourceGateway(Protocol):
@@ -71,6 +76,15 @@ class InMemorySourceGateway:
 
 class RouterEngine:
     """Pure state/event evaluator; it never reads text or executes an Agent."""
+
+    def __init__(
+        self,
+        *,
+        approved_dispatch_artifact_registry: ApprovedDispatchArtifactRegistry | None = None,
+    ) -> None:
+        self._approved_dispatch_artifact_registry = (
+            approved_dispatch_artifact_registry or StaticApprovedDispatchArtifactRegistry(records=())
+        )
 
     def decide(
         self,
@@ -236,6 +250,19 @@ class RouterEngine:
                     code=BlockerCode.INVALID_TICKET_PROPOSAL,
                     detail="reviewed ticket and handoff commits are required before dispatch",
                 )
+            approved_artifacts = resolve_approved_dispatch_artifact(
+                self._approved_dispatch_artifact_registry,
+                ticket_reference=proposal.ticket_reference,
+                handoff_reference=handoff.handoff_reference,
+                implementation_owner_id=proposal.implementation_owner_id,
+                ticket_docs_commit=handoff.ticket_docs_commit,
+                handoff_docs_commit=handoff.handoff_docs_commit,
+            )
+            if approved_artifacts is None:
+                return self._suspend(
+                    code=BlockerCode.INVALID_TICKET_PROPOSAL,
+                    detail="dispatch artifacts are not registered for this reviewed handoff",
+                )
             pending_dispatch = PendingDispatchDescriptor(
                 ticket_reference=proposal.ticket_reference,
                 proposal_revision=proposal.proposal_revision,
@@ -244,8 +271,8 @@ class RouterEngine:
                 implementation_owner_id=proposal.implementation_owner_id,
                 reviewed_handoff_reference=handoff.handoff_reference,
                 event_correlation_id=event.event_id,
-                ticket_docs_commit=handoff.ticket_docs_commit,
-                handoff_docs_commit=handoff.handoff_docs_commit,
+                ticket_docs_commit=approved_artifacts.ticket_docs_commit,
+                handoff_docs_commit=approved_artifacts.handoff_docs_commit,
             )
             return RouterDecision(
                 outcome=RouterOutcome.SUSPEND,

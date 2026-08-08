@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import cast
 
 from library.workflow_router import (
+    ApprovedDispatchArtifact,
     ArtifactRef,
     ArtifactKind,
     AuthorityState,
@@ -29,6 +30,7 @@ from library.workflow_router import (
     RouterEvent,
     RouterRequestEnvelope,
     RouterState,
+    StaticApprovedDispatchArtifactRegistry,
     TicketDispatchConfirmation,
     TicketDispatchReceipt,
     TicketProposal,
@@ -146,6 +148,17 @@ class PluginPolicyAndResponseTests(unittest.TestCase):
             implementation_owner_id=self.implementation.capability_id,
             reviewer_id=self.reviewer.capability_id,
         )
+        self.approved_registry = StaticApprovedDispatchArtifactRegistry(
+            records=(
+                ApprovedDispatchArtifact(
+                    ticket_reference=self.ticket_reference,
+                    handoff_reference=self.handoff.handoff_reference,
+                    implementation_owner_id=self.implementation.capability_id,
+                    ticket_docs_commit="b84c2a5",
+                    handoff_docs_commit="c569056",
+                ),
+            )
+        )
         service = FakePrivateRouterService(
             profile=build_router_poc_profile(),
             entitlement_provider=FakeEntitlementProvider(
@@ -157,8 +170,12 @@ class PluginPolicyAndResponseTests(unittest.TestCase):
                     ),
                 )
             ),
+            approved_dispatch_artifact_registry=self.approved_registry,
         )
-        self.client = PrivateRouterClient(service=service)
+        self.client = PrivateRouterClient(
+            service=service,
+            approved_dispatch_artifact_registry=self.approved_registry,
+        )
 
     def _proposal(self) -> TicketProposal:
         return TicketProposal(
@@ -357,6 +374,61 @@ class PluginPolicyAndResponseTests(unittest.TestCase):
         self.assertEqual("halt", handoff_result.outcome.value)
         self.assertIsNone(handoff_result.text)
 
+    def test_unregistered_valid_shaped_handoff_substitutions_halt_before_pending(self) -> None:
+        substitutions = (
+            ("ticket_commit", {"ticket_docs_commit": "deadbee"}),
+            ("handoff_commit", {"handoff_docs_commit": "cafe123"}),
+            ("ticket_identity", {"ticket_reference": "ticket-forged-03"}),
+            ("handoff_identity", {"handoff_reference": "handoff-forged-03"}),
+            ("owner_identity", {"implementation_owner_id": "cap-forged-owner"}),
+        )
+        for index, (label, update) in enumerate(substitutions):
+            with self.subTest(substitution=label):
+                forged_handoff = self.handoff.model_copy(update=update)
+                request = self._request(
+                    event=RouterEventKind.TICKET_DISPATCH_REQUIRED,
+                    event_id=f"evt_{91 + index:032x}",
+                    handoff=forged_handoff,
+                )
+                private_plan = self.client.route(raw_request=request.model_dump())
+                self.assertEqual("halt", private_plan.mode.value)
+                self.assertIsNone(private_plan.pending_dispatch)
+
+                direct = RouterEngine(
+                    approved_dispatch_artifact_registry=self.approved_registry,
+                ).decide(
+                    state=RouterState(
+                        project_id=self.project,
+                        stage=ProcessStage.TICKETS,
+                        authority_state=AuthorityState.APPROVED,
+                        delivery_stage=DeliveryStage.POC,
+                        artifact_refs=(
+                            ArtifactRef(
+                                kind=ArtifactKind.TICKET,
+                                identifier=self.ticket_reference,
+                                uri="ticket://plugin-policy-03",
+                                revision="b84c2a5",
+                            ),
+                        ),
+                        topology=CollaborationTopology.ONE_IMPLEMENTATION_AGENT,
+                        collaboration_plan=CollaborationTopologyPlan(
+                            topology=CollaborationTopology.ONE_IMPLEMENTATION_AGENT,
+                            control_plane=self.control,
+                            implementation_owner=self.implementation,
+                            reviewer=self.reviewer,
+                        ),
+                    ),
+                    event=RouterEvent(
+                        event_id=request.event_correlation_id,
+                        kind=RouterEventKind.TICKET_DISPATCH_REQUIRED,
+                        implementation_handoff=forged_handoff,
+                        ticket_proposal=self._proposal(),
+                    ),
+                    profile=build_router_poc_profile(),
+                )
+                self.assertEqual(ContinuationDirective.HALT, direct.continuation)
+                self.assertIsNone(direct.pending_dispatch)
+
     def test_each_path_and_uri_boundary_is_rejected_at_artifact_boundary(self) -> None:
         boundary_values = (
             ("exact_equal", r"C:\repo\ticket.md"),
@@ -380,19 +452,56 @@ class PluginPolicyAndResponseTests(unittest.TestCase):
                     with self.assertRaises(ValueError):
                         CommittedDispatchArtifacts.model_validate(payload)
 
-    def test_null_undefined_whitespace_and_empty_container_values_halt(self) -> None:
-        invalid_values: tuple[object, ...] = (None, "undefined", "", "   ", ())
-        for value in invalid_values:
-            with self.subTest(value=repr(value)):
-                with self.assertRaises(ValueError):
-                    CommittedDispatchArtifacts.model_validate(
-                        {
-                            "ticket_docs_commit": value,
-                            "ticket_reference": self.ticket_reference,
-                            "handoff_docs_commit": "c569056",
-                            "handoff_reference": self.handoff.handoff_reference,
-                        }
-                    )
+    def test_omitted_null_empty_and_container_commit_values_halt(self) -> None:
+        for field in ("ticket_docs_commit", "handoff_docs_commit"):
+            other_field = "handoff_docs_commit" if field == "ticket_docs_commit" else "ticket_docs_commit"
+            other_value = "c569056" if other_field == "handoff_docs_commit" else "b84c2a5"
+            for label, value in (
+                ("omitted", None),
+                ("null", None),
+                ("empty", ""),
+                ("whitespace", "   "),
+                ("empty_list", []),
+                ("empty_object", {}),
+            ):
+                with self.subTest(field=field, value=label):
+                    payload: dict[str, object] = {
+                        "ticket_reference": self.ticket_reference,
+                        "handoff_reference": self.handoff.handoff_reference,
+                        other_field: other_value,
+                    }
+                    if label != "omitted":
+                        payload[field] = value
+                    with self.assertRaises(ValueError):
+                        CommittedDispatchArtifacts.model_validate(payload)
+
+    def test_invalid_commit_values_halt_before_private_pending_or_lane(self) -> None:
+        for field in ("ticket_docs_commit", "handoff_docs_commit"):
+            for index, (label, value) in enumerate(
+                (
+                    ("omitted", None),
+                    ("null", None),
+                    ("empty", ""),
+                    ("whitespace", "   "),
+                    ("empty_list", []),
+                    ("empty_object", {}),
+                )
+            ):
+                with self.subTest(field=field, value=label):
+                    event_id = f"evt_{(0xA1 + index + (0 if field == 'ticket_docs_commit' else 16)):032x}"
+                    payload = self._request(
+                        event=RouterEventKind.TICKET_DISPATCH_REQUIRED,
+                        event_id=event_id,
+                    ).model_dump()
+                    handoff_payload = cast(dict[str, object], payload["implementation_handoff"])
+                    if label == "omitted":
+                        handoff_payload.pop(field)
+                    else:
+                        handoff_payload[field] = value
+                    halted = self.client.route(raw_request=payload)
+                    self.assertEqual("halt", halted.mode.value)
+                    self.assertIsNone(halted.pending_dispatch)
+                    self.assertEqual((), halted.ticket_lane_capabilities)
 
     def test_missing_reviewed_commits_halt_direct_and_private_before_pending_or_lane(self) -> None:
         missing_ticket = self.handoff.model_copy(update={"ticket_docs_commit": None})

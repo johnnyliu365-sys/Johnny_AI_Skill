@@ -7,6 +7,7 @@ import unittest
 from pydantic import ValidationError
 
 from library.workflow_router import (
+    ApprovedDispatchArtifact,
     ArtifactKind,
     ArtifactRef,
     AuthorityState,
@@ -32,6 +33,7 @@ from library.workflow_router import (
     RouterOutcome,
     RouterState,
     SourceSnippet,
+    StaticApprovedDispatchArtifactRegistry,
     TicketDispatchConfirmation,
     TicketDispatchReceipt,
     TicketDispatchState,
@@ -58,7 +60,6 @@ class AutonomousCollaborationTests(unittest.TestCase):
 
     def setUp(self) -> None:
         self.profile = build_router_poc_profile()
-        self.engine = RouterEngine()
         self.ticket = ArtifactRef(
             kind=ArtifactKind.TICKET,
             identifier="ticket-topology-dispatch-01",
@@ -79,6 +80,20 @@ class AutonomousCollaborationTests(unittest.TestCase):
             capability_id="cap-reviewer",
             version="1",
             agent_profile="reviewer",
+        )
+        self.approved_registry = StaticApprovedDispatchArtifactRegistry(
+            records=(
+                ApprovedDispatchArtifact(
+                    ticket_reference=self.ticket.identifier,
+                    handoff_reference="handoff-topology-dispatch-01",
+                    implementation_owner_id=self.implementation.capability_id,
+                    ticket_docs_commit="b84c2a5",
+                    handoff_docs_commit="c569056",
+                ),
+            )
+        )
+        self.engine = RouterEngine(
+            approved_dispatch_artifact_registry=self.approved_registry,
         )
 
     def test_topology_selection_rejects_unknown_count_or_unavailable_capability(self) -> None:
@@ -605,8 +620,12 @@ class AutonomousCollaborationTests(unittest.TestCase):
                     ),
                 )
             ),
+            approved_dispatch_artifact_registry=self.approved_registry,
         )
-        client = PrivateRouterClient(service=service)
+        client = PrivateRouterClient(
+            service=service,
+            approved_dispatch_artifact_registry=self.approved_registry,
+        )
         wait_request = self._private_request(
             account=account,
             project=project,
@@ -676,8 +695,12 @@ class AutonomousCollaborationTests(unittest.TestCase):
                     ),
                 )
             ),
+            approved_dispatch_artifact_registry=self.approved_registry,
         )
-        client = PrivateRouterClient(service=service)
+        client = PrivateRouterClient(
+            service=service,
+            approved_dispatch_artifact_registry=self.approved_registry,
+        )
         receipt = self._receipt().model_copy(
             update={"correlation_id": "evt_00000000000000000000000000000064"}
         )
@@ -709,8 +732,12 @@ class AutonomousCollaborationTests(unittest.TestCase):
                     ),
                 )
             ),
+            approved_dispatch_artifact_registry=self.approved_registry,
         )
-        client = PrivateRouterClient(service=service)
+        client = PrivateRouterClient(
+            service=service,
+            approved_dispatch_artifact_registry=self.approved_registry,
+        )
         first_event_id = "evt_00000000000000000000000000000065"
         second_event_id = "evt_00000000000000000000000000000066"
         reopened_event_id = "evt_00000000000000000000000000000067"

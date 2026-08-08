@@ -78,6 +78,8 @@ from .private_router import (
     RouterServiceErrorCode,
 )
 from .policy_response import (
+    ApprovedDispatchArtifact,
+    ApprovedDispatchArtifactRegistry,
     CommittedDispatchArtifacts,
     DispatchResponseFormatter,
     FixedDispatchResponse,
@@ -88,7 +90,9 @@ from .policy_response import (
     RenderError,
     RenderOutcome,
     RenderedDispatchResponse,
+    StaticApprovedDispatchArtifactRegistry,
     render_dispatch_response,
+    resolve_approved_dispatch_artifact,
     read_policy_document,
 )
 from .router import CitationLedger, ContextResolver, InMemorySourceGateway, RouterEngine
@@ -110,6 +114,8 @@ __all__ = (
     "ArtifactKind",
     "ArtifactRef",
     "AutomaticContinuationRunner",
+    "ApprovedDispatchArtifact",
+    "ApprovedDispatchArtifactRegistry",
     "AgentUsage",
     "AuthorityState",
     "AuditDecision",
@@ -179,6 +185,7 @@ __all__ = (
     "RenderError",
     "RenderOutcome",
     "RenderedDispatchResponse",
+    "StaticApprovedDispatchArtifactRegistry",
     "ReferenceStatus",
     "RouterEngine",
     "RouterEvent",
@@ -205,4 +212,5 @@ __all__ = (
     "build_router_poc_profile",
     "read_policy_document",
     "render_dispatch_response",
+    "resolve_approved_dispatch_artifact",
 )

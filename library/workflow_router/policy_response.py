@@ -124,6 +124,88 @@ class CommittedDispatchArtifacts(RouterModel):
     handoff_reference: OpaqueMetadataId
 
 
+class ApprovedDispatchArtifact(RouterModel):
+    """One reviewed ticket/handoff artifact set authorized by the control plane."""
+
+    ticket_reference: OpaqueMetadataId
+    handoff_reference: OpaqueMetadataId
+    implementation_owner_id: OpaqueMetadataId
+    ticket_docs_commit: CommitReference
+    handoff_docs_commit: CommitReference
+
+
+class ApprovedDispatchArtifactRegistry(Protocol):
+    """Private Router registry for exact reviewed dispatch artifacts."""
+
+    def resolve(
+        self,
+        *,
+        ticket_reference: OpaqueMetadataId,
+        handoff_reference: OpaqueMetadataId,
+        implementation_owner_id: OpaqueMetadataId,
+    ) -> ApprovedDispatchArtifact | None:
+        """Resolve one exact ticket, handoff, and named owner identity."""
+
+
+class StaticApprovedDispatchArtifactRegistry:
+    """Small typed registry used by the private boundary and deterministic tests."""
+
+    def __init__(self, *, records: tuple[ApprovedDispatchArtifact, ...]) -> None:
+        identities = tuple(
+            (record.ticket_reference, record.handoff_reference, record.implementation_owner_id)
+            for record in records
+        )
+        if len(set(identities)) != len(identities):
+            raise ValueError("approved dispatch artifact identities must be unique")
+        self._records = records
+
+    def resolve(
+        self,
+        *,
+        ticket_reference: OpaqueMetadataId,
+        handoff_reference: OpaqueMetadataId,
+        implementation_owner_id: OpaqueMetadataId,
+    ) -> ApprovedDispatchArtifact | None:
+        """Return only the record with an exact authorized identity tuple."""
+
+        for record in self._records:
+            if (
+                record.ticket_reference == ticket_reference
+                and record.handoff_reference == handoff_reference
+                and record.implementation_owner_id == implementation_owner_id
+            ):
+                return record
+        return None
+
+
+def resolve_approved_dispatch_artifact(
+    registry: ApprovedDispatchArtifactRegistry,
+    *,
+    ticket_reference: OpaqueMetadataId,
+    handoff_reference: OpaqueMetadataId,
+    implementation_owner_id: OpaqueMetadataId,
+    ticket_docs_commit: CommitReference | None,
+    handoff_docs_commit: CommitReference | None,
+) -> ApprovedDispatchArtifact | None:
+    """Require both identity and reviewed commit metadata to match the registry."""
+
+    if ticket_docs_commit is None or handoff_docs_commit is None:
+        return None
+    record = registry.resolve(
+        ticket_reference=ticket_reference,
+        handoff_reference=handoff_reference,
+        implementation_owner_id=implementation_owner_id,
+    )
+    if record is None:
+        return None
+    if (
+        record.ticket_docs_commit != ticket_docs_commit
+        or record.handoff_docs_commit != handoff_docs_commit
+    ):
+        return None
+    return record
+
+
 class FixedDispatchResponse(RouterModel):
     """A response candidate bound to one Router-created pending descriptor."""
 

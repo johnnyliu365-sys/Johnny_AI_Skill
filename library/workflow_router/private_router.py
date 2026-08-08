@@ -47,12 +47,15 @@ from .contracts import (
 )
 from .profile import ProjectWorkflowProfile
 from .policy_response import (
+    ApprovedDispatchArtifactRegistry,
     CommittedDispatchArtifacts,
     DispatchResponseFormatter,
     FixedDispatchResponse,
     RenderError,
     RenderOutcome,
     RenderedDispatchResponse,
+    StaticApprovedDispatchArtifactRegistry,
+    resolve_approved_dispatch_artifact,
 )
 from .router import ContextResolver, RouterEngine
 
@@ -345,10 +348,14 @@ class FakePrivateRouterService:
         profile: ProjectWorkflowProfile,
         entitlement_provider: EntitlementPort,
         context_budget: PositiveTokenBudget = 1_000,
+        approved_dispatch_artifact_registry: ApprovedDispatchArtifactRegistry | None = None,
     ) -> None:
         self._profile = profile
         self._entitlement_provider = entitlement_provider
         self._context_budget = context_budget
+        self._approved_dispatch_artifact_registry = (
+            approved_dispatch_artifact_registry or StaticApprovedDispatchArtifactRegistry(records=())
+        )
         self._captured_requests: list[RouterRequestEnvelope] = []
         self._pending_dispatches: dict[tuple[str, str, str], PendingDispatchDescriptor] = {}
         self._pending_dispatches_by_ticket: dict[
@@ -380,7 +387,9 @@ class FakePrivateRouterService:
                 error_code=RouterServiceErrorCode.ROUTER_POLICY_BLOCKED,
             )
         pending_dispatch = self._pending_dispatch_for(request=request)
-        decision = RouterEngine().decide(
+        decision = RouterEngine(
+            approved_dispatch_artifact_registry=self._approved_dispatch_artifact_registry,
+        ).decide(
             state=RouterState(
                 project_id=request.opaque_project_id,
                 stage=request.workflow_stage,
@@ -788,8 +797,16 @@ class ContinuationPlan(RouterModel):
 class PrivateRouterClient:
     """Fail-closed local adapter for the private service boundary and replay checks."""
 
-    def __init__(self, *, service: RouterServicePort) -> None:
+    def __init__(
+        self,
+        *,
+        service: RouterServicePort,
+        approved_dispatch_artifact_registry: ApprovedDispatchArtifactRegistry | None = None,
+    ) -> None:
         self._service = service
+        self._approved_dispatch_artifact_registry = (
+            approved_dispatch_artifact_registry or StaticApprovedDispatchArtifactRegistry(records=())
+        )
         self._decision_for_event: dict[str, str] = {}
         self._event_for_decision: dict[str, str] = {}
         self._request_for_event: dict[str, str] = {}
@@ -802,6 +819,25 @@ class PrivateRouterClient:
             request = LocalMetadataNormalizer.normalize(raw_request=raw_request)
         except (TypeError, ValueError):
             return self._halt(code=RouterServiceErrorCode.ROUTER_INPUT_INVALID)
+        if request.router_event_kind is RouterEventKind.TICKET_DISPATCH_REQUIRED:
+            handoff = request.implementation_handoff
+            proposal = request.ticket_proposal
+            if (
+                proposal is None
+                or handoff is None
+                or handoff.ticket_reference != proposal.ticket_reference
+                or handoff.implementation_owner_id != proposal.implementation_owner_id
+                or resolve_approved_dispatch_artifact(
+                    self._approved_dispatch_artifact_registry,
+                    ticket_reference=proposal.ticket_reference,
+                    handoff_reference=handoff.handoff_reference,
+                    implementation_owner_id=proposal.implementation_owner_id,
+                    ticket_docs_commit=handoff.ticket_docs_commit,
+                    handoff_docs_commit=handoff.handoff_docs_commit,
+                )
+                is None
+            ):
+                return self._halt(code=RouterServiceErrorCode.ROUTER_POLICY_BLOCKED)
         if request.dispatch_receipt is not None:
             # A confirmation attempt closes the local rendering capability even if
             # the service later rejects the receipt.  This makes the response one-shot.
