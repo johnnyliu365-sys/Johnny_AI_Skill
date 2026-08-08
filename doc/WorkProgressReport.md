@@ -326,6 +326,20 @@
 | Validation | `python -B -m unittest discover -s tests` — 122 passed; `python -m pytest -q` — 122 passed / 115 subtests; `python -m mypy --strict --no-incremental library tests` — 65 source files clean; `python -m compileall -q library/workflow_router` — 13 modules; metadata-only privacy/source sentinel, smoke and `git diff --check` passed. |
 | Review / integration | No merge, push, deployment, external provider, main-worktree mutation or other-ticket mutation was performed. Independent control-plane review is required before any fast-forward integration. |
 
+## PRG-20260808-010 — Ticket 03 project-scope registry correction handoff
+
+| Field | Value |
+| --- | --- |
+| State | `IMPLEMENTATION_COMMITTED_PENDING_REVIEW` |
+| Ticket / review return | `03-plugin-policy-and-response` / `1bcfebf` (`CHANGES_REQUESTED → IMPLEMENT`) |
+| Receipt / baseline | `c569056` remains valid; the complete rework branch was rebased onto current control-plane `main` at `1bcfebf` before this cycle. |
+| Implementation owner / branch | Codex implementation Agent / `codex/implementation-plugin-policy-and-response-03-rework` |
+| Implementation commit | `46347a6` (`fix: bind dispatch artifacts to project identity`) |
+| Project-scope correction | `ApprovedDispatchArtifactRegistry` identity is now `(project_id, ticket_reference, handoff_reference, implementation_owner_id)`; both direct Router and Private Router resolve and compare the project before creating pending state or granting a lane. Cross-project valid-shaped requests halt closed. |
+| TDD red/green evidence | Added direct and private cross-project regressions using an otherwise exact reviewed handoff; the alternate project cannot reuse the registered artifact record and produces no pending descriptor or implementation lane. Existing forged identity, commit, omission, replay and path/URI regressions remain active. |
+| Validation | `python -B -m unittest discover -s tests` — 130 passed; `python -B -m pytest -q -p no:cacheprovider` — 130 passed / 161 subtests; `python -B -m mypy --strict --no-incremental library tests` — 65 source files clean; `python -B -m compileall -q library/workflow_router` — 13 modules; metadata-only privacy/source sentinel, plugin dispatch smoke and `git diff --check` passed. |
+| Docs-only handoff | This entry is the docs-only handoff following `46347a6`; no raw Context, source text, prompt, path, URI, Secret, PII, production data, merge, push, or deployment was recorded. Independent review is required before integration. |
+
 ## PRG-20260808-009 — Ticket 03 correction handoff (CR-29 through CR-31)
 
 | Field | Value |
