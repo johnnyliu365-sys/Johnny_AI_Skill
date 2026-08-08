@@ -11,19 +11,30 @@ from __future__ import annotations
 from enum import Enum
 from typing import Protocol
 
-from pydantic import model_validator
+from pydantic import TypeAdapter, ValidationError, model_validator
 
 from .contracts import (
     EvidenceDigest,
     NonBlankText,
     OpaqueMetadataId,
     PendingDispatchDescriptor,
+    ProjectId,
     RevisionDigest,
     ReviewedCommitReference,
     RouterModel,
 )
 
 CommitReference = ReviewedCommitReference
+_PROJECT_ID_ADAPTER = TypeAdapter(ProjectId)
+
+
+def _validated_project_id(value: object) -> ProjectId | None:
+    """Normalize one untrusted project identity or fail closed before lookup."""
+
+    try:
+        return _PROJECT_ID_ADAPTER.validate_python(value, strict=True)
+    except ValidationError:
+        return None
 
 
 class PolicyReadOutcome(str, Enum):
@@ -127,7 +138,7 @@ class CommittedDispatchArtifacts(RouterModel):
 class ApprovedDispatchArtifact(RouterModel):
     """One reviewed ticket/handoff artifact set authorized by the control plane."""
 
-    project_id: NonBlankText
+    project_id: ProjectId
     ticket_reference: OpaqueMetadataId
     handoff_reference: OpaqueMetadataId
     implementation_owner_id: OpaqueMetadataId
@@ -141,7 +152,7 @@ class ApprovedDispatchArtifactRegistry(Protocol):
     def resolve(
         self,
         *,
-        project_id: NonBlankText,
+        project_id: ProjectId,
         ticket_reference: OpaqueMetadataId,
         handoff_reference: OpaqueMetadataId,
         implementation_owner_id: OpaqueMetadataId,
@@ -169,16 +180,19 @@ class StaticApprovedDispatchArtifactRegistry:
     def resolve(
         self,
         *,
-        project_id: NonBlankText,
+        project_id: ProjectId,
         ticket_reference: OpaqueMetadataId,
         handoff_reference: OpaqueMetadataId,
         implementation_owner_id: OpaqueMetadataId,
     ) -> ApprovedDispatchArtifact | None:
         """Return only the record with an exact authorized identity tuple."""
 
+        validated_project_id = _validated_project_id(project_id)
+        if validated_project_id is None:
+            return None
         for record in self._records:
             if (
-                record.project_id == project_id
+                record.project_id == validated_project_id
                 and record.ticket_reference == ticket_reference
                 and record.handoff_reference == handoff_reference
                 and record.implementation_owner_id == implementation_owner_id
@@ -190,7 +204,7 @@ class StaticApprovedDispatchArtifactRegistry:
 def resolve_approved_dispatch_artifact(
     registry: ApprovedDispatchArtifactRegistry,
     *,
-    project_id: NonBlankText,
+    project_id: ProjectId,
     ticket_reference: OpaqueMetadataId,
     handoff_reference: OpaqueMetadataId,
     implementation_owner_id: OpaqueMetadataId,
@@ -199,10 +213,15 @@ def resolve_approved_dispatch_artifact(
 ) -> ApprovedDispatchArtifact | None:
     """Require both identity and reviewed commit metadata to match the registry."""
 
-    if ticket_docs_commit is None or handoff_docs_commit is None:
+    validated_project_id = _validated_project_id(project_id)
+    if (
+        validated_project_id is None
+        or ticket_docs_commit is None
+        or handoff_docs_commit is None
+    ):
         return None
     record = registry.resolve(
-        project_id=project_id,
+        project_id=validated_project_id,
         ticket_reference=ticket_reference,
         handoff_reference=handoff_reference,
         implementation_owner_id=implementation_owner_id,

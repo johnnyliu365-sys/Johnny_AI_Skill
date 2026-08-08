@@ -24,6 +24,7 @@ from library.workflow_router import (
     PendingDispatchDescriptor,
     PrivateRouterClient,
     ProcessStage,
+    ProjectId,
     RedactedSummary,
     RouterEngine,
     RouterEventKind,
@@ -102,7 +103,7 @@ class PluginPolicyAndResponseTests(unittest.TestCase):
 
     def setUp(self) -> None:
         self.account = "acct_0123456789abcdef"
-        self.project = "prj_fedcba9876543210"
+        self.project: ProjectId = "prj_fedcba9876543210"
         self.ticket_reference = "ticket-plugin-policy-03"
         self.control = CapabilityRef(
             capability_id="cap-control-plane",
@@ -433,14 +434,70 @@ class PluginPolicyAndResponseTests(unittest.TestCase):
 
     def test_cross_project_registry_identity_halts_direct_and_private(self) -> None:
         alternate_project = "prj_0123456789abcdef"
+        private_service = FakePrivateRouterService(
+            profile=build_router_poc_profile(),
+            entitlement_provider=FakeEntitlementProvider(
+                grants=(
+                    EntitlementGrant(
+                        account_subject_id=self.account,
+                        opaque_project_id=self.project,
+                        permitted_modes=(EntitlementMode.FIRST_PROJECT_FREE,),
+                    ),
+                    EntitlementGrant(
+                        account_subject_id=self.account,
+                        opaque_project_id=alternate_project,
+                        permitted_modes=(EntitlementMode.FIRST_PROJECT_FREE,),
+                    ),
+                )
+            ),
+            approved_dispatch_artifact_registry=self.approved_registry,
+        )
+        private_client = PrivateRouterClient(
+            service=private_service,
+            approved_dispatch_artifact_registry=self.approved_registry,
+        )
         private_request = self._request(
             event=RouterEventKind.TICKET_DISPATCH_REQUIRED,
             event_id="evt_000000000000000000000000000000a0",
             project=alternate_project,
         )
-        private_plan = self.client.route(raw_request=private_request.model_dump())
+        private_plan = private_client.route(raw_request=private_request.model_dump())
         self.assertEqual("halt", private_plan.mode.value)
+        self.assertEqual(0, private_service.request_count)
+        self.assertIsNone(private_plan.response)
         self.assertIsNone(private_plan.pending_dispatch)
+        self.assertEqual((), private_plan.ticket_lane_capabilities)
+        rendered = private_client.render_dispatch_response(
+            plan=private_plan,
+            formatter=DispatchResponseFormatter(),
+        )
+        self.assertEqual("halt", rendered.outcome.value)
+        self.assertIsNone(rendered.text)
+
+        receipt = TicketDispatchReceipt(
+            ticket_reference=self.ticket_reference,
+            implementation_owner_id=self.implementation.capability_id,
+            handoff_reference=self.handoff.handoff_reference,
+            expected_main_revision=self.handoff.expected_main_revision,
+            correlation_id=private_request.event_correlation_id,
+            dispatch_question_id=cast(str, self._proposal().dispatch_question_id),
+            worktree_fingerprint="worktree-plugin-03",
+            branch_fingerprint="branch-plugin-03",
+        )
+        receipt_plan = private_client.route(
+            raw_request=self._request(
+                event=RouterEventKind.IMPLEMENTATION_DISPATCH_CONFIRMED,
+                event_id="evt_000000000000000000000000000000a1",
+                project=alternate_project,
+                receipt=receipt,
+                confirmation=TicketDispatchConfirmation.POSITIVE,
+            ).model_dump()
+        )
+        self.assertEqual("halt", receipt_plan.mode.value)
+        self.assertEqual(1, private_service.request_count)
+        self.assertIsNone(receipt_plan.response)
+        self.assertIsNone(receipt_plan.pending_dispatch)
+        self.assertEqual((), receipt_plan.ticket_lane_capabilities)
 
         direct = RouterEngine(
             approved_dispatch_artifact_registry=self.approved_registry,
@@ -476,6 +533,46 @@ class PluginPolicyAndResponseTests(unittest.TestCase):
         )
         self.assertEqual(ContinuationDirective.HALT, direct.continuation)
         self.assertIsNone(direct.pending_dispatch)
+
+    def test_approved_artifact_project_id_rejects_non_opaque_boundary_values(self) -> None:
+        invalid_project_ids: tuple[tuple[str, object], ...] = (
+            ("omitted", None),
+            ("null", None),
+            ("empty", ""),
+            ("whitespace", "   "),
+            ("empty_list", []),
+            ("empty_object", {}),
+            ("exact_path", r"C:\repo\project"),
+            ("one_extra_character_prefix", r"xC:\repo\project"),
+            ("trailing_slash", "C:\\repo\\project\\"),
+            ("casing_variant", r"c:\REPO\Project"),
+            ("url_encoded", "C:%5Crepo%5Cproject"),
+            ("traversal", r"C:\repo\..\project"),
+            ("uri", "project://unscoped/project"),
+            ("arbitrary_nonblank", "unscoped-project"),
+        )
+        for label, value in invalid_project_ids:
+            with self.subTest(project_id=label):
+                payload: dict[str, object] = {
+                    "project_id": value,
+                    "ticket_reference": self.ticket_reference,
+                    "handoff_reference": self.handoff.handoff_reference,
+                    "implementation_owner_id": self.implementation.capability_id,
+                    "ticket_docs_commit": "b84c2a5",
+                    "handoff_docs_commit": "c569056",
+                }
+                if label == "omitted":
+                    payload.pop("project_id")
+                with self.assertRaises(ValueError):
+                    ApprovedDispatchArtifact.model_validate(payload)
+                self.assertIsNone(
+                    self.approved_registry.resolve(
+                        project_id=cast(ProjectId, value),
+                        ticket_reference=self.ticket_reference,
+                        handoff_reference=self.handoff.handoff_reference,
+                        implementation_owner_id=self.implementation.capability_id,
+                    )
+                )
 
     def test_each_path_and_uri_boundary_is_rejected_at_artifact_boundary(self) -> None:
         boundary_values = (

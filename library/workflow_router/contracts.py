@@ -12,6 +12,7 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 NonBlankText = Annotated[str, Field(min_length=1)]
 PositiveTokenBudget = Annotated[int, Field(gt=0)]
 OpaqueMetadataId = Annotated[str, Field(pattern=r"^[a-z][a-z0-9-]{2,127}$")]
+ProjectId = Annotated[str, Field(pattern=r"^prj_[0-9a-f]{16}$")]
 WorktreeFingerprint = Annotated[str, Field(pattern=r"^worktree-[a-z0-9]+-[0-9]{2}$")]
 BranchFingerprint = Annotated[str, Field(pattern=r"^branch-[a-z0-9]+-[0-9]{2}$")]
 RevisionDigest = Annotated[str, Field(pattern=r"^rev-[0-9a-f]{16,64}$")]

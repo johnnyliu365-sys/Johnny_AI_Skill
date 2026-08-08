@@ -84,7 +84,7 @@ class AutonomousCollaborationTests(unittest.TestCase):
         self.approved_registry = StaticApprovedDispatchArtifactRegistry(
             records=(
                 ApprovedDispatchArtifact(
-                    project_id="autonomous-collaboration-audit",
+                    project_id="prj_aaaaaaaaaaaaaaaa",
                     ticket_reference=self.ticket.identifier,
                     handoff_reference="handoff-topology-dispatch-01",
                     implementation_owner_id=self.implementation.capability_id,
@@ -866,7 +866,7 @@ class AutonomousCollaborationTests(unittest.TestCase):
 
     def _ticket_state(self) -> RouterState:
         return RouterState(
-            project_id="autonomous-collaboration-audit",
+            project_id="prj_aaaaaaaaaaaaaaaa",
             stage=ProcessStage.TICKETS,
             authority_state=AuthorityState.APPROVED,
             delivery_stage=DeliveryStage.POC,

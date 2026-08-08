@@ -33,6 +33,7 @@ from .contracts import (
     NonBlankText,
     OpaqueMetadataId,
     PositiveTokenBudget,
+    ProjectId,
     PendingDispatchDescriptor,
     ProcessStage,
     ResolvedContext,
@@ -61,7 +62,6 @@ from .router import ContextResolver, RouterEngine
 
 
 OpaqueAccountSubjectId = Annotated[str, Field(pattern=r"^acct_[0-9a-f]{16}$")]
-OpaqueProjectId = Annotated[str, Field(pattern=r"^prj_[0-9a-f]{16}$")]
 OpaqueRequestId = Annotated[str, Field(pattern=r"^req_[0-9a-f]{32}$")]
 OpaqueDecisionId = Annotated[str, Field(pattern=r"^dec_[0-9a-f]{32}$")]
 OpaqueEventId = Annotated[str, Field(pattern=r"^evt_[0-9a-f]{32}$")]
@@ -132,7 +132,7 @@ class RouterRequestEnvelope(RouterModel):
 
     request_id: OpaqueRequestId
     account_subject_id: OpaqueAccountSubjectId
-    opaque_project_id: OpaqueProjectId
+    opaque_project_id: ProjectId
     project_entry_mode: Literal[
         "new_project", "inherited_audit", "repair", "deployment_preparation"
     ]
@@ -294,7 +294,7 @@ class EntitlementGrant(RouterModel):
     """A test-only typed entitlement record; it holds no account secret or payment detail."""
 
     account_subject_id: OpaqueAccountSubjectId
-    opaque_project_id: OpaqueProjectId
+    opaque_project_id: ProjectId
     permitted_modes: tuple[EntitlementMode, ...]
 
     @model_validator(mode="after")
