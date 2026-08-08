@@ -477,16 +477,15 @@ class PluginPolicyAndResponseTests(unittest.TestCase):
 
     def test_invalid_commit_values_halt_before_private_pending_or_lane(self) -> None:
         for field in ("ticket_docs_commit", "handoff_docs_commit"):
-            for index, (label, value) in enumerate(
-                (
-                    ("omitted", None),
-                    ("null", None),
-                    ("empty", ""),
-                    ("whitespace", "   "),
-                    ("empty_list", []),
-                    ("empty_object", {}),
-                )
-            ):
+            invalid_values: tuple[tuple[str, object], ...] = (
+                ("omitted", None),
+                ("null", None),
+                ("empty", ""),
+                ("whitespace", "   "),
+                ("empty_list", []),
+                ("empty_object", {}),
+            )
+            for index, (label, value) in enumerate(invalid_values):
                 with self.subTest(field=field, value=label):
                     event_id = f"evt_{(0xA1 + index + (0 if field == 'ticket_docs_commit' else 16)):032x}"
                     payload = self._request(
