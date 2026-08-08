@@ -151,6 +151,7 @@ class PluginPolicyAndResponseTests(unittest.TestCase):
         self.approved_registry = StaticApprovedDispatchArtifactRegistry(
             records=(
                 ApprovedDispatchArtifact(
+                    project_id=self.project,
                     ticket_reference=self.ticket_reference,
                     handoff_reference=self.handoff.handoff_reference,
                     implementation_owner_id=self.implementation.capability_id,
@@ -191,6 +192,7 @@ class PluginPolicyAndResponseTests(unittest.TestCase):
         *,
         event: RouterEventKind,
         event_id: str,
+        project: str | None = None,
         handoff: ImplementationHandoff | None = None,
         receipt: TicketDispatchReceipt | None = None,
         confirmation: TicketDispatchConfirmation | None = None,
@@ -198,7 +200,7 @@ class PluginPolicyAndResponseTests(unittest.TestCase):
         return RouterRequestEnvelope(
             request_id=f"req_{event_id.removeprefix('evt_')}",
             account_subject_id=self.account,
-            opaque_project_id=self.project,
+            opaque_project_id=project or self.project,
             project_entry_mode="new_project",
             entitlement_mode=EntitlementMode.FIRST_PROJECT_FREE,
             workflow_stage=ProcessStage.TICKETS,
@@ -428,6 +430,52 @@ class PluginPolicyAndResponseTests(unittest.TestCase):
                 )
                 self.assertEqual(ContinuationDirective.HALT, direct.continuation)
                 self.assertIsNone(direct.pending_dispatch)
+
+    def test_cross_project_registry_identity_halts_direct_and_private(self) -> None:
+        alternate_project = "prj_0123456789abcdef"
+        private_request = self._request(
+            event=RouterEventKind.TICKET_DISPATCH_REQUIRED,
+            event_id="evt_000000000000000000000000000000a0",
+            project=alternate_project,
+        )
+        private_plan = self.client.route(raw_request=private_request.model_dump())
+        self.assertEqual("halt", private_plan.mode.value)
+        self.assertIsNone(private_plan.pending_dispatch)
+
+        direct = RouterEngine(
+            approved_dispatch_artifact_registry=self.approved_registry,
+        ).decide(
+            state=RouterState(
+                project_id=alternate_project,
+                stage=ProcessStage.TICKETS,
+                authority_state=AuthorityState.APPROVED,
+                delivery_stage=DeliveryStage.POC,
+                artifact_refs=(
+                    ArtifactRef(
+                        kind=ArtifactKind.TICKET,
+                        identifier=self.ticket_reference,
+                        uri="ticket://plugin-policy-03",
+                        revision="b84c2a5",
+                    ),
+                ),
+                topology=CollaborationTopology.ONE_IMPLEMENTATION_AGENT,
+                collaboration_plan=CollaborationTopologyPlan(
+                    topology=CollaborationTopology.ONE_IMPLEMENTATION_AGENT,
+                    control_plane=self.control,
+                    implementation_owner=self.implementation,
+                    reviewer=self.reviewer,
+                ),
+            ),
+            event=RouterEvent(
+                event_id=private_request.event_correlation_id,
+                kind=RouterEventKind.TICKET_DISPATCH_REQUIRED,
+                implementation_handoff=self.handoff,
+                ticket_proposal=self._proposal(),
+            ),
+            profile=build_router_poc_profile(),
+        )
+        self.assertEqual(ContinuationDirective.HALT, direct.continuation)
+        self.assertIsNone(direct.pending_dispatch)
 
     def test_each_path_and_uri_boundary_is_rejected_at_artifact_boundary(self) -> None:
         boundary_values = (

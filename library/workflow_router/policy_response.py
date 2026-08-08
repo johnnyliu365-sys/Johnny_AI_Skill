@@ -127,6 +127,7 @@ class CommittedDispatchArtifacts(RouterModel):
 class ApprovedDispatchArtifact(RouterModel):
     """One reviewed ticket/handoff artifact set authorized by the control plane."""
 
+    project_id: NonBlankText
     ticket_reference: OpaqueMetadataId
     handoff_reference: OpaqueMetadataId
     implementation_owner_id: OpaqueMetadataId
@@ -140,6 +141,7 @@ class ApprovedDispatchArtifactRegistry(Protocol):
     def resolve(
         self,
         *,
+        project_id: NonBlankText,
         ticket_reference: OpaqueMetadataId,
         handoff_reference: OpaqueMetadataId,
         implementation_owner_id: OpaqueMetadataId,
@@ -152,7 +154,12 @@ class StaticApprovedDispatchArtifactRegistry:
 
     def __init__(self, *, records: tuple[ApprovedDispatchArtifact, ...]) -> None:
         identities = tuple(
-            (record.ticket_reference, record.handoff_reference, record.implementation_owner_id)
+            (
+                record.project_id,
+                record.ticket_reference,
+                record.handoff_reference,
+                record.implementation_owner_id,
+            )
             for record in records
         )
         if len(set(identities)) != len(identities):
@@ -162,6 +169,7 @@ class StaticApprovedDispatchArtifactRegistry:
     def resolve(
         self,
         *,
+        project_id: NonBlankText,
         ticket_reference: OpaqueMetadataId,
         handoff_reference: OpaqueMetadataId,
         implementation_owner_id: OpaqueMetadataId,
@@ -170,7 +178,8 @@ class StaticApprovedDispatchArtifactRegistry:
 
         for record in self._records:
             if (
-                record.ticket_reference == ticket_reference
+                record.project_id == project_id
+                and record.ticket_reference == ticket_reference
                 and record.handoff_reference == handoff_reference
                 and record.implementation_owner_id == implementation_owner_id
             ):
@@ -181,6 +190,7 @@ class StaticApprovedDispatchArtifactRegistry:
 def resolve_approved_dispatch_artifact(
     registry: ApprovedDispatchArtifactRegistry,
     *,
+    project_id: NonBlankText,
     ticket_reference: OpaqueMetadataId,
     handoff_reference: OpaqueMetadataId,
     implementation_owner_id: OpaqueMetadataId,
@@ -192,6 +202,7 @@ def resolve_approved_dispatch_artifact(
     if ticket_docs_commit is None or handoff_docs_commit is None:
         return None
     record = registry.resolve(
+        project_id=project_id,
         ticket_reference=ticket_reference,
         handoff_reference=handoff_reference,
         implementation_owner_id=implementation_owner_id,

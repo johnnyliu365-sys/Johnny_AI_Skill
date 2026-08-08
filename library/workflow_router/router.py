@@ -252,6 +252,7 @@ class RouterEngine:
                 )
             approved_artifacts = resolve_approved_dispatch_artifact(
                 self._approved_dispatch_artifact_registry,
+                project_id=state.project_id,
                 ticket_reference=proposal.ticket_reference,
                 handoff_reference=handoff.handoff_reference,
                 implementation_owner_id=proposal.implementation_owner_id,

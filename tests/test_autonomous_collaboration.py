@@ -84,6 +84,15 @@ class AutonomousCollaborationTests(unittest.TestCase):
         self.approved_registry = StaticApprovedDispatchArtifactRegistry(
             records=(
                 ApprovedDispatchArtifact(
+                    project_id="autonomous-collaboration-audit",
+                    ticket_reference=self.ticket.identifier,
+                    handoff_reference="handoff-topology-dispatch-01",
+                    implementation_owner_id=self.implementation.capability_id,
+                    ticket_docs_commit="b84c2a5",
+                    handoff_docs_commit="c569056",
+                ),
+                ApprovedDispatchArtifact(
+                    project_id="prj_fedcba9876543210",
                     ticket_reference=self.ticket.identifier,
                     handoff_reference="handoff-topology-dispatch-01",
                     implementation_owner_id=self.implementation.capability_id,
