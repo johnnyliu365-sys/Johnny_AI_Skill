@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-AUTONOMOUS-COLLABORATION-AUDIT-20260805-01KZ7A2C4E6G8J0L2N4P6R8T` / AC-1, AC-3, AC-9, AC-10 |
 | Context / change | `doc/context/autonomous-collaboration-audit/main.md` / `CHG-20260805-010` |
-| State | `IN_PROGRESS` — Ticket 02 is independently approved and integrated; this ticket resumes under its existing scoped dispatch receipt with a fresh implementation handoff. `4d68938` / `9eda250` remain blocked historical review evidence and must not be reused |
+| State | `READY_TO_MERGE` — final independent review approved the Ticket-03 rework at `f6b9c32` / `72fb057`; receipt `c569056` remains the sole scoped dispatch authority. `4d68938` / `9eda250` remain blocked historical review evidence and must not be reused |
 | Language | Markdown, policy contract tests, and any approved Python formatter contract |
 | Baseline | Reviewed Router contracts at `0d52903`, including Ticket 01 dispatch lanes, Ticket 02 guarded audit, and the dependency-corrected Ticket-03 re-entry; implementation must create its fresh branch from this recorded control-plane baseline before TDD |
 | Control-plane owner / reviewer | Codex / current `main` worktree |
