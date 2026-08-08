@@ -4,11 +4,11 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01, AC-03, AC-06, AC-07, AC-08 |
 | Context / change | `doc/context/local-orchestration-installer/main.md` / `CHG-20260808-011` |
-| State | `CHANGES_REQUESTED` — review `CR-36` through `CR-38` blocks `010110a`; receipt `rcpt_local_orchestration_install_01_20260808` remains valid for a fresh rework allocation |
+| State | `IN_PROGRESS` — fresh rework allocation `aln_local_orchestration_install_01_rework_20260808` addresses CR-36 through CR-38; receipt `rcpt_local_orchestration_install_01_20260808` continues without a second question |
 | Language | Python 3.11, Pydantic strict models and standard-library filesystem test fakes |
 | Baseline | `afee39d` (`docs: plan local orchestration installer tickets`) |
 | Control-plane owner / reviewer | Codex / current `main` worktree |
-| Implementation owner / worktree | Codex implementation Agent / `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` / fresh branch `codex/implementation-local-install-lifecycle-01` |
+| Implementation owner / worktree | Codex implementation Agent / `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` / fresh branch `codex/implementation-local-install-lifecycle-01-rework` |
 | Environment | Local Windows user-scope test sandbox only; no actual host configuration, target-project write or installer binary |
 
 ## User-observable outcome
@@ -27,7 +27,7 @@ Frontend composition / DI: the equivalent command/UI is `InstallControlPlane` / 
 
 - Control-plane owner: Codex/current `main`; implementation owner: named Codex implementation Agent in the stated separate worktree; reviewer: Codex/current `main`.
 - Owner override: `N/A`.
-- `ImplementationHandoff`: original `hnd_local_orchestration_install_01_20260808` is superseded only for stale worktree allocation. `hnd_local_orchestration_install_01_fresh_20260808` retains the same approved SPEC/ticket/Context/TDD, owner and receipt while binding fresh allocation `aln_local_orchestration_install_01_20260808`. The dispatch-record commit that introduces this fresh handoff is the branch start baseline before first red test. It stores no raw payload, Context, path, URI, Secret or PII.
+- `ImplementationHandoff`: original `hnd_local_orchestration_install_01_20260808` and its first fresh allocation are historical. `hnd_local_orchestration_install_01_rework_20260808` retains the approved SPEC/ticket/Context/TDD, owner and receipt while binding fresh allocation `aln_local_orchestration_install_01_rework_20260808`. The dispatch-record commit that introduces this rework handoff is the branch start baseline before fresh red tests. It stores no raw payload, Context, path, URI, Secret or PII.
 - `ImplementationReturn`: `COMPLETED → ACTION_COMPLETED`; `BLOCKED → HALT`; `CHANGE_DETECTED → REQUIREMENT_CHANGED → Grill`.
 
 ## TDD and defect checks
@@ -51,9 +51,9 @@ Frontend composition / DI: the equivalent command/UI is `InstallControlPlane` / 
 | --- | --- |
 | Proposal selection | Control plane selected this first unblocked vertical ticket after `afee39d`. |
 | Handoff reference | `hnd_local_orchestration_install_01_20260808` |
-| Required implementation baseline | The implementation owner creates `codex/implementation-local-install-lifecycle-01` directly from the fresh docs-only dispatch-record `main` commit in its own worktree; `afee39d` remains the prior reviewed source/test baseline. It must not rebase, merge, reset, cherry-pick or reuse `codex/implementation-private-router-saas-01`. |
+| Required implementation baseline | The implementation owner creates `codex/implementation-local-install-lifecycle-01-rework` directly from this rework docs-only dispatch-record `main` commit in its own worktree; review baseline `ccb8164` and prior `010110a` / `7bc5fd5` remain historical evidence. It must not rebase, merge, reset, cherry-pick or reuse the blocked branch/source. |
 | Delivery receipt | `rcpt_local_orchestration_install_01_20260808` — project owner confirmed `已交付` on `2026-08-08`. |
-| Allocation continuation | `aln_local_orchestration_install_01_20260808` keeps the same ticket, implementation-owner identity and receipt; it changes only the stale branch/worktree allocation. No second dispatch question is valid. |
+| Allocation continuation | `aln_local_orchestration_install_01_rework_20260808` keeps the same ticket, implementation-owner identity and receipt; it replaces only review-blocked source allocation. No second dispatch question is valid. |
 | Granted scope | Only this ticket's TDD, source, tests, verification and implementation/docs-only commits in the named implementation worktree. |
 | Explicitly not granted | Any target-project write, host configuration, installer binary release, Ticket 02+ implementation, merge/push/deploy, source outside ticket scope or silent requirements change. |
 
@@ -61,4 +61,4 @@ Frontend composition / DI: the equivalent command/UI is `InstallControlPlane` / 
 
 - Review: `doc/reviews/local-orchestration-installer/01-owned-install-lifecycle-code-review.md` (`CHANGES_REQUESTED`).
 - Blocked historical source: `010110a` / docs-only handoff `7bc5fd5`; it must not be reset, overwritten, cherry-picked or reused.
-- Required correction: CR-36 typed/validated removal proof; CR-37 post-removal absence verification; CR-38 durable recovery state for failed rollback/partial deletion. A control-plane fresh handoff creates the next branch; no new user dispatch is needed.
+- Required correction: CR-36 typed/validated removal proof; CR-37 post-removal absence verification; CR-38 durable recovery state for failed rollback/partial deletion. This rework handoff creates the next branch; no new user dispatch is needed.

@@ -504,3 +504,14 @@
 | Blocking findings | CR-36: dynamic `object`/`getattr` proof boundary violates P0. CR-37: matching proof does not verify host absence. CR-38: rollback/deletion recovery failure can discard retry authority. Full evidence: `doc/reviews/local-orchestration-installer/01-owned-install-lifecycle-code-review.md`. |
 | Scope classification | No requirement, SPEC, ticket acceptance, architecture or delivery-stage change. This is implementation correction; `REQUIREMENT_CHANGED` is not emitted. |
 | Continuation | Original branch is historical evidence. Control plane creates a fresh rework handoff/allocation for the same ticket, owner and receipt; the planning lane remains Ticket-02 `DEPENDENCY_WAIT`. |
+
+## PRG-20260808-023 — Ticket 01 fresh rework handoff
+
+| Field | Value |
+| --- | --- |
+| State | `IMPLEMENT / FRESH_TDD_REWORK` |
+| Review baseline | `ccb8164` records `CHANGES_REQUESTED` for CR-36 through CR-38. Implementation `010110a` and docs handoff `7bc5fd5` are immutable historical evidence. |
+| Fresh handoff / allocation | `hnd_local_orchestration_install_01_rework_20260808` / `aln_local_orchestration_install_01_rework_20260808`; new branch `codex/implementation-local-install-lifecycle-01-rework` starts directly from this current docs-only handoff commit. |
+| Scope | Repeat fresh red → minimal typed implementation → green for only CR-36 typed proof validation, CR-37 verified removal absence, and CR-38 durable recovery state. No target project, host configuration, installer package, Ticket 02+, merge/push/deploy or requirements change is permitted. |
+| Receipt | `rcpt_local_orchestration_install_01_20260808` remains the sole positive dispatch authority. This is a corrected implementation allocation, not a new ticket approval/dispatch. |
+| Required return | implementation commit plus docs-only handoff, first-red evidence for every CR, regression/type/compile/privacy/smoke evidence, then `COMPLETED → ACTION_COMPLETED → REVIEW`. |
