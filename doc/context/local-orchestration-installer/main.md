@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| Context state | `TICKET_01_IMPLEMENTING / PLANNING_GRILL_TICKET_02` |
-| Router event | `IMPLEMENTATION_DISPATCH_CONFIRMED → IMPLEMENT (Ticket 01) + GRILL (planning lane, Ticket 02)` |
+| Context state | `TICKET_01_CHANGES_REQUESTED / PLANNING_DEPENDENCY_WAIT` |
+| Router event | `IMPLEMENTATION_RETURNED → REVIEW_CHANGES_REQUESTED → FRESH_REWORK_HANDOFF` |
 | Delivery stage | `POC` |
 | Requirement change | `CHG-20260808-011` |
 | Baseline | `e04c2be` (`docs: close autonomous workflow planning grill`) |
@@ -120,7 +120,7 @@ boundary: Do not treat the POC's fake adapters as real host/Git operations. Do n
 
 - Ticket: `01-owned-install-lifecycle`, selected from the committed ticket set `afee39d`.
 - Handoff: original `hnd_local_orchestration_install_01_20260808` is superseded only for stale allocation. Fresh `hnd_local_orchestration_install_01_fresh_20260808` / allocation `aln_local_orchestration_install_01_20260808` retain receipt `rcpt_local_orchestration_install_01_20260808`, ticket and owner while moving the execution to branch `codex/implementation-local-install-lifecycle-01` in `C:\Users\<user>\Desktop\AI控制工作workflow-implementation`; reviewer/control plane is Codex/current `main`.
-- State: the project owner confirmed `已交付` on `2026-08-08`. Historical `codex/implementation-private-router-saas-01@3fa2270` cannot rebase cleanly and is retained untouched as evidence. The implementation owner must create the fresh recorded branch directly from this fresh handoff's `main` commit, then begin first-red-test TDD. No second confirmation is required.
+- State: review of `010110a` returned `CHANGES_REQUESTED` (`CR-36` through `CR-38`). That source/docs handoff is blocked historical evidence. The same receipt continues only through the next fresh rework handoff; no second confirmation is required.
 - Planning continuation: Ticket-01 execution now runs independently while the planning lane enters the Ticket-02 Grill. No second ticket-approval question is valid.
 
 ## Ticket 02 Grill convergence

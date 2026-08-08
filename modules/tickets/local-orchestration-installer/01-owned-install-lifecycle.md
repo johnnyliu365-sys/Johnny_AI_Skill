@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01, AC-03, AC-06, AC-07, AC-08 |
 | Context / change | `doc/context/local-orchestration-installer/main.md` / `CHG-20260808-011` |
-| State | `IN_PROGRESS` — dispatch receipt `rcpt_local_orchestration_install_01_20260808` continues through fresh allocation `aln_local_orchestration_install_01_20260808`; implementation owner may create the recorded new branch and begin TDD |
+| State | `CHANGES_REQUESTED` — review `CR-36` through `CR-38` blocks `010110a`; receipt `rcpt_local_orchestration_install_01_20260808` remains valid for a fresh rework allocation |
 | Language | Python 3.11, Pydantic strict models and standard-library filesystem test fakes |
 | Baseline | `afee39d` (`docs: plan local orchestration installer tickets`) |
 | Control-plane owner / reviewer | Codex / current `main` worktree |
@@ -56,3 +56,9 @@ Frontend composition / DI: the equivalent command/UI is `InstallControlPlane` / 
 | Allocation continuation | `aln_local_orchestration_install_01_20260808` keeps the same ticket, implementation-owner identity and receipt; it changes only the stale branch/worktree allocation. No second dispatch question is valid. |
 | Granted scope | Only this ticket's TDD, source, tests, verification and implementation/docs-only commits in the named implementation worktree. |
 | Explicitly not granted | Any target-project write, host configuration, installer binary release, Ticket 02+ implementation, merge/push/deploy, source outside ticket scope or silent requirements change. |
+
+## Review return
+
+- Review: `doc/reviews/local-orchestration-installer/01-owned-install-lifecycle-code-review.md` (`CHANGES_REQUESTED`).
+- Blocked historical source: `010110a` / docs-only handoff `7bc5fd5`; it must not be reset, overwritten, cherry-picked or reused.
+- Required correction: CR-36 typed/validated removal proof; CR-37 post-removal absence verification; CR-38 durable recovery state for failed rollback/partial deletion. A control-plane fresh handoff creates the next branch; no new user dispatch is needed.

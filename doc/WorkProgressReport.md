@@ -493,3 +493,14 @@
 | Fresh handoff / allocation | `hnd_local_orchestration_install_01_fresh_20260808` / `aln_local_orchestration_install_01_20260808`: same ticket, owner, reviewer, user receipt and TDD; fresh branch name `codex/implementation-local-install-lifecycle-01` starts directly from this docs-only control-plane handoff commit. |
 | Required owner action | In the existing owner worktree only, with clean status: create the fresh branch at the recorded current `main` handoff baseline. Do not merge, rebase, reset, cherry-pick, overwrite or reuse the historical branch. Then write/run Ticket-01 first red test. |
 | Authority / continuation | Receipt `rcpt_local_orchestration_install_01_20260808` remains valid by allocation continuation; no second delivery question is permitted. Ticket lane returns to `IMPLEMENT`; planning lane remains at Ticket-02 `DEPENDENCY_WAIT`. |
+
+## PRG-20260808-022 — Ticket 01 independent review return
+
+| Field | Value |
+| --- | --- |
+| State | `CHANGES_REQUESTED → FRESH_REWORK_HANDOFF` |
+| Reviewed range | Baseline `8e8caf7`; implementation `010110a`; docs-only handoff `7bc5fd5`; branch `codex/implementation-local-install-lifecycle-01`. |
+| Independent evidence | `git diff --check`; 148 unittest tests; 148 pytest tests / 175 subtests; strict mypy across 71 files; 5-module in-memory compile; metadata/privacy scan all passed. |
+| Blocking findings | CR-36: dynamic `object`/`getattr` proof boundary violates P0. CR-37: matching proof does not verify host absence. CR-38: rollback/deletion recovery failure can discard retry authority. Full evidence: `doc/reviews/local-orchestration-installer/01-owned-install-lifecycle-code-review.md`. |
+| Scope classification | No requirement, SPEC, ticket acceptance, architecture or delivery-stage change. This is implementation correction; `REQUIREMENT_CHANGED` is not emitted. |
+| Continuation | Original branch is historical evidence. Control plane creates a fresh rework handoff/allocation for the same ticket, owner and receipt; the planning lane remains Ticket-02 `DEPENDENCY_WAIT`. |

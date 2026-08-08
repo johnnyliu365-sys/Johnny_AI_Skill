@@ -114,6 +114,6 @@
 | --- | --- | --- |
 | Requirement change, Wayfinder, Architecture and Grill | DONE | `CHG-20260808-011`; `doc/context/local-orchestration-installer/main.md`; `doc/adr/ADR-20260808-003-local-orchestration-installer.md` |
 | Specification | DONE | `modules/spec/local-orchestration-installer.md` was approved by the owner on `2026-08-08`. |
-| Ticket 01 implementation | IN_PROGRESS | Receipt `rcpt_local_orchestration_install_01_20260808` continues through fresh allocation `aln_local_orchestration_install_01_20260808`. The old divergent branch is historical; the named implementation owner creates the fresh branch from the current handoff baseline, then starts Ticket-01 TDD. |
+| Ticket 01 implementation | CHANGES_REQUESTED | Independent review rejected `010110a` for CR-36 through CR-38. The source is historical; fresh rework handoff/allocation continues the same receipt without another user confirmation. |
 | Ticket 02 planning Grill | DONE / DEPENDENCY_WAIT | Grill accepted the approved AC boundaries; Ticket 02 remains `PLANNED` until Ticket 01 is reviewed and integrated. |
 | Tickets 03–04 / implementation | PLANNED | They remain unselected and receive no source/test authority. |
