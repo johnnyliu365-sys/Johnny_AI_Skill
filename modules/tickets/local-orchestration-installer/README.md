@@ -16,7 +16,7 @@ Deliver a Windows per-user local control plane that owns every installed compone
 
 | Ticket | User-observable capability | State | Dependency |
 | --- | --- | --- | --- |
-| [01-owned-install-lifecycle](01-owned-install-lifecycle.md) | A typed local install/remove engine creates and removes exactly its owned files and fake host receipts, while rejecting foreign/tampered state. | `CHANGES_REQUESTED` — CR-38 through CR-40; original receipt continues to a fresh allocation | Approved SPEC |
+| [01-owned-install-lifecycle](01-owned-install-lifecycle.md) | A typed local install/remove engine creates and removes exactly its owned files and fake host receipts, while rejecting foreign/tampered state. | `IN_PROGRESS` — fresh rework-2 allocation `aln_local_orchestration_install_01_rework_2_20260808`; original receipt continues | Approved SPEC |
 | [02-metadata-runtime-and-guarded-git](02-metadata-runtime-and-guarded-git.md) | A local metadata-only event can resume safely and a registered temporary Git project is guarded by exact ownership/base/lock rules. | `PLANNED` | Ticket 01 |
 | [03-reversible-agent-host-lifecycle](03-reversible-agent-host-lifecycle.md) | A host is reported supported only after its user-scope registration and exact cleanup proof can be verified. | `PLANNED` | Ticket 01 |
 | [04-windows-setup-and-uninstaller-package](04-windows-setup-and-uninstaller-package.md) | One Windows setup/uninstall invocation packages the owned lifecycle with at least one verified host, leaving target repositories untouched. | `PLANNED` | Tickets 01, 02 and 03; available pinned Inno Setup toolchain |

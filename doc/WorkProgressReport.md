@@ -526,3 +526,14 @@
 | Blocking findings | CR-38 remains open because persisted recovery is never loaded/resumed; CR-39 host verification failure propagates `ValidationError`; CR-40 mandatory TDD cases and behavior-specific red evidence are incomplete. Reproduction and exact evidence are in `doc/reviews/local-orchestration-installer/01-owned-install-lifecycle-code-review.md`. |
 | Scope classification | Implementation/evidence corrections only. Approved requirements, SPEC, ticket acceptance, architecture and delivery stage do not change; no `REQUIREMENT_CHANGED` event. |
 | Continuation | Mark this branch historical and create another fresh allocation from the next docs-only control-plane handoff. Receipt `rcpt_local_orchestration_install_01_20260808` continues; Ticket 02 remains `DEPENDENCY_WAIT`. |
+
+## PRG-20260808-026 — Ticket 01 fresh rework-2 handoff
+
+| Field | Value |
+| --- | --- |
+| State | `IMPLEMENT / FRESH_TDD_REWORK` |
+| Review baseline | `f2b4a8e` records the second `CHANGES_REQUESTED`. `fd429fd`, `a222d89` and `8e39c99` are immutable historical evidence. |
+| Fresh handoff / allocation | `hnd_local_orchestration_install_01_rework_2_20260808` / `aln_local_orchestration_install_01_rework_2_20260808`; branch `codex/implementation-local-install-lifecycle-01-rework-2` starts directly from this current docs-only handoff commit. |
+| Scope | Fresh red → minimal typed implementation → green for CR-38 recovery resume, CR-39 finite zero/partial-receipt rollback and CR-40's complete approved ticket matrix. No target project, real host configuration, installer package, Ticket 02+, merge/push/deploy or requirements change. |
+| Receipt | `rcpt_local_orchestration_install_01_20260808` remains the sole positive dispatch authority. This corrected allocation is not a new ticket approval/dispatch. |
+| Required return | New implementation commit(s), then one final docs-only handoff. Evidence must name each behavior-specific first-red test/reason, recovery retry terminal outcomes, complete regression/type/compile/privacy/smoke results and target-repository non-interference across success and required failure paths. |
