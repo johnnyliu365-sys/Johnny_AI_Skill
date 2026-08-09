@@ -1015,3 +1015,16 @@
 | Routing correction | The toolchain and public CLI mechanism are verified, but Ticket 03 still contains no production Codex adapter. Treating the probe as source would be a false support claim. Ticket 05 now owns the finite adapter slice; Ticket 04 moves from external halt to dependency wait. |
 | Ticket-05 lane | Closure `CLOSURE-LOCAL-INSTALL-T05-01` K1–K8; handoff `hnd_local_orchestration_install_05_20260809`; allocation `aln_local_orchestration_install_05_20260809`; receipt `rcpt_local_orchestration_install_05_20260809`; correlation `corr-local-orchestration-install-05-20260809`; authority `PRG-20260809-042` plus this owner-granted capability run. Exactly one new-ticket branch may be created in the existing sole implementation worktree; review corrections stay additive on that branch. |
 | Ticket-04 gate | Inno Setup 6.7.3 is ready. Packaging remains `PLANNED / DEPENDENCY_WAIT` only until Ticket 05 is independently approved and integrated. |
+
+## PRG-20260809-079 — Ticket 05 initial review requires CLI-contract correction
+
+| Field | Value |
+| --- | --- |
+| Router event | `ACTION_COMPLETED → REVIEW / VALIDATION_FAILED → TICKET_REPAIR` |
+| Reviewed return | Branch `codex/implementation-codex-cli-host-adapter-05`; implementation `0c2ab95`; docs-only handoff `39936fc`; initial closure `CLOSURE-LOCAL-INSTALL-T05-01` |
+| Green baseline | Focused 15/15, full 171/171, strict mypy 82 files and diff check passed, but the committed assertions are narrower than K1–K8. |
+| Blocking findings | CR-73 ticket omits the required marketplace source contract; CR-74 uses incompatible commands/JSON and omits registration key; CR-75 leaks boundary failures; CR-76 leaves post-add residue; CR-77 reports absent with marketplace residue; CR-78 accepts foreign absence evidence; CR-79 lacks the claimed complete red/reverse/Git matrix. |
+| Independent probes | `None` and invalid UTF-8 raised; NaN timeout was accepted; official marketplace JSON blocked as malformed; stale post-add verification made zero cleanup calls; removal retry returned `ABSENT` with marketplace present; foreign installation/path evidence returned `ABSENT`. |
+| CLI authority | Current official Codex CLI command reference plus owner-authorized `PRG-20260809-077`; the control shell's WindowsApps executable remained access-denied, so no second live mutation was attempted. |
+| Finding route | `CHANGES_REQUESTED`; repair Ticket 05 and re-freeze its closure, then resume the same owner/worktree/branch/allocation/receipt with additive commits. No new branch/worktree, reset, amend, force, merge, push, deployment, schedule or Ticket-04 implementation. |
+| Review report | `doc/reviews/local-orchestration-installer/05-codex-cli-host-adapter-code-review.md` |
