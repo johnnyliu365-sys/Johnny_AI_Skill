@@ -65,4 +65,3 @@ extra worktree is present.
 new branch/worktree. The same implementation owner must append one correction
 commit and one docs-only correction handoff on the existing Ticket-03 branch.
 This is the only correction review allowed for this closure revision.
-

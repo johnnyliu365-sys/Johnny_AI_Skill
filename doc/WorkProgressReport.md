@@ -945,3 +945,16 @@
 | Owner boundary | Existing sole `workflow-implementation` worktree; one new-ticket branch `codex/implementation-host-capability-gate-03`. Tickets 01/02 remain immutable and released. |
 | Granted scope | Four production files, one test, 550/450 line ceilings, recorded fakes and H1..H8 evidence. No catalog module is imported beyond integrated `InstallationId`. |
 | Not authorized | Another worktree/branch, real Codex/Claude command, subprocess/network/login/config mutation, Ticket-01/02 changes, packaging, merge, push, deployment or schedule action. |
+
+## PRG-20260809-074 - Ticket 03 H7 proof-boundary correction handoff
+
+| Field | Value |
+| --- | --- |
+| Router event | `ACTION_COMPLETED → REVIEW → VALIDATION_FAILED → RETRY / AUTO_CONTINUE` |
+| Initial review | Control commit `b343df4`; report `doc/reviews/local-orchestration-installer/03-reversible-agent-host-lifecycle-code-review.md`; result `CHANGES_REQUESTED`. |
+| Batched finding | H7 `IMPLEMENTATION_DEFECT` plus `EVIDENCE_DEFECT`: a non-validating nested removal-proof evidence value returned by the lifecycle port can reach a `SUPPORTED` serialized report; the committed H7 test does not inject that port output. |
+| Reproduction | Reviewer returned a forged `HostEvidenceId.model_construct(value="SECRET-SENTINEL")` inside the removal proof and a valid absent result. `verify_recorded` returned `SUPPORTED` and the sentinel appeared in `model_dump_json()`. |
+| Verification already passed | Exact H1..H8 8/8; full discovery 155/155; strict mypy 5 files; compile, scope/ceiling, actual-Git isolation and eight original reverse mutations. Only the H7 output-boundary probe failed. |
+| Correction lane | Same Ticket 03 owner, sole implementation worktree, branch `codex/implementation-host-capability-gate-03`, allocation `aln_local_orchestration_install_03_20260809`, receipt `rcpt_local_orchestration_install_03_20260809`; closure unchanged. |
+| Required return | One additive implementation correction commit, one docs-only correction handoff, focused H7 regression/reverse mutation, full H1..H8, full suite, strict mypy, compile/source/scope/Git checks and clean status. |
+| Prohibited | Reset/amend/force/overwrite, another branch/worktree, live host action, target-project write, push/deploy or schedule action. This is the only correction review for this closure. |

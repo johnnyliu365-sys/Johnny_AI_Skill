@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-02, AC-03, AC-06, AC-07, AC-08 |
 | Context / change | `doc/context/local-orchestration-installer/main.md` / `CHG-20260808-011` |
-| State | `IN_PROGRESS / DISPATCHED` |
+| State | `IN_PROGRESS / CORRECTION_DISPATCHED` |
 | Dependencies | Ticket 01 `491f98b`; Ticket 02 `92c58bf`; both closed |
 | Language | Python 3.11, strict Pydantic models and recorded in-memory fakes |
 | Control-plane owner / reviewer | Codex / current `main` worktree |
@@ -83,6 +83,17 @@ packaging and automatic host updates. A later request to claim a real host as
   worktree, allocation and receipt.
 - No review result creates another worktree or same-ticket branch. A failed
   correction review returns `CONVERGENCE_REVIEW_REQUIRED`.
+
+## One-time correction handoff
+
+| Field | Value |
+| --- | --- |
+| Initial review | `b343df4` / `CHANGES_REQUESTED` |
+| Frozen closure | Unchanged `CLOSURE-LOCAL-INSTALL-T03-01`; only H7 proof-boundary implementation and evidence defects are open |
+| Existing lane | Same owner, sole implementation worktree, branch `codex/implementation-host-capability-gate-03`, allocation and receipt |
+| Required correction | Revalidate lifecycle-returned removal proof at the Gate boundary; malformed nested evidence must fail closed and never serialize into a supported/removed report. Add the focused H7 port-output regression and its reverse-mutation evidence. |
+| Commit rule | Append one correction implementation commit and one separate docs-only correction handoff; do not reset, amend, force, overwrite or create another branch/worktree |
+| Still not granted | Live adapter/command, subprocess/network/login/config/cache/target-project mutation, Ticket-01/02 change, packaging, merge, push, deployment or schedule action |
 
 ## Required evidence and return
 
