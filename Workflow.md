@@ -493,6 +493,20 @@ implementation owner 回傳 `ImplementationReturn`。`COMPLETED` 產生 `ACTION_
 
 審閱者須依 `CodeReview.md` 逐項評估，將每項發現、驗證證據與結論記入 review report，並確認其對應的 spec、ticket、測試、實作與 `CONTEXT.md` 可相互追溯。
 
+### 8.1 審查收斂與 finding 路由
+
+implementation handoff 前，ticket 必須提交一個具 revision 的有限 `Acceptance Closure Set`：列出本票全部 AC、領域不變量、狀態／事件、邊界案例、外部失敗、證據與完成判定。不得以「所有邊界」、「完整 fault matrix」或「任何可能失敗」等無法枚舉的描述作為阻擋條件。Closure Set 一經 handoff 即凍結；變更內容必須依 §2 走 `REQUIREMENT_CHANGED`，不能在 Code Review 中靜默擴張。
+
+每一輪審閱必須一次執行完整 Closure Set，並在單一 review report 批次列出全部 blocking findings。禁止修正一個案例後再用新的探索性 probe 逐輪擴張完成條件。每項 finding 必須先分類：
+
+1. `IMPLEMENTATION_DEFECT`：實作違反凍結 AC／不變量／matrix cell；同票、同 branch 追加 correction commit。
+2. `EVIDENCE_DEFECT`：凍結項目的測試、紅燈、Smoke Test 或驗證證據缺失；同票一次補齊。
+3. `TICKET_DEFECT`：應在 TDD／ticket 預先列出但未列出；回控制面修正 ticket，未重新凍結 Closure Set 前不得直接要求實作者猜測補洞。
+4. `REQUIREMENT_CHANGED`：新增或改變 AC、不變量、架構或公開契約；回 `grill-with-docs → to-spec → to-tickets`。
+5. `OUT_OF_SCOPE_HARDENING`：不違反目前 Closure Set 的改善；建立後續 `PLANNED` ticket，不得阻擋本票完成。
+
+同一 Closure revision 最多允許一份初次 review 與一份 correction review。若 correction review 仍有 `IMPLEMENTATION_DEFECT`／`EVIDENCE_DEFECT`，Router 必須輸出 `CONVERGENCE_REVIEW_REQUIRED` 回控制面進行架構／ticket 分解；禁止自動再次派發 implementation correction。新 probe 若無法指向既有 Closure item，只能是 `TICKET_DEFECT`、`REQUIREMENT_CHANGED` 或 `OUT_OF_SCOPE_HARDENING`，不得偽裝成同票 blocking implementation defect。
+
 所有發現修正、驗收證據完整，且 review 報告結論為 `APPROVED` 後，功能集群才可標示 `READY_TO_MERGE`。
 
 交接必須可獨立回答：

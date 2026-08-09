@@ -92,7 +92,11 @@
 ## 3. 審閱證據與結論
 
 - Review report 必須逐項記錄上述驗證結果，並附上相關檔案／位置、測試或命令輸出、smoke test 結果，以及未解決風險。
+- Review 開始前必須讀取 ticket 的具 revision `Acceptance Closure Set`。每個 blocking finding 都必須引用一個既有 Closure item；無法引用者不得直接判為 implementation defect。
+- 同一輪必須一次跑完全部 Closure items 並批次回傳 findings。禁止在 correction 完成後才新增原本可於同一份 baseline 發現的逐輪探索性 blocking probe。
 - 同時必須逐項記錄 §2.1 中攔截點含 `CR` 的三類（1 路徑前綴、3 權限繞過、7 測試涵蓋）的檢查結果與依據。
 - 若發現缺陷屬於 §2.1 中攔截點為 `TDD` 的類別，而**該工單的「TDD 設計」並未列出對應案例**，審閱結論仍為 `CHANGES_REQUESTED`，但根因記為**工單缺陷**，並同時修正工單；不得僅要求實作者補測試而讓同類缺口在下一張工單重現。
+- 每項 finding 必須標記 `IMPLEMENTATION_DEFECT`、`EVIDENCE_DEFECT`、`TICKET_DEFECT`、`REQUIREMENT_CHANGED` 或 `OUT_OF_SCOPE_HARDENING`。只有前兩類可在 Closure Set 不變時回原 implementation lane；`TICKET_DEFECT` 回工單設計、`REQUIREMENT_CHANGED` 回變更控制、`OUT_OF_SCOPE_HARDENING` 另開後續 ticket 且不阻擋目前工單。
 - 結論僅可為 `APPROVED`、`CHANGES_REQUESTED` 或 `BLOCKED`。若有未處理且會影響正確性、安全性、資料隔離、可用性、效能或規格符合性的問題，不得標記為 `APPROVED`。
 - `CHANGES_REQUESTED` 或 `BLOCKED` 的項目修正後，必須重新執行受影響的驗證、Smoke Test 與必要的審閱項目。
+- 同一 Closure revision 最多執行一次 correction review；第二次仍未通過時結論必須附帶 `CONVERGENCE_REVIEW_REQUIRED`，回控制面做架構／ticket 分解，不得直接觸發第三次 implementation correction。

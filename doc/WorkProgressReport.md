@@ -812,3 +812,14 @@
 | Fresh-branch gate | A new branch is permitted only with recorded `FRESH_BRANCH_REQUIRED` evidence: approved requirement change, owner/worktree replacement, unsafe worktree contamination, or verified baseline conflict that cannot be handled safely with additive correction. |
 | Automation effect | `ticket-01-implementer-watchdog` now retains the same ticket, owner, worktree, branch, allocation and receipt for ordinary corrections. It no longer rejects historical source reuse or creates a fresh allocation merely because review returned `CHANGES_REQUESTED`. |
 | Active lane | Ticket 01 rework-13 remains active on its current branch; this policy does not interrupt, recreate or rewrite its in-progress implementation. |
+
+## PRG-20260809-062 — break unbounded Ticket-01 review loop
+
+| Field | Value |
+| --- | --- |
+| Event | `REQUIREMENT_CHANGED / REVIEW_CONVERGENCE` |
+| Root cause | Ticket 01 used an unbounded “complete fault matrix”; CR-40 remained open in 11 review rounds while the two-outcome audit Router mapped every non-approval back to the same correction lane. Branch retention alone did not remove that loop. |
+| Immediate control | `ticket-01-implementer-watchdog` is paused. The active rework-13 implementation task is not interrupted, but no automatic rework-14 or further correction may be dispatched under the old prompt. |
+| Frozen closure | `CLOSURE-LOCAL-INSTALL-T01-20260809-01` freezes seven invariants and finite input/state/receipt/port/retry/terminal/Git matrices. The next review must run the whole set once and batch all findings. |
+| Finding routes | `IMPLEMENTATION_DEFECT`／`EVIDENCE_DEFECT` permit one same-branch correction; `TICKET_DEFECT` returns to ticket design; `REQUIREMENT_CHANGED` returns to Grill/SPEC; `OUT_OF_SCOPE_HARDENING` becomes a later non-blocking ticket. |
+| Loop breaker | A failed correction review emits `CONVERGENCE_REVIEW_REQUIRED`; it cannot automatically dispatch a third implementation attempt for the same Closure revision. |

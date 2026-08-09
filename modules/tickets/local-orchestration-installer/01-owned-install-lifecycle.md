@@ -40,6 +40,40 @@ Frontend composition / DI: the equivalent command/UI is `InstallControlPlane` / 
 6. **Stable errors / exception behavior:** all invalid ownership states expose the finite external result while internally retaining one unique reason code. Inject filesystem, ledger, fake-host and fake-process failures one at a time; assert whether the application returns `*_BLOCKED` without propagating an implementation exception and that no partial receipt/deletion occurs.
 7. **Regression proof:** snapshot a representative existing and empty temporary Git repository before every success/failure path and prove byte tree and `git status --porcelain` are unchanged. Retain first red-test command/name/failure in the completion evidence.
 
+## Frozen Acceptance Closure Set
+
+Closure revision: `CLOSURE-LOCAL-INSTALL-T01-20260809-01`. This revision governs the rework-13 return and its review. The reviewer may block Ticket 01 only by citing one item below; any additional improvement is classified under `TICKET_DEFECT`, `REQUIREMENT_CHANGED` or `OUT_OF_SCOPE_HARDENING` and cannot silently expand this implementation handoff.
+
+### Frozen invariants
+
+| ID | Invariant |
+| --- | --- |
+| `INV-01` | Every public input is recursively validated into strict domain types before the first port effect. |
+| `INV-02` | The fixed root has at most one exact installation owner; a foreign or missing owner never authorizes mutation. |
+| `INV-03` | Every created actual filesystem/host effect is durably associated with exact installation, manifest, receipt and cleanup authority before another fallible step. |
+| `INV-04` | Delete, unregister, ledger mutation, recovery transition and owner release require exact current owner plus authoritative manifest/receipt/ledger/recovery identity and exact returned proof/read-back. |
+| `INV-05` | Every blocked result leaves either zero effects or one exact durable retry authority; one retry after a one-shot fault must converge or remain a stable typed repair state without further mutation. |
+| `INV-06` | `INSTALLED` requires exact live manifest and all selected-host receipts. `REMOVED`／`NOT_INSTALLED` require fresh proof that owner, ledger, recovery, owned files and owned host receipts are all absent. |
+| `INV-07` | Every success, failure and retry leaves representative target Git repositories byte-identical with unchanged `git status --porcelain`. |
+
+### Finite matrix
+
+The required matrix is pairwise one-fault coverage, not an unbounded Cartesian product.
+
+| Matrix ID | Finite cases |
+| --- | --- |
+| `M-INPUT` | Canonical root; extra-prefix; trailing slash; casing; encoded separator/traversal; absolute/drive/UNC/URI/dot path; `None`; omitted; empty; whitespace; empty list/object; raw and `model_construct` entry. |
+| `M-STATE` | `EMPTY`, `INSTALL_PREPARED`, `INSTALL_CLEANUP`, `INSTALLED`, `UNINSTALL_START`, `UNINSTALL_FILES`, `FINALIZE_INTENT`, `FINALIZE_OBSERVED`; each is tested with its legal exact authority and separately with missing owner, foreign owner, missing/tampered ledger or forged/mismatched recovery where applicable. |
+| `M-RECEIPT` | Returned actual receipt differs one field at a time by installation ID, host ID, registration ID, manifest digest or owned paths; exact receipt is the control case. |
+| `M-PORT` | One-shot exact/foreign/replayed/no-op/exception result where supported for clock, owner claim/release, recovery write/clear, filesystem stage/complete/delete/absence, host register/verify/remove/absence, ledger write/delete, runtime stop and process stop. Each port is injected only at lifecycle phases where that port is reachable. |
+| `M-RETRY` | Every `M-PORT` fault asserts the first finite public result, complete owner/ledger/recovery/filesystem/host state, no unrelated mutation, and the next retry outcome. |
+| `M-TERMINAL` | Normal install; exact repeat install; normal uninstall; repeat uninstall; live-effect mismatch; ownerless ledger/effect state; forged `INSTALL_CLEANUP`; forged `FINALIZE_INTENT`; forged `FINALIZE_OBSERVED`. |
+| `M-GIT` | Existing and empty temporary Git repositories across install success/failure and uninstall success/failure. |
+
+### Review closure rule
+
+The next review is closure round 1 for this revision. It must execute the entire matrix and batch every failure in one report. If all frozen items pass, Ticket 01 is `APPROVED`; a new probe that cannot cite `INV-01..07` plus one matrix cell becomes a later hardening ticket and does not block. If round 1 fails, one same-branch correction round is allowed. A failed correction review emits `CONVERGENCE_REVIEW_REQUIRED` and may not automatically dispatch another Ticket-01 correction.
+
 ## Completion evidence
 
 - Required: first red evidence for every behavior; unit tests; strict mypy; compile; metadata/raw-content sentinel; local smoke of fake install/uninstall; target-repository snapshots; `git diff --check`; review report; WorkProgress and docs-only handoff commit.
