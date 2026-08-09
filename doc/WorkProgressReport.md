@@ -1069,3 +1069,14 @@
 | Worktree / branch | Reuse only `C:\Users\<user>\Desktop\AI控制工作workflow-implementation`. Preserve the rejected parent branch reference, then create exactly one child new-ticket branch `codex/implementation-codex-cli-preflight-05a` from the control decomposition commit. No second worktree or concurrent branch. |
 | Granted scope | Ticket-05A files only; recorded ports, no live registration; one implementation commit, complete verification and one docs-only handoff. The implementation owner makes no review/integration/next-ticket decision. |
 | Prohibited | Parent-source reuse, Ticket 05B/05C/04 source, second live registration, hidden host config/cache write, target-project access, Secret, reset/amend/rebase/force, merge, push, release, deployment or schedule. |
+
+## PRG-20260810-084 - Ticket 05A independent review
+
+| Field | Value |
+| --- | --- |
+| Router event | `REVIEW_HANDOFF -> CODE_REVIEW -> CHANGES_REQUESTED -> IMPLEMENT / AUTO_CONTINUE` |
+| Reviewed boundary | Baseline `d90b69e`; branch `codex/implementation-codex-cli-preflight-05a`; implementation `88f7aae`; docs-only handoff `67dc1db`; closure `CLOSURE-LOCAL-INSTALL-T05A-01` A1..A5 |
+| Independent green evidence | Focused `9/9`; full `165/165`; strict mypy `82` files; in-memory compile, source sentinel and `git diff --check` passed. Independent scope is `164` added / `2` removed production non-blank lines, net `162 / 170`; test `128 / 180`. Worktree remained clean. |
+| Review result | `CHANGES_REQUESTED`: CR-86 official `marketplaceSource` and strict version boundary; CR-87 exact canonical absolute source binding; CR-88 collision across both installed and available plugins; CR-89 truthful complete evidence/reverse matrix. |
+| Adversarial evidence | Documented optional `marketplaceSource` is rejected on both list DTOs; arbitrary text containing `9.9.9` is accepted as Codex; `C:\FOREIGN\marketplaces\probe-market` returns `ELIGIBLE`; a same-name plugin in `available` also returns `ELIGIBLE`. |
+| Convergence | One batched review only. Same ticket/task/worktree/branch/allocation/receipt; exactly one additive correction is allowed. No new branch/worktree, integration or next-ticket dispatch. If the frozen `170 / 180` closure cannot fit, implementation must return typed `BLOCKED / TICKET_DEFECT`. |
