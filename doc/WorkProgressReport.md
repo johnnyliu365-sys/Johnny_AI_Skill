@@ -802,3 +802,13 @@
 | Required red/green evidence | Before source implementation, reproduce all four review probes exactly: returned actual receipt mismatch with live effect and no authority; exact-shaped forged `FINALIZE_INTENT` with live effects; ownerless exact ledger/live effects; ownerless exact-shaped `INSTALL_CLEANUP`. Extend actual-receipt field matrices, causal phase-transition matrices and owner/ledger/recovery/effect conjunction matrices. Reverse each guard separately and prove the focused test fails. |
 | Receipt / continuation authority | `rcpt_local_orchestration_install_01_20260808` and bounded authority `PRG-20260809-042` remain valid. This correction allocation requires no second user confirmation. |
 | Required return | Ticket-only implementation commit(s), full regression/strict typing/in-memory compile/sentinel/Git isolation evidence, then one docs-only handoff commit. No self-review, integration, push, deployment, historical-source reuse or progress-only final. |
+
+## PRG-20260809-060 — same-ticket correction branch policy
+
+| Field | Value |
+| --- | --- |
+| Event | `REQUIREMENT_CHANGED / WORKFLOW_POLICY` |
+| Owner decision | A normal `CHANGES_REQUESTED` must continue on the existing ticket branch with additive correction commits. Commit SHA records are the immutable review evidence; a review rejection alone must not create another branch or force source reconstruction. |
+| Fresh-branch gate | A new branch is permitted only with recorded `FRESH_BRANCH_REQUIRED` evidence: approved requirement change, owner/worktree replacement, unsafe worktree contamination, or verified baseline conflict that cannot be handled safely with additive correction. |
+| Automation effect | `ticket-01-implementer-watchdog` now retains the same ticket, owner, worktree, branch, allocation and receipt for ordinary corrections. It no longer rejects historical source reuse or creates a fresh allocation merely because review returned `CHANGES_REQUESTED`. |
+| Active lane | Ticket 01 rework-13 remains active on its current branch; this policy does not interrupt, recreate or rewrite its in-progress implementation. |
