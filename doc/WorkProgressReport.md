@@ -767,3 +767,15 @@
 | Blocking findings | CR-66 accepts predictable, shape-valid `FINALIZE` assertions as causal post-delete evidence and returns `REMOVED` while live host/files remain. CR-67 clears install recovery before owner release is proven, producing permanent `OWNER_WITHOUT_AUTHORITY`. CR-68 releases the owner after a recovery-write replay proof even though recovery was persisted, producing permanent `ORPHANED_AUTHORITY`. CR-40 omits all three exact sequences. |
 | Scope classification | Implementation/contract/TDD correction only; approved SPEC, ticket, architecture, delivery stage, owner, receipt and bounded continuation authority do not change. |
 | Continuation | Mark rework-11 historical and automatically create a fresh same-ticket allocation under receipt `rcpt_local_orchestration_install_01_20260808` and authority `PRG-20260809-042`; Ticket 02 remains `DEPENDENCY_WAIT`. |
+
+## PRG-20260809-056 — Ticket 01 fresh rework-12 handoff
+
+| Field | Value |
+| --- | --- |
+| State | `IMPLEMENT / FRESH_TDD_REWORK` |
+| Review baseline | `8361053` records the twelfth `CHANGES_REQUESTED`. `f17da74`, `8193067` and `95ec79a` join all older implementation branches as immutable historical evidence. |
+| Fresh handoff / allocation | `hnd_local_orchestration_install_01_rework_12_20260809` / `aln_local_orchestration_install_01_rework_12_20260809`; branch `codex/implementation-local-install-lifecycle-01-rework-12` starts directly from this current docs-only handoff commit. |
+| Correction scope | Fresh behavior red → minimal full-surface implementation → green for CR-66 causal pre-delete/post-delete terminal evidence with fresh terminal absence observation, CR-67 root-scoped retry-safe cleanup terminalization and CR-68 authoritative recovery-write mismatch/read-back handling. Preserve CR-59 through CR-65, the complete canonical path/root matrix, multihost physical lifecycle, finite public results and Git isolation. |
+| Required red/green evidence | Before source implementation, reproduce all three review probes exactly: valid-shaped forged `FINALIZE` while host/files remain live; stage-proof failure paired with foreign/replayed/no-op owner release during install cleanup; recovery-write foreign/replayed/no-op proof after exact state persistence. Add every operation phase, one-fault terminal ordering and retry assertion. Reverse causal-finalize, owner-readback and persisted-recovery branches separately and prove focused tests fail. |
+| Receipt / continuation authority | `rcpt_local_orchestration_install_01_20260808` and bounded authority `PRG-20260809-042` remain valid. This correction allocation requires no second user confirmation. |
+| Required return | Ticket-only implementation commit(s), full regression/strict typing/in-memory compile/sentinel/Git isolation evidence, then one docs-only handoff commit. No self-review, integration, push, deployment, historical-source reuse or progress-only final. |

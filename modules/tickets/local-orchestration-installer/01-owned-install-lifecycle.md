@@ -4,11 +4,11 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01, AC-03, AC-06, AC-07, AC-08 |
 | Context / change | `doc/context/local-orchestration-installer/main.md` / `CHG-20260808-011` |
-| State | `IN_PROGRESS` — fresh allocation `aln_local_orchestration_install_01_rework_11_20260809` closes CR-62/63/64/65 while preserving CR-59/60/61 and every earlier accepted guard; the existing receipt continues |
+| State | `IN_PROGRESS` — fresh allocation `aln_local_orchestration_install_01_rework_12_20260809` closes CR-66/67/68 while preserving CR-59 through CR-65 and every earlier accepted guard; the existing receipt continues |
 | Language | Python 3.11, Pydantic strict models and standard-library filesystem test fakes |
 | Baseline | `afee39d` (`docs: plan local orchestration installer tickets`) |
 | Control-plane owner / reviewer | Codex / current `main` worktree |
-| Implementation owner / worktree | Codex implementation Agent / `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` / fresh branch `codex/implementation-local-install-lifecycle-01-rework-11` |
+| Implementation owner / worktree | Codex implementation Agent / `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` / fresh branch `codex/implementation-local-install-lifecycle-01-rework-12` |
 | Environment | Local Windows user-scope test sandbox only; no actual host configuration, target-project write or installer binary |
 
 ## User-observable outcome
@@ -27,7 +27,7 @@ Frontend composition / DI: the equivalent command/UI is `InstallControlPlane` / 
 
 - Control-plane owner: Codex/current `main`; implementation owner: named Codex implementation Agent in the stated separate worktree; reviewer: Codex/current `main`.
 - Owner override: `N/A`.
-- `ImplementationHandoff`: all prior handoffs/allocations are historical. `hnd_local_orchestration_install_01_rework_11_20260809` retains the approved SPEC/ticket/Context/TDD, owner and receipt while binding fresh allocation `aln_local_orchestration_install_01_rework_11_20260809`. The dispatch-record commit that introduces this handoff is the branch start baseline before behavior-specific fresh red tests. It stores no raw payload, Context, path, URI, Secret or PII.
+- `ImplementationHandoff`: all prior handoffs/allocations are historical. `hnd_local_orchestration_install_01_rework_12_20260809` retains the approved SPEC/ticket/Context/TDD, owner and receipt while binding fresh allocation `aln_local_orchestration_install_01_rework_12_20260809`. The dispatch-record commit that introduces this handoff is the branch start baseline before behavior-specific fresh red tests. It stores no raw payload, Context, path, URI, Secret or PII.
 - `ImplementationReturn`: `COMPLETED → ACTION_COMPLETED`; `BLOCKED → HALT`; `CHANGE_DETECTED → REQUIREMENT_CHANGED → Grill`.
 
 ## TDD and defect checks
@@ -50,19 +50,19 @@ Frontend composition / DI: the equivalent command/UI is `InstallControlPlane` / 
 | Field | Value |
 | --- | --- |
 | Proposal selection | Control plane selected this first unblocked vertical ticket after `afee39d`. |
-| Handoff reference | `hnd_local_orchestration_install_01_rework_11_20260809` |
-| Required implementation baseline | The implementation owner creates `codex/implementation-local-install-lifecycle-01-rework-11` directly from this docs-only dispatch-record `main` commit in its own worktree; review baseline `857fde2` and all prior implementation histories remain immutable evidence. It must not rebase, merge, reset, cherry-pick, copy or reuse blocked branch/source. |
+| Handoff reference | `hnd_local_orchestration_install_01_rework_12_20260809` |
+| Required implementation baseline | The implementation owner creates `codex/implementation-local-install-lifecycle-01-rework-12` directly from this docs-only dispatch-record `main` commit in its own worktree; review baseline `8361053` and all prior implementation histories remain immutable evidence. It must not rebase, merge, reset, cherry-pick, copy or reuse blocked branch/source. |
 | Delivery receipt | `rcpt_local_orchestration_install_01_20260808` — project owner confirmed `已交付` on `2026-08-08`. |
-| Allocation continuation | `aln_local_orchestration_install_01_rework_11_20260809` keeps the same ticket, implementation-owner identity and receipt; it replaces only the rework-10 review-blocked source allocation. No second dispatch question is valid. |
+| Allocation continuation | `aln_local_orchestration_install_01_rework_12_20260809` keeps the same ticket, implementation-owner identity and receipt; it replaces only the rework-11 review-blocked source allocation. No second dispatch question is valid. |
 | Granted scope | Only this ticket's TDD, source, tests, verification and implementation/docs-only commits in the named implementation worktree. |
 | Explicitly not granted | Any target-project write, host configuration, installer binary release, Ticket 02+ implementation, merge/push/deploy, source outside ticket scope or silent requirements change. |
 
 ## Review return
 
 - Review: `doc/reviews/local-orchestration-installer/01-owned-install-lifecycle-code-review.md` (`CHANGES_REQUESTED`).
-- Blocked histories: `010110a` / `7bc5fd5`; `fd429fd`, `a222d89` / `8e39c99`; `4b840cd` / `7c73b14`; `c91041a` / `ba74caf`; `7df74e1`, `e84dff0`, `14838d9` / `f90877d`; `a3dc5a2` / `7573a74`; `e6b067c` / `f1301be`; `49a250e` / `aafe154`; `8a7b221` / `8f867cc`; `815d126` / `5405c24`; `ea99ccc` / `415f2bd`. None may be reset, overwritten, cherry-picked, copied or reused.
+- Blocked histories: `010110a` / `7bc5fd5`; `fd429fd`, `a222d89` / `8e39c99`; `4b840cd` / `7c73b14`; `c91041a` / `ba74caf`; `7df74e1`, `e84dff0`, `14838d9` / `f90877d`; `a3dc5a2` / `7573a74`; `e6b067c` / `f1301be`; `49a250e` / `aafe154`; `8a7b221` / `8f867cc`; `815d126` / `5405c24`; `ea99ccc` / `415f2bd`; `f17da74`, `8193067` / `95ec79a`. None may be reset, overwritten, cherry-picked, copied or reused.
 - Corrected and retained requirements: CR-36/37 typed proof/absence validation; CR-39 finite install verification rollback; CR-41 evidence-bearing recovery phases. Rework-4 demonstrates the intended owner-release/recovery-clear sequence and cooperative manifest/checkpoint compensation, but does not close all reachable paths.
-- Still required: CR-40 complete state/evidence matrix; CR-62 exclusive fixed-root owner across installation IDs and interrupted recovery; CR-63 causal recovery phase/intent/ledger authority before every effect; CR-64 parsed canonical owned-path boundary; CR-65 exact consumption of every terminal/checkpoint proof. Preserve CR-59/60/61, CR-54 through CR-58 and all earlier recovery, proof, owner and isolation guards. A new control-plane handoff creates another fresh branch; no new user dispatch is needed.
+- Still required: CR-40 complete state/evidence matrix; CR-66 causal post-delete terminal proof plus fresh terminal absence observation; CR-67 retry-safe install-cleanup terminalization across recovery clear and owner release; CR-68 authoritative recovery-write mismatch handling. Preserve CR-59 through CR-65 and all earlier recovery, proof, owner, canonical path and isolation guards. A new control-plane handoff creates another fresh branch; no new user dispatch is needed.
 
 ### Rework-3 review return
 
