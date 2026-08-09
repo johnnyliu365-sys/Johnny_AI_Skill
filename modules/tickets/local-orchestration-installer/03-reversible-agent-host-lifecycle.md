@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-02, AC-03, AC-06, AC-07, AC-08 |
 | Context / change | `doc/context/local-orchestration-installer/main.md` / `CHG-20260808-011` |
-| State | `IN_PROGRESS / CORRECTION_DISPATCHED` |
+| State | `COMPLETE / APPROVED / INTEGRATED` |
 | Dependencies | Ticket 01 `491f98b`; Ticket 02 `92c58bf`; both closed |
 | Language | Python 3.11, strict Pydantic models and recorded in-memory fakes |
 | Control-plane owner / reviewer | Codex / current `main` worktree |
@@ -118,3 +118,14 @@ packaging and automatic host updates. A later request to claim a real host as
 | Required baseline | The docs-only control commit containing this dispatch |
 | Granted scope | Only four production files, one test, H1..H8 verification and implementation/docs-only commits |
 | Not granted | Another worktree/branch, live host or command action, Ticket-01/02 change, packaging, merge, push, deployment or schedule action |
+
+## Completion and release
+
+| Field | Value |
+| --- | --- |
+| Implementation | Initial `16597b6`; additive H7 correction `673ff7c`; docs handoffs `62394f1` and `633505e` |
+| Review | Initial `b343df4` (`CHANGES_REQUESTED`); final `5601594` (`APPROVED / READY_TO_MERGE`) |
+| Integration | Guarded merge `60cb8cf`; the only merge conflict was append-only `WorkProgressReport.md`, with PRG-073, PRG-074 and PRG-075 all retained |
+| Final verification | Ticket module 9/9, full discovery 156/156, strict mypy five files, compile/source scan, actual-Git isolation and H7 reverse mutation passed |
+| Capability result | Recorded fake lifecycle is `SUPPORTED`; real Codex and Claude remain `UNVERIFIED`; no live adapter or command was authorized |
+| Allocation release | Existing implementation worktree is clean and detached at `60cb8cf`; Ticket-03 branch deleted after verified ancestry; exactly two worktrees and only `main` remain |

@@ -4,11 +4,11 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01 through AC-08 |
 | Context / change | `doc/context/local-orchestration-installer/main.md` / `CHG-20260808-011` |
-| State | `PLANNED` |
+| State | `PLANNED / BLOCKED` |
 | Language | Inno Setup script plus Python 3.11 packaged runner; pinned compiler version required |
 | Baseline | Tickets 01–03 reviewed/integrated baseline and one or more verified host lifecycle adapters |
 | Control-plane owner / reviewer | Codex / current `main` worktree |
-| Implementation owner / worktree | Codex implementation Agent / a fresh synchronized separate worktree after explicit dispatch |
+| Implementation owner / worktree | Codex implementation Agent / the existing sole `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` worktree after a future valid dispatch |
 | Environment | Windows user-scope sandbox; no administrator elevation, target project or production deployment |
 
 ## User-observable outcome
@@ -25,9 +25,15 @@ Frontend composition / DI: setup/uninstaller screens are composition-only and re
 
 ## Handoff and role assignment
 
-- Roles stay separated: Codex/current `main` plans/reviews; the named implementation Agent works only in its own synchronized worktree; owner override `N/A`.
+- Roles stay separated: Codex/current `main` plans/reviews; the named implementation Agent works only in the existing sole implementation worktree; owner override `N/A`. No fresh or additional worktree is authorized.
 - Dispatch requires proof that the exact Inno Setup compiler version is available under normal owner authority and at least one Ticket-03 host adapter is independently reversible. Otherwise this ticket remains `PLANNED` or returns `BLOCKED`; it must not substitute a script that leaves files behind.
 - Handoff references the exact integrated tickets, package manifest, target-repository snapshot fixtures and clean-user-profile smoke plan. Returns follow the global typed completion contract.
+
+## Current typed blockers
+
+- `EXTERNAL_AUTHORITY_MISSING`: Ticket 03 intentionally ships no live Codex or Claude adapter. Both public hosts remain `UNVERIFIED`; the recorded fake cannot satisfy this ticket's genuinely supported-host requirement.
+- `PINNED_TOOLCHAIN_MISSING`: read-only discovery found no `ISCC.exe` on `PATH` or at the standard Inno Setup 6 program locations. No compiler version can be pinned or verified.
+- Resolving either blocker may not use a hidden config edit, installer download, login, live host command or additional worktree. A future dispatch requires explicit external host-test authority, an available approved compiler and a newly bounded finite closure.
 
 ## TDD and defect checks
 

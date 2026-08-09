@@ -988,3 +988,16 @@
 | Actual Git isolation | Supported, unavailable-blocked and forged-proof probes ran between recursive SHA-256 snapshots of one existing and one empty actual temporary Git repository. Both remained byte-identical; porcelain remained `?? existing.txt` and empty respectively. |
 | Reverse mutation | Removing only the Gate proof reconstruction made the focused H7 test fail again with `SUPPORTED` and the serialized sentinel. Restoring it made the focused test and full verification pass. |
 | Scope / handoff | Only `host_lifecycle.py` and the existing Ticket-03 test changed in the correction commit; this entry is the separate docs-only handoff. No review decision, live host action, target-project write, Ticket-01/02 edit, merge, push, deployment or schedule action was performed. |
+
+## PRG-20260809-076 - Ticket 03 approved, integrated and lane released
+
+| Field | Value |
+| --- | --- |
+| Router event | `ACTION_COMPLETED → CORRECTION_REVIEW / VALIDATION_PASSED → HANDOFF / AUTO_CONTINUE` |
+| Ticket / closure | `03-reversible-agent-host-lifecycle` / `CLOSURE-LOCAL-INSTALL-T03-01` (`H1..H8`) complete |
+| Revisions | Initial implementation `16597b6`; H7 correction `673ff7c`; implementation handoffs `62394f1` and `633505e`; final review `5601594`; guarded merge `60cb8cf` |
+| Final verification | Ticket module 9/9, full discovery 156/156, strict mypy five files, compile/source scans, actual-Git isolation and focused H7 reverse mutation all passed |
+| Merge resolution | merge-tree found only append-only `doc/WorkProgressReport.md` contention. PRG-073 implementation evidence, PRG-074 correction handoff and PRG-075 correction evidence were explicitly retained in order; no source/test conflict existed |
+| Capability boundary | Recorded fake is supported; Codex and Claude remain `UNVERIFIED`. No live adapter, command, subprocess, login, target-project write, push, deployment or schedule action occurred |
+| Lane release | Allocation `aln_local_orchestration_install_03_20260809` released. The sole implementation worktree is clean and detached at `60cb8cf`; the fully integrated Ticket-03 branch was deleted. Exactly two worktrees and only local branch `main` remain |
+| Next Router decision | `HALT / EXTERNAL_DECISION_REQUIRED`: Ticket 04 lacks explicit authority for a verified live host lifecycle and lacks an available pinned Inno Setup compiler (`ISCC.exe` absent from PATH and standard locations). No implementation ticket is dispatched |

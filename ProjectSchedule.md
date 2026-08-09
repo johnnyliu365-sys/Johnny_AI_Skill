@@ -116,5 +116,5 @@
 | Specification | DONE | `modules/spec/local-orchestration-installer.md` was approved by the owner on `2026-08-08`. |
 | Ticket 01 implementation | DONE / APPROVED / INTEGRATED | Closure `C1..C8` passed; implementation `ddd9f55`, correction `040a0f6`, review `dc63364` and guarded merge `491f98b`. |
 | Ticket 02 implementation | DONE / APPROVED / INTEGRATED | Closure `D1..D8` passed; implementation `6cc8fb5`, independent review `4527f49`, guarded merge `92c58bf`; allocation and branch released. |
-| Ticket 03 implementation | IN_PROGRESS / DISPATCHED | Recorded host capability gate only; closure `H1..H8`, four production files, one test, sole implementation worktree and one new-ticket branch. No live Codex/Claude command or host mutation. |
-| Ticket 04 implementation | PLANNED / DEPENDENCY_WAIT | Requires Ticket 03 plus an explicitly authorized verified host lifecycle and available pinned setup toolchain. |
+| Ticket 03 implementation | DONE / APPROVED / INTEGRATED | Closure `H1..H8`; implementation `16597b6`, H7 correction `673ff7c`, final review `5601594`, guarded merge `60cb8cf`; allocation and branch released. Real Codex/Claude remain `UNVERIFIED`. |
+| Ticket 04 implementation | PLANNED / BLOCKED | Tickets 01-03 are integrated, but no explicitly authorized verified live host adapter exists and no pinned Inno Setup compiler is available. No implementation lane is active. |

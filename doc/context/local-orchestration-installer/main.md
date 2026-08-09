@@ -175,3 +175,21 @@ allocation `aln_local_orchestration_install_03_20260809` and receipt
 `rcpt_local_orchestration_install_03_20260809`. The existing implementation
 worktree creates only `codex/implementation-host-capability-gate-03` from the
 dispatch commit. No live host or schedule authority is included.
+
+## Ticket 03 completion and Ticket 04 gate
+
+Ticket 03 completed as the bounded recorded capability gate: implementation
+`16597b6`, additive H7 proof-boundary correction `673ff7c`, final independent
+review `5601594` and guarded merge `60cb8cf`. Final verification passed 9/9
+Ticket tests, 156/156 full discovery, strict mypy, compile/source checks,
+actual-Git isolation and the focused H7 reverse mutation. The sole
+implementation worktree is clean and detached at the merge; its integrated
+branch and allocation are released.
+
+This result does not create a live host adapter. Codex and Claude remain
+`UNVERIFIED`. Read-only discovery also found no `ISCC.exe` on `PATH` or at the
+standard Inno Setup 6 locations. Ticket 04 therefore remains
+`PLANNED / BLOCKED` on explicit external host-test authority and an approved
+pinned compiler. It must reuse the existing sole implementation worktree after
+a future valid dispatch; no new worktree, host action, tool installation or
+schedule is authorized.
