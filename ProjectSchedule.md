@@ -116,5 +116,23 @@
 | Specification | DONE | `modules/spec/local-orchestration-installer.md` was approved by the owner on `2026-08-08`. |
 | Ticket 01 implementation | DONE / APPROVED / INTEGRATED | Closure `C1..C8` passed; implementation `ddd9f55`, correction `040a0f6`, review `dc63364` and guarded merge `491f98b`. |
 | Ticket 02 implementation | DONE / APPROVED / INTEGRATED | Closure `D1..D8` passed; implementation `6cc8fb5`, independent review `4527f49`, guarded merge `92c58bf`; allocation and branch released. |
-| Ticket 03 implementation | DONE / APPROVED / INTEGRATED | Closure `H1..H8`; implementation `16597b6`, H7 correction `673ff7c`, final review `5601594`, guarded merge `60cb8cf`; allocation and branch released. Real Codex/Claude remain `UNVERIFIED`. |
-| Ticket 04 implementation | PLANNED / BLOCKED | Tickets 01-03 are integrated, but no explicitly authorized verified live host adapter exists and no pinned Inno Setup compiler is available. No implementation lane is active. |
+| Ticket 03 implementation | DONE / APPROVED / INTEGRATED | Closure `H1..H8`; implementation `16597b6`, H7 correction `673ff7c`, final review `5601594`, guarded merge `60cb8cf`; allocation and branch released. |
+| Toolchain and Codex capability probe | DONE / VERIFIED | Inno Setup 6.7.3 is installed per user with valid signature and compile proof. One disposable Codex CLI marketplace/plugin was installed, hash-verified and completely removed without target-project access. |
+| Ticket 05 Codex CLI adapter | IN_PROGRESS / DISPATCH_PREPARED | Closure `K1..K8`, four production files, one test, unique handoff/allocation/receipt and the existing sole implementation worktree. |
+| Ticket 04 implementation | PLANNED / DEPENDENCY_WAIT | Pinned compiler is ready; package work waits only for Ticket 05 independent approval/integration. |
+
+### Ticket 05 selection after external capability proof
+
+The owner-authorized probe resolved the two external uncertainties without
+claiming that discovery code is production source. Codex CLI 0.144.0-alpha.4
+completed exact marketplace add, plugin add, structured verification, plugin
+remove and marketplace remove for a disposable local payload; matching source
+and installed hashes plus final plugin/marketplace/path absence were recorded.
+Inno Setup 6.7.3 was independently signature/version/compile verified.
+
+Ticket `05-codex-cli-host-adapter` is now the sole selected vertical slice. It
+must turn the documented CLI mechanism into strict receipt-bound adapter source
+within K1–K8, four production files and one test. It uses exactly one branch in
+the existing sole implementation worktree; no second live registration,
+additional worktree, target-project access or schedule is authorized. Ticket 04
+remains dependency-waiting until independent Ticket-05 approval and integration.

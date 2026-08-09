@@ -2,13 +2,13 @@
 
 | Field | Value |
 | --- | --- |
-| Context state | `TICKET_02_IMPLEMENTING / TICKET_03_PLANNED` |
-| Router event | `TICKET_DISPATCH_REQUIRED → IMPLEMENTATION_DISPATCH_CONFIRMED → IMPLEMENT` |
+| Context state | `CODEX_CLI_CAPABILITY_VERIFIED / TICKET_05_DISPATCH_PREPARED / TICKET_04_DEPENDENCY_WAIT` |
+| Router event | `ACTION_COMPLETED → TICKET_SELECTION → GRILL → IMPLEMENT` |
 | Delivery stage | `POC` |
 | Requirement change | `CHG-20260808-011` |
-| Baseline | `491f98b` (`merge: integrate reopened owned lifecycle`) |
+| Baseline | `a43da12` (`docs: close ticket 03 and halt ticket 04`) |
 | Control-plane owner | Codex / current `main` worktree |
-| Implementation owner | Codex implementation Agent / Ticket-02 allocation `aln_local_orchestration_install_02_20260809` |
+| Implementation owner | Codex task `019fcc9c-f34f-7d53-a313-c70c90bf3245` / Ticket-05 allocation `aln_local_orchestration_install_05_20260809` after exact dispatch commit synchronization |
 | Required sources read | `AGENTS.md`, `Workflow.md` (Router, Wayfinder, Grill, change control, specification, tickets, role boundary), `Defined_wayfinder.md`, `CONTEXT.md`, `PRD.md`, `ProjectSchedule.md`, `doc/RequirementChangeLog.md`, existing plugin manifests / README, `library/workflow_router/`, and completed plugin / autonomous-collaboration POCs |
 
 ## Shared Context reference
@@ -88,11 +88,11 @@ The runner is not a hidden model executor. It consumes validated metadata events
 
 **Grill decision: `GO → SPEC_DRAFT`.** The normal success path gives the requested one-click removal. The only allowed exception is an unsafe or failed external lifecycle action, which must stop with an explicit retryable blocked result instead of deleting unowned content or falsely claiming removal.
 
-## Risks, unresolved capability and re-entry
+## Risks, resolved capability and re-entry
 
-- Current workspace inspection found Python but not an Inno Setup/NSIS compiler. A ticket must pin and verify the build tool; no release executable is claimed by this Context.
-- The Codex manual helper could not run because Node.js is absent, and no OpenAI Docs MCP was exposed in this session. Therefore no undocumented Codex lifecycle command is assumed. The host-adapter ticket must use a live supported host and record its verified lifecycle behavior before declaring it supported.
-- The owner must explicitly approve the draft SPEC before ticket planning. A host limitation discovered after approval is `BLOCKED` or `REQUIREMENT_CHANGED → Grill`, not a silent scope expansion.
+- Inno Setup 6.7.3 is installed per user from the official Winget manifest. Its installer digest, valid Pyrsys B.V. signature, registry version and one successful bundled-example compile are verified. This is build-tool capability only; no release executable is claimed by this Context.
+- The official Codex plugin CLI lifecycle was verified with one disposable owner-authorized local marketplace/plugin: add, install, structured list, exact source/installed hash equality, plugin remove, marketplace remove and final plugin/marketplace/path absence all succeeded. No target project or existing plugin was changed. This proves the public host mechanism, not production adapter correctness.
+- Ticket 05 is the bounded adapter slice required to turn that evidence into reviewed source. Ticket 04 waits for Ticket 05 integration. A different CLI contract, hidden config requirement or inability to prove exact absence returns `CHANGE_DETECTED → REQUIREMENT_CHANGED → Grill` or typed `BLOCKED`; it cannot be replaced by broad cache deletion.
 
 ## Approved SPEC and smallest reusable-module selection
 
@@ -186,10 +186,14 @@ actual-Git isolation and the focused H7 reverse mutation. The sole
 implementation worktree is clean and detached at the merge; its integrated
 branch and allocation are released.
 
-This result does not create a live host adapter. Codex and Claude remain
-`UNVERIFIED`. Read-only discovery also found no `ISCC.exe` on `PATH` or at the
-standard Inno Setup 6 locations. Ticket 04 therefore remains
-`PLANNED / BLOCKED` on explicit external host-test authority and an approved
-pinned compiler. It must reuse the existing sole implementation worktree after
-a future valid dispatch; no new worktree, host action, tool installation or
-schedule is authorized.
+At Ticket-03 closure this result did not create a live host adapter: Codex and
+Claude remained `UNVERIFIED`, no `ISCC.exe` was available, and Ticket 04 entered
+`PLANNED / BLOCKED`. That historical halt was resolved by the later
+owner-authorized `PRG-20260809-077` toolchain and disposable CLI capability
+probe. It did not retroactively change Ticket-03 source or claim production
+support.
+
+Ticket 05 is now the only selected implementation lane and reuses the existing
+sole implementation worktree. Ticket 04 is `PLANNED / DEPENDENCY_WAIT` until
+Ticket 05 is independently approved and integrated. No additional worktree,
+second live registration or schedule is authorized.
