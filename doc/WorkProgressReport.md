@@ -698,3 +698,15 @@
 | Blocking findings | CR-57: returned removal/absence proofs are ignored, so shape-valid foreign proofs can produce `REMOVED` while a host registration remains live and owner/ledger/recovery are deleted. CR-58: install cleanup releases owner before fallible recovery clear, so that fault strands recovery with no owner and every retry remains `AUTHORITY_MISMATCH`. CR-40 lacks these exact adversarial and terminal-ordering probes. |
 | Scope classification | Implementation/contract/TDD correction only; approved SPEC, ticket, architecture, delivery stage, owner, receipt and bounded continuation authority do not change. |
 | Continuation | Mark rework-8 historical and automatically create a fresh same-ticket allocation under receipt `rcpt_local_orchestration_install_01_20260808` and authority `PRG-20260809-042`; Ticket 02 remains `DEPENDENCY_WAIT`. |
+
+## PRG-20260809-047 — Ticket 01 fresh rework-9 handoff
+
+| Field | Value |
+| --- | --- |
+| State | `IMPLEMENT / FRESH_TDD_REWORK` |
+| Review baseline | `884a6c5` records the ninth `CHANGES_REQUESTED`. `8a7b221` and `8f867cc` join all older implementation branches as immutable historical evidence. |
+| Fresh handoff / allocation | `hnd_local_orchestration_install_01_rework_9_20260809` / `aln_local_orchestration_install_01_rework_9_20260809`; branch `codex/implementation-local-install-lifecycle-01-rework-9` starts directly from this current docs-only handoff commit. |
+| Correction scope | Fresh behavior red → minimal full-surface implementation → green for CR-57 exact consumption of returned `RemovalProof`/`AbsenceProof` identities before terminal authority deletion and CR-58 retryable install-cleanup terminal ordering across recovery-clear/owner-release faults. Preserve CR-54/55/56, every passing strict contract/port, physical staging, all-host behavior, complete boundary/fault/Git matrix and finite public results. |
+| Required red/green evidence | First reproduce a typed adversarial host/filesystem provider that returns shape-valid foreign or mismatched proofs without removing the requested effect; no case may return terminal success or clear owner/ledger/recovery. Reproduce cleanup `CLEAR_RECOVERY` failure after owner release and prove repeated calls currently remain `AUTHORITY_MISMATCH`. Add one-field proof mismatch/replay/absence matrices, every cleanup terminal ordering, exact authority retention and retry convergence. Reverse each new guard and prove the focused test fails. |
+| Receipt / continuation authority | `rcpt_local_orchestration_install_01_20260808` and bounded authority `PRG-20260809-042` remain valid. This correction allocation requires no second user confirmation. |
+| Required return | Ticket-only implementation commit(s), full verification, then one docs-only handoff commit. No self-review, integration, push, deployment or progress-only final. |
