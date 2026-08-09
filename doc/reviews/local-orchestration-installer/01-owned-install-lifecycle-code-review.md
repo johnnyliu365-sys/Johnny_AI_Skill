@@ -4,9 +4,9 @@
 | --- | --- |
 | Feature / ticket | `local-orchestration-installer` / `01-owned-install-lifecycle` |
 | SPEC / change | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / `CHG-20260808-011` |
-| Reviewed baseline | `15f6be8` |
-| Implementation / docs handoff | `4b840cd` / `7c73b14` |
-| Implementation owner | Codex implementation Agent / `codex/implementation-local-install-lifecycle-01-rework-2` |
+| Reviewed baseline | `7cc8b38` |
+| Implementation / docs handoff | `c91041a` / `ba74caf` |
+| Implementation owner | Codex implementation Agent / `codex/implementation-local-install-lifecycle-01-rework-3` |
 | Reviewer | Codex / current `main` worktree |
 | Result | `CHANGES_REQUESTED` |
 
@@ -14,7 +14,77 @@
 
 - Approved Context: `doc/context/local-orchestration-installer/main.md`.
 - Ticket scope: typed owned ledger, fake lifecycle ports and fail-closed install/uninstall only; no real host configuration, target project, Git adapter or package artifact is reviewed as delivered.
-- Receipt `rcpt_local_orchestration_install_01_20260808` remains valid. The review result blocks the rework-2 implementation branch as historical evidence; it does not alter the approved SPEC, ticket scope or the planning lane's Ticket-02 dependency wait.
+- Receipt `rcpt_local_orchestration_install_01_20260808` remains valid. The review result blocks the rework-3 implementation branch as historical evidence; it does not alter the approved SPEC, ticket scope or the planning lane's Ticket-02 dependency wait.
+
+## Rework-3 review result
+
+CR-41 through CR-43 are corrected. Recovery phases now carry validated evidence and recheck live host/filesystem absence, a receipt is bound to the exact selected host, and one active owner excludes a different installation ID from the fixed root. Each guard also passed independent reverse validation: bypassing it in memory makes its focused regression fail.
+
+The ticket is still not approvable. The terminal cleanup order can discard every retry authority before owner release succeeds, and two install-failure paths leave staged or registered effects without a ledger or recovery record. CR-40 also remains open because the committed matrix asserts finite error codes but does not assert absence/retry of these partial effects and still omits required value variants.
+
+### CR-40 remains open — the failure matrix does not prove clean or retryable outcomes
+
+`test_storage_failures_return_finite_results_and_never_leave_a_ledger` asserts only the returned `STAGE_FAILED` / `RECOVERY_WRITE_FAILED` reason and an empty success ledger (`tests/test_owned_install_lifecycle.py:365-379`). It does not assert the fixed root, active owner, host receipts and recovery authority after recovery-write failure. The owner-release fault is never exercised. The manifest-mismatch path is also absent.
+
+The value-boundary matrix remains incomplete at `tests/test_owned_install_lifecycle.py:504-605`: installation ID lacks the omitted-field case, while owned relative path lacks `None`, omitted, empty-list and empty-object cases. Grouping malformed strings does not replace the ticket's individually required null/undefined/empty/container outcomes.
+
+Independent execution reproduced the missing behavior instead of merely identifying absent tests:
+
+- recovery-write failure after a verified host effect returns `RECOVERY_WRITE_FAILED` while retaining two staged files, one registered host and an active owner, with no ledger or recovery record;
+- a staged manifest mismatch returns `MANIFEST_INVALID` while retaining both staged files and the owner; later same-ID and different-ID installs return `STAGE_FAILED`, leaving those files unowned;
+- owner-release failure after otherwise complete uninstall returns `OWNER_RELEASE_FAILED`, but both ledger and recovery are already gone; the retry returns `NOT_INSTALLED` and a different installation remains blocked by the stale owner.
+
+Required correction: expand the red/green matrix to assert all persisted/effected state, not only finite result codes. Every failure after staging or host registration must either compensate verified owned effects in the same invocation or retain a durable typed recovery/owner record that a retry demonstrably consumes. Exercise owner-release failure and the remaining named boundary variants explicitly.
+
+### CR-44 — terminal cleanup destroys retry authority before owner release
+
+`_resume_uninstall` deletes the ownership ledger and then calls `_clear_then_release` (`library/local_orchestration/lifecycle.py:299-312`). `_clear_then_release` clears recovery before invoking the fallible `release_owner` port (`library/local_orchestration/lifecycle.py:381-390`). If release raises, the result correctly says `OWNER_RELEASE_FAILED`, but no durable record remains that can route the retry.
+
+Independent reproduction: normal install succeeded; with only `fail_owner_release=True`, uninstall returned `UNINSTALL_BLOCKED / OWNER_RELEASE_FAILED`, files and host receipts were gone, `records` and `recoveries` were empty, but owner stayed `inst_0000000000000001`. After removing the fault, a second uninstall returned `NOT_INSTALLED`; installing `inst_0000000000000002` returned `INSTALLATION_EXISTS` forever.
+
+This violates AC-07's necessary owned recovery-state guarantee and produces a false terminal state. Required correction: model finalization as a durable, retryable typed phase. Do not clear the last recovery authority until ledger deletion, recovery cleanup and owner release can be proven to converge idempotently. Add first-red and retry-to-terminal tests for recovery-clear and owner-release faults separately and in sequence.
+
+### CR-45 — install failures can leave unowned staged and host effects
+
+After `stage`, a manifest mismatch returns immediately (`library/local_orchestration/lifecycle.py:76-80`) without writing recovery or deleting the staged result. When `_begin_install_rollback` cannot write its recovery record, it also returns immediately (`library/local_orchestration/lifecycle.py:314-335`) without compensating staged files, detaching any receipt or preserving another retry authority.
+
+Two independent probes demonstrated both paths. A fake that staged the exact payload but returned the manifest in a mismatching order left both files behind with no recovery; later installs could not adopt or delete them. Separately, host registration succeeded, host verification failed and recovery persistence was faulted: the result was `RECOVERY_WRITE_FAILED` with two files, one live host receipt, active owner and no durable ledger/recovery. This is precisely the partial-effect loss prohibited by AC-02/07 and the ticket's stable-exception requirement.
+
+Required correction: acquire durable rollback intent before the first staged/host effect, or provide a verified compensation path whose own failure remains represented by an authoritative typed recovery state. Manifest mismatch must not strand paths that were actually created. Add retries proving the original installation can reach a safe terminal outcome and a foreign installation cannot claim residue.
+
+## Rework-3 independent verification
+
+| Check | Result |
+| --- | --- |
+| Branch ancestry / cleanliness | `7cc8b38 → c91041a → ba74caf`; implementation worktree clean |
+| `git diff --check 7cc8b38..c91041a` | Passed |
+| `python -B -m unittest discover -s tests` | 147 passed |
+| `python -B -m pytest -q -p no:cacheprovider` | 147 passed / 224 subtests |
+| `python -B -m mypy --strict --no-incremental library tests` | 71 source files clean |
+| In-memory compile / privacy sentinels | 5 local-orchestration modules compiled; passed |
+| CR-41 reverse verification | Bypassing live host-absence guard makes the focused phase test fail |
+| CR-42 reverse verification | Bypassing exact receipt binding makes the host-mismatch test fail |
+| CR-43 reverse verification | Bypassing the active-owner gate makes the two-ID test fail |
+| Owner-release recovery probe | Failed: retry says `NOT_INSTALLED` while stale owner blocks another installation |
+| Manifest-mismatch recovery probe | Failed: staged files remain without ledger/recovery and later installs cannot converge |
+| Recovery-write-after-host-effect probe | Failed: staged files and live receipt remain without durable recovery |
+
+## Rework-3 CodeReview standard check
+
+| Requirement | Result / evidence |
+| --- | --- |
+| Clear and strongly typed | Partial pass: primary contracts are typed; finalization lacks a durable state representing release completion. |
+| Coding/architecture rules | Fail: fallible effects are ordered so the recovery authority can disappear first. |
+| Logic correctness | Fail: CR-44 returns a false future `NOT_INSTALLED`; CR-45 strands effects. |
+| Boundary and exception behavior | Fail: finite codes do not imply clean/retryable state, and CR-40 variants remain absent. |
+| Security and ownership isolation | Fail: unowned staged/registered effects cannot be safely attributed or removed. |
+| Test coverage | Fail: all three independent failure probes pass outside the committed suite. |
+| Dependencies | Pass: no new external dependency. |
+| SPEC/ticket compliance | Fail: AC-02/07 and Ticket-01 recovery/matrix requirements are not met. |
+
+## Rework-3 required next rework
+
+The rework-3 branch is blocked historical evidence. The implementation owner must start a fresh branch directly from the next control-plane docs-only handoff baseline, without reset, merge, rebase, cherry-pick or reuse of `c91041a` / `ba74caf`. Receipt `rcpt_local_orchestration_install_01_20260808` continues; no second dispatch confirmation is valid. The new allocation is limited to CR-40, CR-44 and CR-45 with fresh behavior-specific red evidence.
 
 ## Rework-2 review result
 

@@ -559,3 +559,14 @@
 | Scope | Fresh red → minimal typed implementation → green for CR-40 complete matrix/evidence, CR-41 evidence-bearing recovery phases, CR-42 exact selected-host receipt binding and CR-43 exclusive fixed-root ownership. No target project, real host configuration, installer package, Ticket 02+, merge/push/deploy or requirements change. |
 | Receipt | `rcpt_local_orchestration_install_01_20260808` remains the sole positive dispatch authority. This corrected allocation is not a new ticket approval/dispatch. |
 | Required return | New implementation commit(s), then one final docs-only handoff. Evidence must include valid-shaped phase-forgery rejection, host-mismatch rollback, two-ID interleaving/recovery, every named boundary/port subtest's first-red reason, full regression/type/compile/privacy/smoke and target-repository success/failure non-interference. |
+
+## PRG-20260809-031 — Ticket 01 fourth independent review
+
+| Field | Value |
+| --- | --- |
+| State | `REVIEW / CHANGES_REQUESTED` |
+| Reviewed range | Baseline `7cc8b38`; implementation `c91041a`; docs-only handoff `ba74caf`; branch `codex/implementation-local-install-lifecycle-01-rework-3`. |
+| Passing corrections | CR-41 evidence-bearing phases/live absence checks, CR-42 selected-host receipt binding and CR-43 exclusive active-owner gate pass focused tests and reverse mutation checks. Full 147-test regression, 224 subtests, strict mypy across 71 files, five-module compile, diff and privacy sentinels pass. |
+| Blocking findings | CR-40 remains incomplete because finite failure-code tests do not assert clean/retryable effects and required boundary variants remain absent. CR-44 clears ledger/recovery before fallible owner release, leaving a stale owner with retries falsely reporting `NOT_INSTALLED`. CR-45 manifest mismatch and recovery-write failure can strand staged files or a live host receipt without durable recovery. Exact probes are recorded in the formal review. |
+| Scope classification | Implementation/contract/test correction only. Approved requirements, SPEC, architecture and delivery stage do not change; no `REQUIREMENT_CHANGED` event. |
+| Continuation | Mark rework-3 historical and automatically create a fresh allocation under receipt `rcpt_local_orchestration_install_01_20260808`; no second user dispatch question. Ticket 02 remains `DEPENDENCY_WAIT`. |

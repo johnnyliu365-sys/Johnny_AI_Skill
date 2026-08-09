@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01, AC-03, AC-06, AC-07, AC-08 |
 | Context / change | `doc/context/local-orchestration-installer/main.md` / `CHG-20260808-011` |
-| State | `IN_PROGRESS` — fresh allocation `aln_local_orchestration_install_01_rework_3_20260809` addresses CR-40 through CR-43; receipt `rcpt_local_orchestration_install_01_20260808` continues without a second question |
+| State | `CHANGES_REQUESTED` — rework-3 closes CR-41 through CR-43; CR-40, CR-44 and CR-45 require a fresh allocation; receipt `rcpt_local_orchestration_install_01_20260808` continues without a second question |
 | Language | Python 3.11, Pydantic strict models and standard-library filesystem test fakes |
 | Baseline | `afee39d` (`docs: plan local orchestration installer tickets`) |
 | Control-plane owner / reviewer | Codex / current `main` worktree |
@@ -60,6 +60,13 @@ Frontend composition / DI: the equivalent command/UI is `InstallControlPlane` / 
 ## Review return
 
 - Review: `doc/reviews/local-orchestration-installer/01-owned-install-lifecycle-code-review.md` (`CHANGES_REQUESTED`).
-- Blocked histories: `010110a` / `7bc5fd5`; `fd429fd`, `a222d89` / `8e39c99`; `4b840cd` / `7c73b14`. None may be reset, overwritten, cherry-picked or reused.
-- Corrected so far: CR-36/37 typed proof/absence validation; CR-38 normal recovery retry; CR-39 finite install verification rollback.
-- Still required: CR-40 complete matrix/red evidence; CR-41 evidence-bearing recovery phases; CR-42 selected-host receipt binding; CR-43 exclusive fixed-root ownership. A new control-plane handoff creates another fresh branch; no new user dispatch is needed.
+- Blocked histories: `010110a` / `7bc5fd5`; `fd429fd`, `a222d89` / `8e39c99`; `4b840cd` / `7c73b14`; `c91041a` / `ba74caf`. None may be reset, overwritten, cherry-picked or reused.
+- Corrected so far: CR-36/37 typed proof/absence validation; CR-38 normal recovery retry; CR-39 finite install verification rollback; CR-41 evidence-bearing recovery phases; CR-42 selected-host receipt binding; CR-43 exclusive fixed-root ownership.
+- Still required: CR-40 complete state/evidence matrix, CR-44 retryable final owner release and CR-45 durable/compensated install failure effects. A new control-plane handoff creates another fresh branch; no new user dispatch is needed.
+
+### Rework-3 review return
+
+- Reviewed range: `7cc8b38 → c91041a → ba74caf` on `codex/implementation-local-install-lifecycle-01-rework-3`.
+- Closed: CR-41 evidence-bearing/reverified recovery phases; CR-42 exact selected-host receipt binding; CR-43 exclusive active-owner gate.
+- Still required: CR-40 must assert clean/retryable state for every failure and finish the omitted boundary variants; CR-44 must retain retry authority through owner release; CR-45 must prevent manifest/recovery-write failures from stranding staged or host effects.
+- Classification: implementation/TDD correction only. The approved SPEC, architecture, ticket acceptance and receipt do not change; no `REQUIREMENT_CHANGED` event is emitted.
