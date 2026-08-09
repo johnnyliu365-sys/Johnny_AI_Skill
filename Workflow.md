@@ -60,9 +60,15 @@ flowchart TD
 
 `RequirementChangeLog` 是已確認變更的旁路追溯，不取代 Context、SPEC、tickets、TDD 或任一核准閘門。
 
-## P0：文件忽略要求
+<a id="governance-document-ownership"></a>
 
-- 本檔案於任何專案內都應處於 `.gitignore` 項目範圍。
+## P0：治理文件歸屬與插件隔離
+
+- `AGENTS.md`、`Workflow.md` 與 `CodeReview.md` 是 Johnny AI Skill 插件版本庫與安裝 bundle 的正式治理文件，必須保留在插件版本庫、隨插件版本發佈，並由安裝快取提供給插件使用。
+- 這三份文件不得建立、複製、覆寫、搬移、vendor、symlink 或以其他形式部署到 target project；插件安裝、啟用、project takeover、handoff 與移除流程都不得修改 target project 的 `.gitignore` 來隱藏或管理這三份文件。
+- target project 如需自己的 Agent、流程或 Code Review 規範，必須建立並維護 target-owned、target-versioned 的專案文件；不得引用插件安裝快取路徑、不得把本插件三份治理文件當成 target project 的正式產物，也不得形成對插件的 runtime、CI、hook、import、submodule 或 symlink 依賴。
+- 移除或停用插件後，只移除插件能力與對這三份插件治理文件的存取；不得刪除或改寫 target project 的任何原始碼、設定、資料或正式文件。
+- `.gitignore` 不是隔離、授權、文件歸屬或執行邊界，不得用來取代上述插件與 target project 的所有權分離。
 
 ## 專案啟用與唯一來源
 
@@ -524,7 +530,7 @@ implementation handoff 前，ticket 必須提交一個具 revision 的有限 `Ac
 
 ## 9. 實作語言規範
 
-本節只定義**選擇語言的條件**，不指定任何專案要用哪個語言。各專案依這些條件在自己的 `CONTEXT.md` `## 實作語言規範` 做出實例決定；該節才是該專案的權威內容。本檔為通用範本、不隨專案版控，實例決定必須落在共用 `CONTEXT.md`，否則未持有本檔的 Agent 無從遵循。
+本節只定義**選擇語言的條件**，不指定任何專案要用哪個語言。各專案依這些條件在自己的 `CONTEXT.md` `## 實作語言規範` 做出實例決定；該節才是該專案的權威內容。本檔是隨 Johnny AI Skill 插件進行版本控制與發佈的通用治理文件，僅由插件版本庫與安裝快取提供，不得複製或加入 target project；實例決定必須落在 target-owned、target-versioned 的 `CONTEXT.md`，否則未持有該專案正式文件的 Agent 無從遵循。
 
 ### 9.1 優先序
 

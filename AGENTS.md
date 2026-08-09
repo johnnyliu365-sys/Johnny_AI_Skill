@@ -20,7 +20,7 @@
 
 <a id="p0-source-type"></a>
 
-## P0：原始碼型別與文件忽略要求
+## P0：原始碼型別要求
 
 此為所有實作與 Code Review 必須遵守的阻擋規則；任何違反均不得進入 commit、下一張 ticket 或交接。
 
@@ -28,7 +28,7 @@
 - 變數、欄位、函式參數與回傳值、API／事件契約及領域模型必須使用具名、明確且可檢查的型別；以 enum、值物件、DTO 或等價模型表達有限狀態與領域概念。
 - 禁止以 `any`、隱含型別、未驗證的動態物件或字串慣例掩蓋資料契約。外部輸入如不可避免為動態資料，必須在邊界立即驗證、正規化並轉換為強型別，且不得向內層傳遞未驗證資料。
 - 使用的語言或工具必須啟用其可用的嚴格型別檢查；具體執行與分層規則依 [實作流程](Workflow.md#implementation) 辦理。
-- 本檔案於任何專案內都應處於 `.gitignore` 項目範圍。
+- 本檔與 `Workflow.md`、`CodeReview.md` 的文件歸屬、插件隔離及 target project 零複製規則，唯一依據 [Workflow.md 的「治理文件歸屬與插件隔離」](Workflow.md#governance-document-ownership)；不得在本檔另建競爭規則。
 
 Policy／response P0：政策讀取只能在 ephemeral boundary 產生 metadata-only
 結果，不得把原文放進 Router model、formatter、telemetry 或 error。固定
