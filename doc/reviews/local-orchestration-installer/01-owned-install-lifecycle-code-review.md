@@ -4,9 +4,9 @@
 | --- | --- |
 | Feature / ticket | `local-orchestration-installer` / `01-owned-install-lifecycle` |
 | SPEC / change | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / `CHG-20260808-011` |
-| Reviewed baseline | `5e772ec` |
-| Implementation / docs handoff | `49a250e` / `aafe154` |
-| Implementation owner | Codex implementation Agent / `codex/implementation-local-install-lifecycle-01-rework-7` |
+| Reviewed baseline | `ed1a282` |
+| Implementation / docs handoff | `8a7b221` / `8f867cc` |
+| Implementation owner | Codex implementation Agent / `codex/implementation-local-install-lifecycle-01-rework-8` |
 | Reviewer | Codex / current `main` worktree |
 | Result | `CHANGES_REQUESTED` |
 
@@ -14,7 +14,75 @@
 
 - Approved Context: `doc/context/local-orchestration-installer/main.md`.
 - Ticket scope: typed owned ledger, fake lifecycle ports and fail-closed install/uninstall only; no real host configuration, target project, Git adapter or package artifact is reviewed as delivered.
-- Receipt `rcpt_local_orchestration_install_01_20260808` remains valid. The review result blocks the rework-7 implementation branch as historical evidence; it does not alter the approved SPEC, ticket scope or the planning lane's Ticket-02 dependency wait.
+- Receipt `rcpt_local_orchestration_install_01_20260808` remains valid. The review result blocks the rework-8 implementation branch as historical evidence; it does not alter the approved SPEC, ticket scope or the planning lane's Ticket-02 dependency wait.
+
+## Rework-8 review result
+
+The submitted branch closes CR-54 through CR-56 on its cooperative adapters: pre-finalize uninstall recovery is matched to the exact success ledger, deterministic receipt intents are durable before registration, and complete receipt equality is enforced. The reported 151-test regression, 250 subtests and strict mypy result are independently reproducible. It is nevertheless `CHANGES_REQUESTED`: the application discards every returned removal/absence proof without checking that it proves the requested effect, and an install-cleanup checkpoint fault can strand recovery after owner release so every retry remains blocked.
+
+### CR-57 — P0: foreign typed proofs authorize `REMOVED` while a host effect remains live
+
+The port contracts return `RemovalProof` and `AbsenceProof`, but `_cleanup_install`, `_resume_uninstall` and `_finalize` ignore their values (`library/local_orchestration/lifecycle.py:195-198,240-251,267-274`). Consequently the application verifies neither proof owner nor registration/manifest subject before deleting the ledger, releasing the owner, clearing recovery and returning `REMOVED`.
+
+An independent adversarial `HostPort` delegated install normally, then made `remove` a no-op that returned a shape-valid proof for `foreign-install/foreign-registration` and made `verify_absent` return a shape-valid foreign absence proof. Uninstall returned `REMOVED` with one host registration still live, while owner, ledger and recovery were all deleted. This violates AC-06/07 and the explicit exact owner/manifest/receipt/proof/absence boundary.
+
+Required correction: every returned removal and absence proof must be strongly compared with the exact requested installation, registration and manifest/subject before any terminal authority is discarded. A missing, foreign, mismatched or replayed proof must produce finite `*_BLOCKED`, preserve owner/ledger/recovery, and permit a safe retry. Add adversarial typed-provider tests; cooperative fakes alone cannot prove this boundary.
+
+### CR-58 — P1: install cleanup releases owner before a fallible recovery clear and cannot resume
+
+`_cleanup_install` releases the active owner before clearing recovery (`lifecycle.py:204-205`). If `clear_recovery` fails, the durable install recovery remains but the owner is absent. `_install` treats owner absence plus any recovery as `AUTHORITY_MISMATCH`, so no subsequent call can consume or repair the state.
+
+An independent probe skipped physical staging to enter cleanup and injected `CLEAR_RECOVERY` at the terminal substep. The first call returned `INSTALL_BLOCKED`; the second and third also returned `INSTALL_BLOCKED/AUTHORITY_MISMATCH`, with `owner=None` and recovery still present. This reopens CR-40/44 for a reachable declared-port ordering.
+
+Required correction: checkpoint the terminal cleanup transition or order/compensate owner release and recovery clear so every single fault leaves a state a retry can recognize and converge. Add the exact clear-after-release red/green probe plus equivalent proof-validation failure/retry cases.
+
+### CR-40 remains open — cooperative fault matrix misses terminal ordering and untrusted proof behavior
+
+The submitted matrix injects individual enum faults and exercises the new CR-54/55/56 guards, but it does not inject `CLEAR_RECOVERY` after cleanup owner release and does not use a typed port returning mismatched proofs without performing the effect. Passing the current suite therefore cannot prove the ticket's clean-or-durable-retryable or exact-proof acceptance requirements.
+
+## Rework-8 independent verification
+
+| Check | Result |
+| --- | --- |
+| Branch ancestry / cleanliness | `ed1a282 → 8a7b221 → 8f867cc`; implementation worktree clean |
+| `git diff --check ed1a282..8f867cc` | Passed |
+| `python -m unittest discover -s tests -v` | 151 passed |
+| `python -m pytest -q` | 151 passed / 250 subtests |
+| `python -m mypy --strict library tests` | 73 source files clean |
+| Clear-after-release retry probe | Failed: repeated `INSTALL_BLOCKED/AUTHORITY_MISMATCH`, `owner=None`, recovery retained |
+| Foreign typed proof probe | Failed: returned `REMOVED`, retained one live host registration, deleted owner/ledger/recovery |
+| Worktree non-interference | Independent verification left the implementation worktree clean |
+
+## Rework-8 CodeReview standard check
+
+| Requirement | Result / evidence |
+| --- | --- |
+| Clear and strongly typed | Partial pass: proof DTOs are named, but their returned identities are never consumed. |
+| Coding/architecture rules | Partial pass: DI/ports are preserved; application trust validation is absent at the effect boundary. |
+| Logic correctness | Fail: CR-57 returns terminal success with a live effect; CR-58 cannot converge after a reachable fault. |
+| Boundary and exception behavior | Fail: typed foreign proofs are accepted and terminal cleanup retry is stranded. |
+| Security and ownership isolation | Fail: a provider can erase authoritative state without proving removal of the exact owned effect. |
+| Test coverage | Fail: CR-40 omits the two independently reproduced sequences. |
+| Dependencies | Pass: no new runtime dependency. |
+| SPEC/ticket compliance | Fail: AC-06/07/08 and exact owned removal remain incomplete. |
+
+## Rework-8 CodeReview §2.1 defect audit
+
+| # | Category | Result |
+| --- | --- | --- |
+| 1 | Path-prefix mismatch | Existing fixed-root/path tests pass. |
+| 2 | null / empty / containers | Existing public and persisted raw-state matrices pass. |
+| 3 | Authorization bypass | Fail: CR-57 accepts foreign typed proof identity as terminal authority. |
+| 4 | Token format/comparison | N/A by ticket; source sentinel passes. |
+| 5 | Error-code consistency | Finite codes are returned, but CR-58 repeats a non-recoverable authority mismatch. |
+| 6 | Exception propagation | Exceptions are contained; terminal state consistency is not. |
+| 7 | Tests cover described behavior | Fail: CR-57/58 are reproducible outside the submitted suite. |
+
+## Rework-8 required next rework
+
+The rework-8 branch is blocked historical evidence. The implementation owner must start a fresh branch directly from the next control-plane docs-only handoff baseline, without reset, merge, rebase, cherry-pick, source copy or reuse of `8a7b221` / `8f867cc`. Receipt `rcpt_local_orchestration_install_01_20260808` and bounded authority `PRG-20260809-042` continue; no second dispatch confirmation is valid.
+
+The next allocation must preserve the passing rework-8 contract, CR-54/55/56 guards and full matrix while adding exact proof consumption plus recoverable install-cleanup terminal ordering.
 
 ## Rework-7 review result
 

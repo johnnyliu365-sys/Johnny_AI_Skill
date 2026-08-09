@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01, AC-03, AC-06, AC-07, AC-08 |
 | Context / change | `doc/context/local-orchestration-installer/main.md` / `CHG-20260808-011` |
-| State | `IN_PROGRESS` — fresh allocation `aln_local_orchestration_install_01_rework_8_20260809` closes CR-54/55/56 while preserving the complete passing rework-7 surface; the existing receipt continues |
+| State | `CHANGES_REQUESTED` — rework-8 is blocked by CR-57/58 pending a fresh control-plane allocation; the existing receipt and bounded continuation authority remain valid |
 | Language | Python 3.11, Pydantic strict models and standard-library filesystem test fakes |
 | Baseline | `afee39d` (`docs: plan local orchestration installer tickets`) |
 | Control-plane owner / reviewer | Codex / current `main` worktree |
@@ -98,3 +98,10 @@ Frontend composition / DI: the equivalent command/UI is `InstallControlPlane` / 
 - Passing evidence: 150 unittest; 150 pytest / 239 subtests; strict mypy 73 files; in-memory compile, source sentinel, diff check, physical staging, all selected hosts and submitted boundary/fault/Git matrices pass.
 - Blocking evidence: CR-54 deletes a shape-valid recovery target before matching the authoritative ledger; CR-55 can leave a live host registration outside persisted recovery after a later checkpoint fault; CR-56 accepts a registration-ID-only mismatch as `INSTALLED`; CR-40 lacks those exact ordering/mismatch tests.
 - Classification: implementation/contract/TDD correction only. Approved SPEC, ticket, architecture, receipt, owner and delivery stage remain unchanged.
+
+### Rework-8 review return
+
+- Reviewed range: `ed1a282 → 8a7b221 → 8f867cc` on `codex/implementation-local-install-lifecycle-01-rework-8`.
+- Passing evidence: 151 unittest; 151 pytest / 250 subtests; strict mypy 73 files; CR-54/55/56 exact recovery, durable intent and full receipt guards pass.
+- Blocking evidence: CR-57 ignores returned removal/absence proof identity and can return `REMOVED` with a live host registration; CR-58 releases owner before a fallible cleanup recovery clear, leaving retries permanently `AUTHORITY_MISMATCH`; CR-40 omits both sequences.
+- Classification: implementation/contract/TDD correction only. Approved SPEC, ticket, architecture, receipt, implementation owner and delivery stage remain unchanged.
