@@ -1128,3 +1128,16 @@
 | Blocking evidence | CR-90/A5: implementation `.mypy_cache` files were rewritten at `17:17:37Z` and `17:18:44Z` inside the owner turn `17:15:44Z–17:19:44Z`, violating the no-hidden-cache boundary and contradicting the no-hidden-state-write handoff claim. CR-91/A5: branch handoff heading `PRG-20260810-087` duplicates the canonical control correction-review ID. |
 | Terminal decision | `BLOCKED / SUPERSEDE_REQUIRED`. No further same-ticket correction, implementation dispatch, new branch/worktree or reuse of the allocation/receipt is authorized. 05B, 05C and 04 remain dependency-waiting. |
 | Non-actions | Reviewer did not alter or clean the implementation worktree and performed no integration, push, deployment, schedule, live Codex mutation, target-project action, network/login or Secret handling. |
+
+## PRG-20260810-090 - Ticket 05A evidence-only cleanup authorization
+
+| Field | Value |
+| --- | --- |
+| Router event | `BLOCKED -> OWNER_SCOPED_OVERRIDE -> EVIDENCE_CLEANUP_HANDOFF -> IMPLEMENT / AUTO_CONTINUE` |
+| Owner authority | Explicit one-time authorization on 2026-08-10 for only cache cleanup and docs evidence repair after terminal review `ea372b7` |
+| Handoff / identity | `hnd_local_orchestration_install_05a_evidence_cleanup_20260810`; `aln_local_orchestration_install_05a_evidence_cleanup_20260810`; `rcpt_local_orchestration_install_05a_evidence_cleanup_20260810`; correlation/question `corr-local-orchestration-install-05a-evidence-cleanup-20260810` / `q-local-orchestration-install-05a-evidence-cleanup-20260810` |
+| Exact lane | Same task `019fcc9c-f34f-7d53-a313-c70c90bf3245`, sole worktree `C:\Users\<user>\Desktop\AI控制工作workflow-implementation`, branch `codex/implementation-codex-cli-preflight-05a`, exact HEAD `4fc81a5` |
+| Allowed cleanup | Resolve and remove only generated `.mypy_cache`, `.pytest_cache` and `__pycache__` below the assigned implementation worktree. Strict mypy must use a unique OS-temporary cache that is safely removed after verification. |
+| Allowed tracked change | Only `doc/WorkProgressReport.md`: change branch-local duplicate final-handoff heading `PRG-20260810-087` to reserved `PRG-20260810-091`, correct the no-hidden-state claim, and append exact cleanup/ignored-state evidence. One additive docs-only commit only. |
+| Required proof | Focused/full tests, strict mypy, in-memory compile, `git diff --check`, no source/test diff, clean porcelain, and no generated cache in ignored-state readback. Return one docs-only SHA; no review or integration decision. |
+| Prohibited | Source/test edit, implementation commit, amend/reset/rebase/force/cherry-pick, branch/worktree change, live Codex/target-project/host-config action, merge, push, release, deployment, schedule or dependent ticket |

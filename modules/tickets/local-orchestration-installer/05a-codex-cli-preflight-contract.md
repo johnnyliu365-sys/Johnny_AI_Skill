@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01, AC-02 and AC-08 |
 | Context / change | `doc/context/local-orchestration-installer/main.md` / `CHG-20260808-011` |
-| State | `BLOCKED / SUPERSEDE_REQUIRED` |
+| State | `BLOCKED / OWNER-AUTHORIZED EVIDENCE REPAIR PENDING` |
 | Parent evidence | Superseded Ticket 05; review `593e33a`; CR-80, CR-81, CR-82, CR-84 and CR-85 |
 | Baseline | Current control-plane decomposition commit, containing integrated Tickets 01–03 and no production Codex CLI adapter |
 | Control-plane owner / reviewer | Codex / current `main` worktree |
@@ -134,3 +134,23 @@ reuses canonical progress ID `PRG-20260810-087`.
 The terminal conclusion is `BLOCKED / SUPERSEDE_REQUIRED`. Allocation and
 receipt are not valid for another 05A correction. No implementation dispatch,
 new branch/worktree, integration or dependent-ticket start is authorized.
+
+## One-time evidence cleanup exception
+
+The owner explicitly authorizes one evidence-only continuation from `4fc81a5`
+in the existing implementation worktree and branch. Handoff
+`hnd_local_orchestration_install_05a_evidence_cleanup_20260810`, allocation
+`aln_local_orchestration_install_05a_evidence_cleanup_20260810` and receipt
+`rcpt_local_orchestration_install_05a_evidence_cleanup_20260810` apply only to:
+
+1. removing generated `.mypy_cache`, `.pytest_cache` and `__pycache__`
+   directories that resolve beneath the assigned implementation worktree;
+2. rerunning verification with mypy cache redirected to a unique OS-temporary
+   directory, then proving both tracked and ignored state are clean;
+3. one additive docs-only commit that changes the branch-local duplicate
+   `PRG-20260810-087` heading to reserved `PRG-20260810-091`, corrects the
+   hidden-state claim and records the cleanup evidence.
+
+No source/test edit, implementation commit, new branch/worktree, history
+rewrite, integration or dependent ticket is authorized. The following review
+is restricted to CR-90, CR-91 and A5.

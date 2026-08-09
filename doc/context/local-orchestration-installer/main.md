@@ -275,3 +275,12 @@ and the branch-local handoff reused canonical progress ID
 `PRG-20260810-087`. Ticket 05A is therefore `BLOCKED / SUPERSEDE_REQUIRED`.
 No further 05A dispatch, branch/worktree, integration or Ticket 05B/05C/04
 start is authorized without a new owner/control-plane decision.
+
+The owner then granted exactly that bounded decision: one evidence-only cleanup
+on the existing task/worktree/branch at `4fc81a5`. It permits removal of only
+generated Python/mypy/pytest caches beneath the implementation worktree,
+cache-free verification, and one docs-only correction that assigns the
+branch-local final handoff reserved ID `PRG-20260810-091` and corrects its
+hidden-state claim. It grants no source/test change, implementation commit,
+new branch/worktree, integration or 05B/05C/04 start. The next review is limited
+to CR-90, CR-91 and A5.

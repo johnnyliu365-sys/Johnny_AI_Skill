@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | Feature / ticket | `local-orchestration-installer` / `05a-codex-cli-preflight-contract` |
-| Result | `BLOCKED / SUPERSEDE_REQUIRED` after terminal owner-overridden review |
+| Result | `BLOCKED / OWNER-AUTHORIZED EVIDENCE REPAIR PENDING` after terminal review |
 | Reviewer | Codex / current `main` worktree |
 | Reviewed branch | `codex/implementation-codex-cli-preflight-05a` |
 | Boundary | Baseline `d90b69e`; final implementation `97ab31c`; final docs-only handoff `4fc81a5`; terminal control baseline `83e34c3` |
@@ -229,3 +229,27 @@ dispatch, branch or worktree. Ticket 05B, 05C and Ticket 04 remain dependency
 blocked. No integration, cleanup of the implementation worktree, push,
 deployment, schedule, live Codex mutation or target-project action was
 performed.
+
+## Owner-authorized evidence-only exception
+
+The owner explicitly authorized one exception limited to implementation-worktree
+cache cleanup and docs evidence repair. This does not reopen A1–A4, authorize a
+source/test change, or create another implementation correction. The existing
+task, worktree and branch remain the only permitted lane.
+
+| Field | Value |
+| --- | --- |
+| Control authority | `ea372b7` plus the owner's explicit evidence-only cleanup authorization on 2026-08-10 |
+| Handoff | `hnd_local_orchestration_install_05a_evidence_cleanup_20260810` |
+| Allocation / receipt | `aln_local_orchestration_install_05a_evidence_cleanup_20260810` / `rcpt_local_orchestration_install_05a_evidence_cleanup_20260810` |
+| Correlation / question | `corr-local-orchestration-install-05a-evidence-cleanup-20260810` / `q-local-orchestration-install-05a-evidence-cleanup-20260810` |
+| Exact base | Existing branch `codex/implementation-codex-cli-preflight-05a` at `4fc81a5`; no branch/worktree creation or switching |
+| Allowed mutation | Safely remove only `.mypy_cache`, `.pytest_cache` and generated `__pycache__` directories resolved beneath the assigned implementation worktree. No tracked source or test file may change. |
+| Verification | Run focused/full tests, strict mypy with a unique OS-temporary cache, in-memory compile, diff check, porcelain plus ignored-state readback, and prove no generated cache remains. |
+| Docs repair | One additive docs-only commit may change the branch-local final handoff heading from duplicate `PRG-20260810-087` to reserved `PRG-20260810-091`, correct the false hidden-state claim, and record cleanup/readback evidence. No other tracked file may change. |
+| Required return | `COMPLETED` with exactly one new docs-only SHA and exact cleanup/verification evidence, or typed `BLOCKED` with concrete evidence. The implementation owner makes no review/integration decision. |
+| Still prohibited | Source/test change, implementation commit, amend/reset/rebase/force/cherry-pick, new branch/worktree, live Codex or target-project action, hidden host config/cache, merge, push, release, deployment or schedule |
+
+After this return the control-plane reviewer may re-evaluate only CR-90/CR-91
+and A5. No automatic implementation dispatch or dependent ticket follows from
+the cleanup commit itself.
