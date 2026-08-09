@@ -570,3 +570,15 @@
 | Blocking findings | CR-40 remains incomplete because finite failure-code tests do not assert clean/retryable effects and required boundary variants remain absent. CR-44 clears ledger/recovery before fallible owner release, leaving a stale owner with retries falsely reporting `NOT_INSTALLED`. CR-45 manifest mismatch and recovery-write failure can strand staged files or a live host receipt without durable recovery. Exact probes are recorded in the formal review. |
 | Scope classification | Implementation/contract/test correction only. Approved requirements, SPEC, architecture and delivery stage do not change; no `REQUIREMENT_CHANGED` event. |
 | Continuation | Mark rework-3 historical and automatically create a fresh allocation under receipt `rcpt_local_orchestration_install_01_20260808`; no second user dispatch question. Ticket 02 remains `DEPENDENCY_WAIT`. |
+
+## PRG-20260809-032 — Ticket 01 fresh rework-4 handoff
+
+| Field | Value |
+| --- | --- |
+| State | `IMPLEMENT / FRESH_TDD_REWORK` |
+| Review baseline | `65252d6` records the fourth `CHANGES_REQUESTED`. `c91041a` and `ba74caf` join all older implementation branches as immutable historical evidence. |
+| Fresh handoff / allocation | `hnd_local_orchestration_install_01_rework_4_20260809` / `aln_local_orchestration_install_01_rework_4_20260809`; branch `codex/implementation-local-install-lifecycle-01-rework-4` starts directly from this current docs-only handoff commit. |
+| Scope | Fresh red → minimal typed implementation → green for CR-40's complete state/boundary matrix, CR-44 retryable owner-release finalization and CR-45 durable or verified-compensated effects after manifest/recovery-write failure. Preserve all closed CR-36 through CR-43 behavior. No target project, real host configuration, installer package, Ticket 02+, merge/push/deploy or requirements change. |
+| Required red/green evidence | Separately prove owner-release failure retries to a terminal released owner; recovery-clear then owner-release faults cannot lose authority; manifest mismatch leaves no unowned staged path; recovery-write fault after a host effect leaves either verified clean state or durable resumable recovery; same-ID retry converges and a foreign ID cannot claim residue. Complete omitted installation-ID and owned-path boundary variants and assert filesystem/host/owner/ledger/recovery state for every fault. |
+| Receipt | `rcpt_local_orchestration_install_01_20260808` remains the sole positive dispatch authority. This corrected allocation is not a new ticket approval/dispatch. |
+| Required return | New implementation commit(s), then one final docs-only handoff with exact first-red names/reasons, retry terminal outcomes, complete regression/type/compile/privacy/smoke, target-repository non-interference and `git diff --check`. |
