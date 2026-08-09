@@ -960,3 +960,18 @@
 | Capability boundary | The only reusable type is integrated `InstallationId`. `CODEX` and `CLAUDE` public queries always return `UNVERIFIED` with zero lifecycle calls. Only host `RECORDED` can enter the fake lifecycle, and even a non-validating copied public-host request is revalidated and blocked before effects. No production adapter or live support claim exists. |
 | Scope / ceiling | Exactly four authorized production files and `tests/test_reversible_agent_host_lifecycle.py`; production 545/550 non-blank lines and test 317/450. Ticket-01/02 source and tests are unchanged; no additional file, branch or worktree was created. |
 | Handoff authority | Handoff `hnd_local_orchestration_install_03_20260809`; allocation `aln_local_orchestration_install_03_20260809`; receipt `rcpt_local_orchestration_install_03_20260809`; correlation `corr-local-orchestration-install-03-20260809`; authority `PRG-20260809-042`. The implementation owner makes no review or integration decision. |
+
+## PRG-20260809-075 - Ticket 03 H7 proof-boundary correction implementation handoff
+
+| Field | Value |
+| --- | --- |
+| State | `CORRECTION_COMPLETED / INDEPENDENT_CORRECTION_REVIEW_PENDING` |
+| Ticket / closure | `03-reversible-agent-host-lifecycle` / unchanged `CLOSURE-LOCAL-INSTALL-T03-01` (`H1..H8`). |
+| Review / correction authority | Initial review `b343df4` (`CHANGES_REQUESTED`); correction record `PRG-20260809-074`; expected control baseline `976d436e484201a3f0039c61907de93dae324d15`; bounded owner authority `PRG-20260809-042`. |
+| Existing lane | Same branch `codex/implementation-host-capability-gate-03`, sole implementation worktree, handoff `hnd_local_orchestration_install_03_20260809`, allocation `aln_local_orchestration_install_03_20260809` and receipt `rcpt_local_orchestration_install_03_20260809`. No branch or worktree was added or switched. |
+| Additive correction | Source-and-test commit `673ff7c50121db21460c87d1cbb28731ce358f49` recursively reconstructs the lifecycle-returned `AgentHostRemovalProof` at the Gate boundary. Invalid nested evidence now returns `REMOVAL_PROOF_MISMATCH` before absence verification or `SUPPORTED` / `REMOVED` serialization. |
+| First red evidence | `test_h7_forged_nested_removal_evidence_fails_before_absence_check` returned `SUPPORTED`; its serialized removal proof contained `SECRET-SENTINEL`. The adversarial lifecycle supplied a nominal proof whose nested `HostEvidenceId` used non-validating construction and otherwise returned a valid absence command. |
+| Green evidence | Focused H7 passed; exact H1..H8 module passed 9/9; full discovery passed 156/156; strict mypy passed for all five authorized files; in-memory compile passed for the same five files; `git diff --check` and the production forbidden-capability scan passed. Production is 549/550 and the test is 351/450 non-blank lines. |
+| Actual Git isolation | Supported, unavailable-blocked and forged-proof probes ran between recursive SHA-256 snapshots of one existing and one empty actual temporary Git repository. Both remained byte-identical; porcelain remained `?? existing.txt` and empty respectively. |
+| Reverse mutation | Removing only the Gate proof reconstruction made the focused H7 test fail again with `SUPPORTED` and the serialized sentinel. Restoring it made the focused test and full verification pass. |
+| Scope / handoff | Only `host_lifecycle.py` and the existing Ticket-03 test changed in the correction commit; this entry is the separate docs-only handoff. No review decision, live host action, target-project write, Ticket-01/02 edit, merge, push, deployment or schedule action was performed. |
