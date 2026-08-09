@@ -36,9 +36,9 @@ class CodexCliPreflight:
             if proof.installation_id != request.installation_id or proof.root != request.root or proof.locator != request.marketplace_source:
                 raise _Failure(CodexBlockReason.SOURCE_MISMATCH)
             markets = self._parse(self._run(("codex", "plugin", "marketplace", "list", "--json")), CodexMarketplaceList).marketplaces
-            plugins = self._parse(self._run(("codex", "plugin", "list", "--json")), CodexPluginList).installed
+            plugins = self._parse(self._run(("codex", "plugin", "list", "--available", "--json")), CodexPluginList)
             names = {entry.name.casefold() for entry in markets}
-            if request.marketplace.value.casefold() in names or any(entry.name.casefold() == request.plugin.value.casefold() for entry in plugins):
+            if request.marketplace.value.casefold() in names or any(entry.name.casefold() == request.plugin.value.casefold() for entry in plugins.installed + plugins.available):
                 raise _Failure(CodexBlockReason.COLLISION)
             return CodexPreflightEligible(version=version)
         except _Failure as failure: return CodexBlocked(reason=failure.reason)
@@ -47,7 +47,7 @@ class CodexCliPreflight:
 
     def _version(self) -> CodexCliVersion:
         text = self._run(("codex", "--version")).stdout.strip()
-        match = re.search(r"\b\d+\.\d+\.\d+(?:[-+][A-Za-z0-9.-]+)?\b", text)
+        match = re.fullmatch(r"codex-cli (\d+\.\d+\.\d+(?:-[A-Za-z0-9.-]+)?(?:\+[A-Za-z0-9.-]+)?)", text)
         if match is None: raise _Failure(CodexBlockReason.UNSUPPORTED_CLI)
         return CodexCliVersion(value=match.group(0))
 

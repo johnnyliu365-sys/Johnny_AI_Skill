@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import unittest
 from pathlib import Path
@@ -22,6 +23,10 @@ ROOT = InstallRoot(value=CANONICAL_INSTALL_ROOT)
 MARKET = CodexMarketplaceName(value="probe-market")
 PLUGIN = CodexPluginName(value="probe-plugin")
 SOURCE = OwnedRelativePath(value="marketplaces/probe-market")
+
+
+def source_path(locator: str = SOURCE.value) -> str:
+    return os.environ["LOCALAPPDATA"] + "\\JohnnyAIWorkflow\\" + locator.replace("/", "\\")
 
 
 class Commands(CodexCommandPort):
@@ -46,7 +51,7 @@ class Source(CodexFilesystemPort):
         if isinstance(self.proof, Exception):
             raise self.proof
         return self.proof or CodexSourceProof(installation_id=request.installation_id, root=request.root,
-            locator=request.marketplace_source, absolute_path=r"C:\Users\tester\JohnnyAIWorkflow\marketplaces\probe-market")
+            locator=request.marketplace_source, absolute_path=source_path(request.marketplace_source.value))
 
 
 class Nonzero(Commands):
@@ -68,8 +73,8 @@ def marketplace(items: list[dict[str, object]] | None = None) -> dict[str, objec
     return {"marketplaces": items or []}
 
 
-def plugin_list(items: list[dict[str, object]] | None = None) -> dict[str, object]:
-    return {"installed": items or [], "available": []}
+def plugin_list(items: list[dict[str, object]] | None = None, available: list[dict[str, object]] | None = None) -> dict[str, object]:
+    return {"installed": items or [], "available": available or []}
 
 
 def plugin(name: str = PLUGIN.value, market: str = MARKET.value) -> dict[str, object]:
@@ -111,7 +116,7 @@ class CodexCliPreflightTests(unittest.TestCase):
 
     def test_a2_foreign_filesystem_proof_is_blocked_before_lists(self) -> None:
         proof = CodexSourceProof(installation_id=INSTALL, root=ROOT, locator=OwnedRelativePath(value="marketplaces/other"),
-            absolute_path=r"C:\Users\tester\JohnnyAIWorkflow\marketplaces\other")
+            absolute_path=source_path("marketplaces/other"))
         command = Commands([version()])
         result = CodexCliPreflight(command, Source(proof)).check(request())
         self.assertEqual(CodexBlockReason.SOURCE_MISMATCH, cast(CodexBlocked, result).reason)
@@ -131,6 +136,37 @@ class CodexCliPreflightTests(unittest.TestCase):
             result = CodexCliPreflight(command, Source()).check(request())
             self.assertIsInstance(result, CodexBlocked)
             self.assertEqual(3, len(command.calls))
+
+    def test_cr86_official_optional_sources_and_plain_version_are_strict(self) -> None:
+        other = plugin("other", "other") | {"marketplaceSource": {"type": "local", "value": "marketplaces/other"}}
+        present = marketplace([{"name": "other", "root": "root", "marketplaceSource": {"type": "local", "value": "marketplaces/other"}}])
+        self.assertIsInstance(CodexCliPreflight(Commands([version(), present, plugin_list(available=[other])]), Source()).check(request()), CodexPreflightEligible)
+        bad_market = marketplace([{"name": "other", "root": "root", "marketplaceSource": "local"}])
+        bad_plugin = plugin("other", "other") | {"marketplaceSource": {"type": "local", "value": "x", "extra": "x"}}
+        for text, markets, plugins in ((version(), bad_market, plugin_list()), (version(), marketplace(), plugin_list(available=[bad_plugin])), ("not-codex warning 9.9.9 trailing", marketplace(), plugin_list())):
+            with self.subTest(text=text, markets=markets, plugins=plugins):
+                result = CodexCliPreflight(Commands([text, markets, plugins]), Source()).check(request())
+                self.assertIsInstance(result, CodexBlocked)
+
+    def test_cr87_absolute_proof_must_be_exact_canonical_root_before_lists(self) -> None:
+        paths = (r"C:\FOREIGN\marketplaces\probe-market", source_path().replace("JohnnyAIWorkflow", "JohnnyAIWorkflowX"), source_path().replace("JohnnyAIWorkflow", "XJohnnyAIWorkflow"), source_path() + "\\", source_path().replace("JohnnyAIWorkflow", "johnnyaiworkflow"), source_path().replace("marketplaces\\", "marketplaces%2F"), source_path().replace("marketplaces", "marketplaces\\..\\marketplaces"))
+        proofs = tuple(CodexSourceProof.model_construct(installation_id=INSTALL, root=ROOT, locator=SOURCE, absolute_path=value) for value in paths) + (CodexSourceProof.model_construct(installation_id=InstallationId.model_construct(value="foreign"), root=ROOT, locator=SOURCE, absolute_path=source_path()), CodexSourceProof.model_construct(installation_id=INSTALL, root=InstallRoot.model_construct(value=CANONICAL_INSTALL_ROOT + "X"), locator=SOURCE, absolute_path=source_path()))
+        for proof in proofs:
+            command = Commands([version()])
+            result = CodexCliPreflight(command, Source(proof)).check(request())
+            self.assertEqual(CodexBlockReason.SOURCE_MISMATCH, cast(CodexBlocked, result).reason)
+            self.assertEqual((("codex", "--version"),), tuple(command.calls))
+
+    def test_cr88_available_collision_blocks_with_documented_command(self) -> None:
+        for name in (PLUGIN.value, PLUGIN.value.upper()):
+            command = Commands([version(), marketplace(), plugin_list(available=[plugin(name, "foreign")])])
+            result = CodexCliPreflight(command, Source()).check(request())
+            self.assertEqual(CodexBlockReason.COLLISION, cast(CodexBlocked, result).reason)
+            self.assertEqual(("codex", "plugin", "list", "--available", "--json"), command.calls[-1])
+
+    def test_cr89_missing_executable_has_stable_reason(self) -> None:
+        result = CodexCliPreflight(Commands([FileNotFoundError()]), Source()).check(request())
+        self.assertEqual(CodexBlockReason.EXECUTABLE_UNAVAILABLE, cast(CodexBlocked, result).reason)
 
     def test_a4_declared_failures_are_finite(self) -> None:
         failures: tuple[Exception, ...] = (FileNotFoundError(), PermissionError(), subprocess.TimeoutExpired("codex", 1), OSError())

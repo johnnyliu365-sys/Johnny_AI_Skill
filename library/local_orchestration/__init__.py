@@ -83,7 +83,7 @@ from .host_contracts import (
     HostRemovalRequest,
     HostRemovalSucceeded,
     CodexBlockReason, CodexBlocked, CodexCliVersion, CodexCommandPort, CodexCommandResponse,
-    CodexFilesystemPort, CodexMarketplaceEntry, CodexMarketplaceList, CodexMarketplaceName,
+    CodexFilesystemPort, CodexMarketplaceEntry, CodexMarketplaceList, CodexMarketplaceName, CodexMarketplaceSource,
     CodexPluginEntry, CodexPluginList, CodexPluginName, CodexPreflightEligible,
     CodexPreflightRequest, CodexSourceProof,
 )
@@ -156,7 +156,7 @@ __all__ = [
     "RecordedHostLifecycle", "ReversibleHostCapabilityGate",
     "CodexCliPreflight", "ProcessCodexCommandPort",
     "CodexBlockReason", "CodexBlocked", "CodexCliVersion", "CodexCommandPort", "CodexCommandResponse",
-    "CodexFilesystemPort", "CodexMarketplaceEntry", "CodexMarketplaceList", "CodexMarketplaceName",
+    "CodexFilesystemPort", "CodexMarketplaceEntry", "CodexMarketplaceList", "CodexMarketplaceName", "CodexMarketplaceSource",
     "CodexPluginEntry", "CodexPluginList", "CodexPluginName", "CodexPreflightEligible",
     "CodexPreflightRequest", "CodexSourceProof",
 ]

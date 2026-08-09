@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 from enum import Enum
+from os import path
 from typing import ClassVar, Literal, Protocol, Self, runtime_checkable
 
 from pydantic import BaseModel, ConfigDict, field_validator, model_validator
 
-from .contracts import InstallRoot, InstallationId, OwnedRelativePath
+from .contracts import CANONICAL_INSTALL_ROOT, InstallRoot, InstallationId, OwnedRelativePath
 
 
 CANONICAL_HOST_REGISTRATION_KEY = "JohnnyAIWorkflow/AgentHost"
@@ -235,6 +236,12 @@ class CodexMarketplaceName(_CodexValue): pass
 class CodexPluginName(_CodexValue): pass
 
 
+class CodexMarketplaceSource(_StrictModel):
+    type: str
+    value: str
+    _valid = field_validator("type", "value")(classmethod(lambda cls, value: _codex_text(value, "marketplace source field")))
+
+
 class CodexCommandResponse(_StrictModel):
     exit_code: int
     stdout: str
@@ -244,7 +251,7 @@ class CodexCommandResponse(_StrictModel):
 class CodexMarketplaceEntry(_StrictModel):
     name: str
     root: str
-    source: str | None = None
+    marketplaceSource: CodexMarketplaceSource | None = None
     _valid = field_validator("name", "root")(classmethod(lambda cls, value: _codex_text(value, "marketplace field")))
 
 
@@ -265,6 +272,7 @@ class CodexPluginEntry(_StrictModel):
     source: str
     installPolicy: str
     authPolicy: str
+    marketplaceSource: CodexMarketplaceSource | None = None
     _valid = field_validator("pluginId", "name", "marketplaceName", "version", "source", "installPolicy", "authPolicy")(classmethod(lambda cls, value: _codex_text(value, "plugin field")))
 
 
@@ -295,8 +303,7 @@ class CodexSourceProof(_StrictModel):
     absolute_path: str
     @model_validator(mode="after")
     def exact_locator(self) -> Self:
-        path = self.absolute_path.replace("/", "\\")
-        if "://" in self.absolute_path or not ((len(path) > 2 and path[1] == ":" and path[2] == "\\") or path.startswith("\\")) or not path.endswith("\\" + self.locator.value.replace("/", "\\")):
+        if self.absolute_path != path.expandvars(CANONICAL_INSTALL_ROOT) + "\\" + self.locator.value.replace("/", "\\"):
             raise ValueError("source proof is not an owned absolute locator")
         return self
 
