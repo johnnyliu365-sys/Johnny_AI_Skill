@@ -118,7 +118,7 @@
 | Ticket 02 implementation | DONE / APPROVED / INTEGRATED | Closure `D1..D8` passed; implementation `6cc8fb5`, independent review `4527f49`, guarded merge `92c58bf`; allocation and branch released. |
 | Ticket 03 implementation | DONE / APPROVED / INTEGRATED | Closure `H1..H8`; implementation `16597b6`, H7 correction `673ff7c`, final review `5601594`, guarded merge `60cb8cf`; allocation and branch released. |
 | Toolchain and Codex capability probe | DONE / VERIFIED | Inno Setup 6.7.3 is installed per user with valid signature and compile proof. One disposable Codex CLI marketplace/plugin was installed, hash-verified and completely removed without target-project access. |
-| Ticket 05 Codex CLI adapter | IN_PROGRESS / DISPATCH_PREPARED | Closure `K1..K8`, four production files, one test, unique handoff/allocation/receipt and the existing sole implementation worktree. |
+| Ticket 05 Codex CLI adapter | IN_PROGRESS / CORRECTION_DISPATCH_PREPARED | Initial review `dac99fd` returned CR-73..CR-79; corrected closure `CLOSURE-LOCAL-INSTALL-T05-02` keeps the same ticket, owner, branch, worktree, allocation and receipt. |
 | Ticket 04 implementation | PLANNED / DEPENDENCY_WAIT | Pinned compiler is ready; package work waits only for Ticket 05 independent approval/integration. |
 
 ### Ticket 05 selection after external capability proof
@@ -136,3 +136,10 @@ within K1–K8, four production files and one test. It uses exactly one branch i
 the existing sole implementation worktree; no second live registration,
 additional worktree, target-project access or schedule is authorized. Ticket 04
 remains dependency-waiting until independent Ticket-05 approval and integration.
+
+Initial independent review `dac99fd` reproduced false/escaping boundary results,
+partial registration residue, foreign absence-proof acceptance and an adapter
+contract incompatible with the documented CLI. Ticket design repair
+`CLOSURE-LOCAL-INSTALL-T05-02` adds the missing installer-owned marketplace
+source boundary and exact public JSON contract. The same implementation lane
+receives one additive correction; Ticket 04 remains dependency-waiting.

@@ -1028,3 +1028,15 @@
 | CLI authority | Current official Codex CLI command reference plus owner-authorized `PRG-20260809-077`; the control shell's WindowsApps executable remained access-denied, so no second live mutation was attempted. |
 | Finding route | `CHANGES_REQUESTED`; repair Ticket 05 and re-freeze its closure, then resume the same owner/worktree/branch/allocation/receipt with additive commits. No new branch/worktree, reset, amend, force, merge, push, deployment, schedule or Ticket-04 implementation. |
 | Review report | `doc/reviews/local-orchestration-installer/05-codex-cli-host-adapter-code-review.md` |
+
+## PRG-20260809-080 — Ticket 05 corrected closure and same-lane handoff
+
+| Field | Value |
+| --- | --- |
+| Router event | `TICKET_REPAIR_COMPLETED → CORRECTION_HANDOFF → IMPLEMENT / AUTO_CONTINUE` |
+| Review / closure | Initial review `dac99fd`; corrected `CLOSURE-LOCAL-INSTALL-T05-02` retains K1–K8 and adds finite repair clauses R1–R8. |
+| Ticket repair | Added the missing strictly proved installer-owned marketplace source, official command/JSON shapes, canonical receipt identity, finite root/port boundaries, attempt cleanup, conjunctive absence, exact returned-proof consumption and truthful Git/reverse evidence. No SPEC or requirement changed. |
+| Retained lane | Handoff `hnd_local_orchestration_install_05_cr1_20260809`; same task `019fcc9c-f34f-7d53-a313-c70c90bf3245`, implementation worktree, branch `codex/implementation-codex-cli-host-adapter-05`, allocation `aln_local_orchestration_install_05_20260809` and receipt `rcpt_local_orchestration_install_05_20260809`. |
+| Correction scope | Same four production files and one test, final net ceilings `400 / 450`; additive commit(s) on the current branch followed by one docs-only correction handoff. Clear only the reviewer-generated `__pycache__/` in the owner worktree. |
+| Required evidence | CR-73..CR-79 direct probes, K1–K8/R1–R8 exact red/green, official-schema fixtures, full regression, strict mypy, no-bytecode compile, source/scope checks, actual existing/empty Git byte/porcelain invariance and isolated reverse mutations. |
+| Prohibited | New branch/worktree, reset/amend/rebase/force, second live registration, target-project write, historical-source reuse, package/Ticket-04 work, merge, push, deployment or schedule action. |

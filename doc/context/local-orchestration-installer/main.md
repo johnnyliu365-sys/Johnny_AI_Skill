@@ -197,3 +197,16 @@ Ticket 05 is now the only selected implementation lane and reuses the existing
 sole implementation worktree. Ticket 04 is `PLANNED / DEPENDENCY_WAIT` until
 Ticket 05 is independently approved and integrated. No additional worktree,
 second live registration or schedule is authorized.
+
+## Ticket 05 initial review and corrected closure
+
+Initial review `dac99fd` returned `CHANGES_REQUESTED` with CR-73..CR-79. The
+approved SPEC and user outcome are unchanged. CR-73 is a control-plane ticket
+defect: the original closure omitted the installer-owned local marketplace
+source required by the documented CLI. Corrected closure
+`CLOSURE-LOCAL-INSTALL-T05-02` defines that source as an ephemeral, strictly
+proved locator below the canonical installer root and aligns commands/JSON,
+receipt identity, cleanup, absence proof and evidence matrices with the public
+CLI. The same Ticket-05 task, worktree, branch, allocation and receipt remain
+active; only one additive correction and one correction review are permitted.
+Ticket 04 remains `PLANNED / DEPENDENCY_WAIT`.

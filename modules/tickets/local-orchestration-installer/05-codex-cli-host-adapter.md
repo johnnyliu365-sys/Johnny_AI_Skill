@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01, AC-02, AC-07 and AC-08 |
 | Context / change | `doc/context/local-orchestration-installer/main.md` / `CHG-20260808-011` |
-| State | `IN_PROGRESS / DISPATCH_PREPARED` |
+| State | `IN_PROGRESS / CORRECTION_DISPATCH_PREPARED` |
 | Language | Python 3.11, strict Pydantic contracts and a Windows Codex CLI infrastructure adapter |
 | Baseline | Tickets 01–03 reviewed and integrated at `60cb8cf`; owner-authorized Codex CLI lifecycle proof recorded by `PRG-20260809-077` |
 | Control-plane owner / reviewer | Codex / current `main` worktree |
@@ -49,7 +49,7 @@ Out of scope: Claude, hidden config edits, recursive cache deletion, broad
 network download, compiler/package work, target-project access, Secret handling,
 push, deployment, release, another worktree or another implementation branch.
 
-## Frozen closure — `CLOSURE-LOCAL-INSTALL-T05-01`
+## Initial frozen closure — `CLOSURE-LOCAL-INSTALL-T05-01`
 
 | Cut | Required red/green behavior |
 | --- | --- |
@@ -61,6 +61,26 @@ push, deployment, release, another worktree or another implementation branch.
 | `K6` | Unregister requires the exact receipt, removes plugin then marketplace, parses each response, verifies both absent and verifies the exact installed path returned by registration absent. Only then may it issue the matching `HostRemovalProof`. |
 | `K7` | Replay, foreign receipt, tampered digest, mismatched owner/manifest, failed remove, stale list response and path-prefix tricks remain blocked or idempotently absent with zero unrelated effects. Existing installed plugins and marketplaces are byte/list invariant. |
 | `K8` | Run exact ticket tests, full project tests, strict mypy, in-memory compile, source sentinel and reverse mutations for K1–K7. Existing and empty temporary Git repositories remain byte/porcelain identical. The control-plane live proof in `PRG-20260809-077` is capability evidence only; implementation may not perform a second live registration. |
+
+## Corrected closure — `CLOSURE-LOCAL-INSTALL-T05-02`
+
+Initial review `dac99fd` classified CR-73 as a `TICKET_DEFECT`: the initial
+closure required the documented local marketplace lifecycle without defining
+the marketplace source locator required by the public CLI. This correction is
+ticket design repair under the already approved SPEC; it does not change the
+user outcome, authority, implementation owner, branch, worktree, allocation or
+receipt. All K1–K8 requirements remain, with these finite clarifications:
+
+| Repair | Required correction behavior |
+| --- | --- |
+| `R1` — owned source | Add a strict named marketplace-source reference to the install request. It identifies only a relative payload below the canonical installer-owned root. The injected filesystem boundary resolves and proves the ephemeral absolute local source before the first CLI effect; the adapter strictly reconstructs that returned proof and rejects target-project, URI, cwd-relative, foreign-installation, traversal, prefix/suffix/case or non-normalized values. No absolute source is stored in the receipt, Router, telemetry or handoff. |
+| `R2` — actual CLI contract | Use the official command surface: plain typed `codex --version`; `plugin marketplace add <local-source> --json`; `plugin add <plugin>@<marketplace> --json` without `--version`; documented add/list/remove JSON DTOs (`marketplaceName`/`installedRoot`, marketplace `name`/`root`, plugin `installed`/`available`, and add/remove plugin identity fields). The expected plugin version is verified from observed output rather than supplied through an unsupported flag. |
+| `R3` — exact receipt | A success receipt includes the canonical `HostRegistrationKey` and binds the current installation, marketplace source reference, marketplace, plugin, expected/observed version, manifest digest, exact installed relative locator and observed CLI plugin identity. Do not invent owner, digest or registration fields that the CLI does not emit; ownership comes from preflight absence plus the exact current-attempt request/add result/filesystem proof. |
+| `R4` — finite boundaries | Root request/receipt and every returned port DTO are reconstructed with strict validation before use. Missing/invalid ports fail construction; timeout is finite and within bounds; nonzero, malformed JSON, unsupported surface, invalid UTF-8 and declared process errors return one finite typed blocked reason with zero false success. |
+| `R5` — attempt cleanup | After the first owned mutation, every later failure attempts only current-attempt exact cleanup in plugin-then-marketplace order. Stale/missing verification cannot skip cleanup. Cleanup failure remains blocked with retry authority and never reports installed/absent. |
+| `R6` — terminal absence | `ABSENT` or `REMOVED` requires the conjunction of exact plugin absence, exact marketplace absence and exact owned-path absence. A retry after plugin removal but before marketplace removal must finish or block marketplace removal; it cannot return early absence. |
+| `R7` — exact proof | Filesystem manifest/absence results are recursively strict-revalidated and must match installation plus the exact source/installed locator and digest where applicable. Nominal, constructed, foreign, prefix/suffix/case, replayed or stale proof never authorizes success. |
+| `R8` — evidence truth | Add one-to-one tests for every initial K1–K8 and R1–R7 boundary, including official JSON fixtures, cleanup/retry terminal state, unrelated plugin/marketplace invariance, actual existing/empty Git byte and porcelain snapshots, exact first-red output and isolated reverse mutations. The owner clears reviewer-generated `__pycache__/` before returning a clean worktree. |
 
 ## Evidence and review boundary
 
@@ -93,3 +113,16 @@ push, deployment, release, another worktree or another implementation branch.
 | Granted scope | Only the four production files, one test, K1–K8 evidence and implementation/docs-only commits listed above |
 | Branch rule | Create exactly one new-ticket branch in the existing sole implementation worktree; review correction stays additive on that same branch |
 | Not granted | Another worktree/branch, a second live Codex registration, hidden config/cache mutation, target-project write, compiler/package work, merge, push, deployment or schedule action |
+
+## Correction handoff
+
+| Field | Value |
+| --- | --- |
+| Correction handoff | `hnd_local_orchestration_install_05_cr1_20260809` |
+| Initial review | `dac99fd` / `doc/reviews/local-orchestration-installer/05-codex-cli-host-adapter-code-review.md` |
+| Closure | `CLOSURE-LOCAL-INSTALL-T05-02` (`K1..K8` plus finite repairs `R1..R8`) |
+| Retained lane | Ticket `05`; task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; worktree `C:\Users\<user>\Desktop\AI控制工作workflow-implementation`; branch `codex/implementation-codex-cli-host-adapter-05`; allocation `aln_local_orchestration_install_05_20260809`; receipt `rcpt_local_orchestration_install_05_20260809` |
+| Expected control baseline | The control-plane commit containing this ticket repair and `PRG-20260809-080` |
+| Authorized correction | Additive implementation correction(s) and one docs-only correction handoff, limited to the same four production files and one test. The final net source/test ceilings remain `400` / `450`; simplify or replace incorrect code rather than adding another file. |
+| Required return | Exact first-red names/reasons, official-schema fixtures, CR-73..CR-79 probes, K1–K8/R1–R8 green, strict mypy, no-bytecode in-memory compile, source/scope checks, actual-Git isolation, reverse mutations, clean worktree, implementation commit(s), then docs-only handoff commit. |
+| Still prohibited | New branch/worktree, reset, amend, rebase, force, historical-source reuse, second live registration, target-project write, package/Ticket-04 work, merge, push, deployment or schedule action. |
