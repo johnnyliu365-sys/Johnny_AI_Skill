@@ -664,3 +664,14 @@
 | Fixed owner / lane | Implementation owner remains Codex task `019fcc9c-f34f-7d53-a313-c70c90bf3245` in `C:\Users\<user>\Desktop\AI控制工作workflow-implementation`; only one implementation ticket lane may be active at a time. |
 | Mandatory stop | Stop only for a concrete typed `HALT`, `CHANGE_DETECTED → REQUIREMENT_CHANGED`, Wayfinder `NO-GO`, missing external authority, unsupported host/tool evidence, or a requested operation outside the approved SPEC. Ordinary progress, commits, review corrections and ticket transitions are `AUTO_CONTINUE`. |
 | Exclusions | No deployment, real host mutation, target-project write, new requirement, Secret handling, merge conflict shortcut, force operation, push or release is pre-authorized by this record. |
+
+## PRG-20260809-043 — Ticket 01 eighth independent review
+
+| Field | Value |
+| --- | --- |
+| State | `REVIEW / CHANGES_REQUESTED` |
+| Reviewed range | Baseline `5e772ec`; implementation `49a250e`; docs-only handoff `aafe154`; branch `codex/implementation-local-install-lifecycle-01-rework-7`. |
+| Reproduced passing evidence | 150 unittest; 150 pytest / 239 subtests; strict mypy 73 files; in-memory compile, source sentinel and diff check pass. |
+| Blocking findings | CR-54: shape-valid tampered recovery deletes before authoritative ledger comparison. CR-55: a post-host recovery-checkpoint fault leaves a live registration with no durable receipt. CR-56: registration-ID mismatch is accepted as `INSTALLED`. CR-40 lacks these exact red/green paths. |
+| Scope classification | Implementation/contract/TDD correction only; approved SPEC, ticket, architecture, delivery stage, implementation owner and receipt do not change. |
+| Continuation | Mark rework-7 historical and automatically create a fresh allocation under the existing receipt and bounded authority `PRG-20260809-042`; Ticket 02 remains `DEPENDENCY_WAIT`. |

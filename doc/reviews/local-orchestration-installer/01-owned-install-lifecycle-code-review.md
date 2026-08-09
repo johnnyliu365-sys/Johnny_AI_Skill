@@ -4,9 +4,9 @@
 | --- | --- |
 | Feature / ticket | `local-orchestration-installer` / `01-owned-install-lifecycle` |
 | SPEC / change | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / `CHG-20260808-011` |
-| Reviewed baseline | `263e30c` |
-| Implementation / docs handoff | `e6b067c` / `f1301be` |
-| Implementation owner | Codex implementation Agent / `codex/implementation-local-install-lifecycle-01-rework-6` |
+| Reviewed baseline | `5e772ec` |
+| Implementation / docs handoff | `49a250e` / `aafe154` |
+| Implementation owner | Codex implementation Agent / `codex/implementation-local-install-lifecycle-01-rework-7` |
 | Reviewer | Codex / current `main` worktree |
 | Result | `CHANGES_REQUESTED` |
 
@@ -14,7 +14,85 @@
 
 - Approved Context: `doc/context/local-orchestration-installer/main.md`.
 - Ticket scope: typed owned ledger, fake lifecycle ports and fail-closed install/uninstall only; no real host configuration, target project, Git adapter or package artifact is reviewed as delivered.
-- Receipt `rcpt_local_orchestration_install_01_20260808` remains valid. The review result blocks the rework-6 implementation branch as historical evidence; it does not alter the approved SPEC, ticket scope or the planning lane's Ticket-02 dependency wait.
+- Receipt `rcpt_local_orchestration_install_01_20260808` remains valid. The review result blocks the rework-7 implementation branch as historical evidence; it does not alter the approved SPEC, ticket scope or the planning lane's Ticket-02 dependency wait.
+
+## Rework-7 review result
+
+The submitted branch restores the full strict contract/port surface, physically stages payloads, processes all selected hosts, returns finite public results, and supplies the requested boundary/fault/Git matrices. Its reported 150-test regression, 239 subtests, strict mypy, in-memory compilation and diff checks are independently reproducible. It is nevertheless `CHANGES_REQUESTED`: persisted recovery can authorize effects before it is matched to the success ledger, a host effect can occur before durable receipt authority exists, and receipt identity comparison omits the registration ID.
+
+### CR-54 — P0: shape-valid tampered recovery deletes before ledger authorization
+
+When an exact owner has a persisted recovery, `_uninstall_typed` immediately calls `_continue_uninstall` without first requiring the pre-delete recovery manifest and receipts to equal the success ledger (`library/local_orchestration/installation.py:217-220`). The `UNINSTALL_FILES` phase then deletes the recovery manifest (`installation.py:255-272`); the ledger comparison occurs only later in `_finalize_uninstall` (`installation.py:285-290`).
+
+An independent probe installed the normal manifest, then supplied a shape-valid `UNINSTALL_FILES` recovery for the same installation ID but a different manifest targeting `foreign/tampered.txt`. Uninstall returned `UNINSTALL_BLOCKED`, but the foreign file had already been deleted and the filesystem's exact-owner staging record was removed. This directly violates the ticket's promise that foreign/tampered state causes no deletion and reopens the recovery-authorization part of CR-49.
+
+Required correction: before any `UNINSTALL_HOSTS` or `UNINSTALL_FILES` effect, require a present, strictly loaded ledger whose installation ID, manifest and complete receipt tuple exactly match recovery. Ledger absence is legal only for the already-checkpointed `FINALIZE` post-ledger-delete retry. Add shape-valid manifest and receipt mismatch tests proving zero host/filesystem mutation.
+
+### CR-55 — P0: host effect precedes durable recovery authority
+
+Install invokes `HostPort.register` before adding the returned receipt to recovery and before persisting that checkpoint (`installation.py:147-159`). A registration may therefore exist when the following clock or recovery-write call fails. The public boundary returns `INSTALL_BLOCKED`, but the persisted recovery still has no receipt capable of locating or removing that live effect.
+
+An independent adapter probe made the second `write_recovery` call fail after the host registration was stored. The result was `INSTALL_BLOCKED`; `HostPort.verify` proved the expected registration remained live, while the persisted recovery contained zero receipts. The committed fault matrix exercises only the first recovery-write/clock call before effects, so it does not detect this lost-authority sequence. This reopens CR-45.
+
+Required correction: durably checkpoint the deterministic expected receipt before calling `register`, or use a typed idempotent registration operation whose failure can always be queried and removed by that precommitted identity. Test register-after-effect exception, post-register clock failure and post-register recovery-write failure; every result must be clean or retain exact retry authority.
+
+### CR-56 — P1: exact receipt comparison omits registration identity
+
+`_exact_selected_receipt` compares installation ID, host ID, manifest digest and owned paths but not `registration_id` (`installation.py:333-340`). A host adapter that returns the expected host/manifest/paths with a different registration ID therefore passes verification, is written to the ledger and causes `INSTALLED`.
+
+The independent probe returned registration ID `unexpected-registration` with every other field valid. Install returned `INSTALLED` and persisted that unexpected ID. Required correction: compare the complete strongly typed receipt, including registration ID, and add a one-field-at-a-time mismatch matrix for installation, host, registration, manifest digest and owned paths.
+
+### CR-40 remains open — required tests do not cover the blocking sequences
+
+The new matrices substantially improve coverage, but they inject each enum fault only at its first reachable call. They do not cover the later recovery-write/clock positions after a host effect, shape-valid recovery-versus-ledger mismatches, or a registration-ID-only mismatch. The five mutation probes likewise omit these paths. Passing the current suite cannot prove the ticket's durable exact-authority guarantee.
+
+Required correction: add behavior-specific red tests for CR-54 through CR-56, then keep the complete existing matrix and mutation guards. Every effect-producing call followed by a fallible checkpoint must be tested at that precise ordering boundary.
+
+## Rework-7 independent verification
+
+| Check | Result |
+| --- | --- |
+| Branch ancestry / cleanliness | `5e772ec → 49a250e → aafe154`; implementation worktree clean |
+| `git diff --check 5e772ec..aafe154` | Passed |
+| `python -B -m unittest discover -s tests` | 150 passed |
+| `python -B -m pytest -q -p no:cacheprovider` | 150 passed / 239 subtests |
+| `python -B -m mypy --strict --no-incremental library tests` | 73 source files clean |
+| In-memory library compile | Passed |
+| Source sentinel | No broad-clear, `type: ignore`, dynamic `Any`, destructive filesystem or shell use in delivered lifecycle source; test-only subprocess is limited to Git non-interference snapshots |
+| Registration-ID mismatch probe | Failed: returned `INSTALLED` with `unexpected-registration` |
+| Shape-valid recovery mismatch probe | Failed: returned `UNINSTALL_BLOCKED` only after deleting the mismatched recovery target |
+| Post-host checkpoint-fault probe | Failed: live host registration with zero receipts in persisted recovery |
+
+## Rework-7 CodeReview standard check
+
+| Requirement | Result / evidence |
+| --- | --- |
+| Clear and strongly typed | Pass structurally; CR-55 shows durable identity is recorded too late. |
+| Coding/architecture rules | Partial pass: DI and port layering are restored; transition ordering violates durable recovery authority. |
+| Logic correctness | Fail: CR-54 mutates before authorization and CR-56 accepts a non-exact receipt. |
+| Boundary and exception behavior | Fail: CR-55 loses returned-effect authority at later fallible checkpoints. |
+| Security and ownership isolation | Fail: CR-54 permits deletion driven by shape-valid tampered recovery. |
+| Test coverage | Fail: CR-40 lacks CR-54/55/56 ordering and mismatch paths. |
+| Dependencies | Pass: no new runtime dependency. |
+| SPEC/ticket compliance | Fail: AC-02/06/07/08 and exact owned removal are not fully delivered. |
+
+## Rework-7 CodeReview §2.1 defect audit
+
+| # | Category | Result |
+| --- | --- | --- |
+| 1 | Path-prefix mismatch | Canonical root/path and physical containment tests pass. |
+| 2 | null / empty / containers | Required public and persisted raw-state matrices pass. |
+| 3 | Authorization bypass | Fail: CR-54 executes recovery effects before matching the authoritative ledger. |
+| 4 | Token format/comparison | N/A by ticket; source sentinel passes. |
+| 5 | Error-code consistency | Public calls return finite codes, but CR-55's code hides lost cleanup authority. |
+| 6 | Exception propagation | Public exception containment passes; durable post-effect state does not. |
+| 7 | Tests cover described behavior | Fail: CR-54/55/56 are reproducible outside the submitted suite. |
+
+## Rework-7 required next rework
+
+The rework-7 branch is blocked historical evidence. The implementation owner must start a fresh branch directly from the next control-plane docs-only handoff baseline, without reset, merge, rebase, cherry-pick or reuse of `49a250e` / `aafe154`. Receipt `rcpt_local_orchestration_install_01_20260808` continues; no second dispatch confirmation is valid.
+
+The next allocation must preserve all passing rework-7 contracts, matrices, physical staging, all-host processing, finite results, mutation guards and Git isolation while closing CR-54/55/56 with behavior-specific red evidence.
 
 ## Rework-6 review result
 
