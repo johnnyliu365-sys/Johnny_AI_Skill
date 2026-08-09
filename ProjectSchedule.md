@@ -114,6 +114,6 @@
 | --- | --- | --- |
 | Requirement change, Wayfinder, Architecture and Grill | DONE | `CHG-20260808-011`; `doc/context/local-orchestration-installer/main.md`; `doc/adr/ADR-20260808-003-local-orchestration-installer.md` |
 | Specification | DONE | `modules/spec/local-orchestration-installer.md` was approved by the owner on `2026-08-08`. |
-| Ticket 01 implementation | IN_PROGRESS / REOPENED | `aln_local_orchestration_install_01_reopen_20260809` restores the original small fake lifecycle scope: five source files, one test file, closure `C1..C8`, one implementation worktree and one branch. |
-| Ticket 02 planning Grill | DONE / DEPENDENCY_WAIT | Grill accepted the approved AC boundaries; Ticket 02 remains `PLANNED` until Ticket 01 is reviewed and integrated. |
+| Ticket 01 implementation | DONE / APPROVED / INTEGRATED | Closure `C1..C8` passed; implementation `ddd9f55`, correction `040a0f6`, review `dc63364` and guarded merge `491f98b`. |
+| Ticket 02 planning Grill | DONE / READY_FOR_SELECTION | Grill accepted the approved AC boundaries and Ticket 01 dependency is satisfied; Ticket 02 remains `PLANNED` until its own allocation/receipt. |
 | Tickets 03–04 / implementation | PLANNED | They remain unselected and receive no source/test authority. |

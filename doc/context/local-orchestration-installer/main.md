@@ -2,13 +2,13 @@
 
 | Field | Value |
 | --- | --- |
-| Context state | `TICKET_01_REWORK_3_IMPLEMENTING / PLANNING_DEPENDENCY_WAIT` |
-| Router event | `REVIEW_CHANGES_REQUESTED → FRESH_REWORK_HANDOFF → IMPLEMENT` |
+| Context state | `TICKET_01_INTEGRATED / TICKET_02_READY_FOR_SELECTION` |
+| Router event | `REVIEW_APPROVED → GUARDED_INTEGRATION → ACTION_COMPLETED` |
 | Delivery stage | `POC` |
 | Requirement change | `CHG-20260808-011` |
-| Baseline | `e04c2be` (`docs: close autonomous workflow planning grill`) |
+| Baseline | `491f98b` (`merge: integrate reopened owned lifecycle`) |
 | Control-plane owner | Codex / current `main` worktree |
-| Implementation owner | Unassigned; no implementation ticket exists |
+| Implementation owner | Ticket 01 allocation released; Ticket 02 not yet allocated |
 | Required sources read | `AGENTS.md`, `Workflow.md` (Router, Wayfinder, Grill, change control, specification, tickets, role boundary), `Defined_wayfinder.md`, `CONTEXT.md`, `PRD.md`, `ProjectSchedule.md`, `doc/RequirementChangeLog.md`, existing plugin manifests / README, `library/workflow_router/`, and completed plugin / autonomous-collaboration POCs |
 
 ## Shared Context reference
@@ -116,14 +116,15 @@ boundary: Do not treat the POC's fake adapters as real host/Git operations. Do n
 - PRD / change: `PRD.md §15` / `CHG-20260808-011`.
 - Common Context backlink: published by `d94d8d5`; ticket-set backlink pending the next docs-only commit.
 
-## Ticket 01 selection and accepted dispatch
+## Ticket 01 completion and released allocation
 
 - Ticket: `01-owned-install-lifecycle`, selected from the committed ticket set `afee39d`.
 - Reopen: the owner revoked fourteen unmerged experimental branches. They were deleted without integrating `library/local_orchestration` into `main`.
 - Handoff / allocation: `hnd_local_orchestration_install_01_reopen_20260809` / `aln_local_orchestration_install_01_reopen_20260809` retain receipt `rcpt_local_orchestration_install_01_20260808` and the same named implementation owner.
 - Execution boundary: the existing `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` is the only implementation worktree. It uses one branch, `codex/implementation-local-install-lifecycle-01`, for the reopened implementation and its single permitted correction.
 - Scope: five production files, one test file and finite closure `C1..C8`; historical source and CR-36..72 are not implementation inputs.
-- Planning continuation: Ticket 02 remains dependency-waiting until this small reopened Ticket 01 is independently approved and integrated.
+- Completion: implementation `ddd9f55`, evidence correction `040a0f6`, final independent review `dc63364`, guarded integration `491f98b`; the implementation remained within the five-file / one-test ceiling.
+- Planning continuation: Ticket 02's dependency is satisfied and it is `PLANNED / READY_FOR_SELECTION`; it has no implementation allocation or source authority yet.
 
 ## Ticket 02 Grill convergence
 
@@ -135,4 +136,4 @@ boundary: Do not treat the POC's fake adapters as real host/Git operations. Do n
 | Is real Git authority constrained enough? | Only with opaque project identity, explicit registration, per-project lock, clean expected base and fast-forward-only operation. Missing or stale state, conflicts, dirty tree, replay or cross-project request halts before Git. |
 | Is a new SPEC/ADR/CHG needed? | No. These are already accepted AC-04/05/08 boundaries. Changing them, adding push/deploy/reset/merge commit, or carrying raw source would be `REQUIREMENT_CHANGED`. |
 
-**Planning Grill result: `GO → wait for Ticket 01 integration dependency`.** Ticket 02 remains `PLANNED`; it receives no dispatch or implementation authority until the Ticket-01 execution/review/integration return arrives.
+**Planning Grill result: `GO → READY_FOR_SELECTION`.** Ticket 02 remains `PLANNED`; its Ticket-01 dependency is satisfied by reviewed integration `491f98b`, but it receives no implementation authority until a unique allocation and receipt are recorded.

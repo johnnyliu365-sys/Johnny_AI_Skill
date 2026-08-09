@@ -859,3 +859,15 @@
 | Reverse-mutation evidence | Replacing the fake filesystem's physical `target.unlink()` with a no-op made focused C2 fail because `FileNotFoundError` was not raised; restoring the unlink made focused C2 pass. |
 | Green evidence | Full `C1..C8`: 8 passed. Strict mypy: 6 files, no issues. In-memory compile and C8 sentinel passed. Actual temporary Git porcelain remained `?? existing.txt` / empty. `git diff --check` passed. Production remains 517/600 non-blank lines; test is 351/500. |
 | Scope / continuation | Same branch, worktree, allocation, handoff and receipt. No production change, extra file/branch/worktree, merge, push, deployment or schedule action. The control-plane reviewer owns the correction decision. |
+
+## PRG-20260809-066 — reopened Ticket 01 approved and integrated
+
+| Field | Value |
+| --- | --- |
+| Router event | `ACTION_COMPLETED → REVIEW_APPROVED → GUARDED_INTEGRATION → ACTION_COMPLETED` |
+| Final evidence | Implementation `ddd9f55`; additive C2 evidence correction `040a0f6`; handoffs `c29f8ed` / `3c27261`; final review `dc63364`. |
+| Review result | `APPROVED / READY_TO_MERGE`; all C1..C8 items passed and `CR-REOPEN-01` was closed by a successful reverse mutation. |
+| Integration | Merge commit `491f98b` combined the reviewed branch into `main` without conflict, force, reset, overwrite or push. |
+| Integrated verification | 8/8 unittest, strict mypy over six files, in-memory compile and diff check passed on `main`; actual temporary Git non-interference passed during final correction review. |
+| Scope result | Exactly five production files (`517 / 600` non-blank lines) and one test file (`351 / 500`); no historical lifecycle framework, real host/process/Git/project effect or Ticket 02+ implementation entered Ticket 01. |
+| Allocation / continuation | Ticket-01 allocation released. Ticket 02 is dependency-unblocked but remains `PLANNED` until its own unique allocation and receipt. Watchdog remains paused; no schedule was created or resumed. |

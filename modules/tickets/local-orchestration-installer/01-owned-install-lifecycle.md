@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01, AC-03, AC-06, AC-07, AC-08 |
 | Context / change | `doc/context/local-orchestration-installer/main.md` / `CHG-20260808-011` |
-| State | `IN_PROGRESS / REOPENED` |
+| State | `COMPLETE / APPROVED / INTEGRATED` |
 | Language | Python 3.11, Pydantic strict models, standard-library temporary-directory fakes |
 | Control-plane owner / reviewer | Codex / current `main` worktree |
 | Implementation owner / worktree | Codex implementation Agent / existing `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` |
@@ -132,3 +132,14 @@ This is the entire blocking set. Review may not add another Ticket-01 behavior.
 | Required baseline | The docs-only control commit containing this reopened ticket |
 | Granted scope | Only this ticket's five source files, one test file, verification and implementation/docs-only commits |
 | Not granted | Another worktree/branch, historical-source reuse, real effects, Ticket 02+, merge, push, deployment or schedule changes |
+
+## Completion and integration
+
+| Field | Value |
+| --- | --- |
+| Implementation | `ddd9f55` plus additive evidence correction `040a0f6` |
+| Implementation handoffs | `c29f8ed` and `3c27261` |
+| Independent review | `148f14f` initial review; final approval `dc63364` |
+| Guarded integration | Merge commit `491f98b` on `main`; no conflict, force, reset, overwrite or push |
+| Final verification | C1..C8 8/8, strict mypy, in-memory compile, source sentinel, actual temporary-Git non-interference and C2 reverse mutation passed |
+| Allocation | `aln_local_orchestration_install_01_reopen_20260809` released after integration |
