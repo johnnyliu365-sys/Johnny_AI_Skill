@@ -675,3 +675,15 @@
 | Blocking findings | CR-54: shape-valid tampered recovery deletes before authoritative ledger comparison. CR-55: a post-host recovery-checkpoint fault leaves a live registration with no durable receipt. CR-56: registration-ID mismatch is accepted as `INSTALLED`. CR-40 lacks these exact red/green paths. |
 | Scope classification | Implementation/contract/TDD correction only; approved SPEC, ticket, architecture, delivery stage, implementation owner and receipt do not change. |
 | Continuation | Mark rework-7 historical and automatically create a fresh allocation under the existing receipt and bounded authority `PRG-20260809-042`; Ticket 02 remains `DEPENDENCY_WAIT`. |
+
+## PRG-20260809-044 — Ticket 01 fresh rework-8 handoff
+
+| Field | Value |
+| --- | --- |
+| State | `IMPLEMENT / FRESH_TDD_REWORK` |
+| Review baseline | `0553920` records the eighth `CHANGES_REQUESTED`. `49a250e` and `aafe154` join all older implementation branches as immutable historical evidence. |
+| Fresh handoff / allocation | `hnd_local_orchestration_install_01_rework_8_20260809` / `aln_local_orchestration_install_01_rework_8_20260809`; branch `codex/implementation-local-install-lifecycle-01-rework-8` starts directly from this current docs-only handoff commit. |
+| Correction scope | Fresh behavior red → minimal full-surface implementation → green for CR-54 authoritative ledger/recovery matching before pre-finalize effects, CR-55 precommitted or otherwise durable deterministic host receipt authority across post-effect clock/checkpoint faults, and CR-56 complete receipt identity comparison. Preserve the 150-test rework-7 behavior, all accepted contracts/ports, physical staging, all-host processing, finite results, matrices, mutation guards and Git isolation. |
+| Required red/green evidence | Reproduce all three independent probes before source correction. Add shape-valid manifest mismatch and receipt mismatch at `UNINSTALL_HOSTS` and `UNINSTALL_FILES` with zero port mutation; register-after-effect exception, post-register clock fault and post-register recovery-write fault with exact cleanup/retry; one-field receipt mismatch tests for installation, host, registration, manifest digest and owned paths. Reverse each new guard and prove its focused test fails. |
+| Receipt / continuation authority | `rcpt_local_orchestration_install_01_20260808` and bounded authority `PRG-20260809-042` remain valid. This correction allocation requires no second user confirmation. |
+| Required return | Ticket-only implementation commit(s), full verification, then one docs-only handoff commit. No self-review, integration, push, deployment or progress-only final. |
