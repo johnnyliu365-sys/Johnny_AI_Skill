@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from enum import Enum
-from os import path
+import ntpath
 from typing import ClassVar, Literal, Protocol, Self, runtime_checkable
 
 from pydantic import BaseModel, ConfigDict, field_validator, model_validator
@@ -242,6 +242,13 @@ class CodexMarketplaceSource(_StrictModel):
     _valid = field_validator("type", "value")(classmethod(lambda cls, value: _codex_text(value, "marketplace source field")))
 
 
+def _present_source(fields: set[str], source: CodexMarketplaceSource | None) -> None:
+    if "marketplaceSource" in fields and source is None: raise ValueError("marketplace source cannot be null when present")
+
+
+def _windows_absolute(value: str) -> bool: return bool(ntpath.splitdrive(value)[0]) and ntpath.isabs(value)
+
+
 class CodexCommandResponse(_StrictModel):
     exit_code: int
     stdout: str
@@ -253,6 +260,9 @@ class CodexMarketplaceEntry(_StrictModel):
     root: str
     marketplaceSource: CodexMarketplaceSource | None = None
     _valid = field_validator("name", "root")(classmethod(lambda cls, value: _codex_text(value, "marketplace field")))
+    @model_validator(mode="after")
+    def present_source(self) -> Self:
+        _present_source(self.model_fields_set, self.marketplaceSource); return self
 
 
 class CodexMarketplaceList(_StrictModel):
@@ -274,6 +284,9 @@ class CodexPluginEntry(_StrictModel):
     authPolicy: str
     marketplaceSource: CodexMarketplaceSource | None = None
     _valid = field_validator("pluginId", "name", "marketplaceName", "version", "source", "installPolicy", "authPolicy")(classmethod(lambda cls, value: _codex_text(value, "plugin field")))
+    @model_validator(mode="after")
+    def present_source(self) -> Self:
+        _present_source(self.model_fields_set, self.marketplaceSource); return self
 
 
 class CodexPluginList(_StrictModel):
@@ -303,7 +316,8 @@ class CodexSourceProof(_StrictModel):
     absolute_path: str
     @model_validator(mode="after")
     def exact_locator(self) -> Self:
-        if self.absolute_path != path.expandvars(CANONICAL_INSTALL_ROOT) + "\\" + self.locator.value.replace("/", "\\"):
+        root = ntpath.expandvars(CANONICAL_INSTALL_ROOT)
+        if not _windows_absolute(root) or not _windows_absolute(self.absolute_path) or self.absolute_path != root + "\\" + self.locator.value.replace("/", "\\"):
             raise ValueError("source proof is not an owned absolute locator")
         return self
 

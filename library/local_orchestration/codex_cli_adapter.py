@@ -49,7 +49,7 @@ class CodexCliPreflight:
         text = self._run(("codex", "--version")).stdout.strip()
         match = re.fullmatch(r"codex-cli (\d+\.\d+\.\d+(?:-[A-Za-z0-9.-]+)?(?:\+[A-Za-z0-9.-]+)?)", text)
         if match is None: raise _Failure(CodexBlockReason.UNSUPPORTED_CLI)
-        return CodexCliVersion(value=match.group(0))
+        return CodexCliVersion(value=match.group(1))
 
     def _source(self, request: CodexPreflightRequest) -> CodexSourceProof:
         try: return CodexSourceProof.model_validate_json(self._filesystem.resolve_source(request).model_dump_json(warnings=False))

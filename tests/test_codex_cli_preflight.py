@@ -7,6 +7,7 @@ import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import cast
+from unittest.mock import patch
 
 from pydantic import ValidationError
 
@@ -167,6 +168,21 @@ class CodexCliPreflightTests(unittest.TestCase):
     def test_cr89_missing_executable_has_stable_reason(self) -> None:
         result = CodexCliPreflight(Commands([FileNotFoundError()]), Source()).check(request())
         self.assertEqual(CodexBlockReason.EXECUTABLE_UNAVAILABLE, cast(CodexBlocked, result).reason)
+
+    def test_final_explicit_null_marketplace_source_is_blocked(self) -> None:
+        for markets, plugins in ((marketplace([{"name": "other", "root": "root", "marketplaceSource": None}]), plugin_list()), (marketplace(), plugin_list(available=[plugin("other", "other") | {"marketplaceSource": None}]))):
+            self.assertIsInstance(CodexCliPreflight(Commands([version(), markets, plugins]), Source()).check(request()), CodexBlocked)
+
+    def test_final_version_exposes_only_semver(self) -> None:
+        result = CodexCliPreflight(Commands([version(), marketplace(), plugin_list()]), Source()).check(request())
+        self.assertEqual("0.144.0-alpha.4", cast(CodexPreflightEligible, result).version.value)
+
+    def test_final_relative_expanded_root_is_blocked_before_lists(self) -> None:
+        with patch.dict(os.environ, {"LOCALAPPDATA": "relative"}):
+            command = Commands([version()])
+            result = CodexCliPreflight(command, Source()).check(request())
+        self.assertEqual(CodexBlockReason.SOURCE_MISMATCH, cast(CodexBlocked, result).reason)
+        self.assertEqual((("codex", "--version"),), tuple(command.calls))
 
     def test_a4_declared_failures_are_finite(self) -> None:
         failures: tuple[Exception, ...] = (FileNotFoundError(), PermissionError(), subprocess.TimeoutExpired("codex", 1), OSError())
