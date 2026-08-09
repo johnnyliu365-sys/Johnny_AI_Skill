@@ -4,9 +4,9 @@
 | --- | --- |
 | Feature / ticket | `local-orchestration-installer` / `01-owned-install-lifecycle` |
 | SPEC / change | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / `CHG-20260808-011` |
-| Reviewed baseline | `ed1a282` |
-| Implementation / docs handoff | `8a7b221` / `8f867cc` |
-| Implementation owner | Codex implementation Agent / `codex/implementation-local-install-lifecycle-01-rework-8` |
+| Reviewed baseline | `8ea2983` |
+| Implementation / docs handoff | `815d126` / `5405c24` |
+| Implementation owner | Codex implementation Agent / `codex/implementation-local-install-lifecycle-01-rework-9` |
 | Reviewer | Codex / current `main` worktree |
 | Result | `CHANGES_REQUESTED` |
 
@@ -14,7 +14,83 @@
 
 - Approved Context: `doc/context/local-orchestration-installer/main.md`.
 - Ticket scope: typed owned ledger, fake lifecycle ports and fail-closed install/uninstall only; no real host configuration, target project, Git adapter or package artifact is reviewed as delivered.
-- Receipt `rcpt_local_orchestration_install_01_20260808` remains valid. The review result blocks the rework-8 implementation branch as historical evidence; it does not alter the approved SPEC, ticket scope or the planning lane's Ticket-02 dependency wait.
+- Receipt `rcpt_local_orchestration_install_01_20260808` remains valid. The review result blocks the rework-9 implementation branch as historical evidence; it does not alter the approved SPEC, ticket scope or the planning lane's Ticket-02 dependency wait.
+
+## Rework-9 review result
+
+The submitted branch consumes exact host/filesystem removal and absence proof identities and closes the cooperative CR-58 terminal retry sequence. Its 151-test regression, 279 subtests and strict mypy result are independently reproducible. It is nevertheless `CHANGES_REQUESTED`: four actual-receipt mismatch classes strand an untracked live registration, installation success ignores stage/completion and existing-effect verification, and an already-constructed invalid root bypasses boundary validation.
+
+### CR-59 — P0: four receipt-mismatch paths strand a live effect outside recovery authority
+
+`_handle_mismatched_registration` records the actual receipt only when installation, host, manifest digest and owned paths already match (`library/local_orchestration/lifecycle.py:298-321`). If any of those four fields differs, it immediately returns `INSTALL_BLOCKED/AUTHORITY_MISMATCH` without persisting the returned actual receipt or removing it. The precommitted recovery contains only the expected receipt.
+
+Independent probes for installation, host, manifest and owned-path mismatches each produced a first `INSTALL_BLOCKED`, retained one live actual host registration, and left owner/recovery without authority matching that effect. The second call returned `INSTALL_BLOCKED/PROOF_MISMATCH`; the state remained permanently stranded. The submitted test explicitly accepts `registration_count == 1` for these four cases, so it proves the defect rather than the required cleanup.
+
+Required correction: persist a strongly typed expected-intent/actual-observation association for every returned receipt before cleanup, including all one-field mismatches. Cleanup must act on the exact actual effect created by that call, retain authority through every checkpoint failure and converge without deleting unrelated effects. Preserve the complete CR-56 one-field matrix; no mismatch may leave an unreachable registration.
+
+### CR-60 — P0: `INSTALLED` does not require exact stage/completion or live-effect proof
+
+The fresh install path discards both `StageProof` and `CompletionProof` values (`lifecycle.py:131-133`). The existing-ledger success check `_is_completed_install` validates only structural DTO equality (`lifecycle.py:419-437`) and never asks filesystem or host ports to prove the manifest and receipts are live.
+
+Two independent probes reproduced the failure. A typed filesystem returned shape-valid stage/completion proofs for a different installation while writing nothing; install returned `INSTALLED`, persisted a ledger and host registration, but the requested manifest was absent. Separately, after a valid install, removing the exact host and files outside the lifecycle while retaining the ledger caused a repeated install to return `INSTALLED` with zero host registrations and no files.
+
+Required correction: compare every returned stage/completion proof with the exact requested manifest and require exact filesystem completeness plus every receipt's host verification before either new or existing-ledger `INSTALLED`. Wrong, unavailable or stale proof must return finite blocked state without treating the ledger as live. Add adversarial foreign-proof and stale-ledger tests plus reverse mutations.
+
+### CR-61 — P0: constructed nested root bypass reaches effects and succeeds
+
+`install` passes an existing `InstallCommand` directly through `TypeAdapter.validate_python` (`lifecycle.py:89-95`). Pydantic accepts its already-constructed nested models without revalidating the `InstallRoot` literal. An independent command using `InstallRoot.model_construct(value="ForeignRoot")` returned `INSTALLED` and executed ten port effects. This reopens the constructed-object boundary bypass previously closed by the rework-7 surface.
+
+Required correction: explicitly revalidate all model instances from a strict primitive dump, or configure recursive instance revalidation at every nested domain boundary. Add constructed invalid root, installation, manifest, artifact/path, host and receipt tests asserting zero port calls; extend path/URI canonical variants as required by the ticket.
+
+### CR-40 remains open — submitted tests omit or normalize the blocking behavior
+
+The suite covers raw dictionaries and cooperative proof faults, but not nested `model_construct` instances, foreign stage/completion proofs, stale success-ledger effects, or cleanup of four non-registration receipt mismatches. The receipt test treats a retained live registration as expected. Passing the suite therefore cannot prove preserved CR-36/40/52/56 behavior.
+
+## Rework-9 independent verification
+
+| Check | Result |
+| --- | --- |
+| Branch ancestry / cleanliness | `8ea2983 → 815d126 → 5405c24`; implementation worktree clean |
+| `git diff --check 8ea2983..5405c24` | Passed |
+| `python -m unittest discover -s tests -v` | 151 passed |
+| `python -m pytest -q` | 151 passed / 279 subtests |
+| `python -m mypy --strict library tests` | 75 source files clean |
+| Four receipt-mismatch retry probes | Failed: live registration retained; retry remains `INSTALL_BLOCKED/PROOF_MISMATCH` |
+| Foreign stage/completion proof probe | Failed: returned `INSTALLED` with requested files absent |
+| Stale ledger/effects probe | Failed: returned `INSTALLED` with zero host registrations and files absent |
+| Constructed invalid-root probe | Failed: returned `INSTALLED` after ten port effects |
+| Worktree non-interference | Independent verification left the implementation worktree clean |
+
+## Rework-9 CodeReview standard check
+
+| Requirement | Result / evidence |
+| --- | --- |
+| Clear and strongly typed | Partial pass: proof DTOs are explicit; success proofs and actual mismatch observations are not completely consumed. |
+| Coding/architecture rules | Partial pass: DI remains; application/live-state verification is incomplete. |
+| Logic correctness | Fail: CR-59 strands returned effects and CR-60 reports installation for absent effects. |
+| Boundary and exception behavior | Fail: CR-61 bypasses strict nested validation. |
+| Security and ownership isolation | Fail: recovery cannot reach four effects it caused, while stale/foreign proof state is trusted. |
+| Test coverage | Fail: CR-40 omits or accepts all reproduced paths. |
+| Dependencies | Pass: no new runtime dependency. |
+| SPEC/ticket compliance | Fail: AC-01/02/06/07/08 and the preserved rework-8 surface are incomplete. |
+
+## Rework-9 CodeReview §2.1 defect audit
+
+| # | Category | Result |
+| --- | --- | --- |
+| 1 | Path-prefix mismatch | Fail: constructed invalid root bypasses validation and reaches effects. |
+| 2 | null / empty / containers | Raw matrices pass; constructed nested values are not recursively revalidated. |
+| 3 | Authorization bypass | Fail: stale ledger and foreign stage/completion proof can authorize `INSTALLED`. |
+| 4 | Token format/comparison | N/A by ticket; source sentinel passes. |
+| 5 | Error-code consistency | Finite codes are returned, but four receipt mismatches become permanent proof mismatch. |
+| 6 | Exception propagation | Submitted port faults are contained; invalid constructed models are not fully normalized. |
+| 7 | Tests cover described behavior | Fail: CR-59/60/61 are reproducible outside the submitted suite. |
+
+## Rework-9 required next rework
+
+The rework-9 branch is blocked historical evidence. The implementation owner must start a fresh branch directly from the next control-plane docs-only handoff baseline, without reset, merge, rebase, cherry-pick, source copy or reuse of `815d126` / `5405c24`. Receipt `rcpt_local_orchestration_install_01_20260808` and bounded authority `PRG-20260809-042` continue; no second dispatch confirmation is valid.
+
+The next allocation must preserve the passing exact removal/absence proof and terminal retry guards while restoring full actual-receipt observation cleanup, live install proof verification and recursively strict constructed-input boundaries.
 
 ## Rework-8 review result
 

@@ -710,3 +710,14 @@
 | Required red/green evidence | First reproduce a typed adversarial host/filesystem provider that returns shape-valid foreign or mismatched proofs without removing the requested effect; no case may return terminal success or clear owner/ledger/recovery. Reproduce cleanup `CLEAR_RECOVERY` failure after owner release and prove repeated calls currently remain `AUTHORITY_MISMATCH`. Add one-field proof mismatch/replay/absence matrices, every cleanup terminal ordering, exact authority retention and retry convergence. Reverse each new guard and prove the focused test fails. |
 | Receipt / continuation authority | `rcpt_local_orchestration_install_01_20260808` and bounded authority `PRG-20260809-042` remain valid. This correction allocation requires no second user confirmation. |
 | Required return | Ticket-only implementation commit(s), full verification, then one docs-only handoff commit. No self-review, integration, push, deployment or progress-only final. |
+
+## PRG-20260809-049 — Ticket 01 tenth independent review
+
+| Field | Value |
+| --- | --- |
+| State | `REVIEW / CHANGES_REQUESTED` |
+| Reviewed range | Baseline `8ea2983`; implementation `815d126`; docs-only handoff `5405c24`; branch `codex/implementation-local-install-lifecycle-01-rework-9`. |
+| Reproduced passing evidence | 151 unittest; 151 pytest / 279 subtests; strict mypy 75 files; diff check and clean worktree pass. Submitted CR-57/58 focused tests pass. |
+| Blocking findings | CR-59: installation/host/manifest/path actual-receipt mismatches retain a live registration outside recovery and retry remains `PROOF_MISMATCH`. CR-60: new install ignores stage/completion proof identity and existing-ledger install never verifies live effects, so both foreign-proof and stale-ledger probes return `INSTALLED` without files. CR-61: a constructed invalid nested root bypasses validation, executes ports and returns `INSTALLED`. CR-40 lacks or accepts these paths. |
+| Scope classification | Implementation/contract/TDD correction only; approved SPEC, ticket, architecture, delivery stage, owner, receipt and bounded continuation authority do not change. |
+| Continuation | Mark rework-9 historical and automatically create a fresh same-ticket allocation under receipt `rcpt_local_orchestration_install_01_20260808` and authority `PRG-20260809-042`; Ticket 02 remains `DEPENDENCY_WAIT`. |
