@@ -923,3 +923,14 @@
 | Lane release | Allocation `aln_local_orchestration_install_02_20260809` released. The sole implementation worktree is clean and detached at `92c58bf`; the integrated Ticket-02 branch was deleted. |
 | Repository state | Two worktrees remain, and `main` is the only local branch. Rejected/historical heads remain only as the two recorded archive tags. |
 | Continuation | Ticket 03 remains `PLANNED` and unallocated until a separate bounded dispatch. The watchdog stays paused; no schedule was created or resumed. |
+
+## PRG-20260809-071 - bound Ticket 03 host capability gate
+
+| Field | Value |
+| --- | --- |
+| Router event | `TICKET_SELECTION → GRILL → TICKET_REPAIR / PLANNED` |
+| Root defect | The prior draft mixed two live hosts, process execution, external account/policy discovery, broad fault coverage and packaging preparation, and incorrectly requested a fresh worktree. |
+| Bounded result | Closure `CLOSURE-LOCAL-INSTALL-T03-01` freezes H1..H8; exactly four production files, one test and 550/450 non-blank ceilings. Only strict contracts, one synchronous capability gate and recorded fakes are authorized. |
+| Reuse result | No catalog module selected. `identity-resolution` is not host-install authority and Router code is unrelated; only integrated `InstallationId` may be reused. |
+| Live boundary | No production Codex/Claude adapter, command, subprocess, login, host config/cache edit or real host mutation. Both hosts remain `UNVERIFIED`; a support claim requires external authority and change control. |
+| Lane boundary | Existing sole implementation worktree only; one branch is permitted only after a unique Ticket-03 dispatch commit, allocation and receipt. No schedule was created or resumed. |

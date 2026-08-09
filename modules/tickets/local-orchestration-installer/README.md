@@ -18,7 +18,7 @@ Deliver a Windows per-user local control plane that owns every installed compone
 | --- | --- | --- | --- |
 | [01-owned-install-lifecycle](01-owned-install-lifecycle.md) | A small typed fake install/remove engine creates and removes exactly its owned fake files and host receipt, while rejecting foreign/tampered state. | `COMPLETE / APPROVED / INTEGRATED` — implementation `ddd9f55`, correction `040a0f6`, review `dc63364`, merge `491f98b` | Approved SPEC |
 | [02-metadata-runtime-and-guarded-git](02-metadata-runtime-and-guarded-git.md) | A local metadata-only event resumes once and a registered temporary project receives only a typed fast-forward decision under exact identity/base/lock guards. | `COMPLETE / APPROVED / INTEGRATED` — implementation `6cc8fb5`, review `4527f49`, merge `92c58bf` | Ticket 01 satisfied by `491f98b` |
-| [03-reversible-agent-host-lifecycle](03-reversible-agent-host-lifecycle.md) | A host is reported supported only after its user-scope registration and exact cleanup proof can be verified. | `PLANNED` | Ticket 01 |
+| [03-reversible-agent-host-lifecycle](03-reversible-agent-host-lifecycle.md) | A bounded recorded capability gate proves exact receipt/removal semantics while real Codex and Claude remain `UNVERIFIED` without live authority. | `PLANNED / BOUNDED` - closure `H1..H8`, four production files and one test | Tickets 01 and 02 integrated |
 | [04-windows-setup-and-uninstaller-package](04-windows-setup-and-uninstaller-package.md) | One Windows setup/uninstall invocation packages the owned lifecycle with at least one verified host, leaving target repositories untouched. | `PLANNED` | Tickets 01, 02 and 03; available pinned Inno Setup toolchain |
 
 ## Roles and allocation

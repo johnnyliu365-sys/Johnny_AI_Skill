@@ -151,3 +151,21 @@ Allocation `aln_local_orchestration_install_02_20260809` is released. The sole
 implementation worktree is clean and detached at `92c58bf`; the Ticket-02
 branch was deleted. No schedule was created or resumed. Ticket 03 remains
 `PLANNED` until its own bounded dispatch, allocation, receipt and branch exist.
+
+## Ticket 03 Grill convergence
+
+The original Ticket-03 draft mixed two live hosts, process execution, policy and
+login discovery, a full error matrix, removal proof and packaging preparation,
+and incorrectly required a fresh worktree. The bounded ticket now owns only a
+recorded reversible capability gate in four production files and one test under
+finite closure H1..H8.
+
+No reusable-module catalog entry matches host registration authority:
+`identity-resolution` is not an authorization boundary and Router behavior is
+unrelated. Ticket 03 reuses only integrated `InstallationId`. Current evidence
+authorizes no live Codex/Claude action, so both must remain `UNVERIFIED`; a real
+support claim requires separate external test authority and change control.
+
+**Planning Grill result: `GO → PLANNED / BOUNDED`.** The ticket is safe to
+dispatch only to the existing sole implementation worktree with one new-ticket
+branch. Ticket 04 remains dependency-waiting; no schedule is involved.

@@ -116,4 +116,5 @@
 | Specification | DONE | `modules/spec/local-orchestration-installer.md` was approved by the owner on `2026-08-08`. |
 | Ticket 01 implementation | DONE / APPROVED / INTEGRATED | Closure `C1..C8` passed; implementation `ddd9f55`, correction `040a0f6`, review `dc63364` and guarded merge `491f98b`. |
 | Ticket 02 implementation | DONE / APPROVED / INTEGRATED | Closure `D1..D8` passed; implementation `6cc8fb5`, independent review `4527f49`, guarded merge `92c58bf`; allocation and branch released. |
-| Tickets 03–04 / implementation | PLANNED | They remain unselected and receive no source/test authority. |
+| Ticket 03 implementation | PLANNED / BOUNDED | Recorded host capability gate only; closure `H1..H8`, four production files and one test. No live Codex/Claude command or host mutation. |
+| Ticket 04 implementation | PLANNED / DEPENDENCY_WAIT | Requires Ticket 03 plus an explicitly authorized verified host lifecycle and available pinned setup toolchain. |
