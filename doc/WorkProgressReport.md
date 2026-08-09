@@ -629,3 +629,14 @@
 | Required red/green evidence | Record first-red name/reason for every final focused behavior before source correction. Run all seven root variants; five missing-value forms for installation ID, manifest, host receipt and owned path; direct/indirect ownership bypass; every filesystem/ledger/recovery/host/runtime/process/clock fault with full state and retry assertions; exact rework-4 and rework-5 probes; existing/empty Git snapshots across success and failure. Reverse at least owner, phase, returned-effect and terminal-checkpoint guards and prove focused tests fail. |
 | Receipt | `rcpt_local_orchestration_install_01_20260808` remains the sole dispatch authority; no second confirmation is valid. |
 | Required return | Full implementation commit(s), final docs-only handoff, exact red/green evidence, complete regression/strict typing/in-memory compile/privacy/smoke/diff evidence and no self-review/integration. |
+
+## PRG-20260809-040 — Ticket 01 seventh independent review
+
+| Field | Value |
+| --- | --- |
+| State | `REVIEW / CHANGES_REQUESTED` |
+| Reviewed range | Baseline `263e30c`; implementation `e6b067c`; docs-only handoff `f1301be`; branch `codex/implementation-local-install-lifecycle-01-rework-6`. |
+| Reproduced passing evidence | 146 unittest; 146 pytest / 195 subtests; strict mypy 72 files; library compile and diff check all pass. |
+| Blocking findings | CR-50: `FINALIZE` can clear owner/recovery while receipt/files remain live. CR-51/46: post-ledger-delete fault escapes and retry returns `NOT_INSTALLED`. CR-52: install reports success without writing payload files. CR-53: multi-host request records only the first host. CR-40: required manifest/receipt, port-fault/retry and Git non-interference matrices remain absent; stage fault propagates. |
+| Scope classification | Implementation/TDD correction only; approved SPEC, architecture, ticket acceptance, delivery stage and receipt do not change. |
+| Continuation | Mark rework-6 historical and automatically issue a fresh allocation under the existing receipt; no second dispatch question. Ticket 02 remains `DEPENDENCY_WAIT`. |

@@ -4,9 +4,9 @@
 | --- | --- |
 | Feature / ticket | `local-orchestration-installer` / `01-owned-install-lifecycle` |
 | SPEC / change | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / `CHG-20260808-011` |
-| Reviewed baseline | `14be507` |
-| Implementation / docs handoff | `a3dc5a2` / `7573a74` |
-| Implementation owner | Codex implementation Agent / `codex/implementation-local-install-lifecycle-01-rework-5` |
+| Reviewed baseline | `263e30c` |
+| Implementation / docs handoff | `e6b067c` / `f1301be` |
+| Implementation owner | Codex implementation Agent / `codex/implementation-local-install-lifecycle-01-rework-6` |
 | Reviewer | Codex / current `main` worktree |
 | Result | `CHANGES_REQUESTED` |
 
@@ -14,7 +14,94 @@
 
 - Approved Context: `doc/context/local-orchestration-installer/main.md`.
 - Ticket scope: typed owned ledger, fake lifecycle ports and fail-closed install/uninstall only; no real host configuration, target project, Git adapter or package artifact is reviewed as delivered.
-- Receipt `rcpt_local_orchestration_install_01_20260808` remains valid. The review result blocks the rework-5 implementation branch as historical evidence; it does not alter the approved SPEC, ticket scope or the planning lane's Ticket-02 dependency wait.
+- Receipt `rcpt_local_orchestration_install_01_20260808` remains valid. The review result blocks the rework-6 implementation branch as historical evidence; it does not alter the approved SPEC, ticket scope or the planning lane's Ticket-02 dependency wait.
+
+## Rework-6 review result
+
+The submitted branch restores named domain contracts and injected ports, and its reported regression/type/compile checks are reproducible. It is nevertheless not the approved owned lifecycle: durable recovery is not written around ordinary install/uninstall effects, the filesystem fake can report a complete installation without writing the payload, only the first selected host is registered, and most declared port failures still escape the finite result contract. The branch is `CHANGES_REQUESTED` and must not be merged.
+
+### CR-50 — P0: `FINALIZE` recovery discards authority while live effects remain
+
+`OwnedLifecycle.uninstall` treats any exact-owner `FINALIZE` recovery with no success ledger as sufficient to release the owner, clear recovery and return `REMOVED` (`library/local_orchestration/lifecycle.py:50-56`). It does not verify the recovery-bound receipts are absent or the recovery-bound manifest is absent before destroying the only retry authority.
+
+An independent shape-valid probe supplied an exact-owner `FINALIZE` recovery, no success ledger, a live fake host receipt and a live owned manifest. The call returned `REMOVED`, left both effects live, released the owner and cleared recovery. This violates AC-06/07 and reopens CR-49 through the full port surface.
+
+Required correction: every recovery phase must encode and revalidate its exact owner, manifest, receipt, removal-proof and absence evidence. `FINALIZE` may release owner/clear recovery only after the host and filesystem ports prove all recovery-owned effects absent. A live or unverifiable effect must return a finite blocked result and retain retry authority.
+
+### CR-51 — P0: ledger-delete fault escapes and makes residue non-retryable
+
+The ordinary uninstall path removes hosts and files, then performs `delete_ledger`, `clear_recovery` and `release` as an unguarded statement sequence (`lifecycle.py:61-67`). It never writes an uninstall recovery checkpoint before those effects. `TypedOwnership.delete_ledger` even models the required post-delete fault by removing the ledger and then raising (`fakes.py:98-102`), but `uninstall` does not catch it.
+
+The independent probe produced an uncaught `OSError`; the ledger and effects were gone, the owner remained active, no recovery existed, and the next call returned `NOT_INSTALLED`. This is the exact CR-46 lost-terminal-transition failure, not a successful retry implementation.
+
+Required correction: persist an evidence-bearing uninstall checkpoint before each irreversible phase, return finite results for every ownership-store fault, and make retry converge to `REMOVED` without losing owner/recovery authority. No port exception may cross the use-case boundary.
+
+### CR-52 — P1: `INSTALLED` is reported without staging physical payload
+
+`TypedFilesystem.stage` records only an in-memory manifest (`fakes.py:25-28`); it does not write payload bytes below the fixed root. `complete` compares only that dictionary to the ledger (`fakes.py:30-31`) and never checks file existence or digest. The independent normal-install probe returned `INSTALLED` while `JohnnyAIWorkflow/owned/router.json` did not exist, and `complete` still returned true.
+
+Required correction: the temporary-root filesystem adapter must physically stage every payload part, verify resolved-root containment, bytes/digest and complete manifest, and delete only those verified artifacts. `INSTALLED` is illegal until physical completeness and every host receipt are proven.
+
+### CR-53 — P1: multi-host requests silently install only the first host
+
+`install` selects `request.selected_hosts[0]` and writes a ledger with one receipt (`lifecycle.py:22-32`). A valid two-host request returned `INSTALLED` with one receipt. This violates AC-02's requirement that every selected host completes `register → verify → receipt` before success and prevents complete uninstall of the requested configuration.
+
+Required correction: register every selected host, bind each actual receipt to its requested host and manifest, and roll back/recover the exact effects if any host fails. Add one-host, multi-host, mid-sequence failure and retry tests.
+
+### CR-40 remains open — declared port and boundary matrix is still absent
+
+The two delivered lifecycle test files contain fourteen tests. They validate root, installation-ID and owned-path model rejection plus selected focused behaviors, but they do not implement manifest/receipt absent-value matrices, an EffectJournal, individual owner/ledger/recovery/host/filesystem/runtime/process/clock faults, complete first-state/retry assertions, or existing/empty Git success/failure snapshots. The root and value tests only assert Pydantic exceptions/results; they do not assert all port invocation counts are zero.
+
+The application also catches only the clock and combined runtime/process exceptions. An independent `FilesystemPort.stage` fault propagated `OSError`; the same unguarded pattern exists around ownership, host and finalization operations. Passing the repository's existing 146 tests therefore does not prove the ticket's required failure surface.
+
+Required correction: implement the exact CR-40 matrix from the approved ticket and rework-6 handoff. Each injected operation must have a named typed fault, finite result, complete owner/ledger/recovery/host/filesystem state assertion and retry terminal outcome. Record first-red test names/reasons before correcting each behavior.
+
+## Rework-6 independent verification
+
+| Check | Result |
+| --- | --- |
+| Branch ancestry / cleanliness | `263e30c → e6b067c → f1301be`; implementation worktree clean |
+| `git diff --check 263e30c..f1301be` | Passed |
+| `python -B -m unittest discover -s tests` | 146 passed |
+| `python -B -m pytest -q -p no:cacheprovider` | 146 passed / 195 subtests |
+| `python -B -m mypy --strict --no-incremental library tests` | 72 source files clean |
+| `python -B -m compileall -q library` | Passed |
+| FINALIZE live-effect probe | Failed: returned `REMOVED`, retained host/files, cleared owner/recovery |
+| Post-ledger-delete fault/retry probe | Failed: uncaught `OSError`; retry returned `NOT_INSTALLED` with owner stranded |
+| Physical staging probe | Failed: returned `INSTALLED` while payload path was absent; fake `complete` returned true |
+| Two-host probe | Failed: returned `INSTALLED` with one receipt |
+| Filesystem stage-fault probe | Failed: uncaught `OSError` |
+
+## Rework-6 CodeReview standard check
+
+| Requirement | Result / evidence |
+| --- | --- |
+| Clear and strongly typed | Partial pass: contracts/ports are named; public bool faults and missing durable transition contracts remain. |
+| Coding/architecture rules | Fail: use case does not drive its declared recovery state through irreversible effects. |
+| Logic correctness | Fail: CR-50/51 report removal/absence while cleanup authority or owner state is inconsistent. |
+| Boundary and exception behavior | Fail: CR-40 and stage-fault probe show uncaught port exceptions and missing matrices. |
+| Security and ownership isolation | Fail: CR-50 destroys exact-owner recovery authority before proving effects absent. |
+| Test coverage | Fail: mandatory manifest/receipt, port-fault/retry and Git non-interference matrices are absent. |
+| Dependencies | Pass: no new external dependency. |
+| SPEC/ticket compliance | Fail: AC-01/02/06/07/08 are not fully delivered. |
+
+## Rework-6 CodeReview §2.1 defect audit
+
+| # | Category | Result |
+| --- | --- | --- |
+| 1 | Path-prefix mismatch | Contract variants are checked; physical resolved-root containment is not proven because install writes no file. |
+| 2 | null / empty / containers | Installation ID and owned path covered; required persisted manifest/receipt matrices absent. |
+| 3 | Authorization bypass | Fail: CR-50 clears recovery/owner without proof that recovery-bound effects are absent. |
+| 4 | Token format/comparison | N/A by ticket; no authentication token is introduced. |
+| 5 | Error-code consistency | Fail: CR-51 and stage-fault probe propagate exceptions instead of finite codes. |
+| 6 | Exception propagation | Fail: most injected ports are unguarded. |
+| 7 | Tests cover described behavior | Fail: passing suite omits required matrices and all five independent failures. |
+
+## Rework-6 required next rework
+
+The rework-6 branch is blocked historical evidence. The implementation owner must start a fresh branch directly from the next control-plane docs-only handoff baseline, without reset, merge, rebase, cherry-pick or reuse of `e6b067c` / `f1301be`. Receipt `rcpt_local_orchestration_install_01_20260808` continues; no second dispatch confirmation is valid.
+
+The next allocation must first establish the complete required tests and behavior-specific red evidence, then implement a durable phase machine over the existing strict contracts and ports. It must close CR-40/46/50/51/52/53 while preserving CR-36/37/38/39/41/42/43/48/49 guards. The return again requires implementation commit(s), full independent-verifiable evidence and a final docs-only handoff.
 
 ## Rework-5 review result
 

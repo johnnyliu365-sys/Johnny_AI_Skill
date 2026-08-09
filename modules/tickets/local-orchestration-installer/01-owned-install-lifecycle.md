@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01, AC-03, AC-06, AC-07, AC-08 |
 | Context / change | `doc/context/local-orchestration-installer/main.md` / `CHG-20260808-011` |
-| State | `IN_PROGRESS` — fresh allocation `aln_local_orchestration_install_01_rework_6_20260809` must restore the complete approved surface and close CR-40/46/48/49 plus reopened CR-38/42/43; receipt continues |
+| State | `CHANGES_REQUESTED` — rework-6 restores typed ports but is non-durable and incomplete; CR-40/46/50/51/52/53 require fresh implementation while the existing receipt continues |
 | Language | Python 3.11, Pydantic strict models and standard-library filesystem test fakes |
 | Baseline | `afee39d` (`docs: plan local orchestration installer tickets`) |
 | Control-plane owner / reviewer | Codex / current `main` worktree |
@@ -60,7 +60,7 @@ Frontend composition / DI: the equivalent command/UI is `InstallControlPlane` / 
 ## Review return
 
 - Review: `doc/reviews/local-orchestration-installer/01-owned-install-lifecycle-code-review.md` (`CHANGES_REQUESTED`).
-- Blocked histories: `010110a` / `7bc5fd5`; `fd429fd`, `a222d89` / `8e39c99`; `4b840cd` / `7c73b14`; `c91041a` / `ba74caf`; `7df74e1`, `e84dff0`, `14838d9` / `f90877d`; `a3dc5a2` / `7573a74`. None may be reset, overwritten, cherry-picked or reused.
+- Blocked histories: `010110a` / `7bc5fd5`; `fd429fd`, `a222d89` / `8e39c99`; `4b840cd` / `7c73b14`; `c91041a` / `ba74caf`; `7df74e1`, `e84dff0`, `14838d9` / `f90877d`; `a3dc5a2` / `7573a74`; `e6b067c` / `f1301be`. None may be reset, overwritten, cherry-picked or reused.
 - Corrected and retained requirements: CR-36/37 typed proof/absence validation; CR-39 finite install verification rollback; CR-41 evidence-bearing recovery phases. Rework-4 demonstrates the intended owner-release/recovery-clear sequence and cooperative manifest/checkpoint compensation, but does not close all reachable paths.
 - Still required: CR-40 complete state/evidence matrix; CR-46 retry after ledger deletion plus terminal-checkpoint failure; reopened CR-38 operation-safe recovery consumption, CR-42 actual returned-effect cleanup and CR-43 active-owner validation on every existing-ledger path. A new control-plane handoff creates another fresh branch; no new user dispatch is needed.
 
@@ -84,3 +84,10 @@ Frontend composition / DI: the equivalent command/UI is `InstallControlPlane` / 
 - Passing evidence: submitted four-test state-machine behavior, full 135-test regression, 175 subtests, mypy/compile/diff/privacy checks.
 - Blocking evidence: CR-47 removed the approved port-driven lifecycle surface; CR-40 remains incomplete; CR-48 malformed IDs throw or diverge by entrypoint; CR-49 shape-valid recovery clears foreign owner/effects; CR-46 and reopened CR-38/42/43 are not proven through the approved surface.
 - Classification: implementation/architecture-contract/TDD correction only. The approved SPEC/ticket remain authoritative; the implementation's reduced contract is rejected, not treated as `REQUIREMENT_CHANGED`.
+
+### Rework-6 review return
+
+- Reviewed range: `263e30c → e6b067c → f1301be` on `codex/implementation-local-install-lifecycle-01-rework-6`.
+- Passing evidence: full 146-test regression, 195 subtests, strict mypy across 72 files, compile and diff checks; strict contracts and injected ports are restored.
+- Blocking evidence: CR-50 clears `FINALIZE` recovery while live effects remain; CR-51/46 loses retry authority after ledger-delete fault; CR-52 reports `INSTALLED` without physical staging; CR-53 ignores every selected host after the first; CR-40 port/boundary/Git matrix remains incomplete and port exceptions propagate.
+- Classification: implementation/TDD correction only. Approved SPEC, ticket, architecture, receipt and delivery stage remain unchanged.
