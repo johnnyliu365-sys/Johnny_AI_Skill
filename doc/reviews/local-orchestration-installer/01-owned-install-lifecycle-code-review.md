@@ -4,9 +4,9 @@
 | --- | --- |
 | Feature / ticket | `local-orchestration-installer` / `01-owned-install-lifecycle` |
 | SPEC / change | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / `CHG-20260808-011` |
-| Reviewed baseline | `85b7e96` |
-| Implementation / docs handoff | `ea99ccc` / `415f2bd` |
-| Implementation owner | Codex implementation Agent / `codex/implementation-local-install-lifecycle-01-rework-10` |
+| Reviewed baseline | `50b0591` |
+| Implementation / docs handoff | `f17da74`, `8193067` / `95ec79a` |
+| Implementation owner | Codex implementation Agent / `codex/implementation-local-install-lifecycle-01-rework-11` |
 | Reviewer | Codex / current `main` worktree |
 | Result | `CHANGES_REQUESTED` |
 
@@ -14,7 +14,79 @@
 
 - Approved Context: `doc/context/local-orchestration-installer/main.md`.
 - Ticket scope: typed owned ledger, fake lifecycle ports and fail-closed install/uninstall only; no real host configuration, target project, Git adapter or package artifact is reviewed as delivered.
-- Receipt `rcpt_local_orchestration_install_01_20260808` remains valid. The review result blocks the rework-10 implementation branch as historical evidence; it does not alter the approved SPEC, ticket scope or the planning lane's Ticket-02 dependency wait.
+- Receipt `rcpt_local_orchestration_install_01_20260808` remains valid. The review result blocks the rework-11 implementation branch as historical evidence; it does not alter the approved SPEC, ticket scope or the planning lane's Ticket-02 dependency wait.
+
+## Rework-11 review result
+
+The submitted branch restores one exclusive fixed-root owner, recursively revalidates the covered command/path models, verifies live install effects and consumes the cooperative terminal proofs exercised by its suite. Its 149-test regression, 262 pytest subtests, strict mypy, in-memory compile and source sentinel are independently reproducible. It remains `CHANGES_REQUESTED`: a shape-valid but non-causal `FINALIZE` record still erases all authority while live files and registrations remain; install cleanup can clear its only recovery record before owner release is proven; and a mismatched recovery-write proof can release the owner after the recovery was durably written.
+
+### CR-66 — P0: asserted `FINALIZE` evidence is accepted as causal post-delete proof
+
+`Recovery.FINALIZE` requires fields whose values are deterministic from the manifest and receipts (`library/local_orchestration/contracts.py:159-192`). `_uninstall` routes any structurally valid `FINALIZE` directly to `_complete_finalize`, which deletes the ledger, releases the fixed root and clears recovery without re-observing runtime, process, host or filesystem absence (`library/local_orchestration/lifecycle.py:226-235,297-317`). The stored `ledger_delete_proof` is also the expected proof written before ledger deletion (`lifecycle.py:284-295`), not the actual returned proof durably checkpointed after deletion.
+
+An independent probe installed one live host and file, replaced recovery with a fully valid `FINALIZE` containing all expected proof/absence values, then called uninstall. The result was `REMOVED`; the live file and host registration remained, while owner, ledger and recovery were all `None`. Required correction: model pre-delete intent and post-delete observation as distinct causal states, durably persist the exact returned ledger-deletion proof only after read-back confirms absence, and re-observe exact runtime/process/host/filesystem terminal absence before discarding root authority. A predictable assertion must never substitute for an observed transition.
+
+### CR-67 — P0: install cleanup clears recovery before owner release is proven
+
+`_cleanup_install_exact` clears the exact recovery at `lifecycle.py:219` and only then calls `release_root`; that return is compared but the root owner is not read back (`lifecycle.py:221-224`). When stage returns a foreign proof and owner release also returns a foreign proof, the independent probe returned `INSTALL_BLOCKED/INSTALL_CLEANUP_PENDING` with the root still owned, but ledger and recovery absent. Every retry then returned `INSTALL_BLOCKED/OWNER_WITHOUT_AUTHORITY`.
+
+Required correction: make cleanup terminalization a root-scoped, durable transition that survives either recovery-clear or owner-release failure. No ordering may expose an owner without recovery/ledger or an ownerless recovery to another installation. Exact owner-release proof plus root-owner read-back is mandatory, and every one-step foreign/replayed/no-op/exception outcome must converge on retry.
+
+### CR-68 — P0: a mismatched recovery-write proof can orphan the persisted recovery
+
+`_write_recovery` correctly compares proof and read-back (`lifecycle.py:379-383`), but `_new_install` treats any false result as if no recovery exists and immediately releases the root (`lifecycle.py:92-95`). An injected adapter persisted `INSTALL_PREPARED` and returned the same typed proof with `replay=1`. The first call returned `INSTALL_BLOCKED/PREPARE_CHECKPOINT`, released the owner and retained the recovery; the second returned `INSTALL_BLOCKED/ORPHANED_AUTHORITY` permanently.
+
+Required correction: branch on the authoritative read-back after every write/checkpoint mismatch. If exact recovery was persisted, retain the fixed-root owner and resume it; if nothing was persisted, release only after exact absence and owner-release proof/read-back. Cover foreign, replayed, no-op and exception results for every recovery-write phase, not only recovery clear.
+
+### CR-40 remains open — required retained adversaries are not in the committed suite
+
+The fresh suite tests malformed `FINALIZE` with missing evidence, owner-release faults only on the normal uninstall terminal path, and recovery-clear proof faults. It does not test a fully valid forged `FINALIZE` with live effects, owner-release proof failure during install cleanup, or recovery-write foreign/replayed/no-op proof after persistence. The implementation return's claim that all terminal/checkpoint effects have exact proof plus read-back validation is therefore not supported by the committed tests.
+
+## Rework-11 independent verification
+
+| Check | Result |
+| --- | --- |
+| Branch ancestry / cleanliness | `50b0591 → f17da74 → 8193067 → 95ec79a`; implementation worktree clean |
+| `git diff --check 50b0591..95ec79a` | Passed |
+| `python -m unittest discover -s tests` | 149 passed |
+| `python -m pytest -q` | 149 passed / 262 subtests |
+| `python -B -m mypy --strict --no-incremental library tests` | 72 source files clean |
+| In-memory compile / source sentinel | 54 library modules compiled; no `type: ignore`, `Any`, dynamic attribute or eval/exec shortcut in the delivered surface |
+| Exact-shaped live-effect `FINALIZE` probe | Failed: returned `REMOVED`, retained one live host and the file, cleared owner/ledger/recovery |
+| Install-cleanup owner-release probe | Failed: first `INSTALL_CLEANUP_PENDING`, retry permanent `OWNER_WITHOUT_AUTHORITY` |
+| Persisted recovery-write replay probe | Failed: first `PREPARE_CHECKPOINT`, retry permanent `ORPHANED_AUTHORITY` |
+| Worktree non-interference | Generated Python caches were removed by the implementation owner; final worktree clean |
+
+## Rework-11 CodeReview standard check
+
+| Requirement | Result / evidence |
+| --- | --- |
+| Clear and strongly typed | Partial pass: named DTOs/ports exist, but `FINALIZE` evidence is an asserted predictable value rather than a causal observation. |
+| Coding/architecture rules | Partial pass: DI and root exclusivity exist; terminal state cannot atomically retain authority through checkpoint failures. |
+| Logic correctness | Fail: CR-66 returns false `REMOVED`; CR-67/68 create permanently non-resumable states. |
+| Boundary and exception behavior | Fail: exact-shaped persisted state and typed proof mismatch do not remain fail-closed and retryable. |
+| Security and ownership isolation | Fail: forged terminal evidence can discard all ownership while owned effects remain live. |
+| Test coverage | Fail: CR-40 omits all three independently reproduced state/proof sequences. |
+| Dependencies | Pass: no new runtime dependency. |
+| SPEC/ticket compliance | Fail: AC-06/07/08 and the retained CR-50/58/63/65 guarantees are incomplete. |
+
+## Rework-11 CodeReview §2.1 defect audit
+
+| # | Category | Result |
+| --- | --- | --- |
+| 1 | Path-prefix mismatch | Submitted raw/constructed canonical-path matrix passes. |
+| 2 | null / empty / containers | Submitted public and persisted-state boundary cases pass. |
+| 3 | Authorization bypass | Fail: CR-66 accepts asserted terminal evidence as deletion/release authority. |
+| 4 | Token format/comparison | N/A by ticket; source sentinel passes. |
+| 5 | Error-code consistency | Fail: CR-66 returns false success and CR-67/68 return permanent blocked states rather than retry convergence. |
+| 6 | Exception propagation | Public exceptions are finite, but proof/checkpoint failures corrupt the recoverable state invariant. |
+| 7 | Tests cover described behavior | Fail: the three independent probes are absent from the committed suite and contradict the handoff claim. |
+
+## Rework-11 required next rework
+
+The rework-11 branch is blocked historical evidence. The implementation owner must start a fresh branch directly from the next control-plane docs-only handoff baseline, without reset, merge, rebase, cherry-pick, source copy or reuse of `f17da74`, `8193067` or `95ec79a`. Receipt `rcpt_local_orchestration_install_01_20260808` and bounded authority `PRG-20260809-042` continue; no second dispatch confirmation is valid.
+
+The next allocation must preserve CR-59 through CR-65's passing direct guards while adding causal post-delete terminal evidence, retry-safe cleanup terminalization and authoritative recovery-write mismatch handling for CR-66 through CR-68.
 
 ## Rework-10 review result
 

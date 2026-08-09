@@ -756,3 +756,14 @@
 | Required red/green evidence | Before production code, reproduce: two installation IDs sharing the fixed root including interrupted recovery; forged `INSTALL/CLEANUP`, `UNINSTALL_HOSTS` and `FINALIZE` owner/intent/receipt/manifest evidence; raw and constructed dot/drive/UNC/device/scheme/encoded/non-normalized owned paths with zero effects; foreign/unavailable/replayed/no-op runtime, process, ledger-delete and recovery-checkpoint proofs. Every failure must retain exact retry authority, and reversing each guard must make its focused test fail. |
 | Receipt / continuation authority | `rcpt_local_orchestration_install_01_20260808` and bounded authority `PRG-20260809-042` remain valid. This correction allocation requires no second user confirmation. |
 | Required return | Ticket-only implementation commit(s), full verification, then one docs-only handoff commit. No self-review, integration, push, deployment or progress-only final. |
+
+## PRG-20260809-055 — Ticket 01 twelfth independent review
+
+| Field | Value |
+| --- | --- |
+| State | `REVIEW / CHANGES_REQUESTED` |
+| Reviewed range | Baseline `50b0591`; implementation `f17da74`, `8193067`; docs-only handoff `95ec79a`; branch `codex/implementation-local-install-lifecycle-01-rework-11`. |
+| Reproduced passing evidence | 149 unittest; 149 pytest / 262 subtests; strict mypy 72 files; 54-module in-memory compile, source sentinel, diff check and clean worktree pass. Submitted CR-62/64 and direct proof checks pass. |
+| Blocking findings | CR-66 accepts predictable, shape-valid `FINALIZE` assertions as causal post-delete evidence and returns `REMOVED` while live host/files remain. CR-67 clears install recovery before owner release is proven, producing permanent `OWNER_WITHOUT_AUTHORITY`. CR-68 releases the owner after a recovery-write replay proof even though recovery was persisted, producing permanent `ORPHANED_AUTHORITY`. CR-40 omits all three exact sequences. |
+| Scope classification | Implementation/contract/TDD correction only; approved SPEC, ticket, architecture, delivery stage, owner, receipt and bounded continuation authority do not change. |
+| Continuation | Mark rework-11 historical and automatically create a fresh same-ticket allocation under receipt `rcpt_local_orchestration_install_01_20260808` and authority `PRG-20260809-042`; Ticket 02 remains `DEPENDENCY_WAIT`. |
