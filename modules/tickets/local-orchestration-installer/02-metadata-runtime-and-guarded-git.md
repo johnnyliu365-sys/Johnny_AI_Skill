@@ -1,47 +1,110 @@
-# 02 — Metadata Runtime and Guarded Git
+# 02 — Metadata Runtime and Guarded Git Decision
 
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-04, AC-05, AC-08 |
 | Context / change | `doc/context/local-orchestration-installer/main.md` / `CHG-20260808-011` |
-| State | `PLANNED` |
-| Language | Python 3.11 / Pydantic strict; public types/patterns selected from `workflow-router-poc@d94d8d5` |
-| Baseline | Ticket 01 reviewed/integrated documentation and source baseline |
+| State | `PLANNED / BOUNDED` |
+| Required dependency | Ticket 01 integrated at `491f98b` and closed at `24387c2` |
+| Language | Python 3.11, strict Pydantic models and standard-library fakes |
 | Control-plane owner / reviewer | Codex / current `main` worktree |
-| Implementation owner / worktree | Codex implementation Agent / a fresh synchronized separate worktree after explicit dispatch |
-| Environment | Local metadata store and temporary Git repositories only; no company project, host configuration, push or deployment |
+| Implementation owner / worktree | Not allocated; when selected, the existing `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` remains the only implementation worktree |
+| Environment | Metadata-only in-memory store and temporary-repository fakes; no company project, host configuration, push or deployment |
 
 ## User-observable outcome
 
-A validated local metadata event resumes one safe Router continuation or returns finite `HALTED` / `NEEDS_USER_ACTION`. It never persists raw Context. A runtime request may touch a temporary registered Git repository only when opaque project identity, explicit registration, expected clean base, per-project lock and fast-forward condition all match; every other path leaves it unchanged.
+An unseen, installation-bound metadata event is claimed once and returns one
+finite runtime status. Replay, malformed identity, raw content or a Router/port
+failure returns `HALTED` without a Git decision. A registered temporary project
+receives `FAST_FORWARD_ALLOWED` only when its opaque project identity, exact
+canonical registry entry, clean expected base and exclusive lock all match;
+otherwise it returns a stable blocked result without mutation.
 
-## Scope and boundary
+## Smallest reusable-module selection
 
-In scope: `InstallationId`-bound metadata event/checkpoint store, replay claim, status projection, project registry and injected guarded Git adapter. Proposed paths: `library/local_orchestration/{runtime,event_store,project_registry,guarded_git}.py`, public exports and `tests/test_metadata_runtime_and_guarded_git.py`.
+```text
+selected: workflow-router-poc@24387c2
+why: reuse the public strict ProjectId and finite Router event/status vocabulary
+read: library/workflow_router/README.md → __init__.py → contracts.py → profile.py → guarded_integration.py
+dependency: Pydantic; existing optional Router dependencies remain unchanged
+boundary: do not import GuardedIntegrationCoordinator, fake integration effects, raw ContextPacket or any real Git capability
+```
 
-Reuse only: `library.workflow_router` public `ProjectId`, `RouterEvent`, completion/return and Context descriptor contracts, plus guarded integration's error/state pattern. Do not change current Router POC behavior or treat its fake integration port as real Git.
+Rejected as unnecessary: the complete Router engine, telemetry, Temporal,
+policy-response, audit coordinator and previous Ticket-01 lifecycle history.
 
-Out of scope: host lifecycle, installer UI/package, automatic Agent turn, raw source access, target company project registration by installer, push, deploy, reset, merge commit, network or database.
+## Hard scope ceiling
 
-Frontend composition / DI: `ResumeOrchestration` and `ReadRuntimeStatus` are equivalent command boundaries. A runtime composition root injects `EventStorePort`, `RouterPort`, `ProjectRegistryPort`, `GuardedGitPort`, `ClockPort` and notification port; temporary-repo/clock/router/Git fakes are used in tests.
+The complete Ticket-02 production diff is limited to these five files:
 
-## Handoff and role assignment
+```text
+library/local_orchestration/__init__.py
+library/local_orchestration/runtime_contracts.py
+library/local_orchestration/runtime.py
+library/local_orchestration/project_registry.py
+library/local_orchestration/guarded_git.py
+```
 
-- Roles remain separated: control-plane/reviewer Codex/current `main`; implementation owner Codex implementation Agent in its dedicated worktree; owner override `N/A`.
-- Dispatch handoff must cite the exact Ticket-01 integrated baseline and the public `workflow-router-poc@d94d8d5` contracts. It may carry opaque project/correlation/evidence IDs but no actual project path or ContextPacket.
-- A missing registry, dirty/stale base, lock contention, replay or host-needed status produces a typed halt/blocked return. Any need to widen Git permissions is `CHANGE_DETECTED → Grill`.
+The complete Ticket-02 test surface is one file:
 
-## TDD and defect checks
+```text
+tests/test_metadata_runtime_and_guarded_git.py
+```
 
-1. **Normal runtime red/green:** an unseen valid metadata event initially has no claim/checkpoint; green claims it once, resumes one allowed Router continuation and returns a finite status. A valid temporary registered repo under clean exact base exercises one allowed fast-forward-only adapter result.
-2. **Path-prefix boundary:** individually test registered exact root, one-extra-character sibling, trailing separator, casing, URL-encoded locator, traversal and empty locator; noncanonical values cannot be registered, resolved or passed to Git.
-3. **Null / empty boundary:** test `None`, omitted/undefined-equivalent, `""`, whitespace and empty container for event, project identity, revision/base, correlation and registry request. Record which absent forms map to the same finite halt.
-4. **Authority bypass:** verify direct adapter calls and indirect runtime/retry/background path both require the same installation-bound registry, project ID, lock and exact base. No event can grant Git authority merely by carrying a valid-looking project ID.
-5. **Token comparison:** no credential/token is in this ticket. Source-scan that no token equality comparison is introduced; opaque IDs are validated identifiers, and no raw authorization secret is stored or compared.
-6. **Stable errors / exception behavior:** separately inject event store, router, registry, lock and Git subprocess-port failures. Assert external finite error shape, unique internal code, whether errors are contained (expected) rather than thrown, and zero Git side effect on failure.
-7. **Regression proof:** test replay, cross-installation/cross-project event, raw source/Context sentinel, dirty tree, stale base, non-fast-forward, duplicate queue claim and mutation of each required guard. Preserve first red evidence.
+- Ticket-02 production additions/changes must stay at or below 650 non-blank
+  lines; the test file must stay at or below 500 non-blank lines.
+- Do not modify Ticket-01 contracts, ports, lifecycle, fakes or tests.
+- If the frozen closure cannot fit, return `CHANGE_DETECTED`; do not add files,
+  phases, recovery engines, branches or worktrees.
 
-## Completion evidence
+## In scope
 
-- Required: red evidence; unit/integration tests against temporary repositories; strict mypy; compile; privacy sentinel; runtime smoke; target-repository non-interference snapshot; `git diff --check`; review and docs-only handoff.
-- Formal-environment migration: N/A — no production repository, push, deployment or secret is allowed.
+1. Strict metadata event, checkpoint, registry request, repository snapshot and
+   finite runtime/Git-decision models.
+2. One synchronous `ResumeOrchestration` use case with injected event store,
+   Router, registry, lock and guarded-decision ports.
+3. One in-memory metadata store and deterministic temporary-repository fakes.
+4. Exact registration/base/lock admission and fast-forward-only decision. The
+   decision does not execute Git.
+5. Public exports, TDD, strict typing and actual temporary-Git
+   non-interference verification.
+
+## Explicitly out of scope
+
+- Real Git commands/subprocesses, merge/reset/commit/push, filesystem mutation
+  inside a target project, background worker, crash recovery or retry engine.
+- Raw Context/source/prompt/project locator persistence, credentials, tokens,
+  Secret/PII, network, database, Temporal, MCP, host lifecycle or installer UI.
+- Tickets 03–04 behavior or changes to `library/workflow_router`.
+
+## Frozen acceptance set — `CLOSURE-LOCAL-INSTALL-T02-01`
+
+This is the complete blocking set; review may not add Ticket-02 behavior.
+
+| ID | Required executable evidence |
+| --- | --- |
+| `D1` | First valid metadata event is claimed once and returns `COMPLETED`; replay returns `HALTED / REPLAYED` with no second Router or Git call. |
+| `D2` | A valid event whose Router needs a human returns `NEEDS_USER_ACTION` and performs no Git decision. |
+| `D3` | Registry root matrix: exact canonical temporary root is accepted; extra suffix, trailing separator, casing change, encoded separator, `..` and empty locator block before registry/Git effects. |
+| `D4` | For event ID, installation ID, project ID, expected base, correlation ID and registry locator: `None`, omitted, empty string, whitespace and empty container are rejected at the strict boundary. |
+| `D5` | A direct decision request and the indirect runtime path both require the same installation ID, registered `ProjectId`, exact root, clean expected base and acquired lock. Cross-installation/project, dirty, stale, non-fast-forward and contended cases return stable blocked reasons with zero mutation. |
+| `D6` | Exactly four one-shot failures are covered: event claim, Router resume, registry resolve and guarded-decision port. Each returns `HALTED` with one unique internal reason, no uncaught exception and no Git mutation. No Cartesian matrix is required. |
+| `D7` | Persisted metadata contains only typed opaque IDs, finite status and revision/evidence digests. Raw source, Context, prompt, locator/path/URI, Secret and PII sentinels never appear. Existing and empty actual temporary Git repositories remain byte-identical with unchanged porcelain across one allowed and one blocked decision. |
+| `D8` | Source scan over the five production files finds no `Any`, `type: ignore`, credential/token comparison, subprocess/network/Git command, target-project write or dynamic raw object crossing an internal boundary. |
+
+## Review and correction rule
+
+- Reviewer runs D1..D8 once and batches all findings.
+- One failed item may receive one additive correction commit on the same ticket
+  branch/worktree/allocation/receipt.
+- No review result creates another worktree or another branch for this ticket.
+  A second failed review returns `CONVERGENCE_REVIEW_REQUIRED`.
+
+## Required evidence and return
+
+1. First red test name and failure reason for D1..D8 before production code.
+2. Exact unittest for `tests.test_metadata_runtime_and_guarded_git`.
+3. Strict mypy over the five production files and one test file.
+4. In-memory compile, privacy/source sentinel, runtime smoke, actual temporary-Git
+   non-interference, `git diff --check`, scope/line checks and clean status.
+5. One Ticket-02 implementation commit and one separate docs-only handoff commit.
