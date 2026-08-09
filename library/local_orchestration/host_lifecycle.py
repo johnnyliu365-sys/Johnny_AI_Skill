@@ -94,6 +94,10 @@ class ReversibleHostCapabilityGate:
             return HostRemovalBlocked(reason=HostBlockReason.FOREIGN_REGISTRATION)
         try:
             proof = self._lifecycle.unregister(request)
+            try:
+                proof = AgentHostRemovalProof.model_validate_json(proof.model_dump_json())
+            except ValidationError:
+                return HostRemovalBlocked(reason=HostBlockReason.REMOVAL_PROOF_MISMATCH)
             if not _proof_matches(proof, request):
                 return HostRemovalBlocked(reason=HostBlockReason.REMOVAL_PROOF_MISMATCH)
             absent = self._lifecycle.verify_absent(proof)

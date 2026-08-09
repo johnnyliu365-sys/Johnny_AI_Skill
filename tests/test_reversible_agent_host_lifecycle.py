@@ -37,6 +37,30 @@ else:
     FEATURE_IMPORT_ERROR = ""
 
 
+class ForgedRemovalProofLifecycle(RecordedHostLifecycle):
+    def __init__(self) -> None:
+        super().__init__()
+        self.absence_check_count = 0
+
+    def unregister(self, request: HostRemovalRequest) -> AgentHostRemovalProof:
+        proof = super().unregister(request)
+        return proof.model_copy(
+            update={
+                "evidence_id": HostEvidenceId.model_construct(value="SECRET-SENTINEL")
+            }
+        )
+
+    def verify_absent(self, proof: AgentHostRemovalProof) -> HostCommandResult:
+        self.absence_check_count += 1
+        return HostCommandResult(
+            installation_id=proof.installation_id,
+            host=proof.host,
+            registration_key=proof.registration_key,
+            status=HostCommandStatus.ABSENT,
+            evidence_id=HostEvidenceId(value="evidence-0000000000000006"),
+        )
+
+
 class ReversibleAgentHostLifecycleTests(unittest.TestCase):
     def test_h1_recorded_exact_lifecycle_is_supported_and_ends_absent(self) -> None:
         require_feature("H1 recorded exact lifecycle")
@@ -269,6 +293,23 @@ class ReversibleAgentHostLifecycleTests(unittest.TestCase):
             self.assertEqual(existing_status, porcelain(existing))
             self.assertEqual(empty_status, porcelain(empty))
         self.assertFalse(fake.has_registration)
+
+    def test_h7_forged_nested_removal_evidence_fails_before_absence_check(self) -> None:
+        require_feature("H7 forged lifecycle removal proof")
+        request = build_stack()[0]
+        fake = ForgedRemovalProofLifecycle()
+        gate = ReversibleHostCapabilityGate(fake)
+
+        result = gate.verify_recorded(request)
+        serialized = result.model_dump_json()
+
+        self.assertNotIn("SECRET-SENTINEL", serialized)
+        self.assertIsInstance(result, HostCapabilityBlocked)
+        if not isinstance(result, HostCapabilityBlocked):
+            raise AssertionError("H7 expected forged removal evidence to block")
+        self.assertEqual(HostBlockReason.REMOVAL_PROOF_MISMATCH, result.reason)
+        self.assertEqual(0, fake.absence_check_count)
+        self.assertEqual("unrelated-effect", fake.unrelated_marker)
 
     def test_h8_production_source_has_no_forbidden_capability(self) -> None:
         require_feature("H8 forbidden-capability sentinel")
