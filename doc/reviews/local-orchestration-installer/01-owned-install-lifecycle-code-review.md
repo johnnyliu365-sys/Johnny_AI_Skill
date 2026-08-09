@@ -4,9 +4,9 @@
 | --- | --- |
 | Feature / ticket | `local-orchestration-installer` / `01-owned-install-lifecycle` |
 | SPEC / change | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / `CHG-20260808-011` |
-| Reviewed baseline | `f297d4f` |
-| Implementation / docs handoff | `fd429fd`, `a222d89` / `8e39c99` |
-| Implementation owner | Codex implementation Agent / `codex/implementation-local-install-lifecycle-01-rework` |
+| Reviewed baseline | `15f6be8` |
+| Implementation / docs handoff | `4b840cd` / `7c73b14` |
+| Implementation owner | Codex implementation Agent / `codex/implementation-local-install-lifecycle-01-rework-2` |
 | Reviewer | Codex / current `main` worktree |
 | Result | `CHANGES_REQUESTED` |
 
@@ -14,9 +14,103 @@
 
 - Approved Context: `doc/context/local-orchestration-installer/main.md`.
 - Ticket scope: typed owned ledger, fake lifecycle ports and fail-closed install/uninstall only; no real host configuration, target project, Git adapter or package artifact is reviewed as delivered.
-- Receipt `rcpt_local_orchestration_install_01_20260808` remains valid. The review result blocks the rework implementation branch as historical evidence; it does not alter the approved SPEC, ticket scope or the planning lane's Ticket-02 dependency wait.
+- Receipt `rcpt_local_orchestration_install_01_20260808` remains valid. The review result blocks the rework-2 implementation branch as historical evidence; it does not alter the approved SPEC, ticket scope or the planning lane's Ticket-02 dependency wait.
 
-## Rework review result
+## Rework-2 review result
+
+CR-38's normal partial-effect retries and CR-39's first-host verification rollback now reach finite outcomes. The CR-38 recovery-load behavior also passes reverse verification: replacing the recovery load with `None` in memory makes its partial-file retry test fail.
+
+The ticket remains unapprovable because a valid-shaped recovery can skip required phases, selected-host receipts are not bound back to the request, two installation IDs can share and corrupt the one fixed root, and CR-40's mandatory matrix/red evidence remains incomplete.
+
+### CR-40 remains open — mandatory matrix and red evidence are still incomplete
+
+The focused suite expanded to 20 tests, but the approved ticket requires each applicable boundary and external port failure individually, plus a first failing test name/reason for every behavior. The committed evidence does not meet that bar:
+
+- the five null/empty representations are grouped only for `installation_id`; they are not individually applied to manifest, host receipt and owned-path boundaries;
+- `FakeFilesystem.fail_stage`, recovery-write and recovery-clear faults are not each exercised through their observable use cases;
+- target-repository snapshots cover successful install plus failed/successful uninstall, but not the required failed-install path;
+- the handoff lists red failures for normal lifecycle, CR-38 retries, one CR-39 case and a port-fault matrix, not each of the 20 committed behaviors;
+- no test covers the valid-shaped recovery phase bypass, selected-host receipt mismatch or fixed-root cross-installation collision described below.
+
+The implementation and all tests first appear together in `4b840cd`, so Git history cannot independently establish the missing per-behavior red → green order.
+
+Required correction: execute the complete ticket matrix and record each new behavior's exact first-red test/reason before implementation. Grouping is allowed in one test method, but every required value/port/path must be an explicit subtest with externally observable assertions.
+
+### CR-41 — typed recovery phase can skip removal and report false `REMOVED`
+
+`RecoveryRecord` has no operation/phase progress invariant (`library/local_orchestration/contracts.py:223-233`). `_load_recovery_for_uninstall` accepts `UNINSTALL_LEDGER` based only on type, installation ID, operation and phase (`library/local_orchestration/lifecycle.py:202-223`), and `_resume_uninstall` then skips host/file work and deletes the ledger (`library/local_orchestration/lifecycle.py:289-397`).
+
+Independent reproduction installed normally, replaced only the owned recovery entry with a strict `RecoveryRecord` at `UNINSTALL_LEDGER` using the exact ledger manifest/receipts but no completed progress, then invoked uninstall. Result: `REMOVED`; the main ledger and recovery were deleted while every payload file and one host registration still existed.
+
+This is a direct AC-06/07 false-success and tampered-state bypass. Strong field types alone do not prove the preceding effects happened.
+
+Required correction: make phase transitions evidence-bearing and fail closed. At minimum, phase/operation/path invariants must be model-validated; resuming file/ledger phases must reverify all host receipts are absent; entering/finalizing ledger phase must prove every manifest artifact is absent (not merely trust the phase enum). Add valid-shaped phase-forgery tests for every skippable transition.
+
+### CR-42 — host receipt is not bound to the selected host
+
+After `register`, the application checks only that the result is a `HostReceipt`, appends it and calls `verify` (`library/local_orchestration/lifecycle.py:90-103`). Neither this boundary nor `OwnedLedger._consistent` compares `receipt.host_id` to the loop's selected `host_id`.
+
+Independent reproduction selected `host_codex`; a typed fake returned and verified a receipt for `host_claude`. Install returned `INSTALLED` and the ledger recorded only `host_claude`. This violates AC-02's per-selected-host `detect → register → verify → receipt` binding.
+
+Required correction: before verification or ledger construction, require exact installation ID, selected host ID, unique registration identity and receipt-owned paths contained in the staged manifest. Any mismatch must begin finite rollback and never issue an install success ledger.
+
+### CR-43 — two installation IDs collide inside the fixed root
+
+The application checks only `ledger.load(request.installation_id)` (`library/local_orchestration/lifecycle.py:65-72`). The filesystem port receives the installation ID, but `FakeFilesystem.stage` discards it and writes the same relative paths below one fixed root (`library/local_orchestration/fakes.py:45-56`).
+
+Independent reproduction installed two distinct valid installation IDs with the same payload. Both returned `INSTALLED`. Removing the first returned `REMOVED`, deleted the shared files and left the second host registration/ledger; removing the second then returned `MANIFEST_INVALID`.
+
+This breaks fixed-root ownership and one-click detachability. Re-running Setup with a new generated ID must not silently create a second owner of the same paths.
+
+Required correction: give the fixed root one authoritative active-owner record (or equivalently make every artifact path installation-scoped and prove independent ownership). Before staging, atomically reject a different active installation with `INSTALLATION_EXISTS`. Add two-ID install/remove interleaving tests, including interrupted recovery.
+
+## Current independent verification
+
+| Check | Result |
+| --- | --- |
+| Branch ancestry / cleanliness | `15f6be8 → 4b840cd → 7c73b14`; implementation worktree clean |
+| `git diff --check 15f6be8..4b840cd` | Passed |
+| `python -B -m unittest discover -s tests` | 151 passed |
+| `python -B -m pytest -q -p no:cacheprovider` | 151 passed / 192 subtests |
+| `python -B -m mypy --strict --no-incremental library tests` | 71 source files clean |
+| In-memory compile / privacy sentinels | 5 local-orchestration modules compiled; passed |
+| CR-38 reverse verification | Replacing recovery load with `None` makes `test_cr38_partial_file_delete_retry_reaches_removed` fail |
+| Typed phase-forgery probe | Failed: returned `REMOVED` with files and host registration still present |
+| Selected-host mismatch probe | Failed: selected Codex, accepted Claude receipt, returned `INSTALLED` |
+| Two-ID fixed-root probe | Failed: both installed; removing one made the other `MANIFEST_INVALID` with registration retained |
+
+## Current CodeReview standard check
+
+| Requirement | Result / evidence |
+| --- | --- |
+| Clear and strongly typed | Partial pass: values are typed, but CR-41 proves the state type lacks causal invariants. |
+| Coding/architecture rules | Fail: fixed-root ownership is not represented by a single authoritative owner. |
+| Logic correctness | Fail: CR-41 through CR-43 produce false success or cross-install corruption. |
+| Boundary and exception behavior | Partial pass on finite exceptions; fail on the still-incomplete CR-40 matrix. |
+| Security and ownership isolation | Fail: valid-shaped recovery and mismatched host receipt bypass required ownership transitions. |
+| Test coverage | Fail: all three independent probes pass outside the committed suite; red evidence is incomplete. |
+| Dependencies | Pass: no new external dependency. |
+| SPEC/ticket compliance | Fail: AC-02, AC-06, AC-07 and ticket completion evidence are not fully met. |
+
+## Current CodeReview §2.1 defect audit
+
+| # | Category | Result |
+| --- | --- | --- |
+| 1 | Path-prefix mismatch | The seven root cases pass; cross-install fixed-root ownership remains untested (CR-43). |
+| 2 | null / empty / containers | Fail: required representations are not applied to each named model boundary. |
+| 3 | Authorization bypass | Fail: CR-41 and CR-42 skip recovery/selected-host authority checks. |
+| 4 | Token format/comparison | N/A by approved ticket; source sentinel passes. |
+| 5 | Error-code consistency | Finite tested faults pass; CR-41 produces the wrong success state rather than a failure code. |
+| 6 | Exception propagation | Tested host/runtime/process paths pass; stage/recovery write/clear matrix remains incomplete. |
+| 7 | Tests cover described behavior | Fail: CR-40 and three independently reproduced gaps. |
+
+## Required next rework
+
+This branch is blocked historical evidence. The implementation owner must start another fresh branch directly from the next control-plane docs-only handoff baseline, without reset, merge, rebase, cherry-pick or reuse of `4b840cd` or `7c73b14`. The original receipt remains valid; no second user dispatch confirmation is permitted.
+
+The next allocation must address CR-40 through CR-43 with fresh behavior-specific red evidence, then return new implementation commit(s) plus a final docs-only handoff for independent review.
+
+## Prior second-review result (`fd429fd`, `a222d89` / `8e39c99`)
 
 CR-36 and the single-invocation portion of CR-37 are corrected. Runtime type rejection now occurs before deletion, absence is checked through a typed result bound to the same installation, host, registration and owned paths, and reversing either guard in memory makes its focused test fail.
 
@@ -59,7 +153,7 @@ The implementation and tests first appear together in `fd429fd`; the supplied ev
 
 Required correction: execute the complete ticket matrix, record each new behavior's first failing test name/reason before implementation, and keep assertions on externally observable effects. A collection failure for a missing package does not replace behavior-specific red evidence.
 
-## Current independent verification
+## Prior second-review independent verification
 
 | Check | Result |
 | --- | --- |
@@ -74,7 +168,7 @@ Required correction: execute the complete ticket matrix, record each new behavio
 | Recovery retry probes | Failed as described in CR-38; persisted records are not consumed |
 | Install verify-failure probe | Failed as described in CR-39 with propagated `ValidationError` |
 
-## Current CodeReview standard check
+## Prior second-review CodeReview standard check
 
 | Requirement | Result / evidence |
 | --- | --- |
@@ -87,7 +181,7 @@ Required correction: execute the complete ticket matrix, record each new behavio
 | Dependencies | Pass: no new external dependency. |
 | SPEC/ticket compliance | Fail: AC-02/06/07 and the ticket completion evidence are not fully met. |
 
-## Current CodeReview §2.1 defect audit
+## Prior second-review CodeReview §2.1 defect audit
 
 | # | Category | Result |
 | --- | --- | --- |
@@ -99,7 +193,7 @@ Required correction: execute the complete ticket matrix, record each new behavio
 | 6 | Exception propagation | Fail: CR-39 and missing per-port failure cases. |
 | 7 | Tests cover described behavior | Fail: CR-38 retry is not asserted and mandatory ticket cases/red evidence are missing. |
 
-## Required next rework
+## Prior second-review required rework
 
 This branch is blocked historical evidence. The implementation owner must start another fresh branch directly from the next control-plane docs-only handoff baseline, without reset, merge, rebase, cherry-pick or reuse of `fd429fd`, `a222d89` or `8e39c99`. The original receipt remains valid; no second user dispatch confirmation is permitted.
 

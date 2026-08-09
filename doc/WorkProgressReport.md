@@ -537,3 +537,14 @@
 | Scope | Fresh red → minimal typed implementation → green for CR-38 recovery resume, CR-39 finite zero/partial-receipt rollback and CR-40's complete approved ticket matrix. No target project, real host configuration, installer package, Ticket 02+, merge/push/deploy or requirements change. |
 | Receipt | `rcpt_local_orchestration_install_01_20260808` remains the sole positive dispatch authority. This corrected allocation is not a new ticket approval/dispatch. |
 | Required return | New implementation commit(s), then one final docs-only handoff. Evidence must name each behavior-specific first-red test/reason, recovery retry terminal outcomes, complete regression/type/compile/privacy/smoke results and target-repository non-interference across success and required failure paths. |
+
+## PRG-20260809-028 — Ticket 01 third independent review
+
+| Field | Value |
+| --- | --- |
+| State | `REVIEW / CHANGES_REQUESTED` |
+| Reviewed range | Baseline `15f6be8`; implementation `4b840cd`; docs-only handoff `7c73b14`; branch `codex/implementation-local-install-lifecycle-01-rework-2`. |
+| Passing corrections | CR-38 normal partial-effect retries and CR-39 finite host-verification rollback pass; recovery-load reversal breaks the focused retry test as expected. Full regression, strict mypy, compile, diff and privacy checks pass. |
+| Blocking findings | CR-40 matrix/red evidence remains incomplete. CR-41 typed recovery phase can skip host/files and falsely return `REMOVED`; CR-42 a Codex selection accepts a Claude receipt; CR-43 two installation IDs share the fixed root and corrupt each other. Exact probes are recorded in the formal review. |
+| Scope classification | Implementation/contract/test correction only. Approved requirements, SPEC, architecture and delivery stage do not change; no `REQUIREMENT_CHANGED` event. |
+| Continuation | Mark the rework-2 branch historical and create another fresh allocation. Receipt `rcpt_local_orchestration_install_01_20260808` continues; Ticket 02 remains `DEPENDENCY_WAIT`. |

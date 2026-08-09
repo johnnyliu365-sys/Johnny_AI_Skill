@@ -114,6 +114,6 @@
 | --- | --- | --- |
 | Requirement change, Wayfinder, Architecture and Grill | DONE | `CHG-20260808-011`; `doc/context/local-orchestration-installer/main.md`; `doc/adr/ADR-20260808-003-local-orchestration-installer.md` |
 | Specification | DONE | `modules/spec/local-orchestration-installer.md` was approved by the owner on `2026-08-08`. |
-| Ticket 01 implementation | IN_PROGRESS (REWORK 2) | Fresh allocation `aln_local_orchestration_install_01_rework_2_20260808` repeats TDD for CR-38 through CR-40; original receipt continues without another user confirmation. |
+| Ticket 01 implementation | CHANGES_REQUESTED | CR-38/39 normal paths pass, but review blocks `4b840cd` on CR-40 through CR-43. The same receipt continues through another fresh allocation. |
 | Ticket 02 planning Grill | DONE / DEPENDENCY_WAIT | Grill accepted the approved AC boundaries; Ticket 02 remains `PLANNED` until Ticket 01 is reviewed and integrated. |
 | Tickets 03–04 / implementation | PLANNED | They remain unselected and receive no source/test authority. |

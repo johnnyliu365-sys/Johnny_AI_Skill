@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| Context state | `TICKET_01_REWORK_2_IMPLEMENTING / PLANNING_DEPENDENCY_WAIT` |
-| Router event | `REVIEW_CHANGES_REQUESTED → FRESH_REWORK_HANDOFF → IMPLEMENT` |
+| Context state | `TICKET_01_CHANGES_REQUESTED / PLANNING_DEPENDENCY_WAIT` |
+| Router event | `IMPLEMENTATION_RETURNED → REVIEW_CHANGES_REQUESTED` |
 | Delivery stage | `POC` |
 | Requirement change | `CHG-20260808-011` |
 | Baseline | `e04c2be` (`docs: close autonomous workflow planning grill`) |
@@ -120,7 +120,7 @@ boundary: Do not treat the POC's fake adapters as real host/Git operations. Do n
 
 - Ticket: `01-owned-install-lifecycle`, selected from the committed ticket set `afee39d`.
 - Handoff: original `hnd_local_orchestration_install_01_20260808` is superseded only for stale allocation. Fresh `hnd_local_orchestration_install_01_fresh_20260808` / allocation `aln_local_orchestration_install_01_20260808` retain receipt `rcpt_local_orchestration_install_01_20260808`, ticket and owner while moving the execution to branch `codex/implementation-local-install-lifecycle-01` in `C:\Users\<user>\Desktop\AI控制工作workflow-implementation`; reviewer/control plane is Codex/current `main`.
-- State: re-review `f2b4a8e` blocks `fd429fd` / `a222d89` / `8e39c99` as historical evidence. Fresh handoff `hnd_local_orchestration_install_01_rework_2_20260808` binds the same receipt to allocation `aln_local_orchestration_install_01_rework_2_20260808` and branch `codex/implementation-local-install-lifecycle-01-rework-2`; it repeats behavior-specific red tests for CR-38 through CR-40 with no second confirmation.
+- State: review of `4b840cd` / `7c73b14` returned `CHANGES_REQUESTED`. CR-38/39 normal recovery behavior passes, but CR-40 evidence remains incomplete; CR-41 permits typed phase skipping, CR-42 accepts a receipt for an unselected host, and CR-43 permits two IDs to corrupt the fixed root. All prior branches are historical; the same receipt continues without a second confirmation.
 - Planning continuation: Ticket-01 execution now runs independently while the planning lane enters the Ticket-02 Grill. No second ticket-approval question is valid.
 
 ## Ticket 02 Grill convergence

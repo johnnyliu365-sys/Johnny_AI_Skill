@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01, AC-03, AC-06, AC-07, AC-08 |
 | Context / change | `doc/context/local-orchestration-installer/main.md` / `CHG-20260808-011` |
-| State | `IN_PROGRESS` — fresh allocation `aln_local_orchestration_install_01_rework_2_20260808` addresses CR-38 through CR-40; receipt `rcpt_local_orchestration_install_01_20260808` continues without a second question |
+| State | `CHANGES_REQUESTED` — `4b840cd` is blocked by CR-40 through CR-43; receipt `rcpt_local_orchestration_install_01_20260808` continues to a fresh allocation without a second question |
 | Language | Python 3.11, Pydantic strict models and standard-library filesystem test fakes |
 | Baseline | `afee39d` (`docs: plan local orchestration installer tickets`) |
 | Control-plane owner / reviewer | Codex / current `main` worktree |
@@ -60,6 +60,6 @@ Frontend composition / DI: the equivalent command/UI is `InstallControlPlane` / 
 ## Review return
 
 - Review: `doc/reviews/local-orchestration-installer/01-owned-install-lifecycle-code-review.md` (`CHANGES_REQUESTED`).
-- First blocked history: `010110a` / `7bc5fd5`. Second blocked history: `fd429fd`, `a222d89` / `8e39c99`. None may be reset, overwritten, cherry-picked or reused.
-- Corrected in the second branch: CR-36 typed proof rejection and CR-37 typed absence validation for a single invocation.
-- Still required: CR-38 executable recovery resume; CR-39 finite install verification rollback; CR-40 the complete ticket TDD matrix and behavior-specific red evidence. A new control-plane handoff creates another fresh branch; no new user dispatch is needed.
+- Blocked histories: `010110a` / `7bc5fd5`; `fd429fd`, `a222d89` / `8e39c99`; `4b840cd` / `7c73b14`. None may be reset, overwritten, cherry-picked or reused.
+- Corrected so far: CR-36/37 typed proof/absence validation; CR-38 normal recovery retry; CR-39 finite install verification rollback.
+- Still required: CR-40 complete matrix/red evidence; CR-41 evidence-bearing recovery phases; CR-42 selected-host receipt binding; CR-43 exclusive fixed-root ownership. A new control-plane handoff creates another fresh branch; no new user dispatch is needed.
