@@ -744,3 +744,15 @@
 | Blocking findings | CR-62 reopens fixed-root multi-install ownership and cross-install deletion. CR-63 permits forged recovery intent/phase evidence to delete real effects or return `REMOVED` while leaving them live. CR-64 accepts dot/drive/scheme-like owned locators, including uncaught post-effect `ValueError`. CR-65 discards typed runtime/process and checkpoint proofs, accepting foreign/no-op outcomes as terminal success. CR-40 omits these retained adversaries. |
 | Scope classification | Implementation/contract/TDD correction only; approved SPEC, ticket, architecture, delivery stage, owner, receipt and bounded continuation authority do not change. |
 | Continuation | Mark rework-10 historical and automatically create a fresh same-ticket allocation under receipt `rcpt_local_orchestration_install_01_20260808` and authority `PRG-20260809-042`; Ticket 02 remains `DEPENDENCY_WAIT`. |
+
+## PRG-20260809-053 — Ticket 01 fresh rework-11 handoff
+
+| Field | Value |
+| --- | --- |
+| State | `IMPLEMENT / FRESH_TDD_REWORK` |
+| Review baseline | `857fde2` records the eleventh `CHANGES_REQUESTED`. `ea99ccc` and `415f2bd` join all older implementation branches as immutable historical evidence. |
+| Fresh handoff / allocation | `hnd_local_orchestration_install_01_rework_11_20260809` / `aln_local_orchestration_install_01_rework_11_20260809`; branch `codex/implementation-local-install-lifecycle-01-rework-11` starts directly from this current docs-only handoff commit. |
+| Correction scope | Fresh behavior red → minimal full-surface implementation → green for CR-62 exclusive fixed-root ownership, CR-63 causal recovery/ledger/intent authority, CR-64 parsed canonical owned locators and CR-65 exact terminal/checkpoint proof consumption. Preserve the direct CR-59/60/61 corrections, CR-54 through CR-58, all-host physical staging, finite public results and complete fault/Git isolation surface. |
+| Required red/green evidence | Before production code, reproduce: two installation IDs sharing the fixed root including interrupted recovery; forged `INSTALL/CLEANUP`, `UNINSTALL_HOSTS` and `FINALIZE` owner/intent/receipt/manifest evidence; raw and constructed dot/drive/UNC/device/scheme/encoded/non-normalized owned paths with zero effects; foreign/unavailable/replayed/no-op runtime, process, ledger-delete and recovery-checkpoint proofs. Every failure must retain exact retry authority, and reversing each guard must make its focused test fail. |
+| Receipt / continuation authority | `rcpt_local_orchestration_install_01_20260808` and bounded authority `PRG-20260809-042` remain valid. This correction allocation requires no second user confirmation. |
+| Required return | Ticket-only implementation commit(s), full verification, then one docs-only handoff commit. No self-review, integration, push, deployment or progress-only final. |
