@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | Feature / ticket | `local-orchestration-installer` / `01-owned-install-lifecycle` |
-| Current result | `CHANGES_REQUESTED` |
+| Current result | `APPROVED` |
 | Reviewer | Codex / current `main` worktree |
 | Implementation worktree | `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` |
 | Single branch | `codex/implementation-local-install-lifecycle-01` |
@@ -88,3 +88,20 @@ review.
 `CHANGES_REQUESTED`. This is the single permitted correction review for
 `CLOSURE-LOCAL-INSTALL-T01-REOPEN-01`. All discoverable initial-review findings
 are batched above; no other closure item is open.
+
+## Correction review — `REV-LOCAL-INSTALL-T01-REOPEN-01-CORRECTION`
+
+| Field | Evidence |
+| --- | --- |
+| Reviewed revisions | Additive test correction `040a0f6`; docs-only handoff `3c27261`; production remains `ddd9f55`. |
+| Scope integrity | Correction commit changes only `tests/test_owned_install_lifecycle.py`; handoff changes only `doc/WorkProgressReport.md`; the implementation worktree is clean. |
+| Full rerun | C1..C8: 8/8 passed; strict mypy: no issues in six files; six-file in-memory compile and `git diff --check` passed. Production remains `517 / 600` non-blank lines and the test is `351 / 500`. |
+| Git isolation | Actual existing/empty temporary Git repositories again retained byte-identical snapshots and unchanged porcelain (`?? existing.txt` / empty). |
+| `CR-REOPEN-01` mutation | In an isolated archive of `3c27261`, replacing `target.unlink()` with `pass` now fails focused C2 because the expected `FileNotFoundError` is not raised. Restored source passes. |
+| Finding disposition | `CR-REOPEN-01` resolved. No open `IMPLEMENTATION_DEFECT`, `EVIDENCE_DEFECT`, `TICKET_DEFECT` or requirement change remains. |
+
+## Final conclusion
+
+`APPROVED / READY_TO_MERGE`. The finite reopened Ticket-01 closure is complete.
+This correction review is final for the closure revision; no further Ticket-01
+implementation correction is authorized or required.
