@@ -4,9 +4,9 @@
 | --- | --- |
 | Feature / ticket | `local-orchestration-installer` / `01-owned-install-lifecycle` |
 | SPEC / change | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / `CHG-20260808-011` |
-| Reviewed baseline | `8ea2983` |
-| Implementation / docs handoff | `815d126` / `5405c24` |
-| Implementation owner | Codex implementation Agent / `codex/implementation-local-install-lifecycle-01-rework-9` |
+| Reviewed baseline | `85b7e96` |
+| Implementation / docs handoff | `ea99ccc` / `415f2bd` |
+| Implementation owner | Codex implementation Agent / `codex/implementation-local-install-lifecycle-01-rework-10` |
 | Reviewer | Codex / current `main` worktree |
 | Result | `CHANGES_REQUESTED` |
 
@@ -14,7 +14,86 @@
 
 - Approved Context: `doc/context/local-orchestration-installer/main.md`.
 - Ticket scope: typed owned ledger, fake lifecycle ports and fail-closed install/uninstall only; no real host configuration, target project, Git adapter or package artifact is reviewed as delivered.
-- Receipt `rcpt_local_orchestration_install_01_20260808` remains valid. The review result blocks the rework-9 implementation branch as historical evidence; it does not alter the approved SPEC, ticket scope or the planning lane's Ticket-02 dependency wait.
+- Receipt `rcpt_local_orchestration_install_01_20260808` remains valid. The review result blocks the rework-10 implementation branch as historical evidence; it does not alter the approved SPEC, ticket scope or the planning lane's Ticket-02 dependency wait.
+
+## Rework-10 review result
+
+The submitted branch corrects the direct CR-59 receipt-mismatch cleanup, compares exact stage/completion/host proofs on its cooperative adapters, and recursively revalidates the constructed values covered by its focused suite. Its 151-test regression, 242 pytest subtests and strict mypy result are independently reproducible. It remains `CHANGES_REQUESTED`: the fresh implementation regresses the already-retained exclusive fixed-root owner and causal recovery invariants, accepts non-canonical owned locators that execute effects or throw, and discards typed terminal proofs.
+
+### CR-62 — P0: two installations can own and corrupt the same fixed root
+
+`_new_install` claims ownership only by `InstallationId` and never acquires one authoritative owner for the fixed root (`library/local_orchestration/lifecycle.py:140-153`). `TypedOwnership` stores owners, ledgers and recovery independently per installation while `TypedFilesystem` writes every manifest into the same root (`fakes.py:192-225,361-419`). This reopens the retained CR-43 exclusive-owner requirement.
+
+An independent two-ID probe installed `inst-alpha` and `inst-beta` with the same owned path. Both returned `INSTALLED`, two owners and two host effects existed, and uninstalling alpha returned `REMOVED` while deleting beta's shared file. Beta then returned `INSTALL_BLOCKED` with its host/ledger still present. Required correction: atomically bind the fixed root to exactly one installation across normal install, recovery and retry; a second valid installation must fail before filesystem/host effects and may not be admitted until the exact first lifecycle is absent.
+
+### CR-63 — P0: recovery phase and intent evidence are not causally bound to the success ledger
+
+`Recovery` checks only same-installation manifest/owner and that an observation names one listed intent (`contracts.py:175-193`). It does not bind every intent's expected receipt to the manifest/selected host, require the observation tuple to be unique and complete, or prove that `FINALIZE` was reached through exact prior phases. `_recovery_matches_ledger` compares only owner, manifest and actual-receipt tuple (`lifecycle.py:384-390`), while `_cleanup_install_recovery` deletes host/files before checking the active owner (`lifecycle.py:213-240`) and `FINALIZE` skips ledger comparison (`lifecycle.py:285-318`).
+
+Three independent probes reproduced destructive bypasses. A foreign intent ID paired with the exact ledger receipt returned `REMOVED`, retained one live host registration and cleared owner/ledger/recovery. A forged `INSTALL/CLEANUP` recovery with a foreign owner deleted the real host and files before returning `PROOF_MISMATCH`. A forged `UNINSTALL/FINALIZE` recovery naming absent foreign subjects returned `REMOVED`, left the real host and files live, and discarded all authority. Required correction: encode legal operation/phase/evidence combinations, validate every expected-intent/actual observation against the exact ledger and selected hosts, and require exact active owner plus ledger/recovery identity before every cleanup/finalize effect. Ledger absence may be accepted only with a durable, exact post-delete checkpoint.
+
+### CR-64 — P0: owned-path canonical validation permits effectful URI/drive/dot variants
+
+`OwnedPath.must_be_canonical_relative` rejects a few substrings but accepts `.`, `./owned/router.json`, `C:/escape` and `file:escape` (`contracts.py:58-73`). Independent calls with `.` and `C:/escape` raised uncaught `ValueError` after owner/recovery/clock effects; `./owned/router.json` and `file:escape` returned `INSTALLED`. This violates the ticket's zero-effect path boundary and finite public result contract and leaves the CR-61 path/URI extension incomplete.
+
+Required correction: define one parsed canonical-relative path value that rejects empty/dot segments, drive or scheme prefixes, absolute/UNC/device paths, alternate separators, encoded separators/traversal and non-normalized equivalents before the first port call. Add raw and `model_construct` cases plus reverse validation.
+
+### CR-65 — P0: terminal lifecycle proofs are returned but discarded
+
+Uninstall ignores both `RuntimeStopProof` and `ProcessStopProof` (`lifecycle.py:294-297`). Install and uninstall also discard the returned `Recovery` from `clear_recovery` (`lifecycle.py:184,237,317`), and install cleanup discards the returned ledger proof from `delete_ledger` (`lifecycle.py:232`). A typed runtime adapter that returned a proof for `inst-foreign` without stopping its live state still produced `REMOVED` and cleared owner/ledger. A typed ownership adapter whose `clear_recovery` was a no-op returned `INSTALLED` with durable install recovery still present.
+
+Required correction: compare every effect-bearing return with the exact requested installation, owner, manifest, receipt, operation and expected absence/checkpoint before discarding authority. Unavailable, foreign, replayed or no-op proof must return a finite blocked state that preserves a safe retry.
+
+### CR-40 remains open — retained guards are missing from the fresh regression surface
+
+The submitted suite directly covers CR-59/60/61 and cooperative terminal faults, but it does not preserve the ticket's already-recorded CR-41/42/43 recovery and exclusive-root adversaries, canonical owned-locator matrix, or untrusted terminal-proof providers. Passing the suite therefore does not prove the stated preserved surface.
+
+## Rework-10 independent verification
+
+| Check | Result |
+| --- | --- |
+| Branch ancestry / cleanliness | `85b7e96 → ea99ccc → 415f2bd`; both worktrees clean |
+| `git diff --check 85b7e96..415f2bd` | Passed |
+| `python -m unittest discover -s tests -v` | 151 passed |
+| `python -m pytest -q -p no:cacheprovider` | 151 passed / 242 subtests |
+| `python -m mypy --strict --no-incremental library tests` | 73 source files clean |
+| In-memory compile | 54 library modules passed |
+| Two-ID fixed-root probe | Failed: both installed; removing alpha deleted beta's file and left beta blocked |
+| Forged intent / recovery probes | Failed: terminal success or destructive blocked result occurred outside exact causal authority |
+| Owned locator probes | Failed: dot/drive values threw after three effects; relative-dot and scheme-like values installed |
+| Runtime / recovery-clear proof probes | Failed: terminal success accepted foreign/no-op typed proof |
+| Worktree non-interference | Independent verification left both worktrees clean |
+
+## Rework-10 CodeReview standard check
+
+| Requirement | Result / evidence |
+| --- | --- |
+| Clear and strongly typed | Partial pass: DTOs are named, but recovery invariants and terminal proof consumption are incomplete. |
+| Coding/architecture rules | Partial pass: DI remains; the fixed-root owner is modeled per installation rather than per exclusive root. |
+| Logic correctness | Fail: CR-62/63 produce cross-install corruption, live-effect residue and false terminal success. |
+| Boundary and exception behavior | Fail: CR-64 accepts non-canonical locators and lets `ValueError` escape after effects. |
+| Security and ownership isolation | Fail: forged recovery and ignored proof identities can discard exact authority while effects remain live. |
+| Test coverage | Fail: CR-40 omits retained exclusive-root/recovery/path/proof adversaries. |
+| Dependencies | Pass: no new runtime dependency. |
+| SPEC/ticket compliance | Fail: AC-01/03/06/07/08 and retained CR-41/42/43 are incomplete. |
+
+## Rework-10 CodeReview §2.1 defect audit
+
+| # | Category | Result |
+| --- | --- | --- |
+| 1 | Path-prefix mismatch | Fail: owned dot/drive/scheme variants execute effects or escape. |
+| 2 | null / empty / containers | Submitted cases pass; canonical owned-path variants remain incomplete. |
+| 3 | Authorization bypass | Fail: fixed-root multi-owner and forged recovery paths bypass exact authority. |
+| 4 | Token format/comparison | N/A by ticket; no credential comparison introduced. |
+| 5 | Error-code consistency | Fail: invalid paths can throw; forged state can return false `REMOVED`. |
+| 6 | Exception propagation | Fail: `ValueError` escapes after durable effects and typed no-op proofs are swallowed as success. |
+| 7 | Tests cover described behavior | Fail: reverse/independent probes reproduce CR-62 through CR-65 outside the submitted suite. |
+
+## Rework-10 required next rework
+
+The rework-10 branch is blocked historical evidence. The implementation owner must start a fresh branch directly from the next control-plane docs-only handoff baseline, without reset, merge, rebase, cherry-pick, source copy or reuse of `ea99ccc` / `415f2bd`. Receipt `rcpt_local_orchestration_install_01_20260808` and bounded authority `PRG-20260809-042` continue; no second dispatch confirmation is valid.
+
+The next allocation must retain the direct CR-59/60/61 corrections while restoring exclusive fixed-root ownership, causal recovery/phase evidence, complete canonical locator validation and exact consumption of every terminal typed proof.
 
 ## Rework-9 review result
 

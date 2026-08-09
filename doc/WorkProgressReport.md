@@ -733,3 +733,14 @@
 | Required red/green evidence | Reproduce four non-registration receipt mismatch first-call and retry residues; foreign stage/completion proof without requested files; stale exact-shaped ledger after host/files disappear; constructed invalid root/installation/manifest/artifact/path/host/receipt values with zero port calls. Add exact cleanup/retry, adversarial proof and reverse mutation tests for each guard. |
 | Receipt / continuation authority | `rcpt_local_orchestration_install_01_20260808` and bounded authority `PRG-20260809-042` remain valid. This correction allocation requires no second user confirmation. |
 | Required return | Ticket-only implementation commit(s), full verification, then one docs-only handoff commit. No self-review, integration, push, deployment or progress-only final. |
+
+## PRG-20260809-052 — Ticket 01 eleventh independent review
+
+| Field | Value |
+| --- | --- |
+| State | `REVIEW / CHANGES_REQUESTED` |
+| Reviewed range | Baseline `85b7e96`; implementation `ea99ccc`; docs-only handoff `415f2bd`; branch `codex/implementation-local-install-lifecycle-01-rework-10`. |
+| Reproduced passing evidence | 151 unittest; 151 pytest / 242 subtests; strict mypy 73 files; 54-module in-memory compile, diff check and clean worktrees pass. Submitted CR-59/60/61 focused behavior passes. |
+| Blocking findings | CR-62 reopens fixed-root multi-install ownership and cross-install deletion. CR-63 permits forged recovery intent/phase evidence to delete real effects or return `REMOVED` while leaving them live. CR-64 accepts dot/drive/scheme-like owned locators, including uncaught post-effect `ValueError`. CR-65 discards typed runtime/process and checkpoint proofs, accepting foreign/no-op outcomes as terminal success. CR-40 omits these retained adversaries. |
+| Scope classification | Implementation/contract/TDD correction only; approved SPEC, ticket, architecture, delivery stage, owner, receipt and bounded continuation authority do not change. |
+| Continuation | Mark rework-10 historical and automatically create a fresh same-ticket allocation under receipt `rcpt_local_orchestration_install_01_20260808` and authority `PRG-20260809-042`; Ticket 02 remains `DEPENDENCY_WAIT`. |
