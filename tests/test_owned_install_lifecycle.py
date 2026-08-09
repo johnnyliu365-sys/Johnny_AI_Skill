@@ -71,6 +71,8 @@ class OwnedInstallLifecycleTests(unittest.TestCase):
             self.assertIsInstance(stack.service.install(stack.request), InstallSucceeded)
 
             removed = stack.service.uninstall(stack.uninstall_request)
+            with self.assertRaises(FileNotFoundError):
+                stack.filesystem.read(OwnedRelativePath(value="payload/plugin.txt"))
             repeated = stack.service.uninstall(stack.uninstall_request)
 
             self.assertIsInstance(removed, UninstallRemoved)
