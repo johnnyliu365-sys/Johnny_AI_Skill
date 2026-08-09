@@ -946,6 +946,21 @@
 | Granted scope | Four production files, one test, 550/450 line ceilings, recorded fakes and H1..H8 evidence. No catalog module is imported beyond integrated `InstallationId`. |
 | Not authorized | Another worktree/branch, real Codex/Claude command, subprocess/network/login/config mutation, Ticket-01/02 changes, packaging, merge, push, deployment or schedule action. |
 
+## PRG-20260809-073 - bounded Ticket 03 implementation handoff
+
+| Field | Value |
+| --- | --- |
+| State | `IMPLEMENTATION_COMPLETED / INDEPENDENT_REVIEW_PENDING` |
+| Ticket / closure | `03-reversible-agent-host-lifecycle` / `CLOSURE-LOCAL-INSTALL-T03-01` (`H1..H8`). |
+| Baseline / implementation | Exact dispatch baseline `963319b930bfdfbd3851ee6c98343d6218684ff9`; implementation commit `16597b676103df4eb5a9c9673de07bd9b2c29f9e`; branch `codex/implementation-host-capability-gate-03`. |
+| Red evidence | Before production files existed, the first exact unittest run executed eight named tests and failed H1 through H8 independently with the public Ticket-03 contract reported as not implemented. |
+| Green evidence | Exact H1..H8 unittest: 8 passed. Full project discovery: 155 passed. Strict mypy: five authorized files, no issues. In-memory compile: five files. H1/H2/H8 smoke and `git diff --check` passed. |
+| Actual Git isolation | A supported recorded fake and an unavailable blocked fake ran between snapshots of one existing and one empty actual temporary Git repository. Both recursive byte snapshots were identical, existing porcelain remained `?? existing.txt`, and empty porcelain remained empty. |
+| Reverse-mutation evidence | H1 retained the registration after unregister; H2 bypassed recorded-request revalidation; H3 relaxed the canonical key; H4 relaxed opaque evidence validation; H5 accepted a foreign receipt; H6 collapsed unavailable into access-denied; H7 added a source sentinel to the blocked report; H8 inserted a forbidden capability marker. Every corresponding focused test exited nonzero and passed after exact restoration. |
+| Capability boundary | The only reusable type is integrated `InstallationId`. `CODEX` and `CLAUDE` public queries always return `UNVERIFIED` with zero lifecycle calls. Only host `RECORDED` can enter the fake lifecycle, and even a non-validating copied public-host request is revalidated and blocked before effects. No production adapter or live support claim exists. |
+| Scope / ceiling | Exactly four authorized production files and `tests/test_reversible_agent_host_lifecycle.py`; production 545/550 non-blank lines and test 317/450. Ticket-01/02 source and tests are unchanged; no additional file, branch or worktree was created. |
+| Handoff authority | Handoff `hnd_local_orchestration_install_03_20260809`; allocation `aln_local_orchestration_install_03_20260809`; receipt `rcpt_local_orchestration_install_03_20260809`; correlation `corr-local-orchestration-install-03-20260809`; authority `PRG-20260809-042`. The implementation owner makes no review or integration decision. |
+
 ## PRG-20260809-074 - Ticket 03 H7 proof-boundary correction handoff
 
 | Field | Value |
@@ -958,3 +973,18 @@
 | Correction lane | Same Ticket 03 owner, sole implementation worktree, branch `codex/implementation-host-capability-gate-03`, allocation `aln_local_orchestration_install_03_20260809`, receipt `rcpt_local_orchestration_install_03_20260809`; closure unchanged. |
 | Required return | One additive implementation correction commit, one docs-only correction handoff, focused H7 regression/reverse mutation, full H1..H8, full suite, strict mypy, compile/source/scope/Git checks and clean status. |
 | Prohibited | Reset/amend/force/overwrite, another branch/worktree, live host action, target-project write, push/deploy or schedule action. This is the only correction review for this closure. |
+
+## PRG-20260809-075 - Ticket 03 H7 proof-boundary correction implementation handoff
+
+| Field | Value |
+| --- | --- |
+| State | `CORRECTION_COMPLETED / INDEPENDENT_CORRECTION_REVIEW_PENDING` |
+| Ticket / closure | `03-reversible-agent-host-lifecycle` / unchanged `CLOSURE-LOCAL-INSTALL-T03-01` (`H1..H8`). |
+| Review / correction authority | Initial review `b343df4` (`CHANGES_REQUESTED`); correction record `PRG-20260809-074`; expected control baseline `976d436e484201a3f0039c61907de93dae324d15`; bounded owner authority `PRG-20260809-042`. |
+| Existing lane | Same branch `codex/implementation-host-capability-gate-03`, sole implementation worktree, handoff `hnd_local_orchestration_install_03_20260809`, allocation `aln_local_orchestration_install_03_20260809` and receipt `rcpt_local_orchestration_install_03_20260809`. No branch or worktree was added or switched. |
+| Additive correction | Source-and-test commit `673ff7c50121db21460c87d1cbb28731ce358f49` recursively reconstructs the lifecycle-returned `AgentHostRemovalProof` at the Gate boundary. Invalid nested evidence now returns `REMOVAL_PROOF_MISMATCH` before absence verification or `SUPPORTED` / `REMOVED` serialization. |
+| First red evidence | `test_h7_forged_nested_removal_evidence_fails_before_absence_check` returned `SUPPORTED`; its serialized removal proof contained `SECRET-SENTINEL`. The adversarial lifecycle supplied a nominal proof whose nested `HostEvidenceId` used non-validating construction and otherwise returned a valid absence command. |
+| Green evidence | Focused H7 passed; exact H1..H8 module passed 9/9; full discovery passed 156/156; strict mypy passed for all five authorized files; in-memory compile passed for the same five files; `git diff --check` and the production forbidden-capability scan passed. Production is 549/550 and the test is 351/450 non-blank lines. |
+| Actual Git isolation | Supported, unavailable-blocked and forged-proof probes ran between recursive SHA-256 snapshots of one existing and one empty actual temporary Git repository. Both remained byte-identical; porcelain remained `?? existing.txt` and empty respectively. |
+| Reverse mutation | Removing only the Gate proof reconstruction made the focused H7 test fail again with `SUPPORTED` and the serialized sentinel. Restoring it made the focused test and full verification pass. |
+| Scope / handoff | Only `host_lifecycle.py` and the existing Ticket-03 test changed in the correction commit; this entry is the separate docs-only handoff. No review decision, live host action, target-project write, Ticket-01/02 edit, merge, push, deployment or schedule action was performed. |

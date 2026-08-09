@@ -64,6 +64,27 @@ from .runtime_contracts import (
     RuntimeHaltReason,
     RuntimeNeedsUserAction,
 )
+from .host_contracts import (
+    CANONICAL_HOST_REGISTRATION_KEY,
+    AgentHost,
+    AgentHostReceipt,
+    AgentHostRemovalProof,
+    HostBlockReason,
+    HostCapabilityBlocked,
+    HostCapabilityRequest,
+    HostCapabilitySupported,
+    HostCapabilityUnverified,
+    HostCommandResult,
+    HostCommandStatus,
+    HostEvidenceId,
+    HostFailureCode,
+    HostRegistrationKey,
+    HostRemovalBlocked,
+    HostRemovalRequest,
+    HostRemovalSucceeded,
+)
+from .host_fakes import RecordedHostLifecycle
+from .host_lifecycle import ReversibleHostCapabilityGate
 
 __all__ = [
     "CANONICAL_INSTALL_ROOT",
@@ -121,4 +142,11 @@ __all__ = [
     "RuntimeHalted",
     "RuntimeHaltReason",
     "RuntimeNeedsUserAction",
+    "CANONICAL_HOST_REGISTRATION_KEY",
+    "AgentHost", "AgentHostReceipt", "AgentHostRemovalProof",
+    "HostBlockReason", "HostCapabilityBlocked", "HostCapabilityRequest",
+    "HostCapabilitySupported", "HostCapabilityUnverified", "HostCommandResult",
+    "HostCommandStatus", "HostEvidenceId", "HostFailureCode", "HostRegistrationKey",
+    "HostRemovalBlocked", "HostRemovalRequest", "HostRemovalSucceeded",
+    "RecordedHostLifecycle", "ReversibleHostCapabilityGate",
 ]
