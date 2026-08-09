@@ -605,3 +605,14 @@
 | Required red/green evidence | Reproduce all four review probes exactly. Separately inject failure before ledger deletion and after deletion/before final checkpoint; prove retry reaches `REMOVED`. Prove same-ID install cannot clear an uninstall recovery. Prove a host that retains the returned mismatched receipt cannot leave a live effect. Prove a second typed ledger cannot bypass the active owner. Complete manifest/host-receipt absent-value cases and every named owner/ledger/recovery/host/filesystem/runtime/process port fault with full state and retry assertions. |
 | Receipt | `rcpt_local_orchestration_install_01_20260808` remains the sole positive dispatch authority. This corrected allocation is not a new ticket approval/dispatch. |
 | Required return | New implementation commit(s), then one final docs-only handoff with exact first-red names/reasons for every added behavior, retry terminal outcomes, complete regression/type/compile/privacy/smoke, target-repository non-interference and `git diff --check`. |
+
+## PRG-20260809-037 — Ticket 01 sixth independent review
+
+| Field | Value |
+| --- | --- |
+| State | `REVIEW / CHANGES_REQUESTED` |
+| Reviewed range | Baseline `14be507`; implementation `a3dc5a2`; docs-only handoff `7573a74`; branch `codex/implementation-local-install-lifecycle-01-rework-5`. |
+| Passing evidence | Submitted four focused behaviors pass. Full 135 unittest, 135 pytest/175 subtests, strict mypy 69 files, three-module compile, diff and privacy sentinels pass. |
+| Blocking findings | CR-47 replaces the approved port-driven lifecycle with a mutable-memory toy and removes fixed root, payload/manifest/digest/path ownership, host proof/absence and injected effect ports. CR-40 remains incomplete. CR-48 malformed IDs throw or diverge across install/uninstall. CR-49 shape-valid unsupported recovery phases delete effects and clear another installation's owner. CR-46 and reopened CR-38/42/43 are not proven on the approved surface. |
+| Scope classification | Implementation/contract/TDD correction only. The reduced implementation contract is rejected; approved SPEC, architecture, acceptance, stage and receipt remain unchanged. |
+| Continuation | Mark rework-5 historical and automatically create a fresh allocation under receipt `rcpt_local_orchestration_install_01_20260808`; no second dispatch question. Ticket 02 remains `DEPENDENCY_WAIT`. |

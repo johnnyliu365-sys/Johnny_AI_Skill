@@ -4,9 +4,9 @@
 | --- | --- |
 | Feature / ticket | `local-orchestration-installer` / `01-owned-install-lifecycle` |
 | SPEC / change | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / `CHG-20260808-011` |
-| Reviewed baseline | `5142378` |
-| Implementation / docs handoff | `7df74e1`, `e84dff0`, `14838d9` / `f90877d` |
-| Implementation owner | Codex implementation Agent / `codex/implementation-local-install-lifecycle-01-rework-4` |
+| Reviewed baseline | `14be507` |
+| Implementation / docs handoff | `a3dc5a2` / `7573a74` |
+| Implementation owner | Codex implementation Agent / `codex/implementation-local-install-lifecycle-01-rework-5` |
 | Reviewer | Codex / current `main` worktree |
 | Result | `CHANGES_REQUESTED` |
 
@@ -14,7 +14,89 @@
 
 - Approved Context: `doc/context/local-orchestration-installer/main.md`.
 - Ticket scope: typed owned ledger, fake lifecycle ports and fail-closed install/uninstall only; no real host configuration, target project, Git adapter or package artifact is reviewed as delivered.
-- Receipt `rcpt_local_orchestration_install_01_20260808` remains valid. The review result blocks the rework-4 implementation branch as historical evidence; it does not alter the approved SPEC, ticket scope or the planning lane's Ticket-02 dependency wait.
+- Receipt `rcpt_local_orchestration_install_01_20260808` remains valid. The review result blocks the rework-5 implementation branch as historical evidence; it does not alter the approved SPEC, ticket scope or the planning lane's Ticket-02 dependency wait.
+
+## Rework-5 review result
+
+The four focused tests pass inside the submitted model, but the model is not the approved Ticket-01 lifecycle. The implementation replaces the port-driven owned installer with a 93-line mutable-memory simulation and four tests. Consequently it cannot close CR-40, CR-46 or reopened CR-38/42/43 against the actual acceptance surface.
+
+### CR-47 — approved lifecycle and DI surface was replaced by a toy model
+
+The approved ticket requires a fixed `InstallRoot`, typed payload/manifest/digests and owned paths, host-issued registration/removal/absence evidence, filesystem/ownership-ledger/host/runtime/process/clock ports, injected adapters, target-repository isolation and finite install/uninstall results. Submitted `library/local_orchestration` contains only `contracts.py`, `lifecycle.py` and `__init__.py`; there is no `ports.py`, `fakes.py`, payload, manifest digest, owned-path proof, removal proof, host absence, process/runtime boundary or filesystem boundary.
+
+`Lifecycle` directly mutates public `Memory` sets/dictionaries (`library/local_orchestration/lifecycle.py:11-19,22-24`). `_ARTIFACT` and `_HOST` are hard-coded globals (`lifecycle.py:7-8`). The public install API accepts only an installation ID (`lifecycle.py:26`), so it cannot validate version, selected hosts, payload, manifest, fixed root or caller-visible host results. The test suite contains four in-memory tests and no filesystem/Git sandbox, adapter failure matrix or one-click owned-root smoke.
+
+This is a silent public-contract, architecture and acceptance reduction by the implementation owner, not an approved requirement change. Required correction: rebuild the full approved Ticket-01 domain/application/port surface and tests in the fresh branch. A small state machine may coordinate the ports, but it cannot replace them or expose mutable infrastructure state as the application contract.
+
+### CR-40 remains open — four tests do not implement the mandatory matrix
+
+The handoff itself reports only four focused tests. There is no seven-case fixed-root matrix; no five-form matrix for installation ID, manifest, host receipt and owned path; no direct/indirect deletion authority cases; and no individual fault injection for owner, ledger, recovery, host, filesystem, runtime, process and clock boundaries. No representative existing/empty Git repository is created or snapshotted.
+
+The recorded red evidence also covers only the four simplified behaviors. It cannot establish red/green ordering for the complete Ticket-01 behaviors required by the handoff. Required correction: every named boundary and port row in Ticket 01 and rework-5 handoff must have a first-red name/reason, full state assertions, retry terminal outcome where applicable, and target-repository non-interference.
+
+### CR-48 — invalid installation IDs have inconsistent and exception-throwing behavior
+
+`install()` checks only `isinstance(str)` plus `startswith("inst_")` (`library/local_orchestration/lifecycle.py:26-28`), then constructs Pydantic models without catching `ValidationError`. `uninstall()` checks only `isinstance(str)` (`lifecycle.py:57-59`). `Result.installation_id` is an unconstrained `str` (`contracts.py:63-66`).
+
+Independent matrix results:
+
+- `install("inst_")` and `install("inst_nothex")` raise uncaught `ValidationError`;
+- `uninstall("inst_")`, `uninstall("inst_nothex")`, `uninstall("bogus")` and `uninstall("")` return `NOT_INSTALLED`;
+- non-string containers return finite invalid results after being stringified into the output identifier.
+
+The same invalid identity therefore throws, reports absence or reports invalid depending on entrypoint/shape. This violates P0 strong typing, AC-03 and the stable-error/exception matrix. Required correction: validate one opaque `InstallationId` boundary identically before every state read/effect, never stringify rejected caller objects into a typed result, and add all null/omitted/empty/whitespace/container/malformed-format cases for both operations.
+
+### CR-49 — recovery can delete effects and release a foreign owner
+
+`Recovery` has no operation/phase invariant beyond enum membership (`contracts.py:55-60`). `install()` invokes `_compensate()` for any install recovery (`lifecycle.py:29-34`), while `uninstall()` invokes `_finish()` for any uninstall recovery regardless of phase (`lifecycle.py:60-65`). Both helpers unconditionally clear the global owner and named physical effects without proving the owner equals the recovery installation (`lifecycle.py:75-89`).
+
+Two independent shape-valid probes set owner to ID B and inserted an ID-A recovery:
+
+- an uninstall recovery with phase `ROLLBACK` returned `REMOVED`, deleted the artifact/receipt and cleared ID B's owner;
+- an install recovery with phase `FINALIZE` returned `INSTALL_BLOCKED / RECOVERY`, but still deleted the artifact/receipt and cleared ID B's owner.
+
+This is a direct cross-installation authority bypass and proves the focused CR-38/46 tests do not cover reachable recovery phases. Required correction: encode valid operation/phase/evidence combinations in immutable types; before every compensation/finalization effect require exact active owner, ledger/recovery identity, receipt/path evidence and live/absence checks through injected ports. Invalid or foreign recovery must halt with zero mutation.
+
+### Reopened CR-38/42/43 and CR-46 are not proven on the approved surface
+
+- CR-46's `fail_after_ledger_delete` flag mutates one in-memory dictionary; no ledger/checkpoint port split exists, so it cannot prove durability or idempotency across injected persistence failures.
+- CR-38 blocks install on an uninstall recovery in this toy route, but CR-49 shows unsupported phases still execute destructive helpers and there is no real ledger/physical verification path.
+- CR-42 varies only `host_id` while `live_receipts` stores registration-ID strings (`lifecycle.py:47-52`); the returned mismatch uses the same registration ID, so it does not model a distinct actual host effect, owned paths, proof or absence verification.
+- CR-43 tests only changing `state.owner`; it does not inject a second typed ledger/receipt and cannot validate fixed-root files or host effects because those ports/contracts do not exist.
+
+Required correction: reproduce the exact four rework-4 probes through the full port-driven lifecycle, not through a reduced substitute.
+
+## Rework-5 independent verification
+
+| Check | Result |
+| --- | --- |
+| Branch ancestry / cleanliness | `14be507 → a3dc5a2 → 7573a74`; implementation worktree clean |
+| `git diff --check 14be507..a3dc5a2` | Passed |
+| `python -B -m unittest discover -s tests` | 135 passed |
+| `python -B -m pytest -q -p no:cacheprovider` | 135 passed / 175 subtests |
+| `python -B -m mypy --strict --no-incremental library tests` | 69 source files clean |
+| In-memory compile / privacy sentinels | 3 local-orchestration modules compiled; passed |
+| Approved-surface inventory | Failed: ports/fakes, filesystem, manifest/digest, owned path, proofs/absence, process/runtime/clock boundaries absent |
+| Invalid-ID probe | Failed: two malformed `inst_` strings throw; uninstall reports them `NOT_INSTALLED` |
+| Foreign-owner uninstall-recovery probe | Failed: returned `REMOVED` and cleared foreign owner/effects |
+| Foreign-owner install-recovery probe | Failed: blocked result still cleared foreign owner/effects |
+
+## Rework-5 CodeReview standard check
+
+| Requirement | Result / evidence |
+| --- | --- |
+| Clear and strongly typed | Fail: unconstrained result ID, weak prefix parsing and mutable public memory replace domain values/ports. |
+| Coding/architecture rules | Fail: approved domain/application/DI architecture is absent. |
+| Logic correctness | Fail: CR-49 permits cross-owner deletion; invalid IDs diverge by entrypoint. |
+| Boundary and exception behavior | Fail: CR-40/48 demonstrate missing cases and uncaught validation. |
+| Security and ownership isolation | Fail: recovery operation/phase can bypass owner authority. |
+| Test coverage | Fail: four focused tests cannot cover or prove the approved ticket and exact handoff matrix. |
+| Dependencies | Pass: no new external dependency. |
+| SPEC/ticket compliance | Fail: AC-01/02/03/06/07/08 and the named Ticket-01 surface are not delivered. |
+
+## Rework-5 required next rework
+
+The rework-5 branch is blocked historical evidence. The implementation owner must start a fresh branch directly from the next control-plane docs-only handoff baseline, without reset, merge, rebase, cherry-pick or reuse of `a3dc5a2` / `7573a74`. Receipt `rcpt_local_orchestration_install_01_20260808` continues; no second dispatch confirmation is valid. The next allocation must restore the complete approved Ticket-01 surface first, then close CR-40, CR-46, CR-48, CR-49 and reopened CR-38/42/43 with exact behavior-first evidence.
 
 ## Rework-4 review result
 
