@@ -137,3 +137,17 @@ boundary: Do not treat the POC's fake adapters as real host/Git operations. Do n
 | Is a new SPEC/ADR/CHG needed? | No. These are already accepted AC-04/05/08 boundaries. Changing them, adding push/deploy/reset/merge commit, or carrying raw source would be `REQUIREMENT_CHANGED`. |
 
 **Planning Grill result: `GO → IMPLEMENT`.** Ticket 02 is bounded by closure D1..D8 and dispatched under `hnd_local_orchestration_install_02_20260809` / `rcpt_local_orchestration_install_02_20260809`. Its implementation is isolated to the single existing implementation worktree and one Ticket-02 branch; Ticket 03 remains `PLANNED` with no source authority.
+
+## Ticket 02 completion
+
+Implementation `6cc8fb5`, handoff `cc38c5d`, review `4527f49` and guarded
+merge `92c58bf` completed D1..D8 within the five-file / one-test ceiling.
+Independent review covered the green suite, strict mypy, compile/source checks,
+eight reverse mutations, and actual temporary-Git byte/porcelain invariance.
+The merge retained both append-only progress records with no source/test
+conflict, and post-merge verification passed again.
+
+Allocation `aln_local_orchestration_install_02_20260809` is released. The sole
+implementation worktree is clean and detached at `92c58bf`; the Ticket-02
+branch was deleted. No schedule was created or resumed. Ticket 03 remains
+`PLANNED` until its own bounded dispatch, allocation, receipt and branch exist.

@@ -911,3 +911,15 @@
 | Independent result | `APPROVED / READY_TO_MERGE`: D1..D8 passed once, all eight reverse mutations failed as intended, strict mypy/compile/scope checks passed, and actual allowed/blocked temporary Git repos retained identical bytes and porcelain. |
 | Merge resolution | The only merge-tree conflict was the two append-only progress sections at EOF. Both were retained in chronological order as PRG-068 handoff and PRG-069 review; no source or test conflict existed. |
 | Safety | No reset, force, overwrite, push, deployment, target-project write, real host effect, schedule creation or schedule resume occurred. |
+
+## PRG-20260809-070 - Ticket 02 integrated and lane released
+
+| Field | Value |
+| --- | --- |
+| Router event | `ACTION_COMPLETED → REVIEW_APPROVED → GUARDED_INTEGRATION → ACTION_COMPLETED` |
+| Evidence | Implementation `6cc8fb5`; handoff `cc38c5d`; review `4527f49`; merge `92c58bf`. |
+| Integrated verification | 8/8 unittest, strict mypy over six files, in-memory compile and diff check passed on committed `main`. |
+| Merge resolution | The only conflict was the append-only WorkProgress EOF; PRG-068 implementation handoff and PRG-069 review/cleanup were both preserved. No source/test conflict existed. |
+| Lane release | Allocation `aln_local_orchestration_install_02_20260809` released. The sole implementation worktree is clean and detached at `92c58bf`; the integrated Ticket-02 branch was deleted. |
+| Repository state | Two worktrees remain, and `main` is the only local branch. Rejected/historical heads remain only as the two recorded archive tags. |
+| Continuation | Ticket 03 remains `PLANNED` and unallocated until a separate bounded dispatch. The watchdog stays paused; no schedule was created or resumed. |

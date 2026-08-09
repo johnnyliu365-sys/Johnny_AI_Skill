@@ -115,5 +115,5 @@
 | Requirement change, Wayfinder, Architecture and Grill | DONE | `CHG-20260808-011`; `doc/context/local-orchestration-installer/main.md`; `doc/adr/ADR-20260808-003-local-orchestration-installer.md` |
 | Specification | DONE | `modules/spec/local-orchestration-installer.md` was approved by the owner on `2026-08-08`. |
 | Ticket 01 implementation | DONE / APPROVED / INTEGRATED | Closure `C1..C8` passed; implementation `ddd9f55`, correction `040a0f6`, review `dc63364` and guarded merge `491f98b`. |
-| Ticket 02 implementation | IN_PROGRESS / DISPATCHED | Bounded closure `D1..D8`; five production files, one test, allocation `aln_local_orchestration_install_02_20260809`, existing sole implementation worktree and one Ticket-02 branch. |
+| Ticket 02 implementation | DONE / APPROVED / INTEGRATED | Closure `D1..D8` passed; implementation `6cc8fb5`, independent review `4527f49`, guarded merge `92c58bf`; allocation and branch released. |
 | Tickets 03–04 / implementation | PLANNED | They remain unselected and receive no source/test authority. |

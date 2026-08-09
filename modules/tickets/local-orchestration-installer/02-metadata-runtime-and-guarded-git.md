@@ -4,13 +4,15 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-04, AC-05, AC-08 |
 | Context / change | `doc/context/local-orchestration-installer/main.md` / `CHG-20260808-011` |
-| State | `IN_PROGRESS / DISPATCHED` |
+| State | `COMPLETE / APPROVED / INTEGRATED` |
 | Required dependency | Ticket 01 integrated at `491f98b` and closed at `24387c2` |
 | Language | Python 3.11, strict Pydantic models and standard-library fakes |
 | Control-plane owner / reviewer | Codex / current `main` worktree |
 | Implementation owner / worktree | Codex implementation Agent / existing `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` |
-| Single implementation branch | `codex/implementation-local-metadata-git-02` |
+| Released implementation branch | `codex/implementation-local-metadata-git-02` (deleted after guarded merge) |
 | Environment | Metadata-only in-memory store and temporary-repository fakes; no company project, host configuration, push or deployment |
+| Implementation / handoff | `6cc8fb5` / `cc38c5d` |
+| Independent review / integration | `4527f49` / `92c58bf` |
 
 ## User-observable outcome
 
