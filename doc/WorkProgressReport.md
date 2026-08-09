@@ -1103,3 +1103,16 @@
 | Closed | CR-88: exact `--available --json` command and collision checks across installed plus available entries. Declared A4 boundary failures remain finite. |
 | Still blocking | CR-86: explicit `marketplaceSource: null` is accepted on both official DTOs and the parsed version value retains the `codex-cli ` command prefix. CR-87: a relative `LOCALAPPDATA` expansion admits a relative proof and returns `ELIGIBLE`. CR-89: the claimed complete official/root matrix omits these cells. |
 | Convergence | This was the one permitted correction review. No third automatic correction, new branch/worktree, integration or next ticket is authorized. Owner/control-plane convergence choice is required before further implementation. |
+
+## PRG-20260810-088 - Ticket 05A owner convergence override and final correction dispatch
+
+| Field | Value |
+| --- | --- |
+| Router event | `CONVERGENCE_REVIEW_REQUIRED -> OWNER_SCOPED_OVERRIDE -> CORRECTION_HANDOFF -> IMPLEMENT / AUTO_CONTINUE` |
+| Owner authority | Current instruction to inspect correction `b6594b9` / handoff `59c3f96` and re-dispatch according to the verified result. This is an explicit single-use override of the one-correction limit, not a general workflow change. |
+| Independent reconfirmation | Focused `13/13`, full `169/169`, strict mypy `82` files and in-memory compile pass. Direct probes reproduce explicit-null acceptance on both DTOs, prefixed `CodexCliVersion.value`, and `ELIGIBLE` under relative `LOCALAPPDATA`. Production/test cumulative net is `167 / 158`; branch and both worktrees are clean. |
+| Decision | Keep frozen A1–A5, Ticket 05A, task, sole worktree, branch, allocation and receipt. Authorize one final additive repair only; no new branch/worktree. Current implementer is `gpt-5.6-terra` with `xhigh`. |
+| Handoff / identity | `hnd_local_orchestration_install_05a_corr2_owner_20260810`; retained `aln_local_orchestration_install_05a_20260810` / `rcpt_local_orchestration_install_05a_20260810`; correlation/question `corr-local-orchestration-install-05a-corr2-owner-20260810` / `q-local-orchestration-install-05a-corr2-owner-20260810`. |
+| Exact repair | Reject present-null optional sources while allowing absence; parse only the semantic version capture; prove the expanded canonical root and proof are absolute Windows paths before exact equality; commit the omitted cells and truthful reverse evidence. CR-88/A3 and A4 must remain green. |
+| Revised ceiling | 05A cumulative production/test `180 / 180`; final cluster remains `400 / 450`. Readability and named strong types take precedence over line compression. |
+| Required return | One final additive implementation commit from `59c3f96`, full verification, then one docs-only handoff. The next independent review is terminal: `APPROVED` or `BLOCKED / SUPERSEDE_REQUIRED`; no further correction, integration, next ticket, live Codex mutation, target-project access, push, deployment or schedule. |

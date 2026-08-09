@@ -144,3 +144,25 @@ dependency-blocked. A control-plane convergence decision is required before any
 new implementation authority: either the owner explicitly changes the
 one-correction rule for one final same-branch additive repair, or the control
 plane supersedes/decomposes 05A under a new reviewed ticket architecture.
+
+## Owner convergence decision and independent reconfirmation
+
+The owner subsequently instructed the control plane to inspect this exact return
+and re-dispatch according to the result. A fresh independent execution reproduced
+focused `13/13`, full `169/169`, strict mypy across `82` files, in-memory compile
+and clean diff/status. Direct probes again observed:
+
+- explicit `marketplaceSource: null` accepted by both official entry DTOs;
+- `CodexCliVersion.value == "codex-cli 0.144.0-alpha.4"` instead of the semantic
+  version capture;
+- `LOCALAPPDATA=relative` yielding a relative proof and `ELIGIBLE`.
+
+The review conclusion remains `CHANGES_REQUESTED`; nothing is approved or
+integrated. The owner's re-dispatch instruction is recorded as the explicit
+single-use convergence override allowed by the conclusion above. Exactly one
+final additive repair may run on the same ticket/task/worktree/branch, with the
+same allocation and receipt and current implementer model `gpt-5.6-terra` at
+`xhigh`. The ticket production ceiling is revised from `170` to `180` non-blank
+lines so named validation is not compressed; its test ceiling remains `180` and
+the parent `400 / 450` cluster ceiling is unchanged. The next independent review
+is terminal: pass to approval or stop as `BLOCKED / SUPERSEDE_REQUIRED`.

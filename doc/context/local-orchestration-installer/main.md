@@ -256,3 +256,12 @@ baseline; the rejected parent branch remains only a Git reference. 05B, 05C and
 04 remain dependency-waiting. No second worktree, concurrent branch, live Codex
 mutation, target-project access, packaging, push, deployment or schedule is
 authorized.
+
+After the one permitted correction review, independent reconfirmation reproduced
+explicit-null admission, prefixed version value and relative canonical-root
+admission. The owner then explicitly ordered re-dispatch according to that
+verified state. This is a single-use convergence override for one final additive
+repair on the existing 05A branch/worktree with `gpt-5.6-terra` at `xhigh`.
+Allocation and receipt stay unchanged; 05B, 05C and 04 remain blocked. Failure
+of the following independent review ends this lane as `SUPERSEDE_REQUIRED`; it
+does not authorize another same-ticket correction or any new branch/worktree.

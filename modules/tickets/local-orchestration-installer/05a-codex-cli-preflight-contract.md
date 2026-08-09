@@ -4,11 +4,11 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01, AC-02 and AC-08 |
 | Context / change | `doc/context/local-orchestration-installer/main.md` / `CHG-20260808-011` |
-| State | `CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED` |
+| State | `IN_PROGRESS / OWNER-OVERRIDDEN FINAL CORRECTION` |
 | Parent evidence | Superseded Ticket 05; review `593e33a`; CR-80, CR-81, CR-82, CR-84 and CR-85 |
 | Baseline | Current control-plane decomposition commit, containing integrated Tickets 01–03 and no production Codex CLI adapter |
 | Control-plane owner / reviewer | Codex / current `main` worktree |
-| Implementation owner / worktree | Codex task `019fcc9c-f34f-7d53-a313-c70c90bf3245`, model `gpt-5.6-luna`, reasoning `xhigh`, existing sole `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` worktree |
+| Implementation owner / worktree | Codex task `019fcc9c-f34f-7d53-a313-c70c90bf3245`, current model `gpt-5.6-terra`, reasoning `xhigh`, existing sole `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` worktree; the original and first-correction Luna runs remain immutable evidence |
 | Single active branch | `codex/implementation-codex-cli-preflight-05a`, created by the implementation owner from the decomposition baseline after preserving the rejected Ticket-05 branch as read-only evidence |
 | Environment | Windows user scope; recorded command/filesystem ports only; no live registration, target project, login, Secret, network, packaging, deployment or schedule |
 
@@ -41,7 +41,7 @@ tests/test_codex_cli_preflight.py
 ```
 
 - Relative to the decomposition baseline, cumulative net production additions
-  must stay at or below 170 non-blank lines and the test file at or below 180.
+  must stay at or below 180 non-blank lines and the test file at or below 180.
 - Start from the integrated control baseline. Do not copy, cherry-pick or import
   source/tests from rejected Ticket-05 commits `0c2ab95`, `c2ea3f8`, `3f6c41a`
   or `13d02de`; they are review evidence, not an implementation source.
@@ -102,3 +102,23 @@ same-ticket branch or worktree.
 | Required correction | CR-86: exact public `marketplaceSource` type/value DTO on both list-entry types plus strict supported version text. CR-87: exact case-sensitive canonical-root-plus-locator proof and complete path matrix. CR-88: collision across both `installed` and `available`. CR-89: committed missing tests and reproducible per-guard reverse results without rewriting the original red history. |
 | Return | One additive correction implementation commit, complete A1..A5 verification within cumulative production/test `170 / 180`, then one separate docs-only correction handoff commit. Return typed `BLOCKED / TICKET_DEFECT` if the frozen closure cannot fit. |
 | Still prohibited | New branch/worktree, amend/reset/rebase/force, historical-source reuse, broad clear/delete, optional/`None` ports, `Any`, `type: ignore`, live Codex mutation, target-project access, hidden host state, Ticket 05B/05C/04, merge, push, release, deployment or schedule |
+
+## Owner-scoped convergence override and final correction handoff
+
+The owner instruction on 2026-08-10 to re-check the submitted correction and
+re-dispatch according to the verified result is the explicit, single-use
+override contemplated by the correction review. It does not weaken A1–A5 or
+authorize another review loop. It permits exactly one final additive repair on
+the existing branch/worktree; the parent cluster ceiling remains `400 / 450`.
+
+| Field | Value |
+| --- | --- |
+| Reconfirmation | Control review `277a0d0` plus a fresh independent run: focused `13/13`, full `169/169`, strict mypy `82` files and in-memory compile pass; explicit-null, parsed-version and relative-root probes fail exactly as recorded |
+| Final handoff | `hnd_local_orchestration_install_05a_corr2_owner_20260810` |
+| Retained allocation / receipt | `aln_local_orchestration_install_05a_20260810` / `rcpt_local_orchestration_install_05a_20260810` |
+| Correlation / question | `corr-local-orchestration-install-05a-corr2-owner-20260810` / `q-local-orchestration-install-05a-corr2-owner-20260810` |
+| Required implementation base | Existing branch `codex/implementation-codex-cli-preflight-05a` at docs handoff `59c3f96`; preserve `88f7aae`, `67dc1db`, `b6594b9` and `59c3f96`, then add commits only |
+| Exact repair | Reject explicitly present `marketplaceSource: null` on both official DTOs while preserving field absence; return semantic version capture only; require the expanded canonical root and resulting proof path to be absolute Windows paths before exact case-sensitive equality; add the three omitted observable tests and truthful reverse evidence |
+| Ceiling | Cumulative production/test `180 / 180`; use readable named validation and return typed `BLOCKED / TICKET_DEFECT` rather than compressing away a contract |
+| Required return | One final additive implementation commit, complete A1–A5 verification and one separate docs-only handoff. The implementation owner makes no review or integration decision. |
+| Terminal rule | The following independent review must be `APPROVED`, or stop this lane as `BLOCKED / SUPERSEDE_REQUIRED`; no further same-ticket implementation correction is authorized. |

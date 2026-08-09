@@ -119,7 +119,7 @@
 | Ticket 03 implementation | DONE / APPROVED / INTEGRATED | Closure `H1..H8`; implementation `16597b6`, H7 correction `673ff7c`, final review `5601594`, guarded merge `60cb8cf`; allocation and branch released. |
 | Toolchain and Codex capability probe | DONE / VERIFIED | Inno Setup 6.7.3 is installed per user with valid signature and compile proof. One disposable Codex CLI marketplace/plugin was installed, hash-verified and completely removed without target-project access. |
 | Parent Ticket 05 Codex CLI adapter | SUPERSEDED / CONVERGENCE_DECOMPOSED | Correction review found CR-80..CR-85; rejected branch/SHAs remain evidence and its allocation/receipt are closed. |
-| Ticket 05A CLI contract/preflight | CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED | Single correction closed CR-88 but left frozen A1/A2/A5 blockers; no third automatic correction or integration. |
+| Ticket 05A CLI contract/preflight | IN_PROGRESS / OWNER-OVERRIDDEN FINAL CORRECTION | Independent reconfirmation reproduced the three remaining A1/A2/A5 blockers; owner authorized one final same-branch Terra xhigh repair. No new branch/worktree or integration. |
 | Ticket 05B transactional registration | PLANNED / DEPENDENCY_WAIT | Starts only after 05A independent approval/integration. |
 | Ticket 05C receipt removal/replay | PLANNED / DEPENDENCY_WAIT | Starts only after 05A/05B independent approval/integration. |
 | Ticket 04 implementation | PLANNED / DEPENDENCY_WAIT | Pinned compiler is ready; package work waits for all decomposed Codex adapter children 05A–05C. |
