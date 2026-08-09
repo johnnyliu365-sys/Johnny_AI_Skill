@@ -790,3 +790,15 @@
 | Blocking findings | CR-69 strands a returned actual host receipt that differs from deterministic intent while clearing owner/ledger/recovery. CR-70 permits a forged `FINALIZE_INTENT` to delete the ledger before terminal absence and then block permanently. CR-71 reports ownerless ledger/live effects as `NOT_INSTALLED`. CR-72 accepts an ownerless forged install-cleanup record as destructive authority. CR-40 omits all four paths and the retained full matrix. |
 | Scope classification | Implementation/contract/TDD correction only; approved SPEC, ticket, architecture, delivery stage, owner, receipt and bounded continuation authority do not change. |
 | Continuation | Mark rework-12 historical and automatically create a fresh same-ticket allocation under receipt `rcpt_local_orchestration_install_01_20260808` and authority `PRG-20260809-042`; Ticket 02 remains `DEPENDENCY_WAIT`. |
+
+## PRG-20260809-059 — Ticket 01 fresh rework-13 handoff
+
+| Field | Value |
+| --- | --- |
+| State | `IMPLEMENT / FRESH_TDD_REWORK` |
+| Review baseline | `cfb7fc4` records the thirteenth `CHANGES_REQUESTED`. `71c6704` and `ffeea79` join all older implementation branches as immutable historical evidence. |
+| Fresh handoff / allocation | `hnd_local_orchestration_install_01_rework_13_20260809` / `aln_local_orchestration_install_01_rework_13_20260809`; branch `codex/implementation-local-install-lifecycle-01-rework-13` starts directly from this current docs-only handoff commit. |
+| Correction scope | Fresh behavior red → minimal complete implementation → green for CR-69 durable actual-receipt binding/cleanup, CR-70 causal non-forgeable pre-delete transition and absence-before-ledger-delete ordering, CR-71 conjunction-based terminal absence, and CR-72 exact-owner authorization before every cleanup effect. Preserve CR-59 through CR-68, the complete canonical path/root matrix, all-host physical lifecycle, finite public results and Git isolation. |
+| Required red/green evidence | Before source implementation, reproduce all four review probes exactly: returned actual receipt mismatch with live effect and no authority; exact-shaped forged `FINALIZE_INTENT` with live effects; ownerless exact ledger/live effects; ownerless exact-shaped `INSTALL_CLEANUP`. Extend actual-receipt field matrices, causal phase-transition matrices and owner/ledger/recovery/effect conjunction matrices. Reverse each guard separately and prove the focused test fails. |
+| Receipt / continuation authority | `rcpt_local_orchestration_install_01_20260808` and bounded authority `PRG-20260809-042` remain valid. This correction allocation requires no second user confirmation. |
+| Required return | Ticket-only implementation commit(s), full regression/strict typing/in-memory compile/sentinel/Git isolation evidence, then one docs-only handoff commit. No self-review, integration, push, deployment, historical-source reuse or progress-only final. |
