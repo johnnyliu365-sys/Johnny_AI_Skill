@@ -548,3 +548,14 @@
 | Blocking findings | CR-40 matrix/red evidence remains incomplete. CR-41 typed recovery phase can skip host/files and falsely return `REMOVED`; CR-42 a Codex selection accepts a Claude receipt; CR-43 two installation IDs share the fixed root and corrupt each other. Exact probes are recorded in the formal review. |
 | Scope classification | Implementation/contract/test correction only. Approved requirements, SPEC, architecture and delivery stage do not change; no `REQUIREMENT_CHANGED` event. |
 | Continuation | Mark the rework-2 branch historical and create another fresh allocation. Receipt `rcpt_local_orchestration_install_01_20260808` continues; Ticket 02 remains `DEPENDENCY_WAIT`. |
+
+## PRG-20260809-029 — Ticket 01 fresh rework-3 handoff
+
+| Field | Value |
+| --- | --- |
+| State | `IMPLEMENT / FRESH_TDD_REWORK` |
+| Review baseline | `0300666` records the third `CHANGES_REQUESTED`. `4b840cd` and `7c73b14` join all older implementation branches as immutable historical evidence. |
+| Fresh handoff / allocation | `hnd_local_orchestration_install_01_rework_3_20260809` / `aln_local_orchestration_install_01_rework_3_20260809`; branch `codex/implementation-local-install-lifecycle-01-rework-3` starts directly from this current docs-only handoff commit. |
+| Scope | Fresh red → minimal typed implementation → green for CR-40 complete matrix/evidence, CR-41 evidence-bearing recovery phases, CR-42 exact selected-host receipt binding and CR-43 exclusive fixed-root ownership. No target project, real host configuration, installer package, Ticket 02+, merge/push/deploy or requirements change. |
+| Receipt | `rcpt_local_orchestration_install_01_20260808` remains the sole positive dispatch authority. This corrected allocation is not a new ticket approval/dispatch. |
+| Required return | New implementation commit(s), then one final docs-only handoff. Evidence must include valid-shaped phase-forgery rejection, host-mismatch rollback, two-ID interleaving/recovery, every named boundary/port subtest's first-red reason, full regression/type/compile/privacy/smoke and target-repository success/failure non-interference. |
