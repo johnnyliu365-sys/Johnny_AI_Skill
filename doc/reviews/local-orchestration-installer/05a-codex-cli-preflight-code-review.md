@@ -3,10 +3,10 @@
 | Field | Value |
 | --- | --- |
 | Feature / ticket | `local-orchestration-installer` / `05a-codex-cli-preflight-contract` |
-| Result | `CHANGES_REQUESTED` |
+| Result | `BLOCKED / SUPERSEDE_REQUIRED` after terminal owner-overridden review |
 | Reviewer | Codex / current `main` worktree |
 | Reviewed branch | `codex/implementation-codex-cli-preflight-05a` |
-| Boundary | Baseline `d90b69e`; implementation `88f7aae`; docs-only handoff `67dc1db` |
+| Boundary | Baseline `d90b69e`; final implementation `97ab31c`; final docs-only handoff `4fc81a5`; terminal control baseline `83e34c3` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05A-01` / `A1..A5` |
 
 ## Independent verification
@@ -166,3 +166,66 @@ same allocation and receipt and current implementer model `gpt-5.6-terra` at
 lines so named validation is not compressed; its test ceiling remains `180` and
 the parent `400 / 450` cluster ceiling is unchanged. The next independent review
 is terminal: pass to approval or stop as `BLOCKED / SUPERSEDE_REQUIRED`.
+
+## Terminal owner-overridden final review
+
+### Final boundary and independent verification
+
+The final additive implementation `97ab31c694db97363f61fa6f437b6decf22a1a41`
+and docs-only handoff `4fc81a5f74977f4b7b732a51d66e562431a5bcb6`
+are descendants of correction handoff `59c3f96` on the same sole branch and
+worktree. Both Git worktrees are porcelain-clean, the implementation task is
+idle, and no new branch/worktree, merge, push, deployment or live Codex action
+was created. Rejected parent commits `0c2ab95`, `c2ea3f8`, `3f6c41a` and
+`13d02de` are not ancestors of the final implementation.
+
+| Check | Terminal-review evidence |
+| --- | --- |
+| Green suite | PASS: focused unittest `16/16`; full discovery `172/172`; strict mypy `82` files; five-file in-memory compile; source sentinel and `git diff --check`. |
+| Scope / ceiling | PASS: cumulative production `179` added / `2` removed non-blank lines, net `177 / 180`; test `171 / 180`. Final implementation changes only `host_contracts.py`, `codex_cli_adapter.py` and the authorized preflight test; final handoff changes only `doc/WorkProgressReport.md`. |
+| A1 public boundary | PASS: absent optional sources remain valid; explicitly present null is rejected on both official entry DTOs; strict object form passes; version admission remains full-form-only and exposes semantic capture `0.144.0-alpha.4`. |
+| A2 source proof | PASS: exact source succeeds. Foreign, prefix, suffix, trailing separator, case, encoded separator, traversal, relative, drive-relative, empty and constructed root/ID/locator variants recursively block before either list command. |
+| A3 collision | PASS: marketplace plus installed/available plugin collisions, including case variants and foreign marketplaces, return finite `COLLISION` without mutation. |
+| A4 finite failures | PASS: prior declared process/filesystem/timeout/encoding/malformed-output paths remain green; missing executable retains `EXECUTABLE_UNAVAILABLE`. |
+| Reverse truth | PASS for executable behavior: isolated commit-archive mutations of explicit-null rejection, version capture, Windows-absolute admission, available collision and executable mapping each made its named test exit nonzero; restoration returned focused `16/16`. |
+| Git isolation | PASS: the existing and empty temporary Git byte/porcelain test passed inside the full suite. Reviewer probes used recorded ports only. |
+| Hidden-state boundary | **FAIL**: ignored `.mypy_cache` files in the implementation worktree were rewritten at `2026-08-09T17:17:37Z` and `17:18:44Z`, inside the implementation turn `17:15:44Z` through `17:19:44Z`. This violates the ticket's no-hidden-config/cache rule and contradicts the final handoff's no-hidden-state-write claim. The reviewer did not delete or alter the implementation worktree. |
+| Handoff ledger identity | **FAIL**: final branch handoff heading `PRG-20260810-087` collides with the canonical control-plane `PRG-20260810-087` correction-review record already present in control baseline `83e34c3`. Commit SHA and handoff ID remain immutable evidence, but the submitted docs-only record cannot enter the unique progress ledger unchanged. |
+
+### Final closure and CodeReview.md mapping
+
+| Item | Result | Terminal result |
+| --- | --- | --- |
+| `A1` | PASS | Exact public DTO null/absence and semantic-version cells pass. |
+| `A2` | PASS | Exact absolute Windows canonical proof and complete path/bypass matrix pass. |
+| `A3` | PASS | Installed and available collision closure remains complete and effect-free. |
+| `A4` | PASS | Declared failures remain finite with stable named reasons. |
+| `A5` | FAIL | Tests are mutation-sensitive and all executable checks pass, but hidden cache writes make the isolation claim false and the final handoff reuses a canonical progress-record ID. |
+
+- CodeReview.md class 1 path-prefix matrix: PASS, with exact equality and all
+  seven mandatory variants mapped to committed tests plus independent probes.
+- CodeReview.md class 3 authority bypass: PASS, with public request,
+  recursively reconstructed filesystem proof and constructed nested values all
+  converging on the same exact-owner/source checks.
+- CodeReview.md class 7 test truth: FAIL for the delivery evidence, despite all
+  five reverse mutations detecting their intended executable regressions.
+
+### Terminal findings and conclusion
+
+1. **CR-90 — `EVIDENCE_DEFECT`, A5.** The implementation turn rewrote ignored
+   `.mypy_cache` state in the assigned worktree while the ticket prohibited
+   hidden config/cache edits. The docs-only handoff then states that no hidden
+   state write occurred. Git porcelain cleanliness does not make this claim
+   true.
+2. **CR-91 — `EVIDENCE_DEFECT`, A5.** The final docs-only handoff reuses
+   `PRG-20260810-087`, which already identifies the canonical correction review
+   in the control ledger. The handoff commit is immutable, but its record ID is
+   not safe to integrate as submitted.
+
+`BLOCKED / SUPERSEDE_REQUIRED`. The production behavior closes A1 through A4,
+but A5 and the required truthful docs-only handoff do not pass. The ticket's
+terminal rule authorizes no further same-ticket correction, implementation
+dispatch, branch or worktree. Ticket 05B, 05C and Ticket 04 remain dependency
+blocked. No integration, cleanup of the implementation worktree, push,
+deployment, schedule, live Codex mutation or target-project action was
+performed.

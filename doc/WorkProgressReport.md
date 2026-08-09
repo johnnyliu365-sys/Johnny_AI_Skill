@@ -1116,3 +1116,15 @@
 | Exact repair | Reject present-null optional sources while allowing absence; parse only the semantic version capture; prove the expanded canonical root and proof are absolute Windows paths before exact equality; commit the omitted cells and truthful reverse evidence. CR-88/A3 and A4 must remain green. |
 | Revised ceiling | 05A cumulative production/test `180 / 180`; final cluster remains `400 / 450`. Readability and named strong types take precedence over line compression. |
 | Required return | One final additive implementation commit from `59c3f96`, full verification, then one docs-only handoff. The next independent review is terminal: `APPROVED` or `BLOCKED / SUPERSEDE_REQUIRED`; no further correction, integration, next ticket, live Codex mutation, target-project access, push, deployment or schedule. |
+
+## PRG-20260810-089 - Ticket 05A terminal review blocked
+
+| Field | Value |
+| --- | --- |
+| Router event | `FINAL_CORRECTION_COMPLETED -> CODE_REVIEW -> VALIDATION_FAILED -> BLOCKED / SUPERSEDE_REQUIRED` |
+| Boundary | Control `83e34c3`; same 05A branch; final implementation `97ab31c`; docs-only handoff `4fc81a5`; closure `CLOSURE-LOCAL-INSTALL-T05A-01` A1..A5 |
+| Passing implementation evidence | Focused `16/16`; full `172/172`; strict mypy `82` files; five-file in-memory compile; source sentinel and diff check; cumulative production/test net `177 / 171`; exact null/version/path/authority/collision probes and five isolated reverse mutations passed. A1–A4 are closed. |
+| CR checks | Path-prefix class 1 and authority-bypass class 3 pass. Test-truth class 7 fails because delivery evidence contradicts observed hidden state. Existing and empty temporary Git byte/porcelain isolation tests pass. |
+| Blocking evidence | CR-90/A5: implementation `.mypy_cache` files were rewritten at `17:17:37Z` and `17:18:44Z` inside the owner turn `17:15:44Z–17:19:44Z`, violating the no-hidden-cache boundary and contradicting the no-hidden-state-write handoff claim. CR-91/A5: branch handoff heading `PRG-20260810-087` duplicates the canonical control correction-review ID. |
+| Terminal decision | `BLOCKED / SUPERSEDE_REQUIRED`. No further same-ticket correction, implementation dispatch, new branch/worktree or reuse of the allocation/receipt is authorized. 05B, 05C and 04 remain dependency-waiting. |
+| Non-actions | Reviewer did not alter or clean the implementation worktree and performed no integration, push, deployment, schedule, live Codex mutation, target-project action, network/login or Secret handling. |

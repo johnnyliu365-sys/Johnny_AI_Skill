@@ -265,3 +265,13 @@ repair on the existing 05A branch/worktree with `gpt-5.6-terra` at `xhigh`.
 Allocation and receipt stay unchanged; 05B, 05C and 04 remain blocked. Failure
 of the following independent review ends this lane as `SUPERSEDE_REQUIRED`; it
 does not authorize another same-ticket correction or any new branch/worktree.
+
+The terminal review of final implementation `97ab31c` and handoff `4fc81a5`
+passed A1 through A4, focused/full/type/compile/scope checks, the complete path
+and authority-bypass probes, and five independent reverse mutations. It did not
+close A5: implementation-local `.mypy_cache` files were rewritten inside the
+owner turn despite the no-hidden-cache rule and the handoff's contrary claim,
+and the branch-local handoff reused canonical progress ID
+`PRG-20260810-087`. Ticket 05A is therefore `BLOCKED / SUPERSEDE_REQUIRED`.
+No further 05A dispatch, branch/worktree, integration or Ticket 05B/05C/04
+start is authorized without a new owner/control-plane decision.

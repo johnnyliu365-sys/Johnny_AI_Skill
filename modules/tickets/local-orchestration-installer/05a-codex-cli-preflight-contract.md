@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01, AC-02 and AC-08 |
 | Context / change | `doc/context/local-orchestration-installer/main.md` / `CHG-20260808-011` |
-| State | `IN_PROGRESS / OWNER-OVERRIDDEN FINAL CORRECTION` |
+| State | `BLOCKED / SUPERSEDE_REQUIRED` |
 | Parent evidence | Superseded Ticket 05; review `593e33a`; CR-80, CR-81, CR-82, CR-84 and CR-85 |
 | Baseline | Current control-plane decomposition commit, containing integrated Tickets 01–03 and no production Codex CLI adapter |
 | Control-plane owner / reviewer | Codex / current `main` worktree |
@@ -122,3 +122,15 @@ the existing branch/worktree; the parent cluster ceiling remains `400 / 450`.
 | Ceiling | Cumulative production/test `180 / 180`; use readable named validation and return typed `BLOCKED / TICKET_DEFECT` rather than compressing away a contract |
 | Required return | One final additive implementation commit, complete A1–A5 verification and one separate docs-only handoff. The implementation owner makes no review or integration decision. |
 | Terminal rule | The following independent review must be `APPROVED`, or stop this lane as `BLOCKED / SUPERSEDE_REQUIRED`; no further same-ticket implementation correction is authorized. |
+
+## Terminal review result
+
+Final implementation `97ab31c` closes executable A1 through A4 and passes the
+focused/full/type/compile/scope/adversarial/reverse checks. A5 does not close:
+ignored `.mypy_cache` state was rewritten during the implementation turn while
+the handoff claimed no hidden-state write, and the docs-only handoff `4fc81a5`
+reuses canonical progress ID `PRG-20260810-087`.
+
+The terminal conclusion is `BLOCKED / SUPERSEDE_REQUIRED`. Allocation and
+receipt are not valid for another 05A correction. No implementation dispatch,
+new branch/worktree, integration or dependent-ticket start is authorized.
