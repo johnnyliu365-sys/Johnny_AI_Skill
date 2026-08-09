@@ -640,3 +640,16 @@
 | Blocking findings | CR-50: `FINALIZE` can clear owner/recovery while receipt/files remain live. CR-51/46: post-ledger-delete fault escapes and retry returns `NOT_INSTALLED`. CR-52: install reports success without writing payload files. CR-53: multi-host request records only the first host. CR-40: required manifest/receipt, port-fault/retry and Git non-interference matrices remain absent; stage fault propagates. |
 | Scope classification | Implementation/TDD correction only; approved SPEC, architecture, ticket acceptance, delivery stage and receipt do not change. |
 | Continuation | Mark rework-6 historical and automatically issue a fresh allocation under the existing receipt; no second dispatch question. Ticket 02 remains `DEPENDENCY_WAIT`. |
+
+## PRG-20260809-041 — Ticket 01 fresh rework-7 handoff
+
+| Field | Value |
+| --- | --- |
+| State | `IMPLEMENT / FRESH_TDD_REWORK` |
+| Review baseline | `5f7467c` records the seventh `CHANGES_REQUESTED`. `e6b067c` and `f1301be` join all older implementation branches as immutable historical evidence. |
+| Fresh handoff / allocation | `hnd_local_orchestration_install_01_rework_7_20260809` / `aln_local_orchestration_install_01_rework_7_20260809`; branch `codex/implementation-local-install-lifecycle-01-rework-7` starts directly from this current docs-only handoff commit. |
+| Non-negotiable implementation surface | Retain the strict domain contracts and injected filesystem, ownership, ledger, host, runtime, process and clock ports. Installation must physically stage every manifest payload under the fixed temporary root, verify content digests, register every selected host and persist evidence-bearing recovery before fallible effects can become unreachable. Uninstall must converge from every persisted phase without clearing exact-owner authority until receipt-proven host and file absence is verified. |
+| Correction scope | Fresh red → minimal full-surface implementation → green for CR-40 complete boundary/port/state/Git matrix, CR-46/51 retry after ledger deletion and checkpoint faults, CR-50 evidence-validated `FINALIZE`, CR-52 physical staging/digest verification and CR-53 all-selected-host processing. Preserve CR-36/37/38/39/41/42/43/48/49 and all previously closed isolation guards. |
+| Required red/green evidence | Before source correction, reproduce the five review probes: live effects at `FINALIZE`; ledger-delete fault and retry; success without physical file; two selected hosts; filesystem-stage exception. Add all manifest/receipt absent variants, every declared port-operation fault with finite result plus clean-or-retryable state, and existing/empty Git snapshots. Record each first-red name and reason. |
+| Receipt | `rcpt_local_orchestration_install_01_20260808` remains the sole dispatch authority; this automatic correction allocation requires no second user confirmation. |
+| Required return | Full implementation commit(s), complete independent-ready verification, then one docs-only handoff commit. Progress-only final messages are not a handoff. |
