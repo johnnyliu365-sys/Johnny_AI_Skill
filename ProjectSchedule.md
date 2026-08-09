@@ -118,7 +118,7 @@
 | Ticket 02 implementation | DONE / APPROVED / INTEGRATED | Closure `D1..D8` passed; implementation `6cc8fb5`, independent review `4527f49`, guarded merge `92c58bf`; allocation and branch released. |
 | Ticket 03 implementation | DONE / APPROVED / INTEGRATED | Closure `H1..H8`; implementation `16597b6`, H7 correction `673ff7c`, final review `5601594`, guarded merge `60cb8cf`; allocation and branch released. |
 | Toolchain and Codex capability probe | DONE / VERIFIED | Inno Setup 6.7.3 is installed per user with valid signature and compile proof. One disposable Codex CLI marketplace/plugin was installed, hash-verified and completely removed without target-project access. |
-| Ticket 05 Codex CLI adapter | IN_PROGRESS / CORRECTION_DISPATCH_PREPARED | Initial review `dac99fd` returned CR-73..CR-79; corrected closure `CLOSURE-LOCAL-INSTALL-T05-02` keeps the same ticket, owner, branch, worktree, allocation and receipt. |
+| Ticket 05 Codex CLI adapter | BLOCKED / CONVERGENCE_REVIEW_REQUIRED | Correction review reproduced the green suite but found CR-80..CR-85 in the frozen K/R closure; Workflow §8.1 forbids a third automatic correction. |
 | Ticket 04 implementation | PLANNED / DEPENDENCY_WAIT | Pinned compiler is ready; package work waits only for Ticket 05 independent approval/integration. |
 
 ### Ticket 05 selection after external capability proof
@@ -142,4 +142,12 @@ partial registration residue, foreign absence-proof acceptance and an adapter
 contract incompatible with the documented CLI. Ticket design repair
 `CLOSURE-LOCAL-INSTALL-T05-02` adds the missing installer-owned marketplace
 source boundary and exact public JSON contract. The same implementation lane
-receives one additive correction; Ticket 04 remains dependency-waiting.
+received its one additive correction; Ticket 04 remains dependency-waiting.
+
+The single correction review covered `c2ea3f8`, `3f6c41a`, `13d02de` and
+`4c9525b`. Although focused/full tests and strict typing pass, the public CLI
+JSON DTOs, canonical root/proof binding, finite failure mapping, cleanup proof,
+foreign collision gate and evidence matrix still fail CR-80..CR-85. Ticket 05
+is now `CONVERGENCE_REVIEW_REQUIRED`; no third same-closure correction,
+integration, Ticket-04 dispatch, new branch or new worktree is permitted before
+control-plane decomposition.

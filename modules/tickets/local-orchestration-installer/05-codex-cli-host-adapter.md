@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01, AC-02, AC-07 and AC-08 |
 | Context / change | `doc/context/local-orchestration-installer/main.md` / `CHG-20260808-011` |
-| State | `IN_PROGRESS / CORRECTION_DISPATCH_PREPARED` |
+| State | `BLOCKED / CONVERGENCE_REVIEW_REQUIRED` |
 | Language | Python 3.11, strict Pydantic contracts and a Windows Codex CLI infrastructure adapter |
 | Baseline | Tickets 01–03 reviewed and integrated at `60cb8cf`; owner-authorized Codex CLI lifecycle proof recorded by `PRG-20260809-077` |
 | Control-plane owner / reviewer | Codex / current `main` worktree |
@@ -126,3 +126,18 @@ receipt. All K1–K8 requirements remain, with these finite clarifications:
 | Authorized correction | Additive implementation correction(s) and one docs-only correction handoff, limited to the same four production files and one test. The final net source/test ceilings remain `400` / `450`; simplify or replace incorrect code rather than adding another file. |
 | Required return | Exact first-red names/reasons, official-schema fixtures, CR-73..CR-79 probes, K1–K8/R1–R8 green, strict mypy, no-bytecode in-memory compile, source/scope checks, actual-Git isolation, reverse mutations, clean worktree, implementation commit(s), then docs-only handoff commit. |
 | Still prohibited | New branch/worktree, reset, amend, rebase, force, historical-source reuse, second live registration, target-project write, package/Ticket-04 work, merge, push, deployment or schedule action. |
+
+## Correction review outcome
+
+Correction commits `c2ea3f8`, `3f6c41a` and `13d02de` plus final docs handoff
+`4c9525b` received the single allowed correction review. The submitted green
+suite passed, but CR-80..CR-85 remain against the frozen K/R closure: public CLI
+JSON is still modeled with incompatible fields; canonical source/root ownership
+is not carried through proof; real process/filesystem failures can escape;
+cleanup is not absence-verified; foreign plugin-name collision reaches mutation;
+and the required first-red/reverse/byte-snapshot evidence is not reproducible.
+
+Per Workflow §8.1, no third same-closure correction may be dispatched. The
+ticket is blocked for control-plane architecture/ticket decomposition. Preserve
+the current branch, commits, allocation and receipt as immutable evidence; this
+state authorizes neither a new branch/worktree nor Ticket 04.

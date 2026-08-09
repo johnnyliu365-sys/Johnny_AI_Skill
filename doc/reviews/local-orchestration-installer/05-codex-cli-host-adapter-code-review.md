@@ -3,10 +3,10 @@
 | Field | Value |
 | --- | --- |
 | Feature / ticket | `local-orchestration-installer` / `05-codex-cli-host-adapter` |
-| Result | `CHANGES_REQUESTED` |
+| Result | Initial `CHANGES_REQUESTED`; correction `CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED` |
 | Reviewer | Codex / current `main` worktree |
 | Single branch | `codex/implementation-codex-cli-host-adapter-05` |
-| Closure | Initial `CLOSURE-LOCAL-INSTALL-T05-01` / `K1..K8` |
+| Closure | Initial `CLOSURE-LOCAL-INSTALL-T05-01`; correction `CLOSURE-LOCAL-INSTALL-T05-02` / `K1..K8 + R1..R8` |
 
 ## Boundary and revisions
 
@@ -71,3 +71,62 @@ the implementation owner resumes. There is no `REQUIREMENT_CHANGED` and no
 worktree, branch, allocation and receipt; corrections must be additive commits
 on `codex/implementation-codex-cli-host-adapter-05`. This is the single initial
 review permitted for the corrected closure; only one correction review follows.
+
+## Correction review — `CLOSURE-LOCAL-INSTALL-T05-02`
+
+### Correction boundary and submitted revisions
+
+The correction review covers additive implementation commits `c2ea3f8`,
+`3f6c41a` and `13d02de`, intermediate docs-only commit `09b4824`, and final
+docs-only handoff `4c9525b`, all descended from the original handoff `39936fc`
+on the same branch and worktree. The branch and implementation worktree were
+clean at handoff and remained clean after reviewer-owned no-bytecode checks. No
+new branch, worktree, live registration, target-project write, merge, push,
+deployment or schedule action occurred.
+
+### Correction independent verification
+
+| Check | Result / evidence |
+| --- | --- |
+| Submitted green suite | PASS: focused unittest `15/15`; full discovery `171/171`; strict mypy `82` files; in-memory compile of the four production files and one test; `git diff --check`. |
+| Scope / ceiling | PASS: only the four production files and one test contain implementation changes. Independent non-blank comparison against `8d3c1b3` is production `394 / 400`, not the handoff's `396`; the test is `205 / 450`. |
+| Current official CLI contract | FAIL: the current official [Codex CLI command reference](https://learn.chatgpt.com/docs/developer-commands.md?surface=cli) documents plugin add fields `pluginId`, `name`, `marketplaceName`, `version`, `installedPath`, `authPolicy`; plugin-list entries use `pluginId`, `name`, `marketplaceName`, `version`, `installed`, `enabled`, `source`, `installPolicy`, `authPolicy`; marketplace add includes `marketplaceName`, `installedRoot`, `alreadyAdded`. The submitted DTOs still require `id`/`root`, use `pluginName`/`installedRoot` for plugin mutation, reject documented extra fields, and make every mutation identity field optional. |
+| Official-schema probes | FAIL: documented marketplace-add JSON returns `MALFORMED_OUTPUT` with zero cleanup calls; documented plugin-add JSON returns `MALFORMED_OUTPUT`, removes only the marketplace and never the plugin whose add may already have succeeded; documented plugin-list JSON fails strict validation with ten errors. Conversely, empty `{}` marketplace/plugin mutation objects can reach terminal `INSTALLED`. |
+| Canonical ownership probes | FAIL: source locators with case mismatch are accepted; `C:\foreign\JohnnyAIWorkflow\...` is accepted solely because the path contains a magic directory segment, and that foreign proof can authorize terminal `ABSENT`. `CodexInstallRequest`, manifest evidence and absence evidence contain no canonical `InstallRoot` binding or exact source-root proof. |
+| Finite failure probes | FAIL: real `subprocess.TimeoutExpired`, filesystem `source()` `OSError`, and filesystem `inspect()` `OSError` escape instead of returning the finite typed result algebra. The committed fake covers `TimeoutError`, not the exception raised by `subprocess.run`. |
+| Cleanup / retry probes | FAIL: mutation ownership flags are set only after successful response parsing, so a CLI effect followed by documented-but-rejected JSON is not fully reversed. `_cleanup` trusts remove responses and performs no list/path absence verification; the adapter cannot distinguish successful cleanup from retained residue. |
+| Collision / preflight probe | FAIL: an existing same plugin name under another marketplace passes preflight and the adapter begins marketplace/plugin mutations, contrary to K3's foreign-owner collision rule. |
+| Evidence truth | FAIL: the committed Git test compares porcelain only, not byte plus porcelain snapshots; the handoff's named `test_r1...test_r4...` first-red tests do not exist in any submitted commit; reverse-mutation evidence is a generic assertion without reproducible mutation commands/results; intermediate docs commit `09b4824` and the independently measured `394` production lines are omitted or misstated in the return. |
+
+### Corrected closure mapping
+
+| Item | Result | Independent correction result |
+| --- | --- | --- |
+| `K1 / R1` | FAIL | Typed relative paths exist, but case variants and a foreign root containing `JohnnyAIWorkflow` are accepted; no canonical `InstallRoot` is carried or matched. |
+| `K2 / R2 / R4` | FAIL | Plain version parsing works, but documented plugin/marketplace JSON cannot complete the lifecycle and real process/filesystem failures can escape. |
+| `K3` | FAIL | Exact duplicate identity blocks, but the same plugin under a foreign marketplace is allowed to reach mutation. |
+| `K4 / R3` | FAIL | The canonical registration key is present, but empty mutation output is accepted and the receipt is not derived from the documented observed plugin identity/path fields. |
+| `K5 / R5` | FAIL | Some scripted cleanup calls occur, but effect flags are late and cleanup does not prove plugin, marketplace and path absence. |
+| `K6 / R6` | FAIL | The scripted invented-schema happy path checks the three absence booleans, but the documented CLI schema cannot reach it and foreign-root evidence can still yield `ABSENT`. |
+| `K7 / R7` | FAIL | Recursive Pydantic reconstruction is improved, but evidence lacks canonical root/source identity and case-exact matching; foreign source/root proof remains authoritative. |
+| `K8 / R8` | FAIL | Green/type/compile/diff checks pass, but official fixtures, first-red evidence, reverse mutations and byte-level Git snapshots are not truthfully reproducible. |
+
+### Correction-review batched findings
+
+1. **CR-80 — `IMPLEMENTATION_DEFECT`, K2/K4/R2/R3.** `host_contracts.py:329-442` and `codex_cli_adapter.py:51-61,106-122` still model non-public plugin JSON. Replace invented `id`/`root` and `pluginName`/plugin `installedRoot` fields with the documented DTOs, make required output identity required, reject `{}`, and derive the receipt only from the exact observed public fields plus current filesystem proof.
+2. **CR-81 — `IMPLEMENTATION_DEFECT`, K1/K6/K7/R1/R6/R7.** `host_contracts.py:265-326` and `codex_cli_adapter.py:110-173` do not bind the source, manifest or absence proof to `CANONICAL_INSTALL_ROOT`; substring/suffix/case-fold matching accepts foreign roots and case variants. Carry and compare the canonical root and exact relative source/installed locators at every port boundary and in every success/absence proof.
+3. **CR-82 — `IMPLEMENTATION_DEFECT`, K2/K5/K6/R4.** `codex_cli_adapter.py:124-134` misses `subprocess.TimeoutExpired`, while source/inspect port exceptions at `:49,59,72,77,84,88` are outside the finite mapping. Every declared command/filesystem failure must return a named blocked reason without escaping.
+4. **CR-83 — `IMPLEMENTATION_DEFECT`, K5/R5.** `codex_cli_adapter.py:51-65,175-184` records ownership only after parsing and treats remove-response parsing as cleanup proof. Current-attempt effects must become compensable before parsing their response, and cleanup must verify exact plugin, marketplace and path absence before it can be reported as successful.
+5. **CR-84 — `IMPLEMENTATION_DEFECT`, K3.** `codex_cli_adapter.py:140-143` checks only the exact `plugin@marketplace` identifier. The frozen same-name/foreign-owner collision cell must block before the first mutation.
+6. **CR-85 — `EVIDENCE_DEFECT`, K8/R8.** `tests/test_codex_cli_host_adapter.py:146-242` uses non-public JSON fixtures, compares Git porcelain without byte snapshots, and does not preserve the named first-red or reproducible reverse-mutation evidence claimed by `4c9525b`. The handoff also reports `396` production lines while independent non-blank comparison is `394` and omits intermediate docs commit `09b4824`.
+
+### Correction conclusion and convergence route
+
+`CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED`. This is the one permitted
+correction review for `CLOSURE-LOCAL-INSTALL-T05-02`; CR-80 through CR-85 are
+all tied to its frozen K/R items and still affect correctness, ownership,
+cleanup and evidence truth. Workflow §8.1 therefore forbids a third automatic
+implementation correction. Ticket 05 returns to the control plane for
+architecture/ticket decomposition. The existing branch and all submitted SHAs
+remain immutable evidence; no integration, new branch/worktree or Ticket-04
+dispatch is authorized.

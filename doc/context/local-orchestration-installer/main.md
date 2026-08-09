@@ -193,10 +193,10 @@ owner-authorized `PRG-20260809-077` toolchain and disposable CLI capability
 probe. It did not retroactively change Ticket-03 source or claim production
 support.
 
-Ticket 05 is now the only selected implementation lane and reuses the existing
-sole implementation worktree. Ticket 04 is `PLANNED / DEPENDENCY_WAIT` until
-Ticket 05 is independently approved and integrated. No additional worktree,
-second live registration or schedule is authorized.
+Ticket 05 used the existing sole implementation worktree and remains the gate
+for Ticket 04. Its correction review now requires convergence, so there is no
+active implementation continuation. No additional worktree, second live
+registration or schedule is authorized.
 
 ## Ticket 05 initial review and corrected closure
 
@@ -207,6 +207,23 @@ source required by the documented CLI. Corrected closure
 `CLOSURE-LOCAL-INSTALL-T05-02` defines that source as an ephemeral, strictly
 proved locator below the canonical installer root and aligns commands/JSON,
 receipt identity, cleanup, absence proof and evidence matrices with the public
-CLI. The same Ticket-05 task, worktree, branch, allocation and receipt remain
-active; only one additive correction and one correction review are permitted.
+CLI. The same Ticket-05 task, worktree, branch, allocation and receipt remained
+active for one additive correction. The correction review below supersedes
+that active state; no further implementation continuation is permitted.
+
+## Ticket 05 correction review convergence
+
+The one permitted correction review covered implementation commits `c2ea3f8`,
+`3f6c41a`, `13d02de` and final handoff `4c9525b`. Focused/full tests, strict
+typing, in-memory compile and diff checks pass, but CR-80..CR-85 remain within
+the frozen `CLOSURE-LOCAL-INSTALL-T05-02`: the adapter still rejects documented
+CLI JSON while accepting empty mutation output; source/proof identity is not
+bound to the canonical install root; real timeout/filesystem failures escape;
+cleanup is not absence-verified; foreign same-name plugin state reaches
+mutation; and red/reverse/byte-level Git evidence is not reproducible.
+
+Router outcome is `CONVERGENCE_REVIEW_REQUIRED`. Ticket 05 returns to the
+control plane for architecture/ticket decomposition. No third correction,
+integration, new branch/worktree, Ticket-04 implementation, live registration,
+target-project write, push, deployment or schedule is authorized.
 Ticket 04 remains `PLANNED / DEPENDENCY_WAIT`.

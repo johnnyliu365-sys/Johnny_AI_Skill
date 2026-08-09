@@ -1039,4 +1039,17 @@
 | Retained lane | Handoff `hnd_local_orchestration_install_05_cr1_20260809`; same task `019fcc9c-f34f-7d53-a313-c70c90bf3245`, implementation worktree, branch `codex/implementation-codex-cli-host-adapter-05`, allocation `aln_local_orchestration_install_05_20260809` and receipt `rcpt_local_orchestration_install_05_20260809`. |
 | Correction scope | Same four production files and one test, final net ceilings `400 / 450`; additive commit(s) on the current branch followed by one docs-only correction handoff. Clear only the reviewer-generated `__pycache__/` in the owner worktree. |
 | Required evidence | CR-73..CR-79 direct probes, K1–K8/R1–R8 exact red/green, official-schema fixtures, full regression, strict mypy, no-bytecode compile, source/scope checks, actual existing/empty Git byte/porcelain invariance and isolated reverse mutations. |
+
+## PRG-20260809-081 — Ticket 05 correction review requires convergence
+
+| Field | Value |
+| --- | --- |
+| Router event | `ACTION_COMPLETED → CORRECTION_REVIEW / VALIDATION_FAILED → CONVERGENCE_REVIEW_REQUIRED` |
+| Reviewed return | Same branch `codex/implementation-codex-cli-host-adapter-05`; implementation commits `c2ea3f8`, `3f6c41a`, `13d02de`; intermediate docs `09b4824`; final docs handoff `4c9525b`; clean implementation worktree. |
+| Reproduced green evidence | Focused `15/15`; full `171/171`; strict mypy `82` files; five-file in-memory compile; source sentinel and `git diff --check` pass. Independent ceiling is production `394/400` non-blank and test `205/450`. |
+| Blocking findings | CR-80 public CLI JSON fields remain incompatible and empty mutation JSON is accepted; CR-81 canonical root/source/proof binding is absent; CR-82 real timeout/filesystem failures escape; CR-83 cleanup is late and not absence-verified; CR-84 same plugin under a foreign marketplace reaches mutation; CR-85 first-red/reverse/byte-snapshot evidence is not reproducible. |
+| Independent probes | Documented marketplace-add JSON returned `MALFORMED_OUTPUT` with no cleanup; documented plugin-add JSON removed only the marketplace; documented plugin-list JSON failed validation; `{}` mutations reached `INSTALLED`; case-mismatched and `C:\foreign\JohnnyAIWorkflow\...` source proof was accepted and could yield `ABSENT`; `subprocess.TimeoutExpired` and filesystem `OSError` escaped. |
+| Review result | `CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED`. This is the single correction review allowed for `CLOSURE-LOCAL-INSTALL-T05-02`; no third implementation correction may be auto-dispatched. |
+| Control boundary | Preserve the implementation branch and SHAs as immutable evidence. No integration, new branch/worktree, Ticket-04 work, second live registration, target-project write, push, deployment or schedule. Control-plane architecture/ticket decomposition is required. |
+| Review report | `doc/reviews/local-orchestration-installer/05-codex-cli-host-adapter-code-review.md` |
 | Prohibited | New branch/worktree, reset/amend/rebase/force, second live registration, target-project write, historical-source reuse, package/Ticket-04 work, merge, push, deployment or schedule action. |
