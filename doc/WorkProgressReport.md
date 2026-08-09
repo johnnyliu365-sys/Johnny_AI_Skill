@@ -945,3 +945,18 @@
 | Owner boundary | Existing sole `workflow-implementation` worktree; one new-ticket branch `codex/implementation-host-capability-gate-03`. Tickets 01/02 remain immutable and released. |
 | Granted scope | Four production files, one test, 550/450 line ceilings, recorded fakes and H1..H8 evidence. No catalog module is imported beyond integrated `InstallationId`. |
 | Not authorized | Another worktree/branch, real Codex/Claude command, subprocess/network/login/config mutation, Ticket-01/02 changes, packaging, merge, push, deployment or schedule action. |
+
+## PRG-20260809-073 - bounded Ticket 03 implementation handoff
+
+| Field | Value |
+| --- | --- |
+| State | `IMPLEMENTATION_COMPLETED / INDEPENDENT_REVIEW_PENDING` |
+| Ticket / closure | `03-reversible-agent-host-lifecycle` / `CLOSURE-LOCAL-INSTALL-T03-01` (`H1..H8`). |
+| Baseline / implementation | Exact dispatch baseline `963319b930bfdfbd3851ee6c98343d6218684ff9`; implementation commit `16597b676103df4eb5a9c9673de07bd9b2c29f9e`; branch `codex/implementation-host-capability-gate-03`. |
+| Red evidence | Before production files existed, the first exact unittest run executed eight named tests and failed H1 through H8 independently with the public Ticket-03 contract reported as not implemented. |
+| Green evidence | Exact H1..H8 unittest: 8 passed. Full project discovery: 155 passed. Strict mypy: five authorized files, no issues. In-memory compile: five files. H1/H2/H8 smoke and `git diff --check` passed. |
+| Actual Git isolation | A supported recorded fake and an unavailable blocked fake ran between snapshots of one existing and one empty actual temporary Git repository. Both recursive byte snapshots were identical, existing porcelain remained `?? existing.txt`, and empty porcelain remained empty. |
+| Reverse-mutation evidence | H1 retained the registration after unregister; H2 bypassed recorded-request revalidation; H3 relaxed the canonical key; H4 relaxed opaque evidence validation; H5 accepted a foreign receipt; H6 collapsed unavailable into access-denied; H7 added a source sentinel to the blocked report; H8 inserted a forbidden capability marker. Every corresponding focused test exited nonzero and passed after exact restoration. |
+| Capability boundary | The only reusable type is integrated `InstallationId`. `CODEX` and `CLAUDE` public queries always return `UNVERIFIED` with zero lifecycle calls. Only host `RECORDED` can enter the fake lifecycle, and even a non-validating copied public-host request is revalidated and blocked before effects. No production adapter or live support claim exists. |
+| Scope / ceiling | Exactly four authorized production files and `tests/test_reversible_agent_host_lifecycle.py`; production 545/550 non-blank lines and test 317/450. Ticket-01/02 source and tests are unchanged; no additional file, branch or worktree was created. |
+| Handoff authority | Handoff `hnd_local_orchestration_install_03_20260809`; allocation `aln_local_orchestration_install_03_20260809`; receipt `rcpt_local_orchestration_install_03_20260809`; correlation `corr-local-orchestration-install-03-20260809`; authority `PRG-20260809-042`. The implementation owner makes no review or integration decision. |
