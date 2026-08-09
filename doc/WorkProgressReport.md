@@ -1141,3 +1141,15 @@
 | Allowed tracked change | Only `doc/WorkProgressReport.md`: change branch-local duplicate final-handoff heading `PRG-20260810-087` to reserved `PRG-20260810-091`, correct the no-hidden-state claim, and append exact cleanup/ignored-state evidence. One additive docs-only commit only. |
 | Required proof | Focused/full tests, strict mypy, in-memory compile, `git diff --check`, no source/test diff, clean porcelain, and no generated cache in ignored-state readback. Return one docs-only SHA; no review or integration decision. |
 | Prohibited | Source/test edit, implementation commit, amend/reset/rebase/force/cherry-pick, branch/worktree change, live Codex/target-project/host-config action, merge, push, release, deployment, schedule or dependent ticket |
+
+## PRG-20260810-092 - Ticket 05A evidence repair approved
+
+| Field | Value |
+| --- | --- |
+| Router event | `EVIDENCE_CLEANUP_COMPLETED -> CODE_REVIEW -> VALIDATION_PASSED -> APPROVED / READY_TO_MERGE` |
+| Boundary | Control authority `9d3fd4d`; implementation `97ab31c`; repaired docs-only handoff `fb755268`; closure `CLOSURE-LOCAL-INSTALL-T05A-01` A1-A5 |
+| Commit scope | `fb755268` is an additive child of `4fc81a5` and changes only branch `doc/WorkProgressReport.md`; no source, test, branch/worktree or history rewrite occurred. |
+| Independent evidence | Focused `16/16`; full `172/172`; strict mypy `82` files with `--no-incremental` and a safely removed unique OS-temporary cache; four-file in-memory compile; AST source sentinel and `git diff --check` pass. Tracked/ignored status and generated-cache candidate readbacks are empty. |
+| Finding closure | CR-90/A5 closed: the earlier hidden cache write is truthfully recorded, allowed caches are removed, and cache-free verification reproduces. CR-91/A5 closed: branch handoff is uniquely `PRG-20260810-091`, distinct from canonical control `PRG-20260810-087`. A1-A4 remain closed. |
+| Harness diagnostics | One reviewer regex command and one case-insensitive literal sentinel were invalid/overbroad; both were isolated reviewer harness defects. External temp cleanup succeeded, and the final AST sentinel passed without repository state. |
+| Decision / non-actions | `APPROVED / READY_TO_MERGE`. This review did not integrate, dispatch 05B/05C/04, mutate live Codex or a target project, push, release, deploy, use network/login/Secret, or create a schedule. |

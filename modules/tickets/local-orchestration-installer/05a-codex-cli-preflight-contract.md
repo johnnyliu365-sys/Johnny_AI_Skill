@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01, AC-02 and AC-08 |
 | Context / change | `doc/context/local-orchestration-installer/main.md` / `CHG-20260808-011` |
-| State | `BLOCKED / OWNER-AUTHORIZED EVIDENCE REPAIR PENDING` |
+| State | `COMPLETE / APPROVED / READY_TO_MERGE` |
 | Parent evidence | Superseded Ticket 05; review `593e33a`; CR-80, CR-81, CR-82, CR-84 and CR-85 |
 | Baseline | Current control-plane decomposition commit, containing integrated Tickets 01–03 and no production Codex CLI adapter |
 | Control-plane owner / reviewer | Codex / current `main` worktree |
@@ -154,3 +154,14 @@ in the existing implementation worktree and branch. Handoff
 No source/test edit, implementation commit, new branch/worktree, history
 rewrite, integration or dependent ticket is authorized. The following review
 is restricted to CR-90, CR-91 and A5.
+
+## Evidence cleanup review result
+
+Control review of repaired docs-only handoff `fb755268` independently passed
+focused `16/16`, full `172/172`, strict mypy across `82` files using a removed
+OS-temporary cache, four-file in-memory compile, the exact source sentinel and
+diff check. Both tracked and ignored status are empty and no allowed generated
+cache remains beneath the implementation worktree. `PRG-20260810-091` is unique
+to the branch handoff, while canonical control record `PRG-20260810-087`
+remains distinct. CR-90, CR-91 and A5 are closed; the ticket is
+`APPROVED / READY_TO_MERGE` pending a separate guarded integration decision.

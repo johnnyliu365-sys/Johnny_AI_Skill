@@ -3,10 +3,10 @@
 | Field | Value |
 | --- | --- |
 | Feature / ticket | `local-orchestration-installer` / `05a-codex-cli-preflight-contract` |
-| Result | `BLOCKED / OWNER-AUTHORIZED EVIDENCE REPAIR PENDING` after terminal review |
+| Result | `APPROVED / READY_TO_MERGE` after owner-authorized evidence repair review |
 | Reviewer | Codex / current `main` worktree |
 | Reviewed branch | `codex/implementation-codex-cli-preflight-05a` |
-| Boundary | Baseline `d90b69e`; final implementation `97ab31c`; final docs-only handoff `4fc81a5`; terminal control baseline `83e34c3` |
+| Boundary | Baseline `d90b69e`; final implementation `97ab31c`; repaired docs-only handoff `fb755268`; evidence-cleanup authority `9d3fd4d` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05A-01` / `A1..A5` |
 
 ## Independent verification
@@ -253,3 +253,23 @@ task, worktree and branch remain the only permitted lane.
 After this return the control-plane reviewer may re-evaluate only CR-90/CR-91
 and A5. No automatic implementation dispatch or dependent ticket follows from
 the cleanup commit itself.
+
+## Evidence-only terminal review
+
+The implementation owner returned `fb755268004484060b2d4cea7ea69c1ca9609cae`
+as the only additive commit after `4fc81a5`. Its tree changes only
+`doc/WorkProgressReport.md`; no source, test, branch, worktree or history rewrite
+occurred.
+
+| Check | Independent result |
+| --- | --- |
+| CR-90 / A5 cache truth | PASS. The assigned worktree contains no `.mypy_cache`, `.pytest_cache` or `__pycache__`. Focused unittest passed `16/16`; full discovery passed `172/172`; strict mypy passed `82` files with `--no-incremental` and a unique OS-temporary cache; that temporary directory was removed and independently read back absent. Tracked and ignored status are empty. |
+| CR-91 / A5 ledger truth | PASS. The repaired branch handoff uses reserved heading `PRG-20260810-091`; the control ledger retains its distinct canonical `PRG-20260810-087`. The repaired text explicitly admits the earlier cache write and records the authorized cleanup instead of repeating the false no-hidden-state assertion. |
+| Regression / build | PASS. Four Python files compiled in memory, the AST-based source sentinel found no `Any`, `type: ignore`, credential/token field, `shell=True` or `os.system` marker, and `git diff --check d90b69e 97ab31c` passed. A1-A4 and their prior path-prefix, authority-bypass and reverse-mutation review results were not reopened. |
+| Reviewer harness diagnostics | The first reviewer sentinel command had an invalid escaped regex after all tests/type/compile checks had passed; its `finally` removed the external cache. A second literal sentinel treated Python's lowercase `any` as `Any`. Both were reviewer-command defects, not product failures; the final AST sentinel was exact and passed. |
+
+CR-90 and CR-91 are closed as `EVIDENCE_DEFECT` findings. A5 now has truthful,
+reproducible evidence, so `CLOSURE-LOCAL-INSTALL-T05A-01` A1-A5 is complete.
+The terminal decision is `APPROVED / READY_TO_MERGE`. No integration, dependent
+ticket dispatch, live Codex mutation, target-project write, push, release or
+deployment was performed by this review.
