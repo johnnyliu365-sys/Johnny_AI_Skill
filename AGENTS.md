@@ -18,6 +18,8 @@
 
 流程圖只用來定位；完整 `Workflow.md` 才是每一關的強制規則。兩者不可互相取代。
 
+<a id="p0-source-type"></a>
+
 ## P0：原始碼型別與文件忽略要求
 
 此為所有實作與 Code Review 必須遵守的阻擋規則；任何違反均不得進入 commit、下一張 ticket 或交接。
@@ -55,7 +57,7 @@ Router anchor: `#workflow-router`; implementation role anchor: `#role-boundary`.
 
 ## 預設角色邊界
 
-除非專案負責人對單一 ticket 明確改派，使用本指引的控制面 Agent 只負責 Wayfinder、Grill、SPEC、ticket、實作前 handoff 與 review；正式原始碼與測試實作必須交給另一位具名 implementation owner。唯一詳細規則以 [Workflow.md §5.1](Workflow.md#role-boundary) 為準。
+除非專案負責人對單一 ticket 明確改派，使用本指引的控制面 Agent 的責任止於 `WAYFINDER`、Architecture／`grill-with-docs`、Context、SPEC、ticket、實作前 handoff、Code Review 與交接；正式原始碼與測試實作必須交給另一位具名 implementation owner。唯一詳細規則以 [Workflow.md §5.1](Workflow.md#role-boundary) 為準。
 
 完成的 implementation 必須以 typed `ACTION_COMPLETED` 回到 Router；`ImplementationReturn` 的 `CHANGE_DETECTED` 必須回到 `REQUIREMENT_CHANGED`，不得由控制面猜測或靜默擴張範圍。
 
