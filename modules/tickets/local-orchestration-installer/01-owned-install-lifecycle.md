@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01, AC-03, AC-06, AC-07, AC-08 |
 | Context / change | `doc/context/local-orchestration-installer/main.md` / `CHG-20260808-011` |
-| State | `IN_PROGRESS` — fresh allocation `aln_local_orchestration_install_01_rework_4_20260809` addresses CR-40, CR-44 and CR-45; receipt `rcpt_local_orchestration_install_01_20260808` continues without a second question |
+| State | `CHANGES_REQUESTED` — rework-4 improves CR-44/45 but CR-40/46 and reopened CR-38/42/43 require a fresh allocation; receipt `rcpt_local_orchestration_install_01_20260808` continues without a second question |
 | Language | Python 3.11, Pydantic strict models and standard-library filesystem test fakes |
 | Baseline | `afee39d` (`docs: plan local orchestration installer tickets`) |
 | Control-plane owner / reviewer | Codex / current `main` worktree |
@@ -60,9 +60,9 @@ Frontend composition / DI: the equivalent command/UI is `InstallControlPlane` / 
 ## Review return
 
 - Review: `doc/reviews/local-orchestration-installer/01-owned-install-lifecycle-code-review.md` (`CHANGES_REQUESTED`).
-- Blocked histories: `010110a` / `7bc5fd5`; `fd429fd`, `a222d89` / `8e39c99`; `4b840cd` / `7c73b14`; `c91041a` / `ba74caf`. None may be reset, overwritten, cherry-picked or reused.
-- Corrected so far: CR-36/37 typed proof/absence validation; CR-38 normal recovery retry; CR-39 finite install verification rollback; CR-41 evidence-bearing recovery phases; CR-42 selected-host receipt binding; CR-43 exclusive fixed-root ownership.
-- Still required: CR-40 complete state/evidence matrix, CR-44 retryable final owner release and CR-45 durable/compensated install failure effects. A new control-plane handoff creates another fresh branch; no new user dispatch is needed.
+- Blocked histories: `010110a` / `7bc5fd5`; `fd429fd`, `a222d89` / `8e39c99`; `4b840cd` / `7c73b14`; `c91041a` / `ba74caf`; `7df74e1`, `e84dff0`, `14838d9` / `f90877d`. None may be reset, overwritten, cherry-picked or reused.
+- Corrected and retained requirements: CR-36/37 typed proof/absence validation; CR-39 finite install verification rollback; CR-41 evidence-bearing recovery phases. Rework-4 demonstrates the intended owner-release/recovery-clear sequence and cooperative manifest/checkpoint compensation, but does not close all reachable paths.
+- Still required: CR-40 complete state/evidence matrix; CR-46 retry after ledger deletion plus terminal-checkpoint failure; reopened CR-38 operation-safe recovery consumption, CR-42 actual returned-effect cleanup and CR-43 active-owner validation on every existing-ledger path. A new control-plane handoff creates another fresh branch; no new user dispatch is needed.
 
 ### Rework-3 review return
 
@@ -70,3 +70,10 @@ Frontend composition / DI: the equivalent command/UI is `InstallControlPlane` / 
 - Closed: CR-41 evidence-bearing/reverified recovery phases; CR-42 exact selected-host receipt binding; CR-43 exclusive active-owner gate.
 - Still required: CR-40 must assert clean/retryable state for every failure and finish the omitted boundary variants; CR-44 must retain retry authority through owner release; CR-45 must prevent manifest/recovery-write failures from stranding staged or host effects.
 - Classification: implementation/TDD correction only. The approved SPEC, architecture, ticket acceptance and receipt do not change; no `REQUIREMENT_CHANGED` event is emitted.
+
+### Rework-4 review return
+
+- Reviewed range: `5142378 → 7df74e1 → e84dff0 → 14838d9 → f90877d` on `codex/implementation-local-install-lifecycle-01-rework-4`.
+- Passing evidence: owner-release and recovery-clear focused retries, cooperative manifest/checkpoint compensation, 143-test regression, 196 subtests, mypy/compile/diff/privacy checks.
+- Blocking evidence: terminal checkpoint loss after ledger deletion cannot resume; install clears an uninstall recovery; an actual mismatched returned receipt effect remains live; an injected typed second ledger bypasses active owner; CR-40 matrix/red evidence remains incomplete.
+- Classification: implementation/contract/TDD correction only. No approved requirement, architecture, ticket acceptance, delivery stage or receipt changes.

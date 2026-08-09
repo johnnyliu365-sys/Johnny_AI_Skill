@@ -582,3 +582,14 @@
 | Required red/green evidence | Separately prove owner-release failure retries to a terminal released owner; recovery-clear then owner-release faults cannot lose authority; manifest mismatch leaves no unowned staged path; recovery-write fault after a host effect leaves either verified clean state or durable resumable recovery; same-ID retry converges and a foreign ID cannot claim residue. Complete omitted installation-ID and owned-path boundary variants and assert filesystem/host/owner/ledger/recovery state for every fault. |
 | Receipt | `rcpt_local_orchestration_install_01_20260808` remains the sole positive dispatch authority. This corrected allocation is not a new ticket approval/dispatch. |
 | Required return | New implementation commit(s), then one final docs-only handoff with exact first-red names/reasons, retry terminal outcomes, complete regression/type/compile/privacy/smoke, target-repository non-interference and `git diff --check`. |
+
+## PRG-20260809-034 — Ticket 01 fifth independent review
+
+| Field | Value |
+| --- | --- |
+| State | `REVIEW / CHANGES_REQUESTED` |
+| Reviewed range | Baseline `5142378`; implementation `7df74e1`, `e84dff0`, `14838d9`; docs-only handoff `f90877d`; branch `codex/implementation-local-install-lifecycle-01-rework-4`. |
+| Passing evidence | Owner-release and recovery-clear focused sequences retry to `REMOVED`; cooperative manifest/checkpoint compensation passes. Full 143 unittest, 143 pytest/196 subtests, strict mypy 71 files, five-module compile, diff and privacy sentinels pass. |
+| Blocking findings | CR-40 matrix/red evidence remains incomplete. CR-46 loses the terminal transition when ledger deletion succeeds but final checkpoint write fails. CR-38 is reopened because install clears an active uninstall recovery. CR-42 is reopened because rollback discards an actual mismatched returned host effect. CR-43 is reopened because the existing-ledger fast path returns `INSTALLED` before active-owner/physical validation. Exact probes are in the formal review. |
+| Scope classification | Implementation/contract/test correction only. Approved SPEC, architecture, acceptance, delivery stage and receipt do not change; no `REQUIREMENT_CHANGED` event. |
+| Continuation | Mark rework-4 historical and automatically create a fresh allocation under receipt `rcpt_local_orchestration_install_01_20260808`; no second user dispatch question. Ticket 02 remains `DEPENDENCY_WAIT`. |

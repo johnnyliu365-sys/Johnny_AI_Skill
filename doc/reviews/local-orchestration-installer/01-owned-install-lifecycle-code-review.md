@@ -4,9 +4,9 @@
 | --- | --- |
 | Feature / ticket | `local-orchestration-installer` / `01-owned-install-lifecycle` |
 | SPEC / change | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / `CHG-20260808-011` |
-| Reviewed baseline | `7cc8b38` |
-| Implementation / docs handoff | `c91041a` / `ba74caf` |
-| Implementation owner | Codex implementation Agent / `codex/implementation-local-install-lifecycle-01-rework-3` |
+| Reviewed baseline | `5142378` |
+| Implementation / docs handoff | `7df74e1`, `e84dff0`, `14838d9` / `f90877d` |
+| Implementation owner | Codex implementation Agent / `codex/implementation-local-install-lifecycle-01-rework-4` |
 | Reviewer | Codex / current `main` worktree |
 | Result | `CHANGES_REQUESTED` |
 
@@ -14,7 +14,87 @@
 
 - Approved Context: `doc/context/local-orchestration-installer/main.md`.
 - Ticket scope: typed owned ledger, fake lifecycle ports and fail-closed install/uninstall only; no real host configuration, target project, Git adapter or package artifact is reviewed as delivered.
-- Receipt `rcpt_local_orchestration_install_01_20260808` remains valid. The review result blocks the rework-3 implementation branch as historical evidence; it does not alter the approved SPEC, ticket scope or the planning lane's Ticket-02 dependency wait.
+- Receipt `rcpt_local_orchestration_install_01_20260808` remains valid. The review result blocks the rework-4 implementation branch as historical evidence; it does not alter the approved SPEC, ticket scope or the planning lane's Ticket-02 dependency wait.
+
+## Rework-4 review result
+
+The intended CR-44 order is materially improved: owner-release failure retains `UNINSTALL_FINALIZE`, recovery-clear failure retains the final record after releasing the owner, and both focused sequences retry to `REMOVED`. The committed manifest-mismatch and configured post-host checkpoint tests also clean the cooperative fake's effects and retry successfully.
+
+The ticket remains unapprovable because four independent paths bypass or lose that recovery/ownership model. CR-40 also remains open: the fresh suite is smaller than the prior matrix and verifies only selected fault/value cases.
+
+### CR-40 remains open — required boundary, port and red evidence is incomplete
+
+`test_boundaries_cover_omitted_and_container_installation_and_owned_paths` covers the five absent representations for installation ID and owned path (`tests/test_owned_install_lifecycle.py:210-235`), but the approved ticket requires the same explicit matrix for manifest and host receipt. `test_root_variants_and_receipt_model_are_fail_closed` checks only an empty receipt-owned-path tuple (`tests/test_owned_install_lifecycle.py:237-243`), not `None`, omitted, empty string, whitespace, list/object and equivalent outcomes at the named receipt/manifest boundaries.
+
+The port-failure suite covers stage, host verify, runtime, process and two recovery-write positions. It does not exercise owner read/claim, ledger read/write/delete, recovery read, host detect/register/detach/absence, filesystem delete/partial-delete, or the final ledger-delete/checkpoint split. The ticket explicitly requires each external dependency fault to assert finite result, side effects and retry state.
+
+The recorded first red ran eight tests, while the final focused suite contains twelve. `e84dff0` adds target-repository coverage after the implementation, and `14838d9` adds new runtime/process/recovery assertions plus a production-code correction in the same commit; no first-red name/reason is recorded for these added behaviors. This does not establish the required behavior-first TDD order.
+
+Required correction: restore the complete named boundary/port matrix and record the first observable failure for every new behavior before its correction. Every fault assertion must include filesystem, host, owner, success ledger and recovery state plus the retry terminal outcome where effects may have begun.
+
+### CR-46 — ledger deletion can still destroy the finalization transition
+
+At `library/local_orchestration/lifecycle.py:214-219`, `_resume_uninstall` executes `ledger.delete()` before persisting the `UNINSTALL_FINALIZE` record, but maps failure of either operation to `LEDGER_DELETE_FAILED`. If deletion succeeds and the subsequent recovery write fails, the durable record remains `UNINSTALL_LEDGER` while the success ledger is already absent. On retry, lines 167-172 require that ledger and return `LEDGER_INVALID`, so `_finalize` is never reached.
+
+Independent injection at recovery write call six produced: first uninstall `UNINSTALL_BLOCKED / LEDGER_DELETE_FAILED`; second uninstall `UNINSTALL_BLOCKED / LEDGER_INVALID`; empty files/hosts/success ledger; stale `UNINSTALL_LEDGER` recovery and active owner; a foreign installation remained `INSTALLATION_EXISTS`.
+
+Required correction: make ledger removal and the terminal checkpoint one atomic/idempotent port transition, or make `UNINSTALL_LEDGER` resume accept a proven already-absent ledger and deterministically recreate/advance terminal authority. Add first-red tests for failure before deletion, after deletion/before terminal checkpoint, and repeated retry.
+
+### CR-38 reopened — `install()` erases an active uninstall recovery
+
+`install()` loads the success ledger and recovery together, then if any `OwnedLedger` exists it clears any recovery and returns `INSTALLED` (`library/local_orchestration/lifecycle.py:31-42`). It does not validate the recovery operation or resume/reject an uninstall in progress.
+
+Independent reproduction performed a partial host detach. Uninstall returned `HOST_DETACH_FAILED` with durable `UNINSTALL_HOSTS` recovery and the host effect already absent. Calling `install()` with the same ID then cleared that recovery and returned `INSTALLED`; a later uninstall returned `MANIFEST_INVALID`, with the active owner/ledger stranded and no host registration.
+
+Required correction: an install call may only consume an exact install-rollback recovery. Any uninstall recovery must route to the uninstall continuation or return a stable conflict without mutation. An existing ledger may return idempotent `INSTALLED` only after exact owner, request/ledger, filesystem and selected-host live-state validation.
+
+### CR-42 reopened — rollback trusts an invented receipt instead of the returned host effect
+
+The application constructs deterministic `HostReceipt` objects before calling the host (`library/local_orchestration/lifecycle.py:50-53,259-269`) and persists them as though registration had already issued a cleanup receipt. If `register()` returns a different receipt, line 74 rejects it but rollback uses only the precomputed receipt. The actual returned effect is discarded.
+
+A typed host fake that registered and retained the mismatched returned Claude receipt, rather than the planned Codex receipt used by the committed fake, reproduced the bypass: install returned `HOST_RECEIPT_INVALID`, files/owner/recovery were cleared, but one live Claude registration remained. The committed fake appends the planned receipt before returning the mismatch (`library/local_orchestration/fakes.py:164-170`), so its test cannot detect this real boundary behavior.
+
+Required correction: distinguish pre-effect `HostRegistrationIntent` from host-issued `HostReceipt`. Durable recovery must record/reconcile the actual effect identity before treating cleanup as proven. A mismatched result cannot be discarded; cleanup must either verify that no effect occurred or retain authoritative recovery for the returned effect.
+
+### CR-43 reopened — existing-ledger fast path bypasses the active owner
+
+The existing-ledger fast path at `library/local_orchestration/lifecycle.py:36-42` executes before `_claim()` and checks only `isinstance(owned, OwnedLedger)`. It does not compare `active_owner`, request version/hosts/payload, filesystem completeness or live registrations.
+
+Independent reproduction installed ID A, inserted a second fully typed ID-B ledger for the same fixed-root manifest, then called `install(ID_B)`. The application returned `INSTALLED` with the ID-B ledger while `active_owner` and the only live host receipt still belonged to ID A. This regresses the exclusive fixed-root guarantee even though all values are strongly typed.
+
+Required correction: route every existing-ledger result through the same authoritative active-owner and physical-effect verification. A different owner, conflicting recovery, mismatched request or missing live receipt must fail closed without clearing state.
+
+## Rework-4 independent verification
+
+| Check | Result |
+| --- | --- |
+| Branch ancestry / cleanliness | `5142378 → 7df74e1 → e84dff0 → 14838d9 → f90877d`; implementation worktree clean |
+| `git diff --check 5142378..14838d9` | Passed |
+| `python -B -m unittest discover -s tests` | 143 passed |
+| `python -B -m pytest -q -p no:cacheprovider` | 143 passed / 196 subtests |
+| `python -B -m mypy --strict --no-incremental library tests` | 71 source files clean |
+| In-memory compile / privacy sentinels | 5 local-orchestration modules compiled; passed |
+| Ledger-delete/final-checkpoint probe | Failed: retry remains `LEDGER_INVALID` with stale owner/recovery |
+| Install-during-uninstall probe | Failed: returned `INSTALLED`, erased recovery, later uninstall blocked |
+| Actual mismatched-host-effect probe | Failed: live Claude registration remained after rollback |
+| Typed second-ledger probe | Failed: returned `INSTALLED` while active owner/live receipt belonged to ID A |
+
+## Rework-4 CodeReview standard check
+
+| Requirement | Result / evidence |
+| --- | --- |
+| Clear and strongly typed | Partial pass: types are explicit, but a planned registration is incorrectly represented as an issued receipt. |
+| Coding/architecture rules | Fail: success-ledger and finalization paths bypass the single ownership/recovery state machine. |
+| Logic correctness | Fail: CR-38/42/43 regressions and CR-46 produce false success or nonconvergent recovery. |
+| Boundary and exception behavior | Fail: CR-40 omits named value and port failures. |
+| Security and ownership isolation | Fail: a second typed ledger bypasses active owner and a mismatched host effect is orphaned. |
+| Test coverage | Fail: four independently reproducible paths pass outside the committed suite; final tests lack complete red evidence. |
+| Dependencies | Pass: no new external dependency. |
+| SPEC/ticket compliance | Fail: AC-02/03/06/07 and Ticket-01 TDD/retry requirements are not met. |
+
+## Rework-4 required next rework
+
+The rework-4 branch is blocked historical evidence. The implementation owner must start a fresh branch directly from the next control-plane docs-only handoff baseline, without reset, merge, rebase, cherry-pick or reuse of `7df74e1`, `e84dff0`, `14838d9` or `f90877d`. Receipt `rcpt_local_orchestration_install_01_20260808` continues; no second dispatch confirmation is valid. The next allocation is limited to the complete CR-40 matrix, CR-46 and reopened CR-38/42/43 while preserving every previously closed guard.
 
 ## Rework-3 review result
 
