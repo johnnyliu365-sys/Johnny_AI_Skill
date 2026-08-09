@@ -114,6 +114,6 @@
 | --- | --- | --- |
 | Requirement change, Wayfinder, Architecture and Grill | DONE | `CHG-20260808-011`; `doc/context/local-orchestration-installer/main.md`; `doc/adr/ADR-20260808-003-local-orchestration-installer.md` |
 | Specification | DONE | `modules/spec/local-orchestration-installer.md` was approved by the owner on `2026-08-08`. |
-| Ticket 01 implementation | IN_PROGRESS (REWORK 3) | Fresh allocation `aln_local_orchestration_install_01_rework_3_20260809` repeats TDD for CR-40 through CR-43; original receipt continues without another user confirmation. |
+| Ticket 01 implementation | IN_PROGRESS / REOPENED | `aln_local_orchestration_install_01_reopen_20260809` restores the original small fake lifecycle scope: five source files, one test file, closure `C1..C8`, one implementation worktree and one branch. |
 | Ticket 02 planning Grill | DONE / DEPENDENCY_WAIT | Grill accepted the approved AC boundaries; Ticket 02 remains `PLANNED` until Ticket 01 is reviewed and integrated. |
 | Tickets 03–04 / implementation | PLANNED | They remain unselected and receive no source/test authority. |

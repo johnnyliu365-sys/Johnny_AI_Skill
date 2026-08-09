@@ -823,3 +823,16 @@
 | Frozen closure | `CLOSURE-LOCAL-INSTALL-T01-20260809-01` freezes seven invariants and finite input/state/receipt/port/retry/terminal/Git matrices. The next review must run the whole set once and batch all findings. |
 | Finding routes | `IMPLEMENTATION_DEFECT`／`EVIDENCE_DEFECT` permit one same-branch correction; `TICKET_DEFECT` returns to ticket design; `REQUIREMENT_CHANGED` returns to Grill/SPEC; `OUT_OF_SCOPE_HARDENING` becomes a later non-blocking ticket. |
 | Loop breaker | A failed correction review emits `CONVERGENCE_REVIEW_REQUIRED`; it cannot automatically dispatch a third implementation attempt for the same Closure revision. |
+
+## PRG-20260809-063 — revoke branch experiment and reopen minimal Ticket 01
+
+| Field | Value |
+| --- | --- |
+| Event | `TICKET_DEFECT / OWNER_REOPEN` |
+| Owner direction | The project owner rejected the fourteen-branch experiment and ordered Ticket 01 deleted or reopened as the original small task. |
+| Rollback evidence | Fourteen `codex/implementation-local-install-lifecycle-01*` refs were deleted. The implementation worktree is clean and detached at `846caaf`; `main` contains no `library/local_orchestration`. Ticket 02 and Ticket 03 worktrees were untouched. |
+| Root cause | Control-plane review repeatedly replaced one ticket branch with a fresh branch and expanded review findings into implementation scope instead of reviewing the approved small ticket and keeping corrections additive. |
+| Reopened scope | Five production files, one test file, synchronous temporary fake lifecycle, hard line ceiling and finite closure `C1..C8`. Crash recovery, transition grants, exhaustive fault matrices and all real effects are excluded. |
+| Handoff / allocation | `hnd_local_orchestration_install_01_reopen_20260809` / `aln_local_orchestration_install_01_reopen_20260809`; same implementation owner, existing worktree and receipt `rcpt_local_orchestration_install_01_20260808`; single branch `codex/implementation-local-install-lifecycle-01`. |
+| Review rule | One complete batched review and at most one additive correction on the same branch. No new worktree/branch and no automatic third attempt. |
+| Automation | Watchdog remains paused and is not part of the reopened dispatch. |

@@ -119,9 +119,11 @@ boundary: Do not treat the POC's fake adapters as real host/Git operations. Do n
 ## Ticket 01 selection and accepted dispatch
 
 - Ticket: `01-owned-install-lifecycle`, selected from the committed ticket set `afee39d`.
-- Handoff: original `hnd_local_orchestration_install_01_20260808` is superseded only for stale allocation. Fresh `hnd_local_orchestration_install_01_fresh_20260808` / allocation `aln_local_orchestration_install_01_20260808` retain receipt `rcpt_local_orchestration_install_01_20260808`, ticket and owner while moving the execution to branch `codex/implementation-local-install-lifecycle-01` in `C:\Users\<user>\Desktop\AI控制工作workflow-implementation`; reviewer/control plane is Codex/current `main`.
-- State: review `0300666` blocks `4b840cd` / `7c73b14` as historical evidence. Fresh handoff `hnd_local_orchestration_install_01_rework_3_20260809` binds the same receipt to allocation `aln_local_orchestration_install_01_rework_3_20260809` and branch `codex/implementation-local-install-lifecycle-01-rework-3`; it repeats behavior-specific red tests for CR-40 through CR-43 without a second confirmation.
-- Planning continuation: Ticket-01 execution now runs independently while the planning lane enters the Ticket-02 Grill. No second ticket-approval question is valid.
+- Reopen: the owner revoked fourteen unmerged experimental branches. They were deleted without integrating `library/local_orchestration` into `main`.
+- Handoff / allocation: `hnd_local_orchestration_install_01_reopen_20260809` / `aln_local_orchestration_install_01_reopen_20260809` retain receipt `rcpt_local_orchestration_install_01_20260808` and the same named implementation owner.
+- Execution boundary: the existing `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` is the only implementation worktree. It uses one branch, `codex/implementation-local-install-lifecycle-01`, for the reopened implementation and its single permitted correction.
+- Scope: five production files, one test file and finite closure `C1..C8`; historical source and CR-36..72 are not implementation inputs.
+- Planning continuation: Ticket 02 remains dependency-waiting until this small reopened Ticket 01 is independently approved and integrated.
 
 ## Ticket 02 Grill convergence
 
