@@ -653,3 +653,14 @@
 | Required red/green evidence | Before source correction, reproduce the five review probes: live effects at `FINALIZE`; ledger-delete fault and retry; success without physical file; two selected hosts; filesystem-stage exception. Add all manifest/receipt absent variants, every declared port-operation fault with finite result plus clean-or-retryable state, and existing/empty Git snapshots. Record each first-red name and reason. |
 | Receipt | `rcpt_local_orchestration_install_01_20260808` remains the sole dispatch authority; this automatic correction allocation requires no second user confirmation. |
 | Required return | Full implementation commit(s), complete independent-ready verification, then one docs-only handoff commit. Progress-only final messages are not a handoff. |
+
+## PRG-20260809-042 — Bounded continuous execution authority
+
+| Field | Value |
+| --- | --- |
+| Authority | The project owner instructed the control plane to check the current implementer's eventual commits, continue opening tickets for that implementer, and avoid every non-essential interruption while the owner is away. |
+| Scope | After each complete implementation/docs-only return, automatically perform independent review. A failed review creates and dispatches a fresh same-ticket allocation. An approved review performs only the verified guarded integration allowed by `Workflow.md`, then selects and dispatches the next unblocked `PLANNED` ticket under the currently approved installer SPEC. |
+| Ticket-bound receipts | For each already-planned successor ticket, the control plane must still create a unique pending descriptor, handoff and ticket-bound receipt that cites this authority, exact ticket, owner, baseline and correlation. This authority removes a repetitive delivery-confirmation wait; it does not permit receipt reuse or identity mismatch. |
+| Fixed owner / lane | Implementation owner remains Codex task `019fcc9c-f34f-7d53-a313-c70c90bf3245` in `C:\Users\<user>\Desktop\AI控制工作workflow-implementation`; only one implementation ticket lane may be active at a time. |
+| Mandatory stop | Stop only for a concrete typed `HALT`, `CHANGE_DETECTED → REQUIREMENT_CHANGED`, Wayfinder `NO-GO`, missing external authority, unsupported host/tool evidence, or a requested operation outside the approved SPEC. Ordinary progress, commits, review corrections and ticket transitions are `AUTO_CONTINUE`. |
+| Exclusions | No deployment, real host mutation, target-project write, new requirement, Secret handling, merge conflict shortcut, force operation, push or release is pre-authorized by this record. |
