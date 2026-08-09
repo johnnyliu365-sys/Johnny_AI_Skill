@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Literal, Self
+import ntpath
+from typing import ClassVar, Literal, Protocol, Self, runtime_checkable
 
 from pydantic import BaseModel, ConfigDict, field_validator, model_validator
 
-from .contracts import InstallationId
+from .contracts import CANONICAL_INSTALL_ROOT, InstallRoot, InstallationId, OwnedRelativePath
 
 
 CANONICAL_HOST_REGISTRATION_KEY = "JohnnyAIWorkflow/AgentHost"
@@ -215,3 +216,145 @@ class HostRemovalBlocked(_StrictModel):
 
 
 HostRemovalResult = HostRemovalSucceeded | HostRemovalBlocked
+
+
+def _codex_text(value: str, label: str) -> str:
+    if not value or value != value.strip():
+        raise ValueError(f"{label} must be nonblank")
+    return value
+
+
+class _CodexValue(_StrictModel):
+    value: str
+    @field_validator("value")
+    @classmethod
+    def valid(cls, value: str) -> str: return _codex_text(value, cls.__name__)
+
+
+class CodexCliVersion(_CodexValue): pass
+class CodexMarketplaceName(_CodexValue): pass
+class CodexPluginName(_CodexValue): pass
+
+
+class CodexMarketplaceSource(_StrictModel):
+    type: str
+    value: str
+    _valid = field_validator("type", "value")(classmethod(lambda cls, value: _codex_text(value, "marketplace source field")))
+
+
+def _present_source(fields: set[str], source: CodexMarketplaceSource | None) -> None:
+    if "marketplaceSource" in fields and source is None: raise ValueError("marketplace source cannot be null when present")
+
+
+def _windows_absolute(value: str) -> bool: return bool(ntpath.splitdrive(value)[0]) and ntpath.isabs(value)
+
+
+class CodexCommandResponse(_StrictModel):
+    exit_code: int
+    stdout: str
+    stderr: str
+
+
+class CodexMarketplaceEntry(_StrictModel):
+    name: str
+    root: str
+    marketplaceSource: CodexMarketplaceSource | None = None
+    _valid = field_validator("name", "root")(classmethod(lambda cls, value: _codex_text(value, "marketplace field")))
+    @model_validator(mode="after")
+    def present_source(self) -> Self:
+        _present_source(self.model_fields_set, self.marketplaceSource); return self
+
+
+class CodexMarketplaceList(_StrictModel):
+    marketplaces: tuple[CodexMarketplaceEntry, ...]
+    @field_validator("marketplaces", mode="before")
+    @classmethod
+    def tuple_value(cls, value: object) -> tuple[object, ...] | object: return tuple(value) if isinstance(value, list) else value
+
+
+class CodexPluginEntry(_StrictModel):
+    pluginId: str
+    name: str
+    marketplaceName: str
+    version: str
+    installed: bool
+    enabled: bool
+    source: str
+    installPolicy: str
+    authPolicy: str
+    marketplaceSource: CodexMarketplaceSource | None = None
+    _valid = field_validator("pluginId", "name", "marketplaceName", "version", "source", "installPolicy", "authPolicy")(classmethod(lambda cls, value: _codex_text(value, "plugin field")))
+    @model_validator(mode="after")
+    def present_source(self) -> Self:
+        _present_source(self.model_fields_set, self.marketplaceSource); return self
+
+
+class CodexPluginList(_StrictModel):
+    installed: tuple[CodexPluginEntry, ...]
+    available: tuple[CodexPluginEntry, ...]
+    @field_validator("installed", "available", mode="before")
+    @classmethod
+    def tuple_value(cls, value: object) -> tuple[object, ...] | object: return tuple(value) if isinstance(value, list) else value
+
+
+class CodexPreflightRequest(_StrictModel):
+    installation_id: InstallationId
+    root: "InstallRoot"
+    marketplace: CodexMarketplaceName
+    plugin: CodexPluginName
+    marketplace_source: "OwnedRelativePath"
+    @model_validator(mode="after")
+    def owned_source(self) -> Self:
+        if self.marketplace_source.value != f"marketplaces/{self.marketplace.value}" or self.marketplace_source.value != self.marketplace_source.value.casefold(): raise ValueError("source is not canonical")
+        return self
+
+
+class CodexSourceProof(_StrictModel):
+    installation_id: InstallationId
+    root: "InstallRoot"
+    locator: "OwnedRelativePath"
+    absolute_path: str
+    @model_validator(mode="after")
+    def exact_locator(self) -> Self:
+        root = ntpath.expandvars(CANONICAL_INSTALL_ROOT)
+        if not _windows_absolute(root) or not _windows_absolute(self.absolute_path) or self.absolute_path != root + "\\" + self.locator.value.replace("/", "\\"):
+            raise ValueError("source proof is not an owned absolute locator")
+        return self
+
+
+@runtime_checkable
+class CodexCommandPort(Protocol):
+    def execute(self, arguments: tuple[str, ...], timeout_seconds: float) -> CodexCommandResponse: ...
+
+
+@runtime_checkable
+class CodexFilesystemPort(Protocol):
+    def resolve_source(self, request: CodexPreflightRequest) -> CodexSourceProof: ...
+
+
+class CodexBlockReason(str, Enum):
+    INVALID_INPUT = "INVALID_INPUT"
+    INVALID_PORT = "INVALID_PORT"
+    TIMEOUT = "TIMEOUT"
+    EXECUTABLE_UNAVAILABLE = "EXECUTABLE_UNAVAILABLE"
+    ACCESS_DENIED = "ACCESS_DENIED"
+    COMMAND_FAILED = "COMMAND_FAILED"
+    FILESYSTEM_FAILED = "FILESYSTEM_FAILED"
+    MALFORMED_OUTPUT = "MALFORMED_OUTPUT"
+    INVALID_ENCODING = "INVALID_ENCODING"
+    UNSUPPORTED_CLI = "UNSUPPORTED_CLI"
+    SOURCE_MISMATCH = "SOURCE_MISMATCH"
+    COLLISION = "COLLISION"
+
+
+class CodexPreflightEligible(_StrictModel):
+    status: Literal["ELIGIBLE"] = "ELIGIBLE"
+    version: CodexCliVersion
+
+
+class CodexBlocked(_StrictModel):
+    status: Literal["INSTALL_BLOCKED"] = "INSTALL_BLOCKED"
+    reason: CodexBlockReason
+
+
+CodexPreflightResult = CodexPreflightEligible | CodexBlocked

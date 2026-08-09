@@ -1,0 +1,214 @@
+from __future__ import annotations
+
+import json
+import os
+import subprocess
+import unittest
+from pathlib import Path
+from tempfile import TemporaryDirectory
+from typing import cast
+from unittest.mock import patch
+
+from pydantic import ValidationError
+
+from library.local_orchestration.codex_cli_adapter import CodexCliPreflight
+from library.local_orchestration.contracts import CANONICAL_INSTALL_ROOT, InstallRoot, InstallationId, OwnedRelativePath
+from library.local_orchestration.host_contracts import (
+    CodexBlockReason, CodexBlocked, CodexCommandPort, CodexCommandResponse, CodexFilesystemPort,
+    CodexMarketplaceName, CodexPluginName, CodexPreflightRequest,
+    CodexSourceProof, CodexPreflightEligible,
+)
+
+INSTALL = InstallationId(value="installation-0123456789abcdef")
+ROOT = InstallRoot(value=CANONICAL_INSTALL_ROOT)
+MARKET = CodexMarketplaceName(value="probe-market")
+PLUGIN = CodexPluginName(value="probe-plugin")
+SOURCE = OwnedRelativePath(value="marketplaces/probe-market")
+
+
+def source_path(locator: str = SOURCE.value) -> str:
+    return os.environ["LOCALAPPDATA"] + "\\JohnnyAIWorkflow\\" + locator.replace("/", "\\")
+
+
+class Commands(CodexCommandPort):
+    def __init__(self, values: list[str | dict[str, object] | Exception]) -> None:
+        self.values: list[str | dict[str, object] | Exception] = values
+        self.calls: list[tuple[str, ...]] = []
+
+    def execute(self, arguments: tuple[str, ...], timeout_seconds: float) -> CodexCommandResponse:
+        self.calls.append(arguments)
+        value = self.values.pop(0)
+        if isinstance(value, Exception):
+            raise value
+        return CodexCommandResponse(exit_code=0, stdout=value if isinstance(value, str) else json.dumps(value), stderr="")
+
+
+class Source(CodexFilesystemPort):
+    def __init__(self, proof: CodexSourceProof | Exception | None = None) -> None:
+        self.proof, self.calls = proof, 0
+
+    def resolve_source(self, request: CodexPreflightRequest) -> CodexSourceProof:
+        self.calls += 1
+        if isinstance(self.proof, Exception):
+            raise self.proof
+        return self.proof or CodexSourceProof(installation_id=request.installation_id, root=request.root,
+            locator=request.marketplace_source, absolute_path=source_path(request.marketplace_source.value))
+
+
+class Nonzero(Commands):
+    def execute(self, arguments: tuple[str, ...], timeout_seconds: float) -> CodexCommandResponse:
+        self.calls.append(arguments)
+        return CodexCommandResponse(exit_code=1, stdout="", stderr="denied")
+
+
+def request(source: OwnedRelativePath = SOURCE) -> CodexPreflightRequest:
+    return CodexPreflightRequest(installation_id=INSTALL, root=ROOT, marketplace=MARKET,
+        plugin=PLUGIN, marketplace_source=source)
+
+
+def version() -> str:
+    return "codex-cli 0.144.0-alpha.4\n"
+
+
+def marketplace(items: list[dict[str, object]] | None = None) -> dict[str, object]:
+    return {"marketplaces": items or []}
+
+
+def plugin_list(items: list[dict[str, object]] | None = None, available: list[dict[str, object]] | None = None) -> dict[str, object]:
+    return {"installed": items or [], "available": available or []}
+
+
+def plugin(name: str = PLUGIN.value, market: str = MARKET.value) -> dict[str, object]:
+    return {"pluginId": f"{name}@{market}", "name": name, "marketplaceName": market,
+        "version": "1.0.0", "installed": True, "enabled": True, "source": "local",
+        "installPolicy": "trusted", "authPolicy": "none"}
+
+
+class CodexCliPreflightTests(unittest.TestCase):
+    def test_a1_official_shapes_and_invented_fields(self) -> None:
+        command = Commands([version(), marketplace(), plugin_list()])
+        result = CodexCliPreflight(command, Source()).check(request())
+        self.assertIsInstance(result, CodexPreflightEligible)
+        for payload in ({}, {"marketplaces": [], "extra": 1}):
+            with self.subTest(payload=payload):
+                result = CodexCliPreflight(Commands([version(), payload, plugin_list()]), Source()).check(request())
+                self.assertIsInstance(result, CodexBlocked)
+
+    def test_a1_wrong_plugin_shape_is_rejected_before_mutation(self) -> None:
+        result = CodexCliPreflight(Commands([version(), marketplace(), {"installed": [{"id": "x", "root": "y"}], "available": []}]), Source()).check(request())
+        self.assertEqual(CodexBlockReason.MALFORMED_OUTPUT, cast(CodexBlocked, result).reason)
+
+    def test_a1_invalid_encoding_nonzero_and_unsupported_are_finite(self) -> None:
+        for failure in (UnicodeDecodeError("utf-8", b"x", 0, 1, "bad"),):
+            result = CodexCliPreflight(Commands([failure]), Source()).check(request())
+            self.assertEqual(CodexBlockReason.INVALID_ENCODING, cast(CodexBlocked, result).reason)
+        self.assertEqual(CodexBlockReason.COMMAND_FAILED, cast(CodexBlocked, CodexCliPreflight(Nonzero([]), Source()).check(request())).reason)
+        self.assertEqual(CodexBlockReason.UNSUPPORTED_CLI, cast(CodexBlocked, CodexCliPreflight(Commands(["unknown"]), Source()).check(request())).reason)
+
+    def test_a2_source_variants_and_constructed_proof_fail_closed(self) -> None:
+        values: tuple[object, ...] = (None, "", " ", "/absolute", "file:///x", "../x", "marketplaces/Probe", "marketplaces/probe-suffix")
+        for value in values:
+            with self.subTest(value=value):
+                with self.assertRaises((ValidationError, TypeError)):
+                    CodexPreflightRequest.model_validate({**request().model_dump(), "marketplace_source": value})
+        forged = CodexSourceProof.model_construct(installation_id=INSTALL, root=ROOT, locator=[], absolute_path="foreign")
+        result = CodexCliPreflight(Commands([version(), marketplace(), plugin_list()]), Source(forged)).check(request())
+        self.assertIsInstance(result, CodexBlocked)
+
+    def test_a2_foreign_filesystem_proof_is_blocked_before_lists(self) -> None:
+        proof = CodexSourceProof(installation_id=INSTALL, root=ROOT, locator=OwnedRelativePath(value="marketplaces/other"),
+            absolute_path=source_path("marketplaces/other"))
+        command = Commands([version()])
+        result = CodexCliPreflight(command, Source(proof)).check(request())
+        self.assertEqual(CodexBlockReason.SOURCE_MISMATCH, cast(CodexBlocked, result).reason)
+        self.assertEqual((('codex', '--version'),), tuple(command.calls))
+
+    def test_a2_filesystem_oserror_is_finite(self) -> None:
+        result = CodexCliPreflight(Commands([version()]), Source(OSError("source unavailable"))).check(request())
+        self.assertEqual(CodexBlockReason.FILESYSTEM_FAILED, cast(CodexBlocked, result).reason)
+
+    def test_a3_market_and_same_plugin_collisions_do_not_mutate(self) -> None:
+        cases: tuple[tuple[dict[str, object], dict[str, object]], ...] = (
+            (marketplace([{ "name": MARKET.value, "root": "root" }]), plugin_list()),
+            (marketplace([{ "name": "other", "root": "root" }]), plugin_list([plugin(market="other")])),
+        )
+        for markets, plugins in cases:
+            command = Commands([version(), markets, plugins])
+            result = CodexCliPreflight(command, Source()).check(request())
+            self.assertIsInstance(result, CodexBlocked)
+            self.assertEqual(3, len(command.calls))
+
+    def test_cr86_official_optional_sources_and_plain_version_are_strict(self) -> None:
+        other = plugin("other", "other") | {"marketplaceSource": {"type": "local", "value": "marketplaces/other"}}
+        present = marketplace([{"name": "other", "root": "root", "marketplaceSource": {"type": "local", "value": "marketplaces/other"}}])
+        self.assertIsInstance(CodexCliPreflight(Commands([version(), present, plugin_list(available=[other])]), Source()).check(request()), CodexPreflightEligible)
+        bad_market = marketplace([{"name": "other", "root": "root", "marketplaceSource": "local"}])
+        bad_plugin = plugin("other", "other") | {"marketplaceSource": {"type": "local", "value": "x", "extra": "x"}}
+        for text, markets, plugins in ((version(), bad_market, plugin_list()), (version(), marketplace(), plugin_list(available=[bad_plugin])), ("not-codex warning 9.9.9 trailing", marketplace(), plugin_list())):
+            with self.subTest(text=text, markets=markets, plugins=plugins):
+                result = CodexCliPreflight(Commands([text, markets, plugins]), Source()).check(request())
+                self.assertIsInstance(result, CodexBlocked)
+
+    def test_cr87_absolute_proof_must_be_exact_canonical_root_before_lists(self) -> None:
+        paths = (r"C:\FOREIGN\marketplaces\probe-market", source_path().replace("JohnnyAIWorkflow", "JohnnyAIWorkflowX"), source_path().replace("JohnnyAIWorkflow", "XJohnnyAIWorkflow"), source_path() + "\\", source_path().replace("JohnnyAIWorkflow", "johnnyaiworkflow"), source_path().replace("marketplaces\\", "marketplaces%2F"), source_path().replace("marketplaces", "marketplaces\\..\\marketplaces"))
+        proofs = tuple(CodexSourceProof.model_construct(installation_id=INSTALL, root=ROOT, locator=SOURCE, absolute_path=value) for value in paths) + (CodexSourceProof.model_construct(installation_id=InstallationId.model_construct(value="foreign"), root=ROOT, locator=SOURCE, absolute_path=source_path()), CodexSourceProof.model_construct(installation_id=INSTALL, root=InstallRoot.model_construct(value=CANONICAL_INSTALL_ROOT + "X"), locator=SOURCE, absolute_path=source_path()))
+        for proof in proofs:
+            command = Commands([version()])
+            result = CodexCliPreflight(command, Source(proof)).check(request())
+            self.assertEqual(CodexBlockReason.SOURCE_MISMATCH, cast(CodexBlocked, result).reason)
+            self.assertEqual((("codex", "--version"),), tuple(command.calls))
+
+    def test_cr88_available_collision_blocks_with_documented_command(self) -> None:
+        for name in (PLUGIN.value, PLUGIN.value.upper()):
+            command = Commands([version(), marketplace(), plugin_list(available=[plugin(name, "foreign")])])
+            result = CodexCliPreflight(command, Source()).check(request())
+            self.assertEqual(CodexBlockReason.COLLISION, cast(CodexBlocked, result).reason)
+            self.assertEqual(("codex", "plugin", "list", "--available", "--json"), command.calls[-1])
+
+    def test_cr89_missing_executable_has_stable_reason(self) -> None:
+        result = CodexCliPreflight(Commands([FileNotFoundError()]), Source()).check(request())
+        self.assertEqual(CodexBlockReason.EXECUTABLE_UNAVAILABLE, cast(CodexBlocked, result).reason)
+
+    def test_final_explicit_null_marketplace_source_is_blocked(self) -> None:
+        for markets, plugins in ((marketplace([{"name": "other", "root": "root", "marketplaceSource": None}]), plugin_list()), (marketplace(), plugin_list(available=[plugin("other", "other") | {"marketplaceSource": None}]))):
+            self.assertIsInstance(CodexCliPreflight(Commands([version(), markets, plugins]), Source()).check(request()), CodexBlocked)
+
+    def test_final_version_exposes_only_semver(self) -> None:
+        result = CodexCliPreflight(Commands([version(), marketplace(), plugin_list()]), Source()).check(request())
+        self.assertEqual("0.144.0-alpha.4", cast(CodexPreflightEligible, result).version.value)
+
+    def test_final_relative_expanded_root_is_blocked_before_lists(self) -> None:
+        with patch.dict(os.environ, {"LOCALAPPDATA": "relative"}):
+            command = Commands([version()])
+            result = CodexCliPreflight(command, Source()).check(request())
+        self.assertEqual(CodexBlockReason.SOURCE_MISMATCH, cast(CodexBlocked, result).reason)
+        self.assertEqual((("codex", "--version"),), tuple(command.calls))
+
+    def test_a4_declared_failures_are_finite(self) -> None:
+        failures: tuple[Exception, ...] = (FileNotFoundError(), PermissionError(), subprocess.TimeoutExpired("codex", 1), OSError())
+        for failure in failures:
+            result = CodexCliPreflight(Commands([failure]), Source()).check(request())
+            self.assertIsInstance(result, CodexBlocked)
+        self.assertIsInstance(CodexCliPreflight(Commands([version()]), Source(), 0.0).check(request()), CodexBlocked)
+        self.assertIsInstance(CodexCliPreflight(cast(CodexCommandPort, None), Source()).check(request()), CodexBlocked)
+
+    def test_a5_existing_and_empty_git_snapshots_are_unchanged(self) -> None:
+        with TemporaryDirectory() as directory:
+            for name in ("existing", "empty"):
+                repo = Path(directory) / name
+                repo.mkdir()
+                subprocess.run(("git", "init", "--quiet", str(repo)), check=True, shell=False, capture_output=True)
+                if name == "existing":
+                    (repo / "kept.txt").write_bytes(b"kept")
+                    subprocess.run(("git", "-C", str(repo), "add", "kept.txt"), check=True, shell=False, capture_output=True)
+                    subprocess.run(("git", "-C", str(repo), "-c", "user.name=Test", "-c", "user.email=test@example.invalid", "commit", "--quiet", "-m", "seed"), check=True, shell=False, capture_output=True)
+                before_status = subprocess.run(("git", "-C", str(repo), "status", "--porcelain"), check=True, shell=False, capture_output=True).stdout
+                before_bytes = tuple(sorted((p.relative_to(repo).as_posix(), p.read_bytes()) for p in repo.rglob("*") if p.is_file() and ".git" not in p.parts))
+                CodexCliPreflight(Commands([FileNotFoundError()]), Source()).check(request())
+                after_status = subprocess.run(("git", "-C", str(repo), "status", "--porcelain"), check=True, shell=False, capture_output=True).stdout
+                after_bytes = tuple(sorted((p.relative_to(repo).as_posix(), p.read_bytes()) for p in repo.rglob("*") if p.is_file() and ".git" not in p.parts))
+                self.assertEqual((before_status, before_bytes), (after_status, after_bytes))
+
+
+if __name__ == "__main__":
+    unittest.main()

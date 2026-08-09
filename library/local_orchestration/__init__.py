@@ -82,9 +82,14 @@ from .host_contracts import (
     HostRemovalBlocked,
     HostRemovalRequest,
     HostRemovalSucceeded,
+    CodexBlockReason, CodexBlocked, CodexCliVersion, CodexCommandPort, CodexCommandResponse,
+    CodexFilesystemPort, CodexMarketplaceEntry, CodexMarketplaceList, CodexMarketplaceName, CodexMarketplaceSource,
+    CodexPluginEntry, CodexPluginList, CodexPluginName, CodexPreflightEligible,
+    CodexPreflightRequest, CodexSourceProof,
 )
 from .host_fakes import RecordedHostLifecycle
 from .host_lifecycle import ReversibleHostCapabilityGate
+from .codex_cli_adapter import CodexCliPreflight, ProcessCodexCommandPort
 
 __all__ = [
     "CANONICAL_INSTALL_ROOT",
@@ -149,4 +154,9 @@ __all__ = [
     "HostCommandStatus", "HostEvidenceId", "HostFailureCode", "HostRegistrationKey",
     "HostRemovalBlocked", "HostRemovalRequest", "HostRemovalSucceeded",
     "RecordedHostLifecycle", "ReversibleHostCapabilityGate",
+    "CodexCliPreflight", "ProcessCodexCommandPort",
+    "CodexBlockReason", "CodexBlocked", "CodexCliVersion", "CodexCommandPort", "CodexCommandResponse",
+    "CodexFilesystemPort", "CodexMarketplaceEntry", "CodexMarketplaceList", "CodexMarketplaceName", "CodexMarketplaceSource",
+    "CodexPluginEntry", "CodexPluginList", "CodexPluginName", "CodexPreflightEligible",
+    "CodexPreflightRequest", "CodexSourceProof",
 ]
