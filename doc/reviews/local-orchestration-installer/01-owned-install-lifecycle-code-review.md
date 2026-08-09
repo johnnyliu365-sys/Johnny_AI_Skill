@@ -4,9 +4,9 @@
 | --- | --- |
 | Feature / ticket | `local-orchestration-installer` / `01-owned-install-lifecycle` |
 | SPEC / change | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / `CHG-20260808-011` |
-| Reviewed baseline | `50b0591` |
-| Implementation / docs handoff | `f17da74`, `8193067` / `95ec79a` |
-| Implementation owner | Codex implementation Agent / `codex/implementation-local-install-lifecycle-01-rework-11` |
+| Reviewed baseline | `88412e1` |
+| Implementation / docs handoff | `71c6704` / `ffeea79` |
+| Implementation owner | Codex implementation Agent / `codex/implementation-local-install-lifecycle-01-rework-12` |
 | Reviewer | Codex / current `main` worktree |
 | Result | `CHANGES_REQUESTED` |
 
@@ -14,7 +14,74 @@
 
 - Approved Context: `doc/context/local-orchestration-installer/main.md`.
 - Ticket scope: typed owned ledger, fake lifecycle ports and fail-closed install/uninstall only; no real host configuration, target project, Git adapter or package artifact is reviewed as delivered.
-- Receipt `rcpt_local_orchestration_install_01_20260808` remains valid. The review result blocks the rework-11 implementation branch as historical evidence; it does not alter the approved SPEC, ticket scope or the planning lane's Ticket-02 dependency wait.
+- Receipt `rcpt_local_orchestration_install_01_20260808` remains valid. The review result blocks the rework-12 implementation branch as historical evidence; it does not alter the approved SPEC, ticket scope or the planning lane's Ticket-02 dependency wait.
+
+## Rework-12 review result
+
+The submitted branch separates `FINALIZE_INTENT` from `FINALIZE_OBSERVED`, retains root authority for the submitted owner-release and recovery-write fault cases, and independently reproduces its 140-test / 233-subtest regression, strict mypy, in-memory compile, source sentinel, Git-isolation and clean-diff evidence. It remains `CHANGES_REQUESTED`: a returned host receipt that differs from deterministic intent is never recorded for cleanup; a shape-valid forged pre-delete intent deletes the authoritative ledger before proving terminal absence; ownerless live ledgers are reported as `NOT_INSTALLED`; and an ownerless forged install-cleanup record is accepted as deletion authority.
+
+### CR-69 — P0: actual registration receipt mismatch creates an unreachable live effect
+
+After `host.register` returns, `_new_install` compares the actual receipt with the deterministic expected receipt and immediately invokes `_cleanup_install(prepared)` on mismatch (`library/local_orchestration/lifecycle.py:111-117`). `prepared.receipts` contains only deterministic expected receipts, so cleanup cannot name or remove a different returned actual receipt. The cooperative fake never returns a mismatch (`library/local_orchestration/fakes.py:152`), and the committed suite has no actual-receipt mismatch provider.
+
+An independent adapter returned a schema-valid receipt with a different host and registration ID while registering that exact actual effect. The first and second calls both returned `INSTALL_BLOCKED/HOST_PROOF`; the actual registration remained live while owner, ledger and recovery were all absent. Required correction: persist a deterministic pre-registration intent before the call, then durably bind every returned actual receipt to that intent before any later fallible verification/cleanup. Every field mismatch and retry must remove the exact actual effect or retain exact cleanup authority; expected receipt cleanup cannot substitute for actual-effect observation.
+
+### CR-70 — P0: forged `FINALIZE_INTENT` destructively deletes the ledger before absence is proven
+
+Any structurally valid `FINALIZE_INTENT` is routed directly to `_finish_finalize_intent` (`lifecycle.py:195-199`). That function accepts either a matching ledger or ledger absence, constructs a deterministic deletion target, deletes the ledger, and only afterwards calls filesystem/host absence ports (`lifecycle.py:234-250`). A forged intent therefore performs an irreversible authority mutation before its claimed causal predecessor effects are established.
+
+An independent probe installed live files and one host receipt, replaced recovery with a fully schema-valid `FINALIZE_INTENT`, and called uninstall. It returned `UNINSTALL_BLOCKED/PORT_FAILURE`, but the ledger was deleted while owner/recovery and the live effects remained. Every retry repeated the same blocked result permanently. Required correction: a durable intent must be bound to an exact prior state-machine transition that cannot be reconstructed from predictable manifest data alone. Before ledger deletion, freshly prove runtime/process stopped plus exact host/filesystem absence and exact owner/ledger/recovery identity. Deletion proof/read-back may advance only that authenticated transition.
+
+### CR-71 — P0: ownerless durable authority is treated as terminal absence
+
+When no active recovery exists, `_uninstall` returns `NOT_INSTALLED/ABSENT` solely because `root_owner()` is `None`, before reading the ledger (`lifecycle.py:176-186`). An independent probe retained the exact ledger, file and host receipt but removed only the root owner; uninstall returned `NOT_INSTALLED`, leaving all durable/live effects untouched. This is false terminal success and prevents the caller from distinguishing clean absence from orphaned authority.
+
+Required correction: terminal absence must be a conjunction of no owner, no ledger, no recovery and freshly observed no owned host/filesystem effects. Any ownerless ledger/recovery or observed live effect is a typed fail-closed repair state, never `NOT_INSTALLED`.
+
+### CR-72 — P0: ownerless forged install cleanup is accepted as destructive authority
+
+`_cleanup_install` explicitly accepts `owner is None` when the active recovery equals the supplied install recovery (`lifecycle.py:128-134`). It then removes all named host/filesystem effects and the ledger before clearing recovery (`lifecycle.py:136-170`). An independent probe installed normally, replaced recovery with an exact-shaped `INSTALL_CLEANUP`, removed only the owner, and injected a later clock fault. The next install returned `INSTALL_BLOCKED/CLOCK_CHECKPOINT` after deleting the original file, host receipt, ledger and recovery.
+
+Required correction: no cleanup effect may run without the exact fixed-root owner and a causal recovery record tied to the actual effects. Ownerless recovery is a repair-required authority fault; it may be observed and reported but not used as deletion capability. Prove the owner/manifest/receipt/ledger/recovery tuple again immediately before each effectful cleanup transition.
+
+### CR-40 remains open — retained adversarial coverage regressed again
+
+The fresh suite contains eight test methods. Its forged-finalize test covers `FINALIZE_OBSERVED`, not the destructive `FINALIZE_INTENT` path; `TypedHost.register` always returns the expected receipt; uninstall tests do not cover ownerless ledger/live-effect state; and cleanup tests do not cover ownerless forged recovery. The suite also substantially reduces the retained one-fault and boundary surface from earlier accepted reworks. The handoff claim that CR-59 through CR-65 were preserved is therefore unsupported by committed tests.
+
+## Rework-12 independent verification
+
+| Check | Result |
+| --- | --- |
+| Branch ancestry / cleanliness | `88412e1 -> 71c6704 -> ffeea79`; implementation worktree clean |
+| `git diff --check 88412e1..ffeea79` | Passed |
+| `python -m unittest discover -s tests` | 140 passed |
+| `python -m pytest -q` | 140 passed / 233 subtests |
+| `python -B -m mypy --strict --no-incremental library tests` | 72 source files clean |
+| In-memory compile / source sentinel | 54 library modules compiled; submitted sentinel passed |
+| Actual registration receipt mismatch probe | Failed: repeated `INSTALL_BLOCKED/HOST_PROOF`; actual host effect live; owner/ledger/recovery absent |
+| Forged `FINALIZE_INTENT` probe | Failed: repeated `UNINSTALL_BLOCKED/PORT_FAILURE`; ledger deleted while owner/recovery and live file/host remained |
+| Ownerless ledger probe | Failed: returned `NOT_INSTALLED/ABSENT` with exact ledger, file and host receipt still live |
+| Ownerless forged install-cleanup probe | Failed: deleted original file, host receipt, ledger and recovery without exact owner authority |
+| Worktree non-interference | Probes used `python -B` with bytecode writes disabled; final implementation worktree clean |
+
+## Rework-12 CodeReview standard check
+
+| Requirement | Result / evidence |
+| --- | --- |
+| Clear and strongly typed | Partial pass: DTOs and ports are named, but causal transition authority is reconstructible from predictable values. |
+| Coding/architecture rules | Partial pass: DI and fixed-root concepts exist; returned actual effects and orphaned authority are not represented durably. |
+| Logic correctness | Fail: CR-69 strands a live effect, CR-70 destroys ledger authority, CR-71 returns false terminal absence and CR-72 performs ownerless deletion. |
+| Boundary and exception behavior | Fail: valid-shaped persisted states reach destructive or false-success branches instead of finite repair states. |
+| Security and ownership isolation | Fail: ownerless recovery acts as a deletion capability and ownerless live authority is hidden as absent. |
+| Test coverage | Fail: CR-40 omits all four independently reproduced sequences and the retained full matrix. |
+| Dependencies | Pass: no new runtime dependency. |
+| SPEC/ticket compliance | Fail: AC-06/07/08 and retained CR-54/59/63 guarantees remain incomplete. |
+
+## Rework-12 required next rework
+
+The rework-12 branch is blocked historical evidence. The implementation owner must start a fresh branch directly from the next control-plane docs-only handoff baseline, without reset, merge, rebase, cherry-pick, source copy or reuse of `71c6704` or `ffeea79`. Receipt `rcpt_local_orchestration_install_01_20260808` and bounded authority `PRG-20260809-042` continue; no second dispatch confirmation is valid.
+
+The next allocation must retain the submitted CR-66 through CR-68 corrections while restoring durable actual-receipt authority, non-forgeable causal pre-delete transitions, conjunction-based terminal absence and exact-owner authorization before every cleanup effect.
 
 ## Rework-11 review result
 

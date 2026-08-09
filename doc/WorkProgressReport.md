@@ -779,3 +779,14 @@
 | Required red/green evidence | Before source implementation, reproduce all three review probes exactly: valid-shaped forged `FINALIZE` while host/files remain live; stage-proof failure paired with foreign/replayed/no-op owner release during install cleanup; recovery-write foreign/replayed/no-op proof after exact state persistence. Add every operation phase, one-fault terminal ordering and retry assertion. Reverse causal-finalize, owner-readback and persisted-recovery branches separately and prove focused tests fail. |
 | Receipt / continuation authority | `rcpt_local_orchestration_install_01_20260808` and bounded authority `PRG-20260809-042` remain valid. This correction allocation requires no second user confirmation. |
 | Required return | Ticket-only implementation commit(s), full regression/strict typing/in-memory compile/sentinel/Git isolation evidence, then one docs-only handoff commit. No self-review, integration, push, deployment, historical-source reuse or progress-only final. |
+
+## PRG-20260809-058 — Ticket 01 thirteenth independent review
+
+| Field | Value |
+| --- | --- |
+| State | `REVIEW / CHANGES_REQUESTED` |
+| Reviewed range | Baseline `88412e1`; implementation `71c6704`; docs-only handoff `ffeea79`; branch `codex/implementation-local-install-lifecycle-01-rework-12`. |
+| Reproduced passing evidence | 140 unittest; 140 pytest / 233 subtests; strict mypy 72 files; 54-module in-memory compile, source sentinel, Git isolation, diff check and clean worktree pass. Submitted CR-66/67/68 focused cases pass. |
+| Blocking findings | CR-69 strands a returned actual host receipt that differs from deterministic intent while clearing owner/ledger/recovery. CR-70 permits a forged `FINALIZE_INTENT` to delete the ledger before terminal absence and then block permanently. CR-71 reports ownerless ledger/live effects as `NOT_INSTALLED`. CR-72 accepts an ownerless forged install-cleanup record as destructive authority. CR-40 omits all four paths and the retained full matrix. |
+| Scope classification | Implementation/contract/TDD correction only; approved SPEC, ticket, architecture, delivery stage, owner, receipt and bounded continuation authority do not change. |
+| Continuation | Mark rework-12 historical and automatically create a fresh same-ticket allocation under receipt `rcpt_local_orchestration_install_01_20260808` and authority `PRG-20260809-042`; Ticket 02 remains `DEPENDENCY_WAIT`. |
