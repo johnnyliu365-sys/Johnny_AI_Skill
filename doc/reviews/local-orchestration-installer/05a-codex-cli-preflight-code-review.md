@@ -273,3 +273,12 @@ reproducible evidence, so `CLOSURE-LOCAL-INSTALL-T05A-01` A1-A5 is complete.
 The terminal decision is `APPROVED / READY_TO_MERGE`. No integration, dependent
 ticket dispatch, live Codex mutation, target-project write, push, release or
 deployment was performed by this review.
+
+### Guarded integration status
+
+After review commit `d54c0bd`, non-mutating `git merge-tree` against branch
+`fb755268` found one conflict in `doc/WorkProgressReport.md`. Both sides append
+different valid evidence after common base `d90b69e`; source, exports and tests
+are conflict-free. Review approval stands, but integration is
+`HALT / OWNER_RESOLUTION_REQUIRED`. No merge was started and no conflict was
+silently resolved.

@@ -291,3 +291,9 @@ Independent focused `16/16`, full `172/172`, strict mypy `82` files, in-memory
 compile, source sentinel and diff checks close CR-90, CR-91 and A5. Ticket 05A
 is `APPROVED / READY_TO_MERGE`; integration and any 05B dispatch remain separate
 Router actions.
+
+The guarded integration preflight then found one append-only evidence-ledger
+conflict: control `d54c0bd` and branch `fb755268` both extend
+`doc/WorkProgressReport.md` from `d90b69e`. Source and tests are conflict-free,
+but the ledger cannot be silently selected or overwritten. Integration is
+`HALT / OWNER_RESOLUTION_REQUIRED`; 05B remains dependency-waiting.

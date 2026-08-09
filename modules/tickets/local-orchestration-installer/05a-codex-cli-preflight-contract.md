@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01, AC-02 and AC-08 |
 | Context / change | `doc/context/local-orchestration-installer/main.md` / `CHG-20260808-011` |
-| State | `COMPLETE / APPROVED / READY_TO_MERGE` |
+| State | `COMPLETE / APPROVED / INTEGRATION_BLOCKED` |
 | Parent evidence | Superseded Ticket 05; review `593e33a`; CR-80, CR-81, CR-82, CR-84 and CR-85 |
 | Baseline | Current control-plane decomposition commit, containing integrated Tickets 01–03 and no production Codex CLI adapter |
 | Control-plane owner / reviewer | Codex / current `main` worktree |
@@ -165,3 +165,13 @@ cache remains beneath the implementation worktree. `PRG-20260810-091` is unique
 to the branch handoff, while canonical control record `PRG-20260810-087`
 remains distinct. CR-90, CR-91 and A5 are closed; the ticket is
 `APPROVED / READY_TO_MERGE` pending a separate guarded integration decision.
+
+## Guarded integration preflight
+
+Non-mutating `git merge-tree` from common base `d90b69e` against control review
+`d54c0bd` and branch handoff `fb755268` reports one conflict in
+`doc/WorkProgressReport.md`: both sides append distinct immutable control and
+implementation evidence after the same baseline location. Production source,
+exports and tests merge without conflict. Integration is therefore typed
+`HALT / OWNER_RESOLUTION_REQUIRED`; no merge was started and Ticket 05B remains
+dependency-waiting.

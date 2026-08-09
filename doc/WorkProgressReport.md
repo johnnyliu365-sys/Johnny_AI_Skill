@@ -1153,3 +1153,13 @@
 | Finding closure | CR-90/A5 closed: the earlier hidden cache write is truthfully recorded, allowed caches are removed, and cache-free verification reproduces. CR-91/A5 closed: branch handoff is uniquely `PRG-20260810-091`, distinct from canonical control `PRG-20260810-087`. A1-A4 remain closed. |
 | Harness diagnostics | One reviewer regex command and one case-insensitive literal sentinel were invalid/overbroad; both were isolated reviewer harness defects. External temp cleanup succeeded, and the final AST sentinel passed without repository state. |
 | Decision / non-actions | `APPROVED / READY_TO_MERGE`. This review did not integrate, dispatch 05B/05C/04, mutate live Codex or a target project, push, release, deploy, use network/login/Secret, or create a schedule. |
+
+## PRG-20260810-093 - Ticket 05A guarded integration halted
+
+| Field | Value |
+| --- | --- |
+| Router event | `REVIEW_APPROVED -> GUARDED_INTEGRATION_PREFLIGHT -> CONFLICT_DETECTED -> HALT / OWNER_RESOLUTION_REQUIRED` |
+| Exact heads | Common base `d90b69e`; control review `d54c0bd`; implementation branch `fb755268` |
+| Conflict evidence | Non-mutating `git merge-tree` reports both control and implementation sides appended distinct valid records to `doc/WorkProgressReport.md` after the same baseline line. It emits conflict markers for that file. Production exports, `host_contracts.py`, the new adapter and its test merge cleanly. |
+| Required owner decision | Authorize an explicit recorded merge resolution that preserves both complete ledger append sets, or authorize implementation-commit-only integration while retaining branch docs as immutable external evidence. No strategy is assumed. |
+| Non-actions | No merge, cherry-pick, rebase, reset, conflict edit, implementation-worktree write, 05B dispatch, push, release, deployment, live Codex or target-project mutation was performed. |
