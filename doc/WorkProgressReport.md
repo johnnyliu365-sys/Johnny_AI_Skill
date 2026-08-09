@@ -1069,3 +1069,17 @@
 | Worktree / branch | Reuse only `C:\Users\<user>\Desktop\AI控制工作workflow-implementation`. Preserve the rejected parent branch reference, then create exactly one child new-ticket branch `codex/implementation-codex-cli-preflight-05a` from the control decomposition commit. No second worktree or concurrent branch. |
 | Granted scope | Ticket-05A files only; recorded ports, no live registration; one implementation commit, complete verification and one docs-only handoff. The implementation owner makes no review/integration/next-ticket decision. |
 | Prohibited | Parent-source reuse, Ticket 05B/05C/04 source, second live registration, hidden host config/cache write, target-project access, Secret, reset/amend/rebase/force, merge, push, release, deployment or schedule. |
+
+## PRG-20260810-083 - Ticket 05A Codex CLI contract and ownership preflight handoff
+
+| Field | Value |
+| --- | --- |
+| Router event | `ACTION_COMPLETED -> IMPLEMENTATION_COMPLETED -> REVIEW_HANDOFF` |
+| Ticket / closure | `05a-codex-cli-preflight-contract` / `CLOSURE-LOCAL-INSTALL-T05A-01` (`A1..A5`) |
+| Authority | Baseline `d90b69e`; authority `PRG-20260809-042`; handoff `hnd_local_orchestration_install_05a_20260810`; allocation `aln_local_orchestration_install_05a_20260810`; receipt `rcpt_local_orchestration_install_05a_20260810`; correlation `corr-local-orchestration-install-05a-20260810` |
+| Branch / implementation | `codex/implementation-codex-cli-preflight-05a`; implementation commit `88f7aae`. Rejected Ticket-05 branch and all prior SHAs were preserved and not used as implementation input. |
+| First red evidence | Before production source existed, the exact first collection run failed at import for `test_a1_official_shapes_and_invented_fields` with `ModuleNotFoundError` for the new adapter; the same collection failure prevented A2 `test_a2_source_variants_and_constructed_proof_fail_closed`, A3 `test_a3_market_and_same_plugin_collisions_do_not_mutate` and A4 `test_a4_declared_failures_are_finite`. No green result was claimed as red evidence. |
+| Green evidence | Focused A1..A4/A5 module: 9 passed. Full project discovery: 165 passed. Official DTO fixtures reject missing/extra/invented fields; source proofs bind installation/root/exact locator; collision preflight is zero-mutation; declared process/filesystem/timeout/encoding failures map to finite reasons. |
+| Verification | Strict mypy over library/tests passed with 82 files; in-memory compilation passed for the three authorized production files and the authorized test; source sentinel and `git diff --check` passed. Existing and empty temporary Git repositories were snapshotted for bytes and porcelain before/after the probe and remained identical. |
+| Scope / limits | Only the three authorized production files and `tests/test_codex_cli_preflight.py` changed. Production additions are 164 non-blank lines against `d90b69e` (`<=170`); the test is 128 non-blank lines (`<=180`). No mutation command, live Codex registration/removal, target-project access, hidden configuration, network, Secret, package, merge, push, deployment or schedule action occurred. |
+| Handoff | This entry is metadata-only; the separate docs-only handoff commit follows this implementation commit. Independent review/control-plane decision is not made by the implementation owner. |
