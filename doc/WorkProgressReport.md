@@ -593,3 +593,15 @@
 | Blocking findings | CR-40 matrix/red evidence remains incomplete. CR-46 loses the terminal transition when ledger deletion succeeds but final checkpoint write fails. CR-38 is reopened because install clears an active uninstall recovery. CR-42 is reopened because rollback discards an actual mismatched returned host effect. CR-43 is reopened because the existing-ledger fast path returns `INSTALLED` before active-owner/physical validation. Exact probes are in the formal review. |
 | Scope classification | Implementation/contract/test correction only. Approved SPEC, architecture, acceptance, delivery stage and receipt do not change; no `REQUIREMENT_CHANGED` event. |
 | Continuation | Mark rework-4 historical and automatically create a fresh allocation under receipt `rcpt_local_orchestration_install_01_20260808`; no second user dispatch question. Ticket 02 remains `DEPENDENCY_WAIT`. |
+
+## PRG-20260809-035 — Ticket 01 fresh rework-5 handoff
+
+| Field | Value |
+| --- | --- |
+| State | `IMPLEMENT / FRESH_TDD_REWORK` |
+| Review baseline | `58bf113` records the fifth `CHANGES_REQUESTED`. `7df74e1`, `e84dff0`, `14838d9` and `f90877d` join all older implementation branches as immutable historical evidence. |
+| Fresh handoff / allocation | `hnd_local_orchestration_install_01_rework_5_20260809` / `aln_local_orchestration_install_01_rework_5_20260809`; branch `codex/implementation-local-install-lifecycle-01-rework-5` starts directly from this current docs-only handoff commit. |
+| Scope | Fresh red → minimal typed implementation → green for CR-40's complete boundary/port/state matrix, CR-46 atomic/idempotent ledger-to-finalize transition, reopened CR-38 operation-safe recovery consumption, CR-42 actual returned host-effect ownership and CR-43 active-owner/physical validation on every existing-ledger route. Preserve all previously closed guards. No target project, real host configuration, installer package, Ticket 02+, merge/push/deploy or requirements change. |
+| Required red/green evidence | Reproduce all four review probes exactly. Separately inject failure before ledger deletion and after deletion/before final checkpoint; prove retry reaches `REMOVED`. Prove same-ID install cannot clear an uninstall recovery. Prove a host that retains the returned mismatched receipt cannot leave a live effect. Prove a second typed ledger cannot bypass the active owner. Complete manifest/host-receipt absent-value cases and every named owner/ledger/recovery/host/filesystem/runtime/process port fault with full state and retry assertions. |
+| Receipt | `rcpt_local_orchestration_install_01_20260808` remains the sole positive dispatch authority. This corrected allocation is not a new ticket approval/dispatch. |
+| Required return | New implementation commit(s), then one final docs-only handoff with exact first-red names/reasons for every added behavior, retry terminal outcomes, complete regression/type/compile/privacy/smoke, target-repository non-interference and `git diff --check`. |
