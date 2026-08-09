@@ -883,3 +883,18 @@
 | Handoff / allocation | `hnd_local_orchestration_install_02_20260809` / `aln_local_orchestration_install_02_20260809`; receipt `rcpt_local_orchestration_install_02_20260809`; correlation `corr-local-orchestration-install-02-20260809`; authority `PRG-20260809-042`. |
 | Owner boundary | The existing `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` remains the only implementation worktree. Ticket 02 uses exactly one branch, `codex/implementation-local-metadata-git-02`; Ticket 01 source and branch are immutable evidence. |
 | Not authorized | Another worktree/branch, Ticket 01 modification, real Git/host/project mutation, Ticket 03+, merge, push, deployment or schedule action. |
+
+## PRG-20260809-068 -- bounded Ticket 02 implementation handoff
+
+| Field | Value |
+| --- | --- |
+| State | `IMPLEMENTATION_COMPLETED / INDEPENDENT_REVIEW_PENDING` |
+| Ticket / closure | `02-metadata-runtime-and-guarded-git` / `CLOSURE-LOCAL-INSTALL-T02-01` (`D1..D8`). |
+| Baseline / implementation | Exact baseline `b44cd0200d4541fa62a34d8a128f28acb2988d1a`; implementation commit `6cc8fb50498f2091c71b16a4483e98c2ce1de8e0`; branch `codex/implementation-local-metadata-git-02`. |
+| Red evidence | The first executable run named all eight `D1` through `D8` cuts and failed each: claim-once runtime, human-wait routing, canonical registry admission, strict metadata boundary, shared guarded decision, declared failure containment, privacy/repository isolation and source sentinel were all absent before production implementation. |
+| Green evidence | Exact unittest `tests.test_metadata_runtime_and_guarded_git`: 8 passed. Strict mypy: six authorized files, no issues. In-memory compile: six files. Focused D1/D2/D8 smoke: 3 passed. `git diff --check` passed. |
+| Actual Git isolation | An external temporary repository retained its pre-existing porcelain exactly as `?? existing.txt`; a second empty repository remained empty; recursive byte snapshots before and after the guarded decision were identical. No production code invoked Git, subprocess, network, target-project write or background execution. |
+| Reverse-mutation evidence | D1 replay-guard bypass returned completion; D2 human-wait bypass returned completion; D3 locator equality bypass admitted suffix/case mismatch; D4 nonblank-ID bypass admitted empty identifiers; D5 dirty guard bypass allowed fast-forward; D6 reason collapse lost `REGISTRY_RESOLVE_FAILED`; D7 locator persistence exposed the private key; D8 a `subprocess` source marker defeated the sentinel. Each focused test failed under its mutation and passed after restoration. |
+| Boundary result | Only the selected public `ProjectId` contract is reused. The event store receives only `EventId`; the Router receives a sanitized `RouterResumeRequest` with no locator; persisted checkpoints are metadata-only. Every decision is bound to the exact project, registration, installation locator and repository snapshot, or returns a finite typed block/halt result. |
+| Scope / ceiling | Exactly five authorized production files and `tests/test_metadata_runtime_and_guarded_git.py`; production 578/650 non-blank lines, test 333/500. Ticket 01 contracts, ports, lifecycle, fakes and tests are unchanged. |
+| Handoff authority | Handoff `hnd_local_orchestration_install_02_20260809`; allocation `aln_local_orchestration_install_02_20260809`; receipt `rcpt_local_orchestration_install_02_20260809`; authority `PRG-20260809-042`. The implementation owner makes no review or integration decision. |
