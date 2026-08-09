@@ -2,13 +2,13 @@
 
 | Field | Value |
 | --- | --- |
-| Context state | `TICKET_01_INTEGRATED / TICKET_02_READY_FOR_SELECTION` |
-| Router event | `REVIEW_APPROVED → GUARDED_INTEGRATION → ACTION_COMPLETED` |
+| Context state | `TICKET_02_IMPLEMENTING / TICKET_03_PLANNED` |
+| Router event | `TICKET_DISPATCH_REQUIRED → IMPLEMENTATION_DISPATCH_CONFIRMED → IMPLEMENT` |
 | Delivery stage | `POC` |
 | Requirement change | `CHG-20260808-011` |
 | Baseline | `491f98b` (`merge: integrate reopened owned lifecycle`) |
 | Control-plane owner | Codex / current `main` worktree |
-| Implementation owner | Ticket 01 allocation released; Ticket 02 not yet allocated |
+| Implementation owner | Codex implementation Agent / Ticket-02 allocation `aln_local_orchestration_install_02_20260809` |
 | Required sources read | `AGENTS.md`, `Workflow.md` (Router, Wayfinder, Grill, change control, specification, tickets, role boundary), `Defined_wayfinder.md`, `CONTEXT.md`, `PRD.md`, `ProjectSchedule.md`, `doc/RequirementChangeLog.md`, existing plugin manifests / README, `library/workflow_router/`, and completed plugin / autonomous-collaboration POCs |
 
 ## Shared Context reference
@@ -136,4 +136,4 @@ boundary: Do not treat the POC's fake adapters as real host/Git operations. Do n
 | Is real Git authority constrained enough? | Only with opaque project identity, explicit registration, per-project lock, clean expected base and fast-forward-only operation. Missing or stale state, conflicts, dirty tree, replay or cross-project request halts before Git. |
 | Is a new SPEC/ADR/CHG needed? | No. These are already accepted AC-04/05/08 boundaries. Changing them, adding push/deploy/reset/merge commit, or carrying raw source would be `REQUIREMENT_CHANGED`. |
 
-**Planning Grill result: `GO → READY_FOR_SELECTION`.** Ticket 02 remains `PLANNED`; its Ticket-01 dependency is satisfied by reviewed integration `491f98b`, but it receives no implementation authority until a unique allocation and receipt are recorded.
+**Planning Grill result: `GO → IMPLEMENT`.** Ticket 02 is bounded by closure D1..D8 and dispatched under `hnd_local_orchestration_install_02_20260809` / `rcpt_local_orchestration_install_02_20260809`. Its implementation is isolated to the single existing implementation worktree and one Ticket-02 branch; Ticket 03 remains `PLANNED` with no source authority.

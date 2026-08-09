@@ -4,11 +4,12 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-04, AC-05, AC-08 |
 | Context / change | `doc/context/local-orchestration-installer/main.md` / `CHG-20260808-011` |
-| State | `PLANNED / BOUNDED` |
+| State | `IN_PROGRESS / DISPATCHED` |
 | Required dependency | Ticket 01 integrated at `491f98b` and closed at `24387c2` |
 | Language | Python 3.11, strict Pydantic models and standard-library fakes |
 | Control-plane owner / reviewer | Codex / current `main` worktree |
-| Implementation owner / worktree | Not allocated; when selected, the existing `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` remains the only implementation worktree |
+| Implementation owner / worktree | Codex implementation Agent / existing `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` |
+| Single implementation branch | `codex/implementation-local-metadata-git-02` |
 | Environment | Metadata-only in-memory store and temporary-repository fakes; no company project, host configuration, push or deployment |
 
 ## User-observable outcome
@@ -106,5 +107,19 @@ This is the complete blocking set; review may not add Ticket-02 behavior.
 2. Exact unittest for `tests.test_metadata_runtime_and_guarded_git`.
 3. Strict mypy over the five production files and one test file.
 4. In-memory compile, privacy/source sentinel, runtime smoke, actual temporary-Git
-   non-interference, `git diff --check`, scope/line checks and clean status.
+   non-interference, D1..D8 reverse-mutation evidence, `git diff --check`,
+   scope/line checks and clean status.
 5. One Ticket-02 implementation commit and one separate docs-only handoff commit.
+
+## Implementation handoff
+
+| Field | Value |
+| --- | --- |
+| Handoff | `hnd_local_orchestration_install_02_20260809` |
+| Allocation | `aln_local_orchestration_install_02_20260809` |
+| Receipt | `rcpt_local_orchestration_install_02_20260809` |
+| Correlation / question | `corr-local-orchestration-install-02-20260809` / `q-local-orchestration-install-02-20260809` |
+| Authority | Existing bounded owner continuation `PRG-20260809-042`; Ticket 01 completion `PRG-20260809-066` |
+| Required baseline | The docs-only control commit containing this dispatch |
+| Granted scope | Only the five production files, one test, D1..D8 verification and implementation/docs-only commits |
+| Not granted | Another worktree or Ticket-02 branch, Ticket-01 modification, real Git/host/project effects, Ticket 03+, merge, push, deployment or schedule action |

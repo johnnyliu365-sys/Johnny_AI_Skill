@@ -871,3 +871,15 @@
 | Integrated verification | 8/8 unittest, strict mypy over six files, in-memory compile and diff check passed on `main`; actual temporary Git non-interference passed during final correction review. |
 | Scope result | Exactly five production files (`517 / 600` non-blank lines) and one test file (`351 / 500`); no historical lifecycle framework, real host/process/Git/project effect or Ticket 02+ implementation entered Ticket 01. |
 | Allocation / continuation | Ticket-01 allocation released. Ticket 02 is dependency-unblocked but remains `PLANNED` until its own unique allocation and receipt. Watchdog remains paused; no schedule was created or resumed. |
+
+## PRG-20260809-067 — bounded Ticket 02 dispatch
+
+| Field | Value |
+| --- | --- |
+| Router event | `TICKET_DISPATCH_REQUIRED → IMPLEMENTATION_DISPATCH_CONFIRMED → AUTO_CONTINUE / IMPLEMENT` |
+| Ticket / closure | `02-metadata-runtime-and-guarded-git` / `CLOSURE-LOCAL-INSTALL-T02-01` (`D1..D8`). |
+| Scope repair | The prior open-ended runtime/registry/Git ticket was bounded to five production files, one test, a 650/500 non-blank line ceiling and a typed decision only. Real Git commands and recovery/state-machine expansion are excluded. |
+| Reuse selection | Only `workflow-router-poc@24387c2` public `ProjectId` and finite event/status vocabulary are selected. The Router engine, telemetry, Temporal, policy response and audit coordinator are rejected as unnecessary. |
+| Handoff / allocation | `hnd_local_orchestration_install_02_20260809` / `aln_local_orchestration_install_02_20260809`; receipt `rcpt_local_orchestration_install_02_20260809`; correlation `corr-local-orchestration-install-02-20260809`; authority `PRG-20260809-042`. |
+| Owner boundary | The existing `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` remains the only implementation worktree. Ticket 02 uses exactly one branch, `codex/implementation-local-metadata-git-02`; Ticket 01 source and branch are immutable evidence. |
+| Not authorized | Another worktree/branch, Ticket 01 modification, real Git/host/project mutation, Ticket 03+, merge, push, deployment or schedule action. |
