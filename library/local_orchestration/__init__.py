@@ -33,6 +33,37 @@ from .fakes import (
 )
 from .installation import OwnedInstallLifecycle
 from .ports import LedgerAbsent
+from .guarded_git import (
+    FakeProjectLock,
+    FakeRepositorySnapshotPort,
+    GuardedGitDecision,
+)
+from .project_registry import InMemoryProjectRegistry, RegistrationMissing
+from .runtime import (
+    FakeRuntimeRouter,
+    InMemoryMetadataEventStore,
+    ResumeOrchestration,
+)
+from .runtime_contracts import (
+    CorrelationId,
+    EventId,
+    FastForwardAllowed,
+    FastForwardBlocked,
+    GuardedBlockReason,
+    GuardedDecisionRequest,
+    ProjectReference,
+    ProjectRegistration,
+    RegistryLocator,
+    RepositorySnapshot,
+    RevisionDigest,
+    RouterResumeRequest,
+    RouterResumeStatus,
+    RuntimeCompleted,
+    RuntimeEvent,
+    RuntimeHalted,
+    RuntimeHaltReason,
+    RuntimeNeedsUserAction,
+)
 
 __all__ = [
     "CANONICAL_INSTALL_ROOT",
@@ -64,4 +95,30 @@ __all__ = [
     "UninstallResult",
     "UninstallStatus",
     "digest_bytes",
+    "CorrelationId",
+    "EventId",
+    "FakeProjectLock",
+    "FakeRepositorySnapshotPort",
+    "FakeRuntimeRouter",
+    "FastForwardAllowed",
+    "FastForwardBlocked",
+    "GuardedBlockReason",
+    "GuardedDecisionRequest",
+    "GuardedGitDecision",
+    "InMemoryMetadataEventStore",
+    "InMemoryProjectRegistry",
+    "ProjectReference",
+    "ProjectRegistration",
+    "RegistrationMissing",
+    "RegistryLocator",
+    "RepositorySnapshot",
+    "ResumeOrchestration",
+    "RevisionDigest",
+    "RouterResumeRequest",
+    "RouterResumeStatus",
+    "RuntimeCompleted",
+    "RuntimeEvent",
+    "RuntimeHalted",
+    "RuntimeHaltReason",
+    "RuntimeNeedsUserAction",
 ]
