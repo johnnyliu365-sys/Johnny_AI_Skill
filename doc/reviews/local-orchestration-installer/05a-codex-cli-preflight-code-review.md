@@ -94,3 +94,53 @@ permitted. The correction must remain within the frozen `170 / 180` cumulative
 non-blank ceilings; if the complete A1..A5 closure cannot fit, return typed
 `BLOCKED / TICKET_DEFECT` rather than compressing away a contract or expanding
 scope. Ticket 05B, 05C, Ticket 04 and integration remain blocked.
+
+## Correction review
+
+### Correction boundary
+
+The single permitted additive correction consists of implementation
+`b6594b9f9acf1cd2d905b0614ddce23db268510c` and docs-only handoff
+`59c3f96762d65cdc5e39f53cecffdea0428fbc16`, both descending from the original
+handoff `67dc1db` on the same branch and worktree. The submitted worktree is
+clean. No branch/worktree creation, merge, push, live Codex mutation or target
+project access occurred.
+
+### Independent correction verification
+
+| Check | Result / evidence |
+| --- | --- |
+| Green suite | PASS: focused unittest `13/13`; full discovery `169/169`; strict mypy `82` files; in-memory compile; source sentinel; `git diff --check`. |
+| Scope / ceiling | PASS: independent cumulative measurement is `169` added / `2` removed production non-blank lines, net `167 / 170`; test `158 / 180`. |
+| CR-88 collision | CLOSED: the exact `plugin list --available --json` command is used and both `installed` and `available` participate in case-folded same-name collision blocking. |
+| CR-86 null admission | FAIL: both official DTOs accept an explicitly present `marketplaceSource: null`, although A1 and CodeReview.md §2.1 class 2 require `None` to be rejected while permitting the optional field to be absent. An empty object is correctly rejected. |
+| CR-86 parsed version | FAIL: `codex-cli 0.144.0-alpha.4` produces `CodexCliVersion.value == "codex-cli 0.144.0-alpha.4"`; the parser validates the product prefix but returns the full command text (`match.group(0)`) rather than the parsed semantic version capture. |
+| CR-87 absolute canonical root | FAIL: with `LOCALAPPDATA=relative`, `CodexSourceProof.absolute_path="relative\\JohnnyAIWorkflow\\marketplaces\\probe-market"` constructs successfully and the preflight returns `ELIGIBLE`. Equality to the expanded macro is not proof that the expansion is an absolute Windows canonical root. |
+| Evidence truth | FAIL: handoff `59c3f96` claims the optional and exact-root matrices are complete, but contains no explicit-null or non-absolute expansion cell and therefore overstates A1/A2/A5. |
+
+### Corrected closure mapping
+
+| Item | Result | Correction result |
+| --- | --- | --- |
+| `A1` | FAIL | Official present/absent object fixtures pass, but explicit JSON `null` is accepted and the typed version value retains the command prefix. |
+| `A2` | FAIL | Normal-environment foreign/prefix/suffix/case/encoded/traversal probes block, but a relative expansion of the canonical macro authorizes a relative proof. |
+| `A3` | PASS | Marketplace, installed-plugin and available-plugin collisions, including case variants and foreign marketplaces, block without mutation. |
+| `A4` | PASS | Declared process/filesystem/timeout/encoding/malformed-output failures remain finite. |
+| `A5` | FAIL | Green/type/compile/scope/Git and the submitted reverse probes reproduce, but the remaining A1/A2 cells make the evidence claim incomplete and false. |
+
+### Correction conclusion
+
+`CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED`. CR-86, CR-87 and CR-89 are
+not closed; CR-88 is closed. The explicit-null and relative-expansion failures
+are direct cells of frozen A1/A2 and the correction made those exact official
+field/root paths newly reachable. The version normalization regression was
+introduced by the correction's switch from a semver search to a prefixed
+full-match. These are not optional hardening.
+
+This is the correction review allowed by the ticket. The same ticket must not
+receive another automatic correction, branch or worktree, and the rejected
+implementation must not be integrated. Ticket 05B, 05C and Ticket 04 remain
+dependency-blocked. A control-plane convergence decision is required before any
+new implementation authority: either the owner explicitly changes the
+one-correction rule for one final same-branch additive repair, or the control
+plane supersedes/decomposes 05A under a new reviewed ticket architecture.

@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01, AC-02 and AC-08 |
 | Context / change | `doc/context/local-orchestration-installer/main.md` / `CHG-20260808-011` |
-| State | `CHANGES_REQUESTED / CORRECTION_DISPATCH_READY` |
+| State | `CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED` |
 | Parent evidence | Superseded Ticket 05; review `593e33a`; CR-80, CR-81, CR-82, CR-84 and CR-85 |
 | Baseline | Current control-plane decomposition commit, containing integrated Tickets 01–03 and no production Codex CLI adapter |
 | Control-plane owner / reviewer | Codex / current `main` worktree |

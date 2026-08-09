@@ -1092,3 +1092,14 @@
 | Correction closure | CR-86 official optional source DTO and strict version; CR-87 canonical absolute source binding/path matrix; CR-88 installed plus available collision; CR-89 truthful tests and reproducible reverse evidence. One correction implementation commit plus one docs-only handoff. |
 | Ceiling / block | Cumulative production/test remains `170 / 180`. If complete A1..A5 cannot fit, return typed `BLOCKED / TICKET_DEFECT`; do not compress away a typed contract, relax strictness or expand files/scope. |
 | Not authorized | Integration, Ticket 05B/05C/04, live Codex mutation, host cache/config mutation, target-project access, Secret, merge, push, release, deployment or schedule |
+
+## PRG-20260810-087 - Ticket 05A correction review
+
+| Field | Value |
+| --- | --- |
+| Router event | `CORRECTION_COMPLETED -> CODE_REVIEW -> CHANGES_REQUESTED -> CONVERGENCE_REVIEW_REQUIRED / WAIT_FOR_HUMAN` |
+| Boundary | Same 05A branch; correction implementation `b6594b9`; docs-only handoff `59c3f96`; review closure A1..A5 and CR-86..CR-89 |
+| Independent green evidence | Focused `13/13`; full `169/169`; strict mypy `82` files; compile, source sentinel and `git diff --check` passed. Independent cumulative production is net `167 / 170`; test `158 / 180`. Worktree is clean. |
+| Closed | CR-88: exact `--available --json` command and collision checks across installed plus available entries. Declared A4 boundary failures remain finite. |
+| Still blocking | CR-86: explicit `marketplaceSource: null` is accepted on both official DTOs and the parsed version value retains the `codex-cli ` command prefix. CR-87: a relative `LOCALAPPDATA` expansion admits a relative proof and returns `ELIGIBLE`. CR-89: the claimed complete official/root matrix omits these cells. |
+| Convergence | This was the one permitted correction review. No third automatic correction, new branch/worktree, integration or next ticket is authorized. Owner/control-plane convergence choice is required before further implementation. |
