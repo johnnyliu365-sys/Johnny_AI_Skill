@@ -836,3 +836,26 @@
 | Handoff / allocation | `hnd_local_orchestration_install_01_reopen_20260809` / `aln_local_orchestration_install_01_reopen_20260809`; same implementation owner, existing worktree and receipt `rcpt_local_orchestration_install_01_20260808`; single branch `codex/implementation-local-install-lifecycle-01`. |
 | Review rule | One complete batched review and at most one additive correction on the same branch. No new worktree/branch and no automatic third attempt. |
 | Automation | Watchdog remains paused and is not part of the reopened dispatch. |
+
+## PRG-20260809-064 — reopened Ticket 01 implementation handoff
+
+| Field | Value |
+| --- | --- |
+| State | `IMPLEMENTATION_COMPLETED / INDEPENDENT_REVIEW_PENDING` |
+| Ticket / closure | `01-owned-install-lifecycle` / `CLOSURE-LOCAL-INSTALL-T01-REOPEN-01` (`C1..C8`). |
+| Implementation evidence | Ticket-only commit `ddd9f55`; branch `codex/implementation-local-install-lifecycle-01`; implementation baseline `8704ada`. |
+| Red evidence | The first executable run named all eight `test_c1_*` through `test_c8_*` cuts and failed each with its corresponding “not implemented” assertion before production files existed. |
+| Green evidence | Exact unittest: 8 passed. Strict mypy: 6 files, no issues. In-memory compile: 6 files. C1/C2 lifecycle smoke and C8 source sentinel: 3 passed. External C7 probe kept the existing temporary repository porcelain at `?? existing.txt` and the empty repository porcelain empty. `git diff --check` passed. |
+| Scope / ceiling | Exactly five production files and `tests/test_owned_install_lifecycle.py`; production 517/600 non-blank lines, test 349/500. No historical Ticket-01 source, extra branch/worktree, real host/process/Git/project effect, Ticket 02+, merge, push, deployment or schedule action. |
+| Handoff | `hnd_local_orchestration_install_01_reopen_20260809` / `aln_local_orchestration_install_01_reopen_20260809` / receipt `rcpt_local_orchestration_install_01_20260808`. Control-plane reviewer must independently inspect and execute `C1..C8`; implementation owner makes no review decision. |
+
+## PRG-20260809-065 — Ticket 01 C2 evidence correction handoff
+
+| Field | Value |
+| --- | --- |
+| State | `CORRECTION_COMPLETED / CORRECTION_REVIEW_PENDING` |
+| Review / finding | Independent review commit `148f14f`; `CR-REOPEN-01` / `EVIDENCE_DEFECT` / `C2`. |
+| Additive correction | Commit `040a0f6` adds only a direct physical-absence assertion for `payload/plugin.txt` to the existing C2 test. Production files are unchanged from `ddd9f55`. |
+| Reverse-mutation evidence | Replacing the fake filesystem's physical `target.unlink()` with a no-op made focused C2 fail because `FileNotFoundError` was not raised; restoring the unlink made focused C2 pass. |
+| Green evidence | Full `C1..C8`: 8 passed. Strict mypy: 6 files, no issues. In-memory compile and C8 sentinel passed. Actual temporary Git porcelain remained `?? existing.txt` / empty. `git diff --check` passed. Production remains 517/600 non-blank lines; test is 351/500. |
+| Scope / continuation | Same branch, worktree, allocation, handoff and receipt. No production change, extra file/branch/worktree, merge, push, deployment or schedule action. The control-plane reviewer owns the correction decision. |
