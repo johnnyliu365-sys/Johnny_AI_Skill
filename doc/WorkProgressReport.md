@@ -1080,3 +1080,15 @@
 | Review result | `CHANGES_REQUESTED`: CR-86 official `marketplaceSource` and strict version boundary; CR-87 exact canonical absolute source binding; CR-88 collision across both installed and available plugins; CR-89 truthful complete evidence/reverse matrix. |
 | Adversarial evidence | Documented optional `marketplaceSource` is rejected on both list DTOs; arbitrary text containing `9.9.9` is accepted as Codex; `C:\FOREIGN\marketplaces\probe-market` returns `ELIGIBLE`; a same-name plugin in `available` also returns `ELIGIBLE`. |
 | Convergence | One batched review only. Same ticket/task/worktree/branch/allocation/receipt; exactly one additive correction is allowed. No new branch/worktree, integration or next-ticket dispatch. If the frozen `170 / 180` closure cannot fit, implementation must return typed `BLOCKED / TICKET_DEFECT`. |
+
+## PRG-20260810-085 - Ticket 05A single correction dispatch
+
+| Field | Value |
+| --- | --- |
+| Router event | `CHANGES_REQUESTED -> CORRECTION_HANDOFF -> IMPLEMENT / AUTO_CONTINUE` |
+| Review authority | Formal review commit `1cc4e99`; CR-86..CR-89; approved SPEC and closure `CLOSURE-LOCAL-INSTALL-T05A-01` remain unchanged |
+| Identity | New correction handoff `hnd_local_orchestration_install_05a_corr1_20260810`; retained allocation `aln_local_orchestration_install_05a_20260810`; retained receipt `rcpt_local_orchestration_install_05a_20260810`; correlation `corr-local-orchestration-install-05a-corr1-20260810` |
+| Lane | Same implementation task, model/reasoning, sole implementation worktree and branch `codex/implementation-codex-cli-preflight-05a` at `67dc1db`; additive commits only. No branch/worktree creation. |
+| Correction closure | CR-86 official optional source DTO and strict version; CR-87 canonical absolute source binding/path matrix; CR-88 installed plus available collision; CR-89 truthful tests and reproducible reverse evidence. One correction implementation commit plus one docs-only handoff. |
+| Ceiling / block | Cumulative production/test remains `170 / 180`. If complete A1..A5 cannot fit, return typed `BLOCKED / TICKET_DEFECT`; do not compress away a typed contract, relax strictness or expand files/scope. |
+| Not authorized | Integration, Ticket 05B/05C/04, live Codex mutation, host cache/config mutation, target-project access, Secret, merge, push, release, deployment or schedule |

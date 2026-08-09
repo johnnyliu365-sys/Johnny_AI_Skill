@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01, AC-02 and AC-08 |
 | Context / change | `doc/context/local-orchestration-installer/main.md` / `CHG-20260808-011` |
-| State | `IN_PROGRESS / DISPATCH_READY` |
+| State | `CHANGES_REQUESTED / CORRECTION_DISPATCH_READY` |
 | Parent evidence | Superseded Ticket 05; review `593e33a`; CR-80, CR-81, CR-82, CR-84 and CR-85 |
 | Baseline | Current control-plane decomposition commit, containing integrated Tickets 01–03 and no production Codex CLI adapter |
 | Control-plane owner / reviewer | Codex / current `main` worktree |
@@ -89,3 +89,16 @@ The reviewer executes A1–A5 once and batches all findings. At most one additiv
 correction may occur on the same 05A branch/allocation/receipt. A failed
 correction review returns `CONVERGENCE_REVIEW_REQUIRED`; it never creates a
 same-ticket branch or worktree.
+
+## Single correction handoff
+
+| Field | Value |
+| --- | --- |
+| Review / findings | Control review `1cc4e99`; CR-86 through CR-89 in `doc/reviews/local-orchestration-installer/05a-codex-cli-preflight-code-review.md` |
+| Correction handoff | `hnd_local_orchestration_install_05a_corr1_20260810` |
+| Retained allocation / receipt | `aln_local_orchestration_install_05a_20260810` / `rcpt_local_orchestration_install_05a_20260810` |
+| Correlation / question | `corr-local-orchestration-install-05a-corr1-20260810` / `q-local-orchestration-install-05a-corr1-20260810` |
+| Required implementation base | Existing branch `codex/implementation-codex-cli-preflight-05a` at docs handoff `67dc1db`; keep implementation `88f7aae` and all evidence immutable and add commits only |
+| Required correction | CR-86: exact public `marketplaceSource` type/value DTO on both list-entry types plus strict supported version text. CR-87: exact case-sensitive canonical-root-plus-locator proof and complete path matrix. CR-88: collision across both `installed` and `available`. CR-89: committed missing tests and reproducible per-guard reverse results without rewriting the original red history. |
+| Return | One additive correction implementation commit, complete A1..A5 verification within cumulative production/test `170 / 180`, then one separate docs-only correction handoff commit. Return typed `BLOCKED / TICKET_DEFECT` if the frozen closure cannot fit. |
+| Still prohibited | New branch/worktree, amend/reset/rebase/force, historical-source reuse, broad clear/delete, optional/`None` ports, `Any`, `type: ignore`, live Codex mutation, target-project access, hidden host state, Ticket 05B/05C/04, merge, push, release, deployment or schedule |
