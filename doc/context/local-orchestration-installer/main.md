@@ -297,3 +297,11 @@ conflict: control `d54c0bd` and branch `fb755268` both extend
 `doc/WorkProgressReport.md` from `d90b69e`. Source and tests are conflict-free,
 but the ledger cannot be silently selected or overwritten. Integration is
 `HALT / OWNER_RESOLUTION_REQUIRED`; 05B remains dependency-waiting.
+
+The owner authorized a ledger-preserving resolution. Merge `b22c6c4` retains
+both parents and every control/implementation progress record; only Git conflict
+markers were removed. Post-merge focused `16/16`, full `172/172`, strict mypy
+`82` files, compile, sentinel, diff and no-cache readbacks pass. Ticket 05A is
+integrated, its allocation is released and its branch remains read-only
+evidence. Ticket 05B is now the next unblocked planned ticket; no allocation or
+dispatch was created by the merge authorization.

@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | Feature / ticket | `local-orchestration-installer` / `05a-codex-cli-preflight-contract` |
-| Result | `APPROVED / READY_TO_MERGE` after owner-authorized evidence repair review |
+| Result | `APPROVED / INTEGRATED` after owner-authorized evidence repair and guarded merge |
 | Reviewer | Codex / current `main` worktree |
 | Reviewed branch | `codex/implementation-codex-cli-preflight-05a` |
 | Boundary | Baseline `d90b69e`; final implementation `97ab31c`; repaired docs-only handoff `fb755268`; evidence-cleanup authority `9d3fd4d` |
@@ -282,3 +282,15 @@ different valid evidence after common base `d90b69e`; source, exports and tests
 are conflict-free. Review approval stands, but integration is
 `HALT / OWNER_RESOLUTION_REQUIRED`. No merge was started and no conflict was
 silently resolved.
+
+### Owner-authorized integration resolution
+
+The owner explicitly selected the recommended resolution that preserves both
+complete ledger sides. Merge `b22c6c4` has control parent `5281739` and branch
+parent `fb755268`. The resolution removed only the three Git marker lines;
+section-by-section comparison proved all eight control entries and all three
+branch handoff entries are unchanged. Post-merge focused `16/16`, full
+`172/172`, strict mypy `82` files, four-file in-memory compile, AST sentinel and
+diff check passed. External mypy cache removal and final tracked/ignored/cache
+readbacks passed. Ticket 05A is `APPROVED / INTEGRATED`; its allocation is
+released and the branch is retained as read-only evidence.

@@ -1205,3 +1205,15 @@
 | Cache cleanup evidence | Before cleanup, the only candidates resolved under the assigned worktree were `C:\Users\<user>\Desktop\AI控制工作workflow-implementation\.mypy_cache` and `C:\Users\<user>\Desktop\AI控制工作workflow-implementation\.pytest_cache`. Each leaf was validated against the allowed name set and removed with `Remove-Item -LiteralPath -Recurse -Force`; the after-candidate list was empty. |
 | Cache-free verification | With `PYTHONDONTWRITEBYTECODE=1`, `python -B -m unittest tests/test_codex_cli_preflight.py` passed `16/16` and `python -B -m unittest discover -s tests` passed `172/172`. `python -B -m mypy --strict library tests --no-incremental --cache-dir C:\Users\<user>\AppData\Local\Temp\codex-05a-mypy-4db04fb986c041248664fbb3c1bada30` passed `82` files; that validated OS-temporary directory was removed with `Remove-Item -LiteralPath -Recurse -Force` and absence was read back. Four-file in-memory compile, source sentinel and `git diff --check` passed. |
 | Final state readback | No `.mypy_cache`, `.pytest_cache` or `__pycache__` directory remained anywhere beneath the assigned worktree. `git status --porcelain` and `git status --ignored --short` were both empty before this docs-only edit; no source, test or implementation file changed. |
+
+## PRG-20260810-094 - Ticket 05A integrated with ledger-preserving resolution
+
+| Field | Value |
+| --- | --- |
+| Router event | `OWNER_RESOLUTION_GRANTED -> GUARDED_INTEGRATION -> VALIDATION_PASSED -> HANDOFF / AUTO_CONTINUE` |
+| Merge identity | Merge `b22c6c4` with exact parents control `5281739` and implementation branch `fb755268`; implementation remains `97ab31c`, review `d54c0bd` |
+| Conflict resolution | The sole conflict was `doc/WorkProgressReport.md`. Resolution deleted only `<<<<<<<`, `=======` and `>>>>>>>` marker lines. Section comparison preserved all eight control ledger entries and all three implementation handoff entries exactly; source, exports and tests merged automatically. |
+| Integrated verification | Focused `16/16`; full `172/172`; strict mypy `82` files using a unique removed OS-temporary cache; four-file in-memory compile; AST source sentinel; `git diff --check`. Final tracked, ignored and `.mypy_cache`/`.pytest_cache`/`__pycache__` candidate readbacks are empty. |
+| Cleanup evidence | A pre-existing control `.mypy_cache` (created 2026-08-01; last cached files 2026-08-09) was identified during pre-commit readback, safely removed from the control worktree by exact absolute path/leaf validation, and remained absent after post-merge verification. |
+| Closure | Ticket 05A is `DONE / APPROVED / INTEGRATED`; allocation `aln_local_orchestration_install_05a_evidence_cleanup_20260810` is released and the implementation branch/worktree are retained as read-only evidence. Ticket 05B is `PLANNED / NEXT_UNBLOCKED`; this authorization created no 05B handoff, receipt or dispatch. |
+| Non-actions | No branch/worktree creation, history rewrite, push, release, deployment, live Codex mutation, target-project write, network/login/Secret use or schedule was performed. |

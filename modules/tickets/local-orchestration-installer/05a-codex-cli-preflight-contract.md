@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01, AC-02 and AC-08 |
 | Context / change | `doc/context/local-orchestration-installer/main.md` / `CHG-20260808-011` |
-| State | `COMPLETE / APPROVED / INTEGRATION_BLOCKED` |
+| State | `COMPLETE / APPROVED / INTEGRATED` |
 | Parent evidence | Superseded Ticket 05; review `593e33a`; CR-80, CR-81, CR-82, CR-84 and CR-85 |
 | Baseline | Current control-plane decomposition commit, containing integrated Tickets 01–03 and no production Codex CLI adapter |
 | Control-plane owner / reviewer | Codex / current `main` worktree |
@@ -175,3 +175,15 @@ implementation evidence after the same baseline location. Production source,
 exports and tests merge without conflict. Integration is therefore typed
 `HALT / OWNER_RESOLUTION_REQUIRED`; no merge was started and Ticket 05B remains
 dependency-waiting.
+
+## Authorized integration result
+
+The owner authorized the recommended ledger-preserving merge resolution. Merge
+commit `b22c6c4` has exact parents `5281739` and `fb755268`. Resolution removed
+only Git's three conflict-marker lines and retained byte-equivalent content for
+all eight control records and all three implementation handoff records. The
+committed result passed focused `16/16`, full `172/172`, strict mypy across `82`
+files with a removed OS-temporary cache, four-file in-memory compile, AST source
+sentinel and diff check; tracked, ignored and generated-cache readbacks are
+empty. Ticket 05A is integrated and its allocation is released. Ticket 05B is
+the next unblocked planned ticket, but was not dispatched by this authorization.
