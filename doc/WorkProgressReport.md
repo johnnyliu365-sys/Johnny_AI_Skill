@@ -934,3 +934,14 @@
 | Reuse result | No catalog module selected. `identity-resolution` is not host-install authority and Router code is unrelated; only integrated `InstallationId` may be reused. |
 | Live boundary | No production Codex/Claude adapter, command, subprocess, login, host config/cache edit or real host mutation. Both hosts remain `UNVERIFIED`; a support claim requires external authority and change control. |
 | Lane boundary | Existing sole implementation worktree only; one branch is permitted only after a unique Ticket-03 dispatch commit, allocation and receipt. No schedule was created or resumed. |
+
+## PRG-20260809-072 - bounded Ticket 03 dispatch
+
+| Field | Value |
+| --- | --- |
+| Router event | `TICKET_DISPATCH_REQUIRED → IMPLEMENTATION_DISPATCH_CONFIRMED → AUTO_CONTINUE / IMPLEMENT` |
+| Ticket / closure | `03-reversible-agent-host-lifecycle` / `CLOSURE-LOCAL-INSTALL-T03-01` (`H1..H8`). |
+| Handoff / allocation | `hnd_local_orchestration_install_03_20260809` / `aln_local_orchestration_install_03_20260809`; receipt `rcpt_local_orchestration_install_03_20260809`; correlation `corr-local-orchestration-install-03-20260809`; authority `PRG-20260809-042`. |
+| Owner boundary | Existing sole `workflow-implementation` worktree; one new-ticket branch `codex/implementation-host-capability-gate-03`. Tickets 01/02 remain immutable and released. |
+| Granted scope | Four production files, one test, 550/450 line ceilings, recorded fakes and H1..H8 evidence. No catalog module is imported beyond integrated `InstallationId`. |
+| Not authorized | Another worktree/branch, real Codex/Claude command, subprocess/network/login/config mutation, Ticket-01/02 changes, packaging, merge, push, deployment or schedule action. |

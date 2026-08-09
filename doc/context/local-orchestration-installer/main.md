@@ -169,3 +169,9 @@ support claim requires separate external test authority and change control.
 **Planning Grill result: `GO → PLANNED / BOUNDED`.** The ticket is safe to
 dispatch only to the existing sole implementation worktree with one new-ticket
 branch. Ticket 04 remains dependency-waiting; no schedule is involved.
+
+Ticket 03 is dispatched under `hnd_local_orchestration_install_03_20260809`,
+allocation `aln_local_orchestration_install_03_20260809` and receipt
+`rcpt_local_orchestration_install_03_20260809`. The existing implementation
+worktree creates only `codex/implementation-host-capability-gate-03` from the
+dispatch commit. No live host or schedule authority is included.

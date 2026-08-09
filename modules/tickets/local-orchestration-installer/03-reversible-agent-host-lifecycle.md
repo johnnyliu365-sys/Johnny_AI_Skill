@@ -4,11 +4,12 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-02, AC-03, AC-06, AC-07, AC-08 |
 | Context / change | `doc/context/local-orchestration-installer/main.md` / `CHG-20260808-011` |
-| State | `PLANNED / BOUNDED` |
+| State | `IN_PROGRESS / DISPATCHED` |
 | Dependencies | Ticket 01 `491f98b`; Ticket 02 `92c58bf`; both closed |
 | Language | Python 3.11, strict Pydantic models and recorded in-memory fakes |
 | Control-plane owner / reviewer | Codex / current `main` worktree |
 | Implementation owner / worktree | Codex implementation Agent / existing sole `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` |
+| Single implementation branch | `codex/implementation-host-capability-gate-03` |
 | Environment | Recorded fake lifecycle only; no live host, subprocess, login, host configuration, target project, push or deployment |
 
 ## User-observable outcome
@@ -93,3 +94,16 @@ packaging and automatic host updates. A later request to claim a real host as
 4. No claim that Codex or Claude is live-supported. Discovery of a usable live
    lifecycle returns `CHANGE_DETECTED`; missing authority remains a typed halt,
    not a guessed command or hidden configuration edit.
+
+## Implementation handoff
+
+| Field | Value |
+| --- | --- |
+| Handoff | `hnd_local_orchestration_install_03_20260809` |
+| Allocation | `aln_local_orchestration_install_03_20260809` |
+| Receipt | `rcpt_local_orchestration_install_03_20260809` |
+| Correlation / question | `corr-local-orchestration-install-03-20260809` / `q-local-orchestration-install-03-20260809` |
+| Authority | Existing owner continuation `PRG-20260809-042`; Ticket-02 close `PRG-20260809-070` |
+| Required baseline | The docs-only control commit containing this dispatch |
+| Granted scope | Only four production files, one test, H1..H8 verification and implementation/docs-only commits |
+| Not granted | Another worktree/branch, live host or command action, Ticket-01/02 change, packaging, merge, push, deployment or schedule action |
