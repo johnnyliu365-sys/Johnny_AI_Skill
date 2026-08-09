@@ -721,3 +721,15 @@
 | Blocking findings | CR-59: installation/host/manifest/path actual-receipt mismatches retain a live registration outside recovery and retry remains `PROOF_MISMATCH`. CR-60: new install ignores stage/completion proof identity and existing-ledger install never verifies live effects, so both foreign-proof and stale-ledger probes return `INSTALLED` without files. CR-61: a constructed invalid nested root bypasses validation, executes ports and returns `INSTALLED`. CR-40 lacks or accepts these paths. |
 | Scope classification | Implementation/contract/TDD correction only; approved SPEC, ticket, architecture, delivery stage, owner, receipt and bounded continuation authority do not change. |
 | Continuation | Mark rework-9 historical and automatically create a fresh same-ticket allocation under receipt `rcpt_local_orchestration_install_01_20260808` and authority `PRG-20260809-042`; Ticket 02 remains `DEPENDENCY_WAIT`. |
+
+## PRG-20260809-050 — Ticket 01 fresh rework-10 handoff
+
+| Field | Value |
+| --- | --- |
+| State | `IMPLEMENT / FRESH_TDD_REWORK` |
+| Review baseline | `4eaeb3f` records the tenth `CHANGES_REQUESTED`. `815d126` and `5405c24` join all older implementation branches as immutable historical evidence. |
+| Fresh handoff / allocation | `hnd_local_orchestration_install_01_rework_10_20260809` / `aln_local_orchestration_install_01_rework_10_20260809`; branch `codex/implementation-local-install-lifecycle-01-rework-10` starts directly from this current docs-only handoff commit. |
+| Correction scope | Fresh behavior red → minimal full-surface implementation → green for CR-59 durable expected-intent/actual-observation cleanup across all receipt mismatch fields, CR-60 exact stage/completion/live-ledger effect proof before every `INSTALLED`, and CR-61 recursive strict revalidation of constructed nested command/domain inputs before ports. Preserve CR-54 through CR-58 and the complete passing proof/terminal/fault/Git surface. |
+| Required red/green evidence | Reproduce four non-registration receipt mismatch first-call and retry residues; foreign stage/completion proof without requested files; stale exact-shaped ledger after host/files disappear; constructed invalid root/installation/manifest/artifact/path/host/receipt values with zero port calls. Add exact cleanup/retry, adversarial proof and reverse mutation tests for each guard. |
+| Receipt / continuation authority | `rcpt_local_orchestration_install_01_20260808` and bounded authority `PRG-20260809-042` remain valid. This correction allocation requires no second user confirmation. |
+| Required return | Ticket-only implementation commit(s), full verification, then one docs-only handoff commit. No self-review, integration, push, deployment or progress-only final. |
