@@ -118,8 +118,11 @@
 | Ticket 02 implementation | DONE / APPROVED / INTEGRATED | Closure `D1..D8` passed; implementation `6cc8fb5`, independent review `4527f49`, guarded merge `92c58bf`; allocation and branch released. |
 | Ticket 03 implementation | DONE / APPROVED / INTEGRATED | Closure `H1..H8`; implementation `16597b6`, H7 correction `673ff7c`, final review `5601594`, guarded merge `60cb8cf`; allocation and branch released. |
 | Toolchain and Codex capability probe | DONE / VERIFIED | Inno Setup 6.7.3 is installed per user with valid signature and compile proof. One disposable Codex CLI marketplace/plugin was installed, hash-verified and completely removed without target-project access. |
-| Ticket 05 Codex CLI adapter | BLOCKED / CONVERGENCE_REVIEW_REQUIRED | Correction review reproduced the green suite but found CR-80..CR-85 in the frozen K/R closure; Workflow §8.1 forbids a third automatic correction. |
-| Ticket 04 implementation | PLANNED / DEPENDENCY_WAIT | Pinned compiler is ready; package work waits only for Ticket 05 independent approval/integration. |
+| Parent Ticket 05 Codex CLI adapter | SUPERSEDED / CONVERGENCE_DECOMPOSED | Correction review found CR-80..CR-85; rejected branch/SHAs remain evidence and its allocation/receipt are closed. |
+| Ticket 05A CLI contract/preflight | IN_PROGRESS / DISPATCH_READY | Sole selected child: official list DTOs, canonical source proof, collision preflight and finite zero-mutation failures. |
+| Ticket 05B transactional registration | PLANNED / DEPENDENCY_WAIT | Starts only after 05A independent approval/integration. |
+| Ticket 05C receipt removal/replay | PLANNED / DEPENDENCY_WAIT | Starts only after 05A/05B independent approval/integration. |
+| Ticket 04 implementation | PLANNED / DEPENDENCY_WAIT | Pinned compiler is ready; package work waits for all decomposed Codex adapter children 05A–05C. |
 
 ### Ticket 05 selection after external capability proof
 
@@ -151,3 +154,21 @@ foreign collision gate and evidence matrix still fail CR-80..CR-85. Ticket 05
 is now `CONVERGENCE_REVIEW_REQUIRED`; no third same-closure correction,
 integration, Ticket-04 dispatch, new branch or new worktree is permitted before
 control-plane decomposition.
+
+### Ticket 05 convergence decomposition
+
+Owner instruction on 2026-08-10 authorized the required control-plane split.
+The failed monolithic Ticket 05 is historical and cannot receive another
+implementation correction. Its unchanged approved-SPEC outcome is now three
+serial vertical slices: 05A makes the documented CLI/source/collision preflight
+observable without mutation; 05B makes registration transactional with exact
+receipt and verified current-attempt compensation; 05C makes receipt-bound
+removal/replay conjunctive and enables the final `SUPPORTED` projection.
+
+Evidence requirements remain inside each child closure rather than becoming a
+horizontal test ticket. The original cumulative `400` production / `450` test
+line ceilings remain the final cluster ceiling. Only 05A is selected, with one
+unique receipt and one new-ticket branch in the existing sole implementation
+worktree. The rejected parent branch remains immutable evidence; no second
+worktree, concurrent 05B/05C branch, live mutation, packaging or schedule is
+authorized.

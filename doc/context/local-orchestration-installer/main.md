@@ -227,3 +227,32 @@ control plane for architecture/ticket decomposition. No third correction,
 integration, new branch/worktree, Ticket-04 implementation, live registration,
 target-project write, push, deployment or schedule is authorized.
 Ticket 04 remains `PLANNED / DEPENDENCY_WAIT`.
+
+## Ticket 05 control-plane decomposition
+
+On 2026-08-10 the project owner instructed the control plane to begin the
+Workflow §8.1 decomposition. The approved SPEC, host, one-click-removal outcome
+and external capability evidence are unchanged; this is ticket architecture
+repair, not a requirement change.
+
+Parent Ticket 05 is `SUPERSEDED / CONVERGENCE_DECOMPOSED`. Its rejected branch
+`codex/implementation-codex-cli-host-adapter-05`, implementation/docs SHAs,
+reviews, allocation and receipt remain immutable evidence. The allocation is
+released and the receipt is closed/non-reusable. Rejected source is not an
+input to new implementation.
+
+The finite replacement chain is:
+
+1. Ticket 05A: documented CLI list DTOs, canonical installer-owned source proof,
+   same-name/foreign-state collision gate and finite zero-mutation preflight.
+2. Ticket 05B: documented add DTOs, exact receipt, effect journal before parse
+   and absence-verified current-attempt compensation.
+3. Ticket 05C: documented remove DTOs, strict receipt admission, conjunctive
+   plugin/marketplace/path absence, replay isolation and full lifecycle support.
+
+Only 05A is selected. It uses the same named implementation task and same sole
+implementation worktree, but a single new-ticket branch from the clean control
+baseline; the rejected parent branch remains only a Git reference. 05B, 05C and
+04 remain dependency-waiting. No second worktree, concurrent branch, live Codex
+mutation, target-project access, packaging, push, deployment or schedule is
+authorized.

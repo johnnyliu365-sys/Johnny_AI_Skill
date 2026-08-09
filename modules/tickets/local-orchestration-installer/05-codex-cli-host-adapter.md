@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01, AC-02, AC-07 and AC-08 |
 | Context / change | `doc/context/local-orchestration-installer/main.md` / `CHG-20260808-011` |
-| State | `BLOCKED / CONVERGENCE_REVIEW_REQUIRED` |
+| State | `SUPERSEDED / CONVERGENCE_DECOMPOSED` |
 | Language | Python 3.11, strict Pydantic contracts and a Windows Codex CLI infrastructure adapter |
 | Baseline | Tickets 01–03 reviewed and integrated at `60cb8cf`; owner-authorized Codex CLI lifecycle proof recorded by `PRG-20260809-077` |
 | Control-plane owner / reviewer | Codex / current `main` worktree |
@@ -141,3 +141,36 @@ Per Workflow §8.1, no third same-closure correction may be dispatched. The
 ticket is blocked for control-plane architecture/ticket decomposition. Preserve
 the current branch, commits, allocation and receipt as immutable evidence; this
 state authorizes neither a new branch/worktree nor Ticket 04.
+
+## Control-plane decomposition outcome
+
+On 2026-08-10 the project owner instructed the control plane to begin the
+required decomposition. This parent ticket is now historical and may never
+re-enter `IMPLEMENT`. Its branch
+`codex/implementation-codex-cli-host-adapter-05`, submitted SHAs, allocation
+`aln_local_orchestration_install_05_20260809` and receipt
+`rcpt_local_orchestration_install_05_20260809` remain immutable review evidence;
+the allocation is released and the receipt is closed/non-reusable.
+
+The unchanged approved SPEC outcome is decomposed into three sequential,
+independently reviewed user-observable tickets:
+
+1. [05A — contract and ownership preflight](05a-codex-cli-preflight-contract.md)
+   owns official list DTOs, canonical root/source proof, collision checks and
+   finite zero-mutation boundary failures.
+2. [05B — transactional registration](05b-codex-cli-transactional-registration.md)
+   owns official add DTOs, exact receipt construction, effect journaling and
+   verified current-attempt compensation.
+3. [05C — receipt-bound removal and replay](05c-codex-cli-receipt-removal.md)
+   owns official remove DTOs, conjunctive terminal absence, replay isolation
+   and the final production `SUPPORTED` lifecycle projection.
+
+CR-80 maps to 05A/A1, 05B/B1 and 05C/C2; CR-81 to 05A/A2, 05B/B2 and
+05C/C1/C3; CR-82 to 05A/A4, 05B/B5 and 05C/C2/C5; CR-83 to 05B/B3/B4 and
+05C/C3; CR-84 to 05A/A3; CR-85 to A5/B5/C5. Evidence is therefore attached to
+each vertical behavior, not split into a horizontal evidence-only ticket.
+
+Only Ticket 05A is selected. It receives a unique handoff/allocation/receipt
+and may create one new-ticket branch in the existing sole implementation
+worktree from the clean integrated control baseline. Tickets 05B/05C and 04
+remain `PLANNED / DEPENDENCY_WAIT`; no concurrent branch or worktree exists.

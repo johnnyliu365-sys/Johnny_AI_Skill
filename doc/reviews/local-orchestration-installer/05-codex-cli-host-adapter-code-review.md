@@ -130,3 +130,32 @@ implementation correction. Ticket 05 returns to the control plane for
 architecture/ticket decomposition. The existing branch and all submitted SHAs
 remain immutable evidence; no integration, new branch/worktree or Ticket-04
 dispatch is authorized.
+
+## Control-plane convergence decomposition
+
+The owner instructed the control plane to begin decomposition on 2026-08-10.
+No third correction review or implementation dispatch is added to this closure.
+Parent Ticket 05 is superseded as an executable ticket; its rejected branch,
+implementation/docs SHAs and this review remain immutable evidence. Its old
+allocation is released and its receipt is closed/non-reusable.
+
+| Finding | Replacement closure |
+| --- | --- |
+| CR-80 — public DTO mismatch | 05A/A1 list DTOs; 05B/B1 add DTOs; 05C/C2 remove DTOs |
+| CR-81 — root/source/proof identity | 05A/A2; 05B/B2; 05C/C1 and C3 |
+| CR-82 — escaping process/filesystem failures | 05A/A4; 05B/B5; 05C/C2 and C5 |
+| CR-83 — late/unverified compensation | 05B/B3 and B4; 05C/C3 |
+| CR-84 — same-name foreign marketplace | 05A/A3 |
+| CR-85 — untruthful/incomplete evidence | 05A/A5; 05B/B5; 05C/C5 |
+
+The split is vertical and serial: zero-mutation eligibility, transactional
+registration, then receipt-bound removal/replay. Each ticket carries its own
+first-red, official-fixture, reverse-mutation and Git-isolation evidence. There
+is no evidence-only ticket and no broad "all failures" closure. The final child
+retains the parent's cumulative 400 production / 450 test non-blank-line ceiling.
+
+Only 05A may enter implementation after the decomposition commit. It receives a
+new ticket-bound receipt and one active new-ticket branch in the existing sole
+implementation worktree from the clean integrated baseline. This does not
+rewrite or delete the rejected branch and does not authorize concurrent 05B,
+05C or Ticket-04 work.

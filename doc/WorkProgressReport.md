@@ -1053,3 +1053,19 @@
 | Control boundary | Preserve the implementation branch and SHAs as immutable evidence. No integration, new branch/worktree, Ticket-04 work, second live registration, target-project write, push, deployment or schedule. Control-plane architecture/ticket decomposition is required. |
 | Review report | `doc/reviews/local-orchestration-installer/05-codex-cli-host-adapter-code-review.md` |
 | Prohibited | New branch/worktree, reset/amend/rebase/force, second live registration, target-project write, historical-source reuse, package/Ticket-04 work, merge, push, deployment or schedule action. |
+
+## PRG-20260810-082 — Ticket 05 convergence decomposition and Ticket 05A dispatch
+
+| Field | Value |
+| --- | --- |
+| Router event | `CONVERGENCE_REVIEW_REQUIRED → TICKET_DECOMPOSITION → TICKET_DISPATCH_REQUIRED → IMPLEMENT / AUTO_CONTINUE` |
+| Owner authority | Current owner instruction `開始拆` on 2026-08-10, following the earlier instruction to continue under the documented workflow; bounded continuation record `PRG-20260809-042` remains applicable within the approved installer SPEC. |
+| Parent closure | Ticket 05 becomes `SUPERSEDED / CONVERGENCE_DECOMPOSED`. Branch `codex/implementation-codex-cli-host-adapter-05`, commits `0c2ab95`, `c2ea3f8`, `3f6c41a`, `13d02de`, handoffs `39936fc`, `09b4824`, `4c9525b` and reviews `dac99fd`, `593e33a` remain immutable evidence. Parent allocation is released; parent receipt is closed and cannot authorize a child. |
+| Architecture split | 05A: official CLI/list contracts, canonical source proof, collisions and finite zero-mutation preflight. 05B: official add contracts, exact receipt, effect journal and verified compensation. 05C: official remove contracts, strict receipt, conjunctive absence, replay and final lifecycle support. Evidence is bound to each vertical ticket. |
+| Ceiling | Relative to the decomposition baseline: 05A cumulative production/test `170/180`; 05A+05B `310/320`; final 05A–05C retains parent `400/450` non-blank-line ceiling. Rejected parent source/tests cannot be copied, cherry-picked or imported. |
+| Sole selected ticket | `05a-codex-cli-preflight-contract`; closure `CLOSURE-LOCAL-INSTALL-T05A-01` A1–A5; state `IN_PROGRESS / DISPATCH_READY`. Tickets 05B, 05C and 04 remain `PLANNED / DEPENDENCY_WAIT`. |
+| New handoff / allocation | `hnd_local_orchestration_install_05a_20260810` / `aln_local_orchestration_install_05a_20260810` |
+| New receipt / correlation | `rcpt_local_orchestration_install_05a_20260810` / `corr-local-orchestration-install-05a-20260810` / `q-local-orchestration-install-05a-20260810`; exact owner task `019fcc9c-f34f-7d53-a313-c70c90bf3245`, model `gpt-5.6-luna`, reasoning `xhigh`. |
+| Worktree / branch | Reuse only `C:\Users\<user>\Desktop\AI控制工作workflow-implementation`. Preserve the rejected parent branch reference, then create exactly one child new-ticket branch `codex/implementation-codex-cli-preflight-05a` from the control decomposition commit. No second worktree or concurrent branch. |
+| Granted scope | Ticket-05A files only; recorded ports, no live registration; one implementation commit, complete verification and one docs-only handoff. The implementation owner makes no review/integration/next-ticket decision. |
+| Prohibited | Parent-source reuse, Ticket 05B/05C/04 source, second live registration, hidden host config/cache write, target-project access, Secret, reset/amend/rebase/force, merge, push, release, deployment or schedule. |
