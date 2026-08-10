@@ -120,8 +120,8 @@
 | Toolchain and Codex capability probe | DONE / VERIFIED | Inno Setup 6.7.3 is installed per user with valid signature and compile proof. One disposable Codex CLI marketplace/plugin was installed, hash-verified and completely removed without target-project access. |
 | Parent Ticket 05 Codex CLI adapter | SUPERSEDED / CONVERGENCE_DECOMPOSED | Correction review found CR-80..CR-85; rejected branch/SHAs remain evidence and its allocation/receipt are closed. |
 | Ticket 05A CLI contract/preflight | DONE / APPROVED / INTEGRATED | Implementation `97ab31c`; repaired handoff `fb755268`; review `d54c0bd`; owner-authorized ledger-preserving merge `b22c6c4`; post-merge verification passed. |
-| Ticket 05B transactional registration | BLOCKED / TICKET_DEFECT | Implementation `5e919069` and handoff `ef1cf42` passed green/type/scope checks but initial review found CR-92..CR-97; finite ticket revision and readable ceiling decision are required before any correction. |
-| Ticket 05C receipt removal/replay | PLANNED / DEPENDENCY_WAIT | Starts only after 05A/05B independent approval/integration. |
+| Ticket 05B transactional registration | PLANNED / REVISION_02_FROZEN / OWNER_DISPATCH_REQUIRED | Revision 02 enumerates M01..M18, binds request/add proof/effect ownership, and replaces `310 / 320` with cumulative `460 / 540`; implementation `5e919069` and handoff `ef1cf42` remain unmerged evidence; no correction dispatched. |
+| Ticket 05C receipt removal/replay | PLANNED / DEPENDENCY_WAIT / REFREEZE_REQUIRED | Starts only after 05A/05B approval/integration and a measured finite ticket/ceiling refreeze. |
 | Ticket 04 implementation | PLANNED / DEPENDENCY_WAIT | Pinned compiler is ready; package work waits for all decomposed Codex adapter children 05A–05C. |
 
 ### Ticket 05 selection after external capability proof
@@ -166,12 +166,13 @@ receipt and verified current-attempt compensation; 05C makes receipt-bound
 removal/replay conjunctive and enables the final `SUPPORTED` projection.
 
 Evidence requirements remain inside each child closure rather than becoming a
-horizontal test ticket. The original cumulative `400` production / `450` test
-line ceilings remain the final cluster ceiling. Only 05A is selected, with one
-unique receipt and one new-ticket branch in the existing sole implementation
-worktree. The rejected parent branch remains immutable evidence; no second
-worktree, concurrent 05B/05C branch, live mutation, packaging or schedule is
-authorized.
+horizontal test ticket. The original parent-wide `400` production / `450` test
+ceiling is historical: 05B review proved that keeping it would require P0
+compression and omit the finite failure matrix. Revision 02 therefore caps the
+05A+05B cumulative result at `460 / 540`; it grants no 05C expansion. Ticket 05C
+must be remeasured and refrozen after exact 05B integration. The rejected parent
+branch remains immutable evidence; no second worktree, concurrent child branch,
+live mutation, packaging or schedule is authorized.
 
 ### Ticket 05B selection and dispatch
 
@@ -186,3 +187,21 @@ from the exact control dispatch commit. Handoff
 `rcpt_local_orchestration_install_05b_20260810` authorize only frozen closure
 B1–B5. No second worktree, live Codex mutation, target-project write, Ticket
 05C/04 work, merge, push, deployment or schedule is authorized.
+
+### Ticket 05B revision-02 refreeze
+
+Initial review `f02704f` blocked closure revision 01 as a ticket defect and
+batched CR-92 through CR-97. Revision 02 fixes the ticket before any further
+implementation: Python 3.11 is explicit; M01–M18 are the complete finite fault
+matrix; fresh request-bound admission, both add DTOs, a distinct receipt and
+typed `NOT_ATTEMPTED / MAY_EXIST / OWNED / PREEXISTING` journal states are
+required; compensation cannot short-circuit before all three absence proofs.
+
+The cumulative 05A+05B ceiling is `460` production and `540` test non-blank
+lines. This is a bounded readability allowance, not a target and not authority
+for 05C. Revision-01 branch `codex/implementation-codex-cli-registration-05b`,
+implementation `5e919069`, handoff `ef1cf42`, allocation and receipt remain
+inactive evidence. No correction handoff is created by the refreeze. A future
+owner dispatch must reuse that branch/worktree and permits one additive
+correction plus one terminal independent review; failure pauses without another
+automatic dispatch.

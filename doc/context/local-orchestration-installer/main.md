@@ -332,3 +332,22 @@ therefore concludes `BLOCKED / TICKET_DEFECT`. Python 3.11 is restored from the
 approved SPEC, but no correction is dispatched until a finite readable closure
 revision resolves the remaining ceiling conflict. The same 05B branch,
 allocation and receipt remain inactive evidence; 05C/04 remain blocked.
+
+Control-plane refreeze now replaces the defective closure with
+`CLOSURE-LOCAL-INSTALL-T05B-02`. The acceptance surface is finite M01–M18:
+request-bound fresh admission; exact marketplace/plugin add DTOs entering the
+manifest boundary; a distinct relative-only receipt; separate typed
+`NOT_ATTEMPTED`, `MAY_EXIST`, `OWNED` and `PREEXISTING` journal states; exhaustive
+plugin-then-marketplace compensation; fresh marketplace, plugin and installed
+path absence; and truthful byte-plus-porcelain isolation. Python 3.11 is
+explicit. The cumulative 05A+05B ceiling is `460 / 540`, replacing `310 / 320`
+so P0-readable code cannot be traded for semicolon compression. It is not a
+05C ceiling.
+
+This refreeze is documentation-only. Implementation `5e919069`, handoff
+`ef1cf42`, the sole 05B branch, allocation and receipt remain inactive evidence.
+No message is sent to the implementation task. A future explicit owner dispatch
+may create one revision-02 correction handoff on the same task/worktree/branch;
+the next independent review is terminal and another automatic correction is
+not allowed. Ticket 05C now requires its own measured refreeze after 05B
+integration, and Ticket 04 remains dependency-waiting.

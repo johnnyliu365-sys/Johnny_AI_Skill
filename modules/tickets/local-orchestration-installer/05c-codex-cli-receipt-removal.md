@@ -4,10 +4,11 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-02, AC-03, AC-06, AC-07 and AC-08 |
 | Context / change | `doc/context/local-orchestration-installer/main.md` / `CHG-20260808-011` |
-| State | `PLANNED / DEPENDENCY_WAIT` |
+| State | `PLANNED / DEPENDENCY_WAIT / REFREEZE_REQUIRED` |
 | Dependency | Tickets 05A and 05B independently approved and integrated |
 | Control-plane owner / reviewer | Codex / current `main` worktree |
-| Implementation owner / worktree | Codex task `019fcc9c-f34f-7d53-a313-c70c90bf3245`, model `gpt-5.6-luna`, reasoning `xhigh`, existing sole `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` worktree after a future unique dispatch |
+| Implementation owner / worktree | Codex task `019fcc9c-f34f-7d53-a313-c70c90bf3245`, current model `gpt-5.6-terra`, reasoning `xhigh`, existing sole `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` worktree after a future unique dispatch |
+| Implementation language | Python 3.11, as fixed by the approved SPEC |
 | Environment | Windows user scope; recorded command/filesystem ports only; no live registration, target project, login, Secret, network, packaging, deployment or schedule |
 
 ## User-observable outcome
@@ -20,14 +21,18 @@ unrelated effect. A copied, foreign, tampered or partial receipt returns
 `UNINSTALL_BLOCKED`. The completed adapter can be projected as `SUPPORTED` only
 after the full register/remove lifecycle is independently verified.
 
-## Scope and final cluster ceiling
+## Scope and future ceiling gate
 
 Authorized production files are the four 05A/05B production files. The only new
 test file is `tests/test_codex_cli_removal.py`.
 
-- Relative to the decomposition baseline, final cumulative 05A–05C production
-  must stay at or below the original parent ceiling of 400 non-blank lines and
-  all three child test files together at or below 450.
+- The former parent-wide `400 / 450` ceiling is historical and no longer an
+  implementation limit: Ticket 05B review proved that it conflicts with P0
+  readability and finite fault evidence.
+- After 05B is approved and integrated, the control plane must measure that
+  exact baseline and refreeze 05C with its own finite matrix and incremental
+  production/test ceiling before dispatch. This planning file grants no line,
+  source or test expansion now.
 - Use only independently integrated 05A/05B contracts. Rejected parent Ticket-05
   source/tests remain historical evidence and may not be copied or cherry-picked.
 - No broad clear/cache deletion, optional port, `Any`, `type: ignore`, hidden

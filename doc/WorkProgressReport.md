@@ -1243,3 +1243,17 @@
 | Findings | CR-92 `TICKET_DEFECT`; CR-93, CR-94, CR-95 and CR-97 `IMPLEMENTATION_DEFECT`; CR-96 `EVIDENCE_DEFECT`. Full details are in `doc/reviews/local-orchestration-installer/05b-codex-cli-transactional-registration-code-review.md`. |
 | Ticket repair / unresolved decision | Added the mandatory Python 3.11 field from the approved SPEC. A new finite closure revision must enumerate the fault matrix and decide whether the remaining `5` production / `21` test nonblank lines can satisfy P0 readability without further compression or require reviewed decomposition/ceiling change. |
 | Decision / non-actions | `BLOCKED / TICKET_DEFECT`. No correction handoff, implementation dispatch, branch/worktree change, integration, 05C/04 work, push, release, deployment, live Codex mutation, target-project action or schedule was performed. |
+
+## PRG-20260810-098 - Ticket 05B finite revision-02 refreeze
+
+| Field | Value |
+| --- | --- |
+| Router event | `TICKET_DEFECT -> TICKET_REPAIR -> CLOSURE_REFROZEN -> TICKETS / WAIT_FOR_HUMAN` |
+| Owner authority | Owner instruction `重整` on 2026-08-10 authorizes control-plane ticket/document repair only; it does not authorize an implementation correction dispatch. |
+| Repaired ticket | `05b-codex-cli-transactional-registration`; closure `CLOSURE-LOCAL-INSTALL-T05B-02`; implementation language Python 3.11; exact finite matrix M01–M18. |
+| Contract source | Current official OpenAI Codex CLI command reference confirms marketplace-add fields `marketplaceName`, `installedRoot`, `alreadyAdded` and plugin-add fields `pluginId`, `name`, `marketplaceName`, `version`, `installedPath`, `authPolicy`. Raw path fields are revision-02 ephemeral proof inputs, not persisted receipt fields. |
+| Closure repair | B1 request-bound fresh admission and collision recheck; B2 both add DTOs enter a manifest proof and produce a distinct relative-only receipt; B3 separate `NOT_ATTEMPTED / MAY_EXIST / OWNED / PREEXISTING` states; B4 non-short-circuit plugin-then-marketplace compensation plus three fresh absence proofs; B5 exact evidence commands/counts and byte-plus-porcelain isolation. |
+| Scope / ceiling | Exact production files are `host_contracts.py`, `codex_cli_adapter.py`, `__init__.py`; exact tests are preflight and registration. Integrated 05A is `177 / 171`; final cumulative 05A+05B is capped at production/test `460 / 540`. The former `310 / 320` and parent-wide `400 / 450` limits are historical because they induced P0 compression and could not hold the finite matrix. No 05C expansion is granted. |
+| Preserved lane | Read-only Git readback confirms the sole implementation worktree is clean at branch `codex/implementation-codex-cli-registration-05b` HEAD `ef1cf42`, directly after implementation `5e919069` and dispatch `f68d9d6`; ignored/cache candidate output is empty. Task `019fcc9c-f34f-7d53-a313-c70c90bf3245`, allocation and receipt remain inactive evidence. No branch/worktree/history change. |
+| Continuation | `WAIT_FOR_HUMAN`. A future explicit owner dispatch may create one revision-02 correction handoff on the same branch at clean `ef1cf42`; one additive correction and one terminal independent review only. Failure pauses without automatic redispatch. |
+| Non-actions | No implementation task message, source/test edit, implementation-worktree mutation, correction handoff, branch/worktree creation, merge, push, release, deployment, live Codex mutation, target-project action, schedule, Secret or login action was performed. |
