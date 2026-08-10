@@ -121,7 +121,7 @@
 | Parent Ticket 05 Codex CLI adapter | SUPERSEDED / CONVERGENCE_DECOMPOSED | Correction review found CR-80..CR-85; rejected branch/SHAs remain evidence and its allocation/receipt are closed. |
 | Ticket 05A CLI contract/preflight | DONE / APPROVED / INTEGRATED | Implementation `97ab31c`; repaired handoff `fb755268`; review `d54c0bd`; owner-authorized ledger-preserving merge `b22c6c4`; post-merge verification passed. |
 | Ticket 05S combined staging parent | SUPERSEDED / DECOMPOSED | Rejected commits remain immutable evidence; no correction or integration. |
-| Ticket 05S1 disposable environment core | IN_PROGRESS / DISPATCH_AUTHORIZED | Environment provision/teardown only; unique `hnd_local_orchestration_install_05s1_20260811` / `rcpt_local_orchestration_install_05s1_20260811`; no subprocess or Codex behavior. |
+| Ticket 05S1 disposable environment core | BLOCKED / CONVERGENCE_REVIEW_REQUIRED | Independent review of `e0898cd` / `ecce06a` found physical root-junction CR-118 and evidence CR-119; no automatic correction or integration. |
 | Ticket 05S2 bounded child-process runner | PLANNED / DEPENDENCY_WAIT | Starts after 05S1 approval/integration. |
 | Ticket 05S3 Codex protocol fixture | PLANNED / DEPENDENCY_WAIT | Starts after 05S2 approval/integration. |
 | Ticket 05S4 Codex lifecycle oracle | PLANNED / DEPENDENCY_WAIT | Starts after 05S3 approval/integration; only then may 05B/05C be refrozen. |
@@ -218,3 +218,11 @@ branch or allocation was created by decomposition.
 The owner subsequently authorized starting the environment-first ticket. 05S1
 now has one unique handoff/allocation/receipt and may use only the sole existing
 implementation worktree. 05S2–05S4 remain unallocated and cannot start.
+
+The independent 05S1 review passed the focused/full suites, strict typing,
+overlay, fault cleanup and physical child-escape probe, but a real Windows root
+junction is not recognized by the Python 3.11 `Path.is_symlink()` gate. It is
+misclassified only after an external marker read, and the submitted test proves
+only a mocked branch. 05S1 is therefore paused at
+`CONVERGENCE_REVIEW_REQUIRED`; 05S2 remains dependency-waiting and no automatic
+correction or integration is scheduled.

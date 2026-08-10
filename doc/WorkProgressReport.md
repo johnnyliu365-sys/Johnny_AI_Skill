@@ -1218,3 +1218,14 @@
 | Scope | Four test-support Python files only. Provision/teardown and environment overlay; no subprocess, Codex DTO/state, installer, target-project, live host or historical-source reuse. |
 | Branch/worktree | Reuse the sole clean implementation worktree and create only `codex/implementation-disposable-environment-core-05s1` from the exact handoff baseline. No new worktree. |
 | Return / loop rule | One implementation commit plus one docs-only handoff. Reviewer batches one independent review; blocking findings stop without automatic correction or replacement branch. 05S2–05S4 remain dependency-waiting. |
+
+## PRG-20260811-109 — Ticket 05S1 independent terminal review
+
+| Field | Value |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED → CODE_REVIEW → CHANGES_REQUESTED → CONVERGENCE_REVIEW_REQUIRED` |
+| References | Closure `CLOSURE-LOCAL-INSTALL-T05S1-01`; baseline `f88e10f`; implementation `e0898cdca76c360713bef35b1848c0b8b8bd3681`; handoff `ecce06ae8ff46ca770770375c166ba503bb7f17e`; report `doc/reviews/local-orchestration-installer/05s1-disposable-environment-core-code-review.md`; findings `CR-118..CR-119` |
+| Passing evidence | Exact ancestry and scope; clean worktrees; focused 4/4; full 176/176; strict mypy 86 files; in-memory compile; fixed overlay, owner replay, marker mismatch, finite cleanup and physical child-junction isolation passed; zero final staging roots. |
+| Blocking evidence | A real Windows junction reports `ReparsePoint` while Python 3.11 `Path.is_symlink()` is false. Root teardown reads the marker through that junction and returns `CHILD_ESCAPE`, not `ROOT_REPARSE`. The committed test patches `Path.is_symlink` and does not prove the physical E3/T3 boundary. |
+| Control correction | Added the missing explicit `Implementation language: Python 3.11` ticket field required by Workflow section 9.3; closure content is unchanged and no implementation authority is created. |
+| Decision | `CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED`; no automatic correction, branch/worktree replacement, merge, 05S2 dispatch, live host mutation, target-project write, push, release or deployment. |

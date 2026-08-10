@@ -2,13 +2,13 @@
 
 | Field | Value |
 | --- | --- |
-| Context state | `STAGING_DECOMPOSED / TICKET_05S1_DISPATCH_AUTHORIZED / DOWNSTREAM_DEPENDENCY_WAIT` |
-| Router event | `OWNER_DECOMPOSITION → TICKETS → TICKET_DISPATCH_REQUIRED → IMPLEMENTATION_DISPATCH_CONFIRMED` |
+| Context state | `STAGING_DECOMPOSED / TICKET_05S1_CONVERGENCE_REVIEW_REQUIRED / DOWNSTREAM_DEPENDENCY_WAIT` |
+| Router event | `IMPLEMENTATION_COMPLETED → CODE_REVIEW → CHANGES_REQUESTED → CONVERGENCE_REVIEW_REQUIRED` |
 | Delivery stage | `POC` |
 | Requirement change | `CHG-20260808-011` |
 | Baseline | `a37a515` (`docs: replace duplicated ticket history with references`) |
 | Control-plane owner | Codex / current `main` worktree |
-| Implementation owner | Task `019fcc9c-f34f-7d53-a313-c70c90bf3245` under 05S1 handoff `hnd_local_orchestration_install_05s1_20260811`, allocation `aln_local_orchestration_install_05s1_20260811` and receipt `rcpt_local_orchestration_install_05s1_20260811`; sole implementation worktree only |
+| Implementation owner | No active implementation lane. Task `019fcc9c-f34f-7d53-a313-c70c90bf3245` and the 05S1 handoff/allocation/receipt are retained only as submitted review evidence; sole implementation worktree remains unchanged. |
 | Required sources read | `AGENTS.md`, `Workflow.md` (Router, Wayfinder, Grill, change control, specification, tickets, role boundary), `Defined_wayfinder.md`, `CONTEXT.md`, `PRD.md`, `ProjectSchedule.md`, `doc/RequirementChangeLog.md`, existing plugin manifests / README, `library/workflow_router/`, and completed plugin / autonomous-collaboration POCs |
 
 ## Shared Context reference
@@ -278,3 +278,11 @@ implementation. Only 05S1 is selected, with no active dispatch.
 05S1 dispatch is now authorized under ticket-doc baseline `3f685a9` and its
 separate handoff-doc commit. Its implementation scope remains environment-only;
 05S2–05S4 receive no authority from this dispatch.
+
+The submitted 05S1 implementation `e0898cd` and handoff `ecce06a` failed the
+independent E3/T3 physical root-reparse probe. A real Windows junction is a
+`ReparsePoint`, but Python 3.11 `Path.is_symlink()` is false; teardown reads the
+external marker and reports `CHILD_ESCAPE` instead of refusing it at the root
+boundary. Review CR-118/CR-119 records the implementation and evidence defects.
+05S1 is now `CONVERGENCE_REVIEW_REQUIRED`; no correction, merge or downstream
+dispatch is active.

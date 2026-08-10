@@ -4,8 +4,9 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / verification support for AC-02, AC-03, AC-06, AC-07 and AC-08 |
 | Context / decision | `doc/context/local-orchestration-installer/main.md` / `PRG-20260811-106` |
-| State | `IN_PROGRESS / DISPATCH_AUTHORIZED` |
+| State | `BLOCKED / CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED` |
 | Dependency | Ticket 05A integrated by `b22c6c4`; rejected parent 05S is immutable evidence only |
+| Implementation language | Python 3.11 |
 | Implementation responsibility | Codex task `019fcc9c-f34f-7d53-a313-c70c90bf3245`, model `gpt-5.6-terra`, reasoning `xhigh`, in the sole implementation worktree after exact receipt admission |
 | Acceptance responsibility | Control-plane reviewer in the control worktree; the reviewer may execute and inspect but may not patch implementation |
 | Environment level | Test-owned filesystem and process-environment profile; not Windows Sandbox, VM, container, live Codex or package staging |
@@ -85,3 +86,14 @@ independently approved and safely integrated.
 The dispatch prompt must bind this ticket, owner, handoff, allocation, receipt,
 correlation, ticket-doc commit and the separate handoff-doc commit. A mismatch
 is `HALT` and grants no implementation authority.
+
+## Independent review disposition
+
+Implementation `e0898cd` and docs-only handoff `ecce06a` received
+`CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED` in
+`doc/reviews/local-orchestration-installer/05s1-disposable-environment-core-code-review.md`.
+CR-118 proves that a physical Windows root junction is not recognized by the
+Python 3.11 `Path.is_symlink()` gate and is misclassified only after an external
+marker read; CR-119 records that the submitted mock does not prove the physical
+reparse boundary. Per this ticket's loop rule, no automatic correction, merge
+or 05S2 dispatch is authorized.
