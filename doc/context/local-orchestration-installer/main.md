@@ -340,17 +340,19 @@ manifest boundary; a distinct relative-only receipt; separate typed
 `NOT_ATTEMPTED`, `MAY_EXIST`, `OWNED` and `PREEXISTING` journal states; exhaustive
 plugin-then-marketplace compensation; fresh marketplace, plugin and installed
 path absence; and truthful byte-plus-porcelain isolation. Python 3.11 is
-explicit. The cumulative 05A+05B ceiling is `460 / 540`, replacing `310 / 320`
-so P0-readable code cannot be traded for semicolon compression. It is not a
-05C ceiling.
+explicit. This refreeze historically replaced the earlier `310 / 320` dispatch
+constraint with `460 / 540` to prevent semicolon compression. Terminal review
+`CR-98` later supersedes both numeric constraints: line counts are informational
+only and cannot become a 05C acceptance or quality gate.
 
 This refreeze is documentation-only. Implementation `5e919069`, handoff
 `ef1cf42`, the sole 05B branch, allocation and receipt remain inactive evidence.
 No message is sent to the implementation task. A future explicit owner dispatch
 may create one revision-02 correction handoff on the same task/worktree/branch;
 the next independent review is terminal and another automatic correction is
-not allowed. Ticket 05C now requires its own measured refreeze after 05B
-integration, and Ticket 04 remains dependency-waiting.
+not allowed. At that point Ticket 05C awaited a separate refreeze after 05B
+integration; terminal review `CR-98` later removes numeric line limits from that
+future scope decision. Ticket 04 remains dependency-waiting.
 
 The owner then explicitly authorized dispatch. Revision-02 correction handoff
 `hnd_local_orchestration_install_05b_corr1_r02_20260810` is bound to control
@@ -362,3 +364,16 @@ one additive correction for B1–B5/M01–M18 followed by one docs-only handoff 
 one terminal independent review. No new branch/worktree, 05C/04 work, live
 Codex mutation, target-project access, merge, push, deployment or schedule is
 authorized.
+
+Terminal revision-02 review of implementation `1a269411` and handoff `ed74589`
+returns `CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED`. The authoritative
+review batches `CR-98..CR-104`; other planning artifacts reference those IDs
+instead of copying the finding bodies. Pre-command failures still acquire
+deletion authority, absence checks short-circuit, resolved effects remain in
+retry authority, removal path proof is incomplete, and the committed eight-test
+suite does not execute the claimed M04–M16 matrix. The 05B lane is paused with
+its existing branch/allocation/receipt retained as inactive evidence. Numeric
+line ceilings were a control-plane ticket defect, never an owner requirement,
+and are no longer acceptance or quality gates. No additional correction,
+integration, 05C/04 dispatch, branch/worktree, live mutation or schedule is
+authorized before architecture/ticket convergence.

@@ -1271,3 +1271,13 @@
 | Authorized correction | Same five source/test files only; request-bound fresh admission, both add DTOs in proof, distinct relative-only receipt, typed effect journal, non-short-circuit compensation, M01–M18, cumulative production/test `460 / 540`, P0-readable one-statement-per-line code. |
 | Required return | One additive implementation correction commit and one separate docs-only handoff; focused/full tests, strict full-tree mypy with removed external cache, in-memory compile, scope/line/sentinel/diff, reverse B1–B5 evidence, byte-plus-porcelain isolation and clean/cache-free readback. |
 | Terminal / prohibited | The next independent review is terminal. No automatic second correction, new branch/worktree, reset/amend/rebase/force/cherry-pick/history replacement, historical-source reuse, live Codex mutation, target-project access, Ticket 05C/04, merge, push, release, deployment, schedule, network/login/Secret or review/integration decision by the implementation owner. |
+
+## PRG-20260810-101 - Ticket 05B terminal revision-02 review
+
+| Field | Value |
+| --- | --- |
+| Router event | `CORRECTION_COMPLETED -> CODE_REVIEW -> CHANGES_REQUESTED -> CONVERGENCE_REVIEW_REQUIRED` |
+| Boundary | Closure `CLOSURE-LOCAL-INSTALL-T05B-02`; implementation `1a26941176b4ce3c122c41644817e3429cb7c8a5`; docs-only handoff `ed74589c12072d5d70e168735e6ccc440c681ced`; review report `doc/reviews/local-orchestration-installer/05b-codex-cli-transactional-registration-code-review.md` |
+| Independent evidence | Branch/ancestry/scope/clean-state pass; focused `8/8`, full `180/180`, strict mypy `83` files with removed external cache, in-memory compile and diff pass. Adversarial probes reproduce unauthorized pre-command cleanup, short-circuited absence checks, overbroad retry authority and foreign observed output success. |
+| Findings | `CR-98..CR-104`; full evidence and closure mapping live only in the authoritative review report and are referenced by ID elsewhere. Numeric line ceilings are superseded as a control-plane `TICKET_DEFECT`, not an owner requirement or review gate. |
+| Decision | `CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED`. This is the terminal correction review for revision 02; no automatic second correction, integration, Ticket 05C/04 dispatch, new branch/worktree or schedule is authorized. |

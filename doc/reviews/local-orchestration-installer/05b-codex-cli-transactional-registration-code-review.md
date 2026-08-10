@@ -3,11 +3,11 @@
 | Field | Value |
 | --- | --- |
 | Feature / ticket | `local-orchestration-installer` / `05b-codex-cli-transactional-registration` |
-| Result | `BLOCKED / TICKET_DEFECT` |
+| Result | `CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED` |
 | Reviewer | Codex / current `main` worktree |
 | Reviewed branch | `codex/implementation-codex-cli-registration-05b` |
-| Boundary | Dispatch `f68d9d6`; implementation `5e919069`; docs-only handoff `ef1cf42` |
-| Closure | `CLOSURE-LOCAL-INSTALL-T05B-01` / `B1..B5` |
+| Boundary | Initial dispatch/review `f68d9d6` / `f02704f`; revision-02 correction `1a269411`; docs-only handoff `ed74589` |
+| Closure | `CLOSURE-LOCAL-INSTALL-T05B-02` / `B1..B5`, `M01..M18` |
 
 ## Independent verification
 
@@ -98,3 +98,84 @@ and decide a feasible readable ceiling or decomposition. The existing
 implementation task, worktree, 05B branch, allocation and receipt remain
 unchanged and inactive. No integration, Ticket 05C/04 work, push, deployment,
 schedule, live Codex mutation or target-project action is authorized.
+
+## Terminal revision-02 correction review
+
+This is the single correction review permitted for
+`CLOSURE-LOCAL-INSTALL-T05B-02`. Commit ancestry and scope are valid:
+`1a269411` is the direct child of `ef1cf42`, `ed74589` is its docs-only child,
+and the implementation branch is clean with no ignored/cache residue.
+
+### Independent verification
+
+| Check | Result |
+| --- | --- |
+| Focused / full | PASS: committed focused suite `8/8`; full discovery `180/180`. |
+| Strict typing / compile | PASS: `mypy --strict --no-incremental` over `83` files using a removed external cache; three changed source/test files compiled in memory. |
+| Diff / isolation | PASS: `git diff --check`; committed existing/empty Git byte-plus-porcelain test passes. |
+| Scope | PASS: correction changes only `host_contracts.py`, `codex_cli_adapter.py` and `test_codex_cli_registration.py`; handoff changes only `WorkProgressReport.md`. Numeric line counts are informational and were not used as a gate. |
+| Adversarial transaction probes | FAIL: pre-command unavailable effects receive removal authority; absence verification short-circuits; retry retains resolved effects; foreign add path/auth values can still produce `REGISTRATION_VERIFIED` through the submitted manifest fake. |
+| Matrix truth | FAIL: eight aggregate tests do not execute the finite cases claimed for M04–M16. |
+
+### Batched terminal findings
+
+1. **CR-98 — `TICKET_DEFECT`, scope metadata.** Numeric production/test line
+   ceilings were introduced by the control plane, not requested by the owner.
+   They are superseded as acceptance or quality gates. This finding does not
+   reject implementation size; maintainability is reviewed from responsibility,
+   readability, contracts and behavior.
+2. **CR-99 — `IMPLEMENTATION_DEFECT`, B3 / M04 / M06.** The journal changes to
+   `MAY_EXIST` before invoking add, but `FileNotFoundError` and
+   `PermissionError` leave that state intact. Independent probes therefore ran
+   marketplace removal when marketplace-add was unavailable, and plugin removal
+   when plugin-add was unavailable. These are specified pre-command failures and
+   grant no deletion authority.
+3. **CR-100 — `IMPLEMENTATION_DEFECT`, B4 / M12–M16.** `_absent` performs the
+   three required proofs in one short-circuiting `try`. A malformed first
+   marketplace-absence response prevented both plugin absence and installed-path
+   absence from running (`manifest absence calls = 0`). B4 requires every probe
+   to run even when an earlier probe fails.
+4. **CR-101 — `IMPLEMENTATION_DEFECT`, B4 / M12–M17.** Retry authority is
+   calculated before compensation and never updated. When plugin removal proves
+   success but marketplace removal proof fails, the returned retry still grants
+   both `PLUGIN_OWNED` and `MARKETPLACE_OWNED`; it must contain only effects that
+   remain unresolved after the complete proof pass.
+5. **CR-102 — `IMPLEMENTATION_DEFECT`, B4 / M13.** Marketplace removal compares
+   raw `installedRoot` directly to the request's relative source locator. The
+   closure requires raw path verification through the same ephemeral path-proof
+   boundary used for installation. The current port has no removal-proof input,
+   so correct absolute output cannot be normalized and foreign path identity is
+   not proven by that boundary.
+6. **CR-103 — `EVIDENCE_DEFECT`, B5 / M04–M16.** The eight committed tests use
+   aggregate names but omit most required cells: M04/M06 unavailable, access,
+   nonzero and generic variants; M05/M07 empty/null/foreign variants; M08–M10
+   negative list/manifest cells; and most M12–M16 removal/absence cells. Green
+   `8/8` therefore cannot substantiate the handoff claim that M01–M18 are green.
+7. **CR-104 — `EVIDENCE_DEFECT`, B2 / M07 / M10 / M11.** The submitted manifest
+   fake records both add DTOs but derives its proof from the request rather than
+   verifying observed `installedRoot`, `installedPath` and `authPolicy`.
+   Supplying foreign values still returned `REGISTRATION_VERIFIED`. The typed
+   port shape is improved, but the required observed-output proof has not been
+   demonstrated.
+
+### CodeReview.md mandatory checks
+
+- **Path-prefix / case boundary:** FAIL evidence. The ticket declares class 1
+  applicable, but the committed test does not enumerate the required equal,
+  prefix-plus-character, slash, case, encoding, traversal and empty cases.
+- **Authority bypass:** FAIL due CR-99 and CR-101; pre-command failure and stale
+  retry paths grant authority not supported by current-attempt proof.
+- **Test truthfulness:** FAIL due CR-103 and CR-104. Test names claim multiple
+  matrix cells that their assertions do not execute.
+- Strong typing, dependency scope, Secret isolation and target-project
+  isolation independently pass.
+
+### Terminal conclusion
+
+`CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED`. This correction review is
+terminal for revision 02. Per Workflow §8.1, no automatic second correction may
+be dispatched. Ticket 05B returns to control-plane architecture/ticket
+decomposition; the implementation branch, commits, handoff, allocation and
+receipt remain immutable inactive evidence. No integration, Ticket 05C/04,
+push, deployment, live Codex mutation, target-project action or schedule is
+authorized.

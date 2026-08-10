@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01, AC-02, AC-07 and AC-08 |
 | Context / change | `doc/context/local-orchestration-installer/main.md` / `CHG-20260808-011` |
-| State | `IN_PROGRESS / REVISION_02_CORRECTION_DISPATCHED` |
+| State | `BLOCKED / CONVERGENCE_REVIEW_REQUIRED` |
 | Dependency | Satisfied: Ticket 05A independently approved and integrated by `b22c6c4` |
 | Control-plane owner / reviewer | Codex / current `main` worktree |
 | Implementation owner / worktree | Codex task `019fcc9c-f34f-7d53-a313-c70c90bf3245`, model `gpt-5.6-terra`, reasoning `xhigh`, existing sole `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` worktree |
@@ -23,11 +23,10 @@ reports success or leaves unverified partial state.
 This ticket does not expose the public uninstaller or final `SUPPORTED`
 projection; receipt-bound removal and replay are owned by Ticket 05C.
 
-## Scope and cumulative ceiling
+## Scope
 
-The independently integrated 05A baseline is `b22c6c4`, measured as `177`
-production and `171` test non-blank lines relative to the decomposition
-baseline. Revision 02 permits changes only to:
+The independently integrated 05A baseline is `b22c6c4`. Revision 02 permits
+changes only to:
 
 ```text
 library/local_orchestration/host_contracts.py
@@ -37,12 +36,10 @@ tests/test_codex_cli_preflight.py
 tests/test_codex_cli_registration.py
 ```
 
-- Final cumulative 05A+05B production must stay at or below `460` non-blank
-  lines and their two test files at or below `540`. This replaces the defective
-  `310 / 320` ceiling; it is not authority for Ticket 05C or another file.
-- The submitted `305 / 299` result is evidence, not a target. Deleting or
-  rewriting compressed 05B lines in an additive correction commit is allowed;
-  resetting, amending or discarding commits is not.
+- Numeric source/test line ceilings were introduced by the control plane and
+  were never an owner requirement. They are superseded as a quality or
+  acceptance gate. Diff size may be reported as information only; scope is
+  bounded by the files, behavior, contracts and finite closure in this ticket.
 - Every changed declaration and transaction step must use readable named types,
   helpers and one statement per line. Semicolon-combined imports, assignments,
   conditions, returns or enum members fail the P0 readability gate.
@@ -66,7 +63,7 @@ persisted in a receipt.
 | `B2` — official add proof and distinct receipt | After fresh admission, call exact marketplace add then plugin add. Strict DTOs reject `{}`, missing/extra/null/empty fields and identity mismatch. Both complete add DTOs enter the injected manifest proof boundary. It must prove that observed `installedRoot`, `installedPath` and `authPolicy` map to the exact request-owned relative locators/policy, version and digest. A separate `CodexRegistrationReceipt` binds installation, canonical key/root, marketplace, plugin, observed version, relative source/installed locators, auth policy and digest; it contains no absolute path. |
 | `B3` — typed current-attempt journal | Marketplace and plugin use separate finite states `NOT_ATTEMPTED`, `MAY_EXIST`, `OWNED`, `PREEXISTING`. Mark `MAY_EXIST` immediately before each effectful command; a valid current-attempt response confirms `OWNED`. Marketplace `alreadyAdded=true` becomes `PREEXISTING`, blocks, and grants no removal authority. Timeout, nonzero, zero-exit parse/schema/identity failure after an attempted mutation retains `MAY_EXIST`; plugin uncertainty compensates plugin before marketplace. Pre-command invalid input/port/source/collision grants no effect authority. |
 | `B4` — exhaustive verified compensation | For each journaled `MAY_EXIST` or `OWNED` effect, attempt exact plugin then marketplace removal without short-circuiting after one failure. Plugin removal strictly binds `pluginId`, `name`, `marketplaceName`; marketplace removal strictly binds `marketplaceName`, `installedRoot` through the same ephemeral path-proof boundary. Fresh exact plugin absence, marketplace absence and installed-path absence must all pass. Every remove/list/parse/proof failure or residue remains `INSTALL_BLOCKED / COMPENSATION_FAILED` with only the exact unresolved effect states. Never remove `PREEXISTING` or unrelated entries and never report registered/absent from stale proof. |
-| `B5` — finite evidence truth | The numbered matrix below is the complete required failure surface. Preserve first-red names/reasons, make every cell green, and retain one isolated reverse mutation for each of B1, B2, B3, B4 and B5. Run focused/full tests, strict full-tree mypy, in-memory no-bytecode compile, source/scope/line/diff checks, byte-plus-porcelain Git isolation and final tracked/ignored/cache absence. Claims must quote the exact commands and counts actually run. |
+| `B5` — finite evidence truth | The numbered matrix below is the complete required failure surface. Preserve first-red names/reasons, make every cell green, and retain one isolated reverse mutation for each of B1, B2, B3, B4 and B5. Run focused/full tests, strict full-tree mypy, in-memory no-bytecode compile, source/scope/diff checks, byte-plus-porcelain Git isolation and final tracked/ignored/cache absence. Claims must quote the exact commands and counts actually run. |
 
 ## Finite TDD and fault matrix
 
@@ -107,8 +104,8 @@ only the fields explicitly listed in that row.
 ## Completion and rollback boundary
 
 Completion requires one ticket-only implementation commit, B1–B5 red/green and
-reverse evidence, focused/full regression, strict typing, compile, cumulative
-scope/line checks, byte+porcelain Git isolation, clean status and a separate
+reverse evidence, focused/full regression, strict typing, compile, exact scope
+checks, byte+porcelain Git isolation, clean status and a separate
 docs-only handoff. The only rollback is B3/B4 exact current-attempt
 compensation. A compensation proof failure remains blocked and retryable; it
 does not authorize manual cache deletion, another plugin removal or live repair.
@@ -167,9 +164,18 @@ but foreign observed add fields can produce success, cloned admission can
 authorize another installation, and compensation can delete a pre-existing
 marketplace while skipping a possibly-created plugin after timeout.
 
-Closure revision 02 above resolves CR-92 by fixing Python 3.11, enumerating the
-finite M01–M18 matrix and replacing the compression-inducing ceiling with the
-bounded `460 / 540` cumulative ceiling. It does not close CR-93 through CR-97;
+Closure revision 02 above resolves CR-92 by fixing Python 3.11 and enumerating
+the finite M01–M18 matrix. The former numeric ceiling was a control-plane
+ticket defect and is not an acceptance gate. Revision 02 does not close CR-93 through CR-97;
 those remain the exact implementation/evidence correction scope if the owner
 later dispatches revision 02. The existing branch, allocation and receipt remain
 inactive evidence until then; no new branch or worktree is authorized.
+
+## Terminal revision-02 review outcome
+
+Implementation `1a26941176b4ce3c122c41644817e3429cb7c8a5` and docs-only
+handoff `ed74589c12072d5d70e168735e6ccc440c681ced` were independently reviewed.
+The result is `CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED`; findings
+`CR-98` through `CR-104` are recorded once in the authoritative review report.
+This terminal result pauses the lane and grants no additional correction,
+branch, worktree, integration, Ticket 05C/04 work or schedule.

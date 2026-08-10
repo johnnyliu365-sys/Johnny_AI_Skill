@@ -120,8 +120,8 @@
 | Toolchain and Codex capability probe | DONE / VERIFIED | Inno Setup 6.7.3 is installed per user with valid signature and compile proof. One disposable Codex CLI marketplace/plugin was installed, hash-verified and completely removed without target-project access. |
 | Parent Ticket 05 Codex CLI adapter | SUPERSEDED / CONVERGENCE_DECOMPOSED | Correction review found CR-80..CR-85; rejected branch/SHAs remain evidence and its allocation/receipt are closed. |
 | Ticket 05A CLI contract/preflight | DONE / APPROVED / INTEGRATED | Implementation `97ab31c`; repaired handoff `fb755268`; review `d54c0bd`; owner-authorized ledger-preserving merge `b22c6c4`; post-merge verification passed. |
-| Ticket 05B transactional registration | IN_PROGRESS / REVISION_02_CORRECTION_DISPATCHED | Handoff `hnd_local_orchestration_install_05b_corr1_r02_20260810` reuses the same task/worktree/branch at clean `ef1cf42`; M01..M18 and cumulative `460 / 540`; terminal review follows. |
-| Ticket 05C receipt removal/replay | PLANNED / DEPENDENCY_WAIT / REFREEZE_REQUIRED | Starts only after 05A/05B approval/integration and a measured finite ticket/ceiling refreeze. |
+| Ticket 05B transactional registration | BLOCKED / CONVERGENCE_REVIEW_REQUIRED | Terminal revision-02 review of `1a269411` / `ed74589` records CR-98..CR-104; no automatic correction or integration. |
+| Ticket 05C receipt removal/replay | PLANNED / DEPENDENCY_WAIT / REFREEZE_REQUIRED | Starts only after 05A/05B approval/integration and a finite behavior/rollback closure refreeze. |
 | Ticket 04 implementation | PLANNED / DEPENDENCY_WAIT | Pinned compiler is ready; package work waits for all decomposed Codex adapter children 05A–05C. |
 
 ### Ticket 05 selection after external capability proof
@@ -197,9 +197,11 @@ matrix; fresh request-bound admission, both add DTOs, a distinct receipt and
 typed `NOT_ATTEMPTED / MAY_EXIST / OWNED / PREEXISTING` journal states are
 required; compensation cannot short-circuit before all three absence proofs.
 
-The cumulative 05A+05B ceiling is `460` production and `540` test non-blank
-lines. This is a bounded readability allowance, not a target and not authority
-for 05C. Revision-01 branch `codex/implementation-codex-cli-registration-05b`,
+Revision 02 originally recorded `460` production and `540` test non-blank lines
+as a control-plane dispatch constraint. Terminal review `CR-98` supersedes that
+constraint: numeric line counts are informational only, never an acceptance or
+quality gate and never authority for 05C. Revision-01 branch
+`codex/implementation-codex-cli-registration-05b`,
 implementation `5e919069`, handoff `ef1cf42`, allocation and receipt remain
 inactive evidence. No correction handoff is created by the refreeze. A future
 owner dispatch must reuse that branch/worktree and permits one additive
