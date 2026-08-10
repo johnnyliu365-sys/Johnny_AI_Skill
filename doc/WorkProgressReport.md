@@ -1281,3 +1281,13 @@
 | Independent evidence | Exact `ecce06a → 41d5ce4 → e1087d3` ancestry and authorized scope; fresh exported checkout focused 5/5, full 177/177, strict mypy 86 files and in-memory compile 86 files; physical Windows root junction blocked as `ROOT_REPARSE` before marker read; external bytes preserved. |
 | Isolation | Forbidden-source scan passed; no production subprocess; the only subprocess is the authorized bounded physical-junction fixture. Both worktrees remained clean; review export, repository caches and `johnny-stage-env-*` roots read back absent. |
 | Decision | `APPROVED / INTEGRATION_AUTHORIZED`; CR-118/CR-119 resolved. Guarded integration must preserve implementation and control-plane ledger records. 05S2 remains blocked until integration completes. No push, release, deployment, live Codex mutation or target-project access. |
+
+## PRG-20260811-113 — Ticket 05S1 guarded integration
+
+| Field | Value |
+| --- | --- |
+| Router event | `APPROVED → GUARDED_INTEGRATION → ACTION_COMPLETED → NEXT_UNBLOCKED_TICKET_SELECTED` |
+| Integration | Merge `504a3ecb5304d8ca5758b87b1164b315a12e945a`; first parent control approval `17ea1d5d1d4d43d739a0931ec62a41c68bbbc82a`; second parent reviewed handoff `e1087d32e52f3a86a79dd08ad95700e59d731d66`. |
+| Resolution | The sole conflict was `doc/WorkProgressReport.md`. Resolution retained immutable implementation records PRG-108/PRG-111 and control records PRG-109/PRG-110/PRG-112 in numeric order; no source conflict or silent discard occurred. |
+| Post-merge verification | Focused 5/5; full 177/177; strict mypy 86 files; in-memory compile 86 files; `git diff --check`; repository cache and owned environment-root residue both 0. |
+| Completion | 05S1 is `COMPLETE / APPROVED / INTEGRATED`; allocation `aln_local_orchestration_install_05s1_20260811` is released and receipt `rcpt_local_orchestration_install_05s1_20260811` is closed. The unique serial continuation is 05S2 preparation. No push, release, deployment, live Codex mutation or target-project access. |

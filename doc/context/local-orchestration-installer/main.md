@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| Context state | `STAGING_DECOMPOSED / TICKET_05S1_APPROVED_INTEGRATION_PENDING / DOWNSTREAM_DEPENDENCY_WAIT` |
-| Router event | `CORRECTION_COMPLETED → FINAL_CODE_REVIEW → APPROVED → GUARDED_INTEGRATION_REQUIRED` |
+| Context state | `STAGING_DECOMPOSED / TICKET_05S1_INTEGRATED / TICKET_05S2_SELECTED` |
+| Router event | `GUARDED_INTEGRATION_COMPLETED → ACTION_COMPLETED → NEXT_UNBLOCKED_TICKET_SELECTED` |
 | Delivery stage | `POC` |
 | Requirement change | `CHG-20260808-011` |
 | Baseline | `a37a515` (`docs: replace duplicated ticket history with references`) |
@@ -301,3 +301,8 @@ before marker access. Focused 5/5, full 177/177, strict mypy across 86 files,
 compile, source guards and zero-residue readbacks passed. 05S1 is
 `APPROVED / INTEGRATION_AUTHORIZED`; 05S2 remains blocked until the guarded
 integration is recorded.
+
+Guarded merge `504a3ec` preserves both reviewed parents and all progress-ledger
+records. Post-merge verification repeated focused 5/5, full 177/177, strict
+mypy across 86 files, compile and zero-residue checks. 05S1 is
+`COMPLETE / APPROVED / INTEGRATED`; the unique serial continuation is 05S2.

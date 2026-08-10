@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / verification support for AC-02, AC-03, AC-06, AC-07 and AC-08 |
 | Context / decision | `doc/context/local-orchestration-installer/main.md` / `PRG-20260811-106` |
-| State | `APPROVED / INTEGRATION_AUTHORIZED` |
+| State | `COMPLETE / APPROVED / INTEGRATED` — merge `504a3ec` |
 | Dependency | Ticket 05A integrated by `b22c6c4`; rejected parent 05S is immutable evidence only |
 | Implementation language | Python 3.11 |
 | Implementation responsibility | Codex task `019fcc9c-f34f-7d53-a313-c70c90bf3245`, model `gpt-5.6-terra`, reasoning `xhigh`, in the sole implementation worktree after exact receipt admission |
@@ -122,3 +122,12 @@ full suite 177/177, strict mypy across 86 files, in-memory compilation, source
 guards, Git isolation and zero-residue readback. The ticket is
 `APPROVED / INTEGRATION_AUTHORIZED`; 05S2 remains blocked until guarded
 integration is complete.
+
+## Guarded integration
+
+Control approval `17ea1d5` and reviewed handoff `e1087d3` were integrated by
+two-parent merge `504a3ec`. The only conflict was the progress ledger; records
+PRG-108 through PRG-112 were all preserved in identifier order. Post-merge
+focused 5/5, full 177/177, strict mypy 86 files, compile 86 files and
+zero-residue readbacks passed. The 05S1 allocation is released and its receipt
+is closed; 05S2 may now receive a separate ticket-bound handoff.

@@ -121,7 +121,7 @@
 | Parent Ticket 05 Codex CLI adapter | SUPERSEDED / CONVERGENCE_DECOMPOSED | Correction review found CR-80..CR-85; rejected branch/SHAs remain evidence and its allocation/receipt are closed. |
 | Ticket 05A CLI contract/preflight | DONE / APPROVED / INTEGRATED | Implementation `97ab31c`; repaired handoff `fb755268`; review `d54c0bd`; owner-authorized ledger-preserving merge `b22c6c4`; post-merge verification passed. |
 | Ticket 05S combined staging parent | SUPERSEDED / DECOMPOSED | Rejected commits remain immutable evidence; no correction or integration. |
-| Ticket 05S1 disposable environment core | APPROVED / INTEGRATION_AUTHORIZED | Correction `41d5ce4` and handoff `e1087d3` passed final exported 5/5 focused, 177/177 full, strict typing and physical root-junction review. |
+| Ticket 05S1 disposable environment core | DONE / APPROVED / INTEGRATED | Correction `41d5ce4`, handoff `e1087d3`, review `17ea1d5` and guarded merge `504a3ec`; post-merge verification passed. |
 | Ticket 05S2 bounded child-process runner | PLANNED / DEPENDENCY_WAIT | Starts after 05S1 approval/integration. |
 | Ticket 05S3 Codex protocol fixture | PLANNED / DEPENDENCY_WAIT | Starts after 05S2 approval/integration. |
 | Ticket 05S4 Codex lifecycle oracle | PLANNED / DEPENDENCY_WAIT | Starts after 05S3 approval/integration; only then may 05B/05C be refrozen. |
@@ -238,3 +238,9 @@ The final owner-scoped 05S1 review approves correction `41d5ce4` and handoff
 `e1087d3`. A fresh exported checkout passed the physical root-junction test,
 177-test suite, strict typing and zero-residue checks. CR-118/CR-119 are closed;
 05S2 remains dependency-waiting until the guarded 05S1 integration completes.
+
+Guarded merge `504a3ec` integrates the reviewed 05S1 branch with control
+approval `17ea1d5` as its first parent and handoff `e1087d3` as its second.
+The progress-ledger conflict retained every PRG-108 through PRG-112 record.
+Post-merge focused 5/5, full 177/177, strict typing, compilation and residue
+checks passed. 05S1 is complete; 05S2 is the next serial ticket.
