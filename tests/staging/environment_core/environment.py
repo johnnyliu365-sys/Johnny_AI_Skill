@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import stat
 import tempfile
 import uuid
 
@@ -90,10 +91,10 @@ class DisposableEnvironmentAllocator:
         if isinstance(validated_lease, TeardownResult):
             return validated_lease
         root = validated_lease.root.path
+        if self._is_reparse_point(root):
+            return TeardownResult(status=TeardownStatus.BLOCKED, reason=TeardownBlockReason.ROOT_REPARSE)
         if not root.exists():
             return TeardownResult(status=TeardownStatus.ALREADY_ABSENT, reason=TeardownBlockReason.NONE)
-        if root.is_symlink():
-            return TeardownResult(status=TeardownStatus.BLOCKED, reason=TeardownBlockReason.ROOT_REPARSE)
         if not self._is_exact_owned_root(root):
             return TeardownResult(status=TeardownStatus.BLOCKED, reason=TeardownBlockReason.ROOT_ESCAPE)
         marker_path = validated_lease.marker_path
@@ -166,7 +167,7 @@ class DisposableEnvironmentAllocator:
         )
 
     def _validate_new_root(self, root: EnvironmentLocator) -> None:
-        if root.path.is_symlink() or not self._is_exact_owned_root(root.path):
+        if self._is_reparse_point(root.path) or not self._is_exact_owned_root(root.path):
             raise ValueError("new environment root must be an exact owned direct temporary child")
 
     def _is_exact_owned_root(self, root: Path) -> bool:
@@ -184,14 +185,14 @@ class DisposableEnvironmentAllocator:
         return True
 
     def _remove_new_root(self, root: EnvironmentLocator) -> None:
-        if not root.path.exists() or root.path.is_symlink() or not self._is_exact_owned_root(root.path):
+        if not root.path.exists() or self._is_reparse_point(root.path) or not self._is_exact_owned_root(root.path):
             return
         if self._tree_is_exact(root.path):
             self._remove_exact_tree(root.path)
 
     def _tree_is_exact(self, directory: Path) -> bool:
         for child in directory.iterdir():
-            if child.is_symlink():
+            if child.is_symlink() or self._is_reparse_point(child):
                 return False
             resolved_child = child.resolve(strict=True)
             if not resolved_child.is_relative_to(directory):
@@ -207,3 +208,13 @@ class DisposableEnvironmentAllocator:
             else:
                 child.unlink()
         directory.rmdir()
+
+    @staticmethod
+    def _is_reparse_point(path: Path) -> bool:
+        try:
+            attributes = path.lstat().st_file_attributes
+        except FileNotFoundError:
+            return False
+        except OSError:
+            return True
+        return bool(attributes & stat.FILE_ATTRIBUTE_REPARSE_POINT)

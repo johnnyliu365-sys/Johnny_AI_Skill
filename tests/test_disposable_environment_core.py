@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
+import stat
+import subprocess
 import tempfile
 from typing import Callable
 import unittest
@@ -90,8 +92,6 @@ class DisposableEnvironmentCoreTests(unittest.TestCase):
 
         reparse = self._provisioned(allocator, "environment-owner-3333444455556666")
         escape = reparse.root.path / "escape"
-        with patch.object(Path, "is_symlink", self._path_is(reparse.root.path)):
-            self.assertEqual(TeardownBlockReason.ROOT_REPARSE, allocator.teardown(reparse).reason)
         escape.mkdir()
         try:
             with patch.object(Path, "is_symlink", self._path_is(escape)):
@@ -102,6 +102,46 @@ class DisposableEnvironmentCoreTests(unittest.TestCase):
                 escape.rmdir()
         self.assertEqual(TeardownStatus.REMOVED, allocator.teardown(reparse).status)
         self.assertEqual(TeardownStatus.ALREADY_ABSENT, allocator.teardown(reparse).status)
+
+    def test_t3_physical_root_junction_blocks_before_marker_read_through(self) -> None:
+        from tests.staging.environment_core.contracts import EnvironmentOwnerId, TeardownBlockReason, TeardownStatus
+        from tests.staging.environment_core.environment import DisposableEnvironmentAllocator
+
+        allocator = DisposableEnvironmentAllocator.from_system_temp()
+        lease = self._provisioned(allocator, "environment-owner-6666777788889999")
+        self.assertEqual(TeardownStatus.REMOVED, allocator.teardown(lease).status)
+        target = Path(tempfile.mkdtemp(prefix="junction-target-"))
+        target_marker = target / ".johnny-stage-env-owner.json"
+        target_sentinel = target / "sentinel.bin"
+        target_marker.write_text(lease.marker.model_dump_json(warnings=False), encoding="utf-8")
+        target_sentinel.write_bytes(b"external junction target")
+        try:
+            junction = subprocess.run(
+                ("cmd.exe", "/d", "/c", "mklink", "/J", str(lease.root.path), str(target)),
+                shell=False,
+                check=False,
+                capture_output=True,
+                encoding="utf-8",
+                errors="strict",
+                timeout=5,
+            )
+            self.assertEqual(0, junction.returncode, junction.stderr)
+            attributes = lease.root.path.lstat().st_file_attributes
+            self.assertNotEqual(0, attributes & stat.FILE_ATTRIBUTE_REPARSE_POINT)
+            with patch.object(Path, "read_text", side_effect=AssertionError("marker read-through")) as marker_reads:
+                result = allocator.teardown(lease)
+            self.assertEqual(0, marker_reads.call_count)
+            self.assertEqual(TeardownStatus.BLOCKED, result.status)
+            self.assertEqual(TeardownBlockReason.ROOT_REPARSE, result.reason)
+            self.assertTrue(lease.root.path.exists())
+            self.assertEqual(b"external junction target", target_sentinel.read_bytes())
+        finally:
+            if lease.root.path.exists():
+                self.assertNotEqual(0, lease.root.path.lstat().st_file_attributes & stat.FILE_ATTRIBUTE_REPARSE_POINT)
+                lease.root.path.rmdir()
+            target_marker.unlink()
+            target_sentinel.unlink()
+            target.rmdir()
 
     def test_t4_after_root_and_after_marker_faults_remove_only_owned_root_and_preserve_sibling(self) -> None:
         from tests.staging.environment_core.contracts import EnvironmentFault, EnvironmentOwnerId, ProvisionBlockReason
