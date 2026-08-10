@@ -120,7 +120,7 @@
 | Toolchain and Codex capability probe | DONE / VERIFIED | Inno Setup 6.7.3 is installed per user with valid signature and compile proof. One disposable Codex CLI marketplace/plugin was installed, hash-verified and completely removed without target-project access. |
 | Parent Ticket 05 Codex CLI adapter | SUPERSEDED / CONVERGENCE_DECOMPOSED | Correction review found CR-80..CR-85; rejected branch/SHAs remain evidence and its allocation/receipt are closed. |
 | Ticket 05A CLI contract/preflight | DONE / APPROVED / INTEGRATED | Implementation `97ab31c`; repaired handoff `fb755268`; review `d54c0bd`; owner-authorized ledger-preserving merge `b22c6c4`; post-merge verification passed. |
-| Ticket 05S lifecycle contract staging | IN_PROGRESS / DISPATCH_PREPARED | Owner selected stateful child-process/filesystem staging before downstream ticket refreeze; closure `CLOSURE-LOCAL-INSTALL-T05S-01`. |
+| Ticket 05S lifecycle contract staging | IN_PROGRESS / CHANGES_REQUESTED / REVISION_02_CORRECTION_PREPARED | Initial `18b99de` / `2bed349` failed independent protocol, relocation, state-truth and teardown review (CR-105..CR-111); one same-branch correction is prepared under `CLOSURE-LOCAL-INSTALL-T05S-02`. |
 | Ticket 05B transactional registration | BLOCKED / CONVERGENCE_REVIEW_REQUIRED | Terminal revision-02 review of `1a269411` / `ed74589` records CR-98..CR-104; no automatic correction or integration. |
 | Ticket 05C receipt removal/replay | PLANNED / DEPENDENCY_WAIT / REFREEZE_REQUIRED | Starts only after 05A/05B approval/integration and a finite behavior/rollback closure refreeze. |
 | Ticket 04 implementation | PLANNED / DEPENDENCY_WAIT | Pinned compiler is ready; package work waits for all decomposed Codex adapter children 05A–05C. |
@@ -190,7 +190,10 @@ serve as Windows package staging.
 The first bounded gate is therefore Ticket 05S: a test-owned executable child
 process plus persisted disposable filesystem state that independently proves
 the documented Codex add/list/remove/absence lifecycle without invoking live
-Codex. Ticket 05B remains immutable blocked evidence while 05S is implemented
-and reviewed. Only after 05S integration will the control plane refreeze 05B and
-05C against the staging oracle; Ticket 04 will additionally require a real
-disposable Windows user-profile provider.
+Codex. The initial 05S return did not yet expose the injectable bounded command
+port or official add/remove shapes and leaked roots on invalid topology, so
+revision 02 is the sole same-branch correction. Ticket 05B remains immutable
+blocked evidence while 05S is corrected and terminally reviewed. Only after 05S
+integration will the control plane refreeze 05B and 05C against the staging
+oracle; Ticket 04 will additionally require a real disposable Windows
+user-profile provider.

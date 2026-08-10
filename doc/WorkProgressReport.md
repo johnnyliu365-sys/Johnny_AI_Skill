@@ -1172,3 +1172,15 @@
 | Selected first gate | Ticket `05s-codex-lifecycle-contract-staging`; closure `CLOSURE-LOCAL-INSTALL-T05S-01`; stateful test-owned child process and persisted filesystem oracle; no live Codex/target-project mutation. |
 | Handoff identifiers | `hnd_local_orchestration_install_05s_20260810`; `aln_local_orchestration_install_05s_20260810`; `rcpt_local_orchestration_install_05s_20260810`; `corr-local-orchestration-install-05s-20260810`; task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; branch `codex/implementation-codex-lifecycle-staging-05s`. |
 | Downstream boundary | 05B remains terminal blocked evidence and is not patched in this commit. 05C/04 remain dependency-waiting. Their acceptance closures will be revised only after 05S implementation, review and guarded integration. |
+
+## PRG-20260810-104 — Ticket 05S initial review and revision-02 refreeze
+
+| Field | Value |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED → ACTION_COMPLETED → REVIEW_HANDOFF → CHANGES_REQUESTED → TICKET_REFREEZE` |
+| References | Control baseline `3047b4b`; implementation `18b99de`; docs-only handoff `2bed349`; implementation handoff record `PRG-20260810-103` on the submitted branch; review `doc/reviews/local-orchestration-installer/05s-codex-lifecycle-contract-staging-code-review.md`; findings `CR-105..CR-111`. |
+| Independent green evidence | Valid ancestry/scope and clean submitted worktree. After a review-only topology workaround, focused `python -m unittest -v tests.test_codex_lifecycle_staging` passed `8/8`, full `python -m unittest discover -s tests -v` passed `180/180`, and strict mypy passed `88` files. Production source has zero diff. |
+| Blocking evidence | A disposable exported checkout initially produced `13` focused provisioning errors and left `13` new staging roots because the tests assumed a fixed adjacent control worktree and validation occurred after `mkdtemp`. Runtime protocol probes showed the sandbox is not a `CodexCommandPort`, has no timeout, and emits non-official add/remove DTOs. Fresh-state probes returned success for plugin-without-marketplace, invalid semantic version and blank foreign record. Default `python -m unittest discover -v` discovered `0` tests. |
+| Decision | `CHANGES_REQUESTED`. Refrozen closure `CLOSURE-LOCAL-INSTALL-T05S-02` adds `C1..C7/R01..R12`. One additive correction is authorized on the same task, worktree, branch, allocation and receipt; initial commits remain immutable. |
+| Correction identity | Handoff `hnd_local_orchestration_install_05s_20260810`; allocation `aln_local_orchestration_install_05s_20260810`; receipt `rcpt_local_orchestration_install_05s_20260810`; correction correlation `corr-local-orchestration-install-05s-r02-20260810`; branch `codex/implementation-codex-lifecycle-staging-05s`. |
+| Prohibited continuation | No new branch/worktree, production-source change, 05B/05C/04 implementation, integration, live Codex mutation, target-project write, push, release or deployment. |

@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| Context state | `STAGING_FIRST_CONVERGENCE / TICKET_05S_DISPATCH_PREPARED / DOWNSTREAM_DEPENDENCY_WAIT` |
-| Router event | `OWNER_REQUIREMENT_CONFIRMED → ARCHITECTURE / GRILL → SPEC_REVISION → TICKET_SELECTION` |
+| Context state | `STAGING_FIRST_CONVERGENCE / TICKET_05S_REVISION_02_CORRECTION_PREPARED / DOWNSTREAM_DEPENDENCY_WAIT` |
+| Router event | `IMPLEMENTATION_COMPLETED → INDEPENDENT_REVIEW → CHANGES_REQUESTED → TICKET_REFREEZE` |
 | Delivery stage | `POC` |
 | Requirement change | `CHG-20260808-011` |
 | Baseline | `a37a515` (`docs: replace duplicated ticket history with references`) |
@@ -252,3 +252,10 @@ This is a verification-architecture refinement under the approved SPEC and
 does not change AC-01 through AC-08. Ticket 05B stays paused as immutable
 evidence. After 05S is independently approved and integrated, 05B, 05C and 04
 must be refrozen with explicit staging evidence dependencies before dispatch.
+
+The initial 05S implementation `18b99de` and handoff `2bed349` are immutable
+evidence. Independent review found the harness was not a runtime-compatible
+bounded command port, emitted non-official mutation DTOs, depended on a fixed
+sibling worktree, leaked roots when that topology was absent, and accepted
+incoherent persisted states. `CLOSURE-LOCAL-INSTALL-T05S-02` is the one permitted
+same-branch correction; no new worktree or replacement branch is allowed.

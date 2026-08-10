@@ -109,8 +109,11 @@ Verification has two non-interchangeable isolation gates:
    filesystem environment must persist independent marketplace/plugin truth.
    Its list and absence results come from freshly validated state and actual
    sandbox files, never from the caller request or a queued fake response. It
-   may emulate the documented CLI contract, but it must not invoke or modify the
-   user's live Codex installation.
+   must expose an injectable bounded command port with the documented add,
+   list and remove JSON shapes so the downstream adapter consumes the same
+   strict DTO surface. Raw absolute sandbox paths may exist only as ephemeral
+   child-protocol proof inputs; recorded evidence remains relative/metadata-only.
+   The staging port must not invoke or modify the user's live Codex installation.
 2. **Disposable Windows user staging.** Before Ticket 04 can complete, the built
    `Setup.exe` and matching uninstaller must run in a disposable Windows user
    profile or equivalent VM/sandbox that can prove per-user filesystem,
