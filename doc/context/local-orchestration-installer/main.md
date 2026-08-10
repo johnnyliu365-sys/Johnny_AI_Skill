@@ -343,3 +343,10 @@ distinct `WAIT_FAILED_AFTER_START` result after first-wait `OSError` plus
 successful bounded cleanup, and a required `RUN_TIMEOUT` or
 `RUN_WAIT_OS_ERROR` trigger on every unconfirmed termination failure. The same
 task, branch and worktree are retained; 05S3 remains blocked pending review.
+
+The final revision-03 review approves implementation `33a8fa9` and handoff
+`dba0621b`. Independent execution from a fresh immutable export passed focused
+12/12, full 189/189, strict mypy and compile over 91 Python files, all six
+trigger/cleanup failure cells, result-separation probes and zero-residue
+readback. CR-124 is resolved and guarded integration is authorized. 05S3 is
+still undispatched in this turn.

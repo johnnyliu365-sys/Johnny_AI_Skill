@@ -1366,3 +1366,12 @@
 | Binding | Ticket `05s2-bounded-child-process-runner`; closure `CLOSURE-LOCAL-INSTALL-T05S2-03`; override `OVR-LOCAL-INSTALL-T05S2-R03-20260811-01`; ticket-doc `c8556b4`; implementation HEAD `c324c52669cfa16c57433e0f0cf14ee2b00b0d69`; task `019fcc9c-f34f-7d53-a313-c70c90bf3245`. |
 | Receipt | `hnd_local_orchestration_install_05s2_r03_20260811` / `aln_local_orchestration_install_05s2_r03_20260811` / `rcpt_local_orchestration_install_05s2_r03_20260811` / `corr-local-orchestration-install-05s2-r03-20260811` / `q-local-orchestration-install-05s2-r03-20260811`. |
 | Exact continuation | One additive correction in `contracts.py`, `runner.py` and the bounded-runner test file for CR-124, followed by one docs-only PRG-20260811-123 handoff and one final independent review. No fixture/05S1/product change, new branch/worktree or second correction. |
+
+## PRG-20260811-124 — Ticket 05S2 revision-03 final independent review
+
+| Field | Value |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED -> FINAL_CODE_REVIEW -> APPROVED -> GUARDED_INTEGRATION_REQUIRED` |
+| Binding | Closure `CLOSURE-LOCAL-INSTALL-T05S2-03`; override `OVR-LOCAL-INSTALL-T05S2-R03-20260811-01`; implementation `33a8fa90e2766d3cb6217f22aa97265ac5ec6ed8`; docs-only handoff `dba0621b9fa474618b494fb7c7514e67d19c14de`; report `doc/reviews/local-orchestration-installer/05s2-bounded-child-process-runner-code-review.md`. |
+| Independent evidence | Fresh ZIP export focused 12/12 and full 189/189; strict mypy and in-memory compile over 91 files; six trigger/cleanup cells; three strict malformed-model rejections; source/scope/ancestry/diff checks; zero cache, staging-root, junction-target or late-sentinel residue. |
+| Decision | `APPROVED / INTEGRATION_AUTHORIZED`; CR-124 is resolved. Preserve the control review as first parent and reviewed handoff as second parent. No 05S3 dispatch, push, release, deployment, live Codex mutation or target-project access. |

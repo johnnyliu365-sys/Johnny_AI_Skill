@@ -178,3 +178,75 @@ correction on the existing implementation task, branch and worktree at
 `WAIT_FAILED_AFTER_START` outcome, and requires every unconfirmed kill/reap
 failure to retain its initiating trigger. The next review is final for this
 override; any blocker stops without another correction or 05S3 dispatch.
+
+## Revision-03 final independent review
+
+| Field | Value |
+| --- | --- |
+| Closure | `CLOSURE-LOCAL-INSTALL-T05S2-03`; CR-124 / `P3-R03` / `T3-R03-A..C` |
+| Reviewed control baseline | `a072bdd2115c2657c47c9dae7106ff10b2a6baa2`; ticket refreeze `c8556b40f3a46ff7645e074b2dab67138c0693d2` |
+| Submitted implementation / handoff | `33a8fa90e2766d3cb6217f22aa97265ac5ec6ed8` / `dba0621b9fa474618b494fb7c7514e67d19c14de` |
+| Branch / owner | Existing `codex/implementation-bounded-child-process-runner-05s2`; task `019fcc9c-f34f-7d53-a313-c70c90bf3245` |
+| Final result | `APPROVED / INTEGRATION_AUTHORIZED` |
+
+The correction is exactly additive: `c324c526 -> 33a8fa90 -> dba0621b`.
+The implementation commit changes only the three revision-03 Python files and
+the handoff commit changes only `doc/WorkProgressReport.md`. The reviewer used a
+fresh ZIP export of the immutable handoff and did not modify the implementation
+worktree.
+
+### Revision-03 independent verification
+
+| Check | Result / evidence |
+| --- | --- |
+| Focused / full | PASS: 12/12 focused and 189/189 full unittest tests. |
+| Strict type / compile | PASS: strict mypy over 91 Python files with a removed external cache; in-memory compile over the same 91 files. |
+| `P3-R03` result truth | PASS: first `TimeoutExpired` plus successful bounded cleanup remains `TIMEOUT_AFTER_START`; first-wait `OSError` plus successful bounded cleanup is `WAIT_FAILED_AFTER_START / STARTED / CONFIRMED_TERMINATED / WAIT_OS_ERROR` with reap exit 137. |
+| `T3-R03-B` matrix | PASS: both initiating triggers crossed with kill OS error, reap timeout and reap OS error produced all six exact `TERMINATION_FAILED / UNCONFIRMED` cells and retained the initiating trigger. |
+| Strict model probes | PASS: a termination failure without a trigger, a wait failure with `UNCONFIRMED`, and a wait failure with a timeout reason were all rejected. |
+| Source / scope / ancestry | PASS: no `Any`, `type: ignore`, nullable effect port, command string, `shell=True`, raw output field or unbounded wait; exact authorized scope, ancestry and `git diff --check` passed. |
+| Isolation / residue | PASS: exactly the two existing worktrees remained clean; repository cache, `johnny-stage-env-*`, junction-target and late-sentinel counts were all zero. |
+
+### Closure and mandatory-check mapping
+
+| Item | Result | Independent disposition |
+| --- | --- | --- |
+| `P1 / T1` | PASS | Revision-02 NUL/argv/admission behavior remained green in the focused and full suites. |
+| `P2 / T2` | PASS | Revision-02 live ownership, marker and physical junction cases remained green and left no external residue. |
+| `P3-R03 / T3-R03-A` | PASS | The successful cleanup result now states the actual first-wait event and confirmed termination. |
+| `T3-R03-B` | PASS | All six cleanup-failure cells preserve exact trigger, reason and unconfirmed state. |
+| `T3-R03-C` | PASS | Independent reverse assertions separate wait failure from timeout/launch failure and no exception escapes. |
+| `P4 / T4` | PASS | Exact invocation and start/termination truth remain typed; no stdout/stderr or raw exception enters an observation. |
+
+- **Clear strong types:** PASS. Every new state is a named enum/literal-backed
+  strict union member; the cleanup-failure trigger is required, not optional.
+- **Existing coding conventions:** PASS. The correction follows the existing
+  frozen Pydantic, protocol, `unittest` and typed-result structure.
+- **Logic correctness:** PASS. First-wait timeout and OS error are distinct;
+  each path performs at most one kill and one bounded reap.
+- **Edge cases:** PASS. Successful cleanup and all three failed cleanup modes
+  were exercised for the relevant initiating events.
+- **Security / performance:** PASS. No new capability, output channel,
+  ambient environment access or unbounded process wait was introduced.
+- **Test coverage / smoke:** PASS. Committed tests fail under the two recorded
+  reverse mutations, while independent result-separation and malformed-model
+  probes also pass.
+- **Dependency reasonableness:** PASS. No dependency or production-library
+  file changed.
+- **Project specification:** PASS. The implementation matches the exact
+  revision-03 closure without reopening the superseded revisions.
+
+CodeReview.md defect-class readback also passes: physical path and NUL cases
+remain covered; permission and token classes are not applicable; result-code
+consistency, exception containment and test truthfulness are independently
+demonstrated. No new blocking finding exists. CR-124 is resolved.
+
+### Final conclusion
+
+`APPROVED / INTEGRATION_AUTHORIZED`. A guarded integration may preserve the
+control review as first parent and reviewed handoff `dba0621b` as second
+parent. Allocation `aln_local_orchestration_install_05s2_r03_20260811` and
+receipt `rcpt_local_orchestration_install_05s2_r03_20260811` remain active only
+until that integration is verified. This review does not dispatch 05S3 and
+does not authorize push, release, deployment, live Codex mutation or target-
+project access.
