@@ -200,180 +200,33 @@ registration or schedule is authorized.
 
 ## Ticket 05 initial review and corrected closure
 
-Initial review `dac99fd` returned `CHANGES_REQUESTED` with CR-73..CR-79. The
-approved SPEC and user outcome are unchanged. CR-73 is a control-plane ticket
-defect: the original closure omitted the installer-owned local marketplace
-source required by the documented CLI. Corrected closure
-`CLOSURE-LOCAL-INSTALL-T05-02` defines that source as an ephemeral, strictly
-proved locator below the canonical installer root and aligns commands/JSON,
-receipt identity, cleanup, absence proof and evidence matrices with the public
-CLI. The same Ticket-05 task, worktree, branch, allocation and receipt remained
-active for one additive correction. The correction review below supersedes
-that active state; no further implementation continuation is permitted.
+- Initial review: `PRG-20260809-079`; `dac99fd`; `CR-73..CR-79`.
+- Corrected closure: `PRG-20260809-080`;
+  `CLOSURE-LOCAL-INSTALL-T05-02`.
 
 ## Ticket 05 correction review convergence
 
-The one permitted correction review covered implementation commits `c2ea3f8`,
-`3f6c41a`, `13d02de` and final handoff `4c9525b`. Focused/full tests, strict
-typing, in-memory compile and diff checks pass, but CR-80..CR-85 remain within
-the frozen `CLOSURE-LOCAL-INSTALL-T05-02`: the adapter still rejects documented
-CLI JSON while accepting empty mutation output; source/proof identity is not
-bound to the canonical install root; real timeout/filesystem failures escape;
-cleanup is not absence-verified; foreign same-name plugin state reaches
-mutation; and red/reverse/byte-level Git evidence is not reproducible.
-
-Router outcome is `CONVERGENCE_REVIEW_REQUIRED`. Ticket 05 returns to the
-control plane for architecture/ticket decomposition. No third correction,
-integration, new branch/worktree, Ticket-04 implementation, live registration,
-target-project write, push, deployment or schedule is authorized.
-Ticket 04 remains `PLANNED / DEPENDENCY_WAIT`.
+- Correction return: `c2ea3f8`; `3f6c41a`; `13d02de`; `4c9525b`.
+- Review: `PRG-20260809-081`; `593e33a`; `CR-80..CR-85`;
+  `CONVERGENCE_REVIEW_REQUIRED`.
 
 ## Ticket 05 control-plane decomposition
 
-On 2026-08-10 the project owner instructed the control plane to begin the
-Workflow §8.1 decomposition. The approved SPEC, host, one-click-removal outcome
-and external capability evidence are unchanged; this is ticket architecture
-repair, not a requirement change.
+| Item | Reference / state |
+| --- | --- |
+| Decomposition | `PRG-20260810-082`; parent Ticket 05 `SUPERSEDED / CONVERGENCE_DECOMPOSED` |
+| Ticket 05A event chain | `PRG-20260810-083 -> PRG-20260810-084 -> PRG-20260810-085 -> PRG-20260810-086 -> PRG-20260810-087 -> PRG-20260810-088 -> PRG-20260810-089 -> PRG-20260810-090 -> PRG-20260810-091 -> PRG-20260810-092 -> PRG-20260810-093 -> PRG-20260810-094` |
+| Ticket 05A integration | `b22c6c4`; `DONE / APPROVED / INTEGRATED` |
+| Ticket 05B | See the current reference below |
+| Ticket 05C / 04 | `PLANNED / DEPENDENCY_WAIT` |
 
-Parent Ticket 05 is `SUPERSEDED / CONVERGENCE_DECOMPOSED`. Its rejected branch
-`codex/implementation-codex-cli-host-adapter-05`, implementation/docs SHAs,
-reviews, allocation and receipt remain immutable evidence. The allocation is
-released and the receipt is closed/non-reusable. Rejected source is not an
-input to new implementation.
+## Ticket 05B current reference
 
-The finite replacement chain is:
-
-1. Ticket 05A: documented CLI list DTOs, canonical installer-owned source proof,
-   same-name/foreign-state collision gate and finite zero-mutation preflight.
-2. Ticket 05B: documented add DTOs, exact receipt, effect journal before parse
-   and absence-verified current-attempt compensation.
-3. Ticket 05C: documented remove DTOs, strict receipt admission, conjunctive
-   plugin/marketplace/path absence, replay isolation and full lifecycle support.
-
-Only 05A is selected. It uses the same named implementation task and same sole
-implementation worktree, but a single new-ticket branch from the clean control
-baseline; the rejected parent branch remains only a Git reference. 05B, 05C and
-04 remain dependency-waiting. No second worktree, concurrent branch, live Codex
-mutation, target-project access, packaging, push, deployment or schedule is
-authorized.
-
-After the one permitted correction review, independent reconfirmation reproduced
-explicit-null admission, prefixed version value and relative canonical-root
-admission. The owner then explicitly ordered re-dispatch according to that
-verified state. This is a single-use convergence override for one final additive
-repair on the existing 05A branch/worktree with `gpt-5.6-terra` at `xhigh`.
-Allocation and receipt stay unchanged; 05B, 05C and 04 remain blocked. Failure
-of the following independent review ends this lane as `SUPERSEDE_REQUIRED`; it
-does not authorize another same-ticket correction or any new branch/worktree.
-
-The terminal review of final implementation `97ab31c` and handoff `4fc81a5`
-passed A1 through A4, focused/full/type/compile/scope checks, the complete path
-and authority-bypass probes, and five independent reverse mutations. It did not
-close A5: implementation-local `.mypy_cache` files were rewritten inside the
-owner turn despite the no-hidden-cache rule and the handoff's contrary claim,
-and the branch-local handoff reused canonical progress ID
-`PRG-20260810-087`. Ticket 05A is therefore `BLOCKED / SUPERSEDE_REQUIRED`.
-No further 05A dispatch, branch/worktree, integration or Ticket 05B/05C/04
-start is authorized without a new owner/control-plane decision.
-
-The owner then granted exactly that bounded decision: one evidence-only cleanup
-on the existing task/worktree/branch at `4fc81a5`. It permits removal of only
-generated Python/mypy/pytest caches beneath the implementation worktree,
-cache-free verification, and one docs-only correction that assigns the
-branch-local final handoff reserved ID `PRG-20260810-091` and corrects its
-hidden-state claim. It grants no source/test change, implementation commit,
-new branch/worktree, integration or 05B/05C/04 start. The next review is limited
-to CR-90, CR-91 and A5.
-
-That bounded review passed. Repaired handoff `fb755268` changes only the branch
-progress report; the assigned worktree and external reviewer cache are clean.
-Independent focused `16/16`, full `172/172`, strict mypy `82` files, in-memory
-compile, source sentinel and diff checks close CR-90, CR-91 and A5. Ticket 05A
-is `APPROVED / READY_TO_MERGE`; integration and any 05B dispatch remain separate
-Router actions.
-
-The guarded integration preflight then found one append-only evidence-ledger
-conflict: control `d54c0bd` and branch `fb755268` both extend
-`doc/WorkProgressReport.md` from `d90b69e`. Source and tests are conflict-free,
-but the ledger cannot be silently selected or overwritten. Integration is
-`HALT / OWNER_RESOLUTION_REQUIRED`; 05B remains dependency-waiting.
-
-The owner authorized a ledger-preserving resolution. Merge `b22c6c4` retains
-both parents and every control/implementation progress record; only Git conflict
-markers were removed. Post-merge focused `16/16`, full `172/172`, strict mypy
-`82` files, compile, sentinel, diff and no-cache readbacks pass. Ticket 05A is
-integrated, its allocation is released and its branch remains read-only
-evidence. Ticket 05B is now the next unblocked planned ticket; no allocation or
-dispatch was created by the merge authorization.
-
-The owner instruction `可以開始派工` on 2026-08-10 now selects Ticket 05B as
-the sole implementation lane. It receives unique handoff
-`hnd_local_orchestration_install_05b_20260810`, allocation
-`aln_local_orchestration_install_05b_20260810`, receipt
-`rcpt_local_orchestration_install_05b_20260810` and correlation
-`corr-local-orchestration-install-05b-20260810`. The same named implementation
-task uses `gpt-5.6-terra` at `xhigh` in the same sole worktree. It must preserve
-05A branch `fb755268` as immutable evidence and create exactly one 05B branch
-from the exact control dispatch commit. Authority is limited to B1–B5 recorded
-effects, proof-bound receipt and exact current-attempt compensation; 05C/04,
-live Codex mutation, target-project writes, another worktree, merge, push,
-deployment and schedule remain prohibited.
-
-Initial independent review of Ticket 05B implementation `5e919069` and handoff
-`ef1cf42` reproduced focused `8/8`, full `180/180`, complete strict mypy `83`
-files, compile, scope `305/310` production and `299/320` tests, and clean state.
-It also reproduced foreign observed add paths/auth returning
-`REGISTRATION_VERIFIED`, `alreadyAdded=true` causing removal of a pre-existing
-marketplace, plugin-add timeout skipping plugin compensation, and one
-version-only eligible value authorizing a different installation. The committed
-Git test does not read porcelain and the ticket did not enumerate its required
-fault cells or carry the mandatory language field. Review CR-92 through CR-97
-therefore concludes `BLOCKED / TICKET_DEFECT`. Python 3.11 is restored from the
-approved SPEC, but no correction is dispatched until a finite readable closure
-revision resolves the remaining ceiling conflict. The same 05B branch,
-allocation and receipt remain inactive evidence; 05C/04 remain blocked.
-
-Control-plane refreeze now replaces the defective closure with
-`CLOSURE-LOCAL-INSTALL-T05B-02`. The acceptance surface is finite M01–M18:
-request-bound fresh admission; exact marketplace/plugin add DTOs entering the
-manifest boundary; a distinct relative-only receipt; separate typed
-`NOT_ATTEMPTED`, `MAY_EXIST`, `OWNED` and `PREEXISTING` journal states; exhaustive
-plugin-then-marketplace compensation; fresh marketplace, plugin and installed
-path absence; and truthful byte-plus-porcelain isolation. Python 3.11 is
-explicit. This refreeze historically replaced the earlier `310 / 320` dispatch
-constraint with `460 / 540` to prevent semicolon compression. Terminal review
-`CR-98` later supersedes both numeric constraints: line counts are informational
-only and cannot become a 05C acceptance or quality gate.
-
-This refreeze is documentation-only. Implementation `5e919069`, handoff
-`ef1cf42`, the sole 05B branch, allocation and receipt remain inactive evidence.
-No message is sent to the implementation task. A future explicit owner dispatch
-may create one revision-02 correction handoff on the same task/worktree/branch;
-the next independent review is terminal and another automatic correction is
-not allowed. At that point Ticket 05C awaited a separate refreeze after 05B
-integration; terminal review `CR-98` later removes numeric line limits from that
-future scope decision. Ticket 04 remains dependency-waiting.
-
-The owner then explicitly authorized dispatch. Revision-02 correction handoff
-`hnd_local_orchestration_install_05b_corr1_r02_20260810` is bound to control
-refreeze `a7dd4a4`, initial review `f02704f`, retained allocation/receipt and
-correlation `corr-local-orchestration-install-05b-corr1-r02-20260810`.
-Read-only preflight confirms the implementation task is idle and its sole
-worktree is clean on the existing 05B branch at `ef1cf42`. This activates only
-one additive correction for B1–B5/M01–M18 followed by one docs-only handoff and
-one terminal independent review. No new branch/worktree, 05C/04 work, live
-Codex mutation, target-project access, merge, push, deployment or schedule is
-authorized.
-
-Terminal revision-02 review of implementation `1a269411` and handoff `ed74589`
-returns `CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED`. The authoritative
-review batches `CR-98..CR-104`; other planning artifacts reference those IDs
-instead of copying the finding bodies. Pre-command failures still acquire
-deletion authority, absence checks short-circuit, resolved effects remain in
-retry authority, removal path proof is incomplete, and the committed eight-test
-suite does not execute the claimed M04–M16 matrix. The 05B lane is paused with
-its existing branch/allocation/receipt retained as inactive evidence. Numeric
-line ceilings were a control-plane ticket defect, never an owner requirement,
-and are no longer acceptance or quality gates. No additional correction,
-integration, 05C/04 dispatch, branch/worktree, live mutation or schedule is
-authorized before architecture/ticket convergence.
+- Ticket / closure: `05b-codex-cli-transactional-registration` /
+  `CLOSURE-LOCAL-INSTALL-T05B-02`.
+- Event chain: `PRG-20260810-095 -> PRG-20260810-097 -> PRG-20260810-098 ->
+  PRG-20260810-099 -> PRG-20260810-101`.
+- Implementation return: `1a269411` / `ed74589`.
+- Authoritative review: control commit `24227ac`, findings `CR-98..CR-104`.
+- Current state: `CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED`; 05B is
+  paused and 05C/04 remain dependency-waiting.

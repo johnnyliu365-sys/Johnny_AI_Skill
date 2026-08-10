@@ -110,72 +110,14 @@ docs-only handoff. The only rollback is B3/B4 exact current-attempt
 compensation. A compensation proof failure remains blocked and retryable; it
 does not authorize manual cache deletion, another plugin removal or live repair.
 
-## Historical revision-01 implementation handoff
+## Authority and review references
 
-| Field | Value |
+| Stage | Identifiers / state |
 | --- | --- |
-| Handoff | `hnd_local_orchestration_install_05b_20260810` |
-| Allocation | `aln_local_orchestration_install_05b_20260810` |
-| Receipt | `rcpt_local_orchestration_install_05b_20260810` |
-| Correlation / question | `corr-local-orchestration-install-05b-20260810` / `q-local-orchestration-install-05b-20260810` |
-| Authority | Owner instruction `可以開始派工` on 2026-08-10 plus approved program authority `PRG-20260809-042`; consumed by closure revision 01 only |
-| Required baseline | Dispatch `f68d9d6`; branch `codex/implementation-codex-cli-registration-05b` |
-| Preserved return | Implementation `5e919069`; docs-only handoff `ef1cf42`; both are immutable review evidence |
-| Current status | Inactive. It does not authorize revision-02 correction work. |
-| Not granted | Ticket 05C/04 source, public removal/replay, live Codex mutation, broad clear/delete, optional/`None` port, `Any`, `type: ignore`, hidden host/config/cache write, target-project access, network/login/Secret, packaging, merge, push, release, deployment or schedule |
-
-## Revision-02 correction and handoff boundary
-
-- Refreezing this ticket is documentation work only. It creates no correction
-  handoff and sends no instruction to the implementation task.
-- A future explicit owner dispatch may reactivate the retained allocation and
-  receipt only through a new revision-02 correction handoff bound to the exact
-  control-plane refreeze commit and branch HEAD `ef1cf42` after clean-state
-  readback.
-- That handoff must keep task `019fcc9c-f34f-7d53-a313-c70c90bf3245`, the sole
-  implementation worktree and branch
-  `codex/implementation-codex-cli-registration-05b`. No new branch/worktree,
-  reset, amend, force operation or history replacement is permitted.
-- Exactly one additive source/test correction commit and one separate docs-only
-  handoff may be returned. The following independent review is terminal for
-  revision 02: failure pauses the lane without another automatic dispatch.
-
-### Active revision-02 correction handoff
-
-| Field | Value |
-| --- | --- |
-| Owner dispatch | Explicit `可以派工` on 2026-08-10; program authority `PRG-20260809-042` |
-| Control baseline | Refreeze commit `a7dd4a45e337d93b3c78d9f4c0d6fcac1ea76948`; initial review `f02704f07d5ecca65fd97565c71be7d834f9ea66` |
-| Handoff | `hnd_local_orchestration_install_05b_corr1_r02_20260810` |
-| Retained allocation / receipt | `aln_local_orchestration_install_05b_20260810` / `rcpt_local_orchestration_install_05b_20260810` |
-| Correlation | `corr-local-orchestration-install-05b-corr1-r02-20260810` |
-| Exact lane | Task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; sole implementation worktree; branch `codex/implementation-codex-cli-registration-05b`; required clean starting HEAD `ef1cf42bc0c6475b19c6d430d056fb7983d4b33c` |
-| Closure | `CLOSURE-LOCAL-INSTALL-T05B-02`, B1–B5 and M01–M18; close CR-93 through CR-97 without changing the approved SPEC |
-| Return | One additive implementation correction commit, full revision-02 evidence, then one separate docs-only handoff commit; typed `BLOCKED` or `CHANGE_DETECTED` otherwise |
-| Terminal rule | The following independent review is terminal. No automatic second correction, new branch/worktree, reset, amend, force, merge, push, deployment or schedule. |
-
-## Initial independent review result
-
-Review `doc/reviews/local-orchestration-installer/05b-codex-cli-transactional-registration-code-review.md`
-records `BLOCKED / TICKET_DEFECT` for implementation `5e919069` and handoff
-`ef1cf42`. CR-92 through CR-97 are batched against B1–B5. The submitted green,
-full regression, strict type, compile and numerical scope results reproduce,
-but foreign observed add fields can produce success, cloned admission can
-authorize another installation, and compensation can delete a pre-existing
-marketplace while skipping a possibly-created plugin after timeout.
-
-Closure revision 02 above resolves CR-92 by fixing Python 3.11 and enumerating
-the finite M01–M18 matrix. The former numeric ceiling was a control-plane
-ticket defect and is not an acceptance gate. Revision 02 does not close CR-93 through CR-97;
-those remain the exact implementation/evidence correction scope if the owner
-later dispatches revision 02. The existing branch, allocation and receipt remain
-inactive evidence until then; no new branch or worktree is authorized.
-
-## Terminal revision-02 review outcome
-
-Implementation `1a26941176b4ce3c122c41644817e3429cb7c8a5` and docs-only
-handoff `ed74589c12072d5d70e168735e6ccc440c681ced` were independently reviewed.
-The result is `CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED`; findings
-`CR-98` through `CR-104` are recorded once in the authoritative review report.
-This terminal result pauses the lane and grants no additional correction,
-branch, worktree, integration, Ticket 05C/04 work or schedule.
+| Revision 01 dispatch | `PRG-20260810-095`; `hnd_local_orchestration_install_05b_20260810`; `aln_local_orchestration_install_05b_20260810`; `rcpt_local_orchestration_install_05b_20260810`; `corr-local-orchestration-install-05b-20260810`; branch `codex/implementation-codex-cli-registration-05b` |
+| Revision 01 review | `5e919069`; `ef1cf42`; `PRG-20260810-097`; `f02704f`; `CR-92..CR-97` |
+| Revision 02 refreeze | `PRG-20260810-098`; `a7dd4a4`; `CLOSURE-LOCAL-INSTALL-T05B-02` |
+| Revision 02 correction | `PRG-20260810-099`; `hnd_local_orchestration_install_05b_corr1_r02_20260810`; retained allocation/receipt above; `corr-local-orchestration-install-05b-corr1-r02-20260810`; starting HEAD `ef1cf42` |
+| Terminal return | Implementation `1a26941176b4ce3c122c41644817e3429cb7c8a5`; handoff `ed74589c12072d5d70e168735e6ccc440c681ced` |
+| Authoritative review | `PRG-20260810-101`; control commit `24227ac`; `doc/reviews/local-orchestration-installer/05b-codex-cli-transactional-registration-code-review.md`; `CR-98..CR-104` |
+| Current state | `CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED`; all prior dispatch authority is consumed/inactive; no automatic continuation |

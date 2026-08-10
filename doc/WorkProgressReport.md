@@ -169,7 +169,7 @@
 - Ticket commit：`cb2b3e4`（`feat: package detachable project takeover plugin`）。
 - 未修改邊界：沒有安裝 plugin、寫入 `~/.codex`、修改公司專案、啟動 MCP／App／hook、使用 Secret、呼叫外部 Provider 或部署。
 
-## PRG-20260802-005 — Claude Code Plugin Distribution POC
+## PRG-20260802-010 — Claude Code Plugin Distribution POC
 
 | Field | Value |
 | --- | --- |
@@ -1021,263 +1021,143 @@
 | Field | Value |
 | --- | --- |
 | Router event | `ACTION_COMPLETED → REVIEW / VALIDATION_FAILED → TICKET_REPAIR` |
-| Reviewed return | Branch `codex/implementation-codex-cli-host-adapter-05`; implementation `0c2ab95`; docs-only handoff `39936fc`; initial closure `CLOSURE-LOCAL-INSTALL-T05-01` |
-| Green baseline | Focused 15/15, full 171/171, strict mypy 82 files and diff check passed, but the committed assertions are narrower than K1–K8. |
-| Blocking findings | CR-73 ticket omits the required marketplace source contract; CR-74 uses incompatible commands/JSON and omits registration key; CR-75 leaks boundary failures; CR-76 leaves post-add residue; CR-77 reports absent with marketplace residue; CR-78 accepts foreign absence evidence; CR-79 lacks the claimed complete red/reverse/Git matrix. |
-| Independent probes | `None` and invalid UTF-8 raised; NaN timeout was accepted; official marketplace JSON blocked as malformed; stale post-add verification made zero cleanup calls; removal retry returned `ABSENT` with marketplace present; foreign installation/path evidence returned `ABSENT`. |
-| CLI authority | Current official Codex CLI command reference plus owner-authorized `PRG-20260809-077`; the control shell's WindowsApps executable remained access-denied, so no second live mutation was attempted. |
-| Finding route | `CHANGES_REQUESTED`; repair Ticket 05 and re-freeze its closure, then resume the same owner/worktree/branch/allocation/receipt with additive commits. No new branch/worktree, reset, amend, force, merge, push, deployment, schedule or Ticket-04 implementation. |
-| Review report | `doc/reviews/local-orchestration-installer/05-codex-cli-host-adapter-code-review.md` |
+| References | Branch `codex/implementation-codex-cli-host-adapter-05`; implementation `0c2ab95`; handoff `39936fc`; closure `CLOSURE-LOCAL-INSTALL-T05-01`; review `dac99fd`; `CR-73..CR-79`; report `doc/reviews/local-orchestration-installer/05-codex-cli-host-adapter-code-review.md`; result `CHANGES_REQUESTED / TICKET_REPAIR` |
 
 ## PRG-20260809-080 — Ticket 05 corrected closure and same-lane handoff
 
 | Field | Value |
 | --- | --- |
 | Router event | `TICKET_REPAIR_COMPLETED → CORRECTION_HANDOFF → IMPLEMENT / AUTO_CONTINUE` |
-| Review / closure | Initial review `dac99fd`; corrected `CLOSURE-LOCAL-INSTALL-T05-02` retains K1–K8 and adds finite repair clauses R1–R8. |
-| Ticket repair | Added the missing strictly proved installer-owned marketplace source, official command/JSON shapes, canonical receipt identity, finite root/port boundaries, attempt cleanup, conjunctive absence, exact returned-proof consumption and truthful Git/reverse evidence. No SPEC or requirement changed. |
-| Retained lane | Handoff `hnd_local_orchestration_install_05_cr1_20260809`; same task `019fcc9c-f34f-7d53-a313-c70c90bf3245`, implementation worktree, branch `codex/implementation-codex-cli-host-adapter-05`, allocation `aln_local_orchestration_install_05_20260809` and receipt `rcpt_local_orchestration_install_05_20260809`. |
-| Correction scope | Same four production files and one test, final net ceilings `400 / 450`; additive commit(s) on the current branch followed by one docs-only correction handoff. Clear only the reviewer-generated `__pycache__/` in the owner worktree. |
-| Required evidence | CR-73..CR-79 direct probes, K1–K8/R1–R8 exact red/green, official-schema fixtures, full regression, strict mypy, no-bytecode compile, source/scope checks, actual existing/empty Git byte/porcelain invariance and isolated reverse mutations. |
+| References | Review `dac99fd`; closure `CLOSURE-LOCAL-INSTALL-T05-02`; handoff `hnd_local_orchestration_install_05_cr1_20260809`; task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; branch `codex/implementation-codex-cli-host-adapter-05`; allocation `aln_local_orchestration_install_05_20260809`; receipt `rcpt_local_orchestration_install_05_20260809` |
 
 ## PRG-20260809-081 — Ticket 05 correction review requires convergence
 
 | Field | Value |
 | --- | --- |
 | Router event | `ACTION_COMPLETED → CORRECTION_REVIEW / VALIDATION_FAILED → CONVERGENCE_REVIEW_REQUIRED` |
-| Reviewed return | Same branch `codex/implementation-codex-cli-host-adapter-05`; implementation commits `c2ea3f8`, `3f6c41a`, `13d02de`; intermediate docs `09b4824`; final docs handoff `4c9525b`; clean implementation worktree. |
-| Reproduced green evidence | Focused `15/15`; full `171/171`; strict mypy `82` files; five-file in-memory compile; source sentinel and `git diff --check` pass. Independent ceiling is production `394/400` non-blank and test `205/450`. |
-| Blocking findings | CR-80 public CLI JSON fields remain incompatible and empty mutation JSON is accepted; CR-81 canonical root/source/proof binding is absent; CR-82 real timeout/filesystem failures escape; CR-83 cleanup is late and not absence-verified; CR-84 same plugin under a foreign marketplace reaches mutation; CR-85 first-red/reverse/byte-snapshot evidence is not reproducible. |
-| Independent probes | Documented marketplace-add JSON returned `MALFORMED_OUTPUT` with no cleanup; documented plugin-add JSON removed only the marketplace; documented plugin-list JSON failed validation; `{}` mutations reached `INSTALLED`; case-mismatched and `C:\foreign\JohnnyAIWorkflow\...` source proof was accepted and could yield `ABSENT`; `subprocess.TimeoutExpired` and filesystem `OSError` escaped. |
-| Review result | `CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED`. This is the single correction review allowed for `CLOSURE-LOCAL-INSTALL-T05-02`; no third implementation correction may be auto-dispatched. |
-| Control boundary | Preserve the implementation branch and SHAs as immutable evidence. No integration, new branch/worktree, Ticket-04 work, second live registration, target-project write, push, deployment or schedule. Control-plane architecture/ticket decomposition is required. |
-| Review report | `doc/reviews/local-orchestration-installer/05-codex-cli-host-adapter-code-review.md` |
-| Prohibited | New branch/worktree, reset/amend/rebase/force, second live registration, target-project write, historical-source reuse, package/Ticket-04 work, merge, push, deployment or schedule action. |
+| References | Branch `codex/implementation-codex-cli-host-adapter-05`; implementations `c2ea3f8`, `3f6c41a`, `13d02de`; handoffs `09b4824`, `4c9525b`; review `593e33a`; `CR-80..CR-85`; report `doc/reviews/local-orchestration-installer/05-codex-cli-host-adapter-code-review.md`; result `CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED` |
 
 ## PRG-20260810-082 — Ticket 05 convergence decomposition and Ticket 05A dispatch
 
 | Field | Value |
 | --- | --- |
 | Router event | `CONVERGENCE_REVIEW_REQUIRED → TICKET_DECOMPOSITION → TICKET_DISPATCH_REQUIRED → IMPLEMENT / AUTO_CONTINUE` |
-| Owner authority | Current owner instruction `開始拆` on 2026-08-10, following the earlier instruction to continue under the documented workflow; bounded continuation record `PRG-20260809-042` remains applicable within the approved installer SPEC. |
-| Parent closure | Ticket 05 becomes `SUPERSEDED / CONVERGENCE_DECOMPOSED`. Branch `codex/implementation-codex-cli-host-adapter-05`, commits `0c2ab95`, `c2ea3f8`, `3f6c41a`, `13d02de`, handoffs `39936fc`, `09b4824`, `4c9525b` and reviews `dac99fd`, `593e33a` remain immutable evidence. Parent allocation is released; parent receipt is closed and cannot authorize a child. |
-| Architecture split | 05A: official CLI/list contracts, canonical source proof, collisions and finite zero-mutation preflight. 05B: official add contracts, exact receipt, effect journal and verified compensation. 05C: official remove contracts, strict receipt, conjunctive absence, replay and final lifecycle support. Evidence is bound to each vertical ticket. |
-| Ceiling | Relative to the decomposition baseline: 05A cumulative production/test `170/180`; 05A+05B `310/320`; final 05A–05C retains parent `400/450` non-blank-line ceiling. Rejected parent source/tests cannot be copied, cherry-picked or imported. |
-| Sole selected ticket | `05a-codex-cli-preflight-contract`; closure `CLOSURE-LOCAL-INSTALL-T05A-01` A1–A5; state `IN_PROGRESS / DISPATCH_READY`. Tickets 05B, 05C and 04 remain `PLANNED / DEPENDENCY_WAIT`. |
-| New handoff / allocation | `hnd_local_orchestration_install_05a_20260810` / `aln_local_orchestration_install_05a_20260810` |
-| New receipt / correlation | `rcpt_local_orchestration_install_05a_20260810` / `corr-local-orchestration-install-05a-20260810` / `q-local-orchestration-install-05a-20260810`; exact owner task `019fcc9c-f34f-7d53-a313-c70c90bf3245`, model `gpt-5.6-luna`, reasoning `xhigh`. |
-| Worktree / branch | Reuse only `C:\Users\<user>\Desktop\AI控制工作workflow-implementation`. Preserve the rejected parent branch reference, then create exactly one child new-ticket branch `codex/implementation-codex-cli-preflight-05a` from the control decomposition commit. No second worktree or concurrent branch. |
-| Granted scope | Ticket-05A files only; recorded ports, no live registration; one implementation commit, complete verification and one docs-only handoff. The implementation owner makes no review/integration/next-ticket decision. |
-| Prohibited | Parent-source reuse, Ticket 05B/05C/04 source, second live registration, hidden host config/cache write, target-project access, Secret, reset/amend/rebase/force, merge, push, release, deployment or schedule. |
+| References | Authority `PRG-20260809-042`; parent Ticket 05 `SUPERSEDED / CONVERGENCE_DECOMPOSED`; child ticket `05a-codex-cli-preflight-contract`; closure `CLOSURE-LOCAL-INSTALL-T05A-01`; handoff `hnd_local_orchestration_install_05a_20260810`; allocation `aln_local_orchestration_install_05a_20260810`; receipt `rcpt_local_orchestration_install_05a_20260810`; correlation `corr-local-orchestration-install-05a-20260810`; task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; branch `codex/implementation-codex-cli-preflight-05a` |
 
 ## PRG-20260810-084 - Ticket 05A independent review
 
 | Field | Value |
 | --- | --- |
 | Router event | `REVIEW_HANDOFF -> CODE_REVIEW -> CHANGES_REQUESTED -> IMPLEMENT / AUTO_CONTINUE` |
-| Reviewed boundary | Baseline `d90b69e`; branch `codex/implementation-codex-cli-preflight-05a`; implementation `88f7aae`; docs-only handoff `67dc1db`; closure `CLOSURE-LOCAL-INSTALL-T05A-01` A1..A5 |
-| Independent green evidence | Focused `9/9`; full `165/165`; strict mypy `82` files; in-memory compile, source sentinel and `git diff --check` passed. Independent scope is `164` added / `2` removed production non-blank lines, net `162 / 170`; test `128 / 180`. Worktree remained clean. |
-| Review result | `CHANGES_REQUESTED`: CR-86 official `marketplaceSource` and strict version boundary; CR-87 exact canonical absolute source binding; CR-88 collision across both installed and available plugins; CR-89 truthful complete evidence/reverse matrix. |
-| Adversarial evidence | Documented optional `marketplaceSource` is rejected on both list DTOs; arbitrary text containing `9.9.9` is accepted as Codex; `C:\FOREIGN\marketplaces\probe-market` returns `ELIGIBLE`; a same-name plugin in `available` also returns `ELIGIBLE`. |
-| Convergence | One batched review only. Same ticket/task/worktree/branch/allocation/receipt; exactly one additive correction is allowed. No new branch/worktree, integration or next-ticket dispatch. If the frozen `170 / 180` closure cannot fit, implementation must return typed `BLOCKED / TICKET_DEFECT`. |
+| References | Baseline `d90b69e`; branch `codex/implementation-codex-cli-preflight-05a`; implementation `88f7aae`; handoff `67dc1db`; review `1cc4e99`; closure `CLOSURE-LOCAL-INSTALL-T05A-01`; `CR-86..CR-89`; result `CHANGES_REQUESTED` |
 
 ## PRG-20260810-085 - Ticket 05A single correction dispatch
 
 | Field | Value |
 | --- | --- |
 | Router event | `CHANGES_REQUESTED -> CORRECTION_HANDOFF -> IMPLEMENT / AUTO_CONTINUE` |
-| Review authority | Formal review commit `1cc4e99`; CR-86..CR-89; approved SPEC and closure `CLOSURE-LOCAL-INSTALL-T05A-01` remain unchanged |
-| Identity | New correction handoff `hnd_local_orchestration_install_05a_corr1_20260810`; retained allocation `aln_local_orchestration_install_05a_20260810`; retained receipt `rcpt_local_orchestration_install_05a_20260810`; correlation `corr-local-orchestration-install-05a-corr1-20260810` |
-| Lane | Same implementation task, model/reasoning, sole implementation worktree and branch `codex/implementation-codex-cli-preflight-05a` at `67dc1db`; additive commits only. No branch/worktree creation. |
-| Correction closure | CR-86 official optional source DTO and strict version; CR-87 canonical absolute source binding/path matrix; CR-88 installed plus available collision; CR-89 truthful tests and reproducible reverse evidence. One correction implementation commit plus one docs-only handoff. |
-| Ceiling / block | Cumulative production/test remains `170 / 180`. If complete A1..A5 cannot fit, return typed `BLOCKED / TICKET_DEFECT`; do not compress away a typed contract, relax strictness or expand files/scope. |
-| Not authorized | Integration, Ticket 05B/05C/04, live Codex mutation, host cache/config mutation, target-project access, Secret, merge, push, release, deployment or schedule |
+| References | Review `1cc4e99`; `CR-86..CR-89`; closure `CLOSURE-LOCAL-INSTALL-T05A-01`; handoff `hnd_local_orchestration_install_05a_corr1_20260810`; allocation `aln_local_orchestration_install_05a_20260810`; receipt `rcpt_local_orchestration_install_05a_20260810`; correlation `corr-local-orchestration-install-05a-corr1-20260810`; branch HEAD `67dc1db` |
 
 ## PRG-20260810-087 - Ticket 05A correction review
 
 | Field | Value |
 | --- | --- |
 | Router event | `CORRECTION_COMPLETED -> CODE_REVIEW -> CHANGES_REQUESTED -> CONVERGENCE_REVIEW_REQUIRED / WAIT_FOR_HUMAN` |
-| Boundary | Same 05A branch; correction implementation `b6594b9`; docs-only handoff `59c3f96`; review closure A1..A5 and CR-86..CR-89 |
-| Independent green evidence | Focused `13/13`; full `169/169`; strict mypy `82` files; compile, source sentinel and `git diff --check` passed. Independent cumulative production is net `167 / 170`; test `158 / 180`. Worktree is clean. |
-| Closed | CR-88: exact `--available --json` command and collision checks across installed plus available entries. Declared A4 boundary failures remain finite. |
-| Still blocking | CR-86: explicit `marketplaceSource: null` is accepted on both official DTOs and the parsed version value retains the `codex-cli ` command prefix. CR-87: a relative `LOCALAPPDATA` expansion admits a relative proof and returns `ELIGIBLE`. CR-89: the claimed complete official/root matrix omits these cells. |
-| Convergence | This was the one permitted correction review. No third automatic correction, new branch/worktree, integration or next ticket is authorized. Owner/control-plane convergence choice is required before further implementation. |
+| References | Implementation `b6594b9`; handoff `59c3f96`; review `277a0d0`; closure `CLOSURE-LOCAL-INSTALL-T05A-01`; `CR-86..CR-89`; result `CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED` |
 
 ## PRG-20260810-088 - Ticket 05A owner convergence override and final correction dispatch
 
 | Field | Value |
 | --- | --- |
 | Router event | `CONVERGENCE_REVIEW_REQUIRED -> OWNER_SCOPED_OVERRIDE -> CORRECTION_HANDOFF -> IMPLEMENT / AUTO_CONTINUE` |
-| Owner authority | Current instruction to inspect correction `b6594b9` / handoff `59c3f96` and re-dispatch according to the verified result. This is an explicit single-use override of the one-correction limit, not a general workflow change. |
-| Independent reconfirmation | Focused `13/13`, full `169/169`, strict mypy `82` files and in-memory compile pass. Direct probes reproduce explicit-null acceptance on both DTOs, prefixed `CodexCliVersion.value`, and `ELIGIBLE` under relative `LOCALAPPDATA`. Production/test cumulative net is `167 / 158`; branch and both worktrees are clean. |
-| Decision | Keep frozen A1–A5, Ticket 05A, task, sole worktree, branch, allocation and receipt. Authorize one final additive repair only; no new branch/worktree. Current implementer is `gpt-5.6-terra` with `xhigh`. |
-| Handoff / identity | `hnd_local_orchestration_install_05a_corr2_owner_20260810`; retained `aln_local_orchestration_install_05a_20260810` / `rcpt_local_orchestration_install_05a_20260810`; correlation/question `corr-local-orchestration-install-05a-corr2-owner-20260810` / `q-local-orchestration-install-05a-corr2-owner-20260810`. |
-| Exact repair | Reject present-null optional sources while allowing absence; parse only the semantic version capture; prove the expanded canonical root and proof are absolute Windows paths before exact equality; commit the omitted cells and truthful reverse evidence. CR-88/A3 and A4 must remain green. |
-| Revised ceiling | 05A cumulative production/test `180 / 180`; final cluster remains `400 / 450`. Readability and named strong types take precedence over line compression. |
-| Required return | One final additive implementation commit from `59c3f96`, full verification, then one docs-only handoff. The next independent review is terminal: `APPROVED` or `BLOCKED / SUPERSEDE_REQUIRED`; no further correction, integration, next ticket, live Codex mutation, target-project access, push, deployment or schedule. |
+| References | Input `b6594b9` / `59c3f96`; dispatch `83e34c3`; handoff `hnd_local_orchestration_install_05a_corr2_owner_20260810`; allocation `aln_local_orchestration_install_05a_20260810`; receipt `rcpt_local_orchestration_install_05a_20260810`; correlation `corr-local-orchestration-install-05a-corr2-owner-20260810` |
 
 ## PRG-20260810-089 - Ticket 05A terminal review blocked
 
 | Field | Value |
 | --- | --- |
 | Router event | `FINAL_CORRECTION_COMPLETED -> CODE_REVIEW -> VALIDATION_FAILED -> BLOCKED / SUPERSEDE_REQUIRED` |
-| Boundary | Control `83e34c3`; same 05A branch; final implementation `97ab31c`; docs-only handoff `4fc81a5`; closure `CLOSURE-LOCAL-INSTALL-T05A-01` A1..A5 |
-| Passing implementation evidence | Focused `16/16`; full `172/172`; strict mypy `82` files; five-file in-memory compile; source sentinel and diff check; cumulative production/test net `177 / 171`; exact null/version/path/authority/collision probes and five isolated reverse mutations passed. A1–A4 are closed. |
-| CR checks | Path-prefix class 1 and authority-bypass class 3 pass. Test-truth class 7 fails because delivery evidence contradicts observed hidden state. Existing and empty temporary Git byte/porcelain isolation tests pass. |
-| Blocking evidence | CR-90/A5: implementation `.mypy_cache` files were rewritten at `17:17:37Z` and `17:18:44Z` inside the owner turn `17:15:44Z–17:19:44Z`, violating the no-hidden-cache boundary and contradicting the no-hidden-state-write handoff claim. CR-91/A5: branch handoff heading `PRG-20260810-087` duplicates the canonical control correction-review ID. |
-| Terminal decision | `BLOCKED / SUPERSEDE_REQUIRED`. No further same-ticket correction, implementation dispatch, new branch/worktree or reuse of the allocation/receipt is authorized. 05B, 05C and 04 remain dependency-waiting. |
-| Non-actions | Reviewer did not alter or clean the implementation worktree and performed no integration, push, deployment, schedule, live Codex mutation, target-project action, network/login or Secret handling. |
+| References | Control `83e34c3`; implementation `97ab31c`; handoff `4fc81a5`; review `ea372b7`; closure `CLOSURE-LOCAL-INSTALL-T05A-01`; `CR-90..CR-91`; result `BLOCKED / SUPERSEDE_REQUIRED` |
 
 ## PRG-20260810-090 - Ticket 05A evidence-only cleanup authorization
 
 | Field | Value |
 | --- | --- |
 | Router event | `BLOCKED -> OWNER_SCOPED_OVERRIDE -> EVIDENCE_CLEANUP_HANDOFF -> IMPLEMENT / AUTO_CONTINUE` |
-| Owner authority | Explicit one-time authorization on 2026-08-10 for only cache cleanup and docs evidence repair after terminal review `ea372b7` |
-| Handoff / identity | `hnd_local_orchestration_install_05a_evidence_cleanup_20260810`; `aln_local_orchestration_install_05a_evidence_cleanup_20260810`; `rcpt_local_orchestration_install_05a_evidence_cleanup_20260810`; correlation/question `corr-local-orchestration-install-05a-evidence-cleanup-20260810` / `q-local-orchestration-install-05a-evidence-cleanup-20260810` |
-| Exact lane | Same task `019fcc9c-f34f-7d53-a313-c70c90bf3245`, sole worktree `C:\Users\<user>\Desktop\AI控制工作workflow-implementation`, branch `codex/implementation-codex-cli-preflight-05a`, exact HEAD `4fc81a5` |
-| Allowed cleanup | Resolve and remove only generated `.mypy_cache`, `.pytest_cache` and `__pycache__` below the assigned implementation worktree. Strict mypy must use a unique OS-temporary cache that is safely removed after verification. |
-| Allowed tracked change | Only `doc/WorkProgressReport.md`: change branch-local duplicate final-handoff heading `PRG-20260810-087` to reserved `PRG-20260810-091`, correct the no-hidden-state claim, and append exact cleanup/ignored-state evidence. One additive docs-only commit only. |
-| Required proof | Focused/full tests, strict mypy, in-memory compile, `git diff --check`, no source/test diff, clean porcelain, and no generated cache in ignored-state readback. Return one docs-only SHA; no review or integration decision. |
-| Prohibited | Source/test edit, implementation commit, amend/reset/rebase/force/cherry-pick, branch/worktree change, live Codex/target-project/host-config action, merge, push, release, deployment, schedule or dependent ticket |
+| References | Review `ea372b7`; handoff `hnd_local_orchestration_install_05a_evidence_cleanup_20260810`; allocation `aln_local_orchestration_install_05a_evidence_cleanup_20260810`; receipt `rcpt_local_orchestration_install_05a_evidence_cleanup_20260810`; correlation `corr-local-orchestration-install-05a-evidence-cleanup-20260810`; task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; branch `codex/implementation-codex-cli-preflight-05a`; HEAD `4fc81a5` |
 
 ## PRG-20260810-092 - Ticket 05A evidence repair approved
 
 | Field | Value |
 | --- | --- |
 | Router event | `EVIDENCE_CLEANUP_COMPLETED -> CODE_REVIEW -> VALIDATION_PASSED -> APPROVED / READY_TO_MERGE` |
-| Boundary | Control authority `9d3fd4d`; implementation `97ab31c`; repaired docs-only handoff `fb755268`; closure `CLOSURE-LOCAL-INSTALL-T05A-01` A1-A5 |
-| Commit scope | `fb755268` is an additive child of `4fc81a5` and changes only branch `doc/WorkProgressReport.md`; no source, test, branch/worktree or history rewrite occurred. |
-| Independent evidence | Focused `16/16`; full `172/172`; strict mypy `82` files with `--no-incremental` and a safely removed unique OS-temporary cache; four-file in-memory compile; AST source sentinel and `git diff --check` pass. Tracked/ignored status and generated-cache candidate readbacks are empty. |
-| Finding closure | CR-90/A5 closed: the earlier hidden cache write is truthfully recorded, allowed caches are removed, and cache-free verification reproduces. CR-91/A5 closed: branch handoff is uniquely `PRG-20260810-091`, distinct from canonical control `PRG-20260810-087`. A1-A4 remain closed. |
-| Harness diagnostics | One reviewer regex command and one case-insensitive literal sentinel were invalid/overbroad; both were isolated reviewer harness defects. External temp cleanup succeeded, and the final AST sentinel passed without repository state. |
-| Decision / non-actions | `APPROVED / READY_TO_MERGE`. This review did not integrate, dispatch 05B/05C/04, mutate live Codex or a target project, push, release, deploy, use network/login/Secret, or create a schedule. |
+| References | Authority `9d3fd4d`; implementation `97ab31c`; repaired handoff `fb755268`; closure `CLOSURE-LOCAL-INSTALL-T05A-01`; `CR-90..CR-91`; result `APPROVED / READY_TO_MERGE` |
 
 ## PRG-20260810-093 - Ticket 05A guarded integration halted
 
 | Field | Value |
 | --- | --- |
 | Router event | `REVIEW_APPROVED -> GUARDED_INTEGRATION_PREFLIGHT -> CONFLICT_DETECTED -> HALT / OWNER_RESOLUTION_REQUIRED` |
-| Exact heads | Common base `d90b69e`; control review `d54c0bd`; implementation branch `fb755268` |
-| Conflict evidence | Non-mutating `git merge-tree` reports both control and implementation sides appended distinct valid records to `doc/WorkProgressReport.md` after the same baseline line. It emits conflict markers for that file. Production exports, `host_contracts.py`, the new adapter and its test merge cleanly. |
-| Required owner decision | Authorize an explicit recorded merge resolution that preserves both complete ledger append sets, or authorize implementation-commit-only integration while retaining branch docs as immutable external evidence. No strategy is assumed. |
-| Non-actions | No merge, cherry-pick, rebase, reset, conflict edit, implementation-worktree write, 05B dispatch, push, release, deployment, live Codex or target-project mutation was performed. |
+| References | Base `d90b69e`; control `d54c0bd`; branch `fb755268`; result `HALT / OWNER_RESOLUTION_REQUIRED` |
+
 ## PRG-20260810-083 - Ticket 05A Codex CLI contract and ownership preflight handoff
 
 | Field | Value |
 | --- | --- |
 | Router event | `ACTION_COMPLETED -> IMPLEMENTATION_COMPLETED -> REVIEW_HANDOFF` |
-| Ticket / closure | `05a-codex-cli-preflight-contract` / `CLOSURE-LOCAL-INSTALL-T05A-01` (`A1..A5`) |
-| Authority | Baseline `d90b69e`; authority `PRG-20260809-042`; handoff `hnd_local_orchestration_install_05a_20260810`; allocation `aln_local_orchestration_install_05a_20260810`; receipt `rcpt_local_orchestration_install_05a_20260810`; correlation `corr-local-orchestration-install-05a-20260810` |
-| Branch / implementation | `codex/implementation-codex-cli-preflight-05a`; implementation commit `88f7aae`. Rejected Ticket-05 branch and all prior SHAs were preserved and not used as implementation input. |
-| First red evidence | Before production source existed, the exact first collection run failed at import for `test_a1_official_shapes_and_invented_fields` with `ModuleNotFoundError` for the new adapter; the same collection failure prevented A2 `test_a2_source_variants_and_constructed_proof_fail_closed`, A3 `test_a3_market_and_same_plugin_collisions_do_not_mutate` and A4 `test_a4_declared_failures_are_finite`. No green result was claimed as red evidence. |
-| Green evidence | Focused A1..A4/A5 module: 9 passed. Full project discovery: 165 passed. Official DTO fixtures reject missing/extra/invented fields; source proofs bind installation/root/exact locator; collision preflight is zero-mutation; declared process/filesystem/timeout/encoding failures map to finite reasons. |
-| Verification | Strict mypy over library/tests passed with 82 files; in-memory compilation passed for the three authorized production files and the authorized test; source sentinel and `git diff --check` passed. Existing and empty temporary Git repositories were snapshotted for bytes and porcelain before/after the probe and remained identical. |
-| Scope / limits | Only the three authorized production files and `tests/test_codex_cli_preflight.py` changed. Production additions are 164 non-blank lines against `d90b69e` (`<=170`); the test is 128 non-blank lines (`<=180`). No mutation command, live Codex registration/removal, target-project access, hidden configuration, network, Secret, package, merge, push, deployment or schedule action occurred. |
-| Handoff | This entry is metadata-only; the separate docs-only handoff commit follows this implementation commit. Independent review/control-plane decision is not made by the implementation owner. |
+| References | Ticket `05a-codex-cli-preflight-contract`; closure `CLOSURE-LOCAL-INSTALL-T05A-01`; baseline `d90b69e`; authority `PRG-20260809-042`; handoff `hnd_local_orchestration_install_05a_20260810`; allocation `aln_local_orchestration_install_05a_20260810`; receipt `rcpt_local_orchestration_install_05a_20260810`; correlation `corr-local-orchestration-install-05a-20260810`; branch `codex/implementation-codex-cli-preflight-05a`; implementation `88f7aae`; docs handoff `67dc1db` |
 
 ## PRG-20260810-086 - Ticket 05A CR-86 to CR-89 correction handoff
 
 | Field | Value |
 | --- | --- |
-| State / authority | `CORRECTION_COMPLETED / INDEPENDENT_CORRECTION_REVIEW_PENDING`; review `1cc4e99`, correction handoff `hnd_local_orchestration_install_05a_corr1_20260810`, retained allocation and receipt `aln_local_orchestration_install_05a_20260810` / `rcpt_local_orchestration_install_05a_20260810`. |
-| Ticket / revision | `05a-codex-cli-preflight-contract`, frozen closure `CLOSURE-LOCAL-INSTALL-T05A-01` (`A1..A5`), same branch `codex/implementation-codex-cli-preflight-05a`; additive implementation correction `b6594b9f9acf1cd2d905b0614ddce23db268510c`. |
-| First-red evidence | `test_cr86_official_optional_sources_and_plain_version_are_strict` first failed because documented optional source DTO input became `MALFORMED_OUTPUT`; `test_cr87_absolute_proof_must_be_exact_canonical_root_before_lists` first errored after the former code continued into a list call instead of returning `SOURCE_MISMATCH`; `test_cr88_available_collision_blocks_with_documented_command` first observed `ELIGIBLE` for a same-name available entry. The original import-failure first-red history in PRG-083 is preserved. CR-89 adds correction evidence and makes no retroactive first-red claim. |
-| Correction | Added one strict optional `marketplaceSource` type/value DTO to both list entries while retaining the plugin-specific required source; only an exact plain Codex version form is admitted. Source proof validation now requires the exact case-sensitive expanded canonical root plus normalized locator. The complete installed and available list result is requested and both collections take part in case-insensitive collision blocking. |
-| Green / scope | Focused preflight suite `13/13`; full discovery `169/169`; strict mypy `82` files; four-file in-memory compile; source sentinel; `git diff --check`; only the three authorized production files and one authorized test changed. Cumulative nonblank deltas from `d90b69e`: production `167/170`, test `158/180`. |
-| Path and schema matrix | Official optional source absent/present, wrong-type and extra-field cells pass/fail as required. The exact-root matrix covers foreign correct suffix, root prefix/suffix, trailing separator, casing, encoded separator, traversal and constructed values; each blocks before list commands. Available-plugin collisions cover a foreign marketplace and case variation using the required available-list command. |
-| Reverse evidence | Isolated substitutions were restored after each run: renaming the marketplace DTO field made `test_cr86_official_optional_sources_and_plain_version_are_strict` fail; replacing exact-root equality with nonempty-path admission made `test_cr87_absolute_proof_must_be_exact_canonical_root_before_lists` error after an unwanted list call; dropping the available collection made `test_cr88_available_collision_blocks_with_documented_command` observe `ELIGIBLE`; remapping missing executable to filesystem failure made `test_cr89_missing_executable_has_stable_reason` fail its stable-reason assertion. Each was run with `python -B -m unittest` for its named test and then restored before the green suite. |
-| Isolation / handoff | The existing and empty temporary Git byte-plus-porcelain snapshot probe passed. No live Codex command, mutation, target-project access, network, login, Secret, cache/config write, merge, push, deployment or schedule action occurred. This is the required separate docs-only correction handoff; review and integration remain independent control-plane decisions. |
+| References | Review `1cc4e99`; handoff `hnd_local_orchestration_install_05a_corr1_20260810`; allocation `aln_local_orchestration_install_05a_20260810`; receipt `rcpt_local_orchestration_install_05a_20260810`; closure `CLOSURE-LOCAL-INSTALL-T05A-01`; branch `codex/implementation-codex-cli-preflight-05a`; implementation `b6594b9f9acf1cd2d905b0614ddce23db268510c`; docs handoff `59c3f96762d65cdc5e39f53cecffdea0428fbc16` |
 
 ## PRG-20260810-091 - Ticket 05A owner-overridden final correction handoff
 
 | Field | Value |
 | --- | --- |
-| State / authority | `FINAL_CORRECTION_COMPLETED / INDEPENDENT_TERMINAL_REVIEW_PENDING`; owner-scoped dispatch `83e34c3`, review/convergence record `277a0d0`, handoff `hnd_local_orchestration_install_05a_corr2_owner_20260810`, retained allocation and receipt `aln_local_orchestration_install_05a_20260810` / `rcpt_local_orchestration_install_05a_20260810`. |
-| Ticket / revision | `05a-codex-cli-preflight-contract`, frozen closure `CLOSURE-LOCAL-INSTALL-T05A-01` (`A1..A5`), same branch `codex/implementation-codex-cli-preflight-05a`; final additive implementation `97ab31c694db97363f61fa6f437b6decf22a1a41`. Earlier commits remain immutable evidence. |
-| Fresh red evidence | `test_final_explicit_null_marketplace_source_is_blocked` first observed `ELIGIBLE` for explicit null on each official entry kind; `test_final_version_exposes_only_semver` first found the product prefix retained in the value; `test_final_relative_expanded_root_is_blocked_before_lists` first proceeded into a list call and exhausted the recorded command input instead of returning `SOURCE_MISMATCH`. Earlier red evidence remains unchanged. |
-| Correction | A named presence validator rejects only an explicitly supplied null optional source while field absence remains valid. The version parser returns its semantic capture. Canonical source validation now requires both the expanded root and returned path to be Windows absolute before exact case-sensitive root-plus-locator equality. Existing CR-88 installed/available collision and A4 finite-error paths were retained. |
-| Green evidence | Focused preflight suite `16/16`; full discovery `172/172`; strict mypy `82` files; four-file in-memory compile; source sentinel and `git diff --check` pass. Existing and empty temporary Git repositories remained byte-plus-porcelain identical under the recorded probe. Cumulative nonblank deltas from `d90b69e`: production `177/180`, test `171/180`. |
-| Reverse evidence | Each isolated mutation was restored before the green run: disabling explicit-null presence rejection made `test_final_explicit_null_marketplace_source_is_blocked` fail with `ELIGIBLE`; returning version match group zero made `test_final_version_exposes_only_semver` fail; making Windows-absolute admission unconditional made `test_final_relative_expanded_root_is_blocked_before_lists` reach an unwanted list call. Each used its named `python -B -m unittest` command. |
-| Scope / handoff | The implementation commit changes only `host_contracts.py`, `codex_cli_adapter.py` and the authorized preflight test. This is the separate docs-only final handoff. The prior no-hidden-state assertion was false: the earlier mypy run wrote ignored project-local cache. No review, integration, live Codex mutation, target-project access, merge, push, deployment or schedule action occurred. |
-| Evidence-only authority | Control authorization `9d3fd4d`; terminal review `ea372b7`; handoff `hnd_local_orchestration_install_05a_evidence_cleanup_20260810`; allocation/receipt `aln_local_orchestration_install_05a_evidence_cleanup_20260810` / `rcpt_local_orchestration_install_05a_evidence_cleanup_20260810`; correlation/question `corr-local-orchestration-install-05a-evidence-cleanup-20260810` / `q-local-orchestration-install-05a-evidence-cleanup-20260810`. |
-| Cache cleanup evidence | Before cleanup, the only candidates resolved under the assigned worktree were `C:\Users\<user>\Desktop\AI控制工作workflow-implementation\.mypy_cache` and `C:\Users\<user>\Desktop\AI控制工作workflow-implementation\.pytest_cache`. Each leaf was validated against the allowed name set and removed with `Remove-Item -LiteralPath -Recurse -Force`; the after-candidate list was empty. |
-| Cache-free verification | With `PYTHONDONTWRITEBYTECODE=1`, `python -B -m unittest tests/test_codex_cli_preflight.py` passed `16/16` and `python -B -m unittest discover -s tests` passed `172/172`. `python -B -m mypy --strict library tests --no-incremental --cache-dir C:\Users\<user>\AppData\Local\Temp\codex-05a-mypy-4db04fb986c041248664fbb3c1bada30` passed `82` files; that validated OS-temporary directory was removed with `Remove-Item -LiteralPath -Recurse -Force` and absence was read back. Four-file in-memory compile, source sentinel and `git diff --check` passed. |
-| Final state readback | No `.mypy_cache`, `.pytest_cache` or `__pycache__` directory remained anywhere beneath the assigned worktree. `git status --porcelain` and `git status --ignored --short` were both empty before this docs-only edit; no source, test or implementation file changed. |
+| References | Dispatch `83e34c3`; review `277a0d0`; handoff `hnd_local_orchestration_install_05a_corr2_owner_20260810`; allocation `aln_local_orchestration_install_05a_20260810`; receipt `rcpt_local_orchestration_install_05a_20260810`; closure `CLOSURE-LOCAL-INSTALL-T05A-01`; branch `codex/implementation-codex-cli-preflight-05a`; implementation `97ab31c694db97363f61fa6f437b6decf22a1a41`; original handoff `4fc81a5`; evidence authority `9d3fd4d`; terminal review `ea372b7`; repaired handoff `fb755268` |
 
 ## PRG-20260810-094 - Ticket 05A integrated with ledger-preserving resolution
 
 | Field | Value |
 | --- | --- |
 | Router event | `OWNER_RESOLUTION_GRANTED -> GUARDED_INTEGRATION -> VALIDATION_PASSED -> HANDOFF / AUTO_CONTINUE` |
-| Merge identity | Merge `b22c6c4` with exact parents control `5281739` and implementation branch `fb755268`; implementation remains `97ab31c`, review `d54c0bd` |
-| Conflict resolution | The sole conflict was `doc/WorkProgressReport.md`. Resolution deleted only `<<<<<<<`, `=======` and `>>>>>>>` marker lines. Section comparison preserved all eight control ledger entries and all three implementation handoff entries exactly; source, exports and tests merged automatically. |
-| Integrated verification | Focused `16/16`; full `172/172`; strict mypy `82` files using a unique removed OS-temporary cache; four-file in-memory compile; AST source sentinel; `git diff --check`. Final tracked, ignored and `.mypy_cache`/`.pytest_cache`/`__pycache__` candidate readbacks are empty. |
-| Cleanup evidence | A pre-existing control `.mypy_cache` (created 2026-08-01; last cached files 2026-08-09) was identified during pre-commit readback, safely removed from the control worktree by exact absolute path/leaf validation, and remained absent after post-merge verification. |
-| Closure | Ticket 05A is `DONE / APPROVED / INTEGRATED`; allocation `aln_local_orchestration_install_05a_evidence_cleanup_20260810` is released and the implementation branch/worktree are retained as read-only evidence. Ticket 05B is `PLANNED / NEXT_UNBLOCKED`; this authorization created no 05B handoff, receipt or dispatch. |
-| Non-actions | No branch/worktree creation, history rewrite, push, release, deployment, live Codex mutation, target-project write, network/login/Secret use or schedule was performed. |
+| References | Merge `b22c6c4`; parents `5281739` / `fb755268`; implementation `97ab31c`; review `d54c0bd`; Ticket 05A `DONE / APPROVED / INTEGRATED` |
 
 ## PRG-20260810-095 - Ticket 05B transactional registration dispatch
 
 | Field | Value |
 | --- | --- |
 | Router event | `OWNER_DISPATCH_GRANTED -> TICKET_SELECTED -> IMPLEMENTATION_HANDOFF -> IMPLEMENT / AUTO_CONTINUE` |
-| Dependency / authority | Ticket 05A is independently approved and integrated by `b22c6c4`; owner instruction `可以開始派工` on 2026-08-10 plus approved program authority `PRG-20260809-042` selects only Ticket 05B |
-| Ticket / closure | `05b-codex-cli-transactional-registration` / `CLOSURE-LOCAL-INSTALL-T05B-01` (`B1..B5`) |
-| Handoff identity | `hnd_local_orchestration_install_05b_20260810`; allocation `aln_local_orchestration_install_05b_20260810`; receipt `rcpt_local_orchestration_install_05b_20260810`; correlation/question `corr-local-orchestration-install-05b-20260810` / `q-local-orchestration-install-05b-20260810` |
-| Owner / worktree | Task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; `gpt-5.6-terra` / `xhigh`; sole `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` worktree; new branch `codex/implementation-codex-cli-registration-05b` from the exact control dispatch commit |
-| Preflight | Before switching, require branch `codex/implementation-codex-cli-preflight-05a` at `fb755268`, tracked/ignored status empty and no `.mypy_cache`, `.pytest_cache` or `__pycache__`; preserve the branch and all earlier evidence. Any mismatch returns typed `BLOCKED`. |
-| Authorized implementation | Only B1–B5. Use independently integrated 05A contracts; production is limited to the 05A files plus `host_lifecycle.py`, the only new test is `test_codex_cli_registration.py`, and cumulative nonblank ceilings are production/test `310 / 320`. Record every zero-exit current-attempt effect before parsing, bind success to exact receipt/manifest proof, and verify exact plugin-then-marketplace compensation plus path absence. |
-| Return / verification | One implementation commit plus one separate docs-only handoff commit; first-red/green and reverse evidence; focused/full tests; strict mypy with a unique removed OS-temporary cache; in-memory compile; source/scope/line checks; byte+porcelain Git isolation; final tracked/ignored/generated-cache absence. Return typed `BLOCKED` or `CHANGE_DETECTED` with concrete evidence otherwise. |
-| Prohibited | Historical rejected source reuse, public removal/replay, broad clear/delete, optional/`None` ports, `Any`, `type: ignore`, hidden host/config/cache write, live Codex mutation, target-project access, network/login/Secret, second branch/worktree, Ticket 05C/04, review/integration decision, merge, push, release, deployment or schedule |
+| References | Dependency `b22c6c4`; authority `PRG-20260809-042`; ticket `05b-codex-cli-transactional-registration`; closure `CLOSURE-LOCAL-INSTALL-T05B-01`; handoff `hnd_local_orchestration_install_05b_20260810`; allocation `aln_local_orchestration_install_05b_20260810`; receipt `rcpt_local_orchestration_install_05b_20260810`; correlation `corr-local-orchestration-install-05b-20260810`; task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; branch `codex/implementation-codex-cli-registration-05b` |
 
 ## PRG-20260810-097 - Ticket 05B initial review blocked on ticket design
 
 | Field | Value |
 | --- | --- |
 | Router event | `IMPLEMENTATION_COMPLETED -> CODE_REVIEW -> VALIDATION_FAILED -> BLOCKED / TICKET_DEFECT` |
-| Boundary | Dispatch `f68d9d6`; branch `codex/implementation-codex-cli-registration-05b`; implementation `5e919069`; docs-only handoff `ef1cf42`; closure `CLOSURE-LOCAL-INSTALL-T05B-01` B1–B5 |
-| Reproduced passing evidence | Focused `8/8`; full `180/180`; complete `mypy --strict --no-incremental` `83` files with removed external cache; five-file in-memory compile/AST sentinel; `git diff --check`; cumulative production/test `305/310` and `299/320`; tracked/ignored/cache-free readback clean |
-| Blocking probes | Foreign `installedRoot`/`installedPath`/`authPolicy` returned `REGISTRATION_VERIFIED`; `alreadyAdded=true` caused marketplace removal; plugin-add timeout skipped plugin removal; a version-only eligible object registered another installation ID. The B5 Git test never reads porcelain despite the handoff claim. |
-| Findings | CR-92 `TICKET_DEFECT`; CR-93, CR-94, CR-95 and CR-97 `IMPLEMENTATION_DEFECT`; CR-96 `EVIDENCE_DEFECT`. Full details are in `doc/reviews/local-orchestration-installer/05b-codex-cli-transactional-registration-code-review.md`. |
-| Ticket repair / unresolved decision | Added the mandatory Python 3.11 field from the approved SPEC. A new finite closure revision must enumerate the fault matrix and decide whether the remaining `5` production / `21` test nonblank lines can satisfy P0 readability without further compression or require reviewed decomposition/ceiling change. |
-| Decision / non-actions | `BLOCKED / TICKET_DEFECT`. No correction handoff, implementation dispatch, branch/worktree change, integration, 05C/04 work, push, release, deployment, live Codex mutation, target-project action or schedule was performed. |
+| References | Dispatch `f68d9d6`; implementation `5e919069`; handoff `ef1cf42`; review `f02704f`; `CR-92..CR-97`; result `BLOCKED / TICKET_DEFECT` |
 
 ## PRG-20260810-098 - Ticket 05B finite revision-02 refreeze
 
 | Field | Value |
 | --- | --- |
 | Router event | `TICKET_DEFECT -> TICKET_REPAIR -> CLOSURE_REFROZEN -> TICKETS / WAIT_FOR_HUMAN` |
-| Owner authority | Owner instruction `重整` on 2026-08-10 authorizes control-plane ticket/document repair only; it does not authorize an implementation correction dispatch. |
-| Repaired ticket | `05b-codex-cli-transactional-registration`; closure `CLOSURE-LOCAL-INSTALL-T05B-02`; implementation language Python 3.11; exact finite matrix M01–M18. |
-| Contract source | Current official OpenAI Codex CLI command reference confirms marketplace-add fields `marketplaceName`, `installedRoot`, `alreadyAdded` and plugin-add fields `pluginId`, `name`, `marketplaceName`, `version`, `installedPath`, `authPolicy`. Raw path fields are revision-02 ephemeral proof inputs, not persisted receipt fields. |
-| Closure repair | B1 request-bound fresh admission and collision recheck; B2 both add DTOs enter a manifest proof and produce a distinct relative-only receipt; B3 separate `NOT_ATTEMPTED / MAY_EXIST / OWNED / PREEXISTING` states; B4 non-short-circuit plugin-then-marketplace compensation plus three fresh absence proofs; B5 exact evidence commands/counts and byte-plus-porcelain isolation. |
-| Scope / ceiling | Exact production files are `host_contracts.py`, `codex_cli_adapter.py`, `__init__.py`; exact tests are preflight and registration. Integrated 05A is `177 / 171`; final cumulative 05A+05B is capped at production/test `460 / 540`. The former `310 / 320` and parent-wide `400 / 450` limits are historical because they induced P0 compression and could not hold the finite matrix. No 05C expansion is granted. |
-| Preserved lane | Read-only Git readback confirms the sole implementation worktree is clean at branch `codex/implementation-codex-cli-registration-05b` HEAD `ef1cf42`, directly after implementation `5e919069` and dispatch `f68d9d6`; ignored/cache candidate output is empty. Task `019fcc9c-f34f-7d53-a313-c70c90bf3245`, allocation and receipt remain inactive evidence. No branch/worktree/history change. |
-| Continuation | `WAIT_FOR_HUMAN`. A future explicit owner dispatch may create one revision-02 correction handoff on the same branch at clean `ef1cf42`; one additive correction and one terminal independent review only. Failure pauses without automatic redispatch. |
-| Non-actions | No implementation task message, source/test edit, implementation-worktree mutation, correction handoff, branch/worktree creation, merge, push, release, deployment, live Codex mutation, target-project action, schedule, Secret or login action was performed. |
+| References | Ticket `05b-codex-cli-transactional-registration`; closure `CLOSURE-LOCAL-INSTALL-T05B-02`; refreeze commit `a7dd4a4`; prior review `f02704f`; retained HEAD `ef1cf42`; continuation `WAIT_FOR_HUMAN` |
 
 ## PRG-20260810-099 - Ticket 05B revision-02 correction dispatch
 
 | Field | Value |
 | --- | --- |
 | Router event | `OWNER_DISPATCH_CONFIRMED -> CORRECTION_HANDOFF -> IMPLEMENT / AUTO_CONTINUE` |
-| Owner authority | Explicit `可以派工` on 2026-08-10 under approved program authority `PRG-20260809-042` |
-| Ticket / closure | `05b-codex-cli-transactional-registration`; `CLOSURE-LOCAL-INSTALL-T05B-02`, B1–B5 and M01–M18 |
-| Control evidence | Refreeze `a7dd4a45e337d93b3c78d9f4c0d6fcac1ea76948`; initial review `f02704f07d5ecca65fd97565c71be7d834f9ea66`; CR-93 through CR-97 are the complete correction scope |
-| Handoff identity | `hnd_local_orchestration_install_05b_corr1_r02_20260810`; retained allocation/receipt `aln_local_orchestration_install_05b_20260810` / `rcpt_local_orchestration_install_05b_20260810`; correlation `corr-local-orchestration-install-05b-corr1-r02-20260810` |
-| Lane preflight | Implementation task is idle. Sole worktree readback is clean on branch `codex/implementation-codex-cli-registration-05b` at required HEAD `ef1cf42bc0c6475b19c6d430d056fb7983d4b33c`; ignored state is empty. |
-| Authorized correction | Same five source/test files only; request-bound fresh admission, both add DTOs in proof, distinct relative-only receipt, typed effect journal, non-short-circuit compensation, M01–M18, cumulative production/test `460 / 540`, P0-readable one-statement-per-line code. |
-| Required return | One additive implementation correction commit and one separate docs-only handoff; focused/full tests, strict full-tree mypy with removed external cache, in-memory compile, scope/line/sentinel/diff, reverse B1–B5 evidence, byte-plus-porcelain isolation and clean/cache-free readback. |
-| Terminal / prohibited | The next independent review is terminal. No automatic second correction, new branch/worktree, reset/amend/rebase/force/cherry-pick/history replacement, historical-source reuse, live Codex mutation, target-project access, Ticket 05C/04, merge, push, release, deployment, schedule, network/login/Secret or review/integration decision by the implementation owner. |
+| References | Authority `PRG-20260809-042`; closure `CLOSURE-LOCAL-INSTALL-T05B-02`; refreeze `a7dd4a4`; review `f02704f`; handoff `hnd_local_orchestration_install_05b_corr1_r02_20260810`; allocation `aln_local_orchestration_install_05b_20260810`; receipt `rcpt_local_orchestration_install_05b_20260810`; correlation `corr-local-orchestration-install-05b-corr1-r02-20260810`; required HEAD `ef1cf42` |
 
 ## PRG-20260810-101 - Ticket 05B terminal revision-02 review
 
 | Field | Value |
 | --- | --- |
 | Router event | `CORRECTION_COMPLETED -> CODE_REVIEW -> CHANGES_REQUESTED -> CONVERGENCE_REVIEW_REQUIRED` |
-| Boundary | Closure `CLOSURE-LOCAL-INSTALL-T05B-02`; implementation `1a26941176b4ce3c122c41644817e3429cb7c8a5`; docs-only handoff `ed74589c12072d5d70e168735e6ccc440c681ced`; review report `doc/reviews/local-orchestration-installer/05b-codex-cli-transactional-registration-code-review.md` |
-| Independent evidence | Branch/ancestry/scope/clean-state pass; focused `8/8`, full `180/180`, strict mypy `83` files with removed external cache, in-memory compile and diff pass. Adversarial probes reproduce unauthorized pre-command cleanup, short-circuited absence checks, overbroad retry authority and foreign observed output success. |
-| Findings | `CR-98..CR-104`; full evidence and closure mapping live only in the authoritative review report and are referenced by ID elsewhere. Numeric line ceilings are superseded as a control-plane `TICKET_DEFECT`, not an owner requirement or review gate. |
-| Decision | `CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED`. This is the terminal correction review for revision 02; no automatic second correction, integration, Ticket 05C/04 dispatch, new branch/worktree or schedule is authorized. |
+| References | Closure `CLOSURE-LOCAL-INSTALL-T05B-02`; implementation `1a26941176b4ce3c122c41644817e3429cb7c8a5`; handoff `ed74589c12072d5d70e168735e6ccc440c681ced`; review commit `24227ac`; report `doc/reviews/local-orchestration-installer/05b-codex-cli-transactional-registration-code-review.md`; `CR-98..CR-104` |
+| Decision | `CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED`; no automatic continuation |

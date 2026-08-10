@@ -157,61 +157,23 @@ control-plane decomposition.
 
 ### Ticket 05 convergence decomposition
 
-Owner instruction on 2026-08-10 authorized the required control-plane split.
-The failed monolithic Ticket 05 is historical and cannot receive another
-implementation correction. Its unchanged approved-SPEC outcome is now three
-serial vertical slices: 05A makes the documented CLI/source/collision preflight
-observable without mutation; 05B makes registration transactional with exact
-receipt and verified current-attempt compensation; 05C makes receipt-bound
-removal/replay conjunctive and enables the final `SUPPORTED` projection.
-
-Evidence requirements remain inside each child closure rather than becoming a
-horizontal test ticket. The original parent-wide `400` production / `450` test
-ceiling is historical: 05B review proved that keeping it would require P0
-compression and omit the finite failure matrix. Revision 02 therefore caps the
-05A+05B cumulative result at `460 / 540`; it grants no 05C expansion. Ticket 05C
-must be remeasured and refrozen after exact 05B integration. The rejected parent
-branch remains immutable evidence; no second worktree, concurrent child branch,
-live mutation, packaging or schedule is authorized.
+| Item | Authoritative reference |
+| --- | --- |
+| Superseded parent | `PRG-20260810-082`; `codex-cli-host-adapter-and-detachable-installer`; `CLOSURE-LOCAL-INSTALL-T05-02` |
+| Child 05A | `05a-codex-cli-preflight-contract`; integrated by `b22c6c4` |
+| Child 05B | `05b-codex-cli-transactional-registration`; current references below |
+| Child 05C | `05c-codex-cli-receipt-removal`; `PLANNED / DEPENDENCY_WAIT / REFREEZE_REQUIRED` |
 
 ### Ticket 05B selection and dispatch
 
-Owner instruction `可以開始派工` on 2026-08-10 selects only Ticket 05B after
-05A integration `b22c6c4`. The named implementation owner remains task
-`019fcc9c-f34f-7d53-a313-c70c90bf3245` using `gpt-5.6-terra` at `xhigh` in the
-single existing implementation worktree. The owner must preserve the clean 05A
-branch at `fb755268`, then create `codex/implementation-codex-cli-registration-05b`
-from the exact control dispatch commit. Handoff
-`hnd_local_orchestration_install_05b_20260810`, allocation
-`aln_local_orchestration_install_05b_20260810` and receipt
-`rcpt_local_orchestration_install_05b_20260810` authorize only frozen closure
-B1–B5. No second worktree, live Codex mutation, target-project write, Ticket
-05C/04 work, merge, push, deployment or schedule is authorized.
+Only the reference chain is retained here; requirements live in the ticket and
+findings live in the review report.
 
-### Ticket 05B revision-02 refreeze
-
-Initial review `f02704f` blocked closure revision 01 as a ticket defect and
-batched CR-92 through CR-97. Revision 02 fixes the ticket before any further
-implementation: Python 3.11 is explicit; M01–M18 are the complete finite fault
-matrix; fresh request-bound admission, both add DTOs, a distinct receipt and
-typed `NOT_ATTEMPTED / MAY_EXIST / OWNED / PREEXISTING` journal states are
-required; compensation cannot short-circuit before all three absence proofs.
-
-Revision 02 originally recorded `460` production and `540` test non-blank lines
-as a control-plane dispatch constraint. Terminal review `CR-98` supersedes that
-constraint: numeric line counts are informational only, never an acceptance or
-quality gate and never authority for 05C. Revision-01 branch
-`codex/implementation-codex-cli-registration-05b`,
-implementation `5e919069`, handoff `ef1cf42`, allocation and receipt remain
-inactive evidence. No correction handoff is created by the refreeze. A future
-owner dispatch must reuse that branch/worktree and permits one additive
-correction plus one terminal independent review; failure pauses without another
-automatic dispatch.
-
-Owner instruction `可以派工` activates exactly that revision-02 correction.
-Control baseline `a7dd4a4`, review `f02704f`, handoff
-`hnd_local_orchestration_install_05b_corr1_r02_20260810` and correlation
-`corr-local-orchestration-install-05b-corr1-r02-20260810` bind the retained
-allocation/receipt to the clean branch HEAD `ef1cf42`. No branch/worktree is
-created. The implementation owner may add one source/test correction and one
-docs-only handoff; the next independent review is terminal.
+| Stage | Authoritative identifiers |
+| --- | --- |
+| Dependency | Ticket 05A integration `b22c6c4` |
+| Revision 01 dispatch | `PRG-20260810-095`; `hnd_local_orchestration_install_05b_20260810`; `aln_local_orchestration_install_05b_20260810`; `rcpt_local_orchestration_install_05b_20260810`; `corr-local-orchestration-install-05b-20260810` |
+| Revision 01 return/review | `5e919069`; `ef1cf42`; `PRG-20260810-097`; `f02704f`; `CR-92..CR-97` |
+| Revision 02 refreeze | `PRG-20260810-098`; `a7dd4a4`; `CLOSURE-LOCAL-INSTALL-T05B-02` |
+| Revision 02 correction | `PRG-20260810-099`; `hnd_local_orchestration_install_05b_corr1_r02_20260810`; `corr-local-orchestration-install-05b-corr1-r02-20260810`; `1a269411`; `ed74589` |
+| Terminal review | `PRG-20260810-101`; control commit `24227ac`; `CR-98..CR-104`; `CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED` |
