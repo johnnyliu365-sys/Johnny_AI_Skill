@@ -165,3 +165,16 @@ invent a new result.
 loop boundary, this review does not dispatch another correction, create or
 replace a branch/worktree, integrate 05S2, or dispatch 05S3. No push, release,
 deployment, live Codex mutation or target-project access occurred.
+
+## Revision-03 owner-authorized disposition
+
+Owner authorization in this task creates
+`OVR-LOCAL-INSTALL-T05S2-R03-20260811-01` and
+`CLOSURE-LOCAL-INSTALL-T05S2-03` for CR-124 only. It preserves revision-01 and
+revision-02 commits/reviews as immutable evidence and authorizes one additive
+correction on the existing implementation task, branch and worktree at
+`c324c52669cfa16c57433e0f0cf14ee2b00b0d69`. The refrozen contract separates
+`RUN_TIMEOUT` from `RUN_WAIT_OS_ERROR`, adds the truthful confirmed
+`WAIT_FAILED_AFTER_START` outcome, and requires every unconfirmed kill/reap
+failure to retain its initiating trigger. The next review is final for this
+override; any blocker stops without another correction or 05S3 dispatch.

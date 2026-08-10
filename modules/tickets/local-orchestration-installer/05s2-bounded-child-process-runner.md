@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / verification support only |
 | Context / decision | `doc/context/local-orchestration-installer/main.md` / `PRG-20260811-106` |
-| State | `CHANGES_REQUESTED / FINAL_REVISION_02_STOPPED / TICKET_DEFECT` |
+| State | `IN_PROGRESS / REVISION_03_REFROZEN / ONE_CORRECTION_AUTHORIZED` |
 | Dependency | 05S1 independently approved and integrated by `504a3ec` |
 | Implementation language | Python 3.11 |
 | Implementation responsibility | Codex task `019fcc9c-f34f-7d53-a313-c70c90bf3245`, model `gpt-5.6-terra`, reasoning `xhigh`, in the sole implementation worktree after exact receipt admission |
@@ -177,3 +177,57 @@ The one correction authorized by
 `OVR-LOCAL-INSTALL-T05S2-REFREEZE-20260811-01` is consumed. This ticket is
 stopped without a second correction, replacement branch/worktree, integration
 or 05S3 dispatch. All submitted commits remain immutable evidence.
+
+## Revision-03 owner-authorized closure — `CLOSURE-LOCAL-INSTALL-T05S2-03`
+
+Owner authorization in this task creates
+`OVR-LOCAL-INSTALL-T05S2-R03-20260811-01` and refreezes only CR-124. Revision
+01 and revision 02 remain immutable. The generic runner outcome, test-only
+environment and all earlier P1/P2/P4 behavior are unchanged.
+
+### Finite started-child wait contract
+
+- A first run wait that raises `subprocess.TimeoutExpired` remains the exact
+  `RUN_TIMEOUT` trigger. Successful kill plus bounded reap returns
+  `TIMEOUT_AFTER_START`.
+- A first run wait that raises `OSError` is the distinct
+  `RUN_WAIT_OS_ERROR` trigger. Successful kill plus bounded reap returns
+  `WAIT_FAILED_AFTER_START`, never `TIMEOUT_AFTER_START`.
+- `WAIT_FAILED_AFTER_START` is a strict union member with exact invocation,
+  `STARTED`, `CONFIRMED_TERMINATED`, fixed reason `WAIT_OS_ERROR` and the exit
+  code returned by bounded reap. It contains no raw exception or optional
+  placeholder.
+- If kill or bounded reap fails after either trigger, the existing
+  `TERMINATION_FAILED` result remains `STARTED / UNCONFIRMED` with exact reason
+  `KILL_OS_ERROR`, `REAP_TIMEOUT` or `REAP_OS_ERROR`, and now also carries the
+  required trigger `RUN_TIMEOUT` or `RUN_WAIT_OS_ERROR`.
+- No first-wait `OSError` may escape, be classified as a launch failure, or be
+  reported as a confirmed timeout. Every path performs at most one kill and
+  one reap bounded by the distinct termination timeout.
+
+### Revision-03 acceptance delta
+
+| ID | Exact acceptance |
+| --- | --- |
+| `P3-R03` | Timeout and first-wait OS error are distinct finite started-child results; confirmed timeout exists only after `TimeoutExpired` plus successful bounded cleanup. |
+| `T3-R03-A` | A strict typed port raises first-wait `OSError`, then returns exit 137 from bounded reap; result is `WAIT_FAILED_AFTER_START / STARTED / CONFIRMED_TERMINATED / WAIT_OS_ERROR`, with run and termination timeout values observed separately. |
+| `T3-R03-B` | For each trigger (`RUN_TIMEOUT`, `RUN_WAIT_OS_ERROR`), kill error, reap timeout and reap OS error return the exact `TERMINATION_FAILED` reason and required trigger with `UNCONFIRMED` child state. |
+| `T3-R03-C` | Reverse assertion proves no first-wait `OSError` case returns `TIMEOUT_AFTER_START`, launch failure or an exception; normal real timeout and all revision-02 physical tests remain green. |
+
+### Revision-03 implementation handoff
+
+| Field | Value |
+| --- | --- |
+| Handoff | `hnd_local_orchestration_install_05s2_r03_20260811` |
+| Allocation | `aln_local_orchestration_install_05s2_r03_20260811` |
+| Receipt | `rcpt_local_orchestration_install_05s2_r03_20260811` |
+| Correlation / question | `corr-local-orchestration-install-05s2-r03-20260811` / `q-local-orchestration-install-05s2-r03-20260811` |
+| Authority | Owner authorization in this task; override `OVR-LOCAL-INSTALL-T05S2-R03-20260811-01`; program authority `PRG-20260809-042`; final revision-02 review `5b4476c` / CR-124 |
+| Submitted HEAD | Existing branch `codex/implementation-bounded-child-process-runner-05s2` at `c324c52669cfa16c57433e0f0cf14ee2b00b0d69` in the sole implementation worktree |
+| Exact correction scope | `tests/staging/process_runner/contracts.py`, `tests/staging/process_runner/runner.py`, `tests/test_bounded_child_process_runner.py`, then a separate docs-only `doc/WorkProgressReport.md` handoff |
+| Frozen boundary | No fixture, 05S1, production-library, Codex/plugin/install/target-project/live-host change; no new branch/worktree, reset, amend, rebase, force, merge, cherry-pick, stash or push |
+| Return / stop | One additive implementation commit and one docs-only handoff, followed by one independent review. Any blocker stops without another correction or 05S3 dispatch. |
+
+The ticket-doc baseline is this revision-03 refreeze commit; its exact SHA is
+bound by the separate correction-handoff commit. Admission mismatch or replay
+is `HALT` before any implementation write.

@@ -2,13 +2,13 @@
 
 | Field | Value |
 | --- | --- |
-| Context state | `STAGING_DECOMPOSED / TICKET_05S1_INTEGRATED / TICKET_05S2_FINAL_REVIEW_STOPPED` |
-| Router event | `CORRECTION_COMPLETED → REVIEW_COMPLETED → TICKET_DEFECT → WAIT_FOR_HUMAN` |
+| Context state | `STAGING_DECOMPOSED / TICKET_05S1_INTEGRATED / TICKET_05S2_REVISION_03_REFROZEN` |
+| Router event | `WAIT_FOR_HUMAN → OWNER_OVERRIDE → TICKET_REFROZEN → CORRECTION_HANDOFF_REQUIRED` |
 | Delivery stage | `POC` |
 | Requirement change | `CHG-20260808-011` |
 | Baseline | `a37a515` (`docs: replace duplicated ticket history with references`) |
 | Control-plane owner | Codex / current `main` worktree |
-| Implementation owner | Task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; no active allocation after the consumed revision-02 correction |
+| Implementation owner | Task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; one revision-03 correction on the existing 05S2 branch/worktree only |
 | Required sources read | `AGENTS.md`, `Workflow.md` (Router, Wayfinder, Grill, change control, specification, tickets, role boundary), `Defined_wayfinder.md`, `CONTEXT.md`, `PRD.md`, `ProjectSchedule.md`, `doc/RequirementChangeLog.md`, existing plugin manifests / README, `library/workflow_router/`, and completed plugin / autonomous-collaboration POCs |
 
 ## Shared Context reference
@@ -336,3 +336,10 @@ a timeout, but the current runner kills/reaps and returns confirmed
 `TIMEOUT_AFTER_START`. The P3/T3 ticket design omitted a truthful finite state
 for this started-child observation failure. The correction authorization is
 consumed, so 05S2 is stopped without integration or downstream dispatch.
+
+Owner authorization resumes 05S2 as revision 03 without reopening revision 02.
+Closure `CLOSURE-LOCAL-INSTALL-T05S2-03` covers CR-124 only. It requires a
+distinct `WAIT_FAILED_AFTER_START` result after first-wait `OSError` plus
+successful bounded cleanup, and a required `RUN_TIMEOUT` or
+`RUN_WAIT_OS_ERROR` trigger on every unconfirmed termination failure. The same
+task, branch and worktree are retained; 05S3 remains blocked pending review.

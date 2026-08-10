@@ -122,7 +122,7 @@
 | Ticket 05A CLI contract/preflight | DONE / APPROVED / INTEGRATED | Implementation `97ab31c`; repaired handoff `fb755268`; review `d54c0bd`; owner-authorized ledger-preserving merge `b22c6c4`; post-merge verification passed. |
 | Ticket 05S combined staging parent | SUPERSEDED / DECOMPOSED | Rejected commits remain immutable evidence; no correction or integration. |
 | Ticket 05S1 disposable environment core | DONE / APPROVED / INTEGRATED | Correction `41d5ce4`, handoff `e1087d3`, review `17ea1d5` and guarded merge `504a3ec`; post-merge verification passed. |
-| Ticket 05S2 bounded child-process runner | CHANGES_REQUESTED / FINAL_REVISION_02_STOPPED / TICKET_DEFECT | Final review CR-124: first run-wait `OSError` is falsely reported as confirmed timeout; the one correction is consumed. |
+| Ticket 05S2 bounded child-process runner | IN_PROGRESS / REVISION_03_REFROZEN / ONE_CORRECTION_AUTHORIZED | CR-124 only: distinct first-wait error result and trigger-bound cleanup matrix; same branch/worktree. |
 | Ticket 05S3 Codex protocol fixture | PLANNED / DEPENDENCY_WAIT | Starts after 05S2 approval/integration. |
 | Ticket 05S4 Codex lifecycle oracle | PLANNED / DEPENDENCY_WAIT | Starts after 05S3 approval/integration; only then may 05B/05C be refrozen. |
 | Ticket 05B transactional registration | BLOCKED / CONVERGENCE_REVIEW_REQUIRED | Terminal revision-02 review of `1a269411` / `ed74589` records CR-98..CR-104; no automatic correction or integration. |
@@ -270,3 +270,10 @@ path and returned as `TIMEOUT_AFTER_START` after successful kill/reap. Because
 the frozen P3/T3 union has no truthful started-child observation-failure state,
 05S2 stops at `CHANGES_REQUESTED / TICKET_DEFECT`; no second correction,
 integration or 05S3 dispatch is authorized.
+
+The owner now authorizes revision 03 under
+`OVR-LOCAL-INSTALL-T05S2-R03-20260811-01`. It refreezes CR-124 only: a real
+run timeout and a first-wait `OSError` receive distinct triggers and successful
+cleanup results, while every kill/reap failure records its initiating trigger.
+One additive correction may run on the existing 05S2 branch/worktree. No new
+branch/worktree or 05S3 dispatch is authorized before independent approval.

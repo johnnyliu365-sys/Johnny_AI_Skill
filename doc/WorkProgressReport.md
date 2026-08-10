@@ -1347,3 +1347,13 @@
 | Verification | Fresh Unicode-preserving export: focused 10/10, full 187/187, strict mypy 91 files, in-memory compile 91 files, source/scope/diff and residue checks pass. CR-120..CR-123 are closed by evidence. |
 | Finding | CR-124 `TICKET_DEFECT`, P3/T3: a first run-wait `OSError` is routed through timeout cleanup and, after successful kill/bounded reap, falsely returns confirmed `TIMEOUT_AFTER_START`. Independent strict-port replay recorded `kills=1`, `waits=2`. |
 | Decision | `CHANGES_REQUESTED / FINAL_REVIEW_STOPPED`; the authorized correction is consumed. No second dispatch, replacement branch/worktree, merge, 05S3, push, release, deployment, live Codex mutation or target-project access. |
+
+## PRG-20260811-121 — Ticket 05S2 revision-03 refreeze
+
+| Field | Value |
+| --- | --- |
+| Router event | `WAIT_FOR_HUMAN -> OWNER_OVERRIDE -> TICKET_REFROZEN -> CORRECTION_HANDOFF_REQUIRED` |
+| Binding | Ticket `05s2-bounded-child-process-runner`; closure `CLOSURE-LOCAL-INSTALL-T05S2-03`; override `OVR-LOCAL-INSTALL-T05S2-R03-20260811-01`; finding CR-124; submitted HEAD `c324c52669cfa16c57433e0f0cf14ee2b00b0d69`. |
+| Exact delta | Add truthful `WAIT_FAILED_AFTER_START` after first-wait `OSError` plus successful bounded cleanup; require `RUN_TIMEOUT` or `RUN_WAIT_OS_ERROR` trigger on each unconfirmed kill/reap failure. |
+| Identifiers | Handoff `hnd_local_orchestration_install_05s2_r03_20260811`; allocation `aln_local_orchestration_install_05s2_r03_20260811`; receipt `rcpt_local_orchestration_install_05s2_r03_20260811`; correlation `corr-local-orchestration-install-05s2-r03-20260811`; question `q-local-orchestration-install-05s2-r03-20260811`. |
+| Lane / limit | Same task, branch and sole implementation worktree; one additive source/test correction, one docs-only handoff and one final independent review. No replacement branch/worktree, merge or 05S3 before approval. |
