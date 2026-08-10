@@ -1234,3 +1234,18 @@
 | Verification | `python -B -m unittest tests.test_disposable_environment_core -v`: 4/4 passed. `python -B -m unittest discover -s tests -v`: 176/176 passed. `python -B -m mypy --strict --explicit-package-bases --no-incremental --cache-dir <validated OS-temp>`: 86 source files, success; temporary cache removed and read back absent. In-memory `compile`: 4/4 files. Forbidden-source sentinel and `git diff --check`: passed. |
 | Scope/state readback | Four implementation files, 478 nonblank lines total; generated repository caches removed after verification; owned `johnny-stage-env-*` root residue: 0; no merge, push, deployment, review, integration, downstream dispatch, or schedule action. |
 | Review handoff | Independent control-plane review is required. This implementation owner makes no approval or integration decision. |
+
+## PRG-20260811-111 - Ticket 05S1 root-reparse correction handoff
+
+| Field | Value |
+| --- | --- |
+| Router event | `OWNER_SCOPED_CORRECTION_COMPLETED -> IMPLEMENTATION_COMPLETED -> REVIEW_HANDOFF` |
+| Override / review | Override `OVR-LOCAL-INSTALL-T05S1-REPARSE-20260811-01`; control baseline `447af9c134eee4782b4324bbd3c7f7243f1c980a`; terminal review `1da43e4fe6bfcada32806014b9fe0ec671590944`; corrected findings `CR-118` and `CR-119` only. |
+| Ticket binding | Ticket `05s1-disposable-environment-core`; closure `CLOSURE-LOCAL-INSTALL-T05S1-01`; correction handoff `hnd_local_orchestration_install_05s1_corr1_20260811`; allocation `aln_local_orchestration_install_05s1_20260811`; receipt `rcpt_local_orchestration_install_05s1_20260811`; correlation `corr-local-orchestration-install-05s1-corr1-20260811`. |
+| Implementation | Branch `codex/implementation-disposable-environment-core-05s1`; additive implementation `41d5ce4c4c90b0e84c9d756edc81c21ae33b1e27`; only `tests/staging/environment_core/environment.py` and `tests/test_disposable_environment_core.py` changed. |
+| First-red evidence | New `test_t3_physical_root_junction_blocks_before_marker_read_through` failed against `ecce06a`: physical junction reached `Path.read_text` and raised `AssertionError: marker read-through`, proving the old `Path.is_symlink()` gate was post-read and incomplete. |
+| Correction | Production now reads the Windows `FILE_ATTRIBUTE_REPARSE_POINT` through `lstat` before root `exists`, marker read, or tree traversal. A root junction returns finite `BLOCKED / ROOT_REPARSE`; child reparse remains blocked during exact-tree validation. |
+| Physical evidence | The test creates one disposable junction only through bounded argv `cmd.exe /d /c mklink /J`, with `shell=False` and timeout 5. It proves reparse attributes, zero marker-read calls, `ROOT_REPARSE`, link preservation, external sentinel preservation, exact link/target cleanup, and zero owned-root residue. No production subprocess was added. |
+| Verification | `python -B -m unittest tests.test_disposable_environment_core -v`: 5/5 passed. `python -B -m unittest discover -s tests -v`: 177/177 passed. Strict mypy with external removed cache: 86 source files, success. In-memory compile: 2/2 changed files. Source/scope sentinel and `git diff --check`: passed. |
+| Final state | Repository generated-cache residue: 0; owned `johnny-stage-env-*` roots: 0; no merge, push, deployment, integration, downstream dispatch, target-project access, live-host action, or review decision. |
+| Next gate | One final independent review is required by the override; this implementation owner makes no approval or integration decision. |
