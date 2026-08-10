@@ -122,7 +122,7 @@
 | Ticket 05A CLI contract/preflight | DONE / APPROVED / INTEGRATED | Implementation `97ab31c`; repaired handoff `fb755268`; review `d54c0bd`; owner-authorized ledger-preserving merge `b22c6c4`; post-merge verification passed. |
 | Ticket 05S combined staging parent | SUPERSEDED / DECOMPOSED | Rejected commits remain immutable evidence; no correction or integration. |
 | Ticket 05S1 disposable environment core | DONE / APPROVED / INTEGRATED | Correction `41d5ce4`, handoff `e1087d3`, review `17ea1d5` and guarded merge `504a3ec`; post-merge verification passed. |
-| Ticket 05S2 bounded child-process runner | PLANNED / DEPENDENCY_WAIT | Starts after 05S1 approval/integration. |
+| Ticket 05S2 bounded child-process runner | IN_PROGRESS / DISPATCH_AUTHORIZED | P1-P4/T1-T4 freeze one exact argv/environment/cwd/timeout runner; no Codex or plugin state. |
 | Ticket 05S3 Codex protocol fixture | PLANNED / DEPENDENCY_WAIT | Starts after 05S2 approval/integration. |
 | Ticket 05S4 Codex lifecycle oracle | PLANNED / DEPENDENCY_WAIT | Starts after 05S3 approval/integration; only then may 05B/05C be refrozen. |
 | Ticket 05B transactional registration | BLOCKED / CONVERGENCE_REVIEW_REQUIRED | Terminal revision-02 review of `1a269411` / `ed74589` records CR-98..CR-104; no automatic correction or integration. |
@@ -244,3 +244,9 @@ approval `17ea1d5` as its first parent and handoff `e1087d3` as its second.
 The progress-ledger conflict retained every PRG-108 through PRG-112 record.
 Post-merge focused 5/5, full 177/177, strict typing, compilation and residue
 checks passed. 05S1 is complete; 05S2 is the next serial ticket.
+
+05S2 is now frozen as a process-only ticket. It owns one strict request/result
+union, exact `shell=False` execution, a deterministic fixture and physical
+timeout/WinError 5/WinError 206 evidence. It may import integrated 05S1 but may
+not modify it or model Codex/plugin/install state. The sole implementation
+worktree is reused; no additional worktree is authorized.

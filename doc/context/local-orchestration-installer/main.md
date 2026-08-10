@@ -2,13 +2,13 @@
 
 | Field | Value |
 | --- | --- |
-| Context state | `STAGING_DECOMPOSED / TICKET_05S1_INTEGRATED / TICKET_05S2_SELECTED` |
-| Router event | `GUARDED_INTEGRATION_COMPLETED → ACTION_COMPLETED → NEXT_UNBLOCKED_TICKET_SELECTED` |
+| Context state | `STAGING_DECOMPOSED / TICKET_05S1_INTEGRATED / TICKET_05S2_DISPATCH_AUTHORIZED` |
+| Router event | `NEXT_UNBLOCKED_TICKET_SELECTED → TICKET_FROZEN → IMPLEMENTATION_HANDOFF_REQUIRED` |
 | Delivery stage | `POC` |
 | Requirement change | `CHG-20260808-011` |
 | Baseline | `a37a515` (`docs: replace duplicated ticket history with references`) |
 | Control-plane owner | Codex / current `main` worktree |
-| Implementation owner | Task `019fcc9c-f34f-7d53-a313-c70c90bf3245` under bounded override `OVR-LOCAL-INSTALL-T05S1-REPARSE-20260811-01`; existing 05S1 branch/worktree/allocation/receipt only |
+| Implementation owner | Task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; sole implementation worktree; Ticket 05S2 handoff/allocation/receipt only after exact handoff admission |
 | Required sources read | `AGENTS.md`, `Workflow.md` (Router, Wayfinder, Grill, change control, specification, tickets, role boundary), `Defined_wayfinder.md`, `CONTEXT.md`, `PRD.md`, `ProjectSchedule.md`, `doc/RequirementChangeLog.md`, existing plugin manifests / README, `library/workflow_router/`, and completed plugin / autonomous-collaboration POCs |
 
 ## Shared Context reference
@@ -306,3 +306,12 @@ Guarded merge `504a3ec` preserves both reviewed parents and all progress-ledger
 records. Post-merge verification repeated focused 5/5, full 177/177, strict
 mypy across 86 files, compile and zero-residue checks. 05S1 is
 `COMPLETE / APPROVED / INTEGRATED`; the unique serial continuation is 05S2.
+
+05S2 is frozen under closure `CLOSURE-LOCAL-INSTALL-T05S2-01`. It owns only a
+strict generic child-process request/result union, exact argv/environment/cwd,
+finite timeout termination and a deterministic fixture. Physical host probes
+confirmed the intended Windows distinctions before dispatch: missing absolute
+executable is WinError 2, an existing directory executable is WinError 5, and
+oversized argv is FileNotFoundError-class WinError 206 and must map to generic
+launch failure. No Codex, plugin, installation or target-project state is in
+scope. 05S3 remains blocked.
