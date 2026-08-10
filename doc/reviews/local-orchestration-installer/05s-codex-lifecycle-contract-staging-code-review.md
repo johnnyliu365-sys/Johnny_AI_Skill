@@ -182,3 +182,13 @@ replacement worktree, merge or downstream ticket refreeze is authorized. The
 implementation commits and handoff remain immutable rejected evidence. Further
 05S work requires an explicit owner-scoped decision after ticket decomposition;
 until then 05B, 05C and Ticket 04 remain dependency-waiting.
+
+## Post-review disposition
+
+The owner selected ticket decomposition in `PRG-20260811-106`. This does not
+change the terminal `CHANGES_REQUESTED` result and does not authorize reuse of
+`ca5754d`, `832b1dc` or `ccb55bd`. Parent 05S is now
+`SUPERSEDED / DECOMPOSED`; children 05S1 through 05S4 own environment,
+process-runner, protocol-fixture and lifecycle-oracle responsibilities
+respectively. Only 05S1 is selected next and no implementation dispatch has
+occurred.

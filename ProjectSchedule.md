@@ -120,7 +120,11 @@
 | Toolchain and Codex capability probe | DONE / VERIFIED | Inno Setup 6.7.3 is installed per user with valid signature and compile proof. One disposable Codex CLI marketplace/plugin was installed, hash-verified and completely removed without target-project access. |
 | Parent Ticket 05 Codex CLI adapter | SUPERSEDED / CONVERGENCE_DECOMPOSED | Correction review found CR-80..CR-85; rejected branch/SHAs remain evidence and its allocation/receipt are closed. |
 | Ticket 05A CLI contract/preflight | DONE / APPROVED / INTEGRATED | Implementation `97ab31c`; repaired handoff `fb755268`; review `d54c0bd`; owner-authorized ledger-preserving merge `b22c6c4`; post-merge verification passed. |
-| Ticket 05S lifecycle contract staging | CHANGES_REQUESTED / TERMINAL_REVISION_02 / CONVERGENCE_REVIEW_REQUIRED | Corrections `ca5754d` / `832b1dc` and handoff `ccb55bd` failed terminal replay/truth review (CR-112..CR-117); no automatic continuation or integration. |
+| Ticket 05S combined staging parent | SUPERSEDED / DECOMPOSED | Rejected commits remain immutable evidence; no correction or integration. |
+| Ticket 05S1 disposable environment core | PLANNED / SELECTED_NEXT / NOT_DISPATCHED | Environment provision/teardown only; independent acceptance owner; no subprocess or Codex behavior. |
+| Ticket 05S2 bounded child-process runner | PLANNED / DEPENDENCY_WAIT | Starts after 05S1 approval/integration. |
+| Ticket 05S3 Codex protocol fixture | PLANNED / DEPENDENCY_WAIT | Starts after 05S2 approval/integration. |
+| Ticket 05S4 Codex lifecycle oracle | PLANNED / DEPENDENCY_WAIT | Starts after 05S3 approval/integration; only then may 05B/05C be refrozen. |
 | Ticket 05B transactional registration | BLOCKED / CONVERGENCE_REVIEW_REQUIRED | Terminal revision-02 review of `1a269411` / `ed74589` records CR-98..CR-104; no automatic correction or integration. |
 | Ticket 05C receipt removal/replay | PLANNED / DEPENDENCY_WAIT / REFREEZE_REQUIRED | Starts only after 05A/05B approval/integration and a finite behavior/rollback closure refreeze. |
 | Ticket 04 implementation | PLANNED / DEPENDENCY_WAIT | Pinned compiler is ready; package work waits for all decomposed Codex adapter children 05A–05C. |
@@ -203,3 +207,10 @@ repository caches and fails R12, while adversarial probes found state-only
 foreign installed truth and incomplete SemVer/path/process evidence. 05S is now
 paused at `CONVERGENCE_REVIEW_REQUIRED`; 05B/05C/04 are not refrozen or
 dispatched.
+
+Owner decision `PRG-20260811-106` decomposes, rather than repairs, 05S. The new
+serial path is `05S1 environment → 05S2 process runner → 05S3 protocol fixture
+→ 05S4 lifecycle oracle`. Acceptance responsibility stays with the independent
+control-plane reviewer and each child owns only its named behavior. 05S1 is
+selected next but remains `NOT_DISPATCHED`; no automatic correction loop,
+branch or allocation was created by decomposition.

@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-02, AC-03, AC-06, AC-07, AC-08 and Test seams 2, 3, 5, 6 |
 | Context / change | `doc/context/local-orchestration-installer/main.md` / `CHG-20260808-011`; verification-architecture revision approved by the owner on 2026-08-10 |
-| State | `CHANGES_REQUESTED / TERMINAL_REVISION_02 / CONVERGENCE_REVIEW_REQUIRED` |
+| State | `SUPERSEDED / DECOMPOSED / IMMUTABLE_REJECTED_EVIDENCE` |
 | Dependency | Ticket 05A independently approved and integrated by `b22c6c4` |
 | Control-plane owner / reviewer | Codex / current `main` worktree |
 | Implementation owner / worktree | Codex task `019fcc9c-f34f-7d53-a313-c70c90bf3245`, model `gpt-5.6-terra`, reasoning `xhigh`, existing sole `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` worktree |
@@ -165,3 +165,20 @@ R12 from a zero-cache export, foreign plugin truth is state-only, SemVer and the
 path/process matrices remain incomplete, and the handoff identifier collides
 with the existing control ledger. No further automatic correction or
 integration is permitted. Downstream 05B/05C/04 refreeze remains blocked.
+
+## Owner-directed decomposition
+
+`PRG-20260811-106` supersedes this parent as an implementation lane without
+changing or repairing its rejected commits. The replacement sequence is
+strictly serial:
+
+| Child | Single responsibility | Starts only after |
+| --- | --- | --- |
+| [05S1](05s1-disposable-environment-core.md) | Provision and safely destroy one disposable environment; no subprocess or Codex behavior | Selected next; not dispatched |
+| [05S2](05s2-bounded-child-process-runner.md) | Run one generic bounded child process inside integrated 05S1 | 05S1 approved/integrated |
+| [05S3](05s3-codex-protocol-fixture.md) | Validate deterministic documented Codex JSON shapes only | 05S2 approved/integrated |
+| [05S4](05s4-codex-lifecycle-oracle.md) | Persist exact lifecycle/file truth without adapter transaction logic | 05S3 approved/integrated |
+
+Each child has its own acceptance closure and independent review. A blocking
+review stops that child at `CONVERGENCE_REVIEW_REQUIRED`; it cannot reopen this
+parent, automatically dispatch a correction or create a replacement worktree.

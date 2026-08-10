@@ -2,13 +2,13 @@
 
 | Field | Value |
 | --- | --- |
-| Context state | `STAGING_FIRST_CONVERGENCE / TICKET_05S_TERMINAL_CHANGES_REQUESTED / DOWNSTREAM_DEPENDENCY_WAIT` |
-| Router event | `CORRECTION_COMPLETED → TERMINAL_INDEPENDENT_REVIEW → CHANGES_REQUESTED → CONVERGENCE_REVIEW_REQUIRED` |
+| Context state | `STAGING_DECOMPOSED / TICKET_05S1_SELECTED_NOT_DISPATCHED / DOWNSTREAM_DEPENDENCY_WAIT` |
+| Router event | `CONVERGENCE_REVIEW_REQUIRED → OWNER_DECOMPOSITION → TICKETS / WAIT_FOR_DISPATCH` |
 | Delivery stage | `POC` |
 | Requirement change | `CHG-20260808-011` |
 | Baseline | `a37a515` (`docs: replace duplicated ticket history with references`) |
 | Control-plane owner | Codex / current `main` worktree |
-| Implementation owner | Codex task `019fcc9c-f34f-7d53-a313-c70c90bf3245` / selected Ticket-05S allocation `aln_local_orchestration_install_05s_20260810` after exact dispatch commit synchronization |
+| Implementation owner | None active. Task `019fcc9c-f34f-7d53-a313-c70c90bf3245` and the sole implementation worktree are only future candidates after a new reviewed 05S1 handoff, allocation and receipt. |
 | Required sources read | `AGENTS.md`, `Workflow.md` (Router, Wayfinder, Grill, change control, specification, tickets, role boundary), `Defined_wayfinder.md`, `CONTEXT.md`, `PRD.md`, `ProjectSchedule.md`, `doc/RequirementChangeLog.md`, existing plugin manifests / README, `library/workflow_router/`, and completed plugin / autonomous-collaboration POCs |
 
 ## Shared Context reference
@@ -265,3 +265,12 @@ terminal review with `CR-112..CR-117`. The required full command fails R12 from
 a clean exported checkout; foreign installed truth lacks a physical payload;
 SemVer, path-boundary and real process-exception evidence remain incomplete.
 No additional implementation dispatch or downstream refreeze is active.
+
+Owner decision `PRG-20260811-106` supersedes combined 05S as an implementation
+lane. New children are serial and single-purpose: 05S1 owns only disposable
+environment provision/teardown; 05S2 owns only a generic bounded child runner;
+05S3 owns only documented Codex protocol fixtures; 05S4 owns only persisted
+lifecycle/file truth. Transaction, compensation and receipts remain in 05B/05C,
+and real `Setup.exe`/uninstaller isolation remains Ticket 04's separate Windows
+provider gate. The control reviewer owns acceptance and may not patch the
+implementation. Only 05S1 is selected, with no active dispatch.

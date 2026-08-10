@@ -1195,3 +1195,14 @@
 | Blocking replay | From a disposable export with zero initial cache and staging roots, exact `python -m unittest discover -s tests -v` ran 192 tests and failed R12 after creating 24 `__pycache__` directories. The submitted `192`-pass/zero-cache claim is not replayable as written. |
 | Blocking probes | A foreign plugin without any physical payload is emitted as `installed=true` with exit zero. Version validation accepts invalid `01.0.0` and rejects valid prerelease/build SemVer. R01 and R06 do not execute the frozen path and real process-exception matrices. The branch handoff also collides with existing identifier `PRG-20260810-104`. |
 | Decision | `CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED`; no second automatic correction, new branch/worktree, merge, downstream refreeze or dispatch. Submitted commits remain immutable rejected evidence. |
+
+## PRG-20260811-106 — Ticket 05S decomposition and environment-first selection
+
+| Field | Value |
+| --- | --- |
+| Router event | `CONVERGENCE_REVIEW_REQUIRED → OWNER_DECOMPOSITION → TICKETS → WAIT_FOR_DISPATCH` |
+| Owner direction | Split the work into small tickets, establish the environment first, separate acceptance responsibility and prevent another automatic correction loop. |
+| Superseded evidence | Combined 05S and commits `ca5754d`, `832b1dc`, `ccb55bd` remain immutable rejected evidence; none may be copied, cherry-picked, merged or used as approval. |
+| New sequence | `05S1 disposable environment core → 05S2 bounded child-process runner → 05S3 Codex protocol fixture → 05S4 Codex lifecycle oracle`; 05B/05C refreeze waits for 05S4; Ticket 04 retains the separate real Windows package-staging gate. |
+| Responsibility boundary | Each implementation owner changes only its ticket scope. The independent control-plane reviewer owns acceptance and cannot patch implementation. A blocking review stops at `CONVERGENCE_REVIEW_REQUIRED`; no automatic correction, new branch or replacement worktree. |
+| Current continuation | 05S1 is `PLANNED / SELECTED_NEXT / NOT_DISPATCHED`. No allocation, receipt, implementation branch, task message, merge, live host mutation, target-project write, push, release or deployment occurred. |
