@@ -1219,6 +1219,22 @@
 | Branch/worktree | Reuse the sole clean implementation worktree and create only `codex/implementation-disposable-environment-core-05s1` from the exact handoff baseline. No new worktree. |
 | Return / loop rule | One implementation commit plus one docs-only handoff. Reviewer batches one independent review; blocking findings stop without automatic correction or replacement branch. 05S2–05S4 remain dependency-waiting. |
 
+## PRG-20260811-108 - Ticket 05S1 disposable environment core implementation handoff
+
+| Field | Value |
+| --- | --- |
+| Router event | `ACTION_COMPLETED -> IMPLEMENTATION_COMPLETED -> REVIEW_HANDOFF` |
+| Ticket / closure | `05s1-disposable-environment-core`; `CLOSURE-LOCAL-INSTALL-T05S1-01`; E1-E4 / T1-T4 |
+| Authority and binding | Authority `PRG-20260809-042`; decomposition `PRG-20260811-106`; dispatch `PRG-20260811-107`; handoff `hnd_local_orchestration_install_05s1_20260811`; allocation `aln_local_orchestration_install_05s1_20260811`; receipt `rcpt_local_orchestration_install_05s1_20260811`; correlation `corr-local-orchestration-install-05s1-20260811`; question `q-local-orchestration-install-05s1-20260811` |
+| Baseline and owner | Required handoff baseline `f88e10f73f9014fb276d99974eaf1a2074c9a7d0`; ticket-doc `3f685a9`; implementation task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; branch `codex/implementation-disposable-environment-core-05s1`; implementation `e0898cdca76c360713bef35b1848c0b8b8bd3681` |
+| Implementation scope | Only `tests/staging/environment_core/__init__.py`, `contracts.py`, `environment.py`, and `tests/test_disposable_environment_core.py`; no production-library change, subprocess, CLI/Codex state, target-project access, host mutation, Git fixture, or historical-source reuse. |
+| First-red evidence | Before the four staging modules existed, exact focused command failed T1-T4 with `ModuleNotFoundError: No module named 'tests.staging'`; this is the recorded first-red boundary for the new environment-only surface. |
+| Green behavior | T1 provisions distinct direct OS-temp roots and rejects malformed/constructed/replayed owners before effects. T2 returns only the six fixed overlay keys and preserves parent environment values. T3 blocks missing/mismatched marker, reparse and child-escape deletion, then permits exact teardown and finite replay. T4 clears only owned faulted roots and preserves an unrelated sibling. |
+| Reparse evidence | The execution account's physical symbolic-link probe returned `WinError 1314`; T3 therefore uses a typed `Path.is_symlink` test probe to exercise the same production refusal branch. The production path still checks actual reparse/symlink state before deletion; this limitation is disclosed for independent review. |
+| Verification | `python -B -m unittest tests.test_disposable_environment_core -v`: 4/4 passed. `python -B -m unittest discover -s tests -v`: 176/176 passed. `python -B -m mypy --strict --explicit-package-bases --no-incremental --cache-dir <validated OS-temp>`: 86 source files, success; temporary cache removed and read back absent. In-memory `compile`: 4/4 files. Forbidden-source sentinel and `git diff --check`: passed. |
+| Scope/state readback | Four implementation files, 478 nonblank lines total; generated repository caches removed after verification; owned `johnny-stage-env-*` root residue: 0; no merge, push, deployment, review, integration, downstream dispatch, or schedule action. |
+| Review handoff | Independent control-plane review is required. This implementation owner makes no approval or integration decision. |
+
 ## PRG-20260811-109 — Ticket 05S1 independent terminal review
 
 | Field | Value |
@@ -1240,6 +1256,21 @@
 | Required lane | Same worktree and branch `codex/implementation-disposable-environment-core-05s1`; required HEAD `ecce06ae8ff46ca770770375c166ba503bb7f17e`; prior commits remain immutable. |
 | Exact scope | CR-118/CR-119 only: `environment.py` detects physical Windows reparse points before existence/marker/traversal; the test file creates one disposable root junction and proves `ROOT_REPARSE` without read-through. Test-only finite `shell=False` junction construction is permitted; production subprocess and all 05S2 behavior remain prohibited. |
 | Return / stop | One additive implementation commit plus one docs-only handoff, then one final independent review. No further automatic correction, new branch/worktree, merge, downstream dispatch, live host mutation, target-project write, push, release or deployment. |
+
+## PRG-20260811-111 - Ticket 05S1 root-reparse correction handoff
+
+| Field | Value |
+| --- | --- |
+| Router event | `OWNER_SCOPED_CORRECTION_COMPLETED -> IMPLEMENTATION_COMPLETED -> REVIEW_HANDOFF` |
+| Override / review | Override `OVR-LOCAL-INSTALL-T05S1-REPARSE-20260811-01`; control baseline `447af9c134eee4782b4324bbd3c7f7243f1c980a`; terminal review `1da43e4fe6bfcada32806014b9fe0ec671590944`; corrected findings `CR-118` and `CR-119` only. |
+| Ticket binding | Ticket `05s1-disposable-environment-core`; closure `CLOSURE-LOCAL-INSTALL-T05S1-01`; correction handoff `hnd_local_orchestration_install_05s1_corr1_20260811`; allocation `aln_local_orchestration_install_05s1_20260811`; receipt `rcpt_local_orchestration_install_05s1_20260811`; correlation `corr-local-orchestration-install-05s1-corr1-20260811`. |
+| Implementation | Branch `codex/implementation-disposable-environment-core-05s1`; additive implementation `41d5ce4c4c90b0e84c9d756edc81c21ae33b1e27`; only `tests/staging/environment_core/environment.py` and `tests/test_disposable_environment_core.py` changed. |
+| First-red evidence | New `test_t3_physical_root_junction_blocks_before_marker_read_through` failed against `ecce06a`: physical junction reached `Path.read_text` and raised `AssertionError: marker read-through`, proving the old `Path.is_symlink()` gate was post-read and incomplete. |
+| Correction | Production now reads the Windows `FILE_ATTRIBUTE_REPARSE_POINT` through `lstat` before root `exists`, marker read, or tree traversal. A root junction returns finite `BLOCKED / ROOT_REPARSE`; child reparse remains blocked during exact-tree validation. |
+| Physical evidence | The test creates one disposable junction only through bounded argv `cmd.exe /d /c mklink /J`, with `shell=False` and timeout 5. It proves reparse attributes, zero marker-read calls, `ROOT_REPARSE`, link preservation, external sentinel preservation, exact link/target cleanup, and zero owned-root residue. No production subprocess was added. |
+| Verification | `python -B -m unittest tests.test_disposable_environment_core -v`: 5/5 passed. `python -B -m unittest discover -s tests -v`: 177/177 passed. Strict mypy with external removed cache: 86 source files, success. In-memory compile: 2/2 changed files. Source/scope sentinel and `git diff --check`: passed. |
+| Final state | Repository generated-cache residue: 0; owned `johnny-stage-env-*` roots: 0; no merge, push, deployment, integration, downstream dispatch, target-project access, live-host action, or review decision. |
+| Next gate | One final independent review is required by the override; this implementation owner makes no approval or integration decision. |
 
 ## PRG-20260811-112 — Ticket 05S1 final owner-scoped review
 
