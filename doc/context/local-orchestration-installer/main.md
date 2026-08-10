@@ -2,13 +2,13 @@
 
 | Field | Value |
 | --- | --- |
-| Context state | `STAGING_DECOMPOSED / TICKET_05S1_INTEGRATED / TICKET_05S2_DISPATCH_AUTHORIZED` |
-| Router event | `NEXT_UNBLOCKED_TICKET_SELECTED → TICKET_FROZEN → IMPLEMENTATION_HANDOFF_REQUIRED` |
+| Context state | `STAGING_DECOMPOSED / TICKET_05S1_INTEGRATED / TICKET_05S2_CONVERGENCE_REVIEW_REQUIRED` |
+| Router event | `IMPLEMENTATION_COMPLETED → CODE_REVIEW → CHANGES_REQUESTED → CONVERGENCE_REVIEW_REQUIRED` |
 | Delivery stage | `POC` |
 | Requirement change | `CHG-20260808-011` |
 | Baseline | `a37a515` (`docs: replace duplicated ticket history with references`) |
 | Control-plane owner | Codex / current `main` worktree |
-| Implementation owner | Task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; sole implementation worktree; Ticket 05S2 handoff/allocation/receipt only after exact handoff admission |
+| Implementation owner | Task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; submitted 05S2 branch is immutable review evidence; no active allocation or correction |
 | Required sources read | `AGENTS.md`, `Workflow.md` (Router, Wayfinder, Grill, change control, specification, tickets, role boundary), `Defined_wayfinder.md`, `CONTEXT.md`, `PRD.md`, `ProjectSchedule.md`, `doc/RequirementChangeLog.md`, existing plugin manifests / README, `library/workflow_router/`, and completed plugin / autonomous-collaboration POCs |
 
 ## Shared Context reference
@@ -315,3 +315,12 @@ executable is WinError 2, an existing directory executable is WinError 5, and
 oversized argv is FileNotFoundError-class WinError 206 and must map to generic
 launch failure. No Codex, plugin, installation or target-project state is in
 scope. 05S3 remains blocked.
+
+Submitted 05S2 implementation `52d7455` and handoff `72ccfaa` failed terminal
+review CR-120..CR-123. A physical replacement of the owned cwd by a Windows
+junction was accepted and a real successful child wrote external bytes. An
+embedded-NUL absolute executable crossed validation and leaked `ValueError`.
+The committed late-sentinel timing is shorter than the fixture delay, and the
+control-plane ticket omitted a finite termination-failure result/cleanup bound.
+05S2 is `CONVERGENCE_REVIEW_REQUIRED`; no correction, integration or 05S3
+dispatch is active.

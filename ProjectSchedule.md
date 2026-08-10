@@ -122,7 +122,7 @@
 | Ticket 05A CLI contract/preflight | DONE / APPROVED / INTEGRATED | Implementation `97ab31c`; repaired handoff `fb755268`; review `d54c0bd`; owner-authorized ledger-preserving merge `b22c6c4`; post-merge verification passed. |
 | Ticket 05S combined staging parent | SUPERSEDED / DECOMPOSED | Rejected commits remain immutable evidence; no correction or integration. |
 | Ticket 05S1 disposable environment core | DONE / APPROVED / INTEGRATED | Correction `41d5ce4`, handoff `e1087d3`, review `17ea1d5` and guarded merge `504a3ec`; post-merge verification passed. |
-| Ticket 05S2 bounded child-process runner | IN_PROGRESS / DISPATCH_AUTHORIZED | P1-P4/T1-T4 freeze one exact argv/environment/cwd/timeout runner; no Codex or plugin state. |
+| Ticket 05S2 bounded child-process runner | CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED | Review CR-120..CR-123: cwd junction escape, executable-NUL exception, late-sentinel evidence gap and missing finite termination-failure closure. |
 | Ticket 05S3 Codex protocol fixture | PLANNED / DEPENDENCY_WAIT | Starts after 05S2 approval/integration. |
 | Ticket 05S4 Codex lifecycle oracle | PLANNED / DEPENDENCY_WAIT | Starts after 05S3 approval/integration; only then may 05B/05C be refrozen. |
 | Ticket 05B transactional registration | BLOCKED / CONVERGENCE_REVIEW_REQUIRED | Terminal revision-02 review of `1a269411` / `ed74589` records CR-98..CR-104; no automatic correction or integration. |
@@ -250,3 +250,11 @@ union, exact `shell=False` execution, a deterministic fixture and physical
 timeout/WinError 5/WinError 206 evidence. It may import integrated 05S1 but may
 not modify it or model Codex/plugin/install state. The sole implementation
 worktree is reused; no additional worktree is authorized.
+
+The independent 05S2 review passed focused 5/5, full 182/182, strict typing,
+physical WinError 2/5/206 and extended timeout cleanup. It nevertheless proved
+a real cwd-junction escape that wrote external bytes, an accepted NUL
+executable that leaked `ValueError`, and a non-truthful committed late-sentinel
+window. The control-plane closure also omitted finite kill/wait failure
+semantics. 05S2 is paused at `CONVERGENCE_REVIEW_REQUIRED`; no automatic
+correction, merge or 05S3 dispatch is active.

@@ -1305,3 +1305,15 @@
 | Physical pre-freeze evidence | On this Windows host, missing absolute executable produced WinError 2, an existing directory used as executable produced WinError 5, and oversized argv produced FileNotFoundError-class WinError 206. The closure therefore requires classification by concrete WinError, not Python exception class alone. |
 | Branch/worktree | Reuse the sole clean `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` worktree currently at submitted 05S1 handoff `e1087d3`. Create only `codex/implementation-bounded-child-process-runner-05s2` at this handoff-doc commit; no new worktree. |
 | Return / stop | First-red evidence, one implementation commit, exact focused/full/strict verification and clean readback, then one docs-only handoff. One independent review; any blocker stops without automatic correction, replacement branch/worktree or 05S3 dispatch. No push, release, deployment, live Codex mutation or target-project access. |
+
+## PRG-20260811-116 — Ticket 05S2 independent terminal review
+
+| Field | Value |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED → CODE_REVIEW → CHANGES_REQUESTED → CONVERGENCE_REVIEW_REQUIRED` |
+| References | Closure `CLOSURE-LOCAL-INSTALL-T05S2-01`; baseline `622e78d`; implementation `52d74554c930a53ee2b84838d0ee31afde9f6b80`; handoff `72ccfaab44429749c61a77177567deb81d7f29dc`; report `doc/reviews/local-orchestration-installer/05s2-bounded-child-process-runner-code-review.md`; findings `CR-120..CR-123` |
+| Passing evidence | Exact ancestry/scope and clean worktrees; fresh export focused 5/5, full 182/182, strict mypy 91 files, compile 91 files; physical success/nonzero/timeout/WinError 2/5/206; independent 2.3-second no-late-sentinel replay; zero final cache/root residue. |
+| Blocking evidence | A real cwd junction passed request validation, runner returned `SUCCESS`, and relative child output appeared as external bytes `outside`. A NUL-bearing absolute executable was accepted then leaked `ValueError`. The committed late-sentinel check waits 0.2 seconds against a 2-second fixture delay. |
+| Control ticket defect | The frozen P3 union omitted a started-child termination-failure result and finite secondary kill/wait budget. This must be refrozen by the control plane; implementation cannot infer a new result contract. |
+| Lane closure | Allocation `aln_local_orchestration_install_05s2_20260811` is released and receipt `rcpt_local_orchestration_install_05s2_20260811` is closed against replay. |
+| Decision | `CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED`; no automatic correction, branch/worktree replacement, merge, 05S3 dispatch, live Codex mutation, target-project write, push, release or deployment. Submitted commits remain immutable review evidence. |

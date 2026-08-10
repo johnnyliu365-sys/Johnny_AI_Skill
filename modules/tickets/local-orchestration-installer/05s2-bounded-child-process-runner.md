@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / verification support only |
 | Context / decision | `doc/context/local-orchestration-installer/main.md` / `PRG-20260811-106` |
-| State | `IN_PROGRESS / DISPATCH_AUTHORIZED` |
+| State | `CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED` |
 | Dependency | 05S1 independently approved and integrated by `504a3ec` |
 | Implementation language | Python 3.11 |
 | Implementation responsibility | Codex task `019fcc9c-f34f-7d53-a313-c70c90bf3245`, model `gpt-5.6-terra`, reasoning `xhigh`, in the sole implementation worktree after exact receipt admission |
@@ -109,3 +109,16 @@ guarded integration.
 The dispatch prompt must bind this ticket, owner, handoff, allocation, receipt,
 correlation, exact ticket-doc baseline and separate handoff-doc commit. Any
 mismatch is `HALT` and grants no implementation authority.
+
+## Independent review disposition
+
+Implementation `52d7455` and docs-only handoff `72ccfaa` received
+`CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED` in
+`doc/reviews/local-orchestration-installer/05s2-bounded-child-process-runner-code-review.md`.
+CR-120 proves a physical working-directory junction redirects a successful
+child write outside the owned root. CR-121 records an accepted NUL executable
+that leaks `ValueError`. CR-122 records a non-truthful late-sentinel timing
+assertion. CR-123 is a control-plane ticket defect: the frozen union omitted a
+finite started-child termination-failure outcome and cleanup budget. No
+automatic correction, merge or 05S3 dispatch is authorized. The allocation is
+released and the receipt is closed against replay.
