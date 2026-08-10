@@ -122,7 +122,7 @@
 | Ticket 05A CLI contract/preflight | DONE / APPROVED / INTEGRATED | Implementation `97ab31c`; repaired handoff `fb755268`; review `d54c0bd`; owner-authorized ledger-preserving merge `b22c6c4`; post-merge verification passed. |
 | Ticket 05S combined staging parent | SUPERSEDED / DECOMPOSED | Rejected commits remain immutable evidence; no correction or integration. |
 | Ticket 05S1 disposable environment core | DONE / APPROVED / INTEGRATED | Correction `41d5ce4`, handoff `e1087d3`, review `17ea1d5` and guarded merge `504a3ec`; post-merge verification passed. |
-| Ticket 05S2 bounded child-process runner | IN_PROGRESS / REVISION_02_REFROZEN / ONE_CORRECTION_AUTHORIZED | `CLOSURE-LOCAL-INSTALL-T05S2-02`; override `OVR-LOCAL-INSTALL-T05S2-REFREEZE-20260811-01`; same branch/worktree only. |
+| Ticket 05S2 bounded child-process runner | CHANGES_REQUESTED / FINAL_REVISION_02_STOPPED / TICKET_DEFECT | Final review CR-124: first run-wait `OSError` is falsely reported as confirmed timeout; the one correction is consumed. |
 | Ticket 05S3 Codex protocol fixture | PLANNED / DEPENDENCY_WAIT | Starts after 05S2 approval/integration. |
 | Ticket 05S4 Codex lifecycle oracle | PLANNED / DEPENDENCY_WAIT | Starts after 05S3 approval/integration; only then may 05B/05C be refrozen. |
 | Ticket 05B transactional registration | BLOCKED / CONVERGENCE_REVIEW_REQUIRED | Terminal revision-02 review of `1a269411` / `ed74589` records CR-98..CR-104; no automatic correction or integration. |
@@ -261,3 +261,12 @@ refreezes only CR-120..CR-123 as `CLOSURE-LOCAL-INSTALL-T05S2-02` and
 authorizes one additive correction on the existing branch/worktree. Any
 blocker in the final correction review stops; merge and 05S3 dispatch remain
 unauthorized until approval.
+
+The revision-02 correction `34babbd` and handoff `c324c52` close the four
+refrozen findings, and fresh-export focused 10/10, full 187/187, strict typing,
+physical junction and cleanup checks pass. Final adversarial review nevertheless
+proves CR-124: a first run-wait `OSError` is routed through the timeout cleanup
+path and returned as `TIMEOUT_AFTER_START` after successful kill/reap. Because
+the frozen P3/T3 union has no truthful started-child observation-failure state,
+05S2 stops at `CHANGES_REQUESTED / TICKET_DEFECT`; no second correction,
+integration or 05S3 dispatch is authorized.

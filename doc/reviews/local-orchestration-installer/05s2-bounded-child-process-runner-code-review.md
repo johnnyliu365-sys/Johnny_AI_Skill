@@ -118,3 +118,50 @@ same task, worktree and branch at submitted HEAD `72ccfaa`; revision-01 commits
 and this review remain immutable. The next review is final for this override:
 any blocker stops without another correction, branch/worktree replacement or
 05S3 dispatch.
+
+## Revision-02 final independent review
+
+| Field | Value |
+| --- | --- |
+| Closure | `CLOSURE-LOCAL-INSTALL-T05S2-02`; P1-P4 / T1-T4 |
+| Reviewed baseline | Control `a5ebc98f40f199b86a7ad43941aa0ffafc55e457`; submitted HEAD `72ccfaab44429749c61a77177567deb81d7f29dc` |
+| Correction / handoff | `34babbd2ff200715c350b4a46c99d47db84de7e8` / `c324c52669cfa16c57433e0f0cf14ee2b00b0d69` |
+| Final result | `CHANGES_REQUESTED / FINAL_REVIEW_STOPPED / TICKET_DEFECT` |
+
+The ancestry is exact and additive: `72ccfaa -> 34babbd -> c324c52`.
+Correction scope is exactly the four authorized Python files; the later commit
+changes only `doc/WorkProgressReport.md`. Both worktrees remained clean and
+only the original control and implementation worktrees exist.
+
+### Revision-02 verification
+
+| Check | Result / evidence |
+| --- | --- |
+| Fresh export | PASS after using ZIP to preserve the repository's Unicode paths; no implementation-worktree write. |
+| Focused / full | PASS: 10/10 focused and 187/187 full tests. |
+| Strict type / compile | PASS: strict mypy and in-memory compile across 91 Python files; external mypy cache removed after review. |
+| Scope / source / diff | PASS: authorized file sets, additive ancestry, P0 source sentinel and `git diff --check`. |
+| CR-120 / CR-121 | PASS: physical root/cwd/five-child/overlay junctions and marker tamper stop before the process port; NUL executable is rejected at construction. |
+| CR-122 / CR-123 | PASS: committed wait exceeds the fixture late-write deadline; normal bounded reap and all three named kill/reap failure results pass. |
+| Residue | PASS: zero `johnny-stage-env-*` roots, junction targets, late sentinels and repository cache directories. |
+| Started-child wait-error reverse probe | **FAIL:** the first `wait()` raised `OSError`, not `TimeoutExpired`; kill succeeded, bounded reap returned 137, and the runner returned `TIMEOUT_AFTER_START` (`kills=1`, `waits=2`). |
+
+### CR-124 — `TICKET_DEFECT`, P3/T3
+
+`tests/staging/process_runner/runner.py:87-92` handles both
+`subprocess.TimeoutExpired` and a first-wait `OSError` by calling
+`_terminate_after_timeout`. The latter path can therefore return confirmed
+`TIMEOUT_AFTER_START` even though no timeout was observed. This violates result
+truth and the port's documented exception surface. CodeReview.md defect classes
+5, 6 and 7 apply: the TDD matrix omitted the first-wait error case, and the
+frozen union has no exact started-child observation-failure state. This is a
+ticket-design omission rather than authority for the implementation owner to
+invent a new result.
+
+### Final conclusion
+
+`CHANGES_REQUESTED / FINAL_REVIEW_STOPPED`. The one correction authorized by
+`OVR-LOCAL-INSTALL-T05S2-REFREEZE-20260811-01` is consumed. Per the explicit
+loop boundary, this review does not dispatch another correction, create or
+replace a branch/worktree, integrate 05S2, or dispatch 05S3. No push, release,
+deployment, live Codex mutation or target-project access occurred.

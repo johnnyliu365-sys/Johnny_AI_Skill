@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / verification support only |
 | Context / decision | `doc/context/local-orchestration-installer/main.md` / `PRG-20260811-106` |
-| State | `IN_PROGRESS / REVISION_02_REFROZEN / ONE_CORRECTION_AUTHORIZED` |
+| State | `CHANGES_REQUESTED / FINAL_REVISION_02_STOPPED / TICKET_DEFECT` |
 | Dependency | 05S1 independently approved and integrated by `504a3ec` |
 | Implementation language | Python 3.11 |
 | Implementation responsibility | Codex task `019fcc9c-f34f-7d53-a313-c70c90bf3245`, model `gpt-5.6-terra`, reasoning `xhigh`, in the sole implementation worktree after exact receipt admission |
@@ -160,3 +160,20 @@ Owner override `OVR-LOCAL-INSTALL-T05S2-REFREEZE-20260811-01` subsequently
 authorizes exactly the revision-02 refreeze and one additive same-branch
 correction defined above; it does not reopen revision 01 or permit a second
 correction.
+
+## Revision-02 final review disposition
+
+Correction `34babbd2ff200715c350b4a46c99d47db84de7e8` and docs-only handoff
+`c324c52669cfa16c57433e0f0cf14ee2b00b0d69` close CR-120..CR-123, but the
+final independent review records CR-124 as a `TICKET_DEFECT`. The required
+`StartedChildProcess.wait()` port permits a concrete `OSError`; when the first
+run wait raises that error, `runner.py:91-92` routes it through the timeout
+path. An independent strict-port probe then killed and bounded-reaped the child
+and returned `TIMEOUT_AFTER_START`, even though no `TimeoutExpired` occurred.
+The frozen result union and TDD matrix do not contain an exact state for this
+started-child observation failure, so P3/T3 result truth is not closed.
+
+The one correction authorized by
+`OVR-LOCAL-INSTALL-T05S2-REFREEZE-20260811-01` is consumed. This ticket is
+stopped without a second correction, replacement branch/worktree, integration
+or 05S3 dispatch. All submitted commits remain immutable evidence.

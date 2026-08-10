@@ -2,13 +2,13 @@
 
 | Field | Value |
 | --- | --- |
-| Context state | `STAGING_DECOMPOSED / TICKET_05S1_INTEGRATED / TICKET_05S2_REVISION_02_REFROZEN` |
-| Router event | `CONVERGENCE_REVIEW_REQUIRED → OWNER_OVERRIDE → TICKET_REFROZEN → CORRECTION_HANDOFF_REQUIRED` |
+| Context state | `STAGING_DECOMPOSED / TICKET_05S1_INTEGRATED / TICKET_05S2_FINAL_REVIEW_STOPPED` |
+| Router event | `CORRECTION_COMPLETED → REVIEW_COMPLETED → TICKET_DEFECT → WAIT_FOR_HUMAN` |
 | Delivery stage | `POC` |
 | Requirement change | `CHG-20260808-011` |
 | Baseline | `a37a515` (`docs: replace duplicated ticket history with references`) |
 | Control-plane owner | Codex / current `main` worktree |
-| Implementation owner | Task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; one active revision-02 correction on the existing 05S2 branch/worktree only |
+| Implementation owner | Task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; no active allocation after the consumed revision-02 correction |
 | Required sources read | `AGENTS.md`, `Workflow.md` (Router, Wayfinder, Grill, change control, specification, tickets, role boundary), `Defined_wayfinder.md`, `CONTEXT.md`, `PRD.md`, `ProjectSchedule.md`, `doc/RequirementChangeLog.md`, existing plugin manifests / README, `library/workflow_router/`, and completed plugin / autonomous-collaboration POCs |
 
 ## Shared Context reference
@@ -328,3 +328,11 @@ reviewed gaps as `CLOSURE-LOCAL-INSTALL-T05S2-02`: live non-reparse ownership,
 NUL-free executable admission, truth-preserving late-write evidence and finite
 kill/reap failure semantics. One additive correction is permitted on the same
 branch/worktree; integration and 05S3 remain blocked pending the final review.
+
+The final exported review of correction `34babbd` and handoff `c324c52` passes
+the refrozen NUL, physical reparse, extended late-write and bounded kill/reap
+matrix. It also independently proves CR-124: a first run-wait `OSError` is not
+a timeout, but the current runner kills/reaps and returns confirmed
+`TIMEOUT_AFTER_START`. The P3/T3 ticket design omitted a truthful finite state
+for this started-child observation failure. The correction authorization is
+consumed, so 05S2 is stopped without integration or downstream dispatch.

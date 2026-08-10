@@ -1337,3 +1337,13 @@
 | Binding | Ticket `05s2-bounded-child-process-runner`; closure `CLOSURE-LOCAL-INSTALL-T05S2-02`; ticket-doc `f19870f`; implementation HEAD `72ccfaab44429749c61a77177567deb81d7f29dc`; task `019fcc9c-f34f-7d53-a313-c70c90bf3245` |
 | Receipt | `hnd_local_orchestration_install_05s2_r02_20260811` / `aln_local_orchestration_install_05s2_r02_20260811` / `rcpt_local_orchestration_install_05s2_r02_20260811` / `corr-local-orchestration-install-05s2-r02-20260811` / `q-local-orchestration-install-05s2-r02-20260811` |
 | Continuation | One same-branch additive correction for CR-120..CR-123, then one docs-only return and one final independent review. No new branch/worktree or second correction. |
+
+## PRG-20260811-120 — Ticket 05S2 revision-02 final review
+
+| Field | Value |
+| --- | --- |
+| Router event | `REVIEW_COMPLETED -> CHANGES_REQUESTED -> TICKET_DEFECT -> WAIT_FOR_HUMAN` |
+| Binding | Ticket `05s2-bounded-child-process-runner`; closure `CLOSURE-LOCAL-INSTALL-T05S2-02`; override `OVR-LOCAL-INSTALL-T05S2-REFREEZE-20260811-01`; correction `34babbd2ff200715c350b4a46c99d47db84de7e8`; handoff `c324c52669cfa16c57433e0f0cf14ee2b00b0d69`. |
+| Verification | Fresh Unicode-preserving export: focused 10/10, full 187/187, strict mypy 91 files, in-memory compile 91 files, source/scope/diff and residue checks pass. CR-120..CR-123 are closed by evidence. |
+| Finding | CR-124 `TICKET_DEFECT`, P3/T3: a first run-wait `OSError` is routed through timeout cleanup and, after successful kill/bounded reap, falsely returns confirmed `TIMEOUT_AFTER_START`. Independent strict-port replay recorded `kills=1`, `waits=2`. |
+| Decision | `CHANGES_REQUESTED / FINAL_REVIEW_STOPPED`; the authorized correction is consumed. No second dispatch, replacement branch/worktree, merge, 05S3, push, release, deployment, live Codex mutation or target-project access. |
