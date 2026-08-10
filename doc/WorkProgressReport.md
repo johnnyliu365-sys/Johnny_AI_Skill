@@ -1328,3 +1328,12 @@
 | Refrozen delta | CR-120 live non-reparse lease/cwd admission; CR-121 NUL-free executable; CR-122 late-write evidence beyond the fixture deadline; CR-123 finite termination timeout and named kill/reap failure result. |
 | Lane | Same task `019fcc9c-f34f-7d53-a313-c70c90bf3245`, same sole implementation worktree and existing branch `codex/implementation-bounded-child-process-runner-05s2`; no branch/worktree creation or switch. |
 | Limit | One additive implementation correction plus one docs-only handoff, then one final independent review. Any blocker stops; no second correction, merge, 05S3 dispatch, live Codex mutation, target-project write, push, release or deployment. |
+
+## PRG-20260811-118 — Ticket 05S2 revision-02 correction handoff
+
+| Field | Value |
+| --- | --- |
+| Router event | `ACTION_COMPLETED → CORRECTION_HANDOFF_VALIDATED → IMPLEMENT / AUTO_CONTINUE` |
+| Binding | Ticket `05s2-bounded-child-process-runner`; closure `CLOSURE-LOCAL-INSTALL-T05S2-02`; ticket-doc `f19870f`; implementation HEAD `72ccfaab44429749c61a77177567deb81d7f29dc`; task `019fcc9c-f34f-7d53-a313-c70c90bf3245` |
+| Receipt | `hnd_local_orchestration_install_05s2_r02_20260811` / `aln_local_orchestration_install_05s2_r02_20260811` / `rcpt_local_orchestration_install_05s2_r02_20260811` / `corr-local-orchestration-install-05s2-r02-20260811` / `q-local-orchestration-install-05s2-r02-20260811` |
+| Continuation | One same-branch additive correction for CR-120..CR-123, then one docs-only return and one final independent review. No new branch/worktree or second correction. |
