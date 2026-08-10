@@ -1291,3 +1291,17 @@
 | Resolution | The sole conflict was `doc/WorkProgressReport.md`. Resolution retained immutable implementation records PRG-108/PRG-111 and control records PRG-109/PRG-110/PRG-112 in numeric order; no source conflict or silent discard occurred. |
 | Post-merge verification | Focused 5/5; full 177/177; strict mypy 86 files; in-memory compile 86 files; `git diff --check`; repository cache and owned environment-root residue both 0. |
 | Completion | 05S1 is `COMPLETE / APPROVED / INTEGRATED`; allocation `aln_local_orchestration_install_05s1_20260811` is released and receipt `rcpt_local_orchestration_install_05s1_20260811` is closed. The unique serial continuation is 05S2 preparation. No push, release, deployment, live Codex mutation or target-project access. |
+
+## PRG-20260811-114 — Ticket 05S2 bounded-runner handoff
+
+| Field | Value |
+| --- | --- |
+| Router event | `NEXT_UNBLOCKED_TICKET_SELECTED → TICKET_FROZEN → TICKET_DISPATCH_REQUIRED → IMPLEMENTATION_DISPATCH_CONFIRMED / IMPLEMENT` |
+| Ticket / closure | `05s2-bounded-child-process-runner`; `CLOSURE-LOCAL-INSTALL-T05S2-01`; P1-P4/T1-T4 |
+| Binding identifiers | Handoff `hnd_local_orchestration_install_05s2_20260811`; allocation `aln_local_orchestration_install_05s2_20260811`; receipt `rcpt_local_orchestration_install_05s2_20260811`; correlation `corr-local-orchestration-install-05s2-20260811`; question `q-local-orchestration-install-05s2-20260811`; task `019fcc9c-f34f-7d53-a313-c70c90bf3245` |
+| Authority / delivery | Continuing owner instruction in this task and program authority `PRG-20260809-042`; dependency integration `PRG-20260811-113` / `504a3ec`; owner explicitly instructed the control plane to continue after the bounded 05S1 plan. |
+| Baseline | Ticket-doc commit `13e7487b4cdf2d9043f42c9b97caa0fcd65d9b39`; this record's commit is the separate handoff-doc baseline and must be read back before implementation. |
+| Scope | Five new process-runner test-support Python files only plus a later docs-only handoff. Integrated 05S1 is read-only. Exact argv/environment/cwd/timeout and finite process observations only; no Codex, plugin, installation, target-project, live-host or rejected-05S source. |
+| Physical pre-freeze evidence | On this Windows host, missing absolute executable produced WinError 2, an existing directory used as executable produced WinError 5, and oversized argv produced FileNotFoundError-class WinError 206. The closure therefore requires classification by concrete WinError, not Python exception class alone. |
+| Branch/worktree | Reuse the sole clean `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` worktree currently at submitted 05S1 handoff `e1087d3`. Create only `codex/implementation-bounded-child-process-runner-05s2` at this handoff-doc commit; no new worktree. |
+| Return / stop | First-red evidence, one implementation commit, exact focused/full/strict verification and clean readback, then one docs-only handoff. One independent review; any blocker stops without automatic correction, replacement branch/worktree or 05S3 dispatch. No push, release, deployment, live Codex mutation or target-project access. |
