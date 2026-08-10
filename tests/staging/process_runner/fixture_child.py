@@ -98,6 +98,7 @@ class FixtureObservation:
 
 
 _OVERLAY_KEYS = ("USERPROFILE", "LOCALAPPDATA", "APPDATA", "TEMP", "TMP", "CODEX_HOME")
+LATE_WRITE_DELAY_SECONDS = 2.0
 
 
 def _required_environment(key: str) -> str:
@@ -132,7 +133,7 @@ def main(arguments: tuple[str, ...]) -> int:
     except (ValueError, OSError):
         return 64
     if mode is FixtureMode.TIMEOUT:
-        time.sleep(2)
+        time.sleep(LATE_WRITE_DELAY_SECONDS)
     _write_observation("fixture-complete.json", observation)
     if mode is FixtureMode.NONZERO:
         return 7
