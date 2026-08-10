@@ -100,6 +100,30 @@ The ticket set must begin each listed behavior with a red test and retain its fi
 5. **Target non-interference:** snapshot and Git-status tests across representative target repositories cover install, failed install, status, failed uninstall and successful uninstall.
 6. **Packaging smoke:** a clean Windows user sandbox installs from the released `Setup.exe`, starts/stops only the owned runner, removes it once and confirms no registered owned host integration remains.
 
+### Verification staging architecture
+
+Verification has two non-interchangeable isolation gates:
+
+1. **Codex lifecycle contract staging.** Before refreezing transactional
+   registration or receipt removal, a disposable test-owned child process and
+   filesystem environment must persist independent marketplace/plugin truth.
+   Its list and absence results come from freshly validated state and actual
+   sandbox files, never from the caller request or a queued fake response. It
+   may emulate the documented CLI contract, but it must not invoke or modify the
+   user's live Codex installation.
+2. **Disposable Windows user staging.** Before Ticket 04 can complete, the built
+   `Setup.exe` and matching uninstaller must run in a disposable Windows user
+   profile or equivalent VM/sandbox that can prove per-user filesystem,
+   configuration, process and host-registration cleanup. A temporary directory,
+   Linux container or contract emulator is not sufficient for this packaging
+   gate.
+
+Both gates must preserve unrelated state and byte-plus-porcelain snapshots of
+representative target repositories. The environment is destroyed only after
+fresh absence proof is captured. Contract-staging evidence does not project a
+host as production `SUPPORTED`, and the Windows staging gate cannot replace the
+finite unit/fault matrix.
+
 ## Risks, compatibility, rollback and release prerequisites
 
 - The initial platform is Windows per-user only. Other operating systems are explicitly unsupported rather than silently using unsafe path semantics.
@@ -120,6 +144,7 @@ The ticket set must begin each listed behavior with a red test and retain its fi
 | --- | --- | --- |
 | 2026-08-08 | Codex / current `main` / `e04c2be` | Initial Wayfinder, Architecture and Grill convergence to draft specification. |
 | 2026-08-08 | Project owner / current `main` | Approved the complete POC scope, including owned one-click uninstall and fail-closed host lifecycle boundary. |
+| 2026-08-10 | Project owner and Codex / current `main` | Approved the two-gate verification architecture: stateful Codex contract staging before 05B/05C refreeze, then disposable Windows user staging before package acceptance. Product scope and AC-01 through AC-08 are unchanged. |
 
 ## Approval record
 

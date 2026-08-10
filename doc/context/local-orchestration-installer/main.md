@@ -2,13 +2,13 @@
 
 | Field | Value |
 | --- | --- |
-| Context state | `CODEX_CLI_CAPABILITY_VERIFIED / TICKET_05_DISPATCH_PREPARED / TICKET_04_DEPENDENCY_WAIT` |
-| Router event | `ACTION_COMPLETED → TICKET_SELECTION → GRILL → IMPLEMENT` |
+| Context state | `STAGING_FIRST_CONVERGENCE / TICKET_05S_DISPATCH_PREPARED / DOWNSTREAM_DEPENDENCY_WAIT` |
+| Router event | `OWNER_REQUIREMENT_CONFIRMED → ARCHITECTURE / GRILL → SPEC_REVISION → TICKET_SELECTION` |
 | Delivery stage | `POC` |
 | Requirement change | `CHG-20260808-011` |
-| Baseline | `a43da12` (`docs: close ticket 03 and halt ticket 04`) |
+| Baseline | `a37a515` (`docs: replace duplicated ticket history with references`) |
 | Control-plane owner | Codex / current `main` worktree |
-| Implementation owner | Codex task `019fcc9c-f34f-7d53-a313-c70c90bf3245` / Ticket-05 allocation `aln_local_orchestration_install_05_20260809` after exact dispatch commit synchronization |
+| Implementation owner | Codex task `019fcc9c-f34f-7d53-a313-c70c90bf3245` / selected Ticket-05S allocation `aln_local_orchestration_install_05s_20260810` after exact dispatch commit synchronization |
 | Required sources read | `AGENTS.md`, `Workflow.md` (Router, Wayfinder, Grill, change control, specification, tickets, role boundary), `Defined_wayfinder.md`, `CONTEXT.md`, `PRD.md`, `ProjectSchedule.md`, `doc/RequirementChangeLog.md`, existing plugin manifests / README, `library/workflow_router/`, and completed plugin / autonomous-collaboration POCs |
 
 ## Shared Context reference
@@ -230,3 +230,25 @@ registration or schedule is authorized.
 - Authoritative review: control commit `24227ac`, findings `CR-98..CR-104`.
 - Current state: `CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED`; 05B is
   paused and 05C/04 remain dependency-waiting.
+
+## Staging-first convergence decision
+
+The owner directed the control plane to establish isolation before rewriting
+the blocked lifecycle tickets. The architecture now separates two evidence
+levels:
+
+- `05S` owns a disposable, stateful child-process/filesystem Codex contract
+  staging environment. Fresh persisted state and actual sandbox files are the
+  oracle for add/list/remove/absence; no result may be manufactured from the
+  request or a queued fake response. It cannot invoke live Codex or touch a
+  target project.
+- Ticket 04 retains a later disposable Windows user-profile smoke gate for the
+  real `Setup.exe`/uninstaller. Current host inspection found Windows Sandbox
+  absent, Hyper-V management unavailable to this control process and Docker on
+  an inactive Linux context; none is falsely recorded as a usable Windows
+  package staging provider.
+
+This is a verification-architecture refinement under the approved SPEC and
+does not change AC-01 through AC-08. Ticket 05B stays paused as immutable
+evidence. After 05S is independently approved and integrated, 05B, 05C and 04
+must be refrozen with explicit staging evidence dependencies before dispatch.

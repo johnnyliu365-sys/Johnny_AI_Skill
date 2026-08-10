@@ -120,6 +120,7 @@
 | Toolchain and Codex capability probe | DONE / VERIFIED | Inno Setup 6.7.3 is installed per user with valid signature and compile proof. One disposable Codex CLI marketplace/plugin was installed, hash-verified and completely removed without target-project access. |
 | Parent Ticket 05 Codex CLI adapter | SUPERSEDED / CONVERGENCE_DECOMPOSED | Correction review found CR-80..CR-85; rejected branch/SHAs remain evidence and its allocation/receipt are closed. |
 | Ticket 05A CLI contract/preflight | DONE / APPROVED / INTEGRATED | Implementation `97ab31c`; repaired handoff `fb755268`; review `d54c0bd`; owner-authorized ledger-preserving merge `b22c6c4`; post-merge verification passed. |
+| Ticket 05S lifecycle contract staging | IN_PROGRESS / DISPATCH_PREPARED | Owner selected stateful child-process/filesystem staging before downstream ticket refreeze; closure `CLOSURE-LOCAL-INSTALL-T05S-01`. |
 | Ticket 05B transactional registration | BLOCKED / CONVERGENCE_REVIEW_REQUIRED | Terminal revision-02 review of `1a269411` / `ed74589` records CR-98..CR-104; no automatic correction or integration. |
 | Ticket 05C receipt removal/replay | PLANNED / DEPENDENCY_WAIT / REFREEZE_REQUIRED | Starts only after 05A/05B approval/integration and a finite behavior/rollback closure refreeze. |
 | Ticket 04 implementation | PLANNED / DEPENDENCY_WAIT | Pinned compiler is ready; package work waits for all decomposed Codex adapter children 05A–05C. |
@@ -177,3 +178,19 @@ findings live in the review report.
 | Revision 02 refreeze | `PRG-20260810-098`; `a7dd4a4`; `CLOSURE-LOCAL-INSTALL-T05B-02` |
 | Revision 02 correction | `PRG-20260810-099`; `hnd_local_orchestration_install_05b_corr1_r02_20260810`; `corr-local-orchestration-install-05b-corr1-r02-20260810`; `1a269411`; `ed74589` |
 | Terminal review | `PRG-20260810-101`; control commit `24227ac`; `CR-98..CR-104`; `CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED` |
+
+### Ticket 05S staging-first convergence
+
+The owner requires an isolated verification environment before 05B/05C/04 are
+rewritten. Host capability inspection found no available Windows Sandbox
+executable, no current Hyper-V management permission and no running Windows
+container engine. A Linux-container or temporary-directory-only claim cannot
+serve as Windows package staging.
+
+The first bounded gate is therefore Ticket 05S: a test-owned executable child
+process plus persisted disposable filesystem state that independently proves
+the documented Codex add/list/remove/absence lifecycle without invoking live
+Codex. Ticket 05B remains immutable blocked evidence while 05S is implemented
+and reviewed. Only after 05S integration will the control plane refreeze 05B and
+05C against the staging oracle; Ticket 04 will additionally require a real
+disposable Windows user-profile provider.

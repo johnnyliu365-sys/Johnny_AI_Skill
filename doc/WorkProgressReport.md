@@ -1161,3 +1161,14 @@
 | Router event | `CORRECTION_COMPLETED -> CODE_REVIEW -> CHANGES_REQUESTED -> CONVERGENCE_REVIEW_REQUIRED` |
 | References | Closure `CLOSURE-LOCAL-INSTALL-T05B-02`; implementation `1a26941176b4ce3c122c41644817e3429cb7c8a5`; handoff `ed74589c12072d5d70e168735e6ccc440c681ced`; review commit `24227ac`; report `doc/reviews/local-orchestration-installer/05b-codex-cli-transactional-registration-code-review.md`; `CR-98..CR-104` |
 | Decision | `CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED`; no automatic continuation |
+
+## PRG-20260810-102 — staging-first convergence and Ticket 05S dispatch preparation
+
+| Field | Value |
+| --- | --- |
+| Router event | `OWNER_REQUIREMENT_CONFIRMED → ARCHITECTURE / GRILL → SPEC_REVISION → TICKET_SELECTED → IMPLEMENTATION_HANDOFF` |
+| Owner decision | Establish an isolated install/remove verification environment first; only after it is independently approved may the control plane refreeze 05B, 05C and Ticket 04. |
+| Capability evidence | Windows 10 Pro reports a hypervisor, but `WindowsSandbox.exe` is absent; Hyper-V management is unavailable to the current control process; Docker is an inactive `desktop-linux` context. No provider is misreported as usable Windows package staging. |
+| Selected first gate | Ticket `05s-codex-lifecycle-contract-staging`; closure `CLOSURE-LOCAL-INSTALL-T05S-01`; stateful test-owned child process and persisted filesystem oracle; no live Codex/target-project mutation. |
+| Handoff identifiers | `hnd_local_orchestration_install_05s_20260810`; `aln_local_orchestration_install_05s_20260810`; `rcpt_local_orchestration_install_05s_20260810`; `corr-local-orchestration-install-05s-20260810`; task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; branch `codex/implementation-codex-lifecycle-staging-05s`. |
+| Downstream boundary | 05B remains terminal blocked evidence and is not patched in this commit. 05C/04 remain dependency-waiting. Their acceptance closures will be revised only after 05S implementation, review and guarded integration. |
