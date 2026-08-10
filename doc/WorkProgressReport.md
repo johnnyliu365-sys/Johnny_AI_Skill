@@ -1306,6 +1306,22 @@
 | Branch/worktree | Reuse the sole clean `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` worktree currently at submitted 05S1 handoff `e1087d3`. Create only `codex/implementation-bounded-child-process-runner-05s2` at this handoff-doc commit; no new worktree. |
 | Return / stop | First-red evidence, one implementation commit, exact focused/full/strict verification and clean readback, then one docs-only handoff. One independent review; any blocker stops without automatic correction, replacement branch/worktree or 05S3 dispatch. No push, release, deployment, live Codex mutation or target-project access. |
 
+## PRG-20260811-115 - Ticket 05S2 bounded child-process runner implementation handoff
+
+| Field | Value |
+| --- | --- |
+| Router event | `ACTION_COMPLETED -> IMPLEMENTATION_COMPLETED -> REVIEW_HANDOFF` |
+| Ticket / closure | `05s2-bounded-child-process-runner`; `CLOSURE-LOCAL-INSTALL-T05S2-01`; P1-P4 / T1-T4 |
+| Authority and binding | Authority `PRG-20260809-042`, `PRG-20260811-113` and `PRG-20260811-114`; handoff `hnd_local_orchestration_install_05s2_20260811`; allocation `aln_local_orchestration_install_05s2_20260811`; receipt `rcpt_local_orchestration_install_05s2_20260811`; correlation `corr-local-orchestration-install-05s2-20260811`; question `q-local-orchestration-install-05s2-20260811`. |
+| Baseline / owner | Ticket-doc baseline `13e7487b4cdf2d9043f42c9b97caa0fcd65d9b39`; handoff-doc baseline `622e78d950a2d35cacf4e5d49fe27fdf7e58e6a1`; owner task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; branch `codex/implementation-bounded-child-process-runner-05s2`; implementation `52d74554c930a53ee2b84838d0ee31afde9f6b80`. |
+| Implementation scope | Only `tests/staging/process_runner/__init__.py`, `contracts.py`, `runner.py`, `fixture_child.py`, and `tests/test_bounded_child_process_runner.py`; integrated 05S1 and production library are unchanged. |
+| First-red evidence | Before process-runner modules existed, exact focused command failed importing `tests.test_bounded_child_process_runner` with `ModuleNotFoundError: No module named 'tests.staging.process_runner'`. |
+| P1/P2 evidence | Strict immutable request models reject relative executable, command-string argv, malformed argv, outside cwd, non-exact overlay and invalid timeout before any child. A real absolute Python child received exactly the original/effective argv, owned cwd, all and only the six 05S1 overlay keys, while parent environment and an external sibling remained unchanged. |
+| P3/P4 evidence | Real success, nonzero exit, timeout, unavailable, access denied and generic launch outcomes are named union members. Timeout kills and waits before returning; no late completion sentinel remained. Windows probes mapped concrete WinError 2/3 to unavailable, 5 to access denied and 206 to generic launch failure. Observations include exact executable and argv plus started truth; raw stdout/stderr are redirected to `DEVNULL` and excluded from the result shape. |
+| Verification | `python -B -m unittest tests.test_bounded_child_process_runner -v`: 5/5 passed. `python -B -m unittest discover -s tests -v`: 182/182 passed. Strict mypy with removed repository-external cache: 91 source files, success. In-memory compile: 5/5 authorized files. AST/source sentinel, scope guard and `git diff --check`: passed. |
+| Final state | Repository generated-cache residue: 0; owned `johnny-stage-env-*` roots: 0; no late timeout sentinel; no live Codex, target-project action, merge, push, release, deployment, integration decision or 05S3 dispatch. |
+| Review handoff | Independent control-plane review is required. This implementation owner makes no review or integration decision. |
+
 ## PRG-20260811-116 — Ticket 05S2 independent terminal review
 
 | Field | Value |
@@ -1338,6 +1354,21 @@
 | Receipt | `hnd_local_orchestration_install_05s2_r02_20260811` / `aln_local_orchestration_install_05s2_r02_20260811` / `rcpt_local_orchestration_install_05s2_r02_20260811` / `corr-local-orchestration-install-05s2-r02-20260811` / `q-local-orchestration-install-05s2-r02-20260811` |
 | Continuation | One same-branch additive correction for CR-120..CR-123, then one docs-only return and one final independent review. No new branch/worktree or second correction. |
 
+## PRG-20260811-119 - Ticket 05S2 revision-02 correction handoff
+
+| Field | Value |
+| --- | --- |
+| Router event | `ACTION_COMPLETED -> IMPLEMENTATION_CORRECTION_COMPLETED -> REVIEW_HANDOFF` |
+| Ticket / closure | `05s2-bounded-child-process-runner`; `CLOSURE-LOCAL-INSTALL-T05S2-02`; P1-P4 / T1-T4; owner override `OVR-LOCAL-INSTALL-T05S2-REFREEZE-20260811-01`. |
+| Authority / binding | Authority `PRG-20260809-042`, `PRG-20260811-117`, and `PRG-20260811-118`; review `8d1767d`; handoff `hnd_local_orchestration_install_05s2_r02_20260811`; allocation `aln_local_orchestration_install_05s2_r02_20260811`; receipt `rcpt_local_orchestration_install_05s2_r02_20260811`; correlation `corr-local-orchestration-install-05s2-r02-20260811`; question `q-local-orchestration-install-05s2-r02-20260811`. |
+| Baselines / owner | Ticket-doc `f19870f`; correction-handoff baseline `a5ebc98f40f199b86a7ad43941aa0ffafc55e457`; submitted pre-correction HEAD `72ccfaab44429749c61a77177567deb81d7f29dc`; owner task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; branch `codex/implementation-bounded-child-process-runner-05s2`; additive implementation `34babbd2ff200715c350b4a46c99d47db84de7e8`. |
+| Exact correction scope | Only `tests/staging/process_runner/contracts.py`, `runner.py`, `fixture_child.py`, and `tests/test_bounded_child_process_runner.py`. Integrated 05S1 and all production-library files remain unchanged. |
+| First-red evidence | Against `72ccfaa`, `test_t1_strict_request_boundary_rejects_before_child_effects` failed because an embedded-NUL executable was accepted; `test_r02_t2_live_cwd_junction_after_request_construction_blocks_before_child_start` and every child/overlay subcase failed because a physical junction still returned `SUCCESS`; `test_r02_t2_live_root_junction_is_rejected_before_process_port` failed because construction accepted the root junction; and `test_r02_t3_injected_port_maps_all_termination_failures_without_exception` failed because the runner accepted no required process port. CR-122 is an evidence correction: the formal review recorded the prior `0.2`-second observation as shorter than the fixture's two-second late-write schedule; the committed test now waits `LATE_WRITE_DELAY_SECONDS + 0.2` and does not claim a non-existent runtime red. |
+| Green behavior | Absolute executable and argv reject NUL before a process effect. Construction and run admission revalidate exact non-reparse root, marker, five children, six overlay locators and cwd; physical root/cwd/child/overlay junctions and marker tampering stop before child start. A required typed port has one concrete shell-free subprocess binding. A distinct termination timeout yields named `KILL_OS_ERROR`, `REAP_TIMEOUT`, or `REAP_OS_ERROR` with a started but `UNCONFIRMED` child state; normal reap remains confirmed timeout with an exit code. |
+| Verification | `python -B -m unittest tests.test_bounded_child_process_runner -v`: 10/10 passed. `python -B -m unittest discover -s tests -v`: 187/187 passed. `python -B -m mypy --strict --explicit-package-bases --no-incremental --cache-dir <validated OS-temp>`: 91 source files, success; its external cache was removed and read back absent. In-memory compile: 4/4 changed files. Source/scope sentinel and `git diff --check`: passed. |
+| Residue / isolation | Repository `.mypy_cache`, `.pytest_cache`, and `__pycache__` count: 0. Owned staging-root count: 0. External junction-target count: 0. Late completion-sentinel count: 0. The child receives only the exact six-entry overlay; no raw stdout/stderr crosses the runner boundary. No live Codex, target-project, merge, push, release, deployment, integration decision, review decision, or 05S3 dispatch occurred. |
+| Review handoff | One final independent review is required by the refreeze. This implementation owner makes no approval, integration, or downstream-ticket decision. |
+
 ## PRG-20260811-120 — Ticket 05S2 revision-02 final review
 
 | Field | Value |
@@ -1366,6 +1397,22 @@
 | Binding | Ticket `05s2-bounded-child-process-runner`; closure `CLOSURE-LOCAL-INSTALL-T05S2-03`; override `OVR-LOCAL-INSTALL-T05S2-R03-20260811-01`; ticket-doc `c8556b4`; implementation HEAD `c324c52669cfa16c57433e0f0cf14ee2b00b0d69`; task `019fcc9c-f34f-7d53-a313-c70c90bf3245`. |
 | Receipt | `hnd_local_orchestration_install_05s2_r03_20260811` / `aln_local_orchestration_install_05s2_r03_20260811` / `rcpt_local_orchestration_install_05s2_r03_20260811` / `corr-local-orchestration-install-05s2-r03-20260811` / `q-local-orchestration-install-05s2-r03-20260811`. |
 | Exact continuation | One additive correction in `contracts.py`, `runner.py` and the bounded-runner test file for CR-124, followed by one docs-only PRG-20260811-123 handoff and one final independent review. No fixture/05S1/product change, new branch/worktree or second correction. |
+
+## PRG-20260811-123 - Ticket 05S2 revision-03 CR-124 correction handoff
+
+| Field | Value |
+| --- | --- |
+| Router event | `ACTION_COMPLETED -> IMPLEMENTATION_CORRECTION_COMPLETED -> REVIEW_HANDOFF` |
+| Ticket / closure | `05s2-bounded-child-process-runner`; `CLOSURE-LOCAL-INSTALL-T05S2-03`; CR-124; owner override `OVR-LOCAL-INSTALL-T05S2-R03-20260811-01`. |
+| Authority / binding | Authority `PRG-20260809-042`, `PRG-20260811-121`, and `PRG-20260811-122`; handoff `hnd_local_orchestration_install_05s2_r03_20260811`; allocation `aln_local_orchestration_install_05s2_r03_20260811`; receipt `rcpt_local_orchestration_install_05s2_r03_20260811`; correlation `corr-local-orchestration-install-05s2-r03-20260811`; question `q-local-orchestration-install-05s2-r03-20260811`. |
+| Baselines / owner | Ticket-doc `c8556b40f3a46ff7645e074b2dab67138c0693d2`; correction-handoff baseline `a072bdd2115c2657c47c9dae7106ff10b2a6baa2`; submitted pre-correction HEAD `c324c52669cfa16c57433e0f0cf14ee2b00b0d69`; owner task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; branch `codex/implementation-bounded-child-process-runner-05s2`; additive implementation `33a8fa90e2766d3cb6217f22aa97265ac5ec6ed8`. |
+| Exact correction scope | Only `tests/staging/process_runner/contracts.py`, `tests/staging/process_runner/runner.py`, and `tests/test_bounded_child_process_runner.py`; no fixture, 05S1, production-library, Codex, plugin, install, target-project, or live-host change. |
+| First-red evidence | Against `c324c52`, `test_r03_t3_run_wait_os_error_is_not_a_confirmed_timeout` received `TIMEOUT_AFTER_START` instead of the required distinct wait-failure outcome. `test_r03_t3_every_unconfirmed_cleanup_failure_carries_its_first_wait_trigger` found no trigger field for all six trigger-by-cleanup-failure cells. |
+| Green behavior | First `TimeoutExpired` carries `RUN_TIMEOUT` and successful bounded reap returns confirmed `TIMEOUT_AFTER_START`. First wait `OSError` carries `RUN_WAIT_OS_ERROR` and successful bounded reap returns strict `WAIT_FAILED_AFTER_START / STARTED / CONFIRMED_TERMINATED / WAIT_OS_ERROR` with exit code. Kill, reap-timeout, and reap-OS-error states remain finite `TERMINATION_FAILED / UNCONFIRMED` and preserve either required trigger. Each path has at most one kill and one bounded reap. |
+| Reverse-mutation evidence | Changing the wait-error success return to `TIMEOUT_AFTER_START` failed the new exact-outcome test. Changing the wait-error trigger to `RUN_TIMEOUT` failed the three `RUN_WAIT_OS_ERROR` cleanup-failure cells. Both isolated mutations were restored before final green verification. |
+| Verification | `python -B -m unittest tests.test_bounded_child_process_runner -v`: 12/12 passed. `python -B -m unittest discover -s tests -v`: 189/189 passed. `python -B -m mypy --strict --explicit-package-bases --no-incremental --cache-dir <validated OS-temp>`: 91 source files, success; the external cache was removed and read back absent. In-memory compile: 3/3 changed files. Source/scope sentinel and `git diff --check`: passed. |
+| Residue / isolation | Repository `.mypy_cache`, `.pytest_cache`, and `__pycache__` count: 0. Owned staging-root and external junction-target counts: 0. No late completion sentinel, raw stdout/stderr evidence, live Codex, target-project action, merge, push, release, deployment, integration decision, review decision, or 05S3 dispatch occurred. |
+| Review handoff | Independent review is required. This implementation owner makes no approval, integration, or downstream-ticket decision. |
 
 ## PRG-20260811-124 — Ticket 05S2 revision-03 final independent review
 
