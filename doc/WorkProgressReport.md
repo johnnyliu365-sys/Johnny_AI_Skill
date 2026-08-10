@@ -1217,3 +1217,17 @@
 | Cleanup evidence | A pre-existing control `.mypy_cache` (created 2026-08-01; last cached files 2026-08-09) was identified during pre-commit readback, safely removed from the control worktree by exact absolute path/leaf validation, and remained absent after post-merge verification. |
 | Closure | Ticket 05A is `DONE / APPROVED / INTEGRATED`; allocation `aln_local_orchestration_install_05a_evidence_cleanup_20260810` is released and the implementation branch/worktree are retained as read-only evidence. Ticket 05B is `PLANNED / NEXT_UNBLOCKED`; this authorization created no 05B handoff, receipt or dispatch. |
 | Non-actions | No branch/worktree creation, history rewrite, push, release, deployment, live Codex mutation, target-project write, network/login/Secret use or schedule was performed. |
+
+## PRG-20260810-095 - Ticket 05B transactional registration dispatch
+
+| Field | Value |
+| --- | --- |
+| Router event | `OWNER_DISPATCH_GRANTED -> TICKET_SELECTED -> IMPLEMENTATION_HANDOFF -> IMPLEMENT / AUTO_CONTINUE` |
+| Dependency / authority | Ticket 05A is independently approved and integrated by `b22c6c4`; owner instruction `可以開始派工` on 2026-08-10 plus approved program authority `PRG-20260809-042` selects only Ticket 05B |
+| Ticket / closure | `05b-codex-cli-transactional-registration` / `CLOSURE-LOCAL-INSTALL-T05B-01` (`B1..B5`) |
+| Handoff identity | `hnd_local_orchestration_install_05b_20260810`; allocation `aln_local_orchestration_install_05b_20260810`; receipt `rcpt_local_orchestration_install_05b_20260810`; correlation/question `corr-local-orchestration-install-05b-20260810` / `q-local-orchestration-install-05b-20260810` |
+| Owner / worktree | Task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; `gpt-5.6-terra` / `xhigh`; sole `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` worktree; new branch `codex/implementation-codex-cli-registration-05b` from the exact control dispatch commit |
+| Preflight | Before switching, require branch `codex/implementation-codex-cli-preflight-05a` at `fb755268`, tracked/ignored status empty and no `.mypy_cache`, `.pytest_cache` or `__pycache__`; preserve the branch and all earlier evidence. Any mismatch returns typed `BLOCKED`. |
+| Authorized implementation | Only B1–B5. Use independently integrated 05A contracts; production is limited to the 05A files plus `host_lifecycle.py`, the only new test is `test_codex_cli_registration.py`, and cumulative nonblank ceilings are production/test `310 / 320`. Record every zero-exit current-attempt effect before parsing, bind success to exact receipt/manifest proof, and verify exact plugin-then-marketplace compensation plus path absence. |
+| Return / verification | One implementation commit plus one separate docs-only handoff commit; first-red/green and reverse evidence; focused/full tests; strict mypy with a unique removed OS-temporary cache; in-memory compile; source/scope/line checks; byte+porcelain Git isolation; final tracked/ignored/generated-cache absence. Return typed `BLOCKED` or `CHANGE_DETECTED` with concrete evidence otherwise. |
+| Prohibited | Historical rejected source reuse, public removal/replay, broad clear/delete, optional/`None` ports, `Any`, `type: ignore`, hidden host/config/cache write, live Codex mutation, target-project access, network/login/Secret, second branch/worktree, Ticket 05C/04, review/integration decision, merge, push, release, deployment or schedule |

@@ -305,3 +305,16 @@ markers were removed. Post-merge focused `16/16`, full `172/172`, strict mypy
 integrated, its allocation is released and its branch remains read-only
 evidence. Ticket 05B is now the next unblocked planned ticket; no allocation or
 dispatch was created by the merge authorization.
+
+The owner instruction `可以開始派工` on 2026-08-10 now selects Ticket 05B as
+the sole implementation lane. It receives unique handoff
+`hnd_local_orchestration_install_05b_20260810`, allocation
+`aln_local_orchestration_install_05b_20260810`, receipt
+`rcpt_local_orchestration_install_05b_20260810` and correlation
+`corr-local-orchestration-install-05b-20260810`. The same named implementation
+task uses `gpt-5.6-terra` at `xhigh` in the same sole worktree. It must preserve
+05A branch `fb755268` as immutable evidence and create exactly one 05B branch
+from the exact control dispatch commit. Authority is limited to B1–B5 recorded
+effects, proof-bound receipt and exact current-attempt compensation; 05C/04,
+live Codex mutation, target-project writes, another worktree, merge, push,
+deployment and schedule remain prohibited.

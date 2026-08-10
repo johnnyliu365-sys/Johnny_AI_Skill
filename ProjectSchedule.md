@@ -120,7 +120,7 @@
 | Toolchain and Codex capability probe | DONE / VERIFIED | Inno Setup 6.7.3 is installed per user with valid signature and compile proof. One disposable Codex CLI marketplace/plugin was installed, hash-verified and completely removed without target-project access. |
 | Parent Ticket 05 Codex CLI adapter | SUPERSEDED / CONVERGENCE_DECOMPOSED | Correction review found CR-80..CR-85; rejected branch/SHAs remain evidence and its allocation/receipt are closed. |
 | Ticket 05A CLI contract/preflight | DONE / APPROVED / INTEGRATED | Implementation `97ab31c`; repaired handoff `fb755268`; review `d54c0bd`; owner-authorized ledger-preserving merge `b22c6c4`; post-merge verification passed. |
-| Ticket 05B transactional registration | PLANNED / NEXT_UNBLOCKED | Ticket 05A dependency is satisfied by `b22c6c4`; no 05B allocation or dispatch has been created. |
+| Ticket 05B transactional registration | IN_PROGRESS / IMPLEMENTATION_DISPATCHED | Ticket 05A dependency is satisfied by `b22c6c4`; unique 05B handoff/allocation/receipt dispatched to the same named task and sole worktree. |
 | Ticket 05C receipt removal/replay | PLANNED / DEPENDENCY_WAIT | Starts only after 05A/05B independent approval/integration. |
 | Ticket 04 implementation | PLANNED / DEPENDENCY_WAIT | Pinned compiler is ready; package work waits for all decomposed Codex adapter children 05A–05C. |
 
@@ -172,3 +172,17 @@ unique receipt and one new-ticket branch in the existing sole implementation
 worktree. The rejected parent branch remains immutable evidence; no second
 worktree, concurrent 05B/05C branch, live mutation, packaging or schedule is
 authorized.
+
+### Ticket 05B selection and dispatch
+
+Owner instruction `可以開始派工` on 2026-08-10 selects only Ticket 05B after
+05A integration `b22c6c4`. The named implementation owner remains task
+`019fcc9c-f34f-7d53-a313-c70c90bf3245` using `gpt-5.6-terra` at `xhigh` in the
+single existing implementation worktree. The owner must preserve the clean 05A
+branch at `fb755268`, then create `codex/implementation-codex-cli-registration-05b`
+from the exact control dispatch commit. Handoff
+`hnd_local_orchestration_install_05b_20260810`, allocation
+`aln_local_orchestration_install_05b_20260810` and receipt
+`rcpt_local_orchestration_install_05b_20260810` authorize only frozen closure
+B1–B5. No second worktree, live Codex mutation, target-project write, Ticket
+05C/04 work, merge, push, deployment or schedule is authorized.
