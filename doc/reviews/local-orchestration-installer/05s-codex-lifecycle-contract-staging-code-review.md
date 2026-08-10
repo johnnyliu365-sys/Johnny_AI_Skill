@@ -3,11 +3,11 @@
 | Field | Value |
 | --- | --- |
 | Feature / ticket | `local-orchestration-installer` / `05s-codex-lifecycle-contract-staging` |
-| Result | `CHANGES_REQUESTED / REVISION_02_CORRECTION_PREPARED` |
+| Result | `CHANGES_REQUESTED / TERMINAL_REVISION_02 / PAUSED` |
 | Reviewer | Codex / current `main` worktree |
 | Reviewed branch | `codex/implementation-codex-lifecycle-staging-05s` |
-| Boundary | Control baseline `3047b4b`; implementation `18b99de`; docs-only handoff `2bed349` |
-| Reviewed closure | `CLOSURE-LOCAL-INSTALL-T05S-01` / `S1..S7`, `E01..E08` |
+| Boundary | Control baseline `3685f0e`; initial `18b99de` / `2bed349`; corrections `ca5754d` and `832b1dc`; docs-only handoff `ccb55bd` |
+| Reviewed closure | `CLOSURE-LOCAL-INSTALL-T05S-02` / `C1..C7`, `R01..R12` |
 
 ## Independent verification
 
@@ -119,3 +119,66 @@ revision 02 and permits one additive correction on the same ticket, task,
 worktree, branch, allocation and receipt. No new branch/worktree, production
 source change, downstream 05B/05C/04 dispatch, integration, live Codex action,
 push, release or deployment is authorized.
+
+## Terminal revision-02 review
+
+Revision 02 has valid additive ancestry and changes only four authorized
+test-support Python files, followed by one docs-only handoff. The implementation
+worktree is clean, production source is unchanged, `git diff --check` passes,
+focused tests pass `20/20`, strict mypy passes `88` source files, and in-memory
+compile passes all four changed Python files. These checks do not close the
+frozen acceptance closure.
+
+The exact required full command was run twice from the disposable exported
+checkout. The decisive run began with zero `__pycache__` directories and zero
+staging roots. `python -m unittest discover -s tests -v` ran 192 tests but
+failed R12 because normal Python imports created 24 repository-local
+`__pycache__` directories before R12 asserted that the count was zero. The run
+ended with zero staging roots but 24 caches. Setting an unstated ambient
+`PYTHONDONTWRITEBYTECODE` value cannot make the submitted handoff replayable,
+and no such prerequisite appears in its command evidence.
+
+Independent probes also showed that `seed_unrelated_records()` creates a
+foreign plugin record with no physical payload, while `plugin list` exits zero
+and reports that record as `installed=true`. The current truth check validates
+physical state only for the exact owned plugin, so the claimed recursively
+coherent foreign record is state-only. SemVer validation accepts invalid
+`01.0.0` and rejects valid `1.0.0-alpha` and `1.0.0+build.1`. R01 does not
+execute the frozen boundary matrix: its prefix-plus-character and encoded cases
+are merely nonexistent relative paths, it has no case-variation assertion, and
+its traversal case checks normalization output rather than a provision
+boundary. R06 short-circuits synthetic `PortFault` values and never exercises
+the real subprocess timeout/unavailable/access/generic exception branches.
+
+### Terminal findings
+
+1. **CR-112 — `EVIDENCE_DEFECT / TICKET_DEFECT`, C7/R12.** The frozen exact
+   full command deterministically creates 24 caches and fails R12 from a clean
+   export. The handoff's `192`-pass and zero-cache claim omits a material ambient
+   precondition and is not independently replayable.
+2. **CR-113 — `IMPLEMENTATION_DEFECT`, C4/C5/R09.** Foreign plugin state is
+   emitted as installed without a corresponding payload. State/file agreement
+   is not checked recursively in both directions, so unrelated-state evidence
+   can fabricate installed truth.
+3. **CR-114 — `IMPLEMENTATION_DEFECT`, C4/R07.** The version regex is not a
+   semantic-version validator: it accepts a leading-zero version and rejects
+   valid prerelease/build forms.
+4. **CR-115 — `EVIDENCE_DEFECT`, R01.** The committed path test does not cover
+   the frozen equal/prefix/case/encoded/traversal boundary matrix with existing
+   distinguishable paths.
+5. **CR-116 — `EVIDENCE_DEFECT`, C2/C6/R06.** Synthetic pre-child faults do not
+   exercise the real `subprocess.run` exception mappings. The caught
+   unavailable/access/generic branches therefore remain unverified, including
+   their `child_started` observation.
+6. **CR-117 — `EVIDENCE_DEFECT`.** The submitted handoff reuses
+   `PRG-20260810-104`, which is already the control-plane initial-review record;
+   its identifier cannot be integrated as a unique ledger entry.
+
+### Terminal conclusion
+
+`CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED`. Per the owner-approved
+terminal-review rule, no second automatic correction, replacement branch,
+replacement worktree, merge or downstream ticket refreeze is authorized. The
+implementation commits and handoff remain immutable rejected evidence. Further
+05S work requires an explicit owner-scoped decision after ticket decomposition;
+until then 05B, 05C and Ticket 04 remain dependency-waiting.

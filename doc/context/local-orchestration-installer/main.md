@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| Context state | `STAGING_FIRST_CONVERGENCE / TICKET_05S_REVISION_02_CORRECTION_PREPARED / DOWNSTREAM_DEPENDENCY_WAIT` |
-| Router event | `IMPLEMENTATION_COMPLETED → INDEPENDENT_REVIEW → CHANGES_REQUESTED → TICKET_REFREEZE` |
+| Context state | `STAGING_FIRST_CONVERGENCE / TICKET_05S_TERMINAL_CHANGES_REQUESTED / DOWNSTREAM_DEPENDENCY_WAIT` |
+| Router event | `CORRECTION_COMPLETED → TERMINAL_INDEPENDENT_REVIEW → CHANGES_REQUESTED → CONVERGENCE_REVIEW_REQUIRED` |
 | Delivery stage | `POC` |
 | Requirement change | `CHG-20260808-011` |
 | Baseline | `a37a515` (`docs: replace duplicated ticket history with references`) |
@@ -259,3 +259,9 @@ bounded command port, emitted non-official mutation DTOs, depended on a fixed
 sibling worktree, leaked roots when that topology was absent, and accepted
 incoherent persisted states. `CLOSURE-LOCAL-INSTALL-T05S-02` is the one permitted
 same-branch correction; no new worktree or replacement branch is allowed.
+
+Revision-02 corrections `ca5754d` and `832b1dc` plus handoff `ccb55bd` failed
+terminal review with `CR-112..CR-117`. The required full command fails R12 from
+a clean exported checkout; foreign installed truth lacks a physical payload;
+SemVer, path-boundary and real process-exception evidence remain incomplete.
+No additional implementation dispatch or downstream refreeze is active.

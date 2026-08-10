@@ -1184,3 +1184,14 @@
 | Decision | `CHANGES_REQUESTED`. Refrozen closure `CLOSURE-LOCAL-INSTALL-T05S-02` adds `C1..C7/R01..R12`. One additive correction is authorized on the same task, worktree, branch, allocation and receipt; initial commits remain immutable. |
 | Correction identity | Handoff `hnd_local_orchestration_install_05s_20260810`; allocation `aln_local_orchestration_install_05s_20260810`; receipt `rcpt_local_orchestration_install_05s_20260810`; correction correlation `corr-local-orchestration-install-05s-r02-20260810`; branch `codex/implementation-codex-lifecycle-staging-05s`. |
 | Prohibited continuation | No new branch/worktree, production-source change, 05B/05C/04 implementation, integration, live Codex mutation, target-project write, push, release or deployment. |
+
+## PRG-20260811-105 — Ticket 05S terminal revision-02 review
+
+| Field | Value |
+| --- | --- |
+| Router event | `CORRECTION_COMPLETED → TERMINAL_CODE_REVIEW → CHANGES_REQUESTED → CONVERGENCE_REVIEW_REQUIRED` |
+| References | Control baseline `3685f0e`; implementation corrections `ca5754d6a4f8ad271f57b3312e5f1c7171169f0c` and `832b1dcf1a0607059d9ffbb854740ce238ee949c`; docs-only handoff `ccb55bd75c2c24b658828a554dd441fb54733752`; closure `CLOSURE-LOCAL-INSTALL-T05S-02`; findings `CR-112..CR-117` |
+| Passing evidence | Valid ancestry and authorized four-file implementation scope; clean implementation worktree; focused `20/20`; strict mypy `88` files; in-memory compile `4` files; production source unchanged; `git diff --check` clean; terminal runs left zero staging roots. |
+| Blocking replay | From a disposable export with zero initial cache and staging roots, exact `python -m unittest discover -s tests -v` ran 192 tests and failed R12 after creating 24 `__pycache__` directories. The submitted `192`-pass/zero-cache claim is not replayable as written. |
+| Blocking probes | A foreign plugin without any physical payload is emitted as `installed=true` with exit zero. Version validation accepts invalid `01.0.0` and rejects valid prerelease/build SemVer. R01 and R06 do not execute the frozen path and real process-exception matrices. The branch handoff also collides with existing identifier `PRG-20260810-104`. |
+| Decision | `CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED`; no second automatic correction, new branch/worktree, merge, downstream refreeze or dispatch. Submitted commits remain immutable rejected evidence. |

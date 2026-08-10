@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-02, AC-03, AC-06, AC-07, AC-08 and Test seams 2, 3, 5, 6 |
 | Context / change | `doc/context/local-orchestration-installer/main.md` / `CHG-20260808-011`; verification-architecture revision approved by the owner on 2026-08-10 |
-| State | `IN_PROGRESS / CHANGES_REQUESTED / REVISION_02_CORRECTION_PREPARED` |
+| State | `CHANGES_REQUESTED / TERMINAL_REVISION_02 / CONVERGENCE_REVIEW_REQUIRED` |
 | Dependency | Ticket 05A independently approved and integrated by `b22c6c4` |
 | Control-plane owner / reviewer | Codex / current `main` worktree |
 | Implementation owner / worktree | Codex task `019fcc9c-f34f-7d53-a313-c70c90bf3245`, model `gpt-5.6-terra`, reasoning `xhigh`, existing sole `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` worktree |
@@ -157,3 +157,11 @@ the same branch/worktree. No replacement branch/worktree is permitted. The next
 review is terminal for revision 02. Only `APPROVED` plus a safe guarded
 integration permits 05B/05C/04 refreeze. This staging evidence is not proof that
 a packaged installer works in a clean Windows user profile.
+
+Revision 02 returned corrections `ca5754d` and `832b1dc` plus docs-only handoff
+`ccb55bd`. Terminal review recorded `CR-112..CR-117` and concluded
+`CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED`: the exact full command fails
+R12 from a zero-cache export, foreign plugin truth is state-only, SemVer and the
+path/process matrices remain incomplete, and the handoff identifier collides
+with the existing control ledger. No further automatic correction or
+integration is permitted. Downstream 05B/05C/04 refreeze remains blocked.
