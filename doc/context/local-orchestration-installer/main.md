@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| Context state | `STAGING_DECOMPOSED / TICKET_05S1_OWNER_SCOPED_CORRECTION / DOWNSTREAM_DEPENDENCY_WAIT` |
-| Router event | `CONVERGENCE_REVIEW_REQUIRED → OWNER_SCOPED_OVERRIDE → CORRECTION_HANDOFF → IMPLEMENT` |
+| Context state | `STAGING_DECOMPOSED / TICKET_05S1_APPROVED_INTEGRATION_PENDING / DOWNSTREAM_DEPENDENCY_WAIT` |
+| Router event | `CORRECTION_COMPLETED → FINAL_CODE_REVIEW → APPROVED → GUARDED_INTEGRATION_REQUIRED` |
 | Delivery stage | `POC` |
 | Requirement change | `CHG-20260808-011` |
 | Baseline | `a37a515` (`docs: replace duplicated ticket history with references`) |
@@ -294,3 +294,10 @@ environment reparse detector and its physical root-junction test on the same
 branch and worktree. The test may use a finite `shell=False` process solely to
 construct the Windows junction; no product process runner or 05S2 behavior is
 authorized. Any blocker in the next review stops again.
+
+The final exported review of correction `41d5ce4` and handoff `e1087d3`
+passed E1-E4/T1-T4, including a physical Windows root junction that is blocked
+before marker access. Focused 5/5, full 177/177, strict mypy across 86 files,
+compile, source guards and zero-residue readbacks passed. 05S1 is
+`APPROVED / INTEGRATION_AUTHORIZED`; 05S2 remains blocked until the guarded
+integration is recorded.

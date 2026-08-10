@@ -1240,3 +1240,13 @@
 | Required lane | Same worktree and branch `codex/implementation-disposable-environment-core-05s1`; required HEAD `ecce06ae8ff46ca770770375c166ba503bb7f17e`; prior commits remain immutable. |
 | Exact scope | CR-118/CR-119 only: `environment.py` detects physical Windows reparse points before existence/marker/traversal; the test file creates one disposable root junction and proves `ROOT_REPARSE` without read-through. Test-only finite `shell=False` junction construction is permitted; production subprocess and all 05S2 behavior remain prohibited. |
 | Return / stop | One additive implementation commit plus one docs-only handoff, then one final independent review. No further automatic correction, new branch/worktree, merge, downstream dispatch, live host mutation, target-project write, push, release or deployment. |
+
+## PRG-20260811-112 — Ticket 05S1 final owner-scoped review
+
+| Field | Value |
+| --- | --- |
+| Router event | `OWNER_SCOPED_CORRECTION_COMPLETED → FINAL_CODE_REVIEW → APPROVED → GUARDED_INTEGRATION_REQUIRED` |
+| References | Override `OVR-LOCAL-INSTALL-T05S1-REPARSE-20260811-01`; closure `CLOSURE-LOCAL-INSTALL-T05S1-01`; correction `41d5ce4c4c90b0e84c9d756edc81c21ae33b1e27`; docs-only handoff `e1087d32e52f3a86a79dd08ad95700e59d731d66`; report `doc/reviews/local-orchestration-installer/05s1-disposable-environment-core-code-review.md` |
+| Independent evidence | Exact `ecce06a → 41d5ce4 → e1087d3` ancestry and authorized scope; fresh exported checkout focused 5/5, full 177/177, strict mypy 86 files and in-memory compile 86 files; physical Windows root junction blocked as `ROOT_REPARSE` before marker read; external bytes preserved. |
+| Isolation | Forbidden-source scan passed; no production subprocess; the only subprocess is the authorized bounded physical-junction fixture. Both worktrees remained clean; review export, repository caches and `johnny-stage-env-*` roots read back absent. |
+| Decision | `APPROVED / INTEGRATION_AUTHORIZED`; CR-118/CR-119 resolved. Guarded integration must preserve implementation and control-plane ledger records. 05S2 remains blocked until integration completes. No push, release, deployment, live Codex mutation or target-project access. |

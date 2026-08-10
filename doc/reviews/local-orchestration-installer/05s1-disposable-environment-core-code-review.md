@@ -6,10 +6,10 @@
 | --- | --- |
 | Ticket / closure | `05s1-disposable-environment-core` / `CLOSURE-LOCAL-INSTALL-T05S1-01` / E1-E4 and T1-T4 |
 | Reviewed baseline | `f88e10f73f9014fb276d99974eaf1a2074c9a7d0` |
-| Implementation | `e0898cdca76c360713bef35b1848c0b8b8bd3681` |
-| Docs-only handoff | `ecce06ae8ff46ca770770375c166ba503bb7f17e` |
+| Implementation | Initial `e0898cdca76c360713bef35b1848c0b8b8bd3681`; owner-scoped correction `41d5ce4c4c90b0e84c9d756edc81c21ae33b1e27` |
+| Docs-only handoff | Initial `ecce06ae8ff46ca770770375c166ba503bb7f17e`; final `e1087d32e52f3a86a79dd08ad95700e59d731d66` |
 | Branch / owner | `codex/implementation-disposable-environment-core-05s1` / task `019fcc9c-f34f-7d53-a313-c70c90bf3245` |
-| Review result | `CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED` |
+| Review result | `APPROVED / INTEGRATION_AUTHORIZED` after the single owner-scoped correction |
 
 The submitted ancestry is exact: `f88e10f -> e0898cd -> ecce06a`. The
 implementation commit adds only the four authorized Python files; the handoff
@@ -113,3 +113,34 @@ and receipt. It permits only CR-118/CR-119 correction: early physical Windows
 reparse detection and a real root-junction test. This disposition does not
 change the review result above, approve the submitted commits, start 05S2 or
 authorize another correction after the next independent review.
+
+## Final owner-scoped correction review
+
+The final submitted ancestry is exact:
+`ecce06a -> 41d5ce4 -> e1087d3`. The correction commit changes only
+`tests/staging/environment_core/environment.py` and
+`tests/test_disposable_environment_core.py`; the final handoff changes only
+`doc/WorkProgressReport.md`. Both worktrees were clean and `git diff --check`
+passed. No new branch or worktree was created.
+
+| Check | Independent result |
+| --- | --- |
+| Focused command | PASS: an exported checkout ran `python -B -m unittest tests.test_disposable_environment_core -v`, 5/5. |
+| Full command | PASS: the same export ran `python -B -m unittest discover -s tests -v`, 177/177. |
+| Strict typing / compile | PASS: strict mypy checked 86 source files with an external temporary cache; all 86 Python files compiled in memory. |
+| Physical root reparse | PASS: the committed test created a real Windows junction, observed `FILE_ATTRIBUTE_REPARSE_POINT`, proved zero marker-read calls, returned `BLOCKED / ROOT_REPARSE`, preserved the junction and external sentinel, then removed only its test-owned artifacts. |
+| Source / scope | PASS: no `Any`, `type: ignore`, broad delete, shell execution or production subprocess. The sole bounded `subprocess.run` is the explicitly authorized physical-junction fixture with fixed argv, `shell=False` and timeout 5. |
+| Isolation / residue | PASS: control and implementation worktrees remained clean; exported review artifacts were removed; repository cache and final `johnny-stage-env-*` root readbacks were empty. |
+
+CR-118 and CR-119 are resolved. Reparse detection now reads the Windows file
+attribute through `lstat` before root existence, marker access or traversal;
+the physical regression test fails if marker access occurs through the
+junction. E1-E4 and T1-T4 therefore pass without importing 05S2 behavior.
+
+## Final conclusion
+
+`APPROVED / INTEGRATION_AUTHORIZED`. This approval applies only to Ticket 05S1
+and commits `e0898cd`, `41d5ce4`, `ecce06a` and `e1087d3` in their reviewed
+ancestry. It authorizes a guarded integration that preserves the control-plane
+review and handoff ledger; it does not authorize push, release, deployment,
+live Codex mutation, target-project access or silent conflict resolution.

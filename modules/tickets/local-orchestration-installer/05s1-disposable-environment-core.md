@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / verification support for AC-02, AC-03, AC-06, AC-07 and AC-08 |
 | Context / decision | `doc/context/local-orchestration-installer/main.md` / `PRG-20260811-106` |
-| State | `IN_PROGRESS / OWNER_SCOPED_CORRECTION_AUTHORIZED` |
+| State | `APPROVED / INTEGRATION_AUTHORIZED` |
 | Dependency | Ticket 05A integrated by `b22c6c4`; rejected parent 05S is immutable evidence only |
 | Implementation language | Python 3.11 |
 | Implementation responsibility | Codex task `019fcc9c-f34f-7d53-a313-c70c90bf3245`, model `gpt-5.6-terra`, reasoning `xhigh`, in the sole implementation worktree after exact receipt admission |
@@ -113,3 +113,12 @@ or 05S2 dispatch is authorized.
 | Test-only junction exception | The test file alone may use one bounded `subprocess.run` with exact argv, `shell=False` and finite timeout solely to create a disposable Windows junction. This does not authorize a process runner, CLI shim, Codex invocation or production subprocess. |
 | Required return | One additive implementation correction commit, then one docs-only `doc/WorkProgressReport.md` handoff commit. Re-run the unchanged closure and exact verification commands. |
 | Stop rule | The next independent review is final for this override. Any remaining blocker returns to `CONVERGENCE_REVIEW_REQUIRED`; no further automatic correction. |
+
+## Final independent review
+
+Correction `41d5ce4` and docs-only handoff `e1087d3` resolve CR-118 and
+CR-119. An exported checkout passed the physical root-junction test 5/5, the
+full suite 177/177, strict mypy across 86 files, in-memory compilation, source
+guards, Git isolation and zero-residue readback. The ticket is
+`APPROVED / INTEGRATION_AUTHORIZED`; 05S2 remains blocked until guarded
+integration is complete.
