@@ -1229,3 +1229,14 @@
 | Blocking evidence | A real Windows junction reports `ReparsePoint` while Python 3.11 `Path.is_symlink()` is false. Root teardown reads the marker through that junction and returns `CHILD_ESCAPE`, not `ROOT_REPARSE`. The committed test patches `Path.is_symlink` and does not prove the physical E3/T3 boundary. |
 | Control correction | Added the missing explicit `Implementation language: Python 3.11` ticket field required by Workflow section 9.3; closure content is unchanged and no implementation authority is created. |
 | Decision | `CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED`; no automatic correction, branch/worktree replacement, merge, 05S2 dispatch, live host mutation, target-project write, push, release or deployment. |
+
+## PRG-20260811-110 — Ticket 05S1 owner-scoped reparse correction
+
+| Field | Value |
+| --- | --- |
+| Router event | `CONVERGENCE_REVIEW_REQUIRED → OWNER_SCOPED_OVERRIDE → CORRECTION_HANDOFF → IMPLEMENT / AUTO_CONTINUE` |
+| Owner override | `OVR-LOCAL-INSTALL-T05S1-REPARSE-20260811-01`; explicit owner instruction to continue after review `1da43e4`; closure remains `CLOSURE-LOCAL-INSTALL-T05S1-01` |
+| Correction binding | Handoff `hnd_local_orchestration_install_05s1_corr1_20260811`; retained allocation `aln_local_orchestration_install_05s1_20260811`; retained receipt `rcpt_local_orchestration_install_05s1_20260811`; correlation `corr-local-orchestration-install-05s1-corr1-20260811`; task `019fcc9c-f34f-7d53-a313-c70c90bf3245` |
+| Required lane | Same worktree and branch `codex/implementation-disposable-environment-core-05s1`; required HEAD `ecce06ae8ff46ca770770375c166ba503bb7f17e`; prior commits remain immutable. |
+| Exact scope | CR-118/CR-119 only: `environment.py` detects physical Windows reparse points before existence/marker/traversal; the test file creates one disposable root junction and proves `ROOT_REPARSE` without read-through. Test-only finite `shell=False` junction construction is permitted; production subprocess and all 05S2 behavior remain prohibited. |
+| Return / stop | One additive implementation commit plus one docs-only handoff, then one final independent review. No further automatic correction, new branch/worktree, merge, downstream dispatch, live host mutation, target-project write, push, release or deployment. |

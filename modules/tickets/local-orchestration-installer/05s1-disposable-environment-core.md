@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / verification support for AC-02, AC-03, AC-06, AC-07 and AC-08 |
 | Context / decision | `doc/context/local-orchestration-installer/main.md` / `PRG-20260811-106` |
-| State | `BLOCKED / CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED` |
+| State | `IN_PROGRESS / OWNER_SCOPED_CORRECTION_AUTHORIZED` |
 | Dependency | Ticket 05A integrated by `b22c6c4`; rejected parent 05S is immutable evidence only |
 | Implementation language | Python 3.11 |
 | Implementation responsibility | Codex task `019fcc9c-f34f-7d53-a313-c70c90bf3245`, model `gpt-5.6-terra`, reasoning `xhigh`, in the sole implementation worktree after exact receipt admission |
@@ -97,3 +97,19 @@ Python 3.11 `Path.is_symlink()` gate and is misclassified only after an external
 marker read; CR-119 records that the submitted mock does not prove the physical
 reparse boundary. Per this ticket's loop rule, no automatic correction, merge
 or 05S2 dispatch is authorized.
+
+## Owner override record
+
+| Field | Value |
+| --- | --- |
+| Override | `OVR-LOCAL-INSTALL-T05S1-REPARSE-20260811-01` |
+| Owner decision | The project owner explicitly authorized continuing after the terminal review. This is one bounded exception, not an automatic correction loop. |
+| Correction handoff | `hnd_local_orchestration_install_05s1_corr1_20260811` |
+| Retained allocation / receipt | `aln_local_orchestration_install_05s1_20260811` / `rcpt_local_orchestration_install_05s1_20260811` |
+| Correction correlation | `corr-local-orchestration-install-05s1-corr1-20260811` |
+| Required branch / HEAD | Existing `codex/implementation-disposable-environment-core-05s1` at exact `ecce06ae8ff46ca770770375c166ba503bb7f17e`; no branch/worktree switch, merge, rebase, reset, amend or force operation |
+| Review baseline | Control review `1da43e4fe6bfcada32806014b9fe0ec671590944`; findings `CR-118` and `CR-119` only |
+| Authorized source correction | Only `tests/staging/environment_core/environment.py` and `tests/test_disposable_environment_core.py`: detect a Windows reparse point before `exists`, marker read or traversal; add a physical root-junction test that proves `ROOT_REPARSE`, root preservation and no marker read-through. |
+| Test-only junction exception | The test file alone may use one bounded `subprocess.run` with exact argv, `shell=False` and finite timeout solely to create a disposable Windows junction. This does not authorize a process runner, CLI shim, Codex invocation or production subprocess. |
+| Required return | One additive implementation correction commit, then one docs-only `doc/WorkProgressReport.md` handoff commit. Re-run the unchanged closure and exact verification commands. |
+| Stop rule | The next independent review is final for this override. Any remaining blocker returns to `CONVERGENCE_REVIEW_REQUIRED`; no further automatic correction. |

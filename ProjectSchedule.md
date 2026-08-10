@@ -121,7 +121,7 @@
 | Parent Ticket 05 Codex CLI adapter | SUPERSEDED / CONVERGENCE_DECOMPOSED | Correction review found CR-80..CR-85; rejected branch/SHAs remain evidence and its allocation/receipt are closed. |
 | Ticket 05A CLI contract/preflight | DONE / APPROVED / INTEGRATED | Implementation `97ab31c`; repaired handoff `fb755268`; review `d54c0bd`; owner-authorized ledger-preserving merge `b22c6c4`; post-merge verification passed. |
 | Ticket 05S combined staging parent | SUPERSEDED / DECOMPOSED | Rejected commits remain immutable evidence; no correction or integration. |
-| Ticket 05S1 disposable environment core | BLOCKED / CONVERGENCE_REVIEW_REQUIRED | Independent review of `e0898cd` / `ecce06a` found physical root-junction CR-118 and evidence CR-119; no automatic correction or integration. |
+| Ticket 05S1 disposable environment core | IN_PROGRESS / OWNER_SCOPED_CORRECTION_AUTHORIZED | One explicit owner override permits only CR-118/CR-119 physical root-reparse correction on the same branch/worktree. |
 | Ticket 05S2 bounded child-process runner | PLANNED / DEPENDENCY_WAIT | Starts after 05S1 approval/integration. |
 | Ticket 05S3 Codex protocol fixture | PLANNED / DEPENDENCY_WAIT | Starts after 05S2 approval/integration. |
 | Ticket 05S4 Codex lifecycle oracle | PLANNED / DEPENDENCY_WAIT | Starts after 05S3 approval/integration; only then may 05B/05C be refrozen. |
@@ -226,3 +226,10 @@ misclassified only after an external marker read, and the submitted test proves
 only a mocked branch. 05S1 is therefore paused at
 `CONVERGENCE_REVIEW_REQUIRED`; 05S2 remains dependency-waiting and no automatic
 correction or integration is scheduled.
+
+The project owner subsequently authorized one bounded exception:
+`OVR-LOCAL-INSTALL-T05S1-REPARSE-20260811-01`. It retains the existing 05S1
+branch, worktree, allocation and receipt, and permits only early Windows
+reparse-point detection plus a physical root-junction test. A bounded
+test-fixture subprocess may create the junction; production code still cannot
+execute a child process. The closure remains E1-E4/T1-T4 and 05S2 stays blocked.

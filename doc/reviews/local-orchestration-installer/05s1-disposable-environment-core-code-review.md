@@ -103,3 +103,13 @@ loop boundary, this initial blocking review stops the lane. There is no
 automatic correction, replacement branch/worktree, merge, 05S2 dispatch, live
 Codex action, target-project write, push, release or deployment. The submitted
 implementation and handoff commits remain immutable review evidence.
+
+## Post-review owner disposition
+
+The project owner explicitly authorized one bounded continuation after this
+terminal result. Override `OVR-LOCAL-INSTALL-T05S1-REPARSE-20260811-01` retains
+the same ticket, closure, implementation owner, worktree, branch, allocation
+and receipt. It permits only CR-118/CR-119 correction: early physical Windows
+reparse detection and a real root-junction test. This disposition does not
+change the review result above, approve the submitted commits, start 05S2 or
+authorize another correction after the next independent review.

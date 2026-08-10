@@ -2,13 +2,13 @@
 
 | Field | Value |
 | --- | --- |
-| Context state | `STAGING_DECOMPOSED / TICKET_05S1_CONVERGENCE_REVIEW_REQUIRED / DOWNSTREAM_DEPENDENCY_WAIT` |
-| Router event | `IMPLEMENTATION_COMPLETED → CODE_REVIEW → CHANGES_REQUESTED → CONVERGENCE_REVIEW_REQUIRED` |
+| Context state | `STAGING_DECOMPOSED / TICKET_05S1_OWNER_SCOPED_CORRECTION / DOWNSTREAM_DEPENDENCY_WAIT` |
+| Router event | `CONVERGENCE_REVIEW_REQUIRED → OWNER_SCOPED_OVERRIDE → CORRECTION_HANDOFF → IMPLEMENT` |
 | Delivery stage | `POC` |
 | Requirement change | `CHG-20260808-011` |
 | Baseline | `a37a515` (`docs: replace duplicated ticket history with references`) |
 | Control-plane owner | Codex / current `main` worktree |
-| Implementation owner | No active implementation lane. Task `019fcc9c-f34f-7d53-a313-c70c90bf3245` and the 05S1 handoff/allocation/receipt are retained only as submitted review evidence; sole implementation worktree remains unchanged. |
+| Implementation owner | Task `019fcc9c-f34f-7d53-a313-c70c90bf3245` under bounded override `OVR-LOCAL-INSTALL-T05S1-REPARSE-20260811-01`; existing 05S1 branch/worktree/allocation/receipt only |
 | Required sources read | `AGENTS.md`, `Workflow.md` (Router, Wayfinder, Grill, change control, specification, tickets, role boundary), `Defined_wayfinder.md`, `CONTEXT.md`, `PRD.md`, `ProjectSchedule.md`, `doc/RequirementChangeLog.md`, existing plugin manifests / README, `library/workflow_router/`, and completed plugin / autonomous-collaboration POCs |
 
 ## Shared Context reference
@@ -286,3 +286,11 @@ external marker and reports `CHILD_ESCAPE` instead of refusing it at the root
 boundary. Review CR-118/CR-119 records the implementation and evidence defects.
 05S1 is now `CONVERGENCE_REVIEW_REQUIRED`; no correction, merge or downstream
 dispatch is active.
+
+The project owner explicitly authorized one bounded 05S1 exception after that
+review. Correction handoff
+`hnd_local_orchestration_install_05s1_corr1_20260811` may change only the
+environment reparse detector and its physical root-junction test on the same
+branch and worktree. The test may use a finite `shell=False` process solely to
+construct the Windows junction; no product process runner or 05S2 behavior is
+authorized. Any blocker in the next review stops again.
