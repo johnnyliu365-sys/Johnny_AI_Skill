@@ -120,7 +120,7 @@
 | Toolchain and Codex capability probe | DONE / VERIFIED | Inno Setup 6.7.3 is installed per user with valid signature and compile proof. One disposable Codex CLI marketplace/plugin was installed, hash-verified and completely removed without target-project access. |
 | Parent Ticket 05 Codex CLI adapter | SUPERSEDED / CONVERGENCE_DECOMPOSED | Correction review found CR-80..CR-85; rejected branch/SHAs remain evidence and its allocation/receipt are closed. |
 | Ticket 05A CLI contract/preflight | DONE / APPROVED / INTEGRATED | Implementation `97ab31c`; repaired handoff `fb755268`; review `d54c0bd`; owner-authorized ledger-preserving merge `b22c6c4`; post-merge verification passed. |
-| Ticket 05B transactional registration | IN_PROGRESS / IMPLEMENTATION_DISPATCHED | Ticket 05A dependency is satisfied by `b22c6c4`; unique 05B handoff/allocation/receipt dispatched to the same named task and sole worktree. |
+| Ticket 05B transactional registration | BLOCKED / TICKET_DEFECT | Implementation `5e919069` and handoff `ef1cf42` passed green/type/scope checks but initial review found CR-92..CR-97; finite ticket revision and readable ceiling decision are required before any correction. |
 | Ticket 05C receipt removal/replay | PLANNED / DEPENDENCY_WAIT | Starts only after 05A/05B independent approval/integration. |
 | Ticket 04 implementation | PLANNED / DEPENDENCY_WAIT | Pinned compiler is ready; package work waits for all decomposed Codex adapter children 05A–05C. |
 

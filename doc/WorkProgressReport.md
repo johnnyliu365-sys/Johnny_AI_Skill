@@ -1231,3 +1231,15 @@
 | Authorized implementation | Only B1–B5. Use independently integrated 05A contracts; production is limited to the 05A files plus `host_lifecycle.py`, the only new test is `test_codex_cli_registration.py`, and cumulative nonblank ceilings are production/test `310 / 320`. Record every zero-exit current-attempt effect before parsing, bind success to exact receipt/manifest proof, and verify exact plugin-then-marketplace compensation plus path absence. |
 | Return / verification | One implementation commit plus one separate docs-only handoff commit; first-red/green and reverse evidence; focused/full tests; strict mypy with a unique removed OS-temporary cache; in-memory compile; source/scope/line checks; byte+porcelain Git isolation; final tracked/ignored/generated-cache absence. Return typed `BLOCKED` or `CHANGE_DETECTED` with concrete evidence otherwise. |
 | Prohibited | Historical rejected source reuse, public removal/replay, broad clear/delete, optional/`None` ports, `Any`, `type: ignore`, hidden host/config/cache write, live Codex mutation, target-project access, network/login/Secret, second branch/worktree, Ticket 05C/04, review/integration decision, merge, push, release, deployment or schedule |
+
+## PRG-20260810-097 - Ticket 05B initial review blocked on ticket design
+
+| Field | Value |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED -> CODE_REVIEW -> VALIDATION_FAILED -> BLOCKED / TICKET_DEFECT` |
+| Boundary | Dispatch `f68d9d6`; branch `codex/implementation-codex-cli-registration-05b`; implementation `5e919069`; docs-only handoff `ef1cf42`; closure `CLOSURE-LOCAL-INSTALL-T05B-01` B1–B5 |
+| Reproduced passing evidence | Focused `8/8`; full `180/180`; complete `mypy --strict --no-incremental` `83` files with removed external cache; five-file in-memory compile/AST sentinel; `git diff --check`; cumulative production/test `305/310` and `299/320`; tracked/ignored/cache-free readback clean |
+| Blocking probes | Foreign `installedRoot`/`installedPath`/`authPolicy` returned `REGISTRATION_VERIFIED`; `alreadyAdded=true` caused marketplace removal; plugin-add timeout skipped plugin removal; a version-only eligible object registered another installation ID. The B5 Git test never reads porcelain despite the handoff claim. |
+| Findings | CR-92 `TICKET_DEFECT`; CR-93, CR-94, CR-95 and CR-97 `IMPLEMENTATION_DEFECT`; CR-96 `EVIDENCE_DEFECT`. Full details are in `doc/reviews/local-orchestration-installer/05b-codex-cli-transactional-registration-code-review.md`. |
+| Ticket repair / unresolved decision | Added the mandatory Python 3.11 field from the approved SPEC. A new finite closure revision must enumerate the fault matrix and decide whether the remaining `5` production / `21` test nonblank lines can satisfy P0 readability without further compression or require reviewed decomposition/ceiling change. |
+| Decision / non-actions | `BLOCKED / TICKET_DEFECT`. No correction handoff, implementation dispatch, branch/worktree change, integration, 05C/04 work, push, release, deployment, live Codex mutation, target-project action or schedule was performed. |

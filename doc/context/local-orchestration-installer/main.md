@@ -318,3 +318,17 @@ from the exact control dispatch commit. Authority is limited to B1–B5 recorded
 effects, proof-bound receipt and exact current-attempt compensation; 05C/04,
 live Codex mutation, target-project writes, another worktree, merge, push,
 deployment and schedule remain prohibited.
+
+Initial independent review of Ticket 05B implementation `5e919069` and handoff
+`ef1cf42` reproduced focused `8/8`, full `180/180`, complete strict mypy `83`
+files, compile, scope `305/310` production and `299/320` tests, and clean state.
+It also reproduced foreign observed add paths/auth returning
+`REGISTRATION_VERIFIED`, `alreadyAdded=true` causing removal of a pre-existing
+marketplace, plugin-add timeout skipping plugin compensation, and one
+version-only eligible value authorizing a different installation. The committed
+Git test does not read porcelain and the ticket did not enumerate its required
+fault cells or carry the mandatory language field. Review CR-92 through CR-97
+therefore concludes `BLOCKED / TICKET_DEFECT`. Python 3.11 is restored from the
+approved SPEC, but no correction is dispatched until a finite readable closure
+revision resolves the remaining ceiling conflict. The same 05B branch,
+allocation and receipt remain inactive evidence; 05C/04 remain blocked.

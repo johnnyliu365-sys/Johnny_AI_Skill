@@ -4,10 +4,11 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01, AC-02, AC-07 and AC-08 |
 | Context / change | `doc/context/local-orchestration-installer/main.md` / `CHG-20260808-011` |
-| State | `IN_PROGRESS / IMPLEMENTATION_DISPATCHED` |
+| State | `BLOCKED / TICKET_DEFECT` |
 | Dependency | Satisfied: Ticket 05A independently approved and integrated by `b22c6c4` |
 | Control-plane owner / reviewer | Codex / current `main` worktree |
 | Implementation owner / worktree | Codex task `019fcc9c-f34f-7d53-a313-c70c90bf3245`, model `gpt-5.6-terra`, reasoning `xhigh`, existing sole `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` worktree |
+| Implementation language | Python 3.11, as fixed by the approved SPEC; this field was missing from closure revision 01 and is repaired by the control-plane review |
 | Environment | Windows user scope; recorded command/filesystem ports only; no live registration, target project, login, Secret, network, packaging, deployment or schedule |
 
 ## User-observable outcome
@@ -85,3 +86,19 @@ Ticket 05B is the sole selected implementation lane. The delivery confirmation
 for `q-local-orchestration-install-05b-20260810` starts only this receipt-bound
 lane. Independent review follows the implementation/docs handoff; any correction
 is additive on this same 05B branch and never creates another branch or worktree.
+
+## Initial independent review result
+
+Review `doc/reviews/local-orchestration-installer/05b-codex-cli-transactional-registration-code-review.md`
+records `BLOCKED / TICKET_DEFECT` for implementation `5e919069` and handoff
+`ef1cf42`. CR-92 through CR-97 are batched against B1–B5. The submitted green,
+full regression, strict type, compile and numerical scope results reproduce,
+but foreign observed add fields can produce success, cloned admission can
+authorize another installation, and compensation can delete a pre-existing
+marketplace while skipping a possibly-created plugin after timeout.
+
+No correction is dispatched from closure revision 01. Before a correction can
+be considered, the control plane must re-freeze a finite ticket revision that
+enumerates every required failure cell and resolves the P0 readability versus
+remaining ceiling conflict. The existing branch, allocation and receipt remain
+inactive evidence; no new branch or worktree is authorized.
