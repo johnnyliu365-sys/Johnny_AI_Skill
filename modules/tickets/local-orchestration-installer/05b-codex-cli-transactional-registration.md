@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01, AC-02, AC-07 and AC-08 |
 | Context / change | `doc/context/local-orchestration-installer/main.md` / `CHG-20260808-011` |
-| State | `PLANNED / REVISION_02_FROZEN / OWNER_DISPATCH_REQUIRED` |
+| State | `IN_PROGRESS / REVISION_02_CORRECTION_DISPATCHED` |
 | Dependency | Satisfied: Ticket 05A independently approved and integrated by `b22c6c4` |
 | Control-plane owner / reviewer | Codex / current `main` worktree |
 | Implementation owner / worktree | Codex task `019fcc9c-f34f-7d53-a313-c70c90bf3245`, model `gpt-5.6-terra`, reasoning `xhigh`, existing sole `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` worktree |
@@ -142,6 +142,20 @@ does not authorize manual cache deletion, another plugin removal or live repair.
 - Exactly one additive source/test correction commit and one separate docs-only
   handoff may be returned. The following independent review is terminal for
   revision 02: failure pauses the lane without another automatic dispatch.
+
+### Active revision-02 correction handoff
+
+| Field | Value |
+| --- | --- |
+| Owner dispatch | Explicit `可以派工` on 2026-08-10; program authority `PRG-20260809-042` |
+| Control baseline | Refreeze commit `a7dd4a45e337d93b3c78d9f4c0d6fcac1ea76948`; initial review `f02704f07d5ecca65fd97565c71be7d834f9ea66` |
+| Handoff | `hnd_local_orchestration_install_05b_corr1_r02_20260810` |
+| Retained allocation / receipt | `aln_local_orchestration_install_05b_20260810` / `rcpt_local_orchestration_install_05b_20260810` |
+| Correlation | `corr-local-orchestration-install-05b-corr1-r02-20260810` |
+| Exact lane | Task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; sole implementation worktree; branch `codex/implementation-codex-cli-registration-05b`; required clean starting HEAD `ef1cf42bc0c6475b19c6d430d056fb7983d4b33c` |
+| Closure | `CLOSURE-LOCAL-INSTALL-T05B-02`, B1–B5 and M01–M18; close CR-93 through CR-97 without changing the approved SPEC |
+| Return | One additive implementation correction commit, full revision-02 evidence, then one separate docs-only handoff commit; typed `BLOCKED` or `CHANGE_DETECTED` otherwise |
+| Terminal rule | The following independent review is terminal. No automatic second correction, new branch/worktree, reset, amend, force, merge, push, deployment or schedule. |
 
 ## Initial independent review result
 

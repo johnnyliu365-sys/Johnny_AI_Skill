@@ -1257,3 +1257,17 @@
 | Preserved lane | Read-only Git readback confirms the sole implementation worktree is clean at branch `codex/implementation-codex-cli-registration-05b` HEAD `ef1cf42`, directly after implementation `5e919069` and dispatch `f68d9d6`; ignored/cache candidate output is empty. Task `019fcc9c-f34f-7d53-a313-c70c90bf3245`, allocation and receipt remain inactive evidence. No branch/worktree/history change. |
 | Continuation | `WAIT_FOR_HUMAN`. A future explicit owner dispatch may create one revision-02 correction handoff on the same branch at clean `ef1cf42`; one additive correction and one terminal independent review only. Failure pauses without automatic redispatch. |
 | Non-actions | No implementation task message, source/test edit, implementation-worktree mutation, correction handoff, branch/worktree creation, merge, push, release, deployment, live Codex mutation, target-project action, schedule, Secret or login action was performed. |
+
+## PRG-20260810-099 - Ticket 05B revision-02 correction dispatch
+
+| Field | Value |
+| --- | --- |
+| Router event | `OWNER_DISPATCH_CONFIRMED -> CORRECTION_HANDOFF -> IMPLEMENT / AUTO_CONTINUE` |
+| Owner authority | Explicit `可以派工` on 2026-08-10 under approved program authority `PRG-20260809-042` |
+| Ticket / closure | `05b-codex-cli-transactional-registration`; `CLOSURE-LOCAL-INSTALL-T05B-02`, B1–B5 and M01–M18 |
+| Control evidence | Refreeze `a7dd4a45e337d93b3c78d9f4c0d6fcac1ea76948`; initial review `f02704f07d5ecca65fd97565c71be7d834f9ea66`; CR-93 through CR-97 are the complete correction scope |
+| Handoff identity | `hnd_local_orchestration_install_05b_corr1_r02_20260810`; retained allocation/receipt `aln_local_orchestration_install_05b_20260810` / `rcpt_local_orchestration_install_05b_20260810`; correlation `corr-local-orchestration-install-05b-corr1-r02-20260810` |
+| Lane preflight | Implementation task is idle. Sole worktree readback is clean on branch `codex/implementation-codex-cli-registration-05b` at required HEAD `ef1cf42bc0c6475b19c6d430d056fb7983d4b33c`; ignored state is empty. |
+| Authorized correction | Same five source/test files only; request-bound fresh admission, both add DTOs in proof, distinct relative-only receipt, typed effect journal, non-short-circuit compensation, M01–M18, cumulative production/test `460 / 540`, P0-readable one-statement-per-line code. |
+| Required return | One additive implementation correction commit and one separate docs-only handoff; focused/full tests, strict full-tree mypy with removed external cache, in-memory compile, scope/line/sentinel/diff, reverse B1–B5 evidence, byte-plus-porcelain isolation and clean/cache-free readback. |
+| Terminal / prohibited | The next independent review is terminal. No automatic second correction, new branch/worktree, reset/amend/rebase/force/cherry-pick/history replacement, historical-source reuse, live Codex mutation, target-project access, Ticket 05C/04, merge, push, release, deployment, schedule, network/login/Secret or review/integration decision by the implementation owner. |

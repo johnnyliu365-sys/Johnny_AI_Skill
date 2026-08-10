@@ -351,3 +351,14 @@ may create one revision-02 correction handoff on the same task/worktree/branch;
 the next independent review is terminal and another automatic correction is
 not allowed. Ticket 05C now requires its own measured refreeze after 05B
 integration, and Ticket 04 remains dependency-waiting.
+
+The owner then explicitly authorized dispatch. Revision-02 correction handoff
+`hnd_local_orchestration_install_05b_corr1_r02_20260810` is bound to control
+refreeze `a7dd4a4`, initial review `f02704f`, retained allocation/receipt and
+correlation `corr-local-orchestration-install-05b-corr1-r02-20260810`.
+Read-only preflight confirms the implementation task is idle and its sole
+worktree is clean on the existing 05B branch at `ef1cf42`. This activates only
+one additive correction for B1–B5/M01–M18 followed by one docs-only handoff and
+one terminal independent review. No new branch/worktree, 05C/04 work, live
+Codex mutation, target-project access, merge, push, deployment or schedule is
+authorized.
