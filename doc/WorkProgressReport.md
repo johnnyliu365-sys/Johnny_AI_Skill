@@ -1206,3 +1206,15 @@
 | New sequence | `05S1 disposable environment core → 05S2 bounded child-process runner → 05S3 Codex protocol fixture → 05S4 Codex lifecycle oracle`; 05B/05C refreeze waits for 05S4; Ticket 04 retains the separate real Windows package-staging gate. |
 | Responsibility boundary | Each implementation owner changes only its ticket scope. The independent control-plane reviewer owns acceptance and cannot patch implementation. A blocking review stops at `CONVERGENCE_REVIEW_REQUIRED`; no automatic correction, new branch or replacement worktree. |
 | Current continuation | 05S1 is `PLANNED / SELECTED_NEXT / NOT_DISPATCHED`. No allocation, receipt, implementation branch, task message, merge, live host mutation, target-project write, push, release or deployment occurred. |
+
+## PRG-20260811-107 — Ticket 05S1 environment-core handoff
+
+| Field | Value |
+| --- | --- |
+| Router event | `TICKETS → TICKET_DISPATCH_REQUIRED → IMPLEMENTATION_DISPATCH_CONFIRMED / IMPLEMENT` |
+| Ticket / closure | `05s1-disposable-environment-core`; `CLOSURE-LOCAL-INSTALL-T05S1-01`; E1–E4/T1–T4 |
+| Binding identifiers | Handoff `hnd_local_orchestration_install_05s1_20260811`; allocation `aln_local_orchestration_install_05s1_20260811`; receipt `rcpt_local_orchestration_install_05s1_20260811`; correlation `corr-local-orchestration-install-05s1-20260811`; question `q-local-orchestration-install-05s1-20260811`; owner task `019fcc9c-f34f-7d53-a313-c70c90bf3245` |
+| Baseline | Ticket-doc commit `3f685a9`; this record's commit is the required handoff-doc commit and must be read back before implementation. |
+| Scope | Four test-support Python files only. Provision/teardown and environment overlay; no subprocess, Codex DTO/state, installer, target-project, live host or historical-source reuse. |
+| Branch/worktree | Reuse the sole clean implementation worktree and create only `codex/implementation-disposable-environment-core-05s1` from the exact handoff baseline. No new worktree. |
+| Return / loop rule | One implementation commit plus one docs-only handoff. Reviewer batches one independent review; blocking findings stop without automatic correction or replacement branch. 05S2–05S4 remain dependency-waiting. |

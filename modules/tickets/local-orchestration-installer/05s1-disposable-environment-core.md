@@ -4,9 +4,9 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / verification support for AC-02, AC-03, AC-06, AC-07 and AC-08 |
 | Context / decision | `doc/context/local-orchestration-installer/main.md` / `PRG-20260811-106` |
-| State | `PLANNED / SELECTED_NEXT / NOT_DISPATCHED` |
+| State | `IN_PROGRESS / DISPATCH_AUTHORIZED` |
 | Dependency | Ticket 05A integrated by `b22c6c4`; rejected parent 05S is immutable evidence only |
-| Implementation responsibility | One future named implementation owner in the sole implementation worktree; no allocation or receipt exists yet |
+| Implementation responsibility | Codex task `019fcc9c-f34f-7d53-a313-c70c90bf3245`, model `gpt-5.6-terra`, reasoning `xhigh`, in the sole implementation worktree after exact receipt admission |
 | Acceptance responsibility | Control-plane reviewer in the control worktree; the reviewer may execute and inspect but may not patch implementation |
 | Environment level | Test-owned filesystem and process-environment profile; not Windows Sandbox, VM, container, live Codex or package staging |
 
@@ -67,3 +67,21 @@ The reviewer batches all findings in one review. Any blocking result stops at
 `CONVERGENCE_REVIEW_REQUIRED`; it does not automatically dispatch a correction,
 create another branch or expand this closure. 05S2 cannot start until 05S1 is
 independently approved and safely integrated.
+
+## Implementation handoff
+
+| Field | Value |
+| --- | --- |
+| Handoff | `hnd_local_orchestration_install_05s1_20260811` |
+| Allocation | `aln_local_orchestration_install_05s1_20260811` |
+| Receipt | `rcpt_local_orchestration_install_05s1_20260811` |
+| Correlation / question | `corr-local-orchestration-install-05s1-20260811` / `q-local-orchestration-install-05s1-20260811` |
+| Authority | Owner instruction to decompose and establish the environment first; decomposition record `PRG-20260811-106`; continuing authority `PRG-20260809-042` |
+| Ticket-doc baseline | `3f685a9` |
+| Worktree / branch | Reuse only `C:\Users\<user>\Desktop\AI控制工作workflow-implementation`. From clean state, create exactly one new-ticket branch `codex/implementation-disposable-environment-core-05s1` at the exact reviewed handoff baseline. Do not create another worktree. |
+| Historical-source boundary | Branch `codex/implementation-codex-lifecycle-staging-05s` and commits `ca5754d`, `832b1dc`, `ccb55bd` are immutable rejected evidence. Do not copy, cherry-pick or reuse their source/tests. |
+| Required return | One implementation commit changing only the four authorized Python files, exact E1–E4/T1–T4 verification and clean readback, followed by one docs-only `doc/WorkProgressReport.md` handoff commit. No review, merge, downstream dispatch or host mutation. |
+
+The dispatch prompt must bind this ticket, owner, handoff, allocation, receipt,
+correlation, ticket-doc commit and the separate handoff-doc commit. A mismatch
+is `HALT` and grants no implementation authority.

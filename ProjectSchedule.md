@@ -121,7 +121,7 @@
 | Parent Ticket 05 Codex CLI adapter | SUPERSEDED / CONVERGENCE_DECOMPOSED | Correction review found CR-80..CR-85; rejected branch/SHAs remain evidence and its allocation/receipt are closed. |
 | Ticket 05A CLI contract/preflight | DONE / APPROVED / INTEGRATED | Implementation `97ab31c`; repaired handoff `fb755268`; review `d54c0bd`; owner-authorized ledger-preserving merge `b22c6c4`; post-merge verification passed. |
 | Ticket 05S combined staging parent | SUPERSEDED / DECOMPOSED | Rejected commits remain immutable evidence; no correction or integration. |
-| Ticket 05S1 disposable environment core | PLANNED / SELECTED_NEXT / NOT_DISPATCHED | Environment provision/teardown only; independent acceptance owner; no subprocess or Codex behavior. |
+| Ticket 05S1 disposable environment core | IN_PROGRESS / DISPATCH_AUTHORIZED | Environment provision/teardown only; unique `hnd_local_orchestration_install_05s1_20260811` / `rcpt_local_orchestration_install_05s1_20260811`; no subprocess or Codex behavior. |
 | Ticket 05S2 bounded child-process runner | PLANNED / DEPENDENCY_WAIT | Starts after 05S1 approval/integration. |
 | Ticket 05S3 Codex protocol fixture | PLANNED / DEPENDENCY_WAIT | Starts after 05S2 approval/integration. |
 | Ticket 05S4 Codex lifecycle oracle | PLANNED / DEPENDENCY_WAIT | Starts after 05S3 approval/integration; only then may 05B/05C be refrozen. |
@@ -214,3 +214,7 @@ serial path is `05S1 environment → 05S2 process runner → 05S3 protocol fixtu
 control-plane reviewer and each child owns only its named behavior. 05S1 is
 selected next but remains `NOT_DISPATCHED`; no automatic correction loop,
 branch or allocation was created by decomposition.
+
+The owner subsequently authorized starting the environment-first ticket. 05S1
+now has one unique handoff/allocation/receipt and may use only the sole existing
+implementation worktree. 05S2–05S4 remain unallocated and cannot start.

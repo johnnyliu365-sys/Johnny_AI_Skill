@@ -2,13 +2,13 @@
 
 | Field | Value |
 | --- | --- |
-| Context state | `STAGING_DECOMPOSED / TICKET_05S1_SELECTED_NOT_DISPATCHED / DOWNSTREAM_DEPENDENCY_WAIT` |
-| Router event | `CONVERGENCE_REVIEW_REQUIRED → OWNER_DECOMPOSITION → TICKETS / WAIT_FOR_DISPATCH` |
+| Context state | `STAGING_DECOMPOSED / TICKET_05S1_DISPATCH_AUTHORIZED / DOWNSTREAM_DEPENDENCY_WAIT` |
+| Router event | `OWNER_DECOMPOSITION → TICKETS → TICKET_DISPATCH_REQUIRED → IMPLEMENTATION_DISPATCH_CONFIRMED` |
 | Delivery stage | `POC` |
 | Requirement change | `CHG-20260808-011` |
 | Baseline | `a37a515` (`docs: replace duplicated ticket history with references`) |
 | Control-plane owner | Codex / current `main` worktree |
-| Implementation owner | None active. Task `019fcc9c-f34f-7d53-a313-c70c90bf3245` and the sole implementation worktree are only future candidates after a new reviewed 05S1 handoff, allocation and receipt. |
+| Implementation owner | Task `019fcc9c-f34f-7d53-a313-c70c90bf3245` under 05S1 handoff `hnd_local_orchestration_install_05s1_20260811`, allocation `aln_local_orchestration_install_05s1_20260811` and receipt `rcpt_local_orchestration_install_05s1_20260811`; sole implementation worktree only |
 | Required sources read | `AGENTS.md`, `Workflow.md` (Router, Wayfinder, Grill, change control, specification, tickets, role boundary), `Defined_wayfinder.md`, `CONTEXT.md`, `PRD.md`, `ProjectSchedule.md`, `doc/RequirementChangeLog.md`, existing plugin manifests / README, `library/workflow_router/`, and completed plugin / autonomous-collaboration POCs |
 
 ## Shared Context reference
@@ -274,3 +274,7 @@ lifecycle/file truth. Transaction, compensation and receipts remain in 05B/05C,
 and real `Setup.exe`/uninstaller isolation remains Ticket 04's separate Windows
 provider gate. The control reviewer owns acceptance and may not patch the
 implementation. Only 05S1 is selected, with no active dispatch.
+
+05S1 dispatch is now authorized under ticket-doc baseline `3f685a9` and its
+separate handoff-doc commit. Its implementation scope remains environment-only;
+05S2–05S4 receive no authority from this dispatch.
