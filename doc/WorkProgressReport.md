@@ -1218,3 +1218,19 @@
 | Scope | Four test-support Python files only. Provision/teardown and environment overlay; no subprocess, Codex DTO/state, installer, target-project, live host or historical-source reuse. |
 | Branch/worktree | Reuse the sole clean implementation worktree and create only `codex/implementation-disposable-environment-core-05s1` from the exact handoff baseline. No new worktree. |
 | Return / loop rule | One implementation commit plus one docs-only handoff. Reviewer batches one independent review; blocking findings stop without automatic correction or replacement branch. 05S2–05S4 remain dependency-waiting. |
+
+## PRG-20260811-108 - Ticket 05S1 disposable environment core implementation handoff
+
+| Field | Value |
+| --- | --- |
+| Router event | `ACTION_COMPLETED -> IMPLEMENTATION_COMPLETED -> REVIEW_HANDOFF` |
+| Ticket / closure | `05s1-disposable-environment-core`; `CLOSURE-LOCAL-INSTALL-T05S1-01`; E1-E4 / T1-T4 |
+| Authority and binding | Authority `PRG-20260809-042`; decomposition `PRG-20260811-106`; dispatch `PRG-20260811-107`; handoff `hnd_local_orchestration_install_05s1_20260811`; allocation `aln_local_orchestration_install_05s1_20260811`; receipt `rcpt_local_orchestration_install_05s1_20260811`; correlation `corr-local-orchestration-install-05s1-20260811`; question `q-local-orchestration-install-05s1-20260811` |
+| Baseline and owner | Required handoff baseline `f88e10f73f9014fb276d99974eaf1a2074c9a7d0`; ticket-doc `3f685a9`; implementation task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; branch `codex/implementation-disposable-environment-core-05s1`; implementation `e0898cdca76c360713bef35b1848c0b8b8bd3681` |
+| Implementation scope | Only `tests/staging/environment_core/__init__.py`, `contracts.py`, `environment.py`, and `tests/test_disposable_environment_core.py`; no production-library change, subprocess, CLI/Codex state, target-project access, host mutation, Git fixture, or historical-source reuse. |
+| First-red evidence | Before the four staging modules existed, exact focused command failed T1-T4 with `ModuleNotFoundError: No module named 'tests.staging'`; this is the recorded first-red boundary for the new environment-only surface. |
+| Green behavior | T1 provisions distinct direct OS-temp roots and rejects malformed/constructed/replayed owners before effects. T2 returns only the six fixed overlay keys and preserves parent environment values. T3 blocks missing/mismatched marker, reparse and child-escape deletion, then permits exact teardown and finite replay. T4 clears only owned faulted roots and preserves an unrelated sibling. |
+| Reparse evidence | The execution account's physical symbolic-link probe returned `WinError 1314`; T3 therefore uses a typed `Path.is_symlink` test probe to exercise the same production refusal branch. The production path still checks actual reparse/symlink state before deletion; this limitation is disclosed for independent review. |
+| Verification | `python -B -m unittest tests.test_disposable_environment_core -v`: 4/4 passed. `python -B -m unittest discover -s tests -v`: 176/176 passed. `python -B -m mypy --strict --explicit-package-bases --no-incremental --cache-dir <validated OS-temp>`: 86 source files, success; temporary cache removed and read back absent. In-memory `compile`: 4/4 files. Forbidden-source sentinel and `git diff --check`: passed. |
+| Scope/state readback | Four implementation files, 478 nonblank lines total; generated repository caches removed after verification; owned `johnny-stage-env-*` root residue: 0; no merge, push, deployment, review, integration, downstream dispatch, or schedule action. |
+| Review handoff | Independent control-plane review is required. This implementation owner makes no approval or integration decision. |
