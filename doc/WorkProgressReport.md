@@ -1357,3 +1357,12 @@
 | Exact delta | Add truthful `WAIT_FAILED_AFTER_START` after first-wait `OSError` plus successful bounded cleanup; require `RUN_TIMEOUT` or `RUN_WAIT_OS_ERROR` trigger on each unconfirmed kill/reap failure. |
 | Identifiers | Handoff `hnd_local_orchestration_install_05s2_r03_20260811`; allocation `aln_local_orchestration_install_05s2_r03_20260811`; receipt `rcpt_local_orchestration_install_05s2_r03_20260811`; correlation `corr-local-orchestration-install-05s2-r03-20260811`; question `q-local-orchestration-install-05s2-r03-20260811`. |
 | Lane / limit | Same task, branch and sole implementation worktree; one additive source/test correction, one docs-only handoff and one final independent review. No replacement branch/worktree, merge or 05S3 before approval. |
+
+## PRG-20260811-122 — Ticket 05S2 revision-03 correction handoff
+
+| Field | Value |
+| --- | --- |
+| Router event | `ACTION_COMPLETED -> CORRECTION_HANDOFF_VALIDATED -> IMPLEMENT / AUTO_CONTINUE` |
+| Binding | Ticket `05s2-bounded-child-process-runner`; closure `CLOSURE-LOCAL-INSTALL-T05S2-03`; override `OVR-LOCAL-INSTALL-T05S2-R03-20260811-01`; ticket-doc `c8556b4`; implementation HEAD `c324c52669cfa16c57433e0f0cf14ee2b00b0d69`; task `019fcc9c-f34f-7d53-a313-c70c90bf3245`. |
+| Receipt | `hnd_local_orchestration_install_05s2_r03_20260811` / `aln_local_orchestration_install_05s2_r03_20260811` / `rcpt_local_orchestration_install_05s2_r03_20260811` / `corr-local-orchestration-install-05s2-r03-20260811` / `q-local-orchestration-install-05s2-r03-20260811`. |
+| Exact continuation | One additive correction in `contracts.py`, `runner.py` and the bounded-runner test file for CR-124, followed by one docs-only PRG-20260811-123 handoff and one final independent review. No fixture/05S1/product change, new branch/worktree or second correction. |
