@@ -108,3 +108,13 @@ merge, 05S3 dispatch, live Codex action, target-project write, push, release or
 deployment. Allocation `aln_local_orchestration_install_05s2_20260811` is
 released and receipt `rcpt_local_orchestration_install_05s2_20260811` is
 closed against replay. Submitted commits remain immutable review evidence.
+
+## Owner-authorized disposition
+
+Owner override `OVR-LOCAL-INSTALL-T05S2-REFREEZE-20260811-01` accepts the
+control-plane responsibility for CR-123 and refreezes only CR-120..CR-123 as
+`CLOSURE-LOCAL-INSTALL-T05S2-02`. It authorizes one additive correction on the
+same task, worktree and branch at submitted HEAD `72ccfaa`; revision-01 commits
+and this review remain immutable. The next review is final for this override:
+any blocker stops without another correction, branch/worktree replacement or
+05S3 dispatch.

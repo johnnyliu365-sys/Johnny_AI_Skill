@@ -2,13 +2,13 @@
 
 | Field | Value |
 | --- | --- |
-| Context state | `STAGING_DECOMPOSED / TICKET_05S1_INTEGRATED / TICKET_05S2_CONVERGENCE_REVIEW_REQUIRED` |
-| Router event | `IMPLEMENTATION_COMPLETED → CODE_REVIEW → CHANGES_REQUESTED → CONVERGENCE_REVIEW_REQUIRED` |
+| Context state | `STAGING_DECOMPOSED / TICKET_05S1_INTEGRATED / TICKET_05S2_REVISION_02_REFROZEN` |
+| Router event | `CONVERGENCE_REVIEW_REQUIRED → OWNER_OVERRIDE → TICKET_REFROZEN → CORRECTION_HANDOFF_REQUIRED` |
 | Delivery stage | `POC` |
 | Requirement change | `CHG-20260808-011` |
 | Baseline | `a37a515` (`docs: replace duplicated ticket history with references`) |
 | Control-plane owner | Codex / current `main` worktree |
-| Implementation owner | Task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; submitted 05S2 branch is immutable review evidence; no active allocation or correction |
+| Implementation owner | Task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; one active revision-02 correction on the existing 05S2 branch/worktree only |
 | Required sources read | `AGENTS.md`, `Workflow.md` (Router, Wayfinder, Grill, change control, specification, tickets, role boundary), `Defined_wayfinder.md`, `CONTEXT.md`, `PRD.md`, `ProjectSchedule.md`, `doc/RequirementChangeLog.md`, existing plugin manifests / README, `library/workflow_router/`, and completed plugin / autonomous-collaboration POCs |
 
 ## Shared Context reference
@@ -322,5 +322,9 @@ junction was accepted and a real successful child wrote external bytes. An
 embedded-NUL absolute executable crossed validation and leaked `ValueError`.
 The committed late-sentinel timing is shorter than the fixture delay, and the
 control-plane ticket omitted a finite termination-failure result/cleanup bound.
-05S2 is `CONVERGENCE_REVIEW_REQUIRED`; no correction, integration or 05S3
-dispatch is active.
+05S2 was `CONVERGENCE_REVIEW_REQUIRED`. Owner override
+`OVR-LOCAL-INSTALL-T05S2-REFREEZE-20260811-01` now refreezes only the four
+reviewed gaps as `CLOSURE-LOCAL-INSTALL-T05S2-02`: live non-reparse ownership,
+NUL-free executable admission, truth-preserving late-write evidence and finite
+kill/reap failure semantics. One additive correction is permitted on the same
+branch/worktree; integration and 05S3 remain blocked pending the final review.

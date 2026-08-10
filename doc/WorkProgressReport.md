@@ -1317,3 +1317,14 @@
 | Control ticket defect | The frozen P3 union omitted a started-child termination-failure result and finite secondary kill/wait budget. This must be refrozen by the control plane; implementation cannot infer a new result contract. |
 | Lane closure | Allocation `aln_local_orchestration_install_05s2_20260811` is released and receipt `rcpt_local_orchestration_install_05s2_20260811` is closed against replay. |
 | Decision | `CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED`; no automatic correction, branch/worktree replacement, merge, 05S3 dispatch, live Codex mutation, target-project write, push, release or deployment. Submitted commits remain immutable review evidence. |
+
+## PRG-20260811-117 — Ticket 05S2 revision-02 refreeze
+
+| Field | Value |
+| --- | --- |
+| Router event | `CONVERGENCE_REVIEW_REQUIRED → OWNER_OVERRIDE → TICKET_REFROZEN → CORRECTION_HANDOFF_REQUIRED` |
+| Binding | Override `OVR-LOCAL-INSTALL-T05S2-REFREEZE-20260811-01`; closure `CLOSURE-LOCAL-INSTALL-T05S2-02`; review `8d1767d`; submitted HEAD `72ccfaab44429749c61a77177567deb81d7f29dc` |
+| Correction identifiers | Handoff `hnd_local_orchestration_install_05s2_r02_20260811`; allocation `aln_local_orchestration_install_05s2_r02_20260811`; receipt `rcpt_local_orchestration_install_05s2_r02_20260811`; correlation `corr-local-orchestration-install-05s2-r02-20260811`; question `q-local-orchestration-install-05s2-r02-20260811` |
+| Refrozen delta | CR-120 live non-reparse lease/cwd admission; CR-121 NUL-free executable; CR-122 late-write evidence beyond the fixture deadline; CR-123 finite termination timeout and named kill/reap failure result. |
+| Lane | Same task `019fcc9c-f34f-7d53-a313-c70c90bf3245`, same sole implementation worktree and existing branch `codex/implementation-bounded-child-process-runner-05s2`; no branch/worktree creation or switch. |
+| Limit | One additive implementation correction plus one docs-only handoff, then one final independent review. Any blocker stops; no second correction, merge, 05S3 dispatch, live Codex mutation, target-project write, push, release or deployment. |
