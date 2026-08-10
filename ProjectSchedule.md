@@ -122,8 +122,8 @@
 | Ticket 05A CLI contract/preflight | DONE / APPROVED / INTEGRATED | Implementation `97ab31c`; repaired handoff `fb755268`; review `d54c0bd`; owner-authorized ledger-preserving merge `b22c6c4`; post-merge verification passed. |
 | Ticket 05S combined staging parent | SUPERSEDED / DECOMPOSED | Rejected commits remain immutable evidence; no correction or integration. |
 | Ticket 05S1 disposable environment core | DONE / APPROVED / INTEGRATED | Correction `41d5ce4`, handoff `e1087d3`, review `17ea1d5` and guarded merge `504a3ec`; post-merge verification passed. |
-| Ticket 05S2 bounded child-process runner | APPROVED / INTEGRATION_AUTHORIZED | Revision-03 `33a8fa9` / `dba0621b` passed final independent review; CR-124 resolved. |
-| Ticket 05S3 Codex protocol fixture | PLANNED / DEPENDENCY_WAIT | Starts after 05S2 approval/integration. |
+| Ticket 05S2 bounded child-process runner | DONE / APPROVED / INTEGRATED | Revision-03 `33a8fa9` / `dba0621b`, review `c97b754`, guarded merge `6e24e06`; CR-124 resolved and post-merge verification passed. |
+| Ticket 05S3 Codex protocol fixture | PLANNED / READY / NOT_DISPATCHED | Dependency satisfied by 05S2 merge `6e24e06`; deliberately not dispatched in this turn. |
 | Ticket 05S4 Codex lifecycle oracle | PLANNED / DEPENDENCY_WAIT | Starts after 05S3 approval/integration; only then may 05B/05C be refrozen. |
 | Ticket 05B transactional registration | BLOCKED / CONVERGENCE_REVIEW_REQUIRED | Terminal revision-02 review of `1a269411` / `ed74589` records CR-98..CR-104; no automatic correction or integration. |
 | Ticket 05C receipt removal/replay | PLANNED / DEPENDENCY_WAIT / REFREEZE_REQUIRED | Starts only after 05A/05B approval/integration and a finite behavior/rollback closure refreeze. |
@@ -283,3 +283,10 @@ and handoff `dba0621b`. A fresh immutable export passed focused 12/12, full
 189/189, strict mypy and compile across 91 files, plus the six-cell trigger /
 cleanup matrix and strict malformed-model probes. CR-124 is resolved; guarded
 integration is authorized, while 05S3 remains undispatched for this turn.
+
+Guarded merge `6e24e06` integrates the control approval `c97b754` as first
+parent and reviewed handoff `dba0621b` as second parent. The sole conflict was
+the progress ledger; PRG-114 through PRG-124 were retained once in numeric
+order. Post-merge focused 12/12, full 189/189, strict mypy and compile over 91
+files passed with zero residue. 05S2 is complete. 05S3 is ready but remains
+undispatched because this turn ends after the 05S2 integration.

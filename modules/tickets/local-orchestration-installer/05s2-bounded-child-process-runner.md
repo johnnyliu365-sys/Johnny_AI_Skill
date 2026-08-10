@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / verification support only |
 | Context / decision | `doc/context/local-orchestration-installer/main.md` / `PRG-20260811-106` |
-| State | `APPROVED / INTEGRATION_AUTHORIZED` |
+| State | `COMPLETE / APPROVED / INTEGRATED` |
 | Dependency | 05S1 independently approved and integrated by `504a3ec` |
 | Implementation language | Python 3.11 |
 | Implementation responsibility | Codex task `019fcc9c-f34f-7d53-a313-c70c90bf3245`, model `gpt-5.6-terra`, reasoning `xhigh`, in the sole implementation worktree after exact receipt admission |
