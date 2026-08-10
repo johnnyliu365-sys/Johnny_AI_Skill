@@ -38,9 +38,12 @@ from tests.staging.process_runner.contracts import (
     ProcessInvocation,
     ProcessObservation,
     SuccessfulProcessObservation,
+    StartedChildTrigger,
     TerminationFailedProcessObservation,
     TerminationFailureReason,
     TimedOutProcessObservation,
+    WaitFailedAfterStartObservation,
+    WaitFailureReason,
 )
 from tests.staging.process_runner.fixture_child import (
     LATE_WRITE_DELAY_SECONDS,
@@ -59,6 +62,7 @@ ENVIRONMENT_PREFIX = "johnny-stage-env-"
 class TerminationScenario(str, Enum):
     """Named deterministic child failures used only after a real timeout."""
 
+    NONE = "NONE"
     KILL_OS_ERROR = "KILL_OS_ERROR"
     REAP_TIMEOUT = "REAP_TIMEOUT"
     REAP_OS_ERROR = "REAP_OS_ERROR"
@@ -67,7 +71,8 @@ class TerminationScenario(str, Enum):
 class TimeoutChildPort:
     """A strict child whose first wait always reaches timeout handling."""
 
-    def __init__(self, scenario: TerminationScenario) -> None:
+    def __init__(self, trigger: StartedChildTrigger, scenario: TerminationScenario) -> None:
+        self._trigger = trigger
         self._scenario = scenario
         self._wait_count = 0
         self.kill_count = 0
@@ -77,7 +82,9 @@ class TimeoutChildPort:
         self._wait_count += 1
         self.wait_timeouts.append(timeout_seconds)
         if self._wait_count == 1:
-            raise subprocess.TimeoutExpired(("fixture",), timeout_seconds)
+            if self._trigger is StartedChildTrigger.RUN_TIMEOUT:
+                raise subprocess.TimeoutExpired(("fixture",), timeout_seconds)
+            raise OSError("deterministic first wait error")
         if self._scenario is TerminationScenario.REAP_TIMEOUT:
             raise subprocess.TimeoutExpired(("fixture",), timeout_seconds)
         if self._scenario is TerminationScenario.REAP_OS_ERROR:
@@ -93,8 +100,8 @@ class TimeoutChildPort:
 class TimeoutProcessPort:
     """Typed in-memory port limited to nondeterministic kill/reap failure tests."""
 
-    def __init__(self, scenario: TerminationScenario) -> None:
-        self.child = TimeoutChildPort(scenario)
+    def __init__(self, trigger: StartedChildTrigger, scenario: TerminationScenario) -> None:
+        self.child = TimeoutChildPort(trigger, scenario)
         self.start_count = 0
 
     def start(
@@ -364,7 +371,7 @@ class BoundedChildProcessRunnerTests(unittest.TestCase):
             for scenario, expected in expected_outcomes.items():
                 with self.subTest(scenario=scenario.value):
                     expected_reason, expected_waits = expected
-                    port = TimeoutProcessPort(scenario)
+                    port = TimeoutProcessPort(StartedChildTrigger.RUN_TIMEOUT, scenario)
                     runner = BoundedChildProcessRunner(port)
                     observation = runner.run(
                         self._request(lease, arguments=(str(FIXTURE_CHILD), "timeout"), timeout=50)
@@ -380,10 +387,54 @@ class BoundedChildProcessRunnerTests(unittest.TestCase):
                     self.assertEqual(1, port.start_count)
                     self.assertEqual(1, port.child.kill_count)
                     self.assertEqual(expected_reason, observation.termination_reason)
+                    self.assertEqual(StartedChildTrigger.RUN_TIMEOUT, observation.trigger)
                     self.assertEqual(ChildTerminationState.UNCONFIRMED, observation.child_state)
                     self.assertEqual(expected_waits, tuple(port.child.wait_timeouts))
                     self.assertNotIn("stdout", observation.model_dump())
                     self.assertNotIn("stderr", observation.model_dump())
+        finally:
+            self._teardown(allocator, lease)
+
+    def test_r03_t3_run_wait_os_error_is_not_a_confirmed_timeout(self) -> None:
+        allocator, lease = self._lease("environment-owner-3333444455556666")
+        try:
+            port = TimeoutProcessPort(StartedChildTrigger.RUN_WAIT_OS_ERROR, TerminationScenario.NONE)
+            observation = BoundedChildProcessRunner(port).run(
+                self._request(lease, arguments=(str(FIXTURE_CHILD), "timeout"), timeout=50)
+            )
+            self.assertIsInstance(observation, WaitFailedAfterStartObservation)
+            assert isinstance(observation, WaitFailedAfterStartObservation)
+            self.assertEqual(ChildStartState.STARTED, observation.started)
+            self.assertEqual(ChildTerminationState.CONFIRMED_TERMINATED, observation.child_state)
+            self.assertEqual(WaitFailureReason.WAIT_OS_ERROR, observation.reason)
+            self.assertEqual(137, observation.exit_code.value)
+            self.assertEqual(1, port.start_count)
+            self.assertEqual(1, port.child.kill_count)
+            self.assertEqual((0.05, 0.5), tuple(port.child.wait_timeouts))
+        finally:
+            self._teardown(allocator, lease)
+
+    def test_r03_t3_every_unconfirmed_cleanup_failure_carries_its_first_wait_trigger(self) -> None:
+        allocator, lease = self._lease("environment-owner-4444555566667777")
+        expected_reasons = {
+            TerminationScenario.KILL_OS_ERROR: "KILL_OS_ERROR",
+            TerminationScenario.REAP_TIMEOUT: "REAP_TIMEOUT",
+            TerminationScenario.REAP_OS_ERROR: "REAP_OS_ERROR",
+        }
+        try:
+            for trigger in StartedChildTrigger:
+                for scenario, expected_reason in expected_reasons.items():
+                    with self.subTest(trigger=trigger.value, scenario=scenario.value):
+                        port = TimeoutProcessPort(trigger, scenario)
+                        observation = BoundedChildProcessRunner(port).run(
+                            self._request(lease, arguments=(str(FIXTURE_CHILD), "timeout"), timeout=50)
+                        )
+                        self.assertIsInstance(observation, TerminationFailedProcessObservation)
+                        assert isinstance(observation, TerminationFailedProcessObservation)
+                        self.assertEqual(expected_reason, observation.termination_reason.value)
+                        self.assertEqual(trigger, observation.trigger)
+                        self.assertEqual(ChildTerminationState.UNCONFIRMED, observation.child_state)
+                        self.assertEqual(1, port.child.kill_count)
         finally:
             self._teardown(allocator, lease)
 

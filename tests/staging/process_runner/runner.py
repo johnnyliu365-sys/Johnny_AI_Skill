@@ -17,10 +17,12 @@ from .contracts import (
     ProcessObservation,
     ProcessPort,
     StartedChildProcess,
+    StartedChildTrigger,
     SuccessfulProcessObservation,
     TerminationFailedProcessObservation,
     TerminationFailureReason,
     TimedOutProcessObservation,
+    WaitFailedAfterStartObservation,
     WindowsLaunchEvidence,
     revalidate_process_admission,
 )
@@ -87,24 +89,36 @@ class BoundedChildProcessRunner:
         try:
             exit_code = child.wait(admission.timeout.value / 1_000)
         except subprocess.TimeoutExpired:
-            return self._terminate_after_timeout(child, admission, invocation)
+            return self._terminate_after_first_wait(
+                child,
+                admission,
+                invocation,
+                StartedChildTrigger.RUN_TIMEOUT,
+            )
         except OSError:
-            return self._terminate_after_timeout(child, admission, invocation)
+            return self._terminate_after_first_wait(
+                child,
+                admission,
+                invocation,
+                StartedChildTrigger.RUN_WAIT_OS_ERROR,
+            )
         if exit_code == 0:
             return SuccessfulProcessObservation(invocation=invocation, exit_code=ProcessExitCode(value=exit_code))
         return NonzeroProcessObservation(invocation=invocation, exit_code=ProcessExitCode(value=exit_code))
 
     @staticmethod
-    def _terminate_after_timeout(
+    def _terminate_after_first_wait(
         child: StartedChildProcess,
         request: ChildProcessRequest,
         invocation: ProcessInvocation,
+        trigger: StartedChildTrigger,
     ) -> ProcessObservation:
         try:
             child.kill()
         except OSError:
             return TerminationFailedProcessObservation(
                 invocation=invocation,
+                trigger=trigger,
                 termination_reason=TerminationFailureReason.KILL_OS_ERROR,
             )
         try:
@@ -112,14 +126,18 @@ class BoundedChildProcessRunner:
         except subprocess.TimeoutExpired:
             return TerminationFailedProcessObservation(
                 invocation=invocation,
+                trigger=trigger,
                 termination_reason=TerminationFailureReason.REAP_TIMEOUT,
             )
         except OSError:
             return TerminationFailedProcessObservation(
                 invocation=invocation,
+                trigger=trigger,
                 termination_reason=TerminationFailureReason.REAP_OS_ERROR,
             )
-        return TimedOutProcessObservation(invocation=invocation, exit_code=ProcessExitCode(value=exit_code))
+        if trigger is StartedChildTrigger.RUN_TIMEOUT:
+            return TimedOutProcessObservation(invocation=invocation, exit_code=ProcessExitCode(value=exit_code))
+        return WaitFailedAfterStartObservation(invocation=invocation, exit_code=ProcessExitCode(value=exit_code))
 
     @staticmethod
     def _launch_failure(invocation: ProcessInvocation, error: OSError | ValueError) -> ProcessObservation:

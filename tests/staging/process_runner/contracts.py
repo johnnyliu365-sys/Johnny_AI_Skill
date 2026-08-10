@@ -197,6 +197,7 @@ class ChildStartState(str, Enum):
 
 
 class ChildTerminationState(str, Enum):
+    CONFIRMED_TERMINATED = "CONFIRMED_TERMINATED"
     UNCONFIRMED = "UNCONFIRMED"
 
 
@@ -204,6 +205,7 @@ class ProcessResultKind(str, Enum):
     SUCCESS = "SUCCESS"
     NONZERO_EXIT = "NONZERO_EXIT"
     TIMEOUT_AFTER_START = "TIMEOUT_AFTER_START"
+    WAIT_FAILED_AFTER_START = "WAIT_FAILED_AFTER_START"
     TERMINATION_FAILED = "TERMINATION_FAILED"
     EXECUTABLE_UNAVAILABLE = "EXECUTABLE_UNAVAILABLE"
     ACCESS_DENIED = "ACCESS_DENIED"
@@ -214,6 +216,15 @@ class TerminationFailureReason(str, Enum):
     KILL_OS_ERROR = "KILL_OS_ERROR"
     REAP_TIMEOUT = "REAP_TIMEOUT"
     REAP_OS_ERROR = "REAP_OS_ERROR"
+
+
+class StartedChildTrigger(str, Enum):
+    RUN_TIMEOUT = "RUN_TIMEOUT"
+    RUN_WAIT_OS_ERROR = "RUN_WAIT_OS_ERROR"
+
+
+class WaitFailureReason(str, Enum):
+    WAIT_OS_ERROR = "WAIT_OS_ERROR"
 
 
 class ProcessExitCode(StrictModel):
@@ -276,11 +287,21 @@ class TimedOutProcessObservation(StrictModel):
     exit_code: ProcessExitCode
 
 
+class WaitFailedAfterStartObservation(StrictModel):
+    invocation: ProcessInvocation
+    result: Literal[ProcessResultKind.WAIT_FAILED_AFTER_START] = ProcessResultKind.WAIT_FAILED_AFTER_START
+    started: Literal[ChildStartState.STARTED] = ChildStartState.STARTED
+    child_state: Literal[ChildTerminationState.CONFIRMED_TERMINATED] = ChildTerminationState.CONFIRMED_TERMINATED
+    reason: Literal[WaitFailureReason.WAIT_OS_ERROR] = WaitFailureReason.WAIT_OS_ERROR
+    exit_code: ProcessExitCode
+
+
 class TerminationFailedProcessObservation(StrictModel):
     invocation: ProcessInvocation
     result: Literal[ProcessResultKind.TERMINATION_FAILED] = ProcessResultKind.TERMINATION_FAILED
     started: Literal[ChildStartState.STARTED] = ChildStartState.STARTED
     child_state: Literal[ChildTerminationState.UNCONFIRMED] = ChildTerminationState.UNCONFIRMED
+    trigger: StartedChildTrigger
     termination_reason: TerminationFailureReason
 
 
@@ -331,6 +352,7 @@ ProcessObservation: TypeAlias = (
     SuccessfulProcessObservation
     | NonzeroProcessObservation
     | TimedOutProcessObservation
+    | WaitFailedAfterStartObservation
     | TerminationFailedProcessObservation
     | ExecutableUnavailableObservation
     | AccessDeniedObservation
