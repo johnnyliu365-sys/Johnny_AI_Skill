@@ -2,11 +2,10 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
 from enum import Enum
 import ntpath
 from types import CodeType, FunctionType, GetSetDescriptorType, MappingProxyType, MethodType
-from typing import Callable, Final, Literal, TypeAlias, cast
+from typing import Callable, Final, Literal, NoReturn, SupportsIndex, TypeAlias, cast
 
 from pydantic import BaseModel, ConfigDict, ValidationError, model_validator
 
@@ -604,9 +603,17 @@ class _CapabilityToken:
 _CAPABILITY_TOKEN: Final[_CapabilityToken] = _CapabilityToken()
 
 
-@dataclass(frozen=True, slots=True, init=False, repr=False)
 class CodexRegistrationPortCapability:
     """Four bound operations admitted without resolving candidate descriptors."""
+
+    __slots__ = (
+        "_authority",
+        "status",
+        "fresh_preflight",
+        "add_marketplace",
+        "add_plugin",
+        "prove",
+    )
 
     _authority: _CapabilityToken
     status: Literal["ADMITTED"]
@@ -631,6 +638,21 @@ class CodexRegistrationPortCapability:
         object.__setattr__(self, "add_marketplace", add_marketplace)
         object.__setattr__(self, "add_plugin", add_plugin)
         object.__setattr__(self, "prove", prove)
+
+    def __setattr__(self, name: str, value: object) -> NoReturn:
+        raise AttributeError("capability is immutable")
+
+    def __copy__(self) -> NoReturn:
+        raise TypeError("capability transfer is forbidden")
+
+    def __deepcopy__(self, memo: dict[int, object]) -> NoReturn:
+        raise TypeError("capability transfer is forbidden")
+
+    def __reduce__(self) -> NoReturn:
+        raise TypeError("capability transfer is forbidden")
+
+    def __reduce_ex__(self, protocol: SupportsIndex) -> NoReturn:
+        raise TypeError("capability transfer is forbidden")
 
     def metadata(self) -> CodexRegistrationPortAdmitted:
         """Return only frozen public metadata, never the bound operations."""

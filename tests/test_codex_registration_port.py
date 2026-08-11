@@ -3,9 +3,11 @@
 from __future__ import annotations
 
 import copy
+from dataclasses import asdict, astuple
 from enum import Enum
 import ntpath
-from typing import NoReturn, cast
+import pickle
+from typing import Callable, NoReturn, cast
 import unittest
 
 from pydantic import ValidationError
@@ -798,6 +800,31 @@ class CodexRegistrationPortTests(unittest.TestCase):
                 adapter.add_plugin,
                 adapter.prove,
             )
+        with self.subTest(transfer="dataclasses.asdict"):
+            with self.assertRaises(TypeError) as asdict_failure:
+                cast(Callable[[object], object], asdict)(admitted)
+            self.assertNotIn("fresh_preflight", str(asdict_failure.exception))
+            self.assertNotIn("\\", str(asdict_failure.exception))
+        with self.subTest(transfer="dataclasses.astuple"):
+            with self.assertRaises(TypeError) as astuple_failure:
+                cast(Callable[[object], object], astuple)(admitted)
+            self.assertNotIn("fresh_preflight", str(astuple_failure.exception))
+            self.assertNotIn("\\", str(astuple_failure.exception))
+        with self.subTest(transfer="copy.copy"):
+            with self.assertRaises(TypeError) as copy_failure:
+                copy.copy(admitted)
+            self.assertNotIn("fresh_preflight", str(copy_failure.exception))
+            self.assertNotIn("\\", str(copy_failure.exception))
+        with self.subTest(transfer="copy.deepcopy"):
+            with self.assertRaises(TypeError) as deepcopy_failure:
+                copy.deepcopy(admitted)
+            self.assertNotIn("fresh_preflight", str(deepcopy_failure.exception))
+            self.assertNotIn("\\", str(deepcopy_failure.exception))
+        with self.subTest(transfer="pickle round-trip"):
+            with self.assertRaises(TypeError) as pickle_failure:
+                pickle.loads(pickle.dumps(admitted))
+            self.assertNotIn("fresh_preflight", str(pickle_failure.exception))
+            self.assertNotIn("\\", str(pickle_failure.exception))
         forged = object.__new__(CodexRegistrationPortCapability)
         with self.assertRaises((AttributeError, TypeError)):
             forged.metadata()
