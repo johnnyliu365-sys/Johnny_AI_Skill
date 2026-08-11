@@ -90,6 +90,27 @@ from .host_contracts import (
 from .host_fakes import RecordedHostLifecycle
 from .host_lifecycle import ReversibleHostCapabilityGate
 from .codex_cli_adapter import CodexCliPreflight, ProcessCodexCommandPort
+from .codex_registration_contracts import (
+    CodexAttemptEffect,
+    CodexAttemptEffectState,
+    CodexAuthPolicy,
+    CodexJournalValidationResult,
+    CodexMarketplaceAddObservation,
+    CodexObservedAbsolutePath,
+    CodexPluginAddObservation,
+    CodexPluginId,
+    CodexRegistrationAttemptId,
+    CodexRegistrationAttemptJournal,
+    CodexRegistrationProof,
+    CodexRegistrationProofPort,
+    CodexRegistrationProofRequest,
+    CodexRegistrationReceipt,
+    CodexRegistrationRejectReason,
+    CodexRegistrationRejected,
+    CodexRegistrationResult,
+    issue_registration_receipt,
+    revalidate_current_attempt_journal,
+)
 
 __all__ = [
     "CANONICAL_INSTALL_ROOT",
@@ -159,4 +180,23 @@ __all__ = [
     "CodexFilesystemPort", "CodexMarketplaceEntry", "CodexMarketplaceList", "CodexMarketplaceName", "CodexMarketplaceSource",
     "CodexPluginEntry", "CodexPluginList", "CodexPluginName", "CodexPreflightEligible",
     "CodexPreflightRequest", "CodexSourceProof",
+    "CodexAttemptEffect",
+    "CodexAttemptEffectState",
+    "CodexAuthPolicy",
+    "CodexJournalValidationResult",
+    "CodexMarketplaceAddObservation",
+    "CodexObservedAbsolutePath",
+    "CodexPluginAddObservation",
+    "CodexPluginId",
+    "CodexRegistrationAttemptId",
+    "CodexRegistrationAttemptJournal",
+    "CodexRegistrationProof",
+    "CodexRegistrationProofPort",
+    "CodexRegistrationProofRequest",
+    "CodexRegistrationReceipt",
+    "CodexRegistrationRejectReason",
+    "CodexRegistrationRejected",
+    "CodexRegistrationResult",
+    "issue_registration_receipt",
+    "revalidate_current_attempt_journal",
 ]
