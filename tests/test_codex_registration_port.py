@@ -84,6 +84,8 @@ ATTEMPT = CodexRegistrationAttemptId(value="attempt-0123456789abcdef")
 OTHER_ATTEMPT = CodexRegistrationAttemptId(value="attempt-fedcba9876543210")
 DIGEST = ArtifactDigest(value="a" * 64)
 AUTH_POLICY = CodexAuthPolicy(value="trusted-local")
+EXPECTED_PLUGIN_ID = CodexPluginId(value="plugin-probe-012345")
+FOREIGN_PLUGIN_ID = CodexPluginId(value="plugin-foreign-987654")
 
 
 class RequestField(str, Enum):
@@ -94,6 +96,7 @@ class RequestField(str, Enum):
     INSTALLED_LOCATOR = "installed_locator"
     DIGEST = "digest"
     EXPECTED_AUTH_POLICY = "expected_auth_policy"
+    EXPECTED_PLUGIN_ID = "expected_plugin_id"
 
 
 class MissingValue:
@@ -158,6 +161,7 @@ def port_request(
     installed_locator: OwnedRelativePath = INSTALLED,
     digest: ArtifactDigest = DIGEST,
     expected_auth_policy: CodexAuthPolicy = AUTH_POLICY,
+    expected_plugin_id: CodexPluginId = EXPECTED_PLUGIN_ID,
 ) -> CodexRegistrationPortRequest:
     return CodexRegistrationPortRequest(
         preflight=preflight() if current_preflight is None else current_preflight,
@@ -167,6 +171,7 @@ def port_request(
         installed_locator=installed_locator,
         digest=digest,
         expected_auth_policy=expected_auth_policy,
+        expected_plugin_id=expected_plugin_id,
     )
 
 
@@ -179,6 +184,7 @@ def malformed_request(field: RequestField, value: object) -> CodexRegistrationPo
         "installed_locator": INSTALLED,
         "digest": DIGEST,
         "expected_auth_policy": AUTH_POLICY,
+        "expected_plugin_id": EXPECTED_PLUGIN_ID,
     }
     if value is MISSING:
         del values[field.value]
@@ -224,7 +230,7 @@ def plugin_success(
     current_request = port_request() if request is None else request
     current_observation = (
         CodexPluginAddObservation(
-            plugin_id=CodexPluginId(value="plugin-probe-012345"),
+            plugin_id=current_request.expected_plugin_id,
             name=current_request.preflight.plugin,
             marketplace_name=current_request.preflight.marketplace,
             version=current_request.expected_version,
@@ -445,11 +451,52 @@ class RepresentationTrapAdapter(ValidAdapter):
 
 
 class CodexRegistrationPortTests(unittest.TestCase):
-    def test_a1_exact_request_source_binding_and_all_49_root_shape_cells(self) -> None:
+    def test_i1_expected_plugin_id_is_required_and_foreign_id_is_rejected(self) -> None:
+        with self.subTest(boundary="request accepts exact plugin identity authority"):
+            exact = CodexRegistrationPortRequest(
+                preflight=preflight(),
+                attempt_id=ATTEMPT,
+                expected_version=VERSION,
+                source_locator=SOURCE,
+                installed_locator=INSTALLED,
+                digest=DIGEST,
+                expected_auth_policy=AUTH_POLICY,
+                expected_plugin_id=EXPECTED_PLUGIN_ID,
+            )
+            self.assertEqual(EXPECTED_PLUGIN_ID.value, exact.expected_plugin_id.value)
+        with self.subTest(boundary="foreign plugin identity is rejected"):
+            expected = CodexRegistrationPortRequest.model_construct(
+                preflight=preflight(),
+                attempt_id=ATTEMPT,
+                expected_version=VERSION,
+                source_locator=SOURCE,
+                installed_locator=INSTALLED,
+                digest=DIGEST,
+                expected_auth_policy=AUTH_POLICY,
+                expected_plugin_id=EXPECTED_PLUGIN_ID,
+            )
+            foreign_observation = CodexPluginAddObservation(
+                plugin_id=FOREIGN_PLUGIN_ID,
+                name=PLUGIN,
+                marketplace_name=MARKETPLACE,
+                version=VERSION,
+                installed_path=observed_path(INSTALLED),
+                auth_policy=AUTH_POLICY,
+            )
+            self.assert_rejected(
+                revalidate_plugin_add_result(plugin_success(expected, foreign_observation), expected),
+                CodexRegistrationPortValueRejectReason.REQUEST_MISMATCH,
+            )
+
+    def test_a1_i2_exact_request_binding_and_all_56_root_shape_cells(self) -> None:
         exact = port_request()
         rebuilt = revalidate_registration_port_request(exact)
         self.assertIsInstance(rebuilt, CodexRegistrationPortRequest)
         self.assertIsNot(exact, rebuilt)
+        if not isinstance(rebuilt, CodexRegistrationPortRequest):
+            raise AssertionError("expected rebuilt request")
+        self.assertEqual(EXPECTED_PLUGIN_ID.value, rebuilt.expected_plugin_id.value)
+        self.assertIsNot(exact.expected_plugin_id, rebuilt.expected_plugin_id)
         invalid_values: tuple[tuple[str, object], ...] = (
             ("missing", MISSING),
             ("none", None),
@@ -468,7 +515,13 @@ class CodexRegistrationPortTests(unittest.TestCase):
                     if isinstance(value, PlainTrap):
                         self.assertEqual(0, value.invocation_count)
                     cell_count += 1
-        self.assertEqual(49, cell_count)
+        self.assertEqual(56, cell_count)
+        self.assert_rejected(
+            revalidate_registration_port_request(
+                malformed_request(RequestField.EXPECTED_PLUGIN_ID, EXPECTED_PLUGIN_ID.value),
+            ),
+            CodexRegistrationPortValueRejectReason.INVALID_REQUEST,
+        )
         foreign_source = OwnedRelativePath(value="marketplaces/other-market")
         mismatched = CodexRegistrationPortRequest.model_construct(
             preflight=preflight(),
@@ -478,6 +531,7 @@ class CodexRegistrationPortTests(unittest.TestCase):
             installed_locator=INSTALLED,
             digest=DIGEST,
             expected_auth_policy=AUTH_POLICY,
+            expected_plugin_id=EXPECTED_PLUGIN_ID,
         )
         self.assert_rejected(
             revalidate_registration_port_request(mismatched),
@@ -492,7 +546,84 @@ class CodexRegistrationPortTests(unittest.TestCase):
                 installed_locator=INSTALLED,
                 digest=DIGEST,
                 expected_auth_policy=AUTH_POLICY,
+                expected_plugin_id=EXPECTED_PLUGIN_ID,
             )
+        with self.assertRaises(ValidationError):
+            CodexRegistrationPortRequest.model_validate(
+                {
+                    "preflight": preflight(),
+                    "attempt_id": ATTEMPT,
+                    "expected_version": VERSION,
+                    "source_locator": SOURCE,
+                    "installed_locator": INSTALLED,
+                    "digest": DIGEST,
+                    "expected_auth_policy": AUTH_POLICY,
+                },
+            )
+
+    def test_i3_expected_plugin_id_binds_request_and_every_result_envelope(self) -> None:
+        expected = port_request()
+        rebuilt_request = revalidate_registration_port_request(expected)
+        self.assertIsInstance(rebuilt_request, CodexRegistrationPortRequest)
+        if not isinstance(rebuilt_request, CodexRegistrationPortRequest):
+            raise AssertionError("expected rebuilt request")
+        self.assertEqual(EXPECTED_PLUGIN_ID.value, rebuilt_request.expected_plugin_id.value)
+        self.assertIsNot(expected.expected_plugin_id, rebuilt_request.expected_plugin_id)
+
+        exact_fresh = fresh_result(expected)
+        exact_marketplace = marketplace_success(expected)
+        exact_plugin = plugin_success(expected)
+        rebuilt_fresh = revalidate_fresh_preflight_result(exact_fresh, expected)
+        rebuilt_marketplace = revalidate_marketplace_add_result(exact_marketplace, expected)
+        rebuilt_plugin = revalidate_plugin_add_result(exact_plugin, expected)
+        self.assertIsInstance(rebuilt_fresh, CodexFreshPreflightAccepted)
+        self.assertIsInstance(rebuilt_marketplace, CodexMarketplaceAddSucceeded)
+        self.assertIsInstance(rebuilt_plugin, CodexPluginAddSucceeded)
+        self.assertIsNot(exact_fresh, rebuilt_fresh)
+        self.assertIsNot(exact_marketplace, rebuilt_marketplace)
+        self.assertIsNot(exact_plugin, rebuilt_plugin)
+
+        foreign_request = port_request(expected_plugin_id=FOREIGN_PLUGIN_ID)
+        self.assert_rejected(
+            revalidate_fresh_preflight_result(fresh_result(foreign_request), expected),
+            CodexRegistrationPortValueRejectReason.REQUEST_MISMATCH,
+        )
+        self.assert_rejected(
+            revalidate_marketplace_add_result(marketplace_success(foreign_request), expected),
+            CodexRegistrationPortValueRejectReason.REQUEST_MISMATCH,
+        )
+        self.assert_rejected(
+            revalidate_plugin_add_result(plugin_success(foreign_request), expected),
+            CodexRegistrationPortValueRejectReason.REQUEST_MISMATCH,
+        )
+
+    def test_i4_plugin_observation_id_must_match_request_authority(self) -> None:
+        expected = port_request()
+        identities: tuple[tuple[str, CodexPluginId, bool], ...] = (
+            ("exact", EXPECTED_PLUGIN_ID, True),
+            ("case-changed", CodexPluginId(value=EXPECTED_PLUGIN_ID.value.upper()), False),
+            ("prefix-plus-character", CodexPluginId(value=EXPECTED_PLUGIN_ID.value + "x"), False),
+            ("unrelated", FOREIGN_PLUGIN_ID, False),
+        )
+        for label, plugin_id, accepted in identities:
+            with self.subTest(identity=label):
+                observation = CodexPluginAddObservation(
+                    plugin_id=plugin_id,
+                    name=PLUGIN,
+                    marketplace_name=MARKETPLACE,
+                    version=VERSION,
+                    installed_path=observed_path(INSTALLED),
+                    auth_policy=AUTH_POLICY,
+                )
+                supplied = plugin_success(expected, observation)
+                result = revalidate_plugin_add_result(supplied, expected)
+                if accepted:
+                    self.assertIsInstance(result, CodexPluginAddSucceeded)
+                    self.assertIsNot(supplied, result)
+                else:
+                    self.assert_rejected(result, CodexRegistrationPortValueRejectReason.REQUEST_MISMATCH)
+                    self.assertNotIn(plugin_id.value, repr(result))
+                    self.assertNotIn(plugin_id.value, str(result))
 
     def test_a2_exact_result_envelopes_rebuild_and_mismatches_are_finite(self) -> None:
         expected = port_request()
@@ -566,6 +697,7 @@ class CodexRegistrationPortTests(unittest.TestCase):
             port_request(installed_locator=OwnedRelativePath(value="plugins/other-plugin")),
             port_request(digest=ArtifactDigest(value="b" * 64)),
             port_request(expected_auth_policy=CodexAuthPolicy(value="other-policy")),
+            port_request(expected_plugin_id=FOREIGN_PLUGIN_ID),
         )
         for alternate in alternate_requests:
             with self.subTest(bound_request=alternate):
@@ -592,7 +724,7 @@ class CodexRegistrationPortTests(unittest.TestCase):
         wrong_plugin_version = plugin_success(
             expected,
             CodexPluginAddObservation(
-                plugin_id=CodexPluginId(value="plugin-probe-012345"),
+                plugin_id=EXPECTED_PLUGIN_ID,
                 name=PLUGIN,
                 marketplace_name=MARKETPLACE,
                 version=CodexCliVersion(value="9.9.9"),
@@ -620,7 +752,7 @@ class CodexRegistrationPortTests(unittest.TestCase):
         )
         plugin_mismatch_observations = (
             CodexPluginAddObservation(
-                plugin_id=CodexPluginId(value="plugin-probe-012345"),
+                plugin_id=EXPECTED_PLUGIN_ID,
                 name=CodexPluginName(value="other-plugin"),
                 marketplace_name=MARKETPLACE,
                 version=VERSION,
@@ -628,7 +760,7 @@ class CodexRegistrationPortTests(unittest.TestCase):
                 auth_policy=AUTH_POLICY,
             ),
             CodexPluginAddObservation(
-                plugin_id=CodexPluginId(value="plugin-probe-012345"),
+                plugin_id=EXPECTED_PLUGIN_ID,
                 name=PLUGIN,
                 marketplace_name=CodexMarketplaceName(value="other-market"),
                 version=VERSION,
@@ -636,7 +768,7 @@ class CodexRegistrationPortTests(unittest.TestCase):
                 auth_policy=AUTH_POLICY,
             ),
             CodexPluginAddObservation(
-                plugin_id=CodexPluginId(value="plugin-probe-012345"),
+                plugin_id=EXPECTED_PLUGIN_ID,
                 name=PLUGIN,
                 marketplace_name=MARKETPLACE,
                 version=VERSION,
@@ -646,7 +778,7 @@ class CodexRegistrationPortTests(unittest.TestCase):
                 auth_policy=AUTH_POLICY,
             ),
             CodexPluginAddObservation(
-                plugin_id=CodexPluginId(value="plugin-probe-012345"),
+                plugin_id=EXPECTED_PLUGIN_ID,
                 name=PLUGIN,
                 marketplace_name=MARKETPLACE,
                 version=VERSION,
@@ -677,7 +809,7 @@ class CodexRegistrationPortTests(unittest.TestCase):
             request=expected,
             confirmed=plugin_success(expected).confirmed,
             observation=CodexPluginAddObservation.model_construct(
-                plugin_id=CodexPluginId(value="plugin-probe-012345"),
+                plugin_id=EXPECTED_PLUGIN_ID,
                 name=PLUGIN,
                 marketplace_name=MARKETPLACE,
                 version=VERSION,
