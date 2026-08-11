@@ -62,6 +62,7 @@ class CodexRegistrationPortRequest(_StrictModel):
     installed_locator: OwnedRelativePath
     digest: ArtifactDigest
     expected_auth_policy: CodexAuthPolicy
+    expected_plugin_id: CodexPluginId
 
     @model_validator(mode="after")
     def exact_source_binding(self) -> CodexRegistrationPortRequest:
@@ -171,6 +172,7 @@ def revalidate_registration_port_request(value: object) -> CodexRegistrationPort
         rebuilt_installed = OwnedRelativePath(value=current.installed_locator.value)
         rebuilt_digest = ArtifactDigest(value=current.digest.value)
         rebuilt_auth = CodexAuthPolicy(value=current.expected_auth_policy.value)
+        rebuilt_plugin_id = CodexPluginId(value=current.expected_plugin_id.value)
     except (AttributeError, TypeError, ValidationError, ValueError):
         return _value_rejected(CodexRegistrationPortValueRejectReason.INVALID_REQUEST)
     if rebuilt_source.value != rebuilt_preflight.marketplace_source.value:
@@ -184,6 +186,7 @@ def revalidate_registration_port_request(value: object) -> CodexRegistrationPort
             installed_locator=rebuilt_installed,
             digest=rebuilt_digest,
             expected_auth_policy=rebuilt_auth,
+            expected_plugin_id=rebuilt_plugin_id,
         )
     except (TypeError, ValidationError, ValueError):
         return _value_rejected(CodexRegistrationPortValueRejectReason.INVALID_REQUEST)
@@ -287,7 +290,8 @@ def revalidate_plugin_add_result(
     if observation.version.value != expected.expected_version.value:
         return _value_rejected(CodexRegistrationPortValueRejectReason.VERSION_MISMATCH)
     if (
-        observation.name.value != expected.preflight.plugin.value
+        observation.plugin_id.value != expected.expected_plugin_id.value
+        or observation.name.value != expected.preflight.plugin.value
         or observation.marketplace_name.value != expected.preflight.marketplace.value
         or observation.auth_policy.value != expected.expected_auth_policy.value
         or observation.installed_path.value != _canonical_observed_path(expected.installed_locator)
@@ -326,6 +330,8 @@ def _request_fields_are_exact(value: CodexRegistrationPortRequest) -> bool:
             and type(value.digest.value) is str
             and type(value.expected_auth_policy) is CodexAuthPolicy
             and type(value.expected_auth_policy.value) is str
+            and type(value.expected_plugin_id) is CodexPluginId
+            and type(value.expected_plugin_id.value) is str
         )
     except AttributeError:
         return False
@@ -347,6 +353,7 @@ def _requests_match(
         and current.installed_locator.value == expected.installed_locator.value
         and current.digest.value == expected.digest.value
         and current.expected_auth_policy.value == expected.expected_auth_policy.value
+        and current.expected_plugin_id.value == expected.expected_plugin_id.value
     )
 
 
