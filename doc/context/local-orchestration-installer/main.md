@@ -2,13 +2,13 @@
 
 | Field | Value |
 | --- | --- |
-| Context state | `TICKET_05B3C_IMPLEMENTATION_DISPATCHED` |
-| Router event | `TICKET_SELECTED(05B3C) / TICKET_FREEZE_COMPLETED / IMPLEMENTATION_DISPATCH_CONFIRMED` |
+| Context state | `TICKET_05B3C_REVIEW_APPROVED` |
+| Router event | `IMPLEMENTATION_COMPLETED(05B3C) / TERMINAL_CODE_REVIEW / READY_TO_MERGE` |
 | Delivery stage | `POC` |
 | Requirement change | `CHG-20260808-011` |
 | Baseline | `3367136` (`docs: decompose 05B3B identity admission`) |
 | Control-plane owner | Codex / current `main` worktree |
-| Implementation owner | 05B3A and 05B3B1 are integrated and released; 05B3B is terminal rejected; task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` owns active 05B3C in existing `workflow-implementer-2` |
+| Implementation owner | 05B3A and 05B3B1 are integrated and released; 05B3B is terminal rejected; task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` returned approved 05B3C evidence from existing `workflow-implementer-2` |
 | Required sources read | `AGENTS.md`, `Workflow.md` (Router, Wayfinder, Grill, change control, specification, tickets, role boundary), `Defined_wayfinder.md`, `CONTEXT.md`, `PRD.md`, `ProjectSchedule.md`, `doc/RequirementChangeLog.md`, existing plugin manifests / README, `library/workflow_router/`, and completed plugin / autonomous-collaboration POCs |
 
 ## Shared Context reference
@@ -525,3 +525,9 @@ operation exception cells and five independent reversals. Implementer-2 is
 selected in the existing worktree; one new ticket branch from the reviewed
 control baseline is allowed. The reviewed freeze is `df24448`; dispatch is
 bound to PRG-20260812-187 and no new worktree is allowed.
+
+Terminal independent review approved implementation `b44cb38` and docs-only
+handoff `6d7dd37`. Exact C1-C8, five isolated reversals, focused/full/type/
+compile, dependency-blob, scope and residue checks passed. Guarded integration
+is the only legal continuation. 05B4 retains the separate responsibility for
+fresh registration admission and exact receipt/proof/journal/oracle binding.
