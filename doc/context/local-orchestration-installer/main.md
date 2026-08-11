@@ -2,13 +2,13 @@
 
 | Field | Value |
 | --- | --- |
-| Context state | `TICKET_05B3A_05B3B_REVISION_02_CORRECTION_READY` |
-| Router event | `IMPLEMENTATION_COMPLETED → REVIEW → TICKET_DEFECT → TICKET_REFROZEN` |
+| Context state | `TICKET_05B3A_APPROVED_05B3B_CONVERGENCE_REVIEW_REQUIRED` |
+| Router event | `CORRECTION_REVIEW_COMPLETED → APPROVED(05B3A) / CONVERGENCE_REVIEW_REQUIRED(05B3B)` |
 | Delivery stage | `POC` |
 | Requirement change | `CHG-20260808-011` |
-| Baseline | `9716704` (`docs: record Ticket 05B3 terminal review`) |
+| Baseline | `0104372` (`docs: refreeze Ticket 05B3 child corrections`) |
 | Control-plane owner | Codex / current `main` worktree |
-| Implementation owner | Parallel proposals: primary task owns only 05B3A in `workflow-implementation`; second task owns only 05B3B in `workflow-implementer-2`; 05B3C is unallocated |
+| Implementation owner | 05B3A return is approved and awaiting guarded integration; 05B3B revision-02 return is terminal rejected and awaits control-plane convergence; 05B3C is unallocated |
 | Required sources read | `AGENTS.md`, `Workflow.md` (Router, Wayfinder, Grill, change control, specification, tickets, role boundary), `Defined_wayfinder.md`, `CONTEXT.md`, `PRD.md`, `ProjectSchedule.md`, `doc/RequirementChangeLog.md`, existing plugin manifests / README, `library/workflow_router/`, and completed plugin / autonomous-collaboration POCs |
 
 ## Shared Context reference
@@ -491,11 +491,9 @@ completed 06A allocation was released by its guarded integration. Each row is
 one isolated active lane. The owners may not read the other's worktree or use
 the other's unintegrated source; 05B3C remains unallocated.
 
-Initial independent reviews of 05B3A and 05B3B are recorded in the unique
-review reports. Normal focused/full/type/compile verification passes for both,
-but CR-137 through CR-143 block integration. Revision 02 now freezes built-in
-`type(candidate)` plus trusted raw `type.__dict__` getset descriptors and
-identity-only class checks for 05B3A. It freezes removal(s), plugin-list proof,
-marketplace proof, installed-location proof plus an exact request/attempt-bound
-residual journal for 05B3B. Corrections stay additive on the two existing
-branches/worktrees; no new lane, integration or 05B3C dispatch is authorized.
+Revision-02 independent reviews are recorded in the unique review reports.
+05B3A closes CR-137 through CR-139 and is approved for guarded integration.
+05B3B closes CR-140 through CR-143 but exposes CR-144/CR-145: a recursively
+malformed exact plan identity can escape as `PydanticSerializationError`.
+Workflow.md §8.1 therefore requires control-plane convergence; no third
+correction, 05B3B integration or 05B3C dispatch is authorized.

@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01, AC-02 and AC-07 compensation-state seam |
-| State | `IN_PROGRESS / REVISION_02_CORRECTION_READY` |
+| State | `BLOCKED / CONVERGENCE_REVIEW_REQUIRED` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B3B-02` / R1-R5 |
 | Dependency | Integrated 05B1/05B2 at control baseline; ADR-20260811-004; no dependency on 05B3A source |
 | Control / implementation / reviewer | Current `main` / task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` / independent current `main` reviewer |
@@ -111,3 +111,14 @@ equality escapes finite validation and only three of five required reverse
 mutations were recorded. Revision 02 above is the complete correction contract
 for CR-140 through CR-143. No unrelated hardening, integration or 05B3C work
 is authorized.
+
+## Revision 02 review record
+
+Correction `3f22551b8f581d087ef0cdbad6a70fbd671202e2` and docs-only handoff
+`4d5bbefe42e1d1ae3206b29e877f0556bda3ce4c` are `CHANGES_REQUESTED /
+CONVERGENCE_REVIEW_REQUIRED`. Standard verification and all six R4 reversals
+pass, but CR-144/CR-145 reproduce four constructed exact plan identities whose
+malformed nested request, attempt ID, marketplace state or plugin state escapes
+as `PydanticSerializationError` rather than finite `PLAN_INVALID`. Per
+Workflow.md §8.1, no third correction, integration or 05B3C dispatch is
+authorized.

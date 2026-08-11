@@ -1963,3 +1963,24 @@
 | Binding | Closure `CLOSURE-LOCAL-INSTALL-T05B3B-02`; correction handoff `hnd_local_orchestration_install_05b3b_r02_20260812`; existing allocation/receipt retained. |
 | Frozen correction | Exact proof order is plugin lists, marketplace, installed location after authorized removals. Every result preserves exact request/attempt-bound residual states; wrong-plan checks are identity-only. Six independent reversals are required. |
 | Lane / return | Same task, worktree and branch at clean `aab7bf5df0c4501ba30e364fa4c76936412c4282`; additive two-file correction then WPR-only return `PRG-20260812-177`. No cross-lane read, effect, branch/worktree creation or integration. |
+
+## PRG-20260812-178 — Ticket 05B3A revision-02 correction review
+
+| Field | Value |
+| --- | --- |
+| Router event | `IMPLEMENTATION_CORRECTION_COMPLETED -> CORRECTION_REVIEW -> APPROVED -> READY_TO_MERGE` |
+| Reviewed return | Closure `CLOSURE-LOCAL-INSTALL-T05B3A-02`; implementation `a87af389835f481882dc9e18e69177e8d156278a`; docs-only handoff `0378655864e4277d553558a40d5122702aa3d7d9`; report `doc/reviews/local-orchestration-installer/05b3a-codex-safe-port-capability-code-review.md`. |
+| Standard verification | Immutable Unicode-safe export: focused 6/6, full 236/236, strict mypy 112 files and in-memory compile 112 files passed. Exact ancestry/scope/diff and clean implementation lane passed; restored source matched reviewed blob `a6ca8635ca8246fa0f98207f73ef494c568223ae`. |
+| Closure / reversals | All 16 candidate/metaclass process-control trap cells remain unread. Five reviewer mutations for candidate lookup, metaclass lookup, equality, signature inspection and property admission independently turned red and were restored. |
+| Review harness note | A Windows `tar` extraction that omitted Unicode paths and a reviewer-timeout run that left two disposable stage roots were discarded. Python `tarfile` extraction preserved all paths; the exact roots were removed before the authoritative clean full-suite rerun. No implementation worktree or target project changed. |
+| Decision | `APPROVED / READY_TO_MERGE`; CR-137 through CR-139 closed. Guarded 05B3A integration is allowed independently; 05B3C remains dependency-waiting on 05B3B. |
+
+## PRG-20260812-179 — Ticket 05B3B revision-02 correction review
+
+| Field | Value |
+| --- | --- |
+| Router event | `IMPLEMENTATION_CORRECTION_COMPLETED -> CORRECTION_REVIEW -> CHANGES_REQUESTED -> CONVERGENCE_REVIEW_REQUIRED` |
+| Reviewed return | Closure `CLOSURE-LOCAL-INSTALL-T05B3B-02`; implementation `3f22551b8f581d087ef0cdbad6a70fbd671202e2`; docs-only handoff `4d5bbefe42e1d1ae3206b29e877f0556bda3ce4c`; report `doc/reviews/local-orchestration-installer/05b3b-codex-compensation-reducer-code-review.md`. |
+| Passing evidence | Immutable Unicode-safe export: focused 15/15, full 245/245, strict mypy 112 files and in-memory compile 112 files passed. Exact ancestry/scope/diff and clean implementation lane passed; restored source matched reviewed blob `70685c0a722f9acda5256b92c51c202fb6d222be`. All six required reviewer mutations independently turned red and were restored. |
+| Blocking batch | CR-144 `IMPLEMENTATION_DEFECT`, R3/R5: `_plan_matches_rebuild()` serializes the supplied nested identity outside the finite exception boundary. Constructed exact identities with malformed request, attempt ID, marketplace state or plugin state each escape as `PydanticSerializationError` instead of `PLAN_INVALID`. CR-145 `EVIDENCE_DEFECT`: the committed matrix omits those four recursively malformed identity cells. |
+| Decision | `CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED`. This is the correction review; Workflow.md §8.1 forbids automatic third correction. No 05B3B integration, 05B3C dispatch, live Codex mutation, target-project write, push, release or deployment. |

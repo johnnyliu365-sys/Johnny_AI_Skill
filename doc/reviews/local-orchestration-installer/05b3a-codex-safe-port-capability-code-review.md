@@ -81,3 +81,25 @@ complete blocking batch for closure revision 01; A2 and A5 have no other
 blocking finding. No integration or 05B3C dispatch is authorized. The control
 plane must correct and refreeze the ticket before the same owner may append one
 correction implementation and one WPR-only handoff on the existing branch.
+
+## Revision 02 correction review
+
+| Field | Value |
+| --- | --- |
+| Ticket / closure | `05b3a-codex-safe-port-capability` / `CLOSURE-LOCAL-INSTALL-T05B3A-02` / R1-R4 |
+| Reviewed correction | Implementation `a87af389835f481882dc9e18e69177e8d156278a`; docs-only handoff `0378655864e4277d553558a40d5122702aa3d7d9` |
+| Exact ancestry / scope | PASS: `0275daf -> a87af38 -> 0378655`; correction changes only the authorized capability source and focused test, while the handoff changes only `doc/WorkProgressReport.md`. |
+| Standard verification | PASS: immutable Unicode-safe export, focused 6/6, full 236/236, strict mypy 112 files, in-memory compile 112 files, reviewed/restored source blob `a6ca8635ca8246fa0f98207f73ef494c568223ae`, diff/scope and clean lane readback. |
+| R1-R3 | PASS: class acquisition uses built-in `type(candidate)`; MRO and class dictionaries use the captured raw built-in getset descriptors; exclusions and exact shapes use identity; all 16 candidate/metaclass process-control trap cells remain unread; revision-01 shape, metadata and explicit-operation behavior remains green. |
+| R4 reverse truthfulness | PASS: five isolated reviewer mutations independently turned red for candidate `object.__getattribute__`, metaclass `type.__getattribute__`, equality membership, `inspect.signature` and property admission, then were restored to the reviewed blob. |
+| Review result | `APPROVED / READY_TO_MERGE`; CR-137 through CR-139 are closed. |
+
+The first reviewer full-suite attempt was discarded because Windows `tar`
+omitted Unicode paths from extraction; a Python `tarfile` extraction proved
+those paths present and produced the authoritative results above. A later
+reviewer timeout left two exact disposable stage roots; they were removed
+before the clean authoritative rerun. Neither event changed an implementation
+worktree or target project.
+
+No blocking finding remains for revision 02. Guarded integration may include
+this branch independently; 05B3C remains dependency-waiting on 05B3B.

@@ -87,3 +87,39 @@ boundary have no other blocking finding. No integration or 05B3C dispatch is
 authorized. The control plane must correct and refreeze the ticket before the
 same owner may append one correction implementation and one WPR-only handoff
 on the existing branch.
+
+## Revision 02 correction review
+
+| Field | Value |
+| --- | --- |
+| Ticket / closure | `05b3b-codex-compensation-reducer` / `CLOSURE-LOCAL-INSTALL-T05B3B-02` / R1-R5 |
+| Reviewed correction | Implementation `3f22551b8f581d087ef0cdbad6a70fbd671202e2`; docs-only handoff `4d5bbefe42e1d1ae3206b29e877f0556bda3ce4c` |
+| Exact ancestry / scope | PASS: `aab7bf5 -> 3f22551 -> 4d5bbef`; correction changes only the authorized reducer source and focused test, while the handoff changes only `doc/WorkProgressReport.md`. |
+| Standard verification | PASS: immutable Unicode-safe export, focused 15/15, full 245/245, strict mypy 112 files, in-memory compile 112 files, reviewed/restored source blob `70685c0a722f9acda5256b92c51c202fb6d222be`, diff/scope and clean lane readback. |
+| R1 / R2 | PASS for the exact proof order, all reachable authority pairs, request/attempt-bound residual journal, MAY_EXIST-versus-OWNED serialization, cross-request/attempt, substituted-state and stale-plan cells. |
+| R3 / R5 | **FAIL:** an exact `CodexCompensationPlan` whose exact `CodexCompensationPlanIdentity` was created with `model_construct()` and one malformed nested field escapes as `PydanticSerializationError` instead of returning finite `PLAN_INVALID`. The reviewer reproduced this independently for all four identity fields: request, attempt ID, marketplace state and plugin state. |
+| R4 reverse truthfulness | PASS: six isolated reviewer mutations independently turned red for proof order, pre-existing authority, complete-after-declared-failure reduction, early authority clearing, stale-authority retention and wrong-plan equality, then were restored to the reviewed blob. |
+| Review result | `CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED`; CR-144 and CR-145 are the complete revision-02 blocking batch. |
+
+### Revision 02 findings
+
+**CR-144 — `IMPLEMENTATION_DEFECT`, R3/R5.**
+`_revalidate_plan()` guards exact-field admission and plan rebuilding, but calls
+`_plan_matches_rebuild()` after its exception boundary. That helper serializes
+the supplied nested identity. A constructed exact identity can therefore make
+Pydantic raise `PydanticSerializationError`, violating the frozen rule that
+constructed malformed models fail finitely. Recursive exact validation must
+occur before comparison, and serialization/validation failure must map to
+`PLAN_INVALID` without catching process-control exceptions.
+
+**CR-145 — `EVIDENCE_DEFECT`, R3/R5 and CodeReview.md class 7.** The committed
+malformed matrix covers normalized outcomes and a wrong top-level plan type,
+but no recursively malformed exact plan identity. Add the four constructed
+identity cells and prove each produces metadata-only `PLAN_INVALID` without an
+exception escape.
+
+This is the correction review for the same ticket sequence. Per Workflow.md
+§8.1, no automatic third implementation correction is permitted. 05B3B is not
+approved or integrable; return to control-plane convergence review and keep
+05B3C dependency-waiting. No live Codex mutation, target-project write, push,
+release or deployment is authorized.

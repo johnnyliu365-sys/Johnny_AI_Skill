@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01, AC-02 and AC-07 effect-boundary seam |
-| State | `IN_PROGRESS / REVISION_02_CORRECTION_READY` |
+| State | `APPROVED / READY_TO_MERGE` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B3A-02` / R1-R4 |
 | Dependency | Integrated 05B1/05B2 at control baseline; ADR-20260811-004 |
 | Control / implementation / reviewer | Current `main` / task `019fcc9c-f34f-7d53-a313-c70c90bf3245` / independent current `main` reviewer |
@@ -114,3 +114,12 @@ implementation also invokes caller metaclass equality and the committed
 evidence omits those paths. Revision 02 above is the complete correction
 contract for CR-137 through CR-139. No unrelated hardening, integration or
 05B3C work is authorized.
+
+## Revision 02 review record
+
+Correction `a87af389835f481882dc9e18e69177e8d156278a` and docs-only handoff
+`0378655864e4277d553558a40d5122702aa3d7d9` are `APPROVED /
+READY_TO_MERGE`. Independent verification passed focused 6/6, full 236/236,
+strict mypy and compile over 112 files, all 16 trap cells and all five isolated
+R4 reversals. CR-137 through CR-139 are closed; no 05B3C dispatch occurs before
+guarded integration and the 05B3B dependency is resolved.
