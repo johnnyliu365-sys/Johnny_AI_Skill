@@ -1861,3 +1861,13 @@
 | Exact scope | New `codex_compensation.py`, new `test_codex_compensation.py`, and export-only `library/local_orchestration/__init__.py`. Integrated 05B1/05B2 are read-only; production must not import test-owned 05S4 or reuse rejected parent source. |
 | Finite outcome | Exact manifest/current-attempt authority; no call for `NOT_ATTEMPTED`/`PREEXISTING`; plugin-first removal; every finite removal/probe failure still runs all later finite steps; only fresh marketplace, plugin and installed-path absence reduces retry authority. |
 | Return / guards | One exact-scope implementation commit plus one WPR-only handoff reserved as PRG-162, with truthful first-red/green and five reverse mutations. Implementer works alone and makes no review, integration, downstream-dispatch or Agent-control decision. No push, release, deployment, live Codex mutation or target-project write. |
+
+## PRG-20260811-163 — Ticket 05B3 initial independent review
+
+| Field | Value |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05B3) -> INITIAL_CODE_REVIEW -> CHANGES_REQUESTED` |
+| Binding | Closure `CLOSURE-LOCAL-INSTALL-T05B3-01`; implementation `0f7951224de7b3fdde6ab81fc640f7894fc0a140`; docs-only handoff `b59e97b0912f4e347b37efcbec266f7713868a43`; report `doc/reviews/local-orchestration-installer/05b3-codex-exhaustive-compensation-code-review.md`. |
+| Independent verification | Immutable export: focused 8/8, full 238/238, strict mypy 112 files, in-memory compile 3/3, exact scope/ancestry/diff and no-effect checks passed. D2-D5, cross-request admission and all five reverse mutations passed. |
+| Blocking batch | CR-135: structural five-name ports with non-callable or incompatible-signature operations pass runtime protocol admission and raise `TypeError` instead of finite zero-call `INVALID_PORT`. CR-136: committed T1 omits those port cells plus the frozen null/blank/container/wrong/constructed and cross-request evidence matrix. |
+| Decision | `CHANGES_REQUESTED`; same ticket/task/worktree/branch/allocation/receipt remain bound. One same-closure correction is permitted. No new branch/worktree, integration, downstream dispatch, live Codex mutation, target-project write, push, release or deployment. |
