@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01, AC-02, AC-07 and AC-08 registration seam |
 | Parent evidence | Terminal 05B revision-02 review `24227ac`; CR-98 through CR-104 remain immutable evidence |
-| State | `IN_PROGRESS / DISPATCH_CONFIRMED` |
+| State | `CHANGES_REQUESTED / TICKET_REFREEZE_REQUIRED` — final initial review `CR-128` through `CR-132` |
 | Dependency | 05A plus 05S1-05S4 independently approved and integrated by `b22c6c4`, `504a3ec`, `6e24e06`, `43a1639` and `4af381c` |
 | Implementation owner | Task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; existing `workflow-implementation` worktree and branch only |
 | Acceptance owner | Independent control-plane reviewer; no implementation writes |
@@ -75,3 +75,33 @@ and one docs-only commit changing only `doc/WorkProgressReport.md`. The
 implementation owner makes no review, integration or downstream dispatch
 decision. Any contract conflict returns typed `CHANGE_DETECTED`; any unsafe
 baseline or missing authority returns typed `HALT`.
+
+## Initial independent review
+
+Implementation `fbedefcef113ff1a85e5709ea80c205c54ff85eb` and docs-only
+handoff `6969d4412d0391684739890e4fc3e5451d4ed6c0` have valid ancestry,
+exact source/docs scope and a clean implementation worktree. A fresh immutable
+export passed focused 4/4, full 209/209, strict full-tree mypy and in-memory
+compile over 104 Python files.
+
+The review nevertheless returns `CHANGES_REQUESTED / TICKET_REFREEZE_REQUIRED`:
+
+- `CR-128 / TICKET_DEFECT`: C2/C3 name a request-owned auth policy but the
+  frozen request has no expected-policy authority separate from observed
+  `authPolicy`; a request-only fake produced a receipt for `foreign-policy`.
+- `CR-129 / EVIDENCE_DEFECT`: the committed request-only auth fake changes the
+  proof after reading a trusted request and therefore never exercises the
+  required foreign observed-auth request.
+- `CR-130 / TICKET_DEFECT`: CodeReview.md class 6 applies, but C3/T4 do not
+  choose finite rejection versus propagation for proof-port failure; an
+  injected `RuntimeError` currently escapes.
+- `CR-131 / IMPLEMENTATION_DEFECT`: the journal accepts impossible downstream
+  plugin states while marketplace is still `MAY_EXIST` or is already
+  `PREEXISTING`; T3 incorrectly labels those cells legal.
+- `CR-132 / EVIDENCE_DEFECT`: committed T1/T2 do not include the complete
+  seven-cell path matrix or the required null/wrong proof-port cases.
+
+No correction or integration is authorized until the control plane refreezes
+the finite expected-policy, exception and legal-journal contracts. The same
+ticket, implementation owner, worktree, branch, allocation and valid receipt
+remain bound; no replacement lane is permitted.

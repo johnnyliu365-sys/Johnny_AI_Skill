@@ -1687,3 +1687,14 @@
 | Ledger resolution | The sole conflict was `doc/WorkProgressReport.md`. Main retained PRG-133 through PRG-145 once; the lane-local Ticket 06A return colliding at PRG-141 is preserved on main as PRG-146 with explicit normalization. Neither immutable parent was amended or overwritten. |
 | Post-merge verification | Focused 11/11 and full 216/216 unittest passed. Strict full-tree mypy and in-memory compile passed over 106 Python files; source sentinel and `git diff --check` passed. External cache was removed and read back absent; repository cache residue was zero. |
 | Completion | Ticket 06A is `COMPLETE / APPROVED_EVIDENCE / INSTALL_BLOCKED / ROLE_ISOLATION_UNPROVEN / INTEGRATED`; allocation `aln_local_orchestration_install_06a_20260811` is released and receipt `rcpt_local_orchestration_install_06a_20260811` is closed. Actual host NO-GO remains binding, so autonomous Ticket 04 and 06B/06C remain blocked. No live Codex mutation, target-project write, push, release or deployment. |
+
+## PRG-20260811-148 — Ticket 05B1 final initial independent review
+
+| Field | Value |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05B1) -> FINAL_INITIAL_CODE_REVIEW -> CHANGES_REQUESTED / TICKET_REFREEZE_REQUIRED` |
+| Binding | Closure `CLOSURE-LOCAL-INSTALL-T05B1-01`; implementation `fbedefcef113ff1a85e5709ea80c205c54ff85eb`; docs-only handoff `6969d4412d0391684739890e4fc3e5451d4ed6c0`; report `doc/reviews/local-orchestration-installer/05b1-codex-registration-contracts-and-journal-code-review.md`. |
+| Independent baseline evidence | Fresh immutable export: focused 4/4, full 209/209, strict full-tree mypy and in-memory compile over 104 files; exact scope/ancestry/diff and zero review-cache residue passed. |
+| Blocking batch | CR-128 ticket omission of independent expected auth-policy authority; CR-129 false request-only foreign-auth evidence; CR-130 unspecified proof-port exception semantics; CR-131 impossible journal states accepted; CR-132 incomplete committed path/port TDD cells. |
+| Concrete reproduction | A request whose observed policy is `foreign-policy` plus an exact request-only proof returns `CodexRegistrationReceipt`. Journals `(PREEXISTING, OWNED)` and `(MAY_EXIST, OWNED)` are accepted and grant plugin authority. A proof-port `RuntimeError` escapes with no frozen disposition. |
+| Decision | `CHANGES_REQUESTED / TICKET_REFREEZE_REQUIRED`; no same-closure correction or integration. Same task/worktree/branch/allocation/receipt remain bound pending one finite control refreeze. 05B2-05B4 stay blocked. No live Codex mutation, target-project write, push, release or deployment. |

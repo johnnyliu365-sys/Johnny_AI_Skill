@@ -337,6 +337,16 @@ implementation. Only 05S1 is selected, with no active dispatch.
 separate handoff-doc commit. Its implementation scope remains environment-only;
 05S2–05S4 receive no authority from this dispatch.
 
+Ticket 05B1 implementation `fbedefc` / handoff `6969d44` passed exact scope,
+focused 4/4, full 209/209 and strict type/compile over 104 files, but its final
+initial review found CR-128..CR-132. There is no independent expected auth
+policy in the proof request, so an echoing proof fake issues a receipt for a
+foreign observed policy. Proof-port exception semantics were not frozen;
+`RuntimeError` currently escapes. The journal also accepts plugin attempt
+states after a still-ambiguous or pre-existing marketplace, and committed TDD
+omits required path/port cells. 05B1 is stopped for one control-plane refreeze;
+05B2-05B4 remain blocked.
+
 The submitted 05S1 implementation `e0898cd` and handoff `ecce06a` failed the
 independent E3/T3 physical root-reparse probe. A real Windows junction is a
 `ReparsePoint`, but Python 3.11 `Path.is_symlink()` is false; teardown reads the
