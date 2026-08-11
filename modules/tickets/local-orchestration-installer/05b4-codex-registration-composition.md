@@ -3,8 +3,8 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01, AC-02, AC-07 and AC-08 |
-| State | `CONVERGENCE_DECOMPOSED / CHILD_05B4A_SELECTED` |
-| Dependency | 05A, 05S1-05S4, 05B1, 05B2, 05B3A, 05B3B1 and 05B3C integrated |
+| State | `CONVERGENCE_DECOMPOSED / CHILD_05B4A_COMPLETE / CHILD_05B4B_REFREEZE_READY` |
+| Dependency | 05A, 05S1-05S4, 05B1, 05B2, 05B3A, 05B3B1, 05B3C and 05B4A integrated |
 | Historical evidence | Terminal rejected 05B review `24227ac`; rejected source is evidence only and must not be reused |
 
 ## Refreeze decision

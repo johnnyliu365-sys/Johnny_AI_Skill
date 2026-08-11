@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01, AC-02, AC-07 and AC-08 registration seam |
-| State | `IN_REVIEW / CORRECTION_APPROVED / READY_TO_MERGE` |
+| State | `COMPLETE / APPROVED / INTEGRATED` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B4A-01` / A1-A7 |
 | Dependency | Integrated 05A preflight, 05B1 contracts and 05B2 classifier; 05B3C remains read-only |
 | Owner / worktree | Task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2`; no new worktree |
@@ -133,3 +133,12 @@ terminal review in
 `doc/reviews/local-orchestration-installer/05b4a-codex-registration-port-capability-code-review.md`.
 The reviewed A1-A7 closure is unchanged. Only guarded integration is the next
 legal action; downstream 05B4B remains undispatched.
+
+## Completion
+
+Guarded merge `5f30a717e16cbdc126a685e48542c11337310bbf`
+integrates the reviewed handoff with formal review as first parent. Post-merge
+verification passed. Allocation `aln_local_orchestration_install_05b4a_20260812`
+is released and receipt `rcpt_local_orchestration_install_05b4a_20260812` is
+closed against replay. 05B4B may now be refrozen by the control plane; this
+completion is not an implementation dispatch.

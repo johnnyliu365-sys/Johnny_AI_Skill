@@ -115,3 +115,18 @@ formal review commit as first parent and reviewed handoff `7ce9bb3` as second
 parent. The merge must preserve every WPR record exactly once and rerun
 focused/full/type/compile/source/diff/residue checks. No push, release,
 deployment, live Codex mutation or target-project write is authorized.
+
+## Guarded integration
+
+Merge `5f30a717e16cbdc126a685e48542c11337310bbf` preserves formal terminal
+review `47bc1e1ab23a489ba8043ca20dcdf64646e126a3` as first parent and reviewed
+handoff `7ce9bb36e90af669daa5dfa2999638a112f4cde3` as second parent. Product
+source and tests merged without conflict; the sole WPR conflict retained
+PRG-191 through PRG-197 exactly once and in order. Integrated source/test blobs
+equal the reviewed correction.
+
+On the merged tree, focused 6/6, serial full discovery 266/266, strict mypy
+118 files and in-memory compile 118 files passed. Source sentinel,
+`git diff --check`, parent/blob equality and tracked/ignored/cache residue
+checks passed. No live Codex mutation, target-project write, push, release or
+deployment occurred.

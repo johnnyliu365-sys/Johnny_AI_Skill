@@ -2252,3 +2252,13 @@
 | CR-146 / CR-147 closure | `asdict`, `astuple`, shallow/deep copy and pickle transfer all fail finitely; no operation or usable authority is exported or retained. Capability remains non-dataclass, metadata is exactly `ADMITTED / 4`, repr/errors are metadata-only and operation count remains zero. The five probes are committed and the recorded first-red is consistent with the additive diff. |
 | A7 adversarial evidence | Request/source binding, wrong-target rejection, descriptor-free MRO access and private construction authority were each independently reversed, turned red and were restored. Restored source/test blobs equal the reviewed correction and focused returned 6/6. |
 | Decision | `APPROVED / READY_TO_MERGE`; CR-146 and CR-147 are resolved. Guarded integration only; no live Codex mutation, target-project write, push, release or deployment. |
+
+## PRG-20260812-198 — Ticket 05B4A guarded integration
+
+| Field | Value |
+| --- | --- |
+| Router event | `REVIEW_APPROVED(05B4A) -> GUARDED_INTEGRATION -> ACTION_COMPLETED -> TICKET_05B4B_REFREEZE_READY` |
+| Integration | Merge `5f30a717e16cbdc126a685e48542c11337310bbf` preserves formal terminal review `47bc1e1ab23a489ba8043ca20dcdf64646e126a3` as first parent and reviewed handoff `7ce9bb36e90af669daa5dfa2999638a112f4cde3` as second parent. Source/test blobs exactly match the reviewed correction. |
+| Ledger resolution | The sole conflict was `doc/WorkProgressReport.md`; PRG-191 through PRG-197 are retained exactly once and in order. Neither immutable parent was amended, reset, forced or overwritten. |
+| Post-merge verification | Focused 6/6 and serial full discovery 266/266 passed. Strict full-tree mypy and in-memory compile passed 118 files. Source sentinel, `git diff --check`, exact parent/blob equality and tracked/ignored/cache residue checks passed. |
+| Completion | 05B4A is `COMPLETE / APPROVED / INTEGRATED`; allocation `aln_local_orchestration_install_05b4a_20260812` is released and receipt `rcpt_local_orchestration_install_05b4a_20260812` is closed against replay. 05B4B is unallocated and ready only for control-plane refreeze. No live Codex mutation, target-project write, push, release or deployment. |
