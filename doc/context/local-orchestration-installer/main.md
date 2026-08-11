@@ -2,13 +2,13 @@
 
 | Field | Value |
 | --- | --- |
-| Context state | `TICKET_05B4_REFREEZE_READY` |
-| Router event | `REVIEW_APPROVED(05B3C) / GUARDED_INTEGRATION / ACTION_COMPLETED / TICKET_SELECTED(05B4)` |
+| Context state | `TICKET_05B4A_FROZEN` |
+| Router event | `TICKET_SELECTED(05B4) / CONVERGENCE_DECOMPOSED / TICKET_SELECTED(05B4A) / TICKET_FREEZE_COMPLETED` |
 | Delivery stage | `POC` |
 | Requirement change | `CHG-20260808-011` |
 | Baseline | `3367136` (`docs: decompose 05B3B identity admission`) |
 | Control-plane owner | Codex / current `main` worktree |
-| Implementation owner | 05B3A, 05B3B1 and 05B3C are integrated and released; 05B3B is terminal rejected; 05B4 is unallocated pending control-plane refreeze |
+| Implementation owner | 05B3A, 05B3B1 and 05B3C are integrated and released; 05B3B is terminal rejected; task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` is selected for frozen 05B4A in existing `workflow-implementer-2`, dispatch pending |
 | Required sources read | `AGENTS.md`, `Workflow.md` (Router, Wayfinder, Grill, change control, specification, tickets, role boundary), `Defined_wayfinder.md`, `CONTEXT.md`, `PRD.md`, `ProjectSchedule.md`, `doc/RequirementChangeLog.md`, existing plugin manifests / README, `library/workflow_router/`, and completed plugin / autonomous-collaboration POCs |
 
 ## Shared Context reference
@@ -537,3 +537,13 @@ formal review as first parent. Post-merge focused 6/6, full 260/260, strict
 mypy and compile over 116 files, exact blob, source/diff and residue checks
 passed. The allocation is released and the receipt is closed. 05B4 is now
 eligible only for control-plane refreeze; no implementation dispatch exists.
+
+## Ticket 05B4 convergence decomposition
+
+The control-plane refreeze separates the descriptor-free registration effect
+capability from the transaction that consumes it. 05B4A closure A1-A7 owns
+only strict request/result envelopes and four-operation static admission in a
+new port module, its focused test and export-only root. 05B4B remains serial
+and unallocated until 05B4A is independently approved and integrated; it will
+then own fresh preflight/add/proof/receipt/compensation and 05S4 oracle truth.
+This changes no SPEC acceptance criterion and does not reopen rejected 05B.

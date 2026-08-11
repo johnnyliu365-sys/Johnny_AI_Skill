@@ -133,7 +133,9 @@
 | Ticket 05B3B pure compensation reducer | SUPERSEDED / CONVERGENCE_DECOMPOSED | Revision-02 `3f22551` / `4d5bbef` remains terminal rejected evidence; no third same-closure correction or integration. |
 | Ticket 05B3B1 recursive plan identity admission | COMPLETE / APPROVED / INTEGRATED | Implementation `b50699c`, handoff `441bcc8`, review `382cc95`, merge `ac91290`; terminal I1-I5 plus parent R1-R5 and all eight reversals passed. |
 | Ticket 05B3C compensation composition | COMPLETE / APPROVED / INTEGRATED | Guarded merge `d8f6127` integrated reviewed handoff `6d7dd37`; post-merge verification passed. |
-| Ticket 05B4 registration composition | PLANNED / READY_FOR_REFREEZE | Final admission/add/proof/compensation/oracle composition is now unblocked; no owner or implementation receipt is allocated yet. |
+| Ticket 05B4 registration composition parent | CONVERGENCE_DECOMPOSED / CHILD_05B4A_SELECTED | Safe registration-port admission and full transaction composition are serial children; no requirement change. |
+| Ticket 05B4A registration port capability | FROZEN / DISPATCH_PENDING | A1-A7 freeze a descriptor-free four-operation boundary in three exact paths; implementer-2 selected in its existing worktree. |
+| Ticket 05B4B registration transaction composition | PLANNED / DEPENDENCY_WAIT | Fresh preflight/add/proof/receipt/compensation plus 05S4 oracle evidence starts only after 05B4A integration. |
 | Ticket 05C receipt removal/replay | PLANNED / DEPENDENCY_WAIT / REFREEZE_REQUIRED | Starts only after 05A/05B approval/integration and a finite behavior/rollback closure refreeze. |
 | Ticket 06A Codex role-profile capability proof | DONE / APPROVED_EVIDENCE / INSTALL_BLOCKED / INTEGRATED | Implementation `38e9a8b`, handoff `f6f186f`, review `62955ec`, guarded merge `de4141e`; actual installed-host result is `ROLE_ISOLATION_UNPROVEN / ACCESS_DENIED / OUTPUT_UNAVAILABLE`, so capability dependents stay blocked. |
 | Autonomous Ticket 04 reviewer-only authority | PLANNED / DEPENDENCY_WAIT | Starts only after reviewed 06A `SUPPORTED`; typed fake effect gate, not a real Agent turn. |

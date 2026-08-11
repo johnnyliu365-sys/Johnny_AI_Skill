@@ -2169,3 +2169,15 @@
 | Ledger resolution | The sole conflict was `doc/WorkProgressReport.md`; PRG-186 through PRG-189 are retained exactly once. Neither immutable parent was amended, reset, forced or overwritten. |
 | Post-merge verification | Focused 6/6 and full 260/260 unittest passed. Strict full-tree mypy and in-memory compile passed 116 files. Source sentinel, `git diff --check`, exact blob equality, external-cache removal and tracked/ignored/cache residue checks passed. |
 | Completion | 05B3C is `COMPLETE / APPROVED / INTEGRATED`; allocation `aln_local_orchestration_install_05b3c_20260812` is released and receipt `rcpt_local_orchestration_install_05b3c_20260812` is closed against replay. 05B4 is unallocated and ready only for control-plane refreeze. No live Codex mutation, target-project write, push, release or deployment. |
+
+## PRG-20260812-191 — Ticket 05B4 convergence decomposition and 05B4A freeze
+
+| Field | Value |
+| --- | --- |
+| Router event | `ACTION_COMPLETED(05B3C) -> TICKET_SELECTED(05B4) -> CONVERGENCE_DECOMPOSED -> TICKET_SELECTED(05B4A) -> TICKET_FREEZE_COMPLETED -> DISPATCH_PENDING` |
+| Decision | The old 05B4 placeholder is split into serial 05B4A safe port admission and 05B4B full transaction composition. This prevents caller-manufactured effect truth from sharing one closure with transaction execution; SPEC/AC remain unchanged. |
+| Ticket / closure | `05b4a-codex-registration-port-capability`; `CLOSURE-LOCAL-INSTALL-T05B4A-01`; exact A1-A7 are authoritative. |
+| Dependency / scope | Integrated 05A/05B1/05B2 only; 05B3A/B1/C and 05S4 remain read-only. New port module, focused test and export-only root are the sole source paths. Rejected 05B source is excluded. |
+| Binding | `hnd_local_orchestration_install_05b4a_20260812`; `aln_local_orchestration_install_05b4a_20260812`; `rcpt_local_orchestration_install_05b4a_20260812`; `corr-local-orchestration-install-05b4a-20260812`; `q-local-orchestration-install-05b4a-20260812`; `scx-local-orchestration-install-05b4a-20260812-01`. |
+| Owner / lane | Owner-selected task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2`; later create one new ticket branch from the exact dispatch registry commit; no new worktree. |
+| Stop | Freeze is not dispatch. No source/test work, other agent control, live/staging effect, review, integration, 05B4B/05C work, push, release or deployment is authorized before the dispatch registry is committed. |
