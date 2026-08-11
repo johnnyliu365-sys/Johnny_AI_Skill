@@ -452,3 +452,13 @@ ledger; all PRG-114 through PRG-124 records were retained once in order.
 Post-merge focused 12/12, full 189/189, strict mypy and compile over 91 files
 passed with zero residue. 05S2 is `COMPLETE / APPROVED / INTEGRATED`; 05S3 is
 the next ready ticket but remains undispatched at the end of this turn.
+
+Ticket 05B2 correction `8a7bf95` closes CR-133/CR-134 and guarded merge
+`c97505c` integrates its strict command-attempt classifier after independent
+focused 7/7, full 230/230 and strict-mypy verification. The next serial child
+is 05B3, refrozen as a compensation-only coordinator rather than another full
+transaction: an exact current-attempt manifest plus 05B1 journal authorize
+only plugin-first current-attempt removals; five distinct typed port calls run
+without finite-failure short-circuiting; fresh marketplace, plugin and
+installed-path absence alone reduce retry authority. 05B4 remains blocked
+until 05B3 is independently approved and integrated.

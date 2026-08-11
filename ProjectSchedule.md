@@ -127,8 +127,9 @@
 | Ticket 05S4 Codex lifecycle oracle | DONE / APPROVED / INTEGRATED | Correction `02f33ef`, handoff `52ab9c0`, review `68ff06b`, guarded merge `4af381c`; CR-126/CR-127 closed and post-merge verification passed. |
 | Ticket 05B transactional registration parent | SUPERSEDED / CONVERGENCE_DECOMPOSED | Terminal CR-98..CR-104 evidence is immutable; replaced by 05B1-05B4 after integrated staging. |
 | Ticket 05B1 registration contracts/journal | DONE / APPROVED / INTEGRATED | Correction `dc57ff9`, handoff `1df30ae`, review `36ec95c` and guarded merge `bbc7de5`; CR-128..CR-132 closed and post-merge verification passed. |
-| Ticket 05B2 command-attempt classification | IN_PROGRESS / IMPLEMENTATION_DISPATCH_CONFIRMED | Pure classifier closure freezes pre-start zero-authority, started `MAY_EXIST`, exact confirmation and all 14 command/journal admission cells in the existing primary lane. |
-| Tickets 05B3-05B4 | PLANNED / DEPENDENCY_WAIT | Exhaustive compensation and final transaction composition remain serial behind 05B2. |
+| Ticket 05B2 command-attempt classification | COMPLETE / APPROVED / INTEGRATED | Corrected strict classifier and full C1-C4 matrix integrated by `c97505c`; completion recorded by `ef45f65`. |
+| Ticket 05B3 exhaustive compensation | PLANNED / READY_FOR_DISPATCH | Exact current-attempt manifest/journal authority, plugin-first removal, exhaustive fresh proofs and residual-only retry authority are refrozen after 05B2 integration. |
+| Ticket 05B4 registration composition | PLANNED / DEPENDENCY_WAIT | Final admission/add/proof/compensation/oracle composition remains serial behind 05B3. |
 | Ticket 05C receipt removal/replay | PLANNED / DEPENDENCY_WAIT / REFREEZE_REQUIRED | Starts only after 05A/05B approval/integration and a finite behavior/rollback closure refreeze. |
 | Ticket 06A Codex role-profile capability proof | DONE / APPROVED_EVIDENCE / INSTALL_BLOCKED / INTEGRATED | Implementation `38e9a8b`, handoff `f6f186f`, review `62955ec`, guarded merge `de4141e`; actual installed-host result is `ROLE_ISOLATION_UNPROVEN / ACCESS_DENIED / OUTPUT_UNAVAILABLE`, so capability dependents stay blocked. |
 | Autonomous Ticket 04 reviewer-only authority | PLANNED / DEPENDENCY_WAIT | Starts only after reviewed 06A `SUPPORTED`; typed fake effect gate, not a real Agent turn. |
