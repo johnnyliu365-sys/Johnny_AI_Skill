@@ -2191,3 +2191,13 @@
 | Binding | `hnd_local_orchestration_install_05b4a_20260812`; `aln_local_orchestration_install_05b4a_20260812`; `rcpt_local_orchestration_install_05b4a_20260812`; `corr-local-orchestration-install-05b4a-20260812`; `q-local-orchestration-install-05b4a-20260812`; `scx-local-orchestration-install-05b4a-20260812-01`. |
 | Owner / admission | Task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing clean `workflow-implementer-2` at `6d7dd37095005b11d68e136d6687d402b5187c9e`; create only `codex/implementation-codex-registration-port-05b4a` from this dispatch registry commit. |
 | Scope / return | New registration port module, new focused test and export-only root; implementation commit then WPR-only PRG-193. No other agent, worktree, cross-lane history, dependency edit, effect execution, 05B4B work, review, integration, push, release or deployment. |
+
+## PRG-20260812-194 — Ticket 05B4A initial independent review
+
+| Field | Value |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05B4A) -> REVIEW_COMPLETED -> CHANGES_REQUESTED -> CORRECTION_HANDOFF_PENDING` |
+| Immutable return | Dispatch `f5b187fa692b1b7aeda8e77d885cf331aac80ccb`; implementation `f344a49b323eac039c5f36f51c823dcf75fa7c9c`; docs-only handoff `7c4fd5970d54798040fb5a6ac128717bbeb49f79` / PRG-193. |
+| Decision / findings | `CHANGES_REQUESTED`; complete initial-review batch CR-146 `IMPLEMENTATION_DEFECT` and CR-147 `EVIDENCE_DEFECT`, both bound to existing A3/A7. Dataclass structural serialization exports all four bound effect operations, and pickle round-trip retains callable operations after metadata authority becomes invalid; committed evidence omitted this mandatory serialization probe. |
+| Independent verification | Unicode-safe immutable export: focused 6/6, full 266/266, strict mypy 118 files and in-memory compile 118 files. A1-A7 source/test review completed; all four submitted reversals independently turned red and were restored; restored source blob matched the implementation before focused returned green. |
+| Continuation | Same ticket/owner/worktree/branch/allocation/receipt; one additive correction only after a separate exact review-baseline correction handoff commit. No new branch/worktree, integration, 05B4B work, push, release, deployment, live Codex or target-project effect. |

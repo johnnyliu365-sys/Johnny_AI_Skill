@@ -96,3 +96,19 @@ deployment is authorized.
 | Side context | `scx-local-orchestration-install-05b4a-20260812-01` |
 | Owner / lane | Task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2`; create only branch `codex/implementation-codex-registration-port-05b4a` from the later exact dispatch registry commit. |
 | Return | Exact-scope implementation commit, then WPR-only handoff reserved as PRG-20260812-193. |
+
+## Initial independent review disposition
+
+Review of immutable implementation `f344a49b323eac039c5f36f51c823dcf75fa7c9c`
+and handoff `7c4fd5970d54798040fb5a6ac128717bbeb49f79` is
+`CHANGES_REQUESTED`. The complete blocking batch is CR-146 and CR-147 in
+`doc/reviews/local-orchestration-installer/05b4a-codex-registration-port-capability-code-review.md`.
+
+The existing revision-01 closure remains authoritative. A3 already requires
+metadata-only authority and forbids serialization or handoff from exposing
+bound operations. One additive correction must make standard dataclass
+structural serialization and pickle/copy transfer red before correction, then
+prove none can export or retain callable operations or usable authority while
+all existing A1-A7 evidence remains green. The existing owner, worktree,
+branch, allocation and receipt remain reserved; this review does not itself
+dispatch the correction or authorize a new branch/worktree.
