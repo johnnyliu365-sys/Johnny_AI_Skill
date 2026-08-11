@@ -91,3 +91,9 @@ dependency-waiting and owns all cross-module composition.
   change, owner/worktree replacement, contamination or baseline conflict;
   rejected commits remain immutable ancestors and the terminal child review
   must rerun the complete reducer R1-R5 plus I1-I5.
+- Revision 04 follows integrated 05B3B1 merge
+  `ac912904ccf83a71c87512d2e8b29e5f6f45fa8b`. Both dependencies are now
+  closed, so 05B3C is frozen as one thin coordinator over their public
+  boundaries. It validates plan/request identity before effects, executes the
+  exact reducer order, normalizes only finite returned values, propagates
+  actual operation exceptions and returns the reducer algebra unchanged.

@@ -2,13 +2,13 @@
 
 | Field | Value |
 | --- | --- |
-| Context state | `TICKET_05B3B1_COMPLETE / TICKET_05B3C_REFREEZE_READY` |
-| Router event | `TERMINAL_REVIEW_APPROVED / GUARDED_INTEGRATION_COMPLETED / ACTION_COMPLETED` |
+| Context state | `TICKET_05B3C_FROZEN / DISPATCH_PENDING` |
+| Router event | `ACTION_COMPLETED(05B3B1) / TICKET_SELECTED(05B3C) / TICKET_FREEZE_COMPLETED` |
 | Delivery stage | `POC` |
 | Requirement change | `CHG-20260808-011` |
 | Baseline | `3367136` (`docs: decompose 05B3B identity admission`) |
 | Control-plane owner | Codex / current `main` worktree |
-| Implementation owner | 05B3A and 05B3B1 are integrated and released; 05B3B is terminal rejected; 05B3C is unallocated pending ticket refreeze |
+| Implementation owner | 05B3A and 05B3B1 are integrated and released; 05B3B is terminal rejected; task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` selected for 05B3C in existing `workflow-implementer-2`, dispatch pending |
 | Required sources read | `AGENTS.md`, `Workflow.md` (Router, Wayfinder, Grill, change control, specification, tickets, role boundary), `Defined_wayfinder.md`, `CONTEXT.md`, `PRD.md`, `ProjectSchedule.md`, `doc/RequirementChangeLog.md`, existing plugin manifests / README, `library/workflow_router/`, and completed plugin / autonomous-collaboration POCs |
 
 ## Shared Context reference
@@ -515,3 +515,12 @@ and guarded merge `ac912904ccf83a71c87512d2e8b29e5f6f45fa8b` integrated the
 reviewed handoff. The allocation is released and the receipt is closed. 05B3C
 is now eligible only for a fresh control-plane ticket refreeze; no
 implementation dispatch has occurred.
+
+## Ticket 05B3C composition freeze
+
+Closure `CLOSURE-LOCAL-INSTALL-T05B3C-01` owns only the new coordinator, its
+focused test and root exports. C1-C8 freeze zero-call admission, exact five-step
+mapping, five finite return failures, manifest-bound observation truth, all 20
+operation exception cells and five independent reversals. Implementer-2 is
+selected in the existing worktree; one new ticket branch from the reviewed
+control baseline is allowed, but no new worktree or dispatch has occurred.

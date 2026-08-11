@@ -2112,3 +2112,14 @@
 | Ledger resolution | The sole conflict was `doc/WorkProgressReport.md`; PRG-170 through PRG-184 are retained exactly once. Neither immutable parent was amended, reset, forced or overwritten. |
 | Post-merge verification | Focused 18/18 and full 254/254 unittest passed. Strict full-tree mypy and in-memory compile passed 114 files. Source sentinel, `git diff --check`, external-cache removal and repository residue checks passed. |
 | Completion | 05B3B1 is `COMPLETE / APPROVED / INTEGRATED`; allocation `aln_local_orchestration_install_05b3b1_20260812` is released and receipt `rcpt_local_orchestration_install_05b3b1_20260812` is closed against replay. 05B3C is unallocated and ready for ticket refreeze, not implementation. No live Codex mutation, target-project write, push, release or deployment. |
+
+## PRG-20260812-186 — Ticket 05B3C composition freeze
+
+| Field | Value |
+| --- | --- |
+| Router event | `ACTION_COMPLETED(05B3B1) -> TICKET_SELECTED(05B3C) -> TICKET_FREEZE_COMPLETED -> DISPATCH_PENDING` |
+| Ticket / closure | `05b3c-codex-compensation-composition`; `CLOSURE-LOCAL-INSTALL-T05B3C-01`; exact C1-C8 in the ticket is authoritative. |
+| Dependencies / baseline | Integrated 05B3A capability and 05B3B1 reducer on reviewed control baseline `b8d6e24da06e0a820eb0caaea3e1bd907a8b10b4`. Rejected 05B3 source remains excluded. |
+| Binding | `hnd_local_orchestration_install_05b3c_20260812`; `aln_local_orchestration_install_05b3c_20260812`; `rcpt_local_orchestration_install_05b3c_20260812`; `corr-local-orchestration-install-05b3c-20260812`; `scx-local-orchestration-install-05b3c-20260812-01`. |
+| Owner / lane | Owner-selected task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; reuse existing `workflow-implementer-2`; one new ticket branch `codex/implementation-codex-compensation-composition-05b3c` from the later dispatch registry commit; no new worktree. |
+| Scope / return | New coordinator, new focused test and export-only root change; then WPR-only PRG-188 handoff. No port/reducer dependency edits, historical-source copy, live Codex, host, target-project, network, push, release or deployment. |
