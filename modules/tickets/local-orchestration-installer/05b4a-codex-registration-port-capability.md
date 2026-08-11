@@ -112,3 +112,14 @@ prove none can export or retain callable operations or usable authority while
 all existing A1-A7 evidence remains green. The existing owner, worktree,
 branch, allocation and receipt remain reserved; this review does not itself
 dispatch the correction or authorize a new branch/worktree.
+
+## Additive correction dispatch
+
+| Field | Value |
+| --- | --- |
+| Review baseline | `9fef2b8c895e1ece9a48c8e5e3b906deffcd7ea8`; CR-146 and CR-147 are the complete initial-review batch. |
+| Correction handoff | `hnd_local_orchestration_install_05b4a_correction_01_20260812`; correlation `corr-local-orchestration-install-05b4a-correction-01-20260812`; side context `scx-local-orchestration-install-05b4a-20260812-02`. |
+| Retained authority | Existing allocation `aln_local_orchestration_install_05b4a_20260812`, receipt `rcpt_local_orchestration_install_05b4a_20260812`, task, worktree and branch; no new delivery question. |
+| Red / green | Against submitted handoff `7c4fd5970d54798040fb5a6ac128717bbeb49f79`, add one committed A3 regression proving `dataclasses.asdict`/`astuple` cannot export dataclass fields or bound operations and pickle round-trip cannot retain a callable operation or usable authority. Existing copied-token, forged-construction, metadata, repr and zero-call cases remain mandatory. The smallest production correction follows; generic serialization/copy probes must execute zero adapter operations. |
+| Exact correction scope | Additive modifications only to `library/local_orchestration/codex_registration_port.py` and `tests/test_codex_registration_port.py`; no package-root or dependency change. Return one correction implementation commit followed by WPR-only PRG-20260812-196. |
+| Stop | This is the sole revision-01 correction. No reset, amend, force, branch/worktree creation, 05B4B/05C work, integration, push, release, deployment, live Codex or target-project effect. |

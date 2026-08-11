@@ -84,4 +84,3 @@ constructor and zero-invocation cases must remain green, and no operation may
 run during admission or probes. No new source file, dependency, branch,
 worktree, product behavior, 05B4B work, merge, push, release, deployment or
 live/target-project effect is authorized.
-

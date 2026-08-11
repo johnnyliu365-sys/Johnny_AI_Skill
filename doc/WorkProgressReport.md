@@ -2201,3 +2201,14 @@
 | Decision / findings | `CHANGES_REQUESTED`; complete initial-review batch CR-146 `IMPLEMENTATION_DEFECT` and CR-147 `EVIDENCE_DEFECT`, both bound to existing A3/A7. Dataclass structural serialization exports all four bound effect operations, and pickle round-trip retains callable operations after metadata authority becomes invalid; committed evidence omitted this mandatory serialization probe. |
 | Independent verification | Unicode-safe immutable export: focused 6/6, full 266/266, strict mypy 118 files and in-memory compile 118 files. A1-A7 source/test review completed; all four submitted reversals independently turned red and were restored; restored source blob matched the implementation before focused returned green. |
 | Continuation | Same ticket/owner/worktree/branch/allocation/receipt; one additive correction only after a separate exact review-baseline correction handoff commit. No new branch/worktree, integration, 05B4B work, push, release, deployment, live Codex or target-project effect. |
+
+## PRG-20260812-195 — Ticket 05B4A additive correction dispatch
+
+| Field | Value |
+| --- | --- |
+| Router event | `CHANGES_REQUESTED(05B4A) -> CORRECTION_HANDOFF_COMPLETED -> IMPLEMENT`; no human wait or new delivery question. |
+| Review / batch | Formal review `9fef2b8c895e1ece9a48c8e5e3b906deffcd7ea8`; complete batch CR-146 / CR-147; existing revision-01 A3/A7 closure remains unchanged. |
+| Binding | Correction handoff `hnd_local_orchestration_install_05b4a_correction_01_20260812`; correlation `corr-local-orchestration-install-05b4a-correction-01-20260812`; side context `scx-local-orchestration-install-05b4a-20260812-02`; retained allocation `aln_local_orchestration_install_05b4a_20260812` and receipt `rcpt_local_orchestration_install_05b4a_20260812`. |
+| Owner / lane | Same task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`, existing `workflow-implementer-2`, branch `codex/implementation-codex-registration-port-05b4a` at immutable handoff `7c4fd5970d54798040fb5a6ac128717bbeb49f79`; additive commits only. |
+| Exact correction | Add committed A3 first-red structural-serialization and pickle-transfer probes, then the smallest production fix preventing exported/retained callable operations or usable authority. Modify only the registration port module and its focused test; return one implementation correction commit followed by WPR-only PRG-196. |
+| Stop | Sole correction; no new branch/worktree, package-root/dependency edit, reset/amend/force, integration, 05B4B/05C work, push, release, deployment, live Codex or target-project effect. |
