@@ -2,13 +2,13 @@
 
 | Field | Value |
 | --- | --- |
-| Context state | `TICKET_05B3B1_IMPLEMENTATION_DISPATCHED` |
-| Router event | `TICKET_DECOMPOSITION(05B3B1) / IMPLEMENTATION_DISPATCH_CONFIRMED` |
+| Context state | `TICKET_05B3B1_REVIEW_APPROVED` |
+| Router event | `IMPLEMENTATION_COMPLETED / TERMINAL_REVIEW_APPROVED / GUARDED_INTEGRATION_READY` |
 | Delivery stage | `POC` |
 | Requirement change | `CHG-20260808-011` |
 | Baseline | `3367136` (`docs: decompose 05B3B identity admission`) |
 | Control-plane owner | Codex / current `main` worktree |
-| Implementation owner | 05B3A is integrated and released; 05B3B is terminal rejected; task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` is selected for 05B3B1 in existing `workflow-implementer-2`; 05B3C is unallocated |
+| Implementation owner | 05B3A is integrated and released; 05B3B is terminal rejected; task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` completed reviewed 05B3B1 in existing `workflow-implementer-2`; 05B3C is unallocated |
 | Required sources read | `AGENTS.md`, `Workflow.md` (Router, Wayfinder, Grill, change control, specification, tickets, role boundary), `Defined_wayfinder.md`, `CONTEXT.md`, `PRD.md`, `ProjectSchedule.md`, `doc/RequirementChangeLog.md`, existing plugin manifests / README, `library/workflow_router/`, and completed plugin / autonomous-collaboration POCs |
 
 ## Shared Context reference
@@ -485,7 +485,7 @@ no new worktree, copied rejected source or cross-lane read/write is permitted.
 | --- | --- | --- | --- | --- |
 | 05B3A | task `019fcc9c-f34f-7d53-a313-c70c90bf3245` / `workflow-implementation` | `codex/implementation-codex-safe-port-capability-05b3a` | correction `hnd_local_orchestration_install_05b3a_r02_20260812`; released `aln_local_orchestration_install_05b3a_20260811`; closed `rcpt_local_orchestration_install_05b3a_20260811` | Integrated by `8a13eb7`; no active lane |
 | 05B3B | task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` / `workflow-implementer-2` | `codex/implementation-codex-compensation-reducer-05b3b` | parent correction handoff and old allocation/receipt closed | Terminal rejected handoff `4d5bbef`; immutable ancestor only |
-| 05B3B1 | task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` / `workflow-implementer-2` | existing `codex/implementation-codex-compensation-reducer-05b3b` | `hnd_local_orchestration_install_05b3b1_20260812`; `aln_local_orchestration_install_05b3b1_20260812`; `rcpt_local_orchestration_install_05b3b1_20260812` | Active child lane from clean `4d5bbef`; no branch/worktree creation |
+| 05B3B1 | task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` / `workflow-implementer-2` | existing `codex/implementation-codex-compensation-reducer-05b3b` | `hnd_local_orchestration_install_05b3b1_20260812`; `aln_local_orchestration_install_05b3b1_20260812`; `rcpt_local_orchestration_install_05b3b1_20260812` | Terminal review approved `b50699c` / `441bcc8`; guarded integration pending |
 
 The previous 05B3 allocation is closed as terminal rejected evidence; the
 completed 06A and 05B3A allocations were released by guarded integration.
