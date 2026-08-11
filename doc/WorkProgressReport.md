@@ -2283,3 +2283,14 @@
 | Binding | `hnd_local_orchestration_install_05b4a1_20260812`; `aln_local_orchestration_install_05b4a1_20260812`; `rcpt_local_orchestration_install_05b4a1_20260812`; `corr-local-orchestration-install-05b4a1-20260812`; `q-local-orchestration-install-05b4a1-20260812`; `scx-local-orchestration-install-05b4a1-20260812-01`. |
 | Owner / admission | Task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing clean `workflow-implementer-2` at `7ce9bb36e90af669daa5dfa2999638a112f4cde3`; create only branch `codex/implementation-codex-plugin-identity-authority-05b4a1` from this exact dispatch registry commit. Owner instruction `開始吧` is the positive delivery confirmation for this ticket. |
 | Scope / return | Existing registration-port module and focused test only; implementation commit then WPR-only PRG-201. No package/dependency/staging/compensation/composition edit, other Agent, new worktree, live effect, review, integration, 05B4B/05C work, push, release or deployment. |
+
+## PRG-20260812-202 — Ticket 05B4A1 independent terminal review
+
+| Field | Value |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05B4A1) -> TERMINAL_CODE_REVIEW -> APPROVED -> READY_TO_MERGE` |
+| Reviewed return | Closure `CLOSURE-LOCAL-INSTALL-T05B4A1-01`; implementation `76f0b9681264e359873354145e1ddcaa92aaf894`; docs-only handoff `30d6bcff91368c162664dc2eef7dee5a7c543950`; formal report `doc/reviews/local-orchestration-installer/05b4a1-codex-plugin-identity-authority-code-review.md`. |
+| Standard verification | Immutable ZIP export: focused 9/9, serial full 269/269, strict mypy 118 files and in-memory compile 118 files. Exact ancestry/scope, dependency isolation, source/diff and submitted-lane tracked/ignored/cache readbacks passed. |
+| I1-I5 closure | Required exact expected ID, recursive request/envelope binding and exact plugin-observation identity all passed. Case, prefix and unrelated IDs reject without raw leakage. Existing `ADMITTED / 4`, zero-call and five transfer guards remain intact. |
+| I6 adversarial evidence | Independent reversals of expected-ID request equality and observation-ID binding each turned their named test red. Inverse patches restored source/test blobs `15ac2b849b88ba57cf09889ad51a75e454547eb3` / `90d8e51e605aff1c2dce1c921227bb1cf0d79537`; focused returned 9/9. |
+| Decision | `APPROVED / READY_TO_MERGE`; no blocking finding. Guarded integration only; 05B4B remains undispatched until integration. No push, release, deployment, live Codex mutation or target-project write. |

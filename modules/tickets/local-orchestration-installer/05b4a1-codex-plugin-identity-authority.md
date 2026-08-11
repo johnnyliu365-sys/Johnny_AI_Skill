@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01, AC-02, AC-07 and AC-08 registration seam |
-| State | `IN_PROGRESS / IMPLEMENTATION_DISPATCHED` |
+| State | `IN_REVIEW / APPROVED / READY_TO_MERGE` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B4A1-01` / I1-I6 |
 | Dependency | 05B4A approved and integrated by `5f30a717e16cbdc126a685e48542c11337310bbf` |
 | Owner / worktree | Task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2`; no new worktree |
@@ -92,3 +92,14 @@ integration, 05B4B/05C work, push, release or deployment is authorized.
 | Lane admission | Existing clean `workflow-implementer-2` at `7ce9bb36e90af669daa5dfa2999638a112f4cde3`; three-worktree topology unchanged |
 | Required branch | Create only `codex/implementation-codex-plugin-identity-authority-05b4a1` directly from the exact later dispatch-registry commit in the same worktree; no merge, rebase, cherry-pick or new worktree |
 | Authority | `hnd_local_orchestration_install_05b4a1_20260812`; `aln_local_orchestration_install_05b4a1_20260812`; `rcpt_local_orchestration_install_05b4a1_20260812`; `corr-local-orchestration-install-05b4a1-20260812`; `scx-local-orchestration-install-05b4a1-20260812-01` |
+
+## Independent review disposition
+
+Implementation `76f0b9681264e359873354145e1ddcaa92aaf894` and
+docs-only handoff `30d6bcff91368c162664dc2eef7dee5a7c543950` are
+`APPROVED / READY_TO_MERGE`. The formal review is
+`doc/reviews/local-orchestration-installer/05b4a1-codex-plugin-identity-authority-code-review.md`.
+
+I1-I6 are closed without a correction request. Only guarded integration is
+the next legal action. Ticket 05B4B remains undispatched until this reviewed
+contract is integrated.
