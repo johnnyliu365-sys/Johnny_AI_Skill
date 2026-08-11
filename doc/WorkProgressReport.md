@@ -1453,3 +1453,13 @@
 | Independent evidence | Fresh immutable export: focused 4/4, full 193/193, strict mypy and in-memory compile over 96 files; exact scope/source/ancestry/diff, child binding, topology, cleanup and zero-residue checks passed. |
 | Finding | CR-125 `IMPLEMENTATION_DEFECT`, D2/D4 and T2/T4: bounded 3,062-byte deep-array and 5,061-byte huge-integer JSON inputs escape as `RecursionError` and `ValueError` instead of a finite `CodexProtocolRejectReason`. |
 | Decision | `CHANGES_REQUESTED / FINAL_REVIEW_STOPPED`; release allocation `aln_local_orchestration_install_05s3_20260811` and close receipt `rcpt_local_orchestration_install_05s3_20260811` against replay. No automatic correction, branch/worktree replacement, integration, 05S4, push, release, deployment, live Codex mutation or target-project write. |
+
+## PRG-20260811-129 — Ticket 05S3 CR-125 revision-02 correction authorization
+
+| Field | Value |
+| --- | --- |
+| Router event | `FINAL_REVIEW_STOPPED -> OWNER_OVERRIDE -> CORRECTION_HANDOFF -> IMPLEMENTATION_DISPATCH_REQUIRED` |
+| Binding | Override `OVR-LOCAL-INSTALL-T05S3-CR125-20260811-01`; closure `CLOSURE-LOCAL-INSTALL-T05S3-02`; finding CR-125; submitted HEAD `f725d48238402606107b0e304b6bf7213c0acc2b`; control review `bf00d044a262312438a5728e41f1422df060839d`. |
+| Identifiers | Handoff `hnd_local_orchestration_install_05s3_r02_20260811`; allocation `aln_local_orchestration_install_05s3_r02_20260811`; receipt `rcpt_local_orchestration_install_05s3_r02_20260811`; correlation `corr-local-orchestration-install-05s3-r02-20260811`; question `q-local-orchestration-install-05s3-r02-20260811`. |
+| Exact delta | Preserve duplicate-key specificity; map bounded decoder `JSONDecodeError`, `RecursionError` and non-duplicate `ValueError` to existing `MALFORMED_JSON`; add the exact 1,500-level and 5,000-digit regressions. No broad exception catch or new result. |
+| Lane / limit | Same task `019fcc9c-f34f-7d53-a313-c70c90bf3245`, same sole implementation worktree and branch `codex/implementation-codex-protocol-fixture-05s3`; one additive implementation commit, one docs-only handoff and one final review. No replacement branch/worktree, integration or 05S4 before approval. |

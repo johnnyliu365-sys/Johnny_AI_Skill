@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01, AC-02 and AC-08 protocol seam only |
 | Context / decision | `doc/context/local-orchestration-installer/main.md` / `PRG-20260811-106` |
-| State | `CHANGES_REQUESTED / FINAL_REVIEW_STOPPED` — CR-125 |
+| State | `IN_PROGRESS / REVISION_02_CORRECTION_AUTHORIZED` — CR-125 only |
 | Dependency | 05S1 and 05S2 independently approved and integrated by `504a3ec` and `6e24e06` |
 | Implementation language | Python 3.11 |
 | Implementation responsibility | Codex task `019fcc9c-f34f-7d53-a313-c70c90bf3245`, model `gpt-5.6-terra`, reasoning `xhigh`, in the sole implementation worktree after exact receipt admission |
@@ -147,3 +147,35 @@ independent reviewer reruns the matrix from a fresh export and performs
 adversarial child-binding, response-topology and cleanup probes. Any blocker
 stops without automatic correction, replacement branch/worktree or downstream
 dispatch.
+
+## Revision-02 owner-authorized correction — CR-125 only
+
+Owner override `OVR-LOCAL-INSTALL-T05S3-CR125-20260811-01` refreezes only
+CR-125 as `CLOSURE-LOCAL-INSTALL-T05S3-02`. Revision-01 implementation,
+handoff and review remain immutable evidence.
+
+- The correction starts additively from exact submitted HEAD
+  `f725d48238402606107b0e304b6bf7213c0acc2b` on the existing branch and
+  existing implementation worktree. No branch or worktree creation, reset,
+  amend, rebase, force, merge or stash is authorized.
+- Scope is only `tests/staging/codex_protocol/contracts.py` and
+  `tests/test_codex_protocol_fixture.py`, followed by one separate
+  `doc/WorkProgressReport.md`-only handoff commit.
+- Preserve the specific duplicate-key result. Map standard-library JSON
+  `JSONDecodeError`, `RecursionError` and non-duplicate `ValueError` failures
+  admitted by the bounded byte contract to the existing finite
+  `MALFORMED_JSON` result. Do not catch `MemoryError`, `KeyboardInterrupt`,
+  `SystemExit`, `BaseException` or broad `Exception`; do not add raw exception
+  data or a new result member.
+- First-red tests against the submitted HEAD must reproduce both review probes:
+  a 1,500-level array and a 5,000-digit integer, each below
+  `MAX_RESPONSE_BYTES`, each returning only after the correction as
+  `MALFORMED_JSON`. Duplicate-key behavior and all revision-01 tests must stay
+  green. Reverse-check removal of each new exception mapping.
+- Run the frozen focused/full commands, strict full-tree mypy with a removed
+  repository-external cache, in-memory compile, source/scope sentinel,
+  `git diff --check`, clean tracked/ignored readback and zero-residue checks.
+
+Return one additive implementation commit and one docs-only handoff. The next
+independent review is final for this override: any blocker stops without a
+second correction, replacement branch/worktree, integration or 05S4 dispatch.

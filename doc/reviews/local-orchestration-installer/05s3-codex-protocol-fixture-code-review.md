@@ -83,3 +83,14 @@ integration, 05S4 dispatch, live Codex mutation, target-project write, push,
 release or deployment. Allocation `aln_local_orchestration_install_05s3_20260811`
 is released and receipt `rcpt_local_orchestration_install_05s3_20260811` is
 closed against replay. Submitted commits remain immutable review evidence.
+
+## Owner-authorized revision-02 disposition
+
+The owner authorizes `OVR-LOCAL-INSTALL-T05S3-CR125-20260811-01` and
+`CLOSURE-LOCAL-INSTALL-T05S3-02` for CR-125 only. The same task, implementation
+worktree and branch may add one correction commit from exact submitted HEAD
+`f725d48238402606107b0e304b6bf7213c0acc2b`, followed by one docs-only
+handoff. The correction must retain duplicate-key specificity, map only the
+documented standard JSON decoder failures to the existing finite result, and
+add the two exact bounded regression probes. The next independent review is
+final for this override; any blocker stops without another correction or 05S4.

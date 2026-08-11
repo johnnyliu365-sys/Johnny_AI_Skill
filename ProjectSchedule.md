@@ -123,7 +123,7 @@
 | Ticket 05S combined staging parent | SUPERSEDED / DECOMPOSED | Rejected commits remain immutable evidence; no correction or integration. |
 | Ticket 05S1 disposable environment core | DONE / APPROVED / INTEGRATED | Correction `41d5ce4`, handoff `e1087d3`, review `17ea1d5` and guarded merge `504a3ec`; post-merge verification passed. |
 | Ticket 05S2 bounded child-process runner | DONE / APPROVED / INTEGRATED | Revision-03 `33a8fa9` / `dba0621b`, review `c97b754`, guarded merge `6e24e06`; CR-124 resolved and post-merge verification passed. |
-| Ticket 05S3 Codex protocol fixture | CHANGES_REQUESTED / FINAL_REVIEW_STOPPED | Implementation `bd59011`, handoff `f725d48`; CR-125 records escaping bounded JSON decoder exceptions. No automatic correction. |
+| Ticket 05S3 Codex protocol fixture | IN_PROGRESS / REVISION_02_CORRECTION_AUTHORIZED | CR-125 only; same task/worktree/branch, one additive correction and one final review. |
 | Ticket 05S4 Codex lifecycle oracle | PLANNED / DEPENDENCY_WAIT | Starts after 05S3 approval/integration; only then may 05B/05C be refrozen. |
 | Ticket 05B transactional registration | BLOCKED / CONVERGENCE_REVIEW_REQUIRED | Terminal revision-02 review of `1a269411` / `ed74589` records CR-98..CR-104; no automatic correction or integration. |
 | Ticket 05C receipt removal/replay | PLANNED / DEPENDENCY_WAIT / REFREEZE_REQUIRED | Starts only after 05A/05B approval/integration and a finite behavior/rollback closure refreeze. |
@@ -297,3 +297,9 @@ Independent bounded-input probes nevertheless found CR-125: standard-library
 JSON decoding can escape as `RecursionError` or plain `ValueError` instead of a
 declared rejection. The ticket is `CHANGES_REQUESTED / FINAL_REVIEW_STOPPED`;
 no correction, integration or 05S4 dispatch is authorized automatically.
+
+The owner authorizes `OVR-LOCAL-INSTALL-T05S3-CR125-20260811-01` and
+`CLOSURE-LOCAL-INSTALL-T05S3-02` for CR-125 only. The existing 05S3 lane may
+add one correction from `f725d48` that maps the two proven standard JSON
+decoder exceptions to the existing finite rejection and adds exact regression
+tests. No new branch/worktree or 05S4 is authorized; the next review is final.
