@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | Local installer SPEC revision 02 / AC-09 and AC-10 feasibility |
 | Change | `CHG-20260811-012` |
-| State | `APPROVED / INSTALL_BLOCKED / ROLE_ISOLATION_UNPROVEN / INTEGRATION_AUTHORIZED` |
+| State | `COMPLETE / APPROVED_EVIDENCE / INSTALL_BLOCKED / ROLE_ISOLATION_UNPROVEN / INTEGRATED` |
 | Dependency | 05S1-05S4 integrated; implementation `38e9a8b` and handoff `f6f186f` independently reviewed; actual installed-host capability is blocked |
 | Implementation owner | Task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; `C:\Users\<user>\Desktop\AI控制工作workflow-implementer-2`; branch `codex/implementation-codex-role-profile-proof-06a` recreated from the exact handoff baseline |
 | Reviewer | Control-plane `main`; sole Agent-to-Agent orchestrator |
@@ -71,3 +71,11 @@ it is not host evidence and cannot project `SUPPORTED`. The evidence
 implementation is approved for guarded integration, while autonomous Ticket
 04 and Tickets 06B/06C remain blocked pending separately authorized capability
 change.
+
+Guarded merge `de4141e0d33b42813323587108b20131624ddc93`
+preserves control review `62955ecab394534832a40e7bda16f1965b634eaa`
+as first parent and reviewed handoff
+`f6f186f2071035907e83577c58120e20442023c4` as second parent. Post-merge
+focused 11/11, full 216/216 and strict mypy/compile over 106 Python files
+passed. The allocation is released and receipt closed; the typed host block
+and downstream stop remain unchanged.

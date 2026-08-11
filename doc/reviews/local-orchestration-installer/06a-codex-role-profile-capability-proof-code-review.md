@@ -54,3 +54,18 @@ OUTPUT_UNAVAILABLE` NO-GO. Autonomous Ticket 04 and Tickets 06B/06C must not
 be dispatched unless a separately authorized capability change produces new
 real-host evidence. No push, release, deployment, live Codex mutation or
 target-project write is authorized.
+
+## Guarded integration
+
+Merge `de4141e0d33b42813323587108b20131624ddc93` preserves control review
+`62955ecab394534832a40e7bda16f1965b634eaa` as first parent and reviewed
+handoff `f6f186f2071035907e83577c58120e20442023c4` as second parent. The
+sole conflict was `doc/WorkProgressReport.md`; resolution retained all control
+records and normalized the implementation lane's colliding PRG-141 return as
+unique PRG-146 without amending the immutable handoff.
+
+Post-merge focused 11/11, full 216/216, strict mypy and in-memory compile over
+106 Python files, source sentinel, scope and diff checks passed with zero cache
+residue. Ticket 06A is `COMPLETE / APPROVED_EVIDENCE / INSTALL_BLOCKED /
+ROLE_ISOLATION_UNPROVEN / INTEGRATED`; its allocation is released and receipt
+closed. Downstream capability dependents remain blocked.

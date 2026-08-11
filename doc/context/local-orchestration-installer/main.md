@@ -316,6 +316,14 @@ contract evidence only and cannot replace host proof. The implementation is
 integration-authorized as truthful fail-closed evidence; autonomous Ticket 04
 and 06B/06C remain stopped pending separately authorized capability change.
 
+Guarded merge `de4141e` preserves the control review as first parent and the
+reviewed 06A handoff as second parent. The progress-ledger collision was
+resolved without amending either immutable source commit: the lane-local
+PRG-141 return is recorded on main as unique PRG-146. Post-merge focused
+11/11, full 216/216 and strict mypy/compile over 106 files passed. 06A is
+complete and integrated as truthful blocked evidence; its allocation is
+released and receipt closed.
+
 Owner decision `PRG-20260811-106` supersedes combined 05S as an implementation
 lane. New children are serial and single-purpose: 05S1 owns only disposable
 environment provision/teardown; 05S2 owns only a generic bounded child runner;

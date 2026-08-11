@@ -1677,3 +1677,13 @@
 | P2 actual capability | Exact WindowsApps `codex.exe` discovery used no wildcard fallback. One bounded disposable `--version` invocation through integrated 05S1/05S2 returned finite `ACCESS_DENIED`. Because no deterministic effective host readback exists, actual result is `INSTALL_BLOCKED / ROLE_ISOLATION_UNPROVEN / OUTPUT_UNAVAILABLE`, not `SUPPORTED`. |
 | P4 / residue evidence | Every probe used a leased disposable `CODEX_HOME`; actual readback reported `REMOVED`, root absent and both profile files absent. Tests preserve a same-name foreign sentinel plus byte and porcelain snapshots of temporary representative repositories. |
 | Implementer verification | Focused 11/11; full 206/206; strict tests-only mypy 38 files; in-memory compile, reverse mutation, scope/diff and residue checks passed. Independent reviewer full-tree verification and actual-host disposition are recorded in PRG-145. No review, integration, push, release or deployment was performed by the implementation owner. |
+
+## PRG-20260811-147 — Ticket 06A guarded integration
+
+| Field | Value |
+| --- | --- |
+| Router event | `APPROVED_EVIDENCE + INSTALL_BLOCKED -> GUARDED_INTEGRATION -> ACTION_COMPLETED / DEPENDENTS_BLOCKED` |
+| Integration | Merge `de4141e0d33b42813323587108b20131624ddc93` preserves control review `62955ecab394534832a40e7bda16f1965b634eaa` as first parent and reviewed handoff `f6f186f2071035907e83577c58120e20442023c4` as second parent. The four evidence source paths merged without conflict. |
+| Ledger resolution | The sole conflict was `doc/WorkProgressReport.md`. Main retained PRG-133 through PRG-145 once; the lane-local Ticket 06A return colliding at PRG-141 is preserved on main as PRG-146 with explicit normalization. Neither immutable parent was amended or overwritten. |
+| Post-merge verification | Focused 11/11 and full 216/216 unittest passed. Strict full-tree mypy and in-memory compile passed over 106 Python files; source sentinel and `git diff --check` passed. External cache was removed and read back absent; repository cache residue was zero. |
+| Completion | Ticket 06A is `COMPLETE / APPROVED_EVIDENCE / INSTALL_BLOCKED / ROLE_ISOLATION_UNPROVEN / INTEGRATED`; allocation `aln_local_orchestration_install_06a_20260811` is released and receipt `rcpt_local_orchestration_install_06a_20260811` is closed. Actual host NO-GO remains binding, so autonomous Ticket 04 and 06B/06C remain blocked. No live Codex mutation, target-project write, push, release or deployment. |
