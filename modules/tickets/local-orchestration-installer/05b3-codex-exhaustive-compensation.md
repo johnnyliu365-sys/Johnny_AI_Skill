@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01, AC-02, AC-07 and AC-08 compensation seam |
-| State | `PLANNED / READY_FOR_DISPATCH` |
+| State | `IN_PROGRESS / IMPLEMENTATION_DISPATCH_CONFIRMED` |
 | Dependency | Ticket 05B1 and 05B2 independently approved and integrated by `bbc7de5` and `c97505c` / `ef45f65` |
 | Implementation owner | Task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; existing `workflow-implementation` worktree and branch only |
 | Acceptance owner | Independent control-plane reviewer; no implementation writes |
@@ -121,3 +121,17 @@ paths, followed by one docs-only commit changing only
 review, integration, downstream-dispatch or Agent-control decision. No new
 branch/worktree, reset, rebase, amend, force, merge, cherry-pick, stash, push,
 release, deployment, live Codex mutation or target-project write.
+
+## Dispatch binding
+
+| Field | Value |
+| --- | --- |
+| Project / closure | `prj-local-orchestration-installer-poc-20260808` / `CLOSURE-LOCAL-INSTALL-T05B3-01` |
+| Handoff | `hnd_local_orchestration_install_05b3_20260811` |
+| Allocation / receipt | `aln_local_orchestration_install_05b3_20260811` / `rcpt_local_orchestration_install_05b3_20260811` |
+| Correlation / question | `corr-local-orchestration-install-05b3-20260811` / `q-local-orchestration-install-05b3-20260811` |
+| Side context | `scx-local-orchestration-install-05b3-20260811-01` |
+| Authority | Owner instruction to continue under the approved workflow; program authority `PRG-20260809-042`; integrated dependency `c97505c67d4a7ba602f590ff281fda0d1663768d` / `ef45f65` |
+| Ticket-doc baseline | `77c8756d341bd8b0c93899cac6132f18c31b4840` |
+| Expected lane admission | Existing branch `codex/implementation-codex-protocol-fixture-05s3` at exact clean HEAD `b8090078c6a41f19cba0c216f2a3e7030dc4dec8`, then normal `git merge --ff-only` to the control handoff commit. No new branch/worktree. |
+| Return | One exact-scope implementation commit, then one `doc/WorkProgressReport.md`-only handoff reserved as unique `PRG-20260811-162`. |

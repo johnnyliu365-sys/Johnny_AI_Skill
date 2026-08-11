@@ -1849,3 +1849,15 @@
 | Ledger resolution | The sole conflict was `doc/WorkProgressReport.md`; PRG-155 through PRG-159 are retained in chronological order exactly once. Neither immutable parent was amended, reset or overwritten. |
 | Post-merge verification | Focused 7/7 and full 230/230 unittest passed. Strict full-tree mypy passed 110 files; in-memory compile 3/3, source sentinel and `git diff --check` passed. External review/cache roots were removed and read back absent; repository tracked, ignored and cache-residue readback is clean. |
 | Completion | 05B2 is `COMPLETE / APPROVED / INTEGRATED`; allocation `aln_local_orchestration_install_05b2_20260811` is released and receipt `rcpt_local_orchestration_install_05b2_20260811` is closed against replay. No live Codex mutation, target-project write, push, release or deployment. |
+
+## PRG-20260811-161 — Ticket 05B3 refreeze and implementation dispatch
+
+| Field | Value |
+| --- | --- |
+| Router event | `ACTION_COMPLETED(05B2) -> TICKET_SELECTED(05B3) -> TICKET_DISPATCH_REQUIRED -> IMPLEMENTATION_DISPATCH_CONFIRMED` |
+| Project / ticket / closure | `prj-local-orchestration-installer-poc-20260808`; `05b3-codex-exhaustive-compensation`; `CLOSURE-LOCAL-INSTALL-T05B3-01`; D1-D5/T1-T5. |
+| Binding | Handoff `hnd_local_orchestration_install_05b3_20260811`; allocation `aln_local_orchestration_install_05b3_20260811`; receipt `rcpt_local_orchestration_install_05b3_20260811`; correlation `corr-local-orchestration-install-05b3-20260811`; question `q-local-orchestration-install-05b3-20260811`; side-context `scx-local-orchestration-install-05b3-20260811-01`; ticket docs `77c8756d341bd8b0c93899cac6132f18c31b4840`. |
+| Owner / lane | Task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; reuse only clean `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` and existing branch `codex/implementation-codex-protocol-fixture-05s3` at submitted HEAD `b8090078c6a41f19cba0c216f2a3e7030dc4dec8`, then normal `git merge --ff-only` to this handoff. No new branch/worktree. |
+| Exact scope | New `codex_compensation.py`, new `test_codex_compensation.py`, and export-only `library/local_orchestration/__init__.py`. Integrated 05B1/05B2 are read-only; production must not import test-owned 05S4 or reuse rejected parent source. |
+| Finite outcome | Exact manifest/current-attempt authority; no call for `NOT_ATTEMPTED`/`PREEXISTING`; plugin-first removal; every finite removal/probe failure still runs all later finite steps; only fresh marketplace, plugin and installed-path absence reduces retry authority. |
+| Return / guards | One exact-scope implementation commit plus one WPR-only handoff reserved as PRG-162, with truthful first-red/green and five reverse mutations. Implementer works alone and makes no review, integration, downstream-dispatch or Agent-control decision. No push, release, deployment, live Codex mutation or target-project write. |
