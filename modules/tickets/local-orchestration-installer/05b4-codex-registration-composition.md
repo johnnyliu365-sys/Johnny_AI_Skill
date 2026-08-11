@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01, AC-02, AC-07 and AC-08 |
-| State | `CONVERGENCE_DECOMPOSED / CHILD_05B4A1_COMPLETE / CHILD_05B4B_REFREEZE_READY` |
+| State | `CONVERGENCE_DECOMPOSED / CHILD_05B4B1_FROZEN / CHILD_05B4B2_DEPENDENCY_WAIT` |
 | Dependency | 05A, 05S1-05S4, 05B1, 05B2, 05B3A, 05B3B1, 05B3C, 05B4A and 05B4A1 integrated |
 | Historical evidence | Terminal rejected 05B review `24227ac`; rejected source is evidence only and must not be reused |
 
@@ -19,9 +19,15 @@ like effect truth. This is ticket convergence, not a requirement change.
 | --- | --- | --- |
 | [05B4A](05b4a-codex-registration-port-capability.md) | Admit one closed four-operation registration port and freeze exact request/result envelopes without executing it. | Integrated 05A/05B1/05B2 |
 | [05B4A1](05b4a1-codex-plugin-identity-authority.md) | Bind installer-controlled expected plugin ID into request and plugin-add observation validation. | 05B4A approved and integrated |
-| 05B4B | Compose fresh preflight, marketplace/plugin add classification, proof/receipt, exact compensation and 05S4 oracle evidence into one finite registration result. | 05B4A1 approved and integrated |
+| [05B4B](05b4b-codex-registration-transaction.md) | Convergence parent that separates pure forward transaction decisions from every registration effect. | 05B4A1 approved and integrated |
+| [05B4B1](05b4b1-codex-registration-reducer.md) | Purely reduce fresh-preflight and ordered add results into the next exact directive, proof request, compensation plan or finite block. | 05B4A1 approved and integrated |
+| 05B4B2 | Later compose the admitted registration capability, proof/receipt boundary, integrated compensation composition and 05S4 oracle against the reviewed B1 decisions. | 05B4B1 approved and integrated |
 
-05B4A, 05B4A1 and 05B4B remain serial because composition consumes the exact
-reviewed request authority and port contract. 05C remains blocked until 05B4B
-is approved and integrated. No child may copy or cherry-pick rejected 05B
-source.
+05B4A, 05B4A1, 05B4B1 and 05B4B2 remain serial because each downstream
+boundary consumes an exact reviewed contract. The prior 05B4B shape is not
+implementable as one ticket: it joined pure sequencing, four registration
+effects, receipt authority, compensation and oracle acceptance into one review
+surface. Splitting it is ticket convergence under unchanged requirements.
+
+05C remains blocked until 05B4B2 is approved and integrated. No child may copy,
+import or cherry-pick rejected 05B source.

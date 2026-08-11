@@ -2317,3 +2317,14 @@
 | Ledger resolution | The sole conflict was `doc/WorkProgressReport.md`; PRG-199 through PRG-202 are retained exactly once and in order. Neither immutable parent was amended, reset, forced or overwritten. |
 | Post-merge verification | Focused 9/9 and serial full discovery 269/269 passed. Strict full-tree mypy and in-memory compile passed 118 files. Source sentinel, `git diff --check`, exact parent/blob equality and all worktree tracked/ignored/cache residue checks passed. |
 | Completion | 05B4A1 is `COMPLETE / APPROVED / INTEGRATED`; allocation `aln_local_orchestration_install_05b4a1_20260812` is released and receipt `rcpt_local_orchestration_install_05b4a1_20260812` is closed against replay. 05B4B is unallocated and ready only for control-plane refreeze. No live Codex mutation, target-project write, push, release or deployment. |
+
+## PRG-20260812-204 — Ticket 05B4B convergence decomposition and 05B4B1 freeze
+
+| Field | Value |
+| --- | --- |
+| Router event | `ACTION_COMPLETED(05B4A1) -> TICKET_SELECTED(05B4B) -> CONVERGENCE_DECOMPOSED -> TICKET_SELECTED(05B4B1) -> TICKET_FREEZE_COMPLETED -> DISPATCH_PENDING` |
+| Decision | The former 05B4B placeholder combined pure sequencing, four registration operations, proof/receipt authority, compensation execution and lifecycle-oracle acceptance. It is decomposed without a requirement change into 05B4B1 pure forward reduction and later 05B4B2 effect composition. |
+| Ticket / closure | `05b4b1-codex-registration-reducer`; `CLOSURE-LOCAL-INSTALL-T05B4B1-01`; exact D1-D8 in the ticket are authoritative. 05B4B2 remains unallocated and dependency-waiting. |
+| Binding | `hnd_local_orchestration_install_05b4b1_20260812`; `aln_local_orchestration_install_05b4b1_20260812`; `rcpt_local_orchestration_install_05b4b1_20260812`; `corr-local-orchestration-install-05b4b1-20260812`; `q-local-orchestration-install-05b4b1-20260812`; `scx-local-orchestration-install-05b4b1-20260812-01`. |
+| Owner / lane | Selected task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2`; later create only `codex/implementation-codex-registration-reducer-05b4b1` from the exact dispatch registry commit. No new worktree. |
+| Scope / stop | New pure reducer and focused test only, then WPR-only PRG-206. No port call, proof/receipt effect, compensation operation, process, filesystem, oracle, live Codex/host/target-project/network effect, package/dependency edit, another Agent, review, integration, 05B4B2/05C work, push, release or deployment. Freeze is not dispatch. |

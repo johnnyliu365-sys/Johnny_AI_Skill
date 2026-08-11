@@ -2,13 +2,13 @@
 
 | Field | Value |
 | --- | --- |
-| Context state | `TICKET_05B4A1_IMPLEMENTATION_DISPATCHED` |
-| Router event | `TICKET_SELECTED(05B4A1) / TICKET_FREEZE_COMPLETED / IMPLEMENTATION_DISPATCH_CONFIRMED` |
+| Context state | `TICKET_05B4B1_FREEZE_COMPLETED / DISPATCH_PENDING` |
+| Router event | `ACTION_COMPLETED(05B4A1) / TICKET_05B4B_CONVERGENCE_DECOMPOSED / TICKET_SELECTED(05B4B1) / TICKET_FREEZE_COMPLETED` |
 | Delivery stage | `POC` |
 | Requirement change | `CHG-20260808-011` |
-| Baseline | `92405a1` (`docs: complete Ticket 05B4A integration`) |
+| Baseline | `ae47b71` (`docs: complete Ticket 05B4A1 integration`) |
 | Control-plane owner | Codex / current `main` worktree |
-| Implementation owner | 05B3A, 05B3B1, 05B3C and 05B4A are integrated and released; 05B3B is terminal rejected; task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` owns active 05B4A1 in existing `workflow-implementer-2` under its unique receipt |
+| Implementation owner | 05B4A1 is integrated and released; task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` is selected for 05B4B1 in existing `workflow-implementer-2`, but receives no implementation authority until the separate dispatch registry commit |
 | Required sources read | `AGENTS.md`, `Workflow.md` (Router, Wayfinder, Grill, change control, specification, tickets, role boundary), `Defined_wayfinder.md`, `CONTEXT.md`, `PRD.md`, `ProjectSchedule.md`, `doc/RequirementChangeLog.md`, existing plugin manifests / README, `library/workflow_router/`, and completed plugin / autonomous-collaboration POCs |
 
 ## Shared Context reference
@@ -579,3 +579,17 @@ Dispatch is bound to reviewed freeze `741ae0b`, PRG-20260812-200 and the exact
 registry commit carrying that record. The owner must create only
 `codex/implementation-codex-plugin-identity-authority-05b4a1` from that commit
 inside the existing worktree. 05B4B remains unallocated.
+
+05B4A1 implementation `76f0b96`, handoff `30d6bcf`, independent review
+`42e1590` and guarded merge `3399cf9` are complete. Its allocation is released
+and receipt closed.
+
+## Ticket 05B4B convergence decomposition
+
+The former 05B4B placeholder joined pure sequencing, registration effects,
+proof/receipt, compensation execution and lifecycle-oracle acceptance. The
+control plane decomposes it under unchanged requirements: 05B4B1 owns only a
+pure forward reducer through an exact proof request or compensation plan;
+05B4B2 later owns all effects and final truth. Only 05B4B1 closure D1-D8 is
+frozen. Implementer-2 is selected in its existing worktree; no new worktree,
+05B4B2 allocation or implementation dispatch exists at this freeze.
