@@ -128,8 +128,11 @@
 | Ticket 05B transactional registration parent | SUPERSEDED / CONVERGENCE_DECOMPOSED | Terminal CR-98..CR-104 evidence is immutable; replaced by 05B1-05B4 after integrated staging. |
 | Ticket 05B1 registration contracts/journal | DONE / APPROVED / INTEGRATED | Correction `dc57ff9`, handoff `1df30ae`, review `36ec95c` and guarded merge `bbc7de5`; CR-128..CR-132 closed and post-merge verification passed. |
 | Ticket 05B2 command-attempt classification | COMPLETE / APPROVED / INTEGRATED | Corrected strict classifier and full C1-C4 matrix integrated by `c97505c`; completion recorded by `ef45f65`. |
-| Ticket 05B3 exhaustive compensation | CONVERGENCE_REVIEW_REQUIRED / TERMINAL_CORRECTION_REJECTED | Terminal review preserved D2-D5 but found CR-135/CR-136 still open: callable signature inspection invokes descriptor-backed metadata and can escape before finite invalid-port rejection. No third same-closure correction or integration is authorized. |
-| Ticket 05B4 registration composition | PLANNED / DEPENDENCY_WAIT | Final admission/add/proof/compensation/oracle composition remains serial behind 05B3. |
+| Ticket 05B3 exhaustive compensation | SUPERSEDED / CONVERGENCE_DECOMPOSED | Terminal rejected evidence retained; replaced by ADR-20260811-004 and 05B3A-05B3C. |
+| Ticket 05B3A safe port capability | PLANNED / READY_FOR_DISPATCH | Closed zero-descriptor admission; primary implementation lane proposed. |
+| Ticket 05B3B pure compensation reducer | PLANNED / READY_FOR_DISPATCH | Pure plan/reduce state machine; second implementation lane proposed in parallel. |
+| Ticket 05B3C compensation composition | PLANNED / DEPENDENCY_WAIT | Starts only after 05B3A and 05B3B are independently approved and integrated. |
+| Ticket 05B4 registration composition | PLANNED / DEPENDENCY_WAIT | Final admission/add/proof/compensation/oracle composition remains serial behind 05B3C. |
 | Ticket 05C receipt removal/replay | PLANNED / DEPENDENCY_WAIT / REFREEZE_REQUIRED | Starts only after 05A/05B approval/integration and a finite behavior/rollback closure refreeze. |
 | Ticket 06A Codex role-profile capability proof | DONE / APPROVED_EVIDENCE / INSTALL_BLOCKED / INTEGRATED | Implementation `38e9a8b`, handoff `f6f186f`, review `62955ec`, guarded merge `de4141e`; actual installed-host result is `ROLE_ISOLATION_UNPROVEN / ACCESS_DENIED / OUTPUT_UNAVAILABLE`, so capability dependents stay blocked. |
 | Autonomous Ticket 04 reviewer-only authority | PLANNED / DEPENDENCY_WAIT | Starts only after reviewed 06A `SUPPORTED`; typed fake effect gate, not a real Agent turn. |

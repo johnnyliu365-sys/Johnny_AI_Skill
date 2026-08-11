@@ -1891,3 +1891,13 @@
 | Passing evidence | Immutable export: focused 10/10, full 240/240, strict mypy 112 files, in-memory compile 2/2, exact scope/ancestry/blob/diff and zero-residue checks passed. D2-D5 remained green; all five frozen reverse mutations independently turned red. |
 | Terminal blocker | CR-135 remains open: `inspect.signature()` dynamically reads an arbitrary callable member's `__signature__` descriptor. A no-authority five-operation surface caused five observable descriptor reads; a raising descriptor escaped as `RuntimeError` instead of finite zero-call `INVALID_PORT`. CR-136 remains open because the committed descriptor test covers only a descriptor directly on the port class, not this callable-metadata path. |
 | Decision | `CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED`. This is the terminal correction review: no third implementation correction, branch/worktree replacement, integration, 05B4 dispatch, live Codex mutation, target-project write, push, release or deployment. Submitted commits remain immutable rejected evidence. |
+
+## PRG-20260811-167 — Ticket 05B3 convergence decomposition
+
+| Field | Value |
+| --- | --- |
+| Router event | `CONVERGENCE_REVIEW_REQUIRED -> ARCHITECTURE -> TICKETS -> ACTION_COMPLETED` |
+| Decision | ADR-20260811-004 closes the arbitrary-callable design: 05B3A owns static zero-descriptor capability admission, 05B3B owns pure plan/reduce behavior, and 05B3C owns later composition. Product AC and SPEC identity are unchanged. |
+| Parallel safety | 05B3A and 05B3B use disjoint two-file scopes and depend only on integrated 05B1/05B2. Neither may import or inspect the other's unintegrated worktree. 05B3C remains dependency-waiting. |
+| Rejected evidence | Original 05B3 closure, branch and commits remain immutable and unmerged; no source may be copied, cherry-picked or imported. This is the recorded `FRESH_BRANCH_REQUIRED` cause for the primary lane. |
+| Proposed owners | 05B3A: task `019fcc9c-f34f-7d53-a313-c70c90bf3245` / existing `workflow-implementation`. 05B3B: task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` / existing `workflow-implementer-2`. No new worktree is authorized. |

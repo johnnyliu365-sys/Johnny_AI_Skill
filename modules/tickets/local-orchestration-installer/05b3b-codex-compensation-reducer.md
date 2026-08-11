@@ -1,0 +1,81 @@
+# 05B3B — Pure Codex Compensation Planner and Reducer
+
+| Field | Value |
+| --- | --- |
+| SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01, AC-02 and AC-07 compensation-state seam |
+| State | `PLANNED / READY_FOR_DISPATCH` |
+| Closure | `CLOSURE-LOCAL-INSTALL-T05B3B-01` / B1-B5 |
+| Dependency | Integrated 05B1/05B2 at control baseline; ADR-20260811-004; no dependency on 05B3A source |
+| Control / implementation / reviewer | Current `main` / task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` / independent current `main` reviewer |
+| Worktree / branch | Existing `workflow-implementer-2`; new ticket branch from reviewed handoff after owner removes its sole `.mypy_cache` residue |
+| Language | Python 3.11; strict Pydantic/mypy |
+
+## One observable outcome
+
+Given an exact integrated 05B1 current-attempt journal, derive one finite
+ordered compensation plan; given that plan plus a complete ordered sequence of
+normalized observations, return a deterministic result and only the authority
+not proved absent. This ticket is pure: it accepts no adapter/callable and
+performs no operation, command, path access or host effect.
+
+## Exact source boundary
+
+Only these new paths may change:
+
+1. `library/local_orchestration/codex_compensation_reducer.py`
+2. `tests/test_codex_compensation_reducer.py`
+
+All existing source/tests and root exports are read-only. 05B3A is a parallel
+contract and may not be read from another worktree or imported before reviewed
+integration. Rejected 05B3 source is not an input.
+
+## Public contract and architecture
+
+- `build_compensation_plan()` consumes only an exact revalidated 05B1
+  preflight/attempt/journal identity and returns either a finite block, a typed
+  no-compensation plan, or an ordered tuple of finite `CodexCompensationStep`.
+- Only `MAY_EXIST` and `OWNED` schedule removal. Plugin removal precedes
+  marketplace removal. Whenever any removal authority exists, the three proof
+  steps follow in fixed order.
+- `reduce_compensation()` consumes the exact plan and one normalized outcome
+  for every planned step in exact order. It cannot call a port or synthesize a
+  missing observation.
+- Normalized outcomes distinguish confirmed, declared failure, malformed,
+  mismatch, residue, proved absence and unproved status without carrying raw
+  command/output/path/exception data.
+- Marketplace authority clears only on fresh exact marketplace absence.
+  Plugin authority clears only when both plugin-list locations and the exact
+  installed path are freshly absent. A removal failure remains a failure but
+  does not retain authority once all absence proof succeeds.
+
+## Acceptance Closure Set — revision 01
+
+| ID | Finite completion rule |
+| --- | --- |
+| `B1` | All seven legal 05B1 journal pairs are tabled. The six states reachable from integrated 05B2 produce the exact no-compensation or ordered step tuple; the legal-but-unreachable `(OWNED, PREEXISTING)` pair, cross-request, replayed-attempt, malformed and all nine illegal state pairs reject finitely. |
+| `B2` | No-authority and pre-existing states schedule no step. `MAY_EXIST`/`OWNED` schedule only their exact removals, plugin first, followed by all three proof steps. |
+| `B3` | Missing, extra, duplicate, reordered, wrong-plan or wrong-step outcomes reject finitely. Every declared failure remains represented while the complete later observation sequence is still required. |
+| `B4` | The complete plugin installed/available, marketplace and installed-path truth table clears only freshly proved absence and retains only unresolved current-attempt authority. Foreign/unrelated truth is never modeled as owned residue. |
+| `B5` | Results are frozen `COMPENSATION_NOT_REQUIRED`, `COMPENSATED`, `COMPENSATION_FAILED` or pre-reduction `COMPENSATION_BLOCKED`, with ordered unique finite reasons and metadata-only serialization. |
+
+## TDD design and CodeReview.md §2.1 mapping
+
+- **Null/empty/container (class 2):** every plan/outcome field rejects null,
+  blank and container substitutions; missing/extra sequence cells reject.
+- **Authority bypass (class 3):** enumerate all journal pairs and direct/cross-
+  request/replay paths; only B2 states schedule removal.
+- **Error-code consistency (class 5):** every B1/B3 invalidity has one stable
+  finite code and no raw diagnostic text.
+- **Exception propagation (class 6):** not applicable to external effects;
+  constructed malformed models must return finite blocks rather than raise.
+- **Path/token classes (1/4):** no path, URI, credential or token is accepted.
+- **Truthfulness (class 7 / CR):** independently reverse pre-existing
+  authority, removal order, finite-failure completeness, early authority
+  clearing and stale-authority retention; every reverse must turn red.
+
+First red must be captured before production source exists. Focused/full
+unittest, strict full-tree mypy with a removed external cache, in-memory
+compile, source/diff/scope and zero-residue checks are required. One
+implementation commit is followed by one WPR-only handoff commit. No port,
+callable, live Codex, target-project write, network, Secret, integration, push,
+release or deployment is authorized.

@@ -94,6 +94,14 @@ This POC has no company-project frontend. Its formal interaction boundaries are 
 - **Test substitutions:** fake filesystem confined to a temporary root, fake host lifecycle, fake process, deterministic clock, in-memory queue, registry and Git port. Tests must assert no effect was requested against a target repository.
 - **States / accessibility:** setup and uninstall must expose success, progress, empty/no-host, error/blocked and retry state in text, without relying on colour alone. No permission beyond the invoking user is requested.
 
+Compensation adapters cross a closed capability boundary. An untrusted adapter
+candidate is admitted by static plain-method inspection into a frozen typed
+capability before any no-compensation or effect path. Candidate or callable
+descriptors, `inspect.signature()` over caller-controlled data and arbitrary
+callable objects are forbidden. Compensation planning/reduction is a separate
+pure domain capability; the later composition root alone executes admitted
+operations and validates exact manifest-bound observations.
+
 ## Implementation handoff and return contract
 
 - `ImplementationHandoff` must cite this approved SPEC, `CHG-20260808-011`, the Context, an approved vertical ticket, named implementation owner/reviewer, TDD cases, installer composition-root reference and exact host capability assumptions.
@@ -162,6 +170,7 @@ finite unit/fault matrix.
 | 2026-08-08 | Project owner / current `main` | Approved the complete POC scope, including owned one-click uninstall and fail-closed host lifecycle boundary. |
 | 2026-08-10 | Project owner and Codex / current `main` | Approved the two-gate verification architecture: stateful Codex contract staging before 05B/05C refreeze, then disposable Windows user staging before package acceptance. Product scope and AC-01 through AC-08 are unchanged. |
 | 2026-08-11 | Project owner / `CHG-20260811-012` | Approved AC-09/AC-10 reviewer-only Codex role profiles, fail-closed host capability proof, receipt-bound removal and new Tickets 06A-06C. Existing AC-01 through AC-08 remain unchanged. |
+| 2026-08-11 | Project owner / ADR-20260811-004 | Refined the unchanged AC-01/02/07/08 compensation seam into closed port admission, pure reduction and thin composition after terminal 05B3 convergence. |
 
 ## Approval record
 

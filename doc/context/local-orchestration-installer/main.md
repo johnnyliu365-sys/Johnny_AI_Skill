@@ -2,13 +2,13 @@
 
 | Field | Value |
 | --- | --- |
-| Context state | `STAGING_DECOMPOSED / TICKET_05S1_INTEGRATED / TICKET_05S2_REVISION_03_REFROZEN` |
-| Router event | `WAIT_FOR_HUMAN → OWNER_OVERRIDE → TICKET_REFROZEN → CORRECTION_HANDOFF_REQUIRED` |
+| Context state | `TICKET_05B3_CONVERGENCE_DECOMPOSED / 05B3A_05B3B_READY_FOR_PARALLEL_DISPATCH` |
+| Router event | `CONVERGENCE_REVIEW_REQUIRED → ARCHITECTURE → TICKETS` |
 | Delivery stage | `POC` |
 | Requirement change | `CHG-20260808-011` |
-| Baseline | `a37a515` (`docs: replace duplicated ticket history with references`) |
+| Baseline | `9716704` (`docs: record Ticket 05B3 terminal review`) |
 | Control-plane owner | Codex / current `main` worktree |
-| Implementation owner | Task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; one revision-03 correction on the existing 05S2 branch/worktree only |
+| Implementation owner | Parallel proposals: primary task owns only 05B3A in `workflow-implementation`; second task owns only 05B3B in `workflow-implementer-2`; 05B3C is unallocated |
 | Required sources read | `AGENTS.md`, `Workflow.md` (Router, Wayfinder, Grill, change control, specification, tickets, role boundary), `Defined_wayfinder.md`, `CONTEXT.md`, `PRD.md`, `ProjectSchedule.md`, `doc/RequirementChangeLog.md`, existing plugin manifests / README, `library/workflow_router/`, and completed plugin / autonomous-collaboration POCs |
 
 ## Shared Context reference
@@ -462,3 +462,19 @@ only plugin-first current-attempt removals; five distinct typed port calls run
 without finite-failure short-circuiting; fresh marketplace, plugin and
 installed-path absence alone reduce retry authority. 05B4 remains blocked
 until 05B3 is independently approved and integrated.
+
+## Ticket 05B3 convergence decomposition
+
+Terminal review `9716704` proved that unrestricted Python callable inspection
+cannot satisfy the frozen zero-descriptor boundary. ADR-20260811-004 preserves
+the required user behavior while replacing the implementation architecture:
+
+- 05B3A owns only static plain-method admission into a frozen typed capability.
+- 05B3B owns only pure plan/reduce behavior over integrated 05B1 journal truth.
+- 05B3C later owns all execution and exact observation composition.
+
+05B3A and 05B3B have disjoint files and no dependency on one another's
+unintegrated source, so the two named owners may run concurrently. Their old
+branches remain immutable references. Each owner must create its own single
+ticket branch from the reviewed control handoff inside its existing worktree;
+no new worktree, copied rejected source or cross-lane read/write is permitted.

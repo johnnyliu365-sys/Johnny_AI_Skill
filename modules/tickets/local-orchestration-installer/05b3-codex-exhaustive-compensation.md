@@ -3,11 +3,18 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01, AC-02, AC-07 and AC-08 compensation seam |
-| State | `IN_PROGRESS / CORRECTION_DISPATCH_CONFIRMED` |
+| State | `SUPERSEDED / CONVERGENCE_DECOMPOSED / IMMUTABLE_REJECTED_EVIDENCE` |
 | Dependency | Ticket 05B1 and 05B2 independently approved and integrated by `bbc7de5` and `c97505c` / `ef45f65` |
-| Implementation owner | Task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; existing `workflow-implementation` worktree and branch only |
+| Implementation owner | Released after terminal review; rejected branch and commits remain immutable evidence |
 | Acceptance owner | Independent control-plane reviewer; no implementation writes |
 | Language | Python 3.11, strict Pydantic and mypy |
+
+Terminal review `97167046ff8a3889d36e369566b8e6342bdb5691` leaves CR-135
+and CR-136 open and forbids a third correction to this Closure revision.
+ADR-20260811-004 replaces this implementation lane with parallel 05B3A
+closed-port admission and 05B3B pure reduction, followed by dependency-waiting
+05B3C composition. This file and commits `0f79512`, `2c4533c`, `b59e97b` and
+`89446d9` are evidence only, not source inputs.
 
 ## One outcome
 
