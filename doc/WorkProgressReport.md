@@ -1538,3 +1538,13 @@
 | Independent evidence | Immutable export: focused 6/6, full 201/201, strict mypy 102 files and in-memory compile passed. Adversarial O4 duplicated one coherent foreign marketplace identity and received an accepted two-entry fresh list. Adversarial O6 injected ordinary fixture `OSError` after fixed command creation and observed `PROCESS_FAILED` plus command residue. |
 | Findings | CR-126 `IMPLEMENTATION_DEFECT / O4`; CR-127 `IMPLEMENTATION_DEFECT / O6`. This is the complete blocking batch for revision 01. |
 | Decision | `CHANGES_REQUESTED / REVISION_02_AUTHORIZED` by the owner's current instruction to inspect and dispatch the affected work. Same task/worktree/branch only; one additive correction and one docs-only handoff, followed by final review. No integration, 05B/05C refreeze, live Codex mutation, target-project write, push, release or deployment. |
+
+## PRG-20260811-136 — Ticket 05S4 revision-02 correction dispatch
+
+| Field | Value |
+| --- | --- |
+| Router event | `CHANGES_REQUESTED -> OWNER_DISPATCH_INSTRUCTION -> CORRECTION_HANDOFF -> IMPLEMENTATION_DISPATCH_CONFIRMED` |
+| Binding | Closure `CLOSURE-LOCAL-INSTALL-T05S4-02`; findings CR-126/CR-127; control review `3012af96da2e4d7a2e64b6cb41c035e86ea43fa2`; submitted HEAD `e4d00ddc4cb54be5706cfc136245302250259993`. |
+| Identifiers | Handoff `hnd_local_orchestration_install_05s4_r02_20260811`; allocation `aln_local_orchestration_install_05s4_r02_20260811`; receipt `rcpt_local_orchestration_install_05s4_r02_20260811`; correlation `corr-local-orchestration-install-05s4-r02-20260811`; question `q-local-orchestration-install-05s4-r02-20260811`. |
+| Exact delta | Reject duplicate identities within each foreign collection while preserving O3 distinctions; guarantee safe exact command cleanup after ordinary dependency completion/block and return `COMMAND_CLEANUP_FAILED` on cleanup failure without catching process-control exceptions. Add both exact first-red and reverse-mutation regressions. |
+| Lane / return | Existing task `019fcc9c-f34f-7d53-a313-c70c90bf3245`, sole implementation worktree and existing branch only. One additive implementation commit plus one `WorkProgressReport.md`-only handoff. Final review stops on any blocker; no new branch/worktree, 05B/05C/new-role implementation, integration, push, release, deployment, live Codex mutation or target-project write. |

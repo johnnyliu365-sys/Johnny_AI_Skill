@@ -129,3 +129,11 @@ Only `contracts.py`, `oracle_child.py`, `oracle.py` and
 and reverse-mutation evidence. This is the sole correction review for
 `CLOSURE-LOCAL-INSTALL-T05S4-02`; any remaining blocker stops with
 `CONVERGENCE_REVIEW_REQUIRED`.
+
+Correction binding: `hnd_local_orchestration_install_05s4_r02_20260811` /
+`aln_local_orchestration_install_05s4_r02_20260811` /
+`rcpt_local_orchestration_install_05s4_r02_20260811` /
+`corr-local-orchestration-install-05s4-r02-20260811` /
+`q-local-orchestration-install-05s4-r02-20260811`. Control review baseline:
+`3012af96da2e4d7a2e64b6cb41c035e86ea43fa2`; submitted implementation HEAD:
+`e4d00ddc4cb54be5706cfc136245302250259993`.
