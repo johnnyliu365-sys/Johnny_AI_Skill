@@ -2192,6 +2192,22 @@
 | Owner / admission | Task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing clean `workflow-implementer-2` at `6d7dd37095005b11d68e136d6687d402b5187c9e`; create only `codex/implementation-codex-registration-port-05b4a` from this dispatch registry commit. |
 | Scope / return | New registration port module, new focused test and export-only root; implementation commit then WPR-only PRG-193. No other agent, worktree, cross-lane history, dependency edit, effect execution, 05B4B work, review, integration, push, release or deployment. |
 
+## PRG-20260812-193 — Ticket 05B4A registration port implementation handoff
+
+| Field | Value |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05B4A) -> ACTION_COMPLETED -> REVIEW_HANDOFF`; independent control-plane review remains required. |
+| Ticket / closure | `05b4a-codex-registration-port-capability`; `CLOSURE-LOCAL-INSTALL-T05B4A-01`; exact A1-A7 only. |
+| Binding | Handoff `hnd_local_orchestration_install_05b4a_20260812`; allocation `aln_local_orchestration_install_05b4a_20260812`; receipt `rcpt_local_orchestration_install_05b4a_20260812`; correlation `corr-local-orchestration-install-05b4a-20260812`; question `q-local-orchestration-install-05b4a-20260812`; side-context `scx-local-orchestration-install-05b4a-20260812-01`; reviewed freeze `95ae98ea0df0d071c3ee259efadd73efc322380d`; dispatch registry `f5b187fa692b1b7aeda8e77d885cf331aac80ccb` / `PRG-20260812-192`. |
+| Owner / implementation | Owner task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; branch `codex/implementation-codex-registration-port-05b4a`; implementation `f344a49b323eac039c5f36f51c823dcf75fa7c9c`, descended directly from the reviewed dispatch registry. |
+| Exact scope | Implementation changes only new `library/local_orchestration/codex_registration_port.py`, new `tests/test_codex_registration_port.py`, and export-only `library/local_orchestration/__init__.py`. Every integrated dependency and its test remains unchanged. |
+| Real first red | Before production source existed, focused unittest failed with exact `ModuleNotFoundError: No module named 'library.local_orchestration.codex_registration_port'`; no adapter operation or external effect ran. |
+| A1-A2 evidence | Exact request rebuild and source binding pass; all 49 root-field malformed cells return finite `INVALID_REQUEST` with zero trap invocation. Accepted/rejected preflight, marketplace/plugin successes and both command-failure kinds rebuild exactly. Twenty-one cross-bound request cells, version/locator/auth observation mismatches, recursively malformed envelopes and all four wrong-target forms return the frozen finite reasons without raw validation text. |
+| A3-A5 evidence | One exact four-method adapter admits with zero calls and metadata exactly `ADMITTED / 4`; direct, copied-token and forged construction fail. Sixteen candidate/method rejection shapes are finite and inherited plain methods admit. Candidate/metaclass lookup, descriptor, annotations, signature/wrapper/default, representation and four process-control body traps all remain uninvoked. |
+| A6-A7 evidence | Static source sentinel proves imports are limited to the four integrated contract modules and finds no effect call, `Any`, `type: ignore`, broad catch, optional port, dynamic candidate lookup, raw output or rejected-source reuse. Four isolated mutations independently turned their named tests red and were restored: request/source binding (A1), wrong-target rejection (A2), descriptor-free admission (A5), and private construction authority (A3). Restored focused result is 6/6. |
+| Verification / residue | Full unittest 266/266; strict full-tree mypy 118 files; in-memory compile 118 files; exact source/scope/dependency/diff checks passed. Both repository-external mypy caches were resolved, removed and read back absent; repository `.mypy_cache`, `.pytest_cache` and `__pycache__` count is zero. |
+| Non-interference / handoff | The new boundary did not execute preflight, add, proof, receipt, compensation, oracle, live/staging Codex, host, target-project or network effects and did not perform 05B4B/05C work, review, integration, downstream dispatch, push, release or deployment. This is implementation evidence, not a review decision. |
+
 ## PRG-20260812-194 — Ticket 05B4A initial independent review
 
 | Field | Value |
@@ -2212,6 +2228,19 @@
 | Owner / lane | Same task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`, existing `workflow-implementer-2`, branch `codex/implementation-codex-registration-port-05b4a` at immutable handoff `7c4fd5970d54798040fb5a6ac128717bbeb49f79`; additive commits only. |
 | Exact correction | Add committed A3 first-red structural-serialization and pickle-transfer probes, then the smallest production fix preventing exported/retained callable operations or usable authority. Modify only the registration port module and its focused test; return one implementation correction commit followed by WPR-only PRG-196. |
 | Stop | Sole correction; no new branch/worktree, package-root/dependency edit, reset/amend/force, integration, 05B4B/05C work, push, release, deployment, live Codex or target-project effect. |
+
+## PRG-20260812-196 — Ticket 05B4A additive correction handoff
+
+| Field | Value |
+| --- | --- |
+| Router event | `CHANGES_REQUESTED(05B4A) -> CORRECTION_IMPLEMENTATION_COMPLETED -> ACTION_COMPLETED -> REVIEW_HANDOFF`; independent control-plane review remains required. |
+| Review / binding | Formal review `9fef2b8c895e1ece9a48c8e5e3b906deffcd7ea8`; complete batch CR-146 / CR-147; correction handoff `hnd_local_orchestration_install_05b4a_correction_01_20260812`; retained allocation `aln_local_orchestration_install_05b4a_20260812` and receipt `rcpt_local_orchestration_install_05b4a_20260812`; correlation `corr-local-orchestration-install-05b4a-correction-01-20260812`; side-context `scx-local-orchestration-install-05b4a-20260812-02`. |
+| Owner / correction | Same task, worktree and branch; additive implementation correction `3ab59717a9b8d57fbca8fbd8d86937a8f9eaacee` descends directly from submitted handoff `7c4fd5970d54798040fb5a6ac128717bbeb49f79`. It changes only `library/local_orchestration/codex_registration_port.py` and `tests/test_codex_registration_port.py`. |
+| Exact first red | With only the committed A3 probes added, the named A3 test produced five independent failures because `dataclasses.asdict`, `dataclasses.astuple`, `copy.copy`, `copy.deepcopy` and pickle round-trip each failed to raise `TypeError`; production source remained unchanged and adapter operation count remained zero. |
+| Correction / actual capability | The admitted capability is a frozen slotted non-dataclass with metadata exactly `ADMITTED / 4`. `asdict` and `astuple` reject structural serialization; shallow/deep copy and pickle round-trip return fixed metadata-only `TypeError("capability transfer is forbidden")`. Direct, copied-token and forged construction remain rejected, repr remains safe, and all five probes execute zero adapter operations. |
+| Green / reversals | Named A3 and focused A1-A7 are green at 1/1 and 6/6. Four isolated A7 mutations independently turned red and were restored: request/source binding failed during construction, wrong-target classification returned the wrong finite reason, descriptor-free admission invoked the metaclass trap, and private authority rejected the legitimate factory token. Restored source/test blobs are `a85f134b5999fc50e07e2fab617c4c8450d669cd` / `93d4d405b43008142b811ad899f803887a5540cf`. |
+| Verification / residue | Full unittest 266/266; strict full-tree mypy passed 118 source files with the resolved external cache removed and read back absent; in-memory compile passed 118 files. Source sentinel, `git diff --check`, exact ancestry/scope and three-worktree topology passed. Repository tracked/ignored/cache residue was zero before this WPR-only handoff. |
+| Non-interference / handoff | No adapter operation, preflight, add, proof, receipt, compensation, oracle, live Codex, host, target-project, network or cross-lane effect ran. No package-root/dependency edit, another Agent, review, integration, 05B4B/05C work, push, release or deployment was performed. This is implementation evidence, not a review decision. |
 
 ## PRG-20260812-197 — Ticket 05B4A terminal correction review
 
