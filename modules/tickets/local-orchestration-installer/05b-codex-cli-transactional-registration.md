@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01, AC-02, AC-07 and AC-08 |
 | Context / change | `doc/context/local-orchestration-installer/main.md` / `CHG-20260808-011` |
-| State | `BLOCKED / CONVERGENCE_REVIEW_REQUIRED` |
+| State | `SUPERSEDED / CONVERGENCE_DECOMPOSED / IMMUTABLE_REJECTED_EVIDENCE` — replaced by 05B1 through 05B4; no old allocation or branch authority |
 | Dependency | Satisfied: Ticket 05A independently approved and integrated by `b22c6c4` |
 | Control-plane owner / reviewer | Codex / current `main` worktree |
 | Implementation owner / worktree | Codex task `019fcc9c-f34f-7d53-a313-c70c90bf3245`, model `gpt-5.6-terra`, reasoning `xhigh`, existing sole `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` worktree |
@@ -121,3 +121,21 @@ does not authorize manual cache deletion, another plugin removal or live repair.
 | Terminal return | Implementation `1a26941176b4ce3c122c41644817e3429cb7c8a5`; handoff `ed74589c12072d5d70e168735e6ccc440c681ced` |
 | Authoritative review | `PRG-20260810-101`; control commit `24227ac`; `doc/reviews/local-orchestration-installer/05b-codex-cli-transactional-registration-code-review.md`; `CR-98..CR-104` |
 | Current state | `CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED`; all prior dispatch authority is consumed/inactive; no automatic continuation |
+
+## Post-staging convergence decomposition
+
+Owner instructions to build isolation first and split the stuck ticket are now
+actionable because 05S1-05S4 are independently integrated. This parent and its
+rejected commits remain immutable evidence; they are not reopened.
+
+1. `05B1` defines strict observed-add proof, metadata-only receipt and
+   current-attempt journal contracts with no effects.
+2. `05B2` classifies command-start truth and produces journal transitions
+   without granting authority on pre-command unavailable/access-denied cases.
+3. `05B3` performs exhaustive plugin-first compensation and all three fresh
+   absence proofs, returning only unresolved effects.
+4. `05B4` composes fresh 05A admission, 05B1-05B3 and the 05S4 oracle into the
+   full registration result and finite M01-M18 evidence.
+
+Each child receives a unique closure, allocation and receipt. Only 05B1 is
+currently dispatched; later children remain dependency-waiting.

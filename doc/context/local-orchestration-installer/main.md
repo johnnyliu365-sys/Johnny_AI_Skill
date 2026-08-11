@@ -228,8 +228,10 @@ registration or schedule is authorized.
   PRG-20260810-099 -> PRG-20260810-101`.
 - Implementation return: `1a269411` / `ed74589`.
 - Authoritative review: control commit `24227ac`, findings `CR-98..CR-104`.
-- Current state: `CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED`; 05B is
-  paused and 05C/04 remain dependency-waiting.
+- Current state: the old 05B closure is immutable
+  `SUPERSEDED / CONVERGENCE_DECOMPOSED`. Integrated 05S1-05S4 permit new
+  children 05B1-05B4; only pure no-effect 05B1 is dispatched. 05C/04 remain
+  dependency-waiting.
 
 ## Staging-first convergence decision
 

@@ -1634,3 +1634,23 @@
 | Conflict resolution | The sole conflict was `doc/WorkProgressReport.md`. Resolution retained PRG-134 through PRG-141 exactly once and in numeric order; neither control nor implementation evidence was overwritten. |
 | Post-merge verification | Focused 10/10 and full 205/205 unittest passed. Strict mypy and in-memory compile passed over 102 source files; source sentinel and `git diff --check` passed. External cache was removed; repository cache, `__pycache__` and fixed command/response residue counts were zero. |
 | Completion | 05S4 is `COMPLETE / APPROVED / INTEGRATED`; allocation `aln_local_orchestration_install_05s4_r02_20260811` is released and receipt `rcpt_local_orchestration_install_05s4_r02_20260811` is closed. 06A continues in its independent lane. 05B requires control-plane refreeze before any new implementation allocation. No push, release, deployment, live Codex mutation or target-project write. |
+
+## PRG-20260811-143 — Ticket 05B convergence decomposition
+
+| Field | Value |
+| --- | --- |
+| Router event | `ACTION_COMPLETED(05S4) -> CONVERGENCE_REVIEW -> TICKET_DECOMPOSITION -> NEXT_TICKET_SELECTED` |
+| Evidence | Old 05B revision-02 remains terminal immutable CR-98..CR-104 evidence. Integrated 05S1-05S4 now supply deterministic environment, bounded runner, strict protocol and lifecycle truth; rejected branch source is not reused. |
+| Decomposition | 05B1 observed proof/receipt/journal contracts -> 05B2 command-attempt classification -> 05B3 exhaustive compensation -> 05B4 transaction/oracle composition. Each child has one outcome and independent acceptance. |
+| Selection | 05B1 is the smallest dependency-free child and has no effects. 05B2-05B4, 05C and package Ticket 04 remain dependency-waiting. Numeric line ceilings are absent; scope, responsibilities, strict contracts, finite behavior and evidence govern quality. |
+
+## PRG-20260811-144 — Ticket 05B1 implementation dispatch
+
+| Field | Value |
+| --- | --- |
+| Router event | `TICKET_SELECTED -> TICKET_DISPATCH_REQUIRED -> IMPLEMENTATION_DISPATCH_CONFIRMED / IMPLEMENT` |
+| Project / ticket / closure | `prj-local-orchestration-installer-poc-20260808`; `05b1-codex-registration-contracts-and-journal`; `CLOSURE-LOCAL-INSTALL-T05B1-01`; C1-C4/T1-T4. |
+| Binding identifiers | Handoff `hnd_local_orchestration_install_05b1_20260811`; allocation `aln_local_orchestration_install_05b1_20260811`; receipt `rcpt_local_orchestration_install_05b1_20260811`; correlation `corr-local-orchestration-install-05b1-20260811`; question `q-local-orchestration-install-05b1-20260811`; side-context `scx-local-orchestration-install-05b1-20260811-01`. |
+| Owner / lane | Task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; reuse only clean `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` and its existing branch after an exact normal fast-forward from integrated 05S4 handoff to this handoff baseline. No new branch/worktree. |
+| Exact scope | New `codex_registration_contracts.py`, new `test_codex_registration_contracts.py`, and export-only `library/local_orchestration/__init__.py`. Existing source/tests are read-only. No command, filesystem, registration, removal, list, absence, live Codex, target-project or network effect. |
+| Return | One exact-scope implementation commit plus one `WorkProgressReport.md`-only handoff, with C1-C4 first-red/green/reverse evidence and full strict verification. Implementer works alone and makes no review, integration, downstream dispatch or Agent-control decision. |
