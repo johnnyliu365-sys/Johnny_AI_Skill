@@ -1528,3 +1528,13 @@
 | Lane | Release completed 05S3 allocation. Reuse only the clean `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` worktree and its existing `codex/implementation-codex-protocol-fixture-05s3` branch. Exact ancestry proves `008fac8` can fast-forward to this handoff baseline, so `FRESH_BRANCH_REQUIRED` is absent and no new branch/worktree is permitted. |
 | Scope / return | Read the frozen ticket instead of copying its contents. Implement only its six named Python paths with recorded first-red, smoke, focused/full/strict checks and zero residue; return one implementation commit and one `WorkProgressReport.md`-only handoff. No 05B/05C transaction, compensation, receipt, live Codex, target-project write, review decision, merge, push, release or deployment. |
 | Stop rule | `COMPLETED -> ACTION_COMPLETED`; any contract or requirement conflict returns typed `CHANGE_DETECTED`; any missing authority or unsafe baseline returns typed `HALT`. Blocking review stops without automatic correction. |
+
+## PRG-20260811-135 — Ticket 05S4 independent review
+
+| Field | Value |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED -> FINAL_CODE_REVIEW -> CHANGES_REQUESTED -> CORRECTION_HANDOFF_REQUIRED` |
+| Binding | Closure `CLOSURE-LOCAL-INSTALL-T05S4-01`; implementation `9086c0c62c0de1d9ad247caa6e9eabc95c816c46` plus whitespace-only `32b67b71858568eed5ecd7ab90ecd91709647b1f`; docs-only handoff `e4d00ddc4cb54be5706cfc136245302250259993`; report `doc/reviews/local-orchestration-installer/05s4-codex-lifecycle-oracle-code-review.md`. |
+| Independent evidence | Immutable export: focused 6/6, full 201/201, strict mypy 102 files and in-memory compile passed. Adversarial O4 duplicated one coherent foreign marketplace identity and received an accepted two-entry fresh list. Adversarial O6 injected ordinary fixture `OSError` after fixed command creation and observed `PROCESS_FAILED` plus command residue. |
+| Findings | CR-126 `IMPLEMENTATION_DEFECT / O4`; CR-127 `IMPLEMENTATION_DEFECT / O6`. This is the complete blocking batch for revision 01. |
+| Decision | `CHANGES_REQUESTED / REVISION_02_AUTHORIZED` by the owner's current instruction to inspect and dispatch the affected work. Same task/worktree/branch only; one additive correction and one docs-only handoff, followed by final review. No integration, 05B/05C refreeze, live Codex mutation, target-project write, push, release or deployment. |

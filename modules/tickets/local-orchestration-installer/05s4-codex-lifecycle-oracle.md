@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-02, AC-03, AC-06, AC-07 and AC-08 lifecycle seam |
 | Context / decision | `doc/context/local-orchestration-installer/main.md` / `PRG-20260811-106` |
-| State | `IN_PROGRESS / IMPLEMENTATION_DISPATCHED` |
+| State | `CHANGES_REQUESTED / REVISION_02_CORRECTION_REQUIRED` — CR-126 and CR-127 |
 | Dependency | Satisfied: 05S1, 05S2 and 05S3 independently approved and integrated by `504a3ec`, `6e24e06` and `43a1639` |
 | Implementation language | Python 3.11 |
 | Implementation responsibility | Codex task `019fcc9c-f34f-7d53-a313-c70c90bf3245`, model `gpt-5.6-terra`, reasoning `xhigh`, in the sole implementation worktree after exact receipt admission |
@@ -109,3 +109,23 @@ Fault timing, compensation, current-attempt authority and receipts remain
 exclusively with 05B/05C. Any blocking review stops without automatic
 correction. Only an independently approved and integrated 05S4 permits the
 control plane to refreeze 05B and 05C.
+
+## Revision-02 correction closure
+
+The project owner's `2026-08-11` instruction to inspect every affected ticket
+and dispatch the work authorizes one same-lane correction for the complete
+independent-review batch:
+
+- `CR-126 / O4`: reject a duplicate identity within either foreign collection
+  without rejecting O3's distinct owned/foreign authority records or the same
+  plugin display name carried by different plugin IDs.
+- `CR-127 / O6`: remove the exact ordinary fixed command file on every
+  ordinary dependency completion or block after command creation; a failed
+  exact cleanup returns `COMMAND_CLEANUP_FAILED`, and process-control
+  exceptions remain uncaught and unclassified.
+
+Only `contracts.py`, `oracle_child.py`, `oracle.py` and
+`test_codex_lifecycle_oracle.py` may change. Both regressions require first-red
+and reverse-mutation evidence. This is the sole correction review for
+`CLOSURE-LOCAL-INSTALL-T05S4-02`; any remaining blocker stops with
+`CONVERGENCE_REVIEW_REQUIRED`.

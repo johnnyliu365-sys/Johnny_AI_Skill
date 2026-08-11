@@ -124,7 +124,7 @@
 | Ticket 05S1 disposable environment core | DONE / APPROVED / INTEGRATED | Correction `41d5ce4`, handoff `e1087d3`, review `17ea1d5` and guarded merge `504a3ec`; post-merge verification passed. |
 | Ticket 05S2 bounded child-process runner | DONE / APPROVED / INTEGRATED | Revision-03 `33a8fa9` / `dba0621b`, review `c97b754`, guarded merge `6e24e06`; CR-124 resolved and post-merge verification passed. |
 | Ticket 05S3 Codex protocol fixture | DONE / APPROVED / INTEGRATED | Correction `4835b0f`, handoff `008fac8`, final review `c518e62` and guarded merge `43a1639`; CR-125 closed and post-merge verification passed. |
-| Ticket 05S4 Codex lifecycle oracle | IN_PROGRESS / IMPLEMENTATION_DISPATCHED | Closure `CLOSURE-LOCAL-INSTALL-T05S4-01`; ticket baseline `85ac8a0`; unique handoff/allocation/receipt prepared for the existing implementation task/worktree. |
+| Ticket 05S4 Codex lifecycle oracle | CHANGES_REQUESTED / REVISION_02_CORRECTION_REQUIRED | Independent review reproduced CR-126 duplicate-foreign acceptance and CR-127 fixed-command residue; correction stays on the existing task/worktree/branch. |
 | Ticket 05B transactional registration | BLOCKED / CONVERGENCE_REVIEW_REQUIRED | Terminal revision-02 review of `1a269411` / `ed74589` records CR-98..CR-104; no automatic correction or integration. |
 | Ticket 05C receipt removal/replay | PLANNED / DEPENDENCY_WAIT / REFREEZE_REQUIRED | Starts only after 05A/05B approval/integration and a finite behavior/rollback closure refreeze. |
 | Ticket 04 implementation | PLANNED / DEPENDENCY_WAIT | Pinned compiler is ready; package work waits for all decomposed Codex adapter children 05A–05C. |

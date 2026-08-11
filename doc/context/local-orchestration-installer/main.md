@@ -266,6 +266,17 @@ a clean exported checkout; foreign installed truth lacks a physical payload;
 SemVer, path-boundary and real process-exception evidence remain incomplete.
 No additional implementation dispatch or downstream refreeze is active.
 
+## Ticket 05S4 independent review boundary
+
+The immutable `e4d00dd` handoff passes 6/6 focused, 201/201 full and strict
+typing, but independent O4/O6 probes reproduce two blocking defects. Duplicate
+foreign identities are accepted and returned as list truth (CR-126), and an
+ordinary fixture failure after command creation leaves the fixed command file
+(CR-127). Revision-02 keeps the same ticket, task, sole implementation
+worktree and branch and may change only the four named oracle/test paths. 05B,
+05C, Ticket 04 and the reviewer-only orchestration change remain blocked from
+implementation while this sole lane is active.
+
 Owner decision `PRG-20260811-106` supersedes combined 05S as an implementation
 lane. New children are serial and single-purpose: 05S1 owns only disposable
 environment provision/teardown; 05S2 owns only a generic bounded child runner;
