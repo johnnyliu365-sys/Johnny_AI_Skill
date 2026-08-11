@@ -2102,3 +2102,13 @@
 | Child closure | I1 exact admission and mismatches pass; I2 is exactly 28/28 finite malformed-shape cells; I3 is exactly 16/16 no-trap-invocation cells across four process-control families. No broad catch, dynamic lookup or pre-admission untrusted operation was introduced. |
 | Parent closure / truthfulness | Complete parent R1-R5 remains green. Six isolated parent reversals plus both child I4 reversals independently turned red and were restored. Reviewed source returned to blob `a5c639b84fe75632bee1a8b6b2441fc3db9bbdca`. |
 | Decision | `APPROVED / READY_TO_MERGE`; CR-144 and CR-145 closed. Guarded integration is authorized; 05B3C remains dependency-waiting until integration. No live Codex mutation, target-project write, push, release or deployment. |
+
+## PRG-20260812-185 — Ticket 05B3B1 guarded integration
+
+| Field | Value |
+| --- | --- |
+| Router event | `REVIEW_APPROVED -> GUARDED_INTEGRATION -> ACTION_COMPLETED -> TICKET_05B3C_REFREEZE_READY` |
+| Integration | Merge `ac912904ccf83a71c87512d2e8b29e5f6f45fa8b` preserves formal review `382cc954eb3f59bbeb3656a1dcfe9d78ab686a59` as first parent and reviewed handoff `441bcc8f6959b6abc6a39749b57c992f6e5622fa` as second parent. Product source/test blobs match the reviewed handoff. |
+| Ledger resolution | The sole conflict was `doc/WorkProgressReport.md`; PRG-170 through PRG-184 are retained exactly once. Neither immutable parent was amended, reset, forced or overwritten. |
+| Post-merge verification | Focused 18/18 and full 254/254 unittest passed. Strict full-tree mypy and in-memory compile passed 114 files. Source sentinel, `git diff --check`, external-cache removal and repository residue checks passed. |
+| Completion | 05B3B1 is `COMPLETE / APPROVED / INTEGRATED`; allocation `aln_local_orchestration_install_05b3b1_20260812` is released and receipt `rcpt_local_orchestration_install_05b3b1_20260812` is closed against replay. 05B3C is unallocated and ready for ticket refreeze, not implementation. No live Codex mutation, target-project write, push, release or deployment. |

@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / unchanged AC-01, AC-02 and AC-07 compensation-state seam |
-| State | `REVIEW_APPROVED / READY_TO_MERGE` |
+| State | `COMPLETE / APPROVED / INTEGRATED` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B3B1-01` / I1-I5 |
 | Dependency | Integrated 05B1/05B2/05B3A; terminal 05B3B submission `4d5bbefe42e1d1ae3206b29e877f0556bda3ce4c`; ADR-20260811-004 revision 03 |
 | Control / implementation / reviewer | Current `main` / task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` / independent current `main` reviewer |
@@ -105,5 +105,6 @@ Implementation `b50699cfc4e10d94a3b8c135581b319cac161ed8` and docs-only
 handoff `441bcc8f6959b6abc6a39749b57c992f6e5622fa` passed the complete
 I1-I5 and parent R1-R5 terminal review, including all eight independent reverse
 mutations. The formal decision is `APPROVED / READY_TO_MERGE`; guarded
-integration is authorized, while 05B3C remains dependency-waiting until the
-integration is complete.
+integration `ac912904ccf83a71c87512d2e8b29e5f6f45fa8b` preserves the formal
+review as first parent and the reviewed handoff as second parent. 05B3C is now
+unblocked for control-plane ticket refreeze; it is not yet dispatched.

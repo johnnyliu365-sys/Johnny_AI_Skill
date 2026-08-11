@@ -2,13 +2,13 @@
 
 | Field | Value |
 | --- | --- |
-| Context state | `TICKET_05B3B1_REVIEW_APPROVED` |
-| Router event | `IMPLEMENTATION_COMPLETED / TERMINAL_REVIEW_APPROVED / GUARDED_INTEGRATION_READY` |
+| Context state | `TICKET_05B3B1_COMPLETE / TICKET_05B3C_REFREEZE_READY` |
+| Router event | `TERMINAL_REVIEW_APPROVED / GUARDED_INTEGRATION_COMPLETED / ACTION_COMPLETED` |
 | Delivery stage | `POC` |
 | Requirement change | `CHG-20260808-011` |
 | Baseline | `3367136` (`docs: decompose 05B3B identity admission`) |
 | Control-plane owner | Codex / current `main` worktree |
-| Implementation owner | 05B3A is integrated and released; 05B3B is terminal rejected; task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` completed reviewed 05B3B1 in existing `workflow-implementer-2`; 05B3C is unallocated |
+| Implementation owner | 05B3A and 05B3B1 are integrated and released; 05B3B is terminal rejected; 05B3C is unallocated pending ticket refreeze |
 | Required sources read | `AGENTS.md`, `Workflow.md` (Router, Wayfinder, Grill, change control, specification, tickets, role boundary), `Defined_wayfinder.md`, `CONTEXT.md`, `PRD.md`, `ProjectSchedule.md`, `doc/RequirementChangeLog.md`, existing plugin manifests / README, `library/workflow_router/`, and completed plugin / autonomous-collaboration POCs |
 
 ## Shared Context reference
@@ -485,13 +485,13 @@ no new worktree, copied rejected source or cross-lane read/write is permitted.
 | --- | --- | --- | --- | --- |
 | 05B3A | task `019fcc9c-f34f-7d53-a313-c70c90bf3245` / `workflow-implementation` | `codex/implementation-codex-safe-port-capability-05b3a` | correction `hnd_local_orchestration_install_05b3a_r02_20260812`; released `aln_local_orchestration_install_05b3a_20260811`; closed `rcpt_local_orchestration_install_05b3a_20260811` | Integrated by `8a13eb7`; no active lane |
 | 05B3B | task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` / `workflow-implementer-2` | `codex/implementation-codex-compensation-reducer-05b3b` | parent correction handoff and old allocation/receipt closed | Terminal rejected handoff `4d5bbef`; immutable ancestor only |
-| 05B3B1 | task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` / `workflow-implementer-2` | existing `codex/implementation-codex-compensation-reducer-05b3b` | `hnd_local_orchestration_install_05b3b1_20260812`; `aln_local_orchestration_install_05b3b1_20260812`; `rcpt_local_orchestration_install_05b3b1_20260812` | Terminal review approved `b50699c` / `441bcc8`; guarded integration pending |
+| 05B3B1 | task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` / `workflow-implementer-2` | existing `codex/implementation-codex-compensation-reducer-05b3b` | closed `hnd_local_orchestration_install_05b3b1_20260812`; released `aln_local_orchestration_install_05b3b1_20260812`; closed `rcpt_local_orchestration_install_05b3b1_20260812` | Integrated by `ac91290`; no active lane |
 
 The previous 05B3 allocation is closed as terminal rejected evidence; the
 completed 06A and 05B3A allocations were released by guarded integration.
-Only the 05B3B1 row is an active implementation lane. The owners may not read the
-other's worktree or use the other's unintegrated source; 05B3C remains
-unallocated.
+No implementation lane is active. The owners may not read the other's worktree
+or use uncommitted cross-lane source; 05B3C remains unallocated until its
+control-plane ticket refreeze and receipt are committed.
 
 Revision-02 independent reviews are recorded in the unique review reports.
 05B3A closes CR-137 through CR-139 and is integrated by `8a13eb7`.
@@ -509,3 +509,9 @@ clean worktree and branch; no `FRESH_BRANCH_REQUIRED` evidence exists. The
 terminal review must validate the complete resulting reducer against parent
 R1-R5 and child I1-I5. 05B3C remains unallocated until that child is approved
 and integrated.
+
+Terminal review `382cc954eb3f59bbeb3656a1dcfe9d78ab686a59` approved the child,
+and guarded merge `ac912904ccf83a71c87512d2e8b29e5f6f45fa8b` integrated the
+reviewed handoff. The allocation is released and the receipt is closed. 05B3C
+is now eligible only for a fresh control-plane ticket refreeze; no
+implementation dispatch has occurred.

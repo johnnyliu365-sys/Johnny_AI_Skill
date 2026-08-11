@@ -131,8 +131,8 @@
 | Ticket 05B3 exhaustive compensation | SUPERSEDED / CONVERGENCE_DECOMPOSED | Terminal rejected evidence retained; replaced by ADR-20260811-004 and 05B3A-05B3C. |
 | Ticket 05B3A safe port capability | COMPLETE / APPROVED / INTEGRATED | Revision-02 correction `a87af38`, handoff `0378655`, review `dda8ba4` and guarded merge `8a13eb7`; post-merge focused/full/type/compile passed and CR-137..CR-139 are closed. |
 | Ticket 05B3B pure compensation reducer | SUPERSEDED / CONVERGENCE_DECOMPOSED | Revision-02 `3f22551` / `4d5bbef` remains terminal rejected evidence; no third same-closure correction or integration. |
-| Ticket 05B3B1 recursive plan identity admission | REVIEW_APPROVED / READY_TO_MERGE | Implementation `b50699c`, handoff `441bcc8`; terminal I1-I5 plus parent R1-R5 review and all eight reversals passed. Guarded integration pending. |
-| Ticket 05B3C compensation composition | PLANNED / DEPENDENCY_WAIT | 05B3A is integrated; starts only after approved/integrated 05B3B1. |
+| Ticket 05B3B1 recursive plan identity admission | COMPLETE / APPROVED / INTEGRATED | Implementation `b50699c`, handoff `441bcc8`, review `382cc95`, merge `ac91290`; terminal I1-I5 plus parent R1-R5 and all eight reversals passed. |
+| Ticket 05B3C compensation composition | PLANNED / READY_FOR_TICKET_REFREEZE | Both 05B3A and 05B3B1 are integrated; closure, owner and receipt must now be frozen before dispatch. |
 | Ticket 05B4 registration composition | PLANNED / DEPENDENCY_WAIT | Final admission/add/proof/compensation/oracle composition remains serial behind 05B3C. |
 | Ticket 05C receipt removal/replay | PLANNED / DEPENDENCY_WAIT / REFREEZE_REQUIRED | Starts only after 05A/05B approval/integration and a finite behavior/rollback closure refreeze. |
 | Ticket 06A Codex role-profile capability proof | DONE / APPROVED_EVIDENCE / INSTALL_BLOCKED / INTEGRATED | Implementation `38e9a8b`, handoff `f6f186f`, review `62955ec`, guarded merge `de4141e`; actual installed-host result is `ROLE_ISOLATION_UNPROVEN / ACCESS_DENIED / OUTPUT_UNAVAILABLE`, so capability dependents stay blocked. |
