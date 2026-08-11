@@ -3,11 +3,11 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01, AC-02 and AC-07 effect-boundary seam |
-| State | `CHANGES_REQUESTED / TICKET_REFREEZE_REQUIRED` |
-| Closure | `CLOSURE-LOCAL-INSTALL-T05B3A-01` / A1-A5 |
+| State | `IN_PROGRESS / REVISION_02_CORRECTION_READY` |
+| Closure | `CLOSURE-LOCAL-INSTALL-T05B3A-02` / R1-R4 |
 | Dependency | Integrated 05B1/05B2 at control baseline; ADR-20260811-004 |
 | Control / implementation / reviewer | Current `main` / task `019fcc9c-f34f-7d53-a313-c70c90bf3245` / independent current `main` reviewer |
-| Worktree / branch | Existing `workflow-implementation`; new ticket branch required from the reviewed handoff because its current branch is immutable rejected 05B3 evidence |
+| Worktree / branch | Existing `workflow-implementation` / existing `codex/implementation-codex-safe-port-capability-05b3a`; additive correction only |
 | Language | Python 3.11; strict Pydantic/mypy |
 
 ## One observable outcome
@@ -41,27 +41,30 @@ branch is evidence only: no copy, cherry-pick, import or source reuse.
   instance method. Static/class methods, properties, custom descriptors,
   per-instance callable objects, built-ins and variadic or wrong-arity
   functions reject; unrelated class members do not affect admission.
-- Lookup must bypass caller overrides: obtain the concrete class through the
-  built-in `object.__getattribute__`, then read `__mro__` and each class
-  `__dict__` through the built-in `type.__getattribute__`. Runtime arity uses
-  safe code/default metadata of the raw function only. Calling
-  `inspect.signature()` or following `__signature__` / `__wrapped__` on
-  caller-controlled data is forbidden.
+- Lookup must bypass caller descriptors and equality: obtain the concrete class
+  only with built-in `type(candidate)`. Capture the trusted `__mro__` and
+  `__dict__` getset descriptors from immutable built-in `type.__dict__`, then
+  invoke those raw descriptors to obtain the real MRO and raw class mappings.
+  Do not use `object.__getattribute__` or `type.__getattribute__` for
+  caller-owned class metadata. Built-in candidate exclusions and all exact
+  class checks use identity (`is`) only. Runtime arity uses safe code/default
+  metadata of the raw function only. Calling `inspect.signature()` or
+  following `__signature__` / `__wrapped__` on caller-controlled data is
+  forbidden.
 - Raw functions are bound explicitly into the exact frozen capability. The
   factory never dynamically gets a candidate member and never calls one.
 - Strong request/manifest and five operation return contracts are defined here
   for later 05B3C use; no raw output, exception text, receipt, absolute path or
   registration success enters admission results.
 
-## Acceptance Closure Set — revision 01
+## Acceptance Closure Set — revision 02
 
 | ID | Finite completion rule |
 | --- | --- |
-| `A1` | A valid plain-method adapter returns one exact frozen capability; all five bound operations retain distinct typed signatures. Admission itself produces zero reads/calls beyond static function metadata. |
-| `A2` | For each of five names, missing, non-callable, property, staticmethod, classmethod, custom descriptor, per-instance callable, zero/two-request, variadic and required-keyword-only shapes return finite `INVALID_PORT` with the exact reason and zero descriptor/operation calls. |
-| `A3` | Candidate and callable traps on `__getattribute__`, `__get__`, `__signature__` and `__wrapped__` remain unread. A trap that would raise `RuntimeError`, `MemoryError`, `KeyboardInterrupt` or `SystemExit` cannot escape admission. |
-| `A4` | `None`, empty/blank text and tuple/list/dict candidates reject identically before effects. Extra unrelated class members neither grant nor remove the five required operations. |
-| `A5` | Only after successful admission may a caller invoke a bound operation. An exception from that actual operation is not swallowed or reclassified by the capability. Serialized admission results are metadata-only. |
+| `R1` | Replace the unsafe revision-01 primitives exactly as specified above. A valid plain-method adapter returns one frozen five-operation capability, while admission reads no caller descriptor, invokes no caller equality/operation and produces only metadata. |
+| `R2` | Cross candidate `__class__`, metaclass `__mro__`, metaclass `__dict__` and metaclass `__eq__` traps with `RuntimeError`, `MemoryError`, `KeyboardInterrupt` and `SystemExit`: all 16 cells remain unread and admission completes finitely. Preserve the revision-01 instance/member/callable trap table and all invalid-shape cells. |
+| `R3` | Preserve every passing revision-01 A1-A5 behavior: exact five-name/arity admission, frozen typed binding, null/text/container rejection, unrelated-member neutrality, metadata-only serialization and propagation only from an explicitly invoked admitted operation. |
+| `R4` | Independently reverse (a) candidate class acquisition to `object.__getattribute__`, (b) MRO or class-dictionary acquisition to `type.__getattribute__`, (c) an exact class identity check to equality/membership, (d) code-metadata arity to `inspect.signature`, and (e) one descriptor rejection to admission. Each isolated reverse must turn its named test red and be restored. |
 
 ## TDD design and CodeReview.md §2.1 mapping
 
@@ -77,9 +80,8 @@ branch is evidence only: no copy, cherry-pick, import or source reuse.
 - **Authority bypass (class 3):** direct use of an unadmitted candidate is not
   part of the public capability API; copied/malformed capability construction
   cannot be accepted as an admission result.
-- **Truthfulness (class 7 / CR):** reverse static lookup to dynamic `getattr`,
-  replace code-object validation with `inspect.signature`, and accept one
-  descriptor/callable shape; each isolated reverse must make the named test red.
+- **Truthfulness (class 7 / CR):** the five independent R4 reversals are
+  mandatory; the handoff must name each red test and restoration.
 
 First red must be captured before production source exists. Focused/full
 unittest, strict full-tree mypy with a removed external cache, in-memory
@@ -92,15 +94,14 @@ deployment is authorized.
 
 | Field | Value |
 | --- | --- |
-| Project / closure | `prj-local-orchestration-installer-poc-20260808` / `CLOSURE-LOCAL-INSTALL-T05B3A-01` |
-| Handoff | `hnd_local_orchestration_install_05b3a_20260811` |
+| Project / closure | `prj-local-orchestration-installer-poc-20260808` / `CLOSURE-LOCAL-INSTALL-T05B3A-02` |
+| Correction handoff | `hnd_local_orchestration_install_05b3a_r02_20260812` |
 | Allocation / receipt | `aln_local_orchestration_install_05b3a_20260811` / `rcpt_local_orchestration_install_05b3a_20260811` |
-| Correlation / question | `corr-local-orchestration-install-05b3a-20260811` / `q-local-orchestration-install-05b3a-20260811` |
-| Side context | `scx-local-orchestration-install-05b3a-20260811-01` |
-| Authority | Owner instruction to open and parallelize the independently safe tickets; ADR-20260811-004; convergence record `PRG-20260811-167` |
-| Ticket-doc baseline | `f60d90ffba7a8cc2b3c7c7eb7a24fe06883b932d` |
-| Expected lane admission | Preserve rejected branch `codex/implementation-codex-protocol-fixture-05s3` at `89446d94b57f73b202f5a34a12dd763ae0904988`, then create `codex/implementation-codex-safe-port-capability-05b3a` from the exact reviewed handoff commit in the same existing worktree. |
-| Return | One exact-scope implementation commit, then one `doc/WorkProgressReport.md`-only handoff reserved as unique `PRG-20260811-170`. |
+| Correlation / question | `corr-local-orchestration-install-05b3a-r02-20260812` / `q-local-orchestration-install-05b3a-r02-20260812` |
+| Side context | `scx-local-orchestration-install-05b3a-20260812-02` |
+| Authority | Owner instruction to continue parallel implementation; ADR-20260811-004 revision 02; review `14fda317538f6661573cf687468f5291ced84ff7` |
+| Lane admission | Exact clean submitted HEAD `0275daf172ca3536f7ab6b9fff880bb54478d9af` on the existing branch/worktree. Do not create/switch/reset/rebase/merge/cherry-pick a branch or worktree. |
+| Return | One additive exact-scope correction commit, then one `doc/WorkProgressReport.md`-only handoff reserved as unique `PRG-20260812-176`. |
 
 ## Initial review record
 
@@ -110,5 +111,6 @@ and handoff `0275daf172ca3536f7ab6b9fff880bb54478d9af` is
 complete initial blocking batch. Revision 01 incorrectly prescribed lookup
 primitives that still execute candidate/metaclass data descriptors; the
 implementation also invokes caller metaclass equality and the committed
-evidence omits those paths. No correction or integration is authorized until
-the control plane freezes revision 02.
+evidence omits those paths. Revision 02 above is the complete correction
+contract for CR-137 through CR-139. No unrelated hardening, integration or
+05B3C work is authorized.

@@ -87,4 +87,3 @@ boundary have no other blocking finding. No integration or 05B3C dispatch is
 authorized. The control plane must correct and refreeze the ticket before the
 same owner may append one correction implementation and one WPR-only handoff
 on the existing branch.
-

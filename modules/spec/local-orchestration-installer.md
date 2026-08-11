@@ -95,12 +95,17 @@ This POC has no company-project frontend. Its formal interaction boundaries are 
 - **States / accessibility:** setup and uninstall must expose success, progress, empty/no-host, error/blocked and retry state in text, without relying on colour alone. No permission beyond the invoking user is requested.
 
 Compensation adapters cross a closed capability boundary. An untrusted adapter
-candidate is admitted by static plain-method inspection into a frozen typed
-capability before any no-compensation or effect path. Candidate or callable
-descriptors, `inspect.signature()` over caller-controlled data and arbitrary
-callable objects are forbidden. Compensation planning/reduction is a separate
-pure domain capability; the later composition root alone executes admitted
-operations and validates exact manifest-bound observations.
+candidate is admitted by built-in `type(candidate)` plus raw trusted getset
+descriptors captured from immutable built-in `type.__dict__`; caller-owned
+class descriptors and equality are never executed. Only raw plain instance
+methods may enter a frozen typed capability before any no-compensation or
+effect path. `object/type.__getattribute__` over caller-owned class metadata,
+`inspect.signature()` over caller-controlled data and arbitrary callable
+objects are forbidden. Compensation planning/reduction is a separate pure
+domain capability. Its exact order is removal(s), plugin-list absence,
+marketplace absence, then installed-location absence; its result preserves the
+exact request/attempt-bound residual state. The later composition root alone
+executes admitted operations and validates exact manifest-bound observations.
 
 ## Implementation handoff and return contract
 

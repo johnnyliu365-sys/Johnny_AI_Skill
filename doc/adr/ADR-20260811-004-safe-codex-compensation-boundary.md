@@ -24,18 +24,25 @@ finitely before any effect. The implementation boundary must be narrowed.
 Split compensation into three independently reviewable capabilities:
 
 1. **05B3A — closed port capability.** A factory receives an untrusted
-   `object`, obtains its concrete class through the built-in
-   `object.__getattribute__`, walks class dictionaries through the built-in
-   `type.__getattribute__`, accepts the five required names only when their raw
-   values are plain Python `FunctionType` instance methods with finite
-   code-object arity, and binds those functions without resolving candidate
-   attributes. It returns either a frozen typed capability or a finite
-   rejection. It never calls `inspect.signature()` on caller-controlled data
-   and never invokes a caller-controlled descriptor or operation.
+   `object`, obtains its concrete class only with built-in `type(candidate)`,
+   and obtains the real class MRO and raw class dictionaries only through the
+   trusted getset descriptors captured from immutable built-in `type.__dict__`.
+   It accepts the five required names only when their raw values are plain
+   Python `FunctionType` instance methods with finite code-object arity, then
+   binds those functions without resolving candidate attributes. It returns
+   either a frozen typed capability or a finite rejection. It never calls
+   `object.__getattribute__` or `type.__getattribute__` for caller-owned class
+   metadata, never compares an untrusted class by equality, never calls
+   `inspect.signature()` on caller-controlled data, and never invokes a
+   caller-controlled descriptor or operation.
 2. **05B3B — pure planner/reducer.** A deterministic domain function derives
    the exact ordered compensation plan from an integrated 05B1 journal and
-   reduces a complete finite observation sequence to residual authority. It
-   has no port, callable, descriptor, command or filesystem dependency.
+   reduces a complete finite observation sequence to a recursively strict
+   residual journal. The residual record preserves the exact request and
+   attempt identity plus each original `MAY_EXIST`, `OWNED`, `PREEXISTING` or
+   `NOT_ATTEMPTED` state; only the corresponding fresh absence proof may
+   replace current-attempt removal authority with `NOT_ATTEMPTED`. It has no
+   port, callable, descriptor, command or filesystem dependency.
 3. **05B3C — thin composition.** Only after 05B3A and 05B3B are independently
    approved and integrated, a coordinator executes the validated capability
    in the reducer's order, validates returned observations against the exact
@@ -71,3 +78,7 @@ dependency-waiting and owns all cross-module composition.
 
 - Initial accepted convergence decision following terminal review
   `97167046ff8a3889d36e369566b8e6342bdb5691`.
+- Revision 02 follows review `14fda317538f6661573cf687468f5291ced84ff7`:
+  it replaces descriptor-resolving lookup primitives, freezes identity-only
+  class checks, names the exact proof order, and restores the exact residual
+  current-attempt identity/state contract without changing product behavior.

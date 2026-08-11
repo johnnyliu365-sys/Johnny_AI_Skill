@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| Context state | `TICKET_05B3A_05B3B_INITIAL_REVIEW_CHANGES_REQUESTED / REFREEZE_REQUIRED` |
-| Router event | `IMPLEMENTATION_COMPLETED → REVIEW → TICKET_DEFECT` |
+| Context state | `TICKET_05B3A_05B3B_REVISION_02_CORRECTION_READY` |
+| Router event | `IMPLEMENTATION_COMPLETED → REVIEW → TICKET_DEFECT → TICKET_REFROZEN` |
 | Delivery stage | `POC` |
 | Requirement change | `CHG-20260808-011` |
 | Baseline | `9716704` (`docs: record Ticket 05B3 terminal review`) |
@@ -481,10 +481,10 @@ no new worktree, copied rejected source or cross-lane read/write is permitted.
 
 ## 05B3A / 05B3B parallel allocation
 
-| Ticket | Owner / existing worktree | New active branch | Handoff / allocation / receipt | Expected baseline |
+| Ticket | Owner / existing worktree | Active branch | Handoff / allocation / receipt | Revision-02 lane baseline |
 | --- | --- | --- | --- | --- |
-| 05B3A | task `019fcc9c-f34f-7d53-a313-c70c90bf3245` / `workflow-implementation` | `codex/implementation-codex-safe-port-capability-05b3a` | `hnd_local_orchestration_install_05b3a_20260811` / `aln_local_orchestration_install_05b3a_20260811` / `rcpt_local_orchestration_install_05b3a_20260811` | Exact reviewed dispatch handoff after ticket-doc baseline `f60d90ffba7a8cc2b3c7c7eb7a24fe06883b932d` |
-| 05B3B | task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` / `workflow-implementer-2` | `codex/implementation-codex-compensation-reducer-05b3b` | `hnd_local_orchestration_install_05b3b_20260811` / `aln_local_orchestration_install_05b3b_20260811` / `rcpt_local_orchestration_install_05b3b_20260811` | Exact reviewed dispatch handoff after owner-only cleanup of `.mypy_cache` |
+| 05B3A | task `019fcc9c-f34f-7d53-a313-c70c90bf3245` / `workflow-implementation` | `codex/implementation-codex-safe-port-capability-05b3a` | correction `hnd_local_orchestration_install_05b3a_r02_20260812`; retained `aln_local_orchestration_install_05b3a_20260811` / `rcpt_local_orchestration_install_05b3a_20260811` | Exact clean handoff `0275daf172ca3536f7ab6b9fff880bb54478d9af` |
+| 05B3B | task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` / `workflow-implementer-2` | `codex/implementation-codex-compensation-reducer-05b3b` | correction `hnd_local_orchestration_install_05b3b_r02_20260812`; retained `aln_local_orchestration_install_05b3b_20260811` / `rcpt_local_orchestration_install_05b3b_20260811` | Exact clean handoff `aab7bf5df0c4501ba30e364fa4c76936412c4282` |
 
 The previous 05B3 allocation is closed as terminal rejected evidence; the
 completed 06A allocation was released by its guarded integration. Each row is
@@ -493,7 +493,9 @@ the other's unintegrated source; 05B3C remains unallocated.
 
 Initial independent reviews of 05B3A and 05B3B are recorded in the unique
 review reports. Normal focused/full/type/compile verification passes for both,
-but CR-137 through CR-143 block integration. The control plane must first
-refreeze safe class-dictionary primitives, exact proof order and exact residual
-current-attempt identity/state. Both implementation branches remain immutable
-submitted evidence until a reviewed revision-02 correction handoff exists.
+but CR-137 through CR-143 block integration. Revision 02 now freezes built-in
+`type(candidate)` plus trusted raw `type.__dict__` getset descriptors and
+identity-only class checks for 05B3A. It freezes removal(s), plugin-list proof,
+marketplace proof, installed-location proof plus an exact request/attempt-bound
+residual journal for 05B3B. Corrections stay additive on the two existing
+branches/worktrees; no new lane, integration or 05B3C dispatch is authorized.

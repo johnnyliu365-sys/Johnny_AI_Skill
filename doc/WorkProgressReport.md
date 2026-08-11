@@ -1945,3 +1945,21 @@
 | Blocking batch | CR-140/CR-141 `TICKET_DEFECT`: proof order and exact residual current-attempt identity/state were not frozen. CR-142 `IMPLEMENTATION_DEFECT`: wrong-plan metaclass equality lets four exceptions escape. CR-143 `EVIDENCE_DEFECT`: only three of five named reverse mutations were recorded. |
 | Reproduction | Wrong-plan equality escaped `RuntimeError`, `MemoryError`, `KeyboardInterrupt` and `SystemExit`. Separate MAY_EXIST and OWNED marketplace-residue plans serialized to identical effect-only results; current proof order differs from the unchanged prior D3 sequence. |
 | Decision | `CHANGES_REQUESTED / TICKET_REFREEZE_REQUIRED`. No integration, 05B3C dispatch, live Codex mutation, target-project write, push, release or deployment. |
+
+## PRG-20260812-174 — Ticket 05B3A revision-02 refreeze and correction handoff
+
+| Field | Value |
+| --- | --- |
+| Router event | `TICKET_DEFECT(CR-137..CR-139) -> TICKET_REFROZEN -> CORRECTION_DISPATCH_READY` |
+| Binding | Closure `CLOSURE-LOCAL-INSTALL-T05B3A-02`; correction handoff `hnd_local_orchestration_install_05b3a_r02_20260812`; existing allocation/receipt retained. |
+| Frozen correction | Use only built-in `type(candidate)`, raw trusted `type.__dict__` getset descriptors and identity-only class checks. Add the 16 class/metaclass trap cells and five independent reverse mutations; preserve all passing revision-01 behavior. |
+| Lane / return | Same task, worktree and branch at clean `0275daf172ca3536f7ab6b9fff880bb54478d9af`; additive two-file correction then WPR-only return `PRG-20260812-176`. No branch/worktree creation or integration. |
+
+## PRG-20260812-175 — Ticket 05B3B revision-02 refreeze and correction handoff
+
+| Field | Value |
+| --- | --- |
+| Router event | `TICKET_DEFECT(CR-140..CR-143) -> TICKET_REFROZEN -> CORRECTION_DISPATCH_READY` |
+| Binding | Closure `CLOSURE-LOCAL-INSTALL-T05B3B-02`; correction handoff `hnd_local_orchestration_install_05b3b_r02_20260812`; existing allocation/receipt retained. |
+| Frozen correction | Exact proof order is plugin lists, marketplace, installed location after authorized removals. Every result preserves exact request/attempt-bound residual states; wrong-plan checks are identity-only. Six independent reversals are required. |
+| Lane / return | Same task, worktree and branch at clean `aab7bf5df0c4501ba30e364fa4c76936412c4282`; additive two-file correction then WPR-only return `PRG-20260812-177`. No cross-lane read, effect, branch/worktree creation or integration. |

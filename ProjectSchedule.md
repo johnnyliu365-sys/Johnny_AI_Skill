@@ -129,8 +129,8 @@
 | Ticket 05B1 registration contracts/journal | DONE / APPROVED / INTEGRATED | Correction `dc57ff9`, handoff `1df30ae`, review `36ec95c` and guarded merge `bbc7de5`; CR-128..CR-132 closed and post-merge verification passed. |
 | Ticket 05B2 command-attempt classification | COMPLETE / APPROVED / INTEGRATED | Corrected strict classifier and full C1-C4 matrix integrated by `c97505c`; completion recorded by `ef45f65`. |
 | Ticket 05B3 exhaustive compensation | SUPERSEDED / CONVERGENCE_DECOMPOSED | Terminal rejected evidence retained; replaced by ADR-20260811-004 and 05B3A-05B3C. |
-| Ticket 05B3A safe port capability | CHANGES_REQUESTED / TICKET_REFREEZE_REQUIRED | Initial review CR-137..CR-139: prescribed class lookup still executes candidate/metaclass descriptors; equality and evidence gaps remain. No integration. |
-| Ticket 05B3B pure compensation reducer | CHANGES_REQUESTED / TICKET_REFREEZE_REQUIRED | Initial review CR-140..CR-143: proof order/residual identity were under-specified, wrong-plan equality escapes, and reverse evidence is incomplete. No integration. |
+| Ticket 05B3A safe port capability | IN_PROGRESS / REVISION_02_CORRECTION_READY | CR-137..CR-139 refrozen around built-in `type(candidate)`, raw trusted `type.__dict__` getset descriptors, identity-only checks and the 16-cell trap matrix. Same branch/worktree; no integration. |
+| Ticket 05B3B pure compensation reducer | IN_PROGRESS / REVISION_02_CORRECTION_READY | CR-140..CR-143 refrozen with the exact proof order, request/attempt-bound residual journal, identity-only wrong-plan checks and complete reverse evidence. Same branch/worktree; no integration. |
 | Ticket 05B3C compensation composition | PLANNED / DEPENDENCY_WAIT | Starts only after 05B3A and 05B3B are independently approved and integrated. |
 | Ticket 05B4 registration composition | PLANNED / DEPENDENCY_WAIT | Final admission/add/proof/compensation/oracle composition remains serial behind 05B3C. |
 | Ticket 05C receipt removal/replay | PLANNED / DEPENDENCY_WAIT / REFREEZE_REQUIRED | Starts only after 05A/05B approval/integration and a finite behavior/rollback closure refreeze. |
