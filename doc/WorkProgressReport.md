@@ -1432,3 +1432,14 @@
 | Resolution | The sole conflict was `doc/WorkProgressReport.md`. Resolution retained each PRG-114 through PRG-124 record exactly once in numeric order; no source conflict or silent discard occurred. |
 | Post-merge verification | Focused 12/12; full 189/189; strict mypy 91 files with removed external cache; in-memory compile 91 files; `git diff --check`; zero repository cache, staging-root, junction-target and late-sentinel residue. |
 | Completion | 05S2 is `COMPLETE / APPROVED / INTEGRATED`; allocation `aln_local_orchestration_install_05s2_r03_20260811` is released and receipt `rcpt_local_orchestration_install_05s2_r03_20260811` is closed. 05S3 is `PLANNED / READY / NOT_DISPATCHED`. No push, release, deployment, live Codex mutation or target-project access. |
+
+## PRG-20260811-126 — Ticket 05S3 protocol-fixture handoff
+
+| Field | Value |
+| --- | --- |
+| Router event | `NEXT_UNBLOCKED_TICKET_SELECTED → TICKET_FROZEN → IMPLEMENTATION_DISPATCH_CONFIRMED / IMPLEMENT` |
+| Ticket / closure | `05s3-codex-protocol-fixture`; `CLOSURE-LOCAL-INSTALL-T05S3-01`; D1-D4/T1-T4 |
+| Binding identifiers | Handoff `hnd_local_orchestration_install_05s3_20260811`; allocation `aln_local_orchestration_install_05s3_20260811`; receipt `rcpt_local_orchestration_install_05s3_20260811`; correlation `corr-local-orchestration-install-05s3-20260811`; question `q-local-orchestration-install-05s3-20260811`; owner task `019fcc9c-f34f-7d53-a313-c70c90bf3245` |
+| Authority / baselines | Program authority `PRG-20260809-042`; owner delivery confirmation in this task; dependency merge `6e24e06`; ticket-doc `9df3fe9f912593e9936e12992a1010bedf015c9f`; this record's commit is the handoff-doc baseline. |
+| Lane | Reuse only `C:\Users\<user>\Desktop\AI控制工作workflow-implementation`; create one new-ticket branch `codex/implementation-codex-protocol-fixture-05s3` from the exact handoff-doc baseline. No new worktree. |
+| Scope / return | Implement only the five Python paths named in the ticket, then one `WorkProgressReport.md`-only return commit. Integrated 05S1/05S2/05A are read-only; rejected combined-05S source is evidence only. Any blocker returns typed `HALT`/`CHANGE_DETECTED`; no automatic correction, review decision, integration, 05S4, push, release, deployment, live Codex mutation or target-project write. |
