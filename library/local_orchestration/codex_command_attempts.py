@@ -58,7 +58,7 @@ class CodexPreStartFailure(_StrictModel):
 
     target: CodexCommandTarget
     reason: CodexPreStartFailureReason
-    start_state: Literal[CodexCommandStartState.NOT_STARTED] = CodexCommandStartState.NOT_STARTED
+    start_state: Literal[CodexCommandStartState.NOT_STARTED]
 
 
 class CodexStartedFailure(_StrictModel):
@@ -66,22 +66,22 @@ class CodexStartedFailure(_StrictModel):
 
     target: CodexCommandTarget
     reason: CodexStartedFailureReason
-    start_state: Literal[CodexCommandStartState.STARTED] = CodexCommandStartState.STARTED
+    start_state: Literal[CodexCommandStartState.STARTED]
 
 
 class CodexMarketplaceAddConfirmed(_StrictModel):
     """A strict marketplace confirmation, distinct from a plugin confirmation."""
 
-    target: Literal[CodexCommandTarget.MARKETPLACE_ADD] = CodexCommandTarget.MARKETPLACE_ADD
-    start_state: Literal[CodexCommandStartState.STARTED] = CodexCommandStartState.STARTED
+    target: Literal[CodexCommandTarget.MARKETPLACE_ADD]
+    start_state: Literal[CodexCommandStartState.STARTED]
     already_added: bool
 
 
 class CodexPluginAddConfirmed(_StrictModel):
     """A strict plugin confirmation with no caller-manufactured final authority."""
 
-    target: Literal[CodexCommandTarget.PLUGIN_ADD] = CodexCommandTarget.PLUGIN_ADD
-    start_state: Literal[CodexCommandStartState.STARTED] = CodexCommandStartState.STARTED
+    target: Literal[CodexCommandTarget.PLUGIN_ADD]
+    start_state: Literal[CodexCommandStartState.STARTED]
 
 
 CodexCommandObservation: TypeAlias = (
@@ -138,18 +138,88 @@ def _journal_rejection(reason: CodexRegistrationRejectReason) -> CodexCommandCla
     return CodexCommandClassificationRejected(reason=CodexCommandClassificationRejectReason.JOURNAL_INVALID)
 
 
+def _pre_start_fields_are_exact(observation: CodexPreStartFailure) -> bool:
+    return (
+        type(observation.target) is CodexCommandTarget
+        and type(observation.reason) is CodexPreStartFailureReason
+        and observation.start_state is CodexCommandStartState.NOT_STARTED
+    )
+
+
+def _started_failure_fields_are_exact(observation: CodexStartedFailure) -> bool:
+    return (
+        type(observation.target) is CodexCommandTarget
+        and type(observation.reason) is CodexStartedFailureReason
+        and observation.start_state is CodexCommandStartState.STARTED
+    )
+
+
+def _marketplace_confirmation_fields_are_exact(observation: CodexMarketplaceAddConfirmed) -> bool:
+    return (
+        observation.target is CodexCommandTarget.MARKETPLACE_ADD
+        and observation.start_state is CodexCommandStartState.STARTED
+        and type(observation.already_added) is bool
+    )
+
+
+def _plugin_confirmation_fields_are_exact(observation: CodexPluginAddConfirmed) -> bool:
+    return (
+        observation.target is CodexCommandTarget.PLUGIN_ADD
+        and observation.start_state is CodexCommandStartState.STARTED
+    )
+
+
 def _revalidate_observation(
     observation: CodexCommandObservation,
 ) -> CodexCommandObservation | CodexCommandClassificationRejected:
     try:
         if isinstance(observation, CodexPreStartFailure):
-            return CodexPreStartFailure.model_validate_json(observation.model_dump_json(warnings=False))
+            if not _pre_start_fields_are_exact(observation):
+                return CodexCommandClassificationRejected(
+                    reason=CodexCommandClassificationRejectReason.INVALID_OBSERVATION
+                )
+            return CodexPreStartFailure.model_validate(
+                {
+                    "target": observation.target,
+                    "reason": observation.reason,
+                    "start_state": observation.start_state,
+                }
+            )
         if isinstance(observation, CodexStartedFailure):
-            return CodexStartedFailure.model_validate_json(observation.model_dump_json(warnings=False))
+            if not _started_failure_fields_are_exact(observation):
+                return CodexCommandClassificationRejected(
+                    reason=CodexCommandClassificationRejectReason.INVALID_OBSERVATION
+                )
+            return CodexStartedFailure.model_validate(
+                {
+                    "target": observation.target,
+                    "reason": observation.reason,
+                    "start_state": observation.start_state,
+                }
+            )
         if isinstance(observation, CodexMarketplaceAddConfirmed):
-            return CodexMarketplaceAddConfirmed.model_validate_json(observation.model_dump_json(warnings=False))
+            if not _marketplace_confirmation_fields_are_exact(observation):
+                return CodexCommandClassificationRejected(
+                    reason=CodexCommandClassificationRejectReason.INVALID_OBSERVATION
+                )
+            return CodexMarketplaceAddConfirmed.model_validate(
+                {
+                    "target": observation.target,
+                    "start_state": observation.start_state,
+                    "already_added": observation.already_added,
+                }
+            )
         if isinstance(observation, CodexPluginAddConfirmed):
-            return CodexPluginAddConfirmed.model_validate_json(observation.model_dump_json(warnings=False))
+            if not _plugin_confirmation_fields_are_exact(observation):
+                return CodexCommandClassificationRejected(
+                    reason=CodexCommandClassificationRejectReason.INVALID_OBSERVATION
+                )
+            return CodexPluginAddConfirmed.model_validate(
+                {
+                    "target": observation.target,
+                    "start_state": observation.start_state,
+                }
+            )
     except (AttributeError, TypeError, ValidationError, ValueError):
         return CodexCommandClassificationRejected(reason=CodexCommandClassificationRejectReason.INVALID_OBSERVATION)
     return CodexCommandClassificationRejected(reason=CodexCommandClassificationRejectReason.INVALID_OBSERVATION)

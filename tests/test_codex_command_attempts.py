@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import cast
 import unittest
 
-from pydantic import ValidationError
+from pydantic import BaseModel, ValidationError
 
 from library.local_orchestration.codex_command_attempts import (
     CodexCommandClassificationRejectReason,
@@ -63,14 +63,37 @@ def pre_start(
     target: CodexCommandTarget,
     reason: CodexPreStartFailureReason,
 ) -> CodexPreStartFailure:
-    return CodexPreStartFailure(target=target, reason=reason)
+    return CodexPreStartFailure(
+        target=target,
+        reason=reason,
+        start_state=CodexCommandStartState.NOT_STARTED,
+    )
 
 
 def started_failure(
     target: CodexCommandTarget,
     reason: CodexStartedFailureReason,
 ) -> CodexStartedFailure:
-    return CodexStartedFailure(target=target, reason=reason)
+    return CodexStartedFailure(
+        target=target,
+        reason=reason,
+        start_state=CodexCommandStartState.STARTED,
+    )
+
+
+def marketplace_confirmation(already_added: bool) -> CodexMarketplaceAddConfirmed:
+    return CodexMarketplaceAddConfirmed(
+        target=CodexCommandTarget.MARKETPLACE_ADD,
+        start_state=CodexCommandStartState.STARTED,
+        already_added=already_added,
+    )
+
+
+def plugin_confirmation() -> CodexPluginAddConfirmed:
+    return CodexPluginAddConfirmed(
+        target=CodexCommandTarget.PLUGIN_ADD,
+        start_state=CodexCommandStartState.STARTED,
+    )
 
 
 class UnexpectedJournal:
@@ -84,6 +107,212 @@ class UnexpectedJournal:
 
 
 class CodexCommandAttemptTests(unittest.TestCase):
+    def test_t1_c1_requires_every_declared_observation_field(self) -> None:
+        observation_payloads: tuple[tuple[type[BaseModel], dict[str, object]], ...] = (
+            (
+                CodexPreStartFailure,
+                {
+                    "target": CodexCommandTarget.MARKETPLACE_ADD,
+                    "reason": CodexPreStartFailureReason.ACCESS_DENIED,
+                    "start_state": CodexCommandStartState.NOT_STARTED,
+                },
+            ),
+            (
+                CodexStartedFailure,
+                {
+                    "target": CodexCommandTarget.PLUGIN_ADD,
+                    "reason": CodexStartedFailureReason.NONZERO_EXIT,
+                    "start_state": CodexCommandStartState.STARTED,
+                },
+            ),
+            (
+                CodexMarketplaceAddConfirmed,
+                {
+                    "target": CodexCommandTarget.MARKETPLACE_ADD,
+                    "start_state": CodexCommandStartState.STARTED,
+                    "already_added": False,
+                },
+            ),
+            (
+                CodexPluginAddConfirmed,
+                {
+                    "target": CodexCommandTarget.PLUGIN_ADD,
+                    "start_state": CodexCommandStartState.STARTED,
+                },
+            ),
+        )
+        for model_type, payload in observation_payloads:
+            for missing_field in payload:
+                with self.subTest(model=model_type.__name__, missing=missing_field):
+                    missing_payload = dict(payload)
+                    del missing_payload[missing_field]
+                    with self.assertRaises(ValidationError):
+                        model_type.model_validate(missing_payload)
+
+    def test_t1_c1_rejects_constructed_raw_python_literals(self) -> None:
+        raw_cases = (
+            (
+                CodexPreStartFailure.model_construct(
+                    target="MARKETPLACE_ADD",
+                    reason="ACCESS_DENIED",
+                    start_state="NOT_STARTED",
+                ),
+                journal(CodexAttemptEffectState.NOT_ATTEMPTED, CodexAttemptEffectState.NOT_ATTEMPTED),
+            ),
+            (
+                CodexStartedFailure.model_construct(
+                    target="MARKETPLACE_ADD",
+                    reason="NONZERO_EXIT",
+                    start_state="STARTED",
+                ),
+                journal(CodexAttemptEffectState.NOT_ATTEMPTED, CodexAttemptEffectState.NOT_ATTEMPTED),
+            ),
+            (
+                CodexMarketplaceAddConfirmed.model_construct(
+                    target="MARKETPLACE_ADD",
+                    start_state="STARTED",
+                    already_added=False,
+                ),
+                journal(CodexAttemptEffectState.NOT_ATTEMPTED, CodexAttemptEffectState.NOT_ATTEMPTED),
+            ),
+            (
+                CodexMarketplaceAddConfirmed.model_construct(
+                    target=CodexCommandTarget.MARKETPLACE_ADD,
+                    start_state=CodexCommandStartState.STARTED,
+                    already_added="false",
+                ),
+                journal(CodexAttemptEffectState.NOT_ATTEMPTED, CodexAttemptEffectState.NOT_ATTEMPTED),
+            ),
+            (
+                CodexPluginAddConfirmed.model_construct(
+                    target="PLUGIN_ADD",
+                    start_state="STARTED",
+                ),
+                journal(CodexAttemptEffectState.OWNED, CodexAttemptEffectState.NOT_ATTEMPTED),
+            ),
+        )
+        for observation, current_journal in raw_cases:
+            with self.subTest(observation=type(observation).__name__):
+                self._assert_rejected(
+                    classify_command_attempt(observation, current_journal, request(), ATTEMPT),
+                    CodexCommandClassificationRejectReason.INVALID_OBSERVATION,
+                )
+
+    def test_t1_c1_complete_strict_boundary_shape_table(self) -> None:
+        observation_payloads: tuple[tuple[type[BaseModel], dict[str, object]], ...] = (
+            (
+                CodexPreStartFailure,
+                {
+                    "target": CodexCommandTarget.MARKETPLACE_ADD,
+                    "reason": CodexPreStartFailureReason.ACCESS_DENIED,
+                    "start_state": CodexCommandStartState.NOT_STARTED,
+                },
+            ),
+            (
+                CodexStartedFailure,
+                {
+                    "target": CodexCommandTarget.PLUGIN_ADD,
+                    "reason": CodexStartedFailureReason.NONZERO_EXIT,
+                    "start_state": CodexCommandStartState.STARTED,
+                },
+            ),
+            (
+                CodexMarketplaceAddConfirmed,
+                {
+                    "target": CodexCommandTarget.MARKETPLACE_ADD,
+                    "start_state": CodexCommandStartState.STARTED,
+                    "already_added": False,
+                },
+            ),
+            (
+                CodexPluginAddConfirmed,
+                {
+                    "target": CodexCommandTarget.PLUGIN_ADD,
+                    "start_state": CodexCommandStartState.STARTED,
+                },
+            ),
+        )
+        invalid_values: tuple[object, ...] = (None, "", " ", [], {})
+        for model_type, payload in observation_payloads:
+            for field_name in payload:
+                for invalid_value in invalid_values:
+                    with self.subTest(model=model_type.__name__, field=field_name, value=repr(invalid_value)):
+                        invalid_payload = dict(payload)
+                        invalid_payload[field_name] = invalid_value
+                        with self.assertRaises(ValidationError):
+                            model_type.model_validate(invalid_payload)
+            with self.subTest(model=model_type.__name__, extra="forbidden"):
+                with self.assertRaises(ValidationError):
+                    model_type.model_validate(payload | {"extra": "forbidden"})
+        wrong_literal_payloads: tuple[tuple[type[BaseModel], dict[str, object]], ...] = (
+            (
+                CodexPreStartFailure,
+                {
+                    "target": CodexCommandTarget.MARKETPLACE_ADD,
+                    "reason": CodexStartedFailureReason.NONZERO_EXIT,
+                    "start_state": CodexCommandStartState.NOT_STARTED,
+                },
+            ),
+            (
+                CodexPreStartFailure,
+                {
+                    "target": CodexCommandTarget.MARKETPLACE_ADD,
+                    "reason": CodexPreStartFailureReason.ACCESS_DENIED,
+                    "start_state": CodexCommandStartState.STARTED,
+                },
+            ),
+            (
+                CodexStartedFailure,
+                {
+                    "target": CodexCommandTarget.PLUGIN_ADD,
+                    "reason": CodexPreStartFailureReason.ACCESS_DENIED,
+                    "start_state": CodexCommandStartState.STARTED,
+                },
+            ),
+            (
+                CodexStartedFailure,
+                {
+                    "target": CodexCommandTarget.PLUGIN_ADD,
+                    "reason": CodexStartedFailureReason.NONZERO_EXIT,
+                    "start_state": CodexCommandStartState.NOT_STARTED,
+                },
+            ),
+            (
+                CodexMarketplaceAddConfirmed,
+                {
+                    "target": CodexCommandTarget.PLUGIN_ADD,
+                    "start_state": CodexCommandStartState.STARTED,
+                    "already_added": False,
+                },
+            ),
+            (
+                CodexMarketplaceAddConfirmed,
+                {
+                    "target": CodexCommandTarget.MARKETPLACE_ADD,
+                    "start_state": CodexCommandStartState.NOT_STARTED,
+                    "already_added": False,
+                },
+            ),
+            (
+                CodexPluginAddConfirmed,
+                {
+                    "target": CodexCommandTarget.MARKETPLACE_ADD,
+                    "start_state": CodexCommandStartState.STARTED,
+                },
+            ),
+            (
+                CodexPluginAddConfirmed,
+                {
+                    "target": CodexCommandTarget.PLUGIN_ADD,
+                    "start_state": CodexCommandStartState.NOT_STARTED,
+                },
+            ),
+        )
+        for model_type, wrong_payload in wrong_literal_payloads:
+            with self.subTest(model=model_type.__name__, wrong=wrong_payload):
+                with self.assertRaises(ValidationError):
+                    model_type.model_validate(wrong_payload)
+
     def test_t1_c1_all_finite_observations_are_strict_and_start_state_bound(self) -> None:
         pre_start_reasons = tuple(CodexPreStartFailureReason)
         started_reasons = tuple(CodexStartedFailureReason)
@@ -98,12 +327,12 @@ class CodexCommandAttemptTests(unittest.TestCase):
                 with self.subTest(started_target=target, reason=started_reason):
                     started_observation = started_failure(target, started_reason)
                     self.assertIs(CodexCommandStartState.STARTED, started_observation.start_state)
-        marketplace_confirmation = CodexMarketplaceAddConfirmed(already_added=False)
-        existing_marketplace = CodexMarketplaceAddConfirmed(already_added=True)
-        plugin_confirmation = CodexPluginAddConfirmed()
-        self.assertIs(CodexCommandTarget.MARKETPLACE_ADD, marketplace_confirmation.target)
-        self.assertIs(CodexCommandTarget.MARKETPLACE_ADD, existing_marketplace.target)
-        self.assertIs(CodexCommandTarget.PLUGIN_ADD, plugin_confirmation.target)
+        fresh_marketplace_confirmation = marketplace_confirmation(already_added=False)
+        existing_marketplace_confirmation = marketplace_confirmation(already_added=True)
+        confirmed_plugin = plugin_confirmation()
+        self.assertIs(CodexCommandTarget.MARKETPLACE_ADD, fresh_marketplace_confirmation.target)
+        self.assertIs(CodexCommandTarget.MARKETPLACE_ADD, existing_marketplace_confirmation.target)
+        self.assertIs(CodexCommandTarget.PLUGIN_ADD, confirmed_plugin.target)
         required_models: tuple[tuple[type[CodexPreStartFailure | CodexStartedFailure | CodexMarketplaceAddConfirmed], dict[str, object]], ...] = (
             (
                 CodexPreStartFailure,
@@ -291,24 +520,24 @@ class CodexCommandAttemptTests(unittest.TestCase):
                     result = classify_command_attempt(started_failure(target, started_reason), before, request(), ATTEMPT)
                     self._assert_journal(result, expected_state[0], expected_state[1], expected_order)
         marketplace_before = journal(CodexAttemptEffectState.NOT_ATTEMPTED, CodexAttemptEffectState.NOT_ATTEMPTED)
-        fresh_marketplace = classify_command_attempt(CodexMarketplaceAddConfirmed(already_added=False), marketplace_before, request(), ATTEMPT)
+        fresh_marketplace = classify_command_attempt(marketplace_confirmation(already_added=False), marketplace_before, request(), ATTEMPT)
         self._assert_journal(fresh_marketplace, CodexAttemptEffectState.OWNED, CodexAttemptEffectState.NOT_ATTEMPTED, (CodexAttemptEffect.MARKETPLACE,))
-        existing_marketplace = classify_command_attempt(CodexMarketplaceAddConfirmed(already_added=True), marketplace_before, request(), ATTEMPT)
+        existing_marketplace = classify_command_attempt(marketplace_confirmation(already_added=True), marketplace_before, request(), ATTEMPT)
         self._assert_journal(existing_marketplace, CodexAttemptEffectState.PREEXISTING, CodexAttemptEffectState.NOT_ATTEMPTED, ())
         plugin_before = journal(CodexAttemptEffectState.OWNED, CodexAttemptEffectState.NOT_ATTEMPTED)
-        plugin_result = classify_command_attempt(CodexPluginAddConfirmed(), plugin_before, request(), ATTEMPT)
+        plugin_result = classify_command_attempt(plugin_confirmation(), plugin_before, request(), ATTEMPT)
         self._assert_journal(plugin_result, CodexAttemptEffectState.OWNED, CodexAttemptEffectState.OWNED, (CodexAttemptEffect.PLUGIN, CodexAttemptEffect.MARKETPLACE))
 
     def test_t4_c4_results_are_limited_and_unexpected_exceptions_propagate(self) -> None:
         valid_result = classify_command_attempt(
-            CodexMarketplaceAddConfirmed(already_added=False),
+            marketplace_confirmation(already_added=False),
             journal(CodexAttemptEffectState.NOT_ATTEMPTED, CodexAttemptEffectState.NOT_ATTEMPTED),
             request(),
             ATTEMPT,
         )
         self.assertIsInstance(valid_result, CodexRegistrationAttemptJournal)
         rejected = classify_command_attempt(
-            CodexPluginAddConfirmed(),
+            plugin_confirmation(),
             journal(CodexAttemptEffectState.NOT_ATTEMPTED, CodexAttemptEffectState.NOT_ATTEMPTED),
             request(),
             ATTEMPT,
