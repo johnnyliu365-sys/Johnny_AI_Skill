@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01, AC-02, AC-07 and AC-08 registration seam |
 | Parent evidence | Terminal 05B revision-02 review `24227ac`; CR-98 through CR-104 remain immutable evidence |
-| State | `IN_PROGRESS / REVISION_02_DISPATCH_CONFIRMED` — one additive correction for `CR-128` through `CR-132` |
+| State | `APPROVED / READY_TO_MERGE` — final correction review closes `CR-128` through `CR-132` |
 | Dependency | 05A plus 05S1-05S4 independently approved and integrated by `b22c6c4`, `504a3ec`, `6e24e06`, `43a1639` and `4af381c` |
 | Implementation owner | Task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; existing `workflow-implementation` worktree and branch only |
 | Acceptance owner | Independent control-plane reviewer; no implementation writes |
@@ -136,3 +136,19 @@ integration or further correction.
 | Retained allocation / receipt | `aln_local_orchestration_install_05b1_20260811` / `rcpt_local_orchestration_install_05b1_20260811` |
 | Correlation / question | `corr-local-orchestration-install-05b1-r02-20260811` / `q-local-orchestration-install-05b1-r02-20260811` |
 | Submitted branch HEAD | `6969d4412d0391684739890e4fc3e5451d4ed6c0` |
+
+## Final correction review
+
+Correction implementation `dc57ff9314b8ee1cc7e158af9b4b2a65723422ee`
+and docs-only handoff `1df30ae6ed9a87b4b9fe35b64ea09ccc107cccee`
+have valid additive ancestry, exact scope and a clean implementation lane. A
+fresh immutable export passed focused 7/7, full 212/212, strict full-tree mypy
+over 104 files, in-memory compile and zero-residue readback.
+
+Independent probes confirm foreign observed auth returns `INVALID_INPUT` with
+zero proof-port calls; the typed port failure maps to `PROOF_PORT_FAILED` while
+`RuntimeError`, `MemoryError`, `KeyboardInterrupt` and `SystemExit` propagate;
+exactly seven journal pairs are accepted and nine rejected; receipt output is
+metadata-only. Independent in-memory reverse mutations for expected-policy
+equality, typed exception mapping and the journal guard each turned the
+corresponding committed test red. Final result: `APPROVED / READY_TO_MERGE`.

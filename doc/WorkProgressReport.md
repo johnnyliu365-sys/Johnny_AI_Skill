@@ -1708,3 +1708,13 @@
 | Binding | Correction handoff `hnd_local_orchestration_install_05b1_r02_20260811`; retained allocation `aln_local_orchestration_install_05b1_20260811`; retained valid receipt `rcpt_local_orchestration_install_05b1_20260811`; correlation `corr-local-orchestration-install-05b1-r02-20260811`; question `q-local-orchestration-install-05b1-r02-20260811`; submitted branch HEAD `6969d4412d0391684739890e4fc3e5451d4ed6c0`. |
 | Exact correction | Add independent expected auth-policy authority and a real foreign-observed-auth rejection; define typed proof-port failure mapping plus explicit unexpected/process-control propagation; restrict journal to seven exact legal state pairs; commit the seven path, null/wrong port, exception and 16-state matrices with three reverse mutations. |
 | Lane / return | Same task `019fcc9c-f34f-7d53-a313-c70c90bf3245`, worktree `workflow-implementation`, existing branch and exact three source/test paths only. One additive implementation commit plus one WPR-only handoff reserved as unique PRG-150. Final review stops on any blocker. No new branch/worktree, downstream dispatch, integration, live Codex mutation, target-project write, push, release or deployment. |
+
+## PRG-20260811-151 — Ticket 05B1 final correction review
+
+| Field | Value |
+| --- | --- |
+| Router event | `IMPLEMENTATION_CORRECTION_COMPLETED -> FINAL_CORRECTION_REVIEW -> APPROVED / READY_TO_MERGE` |
+| Binding | Closure `CLOSURE-LOCAL-INSTALL-T05B1-02`; implementation `dc57ff9314b8ee1cc7e158af9b4b2a65723422ee`; handoff `1df30ae6ed9a87b4b9fe35b64ea09ccc107cccee`; report `doc/reviews/local-orchestration-installer/05b1-codex-registration-contracts-and-journal-code-review.md`. |
+| Independent verification | Fresh immutable export: focused 7/7, full 212/212, strict mypy 104 files, in-memory compile 3/3 and zero residue. Direct probes pass foreign-auth zero-call, typed/unexpected exceptions, seven-accepted/nine-rejected journal matrix and metadata-only receipt. |
+| Test truthfulness | Independent in-memory reverse mutations of expected-policy equality, typed failure mapping and legal-journal guard each turn the corresponding committed test red. |
+| Decision | `APPROVED / READY_TO_MERGE`; CR-128 through CR-132 closed. No downstream dispatch until guarded integration is recorded. No live Codex mutation, target-project write, push, release or deployment. |

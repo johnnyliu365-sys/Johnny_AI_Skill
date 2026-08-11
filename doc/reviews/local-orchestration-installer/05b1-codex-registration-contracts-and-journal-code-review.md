@@ -4,11 +4,11 @@
 
 | Field | Value |
 | --- | --- |
-| Ticket / closure | `05b1-codex-registration-contracts-and-journal` / `CLOSURE-LOCAL-INSTALL-T05B1-01` / C1-C4 and T1-T4 |
+| Ticket / closure | `05b1-codex-registration-contracts-and-journal` / `CLOSURE-LOCAL-INSTALL-T05B1-01` plus `CLOSURE-LOCAL-INSTALL-T05B1-02` |
 | Reviewed baseline | `16d48ac70cf560f073adb58991d4f0800f28ac9e` |
-| Implementation / handoff | `fbedefcef113ff1a85e5709ea80c205c54ff85eb` / `6969d4412d0391684739890e4fc3e5451d4ed6c0` |
+| Implementation / handoff | Initial `fbedefcef113ff1a85e5709ea80c205c54ff85eb` / `6969d4412d0391684739890e4fc3e5451d4ed6c0`; correction `dc57ff9314b8ee1cc7e158af9b4b2a65723422ee` / `1df30ae6ed9a87b4b9fe35b64ea09ccc107cccee` |
 | Branch / owner | Existing `codex/implementation-codex-protocol-fixture-05s3` / task `019fcc9c-f34f-7d53-a313-c70c90bf3245` |
-| Review result | `CHANGES_REQUESTED / TICKET_REFREEZE_REQUIRED` |
+| Review result | Initial `CHANGES_REQUESTED / TICKET_REFREEZE_REQUIRED`; final correction review `APPROVED / READY_TO_MERGE` |
 
 The implementation changes only the three authorized source/test paths and
 the handoff changes only `doc/WorkProgressReport.md`. The implementation
@@ -94,3 +94,44 @@ control plane before any correction. The same ticket, task, worktree, branch,
 allocation and valid receipt remain bound; no replacement branch/worktree,
 integration, downstream dispatch, live Codex mutation, target-project write,
 push, release or deployment is authorized by this review.
+
+## Final correction review — closure revision 02
+
+### Independent verification
+
+| Check | Result / evidence |
+| --- | --- |
+| Ancestry / scope / residue | PASS: `dc57ff9` is additive on submitted `6969d44` and changes only the three authorized source/test paths; `1df30ae` changes only `doc/WorkProgressReport.md`. The branch and tracked/ignored readbacks are clean. |
+| Focused / full | PASS: fresh immutable export ran focused 7/7 and full 212/212 unittest tests. |
+| Strict type / compile | PASS: strict full-tree mypy reported no issues in 104 files; three authorized Python paths compiled in memory. External mypy cache and review residue read back absent. |
+| R1 / CR-128 / CR-129 | PASS: a trusted expected policy plus foreign observed policy returns `INVALID_INPUT`, no receipt and zero proof-port calls. Proof and metadata-only receipt bind the expected policy. |
+| R2 / CR-130 | PASS: only `CodexRegistrationProofPortFailure` maps to `PROOF_PORT_FAILED`; malformed shape maps to `INVALID_PROOF`; `RuntimeError`, `MemoryError`, `KeyboardInterrupt` and `SystemExit` propagate. |
+| R3 / CR-131 | PASS: an independent 16-cell enumeration accepts exactly the frozen seven state pairs, rejects nine, and grants plugin-before-marketplace removal authority only for `MAY_EXIST`/`OWNED`. |
+| R4 / CR-132 | PASS: the committed table contains equal plus six invalid path cells for both observed fields, `None`/wrong port cells, foreign auth, exception cells and all 16 journal pairs. |
+| Reverse mutations | PASS: disabling expected-policy equality changes the target result to `PROOF_MISMATCH`; replacing the typed catch makes the declared failure escape; disabling the journal guard accepts forbidden states. Each targeted committed test turns red. |
+| No-effect boundary | PASS: the ticket remains pure contracts/tests. No Codex command, filesystem, target-project, network, Secret, orchestration, packaging, push, release or deployment effect exists. |
+
+### Mandatory CodeReview.md mapping
+
+- **Path-prefix class (CR):** all seven named cells map to
+  `test_r4_every_path_boundary_cell_rejects_before_proof_port` for both
+  marketplace root and plugin path; the exact cell succeeds and every other
+  cell rejects before the proof port.
+- **Authority bypass (CR):** expected policy is distinct from observation;
+  foreign observation cannot reach the port. Impossible journal states cannot
+  create removal authority. Receipt serialization contains no observed
+  absolute path.
+- **Test truthfulness (CR):** direct independent probes reproduce R1-R3, and
+  three source-level in-memory mutations independently make their target tests
+  fail. First-red evidence is consistent with the submitted correction.
+- **Null/container, error-code and exception TDD:** committed strict DTO,
+  `None`/wrong port, finite typed failure and explicit propagation cells pass.
+- **Agent role, dependencies and scope:** no orchestration API or new dependency
+  is introduced; source and handoff scopes are exact.
+
+### Final decision
+
+`APPROVED / READY_TO_MERGE`. CR-128 through CR-132 are closed. No blocking
+finding remains in closure revision 02, and no new probe expands the frozen
+closure. Guarded integration may proceed; downstream Ticket 05B2 remains
+blocked until that integration is recorded.

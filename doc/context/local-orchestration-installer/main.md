@@ -354,6 +354,13 @@ seven exact legal journal states, and truthful path/port/exception tables. One
 additive correction is dispatched to the same task, worktree and branch with
 the original allocation/receipt; no new lane exists. The next review is final.
 
+Final correction implementation `dc57ff9` and handoff `1df30ae` close
+CR-128..CR-132. Independent immutable-export verification passes the full
+suite and strict types; direct foreign-auth, 16-state journal, exception,
+metadata-only receipt and three reverse-mutation probes all pass. Ticket 05B1
+is `APPROVED / READY_TO_MERGE`; 05B2 remains dependency-waiting until guarded
+integration completes.
+
 The submitted 05S1 implementation `e0898cd` and handoff `ecce06a` failed the
 independent E3/T3 physical root-reparse probe. A real Windows junction is a
 `ReparsePoint`, but Python 3.11 `Path.is_symlink()` is false; teardown reads the
