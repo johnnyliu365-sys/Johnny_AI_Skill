@@ -86,3 +86,48 @@ WPR-only handoff. Its review is terminal for this closure: any remaining
 blocker requires `CONVERGENCE_REVIEW_REQUIRED`, not another implementation
 correction. No integration or downstream dispatch is authorized by this
 review.
+
+## Terminal correction review
+
+| Field | Value |
+| --- | --- |
+| Correction implementation / handoff | `2c4533c8d10efdb160d78707d26536c346911116` / `89446d94b57f73b202f5a34a12dd763ae0904988` |
+| Scope / lane | PASS: the implementation changes only `codex_compensation.py` and its test; the handoff changes only `doc/WorkProgressReport.md`. The existing branch, implementation worktree and three-worktree topology are unchanged and clean. |
+| Standard verification | PASS: immutable-export focused 10/10, full 240/240, strict mypy over 112 source files, in-memory compile 2/2, exact ancestry, blob sentinels, diff check and zero cache residue. |
+| Preserved closure | PASS: D2-D5 remain green. Each of the five frozen reverse mutations independently turned the focused suite red and was discarded outside the submitted worktree. |
+| Terminal result | `CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED`; CR-135 and CR-136 remain open. |
+
+The correction rejects missing, non-callable and ordinary wrong-signature
+members before the no-compensation branch, and the expanded strict-shape and
+cross-request cells pass. It does not, however, meet the already-frozen
+side-effect-free descriptor boundary. `_port_operation_accepts_request()`
+passes an arbitrary callable instance to `inspect.signature()`. Python reads
+that instance's `__signature__` descriptor while validating the port.
+
+An independent no-authority probe supplied five callable operation objects,
+each with a property-backed `__signature__`. No operation was called, but the
+admission path read the property five times and returned
+`COMPENSATION_NOT_REQUIRED`. With the same property raising `RuntimeError`,
+the first descriptor read escaped instead of returning the required finite
+`COMPENSATION_BLOCKED / INVALID_PORT`; operation-call count remained zero.
+This directly violates correction item 1, which forbids descriptor invocation
+during validation, and is not a new hardening requirement.
+
+**CR-135 remains `IMPLEMENTATION_DEFECT`, D1/T1.** Static lookup of the five
+port members is insufficient while signature validation dynamically resolves
+metadata on an arbitrary callable object. Admission must not execute either a
+port-member descriptor or a callable metadata descriptor, and an invalid or
+uninspectable surface must fail finitely before the no-compensation branch.
+
+**CR-136 remains `EVIDENCE_DEFECT`, D1/T1/CodeReview.md class 7.** The new
+`DescriptorTrapPort` covers descriptors placed directly on the port class, but
+does not cover a callable member whose signature metadata is descriptor-backed.
+Consequently the committed test can claim descriptor-safe admission while the
+runtime still produces five observable descriptor reads or an escaping
+exception.
+
+Because this is the single permitted correction review for
+`CLOSURE-LOCAL-INSTALL-T05B3-01`, the Router must stop the same-closure
+implementation loop. No third correction, replacement branch/worktree,
+integration or 05B4 dispatch is authorized. The next legal action is
+control-plane convergence review and ticket/architecture decomposition.

@@ -1881,3 +1881,13 @@
 | Binding | Correction handoff `hnd_local_orchestration_install_05b3_r01_20260811`; retained allocation `aln_local_orchestration_install_05b3_20260811`; retained receipt `rcpt_local_orchestration_install_05b3_20260811`; correlation `corr-local-orchestration-install-05b3-r01-20260811`; question `q-local-orchestration-install-05b3-r01-20260811`; side-context `scx-local-orchestration-install-05b3-20260811-02`. |
 | Exact correction | Reject five-name ports whose operations are non-callable or request-signature incompatible before effects; commit the frozen strict-shape, cross-request and complete invalid-port evidence matrix. Preserve D2-D5 and all no-effect boundaries. |
 | Lane / return | Same task, worktree and branch at exact clean submitted HEAD `b59e97b0912f4e347b37efcbec266f7713868a43`; read the control correction by commit without merge/cherry-pick/switch. One additive implementation commit in the existing source/test scope plus one WPR-only handoff reserved as PRG-165. This is the terminal same-closure correction; no new branch/worktree or second correction. |
+
+## PRG-20260811-166 — Ticket 05B3 terminal correction review
+
+| Field | Value |
+| --- | --- |
+| Router event | `CORRECTION_COMPLETED -> TERMINAL_CODE_REVIEW -> CHANGES_REQUESTED -> CONVERGENCE_REVIEW_REQUIRED` |
+| Reviewed return | Implementation `2c4533c8d10efdb160d78707d26536c346911116`; docs-only handoff `89446d94b57f73b202f5a34a12dd763ae0904988`; unchanged closure `CLOSURE-LOCAL-INSTALL-T05B3-01`; report `doc/reviews/local-orchestration-installer/05b3-codex-exhaustive-compensation-code-review.md`. |
+| Passing evidence | Immutable export: focused 10/10, full 240/240, strict mypy 112 files, in-memory compile 2/2, exact scope/ancestry/blob/diff and zero-residue checks passed. D2-D5 remained green; all five frozen reverse mutations independently turned red. |
+| Terminal blocker | CR-135 remains open: `inspect.signature()` dynamically reads an arbitrary callable member's `__signature__` descriptor. A no-authority five-operation surface caused five observable descriptor reads; a raising descriptor escaped as `RuntimeError` instead of finite zero-call `INVALID_PORT`. CR-136 remains open because the committed descriptor test covers only a descriptor directly on the port class, not this callable-metadata path. |
+| Decision | `CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED`. This is the terminal correction review: no third implementation correction, branch/worktree replacement, integration, 05B4 dispatch, live Codex mutation, target-project write, push, release or deployment. Submitted commits remain immutable rejected evidence. |
