@@ -2212,3 +2212,14 @@
 | Owner / lane | Same task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`, existing `workflow-implementer-2`, branch `codex/implementation-codex-registration-port-05b4a` at immutable handoff `7c4fd5970d54798040fb5a6ac128717bbeb49f79`; additive commits only. |
 | Exact correction | Add committed A3 first-red structural-serialization and pickle-transfer probes, then the smallest production fix preventing exported/retained callable operations or usable authority. Modify only the registration port module and its focused test; return one implementation correction commit followed by WPR-only PRG-196. |
 | Stop | Sole correction; no new branch/worktree, package-root/dependency edit, reset/amend/force, integration, 05B4B/05C work, push, release, deployment, live Codex or target-project effect. |
+
+## PRG-20260812-197 — Ticket 05B4A terminal correction review
+
+| Field | Value |
+| --- | --- |
+| Router event | `CORRECTION_IMPLEMENTATION_COMPLETED(05B4A) -> TERMINAL_CODE_REVIEW -> APPROVED -> READY_TO_MERGE` |
+| Reviewed return | Closure `CLOSURE-LOCAL-INSTALL-T05B4A-01`; correction implementation `3ab59717a9b8d57fbca8fbd8d86937a8f9eaacee`; docs-only handoff `7ce9bb36e90af669daa5dfa2999638a112f4cde3`; report `doc/reviews/local-orchestration-installer/05b4a-codex-registration-port-capability-code-review.md`. |
+| Standard verification | Unicode-safe immutable export: focused 6/6, full 266/266, strict mypy 118 files and in-memory compile 118 files passed. Exact ancestry/scope/diff, source sentinel and submitted-lane cleanliness passed. |
+| CR-146 / CR-147 closure | `asdict`, `astuple`, shallow/deep copy and pickle transfer all fail finitely; no operation or usable authority is exported or retained. Capability remains non-dataclass, metadata is exactly `ADMITTED / 4`, repr/errors are metadata-only and operation count remains zero. The five probes are committed and the recorded first-red is consistent with the additive diff. |
+| A7 adversarial evidence | Request/source binding, wrong-target rejection, descriptor-free MRO access and private construction authority were each independently reversed, turned red and were restored. Restored source/test blobs equal the reviewed correction and focused returned 6/6. |
+| Decision | `APPROVED / READY_TO_MERGE`; CR-146 and CR-147 are resolved. Guarded integration only; no live Codex mutation, target-project write, push, release or deployment. |

@@ -2,11 +2,11 @@
 
 ## Review decision
 
-`CHANGES_REQUESTED / ONE_ADDITIVE_CORRECTION_REQUIRED`
+`APPROVED / READY_TO_MERGE`
 
-The complete initial-review blocking batch is CR-146 and CR-147. Both point to
-the existing `CLOSURE-LOCAL-INSTALL-T05B4A-01` A3 metadata-only capability
-boundary; the closure and product requirement do not change.
+The sole additive correction closes the complete initial-review batch CR-146
+and CR-147 without changing `CLOSURE-LOCAL-INSTALL-T05B4A-01`, its A1-A7
+acceptance closure or the product requirement. No blocking finding remains.
 
 ## Reviewed immutable return
 
@@ -18,7 +18,7 @@ boundary; the closure and product requirement do not change.
 | Docs-only handoff | `7c4fd5970d54798040fb5a6ac128717bbeb49f79`; PRG-20260812-193 |
 | Binding | `hnd_local_orchestration_install_05b4a_20260812`; `aln_local_orchestration_install_05b4a_20260812`; `rcpt_local_orchestration_install_05b4a_20260812`; `corr-local-orchestration-install-05b4a-20260812` |
 
-## CodeReview.md verification
+## Initial CodeReview.md verification
 
 | Gate | Result |
 | --- | --- |
@@ -84,3 +84,34 @@ constructor and zero-invocation cases must remain green, and no operation may
 run during admission or probes. No new source file, dependency, branch,
 worktree, product behavior, 05B4B work, merge, push, release, deployment or
 live/target-project effect is authorized.
+
+## Terminal correction review
+
+| Field | Evidence |
+| --- | --- |
+| Correction implementation | `3ab59717a9b8d57fbca8fbd8d86937a8f9eaacee`; additive changes only to the registration-port module and its focused test |
+| Correction handoff | `7ce9bb36e90af669daa5dfa2999638a112f4cde3`; WPR-only PRG-20260812-196 |
+| Ancestry | `7c4fd59 -> 3ab5971 -> 7ce9bb3`; the initial implementation and review evidence remain immutable ancestors |
+| Binding | `hnd_local_orchestration_install_05b4a_correction_01_20260812`; retained allocation `aln_local_orchestration_install_05b4a_20260812`, receipt `rcpt_local_orchestration_install_05b4a_20260812` and correlation `corr-local-orchestration-install-05b4a-correction-01-20260812` |
+
+### Terminal CodeReview.md verification
+
+| Gate | Result |
+| --- | --- |
+| Exact ancestry / scope | PASS: both additive commits descend from the submitted handoff; implementation changes only the two correction-authorized paths and handoff changes only `doc/WorkProgressReport.md`. The implementation worktree is clean. |
+| Focused / regression | PASS on a Unicode-safe immutable ZIP export: focused 6/6 and full discovery 266/266. |
+| Strict type / compile | PASS: strict full-tree mypy and in-memory compile over 118 files. |
+| CR-146 / A3 behavior | PASS: capability is slotted and non-dataclass; `asdict`, `astuple`, shallow/deep copy and pickle round-trip all fail finitely without exporting or retaining an operation. Metadata remains exactly `ADMITTED / 4`, repr/errors are metadata-only and adapter operation count is zero. |
+| CR-147 / A3 evidence | PASS: all five transfer probes are committed in the named A3 test. The first-red record identifies five independent failures against unchanged production, and the reviewer reproduced every corrected probe. |
+| A1-A6 regression | PASS: exact request/result binding, target/version classification, finite malformed input, descriptor/metaclass trap isolation and contract-only source constraints remain intact. Source sentinel found no `Any`, `type: ignore`, broad catch, dynamic candidate lookup, optional port or historical-source reuse. |
+| A7 truthfulness | PASS: the reviewer independently reversed request/source binding, wrong-target rejection, descriptor-free MRO access and private constructor authority. Every mutation turned red; inverse patches restored source blob `a85f134b5999fc50e07e2fab617c4c8450d669cd`, test blob `93d4d405b43008142b811ad899f803887a5540cf` and focused 6/6. |
+| Diff / residue | PASS: exact commit scopes, `git diff --check`, submitted-lane tracked/ignored/cache readbacks and three-worktree topology are clean. Review execution remained outside all worktrees. |
+
+## Terminal disposition
+
+CR-146 is closed as `IMPLEMENTATION_DEFECT_RESOLVED`; CR-147 is closed as
+`EVIDENCE_DEFECT_RESOLVED`. Guarded integration is authorized only with this
+formal review commit as first parent and reviewed handoff `7ce9bb3` as second
+parent. The merge must preserve every WPR record exactly once and rerun
+focused/full/type/compile/source/diff/residue checks. No push, release,
+deployment, live Codex mutation or target-project write is authorized.

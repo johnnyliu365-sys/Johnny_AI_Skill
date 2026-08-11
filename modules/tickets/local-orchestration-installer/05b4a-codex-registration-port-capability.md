@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01, AC-02, AC-07 and AC-08 registration seam |
-| State | `IN_PROGRESS / IMPLEMENTATION_DISPATCHED` |
+| State | `IN_REVIEW / CORRECTION_APPROVED / READY_TO_MERGE` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B4A-01` / A1-A7 |
 | Dependency | Integrated 05A preflight, 05B1 contracts and 05B2 classifier; 05B3C remains read-only |
 | Owner / worktree | Task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2`; no new worktree |
@@ -123,3 +123,13 @@ dispatch the correction or authorize a new branch/worktree.
 | Red / green | Against submitted handoff `7c4fd5970d54798040fb5a6ac128717bbeb49f79`, add one committed A3 regression proving `dataclasses.asdict`/`astuple` cannot export dataclass fields or bound operations and pickle round-trip cannot retain a callable operation or usable authority. Existing copied-token, forged-construction, metadata, repr and zero-call cases remain mandatory. The smallest production correction follows; generic serialization/copy probes must execute zero adapter operations. |
 | Exact correction scope | Additive modifications only to `library/local_orchestration/codex_registration_port.py` and `tests/test_codex_registration_port.py`; no package-root or dependency change. Return one correction implementation commit followed by WPR-only PRG-20260812-196. |
 | Stop | This is the sole revision-01 correction. No reset, amend, force, branch/worktree creation, 05B4B/05C work, integration, push, release, deployment, live Codex or target-project effect. |
+
+## Terminal correction review disposition
+
+Correction implementation `3ab59717a9b8d57fbca8fbd8d86937a8f9eaacee`
+and docs-only handoff `7ce9bb36e90af669daa5dfa2999638a112f4cde3`
+are `APPROVED / READY_TO_MERGE`. CR-146 and CR-147 are closed by the formal
+terminal review in
+`doc/reviews/local-orchestration-installer/05b4a-codex-registration-port-capability-code-review.md`.
+The reviewed A1-A7 closure is unchanged. Only guarded integration is the next
+legal action; downstream 05B4B remains undispatched.
