@@ -2159,3 +2159,13 @@
 | Closure / adversarial evidence | All six reachable authority pairs execute exact reducer order with the same request object; four cross-context identity mismatches and five malformed capability slots block with zero calls; nested source traps remain uninvoked. Five isolated C7 reversals each turned the focused suite red and were restored. |
 | Responsibility boundary | 05B3C closes only compensation execution and observation reduction. 05B4 still owns fresh registration admission and exact receipt/proof/journal/oracle-to-manifest composition; no historical or unreviewed source was reused. |
 | Decision | `APPROVED / READY_TO_MERGE`; guarded integration is authorized. No live Codex mutation, target-project write, push, release or deployment. |
+
+## PRG-20260812-190 — Ticket 05B3C guarded integration
+
+| Field | Value |
+| --- | --- |
+| Router event | `REVIEW_APPROVED(05B3C) -> GUARDED_INTEGRATION -> ACTION_COMPLETED -> TICKET_05B4_REFREEZE_READY` |
+| Integration | Merge `d8f6127909f219660ad1efd1c9ec2d2254a45257` preserves formal review `e11d540ec3beda3e7587ed7193ca1d394fbf774b` as first parent and reviewed handoff `6d7dd37095005b11d68e136d6687d402b5187c9e` as second parent. Coordinator and focused-test blobs exactly match the reviewed handoff. |
+| Ledger resolution | The sole conflict was `doc/WorkProgressReport.md`; PRG-186 through PRG-189 are retained exactly once. Neither immutable parent was amended, reset, forced or overwritten. |
+| Post-merge verification | Focused 6/6 and full 260/260 unittest passed. Strict full-tree mypy and in-memory compile passed 116 files. Source sentinel, `git diff --check`, exact blob equality, external-cache removal and tracked/ignored/cache residue checks passed. |
+| Completion | 05B3C is `COMPLETE / APPROVED / INTEGRATED`; allocation `aln_local_orchestration_install_05b3c_20260812` is released and receipt `rcpt_local_orchestration_install_05b3c_20260812` is closed against replay. 05B4 is unallocated and ready only for control-plane refreeze. No live Codex mutation, target-project write, push, release or deployment. |

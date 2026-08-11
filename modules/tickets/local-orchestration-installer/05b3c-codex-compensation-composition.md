@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01, AC-02, AC-07 and AC-08 compensation seam |
-| State | `REVIEW_APPROVED / READY_TO_MERGE` |
+| State | `COMPLETE / APPROVED / INTEGRATED` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B3C-01` / C1-C8 |
 | Dependency | 05B3A and 05B3B1 integrated |
 | Owner / worktree | Task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` / existing `workflow-implementer-2`; one new ticket branch from reviewed current main, no new worktree |
@@ -112,3 +112,10 @@ This approval is limited to compensation execution and observation reduction.
 Ticket 05B4 remains solely responsible for binding fresh registration
 admission, exact receipt/proof/journal evidence and the 05S4 oracle to the
 manifest; that downstream responsibility is not silently absorbed here.
+
+Guarded merge `d8f6127909f219660ad1efd1c9ec2d2254a45257` preserves formal
+review `e11d540ec3beda3e7587ed7193ca1d394fbf774b` as first parent and
+reviewed handoff `6d7dd37095005b11d68e136d6687d402b5187c9e` as second parent.
+Post-merge focused 6/6, full 260/260, strict mypy and in-memory compile over
+116 files, source/diff/blob/residue checks passed. The allocation is released
+and the receipt is closed against replay.

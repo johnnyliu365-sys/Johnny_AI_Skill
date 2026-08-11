@@ -2,13 +2,13 @@
 
 | Field | Value |
 | --- | --- |
-| Context state | `TICKET_05B3C_REVIEW_APPROVED` |
-| Router event | `IMPLEMENTATION_COMPLETED(05B3C) / TERMINAL_CODE_REVIEW / READY_TO_MERGE` |
+| Context state | `TICKET_05B4_REFREEZE_READY` |
+| Router event | `REVIEW_APPROVED(05B3C) / GUARDED_INTEGRATION / ACTION_COMPLETED / TICKET_SELECTED(05B4)` |
 | Delivery stage | `POC` |
 | Requirement change | `CHG-20260808-011` |
 | Baseline | `3367136` (`docs: decompose 05B3B identity admission`) |
 | Control-plane owner | Codex / current `main` worktree |
-| Implementation owner | 05B3A and 05B3B1 are integrated and released; 05B3B is terminal rejected; task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` returned approved 05B3C evidence from existing `workflow-implementer-2` |
+| Implementation owner | 05B3A, 05B3B1 and 05B3C are integrated and released; 05B3B is terminal rejected; 05B4 is unallocated pending control-plane refreeze |
 | Required sources read | `AGENTS.md`, `Workflow.md` (Router, Wayfinder, Grill, change control, specification, tickets, role boundary), `Defined_wayfinder.md`, `CONTEXT.md`, `PRD.md`, `ProjectSchedule.md`, `doc/RequirementChangeLog.md`, existing plugin manifests / README, `library/workflow_router/`, and completed plugin / autonomous-collaboration POCs |
 
 ## Shared Context reference
@@ -531,3 +531,9 @@ handoff `6d7dd37`. Exact C1-C8, five isolated reversals, focused/full/type/
 compile, dependency-blob, scope and residue checks passed. Guarded integration
 is the only legal continuation. 05B4 retains the separate responsibility for
 fresh registration admission and exact receipt/proof/journal/oracle binding.
+
+Guarded merge `d8f6127` integrated the exact reviewed 05B3C handoff with the
+formal review as first parent. Post-merge focused 6/6, full 260/260, strict
+mypy and compile over 116 files, exact blob, source/diff and residue checks
+passed. The allocation is released and the receipt is closed. 05B4 is now
+eligible only for control-plane refreeze; no implementation dispatch exists.
