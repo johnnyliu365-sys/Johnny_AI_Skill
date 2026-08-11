@@ -1569,3 +1569,15 @@
 | Safe cleanup | Control used non-force `git worktree remove` on the exact resolved stale path and `git branch -d` on the fully merged branch. Readback proves the path and branch absent and exactly two worktrees remain. No implementation file or current implementation branch was changed. |
 | Continuation | The same task `019fcc9c-f34f-7d53-a313-c70c90bf3245`, branch `codex/implementation-codex-protocol-fixture-05s3`, Ticket-05S4 revision-02 allocation and unmodified receipt were resumed. This is not a new ticket or authority. |
 | Dependency result | 05S4 remains the sole active lane. Ticket 06A remains queued `READY_AFTER_05S4`; no new task, worktree, branch, automation, integration, push, release or deployment was created. |
+
+## PRG-20260811-140 — Ticket 06A second-lane dispatch
+
+| Field | Value |
+| --- | --- |
+| Router event | `IMPLEMENTATION_RETURNED(05S4) + OWNER_TOPOLOGY_OVERRIDE -> TICKET_DISPATCH_REQUIRED(06A) -> IMPLEMENTATION_DISPATCH_CONFIRMED` |
+| Authority | Project owner explicitly supplied a second implementer task/worktree and instructed the reviewer to begin dispatch. Only this reviewer may create or steer either implementation allocation. |
+| Project / ticket / closure | `prj-local-orchestration-installer-poc-20260808`; `06a-codex-role-profile-capability-proof`; `CLOSURE-LOCAL-INSTALL-T06A-01`; P1-P4. |
+| Binding identifiers | Handoff `hnd_local_orchestration_install_06a_20260811`; allocation `aln_local_orchestration_install_06a_20260811`; receipt `rcpt_local_orchestration_install_06a_20260811`; correlation `corr-local-orchestration-install-06a-20260811`; question `q-local-orchestration-install-06a-20260811`; side-context `scx-local-orchestration-install-06a-20260811-01`. |
+| Owner / lane | Task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; exact worktree `C:\Users\<user>\Desktop\AI控制工作workflow-implementer-2`; ticket branch `codex/implementation-codex-role-profile-proof-06a`. Because the prior idle branch/worktree had been safely removed, this owner must recreate only its own exact lane from this clean handoff baseline before source writes. |
+| Isolation | 05S4 implementation task is released and its immutable `02f33ef` / `52ab9c0` return is under independent control-plane review. 06A may change only its four new staging/test paths. The two tasks may not read uncommitted files from, modify, dispatch, steer, wait on or close one another. |
+| Return | One four-path implementation commit and one `WorkProgressReport.md`-only handoff; report actual `SUPPORTED` or typed `INSTALL_BLOCKED / ROLE_ISOLATION_UNPROVEN` evidence. No production source, existing test edit, live user Codex mutation, target-project access, integration, push, release or deployment. |

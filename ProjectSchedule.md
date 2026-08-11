@@ -124,10 +124,10 @@
 | Ticket 05S1 disposable environment core | DONE / APPROVED / INTEGRATED | Correction `41d5ce4`, handoff `e1087d3`, review `17ea1d5` and guarded merge `504a3ec`; post-merge verification passed. |
 | Ticket 05S2 bounded child-process runner | DONE / APPROVED / INTEGRATED | Revision-03 `33a8fa9` / `dba0621b`, review `c97b754`, guarded merge `6e24e06`; CR-124 resolved and post-merge verification passed. |
 | Ticket 05S3 Codex protocol fixture | DONE / APPROVED / INTEGRATED | Correction `4835b0f`, handoff `008fac8`, final review `c518e62` and guarded merge `43a1639`; CR-125 closed and post-merge verification passed. |
-| Ticket 05S4 Codex lifecycle oracle | CHANGES_REQUESTED / REVISION_02_CORRECTION_REQUIRED | Independent review reproduced CR-126 duplicate-foreign acceptance and CR-127 fixed-command residue; correction stays on the existing task/worktree/branch. |
+| Ticket 05S4 Codex lifecycle oracle | IMPLEMENTATION_RETURNED / FINAL_REVIEW_REQUIRED | Correction `02f33ef`, handoff `52ab9c0`; reviewer is independently rerunning CR-126/CR-127 probes before any integration. |
 | Ticket 05B transactional registration | BLOCKED / CONVERGENCE_REVIEW_REQUIRED | Terminal revision-02 review of `1a269411` / `ed74589` records CR-98..CR-104; no automatic correction or integration. |
 | Ticket 05C receipt removal/replay | PLANNED / DEPENDENCY_WAIT / REFREEZE_REQUIRED | Starts only after 05A/05B approval/integration and a finite behavior/rollback closure refreeze. |
-| Ticket 06A Codex role-profile capability proof | PLANNED / READY_AFTER_05S4 | Disposable host proof for reviewer tools present and implementation multi-agent tools absent; real CLI currently resolves to a WindowsApps binary but direct invocation from this shell returns access denied, so success must not be assumed. |
+| Ticket 06A Codex role-profile capability proof | IN_PROGRESS / DISPATCH_CONFIRMED | Owner-authorized second task/worktree runs the disposable proof independently of the 05S4 review; access-denied or unproven isolation remains a typed block. |
 | Autonomous Ticket 04 reviewer-only authority | PLANNED / DEPENDENCY_WAIT | Starts only after reviewed 06A `SUPPORTED`; typed fake effect gate, not a real Agent turn. |
 | Tickets 06B/06C role-profile lifecycle/composition | PLANNED / DEPENDENCY_WAIT | Wait for 06A and autonomous Ticket 04; own/remove profiles, then compose exact reviewer authority. |
 | Ticket 04 implementation | PLANNED / DEPENDENCY_WAIT | Pinned compiler is ready; package work waits for decomposed Codex adapter 05A–05C and reviewer-role 06A–06C clusters. |
