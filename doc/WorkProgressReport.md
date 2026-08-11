@@ -1785,3 +1785,13 @@
 | Independent verification | Immutable export: focused 4/4, full 227/227, strict mypy 110 files, in-memory compile 3/3, exact scope/ancestry/diff and no-effect checks passed. C2 admission, C3 transitions, C4 exception/result boundary and all three reverse mutations passed. |
 | Blocking batch | CR-133 implementation accepts six missing discriminator fields and constructed raw-string enums/literals; CR-134 committed T1 omits those exact cells. Both cite frozen C1/T1 and require one additive same-lane correction. |
 | Decision | `CHANGES_REQUESTED`; same ticket/task/worktree/branch/allocation/receipt remain bound. No new branch/worktree, integration, downstream dispatch, live Codex mutation, target-project write, push, release or deployment. |
+
+## PRG-20260811-157 — Ticket 05B2 same-closure correction handoff
+
+| Field | Value |
+| --- | --- |
+| Router event | `INITIAL_CODE_REVIEW -> CHANGES_REQUESTED -> CORRECTION_HANDOFF -> IMPLEMENTATION_DISPATCH_CONFIRMED` |
+| Review / closure | Review `4aa85e6900da974e92e51cdc6b66c80b5b550707`; unchanged `CLOSURE-LOCAL-INSTALL-T05B2-01`; CR-133 and CR-134 only. |
+| Binding | Correction handoff `hnd_local_orchestration_install_05b2_r01_20260811`; retained allocation `aln_local_orchestration_install_05b2_20260811`; retained receipt `rcpt_local_orchestration_install_05b2_20260811`; correlation `corr-local-orchestration-install-05b2-r01-20260811`; question `q-local-orchestration-install-05b2-r01-20260811`; side-context `scx-local-orchestration-install-05b2-20260811-02`. |
+| Exact correction | Make all four observation models require every field; remove JSON coercion from recursive strict revalidation; commit every per-field missing and constructed raw-string cell. Preserve C2-C4 and all no-effect boundaries. |
+| Lane / return | Same task, worktree and branch at exact clean submitted HEAD `d3bb4ade4f420e2a2bb38b779db0263d0a90f10a`; exact same three source/test paths only. One additive implementation commit plus one WPR-only handoff reserved as unique PRG-158. This is the terminal same-closure correction; no new branch/worktree or second correction. |

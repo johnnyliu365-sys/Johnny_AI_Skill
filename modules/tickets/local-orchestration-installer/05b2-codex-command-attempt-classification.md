@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01, AC-02, AC-07 and AC-08 registration seam |
 | Parent evidence | Terminal 05B review `24227ac`, especially CR-99/CR-103; rejected parent source remains historical evidence only |
-| State | `IN_PROGRESS / IMPLEMENTATION_DISPATCH_CONFIRMED` |
+| State | `IN_PROGRESS / CORRECTION_DISPATCH_CONFIRMED` |
 | Dependency | 05B1 independently approved and integrated by `bbc7de5` / `b2525ec` |
 | Implementation owner | Task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; existing `workflow-implementation` worktree and branch only |
 | Acceptance owner | Independent control-plane reviewer; no implementation writes |
@@ -75,6 +75,45 @@ paths, then one docs-only commit changing only `doc/WorkProgressReport.md`.
 The implementation owner works alone and makes no review, integration,
 downstream dispatch or Agent-control decision. No new branch/worktree, reset,
 rebase, amend, force, merge, cherry-pick, stash, push, release or deployment.
+
+## Same-closure correction handoff — CR-133 and CR-134
+
+The initial independent review at
+`4aa85e6900da974e92e51cdc6b66c80b5b550707` found the complete blocking
+batch for `CLOSURE-LOCAL-INSTALL-T05B2-01`. C2-C4 and their reverse
+mutations are closed; this correction may change only C1/T1 behavior and
+evidence:
+
+1. Every field declared by all four observation models is required at their
+   validation boundary. Removing any one target, reason, start-state or
+   `already_added` field must raise validation failure; a fixed literal must
+   be supplied and checked, not manufactured by a default.
+2. Recursive observation validation must preserve strict Python enum/literal
+   types. A `model_construct` object containing correctly spelled raw strings
+   for enum/literal fields must return finite `INVALID_OBSERVATION`; JSON
+   round-trip coercion may not upgrade those strings into trusted members.
+3. Commit a four-model table that removes every field one at a time, plus
+   null, blank, container, wrong nonblank literal, swapped start-state/target
+   and constructed raw-string cells. Each accepted cell named in CR-133 must
+   be captured red before the correction and green afterward.
+4. Preserve all C2-C4 behavior, public result algebra, no-effect boundary and
+   the three existing reverse-mutation protections exactly.
+
+This is the one permitted same-closure correction. It stays on task
+`019fcc9c-f34f-7d53-a313-c70c90bf3245`, the existing
+`workflow-implementation` worktree and branch
+`codex/implementation-codex-protocol-fixture-05s3`, starting at exact clean
+HEAD `d3bb4ade4f420e2a2bb38b779db0263d0a90f10a`. Preserve allocation
+`aln_local_orchestration_install_05b2_20260811` and receipt
+`rcpt_local_orchestration_install_05b2_20260811`; correction handoff
+`hnd_local_orchestration_install_05b2_r01_20260811`, correlation
+`corr-local-orchestration-install-05b2-r01-20260811`, question
+`q-local-orchestration-install-05b2-r01-20260811` and side-context
+`scx-local-orchestration-install-05b2-20260811-02` are exact. Return one
+additive three-path implementation commit, then a WPR-only handoff using
+unique `PRG-20260811-158`. A remaining blocker at final correction review
+routes to `CONVERGENCE_REVIEW_REQUIRED`; no further implementation correction
+is authorized.
 
 ## Planned dispatch binding
 
