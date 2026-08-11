@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01, AC-02 and AC-07 compensation-state seam |
-| State | `BLOCKED / CONVERGENCE_REVIEW_REQUIRED` |
+| State | `SUPERSEDED / CONVERGENCE_DECOMPOSED / IMMUTABLE_REJECTED_EVIDENCE` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B3B-02` / R1-R5 |
 | Dependency | Integrated 05B1/05B2 at control baseline; ADR-20260811-004; no dependency on 05B3A source |
 | Control / implementation / reviewer | Current `main` / task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` / independent current `main` reviewer |
@@ -122,3 +122,13 @@ malformed nested request, attempt ID, marketplace state or plugin state escapes
 as `PydanticSerializationError` rather than finite `PLAN_INVALID`. Per
 Workflow.md §8.1, no third correction, integration or 05B3C dispatch is
 authorized.
+
+## Convergence disposition
+
+This closure is closed to further implementation. CR-144/CR-145 are routed to
+the finite child Ticket `05b3b1-codex-plan-identity-admission` under a new
+closure, allocation and receipt. The child may append to the same clean owner
+branch only because no requirement change, owner/worktree replacement,
+contamination or baseline conflict exists. Its terminal review must re-evaluate
+the complete resulting reducer against this ticket's R1-R5; this record does
+not approve or integrate the rejected parent commits.

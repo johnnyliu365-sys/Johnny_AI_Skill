@@ -123,3 +123,14 @@ This is the correction review for the same ticket sequence. Per Workflow.md
 approved or integrable; return to control-plane convergence review and keep
 05B3C dependency-waiting. No live Codex mutation, target-project write, push,
 release or deployment is authorized.
+
+## Convergence routing
+
+Control-plane convergence classifies the missing recursive identity matrix as
+a bounded child seam rather than reopening revision 02. Ticket 05B3B is
+superseded and immutable; CR-144/CR-145 are assigned to new closure
+`CLOSURE-LOCAL-INSTALL-T05B3B1-01`. The child receives a new allocation and
+receipt while retaining the same clean owner worktree/branch as an additive
+history. Its terminal review must rerun this report's complete R1-R5 evidence
+and the child I1-I5 matrix before any integration. This routing is not an
+approval of `3f22551` or `4d5bbef`.

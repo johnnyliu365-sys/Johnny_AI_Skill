@@ -2,13 +2,13 @@
 
 | Field | Value |
 | --- | --- |
-| Context state | `TICKET_05B3A_INTEGRATED_05B3B_CONVERGENCE_REVIEW_REQUIRED` |
-| Router event | `GUARDED_INTEGRATION_COMPLETED(05B3A) / CONVERGENCE_REVIEW_REQUIRED(05B3B)` |
+| Context state | `TICKET_05B3B1_OWNER_AUTHORIZED_DISPATCH_READY` |
+| Router event | `CONVERGENCE_REVIEW_REQUIRED(05B3B) / TICKET_DECOMPOSITION(05B3B1)` |
 | Delivery stage | `POC` |
 | Requirement change | `CHG-20260808-011` |
 | Baseline | `8a13eb7` (`merge: integrate approved Ticket 05B3A`) |
 | Control-plane owner | Codex / current `main` worktree |
-| Implementation owner | 05B3A is integrated and its owner allocation is released; 05B3B revision-02 is terminal rejected and awaits control-plane convergence; 05B3C is unallocated |
+| Implementation owner | 05B3A is integrated and released; 05B3B is terminal rejected; task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` is selected for 05B3B1 in existing `workflow-implementer-2`; 05B3C is unallocated |
 | Required sources read | `AGENTS.md`, `Workflow.md` (Router, Wayfinder, Grill, change control, specification, tickets, role boundary), `Defined_wayfinder.md`, `CONTEXT.md`, `PRD.md`, `ProjectSchedule.md`, `doc/RequirementChangeLog.md`, existing plugin manifests / README, `library/workflow_router/`, and completed plugin / autonomous-collaboration POCs |
 
 ## Shared Context reference
@@ -498,3 +498,13 @@ Revision-02 independent reviews are recorded in the unique review reports.
 malformed exact plan identity can escape as `PydanticSerializationError`.
 Workflow.md §8.1 therefore requires control-plane convergence; no third
 correction, 05B3B integration or 05B3C dispatch is authorized.
+
+## Ticket 05B3B1 convergence child
+
+Owner authorization selects one finite child for CR-144/CR-145. 05B3B1 owns
+only recursive plan-identity admission before comparison/serialization. It
+uses a new closure, allocation and receipt but retains implementer-2's existing
+clean worktree and branch; no `FRESH_BRANCH_REQUIRED` evidence exists. The
+terminal review must validate the complete resulting reducer against parent
+R1-R5 and child I1-I5. 05B3C remains unallocated until that child is approved
+and integrated.

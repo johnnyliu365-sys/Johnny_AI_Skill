@@ -2027,3 +2027,14 @@
 | Ledger resolution | The sole conflict was `doc/WorkProgressReport.md`; PRG-170, PRG-172 through PRG-176, PRG-178 and PRG-179 are retained exactly once. Neither immutable parent was amended, reset or overwritten. |
 | Post-merge verification | Focused 6/6 and full 236/236 unittest passed. Strict full-tree mypy and in-memory compile passed 112 files. `git diff --check`, repository cache scan, external mypy cache removal and owned stage-root readback passed. |
 | Completion | 05B3A is `COMPLETE / APPROVED / INTEGRATED`; allocation `aln_local_orchestration_install_05b3a_20260811` is released and receipt `rcpt_local_orchestration_install_05b3a_20260811` is closed against replay. 05B3C remains dependency-waiting on 05B3B convergence. No live Codex mutation, target-project write, push, release or deployment. |
+
+## PRG-20260812-181 — Ticket 05B3B convergence decomposition
+
+| Field | Value |
+| --- | --- |
+| Router event | `CONVERGENCE_REVIEW_REQUIRED(05B3B) -> ARCHITECTURE_CONFIRMATION -> TICKET_DECOMPOSITION(05B3B1) -> TICKET_DISPATCH_REQUIRED` |
+| Parent evidence | Terminal closure `CLOSURE-LOCAL-INSTALL-T05B3B-02`; implementation `3f22551b8f581d087ef0cdbad6a70fbd671202e2`; handoff `4d5bbefe42e1d1ae3206b29e877f0556bda3ce4c`; CR-144/CR-145. Parent becomes immutable `SUPERSEDED / CONVERGENCE_DECOMPOSED`; no third correction. |
+| Child | `05b3b1-codex-plan-identity-admission`; closure `CLOSURE-LOCAL-INSTALL-T05B3B1-01`; exact I1-I5 matrix. It owns only recursive exact identity admission before supplied-field operations and must return metadata-only `PLAN_INVALID` for all frozen malformed/trap cells. |
+| Architecture | No requirement or public contract change. No fresh branch is justified: the owner, worktree, branch and clean exact baseline are unchanged and there is no contamination or baseline conflict. The child gets a new ticket-bound allocation/receipt and additive commits; rejected parent commits remain immutable ancestors, not approved evidence. |
+| Owner / lane | Owner-authorized task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2`; existing `codex/implementation-codex-compensation-reducer-05b3b`; clean admission baseline `4d5bbefe42e1d1ae3206b29e877f0556bda3ce4c`. Primary implementer remains idle. |
+| Review stop | One terminal child review reruns parent R1-R5, parent six reversals and child I1-I5. Any blocker returns `CONVERGENCE_REVIEW_REQUIRED`; no correction loop, integration or 05B3C dispatch. |

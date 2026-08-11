@@ -82,3 +82,12 @@ dependency-waiting and owns all cross-module composition.
   it replaces descriptor-resolving lookup primitives, freezes identity-only
   class checks, names the exact proof order, and restores the exact residual
   current-attempt identity/state contract without changing product behavior.
+- Revision 03 follows terminal 05B3B review
+  `dda8ba460a00a4e734811bcfe95595b42d9db693`: CR-144/CR-145 are isolated in
+  child Ticket 05B3B1. The product contract and reducer architecture do not
+  change. The child admits the four nested identity fields before any supplied
+  identity comparison/serialization and receives a new closure and receipt.
+  It appends on the existing clean owner branch because there is no requirement
+  change, owner/worktree replacement, contamination or baseline conflict;
+  rejected commits remain immutable ancestors and the terminal child review
+  must rerun the complete reducer R1-R5 plus I1-I5.
