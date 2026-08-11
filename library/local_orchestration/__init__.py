@@ -90,6 +90,21 @@ from .host_contracts import (
 from .host_fakes import RecordedHostLifecycle
 from .host_lifecycle import ReversibleHostCapabilityGate
 from .codex_cli_adapter import CodexCliPreflight, ProcessCodexCommandPort
+from .codex_command_attempts import (
+    CodexCommandClassificationRejectReason,
+    CodexCommandClassificationRejected,
+    CodexCommandClassificationResult,
+    CodexCommandObservation,
+    CodexCommandStartState,
+    CodexCommandTarget,
+    CodexMarketplaceAddConfirmed,
+    CodexPluginAddConfirmed,
+    CodexPreStartFailure,
+    CodexPreStartFailureReason,
+    CodexStartedFailure,
+    CodexStartedFailureReason,
+    classify_command_attempt,
+)
 from .codex_registration_contracts import (
     CodexAttemptEffect,
     CodexAttemptEffectState,
@@ -177,6 +192,19 @@ __all__ = [
     "HostRemovalBlocked", "HostRemovalRequest", "HostRemovalSucceeded",
     "RecordedHostLifecycle", "ReversibleHostCapabilityGate",
     "CodexCliPreflight", "ProcessCodexCommandPort",
+    "CodexCommandClassificationRejectReason",
+    "CodexCommandClassificationRejected",
+    "CodexCommandClassificationResult",
+    "CodexCommandObservation",
+    "CodexCommandStartState",
+    "CodexCommandTarget",
+    "CodexMarketplaceAddConfirmed",
+    "CodexPluginAddConfirmed",
+    "CodexPreStartFailure",
+    "CodexPreStartFailureReason",
+    "CodexStartedFailure",
+    "CodexStartedFailureReason",
+    "classify_command_attempt",
     "CodexBlockReason", "CodexBlocked", "CodexCliVersion", "CodexCommandPort", "CodexCommandResponse",
     "CodexFilesystemPort", "CodexMarketplaceEntry", "CodexMarketplaceList", "CodexMarketplaceName", "CodexMarketplaceSource",
     "CodexPluginEntry", "CodexPluginList", "CodexPluginName", "CodexPreflightEligible",
