@@ -1505,3 +1505,13 @@
 | Binding | Closure `CLOSURE-LOCAL-INSTALL-T05S3-02`; override `OVR-LOCAL-INSTALL-T05S3-CR125-20260811-01`; correction `4835b0f0b5f404d13dd04e0aa55ca6205a816f2c`; handoff `008fac8327ce783b2cc39331064eed8e31c9a34d`; report `doc/reviews/local-orchestration-installer/05s3-codex-protocol-fixture-code-review.md`. |
 | Independent evidence | Fresh immutable export: focused 6/6, full 195/195, strict mypy and compile over 96 files; exact original 3,062/5,061-byte probes, duplicate-key specificity, excluded `MemoryError`, both reverse mutations, scope/ancestry/diff and zero-residue checks passed. |
 | Decision | `APPROVED / INTEGRATION_AUTHORIZED`; CR-125 is closed. Allocation and receipt remain active only until guarded integration is verified. No merge, 05S4 dispatch, push, release, deployment, live Codex mutation or target-project write in this correction review. |
+
+## PRG-20260811-132 — Ticket 05S3 guarded integration
+
+| Field | Value |
+| --- | --- |
+| Router event | `APPROVED -> GUARDED_INTEGRATION -> ACTION_COMPLETED -> PAUSE_BEFORE_NEXT_TICKET` |
+| Integration | Merge `43a1639cfda44b4b9c664c584cf557b47ddb510a`; first parent control approval `c518e6211f6c7f8d90df2f7681fd457036cf8978`; second parent reviewed handoff `008fac8327ce783b2cc39331064eed8e31c9a34d`. |
+| Resolution | The sole conflict was `doc/WorkProgressReport.md`. Resolution retained PRG-126 through PRG-131 exactly once in numeric order; no source conflict or silent discard occurred. |
+| Post-merge verification | Focused 6/6; full 195/195; strict mypy 96 files with removed external cache; in-memory compile 96 files; exact 3,062/5,061-byte CR-125 probes, duplicate-key specificity and excluded `MemoryError`; source sentinels and `git diff --check`; zero repository cache, fixed response-file and staging-root residue. |
+| Completion | 05S3 is `COMPLETE / APPROVED / INTEGRATED`; allocation `aln_local_orchestration_install_05s3_r02_20260811` is released and receipt `rcpt_local_orchestration_install_05s3_r02_20260811` is closed. 05S4 is `PLANNED / READY / NOT_DISPATCHED`. No push, release, deployment, live Codex mutation or target-project write. |

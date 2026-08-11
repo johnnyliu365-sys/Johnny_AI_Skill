@@ -159,3 +159,19 @@ second parent. Allocation `aln_local_orchestration_install_05s3_r02_20260811`
 and receipt `rcpt_local_orchestration_install_05s3_r02_20260811` remain active
 only until that integration is verified. This correction review does not merge,
 dispatch 05S4, push, release, deploy, mutate live Codex or touch a target project.
+
+## Guarded integration
+
+Merge `43a1639cfda44b4b9c664c584cf557b47ddb510a` preserves control approval
+`c518e6211f6c7f8d90df2f7681fd457036cf8978` as first parent and reviewed
+handoff `008fac8327ce783b2cc39331064eed8e31c9a34d` as second parent. The only
+conflict was `doc/WorkProgressReport.md`; PRG-126 through PRG-131 were retained
+exactly once and in numeric order.
+
+Post-merge verification passed: focused 6/6, full 195/195, strict mypy and
+in-memory compile over 96 files, exact 3,062/5,061-byte decoder probes,
+duplicate-key specificity, excluded `MemoryError`, source sentinels,
+`git diff --check`, two clean worktrees and zero cache/response/staging-root
+residue. Ticket 05S3 is `COMPLETE / APPROVED / INTEGRATED`; 05S4 is ready but
+was not dispatched. No push, release, deployment, live Codex mutation or
+target-project write occurred.
