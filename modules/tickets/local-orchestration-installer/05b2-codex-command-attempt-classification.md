@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01, AC-02, AC-07 and AC-08 registration seam |
 | Parent evidence | Terminal 05B review `24227ac`, especially CR-99/CR-103; rejected parent source remains historical evidence only |
-| State | `PLANNED / READY_FOR_DISPATCH` |
+| State | `IN_PROGRESS / IMPLEMENTATION_DISPATCH_CONFIRMED` |
 | Dependency | 05B1 independently approved and integrated by `bbc7de5` / `b2525ec` |
 | Implementation owner | Task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; existing `workflow-implementation` worktree and branch only |
 | Acceptance owner | Independent control-plane reviewer; no implementation writes |
@@ -86,4 +86,5 @@ rebase, amend, force, merge, cherry-pick, stash, push, release or deployment.
 | Correlation / question | `corr-local-orchestration-install-05b2-20260811` / `q-local-orchestration-install-05b2-20260811` |
 | Side context | `scx-local-orchestration-install-05b2-20260811-01` |
 | Authority | Owner instruction to continue under the approved workflow; program authority `PRG-20260809-042`; integrated dependency `b2525ec` |
-| Ticket-doc baseline | This ticket-definition commit; its exact SHA is bound by the separate handoff record before implementation dispatch. |
+| Ticket-doc baseline | `c6ba7713160f04b56a4982fd6dae4d1d4d34f026` |
+| Expected lane admission | Existing branch `codex/implementation-codex-protocol-fixture-05s3` at exact clean HEAD `1df30ae6ed9a87b4b9fe35b64ea09ccc107cccee`, then normal `--ff-only` to the reviewed handoff commit. |

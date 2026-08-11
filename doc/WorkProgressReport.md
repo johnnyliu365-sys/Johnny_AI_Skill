@@ -1763,3 +1763,15 @@
 | Conflict resolution | The sole conflict was `doc/WorkProgressReport.md`. Resolution retained PRG-145 through PRG-152 exactly once; implementation-lane duplicate PRG-145 is normalized to unique PRG-152 without amending the immutable handoff commit. |
 | Post-merge verification | Focused 7/7 and full 223/223 unittest passed. Strict mypy passed 108 files; in-memory compile 3/3, source sentinel and diff checks passed. External cache was removed; repository cache/pyc residue count is zero. |
 | Completion | 05B1 is `COMPLETE / APPROVED / INTEGRATED`; allocation `aln_local_orchestration_install_05b1_20260811` is released and receipt `rcpt_local_orchestration_install_05b1_20260811` is closed against replay. 05B2 is the next unblocked serial ticket. No live Codex mutation, target-project write, push, release or deployment. |
+
+## PRG-20260811-154 — Ticket 05B2 implementation handoff and dispatch
+
+| Field | Value |
+| --- | --- |
+| Router event | `ACTION_COMPLETED(05B1) -> TICKET_SELECTED(05B2) -> TICKET_DISPATCH_REQUIRED -> IMPLEMENTATION_DISPATCH_CONFIRMED` |
+| Project / ticket / closure | `prj-local-orchestration-installer-poc-20260808`; `05b2-codex-command-attempt-classification`; `CLOSURE-LOCAL-INSTALL-T05B2-01`; C1-C4/T1-T4. |
+| Binding | Handoff `hnd_local_orchestration_install_05b2_20260811`; allocation `aln_local_orchestration_install_05b2_20260811`; receipt `rcpt_local_orchestration_install_05b2_20260811`; correlation `corr-local-orchestration-install-05b2-20260811`; question `q-local-orchestration-install-05b2-20260811`; side-context `scx-local-orchestration-install-05b2-20260811-01`; ticket docs `c6ba7713160f04b56a4982fd6dae4d1d4d34f026`. |
+| Owner / lane | Task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; reuse only clean `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` and existing branch `codex/implementation-codex-protocol-fixture-05s3` at submitted HEAD `1df30ae6ed9a87b4b9fe35b64ea09ccc107cccee`, then normal `--ff-only` to this handoff. No new branch/worktree. |
+| Exact scope | New `codex_command_attempts.py`, new `test_codex_command_attempts.py`, and export-only `library/local_orchestration/__init__.py`. Integrated 05B1 is read-only; production must not import test-owned 05S2. No command, process, parse, filesystem, host or target-project effect. |
+| Finite outcome | Three pre-start reasons leave authority unchanged; six started/ambiguous reasons yield only `MAY_EXIST`; three confirmations map to exact `OWNED`/`PREEXISTING`; only two of fourteen command/current-journal admission pairs are legal. |
+| Return / guards | One exact-scope implementation commit plus one WPR-only handoff with truthful first-red/green and three reverse mutations. Implementer works alone and makes no review, integration, downstream dispatch or Agent-control decision. No push, release, deployment, live Codex mutation or target-project write. |
