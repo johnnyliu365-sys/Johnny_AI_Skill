@@ -1460,3 +1460,19 @@
 | Verification | `python -B -m unittest tests.test_codex_protocol_fixture -v`: 4/4 passed. `python -B -m unittest discover -s tests -v`: 193/193 passed. `python -B -m mypy --strict --explicit-package-bases --no-incremental --cache-dir <validated OS-temp>`: 96 source files, success; the external cache was removed and read back absent. In-memory compile: 5/5 authorized files. Source/scope sentinel and `git diff --check`: passed. |
 | Residue / isolation | Repository `.mypy_cache`, `.pytest_cache`, `__pycache__`, fixed response-file, owned staging-root and response-target residue counts: 0. No live Codex, target-project action, installer/lifecycle persistence, compensation, absence behavior, merge, push, release, deployment, integration decision, review decision, or 05S4 dispatch occurred. |
 | Review handoff | Independent control-plane review is required. This implementation owner makes no approval, integration, or downstream-ticket decision. |
+
+## PRG-20260811-130 — Ticket 05S3 CR-125 revision-02 correction handoff
+
+| Field | Value |
+| --- | --- |
+| Router event | `ACTION_COMPLETED -> IMPLEMENTATION_CORRECTION_COMPLETED -> REVIEW_HANDOFF` |
+| Ticket / closure | `05s3-codex-protocol-fixture`; `CLOSURE-LOCAL-INSTALL-T05S3-02`; CR-125 only; owner override `OVR-LOCAL-INSTALL-T05S3-CR125-20260811-01`. |
+| Authority / binding | Authority `PRG-20260809-042` and `PRG-20260811-129`; handoff `hnd_local_orchestration_install_05s3_r02_20260811`; allocation `aln_local_orchestration_install_05s3_r02_20260811`; receipt `rcpt_local_orchestration_install_05s3_r02_20260811`; correlation `corr-local-orchestration-install-05s3-r02-20260811`; question `q-local-orchestration-install-05s3-r02-20260811`. |
+| Baseline / owner | Control correction baseline `4b17a2587cd247c2c97fffbf7785e284a8610500`; submitted pre-correction HEAD `f725d48238402606107b0e304b6bf7213c0acc2b`; owner task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; branch `codex/implementation-codex-protocol-fixture-05s3`; additive implementation `4835b0f0b5f404d13dd04e0aa55ca6205a816f2c`. |
+| Exact correction scope | Only `tests/staging/codex_protocol/contracts.py` and `tests/test_codex_protocol_fixture.py`; all integrated and production files remain unchanged. |
+| First-red evidence | Against submitted HEAD, `test_r02_cr125_deep_array_maps_recursion_error_to_malformed_json` escaped the named recursion decoder failure and `test_r02_cr125_large_integer_maps_value_error_to_malformed_json` escaped the named integer decoder failure. Both bounded payloads are below `MAX_RESPONSE_BYTES`; no raw exception output is retained. |
+| Correction | The strict JSON decoder preserves `_DuplicateJsonKey -> DUPLICATE_KEY` first, then maps only `JSONDecodeError`, `RecursionError`, and non-duplicate `ValueError` from `json.loads` to the existing `MALFORMED_JSON` rejection. It does not catch broad or process-control exceptions. |
+| Reverse-mutation evidence | Removing only `RecursionError` mapping failed the deep-array regression; removing only `ValueError` mapping failed the large-integer regression. Each mutation was restored before green verification. |
+| Verification | Focused `python -B -m unittest tests.test_codex_protocol_fixture -v`: 6/6 passed. Full `python -B -m unittest discover -s tests -v`: 195/195 passed. Strict mypy with a validated external no-incremental cache: 96 source files, success; cache removal and absent readback passed. In-memory compile: 2/2 changed files. Source/scope sentinel and `git diff --check`: passed. |
+| Residue / isolation | Repository cache, fixed response-file and owned staging-root residue counts are zero. No live Codex, target-project action, review, integration, downstream dispatch, merge, push, release or deployment occurred. |
+| Review handoff | Independent control-plane review is required. This implementation owner makes no approval or integration decision. |
