@@ -154,32 +154,30 @@ def _validate_state_identity(state: dict[str, object], codex_home: Path) -> None
 
 
 def _validate_records(state: dict[str, object]) -> None:
-    marketplace_names: set[str] = set()
-    plugin_ids: set[str] = set()
     for collection in ("marketplaces", "foreign_marketplaces"):
+        marketplace_names: set[str] = set()
         value = state[collection]
         assert isinstance(value, list)
         for record in value:
             _validate_marketplace_record(record)
             assert isinstance(record, dict)
-            if collection == "marketplaces":
-                name = record["name"]
-                assert isinstance(name, str)
-                if name in marketplace_names:
-                    raise OracleFailure(STATE_INVALID)
-                marketplace_names.add(name)
+            name = record["name"]
+            assert isinstance(name, str)
+            if name in marketplace_names:
+                raise OracleFailure(STATE_INVALID)
+            marketplace_names.add(name)
     for collection in ("plugins", "foreign_plugins"):
+        plugin_ids: set[str] = set()
         value = state[collection]
         assert isinstance(value, list)
         for record in value:
             _validate_plugin_record(record)
             assert isinstance(record, dict)
-            if collection == "plugins":
-                plugin_id = record["plugin_id"]
-                assert isinstance(plugin_id, str)
-                if plugin_id in plugin_ids:
-                    raise OracleFailure(STATE_INVALID)
-                plugin_ids.add(plugin_id)
+            plugin_id = record["plugin_id"]
+            assert isinstance(plugin_id, str)
+            if plugin_id in plugin_ids:
+                raise OracleFailure(STATE_INVALID)
+            plugin_ids.add(plugin_id)
 
 
 def _validate_marketplace_record(record: object) -> None:

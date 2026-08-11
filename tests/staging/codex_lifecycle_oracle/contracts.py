@@ -178,11 +178,19 @@ class OracleState(StrictModel):
     foreign_plugins: tuple[OraclePluginRecord, ...]
 
     @model_validator(mode="after")
-    def unique_owned_identities(self) -> OracleState:
-        marketplace_ids = tuple(record.name for record in self.marketplaces)
-        plugin_ids = tuple(record.plugin_id for record in self.plugins)
-        if len(set(marketplace_ids)) != len(marketplace_ids) or len(set(plugin_ids)) != len(plugin_ids):
-            raise ValueError("owned state contains duplicate identities")
+    def unique_collection_identities(self) -> OracleState:
+        marketplace_collections = (self.marketplaces, self.foreign_marketplaces)
+        plugin_collections = (self.plugins, self.foreign_plugins)
+        marketplace_duplicates = any(
+            len({record.name for record in collection}) != len(collection)
+            for collection in marketplace_collections
+        )
+        plugin_duplicates = any(
+            len({record.plugin_id for record in collection}) != len(collection)
+            for collection in plugin_collections
+        )
+        if marketplace_duplicates or plugin_duplicates:
+            raise ValueError("state collection contains duplicate identities")
         return self
 
 

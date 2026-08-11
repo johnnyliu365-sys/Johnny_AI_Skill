@@ -78,14 +78,20 @@ class CodexLifecycleOracle:
             return validated_command
         try:
             command_path = validated_command_path(validated_lease)
-            if command_path.exists() or _is_reparse(command_path):
-                return OracleBlocked(reason=OracleBlockReason.COMMAND_INVALID)
-            command_path.write_text(validated_command.model_dump_json(warnings=False), encoding="utf-8")
-            if not _is_plain_file(command_path):
-                return OracleBlocked(reason=OracleBlockReason.COMMAND_INVALID)
-            response = self._fixture.run(validated_lease, validated_command.action.surface)
         except (OSError, ValueError):
             return OracleBlocked(reason=OracleBlockReason.PROCESS_FAILED)
+        try:
+            if command_path.exists() or _is_reparse(command_path):
+                return OracleBlocked(reason=OracleBlockReason.COMMAND_INVALID)
+        except OSError:
+            return OracleBlocked(reason=OracleBlockReason.PROCESS_FAILED)
+        try:
+            command_path.write_text(validated_command.model_dump_json(warnings=False), encoding="utf-8")
+            if not _is_plain_file(command_path):
+                return _blocked_after_command_cleanup(command_path, OracleBlockReason.COMMAND_INVALID)
+            response = self._fixture.run(validated_lease, validated_command.action.surface)
+        except (OSError, ValueError):
+            return _blocked_after_command_cleanup(command_path, OracleBlockReason.PROCESS_FAILED)
         cleanup_ok = _remove_exact_file(command_path)
         if not cleanup_ok:
             return OracleBlocked(reason=OracleBlockReason.COMMAND_CLEANUP_FAILED)
@@ -205,6 +211,12 @@ def _remove_exact_file(path: Path) -> bool:
     except OSError:
         return False
     return True
+
+
+def _blocked_after_command_cleanup(command_path: Path, reason: OracleBlockReason) -> OracleBlocked:
+    if not _remove_exact_file(command_path):
+        return OracleBlocked(reason=OracleBlockReason.COMMAND_CLEANUP_FAILED)
+    return OracleBlocked(reason=reason)
 
 
 def _is_reparse(path: Path) -> bool:

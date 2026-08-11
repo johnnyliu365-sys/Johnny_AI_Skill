@@ -30,12 +30,16 @@ from tests.staging.codex_lifecycle_oracle.contracts import (
 from tests.staging.codex_lifecycle_oracle.oracle import CodexLifecycleOracle
 from tests.staging.codex_lifecycle_oracle.protocol_runner import CodexLifecycleOracleRunner, ORACLE_CHILD
 from tests.staging.codex_protocol.contracts import (
+    CodexProtocolAccepted,
     CodexMarketplaceAdd,
     CodexMarketplaceRemove,
     CodexPluginAdd,
     CodexPluginRemove,
+    CodexProtocolRejected,
     CodexProtocolSurface,
+    ExactResponseFilePort,
 )
+from tests.staging.codex_protocol.fixture import CodexProtocolFixture
 from tests.staging.environment_core.contracts import (
     EnvironmentLease,
     EnvironmentLocator,
@@ -73,6 +77,45 @@ class FailingProcessPort:
         overlay: EnvironmentOverlay,
     ) -> StartedChildProcess:
         raise OSError("injected process failure")
+
+
+class OrdinaryFixtureFailure(CodexProtocolFixture):
+    """Raises only an ordinary dependency error after the command file is written."""
+
+    def __init__(self, runner: CodexLifecycleOracleRunner) -> None:
+        super().__init__(runner, ExactResponseFilePort())
+
+    def run(
+        self,
+        lease: EnvironmentLease,
+        surface: CodexProtocolSurface,
+    ) -> CodexProtocolAccepted | CodexProtocolRejected:
+        raise OSError("injected fixture dependency failure")
+
+
+class CleanupFailureFixture(CodexProtocolFixture):
+    """Makes only the fixed command locator non-ordinary before failing."""
+
+    def __init__(self, runner: CodexLifecycleOracleRunner) -> None:
+        super().__init__(runner, ExactResponseFilePort())
+
+    def run(
+        self,
+        lease: EnvironmentLease,
+        surface: CodexProtocolSurface,
+    ) -> CodexProtocolAccepted | CodexProtocolRejected:
+        command_path = lease.temporary.absolute.path / ORACLE_COMMAND_FILE_NAME
+        command_path.unlink()
+        command_path.mkdir()
+        raise OSError("injected fixture dependency failure")
+
+
+class FixtureFailureOracle(CodexLifecycleOracle):
+    """Uses a typed fixture failure without changing the production composition."""
+
+    def __init__(self, runner: CodexLifecycleOracleRunner, fixture: CodexProtocolFixture) -> None:
+        super().__init__(runner)
+        self._fixture = fixture
 
 
 class CodexLifecycleOracleTests(unittest.TestCase):
@@ -134,6 +177,76 @@ class CodexLifecycleOracleTests(unittest.TestCase):
             self.assertFalse((oracle.payload_root(lease) / "plugins" / "owned-plugin.json").exists())
         finally:
             self._teardown(allocator, lease)
+
+    def test_cr126_duplicate_foreign_identities_are_blocked_before_fresh_child_list(self) -> None:
+        cells: tuple[
+            tuple[
+                str,
+                OracleMarketplaceRecord | OraclePluginRecord,
+                str,
+            ],
+            ...,
+        ] = (
+            ("foreign-marketplace", self._foreign_marketplace("foreign-duplicate-market", "foreign-root"), "marketplace"),
+            ("foreign-plugin", self._foreign_plugin("foreign-duplicate-plugin", "foreign-name", "foreign-market"), "plugin"),
+        )
+        for index, (label, record, collection) in enumerate(cells, start=50):
+            with self.subTest(collection=label):
+                allocator, lease, oracle = self._ready(f"00000000000000{index:02x}")
+                try:
+                    self._assert_completed(oracle.initialize(lease), CodexMarketplaceList)
+                    if collection == "marketplace":
+                        if not isinstance(record, OracleMarketplaceRecord):
+                            raise AssertionError("marketplace test record type mismatch")
+                        self.assertIsInstance(oracle.seed_foreign_marketplace(lease, record), OracleForeignSeeded)
+                        duplicate = oracle.seed_foreign_marketplace(lease, record)
+                        self._assert_foreign_seed_blocked(duplicate, OracleBlockReason.STATE_INVALID)
+                        response = self._run(oracle, lease, OracleAction.MARKETPLACE_LIST)
+                        marketplaces = self._assert_completed(response, CodexMarketplaceList)
+                        self.assertEqual((record.name,), tuple(entry.name for entry in marketplaces.marketplaces))
+                    else:
+                        if not isinstance(record, OraclePluginRecord):
+                            raise AssertionError("plugin test record type mismatch")
+                        self.assertIsInstance(oracle.seed_foreign_plugin(lease, record), OracleForeignSeeded)
+                        duplicate = oracle.seed_foreign_plugin(lease, record)
+                        self._assert_foreign_seed_blocked(duplicate, OracleBlockReason.STATE_INVALID)
+                        response = self._run(oracle, lease, OracleAction.PLUGIN_LIST)
+                        plugins = self._assert_completed(response, CodexPluginList)
+                        self.assertEqual((record.plugin_id,), tuple(entry.pluginId for entry in plugins.installed))
+                finally:
+                    self._teardown(allocator, lease)
+
+    def test_cr126_tampered_foreign_duplicates_are_rejected_by_the_fresh_child(self) -> None:
+        cells: tuple[tuple[str, OracleAction, str, OracleMarketplaceRecord | OraclePluginRecord], ...] = (
+            (
+                "foreign-marketplace",
+                OracleAction.MARKETPLACE_LIST,
+                "foreign_marketplaces",
+                self._foreign_marketplace("foreign-child-market", "foreign-root"),
+            ),
+            (
+                "foreign-plugin",
+                OracleAction.PLUGIN_LIST,
+                "foreign_plugins",
+                self._foreign_plugin("foreign-child-plugin", "foreign-name", "foreign-market"),
+            ),
+        )
+        for index, (label, action, collection, record) in enumerate(cells, start=60):
+            with self.subTest(collection=label):
+                allocator, lease, oracle = self._ready(f"00000000000000{index:02x}")
+                try:
+                    self._assert_completed(oracle.initialize(lease), CodexMarketplaceList)
+                    if isinstance(record, OracleMarketplaceRecord):
+                        self.assertIsInstance(oracle.seed_foreign_marketplace(lease, record), OracleForeignSeeded)
+                    else:
+                        self.assertIsInstance(oracle.seed_foreign_plugin(lease, record), OracleForeignSeeded)
+                    state_path = oracle.state_path(lease)
+                    state = json.loads(state_path.read_text(encoding="utf-8"))
+                    state[collection].append(dict(state[collection][0]))
+                    state_path.write_text(json.dumps(state, separators=(",", ":")), encoding="utf-8")
+                    self._assert_blocked(self._run(oracle, lease, action), OracleBlockReason.STATE_INVALID)
+                finally:
+                    self._teardown(allocator, lease)
 
     def test_o4_invalid_state_and_topology_cells_are_finite_before_false_results(self) -> None:
         cells = (
@@ -271,6 +384,32 @@ class CodexLifecycleOracleTests(unittest.TestCase):
             finally:
                 self._teardown(allocator, lease)
 
+    def test_cr127_ordinary_fixture_error_removes_the_exact_command_file(self) -> None:
+        allocator, lease, oracle = self._ready("000000000000003c")
+        runner = CodexLifecycleOracleRunner(BoundedChildProcessRunner(SubprocessProcessPort()))
+        failing_oracle = FixtureFailureOracle(runner, OrdinaryFixtureFailure(runner))
+        try:
+            self._assert_completed(oracle.initialize(lease), CodexMarketplaceList)
+            result = failing_oracle.run(lease, self._command(OracleAction.MARKETPLACE_LIST))
+            self._assert_blocked(result, OracleBlockReason.PROCESS_FAILED)
+            self.assertFalse((lease.temporary.absolute.path / ORACLE_COMMAND_FILE_NAME).exists())
+        finally:
+            self._teardown(allocator, lease)
+
+    def test_cr127_failed_exact_command_cleanup_is_finite(self) -> None:
+        allocator, lease, oracle = self._ready("000000000000003d")
+        runner = CodexLifecycleOracleRunner(BoundedChildProcessRunner(SubprocessProcessPort()))
+        failing_oracle = FixtureFailureOracle(runner, CleanupFailureFixture(runner))
+        command_path = lease.temporary.absolute.path / ORACLE_COMMAND_FILE_NAME
+        try:
+            self._assert_completed(oracle.initialize(lease), CodexMarketplaceList)
+            result = failing_oracle.run(lease, self._command(OracleAction.MARKETPLACE_LIST))
+            self._assert_blocked(result, OracleBlockReason.COMMAND_CLEANUP_FAILED)
+            self.assertTrue(command_path.is_dir())
+            command_path.rmdir()
+        finally:
+            self._teardown(allocator, lease)
+
     @staticmethod
     def _command(action: OracleAction) -> OracleCommand:
         return OracleCommand(action=action, identity=IDENTITY)
@@ -290,6 +429,16 @@ class CodexLifecycleOracleTests(unittest.TestCase):
     def _assert_blocked(result: OracleRunResult, expected: OracleBlockReason) -> None:
         if not isinstance(result, OracleBlocked):
             raise AssertionError(f"expected blocked result, received {result}")
+        if result.reason is not expected:
+            raise AssertionError(f"expected {expected}, received {result.reason}")
+
+    @staticmethod
+    def _assert_foreign_seed_blocked(
+        result: OracleForeignSeeded | OracleBlocked,
+        expected: OracleBlockReason,
+    ) -> None:
+        if not isinstance(result, OracleBlocked):
+            raise AssertionError(f"expected blocked foreign seed, received {result}")
         if result.reason is not expected:
             raise AssertionError(f"expected {expected}, received {result.reason}")
 
