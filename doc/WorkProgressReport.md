@@ -1443,3 +1443,13 @@
 | Authority / baselines | Program authority `PRG-20260809-042`; owner delivery confirmation in this task; dependency merge `6e24e06`; ticket-doc `9df3fe9f912593e9936e12992a1010bedf015c9f`; this record's commit is the handoff-doc baseline. |
 | Lane | Reuse only `C:\Users\<user>\Desktop\AI控制工作workflow-implementation`; create one new-ticket branch `codex/implementation-codex-protocol-fixture-05s3` from the exact handoff-doc baseline. No new worktree. |
 | Scope / return | Implement only the five Python paths named in the ticket, then one `WorkProgressReport.md`-only return commit. Integrated 05S1/05S2/05A are read-only; rejected combined-05S source is evidence only. Any blocker returns typed `HALT`/`CHANGE_DETECTED`; no automatic correction, review decision, integration, 05S4, push, release, deployment, live Codex mutation or target-project write. |
+
+## PRG-20260811-128 — Ticket 05S3 final independent review
+
+| Field | Value |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED -> FINAL_CODE_REVIEW -> CHANGES_REQUESTED -> FINAL_REVIEW_STOPPED` |
+| Binding | Closure `CLOSURE-LOCAL-INSTALL-T05S3-01`; implementation `bd59011636fd87f6c8ba28b25253ab21e7980d1c`; docs-only handoff `f725d48238402606107b0e304b6bf7213c0acc2b`; report `doc/reviews/local-orchestration-installer/05s3-codex-protocol-fixture-code-review.md`. |
+| Independent evidence | Fresh immutable export: focused 4/4, full 193/193, strict mypy and in-memory compile over 96 files; exact scope/source/ancestry/diff, child binding, topology, cleanup and zero-residue checks passed. |
+| Finding | CR-125 `IMPLEMENTATION_DEFECT`, D2/D4 and T2/T4: bounded 3,062-byte deep-array and 5,061-byte huge-integer JSON inputs escape as `RecursionError` and `ValueError` instead of a finite `CodexProtocolRejectReason`. |
+| Decision | `CHANGES_REQUESTED / FINAL_REVIEW_STOPPED`; release allocation `aln_local_orchestration_install_05s3_20260811` and close receipt `rcpt_local_orchestration_install_05s3_20260811` against replay. No automatic correction, branch/worktree replacement, integration, 05S4, push, release, deployment, live Codex mutation or target-project write. |
