@@ -361,6 +361,11 @@ metadata-only receipt and three reverse-mutation probes all pass. Ticket 05B1
 is `APPROVED / READY_TO_MERGE`; 05B2 remains dependency-waiting until guarded
 integration completes.
 
+Guarded merge `bbc7de5` integrates 05B1 after post-merge focused 7/7, full
+223/223, strict mypy 108 files and zero-residue verification. Its allocation is
+released and receipt closed. Ticket 05B2 command-attempt classification is now
+the next unblocked serial child; 05B3-05B4 remain dependency-waiting.
+
 The submitted 05S1 implementation `e0898cd` and handoff `ecce06a` failed the
 independent E3/T3 physical root-reparse probe. A real Windows junction is a
 `ReparsePoint`, but Python 3.11 `Path.is_symlink()` is false; teardown reads the

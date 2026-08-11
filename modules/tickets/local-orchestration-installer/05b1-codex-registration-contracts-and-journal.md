@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01, AC-02, AC-07 and AC-08 registration seam |
 | Parent evidence | Terminal 05B revision-02 review `24227ac`; CR-98 through CR-104 remain immutable evidence |
-| State | `APPROVED / READY_TO_MERGE` — final correction review closes `CR-128` through `CR-132` |
+| State | `COMPLETE / APPROVED / INTEGRATED` — guarded merge `bbc7de5` closes `CR-128` through `CR-132` |
 | Dependency | 05A plus 05S1-05S4 independently approved and integrated by `b22c6c4`, `504a3ec`, `6e24e06`, `43a1639` and `4af381c` |
 | Implementation owner | Task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; existing `workflow-implementation` worktree and branch only |
 | Acceptance owner | Independent control-plane reviewer; no implementation writes |
@@ -152,3 +152,9 @@ exactly seven journal pairs are accepted and nine rejected; receipt output is
 metadata-only. Independent in-memory reverse mutations for expected-policy
 equality, typed exception mapping and the journal guard each turned the
 corresponding committed test red. Final result: `APPROVED / READY_TO_MERGE`.
+
+Guarded merge `bbc7de5c534c4613356e1e28005e2d11cd8c9283` preserves review
+`36ec95cd4898d4a21dbd54bb57052974a19bb9af` as first parent and reviewed
+handoff `1df30ae6ed9a87b4b9fe35b64ea09ccc107cccee` as second parent. The sole
+WPR conflict retains PRG-145 through PRG-152 exactly once; the lane-local
+duplicate PRG-145 is normalized to PRG-152 without rewriting its commit.

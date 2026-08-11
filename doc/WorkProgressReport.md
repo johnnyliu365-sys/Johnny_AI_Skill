@@ -1753,3 +1753,13 @@
 | Verification | Focused `python -B -m unittest tests.test_codex_registration_contracts -v`: 4/4 passed. Full `python -B -m unittest discover -s tests -v`: 209/209 passed. Strict mypy `--strict --explicit-package-bases --no-incremental` with a validated repository-external cache: 104 source files, success; the cache was removed and read back absent. In-memory compile: 3/3 authorized Python paths. Source sentinel, exact scope, and `git diff --check`: passed. |
 | Residue / isolation | Repository `.mypy_cache`, `.pytest_cache`, and `__pycache__` residue counts are zero. This pure contract ticket made no command, process, filesystem, registration, removal, list, absence, live Codex, target-project, network, review, integration, downstream dispatch, merge, push, release or deployment effect. |
 | Review handoff | Independent control-plane review is required. This implementation owner makes no approval, integration or downstream-ticket decision. |
+
+## PRG-20260811-153 — Ticket 05B1 guarded integration
+
+| Field | Value |
+| --- | --- |
+| Router event | `REVIEW_APPROVED -> GUARDED_INTEGRATION -> ACTION_COMPLETED -> NEXT_TICKET_SELECTION` |
+| Integration | Merge `bbc7de5c534c4613356e1e28005e2d11cd8c9283` preserves control review `36ec95cd4898d4a21dbd54bb57052974a19bb9af` as first parent and reviewed handoff `1df30ae6ed9a87b4b9fe35b64ea09ccc107cccee` as second parent. Source merged without conflict. |
+| Conflict resolution | The sole conflict was `doc/WorkProgressReport.md`. Resolution retained PRG-145 through PRG-152 exactly once; implementation-lane duplicate PRG-145 is normalized to unique PRG-152 without amending the immutable handoff commit. |
+| Post-merge verification | Focused 7/7 and full 223/223 unittest passed. Strict mypy passed 108 files; in-memory compile 3/3, source sentinel and diff checks passed. External cache was removed; repository cache/pyc residue count is zero. |
+| Completion | 05B1 is `COMPLETE / APPROVED / INTEGRATED`; allocation `aln_local_orchestration_install_05b1_20260811` is released and receipt `rcpt_local_orchestration_install_05b1_20260811` is closed against replay. 05B2 is the next unblocked serial ticket. No live Codex mutation, target-project write, push, release or deployment. |
