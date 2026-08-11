@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import ntpath
+from typing import cast
 import unittest
 
 from pydantic import ValidationError
@@ -26,6 +27,7 @@ from library.local_orchestration.codex_registration_contracts import (
     issue_registration_receipt,
     revalidate_current_attempt_journal,
 )
+import library.local_orchestration.codex_registration_contracts as registration_contracts
 from library.local_orchestration.contracts import ArtifactDigest, CANONICAL_INSTALL_ROOT, InstallRoot, InstallationId, OwnedRelativePath
 from library.local_orchestration.host_contracts import CodexCliVersion, CodexMarketplaceName, CodexPluginName, CodexPreflightRequest
 
@@ -62,19 +64,22 @@ def marketplace_observation() -> CodexMarketplaceAddObservation:
     )
 
 
-def plugin_observation() -> CodexPluginAddObservation:
+def plugin_observation(auth_policy: CodexAuthPolicy = AUTH_POLICY) -> CodexPluginAddObservation:
     return CodexPluginAddObservation(
         plugin_id=CodexPluginId(value="probe-plugin-id"),
         name=PLUGIN,
         marketplace_name=MARKETPLACE,
         version=VERSION,
         installed_path=PLUGIN_PATH,
-        auth_policy=AUTH_POLICY,
+        auth_policy=auth_policy,
     )
 
 
-def proof_request() -> CodexRegistrationProofRequest:
-    return CodexRegistrationProofRequest(
+def proof_request(
+    expected_auth_policy: CodexAuthPolicy = AUTH_POLICY,
+    observed_auth_policy: CodexAuthPolicy = AUTH_POLICY,
+) -> CodexRegistrationProofRequest:
+    request = CodexRegistrationProofRequest(
         preflight=preflight_request(),
         version=VERSION,
         marketplace_observation=marketplace_observation(),
@@ -82,6 +87,12 @@ def proof_request() -> CodexRegistrationProofRequest:
         source_locator=SOURCE_LOCATOR,
         installed_locator=INSTALLED_LOCATOR,
         digest=DIGEST,
+    )
+    return request.model_copy(
+        update={
+            "expected_auth_policy": expected_auth_policy,
+            "plugin_observation": plugin_observation(observed_auth_policy),
+        }
     )
 
 
@@ -137,6 +148,40 @@ class MismatchedProofPort(CodexRegistrationProofPort):
 
     def prove(self, request: CodexRegistrationProofRequest) -> CodexRegistrationProof:
         return self._proof
+
+
+class TypedFailureProofPort(CodexRegistrationProofPort):
+    """Raises only the ticket-declared typed port failure."""
+
+    def prove(self, request: CodexRegistrationProofRequest) -> CodexRegistrationProof:
+        raise registration_contracts.CodexRegistrationProofPortFailure()
+
+
+class MalformedProofPort(CodexRegistrationProofPort):
+    """Returns a typed-but-constructed proof that must be rejected at the boundary."""
+
+    def prove(self, request: CodexRegistrationProofRequest) -> CodexRegistrationProof:
+        return CodexRegistrationProof.model_construct()
+
+
+class RuntimeFailureProofPort(CodexRegistrationProofPort):
+    def prove(self, request: CodexRegistrationProofRequest) -> CodexRegistrationProof:
+        raise RuntimeError
+
+
+class MemoryFailureProofPort(CodexRegistrationProofPort):
+    def prove(self, request: CodexRegistrationProofRequest) -> CodexRegistrationProof:
+        raise MemoryError
+
+
+class KeyboardFailureProofPort(CodexRegistrationProofPort):
+    def prove(self, request: CodexRegistrationProofRequest) -> CodexRegistrationProof:
+        raise KeyboardInterrupt
+
+
+class ExitFailureProofPort(CodexRegistrationProofPort):
+    def prove(self, request: CodexRegistrationProofRequest) -> CodexRegistrationProof:
+        raise SystemExit
 
 
 class CodexRegistrationContractsTests(unittest.TestCase):
@@ -288,21 +333,93 @@ class CodexRegistrationContractsTests(unittest.TestCase):
             CodexRegistrationRejectReason.INVALID_PROOF,
         )
 
+    def test_r1_expected_auth_policy_blocks_foreign_observation_before_proof_port(self) -> None:
+        foreign_policy = CodexAuthPolicy(value="foreign-policy")
+        request = proof_request(AUTH_POLICY, foreign_policy)
+        port = ExactProofPort()
+        self._assert_rejected(
+            issue_registration_receipt(request, port),
+            CodexRegistrationRejectReason.INVALID_INPUT,
+        )
+        self.assertEqual(0, port.calls)
+
+    def test_r2_proof_port_failure_algebra_is_finite_and_process_control_propagates(self) -> None:
+        request = proof_request()
+        self._assert_rejected(
+            issue_registration_receipt(request, TypedFailureProofPort()),
+            CodexRegistrationRejectReason.PROOF_PORT_FAILED,
+        )
+        self._assert_rejected(
+            issue_registration_receipt(request, MalformedProofPort()),
+            CodexRegistrationRejectReason.INVALID_PROOF,
+        )
+        wrong_ports: tuple[object, ...] = (None, object())
+        for wrong_port in wrong_ports:
+            with self.subTest(wrong_port=type(wrong_port).__name__):
+                self._assert_rejected(
+                    issue_registration_receipt(request, cast(CodexRegistrationProofPort, wrong_port)),
+                    CodexRegistrationRejectReason.INVALID_PROOF_PORT,
+                )
+        unexpected_ports: tuple[tuple[type[BaseException], CodexRegistrationProofPort], ...] = (
+            (RuntimeError, RuntimeFailureProofPort()),
+            (MemoryError, MemoryFailureProofPort()),
+            (KeyboardInterrupt, KeyboardFailureProofPort()),
+            (SystemExit, ExitFailureProofPort()),
+        )
+        for exception_type, unexpected_port in unexpected_ports:
+            with self.subTest(exception=exception_type.__name__):
+                with self.assertRaises(exception_type):
+                    issue_registration_receipt(request, unexpected_port)
+
+    def test_r4_every_path_boundary_cell_rejects_before_proof_port(self) -> None:
+        exact = proof_request()
+        exact_port = ExactProofPort()
+        self.assertIsInstance(issue_registration_receipt(exact, exact_port), CodexRegistrationReceipt)
+        self.assertEqual(1, exact_port.calls)
+        invalid_paths: tuple[tuple[str, str], ...] = (
+            ("prefix-plus-character", MARKETPLACE_ROOT.value + "X"),
+            ("trailing-slash", MARKETPLACE_ROOT.value + "\\"),
+            ("case", MARKETPLACE_ROOT.value.replace("probe-market", "Probe-market")),
+            ("url-encoded-separator", MARKETPLACE_ROOT.value.replace("marketplaces\\", "marketplaces%2F")),
+            ("traversal", MARKETPLACE_ROOT.value.replace("marketplaces\\probe-market", "marketplaces\\..\\probe-market")),
+            ("empty", ""),
+        )
+        for label, path in invalid_paths:
+            for observed_field in ("marketplace-root", "plugin-path"):
+                with self.subTest(path_cell=label, observed_field=observed_field):
+                    invalid_path = CodexObservedAbsolutePath.model_construct(value=path)
+                    if observed_field == "marketplace-root":
+                        invalid_request = exact.model_copy(
+                            update={
+                                "marketplace_observation": marketplace_observation().model_copy(
+                                    update={"installed_root": invalid_path}
+                                )
+                            }
+                        )
+                    else:
+                        invalid_request = exact.model_copy(
+                            update={
+                                "plugin_observation": plugin_observation().model_copy(
+                                    update={"installed_path": invalid_path}
+                                )
+                            }
+                        )
+                    port = ExactProofPort()
+                    self._assert_rejected(
+                        issue_registration_receipt(invalid_request, port),
+                        CodexRegistrationRejectReason.INVALID_INPUT,
+                    )
+                    self.assertEqual(0, port.calls)
+
     def test_t3_c4_attempt_journal_enforces_order_and_plugin_first_removal_authority(self) -> None:
         legal_cells = (
             (CodexAttemptEffectState.NOT_ATTEMPTED, CodexAttemptEffectState.NOT_ATTEMPTED, ()),
             (CodexAttemptEffectState.MAY_EXIST, CodexAttemptEffectState.NOT_ATTEMPTED, (CodexAttemptEffect.MARKETPLACE,)),
-            (CodexAttemptEffectState.MAY_EXIST, CodexAttemptEffectState.MAY_EXIST, (CodexAttemptEffect.PLUGIN, CodexAttemptEffect.MARKETPLACE)),
-            (CodexAttemptEffectState.MAY_EXIST, CodexAttemptEffectState.OWNED, (CodexAttemptEffect.PLUGIN, CodexAttemptEffect.MARKETPLACE)),
-            (CodexAttemptEffectState.MAY_EXIST, CodexAttemptEffectState.PREEXISTING, (CodexAttemptEffect.MARKETPLACE,)),
             (CodexAttemptEffectState.OWNED, CodexAttemptEffectState.NOT_ATTEMPTED, (CodexAttemptEffect.MARKETPLACE,)),
             (CodexAttemptEffectState.OWNED, CodexAttemptEffectState.MAY_EXIST, (CodexAttemptEffect.PLUGIN, CodexAttemptEffect.MARKETPLACE)),
             (CodexAttemptEffectState.OWNED, CodexAttemptEffectState.OWNED, (CodexAttemptEffect.PLUGIN, CodexAttemptEffect.MARKETPLACE)),
             (CodexAttemptEffectState.OWNED, CodexAttemptEffectState.PREEXISTING, (CodexAttemptEffect.MARKETPLACE,)),
             (CodexAttemptEffectState.PREEXISTING, CodexAttemptEffectState.NOT_ATTEMPTED, ()),
-            (CodexAttemptEffectState.PREEXISTING, CodexAttemptEffectState.MAY_EXIST, (CodexAttemptEffect.PLUGIN,)),
-            (CodexAttemptEffectState.PREEXISTING, CodexAttemptEffectState.OWNED, (CodexAttemptEffect.PLUGIN,)),
-            (CodexAttemptEffectState.PREEXISTING, CodexAttemptEffectState.PREEXISTING, ()),
         )
         for marketplace_state, plugin_state, expected in legal_cells:
             with self.subTest(marketplace=marketplace_state, plugin=plugin_state):
@@ -313,17 +430,25 @@ class CodexRegistrationContractsTests(unittest.TestCase):
                     plugin_state=plugin_state,
                 )
                 self.assertEqual(expected, journal.unresolved_removal_order())
-        with self.assertRaises(ValidationError):
-            CodexRegistrationAttemptJournal(
-                request=preflight_request(),
-                attempt_id=ATTEMPT,
-                marketplace_state=CodexAttemptEffectState.NOT_ATTEMPTED,
-                plugin_state=CodexAttemptEffectState.MAY_EXIST,
-            )
+        states: tuple[CodexAttemptEffectState, ...] = tuple(CodexAttemptEffectState)
+        legal_pairs = tuple((marketplace, plugin) for marketplace, plugin, _ in legal_cells)
+        for marketplace_state in states:
+            for plugin_state in states:
+                pair = (marketplace_state, plugin_state)
+                if pair in legal_pairs:
+                    continue
+                with self.subTest(illegal_marketplace=marketplace_state, illegal_plugin=plugin_state):
+                    with self.assertRaises(ValidationError):
+                        CodexRegistrationAttemptJournal(
+                            request=preflight_request(),
+                            attempt_id=ATTEMPT,
+                            marketplace_state=marketplace_state,
+                            plugin_state=plugin_state,
+                        )
         journal = CodexRegistrationAttemptJournal(
             request=preflight_request(),
             attempt_id=ATTEMPT,
-            marketplace_state=CodexAttemptEffectState.MAY_EXIST,
+            marketplace_state=CodexAttemptEffectState.OWNED,
             plugin_state=CodexAttemptEffectState.MAY_EXIST,
         )
         same_attempt = revalidate_current_attempt_journal(journal, preflight_request(), ATTEMPT)
@@ -357,7 +482,7 @@ class CodexRegistrationContractsTests(unittest.TestCase):
             CodexRegistrationAttemptJournal.model_validate({
                 "request": preflight_request(),
                 "attempt_id": ATTEMPT,
-                "marketplace_state": CodexAttemptEffectState.MAY_EXIST,
+                "marketplace_state": CodexAttemptEffectState.OWNED,
                 "plugin_state": CodexAttemptEffectState.MAY_EXIST,
                 "extra": "forbidden",
             })
@@ -372,7 +497,7 @@ class CodexRegistrationContractsTests(unittest.TestCase):
             request=preflight_request(),
             attempt_id=ATTEMPT,
             marketplace_state=CodexAttemptEffectState.PREEXISTING,
-            plugin_state=CodexAttemptEffectState.PREEXISTING,
+            plugin_state=CodexAttemptEffectState.NOT_ATTEMPTED,
         )
         self.assertEqual((), journal.unresolved_removal_order())
 

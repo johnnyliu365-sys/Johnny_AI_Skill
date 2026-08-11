@@ -51,6 +51,9 @@ class CodexAuthPolicy(_CodexTextValue):
     """A non-secret, named policy observation returned by the CLI."""
 
 
+DEFAULT_EXPECTED_AUTH_POLICY = CodexAuthPolicy(value="trusted-local")
+
+
 class CodexObservedAbsolutePath(_StrictModel):
     """An observed Windows path that may be compared but never persisted in a receipt."""
 
@@ -119,6 +122,7 @@ class CodexRegistrationProofRequest(_StrictModel):
     source_locator: OwnedRelativePath
     installed_locator: OwnedRelativePath
     digest: ArtifactDigest
+    expected_auth_policy: CodexAuthPolicy = DEFAULT_EXPECTED_AUTH_POLICY
 
     @model_validator(mode="after")
     def exact_request_observation_binding(self) -> Self:
@@ -130,6 +134,8 @@ class CodexRegistrationProofRequest(_StrictModel):
             raise ValueError("plugin observation must bind the preflight request")
         if self.plugin_observation.marketplace_name != self.preflight.marketplace:
             raise ValueError("plugin marketplace must bind the preflight request")
+        if self.plugin_observation.auth_policy != self.expected_auth_policy:
+            raise ValueError("plugin auth policy must bind the request authority")
         if self.marketplace_observation.installed_root.value != _canonical_observed_path(self.source_locator):
             raise ValueError("marketplace observation must bind the canonical source locator")
         if self.plugin_observation.installed_path.value != _canonical_observed_path(self.installed_locator):
@@ -153,6 +159,10 @@ class CodexRegistrationProof(_StrictModel):
     observed_marketplace_root: CodexObservedAbsolutePath
     observed_marketplace_already_added: bool
     observed_plugin_path: CodexObservedAbsolutePath
+
+
+class CodexRegistrationProofPortFailure(Exception):
+    """The one declared finite failure raised by a proof-port implementation."""
 
 
 @runtime_checkable
@@ -181,6 +191,7 @@ class CodexRegistrationReceipt(_StrictModel):
 class CodexRegistrationRejectReason(str, Enum):
     INVALID_INPUT = "INVALID_INPUT"
     INVALID_PROOF_PORT = "INVALID_PROOF_PORT"
+    PROOF_PORT_FAILED = "PROOF_PORT_FAILED"
     INVALID_PROOF = "INVALID_PROOF"
     PROOF_MISMATCH = "PROOF_MISMATCH"
     JOURNAL_INVALID = "JOURNAL_INVALID"
@@ -211,6 +222,9 @@ def issue_registration_receipt(
         return CodexRegistrationRejected(reason=CodexRegistrationRejectReason.INVALID_PROOF_PORT)
     try:
         proof = proof_port.prove(validated_request)
+    except CodexRegistrationProofPortFailure:
+        return CodexRegistrationRejected(reason=CodexRegistrationRejectReason.PROOF_PORT_FAILED)
+    try:
         validated_proof = CodexRegistrationProof.model_validate_json(proof.model_dump_json(warnings=False))
     except (AttributeError, TypeError, ValidationError, ValueError):
         return CodexRegistrationRejected(reason=CodexRegistrationRejectReason.INVALID_PROOF)
@@ -225,7 +239,7 @@ def issue_registration_receipt(
         version=validated_request.version,
         source_locator=validated_request.source_locator,
         installed_locator=validated_request.installed_locator,
-        auth_policy=validated_request.plugin_observation.auth_policy,
+        auth_policy=validated_request.expected_auth_policy,
         digest=validated_request.digest,
     )
 
@@ -252,7 +266,7 @@ def _proof_matches_request(
         and proof.version == request.version
         and proof.source_locator == request.source_locator
         and proof.installed_locator == request.installed_locator
-        and proof.auth_policy == request.plugin_observation.auth_policy
+        and proof.auth_policy == request.expected_auth_policy
         and proof.digest == request.digest
         and proof.observed_marketplace_root == request.marketplace_observation.installed_root
         and proof.observed_marketplace_already_added == request.marketplace_observation.already_added
@@ -272,6 +286,19 @@ class CodexAttemptEffect(str, Enum):
     MARKETPLACE = "MARKETPLACE"
 
 
+_LEGAL_ATTEMPT_STATE_PAIRS: frozenset[tuple[CodexAttemptEffectState, CodexAttemptEffectState]] = frozenset(
+    (
+        (CodexAttemptEffectState.NOT_ATTEMPTED, CodexAttemptEffectState.NOT_ATTEMPTED),
+        (CodexAttemptEffectState.MAY_EXIST, CodexAttemptEffectState.NOT_ATTEMPTED),
+        (CodexAttemptEffectState.OWNED, CodexAttemptEffectState.NOT_ATTEMPTED),
+        (CodexAttemptEffectState.OWNED, CodexAttemptEffectState.MAY_EXIST),
+        (CodexAttemptEffectState.OWNED, CodexAttemptEffectState.OWNED),
+        (CodexAttemptEffectState.OWNED, CodexAttemptEffectState.PREEXISTING),
+        (CodexAttemptEffectState.PREEXISTING, CodexAttemptEffectState.NOT_ATTEMPTED),
+    )
+)
+
+
 class CodexRegistrationAttemptJournal(_StrictModel):
     """Finite current-attempt authority with plugin-first unresolved ordering."""
 
@@ -282,11 +309,9 @@ class CodexRegistrationAttemptJournal(_StrictModel):
 
     @model_validator(mode="after")
     def legal_attempt_order(self) -> Self:
-        if (
-            self.marketplace_state is CodexAttemptEffectState.NOT_ATTEMPTED
-            and self.plugin_state is not CodexAttemptEffectState.NOT_ATTEMPTED
-        ):
-            raise ValueError("plugin state cannot precede a marketplace attempt")
+        state_pair = (self.marketplace_state, self.plugin_state)
+        if state_pair not in _LEGAL_ATTEMPT_STATE_PAIRS:
+            raise ValueError("marketplace and plugin attempt states are not causally legal")
         return self
 
     def unresolved_removal_order(self) -> tuple[CodexAttemptEffect, ...]:
