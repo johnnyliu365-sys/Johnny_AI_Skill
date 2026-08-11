@@ -388,6 +388,10 @@ def _plan_fields_are_exact(plan: CodexCompensationPlan | CodexNoCompensationPlan
         and type(plan.request) is CodexPreflightRequest
         and type(plan.attempt_id) is CodexRegistrationAttemptId
         and type(plan.identity) is CodexCompensationPlanIdentity
+        and type(plan.identity.request) is CodexPreflightRequest
+        and type(plan.identity.attempt_id) is CodexRegistrationAttemptId
+        and type(plan.identity.marketplace_state) is CodexAttemptEffectState
+        and type(plan.identity.plugin_state) is CodexAttemptEffectState
         and type(plan.status) is str
         and type(plan.steps) is tuple
         and all(type(step) is CodexCompensationStep for step in plan.steps)

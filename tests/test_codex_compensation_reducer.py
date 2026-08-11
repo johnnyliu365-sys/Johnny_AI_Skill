@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from typing import cast
+from enum import Enum
+from typing import NoReturn, cast
 import unittest
 
 from pydantic import BaseModel, ValidationError
@@ -14,6 +15,7 @@ from library.local_orchestration.codex_compensation_reducer import (
     CodexCompensationNoop,
     CodexCompensationObservation,
     CodexCompensationPlan,
+    CodexCompensationPlanIdentity,
     CodexCompensationReason,
     CodexCompensationResult,
     CodexCompensationStep,
@@ -43,6 +45,62 @@ ROOT = InstallRoot(value=CANONICAL_INSTALL_ROOT)
 MARKETPLACE = CodexMarketplaceName(value="probe-market")
 PLUGIN = CodexPluginName(value="probe-plugin")
 ATTEMPT = CodexRegistrationAttemptId(value="attempt-0123456789abcdef")
+
+
+class IdentityField(str, Enum):
+    REQUEST = "request"
+    ATTEMPT_ID = "attempt_id"
+    MARKETPLACE_STATE = "marketplace_state"
+    PLUGIN_STATE = "plugin_state"
+
+
+class MissingIdentityValue:
+    pass
+
+
+class PlainIdentityValue:
+    pass
+
+
+class IdentityTrapException(str, Enum):
+    RUNTIME_ERROR = "RuntimeError"
+    MEMORY_ERROR = "MemoryError"
+    KEYBOARD_INTERRUPT = "KeyboardInterrupt"
+    SYSTEM_EXIT = "SystemExit"
+
+
+class IdentityOperationTrap:
+    def __init__(self, exception_kind: IdentityTrapException) -> None:
+        self.exception_kind = exception_kind
+        self.invocation_count = 0
+
+    def _raise(self) -> NoReturn:
+        self.invocation_count += 1
+        if self.exception_kind is IdentityTrapException.RUNTIME_ERROR:
+            raise RuntimeError()
+        if self.exception_kind is IdentityTrapException.MEMORY_ERROR:
+            raise MemoryError()
+        if self.exception_kind is IdentityTrapException.KEYBOARD_INTERRUPT:
+            raise KeyboardInterrupt()
+        raise SystemExit()
+
+    def __eq__(self, other: object) -> bool:
+        self._raise()
+
+    def __hash__(self) -> int:
+        self._raise()
+
+    def __str__(self) -> str:
+        self._raise()
+
+    def __repr__(self) -> str:
+        self._raise()
+
+    def __format__(self, format_spec: str) -> str:
+        self._raise()
+
+
+MISSING_IDENTITY_VALUE = MissingIdentityValue()
 
 
 def request() -> CodexPreflightRequest:
@@ -107,7 +165,154 @@ def replace_outcome(
     return outcomes[:index] + (replacement,) + outcomes[index + 1 :]
 
 
+def identity_with_substitution(
+    plan: CodexCompensationPlan,
+    field: IdentityField,
+    value: object,
+) -> CodexCompensationPlanIdentity:
+    if field is IdentityField.REQUEST:
+        if value is MISSING_IDENTITY_VALUE:
+            return CodexCompensationPlanIdentity.model_construct(
+                attempt_id=plan.identity.attempt_id,
+                marketplace_state=plan.identity.marketplace_state,
+                plugin_state=plan.identity.plugin_state,
+            )
+        return CodexCompensationPlanIdentity.model_construct(
+            request=value,
+            attempt_id=plan.identity.attempt_id,
+            marketplace_state=plan.identity.marketplace_state,
+            plugin_state=plan.identity.plugin_state,
+        )
+    if field is IdentityField.ATTEMPT_ID:
+        if value is MISSING_IDENTITY_VALUE:
+            return CodexCompensationPlanIdentity.model_construct(
+                request=plan.identity.request,
+                marketplace_state=plan.identity.marketplace_state,
+                plugin_state=plan.identity.plugin_state,
+            )
+        return CodexCompensationPlanIdentity.model_construct(
+            request=plan.identity.request,
+            attempt_id=value,
+            marketplace_state=plan.identity.marketplace_state,
+            plugin_state=plan.identity.plugin_state,
+        )
+    if field is IdentityField.MARKETPLACE_STATE:
+        if value is MISSING_IDENTITY_VALUE:
+            return CodexCompensationPlanIdentity.model_construct(
+                request=plan.identity.request,
+                attempt_id=plan.identity.attempt_id,
+                plugin_state=plan.identity.plugin_state,
+            )
+        return CodexCompensationPlanIdentity.model_construct(
+            request=plan.identity.request,
+            attempt_id=plan.identity.attempt_id,
+            marketplace_state=value,
+            plugin_state=plan.identity.plugin_state,
+        )
+    if value is MISSING_IDENTITY_VALUE:
+        return CodexCompensationPlanIdentity.model_construct(
+            request=plan.identity.request,
+            attempt_id=plan.identity.attempt_id,
+            marketplace_state=plan.identity.marketplace_state,
+        )
+    return CodexCompensationPlanIdentity.model_construct(
+        request=plan.identity.request,
+        attempt_id=plan.identity.attempt_id,
+        marketplace_state=plan.identity.marketplace_state,
+        plugin_state=value,
+    )
+
+
+def plan_with_identity(
+    plan: CodexCompensationPlan,
+    identity: CodexCompensationPlanIdentity,
+) -> CodexCompensationPlan:
+    return CodexCompensationPlan.model_construct(
+        journal=plan.journal,
+        request=plan.request,
+        attempt_id=plan.attempt_id,
+        identity=identity,
+        status=plan.status,
+        steps=plan.steps,
+    )
+
+
 class CodexCompensationReducerTests(unittest.TestCase):
+    def test_i1_exact_identity_admits_and_exact_value_mismatches_block(self) -> None:
+        plan = valid_plan(CodexAttemptEffectState.OWNED, CodexAttemptEffectState.OWNED)
+        if not isinstance(plan, CodexCompensationPlan):
+            raise AssertionError(f"expected required plan, received {plan}")
+        self.assert_compensated(reduce_compensation(plan, success_outcomes(plan)))
+        other_request = CodexPreflightRequest(
+            installation_id=INSTALLATION,
+            root=ROOT,
+            marketplace=CodexMarketplaceName(value="other-market"),
+            plugin=PLUGIN,
+            marketplace_source=OwnedRelativePath(value="marketplaces/other-market"),
+        )
+        substitutions: tuple[tuple[IdentityField, object], ...] = (
+            (IdentityField.REQUEST, other_request),
+            (IdentityField.ATTEMPT_ID, CodexRegistrationAttemptId(value="attempt-fedcba9876543210")),
+            (IdentityField.MARKETPLACE_STATE, CodexAttemptEffectState.MAY_EXIST),
+            (IdentityField.PLUGIN_STATE, CodexAttemptEffectState.MAY_EXIST),
+        )
+        for field, value in substitutions:
+            with self.subTest(field=field.value):
+                mismatched_plan = plan_with_identity(plan, identity_with_substitution(plan, field, value))
+                self.assert_blocked(
+                    reduce_compensation(mismatched_plan, success_outcomes(plan)),
+                    CodexCompensationBlockReason.PLAN_INVALID,
+                )
+
+    def test_i2_all_28_exact_shape_cells_block_finitely(self) -> None:
+        plan = valid_plan(CodexAttemptEffectState.OWNED, CodexAttemptEffectState.OWNED)
+        if not isinstance(plan, CodexCompensationPlan):
+            raise AssertionError(f"expected required plan, received {plan}")
+        invalid_values: tuple[tuple[str, object], ...] = (
+            ("missing", MISSING_IDENTITY_VALUE),
+            ("none", None),
+            ("empty", ""),
+            ("whitespace", " "),
+            ("list", []),
+            ("dict", {}),
+            ("plain_object", PlainIdentityValue()),
+        )
+        cell_count = 0
+        for field in IdentityField:
+            for label, value in invalid_values:
+                with self.subTest(field=field.value, substitution=label):
+                    malformed_plan = plan_with_identity(
+                        plan,
+                        identity_with_substitution(plan, field, value),
+                    )
+                    self.assert_blocked(
+                        reduce_compensation(malformed_plan, success_outcomes(plan)),
+                        CodexCompensationBlockReason.PLAN_INVALID,
+                    )
+                    cell_count += 1
+        self.assertEqual(28, cell_count)
+
+    def test_i3_all_16_identity_operation_traps_remain_uninvoked(self) -> None:
+        plan = valid_plan(CodexAttemptEffectState.OWNED, CodexAttemptEffectState.OWNED)
+        if not isinstance(plan, CodexCompensationPlan):
+            raise AssertionError(f"expected required plan, received {plan}")
+        cell_count = 0
+        for field in IdentityField:
+            for exception_kind in IdentityTrapException:
+                with self.subTest(field=field.value, exception=exception_kind.value):
+                    trap = IdentityOperationTrap(exception_kind)
+                    trapped_plan = plan_with_identity(
+                        plan,
+                        identity_with_substitution(plan, field, trap),
+                    )
+                    self.assert_blocked(
+                        reduce_compensation(trapped_plan, success_outcomes(plan)),
+                        CodexCompensationBlockReason.PLAN_INVALID,
+                    )
+                    self.assertEqual(0, trap.invocation_count)
+                    cell_count += 1
+        self.assertEqual(16, cell_count)
+
     def test_b1_all_seven_legal_journal_pairs_have_exact_result(self) -> None:
         proof_steps = (
             CodexCompensationStep.PROVE_PLUGIN_LISTS_ABSENT,
