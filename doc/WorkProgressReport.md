@@ -1444,6 +1444,23 @@
 | Lane | Reuse only `C:\Users\<user>\Desktop\AI控制工作workflow-implementation`; create one new-ticket branch `codex/implementation-codex-protocol-fixture-05s3` from the exact handoff-doc baseline. No new worktree. |
 | Scope / return | Implement only the five Python paths named in the ticket, then one `WorkProgressReport.md`-only return commit. Integrated 05S1/05S2/05A are read-only; rejected combined-05S source is evidence only. Any blocker returns typed `HALT`/`CHANGE_DETECTED`; no automatic correction, review decision, integration, 05S4, push, release, deployment, live Codex mutation or target-project write. |
 
+## PRG-20260811-127 - Ticket 05S3 Codex protocol fixture implementation handoff
+
+| Field | Value |
+| --- | --- |
+| Router event | `ACTION_COMPLETED -> IMPLEMENTATION_COMPLETED -> REVIEW_HANDOFF` |
+| Ticket / closure | `05s3-codex-protocol-fixture`; `CLOSURE-LOCAL-INSTALL-T05S3-01`; D1-D4 / T1-T4. |
+| Authority / binding | Authority `PRG-20260809-042` and `PRG-20260811-126`; handoff `hnd_local_orchestration_install_05s3_20260811`; allocation `aln_local_orchestration_install_05s3_20260811`; receipt `rcpt_local_orchestration_install_05s3_20260811`; correlation `corr-local-orchestration-install-05s3-20260811`; question `q-local-orchestration-install-05s3-20260811`. |
+| Baselines / owner | Ticket-doc `9df3fe9f912593e9936e12992a1010bedf015c9f`; handoff-doc baseline `130ef794e8d62d32f89054ad86f75f7dfd8cd42c`; owner task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; branch `codex/implementation-codex-protocol-fixture-05s3`; implementation `bd59011636fd87f6c8ba28b25253ab21e7980d1c`. |
+| Exact scope | Only `tests/staging/codex_protocol/__init__.py`, `contracts.py`, `fixture.py`, `fixture_child.py`, and `tests/test_codex_protocol_fixture.py`; integrated 05A/05S1/05S2 and all production files remain unchanged. |
+| First-red evidence | Before the protocol-test surface existed, the exact focused command failed to import `tests.test_codex_protocol_fixture`; the test module and the protocol package were absent. This is the recorded T1 first-red for the new fixture boundary. |
+| D1 / D2 evidence | The four frozen mutation DTOs, reused 05A list DTOs, six-way surface cross-check, strict booleans and plain nonblank version are enforced. Table-driven tests reject empty, malformed, invalid UTF-8, duplicate-key, missing, null, blank, wrong-type and top-level/nested extra-field cells; optional source absence succeeds while explicit null fails. |
+| D3 / D4 evidence | Each of six selected surfaces invokes the integrated bounded runner with only the fixture script and selected surface. Accepted data is read only from the child-created fixed response file. Collision, physical response reparse, non-file, oversize, byte/decode/parse/schema, read, cleanup and failed-process paths produce finite rejection; external bytes and parent environment remain unchanged, and the response file is removed on successful and cleanable rejected paths. |
+| Reverse-mutation evidence | Relaxing local DTO extras to ignore failed T2. Replacing selected-surface child input with a fixed surface failed five T3 cells. Skipping successful-path exact response cleanup failed all six T3 residue assertions. Each mutation was restored before final verification. |
+| Verification | `python -B -m unittest tests.test_codex_protocol_fixture -v`: 4/4 passed. `python -B -m unittest discover -s tests -v`: 193/193 passed. `python -B -m mypy --strict --explicit-package-bases --no-incremental --cache-dir <validated OS-temp>`: 96 source files, success; the external cache was removed and read back absent. In-memory compile: 5/5 authorized files. Source/scope sentinel and `git diff --check`: passed. |
+| Residue / isolation | Repository `.mypy_cache`, `.pytest_cache`, `__pycache__`, fixed response-file, owned staging-root and response-target residue counts: 0. No live Codex, target-project action, installer/lifecycle persistence, compensation, absence behavior, merge, push, release, deployment, integration decision, review decision, or 05S4 dispatch occurred. |
+| Review handoff | Independent control-plane review is required. This implementation owner makes no approval, integration, or downstream-ticket decision. |
+
 ## PRG-20260811-128 — Ticket 05S3 final independent review
 
 | Field | Value |
@@ -1463,6 +1480,22 @@
 | Identifiers | Handoff `hnd_local_orchestration_install_05s3_r02_20260811`; allocation `aln_local_orchestration_install_05s3_r02_20260811`; receipt `rcpt_local_orchestration_install_05s3_r02_20260811`; correlation `corr-local-orchestration-install-05s3-r02-20260811`; question `q-local-orchestration-install-05s3-r02-20260811`. |
 | Exact delta | Preserve duplicate-key specificity; map bounded decoder `JSONDecodeError`, `RecursionError` and non-duplicate `ValueError` to existing `MALFORMED_JSON`; add the exact 1,500-level and 5,000-digit regressions. No broad exception catch or new result. |
 | Lane / limit | Same task `019fcc9c-f34f-7d53-a313-c70c90bf3245`, same sole implementation worktree and branch `codex/implementation-codex-protocol-fixture-05s3`; one additive implementation commit, one docs-only handoff and one final review. No replacement branch/worktree, integration or 05S4 before approval. |
+
+## PRG-20260811-130 — Ticket 05S3 CR-125 revision-02 correction handoff
+
+| Field | Value |
+| --- | --- |
+| Router event | `ACTION_COMPLETED -> IMPLEMENTATION_CORRECTION_COMPLETED -> REVIEW_HANDOFF` |
+| Ticket / closure | `05s3-codex-protocol-fixture`; `CLOSURE-LOCAL-INSTALL-T05S3-02`; CR-125 only; owner override `OVR-LOCAL-INSTALL-T05S3-CR125-20260811-01`. |
+| Authority / binding | Authority `PRG-20260809-042` and `PRG-20260811-129`; handoff `hnd_local_orchestration_install_05s3_r02_20260811`; allocation `aln_local_orchestration_install_05s3_r02_20260811`; receipt `rcpt_local_orchestration_install_05s3_r02_20260811`; correlation `corr-local-orchestration-install-05s3-r02-20260811`; question `q-local-orchestration-install-05s3-r02-20260811`. |
+| Baseline / owner | Control correction baseline `4b17a2587cd247c2c97fffbf7785e284a8610500`; submitted pre-correction HEAD `f725d48238402606107b0e304b6bf7213c0acc2b`; owner task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; branch `codex/implementation-codex-protocol-fixture-05s3`; additive implementation `4835b0f0b5f404d13dd04e0aa55ca6205a816f2c`. |
+| Exact correction scope | Only `tests/staging/codex_protocol/contracts.py` and `tests/test_codex_protocol_fixture.py`; all integrated and production files remain unchanged. |
+| First-red evidence | Against submitted HEAD, `test_r02_cr125_deep_array_maps_recursion_error_to_malformed_json` escaped the named recursion decoder failure and `test_r02_cr125_large_integer_maps_value_error_to_malformed_json` escaped the named integer decoder failure. Both bounded payloads are below `MAX_RESPONSE_BYTES`; no raw exception output is retained. |
+| Correction | The strict JSON decoder preserves `_DuplicateJsonKey -> DUPLICATE_KEY` first, then maps only `JSONDecodeError`, `RecursionError`, and non-duplicate `ValueError` from `json.loads` to the existing `MALFORMED_JSON` rejection. It does not catch broad or process-control exceptions. |
+| Reverse-mutation evidence | Removing only `RecursionError` mapping failed the deep-array regression; removing only `ValueError` mapping failed the large-integer regression. Each mutation was restored before green verification. |
+| Verification | Focused `python -B -m unittest tests.test_codex_protocol_fixture -v`: 6/6 passed. Full `python -B -m unittest discover -s tests -v`: 195/195 passed. Strict mypy with a validated external no-incremental cache: 96 source files, success; cache removal and absent readback passed. In-memory compile: 2/2 changed files. Source/scope sentinel and `git diff --check`: passed. |
+| Residue / isolation | Repository cache, fixed response-file and owned staging-root residue counts are zero. No live Codex, target-project action, review, integration, downstream dispatch, merge, push, release or deployment occurred. |
+| Review handoff | Independent control-plane review is required. This implementation owner makes no approval or integration decision. |
 
 ## PRG-20260811-131 — Ticket 05S3 revision-02 final independent review
 
