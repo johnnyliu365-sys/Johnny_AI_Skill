@@ -293,8 +293,10 @@ unchanged. AC-09/AC-10 add a separate serial sequence:
    config; `06C` composes profile proof with the authority gate.
 4. Windows package Ticket 04 waits for 05A-05C and 06A-06C.
 
-05S4 revision-02 returned `COMPLETED` at correction `02f33ef` / handoff
-`52ab9c0` and awaits independent final review. The project owner then explicitly
+05S4 revision-02 correction `02f33ef` / handoff `52ab9c0` passed its final
+independent review: focused 10/10, full 205/205, strict type/compile over 102
+files and the exact CR-126/CR-127 probes passed. Guarded integration is
+authorized. The project owner then explicitly
 authorized a second named implementer for independent work. Ticket 06A may run
 in `workflow-implementer-2` while control reviews 05S4 because its four new
 staging/test paths do not overlap the oracle correction. Each task is bound to

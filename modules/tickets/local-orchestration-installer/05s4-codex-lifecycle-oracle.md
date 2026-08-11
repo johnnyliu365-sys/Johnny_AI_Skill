@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-02, AC-03, AC-06, AC-07 and AC-08 lifecycle seam |
 | Context / decision | `doc/context/local-orchestration-installer/main.md` / `PRG-20260811-106` |
-| State | `CHANGES_REQUESTED / REVISION_02_CORRECTION_REQUIRED` — CR-126 and CR-127 |
+| State | `APPROVED / INTEGRATION_AUTHORIZED` — revision-02 correction `02f33ef`, handoff `52ab9c0`; CR-126 and CR-127 closed by final independent review |
 | Dependency | Satisfied: 05S1, 05S2 and 05S3 independently approved and integrated by `504a3ec`, `6e24e06` and `43a1639` |
 | Implementation language | Python 3.11 |
 | Implementation responsibility | Codex task `019fcc9c-f34f-7d53-a313-c70c90bf3245`, model `gpt-5.6-terra`, reasoning `xhigh`, in the sole implementation worktree after exact receipt admission |
@@ -137,3 +137,14 @@ Correction binding: `hnd_local_orchestration_install_05s4_r02_20260811` /
 `q-local-orchestration-install-05s4-r02-20260811`. Control review baseline:
 `3012af96da2e4d7a2e64b6cb41c035e86ea43fa2`; submitted implementation HEAD:
 `e4d00ddc4cb54be5706cfc136245302250259993`.
+
+## Revision-02 final independent review
+
+The control reviewer independently verified immutable correction
+`02f33efbcb6eba400dcf92b81ba948716dee8e56` and docs-only handoff
+`52ab9c0e71c5b7dd4fcec72970d2bc6a7517c954`. Focused 10/10 and full
+205/205 unittest suites, strict mypy and in-memory compile over 102 files,
+exact CR-126/CR-127 adversarial probes, process-control propagation, scope,
+ancestry, diff and residue checks passed. CR-126 and CR-127 are closed;
+guarded integration is authorized. Allocation and receipt remain active only
+until the reviewed handoff is integrated and verified.

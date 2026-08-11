@@ -103,3 +103,58 @@ handoff. The next independent review is final; any blocker stops with
 `CONVERGENCE_REVIEW_REQUIRED`. No integration, 05B/05C refreeze, new-role
 ticket implementation, live Codex mutation, target-project write, push,
 release or deployment is authorized by this review.
+
+## Revision-02 final independent review
+
+| Field | Value |
+| --- | --- |
+| Closure | `CLOSURE-LOCAL-INSTALL-T05S4-02`; CR-126 and CR-127 only |
+| Control review baseline | `3012af96da2e4d7a2e64b6cb41c035e86ea43fa2` |
+| Correction / handoff | `02f33efbcb6eba400dcf92b81ba948716dee8e56` / `52ab9c0e71c5b7dd4fcec72970d2bc6a7517c954` |
+| Branch / owner | Existing `codex/implementation-codex-protocol-fixture-05s3` / task `019fcc9c-f34f-7d53-a313-c70c90bf3245` |
+| Final result | `APPROVED / INTEGRATION_AUTHORIZED` |
+
+The correction is additive from submitted handoff `e4d00dd` and changes only
+the four authorized oracle/test paths; the handoff changes only
+`doc/WorkProgressReport.md`. Review used a fresh immutable ZIP export of the
+implementation commit and did not write to either implementation worktree.
+
+### Independent verification
+
+| Check | Result / evidence |
+| --- | --- |
+| Focused / full | PASS: 10/10 focused and 205/205 full unittest tests. |
+| Strict type / compile | PASS: strict mypy with explicit package bases over 102 source files and in-memory compile over the same 102 files. |
+| CR-126 | PASS: duplicate identity in either foreign collection is blocked in the parent state model; direct persisted duplicates are independently rejected by the fresh child. Owned-versus-foreign distinction remains permitted. |
+| CR-127 | PASS: ordinary post-command dependency failure removes the exact command file; a non-ordinary command locator produces `COMMAND_CLEANUP_FAILED`. |
+| Exception boundary | PASS: an injected `MemoryError` propagates and is not caught or misclassified. |
+| Scope / ancestry / diff | PASS: exact four-file correction, one-file handoff, additive ancestry, source sentinel and `git diff --check`. |
+| Isolation / residue | PASS: control and both implementation worktrees are clean; review export, external cache, fixed command/response file and owned staging roots read back absent after exact cleanup. |
+
+### Mandatory-check mapping
+
+- **Clear strong types:** PASS. The finite union and named block reasons remain
+  strict; no nullable effect port or dynamic escape was added.
+- **Existing coding conventions:** PASS. The correction follows the existing
+  strict state/child validation and typed fixture seam.
+- **Logic correctness:** PASS. Identity uniqueness is collection-local as O3
+  requires, and every ordinary post-command result either cleans up or returns
+  the cleanup-specific block.
+- **Edge cases:** PASS. Seeded and raw-state duplicates, ordinary dependency
+  error, non-ordinary cleanup target and excluded process-control exception
+  were independently exercised.
+- **Security / performance:** PASS. Exact-path and disposable-environment
+  boundaries are unchanged; no live Codex, target project, network or Secret
+  was accessed.
+- **Test coverage / smoke:** PASS. The four named CR-126/CR-127 regressions
+  pass in addition to the complete focused/full suites.
+- **Dependency reasonableness:** PASS. No dependency or production file
+  changed.
+- **Project specification:** PASS. O1-O6 remain satisfied and CR-126/CR-127
+  are closed without changing 05B/05C transaction semantics.
+
+No new blocking finding exists. `APPROVED / INTEGRATION_AUTHORIZED`.
+Allocation `aln_local_orchestration_install_05s4_r02_20260811` and receipt
+`rcpt_local_orchestration_install_05s4_r02_20260811` remain active only until
+guarded integration is verified. This review does not refreeze or dispatch
+05B/05C, mutate live Codex, touch a target project, push, release or deploy.
