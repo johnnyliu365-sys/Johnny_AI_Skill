@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01, AC-02, AC-07 and AC-08 compensation seam |
-| State | `IN_PROGRESS / IMPLEMENTATION_DISPATCH_CONFIRMED` |
+| State | `IN_PROGRESS / CORRECTION_DISPATCH_CONFIRMED` |
 | Dependency | Ticket 05B1 and 05B2 independently approved and integrated by `bbc7de5` and `c97505c` / `ef45f65` |
 | Implementation owner | Task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; existing `workflow-implementation` worktree and branch only |
 | Acceptance owner | Independent control-plane reviewer; no implementation writes |
@@ -121,6 +121,52 @@ paths, followed by one docs-only commit changing only
 review, integration, downstream-dispatch or Agent-control decision. No new
 branch/worktree, reset, rebase, amend, force, merge, cherry-pick, stash, push,
 release, deployment, live Codex mutation or target-project write.
+
+## Same-closure correction handoff — CR-135 and CR-136
+
+The complete initial-review blocking batch is recorded at control review
+`91375be0c528adc02477cabfac01950889671d21`. D2-D5 and all five frozen
+reverse mutations are closed. This correction may change only D1/T1 port
+admission and its missing evidence:
+
+1. Validate the five named port operations before the no-compensation branch
+   or any effect. An object with all five names but a non-callable value, or a
+   callable whose signature cannot accept exactly the required request, must
+   return `COMPENSATION_BLOCKED / INVALID_PORT` with zero calls. Do not invoke
+   descriptors or a port operation merely to validate the surface.
+2. Preserve the existing behavior that a valid port's declared
+   `CodexCompensationPortFailure` maps finitely and the frozen unexpected /
+   process-control exceptions raised from an actual operation propagate.
+3. Commit the complete finite T1 table: every field of the manifest, request,
+   two removal confirmations and installed-path proof is required; extra,
+   null, applicable blank/container/wrong enum-or-literal and constructed
+   shapes reject recursively. Add the cross-request journal cell with the
+   exact finite reason.
+4. Table invalid port surfaces for all five operation names, including
+   missing, non-callable and incompatible request signatures. Assert zero
+   calls for both an authority-bearing request and a no-compensation request.
+   The non-callable and wrong-signature cells are the correction first-red.
+5. Preserve D2-D5, the public exports, exact call order, result algebra,
+   metadata-only boundary and all five existing reverse protections.
+
+This is the one permitted same-closure correction. It stays on task
+`019fcc9c-f34f-7d53-a313-c70c90bf3245`, the existing
+`workflow-implementation` worktree and branch
+`codex/implementation-codex-protocol-fixture-05s3`, at exact clean submitted
+HEAD `b59e97b0912f4e347b37efcbec266f7713868a43`. The implementer reads this
+correction from the control commit; it must not merge, cherry-pick or switch
+the lane. Preserve allocation
+`aln_local_orchestration_install_05b3_20260811` and receipt
+`rcpt_local_orchestration_install_05b3_20260811`; correction handoff
+`hnd_local_orchestration_install_05b3_r01_20260811`, correlation
+`corr-local-orchestration-install-05b3-r01-20260811`, question
+`q-local-orchestration-install-05b3-r01-20260811` and side-context
+`scx-local-orchestration-install-05b3-20260811-02` are exact. Return one
+additive implementation commit changing only `codex_compensation.py` and its
+test (the export file remains read-only unless the public surface must change),
+then a WPR-only handoff using unique `PRG-20260811-165`. A remaining blocker
+at terminal correction review routes to `CONVERGENCE_REVIEW_REQUIRED`; no
+further implementation correction is authorized.
 
 ## Dispatch binding
 
