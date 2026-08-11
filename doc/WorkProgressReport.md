@@ -2307,3 +2307,13 @@
 | I1-I5 closure | Required exact expected ID, recursive request/envelope binding and exact plugin-observation identity all passed. Case, prefix and unrelated IDs reject without raw leakage. Existing `ADMITTED / 4`, zero-call and five transfer guards remain intact. |
 | I6 adversarial evidence | Independent reversals of expected-ID request equality and observation-ID binding each turned their named test red. Inverse patches restored source/test blobs `15ac2b849b88ba57cf09889ad51a75e454547eb3` / `90d8e51e605aff1c2dce1c921227bb1cf0d79537`; focused returned 9/9. |
 | Decision | `APPROVED / READY_TO_MERGE`; no blocking finding. Guarded integration only; 05B4B remains undispatched until integration. No push, release, deployment, live Codex mutation or target-project write. |
+
+## PRG-20260812-203 — Ticket 05B4A1 guarded integration
+
+| Field | Value |
+| --- | --- |
+| Router event | `REVIEW_APPROVED(05B4A1) -> GUARDED_INTEGRATION -> ACTION_COMPLETED -> TICKET_05B4B_REFREEZE_READY` |
+| Integration | Merge `3399cf934874f3304959ef0b6913548c0d767e01` preserves formal review `42e1590126cdc7f922269b2d7e4012862e85f15a` as first parent and reviewed handoff `30d6bcff91368c162664dc2eef7dee5a7c543950` as second parent. Source/test blobs exactly match the reviewed return. |
+| Ledger resolution | The sole conflict was `doc/WorkProgressReport.md`; PRG-199 through PRG-202 are retained exactly once and in order. Neither immutable parent was amended, reset, forced or overwritten. |
+| Post-merge verification | Focused 9/9 and serial full discovery 269/269 passed. Strict full-tree mypy and in-memory compile passed 118 files. Source sentinel, `git diff --check`, exact parent/blob equality and all worktree tracked/ignored/cache residue checks passed. |
+| Completion | 05B4A1 is `COMPLETE / APPROVED / INTEGRATED`; allocation `aln_local_orchestration_install_05b4a1_20260812` is released and receipt `rcpt_local_orchestration_install_05b4a1_20260812` is closed against replay. 05B4B is unallocated and ready only for control-plane refreeze. No live Codex mutation, target-project write, push, release or deployment. |

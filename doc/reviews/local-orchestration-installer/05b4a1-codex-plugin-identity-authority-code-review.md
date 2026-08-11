@@ -50,3 +50,17 @@ as second parent. The merge must preserve PRG-199 through PRG-202 exactly once
 and in order, preserve the reviewed source/test blobs, and rerun focused/full,
 strict type, compile, source, diff and residue checks. No push, release,
 deployment, live Codex mutation or target-project write is authorized.
+
+## Guarded integration
+
+Merge `3399cf934874f3304959ef0b6913548c0d767e01` preserves formal review
+`42e1590126cdc7f922269b2d7e4012862e85f15a` as first parent and reviewed
+handoff `30d6bcff91368c162664dc2eef7dee5a7c543950` as second parent. The sole
+conflict was `doc/WorkProgressReport.md`; PRG-199 through PRG-202 are retained
+exactly once and in order. Source/test blobs equal the reviewed return.
+
+On the merged tree, focused 9/9, serial full discovery 269/269, strict mypy
+118 files and in-memory compile 118 files passed. Source, `git diff --check`,
+parent/blob equality and all worktree tracked/ignored/cache residue checks
+passed. No live Codex mutation, target-project write, push, release or
+deployment occurred.

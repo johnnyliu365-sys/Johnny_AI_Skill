@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01, AC-02, AC-07 and AC-08 registration seam |
-| State | `IN_REVIEW / APPROVED / READY_TO_MERGE` |
+| State | `COMPLETE / APPROVED / INTEGRATED` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B4A1-01` / I1-I6 |
 | Dependency | 05B4A approved and integrated by `5f30a717e16cbdc126a685e48542c11337310bbf` |
 | Owner / worktree | Task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2`; no new worktree |
@@ -103,3 +103,13 @@ docs-only handoff `30d6bcff91368c162664dc2eef7dee5a7c543950` are
 I1-I6 are closed without a correction request. Only guarded integration is
 the next legal action. Ticket 05B4B remains undispatched until this reviewed
 contract is integrated.
+
+## Completion
+
+Guarded merge `3399cf934874f3304959ef0b6913548c0d767e01`
+integrates the reviewed handoff with formal review
+`42e1590126cdc7f922269b2d7e4012862e85f15a` as first parent. Post-merge
+verification passed. Allocation `aln_local_orchestration_install_05b4a1_20260812`
+is released and receipt `rcpt_local_orchestration_install_05b4a1_20260812` is
+closed against replay. 05B4B may now be refrozen by the control plane; this
+completion is not an implementation dispatch.

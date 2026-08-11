@@ -133,10 +133,10 @@
 | Ticket 05B3B pure compensation reducer | SUPERSEDED / CONVERGENCE_DECOMPOSED | Revision-02 `3f22551` / `4d5bbef` remains terminal rejected evidence; no third same-closure correction or integration. |
 | Ticket 05B3B1 recursive plan identity admission | COMPLETE / APPROVED / INTEGRATED | Implementation `b50699c`, handoff `441bcc8`, review `382cc95`, merge `ac91290`; terminal I1-I5 plus parent R1-R5 and all eight reversals passed. |
 | Ticket 05B3C compensation composition | COMPLETE / APPROVED / INTEGRATED | Guarded merge `d8f6127` integrated reviewed handoff `6d7dd37`; post-merge verification passed. |
-| Ticket 05B4 registration composition parent | CONVERGENCE_DECOMPOSED / CHILD_05B4A1_DISPATCHED | Safe port admission, exact expected plugin identity and full composition are serial children; no requirement change. |
+| Ticket 05B4 registration composition parent | CONVERGENCE_DECOMPOSED / CHILD_05B4A1_COMPLETE / CHILD_05B4B_REFREEZE_READY | Safe port admission, exact expected plugin identity and full composition are serial children; no requirement change. |
 | Ticket 05B4A registration port capability | COMPLETE / APPROVED / INTEGRATED | Correction `3ab5971`, handoff `7ce9bb3`, terminal review `47bc1e1` and guarded merge `5f30a71`; CR-146/CR-147 closed. |
-| Ticket 05B4A1 plugin identity authority | IN_PROGRESS / IMPLEMENTATION_DISPATCHED | Exact I1-I6 prerequisite dispatched to implementer-2 in its existing worktree; one ticket branch, no new worktree. |
-| Ticket 05B4B registration transaction composition | PLANNED / DEPENDENCY_WAIT | Fresh preflight/add/proof/receipt/compensation plus 05S4 oracle evidence starts only after 05B4A1 integration. |
+| Ticket 05B4A1 plugin identity authority | COMPLETE / APPROVED / INTEGRATED | Implementation `76f0b96`, handoff `30d6bcf`, review `42e1590`, merge `3399cf9`; exact I1-I6 passed. |
+| Ticket 05B4B registration transaction composition | PLANNED / REFREEZE_READY | Fresh preflight/add/proof/receipt/compensation plus 05S4 oracle evidence may be refrozen from the integrated 05B4A1 contract. |
 | Ticket 05C receipt removal/replay | PLANNED / DEPENDENCY_WAIT / REFREEZE_REQUIRED | Starts only after 05A/05B approval/integration and a finite behavior/rollback closure refreeze. |
 | Ticket 06A Codex role-profile capability proof | DONE / APPROVED_EVIDENCE / INSTALL_BLOCKED / INTEGRATED | Implementation `38e9a8b`, handoff `f6f186f`, review `62955ec`, guarded merge `de4141e`; actual installed-host result is `ROLE_ISOLATION_UNPROVEN / ACCESS_DENIED / OUTPUT_UNAVAILABLE`, so capability dependents stay blocked. |
 | Autonomous Ticket 04 reviewer-only authority | PLANNED / DEPENDENCY_WAIT | Starts only after reviewed 06A `SUPPORTED`; typed fake effect gate, not a real Agent turn. |
