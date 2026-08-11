@@ -1923,3 +1923,25 @@
 | Released / new lane | The completed 06A allocation was released by guarded integration `de4141e`. Task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` preserves branch `codex/implementation-codex-role-profile-proof-06a` at `f6f186f2071035907e83577c58120e20442023c4`; after owner-only removal and readback of its sole `.mypy_cache`, it creates `codex/implementation-codex-compensation-reducer-05b3b` from this reviewed handoff in the same existing worktree. No new worktree. |
 | Exact scope / independence | Only new `codex_compensation_reducer.py` and `test_codex_compensation_reducer.py`. Integrated 05B1/05B2 are read-only; rejected 05B3 and the parallel 05B3A lane are not source inputs. |
 | Return / guards | One exact-scope implementation commit plus one WPR-only handoff reserved as PRG-171. Work alone; no port/callable/effect, integration, downstream dispatch, Agent control, live Codex mutation, target-project write, push, release or deployment. |
+
+## PRG-20260812-172 — Ticket 05B3A initial independent review
+
+| Field | Value |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05B3A) -> REVIEW -> CHANGES_REQUESTED -> TICKET_REFREEZE_REQUIRED` |
+| Reviewed evidence | Implementation `1c3739d305e83c97dd1be723240456cb954ea6cd`; WPR-only handoff `0275daf172ca3536f7ab6b9fff880bb54478d9af`; clean exact ancestry and two-file scope. |
+| Standard verification | Focused 5/5, full 235/235, strict mypy 112 files, in-memory compile 112 files, diff/scope/residue passed. |
+| Blocking batch | CR-137 `TICKET_DEFECT`: prescribed `object/type.__getattribute__` paths execute candidate/metaclass data descriptors. CR-138 `IMPLEMENTATION_DEFECT`: class tuple membership invokes caller metaclass equality. CR-139 `EVIDENCE_DEFECT`: those class/metaclass paths and four admission exceptions are untested. |
+| Reproduction | Candidate `__class__` traps escaped as `RuntimeError`, `MemoryError`, `KeyboardInterrupt` and `SystemExit`; metaclass `__mro__`, `__dict__` and `__eq__` traps each escaped as `RuntimeError`. No port operation ran. |
+| Decision | `CHANGES_REQUESTED / TICKET_REFREEZE_REQUIRED`. No integration, 05B3C dispatch, live Codex mutation, target-project write, push, release or deployment. |
+
+## PRG-20260812-173 — Ticket 05B3B initial independent review
+
+| Field | Value |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05B3B) -> REVIEW -> CHANGES_REQUESTED -> TICKET_REFREEZE_REQUIRED` |
+| Reviewed evidence | Implementation `e7bdee5b1bcd21d5cbc589f7abed4da156d0fdc8`; WPR-only handoff `aab7bf5df0c4501ba30e364fa4c76936412c4282`; clean exact ancestry and two-file scope. |
+| Standard verification | Focused 7/7, full 237/237, strict mypy 112 files, in-memory compile 112 files, diff/scope/residue passed. |
+| Blocking batch | CR-140/CR-141 `TICKET_DEFECT`: proof order and exact residual current-attempt identity/state were not frozen. CR-142 `IMPLEMENTATION_DEFECT`: wrong-plan metaclass equality lets four exceptions escape. CR-143 `EVIDENCE_DEFECT`: only three of five named reverse mutations were recorded. |
+| Reproduction | Wrong-plan equality escaped `RuntimeError`, `MemoryError`, `KeyboardInterrupt` and `SystemExit`. Separate MAY_EXIST and OWNED marketplace-residue plans serialized to identical effect-only results; current proof order differs from the unchanged prior D3 sequence. |
+| Decision | `CHANGES_REQUESTED / TICKET_REFREEZE_REQUIRED`. No integration, 05B3C dispatch, live Codex mutation, target-project write, push, release or deployment. |

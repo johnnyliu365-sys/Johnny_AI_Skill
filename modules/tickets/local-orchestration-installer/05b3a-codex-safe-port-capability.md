@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01, AC-02 and AC-07 effect-boundary seam |
-| State | `IN_PROGRESS / IMPLEMENTATION_DISPATCH_CONFIRMED` |
+| State | `CHANGES_REQUESTED / TICKET_REFREEZE_REQUIRED` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B3A-01` / A1-A5 |
 | Dependency | Integrated 05B1/05B2 at control baseline; ADR-20260811-004 |
 | Control / implementation / reviewer | Current `main` / task `019fcc9c-f34f-7d53-a313-c70c90bf3245` / independent current `main` reviewer |
@@ -101,3 +101,14 @@ deployment is authorized.
 | Ticket-doc baseline | `f60d90ffba7a8cc2b3c7c7eb7a24fe06883b932d` |
 | Expected lane admission | Preserve rejected branch `codex/implementation-codex-protocol-fixture-05s3` at `89446d94b57f73b202f5a34a12dd763ae0904988`, then create `codex/implementation-codex-safe-port-capability-05b3a` from the exact reviewed handoff commit in the same existing worktree. |
 | Return | One exact-scope implementation commit, then one `doc/WorkProgressReport.md`-only handoff reserved as unique `PRG-20260811-170`. |
+
+## Initial review record
+
+Review of implementation `1c3739d305e83c97dd1be723240456cb954ea6cd`
+and handoff `0275daf172ca3536f7ab6b9fff880bb54478d9af` is
+`CHANGES_REQUESTED / TICKET_REFREEZE_REQUIRED`. CR-137 through CR-139 are the
+complete initial blocking batch. Revision 01 incorrectly prescribed lookup
+primitives that still execute candidate/metaclass data descriptors; the
+implementation also invokes caller metaclass equality and the committed
+evidence omits those paths. No correction or integration is authorized until
+the control plane freezes revision 02.

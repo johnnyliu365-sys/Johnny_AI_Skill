@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01, AC-02 and AC-07 compensation-state seam |
-| State | `IN_PROGRESS / IMPLEMENTATION_DISPATCH_CONFIRMED` |
+| State | `CHANGES_REQUESTED / TICKET_REFREEZE_REQUIRED` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B3B-01` / B1-B5 |
 | Dependency | Integrated 05B1/05B2 at control baseline; ADR-20260811-004; no dependency on 05B3A source |
 | Control / implementation / reviewer | Current `main` / task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` / independent current `main` reviewer |
@@ -93,3 +93,14 @@ release or deployment is authorized.
 | Ticket-doc baseline | `f60d90ffba7a8cc2b3c7c7eb7a24fe06883b932d` |
 | Expected lane admission | Preserve completed branch `codex/implementation-codex-role-profile-proof-06a` at `f6f186f2071035907e83577c58120e20442023c4`; after removing its sole `.mypy_cache` residue, create `codex/implementation-codex-compensation-reducer-05b3b` from the exact reviewed handoff commit in the same existing worktree. |
 | Return | One exact-scope implementation commit, then one `doc/WorkProgressReport.md`-only handoff reserved as unique `PRG-20260811-171`. |
+
+## Initial review record
+
+Review of implementation `e7bdee5b1bcd21d5cbc589f7abed4da156d0fdc8`
+and handoff `aab7bf5df0c4501ba30e364fa4c76936412c4282` is
+`CHANGES_REQUESTED / TICKET_REFREEZE_REQUIRED`. CR-140 through CR-143 are the
+complete initial blocking batch. Revision 01 did not freeze the exact proof
+order or exact residual current-attempt identity/state; wrong-plan metaclass
+equality escapes finite validation and only three of five required reverse
+mutations were recorded. No correction or integration is authorized until the
+control plane freezes revision 02.

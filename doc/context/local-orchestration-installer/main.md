@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| Context state | `TICKET_05B3_CONVERGENCE_DECOMPOSED / 05B3A_05B3B_READY_FOR_PARALLEL_DISPATCH` |
-| Router event | `CONVERGENCE_REVIEW_REQUIRED → ARCHITECTURE → TICKETS` |
+| Context state | `TICKET_05B3A_05B3B_INITIAL_REVIEW_CHANGES_REQUESTED / REFREEZE_REQUIRED` |
+| Router event | `IMPLEMENTATION_COMPLETED → REVIEW → TICKET_DEFECT` |
 | Delivery stage | `POC` |
 | Requirement change | `CHG-20260808-011` |
 | Baseline | `9716704` (`docs: record Ticket 05B3 terminal review`) |
@@ -490,3 +490,10 @@ The previous 05B3 allocation is closed as terminal rejected evidence; the
 completed 06A allocation was released by its guarded integration. Each row is
 one isolated active lane. The owners may not read the other's worktree or use
 the other's unintegrated source; 05B3C remains unallocated.
+
+Initial independent reviews of 05B3A and 05B3B are recorded in the unique
+review reports. Normal focused/full/type/compile verification passes for both,
+but CR-137 through CR-143 block integration. The control plane must first
+refreeze safe class-dictionary primitives, exact proof order and exact residual
+current-attempt identity/state. Both implementation branches remain immutable
+submitted evidence until a reviewed revision-02 correction handoff exists.
