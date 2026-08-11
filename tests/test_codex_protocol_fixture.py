@@ -24,6 +24,7 @@ from tests.staging.codex_protocol.contracts import (
     CodexProtocolRejected,
     CodexProtocolSurface,
     ExactResponseFilePort,
+    MAX_RESPONSE_BYTES,
     RESPONSE_FILE_NAME,
     ResponseFileInspection,
     ResponseFileRead,
@@ -321,6 +322,26 @@ class CodexProtocolFixtureTests(unittest.TestCase):
                 "authPolicy",
             ),
             ("pluginId", "name", "marketplaceName", "version", "source", "installPolicy", "authPolicy"),
+        )
+
+    def test_r02_cr125_deep_array_maps_recursion_error_to_malformed_json(self) -> None:
+        raw = b"[" * 1_500 + b"]" * 1_500
+
+        self.assertLess(len(raw), MAX_RESPONSE_BYTES)
+        self._assert_reason(
+            CodexProtocolSurface.MARKETPLACE_ADD,
+            raw,
+            CodexProtocolRejectReason.MALFORMED_JSON,
+        )
+
+    def test_r02_cr125_large_integer_maps_value_error_to_malformed_json(self) -> None:
+        raw = b'{"value":' + b"9" * 5_000 + b"}"
+
+        self.assertLess(len(raw), MAX_RESPONSE_BYTES)
+        self._assert_reason(
+            CodexProtocolSurface.MARKETPLACE_ADD,
+            raw,
+            CodexProtocolRejectReason.MALFORMED_JSON,
         )
 
     def test_t3_real_child_proves_all_six_payloads_are_not_parent_synthesized(self) -> None:

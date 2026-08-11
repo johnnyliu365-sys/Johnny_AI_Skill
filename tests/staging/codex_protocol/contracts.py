@@ -237,7 +237,7 @@ def parse_codex_protocol_payload(
         parsed: object = json.loads(decoded, object_pairs_hook=_strict_json_object)
     except _DuplicateJsonKey:
         return CodexProtocolRejectReason.DUPLICATE_KEY
-    except json.JSONDecodeError:
+    except (json.JSONDecodeError, RecursionError, ValueError):
         return CodexProtocolRejectReason.MALFORMED_JSON
     if not isinstance(parsed, dict):
         return CodexProtocolRejectReason.SCHEMA_INVALID
