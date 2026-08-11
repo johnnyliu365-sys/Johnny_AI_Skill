@@ -2134,6 +2134,21 @@
 | Owner / admission | Task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing clean `workflow-implementer-2` at `441bcc8f6959b6abc6a39749b57c992f6e5622fa`; create only `codex/implementation-codex-compensation-composition-05b3c` from this dispatch registry commit. |
 | Scope / return | Three authorized paths, exact first-red/C1-C8/five reversals/full verification, implementation commit then WPR-only PRG-188. No other agent, worktree, cross-lane history, dependency edit, live effect, review, integration, push, release or deployment. |
 
+## PRG-20260812-188 — Ticket 05B3C compensation composition implementation handoff
+
+| Field | Value |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05B3C) -> ACTION_COMPLETED -> REVIEW_HANDOFF`; independent control-plane review remains required. |
+| Ticket / closure | `05b3c-codex-compensation-composition`; `CLOSURE-LOCAL-INSTALL-T05B3C-01`; exact C1-C8 only. |
+| Binding | Handoff `hnd_local_orchestration_install_05b3c_20260812`; allocation `aln_local_orchestration_install_05b3c_20260812`; receipt `rcpt_local_orchestration_install_05b3c_20260812`; correlation `corr-local-orchestration-install-05b3c-20260812`; question `q-local-orchestration-install-05b3c-20260812`; side-context `scx-local-orchestration-install-05b3c-20260812-01`; ticket freeze `df2444878bac309bb7be5e56750cc5304bf9cde1`; dispatch registry `644d0775a5f09a5aa05d146a32c84df6c317a3b3` / `PRG-20260812-187`. |
+| Owner / implementation | Owner task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; branch `codex/implementation-codex-compensation-composition-05b3c`; implementation `b44cb38bbdff181d7aef46feef7fc9db62ec1edb`, descended directly from the reviewed dispatch registry. |
+| Exact scope | Implementation changes only new `library/local_orchestration/codex_compensation_composition.py`, new `tests/test_codex_compensation_composition.py`, and export-only `library/local_orchestration/__init__.py`. Integrated 05B3A port and 05B3B1 reducer source/tests remain byte-identical to the admitted baseline. |
+| Real first red | Focused unittest failed before production source existed with exact `ModuleNotFoundError: No module named 'library.local_orchestration.codex_compensation_composition'`; no operation or external effect ran. |
+| C1-C6 green evidence | Exact admission/no-compensation cells are zero-call; both-authority and marketplace-only plans preserve frozen order and request identity; all five finite wrong returns continue and reduce exact residual authority; removal/plugin-list/marketplace-list/path truth matrices pass; all 280 recursive manifest cells are finite and trap-free; all 20 operation/exception cells propagate and stop exactly. |
+| C7 reversals | Five isolated mutations independently turned their named committed tests red and were restored: exact dispatch (C2, two cells), continue-after-finite-failure (C3, five cells), removal-manifest admission (C4, one cell), independent plugin-list truth (C4, four cells), and operation-exception propagation (C6, one cell). Restored focused result is 6/6. |
+| C8 verification | Full unittest 260/260; strict full-tree mypy 116 files; in-memory compile 116 files; source sentinel, exact scope, integrated dependency blob check and `git diff --check` passed. Both repository-external mypy caches were resolved, removed and read back absent; repository `.mypy_cache`, `.pytest_cache` and `__pycache__` count is zero. |
+| Non-interference / handoff | This in-memory composition lane ran no process, filesystem/host/target-project operation, live Codex, network, Secret, cross-lane read, review, integration, downstream dispatch, push, release or deployment. This return is implementation evidence, not a review decision. |
+
 ## PRG-20260812-189 — Ticket 05B3C terminal independent review
 
 | Field | Value |

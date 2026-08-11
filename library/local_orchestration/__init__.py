@@ -127,6 +127,7 @@ from .codex_registration_contracts import (
     issue_registration_receipt,
     revalidate_current_attempt_journal,
 )
+from .codex_compensation_composition import compose_codex_compensation
 
 __all__ = [
     "CANONICAL_INSTALL_ROOT",
@@ -229,4 +230,5 @@ __all__ = [
     "CodexRegistrationResult",
     "issue_registration_receipt",
     "revalidate_current_attempt_journal",
+    "compose_codex_compensation",
 ]
