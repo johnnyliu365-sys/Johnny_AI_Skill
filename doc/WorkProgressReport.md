@@ -1775,3 +1775,13 @@
 | Exact scope | New `codex_command_attempts.py`, new `test_codex_command_attempts.py`, and export-only `library/local_orchestration/__init__.py`. Integrated 05B1 is read-only; production must not import test-owned 05S2. No command, process, parse, filesystem, host or target-project effect. |
 | Finite outcome | Three pre-start reasons leave authority unchanged; six started/ambiguous reasons yield only `MAY_EXIST`; three confirmations map to exact `OWNED`/`PREEXISTING`; only two of fourteen command/current-journal admission pairs are legal. |
 | Return / guards | One exact-scope implementation commit plus one WPR-only handoff with truthful first-red/green and three reverse mutations. Implementer works alone and makes no review, integration, downstream dispatch or Agent-control decision. No push, release, deployment, live Codex mutation or target-project write. |
+
+## PRG-20260811-156 — Ticket 05B2 initial independent review
+
+| Field | Value |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05B2) -> INITIAL_CODE_REVIEW -> CHANGES_REQUESTED` |
+| Binding | Closure `CLOSURE-LOCAL-INSTALL-T05B2-01`; implementation `e8beeac74635573c94d1a4f5852fe0ea2224d9e4`; docs-only handoff `d3bb4ade4f420e2a2bb38b779db0263d0a90f10a`; report `doc/reviews/local-orchestration-installer/05b2-codex-command-attempt-classification-code-review.md`. |
+| Independent verification | Immutable export: focused 4/4, full 227/227, strict mypy 110 files, in-memory compile 3/3, exact scope/ancestry/diff and no-effect checks passed. C2 admission, C3 transitions, C4 exception/result boundary and all three reverse mutations passed. |
+| Blocking batch | CR-133 implementation accepts six missing discriminator fields and constructed raw-string enums/literals; CR-134 committed T1 omits those exact cells. Both cite frozen C1/T1 and require one additive same-lane correction. |
+| Decision | `CHANGES_REQUESTED`; same ticket/task/worktree/branch/allocation/receipt remain bound. No new branch/worktree, integration, downstream dispatch, live Codex mutation, target-project write, push, release or deployment. |
