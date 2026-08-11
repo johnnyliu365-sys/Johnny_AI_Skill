@@ -2273,3 +2273,13 @@
 | Binding | `hnd_local_orchestration_install_05b4a1_20260812`; `aln_local_orchestration_install_05b4a1_20260812`; `rcpt_local_orchestration_install_05b4a1_20260812`; `corr-local-orchestration-install-05b4a1-20260812`; `q-local-orchestration-install-05b4a1-20260812`; `scx-local-orchestration-install-05b4a1-20260812-01`. |
 | Owner / lane | Owner-selected task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2`; later create only branch `codex/implementation-codex-plugin-identity-authority-05b4a1` from the exact dispatch registry commit; no new worktree. |
 | Scope / stop | Existing registration-port module and focused test only, then WPR-only PRG-201. No package/dependency/staging/compensation/composition edit, live effect, review, integration, 05B4B/05C work, push, release or deployment. Freeze is not dispatch. |
+
+## PRG-20260812-200 — Ticket 05B4A1 implementation dispatch
+
+| Field | Value |
+| --- | --- |
+| Router event | `TICKET_SELECTED(05B4A1) -> TICKET_DISPATCH_REQUIRED -> IMPLEMENTATION_DISPATCH_CONFIRMED` |
+| Reviewed freeze | `741ae0b300321f0f95341c322b9262909a8e6b4b`; ticket `05b4a1-codex-plugin-identity-authority`; closure `CLOSURE-LOCAL-INSTALL-T05B4A1-01`; exact I1-I6. |
+| Binding | `hnd_local_orchestration_install_05b4a1_20260812`; `aln_local_orchestration_install_05b4a1_20260812`; `rcpt_local_orchestration_install_05b4a1_20260812`; `corr-local-orchestration-install-05b4a1-20260812`; `q-local-orchestration-install-05b4a1-20260812`; `scx-local-orchestration-install-05b4a1-20260812-01`. |
+| Owner / admission | Task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing clean `workflow-implementer-2` at `7ce9bb36e90af669daa5dfa2999638a112f4cde3`; create only branch `codex/implementation-codex-plugin-identity-authority-05b4a1` from this exact dispatch registry commit. Owner instruction `開始吧` is the positive delivery confirmation for this ticket. |
+| Scope / return | Existing registration-port module and focused test only; implementation commit then WPR-only PRG-201. No package/dependency/staging/compensation/composition edit, other Agent, new worktree, live effect, review, integration, 05B4B/05C work, push, release or deployment. |

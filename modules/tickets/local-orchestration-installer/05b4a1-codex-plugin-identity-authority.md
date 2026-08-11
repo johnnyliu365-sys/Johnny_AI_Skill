@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01, AC-02, AC-07 and AC-08 registration seam |
-| State | `IN_PROGRESS / TICKET_FROZEN / DISPATCH_PENDING` |
+| State | `IN_PROGRESS / IMPLEMENTATION_DISPATCHED` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B4A1-01` / I1-I6 |
 | Dependency | 05B4A approved and integrated by `5f30a717e16cbdc126a685e48542c11337310bbf` |
 | Owner / worktree | Task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2`; no new worktree |
@@ -82,3 +82,13 @@ integration, 05B4B/05C work, push, release or deployment is authorized.
 | Side context | `scx-local-orchestration-install-05b4a1-20260812-01` |
 | Owner / lane | Task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2`; later create only branch `codex/implementation-codex-plugin-identity-authority-05b4a1` from the exact dispatch registry commit. |
 | Return | Exact two-path implementation commit, then WPR-only PRG-20260812-201. |
+
+## Dispatch registry
+
+| Field | Value |
+| --- | --- |
+| Reviewed freeze | `741ae0b300321f0f95341c322b9262909a8e6b4b`; exact I1-I6 |
+| Delivery confirmation | Owner instruction `開始吧`; question `q-local-orchestration-install-05b4a1-20260812` is answered positively for this ticket only |
+| Lane admission | Existing clean `workflow-implementer-2` at `7ce9bb36e90af669daa5dfa2999638a112f4cde3`; three-worktree topology unchanged |
+| Required branch | Create only `codex/implementation-codex-plugin-identity-authority-05b4a1` directly from the exact later dispatch-registry commit in the same worktree; no merge, rebase, cherry-pick or new worktree |
+| Authority | `hnd_local_orchestration_install_05b4a1_20260812`; `aln_local_orchestration_install_05b4a1_20260812`; `rcpt_local_orchestration_install_05b4a1_20260812`; `corr-local-orchestration-install-05b4a1-20260812`; `scx-local-orchestration-install-05b4a1-20260812-01` |
