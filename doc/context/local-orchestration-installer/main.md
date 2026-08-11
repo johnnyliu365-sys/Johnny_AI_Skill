@@ -2,13 +2,13 @@
 
 | Field | Value |
 | --- | --- |
-| Context state | `TICKET_05B4A_IMPLEMENTATION_DISPATCHED` |
-| Router event | `TICKET_SELECTED(05B4A) / TICKET_FREEZE_COMPLETED / IMPLEMENTATION_DISPATCH_CONFIRMED` |
+| Context state | `TICKET_05B4A1_FROZEN / DISPATCH_PENDING` |
+| Router event | `ACTION_COMPLETED(05B4A) / TICKET_SELECTED(05B4A1) / TICKET_FREEZE_COMPLETED` |
 | Delivery stage | `POC` |
 | Requirement change | `CHG-20260808-011` |
-| Baseline | `3367136` (`docs: decompose 05B3B identity admission`) |
+| Baseline | `92405a1` (`docs: complete Ticket 05B4A integration`) |
 | Control-plane owner | Codex / current `main` worktree |
-| Implementation owner | 05B3A, 05B3B1 and 05B3C are integrated and released; 05B3B is terminal rejected; task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` owns active 05B4A in existing `workflow-implementer-2` under its unique receipt |
+| Implementation owner | 05B3A, 05B3B1, 05B3C and 05B4A are integrated and released; 05B3B is terminal rejected; task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` is selected for frozen 05B4A1 in existing `workflow-implementer-2`; dispatch remains pending |
 | Required sources read | `AGENTS.md`, `Workflow.md` (Router, Wayfinder, Grill, change control, specification, tickets, role boundary), `Defined_wayfinder.md`, `CONTEXT.md`, `PRD.md`, `ProjectSchedule.md`, `doc/RequirementChangeLog.md`, existing plugin manifests / README, `library/workflow_router/`, and completed plugin / autonomous-collaboration POCs |
 
 ## Shared Context reference
@@ -552,3 +552,25 @@ This changes no SPEC acceptance criterion and does not reopen rejected 05B.
 registry commit carrying that record. The implementation owner must create
 only `codex/implementation-codex-registration-port-05b4a` at that commit in
 the existing worktree; no other lane or 05B4B work is authorized.
+
+05B4A terminal correction review closed CR-146/CR-147 and guarded merge
+`5f30a71` integrated the exact reviewed capability. Post-merge focused/full,
+strict type, compile, source/blob/diff and residue checks passed; its allocation
+is released and receipt closed.
+
+## Ticket 05B4A1 plugin identity prerequisite
+
+05B4B pre-freeze found one exact authority gap rather than an implementation
+failure: the reviewed registration request has no expected plugin ID, its
+plugin-success validator therefore cannot reject a foreign ID, and a started
+plugin-add failure supplies no ID while the integrated compensation manifest
+requires one. Installer-controlled plugin identity already exists in the
+approved staging architecture and payload; binding it before effects changes
+no SPEC behavior.
+
+Closure `CLOSURE-LOCAL-INSTALL-T05B4A1-01` owns only the existing registration
+port module and focused test. It adds required expected plugin-ID authority,
+binds all request/result comparisons and preserves A1-A7 capability behavior.
+05B4B remains unallocated until this prerequisite is independently approved
+and integrated. The selected owner is implementer-2 in the existing worktree;
+freeze is not dispatch and no new worktree is authorized.

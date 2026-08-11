@@ -2262,3 +2262,14 @@
 | Ledger resolution | The sole conflict was `doc/WorkProgressReport.md`; PRG-191 through PRG-197 are retained exactly once and in order. Neither immutable parent was amended, reset, forced or overwritten. |
 | Post-merge verification | Focused 6/6 and serial full discovery 266/266 passed. Strict full-tree mypy and in-memory compile passed 118 files. Source sentinel, `git diff --check`, exact parent/blob equality and tracked/ignored/cache residue checks passed. |
 | Completion | 05B4A is `COMPLETE / APPROVED / INTEGRATED`; allocation `aln_local_orchestration_install_05b4a_20260812` is released and receipt `rcpt_local_orchestration_install_05b4a_20260812` is closed against replay. 05B4B is unallocated and ready only for control-plane refreeze. No live Codex mutation, target-project write, push, release or deployment. |
+
+## PRG-20260812-199 — Ticket 05B4A1 plugin identity authority freeze
+
+| Field | Value |
+| --- | --- |
+| Router event | `ACTION_COMPLETED(05B4A) -> TICKET_SELECTED(05B4B) -> PREREQUISITE_GAP_DETECTED -> TICKET_SELECTED(05B4A1) -> TICKET_FREEZE_COMPLETED -> DISPATCH_PENDING` |
+| Decision | 05B4B cannot safely construct the integrated compensation manifest for a started plugin-add failure because the registration request has no expected plugin ID; the success validator likewise cannot reject a foreign returned ID. This is a ticket/architecture prerequisite under unchanged AC-01/02/07/08, not a requirement change or reopened 05B4A correction. |
+| Ticket / closure | `05b4a1-codex-plugin-identity-authority`; `CLOSURE-LOCAL-INSTALL-T05B4A1-01`; exact I1-I6 in the ticket are authoritative. |
+| Binding | `hnd_local_orchestration_install_05b4a1_20260812`; `aln_local_orchestration_install_05b4a1_20260812`; `rcpt_local_orchestration_install_05b4a1_20260812`; `corr-local-orchestration-install-05b4a1-20260812`; `q-local-orchestration-install-05b4a1-20260812`; `scx-local-orchestration-install-05b4a1-20260812-01`. |
+| Owner / lane | Owner-selected task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2`; later create only branch `codex/implementation-codex-plugin-identity-authority-05b4a1` from the exact dispatch registry commit; no new worktree. |
+| Scope / stop | Existing registration-port module and focused test only, then WPR-only PRG-201. No package/dependency/staging/compensation/composition edit, live effect, review, integration, 05B4B/05C work, push, release or deployment. Freeze is not dispatch. |
