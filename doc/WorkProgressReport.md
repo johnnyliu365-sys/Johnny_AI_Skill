@@ -1548,3 +1548,14 @@
 | Identifiers | Handoff `hnd_local_orchestration_install_05s4_r02_20260811`; allocation `aln_local_orchestration_install_05s4_r02_20260811`; receipt `rcpt_local_orchestration_install_05s4_r02_20260811`; correlation `corr-local-orchestration-install-05s4-r02-20260811`; question `q-local-orchestration-install-05s4-r02-20260811`. |
 | Exact delta | Reject duplicate identities within each foreign collection while preserving O3 distinctions; guarantee safe exact command cleanup after ordinary dependency completion/block and return `COMMAND_CLEANUP_FAILED` on cleanup failure without catching process-control exceptions. Add both exact first-red and reverse-mutation regressions. |
 | Lane / return | Existing task `019fcc9c-f34f-7d53-a313-c70c90bf3245`, sole implementation worktree and existing branch only. One additive implementation commit plus one `WorkProgressReport.md`-only handoff. Final review stops on any blocker; no new branch/worktree, 05B/05C/new-role implementation, integration, push, release, deployment, live Codex mutation or target-project write. |
+
+## PRG-20260811-137 — Reviewer-only orchestration change freeze
+
+| Field | Value |
+| --- | --- |
+| Router event | `REQUIREMENT_CHANGED -> GRILL -> SPEC_REVISION_APPROVED -> TICKETS_REFROZEN -> DEPENDENCY_WAIT` |
+| Authority | Project-owner requirements: only reviewer may control implementers; inspect affected tickets and process dispatch together. Change `CHG-20260811-012`; PRD §16; autonomous/local SPEC revision 02. |
+| Affected artifacts | Governance role/review rules; takeover skill via future autonomous Ticket 04; new local 06A-06C; Windows package Ticket 04 dependency. Integrated autonomous 01-03 and local 01-03/05A/05S1-05S3 remain immutable; this change does not revise the existing 05A-05C/05S4 behavior acceptance. |
+| Host evidence | Official Codex documentation states multi-agent tools default enabled, custom agents are config layers and `agents.enabled=false` disables multi-agent tools. Local shell resolves Codex under WindowsApps but direct CLI invocation returns access denied; per-agent effective isolation is therefore `UNPROVEN` until disposable 06A evidence. |
+| Serial plan | Existing 05S4 revision-02 remains the sole dispatched lane. 06A is `READY_AFTER_05S4`; autonomous 04 then 06B then 06C follow only after independent approval/integration of each predecessor. No second task/branch/worktree or automation was created. |
+| Stop rule | If 06A cannot prove effective reviewer/implementer tool separation, return `INSTALL_BLOCKED / ROLE_ISOLATION_UNPROVEN` and stop the role-profile product path. Prompt-only enforcement is forbidden. |

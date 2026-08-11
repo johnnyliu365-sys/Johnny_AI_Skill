@@ -2,11 +2,11 @@
 
 | Field | Value |
 | --- | --- |
-| SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01 through AC-08 |
-| Context / change | `doc/context/local-orchestration-installer/main.md` / `CHG-20260808-011` |
+| SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01 through AC-10 |
+| Context / change | `doc/context/local-orchestration-installer/main.md` / `CHG-20260808-011`, `CHG-20260811-012` |
 | State | `PLANNED / DEPENDENCY_WAIT` |
 | Language | Inno Setup 6.7.3 script plus Python 3.11 packaged runner |
-| Baseline | Tickets 01–03 reviewed/integrated baseline plus independently approved/integrated Codex CLI adapter children 05A–05C |
+| Baseline | Tickets 01–03 plus independently approved/integrated Codex CLI adapter children 05A–05C, reviewer-role Tickets 06A–06C and autonomous authority Ticket 04 |
 | Control-plane owner / reviewer | Codex / current `main` worktree |
 | Implementation owner / worktree | Codex implementation Agent / the existing sole `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` worktree after a future valid dispatch |
 | Environment | Windows user-scope sandbox; no administrator elevation, target project or production deployment |
@@ -26,7 +26,7 @@ Frontend composition / DI: setup/uninstaller screens are composition-only and re
 ## Handoff and role assignment
 
 - Roles stay separated: Codex/current `main` plans/reviews; the named implementation Agent works only in the existing sole implementation worktree; owner override `N/A`. No fresh or additional worktree is authorized.
-- Dispatch requires independently approved/integrated Tickets 05A–05C and the already verified Inno Setup 6.7.3 compiler. Until the full decomposed adapter cluster is integrated this ticket remains `PLANNED / DEPENDENCY_WAIT`; it must not substitute a script that leaves files behind.
+- Dispatch requires independently approved/integrated Tickets 05A–05C, 06A–06C, autonomous reviewer-authority Ticket 04 and the already verified Inno Setup 6.7.3 compiler. Until both decomposed clusters are integrated this ticket remains `PLANNED / DEPENDENCY_WAIT`; it must not substitute a script that leaves files behind or an implementation profile that can spawn Agents.
 - Handoff references the exact integrated tickets, package manifest, target-repository snapshot fixtures and clean-user-profile smoke plan. Returns follow the global typed completion contract.
 
 ## Current typed gate
@@ -34,6 +34,7 @@ Frontend composition / DI: setup/uninstaller screens are composition-only and re
 - `PINNED_TOOLCHAIN_VERIFIED`: Inno Setup 6.7.3 was installed per user from the official Winget manifest. The installer SHA-256 is `9c73c3bae7ed48d44112a0f48e66742c00090bdb5bef71d9d3c056c66e97b732`; `ISCC.exe` has a valid Pyrsys B.V. signature, reports 6.7.3, and compiled the bundled example successfully.
 - `CODEX_LIFECYCLE_DISCOVERED`: an owner-authorized disposable local marketplace/plugin completed exact Codex CLI add, install, list, remove and marketplace-remove operations. Source and installed manifest/skill SHA-256 values matched; the exact plugin ID, marketplace and installed path were all absent afterward. This capability probe is not production adapter source.
 - `IMPLEMENTATION_DEPENDENCY_MISSING`: Ticket 03 intentionally shipped no production Codex adapter. Parent Ticket 05 was rejected and decomposed; Tickets 05A–05C now own the bounded adapter serially. Packaging cannot start until all three implementations, independent reviews and guarded integrations are complete.
+- `REVIEWER_ROLE_DEPENDENCY_MISSING`: `CHG-20260811-012` requires an isolated 06A capability proof, the typed autonomous Ticket-04 authority gate and receipt-owned 06B/06C role-profile composition. Packaging cannot claim Codex support until all are independently approved/integrated.
 - No hidden host configuration, broad cache clear, target-project write, new worktree, push, deployment or schedule action is permitted.
 
 ## TDD and defect checks

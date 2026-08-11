@@ -7,7 +7,7 @@
 | Author / baseline | Codex control plane / `main` / `4feeb94` |
 | Context | `doc/context/autonomous-collaboration-audit/main.md` |
 | PRD | `PRD.md §14` |
-| Change | `CHG-20260805-010` |
+| Change | `CHG-20260805-010`; reviewer-only authority revision `CHG-20260811-012` |
 | Shared Context | `CONTEXT.md §衍生 SPEC 索引` |
 | Implementation language | Python 3.11 for Router contracts/tests; Markdown for workflow/skill/templates |
 
@@ -32,6 +32,8 @@ Out of scope: SaaS, pricing, billing, user accounts, entitlements, remote/privat
 9. After Grill-to-SPEC approval has produced committed ticket and handoff documents, the control-plane response exactly contains `工單 ready`, ticket docs commit, ticket reference, `文件交接`, handoff docs commit, implementation owner, and the dispatch-confirmation question.
 10. Existing commercial Router POC records remain historical; no new commercial wording, price, entitlement, SaaS/hosted-service capability or payment integration may be introduced by this POC.
 11. Waiting for an active ticket's typed implementation return is an automatic event wait, not `WAIT_FOR_HUMAN`: its monitor wakes the planning lane and re-evaluates pending ticket proposals without prompting the user.
+12. Only the ticket's named reviewer may invoke Agent-to-Agent orchestration for its implementation owner: create/spawn/fork, dispatch/follow-up, steer, wait, interrupt and close. A valid effect binds project, ticket, reviewed handoff, unconsumed receipt, reviewer, target implementation owner, action and correlation.
+13. The implementation owner has no orchestration authority. Direct tool calls, indirect adapters, copied/forged reviewer identity, wrong target and replay all return `HALT / ROLE_FORBIDDEN` before an Agent/thread effect. Model, agent name and prompt text are never authority.
 
 ## Domain model, data flow and responsibility boundary
 
@@ -48,9 +50,17 @@ ApprovedDispatchArtifact = { project_id, ticket_ref, handoff_ref,
                               handoff_docs_commit }
 TicketEvent = TICKET_DISPATCH_REQUIRED | IMPLEMENTATION_DISPATCH_CONFIRMED
             | IMPLEMENTATION_RETURNED | INTEGRATION_COMPLETED | AUDIT_COMPLETED
+AgentRole = REVIEWER | IMPLEMENTATION_OWNER
+OrchestrationAction = CREATE | DISPATCH | FOLLOW_UP | STEER | WAIT | INTERRUPT | CLOSE
+ReviewerOrchestrationGrant = { project_id, ticket_ref, reviewed_handoff_ref,
+                               receipt_ref, reviewer_id, implementation_owner_id,
+                               action, correlation_id }
+OrchestrationDecision = AUTHORIZED | ROLE_FORBIDDEN | RECEIPT_INVALID
 ```
 
 The control-plane/main owner owns Wayfinder, Architecture, Grill, Context, SPEC, tickets, dispatch question, guarded integration, audit and handoff. The implementation owner owns only its assigned ticket branch/worktree, TDD, source/tests, verification and implementation commit. The integration capability may update `main` only while holding an exclusive project lock and only after a validated return; it is an automated action, not a second human approval.
+
+For Agent-to-Agent effects the named reviewer, not a generic control-plane or implementation capability, is the sole authority. The orchestration adapter accepts only a previously issued exact grant and consumes its receipt/action binding at most once. It exposes no fallback that infers authority from an agent profile string.
 
 `ImplementationHandoff` and `ImplementationReturn` remain metadata-only. New topology/dispatch values may carry opaque IDs, revision digests, event IDs, artifact references and consumer fingerprints, never raw ContextPacket/source/document text, prompt, path, URI, Secret or PII.
 
@@ -80,6 +90,7 @@ The approved implementation ticket must first produce executable red evidence fo
 6. Fixed response tests assert the required Chinese labels and commit/ticket/owner references.
 7. A ticket-open event changes only the selected proposal to `IN_PROGRESS`, emits its dispatch question once, and an implementation return wakes dependent proposals without a human prompt.
 8. CodeReview.md §2.1: seven locator forms for any worktree/path boundary, null/empty values, direct/indirect authorization bypass, N/A token scan, stable error mapping, adapter exceptions, and reverse/mutation proof for dispatch and integration guards. The approved-artifact project-ID boundary rejects null/empty/whitespace and path/URI/traversal values. Dispatch authorization tests instantiate a second entitled opaque project with otherwise identical ticket/handoff/owner/commit values; it must halt before pending state, rendering, receipt acceptance or lane grant.
+9. Reviewer-only orchestration tests cover every finite action. One exact reviewer grant succeeds once; implementation-owner direct calls, an indirect wrapper, generic control-plane substitution, copied/forged reviewer, wrong ticket/handoff/receipt/target/correlation and replay all return `ROLE_FORBIDDEN` or the exact receipt error before a fake host effect. Reverse mutation of the role check and receipt consumption must fail their matching tests.
 
 ## Risks, compatibility, rollback and deployment
 
@@ -101,9 +112,10 @@ The approved implementation ticket must first produce executable red evidence fo
 | 2026-08-05 | Codex control plane / `4feeb94` | Initial non-commercial multi-AI collaboration and audit draft. |
 | 2026-08-05 | Project owner | Approved the SPEC and authorised ticket planning only. |
 | 2026-08-05 | Project owner | Clarified that `已轉交` is the named ticket's approval and dispatch confirmation, not a second approval after delivery. |
+| 2026-08-11 | Project owner / `CHG-20260811-012` | Approved reviewer-only Agent orchestration and implementation-owner tool denial; integrated tickets remain immutable evidence and a new Ticket 04 carries the delta. |
 
 ## Approval record
 
 - Decision maker: project owner.
 - Date: `2026-08-05 (Asia/Taipei)`.
-- Approval scope: this SPEC and ticket planning. A ticket's source/test implementation is authorised only when a named implementation owner/worktree receives the ticket and the project owner confirms dispatch; no separate ceremonial ticket approval is required.
+- Approval scope: this SPEC including the `CHG-20260811-012` revision and ticket planning. A ticket's source/test implementation is authorised only when a named implementation owner/worktree receives the ticket and the project owner confirms dispatch; only the named reviewer may perform Agent-to-Agent orchestration and no separate ceremonial ticket approval is required.

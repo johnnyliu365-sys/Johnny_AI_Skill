@@ -127,7 +127,10 @@
 | Ticket 05S4 Codex lifecycle oracle | CHANGES_REQUESTED / REVISION_02_CORRECTION_REQUIRED | Independent review reproduced CR-126 duplicate-foreign acceptance and CR-127 fixed-command residue; correction stays on the existing task/worktree/branch. |
 | Ticket 05B transactional registration | BLOCKED / CONVERGENCE_REVIEW_REQUIRED | Terminal revision-02 review of `1a269411` / `ed74589` records CR-98..CR-104; no automatic correction or integration. |
 | Ticket 05C receipt removal/replay | PLANNED / DEPENDENCY_WAIT / REFREEZE_REQUIRED | Starts only after 05A/05B approval/integration and a finite behavior/rollback closure refreeze. |
-| Ticket 04 implementation | PLANNED / DEPENDENCY_WAIT | Pinned compiler is ready; package work waits for all decomposed Codex adapter children 05A–05C. |
+| Ticket 06A Codex role-profile capability proof | PLANNED / READY_AFTER_05S4 | Disposable host proof for reviewer tools present and implementation multi-agent tools absent; real CLI currently resolves to a WindowsApps binary but direct invocation from this shell returns access denied, so success must not be assumed. |
+| Autonomous Ticket 04 reviewer-only authority | PLANNED / DEPENDENCY_WAIT | Starts only after reviewed 06A `SUPPORTED`; typed fake effect gate, not a real Agent turn. |
+| Tickets 06B/06C role-profile lifecycle/composition | PLANNED / DEPENDENCY_WAIT | Wait for 06A and autonomous Ticket 04; own/remove profiles, then compose exact reviewer authority. |
+| Ticket 04 implementation | PLANNED / DEPENDENCY_WAIT | Pinned compiler is ready; package work waits for decomposed Codex adapter 05A–05C and reviewer-role 06A–06C clusters. |
 
 ### Ticket 05 selection after external capability proof
 

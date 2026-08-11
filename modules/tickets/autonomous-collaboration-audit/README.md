@@ -13,6 +13,7 @@ Deliver a non-commercial, detachable workflow control plane that selects a colla
 | [01-topology-dispatch-lanes](01-topology-dispatch-lanes.md) | Capability-count question and typed dispatch wait/receipt with parallel lane isolation | `INTEGRATED` | Approved `67b049a` is patch-equivalent to rebased `0dc4da5`, which is in `main` through Ticket 02's reviewed integration baseline |
 | [02-guarded-integration-audit](02-guarded-integration-audit.md) | Valid implementation return reaches a guarded local main integration and automatic Grill audit | `INTEGRATED` | Fourth correction review approved `906679a`; source fast-forwarded to `main` at `90e9191` |
 | [03-plugin-policy-and-response](03-plugin-policy-and-response.md) | Codex/Claude guidance and fixed `工單 ready` / `文件交接` response | `INTEGRATED` | Rebased reviewed implementation `0a5b757` / `43033bf` fast-forwarded from `b34e59e`; the post-integration Grill audit found no new scope or correction route |
+| [04-reviewer-only-orchestration-authority](04-reviewer-only-orchestration-authority.md) | Exact reviewer-only Agent effect authorization and implementation-owner denial | `PLANNED / DEPENDENCY_WAIT` | `CHG-20260811-012`; wait for local 06A host capability proof and release of the sole implementation lane |
 
 ## Mandatory approval data
 
@@ -22,7 +23,7 @@ The project owner selected this topology on `2026-08-05`:
 1：main control-plane session + existing separate implementation session/worktree
 ```
 
-The named implementation owner is Codex implementation Agent; the control-plane/reviewer is Codex/current `main` worktree. A positive delivery confirmation is the ticket-scoped approval and implementation authority; no second approval is requested. Tickets 01 through 03 are integrated and there is no active implementation lane. Ticket 03's receipt and blocked branch remain historical audit evidence only; they grant no further worktree, Context, capability or implementation authority.
+The named implementation owner is Codex implementation Agent; the control-plane/reviewer is Codex/current `main` worktree. A positive delivery confirmation is the ticket-scoped approval and implementation authority; no second approval is requested. Tickets 01 through 03 are integrated. `CHG-20260811-012` adds planned Ticket 04 without rewriting them. Only the named reviewer may control an implementation Agent; the implementation owner may not orchestrate any Agent. Ticket 03's receipt and blocked branch remain historical audit evidence only.
 
 ## Shared baseline
 

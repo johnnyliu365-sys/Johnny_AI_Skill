@@ -463,3 +463,18 @@ The audit retains the POC boundary: policy reads are metadata-only, fixed dispat
 | Continuation | `ACTION_COMPLETED -> AUTO_CONTINUE -> HANDOFF`; no user wait, correction worktree, new ticket, push, deployment or external action is created. |
 
 This closes the current planning loop without claiming that the external host has been automated. The Router POC can govern and verify declared actions; a durable host/Git orchestration capability remains a separately scoped future decision.
+
+## Reviewer-only orchestration revision
+
+`CHG-20260811-012` changes the authority contract without rewriting integrated
+Tickets 01-03. Only the ticket's named reviewer may create/dispatch/follow-up,
+steer, wait, interrupt or close an implementation Agent. The implementation
+owner has no Agent-control authority; direct and indirect attempts must return
+`HALT / ROLE_FORBIDDEN` before an effect. Model, profile name and prompt are
+not credentials.
+
+Planned Ticket 04 adds only the typed Router/fake-effect gate and takeover
+policy regression. It depends on a reviewed local Ticket-06A Codex host
+capability result so the project does not claim a tool boundary the installed
+host cannot enforce. No real Agent turn, target-project write, push, release or
+deployment is authorized by this revision.

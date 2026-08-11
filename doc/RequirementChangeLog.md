@@ -193,3 +193,19 @@
 | ADR | `doc/adr/ADR-20260808-003-local-orchestration-installer.md` |
 | Linked specification | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` (`APPROVED` on `2026-08-08`) |
 | Acceptance | The approved specification must demonstrate a one-click normal uninstall that removes all verified owned components, an idempotent absence result, fail-closed foreign/tampered state, and proof that target repositories are untouched. |
+
+## CHG-20260811-012 — Restrict implementation-Agent control to the named reviewer
+
+| Field | Value |
+| --- | --- |
+| Date | `2026-08-11` |
+| Requested by | Project owner |
+| Previous rule | The workflow separates control-plane/reviewer and implementation ownership, but Codex multi-agent tools are enabled by default and no installed role profile or effect gate proves that an implementation owner cannot create or control another Agent. |
+| Changed rule | Only the ticket's named reviewer may create, dispatch, follow up, steer, wait for, interrupt or close implementation Agents/tasks. An implementation owner receives one approved ticket, works alone in its own worktree and returns typed evidence; every direct or indirect implementation-side orchestration attempt is `HALT / ROLE_FORBIDDEN` before host effect. |
+| Reason | The project owner requires a high-trust reviewer/specification role to control lower-cost implementation roles and forbids an implementer from recursively creating or controlling more implementers. |
+| In scope | Workflow/skill/review policy; typed reviewer-role authority gate; disposable Codex custom-agent capability proof; receipt-bound reviewer/implementer profile install and complete removal; exact negative replay/forgery/indirect-path tests. |
+| Out of scope | Target-project files; model hosting; forced model turns; platform-wide claims; Claude support before a separate capability proof; network, Secret, push, release or deployment. |
+| Official host fact | Current Codex documentation states that multi-agent tools are enabled by default, custom agents are config layers, and `agents.enabled=false` disables multi-agent tools. Whether that key is safely effective inside an implementation custom-agent layer is an unproven host capability and must be tested in a disposable `CODEX_HOME`; inability to prove it is `INSTALL_BLOCKED`, not a prompt-only fallback. |
+| Affected specifications | `modules/spec/autonomous-collaboration-audit.md` revision 02 and `modules/spec/local-orchestration-installer.md` revision 02. |
+| Ticket impact | Add autonomous Ticket 04 and local Tickets 06A-06C; update Windows package Ticket 04 dependencies. Completed tickets and 05A-05C/05S4 behavior remain immutable unless their own acceptance is independently changed. |
+| Acceptance | A valid exact reviewer dispatch succeeds once; copied/forged/replayed reviewer authority and every implementation-owner orchestration surface fail with `ROLE_FORBIDDEN`; install/remove leaves no owned agent profile or target-project change. |

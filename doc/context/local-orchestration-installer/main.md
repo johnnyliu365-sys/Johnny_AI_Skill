@@ -277,6 +277,26 @@ worktree and branch and may change only the four named oracle/test paths. 05B,
 05C, Ticket 04 and the reviewer-only orchestration change remain blocked from
 implementation while this sole lane is active.
 
+## Reviewer-only Codex role-profile sequence
+
+`CHG-20260811-012` leaves AC-01 through AC-08 and completed/active 05 tickets
+unchanged. AC-09/AC-10 add a separate serial sequence:
+
+1. `06A` proves in a disposable `CODEX_HOME` that the current Codex custom-agent
+   layer can expose orchestration tools to reviewer while disabling them for
+   implementation. Current shell discovery resolves the WindowsApps Codex
+   executable but direct invocation returns access denied, so support is not
+   presumed; an unprovable boundary is typed `ROLE_ISOLATION_UNPROVEN`.
+2. Autonomous Ticket 04 implements the receipt-bound reviewer-only fake effect
+   gate after 06A is reviewed `SUPPORTED`.
+3. `06B` owns/reads/removes the two profiles and preserves foreign/global
+   config; `06C` composes profile proof with the authority gate.
+4. Windows package Ticket 04 waits for 05A-05C and 06A-06C.
+
+05S4 revision-02 remains the sole implementation lane. 06A is only queued
+`READY_AFTER_05S4`; no second dispatch, branch, worktree, automation, live
+Codex mutation or target-project action exists.
+
 Owner decision `PRG-20260811-106` supersedes combined 05S as an implementation
 lane. New children are serial and single-purpose: 05S1 owns only disposable
 environment provision/teardown; 05S2 owns only a generic bounded child runner;

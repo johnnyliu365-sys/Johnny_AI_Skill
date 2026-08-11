@@ -7,7 +7,7 @@
 | Author | Codex / current `main` worktree / baseline `e04c2be` |
 | Context | `doc/context/local-orchestration-installer/main.md` |
 | PRD | `PRD.md §15` |
-| Requirement change | `CHG-20260808-011` |
+| Requirement change | `CHG-20260808-011`; reviewer-only role revision `CHG-20260811-012` |
 | Common Context backlink | `CONTEXT.md › 衍生 SPEC 索引` |
 | Implementation language | Python 3.11 for typed adapter/runtime contracts; Inno Setup script for the Windows installer package after its toolchain is pinned and verified. |
 
@@ -53,6 +53,16 @@ This POC includes a Windows per-user `Setup.exe` / uninstaller, installer-owned 
 
 **AC-08 — Target-project non-interference.** Install, status, failed uninstall and successful uninstall must leave both an existing and an empty representative target repository byte-for-byte and Git-status unchanged.
 
+### Install reviewer and implementation role profiles
+
+1. A disposable Codex home first proves the documented custom-agent schema and exact multi-agent tool behavior without mutating the user's live Codex home.
+2. Installation writes one reviewer profile with the required orchestration surface and one implementation profile whose multi-agent/thread-control surface is disabled, then records exact owned-profile receipts.
+3. Removal deletes only receipt-matched owned profiles and verifies their absence while preserving foreign profiles byte-for-byte.
+
+**AC-09 — Reviewer-only tool surface.** Only the reviewer profile may expose create/spawn/fork, dispatch/follow-up, steer, wait, interrupt and close. The implementation profile must prove these tools unavailable and the shared Router gate must return `HALT / ROLE_FORBIDDEN` for direct and indirect implementation-side attempts. If the current Codex custom-agent layer cannot reliably enforce this, Codex role-profile support is `INSTALL_BLOCKED`; prompt instructions are not an acceptable substitute.
+
+**AC-10 — Role-profile ownership and removal.** Reviewer and implementation profile files/config entries are installer-owned only after exact digest and host readback. Normal uninstall removes both in one invocation and proves absence; foreign/manual profiles, global settings and target projects remain byte-for-byte/Git-status unchanged. Missing/tampered/foreign receipts block without broad deletion.
+
 ## Domain model, data flow and responsibility boundaries
 
 | Layer | Named types / responsibility | Prohibited responsibility |
@@ -72,6 +82,7 @@ The installer owns its root. The runtime owns only metadata inside that root. Th
 - `HostLifecyclePort` is a capability boundary. A Codex/Claude adapter is production-supported only after a live lifecycle test proves user-scope registration and `HostRemovalProof` for every receipt-owned registration/payload it creates. Installer code must not edit hidden/unpublished host configuration formats.
 - Installer and runtime logs use typed error codes plus redacted correlation/installation IDs. They may not include subprocess command arguments when those could reveal target/project data.
 - Runtime process start/stop uses a recorded child process identity. Stop has a bounded timeout and requires exact ownership before termination.
+- Codex role-profile records use finite `AgentRole`, `AgentProfileId`, `AgentToolPolicy`, `ReviewerOrchestrationGrant` and `AgentProfileRemovalProof` types. `agents.enabled=false` or any equivalent implementation-profile setting is accepted only after disposable behavioral proof in the installed Codex version; config shape alone is insufficient.
 
 ## Frontend composition and dependency injection
 
@@ -99,6 +110,8 @@ The ticket set must begin each listed behavior with a red test and retain its fi
 4. **Runtime / Git regression:** malformed/replayed/cross-installation event, raw-content sentinel, unregistered project, dirty/stale/non-fast-forward Git request and duplicate queue claim halt before side effects.
 5. **Target non-interference:** snapshot and Git-status tests across representative target repositories cover install, failed install, status, failed uninstall and successful uninstall.
 6. **Packaging smoke:** a clean Windows user sandbox installs from the released `Setup.exe`, starts/stops only the owned runner, removes it once and confirms no registered owned host integration remains.
+7. **Role-profile capability proof:** isolated Codex config loads the exact reviewer and implementation custom agents. Reviewer positive orchestration is observable; every implementation direct/indirect thread-control attempt is unavailable or `ROLE_FORBIDDEN`. Unsupported per-agent config is a typed block, not a green prompt assertion.
+8. **Role-profile lifecycle:** exact owned install/readback/remove/absence, tampered receipt, same-name foreign profile, replay and foreign/global config preservation. Representative target repositories remain unchanged.
 
 ### Verification staging architecture
 
@@ -148,9 +161,10 @@ finite unit/fault matrix.
 | 2026-08-08 | Codex / current `main` / `e04c2be` | Initial Wayfinder, Architecture and Grill convergence to draft specification. |
 | 2026-08-08 | Project owner / current `main` | Approved the complete POC scope, including owned one-click uninstall and fail-closed host lifecycle boundary. |
 | 2026-08-10 | Project owner and Codex / current `main` | Approved the two-gate verification architecture: stateful Codex contract staging before 05B/05C refreeze, then disposable Windows user staging before package acceptance. Product scope and AC-01 through AC-08 are unchanged. |
+| 2026-08-11 | Project owner / `CHG-20260811-012` | Approved AC-09/AC-10 reviewer-only Codex role profiles, fail-closed host capability proof, receipt-bound removal and new Tickets 06A-06C. Existing AC-01 through AC-08 remain unchanged. |
 
 ## Approval record
 
 - Decision maker: Project owner
 - Date: `2026-08-08 (Asia/Taipei)`
-- Approval scope: Full `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X`; tickets may now be planned, but each implementation still requires its own delivery-confirmation receipt.
+- Approval scope: Full `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X`, including AC-09/AC-10; tickets may now be planned, but each implementation still requires its own delivery-confirmation receipt and only the named reviewer may orchestrate the implementation task.

@@ -22,6 +22,7 @@
 | 測試覆蓋 | 測試覆蓋新增或變更的核心行為、重要分支、邊界與異常；測試可重跑，且 smoke test 已通過。覆蓋是否足夠以風險與行為證據判斷，不僅以百分比判斷。 |
 | 依賴合理 | 新增、升級或保留的依賴有必要性、相容性與維護性依據；沒有可避免的重複、過時或高風險依賴。 |
 | 專案規格符合性 | 實作、測試、設定與文件符合已核准的 spec、ticket 與 `CONTEXT.md`；差異已取得核准並完成追溯。 |
+| Agent 角色權限 | 涉及多 Agent／task 控制時，reviewer 是唯一可達 orchestration effect 的角色；implementation owner 的直接與間接 create/spawn/fork/send/follow-up/steer/wait/interrupt/close 均在 effect 前固定回 `HALT / ROLE_FORBIDDEN`。必須反證 copied/forged/replayed reviewer、錯 ticket/handoff/receipt/target/correlation 與一般 capability 字串不能授權；prompt 或 model 選擇不得充當安全邊界。 |
 
 ## 2.1 缺陷分類與攔截點
 
@@ -58,6 +59,11 @@
 **TDD 必要案例**：(a) 直接存取——無憑證、錯憑證、過期憑證；(b) **間接存取**——經由其他已註冊入口、內部呼叫或背景工作抵達同一資源。
 
 **CR 必要動作**：**從唯一系統組裝入口出發列舉所有可達路徑**，確認每條都經過同一判定點。繞過路徑通常存在於另一張 ticket，因此必須在功能集群層審閱執行。
+
+多 Agent 功能另須從 reviewer 與 implementation owner 兩個 profile 各自
+列舉所有 thread-control 工具。reviewer 的正向案例必須精確綁定 receipt；
+implementation owner 的直接工具、間接 adapter、偽造 reviewer identity、
+重播 receipt 與錯 target 都必須在任何 host effect 前 `ROLE_FORBIDDEN`。
 
 ### 4. Token 格式與比較
 

@@ -170,3 +170,26 @@ Turn the existing detachable workflow plugin into a Windows per-user control-pla
 4. One normal uninstaller invocation stops the owned runtime, unregisters each owned host integration, and deletes all installer-owned payload, ledger, queue, checkpoint and launcher files. A second invocation reports `NOT_INSTALLED` without error or target-project mutation.
 5. If process stop, ownership verification or host unregistration fails, uninstall reports `UNINSTALL_BLOCKED`, retains only its own state for retry, and never claims success or deletes unknown host/project content.
 6. Automated tests prove an install/uninstall cycle leaves representative existing and empty target repositories byte-for-byte and Git-status unchanged.
+
+## 16. Reviewer-only Agent Orchestration
+
+Only the reviewer named by an approved ticket may control implementation
+Agents. The reviewer owns task creation/dispatch, follow-up, steering, waiting,
+interrupt and closure. An implementation owner receives one ticket, works in
+its own worktree, commits and returns a typed result; it cannot create, control
+or wait on another Agent, dispatch a later ticket, or become reviewer by using
+the same name, model or prompt.
+
+The boundary must be enforced twice: a Router/effect authorization gate binds
+reviewer, project, ticket, reviewed handoff, receipt, target owner, action and
+correlation; an installed Codex implementation profile must have no usable
+multi-agent/thread-control tool surface. Because Codex enables multi-agent
+tools by default, a disposable host proof must establish the supported custom
+agent configuration before the installer can report `SUPPORTED`. Prompt-only
+instructions are defense in depth, not the authorization mechanism.
+
+- Change: `CHG-20260811-012`
+- Revised specifications: `modules/spec/autonomous-collaboration-audit.md` and
+  `modules/spec/local-orchestration-installer.md`
+- Non-goals: target-project files, forced model turns, platform-wide enforcement,
+  Claude support without its own proof, push, release or deployment.

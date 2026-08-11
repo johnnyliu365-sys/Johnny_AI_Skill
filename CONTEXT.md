@@ -16,6 +16,10 @@
 - 每張已核准工單在交付給具名 implementation owner 前，必須停在精確的 dispatch-confirmation 人類閘門；確認交付後，planning lane 自動進入下一個 Grill，ticket execution lane 在獨立 branch/worktree 持續執行、回傳、受控整合與稽核。
 - 工作流程的 commit 只是可追溯的完成證據，必須轉為 `ACTION_COMPLETED` 並重新交由 Router 判定下一步；除 Profile 宣告的權限閘門外，不得因 commit、docs-only commit 或單一工作階段完成而停止。缺少必要來源、具名 owner、權限、能力或有效決策時必須 fail-closed，而不是假裝等待或自行繼續。
 - 控制面 Agent 僅負責 Wayfinder、Grill、Context、SPEC、ticket、實作前 handoff、review 與 handoff。正式實作必須由另一位具名 implementation owner 完成；該 owner 如遇需求、公開契約、架構、前端組合或驗收變更，必須以 `REQUIREMENT_CHANGED` 回交控制面重新收斂。
+- 只有 ticket 具名 reviewer 可控制 implementation Agent/task。實作者不得
+  spawn、delegate、follow-up、steer、wait、interrupt 或 close 其他 Agent；
+  角色名稱、model 或 prompt 不是 authority。Router effect gate 與 host tool
+  surface 必須共同強制此規則，失敗固定為 `HALT / ROLE_FORBIDDEN`。
 - `local-orchestration-installer` 是已開始規格化的 Windows 使用者層級 POC：目標是在 Agent UI 外建立由安裝器擁有的本機控制面、插件 payload 與 metadata-only runtime，並以一鍵解除安裝移除**僅由該安裝器建立**的內容。它不得寫入、刪除或成為任何目標／公司專案的 runtime、CI、版本控制或檔案依賴；現有手動 marketplace 安裝若非本安裝器所有，必須視為 foreign installation，不得覆寫或移除。
 
 ## 識別碼登錄
@@ -121,3 +125,9 @@
 - Scope: Windows per-user installer/uninstaller, owned-install ledger, metadata-only local orchestration adapter, injected host registration adapters, and a guarded local Git port. The installer deletes only its recorded, verified owned payload and state; it never changes target projects.
 - PRD / change: `PRD.md §15`; `CHG-20260808-011`.
 - Handoff state: owner-approved specification is ready for ticket planning. Actual Codex/Claude host registration commands remain a capability contract to be validated in an approved implementation ticket; absent or non-removable host capability is an install-time fail-closed result, not a silent partial install.
+- Revision `CHG-20260811-012`: add disposable Codex reviewer/implementer
+  profile proof and receipt-bound lifecycle. Only reviewer receives orchestration
+  tools; implementation multi-agent control must be physically unavailable or
+  the host remains `INSTALL_BLOCKED`. This adds Tickets 06A-06C and changes
+  Ticket 04 dependencies; it does not reopen completed tickets or change
+  05A-05C/05S4 plugin lifecycle acceptance.

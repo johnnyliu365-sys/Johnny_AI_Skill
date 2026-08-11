@@ -406,6 +406,21 @@ implementation owner 是 ticket 具名指定的另一位 Agent／worktree，負�
 
 每張 ticket 必須同時標示控制面 owner、implementation owner 與 reviewer。缺任一 owner 或同一 Agent 未經明確改派同時承擔兩者時，不得進入 `implement`。
 
+reviewer 是唯一 Agent-to-Agent orchestrator。只有 ticket 與 receipt
+精確綁定的 reviewer capability 可以 create／spawn／fork implementation
+task、傳送或追送工單、steer、wait、interrupt 或 close 該具名
+implementation owner。implementation owner 的 host tool surface 必須移除
+multi-agent／thread-control 工具；它不得直接或間接建立、委派、控制、
+等待或關閉其他 Agent，不得派下一票，也不得自行升格 reviewer。任何
+嘗試一律在 host effect 前回 `HALT / ROLE_FORBIDDEN`。
+
+此邊界不可只靠 developer prompt、agent 名稱、model 名稱或一般
+`CapabilityRef` 字串。每個 orchestration effect 必須驗證具名 reviewer
+role、reviewer capability、project、ticket、reviewed handoff、未消耗
+receipt、target implementation owner、action 與 correlation；copy、forge、
+replay、role substitution 或 indirect adapter path 均 fail closed。專案負責
+人的明確改派是唯一上位例外，且必須先留下 owner override record。
+
 實作完成後，implementation owner 必須以 `ImplementationReturn` 回交控制面；只有 `ACTION_COMPLETED` 經 Router 重新分類後，才可進入 Smoke Test、Review 或 Handoff。
 
 實作前的 `ImplementationHandoff` 必須帶有唯一 `handoff_ref`，並引用已核准的 SPEC／ticket／Context／TDD 與角色 ID。控制面開立 `IN_PROGRESS` proposal 時，Router 必須驗證 handoff，建立 metadata-only `PendingDispatchDescriptor`，再以該 descriptor 的 ticket 與 implementation owner 顯示唯一交付問題。Dispatch admission 必須注入 typed `ApprovedDispatchArtifactRegistry`，以 `(project_id, ticket_ref, reviewed_handoff_ref, implementation_owner)` 精確解析已審核的 ticket 與 handoff commit；`project_id` 必須是具名、可檢查的 opaque ID，不能只是 `NonBlankText` 或可攜帶路徑／URI 的任意字串。Router 只能把 caller 帶入的 handoff commit 當作與該記錄比較的 assertion，不得視為授權來源。registry 缺少精確記錄、identity 或任一 commit 不一致，或記錄屬於另一個 project 時，必須在建立問題、pending、receipt、render 或 implementation lane 前 `HALT`。只有稍後的正面 `IMPLEMENTATION_DISPATCH_CONFIRMED` receipt 同時匹配 pending descriptor 的 ticket、owner、question／correlation、reviewed `handoff_ref` 與 expected base revision，才可建立兩條彼此隔離的 lane：ticket lane 取得具名 implementation capability 並進入 `IMPLEMENT`；planning lane 自動進入下一個 Grill。receipt 缺失、重播、無 pending descriptor、proposal 未 `IN_PROGRESS`、handoff／owner／correlation 不符或任何來源未驗證時一律 `HALT`，不得授予 source、Context、capability、worktree 或 implementation。`TICKETS + ACTION_COMPLETED` 不得成為第二次人工核准等待；`TICKETS + APPROVAL_GRANTED → IMPLEMENT` 是已淘汰的 legacy transition，必須 `HALT`。
@@ -463,6 +478,11 @@ implementation owner 回傳 `ImplementationReturn`。`COMPLETED` 產生 `ACTION_
 - 其他 Agent 可讀、評論或建立 review 報告，但不得跨 worktree 替實作者修改或提交。
 - Composition Root、migration、共享契約或同一設定檔有衝突時，建立先行整合 ticket，或由指定整合者串行處理。
 - handoff／merge 前，必須核對 Context、tickets、elements、資料模型、API／事件、Provider、快取、測試與實際 diff；任一衝突未解即為 `BLOCKED`。
+- reviewer 單獨持有 Agent orchestration 工具與 receipt-bound effect port；
+  implementation owner 只接收一張已核准 ticket、在自己的 worktree 執行
+  TDD／驗證／commit 並回傳 typed result。implementation owner 的任何
+  spawn／delegate／follow-up／steer／wait／interrupt／close 路徑（含間接
+  adapter）必須在 effect 前 `ROLE_FORBIDDEN`。
 
 ### 6.1 已確認 ticket 的 implementation allocation 切換與同票修正
 
