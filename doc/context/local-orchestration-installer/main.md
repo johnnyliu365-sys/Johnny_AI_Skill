@@ -306,6 +306,16 @@ staging/test paths do not overlap the oracle correction. Each task is bound to
 one ticket/worktree and cannot control the other; no automation, live Codex
 mutation or target-project action is authorized.
 
+Ticket 06A implementation `38e9a8b` and handoff `f6f186f` passed independent
+review from a fresh immutable export: focused 11/11, full 206/206, strict
+full-tree mypy/compile over 100 files, same-name foreign-sentinel preservation
+and exact teardown all passed. The independently repeated actual installed-host
+probe nevertheless returns `INSTALL_BLOCKED / ROLE_ISOLATION_UNPROVEN /
+ACCESS_DENIED / OUTPUT_UNAVAILABLE`. Synthetic effective-readback injection is
+contract evidence only and cannot replace host proof. The implementation is
+integration-authorized as truthful fail-closed evidence; autonomous Ticket 04
+and 06B/06C remain stopped pending separately authorized capability change.
+
 Owner decision `PRG-20260811-106` supersedes combined 05S as an implementation
 lane. New children are serial and single-purpose: 05S1 owns only disposable
 environment provision/teardown; 05S2 owns only a generic bounded child runner;

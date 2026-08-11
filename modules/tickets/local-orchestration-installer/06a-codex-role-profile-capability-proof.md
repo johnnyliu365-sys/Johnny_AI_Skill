@@ -4,8 +4,8 @@
 | --- | --- |
 | SPEC / AC | Local installer SPEC revision 02 / AC-09 and AC-10 feasibility |
 | Change | `CHG-20260811-012` |
-| State | `IN_PROGRESS / DISPATCH_CONFIRMED` |
-| Dependency | 05S1/05S2/05S3 integrated; 05S4 revision-02 returned `COMPLETED`, and the project owner authorized a second non-overlapping implementation lane |
+| State | `APPROVED / INSTALL_BLOCKED / ROLE_ISOLATION_UNPROVEN / INTEGRATION_AUTHORIZED` |
+| Dependency | 05S1-05S4 integrated; implementation `38e9a8b` and handoff `f6f186f` independently reviewed; actual installed-host capability is blocked |
 | Implementation owner | Task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; `C:\Users\<user>\Desktop\AI控制工作workflow-implementer-2`; branch `codex/implementation-codex-role-profile-proof-06a` recreated from the exact handoff baseline |
 | Reviewer | Control-plane `main`; sole Agent-to-Agent orchestrator |
 | Environment | Disposable `CODEX_HOME` only; no live user Codex mutation, target project, model turn, network, Secret, push, release or deployment |
@@ -53,3 +53,21 @@ control or wait on another Agent. Return one implementation commit containing
 only the four authorized paths and one `WorkProgressReport.md`-only handoff. A
 reviewed `SUPPORTED` result unblocks autonomous Ticket 04; any other result is
 a real typed stop for Codex role-profile installation.
+
+## Independent review result
+
+Implementation `38e9a8ba85cf83fbccbcbe2c197f3bedf547a061` and docs-only
+handoff `f6f186f2071035907e83577c58120e20442023c4` satisfy the frozen
+P1-P4 evidence contract and exact four-path scope. A fresh immutable export
+passed focused 11/11, full 206/206, strict full-tree mypy and in-memory compile
+over 100 Python files. Independent same-name foreign-sentinel, unsupported
+configuration, teardown and repository-isolation probes also passed.
+
+The actual installed-host probe independently reproduced
+`INSTALL_BLOCKED / ROLE_ISOLATION_UNPROVEN / ACCESS_DENIED /
+OUTPUT_UNAVAILABLE`, with the disposable root and both owned profiles removed.
+The injected `_EffectiveReadback` success test proves contract behavior only;
+it is not host evidence and cannot project `SUPPORTED`. The evidence
+implementation is approved for guarded integration, while autonomous Ticket
+04 and Tickets 06B/06C remain blocked pending separately authorized capability
+change.

@@ -1654,3 +1654,13 @@
 | Owner / lane | Task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; reuse only clean `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` and its existing branch after an exact normal fast-forward from integrated 05S4 handoff to this handoff baseline. No new branch/worktree. |
 | Exact scope | New `codex_registration_contracts.py`, new `test_codex_registration_contracts.py`, and export-only `library/local_orchestration/__init__.py`. Existing source/tests are read-only. No command, filesystem, registration, removal, list, absence, live Codex, target-project or network effect. |
 | Return | One exact-scope implementation commit plus one `WorkProgressReport.md`-only handoff, with C1-C4 first-red/green/reverse evidence and full strict verification. Implementer works alone and makes no review, integration, downstream dispatch or Agent-control decision. |
+
+## PRG-20260811-145 — Ticket 06A final independent review
+
+| Field | Value |
+| --- | --- |
+| Router event | `IMPLEMENTATION_RETURN(06A) -> FINAL_CODE_REVIEW -> APPROVED_EVIDENCE + INSTALL_BLOCKED -> INTEGRATION_AUTHORIZED` |
+| Binding | Closure `CLOSURE-LOCAL-INSTALL-T06A-01`; implementation `38e9a8ba85cf83fbccbcbe2c197f3bedf547a061`; docs-only handoff `f6f186f2071035907e83577c58120e20442023c4`; review `doc/reviews/local-orchestration-installer/06a-codex-role-profile-capability-proof-code-review.md`. |
+| Independent evidence | Fresh immutable export: focused 11/11, full 206/206, strict full-tree mypy and in-memory compile over 100 files. Same-name foreign sentinel, unsupported config, teardown, scope, ancestry, source and diff probes passed. The handoff's tests-only 38-file mypy claim is not reused as full-tree proof. |
+| Actual capability | Independent installed-host probe reproduced `INSTALL_BLOCKED / ROLE_ISOLATION_UNPROVEN / ACCESS_DENIED / OUTPUT_UNAVAILABLE`; teardown was `REMOVED`, disposable root and both owned profile files absent. Synthetic `_EffectiveReadback` is contract-only and cannot project actual `SUPPORTED`. |
+| Decision | Evidence implementation `APPROVED / INTEGRATION_AUTHORIZED`; current host capability is concrete NO-GO. Autonomous Ticket 04 and 06B/06C remain blocked pending separately authorized capability change. Allocation and receipt stay active only through guarded integration. No live Codex mutation, target-project write, push, release or deployment. |

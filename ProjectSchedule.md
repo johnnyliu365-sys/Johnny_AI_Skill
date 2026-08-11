@@ -129,7 +129,7 @@
 | Ticket 05B1 registration contracts/journal | IN_PROGRESS / DISPATCH_CONFIRMED | First implementation lane owns the pure no-effect observed-proof, receipt and current-attempt authority contracts. |
 | Tickets 05B2-05B4 | PLANNED / DEPENDENCY_WAIT | Command classification, exhaustive compensation and final transaction composition remain serial behind 05B1. |
 | Ticket 05C receipt removal/replay | PLANNED / DEPENDENCY_WAIT / REFREEZE_REQUIRED | Starts only after 05A/05B approval/integration and a finite behavior/rollback closure refreeze. |
-| Ticket 06A Codex role-profile capability proof | IN_PROGRESS / DISPATCH_CONFIRMED | Owner-authorized second task/worktree runs the disposable proof independently of the 05S4 review; access-denied or unproven isolation remains a typed block. |
+| Ticket 06A Codex role-profile capability proof | APPROVED / INSTALL_BLOCKED / INTEGRATION_AUTHORIZED | Evidence implementation `38e9a8b` and handoff `f6f186f` passed independent review; actual installed-host result is `ROLE_ISOLATION_UNPROVEN / ACCESS_DENIED / OUTPUT_UNAVAILABLE`, so capability dependents stay blocked. |
 | Autonomous Ticket 04 reviewer-only authority | PLANNED / DEPENDENCY_WAIT | Starts only after reviewed 06A `SUPPORTED`; typed fake effect gate, not a real Agent turn. |
 | Tickets 06B/06C role-profile lifecycle/composition | PLANNED / DEPENDENCY_WAIT | Wait for 06A and autonomous Ticket 04; own/remove profiles, then compose exact reviewer authority. |
 | Ticket 04 implementation | PLANNED / DEPENDENCY_WAIT | Pinned compiler is ready; package work waits for decomposed Codex adapter 05A–05C and reviewer-role 06A–06C clusters. |
