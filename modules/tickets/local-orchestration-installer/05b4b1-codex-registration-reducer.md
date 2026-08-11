@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / unchanged AC-01, AC-02, AC-07 and AC-08 registration seam |
-| State | `IN_PROGRESS / IMPLEMENTATION_DISPATCHED` |
+| State | `CHANGES_REQUESTED / TICKET_DEFECT / CONVERGENCE_REVIEW_REQUIRED` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B4B1-01` / D1-D8 |
 | Dependency | 05B4A1 approved and integrated by `3399cf934874f3304959ef0b6913548c0d767e01` |
 | Owner / worktree | Task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2`; no new worktree |
@@ -111,3 +111,15 @@ or 05C work, live effect, push, release or deployment is authorized.
 The independent review after return is terminal for this closure. A blocking
 finding stops at `CONVERGENCE_REVIEW_REQUIRED`; it does not automatically open
 a correction, new branch/worktree or 05B4B2 dispatch.
+
+## Terminal review — revision 01
+
+Formal review
+`doc/reviews/local-orchestration-installer/05b4b1-codex-registration-reducer-code-review.md`
+records CR-148. The exact original pending object remains authorized after a
+successful advance, so it can be replayed and accepted again. This violates D6.
+Because a pure reducer with no authoritative current-generation input cannot
+distinguish the first call from the same input replay, the finding is
+`TICKET_DEFECT`, not an additive source correction. The submitted commits remain
+immutable evidence; no merge, correction, new branch/worktree or 05B4B2 dispatch
+is authorized before a reviewed refreeze.

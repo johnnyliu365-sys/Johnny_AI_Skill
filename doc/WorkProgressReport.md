@@ -2338,3 +2338,14 @@
 | Binding | `hnd_local_orchestration_install_05b4b1_20260812`; `aln_local_orchestration_install_05b4b1_20260812`; `rcpt_local_orchestration_install_05b4b1_20260812`; `corr-local-orchestration-install-05b4b1-20260812`; `q-local-orchestration-install-05b4b1-20260812`; `scx-local-orchestration-install-05b4b1-20260812-01`. |
 | Owner / admission | Task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; idle clean existing `workflow-implementer-2` at `30d6bcff91368c162664dc2eef7dee5a7c543950`; create only branch `codex/implementation-codex-registration-reducer-05b4b1` from this exact dispatch registry commit. Owner instruction `開始吧` is the positive delivery confirmation for this ticket. |
 | Scope / return | New reducer module and focused test only; implementation commit then WPR-only PRG-206. No integrated-source/package/dependency edit, port/effect execution, another Agent, new worktree, review, integration, 05B4B2/05C work, live Codex/host/target-project/network effect, push, release or deployment. |
+
+## PRG-20260812-207 — Ticket 05B4B1 independent terminal review
+
+| Field | Value |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05B4B1) -> TERMINAL_CODE_REVIEW -> CHANGES_REQUESTED -> TICKET_DEFECT -> CONVERGENCE_REVIEW_REQUIRED` |
+| Reviewed return | Closure `CLOSURE-LOCAL-INSTALL-T05B4B1-01`; implementation `2eb2264e97d4e41f529a8c232da6a2552e78c619`; docs-only handoff `658a8f7e10d955b10a28eeb89133ec7c6b3e05a2`; formal report `doc/reviews/local-orchestration-installer/05b4b1-codex-registration-reducer-code-review.md`; CR-148. |
+| Standard verification | Immutable ZIP export: focused 10/10, serial full 279/279, strict mypy 120 files and in-memory compile 120 files passed. Exact ancestry/scope, source/diff, submitted-lane cleanliness and three-worktree topology passed. |
+| Blocking evidence | The exact original `CodexFreshPreflightPending` was advanced twice with the same exact accepted result; both calls returned `CodexMarketplaceAddPending`. The independent D6 assertion requiring the second call to return `CodexRegistrationBlocked` failed. Marketplace and plugin pending states exhibit the same replay acceptance. |
+| Classification | `TICKET_DEFECT`: D6 requires consumed stale-state rejection, but the frozen pure reducer has no current-generation, lease, registry or consumption input capable of distinguishing first use from identical replay. A hidden mutable registry would change lifecycle, concurrency and cleanup semantics and is not an additive implementation correction. |
+| Decision / stop | `CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED`; do not merge the handoff, dispatch 05B4B2, or open a correction/new branch/worktree. Recommended refreeze keeps B1 deterministic and assigns current-generation/single-use replay protection to B2's transaction coordinator; the alternative must explicitly refreeze B1 as stateful. No live effect, target-project write, push, release or deployment occurred. |

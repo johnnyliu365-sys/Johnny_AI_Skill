@@ -2,13 +2,13 @@
 
 | Field | Value |
 | --- | --- |
-| Context state | `TICKET_05B4B1_IMPLEMENTATION_DISPATCHED` |
-| Router event | `ACTION_COMPLETED(05B4A1) / TICKET_05B4B_CONVERGENCE_DECOMPOSED / TICKET_SELECTED(05B4B1) / IMPLEMENTATION_DISPATCH_CONFIRMED` |
+| Context state | `TICKET_05B4B1_CONVERGENCE_REVIEW_REQUIRED` |
+| Router event | `IMPLEMENTATION_COMPLETED(05B4B1) / TERMINAL_CODE_REVIEW / CHANGES_REQUESTED / TICKET_DEFECT / CONVERGENCE_REVIEW_REQUIRED` |
 | Delivery stage | `POC` |
 | Requirement change | `CHG-20260808-011` |
-| Baseline | `ae47b71` (`docs: complete Ticket 05B4A1 integration`) |
+| Baseline | `1ca86f7` (`docs: dispatch Ticket 05B4B1 registration reducer`) |
 | Control-plane owner | Codex / current `main` worktree |
-| Implementation owner | 05B4A1 is integrated and released; task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` owns active 05B4B1 in existing `workflow-implementer-2` under its unique receipt |
+| Implementation owner | 05B4A1 is integrated and released; 05B4B1 implementation/handoff remain immutable in existing `workflow-implementer-2`, but its allocation is stopped at terminal review and no implementation continuation is authorized |
 | Required sources read | `AGENTS.md`, `Workflow.md` (Router, Wayfinder, Grill, change control, specification, tickets, role boundary), `Defined_wayfinder.md`, `CONTEXT.md`, `PRD.md`, `ProjectSchedule.md`, `doc/RequirementChangeLog.md`, existing plugin manifests / README, `library/workflow_router/`, and completed plugin / autonomous-collaboration POCs |
 
 ## Shared Context reference
