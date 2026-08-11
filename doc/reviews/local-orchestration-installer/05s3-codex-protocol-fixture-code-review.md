@@ -94,3 +94,68 @@ handoff. The correction must retain duplicate-key specificity, map only the
 documented standard JSON decoder failures to the existing finite result, and
 add the two exact bounded regression probes. The next independent review is
 final for this override; any blocker stops without another correction or 05S4.
+
+## Revision-02 final independent review
+
+| Field | Value |
+| --- | --- |
+| Closure / override | `CLOSURE-LOCAL-INSTALL-T05S3-02` / `OVR-LOCAL-INSTALL-T05S3-CR125-20260811-01` / CR-125 only |
+| Control baseline | `4b17a2587cd247c2c97fffbf7785e284a8610500` |
+| Correction / handoff | `4835b0f0b5f404d13dd04e0aa55ca6205a816f2c` / `008fac8327ce783b2cc39331064eed8e31c9a34d` |
+| Branch / owner | Existing `codex/implementation-codex-protocol-fixture-05s3` / task `019fcc9c-f34f-7d53-a313-c70c90bf3245` |
+| Final result | `APPROVED / INTEGRATION_AUTHORIZED` |
+
+The correction is exactly additive: `f725d48 -> 4835b0f -> 008fac8`. The
+implementation commit changes only the two authorized Python files and the
+handoff changes only `doc/WorkProgressReport.md`. Both worktrees remained clean
+and exactly the original two worktrees exist. Review ran from a fresh immutable
+ZIP export and never wrote to the implementation worktree.
+
+### Independent verification
+
+| Check | Result / evidence |
+| --- | --- |
+| Focused / full | PASS: 6/6 focused and 195/195 full unittest tests. |
+| Strict type / compile | PASS: strict mypy over 96 source files with a removed external cache; in-memory compile over the same 96 files. |
+| Exact CR-125 probes | PASS: the original nested-object forms were 3,062 and 5,061 bytes, both below the bound, and both returned `MALFORMED_JSON`. |
+| Result specificity | PASS: duplicate-key input remained `DUPLICATE_KEY`; injected `MemoryError` escaped and was not misclassified. |
+| Reverse mutations | PASS: independently removing only `RecursionError` made the deep-array test error; removing only `ValueError` made the huge-integer test error. The review export was restored to the submitted bytes before final readback. |
+| Scope / source / ancestry | PASS: exact two-file implementation scope, one-file docs scope, additive ancestry, source sentinel and `git diff --check`. |
+| Isolation / residue | PASS: both worktrees clean; repository cache, fixed response-file and owned staging-root counts were zero. |
+
+### Closure and mandatory-check mapping
+
+| Item | Result | Independent disposition |
+| --- | --- | --- |
+| `D1 / T1` | PASS | Revision-01 strict public models and all six canonical payloads remain green. |
+| `D2 / T2` | PASS | Every declared schema case plus both bounded standard decoder limits returns a finite typed result. |
+| `D3 / T3` | PASS | Real-child binding and exact process-failure truth remain green in focused/full suites. |
+| `D4 / T4` | PASS | Exception finiteness, topology, cleanup, invariants and zero residue all pass. |
+
+- **Clear strong types:** PASS. The parser retains the declared finite result
+  union without adding a broad or nullable path.
+- **Existing coding conventions:** PASS. The correction is the smallest change
+  to the existing strict parser and unittest structure.
+- **Logic correctness:** PASS. Duplicate keys are handled before the broader
+  decoder `ValueError`; the two proven decoder limits map to `MALFORMED_JSON`.
+- **Edge cases:** PASS. Both standard decoder limits, duplicate keys and the
+  excluded process-control exception were independently exercised.
+- **Security / performance:** PASS. The 65,536-byte transport bound and all
+  filesystem/process isolation behavior remain unchanged.
+- **Test coverage / smoke:** PASS. Both exact tests fail under their matching
+  one-line reverse mutation and pass after restoration.
+- **Dependency reasonableness:** PASS. No dependency or production file changed.
+- **Project specification:** PASS. CR-125 is closed without changing D1-D4 or
+  inventing a new result contract.
+
+CodeReview.md defect classes 5, 6 and 7 now pass. No new blocking finding
+exists.
+
+### Final conclusion
+
+`APPROVED / INTEGRATION_AUTHORIZED`. A later guarded integration may preserve
+the control review commit as first parent and reviewed handoff `008fac8` as
+second parent. Allocation `aln_local_orchestration_install_05s3_r02_20260811`
+and receipt `rcpt_local_orchestration_install_05s3_r02_20260811` remain active
+only until that integration is verified. This correction review does not merge,
+dispatch 05S4, push, release, deploy, mutate live Codex or touch a target project.

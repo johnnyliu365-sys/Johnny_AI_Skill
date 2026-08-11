@@ -123,7 +123,7 @@
 | Ticket 05S combined staging parent | SUPERSEDED / DECOMPOSED | Rejected commits remain immutable evidence; no correction or integration. |
 | Ticket 05S1 disposable environment core | DONE / APPROVED / INTEGRATED | Correction `41d5ce4`, handoff `e1087d3`, review `17ea1d5` and guarded merge `504a3ec`; post-merge verification passed. |
 | Ticket 05S2 bounded child-process runner | DONE / APPROVED / INTEGRATED | Revision-03 `33a8fa9` / `dba0621b`, review `c97b754`, guarded merge `6e24e06`; CR-124 resolved and post-merge verification passed. |
-| Ticket 05S3 Codex protocol fixture | IN_PROGRESS / REVISION_02_CORRECTION_AUTHORIZED | CR-125 only; same task/worktree/branch, one additive correction and one final review. |
+| Ticket 05S3 Codex protocol fixture | APPROVED / INTEGRATION_AUTHORIZED | Correction `4835b0f`, handoff `008fac8`; final fresh-export review closes CR-125. |
 | Ticket 05S4 Codex lifecycle oracle | PLANNED / DEPENDENCY_WAIT | Starts after 05S3 approval/integration; only then may 05B/05C be refrozen. |
 | Ticket 05B transactional registration | BLOCKED / CONVERGENCE_REVIEW_REQUIRED | Terminal revision-02 review of `1a269411` / `ed74589` records CR-98..CR-104; no automatic correction or integration. |
 | Ticket 05C receipt removal/replay | PLANNED / DEPENDENCY_WAIT / REFREEZE_REQUIRED | Starts only after 05A/05B approval/integration and a finite behavior/rollback closure refreeze. |
@@ -303,3 +303,10 @@ The owner authorizes `OVR-LOCAL-INSTALL-T05S3-CR125-20260811-01` and
 add one correction from `f725d48` that maps the two proven standard JSON
 decoder exceptions to the existing finite rejection and adds exact regression
 tests. No new branch/worktree or 05S4 is authorized; the next review is final.
+
+The revision-02 final review approves correction `4835b0f` and handoff
+`008fac8`. Fresh-export focused 6/6, full 195/195, strict mypy and compile over
+96 files passed. Exact original-shape decoder probes, duplicate-key specificity,
+process-control exception escape and both independent reverse mutations passed
+with zero residue. CR-125 is closed; guarded integration is authorized, but no
+merge or 05S4 dispatch is performed by this correction authorization.

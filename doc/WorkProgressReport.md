@@ -1463,3 +1463,12 @@
 | Identifiers | Handoff `hnd_local_orchestration_install_05s3_r02_20260811`; allocation `aln_local_orchestration_install_05s3_r02_20260811`; receipt `rcpt_local_orchestration_install_05s3_r02_20260811`; correlation `corr-local-orchestration-install-05s3-r02-20260811`; question `q-local-orchestration-install-05s3-r02-20260811`. |
 | Exact delta | Preserve duplicate-key specificity; map bounded decoder `JSONDecodeError`, `RecursionError` and non-duplicate `ValueError` to existing `MALFORMED_JSON`; add the exact 1,500-level and 5,000-digit regressions. No broad exception catch or new result. |
 | Lane / limit | Same task `019fcc9c-f34f-7d53-a313-c70c90bf3245`, same sole implementation worktree and branch `codex/implementation-codex-protocol-fixture-05s3`; one additive implementation commit, one docs-only handoff and one final review. No replacement branch/worktree, integration or 05S4 before approval. |
+
+## PRG-20260811-131 — Ticket 05S3 revision-02 final independent review
+
+| Field | Value |
+| --- | --- |
+| Router event | `IMPLEMENTATION_CORRECTION_COMPLETED -> FINAL_CODE_REVIEW -> APPROVED -> GUARDED_INTEGRATION_REQUIRED` |
+| Binding | Closure `CLOSURE-LOCAL-INSTALL-T05S3-02`; override `OVR-LOCAL-INSTALL-T05S3-CR125-20260811-01`; correction `4835b0f0b5f404d13dd04e0aa55ca6205a816f2c`; handoff `008fac8327ce783b2cc39331064eed8e31c9a34d`; report `doc/reviews/local-orchestration-installer/05s3-codex-protocol-fixture-code-review.md`. |
+| Independent evidence | Fresh immutable export: focused 6/6, full 195/195, strict mypy and compile over 96 files; exact original 3,062/5,061-byte probes, duplicate-key specificity, excluded `MemoryError`, both reverse mutations, scope/ancestry/diff and zero-residue checks passed. |
+| Decision | `APPROVED / INTEGRATION_AUTHORIZED`; CR-125 is closed. Allocation and receipt remain active only until guarded integration is verified. No merge, 05S4 dispatch, push, release, deployment, live Codex mutation or target-project write in this correction review. |
