@@ -1901,3 +1901,25 @@
 | Parallel safety | 05B3A and 05B3B use disjoint two-file scopes and depend only on integrated 05B1/05B2. Neither may import or inspect the other's unintegrated worktree. 05B3C remains dependency-waiting. |
 | Rejected evidence | Original 05B3 closure, branch and commits remain immutable and unmerged; no source may be copied, cherry-picked or imported. This is the recorded `FRESH_BRANCH_REQUIRED` cause for the primary lane. |
 | Proposed owners | 05B3A: task `019fcc9c-f34f-7d53-a313-c70c90bf3245` / existing `workflow-implementation`. 05B3B: task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` / existing `workflow-implementer-2`. No new worktree is authorized. |
+
+## PRG-20260811-168 — Ticket 05B3A implementation dispatch
+
+| Field | Value |
+| --- | --- |
+| Router event | `TICKET_SELECTED(05B3A) -> TICKET_DISPATCH_REQUIRED -> IMPLEMENTATION_DISPATCH_CONFIRMED` |
+| Project / ticket / closure | `prj-local-orchestration-installer-poc-20260808`; `05b3a-codex-safe-port-capability`; `CLOSURE-LOCAL-INSTALL-T05B3A-01`; A1-A5. |
+| Binding | Handoff `hnd_local_orchestration_install_05b3a_20260811`; allocation `aln_local_orchestration_install_05b3a_20260811`; receipt `rcpt_local_orchestration_install_05b3a_20260811`; correlation `corr-local-orchestration-install-05b3a-20260811`; question `q-local-orchestration-install-05b3a-20260811`; side-context `scx-local-orchestration-install-05b3a-20260811-01`; ticket docs `f60d90ffba7a8cc2b3c7c7eb7a24fe06883b932d`. |
+| Released / new lane | The old 05B3 allocation is closed as terminal rejected evidence. Task `019fcc9c-f34f-7d53-a313-c70c90bf3245` preserves branch `codex/implementation-codex-protocol-fixture-05s3` at `89446d94b57f73b202f5a34a12dd763ae0904988`, then creates `codex/implementation-codex-safe-port-capability-05b3a` from this reviewed handoff inside the same existing worktree. No new worktree. |
+| Exact scope / independence | Only new `codex_compensation_port.py` and `test_codex_compensation_port.py`. Integrated 05B1/05B2 are read-only; rejected 05B3 and the parallel 05B3B lane are not source inputs. |
+| Return / guards | One exact-scope implementation commit plus one WPR-only handoff reserved as PRG-170. Work alone; no integration, downstream dispatch, Agent control, live Codex mutation, target-project write, push, release or deployment. |
+
+## PRG-20260811-169 — Ticket 05B3B implementation dispatch
+
+| Field | Value |
+| --- | --- |
+| Router event | `TICKET_SELECTED(05B3B) -> TICKET_DISPATCH_REQUIRED -> IMPLEMENTATION_DISPATCH_CONFIRMED` |
+| Project / ticket / closure | `prj-local-orchestration-installer-poc-20260808`; `05b3b-codex-compensation-reducer`; `CLOSURE-LOCAL-INSTALL-T05B3B-01`; B1-B5. |
+| Binding | Handoff `hnd_local_orchestration_install_05b3b_20260811`; allocation `aln_local_orchestration_install_05b3b_20260811`; receipt `rcpt_local_orchestration_install_05b3b_20260811`; correlation `corr-local-orchestration-install-05b3b-20260811`; question `q-local-orchestration-install-05b3b-20260811`; side-context `scx-local-orchestration-install-05b3b-20260811-01`; ticket docs `f60d90ffba7a8cc2b3c7c7eb7a24fe06883b932d`. |
+| Released / new lane | The completed 06A allocation was released by guarded integration `de4141e`. Task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` preserves branch `codex/implementation-codex-role-profile-proof-06a` at `f6f186f2071035907e83577c58120e20442023c4`; after owner-only removal and readback of its sole `.mypy_cache`, it creates `codex/implementation-codex-compensation-reducer-05b3b` from this reviewed handoff in the same existing worktree. No new worktree. |
+| Exact scope / independence | Only new `codex_compensation_reducer.py` and `test_codex_compensation_reducer.py`. Integrated 05B1/05B2 are read-only; rejected 05B3 and the parallel 05B3A lane are not source inputs. |
+| Return / guards | One exact-scope implementation commit plus one WPR-only handoff reserved as PRG-171. Work alone; no port/callable/effect, integration, downstream dispatch, Agent control, live Codex mutation, target-project write, push, release or deployment. |

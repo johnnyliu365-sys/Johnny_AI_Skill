@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01, AC-02 and AC-07 effect-boundary seam |
-| State | `PLANNED / READY_FOR_DISPATCH` |
+| State | `IN_PROGRESS / IMPLEMENTATION_DISPATCH_CONFIRMED` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B3A-01` / A1-A5 |
 | Dependency | Integrated 05B1/05B2 at control baseline; ADR-20260811-004 |
 | Control / implementation / reviewer | Current `main` / task `019fcc9c-f34f-7d53-a313-c70c90bf3245` / independent current `main` reviewer |
@@ -87,3 +87,17 @@ compile, source/diff/scope and zero-residue checks are required. One
 implementation commit is followed by one WPR-only handoff commit. No live
 Codex, target-project write, network, Secret, integration, push, release or
 deployment is authorized.
+
+## Dispatch binding
+
+| Field | Value |
+| --- | --- |
+| Project / closure | `prj-local-orchestration-installer-poc-20260808` / `CLOSURE-LOCAL-INSTALL-T05B3A-01` |
+| Handoff | `hnd_local_orchestration_install_05b3a_20260811` |
+| Allocation / receipt | `aln_local_orchestration_install_05b3a_20260811` / `rcpt_local_orchestration_install_05b3a_20260811` |
+| Correlation / question | `corr-local-orchestration-install-05b3a-20260811` / `q-local-orchestration-install-05b3a-20260811` |
+| Side context | `scx-local-orchestration-install-05b3a-20260811-01` |
+| Authority | Owner instruction to open and parallelize the independently safe tickets; ADR-20260811-004; convergence record `PRG-20260811-167` |
+| Ticket-doc baseline | `f60d90ffba7a8cc2b3c7c7eb7a24fe06883b932d` |
+| Expected lane admission | Preserve rejected branch `codex/implementation-codex-protocol-fixture-05s3` at `89446d94b57f73b202f5a34a12dd763ae0904988`, then create `codex/implementation-codex-safe-port-capability-05b3a` from the exact reviewed handoff commit in the same existing worktree. |
+| Return | One exact-scope implementation commit, then one `doc/WorkProgressReport.md`-only handoff reserved as unique `PRG-20260811-170`. |
