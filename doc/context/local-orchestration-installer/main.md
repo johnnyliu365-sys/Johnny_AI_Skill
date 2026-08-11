@@ -2,13 +2,13 @@
 
 | Field | Value |
 | --- | --- |
-| Context state | `TICKET_05B3A_APPROVED_05B3B_CONVERGENCE_REVIEW_REQUIRED` |
-| Router event | `CORRECTION_REVIEW_COMPLETED → APPROVED(05B3A) / CONVERGENCE_REVIEW_REQUIRED(05B3B)` |
+| Context state | `TICKET_05B3A_INTEGRATED_05B3B_CONVERGENCE_REVIEW_REQUIRED` |
+| Router event | `GUARDED_INTEGRATION_COMPLETED(05B3A) / CONVERGENCE_REVIEW_REQUIRED(05B3B)` |
 | Delivery stage | `POC` |
 | Requirement change | `CHG-20260808-011` |
-| Baseline | `0104372` (`docs: refreeze Ticket 05B3 child corrections`) |
+| Baseline | `8a13eb7` (`merge: integrate approved Ticket 05B3A`) |
 | Control-plane owner | Codex / current `main` worktree |
-| Implementation owner | 05B3A return is approved and awaiting guarded integration; 05B3B revision-02 return is terminal rejected and awaits control-plane convergence; 05B3C is unallocated |
+| Implementation owner | 05B3A is integrated and its owner allocation is released; 05B3B revision-02 is terminal rejected and awaits control-plane convergence; 05B3C is unallocated |
 | Required sources read | `AGENTS.md`, `Workflow.md` (Router, Wayfinder, Grill, change control, specification, tickets, role boundary), `Defined_wayfinder.md`, `CONTEXT.md`, `PRD.md`, `ProjectSchedule.md`, `doc/RequirementChangeLog.md`, existing plugin manifests / README, `library/workflow_router/`, and completed plugin / autonomous-collaboration POCs |
 
 ## Shared Context reference
@@ -479,20 +479,21 @@ branches remain immutable references. Each owner must create its own single
 ticket branch from the reviewed control handoff inside its existing worktree;
 no new worktree, copied rejected source or cross-lane read/write is permitted.
 
-## 05B3A / 05B3B parallel allocation
+## 05B3A / 05B3B allocation record
 
-| Ticket | Owner / existing worktree | Active branch | Handoff / allocation / receipt | Revision-02 lane baseline |
+| Ticket | Owner / existing worktree | Recorded branch | Handoff / allocation / receipt | Current disposition |
 | --- | --- | --- | --- | --- |
-| 05B3A | task `019fcc9c-f34f-7d53-a313-c70c90bf3245` / `workflow-implementation` | `codex/implementation-codex-safe-port-capability-05b3a` | correction `hnd_local_orchestration_install_05b3a_r02_20260812`; retained `aln_local_orchestration_install_05b3a_20260811` / `rcpt_local_orchestration_install_05b3a_20260811` | Exact clean handoff `0275daf172ca3536f7ab6b9fff880bb54478d9af` |
-| 05B3B | task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` / `workflow-implementer-2` | `codex/implementation-codex-compensation-reducer-05b3b` | correction `hnd_local_orchestration_install_05b3b_r02_20260812`; retained `aln_local_orchestration_install_05b3b_20260811` / `rcpt_local_orchestration_install_05b3b_20260811` | Exact clean handoff `aab7bf5df0c4501ba30e364fa4c76936412c4282` |
+| 05B3A | task `019fcc9c-f34f-7d53-a313-c70c90bf3245` / `workflow-implementation` | `codex/implementation-codex-safe-port-capability-05b3a` | correction `hnd_local_orchestration_install_05b3a_r02_20260812`; released `aln_local_orchestration_install_05b3a_20260811`; closed `rcpt_local_orchestration_install_05b3a_20260811` | Integrated by `8a13eb7`; no active lane |
+| 05B3B | task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` / `workflow-implementer-2` | `codex/implementation-codex-compensation-reducer-05b3b` | correction `hnd_local_orchestration_install_05b3b_r02_20260812`; closed pending convergence `aln_local_orchestration_install_05b3b_20260811` / `rcpt_local_orchestration_install_05b3b_20260811` | Terminal rejected handoff `4d5bbef`; no active lane |
 
 The previous 05B3 allocation is closed as terminal rejected evidence; the
-completed 06A allocation was released by its guarded integration. Each row is
-one isolated active lane. The owners may not read the other's worktree or use
-the other's unintegrated source; 05B3C remains unallocated.
+completed 06A and 05B3A allocations were released by guarded integration.
+Neither row is an active implementation lane. The owners may not read the
+other's worktree or use the other's unintegrated source; 05B3C remains
+unallocated.
 
 Revision-02 independent reviews are recorded in the unique review reports.
-05B3A closes CR-137 through CR-139 and is approved for guarded integration.
+05B3A closes CR-137 through CR-139 and is integrated by `8a13eb7`.
 05B3B closes CR-140 through CR-143 but exposes CR-144/CR-145: a recursively
 malformed exact plan identity can escape as `PydanticSerializationError`.
 Workflow.md §8.1 therefore requires control-plane convergence; no third

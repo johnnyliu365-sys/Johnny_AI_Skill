@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01, AC-02 and AC-07 effect-boundary seam |
-| State | `APPROVED / READY_TO_MERGE` |
+| State | `COMPLETE / APPROVED / INTEGRATED` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B3A-02` / R1-R4 |
 | Dependency | Integrated 05B1/05B2 at control baseline; ADR-20260811-004 |
 | Control / implementation / reviewer | Current `main` / task `019fcc9c-f34f-7d53-a313-c70c90bf3245` / independent current `main` reviewer |
@@ -123,3 +123,10 @@ READY_TO_MERGE`. Independent verification passed focused 6/6, full 236/236,
 strict mypy and compile over 112 files, all 16 trap cells and all five isolated
 R4 reversals. CR-137 through CR-139 are closed; no 05B3C dispatch occurs before
 guarded integration and the 05B3B dependency is resolved.
+
+Guarded integration `8a13eb7b26275540604c590f8f8c24e024b19914`
+preserves control review `dda8ba460a00a4e734811bcfe95595b42d9db693`
+as first parent and reviewed handoff
+`0378655864e4277d553558a40d5122702aa3d7d9` as second parent. Post-merge
+focused 6/6, full 236/236, strict mypy and in-memory compile over 112 files
+passed; the allocation is released and receipt is closed against replay.

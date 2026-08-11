@@ -2017,3 +2017,13 @@
 | Passing evidence | Immutable Unicode-safe export: focused 15/15, full 245/245, strict mypy 112 files and in-memory compile 112 files passed. Exact ancestry/scope/diff and clean implementation lane passed; restored source matched reviewed blob `70685c0a722f9acda5256b92c51c202fb6d222be`. All six required reviewer mutations independently turned red and were restored. |
 | Blocking batch | CR-144 `IMPLEMENTATION_DEFECT`, R3/R5: `_plan_matches_rebuild()` serializes the supplied nested identity outside the finite exception boundary. Constructed exact identities with malformed request, attempt ID, marketplace state or plugin state each escape as `PydanticSerializationError` instead of `PLAN_INVALID`. CR-145 `EVIDENCE_DEFECT`: the committed matrix omits those four recursively malformed identity cells. |
 | Decision | `CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED`. This is the correction review; Workflow.md §8.1 forbids automatic third correction. No 05B3B integration, 05B3C dispatch, live Codex mutation, target-project write, push, release or deployment. |
+
+## PRG-20260812-180 — Ticket 05B3A guarded integration
+
+| Field | Value |
+| --- | --- |
+| Router event | `REVIEW_APPROVED -> GUARDED_INTEGRATION -> ACTION_COMPLETED -> DEPENDENCY_WAIT` |
+| Integration | Merge `8a13eb7b26275540604c590f8f8c24e024b19914` preserves formal review `dda8ba460a00a4e734811bcfe95595b42d9db693` as first parent and reviewed handoff `0378655864e4277d553558a40d5122702aa3d7d9` as second parent. Product source and tests merged without conflict. |
+| Ledger resolution | The sole conflict was `doc/WorkProgressReport.md`; PRG-170, PRG-172 through PRG-176, PRG-178 and PRG-179 are retained exactly once. Neither immutable parent was amended, reset or overwritten. |
+| Post-merge verification | Focused 6/6 and full 236/236 unittest passed. Strict full-tree mypy and in-memory compile passed 112 files. `git diff --check`, repository cache scan, external mypy cache removal and owned stage-root readback passed. |
+| Completion | 05B3A is `COMPLETE / APPROVED / INTEGRATED`; allocation `aln_local_orchestration_install_05b3a_20260811` is released and receipt `rcpt_local_orchestration_install_05b3a_20260811` is closed against replay. 05B3C remains dependency-waiting on 05B3B convergence. No live Codex mutation, target-project write, push, release or deployment. |
