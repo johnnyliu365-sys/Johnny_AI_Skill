@@ -1559,3 +1559,13 @@
 | Host evidence | Official Codex documentation states multi-agent tools default enabled, custom agents are config layers and `agents.enabled=false` disables multi-agent tools. Local shell resolves Codex under WindowsApps but direct CLI invocation returns access denied; per-agent effective isolation is therefore `UNPROVEN` until disposable 06A evidence. |
 | Serial plan | Existing 05S4 revision-02 remains the sole dispatched lane. 06A is `READY_AFTER_05S4`; autonomous 04 then 06B then 06C follow only after independent approval/integration of each predecessor. No second task/branch/worktree or automation was created. |
 | Stop rule | If 06A cannot prove effective reviewer/implementer tool separation, return `INSTALL_BLOCKED / ROLE_ISOLATION_UNPROVEN` and stop the role-profile product path. Prompt-only enforcement is forbidden. |
+
+## PRG-20260811-138 — Remove stale third worktree and resume 05S4
+
+| Field | Value |
+| --- | --- |
+| Trigger | The implementation owner returned typed `HALT` because Git still registered `workflow-implementer-2`, making three worktrees instead of the ticket's exact two-worktree admission. It performed no write. |
+| Readback | The stale worktree was clean at `ff7fc8508331085e8d54469ada8c64fe4bf591d9`; branch `codex/implementer-2` had zero commits outside `main` and was a verified ancestor (`main` ahead 3, stale branch ahead 0). |
+| Safe cleanup | Control used non-force `git worktree remove` on the exact resolved stale path and `git branch -d` on the fully merged branch. Readback proves the path and branch absent and exactly two worktrees remain. No implementation file or current implementation branch was changed. |
+| Continuation | The same task `019fcc9c-f34f-7d53-a313-c70c90bf3245`, branch `codex/implementation-codex-protocol-fixture-05s3`, Ticket-05S4 revision-02 allocation and unmodified receipt were resumed. This is not a new ticket or authority. |
+| Dependency result | 05S4 remains the sole active lane. Ticket 06A remains queued `READY_AFTER_05S4`; no new task, worktree, branch, automation, integration, push, release or deployment was created. |
