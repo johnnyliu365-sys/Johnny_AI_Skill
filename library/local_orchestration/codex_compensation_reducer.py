@@ -80,12 +80,22 @@ class CodexCompensationReason(str, Enum):
     MARKETPLACE_MISMATCH = "MARKETPLACE_MISMATCH"
 
 
+class CodexCompensationPlanIdentity(_StrictModel):
+    """Immutable current-attempt identity bound into one compensation plan."""
+
+    request: CodexPreflightRequest
+    attempt_id: CodexRegistrationAttemptId
+    marketplace_state: CodexAttemptEffectState
+    plugin_state: CodexAttemptEffectState
+
+
 class CodexCompensationPlan(_StrictModel):
     """An exact journal-bound ordered plan with one or more owned removals."""
 
     journal: CodexRegistrationAttemptJournal
     request: CodexPreflightRequest
     attempt_id: CodexRegistrationAttemptId
+    identity: CodexCompensationPlanIdentity
     status: Literal["COMPENSATION_REQUIRED"]
     steps: tuple[CodexCompensationStep, ...]
 
@@ -102,6 +112,7 @@ class CodexNoCompensationPlan(_StrictModel):
     journal: CodexRegistrationAttemptJournal
     request: CodexPreflightRequest
     attempt_id: CodexRegistrationAttemptId
+    identity: CodexCompensationPlanIdentity
     status: Literal["NO_COMPENSATION_REQUIRED"]
     steps: tuple[CodexCompensationStep, ...]
 
@@ -117,6 +128,25 @@ class CodexCompensationBlocked(_StrictModel):
 
     status: Literal["COMPENSATION_BLOCKED"]
     reason: CodexCompensationBlockReason
+
+
+class CodexCompensationResidualJournal(_StrictModel):
+    """Exact request-bound current-attempt state after pure reduction."""
+
+    request: CodexPreflightRequest
+    attempt_id: CodexRegistrationAttemptId
+    marketplace_state: CodexAttemptEffectState
+    plugin_state: CodexAttemptEffectState
+
+    def unresolved_removal_order(self) -> tuple[CodexAttemptEffect, ...]:
+        """Expose only the authority that still belongs to this exact journal."""
+
+        effects: list[CodexAttemptEffect] = []
+        if self.plugin_state in (CodexAttemptEffectState.MAY_EXIST, CodexAttemptEffectState.OWNED):
+            effects.append(CodexAttemptEffect.PLUGIN)
+        if self.marketplace_state in (CodexAttemptEffectState.MAY_EXIST, CodexAttemptEffectState.OWNED):
+            effects.append(CodexAttemptEffect.MARKETPLACE)
+        return tuple(effects)
 
 
 class CodexRemovalConfirmed(_StrictModel):
@@ -168,7 +198,7 @@ class _CodexCompensationResult(_StrictModel):
     """Shared metadata-only completed-reduction fields."""
 
     reasons: tuple[CodexCompensationReason, ...]
-    remaining_authority: tuple[CodexAttemptEffect, ...]
+    residual_journal: CodexCompensationResidualJournal
 
     @field_validator("reasons")
     @classmethod
@@ -176,6 +206,12 @@ class _CodexCompensationResult(_StrictModel):
         if len(reasons) != len(set(reasons)):
             raise ValueError("compensation reasons must be unique")
         return reasons
+
+    @property
+    def remaining_authority(self) -> tuple[CodexAttemptEffect, ...]:
+        """Derived compatibility view; the residual journal remains authoritative."""
+
+        return self.residual_journal.unresolved_removal_order()
 
 
 class CodexCompensationNoop(_CodexCompensationResult):
@@ -185,7 +221,7 @@ class CodexCompensationNoop(_CodexCompensationResult):
 
     @model_validator(mode="after")
     def no_authority_or_reasons(self) -> Self:
-        if self.reasons or self.remaining_authority:
+        if self.reasons or self.residual_journal.unresolved_removal_order():
             raise ValueError("no-compensation result cannot retain a reason or authority")
         return self
 
@@ -197,7 +233,7 @@ class CodexCompensated(_CodexCompensationResult):
 
     @model_validator(mode="after")
     def no_authority_or_reasons(self) -> Self:
-        if self.reasons or self.remaining_authority:
+        if self.reasons or self.residual_journal.unresolved_removal_order():
             raise ValueError("compensated result cannot retain a reason or authority")
         return self
 
@@ -222,8 +258,8 @@ CodexCompensationPlanResult: TypeAlias = CodexCompensationPlan | CodexNoCompensa
 
 _PROOF_STEPS: tuple[CodexCompensationStep, ...] = (
     CodexCompensationStep.PROVE_PLUGIN_LISTS_ABSENT,
-    CodexCompensationStep.PROVE_INSTALLED_LOCATION_ABSENT,
     CodexCompensationStep.PROVE_MARKETPLACE_ABSENT,
+    CodexCompensationStep.PROVE_INSTALLED_LOCATION_ABSENT,
 )
 
 
@@ -246,6 +282,7 @@ def build_compensation_plan(
             journal=validated_journal,
             request=request,
             attempt_id=attempt_id,
+            identity=_plan_identity(validated_journal),
             status="NO_COMPENSATION_REQUIRED",
             steps=(),
         )
@@ -253,6 +290,7 @@ def build_compensation_plan(
         journal=validated_journal,
         request=request,
         attempt_id=attempt_id,
+        identity=_plan_identity(validated_journal),
         status="COMPENSATION_REQUIRED",
         steps=steps,
     )
@@ -274,7 +312,7 @@ def reduce_compensation(
         return CodexCompensationNoop(
             status="COMPENSATION_NOT_REQUIRED",
             reasons=(),
-            remaining_authority=(),
+            residual_journal=_residual_journal(validated_plan, plugin_cleared=False, marketplace_cleared=False),
         )
     return _reduce_required_plan(validated_plan, validated_outcomes)
 
@@ -323,6 +361,15 @@ def _journal_rejection(reason: CodexRegistrationRejectReason) -> CodexCompensati
     return _blocked(CodexCompensationBlockReason.JOURNAL_INVALID)
 
 
+def _plan_identity(journal: CodexRegistrationAttemptJournal) -> CodexCompensationPlanIdentity:
+    return CodexCompensationPlanIdentity(
+        request=journal.request,
+        attempt_id=journal.attempt_id,
+        marketplace_state=journal.marketplace_state,
+        plugin_state=journal.plugin_state,
+    )
+
+
 def _steps_for_journal(journal: CodexRegistrationAttemptJournal) -> tuple[CodexCompensationStep, ...]:
     steps: list[CodexCompensationStep] = []
     if journal.plugin_state in (CodexAttemptEffectState.MAY_EXIST, CodexAttemptEffectState.OWNED):
@@ -336,10 +383,11 @@ def _steps_for_journal(journal: CodexRegistrationAttemptJournal) -> tuple[CodexC
 
 def _plan_fields_are_exact(plan: CodexCompensationPlan | CodexNoCompensationPlan) -> bool:
     return (
-        type(plan) in (CodexCompensationPlan, CodexNoCompensationPlan)
+        (type(plan) is CodexCompensationPlan or type(plan) is CodexNoCompensationPlan)
         and type(plan.journal) is CodexRegistrationAttemptJournal
         and type(plan.request) is CodexPreflightRequest
         and type(plan.attempt_id) is CodexRegistrationAttemptId
+        and type(plan.identity) is CodexCompensationPlanIdentity
         and type(plan.status) is str
         and type(plan.steps) is tuple
         and all(type(step) is CodexCompensationStep for step in plan.steps)
@@ -357,9 +405,29 @@ def _revalidate_plan(
         return _blocked(CodexCompensationBlockReason.PLAN_INVALID)
     if isinstance(rebuilt_plan, CodexCompensationBlocked):
         return rebuilt_plan
-    if rebuilt_plan != plan:
+    if not _plan_matches_rebuild(rebuilt_plan, plan):
         return _blocked(CodexCompensationBlockReason.PLAN_INVALID)
     return rebuilt_plan
+
+
+def _plan_matches_rebuild(
+    rebuilt_plan: CodexCompensationPlan | CodexNoCompensationPlan,
+    supplied_plan: CodexCompensationPlan | CodexNoCompensationPlan,
+) -> bool:
+    """Compare only exact trusted plan fields after identity-only type admission."""
+
+    if type(rebuilt_plan) is not type(supplied_plan):
+        return False
+    if rebuilt_plan.status != supplied_plan.status or len(rebuilt_plan.steps) != len(supplied_plan.steps):
+        return False
+    if any(rebuilt_step is not supplied_step for rebuilt_step, supplied_step in zip(rebuilt_plan.steps, supplied_plan.steps, strict=True)):
+        return False
+    return (
+        rebuilt_plan.journal.model_dump_json(warnings=False) == supplied_plan.journal.model_dump_json(warnings=False)
+        and rebuilt_plan.request.model_dump_json(warnings=False) == supplied_plan.request.model_dump_json(warnings=False)
+        and rebuilt_plan.attempt_id.model_dump_json(warnings=False) == supplied_plan.attempt_id.model_dump_json(warnings=False)
+        and rebuilt_plan.identity.model_dump_json(warnings=False) == supplied_plan.identity.model_dump_json(warnings=False)
+    )
 
 
 def _revalidate_outcome_sequence(
@@ -462,18 +530,37 @@ def _reduce_required_plan(
         elif isinstance(observation, CodexMarketplaceProof) and marketplace_authority:
             marketplace_absent = observation.truth is CodexProofTruth.PROVED_ABSENT
             _append_marketplace_reason(reasons, observation.truth)
-    remaining_authority: list[CodexAttemptEffect] = []
-    if plugin_authority and not (plugin_lists_absent and installed_location_absent):
-        remaining_authority.append(CodexAttemptEffect.PLUGIN)
-    if marketplace_authority and not marketplace_absent:
-        remaining_authority.append(CodexAttemptEffect.MARKETPLACE)
+    residual_journal = _residual_journal(
+        plan,
+        plugin_cleared=plugin_authority and plugin_lists_absent and installed_location_absent,
+        marketplace_cleared=marketplace_authority and marketplace_absent,
+    )
     if reasons:
         return CodexCompensationFailed(
             status="COMPENSATION_FAILED",
             reasons=tuple(reasons),
-            remaining_authority=tuple(remaining_authority),
+            residual_journal=residual_journal,
         )
-    return CodexCompensated(status="COMPENSATED", reasons=(), remaining_authority=())
+    return CodexCompensated(status="COMPENSATED", reasons=(), residual_journal=residual_journal)
+
+
+def _residual_journal(
+    plan: CodexCompensationPlan | CodexNoCompensationPlan,
+    plugin_cleared: bool,
+    marketplace_cleared: bool,
+) -> CodexCompensationResidualJournal:
+    plugin_state = plan.journal.plugin_state
+    marketplace_state = plan.journal.marketplace_state
+    if plugin_cleared and plugin_state in (CodexAttemptEffectState.MAY_EXIST, CodexAttemptEffectState.OWNED):
+        plugin_state = CodexAttemptEffectState.NOT_ATTEMPTED
+    if marketplace_cleared and marketplace_state in (CodexAttemptEffectState.MAY_EXIST, CodexAttemptEffectState.OWNED):
+        marketplace_state = CodexAttemptEffectState.NOT_ATTEMPTED
+    return CodexCompensationResidualJournal(
+        request=plan.request,
+        attempt_id=plan.attempt_id,
+        marketplace_state=marketplace_state,
+        plugin_state=plugin_state,
+    )
 
 
 def _append_reason(reasons: list[CodexCompensationReason], reason: CodexCompensationReason) -> None:
