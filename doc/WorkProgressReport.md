@@ -2181,3 +2181,13 @@
 | Binding | `hnd_local_orchestration_install_05b4a_20260812`; `aln_local_orchestration_install_05b4a_20260812`; `rcpt_local_orchestration_install_05b4a_20260812`; `corr-local-orchestration-install-05b4a-20260812`; `q-local-orchestration-install-05b4a-20260812`; `scx-local-orchestration-install-05b4a-20260812-01`. |
 | Owner / lane | Owner-selected task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2`; later create one new ticket branch from the exact dispatch registry commit; no new worktree. |
 | Stop | Freeze is not dispatch. No source/test work, other agent control, live/staging effect, review, integration, 05B4B/05C work, push, release or deployment is authorized before the dispatch registry is committed. |
+
+## PRG-20260812-192 — Ticket 05B4A implementation dispatch
+
+| Field | Value |
+| --- | --- |
+| Router event | `TICKET_SELECTED(05B4A) -> TICKET_DISPATCH_REQUIRED -> IMPLEMENTATION_DISPATCH_CONFIRMED` |
+| Reviewed freeze | `95ae98ea0df0d071c3ee259efadd73efc322380d`; ticket `05b4a-codex-registration-port-capability`; closure `CLOSURE-LOCAL-INSTALL-T05B4A-01`; exact A1-A7. |
+| Binding | `hnd_local_orchestration_install_05b4a_20260812`; `aln_local_orchestration_install_05b4a_20260812`; `rcpt_local_orchestration_install_05b4a_20260812`; `corr-local-orchestration-install-05b4a-20260812`; `q-local-orchestration-install-05b4a-20260812`; `scx-local-orchestration-install-05b4a-20260812-01`. |
+| Owner / admission | Task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing clean `workflow-implementer-2` at `6d7dd37095005b11d68e136d6687d402b5187c9e`; create only `codex/implementation-codex-registration-port-05b4a` from this dispatch registry commit. |
+| Scope / return | New registration port module, new focused test and export-only root; implementation commit then WPR-only PRG-193. No other agent, worktree, cross-lane history, dependency edit, effect execution, 05B4B work, review, integration, push, release or deployment. |

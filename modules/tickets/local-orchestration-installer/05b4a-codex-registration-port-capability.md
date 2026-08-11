@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01, AC-02, AC-07 and AC-08 registration seam |
-| State | `FROZEN / DISPATCH_PENDING` |
+| State | `IN_PROGRESS / IMPLEMENTATION_DISPATCHED` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B4A-01` / A1-A7 |
 | Dependency | Integrated 05A preflight, 05B1 contracts and 05B2 classifier; 05B3C remains read-only |
 | Owner / worktree | Task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2`; no new worktree |

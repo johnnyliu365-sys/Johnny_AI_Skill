@@ -2,13 +2,13 @@
 
 | Field | Value |
 | --- | --- |
-| Context state | `TICKET_05B4A_FROZEN` |
-| Router event | `TICKET_SELECTED(05B4) / CONVERGENCE_DECOMPOSED / TICKET_SELECTED(05B4A) / TICKET_FREEZE_COMPLETED` |
+| Context state | `TICKET_05B4A_IMPLEMENTATION_DISPATCHED` |
+| Router event | `TICKET_SELECTED(05B4A) / TICKET_FREEZE_COMPLETED / IMPLEMENTATION_DISPATCH_CONFIRMED` |
 | Delivery stage | `POC` |
 | Requirement change | `CHG-20260808-011` |
 | Baseline | `3367136` (`docs: decompose 05B3B identity admission`) |
 | Control-plane owner | Codex / current `main` worktree |
-| Implementation owner | 05B3A, 05B3B1 and 05B3C are integrated and released; 05B3B is terminal rejected; task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` is selected for frozen 05B4A in existing `workflow-implementer-2`, dispatch pending |
+| Implementation owner | 05B3A, 05B3B1 and 05B3C are integrated and released; 05B3B is terminal rejected; task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` owns active 05B4A in existing `workflow-implementer-2` under its unique receipt |
 | Required sources read | `AGENTS.md`, `Workflow.md` (Router, Wayfinder, Grill, change control, specification, tickets, role boundary), `Defined_wayfinder.md`, `CONTEXT.md`, `PRD.md`, `ProjectSchedule.md`, `doc/RequirementChangeLog.md`, existing plugin manifests / README, `library/workflow_router/`, and completed plugin / autonomous-collaboration POCs |
 
 ## Shared Context reference
@@ -547,3 +547,8 @@ new port module, its focused test and export-only root. 05B4B remains serial
 and unallocated until 05B4A is independently approved and integrated; it will
 then own fresh preflight/add/proof/receipt/compensation and 05S4 oracle truth.
 This changes no SPEC acceptance criterion and does not reopen rejected 05B.
+
+05B4A dispatch is bound to freeze `95ae98e`, PRG-20260812-192 and the exact
+registry commit carrying that record. The implementation owner must create
+only `codex/implementation-codex-registration-port-05b4a` at that commit in
+the existing worktree; no other lane or 05B4B work is authorized.
