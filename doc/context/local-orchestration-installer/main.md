@@ -2,13 +2,13 @@
 
 | Field | Value |
 | --- | --- |
-| Context state | `TICKET_05B4B1_FREEZE_COMPLETED / DISPATCH_PENDING` |
-| Router event | `ACTION_COMPLETED(05B4A1) / TICKET_05B4B_CONVERGENCE_DECOMPOSED / TICKET_SELECTED(05B4B1) / TICKET_FREEZE_COMPLETED` |
+| Context state | `TICKET_05B4B1_IMPLEMENTATION_DISPATCHED` |
+| Router event | `ACTION_COMPLETED(05B4A1) / TICKET_05B4B_CONVERGENCE_DECOMPOSED / TICKET_SELECTED(05B4B1) / IMPLEMENTATION_DISPATCH_CONFIRMED` |
 | Delivery stage | `POC` |
 | Requirement change | `CHG-20260808-011` |
 | Baseline | `ae47b71` (`docs: complete Ticket 05B4A1 integration`) |
 | Control-plane owner | Codex / current `main` worktree |
-| Implementation owner | 05B4A1 is integrated and released; task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` is selected for 05B4B1 in existing `workflow-implementer-2`, but receives no implementation authority until the separate dispatch registry commit |
+| Implementation owner | 05B4A1 is integrated and released; task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` owns active 05B4B1 in existing `workflow-implementer-2` under its unique receipt |
 | Required sources read | `AGENTS.md`, `Workflow.md` (Router, Wayfinder, Grill, change control, specification, tickets, role boundary), `Defined_wayfinder.md`, `CONTEXT.md`, `PRD.md`, `ProjectSchedule.md`, `doc/RequirementChangeLog.md`, existing plugin manifests / README, `library/workflow_router/`, and completed plugin / autonomous-collaboration POCs |
 
 ## Shared Context reference
