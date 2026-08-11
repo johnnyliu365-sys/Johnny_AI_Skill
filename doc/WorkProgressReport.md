@@ -1529,6 +1529,23 @@
 | Scope / return | Read the frozen ticket instead of copying its contents. Implement only its six named Python paths with recorded first-red, smoke, focused/full/strict checks and zero residue; return one implementation commit and one `WorkProgressReport.md`-only handoff. No 05B/05C transaction, compensation, receipt, live Codex, target-project write, review decision, merge, push, release or deployment. |
 | Stop rule | `COMPLETED -> ACTION_COMPLETED`; any contract or requirement conflict returns typed `CHANGE_DETECTED`; any missing authority or unsafe baseline returns typed `HALT`. Blocking review stops without automatic correction. |
 
+## PRG-20260811-134 — Ticket 05S4 lifecycle-oracle implementation handoff
+
+| Field | Value |
+| --- | --- |
+| Router event | `ACTION_COMPLETED -> IMPLEMENTATION_COMPLETED -> REVIEW_HANDOFF` |
+| Ticket / closure | `05s4-codex-lifecycle-oracle`; `CLOSURE-LOCAL-INSTALL-T05S4-01`; O1-O6. |
+| Authority / binding | Authority `PRG-20260809-042` and `PRG-20260811-133`; handoff `hnd_local_orchestration_install_05s4_20260811`; allocation `aln_local_orchestration_install_05s4_20260811`; receipt `rcpt_local_orchestration_install_05s4_20260811`; correlation `corr-local-orchestration-install-05s4-20260811`; question `q-local-orchestration-install-05s4-20260811`; side-context `scx-local-orchestration-install-05s4-20260811-01`. |
+| Baseline / owner | Ticket-doc `85ac8a015ca2a10c7ea6b502b7ccecb86ac11f81`; handoff-doc baseline `ff7fc8508331085e8d54469ada8c64fe4bf591d9`; owner task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; branch `codex/implementation-codex-protocol-fixture-05s3`; implementation `9086c0c62c0de1d9ad247caa6e9eabc95c816c46`; additive whitespace-only validation fix `32b67b71858568eed5ecd7ab90ecd91709647b1f`. |
+| Exact scope | Only the six ticket-authorized oracle Python paths changed. No integrated 05S1/05S2/05S3 or production source changed. |
+| First-red evidence | Before source existed, each O1-O6 focused test (`test_o1_serial_owned_lifecycle_uses_fresh_child_lists` through `test_o6_failures_remain_finite_and_leave_no_command_or_response_residue`) failed with the missing oracle-module reason. |
+| O1-O3 evidence | A real bounded child initializes, adds, lists and removes exact owned records and payloads. Fresh child lists return reused strict protocol DTOs. Unrelated and same-name foreign records retain byte/value identity and never provide owned-removal authority. |
+| O4-O6 evidence | Missing/tampered/duplicate/null state, locator variants, absent or extraneous payloads, stale digest and wrong file kind return named finite blocks before a false result. The runner replaces only the fixture executable with the real oracle child and accepts no queued or parent-synthesized response. Process and command-boundary failures remain finite; command/response files are removed. Final absence follows fresh child checks before teardown; existing and empty temporary Git snapshots remain unchanged. |
+| Reverse-mutation evidence | Bypassing the fresh state-file boundary failed the missing-state O4 cell. Weakening digest comparison failed stale-digest O4. Redirecting owned plugin removal to a foreign record failed O3. Omitting the terminal state removal failed O2 absence. Each mutation was restored before final verification. |
+| Verification | Focused `python -B -m unittest tests.test_codex_lifecycle_oracle -v`: 6/6 passed. Full `python -B -m unittest discover -s tests -v`: 201/201 passed. Strict full-tree mypy with a validated external no-incremental cache: 102 source files, success; cache removal and absent readback passed. In-memory compile: 6/6 changed files. Source/scope sentinel and cumulative `git diff --check`: passed. |
+| Residue / isolation | Repository cache, fixed command/response file and owned staging-root residue counts are zero. No live Codex, target-project action, review, integration, 05B/05C decision, merge, push, release or deployment occurred. |
+| Review handoff | Independent control-plane review is required. This implementation owner makes no approval, integration or downstream-ticket decision. |
+
 ## PRG-20260811-135 — Ticket 05S4 independent review
 
 | Field | Value |
@@ -1569,6 +1586,22 @@
 | Safe cleanup | Control used non-force `git worktree remove` on the exact resolved stale path and `git branch -d` on the fully merged branch. Readback proves the path and branch absent and exactly two worktrees remain. No implementation file or current implementation branch was changed. |
 | Continuation | The same task `019fcc9c-f34f-7d53-a313-c70c90bf3245`, branch `codex/implementation-codex-protocol-fixture-05s3`, Ticket-05S4 revision-02 allocation and unmodified receipt were resumed. This is not a new ticket or authority. |
 | Dependency result | 05S4 remains the sole active lane. Ticket 06A remains queued `READY_AFTER_05S4`; no new task, worktree, branch, automation, integration, push, release or deployment was created. |
+
+## PRG-20260811-139 — Ticket 05S4 revision-02 correction handoff
+
+| Field | Value |
+| --- | --- |
+| Router event | `ACTION_COMPLETED -> IMPLEMENTATION_CORRECTION_COMPLETED -> REVIEW_HANDOFF` |
+| Ticket / closure | `05s4-codex-lifecycle-oracle`; `CLOSURE-LOCAL-INSTALL-T05S4-02`; CR-126 and CR-127 only. |
+| Authority / binding | Authority `PRG-20260809-042` and correction dispatch `PRG-20260811-135/136`; review baseline `3012af96da2e4d7a2e64b6cb41c035e86ea43fa2`; correction handoff `hnd_local_orchestration_install_05s4_r02_20260811`; allocation `aln_local_orchestration_install_05s4_r02_20260811`; receipt `rcpt_local_orchestration_install_05s4_r02_20260811`; correlation `corr-local-orchestration-install-05s4-r02-20260811`; question `q-local-orchestration-install-05s4-r02-20260811`. |
+| Baseline / owner | Control correction handoff `85a8f79128975088b49cd75ec0857759cbec5c13`; submitted pre-correction HEAD `e4d00ddc4cb54be5706cfc136245302250259993`; owner task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; existing branch `codex/implementation-codex-protocol-fixture-05s3`; additive implementation `02f33efbcb6eba400dcf92b81ba948716dee8e56`. |
+| Exact scope | Only `tests/staging/codex_lifecycle_oracle/contracts.py`, `oracle_child.py`, `oracle.py`, and `tests/test_codex_lifecycle_oracle.py` changed. Integrated 05S1-05S3 and production source remain unchanged. |
+| First-red evidence | Against the submitted HEAD, `test_cr126_duplicate_foreign_identities_are_blocked_before_fresh_child_list` accepted a second coherent foreign marketplace/plugin identity and fresh child lists returned duplicate entries. `test_cr127_ordinary_fixture_error_removes_the_exact_command_file` returned finite `PROCESS_FAILED` while leaving the fixed command file; `test_cr127_failed_exact_command_cleanup_is_finite` returned `PROCESS_FAILED` instead of `COMMAND_CLEANUP_FAILED`. |
+| Correction | Strict state validation now checks identity uniqueness independently for owned and foreign marketplace/plugin collections, retaining owned-vs-foreign distinction and same display-name/different plugin-ID behavior. The child repeats the collection-local checks for raw persisted state. After command creation, ordinary `OSError`/`ValueError` dependency failure first attempts safe exact ordinary-file cleanup; an unavailable exact cleanup returns `COMMAND_CLEANUP_FAILED`. Process-control exceptions remain uncaught. |
+| Reverse-mutation evidence | Removing foreign collections from the state validator accepted each duplicate seed. Removing foreign collection validation in the child made the direct tampered-state probe return duplicate completed lists. Removing the post-command failure cleanup left the fixed command file present. Each mutation was restored before final verification. |
+| Verification | Focused `python -B -m unittest tests.test_codex_lifecycle_oracle -v`: 10/10 passed. Full `python -B -m unittest discover -s tests -v`: 205/205 passed. Strict full-tree mypy with a validated external no-incremental cache: 102 source files, success; the external cache was removed and read back absent. In-memory compile and source sentinel: 4/4 changed files; exact scope and `git diff --check`: passed. |
+| Residue / isolation | Repository `.mypy_cache`, `.pytest_cache`, `__pycache__`, fixed command/response files and owned staging-root residue counts are zero. The O6 existing/empty temporary Git snapshots remain invariant. No live Codex, target-project action, review, integration, downstream dispatch, merge, push, release or deployment occurred. |
+| Review handoff | Independent control-plane final review is required. This implementation owner makes no approval or integration decision. |
 
 ## PRG-20260811-140 — Ticket 06A second-lane dispatch
 
