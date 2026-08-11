@@ -131,7 +131,7 @@
 | Ticket 05B3 exhaustive compensation | SUPERSEDED / CONVERGENCE_DECOMPOSED | Terminal rejected evidence retained; replaced by ADR-20260811-004 and 05B3A-05B3C. |
 | Ticket 05B3A safe port capability | COMPLETE / APPROVED / INTEGRATED | Revision-02 correction `a87af38`, handoff `0378655`, review `dda8ba4` and guarded merge `8a13eb7`; post-merge focused/full/type/compile passed and CR-137..CR-139 are closed. |
 | Ticket 05B3B pure compensation reducer | SUPERSEDED / CONVERGENCE_DECOMPOSED | Revision-02 `3f22551` / `4d5bbef` remains terminal rejected evidence; no third same-closure correction or integration. |
-| Ticket 05B3B1 recursive plan identity admission | PLANNED / OWNER_AUTHORIZED / DISPATCH_READY | New finite child owns CR-144/CR-145 only, uses implementer-2's existing clean branch/worktree and receives a new receipt; terminal review reruns parent R1-R5. |
+| Ticket 05B3B1 recursive plan identity admission | IN_PROGRESS / IMPLEMENTATION_DISPATCHED | Freeze `3367136`; new finite child owns CR-144/CR-145 only, uses implementer-2's existing clean branch/worktree and new receipt; terminal review reruns parent R1-R5. |
 | Ticket 05B3C compensation composition | PLANNED / DEPENDENCY_WAIT | 05B3A is integrated; starts only after approved/integrated 05B3B1. |
 | Ticket 05B4 registration composition | PLANNED / DEPENDENCY_WAIT | Final admission/add/proof/compensation/oracle composition remains serial behind 05B3C. |
 | Ticket 05C receipt removal/replay | PLANNED / DEPENDENCY_WAIT / REFREEZE_REQUIRED | Starts only after 05A/05B approval/integration and a finite behavior/rollback closure refreeze. |

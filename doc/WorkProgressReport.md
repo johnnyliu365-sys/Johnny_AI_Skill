@@ -2038,3 +2038,14 @@
 | Architecture | No requirement or public contract change. No fresh branch is justified: the owner, worktree, branch and clean exact baseline are unchanged and there is no contamination or baseline conflict. The child gets a new ticket-bound allocation/receipt and additive commits; rejected parent commits remain immutable ancestors, not approved evidence. |
 | Owner / lane | Owner-authorized task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2`; existing `codex/implementation-codex-compensation-reducer-05b3b`; clean admission baseline `4d5bbefe42e1d1ae3206b29e877f0556bda3ce4c`. Primary implementer remains idle. |
 | Review stop | One terminal child review reruns parent R1-R5, parent six reversals and child I1-I5. Any blocker returns `CONVERGENCE_REVIEW_REQUIRED`; no correction loop, integration or 05B3C dispatch. |
+
+## PRG-20260812-182 — Ticket 05B3B1 implementation dispatch
+
+| Field | Value |
+| --- | --- |
+| Router event | `TICKET_SELECTED(05B3B1) -> TICKET_DISPATCH_REQUIRED -> IMPLEMENTATION_DISPATCH_CONFIRMED` |
+| Reviewed control freeze | `3367136110888648f8696e72e1733c7f2f8ff981`; ticket `05b3b1-codex-plan-identity-admission`; closure `CLOSURE-LOCAL-INSTALL-T05B3B1-01`; I1-I5. |
+| Binding | Handoff `hnd_local_orchestration_install_05b3b1_20260812`; allocation `aln_local_orchestration_install_05b3b1_20260812`; receipt `rcpt_local_orchestration_install_05b3b1_20260812`; correlation `corr-local-orchestration-install-05b3b1-20260812`; question `q-local-orchestration-install-05b3b1-20260812`; side-context `scx-local-orchestration-install-05b3b1-20260812-01`. |
+| Owner / admission | Task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2`; existing `codex/implementation-codex-compensation-reducer-05b3b`; exact clean HEAD `4d5bbefe42e1d1ae3206b29e877f0556bda3ce4c`; tracked and ignored readbacks empty. |
+| Scope / return | Change only the existing reducer and its focused test; one additive implementation commit followed by one WPR-only `PRG-20260812-183` handoff. No branch/worktree operation, cross-lane read, broad catch, `Any`, `type: ignore`, live effect, integration, push, release or deployment. |
+| Review gate | Return is not approval. The independent reviewer must execute child I1-I5, all parent R1-R5, the parent six reversals, focused/full/type/compile and residue checks before any guarded integration or 05B3C transition. |

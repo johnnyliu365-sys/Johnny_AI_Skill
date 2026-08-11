@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / unchanged AC-01, AC-02 and AC-07 compensation-state seam |
-| State | `PLANNED / OWNER_AUTHORIZED / DISPATCH_READY` |
+| State | `IN_PROGRESS / IMPLEMENTATION_DISPATCHED` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B3B1-01` / I1-I5 |
 | Dependency | Integrated 05B1/05B2/05B3A; terminal 05B3B submission `4d5bbefe42e1d1ae3206b29e877f0556bda3ce4c`; ADR-20260811-004 revision 03 |
 | Control / implementation / reviewer | Current `main` / task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` / independent current `main` reviewer |
@@ -88,7 +88,7 @@ accepted. No new dependency is authorized.
 | Allocation / receipt | `aln_local_orchestration_install_05b3b1_20260812` / `rcpt_local_orchestration_install_05b3b1_20260812` |
 | Correlation / question | `corr-local-orchestration-install-05b3b1-20260812` / `q-local-orchestration-install-05b3b1-20260812` |
 | Side context | `scx-local-orchestration-install-05b3b1-20260812-01` |
-| Authority | Owner instruction on 2026-08-12 to use implementer-2 at the upgraded model; exact reviewed control freeze commit is recorded in PRG-20260812-182. |
+| Authority | Owner instruction on 2026-08-12 to use implementer-2 at the upgraded model; reviewed freeze `3367136110888648f8696e72e1733c7f2f8ff981`; dispatch registry PRG-20260812-182. |
 | Lane admission | Exact clean submitted HEAD `4d5bbefe42e1d1ae3206b29e877f0556bda3ce4c` in the existing branch/worktree. Do not create/switch/reset/rebase/merge/cherry-pick a branch or worktree. |
 | Return | One additive exact-scope implementation commit, then one `doc/WorkProgressReport.md`-only handoff reserved as unique `PRG-20260812-183`. |
 
