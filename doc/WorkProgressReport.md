@@ -1940,6 +1940,20 @@
 | Residue / non-interference | Repository cache readback found zero `.mypy_cache`, `.pytest_cache`, or `__pycache__` residue; tracked and ignored state was clean before this docs-only handoff. No command, filesystem, live Codex, host, target-project, network, Secret, review, integration, downstream dispatch, push, release or deployment effect occurred. |
 | Review handoff | Independent control-plane review is required. This implementation owner makes no approval, integration, or next-ticket decision. |
 
+## PRG-20260811-171 — Ticket 05B3B pure compensation reducer implementation handoff
+
+| Field | Value |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED -> ACTION_COMPLETED -> REVIEW_HANDOFF`; independent control-plane review remains required. |
+| Project / ticket / closure | `prj-local-orchestration-installer-poc-20260808`; `05b3b-codex-compensation-reducer`; `CLOSURE-LOCAL-INSTALL-T05B3B-01`; B1-B5 only. |
+| Binding | Handoff `hnd_local_orchestration_install_05b3b_20260811`; allocation `aln_local_orchestration_install_05b3b_20260811`; receipt `rcpt_local_orchestration_install_05b3b_20260811`; correlation `corr-local-orchestration-install-05b3b-20260811`; question `q-local-orchestration-install-05b3b-20260811`; side-context `scx-local-orchestration-install-05b3b-20260811-01`; ticket-doc baseline `f60d90ffba7a8cc2b3c7c7eb7a24fe06883b932d`; reviewed handoff `3e5ae000aad64eca493ce003f04984dbd818a2e7`. |
+| Owner / implementation | Owner task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; branch `codex/implementation-codex-compensation-reducer-05b3b`; implementation commit `e7bdee5b1bcd21d5cbc589f7abed4da156d0fdc8`. The completed 06A branch and commits remain unchanged evidence. |
+| Exact scope | Only new `library/local_orchestration/codex_compensation_reducer.py` and new `tests/test_codex_compensation_reducer.py` changed. All integrated source/tests, root exports, rejected 05B3 source, and the 05B3A worktree remained outside this lane. |
+| First-red / green | Before production source existed, `python -m unittest tests.test_codex_compensation_reducer` failed one test-module load with `ModuleNotFoundError` for `library.local_orchestration.codex_compensation_reducer`. After the minimum pure implementation, the focused reducer suite passed 7/7 and the complete suite passed 237/237. |
+| B1-B5 evidence | The pure planner/reducer revalidates the current journal and exact plan, schedules only owned/current authority, requires the complete normalized outcome sequence, preserves ordered finite reasons and clears authority only after fresh exact absence proofs. Results carry no raw command, path, output, exception or network data and invoke no effect. |
+| Reverse / verification | Three revision-01 reversals turned red and were restored. Focused 7/7, full 237/237, strict mypy 112 files, in-memory compile 112 files, source/scope/diff and residue checks passed. |
+| Review handoff | This implementation owner makes no review, integration, allocation-release, or next-ticket decision. Independent control-plane review is required. |
+
 ## PRG-20260812-172 — Ticket 05B3A initial independent review
 
 | Field | Value |
@@ -1997,6 +2011,19 @@
 | Residue / non-interference | Repository `.mypy_cache`, `.pytest_cache`, and `__pycache__` counts are zero. No command, filesystem, live Codex, host, target-project, network, Secret, review, integration, downstream-dispatch, push, release, or deployment effect occurred. |
 | Review handoff | Return is for independent control-plane review only. This implementation owner makes no approval, integration, or next-ticket decision. |
 
+## PRG-20260812-177 — Ticket 05B3B revision-02 correction handoff
+
+| Field | Value |
+| --- | --- |
+| Router event | `CHANGES_REQUESTED -> IMPLEMENTATION_CORRECTION_COMPLETED -> ACTION_COMPLETED -> REVIEW_HANDOFF`; independent control-plane review remains required. |
+| Ticket / closure | `05b3b-codex-compensation-reducer`; `CLOSURE-LOCAL-INSTALL-T05B3B-02`; CR-140 through CR-143 and R1-R5 only. |
+| Binding | Correction handoff `hnd_local_orchestration_install_05b3b_r02_20260812`; retained allocation `aln_local_orchestration_install_05b3b_20260811`; retained receipt `rcpt_local_orchestration_install_05b3b_20260811`; correlation `corr-local-orchestration-install-05b3b-r02-20260812`; question `q-local-orchestration-install-05b3b-r02-20260812`; side-context `scx-local-orchestration-install-05b3b-20260812-02`. |
+| Owner / implementation | Owner task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; unchanged branch `codex/implementation-codex-compensation-reducer-05b3b`; additive correction implementation `3f22551b8f581d087ef0cdbad6a70fbd671202e2`, descended from submitted handoff `aab7bf5df0c4501ba30e364fa4c76936412c4282`. |
+| Exact scope | Only `library/local_orchestration/codex_compensation_reducer.py` and `tests/test_codex_compensation_reducer.py` changed. Existing root exports, integrated 05B1/05B2, rejected 05B3 source and the 05B3A lane stayed outside this implementation. |
+| R1-R5 evidence | The correction froze exact removal/proof order, strict request/attempt-bound residual state, identity-only plan admission, all six named reverse mutations and all prior finite metadata/no-effect behavior. |
+| Verification | Focused 15/15, full 245/245, strict mypy 112 files, in-memory compile 112 files, source/scope/diff and residue checks passed. |
+| Review handoff | This owner makes no review, integration, allocation-release or next-ticket decision. Independent control-plane review is required. |
+
 ## PRG-20260812-178 — Ticket 05B3A revision-02 correction review
 
 | Field | Value |
@@ -2049,6 +2076,21 @@
 | Owner / admission | Task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2`; existing `codex/implementation-codex-compensation-reducer-05b3b`; exact clean HEAD `4d5bbefe42e1d1ae3206b29e877f0556bda3ce4c`; tracked and ignored readbacks empty. |
 | Scope / return | Change only the existing reducer and its focused test; one additive implementation commit followed by one WPR-only `PRG-20260812-183` handoff. No branch/worktree operation, cross-lane read, broad catch, `Any`, `type: ignore`, live effect, integration, push, release or deployment. |
 | Review gate | Return is not approval. The independent reviewer must execute child I1-I5, all parent R1-R5, the parent six reversals, focused/full/type/compile and residue checks before any guarded integration or 05B3C transition. |
+
+## PRG-20260812-183 — Ticket 05B3B1 plan identity admission implementation handoff
+
+| Field | Value |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05B3B1) -> ACTION_COMPLETED -> REVIEW_HANDOFF`; independent terminal child review remains required. |
+| Ticket / closure | `05b3b1-codex-plan-identity-admission`; `CLOSURE-LOCAL-INSTALL-T05B3B1-01`; I1-I5 only. |
+| Binding | Handoff `hnd_local_orchestration_install_05b3b1_20260812`; allocation `aln_local_orchestration_install_05b3b1_20260812`; receipt `rcpt_local_orchestration_install_05b3b1_20260812`; correlation `corr-local-orchestration-install-05b3b1-20260812`; question `q-local-orchestration-install-05b3b1-20260812`; side-context `scx-local-orchestration-install-05b3b1-20260812-01`; reviewed ticket freeze `3367136110888648f8696e72e1733c7f2f8ff981`; dispatch registry `7e55819a78b646f85256a6dfc8adf957d0742630` / `PRG-20260812-182`. |
+| Owner / implementation | Owner task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; unchanged branch `codex/implementation-codex-compensation-reducer-05b3b`; additive implementation `b50699cfc4e10d94a3b8c135581b319cac161ed8`, descended directly from clean admitted parent handoff `4d5bbefe42e1d1ae3206b29e877f0556bda3ce4c`. |
+| Exact scope | Only `library/local_orchestration/codex_compensation_reducer.py` and `tests/test_codex_compensation_reducer.py` changed in the implementation commit. Parent revision-02 commits remain immutable ancestors; every root export and other source/test path stayed read-only. |
+| Real first-red evidence | Four nested identity plain-object cells ran before the correction; marketplace and plugin state escaped as `PydanticSerializationError`, while request and attempt ID already blocked finitely. The overall test exited nonzero. |
+| I1-I4 evidence | Exact recursive field types are admitted before any supplied-field operation. All 28 malformed-shape cells and 16 process-control trap cells return `PLAN_INVALID` with zero trap invocation. Removing one recursive guard produced 27/28 with an escape; pre-admission serialization produced 26/28 with two escapes. Both mutations were restored. |
+| I5 / parent preservation | Focused 18/18, full 248/248, strict mypy 112 files, in-memory compile 112 files, source/scope/diff and tracked/ignored/cache checks passed. Every parent B1-B5 and R1-R5 test remained green. |
+| Residue / non-interference | The reducer remains pure; no port/callable, command, live Codex, host, target-project, network, Secret, cross-lane read, integration, downstream dispatch, push, release or deployment effect occurred. |
+| Review handoff | This return is not a review decision. The independent control-plane reviewer owns the one terminal child review, including parent R1-R5, parent six reversals and child I1-I5. |
 
 ## PRG-20260812-184 — Ticket 05B3B1 terminal independent review
 
