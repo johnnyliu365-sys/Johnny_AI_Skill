@@ -347,6 +347,13 @@ states after a still-ambiguous or pre-existing marketplace, and committed TDD
 omits required path/port cells. 05B1 is stopped for one control-plane refreeze;
 05B2-05B4 remain blocked.
 
+Control review `97cce99` refreezes those findings as
+`CLOSURE-LOCAL-INSTALL-T05B1-02`: a separate expected auth policy, a typed
+proof-port failure with explicit unexpected/process-control propagation, the
+seven exact legal journal states, and truthful path/port/exception tables. One
+additive correction is dispatched to the same task, worktree and branch with
+the original allocation/receipt; no new lane exists. The next review is final.
+
 The submitted 05S1 implementation `e0898cd` and handoff `ecce06a` failed the
 independent E3/T3 physical root-reparse probe. A real Windows junction is a
 `ReparsePoint`, but Python 3.11 `Path.is_symlink()` is false; teardown reads the

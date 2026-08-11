@@ -1698,3 +1698,13 @@
 | Blocking batch | CR-128 ticket omission of independent expected auth-policy authority; CR-129 false request-only foreign-auth evidence; CR-130 unspecified proof-port exception semantics; CR-131 impossible journal states accepted; CR-132 incomplete committed path/port TDD cells. |
 | Concrete reproduction | A request whose observed policy is `foreign-policy` plus an exact request-only proof returns `CodexRegistrationReceipt`. Journals `(PREEXISTING, OWNED)` and `(MAY_EXIST, OWNED)` are accepted and grant plugin authority. A proof-port `RuntimeError` escapes with no frozen disposition. |
 | Decision | `CHANGES_REQUESTED / TICKET_REFREEZE_REQUIRED`; no same-closure correction or integration. Same task/worktree/branch/allocation/receipt remain bound pending one finite control refreeze. 05B2-05B4 stay blocked. No live Codex mutation, target-project write, push, release or deployment. |
+
+## PRG-20260811-149 — Ticket 05B1 revision-02 refreeze and correction dispatch
+
+| Field | Value |
+| --- | --- |
+| Router event | `CHANGES_REQUESTED / TICKET_DEFECT -> CONTROL_REFREEZE -> CORRECTION_HANDOFF -> IMPLEMENTATION_DISPATCH_CONFIRMED` |
+| Closure / review | `CLOSURE-LOCAL-INSTALL-T05B1-02`; CR-128 through CR-132; final initial review `97cce9975fd95eeb7677406522955a5cb3d2a389`. |
+| Binding | Correction handoff `hnd_local_orchestration_install_05b1_r02_20260811`; retained allocation `aln_local_orchestration_install_05b1_20260811`; retained valid receipt `rcpt_local_orchestration_install_05b1_20260811`; correlation `corr-local-orchestration-install-05b1-r02-20260811`; question `q-local-orchestration-install-05b1-r02-20260811`; submitted branch HEAD `6969d4412d0391684739890e4fc3e5451d4ed6c0`. |
+| Exact correction | Add independent expected auth-policy authority and a real foreign-observed-auth rejection; define typed proof-port failure mapping plus explicit unexpected/process-control propagation; restrict journal to seven exact legal state pairs; commit the seven path, null/wrong port, exception and 16-state matrices with three reverse mutations. |
+| Lane / return | Same task `019fcc9c-f34f-7d53-a313-c70c90bf3245`, worktree `workflow-implementation`, existing branch and exact three source/test paths only. One additive implementation commit plus one WPR-only handoff reserved as unique PRG-150. Final review stops on any blocker. No new branch/worktree, downstream dispatch, integration, live Codex mutation, target-project write, push, release or deployment. |

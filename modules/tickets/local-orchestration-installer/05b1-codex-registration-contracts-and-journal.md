@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01, AC-02, AC-07 and AC-08 registration seam |
 | Parent evidence | Terminal 05B revision-02 review `24227ac`; CR-98 through CR-104 remain immutable evidence |
-| State | `CHANGES_REQUESTED / TICKET_REFREEZE_REQUIRED` — final initial review `CR-128` through `CR-132` |
+| State | `IN_PROGRESS / REVISION_02_DISPATCH_CONFIRMED` — one additive correction for `CR-128` through `CR-132` |
 | Dependency | 05A plus 05S1-05S4 independently approved and integrated by `b22c6c4`, `504a3ec`, `6e24e06`, `43a1639` and `4af381c` |
 | Implementation owner | Task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; existing `workflow-implementation` worktree and branch only |
 | Acceptance owner | Independent control-plane reviewer; no implementation writes |
@@ -105,3 +105,34 @@ No correction or integration is authorized until the control plane refreezes
 the finite expected-policy, exception and legal-journal contracts. The same
 ticket, implementation owner, worktree, branch, allocation and valid receipt
 remain bound; no replacement lane is permitted.
+
+## Revision-02 correction closure — `CLOSURE-LOCAL-INSTALL-T05B1-02`
+
+This finite refreeze supersedes only the defective C2-C4/T1-T4 details. The
+one outcome, exact three-source-file boundary, no-effect boundary, owner,
+worktree, branch, allocation and original valid receipt remain unchanged.
+
+| ID | Required correction and first-red/green behavior |
+| --- | --- |
+| `R1` — independent expected auth policy | Add one typed `expected_auth_policy` authority to `CodexRegistrationProofRequest`, separate from the plugin observation. Recursive request validation requires observed `authPolicy` to equal the expected value before invoking the proof port. Proof and metadata-only receipt bind the expected value. With expected `trusted-local` fixed, foreign observed `foreign-policy` plus an exact request-only proof returns finite `INVALID_INPUT`, no receipt and zero proof-port calls. |
+| `R2` — typed proof-port exception boundary | Add one named typed proof-port failure and one finite `PROOF_PORT_FAILED` rejection. Catch only that typed failure. Malformed return shape retains `INVALID_PROOF`. Unexpected `RuntimeError`, `MemoryError`, `KeyboardInterrupt` and `SystemExit` propagate; tests explicitly assert the chosen behavior. No broad catch or raw exception text persistence. |
+| `R3` — exact legal journal matrix | The only legal `(marketplace, plugin)` states are `(NOT_ATTEMPTED, NOT_ATTEMPTED)`, `(MAY_EXIST, NOT_ATTEMPTED)`, `(OWNED, NOT_ATTEMPTED)`, `(OWNED, MAY_EXIST)`, `(OWNED, OWNED)`, `(OWNED, PREEXISTING)` and `(PREEXISTING, NOT_ATTEMPTED)`. Table all 16 combinations; the other nine fail recursive validation. Removal order remains plugin then marketplace only for `MAY_EXIST`/`OWNED`; neither `PREEXISTING` nor `NOT_ATTEMPTED` grants authority. |
+| `R4` — truthful committed evidence | Commit the exact equal, prefix-plus-character, trailing-slash, case, URL-encoded separator, traversal and empty path cells. Commit `None` and wrong-shape proof-port cells, the real foreign observed-auth request-only cell, typed/unexpected/process-control exception cells, and all 16 journal states. Reverse the expected-policy equality, typed exception mapping and legal journal guard independently; each required test must red, then restore. |
+
+Run focused/full unittest, strict full-tree mypy with a validated external cache
+removed afterward, in-memory compile, source/scope/diff and tracked/ignored
+zero-residue readback. Return one additive implementation commit changing only
+the three original authorized paths, then one `WorkProgressReport.md`-only
+handoff using reserved unique record `PRG-20260811-150`. The next independent
+review is final; any blocker stops with `CONVERGENCE_REVIEW_REQUIRED` and no
+integration or further correction.
+
+### Revision-02 binding
+
+| Field | Value |
+| --- | --- |
+| Control review baseline | `97cce9975fd95eeb7677406522955a5cb3d2a389` |
+| Correction handoff | `hnd_local_orchestration_install_05b1_r02_20260811` |
+| Retained allocation / receipt | `aln_local_orchestration_install_05b1_20260811` / `rcpt_local_orchestration_install_05b1_20260811` |
+| Correlation / question | `corr-local-orchestration-install-05b1-r02-20260811` / `q-local-orchestration-install-05b1-r02-20260811` |
+| Submitted branch HEAD | `6969d4412d0391684739890e4fc3e5451d4ed6c0` |
