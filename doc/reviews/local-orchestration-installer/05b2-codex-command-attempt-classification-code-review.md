@@ -6,9 +6,9 @@
 | --- | --- |
 | Ticket / closure | `05b2-codex-command-attempt-classification` / `CLOSURE-LOCAL-INSTALL-T05B2-01` |
 | Reviewed baseline | `22600c385bebf1a919bf05fb2745661c4d920b29` |
-| Implementation / handoff | `e8beeac74635573c94d1a4f5852fe0ea2224d9e4` / `d3bb4ade4f420e2a2bb38b779db0263d0a90f10a` |
+| Implementation / handoff | Initial `e8beeac74635573c94d1a4f5852fe0ea2224d9e4` / `d3bb4ade4f420e2a2bb38b779db0263d0a90f10a`; correction `8a7bf95c1b070df4f3f5cf61186072cadc0c5951` / `b8090078c6a41f19cba0c216f2a3e7030dc4dec8` |
 | Branch / owner | Existing `codex/implementation-codex-protocol-fixture-05s3` / task `019fcc9c-f34f-7d53-a313-c70c90bf3245` |
-| Review result | `CHANGES_REQUESTED`; one same-closure additive correction is permitted |
+| Review result | `APPROVED / READY_TO_MERGE`; terminal correction review closed CR-133 and CR-134 |
 
 The implementation changes exactly the three authorized source/test paths and
 the handoff changes only `doc/WorkProgressReport.md`. The implementation lane
@@ -79,3 +79,28 @@ WPR-only handoff. This correction review will be terminal for this closure: a
 remaining blocker requires `CONVERGENCE_REVIEW_REQUIRED`, not a second
 implementation correction. No integration or downstream dispatch is
 authorized by this review.
+
+## Terminal correction review
+
+The preceding `CHANGES_REQUESTED` record remains the immutable initial-review
+evidence. The additive correction was reviewed from a fresh immutable export
+of `8a7bf95c1b070df4f3f5cf61186072cadc0c5951`; the implementation worktree was
+not modified.
+
+| Check | Final result / evidence |
+| --- | --- |
+| Admission / scope | PASS: `d3bb4ade` is an ancestor of correction `8a7bf95c`; docs-only handoff `b8090078` descends from it. The correction changes only `codex_command_attempts.py` and its test; the handoff changes only `doc/WorkProgressReport.md`. The lane is clean in tracked and ignored readback. |
+| Focused / full | PASS: 7/7 focused and 230/230 full unittest tests from the immutable export. |
+| Strict type / compile / sentinel | PASS: strict full-tree mypy over 110 source files, in-memory compile over both changed Python paths, source sentinel and `git diff --check`. The external mypy cache was isolated from the repository. |
+| CR-133 | CLOSED: all eleven fields across the four observation models reject omission. Exact Python enum/literal/boolean guards reject five independently constructed raw-value cases as finite `INVALID_OBSERVATION`, before admission or transition. No JSON coercion path remains. |
+| CR-134 | CLOSED: the committed T1 tables enumerate every model field, raw strings for every discriminator surface, a raw boolean, invalid shapes and swapped values. |
+| C2-C4 preservation | PASS: independent admission enumeration remains exactly 2 accepted / 12 rejected; four unexpected/process-control exceptions propagate; finite rejection exposes only `status` and `reason`. |
+| Test truthfulness | PASS: five isolated reverse mutations each turned the intended test red: restore one discriminator default (one red cell), restore pre-start JSON coercion (raw-string cell red), treat access denied as attempted (two red cells), leave started failures unchanged (twelve red cells), and map pre-existing marketplace to `OWNED` (one red assertion). After restoration, the source blob matched the reviewed commit byte-for-byte and focused 7/7 passed again. |
+
+### Final decision
+
+`APPROVED / READY_TO_MERGE`. CR-133 and CR-134 are closed; C1-C4 and T1-T4
+now satisfy `CLOSURE-LOCAL-INSTALL-T05B2-01`. Guarded integration may proceed
+only with reviewed handoff `b8090078c6a41f19cba0c216f2a3e7030dc4dec8`
+and a clean control lane. No live Codex mutation, target-project write, push,
+release or deployment is authorized.
