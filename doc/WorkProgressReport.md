@@ -2123,3 +2123,13 @@
 | Binding | `hnd_local_orchestration_install_05b3c_20260812`; `aln_local_orchestration_install_05b3c_20260812`; `rcpt_local_orchestration_install_05b3c_20260812`; `corr-local-orchestration-install-05b3c-20260812`; `scx-local-orchestration-install-05b3c-20260812-01`. |
 | Owner / lane | Owner-selected task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; reuse existing `workflow-implementer-2`; one new ticket branch `codex/implementation-codex-compensation-composition-05b3c` from the later dispatch registry commit; no new worktree. |
 | Scope / return | New coordinator, new focused test and export-only root change; then WPR-only PRG-188 handoff. No port/reducer dependency edits, historical-source copy, live Codex, host, target-project, network, push, release or deployment. |
+
+## PRG-20260812-187 — Ticket 05B3C implementation dispatch
+
+| Field | Value |
+| --- | --- |
+| Router event | `TICKET_SELECTED(05B3C) -> TICKET_DISPATCH_REQUIRED -> IMPLEMENTATION_DISPATCH_CONFIRMED` |
+| Reviewed freeze | `df2444878bac309bb7be5e56750cc5304bf9cde1`; ticket `05b3c-codex-compensation-composition`; closure `CLOSURE-LOCAL-INSTALL-T05B3C-01`; exact C1-C8. |
+| Binding | `hnd_local_orchestration_install_05b3c_20260812`; `aln_local_orchestration_install_05b3c_20260812`; `rcpt_local_orchestration_install_05b3c_20260812`; `corr-local-orchestration-install-05b3c-20260812`; `q-local-orchestration-install-05b3c-20260812`; `scx-local-orchestration-install-05b3c-20260812-01`. |
+| Owner / admission | Task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing clean `workflow-implementer-2` at `441bcc8f6959b6abc6a39749b57c992f6e5622fa`; create only `codex/implementation-codex-compensation-composition-05b3c` from this dispatch registry commit. |
+| Scope / return | Three authorized paths, exact first-red/C1-C8/five reversals/full verification, implementation commit then WPR-only PRG-188. No other agent, worktree, cross-lane history, dependency edit, live effect, review, integration, push, release or deployment. |

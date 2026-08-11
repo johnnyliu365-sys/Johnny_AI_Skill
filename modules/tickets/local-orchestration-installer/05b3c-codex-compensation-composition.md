@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01, AC-02, AC-07 and AC-08 compensation seam |
-| State | `IN_PROGRESS / TICKET_FROZEN / DISPATCH_PENDING` |
+| State | `IN_PROGRESS / IMPLEMENTATION_DISPATCHED` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B3C-01` / C1-C8 |
 | Dependency | 05B3A and 05B3B1 integrated |
 | Owner / worktree | Task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` / existing `workflow-implementer-2`; one new ticket branch from reviewed current main, no new worktree |
