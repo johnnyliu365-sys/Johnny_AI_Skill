@@ -2,10 +2,9 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping
 from dataclasses import dataclass
 from enum import Enum
-from types import CodeType, FunctionType, MethodType
+from types import CodeType, FunctionType, GetSetDescriptorType, MappingProxyType, MethodType
 from typing import Callable, Final, Literal, TypeAlias, cast
 
 from pydantic import BaseModel, ConfigDict
@@ -108,6 +107,8 @@ _CAPABILITY_TOKEN: Final[_CapabilityToken] = _CapabilityToken()
 _MISSING_OPERATION: Final[object] = object()
 _FUNCTION_VARARGS_FLAG: Final[int] = 0x04
 _FUNCTION_VARKWARGS_FLAG: Final[int] = 0x08
+_TYPE_MRO_GETSET: Final[GetSetDescriptorType] = cast(GetSetDescriptorType, type.__dict__["__mro__"])
+_TYPE_DICTIONARY_GETSET: Final[GetSetDescriptorType] = cast(GetSetDescriptorType, type.__dict__["__dict__"])
 
 
 @dataclass(frozen=True, slots=True, init=False)
@@ -161,11 +162,8 @@ def admit_codex_compensation_port(candidate: object) -> CodexCompensationPortAdm
 
     if candidate is None:
         return _rejected(CodexCompensationPortRejectReason.INVALID_CANDIDATE)
-    candidate_class_value = object.__getattribute__(candidate, "__class__")
-    if not isinstance(candidate_class_value, type):
-        return _rejected(CodexCompensationPortRejectReason.INVALID_CANDIDATE)
-    candidate_class = cast(type[object], candidate_class_value)
-    if candidate_class in (str, tuple, list, dict):
+    candidate_class = type(candidate)
+    if candidate_class is str or candidate_class is tuple or candidate_class is list or candidate_class is dict:
         return _rejected(CodexCompensationPortRejectReason.INVALID_CANDIDATE)
     remove_plugin = _admit_operation(candidate_class, _OperationName.REMOVE_PLUGIN)
     if isinstance(remove_plugin, CodexCompensationPortRejected):
@@ -201,36 +199,37 @@ def _admit_operation(
     raw_member = _raw_member_from_mro(candidate_class, operation)
     if raw_member is _MISSING_OPERATION:
         return _rejected(CodexCompensationPortRejectReason.MISSING_OPERATION)
-    if isinstance(raw_member, property):
+    if type(raw_member) is property:
         return _rejected(CodexCompensationPortRejectReason.PROPERTY_OPERATION)
-    if isinstance(raw_member, staticmethod):
+    if type(raw_member) is staticmethod:
         return _rejected(CodexCompensationPortRejectReason.STATIC_METHOD_OPERATION)
-    if isinstance(raw_member, classmethod):
+    if type(raw_member) is classmethod:
         return _rejected(CodexCompensationPortRejectReason.CLASS_METHOD_OPERATION)
-    if not isinstance(raw_member, FunctionType):
+    if type(raw_member) is not FunctionType:
         return _rejected(CodexCompensationPortRejectReason.NON_PLAIN_FUNCTION)
-    shape_reason = _plain_function_shape_reason(raw_member)
+    plain_function = raw_member
+    shape_reason = _plain_function_shape_reason(plain_function)
     if shape_reason is not None:
         return _rejected(shape_reason)
-    return raw_member
+    return plain_function
 
 
 def _raw_member_from_mro(candidate_class: type[object], operation: _OperationName) -> object:
-    """Read class dictionaries through built-ins so caller descriptors remain inert."""
+    """Read raw type slots without resolving caller class or metaclass descriptors."""
 
-    mro_value = type.__getattribute__(candidate_class, "__mro__")
-    if not isinstance(mro_value, tuple):
+    mro_value: object = _TYPE_MRO_GETSET.__get__(candidate_class, type)
+    if type(mro_value) is not tuple:
         return _MISSING_OPERATION
-    for owner_value in mro_value:
-        if not isinstance(owner_value, type):
-            return _MISSING_OPERATION
+    for owner_value in cast(tuple[object, ...], mro_value):
         owner = cast(type[object], owner_value)
-        dictionary_value = type.__getattribute__(owner, "__dict__")
-        if not isinstance(dictionary_value, Mapping):
+        dictionary_value: object = _TYPE_DICTIONARY_GETSET.__get__(owner, type)
+        if type(dictionary_value) is not MappingProxyType:
             return _MISSING_OPERATION
-        dictionary = cast(Mapping[str, object], dictionary_value)
-        if operation.value in dictionary:
+        dictionary = cast(MappingProxyType[str, object], dictionary_value)
+        try:
             return dictionary[operation.value]
+        except KeyError:
+            continue
     return _MISSING_OPERATION
 
 
@@ -240,17 +239,18 @@ def _plain_function_shape_reason(function: FunctionType) -> CodexCompensationPor
     code_value = object.__getattribute__(function, "__code__")
     defaults_value = object.__getattribute__(function, "__defaults__")
     keyword_defaults_value = object.__getattribute__(function, "__kwdefaults__")
-    if not isinstance(code_value, CodeType):
+    if type(code_value) is not CodeType:
         return CodexCompensationPortRejectReason.NON_PLAIN_FUNCTION
+    code = code_value
     if defaults_value is not None or keyword_defaults_value is not None:
         return CodexCompensationPortRejectReason.DEFAULTED_ARGUMENTS
-    if code_value.co_flags & (_FUNCTION_VARARGS_FLAG | _FUNCTION_VARKWARGS_FLAG):
+    if code.co_flags & (_FUNCTION_VARARGS_FLAG | _FUNCTION_VARKWARGS_FLAG):
         return CodexCompensationPortRejectReason.VARIADIC_ARGUMENTS
-    if code_value.co_kwonlyargcount != 0:
+    if code.co_kwonlyargcount != 0:
         return CodexCompensationPortRejectReason.REQUIRED_KEYWORD_ARGUMENTS
-    if code_value.co_argcount < 2:
+    if code.co_argcount < 2:
         return CodexCompensationPortRejectReason.ZERO_REQUEST_ARGUMENTS
-    if code_value.co_argcount > 2:
+    if code.co_argcount > 2:
         return CodexCompensationPortRejectReason.TWO_REQUEST_ARGUMENTS
     return None
 

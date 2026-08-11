@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import unittest
+from enum import Enum
+from typing import NoReturn
 
 from library.local_orchestration.codex_compensation_port import (
     CodexCompensationPortCapability,
@@ -125,6 +127,27 @@ class _MetadataTrap:
         raise RuntimeError("function metadata was read")
 
 
+class _TrapSurface(str, Enum):
+    """The four caller-controlled class surfaces forbidden during admission."""
+
+    CANDIDATE_CLASS = "candidate_class"
+    METACLASS_MRO = "metaclass_mro"
+    METACLASS_DICTIONARY = "metaclass_dictionary"
+    METACLASS_EQUALITY = "metaclass_equality"
+
+
+class _TrapRead:
+    """Records a forbidden metadata read before raising its exact failure type."""
+
+    def __init__(self, failure_type: type[BaseException]) -> None:
+        self.failure_type = failure_type
+        self.read_count = 0
+
+    def fail(self) -> NoReturn:
+        self.read_count += 1
+        raise self.failure_type("caller metadata was read")
+
+
 def _signature_metadata_trap(self: object, current: CodexCompensationPortRequest) -> CodexPluginRemovalProof:
     raise AssertionError("metadata-trapped function was invoked")
 
@@ -173,6 +196,48 @@ def _adapter_with(operation_name: str, replacement: object, *, present: bool = T
         del members[operation_name]
     adapter_type = type("AdversarialPort", (), members)
     return adapter_type()
+
+
+def _trapped_candidate(
+    surface: _TrapSurface,
+    failure_type: type[BaseException],
+) -> tuple[object, _TrapRead]:
+    """Build a valid adapter whose one unsafe metadata path raises on access."""
+
+    trap = _TrapRead(failure_type)
+    if surface is _TrapSurface.CANDIDATE_CLASS:
+        def candidate_class_property(instance: object) -> object:
+            trap.fail()
+
+        candidate_type = type(
+            "CandidateClassTrapPort",
+            (ValidPort,),
+            {"__class__": property(candidate_class_property)},
+        )
+        return candidate_type(), trap
+    if surface is _TrapSurface.METACLASS_EQUALITY:
+        def metaclass_equality(left: object, right: object) -> bool:
+            trap.fail()
+
+        metaclass = type(
+            "EqualityTrapMetaclass",
+            (type,),
+            {"__eq__": metaclass_equality},
+        )
+    else:
+        def metaclass_property(owner: object) -> object:
+            trap.fail()
+
+        member_name = "__mro__"
+        if surface is _TrapSurface.METACLASS_DICTIONARY:
+            member_name = "__dict__"
+        metaclass = type(
+            "DescriptorTrapMetaclass",
+            (type,),
+            {member_name: property(metaclass_property)},
+        )
+    candidate_type = metaclass("MetaclassTrapPort", (ValidPort,), {})
+    return candidate_type(), trap
 
 
 class _ReadTrapPort:
@@ -268,6 +333,28 @@ class CodexCompensationPortTests(unittest.TestCase):
         if not isinstance(metadata_result, CodexCompensationPortCapability):
             raise AssertionError(f"expected capability, received {metadata_result}")
 
+    def test_r2_all_candidate_and_metaclass_traps_remain_unread(self) -> None:
+        surfaces: tuple[_TrapSurface, ...] = (
+            _TrapSurface.CANDIDATE_CLASS,
+            _TrapSurface.METACLASS_MRO,
+            _TrapSurface.METACLASS_DICTIONARY,
+            _TrapSurface.METACLASS_EQUALITY,
+        )
+        failure_types: tuple[type[BaseException], ...] = (
+            RuntimeError,
+            MemoryError,
+            KeyboardInterrupt,
+            SystemExit,
+        )
+        for surface in surfaces:
+            for failure_type in failure_types:
+                with self.subTest(surface=surface.value, failure=failure_type.__name__):
+                    candidate, trap = _trapped_candidate(surface, failure_type)
+                    result = admit_codex_compensation_port(candidate)
+                    if not isinstance(result, CodexCompensationPortCapability):
+                        raise AssertionError(f"expected capability, received {result}")
+                    self.assertEqual(0, trap.read_count)
+
     def test_a4_invalid_candidate_values_and_unrelated_class_members_reject_or_preserve_admission(self) -> None:
         invalid_candidates: tuple[object, ...] = (None, "", "   ", (), [], {})
         for candidate in invalid_candidates:
@@ -276,15 +363,14 @@ class CodexCompensationPortTests(unittest.TestCase):
                     admit_codex_compensation_port(candidate),
                     CodexCompensationPortRejectReason.INVALID_CANDIDATE,
                 )
+        unrelated = _DescriptorTrap()
+
         class ExtraMemberPort(ValidPort):
-            unrelated = _DescriptorTrap()
+            unrelated_member = unrelated
 
         result = admit_codex_compensation_port(ExtraMemberPort())
         if not isinstance(result, CodexCompensationPortCapability):
             raise AssertionError(f"expected capability, received {result}")
-        unrelated = type.__getattribute__(ExtraMemberPort, "__dict__")["unrelated"]
-        if not isinstance(unrelated, _DescriptorTrap):
-            raise AssertionError("unrelated fixture lost its exact type")
         self.assertEqual(0, unrelated.read_count)
         admitted = admit_codex_compensation_port(ValidPort())
         if not isinstance(admitted, CodexCompensationPortCapability):
