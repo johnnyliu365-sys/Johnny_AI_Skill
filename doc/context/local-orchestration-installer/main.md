@@ -366,6 +366,14 @@ Guarded merge `bbc7de5` integrates 05B1 after post-merge focused 7/7, full
 released and receipt closed. Ticket 05B2 command-attempt classification is now
 the next unblocked serial child; 05B3-05B4 remain dependency-waiting.
 
+Ticket 05B2 is refrozen as a pure production classifier: it consumes integrated
+05B1 journals plus finite command-start truth, never imports the test-owned
+05S2 runner, and performs no effect. Pre-start unavailable/access-denied/
+generic-launch failure grants no authority; every started ambiguous failure grants only `MAY_EXIST`; exact
+fresh/pre-existing confirmations map to `OWNED`/`PREEXISTING`. All other
+command/journal pairs fail closed. The separate handoff record binds the exact
+ticket-doc commit before dispatch.
+
 The submitted 05S1 implementation `e0898cd` and handoff `ecce06a` failed the
 independent E3/T3 physical root-reparse probe. A real Windows junction is a
 `ReparsePoint`, but Python 3.11 `Path.is_symlink()` is false; teardown reads the
