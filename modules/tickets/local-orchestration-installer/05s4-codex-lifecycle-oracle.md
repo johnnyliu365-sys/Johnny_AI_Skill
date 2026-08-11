@@ -4,12 +4,14 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-02, AC-03, AC-06, AC-07 and AC-08 lifecycle seam |
 | Context / decision | `doc/context/local-orchestration-installer/main.md` / `PRG-20260811-106` |
-| State | `PLANNED / READY / NOT_DISPATCHED` |
+| State | `IN_PROGRESS / IMPLEMENTATION_DISPATCHED` |
 | Dependency | Satisfied: 05S1, 05S2 and 05S3 independently approved and integrated by `504a3ec`, `6e24e06` and `43a1639` |
 | Implementation language | Python 3.11 |
 | Implementation responsibility | Codex task `019fcc9c-f34f-7d53-a313-c70c90bf3245`, model `gpt-5.6-terra`, reasoning `xhigh`, in the sole implementation worktree after exact receipt admission |
 | Acceptance responsibility | Independent control-plane reviewer; no implementation writes |
 | Environment | Disposable 05S1 environment and real 05S2 child only; no live Codex, target-project, installer, network, Secret, push, release or deployment |
+| Dispatch binding | `hnd_local_orchestration_install_05s4_20260811` / `aln_local_orchestration_install_05s4_20260811` / `rcpt_local_orchestration_install_05s4_20260811` / `corr-local-orchestration-install-05s4-20260811` / `q-local-orchestration-install-05s4-20260811` |
+| Ticket-doc baseline | `85ac8a015ca2a10c7ea6b502b7ccecb86ac11f81` |
 
 ## One outcome
 

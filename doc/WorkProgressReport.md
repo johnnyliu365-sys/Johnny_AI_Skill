@@ -1515,3 +1515,16 @@
 | Resolution | The sole conflict was `doc/WorkProgressReport.md`. Resolution retained PRG-126 through PRG-131 exactly once in numeric order; no source conflict or silent discard occurred. |
 | Post-merge verification | Focused 6/6; full 195/195; strict mypy 96 files with removed external cache; in-memory compile 96 files; exact 3,062/5,061-byte CR-125 probes, duplicate-key specificity and excluded `MemoryError`; source sentinels and `git diff --check`; zero repository cache, fixed response-file and staging-root residue. |
 | Completion | 05S3 is `COMPLETE / APPROVED / INTEGRATED`; allocation `aln_local_orchestration_install_05s3_r02_20260811` is released and receipt `rcpt_local_orchestration_install_05s3_r02_20260811` is closed. 05S4 is `PLANNED / READY / NOT_DISPATCHED`. No push, release, deployment, live Codex mutation or target-project write. |
+
+## PRG-20260811-133 — Ticket 05S4 lifecycle-oracle dispatch
+
+| Field | Value |
+| --- | --- |
+| Router event | `ACTION_COMPLETED -> TICKET_DISPATCH_REQUIRED -> IMPLEMENTATION_DISPATCH_CONFIRMED / IMPLEMENT` |
+| Project / ticket / closure | `prj-local-orchestration-installer-poc-20260808`; `05s4-codex-lifecycle-oracle`; `CLOSURE-LOCAL-INSTALL-T05S4-01`; O1–O6 |
+| Binding identifiers | Handoff `hnd_local_orchestration_install_05s4_20260811`; allocation `aln_local_orchestration_install_05s4_20260811`; receipt `rcpt_local_orchestration_install_05s4_20260811`; correlation `corr-local-orchestration-install-05s4-20260811`; question `q-local-orchestration-install-05s4-20260811`; side-context `scx-local-orchestration-install-05s4-20260811-01`. |
+| Authority / owner | Owner instruction “先修正後派工” in the current control task; implementation task `019fcc9c-f34f-7d53-a313-c70c90bf3245`, `gpt-5.6-terra / xhigh`; independent reviewer remains this control worktree. |
+| Baselines | Dependency merge `43a1639cfda44b4b9c664c584cf557b47ddb510a`; ticket-doc `85ac8a015ca2a10c7ea6b502b7ccecb86ac11f81`; this record's commit is the handoff-doc baseline. |
+| Lane | Release completed 05S3 allocation. Reuse only the clean `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` worktree and its existing `codex/implementation-codex-protocol-fixture-05s3` branch. Exact ancestry proves `008fac8` can fast-forward to this handoff baseline, so `FRESH_BRANCH_REQUIRED` is absent and no new branch/worktree is permitted. |
+| Scope / return | Read the frozen ticket instead of copying its contents. Implement only its six named Python paths with recorded first-red, smoke, focused/full/strict checks and zero residue; return one implementation commit and one `WorkProgressReport.md`-only handoff. No 05B/05C transaction, compensation, receipt, live Codex, target-project write, review decision, merge, push, release or deployment. |
+| Stop rule | `COMPLETED -> ACTION_COMPLETED`; any contract or requirement conflict returns typed `CHANGE_DETECTED`; any missing authority or unsafe baseline returns typed `HALT`. Blocking review stops without automatic correction. |
