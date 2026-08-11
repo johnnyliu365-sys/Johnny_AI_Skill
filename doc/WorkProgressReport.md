@@ -1924,6 +1924,22 @@
 | Exact scope / independence | Only new `codex_compensation_reducer.py` and `test_codex_compensation_reducer.py`. Integrated 05B1/05B2 are read-only; rejected 05B3 and the parallel 05B3A lane are not source inputs. |
 | Return / guards | One exact-scope implementation commit plus one WPR-only handoff reserved as PRG-171. Work alone; no port/callable/effect, integration, downstream dispatch, Agent control, live Codex mutation, target-project write, push, release or deployment. |
 
+## PRG-20260811-170 — Ticket 05B3A safe-port capability handoff
+
+| Field | Value |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED -> ACTION_COMPLETED -> REVIEW_HANDOFF`; independent review remains required. |
+| Ticket / closure | `05b3a-codex-safe-port-capability`; `CLOSURE-LOCAL-INSTALL-T05B3A-01`; A1-A5 only. |
+| Binding | Handoff `hnd_local_orchestration_install_05b3a_20260811`; allocation `aln_local_orchestration_install_05b3a_20260811`; receipt `rcpt_local_orchestration_install_05b3a_20260811`; correlation `corr-local-orchestration-install-05b3a-20260811`; question `q-local-orchestration-install-05b3a-20260811`; side-context `scx-local-orchestration-install-05b3a-20260811-01`; ticket baseline `f60d90ffba7a8cc2b3c7c7eb7a24fe06883b932d`; reviewed handoff `3e5ae000aad64eca493ce003f04984dbd818a2e7`. |
+| Owner / implementation | Owner task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; branch `codex/implementation-codex-safe-port-capability-05b3a`; exact-scope implementation commit `1c3739d305e83c97dd1be723240456cb954ea6cd`. |
+| Exact scope | Only the two newly authorized capability/test paths changed. Existing compensation source, integrated dependencies, root exports and every other source/test path remain read-only. |
+| First-red evidence | Before production source existed, the exact focused command failed with `ModuleNotFoundError` for the new capability module. The committed A1-A5 test module existed first; no later green result is represented as red evidence. |
+| A1-A5 outcome | Admission accepts only five plain instance methods found from immutable class/MRO dictionaries, validates code/default arity metadata without descriptor resolution, and explicitly binds each raw function into a frozen typed capability. Missing, non-plain, property, static/class, descriptor, per-instance, builtin, wrong-arity, variadic, keyword-only and defaulted shapes return finite `INVALID_PORT`; null/text/container values likewise reject. Bound operation exceptions propagate only after admission; serialization exposes admission metadata only. |
+| Reverse-mutation evidence | (1) Reversing built-in candidate-class lookup to dynamic access made the candidate trap raise `RuntimeError`. (2) Replacing code/default validation with signature inspection made the metadata trap raise `RuntimeError`. (3) Admitting a property getter returned capabilities for every property cell instead of the required rejection. Each isolated mutation was restored before final green verification. |
+| Verification | Focused `python -B -m unittest tests.test_codex_compensation_port -v`: 5/5 passed. Full `python -B -m unittest discover -s tests -v`: 235/235 passed. Strict `mypy --strict --explicit-package-bases --no-incremental`: 112 source files passed with a validated repository-external cache removed and read back absent. In-memory compile: 2/2 changed paths. Static source sentinel, exact staged scope, and `git diff --check`: passed. |
+| Residue / non-interference | Repository cache readback found zero `.mypy_cache`, `.pytest_cache`, or `__pycache__` residue; tracked and ignored state was clean before this docs-only handoff. No command, filesystem, live Codex, host, target-project, network, Secret, review, integration, downstream dispatch, push, release or deployment effect occurred. |
+| Review handoff | Independent control-plane review is required. This implementation owner makes no approval, integration, or next-ticket decision. |
+
 ## PRG-20260812-172 — Ticket 05B3A initial independent review
 
 | Field | Value |
@@ -1963,6 +1979,23 @@
 | Binding | Closure `CLOSURE-LOCAL-INSTALL-T05B3B-02`; correction handoff `hnd_local_orchestration_install_05b3b_r02_20260812`; existing allocation/receipt retained. |
 | Frozen correction | Exact proof order is plugin lists, marketplace, installed location after authorized removals. Every result preserves exact request/attempt-bound residual states; wrong-plan checks are identity-only. Six independent reversals are required. |
 | Lane / return | Same task, worktree and branch at clean `aab7bf5df0c4501ba30e364fa4c76936412c4282`; additive two-file correction then WPR-only return `PRG-20260812-177`. No cross-lane read, effect, branch/worktree creation or integration. |
+
+## PRG-20260812-176 — Ticket 05B3A revision-02 correction handoff
+
+| Field | Value |
+| --- | --- |
+| Router event | `CHANGES_REQUESTED -> IMPLEMENTATION_CORRECTION_COMPLETED -> ACTION_COMPLETED -> REVIEW_HANDOFF`; independent review remains required. |
+| Ticket / closure | `05b3a-codex-safe-port-capability`; `CLOSURE-LOCAL-INSTALL-T05B3A-02`; CR-137 through CR-139 and R1-R4 only. |
+| Binding | Correction handoff `hnd_local_orchestration_install_05b3a_r02_20260812`; retained allocation `aln_local_orchestration_install_05b3a_20260811`; retained receipt `rcpt_local_orchestration_install_05b3a_20260811`; correlation `corr-local-orchestration-install-05b3a-r02-20260812`; side-context `scx-local-orchestration-install-05b3a-20260812-02`; refrozen ticket `0104372e604d93ab47bc456214d8277b6bb12db5`; review `14fda317538f6661573cf687468f5291ced84ff7`. |
+| Owner / implementation | Named implementation owner task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; existing branch `codex/implementation-codex-safe-port-capability-05b3a`; additive exact-scope implementation commit `a87af389835f481882dc9e18e69177e8d156278a`. |
+| Exact scope | Only `library/local_orchestration/codex_compensation_port.py` and `tests/test_codex_compensation_port.py` changed. Root exports and every other source/test path were read-only. |
+| Fresh red evidence | Before the correction, `test_r2_all_candidate_and_metaclass_traps_remain_unread` failed in the `candidate_class` trap cells: `RuntimeError` and `MemoryError` escaped, followed by escaped `KeyboardInterrupt`. This is the correction's only first-red claim; no pre-existing green result is labelled red. |
+| CR-137 / CR-138 correction | Admission now takes the concrete type only through built-in `type(candidate)`, reads MRO and class mappings via raw trusted getset descriptors captured from built-in `type.__dict__`, and uses only identity checks for candidate exclusions and member shapes. It never dynamically resolves caller class/metaclass metadata or compares an untrusted class by equality. |
+| CR-139 matrix | The committed R2 table covers four trap surfaces (`__class__`, metaclass `__mro__`, metaclass `__dict__`, and metaclass `__eq__`) crossed with `RuntimeError`, `MemoryError`, `KeyboardInterrupt`, and `SystemExit`: all sixteen cells remain unread and admit the frozen five-operation capability. Revision-01 shape, descriptor, metadata-only, and explicit-operation propagation tests remain green. |
+| Reverse-mutation evidence | (1) Replacing `type(candidate)` with candidate `object.__getattribute__` made R2 fail in `candidate_class`. (2) Replacing the raw MRO getset with `type.__getattribute__` made R2 fail in `metaclass_mro`. (3) Replacing identity exclusions with tuple membership made R2 fail in `metaclass_equality`. (4) Replacing raw code metadata with `inspect.signature` made A3 reject the metadata-trapped adapter. (5) Admitting a property raw member made A2 fail with `MethodType` errors for all five property cells. Each isolated mutation was restored before final verification. |
+| Verification | Focused `python -B -m unittest tests.test_codex_compensation_port -v`: 6/6 passed. Full `python -B -m unittest discover -s tests -v`: 236/236 passed. Strict `mypy --strict --explicit-package-bases --no-incremental`: 112 source files passed with an external temporary cache removed and read back absent. In-memory compile: 112 Python files. Source sentinel, exact scope, and `git diff --check` passed. |
+| Residue / non-interference | Repository `.mypy_cache`, `.pytest_cache`, and `__pycache__` counts are zero. No command, filesystem, live Codex, host, target-project, network, Secret, review, integration, downstream-dispatch, push, release, or deployment effect occurred. |
+| Review handoff | Return is for independent control-plane review only. This implementation owner makes no approval, integration, or next-ticket decision. |
 
 ## PRG-20260812-178 — Ticket 05B3A revision-02 correction review
 
