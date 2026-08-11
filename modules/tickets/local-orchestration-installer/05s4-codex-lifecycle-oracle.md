@@ -4,8 +4,8 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-02, AC-03, AC-06, AC-07 and AC-08 lifecycle seam |
 | Context / decision | `doc/context/local-orchestration-installer/main.md` / `PRG-20260811-106` |
-| State | `PLANNED / DEPENDENCY_WAIT / NOT_DISPATCHED` |
-| Dependency | 05S1, 05S2 and 05S3 independently approved and integrated |
+| State | `PLANNED / READY / NOT_DISPATCHED` |
+| Dependency | Satisfied: 05S1, 05S2 and 05S3 independently approved and integrated by `504a3ec`, `6e24e06` and `43a1639` |
 | Implementation responsibility | Future named owner in the sole implementation worktree; no active allocation |
 | Acceptance responsibility | Independent control-plane reviewer; no implementation writes |
 
