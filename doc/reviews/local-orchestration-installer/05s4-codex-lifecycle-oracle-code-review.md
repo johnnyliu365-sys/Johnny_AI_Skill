@@ -158,3 +158,17 @@ Allocation `aln_local_orchestration_install_05s4_r02_20260811` and receipt
 `rcpt_local_orchestration_install_05s4_r02_20260811` remain active only until
 guarded integration is verified. This review does not refreeze or dispatch
 05B/05C, mutate live Codex, touch a target project, push, release or deploy.
+
+## Guarded integration
+
+Merge `4af381c` preserves approval `68ff06b` as first parent and reviewed
+handoff `52ab9c0` as second parent. The sole conflict was
+`doc/WorkProgressReport.md`; resolution retained PRG-134 through PRG-141
+exactly once and in numeric order. Source merged without conflict.
+
+Post-merge verification passed: focused 10/10, full 205/205, strict mypy and
+in-memory compile over 102 source files, source sentinel, `git diff --check`
+and zero repository cache/fixed command-response residue. Ticket 05S4 is
+`COMPLETE / APPROVED / INTEGRATED`; its allocation is released and receipt
+closed. No 05B/05C implementation, live Codex mutation, target-project write,
+push, release or deployment occurred.

@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-02, AC-03, AC-06, AC-07 and AC-08 lifecycle seam |
 | Context / decision | `doc/context/local-orchestration-installer/main.md` / `PRG-20260811-106` |
-| State | `APPROVED / INTEGRATION_AUTHORIZED` — revision-02 correction `02f33ef`, handoff `52ab9c0`; CR-126 and CR-127 closed by final independent review |
+| State | `COMPLETE / APPROVED / INTEGRATED` — revision-02 correction `02f33ef`, handoff `52ab9c0`, review `68ff06b`, guarded merge `4af381c`; CR-126 and CR-127 closed |
 | Dependency | Satisfied: 05S1, 05S2 and 05S3 independently approved and integrated by `504a3ec`, `6e24e06` and `43a1639` |
 | Implementation language | Python 3.11 |
 | Implementation responsibility | Codex task `019fcc9c-f34f-7d53-a313-c70c90bf3245`, model `gpt-5.6-terra`, reasoning `xhigh`, in the sole implementation worktree after exact receipt admission |
@@ -148,3 +148,12 @@ exact CR-126/CR-127 adversarial probes, process-control propagation, scope,
 ancestry, diff and residue checks passed. CR-126 and CR-127 are closed;
 guarded integration is authorized. Allocation and receipt remain active only
 until the reviewed handoff is integrated and verified.
+
+## Guarded integration
+
+Merge `4af381c` preserves control approval `68ff06b` as first parent and the
+reviewed handoff `52ab9c0` as second parent. The sole conflict was
+`doc/WorkProgressReport.md`; PRG-134 through PRG-141 were retained exactly once
+and in numeric order. Post-merge focused 10/10, full 205/205, strict mypy and
+in-memory compile over 102 files, source/diff/residue checks passed. Ticket
+05S4 is complete; its allocation is released and receipt closed.

@@ -124,7 +124,7 @@
 | Ticket 05S1 disposable environment core | DONE / APPROVED / INTEGRATED | Correction `41d5ce4`, handoff `e1087d3`, review `17ea1d5` and guarded merge `504a3ec`; post-merge verification passed. |
 | Ticket 05S2 bounded child-process runner | DONE / APPROVED / INTEGRATED | Revision-03 `33a8fa9` / `dba0621b`, review `c97b754`, guarded merge `6e24e06`; CR-124 resolved and post-merge verification passed. |
 | Ticket 05S3 Codex protocol fixture | DONE / APPROVED / INTEGRATED | Correction `4835b0f`, handoff `008fac8`, final review `c518e62` and guarded merge `43a1639`; CR-125 closed and post-merge verification passed. |
-| Ticket 05S4 Codex lifecycle oracle | APPROVED / INTEGRATION_AUTHORIZED | Correction `02f33ef`, handoff `52ab9c0`; final independent review closed CR-126/CR-127 and authorized guarded integration. |
+| Ticket 05S4 Codex lifecycle oracle | DONE / APPROVED / INTEGRATED | Correction `02f33ef`, handoff `52ab9c0`, review `68ff06b`, guarded merge `4af381c`; CR-126/CR-127 closed and post-merge verification passed. |
 | Ticket 05B transactional registration | BLOCKED / CONVERGENCE_REVIEW_REQUIRED | Terminal revision-02 review of `1a269411` / `ed74589` records CR-98..CR-104; no automatic correction or integration. |
 | Ticket 05C receipt removal/replay | PLANNED / DEPENDENCY_WAIT / REFREEZE_REQUIRED | Starts only after 05A/05B approval/integration and a finite behavior/rollback closure refreeze. |
 | Ticket 06A Codex role-profile capability proof | IN_PROGRESS / DISPATCH_CONFIRMED | Owner-authorized second task/worktree runs the disposable proof independently of the 05S4 review; access-denied or unproven isolation remains a typed block. |

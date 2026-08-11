@@ -1624,3 +1624,13 @@
 | Independent evidence | Fresh immutable ZIP export: focused 10/10, full 205/205, strict mypy and in-memory compile over 102 files. Exact duplicate-foreign seed/raw-state probes, ordinary cleanup, failed-cleanup specificity and excluded `MemoryError` passed. Scope, ancestry, source sentinel and diff checks passed. |
 | Isolation / cleanup | Review did not write either implementation worktree. Exact review export and external cache were removed and read back absent; control and both implementation worktrees were clean at review readback. |
 | Decision | `APPROVED / INTEGRATION_AUTHORIZED`; CR-126 and CR-127 closed. Allocation and receipt remain active only until guarded integration is verified. 06A continues independently; no 05B/05C refreeze, live Codex mutation, target-project write, push, release or deployment. |
+
+## PRG-20260811-142 — Ticket 05S4 guarded integration
+
+| Field | Value |
+| --- | --- |
+| Router event | `APPROVED -> GUARDED_INTEGRATION -> ACTION_COMPLETED -> NEXT_TICKET_SELECTION_REQUIRED` |
+| Integration | Merge `4af381c` preserves control approval `68ff06b` as first parent and reviewed handoff `52ab9c0` as second parent. Source merged without conflict. |
+| Conflict resolution | The sole conflict was `doc/WorkProgressReport.md`. Resolution retained PRG-134 through PRG-141 exactly once and in numeric order; neither control nor implementation evidence was overwritten. |
+| Post-merge verification | Focused 10/10 and full 205/205 unittest passed. Strict mypy and in-memory compile passed over 102 source files; source sentinel and `git diff --check` passed. External cache was removed; repository cache, `__pycache__` and fixed command/response residue counts were zero. |
+| Completion | 05S4 is `COMPLETE / APPROVED / INTEGRATED`; allocation `aln_local_orchestration_install_05s4_r02_20260811` is released and receipt `rcpt_local_orchestration_install_05s4_r02_20260811` is closed. 06A continues in its independent lane. 05B requires control-plane refreeze before any new implementation allocation. No push, release, deployment, live Codex mutation or target-project write. |

@@ -296,7 +296,8 @@ unchanged. AC-09/AC-10 add a separate serial sequence:
 05S4 revision-02 correction `02f33ef` / handoff `52ab9c0` passed its final
 independent review: focused 10/10, full 205/205, strict type/compile over 102
 files and the exact CR-126/CR-127 probes passed. Guarded integration is
-authorized. The project owner then explicitly
+complete at merge `4af381c`; the allocation is released and receipt closed.
+The project owner then explicitly
 authorized a second named implementer for independent work. Ticket 06A may run
 in `workflow-implementer-2` while control reviews 05S4 because its four new
 staging/test paths do not overlap the oracle correction. Each task is bound to
