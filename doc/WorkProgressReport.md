@@ -1839,3 +1839,13 @@
 | Independent verification | Fresh immutable export: focused 7/7, full 230/230, strict mypy 110 files, in-memory compile 2/2, exact scope/ancestry, sentinel and diff checks passed. Direct probes reject all eleven omitted fields and five constructed raw values, preserve the exact 2/12 admission matrix, propagate four unexpected/process-control exceptions and expose only the finite rejection fields. |
 | Test truthfulness | Five isolated reverse mutations independently turned red for discriminator defaults, JSON coercion, access-denied authority, unchanged started failures and pre-existing-as-owned. Restored source matched reviewed blob `1e3d13866667f0bd76b0d011321f0de910a2a8b7`; focused 7/7 then passed. |
 | Decision | `APPROVED / READY_TO_MERGE`; CR-133 and CR-134 closed. No downstream dispatch before guarded integration. No live Codex mutation, target-project write, push, release or deployment. |
+
+## PRG-20260811-160 — Ticket 05B2 guarded integration
+
+| Field | Value |
+| --- | --- |
+| Router event | `REVIEW_APPROVED -> GUARDED_INTEGRATION -> ACTION_COMPLETED -> NEXT_TICKET_SELECTION` |
+| Integration | Merge `c97505c67d4a7ba602f590ff281fda0d1663768d` preserves control review `29efca477001e4e94bbb6b8cddaede77f15a2632` as first parent and reviewed handoff `b8090078c6a41f19cba0c216f2a3e7030dc4dec8` as second parent. Product source and tests merged without conflict. |
+| Ledger resolution | The sole conflict was `doc/WorkProgressReport.md`; PRG-155 through PRG-159 are retained in chronological order exactly once. Neither immutable parent was amended, reset or overwritten. |
+| Post-merge verification | Focused 7/7 and full 230/230 unittest passed. Strict full-tree mypy passed 110 files; in-memory compile 3/3, source sentinel and `git diff --check` passed. External review/cache roots were removed and read back absent; repository tracked, ignored and cache-residue readback is clean. |
+| Completion | 05B2 is `COMPLETE / APPROVED / INTEGRATED`; allocation `aln_local_orchestration_install_05b2_20260811` is released and receipt `rcpt_local_orchestration_install_05b2_20260811` is closed against replay. No live Codex mutation, target-project write, push, release or deployment. |

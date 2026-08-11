@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01, AC-02, AC-07 and AC-08 registration seam |
 | Parent evidence | Terminal 05B review `24227ac`, especially CR-99/CR-103; rejected parent source remains historical evidence only |
-| State | `APPROVED / READY_TO_MERGE` |
+| State | `COMPLETE / APPROVED / INTEGRATED` |
 | Dependency | 05B1 independently approved and integrated by `bbc7de5` / `b2525ec` |
 | Implementation owner | Task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; existing `workflow-implementation` worktree and branch only |
 | Acceptance owner | Independent control-plane reviewer; no implementation writes |
