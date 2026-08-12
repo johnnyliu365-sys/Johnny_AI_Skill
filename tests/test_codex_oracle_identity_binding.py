@@ -6,6 +6,8 @@ from enum import Enum
 from typing import NoReturn
 import unittest
 
+from pydantic import BaseModel
+
 from library.local_orchestration.codex_registration_contracts import (
     CodexAuthPolicy,
     CodexPluginId,
@@ -72,6 +74,43 @@ class RequestSubclass(CodexRegistrationPortRequest):
     """A caller-controlled derived shape that admission must reject."""
 
 
+class OriginalRequestStateNode(str, Enum):
+    """Every exact Pydantic node retained by a registration request."""
+
+    REQUEST = "request"
+    PREFLIGHT = "preflight"
+    INSTALLATION_ID = "installation_id"
+    ROOT = "root"
+    MARKETPLACE = "marketplace"
+    PLUGIN = "plugin"
+    MARKETPLACE_SOURCE = "marketplace_source"
+    ATTEMPT_ID = "attempt_id"
+    EXPECTED_VERSION = "expected_version"
+    SOURCE_LOCATOR = "source_locator"
+    INSTALLED_LOCATOR = "installed_locator"
+    DIGEST = "digest"
+    EXPECTED_AUTH_POLICY = "expected_auth_policy"
+    EXPECTED_PLUGIN_ID = "expected_plugin_id"
+
+
+ORIGINAL_REQUEST_STATE_SHAPE_INJECTION_TABLE: tuple[OriginalRequestStateNode, ...] = (
+    OriginalRequestStateNode.REQUEST,
+    OriginalRequestStateNode.PREFLIGHT,
+    OriginalRequestStateNode.INSTALLATION_ID,
+    OriginalRequestStateNode.ROOT,
+    OriginalRequestStateNode.MARKETPLACE,
+    OriginalRequestStateNode.PLUGIN,
+    OriginalRequestStateNode.MARKETPLACE_SOURCE,
+    OriginalRequestStateNode.ATTEMPT_ID,
+    OriginalRequestStateNode.EXPECTED_VERSION,
+    OriginalRequestStateNode.SOURCE_LOCATOR,
+    OriginalRequestStateNode.INSTALLED_LOCATOR,
+    OriginalRequestStateNode.DIGEST,
+    OriginalRequestStateNode.EXPECTED_AUTH_POLICY,
+    OriginalRequestStateNode.EXPECTED_PLUGIN_ID,
+)
+
+
 def request() -> CodexRegistrationPortRequest:
     preflight = CodexPreflightRequest(
         installation_id=INSTALLATION,
@@ -114,6 +153,43 @@ def assert_rejected(testcase: unittest.TestCase, value: object) -> None:
     )
 
     testcase.assertIs(type(value), OracleIdentityBindingRejected)
+
+
+def original_request_state_node(
+    supplied: CodexRegistrationPortRequest,
+    node: OriginalRequestStateNode,
+) -> BaseModel:
+    """Select one fixed original Pydantic node without dynamic lookup."""
+
+    if node is OriginalRequestStateNode.REQUEST:
+        return supplied
+    if node is OriginalRequestStateNode.PREFLIGHT:
+        return supplied.preflight
+    if node is OriginalRequestStateNode.INSTALLATION_ID:
+        return supplied.preflight.installation_id
+    if node is OriginalRequestStateNode.ROOT:
+        return supplied.preflight.root
+    if node is OriginalRequestStateNode.MARKETPLACE:
+        return supplied.preflight.marketplace
+    if node is OriginalRequestStateNode.PLUGIN:
+        return supplied.preflight.plugin
+    if node is OriginalRequestStateNode.MARKETPLACE_SOURCE:
+        return supplied.preflight.marketplace_source
+    if node is OriginalRequestStateNode.ATTEMPT_ID:
+        return supplied.attempt_id
+    if node is OriginalRequestStateNode.EXPECTED_VERSION:
+        return supplied.expected_version
+    if node is OriginalRequestStateNode.SOURCE_LOCATOR:
+        return supplied.source_locator
+    if node is OriginalRequestStateNode.INSTALLED_LOCATOR:
+        return supplied.installed_locator
+    if node is OriginalRequestStateNode.DIGEST:
+        return supplied.digest
+    if node is OriginalRequestStateNode.EXPECTED_AUTH_POLICY:
+        return supplied.expected_auth_policy
+    if node is OriginalRequestStateNode.EXPECTED_PLUGIN_ID:
+        return supplied.expected_plugin_id
+    raise AssertionError("unknown original request state node")
 
 
 class CodexOracleIdentityBindingTests(unittest.TestCase):
@@ -259,6 +335,15 @@ class CodexOracleIdentityBindingTests(unittest.TestCase):
         supplied = request()
         object.__setattr__(supplied, "untrusted_extra", "untrusted")
         assert_rejected(self, bind_oracle_identity(supplied))
+
+    def test_i5_recursive_original_state_shape_rejects_every_injected_exact_node(self) -> None:
+        from tests.staging.codex_lifecycle_oracle.identity_binding import bind_oracle_identity
+
+        for node in ORIGINAL_REQUEST_STATE_SHAPE_INJECTION_TABLE:
+            supplied = request().model_copy(deep=True)
+            object.__setattr__(original_request_state_node(supplied, node), "untrusted_extra", "untrusted")
+            with self.subTest(node=node.value):
+                assert_rejected(self, bind_oracle_identity(supplied))
 
     def test_i6_binding_result_exposes_only_data(self) -> None:
         from tests.staging.codex_lifecycle_oracle import identity_binding

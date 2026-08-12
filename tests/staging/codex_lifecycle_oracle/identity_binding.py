@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from enum import Enum
 import ntpath
-from typing import Literal, TypeAlias
+from typing import Literal, TypeAlias, cast
 
 from pydantic import BaseModel, ConfigDict, ValidationError
 
@@ -27,6 +27,25 @@ _PATH_VALIDATION_PLUGIN_ID = "oracle-validation-plugin"
 _PATH_VALIDATION_PLUGIN_NAME = "oracle-validation-plugin-name"
 _PATH_VALIDATION_VERSION = "0.0.0"
 _PATH_VALIDATION_AUTH_POLICY = "staging-validation-policy"
+
+_REQUEST_STATE_FIELDS: tuple[str, ...] = (
+    "preflight",
+    "attempt_id",
+    "expected_version",
+    "source_locator",
+    "installed_locator",
+    "digest",
+    "expected_auth_policy",
+    "expected_plugin_id",
+)
+_PREFLIGHT_STATE_FIELDS: tuple[str, ...] = (
+    "installation_id",
+    "root",
+    "marketplace",
+    "plugin",
+    "marketplace_source",
+)
+_VALUE_STATE_FIELDS: tuple[str, ...] = ("value",)
 
 
 class _StrictModel(BaseModel):
@@ -63,7 +82,9 @@ def bind_oracle_identity(value: object) -> OracleIdentityBindingResult:
         return _rejected_request(rebuilt.reason)
     if type(rebuilt) is not CodexRegistrationPortRequest:
         return _rejected(OracleIdentityBindingRejectReason.INVALID_REQUEST)
-    if not _has_no_extra_request_state(value):
+    if type(value) is not CodexRegistrationPortRequest:
+        return _rejected(OracleIdentityBindingRejectReason.INVALID_REQUEST)
+    if not _has_exact_original_request_state(value):
         return _rejected(OracleIdentityBindingRejectReason.INVALID_REQUEST)
 
     marketplace_root = _logical_path(rebuilt.source_locator)
@@ -93,13 +114,68 @@ def _logical_path(locator: OwnedRelativePath) -> str:
     return ntpath.join(FIXED_STAGING_LOGICAL_ROOT, locator.value.replace("/", "\\"))
 
 
-def _has_no_extra_request_state(value: object) -> bool:
-    """Use strict Pydantic revalidation to reject injected undeclared request state."""
+def _has_exact_original_request_state(value: CodexRegistrationPortRequest) -> bool:
+    """Prove every original exact Pydantic node has only its fixed declared state."""
 
-    try:
-        CodexRegistrationPortRequest.model_validate(value)
-    except (AttributeError, ValidationError, ValueError):
+    preflight = value.preflight
+    return (
+        _has_exact_model_state(value, _REQUEST_STATE_FIELDS)
+        and _has_exact_model_state(preflight, _PREFLIGHT_STATE_FIELDS)
+        and _has_exact_model_state(preflight.installation_id, _VALUE_STATE_FIELDS)
+        and _has_exact_model_state(preflight.root, _VALUE_STATE_FIELDS)
+        and _has_exact_model_state(preflight.marketplace, _VALUE_STATE_FIELDS)
+        and _has_exact_model_state(preflight.plugin, _VALUE_STATE_FIELDS)
+        and _has_exact_model_state(preflight.marketplace_source, _VALUE_STATE_FIELDS)
+        and _has_exact_model_state(value.attempt_id, _VALUE_STATE_FIELDS)
+        and _has_exact_model_state(value.expected_version, _VALUE_STATE_FIELDS)
+        and _has_exact_model_state(value.source_locator, _VALUE_STATE_FIELDS)
+        and _has_exact_model_state(value.installed_locator, _VALUE_STATE_FIELDS)
+        and _has_exact_model_state(value.digest, _VALUE_STATE_FIELDS)
+        and _has_exact_model_state(value.expected_auth_policy, _VALUE_STATE_FIELDS)
+        and _has_exact_model_state(value.expected_plugin_id, _VALUE_STATE_FIELDS)
+    )
+
+
+def _has_exact_model_state(value: BaseModel, expected_fields: tuple[str, ...]) -> bool:
+    """Read fixed Pydantic storage without inspecting caller-defined members."""
+
+    state: object = object.__getattribute__(value, "__dict__")
+    extras: object = object.__getattribute__(value, "__pydantic_extra__")
+    private: object = object.__getattribute__(value, "__pydantic_private__")
+    fields_set: object = object.__getattribute__(value, "__pydantic_fields_set__")
+    if type(state) is not dict or extras is not None or private is not None or type(fields_set) is not set:
         return False
+    return _has_exact_dict_keys(cast(dict[object, object], state), expected_fields) and _has_exact_set_keys(
+        cast(set[object], fields_set),
+        expected_fields,
+    )
+
+
+def _has_exact_dict_keys(values: dict[object, object], expected_fields: tuple[str, ...]) -> bool:
+    """Check a built-in state mapping after rejecting all non-string caller keys."""
+
+    if len(values) != len(expected_fields):
+        return False
+    for key in values:
+        if type(key) is not str:
+            return False
+    for expected in expected_fields:
+        if expected not in values:
+            return False
+    return True
+
+
+def _has_exact_set_keys(values: set[object], expected_fields: tuple[str, ...]) -> bool:
+    """Check the fixed Pydantic field-set with no caller equality or hash protocol."""
+
+    if len(values) != len(expected_fields):
+        return False
+    for key in values:
+        if type(key) is not str:
+            return False
+    for expected in expected_fields:
+        if expected not in values:
+            return False
     return True
 
 
