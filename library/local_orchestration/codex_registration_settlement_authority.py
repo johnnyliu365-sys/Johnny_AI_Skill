@@ -312,14 +312,36 @@ def _build_settlement_authority_system() -> tuple[
             self.owner_reference = owner_reference
             self.coordinator = coordinator
 
+    class ClaimBinding:
+        """Canonical primitive fields isolated from public claim metadata."""
+
+        __slots__ = ("attempt_value", "generation_number", "kind", "phase")
+
+        attempt_value: str
+        generation_number: int
+        kind: CodexRegistrationSettlementClaimKind
+        phase: CodexRegistrationPhase
+
+        def __init__(
+            self,
+            attempt_value: str,
+            phase: CodexRegistrationPhase,
+            generation_number: int,
+            kind: CodexRegistrationSettlementClaimKind,
+        ) -> None:
+            self.attempt_value = attempt_value
+            self.phase = phase
+            self.generation_number = generation_number
+            self.kind = kind
+
     class ClaimRecord:
         """Weakly claim-bound one-shot data retained only until consume or collection."""
 
-        __slots__ = ("claim_reference", "kind", "metadata", "owner_reference", "payload")
+        __slots__ = ("binding", "claim_reference", "kind", "owner_reference", "payload")
 
+        binding: ClaimBinding
         claim_reference: ReferenceType[_CodexRegistrationSettlementClaim]
         kind: CodexRegistrationSettlementClaimKind
-        metadata: CodexRegistrationSettlementClaimMetadata
         owner_reference: ReferenceType[CodexRegistrationSettlementAuthority]
         payload: _SettlementPayload
 
@@ -327,13 +349,13 @@ def _build_settlement_authority_system() -> tuple[
             self,
             claim_reference: ReferenceType[_CodexRegistrationSettlementClaim],
             owner_reference: ReferenceType[CodexRegistrationSettlementAuthority],
-            metadata: CodexRegistrationSettlementClaimMetadata,
+            binding: ClaimBinding,
             kind: CodexRegistrationSettlementClaimKind,
             payload: _SettlementPayload,
         ) -> None:
             self.claim_reference = claim_reference
             self.owner_reference = owner_reference
-            self.metadata = metadata
+            self.binding = binding
             self.kind = kind
             self.payload = payload
 
@@ -350,6 +372,82 @@ def _build_settlement_authority_system() -> tuple[
         return CodexRegistrationSettlementClaimBlocked(
             reason=CodexRegistrationSettlementClaimBlockReason.INVALID_CLAIM
         )
+
+    def canonical_claim_binding(
+        metadata: CodexRegistrationSettlementClaimMetadata,
+    ) -> ClaimBinding:
+        if type(metadata) is not CodexRegistrationSettlementClaimMetadata:
+            raise TypeError("settlement claim metadata is invalid")
+        try:
+            status_value: object = object.__getattribute__(metadata, "status")
+            attempt_id_value: object = object.__getattribute__(metadata, "attempt_id")
+            phase_value: object = object.__getattribute__(metadata, "phase")
+            generation_value: object = object.__getattribute__(metadata, "generation")
+            kind_value: object = object.__getattribute__(metadata, "kind")
+        except AttributeError:
+            raise TypeError("settlement claim metadata is invalid") from None
+        if (
+            type(status_value) is not str
+            or type(attempt_id_value) is not CodexRegistrationAttemptId
+            or type(phase_value) is not CodexRegistrationPhase
+            or type(generation_value) is not CodexRegistrationGeneration
+            or type(kind_value) is not CodexRegistrationSettlementClaimKind
+            or status_value != "SETTLEMENT_CLAIM"
+        ):
+            raise TypeError("settlement claim metadata is invalid")
+        attempt_id = attempt_id_value
+        generation = generation_value
+        try:
+            attempt_value: object = object.__getattribute__(attempt_id, "value")
+            generation_number: object = object.__getattribute__(generation, "value")
+        except AttributeError:
+            raise TypeError("settlement claim metadata is invalid") from None
+        if (
+            type(attempt_value) is not str
+            or type(generation_number) is not int
+            or generation_number < 1
+        ):
+            raise TypeError("settlement claim metadata is invalid")
+        return ClaimBinding(attempt_value, phase_value, generation_number, kind_value)
+
+    def live_metadata_matches_binding(
+        value: object,
+        binding: ClaimBinding,
+        expected_kind: CodexRegistrationSettlementClaimKind,
+    ) -> bool:
+        if type(value) is not CodexRegistrationSettlementClaimMetadata:
+            return False
+        metadata = value
+        try:
+            status_value: object = object.__getattribute__(metadata, "status")
+            attempt_id_value: object = object.__getattribute__(metadata, "attempt_id")
+            phase_value: object = object.__getattribute__(metadata, "phase")
+            generation_value: object = object.__getattribute__(metadata, "generation")
+            kind_value: object = object.__getattribute__(metadata, "kind")
+        except AttributeError:
+            return False
+        if (
+            type(status_value) is not str
+            or type(attempt_id_value) is not CodexRegistrationAttemptId
+            or type(phase_value) is not CodexRegistrationPhase
+            or type(generation_value) is not CodexRegistrationGeneration
+            or type(kind_value) is not CodexRegistrationSettlementClaimKind
+            or status_value != "SETTLEMENT_CLAIM"
+            or phase_value is not binding.phase
+            or kind_value is not expected_kind
+            or kind_value is not binding.kind
+        ):
+            return False
+        attempt_id = attempt_id_value
+        generation = generation_value
+        try:
+            attempt_value: object = object.__getattribute__(attempt_id, "value")
+            generation_number: object = object.__getattribute__(generation, "value")
+        except AttributeError:
+            return False
+        if type(attempt_value) is not str or type(generation_number) is not int:
+            return False
+        return attempt_value == binding.attempt_value and generation_number == binding.generation_number
 
     def registered(
         owner: CodexRegistrationSettlementAuthority,
@@ -469,6 +567,7 @@ def _build_settlement_authority_system() -> tuple[
         kind: CodexRegistrationSettlementClaimKind,
         payload: _SettlementPayload,
     ) -> CodexRegistrationProofClaim | CodexRegistrationCompensationClaim:
+        binding = canonical_claim_binding(metadata)
         if kind is CodexRegistrationSettlementClaimKind.PROOF:
             claim: _CodexRegistrationSettlementClaim = object.__new__(CodexRegistrationProofClaim)
         else:
@@ -500,7 +599,7 @@ def _build_settlement_authority_system() -> tuple[
             claim_registry[claim_identity] = ClaimRecord(
                 claim_reference,
                 owner_reference,
-                metadata,
+                binding,
                 kind,
                 payload,
             )
@@ -646,14 +745,18 @@ def _build_settlement_authority_system() -> tuple[
                 record.claim_reference() is not claim
                 or record.owner_reference() is None
                 or record.kind is not expected_kind
-                or record.metadata.kind is not expected_kind
+                or record.binding.kind is not expected_kind
             ):
                 return blocked_claim()
             try:
                 claim_metadata_value: object = object.__getattribute__(claim, "_metadata")
             except AttributeError:
                 return blocked_claim()
-            if claim_metadata_value is not record.metadata:
+            if not live_metadata_matches_binding(
+                claim_metadata_value,
+                record.binding,
+                expected_kind,
+            ):
                 return blocked_claim()
             del claim_registry[claim_identity]
             return record.payload

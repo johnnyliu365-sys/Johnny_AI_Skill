@@ -68,7 +68,9 @@ from library.local_orchestration.codex_registration_settlement_authority import 
 )
 from library.local_orchestration.codex_registration_transaction import (
     CodexRegistrationAddRecovery,
+    CodexRegistrationGeneration,
     CodexRegistrationNextReadyPhase,
+    CodexRegistrationPhase,
     CodexRegistrationReadyLease,
     CodexRegistrationTerminal,
     CodexRegistrationTransactionBlockReason,
@@ -99,6 +101,7 @@ SOURCE = OwnedRelativePath(value="marketplaces/settlement-market")
 INSTALLED = OwnedRelativePath(value="plugins/settlement-plugin")
 VERSION = CodexCliVersion(value="1.2.3")
 ATTEMPT = CodexRegistrationAttemptId(value="attempt-0123456789abcdef")
+OTHER_ATTEMPT = CodexRegistrationAttemptId(value="attempt-fedcba9876543210")
 DIGEST = ArtifactDigest(value="b" * 64)
 AUTH_POLICY = CodexAuthPolicy(value="trusted-local")
 PLUGIN_ID = CodexPluginId(value="plugin-settlement-012345")
@@ -478,6 +481,32 @@ class CodexRegistrationSettlementAuthorityTests(unittest.TestCase):
         cloned = object.__new__(CodexRegistrationProofClaim)
         object.__setattr__(cloned, "_metadata", other_claim.metadata())
         assert_claim_blocked(self, consume_codex_registration_proof_claim(cloned))
+
+    def test_cr155_in_place_valid_metadata_mutation_is_blocked_and_unchanged_claim_consumes_once(self) -> None:
+        unchanged_authority = authority(SettlementAdapter())
+        unchanged = plugin_claim(unchanged_authority)
+        self.assertIs(type(consume_codex_registration_proof_claim(unchanged)), CodexRegistrationProofRequired)
+
+        mutations: tuple[tuple[str, object], ...] = (
+            ("attempt_id", OTHER_ATTEMPT),
+            ("phase", CodexRegistrationPhase.FRESH_PREFLIGHT),
+            ("generation", CodexRegistrationGeneration(value=99)),
+        )
+        for field_name, alternate_value in mutations:
+            with self.subTest(field=field_name):
+                altered_authority = authority(SettlementAdapter())
+                altered = plugin_claim(altered_authority)
+                live_metadata = object.__getattribute__(altered, "_metadata")
+                object.__setattr__(live_metadata, field_name, alternate_value)
+                assert_claim_blocked(self, consume_codex_registration_proof_claim(altered))
+
+        trapped_authority = authority(SettlementAdapter())
+        trapped = plugin_claim(trapped_authority)
+        live_metadata = object.__getattribute__(trapped, "_metadata")
+        nested_trap = CallerTrap()
+        object.__setattr__(live_metadata, "attempt_id", nested_trap)
+        assert_claim_blocked(self, consume_codex_registration_proof_claim(trapped))
+        self.assertEqual(0, nested_trap.invocation_count)
 
     def test_c6_duplicate_consume_is_synchronized_and_owner_collection_reclaims_claim(self) -> None:
         current = authority(SettlementAdapter())
