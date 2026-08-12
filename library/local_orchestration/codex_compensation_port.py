@@ -62,11 +62,53 @@ class CodexInstalledPathAbsenceProof(_StrictModel):
     absent: Literal[True]
 
 
-CodexRemovePluginOperation: TypeAlias = Callable[[CodexCompensationPortRequest], CodexPluginRemovalProof]
-CodexRemoveMarketplaceOperation: TypeAlias = Callable[[CodexCompensationPortRequest], CodexMarketplaceRemovalProof]
-CodexListPluginsOperation: TypeAlias = Callable[[CodexCompensationPortRequest], CodexPluginList]
-CodexListMarketplacesOperation: TypeAlias = Callable[[CodexCompensationPortRequest], CodexMarketplaceList]
-CodexProveInstalledPathAbsentOperation: TypeAlias = Callable[[CodexCompensationPortRequest], CodexInstalledPathAbsenceProof]
+class CodexCompensationPortOperation(str, Enum):
+    """The one exact admitted operation bound into a finite failure envelope."""
+
+    REMOVE_PLUGIN = "REMOVE_PLUGIN"
+    REMOVE_MARKETPLACE = "REMOVE_MARKETPLACE"
+    LIST_PLUGINS = "LIST_PLUGINS"
+    LIST_MARKETPLACES = "LIST_MARKETPLACES"
+    PROVE_INSTALLED_PATH_ABSENT = "PROVE_INSTALLED_PATH_ABSENT"
+
+
+class CodexCompensationPortFailureReason(str, Enum):
+    """Finite metadata-only reasons for an admitted operation's returned failure."""
+
+    REQUEST_INVALID = "REQUEST_INVALID"
+    DEPENDENCY_BLOCKED = "DEPENDENCY_BLOCKED"
+    EVIDENCE_INVALID = "EVIDENCE_INVALID"
+
+
+class CodexCompensationPortOperationFailed(_StrictModel):
+    """Closed manifest-bound failure value with no diagnostic or new path authority."""
+
+    manifest: CodexCompensationPortManifest
+    operation: CodexCompensationPortOperation
+    status: Literal["FAILED"] = "FAILED"
+    reason: CodexCompensationPortFailureReason
+
+
+CodexRemovePluginOperation: TypeAlias = Callable[
+    [CodexCompensationPortRequest],
+    CodexPluginRemovalProof | CodexCompensationPortOperationFailed,
+]
+CodexRemoveMarketplaceOperation: TypeAlias = Callable[
+    [CodexCompensationPortRequest],
+    CodexMarketplaceRemovalProof | CodexCompensationPortOperationFailed,
+]
+CodexListPluginsOperation: TypeAlias = Callable[
+    [CodexCompensationPortRequest],
+    CodexPluginList | CodexCompensationPortOperationFailed,
+]
+CodexListMarketplacesOperation: TypeAlias = Callable[
+    [CodexCompensationPortRequest],
+    CodexMarketplaceList | CodexCompensationPortOperationFailed,
+]
+CodexProveInstalledPathAbsentOperation: TypeAlias = Callable[
+    [CodexCompensationPortRequest],
+    CodexInstalledPathAbsenceProof | CodexCompensationPortOperationFailed,
+]
 
 
 class CodexCompensationPortRejectReason(str, Enum):
