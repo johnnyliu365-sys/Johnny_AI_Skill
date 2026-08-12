@@ -7,6 +7,8 @@ import ntpath
 from typing import NoReturn
 import unittest
 
+from pydantic import ValidationError
+
 import library.local_orchestration.codex_registration_reducer as registration_reducer
 from library.local_orchestration.codex_command_attempts import (
     CodexCommandStartState,
@@ -47,8 +49,13 @@ from library.local_orchestration.codex_registration_reducer import (
     CodexRegistrationBlocked,
     CodexRegistrationCompensationRequired,
     CodexRegistrationProofRequired,
+    _journal_matches_request,
+    _plan_matches_rebuild,
     advance_codex_registration,
     begin_codex_registration,
+)
+from library.local_orchestration.codex_registration_settlement_authority import (
+    _rebuild_compensation_required,
 )
 from library.local_orchestration.contracts import (
     CANONICAL_INSTALL_ROOT,
@@ -260,6 +267,133 @@ def plugin_pending() -> CodexPluginAddPending:
 class CodexRegistrationReducerTests(unittest.TestCase):
     def test_d1_begin_requires_the_new_reducer_boundary(self) -> None:
         self.assertTrue(callable(begin_codex_registration))
+
+    def test_b1_terminal_compensation_retains_the_exact_registration_request(self) -> None:
+        current = marketplace_pending()
+        terminal = advance_codex_registration(current, None)
+        self.assertIsInstance(terminal, CodexRegistrationCompensationRequired)
+        if not isinstance(terminal, CodexRegistrationCompensationRequired):
+            raise AssertionError("expected terminal compensation")
+        self.assertEqual(current.request.model_dump(), terminal.request.model_dump())
+
+    def test_b2_every_terminal_compensation_path_carries_exact_request_context(self) -> None:
+        marketplace = marketplace_pending()
+        plugin = plugin_pending()
+        cases: tuple[tuple[CodexMarketplaceAddPending | CodexPluginAddPending, object], ...] = (
+            (marketplace, None),
+            (
+                plugin,
+                command_failure(
+                    plugin.request,
+                    CodexCommandTarget.PLUGIN_ADD,
+                    CodexStartedFailureReason.IDENTITY_MISMATCH,
+                ),
+            ),
+        )
+        for current, result in cases:
+            with self.subTest(phase=current.status):
+                terminal = advance_codex_registration(current, result)
+                self.assertIsInstance(terminal, CodexRegistrationCompensationRequired)
+                if not isinstance(terminal, CodexRegistrationCompensationRequired):
+                    raise AssertionError("expected terminal compensation")
+                self.assertEqual(current.request.model_dump(), terminal.request.model_dump())
+                self.assertEqual(current.request.preflight.model_dump(), terminal.journal.request.model_dump())
+                self.assertEqual(current.request.preflight.model_dump(), terminal.plan.request.model_dump())
+                self.assertEqual(current.request.attempt_id.model_dump(), terminal.journal.attempt_id.model_dump())
+                self.assertEqual(current.request.attempt_id.model_dump(), terminal.plan.attempt_id.model_dump())
+
+    def test_b3_terminal_compensation_rejects_mismatched_request_journal_and_plan(self) -> None:
+        terminal = self.compensation_terminal()
+        other_preflight = terminal.request.preflight.model_copy(
+            update={"marketplace": CodexMarketplaceName(value="other-market")}
+        )
+        mismatched_requests: tuple[tuple[str, CodexRegistrationPortRequest], ...] = (
+            ("preflight", terminal.request.model_copy(update={"preflight": other_preflight})),
+            ("attempt", terminal.request.model_copy(update={"attempt_id": OTHER_ATTEMPT})),
+        )
+        for field_name, altered_request in mismatched_requests:
+            with self.subTest(context="request", field=field_name):
+                altered = terminal.model_copy(update={"request": altered_request})
+                self.assert_context_rejected(altered)
+
+        malformed_fields = (
+            "preflight",
+            "attempt_id",
+            "expected_version",
+            "source_locator",
+            "installed_locator",
+            "digest",
+            "expected_auth_policy",
+            "expected_plugin_id",
+        )
+        for field_name in malformed_fields:
+            with self.subTest(context="request-shape", field=field_name):
+                trap = PlainTrap()
+                malformed_request = terminal.request.model_copy(update={field_name: trap})
+                self.assert_context_rejected(terminal.model_copy(update={"request": malformed_request}))
+                self.assertEqual(0, trap.invocation_count)
+
+        altered_journal = terminal.journal.model_copy(update={"attempt_id": OTHER_ATTEMPT})
+        alternate_plan = terminal.plan.model_copy(
+            update={
+                "journal": altered_journal,
+                "attempt_id": OTHER_ATTEMPT,
+                "identity": terminal.plan.identity.model_copy(update={"attempt_id": OTHER_ATTEMPT}),
+            }
+        )
+        self.assert_context_rejected(
+            terminal.model_copy(update={"journal": altered_journal, "plan": alternate_plan})
+        )
+
+    def test_b3_terminal_compensation_rejects_rebuilt_plan_substitution(self) -> None:
+        terminal = self.compensation_terminal()
+        substitutions: tuple[tuple[str, CodexCompensationPlan], ...] = (
+            ("status", terminal.plan.model_copy(update={"status": "NO_COMPENSATION_REQUIRED"})),
+            ("order", terminal.plan.model_copy(update={"steps": tuple(reversed(terminal.plan.steps))})),
+            (
+                "identity",
+                terminal.plan.model_copy(
+                    update={
+                        "identity": terminal.plan.identity.model_copy(
+                            update={"marketplace_state": CodexAttemptEffectState.NOT_ATTEMPTED}
+                        )
+                    }
+                ),
+            ),
+        )
+        for field_name, altered_plan in substitutions:
+            with self.subTest(context="plan", field=field_name):
+                self.assert_context_rejected(terminal.model_copy(update={"plan": altered_plan}))
+
+    def test_b6_request_journal_equality_rejects_a_foreign_attempt(self) -> None:
+        terminal = self.compensation_terminal()
+        altered_journal = terminal.journal.model_copy(update={"attempt_id": OTHER_ATTEMPT})
+        self.assertFalse(_journal_matches_request(altered_journal, terminal.request))
+
+    def test_b6_rebuilt_plan_equality_rejects_an_order_substitution(self) -> None:
+        terminal = self.compensation_terminal()
+        altered_plan = terminal.plan.model_copy(update={"steps": tuple(reversed(terminal.plan.steps))})
+        self.assertFalse(_plan_matches_rebuild(terminal.plan, altered_plan))
+
+    def test_b4_settlement_rebuild_preserves_context_and_rejects_constructed_invalid_context(self) -> None:
+        terminal = self.compensation_terminal()
+        rebuilt = _rebuild_compensation_required(terminal)
+        self.assertEqual(terminal.model_dump(), rebuilt.model_dump())
+
+        altered_journal = terminal.journal.model_copy(update={"attempt_id": OTHER_ATTEMPT})
+        altered = terminal.model_copy(update={"journal": altered_journal})
+        with self.assertRaises(ValidationError):
+            _rebuild_compensation_required(altered)
+
+    def compensation_terminal(self) -> CodexRegistrationCompensationRequired:
+        terminal = advance_codex_registration(marketplace_pending(), None)
+        if not isinstance(terminal, CodexRegistrationCompensationRequired):
+            raise AssertionError("expected terminal compensation")
+        return terminal
+
+    def assert_context_rejected(self, value: CodexRegistrationCompensationRequired) -> None:
+        with self.assertRaises(ValidationError):
+            CodexRegistrationCompensationRequired.model_validate(value)
 
     def test_r2_d1_exact_pending_copies_and_reconstruction_reduce_identically(self) -> None:
         fresh = fresh_pending()

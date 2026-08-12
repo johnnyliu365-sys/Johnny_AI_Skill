@@ -5,7 +5,7 @@ from __future__ import annotations
 from enum import Enum
 from typing import Literal, TypeAlias, cast
 
-from pydantic import BaseModel, ConfigDict, ValidationError
+from pydantic import BaseModel, ConfigDict, ValidationError, model_validator
 
 from .codex_command_attempts import (
     CodexCommandClassificationRejected,
@@ -21,6 +21,7 @@ from .codex_command_attempts import (
 )
 from .codex_compensation_reducer import (
     CodexCompensationPlan,
+    CodexCompensationPlanIdentity,
     build_compensation_plan,
 )
 from .codex_registration_contracts import (
@@ -28,6 +29,7 @@ from .codex_registration_contracts import (
     CodexMarketplaceAddObservation,
     CodexPluginAddObservation,
     CodexPluginId,
+    CodexRegistrationAttemptId,
     CodexRegistrationAttemptJournal,
     CodexRegistrationProofRequest,
     CodexRegistrationRejected,
@@ -47,6 +49,7 @@ from .codex_registration_port import (
     revalidate_plugin_add_result,
     revalidate_registration_port_request,
 )
+from .host_contracts import CodexPreflightRequest
 
 
 class _StrictModel(BaseModel):
@@ -99,9 +102,17 @@ class CodexRegistrationProofRequired(_StrictModel):
 
 
 class CodexRegistrationCompensationRequired(_StrictModel):
+    """A terminal, recursively request-bound compensation decision."""
+
     status: Literal["COMPENSATION_REQUIRED"] = "COMPENSATION_REQUIRED"
+    request: CodexRegistrationPortRequest
     journal: CodexRegistrationAttemptJournal
     plan: CodexCompensationPlan
+
+    @model_validator(mode="after")
+    def exact_compensation_context(self) -> CodexRegistrationCompensationRequired:
+        _rebuild_compensation_context(self.request, self.journal, self.plan)
+        return self
 
 
 class CodexRegistrationBlocked(_StrictModel):
@@ -382,7 +393,209 @@ def _compensation_required(
     plan = build_compensation_plan(journal, request.preflight, request.attempt_id)
     if type(plan) is not CodexCompensationPlan:
         return _blocked(CodexRegistrationBlockReason.COMPENSATION_PLAN_INVALID)
-    return CodexRegistrationCompensationRequired(journal=journal, plan=plan)
+    try:
+        context_request, context_journal, context_plan = _rebuild_compensation_context(request, journal, plan)
+        return CodexRegistrationCompensationRequired(
+            request=context_request,
+            journal=context_journal,
+            plan=context_plan,
+        )
+    except (AttributeError, TypeError, ValidationError, ValueError):
+        return _blocked(CodexRegistrationBlockReason.COMPENSATION_PLAN_INVALID)
+
+
+def _rebuild_compensation_context(
+    request_value: object,
+    journal_value: object,
+    plan_value: object,
+) -> tuple[CodexRegistrationPortRequest, CodexRegistrationAttemptJournal, CodexCompensationPlan]:
+    """Rebuild only one exact request, journal, and compensation plan context."""
+
+    request = revalidate_registration_port_request(request_value)
+    if isinstance(request, CodexRegistrationPortValueRejected):
+        raise ValueError("compensation request is invalid")
+    journal = _revalidate_pending_journal(journal_value, request)
+    if isinstance(journal, CodexRegistrationBlocked) or not _journal_matches_request(journal, request):
+        raise ValueError("compensation journal is invalid")
+    rebuilt_plan = build_compensation_plan(journal, request.preflight, request.attempt_id)
+    if type(rebuilt_plan) is not CodexCompensationPlan:
+        raise ValueError("compensation plan is invalid")
+    if type(plan_value) is not CodexCompensationPlan:
+        raise ValueError("compensation plan is invalid")
+    if not _plan_matches_rebuild(rebuilt_plan, plan_value):
+        raise ValueError("compensation plan is invalid")
+    return request, journal, rebuilt_plan
+
+
+def _journal_matches_request(
+    journal: CodexRegistrationAttemptJournal,
+    request: CodexRegistrationPortRequest,
+) -> bool:
+    """Compare only rebuilt primitive request and journal fields."""
+
+    try:
+        if (
+            type(journal) is not CodexRegistrationAttemptJournal
+            or type(journal.request) is not type(request.preflight)
+            or type(journal.attempt_id) is not type(request.attempt_id)
+            or type(journal.marketplace_state) is not CodexAttemptEffectState
+            or type(journal.plugin_state) is not CodexAttemptEffectState
+        ):
+            return False
+        return _preflights_match(journal.request, request.preflight) and _attempts_match(
+            journal.attempt_id,
+            request.attempt_id,
+        )
+    except AttributeError:
+        return False
+
+
+def _preflights_match(left: CodexPreflightRequest, right: CodexPreflightRequest) -> bool:
+    """Compare exact built-in fields only after concrete-type admission."""
+
+    if type(left) is not type(right):
+        return False
+    try:
+        left_installation = left.installation_id
+        right_installation = right.installation_id
+        left_root = left.root
+        right_root = right.root
+        left_marketplace = left.marketplace
+        right_marketplace = right.marketplace
+        left_plugin = left.plugin
+        right_plugin = right.plugin
+        left_source = left.marketplace_source
+        right_source = right.marketplace_source
+        if (
+            type(left_installation) is not type(right_installation)
+            or type(left_root) is not type(right_root)
+            or type(left_marketplace) is not type(right_marketplace)
+            or type(left_plugin) is not type(right_plugin)
+            or type(left_source) is not type(right_source)
+        ):
+            return False
+        left_values = (
+            left_installation.value,
+            left_root.value,
+            left_marketplace.value,
+            left_plugin.value,
+            left_source.value,
+        )
+        right_values = (
+            right_installation.value,
+            right_root.value,
+            right_marketplace.value,
+            right_plugin.value,
+            right_source.value,
+        )
+    except AttributeError:
+        return False
+    if not all(type(value) is str for value in (*left_values, *right_values)):
+        return False
+    return left_values == right_values
+
+
+def _attempts_match(left: CodexRegistrationAttemptId, right: CodexRegistrationAttemptId) -> bool:
+    """Compare validated attempt values without model equality."""
+
+    if type(left) is not type(right):
+        return False
+    try:
+        left_value = left.value
+        right_value = right.value
+    except AttributeError:
+        return False
+    return type(left_value) is str and type(right_value) is str and left_value == right_value
+
+
+def _journals_match(
+    left: CodexRegistrationAttemptJournal,
+    right: CodexRegistrationAttemptJournal,
+) -> bool:
+    """Compare every rebuilt journal field without Pydantic equality or serialization."""
+
+    try:
+        if (
+            type(left) is not CodexRegistrationAttemptJournal
+            or type(right) is not CodexRegistrationAttemptJournal
+            or type(left.marketplace_state) is not CodexAttemptEffectState
+            or type(right.marketplace_state) is not CodexAttemptEffectState
+            or type(left.plugin_state) is not CodexAttemptEffectState
+            or type(right.plugin_state) is not CodexAttemptEffectState
+        ):
+            return False
+        return (
+            _preflights_match(left.request, right.request)
+            and _attempts_match(left.attempt_id, right.attempt_id)
+            and left.marketplace_state is right.marketplace_state
+            and left.plugin_state is right.plugin_state
+        )
+    except AttributeError:
+        return False
+
+
+def _plan_identity_matches(
+    left: CodexCompensationPlanIdentity,
+    right: CodexCompensationPlanIdentity,
+) -> bool:
+    """Compare only exact fields in the immutable compensation identity."""
+
+    try:
+        if (
+            type(left) is not CodexCompensationPlanIdentity
+            or type(right) is not CodexCompensationPlanIdentity
+            or type(left.marketplace_state) is not CodexAttemptEffectState
+            or type(right.marketplace_state) is not CodexAttemptEffectState
+            or type(left.plugin_state) is not CodexAttemptEffectState
+            or type(right.plugin_state) is not CodexAttemptEffectState
+        ):
+            return False
+        return (
+            _preflights_match(left.request, right.request)
+            and _attempts_match(left.attempt_id, right.attempt_id)
+            and left.marketplace_state is right.marketplace_state
+            and left.plugin_state is right.plugin_state
+        )
+    except AttributeError:
+        return False
+
+
+def _plan_matches_rebuild(
+    rebuilt: CodexCompensationPlan,
+    supplied: CodexCompensationPlan,
+) -> bool:
+    """Require every supplied plan field to equal the sole rebuilt plan."""
+
+    try:
+        if (
+            type(rebuilt) is not CodexCompensationPlan
+            or type(supplied) is not CodexCompensationPlan
+            or type(rebuilt.status) is not str
+            or type(supplied.status) is not str
+            or type(rebuilt.steps) is not tuple
+            or type(supplied.steps) is not tuple
+            or type(rebuilt.journal) is not CodexRegistrationAttemptJournal
+            or type(supplied.journal) is not CodexRegistrationAttemptJournal
+            or type(rebuilt.identity) is not CodexCompensationPlanIdentity
+            or type(supplied.identity) is not CodexCompensationPlanIdentity
+        ):
+            return False
+        if len(rebuilt.steps) != len(supplied.steps):
+            return False
+        if any(
+            type(rebuilt_step) is not type(supplied_step) or rebuilt_step is not supplied_step
+            for rebuilt_step, supplied_step in zip(rebuilt.steps, supplied.steps, strict=True)
+        ):
+            return False
+        return (
+            rebuilt.status == supplied.status
+            and _journals_match(rebuilt.journal, supplied.journal)
+            and _preflights_match(rebuilt.request, supplied.request)
+            and _attempts_match(rebuilt.attempt_id, supplied.attempt_id)
+            and _plan_identity_matches(rebuilt.identity, supplied.identity)
+        )
+    except AttributeError:
+        return False
 
 
 def _proof_required(
