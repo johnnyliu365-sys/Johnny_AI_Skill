@@ -2805,6 +2805,18 @@
 | Lane | Planned existing task `019fcc9c-f34f-7d53-a313-c70c90bf3245` / `workflow-implementation`; no new worktree. Freeze is not dispatch. |
 | Security | `XSS_NOT_APPLICABLE`; no renderer/JavaScript/bridge. No live Codex, filesystem, process, host, network, target-project, push, release or deployment authority. |
 
+## PRG-20260812-252 — Ticket 05B4B2C proof-settlement implementation handoff
+
+| Field | Value |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05B4B2C) -> ACTION_COMPLETED -> REVIEW_HANDOFF`; independent review remains required. |
+| Ticket / binding | `05b4b2c-codex-registration-proof-settlement`; `CLOSURE-LOCAL-INSTALL-T05B4B2C-01` / P1-P8; `hnd_local_orchestration_install_05b4b2c_20260812`; `aln_local_orchestration_install_05b4b2c_20260812`; `rcpt_local_orchestration_install_05b4b2c_20260812`; `corr-local-orchestration-install-05b4b2c-20260812`; `q-local-orchestration-install-05b4b2c-20260812`; `scx-local-orchestration-install-05b4b2c-20260812-01`; freeze `2183afb3956744163c22cb16f1c2285d0aa82de8`; dispatch `8109551a0e96a0773aff138167eec6369667293b`. |
+| Implementation / scope | Implementation `c27924f` descends from the dispatch and changes exactly the two authorized new paths: proof settlement source and its focused test. The entry admits the integrated port before one claim consumption, blocks invalid ports while retaining the live claim, and dispatches the rebuilt proof request only through the integrated receipt issuer. No package export or integrated source/test changed. |
+| First red / P1-P6 green | The initial focused import failed exactly with `ModuleNotFoundError` while the production module was absent. The retained focused suite then passed 7/7: invalid port candidates leave claims live and make zero caller calls; invalid, fabricated, altered, metadata-only, wrong-kind and replay claims block; an exact claim reaches only one proof call and yields the metadata-only receipt; declared/malformed/every exact-field mismatch remain finite; unexpected failures propagate after one call; synchronized duplicates yield one receipt and one claim block. |
+| P8 reverse evidence | Five isolated mutations made their named committed regressions red, then each source blob was restored: admission after consumption made P2 fail in 8 cells; non-exact claim consumption made P4 fail; proof-dispatch removal made P4 fail; direct proof return bypassing the integrated issuer made P5 fail in 14 mismatch cells plus the declared-failure path; duplicate claim consumption before proof made P6 fail. The restored focused suite passed 7/7. |
+| Verification / residue | `python -B -m unittest tests.test_codex_registration_proof_settlement -v` passed 7/7. `python -B -m unittest discover -s tests -q` passed 337/337. Strict mypy with `--strict --explicit-package-bases --no-incremental` passed 128 Python files using a repository-external cache that was removed and read back absent. In-memory compile passed 128 files; source sentinel, `git diff --check`, exact two-path scope, dispatch ancestry and three-worktree topology passed. Tracked/ignored readback and repository cache scan were clean before this handoff edit. |
+| XSS / non-interference | `XSS_NOT_APPLICABLE`: no renderer, HTML/DOM, JavaScript context or privileged bridge was added. Only injected in-memory fakes ran; no add, compensation, oracle, process, filesystem, host, network, target-project or live Codex effect occurred. No Agent control, review/integration decision, push, release or deployment was performed. This is an implementation return, not self-review. |
+
 ## PRG-20260812-250 — Ticket 05B4B2C dispatch registry
 
 | Field | Value |
