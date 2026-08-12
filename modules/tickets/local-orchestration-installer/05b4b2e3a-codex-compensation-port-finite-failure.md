@@ -33,7 +33,8 @@ into confirmed removal or proved absence.
   exactly `REQUEST_INVALID`, `DEPENDENCY_BLOCKED` and `EVIDENCE_INVALID`.
   One frozen strict `CodexCompensationPortOperationFailed` contains only exact
   manifest, operation, `FAILED` status and reason. It carries no exception,
-  message, path, raw oracle state or diagnostic.
+  message, raw oracle state, diagnostic or locator/path field outside the
+  already required exact manifest.
 - Extend each operation alias only with that failure envelope. Capability
   admission and its no-descriptor/no-execution behavior remain unchanged.
 - Composition accepts a failure only when the envelope and recursively retained
@@ -56,7 +57,7 @@ into confirmed removal or proved absence.
 | `F3` | Exact matching removal failures reduce only to declared removal failures and preserve corresponding residual authority. |
 | `F4` | Exact matching list/path failures reduce only to `UNPROVED` and never to `MALFORMED`, `CONFIRMED` or `PROVED_ABSENT`. |
 | `F5` | Wrong operation/manifest, raw/subclass/container/null, missing/extra/constructed-invalid and injected original state cannot claim success or absence and invoke no caller protocol. |
-| `F6` | Failure serialization is metadata-only and contains no callable, exception text, raw diagnostic, absolute path or oracle state. Existing ordinary-exception propagation is unchanged. |
+| `F6` | Failure serialization is metadata-only and contains no callable, exception text, raw diagnostic, oracle state or locator/path field outside the required exact manifest. The manifest's existing `root` authority remains present and no new path authority is added. Existing ordinary-exception propagation is unchanged. |
 | `F7` | Source adds no `Any`, `type: ignore`, broad catch, optional authority, dynamic lookup/signature or historical-source reuse. `XSS_NOT_APPLICABLE`. |
 | `F8` | Reverse operation matching, manifest matching and failure normalization independently. Each named test turns red, exact blobs restore, and focused/full unittest, strict mypy, compile, source/scope/diff/ancestry/topology/residue checks pass. |
 
@@ -103,3 +104,14 @@ required before the implementation owner may switch branch or edit.
 
 This is the single dispatch. Only the four exact implementation paths and a
 later WPR-only `PRG-20260813-284` are writable in this lane.
+
+## Post-dispatch wording correction
+
+Control review found one internal wording contradiction before implementation
+return: the frozen envelope must contain the exact manifest, and that integrated
+manifest necessarily contains its existing `root` authority, so an absolute
+ban on every serialized absolute path was impossible. The unchanged F6 intent
+is now explicit: the envelope may contain the exact manifest and must add no
+path/locator field outside it. This is `TICKET_DEFECT / SAME_CLOSURE`; F1-F8,
+owner, branch, worktree, allocation, receipt, correlation and writable scope
+remain unchanged.

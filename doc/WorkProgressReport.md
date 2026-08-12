@@ -3148,3 +3148,12 @@
 | Freeze / binding | `341a58bcfc8b6553db149a56ac005ac9fafec373`; F1-F8; `hnd_local_orchestration_install_05b4b2e3a_20260813`; `aln_local_orchestration_install_05b4b2e3a_20260813`; `rcpt_local_orchestration_install_05b4b2e3a_20260813`; `corr-local-orchestration-install-05b4b2e3a-20260813`; `scx-local-orchestration-install-05b4b2e3a-20260813-01`. |
 | Lane | Idle task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; exact clean submitted HEAD `658f3d7e886d1fd5ddca7bc2c39a8cd887afa4d0` in existing `workflow-implementer-2`; zero tracked/ignored/cache residue; exactly three worktrees; target branch absent; no new worktree. |
 | Return | Exact four-path implementation commit, then WPR-only PRG-284. Reviewer retains sole orchestration and review authority. No E3 adapter, staging push or package work. |
+
+## PRG-20260813-285 — Ticket 05B4B2E3A wording-defect correction
+
+| Field | Value |
+| --- | --- |
+| Router event | `IMPLEMENT_ACTIVE(05B4B2E3A) -> TICKET_DEFECT_DETECTED -> SAME_CLOSURE_WORDING_CORRECTION` |
+| Defect | F6 required an envelope containing the exact integrated manifest while also appearing to ban the manifest's existing absolute `root`; those statements were internally impossible together. |
+| Correction | The exact manifest remains required. Failure serialization may add no locator/path field outside that manifest and still carries no callable, exception text, raw diagnostic or oracle state. No new authority or product behavior is introduced. |
+| Continuity | Retain F1-F8, task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`, existing worktree/branch, allocation, receipt, correlation and four-path scope. No restart, new branch or worktree. |
