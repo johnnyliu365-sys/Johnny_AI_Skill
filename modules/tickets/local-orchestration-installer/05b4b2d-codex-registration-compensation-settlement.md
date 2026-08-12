@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / unchanged AC-01, AC-02, AC-07 and AC-08 compensation seam |
-| State | `IN_PROGRESS / DISPATCH_CONFIRMED` |
+| State | `APPROVED / READY_TO_MERGE` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B4B2D-01` / S1-S9 |
 | Dependency | 05B4B2B2 integrated by `e7cd37b5abde7b9c693315e38fcd73dc0a001dc2` |
 | Planned owner | Task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2`; one new ticket branch in that same worktree, no new worktree |
@@ -103,3 +103,9 @@ commit and verified clean lane before implementation starts.
 
 This is the single dispatch. Only the exact two implementation paths and later
 WPR-only PRG-20260812-260 are writable in this lane.
+
+## Review decision
+
+Terminal independent review of implementation `bf9278f182bf2a6e11e62e83c67f43e276e73dfe`
+and WPR-only handoff `60a8311548edfd096733d1d7cf1e1eb928077f55`
+is `APPROVED / READY_TO_MERGE` under S1-S9.

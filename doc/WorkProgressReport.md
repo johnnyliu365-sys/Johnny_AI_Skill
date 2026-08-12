@@ -2922,3 +2922,13 @@
 | Remote preflight | `origin/main=cbdfa7751c21c0355cb3aaaae5b7f045d9e84154`; no remote/local `staging` branch exists; pre-change local `main=11616fc6bd26dd8ce70cab675ed7411644a45734` and is ahead of origin. Therefore no push is performed now. Future authority is restricted to 04D create-or-fast-forward publication of the exact 04C candidate with mandatory remote SHA readback. |
 | Convergence | `CHG-20260812-014`; ADR-20260812-006; PRD §15; local installer Context; SPEC AC-11/AC-12. Package parent 04 is `DECOMPOSED / NON_DISPATCHABLE`; serial 04A-04I separately own payload manifest, Inno build source, complete-candidate freeze, staging backup, disposable-Windows environment qualification, clean-export release build, install verification, uninstall/absence verification and first-version evidence freeze. |
 | Non-interference | 05B4B2D remains active under its existing owner/worktree/branch/receipt and was not interrupted, steered, rebased or modified. No worktree/branch was created, no package child was selected or dispatched, and no push, build, install, release, deployment, target-project mutation or Secret handling occurred. |
+
+## PRG-20260813-262 — Ticket 05B4B2D terminal independent review
+
+| Field | Value |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05B4B2D) -> TERMINAL_CODE_REVIEW -> APPROVED -> GUARDED_INTEGRATION_READY` |
+| Immutable return | `11616fc6bd26dd8ce70cab675ed7411644a45734 -> bf9278f182bf2a6e11e62e83c67f43e276e73dfe -> 60a8311548edfd096733d1d7cf1e1eb928077f55`; exact two implementation paths then WPR-only PRG-260. |
+| Independent evidence | Unicode-safe repository-external snapshot passed focused 9/9, serial full 353/353, strict mypy 130 files and compile 130 files. Six isolated reversals covering admission order, claim gate, manifest source, terminal plan, recovery plan and single composition turned the named tests red; final fresh export reproduced immutable source/test blobs. |
+| Environment note | Native Windows `tar` mangled the names of two pre-existing Chinese package directories and caused seven false full-suite failures. Re-export with Python `tarfile` preserved the exact Git tree and passed 353/353; the false result is test-environment interference, not a B2D source defect. |
+| Disposition | `APPROVED / READY_TO_MERGE`; S1-S9 closed; `XSS_NOT_APPLICABLE`; only exact handoff `60a8311548edfd096733d1d7cf1e1eb928077f55` may be guarded-integrated. |
