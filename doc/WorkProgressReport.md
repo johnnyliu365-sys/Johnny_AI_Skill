@@ -3035,3 +3035,14 @@
 | Closure | CR-157 closed: alternate valid logical path removal is blocked and state/payload remain byte-identical. CR-158 closed: segment-ending space/period is rejected by parent, fresh-child and persisted-state gates. |
 | Independent evidence | Unicode-safe external snapshot passed focused 17/17, full 360/360, strict mypy 130 files and compile 130 files. Removing exact-path comparison made CR-157 red; removing parent/child normalization guards made the named CR-158 cells red; immutable blobs restored and named tests green. |
 | Disposition | `APPROVED / READY_TO_MERGE`; only exact handoff `002b2982cbf111262865946dc16d83c23a7bc879` may enter guarded integration. `XSS_NOT_APPLICABLE`. No push, package, release, deployment or target-project effect. |
+
+## PRG-20260813-272 — Ticket 05B4B2E0 integration and 05B4B2E1 reviewed freeze
+
+| Field | Value |
+| --- | --- |
+| Router event | `REVIEW_APPROVED(05B4B2E0) -> GUARDED_INTEGRATION -> ACTION_COMPLETED -> CHILD_SELECTED(05B4B2E1) -> TICKET_FROZEN / DISPATCH_PENDING` |
+| E0 integration | Merge `3fc2f99f9cd4a7fff3e100918089ffed99cc16ab`; first parent approval `28486b8bee3a3df912cdfca9f2061b12c2704b94`; second parent exact handoff `002b2982cbf111262865946dc16d83c23a7bc879`. The sole WPR conflict was explicitly resolved by retaining PRG-267 through PRG-271 once. |
+| Post-merge verification | Focused oracle 17/17, full serial 360/360, strict mypy 130 files and compile 130 files passed; exact merge topology, diff and three-worktree topology passed. E0 is complete; allocation released and receipt closed. |
+| E1 freeze | `CLOSURE-LOCAL-INSTALL-T05B4B2E1-01` / I1-I8. Pure staging mapper recursively revalidates one exact registration request and derives a deterministic oracle identity with canonical logical paths and named fixture-only labels; no port, command or effect. |
+| Planned lane | Existing task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` in `workflow-implementer-2`; no new worktree. Freeze is not dispatch; exact lane/readback and registry remain required. |
+| Package boundary | No staging push, package, release, deployment or target-project action. 04D remains the only future staging warm-backup authority after exact 04C candidate freeze. |

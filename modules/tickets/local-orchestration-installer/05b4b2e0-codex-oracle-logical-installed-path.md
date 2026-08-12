@@ -111,6 +111,16 @@ focused 17/17, full 360/360, strict mypy 130 files, compile 130 files and the
 two reviewer reverse gates pass. Only guarded integration of the exact
 handoff is next; E1 remains dependency-blocked until that merge completes.
 
+## Guarded integration
+
+Merge `3fc2f99f9cd4a7fff3e100918089ffed99cc16ab` has first parent approval
+`28486b8bee3a3df912cdfca9f2061b12c2704b94` and second parent exact handoff
+`002b2982cbf111262865946dc16d83c23a7bc879`. The explicit WPR resolution keeps
+PRG-267 through PRG-271 once. Post-merge focused 17/17, full 360/360, strict
+mypy 130 files and compile 130 files pass. State is
+`COMPLETED / APPROVED / INTEGRATED`; the allocation is released and receipt
+closed against replay.
+
 ## Planned dispatch binding
 
 | Field | Value |

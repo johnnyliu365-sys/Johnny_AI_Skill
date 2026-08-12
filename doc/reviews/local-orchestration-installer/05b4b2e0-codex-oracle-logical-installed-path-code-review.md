@@ -80,3 +80,13 @@ the control review and correction handoff are committed.
 integration may merge only exact handoff
 `002b2982cbf111262865946dc16d83c23a7bc879`, preserving this approval as
 first-parent control history. E1 remains blocked until integration completes.
+
+## Guarded integration
+
+Merge `3fc2f99f9cd4a7fff3e100918089ffed99cc16ab` preserves approval
+`28486b8bee3a3df912cdfca9f2061b12c2704b94` as first parent and exact handoff
+`002b2982cbf111262865946dc16d83c23a7bc879` as second parent. The sole conflict
+was append-only WPR evidence; PRG-267 through PRG-271 were explicitly retained
+once and in event order. Post-merge focused 17/17, full 360/360, strict mypy
+130 files and compile 130 files pass. E0 is complete and its allocation and
+receipt are closed against replay.
