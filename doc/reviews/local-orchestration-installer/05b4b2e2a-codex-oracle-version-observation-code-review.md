@@ -49,3 +49,13 @@ or create a new executable/path authority.
 `6a752f4d79fcb8e7af47ad9d00c05a3484fd4505`, preserving this approval in the
 first-parent control history. No staging push, package, release, deployment or
 target-project action is authorized.
+
+## Guarded integration record
+
+`APPROVED / INTEGRATED`. Merge
+`52a2a4e4f1a823e875a88fb6bea48e7021270602` has approval
+`fcaf0dceda3f4407e6bcde11ee92faa179669574` as first parent and exact handoff
+`6a752f4d79fcb8e7af47ad9d00c05a3484fd4505` as second parent. The WPR conflict
+retains PRG-283, PRG-285 and PRG-286 once. After both prerequisite merges,
+combined focused 44/44, full 379/379, strict mypy and compile over 132 files
+pass; main is clean and exactly three worktrees remain.

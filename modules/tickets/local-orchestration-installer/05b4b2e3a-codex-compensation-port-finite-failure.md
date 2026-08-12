@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / unchanged AC-02, AC-07 and AC-08 effect boundary |
-| State | `COMPLETED / APPROVED / GUARDED_INTEGRATION_READY` |
+| State | `COMPLETED / APPROVED / INTEGRATED` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B4B2E3A-01` / F1-F8 |
 | Dependency | Compensation port/composition integrated; E1 integrated by `27c8305200f61d9658aa5b2b32bd15a7db4d0b4c` |
 | Planned owner | Task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2`; no new worktree |
@@ -111,6 +111,14 @@ later WPR-only `PRG-20260813-284` are writable in this lane.
 `a51adfb3412e38bfb108f950f5628cea7bfc24af -> 33ff1b1254632ce7a3215bfa64894be9c37c14f9 -> 5e3b3ccca6357ec485376009eecf06f3c4a4dbb7`.
 Focused 17/17, isolated full serial 375/375, strict mypy and in-memory compile
 over 132 files passed. Only the exact handoff may enter guarded integration.
+
+## Guarded integration
+
+Merge `b324f913b69a5c25d16f2d9d1ac4b6c00e8c2a2b` has first parent approval
+`a80f640f7cce53e4937a5915cba350d7ecb9444d` and second parent exact handoff
+`5e3b3ccca6357ec485376009eecf06f3c4a4dbb7`. Post-merge combined focused
+44/44, full 379/379, strict mypy and compile over 132 files pass. Ticket is
+complete; allocation is released and receipt closed.
 
 ## Post-dispatch wording correction
 

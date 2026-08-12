@@ -3202,3 +3202,14 @@
 | Closure | F1-F8 pass: the five-operation failure value is exact manifest/operation-bound, maps only exact finite failures to conservative existing reducer observations, rejects wrong/foreign/injected values and preserves ordinary exception propagation. F6 retains manifest root but exports no additional path/locator or diagnostics. |
 | Independent evidence | External immutable snapshot passed focused 17/17, full serial 375/375 in a unique external temp root, strict mypy 132 files and compile 132 files. Reviewer probes independently covered enum/envelope serialization, wrong operation, foreign manifest, recursive injected state/trap and exception propagation. |
 | Disposition | `APPROVED / READY_TO_MERGE`; only exact handoff `5e3b3ccca6357ec485376009eecf06f3c4a4dbb7` may enter guarded integration. `XSS_NOT_APPLICABLE`. No E3 adapter, staging push, package, release, deployment or target-project effect. |
+
+## PRG-20260813-288 — E2A/E3A guarded integration completion
+
+| Field | Value |
+| --- | --- |
+| Router event | `REVIEW_APPROVED(05B4B2E2A,05B4B2E3A) -> GUARDED_INTEGRATION -> ACTION_COMPLETED / TICKETS_COMPLETED` |
+| E2A integration | Merge `52a2a4e4f1a823e875a88fb6bea48e7021270602`; first parent approval `fcaf0dceda3f4407e6bcde11ee92faa179669574`; second parent exact handoff `6a752f4d79fcb8e7af47ad9d00c05a3484fd4505`. |
+| E3A integration | Merge `b324f913b69a5c25d16f2d9d1ac4b6c00e8c2a2b`; first parent approval `a80f640f7cce53e4937a5915cba350d7ecb9444d`; second parent exact handoff `5e3b3ccca6357ec485376009eecf06f3c4a4dbb7`. |
+| Post-merge evidence | Combined focused protocol/oracle/compensation suites passed 44/44; full serial discovery passed 379/379 in a unique external temp root; strict mypy and in-memory compile passed 132 files. Merge topology, clean main and exactly three worktrees passed. |
+| Completion | E2A and E3A are `COMPLETED / APPROVED / INTEGRATED`; both allocations are released and receipts closed. E2/E3 adapters require new reviewed freezes and unique bindings from this integrated baseline. |
+| Package boundary | No staging push, package, release, deployment or target-project action. Remote `staging` remains reserved for future 04D after exact 04C candidate freeze. |
