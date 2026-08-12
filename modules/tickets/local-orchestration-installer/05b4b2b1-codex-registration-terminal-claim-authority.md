@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / unchanged AC-01, AC-02, AC-07 and AC-08 settlement seam |
-| State | `FROZEN / DISPATCH_PENDING` |
+| State | `IN_PROGRESS / DISPATCH_CONFIRMED` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B4B2B1-01` / C1-C8 |
 | Dependency | 05B4B2B independently approved and integrated by `63e8a7b6825f1807b5810007edcc10744149182d` |
 | Planned owner | Task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2`; one new branch in the same worktree, no new worktree |
@@ -93,5 +93,15 @@ release or deployment is authorized.
 | Owner / lane | Task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2`; later create only `codex/implementation-codex-registration-terminal-claim-05b4b2b1` from the exact dispatch commit. |
 | Return | Exact two-path implementation commit, then WPR-only PRG-20260812-242. |
 
-Freeze is not dispatch. A later dispatch registry and exact clean-lane readback
-must exist before branch switch or source/test edit.
+## Dispatch registry
+
+| Field | Value |
+| --- | --- |
+| Reviewed freeze | `594072f0bedead9d9f54553b31eed976b605ee02`; corrected C1-C8 including terminal and started-add recovery claims |
+| Delivery authority | Project owner instruction `繼續 不要卡住`; `IMPLEMENTATION_DISPATCH_CONFIRMED` for this ticket only |
+| Lane readback | Task is idle; existing `workflow-implementer-2` is clean at exact submitted HEAD `2fbe55f0cd8dc18788dd121ff1529d81d6b52409`; exactly three existing worktrees |
+| Branch | Create only `codex/implementation-codex-registration-terminal-claim-05b4b2b1` from the exact dispatch-registry commit; no new worktree |
+| Binding | `hnd_local_orchestration_install_05b4b2b1_20260812`; `aln_local_orchestration_install_05b4b2b1_20260812`; `rcpt_local_orchestration_install_05b4b2b1_20260812`; `corr-local-orchestration-install-05b4b2b1-20260812`; `q-local-orchestration-install-05b4b2b1-20260812`; `scx-local-orchestration-install-05b4b2b1-20260812-01` |
+
+This registry is the single dispatch. The implementation owner may work only
+the exact two source/test paths and later the WPR-only PRG-20260812-242 return.

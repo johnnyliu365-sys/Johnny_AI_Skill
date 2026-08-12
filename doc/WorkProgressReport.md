@@ -2689,6 +2689,16 @@
 | Scope / XSS | Same closure C1-C8 and exact two new source/test paths; no effect ticket added. `XSS_NOT_APPLICABLE`. Implementation handoff evidence is reserved as PRG-20260812-242. |
 | Stop | Refreeze remains non-dispatch. B2C/B2D remain unallocated until B2B1 is independently approved and integrated. |
 
+## PRG-20260812-240 — Ticket 05B4B2B1 implementation dispatch
+
+| Field | Value |
+| --- | --- |
+| Router event | `TICKET_REFROZEN -> TICKET_DISPATCH_REQUIRED -> IMPLEMENTATION_DISPATCH_CONFIRMED / IMPLEMENT` |
+| Reviewed authority | Corrected freeze `594072f0bedead9d9f54553b31eed976b605ee02`; `05b4b2b1-codex-registration-terminal-claim-authority`; `CLOSURE-LOCAL-INSTALL-T05B4B2B1-01`; exact C1-C8. |
+| Binding | `hnd_local_orchestration_install_05b4b2b1_20260812`; `aln_local_orchestration_install_05b4b2b1_20260812`; `rcpt_local_orchestration_install_05b4b2b1_20260812`; `corr-local-orchestration-install-05b4b2b1-20260812`; `q-local-orchestration-install-05b4b2b1-20260812`; `scx-local-orchestration-install-05b4b2b1-20260812-01`. |
+| Owner / admission | Same idle task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing clean `workflow-implementer-2` at exact submitted HEAD `2fbe55f0cd8dc18788dd121ff1529d81d6b52409`; exactly three existing worktrees. Create only `codex/implementation-codex-registration-terminal-claim-05b4b2b1` from this dispatch-registry commit. Project-owner instruction `繼續 不要卡住` is the positive delivery confirmation. |
+| Scope / return | New settlement-authority module and focused test only, then WPR-only PRG-20260812-242. No new worktree/Agent, B2C/B2D effect, package/export edit, live Codex/process/filesystem/host/network/target-project mutation, review/integration, push, release or deployment. `XSS_NOT_APPLICABLE`. |
+
 ## PRG-20260812-235 — Ticket 05B4B2B CR-154 bounded correction handoff
 
 | Field | Value |
