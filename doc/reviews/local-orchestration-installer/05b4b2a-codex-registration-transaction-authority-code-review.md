@@ -2,12 +2,12 @@
 
 ## Review decision
 
-`CHANGES_REQUESTED / IMPLEMENTATION_DEFECT / SAME_CLOSURE_CORRECTION`
+`APPROVED / READY_TO_MERGE`
 
-The immutable return satisfies scope, ancestry, transaction sequencing,
-concurrency, typing and effect-isolation gates. One frozen T5 boundary remains
-open: constructed-invalid lease metadata can execute caller-defined comparison
-or hashing code and raise before the authority returns its finite typed block.
+The immutable correction closes CR-150 without widening the ticket. Exact plain
+metadata types are now established before comparison, hashing or registry
+lookup, so constructed-invalid caller protocols return finite `INVALID_LEASE`
+without invocation. All T1-T8 gates pass.
 
 ## Reviewed immutable return
 
@@ -56,9 +56,19 @@ focused/full suites, strict full-tree mypy, compile, source sentinel and the T5
 guard-bypass reverse mutation. No new branch/worktree, public contract, port,
 effect, B2B-B2E/05C work, package, push, release or deployment is authorized.
 
+## Final correction review
+
+| Gate | Result |
+| --- | --- |
+| Immutable return | PASS: `312005e -> 4e6924b -> e4841ab`; correction changes only the existing transaction module/test and the handoff changes only `doc/WorkProgressReport.md` as PRG-20260812-221. |
+| CR-150 behavior | PASS: exact `str`/closed value-object/`int` gates precede literal comparison, numeric ordering and dictionary lookup. Constructed-invalid status comparison and attempt-key hashing traps both return `INVALID_LEASE` with invocation count zero. |
+| Independent verification | PASS: immutable ZIP export named CR-150 1/1, focused 11/11 and full 294/294; strict mypy and in-memory compile pass all 122 Python files. No `Any`, `type: ignore`, broad exception catch or residue is present. |
+| Evidence truthfulness | PASS: the committed two-cell regression represents both original failures; the isolated guard-bypass reversal restored both caller `RuntimeError` failures and exact correction blobs were restored. Existing T1-T8 behavior remains green. |
+| XSS review | `XSS_NOT_APPLICABLE`: no Browser, WebView, HTML/DOM renderer, JavaScript execution context or privileged JavaScript bridge/API is introduced. |
+
 ## Disposition
 
-`CHANGES_REQUESTED / SAME_CLOSURE_CORRECTION_REQUIRED`. The existing
-implementation and handoff remain immutable evidence and are not mergeable.
-The same task, worktree, branch, allocation, receipt and correlation remain the
-only authorized lane for one CR-150 correction.
+`APPROVED / READY_TO_MERGE`. CR-150 is closed. Guarded integration may merge
+only exact handoff `e4841abfd8caf8e262fa451055da94f5acc754a8`, preserving this
+review commit as first-parent control history and the submitted handoff as the
+second parent. B2B-B2E remain unallocated until integration completes.

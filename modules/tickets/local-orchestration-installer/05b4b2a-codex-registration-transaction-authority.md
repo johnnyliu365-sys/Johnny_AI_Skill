@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / unchanged AC-01, AC-02, AC-07 and AC-08 transaction seam |
-| State | `CHANGES_REQUESTED / CR-150_CORRECTION_REQUIRED` |
+| State | `APPROVED / READY_TO_MERGE` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B4B2A-01` / T1 through T8 |
 | Dependency | B1 revision 02 approved and integrated by `d7c59349b436d552f2fab457a297e2eac6958093` |
 | Planned owner | Task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2`; no new worktree |
@@ -138,3 +138,13 @@ allocation, receipt and correlation; no new branch or worktree is allowed.
 | Exact admission | Clean submitted HEAD `312005e6091e088b225e8c53d39480264f860e19`; control baseline carrying this record; additive correction commits only |
 | Exact correction | Add one two-cell first-red regression for caller comparison/hashing traps, then validate exact plain field types before any comparison, hashing, serialization, repr or other caller protocol. Return finite `INVALID_LEASE` with zero trap invocation. |
 | Return | One correction commit changing only the existing transaction module/test, then WPR-only reserved `PRG-20260812-221`; rerun focused/full, strict mypy, compile, sentinel, CR-150 reversal and residue readback. |
+
+## Final independent review
+
+Correction `4e6924bf70cfe98f5950e613405b4abddb4cd037` and WPR-only handoff
+`e4841abfd8caf8e262fa451055da94f5acc754a8` are `APPROVED / READY_TO_MERGE`.
+CR-150 is closed: both caller-controlled comparison and hashing traps are
+rejected before invocation. Independent named 1/1, focused 11/11, full 294/294,
+strict mypy 122 files, in-memory compile 122 files, scope, ancestry, sentinel
+and residue checks pass. XSS is `XSS_NOT_APPLICABLE` for this effect-free
+Python domain boundary. Only guarded integration of the exact handoff is next.

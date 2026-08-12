@@ -2490,3 +2490,13 @@
 | Owner / admission | Same task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2`; existing branch `codex/implementation-codex-registration-transaction-authority-05b4b2a`; exact clean submitted HEAD `312005e6091e088b225e8c53d39480264f860e19`; additive commits only. |
 | Exact correction / return | First-red the two caller-protocol trap cells, then establish exact plain metadata field types before comparison/hash and return finite `INVALID_LEASE` with zero trap invocation. Change only the existing transaction module/test; preserve all other T1-T8 evidence. One correction commit followed by WPR-only reserved `PRG-20260812-221`. |
 | Stop | No new public contract, other hardening/refactor, B2B-B2E/05C work, branch/worktree, Agent, effect, review/integration, push, release or deployment. |
+
+## PRG-20260812-222 — Ticket 05B4B2A CR-150 final independent review
+
+| Field | Value |
+| --- | --- |
+| Router event | `IMPLEMENTATION_CORRECTION_COMPLETED(CR-150) -> TERMINAL_CODE_REVIEW -> APPROVED -> READY_TO_MERGE` |
+| Reviewed return | Closure `CLOSURE-LOCAL-INSTALL-T05B4B2A-01`; correction `4e6924bf70cfe98f5950e613405b4abddb4cd037`; WPR-only handoff `e4841abfd8caf8e262fa451055da94f5acc754a8`; formal report `doc/reviews/local-orchestration-installer/05b4b2a-codex-registration-transaction-authority-code-review.md`. |
+| Exact review | `312005e -> 4e6924b -> e4841ab` ancestry, two-path correction scope, WPR-only handoff, clean lane and unchanged topology pass. Repository-external immutable export passes named CR-150 1/1, focused 11/11, full 294/294, strict mypy 122 files and in-memory compile 122 files. |
+| Adversarial closure | Exact-type gates now precede caller-controlled status comparison and attempt-key hashing; both constructed-invalid cells return finite `INVALID_LEASE` with zero trap invocation. The guard-bypass reversal restores both original `RuntimeError` failures and exact correction blobs were restored. CR-150 is closed. XSS is `XSS_NOT_APPLICABLE`. |
+| Decision / continuation | `APPROVED / READY_TO_MERGE`. Guarded integration of exact handoff `e4841ab` is the only continuation. B2B-B2E remain unallocated until integration. No live Codex, host, target-project or network effect, push, release or deployment occurred. |
