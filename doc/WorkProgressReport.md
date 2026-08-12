@@ -3379,3 +3379,13 @@
 | Integration | Review `498394c`; exact approved handoff `b153636fe2acd37af0b376ee825e0cf9336b98b1`; merge `c042af1`. The WPR append conflict was resolved by retaining both immutable PRG-303 implementation evidence and PRG-304 independent review evidence. No source conflict existed. |
 | Post-merge verification | Focused 24/24 and full 395/395 passed from control main. Exactly three existing worktrees remain. No push, package/build/install, live Codex, target-project write, release or deployment occurred. |
 | Continuation | E3C is complete. E3 stays `RESPONSE-CONTRACT_REVIEW / NOT_DISPATCHED` until E2 terminal review determines the single reusable exact response-admission boundary, preventing another broad validation-plus-effect ticket. |
+
+## PRG-20260813-306 — Ticket 05B4B2E2 independent review correction handoff
+
+| Field | Value |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05B4B2E2) -> TERMINAL_CODE_REVIEW -> CHANGES_REQUESTED / SAME_BRANCH_CORRECTION` |
+| Reviewed chain | Dispatch `ace86099bc3582dbd8642662b0c937867b3e7d1f` -> implementation `b3894f33b5e050d495e4fde1e39aec0c32bfb0be` -> docs-only handoff `699cba8f1b844552a9b36baf926613594542ed4b`. |
+| Independent verification | Exact immutable snapshot: focused 11/11 and full 399/399 passed. Reviewer probes then proved direct-constructor capability bypass and constructed-bound `AttributeError`; static review proved oracle blocks are falsely returned as `UNSUPPORTED_CLI`. |
+| Findings | `CR-162 IMPLEMENTATION_DEFECT`: constructor bypasses factory authority. `CR-163 IMPLEMENTATION_DEFECT`: constructed binding is non-finite. `CR-164 IMPLEMENTATION_DEFECT`: block/malformed/version mismatch are not distinguished. R2-R3 remain open. |
+| Correction authority | Retain the same ticket/owner/worktree/branch/allocation/receipt. Add constructor-token, finite-bound, and exact preflight-classification tests/source only; return one additive correction commit and one WPR-only handoff. |
