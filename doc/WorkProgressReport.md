@@ -2763,6 +2763,15 @@
 | CR-155 closure | `ClaimRecord` owns a separate canonical primitive binding. Exact live metadata and nested primitive types are validated before comparison/tombstone. Independent unchanged consumption succeeds once; same-object alternate attempt, phase and generation mutations all return finite `INVALID_CLAIM`; nested trap invocation remains zero. |
 | Independent verification | Repository-external immutable snapshot passed focused 13/13, full serial 330/330, strict mypy 126 Python files and compile 126 files. Binding-gate reversal made attempt/generation cells red; restored source blob is `300cd6b6ad24c7a81a53cd1f1fdcb22cfa55425d`. Exact scope, ancestry and three-worktree topology pass. |
 | Disposition | `APPROVED / READY_TO_MERGE`; CR-155 closed; `XSS_NOT_APPLICABLE`. Only guarded integration of exact handoff `2f9968ccb3825a77d26202c008c0cc6ea94cc3ed` is permitted. |
+
+## PRG-20260812-247 — Ticket 05B4B2B1 guarded integration completion
+
+| Field | Value |
+| --- | --- |
+| Router event | `REVIEW_APPROVED(CR-155) -> GUARDED_INTEGRATION -> ACTION_COMPLETED -> TICKET_05B4B2C_05B4B2D_REFREEZE_READY` |
+| Integration | Merge `0c4476f8d40b53292ea69d0daec084860beeaa03`; first parent control review `d5f3b42203aa38a1ac38fb9475ae47c42184641a`; second parent exact handoff `2f9968ccb3825a77d26202c008c0cc6ea94cc3ed`. The only conflict was append-only WPR evidence; guarded resolution retained PRG-242 through PRG-246 without one-sided overwrite. |
+| Integrated verification | Focused settlement-authority suite passed 13/13. Independent integrated attempt/phase/generation same-object mutation probes all returned `INVALID_CLAIM`; `git diff --check` passed. Test-generated cache was removed only through four exact Git-clean paths and read back absent. |
+| Completion / continuation | 05B4B2B1 is `COMPLETED / INTEGRATED`; its allocation is released. 05B4B2C proof settlement and 05B4B2D compensation settlement dependencies are now satisfied and may be independently refrozen. No push, release, deployment or live host/target effect occurred. |
 ## PRG-20260812-242 — Ticket 05B4B2B1 terminal claim authority handoff
 
 | Field | Value |

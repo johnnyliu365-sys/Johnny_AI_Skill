@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / unchanged AC-01, AC-02, AC-07 and AC-08 settlement seam |
-| State | `APPROVED / READY_TO_MERGE` |
+| State | `COMPLETED / INTEGRATED` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B4B2B1-01` / C1-C8 |
 | Dependency | 05B4B2B independently approved and integrated by `63e8a7b6825f1807b5810007edcc10744149182d` |
 | Planned owner | Task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2`; one new branch in the same worktree, no new worktree |
@@ -138,3 +138,14 @@ comparison plus its named first-red/reversal, and use additive commits only.
 
 No reset, amend, rebase, merge, new branch/worktree, public API change,
 out-of-scope hardening or downstream settlement effect is admitted.
+
+## Completion record
+
+Formal correction review `d5f3b42203aa38a1ac38fb9475ae47c42184641a`
+approved CR-155. Guarded integration
+`0c4476f8d40b53292ea69d0daec084860beeaa03` preserves control review as
+first parent and exact implementation handoff
+`2f9968ccb3825a77d26202c008c0cc6ea94cc3ed` as second parent. Integrated
+focused 13/13 and the three exact CR-155 mutation probes pass. The allocation
+is released; B2C/B2D may now be independently refrozen but remain non-dispatch
+until their own reviewed registry exists.
