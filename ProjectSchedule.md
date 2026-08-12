@@ -145,7 +145,7 @@
 | Ticket 05B4B2E lifecycle acceptance parent | CONVERGENCE_DECOMPOSED / NON_DISPATCHABLE | E0 oracle evidence, E1 identity, E2/E3 adapters, E4 success, E5 compensation and E6 isolation are separately accepted. |
 | Ticket 05B4B2E0 oracle logical installed path | COMPLETE / APPROVED / INTEGRATED | Merge `3fc2f99`; post-merge focused 17/full 360/strict mypy pass; allocation released and receipt closed. |
 | Ticket 05B4B2E1 oracle identity binding | COMPLETED / APPROVED / INTEGRATED | Merge `27c8305`; CR-159 closed by recursive 14-node rejection, full 370 and strict typing. |
-| Ticket 05B4B2E2A oracle version observation | IMPLEMENTATION_DISPATCH_CONFIRMED / IMPLEMENT | Implementer-1 supplies caller-independent fresh CLI-version evidence before E2. |
+| Ticket 05B4B2E2A oracle version observation | COMPLETED / APPROVED / GUARDED_INTEGRATION_READY | Exact handoff `6a752f4`; isolated focused 27/full 374/strict mypy pass. |
 | Ticket 05B4B2E3A compensation finite failure | IMPLEMENTATION_DISPATCH_CONFIRMED / IMPLEMENT | Implementer-2 supplies a request-bound finite effect-failure value before E3. |
 | Tickets 05B4B2E2/E3 oracle adapters | PLANNED / PREREQUISITE_WAIT | Refreeze separately only after E2A/E3A approval and integration. |
 | Tickets 05B4B2E4-E6 lifecycle acceptance | PLANNED / DEPENDENCY_WAIT | Success, compensation and isolation remain small dependency-ordered acceptance tickets. |
