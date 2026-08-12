@@ -70,6 +70,27 @@ reserved as `PRG-20260813-266`.
 No E1-E6/05C/package work, live Codex, real host/filesystem, target-project,
 other Agent, review/integration, push, release or deployment is authorized.
 
+## Initial independent review and bounded correction
+
+Implementation `f79696241a828e1d523370d6b03ff0c6ed45355c` and docs-only
+handoff `05b65bce17be0dbab7aeefc8118ad8d37e3d5bce` are
+`CHANGES_REQUESTED / SAME_CLOSURE_CORRECTION`.
+
+- `CR-157 / IMPLEMENTATION_DEFECT / O2-O6-O8`: `_exact_plugin()` does not bind
+  the required logical installed path. A remove command carrying a different
+  valid path deletes the installed plugin instead of returning the finite
+  existing block with zero mutation.
+- `CR-158 / IMPLEMENTATION_DEFECT / O4-O8`: both path validators accept a
+  Win32-ambiguous segment ending in a space or period, contrary to the frozen
+  normalized-path rule.
+
+Revision 02 retains the same closure, owner, worktree, branch, allocation,
+receipt and correlation. Add named regressions for both findings, make the
+exact plugin identity include `installed_path`, reject segment-ending space or
+period in the parent and child validators, and independently reverse both new
+guards. Only the original four implementation files plus a later WPR-only
+handoff may change. No new branch or worktree is allowed.
+
 ## Planned dispatch binding
 
 | Field | Value |

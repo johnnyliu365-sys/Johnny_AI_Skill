@@ -2980,3 +2980,14 @@
 | Freeze / binding | `0a71cc6d046a5ead8e5157b42c86fb38e28f0363`; O1-O8; `hnd_local_orchestration_install_05b4b2e0_20260813`; `aln_local_orchestration_install_05b4b2e0_20260813`; `rcpt_local_orchestration_install_05b4b2e0_20260813`; `corr-local-orchestration-install-05b4b2e0-20260813`; `scx-local-orchestration-install-05b4b2e0-20260813-01`. |
 | Lane | Idle task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; exact clean submitted HEAD `09467cd8b8a9f652648e8383750fa36d190a41fd`; target branch absent; exactly three existing worktrees; no new worktree. |
 | Return | Exact four-path implementation commit, then WPR-only PRG-267. Reviewer retains sole orchestration and review authority. No staging push or package work is authorized. |
+
+## PRG-20260813-268 — Ticket 05B4B2E0 initial independent review
+
+| Field | Value |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05B4B2E0) -> TERMINAL_CODE_REVIEW -> CHANGES_REQUESTED / SAME_CLOSURE_CORRECTION` |
+| Immutable return | `060109b79f94c02214d1f1e7127f7175a0bfd207 -> f79696241a828e1d523370d6b03ff0c6ed45355c -> 05b65bce17be0dbab7aeefc8118ad8d37e3d5bce`; exact four implementation paths then WPR-only PRG-267; clean submitted lane and unchanged three-worktree topology. |
+| Passing evidence | Unicode-safe repository-external snapshot passed focused 14/14, full 357/357, strict mypy 130 files and in-memory compile 130 files. Required logical path persistence, response, payload/digest coverage, physical-locator separation, schema/tamper rejection and the submitted four reversals pass. |
+| CR-157 | `IMPLEMENTATION_DEFECT / O2-O6-O8`: after adding at the exact path, an otherwise matching `PLUGIN_REMOVE` command carrying another valid logical path returned `OracleCompleted` and removed the payload. `_exact_plugin()` omits `installed_path`, so removal is not bound to the new exact identity field. |
+| CR-158 | `IMPLEMENTATION_DEFECT / O4-O8`: `C:\owned \plugin` is accepted by both validators although ordinary Win32 path processing normalizes a segment-ending space or period. This violates the frozen normalized/unambiguous path boundary. |
+| Disposition | Same ticket, owner, worktree, branch, allocation, receipt and correlation; add committed regressions and isolated reversals for both findings. No new branch/worktree, E1-E6, staging push, package, release or deployment. `XSS_NOT_APPLICABLE`. |
