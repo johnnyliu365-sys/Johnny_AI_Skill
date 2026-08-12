@@ -2832,3 +2832,22 @@
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B4B2B2-01` / B1-B7 adds only exact, recursively validated `CodexRegistrationPortRequest` binding to terminal compensation data; all effects remain prohibited. B2D waits for its integration. |
 | Lane | Planned existing task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` / `workflow-implementer-2`; disjoint from B2C; no new worktree. Freeze is not dispatch. |
 | Security | `XSS_NOT_APPLICABLE`; no renderer/JavaScript/bridge. No live Codex, filesystem, process, host, network, target-project, push, release or deployment authority. |
+
+## PRG-20260812-254 — Ticket 05B4B2C terminal independent review
+
+| Field | Value |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05B4B2C) -> TERMINAL_CODE_REVIEW -> APPROVED -> GUARDED_INTEGRATION_READY` |
+| Immutable return | `8109551a0e96a0773aff138167eec6369667293b -> c27924f9cfe352bd88cb7ae9d28e244e72784547 -> 09467cd8b8a9f652648e8383750fa36d190a41fd`; exact two implementation paths then WPR-only PRG-252. |
+| Independent evidence | Repository-external snapshot passed focused 7/7, serial full 337/337, strict mypy 128 files and compile 128 files. Admission-order reversal turned P2 red; exact source blob `ed692edf9966afe8b8edf3c75f42a5d01ef246e0` restored. Parallel snapshot suites collided only in shared `%TEMP%`; isolated serial rerun passed. |
+| Disposition | `APPROVED / READY_TO_MERGE`; P1-P8 closed; `XSS_NOT_APPLICABLE`; only exact handoff `09467cd8b8a9f652648e8383750fa36d190a41fd` may be guarded-integrated. |
+
+## PRG-20260812-255 — Ticket 05B4B2B2 CR-156 correction and terminal review
+
+| Field | Value |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05B4B2B2) -> TICKET_DEFECT(CR-156) -> CLOSURE_CORRECTED -> CONVERGENCE_REVIEW -> APPROVED -> GUARDED_INTEGRATION_READY` |
+| Finding / correction | The original B3 asked a public DTO to self-authenticate valid request-only replacement values that appear nowhere else in the DTO. That is impossible without external authority. Corrected B3/B4 names the integrated B2B1 opaque one-shot claim as the sole authority; B2D may consume only its claim-owned request and never raw DTO/caller manifest values. |
+| Immutable return | `8109551a0e96a0773aff138167eec6369667293b -> 7603d6b75a665f9cbf4e06b0afe7e0421fb912ff -> e12ee8bef24172db517bfb346bd7fd4f972a2759`; implementation remains unchanged because CR-156 is `TICKET_DEFECT`, not `IMPLEMENTATION_DEFECT`. |
+| Independent evidence | Snapshot passed reducer/settlement 34/34, full 337/337, strict mypy 126 files and compile 126 files. A valid alternate raw DTO validates as data but the claim consumer returns `CodexRegistrationSettlementClaimBlocked`; request/journal reversal made the foreign-attempt test red and exact blob `61f9ece0d4216d5cff0a875254a2113360b69b75` restored. |
+| Disposition | Corrected B1-B7 are `APPROVED / READY_TO_MERGE`; `XSS_NOT_APPLICABLE`; only exact handoff `e12ee8bef24172db517bfb346bd7fd4f972a2759` may be guarded-integrated. |
