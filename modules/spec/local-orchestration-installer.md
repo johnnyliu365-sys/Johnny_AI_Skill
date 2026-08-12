@@ -88,6 +88,20 @@ The installer owns its root. The runtime owns only metadata inside that root. Th
 
 This POC has no company-project frontend. Its formal interaction boundaries are the Windows setup/uninstall dialogs and local command status result.
 
+### XSS Review classification
+
+Current POC scope is `XSS_NOT_APPLICABLE`: no untrusted data enters a Browser,
+WebView, HTML/DOM renderer or JavaScript execution context. The Windows
+setup/uninstall dialogs and local status projection consume only finite typed
+models and expose no Native Bridge, IPC or Extension API to JavaScript.
+
+This classification is not inherited by a future thin plugin UI. Any ticket
+that introduces Browser/WebView/HTML/DOM/JavaScript rendering must re-enter the
+[Workflow XSS gate](../../Workflow.md#xss-review). If that JavaScript context
+can reach host or extension capabilities, it is `PRIVILEGED_XSS_REVIEW` and
+must freeze the complete source-to-sink and JavaScript-to-host capability
+matrices before implementation.
+
 - **Composition roots:** `Setup.exe` and uninstaller each assemble a fresh application graph per invocation. The runtime assembles a distinct graph per event-processing run.
 - **Injected dependencies:** filesystem, ledger, host lifecycle, process lifecycle, event store, project registry, guarded Git, clock and notification ports are constructor/factory injected behind named interfaces.
 - **Production bindings:** production may bind a Windows owned-root filesystem and a verified host adapter only after capability checks. A host command/result is not a global singleton or an implicit environment read.
@@ -176,6 +190,7 @@ finite unit/fault matrix.
 | 2026-08-10 | Project owner and Codex / current `main` | Approved the two-gate verification architecture: stateful Codex contract staging before 05B/05C refreeze, then disposable Windows user staging before package acceptance. Product scope and AC-01 through AC-08 are unchanged. |
 | 2026-08-11 | Project owner / `CHG-20260811-012` | Approved AC-09/AC-10 reviewer-only Codex role profiles, fail-closed host capability proof, receipt-bound removal and new Tickets 06A-06C. Existing AC-01 through AC-08 remain unchanged. |
 | 2026-08-11 | Project owner / ADR-20260811-004 | Refined the unchanged AC-01/02/07/08 compensation seam into closed port admission, pure reduction and thin composition after terminal 05B3 convergence. |
+| 2026-08-12 | Project owner / `CHG-20260812-013` | Added the mandatory XSS classification. Current POC remains `XSS_NOT_APPLICABLE`; future renderer or privileged JavaScript work must re-enter the tiered XSS gate. |
 
 ## Approval record
 

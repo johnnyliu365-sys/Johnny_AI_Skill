@@ -2,13 +2,13 @@
 
 | Field | Value |
 | --- | --- |
-| Context state | `TICKET_05B4B2A_COMPLETE / TICKET_05B4B2B_REFREEZE_READY` |
-| Router event | `REVIEW_APPROVED / GUARDED_INTEGRATION / ACTION_COMPLETED` |
+| Context state | `TICKET_05B4B2A_COMPLETE / TICKET_05B4B2B_FROZEN` |
+| Router event | `ACTION_COMPLETED / TICKET_SELECTED / TICKET_FREEZE_COMPLETED / DISPATCH_PENDING` |
 | Delivery stage | `POC` |
-| Requirement change | `CHG-20260808-011` |
+| Requirement change | `CHG-20260808-011`; governance security overlay `CHG-20260812-013` |
 | Baseline | `cd3e9b6789623bd2a12ff7c69db4d5fcadd1718f` (`docs: refreeze Ticket 05B4B1 pure reducer`) |
 | Control-plane owner | Codex / current `main` worktree |
-| Implementation owner | 05B4B2A allocation is released after guarded merge `494aaca`; no implementation owner or receipt is yet allocated to 05B4B2B before its fresh control-plane freeze |
+| Implementation owner | Planned 05B4B2B owner is task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` in existing `workflow-implementer-2`; freeze is not dispatch and no receipt is active yet |
 | Required sources read | `AGENTS.md`, `Workflow.md` (Router, Wayfinder, Grill, change control, specification, tickets, role boundary), `Defined_wayfinder.md`, `CONTEXT.md`, `PRD.md`, `ProjectSchedule.md`, `doc/RequirementChangeLog.md`, existing plugin manifests / README, `library/workflow_router/`, and completed plugin / autonomous-collaboration POCs |
 
 ## Shared Context reference
@@ -59,6 +59,13 @@
 ```
 
 ## Functional Architecture Brief
+
+XSS classification for the current POC is `XSS_NOT_APPLICABLE`: its Windows
+dialogs and local command projections do not render untrusted data in a
+Browser, WebView, HTML/DOM renderer or JavaScript context. This must be
+reclassified per ticket if a future thin plugin introduces such a renderer;
+JavaScript access to Native Bridge, IPC, Extension API or host automation is
+automatically `PRIVILEGED_XSS_REVIEW`.
 
 | Frontend / equivalent interaction slice | Observable states | Derived use case / domain rules | Data pipeline and owner | Composition and DI boundary |
 | --- | --- | --- | --- | --- |

@@ -3,9 +3,9 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / unchanged AC-01, AC-02, AC-07 and AC-08 |
-| State | `CONVERGENCE_DECOMPOSED / CHILD_05B4B2A_FROZEN / LATER_CHILDREN_PLANNED` |
+| State | `CONVERGENCE_DECOMPOSED / CHILD_05B4B2A_COMPLETE / CHILD_05B4B2B_FROZEN` |
 | Dependency | 05B4B1 revision 02 approved and integrated by `d7c59349b436d552f2fab457a297e2eac6958093` |
-| Allocation | Only 05B4B2A may receive a later dispatch; B2B-B2E are unallocated |
+| Allocation | 05B4B2A released; only freshly frozen 05B4B2B may receive the next dispatch; B2C-B2E remain unallocated |
 
 ## Convergence decision
 

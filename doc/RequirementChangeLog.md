@@ -209,3 +209,17 @@
 | Affected specifications | `modules/spec/autonomous-collaboration-audit.md` revision 02 and `modules/spec/local-orchestration-installer.md` revision 02. |
 | Ticket impact | Add autonomous Ticket 04 and local Tickets 06A-06C; update Windows package Ticket 04 dependencies. Completed tickets and 05A-05C/05S4 behavior remain immutable unless their own acceptance is independently changed. |
 | Acceptance | A valid exact reviewer dispatch succeeds once; copied/forged/replayed reviewer authority and every implementation-owner orchestration surface fail with `ROLE_FORBIDDEN`; install/remove leaves no owned agent profile or target-project change. |
+
+## CHG-20260812-013 — Require tiered XSS review from architecture through Code Review
+
+| Field | Value |
+| --- | --- |
+| Date | `2026-08-12` |
+| Requested by | Project owner |
+| Previous rule | Security review prohibited injection generally, but workflow architecture, SPEC, tickets, TDD and Code Review did not require a closed XSS classification or distinguish ordinary browser impact from JavaScript-accessible host capability. |
+| Changed rule | Any untrusted data rendered through Browser, WebView, HTML/DOM renderer or JavaScript execution context must enter XSS Review. If JavaScript can reach Native Bridge, IPC, Extension API or another privileged capability, review escalates to the complete JavaScript-to-host effect graph. |
+| Reason | XSS inside a privileged desktop/plugin context can expand beyond a web session into host program authority; prevention must be designed and tested before implementation rather than discovered after code is written. |
+| In scope | Workflow architecture/Grill, Context, SPEC and ticket classification; source-to-sink and privileged capability matrices; isolated renderer TDD; fake bridge/IPC/extension negative tests; Code Review sink/capability enumeration and reversal. |
+| Out of scope | Adding a renderer to the current POC, live browser/host effects, target-project changes, new runtime dependencies, push, release or deployment. |
+| Current project impact | The local-orchestration-installer POC is `XSS_NOT_APPLICABLE` because it has no Browser/WebView/HTML/DOM/JavaScript context. The approved SPEC and Context now record that reason; every future renderer ticket must classify again and cannot inherit this result. |
+| Acceptance | `AGENTS.md`, `Workflow.md` and `CodeReview.md` define the mandatory tiered gate; affected SPEC/tickets cannot implement without a named classification and test matrix; privileged tests fail closed before fake host effect and preserve one exact authorized positive case. |

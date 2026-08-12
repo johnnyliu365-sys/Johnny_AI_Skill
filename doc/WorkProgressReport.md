@@ -2534,3 +2534,14 @@
 | Ledger resolution | The sole conflict was `doc/WorkProgressReport.md`; PRG-218 through PRG-222 are retained exactly once. Neither immutable parent was amended, reset, forced or overwritten. |
 | Post-merge verification | Focused 11/11 and serial full 294/294 pass. Strict full-tree mypy and in-memory compile pass 122 files. `git diff --check`, exact parent/product equality and the unchanged three-worktree topology pass. |
 | Completion | 05B4B2A is `COMPLETE / APPROVED / INTEGRATED`; allocation `aln_local_orchestration_install_05b4b2a_20260812` is released and receipt `rcpt_local_orchestration_install_05b4b2a_20260812` is closed against replay. 05B4B2B is unallocated and only `REFREEZE_READY`; its freeze must classify XSS under the new governance rule. No live Codex, host, target-project or network effect, push, release or deployment occurred. |
+
+## PRG-20260812-224 — Ticket 05B4B2B forward composition freeze
+
+| Field | Value |
+| --- | --- |
+| Router event | `ACTION_COMPLETED(05B4B2A) -> TICKET_SELECTED(05B4B2B) -> TICKET_FREEZE_COMPLETED -> DISPATCH_PENDING` |
+| Decision | Freeze the serial forward-effect composition only: a private B2A coordinator consumes each lease before one exact rebuilt 05B4A operation, then B2A/B1 alone classifies the returned value. Proof, receipt, compensation and lifecycle acceptance remain later children. |
+| Ticket / closure | `05b4b2b-codex-registration-forward-composition`; `CLOSURE-LOCAL-INSTALL-T05B4B2B-01`; exact F1-F8; two new source/test paths only. |
+| XSS | `XSS_NOT_APPLICABLE`: no Browser, WebView, HTML/DOM renderer or JavaScript execution context. The approved SPEC and Context record the classification; any future renderer/bridge ticket must re-enter the tiered XSS gate. |
+| Planned binding | `hnd_local_orchestration_install_05b4b2b_20260812`; `aln_local_orchestration_install_05b4b2b_20260812`; `rcpt_local_orchestration_install_05b4b2b_20260812`; `corr-local-orchestration-install-05b4b2b-20260812`; `q-local-orchestration-install-05b4b2b-20260812`; `scx-local-orchestration-install-05b4b2b-20260812-01`. Planned owner is the same task in existing `workflow-implementer-2`; no new worktree. |
+| Stop | Freeze is not dispatch. No source/test edit, branch switch, operation, B2C-B2E/05C work, live state, target-project write, push, release or deployment is authorized before the dispatch registry. |
