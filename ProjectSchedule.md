@@ -146,7 +146,7 @@
 | Ticket 05B4B2E0 oracle logical installed path | COMPLETE / APPROVED / INTEGRATED | Merge `3fc2f99`; post-merge focused 17/full 360/strict mypy pass; allocation released and receipt closed. |
 | Ticket 05B4B2E1 oracle identity binding | COMPLETED / APPROVED / INTEGRATED | Merge `27c8305`; CR-159 closed by recursive 14-node rejection, full 370 and strict typing. |
 | Ticket 05B4B2E2A oracle version observation | COMPLETED / APPROVED / GUARDED_INTEGRATION_READY | Exact handoff `6a752f4`; isolated focused 27/full 374/strict mypy pass. |
-| Ticket 05B4B2E3A compensation finite failure | IMPLEMENTATION_DISPATCH_CONFIRMED / IMPLEMENT | Implementer-2 supplies a request-bound finite effect-failure value before E3. |
+| Ticket 05B4B2E3A compensation finite failure | COMPLETED / APPROVED / GUARDED_INTEGRATION_READY | Exact handoff `5e3b3cc`; isolated focused 17/full 375/strict mypy pass. |
 | Tickets 05B4B2E2/E3 oracle adapters | PLANNED / PREREQUISITE_WAIT | Refreeze separately only after E2A/E3A approval and integration. |
 | Tickets 05B4B2E4-E6 lifecycle acceptance | PLANNED / DEPENDENCY_WAIT | Success, compensation and isolation remain small dependency-ordered acceptance tickets. |
 | Ticket 05C receipt removal/replay | PLANNED / DEPENDENCY_WAIT / REFREEZE_REQUIRED | Starts only after 05A/05B approval/integration and a finite behavior/rollback closure refreeze. |
