@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / unchanged AC-01, AC-02, AC-07 and AC-08 settlement seam |
-| State | `IN_PROGRESS / DISPATCH_CONFIRMED` |
+| State | `CHANGES_REQUESTED / SAME_CLOSURE_CORRECTION_REQUIRED` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B4B2B1-01` / C1-C8 |
 | Dependency | 05B4B2B independently approved and integrated by `63e8a7b6825f1807b5810007edcc10744149182d` |
 | Planned owner | Task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2`; one new branch in the same worktree, no new worktree |
@@ -115,3 +115,13 @@ path must be relative to that verified root; another mismatch is typed `HALT`.
 
 This registry is the single dispatch. The implementation owner may work only
 the exact two source/test paths and later the WPR-only PRG-20260812-242 return.
+
+## Review correction record
+
+Independent review of immutable return `a57dd0a -> ad2fc50` found CR-155, an
+`IMPLEMENTATION_DEFECT` inside existing C4/C5. A live claim and its registry
+record share one metadata object; in-place mutation preserves the current
+identity check and the altered attempt/phase/generation binding is consumed.
+The bounded correction must retain the same owner, worktree, branch,
+allocation, receipt and correlation, add canonical authority-owned binding
+comparison plus its named first-red/reversal, and use additive commits only.
