@@ -23,10 +23,11 @@
 | 依賴合理 | 新增、升級或保留的依賴有必要性、相容性與維護性依據；沒有可避免的重複、過時或高風險依賴。 |
 | 專案規格符合性 | 實作、測試、設定與文件符合已核准的 spec、ticket 與 `CONTEXT.md`；差異已取得核准並完成追溯。 |
 | Agent 角色權限 | 涉及多 Agent／task 控制時，reviewer 是唯一可達 orchestration effect 的角色；implementation owner 的直接與間接 create/spawn/fork/send/follow-up/steer/wait/interrupt/close 均在 effect 前固定回 `HALT / ROLE_FORBIDDEN`。必須反證 copied/forged/replayed reviewer、錯 ticket/handoff/receipt/target/correlation 與一般 capability 字串不能授權；prompt 或 model 選擇不得充當安全邊界。 |
+| XSS 與宿主能力 | 任何不可信資料進入 Browser、WebView、HTML／DOM Renderer 或 JavaScript execution context 的功能，都必須依 [Workflow.md 的 XSS Review 強制閘門](Workflow.md#xss-review)審查 source-to-sink、實際 renderer 行為與繞過路徑。JavaScript 可達 Native Bridge、IPC、Extension API 或其他 privileged capability 時，必須升級審查 JavaScript → host effect 的完整 capability graph，並證明所有未授權路徑在 effect 前 fail closed。 |
 
 ## 2.1 缺陷分類與攔截點
 
-下列七類是本專案實際發生過、且可被系統性攔截的缺陷。**「攔截點」決定責任歸屬**：標 `TDD` 者，工單的「TDD 設計」必須逐一列出對應案例，未列出即為工單缺陷而非實作缺陷；標 `CR` 者，審閱報告必須逐項記錄結果。
+下列八類是本專案已知且可被系統性攔截的缺陷。**「攔截點」決定責任歸屬**：標 `TDD` 者，工單的「TDD 設計」必須逐一列出對應案例，未列出即為工單缺陷而非實作缺陷；標 `CR` 者，審閱報告必須逐項記錄結果。
 
 | # | 類別 | 攔截點 |
 | --- | --- | --- |
@@ -37,6 +38,7 @@
 | 5 | 錯誤碼是否一致 | TDD |
 | 6 | 例外是否會拋出 | TDD |
 | 7 | 測試是否真的涵蓋描述 | CR |
+| 8 | XSS 與 privileged JavaScript capability | Architecture／SPEC／TDD ＋ CR |
 
 ### 1. 路徑前綴誤匹配
 
@@ -97,12 +99,28 @@ implementation owner 的直接工具、間接 adapter、偽造 reviewer identity
 3. **反向驗證**：移除或反轉該實作後，該測試必須失敗。這是唯一能證明測試真的驗到那件事的方法。
 4. 檢查紅燈證據是否真實（工單所記紅燈輸出、commit 順序、測試先於實作）。
 
+### 8. XSS 與 privileged JavaScript capability
+
+任何使用 Browser、WebView、HTML／DOM Renderer 或 JavaScript execution context 呈現不可信資料的功能，都必須進入 XSS Review。若 JavaScript execution context 可存取 Native Bridge、IPC、Extension API 或其他 privileged capability，XSS 必須升級審查；此時成功的 XSS 不只影響網頁 session，也可能取得宿主程式能力。
+
+**TDD 必要案例**：逐格引用 ticket 的 XSS matrix，驗證適用的 script／event handler、危險 URL scheme、SVG／foreign-content、attribute／URL／CSS／template breakout、編碼變體、stored／reflected／DOM-based source、二次 decode 及 navigation／reload。每格須在隔離 renderer 中斷言攻擊 marker 未執行，而不只比對字串或 snapshot；sanitizer／encoder 單元測試不得取代 renderer 行為測試。
+
+`PRIVILEGED_XSS_REVIEW` 另須以 fake bridge／IPC／Extension capability 驗證：惡意 script、錯 origin／frame／caller、錯或多餘 schema 欄位、未授權 action、replay、間接 adapter 與 navigation 後 context，全部在 host effect 前 fail closed；唯一精確授權的正向案例仍須成功。測試不得觸發真實宿主、target project、filesystem、process、credential 或 extension effect。
+
+**CR 必要動作**：
+
+1. 先核對 `XSS_NOT_APPLICABLE`／`STANDARD_XSS_REVIEW`／`PRIVILEGED_XSS_REVIEW` 分類及其 Architecture／SPEC 依據；漏分或降級即 `TICKET_DEFECT` 或 `REQUIREMENT_CHANGED`。
+2. 從每個 untrusted source 追到每個 parsing／storage／transformation 與 DOM／HTML／script sink，列出 framework escape、sanitizer、Trusted Types、CSP、sandbox、origin 與 navigation 邊界；禁止以工具名稱代替可達性證據。
+3. 搜尋並審查 `innerHTML`、`outerHTML`、`insertAdjacentHTML`、`document.write`、HTML template／markdown converter、script URL、動態 code evaluation 及框架等價 escape hatch；每個可達 sink 都要對應 TDD 格或明確不可達證據。
+4. 升級審查時，從 JavaScript context 反向列舉 Native Bridge、IPC、Extension API 與其他 privileged port 的所有直接／間接入口，核對 origin／frame／caller、schema、action allowlist、authorization、replay 與 effect-before-gate；任一路徑可繞過即 `CHANGES_REQUESTED`。
+5. 對至少一個凍結的攻擊格反轉 sanitizer／encoder／sink gate 或 privileged capability gate，確認 committed test 轉紅並精確還原。
+
 ## 3. 審閱證據與結論
 
 - Review report 必須逐項記錄上述驗證結果，並附上相關檔案／位置、測試或命令輸出、smoke test 結果，以及未解決風險。
 - Review 開始前必須讀取 ticket 的具 revision `Acceptance Closure Set`。每個 blocking finding 都必須引用一個既有 Closure item；無法引用者不得直接判為 implementation defect。
 - 同一輪必須一次跑完全部 Closure items 並批次回傳 findings。禁止在 correction 完成後才新增原本可於同一份 baseline 發現的逐輪探索性 blocking probe。
-- 同時必須逐項記錄 §2.1 中攔截點含 `CR` 的三類（1 路徑前綴、3 權限繞過、7 測試涵蓋）的檢查結果與依據。
+- 同時必須逐項記錄 §2.1 中攔截點含 `CR` 的四類（1 路徑前綴、3 權限繞過、7 測試涵蓋、8 XSS 與 privileged JavaScript capability）的檢查結果與依據；第 8 類若分類為 `XSS_NOT_APPLICABLE`，仍須記錄可驗證理由。
 - 若發現缺陷屬於 §2.1 中攔截點為 `TDD` 的類別，而**該工單的「TDD 設計」並未列出對應案例**，審閱結論仍為 `CHANGES_REQUESTED`，但根因記為**工單缺陷**，並同時修正工單；不得僅要求實作者補測試而讓同類缺口在下一張工單重現。
 - 每項 finding 必須標記 `IMPLEMENTATION_DEFECT`、`EVIDENCE_DEFECT`、`TICKET_DEFECT`、`REQUIREMENT_CHANGED` 或 `OUT_OF_SCOPE_HARDENING`。只有前兩類可在 Closure Set 不變時回原 implementation lane；`TICKET_DEFECT` 回工單設計、`REQUIREMENT_CHANGED` 回變更控制、`OUT_OF_SCOPE_HARDENING` 另開後續 ticket 且不阻擋目前工單。
 - 結論僅可為 `APPROVED`、`CHANGES_REQUESTED` 或 `BLOCKED`。若有未處理且會影響正確性、安全性、資料隔離、可用性、效能或規格符合性的問題，不得標記為 `APPROVED`。

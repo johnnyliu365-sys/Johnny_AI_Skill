@@ -53,6 +53,7 @@ Router anchor: `#workflow-router`; implementation role anchor: `#role-boundary`.
 | 進行或交付 Code Review | [Code Review 標準](CodeReview.md) | 唯一驗證項目、證據與審閱結論 |
 | 多 Agent 或多 worktree | [協作](Workflow.md#collaboration) | 讀共同基準、確認 owner 與衝突 |
 | 涉及 Secret、正式 Log、權限或外部 Provider | [安全](Workflow.md#security) | 先確認安全邊界與授權 |
+| 不可信資料進入 Browser／WebView／HTML／DOM／JavaScript context | [XSS Review 強制閘門](Workflow.md#xss-review) | 先分類一般或 privileged XSS，將 source-to-sink 與 capability matrix 帶入 SPEC、ticket、TDD 與 review |
 | 工單或功能集群完成 | [審閱與交接](Workflow.md#review-handoff) | commit、驗證、review、handoff／UAT |
 
 ## 預設角色邊界

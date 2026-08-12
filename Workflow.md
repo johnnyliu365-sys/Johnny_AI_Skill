@@ -326,10 +326,27 @@ Wayfinder 的輸出順序固定為「產品定位 → 可驗收前端功能切�
 - 每個核心前端功能切片是否可追溯到唯一後端 use case、資料 owner／管線、讀取 projection 與回傳 UI state；任一斷點都必須列為缺口而非由 Agent 猜測。
 - 領域術語、資料所有權、資料流、保存與刪除限制。
 - UI、API、背景工作、快取、資料庫、Provider、權限、成本與維運影響。
+- 是否以 Browser、WebView、HTML／DOM Renderer 或 JavaScript execution context 呈現不可信資料；若是，必須盤點資料來源、編碼／清理邊界、DOM sink、navigation／origin 邊界與 XSS 影響。若該 JavaScript execution context 可觸達 Native Bridge、IPC、Extension API 或其他 privileged capability，必須同時盤點全部可達宿主能力與信任邊界，並升級為 privileged XSS 風險。
 - 模組責任、依賴方向、Composition Root、具名依賴注入、生命週期、test fake 與不可修改邊界。
 - 替代方案、風險、回滾／forward-fix 與不做範圍。
 
 完成後更新共同 `CONTEXT.md`；重大且難以回復的決策另以 ADR 留存。沒有明確授權時，只能提出草案或缺口，不能新增正式產物。
+
+<a id="xss-review"></a>
+
+### 1.3 XSS Review 強制閘門
+
+任何使用 Browser、WebView、HTML／DOM Renderer 或 JavaScript execution context 呈現不可信資料的功能，都必須進入 XSS Review。若 JavaScript execution context 可存取 Native Bridge、IPC、Extension API 或其他 privileged capability，XSS 必須升級審查，因為影響可能從網頁 session 擴張成宿主程式能力。
+
+Architecture／`grill-with-docs` 必須先做出下列封閉分類，並把結果帶入 Context、SPEC、ticket 與 review；不得等到實作後才補判定：
+
+1. `XSS_NOT_APPLICABLE`：沒有不可信資料進入上述 renderer／execution context；須記錄可驗證理由。
+2. `STANDARD_XSS_REVIEW`：不可信資料會進入 renderer／execution context，但該 context 無法觸達宿主 privileged capability。
+3. `PRIVILEGED_XSS_REVIEW`：JavaScript execution context 可直接或間接觸達 Native Bridge、IPC、Extension API、filesystem、process、credential、host automation 或其他 privileged capability。
+
+命中後必須凍結：不可信資料來源與 owner、每個解析／轉換／儲存／呈現階段、精確輸出 context 與 DOM sink、採用的 context-aware encoding／sanitization、禁止的 bypass API、CSP／sandbox／origin／navigation 邊界，以及可重跑的 renderer 測試方式。不得以「已 escape」、「使用框架」或單一 sanitizer 名稱取代 source-to-sink 證據。
+
+`PRIVILEGED_XSS_REVIEW` 另須列出 JavaScript 可達的每個 bridge／IPC／extension capability、其最小權限、允許 origin／frame／caller、具名 message schema、每次呼叫的授權／驗證點、失敗行為與宿主 effect fake。Renderer 與 privileged capability 之間預設拒絕；prompt、UI 隱藏、方法命名、一般 capability 字串或前端檢查不得充當安全邊界。無法證明不可達或 fail-closed 時，不得進入實作。
 
 <a id="change-control"></a>
 
@@ -359,6 +376,7 @@ Wayfinder 的輸出順序固定為「產品定位 → 可驗收前端功能切�
 - 領域模型、資料庫、快取、API／事件、UI、Provider、權限與維運影響。
 - Composition Root、公開介面、依賴方向與責任邊界。
 - 測試切點、驗收條件、風險、相容性、回滾／forward-fix 與部署前提。
+- [XSS Review 強制閘門](#xss-review)的分類與理由；命中時須完整記錄 untrusted source → transformation／storage → output context／DOM sink 的資料流、防護責任與驗收矩陣。`PRIVILEGED_XSS_REVIEW` 還須記錄 JavaScript → bridge／IPC／Extension API → host effect 的 capability graph、最小權限與 fail-closed 邊界。
 
 SPEC 只能在產品負責人或使用者明確核准後進入 `APPROVED`。修訂追加修訂簽名；取代才建立新 SPEC 並標記舊 SPEC `SUPERSEDED`。ID 一經發布永不重用。
 
@@ -375,6 +393,7 @@ SPEC 核准且共同 Context 回掛完成後，才可建立 `modules/tickets/<fe
 - owner、worktree、審閱者、環境、In Scope、Out of Scope 與依賴。
 - 領域／應用／基礎設施／UI 影響、公開契約與實際原始碼位置。
 - TDD 的正常、違規、外部失敗與回歸測試切點。
+- XSS 分類及其 SPEC 引用；命中 XSS Review 時，列出有限、具名、可反向驗證的 payload／sink／navigation／storage 測試格。`PRIVILEGED_XSS_REVIEW` 必須另列每個 bridge／IPC／Extension capability 的未授權與繞過測試格。
 - 驗收方法、正式環境 SOP、回滾策略與完成回寫欄位。
 
 `modules/element/<language>/<feature>/<ticket-id>/` 是索引與證據，不得複製正式原始碼；必須連結實際原始碼、領域型別、公開契約、TDD 與驗證結果。
@@ -389,8 +408,22 @@ SPEC 核准範圍內的 ticket 規劃可由控制面建立；ticket 文件 commi
 2. **依賴注入**：API client、repository、state store、navigation、clock、feature flag、analytics、i18n、權限與其他外部能力，必須透過具名介面、props、constructor／factory 或框架等價的 composition root 注入。禁止元件內直接建立全域 singleton、直接讀取環境或隱式存取外部服務。
 3. **Composition Root**：ticket 必須指出組合根的位置、依賴生命週期／scope、production binding 與 test fake／stub 的替換方式。跨畫面的共享依賴只可在 composition root 或其明確子樹裝配。
 4. **驗收與 TDD**：ticket 必須列出元件組合、注入替換、失敗／loading／empty state、權限與可存取性行為；測試應能以 fake dependency 驗證 UI，不依賴真實網路、全域 state 或時間。
+5. **XSS 分類**：只要不可信資料可能進入 Browser、WebView、HTML／DOM Renderer 或 JavaScript execution context，就必須引用 [XSS Review 強制閘門](#xss-review)及對應 SPEC matrix；不得因使用框架預設 escaping 而省略。JavaScript 可達宿主 capability 時必須標記 `PRIVILEGED_XSS_REVIEW`。
 
 缺少上述任一項的正式前端 ticket 不得進入 `implement`；審閱結論為 `BLOCKED`。純視覺探索或未核准 wireframe 不構成正式前端實作。
+
+### 4.2 XSS Ticket 的最低 TDD closure
+
+命中 `STANDARD_XSS_REVIEW` 或 `PRIVILEGED_XSS_REVIEW` 的 ticket，須依實際 output context 選出適用案例並逐格命名；至少包含：純文字與合法 markup 正向案例、`<script>`／事件處理器、`javascript:` URL、SVG／foreign-content、attribute／URL／CSS／template context breakout、HTML entity／URL／Unicode 編碼變體、stored／reflected／DOM-based source，以及 navigation／redirect／reload 後的行為。不可適用的格須寫明理由，不得以「各種 XSS payload」概括。
+
+測試必須同時證明：
+
+1. 不可信內容只以預期 context 呈現，攻擊 marker 沒有執行，且沒有經替代 DOM sink、hydration、template helper、markdown／HTML converter 或二次 decode 繞過。
+2. sanitizer／encoder 的單元測試與實際 renderer 行為測試分開；只有字串包含／不包含、snapshot 或 source scan 不足以證明 XSS 不可執行。Renderer 測試使用隔離、無真實 host effect 的 browser／WebView harness。
+3. CSP、sandbox、Trusted Types 或框架 escaping 只能作為縱深防禦；測試仍須驗證實際 source-to-sink 邊界與禁止 API。
+4. `PRIVILEGED_XSS_REVIEW` 必須注入 fake Native Bridge／IPC／Extension API／privileged port，逐一斷言惡意 script、錯 origin／frame／caller、錯 schema、額外欄位、未授權 action、replay 與 navigation 後 context 都在任何 host effect 前 fail closed；另保留一個精確授權的正向呼叫，證明安全 gate 不是只把功能關閉。
+
+上述適用格、首次紅燈、綠燈與至少一個會使攻擊格重新執行的反向變異，皆須進入 Acceptance Closure Set。缺少分類或必要矩陣時是 `TICKET_DEFECT`，不得交給實作者自行猜測。
 
 <a id="implementation"></a>
 
@@ -510,6 +543,7 @@ implementation owner 回傳 `ImplementationReturn`。`COMPLETED` 產生 `ACTION_
 - 正式 Log 必須 redact／sanitize，且以唯讀方式查詢；不得暴露 Authorization header、Cookie、Token、精確位置或正式使用者資料。
 - 任何 Secret、KMS、正式 Log、事故診斷、管理權限、付費 Provider 或安全例外，先查安全邊界文件並通過需求、規格與工單閘門。
 - 外部 Webhook 必須驗簽、去重、限流與 fail-closed；所有前端輸入都由伺服器重新驗證與正規化。
+- 不可信資料進入 Browser／WebView／HTML／DOM／JavaScript context 時，必須通過 [XSS Review 強制閘門](#xss-review)；可觸達 Native Bridge、IPC、Extension API 或其他宿主能力時一律升級為 `PRIVILEGED_XSS_REVIEW`。
 
 <a id="review-handoff"></a>
 
