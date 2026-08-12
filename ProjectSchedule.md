@@ -144,8 +144,8 @@
 | Ticket 05B4B2D compensation settlement | COMPLETE / APPROVED / INTEGRATED | Implementation `bf9278f`, handoff `60a8311`, review `eef459e`, guarded merge `9769a75`; post-merge 353 tests and strict mypy passed. |
 | Ticket 05B4B2E lifecycle acceptance parent | CONVERGENCE_DECOMPOSED / NON_DISPATCHABLE | E0 oracle evidence, E1 identity, E2/E3 adapters, E4 success, E5 compensation and E6 isolation are separately accepted. |
 | Ticket 05B4B2E0 oracle logical installed path | COMPLETE / APPROVED / INTEGRATED | Merge `3fc2f99`; post-merge focused 17/full 360/strict mypy pass; allocation released and receipt closed. |
-| Ticket 05B4B2E1 oracle identity binding | APPROVED / GUARDED_INTEGRATION_READY | Correction `ef80813`, handoff `658f3d7`; CR-159 closed by recursive 14-node rejection, full 370 and strict typing. |
-| Tickets 05B4B2E2/E3 oracle adapters | PLANNED / DEPENDENCY_WAIT | Disjoint registration and compensation adapters may run in parallel only after E1 integration. |
+| Ticket 05B4B2E1 oracle identity binding | COMPLETED / APPROVED / INTEGRATED | Merge `27c8305`; CR-159 closed by recursive 14-node rejection, full 370 and strict typing. |
+| Tickets 05B4B2E2/E3 oracle adapters | PLANNED / REFREEZE_REQUIRED | E1 is integrated. E2 needs an independent fresh CLI-version oracle observation before dispatch; E3 may be frozen separately. |
 | Tickets 05B4B2E4-E6 lifecycle acceptance | PLANNED / DEPENDENCY_WAIT | Success, compensation and isolation remain small dependency-ordered acceptance tickets. |
 | Ticket 05C receipt removal/replay | PLANNED / DEPENDENCY_WAIT / REFREEZE_REQUIRED | Starts only after 05A/05B approval/integration and a finite behavior/rollback closure refreeze. |
 | Ticket 06A Codex role-profile capability proof | DONE / APPROVED_EVIDENCE / INSTALL_BLOCKED / INTEGRATED | Implementation `38e9a8b`, handoff `f6f186f`, review `62955ec`, guarded merge `de4141e`; actual installed-host result is `ROLE_ISOLATION_UNPROVEN / ACCESS_DENIED / OUTPUT_UNAVAILABLE`, so capability dependents stay blocked. |

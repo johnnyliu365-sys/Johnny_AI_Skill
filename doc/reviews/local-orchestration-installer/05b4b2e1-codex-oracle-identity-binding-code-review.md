@@ -80,3 +80,13 @@ its correction handoff are committed.
 only exact handoff `658f3d7e886d1fd5ddca7bc2c39a8cd887afa4d0`, preserving this
 approval as first-parent control history. E2/E3 remain undispatched until the
 integration and post-merge readback pass.
+
+## Guarded integration record
+
+`APPROVED / INTEGRATED`. Merge
+`27c8305200f61d9658aa5b2b32bd15a7db4d0b4c` has first parent
+`e69bafa4b7fff430f95e4e83ddfcb0398a8de173` and second parent exact handoff
+`658f3d7e886d1fd5ddca7bc2c39a8cd887afa4d0`. The sole WPR conflict retained
+PRG-273 through PRG-278 exactly once and in order. Post-merge focused/relevant
+27/27, full serial 370/370, strict mypy and in-memory compile over 132 files
+passed; main was clean and exactly the original three worktrees remained.

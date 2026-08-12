@@ -3110,3 +3110,13 @@
 | Closure | CR-159 closed: the exact outer request, preflight and all twelve nested value nodes must contain only declared dictionary/field-set state with no Pydantic extra/private state before binding. |
 | Independent evidence | Unicode-safe external snapshot passed focused/relevant 27/27, full serial 370/370, strict mypy 132 files and compile 132 files. Forty-two additional extra/private/field-set injections across all 14 nodes rejected. Reducing the guard to the outer request made all 13 nested committed cells red; exact source blob restored and green. |
 | Disposition | `APPROVED / READY_TO_MERGE`; only exact handoff `658f3d7e886d1fd5ddca7bc2c39a8cd887afa4d0` may enter guarded integration. `XSS_NOT_APPLICABLE`. No staging push, package, release, deployment or target-project effect. |
+
+## PRG-20260813-279 — Ticket 05B4B2E1 guarded integration completion
+
+| Field | Value |
+| --- | --- |
+| Router event | `REVIEW_APPROVED(05B4B2E1) -> GUARDED_INTEGRATION -> ACTION_COMPLETED / TICKET_COMPLETED` |
+| Integration | Merge `27c8305200f61d9658aa5b2b32bd15a7db4d0b4c`; first parent approval `e69bafa4b7fff430f95e4e83ddfcb0398a8de173`; second parent exact handoff `658f3d7e886d1fd5ddca7bc2c39a8cd887afa4d0`. The sole WPR conflict retained PRG-273 through PRG-278 exactly once and in order. |
+| Post-merge evidence | Focused/relevant 27/27, full serial 370/370, strict mypy 132 files and in-memory compile 132 files passed. Main and submitted implementation lanes were clean; exactly the original three worktrees remained. |
+| Completion | E1 is `COMPLETED / APPROVED / INTEGRATED`; allocation released and receipt closed. E2/E3 require their own reviewed freezes and new unique bindings. |
+| Package boundary | No staging push, package, release, deployment or target-project action. Only future 04D may fast-forward the remote `staging` warm-backup ref after exact 04C candidate freeze. |

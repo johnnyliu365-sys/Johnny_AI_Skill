@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / unchanged AC-01, AC-02, AC-07 and AC-08 staging seam |
-| State | `APPROVED / GUARDED_INTEGRATION_READY` |
+| State | `COMPLETED / APPROVED / INTEGRATED` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B4B2E1-01` / I1-I8 |
 | Dependency | E0 integrated by `3fc2f99f9cd4a7fff3e100918089ffed99cc16ab` |
 | Planned owner | Task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2`; no new worktree |
@@ -130,3 +130,17 @@ Correction `ef80813b223b53f638b7c263054a6f03045c28a7` and docs handoff
 focused/relevant 27/27, full 370/370, strict mypy and compile over 132 files,
 42 additional internal-state probes and the recursive-guard reversal pass.
 Only the exact handoff is ready for guarded integration.
+
+## Guarded integration completion
+
+Merge `27c8305200f61d9658aa5b2b32bd15a7db4d0b4c` preserves approval
+`e69bafa4b7fff430f95e4e83ddfcb0398a8de173` as first parent and exact docs
+handoff `658f3d7e886d1fd5ddca7bc2c39a8cd887afa4d0` as second parent. The sole
+`doc/WorkProgressReport.md` conflict was resolved by retaining PRG-273 through
+PRG-278 exactly once and in order.
+
+Post-merge focused/relevant 27/27, full serial 370/370, strict mypy and
+in-memory compile over 132 files passed. Main and both submitted implementation
+lanes were clean and the existing three-worktree topology was unchanged. E1 is
+complete; its allocation is released and receipt closed. No staging push,
+package, release, deployment or target-project effect occurred.
