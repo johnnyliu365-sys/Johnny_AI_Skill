@@ -149,7 +149,9 @@
 | Ticket 05B4B2E3A compensation finite failure | COMPLETED / APPROVED / INTEGRATED | Merge `b324f91`; combined focused 44/full 379/strict mypy pass. |
 | Ticket 05B4B2E2B registration no-effect failure | COMPLETED / APPROVED / INTEGRATED | Merge `784d08a`; CR-160 incident remains truthfully preserved. |
 | Ticket 05B4B2E3B oracle owned-absence preservation | COMPLETED / APPROVED / INTEGRATED | Merge `dc07eec`; CR-161 subclass/constructed evidence is finitely blocked. |
-| Tickets 05B4B2E2/E3 oracle adapters | PLANNED / READY_FOR_REFREEZE | Their A/B prerequisites are approved and integrated; refreeze each as a separate small ticket. |
+| Ticket 05B4B2E2 registration oracle adapter | FROZEN / READY_FOR_DISPATCH | R1-R8 requires an isolated child logical `%LOCALAPPDATA%`; no ambient path rewrite. |
+| Ticket 05B4B2E3C compensation request revalidation | FROZEN / READY_FOR_DISPATCH | Pure public exact request admission; disjoint from E2. |
+| Ticket 05B4B2E3 compensation oracle adapter | PLANNED / PREREQUISITE_WAIT | Refreeze only after E3C approval/integration. |
 | Tickets 05B4B2E4-E6 lifecycle acceptance | PLANNED / DEPENDENCY_WAIT | Success, compensation and isolation remain small dependency-ordered acceptance tickets. |
 | Ticket 05C receipt removal/replay | PLANNED / DEPENDENCY_WAIT / REFREEZE_REQUIRED | Starts only after 05A/05B approval/integration and a finite behavior/rollback closure refreeze. |
 | Ticket 06A Codex role-profile capability proof | DONE / APPROVED_EVIDENCE / INSTALL_BLOCKED / INTEGRATED | Implementation `38e9a8b`, handoff `f6f186f`, review `62955ec`, guarded merge `de4141e`; actual installed-host result is `ROLE_ISOLATION_UNPROVEN / ACCESS_DENIED / OUTPUT_UNAVAILABLE`, so capability dependents stay blocked. |

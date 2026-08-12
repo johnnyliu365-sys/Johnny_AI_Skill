@@ -3327,3 +3327,15 @@
 | Post-merge evidence | Combined focused suites passed 66/66; full serial discovery passed 388/388 in one unique reviewer-owned external TEMP; strict mypy and in-memory compile passed 132 files. Exact merge ancestry, duplicate-PRG check, diff check, clean main and exactly three worktrees passed. |
 | Completion / continuation | E2B and E3B are `COMPLETED / APPROVED / INTEGRATED`; allocations released and receipts closed. E2 and E3 adapter tickets are now separately eligible for reviewer refreeze from this integrated baseline; neither is dispatched by this record. |
 | Package boundary | No staging push, package, build/install, release, deployment, live Codex or target-project action. Remote `staging` remains reserved for 04D only after exact clean v1 candidate freeze under 04C. |
+
+## PRG-20260813-299 — E2 adapter and E3C request-revalidation freeze
+
+| Field | Value |
+| --- | --- |
+| State | `TICKET_DEFECT_REVIEWED / DECOMPOSED / FROZEN / NOT_DISPATCHED` |
+| Router event | `ACTION_COMPLETED(E2B,E3B) -> ADAPTER_CONTRACT_REVIEW -> TICKETS_FROZEN(E2,E3C)` |
+| E2 probe | The exact E1 fixed-root marketplace observation revalidates as `REQUEST_MISMATCH` under ambient host `%LOCALAPPDATA%`, and succeeds only in a separate process whose `%LOCALAPPDATA%` expands to the E1 fixed logical root. R1-R8 therefore require a dedicated child and explicitly forbid path rewriting/manufacture. |
+| E3 defect | The future effect adapter needs recursive exact request admission, but the only complete validator is private to compensation composition. E3C Q1-Q6 publishes one pure finite public revalidator before E3 refreeze, preventing copied competing validation and repeated constructed-state defects. |
+| Parallel safety | E2 owns two new staging adapter/test paths. E3C owns compensation port/composition and their focused tests. Writable sets are disjoint and use only the two existing implementation tasks/worktrees after lane readback. |
+| Delivery boundary | No implementation dispatch, worktree mutation, staging push, package/build/install, live Codex, target-project write, release or deployment. 04C must freeze the exact clean v1 candidate before 04D may publish/read back remote staging as the warm backup. |
+| XSS | `XSS_NOT_APPLICABLE`: neither ticket adds Browser, WebView, HTML/DOM renderer or JavaScript execution context. |
