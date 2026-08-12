@@ -2903,3 +2903,12 @@
 | Outcome | Safely admit a compensation port, consume one exact claim, derive manifest and terminal/recovery plan only from claim-owned values, then delegate one exhaustive sequence to existing compensation composition. |
 | Lane | Planned existing task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` / `workflow-implementer-2`; no new worktree. Freeze is not dispatch. |
 | Security | `XSS_NOT_APPLICABLE`; no renderer/JavaScript/bridge. No live Codex, filesystem/process/network/target-project, push, release or deployment authority. |
+
+## PRG-20260812-259 — Ticket 05B4B2D dispatch registry
+
+| Field | Value |
+| --- | --- |
+| Router event | `TICKET_FROZEN(05B4B2D) -> IMPLEMENTATION_DISPATCH_CONFIRMED / IMPLEMENT` |
+| Freeze / binding | `e6d747bd04b90b922202b6eb8ded1e12c409c678`; closure S1-S9; `hnd_local_orchestration_install_05b4b2d_20260812`; `aln_local_orchestration_install_05b4b2d_20260812`; `rcpt_local_orchestration_install_05b4b2d_20260812`; `corr-local-orchestration-install-05b4b2d-20260812`; `scx-local-orchestration-install-05b4b2d-20260812-01`. |
+| Lane | Idle task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; exact clean submitted HEAD `e12ee8bef24172db517bfb346bd7fd4f972a2759` in existing `workflow-implementer-2`; exactly three worktrees; create one branch from this registry commit; no new worktree. |
+| Return | Exact compensation-settlement source/test commit, then WPR-only PRG-260. Reviewer retains sole orchestration and review authority. |
