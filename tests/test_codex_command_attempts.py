@@ -107,6 +107,21 @@ class UnexpectedJournal:
 
 
 class CodexCommandAttemptTests(unittest.TestCase):
+    def test_n1_no_effect_pre_start_reasons_are_closed_and_not_started(self) -> None:
+        expected_reasons = (
+            CodexPreStartFailureReason.INVALID_REQUEST,
+            CodexPreStartFailureReason.REQUEST_MISMATCH,
+        )
+        for target in CodexCommandTarget:
+            for reason in expected_reasons:
+                with self.subTest(target=target, reason=reason):
+                    observation = CodexPreStartFailure(
+                        target=target,
+                        reason=reason,
+                        start_state=CodexCommandStartState.NOT_STARTED,
+                    )
+                    self.assertIs(CodexCommandStartState.NOT_STARTED, observation.start_state)
+
     def test_t1_c1_requires_every_declared_observation_field(self) -> None:
         observation_payloads: tuple[tuple[type[BaseModel], dict[str, object]], ...] = (
             (
@@ -316,7 +331,7 @@ class CodexCommandAttemptTests(unittest.TestCase):
     def test_t1_c1_all_finite_observations_are_strict_and_start_state_bound(self) -> None:
         pre_start_reasons = tuple(CodexPreStartFailureReason)
         started_reasons = tuple(CodexStartedFailureReason)
-        self.assertEqual(3, len(pre_start_reasons))
+        self.assertEqual(5, len(pre_start_reasons))
         self.assertEqual(6, len(started_reasons))
         for target in CodexCommandTarget:
             for pre_start_reason in pre_start_reasons:

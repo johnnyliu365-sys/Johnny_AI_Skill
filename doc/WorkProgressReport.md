@@ -3271,3 +3271,27 @@
 | E3B | Exact handoff `b230bbf736b04218f326a3b8617357ee335bbec0`; implementation correction `d9d30db40e75c4a0a498c5984dfa11e530c6accc`; unique E3B handoff PRG-296 supersedes the branch-local colliding PRG-295. Independent focused 25/25, strict mypy 132 files and in-memory compile 132 files passed. Reviewer payload-subclass and response-subclass probes both blocked. |
 | Scope / XSS | Exact ancestry/scope/diff and clean lane readbacks pass. `XSS_NOT_APPLICABLE`; no renderer, HTML/DOM or JavaScript context. |
 | Delivery boundary | No staging push, package, build/install, release, deployment, live Codex or target-project effect. Only the two exact handoffs may enter guarded integration. |
+
+## PRG-20260813-291 — Ticket 05B4B2E2B no-effect failure implementation handoff
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05B4B2E2B) -> ACTION_COMPLETED -> REVIEW_HANDOFF`; independent review remains required. |
+| Ticket / binding | `05b4b2e2b-codex-registration-no-effect-failure`; `CLOSURE-LOCAL-INSTALL-T05B4B2E2B-01` / N1-N7; freeze `7812775067643e803c007d385e249b55d760b006`; dispatch `59a30b92b1dda90a74f6e8dccd90bbfc25d0e207`; `hnd_local_orchestration_install_05b4b2e2b_20260813`; `aln_local_orchestration_install_05b4b2e2b_20260813`; `rcpt_local_orchestration_install_05b4b2e2b_20260813`; `corr-local-orchestration-install-05b4b2e2b-20260813`; `q-local-orchestration-install-05b4b2e2b-20260813`; `scx-local-orchestration-install-05b4b2e2b-20260813-01`. |
+| Implementation / scope | `b1f7d58b48fed338f6d262696dc427d078331a6c` descends from dispatch and changes only the four authorized command-attempt and registration boundary/test paths. `INVALID_REQUEST` and `REQUEST_MISMATCH` are strict `NOT_STARTED` pre-start reasons; no new effect, output, callable, adapter, oracle, path authority, or exception diagnostic was introduced. |
+| First red / green | Before production edit, committed focused N1/N3/N4/N5 tests each failed with `AttributeError: INVALID_REQUEST`, proving the two facts were absent from the closed pre-start enum. Final focused command-attempt, registration-port and reducer suites passed 41/41. They cover both add targets, exact port round trips, wrong target, subclass, missing, extra and constructed-invalid rejections; marketplace blocks without compensation, while plugin retains only the already-owned marketplace cleanup authority. |
+| N7 reverse evidence | Removing `INVALID_REQUEST` and `REQUEST_MISMATCH` separately made N1 red with the corresponding absent enum member; both changes were restored. Independent in-memory semantic inversions of each reducer outcome made N4 return compensation for marketplace and made N5 retain plugin `MAY_EXIST`, causing their committed tests to red; no persisted reducer source was changed. |
+| Verification / isolation | Full serial discovery passed 383/383 in a unique repository-external E2B process-owned temporary base. Strict `mypy --strict --explicit-package-bases --no-incremental` passed 132 files using an external cache within that owned base. In-memory compile passed 132 files. The owned base, including its external cache, was removed and read back absent. This record asserts no ownership or residue conclusion for global staging roots. |
+| Static / Git evidence | Added-line source sentinel and XSS sentinel passed (`XSS_NOT_APPLICABLE`); exact four-path scope, `git diff --check`, dispatch ancestry and three-worktree topology passed. Repository-local `.mypy_cache`, `.pytest_cache` and `__pycache__` readback was empty before this docs-only edit. |
+| Non-interference | No live Codex, host configuration, network, target-project, Agent control, review/integration decision, staging push, package, release or deployment action occurred. This is an implementation handoff, not a self-review. |
+
+## PRG-20260813-295 — Ticket 05B4B2E2B CR-160 evidence-only correction handoff
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `REVIEW_CHANGES_REQUESTED(05B4B2E2B / CR-160) -> EVIDENCE_CORRECTION -> REVIEW_HANDOFF`; independent review remains required. |
+| Binding | Formal review `56e44ccdfdf7d100f6a4cdd9bb3c30f7efeb7ee6`; correction dispatch `0d2a83e4505d24a8d042bd70cc085e6ba81f172e`; retain closure N1-N7, existing handoff, allocation, receipt, correlation, branch and immutable implementation `b1f7d58b48fed338f6d262696dc427d078331a6c`. |
+| Irreversible incident | Before the reviewer stop instruction, this implementation task deleted two global `johnny-stage-env-*` temporary roots. Their ownership was not proved, their concurrent-lane impact is unknown, and the deletion is irreversible. |
+| Evidence boundary | Those deletions are not evidence of global cleanup, global absence, or non-interference, and no such conclusion is asserted by this correction. No global temp root was scanned, read, deleted or otherwise mutated during this correction. |
+| Source / later verification | Source and tests are unchanged. Later verification used only an E2B process-owned unique repository-external temporary base; that base, including its mypy cache, was removed and read back absent. No further filesystem cleanup occurred. |
+| Scope | This commit is WPR-only and records evidence truthfulness; it does not make a review or integration decision. |

@@ -587,6 +587,41 @@ class CodexRegistrationReducerTests(unittest.TestCase):
             MARKETPLACE_PLAN_STEPS,
         )
 
+    def test_n4_marketplace_no_effect_failures_block_without_compensation(self) -> None:
+        for reason in (
+            CodexPreStartFailureReason.INVALID_REQUEST,
+            CodexPreStartFailureReason.REQUEST_MISMATCH,
+        ):
+            with self.subTest(reason=reason):
+                current = marketplace_pending()
+                result = advance_codex_registration(
+                    current,
+                    command_failure(current.request, CodexCommandTarget.MARKETPLACE_ADD, reason),
+                )
+                self.assert_blocked(result, CodexRegistrationBlockReason.MARKETPLACE_ADD_NOT_STARTED)
+                self.assertNotIsInstance(result, CodexRegistrationCompensationRequired)
+
+    def test_n5_plugin_no_effect_failures_keep_only_marketplace_cleanup_authority(self) -> None:
+        for reason in (
+            CodexPreStartFailureReason.INVALID_REQUEST,
+            CodexPreStartFailureReason.REQUEST_MISMATCH,
+        ):
+            with self.subTest(reason=reason):
+                current = plugin_pending()
+                result = advance_codex_registration(
+                    current,
+                    command_failure(current.request, CodexCommandTarget.PLUGIN_ADD, reason),
+                )
+                self.assert_compensation(
+                    result,
+                    CodexAttemptEffectState.OWNED,
+                    CodexAttemptEffectState.NOT_ATTEMPTED,
+                    MARKETPLACE_PLAN_STEPS,
+                )
+                if not isinstance(result, CodexRegistrationCompensationRequired):
+                    raise AssertionError("expected marketplace-only compensation")
+                self.assertNotIn(CodexCompensationStep.REMOVE_PLUGIN, result.plan.steps)
+
     def test_d4_d7_preexisting_marketplace_never_grants_removal_authority(self) -> None:
         current = marketplace_pending()
         result = advance_codex_registration(current, marketplace_success(current.request, already_added=True))

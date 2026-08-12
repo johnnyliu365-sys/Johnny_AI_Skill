@@ -103,6 +103,10 @@ class MissingValue:
     pass
 
 
+class DerivedPreStartFailure(CodexPreStartFailure):
+    pass
+
+
 class TrapCounter:
     def __init__(self) -> None:
         self.count = 0
@@ -736,6 +740,7 @@ class CodexRegistrationPortTests(unittest.TestCase):
             revalidate_plugin_add_result(wrong_plugin_version, expected),
             CodexRegistrationPortValueRejectReason.VERSION_MISMATCH,
         )
+
         wrong_marketplace_path = marketplace_success(
             expected,
             CodexMarketplaceAddObservation(
@@ -847,6 +852,97 @@ class CodexRegistrationPortTests(unittest.TestCase):
             observed_path(SOURCE).value,
             marketplace_success(expected).observation.installed_root.value,
         )
+
+    def test_n3_no_effect_failures_round_trip_only_for_the_exact_add_target(self) -> None:
+        expected = port_request()
+        no_effect_reasons = (
+            CodexPreStartFailureReason.INVALID_REQUEST,
+            CodexPreStartFailureReason.REQUEST_MISMATCH,
+        )
+        revalidators = (
+            (
+                CodexCommandTarget.MARKETPLACE_ADD,
+                revalidate_marketplace_add_result,
+                revalidate_plugin_add_result,
+            ),
+            (
+                CodexCommandTarget.PLUGIN_ADD,
+                revalidate_plugin_add_result,
+                revalidate_marketplace_add_result,
+            ),
+        )
+        for target, exact_revalidator, wrong_revalidator in revalidators:
+            for reason in no_effect_reasons:
+                with self.subTest(target=target, reason=reason):
+                    exact = CodexRegistrationCommandFailed(
+                        request=expected,
+                        failure=CodexPreStartFailure(
+                            target=target,
+                            reason=reason,
+                            start_state=CodexCommandStartState.NOT_STARTED,
+                        ),
+                    )
+                    rebuilt = exact_revalidator(exact, expected)
+                    self.assertIsInstance(rebuilt, CodexRegistrationCommandFailed)
+                    if not isinstance(rebuilt, CodexRegistrationCommandFailed):
+                        raise AssertionError("expected exact command failure")
+                    self.assertIsInstance(rebuilt.failure, CodexPreStartFailure)
+                    self.assertIs(reason, rebuilt.failure.reason)
+                    self.assertIs(CodexCommandStartState.NOT_STARTED, rebuilt.failure.start_state)
+                    self.assert_rejected(
+                        wrong_revalidator(exact, expected),
+                        CodexRegistrationPortValueRejectReason.TARGET_MISMATCH,
+                    )
+
+                    constructed_missing = CodexRegistrationCommandFailed.model_construct(
+                        request=expected,
+                        failure=CodexPreStartFailure.model_construct(target=target, reason=reason),
+                    )
+                    self.assert_rejected(
+                        exact_revalidator(constructed_missing, expected),
+                        CodexRegistrationPortValueRejectReason.INVALID_RESULT,
+                    )
+                    constructed_raw = CodexRegistrationCommandFailed.model_construct(
+                        request=expected,
+                        failure=CodexPreStartFailure.model_construct(
+                            target=target.value,
+                            reason=reason.value,
+                            start_state=CodexCommandStartState.NOT_STARTED.value,
+                        ),
+                    )
+                    self.assert_rejected(
+                        exact_revalidator(constructed_raw, expected),
+                        CodexRegistrationPortValueRejectReason.INVALID_RESULT,
+                    )
+                    subclassed = CodexRegistrationCommandFailed.model_construct(
+                        request=expected,
+                        failure=DerivedPreStartFailure(
+                            target=target,
+                            reason=reason,
+                            start_state=CodexCommandStartState.NOT_STARTED,
+                        ),
+                    )
+                    self.assert_rejected(
+                        exact_revalidator(subclassed, expected),
+                        CodexRegistrationPortValueRejectReason.INVALID_RESULT,
+                    )
+                    with self.assertRaises(ValidationError):
+                        CodexPreStartFailure.model_validate(
+                            {
+                                "target": target,
+                                "reason": reason,
+                                "start_state": CodexCommandStartState.NOT_STARTED,
+                                "unexpected": "extra",
+                            }
+                        )
+                    with self.assertRaises(ValidationError):
+                        CodexRegistrationCommandFailed.model_validate(
+                            {
+                                "request": expected,
+                                "failure": exact.failure,
+                                "unexpected": "extra",
+                            }
+                        )
 
     def test_a2_wrong_operation_targets_are_rejected_exactly(self) -> None:
         expected = port_request()
