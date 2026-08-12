@@ -138,14 +138,25 @@
 | Ticket 05B4A1 plugin identity authority | COMPLETE / APPROVED / INTEGRATED | Implementation `76f0b96`, handoff `30d6bcf`, review `42e1590`, merge `3399cf9`; exact I1-I6 passed. |
 | Ticket 05B4B registration transaction parent | CONVERGENCE_DECOMPOSED | Split pure forward decisions from effect/proof/receipt/compensation/oracle composition. |
 | Ticket 05B4B1 pure registration reducer | COMPLETE / APPROVED / INTEGRATED | Correction `64e9e0a`, handoff `918c9af`, review `71f30be`, guarded merge `d7c5934`; post-merge verification passed. |
-| Ticket 05B4B2 transaction parent | CONVERGENCE_DECOMPOSED / CHILD_05B4B2A_COMPLETE / CHILD_05B4B2B_FROZEN | B2A owns integrated effect-free authority; B2B closure F1-F8 is freshly frozen, while B2C-B2E remain dependency-waiting. |
+| Ticket 05B4B2 transaction parent | CONVERGENCE_DECOMPOSED / B2A-B2C_INTEGRATED / B2D_IN_PROGRESS | Transaction authority, forward composition, claim/context and proof settlement are integrated; compensation settlement is active; lifecycle acceptance waits. |
 | Ticket 05B4B2A transaction authority | COMPLETE / APPROVED / INTEGRATED | Correction `4e6924b`, handoff `e4841ab`, review `e03cb8d`, guarded merge `494aaca`; post-merge focused 11/11, full 294/294, strict mypy and compile 122 files pass. |
-| Ticket 05B4B2B forward composition | IN_PROGRESS / DISPATCH_CONFIRMED | Exact F1-F8 and XSS N/A at freeze `45afa50`; assigned to existing `workflow-implementer-2` with unique receipt; no new worktree. |
+| Ticket 05B4B2B/B1/B2 and B2C | COMPLETE / APPROVED / INTEGRATED | Forward `63e8a7b`; claim `0c4476f`; compensation context `e7cd37b`; proof settlement `af3a95a`. |
+| Ticket 05B4B2D compensation settlement | IN_PROGRESS / DISPATCH_CONFIRMED | Exact S1-S9 at `11616fc`; assigned to existing `workflow-implementer-2`; no new worktree. |
+| Ticket 05B4B2E lifecycle acceptance | PLANNED / DEPENDENCY_WAIT / REFREEZE_REQUIRED | Starts only after B2C and B2D are independently approved/integrated. |
 | Ticket 05C receipt removal/replay | PLANNED / DEPENDENCY_WAIT / REFREEZE_REQUIRED | Starts only after 05A/05B approval/integration and a finite behavior/rollback closure refreeze. |
 | Ticket 06A Codex role-profile capability proof | DONE / APPROVED_EVIDENCE / INSTALL_BLOCKED / INTEGRATED | Implementation `38e9a8b`, handoff `f6f186f`, review `62955ec`, guarded merge `de4141e`; actual installed-host result is `ROLE_ISOLATION_UNPROVEN / ACCESS_DENIED / OUTPUT_UNAVAILABLE`, so capability dependents stay blocked. |
 | Autonomous Ticket 04 reviewer-only authority | PLANNED / DEPENDENCY_WAIT | Starts only after reviewed 06A `SUPPORTED`; typed fake effect gate, not a real Agent turn. |
 | Tickets 06B/06C role-profile lifecycle/composition | PLANNED / DEPENDENCY_WAIT | Wait for 06A and autonomous Ticket 04; own/remove profiles, then compose exact reviewer authority. |
-| Ticket 04 implementation | PLANNED / DEPENDENCY_WAIT | Pinned compiler is ready; package work waits for decomposed Codex adapter 05A–05C and reviewer-role 06A–06C clusters. |
+| Ticket 04 package parent | DECOMPOSED / NON_DISPATCHABLE | `CHG-20260812-014`; replaced by serial 04A-04I. |
+| Ticket 04A payload manifest contract | PLANNED / DEPENDENCY_WAIT | After runtime/host prerequisites; pure typed source/test only. |
+| Ticket 04B Inno installer build source | PLANNED / DEPENDENCY_WAIT | After 04A integration; `.iss`/build source and disposable compile only. |
+| Ticket 04C version-one candidate freeze | PLANNED / DEPENDENCY_WAIT | After 04A/04B integration; freeze complete clean source SHA. |
+| Ticket 04D remote staging warm backup | PLANNED / DEPENDENCY_WAIT | After 04C: create/fast-forward exact candidate to `origin/staging`, then SHA readback. No push now. |
+| Ticket 04E disposable Windows environment | PLANNED / DEPENDENCY_WAIT | After 04D; qualify standard-user Windows isolation only, no product install. |
+| Ticket 04F Windows release build | PLANNED / DEPENDENCY_WAIT | After 04D/04E; clean staging export build only, no install. |
+| Ticket 04G disposable Windows install | PLANNED / DEPENDENCY_WAIT | After 04F; physical install acceptance only. |
+| Ticket 04H disposable Windows uninstall | PLANNED / DEPENDENCY_WAIT | After 04G; product removal/absence/foreign preservation only. |
+| Ticket 04I first-version freeze | PLANNED / DEPENDENCY_WAIT | After 04G/04H; immutable source/toolchain/manifest/artifact/review record. |
 
 ### Ticket 05 selection after external capability proof
 
@@ -162,6 +173,19 @@ within K1–K8, four production files and one test. It uses exactly one branch i
 the existing sole implementation worktree; no second live registration,
 additional worktree, target-project access or schedule is authorized. Ticket 04
 remains dependency-waiting until independent Ticket-05 approval and integration.
+
+### Version-one staging and package convergence
+
+Owner change `CHG-20260812-014` makes remote `staging` a pre-release-build warm
+source backup and the baseline for later feature/architecture work. The remote
+has no current `staging` ref, while unfinished local `main` is ahead of
+`origin/main`; therefore no push occurs now. After runtime/host prerequisites,
+04A and 04B separately implement and integrate the manifest contract and Inno
+build source. 04C freezes that exact clean candidate and 04D alone may create or
+fast-forward `origin/staging` to its SHA with mandatory readback. Package parent
+04 is non-dispatchable; serial 04E-04I separately accept Windows environment,
+clean-export release build, install, uninstall/absence and immutable version-one
+evidence. Public release, deployment and `main` push remain outside this plan.
 
 Initial independent review `dac99fd` reproduced false/escaping boundary results,
 partial registration residue, foreign absence-proof acceptance and an adapter

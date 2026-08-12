@@ -2,13 +2,13 @@
 
 | Field | Value |
 | --- | --- |
-| Context state | `TICKET_05B4B2A_COMPLETE / TICKET_05B4B2B_IN_PROGRESS` |
-| Router event | `TICKET_FREEZE_COMPLETED / TICKET_DISPATCH_REQUIRED / IMPLEMENTATION_DISPATCH_CONFIRMED` |
+| Context state | `TICKET_05B4B2C_COMPLETE / TICKET_05B4B2D_IN_PROGRESS / PACKAGE_04_DECOMPOSED` |
+| Router event | `IMPLEMENTATION_DISPATCH_CONFIRMED(05B4B2D) / REQUIREMENT_CHANGED(CHG-20260812-014) / TICKETS_PLANNED(04A-04I)` |
 | Delivery stage | `POC` |
-| Requirement change | `CHG-20260808-011`; governance security overlay `CHG-20260812-013` |
-| Baseline | `cd3e9b6789623bd2a12ff7c69db4d5fcadd1718f` (`docs: refreeze Ticket 05B4B1 pure reducer`) |
+| Requirement change | `CHG-20260808-011`; reviewer-role revision `CHG-20260811-012`; governance security overlay `CHG-20260812-013`; version-one delivery revision `CHG-20260812-014` |
+| Baseline | `11616fc6bd26dd8ce70cab675ed7411644a45734` (05B4B2D dispatch registry and pre-change control baseline) |
 | Control-plane owner | Codex / current `main` worktree |
-| Implementation owner | 05B4B2B is allocated to task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` in existing `workflow-implementer-2` under exact receipt `rcpt_local_orchestration_install_05b4b2b_20260812`; no new worktree |
+| Implementation owner | 05B4B2D is allocated to task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` in existing `workflow-implementer-2` under exact receipt `rcpt_local_orchestration_install_05b4b2d_20260812`; no new worktree |
 | Required sources read | `AGENTS.md`, `Workflow.md` (Router, Wayfinder, Grill, change control, specification, tickets, role boundary), `Defined_wayfinder.md`, `CONTEXT.md`, `PRD.md`, `ProjectSchedule.md`, `doc/RequirementChangeLog.md`, existing plugin manifests / README, `library/workflow_router/`, and completed plugin / autonomous-collaboration POCs |
 
 ## Shared Context reference
@@ -81,6 +81,17 @@ automatically `PRIVILEGED_XSS_REVIEW`.
 2. **Target-project registry** — a project can be represented only by a validated opaque `ProjectId` and an explicit local registration supplied at runtime. A guarded Git adapter resolves the actual path only inside its local injected implementation, requires a clean expected base and permits no operation outside that registered root. The installer never calls it.
 
 The runner is not a hidden model executor. It consumes validated metadata events, resumes local checkpoints and emits `HALTED` / notification state when a human or host capability is required. Host-specific Codex and Claude behavior lives behind `HostLifecyclePort`; the core installer/runtime has no platform-specific configuration knowledge.
+
+### Version-one staging and package convergence
+
+[ADR-20260812-006](../../adr/ADR-20260812-006-version-one-staging-and-package-convergence.md) adds a delivery boundary without changing the runtime architecture:
+
+1. Current POC prerequisite work continues through independent review and guarded integration on `main`; the active 05B4B2D lane is not interrupted or rebased by this change.
+2. After every runtime/host prerequisite is satisfied, 04A implements the pure payload-manifest contract and 04B implements the bounded Inno installer/build source. Each is independently reviewed and integrated without accepting a release artifact. A reviewer-only 04C gate then selects one exact clean `main` commit containing both. Before release build or disposable Windows integration begins, 04D publishes exactly that commit to remote `staging` using only branch creation or verified fast-forward and reads back the same SHA. Remote divergence is `HALT / STAGING_DIVERGED`; no force, reset or silent resolution is allowed.
+3. The former local Ticket 04 is a non-dispatchable parent. Children 04A through 04I serially own payload-manifest contract, installer build source, complete candidate freeze, staging warm backup, disposable-Windows environment qualification, release build, disposable install verification, disposable uninstall/absence verification and immutable version-one artifact evidence.
+4. The frozen version-one record is append-only and binds source/staging identity, Inno Setup 6.7.3, payload manifest and binary digests, tests and review. Later functional or architectural changes branch from the current `staging` baseline under change control; they cannot overwrite the version-one record or artifact identity.
+
+The remote currently has no `staging` branch and `origin/main` is behind local `main`; this is a precondition fact, not authority to push now. The owner has authorized the future exact staging publication only at the 04D gate after 04A/04B source integration and 04C candidate approval succeed.
 
 ## Grill findings and decision
 

@@ -131,3 +131,13 @@
   the host remains `INSTALL_BLOCKED`. This adds Tickets 06A-06C and changes
   Ticket 04 dependencies; it does not reopen completed tickets or change
   05A-05C/05S4 plugin lifecycle acceptance.
+- Revision `CHG-20260812-014`: the exact reviewed version-one candidate must be
+  pushed to remote `staging` with create-or-fast-forward-only semantics and SHA
+  readback before release-build/system-integration begins. The former package
+  Ticket 04 is a non-dispatchable parent decomposed into nine serial
+  tickets with separate acceptance responsibility. The first packaged version
+  is identified by source/staging SHA, pinned toolchain, manifest and artifact
+  digests plus review evidence; later feature/architecture work starts from
+  `staging` and cannot overwrite that immutable record. Manifest and installer
+  source are independently implemented/integrated before candidate freeze/push;
+  the release binary is later built from a clean export of that exact remote SHA.

@@ -2912,3 +2912,13 @@
 | Freeze / binding | `e6d747bd04b90b922202b6eb8ded1e12c409c678`; closure S1-S9; `hnd_local_orchestration_install_05b4b2d_20260812`; `aln_local_orchestration_install_05b4b2d_20260812`; `rcpt_local_orchestration_install_05b4b2d_20260812`; `corr-local-orchestration-install-05b4b2d-20260812`; `scx-local-orchestration-install-05b4b2d-20260812-01`. |
 | Lane | Idle task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; exact clean submitted HEAD `e12ee8bef24172db517bfb346bd7fd4f972a2759` in existing `workflow-implementer-2`; exactly three worktrees; create one branch from this registry commit; no new worktree. |
 | Return | Exact compensation-settlement source/test commit, then WPR-only PRG-260. Reviewer retains sole orchestration and review authority. |
+
+## PRG-20260812-261 — Version-one staging and package convergence
+
+| Field | Value |
+| --- | --- |
+| Router event | `OWNER_REQUIREMENT_CHANGED -> GRILL_WITH_DOCS -> SPEC_REVISION_APPROVED -> TICKETS_PLANNED / ACTION_COMPLETED` |
+| Authority | Project owner instructed that the exact source be pushed to `staging` as a warm backup immediately before final package/system-integration work, that later function/architecture changes start from `staging`, that the first packaged version remain immutable and that package/system-integration work use small tickets with correctness as the priority. |
+| Remote preflight | `origin/main=cbdfa7751c21c0355cb3aaaae5b7f045d9e84154`; no remote/local `staging` branch exists; pre-change local `main=11616fc6bd26dd8ce70cab675ed7411644a45734` and is ahead of origin. Therefore no push is performed now. Future authority is restricted to 04D create-or-fast-forward publication of the exact 04C candidate with mandatory remote SHA readback. |
+| Convergence | `CHG-20260812-014`; ADR-20260812-006; PRD §15; local installer Context; SPEC AC-11/AC-12. Package parent 04 is `DECOMPOSED / NON_DISPATCHABLE`; serial 04A-04I separately own payload manifest, Inno build source, complete-candidate freeze, staging backup, disposable-Windows environment qualification, clean-export release build, install verification, uninstall/absence verification and first-version evidence freeze. |
+| Non-interference | 05B4B2D remains active under its existing owner/worktree/branch/receipt and was not interrupted, steered, rebased or modified. No worktree/branch was created, no package child was selected or dispatched, and no push, build, install, release, deployment, target-project mutation or Secret handling occurred. |

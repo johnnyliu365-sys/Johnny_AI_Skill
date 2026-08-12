@@ -7,7 +7,7 @@
 | Author | Codex / current `main` worktree / baseline `e04c2be` |
 | Context | `doc/context/local-orchestration-installer/main.md` |
 | PRD | `PRD.md §15` |
-| Requirement change | `CHG-20260808-011`; reviewer-only role revision `CHG-20260811-012` |
+| Requirement change | `CHG-20260808-011`; reviewer-only role revision `CHG-20260811-012`; version-one delivery revision `CHG-20260812-014` |
 | Common Context backlink | `CONTEXT.md › 衍生 SPEC 索引` |
 | Implementation language | Python 3.11 for typed adapter/runtime contracts; Inno Setup script for the Windows installer package after its toolchain is pinned and verified. |
 
@@ -62,6 +62,18 @@ This POC includes a Windows per-user `Setup.exe` / uninstaller, installer-owned 
 **AC-09 — Reviewer-only tool surface.** Only the reviewer profile may expose create/spawn/fork, dispatch/follow-up, steer, wait, interrupt and close. The implementation profile must prove these tools unavailable and the shared Router gate must return `HALT / ROLE_FORBIDDEN` for direct and indirect implementation-side attempts. If the current Codex custom-agent layer cannot reliably enforce this, Codex role-profile support is `INSTALL_BLOCKED`; prompt instructions are not an acceptable substitute.
 
 **AC-10 — Role-profile ownership and removal.** Reviewer and implementation profile files/config entries are installer-owned only after exact digest and host readback. Normal uninstall removes both in one invocation and proves absence; foreign/manual profiles, global settings and target projects remain byte-for-byte/Git-status unchanged. Missing/tampered/foreign receipts block without broad deletion.
+
+### Freeze and preserve the first packaged version
+
+1. After all runtime and host prerequisites are independently approved and integrated, one bounded implementation ticket adds the pure typed payload-manifest contract and a second adds the Inno installer/build source. Each receives its own TDD, implementation, review and guarded integration. Verification may produce only disposable test output; no release artifact is accepted before staging.
+2. After both source tickets are independently approved and integrated, the reviewer freezes one exact clean `main` commit as the complete version-one source candidate.
+3. Before any release build or disposable Windows system integration is dispatched, the reviewer publishes exactly that commit to remote `staging` using branch creation or a verified fast-forward-only update, then independently reads back the same remote SHA.
+4. Disposable-Windows environment qualification, release build, install verification, uninstall/absence verification and final artifact freeze consume that exact source/artifact lineage in separate serial tickets. The release build uses a clean export of the exact remote staging SHA.
+5. After version one is frozen, later feature or architecture work starts from the current `staging` baseline through normal change control; it never rewrites the version-one release record or artifact identity.
+
+**AC-11 — Staging warm-backup gate.** The remote `staging` ref must equal the reviewed complete version-one source candidate—including installer build source—before release build/system-integration begins. Dirty or incomplete source, absent authority, unexpected remote history, non-fast-forward update, failed fetch/readback or SHA mismatch returns a typed halt before build or install. The gate never force-pushes, deletes a remote ref, pushes `main`, creates a release or stores build artifacts/secrets in Git.
+
+**AC-12 — Immutable version-one identity.** The version-one release record binds the exact source commit, remote staging SHA at build start, clean-export identity, Inno Setup version, owned payload manifest digest, setup and matching uninstaller digests, disposable install/uninstall evidence and independent review references. It is append-only: a changed source, manifest, toolchain or binary digest is a new candidate/version and cannot overwrite the first record or reuse its success claim.
 
 ## Domain model, data flow and responsibility boundaries
 
@@ -167,10 +179,15 @@ fresh absence proof is captured. Contract-staging evidence does not project a
 host as production `SUPPORTED`, and the Windows staging gate cannot replace the
 finite unit/fault matrix.
 
+Remote Git `staging` is a third, delivery-only boundary and must not be confused
+with either test environment above. It is a warm backup and future development
+baseline for one reviewed source commit; it does not by itself prove install,
+uninstall, host support or binary correctness.
+
 ## Risks, compatibility, rollback and release prerequisites
 
 - The initial platform is Windows per-user only. Other operating systems are explicitly unsupported rather than silently using unsafe path semantics.
-- Inno Setup is selected for the self-contained setup/uninstaller package because it provides a paired Windows uninstaller; its compiler is not installed in this workspace and must be version-pinned, acquired under the owner’s normal tool-install authority and validated in an implementation ticket before release.
+- Inno Setup is selected for the self-contained setup/uninstaller package because it provides a paired Windows uninstaller. Version 6.7.3 has been acquired and signature/version/compile verified; the package-assembly ticket must re-read and bind that exact compiler identity before accepting an artifact.
 - Codex and Claude compatibility is adapter-specific. A verified adapter may be released; an unverified host remains unavailable without blocking the detachable core.
 - Rollback is a forward release that invokes the matching uninstaller or removes the POC from an owned test user profile. It never deletes a target project. Recovery after `UNINSTALL_BLOCKED` must display the exact owned root and failed owned receipt, then require retry/independent verification.
 - No public artifact, code signing, auto-update, remote distribution, support SLA or deployment is approved by this POC.
@@ -191,9 +208,10 @@ finite unit/fault matrix.
 | 2026-08-11 | Project owner / `CHG-20260811-012` | Approved AC-09/AC-10 reviewer-only Codex role profiles, fail-closed host capability proof, receipt-bound removal and new Tickets 06A-06C. Existing AC-01 through AC-08 remain unchanged. |
 | 2026-08-11 | Project owner / ADR-20260811-004 | Refined the unchanged AC-01/02/07/08 compensation seam into closed port admission, pure reduction and thin composition after terminal 05B3 convergence. |
 | 2026-08-12 | Project owner / `CHG-20260812-013` | Added the mandatory XSS classification. Current POC remains `XSS_NOT_APPLICABLE`; future renderer or privileged JavaScript work must re-enter the tiered XSS gate. |
+| 2026-08-12 | Project owner / `CHG-20260812-014` / ADR-20260812-006 | Required exact complete-source publication to remote `staging` before release build/system integration, decomposed manifest/source/environment/build/install/uninstall acceptance into serial tickets and made the first packaged version an immutable source/toolchain/manifest/artifact evidence record. |
 
 ## Approval record
 
 - Decision maker: Project owner
 - Date: `2026-08-08 (Asia/Taipei)`
-- Approval scope: Full `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X`, including AC-09/AC-10; tickets may now be planned, but each implementation still requires its own delivery-confirmation receipt and only the named reviewer may orchestrate the implementation task.
+- Approval scope: Full `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X`, including owner-approved revisions AC-09 through AC-12; tickets may now be planned, but each implementation still requires its own delivery-confirmation receipt and only the named reviewer may orchestrate the implementation task. The owner separately authorized only the future exact 04D staging publication after 04A/04B integration and 04C approval.

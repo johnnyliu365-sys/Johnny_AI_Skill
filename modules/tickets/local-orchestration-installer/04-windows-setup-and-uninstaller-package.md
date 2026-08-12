@@ -1,53 +1,51 @@
-# 04 — Windows Setup and Uninstaller Package
+# 04 — Windows Setup and Uninstaller Package Parent
 
 | Field | Value |
 | --- | --- |
-| SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01 through AC-10 |
-| Context / change | `doc/context/local-orchestration-installer/main.md` / `CHG-20260808-011`, `CHG-20260811-012` |
-| State | `PLANNED / DEPENDENCY_WAIT` |
-| Language | Inno Setup 6.7.3 script plus Python 3.11 packaged runner |
-| Baseline | Tickets 01–03 plus independently approved/integrated Codex CLI adapter children 05A–05C, reviewer-role Tickets 06A–06C and autonomous authority Ticket 04 |
-| Control-plane owner / reviewer | Codex / current `main` worktree |
-| Implementation owner / worktree | Codex implementation Agent / the existing sole `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` worktree after a future valid dispatch |
-| Environment | Windows user-scope sandbox; no administrator elevation, target project or production deployment |
+| SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-01 through AC-12 |
+| Context / change | `doc/context/local-orchestration-installer/main.md` / `CHG-20260812-014` |
+| State | `DECOMPOSED / NON_DISPATCHABLE` |
+| Reviewer | Codex / current `main` worktree |
+| Implementation owner | `N/A` — children require separate selection and dispatch |
 
-## User-observable outcome
+## Historical outcome
 
-The owner runs one `Setup.exe`, selects at least one genuinely supported host, and receives `INSTALLED` only after the packaged local root and host receipt are verified. Running the matching uninstaller once stops the owned runner, removes all receipt-owned registrations/payload, and deletes `%LOCALAPPDATA%\\JohnnyAIWorkflow`; rerunning reports `NOT_INSTALLED`. Both representative target repositories remain unchanged.
+This parent originally combined package assembly, physical installation,
+physical uninstall and release evidence. That review surface is too broad to
+attribute failures safely. Its intended user outcome remains authoritative,
+but no implementation may be dispatched against this file.
 
-## Scope and boundary
+## Serial children
 
-In scope: pinned Inno Setup build configuration, payload manifest generation, user-scope setup/uninstaller wiring, process/host lifecycle invocation, install/update/remove result presentation and clean-user-profile smoke automation. Proposed paths: `installer/JohnnyAIWorkflow.iss`, `installer/README.md`, package build script, release manifest and `tests/test_windows_package_contract.py`.
+| Order | Child | Sole acceptance responsibility |
+| --- | --- | --- |
+| 1 | [04A — Payload manifest contract](04a-payload-manifest-contract.md) | Implement the pure typed owned-payload manifest and digest contract. |
+| 2 | [04B — Inno installer build source](04b-inno-installer-build-source.md) | Implement bounded `.iss`/build source against 04A; accept no release artifact. |
+| 3 | [04C — Version-one candidate freeze](04c-version-one-candidate-freeze.md) | Select one exact clean, dependency-complete source commit containing 04A/04B. |
+| 4 | [04D — Staging warm backup](04d-staging-warm-backup.md) | Publish only that SHA to remote `staging` and read it back. |
+| 5 | [04E — Disposable Windows environment qualification](04e-disposable-windows-environment-qualification.md) | Prove a standard-user Windows isolation boundary before product effects. |
+| 6 | [04F — Windows release build](04f-windows-release-build.md) | Build manifest-bound setup/uninstaller artifacts from a clean staging export; do not install them. |
+| 7 | [04G — Disposable Windows install verification](04g-disposable-windows-install-verification.md) | Verify one clean per-user install in the qualified boundary. |
+| 8 | [04H — Disposable Windows uninstall verification](04h-disposable-windows-uninstall-verification.md) | Verify one-click owned removal, replay absence and foreign/target preservation. |
+| 9 | [04I — Version-one artifact freeze](04i-version-one-artifact-freeze.md) | Bind immutable source/toolchain/manifest/artifact/review evidence. |
 
-Out of scope: admin/system installation, arbitrary install path, code signing/public distribution, auto-update, support SLA, host model execution, target project manipulation, direct cache deletion, secrets, networking, push or deployment.
+Each child is frozen and dispatched only after its predecessor is independently
+approved. No child inherits implementation authority, branch, worktree or
+receipt from another. `CHANGES_REQUESTED` follows the normal same-ticket,
+same-branch additive-correction rule; it does not reopen this parent.
 
-Frontend composition / DI: setup/uninstaller screens are composition-only and receive typed install/remove projections from the packaged runner. Production bindings are the pinned Inno package plus verified host adapters; tests fake package/process/host files. Success, progress, no-host, blocked and retry text must be accessible without colour.
+The child files are approved planning skeletons, not frozen implementation
+handoffs. Before selecting exactly one child, the reviewer must update that
+child with exact writable paths, named implementation owner (or explicit
+reviewer-only evidence gate), environment/SOP, CodeReview §2.1 category matrix,
+first-red/reversal closure and one ticket-bound handoff/allocation/receipt.
+No group dispatch, inherited receipt or implementation of a later child is
+valid.
 
-## Handoff and role assignment
+## Current gate
 
-- Roles stay separated: Codex/current `main` plans/reviews; the named implementation Agent works only in the existing sole implementation worktree; owner override `N/A`. No fresh or additional worktree is authorized.
-- Dispatch requires independently approved/integrated Tickets 05A–05C, 06A–06C, autonomous reviewer-authority Ticket 04 and the already verified Inno Setup 6.7.3 compiler. Until both decomposed clusters are integrated this ticket remains `PLANNED / DEPENDENCY_WAIT`; it must not substitute a script that leaves files behind or an implementation profile that can spawn Agents.
-- Handoff references the exact integrated tickets, package manifest, target-repository snapshot fixtures and clean-user-profile smoke plan. Returns follow the global typed completion contract.
-
-## Current typed gate
-
-- `PINNED_TOOLCHAIN_VERIFIED`: Inno Setup 6.7.3 was installed per user from the official Winget manifest. The installer SHA-256 is `9c73c3bae7ed48d44112a0f48e66742c00090bdb5bef71d9d3c056c66e97b732`; `ISCC.exe` has a valid Pyrsys B.V. signature, reports 6.7.3, and compiled the bundled example successfully.
-- `CODEX_LIFECYCLE_DISCOVERED`: an owner-authorized disposable local marketplace/plugin completed exact Codex CLI add, install, list, remove and marketplace-remove operations. Source and installed manifest/skill SHA-256 values matched; the exact plugin ID, marketplace and installed path were all absent afterward. This capability probe is not production adapter source.
-- `IMPLEMENTATION_DEPENDENCY_MISSING`: Ticket 03 intentionally shipped no production Codex adapter. Parent Ticket 05 was rejected and decomposed; Tickets 05A–05C now own the bounded adapter serially. Packaging cannot start until all three implementations, independent reviews and guarded integrations are complete.
-- `REVIEWER_ROLE_DEPENDENCY_MISSING`: `CHG-20260811-012` requires an isolated 06A capability proof, the typed autonomous Ticket-04 authority gate and receipt-owned 06B/06C role-profile composition. Packaging cannot claim Codex support until all are independently approved/integrated.
-- No hidden host configuration, broad cache clear, target-project write, new worktree, push, deployment or schedule action is permitted.
-
-## TDD and defect checks
-
-1. **Normal package red/green:** before installer wiring, a clean-user sandbox lacks owned payload/receipt; green builds `Setup.exe`, installs one verified fake/real host, observes `INSTALLED`, then one uninstaller invocation removes every owned artifact and returns `NOT_INSTALLED` on replay.
-2. **Path-prefix boundary:** package/root verification must test exact root, one-extra-character directory, trailing separator, casing, URL encoding, traversal and empty path. The uninstaller cannot schedule deletion outside the fixed root.
-3. **Null / empty boundary:** test `None`, omitted/undefined-equivalent, empty, whitespace and empty container package manifest, install ID, host selection and receipt; setup blocks before unpack/process action.
-4. **Authority bypass:** direct uninstaller launch, interrupted update and indirect package-repair path all require the same verified owned ledger/host proof. A foreign/manual plugin or arbitrary target directory cannot be claimed by package name.
-5. **Token comparison:** packaging contains no credential/token. Source/artifact scan must assert no secret token is embedded or equality-compared; any host login remains outside package scope.
-6. **Stable errors / exception behavior:** inject compiler unavailable, archive/digest mismatch, host failure, runner-stop timeout, removal failure and filesystem error. Assert consistent external blocked result, unique internal reason and no false success or orphaned partial registration.
-7. **Regression proof:** clean user profile smoke plus existing/empty target repository snapshots cover install, failed install, status, failed uninstall and successful uninstall. Mutation of a manifest entry, host receipt or deletion guard must fail its corresponding test; preserve all first red evidence.
-
-## Completion evidence
-
-- Required: red evidence; package build/version proof; unit/contract tests; strict type check; compile; exact one-click install/uninstall smoke in clean user profile; all receipt-owned host cleanup proof; target-repository snapshots; `git diff --check`; independent review; WorkProgress docs handoff.
-- Formal-environment migration: N/A — package installation is local user-scope only. Recovery is the matching uninstaller; failure requires `UNINSTALL_BLOCKED` retry, not manual project cleanup.
+All children remain `PLANNED / DEPENDENCY_WAIT`. 04A cannot start until the
+Codex lifecycle and reviewer-role prerequisites required by the approved SPEC
+are independently resolved, approved and integrated. The active 05B4B2D lane
+continues unchanged. No current push, build, install, release or deployment is
+authorized by this decomposition.

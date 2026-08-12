@@ -171,6 +171,16 @@ Turn the existing detachable workflow plugin into a Windows per-user control-pla
 5. If process stop, ownership verification or host unregistration fails, uninstall reports `UNINSTALL_BLOCKED`, retains only its own state for retry, and never claims success or deletes unknown host/project content.
 6. Automated tests prove an install/uninstall cycle leaves representative existing and empty target repositories byte-for-byte and Git-status unchanged.
 
+### Version-one delivery strategy
+
+- The completed POC and installer-source prerequisites are first converged on one independently reviewed `main` candidate. Immediately before release build/system-integration starts, that exact candidate is published to remote `staging` by a create-or-fast-forward-only push and read back as the same SHA. Missing authority, dirty source, non-fast-forward remote or mismatched readback halts before release build; force-push and silent conflict resolution are prohibited.
+- Package and system-integration work is decomposed into small serial tickets. Payload-manifest contract, Inno installer source, complete candidate freeze, staging warm backup, disposable-Windows environment qualification, release build, install verification, uninstall/absence verification and version-one artifact freeze are separate acceptance responsibilities. The release build uses a clean export of the exact staged candidate, so that staging SHA contains every source file needed to reproduce the artifact.
+- The first packaged version is immutable evidence. Its release record binds the exact source commit, staging ref at build start, pinned compiler version, owned payload manifest digest, setup/uninstaller artifact digests and independent verification/review references. A later rebuild or changed manifest is a new candidate and cannot overwrite that record or artifact identity.
+- After the version-one freeze, functional or architectural changes start from the current `staging` baseline and re-enter normal change control, specification and ticket review. They do not modify the frozen version-one source/artifact record.
+
+- Change: `CHG-20260812-014`
+- Decision: `doc/adr/ADR-20260812-006-version-one-staging-and-package-convergence.md`
+
 ## 16. Reviewer-only Agent Orchestration
 
 Only the reviewer named by an approved ticket may control implementation
