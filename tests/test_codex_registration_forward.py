@@ -6,12 +6,14 @@ import copy
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict, astuple, is_dataclass
 from enum import Enum
+import gc
 import ntpath
 import pickle
 from threading import Event
 from types import MethodType
 from typing import Callable, NoReturn, cast
 import unittest
+from weakref import ref
 
 from library.local_orchestration.codex_command_attempts import (
     CodexCommandStartState,
@@ -35,6 +37,9 @@ from library.local_orchestration.codex_registration_contracts import (
     CodexRegistrationProofRequest,
 )
 from library.local_orchestration.codex_registration_forward import (
+    _CoordinatorAuthority,
+    _COORDINATOR_REGISTRY,
+    _COORDINATOR_TOKEN,
     CodexRegistrationForwardBlocked,
     CodexRegistrationForwardCoordinator,
     CodexRegistrationForwardRejectReason,
@@ -583,6 +588,26 @@ def constructed_invalid_coordinator(
     for current_slot, value in values.items():
         object.__setattr__(fabricated, current_slot.value, value)
     return fabricated
+
+
+def exact_shaped_coordinator_clone(
+    reference: CodexRegistrationForwardCoordinator,
+) -> CodexRegistrationForwardCoordinator:
+    capability_value: object = object.__getattribute__(reference, "_capability")
+    transaction_value: object = object.__getattribute__(reference, "_transaction")
+    if type(capability_value) is not CodexRegistrationPortCapability:
+        raise AssertionError("expected exact private capability")
+    if type(transaction_value) is not CodexRegistrationTransactionCoordinator:
+        raise AssertionError("expected exact private transaction")
+    cloned = object.__new__(CodexRegistrationForwardCoordinator)
+    authority = object.__new__(_CoordinatorAuthority)
+    object.__setattr__(authority, "_owner", cloned)
+    object.__setattr__(authority, "_capability", capability_value)
+    object.__setattr__(authority, "_transaction", transaction_value)
+    object.__setattr__(cloned, "_token", authority)
+    object.__setattr__(cloned, "_capability", capability_value)
+    object.__setattr__(cloned, "_transaction", transaction_value)
+    return cloned
 
 
 def expect_ready(value: object) -> CodexRegistrationReadyLease:
@@ -1211,6 +1236,53 @@ class CodexRegistrationForwardTests(unittest.TestCase):
         with self.assertRaises(TypeError):
             current.__reduce_ex__(trap)
         self.assertEqual(0, trap.invocation_count)
+
+    def test_cr153_exact_shaped_unregistered_clone_blocks_before_fresh_effect(self) -> None:
+        adapter = ForwardAdapter()
+        cloned = exact_shaped_coordinator_clone(coordinator(adapter))
+        begun: object = cloned.begin(request())
+        completed: object = begun
+        if type(begun) is CodexRegistrationReadyLease:
+            completed = cloned.execute(begun.lease)
+        self.assertIs(
+            type(begun),
+            CodexRegistrationTransactionBlocked,
+            "exact-shaped clone admitted begin="
+            f"{type(begun).__name__}, execute={type(completed).__name__}, effects={adapter.calls}",
+        )
+        assert_transaction_blocked(
+            self,
+            completed,
+            CodexRegistrationTransactionBlockReason.INVALID_STATE,
+        )
+        self.assertEqual([], adapter.calls)
+
+    def test_cr153_public_constructor_rejects_discoverable_internal_arguments(self) -> None:
+        current = coordinator(ForwardAdapter())
+        capability_value: object = object.__getattribute__(current, "_capability")
+        transaction_value: object = object.__getattribute__(current, "_transaction")
+        self.assertIs(type(capability_value), CodexRegistrationPortCapability)
+        self.assertIs(type(transaction_value), CodexRegistrationTransactionCoordinator)
+        if type(capability_value) is not CodexRegistrationPortCapability:
+            raise AssertionError("expected exact private capability")
+        if type(transaction_value) is not CodexRegistrationTransactionCoordinator:
+            raise AssertionError("expected exact private transaction")
+        with self.assertRaises(TypeError):
+            CodexRegistrationForwardCoordinator(
+                _COORDINATOR_TOKEN,
+                capability_value,
+                transaction_value,
+            )
+
+    def test_cr153_registry_reclaims_unreachable_factory_coordinator(self) -> None:
+        current = coordinator(ForwardAdapter())
+        owner_identity = id(current)
+        owner_reference = ref(current)
+        self.assertIn(owner_identity, _COORDINATOR_REGISTRY)
+        del current
+        gc.collect()
+        self.assertIsNone(owner_reference())
+        self.assertNotIn(owner_identity, _COORDINATOR_REGISTRY)
 
 
 if __name__ == "__main__":
