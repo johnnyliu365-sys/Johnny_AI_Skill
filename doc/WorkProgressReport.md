@@ -2657,6 +2657,16 @@
 | Verification / residue | Restored named correction tests passed 3/3, focused serial unittest passed 19/19 and full serial discovery passed 313/313. Strict full-tree mypy passed 124 tracked Python files with `--strict --explicit-package-bases --no-incremental`; both external mypy caches were removed and read back absent. In-memory compile passed 124 files. Forbidden-source and XSS-path sentinels returned zero; `git diff --check`, exact two-path correction scope, submitted ancestry, control baseline and unchanged three-worktree topology passed. Twenty-eight verified test/cache directories were removed by exact paths; tracked/ignored/cache residue was zero before commit. |
 | XSS / non-interference / handoff | `XSS_NOT_APPLICABLE`: no renderer, JavaScript or bridge path was discovered. Only admitted in-memory fakes ran. No live Codex, process, filesystem/host/network/target-project mutation, proof/receipt/compensation/oracle work, another Agent, B2C-B2E/05C work, review/integration, push, release or deployment was performed. This is correction evidence, not a review decision. |
 
+## PRG-20260812-237 — Ticket 05B4B2B guarded integration
+
+| Field | Value |
+| --- | --- |
+| Router event | `REVIEW_APPROVED(CR-154) -> GUARDED_INTEGRATION -> ACTION_COMPLETED -> TICKET_05B4B2C_REFREEZE_READY` |
+| Integration | Merge `63e8a7b6825f1807b5810007edcc10744149182d` preserves final approval `2db96beea8ba3ad4749e13d3959f7ec01ac15a6f` as first parent and exact reviewed handoff `2fbe55f0cd8dc18788dd121ff1529d81d6b52409` as second parent. Product source/test exactly match the reviewed handoff. |
+| Ledger resolution | The sole conflict was `doc/WorkProgressReport.md`; PRG-224 through PRG-236 are retained exactly once. Neither immutable parent was amended, reset, forced or overwritten. |
+| Post-merge verification | Focused 23/23 and serial full 317/317 pass. Strict full-tree mypy and in-memory compile pass 124 files. `git diff --check`, exact parent/product equality and unchanged three-worktree topology pass. A repository-external mypy cache directory remains because the execution policy rejected recursive deletion; no worktree cache or tracked/ignored residue exists. |
+| Completion | 05B4B2B is `COMPLETE / APPROVED / INTEGRATED`; allocation `aln_local_orchestration_install_05b4b2b_20260812` is released and receipt `rcpt_local_orchestration_install_05b4b2b_20260812` is closed against replay. 05B4B2C is unallocated and `REFREEZE_READY`. No live Codex, host, target-project or network effect, push, release or deployment occurred. |
+
 ## PRG-20260812-235 — Ticket 05B4B2B CR-154 bounded correction handoff
 
 | Field | Value |

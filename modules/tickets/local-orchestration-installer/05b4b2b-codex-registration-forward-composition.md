@@ -210,3 +210,13 @@ unregistered clones block before state/effect and weak cleanup remains bounded.
 Independent focused 23/23, full 317/317, strict mypy 124 files, compile 124
 files, scope, ancestry and residue checks pass. XSS is
 `XSS_NOT_APPLICABLE`. Only guarded integration of the exact handoff is next.
+
+## Guarded integration
+
+Merge `63e8a7b6825f1807b5810007edcc10744149182d` preserves final approval
+`2db96beea8ba3ad4749e13d3959f7ec01ac15a6f` as first parent and exact handoff
+`2fbe55f0cd8dc18788dd121ff1529d81d6b52409` as second parent. The progress
+ledger was the only conflict and retains PRG-224 through PRG-236 once each.
+Post-merge focused 23/23, full 317/317, strict mypy and compile 124 files pass.
+Ticket 05B4B2B is `COMPLETE / APPROVED / INTEGRATED`; its allocation is
+released and receipt is closed against replay.

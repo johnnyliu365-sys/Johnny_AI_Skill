@@ -128,6 +128,17 @@ integration may merge only exact handoff
 first-parent control history and the submitted handoff as second parent. B2C
 through B2E remain unallocated until integration completes.
 
+## Guarded integration
+
+Merge `63e8a7b6825f1807b5810007edcc10744149182d` preserves approval
+`2db96beea8ba3ad4749e13d3959f7ec01ac15a6f` as first parent and exact reviewed
+handoff `2fbe55f0cd8dc18788dd121ff1529d81d6b52409` as second parent. The sole
+conflict was the progress ledger; PRG-224 through PRG-236 are retained exactly
+once. Post-merge focused 23/23, full 317/317, strict mypy and compile 124 files
+pass. Product source/test exactly match the reviewed handoff. No force, reset,
+amend, push, release, deployment, live Codex or target-project mutation
+occurred.
+
 ## Second correction review — CR-154
 
 The additive return `35fc40f -> 2799a32 -> 7c10d01` has exact ancestry and
