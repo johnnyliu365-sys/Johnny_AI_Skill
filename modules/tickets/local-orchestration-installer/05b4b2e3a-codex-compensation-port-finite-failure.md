@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / unchanged AC-02, AC-07 and AC-08 effect boundary |
-| State | `PLANNED / REVIEWED_FREEZE / DISPATCH_PENDING` |
+| State | `IMPLEMENTATION_DISPATCH_CONFIRMED / IMPLEMENT` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B4B2E3A-01` / F1-F8 |
 | Dependency | Compensation port/composition integrated; E1 integrated by `27c8305200f61d9658aa5b2b32bd15a7db4d0b4c` |
 | Planned owner | Task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2`; no new worktree |
@@ -90,3 +90,16 @@ package, release or deployment is authorized.
 
 Freeze is not dispatch. Exact lane/readback and a dispatch registry commit are
 required before the implementation owner may switch branch or edit.
+
+## Dispatch registry
+
+| Field | Value |
+| --- | --- |
+| Reviewed freeze | `341a58bcfc8b6553db149a56ac005ac9fafec373`; exact F1-F8; `XSS_NOT_APPLICABLE` |
+| Delivery authority | Project-owner instruction to continue approved small-ticket work; `IMPLEMENTATION_DISPATCH_CONFIRMED` for E3A only |
+| Lane readback | Idle task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2` clean at exact submitted HEAD `658f3d7e886d1fd5ddca7bc2c39a8cd887afa4d0`; zero tracked/ignored/cache residue; exactly three worktrees; target branch absent |
+| Branch | Create only `codex/implementation-codex-compensation-finite-failure-05b4b2e3a` from the exact commit carrying this registry in the same worktree; no new worktree |
+| Binding | `hnd_local_orchestration_install_05b4b2e3a_20260813`; `aln_local_orchestration_install_05b4b2e3a_20260813`; `rcpt_local_orchestration_install_05b4b2e3a_20260813`; `corr-local-orchestration-install-05b4b2e3a-20260813`; `q-local-orchestration-install-05b4b2e3a-20260813`; `scx-local-orchestration-install-05b4b2e3a-20260813-01` |
+
+This is the single dispatch. Only the four exact implementation paths and a
+later WPR-only `PRG-20260813-284` are writable in this lane.

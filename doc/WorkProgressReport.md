@@ -3130,3 +3130,21 @@
 | E3 defect | Integrated compensation port aliases expose success values only while composition propagates ordinary dependency exceptions. E3 cannot truthfully map finite oracle blocks. E3 is `PREREQUISITE_WAIT`; E3A closure F1-F8 adds one request/operation-bound metadata-only finite failure algebra and normalization. |
 | Parallel safety | E2A owns only staging protocol/oracle source and focused tests. E3A owns only compensation port/composition source and focused tests. Their writable sets are disjoint, so the two existing implementation tasks may run concurrently after exact lane readback and dispatch registries. |
 | Package boundary | No staging push, package, release, deployment or target-project action. Remote `staging` remains reserved for future 04D after exact 04C freeze. |
+
+## PRG-20260813-281 — Ticket 05B4B2E2A dispatch registry
+
+| Field | Value |
+| --- | --- |
+| Router event | `TICKET_FROZEN(05B4B2E2A) -> IMPLEMENTATION_DISPATCH_CONFIRMED / IMPLEMENT` |
+| Freeze / binding | `341a58bcfc8b6553db149a56ac005ac9fafec373`; V1-V8; `hnd_local_orchestration_install_05b4b2e2a_20260813`; `aln_local_orchestration_install_05b4b2e2a_20260813`; `rcpt_local_orchestration_install_05b4b2e2a_20260813`; `corr-local-orchestration-install-05b4b2e2a-20260813`; `scx-local-orchestration-install-05b4b2e2a-20260813-01`. |
+| Lane | Idle task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; exact clean submitted HEAD `002b2982cbf111262865946dc16d83c23a7bc879` in existing `workflow-implementation`; zero tracked/ignored/cache residue; exactly three worktrees; target branch absent; no new worktree. |
+| Return | Exact seven-path implementation commit, then WPR-only PRG-283. Reviewer retains sole orchestration and review authority. No E2 adapter, staging push or package work. |
+
+## PRG-20260813-282 — Ticket 05B4B2E3A dispatch registry
+
+| Field | Value |
+| --- | --- |
+| Router event | `TICKET_FROZEN(05B4B2E3A) -> IMPLEMENTATION_DISPATCH_CONFIRMED / IMPLEMENT` |
+| Freeze / binding | `341a58bcfc8b6553db149a56ac005ac9fafec373`; F1-F8; `hnd_local_orchestration_install_05b4b2e3a_20260813`; `aln_local_orchestration_install_05b4b2e3a_20260813`; `rcpt_local_orchestration_install_05b4b2e3a_20260813`; `corr-local-orchestration-install-05b4b2e3a-20260813`; `scx-local-orchestration-install-05b4b2e3a-20260813-01`. |
+| Lane | Idle task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; exact clean submitted HEAD `658f3d7e886d1fd5ddca7bc2c39a8cd887afa4d0` in existing `workflow-implementer-2`; zero tracked/ignored/cache residue; exactly three worktrees; target branch absent; no new worktree. |
+| Return | Exact four-path implementation commit, then WPR-only PRG-284. Reviewer retains sole orchestration and review authority. No E3 adapter, staging push or package work. |
