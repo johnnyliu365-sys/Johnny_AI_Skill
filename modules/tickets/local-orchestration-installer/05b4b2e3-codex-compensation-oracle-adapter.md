@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| State | `PLANNED / PREREQUISITE_WAIT / NOT_DISPATCHED` |
-| Dependency | 05B4B2E1, E3A and E3B integrated; E3C public compensation-request revalidation must be approved and integrated |
+| State | `PLANNED / RESPONSE-CONTRACT_REVIEW / NOT_DISPATCHED` |
+| Dependency | 05B4B2E1, E3A, E3B and E3C integrated; E2 terminal review must determine whether its exact oracle-response admission is reusable before E3 is frozen |
 | Allocation | None |
 
 ## Reserved responsibility
@@ -19,8 +19,11 @@ manufacture success. No numeric line limit applies.
 
 ## Current refreeze decision
 
-Control review after E3A/E3B integration found that the adapter would otherwise
-have to copy the private recursive request validator from compensation
-composition. Ticket E3C owns that pure prerequisite. E3 remains undispatched
-until E3C is independently approved and integrated; this is a ticket-defect
-decomposition, not an implementation failure or requirement change.
+E3C is approved and integrated at merge `c042af1`, so request admission is
+closed. E3 remains undispatched only while E2 completes terminal review: remove,
+list and absence operations must consume one reusable exact oracle-response
+admission boundary rather than copy response validators into a second effect
+adapter. After E2 terminal review, control will freeze either one small pure
+response-projection prerequisite or a thinner E3 adapter if E2 already supplies
+the complete reusable boundary. This is pre-implementation contract convergence,
+not an implementation failure or requirement change.

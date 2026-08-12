@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / unchanged AC-02, AC-07 and AC-08 |
-| State | `FROZEN / READY_FOR_DISPATCH` |
+| State | `COMPLETED / APPROVED / INTEGRATED` — merge `c042af1` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B4B2E3C-01` / Q1-Q6 |
 | Dependency | E3A `b324f91` approved/integrated; existing private composition validation is read-only evidence |
 | Planned owner | Task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2`; no new worktree |
@@ -85,3 +85,12 @@ required before the implementation owner may switch branch or edit.
 
 This is the single dispatch. Only the exact implementation paths actually
 needed by Q1-Q6 and the later WPR-only `PRG-20260813-303` are writable.
+
+## Completion
+
+Implementation `32cd6535a3f856a691cea04db34459f3639683a5` and docs-only handoff
+`b153636fe2acd37af0b376ee825e0cf9336b98b1` passed independent Q1-Q6 review
+at `498394c` and guarded integration at `c042af1`. Post-merge focused 24/24 and
+full 395/395 passed. The public pure request revalidator is now the only
+recursive request-admission source for later compensation composition/adapter
+work.
