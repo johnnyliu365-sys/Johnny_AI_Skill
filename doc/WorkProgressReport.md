@@ -3248,3 +3248,15 @@
 | E3B | Accepted lifecycle and reviewer focused suite 23/23 pass. `IMPLEMENTATION_DEFECT / CR-161`: a constructed accepted response carrying a `CodexPluginList` subclass reached `OracleAbsent`; exact response/payload type and recursive revalidation must fail closed. |
 | Scope | E2B correction is WPR-only. E3B correction is additive within original `oracle.py` plus focused-test scope, followed by WPR-only handoff. Same branches, worktrees, allocations and receipts; no new worktree or branch. |
 | Delivery boundary | No staging push, package, build/install, release, deployment or target-project action. 04C/04D sequencing is unchanged. |
+
+## PRG-20260813-294 — CR-160/CR-161 same-branch correction dispatch
+
+| Field | Value |
+| --- | --- |
+| State | `CORRECTION_HANDOFF / IMPLEMENTATION_DISPATCH_CONFIRMED` |
+| Router event | `REVIEW_CHANGES_REQUESTED(E2B,E3B) -> SAME_BRANCH_CORRECTION_DISPATCH` |
+| Review baseline | `56e44ccdfdf7d100f6a4cdd9bb3c30f7efeb7ee6`; formal reviews CR-160 and CR-161. |
+| E2B | Same task/branch/allocation/receipt; exact clean handoff `28b9301c3b864eb04278f408b3e761e2df99f092`; WPR-only incident correction and handoff. No filesystem cleanup or source/test edit. |
+| E3B | Same task/branch/allocation/receipt; exact clean handoff `04b4ff10df73cb6b3c743daf0a249f364736de7f`; additive exact-response correction limited to `oracle.py` and `tests/test_codex_lifecycle_oracle.py`, then WPR-only handoff. |
+| Isolation | Both tasks are idle, submitted lanes are clean, exactly three worktrees remain. Reviewer retains sole orchestration/review/integration authority. |
+| Prohibitions | No new branch/worktree, global-temp scan/delete, staging push, package/build/install, live Codex, target-project write, release, deployment or scope expansion. |
