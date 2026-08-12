@@ -514,6 +514,19 @@ class CodexCompensationCompositionTests(unittest.TestCase):
         self.assertIsInstance(result, CodexCompensationNoop)
         self.assertEqual([], no_adapter.calls)
 
+    def test_q5_composition_consumes_public_request_revalidation_before_any_operation(self) -> None:
+        current_request = request()
+        object.__getattribute__(current_request, "__dict__")["injected"] = "state"
+        adapter = RecordingPort()
+        self.assert_plan_invalid(
+            compose_codex_compensation(
+                capability(adapter),
+                current_request,
+                plan(CodexAttemptEffectState.OWNED, CodexAttemptEffectState.OWNED),
+            )
+        )
+        self.assertEqual([], adapter.calls)
+
     def test_c2_exact_step_dispatch_order_mapping_and_same_request_identity(self) -> None:
         cases = (
             (

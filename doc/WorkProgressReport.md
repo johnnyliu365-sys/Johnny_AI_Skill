@@ -3352,6 +3352,16 @@
 | Isolation | Both lanes have zero tracked/ignored/cache residue, exactly three existing worktrees, disjoint writable paths and no authority to create/control Agents. Reviewer retains sole orchestration/review/integration authority. |
 | Prohibitions | No new worktree, broad ticket, numeric line criterion, global staging-root scan/delete, staging push, package/build/install, live Codex, target-project write, release, deployment or scope expansion. |
 
+## PRG-20260813-303 — Ticket 05B4B2E3C compensation request revalidation handoff
+
+| Field | Value |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05B4B2E3C) -> ACTION_COMPLETED -> REVIEW_HANDOFF`; independent review remains required. |
+| Ticket / binding | `CLOSURE-LOCAL-INSTALL-T05B4B2E3C-01` / Q1-Q6; reviewed freeze/dispatch `d5ff1297be90d223834aded354d9d33b6dbd4b35` / `ace86099bc3582dbd8642662b0c937867b3e7d1f`; `hnd_local_orchestration_install_05b4b2e3c_20260813`; `aln_local_orchestration_install_05b4b2e3c_20260813`; `rcpt_local_orchestration_install_05b4b2e3c_20260813`; `corr-local-orchestration-install-05b4b2e3c-20260813`; `q-local-orchestration-install-05b4b2e3c-20260813`; `scx-local-orchestration-install-05b4b2e3c-20260813-01`. |
+| Implementation / scope | `32cd6535a3f856a691cea04db34459f3639683a5` descends from dispatch and changes only the four authorized compensation port/composition source and focused-test paths. It adds one closed public exact request revalidator and composition consumes it without adding an effect. |
+| TDD / reversal | First red proved the public algebra absent. Exact requests recursively rebuild without shared node identity; invalid or injected states reject finitely. Outer-state, nested-state, and rebuild-identity reversals each turned red and restored exact blobs. |
+| Verification / non-interference | Focused 24/24, full 395/395, strict mypy 132 files, in-memory compile, source/XSS/scope/diff/ancestry/topology/residue passed. No adapter/oracle/environment effect, live Codex, target-project write, staging push, package, release, or deployment occurred. |
+
 ## PRG-20260813-304 — Ticket 05B4B2E3C independent review
 
 | Field | Value |
