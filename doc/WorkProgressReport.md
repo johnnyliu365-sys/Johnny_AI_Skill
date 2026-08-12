@@ -3075,3 +3075,13 @@
 | Lane readback | Idle task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2`; exact clean submitted HEAD `6ee9b4a96a5a1720c04845b9edb115d689472f34`; zero ignored/cache residue; exactly three worktrees; retain branch `codex/implementation-codex-oracle-identity-binding-05b4b2e1`. |
 | Correction | Prove and reject undeclared original state recursively for the outer request and every exact nested request model after integrated exact-type admission and before identity binding, without caller protocols or dynamic discovery. Commit the complete nested injection matrix and reverse the guard once. |
 | Return / limits | One additive correction commit in the original two-path scope, then WPR-only PRG-277. No new branch/worktree, E2-E6, live Codex, host/filesystem/network/target-project effect, staging push, package, release or deployment. |
+
+## PRG-20260813-278 — Ticket 05B4B2E1 final independent review
+
+| Field | Value |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05B4B2E1 revision 02) -> TERMINAL_CODE_REVIEW -> APPROVED / GUARDED_INTEGRATION_READY` |
+| Immutable correction | `6ee9b4a96a5a1720c04845b9edb115d689472f34 -> ef80813b223b53f638b7c263054a6f03045c28a7 -> 658f3d7e886d1fd5ddca7bc2c39a8cd887afa4d0`; exact two correction paths then WPR-only PRG-277. |
+| Closure | CR-159 closed: the exact outer request, preflight and all twelve nested value nodes must contain only declared dictionary/field-set state with no Pydantic extra/private state before binding. |
+| Independent evidence | Unicode-safe external snapshot passed focused/relevant 27/27, full serial 370/370, strict mypy 132 files and compile 132 files. Forty-two additional extra/private/field-set injections across all 14 nodes rejected. Reducing the guard to the outer request made all 13 nested committed cells red; exact source blob restored and green. |
+| Disposition | `APPROVED / READY_TO_MERGE`; only exact handoff `658f3d7e886d1fd5ddca7bc2c39a8cd887afa4d0` may enter guarded integration. `XSS_NOT_APPLICABLE`. No staging push, package, release, deployment or target-project effect. |

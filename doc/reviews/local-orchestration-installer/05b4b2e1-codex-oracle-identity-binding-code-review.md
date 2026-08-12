@@ -63,3 +63,20 @@ or deployment is authorized.
 `CHANGES_REQUESTED`. CR-159 is the complete blocking batch for revision 02. A
 same-branch additive correction may be dispatched only after this review and
 its correction handoff are committed.
+
+## Final correction review
+
+| Gate | Result |
+| --- | --- |
+| Immutable correction | PASS: `6ee9b4a96a5a1720c04845b9edb115d689472f34 -> ef80813b223b53f638b7c263054a6f03045c28a7 -> 658f3d7e886d1fd5ddca7bc2c39a8cd887afa4d0`; correction changes only the original two E1 paths and handoff changes only WPR PRG-277. |
+| CR-159 | PASS: fixed-field recursive checking covers the exact request, preflight, all five preflight children and all seven other request value objects. Undeclared dictionary state, Pydantic extra/private state and altered field sets reject before identity binding. |
+| Independent verification | PASS in a Unicode-safe repository-external snapshot: focused/relevant 27/27, full serial 370/370, strict mypy 132 files and in-memory compile 132 files. An additional 42-cell matrix injected extra/private/field-set state across all 14 nodes and every cell returned the finite rejection. |
+| Evidence truthfulness | PASS: reviewer reduced the recursive guard to its outer request check. The committed matrix then failed for all 13 nested nodes with `OracleIdentityBound`; restoring exact source SHA-256 `272C5BCBBA20AD4757B5FB6EF540A96EF9E03D5A3F4D81CBBAB0092A5AD5D784` made the named test green. |
+| CodeReview §2.1 / XSS | Classes 3 and 7 PASS after correction. Class 8 remains `XSS_NOT_APPLICABLE`: no renderer, DOM/HTML, JavaScript context or privileged bridge exists. |
+
+## Final disposition
+
+`APPROVED / READY_TO_MERGE`. CR-159 is closed. Guarded integration may merge
+only exact handoff `658f3d7e886d1fd5ddca7bc2c39a8cd887afa4d0`, preserving this
+approval as first-parent control history. E2/E3 remain undispatched until the
+integration and post-merge readback pass.

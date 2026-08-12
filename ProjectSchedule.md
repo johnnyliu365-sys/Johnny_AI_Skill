@@ -144,7 +144,7 @@
 | Ticket 05B4B2D compensation settlement | COMPLETE / APPROVED / INTEGRATED | Implementation `bf9278f`, handoff `60a8311`, review `eef459e`, guarded merge `9769a75`; post-merge 353 tests and strict mypy passed. |
 | Ticket 05B4B2E lifecycle acceptance parent | CONVERGENCE_DECOMPOSED / NON_DISPATCHABLE | E0 oracle evidence, E1 identity, E2/E3 adapters, E4 success, E5 compensation and E6 isolation are separately accepted. |
 | Ticket 05B4B2E0 oracle logical installed path | COMPLETE / APPROVED / INTEGRATED | Merge `3fc2f99`; post-merge focused 17/full 360/strict mypy pass; allocation released and receipt closed. |
-| Ticket 05B4B2E1 oracle identity binding | REVISION_02_IN_PROGRESS / CR-159 / DISPATCH_CONFIRMED | Same implementer-2 branch/worktree; typed recursive nested-state rejection and complete committed injection matrix only. |
+| Ticket 05B4B2E1 oracle identity binding | APPROVED / GUARDED_INTEGRATION_READY | Correction `ef80813`, handoff `658f3d7`; CR-159 closed by recursive 14-node rejection, full 370 and strict typing. |
 | Tickets 05B4B2E2/E3 oracle adapters | PLANNED / DEPENDENCY_WAIT | Disjoint registration and compensation adapters may run in parallel only after E1 integration. |
 | Tickets 05B4B2E4-E6 lifecycle acceptance | PLANNED / DEPENDENCY_WAIT | Success, compensation and isolation remain small dependency-ordered acceptance tickets. |
 | Ticket 05C receipt removal/replay | PLANNED / DEPENDENCY_WAIT / REFREEZE_REQUIRED | Starts only after 05A/05B approval/integration and a finite behavior/rollback closure refreeze. |
