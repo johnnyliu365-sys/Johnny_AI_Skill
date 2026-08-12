@@ -2578,3 +2578,13 @@
 | CR-152 correction | First-red a caller `__index__` trap, then make `__reduce_ex__` raise direct `TypeError` without conversion, comparison, hashing, representation or any caller protocol. |
 | Verification / return | Preserve F1-F8 and five existing reversals; independently reverse the common authority gate and direct serialization rejection. Rerun focused/full unittest, strict full-tree mypy, in-memory compile, source/scope/diff/ancestry and residue readbacks. Change only the existing forward module/test, then one WPR-only handoff reserved as PRG-20260812-229. |
 | Stop | No new branch/worktree/Agent, reset/amend/rebase/merge, public contract, B2C-B2E/05C work, live effect, target-project write, review/integration, push, release or deployment. |
+
+## PRG-20260812-230 — Ticket 05B4B2B first correction independent review
+
+| Field | Value |
+| --- | --- |
+| Router event | `IMPLEMENTATION_CORRECTION_COMPLETED(CR-151,CR-152) -> TERMINAL_CODE_REVIEW -> CHANGES_REQUESTED(CR-153) -> SAME_CLOSURE_CORRECTION_REQUIRED` |
+| Reviewed return | Additive correction `cf5494016fd5bd89a5ce9d82f5af9d04d9d089ad`; WPR-only handoff `35fc40f4a87223fbe3f8180cfef9fdc112a7d08a`; exact ancestry/scopes, clean lane and unchanged three-worktree topology pass. Immutable export ZIP SHA-256 `19DFCCE06E3EF5E28F85FFE2E6302CA8FCC48127B85D972593A8A5D8DBCE0B7A` passes CR regressions 3/3, focused 19/19 and full 313/313. |
+| Closed CR-152 | Independent `IndexTrap` probe receives direct finite `TypeError` and records zero `__index__` invocations. Serialization caller-protocol execution is closed. |
+| CR-153 | CR-151 remains open: `object.__new__` can build both an exact coordinator and exact-shaped private `_CoordinatorAuthority`, bind their owner/capability/transaction fields and pass `_has_exact_authority`. The reviewer probe returned ready then next-ready and recorded one `FRESH` effect. Field-shape consistency does not prove factory provenance. Classification is `IMPLEMENTATION_DEFECT` within F2/F7. |
+| Required continuation | Same ticket/task/worktree/branch/allocation/receipt/correlation. Add factory-registered, synchronized, identity-only and lifecycle-bounded process-local provenance; unregistered deep clones and public constructor must block before state/effect. Add exact first-red/reversal, preserve closed CR-152 and all earlier F1-F8/reversal evidence. No new branch/worktree, scope expansion, integration, push, release or deployment. |

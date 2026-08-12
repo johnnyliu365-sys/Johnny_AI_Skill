@@ -139,3 +139,14 @@ correlation remain valid; correction commits must be additive.
 
 No reset, amend, rebase, merge, new branch/worktree, public API change or
 out-of-scope hardening is admitted by this correction registry.
+
+### CR-153 review correction
+
+The first correction closes CR-152 but not CR-151: an exact-shaped private
+authority made with `object.__new__` still passes the field-only gate and
+reaches a forward operation. CR-153 therefore requires factory-registered,
+process-local coordinator provenance with exact coordinator/capability/
+transaction identity and synchronized finite lookup. Unregistered deep clones
+must block before state/effect. Public coordinator construction must reject
+unconditionally, and registry ownership must not introduce an unbounded strong
+reference leak. Scope and all original bindings remain unchanged.

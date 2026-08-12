@@ -63,3 +63,41 @@ push, release or deployment is authorized.
 `CHANGES_REQUESTED / SAME_CLOSURE_CORRECTION_REQUIRED`. Retain immutable
 implementation `b6349d5` and handoff `031c2ff` as evidence. The only legal
 continuation is the bounded CR-151/CR-152 correction above.
+
+## First correction review — CR-153
+
+The additive return `031c2ff -> cf54940 -> 35fc40f` has exact two-path and
+WPR-only scopes, is clean, preserves the three-worktree topology and passes in
+an immutable export: CR regressions 3/3, focused 19/19 and full 313/313. It
+closes CR-152: `__reduce_ex__` raises direct `TypeError`, and an independent
+`IndexTrap` records zero invocations.
+
+CR-151 is not yet closed. The new `_CoordinatorAuthority` is validated only by
+exact type plus fields that point back to the coordinator, capability and
+transaction. An independent probe created both the coordinator and an
+exact-shaped `_CoordinatorAuthority` with `object.__new__`, set those four
+identity relationships, and received `CodexRegistrationReadyLease` followed by
+`CodexRegistrationNextReadyPhase`; the admitted fake recorded one `FRESH`
+effect. No private constructor or factory provenance was required.
+
+This is CR-153 / `IMPLEMENTATION_DEFECT` under the same F2/F7 requirement:
+field-shape self-consistency is not construction authority. The bounded
+correction must make the public coordinator constructor reject unconditionally
+and have the factory register each live exact coordinator in a private
+process-local provenance registry. The registry record, not coordinator- or
+caller-constructed fields, must bind the exact coordinator instance to its
+capability and transaction. Every public authority-consuming entry must check
+that record before state/effect. Registry access must be synchronized,
+identity-based, finite and caller-protocol-free; it must not accept an
+unregistered exact-shaped coordinator/authority clone. Use weak ownership or an
+equivalent bounded lifecycle so admission does not create an unbounded strong
+reference leak.
+
+Add a first-red exact-shaped deep-clone cell reproducing the reviewer probe and
+an isolated registry-gate reversal. Preserve the closed CR-152 cell and all
+seven earlier reversals. The same two source/test paths plus WPR-only handoff
+remain the entire correction scope. No public contract, other ticket, new
+branch/worktree, live effect, integration, push, release or deployment is
+authorized.
+
+Decision remains `CHANGES_REQUESTED / SAME_CLOSURE_CORRECTION_REQUIRED`.
