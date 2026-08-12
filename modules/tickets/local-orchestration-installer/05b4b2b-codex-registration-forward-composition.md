@@ -101,3 +101,18 @@ integration, push, release or deployment is authorized.
 
 Freeze is not dispatch. The reviewed freeze commit and a later dispatch
 registry must exist before the implementation lane may switch branch or edit.
+
+## Dispatch registry
+
+| Field | Value |
+| --- | --- |
+| Reviewed freeze | `45afa50204bf8bb8dcdcfc0be0a45cf07bcf6da0`; this ticket; exact F1-F8; `XSS_NOT_APPLICABLE` |
+| Delivery confirmation | Project-owner standing instruction `按照規範繼續工作`; applies to the next approved ticket after guarded integration |
+| Lane admission | Idle clean task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2`; submitted 05B4B2A HEAD `e4841abfd8caf8e262fa451055da94f5acc754a8`; zero tracked/ignored/cache residue; unchanged three-worktree topology |
+| Required branch | From this dispatch-registry commit, switch the existing worktree only to new branch `codex/implementation-codex-registration-forward-05b4b2b`; no new worktree, merge, rebase or cherry-pick |
+| Authority | `hnd_local_orchestration_install_05b4b2b_20260812`; `aln_local_orchestration_install_05b4b2b_20260812`; `rcpt_local_orchestration_install_05b4b2b_20260812`; `corr-local-orchestration-install-05b4b2b-20260812`; `q-local-orchestration-install-05b4b2b-20260812`; `scx-local-orchestration-install-05b4b2b-20260812-01` |
+| Required return | One exact two-path implementation commit satisfying F1-F8, followed by one WPR-only handoff at reserved PRG-20260812-226 |
+
+Any mismatch returns typed `HALT` or `CHANGE_DETECTED`. No second worktree,
+source path, ticket, Agent, proof/receipt/compensation/oracle effect, review,
+integration, push, release or deployment is admitted.

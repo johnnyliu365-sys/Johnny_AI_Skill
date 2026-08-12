@@ -2545,3 +2545,13 @@
 | XSS | `XSS_NOT_APPLICABLE`: no Browser, WebView, HTML/DOM renderer or JavaScript execution context. The approved SPEC and Context record the classification; any future renderer/bridge ticket must re-enter the tiered XSS gate. |
 | Planned binding | `hnd_local_orchestration_install_05b4b2b_20260812`; `aln_local_orchestration_install_05b4b2b_20260812`; `rcpt_local_orchestration_install_05b4b2b_20260812`; `corr-local-orchestration-install-05b4b2b-20260812`; `q-local-orchestration-install-05b4b2b-20260812`; `scx-local-orchestration-install-05b4b2b-20260812-01`. Planned owner is the same task in existing `workflow-implementer-2`; no new worktree. |
 | Stop | Freeze is not dispatch. No source/test edit, branch switch, operation, B2C-B2E/05C work, live state, target-project write, push, release or deployment is authorized before the dispatch registry. |
+
+## PRG-20260812-225 — Ticket 05B4B2B implementation dispatch
+
+| Field | Value |
+| --- | --- |
+| Router event | `TICKET_SELECTED(05B4B2B) -> TICKET_DISPATCH_REQUIRED -> IMPLEMENTATION_DISPATCH_CONFIRMED` |
+| Reviewed freeze | `45afa50204bf8bb8dcdcfc0be0a45cf07bcf6da0`; `05b4b2b-codex-registration-forward-composition`; `CLOSURE-LOCAL-INSTALL-T05B4B2B-01`; exact F1-F8; `XSS_NOT_APPLICABLE`. |
+| Binding | `hnd_local_orchestration_install_05b4b2b_20260812`; `aln_local_orchestration_install_05b4b2b_20260812`; `rcpt_local_orchestration_install_05b4b2b_20260812`; `corr-local-orchestration-install-05b4b2b-20260812`; `q-local-orchestration-install-05b4b2b-20260812`; `scx-local-orchestration-install-05b4b2b-20260812-01`. |
+| Owner / admission | Idle task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing clean `workflow-implementer-2` at submitted 05B4B2A HEAD `e4841abfd8caf8e262fa451055da94f5acc754a8`; zero tracked/ignored/cache residue; unchanged three-worktree topology. From the control commit carrying this registry, create only `codex/implementation-codex-registration-forward-05b4b2b` in that same worktree. |
+| Scope / return | New forward composition module and focused test only; implementation commit then WPR-only PRG-226. No other source/export/dependency, worktree, Agent, B2C-B2E/05C work, proof/receipt/compensation/oracle/live effect, target-project write, review/integration, push, release or deployment. |

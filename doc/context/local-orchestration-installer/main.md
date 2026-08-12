@@ -2,13 +2,13 @@
 
 | Field | Value |
 | --- | --- |
-| Context state | `TICKET_05B4B2A_COMPLETE / TICKET_05B4B2B_FROZEN` |
-| Router event | `ACTION_COMPLETED / TICKET_SELECTED / TICKET_FREEZE_COMPLETED / DISPATCH_PENDING` |
+| Context state | `TICKET_05B4B2A_COMPLETE / TICKET_05B4B2B_IN_PROGRESS` |
+| Router event | `TICKET_FREEZE_COMPLETED / TICKET_DISPATCH_REQUIRED / IMPLEMENTATION_DISPATCH_CONFIRMED` |
 | Delivery stage | `POC` |
 | Requirement change | `CHG-20260808-011`; governance security overlay `CHG-20260812-013` |
 | Baseline | `cd3e9b6789623bd2a12ff7c69db4d5fcadd1718f` (`docs: refreeze Ticket 05B4B1 pure reducer`) |
 | Control-plane owner | Codex / current `main` worktree |
-| Implementation owner | Planned 05B4B2B owner is task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` in existing `workflow-implementer-2`; freeze is not dispatch and no receipt is active yet |
+| Implementation owner | 05B4B2B is allocated to task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` in existing `workflow-implementer-2` under exact receipt `rcpt_local_orchestration_install_05b4b2b_20260812`; no new worktree |
 | Required sources read | `AGENTS.md`, `Workflow.md` (Router, Wayfinder, Grill, change control, specification, tickets, role boundary), `Defined_wayfinder.md`, `CONTEXT.md`, `PRD.md`, `ProjectSchedule.md`, `doc/RequirementChangeLog.md`, existing plugin manifests / README, `library/workflow_router/`, and completed plugin / autonomous-collaboration POCs |
 
 ## Shared Context reference
