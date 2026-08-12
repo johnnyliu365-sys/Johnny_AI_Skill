@@ -7,6 +7,7 @@ import stat
 
 from pydantic import ValidationError
 
+from library.local_orchestration.host_contracts import CodexPluginList
 from tests.staging.codex_protocol.contracts import CodexProtocolAccepted, CodexProtocolRejected, CodexProtocolSurface
 from tests.staging.codex_protocol.fixture import CodexProtocolFixture
 from tests.staging.environment_core.contracts import EnvironmentLease, revalidate_lease
@@ -123,16 +124,45 @@ class CodexLifecycleOracle:
         command: OracleCommand,
         response: CodexProtocolAccepted,
     ) -> OracleRunResult:
-        if response.surface is not CodexProtocolSurface.PLUGIN_LIST:
+        if response.surface is not CodexProtocolSurface.PLUGIN_LIST or not isinstance(response.payload, CodexPluginList):
             return OracleBlocked(reason=OracleBlockReason.ABSENCE_NOT_PROVEN)
         try:
             state_path = validated_state_path(lease)
             payload_root = validated_payload_root(lease)
+            state = _read_state(state_path)
+            if state.marketplaces or state.plugins:
+                return OracleBlocked(reason=OracleBlockReason.ABSENCE_NOT_PROVEN)
             owned_paths = (
                 payload_root / "marketplaces" / f"{command.identity.marketplace_name}.json",
                 payload_root / "plugins" / f"{command.identity.plugin_id}.json",
             )
-            if state_path.exists() or any(path.exists() or _is_reparse(path) for path in owned_paths):
+            if any(path.exists() or _is_reparse(path) for path in owned_paths):
+                return OracleBlocked(reason=OracleBlockReason.ABSENCE_NOT_PROVEN)
+            expected_foreign_plugins = tuple(
+                (
+                    record.plugin_id,
+                    record.name,
+                    record.marketplace_name,
+                    record.version,
+                    record.source,
+                    record.install_policy,
+                    record.auth_policy,
+                )
+                for record in state.foreign_plugins
+            )
+            actual_plugins = tuple(
+                (
+                    entry.pluginId,
+                    entry.name,
+                    entry.marketplaceName,
+                    entry.version,
+                    entry.source,
+                    entry.installPolicy,
+                    entry.authPolicy,
+                )
+                for entry in response.payload.installed
+            )
+            if actual_plugins != expected_foreign_plugins or response.payload.available:
                 return OracleBlocked(reason=OracleBlockReason.ABSENCE_NOT_PROVEN)
         except (OSError, ValueError):
             return OracleBlocked(reason=OracleBlockReason.ABSENCE_NOT_PROVEN)
