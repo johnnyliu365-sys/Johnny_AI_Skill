@@ -103,5 +103,15 @@ release or deployment is authorized.
 | Branch | Create only `codex/implementation-codex-registration-terminal-claim-05b4b2b1` from the exact dispatch-registry commit; no new worktree |
 | Binding | `hnd_local_orchestration_install_05b4b2b1_20260812`; `aln_local_orchestration_install_05b4b2b1_20260812`; `rcpt_local_orchestration_install_05b4b2b1_20260812`; `corr-local-orchestration-install-05b4b2b1-20260812`; `q-local-orchestration-install-05b4b2b1-20260812`; `scx-local-orchestration-install-05b4b2b1-20260812-01` |
 
+### Path-scope correction continuation
+
+The first implementation turn wrote one test to the similarly named but
+unallocated `C:\Users\<user>\Desktop\AI控制工作\workflow-implementer-2` path.
+The exact file was removed, the allocated worktree remained clean at the
+dispatch baseline, and topology remained three worktrees. Resume this same
+ticket/branch/allocation/receipt only after resolving the current Git top-level
+to exact `C:\Users\<user>\Desktop\AI控制工作workflow-implementer-2`. Every edit
+path must be relative to that verified root; another mismatch is typed `HALT`.
+
 This registry is the single dispatch. The implementation owner may work only
 the exact two source/test paths and later the WPR-only PRG-20260812-242 return.

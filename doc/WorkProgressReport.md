@@ -2699,6 +2699,15 @@
 | Owner / admission | Same idle task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing clean `workflow-implementer-2` at exact submitted HEAD `2fbe55f0cd8dc18788dd121ff1529d81d6b52409`; exactly three existing worktrees. Create only `codex/implementation-codex-registration-terminal-claim-05b4b2b1` from this dispatch-registry commit. Project-owner instruction `繼續 不要卡住` is the positive delivery confirmation. |
 | Scope / return | New settlement-authority module and focused test only, then WPR-only PRG-20260812-242. No new worktree/Agent, B2C/B2D effect, package/export edit, live Codex/process/filesystem/host/network/target-project mutation, review/integration, push, release or deployment. `XSS_NOT_APPLICABLE`. |
 
+## PRG-20260812-241 — Ticket 05B4B2B1 path-scope incident and continuation
+
+| Field | Value |
+| --- | --- |
+| Router event | `CHANGE_DETECTED / PATH_SCOPE_VIOLATION -> VERIFIED_CLEANUP -> SAME_TICKET_CORRECTION_CONTINUATION / IMPLEMENT` |
+| Incident | The implementation turn created only `C:\Users\<user>\Desktop\AI控制工作\workflow-implementer-2\tests\test_codex_registration_settlement_authority.py`, outside the allocated Git worktree because of an extra path separator. No production file or commit was created. |
+| Cleanup / readback | The exact erroneous file is absent. The allocated `C:\Users\<user>\Desktop\AI控制工作workflow-implementer-2` is clean on `codex/implementation-codex-registration-terminal-claim-05b4b2b1` at `588e605967c40e70a2e8fbc380734968011ad075`; exactly three Git worktrees remain. |
+| Continuation | This is an operational path-scope incident, not a requirement/ticket/implementation change. Retain the same ticket, owner, branch, allocation, receipt, correlation and C1-C8. Before any edit, the owner must resolve Git top-level to the exact allocated path and use only paths relative to that root. A second mismatch is typed `HALT`. |
+
 ## PRG-20260812-235 — Ticket 05B4B2B CR-154 bounded correction handoff
 
 | Field | Value |
