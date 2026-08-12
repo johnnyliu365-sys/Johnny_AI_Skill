@@ -2555,3 +2555,14 @@
 | Binding | `hnd_local_orchestration_install_05b4b2b_20260812`; `aln_local_orchestration_install_05b4b2b_20260812`; `rcpt_local_orchestration_install_05b4b2b_20260812`; `corr-local-orchestration-install-05b4b2b-20260812`; `q-local-orchestration-install-05b4b2b-20260812`; `scx-local-orchestration-install-05b4b2b-20260812-01`. |
 | Owner / admission | Idle task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing clean `workflow-implementer-2` at submitted 05B4B2A HEAD `e4841abfd8caf8e262fa451055da94f5acc754a8`; zero tracked/ignored/cache residue; unchanged three-worktree topology. From the control commit carrying this registry, create only `codex/implementation-codex-registration-forward-05b4b2b` in that same worktree. |
 | Scope / return | New forward composition module and focused test only; implementation commit then WPR-only PRG-226. No other source/export/dependency, worktree, Agent, B2C-B2E/05C work, proof/receipt/compensation/oracle/live effect, target-project write, review/integration, push, release or deployment. |
+
+## PRG-20260812-227 — Ticket 05B4B2B independent review
+
+| Field | Value |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05B4B2B) -> TERMINAL_CODE_REVIEW -> CHANGES_REQUESTED -> IMPLEMENTATION_DEFECT -> SAME_CLOSURE_CORRECTION_REQUIRED` |
+| Reviewed return | Closure `CLOSURE-LOCAL-INSTALL-T05B4B2B-01`; implementation `b6349d5486b81c0c97040fcc16bf14e1c69c1dcd`; WPR-only handoff `031c2ff0585b59510d1ee5746fd9acc60a837eaf`; formal report `doc/reviews/local-orchestration-installer/05b4b2b-codex-registration-forward-composition-code-review.md`; CR-151 and CR-152. |
+| Passing evidence | Exact ancestry/scope/residue and unchanged three-worktree topology pass. Repository-external immutable export SHA-256 `DE60DC08E8841BD6CA290046F85CE4DE20C214B86086E7C7EE6A62AAECD55CC9` passes focused 16/16 and full 310/310; ordinary capability, sequencing, duplicate/re-entry, result, exception and recovery cells remain green. XSS is `XSS_NOT_APPLICABLE`. |
+| CR-151 | Constructing a coordinator with `object.__new__` bypasses `__init__`; `begin`/`execute`/`recovery` do not revalidate coordinator authority. The independent probe reached `fresh_preflight`, recorded one `FRESH` call and returned a next-ready phase although `metadata()` rejected the same foreign token. |
+| CR-152 | `__reduce_ex__` invokes `operator.index(protocol)` before refusal. A caller `IndexTrap.__index__` executed once and its `RuntimeError` escaped instead of the required direct finite `TypeError`. |
+| Decision / continuation | Both are `IMPLEMENTATION_DEFECT` within F2/F7. Retain the same ticket/task/worktree/branch/allocation/receipt/correlation and immutable commits; dispatch one additive correction batch only. No new branch/worktree, scope expansion, integration, push, release or deployment. |

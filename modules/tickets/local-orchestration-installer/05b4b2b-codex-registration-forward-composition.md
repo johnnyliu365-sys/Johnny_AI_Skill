@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / unchanged AC-01, AC-02, AC-07 and AC-08 forward-registration seam |
-| State | `FROZEN / DISPATCH_PENDING` |
+| State | `CHANGES_REQUESTED / SAME_CLOSURE_CORRECTION_REQUIRED` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B4B2B-01` / F1-F8 |
 | Dependency | 05B4B2A independently approved and integrated by `494aaca201de5a6ee001233b03bccb41de21f7fa` |
 | Planned owner | Task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2`; one new ticket branch from the later dispatch-registry commit; no new worktree |
@@ -116,3 +116,13 @@ registry must exist before the implementation lane may switch branch or edit.
 Any mismatch returns typed `HALT` or `CHANGE_DETECTED`. No second worktree,
 source path, ticket, Agent, proof/receipt/compensation/oracle effect, review,
 integration, push, release or deployment is admitted.
+
+## Review correction record
+
+Independent review of immutable return `b6349d5 -> 031c2ff` found CR-151 and
+CR-152, both `IMPLEMENTATION_DEFECT` inside existing F2/F7. CR-151 requires the
+same exact coordinator-authority gate before `begin`, `execute` and `recovery`
+can mutate transaction state or invoke an operation. CR-152 requires
+`__reduce_ex__` to reject without inspecting or converting its caller-supplied
+protocol. The same ticket, owner, worktree, branch, allocation, receipt and
+correlation remain valid; correction commits must be additive.
