@@ -2743,3 +2743,13 @@
 | Independent green evidence | Repository-external immutable snapshot passed focused 12/12, full serial 329/329, strict mypy 126 source files and in-memory compile. Exact implementation/handoff scope, ancestry, clean lane and unchanged three-worktree topology passed. |
 | CR-155 | The live claim and `ClaimRecord` retain the same Pydantic metadata instance. In-place `object.__setattr__` mutation changed phase `PLUGIN_ADD -> FRESH_PREFLIGHT` and generation `3 -> 999`; proof consumption still succeeded because object identity remained equal. Classification is `IMPLEMENTATION_DEFECT` within frozen C4/C5. |
 | Continuation | Same ticket/task/worktree/branch/allocation/receipt/correlation. Add a separate canonical authority-owned binding, exact trap-free field validation/comparison, named in-place-mutation first-red and isolated reversal. No new branch/worktree or scope expansion. `XSS_NOT_APPLICABLE`. |
+
+## PRG-20260812-244 — Ticket 05B4B2B1 CR-155 correction handoff
+
+| Field | Value |
+| --- | --- |
+| Router event | `CHANGES_REQUESTED(CR-155) -> IMPLEMENTATION_DEFECT -> CORRECTION_HANDOFF_CONFIRMED / IMPLEMENT` |
+| Binding | Correction handoff `hnd_local_orchestration_install_05b4b2b1_cr155_20260812`; retained allocation `aln_local_orchestration_install_05b4b2b1_20260812`, receipt `rcpt_local_orchestration_install_05b4b2b1_20260812`, correlation `corr-local-orchestration-install-05b4b2b1-20260812` and side-context `scx-local-orchestration-install-05b4b2b1-20260812-01`; formal review `2393edb700742798033b1d36b89359de7e5ee3de` / CR-155. |
+| Lane | Same idle task, existing `workflow-implementer-2`, existing branch at clean immutable handoff `ad2fc5003d04289b9971e8bfe8f9c0d066e19f4b`; no new branch/worktree. |
+| Executable correction | First-red valid alternate attempt/phase/generation in-place mutations of the live claim metadata and require finite `INVALID_CLAIM`; keep a separate canonical authority-owned binding; exact trap-free field comparison precedes tombstone; unchanged claim still consumes once. Add one isolated comparison-gate reversal. |
+| Scope / return | Additive correction to the existing settlement module/test only, then WPR-only PRG-20260812-245. Preserve C1-C8 and all five prior reversals; rerun focused/full unittest, strict full-tree mypy, compile, source/scope/diff/ancestry/topology/residue checks. No effect/integration/push/release/deployment. |

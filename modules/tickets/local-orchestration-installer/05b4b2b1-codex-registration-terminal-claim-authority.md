@@ -125,3 +125,16 @@ identity check and the altered attempt/phase/generation binding is consumed.
 The bounded correction must retain the same owner, worktree, branch,
 allocation, receipt and correlation, add canonical authority-owned binding
 comparison plus its named first-red/reversal, and use additive commits only.
+
+### CR-155 correction dispatch registry
+
+| Field | Value |
+| --- | --- |
+| Control review | `2393edb700742798033b1d36b89359de7e5ee3de`; CR-155; unchanged C4/C5 closure |
+| Correction handoff | `hnd_local_orchestration_install_05b4b2b1_cr155_20260812` |
+| Retained authority | `aln_local_orchestration_install_05b4b2b1_20260812`; `rcpt_local_orchestration_install_05b4b2b1_20260812`; `corr-local-orchestration-install-05b4b2b1-20260812`; `scx-local-orchestration-install-05b4b2b1-20260812-01` |
+| Lane | Same task, existing `workflow-implementer-2`, existing `codex/implementation-codex-registration-terminal-claim-05b4b2b1`, exact clean submitted HEAD `ad2fc5003d04289b9971e8bfe8f9c0d066e19f4b`; additive commits only |
+| Correction return | Existing settlement-authority module/test only, then WPR-only handoff reserved as PRG-20260812-245 |
+
+No reset, amend, rebase, merge, new branch/worktree, public API change,
+out-of-scope hardening or downstream settlement effect is admitted.
