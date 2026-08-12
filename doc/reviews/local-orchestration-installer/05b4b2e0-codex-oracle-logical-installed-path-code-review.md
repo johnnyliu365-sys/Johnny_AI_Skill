@@ -62,3 +62,21 @@ deployment is authorized.
 `CHANGES_REQUESTED`. CR-157 and CR-158 are the complete blocking batch for
 revision 02. A same-branch additive correction may be dispatched only after
 the control review and correction handoff are committed.
+
+## Final correction review
+
+| Gate | Result |
+| --- | --- |
+| Immutable correction | PASS: `05b65bce17be0dbab7aeefc8118ad8d37e3d5bce -> 1d465775b71530193cb584fcdc2aed90c873e4f8 -> 002b2982cbf111262865946dc16d83c23a7bc879`; correction changes only contracts, fresh child and focused test; handoff changes only WPR PRG-270. |
+| CR-157 | PASS: exact plugin matching now includes `installed_path`. A valid alternate path returns `COMMAND_INVALID`, preserves exact state/payload bytes and leaves the plugin present. Reviewer reproduced the original exploit and the corrected behavior. |
+| CR-158 | PASS: both validators reject every segment ending in ASCII space or period. Parent construction, tampered fresh-child command and persisted-record cells all fail before an authorized mutation/result. |
+| Independent verification | PASS in repository-external Unicode-safe snapshot: focused 17/17, full 360/360, strict mypy 130 files and in-memory compile 130 files. Source/scope/diff/ancestry/topology and submitted-lane residue checks pass. |
+| Evidence truthfulness | PASS: reviewer removed the exact path comparison and CR-157 turned red; reviewer removed parent/child segment-ending guards and the named parent, fresh-child and persisted-state CR-158 checks turned red. Exact immutable blobs were restored and the named tests returned green. |
+| CodeReview §2.1 / XSS | Classes 1, 3 and 7 PASS after correction. Class 8 remains `XSS_NOT_APPLICABLE`: no renderer, DOM/HTML, JavaScript context or privileged bridge exists. |
+
+## Final disposition
+
+`APPROVED / READY_TO_MERGE`. CR-157 and CR-158 are closed. Guarded
+integration may merge only exact handoff
+`002b2982cbf111262865946dc16d83c23a7bc879`, preserving this approval as
+first-parent control history. E1 remains blocked until integration completes.

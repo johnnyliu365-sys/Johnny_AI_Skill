@@ -102,6 +102,15 @@ handoff may change. No new branch or worktree is allowed.
 | Exact correction | Add the two review reproductions as committed tests; bind removal identity to exact `installed_path`; reject every logical-path segment ending in ASCII space or period in parent and child validation, including persisted-state validation. Independently reverse both guards and restore exact blobs. |
 | Return | One additive correction commit changing only the original four implementation paths, then WPR-only reserved `PRG-20260813-270`; rerun focused/full, strict mypy, compile, sentinel, scope/ancestry/topology and residue readback. |
 
+## Final independent review
+
+Correction `1d465775b71530193cb584fcdc2aed90c873e4f8` and WPR-only handoff
+`002b2982cbf111262865946dc16d83c23a7bc879` are
+`APPROVED / READY_TO_MERGE`. CR-157 and CR-158 are closed. Independent
+focused 17/17, full 360/360, strict mypy 130 files, compile 130 files and the
+two reviewer reverse gates pass. Only guarded integration of the exact
+handoff is next; E1 remains dependency-blocked until that merge completes.
+
 ## Planned dispatch binding
 
 | Field | Value |

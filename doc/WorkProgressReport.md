@@ -3001,3 +3001,13 @@
 | Lane readback | Idle task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; existing `workflow-implementation`; exact clean submitted HEAD `05b65bce17be0dbab7aeefc8118ad8d37e3d5bce`; zero ignored/cache residue; exactly three worktrees; retain branch `codex/implementation-codex-oracle-logical-path-05b4b2e0`. |
 | Correction | Commit the reviewer reproductions for mismatched valid path removal and segment-ending space/period. Exact removal identity must include `installed_path`; parent and child path validators must reject the ambiguity before mutation and persisted-state validation. Reverse both new guards independently. |
 | Return / limits | One additive correction commit in the original four-path scope, then WPR-only PRG-270. No new branch/worktree, E1-E6, staging push, package, release, deployment, live Codex or target-project effect. |
+
+## PRG-20260813-271 — Ticket 05B4B2E0 final independent review
+
+| Field | Value |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05B4B2E0 revision 02) -> TERMINAL_CODE_REVIEW -> APPROVED / GUARDED_INTEGRATION_READY` |
+| Immutable correction | `05b65bce17be0dbab7aeefc8118ad8d37e3d5bce -> 1d465775b71530193cb584fcdc2aed90c873e4f8 -> 002b2982cbf111262865946dc16d83c23a7bc879`; exact three implementation paths then WPR-only PRG-270. |
+| Closure | CR-157 closed: alternate valid logical path removal is blocked and state/payload remain byte-identical. CR-158 closed: segment-ending space/period is rejected by parent, fresh-child and persisted-state gates. |
+| Independent evidence | Unicode-safe external snapshot passed focused 17/17, full 360/360, strict mypy 130 files and compile 130 files. Removing exact-path comparison made CR-157 red; removing parent/child normalization guards made the named CR-158 cells red; immutable blobs restored and named tests green. |
+| Disposition | `APPROVED / READY_TO_MERGE`; only exact handoff `002b2982cbf111262865946dc16d83c23a7bc879` may enter guarded integration. `XSS_NOT_APPLICABLE`. No push, package, release, deployment or target-project effect. |
