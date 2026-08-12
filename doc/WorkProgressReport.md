@@ -2794,3 +2794,23 @@
 | First red / correction | Against unchanged production blob `5d0ae21524df88a7abea1e149906a3cbee0b131b`, valid same-object in-place alternate attempt ID, phase and generation cells all consumed and returned `CodexRegistrationProofRequired`; the named regression failed three cells. ClaimRecord now owns a separate canonical primitive binding. Consumption exact-type validates live metadata plus nested attempt/generation values, then compares attempt/phase/generation/kind to that binding before atomic tombstoning; same-object altered claims now return finite `INVALID_CLAIM`, while unchanged claims consume once. Nested caller trap is rejected with zero protocol calls. |
 | Reverse / verification / residue | Replacing the canonical attempt/generation comparison with an unconditional true gate made the named CR-155 test red in two valid-alternate cells; the exact final blob was restored. Focused serial unittest passed 13/13 and full serial discovery passed 330/330. Strict full-tree mypy passed 126 source files with `--strict --explicit-package-bases --no-incremental` using an external cache removed/read back absent. In-memory compile, source/XSS sentinels, `git diff --check`, exact two-path scope, ancestry and unchanged three-worktree topology passed. Twenty-eight verified test-generated cache directories and local `.mypy_cache` were removed; tracked/ignored/cache residue was zero before commit. |
 | XSS / non-interference | `XSS_NOT_APPLICABLE`: no renderer, HTML/DOM, JavaScript or privileged bridge exists. Only in-memory fakes ran; no effect, live Codex/process/host/filesystem/network/target-project mutation, B2C/B2D work, Agent control, review/integration, push, release or deployment occurred. This is correction evidence, not a review decision. |
+
+## PRG-20260812-248 — Ticket 05B4B2C proof settlement refreeze
+
+| Field | Value |
+| --- | --- |
+| Router event | `ACTION_COMPLETED(05B4B2B1) -> TICKET_REFREEZE(05B4B2C) -> FROZEN / DISPATCH_PENDING` |
+| Dependency / closure | B2B1 merge `0c4476f8d40b53292ea69d0daec084860beeaa03`; `CLOSURE-LOCAL-INSTALL-T05B4B2C-01` / P1-P8; unchanged SPEC AC-01, AC-02, AC-07, AC-08. |
+| Outcome | Consume one exact live proof claim only after fresh safe port admission, invoke only the admitted proof operation once through the integrated receipt validator, and return existing metadata-only receipt or finite rejection. |
+| Lane | Planned existing task `019fcc9c-f34f-7d53-a313-c70c90bf3245` / `workflow-implementation`; no new worktree. Freeze is not dispatch. |
+| Security | `XSS_NOT_APPLICABLE`; no renderer/JavaScript/bridge. No live Codex, filesystem, process, host, network, target-project, push, release or deployment authority. |
+
+## PRG-20260812-249 — Ticket defect and B2B2 compensation-context refreeze
+
+| Field | Value |
+| --- | --- |
+| Router event | `TICKET_REFREEZE(05B4B2D) -> TICKET_DEFECT_FOUND -> TICKET_05B4B2B2_FROZEN / DISPATCH_PENDING` |
+| Finding | Terminal `CodexRegistrationCompensationRequired` retains journal/plan but not plugin ID, version, installed locator, auth policy or digest required by the compensation port manifest. Letting B2D accept those values from a caller would permit removal-target substitution. This is a ticket decomposition defect, not a product requirement change. |
+| Closure | `CLOSURE-LOCAL-INSTALL-T05B4B2B2-01` / B1-B7 adds only exact, recursively validated `CodexRegistrationPortRequest` binding to terminal compensation data; all effects remain prohibited. B2D waits for its integration. |
+| Lane | Planned existing task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` / `workflow-implementer-2`; disjoint from B2C; no new worktree. Freeze is not dispatch. |
+| Security | `XSS_NOT_APPLICABLE`; no renderer/JavaScript/bridge. No live Codex, filesystem, process, host, network, target-project, push, release or deployment authority. |

@@ -643,3 +643,17 @@ to the existing idle implementer-2 worktree at submitted B1 HEAD `918c9aff`.
 The implementation owner may create exactly one B2A branch from the dispatch
 registry commit in that same worktree. No additional worktree or B2B-B2E work
 is authorized.
+
+## B2B1 post-integration settlement refreeze
+
+B2B1 is approved and integrated by `0c4476f8d40b53292ea69d0daec084860beeaa03`.
+Proof settlement B2C can now proceed independently. Compensation settlement
+B2D cannot yet be frozen: terminal `CodexRegistrationCompensationRequired`
+does not retain the exact registration fields required by
+`CodexCompensationPortManifest` (plugin ID, version, installed locator, auth
+policy and digest). Those values must not be supplied later by an untrusted
+caller. B2B2 therefore adds only pure, recursively validated registration
+request binding to the terminal compensation decision. B2B2 and B2C have
+disjoint exact source/test ownership and may run in parallel in the two
+existing worktrees. B2D waits for B2B2 integration; no requirement or SPEC
+acceptance criterion changes.
