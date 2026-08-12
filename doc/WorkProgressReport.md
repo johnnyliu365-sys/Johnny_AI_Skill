@@ -2370,3 +2370,13 @@
 | Binding | `hnd_local_orchestration_install_05b4b1_r02_20260812`; `aln_local_orchestration_install_05b4b1_r02_20260812`; `rcpt_local_orchestration_install_05b4b1_r02_20260812`; `corr-local-orchestration-install-05b4b1-r02-20260812`; `q-local-orchestration-install-05b4b1-r02-20260812`; `scx-local-orchestration-install-05b4b1-r02-20260812-01`. |
 | Owner / admission | Same task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2`; existing branch `codex/implementation-codex-registration-reducer-05b4b1`; exact clean immutable handoff HEAD `658a8f7e10d955b10a28eeb89133ec7c6b3e05a2`; additive commits only. Project-owner instruction `開始` is the positive delivery confirmation for this correction. |
 | Scope / return | Existing reducer and focused test only; exact two-path implementation correction commit followed by WPR-only reserved `PRG-20260812-210`. No new branch/worktree, B2 implementation, another Agent, port/effect execution, review/integration, live Codex/host/target-project/network effect, push, release or deployment. |
+
+## PRG-20260812-211 — Ticket 05B4B1 revision-02 independent review
+
+| Field | Value |
+| --- | --- |
+| Router event | `IMPLEMENTATION_CORRECTION_COMPLETED -> TERMINAL_CODE_REVIEW -> CHANGES_REQUESTED -> IMPLEMENTATION_DEFECT -> CORRECTION_HANDOFF_REQUIRED` |
+| Reviewed return | Closure `CLOSURE-LOCAL-INSTALL-T05B4B1-02`; implementation `aa315b385cf994c5991d44810e4b3a9cceb87ca3`; WPR-only handoff `8ae77343ca455e51a6f3addbcc3e8f1aff29ed2a`; formal report `doc/reviews/local-orchestration-installer/05b4b1-codex-registration-reducer-code-review.md`. |
+| Passing evidence | Exact ancestry/scope/residue passed. Immutable export focused 13/13, full 282/282, strict mypy 120 files and compile 120 files passed. Independent three-phase/five-reconstruction/repeat, malformed nested, public-data and source-effect probes passed; CR-148 is closed. |
+| CR-149 | Each exact pending variant raises `AttributeError` when constructed-invalid state omits `status`; R2-D6 requires finite `INVALID_STATE`. Classification is `IMPLEMENTATION_DEFECT`, bounded to required-field validation and a three-cell regression test. |
+| Decision / continuation | `CHANGES_REQUESTED / SAME_CLOSURE_CORRECTION_REQUIRED`; same ticket/task/worktree/branch/receipt only. No new branch/worktree, ticket refreeze, B2 dispatch, effect, push, release or deployment. |

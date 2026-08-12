@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / unchanged AC-01, AC-02, AC-07 and AC-08 registration seam |
-| State | `IN_PROGRESS / REVISION_02_CORRECTION_DISPATCHED` |
+| State | `IN_PROGRESS / REVISION_02_CHANGES_REQUESTED / CORRECTION_PENDING` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B4B1-02` / R2-D1 through R2-D8 |
 | Dependency | 05B4A1 approved and integrated by `3399cf934874f3304959ef0b6913548c0d767e01` |
 | Owner / worktree | Task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2`; no new worktree |
@@ -189,3 +189,20 @@ The owner must fail closed with a typed `HALT` or `CHANGE_DETECTED` if any
 admission value differs. No new branch/worktree, reset, amend, force, merge,
 package/dependency edit, B2 implementation, another Agent, live effect, review,
 integration, push, release or deployment is part of this dispatch.
+
+## Revision-02 independent review
+
+Correction `aa315b385cf994c5991d44810e4b3a9cceb87ca3` and WPR-only handoff
+`8ae77343ca455e51a6f3addbcc3e8f1aff29ed2a` close CR-148: all exact legal
+copies and reconstructions now reduce deterministically without private object
+identity, and B1 remains effect-free. Focused 13/13, full 282/282, strict mypy
+120 files, compile 120 files and independent value/source adversarial probes
+pass.
+
+`CR-149 / IMPLEMENTATION_DEFECT` remains blocking. For each of the three exact
+pending variants, a constructed-invalid value whose `status` field is absent
+reaches direct `value.status` access and raises `AttributeError`. R2-D6 requires
+finite `INVALID_STATE` rejection for constructed-invalid pending values. The
+smallest same-closure correction is to guard required status access for all
+three variants and commit the exact three-cell regression test; no ticket
+refreeze, B2 work, new branch or new worktree is needed.

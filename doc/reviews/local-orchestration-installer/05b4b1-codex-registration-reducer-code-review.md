@@ -60,3 +60,24 @@ open a correction branch or worktree. The immutable implementation and handoff
 remain evidence. Further work requires control-plane convergence and a reviewed
 ticket refreeze; no push, release, deployment, live Codex mutation or target-
 project write is authorized.
+
+## Revision-02 review
+
+### Decision
+
+`CHANGES_REQUESTED / IMPLEMENTATION_DEFECT / SAME_CLOSURE_CORRECTION`
+
+| Gate | Result |
+| --- | --- |
+| Reviewed return | Implementation correction `aa315b385cf994c5991d44810e4b3a9cceb87ca3`; WPR-only handoff `8ae77343ca455e51a6f3addbcc3e8f1aff29ed2a`; closure `CLOSURE-LOCAL-INSTALL-T05B4B1-02` |
+| Ancestry / scope / residue | PASS: `658a8f7 -> aa315b3 -> 8ae7734`; implementation changes exactly reducer/test, handoff changes WPR only, submitted lane tracked/ignored/cache readbacks are clean. |
+| CR-148 / R2-D1 through R2-D5 | PASS: original, shallow copy, deep copy, exact dump reconstruction, JSON reconstruction and Pydantic deep copy all reduce to identical public decisions; repeated calls are deterministic; private identity authority is absent and B1 remains effect-free. |
+| Standard verification | PASS in repository-external immutable export: focused 13/13, serial full 282/282, strict mypy 120 files and in-memory compile 120 files. |
+| Adversarial value/source boundary | PASS: three phases × five reconstruction variants, repeated exact calls, two nested malformed cells, public-data leakage sentinel and AST/source effect sentinel all pass. |
+| Constructed-invalid pending status | **FAIL — CR-149 / IMPLEMENTATION_DEFECT:** removing `status` from each exact pending variant causes `advance_codex_registration` to raise `AttributeError` at direct status access instead of returning `CodexRegistrationBlocked(INVALID_STATE)`. |
+
+CR-149 is a bounded implementation defect, not a ticket defect or requirement
+change. R2-D6 already requires finite rejection for constructed-invalid pending
+values. The same branch may add one three-variant first-red test and guard the
+required status read before phase comparison. No new state authority, B2 logic,
+branch, worktree or broader hardening is authorized.
