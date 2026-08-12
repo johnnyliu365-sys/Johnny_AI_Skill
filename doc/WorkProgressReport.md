@@ -2449,3 +2449,14 @@
 | Ledger resolution | The sole conflict was `doc/WorkProgressReport.md`; PRG-206 through PRG-214 are retained exactly once. Neither immutable parent was amended, reset, forced or overwritten. |
 | Post-merge verification | Focused 14/14 and serial full 283/283 passed. Strict full-tree mypy and in-memory compile passed 120 files. `git diff --check`, exact parent/product equality, worktree topology and zero cache-residue readback passed. |
 | Completion | 05B4B1 is `COMPLETE / APPROVED / INTEGRATED`; allocation `aln_local_orchestration_install_05b4b1_r02_20260812` is released and receipt `rcpt_local_orchestration_install_05b4b1_r02_20260812` is closed against replay. 05B4B2 is unallocated and only `REFREEZE_READY`. No live Codex, host, target-project or network effect, push, release or deployment occurred. |
+
+## PRG-20260812-216 — Ticket 05B4B2 convergence decomposition and 05B4B2A freeze
+
+| Field | Value |
+| --- | --- |
+| Router event | `ACTION_COMPLETED(05B4B1) -> TICKET_SELECTED(05B4B2) -> CONVERGENCE_DECOMPOSED -> TICKET_SELECTED(05B4B2A) -> TICKET_FREEZE_COMPLETED -> DISPATCH_PENDING` |
+| Decision | The former B2 placeholder mixed transaction concurrency, forward registration effects, proof/receipt, compensation and lifecycle-oracle acceptance. It is decomposed without requirement change into B2A-B2E; ADR-20260812-005 records the process-local authority boundary and sequencing. |
+| Ticket / closure | `05b4b2a-codex-registration-transaction-authority`; `CLOSURE-LOCAL-INSTALL-T05B4B2A-01`; exact T1-T8. B2B-B2E remain unallocated and dependency-waiting. |
+| Binding | `hnd_local_orchestration_install_05b4b2a_20260812`; `aln_local_orchestration_install_05b4b2a_20260812`; `rcpt_local_orchestration_install_05b4b2a_20260812`; `corr-local-orchestration-install-05b4b2a-20260812`; `q-local-orchestration-install-05b4b2a-20260812`; `scx-local-orchestration-install-05b4b2a-20260812-01`. |
+| Owner / lane | Planned task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2`; later create only `codex/implementation-codex-registration-transaction-authority-05b4b2a` from the exact dispatch-registry commit. No new worktree. |
+| Scope / stop | New effect-free transaction module and focused test only, then WPR-only PRG-218. No registration/proof/compensation/process/filesystem/oracle effect, package/dependency edit, another Agent, review/integration, B2B-B2E/05C work, live state, push, release or deployment. Freeze is not dispatch. |

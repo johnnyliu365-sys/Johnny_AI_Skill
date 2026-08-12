@@ -1,36 +1,33 @@
-# 05B4B2 — Codex Registration Transaction Coordinator
+# 05B4B2 — Codex Registration Transaction Convergence Parent
 
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / unchanged AC-01, AC-02, AC-07 and AC-08 |
-| State | `PLANNED / DEPENDENCY_WAIT / REFREEZE_REQUIRED` |
-| Dependency | 05B4B1 revision 02 independently approved and integrated |
-| Allocation | None; no implementation owner, receipt, branch or effect authority |
+| State | `CONVERGENCE_DECOMPOSED / CHILD_05B4B2A_FROZEN / LATER_CHILDREN_PLANNED` |
+| Dependency | 05B4B1 revision 02 approved and integrated by `d7c59349b436d552f2fab457a297e2eac6958093` |
+| Allocation | Only 05B4B2A may receive a later dispatch; B2B-B2E are unallocated |
 
-## Reserved responsibility
+## Convergence decision
 
-This coordinator will be the sole owner of registration transaction currency
-and effect admission. Its future reviewed closure must bind one exact attempt,
-phase and monotonically advancing generation to a coordinator-owned one-shot
-lease before invoking the admitted 05B4A capability.
+The former B2 placeholder joined four independently rejectable boundaries:
+transaction currency/concurrency, forward registration effects, proof/receipt
+settlement, and compensation plus disposable-oracle acceptance. A defect in any
+one would invalidate unrelated evidence and recreate the rejected monolithic
+05B review surface. The product requirement and SPEC acceptance criteria are
+unchanged; this is ticket decomposition.
 
-At minimum, the future closure must prove:
+| Child | One observable responsibility | Dependency |
+| --- | --- | --- |
+| [05B4B2A](05b4b2a-codex-registration-transaction-authority.md) | Own one process-local attempt, exact phase/generation and atomic one-shot start/complete authority without invoking an effect. | B1 integrated |
+| [05B4B2B](05b4b2b-codex-registration-forward-composition.md) | Invoke only fresh-preflight/marketplace-add/plugin-add through an admitted registration capability and the B2A gate. | B2A integrated |
+| [05B4B2C](05b4b2c-codex-registration-proof-settlement.md) | Turn only an exact gated proof request and matching proof into the existing metadata-only registration receipt. | B2B integrated |
+| [05B4B2D](05b4b2d-codex-registration-compensation-settlement.md) | Turn only an exact gated compensation decision into the existing exhaustive compensation composition result. | B2B integrated; may later run in parallel with B2C |
+| [05B4B2E](05b4b2e-codex-registration-lifecycle-acceptance.md) | Prove the composed success and failure paths in the disposable 05S1-05S4 environment, including complete removal/absence. | B2C and B2D integrated |
 
-- the exact live `(attempt_id, phase, generation, lease)` is consumed once;
-- stale, copied, forged, cross-phase and already-consumed leases return a finite
-  metadata-only replay block before any effect;
-- concurrent duplicate submissions cannot execute the same phase twice;
-- `STARTED` is recorded before an effect and ambiguous interruption retains
-  `MAY_EXIST` compensation authority;
-- only a reviewed B1 decision associated with the exact live transaction can
-  reach preflight, add, proof, receipt or compensation execution;
-- proof, receipt, 05B3C compensation and 05S4 lifecycle-oracle truth remain
-  exact and receipt-bound.
+B2A-B2B are serial. After B2B integration, B2C and B2D have disjoint source
+responsibilities and may be allocated to the two existing implementation
+worktrees. B2E remains the final independent acceptance ticket.
 
-B1 values are decision data, not leases or receipts. Copying or reconstructing
-an exact B1 value grants no effect authority. The complete acceptance closure,
-storage lifetime, concurrency model and cleanup policy will be frozen only
-after B1 revision 02 is approved and integrated.
-
-No live Codex, host, filesystem, target-project, network, push, release or
-deployment authority is granted by this planned ticket.
+No child may import or copy terminal rejected 05B source. No live Codex, user
+profile, target project, network, package, push, release or deployment authority
+is granted by this parent.

@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| Context state | `TICKET_05B4B1_REVISION_02_CR149_CORRECTION_DISPATCHED` |
-| Router event | `CHANGES_REQUESTED(CR-149) / CORRECTION_HANDOFF_CONFIRMED` |
+| Context state | `TICKET_05B4B2A_FROZEN / DISPATCH_PENDING` |
+| Router event | `ACTION_COMPLETED(05B4B1) / TICKET_05B4B2_DECOMPOSED / TICKET_05B4B2A_FROZEN` |
 | Delivery stage | `POC` |
 | Requirement change | `CHG-20260808-011` |
 | Baseline | `cd3e9b6789623bd2a12ff7c69db4d5fcadd1718f` (`docs: refreeze Ticket 05B4B1 pure reducer`) |
@@ -619,3 +619,14 @@ Guarded merge `d7c5934` integrated the exact reviewed B1 handoff with approval
 and compile over 120 files passed; the ledger retained PRG-206 through PRG-214
 once and cache residue is zero. The B1 allocation is released and its receipt
 closed. B2 is now eligible only for a fresh control-plane refreeze.
+
+## Ticket 05B4B2 convergence decomposition
+
+The post-B1 refreeze found that the former B2 placeholder still combined four
+independently rejectable surfaces: transaction concurrency, forward effects,
+proof/receipt, and compensation/oracle acceptance. Under unchanged SPEC
+behavior, B2 is decomposed into B2A-B2E. B2A alone is frozen as an effect-free
+process-local transaction authority with exact attempt/phase/generation and
+atomic one-shot start/complete leases. Implementer-2 is the planned owner in
+the existing worktree; freeze is not dispatch. B2B-B2E remain unallocated, and
+B2C/B2D may be parallelized only after B2B is independently integrated.
