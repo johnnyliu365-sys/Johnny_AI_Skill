@@ -2981,6 +2981,18 @@
 | Lane | Idle task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; exact clean submitted HEAD `09467cd8b8a9f652648e8383750fa36d190a41fd`; target branch absent; exactly three existing worktrees; no new worktree. |
 | Return | Exact four-path implementation commit, then WPR-only PRG-267. Reviewer retains sole orchestration and review authority. No staging push or package work is authorized. |
 
+## PRG-20260813-267 — Ticket 05B4B2E0 logical installed-path handoff
+
+| Field | Value |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05B4B2E0) -> ACTION_COMPLETED -> REVIEW_HANDOFF`; independent review remains required. |
+| Ticket / binding | `05b4b2e0-codex-oracle-logical-installed-path`; `CLOSURE-LOCAL-INSTALL-T05B4B2E0-01` / O1-O8; `hnd_local_orchestration_install_05b4b2e0_20260813`; `aln_local_orchestration_install_05b4b2e0_20260813`; `rcpt_local_orchestration_install_05b4b2e0_20260813`; `corr-local-orchestration-install-05b4b2e0-20260813`; `q-local-orchestration-install-05b4b2e0-20260813`; `scx-local-orchestration-install-05b4b2e0-20260813-01`; reviewed freeze `0a71cc6d046a5ead8e5157b42c86fb38e28f0363`; dispatch `060109b79f94c02214d1f1e7127f7175a0bfd207`. |
+| Implementation / scope | `f796962` descends from the exact dispatch and changes only the four authorized 05S4 staging/test files. `OracleIdentity` and `OraclePluginRecord` now require a strictly validated logical installed path. The child persists it, binds it into exact payload/digest bytes, and returns it as `installedPath`; the disposable physical locator remains the exact plugin JSON relative locator. Default and foreign fixtures now carry explicit logical values. |
+| First red / O1-O6 green | With production unchanged and the new path passed to identity, `test_e0_logical_installed_path_is_a_required_identity_contract` failed with Pydantic `extra_forbidden` for the missing field. The additional encoded-traversal boundary cell initially failed because it was accepted, then passed after the same validator was updated. Focused 14/14 confirms exact response/state/payload/digest round-trip, physical/logical separation, old/extra/malformed/tampered state rejection, command-boundary zero mutation, and foreign-record preservation. |
+| O8 reverse evidence | Four isolated child mutations made named committed tests red and were restored: returning the physical locator as `installedPath` failed the response assertion; replacing claim-derived logical retention with a fixed value failed the state/response assertion; removing the logical value from payload serialization made persisted and payload tamper cells falsely complete; changing the physical locator suffix made the exact payload-locator test fail. Final focused rerun passed 14/14. |
+| Verification / residue | `python -B -m unittest tests.test_codex_lifecycle_oracle -v` passed 14/14; full serial discovery passed 357/357. Strict full-tree mypy with `--strict --explicit-package-bases --no-incremental` passed 130 files using a repository-external cache that was removed and read back absent. In-memory compile passed 130 files. Source sentinel, logical-path/physical-locator sentinel, `git diff --check`, exact four-path scope, dispatch ancestry and three-worktree topology passed. Tracked/ignored/cache status and staging-root residue were zero before this handoff edit. |
+| XSS / non-interference | `XSS_NOT_APPLICABLE`: no renderer, HTML/DOM, JavaScript context or privileged bridge was added. Only disposable staging fakes ran; no live Codex, real host/network, target-project, package, staging push, release or deployment action occurred. No review or integration decision was made. |
+
 ## PRG-20260813-268 — Ticket 05B4B2E0 initial independent review
 
 | Field | Value |
@@ -3001,6 +3013,18 @@
 | Lane readback | Idle task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; existing `workflow-implementation`; exact clean submitted HEAD `05b65bce17be0dbab7aeefc8118ad8d37e3d5bce`; zero ignored/cache residue; exactly three worktrees; retain branch `codex/implementation-codex-oracle-logical-path-05b4b2e0`. |
 | Correction | Commit the reviewer reproductions for mismatched valid path removal and segment-ending space/period. Exact removal identity must include `installed_path`; parent and child path validators must reject the ambiguity before mutation and persisted-state validation. Reverse both new guards independently. |
 | Return / limits | One additive correction commit in the original four-path scope, then WPR-only PRG-270. No new branch/worktree, E1-E6, staging push, package, release, deployment, live Codex or target-project effect. |
+
+## PRG-20260813-270 Ticket 05B4B2E0 CR-157/CR-158 correction handoff
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05B4B2E0 correction) -> ACTION_COMPLETED -> REVIEW_HANDOFF`; independent review remains required. |
+| Binding | Same `CLOSURE-LOCAL-INSTALL-T05B4B2E0-01` / O2/O4/O6/O8; review `7ef1b26909a18247d50cf7579ab007a4b32def19`; correction handoff `hnd_local_orchestration_install_05b4b2e0_cr157_cr158_20260813`; retained allocation, receipt and correlation. |
+| Implementation / scope | `1d465775b71530193cb584fcdc2aed90c873e4f8` descends from submitted handoff `05b65bce17be0dbab7aeefc8118ad8d37e3d5bce` and changes only the allowed Oracle contracts, child and focused test files. Exact plugin removal now includes the logical installed path, while parent and fresh-child validation reject every segment ending in ASCII space or period. |
+| First red | With production unchanged, `test_cr157_plugin_remove_requires_exact_logical_installed_path` returned a completed removal. The parent and fresh-child CR-158 tests accepted both segment-ending variants; the persisted period variant reached `DIGEST_MISMATCH` instead of the required finite state block. |
+| Green / reverse | Focused regression is 17/17 green. Removing exact installed-path comparison made CR-157 red; separately removing the parent and child segment-ending guards made their respective CR-158 regressions red. Each exact guard was restored before final verification. |
+| Verification / residue | Full serial unittest discovery passed 360/360. Strict full-tree mypy passed 130 files using a repository-external no-incremental cache that was deleted and read back absent; in-memory compile passed 130 files. Source sentinel, exact three-file scope, `git diff --check`, submitted-baseline ancestry, three-worktree topology, tracked/ignored/cache and staging-root residue checks passed before this docs-only edit. |
+| XSS / non-interference | `XSS_NOT_APPLICABLE`; no renderer, browser, JavaScript context or privileged bridge. No live Codex, host, network, target-project, package, staging push, release, deployment, review or integration action occurred. |
 
 ## PRG-20260813-271 — Ticket 05B4B2E0 final independent review
 

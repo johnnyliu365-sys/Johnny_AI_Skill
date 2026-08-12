@@ -42,6 +42,7 @@ _IDENTITY_FIELDS = (
     "plugin_source",
     "plugin_install_policy",
     "plugin_auth_policy",
+    "plugin_installed_path",
 )
 _MARKETPLACE_FIELDS = ("name", "root", "locator", "digest")
 _PLUGIN_FIELDS = (
@@ -52,6 +53,7 @@ _PLUGIN_FIELDS = (
     "source",
     "install_policy",
     "auth_policy",
+    "installed_path",
     "locator",
     "digest",
 )
@@ -102,6 +104,8 @@ def _load_command(path: Path, selected_surface: str) -> dict[str, object]:
     for canonical in (identity["marketplace_name"], identity["plugin_id"]):
         if not _is_canonical_segment(canonical):
             raise OracleFailure(COMMAND_INVALID)
+    if not _is_logical_installed_path(identity["plugin_installed_path"]):
+        raise OracleFailure(COMMAND_INVALID)
     return raw
 
 
@@ -200,11 +204,12 @@ def _validate_plugin_record(record: object) -> None:
     if not all(_is_nonblank_text(record[field]) for field in _PLUGIN_FIELDS):
         raise OracleFailure(STATE_INVALID)
     plugin_id = record["plugin_id"]
+    installed_path = record["installed_path"]
     locator = record["locator"]
     digest = record["digest"]
-    if not isinstance(plugin_id, str) or not isinstance(locator, str) or not isinstance(digest, str):
+    if not isinstance(plugin_id, str) or not isinstance(installed_path, str) or not isinstance(locator, str) or not isinstance(digest, str):
         raise OracleFailure(STATE_INVALID)
-    if not _is_canonical_segment(plugin_id) or locator != f"plugins/{plugin_id}.json" or not _is_digest(digest):
+    if not _is_canonical_segment(plugin_id) or not _is_logical_installed_path(installed_path) or locator != f"plugins/{plugin_id}.json" or not _is_digest(digest):
         raise OracleFailure(STATE_INVALID)
 
 
@@ -339,7 +344,7 @@ def _plugin_add(state: dict[str, object], state_path: Path, codex_home: Path, id
         "name": record["name"],
         "marketplaceName": record["marketplace_name"],
         "version": record["version"],
-        "installedPath": record["locator"],
+        "installedPath": record["installed_path"],
         "authPolicy": record["auth_policy"],
     }
 
@@ -413,6 +418,7 @@ def _exact_plugin(state: dict[str, object], identity: dict[str, object]) -> dict
         "source": identity["plugin_source"],
         "install_policy": identity["plugin_install_policy"],
         "auth_policy": identity["plugin_auth_policy"],
+        "installed_path": identity["plugin_installed_path"],
     }
     for record in records:
         if isinstance(record, dict) and all(record.get(key) == value for key, value in expected.items()):
@@ -441,6 +447,7 @@ def _plugin_record(identity: dict[str, object]) -> dict[str, object]:
         "source": identity["plugin_source"],
         "install_policy": identity["plugin_install_policy"],
         "auth_policy": identity["plugin_auth_policy"],
+        "installed_path": identity["plugin_installed_path"],
         "locator": f"plugins/{plugin_id}.json",
         "digest": "0" * 64,
     }
@@ -455,7 +462,7 @@ def _marketplace_payload(record: dict[str, object]) -> bytes:
 def _plugin_payload(record: dict[str, object]) -> bytes:
     return (
         f"plugin|{record['plugin_id']}|{record['name']}|{record['marketplace_name']}|{record['version']}|"
-        f"{record['source']}|{record['install_policy']}|{record['auth_policy']}"
+        f"{record['source']}|{record['install_policy']}|{record['auth_policy']}|{record['installed_path']}"
     ).encode("utf-8")
 
 
@@ -496,6 +503,19 @@ def _digest(value: bytes) -> str:
 
 def _is_nonblank_text(value: object) -> bool:
     return isinstance(value, str) and bool(value) and value == value.strip() and "\x00" not in value
+
+
+def _is_logical_installed_path(value: object) -> bool:
+    if not _is_nonblank_text(value) or not isinstance(value, str):
+        return False
+    if "/" in value or "%2e" in value.lower() or "%2f" in value.lower() or "%5c" in value.lower():
+        return False
+    if re.fullmatch(r'[A-Za-z]:\\(?:[^\\/:?*"<>|]+\\)*[^\\/:?*"<>|]+', value) is None:
+        return False
+    return all(
+        segment not in (".", "..") and not segment.endswith((" ", "."))
+        for segment in value.split("\\")
+    )
 
 
 def _is_canonical_segment(value: object) -> bool:

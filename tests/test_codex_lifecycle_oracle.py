@@ -52,6 +52,8 @@ from tests.staging.environment_core.environment import DisposableEnvironmentAllo
 from tests.staging.process_runner.contracts import ProcessInvocation, StartedChildProcess
 from tests.staging.process_runner.runner import BoundedChildProcessRunner, SubprocessProcessPort
 
+LOGICAL_INSTALLED_PATH = r"C:\Users\oracle\AppData\Local\JohnnyAIWorkflow\plugins\owned-plugin"
+ALTERNATE_LOGICAL_INSTALLED_PATH = r"C:\Users\oracle\AppData\Local\JohnnyAIWorkflow\plugins\other-plugin"
 
 IDENTITY = OracleIdentity(
     marketplace_name="owned-market",
@@ -62,6 +64,7 @@ IDENTITY = OracleIdentity(
     plugin_source="owned-source",
     plugin_install_policy="owned-install-policy",
     plugin_auth_policy="owned-auth-policy",
+    plugin_installed_path=LOGICAL_INSTALLED_PATH,
 )
 
 PayloadType = TypeVar("PayloadType")
@@ -118,7 +121,196 @@ class FixtureFailureOracle(CodexLifecycleOracle):
         self._fixture = fixture
 
 
+class LogicalPathCommandTamperFixture(CodexProtocolFixture):
+    """Changes only a child command after parent validation for fresh-boundary evidence."""
+
+    def __init__(self, runner: CodexLifecycleOracleRunner, logical_path: str) -> None:
+        super().__init__(runner, ExactResponseFilePort())
+        self._logical_path = logical_path
+
+    def run(
+        self,
+        lease: EnvironmentLease,
+        surface: CodexProtocolSurface,
+    ) -> CodexProtocolAccepted | CodexProtocolRejected:
+        if surface is CodexProtocolSurface.PLUGIN_ADD:
+            command_path = lease.temporary.absolute.path / ORACLE_COMMAND_FILE_NAME
+            expected = json.dumps(LOGICAL_INSTALLED_PATH)
+            replacement = json.dumps(self._logical_path)
+            serialized = command_path.read_text(encoding="utf-8")
+            if serialized.count(expected) != 1:
+                raise AssertionError("fixture did not receive the exact parent command")
+            command_path.write_text(serialized.replace(expected, replacement), encoding="utf-8")
+        return super().run(lease, surface)
+
+
 class CodexLifecycleOracleTests(unittest.TestCase):
+    def test_cr157_plugin_remove_requires_exact_logical_installed_path(self) -> None:
+        allocator, lease, oracle = self._ready("0000000000000090")
+        try:
+            self._assert_completed(oracle.initialize(lease), CodexMarketplaceList)
+            self._assert_completed(self._run(oracle, lease, OracleAction.MARKETPLACE_ADD), CodexMarketplaceAdd)
+            self._assert_completed(self._run(oracle, lease, OracleAction.PLUGIN_ADD), CodexPluginAdd)
+            state_path = oracle.state_path(lease)
+            payload_path = oracle.payload_root(lease) / "plugins" / f"{IDENTITY.plugin_id}.json"
+            state_before = state_path.read_bytes()
+            payload_before = payload_path.read_bytes()
+            alternate_identity = self._identity_with_logical_path(ALTERNATE_LOGICAL_INSTALLED_PATH)
+            command = OracleCommand(action=OracleAction.PLUGIN_REMOVE, identity=alternate_identity)
+            self._assert_blocked(oracle.run(lease, command), OracleBlockReason.COMMAND_INVALID)
+            self.assertEqual(state_before, state_path.read_bytes())
+            self.assertEqual(payload_before, payload_path.read_bytes())
+            self.assertTrue(payload_path.is_file())
+        finally:
+            self._teardown(allocator, lease)
+
+    def test_cr158_segment_ending_paths_reject_parent_before_mutation(self) -> None:
+        invalid_paths = (
+            r"C:\Users\oracle\AppData\Local\JohnnyAIWorkflow\plugins\owned \plugin",
+            r"C:\Users\oracle\AppData\Local\JohnnyAIWorkflow\plugins\owned.\plugin",
+        )
+        for value in invalid_paths:
+            with self.subTest(value=value):
+                with self.assertRaises(ValueError):
+                    self._identity_with_logical_path(value)
+
+    def test_cr158_segment_ending_paths_reject_fresh_child_before_mutation(self) -> None:
+        invalid_paths = (
+            r"C:\Users\oracle\AppData\Local\JohnnyAIWorkflow\plugins\owned \plugin",
+            r"C:\Users\oracle\AppData\Local\JohnnyAIWorkflow\plugins\owned.\plugin",
+        )
+        for index, value in enumerate(invalid_paths, start=91):
+            with self.subTest(value=value):
+                allocator, lease, unused_oracle = self._ready(f"00000000000000{index:02x}")
+                runner = CodexLifecycleOracleRunner(BoundedChildProcessRunner(SubprocessProcessPort()))
+                oracle = FixtureFailureOracle(runner, LogicalPathCommandTamperFixture(runner, value))
+                try:
+                    self._assert_completed(oracle.initialize(lease), CodexMarketplaceList)
+                    self._assert_completed(self._run(oracle, lease, OracleAction.MARKETPLACE_ADD), CodexMarketplaceAdd)
+                    state_path = oracle.state_path(lease)
+                    payload_root = oracle.payload_root(lease)
+                    state_before = state_path.read_bytes()
+                    payload_before = tuple(payload_root.rglob("*"))
+                    self._assert_blocked(self._run(oracle, lease, OracleAction.PLUGIN_ADD), OracleBlockReason.COMMAND_INVALID)
+                    self.assertEqual(state_before, state_path.read_bytes())
+                    self.assertEqual(payload_before, tuple(payload_root.rglob("*")))
+                finally:
+                    self._teardown(allocator, lease)
+
+    def test_e0_logical_installed_path_is_a_required_identity_contract(self) -> None:
+        identity = OracleIdentity(
+            marketplace_name="owned-market",
+            marketplace_root="owned-root",
+            plugin_id="owned-plugin",
+            plugin_name="owned-plugin-name",
+            plugin_version="release_candidate",
+            plugin_source="owned-source",
+            plugin_install_policy="owned-install-policy",
+            plugin_auth_policy="owned-auth-policy",
+            plugin_installed_path=LOGICAL_INSTALLED_PATH,
+        )
+        self.assertEqual(LOGICAL_INSTALLED_PATH, identity.plugin_installed_path)
+
+    def test_e0_logical_installed_path_round_trips_response_state_digest_and_physical_locator(self) -> None:
+        allocator, lease, oracle = self._ready("0000000000000070")
+        try:
+            self._assert_completed(oracle.initialize(lease), CodexMarketplaceList)
+            self._assert_completed(self._run(oracle, lease, OracleAction.MARKETPLACE_ADD), CodexMarketplaceAdd)
+            plugin = self._assert_completed(self._run(oracle, lease, OracleAction.PLUGIN_ADD), CodexPluginAdd)
+            state = json.loads(oracle.state_path(lease).read_text(encoding="utf-8"))
+            record = state["plugins"][0]
+            payload_path = oracle.payload_root(lease) / "plugins" / f"{IDENTITY.plugin_id}.json"
+            payload = payload_path.read_bytes()
+            self.assertEqual(IDENTITY.plugin_installed_path, plugin.installedPath)
+            self.assertEqual(IDENTITY.plugin_installed_path, record["installed_path"])
+            self.assertEqual(f"plugins/{IDENTITY.plugin_id}.json", record["locator"])
+            self.assertEqual("plugins/owned-plugin.json", payload_path.relative_to(oracle.payload_root(lease)).as_posix())
+            self.assertIn(IDENTITY.plugin_installed_path.encode("utf-8"), payload)
+            self.assertEqual(record["digest"], hashlib.sha256(payload).hexdigest())
+        finally:
+            self._teardown(allocator, lease)
+
+    def test_e0_invalid_logical_paths_are_rejected_before_oracle_mutation(self) -> None:
+        invalid_paths = (
+            r"plugins\owned-plugin",
+            "file:///C:/Users/oracle/plugin",
+            r"C:\Users\oracle\%2Fplugin",
+            r"C:\Users\oracle\%2e%2e\plugin",
+            r"C:\Users\oracle\..\plugin",
+            "C:/Users/oracle/plugin",
+            r"C:\Users\oracle\plugin" + "\\",
+            r"\Users\oracle\plugin",
+            "C:\\Users\\oracle\\plugin\x00",
+        )
+        for index, value in enumerate(invalid_paths, start=71):
+            with self.subTest(value=value):
+                with self.assertRaises(ValueError):
+                    OracleIdentity(
+                        marketplace_name=IDENTITY.marketplace_name,
+                        marketplace_root=IDENTITY.marketplace_root,
+                        plugin_id=IDENTITY.plugin_id,
+                        plugin_name=IDENTITY.plugin_name,
+                        plugin_version=IDENTITY.plugin_version,
+                        plugin_source=IDENTITY.plugin_source,
+                        plugin_install_policy=IDENTITY.plugin_install_policy,
+                        plugin_auth_policy=IDENTITY.plugin_auth_policy,
+                        plugin_installed_path=value,
+                    )
+                allocator, lease, oracle = self._ready(f"00000000000000{index:02x}")
+                try:
+                    self._assert_completed(oracle.initialize(lease), CodexMarketplaceList)
+                    state_before = oracle.state_path(lease).read_bytes()
+                    payload_before = tuple(oracle.payload_root(lease).rglob("*"))
+                    unsafe_identity = IDENTITY.model_copy(update={"plugin_installed_path": value})
+                    unsafe_command = OracleCommand.model_construct(action=OracleAction.PLUGIN_ADD, identity=unsafe_identity)
+                    self._assert_blocked(oracle.run(lease, unsafe_command), OracleBlockReason.COMMAND_INVALID)
+                    self.assertEqual(state_before, oracle.state_path(lease).read_bytes())
+                    self.assertEqual(payload_before, tuple(oracle.payload_root(lease).rglob("*")))
+                    self.assertFalse((lease.temporary.absolute.path / ORACLE_COMMAND_FILE_NAME).exists())
+                finally:
+                    self._teardown(allocator, lease)
+
+    def test_e0_persisted_logical_path_old_schema_extra_and_tamper_fail_closed(self) -> None:
+        cells = (
+            ("old-schema", OracleBlockReason.STATE_INVALID),
+            ("extra-field", OracleBlockReason.STATE_INVALID),
+            ("malformed", OracleBlockReason.STATE_INVALID),
+            ("state-path-tamper", OracleBlockReason.DIGEST_MISMATCH),
+            ("payload-path-tamper", OracleBlockReason.DIGEST_MISMATCH),
+            ("segment-ending-space", OracleBlockReason.STATE_INVALID),
+            ("segment-ending-period", OracleBlockReason.STATE_INVALID),
+        )
+        for index, (cell, expected) in enumerate(cells, start=80):
+            with self.subTest(cell=cell):
+                allocator, lease, oracle = self._ready(f"00000000000000{index:02x}")
+                try:
+                    self._assert_completed(oracle.initialize(lease), CodexMarketplaceList)
+                    self._assert_completed(self._run(oracle, lease, OracleAction.MARKETPLACE_ADD), CodexMarketplaceAdd)
+                    self._assert_completed(self._run(oracle, lease, OracleAction.PLUGIN_ADD), CodexPluginAdd)
+                    state_path = oracle.state_path(lease)
+                    payload_path = oracle.payload_root(lease) / "plugins" / f"{IDENTITY.plugin_id}.json"
+                    if cell == "payload-path-tamper":
+                        payload_path.write_bytes(payload_path.read_bytes().replace(IDENTITY.plugin_installed_path.encode("utf-8"), b"C:\\Foreign\\plugin"))
+                    else:
+                        state = json.loads(state_path.read_text(encoding="utf-8"))
+                        record = state["plugins"][0]
+                        if cell == "old-schema":
+                            del record["installed_path"]
+                        if cell == "extra-field":
+                            record["extra"] = "forbidden"
+                        if cell == "malformed":
+                            record["installed_path"] = "plugins/owned-plugin.json"
+                        if cell == "state-path-tamper":
+                            record["installed_path"] = r"C:\Users\oracle\AppData\Local\JohnnyAIWorkflow\plugins\other-plugin"
+                        if cell == "segment-ending-space":
+                            record["installed_path"] = r"C:\Users\oracle\AppData\Local\JohnnyAIWorkflow\plugins\owned "
+                        if cell == "segment-ending-period":
+                            record["installed_path"] = r"C:\Users\oracle\AppData\Local\JohnnyAIWorkflow\plugins\owned."
+                        state_path.write_text(json.dumps(state, separators=(",", ":")), encoding="utf-8")
+                    self._assert_blocked(self._run(oracle, lease, OracleAction.PLUGIN_LIST), expected)
+                finally:
+                    self._teardown(allocator, lease)
+
     def test_o1_serial_owned_lifecycle_uses_fresh_child_lists(self) -> None:
         allocator, lease, oracle = self._ready("0000000000000001")
         try:
@@ -130,6 +322,7 @@ class CodexLifecycleOracleTests(unittest.TestCase):
             plugin_add = self._run(oracle, lease, OracleAction.PLUGIN_ADD)
             plugin = self._assert_completed(plugin_add, CodexPluginAdd)
             self.assertEqual(IDENTITY.plugin_id, plugin.pluginId)
+            self.assertEqual(IDENTITY.plugin_installed_path, plugin.installedPath)
             markets = self._assert_completed(self._run(oracle, lease, OracleAction.MARKETPLACE_LIST), CodexMarketplaceList)
             plugins = self._assert_completed(self._run(oracle, lease, OracleAction.PLUGIN_LIST), CodexPluginList)
             self.assertEqual((IDENTITY.marketplace_name,), tuple(entry.name for entry in markets.marketplaces))
@@ -174,6 +367,9 @@ class CodexLifecycleOracleTests(unittest.TestCase):
             self._assert_completed(self._run(oracle, lease, OracleAction.MARKETPLACE_REMOVE), CodexMarketplaceRemove)
             self.assertEqual(foreign_market_bytes, (oracle.payload_root(lease) / foreign_marketplace.locator).read_bytes())
             self.assertEqual(foreign_plugin_bytes, (oracle.payload_root(lease) / foreign_plugin.locator).read_bytes())
+            foreign_state = json.loads(oracle.state_path(lease).read_text(encoding="utf-8"))
+            self.assertEqual(foreign_plugin.installed_path, foreign_state["foreign_plugins"][0]["installed_path"])
+            self.assertEqual(f"plugins/{foreign_plugin.plugin_id}.json", foreign_state["foreign_plugins"][0]["locator"])
             self.assertFalse((oracle.payload_root(lease) / "plugins" / "owned-plugin.json").exists())
         finally:
             self._teardown(allocator, lease)
@@ -327,6 +523,7 @@ class CodexLifecycleOracleTests(unittest.TestCase):
                         plugin_source=IDENTITY.plugin_source,
                         plugin_install_policy=IDENTITY.plugin_install_policy,
                         plugin_auth_policy=IDENTITY.plugin_auth_policy,
+                        plugin_installed_path=IDENTITY.plugin_installed_path,
                     )
                     unsafe_command = OracleCommand.model_construct(action=OracleAction.MARKETPLACE_LIST, identity=unsafe_identity)
                     self._assert_blocked(oracle.run(lease, unsafe_command), OracleBlockReason.COMMAND_INVALID)
@@ -414,6 +611,20 @@ class CodexLifecycleOracleTests(unittest.TestCase):
     def _command(action: OracleAction) -> OracleCommand:
         return OracleCommand(action=action, identity=IDENTITY)
 
+    @staticmethod
+    def _identity_with_logical_path(logical_path: str) -> OracleIdentity:
+        return OracleIdentity(
+            marketplace_name=IDENTITY.marketplace_name,
+            marketplace_root=IDENTITY.marketplace_root,
+            plugin_id=IDENTITY.plugin_id,
+            plugin_name=IDENTITY.plugin_name,
+            plugin_version=IDENTITY.plugin_version,
+            plugin_source=IDENTITY.plugin_source,
+            plugin_install_policy=IDENTITY.plugin_install_policy,
+            plugin_auth_policy=IDENTITY.plugin_auth_policy,
+            plugin_installed_path=logical_path,
+        )
+
     def _run(self, oracle: CodexLifecycleOracle, lease: EnvironmentLease, action: OracleAction) -> OracleRunResult:
         return oracle.run(lease, self._command(action))
 
@@ -466,7 +677,17 @@ class CodexLifecycleOracleTests(unittest.TestCase):
 
     @staticmethod
     def _foreign_plugin(plugin_id: str, name: str, marketplace_name: str) -> OraclePluginRecord:
-        values = (plugin_id, name, marketplace_name, "foreign-version", "foreign-source", "foreign-policy", "foreign-auth")
+        installed_path = rf"C:\Foreign\Codex\plugins\{plugin_id}"
+        values = (
+            plugin_id,
+            name,
+            marketplace_name,
+            "foreign-version",
+            "foreign-source",
+            "foreign-policy",
+            "foreign-auth",
+            installed_path,
+        )
         digest = hashlib.sha256(("plugin|" + "|".join(values)).encode("utf-8")).hexdigest()
         return OraclePluginRecord(
             plugin_id=plugin_id,
@@ -476,6 +697,7 @@ class CodexLifecycleOracleTests(unittest.TestCase):
             source="foreign-source",
             install_policy="foreign-policy",
             auth_policy="foreign-auth",
+            installed_path=installed_path,
             locator=f"plugins/{plugin_id}.json",
             digest=digest,
         )

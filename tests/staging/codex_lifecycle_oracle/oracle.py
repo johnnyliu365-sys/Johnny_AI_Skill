@@ -168,6 +168,7 @@ def _default_identity() -> OracleIdentity:
         plugin_source="oracle-source",
         plugin_install_policy="oracle-policy",
         plugin_auth_policy="oracle-auth",
+        plugin_installed_path=r"C:\Users\oracle\AppData\Local\JohnnyAIWorkflow\plugins\oracle-plugin",
     )
 
 
@@ -197,7 +198,7 @@ def _marketplace_payload(record: OracleMarketplaceRecord) -> bytes:
 def _plugin_payload(record: OraclePluginRecord) -> bytes:
     return (
         f"plugin|{record.plugin_id}|{record.name}|{record.marketplace_name}|{record.version}|{record.source}|"
-        f"{record.install_policy}|{record.auth_policy}"
+        f"{record.install_policy}|{record.auth_policy}|{record.installed_path}"
     ).encode("utf-8")
 
 
