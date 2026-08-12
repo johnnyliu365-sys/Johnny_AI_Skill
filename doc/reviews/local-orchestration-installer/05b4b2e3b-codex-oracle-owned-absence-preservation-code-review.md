@@ -2,7 +2,7 @@
 
 ## Review decision
 
-`CHANGES_REQUESTED / IMPLEMENTATION_DEFECT / CR-161`
+`APPROVED / READY_TO_MERGE`
 
 The accepted-lifecycle behavior is correct, but the parent absence boundary
 uses `isinstance` for `CodexPluginList`. A reviewer adversarial probe supplied
@@ -39,3 +39,22 @@ commit in the original `oracle.py` and focused-test scope. Require exact
 before reading it, and finitely block subclass, constructed-raw,
 missing/extra/injected-state and nested malformed entries. Reverse the exact
 type/revalidation gate and restore exact blobs. Then return a WPR-only handoff.
+
+## Correction review
+
+CR-161 is closed by implementation correction
+`d9d30db40e75c4a0a498c5984dfa11e530c6accc` and unique docs-only handoff
+`b230bbf736b04218f326a3b8617357ee335bbec0`. The intervening branch-local
+PRG-20260813-295 identifier is explicitly superseded by unique E3B
+PRG-20260813-296; its immutable commit remains in history and is not the
+current integrated identifier.
+
+The corrected boundary requires exact accepted-response and plugin-list
+classes, validates fixed model state recursively through plugin entries and
+marketplace sources, and rebuilds the accepted response before reading absence
+truth. Independent terminal verification passed the 25-test focused suite,
+strict mypy over 132 Python files and in-memory compilation of the same 132
+files. Reviewer probes that previously admitted a payload subclass now report
+`BLOCKED`; a response subclass is also blocked. A1-A7 pass. Only exact handoff
+`b230bbf736b04218f326a3b8617357ee335bbec0` is approved for guarded
+integration. `XSS_NOT_APPLICABLE`.

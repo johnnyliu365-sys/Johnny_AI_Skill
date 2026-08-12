@@ -3260,3 +3260,14 @@
 | E3B | Same task/branch/allocation/receipt; exact clean handoff `04b4ff10df73cb6b3c743daf0a249f364736de7f`; additive exact-response correction limited to `oracle.py` and `tests/test_codex_lifecycle_oracle.py`, then WPR-only handoff. |
 | Isolation | Both tasks are idle, submitted lanes are clean, exactly three worktrees remain. Reviewer retains sole orchestration/review/integration authority. |
 | Prohibitions | No new branch/worktree, global-temp scan/delete, staging push, package/build/install, live Codex, target-project write, release, deployment or scope expansion. |
+
+## PRG-20260813-297 — E2B/E3B correction terminal review
+
+| Field | Value |
+| --- | --- |
+| State | `APPROVED / READY_FOR_GUARDED_INTEGRATION` |
+| Router event | `CORRECTION_HANDOFF(E2B,E3B) -> TERMINAL_CODE_REVIEW -> APPROVED` |
+| E2B | Exact handoff `7c17caf23a80d5c1bfc5bf81237ce0daba091607`; CR-160 closed by truthful WPR-only incident evidence. Independent focused 41/41, strict mypy 132 files and in-memory compile 132 files passed. The two irreversible unowned-root deletions remain evidence of unknown impact and are not global cleanup, absence or non-interference proof. |
+| E3B | Exact handoff `b230bbf736b04218f326a3b8617357ee335bbec0`; implementation correction `d9d30db40e75c4a0a498c5984dfa11e530c6accc`; unique E3B handoff PRG-296 supersedes the branch-local colliding PRG-295. Independent focused 25/25, strict mypy 132 files and in-memory compile 132 files passed. Reviewer payload-subclass and response-subclass probes both blocked. |
+| Scope / XSS | Exact ancestry/scope/diff and clean lane readbacks pass. `XSS_NOT_APPLICABLE`; no renderer, HTML/DOM or JavaScript context. |
+| Delivery boundary | No staging push, package, build/install, release, deployment, live Codex or target-project effect. Only the two exact handoffs may enter guarded integration. |

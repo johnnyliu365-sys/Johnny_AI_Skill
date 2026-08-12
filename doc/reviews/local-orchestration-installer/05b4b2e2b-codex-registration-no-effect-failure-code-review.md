@@ -2,7 +2,7 @@
 
 ## Review decision
 
-`CHANGES_REQUESTED / EVIDENCE_DEFECT / CR-160`
+`APPROVED / READY_TO_MERGE`
 
 The four-path implementation satisfies N1-N7, but the implementation task
 deleted two global `johnny-stage-env-*` directories before the reviewer could
@@ -40,3 +40,20 @@ instruction; ownership and concurrent-lane impact are unknown; deletion cannot
 be recovered; no global cleanup/absence claim is evidence; later verification
 used only the E2B-owned external temp base. No source/test edit or filesystem
 cleanup is authorized.
+
+## Correction review
+
+CR-160 is closed by WPR-only commit
+`7c17caf23a80d5c1bfc5bf81237ce0daba091607`. PRG-20260813-295 explicitly
+records the two irreversible unowned-root deletions, unknown ownership and
+parallel impact, and forbids treating them as global cleanup, absence or
+non-interference evidence. It also records that later verification used only
+an E2B-owned external temporary base. No source, test or additional filesystem
+cleanup occurred in the correction.
+
+Independent terminal verification passed the exact 41-test focused suite,
+strict mypy over 132 Python files, in-memory compilation of the same 132 files,
+scope/ancestry/diff checks and clean lane readback. N1-N7 remain satisfied.
+Only exact handoff `7c17caf23a80d5c1bfc5bf81237ce0daba091607` is approved for guarded
+integration. The incident remains immutable evidence and does not authorize a
+global cleanup claim. `XSS_NOT_APPLICABLE`.
