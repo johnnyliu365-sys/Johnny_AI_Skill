@@ -2480,3 +2480,13 @@
 | Passing evidence | Exact ancestry/scope/residue passed. Immutable ZIP export focused 10/10, full 293/293, strict mypy 122 files and compile 122 files passed. Atomic start, concurrent complete, generations/tombstone/recovery, exact lease identity, transfer refusal, effect boundary and five submitted reversals passed. XSS classification is `XSS_NOT_APPLICABLE`. |
 | CR-150 | T5 fabricated-input finite blocking is incomplete: constructed-invalid `metadata.status` invokes caller `__eq__`, and constructed-invalid `attempt_id.value` invokes caller `__hash__`, both raising `RuntimeError` before `INVALID_LEASE`. Classification is `IMPLEMENTATION_DEFECT`; correction is bounded to pre-protocol exact field admission and one two-cell regression/reversal. |
 | Decision / continuation | `CHANGES_REQUESTED / SAME_CLOSURE_CORRECTION_REQUIRED`; retain the same ticket/task/worktree/branch/allocation/receipt/correlation. Existing commits remain immutable. No new branch/worktree, B2B-B2E/05C work, effect, integration, push, release or deployment. |
+
+## PRG-20260812-220 — Ticket 05B4B2A CR-150 correction handoff
+
+| Field | Value |
+| --- | --- |
+| Router event | `CHANGES_REQUESTED(CR-150) -> IMPLEMENTATION_DEFECT -> CORRECTION_HANDOFF_CONFIRMED` |
+| Reviewed authority | Control review `f8e42c1`; unchanged `CLOSURE-LOCAL-INSTALL-T05B4B2A-01` / T5 and T8; correction handoff `hnd_local_orchestration_install_05b4b2a_cr150_20260812`. Existing allocation, receipt and correlation remain unchanged. |
+| Owner / admission | Same task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2`; existing branch `codex/implementation-codex-registration-transaction-authority-05b4b2a`; exact clean submitted HEAD `312005e6091e088b225e8c53d39480264f860e19`; additive commits only. |
+| Exact correction / return | First-red the two caller-protocol trap cells, then establish exact plain metadata field types before comparison/hash and return finite `INVALID_LEASE` with zero trap invocation. Change only the existing transaction module/test; preserve all other T1-T8 evidence. One correction commit followed by WPR-only reserved `PRG-20260812-221`. |
+| Stop | No new public contract, other hardening/refactor, B2B-B2E/05C work, branch/worktree, Agent, effect, review/integration, push, release or deployment. |

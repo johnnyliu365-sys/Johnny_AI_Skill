@@ -127,3 +127,14 @@ comparison trap through `status` or a caller hashing trap through
 `attempt_id.value` before finite `INVALID_LEASE`. All other T1-T8 review gates
 passed. The correction retains this closure, owner, worktree, branch,
 allocation, receipt and correlation; no new branch or worktree is allowed.
+
+## CR-150 correction handoff
+
+| Field | Value |
+| --- | --- |
+| Review / closure | Control review `f8e42c1`; CR-150; unchanged `CLOSURE-LOCAL-INSTALL-T05B4B2A-01` / T5 and T8 |
+| Handoff | `hnd_local_orchestration_install_05b4b2a_cr150_20260812` |
+| Retained authority | `aln_local_orchestration_install_05b4b2a_20260812`; `rcpt_local_orchestration_install_05b4b2a_20260812`; `corr-local-orchestration-install-05b4b2a-20260812`; same task/worktree/branch |
+| Exact admission | Clean submitted HEAD `312005e6091e088b225e8c53d39480264f860e19`; control baseline carrying this record; additive correction commits only |
+| Exact correction | Add one two-cell first-red regression for caller comparison/hashing traps, then validate exact plain field types before any comparison, hashing, serialization, repr or other caller protocol. Return finite `INVALID_LEASE` with zero trap invocation. |
+| Return | One correction commit changing only the existing transaction module/test, then WPR-only reserved `PRG-20260812-221`; rerun focused/full, strict mypy, compile, sentinel, CR-150 reversal and residue readback. |
