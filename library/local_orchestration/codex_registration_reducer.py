@@ -177,8 +177,9 @@ def _plugin_pending(
 def _revalidate_pending(value: object) -> CodexRegistrationPending | CodexRegistrationBlocked:
     if type(value) not in (CodexFreshPreflightPending, CodexMarketplaceAddPending, CodexPluginAddPending):
         return _blocked(CodexRegistrationBlockReason.INVALID_STATE)
-    state = cast(_PendingState, value)
+    state = cast(CodexRegistrationPending, value)
     try:
+        status_value: object = state.status
         request_value: object = state.request
         journal_value: object = state.journal
         request = revalidate_registration_port_request(request_value)
@@ -191,21 +192,21 @@ def _revalidate_pending(value: object) -> CodexRegistrationPending | CodexRegist
         return journal
     pair = (journal.marketplace_state, journal.plugin_state)
     if type(value) is CodexFreshPreflightPending:
-        if value.status != "FRESH_PREFLIGHT_PENDING" or pair != (
+        if status_value != "FRESH_PREFLIGHT_PENDING" or pair != (
             CodexAttemptEffectState.NOT_ATTEMPTED,
             CodexAttemptEffectState.NOT_ATTEMPTED,
         ):
             return _blocked(CodexRegistrationBlockReason.INVALID_STATE)
         return _fresh_pending(request, journal)
     if type(value) is CodexMarketplaceAddPending:
-        if value.status != "MARKETPLACE_ADD_PENDING" or pair != (
+        if status_value != "MARKETPLACE_ADD_PENDING" or pair != (
             CodexAttemptEffectState.NOT_ATTEMPTED,
             CodexAttemptEffectState.NOT_ATTEMPTED,
         ):
             return _blocked(CodexRegistrationBlockReason.INVALID_STATE)
         return _marketplace_pending(request, journal)
     plugin_state = cast(CodexPluginAddPending, value)
-    if plugin_state.status != "PLUGIN_ADD_PENDING" or pair != (
+    if status_value != "PLUGIN_ADD_PENDING" or pair != (
         CodexAttemptEffectState.OWNED,
         CodexAttemptEffectState.NOT_ATTEMPTED,
     ):

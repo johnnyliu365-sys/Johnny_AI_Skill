@@ -325,6 +325,39 @@ class CodexRegistrationReducerTests(unittest.TestCase):
                 with self.subTest(decision=type(decision).__name__, token=token):
                     self.assertNotIn(token, public_text)
 
+    def test_cr149_missing_required_pending_status_returns_invalid_state(self) -> None:
+        fresh = fresh_pending()
+        marketplace = marketplace_pending()
+        plugin = plugin_pending()
+        cases: tuple[tuple[str, CodexFreshPreflightPending | CodexMarketplaceAddPending | CodexPluginAddPending, object], ...] = (
+            (
+                "fresh",
+                CodexFreshPreflightPending.model_construct(request=fresh.request, journal=fresh.journal),
+                fresh_accepted(fresh.request),
+            ),
+            (
+                "marketplace",
+                CodexMarketplaceAddPending.model_construct(request=marketplace.request, journal=marketplace.journal),
+                marketplace_success(marketplace.request),
+            ),
+            (
+                "plugin",
+                CodexPluginAddPending.model_construct(
+                    request=plugin.request,
+                    journal=plugin.journal,
+                    marketplace_observation=plugin.marketplace_observation,
+                ),
+                plugin_success(plugin.request),
+            ),
+        )
+        for phase, pending, exact_result in cases:
+            with self.subTest(phase=phase):
+                object.__delattr__(pending, "status")
+                self.assert_blocked(
+                    advance_codex_registration(pending, exact_result),
+                    CodexRegistrationBlockReason.INVALID_STATE,
+                )
+
     def test_d2_begin_rebuilds_exact_request_and_blocks_all_invalid_shapes(self) -> None:
         supplied = request()
         result = begin_codex_registration(supplied)
