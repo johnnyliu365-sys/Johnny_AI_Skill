@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / unchanged AC-01, AC-02, AC-07 and AC-08 transaction seam |
-| State | `IN_PROGRESS / DISPATCH_CONFIRMED` |
+| State | `CHANGES_REQUESTED / CR-150_CORRECTION_REQUIRED` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B4B2A-01` / T1 through T8 |
 | Dependency | B1 revision 02 approved and integrated by `d7c59349b436d552f2fab457a297e2eac6958093` |
 | Planned owner | Task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2`; no new worktree |
@@ -116,3 +116,14 @@ branch or edit either authorized path.
 Any admission mismatch returns typed `HALT` or `CHANGE_DETECTED`. No second
 branch/worktree, source path, ticket, Agent, effect, review, integration, push,
 release or deployment is admitted.
+
+## Initial independent review
+
+The formal review of implementation `6e05c8edfc1ed8db246052f3c19fd6a89539fdf3`
+and handoff `312005e6091e088b225e8c53d39480264f860e19` is
+`CHANGES_REQUESTED / IMPLEMENTATION_DEFECT / SAME_CLOSURE_CORRECTION`.
+CR-150 maps to existing T5: constructed-invalid metadata can invoke a caller
+comparison trap through `status` or a caller hashing trap through
+`attempt_id.value` before finite `INVALID_LEASE`. All other T1-T8 review gates
+passed. The correction retains this closure, owner, worktree, branch,
+allocation, receipt and correlation; no new branch or worktree is allowed.

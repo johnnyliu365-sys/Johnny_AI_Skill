@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| Context state | `TICKET_05B4B2A_IN_PROGRESS / DISPATCH_CONFIRMED` |
-| Router event | `TICKET_05B4B2A_FROZEN / IMPLEMENTATION_DISPATCH_CONFIRMED` |
+| Context state | `TICKET_05B4B2A_CHANGES_REQUESTED / CR-150_CORRECTION_REQUIRED` |
+| Router event | `IMPLEMENTATION_COMPLETED / TERMINAL_CODE_REVIEW / SAME_CLOSURE_CORRECTION_REQUIRED` |
 | Delivery stage | `POC` |
 | Requirement change | `CHG-20260808-011` |
 | Baseline | `cd3e9b6789623bd2a12ff7c69db4d5fcadd1718f` (`docs: refreeze Ticket 05B4B1 pure reducer`) |

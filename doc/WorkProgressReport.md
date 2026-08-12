@@ -2470,3 +2470,13 @@
 | Binding | `hnd_local_orchestration_install_05b4b2a_20260812`; `aln_local_orchestration_install_05b4b2a_20260812`; `rcpt_local_orchestration_install_05b4b2a_20260812`; `corr-local-orchestration-install-05b4b2a-20260812`; `q-local-orchestration-install-05b4b2a-20260812`; `scx-local-orchestration-install-05b4b2a-20260812-01`. |
 | Owner / admission | Task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing clean `workflow-implementer-2` at submitted B1 HEAD `918c9aff6333d46576a81c92390d2bdf0b0e9b31`; create only `codex/implementation-codex-registration-transaction-authority-05b4b2a` from this dispatch-registry commit. Owner instruction `開始` is the positive delivery confirmation for B2A only. |
 | Scope / return | New transaction authority module and focused test only; implementation commit then WPR-only PRG-218. No new worktree, B2B-B2E/05C work, another Agent, effect, package/dependency edit, review/integration, push, release or deployment. |
+
+## PRG-20260812-219 — Ticket 05B4B2A independent review
+
+| Field | Value |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05B4B2A) -> TERMINAL_CODE_REVIEW -> CHANGES_REQUESTED -> IMPLEMENTATION_DEFECT -> SAME_CLOSURE_CORRECTION_REQUIRED` |
+| Reviewed return | Closure `CLOSURE-LOCAL-INSTALL-T05B4B2A-01`; implementation `6e05c8edfc1ed8db246052f3c19fd6a89539fdf3`; WPR-only handoff `312005e6091e088b225e8c53d39480264f860e19`; formal report `doc/reviews/local-orchestration-installer/05b4b2a-codex-registration-transaction-authority-code-review.md`; CR-150. |
+| Passing evidence | Exact ancestry/scope/residue passed. Immutable ZIP export focused 10/10, full 293/293, strict mypy 122 files and compile 122 files passed. Atomic start, concurrent complete, generations/tombstone/recovery, exact lease identity, transfer refusal, effect boundary and five submitted reversals passed. XSS classification is `XSS_NOT_APPLICABLE`. |
+| CR-150 | T5 fabricated-input finite blocking is incomplete: constructed-invalid `metadata.status` invokes caller `__eq__`, and constructed-invalid `attempt_id.value` invokes caller `__hash__`, both raising `RuntimeError` before `INVALID_LEASE`. Classification is `IMPLEMENTATION_DEFECT`; correction is bounded to pre-protocol exact field admission and one two-cell regression/reversal. |
+| Decision / continuation | `CHANGES_REQUESTED / SAME_CLOSURE_CORRECTION_REQUIRED`; retain the same ticket/task/worktree/branch/allocation/receipt/correlation. Existing commits remain immutable. No new branch/worktree, B2B-B2E/05C work, effect, integration, push, release or deployment. |
