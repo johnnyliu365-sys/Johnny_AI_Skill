@@ -5,7 +5,7 @@ from __future__ import annotations
 from enum import Enum
 from threading import RLock
 from types import MethodType
-from typing import Final, Literal, NoReturn, TypeAlias
+from typing import Callable, Final, Literal, NoReturn, TypeAlias
 from weakref import ReferenceType, ref
 
 from pydantic import BaseModel, ConfigDict
@@ -90,30 +90,6 @@ class _CoordinatorAuthority:
         raise AttributeError("forward authority is immutable")
 
 
-class _CoordinatorProvenance:
-    """Weakly owned factory record for one exact coordinator identity."""
-
-    __slots__ = ("_capability", "_owner_reference", "_transaction")
-
-    _capability: CodexRegistrationPortCapability
-    _owner_reference: ReferenceType[CodexRegistrationForwardCoordinator]
-    _transaction: CodexRegistrationTransactionCoordinator
-
-    def __init__(
-        self,
-        owner_reference: ReferenceType[CodexRegistrationForwardCoordinator],
-        capability: CodexRegistrationPortCapability,
-        transaction: CodexRegistrationTransactionCoordinator,
-    ) -> None:
-        self._owner_reference = owner_reference
-        self._capability = capability
-        self._transaction = transaction
-
-
-_COORDINATOR_REGISTRY_LOCK = RLock()
-_COORDINATOR_REGISTRY: dict[int, _CoordinatorProvenance] = {}
-
-
 class CodexRegistrationForwardCoordinator:
     """Own one rebuilt capability and one private transaction coordinator."""
 
@@ -174,17 +150,7 @@ class CodexRegistrationForwardCoordinator:
             or admitted_transaction_value is not transaction_value
         ):
             return False
-        owner_identity = id(self)
-        with _COORDINATOR_REGISTRY_LOCK:
-            try:
-                provenance = _COORDINATOR_REGISTRY[owner_identity]
-            except KeyError:
-                return False
-            return (
-                provenance._owner_reference() is self
-                and provenance._capability is capability_value
-                and provenance._transaction is transaction_value
-            )
+        return _has_registered_coordinator(self, capability_value, transaction_value)
 
     def metadata(self) -> CodexRegistrationForwardAdmitted:
         """Return only finite status and operation-count metadata."""
@@ -241,52 +207,101 @@ CodexRegistrationForwardAdmission: TypeAlias = (
 )
 
 
-def _reclaim_coordinator_provenance(
-    owner_identity: int,
-    owner_reference: ReferenceType[CodexRegistrationForwardCoordinator],
-) -> None:
-    with _COORDINATOR_REGISTRY_LOCK:
-        try:
-            provenance = _COORDINATOR_REGISTRY[owner_identity]
-        except KeyError:
-            return
-        if provenance._owner_reference is owner_reference:
-            del _COORDINATOR_REGISTRY[owner_identity]
+_CoordinatorValidator: TypeAlias = Callable[
+    [
+        CodexRegistrationForwardCoordinator,
+        CodexRegistrationPortCapability,
+        CodexRegistrationTransactionCoordinator,
+    ],
+    bool,
+]
+_ForwardAdmissionFactory: TypeAlias = Callable[[object], CodexRegistrationForwardAdmission]
 
 
-def _new_registered_coordinator(
-    capability: CodexRegistrationPortCapability,
-    transaction: CodexRegistrationTransactionCoordinator,
-) -> CodexRegistrationForwardCoordinator:
-    coordinator = object.__new__(CodexRegistrationForwardCoordinator)
-    authority = _CoordinatorAuthority(_COORDINATOR_TOKEN, coordinator, capability, transaction)
-    object.__setattr__(coordinator, "_token", authority)
-    object.__setattr__(coordinator, "_capability", capability)
-    object.__setattr__(coordinator, "_transaction", transaction)
-    owner_identity = id(coordinator)
+def _build_forward_admission_system() -> tuple[_ForwardAdmissionFactory, _CoordinatorValidator]:
+    """Bind registration provenance to the one public admission closure."""
 
-    def owner_collected(
-        owner_reference: ReferenceType[CodexRegistrationForwardCoordinator],
-    ) -> None:
-        _reclaim_coordinator_provenance(owner_identity, owner_reference)
+    class CoordinatorProvenance:
+        """Weakly owned identity record inaccessible through module attributes."""
 
-    owner_reference = ref(coordinator, owner_collected)
-    provenance = _CoordinatorProvenance(owner_reference, capability, transaction)
-    with _COORDINATOR_REGISTRY_LOCK:
-        _COORDINATOR_REGISTRY[owner_identity] = provenance
-    return coordinator
+        __slots__ = ("capability", "owner_reference", "transaction")
+
+        capability: CodexRegistrationPortCapability
+        owner_reference: ReferenceType[CodexRegistrationForwardCoordinator]
+        transaction: CodexRegistrationTransactionCoordinator
+
+        def __init__(
+            self,
+            owner_reference: ReferenceType[CodexRegistrationForwardCoordinator],
+            capability: CodexRegistrationPortCapability,
+            transaction: CodexRegistrationTransactionCoordinator,
+        ) -> None:
+            self.owner_reference = owner_reference
+            self.capability = capability
+            self.transaction = transaction
+
+    registry_lock = RLock()
+    registry: dict[int, CoordinatorProvenance] = {}
+
+    def validate(
+        coordinator: CodexRegistrationForwardCoordinator,
+        capability: CodexRegistrationPortCapability,
+        transaction: CodexRegistrationTransactionCoordinator,
+    ) -> bool:
+        coordinator_identity = id(coordinator)
+        with registry_lock:
+            try:
+                provenance = registry[coordinator_identity]
+            except KeyError:
+                return False
+            return (
+                provenance.owner_reference() is coordinator
+                and provenance.capability is capability
+                and provenance.transaction is transaction
+            )
+
+    def register(
+        capability: CodexRegistrationPortCapability,
+        transaction: CodexRegistrationTransactionCoordinator,
+    ) -> CodexRegistrationForwardCoordinator:
+        coordinator = object.__new__(CodexRegistrationForwardCoordinator)
+        authority = _CoordinatorAuthority(_COORDINATOR_TOKEN, coordinator, capability, transaction)
+        object.__setattr__(coordinator, "_token", authority)
+        object.__setattr__(coordinator, "_capability", capability)
+        object.__setattr__(coordinator, "_transaction", transaction)
+        coordinator_identity = id(coordinator)
+
+        def owner_collected(
+            owner_reference: ReferenceType[CodexRegistrationForwardCoordinator],
+        ) -> None:
+            with registry_lock:
+                try:
+                    provenance = registry[coordinator_identity]
+                except KeyError:
+                    return
+                if provenance.owner_reference is owner_reference:
+                    del registry[coordinator_identity]
+
+        owner_reference = ref(coordinator, owner_collected)
+        with registry_lock:
+            registry[coordinator_identity] = CoordinatorProvenance(
+                owner_reference,
+                capability,
+                transaction,
+            )
+        return coordinator
+
+    def admit(capability: object) -> CodexRegistrationForwardAdmission:
+        rebuilt = _rebuild_capability(capability)
+        if isinstance(rebuilt, CodexRegistrationForwardBlocked):
+            return rebuilt
+        return register(rebuilt, CodexRegistrationTransactionCoordinator())
+
+    return admit, validate
 
 
-def admit_codex_registration_forward(capability: object) -> CodexRegistrationForwardAdmission:
-    """Admit and rebuild one exact integrated registration capability."""
-
-    rebuilt = _rebuild_capability(capability)
-    if isinstance(rebuilt, CodexRegistrationForwardBlocked):
-        return rebuilt
-    return _new_registered_coordinator(
-        rebuilt,
-        CodexRegistrationTransactionCoordinator(),
-    )
+admit_codex_registration_forward, _has_registered_coordinator = _build_forward_admission_system()
+del _build_forward_admission_system
 
 
 def _rebuild_capability(

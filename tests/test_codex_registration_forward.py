@@ -7,6 +7,7 @@ from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict, astuple, is_dataclass
 from enum import Enum
 import gc
+import library.local_orchestration.codex_registration_forward as forward_module
 import ntpath
 import pickle
 from threading import Event
@@ -38,7 +39,6 @@ from library.local_orchestration.codex_registration_contracts import (
 )
 from library.local_orchestration.codex_registration_forward import (
     _CoordinatorAuthority,
-    _COORDINATOR_REGISTRY,
     _COORDINATOR_TOKEN,
     CodexRegistrationForwardBlocked,
     CodexRegistrationForwardCoordinator,
@@ -1276,13 +1276,27 @@ class CodexRegistrationForwardTests(unittest.TestCase):
 
     def test_cr153_registry_reclaims_unreachable_factory_coordinator(self) -> None:
         current = coordinator(ForwardAdapter())
-        owner_identity = id(current)
         owner_reference = ref(current)
-        self.assertIn(owner_identity, _COORDINATOR_REGISTRY)
         del current
         gc.collect()
         self.assertIsNone(owner_reference())
-        self.assertNotIn(owner_identity, _COORDINATOR_REGISTRY)
+
+    def test_cr154_module_surface_hides_mutable_provenance_and_clone_blocks(self) -> None:
+        self.assertNotIn("_COORDINATOR_REGISTRY", forward_module.__dict__)
+        self.assertNotIn("_COORDINATOR_REGISTRY_LOCK", forward_module.__dict__)
+        self.assertNotIn("_CoordinatorProvenance", forward_module.__dict__)
+        self.assertNotIn("_new_registered_coordinator", forward_module.__dict__)
+        self.assertNotIn("_reclaim_coordinator_provenance", forward_module.__dict__)
+        self.assertNotIn("_build_forward_admission_system", forward_module.__dict__)
+        adapter = ForwardAdapter()
+        cloned = exact_shaped_coordinator_clone(coordinator(adapter))
+        result = cloned.begin(request())
+        assert_transaction_blocked(
+            self,
+            result,
+            CodexRegistrationTransactionBlockReason.INVALID_STATE,
+        )
+        self.assertEqual([], adapter.calls)
 
 
 if __name__ == "__main__":
