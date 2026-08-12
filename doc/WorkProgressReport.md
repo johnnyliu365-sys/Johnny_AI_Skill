@@ -2610,3 +2610,14 @@
 | CR-154 | The mutable `_COORDINATOR_REGISTRY` and constructible `_CoordinatorProvenance` remain ordinary importable module attributes. Inserting a forged exact record for the clone makes `begin` return ready, `execute` return next-ready and invokes one `FRESH` effect. Factory-only provenance is therefore not established. Classification: `IMPLEMENTATION_DEFECT` within F2/F7. |
 | Boundary / correction | Move registry ownership and the sole registration operation into the admission factory's lexical closure; no mutable registry, arbitrary registration function or insertion-ready provenance constructor may remain in module globals. Preserve synchronized identity checks, weak cleanup and all earlier behavior. Threat boundary stops at ordinary module attributes and untrusted objects; arbitrary interpreter compromise/monkeypatching/debugger/closure-cell mutation is trusted-runtime and out of scope. |
 | Continuation | Same ticket/task/worktree/branch/allocation/receipt/correlation; same two-path source/test correction followed by WPR-only handoff. No new branch/worktree, other ticket, live effect, integration, push, release or deployment. |
+
+## PRG-20260812-234 — Ticket 05B4B2B CR-154 correction handoff
+
+| Field | Value |
+| --- | --- |
+| Router event | `CHANGES_REQUESTED(CR-154) -> IMPLEMENTATION_DEFECT -> CORRECTION_HANDOFF_CONFIRMED` |
+| Reviewed authority | Control review `dcc22c921e43a5cc169c775412c518e1724335e7`; unchanged closure F2/F7; correction handoff `hnd_local_orchestration_install_05b4b2b_cr154_20260812`; retained allocation, receipt, correlation and side-context. |
+| Owner / admission | Same idle task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2`; existing branch; exact clean submitted HEAD `7c10d01fd721281192296832529ebbf1183fceab`; additive commits only. |
+| Exact correction | First-red direct module-private registry/provenance injection. Move mutable registry and the only insertion operation inside the public admission factory system's lexical closure; module globals may expose the public admission factory and a validation callable, but no registry object, insertion-ready record type or arbitrary registration callable. Preserve identity-only synchronized lookup, weak cleanup and all closed gates. |
+| Threat boundary | Test ordinary module attributes plus untrusted object fabrication. Arbitrary interpreter compromise, function-global monkeypatching, debugger access and closure introspection/mutation remain trusted-runtime concerns outside this ticket. |
+| Evidence / return | Add a module-global surface regression and isolated closure-ownership reversal; preserve all prior tests/reversals. Rerun focused/full unittest, strict mypy, compile and readbacks. Change only existing forward module/test, then WPR-only PRG-235. No new branch/worktree/Agent, other ticket, live effect, integration, push, release or deployment. |

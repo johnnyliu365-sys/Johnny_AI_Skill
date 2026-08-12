@@ -186,3 +186,16 @@ The same ticket, owner, worktree, branch, allocation, receipt, correlation and
 two-path correction scope remain valid. Add a first-red module-private
 registry-injection regression and an isolated closure-ownership reversal, then
 return one additive correction commit followed by one WPR-only handoff.
+
+### CR-154 correction dispatch registry
+
+| Field | Value |
+| --- | --- |
+| Control review | `dcc22c921e43a5cc169c775412c518e1724335e7`; CR-154; same F2/F7 closure |
+| Correction handoff | `hnd_local_orchestration_install_05b4b2b_cr154_20260812` |
+| Retained authority | `aln_local_orchestration_install_05b4b2b_20260812`; `rcpt_local_orchestration_install_05b4b2b_20260812`; `corr-local-orchestration-install-05b4b2b-20260812`; `scx-local-orchestration-install-05b4b2b-20260812-01` |
+| Lane | Same idle task, existing `workflow-implementer-2`, existing branch, exact clean submitted HEAD `7c10d01fd721281192296832529ebbf1183fceab`; additive commits only |
+| Return | Existing forward module/test only, then WPR-only handoff reserved as PRG-20260812-235 |
+
+No reset, amend, rebase, merge, new branch/worktree, public API change,
+interpreter-hardening expansion or unrelated work is admitted.
