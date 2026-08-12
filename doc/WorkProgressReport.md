@@ -2944,3 +2944,12 @@
 | Independent evidence | Unicode-safe repository-external snapshot passed focused 9/9, serial full 353/353, strict mypy 130 files and compile 130 files. Six isolated reversals covering admission order, claim gate, manifest source, terminal plan, recovery plan and single composition turned the named tests red; final fresh export reproduced immutable source/test blobs. |
 | Environment note | Native Windows `tar` mangled the names of two pre-existing Chinese package directories and caused seven false full-suite failures. Re-export with Python `tarfile` preserved the exact Git tree and passed 353/353; the false result is test-environment interference, not a B2D source defect. |
 | Disposition | `APPROVED / READY_TO_MERGE`; S1-S9 closed; `XSS_NOT_APPLICABLE`; only exact handoff `60a8311548edfd096733d1d7cf1e1eb928077f55` may be guarded-integrated. |
+
+## PRG-20260813-263 — Ticket 05B4B2D guarded integration completion
+
+| Field | Value |
+| --- | --- |
+| Router event | `REVIEW_APPROVED(05B4B2D) -> GUARDED_INTEGRATION -> ACTION_COMPLETED -> TICKET_REFINE(05B4B2E)` |
+| Integration | Merge `9769a75a5c5199fa47b19a2e9ad4242d6575c9a9`; first parent reviewer approval `eef459ed030a8bc686f2f83650716bcabf984a42`; second parent exact handoff `60a8311548edfd096733d1d7cf1e1eb928077f55`. The sole conflict was append-only WPR evidence; the explicit resolution retained PRG-260, PRG-261 and PRG-262. |
+| Integrated verification | Compensation/proof/composition/authority suites passed 35/35; serial full suite passed 353/353; strict mypy passed 130 files; exact parent topology, `git diff --check` and three-worktree topology passed. |
+| Completion / continuation | 05B4B2D is `COMPLETED / APPROVED / INTEGRATED`; allocation released and receipt closed. 05B4B2E dependencies are satisfied, but its combined responsibility is not dispatchable and must be decomposed before implementation. No push, package build, install, release, deployment, target-project mutation or live Codex effect occurred. |

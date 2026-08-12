@@ -2,13 +2,13 @@
 
 | Field | Value |
 | --- | --- |
-| Context state | `TICKET_05B4B2C_COMPLETE / TICKET_05B4B2D_IN_PROGRESS / PACKAGE_04_DECOMPOSED` |
-| Router event | `IMPLEMENTATION_DISPATCH_CONFIRMED(05B4B2D) / REQUIREMENT_CHANGED(CHG-20260812-014) / TICKETS_PLANNED(04A-04I)` |
+| Context state | `TICKET_05B4B2D_COMPLETE / TICKET_05B4B2E_REFINE_REQUIRED / PACKAGE_04_DECOMPOSED` |
+| Router event | `ACTION_COMPLETED(05B4B2D) / TICKET_REFINE(05B4B2E) / TICKETS_PLANNED(04A-04I)` |
 | Delivery stage | `POC` |
 | Requirement change | `CHG-20260808-011`; reviewer-role revision `CHG-20260811-012`; governance security overlay `CHG-20260812-013`; version-one delivery revision `CHG-20260812-014` |
-| Baseline | `11616fc6bd26dd8ce70cab675ed7411644a45734` (05B4B2D dispatch registry and pre-change control baseline) |
+| Baseline | `9769a75a5c5199fa47b19a2e9ad4242d6575c9a9` (05B4B2D guarded integration) |
 | Control-plane owner | Codex / current `main` worktree |
-| Implementation owner | 05B4B2D is allocated to task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` in existing `workflow-implementer-2` under exact receipt `rcpt_local_orchestration_install_05b4b2d_20260812`; no new worktree |
+| Implementation owner | None. 05B4B2D allocation is released and its receipt closed. 05B4B2E has no implementation authority until bounded child tickets are frozen and separately dispatched. |
 | Required sources read | `AGENTS.md`, `Workflow.md` (Router, Wayfinder, Grill, change control, specification, tickets, role boundary), `Defined_wayfinder.md`, `CONTEXT.md`, `PRD.md`, `ProjectSchedule.md`, `doc/RequirementChangeLog.md`, existing plugin manifests / README, `library/workflow_router/`, and completed plugin / autonomous-collaboration POCs |
 
 ## Shared Context reference
