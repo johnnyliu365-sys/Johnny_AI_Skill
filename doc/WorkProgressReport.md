@@ -2439,3 +2439,13 @@
 | Exact review | `8ae7734 -> 64e9e0a -> 918c9af` ancestry, two-path implementation scope, WPR-only handoff, clean lane and unchanged topology passed. Repository-external immutable export passed focused 14/14, full 283/283, strict mypy 120 files and in-memory compile 120 files. |
 | Adversarial closure | All three pending variants with missing `status` return finite `INVALID_STATE`. Five reconstruction forms, repeated reductions, missing nested journal, public-data absence and AST/source effect boundary passed. CR-148 and CR-149 are closed. |
 | Decision / continuation | `APPROVED / READY_TO_MERGE`. Guarded integration of exact handoff `918c9af` is the only continuation. B2 remains unallocated and must be refrozen from the integrated baseline. No live Codex, host, target-project or network effect, push, release or deployment occurred. |
+
+## PRG-20260812-215 — Ticket 05B4B1 guarded integration
+
+| Field | Value |
+| --- | --- |
+| Router event | `REVIEW_APPROVED(CR-149) -> GUARDED_INTEGRATION -> ACTION_COMPLETED -> TICKET_05B4B2_REFREEZE_READY` |
+| Integration | Merge `d7c59349b436d552f2fab457a297e2eac6958093` preserves final approval `71f30bef9ba2e82772cb6d97f8eab47bbc0983c6` as first parent and exact reviewed handoff `918c9aff6333d46576a81c92390d2bdf0b0e9b31` as second parent. Product source/test match the reviewed handoff. |
+| Ledger resolution | The sole conflict was `doc/WorkProgressReport.md`; PRG-206 through PRG-214 are retained exactly once. Neither immutable parent was amended, reset, forced or overwritten. |
+| Post-merge verification | Focused 14/14 and serial full 283/283 passed. Strict full-tree mypy and in-memory compile passed 120 files. `git diff --check`, exact parent/product equality, worktree topology and zero cache-residue readback passed. |
+| Completion | 05B4B1 is `COMPLETE / APPROVED / INTEGRATED`; allocation `aln_local_orchestration_install_05b4b1_r02_20260812` is released and receipt `rcpt_local_orchestration_install_05b4b1_r02_20260812` is closed against replay. 05B4B2 is unallocated and only `REFREEZE_READY`. No live Codex, host, target-project or network effect, push, release or deployment occurred. |

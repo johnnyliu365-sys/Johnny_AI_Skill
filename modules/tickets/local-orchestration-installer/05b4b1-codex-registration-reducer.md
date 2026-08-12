@@ -234,3 +234,11 @@ effect-boundary adversarial probes. CR-148 and CR-149 are closed.
 Decision: `APPROVED / READY_TO_MERGE`. Only guarded integration is authorized.
 05B4B2 remains unallocated and requires a fresh control-plane refreeze from
 the integrated baseline.
+
+Guarded integration completed at `d7c59349b436d552f2fab457a297e2eac6958093`,
+with approval `71f30bef9ba2e82772cb6d97f8eab47bbc0983c6` as first parent and
+reviewed handoff `918c9aff6333d46576a81c92390d2bdf0b0e9b31` as second parent.
+The sole conflict was the append-only progress ledger; PRG-206 through PRG-214
+are retained exactly once. Post-merge focused 14/14, full 283/283, strict mypy
+and compile over 120 files passed with zero cache residue. The allocation is
+released and receipt is closed against replay.

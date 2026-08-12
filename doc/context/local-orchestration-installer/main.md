@@ -613,3 +613,9 @@ independent review: focused 14/14, full 283/283, strict type and compile over
 public-data and source-effect adversarial probes. CR-148 and CR-149 are closed.
 05B4B1 is approved for guarded integration; B2 remains unallocated until its
 ticket is refrozen from that integrated baseline.
+
+Guarded merge `d7c5934` integrated the exact reviewed B1 handoff with approval
+`71f30be` as first parent. Post-merge focused 14/14, full 283/283, strict type
+and compile over 120 files passed; the ledger retained PRG-206 through PRG-214
+once and cache residue is zero. The B1 allocation is released and its receipt
+closed. B2 is now eligible only for a fresh control-plane refreeze.

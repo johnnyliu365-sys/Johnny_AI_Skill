@@ -101,3 +101,10 @@ CR-148 and CR-149 are closed. No blocking finding remains for revision 02.
 Guarded integration of the exact reviewed handoff is authorized; 05B4B2 must
 still be refrozen from the integrated baseline before any implementation
 dispatch.
+
+Guarded integration completed at `d7c59349b436d552f2fab457a297e2eac6958093`,
+preserving this approval as first parent and reviewed handoff `918c9af` as
+second parent. Product source/tests matched the reviewed handoff exactly; the
+sole WPR conflict retained PRG-206 through PRG-214 once. Post-merge focused
+14/14, full 283/283, strict mypy and compile over 120 files passed with zero
+cache residue.
