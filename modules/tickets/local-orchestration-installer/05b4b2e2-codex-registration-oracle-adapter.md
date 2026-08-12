@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | State | `PLANNED / PREREQUISITE_WAIT / NOT_DISPATCHED` |
-| Dependency | 05B4B2E1 integrated; 05B4B2E2A version observation must be approved and integrated |
+| Dependency | 05B4B2E1 and 05B4B2E2A integrated; 05B4B2E2B no-effect failure must be approved and integrated |
 | Allocation | None |
 
 ## Reserved responsibility

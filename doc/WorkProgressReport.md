@@ -3213,3 +3213,15 @@
 | Post-merge evidence | Combined focused protocol/oracle/compensation suites passed 44/44; full serial discovery passed 379/379 in a unique external temp root; strict mypy and in-memory compile passed 132 files. Merge topology, clean main and exactly three worktrees passed. |
 | Completion | E2A and E3A are `COMPLETED / APPROVED / INTEGRATED`; both allocations are released and receipts closed. E2/E3 adapters require new reviewed freezes and unique bindings from this integrated baseline. |
 | Package boundary | No staging push, package, release, deployment or target-project action. Remote `staging` remains reserved for future 04D after exact 04C candidate freeze. |
+
+## PRG-20260813-289 — E2B/E3B small prerequisite freeze
+
+| Field | Value |
+| --- | --- |
+| State | `TICKET_DEFECT / DECOMPOSED / FROZEN / NOT_DISPATCHED` |
+| Router event | `ACTION_COMPLETED(E2A,E3A) -> CONTRACT_GAP_REVIEW -> TICKET_DEFECT_DECOMPOSED(E2B,E3B)` |
+| E2B | Freeze N1-N7: add exact invalid/mismatch no-effect reasons so the future registration adapter never invents a started command. Planned existing owner task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; four exact implementation paths. |
+| E3B | Freeze A1-A7: `ABSENCE` proves owned absence while retaining strict state and foreign payload bytes until environment teardown. Planned existing owner task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; three exact implementation paths. |
+| Parallel safety | E2B owns registration failure contracts/tests; E3B owns staging oracle/test paths. Writable sets are disjoint. Exactly the two existing implementation tasks/worktrees will be used after lane readback. |
+| Delivery boundary | The already-approved 04C/04D rule remains unchanged: no staging push now; after exact clean v1 candidate freeze, 04D alone may create or verified-fast-forward `origin/staging` and read back the exact SHA. Later feature/architecture changes start from staging; immutable v1 evidence is not overwritten. |
+| XSS | `XSS_NOT_APPLICABLE`: neither ticket adds Browser, WebView, HTML/DOM renderer or JavaScript execution context. |

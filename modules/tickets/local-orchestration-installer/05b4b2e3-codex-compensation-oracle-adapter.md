@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | State | `PLANNED / PREREQUISITE_WAIT / NOT_DISPATCHED` |
-| Dependency | 05B4B2E1 integrated; 05B4B2E3A finite port failure must be approved and integrated |
+| Dependency | 05B4B2E1 and 05B4B2E3A integrated; 05B4B2E3B owned-absence preservation must be approved and integrated |
 | Allocation | None |
 
 ## Reserved responsibility

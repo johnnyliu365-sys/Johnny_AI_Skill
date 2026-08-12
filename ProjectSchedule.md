@@ -147,7 +147,9 @@
 | Ticket 05B4B2E1 oracle identity binding | COMPLETED / APPROVED / INTEGRATED | Merge `27c8305`; CR-159 closed by recursive 14-node rejection, full 370 and strict typing. |
 | Ticket 05B4B2E2A oracle version observation | COMPLETED / APPROVED / INTEGRATED | Merge `52a2a4e`; combined focused 44/full 379/strict mypy pass. |
 | Ticket 05B4B2E3A compensation finite failure | COMPLETED / APPROVED / INTEGRATED | Merge `b324f91`; combined focused 44/full 379/strict mypy pass. |
-| Tickets 05B4B2E2/E3 oracle adapters | PLANNED / PREREQUISITE_WAIT | Refreeze separately only after E2A/E3A approval and integration. |
+| Ticket 05B4B2E2B registration no-effect failure | FROZEN / READY_FOR_DISPATCH | Small prerequisite; no adapter or oracle effect. |
+| Ticket 05B4B2E3B oracle owned-absence preservation | FROZEN / READY_FOR_DISPATCH | Small prerequisite; absence must retain foreign evidence. |
+| Tickets 05B4B2E2/E3 oracle adapters | PLANNED / PREREQUISITE_WAIT | Refreeze separately only after their B prerequisites are approved and integrated. |
 | Tickets 05B4B2E4-E6 lifecycle acceptance | PLANNED / DEPENDENCY_WAIT | Success, compensation and isolation remain small dependency-ordered acceptance tickets. |
 | Ticket 05C receipt removal/replay | PLANNED / DEPENDENCY_WAIT / REFREEZE_REQUIRED | Starts only after 05A/05B approval/integration and a finite behavior/rollback closure refreeze. |
 | Ticket 06A Codex role-profile capability proof | DONE / APPROVED_EVIDENCE / INSTALL_BLOCKED / INTEGRATED | Implementation `38e9a8b`, handoff `f6f186f`, review `62955ec`, guarded merge `de4141e`; actual installed-host result is `ROLE_ISOLATION_UNPROVEN / ACCESS_DENIED / OUTPUT_UNAVAILABLE`, so capability dependents stay blocked. |

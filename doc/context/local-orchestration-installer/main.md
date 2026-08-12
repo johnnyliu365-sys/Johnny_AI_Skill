@@ -2,13 +2,13 @@
 
 | Field | Value |
 | --- | --- |
-| Context state | `TICKET_05B4B2D_COMPLETE / TICKET_05B4B2E_DECOMPOSED / CHILD_05B4B2E0_IN_PROGRESS / PACKAGE_04_DECOMPOSED` |
-| Router event | `TICKET_DECOMPOSED(05B4B2E->E0-E6) / IMPLEMENTATION_DISPATCH_CONFIRMED(05B4B2E0)` |
+| Context state | `TICKET_05B4B2D_COMPLETE / E0_E1_E2A_E3A_INTEGRATED / E2B_E3B_FROZEN / PACKAGE_04_DECOMPOSED` |
+| Router event | `ACTION_COMPLETED(E2A,E3A) / TICKET_DEFECT_DECOMPOSED(E2B,E3B)` |
 | Delivery stage | `POC` |
 | Requirement change | `CHG-20260808-011`; reviewer-role revision `CHG-20260811-012`; governance security overlay `CHG-20260812-013`; version-one delivery revision `CHG-20260812-014` |
-| Baseline | `e050f0a` plus the current reviewed E0-E6 ticket freeze; dispatch must cite the final exact control commit |
+| Baseline | Current clean `main`; dispatch must cite the final exact control commit |
 | Control-plane owner | Codex / current `main` worktree |
-| Implementation owner | E0 only: task `019fcc9c-f34f-7d53-a313-c70c90bf3245` in existing `workflow-implementation` under `rcpt_local_orchestration_install_05b4b2e0_20260813`; E1-E6 are unallocated. |
+| Implementation owner | Planned E2B: task `019fcc9c-f34f-7d53-a313-c70c90bf3245` in existing `workflow-implementation`; planned E3B: task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` in existing `workflow-implementer-2`; no new worktree. |
 | Required sources read | `AGENTS.md`, `Workflow.md` (Router, Wayfinder, Grill, change control, specification, tickets, role boundary), `Defined_wayfinder.md`, `CONTEXT.md`, `PRD.md`, `ProjectSchedule.md`, `doc/RequirementChangeLog.md`, existing plugin manifests / README, `library/workflow_router/`, and completed plugin / autonomous-collaboration POCs |
 
 ## Shared Context reference
