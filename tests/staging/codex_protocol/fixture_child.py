@@ -18,6 +18,7 @@ FixtureSurfaceValue: TypeAlias = Literal[
     "PLUGIN_ADD",
     "PLUGIN_LIST",
     "PLUGIN_REMOVE",
+    "VERSION",
 ]
 
 
@@ -46,6 +47,8 @@ def _fixture_surface(value: str) -> FixtureSurfaceValue:
         return "PLUGIN_LIST"
     if value == "PLUGIN_REMOVE":
         return "PLUGIN_REMOVE"
+    if value == "VERSION":
+        return "VERSION"
     raise ValueError("unsupported protocol surface")
 
 
@@ -85,6 +88,8 @@ def _payload(surface: FixtureSurfaceValue) -> dict[str, object]:
         }
     if surface == "PLUGIN_LIST":
         return {"installed": [plugin_entry], "available": [plugin_without_source]}
+    if surface == "VERSION":
+        return {"version": "fixture-child-version"}
     return {"pluginId": "child-plugin-id", "name": "child-plugin", "marketplaceName": "child-market"}
 
 

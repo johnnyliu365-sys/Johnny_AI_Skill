@@ -23,6 +23,7 @@ from tests.staging.codex_protocol.contracts import (
     CodexProtocolRejectReason,
     CodexProtocolRejected,
     CodexProtocolSurface,
+    CodexVersionObservation,
     ExactResponseFilePort,
     MAX_RESPONSE_BYTES,
     RESPONSE_FILE_NAME,
@@ -166,6 +167,7 @@ class CodexProtocolFixtureTests(unittest.TestCase):
             CodexProtocolSurface.PLUGIN_ADD: CodexPluginAdd,
             CodexProtocolSurface.PLUGIN_LIST: CodexPluginList,
             CodexProtocolSurface.PLUGIN_REMOVE: CodexPluginRemove,
+            CodexProtocolSurface.VERSION: CodexVersionObservation,
         }
         for surface in CodexProtocolSurface:
             with self.subTest(surface=surface.value):
@@ -192,6 +194,32 @@ class CodexProtocolFixtureTests(unittest.TestCase):
         with self.assertRaises(ValidationError):
             CodexProtocolAccepted(surface=CodexProtocolSurface.PLUGIN_ADD, payload=marketplace_payload)
 
+    def test_v1_v2_version_protocol_surface_is_strict_and_surface_bound(self) -> None:
+        version_payload: dict[str, object] = {"version": "oracle-staging-version"}
+        parsed = parse_codex_protocol_payload(CodexProtocolSurface.VERSION, _json_bytes(version_payload))
+        self.assertIsInstance(parsed, CodexVersionObservation)
+        assert isinstance(parsed, CodexVersionObservation)
+        self.assertEqual("oracle-staging-version", parsed.version)
+        rejected_payloads: tuple[dict[str, object], ...] = (
+            {},
+            {"version": "oracle-staging-version", "extra": "forbidden"},
+        )
+        for altered in rejected_payloads:
+            with self.subTest(payload=altered):
+                self._assert_rejected(CodexProtocolSurface.VERSION, _json_bytes(altered))
+        self._assert_reason(
+            CodexProtocolSurface.VERSION,
+            b'{"version":"one","version":"two"}',
+            CodexProtocolRejectReason.DUPLICATE_KEY,
+        )
+        self._assert_rejected(CodexProtocolSurface.VERSION, b"{")
+        self._assert_rejected(CodexProtocolSurface.MARKETPLACE_ADD, _json_bytes(version_payload))
+        with self.assertRaises(ValidationError):
+            CodexProtocolAccepted(
+                surface=CodexProtocolSurface.PLUGIN_REMOVE,
+                payload=parsed,
+            )
+
     def test_t2_every_surface_rejects_frozen_schema_boundary_cells(self) -> None:
         required = {
             CodexProtocolSurface.MARKETPLACE_ADD: ("marketplaceName", "installedRoot", "alreadyAdded"),
@@ -207,6 +235,7 @@ class CodexProtocolFixtureTests(unittest.TestCase):
             ),
             CodexProtocolSurface.PLUGIN_LIST: ("installed", "available"),
             CodexProtocolSurface.PLUGIN_REMOVE: ("pluginId", "name", "marketplaceName"),
+            CodexProtocolSurface.VERSION: ("version",),
         }
         text_fields = {
             CodexProtocolSurface.MARKETPLACE_ADD: ("marketplaceName", "installedRoot"),
@@ -222,6 +251,7 @@ class CodexProtocolFixtureTests(unittest.TestCase):
             ),
             CodexProtocolSurface.PLUGIN_LIST: (),
             CodexProtocolSurface.PLUGIN_REMOVE: ("pluginId", "name", "marketplaceName"),
+            CodexProtocolSurface.VERSION: ("version",),
         }
         for surface in CodexProtocolSurface:
             payload = _canonical_payload(surface)
@@ -344,7 +374,7 @@ class CodexProtocolFixtureTests(unittest.TestCase):
             CodexProtocolRejectReason.MALFORMED_JSON,
         )
 
-    def test_t3_real_child_proves_all_six_payloads_are_not_parent_synthesized(self) -> None:
+    def test_t3_real_child_proves_all_seven_payloads_are_not_parent_synthesized(self) -> None:
         allocator, lease = self._lease("environment-owner-3333444455556666")
         overlay_keys = tuple(entry.key.value for entry in lease.overlay.entries)
         parent_environment = {key: os.environ.get(key) for key in overlay_keys}
@@ -639,6 +669,8 @@ def _canonical_payload(surface: CodexProtocolSurface) -> dict[str, object]:
         }
     if surface is CodexProtocolSurface.PLUGIN_LIST:
         return {"installed": [plugin_entry], "available": [plugin_without_source]}
+    if surface is CodexProtocolSurface.VERSION:
+        return {"version": "oracle-staging-version"}
     return {"pluginId": "child-plugin-id", "name": "child-plugin", "marketplaceName": "child-market"}
 
 

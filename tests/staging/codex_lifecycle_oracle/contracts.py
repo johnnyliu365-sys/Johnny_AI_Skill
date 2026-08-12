@@ -17,6 +17,7 @@ from tests.staging.environment_core.contracts import EnvironmentId, EnvironmentL
 ORACLE_COMMAND_FILE_NAME = ".johnny-05s4-command.json"
 ORACLE_STATE_FILE_NAME = ".johnny-05s4-state.json"
 ORACLE_PAYLOAD_DIRECTORY_NAME = "oracle-payloads"
+ORACLE_STAGING_CODEX_VERSION = "oracle-staging-version"
 
 
 class StrictModel(BaseModel):
@@ -53,6 +54,7 @@ class OracleAction(str, Enum):
     PLUGIN_ADD = "PLUGIN_ADD"
     PLUGIN_LIST = "PLUGIN_LIST"
     PLUGIN_REMOVE = "PLUGIN_REMOVE"
+    VERSION = "VERSION"
     ABSENCE = "ABSENCE"
 
     @property
@@ -64,6 +66,7 @@ class OracleAction(str, Enum):
             OracleAction.PLUGIN_ADD: CodexProtocolSurface.PLUGIN_ADD,
             OracleAction.PLUGIN_LIST: CodexProtocolSurface.PLUGIN_LIST,
             OracleAction.PLUGIN_REMOVE: CodexProtocolSurface.PLUGIN_REMOVE,
+            OracleAction.VERSION: CodexProtocolSurface.VERSION,
             OracleAction.ABSENCE: CodexProtocolSurface.PLUGIN_LIST,
         }
         return surfaces[self]
@@ -201,10 +204,13 @@ class OraclePluginRecord(StrictModel):
 class OracleState(StrictModel):
     owner: EnvironmentOwnerId
     environment_id: EnvironmentId
+    codex_version: str
     marketplaces: tuple[OracleMarketplaceRecord, ...]
     plugins: tuple[OraclePluginRecord, ...]
     foreign_marketplaces: tuple[OracleMarketplaceRecord, ...]
     foreign_plugins: tuple[OraclePluginRecord, ...]
+
+    _version = field_validator("codex_version")(classmethod(lambda cls, value: _nonblank(value, "codex version")))
 
     @model_validator(mode="after")
     def unique_collection_identities(self) -> OracleState:

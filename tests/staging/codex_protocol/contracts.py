@@ -31,6 +31,7 @@ class CodexProtocolSurface(str, Enum):
     PLUGIN_ADD = "PLUGIN_ADD"
     PLUGIN_LIST = "PLUGIN_LIST"
     PLUGIN_REMOVE = "PLUGIN_REMOVE"
+    VERSION = "VERSION"
 
 
 class CodexProtocolRejectReason(str, Enum):
@@ -92,6 +93,14 @@ class CodexPluginRemove(StrictModel):
     _text = field_validator("pluginId", "name", "marketplaceName")(classmethod(lambda cls, value: _nonblank(value, "field")))
 
 
+class CodexVersionObservation(StrictModel):
+    """One child-observed version with no caller-provided identity fields."""
+
+    version: str
+
+    _text = field_validator("version")(classmethod(lambda cls, value: _nonblank(value, "version")))
+
+
 CodexProtocolPayload: TypeAlias = (
     CodexMarketplaceAdd
     | CodexMarketplaceList
@@ -99,6 +108,7 @@ CodexProtocolPayload: TypeAlias = (
     | CodexPluginAdd
     | CodexPluginList
     | CodexPluginRemove
+    | CodexVersionObservation
 )
 
 
@@ -115,6 +125,7 @@ class CodexProtocolAccepted(StrictModel):
             CodexProtocolSurface.PLUGIN_ADD: CodexPluginAdd,
             CodexProtocolSurface.PLUGIN_LIST: CodexPluginList,
             CodexProtocolSurface.PLUGIN_REMOVE: CodexPluginRemove,
+            CodexProtocolSurface.VERSION: CodexVersionObservation,
         }[self.surface]
         if not isinstance(self.payload, expected):
             raise ValueError("payload does not match the selected protocol surface")
@@ -252,6 +263,8 @@ def parse_codex_protocol_payload(
             return CodexPluginAdd.model_validate(parsed)
         if surface is CodexProtocolSurface.PLUGIN_LIST:
             return CodexPluginList.model_validate(parsed)
+        if surface is CodexProtocolSurface.VERSION:
+            return CodexVersionObservation.model_validate(parsed)
         return CodexPluginRemove.model_validate(parsed)
     except (ValidationError, ValueError, TypeError):
         return CodexProtocolRejectReason.SCHEMA_INVALID
