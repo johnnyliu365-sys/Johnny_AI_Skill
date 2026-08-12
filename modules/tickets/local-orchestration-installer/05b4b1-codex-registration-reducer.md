@@ -221,3 +221,16 @@ refreeze, B2 work, new branch or new worktree is needed.
 No other malformed shape, refactor, authority mechanism, B2 implementation,
 branch/worktree, Agent, effect, integration, push, release or deployment is
 authorized.
+
+## CR-149 final review
+
+Correction `64e9e0ae2dba88b4be98438eef3b0639a78d6601` and WPR-only
+handoff `918c9aff6333d46576a81c92390d2bdf0b0e9b31` satisfy the existing
+R2-D6 boundary. Independent immutable-export verification passed focused
+14/14, full 283/283, strict mypy and compile over 120 files, plus exact
+missing-field, reconstruction, deterministic replay, public-data and
+effect-boundary adversarial probes. CR-148 and CR-149 are closed.
+
+Decision: `APPROVED / READY_TO_MERGE`. Only guarded integration is authorized.
+05B4B2 remains unallocated and requires a fresh control-plane refreeze from
+the integrated baseline.

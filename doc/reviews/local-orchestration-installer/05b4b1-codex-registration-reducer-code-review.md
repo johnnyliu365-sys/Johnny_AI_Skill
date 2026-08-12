@@ -81,3 +81,23 @@ change. R2-D6 already requires finite rejection for constructed-invalid pending
 values. The same branch may add one three-variant first-red test and guard the
 required status read before phase comparison. No new state authority, B2 logic,
 branch, worktree or broader hardening is authorized.
+
+## CR-149 final correction review
+
+### Decision
+
+`APPROVED / READY_TO_MERGE`
+
+| Gate | Result |
+| --- | --- |
+| Reviewed return | Correction `64e9e0ae2dba88b4be98438eef3b0639a78d6601`; WPR-only handoff `918c9aff6333d46576a81c92390d2bdf0b0e9b31`; closure `CLOSURE-LOCAL-INSTALL-T05B4B1-02` |
+| Ancestry / scope / residue | PASS: `8ae7734 -> 64e9e0a -> 918c9af`; correction changes exactly reducer/test, handoff changes WPR only, and the submitted lane is clean with unchanged three-worktree topology. |
+| CR-149 | PASS: fresh, marketplace and plugin constructed-invalid pending values with `status` removed each return `CodexRegistrationBlocked(INVALID_STATE)` instead of raising. The correction adds no authority, port, callable or effect. |
+| Independent standard verification | PASS in a repository-external immutable export: focused 14/14, serial full 283/283, strict mypy 120 files and in-memory compile 120 files. |
+| Independent adversarial verification | PASS: three phases, five reconstruction forms, three repeated reductions, missing `status`, missing nested journal, public-data absence and AST/source effect-boundary probes all passed. |
+| Evidence truthfulness | PASS: the new guard-bypass mutation restored all three `AttributeError` failures before exact restoration; the five retained revision-02 reversals were rerun by the implementation owner and remain represented by committed tests. |
+
+CR-148 and CR-149 are closed. No blocking finding remains for revision 02.
+Guarded integration of the exact reviewed handoff is authorized; 05B4B2 must
+still be refrozen from the integrated baseline before any implementation
+dispatch.

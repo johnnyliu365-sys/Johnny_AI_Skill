@@ -606,3 +606,10 @@ constructed-invalid state omits `status`. This is a bounded implementation
 defect under existing R2-D6. One same-branch correction is dispatched against
 review `8806d53ac1e2066ee72b64293a4b557cd9474f07` to guard only those three
 cells. B2 remains dependency-waiting and unallocated.
+
+The bounded correction `64e9e0a` and WPR-only handoff `918c9af` passed final
+independent review: focused 14/14, full 283/283, strict type and compile over
+120 files, plus missing-field, reconstruction, deterministic replay,
+public-data and source-effect adversarial probes. CR-148 and CR-149 are closed.
+05B4B1 is approved for guarded integration; B2 remains unallocated until its
+ticket is refrozen from that integrated baseline.
