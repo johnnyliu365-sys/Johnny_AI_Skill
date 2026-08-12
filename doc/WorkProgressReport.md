@@ -3046,3 +3046,12 @@
 | E1 freeze | `CLOSURE-LOCAL-INSTALL-T05B4B2E1-01` / I1-I8. Pure staging mapper recursively revalidates one exact registration request and derives a deterministic oracle identity with canonical logical paths and named fixture-only labels; no port, command or effect. |
 | Planned lane | Existing task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` in `workflow-implementer-2`; no new worktree. Freeze is not dispatch; exact lane/readback and registry remain required. |
 | Package boundary | No staging push, package, release, deployment or target-project action. 04D remains the only future staging warm-backup authority after exact 04C candidate freeze. |
+
+## PRG-20260813-273 — Ticket 05B4B2E1 dispatch registry
+
+| Field | Value |
+| --- | --- |
+| Router event | `TICKET_FROZEN(05B4B2E1) -> IMPLEMENTATION_DISPATCH_CONFIRMED / IMPLEMENT` |
+| Freeze / binding | `d25e6fcae3c273f94efe5cf68e3dc5b078e235ed`; I1-I8; `hnd_local_orchestration_install_05b4b2e1_20260813`; `aln_local_orchestration_install_05b4b2e1_20260813`; `rcpt_local_orchestration_install_05b4b2e1_20260813`; `corr-local-orchestration-install-05b4b2e1-20260813`; `scx-local-orchestration-install-05b4b2e1-20260813-01`. |
+| Lane | Idle/not-loaded task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; exact clean submitted HEAD `60a8311548edfd096733d1d7cf1e1eb928077f55` in existing `workflow-implementer-2`; zero tracked/ignored/cache residue; exactly three worktrees; target branch absent; no new worktree. |
+| Return | Exact two-path implementation commit, then WPR-only PRG-274. Reviewer retains sole orchestration and review authority. No E2-E6, staging push or package work is authorized. |

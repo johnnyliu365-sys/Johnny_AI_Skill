@@ -87,3 +87,16 @@ authorized.
 
 Freeze is not dispatch. Exact lane/readback and a dispatch registry commit are
 required before the implementation owner may switch branch or edit.
+
+## Dispatch registry
+
+| Field | Value |
+| --- | --- |
+| Reviewed freeze | `d25e6fcae3c273f94efe5cf68e3dc5b078e235ed`; exact I1-I8; `XSS_NOT_APPLICABLE` |
+| Delivery authority | Project-owner standing instruction to continue approved small-ticket work; `IMPLEMENTATION_DISPATCH_CONFIRMED` for E1 only |
+| Lane readback | Task is idle/not-loaded; existing `workflow-implementer-2` is clean at exact submitted HEAD `60a8311548edfd096733d1d7cf1e1eb928077f55`; zero tracked/ignored/cache residue; exactly three existing worktrees; target branch absent |
+| Branch | Create only `codex/implementation-codex-oracle-identity-binding-05b4b2e1` from the exact commit carrying this dispatch registry in the same worktree; no new worktree |
+| Binding | `hnd_local_orchestration_install_05b4b2e1_20260813`; `aln_local_orchestration_install_05b4b2e1_20260813`; `rcpt_local_orchestration_install_05b4b2e1_20260813`; `corr-local-orchestration-install-05b4b2e1-20260813`; `q-local-orchestration-install-05b4b2e1-20260813`; `scx-local-orchestration-install-05b4b2e1-20260813-01` |
+
+This is the single dispatch. Only the exact two implementation paths and a
+later WPR-only `PRG-20260813-274` are writable in this lane.
