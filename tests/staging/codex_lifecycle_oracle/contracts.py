@@ -41,6 +41,8 @@ def _logical_installed_path(value: str, label: str) -> str:
         raise ValueError(f"{label} must be a normalized drive-qualified Windows absolute path")
     if any(segment in (".", "..") for segment in text.split("\\")):
         raise ValueError(f"{label} must not contain traversal components")
+    if any(segment.endswith((" ", ".")) for segment in text.split("\\")):
+        raise ValueError(f"{label} must not contain Windows-ambiguous segments")
     return text
 
 

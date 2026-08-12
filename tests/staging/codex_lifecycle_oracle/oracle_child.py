@@ -418,6 +418,7 @@ def _exact_plugin(state: dict[str, object], identity: dict[str, object]) -> dict
         "source": identity["plugin_source"],
         "install_policy": identity["plugin_install_policy"],
         "auth_policy": identity["plugin_auth_policy"],
+        "installed_path": identity["plugin_installed_path"],
     }
     for record in records:
         if isinstance(record, dict) and all(record.get(key) == value for key, value in expected.items()):
@@ -511,7 +512,10 @@ def _is_logical_installed_path(value: object) -> bool:
         return False
     if re.fullmatch(r'[A-Za-z]:\\(?:[^\\/:?*"<>|]+\\)*[^\\/:?*"<>|]+', value) is None:
         return False
-    return all(segment not in (".", "..") for segment in value.split("\\"))
+    return all(
+        segment not in (".", "..") and not segment.endswith((" ", "."))
+        for segment in value.split("\\")
+    )
 
 
 def _is_canonical_segment(value: object) -> bool:
