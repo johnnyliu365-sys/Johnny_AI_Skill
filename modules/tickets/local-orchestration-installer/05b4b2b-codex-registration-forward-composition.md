@@ -199,3 +199,14 @@ return one additive correction commit followed by one WPR-only handoff.
 
 No reset, amend, rebase, merge, new branch/worktree, public API change,
 interpreter-hardening expansion or unrelated work is admitted.
+
+## Final independent review
+
+Correction `7f0db75c72ce3c84663d3a3d398bb7e6c6d6a3b8` and WPR-only
+handoff `2fbe55f0cd8dc18788dd121ff1529d81d6b52409` are
+`APPROVED / READY_TO_MERGE`. CR-154 is closed: ordinary module attributes no
+longer expose mutable registry/provenance insertion authority, while exact
+unregistered clones block before state/effect and weak cleanup remains bounded.
+Independent focused 23/23, full 317/317, strict mypy 124 files, compile 124
+files, scope, ancestry and residue checks pass. XSS is
+`XSS_NOT_APPLICABLE`. Only guarded integration of the exact handoff is next.

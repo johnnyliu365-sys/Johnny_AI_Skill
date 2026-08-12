@@ -102,6 +102,32 @@ authorized.
 
 Decision remains `CHANGES_REQUESTED / SAME_CLOSURE_CORRECTION_REQUIRED`.
 
+## Final correction review
+
+| Gate | Result |
+| --- | --- |
+| Immutable return | PASS: `7c10d01 -> 7f0db75 -> 2fbe55f`; correction changes only the existing forward module/test and handoff changes only `doc/WorkProgressReport.md` as PRG-20260812-235. The lane is clean and the three-worktree topology is unchanged. |
+| CR-154 ordinary module surface | PASS: mutable registry, lock, insertion-ready provenance record, builder, reclaimer and arbitrary registration helper are absent from module globals. The public admission factory and validation-only `_has_registered_coordinator` remain; neither accepts an arbitrary registration operation through ordinary module attributes. |
+| Authority / lifecycle | PASS: an independently rebuilt exact coordinator/authority clone blocks metadata, repr, begin, execute and recovery before effect; public construction rejects; the real factory coordinator becomes unreachable after references are dropped, proving weak bounded ownership. |
+| Caller protocol / prior closure | PASS: independent `IndexTrap` records zero `__index__` calls; CR-152 remains closed. All F1-F8 focused behavior and the submitted reversals remain green. |
+| Independent verification | PASS: immutable export ZIP SHA-256 `EC5E58E2FF79303ED78D6B0B2C43AF6B3422A3AFCCA90CDBF228FB8F72DC8D0C` passes focused 23/23, full 317/317, strict mypy 124 files and in-memory compile 124 files. Independent probe reports five forged entries blocked, effects 0, index calls 0 and weak reclamation 1. |
+| CodeReview §2.1 class 3 | PASS: all public authority-consuming entries converge on the same exact authority plus closure-owned factory-provenance validation before state/effect; ordinary private-module import no longer supplies an alternate insertion route. |
+| CodeReview §2.1 class 7 | PASS: the committed CR-154 regression covers the previously missing ordinary module-surface injection route and the reversal establishes that it detects re-exposure. |
+| XSS review | `XSS_NOT_APPLICABLE`: no Browser, WebView, HTML/DOM renderer, JavaScript execution context, Native Bridge, IPC or Extension API is introduced. |
+
+The reviewed boundary is untrusted objects plus ordinary importable module
+attributes. Arbitrary interpreter compromise, function-global monkeypatching,
+debugger access and closure introspection/mutation remain trusted-runtime
+concerns outside this ticket, exactly as frozen for CR-154.
+
+## Disposition
+
+`APPROVED / READY_TO_MERGE`. CR-151 through CR-154 are closed. Guarded
+integration may merge only exact handoff
+`2fbe55f0cd8dc18788dd121ff1529d81d6b52409`, preserving this review commit as
+first-parent control history and the submitted handoff as second parent. B2C
+through B2E remain unallocated until integration completes.
+
 ## Second correction review — CR-154
 
 The additive return `35fc40f -> 2799a32 -> 7c10d01` has exact ancestry and

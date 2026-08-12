@@ -2621,3 +2621,13 @@
 | Exact correction | First-red direct module-private registry/provenance injection. Move mutable registry and the only insertion operation inside the public admission factory system's lexical closure; module globals may expose the public admission factory and a validation callable, but no registry object, insertion-ready record type or arbitrary registration callable. Preserve identity-only synchronized lookup, weak cleanup and all closed gates. |
 | Threat boundary | Test ordinary module attributes plus untrusted object fabrication. Arbitrary interpreter compromise, function-global monkeypatching, debugger access and closure introspection/mutation remain trusted-runtime concerns outside this ticket. |
 | Evidence / return | Add a module-global surface regression and isolated closure-ownership reversal; preserve all prior tests/reversals. Rerun focused/full unittest, strict mypy, compile and readbacks. Change only existing forward module/test, then WPR-only PRG-235. No new branch/worktree/Agent, other ticket, live effect, integration, push, release or deployment. |
+
+## PRG-20260812-236 — Ticket 05B4B2B final independent review
+
+| Field | Value |
+| --- | --- |
+| Router event | `IMPLEMENTATION_CORRECTION_COMPLETED(CR-154) -> TERMINAL_CODE_REVIEW -> APPROVED -> GUARDED_INTEGRATION_READY` |
+| Reviewed return | Additive correction `7f0db75c72ce3c84663d3a3d398bb7e6c6d6a3b8`; WPR-only handoff `2fbe55f0cd8dc18788dd121ff1529d81d6b52409`; exact ancestry/scopes, clean lane and unchanged topology pass. |
+| Independent verification | Repository-external immutable export ZIP SHA-256 `EC5E58E2FF79303ED78D6B0B2C43AF6B3422A3AFCCA90CDBF228FB8F72DC8D0C` passes focused 23/23, full 317/317, strict mypy 124 files and compile 124 files. |
+| CR-154 closure | Ordinary module attributes expose no mutable registry, insertion-ready record, builder/reclaimer or arbitrary registration helper. Independent exact clone is blocked at metadata/repr/begin/execute/recovery with zero effect; public construction and caller `__index__` remain blocked, and weak ownership reclaims the coordinator. CR-151 through CR-154 are closed. |
+| XSS / decision | `XSS_NOT_APPLICABLE`: no renderer, JavaScript or privileged bridge path. `APPROVED / READY_TO_MERGE`; only guarded integration of exact handoff `2fbe55f0cd8dc18788dd121ff1529d81d6b52409` is next. |
