@@ -7,7 +7,7 @@ from enum import Enum
 from types import CodeType, FunctionType, GetSetDescriptorType, MappingProxyType, MethodType
 from typing import Callable, Final, Literal, TypeAlias, cast
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, ValidationError
 
 from .codex_registration_contracts import CodexAuthPolicy, CodexPluginId
 from .contracts import ArtifactDigest, InstallRoot, InstallationId, OwnedRelativePath
@@ -39,6 +39,175 @@ class CodexCompensationPortRequest(_StrictModel):
     """The single strongly typed argument for each admitted port operation."""
 
     manifest: CodexCompensationPortManifest
+
+
+class CodexCompensationPortValueRejectReason(str, Enum):
+    """The one finite reason for rejecting a non-exact compensation request."""
+
+    INVALID_REQUEST = "INVALID_REQUEST"
+
+
+class CodexCompensationPortValueRejected(_StrictModel):
+    """Metadata-only rejection that never retains a caller manifest or diagnostic."""
+
+    status: Literal["INVALID_VALUE"] = "INVALID_VALUE"
+    reason: CodexCompensationPortValueRejectReason = CodexCompensationPortValueRejectReason.INVALID_REQUEST
+
+
+CodexCompensationPortRequestRevalidation: TypeAlias = (
+    CodexCompensationPortRequest | CodexCompensationPortValueRejected
+)
+
+
+_REQUEST_STATE_FIELDS: Final[tuple[str, ...]] = ("manifest",)
+_MANIFEST_STATE_FIELDS: Final[tuple[str, ...]] = (
+    "installation_id",
+    "root",
+    "marketplace",
+    "marketplace_source",
+    "plugin_id",
+    "plugin",
+    "version",
+    "installed_locator",
+    "auth_policy",
+    "digest",
+)
+_VALUE_STATE_FIELDS: Final[tuple[str, ...]] = ("value",)
+
+
+def revalidate_codex_compensation_port_request(value: object) -> CodexCompensationPortRequestRevalidation:
+    """Rebuild only one exact, closed compensation request without caller protocols."""
+
+    if type(value) is not CodexCompensationPortRequest:
+        return _value_rejected()
+    request = value
+    if not _has_exact_model_state(request, _REQUEST_STATE_FIELDS):
+        return _value_rejected()
+    request_state = _model_state(request)
+    if request_state is None:
+        return _value_rejected()
+    current_manifest = request_state["manifest"]
+    if type(current_manifest) is not CodexCompensationPortManifest:
+        return _value_rejected()
+    rebuilt_manifest = _rebuild_exact_manifest(current_manifest)
+    if rebuilt_manifest is None:
+        return _value_rejected()
+    try:
+        return CodexCompensationPortRequest(manifest=rebuilt_manifest)
+    except (TypeError, ValidationError, ValueError):
+        return _value_rejected()
+
+
+def _rebuild_exact_manifest(value: CodexCompensationPortManifest) -> CodexCompensationPortManifest | None:
+    """Read fixed Pydantic storage and rebuild all closed request values by value."""
+
+    if not _has_exact_model_state(value, _MANIFEST_STATE_FIELDS):
+        return None
+    state = _model_state(value)
+    if state is None:
+        return None
+    installation_id = _rebuild_value(state["installation_id"], InstallationId)
+    root = _rebuild_value(state["root"], InstallRoot)
+    marketplace = _rebuild_value(state["marketplace"], CodexMarketplaceName)
+    marketplace_source = _rebuild_value(state["marketplace_source"], OwnedRelativePath)
+    plugin_id = _rebuild_value(state["plugin_id"], CodexPluginId)
+    plugin = _rebuild_value(state["plugin"], CodexPluginName)
+    version = _rebuild_value(state["version"], CodexCliVersion)
+    installed_locator = _rebuild_value(state["installed_locator"], OwnedRelativePath)
+    auth_policy = _rebuild_value(state["auth_policy"], CodexAuthPolicy)
+    digest = _rebuild_value(state["digest"], ArtifactDigest)
+    if (
+        installation_id is None
+        or root is None
+        or marketplace is None
+        or marketplace_source is None
+        or plugin_id is None
+        or plugin is None
+        or version is None
+        or installed_locator is None
+        or auth_policy is None
+        or digest is None
+    ):
+        return None
+    try:
+        return CodexCompensationPortManifest(
+            installation_id=cast(InstallationId, installation_id),
+            root=cast(InstallRoot, root),
+            marketplace=cast(CodexMarketplaceName, marketplace),
+            marketplace_source=cast(OwnedRelativePath, marketplace_source),
+            plugin_id=cast(CodexPluginId, plugin_id),
+            plugin=cast(CodexPluginName, plugin),
+            version=cast(CodexCliVersion, version),
+            installed_locator=cast(OwnedRelativePath, installed_locator),
+            auth_policy=cast(CodexAuthPolicy, auth_policy),
+            digest=cast(ArtifactDigest, digest),
+        )
+    except (TypeError, ValidationError, ValueError):
+        return None
+
+
+def _rebuild_value(value: object, expected_type: type[BaseModel]) -> BaseModel | None:
+    """Admit one exact scalar model, then reconstruct it from its exact built-in string."""
+
+    if type(value) is not expected_type or not _has_exact_model_state(value, _VALUE_STATE_FIELDS):
+        return None
+    state = _model_state(value)
+    if state is None:
+        return None
+    raw_value = state["value"]
+    if type(raw_value) is not str:
+        return None
+    try:
+        return expected_type(value=raw_value)
+    except (TypeError, ValidationError, ValueError):
+        return None
+
+
+def _has_exact_model_state(value: BaseModel, expected_fields: tuple[str, ...]) -> bool:
+    """Require fixed Pydantic storage without property, equality, or serialization access."""
+
+    state = _model_state(value)
+    if state is None:
+        return False
+    try:
+        extras: object = object.__getattribute__(value, "__pydantic_extra__")
+        private: object = object.__getattribute__(value, "__pydantic_private__")
+        fields_set: object = object.__getattribute__(value, "__pydantic_fields_set__")
+    except AttributeError:
+        return False
+    if extras is not None or private is not None or type(fields_set) is not set:
+        return False
+    if len(state) != len(expected_fields) or len(fields_set) != len(expected_fields):
+        return False
+    for key in state:
+        if type(key) is not str:
+            return False
+    for key in fields_set:
+        if type(key) is not str:
+            return False
+    for expected in expected_fields:
+        if expected not in state or expected not in fields_set:
+            return False
+    return True
+
+
+def _model_state(value: BaseModel) -> dict[str, object] | None:
+    """Read only the exact built-in Pydantic instance dictionary."""
+
+    try:
+        state: object = object.__getattribute__(value, "__dict__")
+    except AttributeError:
+        return None
+    if type(state) is not dict:
+        return None
+    return cast(dict[str, object], state)
+
+
+def _value_rejected() -> CodexCompensationPortValueRejected:
+    return CodexCompensationPortValueRejected(
+        status="INVALID_VALUE",
+        reason=CodexCompensationPortValueRejectReason.INVALID_REQUEST,
+    )
 
 
 class CodexPluginRemovalProof(_StrictModel):

@@ -14,9 +14,11 @@ from .codex_compensation_port import (
     CodexCompensationPortOperationFailed,
     CodexCompensationPortManifest,
     CodexCompensationPortRequest,
+    CodexCompensationPortValueRejected,
     CodexInstalledPathAbsenceProof,
     CodexMarketplaceRemovalProof,
     CodexPluginRemovalProof,
+    revalidate_codex_compensation_port_request,
 )
 from .codex_compensation_reducer import (
     CodexCompensationBlocked,
@@ -72,7 +74,10 @@ def compose_codex_compensation(
 ) -> CodexCompensationResult:
     """Validate all identities, execute the frozen plan, and return reducer truth."""
 
-    if not _capability_is_exact(capability) or not _request_is_exact(request):
+    if not _capability_is_exact(capability):
+        return _plan_invalid()
+    request_revalidation = revalidate_codex_compensation_port_request(request)
+    if type(request_revalidation) is CodexCompensationPortValueRejected:
         return _plan_invalid()
     if type(plan) is not CodexCompensationPlan and type(plan) is not CodexNoCompensationPlan:
         return _plan_invalid()
@@ -132,23 +137,6 @@ def _capability_is_exact(value: object) -> bool:
         )
     except AttributeError:
         return False
-
-
-def _request_is_exact(value: object) -> bool:
-    if type(value) is not CodexCompensationPortRequest:
-        return False
-    request = value
-    try:
-        current_manifest: object = request.manifest
-    except AttributeError:
-        return False
-    if not _manifest_is_exact(current_manifest):
-        return False
-    try:
-        CodexCompensationPortRequest(manifest=cast(CodexCompensationPortManifest, current_manifest))
-    except (TypeError, ValidationError, ValueError):
-        return False
-    return True
 
 
 def _manifest_is_exact(value: object) -> bool:

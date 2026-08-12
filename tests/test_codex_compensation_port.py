@@ -6,6 +6,8 @@ import unittest
 from enum import Enum
 from typing import NoReturn
 
+from pydantic import BaseModel
+
 from library.local_orchestration.codex_compensation_port import (
     CodexCompensationPortCapability,
     CodexCompensationPortFailureReason,
@@ -15,10 +17,13 @@ from library.local_orchestration.codex_compensation_port import (
     CodexCompensationPortRejectReason,
     CodexCompensationPortRejected,
     CodexCompensationPortRequest,
+    CodexCompensationPortValueRejected,
+    CodexCompensationPortValueRejectReason,
     CodexInstalledPathAbsenceProof,
     CodexMarketplaceRemovalProof,
     CodexPluginRemovalProof,
     admit_codex_compensation_port,
+    revalidate_codex_compensation_port_request,
 )
 from library.local_orchestration.codex_registration_contracts import CodexAuthPolicy, CodexPluginId
 from library.local_orchestration.contracts import ArtifactDigest, CANONICAL_INSTALL_ROOT, InstallRoot, InstallationId, OwnedRelativePath
@@ -42,6 +47,18 @@ _OPERATION_NAMES = (
     "list_plugins",
     "list_marketplaces",
     "prove_installed_path_absent",
+)
+_MANIFEST_VALUE_FIELDS = (
+    "installation_id",
+    "root",
+    "marketplace",
+    "marketplace_source",
+    "plugin_id",
+    "plugin",
+    "version",
+    "installed_locator",
+    "auth_policy",
+    "digest",
 )
 
 
@@ -297,7 +314,130 @@ class _ExplodingPort(ValidPort):
         raise self.failure
 
 
+class _RequestProtocolTrap:
+    """Raises if revalidation touches a caller-controlled protocol."""
+
+    def __init__(self) -> None:
+        self.invocation_count = 0
+
+    def _raise(self) -> NoReturn:
+        self.invocation_count += 1
+        raise RuntimeError("request protocol was invoked")
+
+    def __eq__(self, other: object) -> bool:
+        self._raise()
+
+    def __hash__(self) -> int:
+        self._raise()
+
+    def __str__(self) -> str:
+        self._raise()
+
+    def __repr__(self) -> str:
+        self._raise()
+
+    def model_dump(self) -> object:
+        self._raise()
+
+
 class CodexCompensationPortTests(unittest.TestCase):
+    def test_q1_request_revalidation_has_one_closed_finite_rejection(self) -> None:
+        result = revalidate_codex_compensation_port_request(None)
+        if not isinstance(result, CodexCompensationPortValueRejected):
+            raise AssertionError(f"expected finite revalidation rejection, received {result}")
+        self.assertEqual((CodexCompensationPortValueRejectReason.INVALID_REQUEST,), tuple(CodexCompensationPortValueRejectReason))
+        self.assertEqual("INVALID_VALUE", result.status)
+        self.assertIs(CodexCompensationPortValueRejectReason.INVALID_REQUEST, result.reason)
+        self.assertEqual({"status", "reason"}, set(result.model_dump()))
+
+    def test_q2_revalidation_rebuilds_every_request_node_without_original_identity(self) -> None:
+        original = request()
+        result = revalidate_codex_compensation_port_request(original)
+        if type(result) is not CodexCompensationPortRequest:
+            raise AssertionError(f"expected rebuilt request, received {result}")
+        rebuilt = result
+        self.assertEqual(original.model_dump(), rebuilt.model_dump())
+        self.assertIsNot(original, rebuilt)
+        self.assertIsNot(original.manifest, rebuilt.manifest)
+        self.assertIsNot(original.manifest.installation_id, rebuilt.manifest.installation_id)
+        self.assertIsNot(original.manifest.root, rebuilt.manifest.root)
+        self.assertIsNot(original.manifest.marketplace, rebuilt.manifest.marketplace)
+        self.assertIsNot(original.manifest.marketplace_source, rebuilt.manifest.marketplace_source)
+        self.assertIsNot(original.manifest.plugin_id, rebuilt.manifest.plugin_id)
+        self.assertIsNot(original.manifest.plugin, rebuilt.manifest.plugin)
+        self.assertIsNot(original.manifest.version, rebuilt.manifest.version)
+        self.assertIsNot(original.manifest.installed_locator, rebuilt.manifest.installed_locator)
+        self.assertIsNot(original.manifest.auth_policy, rebuilt.manifest.auth_policy)
+        self.assertIsNot(original.manifest.digest, rebuilt.manifest.digest)
+
+    def test_q3_raw_subclass_constructed_invalid_and_recursive_injected_values_reject(self) -> None:
+        class RequestSubclass(CodexCompensationPortRequest):
+            pass
+
+        invalid_values: tuple[object, ...] = (
+            None,
+            "request",
+            (),
+            [],
+            {},
+            RequestSubclass(manifest=manifest()),
+            CodexCompensationPortRequest.model_construct(),
+            CodexCompensationPortRequest.model_construct(manifest=CodexCompensationPortManifest.model_construct()),
+            object.__new__(CodexCompensationPortRequest),
+        )
+        for invalid_value in invalid_values:
+            with self.subTest(kind=type(invalid_value).__name__):
+                self._assert_value_rejected(revalidate_codex_compensation_port_request(invalid_value))
+
+        for field_name in _MANIFEST_VALUE_FIELDS:
+            with self.subTest(nested_type=field_name):
+                nested_invalid = request()
+                manifest_state = object.__getattribute__(nested_invalid.manifest, "__dict__")
+                manifest_state[field_name] = object()
+                self._assert_value_rejected(revalidate_codex_compensation_port_request(nested_invalid))
+
+        for field_name in _MANIFEST_VALUE_FIELDS:
+            with self.subTest(constructed_nested_type=field_name):
+                constructed_nested = request()
+                manifest_state = object.__getattribute__(constructed_nested.manifest, "__dict__")
+                original_value = manifest_state[field_name]
+                if not isinstance(original_value, BaseModel):
+                    raise AssertionError("test fixture lost its exact nested model")
+                manifest_state[field_name] = type(original_value).model_construct()
+                self._assert_value_rejected(revalidate_codex_compensation_port_request(constructed_nested))
+
+        for state_node in ("request", "manifest", *_MANIFEST_VALUE_FIELDS):
+            with self.subTest(injected_state_node=state_node):
+                injected = request()
+                if state_node == "request":
+                    node: object = injected
+                elif state_node == "manifest":
+                    node = injected.manifest
+                else:
+                    node = object.__getattribute__(injected.manifest, state_node)
+                object.__getattribute__(node, "__dict__")["injected"] = "state"
+                self._assert_value_rejected(revalidate_codex_compensation_port_request(injected))
+
+    def test_q4_revalidation_never_invokes_raw_or_constructed_request_protocols(self) -> None:
+        raw_trap = _RequestProtocolTrap()
+        self._assert_value_rejected(revalidate_codex_compensation_port_request(raw_trap))
+        self.assertEqual(0, raw_trap.invocation_count)
+
+        nested_trap = _RequestProtocolTrap()
+        constructed = CodexCompensationPortRequest.model_construct(manifest=nested_trap)
+        self._assert_value_rejected(revalidate_codex_compensation_port_request(constructed))
+        self.assertEqual(0, nested_trap.invocation_count)
+
+    def test_q6_outer_state_gate_rejects_injected_request_state(self) -> None:
+        current = request()
+        object.__getattribute__(current, "__dict__")["injected"] = "state"
+        self._assert_value_rejected(revalidate_codex_compensation_port_request(current))
+
+    def test_q6_nested_state_gate_rejects_injected_value_state(self) -> None:
+        current = request()
+        object.__getattribute__(current.manifest.digest, "__dict__")["injected"] = "state"
+        self._assert_value_rejected(revalidate_codex_compensation_port_request(current))
+
     def test_a1_plain_methods_admit_a_frozen_capability_and_execute_only_after_admission(self) -> None:
         adapter = ValidPort()
         result = admit_codex_compensation_port(adapter)
@@ -514,6 +654,13 @@ class CodexCompensationPortTests(unittest.TestCase):
             raise AssertionError(f"expected rejection, received {result}")
         self.assertEqual("INVALID_PORT", result.status)
         self.assertIs(reason, result.reason)
+
+    def _assert_value_rejected(self, result: object) -> None:
+        if type(result) is not CodexCompensationPortValueRejected:
+            raise AssertionError(f"expected finite value rejection, received {result}")
+        rejected = result
+        self.assertEqual("INVALID_VALUE", rejected.status)
+        self.assertIs(CodexCompensationPortValueRejectReason.INVALID_REQUEST, rejected.reason)
 
 
 if __name__ == "__main__":
