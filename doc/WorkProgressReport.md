@@ -2524,3 +2524,13 @@
 | Reverse evidence | One isolated guard-bypass mutation restored the pre-guard status comparison and attempt-key lookup; both committed cells turned red through their original caller `RuntimeError` and the exact correction blobs were restored. Existing live lease, owner/token/object identity, generation/phase, tombstone, recovery and public transfer contracts remain green. |
 | Verification / residue | Named CR-150 test passed 1/1; focused serial unittest passed 11/11 and full serial discovery passed 294/294. Strict full-tree mypy passed 122 tracked Python files with `--strict --explicit-package-bases --no-incremental`; its repository-external cache was removed and read back absent. In-memory compile passed 122 files. CR-150 ordering/exception source sentinel, `git diff --check`, exact scope/ancestry, control baseline and three-worktree topology passed; test-created cache was removed by exact validated path before commit. |
 | Non-interference / handoff | No public contract, catch broadening, port/effect/live-state path, package/export/dependency or integrated file changed. No another Agent, B2B-B2E/05C work, review/integration, push, release or deployment was performed. This is correction evidence, not a review decision. |
+
+## PRG-20260812-223 — Ticket 05B4B2A guarded integration
+
+| Field | Value |
+| --- | --- |
+| Router event | `REVIEW_APPROVED(CR-150) -> GUARDED_INTEGRATION -> ACTION_COMPLETED -> TICKET_05B4B2B_REFREEZE_READY` |
+| Integration | Merge `494aaca201de5a6ee001233b03bccb41de21f7fa` preserves final approval `e03cb8dc0fe9e911b4763816913552617322b427` as first parent and exact reviewed handoff `e4841abfd8caf8e262fa451055da94f5acc754a8` as second parent. Product source/test blobs exactly match the reviewed handoff. |
+| Ledger resolution | The sole conflict was `doc/WorkProgressReport.md`; PRG-218 through PRG-222 are retained exactly once. Neither immutable parent was amended, reset, forced or overwritten. |
+| Post-merge verification | Focused 11/11 and serial full 294/294 pass. Strict full-tree mypy and in-memory compile pass 122 files. `git diff --check`, exact parent/product equality and the unchanged three-worktree topology pass. |
+| Completion | 05B4B2A is `COMPLETE / APPROVED / INTEGRATED`; allocation `aln_local_orchestration_install_05b4b2a_20260812` is released and receipt `rcpt_local_orchestration_install_05b4b2a_20260812` is closed against replay. 05B4B2B is unallocated and only `REFREEZE_READY`; its freeze must classify XSS under the new governance rule. No live Codex, host, target-project or network effect, push, release or deployment occurred. |

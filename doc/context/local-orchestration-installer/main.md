@@ -2,13 +2,13 @@
 
 | Field | Value |
 | --- | --- |
-| Context state | `TICKET_05B4B2A_APPROVED / READY_TO_MERGE` |
-| Router event | `IMPLEMENTATION_CORRECTION_COMPLETED / TERMINAL_CODE_REVIEW / APPROVED` |
+| Context state | `TICKET_05B4B2A_COMPLETE / TICKET_05B4B2B_REFREEZE_READY` |
+| Router event | `REVIEW_APPROVED / GUARDED_INTEGRATION / ACTION_COMPLETED` |
 | Delivery stage | `POC` |
 | Requirement change | `CHG-20260808-011` |
 | Baseline | `cd3e9b6789623bd2a12ff7c69db4d5fcadd1718f` (`docs: refreeze Ticket 05B4B1 pure reducer`) |
 | Control-plane owner | Codex / current `main` worktree |
-| Implementation owner | Same task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`, existing `workflow-implementer-2` and existing 05B4B2A branch submitted approved correction `4e6924b` / handoff `e4841ab`; no downstream ticket is allocated before guarded integration |
+| Implementation owner | 05B4B2A allocation is released after guarded merge `494aaca`; no implementation owner or receipt is yet allocated to 05B4B2B before its fresh control-plane freeze |
 | Required sources read | `AGENTS.md`, `Workflow.md` (Router, Wayfinder, Grill, change control, specification, tickets, role boundary), `Defined_wayfinder.md`, `CONTEXT.md`, `PRD.md`, `ProjectSchedule.md`, `doc/RequirementChangeLog.md`, existing plugin manifests / README, `library/workflow_router/`, and completed plugin / autonomous-collaboration POCs |
 
 ## Shared Context reference
