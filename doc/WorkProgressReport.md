@@ -2588,3 +2588,14 @@
 | Closed CR-152 | Independent `IndexTrap` probe receives direct finite `TypeError` and records zero `__index__` invocations. Serialization caller-protocol execution is closed. |
 | CR-153 | CR-151 remains open: `object.__new__` can build both an exact coordinator and exact-shaped private `_CoordinatorAuthority`, bind their owner/capability/transaction fields and pass `_has_exact_authority`. The reviewer probe returned ready then next-ready and recorded one `FRESH` effect. Field-shape consistency does not prove factory provenance. Classification is `IMPLEMENTATION_DEFECT` within F2/F7. |
 | Required continuation | Same ticket/task/worktree/branch/allocation/receipt/correlation. Add factory-registered, synchronized, identity-only and lifecycle-bounded process-local provenance; unregistered deep clones and public constructor must block before state/effect. Add exact first-red/reversal, preserve closed CR-152 and all earlier F1-F8/reversal evidence. No new branch/worktree, scope expansion, integration, push, release or deployment. |
+
+## PRG-20260812-231 — Ticket 05B4B2B CR-153 correction handoff
+
+| Field | Value |
+| --- | --- |
+| Router event | `CHANGES_REQUESTED(CR-153) -> IMPLEMENTATION_DEFECT -> CORRECTION_HANDOFF_CONFIRMED` |
+| Reviewed authority | Control review `1dfd2188cb16dff4d17364b9a04f574072e903d2`; unchanged closure F2/F7; correction handoff `hnd_local_orchestration_install_05b4b2b_cr153_20260812`; retained allocation, receipt, correlation and side-context. |
+| Owner / admission | Same idle task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2`; existing `codex/implementation-codex-registration-forward-05b4b2b`; exact clean submitted HEAD `35fc40f4a87223fbe3f8180cfef9fdc112a7d08a`; additive commits only. |
+| Exact correction | First-red the reviewer exact-shaped deep authority clone. Public coordinator constructor must reject unconditionally; the admission factory alone registers live coordinators in synchronized, process-local, identity-only, lifecycle-bounded provenance binding exact coordinator/capability/transaction. Every public authority-consuming entry checks that record before state/effect; unregistered clones block finitely without caller protocol. |
+| Evidence / return | Add an isolated provenance-gate reversal; preserve CR-152 and all prior F1-F8 and seven reversal cells. Rerun focused/full unittest, strict full-tree mypy, compile, source/scope/diff/ancestry and residue checks. Change only existing forward module/test, then WPR-only PRG-20260812-232. |
+| Stop | No new branch/worktree/Agent, reset/amend/rebase/merge, public contract, other ticket, live effect, target-project mutation, review/integration, push, release or deployment. |
