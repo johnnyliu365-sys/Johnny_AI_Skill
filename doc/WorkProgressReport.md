@@ -3225,3 +3225,15 @@
 | Parallel safety | E2B owns registration failure contracts/tests; E3B owns staging oracle/test paths. Writable sets are disjoint. Exactly the two existing implementation tasks/worktrees will be used after lane readback. |
 | Delivery boundary | The already-approved 04C/04D rule remains unchanged: no staging push now; after exact clean v1 candidate freeze, 04D alone may create or verified-fast-forward `origin/staging` and read back the exact SHA. Later feature/architecture changes start from staging; immutable v1 evidence is not overwritten. |
 | XSS | `XSS_NOT_APPLICABLE`: neither ticket adds Browser, WebView, HTML/DOM renderer or JavaScript execution context. |
+
+## PRG-20260813-290 — E2B/E3B parallel dispatch registry
+
+| Field | Value |
+| --- | --- |
+| State | `IMPLEMENTATION_DISPATCH_CONFIRMED / PARALLEL_DISJOINT` |
+| Router event | `TICKETS_FROZEN(E2B,E3B) -> LANE_READBACK -> IMPLEMENTATION_DISPATCH_CONFIRMED` |
+| Freeze / dispatch | Reviewed freeze `7812775067643e803c007d385e249b55d760b006`; this registry commit is the sole common implementation baseline. |
+| E2B lane | Idle task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; clean submitted HEAD `6a752f4d79fcb8e7af47ad9d00c05a3484fd4505`; target branch absent; exact N1-N7 and retained unique binding recorded in its ticket. |
+| E3B lane | Idle task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; clean submitted HEAD `5e3b3ccca6357ec485376009eecf06f3c4a4dbb7`; target branch absent; exact A1-A7 and retained unique binding recorded in its ticket. |
+| Isolation | Both lanes have zero tracked/ignored/cache residue, exactly three existing worktrees, disjoint writable paths and no authority to create/control Agents. Reviewer retains sole orchestration/review/integration authority. |
+| Prohibitions | No new worktree, broad ticket, numeric line criterion, staging push, package/build/install, live Codex, target-project write, release, deployment or scope expansion. |

@@ -66,3 +66,16 @@ or deployment action is authorized.
 
 Freeze is not dispatch. Exact lane/readback and a dispatch registry commit are
 required before the implementation owner may switch branch or edit.
+
+## Dispatch registry
+
+| Field | Value |
+| --- | --- |
+| Reviewed freeze | `7812775067643e803c007d385e249b55d760b006`; exact N1-N7; `XSS_NOT_APPLICABLE` |
+| Delivery authority | Project-owner instruction to continue approved small-ticket work; `IMPLEMENTATION_DISPATCH_CONFIRMED` for E2B only |
+| Lane readback | Idle task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; existing `workflow-implementation` clean at submitted HEAD `6a752f4d79fcb8e7af47ad9d00c05a3484fd4505`; zero tracked/ignored/cache residue; exactly three worktrees; target branch absent |
+| Branch | Create only `codex/implementation-codex-no-effect-failure-05b4b2e2b` from the exact commit carrying this registry in the same worktree; no new worktree |
+| Binding | `hnd_local_orchestration_install_05b4b2e2b_20260813`; `aln_local_orchestration_install_05b4b2e2b_20260813`; `rcpt_local_orchestration_install_05b4b2e2b_20260813`; `corr-local-orchestration-install-05b4b2e2b-20260813`; `q-local-orchestration-install-05b4b2e2b-20260813`; `scx-local-orchestration-install-05b4b2e2b-20260813-01` |
+
+This is the single dispatch. Only the four exact implementation paths and a
+later WPR-only `PRG-20260813-291` are writable in this lane.
