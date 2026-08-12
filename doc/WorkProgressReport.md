@@ -3399,3 +3399,12 @@
 | Replacement | Idle task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2`; create only `codex/implementation-codex-registration-oracle-adapter-05b4b2e2-correction` from exact E2 handoff. Exactly three worktrees remain; no new worktree. |
 | Authority binding | Same ticket and closure; new correction handoff/allocation `hnd_local_orchestration_install_05b4b2e2_cr162_164_20260813` / `aln_local_orchestration_install_05b4b2e2_cr162_164_20260813`; retain receipt `rcpt_local_orchestration_install_05b4b2e2_r02_20260813`; new correlation/question/side-context recorded in the ticket. |
 | Boundary | Only CR-162/163/164 in the existing two source/test paths and a later WPR-only correction handoff. No staging push, package/build/install, live Codex, target-project write, release or deployment. |
+
+## PRG-20260813-308 — HALT / implementation capacity unavailable
+
+| Field | Value |
+| --- | --- |
+| Router event | `OWNER_REPLACEMENT_DISPATCH -> EXTERNAL_USAGE_LIMIT -> HALT / IMPLEMENTER_CAPACITY_UNAVAILABLE` |
+| Repeated external block | Original task `019fcc9c-f34f-7d53-a313-c70c90bf3245` and replacement task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` both rejected their next turn before work with the same account-level usage-limit response; stated retry time is 2026-08-18 10:20. |
+| Preserved state | Original E2 lane remains clean at `699cba8f1b844552a9b36baf926613594542ed4b`; implementer-2 remains clean at `b153636fe2acd37af0b376ee825e0cf9336b98b1`; control main remains clean. No correction branch or mutation was created; exactly three worktrees remain. |
+| Resume point | Resume same Ticket 05B4B2E2 CR-162/163/164 from recorded correction handoff `f483052` once implementation capacity is available. Reviewer role must not implement the formal source correction. E3 and packaging/staging remain undispatched. |
