@@ -2805,6 +2805,24 @@
 | Lane | Planned existing task `019fcc9c-f34f-7d53-a313-c70c90bf3245` / `workflow-implementation`; no new worktree. Freeze is not dispatch. |
 | Security | `XSS_NOT_APPLICABLE`; no renderer/JavaScript/bridge. No live Codex, filesystem, process, host, network, target-project, push, release or deployment authority. |
 
+## PRG-20260812-250 — Ticket 05B4B2C dispatch registry
+
+| Field | Value |
+| --- | --- |
+| Router event | `TICKET_FROZEN(05B4B2C) -> IMPLEMENTATION_DISPATCH_CONFIRMED / IMPLEMENT` |
+| Freeze / binding | `2183afb3956744163c22cb16f1c2285d0aa82de8`; closure P1-P8; `hnd_local_orchestration_install_05b4b2c_20260812`; `aln_local_orchestration_install_05b4b2c_20260812`; `rcpt_local_orchestration_install_05b4b2c_20260812`; `corr-local-orchestration-install-05b4b2c-20260812`; `scx-local-orchestration-install-05b4b2c-20260812-01`. |
+| Lane | Exact clean submitted HEAD `0378655864e4277d553558a40d5122702aa3d7d9` in existing `workflow-implementation`; create one branch from this registry commit; no new worktree. |
+| Return | Exact proof-settlement source/test commit, then WPR-only PRG-20260812-252. Reviewer retains orchestration and review authority. |
+
+## PRG-20260812-251 — Ticket 05B4B2B2 dispatch registry
+
+| Field | Value |
+| --- | --- |
+| Router event | `TICKET_FROZEN(05B4B2B2) -> IMPLEMENTATION_DISPATCH_CONFIRMED / IMPLEMENT` |
+| Freeze / binding | `2183afb3956744163c22cb16f1c2285d0aa82de8`; closure B1-B7; `hnd_local_orchestration_install_05b4b2b2_20260812`; `aln_local_orchestration_install_05b4b2b2_20260812`; `rcpt_local_orchestration_install_05b4b2b2_20260812`; `corr-local-orchestration-install-05b4b2b2-20260812`; `scx-local-orchestration-install-05b4b2b2-20260812-01`. |
+| Lane | Exact clean submitted HEAD `2f9968ccb3825a77d26202c008c0cc6ea94cc3ed` in existing `workflow-implementer-2`; create one branch from this registry commit; no new worktree. |
+| Return | Exact reducer source/test commit, then WPR-only PRG-20260812-253. Reviewer retains orchestration and review authority. |
+
 ## PRG-20260812-249 — Ticket defect and B2B2 compensation-context refreeze
 
 | Field | Value |

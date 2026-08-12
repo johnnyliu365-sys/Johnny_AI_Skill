@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / unchanged AC-01, AC-02, AC-07 and AC-08 proof/receipt seam |
-| State | `FROZEN / DISPATCH_PENDING` |
+| State | `IN_PROGRESS / DISPATCH_CONFIRMED` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B4B2C-01` / P1-P8 |
 | Dependency | 05B4B2B1 approved and integrated by `0c4476f8d40b53292ea69d0daec084860beeaa03` |
 | Planned owner | Task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; existing `workflow-implementation`; one new ticket branch in that same worktree, no new worktree |
@@ -84,3 +84,16 @@ deployment is authorized.
 
 Freeze is not dispatch. A later dispatch registry must bind the exact freeze
 commit and verified clean lane before implementation starts.
+
+## Dispatch registry
+
+| Field | Value |
+| --- | --- |
+| Reviewed freeze | `2183afb3956744163c22cb16f1c2285d0aa82de8`; exact P1-P8; `XSS_NOT_APPLICABLE` |
+| Delivery authority | Project-owner standing instruction to continue approved work; `IMPLEMENTATION_DISPATCH_CONFIRMED` for this ticket only |
+| Lane readback | Task is idle; existing `workflow-implementation` is clean at exact submitted HEAD `0378655864e4277d553558a40d5122702aa3d7d9`; exactly three existing worktrees |
+| Branch | Create only `codex/implementation-codex-registration-proof-settlement-05b4b2c` from this exact dispatch-registry commit in the same worktree; no new worktree |
+| Binding | `hnd_local_orchestration_install_05b4b2c_20260812`; `aln_local_orchestration_install_05b4b2c_20260812`; `rcpt_local_orchestration_install_05b4b2c_20260812`; `corr-local-orchestration-install-05b4b2c-20260812`; `q-local-orchestration-install-05b4b2c-20260812`; `scx-local-orchestration-install-05b4b2c-20260812-01` |
+
+This is the single dispatch. Only the exact two implementation paths and later
+WPR-only PRG-20260812-252 are writable in this lane.
