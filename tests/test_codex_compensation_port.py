@@ -8,7 +8,10 @@ from typing import NoReturn
 
 from library.local_orchestration.codex_compensation_port import (
     CodexCompensationPortCapability,
+    CodexCompensationPortFailureReason,
     CodexCompensationPortManifest,
+    CodexCompensationPortOperation,
+    CodexCompensationPortOperationFailed,
     CodexCompensationPortRejectReason,
     CodexCompensationPortRejected,
     CodexCompensationPortRequest,
@@ -79,6 +82,31 @@ def marketplace_list(current: CodexCompensationPortRequest) -> CodexMarketplaceL
 
 def path_absence(current: CodexCompensationPortRequest) -> CodexInstalledPathAbsenceProof:
     return CodexInstalledPathAbsenceProof(manifest=current.manifest, absent=True)
+
+
+class FiniteFailurePort:
+    """Admitted plain methods that return one finite failure value."""
+
+    def __init__(self, failure: CodexCompensationPortOperationFailed) -> None:
+        self.failure = failure
+
+    def remove_plugin(self, current: CodexCompensationPortRequest) -> CodexCompensationPortOperationFailed:
+        return self.failure
+
+    def remove_marketplace(self, current: CodexCompensationPortRequest) -> CodexCompensationPortOperationFailed:
+        return self.failure
+
+    def list_plugins(self, current: CodexCompensationPortRequest) -> CodexCompensationPortOperationFailed:
+        return self.failure
+
+    def list_marketplaces(self, current: CodexCompensationPortRequest) -> CodexCompensationPortOperationFailed:
+        return self.failure
+
+    def prove_installed_path_absent(
+        self,
+        current: CodexCompensationPortRequest,
+    ) -> CodexCompensationPortOperationFailed:
+        return self.failure
 
 
 class ValidPort:
@@ -279,9 +307,18 @@ class CodexCompensationPortTests(unittest.TestCase):
         current = request()
         self.assertEqual("REMOVED", result.remove_plugin(current).status)
         self.assertEqual("REMOVED", result.remove_marketplace(current).status)
-        self.assertEqual((), result.list_plugins(current).installed)
-        self.assertEqual((), result.list_marketplaces(current).marketplaces)
-        self.assertTrue(result.prove_installed_path_absent(current).absent)
+        plugins = result.list_plugins(current)
+        if not isinstance(plugins, CodexPluginList):
+            raise AssertionError("expected exact plugin-list result")
+        self.assertEqual((), plugins.installed)
+        marketplaces = result.list_marketplaces(current)
+        if not isinstance(marketplaces, CodexMarketplaceList):
+            raise AssertionError("expected exact marketplace-list result")
+        self.assertEqual((), marketplaces.marketplaces)
+        path_proof = result.prove_installed_path_absent(current)
+        if not isinstance(path_proof, CodexInstalledPathAbsenceProof):
+            raise AssertionError("expected exact installed-path absence result")
+        self.assertTrue(path_proof.absent)
         self.assertEqual(list(_OPERATION_NAMES), adapter.calls)
         self.assertEqual("ADMITTED", result.metadata().status)
 
@@ -405,6 +442,68 @@ class CodexCompensationPortTests(unittest.TestCase):
             for forbidden in ("exception", "candidate", "remove_plugin", "absolute", "receipt", "success"):
                 with self.subTest(payload=payload, forbidden=forbidden):
                     self.assertNotIn(forbidden, payload)
+
+    def test_f1_f2_f6_finite_operation_failure_is_closed_and_admitted_by_every_alias(self) -> None:
+        self.assertEqual(
+            (
+                CodexCompensationPortOperation.REMOVE_PLUGIN,
+                CodexCompensationPortOperation.REMOVE_MARKETPLACE,
+                CodexCompensationPortOperation.LIST_PLUGINS,
+                CodexCompensationPortOperation.LIST_MARKETPLACES,
+                CodexCompensationPortOperation.PROVE_INSTALLED_PATH_ABSENT,
+            ),
+            tuple(CodexCompensationPortOperation),
+        )
+        self.assertEqual(
+            (
+                CodexCompensationPortFailureReason.REQUEST_INVALID,
+                CodexCompensationPortFailureReason.DEPENDENCY_BLOCKED,
+                CodexCompensationPortFailureReason.EVIDENCE_INVALID,
+            ),
+            tuple(CodexCompensationPortFailureReason),
+        )
+        cases: tuple[tuple[CodexCompensationPortOperation, str], ...] = (
+            (CodexCompensationPortOperation.REMOVE_PLUGIN, "remove_plugin"),
+            (CodexCompensationPortOperation.REMOVE_MARKETPLACE, "remove_marketplace"),
+            (CodexCompensationPortOperation.LIST_PLUGINS, "list_plugins"),
+            (CodexCompensationPortOperation.LIST_MARKETPLACES, "list_marketplaces"),
+            (
+                CodexCompensationPortOperation.PROVE_INSTALLED_PATH_ABSENT,
+                "prove_installed_path_absent",
+            ),
+        )
+        for operation, operation_name in cases:
+            with self.subTest(operation=operation.value):
+                current = request()
+                failure = CodexCompensationPortOperationFailed(
+                    manifest=current.manifest,
+                    operation=operation,
+                    status="FAILED",
+                    reason=CodexCompensationPortFailureReason.DEPENDENCY_BLOCKED,
+                )
+                admitted = admit_codex_compensation_port(FiniteFailurePort(failure))
+                if not isinstance(admitted, CodexCompensationPortCapability):
+                    raise AssertionError(f"expected admitted failure port, received {admitted}")
+                if operation_name == "remove_plugin":
+                    returned: object = admitted.remove_plugin(current)
+                elif operation_name == "remove_marketplace":
+                    returned = admitted.remove_marketplace(current)
+                elif operation_name == "list_plugins":
+                    returned = admitted.list_plugins(current)
+                elif operation_name == "list_marketplaces":
+                    returned = admitted.list_marketplaces(current)
+                else:
+                    returned = admitted.prove_installed_path_absent(current)
+                self.assertIs(failure, returned)
+                payload = failure.model_dump()
+                self.assertEqual({"manifest", "operation", "status", "reason"}, set(payload))
+                self.assertEqual("FAILED", payload["status"])
+                self.assertIn("root", payload["manifest"])
+                self.assertNotIn("path", payload)
+                self.assertNotIn("locator", payload)
+                serialized = failure.model_dump_json()
+                for forbidden in ("exception", "diagnostic", "callable", "oracle"):
+                    self.assertNotIn(forbidden, serialized)
 
     def _assert_rejected(
         self,

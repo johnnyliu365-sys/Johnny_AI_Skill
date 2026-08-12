@@ -6,11 +6,16 @@ from enum import Enum
 from typing import NoReturn, cast
 import unittest
 
+from pydantic import BaseModel
+
 from library.local_orchestration import compose_codex_compensation as exported_compose
 from library.local_orchestration.codex_compensation_composition import compose_codex_compensation
 from library.local_orchestration.codex_compensation_port import (
     CodexCompensationPortCapability,
+    CodexCompensationPortFailureReason,
     CodexCompensationPortManifest,
+    CodexCompensationPortOperation,
+    CodexCompensationPortOperationFailed,
     CodexCompensationPortRequest,
     CodexInstalledPathAbsenceProof,
     CodexMarketplaceRemovalProof,
@@ -103,6 +108,37 @@ class ManifestSeam(str, Enum):
     PLUGIN_REMOVAL = "plugin_removal"
     MARKETPLACE_REMOVAL = "marketplace_removal"
     INSTALLED_PATH = "installed_path"
+
+
+class FailureStateNode(str, Enum):
+    FAILURE = "failure"
+    MANIFEST = "manifest"
+    INSTALLATION_ID = "installation_id"
+    ROOT = "root"
+    MARKETPLACE = "marketplace"
+    MARKETPLACE_SOURCE = "marketplace_source"
+    PLUGIN_ID = "plugin_id"
+    PLUGIN = "plugin"
+    VERSION = "version"
+    INSTALLED_LOCATOR = "installed_locator"
+    AUTH_POLICY = "auth_policy"
+    DIGEST = "digest"
+
+
+FAILURE_STATE_INJECTION_TABLE: tuple[FailureStateNode, ...] = (
+    FailureStateNode.FAILURE,
+    FailureStateNode.MANIFEST,
+    FailureStateNode.INSTALLATION_ID,
+    FailureStateNode.ROOT,
+    FailureStateNode.MARKETPLACE,
+    FailureStateNode.MARKETPLACE_SOURCE,
+    FailureStateNode.PLUGIN_ID,
+    FailureStateNode.PLUGIN,
+    FailureStateNode.VERSION,
+    FailureStateNode.INSTALLED_LOCATOR,
+    FailureStateNode.AUTH_POLICY,
+    FailureStateNode.DIGEST,
+)
 
 
 class MissingManifestValue:
@@ -319,6 +355,56 @@ class RecordingPort:
     ) -> CodexInstalledPathAbsenceProof:
         self._record(OperationName.PROVE_INSTALLED_PATH_ABSENT, current)
         return cast(CodexInstalledPathAbsenceProof, self.path_result)
+
+
+def finite_failure(
+    current_manifest: CodexCompensationPortManifest,
+    operation: CodexCompensationPortOperation,
+) -> CodexCompensationPortOperationFailed:
+    return CodexCompensationPortOperationFailed(
+        manifest=current_manifest,
+        operation=operation,
+        status="FAILED",
+        reason=CodexCompensationPortFailureReason.DEPENDENCY_BLOCKED,
+    )
+
+
+class FailureSubclass(CodexCompensationPortOperationFailed):
+    """Caller-controlled derived failure values cannot enter composition."""
+
+
+def failure_state_node(
+    failure: CodexCompensationPortOperationFailed,
+    node: FailureStateNode,
+) -> BaseModel:
+    """Select one fixed failure/manifest node without dynamic member lookup."""
+
+    current_manifest = failure.manifest
+    if node is FailureStateNode.FAILURE:
+        return failure
+    if node is FailureStateNode.MANIFEST:
+        return current_manifest
+    if node is FailureStateNode.INSTALLATION_ID:
+        return current_manifest.installation_id
+    if node is FailureStateNode.ROOT:
+        return current_manifest.root
+    if node is FailureStateNode.MARKETPLACE:
+        return current_manifest.marketplace
+    if node is FailureStateNode.MARKETPLACE_SOURCE:
+        return current_manifest.marketplace_source
+    if node is FailureStateNode.PLUGIN_ID:
+        return current_manifest.plugin_id
+    if node is FailureStateNode.PLUGIN:
+        return current_manifest.plugin
+    if node is FailureStateNode.VERSION:
+        return current_manifest.version
+    if node is FailureStateNode.INSTALLED_LOCATOR:
+        return current_manifest.installed_locator
+    if node is FailureStateNode.AUTH_POLICY:
+        return current_manifest.auth_policy
+    if node is FailureStateNode.DIGEST:
+        return current_manifest.digest
+    raise AssertionError("unknown failure state node")
 
 
 def capability(adapter: RecordingPort) -> CodexCompensationPortCapability:
@@ -775,6 +861,204 @@ class CodexCompensationCompositionTests(unittest.TestCase):
                             plan(CodexAttemptEffectState.OWNED, CodexAttemptEffectState.OWNED),
                         )
                     self.assertEqual(FULL_ORDER[: operation_index + 1], tuple(adapter.calls))
+
+    def test_f1_f3_f4_matching_finite_operation_failures_reduce_without_success(self) -> None:
+        cases: tuple[
+            tuple[
+                OperationName,
+                CodexCompensationPortOperation,
+                tuple[CodexCompensationReason, ...],
+                CodexAttemptEffectState,
+                CodexAttemptEffectState,
+            ],
+            ...,
+        ] = (
+            (
+                OperationName.REMOVE_PLUGIN,
+                CodexCompensationPortOperation.REMOVE_PLUGIN,
+                (CodexCompensationReason.PLUGIN_REMOVAL_DECLARED_FAILURE,),
+                CodexAttemptEffectState.NOT_ATTEMPTED,
+                CodexAttemptEffectState.NOT_ATTEMPTED,
+            ),
+            (
+                OperationName.REMOVE_MARKETPLACE,
+                CodexCompensationPortOperation.REMOVE_MARKETPLACE,
+                (CodexCompensationReason.MARKETPLACE_REMOVAL_DECLARED_FAILURE,),
+                CodexAttemptEffectState.NOT_ATTEMPTED,
+                CodexAttemptEffectState.NOT_ATTEMPTED,
+            ),
+            (
+                OperationName.LIST_PLUGINS,
+                CodexCompensationPortOperation.LIST_PLUGINS,
+                (
+                    CodexCompensationReason.PLUGIN_INSTALLED_UNPROVED,
+                    CodexCompensationReason.PLUGIN_AVAILABLE_UNPROVED,
+                ),
+                CodexAttemptEffectState.NOT_ATTEMPTED,
+                CodexAttemptEffectState.OWNED,
+            ),
+            (
+                OperationName.LIST_MARKETPLACES,
+                CodexCompensationPortOperation.LIST_MARKETPLACES,
+                (CodexCompensationReason.MARKETPLACE_UNPROVED,),
+                CodexAttemptEffectState.OWNED,
+                CodexAttemptEffectState.NOT_ATTEMPTED,
+            ),
+            (
+                OperationName.PROVE_INSTALLED_PATH_ABSENT,
+                CodexCompensationPortOperation.PROVE_INSTALLED_PATH_ABSENT,
+                (CodexCompensationReason.INSTALLED_LOCATION_UNPROVED,),
+                CodexAttemptEffectState.NOT_ATTEMPTED,
+                CodexAttemptEffectState.OWNED,
+            ),
+        )
+        for operation, failure_operation, reasons, marketplace_state, plugin_state in cases:
+            with self.subTest(operation=operation.value):
+                adapter = RecordingPort()
+                self.set_operation_result(adapter, operation, finite_failure(manifest(), failure_operation))
+                result = compose_codex_compensation(
+                    capability(adapter),
+                    request(),
+                    plan(CodexAttemptEffectState.OWNED, CodexAttemptEffectState.OWNED),
+                )
+                self.assert_failed(
+                    result,
+                    reasons,
+                    marketplace_state,
+                    plugin_state,
+                )
+                self.assertEqual(FULL_ORDER, tuple(adapter.calls))
+
+    def test_f5_finite_failure_wrong_operation_or_manifest_cannot_prove_or_confirm(self) -> None:
+        invalid_values: tuple[object, ...] = (
+            None,
+            "",
+            (),
+            [],
+            {},
+            CodexCompensationPortOperationFailed.model_construct(),
+            finite_failure(foreign_manifest(), CodexCompensationPortOperation.REMOVE_PLUGIN),
+            finite_failure(foreign_manifest(), CodexCompensationPortOperation.LIST_PLUGINS),
+            finite_failure(manifest(), CodexCompensationPortOperation.REMOVE_MARKETPLACE),
+        )
+        for value in invalid_values:
+            with self.subTest(value_type=type(value).__name__):
+                adapter = RecordingPort()
+                adapter.plugin_list_result = value
+                result = compose_codex_compensation(
+                    capability(adapter),
+                    request(),
+                    plan(CodexAttemptEffectState.OWNED, CodexAttemptEffectState.OWNED),
+                )
+                self.assert_failed(
+                    result,
+                    (
+                        CodexCompensationReason.PLUGIN_INSTALLED_MALFORMED,
+                        CodexCompensationReason.PLUGIN_AVAILABLE_MALFORMED,
+                    ),
+                    CodexAttemptEffectState.NOT_ATTEMPTED,
+                    CodexAttemptEffectState.OWNED,
+                )
+                self.assertEqual(FULL_ORDER, tuple(adapter.calls))
+
+    def test_f3_matching_removal_failure_retains_only_authority_not_independently_proved_absent(self) -> None:
+        plugin_adapter = RecordingPort()
+        plugin_adapter.plugin_removal_result = finite_failure(
+            manifest(),
+            CodexCompensationPortOperation.REMOVE_PLUGIN,
+        )
+        plugin_adapter.plugin_list_result = finite_failure(
+            manifest(),
+            CodexCompensationPortOperation.LIST_PLUGINS,
+        )
+        plugin_result = compose_codex_compensation(
+            capability(plugin_adapter),
+            request(),
+            plan(CodexAttemptEffectState.OWNED, CodexAttemptEffectState.OWNED),
+        )
+        self.assert_failed(
+            plugin_result,
+            (
+                CodexCompensationReason.PLUGIN_REMOVAL_DECLARED_FAILURE,
+                CodexCompensationReason.PLUGIN_INSTALLED_UNPROVED,
+                CodexCompensationReason.PLUGIN_AVAILABLE_UNPROVED,
+            ),
+            CodexAttemptEffectState.NOT_ATTEMPTED,
+            CodexAttemptEffectState.OWNED,
+        )
+        marketplace_adapter = RecordingPort()
+        marketplace_adapter.marketplace_removal_result = finite_failure(
+            manifest(),
+            CodexCompensationPortOperation.REMOVE_MARKETPLACE,
+        )
+        marketplace_adapter.marketplace_list_result = finite_failure(
+            manifest(),
+            CodexCompensationPortOperation.LIST_MARKETPLACES,
+        )
+        marketplace_result = compose_codex_compensation(
+            capability(marketplace_adapter),
+            request(),
+            plan(CodexAttemptEffectState.OWNED, CodexAttemptEffectState.OWNED),
+        )
+        self.assert_failed(
+            marketplace_result,
+            (
+                CodexCompensationReason.MARKETPLACE_REMOVAL_DECLARED_FAILURE,
+                CodexCompensationReason.MARKETPLACE_UNPROVED,
+            ),
+            CodexAttemptEffectState.OWNED,
+            CodexAttemptEffectState.NOT_ATTEMPTED,
+        )
+
+    def test_f5_failure_subclass_constructed_and_recursive_injected_state_are_trap_free(self) -> None:
+        malformed_values: list[object] = [
+            FailureSubclass(
+                manifest=manifest(),
+                operation=CodexCompensationPortOperation.LIST_PLUGINS,
+                status="FAILED",
+                reason=CodexCompensationPortFailureReason.DEPENDENCY_BLOCKED,
+            ),
+            CodexCompensationPortOperationFailed.model_construct(),
+            CodexCompensationPortOperationFailed.model_construct(
+                manifest=PlainManifestTrap(),
+                operation=CodexCompensationPortOperation.LIST_PLUGINS,
+                status="FAILED",
+                reason=CodexCompensationPortFailureReason.DEPENDENCY_BLOCKED,
+            ),
+        ]
+        for node in FAILURE_STATE_INJECTION_TABLE:
+            failure = finite_failure(
+                manifest().model_copy(deep=True),
+                CodexCompensationPortOperation.LIST_PLUGINS,
+            )
+            object.__setattr__(failure_state_node(failure, node), "untrusted_extra", "untrusted")
+            malformed_values.append(failure)
+        for value in malformed_values:
+            with self.subTest(value_type=type(value).__name__):
+                adapter = RecordingPort()
+                adapter.plugin_list_result = value
+                result = compose_codex_compensation(
+                    capability(adapter),
+                    request(),
+                    plan(CodexAttemptEffectState.OWNED, CodexAttemptEffectState.OWNED),
+                )
+                self.assert_failed(
+                    result,
+                    (
+                        CodexCompensationReason.PLUGIN_INSTALLED_MALFORMED,
+                        CodexCompensationReason.PLUGIN_AVAILABLE_MALFORMED,
+                    ),
+                    CodexAttemptEffectState.NOT_ATTEMPTED,
+                    CodexAttemptEffectState.OWNED,
+                )
+                self.assertEqual(FULL_ORDER, tuple(adapter.calls))
+        trap = malformed_values[2]
+        if type(trap) is not CodexCompensationPortOperationFailed:
+            raise AssertionError("expected exact trap envelope")
+        trapped_manifest = object.__getattribute__(trap, "manifest")
+        if type(trapped_manifest) is not PlainManifestTrap:
+            raise AssertionError("expected exact trap manifest")
+        self.assertEqual(0, trapped_manifest.invocation_count)
 
     def set_operation_result(
         self,
