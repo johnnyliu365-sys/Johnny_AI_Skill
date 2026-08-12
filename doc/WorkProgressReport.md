@@ -2667,6 +2667,18 @@
 | Post-merge verification | Focused 23/23 and serial full 317/317 pass. Strict full-tree mypy and in-memory compile pass 124 files. `git diff --check`, exact parent/product equality and unchanged three-worktree topology pass. A repository-external mypy cache directory remains because the execution policy rejected recursive deletion; no worktree cache or tracked/ignored residue exists. |
 | Completion | 05B4B2B is `COMPLETE / APPROVED / INTEGRATED`; allocation `aln_local_orchestration_install_05b4b2b_20260812` is released and receipt `rcpt_local_orchestration_install_05b4b2b_20260812` is closed against replay. 05B4B2C is unallocated and `REFREEZE_READY`. No live Codex, host, target-project or network effect, push, release or deployment occurred. |
 
+## PRG-20260812-238 — Ticket 05B4B2B1 terminal claim authority freeze
+
+| Field | Value |
+| --- | --- |
+| Router event | `ACTION_COMPLETED(05B4B2B) -> TICKET_REFREEZE(05B4B2C/05B4B2D) -> TICKET_DEFECT_FOUND -> TICKET_05B4B2B1_FROZEN -> DISPATCH_PENDING` |
+| Defect / convergence | B2B terminal is strict decision data but not live one-shot settlement authority. Direct B2C/B2D dispatch would allow reconstructed proof/compensation DTOs and cannot prove exact terminal origin or atomic consumption. This is a ticket decomposition defect, not a requirement change or B2B implementation defect. |
+| Decision | Insert B2B1 as an effect-free authority seam: wrap the exact live B2B coordinator, intercept only its exact terminal, issue one non-transferable proof/compensation claim and consume the matching claim once into rebuilt existing decision data. B2C/B2D remain separate later effect tickets. |
+| Ticket / closure | `05b4b2b1-codex-registration-terminal-claim-authority`; `CLOSURE-LOCAL-INSTALL-T05B4B2B1-01`; exact C1-C8; two new source/test paths only. |
+| XSS | `XSS_NOT_APPLICABLE`: no Browser, WebView, HTML/DOM renderer, JavaScript execution context or privileged bridge/API. |
+| Planned binding | `hnd_local_orchestration_install_05b4b2b1_20260812`; `aln_local_orchestration_install_05b4b2b1_20260812`; `rcpt_local_orchestration_install_05b4b2b1_20260812`; `corr-local-orchestration-install-05b4b2b1-20260812`; `q-local-orchestration-install-05b4b2b1-20260812`; `scx-local-orchestration-install-05b4b2b1-20260812-01`. Planned owner is the same task in existing `workflow-implementer-2`; no new worktree. |
+| Stop | Freeze is not dispatch. B2C/B2D remain unallocated. No branch switch, source/test edit, effect, target-project write, push, release or deployment before a reviewed dispatch registry. |
+
 ## PRG-20260812-235 — Ticket 05B4B2B CR-154 bounded correction handoff
 
 | Field | Value |

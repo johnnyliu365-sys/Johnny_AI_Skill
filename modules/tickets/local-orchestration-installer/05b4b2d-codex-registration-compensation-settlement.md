@@ -3,12 +3,12 @@
 | Field | Value |
 | --- | --- |
 | State | `PLANNED / DEPENDENCY_WAIT / REFREEZE_REQUIRED` |
-| Dependency | 05B4B2B independently approved and integrated |
+| Dependency | 05B4B2B1 terminal claim authority independently approved and integrated |
 | Allocation | None |
 
 ## Reserved responsibility
 
-Consume only B2B's exact gated compensation-required or interrupted-start
+Consume only B2B1's exact gated compensation claim or B2B started-add recovery
 outcome, bind the integrated compensation request/capability and return the
 existing exhaustive compensation composition algebra. It must not execute
 forward registration, issue a registration receipt or create an oracle. No
