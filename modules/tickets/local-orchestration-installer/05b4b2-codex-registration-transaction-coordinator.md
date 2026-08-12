@@ -20,7 +20,7 @@ unchanged; this is ticket decomposition.
 | --- | --- | --- |
 | [05B4B2A](05b4b2a-codex-registration-transaction-authority.md) | Own one process-local attempt, exact phase/generation and atomic one-shot start/complete authority without invoking an effect. | B1 integrated |
 | [05B4B2B](05b4b2b-codex-registration-forward-composition.md) | Invoke only fresh-preflight/marketplace-add/plugin-add through an admitted registration capability and the B2A gate. | B2A integrated |
-| [05B4B2B1](05b4b2b1-codex-registration-terminal-claim-authority.md) | Convert only an exact B2B terminal into one non-transferable, one-shot proof or compensation claim without settlement effects. | B2B integrated |
+| [05B4B2B1](05b4b2b1-codex-registration-terminal-claim-authority.md) | Convert only an exact B2B terminal or started-add recovery into one non-transferable, one-shot proof or compensation claim without settlement effects. | B2B integrated |
 | [05B4B2C](05b4b2c-codex-registration-proof-settlement.md) | Turn only an exact gated proof claim and matching proof into the existing metadata-only registration receipt. | B2B1 integrated |
 | [05B4B2D](05b4b2d-codex-registration-compensation-settlement.md) | Turn only an exact gated compensation claim into the existing exhaustive compensation composition result. | B2B1 integrated; may later run in parallel with B2C |
 | [05B4B2E](05b4b2e-codex-registration-lifecycle-acceptance.md) | Prove the composed success and failure paths in the disposable 05S1-05S4 environment, including complete removal/absence. | B2C and B2D integrated |

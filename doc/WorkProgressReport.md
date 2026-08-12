@@ -2679,6 +2679,16 @@
 | Planned binding | `hnd_local_orchestration_install_05b4b2b1_20260812`; `aln_local_orchestration_install_05b4b2b1_20260812`; `rcpt_local_orchestration_install_05b4b2b1_20260812`; `corr-local-orchestration-install-05b4b2b1-20260812`; `q-local-orchestration-install-05b4b2b1-20260812`; `scx-local-orchestration-install-05b4b2b1-20260812-01`. Planned owner is the same task in existing `workflow-implementer-2`; no new worktree. |
 | Stop | Freeze is not dispatch. B2C/B2D remain unallocated. No branch switch, source/test edit, effect, target-project write, push, release or deployment before a reviewed dispatch registry. |
 
+## PRG-20260812-239 — Ticket 05B4B2B1 freeze correction
+
+| Field | Value |
+| --- | --- |
+| Router event | `TICKET_DEFECT_FOUND(PRG-238) -> SAME_TICKET_REFREEZE -> DISPATCH_PENDING` |
+| Defect | PRG-238 protected terminal proof/compensation DTOs but left `CodexRegistrationAddRecovery` as transferable data. B2D could therefore receive reconstructed recovery data without exact live origin or one-shot consumption. |
+| Correction | The same B2B1 authority now converts exact terminal proof into a proof claim and exact terminal compensation or started-add recovery into a compensation claim. Matching consumption returns a rebuilt existing proof decision, compensation decision or add-recovery DTO once; all raw DTOs remain data and are never settlement authority. |
+| Scope / XSS | Same closure C1-C8 and exact two new source/test paths; no effect ticket added. `XSS_NOT_APPLICABLE`. Implementation handoff evidence is reserved as PRG-20260812-242. |
+| Stop | Refreeze remains non-dispatch. B2C/B2D remain unallocated until B2B1 is independently approved and integrated. |
+
 ## PRG-20260812-235 — Ticket 05B4B2B CR-154 bounded correction handoff
 
 | Field | Value |
