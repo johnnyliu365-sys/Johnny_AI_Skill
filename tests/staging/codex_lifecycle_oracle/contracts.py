@@ -31,6 +31,19 @@ def _nonblank(value: str, label: str) -> str:
     return value
 
 
+def _logical_installed_path(value: str, label: str) -> str:
+    """Accept one normalized drive-qualified Windows observation, never a locator."""
+
+    text = _nonblank(value, label)
+    if "/" in text or "%2e" in text.lower() or "%2f" in text.lower() or "%5c" in text.lower():
+        raise ValueError(f"{label} must not contain alternate or encoded separators")
+    if re.fullmatch(r'[A-Za-z]:\\(?:[^\\/:?*"<>|]+\\)*[^\\/:?*"<>|]+', text) is None:
+        raise ValueError(f"{label} must be a normalized drive-qualified Windows absolute path")
+    if any(segment in (".", "..") for segment in text.split("\\")):
+        raise ValueError(f"{label} must not contain traversal components")
+    return text
+
+
 class OracleAction(str, Enum):
     MARKETPLACE_ADD = "MARKETPLACE_ADD"
     MARKETPLACE_LIST = "MARKETPLACE_LIST"
@@ -99,6 +112,7 @@ class OracleIdentity(StrictModel):
     plugin_source: str
     plugin_install_policy: str
     plugin_auth_policy: str
+    plugin_installed_path: str
 
     _text = field_validator(
         "marketplace_name",
@@ -109,7 +123,13 @@ class OracleIdentity(StrictModel):
         "plugin_source",
         "plugin_install_policy",
         "plugin_auth_policy",
+        "plugin_installed_path",
     )(classmethod(lambda cls, value: _nonblank(value, "identity field")))
+
+    @field_validator("plugin_installed_path")
+    @classmethod
+    def exact_logical_installed_path(cls, value: str) -> str:
+        return _logical_installed_path(value, "plugin installed path")
 
     @model_validator(mode="after")
     def canonical_effect_names(self) -> OracleIdentity:
@@ -147,6 +167,7 @@ class OraclePluginRecord(StrictModel):
     source: str
     install_policy: str
     auth_policy: str
+    installed_path: str
     locator: str
     digest: str
 
@@ -158,9 +179,15 @@ class OraclePluginRecord(StrictModel):
         "source",
         "install_policy",
         "auth_policy",
+        "installed_path",
         "locator",
         "digest",
     )(classmethod(lambda cls, value: _nonblank(value, "plugin field")))
+
+    @field_validator("installed_path")
+    @classmethod
+    def exact_logical_installed_path(cls, value: str) -> str:
+        return _logical_installed_path(value, "plugin installed path")
 
     @model_validator(mode="after")
     def exact_plugin_locator(self) -> OraclePluginRecord:
