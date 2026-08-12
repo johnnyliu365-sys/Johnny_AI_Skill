@@ -2953,3 +2953,21 @@
 | Integration | Merge `9769a75a5c5199fa47b19a2e9ad4242d6575c9a9`; first parent reviewer approval `eef459ed030a8bc686f2f83650716bcabf984a42`; second parent exact handoff `60a8311548edfd096733d1d7cf1e1eb928077f55`. The sole conflict was append-only WPR evidence; the explicit resolution retained PRG-260, PRG-261 and PRG-262. |
 | Integrated verification | Compensation/proof/composition/authority suites passed 35/35; serial full suite passed 353/353; strict mypy passed 130 files; exact parent topology, `git diff --check` and three-worktree topology passed. |
 | Completion / continuation | 05B4B2D is `COMPLETED / APPROVED / INTEGRATED`; allocation released and receipt closed. 05B4B2E dependencies are satisfied, but its combined responsibility is not dispatchable and must be decomposed before implementation. No push, package build, install, release, deployment, target-project mutation or live Codex effect occurred. |
+
+## PRG-20260813-264 — Ticket 05B4B2E lifecycle acceptance decomposition
+
+| Field | Value |
+| --- | --- |
+| Router event | `TICKET_REFINE(05B4B2E) -> CONVERGENCE_DECOMPOSED -> CHILDREN_PLANNED(E0-E6)` |
+| Finding | The former B2E mixed an oracle contract correction, pure identity mapping, registration and compensation adapters, success settlement, failure/compensation settlement, absence, foreign-state preservation and target-project isolation. It was too broad for one owner, one red/green cycle and one independent acceptance decision. |
+| Decomposition | E0 logical-path oracle evidence; E1 pure request/identity binding; E2 registration adapter; E3 compensation adapter; E4 success acceptance; E5 compensation/absence acceptance; E6 foreign/target isolation. E2/E3 may run on the two existing implementers only after E0/E1 are independently approved and integrated; E4-E6 remain dependency ordered. |
+| Package boundary | The separate package chain 04A-04I is unchanged. In particular 04D is the only future staging push authority and remains blocked on complete candidate freeze 04C. No push occurred. |
+
+## PRG-20260813-265 — Ticket 05B4B2E0 reviewed freeze
+
+| Field | Value |
+| --- | --- |
+| Router event | `CHILD_SELECTED(05B4B2E0) -> TICKET_FROZEN / DISPATCH_PENDING` |
+| Closure | `CLOSURE-LOCAL-INSTALL-T05B4B2E0-01` / O1-O8; exact logical Windows installed path is persisted and returned separately from the oracle's disposable physical locator. |
+| Scope | Only 05S4 contracts, oracle, child and focused oracle test are writable. No production adapter or end-to-end lifecycle code. No numeric line limit. `XSS_NOT_APPLICABLE`. |
+| Planned lane | Existing task `019fcc9c-f34f-7d53-a313-c70c90bf3245` in `workflow-implementation`; no new worktree. Freeze is not dispatch; exact lane/readback and a new receipt-bound registry remain required. |

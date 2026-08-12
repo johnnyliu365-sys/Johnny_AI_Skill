@@ -138,11 +138,15 @@
 | Ticket 05B4A1 plugin identity authority | COMPLETE / APPROVED / INTEGRATED | Implementation `76f0b96`, handoff `30d6bcf`, review `42e1590`, merge `3399cf9`; exact I1-I6 passed. |
 | Ticket 05B4B registration transaction parent | CONVERGENCE_DECOMPOSED | Split pure forward decisions from effect/proof/receipt/compensation/oracle composition. |
 | Ticket 05B4B1 pure registration reducer | COMPLETE / APPROVED / INTEGRATED | Correction `64e9e0a`, handoff `918c9af`, review `71f30be`, guarded merge `d7c5934`; post-merge verification passed. |
-| Ticket 05B4B2 transaction parent | CONVERGENCE_DECOMPOSED / B2A-B2D_INTEGRATED / B2E_REFREEZE_REQUIRED | Transaction authority, forward composition and both settlement lanes are integrated; lifecycle acceptance must be decomposed before dispatch. |
+| Ticket 05B4B2 transaction parent | CONVERGENCE_DECOMPOSED / B2A-B2D_INTEGRATED / B2E_DECOMPOSED | Transaction authority, forward composition and both settlement lanes are integrated; lifecycle acceptance is split into E0-E6. |
 | Ticket 05B4B2A transaction authority | COMPLETE / APPROVED / INTEGRATED | Correction `4e6924b`, handoff `e4841ab`, review `e03cb8d`, guarded merge `494aaca`; post-merge focused 11/11, full 294/294, strict mypy and compile 122 files pass. |
 | Ticket 05B4B2B/B1/B2 and B2C | COMPLETE / APPROVED / INTEGRATED | Forward `63e8a7b`; claim `0c4476f`; compensation context `e7cd37b`; proof settlement `af3a95a`. |
 | Ticket 05B4B2D compensation settlement | COMPLETE / APPROVED / INTEGRATED | Implementation `bf9278f`, handoff `60a8311`, review `eef459e`, guarded merge `9769a75`; post-merge 353 tests and strict mypy passed. |
-| Ticket 05B4B2E lifecycle acceptance | PLANNED / REFINE_REQUIRED | Dependencies are satisfied, but staging adapters, success, compensation and isolation acceptance must be split before dispatch. |
+| Ticket 05B4B2E lifecycle acceptance parent | CONVERGENCE_DECOMPOSED / NON_DISPATCHABLE | E0 oracle evidence, E1 identity, E2/E3 adapters, E4 success, E5 compensation and E6 isolation are separately accepted. |
+| Ticket 05B4B2E0 oracle logical installed path | FROZEN / DISPATCH_PENDING | First child; closes the logical-path versus disposable-locator evidence gap without adapter effects. |
+| Ticket 05B4B2E1 oracle identity binding | PLANNED / DEPENDENCY_WAIT | Pure mapping after E0 integration. |
+| Tickets 05B4B2E2/E3 oracle adapters | PLANNED / DEPENDENCY_WAIT | Disjoint registration and compensation adapters may run in parallel only after E1 integration. |
+| Tickets 05B4B2E4-E6 lifecycle acceptance | PLANNED / DEPENDENCY_WAIT | Success, compensation and isolation remain small dependency-ordered acceptance tickets. |
 | Ticket 05C receipt removal/replay | PLANNED / DEPENDENCY_WAIT / REFREEZE_REQUIRED | Starts only after 05A/05B approval/integration and a finite behavior/rollback closure refreeze. |
 | Ticket 06A Codex role-profile capability proof | DONE / APPROVED_EVIDENCE / INSTALL_BLOCKED / INTEGRATED | Implementation `38e9a8b`, handoff `f6f186f`, review `62955ec`, guarded merge `de4141e`; actual installed-host result is `ROLE_ISOLATION_UNPROVEN / ACCESS_DENIED / OUTPUT_UNAVAILABLE`, so capability dependents stay blocked. |
 | Autonomous Ticket 04 reviewer-only authority | PLANNED / DEPENDENCY_WAIT | Starts only after reviewed 06A `SUPPORTED`; typed fake effect gate, not a real Agent turn. |
