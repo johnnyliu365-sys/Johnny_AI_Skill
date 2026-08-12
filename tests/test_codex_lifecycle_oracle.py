@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from enum import Enum
 import hashlib
 import json
 from pathlib import Path
@@ -11,7 +12,7 @@ import tempfile
 from typing import TypeVar
 import unittest
 
-from library.local_orchestration.host_contracts import CodexMarketplaceList, CodexPluginList
+from library.local_orchestration.host_contracts import CodexMarketplaceList, CodexPluginEntry, CodexPluginList
 from tests.staging.codex_lifecycle_oracle.contracts import (
     ORACLE_COMMAND_FILE_NAME,
     ORACLE_STAGING_CODEX_VERSION,
@@ -171,7 +172,128 @@ class AbsenceStateResidueFixture(CodexProtocolFixture):
         return response
 
 
+class DerivedPluginList(CodexPluginList):
+    """An adversarial Pydantic subclass that has the expected public fields."""
+
+
+class DerivedAcceptedResponse(CodexProtocolAccepted):
+    """An exact-shaped subclass that must never cross the absence boundary."""
+
+
+class DerivedPluginEntry(CodexPluginEntry):
+    """An exact-shaped nested subclass that must never prove absence."""
+
+
+class AbsenceResponseShape(str, Enum):
+    DERIVED_ACCEPTED = "DERIVED_ACCEPTED"
+    DERIVED_PAYLOAD = "DERIVED_PAYLOAD"
+    RAW_PAYLOAD = "RAW_PAYLOAD"
+    MISSING_RESPONSE_STATE = "MISSING_RESPONSE_STATE"
+    EXTRA_RESPONSE_STATE = "EXTRA_RESPONSE_STATE"
+    INJECTED_PAYLOAD_STATE = "INJECTED_PAYLOAD_STATE"
+    DERIVED_ENTRY = "DERIVED_ENTRY"
+    MISSING_ENTRY_STATE = "MISSING_ENTRY_STATE"
+
+
+class ConstructedAbsenceResponseFixture(CodexProtocolFixture):
+    """Returns a constructed accepted response with an exact-shaped subclass payload."""
+
+    def __init__(
+        self,
+        runner: CodexLifecycleOracleRunner,
+        shape: AbsenceResponseShape = AbsenceResponseShape.DERIVED_PAYLOAD,
+    ) -> None:
+        super().__init__(runner, ExactResponseFilePort())
+        self._shape = shape
+
+    def run(
+        self,
+        lease: EnvironmentLease,
+        surface: CodexProtocolSurface,
+    ) -> CodexProtocolAccepted | CodexProtocolRejected:
+        response = super().run(lease, surface)
+        if surface is not CodexProtocolSurface.PLUGIN_LIST:
+            return response
+        if not isinstance(response, CodexProtocolAccepted) or not isinstance(response.payload, CodexPluginList):
+            raise AssertionError("fixture did not receive a plugin-list response")
+        payload = response.payload
+        if self._shape is AbsenceResponseShape.DERIVED_ACCEPTED:
+            return DerivedAcceptedResponse.model_construct(surface=CodexProtocolSurface.PLUGIN_LIST, payload=payload)
+        if self._shape is AbsenceResponseShape.DERIVED_PAYLOAD:
+            derived_payload = DerivedPluginList(installed=payload.installed, available=payload.available)
+            return CodexProtocolAccepted.model_construct(surface=CodexProtocolSurface.PLUGIN_LIST, payload=derived_payload)
+        if self._shape is AbsenceResponseShape.RAW_PAYLOAD:
+            return CodexProtocolAccepted.model_construct(
+                surface=CodexProtocolSurface.PLUGIN_LIST,
+                payload={"installed": payload.installed, "available": payload.available},
+            )
+        if self._shape is AbsenceResponseShape.MISSING_RESPONSE_STATE:
+            return CodexProtocolAccepted.model_construct(payload=payload)
+        if self._shape is AbsenceResponseShape.EXTRA_RESPONSE_STATE:
+            forged = CodexProtocolAccepted.model_construct(surface=CodexProtocolSurface.PLUGIN_LIST, payload=payload)
+            object.__setattr__(forged, "injected", "forbidden")
+            return forged
+        if self._shape is AbsenceResponseShape.INJECTED_PAYLOAD_STATE:
+            forged_payload = CodexPluginList.model_construct(installed=payload.installed, available=payload.available)
+            object.__setattr__(forged_payload, "injected", "forbidden")
+            return CodexProtocolAccepted.model_construct(surface=CodexProtocolSurface.PLUGIN_LIST, payload=forged_payload)
+        if not payload.installed:
+            raise AssertionError("fixture requires one foreign plugin entry")
+        entry = payload.installed[0]
+        if self._shape is AbsenceResponseShape.DERIVED_ENTRY:
+            derived_entry = DerivedPluginEntry.model_validate(entry.model_dump(warnings=False))
+            forged_payload = CodexPluginList.model_construct(installed=(derived_entry,), available=payload.available)
+            return CodexProtocolAccepted.model_construct(surface=CodexProtocolSurface.PLUGIN_LIST, payload=forged_payload)
+        missing_entry = CodexPluginEntry.model_construct(
+            pluginId=entry.pluginId,
+            name=entry.name,
+            marketplaceName=entry.marketplaceName,
+            version=entry.version,
+            installed=entry.installed,
+            enabled=entry.enabled,
+            source=entry.source,
+            installPolicy=entry.installPolicy,
+            authPolicy=entry.authPolicy,
+        )
+        forged_payload = CodexPluginList.model_construct(installed=(missing_entry,), available=payload.available)
+        return CodexProtocolAccepted.model_construct(surface=CodexProtocolSurface.PLUGIN_LIST, payload=forged_payload)
+
+
 class CodexLifecycleOracleTests(unittest.TestCase):
+    def test_cr161_constructed_accepted_subclass_payload_must_not_prove_absence(self) -> None:
+        allocator = DisposableEnvironmentAllocator.from_system_temp()
+        provisioned = allocator.provision(EnvironmentOwnerId(value="environment-owner-0000000000000161"))
+        if not isinstance(provisioned, ProvisionedEnvironment):
+            raise AssertionError("failed to provision owned environment")
+        lease = provisioned.environment
+        runner = CodexLifecycleOracleRunner(BoundedChildProcessRunner(SubprocessProcessPort()))
+        oracle = FixtureFailureOracle(runner, ConstructedAbsenceResponseFixture(runner))
+        try:
+            self._assert_completed(oracle.initialize(lease), CodexMarketplaceList)
+            result = self._run(oracle, lease, OracleAction.ABSENCE)
+            self._assert_blocked(result, OracleBlockReason.ABSENCE_NOT_PROVEN)
+        finally:
+            self._teardown(allocator, lease)
+
+    def test_cr161_non_exact_and_recursively_malformed_absence_responses_block_finitely(self) -> None:
+        cells = tuple(AbsenceResponseShape)
+        for index, shape in enumerate(cells, start=70):
+            with self.subTest(shape=shape.value):
+                allocator = DisposableEnvironmentAllocator.from_system_temp()
+                provisioned = allocator.provision(EnvironmentOwnerId(value=f"environment-owner-00000000000016{index:02x}"))
+                if not isinstance(provisioned, ProvisionedEnvironment):
+                    raise AssertionError("failed to provision owned environment")
+                lease = provisioned.environment
+                runner = CodexLifecycleOracleRunner(BoundedChildProcessRunner(SubprocessProcessPort()))
+                oracle = FixtureFailureOracle(runner, ConstructedAbsenceResponseFixture(runner, shape))
+                try:
+                    self._assert_completed(oracle.initialize(lease), CodexMarketplaceList)
+                    foreign = self._foreign_plugin("foreign-cr161-plugin", "foreign-cr161-name", "foreign-cr161-market")
+                    self.assertIsInstance(oracle.seed_foreign_plugin(lease, foreign), OracleForeignSeeded)
+                    self._assert_blocked(self._run(oracle, lease, OracleAction.ABSENCE), OracleBlockReason.ABSENCE_NOT_PROVEN)
+                finally:
+                    self._teardown(allocator, lease)
+
     def test_v3_v4_version_is_persisted_and_independent_from_command_identity(self) -> None:
         allocator, lease, oracle = self._ready("00000000000000a1")
         try:
