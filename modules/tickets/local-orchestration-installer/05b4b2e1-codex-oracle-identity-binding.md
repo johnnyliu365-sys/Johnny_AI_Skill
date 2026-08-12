@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / unchanged AC-01, AC-02, AC-07 and AC-08 staging seam |
-| State | `CHANGES_REQUESTED / CORRECTION_PENDING` |
+| State | `REVISION_02_IN_PROGRESS / DISPATCH_CONFIRMED` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B4B2E1-01` / I1-I8 |
 | Dependency | E0 integrated by `3fc2f99f9cd4a7fff3e100918089ffed99cc16ab` |
 | Planned owner | Task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2`; no new worktree |
@@ -109,3 +109,16 @@ injected extra state on most exact nested request models is erased during
 rebuilding and then accepted, contrary to I5. The same ticket, owner,
 worktree, branch, allocation, receipt and correlation are retained. No new
 branch or worktree is permitted.
+
+## Revision 02 correction registry
+
+| Field | Value |
+| --- | --- |
+| Review / finding | `d4c8f78e1a0bd73003afd4c232023b85a0be427a`; CR-159; unchanged I5/I8 closure |
+| Correction handoff | `hnd_local_orchestration_install_05b4b2e1_cr159_20260813`; retain `aln_local_orchestration_install_05b4b2e1_20260813`, `rcpt_local_orchestration_install_05b4b2e1_20260813` and `corr-local-orchestration-install-05b4b2e1-20260813` |
+| Lane readback | Idle existing task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; clean exact HEAD `6ee9b4a96a5a1720c04845b9edb115d689472f34`; retain existing branch/worktree; exactly three worktrees; no new branch/worktree |
+| Writable correction | Original two implementation paths only; typed recursive original-state-shape rejection plus the complete nested injection table and one isolated reverse mutation |
+| Return | One additive correction commit, then WPR-only `PRG-20260813-277`; reviewer performs the independent terminal review |
+
+No E2-E6, live Codex, host/filesystem/environment/network/target-project
+effect, staging push, package, release or deployment is authorized.

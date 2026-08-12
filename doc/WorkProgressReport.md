@@ -3065,3 +3065,13 @@
 | Passing evidence | Unicode-safe repository-external snapshot passed focused/relevant 18/18, full serial 369/369, strict mypy 132 files and in-memory compile 132 files. Exact mapping, logical paths, no-effect boundary and submitted reversals pass. |
 | CR-159 | `IMPLEMENTATION_DEFECT / I5-I8`: injected extra attributes on exact nested preflight, installation/root/marketplace/plugin/source and locator models are discarded during rebuilding and return `OracleIdentityBound`. The existing outer validation proves declared values, not the original recursive state shape. |
 | Disposition | Same ticket, owner, worktree, branch, allocation, receipt and correlation; add a typed recursive no-extra-state guard, committed coverage for every nested request model and one isolated guard reversal. No new branch/worktree, E2-E6, staging push, package, release or deployment. `XSS_NOT_APPLICABLE`. |
+
+## PRG-20260813-276 — Ticket 05B4B2E1 revision-02 correction dispatch
+
+| Field | Value |
+| --- | --- |
+| Router event | `REVIEW_CHANGES_REQUESTED(05B4B2E1) -> CORRECTION_HANDOFF -> IMPLEMENTATION_DISPATCH_CONFIRMED` |
+| Review / binding | `d4c8f78e1a0bd73003afd4c232023b85a0be427a`; CR-159; `hnd_local_orchestration_install_05b4b2e1_cr159_20260813`; retain the revision-01 allocation, receipt and correlation. |
+| Lane readback | Idle task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2`; exact clean submitted HEAD `6ee9b4a96a5a1720c04845b9edb115d689472f34`; zero ignored/cache residue; exactly three worktrees; retain branch `codex/implementation-codex-oracle-identity-binding-05b4b2e1`. |
+| Correction | Prove and reject undeclared original state recursively for the outer request and every exact nested request model after integrated exact-type admission and before identity binding, without caller protocols or dynamic discovery. Commit the complete nested injection matrix and reverse the guard once. |
+| Return / limits | One additive correction commit in the original two-path scope, then WPR-only PRG-277. No new branch/worktree, E2-E6, live Codex, host/filesystem/network/target-project effect, staging push, package, release or deployment. |
