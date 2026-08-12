@@ -2,7 +2,7 @@
 
 ## Review decision
 
-`CHANGES_REQUESTED`
+`APPROVED / READY_TO_MERGE`
 
 The immutable return satisfies C1-C3 and C6-C8, but CR-155 shows that C4/C5
 claim binding is not immutable. The live claim and its private registry record
@@ -62,9 +62,20 @@ and focused test, followed by one WPR-only handoff. Preserve all C1-C8 tests and
 five submitted reversals. No new branch/worktree, public export, settlement
 effect, B2C/B2D work, integration, push, release or deployment is authorized.
 
+## Final correction review
+
+| Gate | Result |
+| --- | --- |
+| Immutable return | PASS: `ad2fc50 -> 25f6304 -> 2f9968c`; correction changes only the existing settlement module/test and the handoff changes only `doc/WorkProgressReport.md` as PRG-20260812-245. |
+| CR-155 behavior | PASS: `ClaimRecord` owns a separate canonical primitive `ClaimBinding`. Exact status/attempt/phase/generation/kind and nested primitive types are validated before binding comparison and tombstone. Independent same-object alternate attempt, phase and generation probes all return `INVALID_CLAIM`; an unchanged claim consumes once. |
+| Caller protocol safety | PASS: a nested constructed-invalid attempt trap is rejected with zero equality/hash/repr calls. Exact built-in string/integer comparisons occur only after exact-type admission. |
+| Independent verification | PASS in a repository-external immutable snapshot: focused 13/13, full serial 330/330, strict mypy 126 Python files and in-memory compile 126 files. Source sentinel and exact scope/ancestry/topology checks pass. |
+| Evidence truthfulness | PASS: replacing only the canonical attempt/generation comparison with unconditional admission makes the named CR-155 test red in the attempt and generation cells. Restoring the line returns the exact production blob `300cd6b6ad24c7a81a53cd1f1fdcb22cfa55425d` and the named test passes. |
+| XSS review | `XSS_NOT_APPLICABLE`: no Browser, WebView, HTML/DOM renderer, JavaScript execution context or privileged bridge/API is introduced. |
+
 ## Disposition
 
-`CHANGES_REQUESTED / SAME_CLOSURE_CORRECTION_REQUIRED`. This is the one bounded
-correction allowed for closure revision `CLOSURE-LOCAL-INSTALL-T05B4B2B1-01`.
-The same ticket, implementation owner, worktree, branch, allocation, receipt
-and correlation remain valid.
+`APPROVED / READY_TO_MERGE`. CR-155 is closed. Guarded integration may merge
+only exact handoff `2f9968ccb3825a77d26202c008c0cc6ea94cc3ed`, preserving
+the immutable implementation, handoff and review commits. B2C/B2D remain
+unallocated until integration and completion evidence are committed.

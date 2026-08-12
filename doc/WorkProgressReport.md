@@ -2753,3 +2753,13 @@
 | Lane | Same idle task, existing `workflow-implementer-2`, existing branch at clean immutable handoff `ad2fc5003d04289b9971e8bfe8f9c0d066e19f4b`; no new branch/worktree. |
 | Executable correction | First-red valid alternate attempt/phase/generation in-place mutations of the live claim metadata and require finite `INVALID_CLAIM`; keep a separate canonical authority-owned binding; exact trap-free field comparison precedes tombstone; unchanged claim still consumes once. Add one isolated comparison-gate reversal. |
 | Scope / return | Additive correction to the existing settlement module/test only, then WPR-only PRG-20260812-245. Preserve C1-C8 and all five prior reversals; rerun focused/full unittest, strict full-tree mypy, compile, source/scope/diff/ancestry/topology/residue checks. No effect/integration/push/release/deployment. |
+
+## PRG-20260812-246 — Ticket 05B4B2B1 CR-155 final independent review
+
+| Field | Value |
+| --- | --- |
+| Router event | `IMPLEMENTATION_CORRECTION_COMPLETED(CR-155) -> TERMINAL_CODE_REVIEW -> APPROVED -> GUARDED_INTEGRATION_READY` |
+| Immutable return | `ad2fc5003d04289b9971e8bfe8f9c0d066e19f4b -> 25f6304d1dd8f07cc2df703708e2a5dd7378469f -> 2f9968ccb3825a77d26202c008c0cc6ea94cc3ed`; exact two-path correction and WPR-only PRG-245. |
+| CR-155 closure | `ClaimRecord` owns a separate canonical primitive binding. Exact live metadata and nested primitive types are validated before comparison/tombstone. Independent unchanged consumption succeeds once; same-object alternate attempt, phase and generation mutations all return finite `INVALID_CLAIM`; nested trap invocation remains zero. |
+| Independent verification | Repository-external immutable snapshot passed focused 13/13, full serial 330/330, strict mypy 126 Python files and compile 126 files. Binding-gate reversal made attempt/generation cells red; restored source blob is `300cd6b6ad24c7a81a53cd1f1fdcb22cfa55425d`. Exact scope, ancestry and three-worktree topology pass. |
+| Disposition | `APPROVED / READY_TO_MERGE`; CR-155 closed; `XSS_NOT_APPLICABLE`. Only guarded integration of exact handoff `2f9968ccb3825a77d26202c008c0cc6ea94cc3ed` is permitted. |
