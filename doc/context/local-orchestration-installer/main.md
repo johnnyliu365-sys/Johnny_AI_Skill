@@ -2,13 +2,13 @@
 
 | Field | Value |
 | --- | --- |
-| Context state | `TICKET_05B4B1_CONVERGENCE_REVIEW_REQUIRED` |
-| Router event | `IMPLEMENTATION_COMPLETED(05B4B1) / TERMINAL_CODE_REVIEW / CHANGES_REQUESTED / TICKET_DEFECT / CONVERGENCE_REVIEW_REQUIRED` |
+| Context state | `TICKET_05B4B1_REVISION_02_DISPATCH_PENDING` |
+| Router event | `CONVERGENCE_REVIEW_REQUIRED / TICKET_REFROZEN(05B4B1_REVISION_02) / TICKET_DISPATCH_REQUIRED` |
 | Delivery stage | `POC` |
 | Requirement change | `CHG-20260808-011` |
 | Baseline | `1ca86f7` (`docs: dispatch Ticket 05B4B1 registration reducer`) |
 | Control-plane owner | Codex / current `main` worktree |
-| Implementation owner | 05B4A1 is integrated and released; 05B4B1 implementation/handoff remain immutable in existing `workflow-implementer-2`, but its allocation is stopped at terminal review and no implementation continuation is authorized |
+| Implementation owner | Same task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`, existing `workflow-implementer-2` and existing 05B4B1 branch are selected for additive revision-02 correction after dispatch; no new worktree/branch |
 | Required sources read | `AGENTS.md`, `Workflow.md` (Router, Wayfinder, Grill, change control, specification, tickets, role boundary), `Defined_wayfinder.md`, `CONTEXT.md`, `PRD.md`, `ProjectSchedule.md`, `doc/RequirementChangeLog.md`, existing plugin manifests / README, `library/workflow_router/`, and completed plugin / autonomous-collaboration POCs |
 
 ## Shared Context reference
@@ -590,6 +590,11 @@ The former 05B4B placeholder joined pure sequencing, registration effects,
 proof/receipt, compensation execution and lifecycle-oracle acceptance. The
 control plane decomposes it under unchanged requirements: 05B4B1 owns only a
 pure forward reducer through an exact proof request or compensation plan;
-05B4B2 later owns all effects and final truth. Only 05B4B1 closure D1-D8 is
-frozen. Implementer-2 is selected in its existing worktree; no new worktree,
-05B4B2 allocation or implementation dispatch exists at this freeze.
+05B4B2 later owns all effects and final truth.
+
+Revision-01 review CR-148 proved B1 cannot know whether identical input has
+already been consumed. Revision 02 removes reducer-owned Python identity and
+freezes R2-D1 through R2-D8: exact copies/reconstruction remain decision data,
+while B2 exclusively owns attempt/phase/generation and one-shot effect leases.
+Implementer-2 is selected in the existing branch/worktree for additive B1
+correction; no new branch/worktree or B2 implementation allocation exists.

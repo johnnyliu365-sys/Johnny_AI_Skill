@@ -3,8 +3,8 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / unchanged AC-01, AC-02, AC-07 and AC-08 registration seam |
-| State | `CHANGES_REQUESTED / TICKET_DEFECT / CONVERGENCE_REVIEW_REQUIRED` |
-| Closure | `CLOSURE-LOCAL-INSTALL-T05B4B1-01` / D1-D8 |
+| State | `IN_PROGRESS / REVISION_02_FREEZE / DISPATCH_PENDING` |
+| Closure | `CLOSURE-LOCAL-INSTALL-T05B4B1-02` / R2-D1 through R2-D8 |
 | Dependency | 05B4A1 approved and integrated by `3399cf934874f3304959ef0b6913548c0d767e01` |
 | Owner / worktree | Task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2`; no new worktree |
 | Language | Python 3.11; strict Pydantic/mypy |
@@ -123,3 +123,52 @@ distinguish the first call from the same input replay, the finding is
 `TICKET_DEFECT`, not an additive source correction. The submitted commits remain
 immutable evidence; no merge, correction, new branch/worktree or 05B4B2 dispatch
 is authorized before a reviewed refreeze.
+
+## Convergence resolution — revision 02
+
+CR-148 exposed a responsibility contradiction rather than a product requirement
+change. Revision 02 keeps this module a deterministic stateless reducer and
+removes reducer-owned Python object identity as an authority claim:
+
+- pending and terminal variants are strict decision data only;
+- an exact copied, deep-copied or serialization-round-tripped pending value is
+  semantically the same input and reduces to the same metadata decision;
+- repeating identical exact inputs is deterministic and never proves whether
+  a transaction phase is current or already consumed;
+- no B1 value contains or grants a lease, receipt, port or effect capability;
+- invalid shapes, wrong phase/results and mismatched nested contracts still
+  block finitely through the integrated validators;
+- [05B4B2](05b4b2-codex-registration-transaction-coordinator.md) exclusively
+  owns current generation, one-shot lease consumption, concurrent replay
+  exclusion and effect admission.
+
+This separation permits persistence/reconstruction without pretending that
+`id(object)` is durable transaction authority.
+
+## Acceptance Closure Set — revision 02
+
+| ID | Finite completion rule |
+| --- | --- |
+| `R2-D1` | First red adds the revised pure-data boundary probes before production changes. Exact shallow/deep copy and model-dump reconstruction currently block instead of reducing like the exact original; the named test must fail for those cells. |
+| `R2-D2` | Remove reducer-owned `_StateAuthority`, private identity fields and identity admission. No replacement registry, global consumed set, optional token, callable or port may be introduced. |
+| `R2-D3` | Original, shallow copy, deep copy and exact model-dump reconstruction of each legal pending phase produce the same public decision data for the same exact result. Repeated exact calls are deterministic. |
+| `R2-D4` | Every pending/terminal public dump and repr contains no authority, lease, generation, receipt, callable, raw output or secret. A copied B1 decision is data only and cannot invoke an effect in this module. |
+| `R2-D5` | Retain revision-01 D2-D5 request/result, ownership, proof-request and exact compensation-plan matrices unchanged. |
+| `R2-D6` | Retain wrong-phase, terminal, malformed, constructed-invalid, nested-trap and cross-request rejection. Remove only the impossible claim that B1 itself knows whether an otherwise exact value was already consumed. |
+| `R2-D7` | Independently reverse (a) pure copied-state admission, (b) private identity removal, (c) pre-existing marketplace non-ownership, (d) malformed add conservative compensation and (e) exact expected plugin-ID proof binding. Each named test must turn red and be restored. |
+| `R2-D8` | Focused/full serial unittest, strict full-tree mypy with external cache, in-memory compile, source/scope/diff, ancestry and tracked/ignored/cache readbacks pass. Implementation correction changes only the existing reducer and focused test; handoff changes WPR only. |
+
+## Revision-02 allocation plan
+
+| Field | Value |
+| --- | --- |
+| Handoff | `hnd_local_orchestration_install_05b4b1_r02_20260812` |
+| Allocation / receipt | `aln_local_orchestration_install_05b4b1_r02_20260812` / `rcpt_local_orchestration_install_05b4b1_r02_20260812` |
+| Correlation / question | `corr-local-orchestration-install-05b4b1-r02-20260812` / `q-local-orchestration-install-05b4b1-r02-20260812` |
+| Side context | `scx-local-orchestration-install-05b4b1-r02-20260812-01` |
+| Owner / lane | Same task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`, existing `workflow-implementer-2`, existing branch `codex/implementation-codex-registration-reducer-05b4b1` at immutable handoff `658a8f7e10d955b10a28eeb89133ec7c6b3e05a2`; additive commits only. |
+| Return | One exact two-path implementation correction commit, then WPR-only PRG-210. |
+
+No new branch/worktree, reset, amend, force, merge, package/dependency edit,
+05B4B2 implementation, another Agent, live effect, push, release or deployment
+is authorized. This refreeze is not dispatch.

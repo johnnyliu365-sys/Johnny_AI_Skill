@@ -2349,3 +2349,14 @@
 | Blocking evidence | The exact original `CodexFreshPreflightPending` was advanced twice with the same exact accepted result; both calls returned `CodexMarketplaceAddPending`. The independent D6 assertion requiring the second call to return `CodexRegistrationBlocked` failed. Marketplace and plugin pending states exhibit the same replay acceptance. |
 | Classification | `TICKET_DEFECT`: D6 requires consumed stale-state rejection, but the frozen pure reducer has no current-generation, lease, registry or consumption input capable of distinguishing first use from identical replay. A hidden mutable registry would change lifecycle, concurrency and cleanup semantics and is not an additive implementation correction. |
 | Decision / stop | `CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED`; do not merge the handoff, dispatch 05B4B2, or open a correction/new branch/worktree. Recommended refreeze keeps B1 deterministic and assigns current-generation/single-use replay protection to B2's transaction coordinator; the alternative must explicitly refreeze B1 as stateful. No live effect, target-project write, push, release or deployment occurred. |
+
+## PRG-20260812-208 — Ticket 05B4B1 revision-02 convergence refreeze
+
+| Field | Value |
+| --- | --- |
+| Router event | `CONVERGENCE_REVIEW_REQUIRED(05B4B1_REVISION_01) -> TICKET_DEFECT_RESOLVED -> TICKET_REFROZEN(REVISION_02) -> TICKET_DISPATCH_REQUIRED` |
+| Resolution | CR-148 is resolved at ticket design: B1 is deterministic stateless decision data and does not claim to detect whether identical input was consumed. Python object identity/private authority is removed. B2 exclusively owns exact attempt/phase/generation, one-shot lease consumption, concurrent replay exclusion and effect admission. Product requirements and SPEC ACs are unchanged. |
+| Ticket / closure | `05b4b1-codex-registration-reducer`; `CLOSURE-LOCAL-INSTALL-T05B4B1-02`; exact R2-D1 through R2-D8. Planned B2 responsibility is recorded at `05b4b2-codex-registration-transaction-coordinator.md` without allocation or implementation authority. |
+| Binding | `hnd_local_orchestration_install_05b4b1_r02_20260812`; `aln_local_orchestration_install_05b4b1_r02_20260812`; `rcpt_local_orchestration_install_05b4b1_r02_20260812`; `corr-local-orchestration-install-05b4b1-r02-20260812`; `q-local-orchestration-install-05b4b1-r02-20260812`; `scx-local-orchestration-install-05b4b1-r02-20260812-01`. |
+| Owner / lane | Same task, existing `workflow-implementer-2`, existing branch at immutable handoff `658a8f7e10d955b10a28eeb89133ec7c6b3e05a2`; additive source/test correction then WPR-only PRG-210. No new branch/worktree. |
+| Scope / stop | Existing reducer and focused test only. No hidden consumed-state registry, lease implementation, port/effect execution, package/dependency edit, another Agent, review/integration, B2 implementation, live Codex/host/target-project/network effect, push, release or deployment. Freeze is not dispatch. |
