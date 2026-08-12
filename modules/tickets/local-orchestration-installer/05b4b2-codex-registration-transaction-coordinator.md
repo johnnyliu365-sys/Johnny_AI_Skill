@@ -3,9 +3,9 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / unchanged AC-01, AC-02, AC-07 and AC-08 |
-| State | `CONVERGENCE_DECOMPOSED / CHILD_05B4B2A-B1_COMPLETE / CHILD_05B4B2B2_AND_C_IN_PROGRESS` |
+| State | `CONVERGENCE_DECOMPOSED / CHILD_05B4B2A-C_COMPLETE / CHILD_05B4B2D_FROZEN` |
 | Dependency | 05B4B1 revision 02 approved and integrated by `d7c59349b436d552f2fab457a297e2eac6958093` |
-| Allocation | B2A/B2B/B2B1 released; B2B2 allocated to implementer-2 and B2C allocated to implementer-1; B2D-B2E unallocated |
+| Allocation | B2A/B2B/B2B1/B2B2/B2C released; B2D dispatch pending; B2E unallocated |
 
 ## Convergence decision
 
@@ -26,11 +26,11 @@ unchanged; this is ticket decomposition.
 | [05B4B2D](05b4b2d-codex-registration-compensation-settlement.md) | Turn only an exact gated compensation claim into the existing exhaustive compensation composition result. | B2B2 integrated |
 | [05B4B2E](05b4b2e-codex-registration-lifecycle-acceptance.md) | Prove the composed success and failure paths in the disposable 05S1-05S4 environment, including complete removal/absence. | B2C and B2D integrated |
 
-B2A-B2B1 are complete. Refreeze found that B2D cannot safely build its exact
-port manifest from terminal compensation data: plugin ID, version, installed
-locator, auth policy and digest were absent. B2B2 is the minimum pure context
-binding and may run in parallel with B2C in the two existing implementation
-worktrees. B2D waits for B2B2; B2E remains final independent acceptance.
+B2A-B2C are complete and integrated. Refreeze found that B2D could not safely
+build its exact port manifest from the former terminal compensation data;
+B2B2 closed that context gap and B2C independently closed proof settlement.
+B2D is now frozen from the integrated baseline. B2E remains the final
+independent disposable-environment acceptance.
 
 No child may import or copy terminal rejected 05B source. No live Codex, user
 profile, target project, network, package, push, release or deployment authority

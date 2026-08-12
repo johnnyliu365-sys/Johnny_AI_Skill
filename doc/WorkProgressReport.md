@@ -2875,3 +2875,31 @@
 | Immutable return | `8109551a0e96a0773aff138167eec6369667293b -> 7603d6b75a665f9cbf4e06b0afe7e0421fb912ff -> e12ee8bef24172db517bfb346bd7fd4f972a2759`; implementation remains unchanged because CR-156 is `TICKET_DEFECT`, not `IMPLEMENTATION_DEFECT`. |
 | Independent evidence | Snapshot passed reducer/settlement 34/34, full 337/337, strict mypy 126 files and compile 126 files. A valid alternate raw DTO validates as data but the claim consumer returns `CodexRegistrationSettlementClaimBlocked`; request/journal reversal made the foreign-attempt test red and exact blob `61f9ece0d4216d5cff0a875254a2113360b69b75` restored. |
 | Disposition | Corrected B1-B7 are `APPROVED / READY_TO_MERGE`; `XSS_NOT_APPLICABLE`; only exact handoff `e12ee8bef24172db517bfb346bd7fd4f972a2759` may be guarded-integrated. |
+
+## PRG-20260812-256 — Ticket 05B4B2B2 guarded integration completion
+
+| Field | Value |
+| --- | --- |
+| Router event | `REVIEW_APPROVED(CR-156) -> GUARDED_INTEGRATION -> ACTION_COMPLETED` |
+| Integration | Merge `e7cd37b5abde7b9c693315e38fcd73dc0a001dc2`; first parent control review `e5d95f8a4dcf8705fd70af011d37c7040a22d82d`; second parent exact handoff `e12ee8bef24172db517bfb346bd7fd4f972a2759`. The sole conflict was append-only WPR evidence; resolution retained PRG-253-255. |
+| Integrated verification | Reducer plus settlement-authority focused suites passed 34/34. Exact parent topology and `git diff --check` passed. |
+| Completion | 05B4B2B2 is `COMPLETED / INTEGRATED`; allocation released and receipt closed against replay. No live Codex, host, target-project or network effect, push, release or deployment occurred. |
+
+## PRG-20260812-257 — Ticket 05B4B2C guarded integration completion
+
+| Field | Value |
+| --- | --- |
+| Router event | `REVIEW_APPROVED(05B4B2C) -> GUARDED_INTEGRATION -> ACTION_COMPLETED` |
+| Integration | Merge `af3a95aa4376b172d85a98a701db7b5affe2e4fb`; first parent B2B2-integrated control `e7cd37b5abde7b9c693315e38fcd73dc0a001dc2`; second parent exact handoff `09467cd8b8a9f652648e8383750fa36d190a41fd`; automatic content merge had no conflict. |
+| Integrated verification | Cross-lane focused suites passed 41/41; serial full suite passed 344/344; strict mypy passed 73 library files; in-memory compile passed 73 library files; exact 128 Python-file readback, diff and three-worktree topology passed. Generated caches were removed and read back absent. |
+| Completion | 05B4B2C is `COMPLETED / INTEGRATED`; allocation released and receipt closed against replay. No live Codex, host, target-project or network effect, push, release or deployment occurred. |
+
+## PRG-20260812-258 — Ticket 05B4B2D compensation settlement refreeze
+
+| Field | Value |
+| --- | --- |
+| Router event | `ACTION_COMPLETED(05B4B2B2/05B4B2C) -> TICKET_REFREEZE(05B4B2D) -> FROZEN / DISPATCH_PENDING` |
+| Dependency / closure | B2B2 merge `e7cd37b5abde7b9c693315e38fcd73dc0a001dc2`; current integrated main `af3a95aa4376b172d85a98a701db7b5affe2e4fb`; `CLOSURE-LOCAL-INSTALL-T05B4B2D-01` / S1-S9; unchanged SPEC AC-01, AC-02, AC-07, AC-08. |
+| Outcome | Safely admit a compensation port, consume one exact claim, derive manifest and terminal/recovery plan only from claim-owned values, then delegate one exhaustive sequence to existing compensation composition. |
+| Lane | Planned existing task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` / `workflow-implementer-2`; no new worktree. Freeze is not dispatch. |
+| Security | `XSS_NOT_APPLICABLE`; no renderer/JavaScript/bridge. No live Codex, filesystem/process/network/target-project, push, release or deployment authority. |

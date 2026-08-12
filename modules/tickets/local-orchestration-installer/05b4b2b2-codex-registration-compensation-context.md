@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / unchanged AC-01, AC-02, AC-07 and AC-08 compensation authority seam |
-| State | `APPROVED / READY_TO_MERGE` |
+| State | `COMPLETED / APPROVED / INTEGRATED` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B4B2B2-01` / B1-B7 |
 | Dependency | 05B4B2B1 approved and integrated by `0c4476f8d40b53292ea69d0daec084860beeaa03` |
 | Planned owner | Task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2`; one new ticket branch in that same worktree, no new worktree |
@@ -115,3 +115,7 @@ no implementation rewrite.
 Terminal independent review of implementation `7603d6b75a665f9cbf4e06b0afe7e0421fb912ff`
 and WPR-only handoff `e12ee8bef24172db517bfb346bd7fd4f972a2759`
 is `APPROVED / READY_TO_MERGE` under corrected B1-B7.
+
+Guarded merge `e7cd37b5abde7b9c693315e38fcd73dc0a001dc2`
+integrates that exact handoff with control review `e5d95f8a4dcf8705fd70af011d37c7040a22d82d`
+as first parent. Allocation is released and its receipt is closed against replay.
