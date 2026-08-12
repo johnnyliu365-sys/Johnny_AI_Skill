@@ -2971,3 +2971,12 @@
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B4B2E0-01` / O1-O8; exact logical Windows installed path is persisted and returned separately from the oracle's disposable physical locator. |
 | Scope | Only 05S4 contracts, oracle, child and focused oracle test are writable. No production adapter or end-to-end lifecycle code. No numeric line limit. `XSS_NOT_APPLICABLE`. |
 | Planned lane | Existing task `019fcc9c-f34f-7d53-a313-c70c90bf3245` in `workflow-implementation`; no new worktree. Freeze is not dispatch; exact lane/readback and a new receipt-bound registry remain required. |
+
+## PRG-20260813-266 — Ticket 05B4B2E0 dispatch registry
+
+| Field | Value |
+| --- | --- |
+| Router event | `TICKET_FROZEN(05B4B2E0) -> IMPLEMENTATION_DISPATCH_CONFIRMED / IMPLEMENT` |
+| Freeze / binding | `0a71cc6d046a5ead8e5157b42c86fb38e28f0363`; O1-O8; `hnd_local_orchestration_install_05b4b2e0_20260813`; `aln_local_orchestration_install_05b4b2e0_20260813`; `rcpt_local_orchestration_install_05b4b2e0_20260813`; `corr-local-orchestration-install-05b4b2e0-20260813`; `scx-local-orchestration-install-05b4b2e0-20260813-01`. |
+| Lane | Idle task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; exact clean submitted HEAD `09467cd8b8a9f652648e8383750fa36d190a41fd`; target branch absent; exactly three existing worktrees; no new worktree. |
+| Return | Exact four-path implementation commit, then WPR-only PRG-267. Reviewer retains sole orchestration and review authority. No staging push or package work is authorized. |

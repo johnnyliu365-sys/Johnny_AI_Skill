@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / unchanged AC-01, AC-02, AC-07 and AC-08 staging evidence seam |
-| State | `FROZEN / DISPATCH_PENDING` |
+| State | `IN_PROGRESS / DISPATCH_CONFIRMED` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B4B2E0-01` / O1-O8 |
 | Dependency | 05S4 integrated by `4af381c`; B2C/B2D integrated by `af3a95a` / `9769a75` |
 | Planned owner | Task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; existing `workflow-implementation`; no new worktree |
@@ -81,5 +81,15 @@ other Agent, review/integration, push, release or deployment is authorized.
 | Side context | `scx-local-orchestration-install-05b4b2e0-20260813-01` |
 | Owner / lane | Existing task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; `workflow-implementation`; later create only `codex/implementation-codex-oracle-logical-path-05b4b2e0` from the exact dispatch commit. |
 
-Freeze is not dispatch. A later dispatch registry must bind this exact freeze
-commit and verified clean lane before implementation starts.
+## Dispatch registry
+
+| Field | Value |
+| --- | --- |
+| Reviewed freeze | `0a71cc6d046a5ead8e5157b42c86fb38e28f0363`; exact O1-O8; `XSS_NOT_APPLICABLE` |
+| Delivery authority | Project-owner standing instruction to continue approved work; `IMPLEMENTATION_DISPATCH_CONFIRMED` for this ticket only |
+| Lane readback | Task is idle; existing `workflow-implementation` is clean at exact submitted HEAD `09467cd8b8a9f652648e8383750fa36d190a41fd`; no tracked/ignored/cache residue; exactly three existing worktrees; target branch absent |
+| Branch | Create only `codex/implementation-codex-oracle-logical-path-05b4b2e0` from the exact dispatch-registry commit in the same worktree; no new worktree |
+| Binding | `hnd_local_orchestration_install_05b4b2e0_20260813`; `aln_local_orchestration_install_05b4b2e0_20260813`; `rcpt_local_orchestration_install_05b4b2e0_20260813`; `corr-local-orchestration-install-05b4b2e0-20260813`; `q-local-orchestration-install-05b4b2e0-20260813`; `scx-local-orchestration-install-05b4b2e0-20260813-01` |
+
+This is the single dispatch. Only the exact four implementation paths and a
+later WPR-only `PRG-20260813-267` are writable in this lane.
