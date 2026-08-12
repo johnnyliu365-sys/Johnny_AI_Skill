@@ -3389,3 +3389,13 @@
 | Independent verification | Exact immutable snapshot: focused 11/11 and full 399/399 passed. Reviewer probes then proved direct-constructor capability bypass and constructed-bound `AttributeError`; static review proved oracle blocks are falsely returned as `UNSUPPORTED_CLI`. |
 | Findings | `CR-162 IMPLEMENTATION_DEFECT`: constructor bypasses factory authority. `CR-163 IMPLEMENTATION_DEFECT`: constructed binding is non-finite. `CR-164 IMPLEMENTATION_DEFECT`: block/malformed/version mismatch are not distinguished. R2-R3 remain open. |
 | Correction authority | Retain the same ticket/owner/worktree/branch/allocation/receipt. Add constructor-token, finite-bound, and exact preflight-classification tests/source only; return one additive correction commit and one WPR-only handoff. |
+
+## PRG-20260813-307 — Ticket 05B4B2E2 implementation-owner replacement
+
+| Field | Value |
+| --- | --- |
+| Router event | `SAME_BRANCH_CORRECTION_DISPATCH -> EXTERNAL_TASK_USAGE_LIMIT -> FRESH_BRANCH_REQUIRED / OWNER_REPLACED` |
+| Evidence | Original task `019fcc9c-f34f-7d53-a313-c70c90bf3245` failed before work with product usage-limit `systemError`, retry 2026-08-18 10:20. Original lane remains clean at exact handoff `699cba8f1b844552a9b36baf926613594542ed4b`; no correction mutation exists. |
+| Replacement | Idle task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2`; create only `codex/implementation-codex-registration-oracle-adapter-05b4b2e2-correction` from exact E2 handoff. Exactly three worktrees remain; no new worktree. |
+| Authority binding | Same ticket and closure; new correction handoff/allocation `hnd_local_orchestration_install_05b4b2e2_cr162_164_20260813` / `aln_local_orchestration_install_05b4b2e2_cr162_164_20260813`; retain receipt `rcpt_local_orchestration_install_05b4b2e2_r02_20260813`; new correlation/question/side-context recorded in the ticket. |
+| Boundary | Only CR-162/163/164 in the existing two source/test paths and a later WPR-only correction handoff. No staging push, package/build/install, live Codex, target-project write, release or deployment. |

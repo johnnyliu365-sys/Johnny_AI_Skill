@@ -128,3 +128,14 @@ required before the implementation owner may switch branch or edit.
 
 This is the single dispatch. Only the exact two implementation paths and the
 later WPR-only `PRG-20260813-302` are writable in this lane.
+
+## Correction dispatch registry — CR-162 / CR-163 / CR-164
+
+| Field | Value |
+| --- | --- |
+| Review | `CHANGES_REQUESTED` at `56e65bd7fd2d2ac538603bc162eefd17610aa574`; R2-R3 remain open. |
+| FRESH_BRANCH_REQUIRED evidence | Original implementation task `019fcc9c-f34f-7d53-a313-c70c90bf3245` rejected the correction turn before work with product usage-limit `systemError`, retry time 2026-08-18 10:20. Its existing worktree remains clean at exact handoff `699cba8f1b844552a9b36baf926613594542ed4b`. Implementation owner/worktree replacement is therefore required; no correction mutation exists to preserve. |
+| Replacement lane | Idle task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2` clean at submitted E3C handoff `b153636fe2acd37af0b376ee825e0cf9336b98b1`; exactly three worktrees; target correction branch absent. |
+| Branch / base | In the same replacement worktree create only `codex/implementation-codex-registration-oracle-adapter-05b4b2e2-correction` from immutable E2 handoff `699cba8f1b844552a9b36baf926613594542ed4b`; no new worktree, merge, rebase, cherry-pick, reset or amend. |
+| Binding | New correction handoff `hnd_local_orchestration_install_05b4b2e2_cr162_164_20260813`; allocation `aln_local_orchestration_install_05b4b2e2_cr162_164_20260813`; retained valid receipt `rcpt_local_orchestration_install_05b4b2e2_r02_20260813`; correlation `corr-local-orchestration-install-05b4b2e2-cr162-164-20260813`; question `q-local-orchestration-install-05b4b2e2-cr162-164-20260813`; side-context `scx-local-orchestration-install-05b4b2e2-cr162-164-20260813-01`. |
+| Scope | Only the same two adapter/test implementation paths plus a later unique WPR-only correction handoff. Exact correction requirements are the review document; all original R1-R8 constraints remain. |
