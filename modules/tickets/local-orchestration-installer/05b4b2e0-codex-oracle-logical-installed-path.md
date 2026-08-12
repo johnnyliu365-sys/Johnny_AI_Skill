@@ -91,6 +91,17 @@ period in the parent and child validators, and independently reverse both new
 guards. Only the original four implementation files plus a later WPR-only
 handoff may change. No new branch or worktree is allowed.
 
+## Revision-02 correction handoff
+
+| Field | Value |
+| --- | --- |
+| Review / closure | Control review `7ef1b26909a18247d50cf7579ab007a4b32def19`; CR-157/CR-158; unchanged `CLOSURE-LOCAL-INSTALL-T05B4B2E0-01` / O2/O4/O6/O8 |
+| Handoff | `hnd_local_orchestration_install_05b4b2e0_cr157_cr158_20260813` |
+| Retained authority | `aln_local_orchestration_install_05b4b2e0_20260813`; `rcpt_local_orchestration_install_05b4b2e0_20260813`; `corr-local-orchestration-install-05b4b2e0-20260813`; same task/worktree/branch |
+| Exact admission | Idle task and clean exact submitted HEAD `05b65bce17be0dbab7aeefc8118ad8d37e3d5bce`; no ignored/cache residue; exactly three worktrees |
+| Exact correction | Add the two review reproductions as committed tests; bind removal identity to exact `installed_path`; reject every logical-path segment ending in ASCII space or period in parent and child validation, including persisted-state validation. Independently reverse both guards and restore exact blobs. |
+| Return | One additive correction commit changing only the original four implementation paths, then WPR-only reserved `PRG-20260813-270`; rerun focused/full, strict mypy, compile, sentinel, scope/ancestry/topology and residue readback. |
+
 ## Planned dispatch binding
 
 | Field | Value |

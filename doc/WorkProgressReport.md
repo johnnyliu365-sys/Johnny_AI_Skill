@@ -2991,3 +2991,13 @@
 | CR-157 | `IMPLEMENTATION_DEFECT / O2-O6-O8`: after adding at the exact path, an otherwise matching `PLUGIN_REMOVE` command carrying another valid logical path returned `OracleCompleted` and removed the payload. `_exact_plugin()` omits `installed_path`, so removal is not bound to the new exact identity field. |
 | CR-158 | `IMPLEMENTATION_DEFECT / O4-O8`: `C:\owned \plugin` is accepted by both validators although ordinary Win32 path processing normalizes a segment-ending space or period. This violates the frozen normalized/unambiguous path boundary. |
 | Disposition | Same ticket, owner, worktree, branch, allocation, receipt and correlation; add committed regressions and isolated reversals for both findings. No new branch/worktree, E1-E6, staging push, package, release or deployment. `XSS_NOT_APPLICABLE`. |
+
+## PRG-20260813-269 — Ticket 05B4B2E0 revision-02 correction dispatch
+
+| Field | Value |
+| --- | --- |
+| Router event | `REVIEW_CHANGES_REQUESTED(05B4B2E0) -> CORRECTION_HANDOFF -> IMPLEMENTATION_DISPATCH_CONFIRMED` |
+| Review / binding | `7ef1b26909a18247d50cf7579ab007a4b32def19`; CR-157/CR-158; `hnd_local_orchestration_install_05b4b2e0_cr157_cr158_20260813`; retained allocation, receipt and correlation from E0 revision 01. |
+| Lane readback | Idle task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; existing `workflow-implementation`; exact clean submitted HEAD `05b65bce17be0dbab7aeefc8118ad8d37e3d5bce`; zero ignored/cache residue; exactly three worktrees; retain branch `codex/implementation-codex-oracle-logical-path-05b4b2e0`. |
+| Correction | Commit the reviewer reproductions for mismatched valid path removal and segment-ending space/period. Exact removal identity must include `installed_path`; parent and child path validators must reject the ambiguity before mutation and persisted-state validation. Reverse both new guards independently. |
+| Return / limits | One additive correction commit in the original four-path scope, then WPR-only PRG-270. No new branch/worktree, E1-E6, staging push, package, release, deployment, live Codex or target-project effect. |
