@@ -13,6 +13,7 @@ from tests.staging.environment_core.contracts import EnvironmentLease, revalidat
 
 from .contracts import (
     ORACLE_PAYLOAD_DIRECTORY_NAME,
+    ORACLE_STAGING_CODEX_VERSION,
     OracleAction,
     OracleBlockReason,
     OracleBlocked,
@@ -55,6 +56,7 @@ class CodexLifecycleOracle:
             state = OracleState(
                 owner=validated.owner,
                 environment_id=validated.environment_id,
+                codex_version=ORACLE_STAGING_CODEX_VERSION,
                 marketplaces=(),
                 plugins=(),
                 foreign_marketplaces=(),

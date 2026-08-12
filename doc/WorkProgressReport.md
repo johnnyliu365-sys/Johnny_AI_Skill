@@ -3158,6 +3158,19 @@
 | Correction | The exact manifest remains required. Failure serialization may add no locator/path field outside that manifest and still carries no callable, exception text, raw diagnostic or oracle state. No new authority or product behavior is introduced. |
 | Continuity | Retain F1-F8, task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`, existing worktree/branch, allocation, receipt, correlation and four-path scope. No restart, new branch or worktree. |
 
+## PRG-20260813-283 — Ticket 05B4B2E2A version-observation implementation handoff
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05B4B2E2A) -> ACTION_COMPLETED -> REVIEW_HANDOFF`; independent review remains required. |
+| Ticket / binding | `05b4b2e2a-codex-oracle-version-observation`; `CLOSURE-LOCAL-INSTALL-T05B4B2E2A-01` / V1-V8; freeze `341a58bcfc8b6553db149a56ac005ac9fafec373`; dispatch `a51adfb3412e38bfb108f950f5628cea7bfc24af`; `hnd_local_orchestration_install_05b4b2e2a_20260813`; retained allocation, receipt, correlation, question and side-context. |
+| Implementation / scope | `e273515e6e5b4cfd9b9869342a20b2eed5d1d605` descends from dispatch and changes only the seven authorized protocol/oracle staging and focused-test paths. A strict `VERSION` discriminator and one-field `CodexVersionObservation` are now child-parsed; initialization persists the named staging version, and the fresh oracle child returns only that exact persisted state value. |
+| First red | With production unchanged, the V1 test module could not import `CodexVersionObservation`, while the V3/V4 module could not import `ORACLE_STAGING_CODEX_VERSION`; the exact `VERSION` protocol/action/state surface was absent. |
+| V1-V6 green | Protocol parsing rejects missing, extra, duplicate, malformed and cross-surface VERSION payloads. A command carrying a deliberately different `identity.plugin_version` receives the persisted oracle version. Missing, extra, blank and constructed-invalid persisted version state map to the existing finite state block without command/response residue. VERSION preserves exact state bytes, payload bytes, owned state and foreign state. |
+| V8 reverse evidence | Replacing the VERSION parser discriminator with plugin-remove parsing made the V1/V2 regression red. Replacing child state observation with a caller-shaped value made V3/V4 red. Adding a version-state write made V6 state-byte preservation red. Each source blob was restored before final verification. |
+| Verification / residue | Focused protocol/oracle suites passed 27/27; serial full discovery passed 374/374. Strict `mypy --strict --explicit-package-bases --no-incremental` passed 132 files using a repository-external cache that was removed and read back absent. In-memory compile passed 132 files. Source and XSS sentinels (`XSS_NOT_APPLICABLE`), exact seven-file scope, `git diff --check`, dispatch ancestry, three-worktree topology, existing/empty Git snapshot regression and tracked/ignored/cache/staging-root residue readbacks passed before this docs-only edit. |
+| Non-interference | No E2 adapter, compensation, live Codex, host, network, target-project, package, staging push, release, deployment, review or integration action occurred. This is an implementation handoff, not a review decision. |
+
 ## PRG-20260813-286 — Ticket 05B4B2E2A independent review
 
 | Field | Value |

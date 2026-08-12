@@ -31,6 +31,7 @@ _COMMAND_ACTIONS = {
     "PLUGIN_ADD": "PLUGIN_ADD",
     "PLUGIN_LIST": "PLUGIN_LIST",
     "PLUGIN_REMOVE": "PLUGIN_REMOVE",
+    "VERSION": "VERSION",
     "ABSENCE": "PLUGIN_LIST",
 }
 _IDENTITY_FIELDS = (
@@ -118,6 +119,7 @@ def _load_state(path: Path, codex_home: Path) -> dict[str, object]:
     expected = (
         "owner",
         "environment_id",
+        "codex_version",
         "marketplaces",
         "plugins",
         "foreign_marketplaces",
@@ -126,6 +128,8 @@ def _load_state(path: Path, codex_home: Path) -> dict[str, object]:
     if tuple(state) != expected:
         raise OracleFailure(STATE_INVALID)
     _validate_state_identity(state, codex_home)
+    if not _is_nonblank_text(state["codex_version"]):
+        raise OracleFailure(STATE_INVALID)
     for collection in ("marketplaces", "plugins", "foreign_marketplaces", "foreign_plugins"):
         if not isinstance(state[collection], list):
             raise OracleFailure(STATE_INVALID)
@@ -277,6 +281,8 @@ def _apply(command: dict[str, object], state: dict[str, object], state_path: Pat
     identity = command["identity"]
     assert isinstance(action, str)
     assert isinstance(identity, dict)
+    if action == "VERSION":
+        return _version(state)
     if action == "MARKETPLACE_ADD":
         return _marketplace_add(state, state_path, codex_home, identity)
     if action == "MARKETPLACE_LIST":
@@ -290,6 +296,15 @@ def _apply(command: dict[str, object], state: dict[str, object], state_path: Pat
     if action == "PLUGIN_REMOVE":
         return _plugin_remove(state, state_path, codex_home, identity)
     return _absence(state, state_path, codex_home, identity)
+
+
+def _version(state: dict[str, object]) -> dict[str, object]:
+    """Return only the version freshly read from exact persisted oracle state."""
+
+    version = state["codex_version"]
+    if not isinstance(version, str):
+        raise OracleFailure(STATE_INVALID)
+    return {"version": version}
 
 
 def _marketplace_add(state: dict[str, object], state_path: Path, codex_home: Path, identity: dict[str, object]) -> dict[str, object]:

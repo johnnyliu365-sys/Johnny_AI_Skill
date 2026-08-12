@@ -14,6 +14,7 @@ import unittest
 from library.local_orchestration.host_contracts import CodexMarketplaceList, CodexPluginList
 from tests.staging.codex_lifecycle_oracle.contracts import (
     ORACLE_COMMAND_FILE_NAME,
+    ORACLE_STAGING_CODEX_VERSION,
     ORACLE_STATE_FILE_NAME,
     OracleAction,
     OracleBlockReason,
@@ -25,6 +26,7 @@ from tests.staging.codex_lifecycle_oracle.contracts import (
     OracleMarketplaceRecord,
     OraclePluginRecord,
     OracleRunResult,
+    OracleState,
     OracleAbsent,
 )
 from tests.staging.codex_lifecycle_oracle.oracle import CodexLifecycleOracle
@@ -37,6 +39,7 @@ from tests.staging.codex_protocol.contracts import (
     CodexPluginRemove,
     CodexProtocolRejected,
     CodexProtocolSurface,
+    CodexVersionObservation,
     ExactResponseFilePort,
 )
 from tests.staging.codex_protocol.fixture import CodexProtocolFixture
@@ -145,6 +148,96 @@ class LogicalPathCommandTamperFixture(CodexProtocolFixture):
 
 
 class CodexLifecycleOracleTests(unittest.TestCase):
+    def test_v3_v4_version_is_persisted_and_independent_from_command_identity(self) -> None:
+        allocator, lease, oracle = self._ready("00000000000000a1")
+        try:
+            self._assert_completed(oracle.initialize(lease), CodexMarketplaceList)
+            state_path = oracle.state_path(lease)
+            state_before = state_path.read_bytes()
+            state = json.loads(state_before)
+            self.assertEqual(ORACLE_STAGING_CODEX_VERSION, state["codex_version"])
+            command = OracleCommand(
+                action=OracleAction.VERSION,
+                identity=IDENTITY.model_copy(update={"plugin_version": "caller-selected-version"}),
+            )
+            result = oracle.run(lease, command)
+            observation = self._assert_completed(result, CodexVersionObservation)
+            self.assertEqual(ORACLE_STAGING_CODEX_VERSION, observation.version)
+            self.assertEqual(state_before, state_path.read_bytes())
+            self.assertEqual((), self._payload_bytes(oracle.payload_root(lease)))
+            self.assertEqual(
+                (str(Path(sys.executable).resolve(strict=True)), str(ORACLE_CHILD), CodexProtocolSurface.VERSION.value),
+                oracle._runner.last_child_argv,
+            )
+            self.assertFalse((lease.temporary.absolute.path / ORACLE_COMMAND_FILE_NAME).exists())
+            self.assertFalse((lease.temporary.absolute.path / ".johnny-05s3-response.json").exists())
+        finally:
+            self._teardown(allocator, lease)
+
+    def test_v5_version_state_invalid_cells_fail_closed_before_partial_success(self) -> None:
+        cells: tuple[tuple[str, object], ...] = (
+            ("missing", None),
+            ("extra", "unexpected"),
+            ("blank", " "),
+            ("constructed-invalid", []),
+        )
+        for index, (cell, value) in enumerate(cells, start=0xA2):
+            with self.subTest(cell=cell):
+                allocator, lease, oracle = self._ready(f"000000000000{index:04x}")
+                try:
+                    self._assert_completed(oracle.initialize(lease), CodexMarketplaceList)
+                    state_path = oracle.state_path(lease)
+                    state = json.loads(state_path.read_text(encoding="utf-8"))
+                    if cell == "missing":
+                        del state["codex_version"]
+                    elif cell == "extra":
+                        state["unexpected_version"] = value
+                    elif cell == "constructed-invalid":
+                        constructed = OracleState.model_construct(
+                            owner=lease.owner,
+                            environment_id=lease.environment_id,
+                            codex_version=value,
+                            marketplaces=(),
+                            plugins=(),
+                            foreign_marketplaces=(),
+                            foreign_plugins=(),
+                        )
+                        serialized = constructed.model_dump_json(warnings=False)
+                    else:
+                        state["codex_version"] = value
+                    if cell != "constructed-invalid":
+                        serialized = json.dumps(state, separators=(",", ":"))
+                    state_path.write_text(serialized, encoding="utf-8")
+                    state_before = state_path.read_bytes()
+                    payload_before = self._payload_bytes(oracle.payload_root(lease))
+                    self._assert_blocked(self._run(oracle, lease, OracleAction.VERSION), OracleBlockReason.STATE_INVALID)
+                    self.assertEqual(state_before, state_path.read_bytes())
+                    self.assertEqual(payload_before, self._payload_bytes(oracle.payload_root(lease)))
+                    self.assertFalse((lease.temporary.absolute.path / ORACLE_COMMAND_FILE_NAME).exists())
+                    self.assertFalse((lease.temporary.absolute.path / ".johnny-05s3-response.json").exists())
+                finally:
+                    self._teardown(allocator, lease)
+
+    def test_v6_version_preserves_owned_and_foreign_state_and_payloads(self) -> None:
+        allocator, lease, oracle = self._ready("00000000000000a5")
+        foreign = self._foreign_plugin("foreign-version-plugin", "foreign-version-name", "foreign-version-market")
+        try:
+            self._assert_completed(oracle.initialize(lease), CodexMarketplaceList)
+            self._assert_completed(self._run(oracle, lease, OracleAction.MARKETPLACE_ADD), CodexMarketplaceAdd)
+            self._assert_completed(self._run(oracle, lease, OracleAction.PLUGIN_ADD), CodexPluginAdd)
+            self.assertIsInstance(oracle.seed_foreign_plugin(lease, foreign), OracleForeignSeeded)
+            state_path = oracle.state_path(lease)
+            state_before = state_path.read_bytes()
+            payload_before = self._payload_bytes(oracle.payload_root(lease))
+            version = self._assert_completed(self._run(oracle, lease, OracleAction.VERSION), CodexVersionObservation)
+            self.assertEqual(ORACLE_STAGING_CODEX_VERSION, version.version)
+            self.assertEqual(state_before, state_path.read_bytes())
+            self.assertEqual(payload_before, self._payload_bytes(oracle.payload_root(lease)))
+            self.assertFalse((lease.temporary.absolute.path / ORACLE_COMMAND_FILE_NAME).exists())
+            self.assertFalse((lease.temporary.absolute.path / ".johnny-05s3-response.json").exists())
+        finally:
+            self._teardown(allocator, lease)
+
     def test_cr157_plugin_remove_requires_exact_logical_installed_path(self) -> None:
         allocator, lease, oracle = self._ready("0000000000000090")
         try:
@@ -627,6 +720,14 @@ class CodexLifecycleOracleTests(unittest.TestCase):
 
     def _run(self, oracle: CodexLifecycleOracle, lease: EnvironmentLease, action: OracleAction) -> OracleRunResult:
         return oracle.run(lease, self._command(action))
+
+    @staticmethod
+    def _payload_bytes(root: Path) -> tuple[tuple[str, bytes], ...]:
+        return tuple(
+            (path.relative_to(root).as_posix(), path.read_bytes())
+            for path in sorted(root.rglob("*"))
+            if path.is_file()
+        )
 
     @staticmethod
     def _assert_completed(result: OracleRunResult, payload_type: type[PayloadType]) -> PayloadType:
