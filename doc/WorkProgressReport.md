@@ -3055,3 +3055,13 @@
 | Freeze / binding | `d25e6fcae3c273f94efe5cf68e3dc5b078e235ed`; I1-I8; `hnd_local_orchestration_install_05b4b2e1_20260813`; `aln_local_orchestration_install_05b4b2e1_20260813`; `rcpt_local_orchestration_install_05b4b2e1_20260813`; `corr-local-orchestration-install-05b4b2e1-20260813`; `scx-local-orchestration-install-05b4b2e1-20260813-01`. |
 | Lane | Idle/not-loaded task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; exact clean submitted HEAD `60a8311548edfd096733d1d7cf1e1eb928077f55` in existing `workflow-implementer-2`; zero tracked/ignored/cache residue; exactly three worktrees; target branch absent; no new worktree. |
 | Return | Exact two-path implementation commit, then WPR-only PRG-274. Reviewer retains sole orchestration and review authority. No E2-E6, staging push or package work is authorized. |
+
+## PRG-20260813-275 — Ticket 05B4B2E1 initial independent review
+
+| Field | Value |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05B4B2E1) -> TERMINAL_CODE_REVIEW -> CHANGES_REQUESTED / SAME_CLOSURE_CORRECTION` |
+| Immutable return | `97cc49a3b2fec25b9b6e2dbc9f9d1794808a2c09 -> 25b3f9c6541df00d95679233056fcdcf30433a50 -> 6ee9b4a96a5a1720c04845b9edb115d689472f34`; exact two implementation paths then WPR-only PRG-274; clean submitted lane and unchanged three-worktree topology. |
+| Passing evidence | Unicode-safe repository-external snapshot passed focused/relevant 18/18, full serial 369/369, strict mypy 132 files and in-memory compile 132 files. Exact mapping, logical paths, no-effect boundary and submitted reversals pass. |
+| CR-159 | `IMPLEMENTATION_DEFECT / I5-I8`: injected extra attributes on exact nested preflight, installation/root/marketplace/plugin/source and locator models are discarded during rebuilding and return `OracleIdentityBound`. The existing outer validation proves declared values, not the original recursive state shape. |
+| Disposition | Same ticket, owner, worktree, branch, allocation, receipt and correlation; add a typed recursive no-extra-state guard, committed coverage for every nested request model and one isolated guard reversal. No new branch/worktree, E2-E6, staging push, package, release or deployment. `XSS_NOT_APPLICABLE`. |
