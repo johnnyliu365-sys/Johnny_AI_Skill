@@ -3,9 +3,9 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Literal, TypeAlias, TypeVar, cast
+from typing import Literal, TypeAlias, cast
 
-from pydantic import BaseModel, ConfigDict, PrivateAttr, ValidationError
+from pydantic import BaseModel, ConfigDict, ValidationError
 
 from .codex_command_attempts import (
     CodexCommandClassificationRejected,
@@ -69,19 +69,9 @@ class CodexRegistrationBlockReason(str, Enum):
     PROOF_REQUEST_INVALID = "PROOF_REQUEST_INVALID"
 
 
-class _StateAuthority:
-    """Private identity authority for reducer-created pending values."""
-
-
-_STATE_AUTHORITY = _StateAuthority()
-
-
 class _PendingState(_StrictModel):
     request: CodexRegistrationPortRequest
     journal: CodexRegistrationAttemptJournal
-
-    _authority: _StateAuthority = PrivateAttr()
-    _identity: int = PrivateAttr()
 
 
 class CodexFreshPreflightPending(_PendingState):
@@ -127,9 +117,6 @@ CodexRegistrationReduction: TypeAlias = (
 )
 
 
-_PendingT = TypeVar("_PendingT", bound=_PendingState)
-
-
 def begin_codex_registration(value: object) -> CodexRegistrationReduction:
     """Begin one pure current attempt with no effect invocation."""
 
@@ -161,31 +148,18 @@ def advance_codex_registration(state: object, result: object) -> CodexRegistrati
     return _advance_plugin_add(current, result)
 
 
-def _authorize_pending(state: _PendingT) -> _PendingT:
-    state._authority = _STATE_AUTHORITY
-    state._identity = id(state)
-    return state
-
-
-def _has_current_authority(state: _PendingState) -> bool:
-    try:
-        return state._authority is _STATE_AUTHORITY and state._identity == id(state)
-    except AttributeError:
-        return False
-
-
 def _fresh_pending(
     request: CodexRegistrationPortRequest,
     journal: CodexRegistrationAttemptJournal,
 ) -> CodexFreshPreflightPending:
-    return _authorize_pending(CodexFreshPreflightPending(request=request, journal=journal))
+    return CodexFreshPreflightPending(request=request, journal=journal)
 
 
 def _marketplace_pending(
     request: CodexRegistrationPortRequest,
     journal: CodexRegistrationAttemptJournal,
 ) -> CodexMarketplaceAddPending:
-    return _authorize_pending(CodexMarketplaceAddPending(request=request, journal=journal))
+    return CodexMarketplaceAddPending(request=request, journal=journal)
 
 
 def _plugin_pending(
@@ -193,12 +167,10 @@ def _plugin_pending(
     journal: CodexRegistrationAttemptJournal,
     observation: CodexMarketplaceAddObservation,
 ) -> CodexPluginAddPending:
-    return _authorize_pending(
-        CodexPluginAddPending(
-            request=request,
-            journal=journal,
-            marketplace_observation=observation,
-        )
+    return CodexPluginAddPending(
+        request=request,
+        journal=journal,
+        marketplace_observation=observation,
     )
 
 
@@ -206,15 +178,15 @@ def _revalidate_pending(value: object) -> CodexRegistrationPending | CodexRegist
     if type(value) not in (CodexFreshPreflightPending, CodexMarketplaceAddPending, CodexPluginAddPending):
         return _blocked(CodexRegistrationBlockReason.INVALID_STATE)
     state = cast(_PendingState, value)
-    if not _has_current_authority(state):
-        return _blocked(CodexRegistrationBlockReason.INVALID_STATE)
     try:
-        request = revalidate_registration_port_request(state.request)
+        request_value: object = state.request
+        journal_value: object = state.journal
+        request = revalidate_registration_port_request(request_value)
     except (AttributeError, TypeError, ValidationError, ValueError):
         return _blocked(CodexRegistrationBlockReason.INVALID_STATE)
     if isinstance(request, CodexRegistrationPortValueRejected):
         return _blocked(CodexRegistrationBlockReason.INVALID_STATE)
-    journal = _revalidate_pending_journal(state.journal, request)
+    journal = _revalidate_pending_journal(journal_value, request)
     if isinstance(journal, CodexRegistrationBlocked):
         return journal
     pair = (journal.marketplace_state, journal.plugin_state)
@@ -238,7 +210,11 @@ def _revalidate_pending(value: object) -> CodexRegistrationPending | CodexRegist
         CodexAttemptEffectState.NOT_ATTEMPTED,
     ):
         return _blocked(CodexRegistrationBlockReason.INVALID_STATE)
-    observation = _revalidate_carried_marketplace_observation(plugin_state.marketplace_observation, request)
+    try:
+        observation_value: object = plugin_state.marketplace_observation
+    except AttributeError:
+        return _blocked(CodexRegistrationBlockReason.INVALID_STATE)
+    observation = _revalidate_carried_marketplace_observation(observation_value, request)
     if isinstance(observation, CodexRegistrationBlocked):
         return observation
     return _plugin_pending(request, journal, observation)

@@ -7,6 +7,7 @@ import ntpath
 from typing import NoReturn
 import unittest
 
+import library.local_orchestration.codex_registration_reducer as registration_reducer
 from library.local_orchestration.codex_command_attempts import (
     CodexCommandStartState,
     CodexCommandTarget,
@@ -260,6 +261,70 @@ class CodexRegistrationReducerTests(unittest.TestCase):
     def test_d1_begin_requires_the_new_reducer_boundary(self) -> None:
         self.assertTrue(callable(begin_codex_registration))
 
+    def test_r2_d1_exact_pending_copies_and_reconstruction_reduce_identically(self) -> None:
+        fresh = fresh_pending()
+        marketplace = marketplace_pending()
+        plugin = plugin_pending()
+        cases: tuple[tuple[str, CodexFreshPreflightPending | CodexMarketplaceAddPending | CodexPluginAddPending, object], ...] = (
+            ("fresh", fresh, fresh_accepted(fresh.request)),
+            ("marketplace", marketplace, marketplace_success(marketplace.request)),
+            ("plugin", plugin, plugin_success(plugin.request)),
+        )
+        for phase, original, exact_result in cases:
+            with self.subTest(phase=phase):
+                expected = advance_codex_registration(original, exact_result)
+                variants = (
+                    original,
+                    copy.copy(original),
+                    copy.deepcopy(original),
+                    type(original).model_validate(original.model_dump()),
+                )
+                for variant in variants:
+                    actual = advance_codex_registration(variant, exact_result)
+                    self.assertIs(type(expected), type(actual))
+                    self.assertEqual(expected.model_dump(), actual.model_dump())
+                repeated = advance_codex_registration(original, exact_result)
+                self.assertIs(type(expected), type(repeated))
+                self.assertEqual(expected.model_dump(), repeated.model_dump())
+
+    def test_r2_d2_private_identity_authority_is_completely_absent(self) -> None:
+        module_names = registration_reducer.__dict__
+        self.assertNotIn("_StateAuthority", module_names)
+        self.assertNotIn("_STATE_AUTHORITY", module_names)
+        self.assertNotIn("_authorize_pending", module_names)
+        self.assertNotIn("_has_current_authority", module_names)
+        for pending in (fresh_pending(), marketplace_pending(), plugin_pending()):
+            self.assertIsNone(pending.__pydantic_private__)
+            self.assertNotIn("_authority", pending.__dict__)
+            self.assertNotIn("_identity", pending.__dict__)
+
+    def test_r2_d4_public_pending_and_terminal_data_is_metadata_safe(self) -> None:
+        fresh = fresh_pending()
+        marketplace = marketplace_pending()
+        plugin = plugin_pending()
+        proof = advance_codex_registration(plugin, plugin_success(plugin.request))
+        compensation = advance_codex_registration(marketplace, None)
+        blocked = advance_codex_registration(
+            fresh,
+            CodexFreshPreflightRejected(request=fresh.request, reason=CodexBlockReason.COLLISION),
+        )
+        decisions = (fresh, marketplace, plugin, proof, compensation, blocked)
+        forbidden = (
+            "_authority",
+            "_identity",
+            "lease",
+            "generation",
+            "receipt",
+            "callable",
+            "raw_output",
+            "secret",
+        )
+        for decision in decisions:
+            public_text = f"{decision.model_dump()} {repr(decision)}".casefold()
+            for token in forbidden:
+                with self.subTest(decision=type(decision).__name__, token=token):
+                    self.assertNotIn(token, public_text)
+
     def test_d2_begin_rebuilds_exact_request_and_blocks_all_invalid_shapes(self) -> None:
         supplied = request()
         result = begin_codex_registration(supplied)
@@ -433,18 +498,8 @@ class CodexRegistrationReducerTests(unittest.TestCase):
         result = advance_codex_registration(current, plugin_success(current.request))
         self.assert_blocked(result, CodexRegistrationBlockReason.FRESH_PREFLIGHT_INVALID)
 
-    def test_d6_phase_state_copy_terminal_and_nested_shape_guards_are_closed(self) -> None:
+    def test_d6_phase_terminal_and_invalid_nested_shape_guards_are_closed(self) -> None:
         fresh = fresh_pending()
-        copied = copy.copy(fresh)
-        self.assert_blocked(
-            advance_codex_registration(copied, fresh_accepted(fresh.request)),
-            CodexRegistrationBlockReason.INVALID_STATE,
-        )
-        constructed = CodexMarketplaceAddPending(request=fresh.request, journal=fresh.journal)
-        self.assert_blocked(
-            advance_codex_registration(constructed, marketplace_success(fresh.request)),
-            CodexRegistrationBlockReason.INVALID_STATE,
-        )
         missing_request = CodexMarketplaceAddPending.model_construct(journal=fresh.journal)
         self.assert_blocked(
             advance_codex_registration(missing_request, marketplace_success(fresh.request)),
