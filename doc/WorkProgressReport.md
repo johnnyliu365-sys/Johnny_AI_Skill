@@ -3339,3 +3339,15 @@
 | Parallel safety | E2 owns two new staging adapter/test paths. E3C owns compensation port/composition and their focused tests. Writable sets are disjoint and use only the two existing implementation tasks/worktrees after lane readback. |
 | Delivery boundary | No implementation dispatch, worktree mutation, staging push, package/build/install, live Codex, target-project write, release or deployment. 04C must freeze the exact clean v1 candidate before 04D may publish/read back remote staging as the warm backup. |
 | XSS | `XSS_NOT_APPLICABLE`: neither ticket adds Browser, WebView, HTML/DOM renderer or JavaScript execution context. |
+
+## PRG-20260813-300 — E2/E3C parallel dispatch registry
+
+| Field | Value |
+| --- | --- |
+| State | `IMPLEMENTATION_DISPATCH_CONFIRMED / PARALLEL_DISJOINT` |
+| Router event | `TICKETS_FROZEN(E2,E3C) -> LANE_READBACK -> IMPLEMENTATION_DISPATCH_CONFIRMED` |
+| Freeze / dispatch | Reviewed freeze `d5ff1297be90d223834aded354d9d33b6dbd4b35`; this registry commit is the sole common implementation baseline. |
+| E2 lane | Idle task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; clean submitted HEAD `7c17caf23a80d5c1bfc5bf81237ce0daba091607`; target branch absent; exact R1-R8 and unique binding recorded in its ticket. |
+| E3C lane | Idle task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; clean submitted HEAD `b230bbf736b04218f326a3b8617357ee335bbec0`; target branch absent; exact Q1-Q6 and unique binding recorded in its ticket. |
+| Isolation | Both lanes have zero tracked/ignored/cache residue, exactly three existing worktrees, disjoint writable paths and no authority to create/control Agents. Reviewer retains sole orchestration/review/integration authority. |
+| Prohibitions | No new worktree, broad ticket, numeric line criterion, global staging-root scan/delete, staging push, package/build/install, live Codex, target-project write, release, deployment or scope expansion. |

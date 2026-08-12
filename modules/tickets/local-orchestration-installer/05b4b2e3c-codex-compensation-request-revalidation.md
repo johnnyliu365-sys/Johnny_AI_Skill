@@ -72,3 +72,16 @@ dynamic member lookup, optional/`None` authority or historical-source copy.
 
 Freeze is not dispatch. Exact lane/readback and a dispatch registry commit are
 required before the implementation owner may switch branch or edit.
+
+## Dispatch registry
+
+| Field | Value |
+| --- | --- |
+| Reviewed freeze | `d5ff1297be90d223834aded354d9d33b6dbd4b35`; exact Q1-Q6; `XSS_NOT_APPLICABLE` |
+| Delivery authority | Project-owner standing instruction to continue approved small-ticket work; `IMPLEMENTATION_DISPATCH_CONFIRMED` for E3C only |
+| Lane readback | Idle task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2` clean at submitted HEAD `b230bbf736b04218f326a3b8617357ee335bbec0`; zero tracked/ignored/cache residue; exactly three worktrees; target branch absent |
+| Branch | Create only `codex/implementation-codex-compensation-request-revalidation-05b4b2e3c` from the exact commit carrying this registry in the same worktree; no new worktree |
+| Binding | `hnd_local_orchestration_install_05b4b2e3c_20260813`; `aln_local_orchestration_install_05b4b2e3c_20260813`; `rcpt_local_orchestration_install_05b4b2e3c_20260813`; `corr-local-orchestration-install-05b4b2e3c-20260813`; `q-local-orchestration-install-05b4b2e3c-20260813`; `scx-local-orchestration-install-05b4b2e3c-20260813-01` |
+
+This is the single dispatch. Only the exact implementation paths actually
+needed by Q1-Q6 and the later WPR-only `PRG-20260813-303` are writable.
