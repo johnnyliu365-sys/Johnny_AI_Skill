@@ -3315,3 +3315,15 @@
 | Correction | Branch-local docs commit `c836eb97218b43d451f3b056389f3c44ce726e12` used `PRG-20260813-295`, which was already committed by concurrent E2B CR-160. That duplicate identifier is superseded by this unique record and is intentionally absent from the merged current WPR; the original text remains immutable in second-parent history. |
 | Unique handoff | This record is the unique E3B CR-161 handoff identifier. It binds implementation `d9d30db40e75c4a0a498c5984dfa11e530c6accc`, formal review `56e44ccdfdf7d100f6a4cdd9bb3c30f7efeb7ee6`, dispatch `0d2a83e4505d24a8d042bd70cc085e6ba81f172e`, and the retained same-closure handoff/allocation/receipt/correlation evidence. |
 | Retained correction evidence | Exact response/payload classes and recursive fixed-state validation cover response, plugin list, entries and marketplace source before rebuilding. The first red admitted a `CodexPluginList` subclass; final subclass, raw, missing/extra/injected-state and nested malformed cells block with `ABSENCE_NOT_PROVEN`. Focused 25/25, full 384/384, strict mypy and in-memory compile over 132 files passed in the submitted lane. |
+
+## PRG-20260813-298 — E2B/E3B guarded integration completion
+
+| Field | Value |
+| --- | --- |
+| Router event | `REVIEW_APPROVED(E2B,E3B) -> GUARDED_INTEGRATION -> ACTION_COMPLETED / TICKETS_COMPLETED` |
+| E2B integration | Merge `784d08a29155379dab35ee33b037ab039ab6aedf`; first parent approval `3a2a7064ca0daab6930aa49e86c135426b54fb5b`; second parent exact handoff `7c17caf23a80d5c1bfc5bf81237ce0daba091607`. |
+| E3B integration | Merge `dc07eec0ac4966a33563feca60a163584b706fdb`; first parent E2B merge `784d08a29155379dab35ee33b037ab039ab6aedf`; second parent exact handoff `b230bbf736b04218f326a3b8617357ee335bbec0`. |
+| WPR merge resolution | Retained control PRG-293/294/297, E2B PRG-291/295 and E3B PRG-292/296. E3B's colliding branch-local PRG-295 remains immutable in second-parent history but is omitted from the current unique WPR; PRG-296 carries its retained evidence and correction. |
+| Post-merge evidence | Combined focused suites passed 66/66; full serial discovery passed 388/388 in one unique reviewer-owned external TEMP; strict mypy and in-memory compile passed 132 files. Exact merge ancestry, duplicate-PRG check, diff check, clean main and exactly three worktrees passed. |
+| Completion / continuation | E2B and E3B are `COMPLETED / APPROVED / INTEGRATED`; allocations released and receipts closed. E2 and E3 adapter tickets are now separately eligible for reviewer refreeze from this integrated baseline; neither is dispatched by this record. |
+| Package boundary | No staging push, package, build/install, release, deployment, live Codex or target-project action. Remote `staging` remains reserved for 04D only after exact clean v1 candidate freeze under 04C. |

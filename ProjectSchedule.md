@@ -147,9 +147,9 @@
 | Ticket 05B4B2E1 oracle identity binding | COMPLETED / APPROVED / INTEGRATED | Merge `27c8305`; CR-159 closed by recursive 14-node rejection, full 370 and strict typing. |
 | Ticket 05B4B2E2A oracle version observation | COMPLETED / APPROVED / INTEGRATED | Merge `52a2a4e`; combined focused 44/full 379/strict mypy pass. |
 | Ticket 05B4B2E3A compensation finite failure | COMPLETED / APPROVED / INTEGRATED | Merge `b324f91`; combined focused 44/full 379/strict mypy pass. |
-| Ticket 05B4B2E2B registration no-effect failure | REVIEW_APPROVED / READY_FOR_GUARDED_INTEGRATION | Exact handoff `7c17caf`; CR-160 incident is truthfully preserved. |
-| Ticket 05B4B2E3B oracle owned-absence preservation | REVIEW_APPROVED / READY_FOR_GUARDED_INTEGRATION | Exact handoff `b230bbf`; CR-161 subclass/constructed evidence is finitely blocked. |
-| Tickets 05B4B2E2/E3 oracle adapters | PLANNED / PREREQUISITE_WAIT | Refreeze separately only after their B prerequisites are approved and integrated. |
+| Ticket 05B4B2E2B registration no-effect failure | COMPLETED / APPROVED / INTEGRATED | Merge `784d08a`; CR-160 incident remains truthfully preserved. |
+| Ticket 05B4B2E3B oracle owned-absence preservation | COMPLETED / APPROVED / INTEGRATED | Merge `dc07eec`; CR-161 subclass/constructed evidence is finitely blocked. |
+| Tickets 05B4B2E2/E3 oracle adapters | PLANNED / READY_FOR_REFREEZE | Their A/B prerequisites are approved and integrated; refreeze each as a separate small ticket. |
 | Tickets 05B4B2E4-E6 lifecycle acceptance | PLANNED / DEPENDENCY_WAIT | Success, compensation and isolation remain small dependency-ordered acceptance tickets. |
 | Ticket 05C receipt removal/replay | PLANNED / DEPENDENCY_WAIT / REFREEZE_REQUIRED | Starts only after 05A/05B approval/integration and a finite behavior/rollback closure refreeze. |
 | Ticket 06A Codex role-profile capability proof | DONE / APPROVED_EVIDENCE / INSTALL_BLOCKED / INTEGRATED | Implementation `38e9a8b`, handoff `f6f186f`, review `62955ec`, guarded merge `de4141e`; actual installed-host result is `ROLE_ISOLATION_UNPROVEN / ACCESS_DENIED / OUTPUT_UNAVAILABLE`, so capability dependents stay blocked. |
