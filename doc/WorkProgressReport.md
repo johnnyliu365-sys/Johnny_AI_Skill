@@ -3120,3 +3120,13 @@
 | Post-merge evidence | Focused/relevant 27/27, full serial 370/370, strict mypy 132 files and in-memory compile 132 files passed. Main and submitted implementation lanes were clean; exactly the original three worktrees remained. |
 | Completion | E1 is `COMPLETED / APPROVED / INTEGRATED`; allocation released and receipt closed. E2/E3 require their own reviewed freezes and new unique bindings. |
 | Package boundary | No staging push, package, release, deployment or target-project action. Only future 04D may fast-forward the remote `staging` warm-backup ref after exact 04C candidate freeze. |
+
+## PRG-20260813-280 — E2/E3 prerequisite convergence and reviewed freezes
+
+| Field | Value |
+| --- | --- |
+| Router event | `ACTION_COMPLETED(05B4B2E1) -> CHILDREN_REVIEWED -> TICKET_DEFECT / CONVERGENCE_DECOMPOSED -> E2A_E3A_FROZEN` |
+| E2 defect | Integrated registration port requires fresh `CodexPreflightEligible.version`, but 05S4 has no VERSION surface. Copying `request.expected_version` would manufacture success. E2 is `PREREQUISITE_WAIT`; E2A closure V1-V8 adds only caller-independent child-observed oracle version evidence. |
+| E3 defect | Integrated compensation port aliases expose success values only while composition propagates ordinary dependency exceptions. E3 cannot truthfully map finite oracle blocks. E3 is `PREREQUISITE_WAIT`; E3A closure F1-F8 adds one request/operation-bound metadata-only finite failure algebra and normalization. |
+| Parallel safety | E2A owns only staging protocol/oracle source and focused tests. E3A owns only compensation port/composition source and focused tests. Their writable sets are disjoint, so the two existing implementation tasks may run concurrently after exact lane readback and dispatch registries. |
+| Package boundary | No staging push, package, release, deployment or target-project action. Remote `staging` remains reserved for future 04D after exact 04C freeze. |
