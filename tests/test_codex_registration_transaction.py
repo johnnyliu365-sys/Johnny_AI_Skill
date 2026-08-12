@@ -104,6 +104,28 @@ class PlainTrap:
         self._raise()
 
 
+class CallerProtocolTrap:
+    def __init__(self) -> None:
+        self.invocation_count = 0
+
+    def _raise(self, message: str) -> NoReturn:
+        self.invocation_count += 1
+        raise RuntimeError(message)
+
+
+class ComparisonTrap(CallerProtocolTrap):
+    def __eq__(self, other: object) -> bool:
+        self._raise("comparison trap")
+
+
+class HashEqualityTrap(CallerProtocolTrap):
+    def __hash__(self) -> int:
+        self._raise("hash trap")
+
+    def __eq__(self, other: object) -> bool:
+        self._raise("equality trap")
+
+
 def preflight() -> CodexPreflightRequest:
     return CodexPreflightRequest(
         installation_id=INSTALLATION,
@@ -445,6 +467,47 @@ class CodexRegistrationTransactionTests(unittest.TestCase):
         safe_text = f"{ready.lease.metadata().model_dump()} {repr(ready.lease)}".casefold()
         for forbidden in ("operation", "callable", "raw_output", "\\", "secret", "receipt"):
             self.assertNotIn(forbidden, safe_text)
+
+    def test_cr150_t5_caller_protocol_traps_block_without_invocation(self) -> None:
+        coordinator = CodexRegistrationTransactionCoordinator()
+        ready = expect_ready(coordinator.begin(request()))
+        exact = ready.lease.metadata()
+        comparison_trap = ComparisonTrap()
+        hash_trap = HashEqualityTrap()
+        trapped_attempt = CodexRegistrationAttemptId.model_construct(value=hash_trap)
+        cases: tuple[tuple[str, CodexRegistrationLeaseMetadata, CallerProtocolTrap], ...] = (
+            (
+                "status-comparison",
+                CodexRegistrationLeaseMetadata.model_construct(
+                    status=comparison_trap,
+                    attempt_id=exact.attempt_id,
+                    phase=exact.phase,
+                    generation=exact.generation,
+                ),
+                comparison_trap,
+            ),
+            (
+                "attempt-hash",
+                CodexRegistrationLeaseMetadata.model_construct(
+                    attempt_id=trapped_attempt,
+                    phase=exact.phase,
+                    generation=exact.generation,
+                ),
+                hash_trap,
+            ),
+        )
+        for label, metadata, trap in cases:
+            with self.subTest(cell=label):
+                fabricated = object.__new__(CodexRegistrationPhaseLease)
+                object.__setattr__(fabricated, "_token", ready.lease._token)
+                object.__setattr__(fabricated, "_owner", coordinator)
+                object.__setattr__(fabricated, "_metadata", metadata)
+                assert_blocked(
+                    self,
+                    coordinator.start(fabricated),
+                    CodexRegistrationTransactionBlockReason.INVALID_LEASE,
+                )
+                self.assertEqual(0, trap.invocation_count)
 
     def test_t5_t7_owning_coordinator_identity_is_required(self) -> None:
         coordinator = CodexRegistrationTransactionCoordinator()

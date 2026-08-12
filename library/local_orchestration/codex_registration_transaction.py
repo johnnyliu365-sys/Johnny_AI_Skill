@@ -395,25 +395,41 @@ class CodexRegistrationTransactionCoordinator:
             return _blocked(CodexRegistrationTransactionBlockReason.INVALID_LEASE)
         metadata = metadata_value
         try:
-            if (
-                metadata.status != "PHASE_LEASE"
-                or type(metadata.attempt_id) is not CodexRegistrationAttemptId
-                or type(metadata.phase) is not CodexRegistrationPhase
-                or type(metadata.generation) is not CodexRegistrationGeneration
-                or type(metadata.generation.value) is not int
-                or metadata.generation.value < 1
-            ):
-                return _blocked(CodexRegistrationTransactionBlockReason.INVALID_LEASE)
-            record = self._attempts.get(metadata.attempt_id.value)
+            status_value: object = metadata.status
+            attempt_id_value: object = metadata.attempt_id
+            phase_value: object = metadata.phase
+            generation_value: object = metadata.generation
         except (AttributeError, TypeError, ValueError):
             return _blocked(CodexRegistrationTransactionBlockReason.INVALID_LEASE)
+        if (
+            type(status_value) is not str
+            or type(attempt_id_value) is not CodexRegistrationAttemptId
+            or type(phase_value) is not CodexRegistrationPhase
+            or type(generation_value) is not CodexRegistrationGeneration
+        ):
+            return _blocked(CodexRegistrationTransactionBlockReason.INVALID_LEASE)
+        attempt_id = attempt_id_value
+        phase = phase_value
+        generation = generation_value
+        try:
+            attempt_key_value: object = attempt_id.value
+            generation_number_value: object = generation.value
+        except (AttributeError, TypeError, ValueError):
+            return _blocked(CodexRegistrationTransactionBlockReason.INVALID_LEASE)
+        if type(attempt_key_value) is not str or type(generation_number_value) is not int:
+            return _blocked(CodexRegistrationTransactionBlockReason.INVALID_LEASE)
+        attempt_key = attempt_key_value
+        generation_number = generation_number_value
+        if status_value != "PHASE_LEASE" or generation_number < 1:
+            return _blocked(CodexRegistrationTransactionBlockReason.INVALID_LEASE)
+        record = self._attempts.get(attempt_key)
         if record is None:
             return _blocked(CodexRegistrationTransactionBlockReason.INVALID_LEASE)
         if isinstance(record, _TerminalAttempt):
             return _blocked(CodexRegistrationTransactionBlockReason.REPLAYED)
-        if metadata.generation.value != record.generation:
+        if generation_number != record.generation:
             return _blocked(CodexRegistrationTransactionBlockReason.REPLAYED)
-        if metadata.phase is not record.phase:
+        if phase is not record.phase:
             return _blocked(CodexRegistrationTransactionBlockReason.PHASE_MISMATCH)
         if record.lease is not lease:
             return _blocked(CodexRegistrationTransactionBlockReason.INVALID_LEASE)
