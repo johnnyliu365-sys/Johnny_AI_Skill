@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| Context state | `TICKET_05B4B1_REVISION_02_CHANGES_REQUESTED / CORRECTION_PENDING` |
-| Router event | `IMPLEMENTATION_CORRECTION_COMPLETED / TERMINAL_REVIEW / CHANGES_REQUESTED(CR-149)` |
+| Context state | `TICKET_05B4B1_REVISION_02_CR149_CORRECTION_DISPATCHED` |
+| Router event | `CHANGES_REQUESTED(CR-149) / CORRECTION_HANDOFF_CONFIRMED` |
 | Delivery stage | `POC` |
 | Requirement change | `CHG-20260808-011` |
 | Baseline | `cd3e9b6789623bd2a12ff7c69db4d5fcadd1718f` (`docs: refreeze Ticket 05B4B1 pure reducer`) |
@@ -603,5 +603,6 @@ No new branch/worktree or B2 implementation allocation exists.
 The revision-02 return closes CR-148 and passes the independent standard suite,
 but CR-149 reproduces an `AttributeError` for each pending variant when a
 constructed-invalid state omits `status`. This is a bounded implementation
-defect under existing R2-D6; one same-branch correction may guard those three
+defect under existing R2-D6. One same-branch correction is dispatched against
+review `8806d53ac1e2066ee72b64293a4b557cd9474f07` to guard only those three
 cells. B2 remains dependency-waiting and unallocated.

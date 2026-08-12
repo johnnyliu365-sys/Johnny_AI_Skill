@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / unchanged AC-01, AC-02, AC-07 and AC-08 registration seam |
-| State | `IN_PROGRESS / REVISION_02_CHANGES_REQUESTED / CORRECTION_PENDING` |
+| State | `IN_PROGRESS / REVISION_02_CR149_CORRECTION_DISPATCHED` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B4B1-02` / R2-D1 through R2-D8 |
 | Dependency | 05B4A1 approved and integrated by `3399cf934874f3304959ef0b6913548c0d767e01` |
 | Owner / worktree | Task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2`; no new worktree |
@@ -206,3 +206,18 @@ finite `INVALID_STATE` rejection for constructed-invalid pending values. The
 smallest same-closure correction is to guard required status access for all
 three variants and commit the exact three-cell regression test; no ticket
 refreeze, B2 work, new branch or new worktree is needed.
+
+### CR-149 correction handoff
+
+| Field | Value |
+| --- | --- |
+| Reviewed finding | Control review `8806d53ac1e2066ee72b64293a4b557cd9474f07`; CR-149 only; existing `CLOSURE-LOCAL-INSTALL-T05B4B1-02` / R2-D6 |
+| Handoff | `hnd_local_orchestration_install_05b4b1_r02_cr149_20260812` |
+| Retained authority | Existing allocation `aln_local_orchestration_install_05b4b1_r02_20260812`, receipt `rcpt_local_orchestration_install_05b4b1_r02_20260812`, correlation `corr-local-orchestration-install-05b4b1-r02-20260812` and same named implementation owner |
+| Exact admission | Existing `workflow-implementer-2`; existing branch `codex/implementation-codex-registration-reducer-05b4b1`; exact clean HEAD `8ae77343ca455e51a6f3addbcc3e8f1aff29ed2a`; additive commits only |
+| Exact correction | In the focused test, first prove missing `status` on fresh, marketplace and plugin constructed-invalid pending values raises. Then guard status access so all three return `CodexRegistrationBlocked(INVALID_STATE)` without weakening any revision-02 copy/reconstruction or revision-01 matrix. |
+| Return | One exact two-path CR-149 correction commit, then WPR-only reserved `PRG-20260812-213` |
+
+No other malformed shape, refactor, authority mechanism, B2 implementation,
+branch/worktree, Agent, effect, integration, push, release or deployment is
+authorized.

@@ -2380,3 +2380,13 @@
 | Passing evidence | Exact ancestry/scope/residue passed. Immutable export focused 13/13, full 282/282, strict mypy 120 files and compile 120 files passed. Independent three-phase/five-reconstruction/repeat, malformed nested, public-data and source-effect probes passed; CR-148 is closed. |
 | CR-149 | Each exact pending variant raises `AttributeError` when constructed-invalid state omits `status`; R2-D6 requires finite `INVALID_STATE`. Classification is `IMPLEMENTATION_DEFECT`, bounded to required-field validation and a three-cell regression test. |
 | Decision / continuation | `CHANGES_REQUESTED / SAME_CLOSURE_CORRECTION_REQUIRED`; same ticket/task/worktree/branch/receipt only. No new branch/worktree, ticket refreeze, B2 dispatch, effect, push, release or deployment. |
+
+## PRG-20260812-212 — Ticket 05B4B1 CR-149 correction handoff
+
+| Field | Value |
+| --- | --- |
+| Router event | `CHANGES_REQUESTED(CR-149) -> IMPLEMENTATION_DEFECT -> CORRECTION_HANDOFF_CONFIRMED` |
+| Reviewed authority | Control review `8806d53ac1e2066ee72b64293a4b557cd9474f07`; existing closure `CLOSURE-LOCAL-INSTALL-T05B4B1-02` / R2-D6; correction handoff `hnd_local_orchestration_install_05b4b1_r02_cr149_20260812`. Existing allocation, receipt and correlation remain unchanged. |
+| Owner / admission | Same task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2`; existing branch `codex/implementation-codex-registration-reducer-05b4b1`; exact clean HEAD `8ae77343ca455e51a6f3addbcc3e8f1aff29ed2a`; additive commits only. |
+| Exact correction / return | First-red all three missing-`status` cells, then the smallest finite `INVALID_STATE` guard in the existing reducer/test only; preserve all passing R2-D1 through R2-D7 evidence. One exact two-path correction commit followed by WPR-only reserved `PRG-20260812-213`. |
+| Stop | No other hardening, refactor, B2 work, branch/worktree, Agent, effect, review/integration, push, release or deployment. |
