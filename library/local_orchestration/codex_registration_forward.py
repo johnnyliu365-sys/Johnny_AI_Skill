@@ -3,9 +3,8 @@
 from __future__ import annotations
 
 from enum import Enum
-from operator import index
 from types import MethodType
-from typing import Final, Literal, NoReturn, SupportsIndex, TypeAlias
+from typing import Final, Literal, NoReturn, TypeAlias
 
 from pydantic import BaseModel, ConfigDict
 
@@ -63,13 +62,39 @@ class _CoordinatorToken:
 _COORDINATOR_TOKEN: Final[_CoordinatorToken] = _CoordinatorToken()
 
 
+class _CoordinatorAuthority:
+    """One owner-bound capability and transaction identity."""
+
+    __slots__ = ("_capability", "_owner", "_transaction")
+
+    _capability: CodexRegistrationPortCapability
+    _owner: CodexRegistrationForwardCoordinator
+    _transaction: CodexRegistrationTransactionCoordinator
+
+    def __init__(
+        self,
+        token: object,
+        owner: CodexRegistrationForwardCoordinator,
+        capability: CodexRegistrationPortCapability,
+        transaction: CodexRegistrationTransactionCoordinator,
+    ) -> None:
+        if token is not _COORDINATOR_TOKEN:
+            raise TypeError("forward authority construction is forbidden")
+        object.__setattr__(self, "_owner", owner)
+        object.__setattr__(self, "_capability", capability)
+        object.__setattr__(self, "_transaction", transaction)
+
+    def __setattr__(self, name: str, value: object) -> NoReturn:
+        raise AttributeError("forward authority is immutable")
+
+
 class CodexRegistrationForwardCoordinator:
     """Own one rebuilt capability and one private transaction coordinator."""
 
     __slots__ = ("_capability", "_token", "_transaction")
 
     _capability: CodexRegistrationPortCapability
-    _token: _CoordinatorToken
+    _token: _CoordinatorAuthority
     _transaction: CodexRegistrationTransactionCoordinator
 
     def __init__(
@@ -84,7 +109,8 @@ class CodexRegistrationForwardCoordinator:
             raise TypeError("forward coordinator capability is invalid")
         if type(transaction) is not CodexRegistrationTransactionCoordinator:
             raise TypeError("forward transaction coordinator is invalid")
-        object.__setattr__(self, "_token", _COORDINATOR_TOKEN)
+        authority = _CoordinatorAuthority(_COORDINATOR_TOKEN, self, capability, transaction)
+        object.__setattr__(self, "_token", authority)
         object.__setattr__(self, "_capability", capability)
         object.__setattr__(self, "_transaction", transaction)
 
@@ -100,29 +126,56 @@ class CodexRegistrationForwardCoordinator:
     def __reduce__(self) -> NoReturn:
         raise TypeError("forward coordinator transfer is forbidden")
 
-    def __reduce_ex__(self, protocol: SupportsIndex) -> NoReturn:
-        index(protocol)
+    def __reduce_ex__(self, protocol: object) -> NoReturn:
         raise TypeError("forward coordinator transfer is forbidden")
+
+    def _has_exact_authority(self) -> bool:
+        if type(self) is not CodexRegistrationForwardCoordinator:
+            return False
+        try:
+            authority_value: object = object.__getattribute__(self, "_token")
+            capability_value: object = object.__getattribute__(self, "_capability")
+            transaction_value: object = object.__getattribute__(self, "_transaction")
+        except (AttributeError, TypeError):
+            return False
+        if (
+            type(authority_value) is not _CoordinatorAuthority
+            or type(capability_value) is not CodexRegistrationPortCapability
+            or type(transaction_value) is not CodexRegistrationTransactionCoordinator
+        ):
+            return False
+        authority = authority_value
+        try:
+            owner_value: object = object.__getattribute__(authority, "_owner")
+            admitted_capability_value: object = object.__getattribute__(authority, "_capability")
+            admitted_transaction_value: object = object.__getattribute__(authority, "_transaction")
+        except (AttributeError, TypeError):
+            return False
+        return (
+            owner_value is self
+            and admitted_capability_value is capability_value
+            and admitted_transaction_value is transaction_value
+        )
 
     def metadata(self) -> CodexRegistrationForwardAdmitted:
         """Return only finite status and operation-count metadata."""
 
-        if object.__getattribute__(self, "_token") is not _COORDINATOR_TOKEN:
+        if not self._has_exact_authority():
             raise TypeError("forward coordinator authority is invalid")
-        if type(object.__getattribute__(self, "_capability")) is not CodexRegistrationPortCapability:
-            raise TypeError("forward coordinator capability is invalid")
-        if type(object.__getattribute__(self, "_transaction")) is not CodexRegistrationTransactionCoordinator:
-            raise TypeError("forward transaction coordinator is invalid")
         return CodexRegistrationForwardAdmitted()
 
     def begin(self, value: object) -> CodexRegistrationTransactionBegin:
         """Begin one exact request through the private transaction authority."""
 
+        if not self._has_exact_authority():
+            return _transaction_blocked(CodexRegistrationTransactionBlockReason.INVALID_STATE)
         return self._transaction.begin(value)
 
     def execute(self, value: object) -> CodexRegistrationTransactionComplete:
         """Consume one lease, invoke one exact operation, and complete it once."""
 
+        if not self._has_exact_authority():
+            return _transaction_blocked(CodexRegistrationTransactionBlockReason.INVALID_STATE)
         started = self._transaction.start(value)
         if type(started) is CodexRegistrationTransactionBlocked:
             return started
@@ -142,6 +195,8 @@ class CodexRegistrationForwardCoordinator:
     def recovery(self, value: object) -> CodexRegistrationRecoveryView:
         """Expose only B2A conservative recovery data for one started add."""
 
+        if not self._has_exact_authority():
+            return _transaction_blocked(CodexRegistrationTransactionBlockReason.INVALID_STATE)
         return self._transaction.recovery(value)
 
     def __repr__(self) -> str:

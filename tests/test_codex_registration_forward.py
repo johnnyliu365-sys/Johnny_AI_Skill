@@ -140,6 +140,24 @@ class AddMode(str, Enum):
     MALFORMED = "MALFORMED"
 
 
+class CoordinatorEntry(str, Enum):
+    BEGIN = "BEGIN"
+    EXECUTE = "EXECUTE"
+    RECOVERY = "RECOVERY"
+
+
+class CoordinatorSlot(str, Enum):
+    TOKEN = "_token"
+    CAPABILITY = "_capability"
+    TRANSACTION = "_transaction"
+
+
+class InvalidCoordinatorShape(str, Enum):
+    MISSING = "MISSING"
+    FOREIGN = "FOREIGN"
+    WRONG_TYPE = "WRONG_TYPE"
+
+
 class CallerTrap:
     def __init__(self) -> None:
         self.invocation_count = 0
@@ -159,6 +177,15 @@ class CallerTrap:
 
     def __str__(self) -> str:
         self._raise()
+
+
+class IndexTrap:
+    def __init__(self) -> None:
+        self.invocation_count = 0
+
+    def __index__(self) -> int:
+        self.invocation_count += 1
+        raise RuntimeError("INDEX_TRAP")
 
 
 class DescriptorTrap:
@@ -532,6 +559,30 @@ def expect_forward(value: object) -> CodexRegistrationForwardCoordinator:
 
 def coordinator(adapter: ForwardAdapter) -> CodexRegistrationForwardCoordinator:
     return expect_forward(admit_codex_registration_forward(capability(adapter)))
+
+
+def constructed_invalid_coordinator(
+    reference: CodexRegistrationForwardCoordinator,
+    foreign: CodexRegistrationForwardCoordinator,
+    slot: CoordinatorSlot,
+    shape: InvalidCoordinatorShape,
+    trap: CallerTrap,
+) -> CodexRegistrationForwardCoordinator:
+    values: dict[CoordinatorSlot, object] = {
+        CoordinatorSlot.TOKEN: object.__getattribute__(reference, CoordinatorSlot.TOKEN.value),
+        CoordinatorSlot.CAPABILITY: object.__getattribute__(reference, CoordinatorSlot.CAPABILITY.value),
+        CoordinatorSlot.TRANSACTION: object.__getattribute__(reference, CoordinatorSlot.TRANSACTION.value),
+    }
+    if shape is InvalidCoordinatorShape.MISSING:
+        del values[slot]
+    elif shape is InvalidCoordinatorShape.FOREIGN:
+        values[slot] = object.__getattribute__(foreign, slot.value)
+    else:
+        values[slot] = trap
+    fabricated = object.__new__(CodexRegistrationForwardCoordinator)
+    for current_slot, value in values.items():
+        object.__setattr__(fabricated, current_slot.value, value)
+    return fabricated
 
 
 def expect_ready(value: object) -> CodexRegistrationReadyLease:
@@ -1073,6 +1124,92 @@ class CodexRegistrationForwardTests(unittest.TestCase):
         object.__setattr__(valid, "add_plugin", trap)
         blocked = admit_codex_registration_forward(valid)
         self.assertIs(type(blocked), CodexRegistrationForwardBlocked)
+        self.assertEqual(0, trap.invocation_count)
+
+    def test_cr151_constructed_coordinator_authority_blocks_all_public_entries(self) -> None:
+        for entry in CoordinatorEntry:
+            for slot in CoordinatorSlot:
+                for shape in InvalidCoordinatorShape:
+                    with self.subTest(entry=entry, slot=slot, shape=shape):
+                        adapter = ForwardAdapter()
+                        foreign_adapter = ForwardAdapter()
+                        current = coordinator(adapter)
+                        foreign = coordinator(foreign_adapter)
+                        trap = CallerTrap()
+                        argument: object
+                        if entry is CoordinatorEntry.BEGIN:
+                            argument = request()
+                        elif entry is CoordinatorEntry.EXECUTE:
+                            argument = expect_ready(current.begin(request())).lease
+                        else:
+                            fresh = expect_ready(current.begin(request()))
+                            marketplace = expect_next(current.execute(fresh.lease))
+                            transaction_value: object = object.__getattribute__(current, "_transaction")
+                            self.assertIs(type(transaction_value), CodexRegistrationTransactionCoordinator)
+                            if type(transaction_value) is not CodexRegistrationTransactionCoordinator:
+                                raise AssertionError("expected private transaction coordinator")
+                            started = transaction_value.start(marketplace.lease)
+                            self.assertNotIsInstance(started, CodexRegistrationTransactionBlocked)
+                            adapter.calls.clear()
+                            adapter.requests.clear()
+                            argument = marketplace.lease
+
+                        fabricated = constructed_invalid_coordinator(
+                            current,
+                            foreign,
+                            slot,
+                            shape,
+                            trap,
+                        )
+                        result: object
+                        if entry is CoordinatorEntry.BEGIN:
+                            result = fabricated.begin(argument)
+                        elif entry is CoordinatorEntry.EXECUTE:
+                            result = fabricated.execute(argument)
+                        else:
+                            result = fabricated.recovery(argument)
+                        assert_transaction_blocked(
+                            self,
+                            result,
+                            CodexRegistrationTransactionBlockReason.INVALID_STATE,
+                        )
+                        self.assertEqual([], adapter.calls)
+                        self.assertEqual([], foreign_adapter.calls)
+                        self.assertEqual(0, trap.invocation_count)
+                        if entry is CoordinatorEntry.BEGIN:
+                            expect_ready(current.begin(argument))
+                        elif entry is CoordinatorEntry.EXECUTE:
+                            expect_next(current.execute(argument))
+                            self.assertEqual([ForwardPhase.FRESH], adapter.calls)
+                        else:
+                            recovery = current.recovery(argument)
+                            self.assertIs(type(recovery), CodexRegistrationAddRecovery)
+
+    def test_cr151_constructed_coordinator_metadata_and_repr_share_authority_gate(self) -> None:
+        for slot in CoordinatorSlot:
+            for shape in InvalidCoordinatorShape:
+                with self.subTest(slot=slot, shape=shape):
+                    current = coordinator(ForwardAdapter())
+                    foreign = coordinator(ForwardAdapter())
+                    trap = CallerTrap()
+                    fabricated = constructed_invalid_coordinator(
+                        current,
+                        foreign,
+                        slot,
+                        shape,
+                        trap,
+                    )
+                    with self.assertRaises(TypeError):
+                        fabricated.metadata()
+                    with self.assertRaises(TypeError):
+                        repr(fabricated)
+                    self.assertEqual(0, trap.invocation_count)
+
+    def test_cr152_reduce_ex_rejects_without_index_protocol(self) -> None:
+        current = coordinator(ForwardAdapter())
+        trap = IndexTrap()
+        with self.assertRaises(TypeError):
+            current.__reduce_ex__(trap)
         self.assertEqual(0, trap.invocation_count)
 
 
