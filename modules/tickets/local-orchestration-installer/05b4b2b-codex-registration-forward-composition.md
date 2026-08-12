@@ -163,3 +163,26 @@ reference leak. Scope and all original bindings remain unchanged.
 
 No reset, amend, rebase, merge, new branch/worktree, public API change or
 unrelated hardening is admitted.
+
+### CR-154 review correction
+
+The CR-153 return correctly blocks an unregistered field-only clone, rejects
+public construction, preserves caller-protocol safety and reclaims normal
+factory records. It does not yet prove factory-only registration because the
+mutable registry and provenance-record type remain writable module-global
+names. A caller using ordinary private-module imports can insert an exact
+record for a forged coordinator and reach `FRESH`.
+
+CR-154 remains inside F2/F7. Move registry ownership and the only registration
+operation into the admission factory's lexical closure. Do not leave a mutable
+registry, arbitrary registration callable or provenance constructor usable for
+insertion in module globals. Preserve identity-only synchronized validation,
+weak reclamation, public-constructor rejection and all earlier gates. The
+enforced adversary is untrusted input plus ordinary importable module
+attributes; arbitrary interpreter compromise, monkeypatching/debugger access
+and closure-cell mutation are trusted-runtime concerns outside this ticket.
+
+The same ticket, owner, worktree, branch, allocation, receipt, correlation and
+two-path correction scope remain valid. Add a first-red module-private
+registry-injection regression and an isolated closure-ownership reversal, then
+return one additive correction commit followed by one WPR-only handoff.

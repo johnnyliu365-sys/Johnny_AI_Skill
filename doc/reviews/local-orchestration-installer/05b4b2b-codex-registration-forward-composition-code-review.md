@@ -101,3 +101,53 @@ branch/worktree, live effect, integration, push, release or deployment is
 authorized.
 
 Decision remains `CHANGES_REQUESTED / SAME_CLOSURE_CORRECTION_REQUIRED`.
+
+## Second correction review — CR-154
+
+The additive return `35fc40f -> 2799a32 -> 7c10d01` has exact ancestry and
+scope, the submitted lane is clean, and the three-worktree topology is
+unchanged. A repository-external immutable export with ZIP SHA-256
+`D31337BDCB91886C84104936567E6FCF2EC4E2A537C9B936FD72AF7EAE7D232D`
+passes focused 22/22, full 316/316, strict mypy 124 files and in-memory compile
+124 files. Independent probes also confirm that an unregistered exact-shaped
+coordinator/authority clone blocks every public entry with zero effect, public
+construction rejects, `__reduce_ex__` invokes no caller `__index__`, and a
+normal factory record is reclaimed after its coordinator becomes unreachable.
+
+CR-153 is nevertheless not closed. `_COORDINATOR_REGISTRY` and
+`_CoordinatorProvenance` are writable module-global names. An independent
+probe imported those names, constructed an exact provenance record for the
+same unregistered clone and inserted it into the dict. The forged coordinator
+then returned `CodexRegistrationReadyLease`, completed to
+`CodexRegistrationNextReadyPhase`, and recorded one `FRESH` effect. This
+contradicts the frozen requirement that the factory alone can register a live
+coordinator. The registry currently distinguishes registered field shapes,
+not factory provenance.
+
+CR-154 is an `IMPLEMENTATION_DEFECT` within existing F2/F7. The bounded
+correction must move the mutable registry and its registration operation into
+the admission factory's lexical closure. Module globals and importable private
+names may expose only validation, finite metadata or immutable types; they may
+not expose the registry object, a provenance-record constructor usable for
+insertion, or a callable that registers an arbitrary coordinator. Coordinator
+methods must retain the same identity-only, synchronized validation and weak
+reclamation behavior. The committed first-red must reproduce direct
+module-private registry injection on `2799a32`, then prove that neither the
+registry nor a registration operation is present in module globals and that
+an exact unregistered clone remains blocked.
+
+This correction is not intended to resist arbitrary interpreter compromise,
+monkeypatching of production function globals, debugger access or mutation of
+closure cells; code already executing with those powers is inside the trusted
+Python runtime. The enforced boundary is untrusted input objects and callers
+using ordinary importable module attributes. This explicit boundary prevents
+an impossible escalation into treating same-process arbitrary code execution
+as an unforgeable security principal.
+
+Preserve the closed CR-152 behavior, lifecycle reclamation and all earlier
+F1-F8/reversal evidence. Scope remains the same forward module/test followed by
+one WPR-only handoff on the same task, worktree, branch, allocation, receipt
+and correlation. No new branch/worktree, public API, other ticket, live effect,
+integration, push, release or deployment is authorized.
+
+Decision remains `CHANGES_REQUESTED / SAME_CLOSURE_CORRECTION_REQUIRED`.
