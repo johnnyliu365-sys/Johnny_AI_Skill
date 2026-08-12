@@ -126,3 +126,16 @@ can mutate transaction state or invoke an operation. CR-152 requires
 `__reduce_ex__` to reject without inspecting or converting its caller-supplied
 protocol. The same ticket, owner, worktree, branch, allocation, receipt and
 correlation remain valid; correction commits must be additive.
+
+### Correction dispatch registry
+
+| Field | Value |
+| --- | --- |
+| Control review | `cd26d22970409a5a066943e2301b16a58b7f267e`; CR-151 and CR-152; same F2/F7 closure |
+| Correction handoff | `hnd_local_orchestration_install_05b4b2b_cr151_cr152_20260812` |
+| Retained authority | `aln_local_orchestration_install_05b4b2b_20260812`; `rcpt_local_orchestration_install_05b4b2b_20260812`; `corr-local-orchestration-install-05b4b2b-20260812`; `scx-local-orchestration-install-05b4b2b-20260812-01` |
+| Lane | Same task, existing `workflow-implementer-2`, existing `codex/implementation-codex-registration-forward-05b4b2b`, exact clean submitted HEAD `031c2ff0585b59510d1ee5746fd9acc60a837eaf`; additive commits only |
+| Correction return | Existing forward module/test only, then WPR-only handoff reserved as PRG-20260812-229 |
+
+No reset, amend, rebase, merge, new branch/worktree, public API change or
+out-of-scope hardening is admitted by this correction registry.

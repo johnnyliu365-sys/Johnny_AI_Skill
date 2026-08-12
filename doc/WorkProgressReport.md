@@ -2566,3 +2566,15 @@
 | CR-151 | Constructing a coordinator with `object.__new__` bypasses `__init__`; `begin`/`execute`/`recovery` do not revalidate coordinator authority. The independent probe reached `fresh_preflight`, recorded one `FRESH` call and returned a next-ready phase although `metadata()` rejected the same foreign token. |
 | CR-152 | `__reduce_ex__` invokes `operator.index(protocol)` before refusal. A caller `IndexTrap.__index__` executed once and its `RuntimeError` escaped instead of the required direct finite `TypeError`. |
 | Decision / continuation | Both are `IMPLEMENTATION_DEFECT` within F2/F7. Retain the same ticket/task/worktree/branch/allocation/receipt/correlation and immutable commits; dispatch one additive correction batch only. No new branch/worktree, scope expansion, integration, push, release or deployment. |
+
+## PRG-20260812-228 — Ticket 05B4B2B CR-151/CR-152 correction handoff
+
+| Field | Value |
+| --- | --- |
+| Router event | `CHANGES_REQUESTED(CR-151,CR-152) -> IMPLEMENTATION_DEFECT -> CORRECTION_HANDOFF_CONFIRMED` |
+| Reviewed authority | Control review `cd26d22970409a5a066943e2301b16a58b7f267e`; unchanged `CLOSURE-LOCAL-INSTALL-T05B4B2B-01` / F2 and F7; correction handoff `hnd_local_orchestration_install_05b4b2b_cr151_cr152_20260812`; retained allocation, receipt, correlation and side-context. |
+| Owner / admission | Same task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2`; existing branch `codex/implementation-codex-registration-forward-05b4b2b`; exact clean submitted HEAD `031c2ff0585b59510d1ee5746fd9acc60a837eaf`; additive commits only. |
+| CR-151 correction | First-red constructed-invalid coordinator `begin`/`execute`/`recovery` cells, then enforce one exact private authority gate before transaction state/effect access. Foreign/missing/wrong-type token, capability or transaction slots must fail finitely and trap-free with zero transaction/effect invocation. |
+| CR-152 correction | First-red a caller `__index__` trap, then make `__reduce_ex__` raise direct `TypeError` without conversion, comparison, hashing, representation or any caller protocol. |
+| Verification / return | Preserve F1-F8 and five existing reversals; independently reverse the common authority gate and direct serialization rejection. Rerun focused/full unittest, strict full-tree mypy, in-memory compile, source/scope/diff/ancestry and residue readbacks. Change only the existing forward module/test, then one WPR-only handoff reserved as PRG-20260812-229. |
+| Stop | No new branch/worktree/Agent, reset/amend/rebase/merge, public contract, B2C-B2E/05C work, live effect, target-project write, review/integration, push, release or deployment. |
