@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| Context state | `TICKET_05B4B2A_FROZEN / DISPATCH_PENDING` |
-| Router event | `ACTION_COMPLETED(05B4B1) / TICKET_05B4B2_DECOMPOSED / TICKET_05B4B2A_FROZEN` |
+| Context state | `TICKET_05B4B2A_IN_PROGRESS / DISPATCH_CONFIRMED` |
+| Router event | `TICKET_05B4B2A_FROZEN / IMPLEMENTATION_DISPATCH_CONFIRMED` |
 | Delivery stage | `POC` |
 | Requirement change | `CHG-20260808-011` |
 | Baseline | `cd3e9b6789623bd2a12ff7c69db4d5fcadd1718f` (`docs: refreeze Ticket 05B4B1 pure reducer`) |
@@ -630,3 +630,9 @@ process-local transaction authority with exact attempt/phase/generation and
 atomic one-shot start/complete leases. Implementer-2 is the planned owner in
 the existing worktree; freeze is not dispatch. B2B-B2E remain unallocated, and
 B2C/B2D may be parallelized only after B2B is independently integrated.
+
+The B2A dispatch binds freeze `c896bf6f7f130e320eace8996caf4caf65c5de2c`
+to the existing idle implementer-2 worktree at submitted B1 HEAD `918c9aff`.
+The implementation owner may create exactly one B2A branch from the dispatch
+registry commit in that same worktree. No additional worktree or B2B-B2E work
+is authorized.

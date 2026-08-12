@@ -139,7 +139,7 @@
 | Ticket 05B4B registration transaction parent | CONVERGENCE_DECOMPOSED | Split pure forward decisions from effect/proof/receipt/compensation/oracle composition. |
 | Ticket 05B4B1 pure registration reducer | COMPLETE / APPROVED / INTEGRATED | Correction `64e9e0a`, handoff `918c9af`, review `71f30be`, guarded merge `d7c5934`; post-merge verification passed. |
 | Ticket 05B4B2 transaction parent | CONVERGENCE_DECOMPOSED / CHILD_05B4B2A_FROZEN | B2A owns effect-free process-local transaction authority; B2B-B2E remain serial/dependency-waiting as documented. |
-| Ticket 05B4B2A transaction authority | PLANNED / FROZEN / DISPATCH_PENDING | Closure T1-T8; selected for implementer-2 in the existing worktree after dispatch registry. |
+| Ticket 05B4B2A transaction authority | IN_PROGRESS / DISPATCH_CONFIRMED | Closure T1-T8; implementer-2, same worktree, one branch from the exact dispatch commit. |
 | Ticket 05C receipt removal/replay | PLANNED / DEPENDENCY_WAIT / REFREEZE_REQUIRED | Starts only after 05A/05B approval/integration and a finite behavior/rollback closure refreeze. |
 | Ticket 06A Codex role-profile capability proof | DONE / APPROVED_EVIDENCE / INSTALL_BLOCKED / INTEGRATED | Implementation `38e9a8b`, handoff `f6f186f`, review `62955ec`, guarded merge `de4141e`; actual installed-host result is `ROLE_ISOLATION_UNPROVEN / ACCESS_DENIED / OUTPUT_UNAVAILABLE`, so capability dependents stay blocked. |
 | Autonomous Ticket 04 reviewer-only authority | PLANNED / DEPENDENCY_WAIT | Starts only after reviewed 06A `SUPPORTED`; typed fake effect gate, not a real Agent turn. |

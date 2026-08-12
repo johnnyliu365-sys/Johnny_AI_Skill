@@ -2460,3 +2460,13 @@
 | Binding | `hnd_local_orchestration_install_05b4b2a_20260812`; `aln_local_orchestration_install_05b4b2a_20260812`; `rcpt_local_orchestration_install_05b4b2a_20260812`; `corr-local-orchestration-install-05b4b2a-20260812`; `q-local-orchestration-install-05b4b2a-20260812`; `scx-local-orchestration-install-05b4b2a-20260812-01`. |
 | Owner / lane | Planned task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2`; later create only `codex/implementation-codex-registration-transaction-authority-05b4b2a` from the exact dispatch-registry commit. No new worktree. |
 | Scope / stop | New effect-free transaction module and focused test only, then WPR-only PRG-218. No registration/proof/compensation/process/filesystem/oracle effect, package/dependency edit, another Agent, review/integration, B2B-B2E/05C work, live state, push, release or deployment. Freeze is not dispatch. |
+
+## PRG-20260812-217 — Ticket 05B4B2A implementation dispatch
+
+| Field | Value |
+| --- | --- |
+| Router event | `TICKET_SELECTED(05B4B2A) -> TICKET_DISPATCH_REQUIRED -> IMPLEMENTATION_DISPATCH_CONFIRMED` |
+| Reviewed freeze | `c896bf6f7f130e320eace8996caf4caf65c5de2c`; `05b4b2a-codex-registration-transaction-authority`; `CLOSURE-LOCAL-INSTALL-T05B4B2A-01`; exact T1-T8. |
+| Binding | `hnd_local_orchestration_install_05b4b2a_20260812`; `aln_local_orchestration_install_05b4b2a_20260812`; `rcpt_local_orchestration_install_05b4b2a_20260812`; `corr-local-orchestration-install-05b4b2a-20260812`; `q-local-orchestration-install-05b4b2a-20260812`; `scx-local-orchestration-install-05b4b2a-20260812-01`. |
+| Owner / admission | Task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing clean `workflow-implementer-2` at submitted B1 HEAD `918c9aff6333d46576a81c92390d2bdf0b0e9b31`; create only `codex/implementation-codex-registration-transaction-authority-05b4b2a` from this dispatch-registry commit. Owner instruction `開始` is the positive delivery confirmation for B2A only. |
+| Scope / return | New transaction authority module and focused test only; implementation commit then WPR-only PRG-218. No new worktree, B2B-B2E/05C work, another Agent, effect, package/dependency edit, review/integration, push, release or deployment. |

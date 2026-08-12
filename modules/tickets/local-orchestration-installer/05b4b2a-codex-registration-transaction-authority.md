@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / unchanged AC-01, AC-02, AC-07 and AC-08 transaction seam |
-| State | `PLANNED / FROZEN / DISPATCH_PENDING` |
+| State | `IN_PROGRESS / DISPATCH_CONFIRMED` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B4B2A-01` / T1 through T8 |
 | Dependency | B1 revision 02 approved and integrated by `d7c59349b436d552f2fab457a297e2eac6958093` |
 | Planned owner | Task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2`; no new worktree |
@@ -101,3 +101,18 @@ package, push, release or deployment is authorized.
 Freeze is not dispatch. The exact reviewed freeze commit and a later dispatch
 registry commit must be recorded before the implementation lane may switch
 branch or edit either authorized path.
+
+## Dispatch registry
+
+| Field | Value |
+| --- | --- |
+| Reviewed freeze | `c896bf6f7f130e320eace8996caf4caf65c5de2c`; this ticket; exact T1-T8 |
+| Delivery confirmation | Project-owner instruction `開始`; applies only to B2A |
+| Lane admission | Idle clean task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2`; submitted B1 HEAD `918c9aff6333d46576a81c92390d2bdf0b0e9b31`; zero tracked/ignored/cache residue; three-worktree topology unchanged |
+| Required branch | Create only `codex/implementation-codex-registration-transaction-authority-05b4b2a` from the commit carrying this dispatch registry in the same worktree; no new worktree, merge, rebase or cherry-pick |
+| Authority | `hnd_local_orchestration_install_05b4b2a_20260812`; `aln_local_orchestration_install_05b4b2a_20260812`; `rcpt_local_orchestration_install_05b4b2a_20260812`; `corr-local-orchestration-install-05b4b2a-20260812`; `q-local-orchestration-install-05b4b2a-20260812`; `scx-local-orchestration-install-05b4b2a-20260812-01` |
+| Required return | One exact two-path implementation commit satisfying T1-T8, followed by one WPR-only handoff at reserved PRG-20260812-218 |
+
+Any admission mismatch returns typed `HALT` or `CHANGE_DETECTED`. No second
+branch/worktree, source path, ticket, Agent, effect, review, integration, push,
+release or deployment is admitted.
