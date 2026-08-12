@@ -3237,3 +3237,14 @@
 | E3B lane | Idle task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; clean submitted HEAD `5e3b3ccca6357ec485376009eecf06f3c4a4dbb7`; target branch absent; exact A1-A7 and retained unique binding recorded in its ticket. |
 | Isolation | Both lanes have zero tracked/ignored/cache residue, exactly three existing worktrees, disjoint writable paths and no authority to create/control Agents. Reviewer retains sole orchestration/review/integration authority. |
 | Prohibitions | No new worktree, broad ticket, numeric line criterion, staging push, package/build/install, live Codex, target-project write, release, deployment or scope expansion. |
+
+## PRG-20260813-293 — E2B/E3B independent terminal review
+
+| Field | Value |
+| --- | --- |
+| State | `CHANGES_REQUESTED / CR-160 / CR-161` |
+| Router event | `IMPLEMENTATION_COMPLETED(E2B,E3B) -> TERMINAL_CODE_REVIEW -> SAME_BRANCH_CORRECTIONS_REQUIRED` |
+| E2B | N1-N7 source passes and reviewer focused suite is 41/41. `EVIDENCE_DEFECT / CR-160`: before control intervention, the implementation task deleted two global staging temp roots without proving ownership; WPR must record the irreversible incident and remove any global non-interference inference. Source remains immutable. |
+| E3B | Accepted lifecycle and reviewer focused suite 23/23 pass. `IMPLEMENTATION_DEFECT / CR-161`: a constructed accepted response carrying a `CodexPluginList` subclass reached `OracleAbsent`; exact response/payload type and recursive revalidation must fail closed. |
+| Scope | E2B correction is WPR-only. E3B correction is additive within original `oracle.py` plus focused-test scope, followed by WPR-only handoff. Same branches, worktrees, allocations and receipts; no new worktree or branch. |
+| Delivery boundary | No staging push, package, build/install, release, deployment or target-project action. 04C/04D sequencing is unchanged. |

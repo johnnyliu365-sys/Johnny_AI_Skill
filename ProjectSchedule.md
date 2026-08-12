@@ -147,8 +147,8 @@
 | Ticket 05B4B2E1 oracle identity binding | COMPLETED / APPROVED / INTEGRATED | Merge `27c8305`; CR-159 closed by recursive 14-node rejection, full 370 and strict typing. |
 | Ticket 05B4B2E2A oracle version observation | COMPLETED / APPROVED / INTEGRATED | Merge `52a2a4e`; combined focused 44/full 379/strict mypy pass. |
 | Ticket 05B4B2E3A compensation finite failure | COMPLETED / APPROVED / INTEGRATED | Merge `b324f91`; combined focused 44/full 379/strict mypy pass. |
-| Ticket 05B4B2E2B registration no-effect failure | FROZEN / READY_FOR_DISPATCH | Small prerequisite; no adapter or oracle effect. |
-| Ticket 05B4B2E3B oracle owned-absence preservation | FROZEN / READY_FOR_DISPATCH | Small prerequisite; absence must retain foreign evidence. |
+| Ticket 05B4B2E2B registration no-effect failure | CHANGES_REQUESTED / CR-160 | Source closure passes; WPR must record unauthorized unowned-temp deletion. |
+| Ticket 05B4B2E3B oracle owned-absence preservation | CHANGES_REQUESTED / CR-161 | Exact response boundary must reject subclass/constructed-invalid evidence in same-branch correction. |
 | Tickets 05B4B2E2/E3 oracle adapters | PLANNED / PREREQUISITE_WAIT | Refreeze separately only after their B prerequisites are approved and integrated. |
 | Tickets 05B4B2E4-E6 lifecycle acceptance | PLANNED / DEPENDENCY_WAIT | Success, compensation and isolation remain small dependency-ordered acceptance tickets. |
 | Ticket 05C receipt removal/replay | PLANNED / DEPENDENCY_WAIT / REFREEZE_REQUIRED | Starts only after 05A/05B approval/integration and a finite behavior/rollback closure refreeze. |
