@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / unchanged AC-01, AC-02, AC-07 and AC-08 staging seam |
-| State | `FROZEN / DISPATCH_PENDING` |
+| State | `IN_PROGRESS / DISPATCH_CONFIRMED` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B4B2E1-01` / I1-I8 |
 | Dependency | E0 integrated by `3fc2f99f9cd4a7fff3e100918089ffed99cc16ab` |
 | Planned owner | Task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2`; no new worktree |
