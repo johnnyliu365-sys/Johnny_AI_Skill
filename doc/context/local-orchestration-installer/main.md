@@ -2,13 +2,13 @@
 
 | Field | Value |
 | --- | --- |
-| Context state | `TICKET_05B4B1_REVISION_02_DISPATCH_PENDING` |
-| Router event | `CONVERGENCE_REVIEW_REQUIRED / TICKET_REFROZEN(05B4B1_REVISION_02) / TICKET_DISPATCH_REQUIRED` |
+| Context state | `TICKET_05B4B1_REVISION_02_CORRECTION_DISPATCHED` |
+| Router event | `TICKET_REFROZEN(05B4B1_REVISION_02) / IMPLEMENTATION_CORRECTION_DISPATCH_CONFIRMED` |
 | Delivery stage | `POC` |
 | Requirement change | `CHG-20260808-011` |
-| Baseline | `1ca86f7` (`docs: dispatch Ticket 05B4B1 registration reducer`) |
+| Baseline | `cd3e9b6789623bd2a12ff7c69db4d5fcadd1718f` (`docs: refreeze Ticket 05B4B1 pure reducer`) |
 | Control-plane owner | Codex / current `main` worktree |
-| Implementation owner | Same task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`, existing `workflow-implementer-2` and existing 05B4B1 branch are selected for additive revision-02 correction after dispatch; no new worktree/branch |
+| Implementation owner | Same task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`, existing `workflow-implementer-2` and existing 05B4B1 branch are dispatched for additive revision-02 correction; no new worktree/branch |
 | Required sources read | `AGENTS.md`, `Workflow.md` (Router, Wayfinder, Grill, change control, specification, tickets, role boundary), `Defined_wayfinder.md`, `CONTEXT.md`, `PRD.md`, `ProjectSchedule.md`, `doc/RequirementChangeLog.md`, existing plugin manifests / README, `library/workflow_router/`, and completed plugin / autonomous-collaboration POCs |
 
 ## Shared Context reference
@@ -596,5 +596,6 @@ Revision-01 review CR-148 proved B1 cannot know whether identical input has
 already been consumed. Revision 02 removes reducer-owned Python identity and
 freezes R2-D1 through R2-D8: exact copies/reconstruction remain decision data,
 while B2 exclusively owns attempt/phase/generation and one-shot effect leases.
-Implementer-2 is selected in the existing branch/worktree for additive B1
-correction; no new branch/worktree or B2 implementation allocation exists.
+Implementer-2 is dispatched in the existing branch/worktree at exact clean HEAD
+`658a8f7e10d955b10a28eeb89133ec7c6b3e05a2` for the additive B1 correction.
+No new branch/worktree or B2 implementation allocation exists.

@@ -2360,3 +2360,13 @@
 | Binding | `hnd_local_orchestration_install_05b4b1_r02_20260812`; `aln_local_orchestration_install_05b4b1_r02_20260812`; `rcpt_local_orchestration_install_05b4b1_r02_20260812`; `corr-local-orchestration-install-05b4b1-r02-20260812`; `q-local-orchestration-install-05b4b1-r02-20260812`; `scx-local-orchestration-install-05b4b1-r02-20260812-01`. |
 | Owner / lane | Same task, existing `workflow-implementer-2`, existing branch at immutable handoff `658a8f7e10d955b10a28eeb89133ec7c6b3e05a2`; additive source/test correction then WPR-only PRG-210. No new branch/worktree. |
 | Scope / stop | Existing reducer and focused test only. No hidden consumed-state registry, lease implementation, port/effect execution, package/dependency edit, another Agent, review/integration, B2 implementation, live Codex/host/target-project/network effect, push, release or deployment. Freeze is not dispatch. |
+
+## PRG-20260812-209 — Ticket 05B4B1 revision-02 correction dispatch
+
+| Field | Value |
+| --- | --- |
+| Router event | `TICKET_REFROZEN -> TICKET_DISPATCH_REQUIRED -> IMPLEMENTATION_CORRECTION_DISPATCH_CONFIRMED` |
+| Reviewed freeze | `cd3e9b6789623bd2a12ff7c69db4d5fcadd1718f`; ticket `05b4b1-codex-registration-reducer`; closure `CLOSURE-LOCAL-INSTALL-T05B4B1-02`; exact R2-D1 through R2-D8. |
+| Binding | `hnd_local_orchestration_install_05b4b1_r02_20260812`; `aln_local_orchestration_install_05b4b1_r02_20260812`; `rcpt_local_orchestration_install_05b4b1_r02_20260812`; `corr-local-orchestration-install-05b4b1-r02-20260812`; `q-local-orchestration-install-05b4b1-r02-20260812`; `scx-local-orchestration-install-05b4b1-r02-20260812-01`. |
+| Owner / admission | Same task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2`; existing branch `codex/implementation-codex-registration-reducer-05b4b1`; exact clean immutable handoff HEAD `658a8f7e10d955b10a28eeb89133ec7c6b3e05a2`; additive commits only. Project-owner instruction `開始` is the positive delivery confirmation for this correction. |
+| Scope / return | Existing reducer and focused test only; exact two-path implementation correction commit followed by WPR-only reserved `PRG-20260812-210`. No new branch/worktree, B2 implementation, another Agent, port/effect execution, review/integration, live Codex/host/target-project/network effect, push, release or deployment. |

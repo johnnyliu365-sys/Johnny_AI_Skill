@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / unchanged AC-01, AC-02, AC-07 and AC-08 registration seam |
-| State | `IN_PROGRESS / REVISION_02_FREEZE / DISPATCH_PENDING` |
+| State | `IN_PROGRESS / REVISION_02_CORRECTION_DISPATCHED` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B4B1-02` / R2-D1 through R2-D8 |
 | Dependency | 05B4A1 approved and integrated by `3399cf934874f3304959ef0b6913548c0d767e01` |
 | Owner / worktree | Task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2`; no new worktree |
@@ -171,4 +171,21 @@ This separation permits persistence/reconstruction without pretending that
 
 No new branch/worktree, reset, amend, force, merge, package/dependency edit,
 05B4B2 implementation, another Agent, live effect, push, release or deployment
-is authorized. This refreeze is not dispatch.
+is authorized.
+
+## Revision-02 dispatch registry
+
+| Field | Value |
+| --- | --- |
+| Reviewed freeze | `cd3e9b6789623bd2a12ff7c69db4d5fcadd1718f`; this ticket; `CLOSURE-LOCAL-INSTALL-T05B4B1-02`; exact R2-D1 through R2-D8 |
+| Delivery confirmation | Project-owner instruction `開始` in the control task; applies only to this revision-02 correction |
+| Handoff / allocation / receipt | `hnd_local_orchestration_install_05b4b1_r02_20260812` / `aln_local_orchestration_install_05b4b1_r02_20260812` / `rcpt_local_orchestration_install_05b4b1_r02_20260812` |
+| Correlation / question / side context | `corr-local-orchestration-install-05b4b1-r02-20260812` / `q-local-orchestration-install-05b4b1-r02-20260812` / `scx-local-orchestration-install-05b4b1-r02-20260812-01` |
+| Exact admission | Same task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d`; existing `workflow-implementer-2`; existing branch `codex/implementation-codex-registration-reducer-05b4b1`; exact clean submitted HEAD `658a8f7e10d955b10a28eeb89133ec7c6b3e05a2`; additive commits only |
+| Exact implementation scope | `library/local_orchestration/codex_registration_reducer.py`; `tests/test_codex_registration_reducer.py` |
+| Required return | One exact two-path implementation correction commit satisfying R2-D1 through R2-D8, followed by one WPR-only handoff at reserved `PRG-20260812-210` |
+
+The owner must fail closed with a typed `HALT` or `CHANGE_DETECTED` if any
+admission value differs. No new branch/worktree, reset, amend, force, merge,
+package/dependency edit, B2 implementation, another Agent, live effect, review,
+integration, push, release or deployment is part of this dispatch.
