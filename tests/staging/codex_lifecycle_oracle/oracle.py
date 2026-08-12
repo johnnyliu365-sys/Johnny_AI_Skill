@@ -5,8 +5,9 @@ from __future__ import annotations
 from pathlib import Path
 import stat
 
-from pydantic import ValidationError
+from pydantic import BaseModel, ValidationError
 
+from library.local_orchestration.host_contracts import CodexMarketplaceSource, CodexPluginEntry, CodexPluginList
 from tests.staging.codex_protocol.contracts import CodexProtocolAccepted, CodexProtocolRejected, CodexProtocolSurface
 from tests.staging.codex_protocol.fixture import CodexProtocolFixture
 from tests.staging.environment_core.contracts import EnvironmentLease, revalidate_lease
@@ -32,6 +33,23 @@ from .contracts import (
     validated_state_path,
 )
 from .protocol_runner import CodexLifecycleOracleRunner
+
+
+_ACCEPTED_RESPONSE_FIELDS = ("surface", "payload")
+_PLUGIN_LIST_FIELDS = ("installed", "available")
+_PLUGIN_ENTRY_FIELDS = (
+    "pluginId",
+    "name",
+    "marketplaceName",
+    "version",
+    "installed",
+    "enabled",
+    "source",
+    "installPolicy",
+    "authPolicy",
+    "marketplaceSource",
+)
+_MARKETPLACE_SOURCE_FIELDS = ("type", "value")
 
 
 class CodexLifecycleOracle:
@@ -123,16 +141,46 @@ class CodexLifecycleOracle:
         command: OracleCommand,
         response: CodexProtocolAccepted,
     ) -> OracleRunResult:
-        if response.surface is not CodexProtocolSurface.PLUGIN_LIST:
+        payload = _revalidate_absence_payload(response)
+        if payload is None:
             return OracleBlocked(reason=OracleBlockReason.ABSENCE_NOT_PROVEN)
         try:
             state_path = validated_state_path(lease)
             payload_root = validated_payload_root(lease)
+            state = _read_state(state_path)
+            if state.marketplaces or state.plugins:
+                return OracleBlocked(reason=OracleBlockReason.ABSENCE_NOT_PROVEN)
             owned_paths = (
                 payload_root / "marketplaces" / f"{command.identity.marketplace_name}.json",
                 payload_root / "plugins" / f"{command.identity.plugin_id}.json",
             )
-            if state_path.exists() or any(path.exists() or _is_reparse(path) for path in owned_paths):
+            if any(path.exists() or _is_reparse(path) for path in owned_paths):
+                return OracleBlocked(reason=OracleBlockReason.ABSENCE_NOT_PROVEN)
+            expected_foreign_plugins = tuple(
+                (
+                    record.plugin_id,
+                    record.name,
+                    record.marketplace_name,
+                    record.version,
+                    record.source,
+                    record.install_policy,
+                    record.auth_policy,
+                )
+                for record in state.foreign_plugins
+            )
+            actual_plugins = tuple(
+                (
+                    entry.pluginId,
+                    entry.name,
+                    entry.marketplaceName,
+                    entry.version,
+                    entry.source,
+                    entry.installPolicy,
+                    entry.authPolicy,
+                )
+                for entry in payload.installed
+            )
+            if actual_plugins != expected_foreign_plugins or payload.available:
                 return OracleBlocked(reason=OracleBlockReason.ABSENCE_NOT_PROVEN)
         except (OSError, ValueError):
             return OracleBlocked(reason=OracleBlockReason.ABSENCE_NOT_PROVEN)
@@ -172,6 +220,72 @@ def _default_identity() -> OracleIdentity:
         plugin_auth_policy="oracle-auth",
         plugin_installed_path=r"C:\Users\oracle\AppData\Local\JohnnyAIWorkflow\plugins\oracle-plugin",
     )
+
+
+def _revalidate_absence_payload(response: CodexProtocolAccepted) -> CodexPluginList | None:
+    if type(response) is not CodexProtocolAccepted:
+        return None
+    response_state = _exact_model_state(response, _ACCEPTED_RESPONSE_FIELDS)
+    if response_state is None:
+        return None
+    surface = response_state["surface"]
+    payload = response_state["payload"]
+    if type(surface) is not CodexProtocolSurface or surface is not CodexProtocolSurface.PLUGIN_LIST:
+        return None
+    if type(payload) is not CodexPluginList or not _exact_plugin_list(payload):
+        return None
+    try:
+        rebuilt = CodexProtocolAccepted.model_validate(response.model_dump(warnings=False))
+    except (AttributeError, ValidationError, ValueError):
+        return None
+    if type(rebuilt) is not CodexProtocolAccepted or type(rebuilt.payload) is not CodexPluginList:
+        return None
+    return rebuilt.payload
+
+
+def _exact_plugin_list(value: CodexPluginList) -> bool:
+    state = _exact_model_state(value, _PLUGIN_LIST_FIELDS)
+    if state is None:
+        return False
+    installed = state["installed"]
+    available = state["available"]
+    if type(installed) is not tuple or type(available) is not tuple:
+        return False
+    return all(_exact_plugin_entry(entry) for entry in (*installed, *available))
+
+
+def _exact_plugin_entry(value: object) -> bool:
+    if type(value) is not CodexPluginEntry:
+        return False
+    state = _exact_model_state(value, _PLUGIN_ENTRY_FIELDS)
+    if state is None:
+        return False
+    text_fields = ("pluginId", "name", "marketplaceName", "version", "source", "installPolicy", "authPolicy")
+    if any(type(state[field]) is not str for field in text_fields):
+        return False
+    if type(state["installed"]) is not bool or type(state["enabled"]) is not bool:
+        return False
+    source = state["marketplaceSource"]
+    return type(source) is CodexMarketplaceSource and _exact_marketplace_source(source)
+
+
+def _exact_marketplace_source(value: CodexMarketplaceSource) -> bool:
+    state = _exact_model_state(value, _MARKETPLACE_SOURCE_FIELDS)
+    return state is not None and type(state["type"]) is str and type(state["value"]) is str
+
+
+def _exact_model_state(value: BaseModel, fields: tuple[str, ...]) -> dict[str, object] | None:
+    state = value.__dict__
+    fields_set = value.__pydantic_fields_set__
+    if type(state) is not dict or value.__pydantic_extra__ is not None or value.__pydantic_private__ is not None:
+        return None
+    if type(fields_set) is not set or len(state) != len(fields) or len(fields_set) != len(fields):
+        return None
+    if any(type(key) is not str for key in state) or any(type(field) is not str for field in fields_set):
+        return None
+    if any(field not in state or field not in fields_set for field in fields):
+        return None
+    return {field: state[field] for field in fields}
 
 
 def _read_state(path: Path) -> OracleState:

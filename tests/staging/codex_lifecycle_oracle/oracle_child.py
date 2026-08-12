@@ -409,8 +409,7 @@ def _absence(state: dict[str, object], state_path: Path, codex_home: Path, ident
         candidate = payload_root / locator
         if candidate.exists() or _is_reparse(candidate):
             raise OracleFailure(TOPOLOGY_INVALID)
-    state_path.unlink()
-    return {"installed": [], "available": []}
+    return _plugin_list(state)
 
 
 def _exact_marketplace(state: dict[str, object], identity: dict[str, object]) -> dict[str, object]:
