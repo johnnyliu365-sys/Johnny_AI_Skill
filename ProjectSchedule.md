@@ -153,8 +153,8 @@
 | Ticket 05B4B2E3B oracle owned-absence preservation | COMPLETED / APPROVED / INTEGRATED | Merge `dc07eec`; CR-161 subclass/constructed evidence is finitely blocked. |
 | Ticket 05B4B2E2 registration oracle adapter | COMPLETED / APPROVED / INTEGRATED | Merge `d3d3c1d`; post-merge focused 14/full 409/strict mypy and compile 134 pass; allocation released and receipt closed. |
 | Ticket 05B4B2E3C compensation request revalidation | COMPLETED / APPROVED / INTEGRATED | Merge `c042af1`; reviewer focused 24/full 395/strict mypy 132 passed. |
-| Ticket 05B4B2E3D compensation response admission | APPROVED / READY_FOR_GUARDED_INTEGRATION | Revision-03 terminal review closes CR-170/171 at exact handoff `5fa24b5`; normal guarded merge is authorized. |
-| Ticket 05B4B2E3 compensation oracle adapter | PLANNED / DEPENDENCY_WAIT | Refreeze as a thin effect adapter only after E3D approval/integration. |
+| Ticket 05B4B2E3D compensation response admission | COMPLETED / APPROVED / INTEGRATED | Review `eadc04f`; merge `b5541e4`; post-merge focused/full/static verification passed. |
+| Ticket 05B4B2E3 compensation oracle adapter | PLANNED / READY_FOR_REFREEZE | E3A-E3D are integrated; freeze only the thin adapter and its focused tests before dispatch. |
 | Ticket 05B4B2E4 registration success acceptance | COMPLETE / APPROVED / INTEGRATED | Correction `dc909da`, handoff `63b8494`, review `44dd810`, guarded merge `c1a5a7c`; post-merge full/static pass. |
 | Tickets 05B4B2E5-E6 lifecycle acceptance | PLANNED / DEPENDENCY_WAIT | Compensation and isolation remain small dependency-ordered acceptance tickets. |
 | Ticket 05C receipt removal/replay | PLANNED / DEPENDENCY_WAIT / REFREEZE_REQUIRED | Starts only after 05A/05B approval/integration and a finite behavior/rollback closure refreeze. |

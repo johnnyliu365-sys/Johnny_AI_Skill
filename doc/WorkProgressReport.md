@@ -3781,3 +3781,13 @@
 | Independent green | Reviewer-owned immutable ZIP SHA-256 `0EB4AB41A67BD3C97A8D4B0619E2F6FEAA242DFAE727B5C8457FCF5FEEEDB1A6`; focused `13/13`; full `432/432`; strict mypy `138/138`; in-memory compile `138/138`; source/scope/ancestry/clean-lane checks pass. |
 | CR closure | CR-170 is closed by observable exact-state recursive revalidation/rebuild. CR-171 is closed by typed absent/rebuilt-valid/present-invalid admission. Ten invalid-source cells reject, two omissions accept, two state-equivalent constructed sources are rebuilt, and the present-invalid-to-absent reversal turns the committed test red. |
 | Decision / boundary | `APPROVED / READY_TO_MERGE`; complete immutable history only. No implementation-worktree write, new branch/worktree, push, package/build/install, live Codex/host/target-project mutation, staging publication, Secret, release or deployment. |
+
+## PRG-20260814-345 — Ticket 05B4B2E3D guarded integration
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `APPROVED(05B4B2E3D) -> GUARDED_INTEGRATION -> ACTION_COMPLETED / TICKET_COMPLETED` |
+| Merge | Review `eadc04fc314d97372cad6ef0878497a3cba0bd0d` and exact handoff `5fa24b5acceacf98cf101a0126e03388fa70e659` integrated by two-parent merge `b5541e4614d927cf8931288a88c3917d71e0daa1`. Only the predicted WPR append conflict occurred; PRG-343 precedes PRG-344 and every PRG heading remains unique. |
+| Post-merge verification | Focused E3D `13/13`; full explicit serial `432/432`; strict mypy `138/138`; in-memory compile `138/138`; diff and control porcelain pass. |
+| Router continuation | E3D is complete. Thin E3 is the smallest unblocked POC ticket; E5 remains dependency-blocked until E3 is independently approved and integrated. |
+| Boundary | No push, staging publication, package/build/install, live Codex/host/target-project mutation, Secret, release or deployment. |
