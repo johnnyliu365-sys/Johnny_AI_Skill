@@ -4126,3 +4126,13 @@
 | Dispatch / return | Create only `codex/implementation-codex-receipt-removal-request-05c1` at the exact commit carrying this registry. Implement only R1-R7 in the three frozen paths, then one implementation commit and unique PRG-380 WPR-only handoff. |
 | Parallel/resource decision | One owner, no helper or second lane. 05C2 depends on the exact integrated 05C1 API, so speculative parallel work would duplicate or conflict with the contract. |
 | Boundary | No reviewer write to an implementation worktree, new worktree, live Codex/host/target-project effect, push, staging publication, package/build/install, Secret, release or deployment. |
+
+## PRG-20260814-380 - Ticket 05C1 receipt-removal request handoff
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05C1) -> ACTION_COMPLETED -> REVIEW_HANDOFF`; independent review remains required. |
+| Binding / lane | `CLOSURE-LOCAL-INSTALL-T05C1-01` / R1-R7; owner2 task `019ffb0c-db88-7303-895c-aecfadde7c8d`; branch `codex/implementation-codex-receipt-removal-request-05c1`; permanent bound worktree and three-worktree topology preserved. |
+| Implementation | Commit `ec53d3af854348a2f7385e485d17f3e2a84b98d8`; exactly `library/local_orchestration/codex_receipt_removal_request.py`, `tests/test_codex_receipt_removal_request.py`, and export-only `library/local_orchestration/__init__.py`. First red was the missing module. |
+| Acceptance evidence | Focused `12/12`; full serial `474/474`; strict full-tree mypy `146` files with external cache removed; in-memory compile `146` files; three named R6 reversal probes each turned the relevant assertion red and restored exact serialized bytes. All receipt fields map once, including `source_locator -> marketplace_source` and `plugin_name -> plugin`; installation/root identity mismatches return `RECEIPT_MISMATCH`. |
+| Boundary / security | Exact type/state admission rejects null/scalar/container, missing/extra/private, subclass, malformed constructed and invalid nested values without invoking descriptor/equality/serialization traps. `XSS_NOT_APPLICABLE`; no host/HostRegistrationKey, effect port, dynamic lookup, live Codex/host/target-project, package, push, release or deployment effect. Final tracked/ignored porcelain and project-owned caches are clean/absent. |
