@@ -161,7 +161,10 @@
 | Ticket 05B4B2E6P compensation acceptance entrypoint | COMPLETE / APPROVED / INTEGRATED | P1-P8 approved and guarded-merged at `7334cc5`. |
 | Ticket 05B4B2E6A foreign-state isolation acceptance | COMPLETE / APPROVED / INTEGRATED | CR-172 closed by `55b265b`; review `3d10eea`; guarded merge `fe0059e`; post-merge focused/type pass. |
 | Ticket 05B4B2E6B target-project isolation acceptance | COMPLETE / APPROVED / INTEGRATED | B1-B8 review `ff00a03`, guarded merge `0e0934d`; post-merge focused/type pass. |
-| Ticket 05C receipt removal/replay | CONVERGENCE_DECOMPOSITION_REQUIRED / REFREEZE_REQUIRED | 05A/05B dependencies are satisfied; broad C1-C5 must be split into finite serial child tickets before dispatch. |
+| Ticket 05C receipt removal parent | CONVERGENCE_DECOMPOSED / NON_DISPATCHABLE | Cross-contract `host`/`HostRegistrationKey` defect removed; replaced by serial 05C1-05C3. |
+| Ticket 05C1 receipt removal request | FROZEN / READY_FOR_LANE_ADMISSION | Pure exact receipt-to-compensation request; zero effects. |
+| Ticket 05C2 receipt removal composition | PLANNED / DEPENDENCY_WAIT | Starts after 05C1 approved/integrated. |
+| Ticket 05C3 receipt removal acceptance | PLANNED / DEPENDENCY_WAIT | Starts after 05C2 approved/integrated. |
 | Ticket 06A Codex role-profile capability proof | DONE / APPROVED_EVIDENCE / INSTALL_BLOCKED / INTEGRATED | Implementation `38e9a8b`, handoff `f6f186f`, review `62955ec`, guarded merge `de4141e`; actual installed-host result is `ROLE_ISOLATION_UNPROVEN / ACCESS_DENIED / OUTPUT_UNAVAILABLE`, so capability dependents stay blocked. |
 | Autonomous Ticket 04 reviewer-only authority | PLANNED / DEPENDENCY_WAIT | Starts only after reviewed 06A `SUPPORTED`; typed fake effect gate, not a real Agent turn. |
 | Tickets 06B/06C role-profile lifecycle/composition | PLANNED / DEPENDENCY_WAIT | Wait for 06A and autonomous Ticket 04; own/remove profiles, then compose exact reviewer authority. |
@@ -236,7 +239,7 @@ control-plane decomposition.
 | Superseded parent | `PRG-20260810-082`; `codex-cli-host-adapter-and-detachable-installer`; `CLOSURE-LOCAL-INSTALL-T05-02` |
 | Child 05A | `05a-codex-cli-preflight-contract`; integrated by `b22c6c4` |
 | Child 05B | `05b-codex-cli-transactional-registration`; current references below |
-| Child 05C | `05c-codex-cli-receipt-removal`; `PLANNED / DEPENDENCY_WAIT / REFREEZE_REQUIRED` |
+| Child 05C | Parent `05c-codex-cli-receipt-removal` is decomposed; only `05c1-codex-receipt-removal-request` is ready for exact lane admission; 05C2/05C3 remain serial. |
 
 ### Ticket 05B selection and dispatch
 

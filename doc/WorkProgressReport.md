@@ -4104,3 +4104,14 @@
 | Post-merge verification | Focused direct-adapter plus E6A/E6B `28/28`; strict full-tree mypy `144/144`; exact external cache removed; tracked/ignored control porcelain clean. Immutable pre-merge full serial remains `462/462`. |
 | Router continuation | E6P, E6A and E6B are all independently approved/integrated. Parent E6 objective is complete and remains non-dispatchable. Broad 05C becomes eligible only for control-plane decomposition/refreeze into finite child tickets. |
 | Boundary | No push, staging publication, package/build/install, live Codex/host/real-target-project mutation, Secret, release or deployment. |
+
+## PRG-20260814-378 - Ticket 05C convergence decomposition and 05C1 freeze
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `TICKET_ELIGIBLE(05C) + NON_HIGH_RISK_TICKET_DEFECT -> CONVERGENCE_DECOMPOSED / CHILD_05C1_FROZEN` |
+| Defect | The broad ticket required `host` and `HostRegistrationKey` from integrated `CodexRegistrationReceipt`, but those fields belong to the separate generic host lifecycle. It also prohibited an indistinguishable byte-identical receipt copy. Both requirements are removed without changing SPEC outcomes. |
+| Decomposition | 05C1 owns pure exact receipt-to-removal request admission; 05C2 owns closed capability effects and finite replay/absence results; 05C3 owns disposable full-lifecycle, foreign-state and target-project isolation acceptance. Dependencies are serial to avoid overlapping contract/effect ownership. |
+| 05C1 closure | `CLOSURE-LOCAL-INSTALL-T05C1-01` / R1-R7; one production module, one direct test and export-only root change; zero effects; no numeric line criterion. |
+| Resource decision | `STANDARD`, one existing implementation owner, no helper/fan-out. The task is small, low-search and serial; adding an Agent would add authority and merge overhead. |
+| Boundary | Freeze only. No implementation-worktree write, branch/worktree creation, live Codex/host/target-project effect, push, staging publication, package/build/install, Secret, release or deployment. |
