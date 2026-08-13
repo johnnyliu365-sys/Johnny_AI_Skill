@@ -3832,6 +3832,16 @@
 | Closure evidence | Focused serial `13/13`; full serial `445/445`; strict mypy `140` files with cache outside `tests/.johnny-runtime`; in-memory compile `140` files; A8 request-before-effect, action binding, removal identity, response admission and absence-gate reversals each turned red and were restored. A7 used one exact oracle with deterministic class-level in-memory substitution only; no runtime/process/filesystem lifecycle was allocated. |
 | Boundary / security | `XSS_NOT_APPLICABLE`: this adapter projects typed local oracle evidence and does not enter Browser, WebView, HTML/DOM or JavaScript execution contexts. No live Codex, host, network, target-project, cross-worktree, package, release or deployment effect. Exact generated project-owned cache and ignored `__pycache__` residue were removed before handoff. |
 
+## PRG-20260814-352 — Ticket 05B4B2E3 guarded integration
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `APPROVED(05B4B2E3) -> GUARDED_INTEGRATION -> ACTION_COMPLETED / TICKET_COMPLETED` |
+| Merge | Review `9f01e4d3441de53dcd594d258987336ab3428dd7` and exact handoff `f71cd870fe38779dac83ff175d52d25a19713efa` integrated by two-parent merge `1517b03517ffe638bb8c6441a53b940a13a6725e`. Only the predicted WPR append conflict occurred; PRG-350 and PRG-351 are preserved and all prior PRG headings remain unique. |
+| Post-merge verification | Focused E3 `13/13`; full explicit serial `445/445`; strict mypy `140/140`; in-memory compile `140/140`; diff, tracked/ignored porcelain and runtime/cache absence pass. |
+| Router continuation | E3 is complete. E4 was already integrated; E5 registration-compensation acceptance is now the smallest unblocked POC ticket. E6 remains blocked on E5. |
+| Boundary | No push, staging publication, package/build/install, live Codex/host/target-project mutation, Secret, release or deployment. |
+
 ## PRG-20260814-351 — Ticket 05B4B2E3 terminal approval
 
 | Field | Evidence |

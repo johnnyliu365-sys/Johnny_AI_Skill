@@ -154,7 +154,7 @@
 | Ticket 05B4B2E2 registration oracle adapter | COMPLETED / APPROVED / INTEGRATED | Merge `d3d3c1d`; post-merge focused 14/full 409/strict mypy and compile 134 pass; allocation released and receipt closed. |
 | Ticket 05B4B2E3C compensation request revalidation | COMPLETED / APPROVED / INTEGRATED | Merge `c042af1`; reviewer focused 24/full 395/strict mypy 132 passed. |
 | Ticket 05B4B2E3D compensation response admission | COMPLETED / APPROVED / INTEGRATED | Review `eadc04f`; merge `b5541e4`; post-merge focused/full/static verification passed. |
-| Ticket 05B4B2E3 compensation oracle adapter | APPROVED / READY_TO_MERGE | Exact handoff `f71cd87`; independent focused/full/static/adversarial review passed. |
+| Ticket 05B4B2E3 compensation oracle adapter | COMPLETED / APPROVED / INTEGRATED | Review `9f01e4d`; merge `1517b03`; post-merge focused/full/static passed. |
 | Ticket 05B4B2E4 registration success acceptance | COMPLETE / APPROVED / INTEGRATED | Correction `dc909da`, handoff `63b8494`, review `44dd810`, guarded merge `c1a5a7c`; post-merge full/static pass. |
 | Tickets 05B4B2E5-E6 lifecycle acceptance | PLANNED / DEPENDENCY_WAIT | Compensation and isolation remain small dependency-ordered acceptance tickets. |
 | Ticket 05C receipt removal/replay | PLANNED / DEPENDENCY_WAIT / REFREEZE_REQUIRED | Starts only after 05A/05B approval/integration and a finite behavior/rollback closure refreeze. |
