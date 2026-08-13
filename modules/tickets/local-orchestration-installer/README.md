@@ -14,8 +14,9 @@ Deliver a Windows per-user local control plane that owns every installed compone
 
 ## Ticket status and dependency order
 
-> Change-control override `CHG-20260813-015`: Ticket 05S1R is
-> `IN_PROGRESS / DISPATCH_CONFIRMED` and atomically migrates
+> Change-control override `CHG-20260813-015`: parent Ticket 05S1R is
+> `CONVERGENCE_DECOMPOSED / CHILD_05S1R1_IN_PROGRESS`; 05S1R1 closes only the
+> remaining checkout-under-TEMP evidence and atomically preserves the
 > 05S1 plus every integrated direct caller to the per-worktree
 > `tests/.johnny-runtime/` root. E3D and E4 are
 > `BLOCKED / REQUIREMENT_CHANGED / 05S1R_DEPENDENCY`; their older rows below are
@@ -23,7 +24,8 @@ Deliver a Windows per-user local control plane that owns every installed compone
 
 | Ticket | User-observable capability | State | Dependency |
 | --- | --- | --- | --- |
-| [05s1r-project-owned-disposable-runtime-root](05s1r-project-owned-disposable-runtime-root.md) | Atomically migrate 05S1 and every integrated direct caller from shared OS TEMP to the exact per-worktree plugin test runtime. | `IN_PROGRESS / DISPATCH_CONFIRMED` | AC-13 / CHG-20260813-015; exact clean owner1 Local task/worktree |
+| [05s1r-project-owned-disposable-runtime-root](05s1r-project-owned-disposable-runtime-root.md) | Atomically migrate 05S1 and every integrated direct caller from shared OS TEMP to the exact per-worktree plugin test runtime. | `CONVERGENCE_DECOMPOSED / CHILD_05S1R1_IN_PROGRESS` | CR-167/168 closed; CR-169 child required |
+| [05s1r1-temp-checkout-portability-evidence](05s1r1-temp-checkout-portability-evidence.md) | Make T1 failure-clean and prove checkout-derived runtime behavior when the checkout itself is beneath OS TEMP. | `IN_PROGRESS / DISPATCH_CONFIRMED` | Exact parent handoff `ef69fb8c`; one test path only |
 | [01-owned-install-lifecycle](01-owned-install-lifecycle.md) | A small typed fake install/remove engine creates and removes exactly its owned fake files and host receipt, while rejecting foreign/tampered state. | `COMPLETE / APPROVED / INTEGRATED` — implementation `ddd9f55`, correction `040a0f6`, review `dc63364`, merge `491f98b` | Approved SPEC |
 | [02-metadata-runtime-and-guarded-git](02-metadata-runtime-and-guarded-git.md) | A local metadata-only event resumes once and a registered temporary project receives only a typed fast-forward decision under exact identity/base/lock guards. | `COMPLETE / APPROVED / INTEGRATED` — implementation `6cc8fb5`, review `4527f49`, merge `92c58bf` | Ticket 01 satisfied by `491f98b` |
 | [03-reversible-agent-host-lifecycle](03-reversible-agent-host-lifecycle.md) | A bounded recorded capability gate proves exact receipt/removal semantics while real Codex and Claude remain `UNVERIFIED` without live authority. | `COMPLETE / APPROVED / INTEGRATED` - implementation `16597b6`, correction `673ff7c`, review `5601594`, merge `60cb8cf` | Tickets 01 and 02 integrated |

@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-13 |
 | Requirement / ADR | `CHG-20260813-015` / `ADR-20260813-007` |
-| State | `CONVERGENCE_REVIEW_REQUIRED / CHILD_DECOMPOSITION_REQUIRED` |
+| State | `CONVERGENCE_DECOMPOSED / CHILD_05S1R1_IN_PROGRESS` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05S1R-01` / R1-R8 |
 | Dependency | Integrated 05S1-05S4; exact current control freeze; one clean permanent implementation worktree |
 | Language / XSS | Python 3.11 strict Pydantic/mypy / `XSS_NOT_APPLICABLE` |
@@ -189,3 +189,8 @@ Per Workflow section 8.1, the one correction review is terminal. No third
 same-ticket correction is permitted. Formal correction evidence is appended to
 `doc/reviews/local-orchestration-installer/05s1r-project-owned-disposable-runtime-root-code-review.md`.
 The parent must converge through a finite child ticket for CR-169 only.
+
+Child `05S1R1 / CLOSURE-LOCAL-INSTALL-T05S1R1-01` is the sole continuation. It
+inherits exact submitted handoff `ef69fb8c`, permits only the remaining focused
+test path plus a WPR-only handoff, and must pass the reviewer-owned physical
+checkout-under-TEMP matrix before this parent can be approved or integrated.

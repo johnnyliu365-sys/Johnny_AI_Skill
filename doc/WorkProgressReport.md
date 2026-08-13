@@ -3610,3 +3610,13 @@
 | CR-169 open | Fresh checkout-under-TEMP core is `8/10`: T1 line 109 retains the invalid broad TEMP-tree assertion and leaves two leases because cleanup is not registered before the assertion. Six-suite matrix is `64/79`, with later child processes correctly failing closed on the unclaimed residue. |
 | Decision | The one correction review is terminal; no third same-ticket correction. Parent 05S1R requires one evidence-only CR-169 child ticket before integration can unlock E3D/E4. |
 | Boundary | No implementation-worktree mutation, integration, E3D/E4 resume, package ticket, new worktree, push, live Codex/target-project mutation, release or deployment. |
+
+## PRG-20260813-332 — Ticket 05S1R1 convergence child dispatch
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `CONVERGENCE_REVIEW_REQUIRED(05S1R) -> CHILD_TICKET_FROZEN(05S1R1) -> IMPLEMENTATION_DISPATCH_CONFIRMED / AUTO_CONTINUE` |
+| Decomposition | 05S1R1 owns only CR-169's remaining T1 portability/cleanup evidence. CR-167/168 source corrections remain immutable at `0cca9dee`; no third parent correction is authorized. |
+| Exact lane | Product task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; clean exact handoff `ef69fb8c`; permanent owner1 worktree; target branch absent; exactly three worktrees. Unique workspace/handoff/allocation/receipt/correlation/question/side-context are recorded in the child ticket. |
+| Scope / validation | One test path plus separate PRG-333 WPR handoff. Implementation runs local focused matrices; reviewer alone owns physical checkout-under-TEMP core/six-suite/full/static and runtime-absence acceptance. |
+| Boundary | No new worktree, helper Agent, production source, OS-global staging cleanup/enumeration, owner2/sibling/target-project mutation, package/build/install, staging push, live Codex, release or deployment. |
