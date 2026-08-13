@@ -3737,3 +3737,14 @@
 | Post-merge verification | Focused E4 `5/5`; full explicit serial `419/419`; strict mypy `136/136`; in-memory compile `136/136`; diff, tracked/ignored porcelain, runtime/cache absence pass. |
 | Router continuation | E4 is complete. E5 remains dependency-blocked because E3 cannot integrate until E3D CR-170 is refrozen and CR-171 is corrected/reviewed. No unrelated next ticket is dispatchable. |
 | Boundary | No push, package/build/install, live Codex/host/target-project mutation, Secret, release or deployment. |
+
+## PRG-20260814-342 — Ticket 05B4B2E3D revision-03 finite refreeze
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `TICKET_DEFECT_NON_HIGH_RISK + PROJECT_OWNER_AUTO_CONTINUE -> CLOSURE_REVISION_02_FROZEN / CORRECTION_READY` |
+| CR-170 disposition | Constructor provenance is not observable from state-equivalent Pydantic values. P2/P5/P6 now require exact built-in classes, exact observable state, recursive explicit-type revalidation and rebuilding; fully populated state-equivalent constructed values may pass only after rebuilding, while malformed, missing, extra, subclass, injected/private or validator-bypassing invalid state rejects. |
+| CR-171 correction | Optional marketplace source must use a typed absent/rebuilt-valid/present-invalid result. Both plugin-list and marketplace-list receive named omission, valid, state-equivalent, missing-field, invalid-primitive, subclass and injected-state cells; present-invalid may never collapse to absence. |
+| Preserved allocation | Ticket, owner2 task, permanent worktree, E3D branch and revision-02 allocation remain unchanged. Immutable `c588bf6`/`77be192` and review `ea3e94f` remain evidence; one new correction handoff/receipt/correlation is bound in the ticket. |
+| Integration order | E3D correction/review/integration unlocks thin E3. E5 remains blocked on E3; E4 is already integrated. No unrelated parallel ticket is currently dependency-ready. |
+| Boundary | Control docs only. No implementation-worktree write, new branch/worktree, broad cleanup, push, package/build/install, live Codex/host/target-project mutation, Secret, release or deployment. |
