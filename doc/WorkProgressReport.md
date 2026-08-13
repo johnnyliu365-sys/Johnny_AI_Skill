@@ -3953,3 +3953,23 @@
 | Independent green | Reviewer-owned immutable archive SHA-256 `741F314F7E37EF32B3CACDFFBF857068992719CCAC50A2461F00E69DCA7533CE`; focused `3/3`; full `448/448`; strict mypy `142/142`; in-memory compile `142/142`; source/scope/ancestry/clean-lane checks pass. |
 | Adversarial closure | Five reviewer reversals prove exact oracle admission, one-shot fault, compensation order, physical absence and replay gate; exact staging blob restored. Caller lifecycle evidence remains real and the transaction has one staging owner. P1-P8 close with no finding. |
 | Decision / boundary | `APPROVED / READY_TO_MERGE`; complete immutable history only. No implementation-worktree write, new worktree, push, staging publication, package/build/install, live Codex/host/target-project mutation, Secret, release or deployment. |
+
+## PRG-20260814-363 - Ticket 05B4B2E6P guarded integration
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `APPROVED(05B4B2E6P) -> GUARDED_INTEGRATION -> ACTION_COMPLETED / TICKET_COMPLETED` |
+| Merge | Review `9c12d4373c42329509c98af85bb524c0277f5f19` and exact handoff `43b7d45b26e01087a6bfbbe1657187956ecce9e7` integrated by two-parent merge `7334cc5314592ac159e9418a145121d31e4156d5`. Only the predicted WPR append conflict occurred; PRG-361 and PRG-362 were each preserved once. |
+| Post-merge verification | Focused E6P `3/3`; full explicit serial `448/448`; strict mypy `142/142`; in-memory compile `142/142`; clean diff/control porcelain and exact reviewer TEMP cleanup pass. |
+| Router continuation | E6P is complete. E6A foreign-state and E6B target-project isolation now have disjoint writable paths and independent acceptance responsibility, so both may be frozen and dispatched in parallel. |
+| Boundary | No push, staging publication, package/build/install, live Codex/host/target-project mutation, Secret, release or deployment. |
+
+## PRG-20260814-364 - Tickets 05B4B2E6A and 05B4B2E6B parallel freeze
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `TICKET_COMPLETED(05B4B2E6P) + DEPENDENCIES_SATISFIED -> TICKETS_FROZEN(05B4B2E6A,05B4B2E6B) / READY_FOR_DISPATCH` |
+| E6A | `CLOSURE-LOCAL-INSTALL-T05B4B2E6A-01` / A1-A8; owner1; exactly one foreign-state acceptance test followed by reserved PRG-367 WPR-only handoff. It proves both success and compensation preserve exact foreign logical records and payload bytes. |
+| E6B | `CLOSURE-LOCAL-INSTALL-T05B4B2E6B-01` / B1-B8; owner2; exactly one target-project isolation acceptance test followed by reserved PRG-368 WPR-only handoff. It proves two disposable sentinel Git repositories remain byte- and Git-identical. |
+| Parallel safety | The implementation paths are disjoint, both consume integrated E6P read-only, and neither implements product behavior. Review and integration remain independent; guarded integration order is E6A then E6B. |
+| Resource / boundary | `STANDARD`, one named owner per lane, no helpers. Freeze only; no implementation-worktree write, new worktree, live Codex/host/real-target-project effect, push, staging publication, package/build/install, Secret, release or deployment. |
