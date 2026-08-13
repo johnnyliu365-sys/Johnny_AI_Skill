@@ -3993,3 +3993,13 @@
 | Lane readback | Owner2 has no active turn at clean E3 handoff `f71cd87`; permanent top-level/linked git-dir and three-worktree topology match; tracked/ignored porcelain are empty and target E6B branch is absent. New branch must start only from the exact commit carrying this registry. |
 | Dispatch / return | One owner, no helper; exactly the new target-project isolation acceptance test, then unique PRG-368 WPR-only handoff. Non-high-risk ticket/evidence defects may be corrected within the same closure without user wait. |
 | Boundary | No control-side implementation-worktree write, new worktree, live Codex/host/real-target-project effect, push, staging publication, package/build/install, Secret, release or deployment. |
+
+## PRG-20260814-369 - Ticket 05B4B2E6A revision-02 non-high-risk correction refreeze
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_TICKET_DEFECT(05B4B2E6A) -> NON_HIGH_RISK_REFREEZE / READY_FOR_REDISPATCH` |
+| Reproduced defect | With a valid typed foreign marketplace/plugin seeded, integrated success returns finite `INVALID_SEQUENCE`. `registration_adapter.py` requires total marketplace/plugin list cardinality one, while `oracle_child.py` deliberately returns owned and foreign collections together. |
+| Correction | Revision 02 changes only the staging proof contract: exactly one complete owned marketplace identity and one complete owned installed-plugin identity must match; unrelated foreign/available entries are permitted and preserved; zero or duplicate owned matches still fail. The direct adapter test changes from foreign-list rejection to positive preservation/uniqueness evidence. |
+| Same-lane continuity | Owner1 stopped without commit at registry `be0f91f`; tracked porcelain is clean; exactly one untracked frozen E6A acceptance test is preserved; ignored/cache/runtime residue is zero. Same task, worktree, branch, allocation, receipt, correlation and A1-A8 closure remain valid. |
+| Scope / boundary | Exactly `registration_adapter.py`, its direct adapter test and the preserved E6A acceptance test; one additive correction implementation commit then reserved PRG-367 WPR-only handoff. No product source, new branch/worktree, live Codex/host/real-target-project effect, push, staging publication, package/build/install, Secret, release or deployment. |

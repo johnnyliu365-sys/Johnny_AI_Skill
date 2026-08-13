@@ -2,8 +2,9 @@
 
 | Field | Value |
 | --- | --- |
+| Revision | `02` - non-high-risk ticket correction; same branch, owner, receipt and closure |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / unchanged AC-02, AC-07 and AC-08 |
-| State | `DISPATCH_CONFIRMED / IN_PROGRESS` |
+| State | `CORRECTION_REFROZEN / READY_FOR_REDISPATCH` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B4B2E6A-01` / A1-A8 |
 | Dependency | E6P guarded merge `7334cc5314592ac159e9418a145121d31e4156d5` |
 | Planned owner | Existing owner1 task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; permanent `workflow-implementation`; no new worktree/helper |
@@ -18,8 +19,14 @@ coverage or another registration/compensation implementation.
 
 ## Frozen design
 
-- Add only `tests/test_codex_registration_foreign_state_isolation_acceptance.py`.
-  Production and staging-oracle source are read-only dependencies.
+- Update the integrated staging proof boundary only in
+  `tests/staging/codex_lifecycle_oracle/registration_adapter.py` and its direct
+  `tests/test_codex_registration_oracle_adapter.py` tests. The proof must
+  require exactly one installed marketplace and plugin matching the owned
+  identity, while permitting unrelated foreign marketplace/plugin/available
+  entries. Zero or duplicate owned matches remain a declared proof failure.
+- Add `tests/test_codex_registration_foreign_state_isolation_acceptance.py`.
+  All production source and every other staging-oracle source remain read-only.
 - The parent test owns two fresh disposable 05S1 leases: one for the integrated
   success entrypoint and one for the integrated compensation entrypoint. Each
   lease gets one exact initialized oracle and one exact owned request.
@@ -40,14 +47,14 @@ coverage or another registration/compensation implementation.
 
 | ID | Required evidence |
 | --- | --- |
-| `A1` | First red is the missing acceptance-test module; the implementation commit adds exactly the frozen test path. |
-| `A2` | Each of two fresh leases seeds one exact strongly typed foreign marketplace/plugin identity and payload through integrated oracle APIs before the owned transaction. |
+| `A1` | First red is the missing acceptance-test module, followed by the reproduced integrated `INVALID_SEQUENCE` when foreign state is seeded. Implementation changes exactly the three revision-02 frozen paths. |
+| `A2` | Adapter proof accepts unrelated foreign list entries only when exactly one marketplace and exactly one installed plugin match the complete owned identity. Zero or duplicate owned matches fail through the existing declared proof failure. |
 | `A3` | The success entrypoint returns its exact accepted result and produces the integrated owned success state. |
 | `A4` | Success leaves the foreign marketplace/plugin record tuples and exact payload bytes identical to their pre-transaction snapshots. |
 | `A5` | The compensation entrypoint returns exact accepted compensation with the integrated owned logical/physical absence and replay facts. |
 | `A6` | Compensation leaves the foreign marketplace/plugin record tuples and exact payload bytes identical to their pre-transaction snapshots. |
 | `A7` | Prefix-similar foreign identifiers/paths remain isolated; exact lease teardown succeeds and no target-project/global/sibling path is inspected or mutated. |
-| `A8` | Reverse success record, success payload, compensation record, compensation payload and prefix-isolation gates; each turns red and exact bytes restore. Focused/full serial unittest, strict mypy, in-memory compile, source/scope/diff/ancestry/topology/residue checks pass. |
+| `A8` | Reverse exact-owned list membership/cardinality, success record, success payload, compensation record, compensation payload and prefix-isolation gates; each turns red and exact bytes restore. Focused/full serial unittest, strict mypy, in-memory compile, source/scope/diff/ancestry/topology/residue checks pass. |
 
 ## TDD / CodeReview matrix
 
@@ -64,11 +71,13 @@ coverage or another registration/compensation implementation.
 
 ## Exact source and return
 
-Writable implementation path only:
+Writable implementation paths only:
 
-1. `tests/test_codex_registration_foreign_state_isolation_acceptance.py`
+1. `tests/staging/codex_lifecycle_oracle/registration_adapter.py`
+2. `tests/test_codex_registration_oracle_adapter.py`
+3. `tests/test_codex_registration_foreign_state_isolation_acceptance.py`
 
-Return one implementation commit for that path, then one unique
+Return one additive correction implementation commit for those paths, then one unique
 `doc/WorkProgressReport.md`-only handoff reserved as `PRG-20260814-367`. No
 numeric line limit is an acceptance criterion.
 
@@ -99,3 +108,15 @@ second control commit carrying the dispatch registry are required before edit.
 This one-use receipt authorizes only E6A A1-A8 on the exact owner1 task/worktree.
 The owner cannot orchestrate another Agent, issue a review decision, dispatch a
 next ticket or perform push/package/install/staging/release/deployment work.
+
+## Revision-02 correction record
+
+The initial A1 red was followed by a valid foreign-state transaction that the
+integrated staging proof rejected as `INVALID_SEQUENCE`. The oracle correctly
+lists owned and foreign collections together, but revision-01 treated the
+entire list cardinality as owned cardinality. Revision 02 corrects that staging
+proof contract to exact owned-identity membership and uniqueness, then resumes
+the unchanged A1-A8 isolation acceptance. This is a non-high-risk ticket defect:
+product behavior, SPEC/AC, owner, worktree, branch, allocation, receipt and
+correlation are unchanged. The preserved untracked acceptance test remains WIP
+and may not be committed until the corrected dispatch registry is admitted.
