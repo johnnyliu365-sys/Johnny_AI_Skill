@@ -4,7 +4,7 @@
 | --- | --- |
 | Revision | `02` - non-high-risk ticket correction; same branch, owner, receipt and closure |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / unchanged AC-02, AC-07 and AC-08 |
-| State | `CORRECTION_DISPATCH_CONFIRMED / IN_PROGRESS` |
+| State | `COMPLETE / APPROVED / INTEGRATED` - CR-172 closed; guarded merge `fe0059ec5b811c6c67065c9be04eafca0629493a` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B4B2E6A-01` / A1-A8 |
 | Dependency | E6P guarded merge `7334cc5314592ac159e9418a145121d31e4156d5` |
 | Planned owner | Existing owner1 task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; permanent `workflow-implementation`; no new worktree/helper |
@@ -145,3 +145,15 @@ All identity bindings and reviewer-only orchestration restrictions remain exact.
 The reviewer remains sole orchestrator; no helper, self-review, integration,
 next-ticket dispatch, push, staging publication, package/install or release is
 authorized.
+
+## Terminal review and integration
+
+CR-172 is closed by test-only correction
+`55b265b3904596c057feaa1127de9788122dfda7` and handoff
+`6f926995e0aa6250e34d095dd08406908c4834a2`. Independent review
+`3d10eea90c1703b83094bd0804be9762241704a1` verified focused `28/28`, full
+serial `462/462`, strict mypy and compile `144/144`, plus separate
+marketplace-only and plugin-only gate reversals. Guarded two-parent merge
+`fe0059ec5b811c6c67065c9be04eafca0629493a` integrated the exact handoff and
+preserved PRG-375/PRG-376 once each. Post-merge focused `28/28` and strict mypy
+`144/144` pass with a clean control worktree and removed external cache.

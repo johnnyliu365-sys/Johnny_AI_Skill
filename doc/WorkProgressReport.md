@@ -4094,3 +4094,13 @@
 | Independent green | Immutable archive SHA-256 `D83377B3C470D9EF1C1298E899188063BB87AC41630B0BB2E77BB4CA17166F5F`; focused `28/28`; full serial `462/462`; strict mypy `144/144`; in-memory compile `144/144`. |
 | CR-172 closure | Removing only the marketplace count gate turns the independent matrix red; exact restoration followed by removing only the plugin count gate also turns it red. Adapter blob restores to `cfba3269c3314b5cf783869712697f71f80514f4`; original E6A source and acceptance blobs are unchanged. |
 | Decision / boundary | `APPROVED / READY_TO_MERGE`; exact scopes, ancestry, one PRG-375 occurrence, clean owner lane and three-worktree topology pass. No implementation-worktree write by reviewer, new worktree, live Codex/target-project effect, push, staging publication, package/build/install, Secret, release or deployment. |
+
+## PRG-20260814-377 - Ticket 05B4B2E6A guarded integration
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `APPROVED(05B4B2E6A) -> GUARDED_INTEGRATION -> ACTION_COMPLETED / TICKET_COMPLETED` |
+| Merge | Review `3d10eea90c1703b83094bd0804be9762241704a1` and exact handoff `6f926995e0aa6250e34d095dd08406908c4834a2` integrated by two-parent merge `fe0059ec5b811c6c67065c9be04eafca0629493a`. Preflight proved the sole conflict was append-only WPR; guarded resolution preserves PRG-375 and PRG-376 exactly once. |
+| Post-merge verification | Focused direct-adapter plus E6A/E6B `28/28`; strict full-tree mypy `144/144`; exact external cache removed; tracked/ignored control porcelain clean. Immutable pre-merge full serial remains `462/462`. |
+| Router continuation | E6P, E6A and E6B are all independently approved/integrated. Parent E6 objective is complete and remains non-dispatchable. Broad 05C becomes eligible only for control-plane decomposition/refreeze into finite child tickets. |
+| Boundary | No push, staging publication, package/build/install, live Codex/host/real-target-project mutation, Secret, release or deployment. |

@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| State | `CONVERGENCE_DECOMPOSED / NON_DISPATCHABLE` |
+| State | `CONVERGENCE_DECOMPOSED / ALL_CHILDREN_COMPLETE / NON_DISPATCHABLE` |
 | Dependency | 05B4B2E4 and 05B4B2E5 approved and integrated |
 | Allocation | None; a parent ticket never receives implementation authority |
 
@@ -36,3 +36,9 @@ E6 is split into:
 E6A and E6B may run in parallel only after E6P is independently approved and
 integrated. No child adds production behavior or may touch a real target
 project. Each receives a separate closure, receipt, review and integration.
+
+All three children are now independently approved and integrated: E6P by
+`7334cc5314592ac159e9418a145121d31e4156d5`, E6B by
+`0e0934d17382f3fd8ff17878d88ce1e597e35b91`, and E6A by
+`fe0059ec5b811c6c67065c9be04eafca0629493a`. This parent remains an immutable,
+non-dispatchable decomposition record; its isolation objective is complete.
