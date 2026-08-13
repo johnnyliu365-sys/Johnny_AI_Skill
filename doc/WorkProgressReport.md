@@ -3871,3 +3871,13 @@
 | Independent green | Reviewer-owned immutable archive SHA-256 `A7442BD5B61F7C7F93C1D696F345A26EAC78DC987D24E8421F8DC10E47AC2144`; focused `13/13`; full `445/445`; strict mypy `140/140`; in-memory compile `140/140`; source/scope/ancestry/clean-lane checks pass. |
 | Adversarial closure | Seven reviewer probes confirm request-before-effect, exact five-operation admission, removal identity, finite evidence rejection, duplicate/foreign list preservation, absence gating and fixed action order. A1-A8 are closed with no finding. |
 | Decision / boundary | `APPROVED / READY_TO_MERGE`; complete immutable history only. No implementation-worktree write, new worktree, push, staging publication, package/build/install, live Codex/host/target-project mutation, Secret, release or deployment. |
+
+## PRG-20260814-356 - Ticket 05B4B2E5 revision-02 non-high-risk refreeze
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05B4B2E5) -> TICKET_DEFECT_NON_HIGH_RISK -> SAME_CLOSURE_REFREEZE / TERMINAL_REVIEW_READY` |
+| Defect | Revision 01 simultaneously required a pre-settlement E3 adapter request and prohibited its only public typed fixture projection; it also required exact E3 action observation while saying the observer must be removed before E3. No product, security, authority or external-effect defect was found. |
+| Correction | Ticket revision 02 permits exactly one field-for-field typed fixture projection solely to bind the integrated E3 factory, and permits the single class-level wrapper to remain as a passive observer/replay trap while delegating every non-faulted call to the exact original oracle method. Copied plans, outcome/response validators and fabricated compensation effects remain prohibited. |
+| Preserved evidence | C1-C8, one-file scope, owner1 task/worktree/branch, allocation, receipt, correlation, implementation `2bf7dd842f2bef0c55a0448c282189f3067d33fc` and docs-only handoff `5dd0f635bbdcc29ba0aa74d63ad849d2fe4158e4` are unchanged. The returned implementation already conforms and proceeds directly to independent terminal review. |
+| Boundary | Control documentation only; no implementation-worktree write, new worktree/branch, source/test mutation, live Codex/host/target-project effect, staging publication, push, package/build/install, Secret, release or deployment. |

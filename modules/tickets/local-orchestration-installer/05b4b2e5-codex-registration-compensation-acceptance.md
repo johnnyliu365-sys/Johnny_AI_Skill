@@ -2,9 +2,10 @@
 
 | Field | Value |
 | --- | --- |
+| Revision | `02` - non-high-risk ticket correction; implementation scope unchanged |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / unchanged AC-02, AC-07 and AC-08 |
-| State | `FROZEN / IMPLEMENTATION_DISPATCH_CONFIRMED / IMPLEMENT_ACTIVE` |
-| Closure | `CLOSURE-LOCAL-INSTALL-T05B4B2E5-01` / C1-C8 |
+| State | `REFROZEN / IMPLEMENTATION_RETURNED / TERMINAL_REVIEW_READY` |
+| Closure | `CLOSURE-LOCAL-INSTALL-T05B4B2E5-02` / C1-C8 |
 | Dependency | E2 merge `d3d3c1d`, E3 merge `1517b03` and E4 merge `c1a5a7c` approved/integrated |
 | Planned owner | Task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; permanent `workflow-implementation`; no new worktree/helper |
 | Profile / XSS | `STANDARD`; one implementation owner / `XSS_NOT_APPLICABLE` |
@@ -27,16 +28,25 @@ target-project isolation remain exclusively E6.
   the child logical `LOCALAPPDATA` to the integrated oracle root, initializes one
   exact `CodexLifecycleOracle`, and uses the integrated E1/E2 registration
   binding, port, forward coordinator and settlement authority.
-- At the exact plugin-add transition, one class-level test substitution calls
-  the original oracle method exactly once so owned plugin state and payload are
-  genuinely created, records the exact completed result, then returns one
-  `OracleBlocked(PROCESS_FAILED)` to E2. It is one-shot and restored before
-  compensation. No earlier transition or compensation operation is mocked.
+- At the exact plugin-add transition, one class-level test wrapper calls the
+  original oracle method exactly once so owned plugin state and payload are
+  genuinely created, records the exact completed result, then substitutes only
+  that returned value with `OracleBlocked(PROCESS_FAILED)` for E2. The same
+  wrapper may remain installed as a passive action observer through E3 and as a
+  replay-effect trap, but it must delegate every non-faulted oracle call to the
+  exact original method. No earlier transition or compensation operation is
+  replaced, fabricated or short-circuited.
 - The started failure must yield one exact live
   `CodexRegistrationCompensationClaim`, never a receipt. The same lease, oracle
   and manifest-bound E3 adapter are passed to
-  `settle_codex_registration_compensation`; no copied plan, request, outcome or
-  response validator is permitted.
+  `settle_codex_registration_compensation`. Because the E3 factory requires its
+  bound `CodexCompensationPortRequest` before settlement while settlement keeps
+  the claim-owned projection private, this evidence-only fixture may perform
+  one typed field-for-field projection from its admitted registration request
+  into that adapter request. The projection may only bind the integrated E3
+  adapter; it may not plan compensation, validate an outcome or response, or
+  replace the request later supplied by settlement. The E3 adapter's integrated
+  exact-request admission remains the proof that both projections match.
 - Successful settlement must execute only this order after the failure:
   `PLUGIN_REMOVE -> MARKETPLACE_REMOVE -> PLUGIN_LIST -> MARKETPLACE_LIST ->
   ABSENCE`, return exact `CodexCompensated` with no reasons or unresolved
@@ -55,9 +65,9 @@ target-project isolation remain exclusively E6.
 | ID | Required evidence |
 | --- | --- |
 | `C1` | First red is missing `tests.test_codex_registration_compensation_acceptance`; the implementation commit adds exactly that one path. |
-| `C2` | Exact lease/oracle/request admits the integrated E1/E2 chain and E3 adapter on the same identity. Their already integrated negative admission matrices are not duplicated here. |
+| `C2` | Exact lease/oracle/request admits the integrated E1/E2 chain and E3 adapter on the same identity. The one permitted typed fixture projection only supplies the E3 factory's required pre-settlement request; their already integrated negative admission matrices are not duplicated here. |
 | `C3` | Registration actions are exactly `VERSION -> MARKETPLACE_ADD -> PLUGIN_ADD`. The one-shot plugin fault calls original `PLUGIN_ADD` once, proves the owned record/payload existed, then returns only declared `PROCESS_FAILED`; the authority emits one compensation claim and no receipt. |
-| `C4` | Claim settlement invokes exact E3 action order `PLUGIN_REMOVE -> MARKETPLACE_REMOVE -> PLUGIN_LIST -> MARKETPLACE_LIST -> ABSENCE`, each exactly once, with the same lease/oracle/manifest identity. |
+| `C4` | Claim settlement invokes exact E3 action order `PLUGIN_REMOVE -> MARKETPLACE_REMOVE -> PLUGIN_LIST -> MARKETPLACE_LIST -> ABSENCE`, each exactly once, with the same lease/oracle/manifest identity. The passive wrapper observes these calls while delegating each one to the original oracle method. |
 | `C5` | Result is exact `CodexCompensated`, reasons are empty and residual authority is empty. Empty plugin and marketplace lists plus admitted logical absence are part of the integrated reduction, not separately fabricated evidence. |
 | `C6` | Persisted owned oracle state has no marketplace/plugin record and the exact lease-derived physical plugin payload is absent before teardown. The test scans no global or sibling root. |
 | `C7` | Replaying the consumed exact claim cannot execute an oracle action or change state/payload bytes. Exact lease teardown and unique child-TEMP removal succeed; parent environment bytes are unchanged. |
@@ -117,3 +127,16 @@ owner may switch branch or edit.
 This one-use receipt authorizes only E5 C1-C8 on the exact owner1 task/worktree.
 The owner cannot orchestrate another Agent, issue a review decision, dispatch a
 next ticket or perform push/package/install/staging/release/deployment work.
+
+## Revision-02 correction record
+
+The terminal reviewer found two mutually incompatible revision-01 statements:
+the E3 factory requires a compensation request before settlement but the ticket
+forbade the only typed fixture projection available through public APIs, and the
+ticket required exact compensation action observation while also requiring the
+observer to be removed before compensation. Revision 02 resolves only those
+ticket defects. It does not change C1-C8, the one-file implementation scope,
+the owner, branch, allocation, receipt, correlation or product behavior. The
+immutable implementation `2bf7dd842f2bef0c55a0448c282189f3067d33fc` already
+matches the corrected design and may proceed directly to independent terminal
+review without an implementation rewrite.
