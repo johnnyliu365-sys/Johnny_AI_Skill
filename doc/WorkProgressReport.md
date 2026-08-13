@@ -3490,3 +3490,15 @@
 | Admission evidence | Both tasks are idle and product-bound to their exact permanent Local worktrees. Canonical root, filesystem identity, linked Git metadata and reviewer readback agree; both lanes are clean and exactly three worktrees exist. Evidence digests are stored in the ticket registries. |
 | Branch policy | Each owner may create only its one named ticket branch from the exact control commit carrying this registry, inside its existing worktree. No new worktree, historical-source copy, reset, force, rebase or cross-lane write. |
 | Boundary | No helper Agent: both tickets are bounded and low-search. No staging push, package/build/install, live Codex/host/target-project mutation, release or deployment. |
+
+## PRG-20260813-316 ??Ticket 05B4B2E4 registration success acceptance handoff
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05B4B2E4 / S1-S8) -> ACTION_COMPLETED -> REVIEW_HANDOFF`; independent review remains required. |
+| Product / binding | Local project `6d2ebb66-1ae7-48b4-96da-53ffba88ef1f`; task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; branch `codex/implementation-codex-registration-success-acceptance-05b4b2e4`; workspace `wsb_local_orchestration_install_05b4b2e4_20260813_01`; handoff `hnd_local_orchestration_install_05b4b2e4_r01_20260813`; allocation `aln_local_orchestration_install_05b4b2e4_r01_20260813`; receipt `rcpt_local_orchestration_install_05b4b2e4_r01_20260813`; correlation `corr-local-orchestration-install-05b4b2e4-r01-20260813`; question `q-local-orchestration-install-05b4b2e4-r01-20260813`; side-context `scx-local-orchestration-install-05b4b2e4-r01-20260813-01`. |
+| Implementation | `33752375a5dace8e06547a7732bbd08d4c3deb45`, exactly two paths: `tests/staging/codex_lifecycle_oracle/registration_success_acceptance.py` and `tests/test_codex_registration_success_acceptance.py`. First red was the missing success-acceptance module. |
+| S8 reversal evidence | Reversing operation order made the named success test red (child exit `2`); settling through the wrong port candidate made it red (child exit `2`); bypassing the physical identity/digest gate made the payload test red (child exit `3`). Each exact blob was restored before the green matrix. |
+| Verification | Focused acceptance `5/5`; full serial unittest discovery `414/414`; strict full-tree `mypy --strict --explicit-package-bases` `136/136` files with repository-external cache; in-memory compile `136/136` Python files. Post-commit matrix passed at the implementation SHA. |
+| Static / topology / residue | Exact ancestry from registry commit `472201b1f82416d0fc00ec03582d0175f9f97048`, exact two-path scope, `git diff --check`, source/dynamic sentinels, three-worktree topology, tracked/ignored porcelain and cache-residue checks passed. `XSS_NOT_APPLICABLE`: no Browser, WebView, HTML/DOM renderer, JavaScript context or privileged bridge exists. |
+| Boundary | No new worktree, reset/amend/rebase/merge/cherry-pick/stash, network, package/build/install, live Codex/host/target-project write, Secret, Agent control, staging push, release, deployment or review/integration decision occurred. |
