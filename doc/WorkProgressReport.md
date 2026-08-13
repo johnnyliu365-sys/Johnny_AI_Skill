@@ -3984,6 +3984,16 @@
 | Dispatch / return | One owner, no helper; exactly the new foreign-state isolation acceptance test, then unique PRG-367 WPR-only handoff. Non-high-risk ticket/evidence defects may be corrected within the same closure without user wait. |
 | Boundary | No control-side implementation-worktree write, new worktree, live Codex/host/real-target-project effect, push, staging publication, package/build/install, Secret, release or deployment. |
 
+## PRG-20260814-368 - Ticket 05B4B2E6B target-project isolation handoff
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05B4B2E6B) -> ACTION_COMPLETED -> REVIEW_HANDOFF`; independent review remains required. |
+| Binding / lane | `CLOSURE-LOCAL-INSTALL-T05B4B2E6B-01` / B1-B8; owner2 task `019ffb0c-db88-7303-895c-aecfadde7c8d`; branch `codex/implementation-codex-target-project-isolation-05b4b2e6b`; permanent bound worktree and three-worktree topology preserved. |
+| Implementation | Commit `d7dbed23bbadce925a37f0dcf825a3649828a045`; exactly `tests/test_codex_registration_target_project_isolation_acceptance.py`. First red was the missing module. |
+| Acceptance evidence | Focused `12/12`; full serial `460/460`; strict mypy `143` files with external cache removed; in-memory compile `143` files; five B8 reversal probes each turned the guard red and restored exact bytes/porcelain. B2 created exactly two synthetic Git repositories under one ticket-owned TEMP root, with text/binary commits and command-scoped identity. B4/B5 used separate project-owned disposable oracle leases and logical requests containing no synthetic repository path. |
+| Isolation / boundary | Each repository snapshot covered canonical root, Git root, HEAD/tree/index, tracked paths/bytes, full files/directories, Git metadata, tracked/ignored porcelain, lock/nested paths; snapshots remained identical after success, compensation and final readback. `XSS_NOT_APPLICABLE`; no real target/sibling/global path, production/staging source, package, push, release or deployment effect. Exact TEMP leases/root and the external mypy cache were removed before handoff. |
+
 ## PRG-20260814-366 - Ticket 05B4B2E6B dispatch registry
 
 | Field | Evidence |
