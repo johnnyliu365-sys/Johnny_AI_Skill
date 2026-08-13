@@ -122,7 +122,7 @@
 | Ticket 05A CLI contract/preflight | DONE / APPROVED / INTEGRATED | Implementation `97ab31c`; repaired handoff `fb755268`; review `d54c0bd`; owner-authorized ledger-preserving merge `b22c6c4`; post-merge verification passed. |
 | Ticket 05S combined staging parent | SUPERSEDED / DECOMPOSED | Rejected commits remain immutable evidence; no correction or integration. |
 | Ticket 05S1 disposable environment core | DONE / APPROVED / INTEGRATED | Correction `41d5ce4`, handoff `e1087d3`, review `17ea1d5` and guarded merge `504a3ec`; post-merge verification passed. |
-| Ticket 05S1R project-owned disposable runtime root | PLANNED / OWNER_DISPOSITION_WAIT / NOT_DISPATCHED | `CHG-20260813-015` and ADR-007 replace shared OS TEMP with exact per-worktree `tests/.johnny-runtime/`; one implementation worktree must be explicitly returned clean before dispatch. |
+| Ticket 05S1R project-owned disposable runtime root | IN_PROGRESS / DISPATCH_CONFIRMED | Owner1 exact Local task is clean and allocated after owner-authorized E4 path restore; migrate shared OS TEMP to exact per-worktree `tests/.johnny-runtime/` with no owner2 mutation. |
 | Ticket 05S2 bounded child-process runner | DONE / APPROVED / INTEGRATED | Revision-03 `33a8fa9` / `dba0621b`, review `c97b754`, guarded merge `6e24e06`; CR-124 resolved and post-merge verification passed. |
 | Ticket 05S3 Codex protocol fixture | DONE / APPROVED / INTEGRATED | Correction `4835b0f`, handoff `008fac8`, final review `c518e62` and guarded merge `43a1639`; CR-125 closed and post-merge verification passed. |
 | Ticket 05S4 Codex lifecycle oracle | DONE / APPROVED / INTEGRATED | Correction `02f33ef`, handoff `52ab9c0`, review `68ff06b`, guarded merge `4af381c`; CR-126/CR-127 closed and post-merge verification passed. |

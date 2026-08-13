@@ -3542,3 +3542,14 @@
 | E3D disposition | The prior typed halt is superseded for routing by the same foundation change. Owner2's two uncommitted paths and generated cache residue remain preserved; E3D is blocked on 05S1R and later refreeze. |
 | Required owner choice | No new worktree is authorized and both permanent implementation worktrees contain preserved uncommitted state. Recommended minimum-waste disposition is to discard only owner1's small uncommitted E4 test correction to free that worktree for 05S1R, while preserving owner2's larger E3D work until the foundation integrates. No discard/cleanup is performed without explicit approval. |
 | Boundary | Control-plane docs only. No implementation worktree mutation, cleanup, source commit, package/build/install, staging push, live Codex/target-project effect, release or deployment. |
+
+## PRG-20260813-324 — Owner1 cleanup disposition and 05S1R dispatch
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `OWNER_DISPOSITION_GRANTED -> EXACT_PATH_DISCARD -> WORKSPACE_CLEAN -> 05S1R_IMPLEMENTATION_DISPATCH_CONFIRMED` |
+| Authorized discard | Owner1 verified exactly one unstaged E4 test modification and zero staged/untracked/ignored/cache residue, then restored only `tests/test_codex_registration_success_acceptance.py` to handoff `5cf2235ad755bd1f5935f7139789bfa6f9a4c970`. Readback is clean; no commit/folder/branch/worktree/TEMP/owner2/control mutation occurred. |
+| Preserved lane | Owner2 remains unchanged with its two E3D files and generated cache residue untracked. E3D stays blocked on 05S1R; no cleanup or reuse authority was granted. |
+| 05S1R admission | Product project/task `6d2ebb66-1ae7-48b4-96da-53ffba88ef1f` / `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; canonical owner1 root/git-dir and readback digest match; target branch is absent and exactly three worktrees remain. |
+| Dispatch | One-use 05S1R handoff/allocation/receipt/correlation/question/side-context/workspace binding are frozen in the ticket. Owner1 may create only the named branch from the registry commit and write only the exact migration paths plus later PRG-325 WPR handoff. |
+| Boundary | No helper Agent, new worktree, owner2 mutation, broad cleanup, target-project write, package/build/install, staging push, live Codex, release or deployment. |

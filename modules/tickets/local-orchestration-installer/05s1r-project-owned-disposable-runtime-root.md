@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-13 |
 | Requirement / ADR | `CHG-20260813-015` / `ADR-20260813-007` |
-| State | `PLANNED / OWNER_DISPOSITION_WAIT / NOT_DISPATCHED` |
+| State | `IN_PROGRESS / DISPATCH_CONFIRMED` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05S1R-01` / R1-R8 |
 | Dependency | Integrated 05S1-05S4; exact current control freeze; one clean permanent implementation worktree |
 | Language / XSS | Python 3.11 strict Pydantic/mypy / `XSS_NOT_APPLICABLE` |
@@ -87,3 +87,22 @@ two uncommitted E3D paths plus Python cache residue. At least one permanent
 implementation worktree must be returned to an explicitly owner-authorized
 clean state before this ticket can receive a unique dispatch registry. No new
 worktree is authorized.
+
+## Owner disposition and dispatch registry
+
+The project owner explicitly approved discarding only owner1's uncommitted E4
+test correction and preserving owner2's E3D work. Owner1 performed one
+path-scoped restore and returned a clean exact worktree; no folder, branch,
+worktree, commit, TEMP or owner2 state changed.
+
+| Field | Value |
+| --- | --- |
+| Reviewed ticket / handoff | Ticket freeze `9278a75ab2be66fb6fcf610148d639e7ccf30d7f`; reviewed handoff is the control commit carrying this registry. |
+| Delivery authority | Project-owner approval of the recommended minimum-waste disposition plus standing instruction to continue the approved workflow; `IMPLEMENTATION_DISPATCH_CONFIRMED` for 05S1R only. |
+| Product binding | Project `6d2ebb66-1ae7-48b4-96da-53ffba88ef1f`; task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; workspace `wsb_local_orchestration_install_05s1r_20260813_01`; permanent worktree `wtr_workflow_implementation_20260813_01`; readback digest `89c0158be7376419b4010c7a0de455588013c4c3075bf31423a75a5a7d57d4a1`. |
+| Binding | `hnd_local_orchestration_install_05s1r_20260813`; `aln_local_orchestration_install_05s1r_20260813`; `rcpt_local_orchestration_install_05s1r_20260813`; `corr-local-orchestration-install-05s1r-20260813`; `q-local-orchestration-install-05s1r-20260813`; `scx-local-orchestration-install-05s1r-20260813-01`. |
+| Branch | Create only `codex/implementation-project-owned-disposable-runtime-05s1r` from the exact registry commit in the same permanent owner1 worktree; no new worktree. |
+| Writable paths / handoff | The eight frozen implementation paths plus `.gitignore`, followed by unique `PRG-20260813-325` WPR-only handoff. |
+
+This receipt is one-use and cannot authorize E3D, E4, another owner/task or any
+cleanup of owner2/OS TEMP. The implementation owner cannot control an Agent.
