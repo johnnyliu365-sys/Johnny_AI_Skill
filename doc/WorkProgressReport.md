@@ -3791,3 +3791,13 @@
 | Post-merge verification | Focused E3D `13/13`; full explicit serial `432/432`; strict mypy `138/138`; in-memory compile `138/138`; diff and control porcelain pass. |
 | Router continuation | E3D is complete. Thin E3 is the smallest unblocked POC ticket; E5 remains dependency-blocked until E3 is independently approved and integrated. |
 | Boundary | No push, staging publication, package/build/install, live Codex/host/target-project mutation, Secret, release or deployment. |
+
+## PRG-20260814-346 — Ticket 05B4B2E3 thin adapter freeze
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `DEPENDENCIES_SATISFIED(05B4B2E3) -> TICKET_FROZEN / READY_FOR_DISPATCH` |
+| Decomposition | E3 owns only one factory-admitted five-operation staging adapter and one focused test. It consumes E3C request revalidation and E3D response admission; no copied validator, registration, composition, receipt or end-to-end work remains in this ticket. |
+| Closure / scope | `CLOSURE-LOCAL-INSTALL-T05B4B2E3-01` / A1-A8; exactly two new paths, followed by reserved PRG-348 WPR-only handoff. No line-count acceptance criterion. |
+| Resource profile | `STANDARD`: one named owner2 implementation task; no helper/fan-out because the two paths and shared adapter contract are tightly coupled. Owner1 remains idle rather than receiving dependency-blocked E5 work. |
+| Boundary | Freeze only; no dispatch yet, implementation-worktree mutation, new worktree, live Codex/host/target-project effect, staging publication, push, package/build/install, Secret, release or deployment. |
