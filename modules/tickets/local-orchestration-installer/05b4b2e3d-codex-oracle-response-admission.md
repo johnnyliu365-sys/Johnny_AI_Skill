@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / unchanged AC-01, AC-07 and AC-08 |
-| State | `FROZEN / READY_FOR_DISPATCH / REVISION_02` |
+| State | `CHANGES_REQUESTED / TICKET_REFREEZE_REQUIRED` — CR-170 / CR-171 |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B4B2E3D-01` / P1-P8 |
 | Dependency | E2 merge `d3d3c1d`, E3A `b324f91`, E3B `dc07eec` and E3C `c042af1` approved/integrated |
 | Planned owner | Local project `3a624854-bf2f-4aa8-9b04-5f73e9ab2a28`; task `019ffb0c-db88-7303-895c-aecfadde7c8d`; permanent worktree `wtr_workflow_implementer_2_20260813_01` |
@@ -132,3 +132,12 @@ worktree.
 The new receipt is one-use and replaces the suspended revision-01 receipt. Full
 verification must use the project-owned runtime; no host-global cleanup may be
 used to manufacture a green result.
+
+## Revision-02 independent review disposition
+
+Implementation `c588bf6d24fcb459919130e5bebaeb961de72ca4` and WPR-only
+handoff `77be19295f9cd22d085f98b33e522b9152057318` are immutable.
+Independent review records CR-170 `TICKET_DEFECT` and CR-171
+`IMPLEMENTATION_DEFECT` in
+`doc/reviews/local-orchestration-installer/05b4b2e3d-codex-oracle-response-admission-code-review.md`.
+No correction receipt exists until CR-170 is refrozen.

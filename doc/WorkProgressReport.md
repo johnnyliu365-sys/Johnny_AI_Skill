@@ -3683,3 +3683,14 @@
 | E4 | Revision-03 keeps immutable implementation/handoff `3375237`/`5cf2235` on the existing branch. The clean owner worktree must history-merge this registry, preserve WPR append evidence, and correct CR-165/166 only in the focused test. |
 | Parallel safety | E3D and E4 have disjoint writable paths, separate permanent worktrees, tasks, allocations, receipts and handoffs. Neither may create/control a helper Agent. |
 | Boundary | No control-side implementation-worktree mutation, new branch/worktree, source/test edit, OS-global cleanup, push, build/package/install, live Codex/host/target-project mutation, Secret, release or deployment. |
+
+## PRG-20260814-339 — Ticket 05B4B2E3D independent review
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05B4B2E3D) -> TERMINAL_CODE_REVIEW -> CHANGES_REQUESTED / TICKET_REFREEZE_REQUIRED` |
+| Reviewed chain | Registry `334757c` -> implementation `c588bf6` -> WPR-only handoff `77be192`; exact two-path implementation and WPR-only scopes, ancestry, diff and clean owner readback pass. |
+| Independent green | Fresh immutable ZIP export beneath reviewer-owned TEMP: focused `10/10`, full `424/424`, strict mypy `136/136`, in-memory compile `136/136`; external cache removed; XSS not applicable. |
+| CR-170 | `TICKET_DEFECT`: a fully populated `model_construct` value and normally validated value have identical observable Pydantic state. Constructor provenance cannot be inferred; refreeze must require exact-state revalidation/rebuild or introduce a separate explicit authority carrier. |
+| CR-171 | `IMPLEMENTATION_DEFECT`: malformed present `marketplaceSource` returns the same internal `None` as legitimate absence, so plugin/marketplace entries are accepted after silently dropping invalid nested data. |
+| Decision / boundary | No correction dispatch or integration. Immutable commits remain evidence. No implementation-worktree write, new branch/worktree, OS-global cleanup, push, package/build/install, live Codex/host/target-project mutation, Secret, release or deployment. |
