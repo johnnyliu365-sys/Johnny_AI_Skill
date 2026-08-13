@@ -122,6 +122,7 @@
 | Ticket 05A CLI contract/preflight | DONE / APPROVED / INTEGRATED | Implementation `97ab31c`; repaired handoff `fb755268`; review `d54c0bd`; owner-authorized ledger-preserving merge `b22c6c4`; post-merge verification passed. |
 | Ticket 05S combined staging parent | SUPERSEDED / DECOMPOSED | Rejected commits remain immutable evidence; no correction or integration. |
 | Ticket 05S1 disposable environment core | DONE / APPROVED / INTEGRATED | Correction `41d5ce4`, handoff `e1087d3`, review `17ea1d5` and guarded merge `504a3ec`; post-merge verification passed. |
+| Ticket 05S1R project-owned disposable runtime root | PLANNED / OWNER_DISPOSITION_WAIT / NOT_DISPATCHED | `CHG-20260813-015` and ADR-007 replace shared OS TEMP with exact per-worktree `tests/.johnny-runtime/`; one implementation worktree must be explicitly returned clean before dispatch. |
 | Ticket 05S2 bounded child-process runner | DONE / APPROVED / INTEGRATED | Revision-03 `33a8fa9` / `dba0621b`, review `c97b754`, guarded merge `6e24e06`; CR-124 resolved and post-merge verification passed. |
 | Ticket 05S3 Codex protocol fixture | DONE / APPROVED / INTEGRATED | Correction `4835b0f`, handoff `008fac8`, final review `c518e62` and guarded merge `43a1639`; CR-125 closed and post-merge verification passed. |
 | Ticket 05S4 Codex lifecycle oracle | DONE / APPROVED / INTEGRATED | Correction `02f33ef`, handoff `52ab9c0`, review `68ff06b`, guarded merge `4af381c`; CR-126/CR-127 closed and post-merge verification passed. |
@@ -151,9 +152,9 @@
 | Ticket 05B4B2E3B oracle owned-absence preservation | COMPLETED / APPROVED / INTEGRATED | Merge `dc07eec`; CR-161 subclass/constructed evidence is finitely blocked. |
 | Ticket 05B4B2E2 registration oracle adapter | COMPLETED / APPROVED / INTEGRATED | Merge `d3d3c1d`; post-merge focused 14/full 409/strict mypy and compile 134 pass; allocation released and receipt closed. |
 | Ticket 05B4B2E3C compensation request revalidation | COMPLETED / APPROVED / INTEGRATED | Merge `c042af1`; reviewer focused 24/full 395/strict mypy 132 passed. |
-| Ticket 05B4B2E3D compensation response admission | BLOCKED / HALT_SCOPE_VIOLATION | Owner2 stopped before commit after deleting one pre-existing owned test TEMP residue outside the pure-projection authority; uncommitted two-path work is preserved pending owner disposition. |
+| Ticket 05B4B2E3D compensation response admission | BLOCKED / REQUIREMENT_CHANGED / 05S1R_DEPENDENCY | Owner2 uncommitted two-path work is preserved. Resume only after project-owned runtime migration integration and E3D refreeze. |
 | Ticket 05B4B2E3 compensation oracle adapter | PLANNED / DEPENDENCY_WAIT | Refreeze as a thin effect adapter only after E3D approval/integration. |
-| Ticket 05B4B2E4 registration success acceptance | IN_PROGRESS / REVISION_02_CORRECTION_DISPATCHED | CR-165/166 test-only correction dispatched to exact owner1 Local task on the existing branch after clean handoff readback; reviewer retains external worktree-manifest responsibility. |
+| Ticket 05B4B2E4 registration success acceptance | BLOCKED / REQUIREMENT_CHANGED / 05S1R_DEPENDENCY | Owner1 stopped safely with one uncommitted test correction and no new commit/handoff. Resume only after 05S1R integration and E4 refreeze. |
 | Tickets 05B4B2E5-E6 lifecycle acceptance | PLANNED / DEPENDENCY_WAIT | Compensation and isolation remain small dependency-ordered acceptance tickets. |
 | Ticket 05C receipt removal/replay | PLANNED / DEPENDENCY_WAIT / REFREEZE_REQUIRED | Starts only after 05A/05B approval/integration and a finite behavior/rollback closure refreeze. |
 | Ticket 06A Codex role-profile capability proof | DONE / APPROVED_EVIDENCE / INSTALL_BLOCKED / INTEGRATED | Implementation `38e9a8b`, handoff `f6f186f`, review `62955ec`, guarded merge `de4141e`; actual installed-host result is `ROLE_ISOLATION_UNPROVEN / ACCESS_DENIED / OUTPUT_UNAVAILABLE`, so capability dependents stay blocked. |

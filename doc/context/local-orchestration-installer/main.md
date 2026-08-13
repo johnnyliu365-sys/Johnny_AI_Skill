@@ -668,3 +668,26 @@ request binding to the terminal compensation decision. B2B2 and B2C have
 disjoint exact source/test ownership and may run in parallel in the two
 existing worktrees. B2D waits for B2B2 integration; no requirement or SPEC
 acceptance criterion changes.
+
+## Project-owned disposable test runtime
+
+`CHG-20260813-015` and ADR-20260813-007 replace the integrated 05S1
+OS-global TEMP root assumption for all future repository tests. The only valid
+05S1 runtime parent is the exact current plugin checkout's
+`tests/.johnny-runtime/`; because each Git worktree is a separate checkout,
+their test environments can no longer collide through one shared TEMP
+namespace. This directory is test support only and is never copied to or
+created inside a target project.
+
+Each environment is still one generated, marker-bound direct child and all six
+overlay values remain inside it. Successful teardown removes the exact lease
+and then the empty runtime parent. Pre-existing/unclaimed residue, unexpected
+siblings, marker mismatch or reparse state blocks finitely and remains intact;
+there is no startup cleanup or OS-global scan. Final evidence reads ignored as
+well as tracked Git state and proves no project runtime or OS-TEMP staging root
+was created outside the exact current test lifecycle.
+
+Ticket 05S1R owns the atomic allocator/direct-caller migration. E3D and E4 are
+returned to `REQUIREMENT_CHANGED` until that ticket is approved and integrated.
+Their current uncommitted files remain preserved and are neither accepted nor
+discarded by this Context revision.

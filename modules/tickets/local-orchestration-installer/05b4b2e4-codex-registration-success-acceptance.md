@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / unchanged AC-01, AC-07 and AC-08 |
-| State | `IN_PROGRESS / REVISION_02_CORRECTION_DISPATCHED` |
+| State | `BLOCKED / REQUIREMENT_CHANGED / 05S1R_DEPENDENCY` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B4B2E4-02` / S1-S8 |
 | Dependency | E2 merge `d3d3c1d` plus integrated forward, settlement-authority and proof-settlement modules |
 | Planned owner | Local project `6d2ebb66-1ae7-48b4-96da-53ffba88ef1f`; task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; permanent worktree `wtr_workflow_implementation_20260813_01` |
@@ -132,3 +132,13 @@ then one unique WPR-only handoff:
 The correction was dispatched only after registry commit
 `f4d1598d5d76312e3cf7185441f0626de72c6e30` and exact product
 task/worktree/branch/HEAD readback at the immutable handoff.
+
+## Requirement-change disposition
+
+The project owner changed the 05S1 root location through
+`CHG-20260813-015` while the revision-02 correction was running. Owner1 stopped
+at a safe boundary with no new commit or PRG-321 handoff. Only
+`tests/test_codex_registration_success_acceptance.py` is modified and
+uncommitted; focused 5/5 plus the order and same-port reversals passed before
+the steer. E4 must not resume, commit or enter review until 05S1R is approved
+and integrated and this ticket is refrozen against the new foundation.

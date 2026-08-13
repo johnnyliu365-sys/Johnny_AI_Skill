@@ -240,3 +240,19 @@
 | Affected specification/tickets | `modules/spec/local-orchestration-installer.md` AC-11/AC-12; local package parent 04 decomposed into 04A-04I. |
 | Owner authority | The owner explicitly authorizes the future 04D staging push after 04A/04B package-source integration and 04C exact-candidate approval. That authority is limited to safe create-or-fast-forward publication of the exact candidate and mandatory readback; any mismatch or divergence halts. |
 | Acceptance | No release-build/system-integration child starts before remote `staging` equals the complete-source frozen candidate. Each child owns one bounded acceptance concern. The final version-one record is complete and immutable, while later feature/architecture work begins from `staging` and receives a new change/ticket lineage. |
+
+## CHG-20260813-015 — Move disposable repository tests into a project-owned runtime namespace
+
+| Field | Value |
+| --- | --- |
+| Date | `2026-08-13` |
+| Requested by | Project owner |
+| Previous rule | Integrated 05S1 requires each disposable environment root to be a direct child of the resolved OS `%TEMP%` directory. Failed runs can therefore leave globally shared `johnny-stage-env-*` residue discovered by another worktree, while that later ticket has no authority to clean it. |
+| Changed rule | Every 05S1-based repository test environment is rooted below the exact current plugin checkout at `tests/.johnny-runtime/`. Each worktree owns a separate namespace. No test may create, scan or clean an OS-global `johnny-stage-env-*` namespace or place the runtime in a target project. Exact marker-bound teardown removes only its lease and an empty runtime parent; stale/unclaimed residue blocks without automatic deletion. |
+| Reason | Test artifacts should be attributable to the project/worktree that created them. Locality prevents cross-worktree TEMP collisions and makes crash residue visible without granting broad host cleanup authority. |
+| In scope | 05S1 allocator root admission, exact ignore rule, all integrated direct test callers, stale-residue/reparse/marker TDD, tracked/ignored/OS-TEMP/target-project non-interference, and dependent E3D/E4 refreeze. |
+| Out of scope | Installed product root, target-project files, production package staging, live Codex/user profile, OS-global cleanup, new worktree, network, push, release or deployment. |
+| Context / ADR | `doc/context/local-orchestration-installer/main.md`; `doc/adr/ADR-20260813-007-project-owned-disposable-test-runtime.md` |
+| Affected specification | `modules/spec/local-orchestration-installer.md` / AC-13 |
+| Ticket impact | New bounded Ticket 05S1R atomically migrates the allocator and seven integrated direct test callers. E3D and E4 are `REQUIREMENT_CHANGED / 05S1R_DEPENDENCY`; their uncommitted work remains preserved pending explicit disposition. |
+| Acceptance | No `from_system_temp` path remains; every disposable lease is below the exact plugin checkout runtime parent; no case creates or cleans `%TEMP%/johnny-stage-env-*`; stale project-local residue blocks and remains byte-identical; successful full verification leaves tracked, ignored, runtime, target-project and OS-TEMP sentinels unchanged/absent as applicable. |

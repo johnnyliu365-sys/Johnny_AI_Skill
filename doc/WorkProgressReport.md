@@ -3530,3 +3530,15 @@
 | Admission | Product task `019ffb0c-c9c7-7b30-b614-02dea7ed9042` is idle and bound to `C:\Users\<user>\Desktop\AI控制工作workflow-implementation`; canonical root/git-dir match the permanent worktree. Existing E4 branch is clean at exact handoff `5cf2235ad755bd1f5935f7139789bfa6f9a4c970`; exactly three worktrees remain. |
 | Dispatch | Same ticket/owner/worktree/branch/allocation/receipt. Correction authority is freeze `f4d1598d5d76312e3cf7185441f0626de72c6e30` and handoff `hnd_local_orchestration_install_05b4b2e4_cr165_166_20260813`. Only the focused test path plus later PRG-321 WPR handoff is writable. |
 | Boundary | No helper Agent, new branch/worktree, source behavior change, compensation, sibling/global scan or cleanup, staging push, package/build/install, live Codex/target-project mutation, release or deployment. |
+
+## PRG-20260813-323 — Project-owned disposable runtime change control
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `OWNER_REQUIREMENT_CHANGED -> CHANGE_CONTROL -> SPEC_AC13 / ADR_007 / TICKET_05S1R_FROZEN -> OWNER_DISPOSITION_WAIT` |
+| Root cause / decision | Integrated 05S1 creates globally shared `%TEMP%/johnny-stage-env-*` roots, allowing crash residue from one worktree to block another without granting cleanup authority. `CHG-20260813-015` moves every future 05S1 repository test to its exact plugin checkout's `tests/.johnny-runtime/` namespace; target projects remain untouched. |
+| Foundation ticket | New 05S1R atomically removes `from_system_temp`, migrates the allocator plus all seven integrated direct test callers, adds the exact ignore rule and proves stale project-local residue blocks without deletion and no OS-global staging root is created. No owner/receipt/dispatch exists yet. |
+| E4 steer | Owner1 received `REQUIREMENT_CHANGED` at a safe boundary and returned without commit or PRG-321. Only the focused E4 test is modified; focused 5/5 and two reversals passed. The lane remains preserved and blocked on 05S1R. |
+| E3D disposition | The prior typed halt is superseded for routing by the same foundation change. Owner2's two uncommitted paths and generated cache residue remain preserved; E3D is blocked on 05S1R and later refreeze. |
+| Required owner choice | No new worktree is authorized and both permanent implementation worktrees contain preserved uncommitted state. Recommended minimum-waste disposition is to discard only owner1's small uncommitted E4 test correction to free that worktree for 05S1R, while preserving owner2's larger E3D work until the foundation integrates. No discard/cleanup is performed without explicit approval. |
+| Boundary | Control-plane docs only. No implementation worktree mutation, cleanup, source commit, package/build/install, staging push, live Codex/target-project effect, release or deployment. |
