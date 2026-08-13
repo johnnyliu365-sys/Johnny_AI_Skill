@@ -150,7 +150,7 @@ class CodexReceiptRemovalRequestTests(unittest.TestCase):
         result = build_codex_receipt_removal_request(_invocation(installation_id=mismatch))
         _assert_blocked(self, result, CodexReceiptRemovalBlockReason.RECEIPT_MISMATCH)
 
-    def test_R3_root_mismatch_is_receipt_mismatch(self) -> None:
+    def test_R4_constructed_noncanonical_invocation_root_is_invalid_invocation(self) -> None:
         receipt = _receipt()
         mismatch = InstallRoot.model_construct(value=r"%LOCALAPPDATA%\OtherJohnnyAIWorkflow")
         invocation = CodexReceiptRemovalInvocation.model_construct(
@@ -159,7 +159,40 @@ class CodexReceiptRemovalRequestTests(unittest.TestCase):
             receipt=receipt,
         )
         result = build_codex_receipt_removal_request(invocation)
-        _assert_blocked(self, result, CodexReceiptRemovalBlockReason.RECEIPT_MISMATCH)
+        _assert_blocked(self, result, CodexReceiptRemovalBlockReason.INVALID_INVOCATION)
+
+    def test_R4_constructed_invalid_invocation_installation_id_is_invalid_invocation(self) -> None:
+        receipt = _receipt()
+        invalid_id = InstallationId.model_construct(value="")
+        invocation = CodexReceiptRemovalInvocation.model_construct(
+            installation_id=invalid_id,
+            root=receipt.root,
+            receipt=receipt,
+        )
+        result = build_codex_receipt_removal_request(invocation)
+        _assert_blocked(self, result, CodexReceiptRemovalBlockReason.INVALID_INVOCATION)
+
+    def test_R4_constructed_invalid_receipt_root_is_invalid_receipt(self) -> None:
+        receipt = _receipt()
+        invalid_receipt = CodexRegistrationReceipt.model_construct(
+            installation_id=receipt.installation_id,
+            root=InstallRoot.model_construct(value=r"%LOCALAPPDATA%\OtherJohnnyAIWorkflow"),
+            marketplace=receipt.marketplace,
+            plugin_id=receipt.plugin_id,
+            plugin_name=receipt.plugin_name,
+            version=receipt.version,
+            source_locator=receipt.source_locator,
+            installed_locator=receipt.installed_locator,
+            auth_policy=receipt.auth_policy,
+            digest=receipt.digest,
+        )
+        invocation = CodexReceiptRemovalInvocation.model_construct(
+            installation_id=receipt.installation_id,
+            root=receipt.root,
+            receipt=invalid_receipt,
+        )
+        result = build_codex_receipt_removal_request(invocation)
+        _assert_blocked(self, result, CodexReceiptRemovalBlockReason.INVALID_RECEIPT)
 
     def test_R4_null_scalar_and_container_invocations_are_invalid(self) -> None:
         candidates: tuple[object, ...] = (None, 5, "receipt", [], {}, ("receipt",))

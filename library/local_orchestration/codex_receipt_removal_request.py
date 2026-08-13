@@ -83,22 +83,14 @@ def build_codex_receipt_removal_request(value: object) -> CodexReceiptRemovalRes
     if invocation_state is None:
         return _blocked(CodexReceiptRemovalBlockReason.INVALID_INVOCATION)
 
-    rebuilt_receipt = _rebuild_receipt(invocation_state["receipt"])
-    if rebuilt_receipt is None:
-        return _blocked(CodexReceiptRemovalBlockReason.INVALID_RECEIPT)
-
-    raw_installation_id = _raw_value(invocation_state["installation_id"], InstallationId)
-    raw_root = _raw_value(invocation_state["root"], InstallRoot)
-    if (
-        raw_installation_id is not None
-        and raw_installation_id != rebuilt_receipt.installation_id.value
-    ) or (raw_root is not None and raw_root != rebuilt_receipt.root.value):
-        return _blocked(CodexReceiptRemovalBlockReason.RECEIPT_MISMATCH)
-
     rebuilt_installation_id = _rebuild_value(invocation_state["installation_id"], InstallationId)
     rebuilt_root = _rebuild_value(invocation_state["root"], InstallRoot)
     if rebuilt_installation_id is None or rebuilt_root is None:
         return _blocked(CodexReceiptRemovalBlockReason.INVALID_INVOCATION)
+
+    rebuilt_receipt = _rebuild_receipt(invocation_state["receipt"])
+    if rebuilt_receipt is None:
+        return _blocked(CodexReceiptRemovalBlockReason.INVALID_RECEIPT)
 
     installation_id = cast(InstallationId, rebuilt_installation_id)
     root = cast(InstallRoot, rebuilt_root)
@@ -193,17 +185,6 @@ def _rebuild_value(value: object, expected_type: type[BaseModel]) -> BaseModel |
         return expected_type(value=raw_value)
     except (TypeError, ValidationError, ValueError):
         return None
-
-
-def _raw_value(value: object, expected_type: type[BaseModel]) -> str | None:
-    """Read an exact scalar state for the identity gate without invoking validation hooks."""
-
-    if type(value) is not expected_type or not _has_exact_model_state(value, _VALUE_STATE_FIELDS):
-        return None
-    state = _model_state(value)
-    if state is None or type(state["value"]) is not str:
-        return None
-    return state["value"]
 
 
 def _has_exact_model_state(value: BaseModel, expected_fields: tuple[str, ...]) -> bool:
