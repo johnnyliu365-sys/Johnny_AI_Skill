@@ -3932,3 +3932,13 @@
 | Lane readback | Owner1 is idle at clean E5 handoff `5dd0f63`; permanent top-level/linked git-dir and three-worktree topology match; tracked/ignored counts are zero and target E6P branch is absent. New E6P branch must start only from this registry commit in the same worktree. |
 | Dispatch / return | One owner, no helper; exactly the new staging-only compensation entrypoint and existing E5 acceptance test update, then unique PRG-361 WPR-only handoff. Non-high-risk ticket/evidence defects may be corrected within the same closure without user wait. |
 | Boundary | No control-side implementation-worktree write, new worktree, live Codex/host/target-project effect, push, staging publication, package/build/install, Secret, release or deployment. |
+
+## PRG-20260814-362 - Ticket 05B4B2E6P terminal approval
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05B4B2E6P) -> TERMINAL_CODE_REVIEW -> APPROVED / READY_TO_MERGE` |
+| Reviewed chain | Freeze `8312eae` -> dispatch `5d86734` -> implementation `92ee5a3` -> WPR handoff `43b7d45`; implementation scope is exactly the two frozen paths. |
+| Independent green | Reviewer-owned immutable archive SHA-256 `741F314F7E37EF32B3CACDFFBF857068992719CCAC50A2461F00E69DCA7533CE`; focused `3/3`; full `448/448`; strict mypy `142/142`; in-memory compile `142/142`; source/scope/ancestry/clean-lane checks pass. |
+| Adversarial closure | Five reviewer reversals prove exact oracle admission, one-shot fault, compensation order, physical absence and replay gate; exact staging blob restored. Caller lifecycle evidence remains real and the transaction has one staging owner. P1-P8 close with no finding. |
+| Decision / boundary | `APPROVED / READY_TO_MERGE`; complete immutable history only. No implementation-worktree write, new worktree, push, staging publication, package/build/install, live Codex/host/target-project mutation, Secret, release or deployment. |

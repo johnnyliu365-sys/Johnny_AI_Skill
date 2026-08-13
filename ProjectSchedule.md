@@ -158,7 +158,7 @@
 | Ticket 05B4B2E4 registration success acceptance | COMPLETE / APPROVED / INTEGRATED | Correction `dc909da`, handoff `63b8494`, review `44dd810`, guarded merge `c1a5a7c`; post-merge full/static pass. |
 | Ticket 05B4B2E5 registration compensation acceptance | COMPLETE / APPROVED / INTEGRATED | Revision-02 C1-C8 review `bf1afe5`, guarded merge `ce7a1c2`; post-merge focused/full/type/compile passed. |
 | Ticket 05B4B2E6 registration isolation parent | CONVERGENCE_DECOMPOSED / NON_DISPATCHABLE | Split into reusable compensation entrypoint E6P, then parallel foreign-state E6A and target-project E6B evidence. |
-| Ticket 05B4B2E6P compensation acceptance entrypoint | FROZEN / IMPLEMENTATION_DISPATCH_CONFIRMED / IMPLEMENT_ACTIVE | Owner1 exact lane; extract one reusable staging-only typed entrypoint without behavior expansion. |
+| Ticket 05B4B2E6P compensation acceptance entrypoint | APPROVED / READY_TO_MERGE | P1-P8 independently approved; exact handoff awaits guarded integration. |
 | Ticket 05B4B2E6A foreign-state isolation acceptance | PLANNED / DEPENDENCY_WAIT | Evidence-only success and compensation preservation; blocked on E6P. |
 | Ticket 05B4B2E6B target-project isolation acceptance | PLANNED / DEPENDENCY_WAIT | Evidence-only success and compensation byte/Git preservation; blocked on E6P. |
 | Ticket 05C receipt removal/replay | PLANNED / DEPENDENCY_WAIT / REFREEZE_REQUIRED | Starts only after 05A/05B approval/integration and a finite behavior/rollback closure refreeze. |
