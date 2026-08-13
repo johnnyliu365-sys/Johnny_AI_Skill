@@ -4003,3 +4003,13 @@
 | Correction | Revision 02 changes only the staging proof contract: exactly one complete owned marketplace identity and one complete owned installed-plugin identity must match; unrelated foreign/available entries are permitted and preserved; zero or duplicate owned matches still fail. The direct adapter test changes from foreign-list rejection to positive preservation/uniqueness evidence. |
 | Same-lane continuity | Owner1 stopped without commit at registry `be0f91f`; tracked porcelain is clean; exactly one untracked frozen E6A acceptance test is preserved; ignored/cache/runtime residue is zero. Same task, worktree, branch, allocation, receipt, correlation and A1-A8 closure remain valid. |
 | Scope / boundary | Exactly `registration_adapter.py`, its direct adapter test and the preserved E6A acceptance test; one additive correction implementation commit then reserved PRG-367 WPR-only handoff. No product source, new branch/worktree, live Codex/host/real-target-project effect, push, staging publication, package/build/install, Secret, release or deployment. |
+
+## PRG-20260814-370 - Ticket 05B4B2E6A revision-02 correction dispatch
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `CORRECTION_REFROZEN(05B4B2E6A) + SAME_LANE_WIP_ADMITTED -> IMPLEMENTATION_DISPATCH_CONFIRMED / IMPLEMENT` |
+| Refreeze / binding | Reviewed correction `d737ae5cde0b4adcfb11114ae55c46d8ac18d66b`; original owner1 workspace/handoff/allocation/receipt/correlation/question/side-context remain unchanged and cite `PRG-20260809-042`. |
+| Lane readback | Same E6A branch at exact original registry `be0f91f`; tracked/ignored porcelain empty; exactly one untracked frozen acceptance test preserved; zero runtime/cache residue; exactly three worktrees. Fast-forward-only baseline advance must preserve its exact hash. |
+| Dispatch / return | Same owner, no helper/new lane; exact adapter, direct adapter test and preserved acceptance test, then unique PRG-367 WPR-only handoff. The correction changes total-list cardinality to exact-owned membership/uniqueness and must retain zero/duplicate-owned rejection. |
+| Boundary | No control-side implementation-worktree write, new branch/worktree, product source, live Codex/host/real-target-project effect, push, staging publication, package/build/install, Secret, release or deployment. |

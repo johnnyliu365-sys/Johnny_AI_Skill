@@ -4,7 +4,7 @@
 | --- | --- |
 | Revision | `02` - non-high-risk ticket correction; same branch, owner, receipt and closure |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / unchanged AC-02, AC-07 and AC-08 |
-| State | `CORRECTION_REFROZEN / READY_FOR_REDISPATCH` |
+| State | `CORRECTION_DISPATCH_CONFIRMED / IN_PROGRESS` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B4B2E6A-01` / A1-A8 |
 | Dependency | E6P guarded merge `7334cc5314592ac159e9418a145121d31e4156d5` |
 | Planned owner | Existing owner1 task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; permanent `workflow-implementation`; no new worktree/helper |
@@ -120,3 +120,15 @@ the unchanged A1-A8 isolation acceptance. This is a non-high-risk ticket defect:
 product behavior, SPEC/AC, owner, worktree, branch, allocation, receipt and
 correlation are unchanged. The preserved untracked acceptance test remains WIP
 and may not be committed until the corrected dispatch registry is admitted.
+
+## Revision-02 correction dispatch registry
+
+| Field | Value |
+| --- | --- |
+| Reviewed refreeze / authority | Revision-02 refreeze `d737ae5cde0b4adcfb11114ae55c46d8ac18d66b`; standing auto-continue under `PRG-20260809-042`; the original valid allocation/receipt/correlation are retained. |
+| Exact lane readback | Owner1 task is idle on the same E6A branch at `be0f91f626d9f70fc54596d9b29feb25f9a4bb61`; tracked and ignored porcelain are empty; exactly one untracked frozen E6A test is preserved; runtime/cache residue is zero; exactly three worktrees. |
+| Baseline admission | In the same permanent worktree and same E6A branch, fast-forward only from `be0f91f626d9f70fc54596d9b29feb25f9a4bb61` to the exact commit carrying this correction registry while preserving the untracked test byte-for-byte. Re-read the test hash before/after. No reset, rebase, amend, force, stash, new branch/worktree or cross-lane write. |
+| Corrected writable return | Exactly `tests/staging/codex_lifecycle_oracle/registration_adapter.py`, `tests/test_codex_registration_oracle_adapter.py` and the preserved `tests/test_codex_registration_foreign_state_isolation_acceptance.py`; one additive implementation commit, then only PRG-367 in one WPR-only handoff commit. |
+
+This corrected one-use admission supersedes only the revision-01 one-file scope.
+All identity bindings and reviewer-only orchestration restrictions remain exact.

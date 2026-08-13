@@ -159,7 +159,7 @@
 | Ticket 05B4B2E5 registration compensation acceptance | COMPLETE / APPROVED / INTEGRATED | Revision-02 C1-C8 review `bf1afe5`, guarded merge `ce7a1c2`; post-merge focused/full/type/compile passed. |
 | Ticket 05B4B2E6 registration isolation parent | CONVERGENCE_DECOMPOSED / NON_DISPATCHABLE | Split into reusable compensation entrypoint E6P, then parallel foreign-state E6A and target-project E6B evidence. |
 | Ticket 05B4B2E6P compensation acceptance entrypoint | COMPLETE / APPROVED / INTEGRATED | P1-P8 approved and guarded-merged at `7334cc5`. |
-| Ticket 05B4B2E6A foreign-state isolation acceptance | CORRECTION_REFROZEN / READY_FOR_REDISPATCH | Revision 02 corrects staging proof owned-membership admission, then resumes A1-A8 on the same owner1 branch/receipt. |
+| Ticket 05B4B2E6A foreign-state isolation acceptance | CORRECTION_DISPATCH_CONFIRMED / IN_PROGRESS | Revision 02 corrects staging proof owned-membership admission, then resumes A1-A8 on the same owner1 branch/receipt. |
 | Ticket 05B4B2E6B target-project isolation acceptance | DISPATCH_CONFIRMED / IN_PROGRESS | B1-B8 on disjoint owner2 lane; exact one-file acceptance scope. |
 | Ticket 05C receipt removal/replay | PLANNED / DEPENDENCY_WAIT / REFREEZE_REQUIRED | Starts only after 05A/05B approval/integration and a finite behavior/rollback closure refreeze. |
 | Ticket 06A Codex role-profile capability proof | DONE / APPROVED_EVIDENCE / INSTALL_BLOCKED / INTEGRATED | Implementation `38e9a8b`, handoff `f6f186f`, review `62955ec`, guarded merge `de4141e`; actual installed-host result is `ROLE_ISOLATION_UNPROVEN / ACCESS_DENIED / OUTPUT_UNAVAILABLE`, so capability dependents stay blocked. |
