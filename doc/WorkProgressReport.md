@@ -3521,3 +3521,12 @@
 | CR-166 correction | The committed child owns parent-environment, unique-temp and exact lease-root teardown evidence. Reviewer-owned external manifests alone prove all three worktrees byte/porcelain-identical; implementation may not scan sibling worktrees. |
 | Correction scope | Same project/task/workspace/branch and retained allocation/receipt. One additive test-only correction removes post-success foreign seeding and fixes the overclaiming test name, followed by unique PRG-321 WPR handoff. Production/staging source behavior is frozen unchanged. |
 | Boundary | Registry must be committed and exact lane read back before dispatch. No new branch/worktree, global cleanup, compensation, staging push, package/build/install, live Codex/target-project mutation, release or deployment. |
+
+## PRG-20260813-322 — Ticket 05B4B2E4 revision-02 correction dispatch
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `REVISION_02_FROZEN + EXACT_LANE_READBACK -> SAME_BRANCH_CORRECTION_DISPATCH / AUTO_CONTINUE` |
+| Admission | Product task `019ffb0c-c9c7-7b30-b614-02dea7ed9042` is idle and bound to `C:\Users\<user>\Desktop\AI控制工作workflow-implementation`; canonical root/git-dir match the permanent worktree. Existing E4 branch is clean at exact handoff `5cf2235ad755bd1f5935f7139789bfa6f9a4c970`; exactly three worktrees remain. |
+| Dispatch | Same ticket/owner/worktree/branch/allocation/receipt. Correction authority is freeze `f4d1598d5d76312e3cf7185441f0626de72c6e30` and handoff `hnd_local_orchestration_install_05b4b2e4_cr165_166_20260813`. Only the focused test path plus later PRG-321 WPR handoff is writable. |
+| Boundary | No helper Agent, new branch/worktree, source behavior change, compensation, sibling/global scan or cleanup, staging push, package/build/install, live Codex/target-project mutation, release or deployment. |

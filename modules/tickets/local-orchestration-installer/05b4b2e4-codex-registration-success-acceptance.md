@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / unchanged AC-01, AC-07 and AC-08 |
-| State | `CHANGES_REQUESTED / REVISION_02_FROZEN / CORRECTION_NOT_DISPATCHED` |
+| State | `IN_PROGRESS / REVISION_02_CORRECTION_DISPATCHED` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B4B2E4-02` / S1-S8 |
 | Dependency | E2 merge `d3d3c1d` plus integrated forward, settlement-authority and proof-settlement modules |
 | Planned owner | Local project `6d2ebb66-1ae7-48b4-96da-53ffba88ef1f`; task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; permanent worktree `wtr_workflow_implementation_20260813_01` |
@@ -129,5 +129,6 @@ then one unique WPR-only handoff:
 | Branch / baseline | Continue additively from exact handoff `5cf2235ad755bd1f5935f7139789bfa6f9a4c970` on existing branch `codex/implementation-codex-registration-success-acceptance-05b4b2e4`; no new branch/worktree, reset, amend, rebase or force. |
 | Writable paths | Correction only in `tests/test_codex_registration_success_acceptance.py`, followed by unique `PRG-20260813-321` WPR-only handoff. |
 
-No correction is dispatched until this registry is committed and the exact
-product task/worktree/branch/HEAD binding is read back.
+The correction was dispatched only after registry commit
+`f4d1598d5d76312e3cf7185441f0626de72c6e30` and exact product
+task/worktree/branch/HEAD readback at the immutable handoff.
