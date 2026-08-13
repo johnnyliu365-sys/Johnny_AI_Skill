@@ -149,10 +149,12 @@
 | Ticket 05B4B2E3A compensation finite failure | COMPLETED / APPROVED / INTEGRATED | Merge `b324f91`; combined focused 44/full 379/strict mypy pass. |
 | Ticket 05B4B2E2B registration no-effect failure | COMPLETED / APPROVED / INTEGRATED | Merge `784d08a`; CR-160 incident remains truthfully preserved. |
 | Ticket 05B4B2E3B oracle owned-absence preservation | COMPLETED / APPROVED / INTEGRATED | Merge `dc07eec`; CR-161 subclass/constructed evidence is finitely blocked. |
-| Ticket 05B4B2E2 registration oracle adapter | APPROVED / GUARDED_INTEGRATION_READY | Rebound implementation `b3b50a02…`, WPR-only handoff `cc436c28…`; CR-162/163/164 closed by independent focused 14/full 402/strict mypy 134 review and three red/restore probes. |
+| Ticket 05B4B2E2 registration oracle adapter | COMPLETED / APPROVED / INTEGRATED | Merge `d3d3c1d`; post-merge focused 14/full 409/strict mypy and compile 134 pass; allocation released and receipt closed. |
 | Ticket 05B4B2E3C compensation request revalidation | COMPLETED / APPROVED / INTEGRATED | Merge `c042af1`; reviewer focused 24/full 395/strict mypy 132 passed. |
-| Ticket 05B4B2E3 compensation oracle adapter | PLANNED / RESPONSE-CONTRACT_REVIEW | E3C is integrated; refreeze after E2 terminal review determines the single reusable response-admission boundary. |
-| Tickets 05B4B2E4-E6 lifecycle acceptance | PLANNED / DEPENDENCY_WAIT | Success, compensation and isolation remain small dependency-ordered acceptance tickets. |
+| Ticket 05B4B2E3D compensation response admission | FROZEN / READY_FOR_DISPATCH | P1-P8 pure exact response/absence projection; two new staging-only paths; no oracle call or effect. |
+| Ticket 05B4B2E3 compensation oracle adapter | PLANNED / DEPENDENCY_WAIT | Refreeze as a thin effect adapter only after E3D approval/integration. |
+| Ticket 05B4B2E4 registration success acceptance | FROZEN / READY_FOR_DISPATCH | S1-S8 two-path disposable-child system acceptance over integrated E2/forward/settlement/proof. |
+| Tickets 05B4B2E5-E6 lifecycle acceptance | PLANNED / DEPENDENCY_WAIT | Compensation and isolation remain small dependency-ordered acceptance tickets. |
 | Ticket 05C receipt removal/replay | PLANNED / DEPENDENCY_WAIT / REFREEZE_REQUIRED | Starts only after 05A/05B approval/integration and a finite behavior/rollback closure refreeze. |
 | Ticket 06A Codex role-profile capability proof | DONE / APPROVED_EVIDENCE / INSTALL_BLOCKED / INTEGRATED | Implementation `38e9a8b`, handoff `f6f186f`, review `62955ec`, guarded merge `de4141e`; actual installed-host result is `ROLE_ISOLATION_UNPROVEN / ACCESS_DENIED / OUTPUT_UNAVAILABLE`, so capability dependents stay blocked. |
 | Autonomous Ticket 04 reviewer-only authority | PLANNED / DEPENDENCY_WAIT | Starts only after reviewed 06A `SUPPORTED`; typed fake effect gate, not a real Agent turn. |

@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| State | `PLANNED / RESPONSE-CONTRACT_REVIEW / NOT_DISPATCHED` |
-| Dependency | 05B4B2E1, E3A, E3B and E3C integrated; E2 terminal review must determine whether its exact oracle-response admission is reusable before E3 is frozen |
+| State | `PLANNED / DEPENDENCY_WAIT / NOT_DISPATCHED` |
+| Dependency | 05B4B2E1, E3A, E3B and E3C integrated; new pure prerequisite E3D must be approved/integrated before E3 refreeze |
 | Allocation | None |
 
 ## Reserved responsibility
@@ -19,11 +19,10 @@ manufacture success. No numeric line limit applies.
 
 ## Current refreeze decision
 
-E3C is approved and integrated at merge `c042af1`, so request admission is
-closed. E3 remains undispatched only while E2 completes terminal review: remove,
-list and absence operations must consume one reusable exact oracle-response
-admission boundary rather than copy response validators into a second effect
-adapter. After E2 terminal review, control will freeze either one small pure
-response-projection prerequisite or a thinner E3 adapter if E2 already supplies
-the complete reusable boundary. This is pre-implementation contract convergence,
+E2 is approved/integrated at merge `d3d3c1d`. Its exact response admission is
+correct but private and registration-specific, so copying it into E3 would
+create a second validator. Ticket E3D now freezes the small pure compensation
+response-admission prerequisite. E3 remains undispatched until E3D is
+approved/integrated, then refreezes as a thin effect adapter that consumes E3C
+request admission and E3D response admission. This is contract convergence,
 not an implementation failure or requirement change.

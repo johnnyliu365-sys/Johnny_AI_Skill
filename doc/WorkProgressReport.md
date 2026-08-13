@@ -3466,3 +3466,16 @@
 | Reverse evidence | Removing constructor capability made CR-162 fail (`TypeError not raised`); bypassing exact bound-state admission made CR-163 fail (child exit `3`); collapsing block/malformed/version classification made CR-164 fail (child exit `6`). A fresh immutable export restored the exact committed source bytes and all three named tests passed. |
 | CodeReview result | R1-R8 pass; CodeReview categories 1, 3, 7 and 9 pass; category 8 is `XSS_NOT_APPLICABLE`. CR-162/163/164 are closed with no unresolved blocking finding. Formal review is `doc/reviews/local-orchestration-installer/05b4b2e2-codex-registration-oracle-adapter-code-review.md`. |
 | Boundary | Approval authorizes only guarded local integration after clean-parent/conflict checks. No new worktree, staging push, package/build/install, live Codex/host/target-project mutation, release or deployment. E3 remains undispatched until E2 integration completes. |
+
+## PRG-20260813-314 — E2 guarded integration and E3D/E4 reviewed freezes
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `REVIEW_APPROVED(05B4B2E2) -> GUARDED_INTEGRATION -> ACTION_COMPLETED / TICKET_COMPLETED -> CHILDREN_REVIEWED / E3D_E4_FROZEN` |
+| E2 integration | Merge `d3d3c1d`; first parent review `2a667dc`; second parent exact handoff `cc436c28782fb47e10de81e7bfbe3fa8e1b555cb`. WPR resolution retains unique PRG-311 rebind, PRG-312 implementation handoff and PRG-313 terminal review records; integrated source/test blobs exactly match the handoff. |
+| Post-merge evidence | Focused adapter `14/14`, full serial `409/409`, strict mypy `134/134` files and in-memory compile `134/134` passed. Main, both permanent implementation worktrees and the exactly three-worktree topology were clean before completion updates. |
+| E2 completion | Ticket 05B4B2E2 is `COMPLETED / APPROVED / INTEGRATED`; its allocation is released and retained receipt is closed. The old and rebound tasks/commits remain trace evidence but carry no E2 continuation authority. |
+| E3 convergence | E2's response admission is correct but private and registration-specific. New small prerequisite E3D freezes P1-P8 in two new pure staging paths, producing exact compensation response/absence projection without oracle invocation or copied validators. E3 waits for E3D integration, then becomes a thin effect adapter. |
+| E4 freeze | E4 freezes S1-S8 in two new staging acceptance paths: one exact disposable child composes integrated E2, forward, settlement authority and proof settlement into one receipt, verifies owned state/payload truth and tears down only its exact lease. Compensation remains out of scope. |
+| Parallel safety | E3D and E4 writable paths are disjoint and each is one independently reviewable behavior. They may use the two existing exact-workspace implementation tasks after new per-ticket binding/receipt registries; neither may create/control Agents. |
+| Boundary | No implementation dispatch yet, no new worktree, staging push, package/build/install, live Codex/host/target-project mutation, release or deployment. |

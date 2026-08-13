@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / unchanged AC-01, AC-07 and AC-08 |
-| State | `FROZEN / READY_FOR_DISPATCH` |
+| State | `DONE / APPROVED / INTEGRATED` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B4B2E2-02` / R1-R8 |
 | Dependency | E1 `27c8305`, E2A `52a2a4e` and E2B `784d08a` approved/integrated; oracle absence hardening `dc07eec` present in baseline |
 | Planned owner | Task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; existing `workflow-implementation`; no new worktree |
@@ -160,3 +160,12 @@ later WPR-only `PRG-20260813-302` are writable in this lane.
 | Candidate evidence rule | `d3569f24…` is an unreviewed correction candidate created before product rebinding and has no docs-only handoff. The rebound owner must independently verify exact ancestry/two-path scope, CR-162/163/164 regressions, reversals, focused/full tests, strict typing, compile and residue. It may append an additive correction only if frozen requirements require it; no reset, amend, source-copy, branch replacement or historical-evidence deletion. A passing return uses WPR-only `PRG-20260813-312`. |
 | Reserve lane | Local project `3a624854-bf2f-4aa8-9b04-5f73e9ab2a28`; task `019ffb0c-db88-7303-895c-aecfadde7c8d`; workspace binding `wsb_local_orchestration_install_reserve_implementer_2_20260813_01`. It is clean on the preserved empty correction branch at `699cba8f1b844552a9b36baf926613594542ed4b` and has no active ticket, allocation, receipt or implementation authority. |
 | Admission / scope | Workflow §5.2 exact task/worktree binding and CodeReview §2.1 category 9 pass for both tasks. Only the active E2 owner may proceed; E3 and the reserve lane remain dependency-waiting. No new worktree, staging push, package/build/install, live target-project effect, release or deployment. |
+
+## Completion
+
+Revision-02 implementation `b3b50a02a48e7bb8e175200b45e8311e0895f878`
+and WPR-only handoff `cc436c28782fb47e10de81e7bfbe3fa8e1b555cb`
+were independently approved at review commit `2a667dc` and guarded-integrated
+as merge `d3d3c1d`. Post-merge focused `14/14`, full `409/409`, strict mypy
+`134/134` and in-memory compile `134/134` passed. Allocation is released and
+the retained receipt is closed; it cannot authorize another ticket.
