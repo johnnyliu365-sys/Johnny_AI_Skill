@@ -128,6 +128,14 @@ from .codex_registration_contracts import (
     revalidate_current_attempt_journal,
 )
 from .codex_compensation_composition import compose_codex_compensation
+from .codex_receipt_removal_request import (
+    CodexReceiptRemovalBlockReason,
+    CodexReceiptRemovalBlocked,
+    CodexReceiptRemovalInvocation,
+    CodexReceiptRemovalReady,
+    CodexReceiptRemovalResult,
+    build_codex_receipt_removal_request,
+)
 from .codex_registration_port import (
     CodexAddMarketplaceOperation,
     CodexAddPluginOperation,
@@ -262,6 +270,12 @@ __all__ = [
     "issue_registration_receipt",
     "revalidate_current_attempt_journal",
     "compose_codex_compensation",
+    "CodexReceiptRemovalBlockReason",
+    "CodexReceiptRemovalBlocked",
+    "CodexReceiptRemovalInvocation",
+    "CodexReceiptRemovalReady",
+    "CodexReceiptRemovalResult",
+    "build_codex_receipt_removal_request",
     "CodexAddMarketplaceOperation",
     "CodexAddPluginOperation",
     "CodexFreshPreflightAccepted",
