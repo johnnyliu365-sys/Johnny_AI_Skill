@@ -3,10 +3,12 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-02, AC-03 and AC-07 |
-| State | `IN_PROGRESS / DISPATCH_CONFIRMED` |
+| Revision | `02` — non-high-risk ticket correction before independent review |
+| State | `CHANGES_REQUESTED / CR-173 / SAME_BRANCH_CORRECTION` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05C1-01` / R1-R7 |
 | Dependency | 05A/05B and E0-E6 integrated; parent 05C decomposition recorded |
 | Profile / XSS | `STANDARD`; one implementation owner, no helper / `XSS_NOT_APPLICABLE` |
+| Implementation language | Python 3.11 with strict Pydantic models and `mypy --strict` |
 
 ## One observable outcome
 
@@ -27,7 +29,11 @@ installation ID and canonical root into one exact
   the exact invocation and exact receipt/nested value types with fixed declared
   Pydantic state. Rebuild before equality; caller descriptors, equality and
   serialization hooks are never executed.
-- Require invocation installation/root to equal the receipt. Map receipt fields
+- Recursively rebuild the invocation installation ID and root before comparing
+  identity. Require the valid installation ID to equal the receipt; the root
+  must independently rebuild as the one canonical `InstallRoot`, so a
+  noncanonical or constructed-invalid invocation root is `INVALID_INVOCATION`,
+  not `RECEIPT_MISMATCH`. Map receipt fields
   exactly: `source_locator -> marketplace_source` and
   `plugin_name -> plugin`; every other field maps one-to-one into
   `CodexCompensationPortManifest`, then into `CodexCompensationPortRequest`.
@@ -36,9 +42,11 @@ installation ID and canonical root into one exact
   `UNINSTALL_BLOCKED` and only `INVALID_INVOCATION`, `INVALID_RECEIPT` or
   `RECEIPT_MISMATCH`.
 - A valid serialize/reload round trip is accepted as the persisted metadata
-  identity. Subclass, `model_construct`, missing/extra/private state, `None`,
-  scalar/container substitution, invalid path/digest/version/auth and
-  installation/root mismatch are finite zero-effect failures.
+  identity. A fully valid exact data object is not rejected merely because its
+  origin is indistinguishable after construction. Subclass, constructed-invalid
+  or missing/extra/private state, `None`, scalar/container substitution,
+  invalid path/digest/version/auth and installation mismatch are finite
+  zero-effect failures.
 
 ## Acceptance closure
 
@@ -46,8 +54,8 @@ installation ID and canonical root into one exact
 | --- | --- |
 | `R1` | First red is the missing new module; exact integrated receipt produces exact ready receipt/request values. |
 | `R2` | Every receipt field maps once and exactly; source/plugin rename mappings are explicitly tested. |
-| `R3` | Invocation installation/root mismatch returns `RECEIPT_MISMATCH`. |
-| `R4` | Null/scalar/container, missing/extra, subclass, constructed and extra/private-state matrices return finite invalid results. |
+| `R3` | A valid invocation installation ID differing from the valid receipt installation ID returns `RECEIPT_MISMATCH`. There is no second valid `InstallRoot` value. |
+| `R4` | Null/scalar/container, missing/extra, subclass, constructed-invalid and extra/private-state matrices return finite invalid results. A noncanonical invocation root is `INVALID_INVOCATION`; an invalid receipt root is `INVALID_RECEIPT`. |
 | `R5` | Trap descriptors/equality/serialization are not invoked before exact type/state admission. |
 | `R6` | Independently reverse receipt identity gate, source mapping and plugin mapping; each named test turns red and exact bytes restore. |
 | `R7` | Focused/full serial unittest, strict full-tree mypy, in-memory compile, source/scope/diff and tracked/ignored/cache readback pass. |
@@ -92,3 +100,40 @@ record a second control commit carrying the branch/baseline/owner registry.
 This one-use receipt authorizes only R1-R7. The owner cannot orchestrate another
 Agent, review/integrate its work, dispatch a next ticket, push/publish staging,
 or perform package/build/install/release/deployment work.
+
+## Revision-02 control correction
+
+The revision-01 ticket omitted the mandatory implementation-language field and
+asked for a valid root mismatch even though `InstallRoot` admits only the
+canonical installer root. Revision 02 records the already-fixed Python 3.11
+language and makes root handling reachable and fail-closed: invalid invocation
+root is `INVALID_INVOCATION`; invalid receipt root is `INVALID_RECEIPT`;
+`RECEIPT_MISMATCH` is reserved for two valid unequal installation IDs. SPEC,
+public success mapping, owner, branch, allocation, receipt and correlation are
+unchanged. Independent review applies this corrected R1-R7 closure.
+
+## CR-173 correction boundary
+
+Formal review found the implementation compares raw constructed invocation
+identity before validation, so a noncanonical root is incorrectly classified as
+`RECEIPT_MISMATCH`. Keep the same branch, owner, allocation, receipt and
+correlation. Correct only
+`library/local_orchestration/codex_receipt_removal_request.py` and
+`tests/test_codex_receipt_removal_request.py`, then append only reserved
+`PRG-20260814-384` in one WPR-only correction handoff. The export-only root file
+and public contract remain unchanged.
+
+## CR-173 correction dispatch registry
+
+| Field | Value |
+| --- | --- |
+| Reviewed finding | Formal review commit `78e94b805ef17147863076e59aabaeae3704bf8c`; `CR-173`; bounded authority `PRG-20260809-042`. |
+| Retained lane | Existing implementer-2 task `019ffb0c-db88-7303-895c-aecfadde7c8d`; permanent worktree `C:\Users\<user>\Desktop\AI控制工作workflow-implementer-2`; branch `codex/implementation-codex-receipt-removal-request-05c1`; clean handoff `fb748f4fd1b7d1f5862c55fa1484151602f174e0`. |
+| Retained binding | Workspace `wsb_local_orchestration_install_05c1_20260814_01`; handoff `hnd_local_orchestration_install_05c1_20260814`; allocation `aln_local_orchestration_install_05c1_20260814`; receipt `rcpt_local_orchestration_install_05c1_20260814`; correlation `corr-local-orchestration-install-05c1-20260814`; question `q-local-orchestration-install-05c1-20260814`; side context `scx-local-orchestration-install-05c1-20260814-01`. |
+| Admission | Exactly three worktrees remain registered and the implementation lane is clean. Merge only the exact control commit carrying this registry into the retained branch. Read-only `merge-tree` proves the sole expected conflict is append-only `doc/WorkProgressReport.md`; preserve every unique PRG-378 through PRG-383 record exactly once. Any source, test, ticket or other conflict, changed implementation blob, dirty lane or topology drift is typed `HALT`. |
+| Writable correction | Only `library/local_orchestration/codex_receipt_removal_request.py` and `tests/test_codex_receipt_removal_request.py`; one additive implementation correction commit, then only reserved `PRG-20260814-384` in one WPR-only handoff commit. |
+
+This registry neither creates a branch/worktree nor changes owner, allocation,
+receipt, correlation, public API or 05C2 scope. The implementation owner cannot
+orchestrate another Agent, review or integrate its own return, dispatch another
+ticket, push/publish staging, package/install, release or deploy.
