@@ -3589,3 +3589,13 @@
 | CR-168 | `IMPLEMENTATION_DEFECT / R5,R8`: an exact delete/permission failure propagated `PermissionError` instead of a finite typed result preserving truthful absence state. |
 | CR-169 | `IMPLEMENTATION_DEFECT / R2,R4,R7,R8`: committed tests wrongly reject a valid checkout beneath OS TEMP and assert before teardown, leaving project-local residue that causes the dependent focused matrix to fail closed. |
 | Decision / boundary | Formal review is `doc/reviews/local-orchestration-installer/05s1r-project-owned-disposable-runtime-root-code-review.md`. Findings are batched and require one additive same-branch correction; no correction dispatch, new branch/worktree, integration, E3D/E4 resume, staging push, package/build/install, live Codex/target-project mutation, release or deployment occurred. |
+
+## PRG-20260813-329 — Ticket 05S1R revision-02 correction dispatch
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `CHANGES_REQUESTED(05S1R) + REVIEW_COMMITTED -> SAME_BRANCH_CORRECTION_DISPATCH / AUTO_CONTINUE` |
+| Authority | Formal review commit `416e43113b204e8f62da7a63eec5646ba7985bba`; exact correction handoff `hnd_local_orchestration_install_05s1r_cr167_169_20260813`. Original ticket, owner, task, workspace, worktree, branch, allocation, receipt and correlation are retained. |
+| Correction | CR-167 exact 32-lowercase-hex lease-name admission; CR-168 finite `DELETE_FAILED` teardown and rollback behavior; CR-169 location-independent no-direct-OS-TEMP evidence with cleanup registered before assertions. |
+| Scope | Additive correction may touch only environment contracts, allocator and its focused test, followed by a separate PRG-20260813-330 WPR-only handoff. Reviewer owns the final immutable checkout-under-TEMP probe. |
+| Boundary | No new branch/worktree, helper Agent, broad/global cleanup or enumeration, owner2/sibling/target-project mutation, package/build/install, staging push, live Codex, release or deployment. |

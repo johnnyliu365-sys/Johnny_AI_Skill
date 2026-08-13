@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-13 |
 | Requirement / ADR | `CHG-20260813-015` / `ADR-20260813-007` |
-| State | `CHANGES_REQUESTED / INITIAL_REVIEW_COMPLETE` |
+| State | `IN_PROGRESS / CORRECTION_DISPATCH_CONFIRMED` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05S1R-01` / R1-R8 |
 | Dependency | Integrated 05S1-05S4; exact current control freeze; one clean permanent implementation worktree |
 | Language / XSS | Python 3.11 strict Pydantic/mypy / `XSS_NOT_APPLICABLE` |
@@ -129,4 +129,41 @@ in-memory compile `134` files. Three frozen-matrix defects remain:
 
 Formal evidence is recorded in
 `doc/reviews/local-orchestration-installer/05s1r-project-owned-disposable-runtime-root-code-review.md`.
-No correction authority or integration approval is created by this review.
+The review itself creates no integration approval.
+
+## Revision 02 correction freeze and registry
+
+Control review `416e43113b204e8f62da7a63eec5646ba7985bba` authorizes one
+additive correction on the same ticket, owner, permanent worktree, branch,
+allocation, receipt and correlation. No original implementation or review
+commit may be amended, reset, rebased or replaced.
+
+| Field | Value |
+| --- | --- |
+| Correction handoff | `hnd_local_orchestration_install_05s1r_cr167_169_20260813` |
+| Retained binding | Task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; workspace `wsb_local_orchestration_install_05s1r_20260813_01`; worktree `wtr_workflow_implementation_20260813_01`; branch `codex/implementation-project-owned-disposable-runtime-05s1r`; allocation `aln_local_orchestration_install_05s1r_20260813`; receipt `rcpt_local_orchestration_install_05s1r_20260813`; correlation `corr-local-orchestration-install-05s1r-20260813`. |
+| Exact correction base | Clean handoff `b33314ca927532a3c0f74508117b3fd378c90d6a`; review authority `416e43113b204e8f62da7a63eec5646ba7985bba`. |
+| Writable implementation paths | `tests/staging/environment_core/contracts.py`, `tests/staging/environment_core/environment.py`, `tests/test_disposable_environment_core.py`; then `doc/WorkProgressReport.md` only in a separate PRG-20260813-330 handoff commit. |
+
+Correction requirements are only the stable finding identifiers:
+
+- `CR-167`: enforce the exact generated direct-child name shape
+  `johnny-stage-env-` plus 32 lowercase hexadecimal characters; prefix-similar,
+  short, long, non-hex and case-variant names must block before marker read or
+  deletion.
+- `CR-168`: add the narrow finite `DELETE_FAILED` teardown reason and convert
+  exact filesystem cleanup failures into truthful typed results. Do not pop the
+  live claim or report absence while any root remains. Provision/fault rollback
+  cleanup failures must also remain finite and leave residue fail-closed.
+- `CR-169`: remove the invalid assumption that a checkout can never reside
+  beneath OS TEMP. Assert only the exact checkout-derived parent and absence of
+  a direct OS-global staging child. Register exact teardown before any assertion
+  that can fail so a test failure cannot poison later suites.
+
+Run the focused matrix, full serial suite, strict full-tree mypy with external
+cache, in-memory compile, exact scope/diff/ancestry/topology/residue checks and
+bounded reverse tests for CR-167/168. The independent reviewer alone will run
+the final immutable-export checkout-under-TEMP portability probe. No broad
+cleanup, OS-global staging enumeration, sibling worktree scan/write, helper
+Agent, target-project effect, package/build/install, staging push, release or
+deployment is authorized.
