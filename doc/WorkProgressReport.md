@@ -3479,3 +3479,14 @@
 | E4 freeze | E4 freezes S1-S8 in two new staging acceptance paths: one exact disposable child composes integrated E2, forward, settlement authority and proof settlement into one receipt, verifies owned state/payload truth and tears down only its exact lease. Compensation remains out of scope. |
 | Parallel safety | E3D and E4 writable paths are disjoint and each is one independently reviewable behavior. They may use the two existing exact-workspace implementation tasks after new per-ticket binding/receipt registries; neither may create/control Agents. |
 | Boundary | No implementation dispatch yet, no new worktree, staging push, package/build/install, live Codex/host/target-project mutation, release or deployment. |
+
+## PRG-20260813-315 — E3D/E4 exact-workspace parallel dispatch
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `E3D_E4_FROZEN + IMPLEMENTATION_DISPATCH_CONFIRMED -> IMPLEMENT / AUTO_CONTINUE`; two independent lanes have disjoint writable paths. |
+| Owner1 / E4 | Project `6d2ebb66-1ae7-48b4-96da-53ffba88ef1f`; task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; workspace `wsb_local_orchestration_install_05b4b2e4_20260813_01`; ticket `CLOSURE-LOCAL-INSTALL-T05B4B2E4-01`; unique handoff/allocation/receipt/correlation/question/side-context are recorded in E4. |
+| Owner2 / E3D | Project `3a624854-bf2f-4aa8-9b04-5f73e9ab2a28`; task `019ffb0c-db88-7303-895c-aecfadde7c8d`; workspace `wsb_local_orchestration_install_05b4b2e3d_20260813_01`; ticket `CLOSURE-LOCAL-INSTALL-T05B4B2E3D-01`; unique handoff/allocation/receipt/correlation/question/side-context are recorded in E3D. |
+| Admission evidence | Both tasks are idle and product-bound to their exact permanent Local worktrees. Canonical root, filesystem identity, linked Git metadata and reviewer readback agree; both lanes are clean and exactly three worktrees exist. Evidence digests are stored in the ticket registries. |
+| Branch policy | Each owner may create only its one named ticket branch from the exact control commit carrying this registry, inside its existing worktree. No new worktree, historical-source copy, reset, force, rebase or cross-lane write. |
+| Boundary | No helper Agent: both tickets are bounded and low-search. No staging push, package/build/install, live Codex/host/target-project mutation, release or deployment. |

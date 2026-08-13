@@ -3,10 +3,10 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / unchanged AC-01, AC-07 and AC-08 |
-| State | `FROZEN / READY_FOR_DISPATCH` |
+| State | `IN_PROGRESS / DISPATCH_CONFIRMED` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B4B2E4-01` / S1-S8 |
 | Dependency | E2 merge `d3d3c1d` plus integrated forward, settlement-authority and proof-settlement modules |
-| Planned owner | Exact Local project/task for existing `workflow-implementation`; no new worktree |
+| Planned owner | Local project `6d2ebb66-1ae7-48b4-96da-53ffba88ef1f`; task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; permanent worktree `wtr_workflow_implementation_20260813_01` |
 | Control / reviewer | Current control task is both ticket author and independent reviewer; it must not implement source/tests |
 | Language / XSS | Python 3.11 strict Pydantic/mypy / `XSS_NOT_APPLICABLE` |
 
@@ -78,3 +78,17 @@ Return one exact two-path implementation commit, then one unique
 criterion. The lane may create/remove only its exact lease and unique child temp
 base. No E3/E5/E6, live Codex, target-project write, Agent control, staging push,
 package/build/install, release or deployment is authorized.
+
+## Dispatch registry
+
+| Field | Value |
+| --- | --- |
+| Reviewed ticket / handoff | Ticket freeze `4c70988596e783a5e73199ec8327230e29f685c7`; reviewed handoff is the control commit carrying this registry. |
+| Delivery authority | Project-owner standing instruction to resume and continue the approved automated workflow; `IMPLEMENTATION_DISPATCH_CONFIRMED` for E4 only. |
+| Product binding | Project `6d2ebb66-1ae7-48b4-96da-53ffba88ef1f`; task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; workspace `wsb_local_orchestration_install_05b4b2e4_20260813_01`; worktree `wtr_workflow_implementation_20260813_01`; readback digest `9701416a93ba7a75700cade957aa81ed2181ca0e731ce9efbb8ec238dce4be65`. |
+| Binding | `hnd_local_orchestration_install_05b4b2e4_r01_20260813`; `aln_local_orchestration_install_05b4b2e4_r01_20260813`; `rcpt_local_orchestration_install_05b4b2e4_r01_20260813`; `corr-local-orchestration-install-05b4b2e4-r01-20260813`; `q-local-orchestration-install-05b4b2e4-r01-20260813`; `scx-local-orchestration-install-05b4b2e4-r01-20260813-01`. |
+| Branch | Create only `codex/implementation-codex-registration-success-acceptance-05b4b2e4` from the exact registry commit in the same permanent worktree; no new worktree. |
+| Writable paths | The two frozen implementation paths, followed by a unique `PRG-20260813-316` WPR-only handoff. |
+
+This is the single E4 dispatch. The receipt is one-use and cannot authorize E5,
+another ticket, another owner or another task.

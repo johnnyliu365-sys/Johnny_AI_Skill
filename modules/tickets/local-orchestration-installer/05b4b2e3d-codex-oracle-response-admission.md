@@ -3,10 +3,10 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / unchanged AC-01, AC-07 and AC-08 |
-| State | `FROZEN / READY_FOR_DISPATCH` |
+| State | `IN_PROGRESS / DISPATCH_CONFIRMED` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B4B2E3D-01` / P1-P8 |
 | Dependency | E2 merge `d3d3c1d`, E3A `b324f91`, E3B `dc07eec` and E3C `c042af1` approved/integrated |
-| Planned owner | Exact Local project/task for existing `workflow-implementer-2`; no new worktree |
+| Planned owner | Local project `3a624854-bf2f-4aa8-9b04-5f73e9ab2a28`; task `019ffb0c-db88-7303-895c-aecfadde7c8d`; permanent worktree `wtr_workflow_implementer_2_20260813_01` |
 | Control / reviewer | Current control task is both ticket author and independent reviewer; it must not implement source/tests |
 | Language / XSS | Python 3.11 strict Pydantic/mypy / `XSS_NOT_APPLICABLE` |
 
@@ -77,3 +77,17 @@ Return one exact two-path implementation commit, then one unique
 criterion. No E3 effect adapter, E4-E6, live Codex, environment mutation,
 filesystem/network/target-project effect, Agent control, staging push, package,
 release or deployment is authorized.
+
+## Dispatch registry
+
+| Field | Value |
+| --- | --- |
+| Reviewed ticket / handoff | Ticket freeze `4c70988596e783a5e73199ec8327230e29f685c7`; reviewed handoff is the control commit carrying this registry. |
+| Delivery authority | Project-owner standing instruction to resume and continue the approved automated workflow; `IMPLEMENTATION_DISPATCH_CONFIRMED` for E3D only. |
+| Product binding | Project `3a624854-bf2f-4aa8-9b04-5f73e9ab2a28`; task `019ffb0c-db88-7303-895c-aecfadde7c8d`; workspace `wsb_local_orchestration_install_05b4b2e3d_20260813_01`; worktree `wtr_workflow_implementer_2_20260813_01`; readback digest `979cf788a0150f4a9cee82ea5f3c0e53a8d552c8be871f55d0aa70f19d9ff85b`. |
+| Binding | `hnd_local_orchestration_install_05b4b2e3d_r01_20260813`; `aln_local_orchestration_install_05b4b2e3d_r01_20260813`; `rcpt_local_orchestration_install_05b4b2e3d_r01_20260813`; `corr-local-orchestration-install-05b4b2e3d-r01-20260813`; `q-local-orchestration-install-05b4b2e3d-r01-20260813`; `scx-local-orchestration-install-05b4b2e3d-r01-20260813-01`. |
+| Branch | Create only `codex/implementation-codex-oracle-response-admission-05b4b2e3d` from the exact registry commit in the same permanent worktree; no new worktree. |
+| Writable paths | The two frozen implementation paths, followed by a unique `PRG-20260813-317` WPR-only handoff. |
+
+This is the single E3D dispatch. The receipt is one-use and cannot authorize E3,
+another ticket, another owner or another task.
