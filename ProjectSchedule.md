@@ -155,7 +155,7 @@
 | Ticket 05B4B2E3C compensation request revalidation | COMPLETED / APPROVED / INTEGRATED | Merge `c042af1`; reviewer focused 24/full 395/strict mypy 132 passed. |
 | Ticket 05B4B2E3D compensation response admission | CHANGES_REQUESTED / TICKET_REFREEZE_REQUIRED | Immutable `c588bf6`/`77be192`; CR-170 constructor-provenance ticket defect and CR-171 fail-open optional-source defect. No correction dispatch. |
 | Ticket 05B4B2E3 compensation oracle adapter | PLANNED / DEPENDENCY_WAIT | Refreeze as a thin effect adapter only after E3D approval/integration. |
-| Ticket 05B4B2E4 registration success acceptance | FROZEN / READY_FOR_DISPATCH / REVISION_03_CORRECTION | Existing E4 branch and immutable `3375237`/`5cf2235`; merge exact control registry and correct CR-165/166 in the focused test only. |
+| Ticket 05B4B2E4 registration success acceptance | APPROVED / READY_TO_MERGE / REVISION_03 | Correction `dc909da`, handoff `63b8494`; CR-165/166 closed by fresh reviewer full/static/mutation and three-worktree manifest evidence. |
 | Tickets 05B4B2E5-E6 lifecycle acceptance | PLANNED / DEPENDENCY_WAIT | Compensation and isolation remain small dependency-ordered acceptance tickets. |
 | Ticket 05C receipt removal/replay | PLANNED / DEPENDENCY_WAIT / REFREEZE_REQUIRED | Starts only after 05A/05B approval/integration and a finite behavior/rollback closure refreeze. |
 | Ticket 06A Codex role-profile capability proof | DONE / APPROVED_EVIDENCE / INSTALL_BLOCKED / INTEGRATED | Implementation `38e9a8b`, handoff `f6f186f`, review `62955ec`, guarded merge `de4141e`; actual installed-host result is `ROLE_ISOLATION_UNPROVEN / ACCESS_DENIED / OUTPUT_UNAVAILABLE`, so capability dependents stay blocked. |

@@ -3694,3 +3694,14 @@
 | CR-170 | `TICKET_DEFECT`: a fully populated `model_construct` value and normally validated value have identical observable Pydantic state. Constructor provenance cannot be inferred; refreeze must require exact-state revalidation/rebuild or introduce a separate explicit authority carrier. |
 | CR-171 | `IMPLEMENTATION_DEFECT`: malformed present `marketplaceSource` returns the same internal `None` as legitimate absence, so plugin/marketplace entries are accepted after silently dropping invalid nested data. |
 | Decision / boundary | No correction dispatch or integration. Immutable commits remain evidence. No implementation-worktree write, new branch/worktree, OS-global cleanup, push, package/build/install, live Codex/host/target-project mutation, Secret, release or deployment. |
+
+## PRG-20260814-340 — Ticket 05B4B2E4 revision-03 terminal review
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `CORRECTION_COMPLETED(05B4B2E4) -> TERMINAL_CODE_REVIEW -> APPROVED / READY_TO_MERGE` |
+| Reviewed chain | Existing handoff `5cf2235` + registry `334757c` -> two-parent merge `55a12fd` -> correction `dc909da` -> WPR-only handoff `63b8494`; exact merge/test/WPR scopes and ancestry pass. |
+| Independent green | Fresh immutable export: focused `5/5`, full `419/419`, strict mypy `136/136`, in-memory compile `136/136`; Unicode trees present and external cache removed. |
+| CR closure | CR-165 closed by one-owned/zero-foreign clean success evidence and removal of post-success foreign seeding. CR-166 closed by honest committed test naming plus reviewer-owned before/after manifests for all three permanent worktrees. |
+| S8 / manifests | Independent order, wrong-port settlement and payload-gate reversals made named tests red with child exits `4/2/3`, then exact blobs restored and focused `5/5`. All three permanent worktree byte digests, branches, HEADs, tracked/untracked and ignored porcelain were identical before/after. |
+| Decision / boundary | `APPROVED / READY_TO_MERGE`; integrate complete history only. No push, package/build/install, live Codex/host/target-project mutation, Secret, release or deployment. |
