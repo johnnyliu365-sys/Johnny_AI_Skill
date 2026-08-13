@@ -3565,3 +3565,15 @@
 | Governance | `Workflow.md`, `AGENTS.md` and `CodeReview.md` now define the adaptive profile, resource plan and defect/review gate. Reviewer-only Agent authority, workspace binding, strong typing, TDD, security/XSS and guarded integration remain invariant. |
 | Existing lanes | 05S1R is unaffected and remains active on its prior frozen dispatch. Owner2 E3D work remains preserved; no worktree, target project or implementation task was changed by this docs-only architecture turn. |
 | Boundary | Control documentation only. No formal new ticket, receipt, implementation dispatch, target-project mutation, Agent creation, worktree move, push, package, release or deployment. |
+
+## PRG-20260813-327 — Post-POC staging lifecycle requirement
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `REQUIREMENT_CHANGED -> ARCHITECTURE_COMPLETED -> SPEC_DRAFT_REVISED -> WAIT_FOR_HUMAN(SPEC_APPROVAL)` |
+| Owner direction | After the first POC, subsequent development must begin from staging so users without software-delivery experience preserve a stable first result and produce later versions through a controlled lineage. |
+| Change / architecture | `CHG-20260813-017` and `ADR-20260813-009` generalize the existing installer-only V1 warm-backup rule into a target-project invariant: freeze exact accepted POC identity, admit local staging, separately authorize remote publication, and require later ticket ancestry from staging. |
+| Specification | Adaptive orchestration draft now includes AC-11, `StagingTransitionPlan`, post-POC TDD/review closure and a revised eight-slice candidate sequence. Exact AC-01 through AC-11 approval remains required before ticket files. |
+| Governance | `Workflow.md`, `AGENTS.md` and `CodeReview.md` distinguish staging integration, disposable effect testing and stable release/promotion; direct development on the frozen accepted POC is prohibited. |
+| Existing lanes | Active 05S1R and preserved owner2 state are unaffected. No implementation task, branch, worktree or target project was touched. |
+| Boundary | Control documentation only. No formal ticket, receipt, dispatch, Git ref creation, push, target-project mutation, package, release or deployment. |

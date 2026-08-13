@@ -80,4 +80,5 @@ independently bounded work and remains its sole orchestrator.
   project-local execution root requires a separately reviewed lifecycle ticket.
 - The active 05S1R repository-test migration is unrelated and continues on its
   frozen baseline.
-
+- Post-POC branch/version lifecycle is defined separately by
+  `ADR-20260813-009`; adaptive delivery cannot bypass its staging admission.

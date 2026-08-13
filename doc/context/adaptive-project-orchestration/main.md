@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | State | `SPEC_DRAFT / OWNER_REVIEW_REQUIRED` |
-| Requirement / ADR | `CHG-20260813-016` / `ADR-20260813-008` |
+| Requirement / ADR | `CHG-20260813-016`, `CHG-20260813-017` / `ADR-20260813-008`, `ADR-20260813-009` |
 | SPEC | `SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2` |
 | Control owner | Codex / current `main` |
 
@@ -21,10 +21,14 @@
   sufficient classifiers.
 - Security, typed contracts, workspace identity, TDD, independent review and
   exact ownership are invariant across every delivery profile.
+- Once the first POC is independently accepted, its exact commit/version
+  identity is frozen. All later feature and architecture branches/worktrees
+  derive from a verified staging SHA and return only through guarded
+  integration. Staging is a development baseline, not a release assertion or
+  a disposable effect-test environment.
 
 ## Boundary
 
 This context defines future product behavior. It does not move existing
 worktrees, modify a target project, change the frozen 05S1R ticket, package,
 push, release or deploy anything.
-

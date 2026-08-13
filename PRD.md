@@ -236,3 +236,14 @@ closure and the minimum safe implementation resource, while a deceptively
 small high-risk ticket is deterministically escalated before source or host
 effect. Unsupported host automation returns an exact blocked/manual handoff and
 never pretends an Agent or worktree was created.
+
+After the first POC is independently reviewed and accepted, Johnny must freeze
+that exact POC identity before subsequent feature or architecture development.
+A confirmed staging-transition plan creates or verifies the target project's
+local `staging` development ref from the accepted commit; remote publication is
+a separately authorized create-or-fast-forward-only effect with exact SHA
+readback. Every later implementation branch/worktree must derive from the
+admitted staging SHA and return through guarded integration. The frozen POC or
+version-one record is never overwritten, and staging integration never implies
+release. Disposable effect-test environments remain separate from this Git
+development baseline.

@@ -270,3 +270,18 @@
 | Current gate | Owner review of exact AC-01 through AC-10; ticket files and implementation remain blocked until SPEC approval. |
 | Ticket impact | New bounded Ticket 05S1R atomically migrates the allocator and seven integrated direct test callers. E3D and E4 are `REQUIREMENT_CHANGED / 05S1R_DEPENDENCY`; their uncommitted work remains preserved pending explicit disposition. |
 | Acceptance | No `from_system_temp` path remains; every disposable lease is below the exact plugin checkout runtime parent; no case creates or cleans `%TEMP%/johnny-stage-env-*`; stale project-local residue blocks and remains byte-identical; successful full verification leaves tracked, ignored, runtime, target-project and OS-TEMP sentinels unchanged/absent as applicable. |
+
+## CHG-20260813-017 — Require post-POC staging development lifecycle
+
+| Field | Decision |
+| --- | --- |
+| Status | `REQUIREMENT_APPROVED / SPEC_DRAFT_REVISED / TICKETS_NOT_CREATED` |
+| Previous rule | `CHG-20260812-014` preserves this repository's first packaged version and says later work begins from remote staging, but the adaptive target-project workflow did not yet require the same lifecycle for every user's accepted first POC. |
+| Changed rule | After a target project's first POC is independently reviewed and accepted, Johnny freezes its exact commit/version identity and requires a confirmed staging-transition plan. Every later feature or architecture ticket branch/worktree must descend from the admitted staging SHA and return only through guarded integration. Staging is neither release nor a disposable effect-test environment. |
+| Reason | Users without software-delivery experience need a safe default that preserves the known-good first result, provides a recoverable integration lineage and prevents accidental direct development on the only stable baseline. |
+| In scope | Local staging creation/readback, separately authorized remote create-or-fast-forward publication, exact ancestry enforcement, immutable POC/version identity, guarded staging integration and clear separation from disposable effect testing and release promotion. |
+| Out of scope | Creating a branch or worktree now; automatic push; force/reset/delete; target-project mutation; package/build/install; release/deployment; changing the active 05S1R ticket or existing implementation lanes. |
+| Safety invariants | POC review/acceptance and exact commit must exist first. Local Git mutation requires the confirmed plan; remote mutation requires separate authority and history/SHA readback. Wrong/stale/dirty/diverged baselines halt before source, Git, Agent or host effect. |
+| PRD / Context / ADR / SPEC | `PRD.md §17`; `doc/context/adaptive-project-orchestration/main.md`; `ADR-20260813-009`; adaptive orchestration SPEC AC-11. |
+| Current gate | Exact AC-01 through AC-11 and the revised eight-ticket candidate decomposition remain `OWNER_REVIEW_REQUIRED`; no formal ticket or implementation is authorized. |
+| Acceptance | A reviewed/accepted POC can produce one exact local staging baseline; authorized remote publication is create-or-fast-forward-only with exact readback; all later ticket bases prove descent from staging; frozen POC/version bytes and identity remain unchanged; staging never claims release or effect-test authority. |

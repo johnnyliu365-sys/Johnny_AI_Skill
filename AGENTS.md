@@ -45,6 +45,7 @@ Router anchor: `#workflow-router`; implementation role anchor: `#role-boundary`.
 | --- | --- | --- |
 | 流程事件、交付階段、context 或 skill／Agent 選擇 | [流程 Router](Workflow.md#workflow-router) | 讀取 Profile，解析最小 Context 視圖與唯一合法的下一步 |
 | 專案首次啟用，或需依規模／風險調整流程與 implementer | [自適應交付 Profile](Workflow.md#adaptive-delivery-profile) | 先做證據化 assessment，再決定文件深度、驗證、model tier 與最少 lane 數 |
+| 第一版 POC 已驗收，準備後續功能或架構開發 | [POC 後 staging 開發基線](Workflow.md#post-poc-staging-lifecycle) | 先凍結 POC 身分並建立／驗證 staging 基線；後續 ticket 分支只能從該基線衍生 |
 | 尋找可重用原始碼模組 | [模組選擇卡](library/MODULE_CATALOG.md)／`$apply-reusable-modules` | 先選最少 READY 模組，再回到本流程取得採用與實作授權 |
 | 需求、Bug、正式 UI 或邊界不清楚 | [需求釐清](Workflow.md#discovery) | `wayfinder → grill-with-docs` |
 | 需求、UI、資料契約或權限已改變 | [變更控制](Workflow.md#change-control) | 影響分析、更新 Context、重走核准閘門 |

@@ -145,8 +145,9 @@
 ### `SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2` — Guided Bootstrap and Adaptive Delivery
 
 - 狀態：`DRAFT / OWNER_REVIEW_REQUIRED`。
-- 來源：`CHG-20260813-016`、`ADR-20260813-008`、`PRD.md §17`、`doc/context/adaptive-project-orchestration/main.md`。
+- 來源：`CHG-20260813-016`、`CHG-20260813-017`、`ADR-20260813-008`、`ADR-20260813-009`、`PRD.md §17`、`doc/context/adaptive-project-orchestration/main.md`。
 - 收斂結果：安裝與專案初始化分離；使用者確認精確初始化計畫後，專案文件與 implementer worktree 均由 target project 自主持有。先建立 reviewer，核准工單後才由 reviewer 建立或重用 implementer。
 - 自適應原則：以風險、耦合、可逆性、不確定性、驗證環境與外部效果選擇 `COMPACT / STANDARD / HIGH_ASSURANCE`，並依證據選擇 implementer 模型能力與最少安全數量；不得用行數或專案大小單獨降級。
+- 版本生命週期：第一版 POC 經獨立驗收後先凍結精確 commit／版本身分；後續功能與架構 ticket 只能從已驗證的 staging SHA 建立分支／worktree，再以 guarded integration 回到 staging。staging 不等於 release，也不取代 disposable effect 測試環境。
 - 不變底線：reviewer-only orchestration、強型別、TDD、獨立 review、XSS／Secret／workspace／ownership／guarded integration 閘門不可調降。
 - 邊界：不移動既有 worktree，不改 05S1R freeze，不授權 target-project mutation、host task creation、push、package、release 或 deployment。

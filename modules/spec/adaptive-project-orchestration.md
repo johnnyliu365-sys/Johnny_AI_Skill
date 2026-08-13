@@ -7,7 +7,7 @@
 | Author / baseline | Codex control plane / current `main` |
 | Context | `doc/context/adaptive-project-orchestration/main.md` |
 | PRD | `PRD.md §17` |
-| Requirement change / ADR | `CHG-20260813-016` / `ADR-20260813-008` |
+| Requirement change / ADR | `CHG-20260813-016`, `CHG-20260813-017` / `ADR-20260813-008`, `ADR-20260813-009` |
 | Implementation language | Python 3.11 strict typed contracts/adapters; host-specific integration only after capability proof |
 
 ## Problem and goal
@@ -29,6 +29,9 @@ capacity must be evidence-based and proportional to risk and coupling.
 - No model name, project file count or source-line count as authority or the
   sole complexity classifier.
 - No unbounded Agent fan-out and no implementation-owner delegation.
+- No direct post-POC development on the frozen accepted POC/stable ref, and no
+  conflation of a staging integration baseline with a disposable test sandbox
+  or a release.
 
 ## User flow and acceptance criteria
 
@@ -45,6 +48,9 @@ capacity must be evidence-based and proportional to risk and coupling.
 5. At intake and before each ticket dispatch, the reviewer selects a delivery
    profile and resource plan from typed evidence. Approved tickets then cause
    the reviewer to create or reuse the minimum required implementer lanes.
+6. After the first POC is independently accepted, one exact staging transition
+   freezes the POC identity and admits the staging baseline used by every later
+   feature/architecture ticket.
 
 ### AC-01 — Install/init separation
 
@@ -125,12 +131,27 @@ classification changes or convergence failure re-run classification. A profile
 may escalate automatically; downgrade requires complete evidence and cannot
 erase already required tests, findings or immutable commits.
 
+### AC-11 — Post-POC staging lifecycle
+
+After independent POC review and owner acceptance, Johnny freezes the exact POC
+commit/version identity and requires a digest-bound `StagingTransitionPlan`
+before any later feature or architecture implementation. One explicit
+confirmation may create or verify the local staging ref at the accepted commit.
+Remote creation/fast-forward requires separate authority, remote-history
+admission and exact SHA readback. Every subsequent ticket branch/worktree must
+descend from the admitted staging SHA; stale, dirty, diverged, wrong-ancestry or
+mismatched refs halt before source/Git/Agent effect. Guarded integration may
+advance staging but cannot overwrite the frozen POC, imply release or replace
+receipt-bound disposable effect testing.
+
 ## Typed contracts
 
 ```text
 DeliveryProfile = COMPACT | STANDARD | HIGH_ASSURANCE
 ImplementationModelTier = ECONOMY | BALANCED | FRONTIER
 ResearchSupport = NONE | REVIEWER_OWNED_READ_ONLY
+StagingRefState = ABSENT | EXACT_ACCEPTED_POC | VERIFIED_FAST_FORWARD
+RemotePublicationMode = LOCAL_ONLY | CREATE_REMOTE | FAST_FORWARD_REMOTE
 
 DeliveryAssessment = {
   project_id, ticket_ref?, change_surface, coupling, ambiguity,
@@ -148,6 +169,13 @@ ProjectInitializationPlan = {
   project_id, repository_identity_ref, expected_base,
   target_artifact_manifest, ignore_rule, execution_root_ref,
   reviewer_profile_ref, host_capability_refs, plan_digest
+}
+
+StagingTransitionPlan = {
+  project_id, repository_identity_ref, accepted_poc_commit,
+  expected_staging_ref, expected_staging_state,
+  frozen_version_record_ref, remote_publication_mode,
+  remote_history_ref?, plan_digest
 }
 ```
 
@@ -175,6 +203,13 @@ than raw project paths, source, prompts, Secrets or PII.
    plan-digest binding and exact workspace-root validation.
 8. Review must independently verify the selected profile against the actual
    diff/risk, not merely accept the Router label.
+9. Post-POC transition rejects an unreviewed/ambiguous POC commit, altered plan,
+   dirty or stale base, wrong ancestry, unexpected local/remote ref, divergence,
+   force/reset/delete semantics and mismatched SHA readback before effect.
+10. Every later ticket rejects a branch/worktree not descended from its exact
+    admitted staging SHA. Tests independently prove that staging integration
+    cannot mutate the frozen POC/version record or claim release, and that
+    disposable environment success cannot grant Git baseline authority.
 
 ## Candidate vertical ticket sequence
 
@@ -182,10 +217,12 @@ Formal ticket files may be created only after this SPEC is approved:
 
 1. Pure delivery-assessment and resource-plan classifier.
 2. Pure project-initialization plan and manifest contract.
-3. Guarded target-project initialization with idempotent rollback/absence.
-4. Reviewer task activation capability and finite manual fallback.
-5. Reviewer-owned project-local implementer worktree/task lifecycle.
-6. Installer Getting Started/initialization entry-point composition and full
+3. Pure post-POC staging-transition plan and baseline contract.
+4. Guarded target-project initialization with idempotent rollback/absence.
+5. Reviewer task activation capability and finite manual fallback.
+6. Reviewer-owned project-local implementer worktree/task lifecycle.
+7. Guarded post-POC local/remote staging admission and ticket-base enforcement.
+8. Installer Getting Started/initialization entry-point composition and full
    disposable acceptance.
 
 The active 05S1R implementation is not a dependency source and is not
@@ -193,8 +230,9 @@ interrupted by this draft.
 
 ## Approval
 
-The project owner approved the product direction on `2026-08-13`. The exact
-AC-01 through AC-10 and candidate ticket decomposition remain
+The project owner approved the product direction and the post-POC staging
+requirement on `2026-08-13`. The exact AC-01 through AC-11 and candidate ticket
+decomposition remain
 `OWNER_REVIEW_REQUIRED`; no implementation or target-project mutation is
 authorized by this draft.
 

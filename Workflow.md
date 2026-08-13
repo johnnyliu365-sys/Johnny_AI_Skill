@@ -290,6 +290,37 @@ owner 仍不得控制它或任何 Agent。
 需求、風險、XSS／安全分類、耦合或驗證結果變更時必須重新評估；可自動升級，
 降級則必須有完整證據，且不得刪除已要求的測試、finding 或不可變 commit。
 
+<a id="post-poc-staging-lifecycle"></a>
+
+### 0.2.2 POC 後 staging 開發基線
+
+第一版 POC 通過獨立審閱並由專案負責人接受後，不得直接在其凍結來源、
+正式版本記錄或預設穩定分支上繼續開發。Router 必須先產生具型別的
+`StagingTransitionPlan`，精確綁定 repository identity、已接受 POC commit、
+預期 staging ref 狀態、凍結版本記錄及 plan digest；只有一次明確確認可授權
+該計畫內的本機 Git effect。遠端 staging 建立或 fast-forward 是另一個外部
+effect，仍須獨立 authority、remote history 檢查與 SHA readback。
+
+1. POC 未完成獨立 review、驗收或 commit 身分不唯一時，回
+   `WAIT_FOR_HUMAN / POST_POC_BASELINE_REQUIRED`，不得建立後續 ticket 的
+   implementation branch／worktree。
+2. staging 只能建立於或 verified-fast-forward 到精確接受的 POC／既有 staging
+   後繼 commit；禁止 reset、force、覆寫凍結版本、靜默解衝突或從未審閱來源
+   建立 staging。
+3. staging admission 成功後，所有後續功能／架構 ticket 的 expected base 與
+   worktree branch 都必須衍生自當時讀回的 staging SHA。錯 ref、stale SHA、
+   dirty base、diverged remote 或 ancestry 不符，必須在 source／Git／Agent
+   effect 前 typed `HALT`。
+4. 後續變更只可經 change control、SPEC、ticket、TDD、獨立 review 與 guarded
+   integration 回到 staging；穩定版本或新 package 需另經 promotion gate，
+   不得把「已合入 staging」等同「已發行」。
+5. staging 是版本整合基線，不是 effect 測試沙箱。安裝、解除安裝、host、
+   migration 或其他副作用仍必須在 receipt-bound disposable environment 驗證；
+   測試環境不得充當 Git staging authority。
+6. 專案尚無遠端或未授權 push 時，可先建立並驗證本機 staging ref，但不得
+   宣稱已有遠端溫備。後續若政策要求遠端備份，缺少安全 publication 證據時
+   應停在對應 promotion／publication gate。
+
 ### 0.3 Context 與能力解析規則
 
 1. Router 先讀取 `RouterState` 與其 `artifact_refs`，再以目前 `stage`、`event`、`delivery_stage` 與授權狀態選擇最小必要來源；不得將完整共用 Context、聊天記錄或無關歷史直接複製進工作指令。

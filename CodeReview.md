@@ -25,11 +25,12 @@
 | Agent 角色權限 | 涉及多 Agent／task 控制時，reviewer 是唯一可達 orchestration effect 的角色；implementation owner 的直接與間接 create/spawn/fork/send/follow-up/steer/wait/interrupt/close 均在 effect 前固定回 `HALT / ROLE_FORBIDDEN`。必須反證 copied/forged/replayed reviewer、錯 ticket/handoff/receipt/target/correlation 與一般 capability 字串不能授權；prompt 或 model 選擇不得充當安全邊界。 |
 | Task／worktree 綁定 | implementation task 的產品層 active workspace root 必須精確綁定 ticket 的 owner worktree，且正規化絕對根、解析後 filesystem identity 與 Git worktree metadata 三者一致。prompt／handoff 路徑、shell `cd`、command working directory、環境變數或 sibling 可讀權限均不是綁定；缺失、不可讀回或不一致必須在問題、pending、receipt、branch、source 或 host／Git effect 前固定回 `HALT / TASK_WORKSPACE_MISMATCH`。不得用控制面 project 或新建 Codex-managed worktree代替既有永久 implementation worktree。 |
 | 自適應 Profile／資源計畫 | 依實際 diff、風險、耦合、可逆性、驗證環境與外部效果獨立重算 `COMPACT / STANDARD / HIGH_ASSURANCE`，不得只相信 Router 標籤。逐項確認 hard escalation 未被專案大小、行數、成本或 model 名稱降級；多 implementer 必須有互斥 ownership、獨立 AC 與整合順序，helper 必須 reviewer-owned、read-only、no-code。 |
+| POC 後 staging 基線 | 第一版 POC 必須先有獨立 review、owner acceptance 與精確 commit／版本身分。後續 ticket 的 branch/worktree 必須證明衍生自已 admitted 的 staging SHA；stale／dirty／diverged／wrong-ancestry／readback mismatch 在 effect 前 fail closed。遠端 publication 必須另有 authority 且只能 create／verified-fast-forward；staging 不得覆寫 POC、冒充 release 或取代 disposable effect test。 |
 | XSS 與宿主能力 | 任何不可信資料進入 Browser、WebView、HTML／DOM Renderer 或 JavaScript execution context 的功能，都必須依 [Workflow.md 的 XSS Review 強制閘門](Workflow.md#xss-review)審查 source-to-sink、實際 renderer 行為與繞過路徑。JavaScript 可達 Native Bridge、IPC、Extension API 或其他 privileged capability 時，必須升級審查 JavaScript → host effect 的完整 capability graph，並證明所有未授權路徑在 effect 前 fail closed。 |
 
 ## 2.1 缺陷分類與攔截點
 
-下列十類是本專案已知且可被系統性攔截的缺陷。**「攔截點」決定責任歸屬**：標 `TDD` 者，工單的「TDD 設計」必須逐一列出對應案例，未列出即為工單缺陷而非實作缺陷；標 `CR` 者，審閱報告必須逐項記錄結果。
+下列十一類是本專案已知且可被系統性攔截的缺陷。**「攔截點」決定責任歸屬**：標 `TDD` 者，工單的「TDD 設計」必須逐一列出對應案例，未列出即為工單缺陷而非實作缺陷；標 `CR` 者，審閱報告必須逐項記錄結果。
 
 | # | 類別 | 攔截點 |
 | --- | --- | --- |
@@ -43,6 +44,7 @@
 | 8 | XSS 與 privileged JavaScript capability | Architecture／SPEC／TDD ＋ CR |
 | 9 | Implementation task／worktree 綁定錯置 | Architecture／ticket／TDD ＋ CR |
 | 10 | 自適應流程錯誤降級或過度 fan-out | Architecture／ticket／TDD ＋ CR |
+| 11 | POC 後 baseline 混用、錯 ancestry 或 staging 冒充 release | Architecture／ticket／TDD ＋ CR |
 
 ### 1. 路徑前綴誤匹配
 
@@ -154,12 +156,34 @@ disjoint-ownership 與 reviewer-only helper gate 時，其對應測試必須轉�
 3. 反證縮小專案、檔案或行數不會讓高風險 ticket 降級，model 名稱也不會取得 reviewer authority。
 4. 若實際風險低於或高於 ticket profile，分類為 `TICKET_DEFECT` 或 `REQUIREMENT_CHANGED`，不得由 implementation owner自行調整。
 
+### 11. POC 後 baseline 混用、錯 ancestry 或 staging 冒充 release
+
+第一版 POC 若沒有先凍結精確 commit／版本身分，或後續 feature branch 從
+stable/main、舊 staging、dirty checkout、未審閱 commit 或測試沙箱建立，會讓
+「可回復的已知良好版本」失去意義。把 staging 合併誤記成 release，或用
+disposable environment 成功結果授權 Git ref，同樣是邊界混用。
+
+**TDD 必要案例**：精確已接受 POC 的本機 staging 正向；未 review／未接受／
+ambiguous POC、altered plan digest、wrong repository、dirty/stale base、local ref
+unexpected、wrong ancestry、remote divergence、readback mismatch、reset／force／
+delete proposal 全部 effect 前失敗。後續 ticket 的正向分支必須從 exact staging
+SHA 衍生；main/stable、舊 staging、sibling repo、disposable root 與 constructed
+ancestry evidence 全部拒絕。另須斷言 staging integration 不改凍結 POC／版本
+record、不產生 release claim，且未授權 remote 時不 push。
+
+**CR 必要動作**：
+
+1. 獨立讀回 POC acceptance、frozen commit/version record、staging ref 與 ticket expected base。
+2. 用 Git ancestry 與 worktree metadata 驗證實際 branch 起點，不接受分支名稱、handoff 或 implementer 自述。
+3. 遠端變更逐項核對 authority、fetch/history、create-or-fast-forward-only 與 exact SHA readback；任何 force/reset/delete 或 divergence 都阻擋。
+4. 分別驗證 development staging、disposable effect environment 與 release record，禁止三者互相充當 authority。
+
 ## 3. 審閱證據與結論
 
 - Review report 必須逐項記錄上述驗證結果，並附上相關檔案／位置、測試或命令輸出、smoke test 結果，以及未解決風險。
 - Review 開始前必須讀取 ticket 的具 revision `Acceptance Closure Set`。每個 blocking finding 都必須引用一個既有 Closure item；無法引用者不得直接判為 implementation defect。
 - 同一輪必須一次跑完全部 Closure items 並批次回傳 findings。禁止在 correction 完成後才新增原本可於同一份 baseline 發現的逐輪探索性 blocking probe。
-- 同時必須逐項記錄 §2.1 中攔截點含 `CR` 的六類（1 路徑前綴、3 權限繞過、7 測試涵蓋、8 XSS 與 privileged JavaScript capability、9 task／worktree 綁定、10 自適應流程／資源計畫）的檢查結果與依據；第 8 類若分類為 `XSS_NOT_APPLICABLE`，仍須記錄可驗證理由。
+- 同時必須逐項記錄 §2.1 中攔截點含 `CR` 的七類（1 路徑前綴、3 權限繞過、7 測試涵蓋、8 XSS 與 privileged JavaScript capability、9 task／worktree 綁定、10 自適應流程／資源計畫、11 POC 後 staging baseline）的檢查結果與依據；第 8 類若分類為 `XSS_NOT_APPLICABLE`，仍須記錄可驗證理由。
 - 若發現缺陷屬於 §2.1 中攔截點為 `TDD` 的類別，而**該工單的「TDD 設計」並未列出對應案例**，審閱結論仍為 `CHANGES_REQUESTED`，但根因記為**工單缺陷**，並同時修正工單；不得僅要求實作者補測試而讓同類缺口在下一張工單重現。
 - 每項 finding 必須標記 `IMPLEMENTATION_DEFECT`、`EVIDENCE_DEFECT`、`TICKET_DEFECT`、`REQUIREMENT_CHANGED` 或 `OUT_OF_SCOPE_HARDENING`。只有前兩類可在 Closure Set 不變時回原 implementation lane；`TICKET_DEFECT` 回工單設計、`REQUIREMENT_CHANGED` 回變更控制、`OUT_OF_SCOPE_HARDENING` 另開後續 ticket 且不阻擋目前工單。
 - 結論僅可為 `APPROVED`、`CHANGES_REQUESTED` 或 `BLOCKED`。若有未處理且會影響正確性、安全性、資料隔離、可用性、效能或規格符合性的問題，不得標記為 `APPROVED`。
