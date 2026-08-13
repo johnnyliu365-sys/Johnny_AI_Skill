@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-02, AC-03 and AC-07 |
-| State | `FROZEN / READY_FOR_LANE_ADMISSION` |
+| State | `IN_PROGRESS / DISPATCH_CONFIRMED` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05C1-01` / R1-R7 |
 | Dependency | 05A/05B and E0-E6 integrated; parent 05C decomposition recorded |
 | Profile / XSS | `STANDARD`; one implementation owner, no helper / `XSS_NOT_APPLICABLE` |
@@ -77,3 +77,18 @@ is authorized.
 
 The reviewer must first admit one exact clean existing implementation lane and
 record a second control commit carrying the branch/baseline/owner registry.
+
+## Dispatch registry
+
+| Field | Value |
+| --- | --- |
+| Reviewed freeze / authority | Freeze `5c231c51f80d93217c4d775fadd57e6979c5873f`; project-owner standing auto-continue `PRG-20260809-042`; this control commit is the reviewed dispatch handoff. |
+| Exact owner | Existing implementer-2 task `019ffb0c-db88-7303-895c-aecfadde7c8d`; permanent `C:\Users\<user>\Desktop\AI控制工作workflow-implementer-2`; reviewer task remains sole orchestrator. |
+| Exact lane readback | Task idle; clean branch `codex/implementation-codex-target-project-isolation-05b4b2e6b` at integrated handoff `183313ec6c43b0ece57df699c0eb17d5fd3413b4`; tracked/ignored porcelain empty; linked git-dir/top-level exact; exactly three worktrees; target 05C1 branch absent. |
+| Branch admission | In the same permanent worktree create only `codex/implementation-codex-receipt-removal-request-05c1` at the exact control commit carrying this registry. Do not merge/copy a historical branch, create another worktree, reset, rebase, amend, force, stash or alter another lane. |
+| Binding | Workspace `wsb_local_orchestration_install_05c1_20260814_01`; handoff `hnd_local_orchestration_install_05c1_20260814`; allocation `aln_local_orchestration_install_05c1_20260814`; receipt `rcpt_local_orchestration_install_05c1_20260814`; correlation `corr-local-orchestration-install-05c1-20260814`; question `q-local-orchestration-install-05c1-20260814`; side context `scx-local-orchestration-install-05c1-20260814-01`. |
+| Return | One implementation commit changing exactly the three frozen paths, then only PRG-20260814-380 in one WPR-only handoff commit. |
+
+This one-use receipt authorizes only R1-R7. The owner cannot orchestrate another
+Agent, review/integrate its work, dispatch a next ticket, push/publish staging,
+or perform package/build/install/release/deployment work.

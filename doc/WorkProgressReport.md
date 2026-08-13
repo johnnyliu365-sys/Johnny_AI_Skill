@@ -4115,3 +4115,14 @@
 | 05C1 closure | `CLOSURE-LOCAL-INSTALL-T05C1-01` / R1-R7; one production module, one direct test and export-only root change; zero effects; no numeric line criterion. |
 | Resource decision | `STANDARD`, one existing implementation owner, no helper/fan-out. The task is small, low-search and serial; adding an Agent would add authority and merge overhead. |
 | Boundary | Freeze only. No implementation-worktree write, branch/worktree creation, live Codex/host/target-project effect, push, staging publication, package/build/install, Secret, release or deployment. |
+
+## PRG-20260814-379 - Ticket 05C1 dispatch registry
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `CHILD_05C1_FROZEN + EXACT_LANE_ADMITTED -> IMPLEMENTATION_DISPATCH_CONFIRMED / IMPLEMENT` |
+| Freeze / authority | Exact reviewed freeze `5c231c51f80d93217c4d775fadd57e6979c5873f`; standing owner authority `PRG-20260809-042`; unique 05C1 workspace/handoff/allocation/receipt/correlation/question/side-context are recorded in the ticket. |
+| Lane readback | Owner2 task `019ffb0c-db88-7303-895c-aecfadde7c8d` is idle in its permanent worktree, clean at integrated E6B handoff `183313ec6c43b0ece57df699c0eb17d5fd3413b4`; tracked/ignored porcelain empty; exact linked git-dir/top-level; exactly three worktrees; target branch absent. |
+| Dispatch / return | Create only `codex/implementation-codex-receipt-removal-request-05c1` at the exact commit carrying this registry. Implement only R1-R7 in the three frozen paths, then one implementation commit and unique PRG-380 WPR-only handoff. |
+| Parallel/resource decision | One owner, no helper or second lane. 05C2 depends on the exact integrated 05C1 API, so speculative parallel work would duplicate or conflict with the contract. |
+| Boundary | No reviewer write to an implementation worktree, new worktree, live Codex/host/target-project effect, push, staging publication, package/build/install, Secret, release or deployment. |
