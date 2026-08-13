@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / unchanged AC-01, AC-07 and AC-08 |
-| State | `IN_PROGRESS / DISPATCH_CONFIRMED` |
+| State | `FROZEN / READY_FOR_DISPATCH / REVISION_02` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B4B2E3D-01` / P1-P8 |
 | Dependency | E2 merge `d3d3c1d`, E3A `b324f91`, E3B `dc07eec` and E3C `c042af1` approved/integrated |
 | Planned owner | Local project `3a624854-bf2f-4aa8-9b04-5f73e9ab2a28`; task `019ffb0c-db88-7303-895c-aecfadde7c8d`; permanent worktree `wtr_workflow_implementer_2_20260813_01` |
@@ -91,3 +91,44 @@ release or deployment is authorized.
 
 This is the single E3D dispatch. The receipt is one-use and cannot authorize E3,
 another ticket, another owner or another task.
+
+## Halt record
+
+| Field | Value |
+| --- | --- |
+| Typed result | `HALT / SCOPE_VIOLATION`; no implementation commit or WPR handoff exists. |
+| Violation | During full-suite diagnosis, the implementation owner deleted one pre-existing `%TEMP%/johnny-stage-env-*` test-residue directory before the reviewer steer arrived. The directory had an environment owner marker and was not a target-project or worktree path, but cleanup of pre-existing host residue was outside this pure-projection ticket. |
+| Preserved lane | Branch remains at registry `472201b1f82416d0fc00ec03582d0175f9f97048`; only the two frozen files plus generated `__pycache__` directories are untracked. No tracked/source/docs commit exists. |
+| Evidence before halt | First red was missing module; focused `10/10`, focused strict mypy and compile passed. Host full suite ran `419` tests and failed the two existing residue assertions before the out-of-scope cleanup. |
+| Continuation | Receipt is suspended. Reviewer must not accept, commit, clean, reset or redispatch this lane without a project-owner disposition that explicitly covers the preserved uncommitted work and the host-residue incident. |
+
+## Requirement-change disposition
+
+`CHG-20260813-015` replaces the globally shared OS-TEMP 05S1 root with the
+project-owned `tests/.johnny-runtime/` namespace. This ticket cannot resume or
+use its old full-suite evidence until 05S1R is independently approved and
+integrated, then E3D is refrozen against that baseline. The two uncommitted
+implementation paths and generated cache residue remain preserved; this record
+does not authorize their deletion, commit, cleanup or reuse.
+
+## Revision-02 baseline refreeze and dispatch registry
+
+Project-owner continuation authority resolves the prior owner-disposition halt.
+05S1R/05S1R1 are approved and integrated by `d399364`; the preserved two-path
+same-lane WIP is therefore admitted for additive completion. It is not a
+historical implementation source and may not be copied to another branch or
+worktree.
+
+| Field | Value |
+| --- | --- |
+| Reviewed authority | This control commit is the reviewed handoff; foundation merge `d399364`; completion record `2c8376f`; unchanged closure P1-P8. |
+| Product binding | Project `3a624854-bf2f-4aa8-9b04-5f73e9ab2a28`; task `019ffb0c-db88-7303-895c-aecfadde7c8d`; workspace `wsb_local_orchestration_install_05b4b2e3d_20260814_02`; worktree `wtr_workflow_implementer_2_20260813_01`; readback digest `f830fb9af17a5c68a8174e0041a458c6f39a46654bdaa5337afbde222ed4e84f`. |
+| Binding | `hnd_local_orchestration_install_05b4b2e3d_r02_20260814`; `aln_local_orchestration_install_05b4b2e3d_r02_20260814`; `rcpt_local_orchestration_install_05b4b2e3d_r02_20260814`; `corr-local-orchestration-install-05b4b2e3d-r02-20260814`; `q-local-orchestration-install-05b4b2e3d-r02-20260814`; `scx-local-orchestration-install-05b4b2e3d-r02-20260814-01`. |
+| Preserved blobs | `response_admission.py` SHA-256 `a87dfd78ef2d1cdc782033fce016db3104943f6b52fe52e5214f207fee385a40`; focused test SHA-256 `db17a9d01e14ecbd1a1f0e73da8aaf76cb31201464ffde3194bc168d57ba1a79`. |
+| Baseline admission | On the existing E3D branch, verify both hashes, fast-forward the exact control registry commit while preserving both blobs, then verify both hashes again. Any mismatch is typed `HALT`; no reset, stash, rebase, copy or new branch/worktree. |
+| Cleanup authority | Remove only the two exact generated untracked `__pycache__` directories already listed in the halt readback, inside the bound worktree. Never inspect, enumerate or delete OS-global TEMP/staging residue. |
+| Writable paths | The original two frozen implementation paths, followed by unique `PRG-20260814-337` WPR-only handoff. |
+
+The new receipt is one-use and replaces the suspended revision-01 receipt. Full
+verification must use the project-owned runtime; no host-global cleanup may be
+used to manufacture a green result.

@@ -597,7 +597,7 @@ class CodexProtocolFixtureTests(unittest.TestCase):
         return lease.temporary.absolute.path / RESPONSE_FILE_NAME
 
     def _lease(self, owner: str) -> tuple[DisposableEnvironmentAllocator, EnvironmentLease]:
-        allocator = DisposableEnvironmentAllocator.from_system_temp()
+        allocator = DisposableEnvironmentAllocator.from_project_runtime()
         provisioned = allocator.provision(EnvironmentOwnerId(value=owner))
         self.assertIsInstance(provisioned, ProvisionedEnvironment)
         assert isinstance(provisioned, ProvisionedEnvironment)
@@ -609,7 +609,9 @@ class CodexProtocolFixtureTests(unittest.TestCase):
 
     @staticmethod
     def _owned_environment_roots() -> set[Path]:
-        temporary_parent = Path(tempfile.gettempdir()).resolve(strict=True)
+        temporary_parent = (Path(__file__).resolve().parents[1] / "tests" / ".johnny-runtime").resolve()
+        if not temporary_parent.exists():
+            return set()
         return {
             child
             for child in temporary_parent.iterdir()

@@ -240,3 +240,48 @@
 | Affected specification/tickets | `modules/spec/local-orchestration-installer.md` AC-11/AC-12; local package parent 04 decomposed into 04A-04I. |
 | Owner authority | The owner explicitly authorizes the future 04D staging push after 04A/04B package-source integration and 04C exact-candidate approval. That authority is limited to safe create-or-fast-forward publication of the exact candidate and mandatory readback; any mismatch or divergence halts. |
 | Acceptance | No release-build/system-integration child starts before remote `staging` equals the complete-source frozen candidate. Each child owns one bounded acceptance concern. The final version-one record is complete and immutable, while later feature/architecture work begins from `staging` and receives a new change/ticket lineage. |
+
+## CHG-20260813-015 — Move disposable repository tests into a project-owned runtime namespace
+
+| Field | Value |
+| --- | --- |
+| Date | `2026-08-13` |
+| Requested by | Project owner |
+| Previous rule | Integrated 05S1 requires each disposable environment root to be a direct child of the resolved OS `%TEMP%` directory. Failed runs can therefore leave globally shared `johnny-stage-env-*` residue discovered by another worktree, while that later ticket has no authority to clean it. |
+| Changed rule | Every 05S1-based repository test environment is rooted below the exact current plugin checkout at `tests/.johnny-runtime/`. Each worktree owns a separate namespace. No test may create, scan or clean an OS-global `johnny-stage-env-*` namespace or place the runtime in a target project. Exact marker-bound teardown removes only its lease and an empty runtime parent; stale/unclaimed residue blocks without automatic deletion. |
+| Reason | Test artifacts should be attributable to the project/worktree that created them. Locality prevents cross-worktree TEMP collisions and makes crash residue visible without granting broad host cleanup authority. |
+| In scope | 05S1 allocator root admission, exact ignore rule, all integrated direct test callers, stale-residue/reparse/marker TDD, tracked/ignored/OS-TEMP/target-project non-interference, and dependent E3D/E4 refreeze. |
+| Out of scope | Installed product root, target-project files, production package staging, live Codex/user profile, OS-global cleanup, new worktree, network, push, release or deployment. |
+| Context / ADR | `doc/context/local-orchestration-installer/main.md`; `doc/adr/ADR-20260813-007-project-owned-disposable-test-runtime.md` |
+| Affected specification | `modules/spec/local-orchestration-installer.md` / AC-13 |
+
+## CHG-20260813-016 — Add guided project bootstrap and adaptive delivery profiles
+
+| Field | Decision |
+| --- | --- |
+| Status | `REQUIREMENT_APPROVED / SPEC_DRAFTED / TICKETS_NOT_CREATED` |
+| Previous rule | Installation exposed plugin/runtime capabilities but did not define one explicit project bootstrap flow. The collaboration POC asked for a fixed Agent count before planning and otherwise applied substantially the same documentation and verification ceremony regardless of project or ticket risk. |
+| Changed rule | Installation provides only a Johnny-owned README and initialization entry point. After a selected target Git repository passes read-only preflight, one explicit confirmation authorizes exact target-owned project artifacts, a project-local ignored `.johnny/worktrees/` execution root and reviewer activation. Implementers are created/reused later only by the reviewer for receipt-bound tickets. A typed `COMPACT / STANDARD / HIGH_ASSURANCE` assessment selects documentation depth, verification breadth, implementation model capability and the minimum safe lane count for each ticket. |
+| Reason | Small, reversible work should not pay the same ceremony cost as privileged, destructive or cross-boundary work, while project size alone must never downgrade security or authority controls. The primary experience should be guided automation, with README/manual steps as recovery rather than the normal workflow. |
+| In scope | Install/init separation, exact preview and confirmation, target-owned artifacts, project-local worktree lifecycle, reviewer-first activation, evidence-based delivery profiles, model capability tiers, bounded lane count, reviewer-owned read-only research support and reclassification. |
+| Out of scope | Silent target writes, installer-time project selection, forced/unverified host turns or models, model-name authority, unbounded Agent fan-out, implementation-owner delegation, moving existing worktrees, current 05S1R scope, push, release or deployment. |
+| Security invariants | Reviewer-only orchestration, exact receipt/workspace/owner binding, strong types, TDD, independent review, XSS/Secret/ownership gates and guarded integration apply to every profile. Hard escalation triggers can only increase assurance. |
+| PRD / Context / ADR / SPEC | `PRD.md §17`; `doc/context/adaptive-project-orchestration/main.md`; `ADR-20260813-008`; `SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2` |
+| Current gate | Owner review of exact AC-01 through AC-10; ticket files and implementation remain blocked until SPEC approval. |
+| Ticket impact | New bounded Ticket 05S1R atomically migrates the allocator and seven integrated direct test callers. E3D and E4 are `REQUIREMENT_CHANGED / 05S1R_DEPENDENCY`; their uncommitted work remains preserved pending explicit disposition. |
+| Acceptance | No `from_system_temp` path remains; every disposable lease is below the exact plugin checkout runtime parent; no case creates or cleans `%TEMP%/johnny-stage-env-*`; stale project-local residue blocks and remains byte-identical; successful full verification leaves tracked, ignored, runtime, target-project and OS-TEMP sentinels unchanged/absent as applicable. |
+
+## CHG-20260813-017 — Require post-POC staging development lifecycle
+
+| Field | Decision |
+| --- | --- |
+| Status | `REQUIREMENT_APPROVED / SPEC_DRAFT_REVISED / TICKETS_NOT_CREATED` |
+| Previous rule | `CHG-20260812-014` preserves this repository's first packaged version and says later work begins from remote staging, but the adaptive target-project workflow did not yet require the same lifecycle for every user's accepted first POC. |
+| Changed rule | After a target project's first POC is independently reviewed and accepted, Johnny freezes its exact commit/version identity and requires a confirmed staging-transition plan. Every later feature or architecture ticket branch/worktree must descend from the admitted staging SHA and return only through guarded integration. Staging is neither release nor a disposable effect-test environment. |
+| Reason | Users without software-delivery experience need a safe default that preserves the known-good first result, provides a recoverable integration lineage and prevents accidental direct development on the only stable baseline. |
+| In scope | Local staging creation/readback, separately authorized remote create-or-fast-forward publication, exact ancestry enforcement, immutable POC/version identity, guarded staging integration and clear separation from disposable effect testing and release promotion. |
+| Out of scope | Creating a branch or worktree now; automatic push; force/reset/delete; target-project mutation; package/build/install; release/deployment; changing the active 05S1R ticket or existing implementation lanes. |
+| Safety invariants | POC review/acceptance and exact commit must exist first. Local Git mutation requires the confirmed plan; remote mutation requires separate authority and history/SHA readback. Wrong/stale/dirty/diverged baselines halt before source, Git, Agent or host effect. |
+| PRD / Context / ADR / SPEC | `PRD.md §17`; `doc/context/adaptive-project-orchestration/main.md`; `ADR-20260813-009`; adaptive orchestration SPEC AC-11. |
+| Current gate | Exact AC-01 through AC-11 and the revised eight-ticket candidate decomposition remain `OWNER_REVIEW_REQUIRED`; no formal ticket or implementation is authorized. |
+| Acceptance | A reviewed/accepted POC can produce one exact local staging baseline; authorized remote publication is create-or-fast-forward-only with exact readback; all later ticket bases prove descent from staging; frozen POC/version bytes and identity remain unchanged; staging never claims release or effect-test authority. |

@@ -14,8 +14,17 @@ Deliver a Windows per-user local control plane that owns every installed compone
 
 ## Ticket status and dependency order
 
+> Change-control override `CHG-20260813-015`: parent Ticket 05S1R is
+> `COMPLETE / APPROVED / INTEGRATED` by merge `d399364`; 05S1R1 closes only the
+> remaining checkout-under-TEMP evidence and atomically preserves the
+> 05S1 plus every integrated direct caller to the per-worktree
+> `tests/.johnny-runtime/` root. The 05S1R dependency is now satisfied; E3D and
+> E4 require new exact baseline registries before their preserved lanes resume.
+
 | Ticket | User-observable capability | State | Dependency |
 | --- | --- | --- | --- |
+| [05s1r-project-owned-disposable-runtime-root](05s1r-project-owned-disposable-runtime-root.md) | Atomically migrate 05S1 and every integrated direct caller from shared OS TEMP to the exact per-worktree plugin test runtime. | `COMPLETE / APPROVED / INTEGRATED` — merge `d399364` | CR-167/168 closed by `0cca9dee`; CR-169 closed by child `d024e69a` |
+| [05s1r1-temp-checkout-portability-evidence](05s1r1-temp-checkout-portability-evidence.md) | Make T1 failure-clean and prove checkout-derived runtime behavior when the checkout itself is beneath OS TEMP. | `COMPLETE / APPROVED / INTEGRATED` — merge `d399364` | Implementation `d024e69a`; handoff `3488efea`; physical TEMP checkout full `414/414` |
 | [01-owned-install-lifecycle](01-owned-install-lifecycle.md) | A small typed fake install/remove engine creates and removes exactly its owned fake files and host receipt, while rejecting foreign/tampered state. | `COMPLETE / APPROVED / INTEGRATED` — implementation `ddd9f55`, correction `040a0f6`, review `dc63364`, merge `491f98b` | Approved SPEC |
 | [02-metadata-runtime-and-guarded-git](02-metadata-runtime-and-guarded-git.md) | A local metadata-only event resumes once and a registered temporary project receives only a typed fast-forward decision under exact identity/base/lock guards. | `COMPLETE / APPROVED / INTEGRATED` — implementation `6cc8fb5`, review `4527f49`, merge `92c58bf` | Ticket 01 satisfied by `491f98b` |
 | [03-reversible-agent-host-lifecycle](03-reversible-agent-host-lifecycle.md) | A bounded recorded capability gate proves exact receipt/removal semantics while real Codex and Claude remain `UNVERIFIED` without live authority. | `COMPLETE / APPROVED / INTEGRATED` - implementation `16597b6`, correction `673ff7c`, review `5601594`, merge `60cb8cf` | Tickets 01 and 02 integrated |
@@ -55,8 +64,9 @@ Deliver a Windows per-user local control plane that owns every installed compone
 | [05B4B2E3B oracle owned-absence preservation](05b4b2e3b-codex-oracle-owned-absence-preservation.md) | Prove owned absence while retaining strict foreign state and payload bytes. | `COMPLETED / APPROVED / INTEGRATED` — merge `dc07eec` | CR-161 closed by exact recursive response admission |
 | [05B4B2E2 registration oracle adapter](05b4b2e2-codex-registration-oracle-adapter.md) | Adapt fresh preflight, add and proof to one leased oracle. | `FROZEN / READY_FOR_DISPATCH` | Exact logical-root child-process closure R1-R8 |
 | [05B4B2E3C compensation request revalidation](05b4b2e3c-codex-compensation-request-revalidation.md) | Publish one pure exact request revalidator before E3 effects. | `COMPLETED / APPROVED / INTEGRATED` — merge `c042af1` | E3A approved/integrated |
-| [05B4B2E3 compensation oracle adapter](05b4b2e3-codex-compensation-oracle-adapter.md) | Adapt exact remove/list/absence operations to one leased oracle. | `PLANNED / RESPONSE-CONTRACT_REVIEW / NOT_DISPATCHED` | Reuse E2 response admission after its terminal review; do not duplicate it |
-| [05B4B2E4 registration success acceptance](05b4b2e4-codex-registration-success-acceptance.md) | Prove the composed success lane and metadata-only receipt in one fresh disposable lease. | `PLANNED / DEPENDENCY_WAIT / NOT_DISPATCHED` | E2 approved/integrated |
+| [05B4B2E3D compensation response admission](05b4b2e3d-codex-oracle-response-admission.md) | Admit and recursively rebuild exact compensation responses/absence before any effect adapter consumes them. | `FROZEN / READY_FOR_DISPATCH / REVISION_02` | 05S1R integrated by `d399364`; preserved blobs admitted by exact hash |
+| [05B4B2E3 compensation oracle adapter](05b4b2e3-codex-compensation-oracle-adapter.md) | Adapt exact remove/list/absence operations to one leased oracle. | `PLANNED / DEPENDENCY_WAIT / NOT_DISPATCHED` | E3D approved/integrated |
+| [05B4B2E4 registration success acceptance](05b4b2e4-codex-registration-success-acceptance.md) | Prove the composed success lane and metadata-only receipt in one fresh disposable lease. | `FROZEN / READY_FOR_DISPATCH / REVISION_03_CORRECTION` | Existing implementation/handoff; 05S1R integrated by `d399364` |
 | [05B4B2E5 registration compensation acceptance](05b4b2e5-codex-registration-compensation-acceptance.md) | Prove a bounded failure, exhaustive compensation, absence and replay block. | `PLANNED / DEPENDENCY_WAIT / NOT_DISPATCHED` | E2-E4 approved/integrated |
 | [05B4B2E6 registration isolation acceptance](05b4b2e6-codex-registration-isolation-acceptance.md) | Prove foreign oracle and target-project byte/Git preservation. | `PLANNED / DEPENDENCY_WAIT / NOT_DISPATCHED` | E4/E5 approved/integrated |
 | [05c-codex-cli-receipt-removal](05c-codex-cli-receipt-removal.md) | Exact receipt removal verifies plugin, marketplace and path absence; replay is isolated and only the full lifecycle projects `SUPPORTED`. | `PLANNED / DEPENDENCY_WAIT / REFREEZE_REQUIRED` — future exact 05B integrated baseline and finite closure required before dispatch | Tickets 05A and 05B approved/integrated |

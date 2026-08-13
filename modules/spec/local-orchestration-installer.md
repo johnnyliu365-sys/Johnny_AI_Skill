@@ -7,7 +7,7 @@
 | Author | Codex / current `main` worktree / baseline `e04c2be` |
 | Context | `doc/context/local-orchestration-installer/main.md` |
 | PRD | `PRD.md §15` |
-| Requirement change | `CHG-20260808-011`; reviewer-only role revision `CHG-20260811-012`; version-one delivery revision `CHG-20260812-014` |
+| Requirement change | `CHG-20260808-011`; reviewer-only role revision `CHG-20260811-012`; version-one delivery revision `CHG-20260812-014`; project-owned disposable test runtime revision `CHG-20260813-015` |
 | Common Context backlink | `CONTEXT.md › 衍生 SPEC 索引` |
 | Implementation language | Python 3.11 for typed adapter/runtime contracts; Inno Setup script for the Windows installer package after its toolchain is pinned and verified. |
 
@@ -75,6 +75,18 @@ This POC includes a Windows per-user `Setup.exe` / uninstaller, installer-owned 
 
 **AC-12 — Immutable version-one identity.** The version-one release record binds the exact source commit, remote staging SHA at build start, clean-export identity, Inno Setup version, owned payload manifest digest, setup and matching uninstaller digests, disposable install/uninstall evidence and independent review references. It is append-only: a changed source, manifest, toolchain or binary digest is a new candidate/version and cannot overwrite the first record or reuse its success claim.
 
+### Keep disposable repository tests inside their owning plugin checkout
+
+**AC-13 — Project-owned disposable test runtime.** Every 05S1-based repository
+test environment must be an exact marker-bound child of the current plugin
+checkout's `tests/.johnny-runtime/` directory. Each worktree therefore owns a
+separate namespace. No such test may create, scan or clean an
+`%TEMP%/johnny-stage-env-*` root, and no target project may supply or contain
+the runtime root. Successful teardown leaves the exact project runtime
+directory absent; pre-existing/unclaimed residue, unexpected siblings,
+reparse/marker mismatch or incomplete cleanup fails closed without deleting
+the residue. Tracked and ignored Git readback must expose any final residue.
+
 ## Domain model, data flow and responsibility boundaries
 
 | Layer | Named types / responsibility | Prohibited responsibility |
@@ -117,7 +129,12 @@ matrices before implementation.
 - **Composition roots:** `Setup.exe` and uninstaller each assemble a fresh application graph per invocation. The runtime assembles a distinct graph per event-processing run.
 - **Injected dependencies:** filesystem, ledger, host lifecycle, process lifecycle, event store, project registry, guarded Git, clock and notification ports are constructor/factory injected behind named interfaces.
 - **Production bindings:** production may bind a Windows owned-root filesystem and a verified host adapter only after capability checks. A host command/result is not a global singleton or an implicit environment read.
-- **Test substitutions:** fake filesystem confined to a temporary root, fake host lifecycle, fake process, deterministic clock, in-memory queue, registry and Git port. Tests must assert no effect was requested against a target repository.
+- **Test substitutions:** fake filesystem confined to the current plugin
+  checkout's exact `tests/.johnny-runtime/` lease, fake host lifecycle, fake
+  process, deterministic clock, in-memory queue, registry and Git port. The
+  root is never caller-selected or located in a target project. Tests must
+  assert no effect was requested against a target repository or OS-global
+  `johnny-stage-env-*` namespace.
 - **States / accessibility:** setup and uninstall must expose success, progress, empty/no-host, error/blocked and retry state in text, without relying on colour alone. No permission beyond the invoking user is requested.
 
 Compensation adapters cross a closed capability boundary. An untrusted adapter
@@ -209,9 +226,10 @@ uninstall, host support or binary correctness.
 | 2026-08-11 | Project owner / ADR-20260811-004 | Refined the unchanged AC-01/02/07/08 compensation seam into closed port admission, pure reduction and thin composition after terminal 05B3 convergence. |
 | 2026-08-12 | Project owner / `CHG-20260812-013` | Added the mandatory XSS classification. Current POC remains `XSS_NOT_APPLICABLE`; future renderer or privileged JavaScript work must re-enter the tiered XSS gate. |
 | 2026-08-12 | Project owner / `CHG-20260812-014` / ADR-20260812-006 | Required exact complete-source publication to remote `staging` before release build/system integration, decomposed manifest/source/environment/build/install/uninstall acceptance into serial tickets and made the first packaged version an immutable source/toolchain/manifest/artifact evidence record. |
+| 2026-08-13 | Project owner / `CHG-20260813-015` / ADR-20260813-007 | Replaced the shared OS-TEMP 05S1 test root with one exact project-owned runtime namespace per plugin checkout/worktree. Added AC-13 and returned dependent in-flight acceptance tickets to change control. |
 
 ## Approval record
 
 - Decision maker: Project owner
 - Date: `2026-08-08 (Asia/Taipei)`
-- Approval scope: Full `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X`, including owner-approved revisions AC-09 through AC-12; tickets may now be planned, but each implementation still requires its own delivery-confirmation receipt and only the named reviewer may orchestrate the implementation task. The owner separately authorized only the future exact 04D staging publication after 04A/04B integration and 04C approval.
+- Approval scope: Full `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X`, including owner-approved revisions AC-09 through AC-13; tickets may now be planned, but each implementation still requires its own delivery-confirmation receipt and only the named reviewer may orchestrate the implementation task. The owner separately authorized only the future exact 04D staging publication after 04A/04B integration and 04C approval.

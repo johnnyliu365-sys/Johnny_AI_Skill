@@ -131,3 +131,12 @@ PRG-108 through PRG-112 were all preserved in identifier order. Post-merge
 focused 5/5, full 177/177, strict mypy 86 files, compile 86 files and
 zero-residue readbacks passed. The 05S1 allocation is released and its receipt
 is closed; 05S2 may now receive a separate ticket-bound handoff.
+
+## Superseding root-location requirement
+
+The historical 05S1 implementation/review/integration remains immutable
+evidence. `CHG-20260813-015`, AC-13 and ADR-20260813-007 supersede only its
+globally shared OS-TEMP root assumption for future repository tests. New Ticket
+05S1R must migrate the allocator and every integrated direct caller atomically
+before dependent E3D/E4 work resumes. This note does not reopen the closed 05S1
+receipt or authorize a same-ticket correction.

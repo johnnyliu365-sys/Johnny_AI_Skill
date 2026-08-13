@@ -3502,3 +3502,195 @@
 | Verification | Focused acceptance `5/5`; full serial unittest discovery `414/414`; strict full-tree `mypy --strict --explicit-package-bases` `136/136` files with repository-external cache; in-memory compile `136/136` Python files. Post-commit matrix passed at the implementation SHA. |
 | Static / topology / residue | Exact ancestry from registry commit `472201b1f82416d0fc00ec03582d0175f9f97048`, exact two-path scope, `git diff --check`, source/dynamic sentinels, three-worktree topology, tracked/ignored porcelain and cache-residue checks passed. `XSS_NOT_APPLICABLE`: no Browser, WebView, HTML/DOM renderer, JavaScript context or privileged bridge exists. |
 | Boundary | No new worktree, reset/amend/rebase/merge/cherry-pick/stash, network, package/build/install, live Codex/host/target-project write, Secret, Agent control, staging push, release, deployment or review/integration decision occurred. |
+## PRG-20260813-318 — Ticket 05B4B2E3D typed halt
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENT(E3D) -> SCOPE_VIOLATION -> HALT / OWNER_DISPOSITION_REQUIRED` |
+| Incident | While diagnosing two full-suite residue failures, owner2 deleted exact pre-existing test residue `%TEMP%/johnny-stage-env-d7acd177c3704814a0fbaf01c3f83810` before reviewer steering arrived. Its owner/environment markers were read before deletion; it was outside target project and all worktrees, but pre-existing host cleanup was not authorized by this pure-projection ticket. |
+| Preserved evidence | E3D branch remains at registry `472201b1f82416d0fc00ec03582d0175f9f97048`. Two frozen implementation paths are uncommitted; no tracked edit, implementation commit or WPR handoff exists. First red was missing module; focused `10/10`, focused strict mypy and compile passed; the host full suite ran `419` tests with two pre-cleanup residue failures. |
+| Decision | E3D receipt/allocation are suspended. No reviewer cleanup, commit, review, integration or redispatch. Project-owner disposition is required before deciding whether the preserved uncommitted work may be resumed or must be discarded by its owner. E4 remains independently active. |
+
+## PRG-20260813-319 — Ticket 05B4B2E4 independent review
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05B4B2E4) -> TERMINAL_CODE_REVIEW -> CHANGES_REQUESTED / TICKET_REFREEZE_REQUIRED` |
+| Exact return | Project `6d2ebb66-1ae7-48b4-96da-53ffba88ef1f`; task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; implementation `33752375a5dace8e06547a7732bbd08d4c3deb45`; WPR-only handoff `5cf2235ad755bd1f5935f7139789bfa6f9a4c970`; exact two-path implementation scope and ancestry pass. |
+| Independent green | Exact detached clone: focused 5/5, full serial 414/414, strict mypy 136/136 files, in-memory compile 136/136 files, source/diff/scope/topology readbacks pass. |
+| Reverse evidence | Independent order, same-port settlement and physical-payload-gate mutations made the named tests fail with child exits 4, 2 and 3. Exact submitted snapshot remains unchanged. |
+| CR-165 | `TICKET_DEFECT`: frozen S4 implies foreign-state success although SPEC AC-02 requires foreign registration to be `INSTALL_BLOCKED`. Submitted test seeds foreign records only after receipt issuance. Reviewer pre-seed probe returned finite `CLAIM_BLOCKED`, issued no receipt and changed owned-state bytes before the proof gate. E4 must be refrozen as clean success; E5 owns compensation. |
+| CR-166 | `EVIDENCE_DEFECT`: the committed S7-named test does not inspect all three worktrees. Reviewer external before/after manifests proved all three remained byte/porcelain-identical; revision-02 must assign that check to independent review and keep committed evidence bounded to child environment and exact lease teardown. |
+| Decision / boundary | No integration or correction dispatch. Publish revision-02 ticket freeze first; then the same owner may make only bounded test/evidence corrections on the existing branch. `XSS_NOT_APPLICABLE`; no new worktree/branch, staging push, package/build/install, live Codex/target-project mutation, release or deployment. |
+
+## PRG-20260813-320 — Ticket 05B4B2E4 revision-02 refreeze
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `CHANGES_REQUESTED / TICKET_DEFECT -> CONTROL_PLANE_REFREEZE -> CORRECTION_NOT_DISPATCHED` |
+| CR-165 correction | S4 is now an initially clean lease success closure: exactly one owned marketplace/plugin and zero foreign records. SPEC AC-02 keeps pre-existing foreign registration blocked with no false receipt; E5 owns compensation. |
+| CR-166 correction | The committed child owns parent-environment, unique-temp and exact lease-root teardown evidence. Reviewer-owned external manifests alone prove all three worktrees byte/porcelain-identical; implementation may not scan sibling worktrees. |
+| Correction scope | Same project/task/workspace/branch and retained allocation/receipt. One additive test-only correction removes post-success foreign seeding and fixes the overclaiming test name, followed by unique PRG-321 WPR handoff. Production/staging source behavior is frozen unchanged. |
+| Boundary | Registry must be committed and exact lane read back before dispatch. No new branch/worktree, global cleanup, compensation, staging push, package/build/install, live Codex/target-project mutation, release or deployment. |
+
+## PRG-20260813-322 — Ticket 05B4B2E4 revision-02 correction dispatch
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `REVISION_02_FROZEN + EXACT_LANE_READBACK -> SAME_BRANCH_CORRECTION_DISPATCH / AUTO_CONTINUE` |
+| Admission | Product task `019ffb0c-c9c7-7b30-b614-02dea7ed9042` is idle and bound to `C:\Users\<user>\Desktop\AI控制工作workflow-implementation`; canonical root/git-dir match the permanent worktree. Existing E4 branch is clean at exact handoff `5cf2235ad755bd1f5935f7139789bfa6f9a4c970`; exactly three worktrees remain. |
+| Dispatch | Same ticket/owner/worktree/branch/allocation/receipt. Correction authority is freeze `f4d1598d5d76312e3cf7185441f0626de72c6e30` and handoff `hnd_local_orchestration_install_05b4b2e4_cr165_166_20260813`. Only the focused test path plus later PRG-321 WPR handoff is writable. |
+| Boundary | No helper Agent, new branch/worktree, source behavior change, compensation, sibling/global scan or cleanup, staging push, package/build/install, live Codex/target-project mutation, release or deployment. |
+
+## PRG-20260813-323 — Project-owned disposable runtime change control
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `OWNER_REQUIREMENT_CHANGED -> CHANGE_CONTROL -> SPEC_AC13 / ADR_007 / TICKET_05S1R_FROZEN -> OWNER_DISPOSITION_WAIT` |
+| Root cause / decision | Integrated 05S1 creates globally shared `%TEMP%/johnny-stage-env-*` roots, allowing crash residue from one worktree to block another without granting cleanup authority. `CHG-20260813-015` moves every future 05S1 repository test to its exact plugin checkout's `tests/.johnny-runtime/` namespace; target projects remain untouched. |
+| Foundation ticket | New 05S1R atomically removes `from_system_temp`, migrates the allocator plus all seven integrated direct test callers, adds the exact ignore rule and proves stale project-local residue blocks without deletion and no OS-global staging root is created. No owner/receipt/dispatch exists yet. |
+| E4 steer | Owner1 received `REQUIREMENT_CHANGED` at a safe boundary and returned without commit or PRG-321. Only the focused E4 test is modified; focused 5/5 and two reversals passed. The lane remains preserved and blocked on 05S1R. |
+| E3D disposition | The prior typed halt is superseded for routing by the same foundation change. Owner2's two uncommitted paths and generated cache residue remain preserved; E3D is blocked on 05S1R and later refreeze. |
+| Required owner choice | No new worktree is authorized and both permanent implementation worktrees contain preserved uncommitted state. Recommended minimum-waste disposition is to discard only owner1's small uncommitted E4 test correction to free that worktree for 05S1R, while preserving owner2's larger E3D work until the foundation integrates. No discard/cleanup is performed without explicit approval. |
+| Boundary | Control-plane docs only. No implementation worktree mutation, cleanup, source commit, package/build/install, staging push, live Codex/target-project effect, release or deployment. |
+
+## PRG-20260813-324 — Owner1 cleanup disposition and 05S1R dispatch
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `OWNER_DISPOSITION_GRANTED -> EXACT_PATH_DISCARD -> WORKSPACE_CLEAN -> 05S1R_IMPLEMENTATION_DISPATCH_CONFIRMED` |
+| Authorized discard | Owner1 verified exactly one unstaged E4 test modification and zero staged/untracked/ignored/cache residue, then restored only `tests/test_codex_registration_success_acceptance.py` to handoff `5cf2235ad755bd1f5935f7139789bfa6f9a4c970`. Readback is clean; no commit/folder/branch/worktree/TEMP/owner2/control mutation occurred. |
+| Preserved lane | Owner2 remains unchanged with its two E3D files and generated cache residue untracked. E3D stays blocked on 05S1R; no cleanup or reuse authority was granted. |
+| 05S1R admission | Product project/task `6d2ebb66-1ae7-48b4-96da-53ffba88ef1f` / `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; canonical owner1 root/git-dir and readback digest match; target branch is absent and exactly three worktrees remain. |
+| Dispatch | One-use 05S1R handoff/allocation/receipt/correlation/question/side-context/workspace binding are frozen in the ticket. Owner1 may create only the named branch from the registry commit and write only the exact migration paths plus later PRG-325 WPR handoff. |
+| Boundary | No helper Agent, new worktree, owner2 mutation, broad cleanup, target-project write, package/build/install, staging push, live Codex, release or deployment. |
+
+## PRG-20260813-326 — Guided bootstrap and adaptive-delivery architecture
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `REQUIREMENT_CHANGED -> ARCHITECTURE_COMPLETED -> SPEC_DRAFTED -> WAIT_FOR_HUMAN(SPEC_APPROVAL)` |
+| Owner direction | Installation and project adoption are separated: package-owned README/entry point first, one exact user-confirmed target initialization next, reviewer activation after verified host admission, and implementers only after receipt-bound tickets. Workflow detail, implementer model capability and count must adapt to actual difficulty/risk. |
+| Architecture | `ADR-20260813-008` defines guided initialization and `COMPACT / STANDARD / HIGH_ASSURANCE`. Project/file/line count cannot lower risk; hard security/external-effect triggers force high assurance. Default source lane is one implementer and no helper; parallel lanes require disjoint ownership and independent acceptance. |
+| Specification | Draft `SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2` freezes AC-01 through AC-10, typed assessment/resource/initialization contracts, TDD/review closure and six candidate vertical slices. Exact AC approval is still required before ticket files. |
+| Governance | `Workflow.md`, `AGENTS.md` and `CodeReview.md` now define the adaptive profile, resource plan and defect/review gate. Reviewer-only Agent authority, workspace binding, strong typing, TDD, security/XSS and guarded integration remain invariant. |
+| Existing lanes | 05S1R is unaffected and remains active on its prior frozen dispatch. Owner2 E3D work remains preserved; no worktree, target project or implementation task was changed by this docs-only architecture turn. |
+| Boundary | Control documentation only. No formal new ticket, receipt, implementation dispatch, target-project mutation, Agent creation, worktree move, push, package, release or deployment. |
+
+## PRG-20260813-327 — Post-POC staging lifecycle requirement
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `REQUIREMENT_CHANGED -> ARCHITECTURE_COMPLETED -> SPEC_DRAFT_REVISED -> WAIT_FOR_HUMAN(SPEC_APPROVAL)` |
+| Owner direction | After the first POC, subsequent development must begin from staging so users without software-delivery experience preserve a stable first result and produce later versions through a controlled lineage. |
+| Change / architecture | `CHG-20260813-017` and `ADR-20260813-009` generalize the existing installer-only V1 warm-backup rule into a target-project invariant: freeze exact accepted POC identity, admit local staging, separately authorize remote publication, and require later ticket ancestry from staging. |
+| Specification | Adaptive orchestration draft now includes AC-11, `StagingTransitionPlan`, post-POC TDD/review closure and a revised eight-slice candidate sequence. Exact AC-01 through AC-11 approval remains required before ticket files. |
+| Governance | `Workflow.md`, `AGENTS.md` and `CodeReview.md` distinguish staging integration, disposable effect testing and stable release/promotion; direct development on the frozen accepted POC is prohibited. |
+| Existing lanes | Active 05S1R and preserved owner2 state are unaffected. No implementation task, branch, worktree or target project was touched. |
+| Boundary | Control documentation only. No formal ticket, receipt, dispatch, Git ref creation, push, target-project mutation, package, release or deployment. |
+
+## PRG-20260813-328 — Ticket 05S1R initial independent review
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05S1R) -> TERMINAL_CODE_REVIEW -> CHANGES_REQUESTED / SAME_BRANCH_CORRECTION_REQUIRED` |
+| Exact return | Product task `019ffb0c-c9c7-7b30-b614-02dea7ed9042` is idle and bound to the clean permanent implementation worktree. Exact chain is control dispatch `fceba609`, implementation `46dda341` and WPR-only handoff `b33314ca`; implementation/handoff scopes and three-worktree topology pass. |
+| Independent green | Immutable export outside OS TEMP passed focused `77/77`, full serial `412/412`, strict mypy `134/134` files and in-memory compile `134/134`; source/XSS/diff/ancestry/residue checks passed. |
+| CR-167 | `IMPLEMENTATION_DEFECT / R5,R8`: prefix-similar `johnny-stage-env-prefix-similar` was admitted as an exact owned root and deleted because admission uses only `startswith`. |
+| CR-168 | `IMPLEMENTATION_DEFECT / R5,R8`: an exact delete/permission failure propagated `PermissionError` instead of a finite typed result preserving truthful absence state. |
+| CR-169 | `IMPLEMENTATION_DEFECT / R2,R4,R7,R8`: committed tests wrongly reject a valid checkout beneath OS TEMP and assert before teardown, leaving project-local residue that causes the dependent focused matrix to fail closed. |
+| Decision / boundary | Formal review is `doc/reviews/local-orchestration-installer/05s1r-project-owned-disposable-runtime-root-code-review.md`. Findings are batched and require one additive same-branch correction; no correction dispatch, new branch/worktree, integration, E3D/E4 resume, staging push, package/build/install, live Codex/target-project mutation, release or deployment occurred. |
+
+## PRG-20260813-329 — Ticket 05S1R revision-02 correction dispatch
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `CHANGES_REQUESTED(05S1R) + REVIEW_COMMITTED -> SAME_BRANCH_CORRECTION_DISPATCH / AUTO_CONTINUE` |
+| Authority | Formal review commit `416e43113b204e8f62da7a63eec5646ba7985bba`; exact correction handoff `hnd_local_orchestration_install_05s1r_cr167_169_20260813`. Original ticket, owner, task, workspace, worktree, branch, allocation, receipt and correlation are retained. |
+| Correction | CR-167 exact 32-lowercase-hex lease-name admission; CR-168 finite `DELETE_FAILED` teardown and rollback behavior; CR-169 location-independent no-direct-OS-TEMP evidence with cleanup registered before assertions. |
+| Scope | Additive correction may touch only environment contracts, allocator and its focused test, followed by a separate PRG-20260813-330 WPR-only handoff. Reviewer owns the final immutable checkout-under-TEMP probe. |
+| Boundary | No new branch/worktree, helper Agent, broad/global cleanup or enumeration, owner2/sibling/target-project mutation, package/build/install, staging push, live Codex, release or deployment. |
+
+## PRG-20260813-331 — Ticket 05S1R terminal correction review
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `CORRECTION_COMPLETED(05S1R) -> CORRECTION_REVIEW -> CONVERGENCE_REVIEW_REQUIRED / CHILD_DECOMPOSITION_REQUIRED` |
+| Exact return | Correction `0cca9dee7a73a78e55fc739cca1ce5263a0e68ca`; WPR-only handoff `ef69fb8c459309891d53523fc63be33e574b25eb`; exact additive ancestry/scope, clean lane and three-worktree topology pass. |
+| Independent green | Outside-TEMP immutable export focused `79/79`; targeted strict mypy `3/3`; compile `134/134`; source/XSS/residue checks pass. CR-167 exact-name admission and CR-168 finite delete failure are closed. |
+| CR-169 open | Fresh checkout-under-TEMP core is `8/10`: T1 line 109 retains the invalid broad TEMP-tree assertion and leaves two leases because cleanup is not registered before the assertion. Six-suite matrix is `64/79`, with later child processes correctly failing closed on the unclaimed residue. |
+| Decision | The one correction review is terminal; no third same-ticket correction. Parent 05S1R requires one evidence-only CR-169 child ticket before integration can unlock E3D/E4. |
+| Boundary | No implementation-worktree mutation, integration, E3D/E4 resume, package ticket, new worktree, push, live Codex/target-project mutation, release or deployment. |
+
+## PRG-20260813-332 — Ticket 05S1R1 convergence child dispatch
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `CONVERGENCE_REVIEW_REQUIRED(05S1R) -> CHILD_TICKET_FROZEN(05S1R1) -> IMPLEMENTATION_DISPATCH_CONFIRMED / AUTO_CONTINUE` |
+| Decomposition | 05S1R1 owns only CR-169's remaining T1 portability/cleanup evidence. CR-167/168 source corrections remain immutable at `0cca9dee`; no third parent correction is authorized. |
+| Exact lane | Product task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; clean exact handoff `ef69fb8c`; permanent owner1 worktree; target branch absent; exactly three worktrees. Unique workspace/handoff/allocation/receipt/correlation/question/side-context are recorded in the child ticket. |
+| Scope / validation | One test path plus separate PRG-333 WPR handoff. Implementation runs local focused matrices; reviewer alone owns physical checkout-under-TEMP core/six-suite/full/static and runtime-absence acceptance. |
+| Boundary | No new worktree, helper Agent, production source, OS-global staging cleanup/enumeration, owner2/sibling/target-project mutation, package/build/install, staging push, live Codex, release or deployment. |
+
+## PRG-20260814-334 — Ticket 05S1R1 independent approval
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05S1R1) -> FINAL_CODE_REVIEW -> APPROVED / GUARDED_INTEGRATION_REQUIRED` |
+| Exact return | Implementation `d024e69a6c3ba06a0a2697a37bb19fbde1e657ea`; WPR-only `3488efea3f431cd0215b3be1fd79c4c533c9932e`; exact ancestry `ef69fb8c -> d024e69a -> 3488efea`, one-test implementation scope, WPR-only handoff scope and clean permanent lane pass. |
+| Physical TEMP evidence | Fresh exact ZIP export beneath system TEMP passes core `10/10`, six-suite `79/79`, full `414/414` with `2064` subtests, strict mypy `134/134`, in-memory compile `134/134` and final runtime absence. |
+| Failure-clean evidence | Reviewer forced T1's first post-admission behavior assertion to fail; unittest executed both exact typed teardowns and the final absence cleanup, leaving `tests/.johnny-runtime` absent. |
+| Review / integration | Formal review is `doc/reviews/local-orchestration-installer/05s1r1-temp-checkout-portability-evidence-code-review.md`. Merge-tree finds only the expected WPR append conflict; guarded integration must preserve control PRG-326..334 and branch PRG-325/330/333 before post-merge verification. |
+| Boundary | Review/control documentation only. No implementation-worktree mutation, OS-global staging enumeration/delete, owner2/target-project write, package/build/install, live Codex effect, staging push, release or deployment. |
+## PRG-20260813-325 — Ticket 05S1R project-owned disposable runtime implementation handoff
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05S1R) -> ACTION_COMPLETED -> REVIEW_HANDOFF`; independent review remains required. |
+| Product / binding | Local project `6d2ebb66-1ae7-48b4-96da-53ffba88ef1f`; task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; workspace `wsb_local_orchestration_install_05s1r_20260813_01`; worktree `wtr_workflow_implementation_20260813_01`; handoff `hnd_local_orchestration_install_05s1r_20260813`; allocation `aln_local_orchestration_install_05s1r_20260813`; receipt `rcpt_local_orchestration_install_05s1r_20260813`; correlation `corr-local-orchestration-install-05s1r-20260813`; question `q-local-orchestration-install-05s1r-20260813`; side-context `scx-local-orchestration-install-05s1r-20260813-01`. |
+| Implementation | Branch `codex/implementation-project-owned-disposable-runtime-05s1r`; implementation commit `46dda341e2987cd52cf162b76ac1da2b6a94dedf`; exact frozen eight-path scope: `.gitignore`, allocator source, and the six integrated caller test files. No production/runtime target project was changed. |
+| TDD / closure | Genuine first red showed the old `from_system_temp` factory; final focused suite passed `77/77`. R8 independently reversed trusted-root derivation, stale-residue admission, empty-parent teardown and the no-OS-TEMP gate; all four named regressions turned red and exact blobs were restored. |
+| Verification | Full serial unittest discovery passed `412/412`; strict full-tree `mypy --strict --explicit-package-bases` passed `134` source files with a repository-external cache; in-memory compile passed `134` Python files. Final `git diff --check`, exact scope/ancestry, three-worktree topology, tracked/ignored porcelain, project-runtime absence and cache-residue checks passed. `XSS_NOT_APPLICABLE`: no Browser, WebView, HTML/DOM renderer, JavaScript context or privileged bridge exists. |
+| Boundary | No helper Agent, new worktree, reset/amend/rebase/merge/cherry-pick/stash, network, package/build/install, OS-global TEMP cleanup, live Codex/host/target-project mutation, Secret, staging push, release, deployment or review/integration decision occurred. |
+
+## PRG-20260813-330 — Ticket 05S1R revision-02 CR-167/CR-168/CR-169 correction handoff
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `CORRECTION_COMPLETED(05S1R / CR-167-CR-169) -> ACTION_COMPLETED -> REVIEW_HANDOFF`; independent review remains required. |
+| Product / binding | Local project `6d2ebb66-1ae7-48b4-96da-53ffba88ef1f`; task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; workspace `wsb_local_orchestration_install_05s1r_20260813_01`; handoff `hnd_local_orchestration_install_05s1r_cr167_169_20260813`; retained allocation `aln_local_orchestration_install_05s1r_20260813`; retained receipt `rcpt_local_orchestration_install_05s1r_20260813`; correlation `corr-local-orchestration-install-05s1r-20260813`. |
+| Implementation | Same branch `codex/implementation-project-owned-disposable-runtime-05s1r`; correction commit `0cca9de7b6f9152b7b3f172af6ce6a63d6396119`; exact three-path scope: `tests/staging/environment_core/contracts.py`, `tests/staging/environment_core/environment.py`, `tests/test_disposable_environment_core.py`. Base handoff `b33314ca927532a3c0f74508117b3fd378c90d6a` remains immutable. |
+| Findings closed | CR-167 enforces the exact `johnny-stage-env-` plus 32 lowercase hexadecimal direct-child shape before marker read/deletion. CR-168 adds finite typed `BLOCKED / DELETE_FAILED` handling while retaining the live claim and makes rollback cleanup finite/fail-closed. CR-169 registers exact teardown before location assertions and checks only the exact checkout-derived parent plus direct OS-global staging-parent distinction. |
+| Verification | Focused suites passed `79/79`; full serial unittest discovery passed `414/414`; strict full-tree mypy passed `134` files with a repository-external removed cache; in-memory compile passed `134` Python files. CR-167 permissive-name reversal and CR-168 delete-catch reversal both turned their named tests red and exact blobs were restored. Final scope/diff/ancestry/topology/tracked/ignored/runtime/cache checks passed. `XSS_NOT_APPLICABLE`; the reviewer owns the final immutable checkout-under-TEMP export probe. |
+| Boundary | No OS-global staging path was written, enumerated or cleaned; no helper Agent, new branch/worktree, reset/amend/rebase/merge/cherry-pick/stash, sibling/owner2/control/target-project write, package/build/install, live Codex mutation, staging push, release, deployment or review/integration decision occurred. |
+
+## PRG-20260813-333 — Ticket 05S1R1 TEMP-checkout portability evidence handoff
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05S1R1 / CR-169) -> ACTION_COMPLETED -> REVIEW_HANDOFF`; independent review remains required. |
+| Authority / binding | Authority `PRG-20260809-042`; parent review `42cfbd65988649d0b1c4b03be4724007afc7de4b`; child registry `9310ed3cfb837643ef39d91d7ca1ee00235bb2ce`; project `6d2ebb66-1ae7-48b4-96da-53ffba88ef1f`; task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; workspace `wsb_local_orchestration_install_05s1r1_20260813_01`; handoff `hnd_local_orchestration_install_05s1r1_20260813`; allocation `aln_local_orchestration_install_05s1r1_20260813`; receipt `rcpt_local_orchestration_install_05s1r1_20260813`; correlation `corr-local-orchestration-install-05s1r1-20260813`. |
+| Implementation | Branch `codex/implementation-temp-checkout-portability-05s1r1`; implementation commit `d024e69a6c3ba06a0a2697a37bb19fbde1e657ea`; exact one-path scope: `tests/test_disposable_environment_core.py`; parent `ef69fb8c459309891d53523fc63be33e574b25eb` remains immutable. |
+| TDD / P1-P4 | First-red source sentinel at the parent identified the broad T1 assertion `is_relative_to(Path(tempfile.gettempdir()).resolve())`. T1 now registers typed exact cleanup for each admitted lease before post-provision assertions, then verifies the runtime parent is absent after cleanup. It checks the exact checkout-derived direct parent and only rejects a direct OS-global TEMP parent; all owner/replay/malformed/overlay/absence evidence remains. |
+| Verification | Core focused passed `10/10`; six-suite matrix passed `79/79`; full serial unittest passed `414/414`; strict full-tree mypy passed `134` files with an external removed cache; in-memory compile passed `134` Python files. Exact scope/diff/ancestry/topology, source/XSS sentinels, tracked/ignored porcelain, runtime absence and cache-residue checks passed. `XSS_NOT_APPLICABLE`. Reviewer owns the physical checkout-under-TEMP archive/export probe. |
+| Boundary | No production source or contract change, OS-global staging enumeration/delete, helper Agent, new worktree beyond the authorized branch, cross-lane write, reset/amend/rebase/force, merge/push, package/build/install, live Codex/host/target-project mutation, Secret, release or deployment occurred. |
+
+## PRG-20260814-335 — 05S1R / 05S1R1 guarded integration
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `APPROVED(05S1R1) -> GUARDED_INTEGRATION -> ACTION_COMPLETED / DEPENDENCIES_RELEASED` |
+| Merge | Review commit `abb07bbe831949afe73994b37ed9e2c48a7b47ca`; history-preserving merge `d399364bbd082e089d1f8e5264b026fcdd5c9d3f` with parents `abb07bb` and `3488efe`. The only merge conflict was the predicted WPR append conflict. Resolution retained each PRG-325 through PRG-334 exactly once and removed only conflict markers. |
+| Post-merge verification | Core `10/10`; six-suite `79/79`; full `414/414` with `2064` subtests; strict mypy `134/134`; in-memory compile `134/134`; `git diff --check`, runtime/cache/porcelain readback pass. |
+| Router continuation | Parent 05S1R and child 05S1R1 are complete. The 05S1R dependency on E3D/E4 is released; each lane still requires its own exact refreeze, baseline admission and receipt before implementation resumes. |
+| Boundary | No push, package/build/install, staging publication, live Codex/host/target-project mutation, Secret, release or deployment. Owner worktrees were not modified by control. |
+
+## PRG-20260814-336 — E3D/E4 parallel refreeze and dispatch readiness
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `05S1R_DEPENDENCY_SATISFIED + PROJECT_OWNER_AUTO_CONTINUE -> TWO_DISJOINT_LANES_FROZEN / READY_FOR_DISPATCH` |
+| E3D | Revision-02 uses a new one-use receipt. The same owner/branch/worktree may preserve and finish the exact two uncommitted blobs; admission requires before/after SHA-256 equality and an exact fast-forward to this registry. Cleanup is limited to two named generated worktree cache directories; OS-global TEMP is forbidden. |
+| E4 | Revision-03 keeps immutable implementation/handoff `3375237`/`5cf2235` on the existing branch. The clean owner worktree must history-merge this registry, preserve WPR append evidence, and correct CR-165/166 only in the focused test. |
+| Parallel safety | E3D and E4 have disjoint writable paths, separate permanent worktrees, tasks, allocations, receipts and handoffs. Neither may create/control a helper Agent. |
+| Boundary | No control-side implementation-worktree mutation, new branch/worktree, source/test edit, OS-global cleanup, push, build/package/install, live Codex/host/target-project mutation, Secret, release or deployment. |

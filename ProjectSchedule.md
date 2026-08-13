@@ -122,6 +122,8 @@
 | Ticket 05A CLI contract/preflight | DONE / APPROVED / INTEGRATED | Implementation `97ab31c`; repaired handoff `fb755268`; review `d54c0bd`; owner-authorized ledger-preserving merge `b22c6c4`; post-merge verification passed. |
 | Ticket 05S combined staging parent | SUPERSEDED / DECOMPOSED | Rejected commits remain immutable evidence; no correction or integration. |
 | Ticket 05S1 disposable environment core | DONE / APPROVED / INTEGRATED | Correction `41d5ce4`, handoff `e1087d3`, review `17ea1d5` and guarded merge `504a3ec`; post-merge verification passed. |
+| Ticket 05S1R project-owned disposable runtime root | COMPLETE / APPROVED / INTEGRATED | Guarded merge `d399364` preserves the full parent/correction/child history and both WPR evidence sets; post-merge core 10, six-suite 79, full 414 and strict static checks pass. |
+| Ticket 05S1R1 TEMP-checkout portability evidence | COMPLETE / APPROVED / INTEGRATED | Implementation `d024e69a`, handoff `3488efea`, review `abb07bb`, merge `d399364`; CR-169 closed. |
 | Ticket 05S2 bounded child-process runner | DONE / APPROVED / INTEGRATED | Revision-03 `33a8fa9` / `dba0621b`, review `c97b754`, guarded merge `6e24e06`; CR-124 resolved and post-merge verification passed. |
 | Ticket 05S3 Codex protocol fixture | DONE / APPROVED / INTEGRATED | Correction `4835b0f`, handoff `008fac8`, final review `c518e62` and guarded merge `43a1639`; CR-125 closed and post-merge verification passed. |
 | Ticket 05S4 Codex lifecycle oracle | DONE / APPROVED / INTEGRATED | Correction `02f33ef`, handoff `52ab9c0`, review `68ff06b`, guarded merge `4af381c`; CR-126/CR-127 closed and post-merge verification passed. |
@@ -151,9 +153,9 @@
 | Ticket 05B4B2E3B oracle owned-absence preservation | COMPLETED / APPROVED / INTEGRATED | Merge `dc07eec`; CR-161 subclass/constructed evidence is finitely blocked. |
 | Ticket 05B4B2E2 registration oracle adapter | COMPLETED / APPROVED / INTEGRATED | Merge `d3d3c1d`; post-merge focused 14/full 409/strict mypy and compile 134 pass; allocation released and receipt closed. |
 | Ticket 05B4B2E3C compensation request revalidation | COMPLETED / APPROVED / INTEGRATED | Merge `c042af1`; reviewer focused 24/full 395/strict mypy 132 passed. |
-| Ticket 05B4B2E3D compensation response admission | IN_PROGRESS / DISPATCH_CONFIRMED | Owner2 exact Local task; P1-P8 pure exact response/absence projection; two new staging-only paths; no oracle call or effect. |
+| Ticket 05B4B2E3D compensation response admission | FROZEN / READY_FOR_DISPATCH / REVISION_02 | Same-lane two-path WIP admitted at exact hashes; fast-forward exact control registry, remove only two bound worktree caches, then complete P1-P8. |
 | Ticket 05B4B2E3 compensation oracle adapter | PLANNED / DEPENDENCY_WAIT | Refreeze as a thin effect adapter only after E3D approval/integration. |
-| Ticket 05B4B2E4 registration success acceptance | IN_PROGRESS / DISPATCH_CONFIRMED | Owner1 exact Local task; S1-S8 two-path disposable-child system acceptance over integrated E2/forward/settlement/proof. |
+| Ticket 05B4B2E4 registration success acceptance | FROZEN / READY_FOR_DISPATCH / REVISION_03_CORRECTION | Existing E4 branch and immutable `3375237`/`5cf2235`; merge exact control registry and correct CR-165/166 in the focused test only. |
 | Tickets 05B4B2E5-E6 lifecycle acceptance | PLANNED / DEPENDENCY_WAIT | Compensation and isolation remain small dependency-ordered acceptance tickets. |
 | Ticket 05C receipt removal/replay | PLANNED / DEPENDENCY_WAIT / REFREEZE_REQUIRED | Starts only after 05A/05B approval/integration and a finite behavior/rollback closure refreeze. |
 | Ticket 06A Codex role-profile capability proof | DONE / APPROVED_EVIDENCE / INSTALL_BLOCKED / INTEGRATED | Implementation `38e9a8b`, handoff `f6f186f`, review `62955ec`, guarded merge `de4141e`; actual installed-host result is `ROLE_ISOLATION_UNPROVEN / ACCESS_DENIED / OUTPUT_UNAVAILABLE`, so capability dependents stay blocked. |
@@ -169,6 +171,15 @@
 | Ticket 04G disposable Windows install | PLANNED / DEPENDENCY_WAIT | After 04F; physical install acceptance only. |
 | Ticket 04H disposable Windows uninstall | PLANNED / DEPENDENCY_WAIT | After 04G; product removal/absence/foreign preservation only. |
 | Ticket 04I first-version freeze | PLANNED / DEPENDENCY_WAIT | After 04G/04H; immutable source/toolchain/manifest/artifact/review record. |
+
+## Guided Project Bootstrap and Adaptive Delivery
+
+| Stage | State | Evidence / next gate |
+| --- | --- | --- |
+| Requirement / architecture | DONE | `CHG-20260813-016/017`; `ADR-20260813-008/009`; install/init separation, reviewer-first activation, adaptive delivery and post-POC staging lifecycle confirmed by owner. |
+| Exact specification | DRAFT / OWNER_REVIEW_REQUIRED | `modules/spec/adaptive-project-orchestration.md` AC-01 through AC-11. |
+| Ticket decomposition | BLOCKED / SPEC_APPROVAL_REQUIRED | Candidate sequence is recorded in the draft SPEC; no formal ticket, owner, receipt, branch or worktree allocation yet. |
+| Current implementation lanes | UNAFFECTED | 05S1R continues on its frozen baseline; owner2 E3D state remains preserved. |
 
 ### Ticket 05 selection after external capability proof
 

@@ -203,3 +203,47 @@ instructions are defense in depth, not the authorization mechanism.
   `modules/spec/local-orchestration-installer.md`
 - Non-goals: target-project files, forced model turns, platform-wide enforcement,
   Claude support without its own proof, push, release or deployment.
+
+## 17. Guided Project Bootstrap and Adaptive Delivery
+
+Johnny installation must remain separate from project adoption. Installation
+provides a Johnny-owned Getting Started README and initialization entry point,
+but does not select or modify a target repository and does not open Agent tasks.
+After the user selects a Git repository, Johnny performs read-only preflight,
+previews an exact initialization plan and requires one explicit confirmation.
+The confirmed flow creates only target-owned project artifacts and the narrow
+project-local execution boundary, then opens or binds a reviewer when the host
+capability is proven. Implementers are provisioned later only by that reviewer
+for approved, receipt-bound tickets.
+
+The workflow must adapt ceremony and implementation resources to evidence, not
+source-line count or a vague small/large label. `COMPACT`, `STANDARD` and
+`HIGH_ASSURANCE` profiles control artifact depth, verification breadth, model
+capability tier and safe lane count. One implementer and no helper is the
+default. Multiple implementers require disjoint ticket/file ownership and
+independent acceptance. A read-only research helper, when justified by high
+search volume, is provisioned and controlled only by the reviewer.
+
+Authentication/authorization, Secrets, payments, regulated data, destructive
+migrations, release/deployment/signing/supply-chain work, irreversible external
+effects, distributed consistency, sandbox escape and privileged JavaScript
+capabilities always select `HIGH_ASSURANCE`. No adaptive profile can weaken
+reviewer-only authority, strong typing, TDD, independent review, XSS/Secret
+gates, workspace identity or guarded integration.
+
+Success means a small reversible ticket receives a concise but traceable
+closure and the minimum safe implementation resource, while a deceptively
+small high-risk ticket is deterministically escalated before source or host
+effect. Unsupported host automation returns an exact blocked/manual handoff and
+never pretends an Agent or worktree was created.
+
+After the first POC is independently reviewed and accepted, Johnny must freeze
+that exact POC identity before subsequent feature or architecture development.
+A confirmed staging-transition plan creates or verifies the target project's
+local `staging` development ref from the accepted commit; remote publication is
+a separately authorized create-or-fast-forward-only effect with exact SHA
+readback. Every later implementation branch/worktree must derive from the
+admitted staging SHA and return through guarded integration. The frozen POC or
+version-one record is never overwritten, and staging integration never implies
+release. Disposable effect-test environments remain separate from this Git
+development baseline.
