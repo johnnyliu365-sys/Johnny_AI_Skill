@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / unchanged AC-02, AC-07 and AC-08 |
-| State | `FROZEN / READY_FOR_DISPATCH` |
+| State | `FROZEN / IMPLEMENTATION_DISPATCH_CONFIRMED / IMPLEMENT_ACTIVE` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B4B2E5-01` / C1-C8 |
 | Dependency | E2 merge `d3d3c1d`, E3 merge `1517b03` and E4 merge `c1a5a7c` approved/integrated |
 | Planned owner | Task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; permanent `workflow-implementation`; no new worktree/helper |
@@ -103,3 +103,17 @@ numeric line limit is an acceptance criterion.
 Freeze is not dispatch. Exact clean lane/readback, target-branch absence and a
 second control commit carrying the dispatch registry are required before the
 owner may switch branch or edit.
+
+## Dispatch registry
+
+| Field | Value |
+| --- | --- |
+| Reviewed freeze / authority | Freeze `d1ffe1697001ee123bd60e311a89efed23eefb07`; project-owner standing auto-continue under `PRG-20260809-042`; this control commit is the reviewed dispatch handoff. |
+| Exact lane readback | Owner1 top-level `C:/Users/<user>/Desktop/AI控制工作workflow-implementation` and linked git-dir match; task is idle; clean branch `codex/implementation-codex-registration-success-acceptance-05b4b2e4` at `63b84949b2a9c7dd27872a6c0f56aa02207ed65b`; tracked/ignored counts are zero; exactly three worktrees; target E5 branch is absent. |
+| Branch admission | From the clean owner1 worktree, create only `codex/implementation-codex-registration-compensation-acceptance-05b4b2e5` at the exact commit carrying this registry. Do not merge/copy/reuse E4 source as a baseline, create another worktree or alter another lane. |
+| Binding | Workspace `wsb_local_orchestration_install_05b4b2e5_20260814_01`; handoff `hnd_local_orchestration_install_05b4b2e5_20260814`; allocation `aln_local_orchestration_install_05b4b2e5_20260814`; receipt `rcpt_local_orchestration_install_05b4b2e5_20260814`; correlation `corr-local-orchestration-install-05b4b2e5-20260814`; question `q-local-orchestration-install-05b4b2e5-20260814`; side context `scx-local-orchestration-install-05b4b2e5-20260814-01`. |
+| Writable return | Exactly the one frozen test path, one implementation commit, then only PRG-355 in one WPR-only handoff commit. |
+
+This one-use receipt authorizes only E5 C1-C8 on the exact owner1 task/worktree.
+The owner cannot orchestrate another Agent, issue a review decision, dispatch a
+next ticket or perform push/package/install/staging/release/deployment work.

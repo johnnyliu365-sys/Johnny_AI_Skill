@@ -3852,6 +3852,16 @@
 | Resource profile | `STANDARD`: one idle named owner1 task; no helper/fan-out because the failure, claim and rollback evidence share one lease and exact sequential state. |
 | Boundary | Freeze only; no implementation-worktree write, branch/worktree creation, live Codex/host/target-project effect, push, staging publication, package/build/install, Secret, release or deployment. |
 
+## PRG-20260814-354 — Ticket 05B4B2E5 dispatch registry
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `TICKET_FROZEN(05B4B2E5) + EXACT_LANE_ADMITTED -> IMPLEMENTATION_DISPATCH_CONFIRMED / IMPLEMENT` |
+| Freeze / binding | Reviewed freeze `d1ffe1697001ee123bd60e311a89efed23eefb07`; owner1 task/workspace/handoff/allocation/receipt/correlation/question/side-context are unique in the ticket and cite `PRG-20260809-042`. |
+| Lane readback | Permanent owner1 top-level and linked git-dir match; idle clean E4 branch at `63b8494`; tracked/ignored counts zero; exactly three worktrees; target E5 branch absent. The new branch must start only from the exact commit carrying this registry. |
+| Dispatch / return | One owner, no helper; exactly `tests/test_codex_registration_compensation_acceptance.py`, then unique PRG-355 WPR-only handoff. Non-high-risk ticket/evidence defects may be corrected within the same closure without user wait. |
+| Boundary | No control-side implementation-worktree write, new worktree, live Codex/host/target-project effect, push, staging publication, package/build/install, Secret, release or deployment. |
+
 ## PRG-20260814-351 — Ticket 05B4B2E3 terminal approval
 
 | Field | Evidence |
