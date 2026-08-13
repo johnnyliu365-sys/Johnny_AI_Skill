@@ -550,6 +550,8 @@ class CodexRegistrationOracleAdapterTests(unittest.TestCase):
         allocator, lease, oracle = _ready_environment("000000000000e2be")
         try:
             binding = bind_oracle_identity(_request())
+            if type(binding) is not OracleIdentityBound:
+                raise AssertionError("expected a finite identity binding")
             with self.assertRaises(TypeError):
                 CodexRegistrationOracleAdapter(object(), lease, oracle, binding)
             self.assertFalse(oracle.state_path(lease).exists())
