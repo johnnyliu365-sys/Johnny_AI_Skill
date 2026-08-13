@@ -552,11 +552,11 @@ def _fresh_lists_match(
     plugins: CodexPluginList,
     identity: OracleIdentity,
 ) -> bool:
-    if len(marketplaces.marketplaces) != 1 or len(plugins.installed) != 1 or plugins.available:
-        return False
-    marketplace = marketplaces.marketplaces[0]
-    plugin = plugins.installed[0]
-    return _marketplace_entry_matches(marketplace, identity) and _plugin_entry_matches(plugin, identity)
+    owned_marketplaces = tuple(
+        entry for entry in marketplaces.marketplaces if _marketplace_entry_matches(entry, identity)
+    )
+    owned_plugins = tuple(entry for entry in plugins.installed if _plugin_entry_matches(entry, identity))
+    return len(owned_marketplaces) == 1 and len(owned_plugins) == 1
 
 
 def _marketplace_entry_matches(value: object, identity: OracleIdentity) -> bool:

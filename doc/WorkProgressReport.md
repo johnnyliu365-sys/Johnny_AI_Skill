@@ -4024,6 +4024,17 @@
 | Dispatch / return | Same owner, no helper/new lane; exact adapter, direct adapter test and preserved acceptance test, then unique PRG-367 WPR-only handoff. The correction changes total-list cardinality to exact-owned membership/uniqueness and must retain zero/duplicate-owned rejection. |
 | Boundary | No control-side implementation-worktree write, new branch/worktree, product source, live Codex/host/real-target-project effect, push, staging publication, package/build/install, Secret, release or deployment. |
 
+## PRG-20260814-367 - Ticket 05B4B2E6A revision-02 foreign-state isolation handoff
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05B4B2E6A) -> ACTION_COMPLETED / REVIEW_HANDOFF`; independent terminal review remains required. |
+| Binding / lane | `CLOSURE-LOCAL-INSTALL-T05B4B2E6A-01` / A1-A8; task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; branch `codex/implementation-codex-foreign-state-isolation-05b4b2e6a`; correction registry `548166560b97e0eb81cecc80ad7dd3cb1405ce49`. |
+| Implementation | Commit `d3b3174b97a9c1fd52d2e861fd10be83c8d10033`; exactly `tests/staging/codex_lifecycle_oracle/registration_adapter.py`, `tests/test_codex_registration_oracle_adapter.py` and `tests/test_codex_registration_foreign_state_isolation_acceptance.py`. First red was the missing acceptance-test module, followed by the reproduced integrated `INVALID_SEQUENCE` with seeded foreign state. |
+| Closure evidence | Focused direct-adapter + E6A `16/16`; full explicit serial `450/450`; strict full-tree mypy `143/143` source files with external cache removed; in-memory compile `143/143`. Six A8 reversals (owned membership/cardinality, success record, success payload, compensation record, compensation payload and prefix isolation) each turned red and were restored. |
+| Isolation evidence | Two fresh caller-owned project-runtime leases were initialized separately; each seeded one prefix-similar typed foreign marketplace/plugin and exact payload bytes before its integrated success or compensation entrypoint. Success was accepted with owned state present; compensation was accepted with owned logical/physical absence and replay facts; foreign record tuples and payload bytes remained byte-identical in both leases; exact lease teardown passed. |
+| Boundary / security | `XSS_NOT_APPLICABLE`: these staging-oracle tests have no Browser, WebView, HTML/DOM renderer, JavaScript context or privileged bridge. No target-project/global/sibling scan, OS-global staging effect, live Codex/host effect, network, package, release or deployment action. Final tracked/ignored porcelain, project runtime, repository bytecode and external cache are clean/absent. |
+
 ## PRG-20260814-371 - Ticket 05B4B2E6B terminal approval
 
 | Field | Evidence |
@@ -4063,6 +4074,16 @@
 | Lane readback | Same E6A branch is idle/clean at handoff `ec0e80b45cf998378c420787ef16cdaf08d98c34`; zero tracked/ignored/runtime/cache residue; exactly three worktrees; exact merge base `5481665`. |
 | Correction / return | Merge the exact control registry into the same branch, preserving only append-only WPR evidence if that sole conflict occurs. Change only the direct adapter test with four independent matrices, then one additive test commit and unique PRG-375 WPR-only correction handoff. |
 | Boundary | No new branch/worktree/helper, source behavior change, target-project/live host effect, push, staging publication, package/build/install, Secret, release or deployment. |
+
+## PRG-20260814-375 - Ticket 05B4B2E6A CR-172 correction handoff
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05B4B2E6A/CR-172) -> ACTION_COMPLETED / REVIEW_HANDOFF`; independent terminal review remains required. |
+| Binding / lane | Same E6A task/worktree/branch/allocation/receipt/correlation; correction registry `d929114c24221493b2cbccc0eb8ddcaec2669b85`; merge admission commit `1bafc1c1d0b90c1c49aae904032a8dce06fd3cd2`. |
+| Implementation | Test-only correction commit `55b265b3904596c057feaa1127de9788122dfda7`; exact changed path `tests/test_codex_registration_oracle_adapter.py`. The staging adapter and preserved E6A acceptance test blobs remain unchanged from `d3b3174b97a9c1fd52d2e861fd10be83c8d10033`. Four independent proof-failure cases now hold the opposite collection at exact one: marketplace zero/duplicate and plugin zero/duplicate. Positive foreign marketplace/plugin and available-entry acceptance remains. |
+| Verification | Focused direct-adapter + E6A + E6B `28/28`; full explicit serial `462/462`; strict full-tree mypy `144/144` with external cache removed; in-memory compile `144/144`. Marketplace-only and plugin-only gate reversals each turned the matching matrix red and were restored. |
+| Scope / security / residue | `XSS_NOT_APPLICABLE`: no renderer, DOM, JavaScript context or privileged bridge. Final source scope is the direct adapter test only; tracked/ignored porcelain, project runtime, bytecode and external cache are clean/absent; three-worktree topology and ancestry are verified. No product source, target-project/global/sibling scan, live host/Codex, push, staging, package, release or deployment effect. |
 
 ## PRG-20260814-376 - Ticket 05B4B2E6A CR-172 terminal approval
 

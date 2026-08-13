@@ -42,7 +42,12 @@ from library.local_orchestration.contracts import ArtifactDigest, InstallRoot, I
 from library.local_orchestration.host_contracts import (
     CodexBlockReason,
     CodexCliVersion,
+    CodexMarketplaceEntry,
+    CodexMarketplaceList,
+    CodexMarketplaceSource,
     CodexMarketplaceName,
+    CodexPluginEntry,
+    CodexPluginList,
     CodexPluginName,
     CodexPreflightRequest,
 )
@@ -52,6 +57,7 @@ from tests.staging.codex_lifecycle_oracle.contracts import (
     OracleCompleted,
     OracleForeignSeeded,
     OracleMarketplaceRecord,
+    OraclePluginRecord,
 )
 from tests.staging.codex_lifecycle_oracle.identity_binding import OracleIdentityBound, bind_oracle_identity
 from tests.staging.codex_lifecycle_oracle.oracle import CodexLifecycleOracle
@@ -77,6 +83,7 @@ CHILD_SUCCESS_ARGUMENT = "--adapter-child-success"
 CHILD_INVALID_ARGUMENT = "--adapter-child-invalid-request"
 CHILD_VERSION_ARGUMENT = "--adapter-child-version-mismatch"
 CHILD_FOREIGN_LIST_ARGUMENT = "--adapter-child-foreign-list"
+CHILD_OWNED_CARDINALITY_ARGUMENT = "--adapter-child-owned-cardinality"
 CHILD_IDENTITY_ARGUMENT = "--adapter-child-identity-mismatch"
 CHILD_PLUGIN_ORDER_ARGUMENT = "--adapter-child-plugin-order"
 CHILD_CONSTRUCTED_ARGUMENT = "--adapter-child-constructed-request"
@@ -244,6 +251,11 @@ def _child_foreign_list() -> int:
         )
         foreign_root = r"C:\Users\oracle\AppData\Local\JohnnyAIWorkflow\marketplaces\foreign-market"
         foreign_bytes = f"marketplace|foreign-market|{foreign_root}".encode("utf-8")
+        foreign_plugin_path = r"C:\Users\oracle\AppData\Local\JohnnyAIWorkflow\plugins\foreign-plugin"
+        foreign_plugin_bytes = (
+            f"plugin|foreign-plugin|foreign-plugin-name|foreign-market|v1|foreign-source|"
+            f"foreign-policy|foreign-auth|{foreign_plugin_path}"
+        ).encode("utf-8")
         foreign = oracle.seed_foreign_marketplace(
             lease,
             OracleMarketplaceRecord(
@@ -255,11 +267,168 @@ def _child_foreign_list() -> int:
         )
         if type(foreign) is not OracleForeignSeeded:
             return 7
+        foreign_plugin = oracle.seed_foreign_plugin(
+            lease,
+            OraclePluginRecord(
+                plugin_id="foreign-plugin",
+                name="foreign-plugin-name",
+                marketplace_name="foreign-market",
+                version="v1",
+                source="foreign-source",
+                install_policy="foreign-policy",
+                auth_policy="foreign-auth",
+                installed_path=foreign_plugin_path,
+                locator="plugins/foreign-plugin.json",
+                digest=hashlib.sha256(foreign_plugin_bytes).hexdigest(),
+            ),
+        )
+        if type(foreign_plugin) is not OracleForeignSeeded:
+            return 8
+        before_state = oracle.state_path(lease).read_bytes()
+        before_marketplace = (oracle.payload_root(lease) / "marketplaces/foreign-market.json").read_bytes()
+        before_plugin = (oracle.payload_root(lease) / "plugins/foreign-plugin.json").read_bytes()
         try:
-            admitted.prove(proof_request)
+            proof = admitted.prove(proof_request)
         except CodexRegistrationProofPortFailure:
-            return 0
-        return 8
+            return 9
+        if proof.plugin_id.value != _request().expected_plugin_id.value:
+            return 10
+        if (
+            oracle.state_path(lease).read_bytes() != before_state
+            or (oracle.payload_root(lease) / "marketplaces/foreign-market.json").read_bytes() != before_marketplace
+            or (oracle.payload_root(lease) / "plugins/foreign-plugin.json").read_bytes() != before_plugin
+        ):
+            return 11
+        return 0
+    finally:
+        _teardown(allocator, lease)
+
+
+def _child_owned_cardinality() -> int:
+    allocator, lease, oracle = _ready_environment("000000000000e2b7")
+    try:
+        if type(oracle.initialize(lease)) is not OracleCompleted:
+            return 2
+        binding = bind_oracle_identity(_request())
+        if type(binding) is not OracleIdentityBound:
+            return 3
+        adapter = create_oracle_registration_adapter(lease, oracle, binding)
+        if type(adapter) is not CodexRegistrationOracleAdapter:
+            return 4
+        admitted = admit_codex_registration_port(adapter)
+        if type(admitted) is not CodexRegistrationPortCapability:
+            return 5
+        marketplace = admitted.add_marketplace(_request())
+        if type(marketplace) is not CodexMarketplaceAddSucceeded:
+            return 6
+        plugin = admitted.add_plugin(_request())
+        if type(plugin) is not CodexPluginAddSucceeded:
+            return 7
+        proof_request = CodexRegistrationProofRequest(
+            preflight=_request().preflight,
+            version=_request().expected_version,
+            marketplace_observation=marketplace.observation,
+            plugin_observation=plugin.observation,
+            source_locator=_request().source_locator,
+            installed_locator=_request().installed_locator,
+            digest=_request().digest,
+            expected_auth_policy=_request().expected_auth_policy,
+        )
+        owned_marketplace = CodexMarketplaceEntry(
+            name=binding.identity.marketplace_name,
+            root=binding.identity.marketplace_root,
+            marketplaceSource=CodexMarketplaceSource(type="local", value="oracle-source"),
+        )
+        owned_plugin = CodexPluginEntry(
+            pluginId=binding.identity.plugin_id,
+            name=binding.identity.plugin_name,
+            marketplaceName=binding.identity.marketplace_name,
+            version=binding.identity.plugin_version,
+            installed=True,
+            enabled=True,
+            source=binding.identity.plugin_source,
+            installPolicy=binding.identity.plugin_install_policy,
+            authPolicy=binding.identity.plugin_auth_policy,
+            marketplaceSource=CodexMarketplaceSource(type="local", value="oracle-source"),
+        )
+        foreign_marketplace = CodexMarketplaceEntry(
+            name="foreign-market",
+            root=r"C:\Users\oracle\AppData\Local\JohnnyAIWorkflow\marketplaces\foreign-market",
+            marketplaceSource=CodexMarketplaceSource(type="local", value="oracle-source"),
+        )
+        foreign_plugin = CodexPluginEntry(
+            pluginId="foreign-plugin",
+            name="foreign-plugin-name",
+            marketplaceName="foreign-market",
+            version="v1",
+            installed=True,
+            enabled=True,
+            source="foreign-source",
+            installPolicy="foreign-policy",
+            authPolicy="foreign-auth",
+            marketplaceSource=CodexMarketplaceSource(type="local", value="oracle-source"),
+        )
+        available_plugin = CodexPluginEntry(
+            pluginId="available-plugin",
+            name="available-plugin-name",
+            marketplaceName="available-market",
+            version="available-v1",
+            installed=False,
+            enabled=False,
+            source="available-source",
+            installPolicy="available-policy",
+            authPolicy="available-auth",
+            marketplaceSource=CodexMarketplaceSource(type="local", value="oracle-source"),
+        )
+        cases = (
+            (
+                "marketplace_zero_plugin_one",
+                (foreign_marketplace,),
+                (owned_plugin,),
+            ),
+            (
+                "marketplace_duplicate_plugin_one",
+                (owned_marketplace, owned_marketplace),
+                (owned_plugin,),
+            ),
+            (
+                "marketplace_one_plugin_zero",
+                (owned_marketplace,),
+                (foreign_plugin,),
+            ),
+            (
+                "marketplace_one_plugin_duplicate",
+                (owned_marketplace,),
+                (owned_plugin, owned_plugin),
+            ),
+        )
+        before = oracle.state_path(lease).read_bytes()
+        for case_name, marketplace_entries, plugin_entries in cases:
+            _ = case_name
+            responses = (
+                OracleCompleted(
+                    response=CodexProtocolAccepted(
+                        surface=CodexProtocolSurface.MARKETPLACE_LIST,
+                        payload=CodexMarketplaceList(marketplaces=marketplace_entries),
+                    )
+                ),
+                OracleCompleted(
+                    response=CodexProtocolAccepted(
+                        surface=CodexProtocolSurface.PLUGIN_LIST,
+                        payload=CodexPluginList(installed=plugin_entries, available=(available_plugin,)),
+                    )
+                ),
+            )
+            with patch.object(oracle, "run", side_effect=responses):
+                try:
+                    admitted.prove(proof_request)
+                except CodexRegistrationProofPortFailure:
+                    pass
+                else:
+                    return 8
+            if oracle.state_path(lease).read_bytes() != before:
+                return 9
+        return 0
     finally:
         _teardown(allocator, lease)
 
@@ -531,8 +700,11 @@ class CodexRegistrationOracleAdapterTests(unittest.TestCase):
     def test_r4_foreign_request_is_not_started_and_leaves_oracle_state_unchanged(self) -> None:
         self._run_child(CHILD_INVALID_ARGUMENT)
 
-    def test_r6_foreign_fresh_list_only_raises_declared_proof_failure(self) -> None:
+    def test_r6_foreign_fresh_list_preserves_owned_proof(self) -> None:
         self._run_child(CHILD_FOREIGN_LIST_ARGUMENT)
+
+    def test_r6_zero_or_duplicate_owned_matches_raise_declared_proof_failure(self) -> None:
+        self._run_child(CHILD_OWNED_CARDINALITY_ARGUMENT)
 
     def test_r4_accepted_payload_that_disagrees_with_retained_identity_is_started_failure(self) -> None:
         self._run_child(CHILD_IDENTITY_ARGUMENT)
@@ -597,6 +769,8 @@ def _run_child_if_requested() -> bool:
         raise SystemExit(_child_version_mismatch())
     if child_action == CHILD_FOREIGN_LIST_ARGUMENT:
         raise SystemExit(_child_foreign_list())
+    if child_action == CHILD_OWNED_CARDINALITY_ARGUMENT:
+        raise SystemExit(_child_owned_cardinality())
     if child_action == CHILD_IDENTITY_ARGUMENT:
         raise SystemExit(_child_identity_mismatch())
     if child_action == CHILD_PLUGIN_ORDER_ARGUMENT:
