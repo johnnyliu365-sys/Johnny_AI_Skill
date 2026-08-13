@@ -3922,3 +3922,13 @@
 | E6P closure / scope | `CLOSURE-LOCAL-INSTALL-T05B4B2E6P-01` / P1-P8; exactly one new staging-only entrypoint plus the existing E5 test update, followed by reserved PRG-361 WPR-only handoff. No numeric line criterion. |
 | Resource profile | `STANDARD`: owner1 retains behavioral continuity for the two coupled paths; no helper/fan-out. Owner2 remains idle until E6P integration unblocks an actually independent E6A/E6B lane. |
 | Boundary | Freeze only; no implementation-worktree write, branch/worktree creation, live Codex/host/target-project effect, staging publication, push, package/build/install, Secret, release or deployment. |
+
+## PRG-20260814-360 - Ticket 05B4B2E6P dispatch registry
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `TICKET_FROZEN(05B4B2E6P) + EXACT_LANE_ADMITTED -> IMPLEMENTATION_DISPATCH_CONFIRMED / IMPLEMENT` |
+| Freeze / binding | Reviewed freeze `8312eae827d5643d2a74905088d2922580de8d82`; owner1 task/workspace/handoff/allocation/receipt/correlation/question/side-context are unique in the ticket and cite `PRG-20260809-042`. |
+| Lane readback | Owner1 is idle at clean E5 handoff `5dd0f63`; permanent top-level/linked git-dir and three-worktree topology match; tracked/ignored counts are zero and target E6P branch is absent. New E6P branch must start only from this registry commit in the same worktree. |
+| Dispatch / return | One owner, no helper; exactly the new staging-only compensation entrypoint and existing E5 acceptance test update, then unique PRG-361 WPR-only handoff. Non-high-risk ticket/evidence defects may be corrected within the same closure without user wait. |
+| Boundary | No control-side implementation-worktree write, new worktree, live Codex/host/target-project effect, push, staging publication, package/build/install, Secret, release or deployment. |
