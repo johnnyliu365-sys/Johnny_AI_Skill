@@ -4,7 +4,7 @@
 | --- | --- |
 | Revision | `02` - non-high-risk ticket correction; same branch, owner, receipt and closure |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / unchanged AC-02, AC-07 and AC-08 |
-| State | `CORRECTION_DISPATCH_CONFIRMED / IN_PROGRESS` |
+| State | `CHANGES_REQUESTED / EVIDENCE_CORRECTION_REQUIRED` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B4B2E6A-01` / A1-A8 |
 | Dependency | E6P guarded merge `7334cc5314592ac159e9418a145121d31e4156d5` |
 | Planned owner | Existing owner1 task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; permanent `workflow-implementation`; no new worktree/helper |

@@ -4043,3 +4043,13 @@
 | Verification | Immutable source full `460/460`, compile `143/143` and reviewer reversals remain exact; post-merge focused `12/12`, strict mypy `143/143`, clean control porcelain and exact external cache removal pass. |
 | Router continuation | E6B is complete. E6A revision-02 correction remains the only active E6 child; 05C stays undispatched until E6A independently passes and integrates. |
 | Boundary | No push, staging publication, package/build/install, live Codex/host/real-target-project mutation, Secret, release or deployment. |
+
+## PRG-20260814-373 - Ticket 05B4B2E6A CR-172 changes requested
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05B4B2E6A) -> TERMINAL_CODE_REVIEW -> CHANGES_REQUESTED / EVIDENCE_DEFECT` |
+| Reviewed chain | Correction registry `5481665` -> implementation `d3b3174b97a9c1fd52d2e861fd10be83c8d10033` -> WPR-only handoff `ec0e80b45cf998378c420787ef16cdaf08d98c34`; exact implementation scope is three frozen paths. |
+| Independent evidence | Immutable archive SHA-256 `52CD7DCD2872EDD97D904621688CA8B341B2FF0143364F176137AF2077E22611`; focused `16/16` green. Removing only the plugin uniqueness gate survived `16/16`; restoring it and removing only the marketplace uniqueness gate also survived `16/16`. |
+| Finding / correction | `CR-172`: paired zero/zero and duplicate/duplicate cases do not independently lock each owned collection. Add four cases with the opposite collection held at exact one and reverse each gate independently. Source logic and E6A acceptance remain unchanged. |
+| Boundary | Same ticket/owner/branch/worktree/allocation/receipt/correlation; additive test-only correction. Reviewer mutations restored to exact adapter blob and immutable TEMP removed. No product/implementation-worktree write, new lane, external effect, push, staging publication, package/install, Secret, release or deployment. |
