@@ -3727,3 +3727,13 @@
 | Verification | Focused `5/5`; full serial unittest discovery `419/419`; strict full-tree `mypy --strict --explicit-package-bases` `136/136` files with an external cache; in-memory compile `136/136`. The three S8 reversals independently turned red with child exits `4/2/3` (operation order / same-port settlement / physical payload gate) and restored exact blobs. |
 | Static / topology / residue | Exact one-path implementation scope, `git diff --check`, control and handoff ancestry, three-worktree topology, tracked/ignored porcelain, zero repository bytecode/cache residue and absent `tests/.johnny-runtime` passed. `XSS_NOT_APPLICABLE`: no Browser, WebView, HTML/DOM renderer, JavaScript context or privileged bridge exists. |
 | Boundary | No staging-source change, helper Agent, new worktree/branch, OS-global TEMP enumeration/cleanup, sibling/owner2/control/target-project write, package/build/install, live Codex mutation, push, release, deployment or review decision occurred. |
+
+## PRG-20260814-341 — Ticket 05B4B2E4 guarded integration
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `APPROVED(05B4B2E4) -> GUARDED_INTEGRATION -> ACTION_COMPLETED / TICKET_COMPLETED` |
+| Merge | Review `44dd810385f6cf0a03f48fbff0bd7fc27ca1396a` and handoff `63b84949b2a9c7dd27872a6c0f56aa02207ed65b` integrated by two-parent merge `c1a5a7c6429c4b7021d5ecc0090a01e81784ad2f`. Only the predicted WPR append conflict occurred; 335 PRG headings remain unique. |
+| Post-merge verification | Focused E4 `5/5`; full explicit serial `419/419`; strict mypy `136/136`; in-memory compile `136/136`; diff, tracked/ignored porcelain, runtime/cache absence pass. |
+| Router continuation | E4 is complete. E5 remains dependency-blocked because E3 cannot integrate until E3D CR-170 is refrozen and CR-171 is corrected/reviewed. No unrelated next ticket is dispatchable. |
+| Boundary | No push, package/build/install, live Codex/host/target-project mutation, Secret, release or deployment. |
