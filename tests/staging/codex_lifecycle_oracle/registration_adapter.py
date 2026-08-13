@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from enum import Enum
 import ntpath
-from typing import Literal, TypeAlias
+from typing import Final, Literal, TypeAlias, cast
 
 from pydantic import BaseModel, ConfigDict, ValidationError
 
@@ -62,10 +62,7 @@ from tests.staging.codex_protocol.contracts import (
     CodexProtocolSurface,
     CodexVersionObservation,
 )
-from tests.staging.environment_core.contracts import (
-    EnvironmentLease,
-    revalidate_lease,
-)
+from tests.staging.environment_core.contracts import EnvironmentLease, revalidate_lease
 
 from .contracts import OracleAction, OracleBlocked, OracleCommand, OracleCompleted, OracleIdentity, OracleRunResult
 from .identity_binding import (
@@ -102,6 +99,29 @@ OracleRegistrationAdapterAdmission: TypeAlias = (
     "CodexRegistrationOracleAdapter | OracleRegistrationAdapterRejected"
 )
 
+_BOUND_FIELDS: tuple[str, ...] = ("status", "request", "identity")
+_IDENTITY_FIELDS: tuple[str, ...] = (
+    "marketplace_name",
+    "marketplace_root",
+    "plugin_id",
+    "plugin_name",
+    "plugin_version",
+    "plugin_source",
+    "plugin_install_policy",
+    "plugin_auth_policy",
+    "plugin_installed_path",
+)
+_LEASE_FIELDS: tuple[str, ...] = (
+    "owner", "environment_id", "root", "root_relative", "profile", "local_app_data",
+    "roaming_app_data", "temporary", "codex_home", "overlay", "marker",
+)
+
+
+class _AdapterFactoryKey:
+    __slots__ = ()
+
+
+_ADAPTER_FACTORY_KEY: Final[_AdapterFactoryKey] = _AdapterFactoryKey()
 
 def create_oracle_registration_adapter(
     lease: object,
@@ -120,7 +140,7 @@ def create_oracle_registration_adapter(
         return _rejected(OracleRegistrationAdapterRejectReason.INVALID_BINDING)
     if ntpath.expandvars(CANONICAL_INSTALL_ROOT) != FIXED_STAGING_LOGICAL_ROOT:
         return _rejected(OracleRegistrationAdapterRejectReason.LOGICAL_ROOT_MISMATCH)
-    return CodexRegistrationOracleAdapter(rebuilt_lease, oracle, rebuilt_bound)
+    return CodexRegistrationOracleAdapter(_ADAPTER_FACTORY_KEY, rebuilt_lease, oracle, rebuilt_bound)
 
 
 class CodexRegistrationOracleAdapter:
@@ -130,10 +150,13 @@ class CodexRegistrationOracleAdapter:
 
     def __init__(
         self,
+        factory_key: object,
         lease: EnvironmentLease,
         oracle: CodexLifecycleOracle,
         bound: OracleIdentityBound,
     ) -> None:
+        if factory_key is not _ADAPTER_FACTORY_KEY:
+            raise TypeError("adapter construction is factory-only")
         self._lease = lease
         self._oracle = oracle
         self._bound = bound
@@ -147,8 +170,12 @@ class CodexRegistrationOracleAdapter:
         if current is None:
             return CodexFreshPreflightRejected(request=self._bound.request, reason=CodexBlockReason.INVALID_INPUT)
         response = self._run(OracleAction.VERSION)
+        if type(response) is OracleBlocked:
+            return CodexFreshPreflightRejected(request=current, reason=CodexBlockReason.COMMAND_FAILED)
         version = _exact_version_response(response)
-        if version is None or version.value != current.expected_version.value:
+        if version is None:
+            return CodexFreshPreflightRejected(request=current, reason=CodexBlockReason.MALFORMED_OUTPUT)
+        if version.value != current.expected_version.value:
             return CodexFreshPreflightRejected(request=current, reason=CodexBlockReason.UNSUPPORTED_CLI)
         return CodexFreshPreflightAccepted(request=current, eligible=CodexPreflightEligible(version=version))
 
@@ -294,25 +321,74 @@ class CodexRegistrationOracleAdapter:
 
 
 def _rebuild_lease(value: object) -> EnvironmentLease | None:
-    if type(value) is not EnvironmentLease:
+    if _exact_model_state(value, EnvironmentLease, _LEASE_FIELDS) is None:
         return None
-    rebuilt = revalidate_lease(value)
+    rebuilt = revalidate_lease(cast(EnvironmentLease, value))
     if type(rebuilt) is not EnvironmentLease:
         return None
     return rebuilt
 
 
 def _rebuild_identity_bound(value: object) -> OracleIdentityBound | None:
-    if type(value) is not OracleIdentityBound:
+    state = _exact_model_state(value, OracleIdentityBound, _BOUND_FIELDS)
+    if state is None or type(state["status"]) is not str or state["status"] != "ORACLE_IDENTITY_BOUND":
         return None
-    rebound = bind_oracle_identity(value.request)
+    request = state["request"]
+    identity = state["identity"]
+    if type(request) is not CodexRegistrationPortRequest:
+        return None
+    identity_state = _exact_model_state(identity, OracleIdentity, _IDENTITY_FIELDS)
+    if identity_state is None or not all(type(identity_state[field]) is str for field in _IDENTITY_FIELDS):
+        return None
+    rebound = bind_oracle_identity(request)
     if type(rebound) is not OracleIdentityBound:
         return None
-    if not _requests_match(rebound.request, value.request):
-        return None
-    if not _identities_match(rebound.identity, value.identity):
+    if not _identity_matches_state(rebound.identity, identity_state):
         return None
     return rebound
+
+
+def _exact_model_state(
+    value: object,
+    expected_type: type[BaseModel],
+    expected_fields: tuple[str, ...],
+) -> dict[str, object] | None:
+    """Read fixed Pydantic storage without invoking caller-owned protocols."""
+
+    if type(value) is not expected_type:
+        return None
+    state: object = object.__getattribute__(value, "__dict__")
+    extras: object = object.__getattribute__(value, "__pydantic_extra__")
+    private: object = object.__getattribute__(value, "__pydantic_private__")
+    fields_set: object = object.__getattribute__(value, "__pydantic_fields_set__")
+    if type(state) is not dict or extras is not None or private is not None or type(fields_set) is not set:
+        return None
+    values = cast(dict[object, object], state)
+    if not _has_exact_keys(values, expected_fields):
+        return None
+    return cast(dict[str, object], values)
+
+
+def _has_exact_keys(values: dict[object, object] | set[object], expected_fields: tuple[str, ...]) -> bool:
+    if len(values) != len(expected_fields):
+        return False
+    if any(type(key) is not str for key in values):
+        return False
+    return all(field in values for field in expected_fields)
+
+
+def _identity_matches_state(identity: OracleIdentity, state: dict[str, object]) -> bool:
+    return (
+        identity.marketplace_name == state["marketplace_name"]
+        and identity.marketplace_root == state["marketplace_root"]
+        and identity.plugin_id == state["plugin_id"]
+        and identity.plugin_name == state["plugin_name"]
+        and identity.plugin_version == state["plugin_version"]
+        and identity.plugin_source == state["plugin_source"]
+        and identity.plugin_install_policy == state["plugin_install_policy"]
+        and identity.plugin_auth_policy == state["plugin_auth_policy"]
+        and identity.plugin_installed_path == state["plugin_installed_path"]
+    )
 
 
 def _rejected(reason: OracleRegistrationAdapterRejectReason) -> OracleRegistrationAdapterRejected:

@@ -47,6 +47,8 @@ from library.local_orchestration.host_contracts import (
     CodexPreflightRequest,
 )
 from tests.staging.codex_lifecycle_oracle.contracts import (
+    OracleBlockReason,
+    OracleBlocked,
     OracleCompleted,
     OracleForeignSeeded,
     OracleMarketplaceRecord,
@@ -60,7 +62,12 @@ from tests.staging.codex_lifecycle_oracle.registration_adapter import (
     OracleRegistrationAdapterRejected,
     create_oracle_registration_adapter,
 )
-from tests.staging.codex_protocol.contracts import CodexMarketplaceAdd, CodexProtocolAccepted, CodexProtocolSurface
+from tests.staging.codex_protocol.contracts import (
+    CodexMarketplaceAdd,
+    CodexProtocolAccepted,
+    CodexProtocolSurface,
+    CodexVersionObservation,
+)
 from tests.staging.environment_core.contracts import EnvironmentLease, EnvironmentOwnerId, ProvisionedEnvironment, TeardownStatus
 from tests.staging.environment_core.environment import DisposableEnvironmentAllocator
 from tests.staging.process_runner.runner import BoundedChildProcessRunner, SubprocessProcessPort
@@ -74,6 +81,8 @@ CHILD_IDENTITY_ARGUMENT = "--adapter-child-identity-mismatch"
 CHILD_PLUGIN_ORDER_ARGUMENT = "--adapter-child-plugin-order"
 CHILD_CONSTRUCTED_ARGUMENT = "--adapter-child-constructed-request"
 CHILD_PROOF_BEFORE_ARGUMENT = "--adapter-child-proof-before-adds"
+CHILD_CONSTRUCTED_ADMISSION_ARGUMENT = "--adapter-child-constructed-admission"
+CHILD_PREFLIGHT_CLASSIFICATION_ARGUMENT = "--adapter-child-preflight-classification"
 CHILD_TEMP_PREFIX = "e2b-adapter-owned-"
 
 
@@ -409,6 +418,79 @@ def _child_proof_before_adds() -> int:
         _teardown(allocator, lease)
 
 
+def _child_constructed_admission() -> int:
+    allocator, lease, oracle = _ready_environment("000000000000e2bc")
+    try:
+        binding = bind_oracle_identity(_request())
+        if type(binding) is not OracleIdentityBound:
+            return 2
+        malformed = OracleIdentityBound.model_construct(
+            status="ORACLE_IDENTITY_BOUND",
+            request=binding.request,
+            identity=binding.identity,
+        )
+        object.__getattribute__(malformed, "__dict__")["injected"] = "untrusted"
+        result = create_oracle_registration_adapter(lease, oracle, malformed)
+        if type(result) is not OracleRegistrationAdapterRejected:
+            return 3
+        if result.reason is not OracleRegistrationAdapterRejectReason.INVALID_BINDING:
+            return 4
+        incomplete_lease = EnvironmentLease.model_construct(owner=lease.owner)
+        lease_result = create_oracle_registration_adapter(incomplete_lease, oracle, binding)
+        if type(lease_result) is not OracleRegistrationAdapterRejected:
+            return 5
+        if lease_result.reason is not OracleRegistrationAdapterRejectReason.INVALID_LEASE:
+            return 6
+        return 0
+    finally:
+        _teardown(allocator, lease)
+
+
+def _child_preflight_classification() -> int:
+    allocator, lease, oracle = _ready_environment("000000000000e2bd")
+    try:
+        if type(oracle.initialize(lease)) is not OracleCompleted:
+            return 2
+        binding = bind_oracle_identity(_request())
+        adapter = create_oracle_registration_adapter(lease, oracle, binding)
+        if type(adapter) is not CodexRegistrationOracleAdapter:
+            return 3
+        admitted = admit_codex_registration_port(adapter)
+        if type(admitted) is not CodexRegistrationPortCapability:
+            return 4
+        malformed = OracleCompleted(
+            response=CodexProtocolAccepted(
+                surface=CodexProtocolSurface.MARKETPLACE_ADD,
+                payload=CodexMarketplaceAdd(
+                    marketplaceName="adapter-market",
+                    installedRoot=r"C:\Users\oracle\AppData\Local\JohnnyAIWorkflow\marketplaces\adapter-market",
+                    alreadyAdded=False,
+                ),
+            )
+        )
+        mismatch = OracleCompleted(
+            response=CodexProtocolAccepted(
+                surface=CodexProtocolSurface.VERSION,
+                payload=CodexVersionObservation(version="different-version"),
+            )
+        )
+        cases: tuple[tuple[OracleBlocked | OracleCompleted, CodexBlockReason], ...] = (
+            (OracleBlocked(reason=OracleBlockReason.STATE_INVALID), CodexBlockReason.COMMAND_FAILED),
+            (malformed, CodexBlockReason.MALFORMED_OUTPUT),
+            (mismatch, CodexBlockReason.UNSUPPORTED_CLI),
+        )
+        for response, expected_reason in cases:
+            with patch.object(oracle, "run", return_value=response):
+                result = admitted.fresh_preflight(_request())
+            if type(result) is not CodexFreshPreflightRejected:
+                return 5
+            if result.reason is not expected_reason:
+                return 6
+        return 0
+    finally:
+        _teardown(allocator, lease)
+
+
 class CodexRegistrationOracleAdapterTests(unittest.TestCase):
     """The adapter is a closed staging seam, not a caller-synthesized port."""
 
@@ -464,6 +546,22 @@ class CodexRegistrationOracleAdapterTests(unittest.TestCase):
     def test_r6_proof_before_same_instance_exact_adds_is_declared_failure_without_list_effect(self) -> None:
         self._run_child(CHILD_PROOF_BEFORE_ARGUMENT)
 
+    def test_cr162_direct_constructor_requires_private_factory_authority(self) -> None:
+        allocator, lease, oracle = _ready_environment("000000000000e2be")
+        try:
+            binding = bind_oracle_identity(_request())
+            with self.assertRaises(TypeError):
+                CodexRegistrationOracleAdapter(object(), lease, oracle, binding)
+            self.assertFalse(oracle.state_path(lease).exists())
+        finally:
+            _teardown(allocator, lease)
+
+    def test_cr163_constructed_bound_state_is_finitely_rejected(self) -> None:
+        self._run_child(CHILD_CONSTRUCTED_ADMISSION_ARGUMENT)
+
+    def test_cr164_preflight_classifies_block_malformed_and_version_mismatch(self) -> None:
+        self._run_child(CHILD_PREFLIGHT_CLASSIFICATION_ARGUMENT)
+
     def _run_child(self, argument: str) -> None:
         before = tuple(sorted(os.environ.items()))
         with tempfile.TemporaryDirectory(prefix=CHILD_TEMP_PREFIX) as temporary_text:
@@ -505,6 +603,10 @@ def _run_child_if_requested() -> bool:
         raise SystemExit(_child_constructed_request())
     if child_action == CHILD_PROOF_BEFORE_ARGUMENT:
         raise SystemExit(_child_proof_before_adds())
+    if child_action == CHILD_CONSTRUCTED_ADMISSION_ARGUMENT:
+        raise SystemExit(_child_constructed_admission())
+    if child_action == CHILD_PREFLIGHT_CLASSIFICATION_ARGUMENT:
+        raise SystemExit(_child_preflight_classification())
     return False
 
 
