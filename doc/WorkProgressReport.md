@@ -3872,6 +3872,17 @@
 | Adversarial closure | Seven reviewer probes confirm request-before-effect, exact five-operation admission, removal identity, finite evidence rejection, duplicate/foreign list preservation, absence gating and fixed action order. A1-A8 are closed with no finding. |
 | Decision / boundary | `APPROVED / READY_TO_MERGE`; complete immutable history only. No implementation-worktree write, new worktree, push, staging publication, package/build/install, live Codex/host/target-project mutation, Secret, release or deployment. |
 
+## PRG-20260814-355 - Ticket 05B4B2E5 compensation acceptance handoff
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05B4B2E5) -> ACTION_COMPLETED / REVIEW_HANDOFF`; independent review remains required. |
+| Binding / lane | `CLOSURE-LOCAL-INSTALL-T05B4B2E5-01` / C1-C8; owner1 task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; branch `codex/implementation-codex-registration-compensation-acceptance-05b4b2e5`; corrected dispatch registry `d105aacb90786ad740a0dfe69c82523df131df56`. |
+| Implementation | Commit `2bf7dd842f2bef0c55a0448c282189f3067d33fc`; exactly `tests/test_codex_registration_compensation_acceptance.py`. First red was the missing `tests.test_codex_registration_compensation_acceptance` module. |
+| Closure evidence | Focused serial `2/2`; full serial `447/447`; strict full-tree mypy `141` files with an external cache removed afterward; in-memory compile `141/141`. The one-shot fault, compensation order, replay gate and physical-payload absence reverse probes each turned red and were restored. |
+| Runtime / residue | One project-owned lease and one unique child TEMP were used; parent environment bytes were preserved; exact lease teardown and child-TEMP absence passed. Final repository-local cache/runtime residue is zero; tracked and ignored porcelain are clean. |
+| Boundary / security | `XSS_NOT_APPLICABLE`: the evidence-only unittest has no Browser, WebView, HTML/DOM, JavaScript or privileged bridge. No live Codex, host, network, target-project, sibling-worktree, package, release or deployment effect. |
+
 ## PRG-20260814-356 - Ticket 05B4B2E5 revision-02 non-high-risk refreeze
 
 | Field | Evidence |
