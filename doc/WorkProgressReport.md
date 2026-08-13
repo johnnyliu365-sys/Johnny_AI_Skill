@@ -3821,3 +3821,13 @@
 | Preserved binding | A1-A8, owner2 task/worktree/branch, allocation, receipt, correlation and exact two-path scope remain unchanged. The unused handoff reservation moves from PRG-348 to PRG-350. |
 | Lane readback | Owner2 is on the exact new E3 branch at registry `15c2210`; no tracked source/test change exists. Only generated ignored `__pycache__` is present and must be removed within the exact owner worktree before handoff. |
 | Boundary | Control docs only; no implementation-worktree write, new worktree, live Codex/host/target-project effect, staging publication, push, package/build/install, Secret, release or deployment. |
+
+## PRG-20260814-351 — Ticket 05B4B2E3 terminal approval
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05B4B2E3) -> TERMINAL_CODE_REVIEW -> APPROVED / READY_TO_MERGE` |
+| Reviewed chain | Scope correction `b57947c` -> history merge `e320261` -> implementation `e6cc76c` -> exact WPR-only handoff `f71cd87`; implementation scope is exactly the two frozen paths. |
+| Independent green | Reviewer-owned immutable archive SHA-256 `A7442BD5B61F7C7F93C1D696F345A26EAC78DC987D24E8421F8DC10E47AC2144`; focused `13/13`; full `445/445`; strict mypy `140/140`; in-memory compile `140/140`; source/scope/ancestry/clean-lane checks pass. |
+| Adversarial closure | Seven reviewer probes confirm request-before-effect, exact five-operation admission, removal identity, finite evidence rejection, duplicate/foreign list preservation, absence gating and fixed action order. A1-A8 are closed with no finding. |
+| Decision / boundary | `APPROVED / READY_TO_MERGE`; complete immutable history only. No implementation-worktree write, new worktree, push, staging publication, package/build/install, live Codex/host/target-project mutation, Secret, release or deployment. |

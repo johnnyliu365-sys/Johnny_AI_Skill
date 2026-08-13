@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / unchanged AC-02, AC-07 and AC-08 |
-| State | `FROZEN / IMPLEMENTATION_DISPATCH_CONFIRMED / IMPLEMENT_ACTIVE` |
+| State | `APPROVED / READY_TO_MERGE` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B4B2E3-01` / A1-A8 |
 | Dependency | E1, E3A `b324f91`, E3B `dc07eec`, E3C `c042af1` and E3D `b5541e4` approved/integrated |
 | Planned owner | Task `019ffb0c-db88-7303-895c-aecfadde7c8d`; permanent `workflow-implementer-2`; no new worktree/helper |
