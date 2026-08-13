@@ -3499,3 +3499,15 @@
 | Incident | While diagnosing two full-suite residue failures, owner2 deleted exact pre-existing test residue `%TEMP%/johnny-stage-env-d7acd177c3704814a0fbaf01c3f83810` before reviewer steering arrived. Its owner/environment markers were read before deletion; it was outside target project and all worktrees, but pre-existing host cleanup was not authorized by this pure-projection ticket. |
 | Preserved evidence | E3D branch remains at registry `472201b1f82416d0fc00ec03582d0175f9f97048`. Two frozen implementation paths are uncommitted; no tracked edit, implementation commit or WPR handoff exists. First red was missing module; focused `10/10`, focused strict mypy and compile passed; the host full suite ran `419` tests with two pre-cleanup residue failures. |
 | Decision | E3D receipt/allocation are suspended. No reviewer cleanup, commit, review, integration or redispatch. Project-owner disposition is required before deciding whether the preserved uncommitted work may be resumed or must be discarded by its owner. E4 remains independently active. |
+
+## PRG-20260813-319 — Ticket 05B4B2E4 independent review
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05B4B2E4) -> TERMINAL_CODE_REVIEW -> CHANGES_REQUESTED / TICKET_REFREEZE_REQUIRED` |
+| Exact return | Project `6d2ebb66-1ae7-48b4-96da-53ffba88ef1f`; task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; implementation `33752375a5dace8e06547a7732bbd08d4c3deb45`; WPR-only handoff `5cf2235ad755bd1f5935f7139789bfa6f9a4c970`; exact two-path implementation scope and ancestry pass. |
+| Independent green | Exact detached clone: focused 5/5, full serial 414/414, strict mypy 136/136 files, in-memory compile 136/136 files, source/diff/scope/topology readbacks pass. |
+| Reverse evidence | Independent order, same-port settlement and physical-payload-gate mutations made the named tests fail with child exits 4, 2 and 3. Exact submitted snapshot remains unchanged. |
+| CR-165 | `TICKET_DEFECT`: frozen S4 implies foreign-state success although SPEC AC-02 requires foreign registration to be `INSTALL_BLOCKED`. Submitted test seeds foreign records only after receipt issuance. Reviewer pre-seed probe returned finite `CLAIM_BLOCKED`, issued no receipt and changed owned-state bytes before the proof gate. E4 must be refrozen as clean success; E5 owns compensation. |
+| CR-166 | `EVIDENCE_DEFECT`: the committed S7-named test does not inspect all three worktrees. Reviewer external before/after manifests proved all three remained byte/porcelain-identical; revision-02 must assign that check to independent review and keep committed evidence bounded to child environment and exact lease teardown. |
+| Decision / boundary | No integration or correction dispatch. Publish revision-02 ticket freeze first; then the same owner may make only bounded test/evidence corrections on the existing branch. `XSS_NOT_APPLICABLE`; no new worktree/branch, staging push, package/build/install, live Codex/target-project mutation, release or deployment. |
