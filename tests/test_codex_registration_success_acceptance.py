@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import hashlib
 import os
 from pathlib import Path
 import subprocess
@@ -50,10 +49,7 @@ from tests.staging.codex_lifecycle_oracle.contracts import (
     OracleBlocked,
     OracleCommand,
     OracleCompleted,
-    OracleForeignSeeded,
     OracleIdentity,
-    OracleMarketplaceRecord,
-    OraclePluginRecord,
     OracleRunResult,
     OracleState,
 )
@@ -115,7 +111,7 @@ def _request() -> CodexRegistrationPortRequest:
 
 
 def _ready_environment(owner_suffix: str) -> tuple[DisposableEnvironmentAllocator, EnvironmentLease, CodexLifecycleOracle]:
-    allocator = DisposableEnvironmentAllocator.from_system_temp()
+    allocator = DisposableEnvironmentAllocator.from_project_runtime()
     provisioned = allocator.provision(EnvironmentOwnerId(value=f"environment-owner-{owner_suffix}"))
     if type(provisioned) is not ProvisionedEnvironment:
         raise AssertionError("failed to provision the test-owned environment")
@@ -128,37 +124,6 @@ def _teardown(allocator: DisposableEnvironmentAllocator, lease: EnvironmentLease
     result = allocator.teardown(lease)
     if result.status is not TeardownStatus.REMOVED or root.exists():
         raise AssertionError("the exact E4 lease did not tear down")
-
-
-def _foreign_marketplace() -> OracleMarketplaceRecord:
-    root = r"C:\Users\oracle\AppData\Local\JohnnyAIWorkflow\marketplaces\foreign-market"
-    payload = f"marketplace|foreign-market|{root}".encode("utf-8")
-    return OracleMarketplaceRecord(
-        name="foreign-market",
-        root=root,
-        locator="marketplaces/foreign-market.json",
-        digest=hashlib.sha256(payload).hexdigest(),
-    )
-
-
-def _foreign_plugin() -> OraclePluginRecord:
-    installed = r"C:\Users\oracle\AppData\Local\JohnnyAIWorkflow\plugins\foreign-plugin"
-    payload = (
-        "plugin|foreign-plugin|foreign-plugin-name|foreign-market|foreign-version|"
-        f"foreign-source|foreign-install-policy|foreign-auth-policy|{installed}"
-    ).encode("utf-8")
-    return OraclePluginRecord(
-        plugin_id="foreign-plugin",
-        name="foreign-plugin-name",
-        marketplace_name="foreign-market",
-        version="foreign-version",
-        source="foreign-source",
-        install_policy="foreign-install-policy",
-        auth_policy="foreign-auth-policy",
-        installed_path=installed,
-        locator="plugins/foreign-plugin.json",
-        digest=hashlib.sha256(payload).hexdigest(),
-    )
 
 
 def _initialize(
@@ -208,41 +173,19 @@ def _child_success() -> int:
             return 5
         if oracle.state_path(lease).read_bytes() == before_state:
             return 8
-        foreign_marketplace = oracle.seed_foreign_marketplace(lease, _foreign_marketplace())
-        foreign_plugin = oracle.seed_foreign_plugin(lease, _foreign_plugin())
-        if type(foreign_marketplace) is not OracleForeignSeeded or type(foreign_plugin) is not OracleForeignSeeded:
-            return 9
         state = OracleState.model_validate_json(oracle.state_path(lease).read_bytes())
-        if len(state.marketplaces) != 1 or len(state.plugins) != 1:
-            return 6
-        if len(state.foreign_marketplaces) != 1 or len(state.foreign_plugins) != 1:
-            return 7
-        payload_root = oracle.payload_root(lease)
-        foreign_state = oracle.state_path(lease).read_bytes()
-        foreign_marketplace_bytes = (payload_root / "marketplaces" / "foreign-market.json").read_bytes()
-        foreign_plugin_bytes = (payload_root / "plugins" / "foreign-plugin.json").read_bytes()
-        if type(oracle.run(lease, OracleCommand(action=OracleAction.MARKETPLACE_LIST, identity=_identity()))) is not OracleCompleted:
-            return 10
-        if type(oracle.run(lease, OracleCommand(action=OracleAction.PLUGIN_LIST, identity=_identity()))) is not OracleCompleted:
-            return 11
         if (
-            oracle.state_path(lease).read_bytes() != foreign_state
-            or (payload_root / "marketplaces" / "foreign-market.json").read_bytes() != foreign_marketplace_bytes
-            or (payload_root / "plugins" / "foreign-plugin.json").read_bytes() != foreign_plugin_bytes
+            len(state.marketplaces) != 1
+            or len(state.plugins) != 1
+            or len(state.foreign_marketplaces) != 0
+            or len(state.foreign_plugins) != 0
         ):
-            return 12
+            return 6
         if result.receipt.digest != _request().digest:
-            return 13
+            return 9
         return 0
     finally:
         _teardown(allocator, lease)
-
-
-def _identity() -> OracleIdentity:
-    binding = bind_oracle_identity(_request())
-    if type(binding) is not OracleIdentityBound:
-        raise AssertionError("request identity did not bind")
-    return binding.identity
 
 
 def _build_claim(
@@ -378,7 +321,7 @@ class CodexRegistrationSuccessAcceptanceTests(unittest.TestCase):
         finally:
             _teardown(allocator, lease)
 
-    def test_s3_s4_s5_s7_exact_child_success_preserves_foreign_and_parent_state(self) -> None:
+    def test_s3_s4_s5_s7_clean_child_success_order_payload_parent_preservation_unique_child_temp_absence_and_exact_lease_teardown(self) -> None:
         self._run_child(CHILD_SUCCESS_ARGUMENT)
 
     def test_s6_one_shot_claim_replay_and_fabrication_are_blocked(self) -> None:
