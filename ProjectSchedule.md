@@ -151,7 +151,7 @@
 | Ticket 05B4B2E3B oracle owned-absence preservation | COMPLETED / APPROVED / INTEGRATED | Merge `dc07eec`; CR-161 subclass/constructed evidence is finitely blocked. |
 | Ticket 05B4B2E2 registration oracle adapter | COMPLETED / APPROVED / INTEGRATED | Merge `d3d3c1d`; post-merge focused 14/full 409/strict mypy and compile 134 pass; allocation released and receipt closed. |
 | Ticket 05B4B2E3C compensation request revalidation | COMPLETED / APPROVED / INTEGRATED | Merge `c042af1`; reviewer focused 24/full 395/strict mypy 132 passed. |
-| Ticket 05B4B2E3D compensation response admission | IN_PROGRESS / DISPATCH_CONFIRMED | Owner2 exact Local task; P1-P8 pure exact response/absence projection; two new staging-only paths; no oracle call or effect. |
+| Ticket 05B4B2E3D compensation response admission | BLOCKED / HALT_SCOPE_VIOLATION | Owner2 stopped before commit after deleting one pre-existing owned test TEMP residue outside the pure-projection authority; uncommitted two-path work is preserved pending owner disposition. |
 | Ticket 05B4B2E3 compensation oracle adapter | PLANNED / DEPENDENCY_WAIT | Refreeze as a thin effect adapter only after E3D approval/integration. |
 | Ticket 05B4B2E4 registration success acceptance | IN_PROGRESS / DISPATCH_CONFIRMED | Owner1 exact Local task; S1-S8 two-path disposable-child system acceptance over integrated E2/forward/settlement/proof. |
 | Tickets 05B4B2E5-E6 lifecycle acceptance | PLANNED / DEPENDENCY_WAIT | Compensation and isolation remain small dependency-ordered acceptance tickets. |

@@ -3490,3 +3490,12 @@
 | Admission evidence | Both tasks are idle and product-bound to their exact permanent Local worktrees. Canonical root, filesystem identity, linked Git metadata and reviewer readback agree; both lanes are clean and exactly three worktrees exist. Evidence digests are stored in the ticket registries. |
 | Branch policy | Each owner may create only its one named ticket branch from the exact control commit carrying this registry, inside its existing worktree. No new worktree, historical-source copy, reset, force, rebase or cross-lane write. |
 | Boundary | No helper Agent: both tickets are bounded and low-search. No staging push, package/build/install, live Codex/host/target-project mutation, release or deployment. |
+
+## PRG-20260813-318 — Ticket 05B4B2E3D typed halt
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENT(E3D) -> SCOPE_VIOLATION -> HALT / OWNER_DISPOSITION_REQUIRED` |
+| Incident | While diagnosing two full-suite residue failures, owner2 deleted exact pre-existing test residue `%TEMP%/johnny-stage-env-d7acd177c3704814a0fbaf01c3f83810` before reviewer steering arrived. Its owner/environment markers were read before deletion; it was outside target project and all worktrees, but pre-existing host cleanup was not authorized by this pure-projection ticket. |
+| Preserved evidence | E3D branch remains at registry `472201b1f82416d0fc00ec03582d0175f9f97048`. Two frozen implementation paths are uncommitted; no tracked edit, implementation commit or WPR handoff exists. First red was missing module; focused `10/10`, focused strict mypy and compile passed; the host full suite ran `419` tests with two pre-cleanup residue failures. |
+| Decision | E3D receipt/allocation are suspended. No reviewer cleanup, commit, review, integration or redispatch. Project-owner disposition is required before deciding whether the preserved uncommitted work may be resumed or must be discarded by its owner. E4 remains independently active. |

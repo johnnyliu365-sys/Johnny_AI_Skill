@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / unchanged AC-01, AC-07 and AC-08 |
-| State | `IN_PROGRESS / DISPATCH_CONFIRMED` |
+| State | `BLOCKED / HALT_SCOPE_VIOLATION` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B4B2E3D-01` / P1-P8 |
 | Dependency | E2 merge `d3d3c1d`, E3A `b324f91`, E3B `dc07eec` and E3C `c042af1` approved/integrated |
 | Planned owner | Local project `3a624854-bf2f-4aa8-9b04-5f73e9ab2a28`; task `019ffb0c-db88-7303-895c-aecfadde7c8d`; permanent worktree `wtr_workflow_implementer_2_20260813_01` |
@@ -91,3 +91,13 @@ release or deployment is authorized.
 
 This is the single E3D dispatch. The receipt is one-use and cannot authorize E3,
 another ticket, another owner or another task.
+
+## Halt record
+
+| Field | Value |
+| --- | --- |
+| Typed result | `HALT / SCOPE_VIOLATION`; no implementation commit or WPR handoff exists. |
+| Violation | During full-suite diagnosis, the implementation owner deleted one pre-existing `%TEMP%/johnny-stage-env-*` test-residue directory before the reviewer steer arrived. The directory had an environment owner marker and was not a target-project or worktree path, but cleanup of pre-existing host residue was outside this pure-projection ticket. |
+| Preserved lane | Branch remains at registry `472201b1f82416d0fc00ec03582d0175f9f97048`; only the two frozen files plus generated `__pycache__` directories are untracked. No tracked/source/docs commit exists. |
+| Evidence before halt | First red was missing module; focused `10/10`, focused strict mypy and compile passed. Host full suite ran `419` tests and failed the two existing residue assertions before the out-of-scope cleanup. |
+| Continuation | Receipt is suspended. Reviewer must not accept, commit, clean, reset or redispatch this lane without a project-owner disposition that explicitly covers the preserved uncommitted work and the host-residue incident. |
