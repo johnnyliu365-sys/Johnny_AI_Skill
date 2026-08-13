@@ -4074,3 +4074,13 @@
 | Lane readback | Same E6A branch is idle/clean at handoff `ec0e80b45cf998378c420787ef16cdaf08d98c34`; zero tracked/ignored/runtime/cache residue; exactly three worktrees; exact merge base `5481665`. |
 | Correction / return | Merge the exact control registry into the same branch, preserving only append-only WPR evidence if that sole conflict occurs. Change only the direct adapter test with four independent matrices, then one additive test commit and unique PRG-375 WPR-only correction handoff. |
 | Boundary | No new branch/worktree/helper, source behavior change, target-project/live host effect, push, staging publication, package/build/install, Secret, release or deployment. |
+
+## PRG-20260814-375 - Ticket 05B4B2E6A CR-172 correction handoff
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05B4B2E6A/CR-172) -> ACTION_COMPLETED / REVIEW_HANDOFF`; independent terminal review remains required. |
+| Binding / lane | Same E6A task/worktree/branch/allocation/receipt/correlation; correction registry `d929114c24221493b2cbccc0eb8ddcaec2669b85`; merge admission commit `1bafc1c1d0b90c1c49aae904032a8dce06fd3cd2`. |
+| Implementation | Test-only correction commit `55b265b3904596c057feaa1127de9788122dfda7`; exact changed path `tests/test_codex_registration_oracle_adapter.py`. The staging adapter and preserved E6A acceptance test blobs remain unchanged from `d3b3174b97a9c1fd52d2e861fd10be83c8d10033`. Four independent proof-failure cases now hold the opposite collection at exact one: marketplace zero/duplicate and plugin zero/duplicate. Positive foreign marketplace/plugin and available-entry acceptance remains. |
+| Verification | Focused direct-adapter + E6A + E6B `28/28`; full explicit serial `462/462`; strict full-tree mypy `144/144` with external cache removed; in-memory compile `144/144`. Marketplace-only and plugin-only gate reversals each turned the matching matrix red and were restored. |
+| Scope / security / residue | `XSS_NOT_APPLICABLE`: no renderer, DOM, JavaScript context or privileged bridge. Final source scope is the direct adapter test only; tracked/ignored porcelain, project runtime, bytecode and external cache are clean/absent; three-worktree topology and ancestry are verified. No product source, target-project/global/sibling scan, live host/Codex, push, staging, package, release or deployment effect. |
