@@ -3694,3 +3694,15 @@
 | E4 | Revision-03 keeps immutable implementation/handoff `3375237`/`5cf2235` on the existing branch. The clean owner worktree must history-merge this registry, preserve WPR append evidence, and correct CR-165/166 only in the focused test. |
 | Parallel safety | E3D and E4 have disjoint writable paths, separate permanent worktrees, tasks, allocations, receipts and handoffs. Neither may create/control a helper Agent. |
 | Boundary | No control-side implementation-worktree mutation, new branch/worktree, source/test edit, OS-global cleanup, push, build/package/install, live Codex/host/target-project mutation, Secret, release or deployment. |
+
+## PRG-20260814-338 — Ticket 05B4B2E4 revision-03 CR-165/CR-166 correction handoff
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `CORRECTION_COMPLETED(05B4B2E4 / CR-165-CR-166) -> ACTION_COMPLETED -> REVIEW_HANDOFF`; independent review remains required. |
+| Authority / binding | Control registry `334757cd80d5a4d30db8b375d230115662099b3b`; handoff `hnd_local_orchestration_install_05b4b2e4_cr165_166_r03_20260814`; allocation `aln_local_orchestration_install_05b4b2e4_r03_20260814`; receipt `rcpt_local_orchestration_install_05b4b2e4_r03_20260814`; correlation `corr-local-orchestration-install-05b4b2e4-cr165-166-r03-20260814`. |
+| Admission / merge | Existing branch `codex/implementation-codex-registration-success-acceptance-05b4b2e4` admitted at `5cf2235ad755bd1f5935f7139789bfa6f9a4c970`; history-preserving control merge `55a12fdb9a1e071e7ccef1efbeaf3d1c6f42e71b` had only the predicted WPR append conflict. The merged WPR retained every unique PRG exactly once. |
+| Implementation | Additive correction `dc909da63cbd1aaedf73877d47bbceaa5d7e2952`, exactly `tests/test_codex_registration_success_acceptance.py`. It adapts the integrated allocator call to `from_project_runtime()`, removes post-receipt foreign seeding/list helpers and imports, asserts one owned marketplace, one owned plugin and zero foreign records, and bounds the S3/S4/S5/S7 name to executed child evidence. |
+| Verification | Focused `5/5`; full serial unittest discovery `419/419`; strict full-tree `mypy --strict --explicit-package-bases` `136/136` files with an external cache; in-memory compile `136/136`. The three S8 reversals independently turned red with child exits `4/2/3` (operation order / same-port settlement / physical payload gate) and restored exact blobs. |
+| Static / topology / residue | Exact one-path implementation scope, `git diff --check`, control and handoff ancestry, three-worktree topology, tracked/ignored porcelain, zero repository bytecode/cache residue and absent `tests/.johnny-runtime` passed. `XSS_NOT_APPLICABLE`: no Browser, WebView, HTML/DOM renderer, JavaScript context or privileged bridge exists. |
+| Boundary | No staging-source change, helper Agent, new worktree/branch, OS-global TEMP enumeration/cleanup, sibling/owner2/control/target-project write, package/build/install, live Codex mutation, push, release, deployment or review decision occurred. |
