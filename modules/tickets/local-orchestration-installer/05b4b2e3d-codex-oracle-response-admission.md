@@ -3,8 +3,8 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / unchanged AC-01, AC-07 and AC-08 |
-| State | `FROZEN / READY_FOR_DISPATCH / REVISION_02` |
-| Closure | `CLOSURE-LOCAL-INSTALL-T05B4B2E3D-01` / P1-P8 |
+| State | `FROZEN / READY_FOR_DISPATCH / REVISION_03_CORRECTION` — CR-170 refrozen; CR-171 correction required |
+| Closure | `CLOSURE-LOCAL-INSTALL-T05B4B2E3D-02` / P1-P8 |
 | Dependency | E2 merge `d3d3c1d`, E3A `b324f91`, E3B `dc07eec` and E3C `c042af1` approved/integrated |
 | Planned owner | Local project `3a624854-bf2f-4aa8-9b04-5f73e9ab2a28`; task `019ffb0c-db88-7303-895c-aecfadde7c8d`; permanent worktree `wtr_workflow_implementer_2_20260813_01` |
 | Control / reviewer | Current control task is both ticket author and independent reviewer; it must not implement source/tests |
@@ -30,11 +30,19 @@ constructed value or caller-provided payload.
 - Supported protocol actions are `PLUGIN_REMOVE`, `MARKETPLACE_REMOVE`,
   `PLUGIN_LIST` and `MARKETPLACE_LIST`. Exact `OracleAbsent` is accepted only
   for `ABSENCE`. Every other action/result combination is finite rejection.
-- An accepted protocol value must be rebuilt from exact built-in state at every
-  Pydantic node. Subclasses, missing/extra fields, constructed or injected
-  nested values, wrong surface/payload pairs and caller-controlled property,
-  equality, hash, repr or serialization execution reject before any value is
-  exposed.
+- An accepted protocol value must be rebuilt from an exact built-in class and
+  exact observable Pydantic state at every node. Every primitive and nested
+  value is explicitly type-checked, revalidated and rebuilt; the caller's
+  instance never escapes. A fully populated `model_construct` value that is
+  state-equivalent to a normally validated value may pass only through that
+  rebuild because constructor provenance is not observable. Subclasses,
+  missing/extra fields, injected/private state, validator-bypassing invalid
+  state, wrong surface/payload pairs and caller-controlled property, equality,
+  hash, repr or serialization execution reject before any value is exposed.
+- Optional marketplace source admission is a typed three-way result: absent,
+  rebuilt-valid or present-invalid. Parent entry rebuilders may omit only the
+  absent result; present-invalid must reject the entire response and can never
+  be collapsed to absence.
 - Exact `OracleBlocked` maps to one finite dependency-blocked reason without
   retaining its raw reason. Wrong result type, malformed state and
   action/surface mismatch remain separately finite so E3 can map them to its
@@ -48,13 +56,13 @@ constructed value or caller-provided payload.
 | ID | Required evidence |
 | --- | --- |
 | `P1` | First red is the missing response-admission module. The implementation commit changes exactly the two frozen paths. |
-| `P2` | Non-`OracleAction`, unsupported action, non-run-result, subclass and constructed/extra top-level values return one finite invalid/malformed rejection without exception or caller protocol execution. |
+| `P2` | Non-`OracleAction`, unsupported action, non-run-result, subclass, extra/injected/private top-level state and validator-bypassing invalid values return one finite invalid/malformed rejection without exception or caller protocol execution. A fully populated state-equivalent constructed envelope is revalidated, rebuilt and may be accepted; constructor provenance itself is not an input authority. |
 | `P3` | Exact `PLUGIN_REMOVE` plus exact matching `CodexPluginRemove` is rebuilt and accepted; wrong surface, wrong payload, missing/extra/injected field and malformed nested value reject. |
 | `P4` | Exact `MARKETPLACE_REMOVE` plus exact matching `CodexMarketplaceRemove` is rebuilt and accepted; the same finite negative matrix rejects. |
-| `P5` | Exact `PLUGIN_LIST` recursively rebuilds installed/available entries, optional marketplace source and primitive fields; duplicate/foreign entries remain data, while subclasses and malformed/constructed nodes reject. |
-| `P6` | Exact `MARKETPLACE_LIST` recursively rebuilds entries and optional marketplace source; subclasses and malformed/constructed nodes reject. |
+| `P5` | Exact `PLUGIN_LIST` recursively rebuilds installed/available entries, optional marketplace source and primitive fields; duplicate/foreign entries remain data. Legitimate source omission and fully populated state-equivalent constructed values remain accepted only after rebuilding; missing required source fields, invalid primitives, subclasses, extra/injected/private state and other malformed nodes reject. |
+| `P6` | Exact `MARKETPLACE_LIST` applies the same optional-source three-way admission and recursive rebuild rules as P5; omission is accepted, while every present-invalid source rejects the whole response. |
 | `P7` | Exact `OracleAbsent` is accepted only for `ABSENCE`; absence under another action and completed response under `ABSENCE` reject. Exact `OracleBlocked` always returns metadata-only dependency-blocked evidence and never leaks its reason. |
-| `P8` | Independently reverse action/surface matching, one recursive exact-state guard and the absence gate. Each named test turns red and exact blobs restore; focused/full serial unittest, strict mypy, in-memory compile, source/scope/diff/ancestry/topology/residue checks pass. |
+| `P8` | Independently reverse action/surface matching, one recursive exact-state guard, the optional-source present-invalid gate and the absence gate. Each named test turns red and exact blobs restore; focused/full serial unittest, strict mypy, in-memory compile, source/scope/diff/ancestry/topology/residue checks pass. |
 
 ## TDD / CodeReview matrix
 
@@ -132,3 +140,41 @@ worktree.
 The new receipt is one-use and replaces the suspended revision-01 receipt. Full
 verification must use the project-owned runtime; no host-global cleanup may be
 used to manufacture a green result.
+
+## Revision-02 independent review disposition
+
+Implementation `c588bf6d24fcb459919130e5bebaeb961de72ca4` and WPR-only
+handoff `77be19295f9cd22d085f98b33e522b9152057318` are immutable.
+Independent review records CR-170 `TICKET_DEFECT` and CR-171
+`IMPLEMENTATION_DEFECT` in
+`doc/reviews/local-orchestration-installer/05b4b2e3d-codex-oracle-response-admission-code-review.md`.
+No correction receipt exists until CR-170 is refrozen.
+
+## Revision-03 correction refreeze and dispatch registry
+
+CR-170 is resolved at the ticket boundary without expanding the public
+contract: constructor provenance is not inferred. Closure revision 02 freezes
+observable exact-state revalidation/rebuilding instead. CR-171 remains the only
+production correction and must be closed together with the missing P5/P6 cells.
+
+Required named tests cover both plugin-list and marketplace-list entries:
+
+- legitimate optional-source omission accepts;
+- a valid source and a fully populated state-equivalent constructed source are
+  revalidated, rebuilt and accepted;
+- a present source with a missing required field, invalid primitive, subclass,
+  extra field, injected state or private state rejects the whole response;
+- a reverse mutation that collapses present-invalid into absent turns the
+  corresponding committed test red before exact restoration.
+
+| Field | Value |
+| --- | --- |
+| Reviewed authority | Control review `ea3e94f3ecf5a0bbdec68123aad6bfbb8a3e73f1`; this control commit is the revision-03 reviewed handoff; project authority `PRG-20260809-042`. |
+| Preserved lane | Same ticket, owner, task, worktree, branch and allocation. Immutable implementation `c588bf6d24fcb459919130e5bebaeb961de72ca4` and handoff `77be19295f9cd22d085f98b33e522b9152057318` remain evidence. |
+| Binding | Handoff `hnd_local_orchestration_install_05b4b2e3d_cr170_171_r03_20260814`; retained allocation `aln_local_orchestration_install_05b4b2e3d_r02_20260814`; correction receipt `rcpt_local_orchestration_install_05b4b2e3d_r03_20260814`; correlation `corr-local-orchestration-install-05b4b2e3d-cr170-171-r03-20260814`. |
+| Baseline admission | Exact clean branch `codex/implementation-codex-oracle-response-admission-05b4b2e3d` at `77be19295f9cd22d085f98b33e522b9152057318`; history-merge this reviewed control registry. Only the predicted WPR append conflict may be resolved by retaining every unique PRG exactly once; any other conflict is typed `HALT`. |
+| Writable paths | Existing `response_admission.py`, its focused test, then unique `PRG-20260814-343` WPR-only handoff. No new branch/worktree or unrelated source. |
+
+This finite refreeze is `AUTO_CONTINUE`; it does not require another project-owner
+confirmation. The correction receipt authorizes only CR-171 and closure revision
+02 evidence on the preserved E3D lane.

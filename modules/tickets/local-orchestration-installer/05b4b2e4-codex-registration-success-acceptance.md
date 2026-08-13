@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / unchanged AC-01, AC-07 and AC-08 |
-| State | `FROZEN / READY_FOR_DISPATCH / REVISION_03_CORRECTION` |
+| State | `COMPLETE / APPROVED / INTEGRATED` — merge `c1a5a7c` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B4B2E4-02` / S1-S8 |
 | Dependency | E2 merge `d3d3c1d` plus integrated forward, settlement-authority and proof-settlement modules |
 | Planned owner | Local project `6d2ebb66-1ae7-48b4-96da-53ffba88ef1f`; task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; permanent worktree `wtr_workflow_implementation_20260813_01` |
@@ -161,3 +161,19 @@ resume as one additive same-branch correction.
 
 The revision-03 receipt is one-use. The source module and immutable prior commits
 must not be rewritten; reviewer alone performs external three-worktree manifests.
+
+## Revision-03 terminal review disposition
+
+Correction `dc909da63cbd1aaedf73877d47bbceaa5d7e2952` and WPR-only
+handoff `63b84949b2a9c7dd27872a6c0f56aa02207ed65b` are independently
+`APPROVED / READY_TO_MERGE`. CR-165 and CR-166 are closed; formal evidence is
+recorded in the ticket review file. Integration must preserve the complete
+two-parent branch history beginning at merge `55a12fd`.
+
+## Guarded integration disposition
+
+Review `44dd810385f6cf0a03f48fbff0bd7fc27ca1396a` and complete E4
+handoff `63b84949b2a9c7dd27872a6c0f56aa02207ed65b` were integrated by
+history-preserving merge `c1a5a7c6429c4b7021d5ecc0090a01e81784ad2f`.
+The only conflict was the predicted WPR append; every unique PRG was retained
+exactly once. Post-merge focused/full/static/residue verification passed.

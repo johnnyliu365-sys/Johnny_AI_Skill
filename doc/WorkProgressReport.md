@@ -3491,6 +3491,17 @@
 | Branch policy | Each owner may create only its one named ticket branch from the exact control commit carrying this registry, inside its existing worktree. No new worktree, historical-source copy, reset, force, rebase or cross-lane write. |
 | Boundary | No helper Agent: both tickets are bounded and low-search. No staging push, package/build/install, live Codex/host/target-project mutation, release or deployment. |
 
+## PRG-20260813-316 ??Ticket 05B4B2E4 registration success acceptance handoff
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05B4B2E4 / S1-S8) -> ACTION_COMPLETED -> REVIEW_HANDOFF`; independent review remains required. |
+| Product / binding | Local project `6d2ebb66-1ae7-48b4-96da-53ffba88ef1f`; task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; branch `codex/implementation-codex-registration-success-acceptance-05b4b2e4`; workspace `wsb_local_orchestration_install_05b4b2e4_20260813_01`; handoff `hnd_local_orchestration_install_05b4b2e4_r01_20260813`; allocation `aln_local_orchestration_install_05b4b2e4_r01_20260813`; receipt `rcpt_local_orchestration_install_05b4b2e4_r01_20260813`; correlation `corr-local-orchestration-install-05b4b2e4-r01-20260813`; question `q-local-orchestration-install-05b4b2e4-r01-20260813`; side-context `scx-local-orchestration-install-05b4b2e4-r01-20260813-01`. |
+| Implementation | `33752375a5dace8e06547a7732bbd08d4c3deb45`, exactly two paths: `tests/staging/codex_lifecycle_oracle/registration_success_acceptance.py` and `tests/test_codex_registration_success_acceptance.py`. First red was the missing success-acceptance module. |
+| S8 reversal evidence | Reversing operation order made the named success test red (child exit `2`); settling through the wrong port candidate made it red (child exit `2`); bypassing the physical identity/digest gate made the payload test red (child exit `3`). Each exact blob was restored before the green matrix. |
+| Verification | Focused acceptance `5/5`; full serial unittest discovery `414/414`; strict full-tree `mypy --strict --explicit-package-bases` `136/136` files with repository-external cache; in-memory compile `136/136` Python files. Post-commit matrix passed at the implementation SHA. |
+| Static / topology / residue | Exact ancestry from registry commit `472201b1f82416d0fc00ec03582d0175f9f97048`, exact two-path scope, `git diff --check`, source/dynamic sentinels, three-worktree topology, tracked/ignored porcelain and cache-residue checks passed. `XSS_NOT_APPLICABLE`: no Browser, WebView, HTML/DOM renderer, JavaScript context or privileged bridge exists. |
+| Boundary | No new worktree, reset/amend/rebase/merge/cherry-pick/stash, network, package/build/install, live Codex/host/target-project write, Secret, Agent control, staging push, release, deployment or review/integration decision occurred. |
 ## PRG-20260813-318 — Ticket 05B4B2E3D typed halt
 
 | Field | Evidence |
@@ -3695,3 +3706,56 @@
 | Projection / safety | Pure response projection: no oracle invocation, lease inspection, filesystem/host/network effect, E3 adapter, historical private-helper copy, or unvalidated dynamic contract. The integrated project-owned runtime was used; no OS-global TEMP was inspected, enumerated, cleaned, or used to manufacture green. `XSS_NOT_APPLICABLE`: neither frozen path contains a Browser/WebView/HTML/DOM/JavaScript renderer or privileged bridge sink. |
 | Scope / topology | Forbidden-dependency and XSS scans have no matches; `git diff --check`, exact staged-path check, tracked/ignored porcelain, cache-residue check, ancestry, and unchanged three-worktree topology pass. The two named pyc files and empty cache directories were removed as authorized; no target-project, sibling-worktree, source-outside-frozen-path, or live Codex mutation occurred. |
 | Boundary | No helper Agent, new branch/worktree, reset/amend/rebase/cherry-pick/stash, cross-worktree write, package/build/install, staging push, release, deployment, Secret, or review/integration decision occurred. |
+## PRG-20260814-339 — Ticket 05B4B2E3D independent review
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05B4B2E3D) -> TERMINAL_CODE_REVIEW -> CHANGES_REQUESTED / TICKET_REFREEZE_REQUIRED` |
+| Reviewed chain | Registry `334757c` -> implementation `c588bf6` -> WPR-only handoff `77be192`; exact two-path implementation and WPR-only scopes, ancestry, diff and clean owner readback pass. |
+| Independent green | Fresh immutable ZIP export beneath reviewer-owned TEMP: focused `10/10`, full `424/424`, strict mypy `136/136`, in-memory compile `136/136`; external cache removed; XSS not applicable. |
+| CR-170 | `TICKET_DEFECT`: a fully populated `model_construct` value and normally validated value have identical observable Pydantic state. Constructor provenance cannot be inferred; refreeze must require exact-state revalidation/rebuild or introduce a separate explicit authority carrier. |
+| CR-171 | `IMPLEMENTATION_DEFECT`: malformed present `marketplaceSource` returns the same internal `None` as legitimate absence, so plugin/marketplace entries are accepted after silently dropping invalid nested data. |
+| Decision / boundary | No correction dispatch or integration. Immutable commits remain evidence. No implementation-worktree write, new branch/worktree, OS-global cleanup, push, package/build/install, live Codex/host/target-project mutation, Secret, release or deployment. |
+
+## PRG-20260814-340 — Ticket 05B4B2E4 revision-03 terminal review
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `CORRECTION_COMPLETED(05B4B2E4) -> TERMINAL_CODE_REVIEW -> APPROVED / READY_TO_MERGE` |
+| Reviewed chain | Existing handoff `5cf2235` + registry `334757c` -> two-parent merge `55a12fd` -> correction `dc909da` -> WPR-only handoff `63b8494`; exact merge/test/WPR scopes and ancestry pass. |
+| Independent green | Fresh immutable export: focused `5/5`, full `419/419`, strict mypy `136/136`, in-memory compile `136/136`; Unicode trees present and external cache removed. |
+| CR closure | CR-165 closed by one-owned/zero-foreign clean success evidence and removal of post-success foreign seeding. CR-166 closed by honest committed test naming plus reviewer-owned before/after manifests for all three permanent worktrees. |
+| S8 / manifests | Independent order, wrong-port settlement and payload-gate reversals made named tests red with child exits `4/2/3`, then exact blobs restored and focused `5/5`. All three permanent worktree byte digests, branches, HEADs, tracked/untracked and ignored porcelain were identical before/after. |
+| Decision / boundary | `APPROVED / READY_TO_MERGE`; integrate complete history only. No push, package/build/install, live Codex/host/target-project mutation, Secret, release or deployment. |
+## PRG-20260814-338 — Ticket 05B4B2E4 revision-03 CR-165/CR-166 correction handoff
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `CORRECTION_COMPLETED(05B4B2E4 / CR-165-CR-166) -> ACTION_COMPLETED -> REVIEW_HANDOFF`; independent review remains required. |
+| Authority / binding | Control registry `334757cd80d5a4d30db8b375d230115662099b3b`; handoff `hnd_local_orchestration_install_05b4b2e4_cr165_166_r03_20260814`; allocation `aln_local_orchestration_install_05b4b2e4_r03_20260814`; receipt `rcpt_local_orchestration_install_05b4b2e4_r03_20260814`; correlation `corr-local-orchestration-install-05b4b2e4-cr165-166-r03-20260814`. |
+| Admission / merge | Existing branch `codex/implementation-codex-registration-success-acceptance-05b4b2e4` admitted at `5cf2235ad755bd1f5935f7139789bfa6f9a4c970`; history-preserving control merge `55a12fdb9a1e071e7ccef1efbeaf3d1c6f42e71b` had only the predicted WPR append conflict. The merged WPR retained every unique PRG exactly once. |
+| Implementation | Additive correction `dc909da63cbd1aaedf73877d47bbceaa5d7e2952`, exactly `tests/test_codex_registration_success_acceptance.py`. It adapts the integrated allocator call to `from_project_runtime()`, removes post-receipt foreign seeding/list helpers and imports, asserts one owned marketplace, one owned plugin and zero foreign records, and bounds the S3/S4/S5/S7 name to executed child evidence. |
+| Verification | Focused `5/5`; full serial unittest discovery `419/419`; strict full-tree `mypy --strict --explicit-package-bases` `136/136` files with an external cache; in-memory compile `136/136`. The three S8 reversals independently turned red with child exits `4/2/3` (operation order / same-port settlement / physical payload gate) and restored exact blobs. |
+| Static / topology / residue | Exact one-path implementation scope, `git diff --check`, control and handoff ancestry, three-worktree topology, tracked/ignored porcelain, zero repository bytecode/cache residue and absent `tests/.johnny-runtime` passed. `XSS_NOT_APPLICABLE`: no Browser, WebView, HTML/DOM renderer, JavaScript context or privileged bridge exists. |
+| Boundary | No staging-source change, helper Agent, new worktree/branch, OS-global TEMP enumeration/cleanup, sibling/owner2/control/target-project write, package/build/install, live Codex mutation, push, release, deployment or review decision occurred. |
+
+## PRG-20260814-341 — Ticket 05B4B2E4 guarded integration
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `APPROVED(05B4B2E4) -> GUARDED_INTEGRATION -> ACTION_COMPLETED / TICKET_COMPLETED` |
+| Merge | Review `44dd810385f6cf0a03f48fbff0bd7fc27ca1396a` and handoff `63b84949b2a9c7dd27872a6c0f56aa02207ed65b` integrated by two-parent merge `c1a5a7c6429c4b7021d5ecc0090a01e81784ad2f`. Only the predicted WPR append conflict occurred; 335 PRG headings remain unique. |
+| Post-merge verification | Focused E4 `5/5`; full explicit serial `419/419`; strict mypy `136/136`; in-memory compile `136/136`; diff, tracked/ignored porcelain, runtime/cache absence pass. |
+| Router continuation | E4 is complete. E5 remains dependency-blocked because E3 cannot integrate until E3D CR-170 is refrozen and CR-171 is corrected/reviewed. No unrelated next ticket is dispatchable. |
+| Boundary | No push, package/build/install, live Codex/host/target-project mutation, Secret, release or deployment. |
+
+## PRG-20260814-342 — Ticket 05B4B2E3D revision-03 finite refreeze
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `TICKET_DEFECT_NON_HIGH_RISK + PROJECT_OWNER_AUTO_CONTINUE -> CLOSURE_REVISION_02_FROZEN / CORRECTION_READY` |
+| CR-170 disposition | Constructor provenance is not observable from state-equivalent Pydantic values. P2/P5/P6 now require exact built-in classes, exact observable state, recursive explicit-type revalidation and rebuilding; fully populated state-equivalent constructed values may pass only after rebuilding, while malformed, missing, extra, subclass, injected/private or validator-bypassing invalid state rejects. |
+| CR-171 correction | Optional marketplace source must use a typed absent/rebuilt-valid/present-invalid result. Both plugin-list and marketplace-list receive named omission, valid, state-equivalent, missing-field, invalid-primitive, subclass and injected-state cells; present-invalid may never collapse to absence. |
+| Preserved allocation | Ticket, owner2 task, permanent worktree, E3D branch and revision-02 allocation remain unchanged. Immutable `c588bf6`/`77be192` and review `ea3e94f` remain evidence; one new correction handoff/receipt/correlation is bound in the ticket. |
+| Integration order | E3D correction/review/integration unlocks thin E3. E5 remains blocked on E3; E4 is already integrated. No unrelated parallel ticket is currently dependency-ready. |
+| Boundary | Control docs only. No implementation-worktree write, new branch/worktree, broad cleanup, push, package/build/install, live Codex/host/target-project mutation, Secret, release or deployment. |

@@ -1,5 +1,34 @@
 # Ticket 05B4B2E4 Codex Registration Success Acceptance Code Review
 
+## Revision-03 terminal review
+
+`APPROVED / READY_TO_MERGE`
+
+Revision-03 closes CR-165 and CR-166 without changing the immutable staging
+source. The branch history-preservingly merges the project-owned runtime
+foundation, then changes only the focused acceptance test and one WPR handoff.
+
+| Field | Reviewer evidence |
+| --- | --- |
+| Reviewed chain | Existing E4 handoff `5cf2235` plus control registry `334757c` -> two-parent merge `55a12fdb9a1e071e7ccef1efbeaf3d1c6f42e71b` -> correction `dc909da63cbd1aaedf73877d47bbceaa5d7e2952` -> WPR-only handoff `63b84949b2a9c7dd27872a6c0f56aa02207ed65b`. |
+| Exact scope | Merge resolves only the predicted WPR append conflict; correction changes only `tests/test_codex_registration_success_acceptance.py`; handoff changes only WPR. Original staging source blob remains `d5e4f0e66c5a5abd65eb7b937a4cce3c63092dc8`. |
+| Fresh immutable export | PASS. Unicode library trees are present; focused `5/5`; full explicit serial discovery `419/419`; strict mypy `136/136`; in-memory compile `136/136`; external cache removed. |
+| CR-165 | CLOSED. The clean child now requires exactly one owned marketplace/plugin and zero foreign records. Post-receipt foreign seeding/list evidence and its helpers/imports are absent; compensation remains E5 responsibility. |
+| CR-166 | CLOSED. The committed test name now claims only executed child evidence. Reviewer surrounded the run with manifests for control and both permanent implementation worktrees; tracked byte digests, branches, HEADs, tracked/untracked and ignored porcelain were identical before/after. |
+| S8 truth | PASS. Reviewer independently reversed observed operation order, same-port proof settlement and physical-payload verification. The named tests failed with child exits `4`, `2` and `3`; each temporary mutation was removed, exact source/test SHA-256 was restored, and focused returned `5/5`. |
+| Runtime / cleanup | PASS. All child leases use `from_project_runtime()` and exact typed teardown. Fresh export and all permanent worktrees have no runtime/cache residue; no OS-global TEMP staging root was inspected or cleaned. |
+| XSS / privileged capability | `XSS_NOT_APPLICABLE`. No Browser, WebView, HTML/DOM renderer, JavaScript context, bridge, IPC or extension capability changed. |
+
+CodeReview.md mandatory checks pass: strong exact types, finite error results,
+lease-derived paths, same-port proof authority, honest test claims, dependency
+traceability, exact owner/task/worktree binding and proportionate one-owner/no-
+helper profile. No blocking finding remains.
+
+Guarded integration must merge the complete E4 history, not copy the correction
+alone. Preserve both WPR append sets exactly once, then rerun focused/full/static,
+diff and residue checks. No force, reset, push, package/build/install, live Codex,
+target-project write, release or deployment is authorized.
+
 ## Review decision
 
 `CHANGES_REQUESTED / TICKET_REFREEZE_REQUIRED`
