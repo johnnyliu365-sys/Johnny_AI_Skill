@@ -261,7 +261,7 @@ class ConstructedAbsenceResponseFixture(CodexProtocolFixture):
 
 class CodexLifecycleOracleTests(unittest.TestCase):
     def test_cr161_constructed_accepted_subclass_payload_must_not_prove_absence(self) -> None:
-        allocator = DisposableEnvironmentAllocator.from_system_temp()
+        allocator = DisposableEnvironmentAllocator.from_project_runtime()
         provisioned = allocator.provision(EnvironmentOwnerId(value="environment-owner-0000000000000161"))
         if not isinstance(provisioned, ProvisionedEnvironment):
             raise AssertionError("failed to provision owned environment")
@@ -279,7 +279,7 @@ class CodexLifecycleOracleTests(unittest.TestCase):
         cells = tuple(AbsenceResponseShape)
         for index, shape in enumerate(cells, start=70):
             with self.subTest(shape=shape.value):
-                allocator = DisposableEnvironmentAllocator.from_system_temp()
+                allocator = DisposableEnvironmentAllocator.from_project_runtime()
                 provisioned = allocator.provision(EnvironmentOwnerId(value=f"environment-owner-00000000000016{index:02x}"))
                 if not isinstance(provisioned, ProvisionedEnvironment):
                     raise AssertionError("failed to provision owned environment")
@@ -623,7 +623,7 @@ class CodexLifecycleOracleTests(unittest.TestCase):
             self._teardown(allocator, lease)
 
     def test_a3_a6_parent_revalidates_post_child_owned_state_before_oracle_absent(self) -> None:
-        allocator = DisposableEnvironmentAllocator.from_system_temp()
+        allocator = DisposableEnvironmentAllocator.from_project_runtime()
         provisioned = allocator.provision(EnvironmentOwnerId(value="environment-owner-00000000000000a6"))
         if not isinstance(provisioned, ProvisionedEnvironment):
             raise AssertionError("failed to provision owned environment")
@@ -856,7 +856,7 @@ class CodexLifecycleOracleTests(unittest.TestCase):
                     self._teardown(allocator, lease)
 
     def test_o5_protocol_runner_cannot_synthesize_or_queue_a_response(self) -> None:
-        allocator = DisposableEnvironmentAllocator.from_system_temp()
+        allocator = DisposableEnvironmentAllocator.from_project_runtime()
         provisioned = allocator.provision(EnvironmentOwnerId(value="environment-owner-000000000000000c"))
         if not isinstance(provisioned, ProvisionedEnvironment):
             raise AssertionError("failed to provision owned environment")
@@ -987,7 +987,7 @@ class CodexLifecycleOracleTests(unittest.TestCase):
 
     @staticmethod
     def _ready(owner_suffix: str) -> tuple[DisposableEnvironmentAllocator, EnvironmentLease, CodexLifecycleOracle]:
-        allocator = DisposableEnvironmentAllocator.from_system_temp()
+        allocator = DisposableEnvironmentAllocator.from_project_runtime()
         provisioned = allocator.provision(EnvironmentOwnerId(value=f"environment-owner-{owner_suffix}"))
         if not isinstance(provisioned, ProvisionedEnvironment):
             raise AssertionError("failed to provision owned environment")

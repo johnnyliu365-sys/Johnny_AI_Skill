@@ -291,10 +291,12 @@ class BoundedChildProcessRunnerTests(unittest.TestCase):
     def test_r02_t2_live_root_junction_is_rejected_before_process_port(self) -> None:
         allocator, lease = self._lease("environment-owner-abcdaaaa11112222")
         root = lease.root.path
+        runtime_parent = root.parent
         target = Path(tempfile.mkdtemp(prefix="process-runner-junction-target-"))
         child_names = ("profile", "local-app-data", "roaming-app-data", "temp", "codex-home")
         try:
             self._teardown(allocator, lease)
+            runtime_parent.mkdir()
             for name in child_names:
                 (target / name).mkdir()
             (target / ".johnny-stage-env-owner.json").write_text(
@@ -318,6 +320,9 @@ class BoundedChildProcessRunnerTests(unittest.TestCase):
                     child.rmdir()
             self.assertEqual((), tuple(target.iterdir()))
             target.rmdir()
+            if runtime_parent.exists():
+                self.assertEqual((), tuple(runtime_parent.iterdir()))
+                runtime_parent.rmdir()
 
     def test_r02_t2_live_marker_tamper_after_request_construction_blocks_before_child_start(self) -> None:
         allocator, lease = self._lease("environment-owner-bbbb111122223333")
@@ -534,7 +539,7 @@ class BoundedChildProcessRunnerTests(unittest.TestCase):
         return BoundedChildProcessRunner(SubprocessProcessPort())
 
     def _lease(self, owner: str) -> tuple[DisposableEnvironmentAllocator, EnvironmentLease]:
-        allocator = DisposableEnvironmentAllocator.from_system_temp()
+        allocator = DisposableEnvironmentAllocator.from_project_runtime()
         provisioned = allocator.provision(EnvironmentOwnerId(value=owner))
         self.assertIsInstance(provisioned, ProvisionedEnvironment)
         assert isinstance(provisioned, ProvisionedEnvironment)
@@ -590,7 +595,9 @@ class BoundedChildProcessRunnerTests(unittest.TestCase):
 
     @staticmethod
     def _owned_environment_roots() -> set[Path]:
-        temporary_parent = Path(tempfile.gettempdir()).resolve(strict=True)
+        temporary_parent = (REPOSITORY_ROOT / "tests" / ".johnny-runtime").resolve()
+        if not temporary_parent.exists():
+            return set()
         return {
             child
             for child in temporary_parent.iterdir()

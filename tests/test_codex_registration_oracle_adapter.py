@@ -106,7 +106,7 @@ def _request() -> CodexRegistrationPortRequest:
 
 
 def _ready_environment(owner_suffix: str) -> tuple[DisposableEnvironmentAllocator, EnvironmentLease, CodexLifecycleOracle]:
-    allocator = DisposableEnvironmentAllocator.from_system_temp()
+    allocator = DisposableEnvironmentAllocator.from_project_runtime()
     provisioned = allocator.provision(EnvironmentOwnerId(value=f"environment-owner-{owner_suffix}"))
     if type(provisioned) is not ProvisionedEnvironment:
         raise AssertionError("failed to provision the test-owned environment")

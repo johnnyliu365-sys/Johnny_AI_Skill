@@ -11,21 +11,41 @@ from typing import Callable
 import unittest
 from unittest.mock import patch
 
-from tests.staging.environment_core.contracts import EnvironmentLease, ProvisionBlocked
+from tests.staging.environment_core.contracts import (
+    EnvironmentLease,
+    EnvironmentOwnerId,
+    ProvisionBlocked,
+    ProvisionBlockReason,
+    ProvisionedEnvironment,
+    TeardownStatus,
+)
 from tests.staging.environment_core.environment import DisposableEnvironmentAllocator
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 ENVIRONMENT_PREFIX = "johnny-stage-env-"
 ENVIRONMENT_KEYS = ("USERPROFILE", "LOCALAPPDATA", "APPDATA", "TEMP", "TMP", "CODEX_HOME")
+PROJECT_RUNTIME_ROOT = (REPOSITORY_ROOT / "tests" / ".johnny-runtime").resolve()
 
 
 class DisposableEnvironmentCoreTests(unittest.TestCase):
-    def test_t1_two_distinct_owners_provision_unique_direct_temp_roots_and_reject_replay(self) -> None:
+    def test_r1_project_runtime_replaces_system_temp_factory(self) -> None:
+        self.assertNotIn("from_system_temp", DisposableEnvironmentAllocator.__dict__)
+        allocator = DisposableEnvironmentAllocator.from_project_runtime()
+        result = allocator.provision(EnvironmentOwnerId(value="environment-owner-abcdefabcdefabcd"))
+        self.assertIsInstance(result, ProvisionedEnvironment)
+        assert isinstance(result, ProvisionedEnvironment)
+        self.assertEqual(PROJECT_RUNTIME_ROOT, result.environment.root.path.parent)
+        self.assertTrue(result.environment.root.path.is_relative_to(PROJECT_RUNTIME_ROOT))
+        self.assertFalse(result.environment.root.path.is_relative_to(Path(tempfile.gettempdir()).resolve()))
+        self.assertEqual(TeardownStatus.REMOVED, allocator.teardown(result.environment).status)
+        self.assertFalse(PROJECT_RUNTIME_ROOT.exists())
+
+    def test_t1_two_distinct_owners_provision_unique_direct_project_roots_and_reject_replay(self) -> None:
         from tests.staging.environment_core.contracts import EnvironmentOwnerId, ProvisionBlockReason, ProvisionedEnvironment
         from tests.staging.environment_core.environment import DisposableEnvironmentAllocator
 
         before = self._owned_environment_roots()
-        allocator = DisposableEnvironmentAllocator.from_system_temp()
+        allocator = DisposableEnvironmentAllocator.from_project_runtime()
         first = allocator.provision(EnvironmentOwnerId(value="environment-owner-0123456789abcdef"))
         second = allocator.provision(EnvironmentOwnerId(value="environment-owner-fedcba9876543210"))
         self.assertIsInstance(first, ProvisionedEnvironment)
@@ -35,8 +55,9 @@ class DisposableEnvironmentCoreTests(unittest.TestCase):
         self.assertNotEqual(first.environment.environment_id, second.environment.environment_id)
         self.assertNotEqual(first.environment.root, second.environment.root)
         for environment in (first.environment, second.environment):
-            self.assertEqual(Path(tempfile.gettempdir()).resolve(strict=True), environment.root.path.parent)
-            self.assertFalse(environment.root.path.is_relative_to(REPOSITORY_ROOT))
+            self.assertEqual(PROJECT_RUNTIME_ROOT, environment.root.path.parent)
+            self.assertFalse(environment.root.path.is_relative_to(Path(tempfile.gettempdir()).resolve()))
+            self.assertTrue(environment.root.path.is_relative_to(REPOSITORY_ROOT / "tests" / ".johnny-runtime"))
             self.assertTrue(environment.root.path.exists())
         replay = allocator.provision(EnvironmentOwnerId(value="environment-owner-0123456789abcdef"))
         self.assertIsInstance(replay, ProvisionBlocked)
@@ -59,7 +80,7 @@ class DisposableEnvironmentCoreTests(unittest.TestCase):
         from tests.staging.environment_core.environment import DisposableEnvironmentAllocator
 
         snapshot = {key: os.environ.get(key) for key in ENVIRONMENT_KEYS}
-        allocator = DisposableEnvironmentAllocator.from_system_temp()
+        allocator = DisposableEnvironmentAllocator.from_project_runtime()
         result = allocator.provision(EnvironmentOwnerId(value="environment-owner-0011223344556677"))
         self.assertIsInstance(result, ProvisionedEnvironment)
         assert isinstance(result, ProvisionedEnvironment)
@@ -76,7 +97,7 @@ class DisposableEnvironmentCoreTests(unittest.TestCase):
         from tests.staging.environment_core.contracts import EnvironmentOwnerId, ProvisionedEnvironment, TeardownBlockReason, TeardownStatus
         from tests.staging.environment_core.environment import DisposableEnvironmentAllocator
 
-        allocator = DisposableEnvironmentAllocator.from_system_temp()
+        allocator = DisposableEnvironmentAllocator.from_project_runtime()
         missing = self._provisioned(allocator, "environment-owner-1111222233334444")
         missing.marker_path.unlink()
         self.assertEqual(TeardownBlockReason.MARKER_MISSING, allocator.teardown(missing).reason)
@@ -107,7 +128,7 @@ class DisposableEnvironmentCoreTests(unittest.TestCase):
         from tests.staging.environment_core.contracts import EnvironmentOwnerId, TeardownBlockReason, TeardownStatus
         from tests.staging.environment_core.environment import DisposableEnvironmentAllocator
 
-        allocator = DisposableEnvironmentAllocator.from_system_temp()
+        allocator = DisposableEnvironmentAllocator.from_project_runtime()
         lease = self._provisioned(allocator, "environment-owner-6666777788889999")
         self.assertEqual(TeardownStatus.REMOVED, allocator.teardown(lease).status)
         target = Path(tempfile.mkdtemp(prefix="junction-target-"))
@@ -115,6 +136,8 @@ class DisposableEnvironmentCoreTests(unittest.TestCase):
         target_sentinel = target / "sentinel.bin"
         target_marker.write_text(lease.marker.model_dump_json(warnings=False), encoding="utf-8")
         target_sentinel.write_bytes(b"external junction target")
+        runtime_parent = (REPOSITORY_ROOT / "tests" / ".johnny-runtime").resolve()
+        runtime_parent.mkdir()
         try:
             junction = subprocess.run(
                 ("cmd.exe", "/d", "/c", "mklink", "/J", str(lease.root.path), str(target)),
@@ -142,17 +165,19 @@ class DisposableEnvironmentCoreTests(unittest.TestCase):
             target_marker.unlink()
             target_sentinel.unlink()
             target.rmdir()
+            if runtime_parent.exists():
+                runtime_parent.rmdir()
 
     def test_t4_after_root_and_after_marker_faults_remove_only_owned_root_and_preserve_sibling(self) -> None:
         from tests.staging.environment_core.contracts import EnvironmentFault, EnvironmentOwnerId, ProvisionBlockReason
         from tests.staging.environment_core.environment import DisposableEnvironmentAllocator
 
         before = self._owned_environment_roots()
-        with tempfile.NamedTemporaryFile(prefix="johnny-stage-env-sibling-", delete=False) as sibling:
+        with tempfile.NamedTemporaryFile(prefix="os-temp-sentinel-", delete=False) as sibling:
             sibling.write(b"unrelated sibling")
             sibling.flush()
             sibling_path = Path(sibling.name)
-            allocator = DisposableEnvironmentAllocator.from_system_temp()
+            allocator = DisposableEnvironmentAllocator.from_project_runtime()
             allocator.configure_fault(EnvironmentFault.AFTER_ROOT)
             after_root = allocator.provision(EnvironmentOwnerId(value="environment-owner-4444555566667777"))
             self.assertIsInstance(after_root, ProvisionBlocked)
@@ -170,9 +195,57 @@ class DisposableEnvironmentCoreTests(unittest.TestCase):
         finally:
             sibling_path.unlink()
 
+    def test_r6_project_runtime_residue_blocks_and_preserves_exact_bytes(self) -> None:
+        PROJECT_RUNTIME_ROOT.mkdir()
+        unclaimed = PROJECT_RUNTIME_ROOT / "johnny-stage-env-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        sentinel = unclaimed / "residue.bin"
+        unclaimed.mkdir()
+        sentinel.write_bytes(b"unclaimed-project-residue")
+        before = sentinel.read_bytes()
+        try:
+            allocator = DisposableEnvironmentAllocator.from_project_runtime()
+            result = allocator.provision(EnvironmentOwnerId(value="environment-owner-9999888877776666"))
+            self.assertIsInstance(result, ProvisionBlocked)
+            assert isinstance(result, ProvisionBlocked)
+            self.assertEqual(ProvisionBlockReason.INITIALIZATION_FAILED, result.reason)
+            self.assertEqual(before, sentinel.read_bytes())
+            self.assertTrue(unclaimed.exists())
+        finally:
+            sentinel.unlink()
+            unclaimed.rmdir()
+            PROJECT_RUNTIME_ROOT.rmdir()
+
+    def test_r6_unexpected_sibling_and_malformed_parent_block_without_cleanup(self) -> None:
+        PROJECT_RUNTIME_ROOT.mkdir()
+        sibling = PROJECT_RUNTIME_ROOT / "unexpected-sibling"
+        sibling.write_bytes(b"unexpected-sibling")
+        try:
+            allocator = DisposableEnvironmentAllocator.from_project_runtime()
+            blocked = allocator.provision(EnvironmentOwnerId(value="environment-owner-1111000011110000"))
+            self.assertIsInstance(blocked, ProvisionBlocked)
+            assert isinstance(blocked, ProvisionBlocked)
+            self.assertEqual(ProvisionBlockReason.INITIALIZATION_FAILED, blocked.reason)
+            self.assertEqual(b"unexpected-sibling", sibling.read_bytes())
+        finally:
+            sibling.unlink()
+            PROJECT_RUNTIME_ROOT.rmdir()
+
+        PROJECT_RUNTIME_ROOT.write_bytes(b"malformed-runtime-parent")
+        try:
+            allocator = DisposableEnvironmentAllocator.from_project_runtime()
+            blocked = allocator.provision(EnvironmentOwnerId(value="environment-owner-2222000022220000"))
+            self.assertIsInstance(blocked, ProvisionBlocked)
+            assert isinstance(blocked, ProvisionBlocked)
+            self.assertEqual(ProvisionBlockReason.INITIALIZATION_FAILED, blocked.reason)
+            self.assertEqual(b"malformed-runtime-parent", PROJECT_RUNTIME_ROOT.read_bytes())
+        finally:
+            PROJECT_RUNTIME_ROOT.unlink()
+
     @staticmethod
     def _owned_environment_roots() -> set[Path]:
-        parent = Path(tempfile.gettempdir()).resolve(strict=True)
+        parent = (REPOSITORY_ROOT / "tests" / ".johnny-runtime").resolve()
+        if not parent.exists():
+            return set()
         return {child for child in parent.iterdir() if child.is_dir() and child.name.startswith(ENVIRONMENT_PREFIX)}
 
     def _provisioned(self, allocator: DisposableEnvironmentAllocator, owner: str) -> EnvironmentLease:
