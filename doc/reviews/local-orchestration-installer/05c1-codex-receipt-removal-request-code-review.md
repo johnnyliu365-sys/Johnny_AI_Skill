@@ -68,7 +68,8 @@ On the same ticket, owner, worktree, branch, allocation and receipt:
    constructed invalid installation ID; add/retain invalid receipt-root
    evidence as `INVALID_RECEIPT`.
 3. Rerun focused/full/strict/compile and the three unchanged reversals. Append
-   one correction WPR record that explicitly supersedes only PRG-380's root
+   one correction WPR record, reserved as `PRG-20260814-384`, that explicitly
+   supersedes only PRG-380's root
    classification claim.
 
 No export/API redesign, new path, new branch/worktree, new error code or 05C2

@@ -4145,5 +4145,16 @@
 | Reviewed chain | Registry `dd7f66d4535a03e55d8134febe8093f9b98cea72` -> implementation `ec53d3af854348a2f7385e485d17f3e2a84b98d8` -> WPR-only handoff `fb748f4fd1b7d1f5862c55fa1484151602f174e0`; revision-02 control correction `103ae5385e9571c8ebd7496145b945634738e99f`. |
 | Independent green | Immutable archive SHA-256 `6CA7429DC5CB9100BAB2E85564FDC5D092B0B1A82BFE5D7EE9F14F646636CDE9`; focused `12/12`; full serial `474/474`; strict mypy `146`; compile passes; three mapping/identity reversals turn named tests red and exact archive bytes restore. |
 | CR-173 | The source compares `_raw_value` installation/root before rebuilding invocation values. A constructed noncanonical invocation root returns `RECEIPT_MISMATCH`; revision-02 R4 requires `INVALID_INVOCATION`. The committed root test and PRG-380 encode the same wrong result. Classification: `IMPLEMENTATION_DEFECT + EVIDENCE_DEFECT`. |
-| Correction | Same ticket/owner/worktree/branch/allocation/receipt. Correct only the production module and direct test; public exports unchanged; append unique PRG-383 WPR-only correction handoff. |
+| Correction | Same ticket/owner/worktree/branch/allocation/receipt. Correct only the production module and direct test; public exports unchanged; append unique PRG-384 WPR-only correction handoff. |
 | Boundary | Reviewer wrote only control documents and an isolated TEMP export. No implementation-worktree write, new branch/worktree, live Codex/host/target-project effect, push/staging publication, package/build/install, Secret, release or deployment. |
+
+## PRG-20260814-383 - Ticket 05C1 CR-173 correction dispatch
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `CHANGES_REQUESTED(05C1 / CR-173) + SAME_LANE_CLEAN -> CORRECTION_DISPATCH_FROZEN / IMPLEMENT` |
+| Reviewed authority | Finding commit `78e94b805ef17147863076e59aabaeae3704bf8c`; standing bounded authority `PRG-20260809-042`; original 05C1 allocation and receipt remain valid. |
+| Exact lane | Implementer-2 task `019ffb0c-db88-7303-895c-aecfadde7c8d`; `C:\Users\<user>\Desktop\AI控制工作workflow-implementer-2`; `codex/implementation-codex-receipt-removal-request-05c1`; clean handoff `fb748f4fd1b7d1f5862c55fa1484151602f174e0`; exactly three registered worktrees. |
+| Merge admission | Merge only the exact control commit carrying this registry. Read-only `merge-tree` reports only append-only WPR overlap; preserve PRG-378 through PRG-383 exactly once. Any other conflict, dirty lane, changed implementation blob or topology drift is typed `HALT`. |
+| Correction / return | Modify only the receipt-removal source and direct test named in the ticket, with invocation validation before comparison. Return one additive correction commit and then reserved PRG-384 in one WPR-only handoff. |
+| Boundary | Same ticket/owner/worktree/branch/allocation/receipt/correlation; no helper, new lane, reviewer implementation write, live effect, push/staging publication, package/install, Secret, release or deployment. |

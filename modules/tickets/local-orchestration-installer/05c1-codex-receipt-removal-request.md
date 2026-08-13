@@ -120,5 +120,20 @@ identity before validation, so a noncanonical root is incorrectly classified as
 correlation. Correct only
 `library/local_orchestration/codex_receipt_removal_request.py` and
 `tests/test_codex_receipt_removal_request.py`, then append only reserved
-`PRG-20260814-383` in one WPR-only correction handoff. The export-only root file
+`PRG-20260814-384` in one WPR-only correction handoff. The export-only root file
 and public contract remain unchanged.
+
+## CR-173 correction dispatch registry
+
+| Field | Value |
+| --- | --- |
+| Reviewed finding | Formal review commit `78e94b805ef17147863076e59aabaeae3704bf8c`; `CR-173`; bounded authority `PRG-20260809-042`. |
+| Retained lane | Existing implementer-2 task `019ffb0c-db88-7303-895c-aecfadde7c8d`; permanent worktree `C:\Users\<user>\Desktop\AI控制工作workflow-implementer-2`; branch `codex/implementation-codex-receipt-removal-request-05c1`; clean handoff `fb748f4fd1b7d1f5862c55fa1484151602f174e0`. |
+| Retained binding | Workspace `wsb_local_orchestration_install_05c1_20260814_01`; handoff `hnd_local_orchestration_install_05c1_20260814`; allocation `aln_local_orchestration_install_05c1_20260814`; receipt `rcpt_local_orchestration_install_05c1_20260814`; correlation `corr-local-orchestration-install-05c1-20260814`; question `q-local-orchestration-install-05c1-20260814`; side context `scx-local-orchestration-install-05c1-20260814-01`. |
+| Admission | Exactly three worktrees remain registered and the implementation lane is clean. Merge only the exact control commit carrying this registry into the retained branch. Read-only `merge-tree` proves the sole expected conflict is append-only `doc/WorkProgressReport.md`; preserve every unique PRG-378 through PRG-383 record exactly once. Any source, test, ticket or other conflict, changed implementation blob, dirty lane or topology drift is typed `HALT`. |
+| Writable correction | Only `library/local_orchestration/codex_receipt_removal_request.py` and `tests/test_codex_receipt_removal_request.py`; one additive implementation correction commit, then only reserved `PRG-20260814-384` in one WPR-only handoff commit. |
+
+This registry neither creates a branch/worktree nor changes owner, allocation,
+receipt, correlation, public API or 05C2 scope. The implementation owner cannot
+orchestrate another Agent, review or integrate its own return, dispatch another
+ticket, push/publish staging, package/install, release or deploy.
