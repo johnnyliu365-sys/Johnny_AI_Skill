@@ -59,6 +59,10 @@ class DerivedPluginEntry(CodexPluginEntry):
     """An exact-shaped nested payload subclass."""
 
 
+class DerivedMarketplaceSource(CodexMarketplaceSource):
+    """An exact-shaped optional source subclass."""
+
+
 class ProtocolTrap:
     """A caller object whose protocols must never be observed."""
 
@@ -83,6 +87,64 @@ def _completed(surface: CodexProtocolSurface, payload: CodexProtocolPayload) -> 
 def _constructed_completed(surface: object, payload: object) -> OracleCompleted:
     response = CodexProtocolAccepted.model_construct(surface=surface, payload=payload)
     return OracleCompleted(response=response)
+
+
+def _plugin_entry_without_source() -> CodexPluginEntry:
+    return CodexPluginEntry(
+        pluginId="owned-plugin",
+        name="owned-plugin-name",
+        marketplaceName="owned-market",
+        version="1.0.0",
+        installed=True,
+        enabled=True,
+        source="owned-source",
+        installPolicy="global",
+        authPolicy="trusted",
+    )
+
+
+def _plugin_entry_with_source(source: object) -> CodexPluginEntry:
+    return CodexPluginEntry.model_construct(
+        pluginId="owned-plugin",
+        name="owned-plugin-name",
+        marketplaceName="owned-market",
+        version="1.0.0",
+        installed=True,
+        enabled=True,
+        source="owned-source",
+        installPolicy="global",
+        authPolicy="trusted",
+        marketplaceSource=source,
+    )
+
+
+def _marketplace_entry_without_source() -> CodexMarketplaceEntry:
+    return CodexMarketplaceEntry(
+        name="owned-market",
+        root=r"C:\Users\oracle\AppData\Local\JohnnyAIWorkflow\marketplaces\owned-market",
+    )
+
+
+def _marketplace_entry_with_source(source: object) -> CodexMarketplaceEntry:
+    return CodexMarketplaceEntry.model_construct(
+        name="owned-market",
+        root=r"C:\Users\oracle\AppData\Local\JohnnyAIWorkflow\marketplaces\owned-market",
+        marketplaceSource=source,
+    )
+
+
+def _invalid_marketplace_sources() -> tuple[object, ...]:
+    injected = CodexMarketplaceSource(type="marketplace", value="owned-market")
+    object.__getattribute__(injected, "__dict__")["injected"] = "forbidden"
+    private = CodexMarketplaceSource(type="marketplace", value="owned-market")
+    object.__setattr__(private, "__pydantic_private__", {"forged": "forbidden"})
+    return (
+        CodexMarketplaceSource.model_construct(value="owned-market"),
+        CodexMarketplaceSource.model_construct(type=7, value="owned-market"),
+        DerivedMarketplaceSource(type="marketplace", value="owned-market"),
+        injected,
+        private,
+    )
 
 
 def _admit(value: object, action: object) -> CodexOracleResponseAdmission:
@@ -254,6 +316,58 @@ class CodexOracleResponseAdmissionTests(unittest.TestCase):
         malformed = _completed(CodexProtocolSurface.PLUGIN_LIST, CodexPluginList(installed=(derived,), available=()))
         _assert_rejected(self, malformed, OracleAction.PLUGIN_LIST, CodexOracleResponseRejectReason.MALFORMED_RESPONSE)
 
+    def test_p5_plugin_list_marketplace_source_state_matrix(self) -> None:
+        omitted = _admit(
+            _completed(
+                CodexProtocolSurface.PLUGIN_LIST,
+                CodexPluginList(installed=(_plugin_entry_without_source(),), available=()),
+            ),
+            OracleAction.PLUGIN_LIST,
+        )
+        self.assertIs(type(omitted), CodexProtocolAccepted)
+        if type(omitted) is not CodexProtocolAccepted or type(omitted.payload) is not CodexPluginList:
+            raise AssertionError("expected omitted plugin source to be accepted")
+        self.assertIsNone(omitted.payload.installed[0].marketplaceSource)
+
+        valid_source = CodexMarketplaceSource(type="marketplace", value="owned-market")
+        valid = _admit(
+            _completed(
+                CodexProtocolSurface.PLUGIN_LIST,
+                CodexPluginList(installed=(_plugin_entry_with_source(valid_source),), available=()),
+            ),
+            OracleAction.PLUGIN_LIST,
+        )
+        self.assertIs(type(valid), CodexProtocolAccepted)
+        if type(valid) is not CodexProtocolAccepted or type(valid.payload) is not CodexPluginList:
+            raise AssertionError("expected valid plugin source to be accepted")
+        self.assertEqual(valid.payload.installed[0].marketplaceSource, valid_source)
+        self.assertIsNot(valid.payload.installed[0].marketplaceSource, valid_source)
+
+        constructed_source = CodexMarketplaceSource.model_construct(type="marketplace", value="owned-market")
+        constructed = _admit(
+            _completed(
+                CodexProtocolSurface.PLUGIN_LIST,
+                CodexPluginList(installed=(_plugin_entry_with_source(constructed_source),), available=()),
+            ),
+            OracleAction.PLUGIN_LIST,
+        )
+        self.assertIs(type(constructed), CodexProtocolAccepted)
+        if type(constructed) is not CodexProtocolAccepted or type(constructed.payload) is not CodexPluginList:
+            raise AssertionError("expected state-equivalent constructed plugin source to be rebuilt")
+        self.assertEqual(constructed.payload.installed[0].marketplaceSource, MARKETPLACE_SOURCE)
+        self.assertIsNot(constructed.payload.installed[0].marketplaceSource, constructed_source)
+
+        for source in _invalid_marketplace_sources():
+            _assert_rejected(
+                self,
+                _completed(
+                    CodexProtocolSurface.PLUGIN_LIST,
+                    CodexPluginList(installed=(_plugin_entry_with_source(source),), available=()),
+                ),
+                OracleAction.PLUGIN_LIST,
+                CodexOracleResponseRejectReason.MALFORMED_RESPONSE,
+            )
+
     def test_p6_marketplace_list_rebuilds_nested_entries_and_source(self) -> None:
         entry = CodexMarketplaceEntry(
             name="owned-market",
@@ -278,6 +392,58 @@ class CodexOracleResponseAdmissionTests(unittest.TestCase):
         constructed = CodexMarketplaceEntry.model_construct(name="owned-market")
         malformed = _completed(CodexProtocolSurface.MARKETPLACE_LIST, CodexMarketplaceList(marketplaces=(constructed,)))
         _assert_rejected(self, malformed, OracleAction.MARKETPLACE_LIST, CodexOracleResponseRejectReason.MALFORMED_RESPONSE)
+
+    def test_p6_marketplace_list_marketplace_source_state_matrix(self) -> None:
+        omitted = _admit(
+            _completed(
+                CodexProtocolSurface.MARKETPLACE_LIST,
+                CodexMarketplaceList(marketplaces=(_marketplace_entry_without_source(),)),
+            ),
+            OracleAction.MARKETPLACE_LIST,
+        )
+        self.assertIs(type(omitted), CodexProtocolAccepted)
+        if type(omitted) is not CodexProtocolAccepted or type(omitted.payload) is not CodexMarketplaceList:
+            raise AssertionError("expected omitted marketplace source to be accepted")
+        self.assertIsNone(omitted.payload.marketplaces[0].marketplaceSource)
+
+        valid_source = CodexMarketplaceSource(type="marketplace", value="owned-market")
+        valid = _admit(
+            _completed(
+                CodexProtocolSurface.MARKETPLACE_LIST,
+                CodexMarketplaceList(marketplaces=(_marketplace_entry_with_source(valid_source),)),
+            ),
+            OracleAction.MARKETPLACE_LIST,
+        )
+        self.assertIs(type(valid), CodexProtocolAccepted)
+        if type(valid) is not CodexProtocolAccepted or type(valid.payload) is not CodexMarketplaceList:
+            raise AssertionError("expected valid marketplace source to be accepted")
+        self.assertEqual(valid.payload.marketplaces[0].marketplaceSource, valid_source)
+        self.assertIsNot(valid.payload.marketplaces[0].marketplaceSource, valid_source)
+
+        constructed_source = CodexMarketplaceSource.model_construct(type="marketplace", value="owned-market")
+        constructed = _admit(
+            _completed(
+                CodexProtocolSurface.MARKETPLACE_LIST,
+                CodexMarketplaceList(marketplaces=(_marketplace_entry_with_source(constructed_source),)),
+            ),
+            OracleAction.MARKETPLACE_LIST,
+        )
+        self.assertIs(type(constructed), CodexProtocolAccepted)
+        if type(constructed) is not CodexProtocolAccepted or type(constructed.payload) is not CodexMarketplaceList:
+            raise AssertionError("expected state-equivalent constructed marketplace source to be rebuilt")
+        self.assertEqual(constructed.payload.marketplaces[0].marketplaceSource, MARKETPLACE_SOURCE)
+        self.assertIsNot(constructed.payload.marketplaces[0].marketplaceSource, constructed_source)
+
+        for source in _invalid_marketplace_sources():
+            _assert_rejected(
+                self,
+                _completed(
+                    CodexProtocolSurface.MARKETPLACE_LIST,
+                    CodexMarketplaceList(marketplaces=(_marketplace_entry_with_source(source),)),
+                ),
+                OracleAction.MARKETPLACE_LIST,
+                CodexOracleResponseRejectReason.MALFORMED_RESPONSE,
+            )
 
     def test_p7_absence_gate_and_block_are_metadata_only(self) -> None:
         absence = OracleAbsent()
@@ -330,6 +496,18 @@ class CodexOracleResponseAdmissionTests(unittest.TestCase):
 
     def test_p8_reverse_absence_gate(self) -> None:
         _assert_rejected(self, OracleAbsent(), OracleAction.PLUGIN_REMOVE, CodexOracleResponseRejectReason.ACTION_RESULT_MISMATCH)
+
+    def test_p8_reverse_present_invalid_source_cannot_be_absent(self) -> None:
+        invalid_source = CodexMarketplaceSource.model_construct(type=7, value="owned-market")
+        _assert_rejected(
+            self,
+            _completed(
+                CodexProtocolSurface.PLUGIN_LIST,
+                CodexPluginList(installed=(_plugin_entry_with_source(invalid_source),), available=()),
+            ),
+            OracleAction.PLUGIN_LIST,
+            CodexOracleResponseRejectReason.MALFORMED_RESPONSE,
+        )
 
 
 if __name__ == "__main__":

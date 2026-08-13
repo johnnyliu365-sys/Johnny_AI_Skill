@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from enum import Enum
 from typing import Final, Literal, TypeAlias, cast
 
@@ -52,6 +53,27 @@ class CodexOracleResponseRejected(_StrictModel):
 
 CodexOracleResponseAdmission: TypeAlias = (
     CodexProtocolAccepted | OracleAbsent | CodexOracleResponseRejected
+)
+
+
+@dataclass(frozen=True)
+class _MarketplaceSourceAbsent:
+    status: Literal["ABSENT"] = "ABSENT"
+
+
+@dataclass(frozen=True)
+class _MarketplaceSourceRebuiltValid:
+    source: CodexMarketplaceSource
+    status: Literal["REBUILT_VALID"] = "REBUILT_VALID"
+
+
+@dataclass(frozen=True)
+class _MarketplaceSourcePresentInvalid:
+    status: Literal["PRESENT_INVALID"] = "PRESENT_INVALID"
+
+
+_MarketplaceSourceAdmission: TypeAlias = (
+    _MarketplaceSourceAbsent | _MarketplaceSourceRebuiltValid | _MarketplaceSourcePresentInvalid
 )
 
 
@@ -234,6 +256,8 @@ def _rebuild_plugin_entry(value: object) -> CodexPluginEntry | None:
     install_policy = _text(state, "installPolicy")
     auth_policy = _text(state, "authPolicy")
     marketplace_source = _rebuild_marketplace_source(state["marketplaceSource"])
+    if isinstance(marketplace_source, _MarketplaceSourcePresentInvalid):
+        return None
     if (
         plugin_id is None
         or name is None
@@ -247,7 +271,7 @@ def _rebuild_plugin_entry(value: object) -> CodexPluginEntry | None:
     ):
         return None
     try:
-        if marketplace_source is None:
+        if isinstance(marketplace_source, _MarketplaceSourceAbsent):
             return CodexPluginEntry(
                 pluginId=plugin_id,
                 name=name,
@@ -269,7 +293,7 @@ def _rebuild_plugin_entry(value: object) -> CodexPluginEntry | None:
             source=source,
             installPolicy=install_policy,
             authPolicy=auth_policy,
-            marketplaceSource=marketplace_source,
+            marketplaceSource=marketplace_source.source,
         )
     except (TypeError, ValidationError, ValueError):
         return None
@@ -282,30 +306,34 @@ def _rebuild_marketplace_entry(value: object) -> CodexMarketplaceEntry | None:
     name = _text(state, "name")
     root = _text(state, "root")
     marketplace_source = _rebuild_marketplace_source(state["marketplaceSource"])
+    if isinstance(marketplace_source, _MarketplaceSourcePresentInvalid):
+        return None
     if name is None or root is None:
         return None
     try:
-        if marketplace_source is None:
+        if isinstance(marketplace_source, _MarketplaceSourceAbsent):
             return CodexMarketplaceEntry(name=name, root=root)
-        return CodexMarketplaceEntry(name=name, root=root, marketplaceSource=marketplace_source)
+        return CodexMarketplaceEntry(name=name, root=root, marketplaceSource=marketplace_source.source)
     except (TypeError, ValidationError, ValueError):
         return None
 
 
-def _rebuild_marketplace_source(value: object) -> CodexMarketplaceSource | None:
+def _rebuild_marketplace_source(value: object) -> _MarketplaceSourceAdmission:
     if value is None:
-        return None
+        return _MarketplaceSourceAbsent()
     state = _exact_model_state(value, CodexMarketplaceSource, _MARKETPLACE_SOURCE_FIELDS)
     if state is None:
-        return None
+        return _MarketplaceSourcePresentInvalid()
     source_type = _text(state, "type")
     source_value = _text(state, "value")
     if source_type is None or source_value is None:
-        return None
+        return _MarketplaceSourcePresentInvalid()
     try:
-        return CodexMarketplaceSource(type=source_type, value=source_value)
+        return _MarketplaceSourceRebuiltValid(
+            source=CodexMarketplaceSource(type=source_type, value=source_value)
+        )
     except (TypeError, ValidationError, ValueError):
-        return None
+        return _MarketplaceSourcePresentInvalid()
 
 
 def _surface_for_action(action: OracleAction) -> CodexProtocolSurface | None:
