@@ -162,7 +162,7 @@
 | Ticket 05B4B2E6A foreign-state isolation acceptance | COMPLETE / APPROVED / INTEGRATED | CR-172 closed by `55b265b`; review `3d10eea`; guarded merge `fe0059e`; post-merge focused/type pass. |
 | Ticket 05B4B2E6B target-project isolation acceptance | COMPLETE / APPROVED / INTEGRATED | B1-B8 review `ff00a03`, guarded merge `0e0934d`; post-merge focused/type pass. |
 | Ticket 05C receipt removal parent | CONVERGENCE_DECOMPOSED / NON_DISPATCHABLE | Cross-contract `host`/`HostRegistrationKey` defect removed; replaced by serial 05C1-05C3. |
-| Ticket 05C1 receipt removal request | IN_REVIEW / REVISION_02_REFROZEN | Handoff `fb748f4`; implementation-language/root-classification ticket defect corrected before independent review. |
+| Ticket 05C1 receipt removal request | CHANGES_REQUESTED / CR-173 / SAME_BRANCH_CORRECTION | Full `474/474` and static checks pass; constructed-invalid invocation root is misclassified before validation. |
 | Ticket 05C2 receipt removal composition | PLANNED / DEPENDENCY_WAIT | Starts after 05C1 approved/integrated. |
 | Ticket 05C3 receipt removal acceptance | PLANNED / DEPENDENCY_WAIT | Starts after 05C2 approved/integrated. |
 | Ticket 06A Codex role-profile capability proof | DONE / APPROVED_EVIDENCE / INSTALL_BLOCKED / INTEGRATED | Implementation `38e9a8b`, handoff `f6f186f`, review `62955ec`, guarded merge `de4141e`; actual installed-host result is `ROLE_ISOLATION_UNPROVEN / ACCESS_DENIED / OUTPUT_UNAVAILABLE`, so capability dependents stay blocked. |

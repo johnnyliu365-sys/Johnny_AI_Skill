@@ -4136,3 +4136,14 @@
 | Corrected closure | Python 3.11 is explicit. R3 reserves `RECEIPT_MISMATCH` for valid unequal installation IDs. R4 requires a noncanonical/constructed-invalid invocation root to return `INVALID_INVOCATION` and invalid receipt root to return `INVALID_RECEIPT`. Valid persisted serialize/reload identity remains accepted. |
 | Review admission | Existing implementation `ec53d3af854348a2f7385e485d17f3e2a84b98d8` and WPR-only handoff `fb748f4fd1b7d1f5862c55fa1484151602f174e0` remain immutable. Independent review evaluates their exact diff against revision-02; any implementation mismatch becomes one same-branch additive correction. |
 | Boundary | Control documents only; no reviewer implementation-worktree write, new branch/worktree, live effect, push/staging publication, package/build/install, Secret, release or deployment. |
+
+## PRG-20260814-382 - Ticket 05C1 initial independent review
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05C1) -> TERMINAL_CODE_REVIEW -> CHANGES_REQUESTED / CR-173` |
+| Reviewed chain | Registry `dd7f66d4535a03e55d8134febe8093f9b98cea72` -> implementation `ec53d3af854348a2f7385e485d17f3e2a84b98d8` -> WPR-only handoff `fb748f4fd1b7d1f5862c55fa1484151602f174e0`; revision-02 control correction `103ae5385e9571c8ebd7496145b945634738e99f`. |
+| Independent green | Immutable archive SHA-256 `6CA7429DC5CB9100BAB2E85564FDC5D092B0B1A82BFE5D7EE9F14F646636CDE9`; focused `12/12`; full serial `474/474`; strict mypy `146`; compile passes; three mapping/identity reversals turn named tests red and exact archive bytes restore. |
+| CR-173 | The source compares `_raw_value` installation/root before rebuilding invocation values. A constructed noncanonical invocation root returns `RECEIPT_MISMATCH`; revision-02 R4 requires `INVALID_INVOCATION`. The committed root test and PRG-380 encode the same wrong result. Classification: `IMPLEMENTATION_DEFECT + EVIDENCE_DEFECT`. |
+| Correction | Same ticket/owner/worktree/branch/allocation/receipt. Correct only the production module and direct test; public exports unchanged; append unique PRG-383 WPR-only correction handoff. |
+| Boundary | Reviewer wrote only control documents and an isolated TEMP export. No implementation-worktree write, new branch/worktree, live Codex/host/target-project effect, push/staging publication, package/build/install, Secret, release or deployment. |

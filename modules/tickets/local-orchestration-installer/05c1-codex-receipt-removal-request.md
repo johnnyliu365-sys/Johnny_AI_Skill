@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-02, AC-03 and AC-07 |
 | Revision | `02` — non-high-risk ticket correction before independent review |
-| State | `IN_REVIEW / REVISION_02_REFROZEN` |
+| State | `CHANGES_REQUESTED / CR-173 / SAME_BRANCH_CORRECTION` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05C1-01` / R1-R7 |
 | Dependency | 05A/05B and E0-E6 integrated; parent 05C decomposition recorded |
 | Profile / XSS | `STANDARD`; one implementation owner, no helper / `XSS_NOT_APPLICABLE` |
@@ -111,3 +111,14 @@ root is `INVALID_INVOCATION`; invalid receipt root is `INVALID_RECEIPT`;
 `RECEIPT_MISMATCH` is reserved for two valid unequal installation IDs. SPEC,
 public success mapping, owner, branch, allocation, receipt and correlation are
 unchanged. Independent review applies this corrected R1-R7 closure.
+
+## CR-173 correction boundary
+
+Formal review found the implementation compares raw constructed invocation
+identity before validation, so a noncanonical root is incorrectly classified as
+`RECEIPT_MISMATCH`. Keep the same branch, owner, allocation, receipt and
+correlation. Correct only
+`library/local_orchestration/codex_receipt_removal_request.py` and
+`tests/test_codex_receipt_removal_request.py`, then append only reserved
+`PRG-20260814-383` in one WPR-only correction handoff. The export-only root file
+and public contract remain unchanged.
