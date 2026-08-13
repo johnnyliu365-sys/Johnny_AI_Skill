@@ -159,7 +159,7 @@
 | Ticket 05B4B2E5 registration compensation acceptance | COMPLETE / APPROVED / INTEGRATED | Revision-02 C1-C8 review `bf1afe5`, guarded merge `ce7a1c2`; post-merge focused/full/type/compile passed. |
 | Ticket 05B4B2E6 registration isolation parent | CONVERGENCE_DECOMPOSED / NON_DISPATCHABLE | Split into reusable compensation entrypoint E6P, then parallel foreign-state E6A and target-project E6B evidence. |
 | Ticket 05B4B2E6P compensation acceptance entrypoint | COMPLETE / APPROVED / INTEGRATED | P1-P8 approved and guarded-merged at `7334cc5`. |
-| Ticket 05B4B2E6A foreign-state isolation acceptance | CHANGES_REQUESTED / EVIDENCE_CORRECTION_REQUIRED | CR-172: independently lock marketplace/plugin zero and duplicate matrices on the same branch/receipt. |
+| Ticket 05B4B2E6A foreign-state isolation acceptance | CORRECTION_DISPATCH_CONFIRMED / IN_PROGRESS | CR-172 test-only matrix correction on the same branch/receipt. |
 | Ticket 05B4B2E6B target-project isolation acceptance | COMPLETE / APPROVED / INTEGRATED | B1-B8 review `ff00a03`, guarded merge `0e0934d`; post-merge focused/type pass. |
 | Ticket 05C receipt removal/replay | PLANNED / DEPENDENCY_WAIT / REFREEZE_REQUIRED | Starts only after 05A/05B approval/integration and a finite behavior/rollback closure refreeze. |
 | Ticket 06A Codex role-profile capability proof | DONE / APPROVED_EVIDENCE / INSTALL_BLOCKED / INTEGRATED | Implementation `38e9a8b`, handoff `f6f186f`, review `62955ec`, guarded merge `de4141e`; actual installed-host result is `ROLE_ISOLATION_UNPROVEN / ACCESS_DENIED / OUTPUT_UNAVAILABLE`, so capability dependents stay blocked. |

@@ -4,7 +4,7 @@
 | --- | --- |
 | Revision | `02` - non-high-risk ticket correction; same branch, owner, receipt and closure |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / unchanged AC-02, AC-07 and AC-08 |
-| State | `CHANGES_REQUESTED / EVIDENCE_CORRECTION_REQUIRED` |
+| State | `CORRECTION_DISPATCH_CONFIRMED / IN_PROGRESS` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B4B2E6A-01` / A1-A8 |
 | Dependency | E6P guarded merge `7334cc5314592ac159e9418a145121d31e4156d5` |
 | Planned owner | Existing owner1 task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; permanent `workflow-implementation`; no new worktree/helper |
@@ -132,3 +132,16 @@ and may not be committed until the corrected dispatch registry is admitted.
 
 This corrected one-use admission supersedes only the revision-01 one-file scope.
 All identity bindings and reviewer-only orchestration restrictions remain exact.
+
+## CR-172 evidence-correction dispatch registry
+
+| Field | Value |
+| --- | --- |
+| Reviewed finding / authority | Formal `CHANGES_REQUESTED` review `fec1da65fd91c6b9e5f5f5005f8f1840f5cef51c`; standing auto-continue under `PRG-20260809-042`; valid original allocation/receipt/correlation retained. |
+| Exact lane readback | Owner1 task is idle; same branch/worktree is clean at exact handoff `ec0e80b45cf998378c420787ef16cdaf08d98c34`; tracked/ignored/runtime/cache residue zero; exactly three worktrees; merge base with control is the correction registry `548166560b97e0eb81cecc80ad7dd3cb1405ce49`. |
+| Baseline admission | In the same permanent branch/worktree, merge only the exact control commit carrying this registry. If the only conflict is append-only `doc/WorkProgressReport.md`, preserve every unique PRG-367 through PRG-374 once and verify `git diff --check`; any source/test/ticket conflict or changed implementation blob is a typed halt. No reset/rebase/amend/force/stash/new branch/worktree. |
+| Correction scope / return | Change only `tests/test_codex_registration_oracle_adapter.py` to add the four independent zero/duplicate matrices. Keep implementation `d3b3174b97a9c1fd52d2e861fd10be83c8d10033` and E6A acceptance unchanged. Return one additive test correction commit, then only PRG-375 in one WPR-only correction handoff. |
+
+The reviewer remains sole orchestrator; no helper, self-review, integration,
+next-ticket dispatch, push, staging publication, package/install or release is
+authorized.

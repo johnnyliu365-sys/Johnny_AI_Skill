@@ -4053,3 +4053,13 @@
 | Independent evidence | Immutable archive SHA-256 `52CD7DCD2872EDD97D904621688CA8B341B2FF0143364F176137AF2077E22611`; focused `16/16` green. Removing only the plugin uniqueness gate survived `16/16`; restoring it and removing only the marketplace uniqueness gate also survived `16/16`. |
 | Finding / correction | `CR-172`: paired zero/zero and duplicate/duplicate cases do not independently lock each owned collection. Add four cases with the opposite collection held at exact one and reverse each gate independently. Source logic and E6A acceptance remain unchanged. |
 | Boundary | Same ticket/owner/branch/worktree/allocation/receipt/correlation; additive test-only correction. Reviewer mutations restored to exact adapter blob and immutable TEMP removed. No product/implementation-worktree write, new lane, external effect, push, staging publication, package/install, Secret, release or deployment. |
+
+## PRG-20260814-374 - Ticket 05B4B2E6A CR-172 correction dispatch
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `CHANGES_REQUESTED(05B4B2E6A/CR-172) + SAME_LANE_ADMITTED -> IMPLEMENTATION_DISPATCH_CONFIRMED / IMPLEMENT` |
+| Review / binding | Formal review `fec1da65fd91c6b9e5f5f5005f8f1840f5cef51c`; original owner1 workspace/handoff/allocation/receipt/correlation/question/side-context remain exact under `PRG-20260809-042`. |
+| Lane readback | Same E6A branch is idle/clean at handoff `ec0e80b45cf998378c420787ef16cdaf08d98c34`; zero tracked/ignored/runtime/cache residue; exactly three worktrees; exact merge base `5481665`. |
+| Correction / return | Merge the exact control registry into the same branch, preserving only append-only WPR evidence if that sole conflict occurs. Change only the direct adapter test with four independent matrices, then one additive test commit and unique PRG-375 WPR-only correction handoff. |
+| Boundary | No new branch/worktree/helper, source behavior change, target-project/live host effect, push, staging publication, package/build/install, Secret, release or deployment. |
