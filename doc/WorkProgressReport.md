@@ -3620,3 +3620,14 @@
 | Exact lane | Product task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; clean exact handoff `ef69fb8c`; permanent owner1 worktree; target branch absent; exactly three worktrees. Unique workspace/handoff/allocation/receipt/correlation/question/side-context are recorded in the child ticket. |
 | Scope / validation | One test path plus separate PRG-333 WPR handoff. Implementation runs local focused matrices; reviewer alone owns physical checkout-under-TEMP core/six-suite/full/static and runtime-absence acceptance. |
 | Boundary | No new worktree, helper Agent, production source, OS-global staging cleanup/enumeration, owner2/sibling/target-project mutation, package/build/install, staging push, live Codex, release or deployment. |
+
+## PRG-20260814-334 — Ticket 05S1R1 independent approval
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05S1R1) -> FINAL_CODE_REVIEW -> APPROVED / GUARDED_INTEGRATION_REQUIRED` |
+| Exact return | Implementation `d024e69a6c3ba06a0a2697a37bb19fbde1e657ea`; WPR-only `3488efea3f431cd0215b3be1fd79c4c533c9932e`; exact ancestry `ef69fb8c -> d024e69a -> 3488efea`, one-test implementation scope, WPR-only handoff scope and clean permanent lane pass. |
+| Physical TEMP evidence | Fresh exact ZIP export beneath system TEMP passes core `10/10`, six-suite `79/79`, full `414/414` with `2064` subtests, strict mypy `134/134`, in-memory compile `134/134` and final runtime absence. |
+| Failure-clean evidence | Reviewer forced T1's first post-admission behavior assertion to fail; unittest executed both exact typed teardowns and the final absence cleanup, leaving `tests/.johnny-runtime` absent. |
+| Review / integration | Formal review is `doc/reviews/local-orchestration-installer/05s1r1-temp-checkout-portability-evidence-code-review.md`. Merge-tree finds only the expected WPR append conflict; guarded integration must preserve control PRG-326..334 and branch PRG-325/330/333 before post-merge verification. |
+| Boundary | Review/control documentation only. No implementation-worktree mutation, OS-global staging enumeration/delete, owner2/target-project write, package/build/install, live Codex effect, staging push, release or deployment. |
