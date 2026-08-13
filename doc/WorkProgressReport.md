@@ -4013,3 +4013,13 @@
 | Lane readback | Same E6A branch at exact original registry `be0f91f`; tracked/ignored porcelain empty; exactly one untracked frozen acceptance test preserved; zero runtime/cache residue; exactly three worktrees. Fast-forward-only baseline advance must preserve its exact hash. |
 | Dispatch / return | Same owner, no helper/new lane; exact adapter, direct adapter test and preserved acceptance test, then unique PRG-367 WPR-only handoff. The correction changes total-list cardinality to exact-owned membership/uniqueness and must retain zero/duplicate-owned rejection. |
 | Boundary | No control-side implementation-worktree write, new branch/worktree, product source, live Codex/host/real-target-project effect, push, staging publication, package/build/install, Secret, release or deployment. |
+
+## PRG-20260814-371 - Ticket 05B4B2E6B terminal approval
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05B4B2E6B) -> TERMINAL_CODE_REVIEW -> APPROVED / READY_TO_MERGE` |
+| Reviewed chain | Dispatch `be0f91f` -> implementation `d7dbed23bbadce925a37f0dcf825a3649828a045` -> WPR-only handoff `183313ec6c43b0ece57df699c0eb17d5fd3413b4`; implementation scope is exactly the one frozen test path. |
+| Independent green | Immutable archive SHA-256 `29D31780671A3111FFA5C1F73090E8CF09E6EA7F01DF608E9A0022A9D5B354F0`; focused `12/12`; full `460/460`; strict mypy `143/143`; in-memory compile `143/143`; source/scope/ancestry/clean-lane checks pass. |
+| Adversarial closure | Reviewer mutations after success and compensation changed tracked/Git bytes and turned B4/B5 red; removing the second-repository gate turned its dedicated reversal red. Exact source blob restored and focused passed again. B1-B8 close with no finding. |
+| Decision / boundary | `APPROVED / READY_TO_MERGE`; no implementation-worktree write, new worktree, push, staging publication, package/build/install, live Codex/host/real-target-project mutation, Secret, release or deployment. |
