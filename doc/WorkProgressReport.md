@@ -3822,6 +3822,16 @@
 | Lane readback | Owner2 is on the exact new E3 branch at registry `15c2210`; no tracked source/test change exists. Only generated ignored `__pycache__` is present and must be removed within the exact owner worktree before handoff. |
 | Boundary | Control docs only; no implementation-worktree write, new worktree, live Codex/host/target-project effect, staging publication, push, package/build/install, Secret, release or deployment. |
 
+## PRG-20260814-350 — Ticket 05B4B2E3 compensation oracle adapter handoff
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05B4B2E3) -> ACTION_COMPLETED -> REVIEW_HANDOFF`; independent review remains required. |
+| Binding / lane | `CLOSURE-LOCAL-INSTALL-T05B4B2E3-01` / A1-A8; owner2 task `019ffb0c-db88-7303-895c-aecfadde7c8d`; branch `codex/implementation-codex-compensation-oracle-adapter-05b4b2e3`; exact permanent worktree and three-worktree topology preserved. |
+| Implementation | Commit `e6cc76cefef236c5be8f135f0dda9eb224cc555b`; exactly `tests/staging/codex_lifecycle_oracle/compensation_adapter.py` and `tests/test_codex_compensation_oracle_adapter.py`. First red was the missing adapter module. |
+| Closure evidence | Focused serial `13/13`; full serial `445/445`; strict mypy `140` files with cache outside `tests/.johnny-runtime`; in-memory compile `140` files; A8 request-before-effect, action binding, removal identity, response admission and absence-gate reversals each turned red and were restored. A7 used one exact oracle with deterministic class-level in-memory substitution only; no runtime/process/filesystem lifecycle was allocated. |
+| Boundary / security | `XSS_NOT_APPLICABLE`: this adapter projects typed local oracle evidence and does not enter Browser, WebView, HTML/DOM or JavaScript execution contexts. No live Codex, host, network, target-project, cross-worktree, package, release or deployment effect. Exact generated project-owned cache and ignored `__pycache__` residue were removed before handoff. |
+
 ## PRG-20260814-351 — Ticket 05B4B2E3 terminal approval
 
 | Field | Evidence |
