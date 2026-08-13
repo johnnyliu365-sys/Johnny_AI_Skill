@@ -3491,6 +3491,17 @@
 | Branch policy | Each owner may create only its one named ticket branch from the exact control commit carrying this registry, inside its existing worktree. No new worktree, historical-source copy, reset, force, rebase or cross-lane write. |
 | Boundary | No helper Agent: both tickets are bounded and low-search. No staging push, package/build/install, live Codex/host/target-project mutation, release or deployment. |
 
+## PRG-20260813-316 ??Ticket 05B4B2E4 registration success acceptance handoff
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05B4B2E4 / S1-S8) -> ACTION_COMPLETED -> REVIEW_HANDOFF`; independent review remains required. |
+| Product / binding | Local project `6d2ebb66-1ae7-48b4-96da-53ffba88ef1f`; task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; branch `codex/implementation-codex-registration-success-acceptance-05b4b2e4`; workspace `wsb_local_orchestration_install_05b4b2e4_20260813_01`; handoff `hnd_local_orchestration_install_05b4b2e4_r01_20260813`; allocation `aln_local_orchestration_install_05b4b2e4_r01_20260813`; receipt `rcpt_local_orchestration_install_05b4b2e4_r01_20260813`; correlation `corr-local-orchestration-install-05b4b2e4-r01-20260813`; question `q-local-orchestration-install-05b4b2e4-r01-20260813`; side-context `scx-local-orchestration-install-05b4b2e4-r01-20260813-01`. |
+| Implementation | `33752375a5dace8e06547a7732bbd08d4c3deb45`, exactly two paths: `tests/staging/codex_lifecycle_oracle/registration_success_acceptance.py` and `tests/test_codex_registration_success_acceptance.py`. First red was the missing success-acceptance module. |
+| S8 reversal evidence | Reversing operation order made the named success test red (child exit `2`); settling through the wrong port candidate made it red (child exit `2`); bypassing the physical identity/digest gate made the payload test red (child exit `3`). Each exact blob was restored before the green matrix. |
+| Verification | Focused acceptance `5/5`; full serial unittest discovery `414/414`; strict full-tree `mypy --strict --explicit-package-bases` `136/136` files with repository-external cache; in-memory compile `136/136` Python files. Post-commit matrix passed at the implementation SHA. |
+| Static / topology / residue | Exact ancestry from registry commit `472201b1f82416d0fc00ec03582d0175f9f97048`, exact two-path scope, `git diff --check`, source/dynamic sentinels, three-worktree topology, tracked/ignored porcelain and cache-residue checks passed. `XSS_NOT_APPLICABLE`: no Browser, WebView, HTML/DOM renderer, JavaScript context or privileged bridge exists. |
+| Boundary | No new worktree, reset/amend/rebase/merge/cherry-pick/stash, network, package/build/install, live Codex/host/target-project write, Secret, Agent control, staging push, release, deployment or review/integration decision occurred. |
 ## PRG-20260813-318 — Ticket 05B4B2E3D typed halt
 
 | Field | Evidence |
@@ -3705,3 +3716,14 @@
 | CR closure | CR-165 closed by one-owned/zero-foreign clean success evidence and removal of post-success foreign seeding. CR-166 closed by honest committed test naming plus reviewer-owned before/after manifests for all three permanent worktrees. |
 | S8 / manifests | Independent order, wrong-port settlement and payload-gate reversals made named tests red with child exits `4/2/3`, then exact blobs restored and focused `5/5`. All three permanent worktree byte digests, branches, HEADs, tracked/untracked and ignored porcelain were identical before/after. |
 | Decision / boundary | `APPROVED / READY_TO_MERGE`; integrate complete history only. No push, package/build/install, live Codex/host/target-project mutation, Secret, release or deployment. |
+## PRG-20260814-338 — Ticket 05B4B2E4 revision-03 CR-165/CR-166 correction handoff
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `CORRECTION_COMPLETED(05B4B2E4 / CR-165-CR-166) -> ACTION_COMPLETED -> REVIEW_HANDOFF`; independent review remains required. |
+| Authority / binding | Control registry `334757cd80d5a4d30db8b375d230115662099b3b`; handoff `hnd_local_orchestration_install_05b4b2e4_cr165_166_r03_20260814`; allocation `aln_local_orchestration_install_05b4b2e4_r03_20260814`; receipt `rcpt_local_orchestration_install_05b4b2e4_r03_20260814`; correlation `corr-local-orchestration-install-05b4b2e4-cr165-166-r03-20260814`. |
+| Admission / merge | Existing branch `codex/implementation-codex-registration-success-acceptance-05b4b2e4` admitted at `5cf2235ad755bd1f5935f7139789bfa6f9a4c970`; history-preserving control merge `55a12fdb9a1e071e7ccef1efbeaf3d1c6f42e71b` had only the predicted WPR append conflict. The merged WPR retained every unique PRG exactly once. |
+| Implementation | Additive correction `dc909da63cbd1aaedf73877d47bbceaa5d7e2952`, exactly `tests/test_codex_registration_success_acceptance.py`. It adapts the integrated allocator call to `from_project_runtime()`, removes post-receipt foreign seeding/list helpers and imports, asserts one owned marketplace, one owned plugin and zero foreign records, and bounds the S3/S4/S5/S7 name to executed child evidence. |
+| Verification | Focused `5/5`; full serial unittest discovery `419/419`; strict full-tree `mypy --strict --explicit-package-bases` `136/136` files with an external cache; in-memory compile `136/136`. The three S8 reversals independently turned red with child exits `4/2/3` (operation order / same-port settlement / physical payload gate) and restored exact blobs. |
+| Static / topology / residue | Exact one-path implementation scope, `git diff --check`, control and handoff ancestry, three-worktree topology, tracked/ignored porcelain, zero repository bytecode/cache residue and absent `tests/.johnny-runtime` passed. `XSS_NOT_APPLICABLE`: no Browser, WebView, HTML/DOM renderer, JavaScript context or privileged bridge exists. |
+| Boundary | No staging-source change, helper Agent, new worktree/branch, OS-global TEMP enumeration/cleanup, sibling/owner2/control/target-project write, package/build/install, live Codex mutation, push, release, deployment or review decision occurred. |
