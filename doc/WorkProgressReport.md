@@ -3811,3 +3811,13 @@
 | Lane readback | Owner2 is clean at exact E3D handoff `5fa24b5`; canonical top-level/git-dir and three-worktree topology match; tracked/ignored counts are zero and target E3 branch is absent. The new branch must start only from the exact registry commit in the same permanent worktree. |
 | Dispatch / return | One owner, no helper; exactly `compensation_adapter.py` plus its focused test, then unique PRG-348 WPR-only handoff. Non-high-risk ticket/evidence defects may be returned typed for immediate reviewer refreeze; no broad self-expansion. |
 | Boundary | No control-side implementation-worktree mutation, new worktree, live Codex/host/target-project effect, staging publication, push, package/build/install, Secret, release or deployment. |
+
+## PRG-20260814-349 — Ticket 05B4B2E3 same-closure scope correction
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENT_ACTIVE(05B4B2E3) -> TICKET_DEFECT_NON_HIGH_RISK -> SAME_CLOSURE_SCOPE_REDUCTION / AUTO_CONTINUE` |
+| Defect / correction | Initial A7 duplicated E5's real disposable-runtime acceptance. Before source/test implementation began, A7 was narrowed to deterministic in-memory calls around one exact oracle instance; E5 exclusively retains physical process/filesystem/runtime lifecycle evidence. |
+| Preserved binding | A1-A8, owner2 task/worktree/branch, allocation, receipt, correlation and exact two-path scope remain unchanged. The unused handoff reservation moves from PRG-348 to PRG-350. |
+| Lane readback | Owner2 is on the exact new E3 branch at registry `15c2210`; no tracked source/test change exists. Only generated ignored `__pycache__` is present and must be removed within the exact owner worktree before handoff. |
+| Boundary | Control docs only; no implementation-worktree write, new worktree, live Codex/host/target-project effect, staging publication, push, package/build/install, Secret, release or deployment. |
