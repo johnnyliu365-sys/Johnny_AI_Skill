@@ -95,3 +95,41 @@ permanent worktree, branch, allocation and valid receipt. The submitted commits
 remain immutable evidence. No new branch/worktree, integration, E3D/E4 resume,
 staging push, package/build/install, live Codex/target-project mutation,
 release or deployment is authorized by this review.
+
+## Revision 02 terminal correction review
+
+| Field | Value |
+| --- | --- |
+| Correction | `0cca9dee7a73a78e55fc739cca1ce5263a0e68ca` |
+| WPR-only handoff | `ef69fb8c459309891d53523fc63be33e574b25eb` |
+| Exact ancestry | `b33314ca -> 0cca9dee -> ef69fb8c` |
+| Result | `CONVERGENCE_REVIEW_REQUIRED / CR-169_OPEN` |
+
+The correction changes exactly the authorized contracts, allocator and focused
+test paths; the handoff changes only `doc/WorkProgressReport.md`. The permanent
+implementation worktree is clean and exact three-worktree topology is
+unchanged.
+
+| Check | Independent result |
+| --- | --- |
+| Outside-TEMP focused matrix | PASS: immutable export ran `79/79`; project runtime was absent afterward. |
+| Targeted strict typing / compile | PASS: strict mypy passed the three changed Python files; all `134` repository Python files compiled in memory. The submitted handoff additionally records full-tree mypy `134/134` and full serial `414/414`. |
+| CR-167 | CLOSED: exact lowercase 32-hex name admission rejects prefix-similar, short, long, non-hex and uppercase forms before marker read or deletion. |
+| CR-168 | CLOSED: exact delete failure returns `BLOCKED / DELETE_FAILED`, preserves the root/marker and retains the live claim for an intact retry. |
+| Checkout-under-TEMP core | FAIL: fresh exact export ran `8/10`; T1 fails at line 109 and leaves two leases, after which the physical-junction test errors because the runtime parent remains. |
+| Checkout-under-TEMP six-suite matrix | FAIL: fresh exact export ran `79` tests with fourteen failures and one error; later child processes correctly reject the unclaimed residue. |
+| Source / XSS / task binding | PASS: no forbidden dynamic typing or renderer/JavaScript capability; `XSS_NOT_APPLICABLE`; exact owner task is idle and bound to the permanent implementation worktree. |
+
+CR-169 was only partially corrected. The first runtime-root test now registers
+cleanup before its location assertions, but
+`tests/test_disposable_environment_core.py:93-116` still asserts that each
+checkout-derived lease is outside the entire system TEMP tree. That is not the
+AC-13 rule: only a direct OS-global `TEMP/johnny-stage-env-*` root is forbidden.
+The two leases are also not registered for exact cleanup before that assertion,
+so the failed test poisons later evidence.
+
+Final result is `CONVERGENCE_REVIEW_REQUIRED`. Workflow section 8.1 prohibits a
+third correction on this closure. CR-169 must move to one finite evidence-only
+child ticket; the submitted parent and correction commits remain immutable
+evidence. No integration, E3D/E4 resume, package lane, new worktree, push,
+release or deployment is authorized by this terminal review.

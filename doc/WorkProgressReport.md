@@ -3599,3 +3599,14 @@
 | Correction | CR-167 exact 32-lowercase-hex lease-name admission; CR-168 finite `DELETE_FAILED` teardown and rollback behavior; CR-169 location-independent no-direct-OS-TEMP evidence with cleanup registered before assertions. |
 | Scope | Additive correction may touch only environment contracts, allocator and its focused test, followed by a separate PRG-20260813-330 WPR-only handoff. Reviewer owns the final immutable checkout-under-TEMP probe. |
 | Boundary | No new branch/worktree, helper Agent, broad/global cleanup or enumeration, owner2/sibling/target-project mutation, package/build/install, staging push, live Codex, release or deployment. |
+
+## PRG-20260813-331 — Ticket 05S1R terminal correction review
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `CORRECTION_COMPLETED(05S1R) -> CORRECTION_REVIEW -> CONVERGENCE_REVIEW_REQUIRED / CHILD_DECOMPOSITION_REQUIRED` |
+| Exact return | Correction `0cca9dee7a73a78e55fc739cca1ce5263a0e68ca`; WPR-only handoff `ef69fb8c459309891d53523fc63be33e574b25eb`; exact additive ancestry/scope, clean lane and three-worktree topology pass. |
+| Independent green | Outside-TEMP immutable export focused `79/79`; targeted strict mypy `3/3`; compile `134/134`; source/XSS/residue checks pass. CR-167 exact-name admission and CR-168 finite delete failure are closed. |
+| CR-169 open | Fresh checkout-under-TEMP core is `8/10`: T1 line 109 retains the invalid broad TEMP-tree assertion and leaves two leases because cleanup is not registered before the assertion. Six-suite matrix is `64/79`, with later child processes correctly failing closed on the unclaimed residue. |
+| Decision | The one correction review is terminal; no third same-ticket correction. Parent 05S1R requires one evidence-only CR-169 child ticket before integration can unlock E3D/E4. |
+| Boundary | No implementation-worktree mutation, integration, E3D/E4 resume, package ticket, new worktree, push, live Codex/target-project mutation, release or deployment. |

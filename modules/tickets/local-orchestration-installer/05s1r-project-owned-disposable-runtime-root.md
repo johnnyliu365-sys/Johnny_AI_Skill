@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-13 |
 | Requirement / ADR | `CHG-20260813-015` / `ADR-20260813-007` |
-| State | `IN_PROGRESS / CORRECTION_DISPATCH_CONFIRMED` |
+| State | `CONVERGENCE_REVIEW_REQUIRED / CHILD_DECOMPOSITION_REQUIRED` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05S1R-01` / R1-R8 |
 | Dependency | Integrated 05S1-05S4; exact current control freeze; one clean permanent implementation worktree |
 | Language / XSS | Python 3.11 strict Pydantic/mypy / `XSS_NOT_APPLICABLE` |
@@ -167,3 +167,25 @@ the final immutable-export checkout-under-TEMP portability probe. No broad
 cleanup, OS-global staging enumeration, sibling worktree scan/write, helper
 Agent, target-project effect, package/build/install, staging push, release or
 deployment is authorized.
+
+## Revision 02 terminal correction review
+
+The exact additive chain is `b33314ca -> 0cca9dee -> ef69fb8c`. Correction
+implementation scope is exactly the three authorized paths and the handoff is
+WPR-only. An immutable export outside OS TEMP passes the focused matrix
+`79/79`, targeted strict mypy `3/3`, compile `134/134`, source/XSS, scope,
+ancestry, topology and residue checks. CR-167 and CR-168 are closed.
+
+CR-169 remains open. In a fresh exact checkout below OS TEMP,
+`test_t1_two_distinct_owners_provision_unique_direct_project_roots_and_reject_replay`
+still fails at its broad `is_relative_to(tempfile.gettempdir())` assertion.
+Because both provisioned leases are not registered for cleanup before that
+assertion, their residue causes the later physical-junction test and dependent
+child-process suites to fail closed. Fresh core result is `8/10` with one
+failure and one residue-induced error; the six-suite matrix is `64/79` with
+fourteen failures and one error.
+
+Per Workflow section 8.1, the one correction review is terminal. No third
+same-ticket correction is permitted. Formal correction evidence is appended to
+`doc/reviews/local-orchestration-installer/05s1r-project-owned-disposable-runtime-root-code-review.md`.
+The parent must converge through a finite child ticket for CR-169 only.
