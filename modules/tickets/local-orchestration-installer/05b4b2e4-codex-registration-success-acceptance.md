@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / unchanged AC-01, AC-07 and AC-08 |
-| State | `BLOCKED / REQUIREMENT_CHANGED / 05S1R_DEPENDENCY` |
+| State | `FROZEN / READY_FOR_DISPATCH / REVISION_03_CORRECTION` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B4B2E4-02` / S1-S8 |
 | Dependency | E2 merge `d3d3c1d` plus integrated forward, settlement-authority and proof-settlement modules |
 | Planned owner | Local project `6d2ebb66-1ae7-48b4-96da-53ffba88ef1f`; task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; permanent worktree `wtr_workflow_implementation_20260813_01` |
@@ -142,3 +142,22 @@ at a safe boundary with no new commit or PRG-321 handoff. Only
 uncommitted; focused 5/5 plus the order and same-port reversals passed before
 the steer. E4 must not resume, commit or enter review until 05S1R is approved
 and integrated and this ticket is refrozen against the new foundation.
+
+## Revision-03 correction refreeze and dispatch registry
+
+The project owner authorized discarding the interrupted revision-02 test edit;
+the permanent owner worktree is now clean. Immutable implementation `3375237`
+and handoff `5cf2235` remain the evidence base on the existing E4 branch.
+05S1R/05S1R1 are approved and integrated by `d399364`, so CR-165/CR-166 may
+resume as one additive same-branch correction.
+
+| Field | Value |
+| --- | --- |
+| Reviewed authority | This control commit is the reviewed correction handoff; prior review `7c6b46a`; foundation merge `d399364`; completion record `2c8376f`; unchanged revision-02 correction closure. |
+| Product binding | Project `6d2ebb66-1ae7-48b4-96da-53ffba88ef1f`; task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; workspace `wsb_local_orchestration_install_05b4b2e4_20260814_03`; worktree `wtr_workflow_implementation_20260813_01`; readback digest `3ecd6d16b3052ac40a6a88d5ad7e738421bc96f9cd99551f5e7556d73fb59041`. |
+| Binding | `hnd_local_orchestration_install_05b4b2e4_cr165_166_r03_20260814`; `aln_local_orchestration_install_05b4b2e4_r03_20260814`; `rcpt_local_orchestration_install_05b4b2e4_r03_20260814`; `corr-local-orchestration-install-05b4b2e4-cr165-166-r03-20260814`; `q-local-orchestration-install-05b4b2e4-cr165-166-r03-20260814`; `scx-local-orchestration-install-05b4b2e4-cr165-166-r03-20260814-01`. |
+| Baseline admission | Switch the clean permanent worktree to the existing E4 branch at exact handoff `5cf2235`, then history-preserving merge the exact control registry commit. Resolve only the predicted WPR append conflict by retaining every unique PRG exactly once. Any other conflict is typed `HALT`; no reset, amend, rebase, force, new branch or worktree. |
+| Writable paths | Correction only in `tests/test_codex_registration_success_acceptance.py`, followed by unique `PRG-20260814-338` WPR-only handoff. |
+
+The revision-03 receipt is one-use. The source module and immutable prior commits
+must not be rewritten; reviewer alone performs external three-worktree manifests.

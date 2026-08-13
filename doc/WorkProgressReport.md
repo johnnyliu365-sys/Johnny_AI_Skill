@@ -3673,3 +3673,13 @@
 | Post-merge verification | Core `10/10`; six-suite `79/79`; full `414/414` with `2064` subtests; strict mypy `134/134`; in-memory compile `134/134`; `git diff --check`, runtime/cache/porcelain readback pass. |
 | Router continuation | Parent 05S1R and child 05S1R1 are complete. The 05S1R dependency on E3D/E4 is released; each lane still requires its own exact refreeze, baseline admission and receipt before implementation resumes. |
 | Boundary | No push, package/build/install, staging publication, live Codex/host/target-project mutation, Secret, release or deployment. Owner worktrees were not modified by control. |
+
+## PRG-20260814-336 — E3D/E4 parallel refreeze and dispatch readiness
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `05S1R_DEPENDENCY_SATISFIED + PROJECT_OWNER_AUTO_CONTINUE -> TWO_DISJOINT_LANES_FROZEN / READY_FOR_DISPATCH` |
+| E3D | Revision-02 uses a new one-use receipt. The same owner/branch/worktree may preserve and finish the exact two uncommitted blobs; admission requires before/after SHA-256 equality and an exact fast-forward to this registry. Cleanup is limited to two named generated worktree cache directories; OS-global TEMP is forbidden. |
+| E4 | Revision-03 keeps immutable implementation/handoff `3375237`/`5cf2235` on the existing branch. The clean owner worktree must history-merge this registry, preserve WPR append evidence, and correct CR-165/166 only in the focused test. |
+| Parallel safety | E3D and E4 have disjoint writable paths, separate permanent worktrees, tasks, allocations, receipts and handoffs. Neither may create/control a helper Agent. |
+| Boundary | No control-side implementation-worktree mutation, new branch/worktree, source/test edit, OS-global cleanup, push, build/package/install, live Codex/host/target-project mutation, Secret, release or deployment. |
