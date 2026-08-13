@@ -188,6 +188,7 @@ class TeardownBlockReason(str, Enum):
     MARKER_MISSING = "MARKER_MISSING"
     MARKER_MISMATCH = "MARKER_MISMATCH"
     CHILD_ESCAPE = "CHILD_ESCAPE"
+    DELETE_FAILED = "DELETE_FAILED"
 
 
 class TeardownResult(StrictModel):

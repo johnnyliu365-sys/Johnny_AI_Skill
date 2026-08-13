@@ -334,7 +334,7 @@ class CodexAgentProfileCapabilityTests(unittest.TestCase):
             self.assertEqual(self._repository_snapshot(empty_repository, None), before_empty)
 
     def test_p4_cleanup_failure_is_blocked_and_can_be_recovered_only_from_the_owned_lease(self) -> None:
-        allocator = DisposableEnvironmentAllocator.from_system_temp()
+        allocator = DisposableEnvironmentAllocator.from_project_runtime()
         runner = _MarkerRemovingRunner()
         probe = CodexRoleProfileCapabilityProbe(
             allocator=allocator,
@@ -357,7 +357,7 @@ class CodexAgentProfileCapabilityTests(unittest.TestCase):
         self.assertFalse(runner.lease.root.path.exists())
 
     def test_p4_profile_write_failure_still_removes_the_owned_disposable_root(self) -> None:
-        allocator = _ProfileDirectoryConflictAllocator.from_system_temp()
+        allocator = _ProfileDirectoryConflictAllocator.from_project_runtime()
         runner = _ObservationRunner(_RunnerOutcome.SUCCESS)
         probe = CodexRoleProfileCapabilityProbe(
             allocator=allocator,
@@ -377,7 +377,7 @@ class CodexAgentProfileCapabilityTests(unittest.TestCase):
 
     @staticmethod
     def _probe(runner: ProcessRunner, readback: CapabilityReadbackPort) -> RoleProfileProbeResult:
-        allocator = DisposableEnvironmentAllocator.from_system_temp()
+        allocator = DisposableEnvironmentAllocator.from_project_runtime()
         probe = CodexRoleProfileCapabilityProbe(
             allocator=allocator,
             runner=runner,

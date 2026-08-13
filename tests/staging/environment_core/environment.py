@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 from pathlib import Path
+import re
 import stat
-import tempfile
 import uuid
 
 from pydantic import ValidationError
@@ -34,24 +34,24 @@ from .contracts import (
 
 
 _ROOT_PREFIX = "johnny-stage-env-"
+_ROOT_NAME_PATTERN = re.compile(r"johnny-stage-env-[0-9a-f]{32}")
+_RUNTIME_PARENT_NAME = ".johnny-runtime"
+_TESTS_DIRECTORY = Path(__file__).resolve(strict=True).parents[2]
+_PROJECT_RUNTIME_PARENT = _TESTS_DIRECTORY / _RUNTIME_PARENT_NAME
+_CLAIMED_MARKERS: dict[Path, EnvironmentMarker] = {}
 
 
 class DisposableEnvironmentAllocator:
-    """Creates marker-bound environment roots below one resolved OS temp parent."""
+    """Creates marker-bound roots below this checkout's project-owned runtime."""
 
-    def __init__(self, temporary_parent: EnvironmentLocator) -> None:
-        validated_parent = EnvironmentLocator.model_validate(temporary_parent.model_dump())
-        system_parent = Path(tempfile.gettempdir()).resolve(strict=True)
-        if validated_parent.path.resolve(strict=True) != system_parent:
-            raise ValueError("environment allocator must use the resolved OS temporary directory")
-        self._temporary_parent = EnvironmentLocator(value=str(system_parent))
+    def __init__(self) -> None:
+        self._runtime_parent = EnvironmentLocator(value=str(_PROJECT_RUNTIME_PARENT))
         self._claimed_owner_values: set[str] = set()
         self._fault = EnvironmentFault.NONE
 
     @classmethod
-    def from_system_temp(cls) -> DisposableEnvironmentAllocator:
-        parent = Path(tempfile.gettempdir()).resolve(strict=True)
-        return cls(EnvironmentLocator(value=str(parent)))
+    def from_project_runtime(cls) -> DisposableEnvironmentAllocator:
+        return cls()
 
     def configure_fault(self, fault: EnvironmentFault) -> None:
         self._fault = EnvironmentFault(fault)
@@ -62,9 +62,12 @@ class DisposableEnvironmentAllocator:
             return validated_owner
         if validated_owner.value in self._claimed_owner_values:
             return ProvisionBlocked(reason=ProvisionBlockReason.OWNER_REPLAYED)
+        if not self._prepare_runtime_parent():
+            return ProvisionBlocked(reason=ProvisionBlockReason.INITIALIZATION_FAILED)
         try:
             root = self._create_root()
         except OSError:
+            self._remove_runtime_parent_if_empty()
             return ProvisionBlocked(reason=ProvisionBlockReason.INITIALIZATION_FAILED)
         environment_id = EnvironmentId(value=f"environment-{uuid.uuid4().hex}")
         root_locator = EnvironmentLocator(value=str(root.resolve(strict=True)))
@@ -81,6 +84,7 @@ class DisposableEnvironmentAllocator:
                 return ProvisionBlocked(reason=ProvisionBlockReason.FAULT_AFTER_MARKER)
             environment = self._build_environment(validated_owner, environment_id, root_locator, marker)
             self._claimed_owner_values.add(validated_owner.value)
+            _CLAIMED_MARKERS[root_locator.path] = marker
             return ProvisionedEnvironment(environment=environment)
         except (OSError, ValidationError, ValueError):
             self._remove_new_root(root_locator)
@@ -98,6 +102,8 @@ class DisposableEnvironmentAllocator:
         if not self._is_exact_owned_root(root):
             return TeardownResult(status=TeardownStatus.BLOCKED, reason=TeardownBlockReason.ROOT_ESCAPE)
         marker_path = validated_lease.marker_path
+        if self._is_reparse_point(marker_path):
+            return TeardownResult(status=TeardownStatus.BLOCKED, reason=TeardownBlockReason.MARKER_MISMATCH)
         try:
             marker = EnvironmentMarker.model_validate_json(marker_path.read_text(encoding="utf-8"))
         except FileNotFoundError:
@@ -108,7 +114,12 @@ class DisposableEnvironmentAllocator:
             return TeardownResult(status=TeardownStatus.BLOCKED, reason=TeardownBlockReason.MARKER_MISMATCH)
         if not self._tree_is_exact(root):
             return TeardownResult(status=TeardownStatus.BLOCKED, reason=TeardownBlockReason.CHILD_ESCAPE)
-        self._remove_exact_tree(root)
+        try:
+            self._remove_exact_tree(root)
+        except OSError:
+            return TeardownResult(status=TeardownStatus.BLOCKED, reason=TeardownBlockReason.DELETE_FAILED)
+        _CLAIMED_MARKERS.pop(root, None)
+        self._remove_runtime_parent_if_empty()
         return TeardownResult(status=TeardownStatus.REMOVED, reason=TeardownBlockReason.NONE)
 
     def _build_environment(
@@ -149,7 +160,7 @@ class DisposableEnvironmentAllocator:
 
     def _create_root(self) -> Path:
         for _ in range(4):
-            candidate = self._temporary_parent.path / f"{_ROOT_PREFIX}{uuid.uuid4().hex}"
+            candidate = self._runtime_parent.path / f"{_ROOT_PREFIX}{uuid.uuid4().hex}"
             try:
                 candidate.mkdir()
                 return candidate
@@ -168,15 +179,63 @@ class DisposableEnvironmentAllocator:
 
     def _validate_new_root(self, root: EnvironmentLocator) -> None:
         if self._is_reparse_point(root.path) or not self._is_exact_owned_root(root.path):
-            raise ValueError("new environment root must be an exact owned direct temporary child")
+            raise ValueError("new environment root must be an exact owned direct project child")
 
     def _is_exact_owned_root(self, root: Path) -> bool:
         return (
             root.is_absolute()
-            and root.name.startswith(_ROOT_PREFIX)
-            and root.parent.resolve(strict=True) == self._temporary_parent.path.resolve(strict=True)
+            and _ROOT_NAME_PATTERN.fullmatch(root.name) is not None
+            and root.parent.resolve(strict=True) == self._runtime_parent.path.resolve(strict=True)
             and root.exists()
         )
+
+    def _prepare_runtime_parent(self) -> bool:
+        parent = self._runtime_parent.path
+        try:
+            if self._is_reparse_point(parent):
+                return False
+            if not parent.exists():
+                parent.mkdir()
+                if self._is_reparse_point(parent):
+                    return False
+            if not parent.is_dir():
+                return False
+            return self._runtime_children_are_claimed()
+        except OSError:
+            return False
+
+    def _runtime_children_are_claimed(self) -> bool:
+        parent = self._runtime_parent.path
+        try:
+            children = tuple(parent.iterdir())
+        except OSError:
+            return False
+        for child in children:
+            if self._is_reparse_point(child) or not child.is_dir() or not self._is_exact_owned_root(child):
+                return False
+            expected_marker = _CLAIMED_MARKERS.get(child)
+            if expected_marker is None:
+                return False
+            marker_path = child / ".johnny-stage-env-owner.json"
+            if self._is_reparse_point(marker_path):
+                return False
+            try:
+                marker = EnvironmentMarker.model_validate_json(marker_path.read_text(encoding="utf-8"))
+            except (OSError, ValidationError, ValueError):
+                return False
+            if marker != expected_marker:
+                return False
+        return True
+
+    def _remove_runtime_parent_if_empty(self) -> None:
+        parent = self._runtime_parent.path
+        if self._is_reparse_point(parent) or not parent.is_dir():
+            return
+        try:
+            if next(parent.iterdir(), None) is None:
+                parent.rmdir()
+        except (OSError, StopIteration):
+            return
 
     def _consume_fault(self, expected: EnvironmentFault) -> bool:
         if self._fault is not expected:
@@ -185,10 +244,14 @@ class DisposableEnvironmentAllocator:
         return True
 
     def _remove_new_root(self, root: EnvironmentLocator) -> None:
-        if not root.path.exists() or self._is_reparse_point(root.path) or not self._is_exact_owned_root(root.path):
+        try:
+            if not root.path.exists() or self._is_reparse_point(root.path) or not self._is_exact_owned_root(root.path):
+                return
+            if self._tree_is_exact(root.path):
+                self._remove_exact_tree(root.path)
+                self._remove_runtime_parent_if_empty()
+        except OSError:
             return
-        if self._tree_is_exact(root.path):
-            self._remove_exact_tree(root.path)
 
     def _tree_is_exact(self, directory: Path) -> bool:
         for child in directory.iterdir():
