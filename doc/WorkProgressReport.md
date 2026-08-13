@@ -4033,3 +4033,13 @@
 | Independent green | Immutable archive SHA-256 `29D31780671A3111FFA5C1F73090E8CF09E6EA7F01DF608E9A0022A9D5B354F0`; focused `12/12`; full `460/460`; strict mypy `143/143`; in-memory compile `143/143`; source/scope/ancestry/clean-lane checks pass. |
 | Adversarial closure | Reviewer mutations after success and compensation changed tracked/Git bytes and turned B4/B5 red; removing the second-repository gate turned its dedicated reversal red. Exact source blob restored and focused passed again. B1-B8 close with no finding. |
 | Decision / boundary | `APPROVED / READY_TO_MERGE`; no implementation-worktree write, new worktree, push, staging publication, package/build/install, live Codex/host/real-target-project mutation, Secret, release or deployment. |
+
+## PRG-20260814-372 - Ticket 05B4B2E6B guarded integration
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `APPROVED(05B4B2E6B) -> GUARDED_INTEGRATION -> ACTION_COMPLETED / TICKET_COMPLETED` |
+| Merge | Review `ff00a03bb334e9aedaa27a2220169811f2691cf6` and exact handoff `183313ec6c43b0ece57df699c0eb17d5fd3413b4` integrated by two-parent merge `0e0934d17382f3fd8ff17878d88ce1e597e35b91`; automatic merge had no conflict and PRG-368 through PRG-371 each remain unique. |
+| Verification | Immutable source full `460/460`, compile `143/143` and reviewer reversals remain exact; post-merge focused `12/12`, strict mypy `143/143`, clean control porcelain and exact external cache removal pass. |
+| Router continuation | E6B is complete. E6A revision-02 correction remains the only active E6 child; 05C stays undispatched until E6A independently passes and integrates. |
+| Boundary | No push, staging publication, package/build/install, live Codex/host/real-target-project mutation, Secret, release or deployment. |

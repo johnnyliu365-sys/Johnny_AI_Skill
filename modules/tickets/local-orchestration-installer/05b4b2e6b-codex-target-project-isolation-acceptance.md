@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / unchanged AC-02, AC-07 and AC-08 |
-| State | `APPROVED / READY_TO_MERGE` |
+| State | `COMPLETE / APPROVED / INTEGRATED` - guarded merge `0e0934d` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B4B2E6B-01` / B1-B8 |
 | Dependency | E6P guarded merge `7334cc5314592ac159e9418a145121d31e4156d5` |
 | Planned owner | Existing owner2 task `019ffb0c-db88-7303-895c-aecfadde7c8d`; permanent `workflow-implementer-2`; no new worktree/helper |
