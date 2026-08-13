@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-13 |
 | Requirement / ADR | `CHG-20260813-015` / `ADR-20260813-007` |
-| State | `IN_PROGRESS / DISPATCH_CONFIRMED` |
+| State | `CHANGES_REQUESTED / INITIAL_REVIEW_COMPLETE` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05S1R-01` / R1-R8 |
 | Dependency | Integrated 05S1-05S4; exact current control freeze; one clean permanent implementation worktree |
 | Language / XSS | Python 3.11 strict Pydantic/mypy / `XSS_NOT_APPLICABLE` |
@@ -106,3 +106,27 @@ worktree, commit, TEMP or owner2 state changed.
 
 This receipt is one-use and cannot authorize E3D, E4, another owner/task or any
 cleanup of owner2/OS TEMP. The implementation owner cannot control an Agent.
+
+## Initial independent review
+
+The exact submitted chain is `fceba609 -> 46dda341 -> b33314ca`; implementation
+scope and the WPR-only handoff scope are exact, and the implementation worktree
+is clean. Independent verification from an immutable export outside OS TEMP
+passed focused `77/77`, full serial `412/412`, strict mypy `134` files and
+in-memory compile `134` files. Three frozen-matrix defects remain:
+
+- `CR-167 / IMPLEMENTATION_DEFECT / R5,R8`: a prefix-similar direct child such
+  as `johnny-stage-env-prefix-similar` is admitted as an exact owned lease and
+  deleted because root admission checks only `startswith`.
+- `CR-168 / IMPLEMENTATION_DEFECT / R5,R8`: an exact teardown delete or
+  permission failure escapes as `PermissionError` instead of returning a
+  finite typed result while preserving the remaining tree.
+- `CR-169 / IMPLEMENTATION_DEFECT / R2,R4,R7,R8`: the committed test rejects a
+  valid checkout located beneath OS TEMP and performs its first cleanup only
+  after that assertion. The resulting test-owned residue causes the remaining
+  focused matrix to fail closed, so the test does not prove the location-
+  independent checkout-derived contract.
+
+Formal evidence is recorded in
+`doc/reviews/local-orchestration-installer/05s1r-project-owned-disposable-runtime-root-code-review.md`.
+No correction authority or integration approval is created by this review.

@@ -3577,3 +3577,15 @@
 | Governance | `Workflow.md`, `AGENTS.md` and `CodeReview.md` distinguish staging integration, disposable effect testing and stable release/promotion; direct development on the frozen accepted POC is prohibited. |
 | Existing lanes | Active 05S1R and preserved owner2 state are unaffected. No implementation task, branch, worktree or target project was touched. |
 | Boundary | Control documentation only. No formal ticket, receipt, dispatch, Git ref creation, push, target-project mutation, package, release or deployment. |
+
+## PRG-20260813-328 — Ticket 05S1R initial independent review
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05S1R) -> TERMINAL_CODE_REVIEW -> CHANGES_REQUESTED / SAME_BRANCH_CORRECTION_REQUIRED` |
+| Exact return | Product task `019ffb0c-c9c7-7b30-b614-02dea7ed9042` is idle and bound to the clean permanent implementation worktree. Exact chain is control dispatch `fceba609`, implementation `46dda341` and WPR-only handoff `b33314ca`; implementation/handoff scopes and three-worktree topology pass. |
+| Independent green | Immutable export outside OS TEMP passed focused `77/77`, full serial `412/412`, strict mypy `134/134` files and in-memory compile `134/134`; source/XSS/diff/ancestry/residue checks passed. |
+| CR-167 | `IMPLEMENTATION_DEFECT / R5,R8`: prefix-similar `johnny-stage-env-prefix-similar` was admitted as an exact owned root and deleted because admission uses only `startswith`. |
+| CR-168 | `IMPLEMENTATION_DEFECT / R5,R8`: an exact delete/permission failure propagated `PermissionError` instead of a finite typed result preserving truthful absence state. |
+| CR-169 | `IMPLEMENTATION_DEFECT / R2,R4,R7,R8`: committed tests wrongly reject a valid checkout beneath OS TEMP and assert before teardown, leaving project-local residue that causes the dependent focused matrix to fail closed. |
+| Decision / boundary | Formal review is `doc/reviews/local-orchestration-installer/05s1r-project-owned-disposable-runtime-root-code-review.md`. Findings are batched and require one additive same-branch correction; no correction dispatch, new branch/worktree, integration, E3D/E4 resume, staging push, package/build/install, live Codex/target-project mutation, release or deployment occurred. |
