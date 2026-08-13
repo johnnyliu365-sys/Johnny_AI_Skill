@@ -171,6 +171,15 @@
 | Ticket 04H disposable Windows uninstall | PLANNED / DEPENDENCY_WAIT | After 04G; product removal/absence/foreign preservation only. |
 | Ticket 04I first-version freeze | PLANNED / DEPENDENCY_WAIT | After 04G/04H; immutable source/toolchain/manifest/artifact/review record. |
 
+## Guided Project Bootstrap and Adaptive Delivery
+
+| Stage | State | Evidence / next gate |
+| --- | --- | --- |
+| Requirement / architecture | DONE | `CHG-20260813-016`; `ADR-20260813-008`; install/init separation, reviewer-first activation and adaptive delivery direction confirmed by owner. |
+| Exact specification | DRAFT / OWNER_REVIEW_REQUIRED | `modules/spec/adaptive-project-orchestration.md` AC-01 through AC-10. |
+| Ticket decomposition | BLOCKED / SPEC_APPROVAL_REQUIRED | Candidate sequence is recorded in the draft SPEC; no formal ticket, owner, receipt, branch or worktree allocation yet. |
+| Current implementation lanes | UNAFFECTED | 05S1R continues on its frozen baseline; owner2 E3D state remains preserved. |
+
 ### Ticket 05 selection after external capability proof
 
 The owner-authorized probe resolved the two external uncertainties without

@@ -137,8 +137,20 @@ ProjectWorkflowProfile = {
   profile_id: ProfileId,
   profile_version: Version,
   delivery_stage: POC | MVP | COMMERCIAL,
+  delivery_profile: COMPACT | STANDARD | HIGH_ASSURANCE,
   transition_rules: (current_stage, event) ->
     (outcome, next_stage, required_authority, required_source_kinds, eligible_capabilities)
+}
+
+ImplementationResourcePlan = {
+  delivery_profile: COMPACT | STANDARD | HIGH_ASSURANCE,
+  model_tier: ECONOMY | BALANCED | FRONTIER,
+  implementer_count: NonNegativeInt,
+  independent_lane_refs: ImplementationLaneRef[],
+  research_support: NONE | REVIEWER_OWNED_READ_ONLY,
+  assessment_ref: DeliveryAssessmentRef,
+  budget_ceiling_ref: BudgetCeilingRef,
+  host_capability_refs: HostCapabilityRef[]
 }
 
 RouterDecision = {
@@ -244,6 +256,39 @@ Router 核心是固定的流程執行器；每個專案的合法轉移、來源�
 2. POC 的證據足以支持後續投資時，專案負責人以 `REQUIREMENT_CHANGED` 提出「升級至 MVP」的目標，建立 CHG，將目標 Profile 切換為 `MVP`，再由 `WAYFINDER` 重新收斂 MVP 的使用者價值、風險、邊界和驗收條件。其後仍依序經過 Architecture、Grill、Context、SPEC、tickets 與實作門檻。
 3. MVP 驗證後，如要承諾正式營運、安全、支援、可觀測性、資料治理、法規或服務等級，同樣以 `REQUIREMENT_CHANGED` 進入 `COMMERCIAL` Profile，並從 `WAYFINDER` 重走受影響的關卡。商用標準是該專案 Profile 的可驗收承諾，不由 Router 自行推論。
 4. `RouterState.delivery_stage` 必須和正在使用的 Profile 相符。未有核准的 CHG、對應證據或適用 Profile 時，Router 必須 `SUSPEND`，不得把 POC 結果當成 MVP 或商用結論。
+
+<a id="adaptive-delivery-profile"></a>
+
+### 0.2.1 自適應交付 Profile 與實作資源
+
+`delivery_stage` 表示 POC／MVP／COMMERCIAL 承諾；`delivery_profile` 表示本次
+專案／ticket 所需的流程強度，兩者不可混用。Router 在 intake 與每張 ticket
+dispatch 前，必須以具名證據評估變更面、耦合、不確定性／新穎性、失敗影響、
+可逆性、驗證環境與外部效果，選擇：
+
+- `COMPACT`：單一有界變更面、既有模式、可逆、確定性測試且無升級觸發；
+  可縮短 Context／SPEC／ticket 章節，未改變架構決策時免 ADR，但需求、AC、
+  owner、首次紅綠燈、受影響回歸與獨立 review 不得省略。
+- `STANDARD`：跨多個本機元件、共享契約、新 adapter 或中度不確定性；使用
+  正常 Architecture／Grill／Context／SPEC／ticket 與完整受影響驗證。
+- `HIGH_ASSURANCE`：高影響、難以回復、新架構或正式外部邊界；加入替代方案、
+  威脅／失敗矩陣、adversarial verification 與最強獨立審閱。
+
+驗證資料缺失不得預設 `COMPACT`。認證／授權、Secret／credential、付款、
+個資／受管制資料、破壞性 migration、release／deployment／signing／supply
+chain、不可逆外部效果、concurrency／distributed consistency、sandbox escape、
+Native Bridge／IPC／Extension capability 或 `PRIVILEGED_XSS_REVIEW` 一律強制
+`HIGH_ASSURANCE`。專案大小、檔案數或程式行數不得單獨決定或降低等級。
+
+reviewer 依 assessment 產生 `ImplementationResourcePlan`。正式原始碼工作預設
+一位 implementer、無 helper；文件／唯讀工作可為零位。只有互不重疊的 ticket／
+檔案 ownership、獨立 AC 與明確整合順序都成立時才可增加 lane。model tier 是
+host 能力／成本選擇，不授予 authority。高搜尋量且可獨立拆分、低權限、零寫入
+衝突時，reviewer 可建立一位唯讀、no-code research helper；implementation
+owner 仍不得控制它或任何 Agent。
+
+需求、風險、XSS／安全分類、耦合或驗證結果變更時必須重新評估；可自動升級，
+降級則必須有完整證據，且不得刪除已要求的測試、finding 或不可變 commit。
 
 ### 0.3 Context 與能力解析規則
 
@@ -398,6 +443,9 @@ SPEC 核准且共同 Context 回掛完成後，才可建立 `modules/tickets/<fe
 - TDD 的正常、違規、外部失敗與回歸測試切點。
 - XSS 分類及其 SPEC 引用；命中 XSS Review 時，列出有限、具名、可反向驗證的 payload／sink／navigation／storage 測試格。`PRIVILEGED_XSS_REVIEW` 必須另列每個 bridge／IPC／Extension capability 的未授權與繞過測試格。
 - 驗收方法、正式環境 SOP、回滾策略與完成回寫欄位。
+- 適用的 `delivery_profile`、assessment reference、實作 model capability tier、
+  implementer lane 數量／彼此不重疊證據，以及 helper 是否為 reviewer-owned
+  read-only。不得只寫「小專案」或「複雜工單」。
 
 `modules/element/<language>/<feature>/<ticket-id>/` 是索引與證據，不得複製正式原始碼；必須連結實際原始碼、領域型別、公開契約、TDD 與驗證結果。
 

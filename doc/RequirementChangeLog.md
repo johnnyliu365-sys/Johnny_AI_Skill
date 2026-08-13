@@ -254,5 +254,19 @@
 | Out of scope | Installed product root, target-project files, production package staging, live Codex/user profile, OS-global cleanup, new worktree, network, push, release or deployment. |
 | Context / ADR | `doc/context/local-orchestration-installer/main.md`; `doc/adr/ADR-20260813-007-project-owned-disposable-test-runtime.md` |
 | Affected specification | `modules/spec/local-orchestration-installer.md` / AC-13 |
+
+## CHG-20260813-016 — Add guided project bootstrap and adaptive delivery profiles
+
+| Field | Decision |
+| --- | --- |
+| Status | `REQUIREMENT_APPROVED / SPEC_DRAFTED / TICKETS_NOT_CREATED` |
+| Previous rule | Installation exposed plugin/runtime capabilities but did not define one explicit project bootstrap flow. The collaboration POC asked for a fixed Agent count before planning and otherwise applied substantially the same documentation and verification ceremony regardless of project or ticket risk. |
+| Changed rule | Installation provides only a Johnny-owned README and initialization entry point. After a selected target Git repository passes read-only preflight, one explicit confirmation authorizes exact target-owned project artifacts, a project-local ignored `.johnny/worktrees/` execution root and reviewer activation. Implementers are created/reused later only by the reviewer for receipt-bound tickets. A typed `COMPACT / STANDARD / HIGH_ASSURANCE` assessment selects documentation depth, verification breadth, implementation model capability and the minimum safe lane count for each ticket. |
+| Reason | Small, reversible work should not pay the same ceremony cost as privileged, destructive or cross-boundary work, while project size alone must never downgrade security or authority controls. The primary experience should be guided automation, with README/manual steps as recovery rather than the normal workflow. |
+| In scope | Install/init separation, exact preview and confirmation, target-owned artifacts, project-local worktree lifecycle, reviewer-first activation, evidence-based delivery profiles, model capability tiers, bounded lane count, reviewer-owned read-only research support and reclassification. |
+| Out of scope | Silent target writes, installer-time project selection, forced/unverified host turns or models, model-name authority, unbounded Agent fan-out, implementation-owner delegation, moving existing worktrees, current 05S1R scope, push, release or deployment. |
+| Security invariants | Reviewer-only orchestration, exact receipt/workspace/owner binding, strong types, TDD, independent review, XSS/Secret/ownership gates and guarded integration apply to every profile. Hard escalation triggers can only increase assurance. |
+| PRD / Context / ADR / SPEC | `PRD.md §17`; `doc/context/adaptive-project-orchestration/main.md`; `ADR-20260813-008`; `SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2` |
+| Current gate | Owner review of exact AC-01 through AC-10; ticket files and implementation remain blocked until SPEC approval. |
 | Ticket impact | New bounded Ticket 05S1R atomically migrates the allocator and seven integrated direct test callers. E3D and E4 are `REQUIREMENT_CHANGED / 05S1R_DEPENDENCY`; their uncommitted work remains preserved pending explicit disposition. |
 | Acceptance | No `from_system_temp` path remains; every disposable lease is below the exact plugin checkout runtime parent; no case creates or cleans `%TEMP%/johnny-stage-env-*`; stale project-local residue blocks and remains byte-identical; successful full verification leaves tracked, ignored, runtime, target-project and OS-TEMP sentinels unchanged/absent as applicable. |

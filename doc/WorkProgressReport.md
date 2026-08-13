@@ -3553,3 +3553,15 @@
 | 05S1R admission | Product project/task `6d2ebb66-1ae7-48b4-96da-53ffba88ef1f` / `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; canonical owner1 root/git-dir and readback digest match; target branch is absent and exactly three worktrees remain. |
 | Dispatch | One-use 05S1R handoff/allocation/receipt/correlation/question/side-context/workspace binding are frozen in the ticket. Owner1 may create only the named branch from the registry commit and write only the exact migration paths plus later PRG-325 WPR handoff. |
 | Boundary | No helper Agent, new worktree, owner2 mutation, broad cleanup, target-project write, package/build/install, staging push, live Codex, release or deployment. |
+
+## PRG-20260813-326 — Guided bootstrap and adaptive-delivery architecture
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `REQUIREMENT_CHANGED -> ARCHITECTURE_COMPLETED -> SPEC_DRAFTED -> WAIT_FOR_HUMAN(SPEC_APPROVAL)` |
+| Owner direction | Installation and project adoption are separated: package-owned README/entry point first, one exact user-confirmed target initialization next, reviewer activation after verified host admission, and implementers only after receipt-bound tickets. Workflow detail, implementer model capability and count must adapt to actual difficulty/risk. |
+| Architecture | `ADR-20260813-008` defines guided initialization and `COMPACT / STANDARD / HIGH_ASSURANCE`. Project/file/line count cannot lower risk; hard security/external-effect triggers force high assurance. Default source lane is one implementer and no helper; parallel lanes require disjoint ownership and independent acceptance. |
+| Specification | Draft `SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2` freezes AC-01 through AC-10, typed assessment/resource/initialization contracts, TDD/review closure and six candidate vertical slices. Exact AC approval is still required before ticket files. |
+| Governance | `Workflow.md`, `AGENTS.md` and `CodeReview.md` now define the adaptive profile, resource plan and defect/review gate. Reviewer-only Agent authority, workspace binding, strong typing, TDD, security/XSS and guarded integration remain invariant. |
+| Existing lanes | 05S1R is unaffected and remains active on its prior frozen dispatch. Owner2 E3D work remains preserved; no worktree, target project or implementation task was changed by this docs-only architecture turn. |
+| Boundary | Control documentation only. No formal new ticket, receipt, implementation dispatch, target-project mutation, Agent creation, worktree move, push, package, release or deployment. |
