@@ -3553,3 +3553,14 @@
 | 05S1R admission | Product project/task `6d2ebb66-1ae7-48b4-96da-53ffba88ef1f` / `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; canonical owner1 root/git-dir and readback digest match; target branch is absent and exactly three worktrees remain. |
 | Dispatch | One-use 05S1R handoff/allocation/receipt/correlation/question/side-context/workspace binding are frozen in the ticket. Owner1 may create only the named branch from the registry commit and write only the exact migration paths plus later PRG-325 WPR handoff. |
 | Boundary | No helper Agent, new worktree, owner2 mutation, broad cleanup, target-project write, package/build/install, staging push, live Codex, release or deployment. |
+
+## PRG-20260813-325 — Ticket 05S1R project-owned disposable runtime implementation handoff
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05S1R) -> ACTION_COMPLETED -> REVIEW_HANDOFF`; independent review remains required. |
+| Product / binding | Local project `6d2ebb66-1ae7-48b4-96da-53ffba88ef1f`; task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; workspace `wsb_local_orchestration_install_05s1r_20260813_01`; worktree `wtr_workflow_implementation_20260813_01`; handoff `hnd_local_orchestration_install_05s1r_20260813`; allocation `aln_local_orchestration_install_05s1r_20260813`; receipt `rcpt_local_orchestration_install_05s1r_20260813`; correlation `corr-local-orchestration-install-05s1r-20260813`; question `q-local-orchestration-install-05s1r-20260813`; side-context `scx-local-orchestration-install-05s1r-20260813-01`. |
+| Implementation | Branch `codex/implementation-project-owned-disposable-runtime-05s1r`; implementation commit `46dda341e2987cd52cf162b76ac1da2b6a94dedf`; exact frozen eight-path scope: `.gitignore`, allocator source, and the six integrated caller test files. No production/runtime target project was changed. |
+| TDD / closure | Genuine first red showed the old `from_system_temp` factory; final focused suite passed `77/77`. R8 independently reversed trusted-root derivation, stale-residue admission, empty-parent teardown and the no-OS-TEMP gate; all four named regressions turned red and exact blobs were restored. |
+| Verification | Full serial unittest discovery passed `412/412`; strict full-tree `mypy --strict --explicit-package-bases` passed `134` source files with a repository-external cache; in-memory compile passed `134` Python files. Final `git diff --check`, exact scope/ancestry, three-worktree topology, tracked/ignored porcelain, project-runtime absence and cache-residue checks passed. `XSS_NOT_APPLICABLE`: no Browser, WebView, HTML/DOM renderer, JavaScript context or privileged bridge exists. |
+| Boundary | No helper Agent, new worktree, reset/amend/rebase/merge/cherry-pick/stash, network, package/build/install, OS-global TEMP cleanup, live Codex/host/target-project mutation, Secret, staging push, release, deployment or review/integration decision occurred. |
