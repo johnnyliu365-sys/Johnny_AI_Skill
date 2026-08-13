@@ -156,7 +156,8 @@
 | Ticket 05B4B2E3D compensation response admission | COMPLETED / APPROVED / INTEGRATED | Review `eadc04f`; merge `b5541e4`; post-merge focused/full/static verification passed. |
 | Ticket 05B4B2E3 compensation oracle adapter | COMPLETED / APPROVED / INTEGRATED | Review `9f01e4d`; merge `1517b03`; post-merge focused/full/static passed. |
 | Ticket 05B4B2E4 registration success acceptance | COMPLETE / APPROVED / INTEGRATED | Correction `dc909da`, handoff `63b8494`, review `44dd810`, guarded merge `c1a5a7c`; post-merge full/static pass. |
-| Tickets 05B4B2E5-E6 lifecycle acceptance | PLANNED / DEPENDENCY_WAIT | Compensation and isolation remain small dependency-ordered acceptance tickets. |
+| Ticket 05B4B2E5 registration compensation acceptance | FROZEN / READY_FOR_DISPATCH | One real plugin-add started failure, integrated E3 rollback, absence and replay proof. |
+| Ticket 05B4B2E6 registration isolation acceptance | PLANNED / DEPENDENCY_WAIT | Evidence-only foreign and target-project isolation; blocked on E5. |
 | Ticket 05C receipt removal/replay | PLANNED / DEPENDENCY_WAIT / REFREEZE_REQUIRED | Starts only after 05A/05B approval/integration and a finite behavior/rollback closure refreeze. |
 | Ticket 06A Codex role-profile capability proof | DONE / APPROVED_EVIDENCE / INSTALL_BLOCKED / INTEGRATED | Implementation `38e9a8b`, handoff `f6f186f`, review `62955ec`, guarded merge `de4141e`; actual installed-host result is `ROLE_ISOLATION_UNPROVEN / ACCESS_DENIED / OUTPUT_UNAVAILABLE`, so capability dependents stay blocked. |
 | Autonomous Ticket 04 reviewer-only authority | PLANNED / DEPENDENCY_WAIT | Starts only after reviewed 06A `SUPPORTED`; typed fake effect gate, not a real Agent turn. |

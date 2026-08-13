@@ -3842,6 +3842,16 @@
 | Router continuation | E3 is complete. E4 was already integrated; E5 registration-compensation acceptance is now the smallest unblocked POC ticket. E6 remains blocked on E5. |
 | Boundary | No push, staging publication, package/build/install, live Codex/host/target-project mutation, Secret, release or deployment. |
 
+## PRG-20260814-353 — Ticket 05B4B2E5 compensation acceptance freeze
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `TICKET_COMPLETED(05B4B2E3) + DEPENDENCIES_SATISFIED(05B4B2E5) -> TICKET_FROZEN / READY_FOR_DISPATCH` |
+| Decomposition | E5 is one evidence-only child test: one real plugin-add side effect is converted to one declared started failure, then the exact live claim settles through integrated E3 and proves plugin/marketplace/logical/physical absence plus replay zero effect. E6 retains all foreign/target-project isolation. |
+| Closure / scope | `CLOSURE-LOCAL-INSTALL-T05B4B2E5-01` / C1-C8; exactly one new acceptance test followed by reserved PRG-355 WPR-only handoff. No new product/staging source and no numeric line criterion. |
+| Resource profile | `STANDARD`: one idle named owner1 task; no helper/fan-out because the failure, claim and rollback evidence share one lease and exact sequential state. |
+| Boundary | Freeze only; no implementation-worktree write, branch/worktree creation, live Codex/host/target-project effect, push, staging publication, package/build/install, Secret, release or deployment. |
+
 ## PRG-20260814-351 — Ticket 05B4B2E3 terminal approval
 
 | Field | Evidence |
