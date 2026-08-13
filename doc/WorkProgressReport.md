@@ -3444,6 +3444,18 @@
 | Reserve lane | Project `3a624854-bf2f-4aa8-9b04-5f73e9ab2a28`; task `019ffb0c-db88-7303-895c-aecfadde7c8d`; clean preserved branch at `699cba8f1b844552a9b36baf926613594542ed4b`; no ticket/allocation/receipt and no source authority. |
 | Continuation | Dispatch only E2 verification/correction evidence recovery to the rebound active owner. Reserve owner remains idle. E3 refreeze waits for E2 terminal review. No new worktree, staging push, package/build/install, target-project write, release or deployment. |
 
+## PRG-20260813-312 — Ticket 05B4B2E2 CR-162/CR-163/CR-164 rebound evidence recovery
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05B4B2E2 / CR-162-CR-164) -> ACTION_COMPLETED -> REVIEW_HANDOFF`; independent review remains required. |
+| Product / binding | Local project `6d2ebb66-1ae7-48b4-96da-53ffba88ef1f`; replacement task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; workspace binding `wsb_local_orchestration_install_05b4b2e2_cr162_164_20260813_01`; handoff `hnd_local_orchestration_install_05b4b2e2_cr162_164_rebind_20260813`; allocation `aln_local_orchestration_install_05b4b2e2_cr162_164_rebind_20260813`; retained receipt `rcpt_local_orchestration_install_05b4b2e2_r02_20260813`; correlation `corr-local-orchestration-install-05b4b2e2-cr162-164-rebind-20260813`; question `q-local-orchestration-install-05b4b2e2-cr162-164-rebind-20260813`; side-context `scx-local-orchestration-install-05b4b2e2-cr162-164-rebind-20260813-01`. |
+| Immutable candidate / correction | Candidate implementation `d3569f24d6686ae5bf9efe43d47bf6cd5ec82851` is the exact child of immutable E2 handoff `699cba8f1b844552a9b36baf926613594542ed4b` and remained unchanged after CR-162/CR-163/CR-164 verification. Strict typing exposed one test-only union-narrowing gap; additive correction commit `b3b50a02a48e7bb8e175200b45e8311e0895f878` is the final implementation SHA. No production source correction was required. |
+| Scope / TDD evidence | Candidate ancestry and exact implementation scope are limited to `tests/staging/codex_lifecycle_oracle/registration_adapter.py` and `tests/test_codex_registration_oracle_adapter.py`; the correction touched only the latter. Reversing the private constructor token made CR-162 red (`TypeError not raised`); accepting injected constructed binding state made CR-163 red (child exit `3`); collapsing block/malformed/version handling made CR-164 red (classification mismatch, child exit `6`). Each exact blob was restored before green verification. |
+| Verification | Focused adapter suite passed `14/14`; full serial unittest discovery passed `402/402`; strict full-tree `mypy --strict --explicit-package-bases` passed `134` source files using a repository-external cache; in-memory compile passed `134` Python files. The post-correction matrix was rerun from final implementation SHA. |
+| Static / topology / residue | Exact two-path ancestry/scope, source and XSS sentinels, `git diff --check`, linked-worktree topology, tracked/ignored porcelain, and repository cache-residue checks all passed. Final implementation lane is clean on branch `codex/implementation-codex-registration-oracle-adapter-05b4b2e2` at `b3b50a02…`; `XSS_NOT_APPLICABLE`: no Browser, WebView, HTML/DOM renderer, JavaScript execution context or privileged bridge exists. |
+| Non-interference | No new branch/worktree, reset/amend/rebase/merge/cherry-pick/stash, network, package/build/install, live Codex, host/target-project write, Secret, Agent control, staging push, release, deployment or review/integration decision occurred. This is an implementation handoff, not a self-review. |
+
 ## PRG-20260813-313 — Ticket 05B4B2E2 rebound correction terminal review
 
 | Field | Evidence |
