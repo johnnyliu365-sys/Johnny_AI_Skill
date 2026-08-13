@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-13 |
 | Parent / finding | 05S1R terminal correction review `42cfbd65988649d0b1c4b03be4724007afc7de4b` / CR-169 only |
-| State | `READY_TO_MERGE / APPROVED` |
+| State | `COMPLETE / APPROVED / INTEGRATED` — merge `d399364` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05S1R1-01` / P1-P4 |
 | Dependency | Exact parent handoff `ef69fb8c459309891d53523fc63be33e574b25eb`; CR-167/168 closed |
 | Language / profile / XSS | Python 3.11 strict / `COMPACT`, one implementer, no helper / `XSS_NOT_APPLICABLE` |

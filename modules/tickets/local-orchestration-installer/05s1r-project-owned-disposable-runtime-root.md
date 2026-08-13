@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-13 |
 | Requirement / ADR | `CHG-20260813-015` / `ADR-20260813-007` |
-| State | `READY_TO_MERGE / CHILD_05S1R1_APPROVED` |
+| State | `COMPLETE / APPROVED / INTEGRATED` — merge `d399364` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05S1R-01` / R1-R8 |
 | Dependency | Integrated 05S1-05S4; exact current control freeze; one clean permanent implementation worktree |
 | Language / XSS | Python 3.11 strict Pydantic/mypy / `XSS_NOT_APPLICABLE` |

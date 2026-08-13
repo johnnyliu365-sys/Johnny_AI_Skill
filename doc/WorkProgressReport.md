@@ -3663,3 +3663,13 @@
 | TDD / P1-P4 | First-red source sentinel at the parent identified the broad T1 assertion `is_relative_to(Path(tempfile.gettempdir()).resolve())`. T1 now registers typed exact cleanup for each admitted lease before post-provision assertions, then verifies the runtime parent is absent after cleanup. It checks the exact checkout-derived direct parent and only rejects a direct OS-global TEMP parent; all owner/replay/malformed/overlay/absence evidence remains. |
 | Verification | Core focused passed `10/10`; six-suite matrix passed `79/79`; full serial unittest passed `414/414`; strict full-tree mypy passed `134` files with an external removed cache; in-memory compile passed `134` Python files. Exact scope/diff/ancestry/topology, source/XSS sentinels, tracked/ignored porcelain, runtime absence and cache-residue checks passed. `XSS_NOT_APPLICABLE`. Reviewer owns the physical checkout-under-TEMP archive/export probe. |
 | Boundary | No production source or contract change, OS-global staging enumeration/delete, helper Agent, new worktree beyond the authorized branch, cross-lane write, reset/amend/rebase/force, merge/push, package/build/install, live Codex/host/target-project mutation, Secret, release or deployment occurred. |
+
+## PRG-20260814-335 — 05S1R / 05S1R1 guarded integration
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `APPROVED(05S1R1) -> GUARDED_INTEGRATION -> ACTION_COMPLETED / DEPENDENCIES_RELEASED` |
+| Merge | Review commit `abb07bbe831949afe73994b37ed9e2c48a7b47ca`; history-preserving merge `d399364bbd082e089d1f8e5264b026fcdd5c9d3f` with parents `abb07bb` and `3488efe`. The only merge conflict was the predicted WPR append conflict. Resolution retained each PRG-325 through PRG-334 exactly once and removed only conflict markers. |
+| Post-merge verification | Core `10/10`; six-suite `79/79`; full `414/414` with `2064` subtests; strict mypy `134/134`; in-memory compile `134/134`; `git diff --check`, runtime/cache/porcelain readback pass. |
+| Router continuation | Parent 05S1R and child 05S1R1 are complete. The 05S1R dependency on E3D/E4 is released; each lane still requires its own exact refreeze, baseline admission and receipt before implementation resumes. |
+| Boundary | No push, package/build/install, staging publication, live Codex/host/target-project mutation, Secret, release or deployment. Owner worktrees were not modified by control. |
