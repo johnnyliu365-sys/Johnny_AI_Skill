@@ -149,7 +149,7 @@
 | Ticket 05B4B2E3A compensation finite failure | COMPLETED / APPROVED / INTEGRATED | Merge `b324f91`; combined focused 44/full 379/strict mypy pass. |
 | Ticket 05B4B2E2B registration no-effect failure | COMPLETED / APPROVED / INTEGRATED | Merge `784d08a`; CR-160 incident remains truthfully preserved. |
 | Ticket 05B4B2E3B oracle owned-absence preservation | COMPLETED / APPROVED / INTEGRATED | Merge `dc07eec`; CR-161 subclass/constructed evidence is finitely blocked. |
-| Ticket 05B4B2E2 registration oracle adapter | CHANGES_REQUESTED / WORKSPACE_REBOUND / CORRECTION_CANDIDATE | R1-R8 still requires an isolated child logical `%LOCALAPPDATA%`; CR-162/163/164 candidate `d3569f24…` is bound to a new exact-workspace task for verification and handoff. |
+| Ticket 05B4B2E2 registration oracle adapter | APPROVED / GUARDED_INTEGRATION_READY | Rebound implementation `b3b50a02…`, WPR-only handoff `cc436c28…`; CR-162/163/164 closed by independent focused 14/full 402/strict mypy 134 review and three red/restore probes. |
 | Ticket 05B4B2E3C compensation request revalidation | COMPLETED / APPROVED / INTEGRATED | Merge `c042af1`; reviewer focused 24/full 395/strict mypy 132 passed. |
 | Ticket 05B4B2E3 compensation oracle adapter | PLANNED / RESPONSE-CONTRACT_REVIEW | E3C is integrated; refreeze after E2 terminal review determines the single reusable response-admission boundary. |
 | Tickets 05B4B2E4-E6 lifecycle acceptance | PLANNED / DEPENDENCY_WAIT | Success, compensation and isolation remain small dependency-ordered acceptance tickets. |

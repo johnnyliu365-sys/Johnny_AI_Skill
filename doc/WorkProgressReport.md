@@ -3443,3 +3443,14 @@
 | Active E2 lane | Project `6d2ebb66-1ae7-48b4-96da-53ffba88ef1f`; workspace binding `wsb_local_orchestration_install_05b4b2e2_cr162_164_20260813_01`; task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; existing branch at unreviewed candidate `d3569f24d6686ae5bf9efe43d47bf6cd5ec82851`. New handoff/allocation/correlation/question/side-context are recorded in the ticket; the unchanged valid unconsumed receipt is retained. |
 | Reserve lane | Project `3a624854-bf2f-4aa8-9b04-5f73e9ab2a28`; task `019ffb0c-db88-7303-895c-aecfadde7c8d`; clean preserved branch at `699cba8f1b844552a9b36baf926613594542ed4b`; no ticket/allocation/receipt and no source authority. |
 | Continuation | Dispatch only E2 verification/correction evidence recovery to the rebound active owner. Reserve owner remains idle. E3 refreeze waits for E2 terminal review. No new worktree, staging push, package/build/install, target-project write, release or deployment. |
+
+## PRG-20260813-313 — Ticket 05B4B2E2 rebound correction terminal review
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05B4B2E2 revision 02) -> TERMINAL_CODE_REVIEW -> APPROVED / GUARDED_INTEGRATION_READY` |
+| Exact return | Rebound project `6d2ebb66-1ae7-48b4-96da-53ffba88ef1f`; task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; workspace binding `wsb_local_orchestration_install_05b4b2e2_cr162_164_20260813_01`; implementation `b3b50a02a48e7bb8e175200b45e8311e0895f878`; WPR-only handoff `cc436c28782fb47e10de81e7bfbe3fa8e1b555cb`. Product cwd, canonical Git top-level and linked git-dir match the permanent implementation worktree. |
+| Independent verification | Immutable export passed focused `14/14`, full serial `402/402`, strict mypy `134/134` files and in-memory compile `134/134`; exact scope, ancestry, diff, topology, source/XSS and residue readbacks passed. Reviewer finite-admission probes rejected lease/binding subclasses and nested extra/missing identity state `4/4`; caller equality was not executed. |
+| Reverse evidence | Removing constructor capability made CR-162 fail (`TypeError not raised`); bypassing exact bound-state admission made CR-163 fail (child exit `3`); collapsing block/malformed/version classification made CR-164 fail (child exit `6`). A fresh immutable export restored the exact committed source bytes and all three named tests passed. |
+| CodeReview result | R1-R8 pass; CodeReview categories 1, 3, 7 and 9 pass; category 8 is `XSS_NOT_APPLICABLE`. CR-162/163/164 are closed with no unresolved blocking finding. Formal review is `doc/reviews/local-orchestration-installer/05b4b2e2-codex-registration-oracle-adapter-code-review.md`. |
+| Boundary | Approval authorizes only guarded local integration after clean-parent/conflict checks. No new worktree, staging push, package/build/install, live Codex/host/target-project mutation, release or deployment. E3 remains undispatched until E2 integration completes. |
