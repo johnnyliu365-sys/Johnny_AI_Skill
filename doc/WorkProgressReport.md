@@ -3984,6 +3984,16 @@
 | Dispatch / return | One owner, no helper; exactly the new foreign-state isolation acceptance test, then unique PRG-367 WPR-only handoff. Non-high-risk ticket/evidence defects may be corrected within the same closure without user wait. |
 | Boundary | No control-side implementation-worktree write, new worktree, live Codex/host/real-target-project effect, push, staging publication, package/build/install, Secret, release or deployment. |
 
+## PRG-20260814-368 - Ticket 05B4B2E6B target-project isolation handoff
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05B4B2E6B) -> ACTION_COMPLETED -> REVIEW_HANDOFF`; independent review remains required. |
+| Binding / lane | `CLOSURE-LOCAL-INSTALL-T05B4B2E6B-01` / B1-B8; owner2 task `019ffb0c-db88-7303-895c-aecfadde7c8d`; branch `codex/implementation-codex-target-project-isolation-05b4b2e6b`; permanent bound worktree and three-worktree topology preserved. |
+| Implementation | Commit `d7dbed23bbadce925a37f0dcf825a3649828a045`; exactly `tests/test_codex_registration_target_project_isolation_acceptance.py`. First red was the missing module. |
+| Acceptance evidence | Focused `12/12`; full serial `460/460`; strict mypy `143` files with external cache removed; in-memory compile `143` files; five B8 reversal probes each turned the guard red and restored exact bytes/porcelain. B2 created exactly two synthetic Git repositories under one ticket-owned TEMP root, with text/binary commits and command-scoped identity. B4/B5 used separate project-owned disposable oracle leases and logical requests containing no synthetic repository path. |
+| Isolation / boundary | Each repository snapshot covered canonical root, Git root, HEAD/tree/index, tracked paths/bytes, full files/directories, Git metadata, tracked/ignored porcelain, lock/nested paths; snapshots remained identical after success, compensation and final readback. `XSS_NOT_APPLICABLE`; no real target/sibling/global path, production/staging source, package, push, release or deployment effect. Exact TEMP leases/root and the external mypy cache were removed before handoff. |
+
 ## PRG-20260814-366 - Ticket 05B4B2E6B dispatch registry
 
 | Field | Evidence |
@@ -4024,3 +4034,43 @@
 | Closure evidence | Focused direct-adapter + E6A `16/16`; full explicit serial `450/450`; strict full-tree mypy `143/143` source files with external cache removed; in-memory compile `143/143`. Six A8 reversals (owned membership/cardinality, success record, success payload, compensation record, compensation payload and prefix isolation) each turned red and were restored. |
 | Isolation evidence | Two fresh caller-owned project-runtime leases were initialized separately; each seeded one prefix-similar typed foreign marketplace/plugin and exact payload bytes before its integrated success or compensation entrypoint. Success was accepted with owned state present; compensation was accepted with owned logical/physical absence and replay facts; foreign record tuples and payload bytes remained byte-identical in both leases; exact lease teardown passed. |
 | Boundary / security | `XSS_NOT_APPLICABLE`: these staging-oracle tests have no Browser, WebView, HTML/DOM renderer, JavaScript context or privileged bridge. No target-project/global/sibling scan, OS-global staging effect, live Codex/host effect, network, package, release or deployment action. Final tracked/ignored porcelain, project runtime, repository bytecode and external cache are clean/absent. |
+
+## PRG-20260814-371 - Ticket 05B4B2E6B terminal approval
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05B4B2E6B) -> TERMINAL_CODE_REVIEW -> APPROVED / READY_TO_MERGE` |
+| Reviewed chain | Dispatch `be0f91f` -> implementation `d7dbed23bbadce925a37f0dcf825a3649828a045` -> WPR-only handoff `183313ec6c43b0ece57df699c0eb17d5fd3413b4`; implementation scope is exactly the one frozen test path. |
+| Independent green | Immutable archive SHA-256 `29D31780671A3111FFA5C1F73090E8CF09E6EA7F01DF608E9A0022A9D5B354F0`; focused `12/12`; full `460/460`; strict mypy `143/143`; in-memory compile `143/143`; source/scope/ancestry/clean-lane checks pass. |
+| Adversarial closure | Reviewer mutations after success and compensation changed tracked/Git bytes and turned B4/B5 red; removing the second-repository gate turned its dedicated reversal red. Exact source blob restored and focused passed again. B1-B8 close with no finding. |
+| Decision / boundary | `APPROVED / READY_TO_MERGE`; no implementation-worktree write, new worktree, push, staging publication, package/build/install, live Codex/host/real-target-project mutation, Secret, release or deployment. |
+
+## PRG-20260814-372 - Ticket 05B4B2E6B guarded integration
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `APPROVED(05B4B2E6B) -> GUARDED_INTEGRATION -> ACTION_COMPLETED / TICKET_COMPLETED` |
+| Merge | Review `ff00a03bb334e9aedaa27a2220169811f2691cf6` and exact handoff `183313ec6c43b0ece57df699c0eb17d5fd3413b4` integrated by two-parent merge `0e0934d17382f3fd8ff17878d88ce1e597e35b91`; automatic merge had no conflict and PRG-368 through PRG-371 each remain unique. |
+| Verification | Immutable source full `460/460`, compile `143/143` and reviewer reversals remain exact; post-merge focused `12/12`, strict mypy `143/143`, clean control porcelain and exact external cache removal pass. |
+| Router continuation | E6B is complete. E6A revision-02 correction remains the only active E6 child; 05C stays undispatched until E6A independently passes and integrates. |
+| Boundary | No push, staging publication, package/build/install, live Codex/host/real-target-project mutation, Secret, release or deployment. |
+
+## PRG-20260814-373 - Ticket 05B4B2E6A CR-172 changes requested
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05B4B2E6A) -> TERMINAL_CODE_REVIEW -> CHANGES_REQUESTED / EVIDENCE_DEFECT` |
+| Reviewed chain | Correction registry `5481665` -> implementation `d3b3174b97a9c1fd52d2e861fd10be83c8d10033` -> WPR-only handoff `ec0e80b45cf998378c420787ef16cdaf08d98c34`; exact implementation scope is three frozen paths. |
+| Independent evidence | Immutable archive SHA-256 `52CD7DCD2872EDD97D904621688CA8B341B2FF0143364F176137AF2077E22611`; focused `16/16` green. Removing only the plugin uniqueness gate survived `16/16`; restoring it and removing only the marketplace uniqueness gate also survived `16/16`. |
+| Finding / correction | `CR-172`: paired zero/zero and duplicate/duplicate cases do not independently lock each owned collection. Add four cases with the opposite collection held at exact one and reverse each gate independently. Source logic and E6A acceptance remain unchanged. |
+| Boundary | Same ticket/owner/branch/worktree/allocation/receipt/correlation; additive test-only correction. Reviewer mutations restored to exact adapter blob and immutable TEMP removed. No product/implementation-worktree write, new lane, external effect, push, staging publication, package/install, Secret, release or deployment. |
+
+## PRG-20260814-374 - Ticket 05B4B2E6A CR-172 correction dispatch
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `CHANGES_REQUESTED(05B4B2E6A/CR-172) + SAME_LANE_ADMITTED -> IMPLEMENTATION_DISPATCH_CONFIRMED / IMPLEMENT` |
+| Review / binding | Formal review `fec1da65fd91c6b9e5f5f5005f8f1840f5cef51c`; original owner1 workspace/handoff/allocation/receipt/correlation/question/side-context remain exact under `PRG-20260809-042`. |
+| Lane readback | Same E6A branch is idle/clean at handoff `ec0e80b45cf998378c420787ef16cdaf08d98c34`; zero tracked/ignored/runtime/cache residue; exactly three worktrees; exact merge base `5481665`. |
+| Correction / return | Merge the exact control registry into the same branch, preserving only append-only WPR evidence if that sole conflict occurs. Change only the direct adapter test with four independent matrices, then one additive test commit and unique PRG-375 WPR-only correction handoff. |
+| Boundary | No new branch/worktree/helper, source behavior change, target-project/live host effect, push, staging publication, package/build/install, Secret, release or deployment. |

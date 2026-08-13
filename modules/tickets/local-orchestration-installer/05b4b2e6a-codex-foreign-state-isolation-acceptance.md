@@ -132,3 +132,16 @@ and may not be committed until the corrected dispatch registry is admitted.
 
 This corrected one-use admission supersedes only the revision-01 one-file scope.
 All identity bindings and reviewer-only orchestration restrictions remain exact.
+
+## CR-172 evidence-correction dispatch registry
+
+| Field | Value |
+| --- | --- |
+| Reviewed finding / authority | Formal `CHANGES_REQUESTED` review `fec1da65fd91c6b9e5f5f5005f8f1840f5cef51c`; standing auto-continue under `PRG-20260809-042`; valid original allocation/receipt/correlation retained. |
+| Exact lane readback | Owner1 task is idle; same branch/worktree is clean at exact handoff `ec0e80b45cf998378c420787ef16cdaf08d98c34`; tracked/ignored/runtime/cache residue zero; exactly three worktrees; merge base with control is the correction registry `548166560b97e0eb81cecc80ad7dd3cb1405ce49`. |
+| Baseline admission | In the same permanent branch/worktree, merge only the exact control commit carrying this registry. If the only conflict is append-only `doc/WorkProgressReport.md`, preserve every unique PRG-367 through PRG-374 once and verify `git diff --check`; any source/test/ticket conflict or changed implementation blob is a typed halt. No reset/rebase/amend/force/stash/new branch/worktree. |
+| Correction scope / return | Change only `tests/test_codex_registration_oracle_adapter.py` to add the four independent zero/duplicate matrices. Keep implementation `d3b3174b97a9c1fd52d2e861fd10be83c8d10033` and E6A acceptance unchanged. Return one additive test correction commit, then only PRG-375 in one WPR-only correction handoff. |
+
+The reviewer remains sole orchestrator; no helper, self-review, integration,
+next-ticket dispatch, push, staging publication, package/install or release is
+authorized.
