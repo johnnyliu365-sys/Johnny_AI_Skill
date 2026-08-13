@@ -3431,3 +3431,15 @@
 | Current readback | Both owners returned `HALT / PRODUCT_PROJECT_REGISTRATION_UNAVAILABLE`: the available product surface can list projects but cannot register／add an existing local folder. The project list therefore still has no distinct IDs for either permanent implementation worktree. Steps 2-3 are not admissible until registration exists. |
 | Preserved task evidence | Old task `019fcc9c-f34f-7d53-a313-c70c90bf3245` remains immutable evidence; its pre-rebind turn created unreviewed E2 correction commit `d3569f24d6686ae5bf9efe43d47bf6cd5ec82851` and halted without docs handoff because the runtime lacked `langgraph`. Old task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` remains immutable evidence at its prior clean lane. Neither old task is accepted as a correctly workspace-bound replacement task. |
 | Boundary | No source/test edit, new worktree, schedule, staging push, package/build/install, target-project write, release or deployment. E2 correction and E3 remain undispatched until exact workspace binding passes. |
+
+## PRG-20260813-311 — Product projects registered and implementation tasks rebound
+
+| Field | Value |
+| --- | --- |
+| State | `PRODUCT_REBIND_COMPLETED / E2_CORRECTION_DISPATCH_READY / E3_WAIT` |
+| Product projects | Project owner registered existing permanent worktrees as Local projects `6d2ebb66-1ae7-48b4-96da-53ffba88ef1f` and `3a624854-bf2f-4aa8-9b04-5f73e9ab2a28`. No worktree was created or copied. |
+| Reviewer-created tasks | Active E2 owner task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; reserve task `019ffb0c-db88-7303-895c-aecfadde7c8d`. Historical tasks remain immutable evidence and are no longer dispatch targets. |
+| Exact-binding evidence | Both tasks returned `ACTION_COMPLETED / WORKSPACE_BOUND`. Product cwd, canonical Git top-level, linked-worktree git-dir and reviewer filesystem/Git readback match their respective permanent worktrees. Both have empty tracked/ignored porcelain. |
+| Active E2 lane | Project `6d2ebb66-1ae7-48b4-96da-53ffba88ef1f`; workspace binding `wsb_local_orchestration_install_05b4b2e2_cr162_164_20260813_01`; task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; existing branch at unreviewed candidate `d3569f24d6686ae5bf9efe43d47bf6cd5ec82851`. New handoff/allocation/correlation/question/side-context are recorded in the ticket; the unchanged valid unconsumed receipt is retained. |
+| Reserve lane | Project `3a624854-bf2f-4aa8-9b04-5f73e9ab2a28`; task `019ffb0c-db88-7303-895c-aecfadde7c8d`; clean preserved branch at `699cba8f1b844552a9b36baf926613594542ed4b`; no ticket/allocation/receipt and no source authority. |
+| Continuation | Dispatch only E2 verification/correction evidence recovery to the rebound active owner. Reserve owner remains idle. E3 refreeze waits for E2 terminal review. No new worktree, staging push, package/build/install, target-project write, release or deployment. |
