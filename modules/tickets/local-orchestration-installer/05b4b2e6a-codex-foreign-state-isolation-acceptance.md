@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / unchanged AC-02, AC-07 and AC-08 |
-| State | `FROZEN / READY_FOR_DISPATCH` |
+| State | `DISPATCH_CONFIRMED / IN_PROGRESS` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B4B2E6A-01` / A1-A8 |
 | Dependency | E6P guarded merge `7334cc5314592ac159e9418a145121d31e4156d5` |
 | Planned owner | Existing owner1 task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; permanent `workflow-implementation`; no new worktree/helper |
@@ -85,3 +85,17 @@ numeric line limit is an acceptance criterion.
 
 Freeze is not dispatch. Exact clean lane/readback, target-branch absence and a
 second control commit carrying the dispatch registry are required before edit.
+
+## Dispatch registry
+
+| Field | Value |
+| --- | --- |
+| Reviewed freeze / authority | Freeze `1204ed4c90e5195807238114d3df2d52abe3296e`; project-owner standing auto-continue under `PRG-20260809-042`; this control commit is the reviewed dispatch handoff. |
+| Exact lane readback | Owner1 task is idle; permanent top-level and linked git-dir match; clean E6P branch at exact handoff `43b7d45b26e01087a6bfbbe1657187956ecce9e7`; tracked/ignored porcelain are empty; exactly three worktrees; target E6A branch is absent. |
+| Branch admission | From the exact clean owner1 worktree, create only `codex/implementation-codex-foreign-state-isolation-05b4b2e6a` at the exact commit carrying this registry. Do not merge/copy a historical branch, create another worktree, reset, rebase, amend, force, stash or alter another lane. |
+| Binding | Workspace `wsb_local_orchestration_install_05b4b2e6a_20260814_01`; handoff `hnd_local_orchestration_install_05b4b2e6a_20260814`; allocation `aln_local_orchestration_install_05b4b2e6a_20260814`; receipt `rcpt_local_orchestration_install_05b4b2e6a_20260814`; correlation `corr-local-orchestration-install-05b4b2e6a-20260814`; question `q-local-orchestration-install-05b4b2e6a-20260814`; side context `scx-local-orchestration-install-05b4b2e6a-20260814-01`. |
+| Writable return | Exactly the one frozen test path, one implementation commit, then only PRG-367 in one WPR-only handoff commit. |
+
+This one-use receipt authorizes only E6A A1-A8 on the exact owner1 task/worktree.
+The owner cannot orchestrate another Agent, issue a review decision, dispatch a
+next ticket or perform push/package/install/staging/release/deployment work.

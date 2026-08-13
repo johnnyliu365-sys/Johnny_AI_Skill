@@ -3973,3 +3973,23 @@
 | E6B | `CLOSURE-LOCAL-INSTALL-T05B4B2E6B-01` / B1-B8; owner2; exactly one target-project isolation acceptance test followed by reserved PRG-368 WPR-only handoff. It proves two disposable sentinel Git repositories remain byte- and Git-identical. |
 | Parallel safety | The implementation paths are disjoint, both consume integrated E6P read-only, and neither implements product behavior. Review and integration remain independent; guarded integration order is E6A then E6B. |
 | Resource / boundary | `STANDARD`, one named owner per lane, no helpers. Freeze only; no implementation-worktree write, new worktree, live Codex/host/real-target-project effect, push, staging publication, package/build/install, Secret, release or deployment. |
+
+## PRG-20260814-365 - Ticket 05B4B2E6A dispatch registry
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `TICKET_FROZEN(05B4B2E6A) + EXACT_LANE_ADMITTED -> IMPLEMENTATION_DISPATCH_CONFIRMED / IMPLEMENT` |
+| Freeze / binding | Reviewed freeze `1204ed4c90e5195807238114d3df2d52abe3296e`; owner1 task/workspace/handoff/allocation/receipt/correlation/question/side-context are unique in the ticket and cite `PRG-20260809-042`. |
+| Lane readback | Owner1 is idle at clean E6P handoff `43b7d45`; permanent top-level/linked git-dir and three-worktree topology match; tracked/ignored porcelain are empty and target E6A branch is absent. New branch must start only from the exact commit carrying this registry. |
+| Dispatch / return | One owner, no helper; exactly the new foreign-state isolation acceptance test, then unique PRG-367 WPR-only handoff. Non-high-risk ticket/evidence defects may be corrected within the same closure without user wait. |
+| Boundary | No control-side implementation-worktree write, new worktree, live Codex/host/real-target-project effect, push, staging publication, package/build/install, Secret, release or deployment. |
+
+## PRG-20260814-366 - Ticket 05B4B2E6B dispatch registry
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `TICKET_FROZEN(05B4B2E6B) + EXACT_LANE_ADMITTED -> IMPLEMENTATION_DISPATCH_CONFIRMED / IMPLEMENT` |
+| Freeze / binding | Reviewed freeze `1204ed4c90e5195807238114d3df2d52abe3296e`; owner2 task/workspace/handoff/allocation/receipt/correlation/question/side-context are unique in the ticket and cite `PRG-20260809-042`. |
+| Lane readback | Owner2 has no active turn at clean E3 handoff `f71cd87`; permanent top-level/linked git-dir and three-worktree topology match; tracked/ignored porcelain are empty and target E6B branch is absent. New branch must start only from the exact commit carrying this registry. |
+| Dispatch / return | One owner, no helper; exactly the new target-project isolation acceptance test, then unique PRG-368 WPR-only handoff. Non-high-risk ticket/evidence defects may be corrected within the same closure without user wait. |
+| Boundary | No control-side implementation-worktree write, new worktree, live Codex/host/real-target-project effect, push, staging publication, package/build/install, Secret, release or deployment. |
