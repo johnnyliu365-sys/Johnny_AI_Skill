@@ -3881,3 +3881,13 @@
 | Correction | Ticket revision 02 permits exactly one field-for-field typed fixture projection solely to bind the integrated E3 factory, and permits the single class-level wrapper to remain as a passive observer/replay trap while delegating every non-faulted call to the exact original oracle method. Copied plans, outcome/response validators and fabricated compensation effects remain prohibited. |
 | Preserved evidence | C1-C8, one-file scope, owner1 task/worktree/branch, allocation, receipt, correlation, implementation `2bf7dd842f2bef0c55a0448c282189f3067d33fc` and docs-only handoff `5dd0f635bbdcc29ba0aa74d63ad849d2fe4158e4` are unchanged. The returned implementation already conforms and proceeds directly to independent terminal review. |
 | Boundary | Control documentation only; no implementation-worktree write, new worktree/branch, source/test mutation, live Codex/host/target-project effect, staging publication, push, package/build/install, Secret, release or deployment. |
+
+## PRG-20260814-357 - Ticket 05B4B2E5 terminal approval
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05B4B2E5) -> TERMINAL_CODE_REVIEW -> APPROVED / READY_TO_MERGE` |
+| Reviewed chain | Freeze `d1ffe169` -> dispatch `d105aac` -> implementation `2bf7dd8` -> WPR handoff `5dd0f63` -> revision-02 refreeze `124cbde`; implementation scope is exactly the one frozen test path. |
+| Independent green | Reviewer-owned immutable archive SHA-256 `1772BE1412FB4526167F2A60D9B85C1E1B201B856026737F2C878A9F6DD48316`; focused `2/2`; full `447/447`; strict mypy `141/141`; in-memory compile `141/141`; source/scope/ancestry/clean-lane checks pass. |
+| Adversarial closure | Four reviewer reversals prove one-shot fault, exact compensation order, claim replay gate and physical absence (child exits `6/15/12/9`); exact source blob restored. The fixture's sole typed adapter-request projection equals settlement's projection for the admitted request. C1-C8 are closed with no product finding. |
+| Decision / boundary | `APPROVED / READY_TO_MERGE`; complete immutable history only. One discarded read-only reviewer diagnostic returned only a global TEMP item count and was excluded; accepted residue evidence is exact-path only. No implementation-worktree write, new worktree, push, staging publication, package/build/install, live Codex/host/target-project mutation, Secret, release or deployment. |
