@@ -3408,3 +3408,13 @@
 | Repeated external block | Original task `019fcc9c-f34f-7d53-a313-c70c90bf3245` and replacement task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` both rejected their next turn before work with the same account-level usage-limit response; stated retry time is 2026-08-18 10:20. |
 | Preserved state | Original E2 lane remains clean at `699cba8f1b844552a9b36baf926613594542ed4b`; implementer-2 remains clean at `b153636fe2acd37af0b376ee825e0cf9336b98b1`; control main remains clean. No correction branch or mutation was created; exactly three worktrees remain. |
 | Resume point | Resume same Ticket 05B4B2E2 CR-162/163/164 from recorded correction handoff `f483052` once implementation capacity is available. Reviewer role must not implement the formal source correction. E3 and packaging/staging remain undispatched. |
+
+## PRG-20260813-309 — Ticket 05B4B2E2 correction owner restored
+
+| Field | Value |
+| --- | --- |
+| Router event | `IMPLEMENTER_CAPACITY_RESTORED -> REPLACEMENT_ENVIRONMENT_ACCESS_DENIED -> IMPLEMENTATION_OWNER_RESTORED / AUTO_CONTINUE` |
+| Replacement readback | Task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` passed read-only admission, then failed before mutation because its sandbox could not create the linked-worktree Git `index.lock`. The proposed correction branch is absent and `workflow-implementer-2` remains clean at `b153636fe2acd37af0b376ee825e0cf9336b98b1`. |
+| Restored lane | Original task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; existing clean `workflow-implementation`; existing branch `codex/implementation-codex-registration-oracle-adapter-05b4b2e2`; exact handoff `699cba8f1b844552a9b36baf926613594542ed4b`. No new branch or worktree. |
+| Authority | Same ticket/closure and retained receipt. New restoration handoff/allocation/correlation/question/side-context are recorded in the ticket; exact correction remains CR-162/163/164 only. |
+| Continuation | Dispatch additive correction to the restored owner. No Luna helper: the work is bounded and not high-search. E3 remains dependent on E2 terminal review; staging and packaging remain undispatched. |
