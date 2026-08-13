@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / unchanged AC-02, AC-07 and AC-08 |
-| State | `FROZEN / READY_FOR_DISPATCH / NOT_DISPATCHED` |
+| State | `FROZEN / IMPLEMENTATION_DISPATCH_CONFIRMED / IMPLEMENT_ACTIVE` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B4B2E3-01` / A1-A8 |
 | Dependency | E1, E3A `b324f91`, E3B `dc07eec`, E3C `c042af1` and E3D `b5541e4` approved/integrated |
 | Planned owner | Task `019ffb0c-db88-7303-895c-aecfadde7c8d`; permanent `workflow-implementer-2`; no new worktree/helper |
@@ -102,3 +102,17 @@ deployment action is authorized.
 Freeze is not dispatch. Exact clean lane/readback, target-branch absence and a
 second control commit carrying the dispatch registry are required before the
 owner may switch branch or edit.
+
+## Dispatch registry
+
+| Field | Value |
+| --- | --- |
+| Reviewed freeze / authority | Freeze `903b70f9dbdbcbfbc6037e4fcd1a808bb6f388d1`; project-owner standing auto-continue under `PRG-20260809-042`; this control commit is the reviewed dispatch handoff. |
+| Exact lane readback | Permanent owner2 top-level and linked git-dir match; idle task `019ffb0c-db88-7303-895c-aecfadde7c8d`; clean branch `codex/implementation-codex-oracle-response-admission-05b4b2e3d` at `5fa24b5acceacf98cf101a0126e03388fa70e659`; zero tracked/ignored residue; exactly three worktrees; target branch absent. |
+| Branch admission | From the clean owner2 worktree, create only `codex/implementation-codex-compensation-oracle-adapter-05b4b2e3` at the exact commit carrying this registry. Do not merge/copy/reuse E3D source as a baseline, create another worktree or alter another lane. |
+| Binding | Workspace `wsb_local_orchestration_install_05b4b2e3_20260814_01`; handoff `hnd_local_orchestration_install_05b4b2e3_20260814`; allocation `aln_local_orchestration_install_05b4b2e3_20260814`; receipt `rcpt_local_orchestration_install_05b4b2e3_20260814`; correlation `corr-local-orchestration-install-05b4b2e3-20260814`; question `q-local-orchestration-install-05b4b2e3-20260814`; side context `scx-local-orchestration-install-05b4b2e3-20260814-01`. |
+| Writable return | Exactly the two frozen new paths, one implementation commit, then only PRG-348 in one WPR-only handoff commit. |
+
+This one-use receipt authorizes only E3 A1-A8 on the exact owner2 task/worktree.
+The owner cannot orchestrate another Agent, issue a review decision, dispatch a
+next ticket or perform push/package/install/staging/release/deployment work.

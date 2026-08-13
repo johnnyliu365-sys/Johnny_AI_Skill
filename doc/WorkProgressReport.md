@@ -3801,3 +3801,13 @@
 | Closure / scope | `CLOSURE-LOCAL-INSTALL-T05B4B2E3-01` / A1-A8; exactly two new paths, followed by reserved PRG-348 WPR-only handoff. No line-count acceptance criterion. |
 | Resource profile | `STANDARD`: one named owner2 implementation task; no helper/fan-out because the two paths and shared adapter contract are tightly coupled. Owner1 remains idle rather than receiving dependency-blocked E5 work. |
 | Boundary | Freeze only; no dispatch yet, implementation-worktree mutation, new worktree, live Codex/host/target-project effect, staging publication, push, package/build/install, Secret, release or deployment. |
+
+## PRG-20260814-347 — Ticket 05B4B2E3 dispatch registry
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `TICKET_FROZEN(05B4B2E3) + EXACT_LANE_ADMITTED -> IMPLEMENTATION_DISPATCH_CONFIRMED / IMPLEMENT` |
+| Freeze / binding | Reviewed freeze `903b70f9dbdbcbfbc6037e4fcd1a808bb6f388d1`; task `019ffb0c-db88-7303-895c-aecfadde7c8d`; workspace/handoff/allocation/receipt/correlation/question/side-context are unique in the ticket. |
+| Lane readback | Owner2 is clean at exact E3D handoff `5fa24b5`; canonical top-level/git-dir and three-worktree topology match; tracked/ignored counts are zero and target E3 branch is absent. The new branch must start only from the exact registry commit in the same permanent worktree. |
+| Dispatch / return | One owner, no helper; exactly `compensation_adapter.py` plus its focused test, then unique PRG-348 WPR-only handoff. Non-high-risk ticket/evidence defects may be returned typed for immediate reviewer refreeze; no broad self-expansion. |
+| Boundary | No control-side implementation-worktree mutation, new worktree, live Codex/host/target-project effect, staging publication, push, package/build/install, Secret, release or deployment. |
