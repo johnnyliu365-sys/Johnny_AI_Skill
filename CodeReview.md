@@ -23,11 +23,12 @@
 | 依賴合理 | 新增、升級或保留的依賴有必要性、相容性與維護性依據；沒有可避免的重複、過時或高風險依賴。 |
 | 專案規格符合性 | 實作、測試、設定與文件符合已核准的 spec、ticket 與 `CONTEXT.md`；差異已取得核准並完成追溯。 |
 | Agent 角色權限 | 涉及多 Agent／task 控制時，reviewer 是唯一可達 orchestration effect 的角色；implementation owner 的直接與間接 create/spawn/fork/send/follow-up/steer/wait/interrupt/close 均在 effect 前固定回 `HALT / ROLE_FORBIDDEN`。必須反證 copied/forged/replayed reviewer、錯 ticket/handoff/receipt/target/correlation 與一般 capability 字串不能授權；prompt 或 model 選擇不得充當安全邊界。 |
+| Task／worktree 綁定 | implementation task 的產品層 active workspace root 必須精確綁定 ticket 的 owner worktree，且正規化絕對根、解析後 filesystem identity 與 Git worktree metadata 三者一致。prompt／handoff 路徑、shell `cd`、command working directory、環境變數或 sibling 可讀權限均不是綁定；缺失、不可讀回或不一致必須在問題、pending、receipt、branch、source 或 host／Git effect 前固定回 `HALT / TASK_WORKSPACE_MISMATCH`。不得用控制面 project 或新建 Codex-managed worktree代替既有永久 implementation worktree。 |
 | XSS 與宿主能力 | 任何不可信資料進入 Browser、WebView、HTML／DOM Renderer 或 JavaScript execution context 的功能，都必須依 [Workflow.md 的 XSS Review 強制閘門](Workflow.md#xss-review)審查 source-to-sink、實際 renderer 行為與繞過路徑。JavaScript 可達 Native Bridge、IPC、Extension API 或其他 privileged capability 時，必須升級審查 JavaScript → host effect 的完整 capability graph，並證明所有未授權路徑在 effect 前 fail closed。 |
 
 ## 2.1 缺陷分類與攔截點
 
-下列八類是本專案已知且可被系統性攔截的缺陷。**「攔截點」決定責任歸屬**：標 `TDD` 者，工單的「TDD 設計」必須逐一列出對應案例，未列出即為工單缺陷而非實作缺陷；標 `CR` 者，審閱報告必須逐項記錄結果。
+下列九類是本專案已知且可被系統性攔截的缺陷。**「攔截點」決定責任歸屬**：標 `TDD` 者，工單的「TDD 設計」必須逐一列出對應案例，未列出即為工單缺陷而非實作缺陷；標 `CR` 者，審閱報告必須逐項記錄結果。
 
 | # | 類別 | 攔截點 |
 | --- | --- | --- |
@@ -39,6 +40,7 @@
 | 6 | 例外是否會拋出 | TDD |
 | 7 | 測試是否真的涵蓋描述 | CR |
 | 8 | XSS 與 privileged JavaScript capability | Architecture／SPEC／TDD ＋ CR |
+| 9 | Implementation task／worktree 綁定錯置 | Architecture／ticket／TDD ＋ CR |
 
 ### 1. 路徑前綴誤匹配
 
@@ -115,12 +117,25 @@ implementation owner 的直接工具、間接 adapter、偽造 reviewer identity
 4. 升級審查時，從 JavaScript context 反向列舉 Native Bridge、IPC、Extension API 與其他 privileged port 的所有直接／間接入口，核對 origin／frame／caller、schema、action allowlist、authorization、replay 與 effect-before-gate；任一路徑可繞過即 `CHANGES_REQUESTED`。
 5. 對至少一個凍結的攻擊格反轉 sanitizer／encoder／sink gate 或 privileged capability gate，確認 committed test 轉紅並精確還原。
 
+### 9. Implementation task／worktree 綁定錯置
+
+task 在控制面 project 或其他 workspace 啟動，只靠 prompt、handoff 文字或 shell `cd` 指向 implementation worktree，並不會改變產品層 sandbox／Git authority；這種錯置可能讓 source 可讀卻無法安全建立 linked-worktree `index.lock`，也可能讓錯誤 task 取得不屬於它的 effect 範圍。
+
+**TDD 必要案例**：唯一正向案例必須由產品層 task readback、filesystem identity 與 Git worktree metadata 證明精確綁定後才可進入 dispatch。負向至少包括控制面 project root、sibling、parent、child、前綴相似路徑、prompt-only `cd`、command working directory override、環境變數指向、缺少／不可讀回 workspace、錯 Git worktree pointer、錯 project／task／owner／handoff／allocation／correlation；每一格都必須在交付問題、pending、receipt、branch、source 或 host／Git effect 前固定得到 `HALT / TASK_WORKSPACE_MISMATCH`。測試使用 fake product／filesystem／Git readback，不得建立真實 worktree 或修改其他 lane。
+
+**CR 必要動作**：
+
+1. 從產品層重新讀回 task 的 project ID、task ID 與 active workspace root，不接受 prompt、聊天或實作者自述。
+2. 獨立讀回 ticket owner worktree 的 canonical root、filesystem identity 與 Git worktree metadata，逐項對到 opaque binding evidence。
+3. 反證在控制面 project 啟動後執行 `cd`、指定 command working directory 或提供 sibling write permission，仍不能通過 admission。
+4. 變更 task／workspace 時，確認舊 task 與 commits 被保留為不可變證據，且新 handoff、allocation、correlation、question 與 workspace binding 已建立；只有 scope 未變且 receipt 有效、未消耗時才可沿用 receipt。
+
 ## 3. 審閱證據與結論
 
 - Review report 必須逐項記錄上述驗證結果，並附上相關檔案／位置、測試或命令輸出、smoke test 結果，以及未解決風險。
 - Review 開始前必須讀取 ticket 的具 revision `Acceptance Closure Set`。每個 blocking finding 都必須引用一個既有 Closure item；無法引用者不得直接判為 implementation defect。
 - 同一輪必須一次跑完全部 Closure items 並批次回傳 findings。禁止在 correction 完成後才新增原本可於同一份 baseline 發現的逐輪探索性 blocking probe。
-- 同時必須逐項記錄 §2.1 中攔截點含 `CR` 的四類（1 路徑前綴、3 權限繞過、7 測試涵蓋、8 XSS 與 privileged JavaScript capability）的檢查結果與依據；第 8 類若分類為 `XSS_NOT_APPLICABLE`，仍須記錄可驗證理由。
+- 同時必須逐項記錄 §2.1 中攔截點含 `CR` 的五類（1 路徑前綴、3 權限繞過、7 測試涵蓋、8 XSS 與 privileged JavaScript capability、9 task／worktree 綁定）的檢查結果與依據；第 8 類若分類為 `XSS_NOT_APPLICABLE`，仍須記錄可驗證理由。
 - 若發現缺陷屬於 §2.1 中攔截點為 `TDD` 的類別，而**該工單的「TDD 設計」並未列出對應案例**，審閱結論仍為 `CHANGES_REQUESTED`，但根因記為**工單缺陷**，並同時修正工單；不得僅要求實作者補測試而讓同類缺口在下一張工單重現。
 - 每項 finding 必須標記 `IMPLEMENTATION_DEFECT`、`EVIDENCE_DEFECT`、`TICKET_DEFECT`、`REQUIREMENT_CHANGED` 或 `OUT_OF_SCOPE_HARDENING`。只有前兩類可在 Closure Set 不變時回原 implementation lane；`TICKET_DEFECT` 回工單設計、`REQUIREMENT_CHANGED` 回變更控制、`OUT_OF_SCOPE_HARDENING` 另開後續 ticket 且不阻擋目前工單。
 - 結論僅可為 `APPROVED`、`CHANGES_REQUESTED` 或 `BLOCKED`。若有未處理且會影響正確性、安全性、資料隔離、可用性、效能或規格符合性的問題，不得標記為 `APPROVED`。

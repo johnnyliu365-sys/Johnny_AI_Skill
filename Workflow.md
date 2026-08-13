@@ -159,7 +159,8 @@ CompletionEvidence = {
 
 ImplementationHandoff = {
   handoff_ref, ticket_ref, approved_spec_ref, context_reference_metadata, acceptance_refs, tdd_refs,
-  frontend_composition_ref?, control_owner, implementation_owner, reviewer
+  frontend_composition_ref?, project_id, implementation_task_id, workspace_binding_ref,
+  worktree_ref, control_owner, implementation_owner, reviewer
 }
 
 TicketProposal = {
@@ -170,11 +171,13 @@ TicketProposal = {
 PendingDispatchDescriptor = {
   ticket_ref, proposal_revision, dispatch_question_id, implementation_owner,
   reviewed_handoff_ref, ticket_docs_commit, handoff_docs_commit,
+  project_id, implementation_task_id, workspace_binding_ref, worktree_ref,
   event_correlation_id
 }
 
 ApprovedDispatchArtifact = {
-  project_id, ticket_ref, reviewed_handoff_ref, implementation_owner,
+  project_id, ticket_ref, reviewed_handoff_ref, implementation_owner, implementation_task_id,
+  workspace_binding_ref, worktree_ref,
   ticket_docs_commit, handoff_docs_commit
 }
 
@@ -460,6 +463,16 @@ replay、role substitution 或 indirect adapter path 均 fail closed。專案負
 
 implementation owner 回傳 `ImplementationReturn`。`COMPLETED` 產生 `ACTION_COMPLETED` 並進入既定驗證／review，`BLOCKED` fail-closed，`CHANGE_DETECTED` 只能產生 `REQUIREMENT_CHANGED` 回到 Grill。任何 owner 例外必須在 ticket 的 **Owner override record** 記錄專案負責人的明確範圍化改派；未記錄不得覆蓋分離責任。
 
+### 5.2 Implementation task／worktree 精確綁定 admission
+
+reviewer 建立或派送 implementation task 前，host 必須從產品層 project／task readback 與 Git worktree metadata 分別取得該 task 的 active workspace root 及 ticket 指定的 implementation worktree root，並在 ephemeral boundary 同時驗證：平台規則下正規化後的絕對根路徑完全相等、解析 reparse point／symlink 後的 filesystem identity 相同，以及 linked-worktree `.git` pointer 指向同一筆已登錄 worktree metadata。只有三項皆成立才可通過。
+
+prompt、handoff 文字、shell `cd`、command working directory、環境變數、路徑字串、可讀取 sibling directory 或 task 內的自我宣稱，都不構成 workspace binding。task 必須是產品層明確綁定該永久 implementation worktree 的 Local project／task；不得以控制面 project 啟動後再 `cd` 到 implementation worktree，也不得為了通過此閘門建立 Codex-managed 或其他新 worktree。
+
+workspace root 缺失、產品層無法讀回、任一 root／identity／Git metadata 不一致，或只靠 prompt／`cd` 模擬綁定時，必須在建立交付問題、pending descriptor、receipt、branch、source access 或任何 host／Git effect 前固定回傳 `HALT / TASK_WORKSPACE_MISMATCH`。人工同意、一般 filesystem 權限或 reviewer 身分不能覆蓋此阻擋。
+
+可持久化契約只保存 opaque `project_id`、`implementation_task_id`、`workspace_binding_ref`、`worktree_ref`、readback evidence digest、revision 與驗證時間引用，不得保存 raw path／URI。更換 task 或 workspace 時，reviewer 必須保留舊 task 與 commits 作為不可變證據，建立 owner override／rebind record，並針對新 task 產生新的 handoff、allocation、correlation、question 與 workspace binding；ticket 與 scope 未變且 receipt 仍有效、未消耗時才可保留原 receipt。
+
 一次只能實作一張已核准的 ticket。每個新行為依序：
 
 1. 在已同意的測試切點寫可執行測試。
@@ -507,6 +520,7 @@ implementation owner 回傳 `ImplementationReturn`。`COMPLETED` 產生 `ACTION_
 只可針對第 3 類重新走 `grill-with-docs → to-spec → to-tickets`。
 
 - 每個進行中的檔案與 ticket 只能有一個 owner worktree。
+- 每個 active implementation task 只能精確綁定一個 owner worktree；控制面 project、其他 sibling／parent／child worktree 或 prompt-only `cd` 均不得代替產品層 workspace binding，不符時固定 `HALT / TASK_WORKSPACE_MISMATCH`。
 - Agent 只能在自己的 worktree 寫檔、stage、commit、merge、rebase、pull、push、stash 或切換分支。
 - 其他 Agent 可讀、評論或建立 review 報告，但不得跨 worktree 替實作者修改或提交。
 - Composition Root、migration、共享契約或同一設定檔有衝突時，建立先行整合 ticket，或由指定整合者串行處理。

@@ -3418,3 +3418,16 @@
 | Restored lane | Original task `019fcc9c-f34f-7d53-a313-c70c90bf3245`; existing clean `workflow-implementation`; existing branch `codex/implementation-codex-registration-oracle-adapter-05b4b2e2`; exact handoff `699cba8f1b844552a9b36baf926613594542ed4b`. No new branch or worktree. |
 | Authority | Same ticket/closure and retained receipt. New restoration handoff/allocation/correlation/question/side-context are recorded in the ticket; exact correction remains CR-162/163/164 only. |
 | Continuation | Dispatch additive correction to the restored owner. No Luna helper: the work is bounded and not high-search. E3 remains dependent on E2 terminal review; staging and packaging remain undispatched. |
+
+## PRG-20260813-310 — Implementation task／worktree exact-binding governance correction
+
+| Field | Value |
+| --- | --- |
+| State | `REQUIREMENT_CHANGED / GOVERNANCE_CORRECTED / PRODUCT_REBIND_PENDING` |
+| Authority | Project owner directed the reviewer to have both named implementers perform product-level project registration／task rebinding and to add the dispatch admission rule. No new worktree or automation is authorized. |
+| Root cause | Existing implementation tasks were created under the control project; prompt／handoff path and command working directory did not bind the product task sandbox to the permanent implementation worktree. This allowed source readback but could deny linked-worktree Git metadata writes. |
+| Governance change | `Workflow.md` now requires ephemeral product-task, filesystem-identity and Git-worktree readback with exact agreement before dispatch; prompt-only `cd` is explicitly non-binding and mismatch returns `HALT / TASK_WORKSPACE_MISMATCH` before any question, pending, receipt, branch, source or effect. Serializable contracts retain only opaque binding IDs／digests. `CodeReview.md` adds the corresponding TDD／CR matrix. |
+| Rebind rule | Old tasks and commits remain immutable evidence. Each replacement Local task must be product-bound to its exact permanent implementation worktree and receive new task, handoff, allocation, correlation, question and workspace-binding identifiers; an unchanged, valid and unconsumed ticket receipt may be retained. |
+| Current readback | Both owners returned `HALT / PRODUCT_PROJECT_REGISTRATION_UNAVAILABLE`: the available product surface can list projects but cannot register／add an existing local folder. The project list therefore still has no distinct IDs for either permanent implementation worktree. Steps 2-3 are not admissible until registration exists. |
+| Preserved task evidence | Old task `019fcc9c-f34f-7d53-a313-c70c90bf3245` remains immutable evidence; its pre-rebind turn created unreviewed E2 correction commit `d3569f24d6686ae5bf9efe43d47bf6cd5ec82851` and halted without docs handoff because the runtime lacked `langgraph`. Old task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` remains immutable evidence at its prior clean lane. Neither old task is accepted as a correctly workspace-bound replacement task. |
+| Boundary | No source/test edit, new worktree, schedule, staging push, package/build/install, target-project write, release or deployment. E2 correction and E3 remain undispatched until exact workspace binding passes. |
