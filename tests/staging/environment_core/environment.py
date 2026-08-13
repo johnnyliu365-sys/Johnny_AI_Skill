@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import re
 import stat
 import uuid
 
@@ -33,6 +34,7 @@ from .contracts import (
 
 
 _ROOT_PREFIX = "johnny-stage-env-"
+_ROOT_NAME_PATTERN = re.compile(r"johnny-stage-env-[0-9a-f]{32}")
 _RUNTIME_PARENT_NAME = ".johnny-runtime"
 _TESTS_DIRECTORY = Path(__file__).resolve(strict=True).parents[2]
 _PROJECT_RUNTIME_PARENT = _TESTS_DIRECTORY / _RUNTIME_PARENT_NAME
@@ -112,7 +114,10 @@ class DisposableEnvironmentAllocator:
             return TeardownResult(status=TeardownStatus.BLOCKED, reason=TeardownBlockReason.MARKER_MISMATCH)
         if not self._tree_is_exact(root):
             return TeardownResult(status=TeardownStatus.BLOCKED, reason=TeardownBlockReason.CHILD_ESCAPE)
-        self._remove_exact_tree(root)
+        try:
+            self._remove_exact_tree(root)
+        except OSError:
+            return TeardownResult(status=TeardownStatus.BLOCKED, reason=TeardownBlockReason.DELETE_FAILED)
         _CLAIMED_MARKERS.pop(root, None)
         self._remove_runtime_parent_if_empty()
         return TeardownResult(status=TeardownStatus.REMOVED, reason=TeardownBlockReason.NONE)
@@ -179,7 +184,7 @@ class DisposableEnvironmentAllocator:
     def _is_exact_owned_root(self, root: Path) -> bool:
         return (
             root.is_absolute()
-            and root.name.startswith(_ROOT_PREFIX)
+            and _ROOT_NAME_PATTERN.fullmatch(root.name) is not None
             and root.parent.resolve(strict=True) == self._runtime_parent.path.resolve(strict=True)
             and root.exists()
         )
@@ -239,11 +244,14 @@ class DisposableEnvironmentAllocator:
         return True
 
     def _remove_new_root(self, root: EnvironmentLocator) -> None:
-        if not root.path.exists() or self._is_reparse_point(root.path) or not self._is_exact_owned_root(root.path):
+        try:
+            if not root.path.exists() or self._is_reparse_point(root.path) or not self._is_exact_owned_root(root.path):
+                return
+            if self._tree_is_exact(root.path):
+                self._remove_exact_tree(root.path)
+                self._remove_runtime_parent_if_empty()
+        except OSError:
             return
-        if self._tree_is_exact(root.path):
-            self._remove_exact_tree(root.path)
-            self._remove_runtime_parent_if_empty()
 
     def _tree_is_exact(self, directory: Path) -> bool:
         for child in directory.iterdir():

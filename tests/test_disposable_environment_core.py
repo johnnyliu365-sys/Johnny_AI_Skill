@@ -13,10 +13,13 @@ from unittest.mock import patch
 
 from tests.staging.environment_core.contracts import (
     EnvironmentLease,
+    EnvironmentLocator,
+    EnvironmentMarker,
     EnvironmentOwnerId,
     ProvisionBlocked,
     ProvisionBlockReason,
     ProvisionedEnvironment,
+    TeardownBlockReason,
     TeardownStatus,
 )
 from tests.staging.environment_core.environment import DisposableEnvironmentAllocator
@@ -32,13 +35,60 @@ class DisposableEnvironmentCoreTests(unittest.TestCase):
         self.assertNotIn("from_system_temp", DisposableEnvironmentAllocator.__dict__)
         allocator = DisposableEnvironmentAllocator.from_project_runtime()
         result = allocator.provision(EnvironmentOwnerId(value="environment-owner-abcdefabcdefabcd"))
-        self.assertIsInstance(result, ProvisionedEnvironment)
-        assert isinstance(result, ProvisionedEnvironment)
-        self.assertEqual(PROJECT_RUNTIME_ROOT, result.environment.root.path.parent)
-        self.assertTrue(result.environment.root.path.is_relative_to(PROJECT_RUNTIME_ROOT))
-        self.assertFalse(result.environment.root.path.is_relative_to(Path(tempfile.gettempdir()).resolve()))
-        self.assertEqual(TeardownStatus.REMOVED, allocator.teardown(result.environment).status)
-        self.assertFalse(PROJECT_RUNTIME_ROOT.exists())
+        if type(result) is not ProvisionedEnvironment:
+            raise AssertionError("project-runtime provisioning must succeed")
+        environment = result.environment
+        self.addCleanup(self._assert_removed, allocator, environment)
+        self.assertEqual(PROJECT_RUNTIME_ROOT, environment.root.path.parent)
+        self.assertTrue(environment.root.path.is_relative_to(PROJECT_RUNTIME_ROOT))
+        self.assertNotEqual(environment.root.path.parent, Path(tempfile.gettempdir()).resolve())
+
+    def test_cr167_non_exact_root_names_block_before_marker_read_or_delete(self) -> None:
+        names = (
+            "johnny-stage-env-prefix-similar",
+            "johnny-stage-env-abcdef",
+            "johnny-stage-env-" + ("a" * 33),
+            "johnny-stage-env-" + ("g" * 32),
+            "johnny-stage-env-" + ("A" * 32),
+        )
+        for index, name in enumerate(names):
+            with self.subTest(name=name):
+                allocator = DisposableEnvironmentAllocator.from_project_runtime()
+                lease = self._provisioned(allocator, f"environment-owner-{index + 1:016x}")
+                original_root = lease.root.path
+                invalid_root = original_root.with_name(name)
+                original_marker_bytes = lease.marker_path.read_bytes()
+                original_root.rename(invalid_root)
+                invalid_locator = EnvironmentLocator(value=str(invalid_root.resolve(strict=True)))
+                invalid_marker = lease.marker.model_copy(update={"root": invalid_locator})
+                invalid_marker_path = invalid_root / ".johnny-stage-env-owner.json"
+                invalid_marker_path.write_text(invalid_marker.model_dump_json(warnings=False), encoding="utf-8")
+                invalid_lease = self._relocated_lease(lease, invalid_root, invalid_marker)
+                try:
+                    with patch.object(Path, "read_text", side_effect=AssertionError("marker read-through")) as marker_reads:
+                        result = allocator.teardown(invalid_lease)
+                    self.assertEqual(0, marker_reads.call_count)
+                    self.assertEqual(TeardownStatus.BLOCKED, result.status)
+                    self.assertIn(result.reason, (TeardownBlockReason.ROOT_ESCAPE, TeardownBlockReason.INVALID_LEASE))
+                    self.assertTrue(invalid_root.exists())
+                finally:
+                    if invalid_root.exists():
+                        invalid_marker_path.write_bytes(original_marker_bytes)
+                        invalid_root.rename(original_root)
+                        self.assertEqual(TeardownStatus.REMOVED, allocator.teardown(lease).status)
+
+    def test_cr168_delete_failure_is_finite_and_retains_live_claim(self) -> None:
+        allocator = DisposableEnvironmentAllocator.from_project_runtime()
+        lease = self._provisioned(allocator, "environment-owner-fedcbafedcbafedc")
+        try:
+            with patch.object(allocator, "_remove_exact_tree", side_effect=PermissionError("denied")):
+                result = allocator.teardown(lease)
+            self.assertEqual(TeardownStatus.BLOCKED, result.status)
+            self.assertEqual(TeardownBlockReason.DELETE_FAILED, result.reason)
+            self.assertTrue(lease.root.path.exists())
+            self.assertTrue(lease.marker_path.exists())
+        finally:
+            self.assertEqual(TeardownStatus.REMOVED, allocator.teardown(lease).status)
 
     def test_t1_two_distinct_owners_provision_unique_direct_project_roots_and_reject_replay(self) -> None:
         from tests.staging.environment_core.contracts import EnvironmentOwnerId, ProvisionBlockReason, ProvisionedEnvironment
@@ -242,6 +292,45 @@ class DisposableEnvironmentCoreTests(unittest.TestCase):
             PROJECT_RUNTIME_ROOT.unlink()
 
     @staticmethod
+    def _relocated_lease(
+        lease: EnvironmentLease,
+        root: Path,
+        marker: EnvironmentMarker,
+    ) -> EnvironmentLease:
+        relocated_children = tuple(
+            child.model_copy(update={"absolute": EnvironmentLocator(value=str(root / child.relative.value))})
+            for child in (
+                lease.profile,
+                lease.local_app_data,
+                lease.roaming_app_data,
+                lease.temporary,
+                lease.codex_home,
+            )
+        )
+        overlay_paths = (*relocated_children[:3], relocated_children[3], relocated_children[3], relocated_children[4])
+        overlay = lease.overlay.model_copy(
+            update={
+                "entries": tuple(
+                    entry.model_copy(update={"path": child.absolute})
+                    for entry, child in zip(lease.overlay.entries, overlay_paths, strict=True)
+                )
+            }
+        )
+        return lease.model_copy(
+            update={
+                "root": EnvironmentLocator(value=str(root)),
+                "root_relative": lease.root_relative.model_copy(update={"value": root.name}),
+                "profile": relocated_children[0],
+                "local_app_data": relocated_children[1],
+                "roaming_app_data": relocated_children[2],
+                "temporary": relocated_children[3],
+                "codex_home": relocated_children[4],
+                "overlay": overlay,
+                "marker": marker,
+            }
+        )
+
+    @staticmethod
     def _owned_environment_roots() -> set[Path]:
         parent = (REPOSITORY_ROOT / "tests" / ".johnny-runtime").resolve()
         if not parent.exists():
@@ -255,6 +344,14 @@ class DisposableEnvironmentCoreTests(unittest.TestCase):
         self.assertIsInstance(result, ProvisionedEnvironment)
         assert isinstance(result, ProvisionedEnvironment)
         return result.environment
+
+    @staticmethod
+    def _assert_removed(allocator: DisposableEnvironmentAllocator, environment: EnvironmentLease) -> None:
+        result = allocator.teardown(environment)
+        if result.status is not TeardownStatus.REMOVED:
+            raise AssertionError("the exact project-runtime lease did not tear down")
+        if PROJECT_RUNTIME_ROOT.exists():
+            raise AssertionError("the exact project-runtime parent was not removed")
 
     @staticmethod
     def _path_is(target: Path) -> Callable[[Path], bool]:
