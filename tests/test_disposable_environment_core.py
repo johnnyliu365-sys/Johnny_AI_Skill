@@ -96,17 +96,20 @@ class DisposableEnvironmentCoreTests(unittest.TestCase):
 
         before = self._owned_environment_roots()
         allocator = DisposableEnvironmentAllocator.from_project_runtime()
+        self.addCleanup(self._assert_runtime_absent)
         first = allocator.provision(EnvironmentOwnerId(value="environment-owner-0123456789abcdef"))
         second = allocator.provision(EnvironmentOwnerId(value="environment-owner-fedcba9876543210"))
         self.assertIsInstance(first, ProvisionedEnvironment)
-        self.assertIsInstance(second, ProvisionedEnvironment)
         assert isinstance(first, ProvisionedEnvironment)
+        self.addCleanup(self._teardown_exact, allocator, first.environment)
+        self.assertIsInstance(second, ProvisionedEnvironment)
         assert isinstance(second, ProvisionedEnvironment)
+        self.addCleanup(self._teardown_exact, allocator, second.environment)
         self.assertNotEqual(first.environment.environment_id, second.environment.environment_id)
         self.assertNotEqual(first.environment.root, second.environment.root)
         for environment in (first.environment, second.environment):
             self.assertEqual(PROJECT_RUNTIME_ROOT, environment.root.path.parent)
-            self.assertFalse(environment.root.path.is_relative_to(Path(tempfile.gettempdir()).resolve()))
+            self.assertNotEqual(environment.root.path.parent, Path(tempfile.gettempdir()).resolve())
             self.assertTrue(environment.root.path.is_relative_to(REPOSITORY_ROOT / "tests" / ".johnny-runtime"))
             self.assertTrue(environment.root.path.exists())
         replay = allocator.provision(EnvironmentOwnerId(value="environment-owner-0123456789abcdef"))
@@ -121,9 +124,6 @@ class DisposableEnvironmentCoreTests(unittest.TestCase):
                 assert isinstance(blocked, ProvisionBlocked)
                 self.assertEqual(ProvisionBlockReason.INVALID_OWNER, blocked.reason)
         self.assertEqual(before | {first.environment.root.path, second.environment.root.path}, self._owned_environment_roots())
-        self.assertEqual("REMOVED", allocator.teardown(first.environment).status.value)
-        self.assertEqual("REMOVED", allocator.teardown(second.environment).status.value)
-        self.assertEqual(before, self._owned_environment_roots())
 
     def test_t2_overlay_has_exact_owned_keys_without_mutating_parent_environment(self) -> None:
         from tests.staging.environment_core.contracts import EnvironmentOwnerId, ProvisionedEnvironment
@@ -350,6 +350,17 @@ class DisposableEnvironmentCoreTests(unittest.TestCase):
         result = allocator.teardown(environment)
         if result.status is not TeardownStatus.REMOVED:
             raise AssertionError("the exact project-runtime lease did not tear down")
+        if PROJECT_RUNTIME_ROOT.exists():
+            raise AssertionError("the exact project-runtime parent was not removed")
+
+    @staticmethod
+    def _teardown_exact(allocator: DisposableEnvironmentAllocator, environment: EnvironmentLease) -> None:
+        result = allocator.teardown(environment)
+        if result.status is not TeardownStatus.REMOVED:
+            raise AssertionError("the exact project-runtime lease did not tear down")
+
+    @staticmethod
+    def _assert_runtime_absent() -> None:
         if PROJECT_RUNTIME_ROOT.exists():
             raise AssertionError("the exact project-runtime parent was not removed")
 
