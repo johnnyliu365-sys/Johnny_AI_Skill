@@ -4063,3 +4063,13 @@
 | Lane readback | Same E6A branch is idle/clean at handoff `ec0e80b45cf998378c420787ef16cdaf08d98c34`; zero tracked/ignored/runtime/cache residue; exactly three worktrees; exact merge base `5481665`. |
 | Correction / return | Merge the exact control registry into the same branch, preserving only append-only WPR evidence if that sole conflict occurs. Change only the direct adapter test with four independent matrices, then one additive test commit and unique PRG-375 WPR-only correction handoff. |
 | Boundary | No new branch/worktree/helper, source behavior change, target-project/live host effect, push, staging publication, package/build/install, Secret, release or deployment. |
+
+## PRG-20260814-376 - Ticket 05B4B2E6A CR-172 terminal approval
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05B4B2E6A/CR-172) -> TERMINAL_CODE_REVIEW -> APPROVED / READY_TO_MERGE` |
+| Reviewed chain | Correction registry `d929114c24221493b2cbccc0eb8ddcaec2669b85` -> merge admission `1bafc1c1d0b90c1c49aae904032a8dce06fd3cd2` -> test-only correction `55b265b3904596c057feaa1127de9788122dfda7` -> WPR-only handoff `6f926995e0aa6250e34d095dd08406908c4834a2`. |
+| Independent green | Immutable archive SHA-256 `D83377B3C470D9EF1C1298E899188063BB87AC41630B0BB2E77BB4CA17166F5F`; focused `28/28`; full serial `462/462`; strict mypy `144/144`; in-memory compile `144/144`. |
+| CR-172 closure | Removing only the marketplace count gate turns the independent matrix red; exact restoration followed by removing only the plugin count gate also turns it red. Adapter blob restores to `cfba3269c3314b5cf783869712697f71f80514f4`; original E6A source and acceptance blobs are unchanged. |
+| Decision / boundary | `APPROVED / READY_TO_MERGE`; exact scopes, ancestry, one PRG-375 occurrence, clean owner lane and three-worktree topology pass. No implementation-worktree write by reviewer, new worktree, live Codex/target-project effect, push, staging publication, package/build/install, Secret, release or deployment. |
