@@ -3511,3 +3511,13 @@
 | CR-165 | `TICKET_DEFECT`: frozen S4 implies foreign-state success although SPEC AC-02 requires foreign registration to be `INSTALL_BLOCKED`. Submitted test seeds foreign records only after receipt issuance. Reviewer pre-seed probe returned finite `CLAIM_BLOCKED`, issued no receipt and changed owned-state bytes before the proof gate. E4 must be refrozen as clean success; E5 owns compensation. |
 | CR-166 | `EVIDENCE_DEFECT`: the committed S7-named test does not inspect all three worktrees. Reviewer external before/after manifests proved all three remained byte/porcelain-identical; revision-02 must assign that check to independent review and keep committed evidence bounded to child environment and exact lease teardown. |
 | Decision / boundary | No integration or correction dispatch. Publish revision-02 ticket freeze first; then the same owner may make only bounded test/evidence corrections on the existing branch. `XSS_NOT_APPLICABLE`; no new worktree/branch, staging push, package/build/install, live Codex/target-project mutation, release or deployment. |
+
+## PRG-20260813-320 — Ticket 05B4B2E4 revision-02 refreeze
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `CHANGES_REQUESTED / TICKET_DEFECT -> CONTROL_PLANE_REFREEZE -> CORRECTION_NOT_DISPATCHED` |
+| CR-165 correction | S4 is now an initially clean lease success closure: exactly one owned marketplace/plugin and zero foreign records. SPEC AC-02 keeps pre-existing foreign registration blocked with no false receipt; E5 owns compensation. |
+| CR-166 correction | The committed child owns parent-environment, unique-temp and exact lease-root teardown evidence. Reviewer-owned external manifests alone prove all three worktrees byte/porcelain-identical; implementation may not scan sibling worktrees. |
+| Correction scope | Same project/task/workspace/branch and retained allocation/receipt. One additive test-only correction removes post-success foreign seeding and fixes the overclaiming test name, followed by unique PRG-321 WPR handoff. Production/staging source behavior is frozen unchanged. |
+| Boundary | Registry must be committed and exact lane read back before dispatch. No new branch/worktree, global cleanup, compensation, staging push, package/build/install, live Codex/target-project mutation, release or deployment. |
