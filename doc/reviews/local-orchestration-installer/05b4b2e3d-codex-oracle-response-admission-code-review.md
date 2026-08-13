@@ -2,14 +2,15 @@
 
 ## Review decision
 
-`CHANGES_REQUESTED / TICKET_REFREEZE_REQUIRED`
+`APPROVED / READY_TO_MERGE`
 
-The submitted two-commit return is structurally clean and every committed test
-passes, but independent adversarial probes expose one impossible ticket
-requirement and one fail-open nested-value projection. No integration or
-implementation correction is authorized before the ticket is refrozen.
+Closure revision 02 refroze the unobservable constructor-provenance requirement,
+and the additive revision-03 correction closes the fail-open optional-source
+projection. Independent terminal verification of exact handoff
+`5fa24b5acceacf98cf101a0126e03388fa70e659` passes. Guarded integration of the
+complete immutable history is authorized.
 
-## Blocking findings
+## Revision-02 blocking findings (closed by revision-03)
 
 ### CR-170 — `TICKET_DEFECT`: constructor provenance is not observable from a state-equivalent Pydantic value
 
@@ -87,3 +88,54 @@ one additive same-branch correction can address CR-171 and its missing tests.
 The immutable implementation/handoff remain evidence. No new branch/worktree,
 reset, rewrite, integration, push, package/build/install, live Codex,
 target-project write, release or deployment is authorized by this review.
+
+## Revision-03 terminal review
+
+### Reviewed immutable return
+
+| Field | Evidence |
+| --- | --- |
+| Ticket / closure | `05b4b2e3d-codex-oracle-response-admission`; `CLOSURE-LOCAL-INSTALL-T05B4B2E3D-02`; P1-P8 |
+| Binding | Task `019ffb0c-db88-7303-895c-aecfadde7c8d`; handoff `hnd_local_orchestration_install_05b4b2e3d_cr170_171_r03_20260814`; receipt `rcpt_local_orchestration_install_05b4b2e3d_r03_20260814`; correlation `corr-local-orchestration-install-05b4b2e3d-cr170-171-r03-20260814` |
+| Chain | Control refreeze `f12018e979788a571e3d6d746857ddc42cd57810` -> history merge `8de02cb42fe3d78ebeef8b9a4c3a9de93a9052ab` -> correction `0018b0d089f6a79704a60ae7b8861a6c658a1e53` -> WPR `febd0df19f95b4b393ddc782af9404378f29e3e7` -> factual docs correction `5fa24b5acceacf98cf101a0126e03388fa70e659` |
+| Scope | Correction changes exactly the frozen source and focused-test paths; the two following commits change only `doc/WorkProgressReport.md`. Ancestry, diff and clean permanent-owner readback pass. |
+
+### Independent verification
+
+| Gate | Reviewer result |
+| --- | --- |
+| Immutable export | PASS. Exact handoff ZIP-exported below reviewer-owned TEMP; archive SHA-256 `0EB4AB41A67BD3C97A8D4B0619E2F6FEAA242DFAE727B5C8457FCF5FEEEDB1A6`. |
+| Tests | PASS. Focused `13/13`; full explicit serial discovery `432/432`. |
+| Static validation | PASS. Strict mypy with explicit package bases `138/138`; in-memory compile `138/138`; exact-path source sentinel found no `Any`, `type: ignore`, dynamic lookup, effect API or renderer/JavaScript sink. |
+| Adversarial matrix | PASS. Plugin-list and marketplace-list reject ten present-invalid source cells; two legitimate omissions accept; two fully populated constructed sources accept only as newly rebuilt instances. |
+| Test truth | PASS. Reviewer monkeypatched present-invalid admission to absence; committed `test_p8_reverse_present_invalid_source_cannot_be_absent` turned red, then runtime binding restored. |
+| XSS / capability | `XSS_NOT_APPLICABLE`. No Browser, WebView, HTML/DOM renderer, JavaScript context, Native Bridge, IPC or Extension API changes. |
+
+### Finding closure and mandatory checks
+
+- **CR-170 / ticket correctness:** CLOSED. Revision 02 specifies only observable
+  exact-state admission; state-equivalent constructed data is recursively
+  revalidated and rebuilt, while malformed, missing, extra, subclass,
+  injected/private and invalid primitive state rejects.
+- **CR-171 / logic and edge cases:** CLOSED. A closed typed tri-state separates
+  absence, rebuilt-valid and present-invalid sources; parent entries omit only
+  actual absence and reject present-invalid values.
+- **Strong types and conventions:** PASS. Closed dataclass union, explicit
+  Pydantic models, exact primitives and finite results; no untyped effect port.
+- **Tests and mutation truth:** PASS for named P5/P6 matrices and P8 reversal.
+- **Dependencies, traceability and evidence:** PASS. Project-owned runtime,
+  immutable chain, exact hashes and no historical-source reuse.
+- **Role, task/worktree binding and adaptive profile:** PASS. The named owner
+  used the single permanent owner2 worktree, no helper/fan-out and no
+  orchestration authority.
+- **State, error, exception, path, token and authority classes:** PASS or not
+  applicable. Invalid shapes are finite metadata-only rejections; no caller
+  protocol, filesystem/path, token, Secret, external provider or effect exists.
+
+## Terminal decision
+
+`APPROVED / READY_TO_MERGE`. Integrate the complete exact handoff history by a
+normal guarded merge. Preserve every unique WPR record exactly once if the
+predicted append conflict occurs, then rerun focused/full/static checks. No
+push, package/build/install, live Codex/host/target-project mutation, staging
+publication, Secret, release or deployment is authorized.

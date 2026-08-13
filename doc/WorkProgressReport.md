@@ -3748,3 +3748,13 @@
 | Preserved allocation | Ticket, owner2 task, permanent worktree, E3D branch and revision-02 allocation remain unchanged. Immutable `c588bf6`/`77be192` and review `ea3e94f` remain evidence; one new correction handoff/receipt/correlation is bound in the ticket. |
 | Integration order | E3D correction/review/integration unlocks thin E3. E5 remains blocked on E3; E4 is already integrated. No unrelated parallel ticket is currently dependency-ready. |
 | Boundary | Control docs only. No implementation-worktree write, new branch/worktree, broad cleanup, push, package/build/install, live Codex/host/target-project mutation, Secret, release or deployment. |
+
+## PRG-20260814-344 — Ticket 05B4B2E3D revision-03 terminal approval
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `CORRECTION_COMPLETED(05B4B2E3D) -> TERMINAL_CODE_REVIEW -> APPROVED / READY_TO_MERGE` |
+| Reviewed chain | Refreeze `f12018e` -> history merge `8de02cb` -> correction `0018b0d` -> WPR handoff `febd0df` -> factual docs correction / exact handoff `5fa24b5`; correction scope is exactly the two frozen paths and later scope is WPR-only. |
+| Independent green | Reviewer-owned immutable ZIP SHA-256 `0EB4AB41A67BD3C97A8D4B0619E2F6FEAA242DFAE727B5C8457FCF5FEEEDB1A6`; focused `13/13`; full `432/432`; strict mypy `138/138`; in-memory compile `138/138`; source/scope/ancestry/clean-lane checks pass. |
+| CR closure | CR-170 is closed by observable exact-state recursive revalidation/rebuild. CR-171 is closed by typed absent/rebuilt-valid/present-invalid admission. Ten invalid-source cells reject, two omissions accept, two state-equivalent constructed sources are rebuilt, and the present-invalid-to-absent reversal turns the committed test red. |
+| Decision / boundary | `APPROVED / READY_TO_MERGE`; complete immutable history only. No implementation-worktree write, new branch/worktree, push, package/build/install, live Codex/host/target-project mutation, staging publication, Secret, release or deployment. |
