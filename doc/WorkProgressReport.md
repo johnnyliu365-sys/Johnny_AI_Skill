@@ -3933,6 +3933,17 @@
 | Dispatch / return | One owner, no helper; exactly the new staging-only compensation entrypoint and existing E5 acceptance test update, then unique PRG-361 WPR-only handoff. Non-high-risk ticket/evidence defects may be corrected within the same closure without user wait. |
 | Boundary | No control-side implementation-worktree write, new worktree, live Codex/host/target-project effect, push, staging publication, package/build/install, Secret, release or deployment. |
 
+## PRG-20260814-361 - Ticket 05B4B2E6P compensation acceptance entrypoint handoff
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05B4B2E6P) -> ACTION_COMPLETED / REVIEW_HANDOFF`; independent terminal review remains required. |
+| Binding / lane | `CLOSURE-LOCAL-INSTALL-T05B4B2E6P-01` / P1-P8; task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; branch `codex/implementation-codex-compensation-acceptance-entrypoint-05b4b2e6p`; dispatch registry `5d86734abba29499bc5c73ee83a73aca95aebee9`. |
+| Implementation | Commit `92ee5a3e867afc8243ef6fbe5cade4abbf52dc2`; exactly `tests/staging/codex_lifecycle_oracle/registration_compensation_acceptance.py` and `tests/test_codex_registration_compensation_acceptance.py`. First red was the missing `tests.staging.codex_lifecycle_oracle.registration_compensation_acceptance` module. |
+| Closure evidence | Focused serial `3/3`; full explicit serial `448/448`; strict full-tree mypy `142/142` source files with an external cache removed afterward; in-memory compile `142/142`. Five P8 reverse probes (invalid-before-effect, one-shot fault, action order, physical absence and replay) each turned red and were restored. |
+| Runtime / residue | One caller-owned project lease and one unique child TEMP were used; parent environment was preserved; exact compensation order, state/payload absence, replay zero-effect, exact lease teardown and child-TEMP absence passed. Final tracked and ignored porcelain are empty; project runtime, repository-local bytecode and external mypy cache are absent. |
+| Boundary / security | `XSS_NOT_APPLICABLE`: this evidence-only unittest has no Browser, WebView, HTML/DOM, JavaScript or privileged bridge. No live Codex, host, network, target-project, sibling-worktree, OS-global staging scan/cleanup, package, release or deployment effect. |
+
 ## PRG-20260814-362 - Ticket 05B4B2E6P terminal approval
 
 | Field | Evidence |
