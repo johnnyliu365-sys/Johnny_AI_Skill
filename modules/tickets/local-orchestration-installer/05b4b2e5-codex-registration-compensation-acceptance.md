@@ -4,7 +4,7 @@
 | --- | --- |
 | Revision | `02` - non-high-risk ticket correction; implementation scope unchanged |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / unchanged AC-02, AC-07 and AC-08 |
-| State | `APPROVED / READY_TO_MERGE` |
+| State | `COMPLETE / APPROVED / INTEGRATED` - guarded merge `ce7a1c2` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05B4B2E5-01` / C1-C8 (revision-02 wording correction; acceptance items unchanged) |
 | Dependency | E2 merge `d3d3c1d`, E3 merge `1517b03` and E4 merge `c1a5a7c` approved/integrated |
 | Planned owner | Task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; permanent `workflow-implementation`; no new worktree/helper |

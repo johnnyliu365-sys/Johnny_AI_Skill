@@ -3902,3 +3902,23 @@
 | Independent green | Reviewer-owned immutable archive SHA-256 `1772BE1412FB4526167F2A60D9B85C1E1B201B856026737F2C878A9F6DD48316`; focused `2/2`; full `447/447`; strict mypy `141/141`; in-memory compile `141/141`; source/scope/ancestry/clean-lane checks pass. |
 | Adversarial closure | Four reviewer reversals prove one-shot fault, exact compensation order, claim replay gate and physical absence (child exits `6/15/12/9`); exact source blob restored. The fixture's sole typed adapter-request projection equals settlement's projection for the admitted request. C1-C8 are closed with no product finding. |
 | Decision / boundary | `APPROVED / READY_TO_MERGE`; complete immutable history only. One discarded read-only reviewer diagnostic returned only a global TEMP item count and was excluded; accepted residue evidence is exact-path only. No implementation-worktree write, new worktree, push, staging publication, package/build/install, live Codex/host/target-project mutation, Secret, release or deployment. |
+
+## PRG-20260814-358 - Ticket 05B4B2E5 guarded integration
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `APPROVED(05B4B2E5) -> GUARDED_INTEGRATION -> ACTION_COMPLETED / TICKET_COMPLETED` |
+| Merge | Review `bf1afe5a921717e723ad245da9d093022b680d1a` and exact handoff `5dd0f635bbdcc29ba0aa74d63ad849d2fe4158e4` integrated by two-parent merge `ce7a1c2e63feb7ec7eff8b3201a23fa25c7dc16d`. Only the predicted WPR append conflict occurred; PRG-355, PRG-356 and PRG-357 are each preserved once. |
+| Post-merge verification | Focused E5 `2/2`; full explicit serial `447/447`; strict mypy `141/141`; in-memory compile `141/141`; clean diff/control porcelain, absent project runtime and zero bytecode pass. |
+| Router continuation | E5 is complete. Broad E6 is decomposed because reusable compensation entrypoint authority was absent; E6P is the sole smallest unblocked ticket, followed by parallel E6A/E6B. |
+| Boundary | No push, staging publication, package/build/install, live Codex/host/target-project mutation, Secret, release or deployment. |
+
+## PRG-20260814-359 - Ticket 05B4B2E6 decomposition and E6P freeze
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `TICKET_COMPLETED(05B4B2E5) -> TICKET_DEFECT_NON_HIGH_RISK(05B4B2E6) -> DECOMPOSE(E6P,E6A,E6B) -> TICKET_FROZEN(05B4B2E6P)` |
+| Decomposition | Original E6 combined a missing reusable compensation boundary, foreign-state evidence and target-project Git/byte evidence. E6P first extracts the accepted E5 flow; then E6A and E6B can run independently and in parallel without importing private tests or copying the transaction. |
+| E6P closure / scope | `CLOSURE-LOCAL-INSTALL-T05B4B2E6P-01` / P1-P8; exactly one new staging-only entrypoint plus the existing E5 test update, followed by reserved PRG-361 WPR-only handoff. No numeric line criterion. |
+| Resource profile | `STANDARD`: owner1 retains behavioral continuity for the two coupled paths; no helper/fan-out. Owner2 remains idle until E6P integration unblocks an actually independent E6A/E6B lane. |
+| Boundary | Freeze only; no implementation-worktree write, branch/worktree creation, live Codex/host/target-project effect, staging publication, push, package/build/install, Secret, release or deployment. |
