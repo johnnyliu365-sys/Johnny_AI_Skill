@@ -4126,3 +4126,13 @@
 | Dispatch / return | Create only `codex/implementation-codex-receipt-removal-request-05c1` at the exact commit carrying this registry. Implement only R1-R7 in the three frozen paths, then one implementation commit and unique PRG-380 WPR-only handoff. |
 | Parallel/resource decision | One owner, no helper or second lane. 05C2 depends on the exact integrated 05C1 API, so speculative parallel work would duplicate or conflict with the contract. |
 | Boundary | No reviewer write to an implementation worktree, new worktree, live Codex/host/target-project effect, push, staging publication, package/build/install, Secret, release or deployment. |
+
+## PRG-20260814-381 - Ticket 05C1 revision-02 control correction
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05C1) + NON_HIGH_RISK_TICKET_DEFECT -> TICKET_REFROZEN / INDEPENDENT_REVIEW` |
+| Defect / responsibility | The control ticket omitted the Workflow-mandatory implementation-language field and required a valid root mismatch although `InstallRoot` admits one canonical value. This is a reviewer-owned `TICKET_DEFECT`, not implementer scope expansion or a requirement change. |
+| Corrected closure | Python 3.11 is explicit. R3 reserves `RECEIPT_MISMATCH` for valid unequal installation IDs. R4 requires a noncanonical/constructed-invalid invocation root to return `INVALID_INVOCATION` and invalid receipt root to return `INVALID_RECEIPT`. Valid persisted serialize/reload identity remains accepted. |
+| Review admission | Existing implementation `ec53d3af854348a2f7385e485d17f3e2a84b98d8` and WPR-only handoff `fb748f4fd1b7d1f5862c55fa1484151602f174e0` remain immutable. Independent review evaluates their exact diff against revision-02; any implementation mismatch becomes one same-branch additive correction. |
+| Boundary | Control documents only; no reviewer implementation-worktree write, new branch/worktree, live effect, push/staging publication, package/build/install, Secret, release or deployment. |
