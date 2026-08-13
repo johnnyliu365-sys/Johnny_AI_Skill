@@ -380,36 +380,45 @@ def _child_owned_cardinality() -> int:
             authPolicy="available-auth",
             marketplaceSource=CodexMarketplaceSource(type="local", value="oracle-source"),
         )
-        zero_owned = (
-            OracleCompleted(
-                response=CodexProtocolAccepted(
-                    surface=CodexProtocolSurface.MARKETPLACE_LIST,
-                    payload=CodexMarketplaceList(marketplaces=(foreign_marketplace,)),
-                )
+        cases = (
+            (
+                "marketplace_zero_plugin_one",
+                (foreign_marketplace,),
+                (owned_plugin,),
             ),
-            OracleCompleted(
-                response=CodexProtocolAccepted(
-                    surface=CodexProtocolSurface.PLUGIN_LIST,
-                    payload=CodexPluginList(installed=(foreign_plugin,), available=(available_plugin,)),
-                )
+            (
+                "marketplace_duplicate_plugin_one",
+                (owned_marketplace, owned_marketplace),
+                (owned_plugin,),
             ),
-        )
-        duplicate_owned = (
-            OracleCompleted(
-                response=CodexProtocolAccepted(
-                    surface=CodexProtocolSurface.MARKETPLACE_LIST,
-                    payload=CodexMarketplaceList(marketplaces=(owned_marketplace, owned_marketplace)),
-                )
+            (
+                "marketplace_one_plugin_zero",
+                (owned_marketplace,),
+                (foreign_plugin,),
             ),
-            OracleCompleted(
-                response=CodexProtocolAccepted(
-                    surface=CodexProtocolSurface.PLUGIN_LIST,
-                    payload=CodexPluginList(installed=(owned_plugin, owned_plugin), available=()),
-                )
+            (
+                "marketplace_one_plugin_duplicate",
+                (owned_marketplace,),
+                (owned_plugin, owned_plugin),
             ),
         )
         before = oracle.state_path(lease).read_bytes()
-        for responses in (zero_owned, duplicate_owned):
+        for case_name, marketplace_entries, plugin_entries in cases:
+            _ = case_name
+            responses = (
+                OracleCompleted(
+                    response=CodexProtocolAccepted(
+                        surface=CodexProtocolSurface.MARKETPLACE_LIST,
+                        payload=CodexMarketplaceList(marketplaces=marketplace_entries),
+                    )
+                ),
+                OracleCompleted(
+                    response=CodexProtocolAccepted(
+                        surface=CodexProtocolSurface.PLUGIN_LIST,
+                        payload=CodexPluginList(installed=plugin_entries, available=(available_plugin,)),
+                    )
+                ),
+            )
             with patch.object(oracle, "run", side_effect=responses):
                 try:
                     admitted.prove(proof_request)
