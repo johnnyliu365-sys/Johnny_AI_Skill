@@ -5,7 +5,7 @@
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-02, AC-06, AC-07 and AC-08 |
 | Change / PRD / Context | `CHG-20260808-011` / `PRD.md §15` / `doc/context/local-orchestration-installer/main.md` |
 | Revision | `01` |
-| State | `IN_PROGRESS / DISPATCH_READY` |
+| State | `APPROVED / READY_TO_MERGE` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05C2C1-01` / P1-P8 |
 | Dependency | 05C2B guarded merge `75eec43037c182772ca8bb2174de2ecd4e2943b6` |
 | Profile / resource | `STANDARD`; one implementation owner, no helper; serial because 05C2C2 consumes this public staging contract |
@@ -114,3 +114,17 @@ re-read this exact ticket before first red and return
 missing or different. The owner may not self-review/integrate, orchestrate an
 Agent, dispatch another ticket, push/publish staging, package/install, touch
 live Codex/host/target project, release or deploy.
+
+## Independent review
+
+Implementation `8cb41e38dc7d9124a42c92a84d509a89dada0e51` and WPR-only
+handoff `b625d3991a3d68b630d6a4c1a61c2cb8475eb7ae` satisfy P1-P8.
+Reviewer-owned immutable-export verification passed focused `46/46`, full
+serial `509/509`, strict mypy and in-memory compile over `148` Python files.
+Exact owned logical state plus the physical plugin payload returned the named
+presence result; coherent marketplace-only state returned exact absence;
+identity mismatch remained blocked; exact response admission rejected
+subclass, extra-state and cross-action values. Independently disabling the
+physical conjunct and exact dataclass-state length guard made their governing
+tests red, and exact commit blobs were restored. No blocking finding remains;
+guarded integration is reviewer-owned.
