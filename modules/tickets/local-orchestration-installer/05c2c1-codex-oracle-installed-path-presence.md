@@ -5,7 +5,7 @@
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-02, AC-06, AC-07 and AC-08 |
 | Change / PRD / Context | `CHG-20260808-011` / `PRD.md §15` / `doc/context/local-orchestration-installer/main.md` |
 | Revision | `01` |
-| State | `APPROVED / READY_TO_MERGE` |
+| State | `COMPLETE / APPROVED / INTEGRATED` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05C2C1-01` / P1-P8 |
 | Dependency | 05C2B guarded merge `75eec43037c182772ca8bb2174de2ecd4e2943b6` |
 | Profile / resource | `STANDARD`; one implementation owner, no helper; serial because 05C2C2 consumes this public staging contract |
@@ -128,3 +128,14 @@ subclass, extra-state and cross-action values. Independently disabling the
 physical conjunct and exact dataclass-state length guard made their governing
 tests red, and exact commit blobs were restored. No blocking finding remains;
 guarded integration is reviewer-owned.
+
+## Guarded integration
+
+Reviewer review `90dac00e92911f8c49049cf4915373374945332a` integrated the
+approved handoff through merge `fffbc616ee1870b69845cbcecf37a98e842106d3`.
+The only conflict was the predicted append-only WPR overlap; PRG-404 and
+PRG-405 were preserved once and every integrated implementation blob equals
+`8cb41e38dc7d9124a42c92a84d509a89dada0e51`. Post-merge focused
+verification passed `46/46` and strict mypy passed all `148` files. The
+05C2C1 allocation and receipt are closed; 05C2C2 may now consume the exact
+integrated result contract.

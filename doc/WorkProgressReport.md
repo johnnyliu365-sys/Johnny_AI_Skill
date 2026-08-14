@@ -4393,3 +4393,13 @@
 | Independent evidence | Immutable TAR SHA-256 `D478E645937B4C900B5CD899BB13BC1CA92F6D4E44A10DB7AB9261E40192932B`; focused `46/46`; full serial `509/509`; strict mypy `148`; compile `148`; independent exact presence/absence/mismatch/admission matrix and two targeted reversals pass. Reviewer TEMP export and external caches were removed. |
 | Decision | P1-P8 approved with no blocking finding. Strong typing, exact identity/path binding, finite failure, committed-test truthfulness, scope, ancestry and topology gates pass. Only guarded integration is authorized next. |
 | Boundary | No live Codex/host/target-project effect, push/staging publication, package/build/install, Secret, release or deployment. |
+
+## PRG-20260814-406 - Ticket 05C2C1 integration and 05C2C2 revision-02 freeze
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `APPROVED(05C2C1) -> GUARDED_INTEGRATION_COMPLETED -> ACTION_COMPLETED / 05C2C2_DEPENDENCY_READY -> REFREEZE_COMPLETE` |
+| Integration | Review `90dac00e92911f8c49049cf4915373374945332a`; approved handoff `b625d3991a3d68b630d6a4c1a61c2cb8475eb7ae`; guarded merge `fffbc616ee1870b69845cbcecf37a98e842106d3`. Only append-only WPR overlapped, PRG-404/405 occur once and all six approved implementation blobs remained exact. Post-merge focused `46/46` and strict mypy `148` pass. |
+| 05C2C2 dependency readback | Integrated API exposes exact frozen `OracleInstalledPathPresent(action=ABSENCE)` in both oracle-result and response-admission unions. Existing adapter admits that response but still returns `EVIDENCE_INVALID` because its proof projection recognizes only exact `OracleAbsent`; this is the reserved 05C2C2 first red. |
+| Revision-02 closure | M1-M7, Python 3.11 named types, strict full-tree mypy, `STANDARD` one-owner/no-helper, `XSS_NOT_APPLICABLE`, exact two-path scope and unique binding are explicit. Only exact admitted absent/present may create manifest-bound true/false proof; blocked/errors remain unproved. |
+| Boundary | Documentation/refreeze and reviewed integration only. No live Codex/host/target-project effect, push/staging publication, package/install, Secret, release or deployment. |

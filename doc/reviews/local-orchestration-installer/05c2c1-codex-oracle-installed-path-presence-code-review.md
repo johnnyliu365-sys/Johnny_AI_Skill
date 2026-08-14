@@ -28,3 +28,13 @@
 No `IMPLEMENTATION_DEFECT`, `EVIDENCE_DEFECT`, `TICKET_DEFECT`,
 `REQUIREMENT_CHANGED` or blocking hardening finding remains. P1-P8 are
 approved; only reviewer-owned guarded integration is authorized next.
+
+## Guarded integration
+
+| Field | Evidence |
+| --- | --- |
+| Decision | `COMPLETE / APPROVED / INTEGRATED` |
+| Merge | Reviewer-owned guarded merge `fffbc616ee1870b69845cbcecf37a98e842106d3`; only the predicted append-only WPR conflict occurred. |
+| Blob/readback | All six integrated implementation blobs equal approved implementation `8cb41e38dc7d9124a42c92a84d509a89dada0e51`; PRG-404 and PRG-405 each occur once. |
+| Post-merge verification | Focused `46/46` and strict full-tree mypy over `148` files pass; repository-external cache removed and control status clean. |
+| Continuation | 05C2C1 receipt/allocation closed. 05C2C2 is refrozen against this exact integrated API and remains the only serial continuation. |
