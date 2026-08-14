@@ -240,6 +240,11 @@ class OracleAbsent:
 
 
 @dataclass(frozen=True)
+class OracleInstalledPathPresent:
+    action: OracleAction = OracleAction.ABSENCE
+
+
+@dataclass(frozen=True)
 class OracleForeignSeeded:
     collection: str
 
@@ -249,7 +254,7 @@ class OracleBlocked:
     reason: OracleBlockReason
 
 
-OracleRunResult: TypeAlias = OracleCompleted | OracleAbsent | OracleBlocked
+OracleRunResult: TypeAlias = OracleCompleted | OracleAbsent | OracleInstalledPathPresent | OracleBlocked
 
 
 def revalidate_command(command: OracleCommand) -> OracleCommand | OracleBlocked:

@@ -19,6 +19,7 @@ from tests.staging.codex_lifecycle_oracle.contracts import (
     OracleBlocked,
     OracleBlockReason,
     OracleCompleted,
+    OracleInstalledPathPresent,
 )
 from tests.staging.codex_protocol.contracts import (
     CodexMarketplaceRemove,
@@ -48,6 +49,10 @@ MARKETPLACE_SOURCE = CodexMarketplaceSource(type="marketplace", value="owned-mar
 
 
 class DerivedCompleted(OracleCompleted):
+    """A result subclass that must not cross the response boundary."""
+
+
+class DerivedInstalledPathPresent(OracleInstalledPathPresent):
     """A result subclass that must not cross the response boundary."""
 
 
@@ -469,6 +474,34 @@ class CodexOracleResponseAdmissionTests(unittest.TestCase):
         self.assertIs(blocked_result.reason, CodexOracleResponseRejectReason.DEPENDENCY_BLOCKED)
         self.assertNotIn("ProtocolTrap", repr(blocked_result))
 
+    def test_p6_installed_path_present_is_admitted_only_for_absence(self) -> None:
+        present = OracleInstalledPathPresent()
+        result = _admit(present, OracleAction.ABSENCE)
+        self.assertIs(type(result), OracleInstalledPathPresent)
+        if type(result) is not OracleInstalledPathPresent:
+            raise AssertionError("expected rebuilt installed-path presence")
+        self.assertIsNot(result, present)
+        _assert_rejected(self, present, OracleAction.PLUGIN_LIST, CodexOracleResponseRejectReason.ACTION_RESULT_MISMATCH)
+        _assert_rejected(
+            self,
+            DerivedInstalledPathPresent(),
+            OracleAction.ABSENCE,
+            CodexOracleResponseRejectReason.INVALID_RESULT,
+        )
+
+        extra = OracleInstalledPathPresent()
+        object.__setattr__(extra, "injected", "forbidden")
+        _assert_rejected(self, extra, OracleAction.ABSENCE, CodexOracleResponseRejectReason.INVALID_RESULT)
+
+        wrong_action = OracleInstalledPathPresent()
+        object.__setattr__(wrong_action, "action", OracleAction.PLUGIN_LIST)
+        _assert_rejected(
+            self,
+            wrong_action,
+            OracleAction.ABSENCE,
+            CodexOracleResponseRejectReason.MALFORMED_RESPONSE,
+        )
+
     def test_p8_reverse_surface_matching_guard(self) -> None:
         _assert_rejected(
             self,
@@ -496,6 +529,11 @@ class CodexOracleResponseAdmissionTests(unittest.TestCase):
 
     def test_p8_reverse_absence_gate(self) -> None:
         _assert_rejected(self, OracleAbsent(), OracleAction.PLUGIN_REMOVE, CodexOracleResponseRejectReason.ACTION_RESULT_MISMATCH)
+
+    def test_p8_reverse_present_exact_state_guard(self) -> None:
+        forged = OracleInstalledPathPresent()
+        object.__setattr__(forged, "unexpected", "forbidden")
+        _assert_rejected(self, forged, OracleAction.ABSENCE, CodexOracleResponseRejectReason.INVALID_RESULT)
 
     def test_p8_reverse_present_invalid_source_cannot_be_absent(self) -> None:
         invalid_source = CodexMarketplaceSource.model_construct(type=7, value="owned-market")

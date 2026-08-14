@@ -399,16 +399,12 @@ def _plugin_remove(state: dict[str, object], state_path: Path, codex_home: Path,
 
 
 def _absence(state: dict[str, object], state_path: Path, codex_home: Path, identity: dict[str, object]) -> dict[str, object]:
-    marketplaces = state["marketplaces"]
     plugins = state["plugins"]
-    assert isinstance(marketplaces, list) and isinstance(plugins, list)
-    if marketplaces or plugins:
-        raise OracleFailure(COMMAND_INVALID)
+    assert isinstance(plugins, list)
     payload_root = codex_home / PAYLOAD_DIRECTORY_NAME
-    for locator in (f"marketplaces/{identity['marketplace_name']}.json", f"plugins/{identity['plugin_id']}.json"):
-        candidate = payload_root / locator
-        if candidate.exists() or _is_reparse(candidate):
-            raise OracleFailure(TOPOLOGY_INVALID)
+    candidate = payload_root / "plugins" / f"{identity['plugin_id']}.json"
+    if not plugins and (candidate.exists() or _is_reparse(candidate)):
+        raise OracleFailure(TOPOLOGY_INVALID)
     return _plugin_list(state)
 
 
