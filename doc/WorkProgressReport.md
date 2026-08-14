@@ -5005,3 +5005,13 @@
 | Synchronization | Additively merge this registry into the same branch. Only the predicted `doc/WorkProgressReport.md` overlap may be resolved by retaining every unique PRG record exactly once; any other conflict is `HALT / FRESH_BRANCH_REQUIRED_EVIDENCE`. |
 | Exact correction | First-red the three review probes; change only `contracts.py`, `profile.py`, `test_workflow_router.py`; retain POC builder defaults, accept safe distinct Profile refs, accept semantically named opaque tree refs, reject all-zero expected revisions, preserve all SC1-SC8 behavior and run three reversals. Then one WPR-only handoff. |
 | Resource / boundary | Same Luna max owner; no helper, new branch/worktree, R02B/R02C, 06G0P, live host/network/target effect, push, package/install, Secret, release or deployment. `XSS_NOT_APPLICABLE`. |
+
+## PRG-20260815-464 - Router R02A metadata-boundary correction handoff
+
+| Field | Evidence |
+| --- | --- |
+| Synchronization | Same-branch additive merge `b361c17b788ce04840ebf164098ea0477a8eeca6` retained unique PRG-461, PRG-462 and PRG-463 records in order; the only conflict was append-only WPR content. |
+| Correction | `f38c212d51b9ebfb9cdcd28742ce316f04a0a771` changes only the three authorized paths and closes CR-R02A-001..003: reusable distinct Profile metadata, semantically named opaque tree refs, and reserved expected-revision rejection. |
+| First red / reversals | Alternate Profile, `idx-ticket-current`, and all-zero expected-revision probes were red before correction; profile, tree-reference and reserved-revision guards each independently turned their governing test red and were restored. |
+| Verification | Focused Router `43/43`; six-module Router regression `110/110`; explicit serial full suite `546/546`; strict full-tree mypy `150` source files; in-memory compile `150` Python files; source/scope/diff/ancestry/topology checks pass. |
+| Readback | Branch `codex/implementation-router-shared-context-r02a`; tracked and ignored porcelain empty; exactly three worktrees; cache/runtime residue `0`; external mypy cache removed; `XSS_NOT_APPLICABLE`. No helper, live host/network/target effect, push, package/install, release or deployment. |
