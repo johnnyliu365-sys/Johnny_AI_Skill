@@ -4497,6 +4497,15 @@
 | Binding / return | Fresh revision-03 workspace/handoff/allocation/receipt/correlation/question/side-context from the ticket; fast-forward to this registry, change exactly the adapter and its direct test, then append only reserved PRG-20260814-416 in a WPR-only handoff. Revision-02 identifiers remain closed. |
 | Boundary | One owner and no helper. No new branch/worktree, live Codex/host/target-project effect, push/staging publication, package/install, Secret, release or deployment. |
 
+## PRG-20260814-416 - Ticket 05C2C2 revision-03 adapter truth handoff
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05C2C2 / revision 03) -> ACTION_COMPLETED / REVIEW_HANDOFF`; independent review remains required. |
+| Admission / first red | Exact registry `fd16a5f9e11a9f2bdc4633f2733ac5f915c3da7b` was fast-forwarded on the same branch; the ordinary public proof constructor accepted `absent=False` with built-in `bool`. First red was exact admitted `OracleInstalledPathPresent` reaching the adapter and yielding `EVIDENCE_INVALID`. |
+| Implementation | Commit `559f1c1fa9b89c411a80e26f275a6c23aad98a57` changes exactly the two frozen paths; exact admitted absent/present responses map to ordinary manifest-bound true/false proofs with one `ABSENCE` action. |
+| Verification | Focused adapter `15/15`; full explicit serial unittest `514/514`; strict full-tree mypy `148` files with explicit package bases and external cache removed; in-memory compile `148` files. Three M6 reversals (truth mapping, response admission, request-before-effect) turned named tests red and restored exact bytes. |
+| Boundary / residue | `XSS_NOT_APPLICABLE`; no model bypass, `Any`, `type:ignore`, broad catch/clear, dynamic lookup, live Codex/host/target-project effect, package/install, push, release or deployment. Final scope, ancestry, topology, tracked/ignored porcelain and cache/runtime/bytecode residue are clean/absent. |
 ## PRG-20260814-417 - Ticket 05C2C2 revision-03 independent review
 
 | Field | Evidence |
@@ -4516,6 +4525,16 @@
 | Frozen correction | Same revision-03 binding and receipt. Change only the adapter source docstring and malformed final-call indentation. No executable token, import, behavior, type, direct test or other file may change; direct-test blob remains `9c9b24f34fd8145e05ac559f8e4edb8d673ffaab`. |
 | Return | Merge the exact control commit carrying this registry into the same branch, preserving PRG-416 through PRG-418 once; return one additive source-only correction commit and reserved PRG-20260814-419 in one WPR-only handoff commit. |
 | Boundary | No new branch/worktree/helper, live effect, push/staging publication, package/build/install, Secret, release or deployment. |
+
+## PRG-20260814-419 - Ticket 05C2C2 CR-178 correction handoff
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `CORRECTION_DISPATCH_CONFIRMED(CR-178) -> ACTION_COMPLETED / REVIEW_HANDOFF`; independent review remains required. |
+| Merge / implementation | History-preserving merge `ffb84f3d6d88f4cd2903432d0735a1cf4d72c0ee` incorporated the exact control registry with only the WPR overlap resolved; source-only correction commit `e801646c4d32401f90aa65784635a2c66445973e` changes only `tests/staging/codex_lifecycle_oracle/compensation_adapter.py`. |
+| Correction audit | The stale absence-only docstring now states exact admitted absence/presence results become manifest-bound path truth; only the final `_operation_failure(...)` continuation indentation changed. No executable token, import, behavior, type, test or other implementation path changed. Direct-test blob remains `9c9b24f34fd8145e05ac559f8e4edb8d673ffaab`. |
+| Verification | Focused adapter `15/15`; strict full-tree mypy `148` files with removable external cache; in-memory compile `148` files. Diff check and source-only scope audit pass; full-suite rerun was omitted under the frozen non-executable-text/whitespace exception. |
+| Boundary / residue | `XSS_NOT_APPLICABLE`; final tracked/ignored porcelain, ancestry, three-worktree topology and repository-local cache/runtime/bytecode residue are clean/absent. No helper, live Codex/host/target-project effect, push, package/install, release or deployment. |
 
 ## PRG-20260814-420 - Ticket 05C2C2 CR-178 terminal correction review
 

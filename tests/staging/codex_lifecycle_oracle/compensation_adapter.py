@@ -29,6 +29,7 @@ from tests.staging.codex_lifecycle_oracle.contracts import (
     OracleAction,
     OracleCommand,
     OracleIdentity,
+    OracleInstalledPathPresent,
     OracleRunResult,
 )
 from tests.staging.codex_lifecycle_oracle.identity_binding import (
@@ -231,7 +232,7 @@ class CodexCompensationOracleAdapter:
         self,
         request: CodexCompensationPortRequest,
     ) -> CodexInstalledPathAbsenceProof | CodexCompensationPortOperationFailed:
-        """Prove absence only from the exact admitted OracleAbsent result."""
+        """Project exact admitted absence/presence results into manifest-bound path truth."""
 
         current = self._request_or_failure(request, CodexCompensationPortOperation.PROVE_INSTALLED_PATH_ABSENT)
         if type(current) is CodexCompensationPortOperationFailed:
@@ -243,13 +244,15 @@ class CodexCompensationOracleAdapter:
                 CodexCompensationPortOperation.PROVE_INSTALLED_PATH_ABSENT,
                 admitted,
             )
-        if type(admitted) is not OracleAbsent:
-            return _operation_failure(
-                current.manifest,
-                CodexCompensationPortOperation.PROVE_INSTALLED_PATH_ABSENT,
-                CodexCompensationPortFailureReason.EVIDENCE_INVALID,
-            )
-        return CodexInstalledPathAbsenceProof(manifest=current.manifest, absent=True)
+        if type(admitted) is OracleAbsent:
+            return CodexInstalledPathAbsenceProof(manifest=current.manifest, absent=True)
+        if type(admitted) is OracleInstalledPathPresent:
+            return CodexInstalledPathAbsenceProof(manifest=current.manifest, absent=False)
+        return _operation_failure(
+            current.manifest,
+            CodexCompensationPortOperation.PROVE_INSTALLED_PATH_ABSENT,
+            CodexCompensationPortFailureReason.EVIDENCE_INVALID,
+        )
 
     def _request_or_failure(
         self,
