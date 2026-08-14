@@ -4312,3 +4312,22 @@
 | First red / implementation | First red was the missing public module/export `ImportError`. Implementation commit `49fbeafda7e02b01be99eab229fb5f83d86cd972` changes exactly `library/local_orchestration/codex_receipt_removal_composition.py`, `tests/test_codex_receipt_removal_composition.py`, and export-only `library/local_orchestration/__init__.py`. Source SHA-256 `D602D05B0B00F52DC2F7B52451442E002172D0A9C412FD7A957E843494A29E4B`; direct-test SHA-256 `2428CFC3354849EED2ECEB0541BFC4755286D28E13E714A7B86DD5317AB57371`; export SHA-256 `C21EB080BF6D86E8AF8BCB11CF6397A9E6025B87FE015D6B9624928897D6B7B9`. |
 | Acceptance evidence | Focused direct composition `16/16`; full explicit serial suite `499/499`; strict full-tree mypy `148` source files with explicit package bases and repository-external cache removed; in-memory compile `148` files. B8 reversals for plugin-before-marketplace order, all four post-absence conjuncts, replay zero-removal and failure short-circuit each turned its named test red and restored exact bytes. |
 | Boundary / security | Exact 05C1 request construction precedes port admission; all returned values are normalized only through public 05C2A observation; foreign entries remain mutation-free, removal is plugin then marketplace, post-proof is conjunctive, and undeclared adapter exceptions propagate. `XSS_NOT_APPLICABLE`; no `Any`, `type: ignore`, broad catch/clear, dynamic lookup, raw output, path authority, filesystem/process/network/live Codex/host/target-project effect, package, push, release or deployment. Final exact scope/diff/ancestry, three-worktree topology, tracked/ignored porcelain and project cache/bytecode/runtime residue are clean/absent. |
+## PRG-20260814-398 - Ticket 05C2B independent review
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `ACTION_COMPLETED(05C2B) -> REVIEW_COMPLETED / CHANGES_REQUESTED`; ordinary same-branch correction is authorized by standing `PRG-20260809-042`. |
+| Reviewed chain | Implementation `49fbeafda7e02b01be99eab229fb5f83d86cd972`; WPR-only handoff `2067f6ce7b76c8bc4635695a6f902a7f9330fef2`; immutable review archive SHA-256 `E6BE75FE99AA468E4ABBF5E9A977D1205748D724E0C6A6CC3DD4867EA9901C30`. |
+| Independent evidence | Focused `16/16`, full serial `499/499`, strict mypy `148` files, compile `148` files, `19` additional adversarial cells and seven independent runtime reversals pass; reviewer-owned TEMP export/cache was removed. |
+| Findings | CR-175 `IMPLEMENTATION_DEFECT`: private `_observe` widens rebuilt request to `object`, violating P0 internal strong typing. CR-176 `EVIDENCE_DEFECT`: B3 mismatch/unproved actual-observer cells and B7 complete zero-operation/no-hook cells are absent from committed direct tests. |
+| Continuation | Same ticket/owner/permanent worktree/branch/allocation/receipt; source+direct-test-only additive correction, export byte-identical, no new branch/worktree/helper/effect/push/package/install/release/deploy. Reserved correction handoff is PRG-400. |
+
+## PRG-20260814-399 - Ticket 05C2B correction dispatch registry
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `CHANGES_REQUESTED(CR-175,CR-176) + EXACT_LANE_READBACK -> CORRECTION_DISPATCH_CONFIRMED / IMPLEMENT` |
+| Review / schema | Formal review/freeze `8c1c5354f6834a956c839e7347e0060a565d0b60`; exact ticket retains B1-B9, Python 3.11 strict typing, `STANDARD` one-owner/no-helper, `XSS_NOT_APPLICABLE`, two-path correction and unchanged public contract. |
+| Lane / merge admission | Owner task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; same permanent worktree/branch; clean handoff `2067f6ce7b76c8bc4635695a6f902a7f9330fef2`; ignored residue 0; exactly three worktrees. Read-only merge-tree predicts only append-only WPR overlap; PRG-397 through PRG-399 must each remain once. |
+| Binding / return | Existing workspace/handoff/allocation/receipt/correlation/question/side-context retained. Change only composition source and direct test, keep export byte-identical, then return one additive correction and reserved PRG-400 WPR-only handoff. |
+| Boundary | No new branch/worktree/helper, live Codex/host/target-project effect, push/staging publication, package/build/install, Secret, release or deployment. |
