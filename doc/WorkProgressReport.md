@@ -4819,3 +4819,14 @@
 | Reversals | Making `TransitionRule.skill_reference` optional made `test_required_skill_reference_is_required` fail; substituting Profile fallback metadata in the final successful route made `test_successful_decision_copies_exact_rule_contract` fail. Both edits were restored with exact source bytes and the final focused suite is green. |
 | Verification | Focused Router `31/31`; existing six-module Router suite `98/98`; full explicit serial unittest `534/534`; strict full-tree mypy `150` source files with external cache removed; in-memory compile `150` files; `git diff --check` and exact five-path scope pass. |
 | Readback / boundary | Final branch/worktree is clean except the WPR append before this handoff commit; exact three-worktree topology, registry ancestry, tracked/ignored porcelain, cache/bytecode/runtime residue are clean/zero. `XSS_NOT_APPLICABLE`; no helper, live model/host/Codex/home/config/target-project/network effect, push/staging publication, package/install, Secret, release or deployment. |
+
+## PRG-20260814-448 - Router Ticket R01 revision-02 correction handoff
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `REVISION_02_CORRECTION_DISPATCH_CONFIRMED(PRG-447) -> ACTION_COMPLETED / REVIEW_HANDOFF`; CR-R01-001 through CR-R01-003 are closed on the retained lane. |
+| Exact chain | Branch `codex/implementation-router-route-instruction-r01`; parent handoff `a16dfc38eb6141e2aef5fa480be741b1f057ca57`; correction implementation `a961b59d3db60dbd74a9388621adad3112b4f721`; WPR-only handoff is this entry. |
+| Correction | The exhaustive 19-row Profile route table now names the primary next action and exact typed return; seven real policy references/digests are stored as metadata-only values; all-zero reference metadata, conflicting repeated IDs and contract/reference revision mismatches fail Profile construction. |
+| First red / reversals | The new exact route/hash tests first failed against the incoming-event echo and placeholder metadata. Restoring the input-event echo made the intake direction assertion red; replacing a real digest with the all-zero placeholder was rejected before policy admission. Both mutations were restored exactly. |
+| Verification | Focused Router `32/32`; existing six-module Router suite `99/99`; full explicit serial unittest `535/535`; strict full-tree mypy `150` source files with external cache removed; in-memory compile `150` files; exact three-path correction scope and `git diff --check` pass. |
+| Readback / boundary | Correction parent is the prior WPR handoff; final tracked/ignored status is clean, exactly three worktrees remain, and cache/bytecode/runtime residue is zero. `XSS_NOT_APPLICABLE`; no helper, new branch/worktree, live model/host/Codex/home/config/target-project/network effect, push/staging publication, package/install, Secret, release or deployment. |
