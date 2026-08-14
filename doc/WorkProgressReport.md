@@ -4240,3 +4240,14 @@
 | CR-174 | All five exact response objects with injected `__pydantic_extra__` or `__pydantic_private__` still return affirmative `CONFIRMED`/`PROVED_ABSENT`; the direct A5 test omits that matrix. Classification: reviewer-owned ticket ambiguity plus bounded implementation and evidence defects. |
 | Refreeze | Revision 02 preserves ordinary validated mappings but explicitly treats corrupted original Pydantic storage as malformed/unproved evidence. Same-lane correction changes only composition source/direct test, keeps exports identical, adds top-level and representative nested matrices plus one shared-guard reversal, and returns reserved PRG-393. |
 | Boundary | Reviewer wrote only control documents and an isolated TEMP export. No implementation-worktree write, new branch/worktree, live Codex/host/target-project effect, push/staging publication, package/build/install, Secret, release or deployment. |
+
+## PRG-20260814-392 - Ticket 05C2A CR-174 same-lane correction dispatch
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `CHANGES_REQUESTED(05C2A / CR-174) + REVISION_02_SCHEMA_PASS + SAME_LANE_CLEAN -> CORRECTION_DISPATCH_CONFIRMED / IMPLEMENT` |
+| Reviewed authority | Finding/refreeze `e7738ba11310379437be5598ed68b2181c20eb71`; standing authority `PRG-20260809-042`; original 05C2A allocation, receipt and correlation remain valid. |
+| Exact lane | Owner task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; permanent implementation worktree; same 05C2A branch clean at handoff `9f25ef56892b9b9a9a51e470838a383c0f17e500`; ignored/cache/bytecode residue zero; exactly three worktrees. |
+| Merge admission | Merge only the exact control commit carrying this registry. Read-only merge-tree reports only append-only WPR overlap; preserve PRG-390, PRG-391 and PRG-392 exactly once. Any other conflict or topology/scope drift is typed `HALT`. |
+| Correction / return | Change only `codex_compensation_composition.py` and its direct test for CR-174 exact original response state; preserve package exports and ordinary mappings. Return one additive correction commit and then reserved PRG-393 WPR-only handoff. |
+| Boundary | Same ticket/owner/worktree/branch/binding; no helper, new lane, reviewer implementation write, live effect, push/staging publication, package/build/install, Secret, release or deployment. |
