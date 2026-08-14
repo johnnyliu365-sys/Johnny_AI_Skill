@@ -4445,3 +4445,22 @@
 | Verification | Focused serial unittest `52/52`; full explicit serial unittest `512/512`; strict full-tree mypy with explicit package bases and repository-external cache `148` files, no issues; in-memory compile `148` files. Exact truth cells construct and round-trip for `True`/`False`; strict validation rejects `0`, `1`, strings, `None`, containers and other non-bools. |
 | Reversals | Three named reversals turned tests red and were restored byte-for-byte: `Literal[True]` versus T1; compensation false-to-`RESIDUE` mapping versus C4; receipt-removal `RESIDUE` mapping versus B5. Protected composition production files returned to their original hashes, and final focused `52/52` passed. |
 | Scope / boundary | `git diff --check`, exact four-path scope, protected-path check, strict source-policy scan, control ancestry, exact branch/HEAD, and exactly three-worktree topology passed. Tracked/ignored readback has no residue after handoff; no `__pycache__`, `.pyc`, runtime or external mypy cache remains. `XSS_NOT_APPLICABLE` (typed Python proof contract; no browser/WebView/HTML/DOM/JavaScript context). No live Codex/host/target-project effect, helper/subagent, package/install, push, release or deployment. |
+## PRG-20260814-411 - Ticket 05C2C2A independent review
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `REVIEW_HANDOFF(05C2C2A) -> REVIEW_COMPLETED / CHANGES_REQUESTED / EVIDENCE_DEFECT`; same-lane evidence-only correction is authorized by standing `PRG-20260809-042`. |
+| Reviewed chain | Implementation `d407937d03e7dba49cf066599ac9d5c43e9b3624`; WPR-only handoff `6695b146b28d33faeb341f32c92c79bd2b82e66e` / PRG-410; immutable archive SHA-256 `FE360CA2D0DC3E114C2626E7BDFBAAE4429204D23B28CE50E28986A403EFF4BB`. |
+| Independent evidence | Focused `52/52`; full serial `512/512`; strict mypy `148`; compile `148`; strict bool/admission probes and three independent runtime reversals pass. Exact ancestry/scope, clean owner lane and three-worktree topology pass. Reviewer TEMP export/archive/cache were removed and read back absent. |
+| Finding | CR-177 `EVIDENCE_DEFECT`: all four SHA-256 values claimed in PRG-410 differ from the immutable implementation export. The formal review freezes the four reviewer-computed values; no source or test defect was found. |
+| Continuation | Same ticket/owner/permanent worktree/branch/allocation/receipt. Append one WPR-only correction at reserved PRG-20260814-413; source, tests, PRG-410 and prior commits remain immutable. No new branch/worktree/helper/effect/push/package/install/release/deploy. |
+
+## PRG-20260814-412 - Ticket 05C2C2A CR-177 correction dispatch registry
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `CHANGES_REQUESTED(CR-177) + EXACT_LANE_READBACK -> CORRECTION_DISPATCH_CONFIRMED / IMPLEMENT` |
+| Review / schema | Formal review baseline `cd659a57e488f471d83b2bf2bcb1f6c5870a8b8b`; T1-T7 and the strict typed implementation remain frozen, while CR-177 authorizes only correction of the four false hash claims. |
+| Lane / merge admission | Owner-2 task `019ffb0c-db88-7303-895c-aecfadde7c8d`; same permanent worktree/branch; clean handoff `6695b146b28d33faeb341f32c92c79bd2b82e66e`; ignored residue 0; exactly three worktrees. Read-only merge-tree predicts only append-only WPR overlap; PRG-409 through PRG-412 plus submitted PRG-410 must each remain once. |
+| Binding / return | Existing workspace/handoff/allocation/receipt/correlation/question/side-context retained. Merge the exact review baseline, change no implementation blob, then append only reserved PRG-20260814-413 in one WPR-only evidence correction commit. |
+| Boundary | No new branch/worktree/helper, source/test/ticket/review edit, live Codex/host/target-project effect, push/staging publication, package/build/install, Secret, release or deployment. |

@@ -5,7 +5,7 @@
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-02, AC-06, AC-07 and AC-08 |
 | Change / PRD / Context | `CHG-20260808-011` / `PRD.md §15` / `doc/context/local-orchestration-installer/main.md` |
 | Revision | `01` |
-| State | `IN_PROGRESS / DISPATCH_READY` |
+| State | `CHANGES_REQUESTED / EVIDENCE_ONLY_CORRECTION` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05C2C2A-01` / T1-T7 |
 | Dependency | 05C2C1 guarded merge `fffbc616ee1870b69845cbcecf37a98e842106d3`; 05C2C2 revision-02 typed HALT at dispatch `41564b2e1087ede7bc156c68ec4aec715f3fe8bd` |
 | Profile / resource | `STANDARD`; one implementation owner, no helper; serial prerequisite for 05C2C2 revision 03 |
@@ -99,3 +99,28 @@ deploy.
 This receipt authorizes only T1-T7. The owner must mechanically re-read this
 exact ticket before first red and return `HALT / TICKET_SCHEMA_INVALID` on any
 mismatch.
+
+## Initial review correction — CR-177
+
+Independent execution and P0 strong-type review pass, but PRG-410's four
+claimed SHA-256 values do not match the immutable implementation commit.
+CR-177 is one `EVIDENCE_DEFECT` against T7. Keep the same ticket, owner,
+worktree, branch, allocation and receipt; do not modify source, tests or prior
+commits. Append only the reserved PRG-20260814-413 correction record to
+`doc/WorkProgressReport.md`, explicitly superseding only PRG-410's hash row with
+the four reviewer-verified hashes frozen in the formal review. The correction
+must read back as a one-file WPR-only additive commit with a clean lane.
+
+### CR-177 correction dispatch registry
+
+| Field | Value |
+| --- | --- |
+| Review baseline | `cd659a57e488f471d83b2bf2bcb1f6c5870a8b8b`; formal review file is the only source for the four corrected hashes. |
+| Lane | Same owner-2 task, permanent worktree, branch, workspace, handoff, allocation, receipt, correlation, question and side context. |
+| Merge admission | Read-only merge prediction permits only the append-only `doc/WorkProgressReport.md` overlap. Preserve PRG-409 through PRG-412 and submitted PRG-410 exactly once; any other conflict is a typed `HALT`. |
+| Writable scope | `doc/WorkProgressReport.md` only. No source, test, ticket, review or other document edit. |
+| Return | One merge commit for the exact review baseline, then one additive WPR-only commit appending reserved PRG-20260814-413. |
+
+This correction does not authorize amend, reset, rebase, force, stash, new
+branch/worktree, helper Agent, implementation change, live effect, package,
+install, push, release or deployment.
