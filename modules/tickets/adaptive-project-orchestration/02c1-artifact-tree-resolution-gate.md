@@ -4,15 +4,19 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2` revision 05 / AC-17 |
 | PRD / change | `PRD-20260815-022` / `CHG-20260815-022` |
-| State | `IN_PROGRESS / RECEIPT_BOUND` |
-| Closure | `CLOSURE-ADAPTIVE-ROUTER-R02C1-01` / ACX1-ACX8 |
-| Baseline | Change-control refreeze `3139bccc3ab08093519b91cc55e162bd98b6718b`; proposal `6897bcca655c7eb06f2b663c30d7447f561fc389`; exact dispatch registry is the commit containing `PRG-20260815-480` |
-| Delivery profile | `STANDARD`; one Luna implementation owner; no helper |
+| State | `IN_PROGRESS / REVISION_02_REVALIDATION_REQUIRED` |
+| Closure | `CLOSURE-ADAPTIVE-ROUTER-R02C1-01` / ACX1-ACX8 / ticket revision `r02c1-02`; supersedes schema-incomplete `r02c1-01` without changing behavior or public contracts |
+| Baseline | Change-control refreeze `3139bccc3ab08093519b91cc55e162bd98b6718b`; initial review `c71d06d795a31c1a71189dd718c1a326a2522636`; revision-02 refreeze is the commit containing `PRG-20260815-483` |
+| Context / environment | `doc/context/adaptive-project-orchestration/main.md` at `SPEC_REVISION_05_APPROVED / ROUTER_PHASE_ACTIVE`; local pure-Python verification in the named permanent implementation worktree; no target, host or external environment effect |
+| Implementation language / checker | Python 3.11; `python -m mypy --strict --explicit-package-bases --no-incremental` over every Python file under `library/` and `tests/` |
+| Delivery profile / resource plan | `STANDARD`; `PRG-20260815-479`; one `gpt-5.6-luna` max implementation owner; no helper |
 | Control owner / reviewer | Control task `019fb935-bbe1-7f71-8b4b-58ba20c81626`; sole Agent orchestrator |
 | Implementation owner | Existing task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; permanent worktree `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` |
 | Branch | `codex/implementation-router-artifact-tree-r02c1` from the exact dispatch-registry commit |
-| Dispatch binding | Handoff `hnd-adaptive-router-r02c1-20260815`; allocation `aln-adaptive-router-r02c1-20260815`; receipt `rcpt-adaptive-router-r02c1-20260815`; question `q-adaptive-router-r02c1-20260815`; correlation `corr-adaptive-router-r02c1-20260815`; side Context `scx-adaptive-router-r02c1-20260815-01`; expected return `ret-artifact-tree-review-handoff-r02c1` |
+| Prior dispatch | Registry `db9bc7d9d9e4b14ddda7082633e71148cdcc3ed2`; candidate implementation `458791b470629fe7c0e3bb263af87560b58e54b9`; handoff `b1ba51ccc13b0893783b5fd5e2b9e99e4d120d84`; prior side Context `scx-adaptive-router-r02c1-20260815-01` is invalidated by this ticket revision |
+| Revalidation binding | Handoff `hnd-adaptive-router-r02c1-revalidation-20260815-02`; allocation `aln-adaptive-router-r02c1-20260815`; receipt `rcpt-adaptive-router-r02c1-revalidation-20260815-02`; question `q-adaptive-router-r02c1-revalidation-20260815-02`; correlation `corr-adaptive-router-r02c1-revalidation-20260815-02`; side Context `scx-adaptive-router-r02c1-20260815-02`; expected return `ret-artifact-tree-review-handoff-r02c1-r02`; inactive until the exact registry commit containing `PRG-20260815-484` |
 | XSS / effects | `XSS_NOT_APPLICABLE`; pure metadata-only resolver, no source/body read, Agent, filesystem, Git, host or network effect |
+| Operations / rollback | No runtime operation. Before integration, discard the candidate by withholding approval; after guarded integration, use a separately reviewed additive revert. Never reset, force or delete reviewed evidence. |
 
 ## One observable outcome
 
@@ -126,6 +130,11 @@ No other production, test, ticket, review or governance path is writable. In par
 `router.py` and `tests/test_workflow_router.py` are read-only regression inputs, not R02C1 edit
 targets.
 
+For revision-02 revalidation, all four production/test paths are read-only. The owner may only
+additively synchronize the exact `PRG-20260815-484` registry, resolve the single expected
+append-only WPR overlap while retaining each record once and in order, run verification and
+append one WPR-only revalidation handoff. Any changed source/test blob is `CHANGE_DETECTED`.
+
 ## Acceptance closure
 
 | ID | Acceptance |
@@ -139,17 +148,22 @@ targets.
 | `ACX7` | Dedicated focused tests, incoming Router tests, six-module Router regression, full explicit serial unittest, strict full-tree mypy, in-memory compile, source/scope/diff/topology/porcelain/cache gates pass. |
 | `ACX8` | Three bounded reversals turn their governing tests red and restore exact bytes: ignore edge revision/digest equality; remove duplicate-parent rejection; resolve a missing direct segment. |
 
-## First red and return
+## First red and revision-02 return
 
 First red imports the absent contracts and `ArtifactTreeResolver` from the public package and
 calls `resolve`; it must fail before production mutation because the R02C1 surface does not
 exist. Preserve the failure and record the incoming focused Router/six-module/full/type/compile
 baselines without changing their existing tests.
 
-Return one implementation commit changing exactly the four production/test paths, then one
-separate WPR-only handoff commit containing first red, ACX1-ACX8, three reversal
-reds/restorations, full verification identities and final clean readback. Return only
-`COMPLETED`, `BLOCKED` or `CHANGE_DETECTED`; progress-only final is not completion.
+The immutable candidate first red failed before production mutation because the R02C1 public
+surface did not exist. Candidate implementation `458791b470629fe7c0e3bb263af87560b58e54b9`
+and its three reversal records remain the implementation evidence; revision 02 does not ask the
+owner to recreate or rewrite them.
+
+Return one WPR-only revalidation handoff after proving the candidate's four source/test blobs are
+unchanged, ACX1-ACX8 still pass, the revised ticket/Context/language/checker bindings were read,
+and focused/Router/six-module/full/mypy/compile/source/scope/topology/residue gates pass. Return
+only `COMPLETED`, `BLOCKED` or `CHANGE_DETECTED`; progress-only final is not completion.
 
 No helper/subagent, new worktree, self-review/integration, next ticket, R02C2-R06, 06G0P,
 live model/Figma/Codex/home/App/target-project/network effect, push/staging publication,

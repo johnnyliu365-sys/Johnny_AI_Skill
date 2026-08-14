@@ -5209,3 +5209,37 @@
 | Verification | Dedicated plus Router focused `63/63`; six-module Router regression `130/130`; explicit serial full suite `566/566` across `49` files; strict full-tree mypy `152/152`; in-memory compile `152/152`; source/scope/diff/ancestry/topology gates pass. |
 | Readback | Branch `codex/implementation-router-artifact-tree-r02c1`; permanent linked git-dir and exactly three worktrees retained; tracked and ignored porcelain empty; cache/bytecode/runtime residue `0`; external mypy cache removed; `XSS_NOT_APPLICABLE`. |
 | Boundary | No helper, Agent control, `router.py` or existing Router-test edit, R02C2-R06, source/body read port, live model/Codex/home/App/target/network effect, push, package/install, Secret, release or deployment. |
+
+## PRG-20260815-482 - Router R02C1 initial review requires ticket refreeze
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `ACTION_COMPLETED / REVIEW_HANDOFF(PRG-481) -> CHANGES_REQUESTED / TICKET_DEFECT`; formal review is `doc/reviews/adaptive-project-orchestration/02c1-artifact-tree-resolution-gate-code-review.md`. |
+| Submitted chain | Registry `db9bc7d9d9e4b14ddda7082633e71148cdcc3ed2`; implementation `458791b470629fe7c0e3bb263af87560b58e54b9`; WPR-only handoff `b1ba51ccc13b0893783b5fd5e2b9e99e4d120d84`; exact ancestry, scope and clean lane pass. |
+| Independent verification | Repository-external detached clone passed focused `63/63`, explicit serial full suite `566/566` across `49` files, strict mypy `152/152`, compile `152/152` and reviewer probes `9/9`; clone/cache were removed and read back absent. |
+| Finding | `CR-R02C1-001 / TICKET_DEFECT`: revision `r02c1-01` omits the exact feature Context reference and the explicit implementation-language/strict-checker binding required by the canonical ticket schema. No implementation defect was found. |
+| Required route | Refreeze the same ticket as `r02c1-02`; invalidate `scx-adaptive-router-r02c1-20260815-01`; create a new receipt/correlation-bound revalidation view on the same owner/worktree/branch. Preserve candidate implementation bytes and require evidence-only revalidation unless behavior changes. |
+| Boundary | No source/test mutation, new branch/worktree, R02C2/R02C3 implementation, helper, external effect, push, package/install, Secret, release or deployment. `XSS_NOT_APPLICABLE`. |
+
+## PRG-20260815-483 - Router R02C1 ticket revision-02 refreeze
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `CHANGES_REQUESTED / TICKET_DEFECT(PRG-482) -> TICKET_REFROZEN / REVALIDATION_DISPATCH_REQUIRED`; this record creates no receipt or implementation mutation authority. |
+| Ticket | Same `02c1-artifact-tree-resolution-gate` and closure ACX1-ACX8, now revision `r02c1-02`. No behavior, public contract, source scope or requirement changed. |
+| Schema closure | The ticket now binds exact feature Context `doc/context/adaptive-project-orchestration/main.md` revision 05, Python 3.11, the exact strict-mypy gate, resource plan `PRG-479`, local environment and operations/rollback boundaries. `CR-R02C1-001` is corrected at the ticket source. |
+| Candidate preservation | Candidate implementation `458791b470629fe7c0e3bb263af87560b58e54b9` remains immutable and is not rejected. Revision-02 revalidation makes all four source/test paths read-only and permits only registry synchronization plus one WPR-only return. |
+| Context lifecycle | Prior side Context `scx-adaptive-router-r02c1-20260815-01` is invalidated. Planned replacement is `scx-adaptive-router-r02c1-20260815-02`, bound to the same owner/worktree/branch and activated only by a separate exact registry. |
+| Boundary | No source/test mutation, receipt yet, new branch/worktree, helper, R02C2/R02C3 implementation, external effect, push, package/install, Secret, release or deployment. `XSS_NOT_APPLICABLE`. |
+
+## PRG-20260815-484 - Router R02C1 revision-02 revalidation dispatch
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `TICKET_REFROZEN / REVALIDATION_DISPATCH_REQUIRED(PRG-483) + STANDING_OWNER_AUTO_CONTINUE -> IMPLEMENTATION_DISPATCH_CONFIRMED / REVALIDATE`; this is the sole revision-02 registry. |
+| Registry / correction | Refreeze `802df844815db85d6dd3f26a30cb803dca9dcbbb`; review `c71d06d795a31c1a71189dd718c1a326a2522636`; finding `CR-R02C1-001`; exact ticket `modules/tickets/adaptive-project-orchestration/02c1-artifact-tree-resolution-gate.md` revision `r02c1-02`; this registry commit is the dispatch baseline. |
+| Binding | Handoff `hnd-adaptive-router-r02c1-revalidation-20260815-02`; allocation `aln-adaptive-router-r02c1-20260815`; receipt `rcpt-adaptive-router-r02c1-revalidation-20260815-02`; question `q-adaptive-router-r02c1-revalidation-20260815-02`; correlation `corr-adaptive-router-r02c1-revalidation-20260815-02`; side Context `scx-adaptive-router-r02c1-20260815-02`; expected return `ret-artifact-tree-review-handoff-r02c1-r02`. |
+| Owner / lane | Same task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`, permanent implementation worktree and branch `codex/implementation-router-artifact-tree-r02c1`; expected current handoff `b1ba51ccc13b0893783b5fd5e2b9e99e4d120d84`; exactly three worktrees. |
+| Synchronization | Additively merge this exact registry into the same branch. Only the expected append-only `doc/WorkProgressReport.md` overlap may be resolved, retaining PRG-480 through PRG-484 each once and in order. Any other conflict is `BLOCKED`. |
+| Revalidation | Read revision-02 ticket and exact Context; prove implementation `458791b470629fe7c0e3bb263af87560b58e54b9` four source/test blobs unchanged; rerun focused/Router/six-module/full/strict-mypy/compile/source/scope/topology/residue gates; append one WPR-only handoff. |
+| Boundary | All source/test paths are read-only. No new implementation commit, branch/worktree, helper, R02C2/R02C3 implementation, external effect, push, package/install, Secret, release or deployment. Changed candidate bytes return `CHANGE_DETECTED`. `XSS_NOT_APPLICABLE`. |
