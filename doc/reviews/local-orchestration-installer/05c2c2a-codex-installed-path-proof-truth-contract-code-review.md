@@ -47,5 +47,5 @@
 
 The implementation is not being rejected or rewritten. CR-177 is the single
 blocking item in this closure revision, and only an additive WPR-only evidence
-correction on the same owner/worktree/branch/allocation/receipt is authorized.
-
+correction at reserved PRG-20260814-413 on the same
+owner/worktree/branch/allocation/receipt is authorized.

@@ -4442,4 +4442,14 @@
 | Reviewed chain | Implementation `d407937d03e7dba49cf066599ac9d5c43e9b3624`; WPR-only handoff `6695b146b28d33faeb341f32c92c79bd2b82e66e` / PRG-410; immutable archive SHA-256 `FE360CA2D0DC3E114C2626E7BDFBAAE4429204D23B28CE50E28986A403EFF4BB`. |
 | Independent evidence | Focused `52/52`; full serial `512/512`; strict mypy `148`; compile `148`; strict bool/admission probes and three independent runtime reversals pass. Exact ancestry/scope, clean owner lane and three-worktree topology pass. Reviewer TEMP export/archive/cache were removed and read back absent. |
 | Finding | CR-177 `EVIDENCE_DEFECT`: all four SHA-256 values claimed in PRG-410 differ from the immutable implementation export. The formal review freezes the four reviewer-computed values; no source or test defect was found. |
-| Continuation | Same ticket/owner/permanent worktree/branch/allocation/receipt. Append one WPR-only correction at reserved PRG-413; source, tests, PRG-410 and prior commits remain immutable. No new branch/worktree/helper/effect/push/package/install/release/deploy. |
+| Continuation | Same ticket/owner/permanent worktree/branch/allocation/receipt. Append one WPR-only correction at reserved PRG-20260814-413; source, tests, PRG-410 and prior commits remain immutable. No new branch/worktree/helper/effect/push/package/install/release/deploy. |
+
+## PRG-20260814-412 - Ticket 05C2C2A CR-177 correction dispatch registry
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `CHANGES_REQUESTED(CR-177) + EXACT_LANE_READBACK -> CORRECTION_DISPATCH_CONFIRMED / IMPLEMENT` |
+| Review / schema | Formal review baseline `cd659a57e488f471d83b2bf2bcb1f6c5870a8b8b`; T1-T7 and the strict typed implementation remain frozen, while CR-177 authorizes only correction of the four false hash claims. |
+| Lane / merge admission | Owner-2 task `019ffb0c-db88-7303-895c-aecfadde7c8d`; same permanent worktree/branch; clean handoff `6695b146b28d33faeb341f32c92c79bd2b82e66e`; ignored residue 0; exactly three worktrees. Read-only merge-tree predicts only append-only WPR overlap; PRG-409 through PRG-412 plus submitted PRG-410 must each remain once. |
+| Binding / return | Existing workspace/handoff/allocation/receipt/correlation/question/side-context retained. Merge the exact review baseline, change no implementation blob, then append only reserved PRG-20260814-413 in one WPR-only evidence correction commit. |
+| Boundary | No new branch/worktree/helper, source/test/ticket/review edit, live Codex/host/target-project effect, push/staging publication, package/build/install, Secret, release or deployment. |

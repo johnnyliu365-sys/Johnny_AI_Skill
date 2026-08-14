@@ -106,7 +106,21 @@ Independent execution and P0 strong-type review pass, but PRG-410's four
 claimed SHA-256 values do not match the immutable implementation commit.
 CR-177 is one `EVIDENCE_DEFECT` against T7. Keep the same ticket, owner,
 worktree, branch, allocation and receipt; do not modify source, tests or prior
-commits. Append only the reserved PRG-413 correction record to
+commits. Append only the reserved PRG-20260814-413 correction record to
 `doc/WorkProgressReport.md`, explicitly superseding only PRG-410's hash row with
 the four reviewer-verified hashes frozen in the formal review. The correction
 must read back as a one-file WPR-only additive commit with a clean lane.
+
+### CR-177 correction dispatch registry
+
+| Field | Value |
+| --- | --- |
+| Review baseline | `cd659a57e488f471d83b2bf2bcb1f6c5870a8b8b`; formal review file is the only source for the four corrected hashes. |
+| Lane | Same owner-2 task, permanent worktree, branch, workspace, handoff, allocation, receipt, correlation, question and side context. |
+| Merge admission | Read-only merge prediction permits only the append-only `doc/WorkProgressReport.md` overlap. Preserve PRG-409 through PRG-412 and submitted PRG-410 exactly once; any other conflict is a typed `HALT`. |
+| Writable scope | `doc/WorkProgressReport.md` only. No source, test, ticket, review or other document edit. |
+| Return | One merge commit for the exact review baseline, then one additive WPR-only commit appending reserved PRG-20260814-413. |
+
+This correction does not authorize amend, reset, rebase, force, stash, new
+branch/worktree, helper Agent, implementation change, live effect, package,
+install, push, release or deployment.
