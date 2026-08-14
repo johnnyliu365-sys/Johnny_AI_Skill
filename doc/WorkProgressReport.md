@@ -4973,3 +4973,14 @@
 | Source authority | Exactly `library/workflow_router/contracts.py`, `profile.py`, `router.py`, `__init__.py` and `tests/test_workflow_router.py`; then one WPR-only handoff. No other source/test/docs path is writable. |
 | Pre-red / return | Import/call the absent public shared-Context contracts/method before production mutation; implement only SC1-SC8; return one implementation commit plus one WPR-only handoff after focused/six-module/full/mypy/compile/reversal/scope/topology/residue verification. Progress-only final is not completion. |
 | Resource / safety | Host mapping `gpt-5.6-luna`, reasoning `max`; no helper. Reviewer task `019fb935-bbe1-7f71-8b4b-58ba20c81626` is sole orchestrator. `XSS_NOT_APPLICABLE`; no next-ticket authority, new worktree, live model/Codex/home/App/target/network effect, push, package/install, Secret, release or deployment. |
+
+## PRG-20260815-462 - Router R02A independent review changes requested
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `ACTION_COMPLETED / REVIEW_HANDOFF(PRG-461) -> CHANGES_REQUESTED / SAME_TICKET_ADDITIVE_CORRECTION`; R02B and all non-Router work remain blocked. |
+| Review record | `doc/reviews/adaptive-project-orchestration/02a-shared-context-lifecycle-gate-code-review.md`; findings `CR-R02A-001..003` are implementation defects, not a requirement or ticket change. |
+| Independent green | Repository-external detached clone at exact handoff passed focused `40/40`, six-module `107/107`, full serial `543/543`, strict mypy `150/150`, compile `150/150` and a 39-cell decision-table adversarial matrix; the temporary clone was removed. |
+| Blocking probes | A valid alternate project Profile pair is rejected; a typed tree leaf `idx-ticket-current` is rejected by semantic-substring filtering; reserved `rev-0000000000000000` is accepted as an expected revision. |
+| Correction lane | Same ticket/task/permanent worktree/branch/allocation/receipt. Additive correction is limited to `contracts.py`, `profile.py`, `test_workflow_router.py`, followed by one WPR-only handoff; only an append-only WPR sync conflict may retain every unique PRG entry once. |
+| Boundary | No new branch/worktree, R02B/R02C, 06G0P, live host/network/target effect, push, package/install, Secret, release or deployment. `XSS_NOT_APPLICABLE`. |
