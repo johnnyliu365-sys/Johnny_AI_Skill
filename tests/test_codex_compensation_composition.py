@@ -8,8 +8,20 @@ import unittest
 
 from pydantic import BaseModel
 
-from library.local_orchestration import compose_codex_compensation as exported_compose
-from library.local_orchestration.codex_compensation_composition import compose_codex_compensation
+from library.local_orchestration import (
+    CodexCompensationObservationRejectReason,
+    CodexCompensationObservationRejected,
+    CodexCompensationObservationResult,
+    compose_codex_compensation as exported_compose,
+    observe_codex_compensation_operation as exported_observe,
+)
+from library.local_orchestration.codex_compensation_composition import (
+    CodexCompensationObservationRejectReason as CompositionRejectReason,
+    CodexCompensationObservationRejected as CompositionRejected,
+    CodexCompensationObservationResult as CompositionObservationResult,
+    compose_codex_compensation,
+    observe_codex_compensation_operation,
+)
 from library.local_orchestration.codex_compensation_port import (
     CodexCompensationPortCapability,
     CodexCompensationPortFailureReason,
@@ -28,11 +40,18 @@ from library.local_orchestration.codex_compensation_reducer import (
     CodexCompensationBlockReason,
     CodexCompensationFailed,
     CodexCompensationNoop,
+    CodexCompensationStep,
+    CodexInstalledLocationProof,
+    CodexMarketplaceProof,
+    CodexPluginListsProof,
     CodexCompensationPlan,
     CodexCompensationReason,
     CodexCompensationResult,
     CodexNoCompensationPlan,
     build_compensation_plan,
+    CodexProofTruth,
+    CodexRemovalConfirmed,
+    CodexRemovalFailed,
 )
 from library.local_orchestration.codex_registration_contracts import (
     CodexAttemptEffectState,
@@ -373,6 +392,14 @@ class FailureSubclass(CodexCompensationPortOperationFailed):
     """Caller-controlled derived failure values cannot enter composition."""
 
 
+class OperationText(str):
+    """String subclasses are not exact operation enum values."""
+
+
+class RequestSubclass(CodexCompensationPortRequest):
+    """Caller-controlled request subclasses cannot enter observation admission."""
+
+
 def failure_state_node(
     failure: CodexCompensationPortOperationFailed,
     node: FailureStateNode,
@@ -415,6 +442,322 @@ def capability(adapter: RecordingPort) -> CodexCompensationPortCapability:
 
 
 class CodexCompensationCompositionTests(unittest.TestCase):
+    def test_a1_public_observation_contract_and_all_five_successes(self) -> None:
+        self.assertIs(exported_observe, observe_codex_compensation_operation)
+        self.assertIs(CodexCompensationObservationRejectReason, CompositionRejectReason)
+        self.assertIs(CodexCompensationObservationRejected, CompositionRejected)
+        self.assertIs(CodexCompensationObservationResult, CompositionObservationResult)
+        self.assertEqual(
+            ("INVALID_OPERATION", "INVALID_REQUEST"),
+            tuple(reason.value for reason in CodexCompensationObservationRejectReason),
+        )
+        current_request = request()
+        success_values: tuple[tuple[CodexCompensationPortOperation, object, object], ...] = (
+            (
+                CodexCompensationPortOperation.REMOVE_PLUGIN,
+                CodexPluginRemovalProof(manifest=manifest(), status="REMOVED"),
+                CodexRemovalConfirmed(step=CodexCompensationStep.REMOVE_PLUGIN, status="CONFIRMED"),
+            ),
+            (
+                CodexCompensationPortOperation.REMOVE_MARKETPLACE,
+                CodexMarketplaceRemovalProof(manifest=manifest(), status="REMOVED"),
+                CodexRemovalConfirmed(step=CodexCompensationStep.REMOVE_MARKETPLACE, status="CONFIRMED"),
+            ),
+            (
+                CodexCompensationPortOperation.LIST_PLUGINS,
+                CodexPluginList(installed=(), available=()),
+                CodexPluginListsProof(
+                    step=CodexCompensationStep.PROVE_PLUGIN_LISTS_ABSENT,
+                    installed=CodexProofTruth.PROVED_ABSENT,
+                    available=CodexProofTruth.PROVED_ABSENT,
+                ),
+            ),
+            (
+                CodexCompensationPortOperation.LIST_MARKETPLACES,
+                CodexMarketplaceList(marketplaces=()),
+                CodexMarketplaceProof(
+                    step=CodexCompensationStep.PROVE_MARKETPLACE_ABSENT,
+                    truth=CodexProofTruth.PROVED_ABSENT,
+                ),
+            ),
+            (
+                CodexCompensationPortOperation.PROVE_INSTALLED_PATH_ABSENT,
+                CodexInstalledPathAbsenceProof(manifest=manifest(), absent=True),
+                CodexInstalledLocationProof(
+                    step=CodexCompensationStep.PROVE_INSTALLED_LOCATION_ABSENT,
+                    truth=CodexProofTruth.PROVED_ABSENT,
+                ),
+            ),
+        )
+        for operation, value, expected in success_values:
+            with self.subTest(operation=operation.value):
+                result = observe_codex_compensation_operation(operation, value, current_request)
+                self.assertEqual(expected, result)
+
+    def test_a2_each_operation_maps_failure_foreign_and_malformed_values(self) -> None:
+        cases: tuple[tuple[CodexCompensationPortOperation, object, object], ...] = (
+            (
+                CodexCompensationPortOperation.REMOVE_PLUGIN,
+                finite_failure(manifest(), CodexCompensationPortOperation.REMOVE_PLUGIN),
+                CodexRemovalFailed(step=CodexCompensationStep.REMOVE_PLUGIN, status="DECLARED_FAILURE"),
+            ),
+            (
+                CodexCompensationPortOperation.REMOVE_PLUGIN,
+                CodexPluginRemovalProof(manifest=foreign_manifest(), status="REMOVED"),
+                CodexRemovalFailed(step=CodexCompensationStep.REMOVE_PLUGIN, status="DECLARED_FAILURE"),
+            ),
+            (
+                CodexCompensationPortOperation.REMOVE_PLUGIN,
+                object(),
+                CodexRemovalFailed(step=CodexCompensationStep.REMOVE_PLUGIN, status="DECLARED_FAILURE"),
+            ),
+            (
+                CodexCompensationPortOperation.REMOVE_MARKETPLACE,
+                finite_failure(manifest(), CodexCompensationPortOperation.REMOVE_MARKETPLACE),
+                CodexRemovalFailed(step=CodexCompensationStep.REMOVE_MARKETPLACE, status="DECLARED_FAILURE"),
+            ),
+            (
+                CodexCompensationPortOperation.REMOVE_MARKETPLACE,
+                CodexMarketplaceRemovalProof(manifest=foreign_manifest(), status="REMOVED"),
+                CodexRemovalFailed(step=CodexCompensationStep.REMOVE_MARKETPLACE, status="DECLARED_FAILURE"),
+            ),
+            (
+                CodexCompensationPortOperation.REMOVE_MARKETPLACE,
+                object(),
+                CodexRemovalFailed(step=CodexCompensationStep.REMOVE_MARKETPLACE, status="DECLARED_FAILURE"),
+            ),
+            (
+                CodexCompensationPortOperation.LIST_PLUGINS,
+                finite_failure(manifest(), CodexCompensationPortOperation.LIST_PLUGINS),
+                CodexPluginListsProof(
+                    step=CodexCompensationStep.PROVE_PLUGIN_LISTS_ABSENT,
+                    installed=CodexProofTruth.UNPROVED,
+                    available=CodexProofTruth.UNPROVED,
+                ),
+            ),
+            (
+                CodexCompensationPortOperation.LIST_PLUGINS,
+                CodexPluginList(installed=(plugin_entry(plugin_id="foreign-plugin-012345"),), available=()),
+                CodexPluginListsProof(
+                    step=CodexCompensationStep.PROVE_PLUGIN_LISTS_ABSENT,
+                    installed=CodexProofTruth.PROVED_ABSENT,
+                    available=CodexProofTruth.PROVED_ABSENT,
+                ),
+            ),
+            (
+                CodexCompensationPortOperation.LIST_PLUGINS,
+                object(),
+                CodexPluginListsProof(
+                    step=CodexCompensationStep.PROVE_PLUGIN_LISTS_ABSENT,
+                    installed=CodexProofTruth.MALFORMED,
+                    available=CodexProofTruth.MALFORMED,
+                ),
+            ),
+            (
+                CodexCompensationPortOperation.LIST_MARKETPLACES,
+                finite_failure(manifest(), CodexCompensationPortOperation.LIST_MARKETPLACES),
+                CodexMarketplaceProof(
+                    step=CodexCompensationStep.PROVE_MARKETPLACE_ABSENT,
+                    truth=CodexProofTruth.UNPROVED,
+                ),
+            ),
+            (
+                CodexCompensationPortOperation.LIST_MARKETPLACES,
+                CodexMarketplaceList(marketplaces=(marketplace_entry("foreign/source"),)),
+                CodexMarketplaceProof(
+                    step=CodexCompensationStep.PROVE_MARKETPLACE_ABSENT,
+                    truth=CodexProofTruth.MISMATCH,
+                ),
+            ),
+            (
+                CodexCompensationPortOperation.LIST_MARKETPLACES,
+                object(),
+                CodexMarketplaceProof(
+                    step=CodexCompensationStep.PROVE_MARKETPLACE_ABSENT,
+                    truth=CodexProofTruth.MALFORMED,
+                ),
+            ),
+            (
+                CodexCompensationPortOperation.PROVE_INSTALLED_PATH_ABSENT,
+                finite_failure(manifest(), CodexCompensationPortOperation.PROVE_INSTALLED_PATH_ABSENT),
+                CodexInstalledLocationProof(
+                    step=CodexCompensationStep.PROVE_INSTALLED_LOCATION_ABSENT,
+                    truth=CodexProofTruth.UNPROVED,
+                ),
+            ),
+            (
+                CodexCompensationPortOperation.PROVE_INSTALLED_PATH_ABSENT,
+                CodexInstalledPathAbsenceProof(manifest=foreign_manifest(), absent=True),
+                CodexInstalledLocationProof(
+                    step=CodexCompensationStep.PROVE_INSTALLED_LOCATION_ABSENT,
+                    truth=CodexProofTruth.MISMATCH,
+                ),
+            ),
+            (
+                CodexCompensationPortOperation.PROVE_INSTALLED_PATH_ABSENT,
+                object(),
+                CodexInstalledLocationProof(
+                    step=CodexCompensationStep.PROVE_INSTALLED_LOCATION_ABSENT,
+                    truth=CodexProofTruth.MALFORMED,
+                ),
+            ),
+        )
+        for operation, value, expected in cases:
+            with self.subTest(operation=operation.value, value_type=type(value).__name__):
+                self.assertEqual(expected, observe_codex_compensation_operation(operation, value, request()))
+
+    def test_a3_invalid_operation_admission_precedes_all_other_access(self) -> None:
+        invalid_operations: tuple[object, ...] = (
+            None,
+            "REMOVE_PLUGIN",
+            OperationName.REMOVE_PLUGIN,
+            OperationText("REMOVE_PLUGIN"),
+            (),
+            [],
+            {},
+            set(),
+        )
+        for candidate in invalid_operations:
+            with self.subTest(candidate_type=type(candidate).__name__):
+                request_trap = PlainManifestTrap()
+                response_trap = PlainManifestTrap()
+                result = observe_codex_compensation_operation(candidate, response_trap, request_trap)
+                if not isinstance(result, CodexCompensationObservationRejected):
+                    raise AssertionError(f"expected rejection, received {result}")
+                self.assertIs(CodexCompensationObservationRejectReason.INVALID_OPERATION, result.reason)
+                self.assertEqual(0, request_trap.invocation_count)
+                self.assertEqual(0, response_trap.invocation_count)
+
+        trap = PlainManifestTrap()
+        result = observe_codex_compensation_operation(trap, trap, trap)
+        if not isinstance(result, CodexCompensationObservationRejected):
+            raise AssertionError(f"expected rejection, received {result}")
+        self.assertIs(CodexCompensationObservationRejectReason.INVALID_OPERATION, result.reason)
+        self.assertEqual(0, trap.invocation_count)
+
+    def test_a4_invalid_request_precedes_response_classification(self) -> None:
+        invalid_manifest = malformed_manifest(ManifestField.PLUGIN_ID, MISSING_MANIFEST_VALUE)
+        extra_request = request()
+        object.__setattr__(extra_request, "__pydantic_extra__", {"foreign": "state"})
+        private_request = request()
+        object.__setattr__(private_request, "__pydantic_private__", {"foreign": "state"})
+        invalid_requests: tuple[object, ...] = (
+            None,
+            "request",
+            (),
+            [],
+            {},
+            set(),
+            RequestSubclass.model_construct(manifest=manifest()),
+            CodexCompensationPortRequest.model_construct(),
+            CodexCompensationPortRequest.model_construct(manifest=invalid_manifest),
+            extra_request,
+            private_request,
+        )
+        for invalid_request in invalid_requests:
+            with self.subTest(request_type=type(invalid_request).__name__):
+                response_trap = PlainManifestTrap()
+                result = observe_codex_compensation_operation(
+                    CodexCompensationPortOperation.REMOVE_PLUGIN,
+                    response_trap,
+                    invalid_request,
+                )
+                if not isinstance(result, CodexCompensationObservationRejected):
+                    raise AssertionError(f"expected rejection, received {result}")
+                self.assertIs(CodexCompensationObservationRejectReason.INVALID_REQUEST, result.reason)
+                self.assertEqual(0, response_trap.invocation_count)
+
+    def test_a5_response_subclasses_constructed_values_and_traps_remain_finite(self) -> None:
+        cases: tuple[tuple[CodexCompensationPortOperation, object, object], ...] = (
+            (
+                CodexCompensationPortOperation.REMOVE_PLUGIN,
+                FailureSubclass(
+                    manifest=manifest(),
+                    operation=CodexCompensationPortOperation.REMOVE_PLUGIN,
+                    status="FAILED",
+                    reason=CodexCompensationPortFailureReason.DEPENDENCY_BLOCKED,
+                ),
+                CodexRemovalFailed(step=CodexCompensationStep.REMOVE_PLUGIN, status="DECLARED_FAILURE"),
+            ),
+            (
+                CodexCompensationPortOperation.REMOVE_MARKETPLACE,
+                CodexCompensationPortOperationFailed.model_construct(),
+                CodexRemovalFailed(step=CodexCompensationStep.REMOVE_MARKETPLACE, status="DECLARED_FAILURE"),
+            ),
+            (
+                CodexCompensationPortOperation.LIST_PLUGINS,
+                CodexPluginList.model_construct(),
+                CodexPluginListsProof(
+                    step=CodexCompensationStep.PROVE_PLUGIN_LISTS_ABSENT,
+                    installed=CodexProofTruth.MALFORMED,
+                    available=CodexProofTruth.MALFORMED,
+                ),
+            ),
+            (
+                CodexCompensationPortOperation.LIST_MARKETPLACES,
+                CodexMarketplaceList.model_construct(),
+                CodexMarketplaceProof(
+                    step=CodexCompensationStep.PROVE_MARKETPLACE_ABSENT,
+                    truth=CodexProofTruth.MALFORMED,
+                ),
+            ),
+            (
+                CodexCompensationPortOperation.PROVE_INSTALLED_PATH_ABSENT,
+                CodexInstalledPathAbsenceProof.model_construct(),
+                CodexInstalledLocationProof(
+                    step=CodexCompensationStep.PROVE_INSTALLED_LOCATION_ABSENT,
+                    truth=CodexProofTruth.MALFORMED,
+                ),
+            ),
+            (
+                CodexCompensationPortOperation.LIST_PLUGINS,
+                PlainManifestTrap(),
+                CodexPluginListsProof(
+                    step=CodexCompensationStep.PROVE_PLUGIN_LISTS_ABSENT,
+                    installed=CodexProofTruth.MALFORMED,
+                    available=CodexProofTruth.MALFORMED,
+                ),
+            ),
+        )
+        for operation, value, expected in cases:
+            with self.subTest(operation=operation.value, value_type=type(value).__name__):
+                self.assertEqual(expected, observe_codex_compensation_operation(operation, value, request()))
+
+    def test_a7_named_dispatch_and_request_precedence_guards_are_observable(self) -> None:
+        valid_value = CodexPluginRemovalProof(manifest=manifest(), status="REMOVED")
+        valid_request = request()
+        self.assertEqual(
+            CodexRemovalConfirmed(step=CodexCompensationStep.REMOVE_PLUGIN, status="CONFIRMED"),
+            observe_codex_compensation_operation(
+                CodexCompensationPortOperation.REMOVE_PLUGIN,
+                valid_value,
+                valid_request,
+            ),
+        )
+        self.assertEqual(
+            CodexPluginListsProof(
+                step=CodexCompensationStep.PROVE_PLUGIN_LISTS_ABSENT,
+                installed=CodexProofTruth.PROVED_ABSENT,
+                available=CodexProofTruth.PROVED_ABSENT,
+            ),
+            observe_codex_compensation_operation(
+                CodexCompensationPortOperation.LIST_PLUGINS,
+                CodexPluginList(installed=(), available=()),
+                valid_request,
+            ),
+        )
+        invalid_request = CodexCompensationPortRequest.model_construct()
+        response_trap = PlainManifestTrap()
+        rejected = observe_codex_compensation_operation(
+            CodexCompensationPortOperation.REMOVE_PLUGIN,
+            response_trap,
+            invalid_request,
+        )
+        if not isinstance(rejected, CodexCompensationObservationRejected):
+            raise AssertionError(f"expected rejection, received {rejected}")
+        self.assertIs(CodexCompensationObservationRejectReason.INVALID_REQUEST, rejected.reason)
+        self.assertEqual(0, response_trap.invocation_count)
+
     def test_c1_exact_admission_and_no_compensation_are_zero_call(self) -> None:
         self.assertIs(exported_compose, compose_codex_compensation)
         required_plan = plan(CodexAttemptEffectState.OWNED, CodexAttemptEffectState.OWNED)

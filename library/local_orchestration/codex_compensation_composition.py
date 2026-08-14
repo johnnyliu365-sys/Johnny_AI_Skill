@@ -2,10 +2,11 @@
 
 from __future__ import annotations
 
+from enum import Enum
 from types import MethodType
-from typing import cast
+from typing import Literal, TypeAlias, cast
 
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel, ConfigDict, ValidationError
 
 from .codex_compensation_port import (
     CodexCompensationPortCapability,
@@ -65,6 +66,61 @@ _MANIFEST_STATE_FIELDS: tuple[str, ...] = (
     "digest",
 )
 _VALUE_STATE_FIELDS: tuple[str, ...] = ("value",)
+
+
+class CodexCompensationObservationRejectReason(str, Enum):
+    """Finite reasons for rejecting a pure compensation observation request."""
+
+    INVALID_OPERATION = "INVALID_OPERATION"
+    INVALID_REQUEST = "INVALID_REQUEST"
+
+
+class _ObservationModel(BaseModel):
+    """Strict, frozen metadata-only public observation envelope."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True, strict=True, revalidate_instances="always")
+
+
+class CodexCompensationObservationRejected(_ObservationModel):
+    """Finite rejection without response or effect-boundary data."""
+
+    status: Literal["OBSERVATION_REJECTED"]
+    reason: CodexCompensationObservationRejectReason
+
+
+CodexCompensationObservationResult: TypeAlias = (
+    CodexCompensationObservation | CodexCompensationObservationRejected
+)
+
+
+def observe_codex_compensation_operation(
+    operation: object,
+    value: object,
+    request: object,
+) -> CodexCompensationObservationResult:
+    """Normalize one exact returned operation value without invoking an effect boundary."""
+
+    if type(operation) is not CodexCompensationPortOperation:
+        return CodexCompensationObservationRejected(
+            status="OBSERVATION_REJECTED",
+            reason=CodexCompensationObservationRejectReason.INVALID_OPERATION,
+        )
+    request_revalidation = revalidate_codex_compensation_port_request(request)
+    if type(request_revalidation) is CodexCompensationPortValueRejected:
+        return CodexCompensationObservationRejected(
+            status="OBSERVATION_REJECTED",
+            reason=CodexCompensationObservationRejectReason.INVALID_REQUEST,
+        )
+    validated_request = cast(CodexCompensationPortRequest, request_revalidation)
+    if operation is CodexCompensationPortOperation.REMOVE_PLUGIN:
+        return _plugin_removal_observation(value, validated_request)
+    if operation is CodexCompensationPortOperation.REMOVE_MARKETPLACE:
+        return _marketplace_removal_observation(value, validated_request)
+    if operation is CodexCompensationPortOperation.LIST_PLUGINS:
+        return _plugin_list_observation(value, validated_request)
+    if operation is CodexCompensationPortOperation.LIST_MARKETPLACES:
+        return _marketplace_list_observation(value, validated_request)
+    return _installed_path_observation(value, validated_request)
 
 
 def compose_codex_compensation(
