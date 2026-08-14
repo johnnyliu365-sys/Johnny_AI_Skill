@@ -56,3 +56,14 @@ and PRG-423 remain immutable.
 
 No blocking finding remains. Reviewer-owned guarded integration of exact
 handoff `cd43b4570fe720962eca8aeb2cdf821938a27075` is the only continuation.
+
+## Guarded integration
+
+| Field | Evidence |
+| --- | --- |
+| Decision | `COMPLETE / APPROVED / INTEGRATED`; CR-179 remains closed. |
+| Merge | Guarded merge `1e6872acac7df28b5d5bd44991348354a1cd9779` integrates exact handoff `cd43b4570fe720962eca8aeb2cdf821938a27075`. The only conflict was `doc/WorkProgressReport.md`; PRG-423 through PRG-427 remain exactly once. |
+| Executable identity | Marketplace child blob `86edacbbb43a36475071c5494b8c4e0cc2b81f60` and direct-test blob `d897552e65c506e49132b82e1eaccdf8f4004d37` remain the reviewed executable inputs. |
+| Post-merge gates | Focused `34/34`; strict full-tree mypy `148`; in-memory compile `148`; clean tracked/ignored readback and exactly three worktrees. |
+| Post-merge lifecycle | A fresh project-owned disposable probe returned `REGISTRATION_SUCCESS_ACCEPTED`, first removal `REMOVED`, replay `NOT_INSTALLED`, empty exact owned state/payload, and teardown `REMOVED`. |
+| Continuation | Allocation released and receipt closed. 05C3 revision-03 control-plane refreeze is the sole continuation; no other implementation or effect authority exists. |

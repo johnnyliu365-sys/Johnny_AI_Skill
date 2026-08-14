@@ -116,6 +116,22 @@ PRG-423 content is unchanged after normalizing its line-ending frame; PRG-426
 is the unique physical-EOF canonical handoff. The two executable blobs remain
 exact, so CR-179 is closed without source or test mutation.
 
+## Guarded integration
+
+Guarded merge `1e6872acac7df28b5d5bd44991348354a1cd9779` integrates the
+approved canonical handoff `cd43b4570fe720962eca8aeb2cdf821938a27075`.
+The only merge conflict was the append-only progress ledger; PRG-423 through
+PRG-427 remain present exactly once. Post-merge focused tests passed `34/34`,
+strict full-tree mypy and in-memory compile passed over `148` files, and a fresh
+project-owned disposable probe returned `REGISTRATION_SUCCESS_ACCEPTED`, then
+`REMOVED`, then mutation-free replay `NOT_INSTALLED`; exact owned state and
+payload were absent and lease teardown returned `REMOVED`.
+
+Ticket 05C2C3 is therefore `COMPLETE / APPROVED / INTEGRATED`. Its allocation
+is released and receipt is closed against replay. The sole serial continuation
+is control-plane refreeze of 05C3 revision 03; this ticket grants no further
+implementation or effect authority.
+
 ## Forbidden effects
 
 No new branch/worktree before an exact dispatch registry; no helper/subagent;

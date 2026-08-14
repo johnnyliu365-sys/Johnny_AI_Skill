@@ -4624,3 +4624,15 @@
 | Scope / residue | Correction is WPR-only; owner tracked/ignored porcelain is clean, exactly three worktrees remain and cache/runtime/bytecode residue is absent. Prior focused `34/34`, full `517/517`, strict mypy/compile `148` and exact disposable register/remove/replay evidence remain applicable. |
 | Continuation | Reviewer-only guarded integration of exact handoff `cd43b4570fe720962eca8aeb2cdf821938a27075`, then 05C3 revision-03 refreeze against the integrated source-truth dependency. |
 | Boundary | `XSS_NOT_APPLICABLE`; no helper, live Codex/home/config, target-project, network, push/staging publication, package/build/install, Secret, release or deployment. |
+
+## PRG-20260814-428 - Ticket 05C2C3 guarded integration and 05C3 revision-03 refreeze
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `APPROVED(05C2C3) -> GUARDED_INTEGRATION_COMPLETED -> ACTION_COMPLETED / 05C3_REVISION_03_REFROZEN`; 05C3 is not yet dispatched. |
+| Integration | Terminal review `7142b5bdc963405d0e6a1db3e413d2d0ea2bd689`; canonical handoff `cd43b4570fe720962eca8aeb2cdf821938a27075`; guarded merge `1e6872acac7df28b5d5bd44991348354a1cd9779`. The only merge conflict was the append-only WPR; PRG-423 through PRG-427 remain exactly once. |
+| Post-merge verification | Focused `34/34`; strict full-tree mypy `148`; in-memory compile `148`; fresh disposable lifecycle `REGISTRATION_SUCCESS_ACCEPTED -> REMOVED -> NOT_INSTALLED`; exact owned state/payload empty; teardown `REMOVED`. Control readbacks were clean and topology remained exactly three worktrees. |
+| Revision-03 freeze | 05C3 A1-A8 freezes exact live lease/oracle/request admission, actual receipt lineage, first removal/replay, exact action order, foreign preservation, two external sentinels, public-constructor/P0 strong typing and truthful behavior-level red/reversals. Scope is exactly two new staging/test paths and has no line-count ceiling. |
+| Binding reservation | Workspace `wsb_local_orchestration_install_05c3_r03_20260814_01`; handoff `hnd_local_orchestration_install_05c3_r03_20260814`; allocation `aln_local_orchestration_install_05c3_r03_20260814`; receipt `rcpt_local_orchestration_install_05c3_r03_20260814`; correlation `corr-local-orchestration-install-05c3-r03-20260814`; question `q-local-orchestration-install-05c3-r03-20260814`; side context `scx-local-orchestration-install-05c3-r03-20260814-01`. Reservation is not dispatch authority. |
+| Continuation | Perform exact permanent-lane admission and record a reviewer-owned dispatch registry before source mutation. One owner, no helper and no new worktree. |
+| Boundary | `XSS_NOT_APPLICABLE`; no live Codex/home/config, target-project, network, push/staging publication, package/build/install, Secret, release or deployment. |

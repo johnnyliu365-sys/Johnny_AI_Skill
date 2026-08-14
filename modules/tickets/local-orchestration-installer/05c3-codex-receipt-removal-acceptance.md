@@ -3,74 +3,85 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-02, AC-06, AC-07 and AC-08 |
-| Revision | `02` |
-| State | `PLANNED / UPSTREAM_MARKETPLACE_SOURCE_GAP / BLOCKED_BY_05C2C3` |
+| Revision | `03` |
+| State | `PLANNED / REFROZEN / NOT_DISPATCHED` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05C3-01` / A1-A8 |
-| Dependency | 05C2B, 05C2C1 and 05C2C2 integrated; 05C2C3 marketplace-source truth must be independently approved and integrated |
+| Dependency | 05C1, 05C2A, 05C2B, 05C2C1, 05C2C2, 05C2C2A and 05C2C3 are independently approved and integrated; 05C2C3 merge is `1e6872acac7df28b5d5bd44991348354a1cd9779` |
 | Profile / XSS | `STANDARD`; one implementation owner, no helper / `XSS_NOT_APPLICABLE` |
 | Implementation language | Python 3.11 with strict Pydantic models and `mypy --strict` |
 
-## Reserved responsibility
+## Revision-03 frozen responsibility A1-A8
 
-Using only the integrated project-owned disposable staging lease and oracle,
-prove `register -> receipt -> remove -> fresh absence -> replay` end to end.
-The same transactions must preserve seeded foreign state/payloads and two
-external sentinel repositories byte-for-byte with unchanged Git porcelain.
+05C3 is an acceptance-only composition over integrated components. It may not
+add product behavior, weaken an upstream result or emulate any successful
+observation.
 
-## Frozen behavior pending dependency readback
+| ID | Frozen behavior |
+| --- | --- |
+| A1 — exact boundary admission | Admit only the exact live disposable lease, oracle and removal request through their integrated public validators. Invalid, subclassed, constructed-invalid, stale or mutually mismatched values halt before every removal or oracle effect. |
+| A2 — actual receipt chain | Produce one actual registration-success receipt in the same disposable lease, rebuild the exact removal request through 05C1, and use the real admitted oracle adapter. A fake, copied, historical or separately constructed receipt/request/oracle is forbidden. |
+| A3 — remove and replay | First receipt removal returns `REMOVED` and proves every manifest-bound owned plugin, marketplace, logical path and physical payload absent. Replaying the same request returns `NOT_INSTALLED`, performs zero removal actions and leaves oracle state/payload bytes unchanged. |
+| A4 — exact action order | The actual effect trace must match the integrated plan exactly, including plugin removal before marketplace removal. Deleted, duplicated, swapped or extra actions must independently turn the governing test red. |
+| A5 — foreign preservation | Seed prefix-similar foreign plugin/marketplace records and payload bytes. Registration, removal and replay preserve every foreign identity and byte exactly. |
+| A6 — external sentinels | Create two sentinels outside the disposable lease: one existing Git repository and one empty directory. Both remain byte-identical and Git-clean. Sentinel paths must never enter an API, DTO, effect request, overlay or oracle state. |
+| A7 — P0 strong type | Every new/changed variable, parameter, return and fixture uses a named explicit type; dynamic boundary values are immediately validated and converted. Ordinary public constructors and public round trips must succeed for valid values. Source forbids `Any`, `type: ignore`, implicit widening, `model_construct`, `model_copy(update=...)`, optional/`None` ports, dynamic member lookup and catch-all exception handling. Test-only malformed bypass is permitted only to prove rejection and may not enter a success path. Full-tree strict mypy is blocking. |
+| A8 — truthful red and reversals | The counted first red must reach the real registered-receipt removal behavior; module-import failure is bootstrap evidence only. Independently reverse receipt binding, action order, each owned-absence conjunct, replay zero-removal, foreign isolation, both sentinel isolation gates and every A7 admission gate; each governing test must turn red before exact restoration. |
 
-- Acceptance-only staging/test changes; no new product behavior.
-- One fresh success transaction produces the actual integrated receipt. The
-  exact receipt is then consumed by 05C1/05C2B through an admitted oracle port.
-- First removal returns `REMOVED`, exact owned plugin/marketplace/logical and
-  physical payload state is absent, and second removal returns mutation-free
-  `NOT_INSTALLED`.
-- Foreign prefix-similar marketplace/plugin records and payload bytes remain
-  exact across success, removal and replay.
-- Existing and empty external sentinel repositories remain byte-identical and
-  Git-clean. No target-project path enters a product DTO or effect request.
-- Reverse receipt binding, remove order, each of three absence conjuncts,
-  replay zero-removal and both isolation gates independently.
-- This contract-staging evidence does not by itself claim live-host
-  `SUPPORTED`; that projection still requires the separately approved host and
-  disposable-Windows gates fixed by the SPEC.
+## Exact acceptance API
 
-## Revision-02 dependency readback
+```python
+def run_receipt_removal_acceptance(
+    lease: object,
+    oracle: object,
+    request: object,
+) -> ReceiptRemovalAcceptanceResult: ...
+```
 
-The exact integrated flow was exercised in one project-owned disposable lease:
-registration returned `RegistrationSuccessAccepted`, receipt conversion returned
-`CodexReceiptRemovalReady`, and adapter admission returned
-`CodexCompensationOracleAdapter`; nevertheless the first removal returned
-`UNINSTALL_BLOCKED / PRE_REMOVAL_EVIDENCE_INVALID` before either remove call.
-The exact lease was removed and no runtime residue remained.
+`object` is allowed only at this external acceptance boundary. The function
+must immediately revalidate and normalize each value into its exact integrated
+named type before any property read, comparison, serialization or effect.
+Internal variables and helpers may not retain `object` or another dynamic
+contract.
 
-Root cause is an upstream typed-evidence gap. `OracleAction.ABSENCE` can return
-`OracleAbsent` only after owned state and payloads are gone; coherent owned
-presence currently collapses into `OracleBlocked / COMMAND_INVALID`. The
-compensation adapter therefore cannot distinguish exact installed-path presence
-from an unproved dependency failure, and 05C2B correctly refuses to treat that
-failure as residue. Mapping generic blocked/error results to presence, weakening
-`UNPROVED`, or skipping pre-proof is forbidden.
+## Exact writable scope
 
-05C2C1 adds exact staging-oracle installed-path presence evidence and admission;
-05C2C2 maps only that admitted evidence to `absent=False`. This child will be
-refrozen against both exact integrated APIs. No 05C3 implementation authority
-exists now.
+- `tests/staging/codex_lifecycle_oracle/receipt_removal_acceptance.py`
+- `tests/test_codex_receipt_removal_acceptance.py`
 
-## Post-05C2C2 dependency readback
+The implementation commit changes exactly those two new files. No production
+`library/` path, existing staging fixture, export, document, target project or
+other test is writable. There is no line-count ceiling; correctness, explicit
+contracts, readable decomposition and complete evidence determine completion.
 
-Guarded integration `bc97a42638540cb56e0b2b0c716bd93ddeb5dbba`
-closed installed-path truth, but an exact disposable probe still returned
-`UNINSTALL_BLOCKED / PRE_REMOVAL_EVIDENCE_INVALID` with zero removal calls.
-The three pure observations were:
+## First red and mandatory verification
 
-- plugin lists: installed `RESIDUE`, available `PROVED_ABSENT`;
-- installed path: `RESIDUE`;
-- marketplace: `MISMATCH`.
+- A missing-module import may document bootstrap only and is not the counted
+  first red. The counted red must execute the actual integrated registration
+  receipt chain and fail one frozen A1-A8 behavior.
+- Focused tests, the full serial suite, full-tree `mypy --strict
+  --explicit-package-bases --no-incremental`, in-memory compile and source
+  sentinels must pass.
+- Each A8 reversal family must turn its named governing test red and then be
+  restored byte-for-byte.
+- Both external sentinels must be read back unchanged and their exact paths
+  absent from every API/DTO/effect/overlay/oracle value.
+- Exact two-path implementation scope, ancestry, diff check, three-worktree
+  topology and zero tracked/ignored/cache/runtime/bytecode residue are
+  mandatory. One implementation commit is followed by one WPR-only handoff.
 
-The marketplace list hard-codes source `oracle-source`, while the exact
-receipt/manifest binds `marketplaces/acceptance-market`. Ticket 05C2C3 owns
-only this staging source-truth defect. 05C3 remains non-dispatchable until
-05C2C3 is independently approved/integrated and this ticket is revision-03
-refrozen against the resulting exact API. Generic mismatch must never be
-weakened to residue.
+## Binding reservation
+
+| Field | Value |
+| --- | --- |
+| Workspace / handoff | `wsb_local_orchestration_install_05c3_r03_20260814_01` / `hnd_local_orchestration_install_05c3_r03_20260814` |
+| Allocation / receipt | `aln_local_orchestration_install_05c3_r03_20260814` / `rcpt_local_orchestration_install_05c3_r03_20260814` |
+| Correlation / question | `corr-local-orchestration-install-05c3-r03-20260814` / `q-local-orchestration-install-05c3-r03-20260814` |
+| Side context | `scx-local-orchestration-install-05c3-r03-20260814-01` |
+| Authority | Standing project-owner auto-continue `PRG-20260809-042`; this reservation is not dispatch authority. |
+
+## Forbidden effects
+
+No branch or source mutation exists before an exact reviewer-owned dispatch
+registry and lane readback. No helper/subagent, new worktree, live Codex/home/
+config, target-project, network, push/staging publication, package/build/
+install, Secret, release or deployment effect is authorized.
