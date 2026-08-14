@@ -4582,3 +4582,24 @@
 | Binding / scope | `CLOSURE-LOCAL-INSTALL-T05C2C3-01` / S1-S7 plus the ticket's exact workspace, handoff, allocation, receipt, correlation, question and side-context. Writable implementation paths are only `tests/staging/codex_lifecycle_oracle/oracle_child.py` and `tests/test_codex_lifecycle_oracle.py`. |
 | Return | One exact implementation commit, then append only reserved PRG-20260814-423 in one WPR-only handoff commit. Full serial suite, full-tree strict mypy, compile, reversals and residue readback are mandatory; review/integration remain reviewer-owned. |
 | Boundary | No historical-source reuse, hard-coded source, absolute-root source, filtering, `Any`, `type:ignore`, dynamic lookup, broad catch/clear, new worktree/helper, live Codex/home/config, target-project, network, push/staging publication, package/build/install, Secret, release or deployment. |
+
+## PRG-20260814-424 - Ticket 05C2C3 independent review
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `REVIEW_HANDOFF(PRG-423) -> REVIEW_COMPLETED / CHANGES_REQUESTED / EVIDENCE_DEFECT`; standing `PRG-20260809-042` authorizes an additive same-lane correction. |
+| Reviewed chain | Implementation `8de9e60a59645fdf4fc7e6b298be3bcd70b06789`; WPR-only handoff `ff71ce25a2d82b89ceb8eb42c7c16607ca062198`; immutable ZIP SHA-256 `0F9998CD8C41327179D3267C148C0AFB64FDAED061941C3CC8B7BEE2F4AC3A92`. |
+| Independent evidence | Focused `34/34`; full serial `517/517`; strict mypy `148`; compile `148`; two reviewer reversals red then focused green. Exact register-to-receipt removal returned `REMOVED`, replay `NOT_INSTALLED`, state/payload absent and teardown `REMOVED`. Source/test blobs, scope, ancestry, owner cleanliness and three-worktree topology pass. |
+| Finding | CR-179 `EVIDENCE_DEFECT`: PRG-423 was inserted before historical PRG-413 through PRG-422 rather than appended at physical EOF. Its evidence is otherwise truthful; source and tests pass. |
+| Continuation | Same ticket/owner/permanent worktree/branch/allocation/receipt/correlation. Preserve PRG-423 and every earlier line; append one canonical WPR-only correction at physical EOF. No source/test or historical-WPR edit, new branch/worktree/helper or effect. |
+| Boundary | `XSS_NOT_APPLICABLE`; no live Codex/home/config, target-project, network, push/staging publication, package/build/install, Secret, release or deployment. |
+
+## PRG-20260814-425 - Ticket 05C2C3 CR-179 correction dispatch registry
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `CHANGES_REQUESTED(CR-179) + EXACT_LANE_READBACK -> CORRECTION_DISPATCH_CONFIRMED / IMPLEMENT`; correction is WPR-only. |
+| Review / lane | Exact review baseline `fab2fbc341cb8c32736b9fdfc89cf9d25f04d165`; owner task `019ffb0c-db88-7303-895c-aecfadde7c8d`; same permanent worktree/branch/binding, no helper or new lane. |
+| Merge admission | Merge the exact control commit carrying this registry. Resolve only the predicted append-only WPR overlap, preserving PRG-423 through PRG-425 exactly once; no reset, rebase, amend, force, stash or silent conflict resolution. |
+| Correction / return | Keep implementation blob `86edacbbb43a36475071c5494b8c4e0cc2b81f60` and direct-test blob `d897552e65c506e49132b82e1eaccdf8f4004d37` exact. Append only reserved PRG-20260814-426 at physical EOF in one WPR-only commit, then return merge plus correction commits. |
+| Boundary | No source/test/ticket/review or historical-WPR edit, executable rerun, new branch/worktree/helper, live Codex/home/config, target-project, network, push/staging publication, package/build/install, Secret, release or deployment. |
