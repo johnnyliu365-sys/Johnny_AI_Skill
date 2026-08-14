@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2` revision 03 / AC-12 through AC-15 shared route precondition |
 | Change / ADR | `CHG-20260814-019`, `CHG-20260815-020`; `ADR-20260814-011` |
-| State | `IN_PROGRESS / REVISION_04_CORRECTION_DISPATCH_CONFIRMED` |
+| State | `APPROVED / INTEGRATION_PENDING` |
 | Closure | `CLOSURE-ADAPTIVE-ROUTER-R01-04` / R1-R7, CR-R01-001 through CR-R01-004 plus policy-revision rebind |
 | Baseline | Shared-Context policy freeze `3469e20bcbddce0c55b7ad7e92be68eca4257052` |
 | Delivery profile | `STANDARD`; one Luna implementation owner; no helper |

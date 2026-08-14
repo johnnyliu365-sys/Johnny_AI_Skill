@@ -121,3 +121,23 @@ control refreeze into the same branch and updates only the three production/test
 The terminal review must re-run CR-R01-004's P0 source gate as well as the policy hash oracle;
 only that combined result may close R01. The executable Context mutation gate remains the next
 independent ticket and is not smuggled into this correction.
+
+## Revision-04 terminal review
+
+| Field | Value |
+| --- | --- |
+| Guarded sync / correction / handoff | `0f1926764ebb395f6beac7dbd4d11502f7a36425` / `e69b15e632f74820eb07a6e76f227b413ed24416` / `9a789504365d8364b616479cda5b0d2c6e3f12f7` |
+| Scope / ancestry | PASS: merge parents are exact revision-03 handoff and registry `8f7f372`; only WPR conflicted, markers/duplicates are absent, policy blobs equal registry; correction is exactly `profile.py` and `test_workflow_router.py`; handoff is WPR-only. |
+| Independent tests | PASS: six-module Router suite `99/99`; strict mypy `150` files with external cache removed; in-memory compile `150`. |
+| Independent semantic/type probe | PASS: all three canonical CRLF-to-LF policy hashes independently match ticket and Profile metadata; representative Wayfinder/no-return directions pass; seven named AST type/annotation assertions pass; no subprocess import exists. |
+| Worktree / effects | PASS: exact branch/head, clean tracked/ignored status, three registered worktrees and no cache/runtime residue. `XSS_NOT_APPLICABLE`; no target, host, network, push, package, install, Secret, release or deployment effect. |
+| Result | `APPROVED / INTEGRATION_PENDING` |
+
+CR-R01-001 through CR-R01-004 are closed. R1-R7 remain satisfied after the owner-approved policy
+change, and the exact current policy references fail closed instead of silently using stale
+metadata. No review finding remains.
+
+This approval does not claim that shared-Context writes are already blocked. R01 establishes
+trustworthy route instruction metadata only. The independently scoped
+`02-shared-context-lifecycle-gate` must implement and prove the operation/role/stage/revision
+authority boundary before model-role, ticket-admission or non-Router work resumes.
