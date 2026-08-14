@@ -5198,3 +5198,14 @@
 | Context resolution | Resolve identifiers through the exact ticket, revision-05 SPEC AC-17 and `artifact-tree-routing` reference. Do not copy prior ticket prose, archive bodies, whole indexes or library catalogs into the implementation Context. |
 | Pre-red / return | Import/call the absent R02C1 public contracts/resolver before production mutation; implement only ACX1-ACX8; return one implementation commit plus one WPR-only handoff after focused/Router/six-module/full/mypy/compile/reversal/source/scope/topology/residue verification. Progress-only final is not completion. |
 | Resource / safety | Host mapping `gpt-5.6-luna`, reasoning `max`; no helper. Reviewer task `019fb935-bbe1-7f71-8b4b-58ba20c81626` is sole orchestrator. R02C2-R06 remain blocked. `XSS_NOT_APPLICABLE`; no next-ticket authority, new worktree, live model/Codex/home/App/target/network effect, push, package/install, Secret, release or deployment. |
+
+## PRG-20260815-482 - Router R02C1 initial review requires ticket refreeze
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `ACTION_COMPLETED / REVIEW_HANDOFF(PRG-481) -> CHANGES_REQUESTED / TICKET_DEFECT`; formal review is `doc/reviews/adaptive-project-orchestration/02c1-artifact-tree-resolution-gate-code-review.md`. |
+| Submitted chain | Registry `db9bc7d9d9e4b14ddda7082633e71148cdcc3ed2`; implementation `458791b470629fe7c0e3bb263af87560b58e54b9`; WPR-only handoff `b1ba51ccc13b0893783b5fd5e2b9e99e4d120d84`; exact ancestry, scope and clean lane pass. |
+| Independent verification | Repository-external detached clone passed focused `63/63`, explicit serial full suite `566/566` across `49` files, strict mypy `152/152`, compile `152/152` and reviewer probes `9/9`; clone/cache were removed and read back absent. |
+| Finding | `CR-R02C1-001 / TICKET_DEFECT`: revision `r02c1-01` omits the exact feature Context reference and the explicit implementation-language/strict-checker binding required by the canonical ticket schema. No implementation defect was found. |
+| Required route | Refreeze the same ticket as `r02c1-02`; invalidate `scx-adaptive-router-r02c1-20260815-01`; create a new receipt/correlation-bound revalidation view on the same owner/worktree/branch. Preserve candidate implementation bytes and require evidence-only revalidation unless behavior changes. |
+| Boundary | No source/test mutation, new branch/worktree, R02C2/R02C3 implementation, helper, external effect, push, package/install, Secret, release or deployment. `XSS_NOT_APPLICABLE`. |
