@@ -84,3 +84,28 @@ decision-shape reversal.
 No ticket refreeze, new branch/worktree, Router method change, R02C-R06, 06G0P, package/install,
 live host/model/network, target-project, push, release, deployment or Secret effect is authorized.
 `XSS_NOT_APPLICABLE`.
+
+## Revision-02 terminal review
+
+| Field | Result / evidence |
+| --- | --- |
+| Submitted correction | Same-branch merge `8e75a2f5ae5ceff301585d9d247c6900c6d76cf9`; implementation `ec2cdb8721967781e4865c3cb6eeabf99c07684a`; WPR-only handoff `744d8d7a52713c641f17306782b050f5e1415bdc` / `PRG-20260815-475`. |
+| Review result | `APPROVED / GUARDED_INTEGRATION_AUTHORIZED`; `CR-R02B-001` and `CR-R02B-002` are closed. |
+| Immutable checkout | PASS: a repository-external detached clone at the exact handoff was used for review, returned clean after verification, then was removed and read back absent. |
+| Focused / six-module / full | PASS: R02B `10/10`; six-module Router regression `120/120`; explicit serial full suite `556/556` across `48` test files. |
+| Strict typing / compile | PASS: strict mypy with `--explicit-package-bases` over `150/150`; in-memory compile `150/150`; generated cache was removed and the clone was residue-free before deletion. |
+| Reviewer adversarial matrix | PASS: `43/43` independently constructed cells cover five valid Router operations, five semantic leaf IDs, seven locator/raw-field negatives and twenty-six contradictory decision shapes. |
+| Scope / ancestry | PASS: correction implementation changes only `contracts.py` and `test_workflow_router.py`; handoff is WPR-only; exact registry ancestry, diff check, three-worktree topology and clean permanent implementation lane pass. |
+| Security / effects | PASS: no source body, callable, optional effect port, dynamic lookup, constructor bypass, broad exception, filesystem, Git, Agent, host, network or renderer capability was introduced. `XSS_NOT_APPLICABLE`. |
+
+All eight mandatory review dimensions pass: clear strong types, existing conventions, logic,
+edge cases, security/performance, test coverage/smoke, dependencies and specification closure.
+Semantic words remain legal inside opaque exact-leaf IDs while locator syntax and undeclared raw
+fields fail closed. Public decisions now enforce the exact allowed-operation lifecycle algebra,
+and every rejected decision omits an active replacement.
+
+Guarded integration may merge only exact handoff
+`744d8d7a52713c641f17306782b050f5e1415bdc`. Any conflict beyond the expected append-only
+`doc/WorkProgressReport.md` overlap must halt without resolution. R02C-R06, 06G0P, package,
+push, release, deployment, target-project, live host/model/network and Secret effects remain out
+of scope.

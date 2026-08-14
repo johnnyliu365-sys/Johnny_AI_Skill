@@ -5114,3 +5114,15 @@
 | Sync / source authority | Additively merge this registry commit into the existing branch; preserve PRG-472 through PRG-474 once and in order in the sole expected WPR conflict. Then change exactly `library/workflow_router/contracts.py` and `tests/test_workflow_router.py`, followed by one WPR-only handoff. |
 | Verification / return | Preserve the 43-cell behavior, add five semantic-ID positives and complete contradictory-decision negatives, reverse the decision guard, rerun focused/six-module/full/mypy/compile/source/scope/topology/residue/original reversals, and return `COMPLETED`, `BLOCKED` or `CHANGE_DETECTED`. |
 | Boundary | Same ticket and branch only; no reset/amend/force, new branch/worktree, Router method change, R02C-R06, 06G0P, helper, package/install, live host/model/network/target-project effect, push, release, deployment or Secret. `XSS_NOT_APPLICABLE`. |
+
+## PRG-20260815-476 - Router R02B final approval
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `ACTION_COMPLETED / REVIEW_HANDOFF(PRG-475) -> APPROVED / GUARDED_INTEGRATION_AUTHORIZED`; CR-R02B-001 and CR-R02B-002 are closed. |
+| Submitted chain | Same-branch sync `8e75a2f5ae5ceff301585d9d247c6900c6d76cf9`; correction `ec2cdb8721967781e4865c3cb6eeabf99c07684a`; WPR-only handoff `744d8d7a52713c641f17306782b050f5e1415bdc`; exact scope, ancestry and clean lane pass. |
+| Independent verification | Repository-external detached clone passed R02B `10/10`, six-module `120/120`, full serial `556/556`, strict mypy `150/150`, compile `150/150`, source/diff gates and a reviewer-owned `43/43` adversarial matrix; cache and clone were removed and read back absent. |
+| Closure | Opaque exact-leaf IDs permit semantic words without admitting locator syntax or undeclared raw fields. Public decision construction enforces all allowed operation lifecycle pairs and forbids an active replacement on every rejected result. ACX1-ACX8 are closed. |
+| Integration boundary | Guarded integration may merge only exact handoff `744d8d7`; only the predicted append-only WPR overlap is eligible for explicit resolution with each PRG record retained once and in order. Any other conflict halts. |
+| Transition | R02C tree traversal and active/archive/library index lifecycle remain blocked until this exact R02B handoff is integrated; no R02C source or document redesign is included here. |
+| Effects | No push, release, deployment, target-project, live host/model/network, package/install or Secret effect. `XSS_NOT_APPLICABLE`. |
