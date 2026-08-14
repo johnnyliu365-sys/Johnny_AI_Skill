@@ -5300,3 +5300,14 @@
 | Context resolution | Resolve only the exact ticket, revision-05 SPEC AC-17, `requirement-lineage`, `artifact-tree-routing` and required TDD/authority references. Prior ticket prose, requirement bodies, archive contents and unrelated library branches are identifiers only. |
 | Pre-red / return | Import/call the absent public lineage surface before production mutation; implement only ACX1-ACX8; return one implementation commit plus one WPR-only handoff after focused/regression/full/mypy/compile/reversal/source/scope/topology/residue verification. |
 | Resource / safety | `STANDARD`; host mapping `gpt-5.6-luna`, reasoning `max`; no helper. Reviewer task `019fb935-bbe1-7f71-8b4b-58ba20c81626` is sole orchestrator. No next-ticket authority, new worktree, R02C3-R06, external effect, push, package/install, Secret, release or deployment. `XSS_NOT_APPLICABLE`. |
+
+## PRG-20260815-490 - Router R02C2 requirement-lineage implementation handoff
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_DISPATCH_CONFIRMED(PRG-489) -> ACTION_COMPLETED / REVIEW_HANDOFF`; ACX1-ACX8 requirement retirement and archive-lineage behavior is implemented in the receipt-bound lane. |
+| Implementation | `e24ad619684dfd08d7faa4161ab3dbe91170b7cb` changes exactly `library/workflow_router/contracts.py`, `library/workflow_router/requirement_lineage.py`, `library/workflow_router/__init__.py` and `tests/test_workflow_requirement_lineage.py`. |
+| First red / closure | The dedicated first red failed at collection with `ImportError` for the absent public lineage contract; ACX1 strict contracts/decision algebra, ACX2 active-pair equality, ACX3 retirement/archive proof, ACX4 finite failure precedence, ACX5 sibling opacity/effect boundary and ACX6 source gates are covered. ACX8 three bounded reversal probes each remain red when their guard is removed and green after restoration. |
+| Verification | Dedicated plus artifact-tree/Router focused `74/74`; broader Router regression `141/141`; explicit serial full suite `577/577` across `50` test modules; strict full-tree mypy `154/154`; in-memory compile `154/154`; source gate `1/1`; scope/diff/ancestry/topology gates pass. |
+| Readback | Branch `codex/implementation-router-requirement-lineage-r02c2`; registry `4bd9fb19ac5ee9c8ca38348e103fec0877d53885` is an ancestor; permanent linked git-dir and exactly three worktrees retained; tracked and ignored porcelain empty; local cache/bytecode/runtime residue `0`; external mypy cache removed; `XSS_NOT_APPLICABLE`. |
+| Boundary | No helper, Agent control, R02C3-R06 implementation, source/body/archive scan, filesystem/Git/host/network effect, push, package/install, Secret, release or deployment. |
