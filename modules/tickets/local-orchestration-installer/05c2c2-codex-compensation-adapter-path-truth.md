@@ -170,3 +170,15 @@ false docstring with exact admitted absence/presence path-truth wording and
 align the final failure return. No executable token, import, test or other file
 may change. Return one additive source-only commit, then reserved
 PRG-20260814-419 in one WPR-only handoff commit.
+
+#### CR-178 correction dispatch registry
+
+| Field | Value |
+| --- | --- |
+| Review / authority | Exact review baseline `2f3ba13ee12529cb4d35615073685032f72e5ea6`; standing project-owner auto-continue `PRG-20260809-042`; sole reviewer/orchestrator task `019fb935-bbe1-7f71-8b4b-58ba20c81626`. |
+| Exact lane | Existing owner task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; permanent worktree `C:\Users\<user>\Desktop\AI控制工作workflow-implementation`; same branch `codex/implementation-codex-compensation-adapter-path-truth-05c2c2`; clean head `019e287d860d37c646e85c7bbbdd5d7bfc9f6e34`; exactly three worktrees. |
+| Merge admission | Merge the exact control commit carrying this registry into the same branch. The only predicted overlap is append-only `doc/WorkProgressReport.md`; preserve PRG-416 through PRG-418 exactly once. Never reset, rebase, amend, force, stash, create another branch/worktree or silently resolve any other conflict. |
+| Frozen correction | Change only `tests/staging/codex_lifecycle_oracle/compensation_adapter.py`. Replace the stale absence-only docstring with exact admitted absence/presence path-truth wording and align the final `_operation_failure(...)` argument indentation. No executable token, import, behavior, type, test or other file may change. |
+| Immutable proof | Direct-test blob must remain `9c9b24f34fd8145e05ac559f8e4edb8d673ffaab`. Pre-correction source blob is `6ce010db944e30afbd8db291f9c02d6fbdda8219`. Rerun focused `15/15`, strict mypy and in-memory compile; full-suite rerun is optional because the correction is byte-audited non-executable text/whitespace only. |
+| Binding / return | Retain revision-03 workspace, handoff, allocation, receipt, correlation, question and side-context without substitution. Return one additive source-only correction commit, then append only reserved `PRG-20260814-419` in one WPR-only handoff commit. |
+| Boundary | No helper/subagent, live Codex/host/target-project effect, push/staging publication, package/build/install, Secret, release or deployment. |
