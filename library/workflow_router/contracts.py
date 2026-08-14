@@ -28,6 +28,21 @@ def _is_all_zero(value: str, prefix: str) -> bool:
     return bool(suffix) and all(character == "0" for character in suffix)
 
 
+def _agent_context_metadata_is_safe(references: tuple[OpaqueMetadataId, ...]) -> bool:
+    """Keep lease identifiers opaque and free of structural locators."""
+
+    forbidden_delimiters = (
+        "://",
+        "\\",
+        "/",
+    )
+    return not any(
+        marker in reference.casefold()
+        for reference in references
+        for marker in forbidden_delimiters
+    )
+
+
 class RouterModel(BaseModel):
     """Immutable, strict base model for values that cross router boundaries."""
 
@@ -224,6 +239,232 @@ class SharedContextMutationDecision(str, Enum):
     REQUIRE_CHANGE_CONTROL = "require_change_control"
     FORBID_ROLE_OR_STAGE = "forbid_role_or_stage"
     STALE_REVISION = "stale_revision"
+
+
+class AgentContextKind(str, Enum):
+    """The only Context kind admitted by the implementation-owner lease gate."""
+
+    IMPLEMENTATION_TICKET = "implementation_ticket"
+
+
+class AgentContextActorRole(str, Enum):
+    """The only actor role that may own an implementation Context lease."""
+
+    IMPLEMENTATION_OWNER = "implementation_owner"
+
+
+class AgentContextLifecycle(str, Enum):
+    """The finite lifecycle of one ticket-scoped Agent Context lease."""
+
+    ACTIVE = "active"
+    CLOSED = "closed"
+    INVALIDATED = "invalidated"
+
+
+class AgentContextOperation(str, Enum):
+    """The five finite operations admitted by the lease lifecycle gate."""
+
+    OPEN = "open"
+    RESUME = "resume"
+    REBIND_CORRECTION = "rebind_correction"
+    SWITCH_TICKET = "switch_ticket"
+    CLOSE = "close"
+
+
+class AgentContextUpstreamState(str, Enum):
+    """The upstream fact state that precedes operation admission."""
+
+    CURRENT = "current"
+    MISSING = "missing"
+    REQUIREMENT_CHANGED = "requirement_changed"
+
+
+class AgentContextDecisionKind(str, Enum):
+    """The finite outcomes of Agent Context lease admission."""
+
+    ALLOW = "allow"
+    AGENT_CONTEXT_BINDING_MISMATCH = "agent_context_binding_mismatch"
+    AGENT_CONTEXT_STALE = "agent_context_stale"
+    UPSTREAM_DECISION_REQUIRED = "upstream_decision_required"
+    REQUIREMENT_CHANGED = "requirement_changed"
+
+
+class AgentContextLease(RouterModel):
+    """Immutable metadata for one implementation owner's ticket Context view."""
+
+    lease_ref: OpaqueMetadataId
+    project_id: ProjectId
+    context_kind: AgentContextKind
+    lifecycle: AgentContextLifecycle
+    actor_role: AgentContextActorRole
+    actor_capability_ref: OpaqueMetadataId
+    artifact_path_refs: tuple[OpaqueMetadataId, ...] = Field(min_length=1)
+    ticket_ref: OpaqueMetadataId
+    ticket_revision: RevisionDigest
+    receipt_ref: OpaqueMetadataId
+    owner_ref: OpaqueMetadataId
+    worktree_ref: WorktreeFingerprint
+    branch_ref: BranchFingerprint
+    baseline_revision: RevisionDigest
+    control_baseline_ref: ReviewedCommitReference
+    side_context_id: OpaqueMetadataId
+    expected_return_ref: OpaqueMetadataId
+    invalidation_refs: tuple[OpaqueMetadataId, ...] = ()
+
+    @model_validator(mode="after")
+    def metadata_identity_is_exact(self) -> AgentContextLease:
+        """Reject duplicate leaves, reserved revisions and invalid lifecycle ownership."""
+
+        metadata_refs = (
+            self.lease_ref,
+            self.actor_capability_ref,
+            *self.artifact_path_refs,
+            self.ticket_ref,
+            self.receipt_ref,
+            self.owner_ref,
+            self.side_context_id,
+            self.expected_return_ref,
+            *self.invalidation_refs,
+        )
+        if not _agent_context_metadata_is_safe(metadata_refs):
+            raise ValueError("Agent Context identifiers must remain metadata-only")
+        if len(self.artifact_path_refs) != len(set(self.artifact_path_refs)):
+            raise ValueError("Agent Context artifact references must be unique")
+        if len(self.invalidation_refs) != len(set(self.invalidation_refs)):
+            raise ValueError("Agent Context invalidation references must be unique")
+        if _is_all_zero(self.ticket_revision, "rev-"):
+            raise ValueError("ticket revisions must identify real ticket content")
+        if _is_all_zero(self.baseline_revision, "rev-"):
+            raise ValueError("baseline revisions must identify real source content")
+        if not self.control_baseline_ref.strip("0"):
+            raise ValueError("control baselines must identify a real reviewed commit")
+        if self.actor_capability_ref != self.owner_ref:
+            raise ValueError("actor capability must equal the implementation owner")
+        if (
+            self.lifecycle is AgentContextLifecycle.ACTIVE
+            and self.side_context_id in self.invalidation_refs
+        ):
+            raise ValueError("an active lease cannot invalidate its own side Context")
+        return self
+
+
+class AgentContextTransitionRequest(RouterModel):
+    """Strict operation-shaped request for one pure lease transition."""
+
+    request_ref: OpaqueMetadataId
+    operation: AgentContextOperation
+    upstream_state: AgentContextUpstreamState
+    expected_current_lease_ref: OpaqueMetadataId | None
+    expected_current_side_context_id: OpaqueMetadataId | None
+    candidate_lease: AgentContextLease | None
+
+    @model_validator(mode="after")
+    def operation_shape_is_exact(self) -> AgentContextTransitionRequest:
+        """Require the exact null and candidate shape for each finite operation."""
+
+        expected_refs = tuple(
+            reference
+            for reference in (
+                self.request_ref,
+                self.expected_current_lease_ref,
+                self.expected_current_side_context_id,
+            )
+            if reference is not None
+        )
+        if not _agent_context_metadata_is_safe(expected_refs):
+            raise ValueError("Agent Context request identifiers must remain metadata-only")
+        if self.operation is AgentContextOperation.OPEN:
+            if (
+                self.expected_current_lease_ref is not None
+                or self.expected_current_side_context_id is not None
+                or self.candidate_lease is None
+            ):
+                raise ValueError("open requests require no current binding and one candidate")
+        elif self.operation in (
+            AgentContextOperation.RESUME,
+            AgentContextOperation.REBIND_CORRECTION,
+            AgentContextOperation.SWITCH_TICKET,
+        ):
+            if (
+                self.expected_current_lease_ref is None
+                or self.expected_current_side_context_id is None
+                or self.candidate_lease is None
+            ):
+                raise ValueError("replacement requests require both current bindings and a candidate")
+        elif self.operation is AgentContextOperation.CLOSE:
+            if (
+                self.expected_current_lease_ref is None
+                or self.expected_current_side_context_id is None
+                or self.candidate_lease is not None
+            ):
+                raise ValueError("close requests require both current bindings and no candidate")
+        if (
+            self.candidate_lease is not None
+            and self.candidate_lease.lifecycle is not AgentContextLifecycle.ACTIVE
+        ):
+            raise ValueError("transition candidates must be active leases")
+        return self
+
+
+class AgentContextTransitionDecision(RouterModel):
+    """Strict metadata result for one admitted or rejected lease transition."""
+
+    request_ref: OpaqueMetadataId
+    operation: AgentContextOperation
+    decision: AgentContextDecisionKind
+    prior_lease_result: AgentContextLease | None
+    active_lease: AgentContextLease | None
+
+    @model_validator(mode="after")
+    def active_result_is_usable(self) -> AgentContextTransitionDecision:
+        """Ensure each finite decision exposes only its exact lifecycle result shape."""
+
+        if not _agent_context_metadata_is_safe((self.request_ref,)):
+            raise ValueError("Agent Context decision identifiers must remain metadata-only")
+        if self.decision is not AgentContextDecisionKind.ALLOW:
+            if self.active_lease is not None:
+                raise ValueError("rejected Agent Context results cannot expose an active lease")
+            return self
+        if self.operation is AgentContextOperation.OPEN:
+            if (
+                self.prior_lease_result is not None
+                or self.active_lease is None
+                or self.active_lease.lifecycle is not AgentContextLifecycle.ACTIVE
+            ):
+                raise ValueError("open results require only one active lease")
+        elif self.operation is AgentContextOperation.RESUME:
+            if (
+                self.prior_lease_result is None
+                or self.active_lease is None
+                or self.prior_lease_result.lifecycle is not AgentContextLifecycle.ACTIVE
+                or self.active_lease.lifecycle is not AgentContextLifecycle.ACTIVE
+                or self.prior_lease_result != self.active_lease
+            ):
+                raise ValueError("resume results require the same active lease")
+        elif self.operation is AgentContextOperation.REBIND_CORRECTION:
+            if (
+                self.prior_lease_result is None
+                or self.prior_lease_result.lifecycle is not AgentContextLifecycle.INVALIDATED
+                or self.active_lease is None
+                or self.active_lease.lifecycle is not AgentContextLifecycle.ACTIVE
+            ):
+                raise ValueError("correction results require an invalidated prior and active replacement")
+        elif self.operation is AgentContextOperation.SWITCH_TICKET:
+            if (
+                self.prior_lease_result is None
+                or self.prior_lease_result.lifecycle is not AgentContextLifecycle.CLOSED
+                or self.active_lease is None
+                or self.active_lease.lifecycle is not AgentContextLifecycle.ACTIVE
+            ):
+                raise ValueError("switch results require a closed prior and active replacement")
+        elif self.operation is AgentContextOperation.CLOSE:
+            if (
+                self.prior_lease_result is None
+                or self.prior_lease_result.lifecycle is not AgentContextLifecycle.CLOSED
+                or self.active_lease is not None
+            ):
+                raise ValueError("close results require only a closed prior lease")
+        return self
 
 
 class SkillReference(RouterModel):
