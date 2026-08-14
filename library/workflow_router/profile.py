@@ -16,6 +16,7 @@ from .contracts import (
     HumanWaitReason,
     ImplementationReturnStatus,
     NonBlankText,
+    OpaqueMetadataId,
     ProcessStage,
     ReturnContractKind,
     RouterEventKind,
@@ -111,7 +112,7 @@ class ProjectWorkflowProfile(RouterModel):
             != self.router_control_reference.source_revision
         ):
             raise ValueError("profile fallback contract revision must match its reference")
-        references: dict[str, SkillReference] = {
+        references: dict[OpaqueMetadataId, SkillReference] = {
             self.router_control_reference.reference_id: self.router_control_reference
         }
         for rule in self.transition_rules:
@@ -143,13 +144,13 @@ class _PolicyRoute:
 
     current_stage: ProcessStage
     event_kind: RouterEventKind
-    reference_id: str
+    reference_id: OpaqueMetadataId
     return_kind: ReturnContractKind
     router_events: tuple[RouterEventKind, ...]
     implementation_statuses: tuple[ImplementationReturnStatus, ...]
 
 
-_POLICY_REFERENCES = (
+_POLICY_REFERENCES: tuple[SkillReference, ...] = (
     SkillReference(
         reference_id="router-control",
         source_revision="rev-23dd53ad68e5562f",
@@ -188,7 +189,7 @@ _POLICY_REFERENCES = (
 )
 
 
-_POLICY_ROUTES = (
+_POLICY_ROUTES: tuple[_PolicyRoute, ...] = (
     _PolicyRoute(
         ProcessStage.INTAKE,
         RouterEventKind.INTAKE,
@@ -361,7 +362,7 @@ def _route_policy_for(
     raise ValueError("the POC profile has no frozen policy route for this state/event")
 
 
-def _policy_reference_for(reference_id: str) -> SkillReference:
+def _policy_reference_for(reference_id: OpaqueMetadataId) -> SkillReference:
     """Resolve one frozen metadata-only policy reference without reading its file."""
 
     for reference in _POLICY_REFERENCES:
@@ -390,7 +391,7 @@ def _expected_return_for(
 
     policy = _route_policy_for(current_stage=current_stage, event_kind=event_kind)
     reference = _policy_reference_for(policy.reference_id)
-    contract_id = (
+    contract_id: OpaqueMetadataId = (
         f"return-{current_stage.value.replace('_', '-')}-"
         f"{event_kind.value.replace('_', '-')}"
     )

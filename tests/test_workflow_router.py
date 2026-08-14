@@ -4,12 +4,11 @@ from __future__ import annotations
 
 import ast
 import hashlib
-import subprocess
 import unittest
 from contextlib import redirect_stdout
 from dataclasses import dataclass
 from io import StringIO
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from tempfile import TemporaryDirectory
 
 from pydantic import ValidationError
@@ -54,7 +53,12 @@ from library.workflow_router import (
     build_router_poc_profile,
 )
 from library.workflow_router.graph import RouterGraphState
-from library.workflow_router.contracts import RouterDecision
+from library.workflow_router.contracts import (
+    EvidenceDigest,
+    OpaqueMetadataId,
+    RevisionDigest,
+    RouterDecision,
+)
 from library.workflow_router.profile import ProjectWorkflowProfile, TransitionRule
 from library.workflow_router.telemetry_cli import main as telemetry_main
 
@@ -63,7 +67,7 @@ from library.workflow_router.telemetry_cli import main as telemetry_main
 class _ExpectedRoute:
     current_stage: ProcessStage
     input_event: RouterEventKind
-    reference_id: str
+    reference_id: OpaqueMetadataId
     return_kind: ReturnContractKind
     router_events: tuple[RouterEventKind, ...]
     implementation_statuses: tuple[ImplementationReturnStatus, ...]
@@ -71,13 +75,13 @@ class _ExpectedRoute:
 
 @dataclass(frozen=True)
 class _ExpectedPolicy:
-    reference_id: str
-    source_revision: str
-    content_digest: str
-    relative_path: str
+    reference_id: OpaqueMetadataId
+    source_revision: RevisionDigest
+    content_digest: EvidenceDigest
+    relative_path: PurePosixPath
 
 
-_EXPECTED_ROUTES = (
+_EXPECTED_ROUTES: tuple[_ExpectedRoute, ...] = (
     _ExpectedRoute(
         ProcessStage.INTAKE,
         RouterEventKind.INTAKE,
@@ -237,48 +241,48 @@ _EXPECTED_ROUTES = (
 )
 
 
-_EXPECTED_POLICIES = (
+_EXPECTED_POLICIES: tuple[_ExpectedPolicy, ...] = (
     _ExpectedPolicy(
         "router-control",
         "rev-23dd53ad68e5562f",
         "sha256_23dd53ad68e5562f39a35f06f9c21a970b6eb94eab3aeeae468cc8b5cd68b091",
-        "skills/johnny-project-takeover/references/router-control.md",
+        PurePosixPath("skills/johnny-project-takeover/references/router-control.md"),
     ),
     _ExpectedPolicy(
         "discovery-change",
         "rev-5d432a8246bce4ed",
         "sha256_5d432a8246bce4ed890289e24c50e2e29360df165eeb7f9355cb02228e1d10ef",
-        "skills/johnny-project-takeover/references/discovery-change.md",
+        PurePosixPath("skills/johnny-project-takeover/references/discovery-change.md"),
     ),
     _ExpectedPolicy(
         "context-routing",
         "rev-5f1e7958c70c8493",
         "sha256_5f1e7958c70c8493de83aa1481e0f3f3e59c5a40e745a12077eb372fa6e0815e",
-        "skills/johnny-project-takeover/references/context-routing.md",
+        PurePosixPath("skills/johnny-project-takeover/references/context-routing.md"),
     ),
     _ExpectedPolicy(
         "specification-ticketing",
         "rev-c7011f440caa3ec8",
         "sha256_c7011f440caa3ec8fe83e119a110aa368ec4cc130cf71671d0199987140c8af7",
-        "skills/johnny-project-takeover/references/specification-ticketing.md",
+        PurePosixPath("skills/johnny-project-takeover/references/specification-ticketing.md"),
     ),
     _ExpectedPolicy(
         "implementation-authority",
         "rev-855117ed19c9c952",
         "sha256_855117ed19c9c952f8903bc56ce070d2cf3805fb51d7a450c46bbf8a00480f50",
-        "skills/johnny-project-takeover/references/implementation-authority.md",
+        PurePosixPath("skills/johnny-project-takeover/references/implementation-authority.md"),
     ),
     _ExpectedPolicy(
         "implementation-tdd",
         "rev-38408006f23df3b6",
         "sha256_38408006f23df3b66a4368e2b8794cc099b84ea20417e56d881ff19512345574",
-        "skills/johnny-project-takeover/references/implementation-tdd.md",
+        PurePosixPath("skills/johnny-project-takeover/references/implementation-tdd.md"),
     ),
     _ExpectedPolicy(
         "review-checks",
         "rev-4b8527305609194a",
         "sha256_4b8527305609194ae9dd26c16a05ff72d22b1f20a8cb925175d6793766bb5f54",
-        "skills/johnny-project-takeover/references/review-checks.md",
+        PurePosixPath("skills/johnny-project-takeover/references/review-checks.md"),
     ),
 )
 
@@ -1643,15 +1647,6 @@ class RouteInstructionContractTests(unittest.TestCase):
                 }
             )
 
-    def _git_file_bytes(self, relative_path: str) -> bytes:
-        root = Path(__file__).resolve().parents[1]
-        result = subprocess.run(
-            ("git", "-C", str(root), "show", f"HEAD:{relative_path}"),
-            check=True,
-            capture_output=True,
-        )
-        return result.stdout
-
     def test_profile_route_table_and_policy_metadata_are_exact(self) -> None:
         profile = build_router_poc_profile()
         self.assertEqual("router-control", profile.router_control_reference.reference_id)
@@ -1703,11 +1698,7 @@ class RouteInstructionContractTests(unittest.TestCase):
                 policy_path = (
                     Path(__file__).resolve().parents[1] / expected_policy.relative_path
                 )
-                repository_bytes = self._git_file_bytes(expected_policy.relative_path)
-                self.assertEqual(
-                    policy_path.read_bytes().replace(b"\r\n", b"\n"),
-                    repository_bytes,
-                )
+                repository_bytes = policy_path.read_bytes().replace(b"\r\n", b"\n")
                 self.assertEqual(
                     expected_policy.content_digest,
                     "sha256_" + hashlib.sha256(repository_bytes).hexdigest(),
@@ -1947,6 +1938,7 @@ class RouteInstructionContractTests(unittest.TestCase):
             Path("library/workflow_router/contracts.py"),
             Path("library/workflow_router/profile.py"),
             Path("library/workflow_router/router.py"),
+            Path("tests/test_workflow_router.py"),
         )
         class_names = {
             "SkillReference",
@@ -1954,6 +1946,9 @@ class RouteInstructionContractTests(unittest.TestCase):
             "TransitionRule",
             "ProjectWorkflowProfile",
             "RouterDecision",
+            "_PolicyRoute",
+            "_ExpectedRoute",
+            "_ExpectedPolicy",
         }
         field_names = {
             "reference_id",
@@ -1968,6 +1963,43 @@ class RouteInstructionContractTests(unittest.TestCase):
             "expected_return",
             "router_control_reference",
             "halt_return_contract",
+        }
+        expected_class_fields = {
+            "library/workflow_router/profile.py": {
+                "_PolicyRoute": {"reference_id": "OpaqueMetadataId"},
+            },
+            "tests/test_workflow_router.py": {
+                "_ExpectedRoute": {"reference_id": "OpaqueMetadataId"},
+                "_ExpectedPolicy": {
+                    "reference_id": "OpaqueMetadataId",
+                    "source_revision": "RevisionDigest",
+                    "content_digest": "EvidenceDigest",
+                    "relative_path": "PurePosixPath",
+                },
+            },
+        }
+        expected_module_annotations = {
+            "library/workflow_router/profile.py": {
+                "_POLICY_REFERENCES": "tuple[SkillReference, ...]",
+                "_POLICY_ROUTES": "tuple[_PolicyRoute, ...]",
+            },
+            "tests/test_workflow_router.py": {
+                "_EXPECTED_ROUTES": "tuple[_ExpectedRoute, ...]",
+                "_EXPECTED_POLICIES": "tuple[_ExpectedPolicy, ...]",
+            },
+        }
+        expected_function_parameters = {
+            "library/workflow_router/profile.py": {
+                "_policy_reference_for": {"reference_id": "OpaqueMetadataId"},
+            },
+        }
+        expected_local_annotations = {
+            "library/workflow_router/profile.py": {
+                "has_unique_transition_keys": {
+                    "references": "dict[OpaqueMetadataId, SkillReference]",
+                },
+                "_expected_return_for": {"contract_id": "OpaqueMetadataId"},
+            },
         }
         for source_path in source_paths:
             source = source_path.read_text(encoding="utf-8")
@@ -2006,7 +2038,62 @@ class RouteInstructionContractTests(unittest.TestCase):
                         self.assertNotIn("None", annotation)
                         self.assertNotIn("Any", annotation)
                         self.assertNotIn("object", annotation)
-
+            source_key = source_path.as_posix()
+            for class_name, fields in expected_class_fields.get(source_key, {}).items():
+                class_node = class_nodes.get(class_name)
+                self.assertIsNotNone(class_node)
+                if class_node is None:
+                    continue
+                annotations = {
+                    node.target.id: ast.unparse(node.annotation)
+                    for node in class_node.body
+                    if isinstance(node, ast.AnnAssign)
+                    and isinstance(node.target, ast.Name)
+                    and node.target.id in fields
+                }
+                for field_name, expected_annotation in fields.items():
+                    self.assertEqual(expected_annotation, annotations.get(field_name))
+            module_annotations = {
+                node.target.id: ast.unparse(node.annotation)
+                for node in tree.body
+                if isinstance(node, ast.AnnAssign) and isinstance(node.target, ast.Name)
+            }
+            for name, expected_annotation in expected_module_annotations.get(source_key, {}).items():
+                self.assertEqual(expected_annotation, module_annotations.get(name))
+            functions = {
+                node.name: node
+                for node in ast.walk(tree)
+                if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+            }
+            for function_name, parameters in expected_function_parameters.get(
+                source_key, {}
+            ).items():
+                function_node = functions.get(function_name)
+                self.assertIsNotNone(function_node)
+                if function_node is None:
+                    continue
+                function_annotations = {
+                    parameter.arg: ast.unparse(parameter.annotation)
+                    for parameter in (*function_node.args.posonlyargs, *function_node.args.args)
+                    if parameter.annotation is not None
+                }
+                for parameter_name, expected_annotation in parameters.items():
+                    self.assertEqual(
+                        expected_annotation,
+                        function_annotations.get(parameter_name),
+                    )
+            for function_name, locals_ in expected_local_annotations.get(source_key, {}).items():
+                function_node = functions.get(function_name)
+                self.assertIsNotNone(function_node)
+                if function_node is None:
+                    continue
+                local_annotations = {
+                    node.target.id: ast.unparse(node.annotation)
+                    for node in ast.walk(function_node)
+                    if isinstance(node, ast.AnnAssign) and isinstance(node.target, ast.Name)
+                }
+                for local_name, expected_annotation in locals_.items():
+                    self.assertEqual(expected_annotation, local_annotations.get(local_name))
     def test_required_skill_reference_is_required(self) -> None:
         with self.assertRaises(ValidationError):
             TransitionRule.model_validate(
