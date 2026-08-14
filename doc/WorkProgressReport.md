@@ -5209,3 +5209,14 @@
 | Finding | `CR-R02C1-001 / TICKET_DEFECT`: revision `r02c1-01` omits the exact feature Context reference and the explicit implementation-language/strict-checker binding required by the canonical ticket schema. No implementation defect was found. |
 | Required route | Refreeze the same ticket as `r02c1-02`; invalidate `scx-adaptive-router-r02c1-20260815-01`; create a new receipt/correlation-bound revalidation view on the same owner/worktree/branch. Preserve candidate implementation bytes and require evidence-only revalidation unless behavior changes. |
 | Boundary | No source/test mutation, new branch/worktree, R02C2/R02C3 implementation, helper, external effect, push, package/install, Secret, release or deployment. `XSS_NOT_APPLICABLE`. |
+
+## PRG-20260815-483 - Router R02C1 ticket revision-02 refreeze
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `CHANGES_REQUESTED / TICKET_DEFECT(PRG-482) -> TICKET_REFROZEN / REVALIDATION_DISPATCH_REQUIRED`; this record creates no receipt or implementation mutation authority. |
+| Ticket | Same `02c1-artifact-tree-resolution-gate` and closure ACX1-ACX8, now revision `r02c1-02`. No behavior, public contract, source scope or requirement changed. |
+| Schema closure | The ticket now binds exact feature Context `doc/context/adaptive-project-orchestration/main.md` revision 05, Python 3.11, the exact strict-mypy gate, resource plan `PRG-479`, local environment and operations/rollback boundaries. `CR-R02C1-001` is corrected at the ticket source. |
+| Candidate preservation | Candidate implementation `458791b470629fe7c0e3bb263af87560b58e54b9` remains immutable and is not rejected. Revision-02 revalidation makes all four source/test paths read-only and permits only registry synchronization plus one WPR-only return. |
+| Context lifecycle | Prior side Context `scx-adaptive-router-r02c1-20260815-01` is invalidated. Planned replacement is `scx-adaptive-router-r02c1-20260815-02`, bound to the same owner/worktree/branch and activated only by a separate exact registry. |
+| Boundary | No source/test mutation, receipt yet, new branch/worktree, helper, R02C2/R02C3 implementation, external effect, push, package/install, Secret, release or deployment. `XSS_NOT_APPLICABLE`. |
