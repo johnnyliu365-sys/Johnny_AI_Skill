@@ -4603,3 +4603,13 @@
 | Merge admission | Merge the exact control commit carrying this registry. Resolve only the predicted append-only WPR overlap, preserving PRG-423 through PRG-425 exactly once; no reset, rebase, amend, force, stash or silent conflict resolution. |
 | Correction / return | Keep implementation blob `86edacbbb43a36475071c5494b8c4e0cc2b81f60` and direct-test blob `d897552e65c506e49132b82e1eaccdf8f4004d37` exact. Append only reserved PRG-20260814-426 at physical EOF in one WPR-only commit, then return merge plus correction commits. |
 | Boundary | No source/test/ticket/review or historical-WPR edit, executable rerun, new branch/worktree/helper, live Codex/home/config, target-project, network, push/staging publication, package/build/install, Secret, release or deployment. |
+
+## PRG-20260814-426 - Ticket 05C2C3 canonical integration handoff
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `REVIEW_HANDOFF(PRG-423) -> EVIDENCE_CORRECTION_COMPLETED / ACTION_COMPLETED / REVIEW_HANDOFF`; this is the canonical integration handoff. |
+| Correction scope | PRG-423 remains unchanged as truthful historical evidence. This record supersedes only PRG-423's non-append-only placement claim; it does not supersede or alter PRG-423's implementation, test, or verification content. It is appended at physical WPR EOF. |
+| History / identity | Exact control baseline merge commit `605b2545c68268a39f1662e2ee518e58e13d96c1`; executable implementation blob `86edacbbb43a36475071c5494b8c4e0cc2b81f60`; direct-test blob `d897552e65c506e49132b82e1eaccdf8f4004d37`. No executable suite was rerun under the frozen evidence-only correction. |
+| Readback | PRG-423, PRG-424, PRG-425 and PRG-426 each occur exactly once; physical EOF is this PRG-426 heading/record. Merge and correction scopes are exact, tracked/ignored porcelain is clean, exactly three worktrees remain, and no cache/runtime/bytecode residue exists. |
+| Boundary / security | Same owner-2 lane, binding and branch retained. `XSS_NOT_APPLICABLE`; no source/test/ticket/review edit, helper, live Codex/home/config or target-project effect, network, push/staging publication, package/install, Secret, release or deployment. |
