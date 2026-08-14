@@ -4,8 +4,8 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-02, AC-06 and AC-07 |
 | Change / PRD / Context | `CHG-20260808-011` / `PRD.md §15` / `doc/context/local-orchestration-installer/main.md` |
-| Revision | `01` |
-| State | `IN_PROGRESS / DISPATCH_READY` |
+| Revision | `02` |
+| State | `CHANGES_REQUESTED / CORRECTION_REFROZEN` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05C2A-01` / A1-A8 |
 | Dependency | 05C1 and existing compensation port/composition independently approved and integrated |
 | Profile / resource | `STANDARD`; one implementation owner, no helper; high reasoning preferred but model identity grants no authority |
@@ -37,7 +37,13 @@ returns a finite metadata-only rejection before the returned value is read.
   over any response classification.
 - Dispatch the five exact operations to the existing private observation
   normalizers. Do not duplicate, fork or weaken their manifest/identity/list/
-  failure admission. Do not change their existing mapping semantics.
+  failure admission. Preserve all ordinary validated-response mappings.
+  Corrupted original Pydantic state is not an ordinary mapping: an exact-class
+  response envelope, list entry or optional marketplace source carrying
+  injected `__dict__`, `__pydantic_extra__`, `__pydantic_private__` or
+  inconsistent field-set state must not confirm removal or prove absence. The
+  shared private normalizers may be hardened only to map that corrupted state
+  conservatively to their already-existing finite failure/truth result.
 - The entrypoint receives a returned value only. It must not accept, admit,
   resolve or invoke a capability, method, function, descriptor or callable and
   must perform no filesystem, process, Codex, host, target-project or network
@@ -54,7 +60,7 @@ returns a finite metadata-only rejection before the returned value is read.
 | `A2` | For each operation, success, exact declared failure, foreign/mismatched identity and malformed value produce the same exact observation as the integrated private path; no historical-source copy is used. |
 | `A3` | `None`, scalar/string, wrong enum, tuple/list/dict/set, subclass and trap-bearing operation candidates return `INVALID_OPERATION` without request/response member, equality or serialization access. |
 | `A4` | Null/scalar/container, subclass, missing/extra/private, constructed-invalid and invalid-nested request matrices return `INVALID_REQUEST`; response traps are untouched. |
-| `A5` | Extra/private/subclass/constructed malformed response matrices remain finite existing `DECLARED_FAILURE`, `MALFORMED`, `MISMATCH`, `UNPROVED`, residue or absence observations according to the exact operation; no broad clear or `None` port exists. |
+| `A5` | Top-level and nested extra/private/injected-field-state, subclass and constructed malformed response matrices remain finite. Corrupted removal proof maps to existing `DECLARED_FAILURE`; corrupted plugin/marketplace list envelope, entry or optional source maps to existing `MALFORMED`; corrupted installed-path proof maps to existing `MALFORMED`. Valid exact responses retain the existing `MISMATCH`, `UNPROVED`, residue or absence observations according to the exact operation; no broad clear or `None` port exists. |
 | `A6` | Source inspection and behavior prove zero capability/callable admission or invocation, no `Any`, no `type: ignore`, no broad exception catch and no effect boundary. Existing compensation composition tests remain green. |
 | `A7` | Independently reverse the operation dispatch, request-validation precedence and one response identity/mapping guard; each named test turns red, then exact bytes restore. |
 | `A8` | Focused and full serial unittest, strict full-tree mypy, in-memory compile, source sentinel, exact diff/scope, tracked/ignored/cache readback and three-worktree topology all pass. |
@@ -111,3 +117,24 @@ re-read this exact ticket blob and return `HALT / TICKET_SCHEMA_INVALID` before
 red tests if any schema identity differs. The owner may not orchestrate another
 Agent, self-review/integrate, dispatch a next ticket, push/publish staging,
 package/install, release or deploy.
+
+## Revision-02 correction freeze
+
+Independent review of implementation `3b1706889fbc6e5323ce9ba561825f908b4e0dca`
+and handoff `9f25ef56892b9b9a9a51e470838a383c0f17e500` opened CR-174.
+Revision 01 named extra/private response state in A5 but also said not to change
+existing mapping semantics, without distinguishing ordinary validated values
+from caller-corrupted Pydantic storage. That ambiguity is a reviewer-owned
+`TICKET_DEFECT`; accepting all five corrupted success responses is the bounded
+`IMPLEMENTATION_DEFECT`, and the missing direct matrix is an `EVIDENCE_DEFECT`.
+
+The correction remains on the same ticket, owner, permanent worktree, branch,
+allocation, receipt and correlation. It may change only
+`codex_compensation_composition.py` and its direct test; package exports are
+already correct and must remain byte-identical. Add bounded table-driven tests
+for top-level response extra/private state and representative nested plugin and
+marketplace entry/source injected state. Independently reverse the shared
+original-state guard and require the named CR-174 test to turn red, then restore
+exact bytes. Preserve operation/request precedence and every ordinary A1-A7
+result. Return one additive correction commit and reserved PRG-20260814-393 in
+one WPR-only handoff commit after the complete A8 matrix.

@@ -4229,3 +4229,14 @@
 | Lane readback | Owner task `019ffb0c-c9c7-7b30-b614-02dea7ed9042` is `notLoaded`/idle in permanent `C:\Users\<user>\Desktop\AI控制工作workflow-implementation`; clean released branch/head `codex/implementation-codex-foreign-state-isolation-05b4b2e6a` / `6f926995e0aa6250e34d095dd08406908c4834a2`; exact linked Git identity, zero tracked/ignored/cache residue, three worktrees and absent target branch verified. |
 | Binding / dispatch | One-use 05C2A workspace/handoff/allocation/receipt/correlation/question/side-context from the ticket; create only `codex/implementation-codex-compensation-observation-05c2a` at the exact commit carrying this registry in the same worktree. Implement only the three frozen paths and A1-A8; return implementation commit plus reserved PRG-390 WPR-only handoff. |
 | Resource / boundary | One owner, no helper or second lane because source/test ownership overlaps and 05C2B serially depends on this public contract. No reviewer implementation-worktree write, new worktree, live effect, push/staging publication, package/install, Secret, release or deployment. |
+
+## PRG-20260814-391 - Ticket 05C2A terminal review and revision-02 refreeze
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05C2A) -> TERMINAL_CODE_REVIEW -> CHANGES_REQUESTED / CR-174 -> CORRECTION_REFROZEN` |
+| Reviewed chain | Registry `0ee852309cef799ccac94b5dd5d59cd3c4fd0a7b` -> implementation `3b1706889fbc6e5323ce9ba561825f908b4e0dca` -> WPR-only handoff `9f25ef56892b9b9a9a51e470838a383c0f17e500`; immutable archive SHA-256 `756843E8AF749F9D160A24A423CEB4F8CC9ED0A632678D8B42AC00A100E09817`. |
+| Independent green | Focused `17/17`; full serial `482/482`; strict mypy `146`; in-memory compile `146`; exact scope/ancestry/topology and XSS/source gates pass. External mypy cache was removed and read back absent. |
+| CR-174 | All five exact response objects with injected `__pydantic_extra__` or `__pydantic_private__` still return affirmative `CONFIRMED`/`PROVED_ABSENT`; the direct A5 test omits that matrix. Classification: reviewer-owned ticket ambiguity plus bounded implementation and evidence defects. |
+| Refreeze | Revision 02 preserves ordinary validated mappings but explicitly treats corrupted original Pydantic storage as malformed/unproved evidence. Same-lane correction changes only composition source/direct test, keeps exports identical, adds top-level and representative nested matrices plus one shared-guard reversal, and returns reserved PRG-393. |
+| Boundary | Reviewer wrote only control documents and an isolated TEMP export. No implementation-worktree write, new branch/worktree, live Codex/host/target-project effect, push/staging publication, package/build/install, Secret, release or deployment. |
