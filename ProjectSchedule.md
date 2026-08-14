@@ -192,12 +192,13 @@
 
 | Stage | State | Evidence / next gate |
 | --- | --- | --- |
-| Requirement / architecture | ROUTER POLICY APPROVED | `CHG-20260813-016/017`, `CHG-20260814-019`, `CHG-20260815-020/021`; tiered model handover, sealed shared Context, ticket-scoped Agent Context and tree-shaped artifact/requirement/library routing confirmed. |
-| Exact specification | REVISION 04 / ROUTER_PHASE_APPROVED | `modules/spec/adaptive-project-orchestration.md`; AC-12 through AC-17 and Router portions of AC-05 through AC-10 are authorized. Other phases remain owner-review-required. |
-| Ticket decomposition | ROUTER_ONLY / IN_PROGRESS | R02 is split into R02A shared Context, R02B Agent Context lease and R02C artifact-tree lineage; only the next dependency-satisfied closure may receive a formal ticket and receipt. |
+| Requirement / architecture | ROUTER POLICY APPROVED | `CHG-20260813-016/017`, `CHG-20260814-019`, `CHG-20260815-020/022`; tiered model handover, sealed shared Context, ticket-scoped Agent Context and bounded tree routing for every workflow/process/document family, archive library and reusable library confirmed. `CHG-20260815-021` is retired as `ARCH-REQ-20260815-004`. |
+| Exact specification | REVISION 05 / ROUTER_PHASE_APPROVED | `modules/spec/adaptive-project-orchestration.md`; AC-12 through AC-17 and Router portions of AC-05 through AC-10 are authorized. Other phases remain owner-review-required. |
+| Ticket decomposition | ROUTER_ONLY / IN_PROGRESS | R02 is split into R02A shared Context, R02B Agent Context lease, R02C1 generic tree resolution, R02C2 requirement/archive lineage and R02C3 bounded library selection; only the next dependency-satisfied closure may receive a formal ticket and receipt. |
 | Router Ticket R01 | COMPLETE / APPROVED / INTEGRATED | Route instruction contract reviewed at `fefaa0c` and guarded-integrated at `5c3445f`; CR-R01-001 through CR-R01-004 closed. |
 | Router Ticket R02A | COMPLETE / APPROVED / INTEGRATED | `CLOSURE-ADAPTIVE-ROUTER-R02A-01`; independently approved and guarded-integrated at `9bf7d340`; allocation released and its Agent Context closed. |
-| Router Ticket R02B | COMPLETE / APPROVED / INTEGRATED | `CLOSURE-ADAPTIVE-ROUTER-R02B-01`; independently approved at `8f43e5b` and guarded-integrated at `9e3d92b`; allocation released and correction Agent Context closed. R02C becomes the only eligible design closure. |
+| Router Ticket R02B | COMPLETE / APPROVED / INTEGRATED | `CLOSURE-ADAPTIVE-ROUTER-R02B-01`; independently approved at `8f43e5b` and guarded-integrated at `9e3d92b`; allocation released and correction Agent Context closed. R02C1 becomes the only eligible design closure. |
+| Router Ticket R02C1 | READY_FOR_TICKET_DESIGN / NON_DISPATCHABLE | Generic workflow-artifact topology and exact-path resolution only. No implementation ticket, allocation or receipt exists before its separate committed freeze. |
 | Other implementation lanes | PAUSED | 06G0P return is preserved pending review; 06G0-06G4, packaging and other rework/new tickets do not resume before Router acceptance. |
 
 ### Ticket 05 selection after external capability proof

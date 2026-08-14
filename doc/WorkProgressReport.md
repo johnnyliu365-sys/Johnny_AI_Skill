@@ -5161,3 +5161,15 @@
 | Post-merge verification | Six-module Router regression `120/120`; in-memory compile `150/150`; diff, tracked/ignored porcelain and exact three-worktree topology pass. Independent pre-merge full serial remains `556/556`, strict mypy `150/150`, reviewer matrix `43/43`. |
 | Transition | R02B is `COMPLETE / APPROVED / INTEGRATED`; allocation `aln-adaptive-router-r02b-20260815` is released, prior side Context `scx-adaptive-router-r02b-20260815-01` remains invalidated and correction side Context `scx-adaptive-router-r02b-20260815-02` is closed. R02C becomes the only eligible design closure; no implementation receipt exists yet. |
 | Effects | No push, release, deployment, target-project, live host/model/network, package/install or Secret effect. `XSS_NOT_APPLICABLE`. |
+
+## PRG-20260815-478 - Whole-workflow bounded artifact-tree refreeze
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `OWNER_CLARIFICATION -> REQUIREMENT_CHANGED / ARCHITECTURE_REFREEZE_COMPLETE`; this is governance/specification change control only and creates no implementation authority. |
+| Requirement lineage | `PRD-20260815-021 / CHG-20260815-021` leaves the active tree and is preserved as `ARCH-REQ-20260815-004`; replacement `PRD-20260815-022 / CHG-20260815-022` is the sole active whole-workflow tree requirement. |
+| Closed meaning | Every workflow/process/document family uses `root index -> bounded partition index -> exact leaf`. Retired bodies are reachable only through the archive-library tree. Archive and reusable-module libraries must themselves remain bounded trees and cannot regress into flat global ledgers/catalogs. |
+| Refreeze | Shared Context and SPEC are revision 05. AC-17 now names all managed families and typed metadata-only tree contracts; the detailed invariant lives in the canonical `artifact-tree-routing` skill reference rather than expanding `Workflow.md`. |
+| Low-model decomposition | Former R02C is split serially into R02C1 generic topology/resolution, R02C2 active PRD/CHG retirement/archive lineage and R02C3 bounded archive/reusable-library selection. Only R02C1 is dependency-satisfied; it remains non-dispatchable until a separate exact ticket/receipt freeze. |
+| Migration boundary | Existing historical flat evidence is immutable migration input, not automatically rewritten by this change. Any physical migration requires a separately accepted closure; no bulk move, copy or deletion is authorized here. |
+| Effects | Documentation/governance only. No production/test source, implementation worktree, Agent, filesystem topology, host/model/network/target-project, push, package/install, release, deployment or Secret effect. `XSS_NOT_APPLICABLE`. |

@@ -3,11 +3,11 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2` |
-| Status | `REVISION_04 / ROUTER_PHASE_APPROVED / OTHER_PHASES_OWNER_REVIEW_REQUIRED` |
+| Status | `REVISION_05 / ROUTER_PHASE_APPROVED / OTHER_PHASES_OWNER_REVIEW_REQUIRED` |
 | Author / baseline | Codex control plane / current `main` |
 | Context | `doc/context/adaptive-project-orchestration/main.md` |
-| PRD | `PRD-20260813-016`, `PRD-20260813-017`, `PRD-20260814-019`, `PRD-20260815-020`, `PRD-20260815-021` |
-| Requirement change / ADR | `CHG-20260813-016`, `CHG-20260813-017`, `CHG-20260814-019`, `CHG-20260815-020`, `CHG-20260815-021` / `ADR-20260813-008`, `ADR-20260813-009`, `ADR-20260814-011` |
+| PRD | `PRD-20260813-016`, `PRD-20260813-017`, `PRD-20260814-019`, `PRD-20260815-020`, `PRD-20260815-022` |
+| Requirement change / ADR | `CHG-20260813-016`, `CHG-20260813-017`, `CHG-20260814-019`, `CHG-20260815-020`, `CHG-20260815-022` / `ADR-20260813-008`, `ADR-20260813-009`, `ADR-20260814-011` |
 | Implementation language | Python 3.11 strict typed contracts/adapters; host-specific integration only after capability proof |
 
 ## Problem and goal
@@ -205,14 +205,23 @@ A different ticket always closes the old view and creates a fresh identity; a sa
 correction rebinds the exact revised ticket/review baseline. No transcript, raw packet, inferred
 decision or prior-ticket resume prose crosses either boundary.
 
-### AC-17 — Tree-shaped requirement and library lineage
+### AC-17 — Tree-shaped workflow artifact, archive, and library lineage
 
-Formal artifacts use `root index -> partition index -> exact leaf`; an index lists direct
-children only. Each active product requirement is a one-to-one
-`PRD-YYYYMMDD-NNN <-> CHG-YYYYMMDD-NNN` leaf. A retired pair leaves the active tree and enters
-one immutable `ARCH-REQ-YYYYMMDD-NNN` archive-library leaf; active roots retain only that archive
-ID. Reusable-module discovery follows root capability-domain indexes to one module-card leaf.
-The Router never flattens, recursively loads or persists the whole tree.
+Every workflow/process/document artifact family uses
+`root index -> bounded partition index -> exact leaf`; an index contains only direct-child ID,
+kind, revision, digest, lifecycle and child-index/leaf references. This applies to requirement,
+change, shared/Agent Context, SPEC, ticket, review, progress/handoff/evidence, ADR/security,
+archive-library and reusable-module families. Indexes never copy leaf bodies, descendant
+inventories or chat/progress prose.
+
+Each active product requirement is a one-to-one
+`PRD-YYYYMMDD-NNN <-> CHG-YYYYMMDD-NNN` leaf. A retired pair leaves every active edge and enters
+one immutable `ARCH-REQ-YYYYMMDD-NNN` archive-library leaf; the current tree retains only the
+archive ID/reference. The archive library is itself a bounded root/partition/leaf tree, not a
+flat historical ledger. Reusable-module discovery likewise follows capability-domain indexes to
+one module-card leaf and adds nested meaning/ownership partitions before unrelated siblings
+would force broad loading. The Router resolves one explicit path only and never scans,
+flattens, recursively loads or persists a whole tree.
 
 ## Typed contracts
 
@@ -241,6 +250,10 @@ SharedContextMutationDecision = ALLOW | REQUIRE_CHANGE_CONTROL
                               | FORBID_ROLE_OR_STAGE | STALE_REVISION
 ArtifactNodeKind = ROOT_INDEX | PARTITION_INDEX | LEAF
 ArtifactLifecycle = ACTIVE | CLOSED | ARCHIVED
+ArtifactFamily = REQUIREMENT_CHANGE | SHARED_CONTEXT | AGENT_CONTEXT
+               | SPECIFICATION | TICKET | REVIEW | PROGRESS_EVIDENCE
+               | ADR_SECURITY | ARCHIVE_LIBRARY | REUSABLE_MODULE
+ArtifactTreeDecision = RESOLVED | ARTIFACT_TREE_INVALID | ARTIFACT_PATH_NOT_FOUND
 AgentContextKind = ARCHITECTURE | SUPERVISION | IMPLEMENTATION | RESEARCH
 AgentContextLifecycle = OPEN | CLOSED | INVALIDATED
 RequirementLifecycle = ACTIVE | ARCHIVED
@@ -306,6 +319,19 @@ AgentContextLease = {
   worktree_ref?, branch_ref?, baseline_revision?, side_context_id, invalidation_refs
 }
 
+ArtifactChildRef = {
+  child_id, child_kind, revision, content_digest, lifecycle, target_ref
+}
+
+ArtifactIndexNode = {
+  node_id, family, node_kind, revision, content_digest, lifecycle, child_refs
+}
+
+ArtifactPathResolution = {
+  family, root_ref, explicit_path_refs, expected_leaf_ref,
+  decision, resolved_leaf_ref?, invalid_reason?
+}
+
 RequirementLineageRef = {
   prd_ref, change_ref, lifecycle, active_leaf_ref?, archive_bundle_ref?,
   replacement_prd_ref?, replacement_change_ref?, revision, content_digest
@@ -367,10 +393,12 @@ than raw project paths, source, prompts, Secrets or PII.
 17. Agent-Context tests prove a different ticket, ticket revision, receipt, owner, worktree,
     branch or baseline invalidates the prior view before source/Agent effect. Same-ticket
     correction requires an exact revised binding; closed/invalidated views cannot be replayed.
-18. Artifact-tree and requirement-lineage tests reject cycles, duplicate parents/IDs, dangling
-    child refs, recursive flattening, active/archive overlap, unmatched PRD/CHG suffixes and
-    archive leaves reachable from the active tree. Module selection loads only the chosen
-    domain/card branch.
+18. Generic artifact-tree tests cover every declared process/document family and reject cycles,
+    duplicate parents/IDs, dangling child refs, stale revision/digest edges, leaf bodies in
+    indexes, recursive flattening and cross-root aliases. Requirement-lineage tests reject
+    active/archive overlap, unmatched PRD/CHG suffixes and archived leaves reachable through an
+    active edge. Archive/reusable-library tests prove bounded direct-child indexes and load only
+    the selected partition/card/archive branch.
 
 ## Candidate vertical ticket sequence
 
@@ -381,11 +409,13 @@ before its dependent starts:
 1. Versioned skill-reference and expected-return Router contracts.
 2. R02A shared-Context lifecycle and mutation-authority gate.
 3. R02B ticket-scoped Agent-Context lease and invalidation gate.
-4. R02C artifact-tree and PRD/CHG/archive lineage gate.
-5. R03 SPEC-readiness plus model-role sleep/wake decision kernel.
-6. R04 low-model ticket-admission decision kernel.
-7. R05 optional UI design-source decision kernel.
-8. R06 integrated Profile/Router acceptance across references, Context authority, wake, admission and
+4. R02C1 generic workflow artifact topology and exact-path resolution gate.
+5. R02C2 active PRD/CHG retirement and archive-lineage gate.
+6. R02C3 bounded archive/reusable-library index and selection gate.
+7. R03 SPEC-readiness plus model-role sleep/wake decision kernel.
+8. R04 low-model ticket-admission decision kernel.
+9. R05 optional UI design-source decision kernel.
+10. R06 integrated Profile/Router acceptance across references, Context authority, wake, admission and
    metadata-only serialization.
 
 Initialization, project-local worktree lifecycle, post-POC staging, installer
@@ -398,9 +428,10 @@ review/integration and dependent 06G tickets are paused until Router acceptance.
 The project owner approved the product direction and post-POC staging
 requirement on `2026-08-13`, approved the tiered model/decomposition/UI
 direction and Router-first implementation on `2026-08-14`, and required
-architecture-owned sealed shared Context plus tree-shaped bounded artifact/Agent Context on
-`2026-08-15`. Revision 04 authorizes only AC-12 through AC-17 together with the Router portions of
-AC-05 through AC-10 and the eight Router ticket candidates above. Exact
+architecture-owned sealed shared Context, ticket-scoped Agent Context and bounded trees for every
+workflow/process/document family, including recursively bounded archive and reusable libraries,
+on `2026-08-15`. Revision 05 authorizes only AC-12 through AC-17 together with the Router portions
+of AC-05 through AC-10 and the ten Router ticket candidates above. Exact
 initialization and staging implementation tickets under AC-01 through AC-04 and
 AC-11 remain `OWNER_REVIEW_REQUIRED`.
 

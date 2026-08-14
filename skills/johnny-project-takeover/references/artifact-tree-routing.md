@@ -7,6 +7,11 @@ direct children, and only the selected leaf contains working detail.
 ## Tree invariant
 
 Every managed artifact belongs to exactly one rooted tree and has one stable opaque identifier.
+Managed families include requirement/change, shared Context, ticket-scoped Agent Context, SPEC,
+ticket, review, progress/handoff/evidence, ADR/security, archive-library and reusable-module
+artifacts. Product source stays in its normal project source tree, but workflow records may point
+to it only through an exact typed leaf reference.
+
 An index node contains only metadata for its direct children: child ID, artifact kind, revision,
 digest, lifecycle state and child-index or leaf reference. It must not copy child bodies,
 descendant inventories, progress prose or chat history.
@@ -26,7 +31,8 @@ copy. A missing, ambiguous, cyclic, duplicate-parent, stale-revision or digest-m
 - `ACTIVE` leaves remain reachable from the active tree.
 - `CLOSED` ticket/Agent leaves are immutable evidence and are not input to a later ticket.
 - `ARCHIVED` product requirements leave the active tree and become reachable only through the
-  archive library.
+  archive library's exact index path; current indexes keep only the archive identifier/reference,
+  not a copy of the retired body.
 - A replacement creates a new leaf/revision and updates one parent edge. It never edits a sealed
   or archived leaf in place.
 
@@ -39,3 +45,7 @@ Partition by meaning and ownership before a node starts mixing unrelated child k
 partitions are feature, artifact kind, year, language or capability domain. No hard line/file
 count is a quality gate; a node is split when one consumer would otherwise need to inspect
 unrelated siblings or when different owners/lifecycles share one index.
+
+This rule is recursive. Archive libraries and reusable-module libraries must have their own
+bounded root and partition indexes as they grow. Moving a flat ledger or catalog into a directory
+without direct-child indexes and exact-leaf routing does not satisfy this rule.
