@@ -4808,3 +4808,14 @@
 | Source authority | Exactly `library/workflow_router/contracts.py`, `profile.py`, `router.py`, `__init__.py` and `tests/test_workflow_router.py`; then one append-only WPR handoff reserved as `PRG-20260814-445`. No other source/test/docs path is writable. |
 | Pre-red / return | Reproduce public `ImportError: SkillReference` before source change; execute exact committed R1-R7 and return one implementation commit plus one WPR-only handoff. Progress-only final is not completion. |
 | Resource / safety | Host model mapping `gpt-5.6-luna`, highest supported reasoning; one owner, no helper. `XSS_NOT_APPLICABLE`; no Agent delegation/control, new worktree, self-review/integration, 06G0P mutation, live model/Figma/Codex/home/App/target/network effect, push, package/install, Secret, release or deployment. |
+
+## PRG-20260814-445 - Router Ticket R01 implementation handoff
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_DISPATCH_CONFIRMED(PRG-444) -> ACTION_COMPLETED / REVIEW_HANDOFF`; R1-R7 are implemented on the admitted owner lane. |
+| Exact chain | Branch `codex/implementation-router-route-instruction-r01`; implementation `bff21771d3dc10eae4b354097e40123eb2b13001`; WPR-only handoff is this entry. |
+| First red / contract | Public imports of `ExpectedReturnContract`, `ReturnContractKind` and `SkillReference` produced the required `ImportError` before production mutation. R1 finite strict models and JSON round-trips, R2 profile contracts/fallback, R3 success/retry/wait copying, R4 fail-closed fallback, R5 metadata-only serialization and R6 regression coverage are green. |
+| Reversals | Making `TransitionRule.skill_reference` optional made `test_required_skill_reference_is_required` fail; substituting Profile fallback metadata in the final successful route made `test_successful_decision_copies_exact_rule_contract` fail. Both edits were restored with exact source bytes and the final focused suite is green. |
+| Verification | Focused Router `31/31`; existing six-module Router suite `98/98`; full explicit serial unittest `534/534`; strict full-tree mypy `150` source files with external cache removed; in-memory compile `150` files; `git diff --check` and exact five-path scope pass. |
+| Readback / boundary | Final branch/worktree is clean except the WPR append before this handoff commit; exact three-worktree topology, registry ancestry, tracked/ignored porcelain, cache/bytecode/runtime residue are clean/zero. `XSS_NOT_APPLICABLE`; no helper, live model/host/Codex/home/config/target-project/network effect, push/staging publication, package/install, Secret, release or deployment. |
