@@ -4506,3 +4506,22 @@
 | Implementation | Commit `559f1c1fa9b89c411a80e26f275a6c23aad98a57` changes exactly the two frozen paths; exact admitted absent/present responses map to ordinary manifest-bound true/false proofs with one `ABSENCE` action. |
 | Verification | Focused adapter `15/15`; full explicit serial unittest `514/514`; strict full-tree mypy `148` files with explicit package bases and external cache removed; in-memory compile `148` files. Three M6 reversals (truth mapping, response admission, request-before-effect) turned named tests red and restored exact bytes. |
 | Boundary / residue | `XSS_NOT_APPLICABLE`; no model bypass, `Any`, `type:ignore`, broad catch/clear, dynamic lookup, live Codex/host/target-project effect, package/install, push, release or deployment. Final scope, ancestry, topology, tracked/ignored porcelain and cache/runtime/bytecode residue are clean/absent. |
+## PRG-20260814-417 - Ticket 05C2C2 revision-03 independent review
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `REVIEW_HANDOFF(05C2C2 revision 03) -> REVIEW_COMPLETED / CHANGES_REQUESTED`; ordinary same-branch source-only correction is authorized by standing `PRG-20260809-042`. |
+| Reviewed chain | Implementation `559f1c1fa9b89c411a80e26f275a6c23aad98a57`; WPR-only handoff `019e287d860d37c646e85c7bbbdd5d7bfc9f6e34` / PRG-416; immutable archive SHA-256 `13789481A4872916C7F7A2A46620FE1D37B1AE38D97FE26DE4FC07A6EC5787FD`. |
+| Independent evidence | Focused `15/15`; full serial `514/514`; strict mypy `148`; compile `148`; exact truth/no-hook probes and three independent runtime reversals pass. Exact scope/ancestry/clean lane/topology pass; reviewer TEMP export, junctions, archive and cache were removed. |
+| Finding | CR-178 `IMPLEMENTATION_DEFECT`: the changed method's docstring still claims the old absence-only contract and its final failure-call indentation is malformed. Runtime behavior and strong typing are otherwise correct. |
+| Continuation | Same ticket/revision-03 owner/permanent worktree/branch/binding; source-only documentation/indentation correction with direct-test blob byte-identical, then reserved PRG-20260814-419 WPR-only handoff. No new branch/worktree/helper/effect/push/package/install/release/deploy. |
+
+## PRG-20260814-418 - Ticket 05C2C2 CR-178 correction dispatch registry
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `CHANGES_REQUESTED(CR-178) + EXACT_LANE_READBACK + SOURCE_ONLY_SCOPE -> CORRECTION_DISPATCH_CONFIRMED / IMPLEMENT` |
+| Review / lane | Exact review baseline `2f3ba13ee12529cb4d35615073685032f72e5ea6`; owner task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; clean permanent worktree/unchanged branch at handoff `019e287d860d37c646e85c7bbbdd5d7bfc9f6e34`; exactly three worktrees. Read-only merge prediction shows only append-only WPR overlap. |
+| Frozen correction | Same revision-03 binding and receipt. Change only the adapter source docstring and malformed final-call indentation. No executable token, import, behavior, type, direct test or other file may change; direct-test blob remains `9c9b24f34fd8145e05ac559f8e4edb8d673ffaab`. |
+| Return | Merge the exact control commit carrying this registry into the same branch, preserving PRG-416 through PRG-418 once; return one additive source-only correction commit and reserved PRG-20260814-419 in one WPR-only handoff commit. |
+| Boundary | No new branch/worktree/helper, live effect, push/staging publication, package/build/install, Secret, release or deployment. |
