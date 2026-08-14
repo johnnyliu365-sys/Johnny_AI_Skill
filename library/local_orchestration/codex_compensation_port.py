@@ -228,7 +228,7 @@ class CodexInstalledPathAbsenceProof(_StrictModel):
     """Typed path-absence result for later exact composition."""
 
     manifest: CodexCompensationPortManifest
-    absent: Literal[True]
+    absent: bool
 
 
 class CodexCompensationPortOperation(str, Enum):

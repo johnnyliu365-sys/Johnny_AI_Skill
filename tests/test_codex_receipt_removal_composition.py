@@ -567,7 +567,7 @@ def _path(
     *,
     manifest: CodexCompensationPortManifest | None = None,
 ) -> CodexInstalledPathAbsenceProof:
-    return CodexInstalledPathAbsenceProof.model_construct(
+    return CodexInstalledPathAbsenceProof(
         manifest=manifest or CodexCompensationPortManifest(
             installation_id=INSTALLATION,
             root=ROOT,
@@ -581,7 +581,6 @@ def _path(
             digest=DIGEST,
         ),
         absent=absent,
-        _fields_set={"manifest", "absent"},
     )
 
 
