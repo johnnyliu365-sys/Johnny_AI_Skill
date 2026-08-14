@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 from pathlib import Path
 import stat
 
@@ -22,6 +23,7 @@ from .contracts import (
     OracleCompleted,
     OracleForeignSeeded,
     OracleIdentity,
+    OracleInstalledPathPresent,
     OracleMarketplaceRecord,
     OraclePluginRecord,
     OracleRunResult,
@@ -85,7 +87,7 @@ class CodexLifecycleOracle:
             return OracleBlocked(reason=OracleBlockReason.INITIALIZATION_FAILED)
         command = OracleCommand(action=OracleAction.MARKETPLACE_LIST, identity=_default_identity())
         result = self.run(validated, command)
-        if isinstance(result, OracleAbsent):
+        if isinstance(result, (OracleAbsent, OracleInstalledPathPresent)):
             return OracleBlocked(reason=OracleBlockReason.PROCESS_FAILED)
         return result
 
@@ -148,13 +150,23 @@ class CodexLifecycleOracle:
             state_path = validated_state_path(lease)
             payload_root = validated_payload_root(lease)
             state = _read_state(state_path)
-            if state.marketplaces or state.plugins:
-                return OracleBlocked(reason=OracleBlockReason.ABSENCE_NOT_PROVEN)
-            owned_paths = (
-                payload_root / "marketplaces" / f"{command.identity.marketplace_name}.json",
-                payload_root / "plugins" / f"{command.identity.plugin_id}.json",
-            )
-            if any(path.exists() or _is_reparse(path) for path in owned_paths):
+            if state.plugins:
+                if len(state.plugins) != 1:
+                    return OracleBlocked(reason=OracleBlockReason.ABSENCE_NOT_PROVEN)
+                plugin = state.plugins[0]
+                if not _plugin_matches_identity(plugin, command.identity):
+                    return OracleBlocked(reason=OracleBlockReason.ABSENCE_NOT_PROVEN)
+                if len(state.marketplaces) != 1 or not _marketplace_matches_identity(
+                    state.marketplaces[0], command.identity
+                ):
+                    return OracleBlocked(reason=OracleBlockReason.ABSENCE_NOT_PROVEN)
+                if not _exact_plugin_payload(payload_root, plugin):
+                    return OracleBlocked(reason=OracleBlockReason.ABSENCE_NOT_PROVEN)
+                if not _plugin_list_matches_state(payload, state):
+                    return OracleBlocked(reason=OracleBlockReason.ABSENCE_NOT_PROVEN)
+                return OracleInstalledPathPresent()
+            owned_plugin_path = payload_root / "plugins" / f"{command.identity.plugin_id}.json"
+            if owned_plugin_path.exists() or _is_reparse(owned_plugin_path):
                 return OracleBlocked(reason=OracleBlockReason.ABSENCE_NOT_PROVEN)
             expected_foreign_plugins = tuple(
                 (
@@ -241,6 +253,99 @@ def _revalidate_absence_payload(response: CodexProtocolAccepted) -> CodexPluginL
     if type(rebuilt) is not CodexProtocolAccepted or type(rebuilt.payload) is not CodexPluginList:
         return None
     return rebuilt.payload
+
+
+def _plugin_matches_identity(record: OraclePluginRecord, identity: OracleIdentity) -> bool:
+    return (
+        record.plugin_id == identity.plugin_id
+        and record.name == identity.plugin_name
+        and record.marketplace_name == identity.marketplace_name
+        and record.version == identity.plugin_version
+        and record.source == identity.plugin_source
+        and record.install_policy == identity.plugin_install_policy
+        and record.auth_policy == identity.plugin_auth_policy
+        and record.installed_path == identity.plugin_installed_path
+        and record.locator == f"plugins/{identity.plugin_id}.json"
+    )
+
+
+def _marketplace_matches_identity(record: OracleMarketplaceRecord, identity: OracleIdentity) -> bool:
+    return (
+        record.name == identity.marketplace_name
+        and record.root == identity.marketplace_root
+        and record.locator == f"marketplaces/{identity.marketplace_name}.json"
+    )
+
+
+def _exact_plugin_payload(payload_root: Path, record: OraclePluginRecord) -> bool:
+    if record.locator != f"plugins/{record.plugin_id}.json":
+        return False
+    path = payload_root / record.locator
+    if path.parent.parent != payload_root or not _is_plain_file(path):
+        return False
+    try:
+        actual = path.read_bytes()
+    except OSError:
+        return False
+    expected = _plugin_payload(record)
+    return actual == expected and hashlib.sha256(actual).hexdigest() == record.digest
+
+
+def _plugin_list_matches_state(payload: CodexPluginList, state: OracleState) -> bool:
+    if payload.available:
+        return False
+    expected = tuple(
+        _state_plugin_tuple(record)
+        for record in (*state.plugins, *state.foreign_plugins)
+    )
+    actual: list[tuple[str, str, str, str, bool, bool, str, str, str, str, str]] = []
+    for entry in payload.installed:
+        observed = _response_plugin_tuple(entry)
+        if observed is None:
+            return False
+        actual.append(observed)
+    return tuple(actual) == expected
+
+
+def _state_plugin_tuple(
+    record: OraclePluginRecord,
+) -> tuple[str, str, str, str, bool, bool, str, str, str, str, str]:
+    return (
+        record.plugin_id,
+        record.name,
+        record.marketplace_name,
+        record.version,
+        True,
+        True,
+        record.source,
+        record.install_policy,
+        record.auth_policy,
+        "local",
+        "oracle-source",
+    )
+
+
+def _response_plugin_tuple(
+    entry: CodexPluginEntry,
+) -> tuple[str, str, str, str, bool, bool, str, str, str, str, str] | None:
+    if not _exact_plugin_entry(entry):
+        return None
+    source = entry.marketplaceSource
+    if type(source) is not CodexMarketplaceSource:
+        return None
+    return (
+        entry.pluginId,
+        entry.name,
+        entry.marketplaceName,
+        entry.version,
+        entry.installed,
+        entry.enabled,
+        entry.source,
+        entry.installPolicy,
+        entry.authPolicy,
+        source.type,
+        source.value,
+    )
 
 
 def _exact_plugin_list(value: CodexPluginList) -> bool:

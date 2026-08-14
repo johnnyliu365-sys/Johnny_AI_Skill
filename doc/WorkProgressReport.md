@@ -4374,6 +4374,16 @@
 | Binding / dispatch | One-use 05C2C1 workspace/handoff/allocation/receipt/correlation/question/side-context from the ticket; create only `codex/implementation-codex-oracle-installed-path-presence-05c2c1` at the exact registry commit and change only the six frozen paths. Reserved WPR handoff is PRG-404. |
 | Resource / boundary | One owner and no helper because 05C2C2 serially consumes the new result and the oracle/response-admission paths are one cohesive contract. No reviewer implementation-worktree write, new worktree, live effect, push/staging publication, package/install, Secret, release or deployment. |
 
+## PRG-20260814-404 - Ticket 05C2C1 installed-path presence handoff
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05C2C1) -> ACTION_COMPLETED / REVIEW_HANDOFF`; independent review remains required. |
+| Lane / first red | Branch `codex/implementation-codex-oracle-installed-path-presence-05c2c1`; first red was the missing `OracleInstalledPathPresent` import/result path (`ImportError`) in the response-admission test. Exact permanent worktree, linked Git identity and ticket binding were retained. |
+| Implementation | Commit `8cb41e38dc7d9124a42c92a84d509a89dada0e51` changes exactly the six frozen paths. `OracleInstalledPathPresent` is a fixed-action dataclass in the result/admission unions; ABSENCE now distinguishes exact owned logical state plus exact plugin payload from coherent absence, while foreign state remains preserved and non-authorizing. |
+| Verification | Focused lifecycle/response tests `46/46`; full explicit serial unittest `509/509`; strict full-tree `mypy --strict` with explicit package bases `148` files and repository-external cache removed; in-memory compile `148` files. Four independent P7 reversals turned their named tests red and restored exact bytes. |
+| Boundary / residue | Exact six-path scope, diff-check, control ancestry and three-worktree topology passed. `XSS_NOT_APPLICABLE` (typed Python staging evidence only; no browser/WebView/HTML/DOM/JavaScript context). No `Any`, `type: ignore`, broad catch/clear, dynamic lookup, live Codex/host/target-project effect, package/install, push, release or deployment. Final tracked/ignored porcelain, `__pycache__`, `.pyc`, project runtime and external mypy cache are absent/clean. |
+
 ## PRG-20260814-405 - Ticket 05C2C1 independent review
 
 | Field | Evidence |

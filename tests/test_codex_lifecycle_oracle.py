@@ -24,6 +24,7 @@ from tests.staging.codex_lifecycle_oracle.contracts import (
     OracleCompleted,
     OracleForeignSeeded,
     OracleIdentity,
+    OracleInstalledPathPresent,
     OracleMarketplaceRecord,
     OraclePluginRecord,
     OracleRunResult,
@@ -169,6 +170,24 @@ class AbsenceStateResidueFixture(CodexProtocolFixture):
         if self._armed and surface is CodexProtocolSurface.PLUGIN_LIST:
             state_path = lease.codex_home.absolute.path / ORACLE_STATE_FILE_NAME
             state_path.write_bytes(self._residue)
+        return response
+
+
+class PresencePayloadResidueFixture(CodexProtocolFixture):
+    """Removes only the owned payload after child validation for conjunctive proof."""
+
+    def __init__(self, runner: CodexLifecycleOracleRunner) -> None:
+        super().__init__(runner, ExactResponseFilePort())
+
+    def run(
+        self,
+        lease: EnvironmentLease,
+        surface: CodexProtocolSurface,
+    ) -> CodexProtocolAccepted | CodexProtocolRejected:
+        response = super().run(lease, surface)
+        if surface is CodexProtocolSurface.PLUGIN_LIST:
+            payload_path = lease.codex_home.absolute.path / "oracle-payloads" / "plugins" / "owned-plugin.json"
+            payload_path.unlink()
         return response
 
 
@@ -570,6 +589,144 @@ class CodexLifecycleOracleTests(unittest.TestCase):
         finally:
             self._teardown(allocator, lease)
 
+    def test_p2_absence_returns_exact_present_for_owned_plugin_and_payload(self) -> None:
+        allocator, lease, oracle = self._ready("0000000000000401")
+        try:
+            self._assert_completed(oracle.initialize(lease), CodexMarketplaceList)
+            self._assert_completed(self._run(oracle, lease, OracleAction.MARKETPLACE_ADD), CodexMarketplaceAdd)
+            self._assert_completed(self._run(oracle, lease, OracleAction.PLUGIN_ADD), CodexPluginAdd)
+            result = self._run(oracle, lease, OracleAction.ABSENCE)
+            self.assertIs(type(result), OracleInstalledPathPresent)
+            if type(result) is not OracleInstalledPathPresent:
+                raise AssertionError("expected exact installed-path presence")
+            self.assertIs(result.action, OracleAction.ABSENCE)
+        finally:
+            self._teardown(allocator, lease)
+
+    def test_p3_fresh_and_marketplace_only_states_are_exact_absent(self) -> None:
+        cells = (False, True)
+        for index, marketplace_only in enumerate(cells, start=0x402):
+            with self.subTest(marketplace_only=marketplace_only):
+                allocator, lease, oracle = self._ready(f"000000000000{index:04x}")
+                try:
+                    self._assert_completed(oracle.initialize(lease), CodexMarketplaceList)
+                    if marketplace_only:
+                        self._assert_completed(
+                            self._run(oracle, lease, OracleAction.MARKETPLACE_ADD),
+                            CodexMarketplaceAdd,
+                        )
+                    result = self._run(oracle, lease, OracleAction.ABSENCE)
+                    self.assertIs(type(result), OracleAbsent)
+                    if type(result) is not OracleAbsent:
+                        raise AssertionError("expected exact absence")
+                    self.assertIs(result.action, OracleAction.ABSENCE)
+                finally:
+                    self._teardown(allocator, lease)
+
+    def test_p4_incomplete_mismatched_and_tampered_presence_evidence_blocks(self) -> None:
+        cells: tuple[tuple[str, OracleBlockReason], ...] = (
+            ("logical-only", OracleBlockReason.TOPOLOGY_INVALID),
+            ("physical-only", OracleBlockReason.TOPOLOGY_INVALID),
+            ("wrong-identity", OracleBlockReason.ABSENCE_NOT_PROVEN),
+            ("wrong-logical-path", OracleBlockReason.ABSENCE_NOT_PROVEN),
+            ("wrong-digest", OracleBlockReason.DIGEST_MISMATCH),
+        )
+        for index, (cell, expected) in enumerate(cells, start=0x410):
+            with self.subTest(cell=cell):
+                allocator, lease, oracle = self._ready(f"000000000000{index:04x}")
+                try:
+                    self._assert_completed(oracle.initialize(lease), CodexMarketplaceList)
+                    self._assert_completed(
+                        self._run(oracle, lease, OracleAction.MARKETPLACE_ADD),
+                        CodexMarketplaceAdd,
+                    )
+                    self._assert_completed(
+                        self._run(oracle, lease, OracleAction.PLUGIN_ADD),
+                        CodexPluginAdd,
+                    )
+                    command = self._command(OracleAction.ABSENCE)
+                    state_path = oracle.state_path(lease)
+                    plugin_path = oracle.payload_root(lease) / "plugins" / f"{IDENTITY.plugin_id}.json"
+                    if cell == "logical-only":
+                        plugin_path.unlink()
+                    elif cell == "physical-only":
+                        state = json.loads(state_path.read_text(encoding="utf-8"))
+                        state["plugins"] = []
+                        state_path.write_text(json.dumps(state, separators=(",", ":")), encoding="utf-8")
+                    elif cell == "wrong-identity":
+                        command = OracleCommand(
+                            action=OracleAction.ABSENCE,
+                            identity=IDENTITY.model_copy(update={"plugin_id": "other-plugin"}),
+                        )
+                    elif cell == "wrong-logical-path":
+                        command = OracleCommand(
+                            action=OracleAction.ABSENCE,
+                            identity=IDENTITY.model_copy(update={"plugin_installed_path": ALTERNATE_LOGICAL_INSTALLED_PATH}),
+                        )
+                    else:
+                        state = json.loads(state_path.read_text(encoding="utf-8"))
+                        state["plugins"][0]["digest"] = "0" * 64
+                        state_path.write_text(json.dumps(state, separators=(",", ":")), encoding="utf-8")
+                    self._assert_blocked(oracle.run(lease, command), expected)
+                finally:
+                    self._teardown(allocator, lease)
+
+    def test_p5_foreign_only_presence_evidence_is_absent_and_byte_preserving(self) -> None:
+        allocator, lease, oracle = self._ready("0000000000000415")
+        foreign_marketplace = self._foreign_marketplace("foreign-presence-market", "foreign-presence-root")
+        foreign_plugin = self._foreign_plugin("foreign-presence-plugin", "foreign-presence-name", foreign_marketplace.name)
+        try:
+            self._assert_completed(oracle.initialize(lease), CodexMarketplaceList)
+            self.assertIsInstance(oracle.seed_foreign_marketplace(lease, foreign_marketplace), OracleForeignSeeded)
+            self.assertIsInstance(oracle.seed_foreign_plugin(lease, foreign_plugin), OracleForeignSeeded)
+            state_path = oracle.state_path(lease)
+            marketplace_path = oracle.payload_root(lease) / foreign_marketplace.locator
+            plugin_path = oracle.payload_root(lease) / foreign_plugin.locator
+            before_state = state_path.read_bytes()
+            before_marketplace = marketplace_path.read_bytes()
+            before_plugin = plugin_path.read_bytes()
+            result = self._run(oracle, lease, OracleAction.ABSENCE)
+            self.assertIs(type(result), OracleAbsent)
+            self.assertEqual(before_state, state_path.read_bytes())
+            self.assertEqual(before_marketplace, marketplace_path.read_bytes())
+            self.assertEqual(before_plugin, plugin_path.read_bytes())
+        finally:
+            self._teardown(allocator, lease)
+
+    def test_p5_owned_present_preserves_foreign_plugin_state_and_payload(self) -> None:
+        allocator, lease, oracle = self._ready("0000000000000416")
+        foreign = self._foreign_plugin("foreign-owned-presence-plugin", "foreign-owned-presence-name", "foreign-market")
+        try:
+            self._assert_completed(oracle.initialize(lease), CodexMarketplaceList)
+            self.assertIsInstance(oracle.seed_foreign_plugin(lease, foreign), OracleForeignSeeded)
+            self._assert_completed(self._run(oracle, lease, OracleAction.MARKETPLACE_ADD), CodexMarketplaceAdd)
+            self._assert_completed(self._run(oracle, lease, OracleAction.PLUGIN_ADD), CodexPluginAdd)
+            foreign_path = oracle.payload_root(lease) / foreign.locator
+            before_state = oracle.state_path(lease).read_bytes()
+            before_payload = foreign_path.read_bytes()
+            result = self._run(oracle, lease, OracleAction.ABSENCE)
+            self.assertIs(type(result), OracleInstalledPathPresent)
+            self.assertEqual(before_state, oracle.state_path(lease).read_bytes())
+            self.assertEqual(before_payload, foreign_path.read_bytes())
+        finally:
+            self._teardown(allocator, lease)
+
+    def test_p7_presence_requires_logical_and_physical_conjunct(self) -> None:
+        allocator = DisposableEnvironmentAllocator.from_project_runtime()
+        provisioned = allocator.provision(EnvironmentOwnerId(value="environment-owner-0000000000000417"))
+        if not isinstance(provisioned, ProvisionedEnvironment):
+            raise AssertionError("failed to provision owned environment")
+        lease = provisioned.environment
+        runner = CodexLifecycleOracleRunner(BoundedChildProcessRunner(SubprocessProcessPort()))
+        oracle = FixtureFailureOracle(runner, PresencePayloadResidueFixture(runner))
+        try:
+            self._assert_completed(oracle.initialize(lease), CodexMarketplaceList)
+            self._assert_completed(self._run(oracle, lease, OracleAction.MARKETPLACE_ADD), CodexMarketplaceAdd)
+            self._assert_completed(self._run(oracle, lease, OracleAction.PLUGIN_ADD), CodexPluginAdd)
+            self._assert_blocked(self._run(oracle, lease, OracleAction.ABSENCE), OracleBlockReason.ABSENCE_NOT_PROVEN)
+        finally:
+            self._teardown(allocator, lease)
+
     def test_a1_a2_a3_a4_owned_absence_keeps_valid_empty_state_until_teardown(self) -> None:
         allocator, lease, oracle = self._ready("0000000000000002")
         try:
@@ -639,7 +796,8 @@ class CodexLifecycleOracleTests(unittest.TestCase):
             self._assert_completed(self._run(oracle, lease, OracleAction.PLUGIN_REMOVE), CodexPluginRemove)
             self._assert_completed(self._run(oracle, lease, OracleAction.MARKETPLACE_REMOVE), CodexMarketplaceRemove)
             fixture.arm(owned_residue)
-            self._assert_blocked(self._run(oracle, lease, OracleAction.ABSENCE), OracleBlockReason.ABSENCE_NOT_PROVEN)
+            result = self._run(oracle, lease, OracleAction.ABSENCE)
+            self.assertIs(type(result), OracleAbsent)
             self.assertEqual(owned_residue, oracle.state_path(lease).read_bytes())
         finally:
             self._teardown(allocator, lease)
@@ -648,7 +806,6 @@ class CodexLifecycleOracleTests(unittest.TestCase):
         cells: tuple[tuple[str, OracleBlockReason], ...] = (
             ("missing", OracleBlockReason.STATE_MISSING),
             ("tampered", OracleBlockReason.STATE_INVALID),
-            ("owned-residue", OracleBlockReason.COMMAND_INVALID),
             ("topology", OracleBlockReason.TOPOLOGY_INVALID),
         )
         for index, (cell, expected) in enumerate(cells, start=70):
@@ -663,8 +820,6 @@ class CodexLifecycleOracleTests(unittest.TestCase):
                         state = json.loads(state_path.read_text(encoding="utf-8"))
                         state["undeclared"] = "forbidden"
                         state_path.write_text(json.dumps(state, separators=(",", ":")), encoding="utf-8")
-                    elif cell == "owned-residue":
-                        self._assert_completed(self._run(oracle, lease, OracleAction.MARKETPLACE_ADD), CodexMarketplaceAdd)
                     else:
                         unexpected_payload = oracle.payload_root(lease) / "plugins" / "unowned.json"
                         unexpected_payload.parent.mkdir(parents=True)

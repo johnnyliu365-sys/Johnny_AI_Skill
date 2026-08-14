@@ -23,7 +23,7 @@ from tests.staging.codex_protocol.contracts import (
     CodexProtocolSurface,
 )
 
-from .contracts import OracleAbsent, OracleAction, OracleBlocked, OracleCompleted
+from .contracts import OracleAbsent, OracleAction, OracleBlocked, OracleCompleted, OracleInstalledPathPresent
 
 
 class _StrictModel(BaseModel):
@@ -52,7 +52,7 @@ class CodexOracleResponseRejected(_StrictModel):
 
 
 CodexOracleResponseAdmission: TypeAlias = (
-    CodexProtocolAccepted | OracleAbsent | CodexOracleResponseRejected
+    CodexProtocolAccepted | OracleAbsent | OracleInstalledPathPresent | CodexOracleResponseRejected
 )
 
 
@@ -113,6 +113,9 @@ def admit_codex_oracle_response(value: object, action: OracleAction) -> CodexOra
     if type(value) is OracleAbsent:
         return _admit_absence(value, action)
 
+    if type(value) is OracleInstalledPathPresent:
+        return _admit_installed_path_present(value, action)
+
     if type(value) is not OracleCompleted:
         return _rejected(CodexOracleResponseRejectReason.INVALID_RESULT)
 
@@ -154,6 +157,21 @@ def _admit_absence(value: OracleAbsent, action: OracleAction) -> CodexOracleResp
     if action is not OracleAction.ABSENCE:
         return _rejected(CodexOracleResponseRejectReason.ACTION_RESULT_MISMATCH)
     return OracleAbsent()
+
+
+def _admit_installed_path_present(
+    value: OracleInstalledPathPresent,
+    action: OracleAction,
+) -> CodexOracleResponseAdmission:
+    state = _exact_dataclass_state(value, OracleInstalledPathPresent, ("action",))
+    if state is None:
+        return _rejected(CodexOracleResponseRejectReason.INVALID_RESULT)
+    observed_action = state["action"]
+    if type(observed_action) is not OracleAction or observed_action is not OracleAction.ABSENCE:
+        return _rejected(CodexOracleResponseRejectReason.MALFORMED_RESPONSE)
+    if action is not OracleAction.ABSENCE:
+        return _rejected(CodexOracleResponseRejectReason.ACTION_RESULT_MISMATCH)
+    return OracleInstalledPathPresent()
 
 
 def _rebuild_payload(surface: CodexProtocolSurface, value: object) -> CodexProtocolPayload | None:
