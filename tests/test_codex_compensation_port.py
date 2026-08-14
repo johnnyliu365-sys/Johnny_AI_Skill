@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import unittest
 from enum import Enum
-from typing import NoReturn
+from typing import NoReturn, cast
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 
 from library.local_orchestration.codex_compensation_port import (
     CodexCompensationPortCapability,
@@ -341,6 +341,30 @@ class _RequestProtocolTrap:
 
 
 class CodexCompensationPortTests(unittest.TestCase):
+    def test_t1_absent_false_ordinary_constructor_is_a_valid_truth_state(self) -> None:
+        proof = CodexInstalledPathAbsenceProof(manifest=manifest(), absent=False)
+        self.assertFalse(proof.absent)
+
+    def test_t2_exact_true_false_construct_and_round_trip_as_bools(self) -> None:
+        for absent in (True, False):
+            with self.subTest(absent=absent):
+                proof = CodexInstalledPathAbsenceProof(manifest=manifest(), absent=absent)
+                self.assertIs(type(proof.absent), bool)
+                reloaded = CodexInstalledPathAbsenceProof.model_validate_json(proof.model_dump_json())
+                self.assertIs(type(reloaded.absent), bool)
+                self.assertEqual(absent, reloaded.absent)
+                self.assertEqual(proof.manifest.model_dump(), reloaded.manifest.model_dump())
+
+    def test_t3_non_bool_truth_cells_fail_ordinary_validation(self) -> None:
+        invalid_values: tuple[object, ...] = (0, 1, "true", None, [], {}, (True,))
+        for invalid_value in invalid_values:
+            with self.subTest(value_type=type(invalid_value).__name__):
+                with self.assertRaises(ValidationError):
+                    CodexInstalledPathAbsenceProof(
+                        manifest=manifest(),
+                        absent=cast(bool, invalid_value),
+                    )
+
     def test_q1_request_revalidation_has_one_closed_finite_rejection(self) -> None:
         result = revalidate_codex_compensation_port_request(None)
         if not isinstance(result, CodexCompensationPortValueRejected):

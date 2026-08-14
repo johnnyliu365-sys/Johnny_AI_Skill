@@ -1217,7 +1217,7 @@ class CodexCompensationCompositionTests(unittest.TestCase):
             ("absent", CodexInstalledPathAbsenceProof(manifest=manifest(), absent=True), ()),
             (
                 "residue",
-                CodexInstalledPathAbsenceProof.model_construct(manifest=manifest(), absent=False),
+                CodexInstalledPathAbsenceProof(manifest=manifest(), absent=False),
                 (CodexCompensationReason.INSTALLED_LOCATION_RESIDUE,),
             ),
             (
