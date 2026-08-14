@@ -4465,6 +4465,19 @@
 | Binding / return | Existing workspace/handoff/allocation/receipt/correlation/question/side-context retained. Merge the exact review baseline, change no implementation blob, then append only reserved PRG-20260814-413 in one WPR-only evidence correction commit. |
 | Boundary | No new branch/worktree/helper, source/test/ticket/review edit, live Codex/host/target-project effect, push/staging publication, package/build/install, Secret, release or deployment. |
 
+## PRG-20260814-423 - Ticket 05C2C3 marketplace-source truth handoff
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05C2C3) -> ACTION_COMPLETED / REVIEW_HANDOFF`; independent review remains required. |
+| Lane / first red | Branch `codex/implementation-codex-oracle-marketplace-source-truth-05c2c3`; first red executed the real owned `MARKETPLACE_ADD` then `MARKETPLACE_LIST` child path and compared the persisted `marketplaces/owned-market.json` locator with returned hard-coded `oracle-source`. |
+| Implementation | Commit `8de9e60a59645fdf4fc7e6b298be3bcd70b06789` changes exactly `tests/staging/codex_lifecycle_oracle/oracle_child.py` and `tests/test_codex_lifecycle_oracle.py`. Each validated owned/foreign record now derives `CodexMarketplaceSource(type="local", value=locator.removesuffix(".json"))`; order, cardinality, roots, payloads, process surface and failure mappings remain preserved. |
+| Exact file hashes | `oracle_child.py` `2265EC35F6FA4D835829F4289A2E2C57F8F25E8C30BAD067D21E7F7FD634F105`; `test_codex_lifecycle_oracle.py` `6CEBB7B52B71C8456519944A255764D5B02C782D44E84B8E559D67903DBEDA86`. |
+| S1-S5 evidence | Real owned add/list derives the exact persisted relative locator; owned plus prefix-similar foreign records preserve order/cardinality/data/payloads and independently derive sources; invalid missing/wrong-prefix/suffix/casing/encoded/traversal/empty locators remain `STATE_INVALID` with state/payload bytes unchanged; integrated compensation observes `RESIDUE`, then `PROVED_ABSENT` after exact owned removal while foreign state/payload remains preserved. |
+| Verification | Focused lifecycle tests `34/34`; full explicit serial unittest `517/517`; strict full-tree mypy with explicit package bases and removable external cache reports no issues in `148` files; in-memory compile `148` files. |
+| Reversals | Three independent named reversals turned tests red and were restored byte-for-byte: old hard-coded source versus S1, absolute-root source derivation versus S1, and prefix-similar foreign filtering versus S2. Final source sentinel confirms no hard-coded marketplace-list source/root/name token. |
+| Scope / boundary | Exact two-path scope, diff check, baseline ancestry, three-worktree topology, clean tracked/ignored status and zero `__pycache__`, `.pyc`, runtime or external-cache residue passed. `XSS_NOT_APPLICABLE` (typed Python child protocol only; no renderer or JavaScript context). No live Codex/home/config/target-project/network effect, helper/subagent, package/install, push, release or deployment. |
+
 ## PRG-20260814-413 - Ticket 05C2C2A reviewer evidence-frame correction and approval
 
 | Field | Evidence |
