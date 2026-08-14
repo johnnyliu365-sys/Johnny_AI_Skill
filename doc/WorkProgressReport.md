@@ -4525,3 +4525,13 @@
 | Frozen correction | Same revision-03 binding and receipt. Change only the adapter source docstring and malformed final-call indentation. No executable token, import, behavior, type, direct test or other file may change; direct-test blob remains `9c9b24f34fd8145e05ac559f8e4edb8d673ffaab`. |
 | Return | Merge the exact control commit carrying this registry into the same branch, preserving PRG-416 through PRG-418 once; return one additive source-only correction commit and reserved PRG-20260814-419 in one WPR-only handoff commit. |
 | Boundary | No new branch/worktree/helper, live effect, push/staging publication, package/build/install, Secret, release or deployment. |
+
+## PRG-20260814-419 - Ticket 05C2C2 CR-178 correction handoff
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `CORRECTION_DISPATCH_CONFIRMED(CR-178) -> ACTION_COMPLETED / REVIEW_HANDOFF`; independent review remains required. |
+| Merge / implementation | History-preserving merge `ffb84f3d6d88f4cd2903432d0735a1cf4d72c0ee` incorporated the exact control registry with only the WPR overlap resolved; source-only correction commit `e801646c4d32401f90aa65784635a2c66445973e` changes only `tests/staging/codex_lifecycle_oracle/compensation_adapter.py`. |
+| Correction audit | The stale absence-only docstring now states exact admitted absence/presence results become manifest-bound path truth; only the final `_operation_failure(...)` continuation indentation changed. No executable token, import, behavior, type, test or other implementation path changed. Direct-test blob remains `9c9b24f34fd8145e05ac559f8e4edb8d673ffaab`. |
+| Verification | Focused adapter `15/15`; strict full-tree mypy `148` files with removable external cache; in-memory compile `148` files. Diff check and source-only scope audit pass; full-suite rerun was omitted under the frozen non-executable-text/whitespace exception. |
+| Boundary / residue | `XSS_NOT_APPLICABLE`; final tracked/ignored porcelain, ancestry, three-worktree topology and repository-local cache/runtime/bytecode residue are clean/absent. No helper, live Codex/host/target-project effect, push, package/install, release or deployment. |
