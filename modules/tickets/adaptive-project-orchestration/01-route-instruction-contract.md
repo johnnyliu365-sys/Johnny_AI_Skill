@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2` revision 02 / AC-12 through AC-14 shared route precondition |
 | Change / ADR | `CHG-20260814-019`; `ADR-20260814-011` |
-| State | `CHANGES_REQUESTED / REVISION_03_REFROZEN` |
+| State | `IN_PROGRESS / REVISION_03_CORRECTION_DISPATCH_CONFIRMED` |
 | Closure | `CLOSURE-ADAPTIVE-ROUTER-R01-03` / R1-R7 plus CR-R01-001 through CR-R01-004 |
 | Baseline | Router policy freeze `ffc2197f4ac9be495651fd970c0c3f21737aa3bc` |
 | Delivery profile | `STANDARD`; one Luna implementation owner; no helper |
@@ -13,6 +13,7 @@
 | Planned branch | `codex/implementation-router-route-instruction-r01` from the exact registry commit containing `PRG-20260814-444` |
 | Dispatch binding | `hnd_adaptive_router_r01_20260814`; `aln_adaptive_router_r01_20260814`; receipt `rcpt_adaptive_router_r01_20260814`; question `q-adaptive-router-r01-20260814`; correlation `corr-adaptive-router-r01-20260814`; side context `scx-adaptive-router-r01-20260814-01` |
 | Correction binding | `hnd_adaptive_router_r01_r02_20260814`; review baseline `334935dfd557e7d244b31de37e80db8911f27069`; same allocation/receipt/owner/branch; additive after handoff `a16dfc38eb6141e2aef5fa480be741b1f057ca57` |
+| P0 correction binding | `hnd_adaptive_router_r01_r03_20260815`; review baseline `51de13f1be7151a692675509e6ec9357ae64ec46`; same allocation/receipt/owner/branch; additive after handoff `21ced7b7f84a351074f65566603b4a2793334134` |
 | XSS / effects | `XSS_NOT_APPLICABLE`; pure typed Router/Profile contracts and tests, no external effect |
 
 ## One observable outcome

@@ -4838,3 +4838,13 @@
 | Remaining blocker | `CHANGES_REQUESTED / CR-R01-004`: new internal production/test route metadata uses raw `str` and unannotated constants; hash evidence unnecessarily invokes Git. This violates the P0 source-type gate despite strict mypy passing. |
 | Revision-03 closure | `CLOSURE-ADAPTIVE-ROUTER-R01-03`; mechanical domain annotations, typed policy path/direct hashing, expanded AST source gate and two exact reversals only. No route/public behavior change. |
 | Continuation | Same task/worktree/branch/allocation/receipt; WPR-only return reserved as `PRG-20260815-451`. R02, 06G0P, integration and all non-Router work remain paused. |
+
+## PRG-20260815-450 - Router Ticket R01 revision-03 P0 correction dispatch
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `CHANGES_REQUESTED(PRG-449) -> REVISION_03_CORRECTION_DISPATCH_CONFIRMED`; same ticket lane and retained authority. |
+| Review baseline | `51de13f1be7151a692675509e6ec9357ae64ec46`; handoff `hnd_adaptive_router_r01_r03_20260815`; additive after `21ced7b7f84a351074f65566603b4a2793334134`. |
+| Exact correction | CR-R01-004 only: named domain aliases and explicit tuple/map constants in production/test, `PurePosixPath` direct hash evidence, expanded AST P0 gate and two bounded reversals. Route table, policy values and public behavior are immutable. |
+| Owner / authority | Task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; same permanent worktree/branch/allocation `aln_adaptive_router_r01_20260814` and receipt `rcpt_adaptive_router_r01_20260814`. |
+| Safety / return | Original five-path ceiling, but only affected files may change; then WPR-only `PRG-20260815-451`. No helper, R02, 06G0P, new worktree, push, package/install, target/live effect, release or deployment. |
