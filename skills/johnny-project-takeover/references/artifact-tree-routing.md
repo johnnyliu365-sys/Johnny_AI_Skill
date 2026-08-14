@@ -39,4 +39,3 @@ Partition by meaning and ownership before a node starts mixing unrelated child k
 partitions are feature, artifact kind, year, language or capability domain. No hard line/file
 count is a quality gate; a node is split when one consumer would otherwise need to inspect
 unrelated siblings or when different owners/lifecycles share one index.
-

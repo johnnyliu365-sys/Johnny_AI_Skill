@@ -4940,3 +4940,12 @@
 | Router plan | Adaptive SPEC revision 04 adds AC-16/AC-17. R02 is decomposed serially into R02A shared-Context lifecycle authority, R02B Agent-Context lease/invalidation and R02C artifact-tree/PRD-CHG/archive lineage. Only R02A may receive a formal ticket next. |
 | Verification | Active PRD/CHG suffixes are one-to-one; no active/archive overlap; archive pairs are absent from active leaves; governed Markdown links resolve; `CONTEXT.md` has no diff; `git diff --check` passes; six-module Router regression is `99/99`. |
 | Boundary | Documentation, template and index migration only. No Router production/test mutation, implementer dispatch/worktree mutation, 06G0P review/integration, target-project/live host/network effect, push, package/install, Secret, release or deployment. |
+
+## PRG-20260815-458 - Tree migration EOF-format correction
+
+| Field | Evidence |
+| --- | --- |
+| Trigger | The initial architecture commit `856ba73` preserved all semantic checks but its staged check reported extra EOF blank lines in newly created requirement/archive/reference leaves after the commit command continued. |
+| Correction | Remove only the reported terminal blank lines. No identifier, requirement, route, acceptance source, index edge or lifecycle rule changes. |
+| Verification | Final combined migration diff passes `git diff --check`; PRD/CHG pairing, archive isolation, catalog uniqueness, governed links, shared-Context byte identity, Router `99/99` and zero cache residue remain valid. |
+| Boundary | Additive docs formatting correction only; no amend/reset/force, implementation dispatch, source/test mutation or external effect. |

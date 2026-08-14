@@ -34,4 +34,3 @@ Git history remains evidence but is not the runtime lookup mechanism.
   bundles; bundle leaves contain the retired association.
 - Duplicate, dangling, cyclic, wrong-revision or mixed active/archive references are
   `HALT / REQUIREMENT_LINEAGE_INVALID`.
-

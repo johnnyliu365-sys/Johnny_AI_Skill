@@ -6,4 +6,3 @@
 | Archived | [`../archive/requirements/README.md`](../archive/requirements/README.md) |
 
 Each leaf owns one matching PRD/CHG pair. Root and partition indexes list direct children only.
-
