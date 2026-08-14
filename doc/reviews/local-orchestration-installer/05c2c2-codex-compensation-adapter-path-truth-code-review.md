@@ -1,5 +1,21 @@
 # Ticket 05C2C2 Codex Compensation Adapter Path Truth Code Review
 
+## Final correction decision
+
+| Field | Evidence |
+| --- | --- |
+| Verdict | `APPROVED / READY_FOR_GUARDED_INTEGRATION`; CR-178 is closed. |
+| Correction chain | History-preserving registry merge `ffb84f3d6d88f4cd2903432d0735a1cf4d72c0ee`; source-only correction `e801646c4d32401f90aa65784635a2c66445973e`; WPR-only handoff `9ba22b3f8328ba7fffc5ec767488bcfdab125608` / PRG-419. Parentage and exact same revision-03 owner/worktree/branch/binding pass. |
+| Correction scope | PASS. The source commit changes only `tests/staging/codex_lifecycle_oracle/compensation_adapter.py`: one stale docstring becomes exact admitted absence/presence path-truth wording and the final `_operation_failure(...)` indentation is aligned. No executable branch, import, type, test or other path changed. |
+| Immutable proof | PASS. Direct-test blob remains `9c9b24f34fd8145e05ac559f8e4edb8d673ffaab`; PRG-416 through PRG-419 each occur once; tracked/ignored owner porcelain is clean and exactly three worktrees remain. |
+| Independent correction verification | PASS from immutable handoff export: focused adapter `15/15`; strict `mypy --strict --explicit-package-bases --no-incremental` over `148` files; in-memory compile `148` files. The fixed TEMP export/archive/cache were removed and read back absent. The initial full serial `514/514` remains valid because the correction diff is non-executable documentation/indentation only. |
+| Boundary | `XSS_NOT_APPLICABLE`; no live Codex/host/target-project effect, helper, push/staging publication, package/build/install, Secret, release or deployment. |
+
+All initial functionality, P0 strong-type, security, failure, adversarial and
+reverse-evidence gates remain green. Guarded integration may consume only the
+exact final handoff above; any changed blob or conflict outside append-only WPR
+history requires a new review.
+
 ## Initial decision
 
 | Field | Evidence |
@@ -47,4 +63,3 @@ CR-178 is the complete blocking set for this revision's initial review. Only
 one additive source-only correction on the same owner/worktree/branch and
 existing revision-03 binding is authorized; the committed direct test must
 remain byte-identical.
-

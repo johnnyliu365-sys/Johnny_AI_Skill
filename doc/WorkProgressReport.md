@@ -4516,3 +4516,14 @@
 | Frozen correction | Same revision-03 binding and receipt. Change only the adapter source docstring and malformed final-call indentation. No executable token, import, behavior, type, direct test or other file may change; direct-test blob remains `9c9b24f34fd8145e05ac559f8e4edb8d673ffaab`. |
 | Return | Merge the exact control commit carrying this registry into the same branch, preserving PRG-416 through PRG-418 once; return one additive source-only correction commit and reserved PRG-20260814-419 in one WPR-only handoff commit. |
 | Boundary | No new branch/worktree/helper, live effect, push/staging publication, package/build/install, Secret, release or deployment. |
+
+## PRG-20260814-420 - Ticket 05C2C2 CR-178 terminal correction review
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `REVIEW_HANDOFF(PRG-419) -> REVIEW_COMPLETED / APPROVED / READY_FOR_GUARDED_INTEGRATION`; CR-178 is closed. |
+| Reviewed chain | Registry merge `ffb84f3d6d88f4cd2903432d0735a1cf4d72c0ee`; source-only correction `e801646c4d32401f90aa65784635a2c66445973e`; WPR-only handoff `9ba22b3f8328ba7fffc5ec767488bcfdab125608`. Parentage, same revision-03 binding and exact lane pass. |
+| Independent evidence | Immutable-export focused `15/15`; strict full-tree mypy `148`; in-memory compile `148`; exact source diff contains only the corrected docstring and final-call indentation. Direct-test blob remains `9c9b24f34fd8145e05ac559f8e4edb8d673ffaab`; initial full serial `514/514` remains applicable. |
+| Scope / residue | Correction source commit is exact one-path; handoff is WPR-only; PRG-416 through PRG-419 each occur once; owner tracked/ignored status is clean and topology remains exactly three worktrees. Reviewer fixed TEMP export/archive/cache were removed and read back absent. |
+| Continuation | Reviewer-only guarded integration of exact handoff `9ba22b3f8328ba7fffc5ec767488bcfdab125608`, then refreeze 05C3 against the integrated 05C2C1/05C2C2 APIs. No other implementation/effect authority. |
+| Boundary | `XSS_NOT_APPLICABLE`; no helper, live Codex/host/target-project effect, push/staging publication, package/build/install, Secret, release or deployment. |

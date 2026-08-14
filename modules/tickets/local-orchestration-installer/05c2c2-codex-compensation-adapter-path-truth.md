@@ -5,7 +5,7 @@
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-02, AC-06, AC-07 and AC-08 |
 | Change / PRD / Context | `CHG-20260808-011` / `PRD.md §15` / `doc/context/local-orchestration-installer/main.md` |
 | Revision | `03` |
-| State | `CHANGES_REQUESTED / SOURCE_ONLY_CORRECTION` |
+| State | `COMPLETE / APPROVED / READY_FOR_GUARDED_INTEGRATION` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05C2C2-01` / M1-M7 |
 | Dependency | 05C2C1 guarded merge `fffbc616ee1870b69845cbcecf37a98e842106d3`; 05C2C2A approval `6cca1210b51e6d5d5e8105876c993540a12eea21` and guarded merge `1f6532a069fade0bfcf526ad0d49de7a88b281bb` |
 | Profile / resource | `STANDARD`; one implementation owner, no helper; serial consumer of the exact 05C2C1 result |
@@ -182,3 +182,12 @@ PRG-20260814-419 in one WPR-only handoff commit.
 | Immutable proof | Direct-test blob must remain `9c9b24f34fd8145e05ac559f8e4edb8d673ffaab`. Pre-correction source blob is `6ce010db944e30afbd8db291f9c02d6fbdda8219`. Rerun focused `15/15`, strict mypy and in-memory compile; full-suite rerun is optional because the correction is byte-audited non-executable text/whitespace only. |
 | Binding / return | Retain revision-03 workspace, handoff, allocation, receipt, correlation, question and side-context without substitution. Return one additive source-only correction commit, then append only reserved `PRG-20260814-419` in one WPR-only handoff commit. |
 | Boundary | No helper/subagent, live Codex/host/target-project effect, push/staging publication, package/build/install, Secret, release or deployment. |
+
+### Final correction review
+
+CR-178 is closed by source-only correction
+`e801646c4d32401f90aa65784635a2c66445973e` and WPR-only handoff
+`9ba22b3f8328ba7fffc5ec767488bcfdab125608`. Independent focused `15/15`,
+strict mypy `148`, in-memory compile `148`, direct-test blob identity, exact
+diff/scope, clean lane and three-worktree topology pass. Revision-03 M1-M7 are
+approved for guarded integration; the receipt grants no other effect.
