@@ -4433,3 +4433,13 @@
 | Lane readback | Owner-2 task `019ffb0c-db88-7303-895c-aecfadde7c8d`; clean permanent implementer-2 worktree at released 05C1 branch/head `codex/implementation-codex-receipt-removal-request-05c1` / `252a698b73191106a0c4551162d153be86491a08`; exact linked Git identity, zero tracked/ignored/cache residue, exactly three worktrees and absent target branch verified. |
 | Binding / dispatch | One-use 05C2C2A workspace/handoff/allocation/receipt/correlation/question/side-context from the ticket; create only `codex/implementation-codex-installed-path-proof-truth-05c2c2a` at the exact control commit carrying this registry and change only the four frozen paths. Reserved WPR handoff is PRG-410. |
 | Resource / boundary | Owner-2 receives one serial contract repair and no helper. Owner-1 remains released after invalid-ticket WIP cleanup; no overlapping implementation path or parallel dependent adapter work. No live effect, push/staging publication, package/install, Secret, release or deployment. |
+
+## PRG-20260814-411 - Ticket 05C2C2A independent review
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `REVIEW_HANDOFF(05C2C2A) -> REVIEW_COMPLETED / CHANGES_REQUESTED / EVIDENCE_DEFECT`; same-lane evidence-only correction is authorized by standing `PRG-20260809-042`. |
+| Reviewed chain | Implementation `d407937d03e7dba49cf066599ac9d5c43e9b3624`; WPR-only handoff `6695b146b28d33faeb341f32c92c79bd2b82e66e` / PRG-410; immutable archive SHA-256 `FE360CA2D0DC3E114C2626E7BDFBAAE4429204D23B28CE50E28986A403EFF4BB`. |
+| Independent evidence | Focused `52/52`; full serial `512/512`; strict mypy `148`; compile `148`; strict bool/admission probes and three independent runtime reversals pass. Exact ancestry/scope, clean owner lane and three-worktree topology pass. Reviewer TEMP export/archive/cache were removed and read back absent. |
+| Finding | CR-177 `EVIDENCE_DEFECT`: all four SHA-256 values claimed in PRG-410 differ from the immutable implementation export. The formal review freezes the four reviewer-computed values; no source or test defect was found. |
+| Continuation | Same ticket/owner/permanent worktree/branch/allocation/receipt. Append one WPR-only correction at reserved PRG-413; source, tests, PRG-410 and prior commits remain immutable. No new branch/worktree/helper/effect/push/package/install/release/deploy. |
