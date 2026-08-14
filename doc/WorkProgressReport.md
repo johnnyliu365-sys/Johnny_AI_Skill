@@ -4711,3 +4711,14 @@
 | Post-merge evidence | Focused `9/9`; strict full-tree mypy `150/150`; in-memory compile `150/150`; terminal-review full serial `526/526` remains bound to the exact integrated source. Exact ancestry, three-worktree topology, tracked/ignored porcelain and cache/bytecode absence pass. |
 | Continuation | Return to the Router and select only an actually unblocked planned ticket. 05C3 has no further implementation continuation. |
 | Boundary | `XSS_NOT_APPLICABLE`; no helper, live Codex/home/config, target-project, network, push/staging publication, package/build/install, Secret, release or deployment. |
+
+## PRG-20260814-436 - Strong-type dispatch schema root-cause closure
+
+| Field | Evidence |
+| --- | --- |
+| Trigger / classification | Project-owner correction request after 05C3 CR-180; systemic root cause is `TICKET_DEFECT`, not implementer capability. The ticket expressed boundary-only `object` in prose, but dispatch relied on strict mypy and did not require a committed machine-enforced domain gate. |
+| Root cause | A strict language checker accepts `object` as a valid annotation and cannot infer project policy that it is allowed only on a named external boundary. Earlier dependency-schema mismatch also showed that positive-path models were not always publicly constructible before dispatch. Reviewer ticket authoring failed to convert both properties into pre-red executable admission. |
+| Governance correction | `AGENTS.md` now makes checker-green insufficient; `Workflow.md` §4.3 requires ordinary public construction/round-trip probes, exact dynamic-boundary allowlists, committed static gates, red-sensitive reverse mutations and two-stage reviewer/implementer admission; `CodeReview.md` §2.2 independently rechecks the same evidence and traces late discovery to ticket schema. |
+| Fixed failure | Missing or failing evidence returns `HALT / TICKET_SCHEMA_INVALID` and `TICKET_DEFECT / NON_DISPATCHABLE`. Casts, bypass constructors, coercion, `Any`, dynamic lookup and historical-object reuse cannot satisfy a positive path; malformed bypass remains negative-test-only. |
+| Continuation | Apply the new schema preflight to every future implementation ticket before receipt issuance. Existing approved evidence remains immutable; no current implementation lane is reopened by this governance correction. |
+| Boundary | Documentation/governance only; no implementation worktree, live Codex/home/config, target-project, network, push/staging publication, package/build/install, Secret, release or deployment effect. |

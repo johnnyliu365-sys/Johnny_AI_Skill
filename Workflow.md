@@ -507,6 +507,20 @@ SPEC 核准範圍內的 ticket 規劃可由控制面建立；ticket 文件 commi
 
 上述適用格、首次紅燈、綠燈與至少一個會使攻擊格重新執行的反向變異，皆須進入 Acceptance Closure Set。缺少分類或必要矩陣時是 `TICKET_DEFECT`，不得交給實作者自行猜測。
 
+<a id="typed-ticket-preflight"></a>
+
+### 4.3 強型別 ticket schema preflight
+
+強型別要求必須在 dispatch 前轉成可執行契約，不能只寫在自然語言 AC，也不能只以 strict checker 綠燈代替。每張含原始碼或測試實作的 ticket 必須同時滿足：
+
+1. **正向值可公開建構**：對成功路徑使用的每個公開 DTO、值物件、enum、事件、request／response 與依賴契約，以精確 dispatch baseline 執行最小 ordinary public constructor／validator／round-trip probe。probe 必須涵蓋 ticket 實際使用的有限狀態、nullability 與精確 primitive（例如 `bool` 不得以 `0`／`1` 代替），並記錄具名型別、輸入、輸出與結果。
+2. **領域政策可機械攔截**：凡 strict checker 無法直接證明的限制，例如 `object`／動態值只准出現在具名外部邊界、內層必須轉為指定領域型別、禁止特定 constructor／lookup／catch 或有限狀態必須封閉，ticket 必須列出精確 allowlist／denylist，並指定 committed AST／source／schema gate 或等價靜態驗證。
+3. **gate 必須能轉紅**：每個上述領域政策至少有一個將禁止型態重新引入的 bounded reverse mutation；該 mutation 必須使具名 gate 轉紅並在 byte-for-byte 還原後恢復綠燈。只有 source scan 而沒有 red sensitivity 不構成 closure。
+4. **禁止繞過成功路徑**：不得以 `model_construct`、`model_copy(update=...)`、cast、coercion、`Any`、動態 member lookup、歷史物件重用或其他 bypass 讓正向案例成立。測試若需建立 malformed value，只能用於具名負向拒絕格，且不得進入 success receipt、effect 或 round-trip 證據。
+5. **雙重 admission**：reviewer 在建立 dispatch receipt 前先執行並記錄 preflight；implementer 在首次紅燈前對同一 ticket blob／baseline 重跑。任一 probe 缺失、失敗或與 SPEC／dependency schema 衝突，固定回 `HALT / TICKET_SCHEMA_INVALID`，分類為 `TICKET_DEFECT / NON_DISPATCHABLE`；先修上游契約、依賴或拆票，不得開始原始碼 mutation。
+
+`mypy --strict`、Pyright strict 或其他語言的等價 checker 仍是必要 gate，但它們只證明工具可表達的型別規則；不得單獨宣稱符合本節。
+
 <a id="implementation"></a>
 
 ## 5. `implement`：逐張 ticket 的 TDD

@@ -189,6 +189,17 @@ checker。欄位缺失、靠聊天／父工單／相鄰工單推定，或 ticket
 receipt 不一致，均為 `TICKET_DEFECT`；即使產出的程式碼碰巧符合強型別，
 審閱仍為 `BLOCKED`。正式 review 必須記錄此 gate 的獨立結果。
 
+此 gate 還必須獨立重做 [Workflow.md 的強型別 ticket schema preflight](Workflow.md#typed-ticket-preflight)：
+
+1. 在 exact dispatch baseline 以 ordinary public constructor／validator／round-trip 建立每個成功路徑值，核對 ticket 實際有限狀態、nullability 與精確 primitive。
+2. 逐項核對 checker 無法表達的領域政策是否有具名 boundary allowlist／denylist、committed AST／source／schema gate，以及會使該 gate 轉紅的 bounded reverse mutation。
+3. 搜尋 success path 是否使用 bypass constructor、update、cast、coercion、`Any`、動態 lookup 或歷史物件重用；malformed bypass 只能存在於具名負向拒絕案例。
+
+strict checker 綠燈不得取代以上三項。dispatch 前缺少或失敗是
+`TICKET_DEFECT / TICKET_SCHEMA_INVALID / NON_DISPATCHABLE`；若 implementation
+已發生才被發現，正式 review 必須追溯為 ticket schema root cause，阻擋整合
+並先修 ticket／dependency，不得只要求實作者補一個型別註記。
+
 ## 3. 審閱證據與結論
 
 - Review report 必須逐項記錄上述驗證結果，並附上相關檔案／位置、測試或命令輸出、smoke test 結果，以及未解決風險。
