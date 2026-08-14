@@ -5091,3 +5091,14 @@
 | Source authority | Exactly `library/workflow_router/contracts.py`, `router.py`, `__init__.py` and `tests/test_workflow_router.py`; then one WPR-only handoff. No other source/test/docs path is writable. |
 | Pre-red / return | Import/call the absent R02B public contracts/method before production mutation; implement only ACX1-ACX8; return one implementation commit plus one WPR-only handoff after focused/six-module/full/mypy/compile/reversal/scope/topology/residue verification. Progress-only final is not completion. |
 | Resource / safety | Host mapping `gpt-5.6-luna`, reasoning `max`; no helper. Reviewer task `019fb935-bbe1-7f71-8b4b-58ba20c81626` is sole orchestrator. R02C tree traversal/archive-library indexes remain blocked. `XSS_NOT_APPLICABLE`; no next-ticket authority, new worktree, live model/Codex/home/App/target/network effect, push, package/install, Secret, release or deployment. |
+
+## PRG-20260815-473 - Router R02B independent review changes requested
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `ACTION_COMPLETED / REVIEW_HANDOFF(PRG-472) -> CHANGES_REQUESTED / SAME_TICKET_ADDITIVE_CORRECTION`; no R02C or integration authority exists. |
+| Submitted chain | Implementation `251f72b1c2dc880fd6d99c516d43bc2e24687360`; WPR-only handoff `1833506c1e5cdbe992114cff7a0b7a05b211d98d`; exact registry ancestry, four-path scope, clean submitted lane and three-worktree topology pass. |
+| Independent green | Repository-external detached clone passed focused `51/51`, six-module `118/118`, full serial `554/554`, strict mypy `150/150`, compile `150/150` and a 43-cell transition matrix; clone and external mypy cache were removed and read back absent. |
+| Blocking findings | `CR-R02B-001`: semantic words inside valid opaque tree/ticket/return IDs are over-rejected. `CR-R02B-002`: five contradictory public decision shapes construct instead of failing closed. |
+| Correction lane | Same ticket/owner/worktree/branch/allocation/receipt. The submitted side Context `scx-adaptive-router-r02b-20260815-01` is invalidated; the correction registry must bind a fresh side Context to this exact review commit. Only `contracts.py`, `test_workflow_router.py` and a WPR-only handoff are eligible. |
+| Boundary | Additive correction only; no reset/amend/force, new branch/worktree, Router method change, R02C-R06, 06G0P, package/install, host/model/network/target-project effect, push, release, deployment or Secret. `XSS_NOT_APPLICABLE`. |
