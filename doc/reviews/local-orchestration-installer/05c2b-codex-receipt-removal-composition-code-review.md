@@ -89,3 +89,13 @@ tests red; restoring runtime bindings returned focused `18/18`.
 CR-175 and CR-176 are closed. B1-B9 are approved; guarded integration remains
 reviewer-owned. No public contract, renderer/XSS sink, live effect, push,
 package/install, release or deployment is introduced.
+
+## Guarded integration
+
+| Field | Evidence |
+| --- | --- |
+| Decision | `COMPLETE / APPROVED / INTEGRATED` |
+| Merge | Reviewer-owned guarded merge `75eec43037c182772ca8bb2174de2ecd4e2943b6`; only the predicted append-only WPR conflict occurred. |
+| Blob/readback | Integrated composition source, direct test and package export equal the approved `c4581e7` handoff blobs; PRG-397 through PRG-401 each occur once. |
+| Post-merge verification | Focused `18/18` and strict full-tree mypy over `148` files pass; repository-external cache removed; control status clean. |
+| Continuation | 05C2B receipt/allocation closed. 05C3 dependency readback exposed a separate upstream staging-evidence gap; no 05C2B behavior is reopened. |

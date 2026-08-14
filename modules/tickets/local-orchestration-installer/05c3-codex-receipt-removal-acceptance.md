@@ -3,9 +3,10 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-02, AC-06, AC-07 and AC-08 |
-| State | `PLANNED / DEPENDENCY_WAIT` |
+| Revision | `02` |
+| State | `PLANNED / UPSTREAM_EVIDENCE_GAP` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05C3-01` / A1-A8 |
-| Dependency | 05C2B independently approved and integrated |
+| Dependency | 05C2B integrated; 05C2C1 and 05C2C2 must be independently approved and integrated |
 | Profile / XSS | `STANDARD`; one implementation owner, no helper / `XSS_NOT_APPLICABLE` |
 | Implementation language | Python 3.11 with strict Pydantic models and `mypy --strict` |
 
@@ -34,5 +35,24 @@ external sentinel repositories byte-for-byte with unchanged Git porcelain.
   `SUPPORTED`; that projection still requires the separately approved host and
   disposable-Windows gates fixed by the SPEC.
 
-This child will be refrozen against the exact integrated 05C2B API before lane
-admission. No implementation authority exists now.
+## Revision-02 dependency readback
+
+The exact integrated flow was exercised in one project-owned disposable lease:
+registration returned `RegistrationSuccessAccepted`, receipt conversion returned
+`CodexReceiptRemovalReady`, and adapter admission returned
+`CodexCompensationOracleAdapter`; nevertheless the first removal returned
+`UNINSTALL_BLOCKED / PRE_REMOVAL_EVIDENCE_INVALID` before either remove call.
+The exact lease was removed and no runtime residue remained.
+
+Root cause is an upstream typed-evidence gap. `OracleAction.ABSENCE` can return
+`OracleAbsent` only after owned state and payloads are gone; coherent owned
+presence currently collapses into `OracleBlocked / COMMAND_INVALID`. The
+compensation adapter therefore cannot distinguish exact installed-path presence
+from an unproved dependency failure, and 05C2B correctly refuses to treat that
+failure as residue. Mapping generic blocked/error results to presence, weakening
+`UNPROVED`, or skipping pre-proof is forbidden.
+
+05C2C1 adds exact staging-oracle installed-path presence evidence and admission;
+05C2C2 maps only that admitted evidence to `absent=False`. This child will be
+refrozen against both exact integrated APIs. No 05C3 implementation authority
+exists now.

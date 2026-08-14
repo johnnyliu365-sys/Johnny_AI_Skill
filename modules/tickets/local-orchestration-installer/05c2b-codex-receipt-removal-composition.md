@@ -5,7 +5,7 @@
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-02, AC-06 and AC-07 |
 | Change / PRD / Context | `CHG-20260808-011` / `PRD.md §15` / `doc/context/local-orchestration-installer/main.md` |
 | Revision | `02` |
-| State | `APPROVED / READY_TO_MERGE` |
+| State | `COMPLETE / APPROVED / INTEGRATED` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05C2B-01` / B1-B9 |
 | Dependency | 05C2A independently approved and integrated |
 | Profile / resource | `STANDARD`; one implementation owner, no helper; no parallel lane because the public observation contract is a serial dependency |
@@ -187,3 +187,14 @@ review passed focused `18/18`, full serial `501/501`, strict mypy and compile
 over `148` files, exact internal/public type readback, and two targeted
 reversals that made the new mismatch/unproved and no-hook tests red before
 restoration. B1-B9 are approved; integration remains reviewer-owned.
+
+## Guarded integration
+
+Reviewer-owned guarded merge
+`75eec43037c182772ca8bb2174de2ecd4e2943b6` integrated the approved handoff
+without changing the reviewed composition source, direct test or package-export
+blobs. The only predicted and actual overlap was append-only
+`doc/WorkProgressReport.md`; PRG-397 through PRG-401 are each preserved once.
+Post-merge focused `18/18` and strict full-tree mypy over `148` files passed,
+the external cache was removed, and the control worktree returned clean.
+B1-B9 are complete and the 05C2B allocation/receipt are closed.

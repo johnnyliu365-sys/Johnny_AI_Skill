@@ -165,8 +165,10 @@
 | Ticket 05C1 receipt removal request | COMPLETE / APPROVED / INTEGRATED | Correction `e07a9f5`, handoff `252a698`, review `43bae91`, guarded merge `9e0343a`; independent `476/476`, strict mypy and reversals pass; CR-173 closed. |
 | Ticket 05C2 receipt removal composition parent | CONVERGENCE_DECOMPOSED / NON_DISPATCHABLE | Public response admission is private while the public historical composition requires a registration journal; replaced by serial 05C2A-05C2B. |
 | Ticket 05C2A compensation observation admission | COMPLETE / APPROVED / INTEGRATED | CR-174 closed; review `5e7e489`, guarded merge `e2e2fe9`; post-merge focused/type checks pass. |
-| Ticket 05C2B receipt removal composition | IN_PROGRESS / DISPATCH_READY | Exact revision-02 schema/lane registry; one owner, no helper. |
-| Ticket 05C3 receipt removal acceptance | PLANNED / DEPENDENCY_WAIT | Starts after 05C2B independently approved/integrated. |
+| Ticket 05C2B receipt removal composition | COMPLETE / APPROVED / INTEGRATED | CR-175/CR-176 closed; review `355da84`; guarded merge `75eec43`; post-merge focused/type checks pass. |
+| Ticket 05C2C1 oracle installed-path presence | PLANNED / FROZEN / NO_IMPLEMENTATION_AUTHORITY | Add exact typed present evidence; generic blocked/error results remain unproved. |
+| Ticket 05C2C2 adapter installed-path truth | PLANNED / DEPENDENCY_WAIT | After 05C2C1 integration, map only admitted present to `absent=False`. |
+| Ticket 05C3 receipt removal acceptance | PLANNED / UPSTREAM_EVIDENCE_GAP | Disposable probe reproduced `PRE_REMOVAL_EVIDENCE_INVALID`; starts after 05C2C1/C2 integrate. |
 | Ticket 06A Codex role-profile capability proof | DONE / APPROVED_EVIDENCE / INSTALL_BLOCKED / INTEGRATED | Implementation `38e9a8b`, handoff `f6f186f`, review `62955ec`, guarded merge `de4141e`; actual installed-host result is `ROLE_ISOLATION_UNPROVEN / ACCESS_DENIED / OUTPUT_UNAVAILABLE`, so capability dependents stay blocked. |
 | Autonomous Ticket 04 reviewer-only authority | PLANNED / DEPENDENCY_WAIT | Starts only after reviewed 06A `SUPPORTED`; typed fake effect gate, not a real Agent turn. |
 | Tickets 06B/06C role-profile lifecycle/composition | PLANNED / DEPENDENCY_WAIT | Wait for 06A and autonomous Ticket 04; own/remove profiles, then compose exact reviewer authority. |
@@ -241,7 +243,7 @@ control-plane decomposition.
 | Superseded parent | `PRG-20260810-082`; `codex-cli-host-adapter-and-detachable-installer`; `CLOSURE-LOCAL-INSTALL-T05-02` |
 | Child 05A | `05a-codex-cli-preflight-contract`; integrated by `b22c6c4` |
 | Child 05B | `05b-codex-cli-transactional-registration`; current references below |
-| Child 05C | Parent `05c-codex-cli-receipt-removal` is decomposed; only `05c1-codex-receipt-removal-request` is ready for exact lane admission; 05C2/05C3 remain serial. |
+| Child 05C | 05C1, 05C2A and 05C2B are integrated. The verified oracle-presence gap is serial 05C2C1 -> 05C2C2 -> refrozen 05C3. |
 
 ### Ticket 05B selection and dispatch
 

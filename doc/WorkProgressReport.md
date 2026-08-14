@@ -4351,3 +4351,15 @@
 | Independent evidence | Immutable archive SHA-256 `38A33228FD474BE8F7EFAAD08FF7CCC8693FE0BF1E349AC321510A3948A80AA7`; focused `18/18`; full serial `501/501`; strict mypy `148`; compile `148`; exact private/public type readback and two targeted reversals pass; reviewer TEMP/cache removed. |
 | Decision | CR-175 and CR-176 closed; B1-B9 approved. Package export remained byte-identical and the lane is clean. Only guarded integration is authorized next. |
 | Boundary | No live Codex/host/target-project effect, push/staging publication, package/build/install, Secret, release or deployment. |
+
+## PRG-20260814-402 - Ticket 05C2B integration and 05C3 upstream evidence decomposition
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `APPROVED(05C2B) -> GUARDED_INTEGRATION_COMPLETED -> ACTION_COMPLETED / 05C3_DEPENDENCY_READBACK -> UPSTREAM_EVIDENCE_GAP / SPLIT_05C2C1_05C2C2` |
+| Integration | Review `355da847dd5b4a21949c80b2b100f9b505bbfe4e`; approved handoff `c4581e717dfe00af46af45bfa02f02bf56deea25`; guarded merge `75eec43037c182772ca8bb2174de2ecd4e2943b6`. Only append-only WPR overlapped, reviewed implementation/export blobs remained exact, PRG-397 through PRG-401 occur once, and post-merge focused `18/18` plus strict mypy `148` pass. |
+| Disposable reproduction | In one exact project-owned lease with child `LOCALAPPDATA` fixed to the staging logical root, registration returned `RegistrationSuccessAccepted`, receipt conversion `CodexReceiptRemovalReady`, and adapter admission `CodexCompensationOracleAdapter`; composition then returned `UNINSTALL_BLOCKED / PRE_REMOVAL_EVIDENCE_INVALID` before remove. Exact teardown removed the lease root and ignored/runtime readback was empty. |
+| Root cause | Coherent installed state cannot produce typed installed-path presence: ABSENCE currently emits `OracleAbsent` only after removal and collapses owned presence to `OracleBlocked / COMMAND_INVALID`. 05C2B correctly refuses to reinterpret unproved failure as residue. This is an upstream staging oracle/adapter expressiveness gap, not a 05C2B defect. |
+| Decomposition | 05C2C1 owns exact metadata-only `OracleInstalledPathPresent` generation/admission with logical+physical conjunct and foreign exclusion. 05C2C2 serially maps only admitted absent/present to manifest-bound true/false proof. 05C3 remains non-dispatchable until both are independently approved/integrated and its acceptance is refrozen. |
+| Type/resource gate | Both children explicitly require Python 3.11 named dataclass/Pydantic contracts, full-tree `mypy --strict`, exact finite unions, `STANDARD` one owner/no helper and `XSS_NOT_APPLICABLE`. No generic block/error may be treated as presence; no numeric line criterion applies. |
+| Boundary | Control documents and one fully removed disposable staging lease only. No implementation-worktree write, new worktree, live Codex/host/target-project mutation, push/staging publication, package/install, Secret, release or deployment. |
