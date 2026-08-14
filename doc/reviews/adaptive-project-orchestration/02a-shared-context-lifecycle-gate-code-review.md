@@ -123,3 +123,12 @@ project-specific Profile metadata, rejects actual locator/sensitive tokens witho
 false positives, admits semantically named opaque tree references, rejects reserved revisions
 at construction, and retains the exact finite lifecycle/precedence table. No review finding
 remains. Approval does not authorize R02B behavior inside this merge.
+
+## Guarded integration
+
+Approval commit `a96e2608ce8c074e87de52d99e82345b32e8e904` preceded integration. Read-only
+merge-tree predicted only the append-only `doc/WorkProgressReport.md` overlap. The normal
+non-force merge retained PRG-461 through PRG-468 each once and in order, producing
+`9bf7d340b37c38a2db93e6d837df81e60d744fff` with exact parents `a96e260` and `6f36d7d`.
+Post-merge six-module Router regression passed `110/110`, in-memory compile passed `150/150`,
+and the control worktree is clean. No push, release, deployment or external effect occurred.

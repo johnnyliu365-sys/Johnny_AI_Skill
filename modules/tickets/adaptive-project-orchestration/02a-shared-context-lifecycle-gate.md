@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2` revision 04 / AC-15 |
 | PRD / change | `PRD-20260815-020` / `CHG-20260815-020` |
-| State | `IN_PROGRESS / DISPATCH_CONFIRMED` |
+| State | `COMPLETE / APPROVED / INTEGRATED` |
 | Closure | `CLOSURE-ADAPTIVE-ROUTER-R02A-01` / SC1-SC8 |
 | Baseline | Tree/context governance `fa47a878c15f86cc4400a7a2914576c3fde0b9b3` |
 | Delivery profile | `STANDARD`; one Luna implementation owner; no helper |

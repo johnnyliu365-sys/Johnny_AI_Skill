@@ -5057,3 +5057,13 @@
 | Closure | Safe distinct Profile refs and semantic tree-index IDs are admitted; actual file/prompt/Secret tokens, strict extra fields, duplicates and all-zero expected revisions reject; the original lifecycle/role/stage/change-control table remains exact. |
 | Integration boundary | Guarded integration may merge only exact handoff `6f36d7d`; any conflict beyond the predicted append-only WPR record overlap halts. No R02B source or test is included. |
 | Effects | No push, release, deployment, target-project, live host/network, package/install or Secret effect. `XSS_NOT_APPLICABLE`. |
+
+## PRG-20260815-469 - Router R02A guarded integration complete
+
+| Field | Evidence |
+| --- | --- |
+| Integration | Read-only merge-tree predicted only the append-only WPR overlap. Normal non-force merge `9bf7d340b37c38a2db93e6d837df81e60d744fff` integrated exact handoff `6f36d7d45f0c2ca25d26cfa7e71bf3eac3559349` after approval `a96e2608ce8c074e87de52d99e82345b32e8e904`. |
+| Resolution | PRG-461 through PRG-468 are each present once and in order; no source, test, ticket or review conflict occurred. |
+| Post-merge verification | Six-module Router regression `110/110`; in-memory compile `150/150`; diff and control porcelain clean. Independent pre-merge full serial remains `546/546`, strict mypy `150/150`. |
+| Transition | R02A is `COMPLETE / APPROVED / INTEGRATED`; allocation `aln_adaptive_router_r02a_20260815` is released and its Agent Context view is closed. R02B becomes the only eligible next Router closure. |
+| Effects | No push, release, deployment, target-project, live host/network, package/install or Secret effect. `XSS_NOT_APPLICABLE`. |
