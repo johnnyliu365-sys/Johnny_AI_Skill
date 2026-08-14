@@ -76,3 +76,20 @@ branch, allocation, receipt and closure revision. It may change only the two
 already-authorized 05C3 files and append one new WPR-only handoff. Existing
 implementation/handoff/review commits remain immutable; no reset, amend,
 rebase, force, new branch or new worktree is authorized.
+
+## Terminal correction review
+
+| Field | Evidence |
+| --- | --- |
+| Verdict | `APPROVED / READY_TO_MERGE`; CR-180, CR-181 and CR-182 are closed. This is revision 03's single correction review. |
+| Corrected chain | History-preserving merge `d9a6724292148ced85d53224dcb37e3c0906ad8c`; additive two-path correction `c090a3e5c6f3b6a8bf21ed30b20e940c1ea5e6c2`; WPR-only handoff `fc8709e4d26811072c6399a12252eafae2eae522` / PRG-433. Parentage and exact scopes pass. |
+| Immutable export | Unicode-safe ZIP SHA-256 `710BB47FC022565B879BB7A51D3C96B50ACC229261FF4BD656C079E6EF80F0D2`. No review worktree was created. |
+| Independent green evidence | Focused `9/9`; full serial `526/526`; strict full-tree mypy `150` files; in-memory compile `150` files; exact source scan permits only the public API's three `object` parameters. |
+| CR-180 closure | PASS. `observed_run` uses exact `OracleCommand`. Reverting it to `object` made `test_a7_source_gate_limits_object_to_public_boundary` red with the unexpected `('observed_run', 'command_value')` tuple, then exact source was restored. |
+| CR-181 closure | PASS. A6 snapshots relative path, node kind and file bytes for the complete external Git sentinel before/after acceptance. Appending bytes to `.git/config` made A6 red before its Git-status diagnostic, then exact source was restored. |
+| CR-182 closure | PASS. The committed AST/source gate rejects unauthorized `object`, `Any`, `type: ignore`, construction/update bypasses, dynamic lookup, inspect, Optional/None-valued parameters, `typing.cast` and broad catches. The corrected source blob is `97b919b1b51b64c2da644b803da71a2da441e233`. |
+| WPR / lane | PRG-430 through PRG-433 each occur once and PRG-433 is physical EOF. Owner-1 branch is clean at exact handoff, ignored readback is empty and exactly three worktrees remain. |
+| Boundary | `XSS_NOT_APPLICABLE`; no live Codex/home/config, target-project, network, package/install, push, staging publication, release or deployment effect. |
+
+No blocking finding remains. Reviewer-owned guarded integration of exact handoff
+`fc8709e4d26811072c6399a12252eafae2eae522` is the only continuation.

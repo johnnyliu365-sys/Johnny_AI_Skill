@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-02, AC-06, AC-07 and AC-08 |
 | Revision | `03` |
-| State | `IN_PROGRESS / CORRECTION_DISPATCHED` |
+| State | `READY_TO_MERGE / APPROVED` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05C3-01` / A1-A8 |
 | Dependency | 05C1, 05C2A, 05C2B, 05C2C1, 05C2C2, 05C2C2A and 05C2C3 are independently approved and integrated; 05C2C3 merge is `1e6872acac7df28b5d5bd44991348354a1cd9779` |
 | Profile / XSS | `STANDARD`; one implementation owner, no helper / `XSS_NOT_APPLICABLE` |
@@ -133,6 +133,17 @@ by one appended WPR-only handoff; no other change is authorized.
 This is the single correction review cycle permitted for revision 03. A second
 failure must return `CONVERGENCE_REVIEW_REQUIRED`; it may not trigger another
 automatic implementation correction.
+
+## Terminal correction review
+
+CR-180 through CR-182 are closed by history-preserving merge
+`d9a6724292148ced85d53224dcb37e3c0906ad8c`, additive correction
+`c090a3e5c6f3b6a8bf21ed30b20e940c1ea5e6c2` and WPR-only handoff
+`fc8709e4d26811072c6399a12252eafae2eae522`. Independent correction review
+reproduced focused `9/9`, full serial `526/526`, strict mypy and compile over
+`150` files, plus red/restored internal-`object` and Git-sentinel byte
+mutations. Revision 03 is `APPROVED / READY_TO_MERGE`; integration remains
+reviewer-owned.
 
 ## Forbidden effects
 

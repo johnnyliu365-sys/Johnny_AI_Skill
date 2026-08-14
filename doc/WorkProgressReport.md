@@ -4669,3 +4669,14 @@
 | Correction / proof | Exact two-path correction only: internal `OracleCommand` type, complete external Git-sentinel tree byte snapshot, and a committed A7 AST/source gate. The old internal-object form and `.git/config` byte mutation must each turn the corrected governing test red before exact restoration. |
 | Return | One additive implementation correction commit followed by reserved physical-EOF PRG-20260814-433 WPR-only handoff. This is revision 03's sole correction cycle; correction review failure routes to `CONVERGENCE_REVIEW_REQUIRED`. |
 | Boundary | `XSS_NOT_APPLICABLE`; no new branch/worktree/helper, live Codex/home/config, target-project, network, push/staging publication, package/build/install, Secret, release or deployment. |
+
+## PRG-20260814-434 - Ticket 05C3 terminal correction review
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `REVIEW_HANDOFF(PRG-433) -> CORRECTION_REVIEW_COMPLETED / APPROVED / READY_FOR_GUARDED_INTEGRATION`; CR-180 through CR-182 are closed. |
+| Corrected chain | Merge `d9a6724292148ced85d53224dcb37e3c0906ad8c`; correction `c090a3e5c6f3b6a8bf21ed30b20e940c1ea5e6c2`; WPR-only handoff `fc8709e4d26811072c6399a12252eafae2eae522`; immutable ZIP SHA-256 `710BB47FC022565B879BB7A51D3C96B50ACC229261FF4BD656C079E6EF80F0D2`. |
+| Independent verification | Focused `9/9`; full serial `526/526`; strict full-tree mypy `150`; in-memory compile `150`; exact scope/parentage, clean owner lane and three-worktree topology pass. |
+| Adversarial closure | Reverting internal command type to `object` made the committed AST gate red; mutating external sentinel `.git/config` bytes made A6 red before Git diagnostics. Both were restored to exact corrected source blob `97b919b1b51b64c2da644b803da71a2da441e233`, then both governing tests were green. |
+| Continuation | Reviewer-only guarded integration of exact handoff `fc8709e4d26811072c6399a12252eafae2eae522`. No further correction or implementation dispatch is authorized for revision 03. |
+| Boundary | `XSS_NOT_APPLICABLE`; no helper, live Codex/home/config, target-project, network, push/staging publication, package/build/install, Secret, release or deployment. |
