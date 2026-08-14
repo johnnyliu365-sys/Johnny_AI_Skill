@@ -5079,3 +5079,15 @@
 | Planned lane | Existing idle task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; permanent worktree `C:\Users\<user>\Desktop\AI控制工作workflow-implementation`; planned branch `codex/implementation-router-agent-context-r02b` only after exact registry synchronization. Reviewer task `019fb935-bbe1-7f71-8b4b-58ba20c81626` remains sole orchestrator. |
 | Planned binding | Handoff `hnd-adaptive-router-r02b-20260815`; allocation `aln-adaptive-router-r02b-20260815`; correlation `corr-adaptive-router-r02b-20260815`; question `q-adaptive-router-r02b-20260815`; side Context `scx-adaptive-router-r02b-20260815-01`. Receipt is created only in the dispatch registry. |
 | Boundary | `STANDARD`, one Luna max owner, no helper. `XSS_NOT_APPLICABLE`; no implementer worktree mutation by control, new worktree, external effect, push, package/install, Secret, release or deployment. |
+
+## PRG-20260815-471 - Router Ticket R02B implementation dispatch
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `TICKET_DISPATCH_REQUIRED(PRG-470) + STANDING_OWNER_AUTO_CONTINUE -> IMPLEMENTATION_DISPATCH_CONFIRMED / IMPLEMENT`; this record is the sole R02B delivery confirmation. |
+| Registry / ticket | Proposal `ec41373ba29f363c95d4083a7549053c0588d661`; exact ticket `modules/tickets/adaptive-project-orchestration/02b-agent-context-lease-invalidation-gate.md`; closure `CLOSURE-ADAPTIVE-ROUTER-R02B-01` ACX1-ACX8 revision `r02b-01`. The exact dispatch baseline is the commit containing this entry. |
+| Binding | Project `adaptive-router-policy`; handoff `hnd-adaptive-router-r02b-20260815`; allocation `aln-adaptive-router-r02b-20260815`; receipt `rcpt-adaptive-router-r02b-20260815`; correlation `corr-adaptive-router-r02b-20260815`; question `q-adaptive-router-r02b-20260815`; side Context `scx-adaptive-router-r02b-20260815-01`; expected return `ret-agent-context-review-handoff-r02b`. |
+| Owner / lane | Existing idle task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; permanent clean worktree `C:\Users\<user>\Desktop\AI控制工作workflow-implementation`; create only `codex/implementation-router-agent-context-r02b` from this registry commit. R02A allocation is released; exactly three worktrees remain. |
+| Source authority | Exactly `library/workflow_router/contracts.py`, `router.py`, `__init__.py` and `tests/test_workflow_router.py`; then one WPR-only handoff. No other source/test/docs path is writable. |
+| Pre-red / return | Import/call the absent R02B public contracts/method before production mutation; implement only ACX1-ACX8; return one implementation commit plus one WPR-only handoff after focused/six-module/full/mypy/compile/reversal/scope/topology/residue verification. Progress-only final is not completion. |
+| Resource / safety | Host mapping `gpt-5.6-luna`, reasoning `max`; no helper. Reviewer task `019fb935-bbe1-7f71-8b4b-58ba20c81626` is sole orchestrator. R02C tree traversal/archive-library indexes remain blocked. `XSS_NOT_APPLICABLE`; no next-ticket authority, new worktree, live model/Codex/home/App/target/network effect, push, package/install, Secret, release or deployment. |
