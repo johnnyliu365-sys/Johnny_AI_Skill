@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| Decision | `CHANGES_REQUESTED / SAME_LANE_CORRECTION` |
-| Finding | `CR-174` |
+| Decision | `APPROVED / READY_TO_MERGE` |
+| Finding | `CR-174` — closed by same-lane revision-02 correction |
 | Classification | `TICKET_DEFECT + IMPLEMENTATION_DEFECT + EVIDENCE_DEFECT` against revision-01 A5/A6 |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05C2A-01` / A1-A8 revision 02 |
 | Implementation | `3b1706889fbc6e5323ce9ba561825f908b4e0dca` |
@@ -78,3 +78,30 @@ On the same ticket, owner, worktree, branch, allocation, receipt and correlation
 No new branch/worktree/helper, public API, effect, live Codex/host/target-project
 access, push/staging publication, package/build/install, Secret, release or
 deployment is authorized.
+
+## Final correction review
+
+The retained lane merged correction registry
+`b5be2b0ee2b4cd3ac275738cec127f529f13f580` through the sole WPR-conflict merge
+`dfe486b70f98e91d0580f28fbd63539d2042a769`. Additive correction
+`5082cf9d34f3d555b12a2d34d9f21fff317e4568` changes exactly the composition
+source and direct test; handoff `7ba15c9d5513d08d2d2f1ef23e4ca06d164d3525`
+changes only WPR and carries PRG-393 once. The package export blob remains
+identical to the initial implementation and the lane is clean with exactly
+three worktrees.
+
+From immutable handoff archive SHA-256
+`1CE6A5A10019FCB4BB61EA152DA2C52C1325130A8451A82EA6015D93E9C5BE75`, the
+reviewer independently obtained focused `18/18`, full serial `483/483`, strict
+mypy over `146` source files and in-memory compile over `146` files. A separate
+12-cell matrix covered direct `__dict__` injection, missing required field-set
+state and valid omitted optional source behavior. Reversing the shared
+extra/private-state guard made the committed CR-174 test fail all 16 named
+corruption cases; restoring it returned exact Git blobs
+`8cce40a989da3bda6b0b0b5663aae8aedec9925e` and
+`13ad81bd0e13a914a1f7bed9c18e24d691fa3db3` and the test passed again.
+
+CR-174 is closed. Exact original state is required before any removal
+confirmation or absence proof, while valid optional-field omission and all
+ordinary mappings remain compatible. No capability/callable/effect boundary,
+renderer/XSS sink, live Codex/host/target-project action or residue exists.

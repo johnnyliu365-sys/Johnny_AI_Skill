@@ -4251,3 +4251,14 @@
 | Merge admission | Merge only the exact control commit carrying this registry. Read-only merge-tree reports only append-only WPR overlap; preserve PRG-390, PRG-391 and PRG-392 exactly once. Any other conflict or topology/scope drift is typed `HALT`. |
 | Correction / return | Change only `codex_compensation_composition.py` and its direct test for CR-174 exact original response state; preserve package exports and ordinary mappings. Return one additive correction commit and then reserved PRG-393 WPR-only handoff. |
 | Boundary | Same ticket/owner/worktree/branch/binding; no helper, new lane, reviewer implementation write, live effect, push/staging publication, package/build/install, Secret, release or deployment. |
+
+## PRG-20260814-394 - Ticket 05C2A final correction review
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05C2A / CR-174) -> TERMINAL_CODE_REVIEW -> APPROVED / READY_TO_MERGE` |
+| Reviewed chain | Correction registry `b5be2b0ee2b4cd3ac275738cec127f529f13f580` -> WPR-only merge `dfe486b70f98e91d0580f28fbd63539d2042a769` -> correction `5082cf9d34f3d555b12a2d34d9f21fff317e4568` -> PRG-393 handoff `7ba15c9d5513d08d2d2f1ef23e4ca06d164d3525`. |
+| Independent verification | Immutable archive SHA-256 `1CE6A5A10019FCB4BB61EA152DA2C52C1325130A8451A82EA6015D93E9C5BE75`; focused `18/18`; full serial `483/483`; strict mypy `146`; compile `146`; additional adversarial matrix `12/12`. |
+| Mutation truth | Reversing the shared extra/private-state guard made all 16 committed CR-174 cells fail. Exact source/test Git blobs restored to `8cce40a989da3bda6b0b0b5663aae8aedec9925e` / `13ad81bd0e13a914a1f7bed9c18e24d691fa3db3`, then the named test passed. |
+| Decision | CR-174 closed. Corrupted envelope/entry/source state cannot confirm removal or prove absence; valid optional omission and all ordinary mappings remain accepted. `XSS_NOT_APPLICABLE`. |
+| Boundary | Reviewer used and removed one exact TEMP export with its external mypy cache. No implementation-worktree write, live effect, push/staging publication, package/build/install, Secret, release or deployment. |

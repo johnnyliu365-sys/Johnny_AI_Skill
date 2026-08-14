@@ -5,7 +5,7 @@
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-02, AC-06 and AC-07 |
 | Change / PRD / Context | `CHG-20260808-011` / `PRD.md §15` / `doc/context/local-orchestration-installer/main.md` |
 | Revision | `02` |
-| State | `IN_PROGRESS / CORRECTION_DISPATCH_READY` |
+| State | `APPROVED / READY_TO_MERGE` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05C2A-01` / A1-A8 |
 | Dependency | 05C1 and existing compensation port/composition independently approved and integrated |
 | Profile / resource | `STANDARD`; one implementation owner, no helper; high reasoning preferred but model identity grants no authority |
@@ -152,3 +152,13 @@ one WPR-only handoff commit after the complete A8 matrix.
 
 This registry does not authorize a new branch, worktree, owner, helper, public
 contract, effect, package/install, push, release or deployment.
+
+## Revision-02 final review
+
+CR-174 is closed by correction `5082cf9d34f3d555b12a2d34d9f21fff317e4568`
+and WPR-only handoff `7ba15c9d5513d08d2d2f1ef23e4ca06d164d3525`.
+Independent immutable-snapshot review passed focused `18/18`, full serial
+`483/483`, strict mypy and compile over `146` files, an additional 12-cell
+original-state/optional-field matrix, and a shared-guard reversal that failed
+all 16 committed CR-174 cells before exact restoration. A1-A8 are approved;
+guarded integration remains reviewer-owned.
