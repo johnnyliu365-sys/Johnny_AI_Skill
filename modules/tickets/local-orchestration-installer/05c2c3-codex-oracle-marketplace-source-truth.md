@@ -5,7 +5,7 @@
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-02, AC-06, AC-07 and AC-08 |
 | Change / Context | `CHG-20260808-011` / `doc/context/local-orchestration-installer/main.md`; non-requirement-changing staging-evidence defect |
 | Revision | `01` |
-| State | `PLANNED / DEPENDENCY_SATISFIED / NOT_DISPATCHED` |
+| State | `IN_PROGRESS / DISPATCHED` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05C2C3-01` / S1-S7 |
 | Dependency | 05C2C1 guarded merge `fffbc616ee1870b69845cbcecf37a98e842106d3`; 05C2C2 guarded merge `bc97a42638540cb56e0b2b0c716bd93ddeb5dbba` |
 | Profile / resource | `STANDARD`; one implementation owner, no helper; exact two-path staging-only correction |
@@ -63,6 +63,22 @@ before 05C3 may be refrozen.
 | Correlation / question | `corr-local-orchestration-install-05c2c3-20260814` / `q-local-orchestration-install-05c2c3-20260814` |
 | Side context | `scx-local-orchestration-install-05c2c3-20260814-01` |
 | Authority | Standing project-owner auto-continue `PRG-20260809-042`; this reservation is not dispatch authority. |
+
+## Exact dispatch registry
+
+| Field | Value |
+| --- | --- |
+| Ticket schema gate | `PASS`: revision-01 freezes S1-S7, real add/list first red, strict Python typing, exact two-path scope, one owner/no helper, `XSS_NOT_APPLICABLE`, reversals and a unique binding. |
+| Authority / reviewer | Standing project-owner auto-continue `PRG-20260809-042`; sole reviewer/orchestrator task `019fb935-bbe1-7f71-8b4b-58ba20c81626`. |
+| Exact implementation owner | Existing task `019ffb0c-db88-7303-895c-aecfadde7c8d`; permanent worktree `C:\Users\<user>\Desktop\AI控制工作workflow-implementer-2`; new branch `codex/implementation-codex-oracle-marketplace-source-truth-05c2c3` in that same worktree; no helper/subagent/second owner. |
+| Lane readback | Idle clean lane at `codex/implementation-codex-installed-path-proof-truth-05c2c2a` / `50f151c0ec6e9abec9b4c13bdf65e702d97d468e`; no tracked/ignored residue; exactly three worktrees. That head is an exact ancestor of the dispatch baseline and the target branch does not yet exist. |
+| Baseline admission | From the exact control commit carrying this registry, create the named branch in the same permanent worktree. Do not merge/copy a historical implementation branch or create another worktree; never reset, rebase, amend, force or stash. |
+| Binding | Workspace `wsb_local_orchestration_install_05c2c3_20260814_01`; handoff `hnd_local_orchestration_install_05c2c3_20260814`; allocation `aln_local_orchestration_install_05c2c3_20260814`; receipt `rcpt_local_orchestration_install_05c2c3_20260814`; correlation `corr-local-orchestration-install-05c2c3-20260814`; question `q-local-orchestration-install-05c2c3-20260814`; side context `scx-local-orchestration-install-05c2c3-20260814-01`. |
+| Return | One implementation commit changing exactly the two frozen paths, then append only reserved `PRG-20260814-423` in one WPR-only handoff commit. Independent review remains reviewer-owned. |
+
+This registry converts the reservation into exact implementation authority only
+for S1-S7. Any schema, baseline, lane, scope or effect mismatch must return a
+typed `HALT` before source/test mutation.
 
 ## Forbidden effects
 

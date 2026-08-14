@@ -4558,3 +4558,14 @@
 | Root cause / split | Staging `MARKETPLACE_LIST` hard-codes `marketplaceSource.value = oracle-source`, while the exact persisted record locator and receipt manifest bind `marketplaces/<name>`. New 05C2C3 owns only relative marketplace-source truth in `oracle_child.py` plus its direct lifecycle test; no product/SPEC change. |
 | Continuation | 05C3 remains non-dispatchable. Select 05C2C3 with one owner/no helper under a fresh receipt; after independent approval/integration, rerun the exact disposable dependency probe and refreeze 05C3 revision 03. |
 | Boundary | `XSS_NOT_APPLICABLE`; disposable staging proof only. No live Codex/home/config, target-project, network, push/staging publication, package/build/install, Secret, release or deployment. |
+
+## PRG-20260814-422 - Ticket 05C2C3 exact dispatch registry
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `PLANNED(05C2C3) + TICKET_SCHEMA_PASS + EXACT_LANE_ADMITTED -> IMPLEMENTATION_DISPATCH_CONFIRMED / IMPLEMENT` |
+| Schema / first red | Revision-01 S1-S7 freezes exact per-record relative marketplace-source truth, strict types, real add/list first red, three reversals, exact two-path scope, one owner/no helper and `XSS_NOT_APPLICABLE`. A helper/module-existence red is forbidden. |
+| Lane | Exact owner task `019ffb0c-db88-7303-895c-aecfadde7c8d`; clean permanent worktree `C:\Users\<user>\Desktop\AI控制工作workflow-implementer-2`; old head `50f151c0ec6e9abec9b4c13bdf65e702d97d468e` is an ancestor of this dispatch; create branch `codex/implementation-codex-oracle-marketplace-source-truth-05c2c3` in the same worktree. Exactly three worktrees; no helper. |
+| Binding / scope | `CLOSURE-LOCAL-INSTALL-T05C2C3-01` / S1-S7 plus the ticket's exact workspace, handoff, allocation, receipt, correlation, question and side-context. Writable implementation paths are only `tests/staging/codex_lifecycle_oracle/oracle_child.py` and `tests/test_codex_lifecycle_oracle.py`. |
+| Return | One exact implementation commit, then append only reserved PRG-20260814-423 in one WPR-only handoff commit. Full serial suite, full-tree strict mypy, compile, reversals and residue readback are mandatory; review/integration remain reviewer-owned. |
+| Boundary | No historical-source reuse, hard-coded source, absolute-root source, filtering, `Any`, `type:ignore`, dynamic lookup, broad catch/clear, new worktree/helper, live Codex/home/config, target-project, network, push/staging publication, package/build/install, Secret, release or deployment. |
