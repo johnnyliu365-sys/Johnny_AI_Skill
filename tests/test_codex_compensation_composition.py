@@ -396,6 +396,44 @@ class OperationText(str):
     """String subclasses are not exact operation enum values."""
 
 
+class ModelStorageCorruption(str, Enum):
+    EXTRA = "extra"
+    PRIVATE = "private"
+
+
+class NestedResponseTarget(str, Enum):
+    PLUGIN_ENTRY = "plugin_entry"
+    MARKETPLACE_ENTRY = "marketplace_entry"
+    MARKETPLACE_SOURCE = "marketplace_source"
+
+
+def corrupt_model_storage(value: BaseModel, corruption: ModelStorageCorruption) -> BaseModel:
+    if corruption is ModelStorageCorruption.EXTRA:
+        object.__setattr__(value, "__pydantic_extra__", {"foreign": "state"})
+    else:
+        object.__setattr__(value, "__pydantic_private__", {"foreign": "state"})
+    return value
+
+
+def corrupted_nested_response(
+    target: NestedResponseTarget,
+    corruption: ModelStorageCorruption,
+) -> CodexPluginList | CodexMarketplaceList:
+    if target is NestedResponseTarget.PLUGIN_ENTRY:
+        entry = plugin_entry()
+        corrupt_model_storage(entry, corruption)
+        return CodexPluginList(installed=(entry,), available=())
+    marketplace = marketplace_entry()
+    if target is NestedResponseTarget.MARKETPLACE_SOURCE:
+        source: object = marketplace.marketplaceSource
+        if not isinstance(source, CodexMarketplaceSource):
+            raise AssertionError("expected marketplace source")
+        corrupt_model_storage(source, corruption)
+    else:
+        corrupt_model_storage(marketplace, corruption)
+    return CodexMarketplaceList(marketplaces=(marketplace,))
+
+
 class RequestSubclass(CodexCompensationPortRequest):
     """Caller-controlled request subclasses cannot enter observation admission."""
 
@@ -442,6 +480,89 @@ def capability(adapter: RecordingPort) -> CodexCompensationPortCapability:
 
 
 class CodexCompensationCompositionTests(unittest.TestCase):
+    def test_cr174_corrupted_original_response_state_maps_to_finite_nonaffirmative_results(self) -> None:
+        top_level_cases: tuple[tuple[CodexCompensationPortOperation, BaseModel, object], ...] = (
+            (
+                CodexCompensationPortOperation.REMOVE_PLUGIN,
+                CodexPluginRemovalProof(manifest=manifest(), status="REMOVED"),
+                CodexRemovalFailed(step=CodexCompensationStep.REMOVE_PLUGIN, status="DECLARED_FAILURE"),
+            ),
+            (
+                CodexCompensationPortOperation.REMOVE_MARKETPLACE,
+                CodexMarketplaceRemovalProof(manifest=manifest(), status="REMOVED"),
+                CodexRemovalFailed(step=CodexCompensationStep.REMOVE_MARKETPLACE, status="DECLARED_FAILURE"),
+            ),
+            (
+                CodexCompensationPortOperation.LIST_PLUGINS,
+                CodexPluginList(installed=(), available=()),
+                CodexPluginListsProof(
+                    step=CodexCompensationStep.PROVE_PLUGIN_LISTS_ABSENT,
+                    installed=CodexProofTruth.MALFORMED,
+                    available=CodexProofTruth.MALFORMED,
+                ),
+            ),
+            (
+                CodexCompensationPortOperation.LIST_MARKETPLACES,
+                CodexMarketplaceList(marketplaces=()),
+                CodexMarketplaceProof(
+                    step=CodexCompensationStep.PROVE_MARKETPLACE_ABSENT,
+                    truth=CodexProofTruth.MALFORMED,
+                ),
+            ),
+            (
+                CodexCompensationPortOperation.PROVE_INSTALLED_PATH_ABSENT,
+                CodexInstalledPathAbsenceProof(manifest=manifest(), absent=True),
+                CodexInstalledLocationProof(
+                    step=CodexCompensationStep.PROVE_INSTALLED_LOCATION_ABSENT,
+                    truth=CodexProofTruth.MALFORMED,
+                ),
+            ),
+        )
+        for corruption in ModelStorageCorruption:
+            for operation, value, expected in top_level_cases:
+                with self.subTest(corruption=corruption.value, operation=operation.value):
+                    current = value.model_copy(deep=True)
+                    corrupt_model_storage(current, corruption)
+                    result = observe_codex_compensation_operation(operation, current, request())
+                    self.assertEqual(expected, result)
+
+        nested_cases: tuple[
+            tuple[NestedResponseTarget, CodexCompensationPortOperation, object],
+            ...,
+        ] = (
+            (
+                NestedResponseTarget.PLUGIN_ENTRY,
+                CodexCompensationPortOperation.LIST_PLUGINS,
+                CodexPluginListsProof(
+                    step=CodexCompensationStep.PROVE_PLUGIN_LISTS_ABSENT,
+                    installed=CodexProofTruth.MALFORMED,
+                    available=CodexProofTruth.MALFORMED,
+                ),
+            ),
+            (
+                NestedResponseTarget.MARKETPLACE_ENTRY,
+                CodexCompensationPortOperation.LIST_MARKETPLACES,
+                CodexMarketplaceProof(
+                    step=CodexCompensationStep.PROVE_MARKETPLACE_ABSENT,
+                    truth=CodexProofTruth.MALFORMED,
+                ),
+            ),
+            (
+                NestedResponseTarget.MARKETPLACE_SOURCE,
+                CodexCompensationPortOperation.LIST_MARKETPLACES,
+                CodexMarketplaceProof(
+                    step=CodexCompensationStep.PROVE_MARKETPLACE_ABSENT,
+                    truth=CodexProofTruth.MALFORMED,
+                ),
+            ),
+        )
+        for corruption in ModelStorageCorruption:
+            for target, operation, expected in nested_cases:
+                with self.subTest(corruption=corruption.value, target=target.value):
+                    value = corrupted_nested_response(target, corruption)
+                    result = observe_codex_compensation_operation(operation, value, request())
+                    self.assertEqual(expected, result)
+
     def test_a1_public_observation_contract_and_all_five_successes(self) -> None:
         self.assertIs(exported_observe, observe_codex_compensation_operation)
         self.assertIs(CodexCompensationObservationRejectReason, CompositionRejectReason)

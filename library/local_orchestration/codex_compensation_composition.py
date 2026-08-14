@@ -66,6 +66,24 @@ _MANIFEST_STATE_FIELDS: tuple[str, ...] = (
     "digest",
 )
 _VALUE_STATE_FIELDS: tuple[str, ...] = ("value",)
+_REMOVAL_PROOF_STATE_FIELDS: tuple[str, ...] = ("manifest", "status")
+_INSTALLED_PATH_PROOF_STATE_FIELDS: tuple[str, ...] = ("manifest", "absent")
+_PLUGIN_LIST_STATE_FIELDS: tuple[str, ...] = ("installed", "available")
+_PLUGIN_ENTRY_STATE_FIELDS: tuple[str, ...] = (
+    "pluginId",
+    "name",
+    "marketplaceName",
+    "version",
+    "installed",
+    "enabled",
+    "source",
+    "installPolicy",
+    "authPolicy",
+    "marketplaceSource",
+)
+_MARKETPLACE_LIST_STATE_FIELDS: tuple[str, ...] = ("marketplaces",)
+_MARKETPLACE_ENTRY_STATE_FIELDS: tuple[str, ...] = ("name", "root", "marketplaceSource")
+_MARKETPLACE_SOURCE_STATE_FIELDS: tuple[str, ...] = ("type", "value")
 
 
 class CodexCompensationObservationRejectReason(str, Enum):
@@ -261,7 +279,11 @@ def _manifest_has_exact_original_state(value: CodexCompensationPortManifest) -> 
     )
 
 
-def _has_exact_model_state(value: BaseModel, expected_fields: tuple[str, ...]) -> bool:
+def _has_exact_model_state(
+    value: BaseModel,
+    expected_fields: tuple[str, ...],
+    optional_unset_fields: tuple[str, ...] = (),
+) -> bool:
     """Read only fixed Pydantic storage after exact type admission."""
 
     state: object = object.__getattribute__(value, "__dict__")
@@ -270,16 +292,26 @@ def _has_exact_model_state(value: BaseModel, expected_fields: tuple[str, ...]) -
     fields_set: object = object.__getattribute__(value, "__pydantic_fields_set__")
     if type(state) is not dict or extras is not None or private is not None or type(fields_set) is not set:
         return False
-    if len(state) != len(expected_fields) or len(fields_set) != len(expected_fields):
+    if any(field not in expected_fields for field in optional_unset_fields):
+        return False
+    if len(state) != len(expected_fields) or len(fields_set) not in (
+        len(expected_fields),
+        len(expected_fields) - len(optional_unset_fields),
+    ):
         return False
     for key in state:
         if type(key) is not str:
             return False
     for key in fields_set:
-        if type(key) is not str:
+        if type(key) is not str or key not in expected_fields:
             return False
     for expected in expected_fields:
-        if expected not in state or expected not in fields_set:
+        if expected not in state:
+            return False
+        if expected not in optional_unset_fields and expected not in fields_set:
+            return False
+    for optional in optional_unset_fields:
+        if optional not in fields_set and state[optional] is not None:
             return False
     return True
 
@@ -362,6 +394,8 @@ def _plugin_removal_observation(
         return failed
     proof = value
     try:
+        if not _has_exact_model_state(proof, _REMOVAL_PROOF_STATE_FIELDS):
+            return failed
         returned_manifest: object = proof.manifest
         status: object = proof.status
     except AttributeError:
@@ -393,6 +427,8 @@ def _marketplace_removal_observation(
         return failed
     proof = value
     try:
+        if not _has_exact_model_state(proof, _REMOVAL_PROOF_STATE_FIELDS):
+            return failed
         returned_manifest: object = proof.manifest
         status: object = proof.status
     except AttributeError:
@@ -482,6 +518,11 @@ def _installed_path_observation(
         )
     proof = value
     try:
+        if not _has_exact_model_state(proof, _INSTALLED_PATH_PROOF_STATE_FIELDS):
+            return CodexInstalledLocationProof(
+                step=CodexCompensationStep.PROVE_INSTALLED_LOCATION_ABSENT,
+                truth=CodexProofTruth.MALFORMED,
+            )
         returned_manifest: object = proof.manifest
         absent: object = proof.absent
     except AttributeError:
@@ -508,6 +549,8 @@ def _plugin_list_is_exact(value: object) -> bool:
         return False
     plugin_list = value
     try:
+        if not _has_exact_model_state(plugin_list, _PLUGIN_LIST_STATE_FIELDS):
+            return False
         return (
             type(plugin_list.installed) is tuple
             and type(plugin_list.available) is tuple
@@ -523,6 +566,8 @@ def _plugin_entry_is_exact(value: object) -> bool:
         return False
     entry = value
     try:
+        if not _has_exact_model_state(entry, _PLUGIN_ENTRY_STATE_FIELDS, ("marketplaceSource",)):
+            return False
         if (
             type(entry.pluginId) is not str
             or type(entry.name) is not str
@@ -581,6 +626,8 @@ def _marketplace_list_is_exact(value: object) -> bool:
         return False
     marketplace_list = value
     try:
+        if not _has_exact_model_state(marketplace_list, _MARKETPLACE_LIST_STATE_FIELDS):
+            return False
         return (
             type(marketplace_list.marketplaces) is tuple
             and all(_marketplace_entry_is_exact(entry) for entry in marketplace_list.marketplaces)
@@ -594,6 +641,8 @@ def _marketplace_entry_is_exact(value: object) -> bool:
         return False
     entry = value
     try:
+        if not _has_exact_model_state(entry, _MARKETPLACE_ENTRY_STATE_FIELDS, ("marketplaceSource",)):
+            return False
         if type(entry.name) is not str or type(entry.root) is not str:
             return False
         source: object = entry.marketplaceSource
@@ -617,6 +666,8 @@ def _marketplace_source_is_exact(value: object) -> bool:
         return False
     source = value
     try:
+        if not _has_exact_model_state(source, _MARKETPLACE_SOURCE_STATE_FIELDS):
+            return False
         if type(source.type) is not str or type(source.value) is not str:
             return False
         CodexMarketplaceSource(type=source.type, value=source.value)
