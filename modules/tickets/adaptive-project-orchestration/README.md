@@ -8,7 +8,7 @@
 
 | Ticket | Observable closure | State | Dependency |
 | --- | --- | --- | --- |
-| [01-route-instruction-contract](01-route-instruction-contract.md) | Every Router decision carries one versioned skill reference and one exact expected typed return; technical halts use the Profile's router-control fallback. | `REQUIREMENT_CHANGED / POLICY_REFERENCE_REFREEZE_REQUIRED` | `CHG-20260815-020`; completed revision-03 return preserved |
+| [01-route-instruction-contract](01-route-instruction-contract.md) | Every Router decision carries one versioned skill reference and one exact expected typed return; technical halts use the Profile's router-control fallback. | `IN_PROGRESS / REVISION_04_REFROZEN / DISPATCH_PENDING` | `CHG-20260815-020`; completed revision-03 return preserved |
 | `02-shared-context-lifecycle-gate` | Architecture-stage create/seal and change-control-only revision admission; all later roles are read/reference-only. | `CANDIDATE / NON_DISPATCHABLE` | R01 approved/integrated |
 | `03-model-role-readiness-wake` | SPEC readiness and architecture-owner sleep/wake decision kernel. | `CANDIDATE / NON_DISPATCHABLE` | R02 approved/integrated |
 | `04-low-model-ticket-admission` | Four-way low-model decomposition/admission decision kernel. | `CANDIDATE / NON_DISPATCHABLE` | R03 approved/integrated |

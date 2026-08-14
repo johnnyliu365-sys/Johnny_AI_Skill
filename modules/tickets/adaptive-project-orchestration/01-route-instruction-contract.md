@@ -2,11 +2,11 @@
 
 | Field | Value |
 | --- | --- |
-| SPEC / AC | `SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2` revision 02 / AC-12 through AC-14 shared route precondition |
-| Change / ADR | `CHG-20260814-019`; `ADR-20260814-011` |
-| State | `IN_PROGRESS / REVISION_03_CORRECTION_DISPATCH_CONFIRMED` |
-| Closure | `CLOSURE-ADAPTIVE-ROUTER-R01-03` / R1-R7 plus CR-R01-001 through CR-R01-004 |
-| Baseline | Router policy freeze `ffc2197f4ac9be495651fd970c0c3f21737aa3bc` |
+| SPEC / AC | `SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2` revision 03 / AC-12 through AC-15 shared route precondition |
+| Change / ADR | `CHG-20260814-019`, `CHG-20260815-020`; `ADR-20260814-011` |
+| State | `IN_PROGRESS / REVISION_04_REQUIREMENT_REFROZEN / DISPATCH_PENDING` |
+| Closure | `CLOSURE-ADAPTIVE-ROUTER-R01-04` / R1-R7, CR-R01-001 through CR-R01-004 plus policy-revision rebind |
+| Baseline | Shared-Context policy freeze `3469e20bcbddce0c55b7ad7e92be68eca4257052` |
 | Delivery profile | `STANDARD`; one Luna implementation owner; no helper |
 | Control owner / reviewer | Control task `019fb935-bbe1-7f71-8b4b-58ba20c81626`; sole Agent orchestrator |
 | Planned implementation owner | Task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; permanent worktree `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` |
@@ -14,6 +14,7 @@
 | Dispatch binding | `hnd_adaptive_router_r01_20260814`; `aln_adaptive_router_r01_20260814`; receipt `rcpt_adaptive_router_r01_20260814`; question `q-adaptive-router-r01-20260814`; correlation `corr-adaptive-router-r01-20260814`; side context `scx-adaptive-router-r01-20260814-01` |
 | Correction binding | `hnd_adaptive_router_r01_r02_20260814`; review baseline `334935dfd557e7d244b31de37e80db8911f27069`; same allocation/receipt/owner/branch; additive after handoff `a16dfc38eb6141e2aef5fa480be741b1f057ca57` |
 | P0 correction binding | `hnd_adaptive_router_r01_r03_20260815`; review baseline `51de13f1be7151a692675509e6ec9357ae64ec46`; same allocation/receipt/owner/branch; additive after handoff `21ced7b7f84a351074f65566603b4a2793334134` |
+| Requirement-change binding | `hnd_adaptive_router_r01_r04_20260815`; same allocation/receipt/owner/branch; completed revision-03 handoff `7d6c2f2a066a9d039eb13ae0a8e339e04f372f61` remains immutable; exact refreeze commit is supplied at dispatch |
 | XSS / effects | `XSS_NOT_APPLICABLE`; pure typed Router/Profile contracts and tests, no external effect |
 
 ## One observable outcome
@@ -126,17 +127,18 @@ lane continuation; the independently admitted ticket lane continues to use its a
 | `HANDOFF / ACTION_COMPLETED` | `router-control` | `NO_RETURN` |
 | `IMPLEMENT / REQUIREMENT_CHANGED` | `discovery-change` | `EVENT(ACTION_COMPLETED)` |
 
-## Revision-02 exact policy metadata
+## Revision-04 exact policy metadata
 
 Production does not read these files. The Profile stores the following real metadata frozen
-from the Router policy baseline; tests independently hash the files and compare exact bytes.
+from the current Router policy baseline; tests independently hash the files and compare exact
+bytes.
 
 | Reference ID | Source revision | Content digest |
 | --- | --- | --- |
-| `router-control` | `rev-23dd53ad68e5562f` | `sha256_23dd53ad68e5562f39a35f06f9c21a970b6eb94eab3aeeae468cc8b5cd68b091` |
+| `router-control` | `rev-d6660247fa53789c` | `sha256_d6660247fa53789c4a14498aaaae2e15a49fa3335e84fe585480f08ba564de5d` |
 | `discovery-change` | `rev-5d432a8246bce4ed` | `sha256_5d432a8246bce4ed890289e24c50e2e29360df165eeb7f9355cb02228e1d10ef` |
-| `context-routing` | `rev-5f1e7958c70c8493` | `sha256_5f1e7958c70c8493de83aa1481e0f3f3e59c5a40e745a12077eb372fa6e0815e` |
-| `specification-ticketing` | `rev-c7011f440caa3ec8` | `sha256_c7011f440caa3ec8fe83e119a110aa368ec4cc130cf71671d0199987140c8af7` |
+| `context-routing` | `rev-db155a0be96c756f` | `sha256_db155a0be96c756f4b79270ada14c088b338a21e878caff994ae31a41638859d` |
+| `specification-ticketing` | `rev-26e443dfca8e8434` | `sha256_26e443dfca8e84342bb2ca40d748ac155a2b34010fcd6dc7fd5b59c6de5936b3` |
 | `implementation-authority` | `rev-855117ed19c9c952` | `sha256_855117ed19c9c952f8903bc56ce070d2cf3805fb51d7a450c46bbf8a00480f50` |
 | `implementation-tdd` | `rev-38408006f23df3b6` | `sha256_38408006f23df3b66a4368e2b8794cc099b84ea20417e56d881ff19512345574` |
 | `review-checks` | `rev-4b8527305609194a` | `sha256_4b8527305609194ae9dd26c16a05ff72d22b1f20a8cb925175d6793766bb5f54` |
@@ -147,8 +149,9 @@ contract revision must equal its skill reference revision; the fallback pair fol
 rule. A conflicting reference ID or revision mismatch fails Profile construction before any
 Router capability/effect.
 
-Revision-02 tests replace the incoming-event assertion with the exhaustive table above and
-verify real file hashes. Required reversals: restoring the incoming-event echo makes the
+The route/hash oracle originated in revision 02 and remains authoritative. Its three changed
+policy pairs are refrozen by revision 04; the exhaustive route table and remaining four pairs
+are unchanged. The original reversals still apply: restoring the incoming-event echo makes the
 `INTAKE` direction test red; replacing one real digest with the all-zero placeholder makes the
 policy-authenticity test red. Both are restored exactly before final verification.
 
@@ -175,6 +178,35 @@ this revision. The correction is limited to these exact type/evidence requiremen
 Required revision-03 reversals: changing `_PolicyRoute.reference_id` back to `str` turns the
 P0 source gate red; deleting one named tuple annotation turns the same gate red. Restore both
 exactly, then rerun the unchanged revision-02 route/hash oracle and all prior verification.
+
+## Revision-04 requirement-change closure
+
+`CHG-20260815-020` changes authoritative `router-control`, `context-routing` and
+`specification-ticketing` bytes after the completed revision-03 return. That return is not a
+defect and is not discarded; its embedded policy metadata is now stale by design. Revision 04
+first synchronizes the exact committed control baseline into the same implementation branch,
+then changes only:
+
+- the three corresponding `SkillReference` revision/digest pairs in
+  `library/workflow_router/profile.py`;
+- the same three typed `_ExpectedPolicy` pairs in `tests/test_workflow_router.py`;
+- one WPR-only handoff after verification.
+
+The 19-row route table, public contracts, strong-type closure and all other policy metadata are
+unchanged. `ProjectWorkflowProfile.profile_version` remains unchanged because R02, not this
+metadata rebind, owns the new executable Context lifecycle capability.
+
+The sync may resolve only the known append-only `doc/WorkProgressReport.md` overlap by retaining
+every unique PRG entry from both histories exactly once. Any other conflict or content mismatch
+is `HALT / UNSAFE_BASELINE_CONFLICT`; no reset, force, amend, overwrite or silent resolution is
+allowed.
+
+Revision-04 first red runs the policy authenticity oracle against the synchronized documents and
+must report the three stale references. After the six constants are updated it must pass. A
+bounded reversal restoring the old `context-routing` pair must turn that oracle red and be
+restored exactly. Final verification repeats the revision-03 P0 AST gate, focused Router suite,
+six-module suite, full serial suite, strict mypy, in-memory compile, scope/topology/residue and
+policy-byte readback.
 
 ## TDD and source gates
 

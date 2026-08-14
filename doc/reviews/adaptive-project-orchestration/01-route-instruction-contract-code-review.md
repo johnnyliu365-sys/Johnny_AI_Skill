@@ -101,3 +101,23 @@ Revision 03 is a same-ticket mechanical correction only: use the existing
 policy path, explicit tuple/map annotations, and direct typed file-byte hashing without a Git
 subprocess. The AST source gate must cover the new internal route/oracle dataclasses and module
 constants. No route value, digest, public contract or behavior may change.
+
+## Revision-03 return and owner requirement change
+
+| Field | Value |
+| --- | --- |
+| Correction / handoff | `646a8b2d7052eba58ff623133942a976920acffc` / `7d6c2f2a066a9d039eb13ae0a8e339e04f372f61` |
+| Implementer evidence | Focused `32/32`, six-module `99/99`, full serial `535/535`, strict mypy `150`, compile `150`, both P0 reversals, exact two-file correction and clean final readback. |
+| Review disposition | `REQUIREMENT_CHANGED / POLICY_REFERENCE_STALE`; no terminal approval or implementation finding is issued against revision 03. |
+
+Before independent terminal review, the owner required architecture-owned sealed shared Context
+through `CHG-20260815-020`. The authoritative `router-control`, `context-routing` and
+`specification-ticketing` documents therefore changed revision. R01 is designed to fail closed
+on exactly this condition: the completed return's three embedded references no longer match
+current policy bytes.
+
+Revision 04 preserves the entire revision-03 chain as immutable evidence, synchronizes the exact
+control refreeze into the same branch and updates only the three production/test metadata pairs.
+The terminal review must re-run CR-R01-004's P0 source gate as well as the policy hash oracle;
+only that combined result may close R01. The executable Context mutation gate remains the next
+independent ticket and is not smuggled into this correction.

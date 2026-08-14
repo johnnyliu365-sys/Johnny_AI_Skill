@@ -4857,3 +4857,12 @@
 | Context correction | `CONTEXT.md` is reduced from historical status prose to stable facts plus a metadata-only feature index. Ticket/handoff/commit/test/review/worktree state remains in its owning artifact. |
 | R01 disposition | Completed implementation `646a8b2d7052eba58ff623133942a976920acffc` and WPR-only handoff `7d6c2f2a066a9d039eb13ae0a8e339e04f372f61` remain immutable evidence. Terminal approval is paused because the newly approved policy revision makes its embedded policy references stale; this is `REQUIREMENT_CHANGED`, not an implementation defect. |
 | Router order | Refreeze only R01 policy metadata, then independently implement the shared-Context lifecycle/mutation-authority gate before model-role readiness, low-model admission, UI routing or integrated acceptance. All non-Router work remains paused. |
+
+## PRG-20260815-453 - Router R01 revision-04 requirement-change refreeze
+
+| Field | Evidence |
+| --- | --- |
+| Refreeze source | `CHG-20260815-020`; policy baseline `3469e20bcbddce0c55b7ad7e92be68eca4257052`; formal review records `REQUIREMENT_CHANGED`, not a revision-03 defect. |
+| Exact correction | Rebind only `router-control`, `context-routing` and `specification-ticketing` revision/digest pairs in typed production/test constants after guarded baseline sync; no route/public/type behavior change. |
+| Lane | Same ticket/task/worktree/branch/allocation/receipt; handoff `hnd_adaptive_router_r01_r04_20260815`; additive after revision-03 handoff `7d6c2f2a066a9d039eb13ae0a8e339e04f372f61`. |
+| Conflict boundary | Only the expected append-only WPR overlap may be resolved by retaining every unique PRG entry exactly once. Any other conflict halts. R02 and all non-Router work remain paused. |
