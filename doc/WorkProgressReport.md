@@ -4658,3 +4658,14 @@
 | Blocking batch | CR-180 `IMPLEMENTATION_DEFECT`: internal helper retains `object` contrary to A7. CR-181 `EVIDENCE_DEFECT`: changing external sentinel `.git/config` bytes leaves A6 green. CR-182 `EVIDENCE_DEFECT`: committed source admission does not enforce boundary-only `object`. Reviewer mutations were restored to exact source blob `22aef119ded83c2ac25b5586bfd514dca095a291`. |
 | Continuation | Same ticket/revision/owner/permanent worktree/branch/allocation/receipt/correlation. Add one correction commit in the exact two-path scope, then append one WPR-only handoff. No second correction cycle is authorized without `CONVERGENCE_REVIEW_REQUIRED`. |
 | Boundary | `XSS_NOT_APPLICABLE`; no helper, new branch/worktree, live Codex/home/config, target-project, network, push/staging publication, package/build/install, Secret, release or deployment. |
+
+## PRG-20260814-432 - Ticket 05C3 CR-180 through CR-182 correction dispatch
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `CHANGES_REQUESTED(PRG-431) + EXACT_LANE_READBACK -> CORRECTION_DISPATCH_CONFIRMED / IMPLEMENT`; A1-A8 revision 03 and all original binding identifiers remain unchanged. |
+| Review / lane | Exact review baseline `209fd3f7f929aee6cd59ed0fb88e40a15e99c78c`; owner task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; same clean permanent owner-1 worktree/branch at `6f90e65c7206db21c80b03180c92c132b2b2659c`; exactly three worktrees and no ignored residue. |
+| Merge admission | Merge the exact control commit carrying this registry. Resolve only append-only WPR overlap, retaining PRG-430 through PRG-432 and all historical records exactly once in numeric order. Existing source, test, implementation and handoff commits remain immutable. |
+| Correction / proof | Exact two-path correction only: internal `OracleCommand` type, complete external Git-sentinel tree byte snapshot, and a committed A7 AST/source gate. The old internal-object form and `.git/config` byte mutation must each turn the corrected governing test red before exact restoration. |
+| Return | One additive implementation correction commit followed by reserved physical-EOF PRG-20260814-433 WPR-only handoff. This is revision 03's sole correction cycle; correction review failure routes to `CONVERGENCE_REVIEW_REQUIRED`. |
+| Boundary | `XSS_NOT_APPLICABLE`; no new branch/worktree/helper, live Codex/home/config, target-project, network, push/staging publication, package/build/install, Secret, release or deployment. |
