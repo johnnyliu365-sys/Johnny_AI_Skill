@@ -153,8 +153,8 @@ class _PolicyRoute:
 _POLICY_REFERENCES: tuple[SkillReference, ...] = (
     SkillReference(
         reference_id="router-control",
-        source_revision="rev-23dd53ad68e5562f",
-        content_digest="sha256_23dd53ad68e5562f39a35f06f9c21a970b6eb94eab3aeeae468cc8b5cd68b091",
+        source_revision="rev-d6660247fa53789c",
+        content_digest="sha256_d6660247fa53789c4a14498aaaae2e15a49fa3335e84fe585480f08ba564de5d",
     ),
     SkillReference(
         reference_id="discovery-change",
@@ -163,13 +163,13 @@ _POLICY_REFERENCES: tuple[SkillReference, ...] = (
     ),
     SkillReference(
         reference_id="context-routing",
-        source_revision="rev-5f1e7958c70c8493",
-        content_digest="sha256_5f1e7958c70c8493de83aa1481e0f3f3e59c5a40e745a12077eb372fa6e0815e",
+        source_revision="rev-db155a0be96c756f",
+        content_digest="sha256_db155a0be96c756f4b79270ada14c088b338a21e878caff994ae31a41638859d",
     ),
     SkillReference(
         reference_id="specification-ticketing",
-        source_revision="rev-c7011f440caa3ec8",
-        content_digest="sha256_c7011f440caa3ec8fe83e119a110aa368ec4cc130cf71671d0199987140c8af7",
+        source_revision="rev-26e443dfca8e8434",
+        content_digest="sha256_26e443dfca8e84342bb2ca40d748ac155a2b34010fcd6dc7fd5b59c6de5936b3",
     ),
     SkillReference(
         reference_id="implementation-authority",

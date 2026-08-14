@@ -244,8 +244,8 @@ _EXPECTED_ROUTES: tuple[_ExpectedRoute, ...] = (
 _EXPECTED_POLICIES: tuple[_ExpectedPolicy, ...] = (
     _ExpectedPolicy(
         "router-control",
-        "rev-23dd53ad68e5562f",
-        "sha256_23dd53ad68e5562f39a35f06f9c21a970b6eb94eab3aeeae468cc8b5cd68b091",
+        "rev-d6660247fa53789c",
+        "sha256_d6660247fa53789c4a14498aaaae2e15a49fa3335e84fe585480f08ba564de5d",
         PurePosixPath("skills/johnny-project-takeover/references/router-control.md"),
     ),
     _ExpectedPolicy(
@@ -256,14 +256,14 @@ _EXPECTED_POLICIES: tuple[_ExpectedPolicy, ...] = (
     ),
     _ExpectedPolicy(
         "context-routing",
-        "rev-5f1e7958c70c8493",
-        "sha256_5f1e7958c70c8493de83aa1481e0f3f3e59c5a40e745a12077eb372fa6e0815e",
+        "rev-db155a0be96c756f",
+        "sha256_db155a0be96c756f4b79270ada14c088b338a21e878caff994ae31a41638859d",
         PurePosixPath("skills/johnny-project-takeover/references/context-routing.md"),
     ),
     _ExpectedPolicy(
         "specification-ticketing",
-        "rev-c7011f440caa3ec8",
-        "sha256_c7011f440caa3ec8fe83e119a110aa368ec4cc130cf71671d0199987140c8af7",
+        "rev-26e443dfca8e8434",
+        "sha256_26e443dfca8e84342bb2ca40d748ac155a2b34010fcd6dc7fd5b59c6de5936b3",
         PurePosixPath("skills/johnny-project-takeover/references/specification-ticketing.md"),
     ),
     _ExpectedPolicy(
@@ -1651,7 +1651,7 @@ class RouteInstructionContractTests(unittest.TestCase):
         profile = build_router_poc_profile()
         self.assertEqual("router-control", profile.router_control_reference.reference_id)
         self.assertEqual(
-            "rev-23dd53ad68e5562f",
+            "rev-d6660247fa53789c",
             profile.router_control_reference.source_revision,
         )
         self.assertEqual(
