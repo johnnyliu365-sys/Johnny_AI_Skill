@@ -196,7 +196,7 @@ def run_receipt_removal_acceptance(
     def observed_run(
         current_oracle: CodexLifecycleOracle,
         current_lease: EnvironmentLease,
-        command_value: object,
+        command_value: OracleCommand,
     ) -> OracleRunResult:
         if type(command_value) is not OracleCommand:
             return OracleBlocked(reason=OracleBlockReason.COMMAND_INVALID)

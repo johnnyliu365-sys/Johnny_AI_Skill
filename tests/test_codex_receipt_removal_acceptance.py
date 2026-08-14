@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import ast
 import os
 from dataclasses import dataclass
 import hashlib
@@ -10,6 +11,7 @@ import subprocess
 import tempfile
 import unittest
 from unittest.mock import patch
+from typing import Literal
 
 from library.local_orchestration.codex_registration_contracts import (
     CodexAuthPolicy,
@@ -102,6 +104,13 @@ class _ForeignSnapshot:
     payloads: tuple[tuple[str, bytes], ...]
 
 
+@dataclass(frozen=True)
+class _SentinelTreeEntry:
+    relative_path: str
+    node_type: Literal["directory", "file"]
+    content: bytes
+
+
 def _foreign_marketplace() -> OracleMarketplaceRecord:
     name = "acceptance-market-foreign"
     root = "foreign-acceptance-market-root"
@@ -161,6 +170,20 @@ def _foreign_snapshot(lease: EnvironmentLease, oracle: CodexLifecycleOracle) -> 
         plugins=state.foreign_plugins,
         payloads=tuple(payloads),
     )
+
+
+def _sentinel_tree_snapshot(root: Path) -> tuple[_SentinelTreeEntry, ...]:
+    entries: list[_SentinelTreeEntry] = []
+    paths = sorted(root.rglob("*"), key=lambda path: path.relative_to(root).as_posix())
+    for path in paths:
+        relative_path = path.relative_to(root).as_posix()
+        if path.is_dir():
+            entries.append(_SentinelTreeEntry(relative_path, "directory", b""))
+        elif path.is_file():
+            entries.append(_SentinelTreeEntry(relative_path, "file", path.read_bytes()))
+        else:
+            raise AssertionError("sentinel tree contains an unsupported node")
+    return tuple(entries)
 
 
 class CodexReceiptRemovalAcceptanceTests(unittest.TestCase):
@@ -315,8 +338,11 @@ class CodexReceiptRemovalAcceptanceTests(unittest.TestCase):
                 empty_sentinel.mkdir()
                 subprocess.run(("git", "init", "--quiet", str(git_sentinel)), check=True, shell=False)
                 before_environment = tuple(sorted(os.environ.items()))
+                before_git_tree = _sentinel_tree_snapshot(git_sentinel)
                 with patch.dict(os.environ, {"LOCALAPPDATA": r"C:\Users\oracle\AppData\Local"}):
                     result = run_receipt_removal_acceptance(lease, oracle, _request())
+                    after_git_tree = _sentinel_tree_snapshot(git_sentinel)
+                self.assertEqual(before_git_tree, after_git_tree)
                 if type(result) is not ReceiptRemovalAcceptanceAccepted:
                     raise AssertionError("sentinel receipt removal did not accept")
                 status = subprocess.run(
@@ -339,6 +365,106 @@ class CodexReceiptRemovalAcceptanceTests(unittest.TestCase):
                 self.assertNotIn(str(empty_sentinel), result.model_dump_json(warnings=False))
         finally:
             _teardown(allocator, lease)
+
+    def test_a7_source_gate_limits_object_to_public_boundary(self) -> None:
+        source_path = Path(__file__).parent / "staging" / "codex_lifecycle_oracle" / "receipt_removal_acceptance.py"
+        source_text = source_path.read_text(encoding="utf-8")
+        syntax = ast.parse(source_text, filename=str(source_path))
+        expected_object_parameters = {
+            ("run_receipt_removal_acceptance", "lease"),
+            ("run_receipt_removal_acceptance", "oracle"),
+            ("run_receipt_removal_acceptance", "request"),
+        }
+        object_annotations: set[tuple[str, str]] = set()
+        forbidden_nodes: list[tuple[str, int]] = []
+        authorized_object_nodes: set[int] = set()
+        inspect_bindings = {"inspect"}
+        for node in ast.walk(syntax):
+            if isinstance(node, ast.Import):
+                for alias in node.names:
+                    if alias.name == "inspect":
+                        inspect_bindings.add(alias.asname or "inspect")
+            if isinstance(node, ast.ImportFrom) and node.module == "inspect":
+                for alias in node.names:
+                    inspect_bindings.add(alias.asname or alias.name)
+        for node in ast.walk(syntax):
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                arguments = list(node.args.posonlyargs) + list(node.args.args) + list(node.args.kwonlyargs)
+                if node.args.vararg is not None:
+                    arguments.append(node.args.vararg)
+                if node.args.kwarg is not None:
+                    arguments.append(node.args.kwarg)
+                for argument in arguments:
+                    annotation_nodes = () if argument.annotation is None else tuple(ast.walk(argument.annotation))
+                    if any(
+                        isinstance(candidate, ast.Name) and candidate.id == "object"
+                        for candidate in annotation_nodes
+                    ):
+                        object_annotations.add((node.name, argument.arg))
+                        if (node.name, argument.arg) in expected_object_parameters:
+                            authorized_object_nodes.update(
+                                id(candidate)
+                                for candidate in annotation_nodes
+                                if isinstance(candidate, ast.Name) and candidate.id == "object"
+                            )
+                    if any(
+                        (isinstance(candidate, ast.Name) and candidate.id == "Optional")
+                        or (isinstance(candidate, ast.Attribute) and candidate.attr == "Optional")
+                        or (isinstance(candidate, ast.Constant) and candidate.value is None)
+                        for candidate in annotation_nodes
+                    ):
+                        forbidden_nodes.append(("optional parameter", argument.lineno))
+                if node.returns is not None and any(
+                    isinstance(candidate, ast.Name) and candidate.id == "object"
+                    for candidate in ast.walk(node.returns)
+                ):
+                    object_annotations.add((node.name, "<return>"))
+            if isinstance(node, ast.Import) and any(alias.name == "inspect" for alias in node.names):
+                forbidden_nodes.append(("inspect", node.lineno))
+            if isinstance(node, ast.ImportFrom) and node.module == "inspect":
+                forbidden_nodes.append(("inspect", node.lineno))
+            if isinstance(node, ast.Name) and node.id in inspect_bindings:
+                forbidden_nodes.append(("inspect", node.lineno))
+            if isinstance(node, ast.Attribute) and isinstance(node.value, ast.Name) and node.value.id in inspect_bindings:
+                forbidden_nodes.append(("inspect", node.lineno))
+            if isinstance(node, ast.Name) and node.id == "Any":
+                forbidden_nodes.append(("Any", node.lineno))
+            if isinstance(node, ast.Name) and node.id == "object" and id(node) not in authorized_object_nodes:
+                forbidden_nodes.append(("object outside public boundary", node.lineno))
+            if isinstance(node, ast.Attribute) and node.attr == "Any":
+                forbidden_nodes.append(("Any", node.lineno))
+            if isinstance(node, ast.ImportFrom) and node.module == "typing" and any(
+                alias.name == "cast" for alias in node.names
+            ):
+                forbidden_nodes.append(("typing.cast", node.lineno))
+            if isinstance(node, ast.Call) and (
+                (isinstance(node.func, ast.Name) and node.func.id == "cast")
+                or (isinstance(node.func, ast.Attribute) and node.func.attr == "cast")
+            ):
+                forbidden_nodes.append(("typing.cast", node.lineno))
+            if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute):
+                if node.func.attr == "model_construct":
+                    forbidden_nodes.append(("model_construct", node.lineno))
+                if node.func.attr == "model_copy" and any(keyword.arg == "update" for keyword in node.keywords):
+                    forbidden_nodes.append(("model_copy(update=...)", node.lineno))
+                if node.func.attr in {"__getattribute__", "__getattr__"}:
+                    forbidden_nodes.append(("dynamic member lookup", node.lineno))
+            if isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id in {
+                "getattr",
+                "hasattr",
+                "setattr",
+            }:
+                forbidden_nodes.append(("dynamic member lookup", node.lineno))
+            if isinstance(node, ast.Attribute) and node.attr in {"__dict__", "__getattribute__", "__getattr__"}:
+                forbidden_nodes.append(("dynamic member lookup", node.lineno))
+            if isinstance(node, ast.ExceptHandler) and (
+                node.type is None
+                or (isinstance(node.type, ast.Name) and node.type.id in {"BaseException", "Exception"})
+            ):
+                forbidden_nodes.append(("broad catch", node.lineno))
+        self.assertEqual(expected_object_parameters, object_annotations)
+        self.assertEqual([], forbidden_nodes)
+        self.assertNotIn("# type: ignore", source_text.lower())
 
     def test_a7_public_constructors_and_round_trips_keep_strong_types(self) -> None:
         allocator, lease, oracle = _ready()
