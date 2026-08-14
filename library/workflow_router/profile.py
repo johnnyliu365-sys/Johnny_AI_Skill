@@ -114,14 +114,19 @@ class ProjectWorkflowProfile(RouterModel):
             != self.router_control_reference.source_revision
         ):
             raise ValueError("profile fallback contract revision must match its reference")
-        if self.shared_context_ref != "ctx-shared-project":
-            raise ValueError("profile shared Context reference must be the project metadata ID")
-        if self.architecture_owner_capability_ref != "cap-architecture-owner":
-            raise ValueError(
-                "profile architecture owner capability must be the declared metadata ID"
-            )
         if self.shared_context_ref == self.architecture_owner_capability_ref:
             raise ValueError("shared Context and architecture capability IDs must be distinct")
+        metadata_references = (
+            self.shared_context_ref,
+            self.architecture_owner_capability_ref,
+        )
+        forbidden_markers = ("://", "\\", "/", "file", "prompt", "secret")
+        if any(
+            marker in reference.casefold()
+            for reference in metadata_references
+            for marker in forbidden_markers
+        ):
+            raise ValueError("profile references must remain metadata-only")
         references: dict[OpaqueMetadataId, SkillReference] = {
             self.router_control_reference.reference_id: self.router_control_reference
         }

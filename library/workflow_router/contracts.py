@@ -312,15 +312,6 @@ class SharedContextContentManifest(RouterModel):
             "/",
             "prompt",
             "secret",
-            "raw",
-            "body",
-            "progress",
-            "ticket",
-            "commit",
-            "test",
-            "review",
-            "branch",
-            "worktree",
         )
         if any(
             marker in reference.casefold()
@@ -374,6 +365,10 @@ class SharedContextAccessRequest(RouterModel):
     def operation_shape_is_exact(self) -> SharedContextAccessRequest:
         """Require only the fields appropriate to the selected finite operation."""
 
+        if self.expected_current_revision is not None and _is_all_zero(
+            self.expected_current_revision, "rev-"
+        ):
+            raise ValueError("expected shared Context revisions must identify real content")
         if self.operation is SharedContextOperation.CREATE_DRAFT:
             if (
                 self.expected_current_revision is not None

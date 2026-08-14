@@ -1728,7 +1728,7 @@ class RouteInstructionContractTests(unittest.TestCase):
                 content_digest=manifest.content_digest,
             )
         with self.assertRaises(ValidationError):
-            SharedContextState.model_validate(
+                SharedContextState.model_validate(
                 {
                     "context_ref": "ctx-shared-project",
                     "lifecycle": SharedContextLifecycle.SEALED,
@@ -1736,6 +1736,69 @@ class RouteInstructionContractTests(unittest.TestCase):
                     "content_digest": manifest.content_digest,
                 }
             )
+
+    def test_shared_context_profile_accepts_distinct_project_metadata(self) -> None:
+        profile = build_router_poc_profile()
+        alternate = ProjectWorkflowProfile.model_validate(
+            {
+                **profile.model_dump(),
+                "shared_context_ref": "ctx-another-project",
+                "architecture_owner_capability_ref": "cap-another-architecture-owner",
+            }
+        )
+        self.assertEqual("ctx-another-project", alternate.shared_context_ref)
+        self.assertEqual(
+            "cap-another-architecture-owner",
+            alternate.architecture_owner_capability_ref,
+        )
+
+    def test_shared_context_manifest_accepts_semantic_tree_reference_ids(self) -> None:
+        manifest = SharedContextContentManifest(
+            revision="rev-0123456789abcdef",
+            content_digest=(
+                "sha256_0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+            ),
+            stable_fact_refs=("fact-requirement-current",),
+            invariant_boundary_refs=("boundary-invariant-current",),
+            artifact_index_refs=("idx-ticket-current",),
+        )
+        self.assertEqual(("idx-ticket-current",), manifest.artifact_index_refs)
+
+    def test_shared_context_rejects_reserved_expected_revision(self) -> None:
+        manifest = self._manifest()
+        revised_manifest = self._manifest(
+            revision="rev-1123456789abcdef",
+            content_digest=(
+                "sha256_1123456789abcdef1123456789abcdef1123456789abcdef1123456789abcdef"
+            ),
+            suffix="two",
+        )
+        valid_requests = (
+            self._request(
+                operation=SharedContextOperation.REVISE_DRAFT,
+                process_stage=ProcessStage.GRILL,
+                expected_current_revision=manifest.revision,
+                candidate_manifest=revised_manifest,
+            ),
+            self._request(
+                operation=SharedContextOperation.SEAL,
+                process_stage=ProcessStage.CONTEXT,
+                expected_current_revision=manifest.revision,
+            ),
+            self._request(
+                operation=SharedContextOperation.READ_REFERENCE,
+                process_stage=ProcessStage.REVIEW,
+                expected_current_revision=manifest.revision,
+                actor_role=SharedContextActorRole.SUPERVISOR_REVIEWER,
+                actor_capability_ref="cap-reviewer",
+            ),
+        )
+        for request in valid_requests:
+            with self.subTest(operation=request.operation):
+                payload = request.model_dump()
+                payload["expected_current_revision"] = "rev-0000000000000000"
+                with self.assertRaises(ValidationError):
+                    SharedContextAccessRequest.model_validate(payload)
 
     def test_shared_context_profile_and_allowed_rows_are_exact(self) -> None:
         profile = build_router_poc_profile()
