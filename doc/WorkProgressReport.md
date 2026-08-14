@@ -5220,3 +5220,15 @@
 | Candidate preservation | Candidate implementation `458791b470629fe7c0e3bb263af87560b58e54b9` remains immutable and is not rejected. Revision-02 revalidation makes all four source/test paths read-only and permits only registry synchronization plus one WPR-only return. |
 | Context lifecycle | Prior side Context `scx-adaptive-router-r02c1-20260815-01` is invalidated. Planned replacement is `scx-adaptive-router-r02c1-20260815-02`, bound to the same owner/worktree/branch and activated only by a separate exact registry. |
 | Boundary | No source/test mutation, receipt yet, new branch/worktree, helper, R02C2/R02C3 implementation, external effect, push, package/install, Secret, release or deployment. `XSS_NOT_APPLICABLE`. |
+
+## PRG-20260815-484 - Router R02C1 revision-02 revalidation dispatch
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `TICKET_REFROZEN / REVALIDATION_DISPATCH_REQUIRED(PRG-483) + STANDING_OWNER_AUTO_CONTINUE -> IMPLEMENTATION_DISPATCH_CONFIRMED / REVALIDATE`; this is the sole revision-02 registry. |
+| Registry / correction | Refreeze `802df844815db85d6dd3f26a30cb803dca9dcbbb`; review `c71d06d795a31c1a71189dd718c1a326a2522636`; finding `CR-R02C1-001`; exact ticket `modules/tickets/adaptive-project-orchestration/02c1-artifact-tree-resolution-gate.md` revision `r02c1-02`; this registry commit is the dispatch baseline. |
+| Binding | Handoff `hnd-adaptive-router-r02c1-revalidation-20260815-02`; allocation `aln-adaptive-router-r02c1-20260815`; receipt `rcpt-adaptive-router-r02c1-revalidation-20260815-02`; question `q-adaptive-router-r02c1-revalidation-20260815-02`; correlation `corr-adaptive-router-r02c1-revalidation-20260815-02`; side Context `scx-adaptive-router-r02c1-20260815-02`; expected return `ret-artifact-tree-review-handoff-r02c1-r02`. |
+| Owner / lane | Same task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`, permanent implementation worktree and branch `codex/implementation-router-artifact-tree-r02c1`; expected current handoff `b1ba51ccc13b0893783b5fd5e2b9e99e4d120d84`; exactly three worktrees. |
+| Synchronization | Additively merge this exact registry into the same branch. Only the expected append-only `doc/WorkProgressReport.md` overlap may be resolved, retaining PRG-480 through PRG-484 each once and in order. Any other conflict is `BLOCKED`. |
+| Revalidation | Read revision-02 ticket and exact Context; prove implementation `458791b470629fe7c0e3bb263af87560b58e54b9` four source/test blobs unchanged; rerun focused/Router/six-module/full/strict-mypy/compile/source/scope/topology/residue gates; append one WPR-only handoff. |
+| Boundary | All source/test paths are read-only. No new implementation commit, branch/worktree, helper, R02C2/R02C3 implementation, external effect, push, package/install, Secret, release or deployment. Changed candidate bytes return `CHANGE_DETECTED`. `XSS_NOT_APPLICABLE`. |
