@@ -97,6 +97,7 @@ class RouterEngine:
 
         if state.delivery_stage is not profile.delivery_stage:
             return self._suspend(
+                profile=profile,
                 code=BlockerCode.DELIVERY_STAGE_MISMATCH,
                 detail=(
                     f"state delivery stage {state.delivery_stage.value} does not match "
@@ -108,6 +109,7 @@ class RouterEngine:
             and state.topology is not state.collaboration_plan.topology
         ):
             return self._suspend(
+                profile=profile,
                 code=BlockerCode.TOPOLOGY_REQUIRED,
                 detail="router state topology does not match its capability plan",
             )
@@ -116,22 +118,26 @@ class RouterEngine:
             and event.implementation_return.status is ImplementationReturnStatus.BLOCKED
         ):
             return self._suspend(
+                profile=profile,
                 code=BlockerCode.IMPLEMENTATION_RETURN_BLOCKED,
                 detail="implementation owner returned a blocked result",
             )
         if state.stage is ProcessStage.TICKETS and event.kind is RouterEventKind.APPROVAL_GRANTED:
             return self._suspend(
+                profile=profile,
                 code=BlockerCode.LEGACY_TICKET_APPROVAL_BLOCKED,
                 detail="ticket implementation requires confirmed dispatch",
             )
         rule = profile.rule_for(current_stage=state.stage, event_kind=event.kind)
         if rule is None:
             return self._suspend(
+                profile=profile,
                 code=BlockerCode.NO_DECLARED_TRANSITION,
                 detail=f"no transition for {state.stage.value}/{event.kind.value}",
             )
         if rule.required_authority is not None and state.authority_state is not rule.required_authority:
             return self._suspend(
+                profile=profile,
                 code=BlockerCode.AUTHORITY_REQUIRED,
                 detail=(
                     f"{state.stage.value}/{event.kind.value} requires "
@@ -140,17 +146,20 @@ class RouterEngine:
             )
         if rule.requires_implementation_handoff and event.implementation_handoff is None:
             return self._suspend(
+                profile=profile,
                 code=BlockerCode.IMPLEMENTATION_HANDOFF_REQUIRED,
                 detail="this declared ticket approval requires an implementation handoff",
             )
         if not rule.requires_implementation_handoff and event.implementation_handoff is not None:
             return self._suspend(
+                profile=profile,
                 code=BlockerCode.IMPLEMENTATION_HANDOFF_UNDECLARED,
                 detail="implementation handoff is not declared for this profile transition",
             )
         if event.completion_evidence is not None:
             if event.completion_evidence.action_kind not in rule.accepted_completion_actions:
                 return self._suspend(
+                    profile=profile,
                     code=BlockerCode.INVALID_COMPLETION_EVIDENCE,
                     detail=(
                         f"{state.stage.value}/{event.kind.value} does not accept "
@@ -161,21 +170,25 @@ class RouterEngine:
             receipt = event.dispatch_receipt
             if state.topology is None:
                 return self._suspend(
+                    profile=profile,
                     code=BlockerCode.TOPOLOGY_REQUIRED,
                     detail="confirmed dispatch requires a selected collaboration topology",
                 )
             if receipt is None:
                 return self._suspend(
+                    profile=profile,
                     code=BlockerCode.DISPATCH_RECEIPT_REQUIRED,
                     detail="confirmed dispatch requires a typed receipt",
                 )
             if state.pending_dispatch is None:
                 return self._suspend(
+                    profile=profile,
                     code=BlockerCode.PENDING_DISPATCH_REQUIRED,
                     detail="confirmed dispatch requires a pending opened proposal",
                 )
             if event.dispatch_confirmation is not TicketDispatchConfirmation.POSITIVE:
                 return self._suspend(
+                    profile=profile,
                     code=BlockerCode.INVALID_DISPATCH_RECEIPT,
                     detail="confirmed dispatch requires positive confirmation",
                 )
@@ -186,12 +199,14 @@ class RouterEngine:
         if missing:
             missing_names = ", ".join(kind.value for kind in missing)
             return self._suspend(
+                profile=profile,
                 code=BlockerCode.MISSING_REQUIRED_SOURCE,
                 detail=f"missing required source kinds: {missing_names}",
             )
         if ambiguous:
             ambiguous_names = ", ".join(kind.value for kind in ambiguous)
             return self._suspend(
+                profile=profile,
                 code=BlockerCode.AMBIGUOUS_REQUIRED_SOURCE,
                 detail=f"multiple declared sources match required kinds: {ambiguous_names}",
             )
@@ -200,22 +215,26 @@ class RouterEngine:
             handoff = event.implementation_handoff
             if proposal is None:
                 return self._suspend(
+                    profile=profile,
                     code=BlockerCode.TICKET_PROPOSAL_REQUIRED,
                     detail="dispatch question requires an opened ticket proposal",
                 )
             if handoff is None:
                 return self._suspend(
+                    profile=profile,
                     code=BlockerCode.IMPLEMENTATION_HANDOFF_REQUIRED,
                     detail="dispatch question requires the reviewed implementation handoff",
                 )
             if state.pending_dispatch is not None:
                 return self._suspend(
+                    profile=profile,
                     code=BlockerCode.INVALID_PENDING_DISPATCH,
                     detail="one ticket may have only one pending dispatch question",
                 )
             dispatch_question_id = proposal.dispatch_question_id
             if dispatch_question_id is None:
                 return self._suspend(
+                    profile=profile,
                     code=BlockerCode.INVALID_TICKET_PROPOSAL,
                     detail="opened ticket proposal must name its dispatch question",
                 )
@@ -228,6 +247,7 @@ class RouterEngine:
                 != state.collaboration_plan.implementation_owner.capability_id
             ):
                 return self._suspend(
+                    profile=profile,
                     code=BlockerCode.INVALID_TICKET_PROPOSAL,
                     detail="opened ticket proposal does not match the selected owner and ticket",
                 )
@@ -242,11 +262,13 @@ class RouterEngine:
                 or handoff.reviewer_id != state.collaboration_plan.reviewer.capability_id
             ):
                 return self._suspend(
+                    profile=profile,
                     code=BlockerCode.INVALID_TICKET_PROPOSAL,
                     detail="reviewed handoff does not match the selected ticket roles",
                 )
             if handoff.ticket_docs_commit is None or handoff.handoff_docs_commit is None:
                 return self._suspend(
+                    profile=profile,
                     code=BlockerCode.INVALID_TICKET_PROPOSAL,
                     detail="reviewed ticket and handoff commits are required before dispatch",
                 )
@@ -261,6 +283,7 @@ class RouterEngine:
             )
             if approved_artifacts is None:
                 return self._suspend(
+                    profile=profile,
                     code=BlockerCode.INVALID_TICKET_PROPOSAL,
                     detail="dispatch artifacts are not registered for this reviewed handoff",
                 )
@@ -276,6 +299,8 @@ class RouterEngine:
                 handoff_docs_commit=approved_artifacts.handoff_docs_commit,
             )
             return RouterDecision(
+                skill_reference=rule.skill_reference,
+                expected_return=rule.expected_return,
                 outcome=RouterOutcome.SUSPEND,
                 continuation=ContinuationDirective.WAIT_FOR_HUMAN,
                 next_stage=None,
@@ -286,10 +311,20 @@ class RouterEngine:
                 pending_dispatch=pending_dispatch,
             )
         if rule.requires_human_approval:
-            return self._suspend(
-                code=BlockerCode.AUTHORITY_REQUIRED,
-                detail="this declared workflow gate requires an explicit human approval",
+            return RouterDecision(
+                skill_reference=rule.skill_reference,
+                expected_return=rule.expected_return,
+                outcome=RouterOutcome.SUSPEND,
                 continuation=ContinuationDirective.WAIT_FOR_HUMAN,
+                next_stage=None,
+                required_sources=(),
+                eligible_capabilities=(),
+                blockers=(
+                    RouterBlocker(
+                        code=BlockerCode.AUTHORITY_REQUIRED,
+                        detail="this declared workflow gate requires an explicit human approval",
+                    ),
+                ),
                 wait_reason=rule.wait_reason,
             )
         if rule.requires_dispatch_receipt:
@@ -299,11 +334,13 @@ class RouterEngine:
             pending = state.pending_dispatch
             if pending is None:
                 return self._suspend(
+                    profile=profile,
                     code=BlockerCode.PENDING_DISPATCH_REQUIRED,
                     detail="confirmed dispatch requires a pending opened proposal",
                 )
             if state.collaboration_plan is None or state.collaboration_plan.topology is not state.topology:
                 return self._suspend(
+                    profile=profile,
                     code=BlockerCode.TOPOLOGY_REQUIRED,
                     detail="confirmed dispatch requires the selected capability plan",
                 )
@@ -320,6 +357,7 @@ class RouterEngine:
                 != pending.implementation_owner_id
             ):
                 return self._suspend(
+                    profile=profile,
                     code=BlockerCode.INVALID_PENDING_DISPATCH,
                     detail="dispatch receipt does not match the pending proposal and reviewed handoff",
                 )
@@ -328,10 +366,13 @@ class RouterEngine:
                 != state.collaboration_plan.implementation_owner.capability_id
             ):
                 return self._suspend(
+                    profile=profile,
                     code=BlockerCode.INVALID_DISPATCH_RECEIPT,
                     detail="dispatch receipt owner does not match the selected implementation capability",
                 )
             return RouterDecision(
+                skill_reference=rule.skill_reference,
+                expected_return=rule.expected_return,
                 outcome=rule.outcome,
                 continuation=ContinuationDirective.AUTO_CONTINUE,
                 next_stage=rule.next_stage,
@@ -348,6 +389,8 @@ class RouterEngine:
                 ),
             )
         return RouterDecision(
+            skill_reference=rule.skill_reference,
+            expected_return=rule.expected_return,
             outcome=rule.outcome,
             continuation=(
                 ContinuationDirective.AUTO_CONTINUE
@@ -431,6 +474,7 @@ class RouterEngine:
     @staticmethod
     def _suspend(
         *,
+        profile: ProjectWorkflowProfile,
         code: BlockerCode,
         detail: str,
         continuation: ContinuationDirective = ContinuationDirective.HALT,
@@ -439,6 +483,8 @@ class RouterEngine:
         """Build a fail-closed decision without inventing a next stage."""
 
         return RouterDecision(
+            skill_reference=profile.router_control_reference,
+            expected_return=profile.halt_return_contract,
             outcome=RouterOutcome.SUSPEND,
             continuation=continuation,
             next_stage=None,

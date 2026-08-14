@@ -176,6 +176,62 @@ class ImplementationReturnStatus(str, Enum):
     CHANGE_DETECTED = "change_detected"
 
 
+class ReturnContractKind(str, Enum):
+    """The finite return families a routed action may produce."""
+
+    ROUTER_EVENT = "router_event"
+    IMPLEMENTATION_RETURN = "implementation_return"
+    NO_RETURN = "no_return"
+
+
+class SkillReference(RouterModel):
+    """Versioned metadata identifying a later-resolved skill policy."""
+
+    reference_id: OpaqueMetadataId
+    source_revision: RevisionDigest
+    content_digest: EvidenceDigest
+
+    @model_validator(mode="after")
+    def reference_id_is_metadata_only(self) -> SkillReference:
+        """Reject locator and sensitive markers before a registry resolves the reference."""
+
+        normalized = self.reference_id.casefold()
+        forbidden_markers = ("://", "\\", "/", "prompt", "secret")
+        if any(marker in normalized for marker in forbidden_markers):
+            raise ValueError("skill reference IDs are metadata-only")
+        return self
+
+
+class ExpectedReturnContract(RouterModel):
+    """Finite return family and event/status set expected from a selected skill."""
+
+    contract_id: OpaqueMetadataId
+    contract_revision: RevisionDigest
+    return_kind: ReturnContractKind
+    router_events: tuple[RouterEventKind, ...]
+    implementation_statuses: tuple[ImplementationReturnStatus, ...]
+
+    @model_validator(mode="after")
+    def return_family_is_finite_and_consistent(self) -> ExpectedReturnContract:
+        """Keep each return family disjoint, non-empty where required, and duplicate-free."""
+
+        if len(self.router_events) != len(set(self.router_events)):
+            raise ValueError("router events must be unique")
+        if len(self.implementation_statuses) != len(set(self.implementation_statuses)):
+            raise ValueError("implementation statuses must be unique")
+        if self.return_kind is ReturnContractKind.ROUTER_EVENT:
+            if not self.router_events or self.implementation_statuses:
+                raise ValueError("router-event contracts require only non-empty router events")
+        elif self.return_kind is ReturnContractKind.IMPLEMENTATION_RETURN:
+            if not self.implementation_statuses or self.router_events:
+                raise ValueError(
+                    "implementation-return contracts require only non-empty implementation statuses"
+                )
+        elif self.router_events or self.implementation_statuses:
+            raise ValueError("no-return contracts require empty event and status tuples")
+        return self
+
+
 class ArtifactKind(str, Enum):
     """Kinds of official sources and products that may be referenced."""
 
@@ -676,6 +732,8 @@ class ContextView(RouterModel):
 class RouterDecision(RouterModel):
     """The only legal output of the pure router engine."""
 
+    skill_reference: SkillReference
+    expected_return: ExpectedReturnContract
     outcome: RouterOutcome
     continuation: ContinuationDirective
     next_stage: ProcessStage | None
