@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import ast
 import hashlib
+import json
 import unittest
 from contextlib import redirect_stdout
 from dataclasses import dataclass
@@ -3246,13 +3247,120 @@ class AgentContextLeaseGateTests(unittest.TestCase):
             {**current.model_dump(), "control_baseline_ref": "0000000000000000"},
             {**current.model_dump(), "actor_capability_ref": "owner-r02b-other"},
             {**current.model_dump(), "invalidation_refs": ("side-context-r02b",)},
-            {**current.model_dump(), "artifact_path_refs": ("uri-ref",)},
-            {**current.model_dump(), "ticket_ref": "prompt-ref"},
+            {**current.model_dump(), "artifact_path_refs": ("artifact/path-policy",)},
+            {**current.model_dump(), "raw_context": "not-allowed"},
         )
         for payload in invalid_lease_payloads:
             with self.subTest(invalid_lease=payload):
                 with self.assertRaises(ValidationError):
                     AgentContextLease.model_validate(payload)
+
+    def test_semantic_leaf_ids_are_portable_but_locators_and_raw_fields_reject(self) -> None:
+        semantic_cases = (
+            ("artifact source", ("artifact-source-index",), "ticket-r02b", "ret-agent-context-review-handoff-r02b"),
+            ("ticket prompt", ("artifact-r02b-leaf",), "ticket-prompt-hardening", "ret-agent-context-review-handoff-r02b"),
+            ("return resume", ("artifact-r02b-leaf",), "ticket-r02b", "return-resume-review"),
+            ("artifact path", ("artifact-path-policy",), "ticket-r02b", "ret-agent-context-review-handoff-r02b"),
+            ("artifact text", ("artifact-text-contract",), "ticket-r02b", "ret-agent-context-review-handoff-r02b"),
+        )
+        for label, artifact_path_refs, ticket_ref, expected_return_ref in semantic_cases:
+            with self.subTest(semantic_id=label):
+                lease = self._lease(
+                    lease_ref=f"lease-semantic-{label.replace(' ', '-')}",
+                    artifact_path_refs=artifact_path_refs,
+                    ticket_ref=ticket_ref,
+                    expected_return_ref=expected_return_ref,
+                )
+                self.assertEqual(artifact_path_refs, lease.artifact_path_refs)
+                self.assertEqual(ticket_ref, lease.ticket_ref)
+                self.assertEqual(expected_return_ref, lease.expected_return_ref)
+
+        negative_payloads = (
+            {**self._lease().model_dump(), "artifact_path_refs": ("artifact/path-policy",)},
+            {**self._lease().model_dump(), "raw_context": "transcript-not-allowed"},
+        )
+        for payload in negative_payloads:
+            with self.subTest(invalid_lease=payload):
+                with self.assertRaises(ValidationError):
+                    AgentContextLease.model_validate(payload)
+
+    def test_public_decisions_reject_contradictory_result_shapes(self) -> None:
+        current = self._lease()
+        correction = self._correction_lease(current)
+        switch = self._switch_lease(current)
+        closed = self._lease(lifecycle=AgentContextLifecycle.CLOSED)
+        different_active = self._lease(lease_ref="lease-r02b-different-active")
+        cases = (
+            (
+                "open without active",
+                AgentContextOperation.OPEN,
+                AgentContextDecisionKind.ALLOW,
+                None,
+                None,
+            ),
+            (
+                "open with closed active",
+                AgentContextOperation.OPEN,
+                AgentContextDecisionKind.ALLOW,
+                None,
+                closed,
+            ),
+            (
+                "rejected with active replacement",
+                AgentContextOperation.RESUME,
+                AgentContextDecisionKind.AGENT_CONTEXT_BINDING_MISMATCH,
+                current,
+                current,
+            ),
+            (
+                "close with active replacement",
+                AgentContextOperation.CLOSE,
+                AgentContextDecisionKind.ALLOW,
+                current,
+                current,
+            ),
+            (
+                "correction with active prior",
+                AgentContextOperation.REBIND_CORRECTION,
+                AgentContextDecisionKind.ALLOW,
+                current,
+                correction,
+            ),
+            (
+                "switch with active prior",
+                AgentContextOperation.SWITCH_TICKET,
+                AgentContextDecisionKind.ALLOW,
+                current,
+                switch,
+            ),
+            (
+                "resume with different active lease",
+                AgentContextOperation.RESUME,
+                AgentContextDecisionKind.ALLOW,
+                current,
+                different_active,
+            ),
+        )
+        for label, operation, decision, prior, active in cases:
+            payload = {
+                "request_ref": f"request-invalid-decision-{label.replace(' ', '-')}",
+                "operation": operation,
+                "decision": decision,
+                "prior_lease_result": prior,
+                "active_lease": active,
+            }
+            json_payload = {
+                "request_ref": payload["request_ref"],
+                "operation": operation.value,
+                "decision": decision.value,
+                "prior_lease_result": None if prior is None else prior.model_dump(mode="json"),
+                "active_lease": None if active is None else active.model_dump(mode="json"),
+            }
+            with self.subTest(decision_shape=label):
+                with self.assertRaises(ValidationError):
+                    AgentContextTransitionDecision.model_validate(payload)
+                with self.assertRaises(ValidationError):
+                    AgentContextTransitionDecision.model_validate_json(json.dumps(json_payload))
 
     def test_all_five_transition_rows_have_exact_lifecycle_results(self) -> None:
         current = self._lease()

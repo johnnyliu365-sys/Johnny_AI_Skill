@@ -29,34 +29,17 @@ def _is_all_zero(value: str, prefix: str) -> bool:
 
 
 def _agent_context_metadata_is_safe(references: tuple[OpaqueMetadataId, ...]) -> bool:
-    """Keep lease identifiers opaque and free of locators or raw Context markers."""
+    """Keep lease identifiers opaque and free of structural locators."""
 
     forbidden_delimiters = (
         "://",
         "\\",
         "/",
     )
-    forbidden_words = (
-        "body",
-        "packet",
-        "path",
-        "prompt",
-        "raw",
-        "resume",
-        "secret",
-        "source",
-        "text",
-        "transcript",
-        "uri",
-    )
     return not any(
         marker in reference.casefold()
         for reference in references
         for marker in forbidden_delimiters
-    ) and not any(
-        marker in reference.casefold().replace("_", "-").split("-")
-        for reference in references
-        for marker in forbidden_words
     )
 
 
@@ -434,15 +417,53 @@ class AgentContextTransitionDecision(RouterModel):
 
     @model_validator(mode="after")
     def active_result_is_usable(self) -> AgentContextTransitionDecision:
-        """Ensure a result never exposes a closed or invalidated active lease."""
+        """Ensure each finite decision exposes only its exact lifecycle result shape."""
 
         if not _agent_context_metadata_is_safe((self.request_ref,)):
             raise ValueError("Agent Context decision identifiers must remain metadata-only")
-        if (
-            self.active_lease is not None
-            and self.active_lease.lifecycle is not AgentContextLifecycle.ACTIVE
-        ):
-            raise ValueError("active Agent Context results must remain active")
+        if self.decision is not AgentContextDecisionKind.ALLOW:
+            if self.active_lease is not None:
+                raise ValueError("rejected Agent Context results cannot expose an active lease")
+            return self
+        if self.operation is AgentContextOperation.OPEN:
+            if (
+                self.prior_lease_result is not None
+                or self.active_lease is None
+                or self.active_lease.lifecycle is not AgentContextLifecycle.ACTIVE
+            ):
+                raise ValueError("open results require only one active lease")
+        elif self.operation is AgentContextOperation.RESUME:
+            if (
+                self.prior_lease_result is None
+                or self.active_lease is None
+                or self.prior_lease_result.lifecycle is not AgentContextLifecycle.ACTIVE
+                or self.active_lease.lifecycle is not AgentContextLifecycle.ACTIVE
+                or self.prior_lease_result != self.active_lease
+            ):
+                raise ValueError("resume results require the same active lease")
+        elif self.operation is AgentContextOperation.REBIND_CORRECTION:
+            if (
+                self.prior_lease_result is None
+                or self.prior_lease_result.lifecycle is not AgentContextLifecycle.INVALIDATED
+                or self.active_lease is None
+                or self.active_lease.lifecycle is not AgentContextLifecycle.ACTIVE
+            ):
+                raise ValueError("correction results require an invalidated prior and active replacement")
+        elif self.operation is AgentContextOperation.SWITCH_TICKET:
+            if (
+                self.prior_lease_result is None
+                or self.prior_lease_result.lifecycle is not AgentContextLifecycle.CLOSED
+                or self.active_lease is None
+                or self.active_lease.lifecycle is not AgentContextLifecycle.ACTIVE
+            ):
+                raise ValueError("switch results require a closed prior and active replacement")
+        elif self.operation is AgentContextOperation.CLOSE:
+            if (
+                self.prior_lease_result is None
+                or self.prior_lease_result.lifecycle is not AgentContextLifecycle.CLOSED
+                or self.active_lease is not None
+            ):
+                raise ValueError("close results require only a closed prior lease")
         return self
 
 
