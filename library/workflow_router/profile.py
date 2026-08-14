@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
+
 from pydantic import model_validator
 
 from .contracts import (
@@ -100,8 +102,25 @@ class ProjectWorkflowProfile(RouterModel):
         keys = tuple((rule.current_stage, rule.event_kind) for rule in self.transition_rules)
         if len(keys) != len(set(keys)):
             raise ValueError("each current_stage and event_kind pair must have one rule")
+        if self.router_control_reference.reference_id != "router-control":
+            raise ValueError("profile fallback must use the router-control reference")
         if self.halt_return_contract.return_kind is not ReturnContractKind.NO_RETURN:
             raise ValueError("profile halt return contract must be no-return")
+        if (
+            self.halt_return_contract.contract_revision
+            != self.router_control_reference.source_revision
+        ):
+            raise ValueError("profile fallback contract revision must match its reference")
+        references: dict[str, SkillReference] = {
+            self.router_control_reference.reference_id: self.router_control_reference
+        }
+        for rule in self.transition_rules:
+            if rule.expected_return.contract_revision != rule.skill_reference.source_revision:
+                raise ValueError("transition contract revision must match its skill reference")
+            prior_reference = references.get(rule.skill_reference.reference_id)
+            if prior_reference is not None and prior_reference != rule.skill_reference:
+                raise ValueError("one policy reference ID cannot have conflicting metadata")
+            references[rule.skill_reference.reference_id] = rule.skill_reference
         return self
 
     def rule_for(
@@ -118,8 +137,237 @@ class ProjectWorkflowProfile(RouterModel):
         return None
 
 
-_PROFILE_SOURCE_REVISION = "rev-0000000000000001"
-_PROFILE_CONTENT_DIGEST = "sha256_" + ("0" * 64)
+@dataclass(frozen=True)
+class _PolicyRoute:
+    """One frozen input-to-primary-action contract in the POC profile."""
+
+    current_stage: ProcessStage
+    event_kind: RouterEventKind
+    reference_id: str
+    return_kind: ReturnContractKind
+    router_events: tuple[RouterEventKind, ...]
+    implementation_statuses: tuple[ImplementationReturnStatus, ...]
+
+
+_POLICY_REFERENCES = (
+    SkillReference(
+        reference_id="router-control",
+        source_revision="rev-23dd53ad68e5562f",
+        content_digest="sha256_23dd53ad68e5562f39a35f06f9c21a970b6eb94eab3aeeae468cc8b5cd68b091",
+    ),
+    SkillReference(
+        reference_id="discovery-change",
+        source_revision="rev-5d432a8246bce4ed",
+        content_digest="sha256_5d432a8246bce4ed890289e24c50e2e29360df165eeb7f9355cb02228e1d10ef",
+    ),
+    SkillReference(
+        reference_id="context-routing",
+        source_revision="rev-5f1e7958c70c8493",
+        content_digest="sha256_5f1e7958c70c8493de83aa1481e0f3f3e59c5a40e745a12077eb372fa6e0815e",
+    ),
+    SkillReference(
+        reference_id="specification-ticketing",
+        source_revision="rev-c7011f440caa3ec8",
+        content_digest="sha256_c7011f440caa3ec8fe83e119a110aa368ec4cc130cf71671d0199987140c8af7",
+    ),
+    SkillReference(
+        reference_id="implementation-authority",
+        source_revision="rev-855117ed19c9c952",
+        content_digest="sha256_855117ed19c9c952f8903bc56ce070d2cf3805fb51d7a450c46bbf8a00480f50",
+    ),
+    SkillReference(
+        reference_id="implementation-tdd",
+        source_revision="rev-38408006f23df3b6",
+        content_digest="sha256_38408006f23df3b66a4368e2b8794cc099b84ea20417e56d881ff19512345574",
+    ),
+    SkillReference(
+        reference_id="review-checks",
+        source_revision="rev-4b8527305609194a",
+        content_digest="sha256_4b8527305609194ae9dd26c16a05ff72d22b1f20a8cb925175d6793766bb5f54",
+    ),
+)
+
+
+_POLICY_ROUTES = (
+    _PolicyRoute(
+        ProcessStage.INTAKE,
+        RouterEventKind.INTAKE,
+        "discovery-change",
+        ReturnContractKind.ROUTER_EVENT,
+        (RouterEventKind.WAYFINDER_GO, RouterEventKind.WAYFINDER_NO_GO),
+        (),
+    ),
+    _PolicyRoute(
+        ProcessStage.WAYFINDER,
+        RouterEventKind.WAYFINDER_GO,
+        "discovery-change",
+        ReturnContractKind.ROUTER_EVENT,
+        (RouterEventKind.ACTION_COMPLETED,),
+        (),
+    ),
+    _PolicyRoute(
+        ProcessStage.WAYFINDER,
+        RouterEventKind.WAYFINDER_NO_GO,
+        "router-control",
+        ReturnContractKind.NO_RETURN,
+        (),
+        (),
+    ),
+    _PolicyRoute(
+        ProcessStage.ARCHITECTURE,
+        RouterEventKind.ACTION_COMPLETED,
+        "discovery-change",
+        ReturnContractKind.ROUTER_EVENT,
+        (RouterEventKind.ACTION_COMPLETED,),
+        (),
+    ),
+    _PolicyRoute(
+        ProcessStage.GRILL,
+        RouterEventKind.ACTION_COMPLETED,
+        "context-routing",
+        ReturnContractKind.ROUTER_EVENT,
+        (RouterEventKind.ACTION_COMPLETED,),
+        (),
+    ),
+    _PolicyRoute(
+        ProcessStage.CONTEXT,
+        RouterEventKind.ACTION_COMPLETED,
+        "specification-ticketing",
+        ReturnContractKind.ROUTER_EVENT,
+        (RouterEventKind.ACTION_COMPLETED,),
+        (),
+    ),
+    _PolicyRoute(
+        ProcessStage.SPEC,
+        RouterEventKind.ACTION_COMPLETED,
+        "specification-ticketing",
+        ReturnContractKind.ROUTER_EVENT,
+        (RouterEventKind.APPROVAL_GRANTED, RouterEventKind.APPROVAL_DENIED),
+        (),
+    ),
+    _PolicyRoute(
+        ProcessStage.SPEC,
+        RouterEventKind.APPROVAL_GRANTED,
+        "specification-ticketing",
+        ReturnContractKind.ROUTER_EVENT,
+        (RouterEventKind.TICKET_DISPATCH_REQUIRED,),
+        (),
+    ),
+    _PolicyRoute(
+        ProcessStage.TICKETS,
+        RouterEventKind.TICKET_DISPATCH_REQUIRED,
+        "implementation-authority",
+        ReturnContractKind.ROUTER_EVENT,
+        (RouterEventKind.IMPLEMENTATION_DISPATCH_CONFIRMED,),
+        (),
+    ),
+    _PolicyRoute(
+        ProcessStage.TICKETS,
+        RouterEventKind.IMPLEMENTATION_DISPATCH_CONFIRMED,
+        "discovery-change",
+        ReturnContractKind.ROUTER_EVENT,
+        (RouterEventKind.ACTION_COMPLETED,),
+        (),
+    ),
+    _PolicyRoute(
+        ProcessStage.IMPLEMENT,
+        RouterEventKind.IMPLEMENTATION_RETURNED,
+        "implementation-tdd",
+        ReturnContractKind.ROUTER_EVENT,
+        (RouterEventKind.VALIDATION_PASSED, RouterEventKind.VALIDATION_FAILED),
+        (),
+    ),
+    _PolicyRoute(
+        ProcessStage.GRILL,
+        RouterEventKind.INTEGRATION_COMPLETED,
+        "discovery-change",
+        ReturnContractKind.ROUTER_EVENT,
+        (RouterEventKind.ACTION_COMPLETED,),
+        (),
+    ),
+    _PolicyRoute(
+        ProcessStage.GRILL,
+        RouterEventKind.AUDIT_COMPLETED,
+        "review-checks",
+        ReturnContractKind.ROUTER_EVENT,
+        (RouterEventKind.ACTION_COMPLETED,),
+        (),
+    ),
+    _PolicyRoute(
+        ProcessStage.IMPLEMENT,
+        RouterEventKind.ACTION_COMPLETED,
+        "implementation-tdd",
+        ReturnContractKind.ROUTER_EVENT,
+        (RouterEventKind.VALIDATION_PASSED, RouterEventKind.VALIDATION_FAILED),
+        (),
+    ),
+    _PolicyRoute(
+        ProcessStage.SMOKE_TEST,
+        RouterEventKind.VALIDATION_PASSED,
+        "review-checks",
+        ReturnContractKind.ROUTER_EVENT,
+        (RouterEventKind.ACTION_COMPLETED,),
+        (),
+    ),
+    _PolicyRoute(
+        ProcessStage.SMOKE_TEST,
+        RouterEventKind.VALIDATION_FAILED,
+        "implementation-tdd",
+        ReturnContractKind.IMPLEMENTATION_RETURN,
+        (),
+        (
+            ImplementationReturnStatus.COMPLETED,
+            ImplementationReturnStatus.BLOCKED,
+            ImplementationReturnStatus.CHANGE_DETECTED,
+        ),
+    ),
+    _PolicyRoute(
+        ProcessStage.REVIEW,
+        RouterEventKind.ACTION_COMPLETED,
+        "review-checks",
+        ReturnContractKind.ROUTER_EVENT,
+        (RouterEventKind.ACTION_COMPLETED,),
+        (),
+    ),
+    _PolicyRoute(
+        ProcessStage.HANDOFF,
+        RouterEventKind.ACTION_COMPLETED,
+        "router-control",
+        ReturnContractKind.NO_RETURN,
+        (),
+        (),
+    ),
+    _PolicyRoute(
+        ProcessStage.IMPLEMENT,
+        RouterEventKind.REQUIREMENT_CHANGED,
+        "discovery-change",
+        ReturnContractKind.ROUTER_EVENT,
+        (RouterEventKind.ACTION_COMPLETED,),
+        (),
+    ),
+)
+
+
+def _route_policy_for(
+    *,
+    current_stage: ProcessStage,
+    event_kind: RouterEventKind,
+) -> _PolicyRoute:
+    """Return the one frozen primary-action contract for a state/event pair."""
+
+    for policy in _POLICY_ROUTES:
+        if policy.current_stage is current_stage and policy.event_kind is event_kind:
+            return policy
+    raise ValueError("the POC profile has no frozen policy route for this state/event")
+
+
+def _policy_reference_for(reference_id: str) -> SkillReference:
+    """Resolve one frozen metadata-only policy reference without reading its file."""
+
+    for reference in _POLICY_REFERENCES:
+        if reference.reference_id == reference_id:
+            return reference
+    raise ValueError("the POC profile has no frozen policy reference with this ID")
 
 
 def _skill_reference_for(
@@ -127,39 +375,31 @@ def _skill_reference_for(
     current_stage: ProcessStage,
     event_kind: RouterEventKind,
 ) -> SkillReference:
-    """Create deterministic metadata for one declared profile transition."""
+    """Select the exact versioned policy reference for one declared transition."""
 
-    return SkillReference(
-        reference_id=(
-            f"route-{current_stage.value.replace('_', '-')}-"
-            f"{event_kind.value.replace('_', '-')}"
-        ),
-        source_revision=_PROFILE_SOURCE_REVISION,
-        content_digest=_PROFILE_CONTENT_DIGEST,
+    policy = _route_policy_for(current_stage=current_stage, event_kind=event_kind)
+    return _policy_reference_for(policy.reference_id)
+
+
+def _expected_return_for(
+    *,
+    current_stage: ProcessStage,
+    event_kind: RouterEventKind,
+) -> ExpectedReturnContract:
+    """Select the exact typed return produced by the primary next action."""
+
+    policy = _route_policy_for(current_stage=current_stage, event_kind=event_kind)
+    reference = _policy_reference_for(policy.reference_id)
+    contract_id = (
+        f"return-{current_stage.value.replace('_', '-')}-"
+        f"{event_kind.value.replace('_', '-')}"
     )
-
-
-def _expected_return_for(event_kind: RouterEventKind) -> ExpectedReturnContract:
-    """Create the finite return family declared by one profile transition."""
-
-    if event_kind is RouterEventKind.IMPLEMENTATION_RETURNED:
-        return ExpectedReturnContract(
-            contract_id="return-implementation-returned",
-            contract_revision=_PROFILE_SOURCE_REVISION,
-            return_kind=ReturnContractKind.IMPLEMENTATION_RETURN,
-            router_events=(),
-            implementation_statuses=(
-                ImplementationReturnStatus.COMPLETED,
-                ImplementationReturnStatus.BLOCKED,
-                ImplementationReturnStatus.CHANGE_DETECTED,
-            ),
-        )
     return ExpectedReturnContract(
-        contract_id=f"return-{event_kind.value.replace('_', '-')}",
-        contract_revision=_PROFILE_SOURCE_REVISION,
-        return_kind=ReturnContractKind.ROUTER_EVENT,
-        router_events=(event_kind,),
-        implementation_statuses=(),
+        contract_id=contract_id,
+        contract_revision=reference.source_revision,
+        return_kind=policy.return_kind,
+        router_events=policy.router_events,
+        implementation_statuses=policy.implementation_statuses,
     )
 
 
@@ -220,14 +460,10 @@ def build_router_poc_profile() -> ProjectWorkflowProfile:
         profile_id="router-framework-poc",
         profile_version="1",
         delivery_stage=DeliveryStage.POC,
-        router_control_reference=SkillReference(
-            reference_id="router-control",
-            source_revision=_PROFILE_SOURCE_REVISION,
-            content_digest=_PROFILE_CONTENT_DIGEST,
-        ),
+        router_control_reference=_policy_reference_for("router-control"),
         halt_return_contract=ExpectedReturnContract(
             contract_id="router-control-no-return",
-            contract_revision=_PROFILE_SOURCE_REVISION,
+            contract_revision=_policy_reference_for("router-control").source_revision,
             return_kind=ReturnContractKind.NO_RETURN,
             router_events=(),
             implementation_statuses=(),
@@ -238,7 +474,10 @@ def build_router_poc_profile() -> ProjectWorkflowProfile:
                     current_stage=ProcessStage.INTAKE,
                     event_kind=RouterEventKind.INTAKE,
                 ),
-                expected_return=_expected_return_for(RouterEventKind.INTAKE),
+                expected_return=_expected_return_for(
+                    current_stage=ProcessStage.INTAKE,
+                    event_kind=RouterEventKind.INTAKE,
+                ),
                 current_stage=ProcessStage.INTAKE,
                 event_kind=RouterEventKind.INTAKE,
                 outcome=RouterOutcome.ADVANCE,
@@ -251,7 +490,10 @@ def build_router_poc_profile() -> ProjectWorkflowProfile:
                     current_stage=ProcessStage.WAYFINDER,
                     event_kind=RouterEventKind.WAYFINDER_GO,
                 ),
-                expected_return=_expected_return_for(RouterEventKind.WAYFINDER_GO),
+                expected_return=_expected_return_for(
+                    current_stage=ProcessStage.WAYFINDER,
+                    event_kind=RouterEventKind.WAYFINDER_GO,
+                ),
                 current_stage=ProcessStage.WAYFINDER,
                 event_kind=RouterEventKind.WAYFINDER_GO,
                 outcome=RouterOutcome.ADVANCE,
@@ -264,7 +506,10 @@ def build_router_poc_profile() -> ProjectWorkflowProfile:
                     current_stage=ProcessStage.WAYFINDER,
                     event_kind=RouterEventKind.WAYFINDER_NO_GO,
                 ),
-                expected_return=_expected_return_for(RouterEventKind.WAYFINDER_NO_GO),
+                expected_return=_expected_return_for(
+                    current_stage=ProcessStage.WAYFINDER,
+                    event_kind=RouterEventKind.WAYFINDER_NO_GO,
+                ),
                 current_stage=ProcessStage.WAYFINDER,
                 event_kind=RouterEventKind.WAYFINDER_NO_GO,
                 outcome=RouterOutcome.STOP,
@@ -276,7 +521,10 @@ def build_router_poc_profile() -> ProjectWorkflowProfile:
                     current_stage=ProcessStage.ARCHITECTURE,
                     event_kind=RouterEventKind.ACTION_COMPLETED,
                 ),
-                expected_return=_expected_return_for(RouterEventKind.ACTION_COMPLETED),
+                expected_return=_expected_return_for(
+                    current_stage=ProcessStage.ARCHITECTURE,
+                    event_kind=RouterEventKind.ACTION_COMPLETED,
+                ),
                 current_stage=ProcessStage.ARCHITECTURE,
                 event_kind=RouterEventKind.ACTION_COMPLETED,
                 outcome=RouterOutcome.ADVANCE,
@@ -290,7 +538,10 @@ def build_router_poc_profile() -> ProjectWorkflowProfile:
                     current_stage=ProcessStage.GRILL,
                     event_kind=RouterEventKind.ACTION_COMPLETED,
                 ),
-                expected_return=_expected_return_for(RouterEventKind.ACTION_COMPLETED),
+                expected_return=_expected_return_for(
+                    current_stage=ProcessStage.GRILL,
+                    event_kind=RouterEventKind.ACTION_COMPLETED,
+                ),
                 current_stage=ProcessStage.GRILL,
                 event_kind=RouterEventKind.ACTION_COMPLETED,
                 outcome=RouterOutcome.ADVANCE,
@@ -304,7 +555,10 @@ def build_router_poc_profile() -> ProjectWorkflowProfile:
                     current_stage=ProcessStage.CONTEXT,
                     event_kind=RouterEventKind.ACTION_COMPLETED,
                 ),
-                expected_return=_expected_return_for(RouterEventKind.ACTION_COMPLETED),
+                expected_return=_expected_return_for(
+                    current_stage=ProcessStage.CONTEXT,
+                    event_kind=RouterEventKind.ACTION_COMPLETED,
+                ),
                 current_stage=ProcessStage.CONTEXT,
                 event_kind=RouterEventKind.ACTION_COMPLETED,
                 outcome=RouterOutcome.ADVANCE,
@@ -318,7 +572,10 @@ def build_router_poc_profile() -> ProjectWorkflowProfile:
                     current_stage=ProcessStage.SPEC,
                     event_kind=RouterEventKind.ACTION_COMPLETED,
                 ),
-                expected_return=_expected_return_for(RouterEventKind.ACTION_COMPLETED),
+                expected_return=_expected_return_for(
+                    current_stage=ProcessStage.SPEC,
+                    event_kind=RouterEventKind.ACTION_COMPLETED,
+                ),
                 current_stage=ProcessStage.SPEC,
                 event_kind=RouterEventKind.ACTION_COMPLETED,
                 outcome=RouterOutcome.SUSPEND,
@@ -333,7 +590,10 @@ def build_router_poc_profile() -> ProjectWorkflowProfile:
                     current_stage=ProcessStage.SPEC,
                     event_kind=RouterEventKind.APPROVAL_GRANTED,
                 ),
-                expected_return=_expected_return_for(RouterEventKind.APPROVAL_GRANTED),
+                expected_return=_expected_return_for(
+                    current_stage=ProcessStage.SPEC,
+                    event_kind=RouterEventKind.APPROVAL_GRANTED,
+                ),
                 current_stage=ProcessStage.SPEC,
                 event_kind=RouterEventKind.APPROVAL_GRANTED,
                 outcome=RouterOutcome.ADVANCE,
@@ -347,7 +607,10 @@ def build_router_poc_profile() -> ProjectWorkflowProfile:
                     current_stage=ProcessStage.TICKETS,
                     event_kind=RouterEventKind.TICKET_DISPATCH_REQUIRED,
                 ),
-                expected_return=_expected_return_for(RouterEventKind.TICKET_DISPATCH_REQUIRED),
+                expected_return=_expected_return_for(
+                    current_stage=ProcessStage.TICKETS,
+                    event_kind=RouterEventKind.TICKET_DISPATCH_REQUIRED,
+                ),
                 current_stage=ProcessStage.TICKETS,
                 event_kind=RouterEventKind.TICKET_DISPATCH_REQUIRED,
                 outcome=RouterOutcome.SUSPEND,
@@ -363,7 +626,8 @@ def build_router_poc_profile() -> ProjectWorkflowProfile:
                     event_kind=RouterEventKind.IMPLEMENTATION_DISPATCH_CONFIRMED,
                 ),
                 expected_return=_expected_return_for(
-                    RouterEventKind.IMPLEMENTATION_DISPATCH_CONFIRMED
+                    current_stage=ProcessStage.TICKETS,
+                    event_kind=RouterEventKind.IMPLEMENTATION_DISPATCH_CONFIRMED,
                 ),
                 current_stage=ProcessStage.TICKETS,
                 event_kind=RouterEventKind.IMPLEMENTATION_DISPATCH_CONFIRMED,
@@ -379,7 +643,10 @@ def build_router_poc_profile() -> ProjectWorkflowProfile:
                     current_stage=ProcessStage.IMPLEMENT,
                     event_kind=RouterEventKind.IMPLEMENTATION_RETURNED,
                 ),
-                expected_return=_expected_return_for(RouterEventKind.IMPLEMENTATION_RETURNED),
+                expected_return=_expected_return_for(
+                    current_stage=ProcessStage.IMPLEMENT,
+                    event_kind=RouterEventKind.IMPLEMENTATION_RETURNED,
+                ),
                 current_stage=ProcessStage.IMPLEMENT,
                 event_kind=RouterEventKind.IMPLEMENTATION_RETURNED,
                 outcome=RouterOutcome.ADVANCE,
@@ -393,7 +660,10 @@ def build_router_poc_profile() -> ProjectWorkflowProfile:
                     current_stage=ProcessStage.GRILL,
                     event_kind=RouterEventKind.INTEGRATION_COMPLETED,
                 ),
-                expected_return=_expected_return_for(RouterEventKind.INTEGRATION_COMPLETED),
+                expected_return=_expected_return_for(
+                    current_stage=ProcessStage.GRILL,
+                    event_kind=RouterEventKind.INTEGRATION_COMPLETED,
+                ),
                 current_stage=ProcessStage.GRILL,
                 event_kind=RouterEventKind.INTEGRATION_COMPLETED,
                 outcome=RouterOutcome.ADVANCE,
@@ -406,7 +676,10 @@ def build_router_poc_profile() -> ProjectWorkflowProfile:
                     current_stage=ProcessStage.GRILL,
                     event_kind=RouterEventKind.AUDIT_COMPLETED,
                 ),
-                expected_return=_expected_return_for(RouterEventKind.AUDIT_COMPLETED),
+                expected_return=_expected_return_for(
+                    current_stage=ProcessStage.GRILL,
+                    event_kind=RouterEventKind.AUDIT_COMPLETED,
+                ),
                 current_stage=ProcessStage.GRILL,
                 event_kind=RouterEventKind.AUDIT_COMPLETED,
                 outcome=RouterOutcome.ADVANCE,
@@ -420,7 +693,10 @@ def build_router_poc_profile() -> ProjectWorkflowProfile:
                     current_stage=ProcessStage.IMPLEMENT,
                     event_kind=RouterEventKind.ACTION_COMPLETED,
                 ),
-                expected_return=_expected_return_for(RouterEventKind.ACTION_COMPLETED),
+                expected_return=_expected_return_for(
+                    current_stage=ProcessStage.IMPLEMENT,
+                    event_kind=RouterEventKind.ACTION_COMPLETED,
+                ),
                 current_stage=ProcessStage.IMPLEMENT,
                 event_kind=RouterEventKind.ACTION_COMPLETED,
                 outcome=RouterOutcome.ADVANCE,
@@ -434,7 +710,10 @@ def build_router_poc_profile() -> ProjectWorkflowProfile:
                     current_stage=ProcessStage.SMOKE_TEST,
                     event_kind=RouterEventKind.VALIDATION_PASSED,
                 ),
-                expected_return=_expected_return_for(RouterEventKind.VALIDATION_PASSED),
+                expected_return=_expected_return_for(
+                    current_stage=ProcessStage.SMOKE_TEST,
+                    event_kind=RouterEventKind.VALIDATION_PASSED,
+                ),
                 current_stage=ProcessStage.SMOKE_TEST,
                 event_kind=RouterEventKind.VALIDATION_PASSED,
                 outcome=RouterOutcome.ADVANCE,
@@ -447,7 +726,10 @@ def build_router_poc_profile() -> ProjectWorkflowProfile:
                     current_stage=ProcessStage.SMOKE_TEST,
                     event_kind=RouterEventKind.VALIDATION_FAILED,
                 ),
-                expected_return=_expected_return_for(RouterEventKind.VALIDATION_FAILED),
+                expected_return=_expected_return_for(
+                    current_stage=ProcessStage.SMOKE_TEST,
+                    event_kind=RouterEventKind.VALIDATION_FAILED,
+                ),
                 current_stage=ProcessStage.SMOKE_TEST,
                 event_kind=RouterEventKind.VALIDATION_FAILED,
                 outcome=RouterOutcome.RETRY,
@@ -460,7 +742,10 @@ def build_router_poc_profile() -> ProjectWorkflowProfile:
                     current_stage=ProcessStage.REVIEW,
                     event_kind=RouterEventKind.ACTION_COMPLETED,
                 ),
-                expected_return=_expected_return_for(RouterEventKind.ACTION_COMPLETED),
+                expected_return=_expected_return_for(
+                    current_stage=ProcessStage.REVIEW,
+                    event_kind=RouterEventKind.ACTION_COMPLETED,
+                ),
                 current_stage=ProcessStage.REVIEW,
                 event_kind=RouterEventKind.ACTION_COMPLETED,
                 outcome=RouterOutcome.ADVANCE,
@@ -474,7 +759,10 @@ def build_router_poc_profile() -> ProjectWorkflowProfile:
                     current_stage=ProcessStage.HANDOFF,
                     event_kind=RouterEventKind.ACTION_COMPLETED,
                 ),
-                expected_return=_expected_return_for(RouterEventKind.ACTION_COMPLETED),
+                expected_return=_expected_return_for(
+                    current_stage=ProcessStage.HANDOFF,
+                    event_kind=RouterEventKind.ACTION_COMPLETED,
+                ),
                 current_stage=ProcessStage.HANDOFF,
                 event_kind=RouterEventKind.ACTION_COMPLETED,
                 outcome=RouterOutcome.STOP,
@@ -487,7 +775,10 @@ def build_router_poc_profile() -> ProjectWorkflowProfile:
                     current_stage=ProcessStage.IMPLEMENT,
                     event_kind=RouterEventKind.REQUIREMENT_CHANGED,
                 ),
-                expected_return=_expected_return_for(RouterEventKind.REQUIREMENT_CHANGED),
+                expected_return=_expected_return_for(
+                    current_stage=ProcessStage.IMPLEMENT,
+                    event_kind=RouterEventKind.REQUIREMENT_CHANGED,
+                ),
                 current_stage=ProcessStage.IMPLEMENT,
                 event_kind=RouterEventKind.REQUIREMENT_CHANGED,
                 outcome=RouterOutcome.ADVANCE,

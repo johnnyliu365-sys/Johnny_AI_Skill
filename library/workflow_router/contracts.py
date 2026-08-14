@@ -21,6 +21,13 @@ CommitDigest = Annotated[str, Field(pattern=r"^git_[0-9a-f]{12,64}$")]
 ReviewedCommitReference = Annotated[str, Field(pattern=r"^[0-9a-f]{7,64}$")]
 
 
+def _is_all_zero(value: str, prefix: str) -> bool:
+    """Identify reserved all-zero metadata after a validated fixed prefix."""
+
+    suffix = value[len(prefix) :]
+    return bool(suffix) and all(character == "0" for character in suffix)
+
+
 class RouterModel(BaseModel):
     """Immutable, strict base model for values that cross router boundaries."""
 
@@ -199,6 +206,10 @@ class SkillReference(RouterModel):
         forbidden_markers = ("://", "\\", "/", "prompt", "secret")
         if any(marker in normalized for marker in forbidden_markers):
             raise ValueError("skill reference IDs are metadata-only")
+        if _is_all_zero(self.source_revision, "rev-"):
+            raise ValueError("skill reference revisions must identify real policy content")
+        if _is_all_zero(self.content_digest, "sha256_"):
+            raise ValueError("skill reference digests must identify real policy content")
         return self
 
 
@@ -215,6 +226,8 @@ class ExpectedReturnContract(RouterModel):
     def return_family_is_finite_and_consistent(self) -> ExpectedReturnContract:
         """Keep each return family disjoint, non-empty where required, and duplicate-free."""
 
+        if _is_all_zero(self.contract_revision, "rev-"):
+            raise ValueError("return contract revisions must identify real policy content")
         if len(self.router_events) != len(set(self.router_events)):
             raise ValueError("router events must be unique")
         if len(self.implementation_statuses) != len(set(self.implementation_statuses)):
