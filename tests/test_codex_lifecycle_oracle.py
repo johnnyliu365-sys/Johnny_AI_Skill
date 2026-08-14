@@ -12,7 +12,13 @@ import tempfile
 from typing import TypeVar
 import unittest
 
+from library.local_orchestration.codex_compensation_composition import observe_codex_compensation_operation
+from library.local_orchestration.codex_compensation_port import CodexCompensationPortManifest, CodexCompensationPortOperation, CodexCompensationPortRequest
+from library.local_orchestration.codex_compensation_reducer import CodexMarketplaceProof, CodexProofTruth
+from library.local_orchestration.codex_registration_contracts import CodexAuthPolicy, CodexPluginId
+from library.local_orchestration.contracts import CANONICAL_INSTALL_ROOT, ArtifactDigest, InstallRoot, InstallationId, OwnedRelativePath
 from library.local_orchestration.host_contracts import CodexMarketplaceList, CodexPluginEntry, CodexPluginList
+from library.local_orchestration.host_contracts import CodexCliVersion, CodexMarketplaceName, CodexPluginName
 from tests.staging.codex_lifecycle_oracle.contracts import (
     ORACLE_COMMAND_FILE_NAME,
     ORACLE_STAGING_CODEX_VERSION,
@@ -589,6 +595,75 @@ class CodexLifecycleOracleTests(unittest.TestCase):
         finally:
             self._teardown(allocator, lease)
 
+    def test_s1_real_owned_marketplace_add_list_derives_source_from_persisted_locator(self) -> None:
+        allocator, lease, oracle = self._ready("0000000000000420")
+        try:
+            self._assert_completed(oracle.initialize(lease), CodexMarketplaceList)
+            self._assert_completed(self._run(oracle, lease, OracleAction.MARKETPLACE_ADD), CodexMarketplaceAdd)
+            state = OracleState.model_validate_json(oracle.state_path(lease).read_text(encoding="utf-8"))
+            self.assertEqual(1, len(state.marketplaces))
+            persisted_locator = state.marketplaces[0].locator
+            markets = self._assert_completed(self._run(oracle, lease, OracleAction.MARKETPLACE_LIST), CodexMarketplaceList)
+            self.assertEqual(1, len(markets.marketplaces))
+            source = markets.marketplaces[0].marketplaceSource
+            if source is None:
+                raise AssertionError("owned marketplace source is absent")
+            self.assertEqual("local", source.type)
+            self.assertEqual(persisted_locator.removesuffix(".json"), source.value)
+        finally:
+            self._teardown(allocator, lease)
+
+    def test_s2_marketplace_list_derives_each_foreign_source_without_filtering(self) -> None:
+        allocator, lease, oracle = self._ready("0000000000000421")
+        foreign = self._foreign_marketplace("owned-market-shadow", "foreign-shadow-root")
+        try:
+            self._assert_completed(oracle.initialize(lease), CodexMarketplaceList)
+            self._assert_completed(self._run(oracle, lease, OracleAction.MARKETPLACE_ADD), CodexMarketplaceAdd)
+            self.assertIsInstance(oracle.seed_foreign_marketplace(lease, foreign), OracleForeignSeeded)
+            state_before = oracle.state_path(lease).read_bytes()
+            payload_before = self._payload_bytes(oracle.payload_root(lease))
+            markets = self._assert_completed(self._run(oracle, lease, OracleAction.MARKETPLACE_LIST), CodexMarketplaceList)
+            self.assertEqual((IDENTITY.marketplace_name, foreign.name), tuple(entry.name for entry in markets.marketplaces))
+            self.assertEqual(("owned-root", foreign.root), tuple(entry.root for entry in markets.marketplaces))
+            self.assertEqual(
+                ("marketplaces/owned-market", "marketplaces/owned-market-shadow"),
+                tuple(entry.marketplaceSource.value for entry in markets.marketplaces if entry.marketplaceSource is not None),
+            )
+            self.assertEqual(state_before, oracle.state_path(lease).read_bytes())
+            self.assertEqual(payload_before, self._payload_bytes(oracle.payload_root(lease)))
+        finally:
+            self._teardown(allocator, lease)
+
+    def test_s4_marketplace_source_drives_residue_then_absent_with_foreign_preserved(self) -> None:
+        allocator, lease, oracle = self._ready("0000000000000422")
+        foreign = self._foreign_marketplace("owned-market-shadow", "foreign-shadow-root")
+        request = self._marketplace_request()
+        try:
+            self._assert_completed(oracle.initialize(lease), CodexMarketplaceList)
+            self._assert_completed(self._run(oracle, lease, OracleAction.MARKETPLACE_ADD), CodexMarketplaceAdd)
+            self.assertIsInstance(oracle.seed_foreign_marketplace(lease, foreign), OracleForeignSeeded)
+            before_foreign = OracleState.model_validate_json(oracle.state_path(lease).read_text(encoding="utf-8")).foreign_marketplaces
+            foreign_path = oracle.payload_root(lease) / foreign.locator
+            before_foreign_payload = foreign_path.read_bytes()
+            listed = self._assert_completed(self._run(oracle, lease, OracleAction.MARKETPLACE_LIST), CodexMarketplaceList)
+            residue = observe_codex_compensation_operation(CodexCompensationPortOperation.LIST_MARKETPLACES, listed, request)
+            self.assertIsInstance(residue, CodexMarketplaceProof)
+            if not isinstance(residue, CodexMarketplaceProof):
+                raise AssertionError("expected marketplace proof")
+            self.assertIs(residue.truth, CodexProofTruth.RESIDUE)
+            self._assert_completed(self._run(oracle, lease, OracleAction.MARKETPLACE_REMOVE), CodexMarketplaceRemove)
+            after_list = self._assert_completed(self._run(oracle, lease, OracleAction.MARKETPLACE_LIST), CodexMarketplaceList)
+            absent = observe_codex_compensation_operation(CodexCompensationPortOperation.LIST_MARKETPLACES, after_list, request)
+            self.assertIsInstance(absent, CodexMarketplaceProof)
+            if not isinstance(absent, CodexMarketplaceProof):
+                raise AssertionError("expected marketplace proof")
+            self.assertIs(absent.truth, CodexProofTruth.PROVED_ABSENT)
+            after_state = OracleState.model_validate_json(oracle.state_path(lease).read_text(encoding="utf-8"))
+            self.assertEqual(before_foreign, after_state.foreign_marketplaces)
+            self.assertEqual(before_foreign_payload, foreign_path.read_bytes())
+        finally:
+            self._teardown(allocator, lease)
+
     def test_p2_absence_returns_exact_present_for_owned_plugin_and_payload(self) -> None:
         allocator, lease, oracle = self._ready("0000000000000401")
         try:
@@ -984,7 +1059,11 @@ class CodexLifecycleOracleTests(unittest.TestCase):
                     state = json.loads(state_path.read_text(encoding="utf-8"))
                     state["marketplaces"][0]["locator"] = locator
                     state_path.write_text(json.dumps(state, separators=(",", ":")), encoding="utf-8")
+                    before_state = state_path.read_bytes()
+                    before_payload = self._payload_bytes(oracle.payload_root(lease))
                     self._assert_blocked(self._run(oracle, lease, OracleAction.MARKETPLACE_LIST), OracleBlockReason.STATE_INVALID)
+                    self.assertEqual(before_state, state_path.read_bytes())
+                    self.assertEqual(before_payload, self._payload_bytes(oracle.payload_root(lease)))
                 finally:
                     self._teardown(allocator, lease)
         invalid_command_values: tuple[object, ...] = (None, "", " ", [], {})
@@ -1089,6 +1168,23 @@ class CodexLifecycleOracleTests(unittest.TestCase):
     @staticmethod
     def _command(action: OracleAction) -> OracleCommand:
         return OracleCommand(action=action, identity=IDENTITY)
+
+    @staticmethod
+    def _marketplace_request() -> CodexCompensationPortRequest:
+        return CodexCompensationPortRequest(
+            manifest=CodexCompensationPortManifest(
+                installation_id=InstallationId(value="installation-05c2c3-00000001"),
+                root=InstallRoot(value=CANONICAL_INSTALL_ROOT),
+                marketplace=CodexMarketplaceName(value=IDENTITY.marketplace_name),
+                marketplace_source=OwnedRelativePath(value="marketplaces/owned-market"),
+                plugin_id=CodexPluginId(value=IDENTITY.plugin_id),
+                plugin=CodexPluginName(value=IDENTITY.plugin_name),
+                version=CodexCliVersion(value=IDENTITY.plugin_version),
+                installed_locator=OwnedRelativePath(value="plugins/owned-plugin"),
+                auth_policy=CodexAuthPolicy(value=IDENTITY.plugin_auth_policy),
+                digest=ArtifactDigest(value="a" * 64),
+            )
+        )
 
     @staticmethod
     def _identity_with_logical_path(logical_path: str) -> OracleIdentity:
