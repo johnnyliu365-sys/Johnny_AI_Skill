@@ -4796,3 +4796,15 @@
 | Proposed owner / lane | Task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; clean permanent worktree `C:\Users\<user>\Desktop\AI控制工作workflow-implementation`; released branch/head `codex/implementation-codex-receipt-removal-acceptance-05c3` / `fc8709e4d26811072c6399a12252eafae2eae522`. Planned branch is only `codex/implementation-router-route-instruction-r01` from the future dispatch registry. Reviewer task `019fb935-bbe1-7f71-8b4b-58ba20c81626` is sole orchestrator. |
 | Planned binding | Handoff `hnd_adaptive_router_r01_20260814`; allocation `aln_adaptive_router_r01_20260814`; correlation `corr-adaptive-router-r01-20260814`; question `q-adaptive-router-r01-20260814`; side context `scx-adaptive-router-r01-20260814-01`. Receipt is created only in the dispatch-confirmation registry. |
 | Resource / boundary | `STANDARD`; one Luna implementer, no helper. `XSS_NOT_APPLICABLE`; no implementation mutation, new worktree, 06G0P review/integration, live model/Figma/Codex/host/target/network effect, push, package/install, Secret, release or deployment. |
+
+## PRG-20260814-444 - Router Ticket R01 implementation dispatch confirmation
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `TICKET_DISPATCH_REQUIRED(PRG-443) + STANDING_OWNER_AUTO_CONTINUE -> IMPLEMENTATION_DISPATCH_CONFIRMED / IMPLEMENT`; this is the sole ticket delivery confirmation. |
+| Registry / ticket | Proposal baseline `69016f0`; exact ticket `modules/tickets/adaptive-project-orchestration/01-route-instruction-contract.md`; closure `CLOSURE-ADAPTIVE-ROUTER-R01-01` R1-R7 revision 01. The exact dispatch baseline is the commit containing this registry record. |
+| Binding | Project `adaptive-router-policy`; handoff `hnd_adaptive_router_r01_20260814`; allocation `aln_adaptive_router_r01_20260814`; receipt `rcpt_adaptive_router_r01_20260814`; correlation `corr-adaptive-router-r01-20260814`; question `q-adaptive-router-r01-20260814`; side context `scx-adaptive-router-r01-20260814-01`. |
+| Owner / lane | Implementation task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; permanent worktree `C:\Users\<user>\Desktop\AI控制工作workflow-implementation`; create only `codex/implementation-router-route-instruction-r01` at the exact registry commit. Reviewer task `019fb935-bbe1-7f71-8b4b-58ba20c81626` remains sole orchestrator. |
+| Source authority | Exactly `library/workflow_router/contracts.py`, `profile.py`, `router.py`, `__init__.py` and `tests/test_workflow_router.py`; then one append-only WPR handoff reserved as `PRG-20260814-445`. No other source/test/docs path is writable. |
+| Pre-red / return | Reproduce public `ImportError: SkillReference` before source change; execute exact committed R1-R7 and return one implementation commit plus one WPR-only handoff. Progress-only final is not completion. |
+| Resource / safety | Host model mapping `gpt-5.6-luna`, highest supported reasoning; one owner, no helper. `XSS_NOT_APPLICABLE`; no Agent delegation/control, new worktree, self-review/integration, 06G0P mutation, live model/Figma/Codex/home/App/target/network effect, push, package/install, Secret, release or deployment. |

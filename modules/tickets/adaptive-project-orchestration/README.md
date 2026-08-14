@@ -8,7 +8,7 @@
 
 | Ticket | Observable closure | State | Dependency |
 | --- | --- | --- | --- |
-| [01-route-instruction-contract](01-route-instruction-contract.md) | Every Router decision carries one versioned skill reference and one exact expected typed return; technical halts use the Profile's router-control fallback. | `PLANNED / PREFLIGHT_PASSED / DISPATCH_REQUIRED` | `CHG-20260814-019`; docs baseline `ffc2197` |
+| [01-route-instruction-contract](01-route-instruction-contract.md) | Every Router decision carries one versioned skill reference and one exact expected typed return; technical halts use the Profile's router-control fallback. | `IN_PROGRESS / IMPLEMENTATION_DISPATCH_CONFIRMED` | Receipt `rcpt_adaptive_router_r01_20260814`; implementer-1; exact five-file scope |
 | `02-model-role-readiness-wake` | SPEC readiness and architecture-owner sleep/wake decision kernel. | `CANDIDATE / NON_DISPATCHABLE` | R01 approved/integrated |
 | `03-low-model-ticket-admission` | Four-way low-model decomposition/admission decision kernel. | `CANDIDATE / NON_DISPATCHABLE` | R02 approved/integrated |
 | `04-ui-design-source-routing` | Optional design-source capability decision kernel. | `CANDIDATE / NON_DISPATCHABLE` | R03 approved/integrated |
