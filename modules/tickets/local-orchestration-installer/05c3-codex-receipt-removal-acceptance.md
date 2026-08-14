@@ -7,6 +7,7 @@
 | Closure | `CLOSURE-LOCAL-INSTALL-T05C3-01` / A1-A8 |
 | Dependency | 05C2 independently approved and integrated |
 | Profile / XSS | `STANDARD`; one implementation owner, no helper / `XSS_NOT_APPLICABLE` |
+| Implementation language | Python 3.11 with strict Pydantic models and `mypy --strict` |
 
 ## Reserved responsibility
 

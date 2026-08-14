@@ -3,10 +3,11 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-02, AC-06 and AC-07 |
-| State | `PLANNED / DEPENDENCY_WAIT` |
+| State | `PLANNED / REFREEZE_REQUIRED` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05C2-01` / C1-C8 |
 | Dependency | 05C1 independently approved and integrated |
 | Profile / XSS | `STANDARD`; one implementation owner, no helper / `XSS_NOT_APPLICABLE` |
+| Implementation language | Python 3.11 with strict Pydantic models and `mypy --strict` |
 
 ## Reserved responsibility
 

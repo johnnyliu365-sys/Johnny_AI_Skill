@@ -4188,3 +4188,13 @@
 | Independent verification | Immutable export SHA-256 `FEFF10BE64585DAA100A44C14DA27AD63581C1A72F9A923EAB89F1F457158977`; focused `14/14`; full serial `476/476`; strict mypy `146`; in-memory compile `146`; reviewer adversarial precedence matrix `5/5`; classification/source/plugin reversals each turn named tests red and exact bytes restore. |
 | Decision | CR-173 is closed. Invocation identities validate before comparison; invalid invocation and receipt identities remain distinct finite results; public exports and 05C2 scope are unchanged. `XSS_NOT_APPLICABLE`. |
 | Boundary | Reviewer used only an immutable TEMP export and removed it with its external cache after byte restoration. No implementation-worktree write, live effect, push/staging publication, package/install, Secret, release or deployment. |
+
+## PRG-20260814-386 - Ticket 05C1 guarded integration and adjacent-ticket audit
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `APPROVED(05C1) -> GUARDED_INTEGRATION_COMPLETED -> ACTION_COMPLETED / SELECT_05C2_REFREEZE` |
+| Integration | Review `43bae91b28d4d2f3db35f6e908c15f67d8fc8bfd`; exact handoff `252a698b73191106a0c4551162d153be86491a08`; guarded merge `9e0343aa1f397b5dc167f8e898060c078522c356`. Read-only merge-tree and actual merge produced only the expected append-only WPR conflict; PRG-384 and PRG-385 were preserved once in chronological order. |
+| Post-merge verification | Focused `14/14` and strict mypy `146` pass on the integrated tree with a removed external cache. Merge scope is WPR, export-only root, receipt-removal source and direct test; no other conflict or silent resolution occurred. |
+| Adjacent ticket audit | 05C1/05C2/05C3 were created by one reduced decomposition pattern that omitted Workflow §9.3's mandatory implementation-language header. Revision-02 corrected 05C1; this record restores Python 3.11 / strict Pydantic / `mypy --strict` to 05C2 and 05C3 before either can dispatch. 05C2 remains `REFREEZE_REQUIRED` until its exact integrated API closure is complete. |
+| Boundary | Control documents and guarded integration only; no implementation-worktree write, new branch/worktree, live effect, push/staging publication, package/install, Secret, release or deployment. |
