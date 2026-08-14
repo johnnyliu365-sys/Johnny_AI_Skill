@@ -4648,6 +4648,15 @@
 | Pre-red gate / return | Ordinary valid public constructors and round trips must mechanically pass before mutation; otherwise `HALT / TICKET_SCHEMA_INVALID`. Return one implementation commit and reserved physical-EOF PRG-20260814-430 WPR-only handoff. Review/integration remain reviewer-owned. |
 | Boundary | `XSS_NOT_APPLICABLE`; no new worktree/helper, historical-source copy, model bypass, live Codex/home/config, target-project, network, push/staging publication, package/build/install, Secret, release or deployment. |
 
+## PRG-20260814-430 - Ticket 05C3 revision-03 receipt-removal acceptance handoff
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05C3 revision 03) -> ACTION_COMPLETED / REVIEW_HANDOFF`; independent review and integration remain reviewer-owned. |
+| Admission / first red | Corrected exact registry `8ca7ded22c2812a541539e7852b142aa0ed6fea9` admitted on the permanent worktree; bootstrap missing-module import was followed by the counted behavior red after the real registered receipt/removal path executed and returned a rejection instead of acceptance. |
+| Implementation | Commit `78cd32da2490e999227f8409c4fcb52eed6e7e37` changes exactly `tests/staging/codex_lifecycle_oracle/receipt_removal_acceptance.py` and `tests/test_codex_receipt_removal_acceptance.py`. It composes the integrated registration receipt, 05C1 request rebuild, real compensation adapter, first removal and replay. |
+| Verification | Focused 05C3 `8/8`; full serial unittest `525/525`; strict full-tree mypy `150` files with explicit package bases and external cache removed; in-memory compile `150` files. Ten bounded A8 reversals turned governing tests red and were restored: receipt binding, action order, owned state/payload absence, replay zero-removal, foreign preservation, two sentinel isolation checks, lease round-trip and bool typing. |
+| Evidence / boundary | Exact removal order and replay trace, foreign records/payload bytes, owned state/payload absence, external Git/empty sentinels and public constructor round-trips pass. `XSS_NOT_APPLICABLE`; final scope, ancestry, topology, tracked/ignored porcelain and cache/runtime/bytecode residue are clean/absent. No helper, live Codex/home/config/target-project/network effect, push, package/install, release or deployment. |
 ## PRG-20260814-431 - Ticket 05C3 revision-03 independent initial review
 
 | Field | Evidence |
@@ -4669,6 +4678,17 @@
 | Correction / proof | Exact two-path correction only: internal `OracleCommand` type, complete external Git-sentinel tree byte snapshot, and a committed A7 AST/source gate. The old internal-object form and `.git/config` byte mutation must each turn the corrected governing test red before exact restoration. |
 | Return | One additive implementation correction commit followed by reserved physical-EOF PRG-20260814-433 WPR-only handoff. This is revision 03's sole correction cycle; correction review failure routes to `CONVERGENCE_REVIEW_REQUIRED`. |
 | Boundary | `XSS_NOT_APPLICABLE`; no new branch/worktree/helper, live Codex/home/config, target-project, network, push/staging publication, package/build/install, Secret, release or deployment. |
+
+## PRG-20260814-433 - Ticket 05C3 CR-180 through CR-182 correction handoff
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `CORRECTION_DISPATCH_CONFIRMED(CR-180/181/182) -> ACTION_COMPLETED / REVIEW_HANDOFF`; independent correction review remains reviewer-owned. |
+| Merge / implementation | History-preserving merge `d9a6724292148ced85d53224dcb37e3c0906ad8c` incorporated exact control `9083d5d835fc72f2cd029079f451b830be188421` with only the predicted WPR overlap resolved; additive correction `c090a3e5c6f3b6a8bf21ed30b20e940c1ea5e6c2` changes exactly `tests/staging/codex_lifecycle_oracle/receipt_removal_acceptance.py` and `tests/test_codex_receipt_removal_acceptance.py`. |
+| CR-180 / CR-181 | Internal `observed_run` now uses exact `OracleCommand`. A6 snapshots every relative path, node type and file bytes under the external Git sentinel, including `.git`, immediately before/after acceptance and compares before later Git diagnostics. The bounded old-object reversal and `.git/config` byte mutation each turned their governing test red and were restored exactly. |
+| CR-182 | The committed AST/source gate permits `object` only on the three public acceptance parameters and rejects unauthorized object use, `Any`, `type: ignore`, model construction/update bypasses, dynamic member lookup, inspect introspection, Optional/None-valued parameters, `typing.cast`, and broad catches. The corrected source gate is green. |
+| Verification | Focused 05C3 `9/9`; full serial unittest `526/526`; strict full-tree mypy `150` files with explicit package bases and external cache removed; in-memory compile `150` files. Original A8 reversal evidence remains retained in PRG-430; CR-180/181 correction reversals passed red-then-restored. |
+| Scope / residue | `git diff --check`, exact two-path implementation scope, merge ancestry, three-worktree topology, tracked/ignored status, source sentinel, cache/runtime/bytecode residue and physical WPR EOF checks pass; PRG-430, PRG-431, PRG-432 and PRG-433 each occur once. `XSS_NOT_APPLICABLE`; no helper, live Codex/home/config/target-project/network effect, push, package/install, release or deployment. |
 
 ## PRG-20260814-434 - Ticket 05C3 terminal correction review
 
