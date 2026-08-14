@@ -4783,3 +4783,16 @@
 | Verification | Local Markdown links resolve; `git diff --check` passes; existing focused Router/private-router/collaboration/guarded-integration regression is `90/90`. Document source ownership and target-project zero-copy boundaries are unchanged. |
 | Next Router action | Create one exact formal Ticket R01 from this committed baseline for versioned route-reference and expected-return contracts. No broader Router/model/UI implementation may be folded into R01. |
 | Boundary | Documentation/control-plane artifacts only; no production/test source, implementation worktree, Agent dispatch, target-project, live model/Figma/host, network, push, package/install, Secret, release or deployment effect. |
+
+## PRG-20260814-443 - Router Ticket R01 decomposition and dispatch proposal
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `SPEC_REVISION_APPROVED(PRG-442) + TICKET_DECOMPOSITION -> READY_LOW_MODEL / TICKET_DISPATCH_REQUIRED`; no receipt or source/branch authority exists in this proposal. |
+| Exact closure | `modules/tickets/adaptive-project-orchestration/01-route-instruction-contract.md`; `CLOSURE-ADAPTIVE-ROUTER-R01-01` R1-R7 revision 01. One outcome only: every Router decision carries an exact versioned skill reference and expected typed return; technical halts use the Profile router-control/no-return fallback. |
+| Split boundary | Model readiness/wake, ticket-admission decisions, UI/design routing, policy registry/read, `ArtifactRef.uri` migration and integrated acceptance are explicitly excluded and remain dependent candidates. The ticket is split by one public decision-contract closure, not by line/file count. |
+| Strong-type preflight | Proposed public models were constructed/JSON-round-tripped in an ephemeral strict Pydantic prototype: three valid return families pass; six empty/mixed/duplicate family cells and four path/URI/prompt/Secret reference IDs fail. Initial prototype exposed and the ticket corrected the `prompt-router` gap in the shared opaque-ID regex. |
+| First red / regression | Public import of `SkillReference` fails with `ImportError` as required. Existing six-module Router regression remains `90/90`; local Markdown links and diff checks passed at policy freeze `ffc2197`. |
+| Proposed owner / lane | Task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; clean permanent worktree `C:\Users\<user>\Desktop\AI控制工作workflow-implementation`; released branch/head `codex/implementation-codex-receipt-removal-acceptance-05c3` / `fc8709e4d26811072c6399a12252eafae2eae522`. Planned branch is only `codex/implementation-router-route-instruction-r01` from the future dispatch registry. Reviewer task `019fb935-bbe1-7f71-8b4b-58ba20c81626` is sole orchestrator. |
+| Planned binding | Handoff `hnd_adaptive_router_r01_20260814`; allocation `aln_adaptive_router_r01_20260814`; correlation `corr-adaptive-router-r01-20260814`; question `q-adaptive-router-r01-20260814`; side context `scx-adaptive-router-r01-20260814-01`. Receipt is created only in the dispatch-confirmation registry. |
+| Resource / boundary | `STANDARD`; one Luna implementer, no helper. `XSS_NOT_APPLICABLE`; no implementation mutation, new worktree, 06G0P review/integration, live model/Figma/Codex/host/target/network effect, push, package/install, Secret, release or deployment. |
