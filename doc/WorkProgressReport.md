@@ -4828,3 +4828,13 @@
 | Exact closure | `CLOSURE-ADAPTIVE-ROUTER-R01-02`; CR-R01-001..003 only. Complete 19-row policy/next-return map, seven real policy digests, zero-placeholder/conflicting-reference rejection and exact revision binding are frozen in the ticket. |
 | Owner / authority | Task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; worktree `C:\Users\<user>\Desktop\AI控制工作workflow-implementation`; branch `codex/implementation-router-route-instruction-r01`; allocation `aln_adaptive_router_r01_20260814`; retained receipt `rcpt_adaptive_router_r01_20260814`. |
 | Return / safety | Additive correction implementation in the same five files, then WPR-only `PRG-20260814-448`. No helper, R02, 06G0P review, other rework, new worktree, push, package/install, target-project/live host effect, release or deployment. |
+
+## PRG-20260815-449 - Router Ticket R01 revision-02 terminal review and revision-03 refreeze
+
+| Field | Evidence |
+| --- | --- |
+| Reviewed chain | Correction `a961b59d3db60dbd74a9388621adad3112b4f721`; WPR-only handoff `21ced7b7f84a351074f65566603b4a2793334134`; additive ancestry, exact scope and clean residue pass. |
+| Closed findings | CR-R01-001..003: independent focused `32/32` and semantic probe confirm correct next-action returns, real policy IDs/digests, zero rejection, conflict detection and revision binding. |
+| Remaining blocker | `CHANGES_REQUESTED / CR-R01-004`: new internal production/test route metadata uses raw `str` and unannotated constants; hash evidence unnecessarily invokes Git. This violates the P0 source-type gate despite strict mypy passing. |
+| Revision-03 closure | `CLOSURE-ADAPTIVE-ROUTER-R01-03`; mechanical domain annotations, typed policy path/direct hashing, expanded AST source gate and two exact reversals only. No route/public behavior change. |
+| Continuation | Same task/worktree/branch/allocation/receipt; WPR-only return reserved as `PRG-20260815-451`. R02, 06G0P, integration and all non-Router work remain paused. |

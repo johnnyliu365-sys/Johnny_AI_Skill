@@ -4,8 +4,8 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2` revision 02 / AC-12 through AC-14 shared route precondition |
 | Change / ADR | `CHG-20260814-019`; `ADR-20260814-011` |
-| State | `IN_PROGRESS / REVISION_02_CORRECTION_DISPATCH_CONFIRMED` |
-| Closure | `CLOSURE-ADAPTIVE-ROUTER-R01-02` / R1-R7 plus CR-R01-001 through CR-R01-003 |
+| State | `CHANGES_REQUESTED / REVISION_03_REFROZEN` |
+| Closure | `CLOSURE-ADAPTIVE-ROUTER-R01-03` / R1-R7 plus CR-R01-001 through CR-R01-004 |
 | Baseline | Router policy freeze `ffc2197f4ac9be495651fd970c0c3f21737aa3bc` |
 | Delivery profile | `STANDARD`; one Luna implementation owner; no helper |
 | Control owner / reviewer | Control task `019fb935-bbe1-7f71-8b4b-58ba20c81626`; sole Agent orchestrator |
@@ -150,6 +150,30 @@ Revision-02 tests replace the incoming-event assertion with the exhaustive table
 verify real file hashes. Required reversals: restoring the incoming-event echo makes the
 `INTAKE` direction test red; replacing one real digest with the all-zero placeholder makes the
 policy-authenticity test red. Both are restored exactly before final verification.
+
+## Revision-03 P0 source-type closure
+
+No route value, policy ID, revision, digest, contract, validator or public behavior changes in
+this revision. The correction is limited to these exact type/evidence requirements:
+
+- production `_PolicyRoute.reference_id`, the Profile reference-map key and
+  `_policy_reference_for` parameter use `OpaqueMetadataId`;
+- `_POLICY_REFERENCES: tuple[SkillReference, ...]` and
+  `_POLICY_ROUTES: tuple[_PolicyRoute, ...]` are explicit;
+- the local generated contract ID is explicitly `OpaqueMetadataId`;
+- test `_ExpectedRoute.reference_id` uses `OpaqueMetadataId`;
+- test `_ExpectedPolicy` uses `OpaqueMetadataId`, `RevisionDigest`, `EvidenceDigest` and
+  `PurePosixPath` for its four domain fields;
+- `_EXPECTED_ROUTES: tuple[_ExpectedRoute, ...]` and
+  `_EXPECTED_POLICIES: tuple[_ExpectedPolicy, ...]` are explicit;
+- policy hash evidence reads the typed policy path directly, canonicalizes only CRLF to LF,
+  hashes those bytes and does not import/call `subprocess` or Git;
+- the AST source gate includes `_PolicyRoute`, `_ExpectedRoute`, `_ExpectedPolicy` and the four
+  named module constants, rejecting raw `str` domain fields/parameters and missing annotations.
+
+Required revision-03 reversals: changing `_PolicyRoute.reference_id` back to `str` turns the
+P0 source gate red; deleting one named tuple annotation turns the same gate red. Restore both
+exactly, then rerun the unchanged revision-02 route/hash oracle and all prior verification.
 
 ## TDD and source gates
 

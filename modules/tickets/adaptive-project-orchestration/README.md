@@ -8,7 +8,7 @@
 
 | Ticket | Observable closure | State | Dependency |
 | --- | --- | --- | --- |
-| [01-route-instruction-contract](01-route-instruction-contract.md) | Every Router decision carries one versioned skill reference and one exact expected typed return; technical halts use the Profile's router-control fallback. | `IN_PROGRESS / REVISION_02_CORRECTION_DISPATCH_CONFIRMED` | CR-R01-001..003; same receipt, owner, branch and exact five-file scope |
+| [01-route-instruction-contract](01-route-instruction-contract.md) | Every Router decision carries one versioned skill reference and one exact expected typed return; technical halts use the Profile's router-control fallback. | `CHANGES_REQUESTED / REVISION_03_REFROZEN` | CR-R01-001..003 closed; CR-R01-004 P0 typing; same lane/scope |
 | `02-model-role-readiness-wake` | SPEC readiness and architecture-owner sleep/wake decision kernel. | `CANDIDATE / NON_DISPATCHABLE` | R01 approved/integrated |
 | `03-low-model-ticket-admission` | Four-way low-model decomposition/admission decision kernel. | `CANDIDATE / NON_DISPATCHABLE` | R02 approved/integrated |
 | `04-ui-design-source-routing` | Optional design-source capability decision kernel. | `CANDIDATE / NON_DISPATCHABLE` | R03 approved/integrated |

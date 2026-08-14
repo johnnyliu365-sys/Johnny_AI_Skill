@@ -74,3 +74,30 @@ receipt remain in force. Revision 02 is additive from the submitted handoff and 
 the original five implementation paths followed by one WPR-only handoff. It must close
 CR-R01-001 through CR-R01-003; it does not open R02, add a policy reader/registry, change
 `ArtifactRef`, touch 06G0P, create a worktree, push, package, install, release or deploy.
+
+## Revision-02 terminal review
+
+| Field | Value |
+| --- | --- |
+| Correction / handoff | `a961b59d3db60dbd74a9388621adad3112b4f721` / `21ced7b7f84a351074f65566603b4a2793334134` |
+| Scope / ancestry | PASS: additive after `a16dfc3`; correction changes only `contracts.py`, `profile.py` and `test_workflow_router.py`; handoff is WPR-only; branch clean. |
+| Implementer verification | PASS: focused `32/32`, six-module `99/99`, full `535/535`, strict mypy `150`, compile `150`, both revision-02 reversals and zero residue. |
+| Independent semantic probe | PASS: Wayfinder GO/NO-GO, stop no-return, approval response, implementation retry statuses and all seven policy hashes match revision 02. |
+| Terminal result | `CHANGES_REQUESTED / P0_TYPE_CORRECTION_REQUIRED` |
+
+CR-R01-001 through CR-R01-003 are closed. One P0 source-type defect remains:
+
+**CR-R01-004 - `IMPLEMENTATION_DEFECT`, blocking.** The new production
+`_PolicyRoute.reference_id`, `_policy_reference_for` parameter and Profile reference-map key
+use raw `str`; `_POLICY_REFERENCES` and `_POLICY_ROUTES` are unannotated module variables. The
+new test oracle likewise represents policy ID, revision, digest and path as raw `str` and leaves
+its route/policy constants unannotated. Strict mypy infers these shapes but does not make the
+domain intent C++-readable, so the change violates the repository P0 source-type gate. The
+test also spawns `git show` only to recover file bytes already available at a typed repository
+path, making the evidence unnecessarily dependent on a live Git checkout.
+
+Revision 03 is a same-ticket mechanical correction only: use the existing
+`OpaqueMetadataId`, `RevisionDigest` and `EvidenceDigest` aliases, `PurePosixPath` for the test
+policy path, explicit tuple/map annotations, and direct typed file-byte hashing without a Git
+subprocess. The AST source gate must cover the new internal route/oracle dataclasses and module
+constants. No route value, digest, public contract or behavior may change.
