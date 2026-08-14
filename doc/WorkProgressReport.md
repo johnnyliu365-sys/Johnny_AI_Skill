@@ -4722,3 +4722,14 @@
 | Fixed failure | Missing or failing evidence returns `HALT / TICKET_SCHEMA_INVALID` and `TICKET_DEFECT / NON_DISPATCHABLE`. Casts, bypass constructors, coercion, `Any`, dynamic lookup and historical-object reuse cannot satisfy a positive path; malformed bypass remains negative-test-only. |
 | Continuation | Apply the new schema preflight to every future implementation ticket before receipt issuance. Existing approved evidence remains immutable; no current implementation lane is reopened by this governance correction. |
 | Boundary | Documentation/governance only; no implementation worktree, live Codex/home/config, target-project, network, push/staging publication, package/build/install, Secret, release or deployment effect. |
+
+## PRG-20260814-437 - Post-05C3 Router queue readback
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `ACTION_COMPLETED(PRG-436) + EXACT_QUEUE_READBACK -> INSTALL_BLOCKED / ROLE_ISOLATION_UNPROVEN`; no implementation dispatch is legal. |
+| Queue normalization | Corrected two stale summary states only: integrated E0 header now matches merge `3fc2f99`, and integrated E2 index row now matches merge `d3d3c1d` with released allocation/closed receipt. No source, test, closure or historical evidence changed. |
+| Blocking capability | Integrated 06A actual-host evidence remains `INSTALL_BLOCKED / ROLE_ISOLATION_UNPROVEN / ACCESS_DENIED / OUTPUT_UNAVAILABLE`. The current installed host cannot prove reviewer orchestration tools present while implementation orchestration tools are absent through a supported effective readback. Prompt/config text alone is explicitly insufficient. |
+| Dependency chain | 06B requires 06A `SUPPORTED` plus autonomous Ticket 04; 06C requires 06B; package 04A requires 05A-05C and 06A-06C resolved/approved/integrated, and 04B-04I are serial descendants. Therefore every remaining installer ticket is dependency-waiting. |
+| Required continuation | A separately authorized, supported host capability or host-version/config-layer change must first make the 06A effective role-isolation probe return `SUPPORTED`; then refreeze/review that exact capability before 06B dispatch. Do not substitute a fake readback, prompt policy or implementation ticket retry. |
+| Boundary | Both permanent implementation lanes remain idle and clean; no helper, new branch/worktree, live host mutation, target-project, network, push/staging publication, package/build/install, Secret, release or deployment effect. |
