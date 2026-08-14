@@ -4496,3 +4496,13 @@
 | Lane readback | Owner task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; clean permanent worktree on existing branch/head `codex/implementation-codex-compensation-adapter-path-truth-05c2c2` / `41564b2e1087ede7bc156c68ec4aec715f3fe8bd`; zero tracked/ignored/cache/runtime residue and exactly three worktrees. The head is an exact ancestor of the dispatch and permits only same-branch fast-forward. |
 | Binding / return | Fresh revision-03 workspace/handoff/allocation/receipt/correlation/question/side-context from the ticket; fast-forward to this registry, change exactly the adapter and its direct test, then append only reserved PRG-20260814-416 in a WPR-only handoff. Revision-02 identifiers remain closed. |
 | Boundary | One owner and no helper. No new branch/worktree, live Codex/host/target-project effect, push/staging publication, package/install, Secret, release or deployment. |
+
+## PRG-20260814-417 - Ticket 05C2C2 revision-03 independent review
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `REVIEW_HANDOFF(05C2C2 revision 03) -> REVIEW_COMPLETED / CHANGES_REQUESTED`; ordinary same-branch source-only correction is authorized by standing `PRG-20260809-042`. |
+| Reviewed chain | Implementation `559f1c1fa9b89c411a80e26f275a6c23aad98a57`; WPR-only handoff `019e287d860d37c646e85c7bbbdd5d7bfc9f6e34` / PRG-416; immutable archive SHA-256 `13789481A4872916C7F7A2A46620FE1D37B1AE38D97FE26DE4FC07A6EC5787FD`. |
+| Independent evidence | Focused `15/15`; full serial `514/514`; strict mypy `148`; compile `148`; exact truth/no-hook probes and three independent runtime reversals pass. Exact scope/ancestry/clean lane/topology pass; reviewer TEMP export, junctions, archive and cache were removed. |
+| Finding | CR-178 `IMPLEMENTATION_DEFECT`: the changed method's docstring still claims the old absence-only contract and its final failure-call indentation is malformed. Runtime behavior and strong typing are otherwise correct. |
+| Continuation | Same ticket/revision-03 owner/permanent worktree/branch/binding; source-only documentation/indentation correction with direct-test blob byte-identical, then reserved PRG-20260814-419 WPR-only handoff. No new branch/worktree/helper/effect/push/package/install/release/deploy. |

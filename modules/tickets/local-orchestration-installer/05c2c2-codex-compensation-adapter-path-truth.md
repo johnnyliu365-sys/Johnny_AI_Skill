@@ -5,7 +5,7 @@
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-02, AC-06, AC-07 and AC-08 |
 | Change / PRD / Context | `CHG-20260808-011` / `PRD.md §15` / `doc/context/local-orchestration-installer/main.md` |
 | Revision | `03` |
-| State | `IN_PROGRESS / DISPATCH_READY` |
+| State | `CHANGES_REQUESTED / SOURCE_ONLY_CORRECTION` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05C2C2-01` / M1-M7 |
 | Dependency | 05C2C1 guarded merge `fffbc616ee1870b69845cbcecf37a98e842106d3`; 05C2C2A approval `6cca1210b51e6d5d5e8105876c993540a12eea21` and guarded merge `1f6532a069fade0bfcf526ad0d49de7a88b281bb` |
 | Profile / resource | `STANDARD`; one implementation owner, no helper; serial consumer of the exact 05C2C1 result |
@@ -158,3 +158,15 @@ no identifier from revision 02 may authorize implementation.
 This receipt authorizes only revision-03 M1-M7. Mechanically re-read the exact
 ticket and constructor before the first red; any mismatch returns typed
 `HALT / TICKET_SCHEMA_INVALID` without source/test mutation.
+
+### Initial review correction — CR-178
+
+All M1-M7 runtime/type/evidence gates pass. CR-178 is one bounded
+`IMPLEMENTATION_DEFECT`: the changed method still documents the old
+absence-only contract and its final failure-call indentation is malformed.
+Keep the same ticket, revision-03 owner/worktree/branch and binding. Change only
+`tests/staging/codex_lifecycle_oracle/compensation_adapter.py`: replace the
+false docstring with exact admitted absence/presence path-truth wording and
+align the final failure return. No executable token, import, test or other file
+may change. Return one additive source-only commit, then reserved
+PRG-20260814-419 in one WPR-only handoff commit.
