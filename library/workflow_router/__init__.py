@@ -43,6 +43,16 @@ from .contracts import (
     ProjectId,
     PlanningLaneState,
     PendingDispatchDescriptor,
+    RequirementArchiveBundle,
+    RequirementArchiveId,
+    RequirementChangeId,
+    RequirementId,
+    RequirementLifecycle,
+    RequirementLineageDecisionKind,
+    RequirementLineageInvalidReason,
+    RequirementLineageRecord,
+    RequirementLineageValidationDecision,
+    RequirementLineageValidationRequest,
     ReferenceStatus,
     ReturnContractKind,
     RouterEvent,
@@ -91,6 +101,7 @@ from .guarded_integration import (
 )
 from .collaboration import CollaborationTopologyResolver
 from .artifact_tree import ArtifactTreeResolver
+from .requirement_lineage import RequirementLineageGate
 from .profile import build_router_poc_profile
 from .private_router import (
     AutomaticContinuationRunner,
@@ -237,6 +248,17 @@ __all__ = (
     "RenderError",
     "RenderOutcome",
     "RenderedDispatchResponse",
+    "RequirementArchiveBundle",
+    "RequirementArchiveId",
+    "RequirementChangeId",
+    "RequirementId",
+    "RequirementLifecycle",
+    "RequirementLineageDecisionKind",
+    "RequirementLineageGate",
+    "RequirementLineageInvalidReason",
+    "RequirementLineageRecord",
+    "RequirementLineageValidationDecision",
+    "RequirementLineageValidationRequest",
     "StaticApprovedDispatchArtifactRegistry",
     "ReferenceStatus",
     "ReturnContractKind",
