@@ -5,7 +5,7 @@
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-02, AC-06 and AC-07 |
 | Change / PRD / Context | `CHG-20260808-011` / `PRD.md §15` / `doc/context/local-orchestration-installer/main.md` |
 | Revision | `02` |
-| State | `CHANGES_REQUESTED / CORRECTION_REQUIRED` |
+| State | `IN_PROGRESS / CORRECTION_DISPATCH_READY` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05C2B-01` / B1-B9 |
 | Dependency | 05C2A independently approved and integrated |
 | Profile / resource | `STANDARD`; one implementation owner, no helper; no parallel lane because the public observation contract is a serial dependency |
@@ -163,3 +163,17 @@ Correction scope is only
 `49fbeaf` must remain byte-identical. Reverse the new mismatch/unproved and
 no-hook gates, restore exact bytes, rerun B9, then return one additive
 implementation correction and reserved PRG-400 WPR-only handoff.
+
+## Revision-02 correction dispatch registry
+
+| Field | Value |
+| --- | --- |
+| Ticket schema gate | `PASS` against exact review/freeze commit `8c1c5354f6834a956c839e7347e0060a565d0b60`: State, B1-B9 closure, Python 3.11 strict implementation language, `STANDARD` one-owner/no-helper profile, `XSS_NOT_APPLICABLE`, two-path correction scope and CR-175/CR-176 outcomes are explicit. |
+| Authority / reviewer | Project-owner standing auto-continue `PRG-20260809-042`; sole reviewer/orchestrator task `019fb935-bbe1-7f71-8b4b-58ba20c81626`. |
+| Exact implementation lane | Existing owner task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; permanent worktree `C:\Users\<user>\Desktop\AI控制工作workflow-implementation`; same branch `codex/implementation-codex-receipt-removal-composition-05c2b`; clean handoff `2067f6ce7b76c8bc4635695a6f902a7f9330fef2`; exactly three worktrees and zero tracked/ignored/cache residue. |
+| Merge admission | Merge only the exact control commit carrying this registry. Read-only merge-tree proves the only overlap is append-only `doc/WorkProgressReport.md`; preserve PRG-397 through PRG-399 exactly once. Any other conflict, changed implementation blob, dirty lane or topology drift is typed `HALT`. |
+| Binding | Retain workspace `wsb_local_orchestration_install_05c2b_20260814_01`, handoff `hnd_local_orchestration_install_05c2b_20260814`, allocation `aln_local_orchestration_install_05c2b_20260814`, receipt `rcpt_local_orchestration_install_05c2b_20260814`, correlation `corr-local-orchestration-install-05c2b-20260814`, question and side context. |
+| Correction / return | Change only composition source and direct test; preserve export SHA-256 `C21EB080BF6D86E8AF8BCB11CF6397A9E6025B87FE015D6B9624928897D6B7B9`; one additive correction commit followed by unique PRG-400 WPR-only handoff. |
+
+This registry does not authorize a new branch, worktree, owner, helper, public
+contract, effect, package/install, push, release or deployment.

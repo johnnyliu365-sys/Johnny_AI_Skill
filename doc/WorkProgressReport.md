@@ -4312,3 +4312,13 @@
 | Independent evidence | Focused `16/16`, full serial `499/499`, strict mypy `148` files, compile `148` files, `19` additional adversarial cells and seven independent runtime reversals pass; reviewer-owned TEMP export/cache was removed. |
 | Findings | CR-175 `IMPLEMENTATION_DEFECT`: private `_observe` widens rebuilt request to `object`, violating P0 internal strong typing. CR-176 `EVIDENCE_DEFECT`: B3 mismatch/unproved actual-observer cells and B7 complete zero-operation/no-hook cells are absent from committed direct tests. |
 | Continuation | Same ticket/owner/permanent worktree/branch/allocation/receipt; source+direct-test-only additive correction, export byte-identical, no new branch/worktree/helper/effect/push/package/install/release/deploy. Reserved correction handoff is PRG-400. |
+
+## PRG-20260814-399 - Ticket 05C2B correction dispatch registry
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `CHANGES_REQUESTED(CR-175,CR-176) + EXACT_LANE_READBACK -> CORRECTION_DISPATCH_CONFIRMED / IMPLEMENT` |
+| Review / schema | Formal review/freeze `8c1c5354f6834a956c839e7347e0060a565d0b60`; exact ticket retains B1-B9, Python 3.11 strict typing, `STANDARD` one-owner/no-helper, `XSS_NOT_APPLICABLE`, two-path correction and unchanged public contract. |
+| Lane / merge admission | Owner task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; same permanent worktree/branch; clean handoff `2067f6ce7b76c8bc4635695a6f902a7f9330fef2`; ignored residue 0; exactly three worktrees. Read-only merge-tree predicts only append-only WPR overlap; PRG-397 through PRG-399 must each remain once. |
+| Binding / return | Existing workspace/handoff/allocation/receipt/correlation/question/side-context retained. Change only composition source and direct test, keep export byte-identical, then return one additive correction and reserved PRG-400 WPR-only handoff. |
+| Boundary | No new branch/worktree/helper, live Codex/host/target-project effect, push/staging publication, package/build/install, Secret, release or deployment. |
