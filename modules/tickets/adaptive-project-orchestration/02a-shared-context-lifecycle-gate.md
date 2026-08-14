@@ -4,13 +4,14 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2` revision 04 / AC-15 |
 | PRD / change | `PRD-20260815-020` / `CHG-20260815-020` |
-| State | `PLANNED / DISPATCH_PROPOSED` |
+| State | `IN_PROGRESS / DISPATCH_CONFIRMED` |
 | Closure | `CLOSURE-ADAPTIVE-ROUTER-R02A-01` / SC1-SC8 |
 | Baseline | Tree/context governance `fa47a878c15f86cc4400a7a2914576c3fde0b9b3` |
 | Delivery profile | `STANDARD`; one Luna implementation owner; no helper |
 | Control owner / reviewer | Control task `019fb935-bbe1-7f71-8b4b-58ba20c81626`; sole Agent orchestrator |
 | Planned implementation owner | Task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; permanent worktree `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` |
 | Planned branch | `codex/implementation-router-shared-context-r02a` from the exact dispatch-registry commit |
+| Dispatch binding | Handoff `hnd_adaptive_router_r02a_20260815`; allocation `aln_adaptive_router_r02a_20260815`; receipt `rcpt_adaptive_router_r02a_20260815`; question `q-adaptive-router-r02a-20260815`; correlation `corr-adaptive-router-r02a-20260815`; registry `PRG-20260815-460` |
 | Agent Context binding | Ticket revision `r02a-01`; receipt `rcpt_adaptive_router_r02a_20260815`; owner/worktree/branch above; exact registry baseline; `scx-adaptive-router-r02a-20260815-01` |
 | XSS / effects | `XSS_NOT_APPLICABLE`; pure typed Router/Profile gate and tests, no filesystem, Agent, Git, host or network effect |
 

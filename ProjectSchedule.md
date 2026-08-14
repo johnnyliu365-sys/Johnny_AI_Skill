@@ -196,7 +196,7 @@
 | Exact specification | REVISION 04 / ROUTER_PHASE_APPROVED | `modules/spec/adaptive-project-orchestration.md`; AC-12 through AC-17 and Router portions of AC-05 through AC-10 are authorized. Other phases remain owner-review-required. |
 | Ticket decomposition | ROUTER_ONLY / IN_PROGRESS | R02 is split into R02A shared Context, R02B Agent Context lease and R02C artifact-tree lineage; only the next dependency-satisfied closure may receive a formal ticket and receipt. |
 | Router Ticket R01 | COMPLETE / APPROVED / INTEGRATED | Route instruction contract reviewed at `fefaa0c` and guarded-integrated at `5c3445f`; CR-R01-001 through CR-R01-004 closed. |
-| Router Ticket R02A | PLANNED / DISPATCH_PROPOSED | `CLOSURE-ADAPTIVE-ROUTER-R02A-01` freezes the pure shared-Context lifecycle/mutation-authority gate. R02B/R02C and non-Router tickets remain blocked on serial independent acceptance. |
+| Router Ticket R02A | IN_PROGRESS / DISPATCH_CONFIRMED | `CLOSURE-ADAPTIVE-ROUTER-R02A-01`; receipt `rcpt_adaptive_router_r02a_20260815`; one existing Luna owner, no helper. R02B/R02C and non-Router tickets remain blocked. |
 | Other implementation lanes | PAUSED | 06G0P return is preserved pending review; 06G0-06G4, packaging and other rework/new tickets do not resume before Router acceptance. |
 
 ### Ticket 05 selection after external capability proof

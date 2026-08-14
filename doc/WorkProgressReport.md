@@ -4961,3 +4961,15 @@
 | Proposed lane | Existing task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; permanent worktree `C:\Users\<user>\Desktop\AI控制工作workflow-implementation`; planned branch `codex/implementation-router-shared-context-r02a` only after exact registry synchronization. Reviewer task `019fb935-bbe1-7f71-8b4b-58ba20c81626` remains sole orchestrator. |
 | Planned binding | Handoff `hnd_adaptive_router_r02a_20260815`; allocation `aln_adaptive_router_r02a_20260815`; correlation `corr-adaptive-router-r02a-20260815`; question `q-adaptive-router-r02a-20260815`; side Context `scx-adaptive-router-r02a-20260815-01`. Receipt is created only in the dispatch registry. |
 | Boundary | `STANDARD`, one Luna owner, no helper. `XSS_NOT_APPLICABLE`; no implementation mutation, new worktree, Agent dispatch, external effect, push, package/install, Secret, release or deployment. |
+
+## PRG-20260815-460 - Router Ticket R02A implementation dispatch
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `TICKET_DISPATCH_REQUIRED(PRG-459) + STANDING_OWNER_AUTO_CONTINUE -> IMPLEMENTATION_DISPATCH_CONFIRMED / IMPLEMENT`; this record is the sole ticket delivery confirmation. |
+| Registry / ticket | Proposal `007ebcdab1e99d69170a80c11c14dd03b771d4a1`; exact ticket `modules/tickets/adaptive-project-orchestration/02a-shared-context-lifecycle-gate.md`; closure `CLOSURE-ADAPTIVE-ROUTER-R02A-01` SC1-SC8 revision `r02a-01`. The exact dispatch baseline is the commit containing this entry. |
+| Binding | Project `adaptive-router-policy`; handoff `hnd_adaptive_router_r02a_20260815`; allocation `aln_adaptive_router_r02a_20260815`; receipt `rcpt_adaptive_router_r02a_20260815`; correlation `corr-adaptive-router-r02a-20260815`; question `q-adaptive-router-r02a-20260815`; side Context `scx-adaptive-router-r02a-20260815-01`. |
+| Owner / lane | Existing idle task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; permanent clean worktree `C:\Users\<user>\Desktop\AI控制工作workflow-implementation`; released R01 head `9a789504365d8364b616479cda5b0d2c6e3f12f7` is an ancestor of this control baseline; create only `codex/implementation-router-shared-context-r02a` from this registry commit. Exactly three worktrees remain. |
+| Source authority | Exactly `library/workflow_router/contracts.py`, `profile.py`, `router.py`, `__init__.py` and `tests/test_workflow_router.py`; then one WPR-only handoff. No other source/test/docs path is writable. |
+| Pre-red / return | Import/call the absent public shared-Context contracts/method before production mutation; implement only SC1-SC8; return one implementation commit plus one WPR-only handoff after focused/six-module/full/mypy/compile/reversal/scope/topology/residue verification. Progress-only final is not completion. |
+| Resource / safety | Host mapping `gpt-5.6-luna`, reasoning `max`; no helper. Reviewer task `019fb935-bbe1-7f71-8b4b-58ba20c81626` is sole orchestrator. `XSS_NOT_APPLICABLE`; no next-ticket authority, new worktree, live model/Codex/home/App/target/network effect, push, package/install, Secret, release or deployment. |
