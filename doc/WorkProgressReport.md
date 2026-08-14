@@ -5091,3 +5091,16 @@
 | Source authority | Exactly `library/workflow_router/contracts.py`, `router.py`, `__init__.py` and `tests/test_workflow_router.py`; then one WPR-only handoff. No other source/test/docs path is writable. |
 | Pre-red / return | Import/call the absent R02B public contracts/method before production mutation; implement only ACX1-ACX8; return one implementation commit plus one WPR-only handoff after focused/six-module/full/mypy/compile/reversal/scope/topology/residue verification. Progress-only final is not completion. |
 | Resource / safety | Host mapping `gpt-5.6-luna`, reasoning `max`; no helper. Reviewer task `019fb935-bbe1-7f71-8b4b-58ba20c81626` is sole orchestrator. R02C tree traversal/archive-library indexes remain blocked. `XSS_NOT_APPLICABLE`; no next-ticket authority, new worktree, live model/Codex/home/App/target/network effect, push, package/install, Secret, release or deployment. |
+
+## PRG-20260815-472 - Router R02B Agent Context lease gate implementation handoff
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_DISPATCH_CONFIRMED(PRG-471) -> ACTION_COMPLETED / REVIEW_HANDOFF`; exact R02B ticket and receipt-bound lane were admitted in the permanent implementation worktree. |
+| Implementation | `251f72b1c2dc880fd6d99c516d43bc2e24687360` from registry `0280eb5b0d55494475ce18c97670ea1c37a23417`; exactly `contracts.py`, `router.py`, `__init__.py` and `tests/test_workflow_router.py`. |
+| First red | Before production mutation, the focused import failed with `ImportError: cannot import name 'AgentContextActorRole'`, proving the required public R02B contract/method surface was absent. |
+| Closure | ACX1 finite strict models/JSON and operation-shape matrix; ACX2 exact open/resume/rebind/switch/close lifecycle rows; ACX3 independent binding identity rejection; ACX4 stable same-ticket correction and fresh invalidation metadata; ACX5 stale/missing/requirement-change precedence; ACX6 metadata-only serialization and rejection; ACX7 focused/regression/full/type/compile/source gates; ACX8 three bounded reversals. |
+| Reversals | Removing the same-ticket ticket-revision gate, disabling closed-lease staleness, and replacing the switch freshness/invalidation gate each made `test_reversal_rows_reject_changed_revision_replay_and_reused_switch_context` fail; every implementation byte was restored before final verification. |
+| Verification | R02B acceptance `8/8`; source sentinel `1/1`; focused Router `51/51`; six-module Router regression `118/118`; explicit serial full suite `554/554`; strict full-tree mypy `150` source files; in-memory compile `150` Python files; `git diff --check`, exact scope and registry ancestry pass. |
+| Readback | Branch `codex/implementation-router-agent-context-r02b`, implementation parent is the exact registry commit, three worktrees retained, tracked and ignored porcelain empty after implementation commit, workspace cache/runtime residue `0`; repository-external mypy cache removed. `XSS_NOT_APPLICABLE`. |
+| Boundary | No helper, Agent control, R02C/R02D-R06, tree traversal, source read, live model/Codex/home/App/target/network effect, push, package/install, Secret, release or deployment. |
