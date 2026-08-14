@@ -1742,13 +1742,13 @@ class RouteInstructionContractTests(unittest.TestCase):
         alternate = ProjectWorkflowProfile.model_validate(
             {
                 **profile.model_dump(),
-                "shared_context_ref": "ctx-another-project",
-                "architecture_owner_capability_ref": "cap-another-architecture-owner",
+                "shared_context_ref": "ctx-profile-project",
+                "architecture_owner_capability_ref": "cap-profile-architecture-owner",
             }
         )
-        self.assertEqual("ctx-another-project", alternate.shared_context_ref)
+        self.assertEqual("ctx-profile-project", alternate.shared_context_ref)
         self.assertEqual(
-            "cap-another-architecture-owner",
+            "cap-profile-architecture-owner",
             alternate.architecture_owner_capability_ref,
         )
 

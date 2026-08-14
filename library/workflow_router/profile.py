@@ -120,11 +120,15 @@ class ProjectWorkflowProfile(RouterModel):
             self.shared_context_ref,
             self.architecture_owner_capability_ref,
         )
-        forbidden_markers = ("://", "\\", "/", "file", "prompt", "secret")
+        forbidden_tokens = ("file", "prompt", "secret")
         if any(
+            marker in tuple(reference.casefold().split("-"))
+            for reference in metadata_references
+            for marker in forbidden_tokens
+        ) or any(
             marker in reference.casefold()
             for reference in metadata_references
-            for marker in forbidden_markers
+            for marker in ("://", "\\", "/")
         ):
             raise ValueError("profile references must remain metadata-only")
         references: dict[OpaqueMetadataId, SkillReference] = {
