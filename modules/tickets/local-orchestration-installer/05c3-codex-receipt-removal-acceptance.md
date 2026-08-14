@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-02, AC-06, AC-07 and AC-08 |
 | Revision | `03` |
-| State | `PLANNED / REFROZEN / NOT_DISPATCHED` |
+| State | `IN_PROGRESS / DISPATCHED` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05C3-01` / A1-A8 |
 | Dependency | 05C1, 05C2A, 05C2B, 05C2C1, 05C2C2, 05C2C2A and 05C2C3 are independently approved and integrated; 05C2C3 merge is `1e6872acac7df28b5d5bd44991348354a1cd9779` |
 | Profile / XSS | `STANDARD`; one implementation owner, no helper / `XSS_NOT_APPLICABLE` |
@@ -78,6 +78,24 @@ contracts, readable decomposition and complete evidence determine completion.
 | Correlation / question | `corr-local-orchestration-install-05c3-r03-20260814` / `q-local-orchestration-install-05c3-r03-20260814` |
 | Side context | `scx-local-orchestration-install-05c3-r03-20260814-01` |
 | Authority | Standing project-owner auto-continue `PRG-20260809-042`; this reservation is not dispatch authority. |
+
+## Exact dispatch registry
+
+| Field | Value |
+| --- | --- |
+| Ticket schema gate | `PASS`: revision-03 freezes A1-A8, exact two-path scope, behavior-level first red, explicit ordinary-constructor/P0 type gate, full verification, one owner/no helper, `XSS_NOT_APPLICABLE` and one unique binding. |
+| Authority / reviewer | Standing project-owner auto-continue `PRG-20260809-042`; sole reviewer/orchestrator task `019fb935-bbe1-7f71-8b4b-58ba20c81626`. |
+| Exact implementation owner | Existing task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; permanent worktree `C:\Users\<user>\Desktop\AI控制工作workflow-implementation`; new branch `codex/implementation-codex-receipt-removal-acceptance-05c3` in that same worktree; no helper/subagent/second owner. |
+| Lane readback | Idle clean lane at `codex/implementation-codex-compensation-adapter-path-truth-05c2c2` / `9ba22b3f8328ba7fffc5ec767488bcfdab125608`; tracked and ignored porcelain empty; zero repository-local cache/runtime residue; exactly three worktrees. That head is an exact ancestor of the dispatch baseline and the target branch does not exist. |
+| Baseline admission | From the exact control commit carrying this registry, create the named branch in the same permanent worktree. Do not merge/copy a historical implementation branch or create another worktree; never reset, rebase, amend, force or stash. Any mismatch returns typed `HALT` before mutation. |
+| Binding | Workspace `wsb_local_orchestration_install_05c3_r03_20260814_01`; handoff `hnd_local_orchestration_install_05c3_r03_20260814`; allocation `aln_local_orchestration_install_05c3_r03_20260814`; receipt `rcpt_local_orchestration_install_05c3_r03_20260814`; correlation `corr-local-orchestration-install-05c3-r03-20260814`; question `q-local-orchestration-install-05c3-r03-20260814`; side context `scx-local-orchestration-install-05c3-r03-20260814-01`. |
+| Pre-red type gate | Before source mutation, mechanically prove ordinary valid construction and public round-trip for the integrated `EnvironmentLease`, `CodexReceiptRemovalReady`, registration-success receipt and manifest-bound absence proof values used by A1-A3; prove built-in booleans remain `bool`. Any failure is `HALT / TICKET_SCHEMA_INVALID`; no bypass, widening, cast or coercion is allowed. |
+| Writable implementation scope | Exactly `tests/staging/codex_lifecycle_oracle/receipt_removal_acceptance.py` and `tests/test_codex_receipt_removal_acceptance.py`. No other implementation path is writable. |
+| Return | One implementation commit changing exactly the two frozen paths, then append only reserved `PRG-20260814-430` at physical WPR EOF in one WPR-only handoff commit. Independent review and integration remain reviewer-owned. |
+
+This registry converts the reservation into implementation authority for A1-A8
+only. It grants no authority to self-review, integrate, dispatch a next ticket
+or invoke a live host/target-project effect.
 
 ## Forbidden effects
 

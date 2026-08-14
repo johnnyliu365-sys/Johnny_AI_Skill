@@ -4636,3 +4636,14 @@
 | Binding reservation | Workspace `wsb_local_orchestration_install_05c3_r03_20260814_01`; handoff `hnd_local_orchestration_install_05c3_r03_20260814`; allocation `aln_local_orchestration_install_05c3_r03_20260814`; receipt `rcpt_local_orchestration_install_05c3_r03_20260814`; correlation `corr-local-orchestration-install-05c3-r03-20260814`; question `q-local-orchestration-install-05c3-r03-20260814`; side context `scx-local-orchestration-install-05c3-r03-20260814-01`. Reservation is not dispatch authority. |
 | Continuation | Perform exact permanent-lane admission and record a reviewer-owned dispatch registry before source mutation. One owner, no helper and no new worktree. |
 | Boundary | `XSS_NOT_APPLICABLE`; no live Codex/home/config, target-project, network, push/staging publication, package/build/install, Secret, release or deployment. |
+
+## PRG-20260814-429 - Ticket 05C3 revision-03 exact dispatch registry
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `REFROZEN(05C3) + TICKET_SCHEMA_PASS + EXACT_LANE_ADMITTED -> IMPLEMENTATION_DISPATCH_CONFIRMED / IMPLEMENT`. |
+| Lane | Existing owner task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; clean permanent worktree `C:\Users\<user>\Desktop\AI控制工作workflow-implementation`; idle branch/head `codex/implementation-codex-compensation-adapter-path-truth-05c2c2` / `9ba22b3f8328ba7fffc5ec767488bcfdab125608`; target branch `codex/implementation-codex-receipt-removal-acceptance-05c3` absent; old head is an ancestor of the registry baseline; exactly three worktrees. No helper. |
+| Frozen contract | `CLOSURE-LOCAL-INSTALL-T05C3-01` revision 03 A1-A8: exact live boundary admission, actual receipt lineage, first remove/replay, exact action order, foreign preservation, two external sentinels, ordinary public-constructor/P0 strong typing and behavior-level reversals. |
+| Binding / scope | Workspace `wsb_local_orchestration_install_05c3_r03_20260814_01`; handoff `hnd_local_orchestration_install_05c3_r03_20260814`; allocation `aln_local_orchestration_install_05c3_r03_20260814`; receipt `rcpt_local_orchestration_install_05c3_r03_20260814`; correlation `corr-local-orchestration-install-05c3-r03-20260814`; question `q-local-orchestration-install-05c3-r03-20260814`; side context `scx-local-orchestration-install-05c3-r03-20260814-01`. Writable implementation scope is exactly the two frozen 05C3 staging/test files. |
+| Pre-red gate / return | Ordinary valid public constructors and round trips must mechanically pass before mutation; otherwise `HALT / TICKET_SCHEMA_INVALID`. Return one implementation commit and reserved physical-EOF PRG-20260814-430 WPR-only handoff. Review/integration remain reviewer-owned. |
+| Boundary | `XSS_NOT_APPLICABLE`; no new worktree/helper, historical-source copy, model bypass, live Codex/home/config, target-project, network, push/staging publication, package/build/install, Secret, release or deployment. |
