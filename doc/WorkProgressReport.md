@@ -5173,3 +5173,15 @@
 | Low-model decomposition | Former R02C is split serially into R02C1 generic topology/resolution, R02C2 active PRD/CHG retirement/archive lineage and R02C3 bounded archive/reusable-library selection. Only R02C1 is dependency-satisfied; it remains non-dispatchable until a separate exact ticket/receipt freeze. |
 | Migration boundary | Existing historical flat evidence is immutable migration input, not automatically rewritten by this change. Any physical migration requires a separately accepted closure; no bulk move, copy or deletion is authorized here. |
 | Effects | Documentation/governance only. No production/test source, implementation worktree, Agent, filesystem topology, host/model/network/target-project, push, package/install, release, deployment or Secret effect. `XSS_NOT_APPLICABLE`. |
+
+## PRG-20260815-479 - Router Ticket R02C1 decomposition and dispatch proposal
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `ARCHITECTURE_REFREEZE_COMPLETE(PRG-478) + R02B_INTEGRATED(PRG-477) -> READY_LOW_MODEL / TICKET_DISPATCH_REQUIRED`; this proposal creates no implementation receipt or mutation authority. |
+| Exact closure | `modules/tickets/adaptive-project-orchestration/02c1-artifact-tree-resolution-gate.md`; `CLOSURE-ADAPTIVE-ROUTER-R02C1-01` ACX1-ACX8. One pure outcome: validate one caller-supplied metadata path and resolve its exact leaf through direct-child edges. |
+| Context bound | The implementation owner needs only the exact ticket, revision-05 SPEC AC-17 typed contracts, `artifact-tree-routing` invariant and four writable source/test paths. Historical R02A/R02B prose, retired PRD body, archive contents and unrelated library branches are identifiers only, not copied Context. |
+| Serial boundary | R02C2 owns active PRD/CHG retirement/archive reachability; R02C3 owns bounded archive/reusable-library selection. Model wake, ticket admission, UI routing, initialization, staging, 06G0P and package work remain blocked. |
+| Planned lane | Existing idle task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; permanent worktree `C:\Users\<user>\Desktop\AI控制工作workflow-implementation`; planned branch `codex/implementation-router-artifact-tree-r02c1` only after exact registry synchronization. Reviewer task `019fb935-bbe1-7f71-8b4b-58ba20c81626` remains sole orchestrator. |
+| Planned binding | Handoff `hnd-adaptive-router-r02c1-20260815`; allocation `aln-adaptive-router-r02c1-20260815`; correlation `corr-adaptive-router-r02c1-20260815`; question `q-adaptive-router-r02c1-20260815`; side Context `scx-adaptive-router-r02c1-20260815-01`; expected return `ret-artifact-tree-review-handoff-r02c1`. Receipt is created only in the dispatch registry. |
+| Boundary | `STANDARD`, one Luna max owner, no helper. No `router.py`/existing Router-test edit, source/body read port, new worktree, external effect, push, package/install, Secret, release or deployment. `XSS_NOT_APPLICABLE`. |
