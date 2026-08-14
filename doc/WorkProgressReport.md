@@ -5036,3 +5036,13 @@
 | Correction Context | Handoff `hnd_adaptive_router_r02a_r03_20260815`; side Context `scx-adaptive-router-r02a-20260815-03`; additively merge this registry, retaining unique WPR records. Any non-WPR conflict halts. |
 | Exact correction | First-red safe `profile` metadata beside locator-token negatives; change only `profile.py` and `test_workflow_router.py`; use hyphen-token-aware `file` rejection, preserve every other R02A behavior and run one exact reversal plus full gates. Then WPR-only handoff. |
 | Boundary | Same Luna max owner; no helper, branch/worktree creation, R02B/R02C, 06G0P, live host/network/target effect, push, package/install, Secret, release or deployment. `XSS_NOT_APPLICABLE`. |
+
+## PRG-20260815-467 - Router R02A final profile-boundary correction handoff
+
+| Field | Evidence |
+| --- | --- |
+| Synchronization | Same-branch additive merge `9c5d7b7da817afba0dfb927a0415b524b276a71d` retained unique PRG-461 through PRG-466 records; only append-only WPR overlap was resolved. |
+| Correction | `ccc653c211a38e429bb2818925e32865091c3859` changes only `library/workflow_router/profile.py` and `tests/test_workflow_router.py`; `ctx-profile-project` / `cap-profile-architecture-owner` is accepted while `file-ref` and `ctx-file-uri` remain rejected. |
+| First red / reversal | The exact positive `profile` probe was red before correction; removing the boundary-aware guard made the existing locator/sensitive negative matrix red, then the guard was restored. |
+| Verification | Focused Router `43/43`; six-module Router regression `110/110`; explicit serial full suite `546/546`; strict full-tree mypy `150` source files; in-memory compile `150` Python files; source/scope/diff/ancestry/topology checks pass. |
+| Readback | Branch `codex/implementation-router-shared-context-r02a`; tracked and ignored porcelain empty; exactly three worktrees; cache/runtime residue `0`; external mypy cache removed; `XSS_NOT_APPLICABLE`. No helper, live host/network/target effect, push, package/install, release or deployment. |
