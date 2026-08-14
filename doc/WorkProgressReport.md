@@ -4302,3 +4302,13 @@
 | Lane readback | Owner task `019ffb0c-c9c7-7b30-b614-02dea7ed9042` idle in the permanent implementation worktree; clean released branch/head `codex/implementation-codex-compensation-observation-05c2a` / `7ba15c9d5513d08d2d2f1ef23e4ca06d164d3525`; linked Git identity, zero tracked/ignored/cache residue, exactly three worktrees and absent target branch verified. |
 | Binding / dispatch | One-use 05C2B workspace/handoff/allocation/receipt/correlation/question/side-context from the ticket; create only `codex/implementation-codex-receipt-removal-composition-05c2b` at the exact commit carrying this registry and implement only the three frozen paths. Reserved WPR handoff is PRG-397. |
 | Resource / boundary | One owner, no helper or second lane because 05C3 serially depends on the coordinator and export ownership overlaps. No reviewer implementation-worktree write, new worktree, live effect, push/staging publication, package/build/install, Secret, release or deployment. |
+
+## PRG-20260814-398 - Ticket 05C2B independent review
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `ACTION_COMPLETED(05C2B) -> REVIEW_COMPLETED / CHANGES_REQUESTED`; ordinary same-branch correction is authorized by standing `PRG-20260809-042`. |
+| Reviewed chain | Implementation `49fbeafda7e02b01be99eab229fb5f83d86cd972`; WPR-only handoff `2067f6ce7b76c8bc4635695a6f902a7f9330fef2`; immutable review archive SHA-256 `E6BE75FE99AA468E4ABBF5E9A977D1205748D724E0C6A6CC3DD4867EA9901C30`. |
+| Independent evidence | Focused `16/16`, full serial `499/499`, strict mypy `148` files, compile `148` files, `19` additional adversarial cells and seven independent runtime reversals pass; reviewer-owned TEMP export/cache was removed. |
+| Findings | CR-175 `IMPLEMENTATION_DEFECT`: private `_observe` widens rebuilt request to `object`, violating P0 internal strong typing. CR-176 `EVIDENCE_DEFECT`: B3 mismatch/unproved actual-observer cells and B7 complete zero-operation/no-hook cells are absent from committed direct tests. |
+| Continuation | Same ticket/owner/permanent worktree/branch/allocation/receipt; source+direct-test-only additive correction, export byte-identical, no new branch/worktree/helper/effect/push/package/install/release/deploy. Reserved correction handoff is PRG-400. |

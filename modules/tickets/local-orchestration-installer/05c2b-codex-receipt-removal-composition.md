@@ -5,7 +5,7 @@
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-02, AC-06 and AC-07 |
 | Change / PRD / Context | `CHG-20260808-011` / `PRD.md §15` / `doc/context/local-orchestration-installer/main.md` |
 | Revision | `02` |
-| State | `IN_PROGRESS / DISPATCH_READY` |
+| State | `CHANGES_REQUESTED / CORRECTION_REQUIRED` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05C2B-01` / B1-B9 |
 | Dependency | 05C2A independently approved and integrated |
 | Profile / resource | `STANDARD`; one implementation owner, no helper; no parallel lane because the public observation contract is a serial dependency |
@@ -139,3 +139,27 @@ exact ticket blob and return `HALT / TICKET_SCHEMA_INVALID` before first red if
 any identity differs. The owner may not self-review/integrate, dispatch another
 ticket, orchestrate a helper, push/publish staging, package/install, release or
 deploy.
+
+## Revision-02 correction freeze
+
+Independent review of implementation
+`49fbeafda7e02b01be99eab229fb5f83d86cd972` and WPR-only handoff
+`2067f6ce7b76c8bc4635695a6f902a7f9330fef2` opened CR-175 and CR-176.
+The public behavior and B1-B9 closure remain unchanged; this is not a
+requirement change and does not authorize a new branch.
+
+- CR-175 is an `IMPLEMENTATION_DEFECT`: the private `_observe` helper receives
+  the rebuilt `CodexCompensationPortRequest` but widens it to `object`. Retain
+  the exact named request type internally; keep the two frozen public boundary
+  inputs as `object`.
+- CR-176 is an `EVIDENCE_DEFECT`: add direct actual-observer plugin,
+  marketplace and installed-path `MISMATCH` / `UNPROVED` pre-proof cells, plus
+  invalid receipt, identity and capability zero-operation/no-hook cells. Do not
+  monkeypatch or duplicate 05C2A admission in committed tests.
+
+Correction scope is only
+`library/local_orchestration/codex_receipt_removal_composition.py` and
+`tests/test_codex_receipt_removal_composition.py`; the package export blob from
+`49fbeaf` must remain byte-identical. Reverse the new mismatch/unproved and
+no-hook gates, restore exact bytes, rerun B9, then return one additive
+implementation correction and reserved PRG-400 WPR-only handoff.
