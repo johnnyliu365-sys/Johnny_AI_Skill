@@ -4590,3 +4590,14 @@
 | Merge admission | Merge the exact control commit carrying this registry. Resolve only the predicted append-only WPR overlap, preserving PRG-423 through PRG-425 exactly once; no reset, rebase, amend, force, stash or silent conflict resolution. |
 | Correction / return | Keep implementation blob `86edacbbb43a36475071c5494b8c4e0cc2b81f60` and direct-test blob `d897552e65c506e49132b82e1eaccdf8f4004d37` exact. Append only reserved PRG-20260814-426 at physical EOF in one WPR-only commit, then return merge plus correction commits. |
 | Boundary | No source/test/ticket/review or historical-WPR edit, executable rerun, new branch/worktree/helper, live Codex/home/config, target-project, network, push/staging publication, package/build/install, Secret, release or deployment. |
+
+## PRG-20260814-427 - Ticket 05C2C3 CR-179 terminal correction review
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `REVIEW_HANDOFF(PRG-426) -> REVIEW_COMPLETED / APPROVED / READY_FOR_GUARDED_INTEGRATION`; CR-179 is closed. |
+| Corrected chain | Merge `605b2545c68268a39f1662e2ee518e58e13d96c1`; WPR-only canonical handoff `cd43b4570fe720962eca8aeb2cdf821938a27075`. Parentage and exact retained binding pass. |
+| Independent readback | PRG-423 normalized Git content is unchanged with section SHA-256 `484E91014292EACCAD50B2CEAFEA6764748B35C5150C887BCAF4D234ADE5A754`; PRG-423 through PRG-426 are unique and PRG-426 is physical EOF. Executable blobs remain `86edacbbb43a36475071c5494b8c4e0cc2b81f60` and `d897552e65c506e49132b82e1eaccdf8f4004d37`. |
+| Scope / residue | Correction is WPR-only; owner tracked/ignored porcelain is clean, exactly three worktrees remain and cache/runtime/bytecode residue is absent. Prior focused `34/34`, full `517/517`, strict mypy/compile `148` and exact disposable register/remove/replay evidence remain applicable. |
+| Continuation | Reviewer-only guarded integration of exact handoff `cd43b4570fe720962eca8aeb2cdf821938a27075`, then 05C3 revision-03 refreeze against the integrated source-truth dependency. |
+| Boundary | `XSS_NOT_APPLICABLE`; no helper, live Codex/home/config, target-project, network, push/staging publication, package/build/install, Secret, release or deployment. |

@@ -42,3 +42,17 @@
 No source or test correction is authorized. The sole continuation is a
 same-ticket, same-branch, WPR-only additive evidence correction; prior commits
 and PRG-423 remain immutable.
+
+## CR-179 terminal correction review
+
+| Field | Evidence |
+| --- | --- |
+| Verdict | `APPROVED / READY_TO_MERGE`; CR-179 is closed. |
+| Corrected handoff | History-preserving control merge `605b2545c68268a39f1662e2ee518e58e13d96c1`; WPR-only PRG-426 commit `cd43b4570fe720962eca8aeb2cdf821938a27075`. |
+| Scope / identity | Correction commit changes only `doc/WorkProgressReport.md`. Executable blobs remain `86edacbbb43a36475071c5494b8c4e0cc2b81f60` and `d897552e65c506e49132b82e1eaccdf8f4004d37`. |
+| Evidence preservation | Canonical Git-content comparison gives identical PRG-423 section SHA-256 `484E91014292EACCAD50B2CEAFEA6764748B35C5150C887BCAF4D234ADE5A754` before and after correction. A checkout-only LF/CRLF frame difference is not a content change. |
+| Append-only closure | PRG-423, PRG-424, PRG-425 and PRG-426 each occur once; PRG-426 is the last WPR heading and physical final record. It supersedes only PRG-423's placement as the canonical integration handoff. |
+| Lane / residue | Owner tracked and ignored porcelain are clean, exactly three worktrees remain, and cache/runtime/bytecode residue is absent. No executable suite was rerun because executable blobs are immutable. |
+
+No blocking finding remains. Reviewer-owned guarded integration of exact
+handoff `cd43b4570fe720962eca8aeb2cdf821938a27075` is the only continuation.

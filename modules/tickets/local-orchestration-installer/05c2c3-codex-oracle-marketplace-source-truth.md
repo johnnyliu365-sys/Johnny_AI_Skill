@@ -5,7 +5,7 @@
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-02, AC-06, AC-07 and AC-08 |
 | Change / Context | `CHG-20260808-011` / `doc/context/local-orchestration-installer/main.md`; non-requirement-changing staging-evidence defect |
 | Revision | `01` |
-| State | `CORRECTION_IN_PROGRESS / DISPATCHED` |
+| State | `COMPLETE / APPROVED / READY_FOR_GUARDED_INTEGRATION` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05C2C3-01` / S1-S7 |
 | Dependency | 05C2C1 guarded merge `fffbc616ee1870b69845cbcecf37a98e842106d3`; 05C2C2 guarded merge `bc97a42638540cb56e0b2b0c716bd93ddeb5dbba` |
 | Profile / resource | `STANDARD`; one implementation owner, no helper; exact two-path staging-only correction |
@@ -107,6 +107,14 @@ commit remain immutable; no source, test or prior WPR line may be changed.
 
 Any mismatch returns typed `HALT`; otherwise return the history-preserving
 merge commit and the WPR-only PRG-426 correction commit for terminal review.
+
+## CR-179 terminal closure
+
+Owner merge `605b2545c68268a39f1662e2ee518e58e13d96c1` and WPR-only
+correction `cd43b4570fe720962eca8aeb2cdf821938a27075` pass terminal review.
+PRG-423 content is unchanged after normalizing its line-ending frame; PRG-426
+is the unique physical-EOF canonical handoff. The two executable blobs remain
+exact, so CR-179 is closed without source or test mutation.
 
 ## Forbidden effects
 
