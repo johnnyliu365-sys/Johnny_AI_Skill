@@ -5198,3 +5198,14 @@
 | Context resolution | Resolve identifiers through the exact ticket, revision-05 SPEC AC-17 and `artifact-tree-routing` reference. Do not copy prior ticket prose, archive bodies, whole indexes or library catalogs into the implementation Context. |
 | Pre-red / return | Import/call the absent R02C1 public contracts/resolver before production mutation; implement only ACX1-ACX8; return one implementation commit plus one WPR-only handoff after focused/Router/six-module/full/mypy/compile/reversal/source/scope/topology/residue verification. Progress-only final is not completion. |
 | Resource / safety | Host mapping `gpt-5.6-luna`, reasoning `max`; no helper. Reviewer task `019fb935-bbe1-7f71-8b4b-58ba20c81626` is sole orchestrator. R02C2-R06 remain blocked. `XSS_NOT_APPLICABLE`; no next-ticket authority, new worktree, live model/Codex/home/App/target/network effect, push, package/install, Secret, release or deployment. |
+
+## PRG-20260815-481 - Router R02C1 artifact-tree resolution implementation handoff
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_DISPATCH_CONFIRMED(PRG-480) -> ACTION_COMPLETED / REVIEW_HANDOFF`; the pure R02C1 topology and exact-path closure is implemented in the receipt-bound lane. |
+| Implementation | `458791b470629fe7c0e3bb263af87560b58e54b9` changes exactly `library/workflow_router/contracts.py`, `library/workflow_router/artifact_tree.py`, `library/workflow_router/__init__.py` and `tests/test_workflow_artifact_tree.py`. |
+| First red / closure | Before production mutation, the dedicated test failed at collection with `ImportError` for the absent public artifact-tree contract. ACX1 strict contracts/decision algebra, ACX2 ten-family exact paths, ACX3 sibling opacity, ACX4 topology reasons, ACX5 missing/stale edge distinction and ACX6 source gates are covered; ACX8 three reversals each turned red and were restored byte-for-byte. |
+| Verification | Dedicated plus Router focused `63/63`; six-module Router regression `130/130`; explicit serial full suite `566/566` across `49` files; strict full-tree mypy `152/152`; in-memory compile `152/152`; source/scope/diff/ancestry/topology gates pass. |
+| Readback | Branch `codex/implementation-router-artifact-tree-r02c1`; permanent linked git-dir and exactly three worktrees retained; tracked and ignored porcelain empty; cache/bytecode/runtime residue `0`; external mypy cache removed; `XSS_NOT_APPLICABLE`. |
+| Boundary | No helper, Agent control, `router.py` or existing Router-test edit, R02C2-R06, source/body read port, live model/Codex/home/App/target/network effect, push, package/install, Secret, release or deployment. |
