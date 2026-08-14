@@ -4496,3 +4496,13 @@
 | Lane readback | Owner task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; clean permanent worktree on existing branch/head `codex/implementation-codex-compensation-adapter-path-truth-05c2c2` / `41564b2e1087ede7bc156c68ec4aec715f3fe8bd`; zero tracked/ignored/cache/runtime residue and exactly three worktrees. The head is an exact ancestor of the dispatch and permits only same-branch fast-forward. |
 | Binding / return | Fresh revision-03 workspace/handoff/allocation/receipt/correlation/question/side-context from the ticket; fast-forward to this registry, change exactly the adapter and its direct test, then append only reserved PRG-20260814-416 in a WPR-only handoff. Revision-02 identifiers remain closed. |
 | Boundary | One owner and no helper. No new branch/worktree, live Codex/host/target-project effect, push/staging publication, package/install, Secret, release or deployment. |
+
+## PRG-20260814-416 - Ticket 05C2C2 revision-03 adapter truth handoff
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05C2C2 / revision 03) -> ACTION_COMPLETED / REVIEW_HANDOFF`; independent review remains required. |
+| Admission / first red | Exact registry `fd16a5f9e11a9f2bdc4633f2733ac5f915c3da7b` was fast-forwarded on the same branch; the ordinary public proof constructor accepted `absent=False` with built-in `bool`. First red was exact admitted `OracleInstalledPathPresent` reaching the adapter and yielding `EVIDENCE_INVALID`. |
+| Implementation | Commit `559f1c1fa9b89c411a80e26f275a6c23aad98a57` changes exactly the two frozen paths; exact admitted absent/present responses map to ordinary manifest-bound true/false proofs with one `ABSENCE` action. |
+| Verification | Focused adapter `15/15`; full explicit serial unittest `514/514`; strict full-tree mypy `148` files with explicit package bases and external cache removed; in-memory compile `148` files. Three M6 reversals (truth mapping, response admission, request-before-effect) turned named tests red and restored exact bytes. |
+| Boundary / residue | `XSS_NOT_APPLICABLE`; no model bypass, `Any`, `type:ignore`, broad catch/clear, dynamic lookup, live Codex/host/target-project effect, package/install, push, release or deployment. Final scope, ancestry, topology, tracked/ignored porcelain and cache/runtime/bytecode residue are clean/absent. |
