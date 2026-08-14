@@ -191,6 +191,41 @@ class ReturnContractKind(str, Enum):
     NO_RETURN = "no_return"
 
 
+class SharedContextOperation(str, Enum):
+    """The finite operations admitted by the shared-Context lifecycle gate."""
+
+    CREATE_DRAFT = "create_draft"
+    REVISE_DRAFT = "revise_draft"
+    SEAL = "seal"
+    READ_REFERENCE = "read_reference"
+
+
+class SharedContextLifecycle(str, Enum):
+    """The finite stored lifecycle states of the shared Context."""
+
+    ABSENT = "absent"
+    ARCHITECTURE_DRAFT = "architecture_draft"
+    SEALED = "sealed"
+
+
+class SharedContextActorRole(str, Enum):
+    """The finite roles that may request shared-Context access."""
+
+    ARCHITECTURE_OWNER = "architecture_owner"
+    SUPERVISOR_REVIEWER = "supervisor_reviewer"
+    IMPLEMENTATION_OWNER = "implementation_owner"
+    RESEARCH_HELPER = "research_helper"
+
+
+class SharedContextMutationDecision(str, Enum):
+    """The finite outcomes of shared-Context lifecycle admission."""
+
+    ALLOW = "allow"
+    REQUIRE_CHANGE_CONTROL = "require_change_control"
+    FORBID_ROLE_OR_STAGE = "forbid_role_or_stage"
+    STALE_REVISION = "stale_revision"
+
+
 class SkillReference(RouterModel):
     """Versioned metadata identifying a later-resolved skill policy."""
 
@@ -243,6 +278,135 @@ class ExpectedReturnContract(RouterModel):
         elif self.router_events or self.implementation_statuses:
             raise ValueError("no-return contracts require empty event and status tuples")
         return self
+
+
+class SharedContextContentManifest(RouterModel):
+    """Metadata-only content identity for one shared-Context revision."""
+
+    revision: RevisionDigest
+    content_digest: EvidenceDigest
+    stable_fact_refs: tuple[OpaqueMetadataId, ...] = ()
+    invariant_boundary_refs: tuple[OpaqueMetadataId, ...] = ()
+    artifact_index_refs: tuple[OpaqueMetadataId, ...] = ()
+
+    @model_validator(mode="after")
+    def references_are_unique_metadata(self) -> SharedContextContentManifest:
+        """Reject reserved digest values and non-metadata reference markers."""
+
+        if _is_all_zero(self.revision, "rev-"):
+            raise ValueError("shared Context revisions must identify real content")
+        if _is_all_zero(self.content_digest, "sha256_"):
+            raise ValueError("shared Context digests must identify real content")
+        references = (
+            self.stable_fact_refs
+            + self.invariant_boundary_refs
+            + self.artifact_index_refs
+        )
+        if not references:
+            raise ValueError("shared Context manifests require one metadata reference")
+        if len(references) != len(set(references)):
+            raise ValueError("shared Context references must be unique")
+        forbidden_markers = (
+            "://",
+            "\\",
+            "/",
+            "prompt",
+            "secret",
+            "raw",
+            "body",
+            "progress",
+            "ticket",
+            "commit",
+            "test",
+            "review",
+            "branch",
+            "worktree",
+        )
+        if any(
+            marker in reference.casefold()
+            for reference in references
+            for marker in forbidden_markers
+        ):
+            raise ValueError("shared Context references must remain metadata-only")
+        return self
+
+
+class SharedContextState(RouterModel):
+    """The validated metadata state of one shared Context lifecycle."""
+
+    context_ref: OpaqueMetadataId
+    lifecycle: SharedContextLifecycle
+    revision: RevisionDigest | None
+    content_digest: EvidenceDigest | None
+
+    @model_validator(mode="after")
+    def lifecycle_matches_content_identity(self) -> SharedContextState:
+        """Keep absent state empty and every present state fully identified."""
+
+        if self.lifecycle is SharedContextLifecycle.ABSENT:
+            if self.revision is not None or self.content_digest is not None:
+                raise ValueError("absent shared Context state cannot carry content identity")
+            return self
+        if self.revision is None or self.content_digest is None:
+            raise ValueError("present shared Context state requires complete content identity")
+        if _is_all_zero(self.revision, "rev-"):
+            raise ValueError("shared Context revisions must identify real content")
+        if _is_all_zero(self.content_digest, "sha256_"):
+            raise ValueError("shared Context digests must identify real content")
+        return self
+
+
+class SharedContextAccessRequest(RouterModel):
+    """A validated metadata-only request at the shared-Context lifecycle boundary."""
+
+    request_ref: OpaqueMetadataId
+    context_ref: OpaqueMetadataId
+    operation: SharedContextOperation
+    process_stage: ProcessStage
+    actor_role: SharedContextActorRole
+    actor_capability_ref: OpaqueMetadataId
+    expected_current_revision: RevisionDigest | None
+    candidate_manifest: SharedContextContentManifest | None
+    change_authority_state: AuthorityState
+    approved_change_ref: OpaqueMetadataId | None
+
+    @model_validator(mode="after")
+    def operation_shape_is_exact(self) -> SharedContextAccessRequest:
+        """Require only the fields appropriate to the selected finite operation."""
+
+        if self.operation is SharedContextOperation.CREATE_DRAFT:
+            if (
+                self.expected_current_revision is not None
+                or self.candidate_manifest is None
+                or self.change_authority_state is not AuthorityState.NOT_REQUIRED
+                or self.approved_change_ref is not None
+            ):
+                raise ValueError("create requests require an absent prior and one candidate")
+        elif self.operation is SharedContextOperation.REVISE_DRAFT:
+            if self.expected_current_revision is None or self.candidate_manifest is None:
+                raise ValueError("revise requests require a prior revision and one candidate")
+        elif self.operation in (
+            SharedContextOperation.SEAL,
+            SharedContextOperation.READ_REFERENCE,
+        ):
+            if (
+                self.expected_current_revision is None
+                or self.candidate_manifest is not None
+                or self.change_authority_state is not AuthorityState.NOT_REQUIRED
+                or self.approved_change_ref is not None
+            ):
+                raise ValueError("seal and read requests require only an expected revision")
+        return self
+
+
+class SharedContextAccessDecision(RouterModel):
+    """The finite metadata-only result of shared-Context access admission."""
+
+    request_ref: OpaqueMetadataId
+    context_ref: OpaqueMetadataId
+    operation: SharedContextOperation
+    decision: SharedContextMutationDecision
+    resulting_state: SharedContextState
 
 
 class ArtifactKind(str, Enum):

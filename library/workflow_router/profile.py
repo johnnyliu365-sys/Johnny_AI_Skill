@@ -95,6 +95,8 @@ class ProjectWorkflowProfile(RouterModel):
     router_control_reference: SkillReference
     halt_return_contract: ExpectedReturnContract
     transition_rules: tuple[TransitionRule, ...]
+    shared_context_ref: OpaqueMetadataId
+    architecture_owner_capability_ref: OpaqueMetadataId
 
     @model_validator(mode="after")
     def has_unique_transition_keys(self) -> ProjectWorkflowProfile:
@@ -112,6 +114,14 @@ class ProjectWorkflowProfile(RouterModel):
             != self.router_control_reference.source_revision
         ):
             raise ValueError("profile fallback contract revision must match its reference")
+        if self.shared_context_ref != "ctx-shared-project":
+            raise ValueError("profile shared Context reference must be the project metadata ID")
+        if self.architecture_owner_capability_ref != "cap-architecture-owner":
+            raise ValueError(
+                "profile architecture owner capability must be the declared metadata ID"
+            )
+        if self.shared_context_ref == self.architecture_owner_capability_ref:
+            raise ValueError("shared Context and architecture capability IDs must be distinct")
         references: dict[OpaqueMetadataId, SkillReference] = {
             self.router_control_reference.reference_id: self.router_control_reference
         }
@@ -459,7 +469,7 @@ def build_router_poc_profile() -> ProjectWorkflowProfile:
     )
     return ProjectWorkflowProfile(
         profile_id="router-framework-poc",
-        profile_version="1",
+        profile_version="2",
         delivery_stage=DeliveryStage.POC,
         router_control_reference=_policy_reference_for("router-control"),
         halt_return_contract=ExpectedReturnContract(
@@ -788,4 +798,6 @@ def build_router_poc_profile() -> ProjectWorkflowProfile:
                 eligible_capabilities=(grill,),
             ),
         ),
+        shared_context_ref="ctx-shared-project",
+        architecture_owner_capability_ref="cap-architecture-owner",
     )
