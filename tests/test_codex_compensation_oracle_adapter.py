@@ -46,6 +46,7 @@ from tests.staging.codex_lifecycle_oracle.contracts import (
     OracleIdentity,
     OracleRunResult,
     OracleAbsent,
+    OracleInstalledPathPresent,
 )
 from tests.staging.codex_lifecycle_oracle.identity_binding import (
     FIXED_STAGING_LOGICAL_ROOT,
@@ -173,6 +174,10 @@ def _lease(owner_suffix: str) -> EnvironmentLease:
 
 class _InMemoryOwner:
     """No-op owner marker for adapter-only tests; no runtime is allocated."""
+
+
+class DerivedInstalledPathPresent(OracleInstalledPathPresent):
+    """A result subclass that must not cross the adapter boundary."""
 
 
 def _ready(owner_suffix: str) -> tuple[_InMemoryOwner, EnvironmentLease, CodexLifecycleOracle]:
@@ -446,6 +451,19 @@ class CodexCompensationOracleAdapterTests(unittest.TestCase):
             if type(result) is not CodexInstalledPathAbsenceProof:
                 raise AssertionError("expected absence proof")
             self.assertTrue(result.absent)
+            self.assertIs(type(result.absent), bool)
+            self.assertEqual(request().manifest.model_dump(), result.manifest.model_dump())
+            self.assertEqual([OracleAction.ABSENCE], actions)
+
+            actions.clear()
+            with _run_with(oracle, OracleInstalledPathPresent(), actions):
+                present = adapter.prove_installed_path_absent(request())
+            self.assertIs(type(present), CodexInstalledPathAbsenceProof)
+            if type(present) is not CodexInstalledPathAbsenceProof:
+                raise AssertionError("expected admitted installed-path presence proof")
+            self.assertFalse(present.absent)
+            self.assertIs(type(present.absent), bool)
+            self.assertEqual(request().manifest.model_dump(), present.manifest.model_dump())
             self.assertEqual([OracleAction.ABSENCE], actions)
 
             with _run_with(oracle, _response(CodexProtocolSurface.PLUGIN_LIST, CodexPluginList(installed=(), available=())), actions):
@@ -460,6 +478,59 @@ class CodexCompensationOracleAdapterTests(unittest.TestCase):
                     CodexCompensationPortOperation.PROVE_INSTALLED_PATH_ABSENT,
                     CodexCompensationPortFailureReason.DEPENDENCY_BLOCKED,
                 )
+        finally:
+            _teardown(allocator, lease)
+
+    def test_m3_absence_failure_matrix_remains_finite_without_proof(self) -> None:
+        allocator, lease, oracle = _ready("000000000000a31a")
+        try:
+            adapter = _adapter(lease, oracle)
+            forged_extra = OracleInstalledPathPresent()
+            object.__getattribute__(forged_extra, "__dict__")["injected"] = "forbidden"
+            forged_private = OracleInstalledPathPresent()
+            object.__setattr__(forged_private, "__pydantic_private__", {"injected": "forbidden"})
+            wrong_action = OracleAbsent()
+            object.__setattr__(wrong_action, "action", OracleAction.PLUGIN_LIST)
+            constructed_present = OracleInstalledPathPresent.__new__(OracleInstalledPathPresent)
+            malformed = OracleCompleted(
+                response=CodexProtocolAccepted.model_construct(
+                    surface=CodexProtocolSurface.PLUGIN_LIST,
+                )
+            )
+            cells: tuple[tuple[str, OracleRunResult, CodexCompensationPortFailureReason], ...] = (
+                (
+                    "blocked",
+                    OracleBlocked(reason=OracleBlockReason.STATE_INVALID),
+                    CodexCompensationPortFailureReason.DEPENDENCY_BLOCKED,
+                ),
+                ("wrong-action", wrong_action, CodexCompensationPortFailureReason.EVIDENCE_INVALID),
+                ("subclass", DerivedInstalledPathPresent(), CodexCompensationPortFailureReason.EVIDENCE_INVALID),
+                ("constructed", constructed_present, CodexCompensationPortFailureReason.EVIDENCE_INVALID),
+                ("extra", forged_extra, CodexCompensationPortFailureReason.EVIDENCE_INVALID),
+                ("private", forged_private, CodexCompensationPortFailureReason.EVIDENCE_INVALID),
+                ("malformed", malformed, CodexCompensationPortFailureReason.EVIDENCE_INVALID),
+            )
+            for label, response, reason in cells:
+                with self.subTest(cell=label):
+                    actions: list[OracleAction] = []
+                    with _run_with(oracle, response, actions):
+                        failed = adapter.prove_installed_path_absent(request())
+                    _failure(
+                        failed,
+                        CodexCompensationPortOperation.PROVE_INSTALLED_PATH_ABSENT,
+                        reason,
+                    )
+                    self.assertEqual([OracleAction.ABSENCE], actions)
+        finally:
+            _teardown(allocator, lease)
+
+    def test_m5_adapter_preserves_exact_oracle_exception(self) -> None:
+        allocator, lease, oracle = _ready("000000000000a31b")
+        try:
+            adapter = _adapter(lease, oracle)
+            with patch.object(oracle, "run", side_effect=RuntimeError("oracle adapter probe")):
+                with self.assertRaisesRegex(RuntimeError, "oracle adapter probe"):
+                    adapter.prove_installed_path_absent(request())
         finally:
             _teardown(allocator, lease)
 
