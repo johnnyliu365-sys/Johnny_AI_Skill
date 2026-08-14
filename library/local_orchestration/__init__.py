@@ -142,6 +142,14 @@ from .codex_receipt_removal_request import (
     CodexReceiptRemovalResult,
     build_codex_receipt_removal_request,
 )
+from .codex_receipt_removal_composition import (
+    CodexReceiptRemovalCompositionBlockReason,
+    CodexReceiptRemovalCompositionBlocked,
+    CodexReceiptRemovalCompositionResult,
+    CodexReceiptRemovalNotInstalled,
+    CodexReceiptRemovalRemoved,
+    compose_codex_receipt_removal,
+)
 from .codex_registration_port import (
     CodexAddMarketplaceOperation,
     CodexAddPluginOperation,
@@ -286,6 +294,12 @@ __all__ = [
     "CodexReceiptRemovalReady",
     "CodexReceiptRemovalResult",
     "build_codex_receipt_removal_request",
+    "CodexReceiptRemovalCompositionBlockReason",
+    "CodexReceiptRemovalCompositionBlocked",
+    "CodexReceiptRemovalCompositionResult",
+    "CodexReceiptRemovalNotInstalled",
+    "CodexReceiptRemovalRemoved",
+    "compose_codex_receipt_removal",
     "CodexAddMarketplaceOperation",
     "CodexAddPluginOperation",
     "CodexFreshPreflightAccepted",
