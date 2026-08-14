@@ -4866,3 +4866,13 @@
 | Exact correction | Rebind only `router-control`, `context-routing` and `specification-ticketing` revision/digest pairs in typed production/test constants after guarded baseline sync; no route/public/type behavior change. |
 | Lane | Same ticket/task/worktree/branch/allocation/receipt; handoff `hnd_adaptive_router_r01_r04_20260815`; additive after revision-03 handoff `7d6c2f2a066a9d039eb13ae0a8e339e04f372f61`. |
 | Conflict boundary | Only the expected append-only WPR overlap may be resolved by retaining every unique PRG entry exactly once. Any other conflict halts. R02 and all non-Router work remain paused. |
+
+## PRG-20260815-454 - Router R01 revision-04 correction dispatch
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `REQUIREMENT_CHANGED(PRG-452) + REFROZEN(PRG-453) -> REVISION_04_CORRECTION_DISPATCH_CONFIRMED`; retained R01 authority, no new ticket/branch/worktree/allocation/receipt. |
+| Registry / review | Exact review baseline `2f54843ce95fa15eea4ee0422c2d0cba7dabf5ed`; registry is the commit containing this record; correction handoff `hnd_adaptive_router_r01_r04_20260815`. |
+| Admission | Implementation lane must be clean at branch `codex/implementation-router-route-instruction-r01`, HEAD `7d6c2f2a066a9d039eb13ae0a8e339e04f372f61`, then guarded-merge this registry commit. Only an append-only WPR conflict may retain every unique PRG entry exactly once; any other conflict halts. |
+| Exact correction | First-red the three stale policy pairs, update only typed production/test constants for `router-control`, `context-routing` and `specification-ticketing`, perform the bounded old-context reversal and all revision-03 gates, then one WPR-only handoff. |
+| Owner / safety | Same implementation task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`, permanent worktree, branch, allocation `aln_adaptive_router_r01_20260814` and receipt `rcpt_adaptive_router_r01_20260814`; no helper, R02, 06G0P, new worktree, push, package/install, target/live effect, release or deployment. |

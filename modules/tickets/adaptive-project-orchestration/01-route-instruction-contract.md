@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2` revision 03 / AC-12 through AC-15 shared route precondition |
 | Change / ADR | `CHG-20260814-019`, `CHG-20260815-020`; `ADR-20260814-011` |
-| State | `IN_PROGRESS / REVISION_04_REQUIREMENT_REFROZEN / DISPATCH_PENDING` |
+| State | `IN_PROGRESS / REVISION_04_CORRECTION_DISPATCH_CONFIRMED` |
 | Closure | `CLOSURE-ADAPTIVE-ROUTER-R01-04` / R1-R7, CR-R01-001 through CR-R01-004 plus policy-revision rebind |
 | Baseline | Shared-Context policy freeze `3469e20bcbddce0c55b7ad7e92be68eca4257052` |
 | Delivery profile | `STANDARD`; one Luna implementation owner; no helper |
@@ -14,7 +14,7 @@
 | Dispatch binding | `hnd_adaptive_router_r01_20260814`; `aln_adaptive_router_r01_20260814`; receipt `rcpt_adaptive_router_r01_20260814`; question `q-adaptive-router-r01-20260814`; correlation `corr-adaptive-router-r01-20260814`; side context `scx-adaptive-router-r01-20260814-01` |
 | Correction binding | `hnd_adaptive_router_r01_r02_20260814`; review baseline `334935dfd557e7d244b31de37e80db8911f27069`; same allocation/receipt/owner/branch; additive after handoff `a16dfc38eb6141e2aef5fa480be741b1f057ca57` |
 | P0 correction binding | `hnd_adaptive_router_r01_r03_20260815`; review baseline `51de13f1be7151a692675509e6ec9357ae64ec46`; same allocation/receipt/owner/branch; additive after handoff `21ced7b7f84a351074f65566603b4a2793334134` |
-| Requirement-change binding | `hnd_adaptive_router_r01_r04_20260815`; same allocation/receipt/owner/branch; completed revision-03 handoff `7d6c2f2a066a9d039eb13ae0a8e339e04f372f61` remains immutable; exact refreeze commit is supplied at dispatch |
+| Requirement-change binding | `hnd_adaptive_router_r01_r04_20260815`; review baseline `2f54843ce95fa15eea4ee0422c2d0cba7dabf5ed`; same allocation/receipt/owner/branch; completed revision-03 handoff `7d6c2f2a066a9d039eb13ae0a8e339e04f372f61` remains immutable; dispatch registry is the commit containing `PRG-20260815-454` |
 | XSS / effects | `XSS_NOT_APPLICABLE`; pure typed Router/Profile contracts and tests, no external effect |
 
 ## One observable outcome
