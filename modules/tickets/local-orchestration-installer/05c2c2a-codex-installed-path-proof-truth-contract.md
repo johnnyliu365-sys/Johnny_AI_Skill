@@ -5,7 +5,7 @@
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-02, AC-06, AC-07 and AC-08 |
 | Change / PRD / Context | `CHG-20260808-011` / `PRD.md §15` / `doc/context/local-orchestration-installer/main.md` |
 | Revision | `01` |
-| State | `PLANNED / DISPATCH_PENDING` |
+| State | `IN_PROGRESS / DISPATCH_READY` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05C2C2A-01` / T1-T7 |
 | Dependency | 05C2C1 guarded merge `fffbc616ee1870b69845cbcecf37a98e842106d3`; 05C2C2 revision-02 typed HALT at dispatch `41564b2e1087ede7bc156c68ec4aec715f3fe8bd` |
 | Profile / resource | `STANDARD`; one implementation owner, no helper; serial prerequisite for 05C2C2 revision 03 |
@@ -83,3 +83,19 @@ followed by one WPR-only handoff with the reviewer-reserved progress identifier.
 The implementation owner may not self-review/integrate, orchestrate another
 Agent, create a worktree, push/publish staging, package/install, release or
 deploy.
+
+## Dispatch registry
+
+| Field | Value |
+| --- | --- |
+| Ticket schema gate | `PASS` against exact freeze `ca5e5cfb0bca0d7faaef03c5d6c7207ffd389a2a`: State, T1-T7, Python 3.11 strict Pydantic/domain contracts plus full-tree `mypy --strict`, `STANDARD` one-owner/no-helper profile, `XSS_NOT_APPLICABLE`, exact four-path scope and all binding identities are explicit. |
+| Authority / reviewer | Project-owner standing auto-continue `PRG-20260809-042`; sole reviewer/orchestrator task `019fb935-bbe1-7f71-8b4b-58ba20c81626`. |
+| Exact implementation owner | Existing owner-2 task `019ffb0c-db88-7303-895c-aecfadde7c8d`; permanent worktree `C:\Users\<user>\Desktop\AI控制工作workflow-implementer-2`; no helper, subagent or second owner. |
+| Released lane readback | Completed owner-2 task lane is clean at released 05C1 branch/head `codex/implementation-codex-receipt-removal-request-05c1` / `252a698b73191106a0c4551162d153be86491a08`; exact top-level/linked git-dir, zero tracked/ignored/cache residue, exactly three worktrees and absent target branch verified. |
+| Branch / baseline | In the same owner-2 permanent worktree create only `codex/implementation-codex-installed-path-proof-truth-05c2c2a` at the exact control commit carrying this registry. Do not merge/copy a historical branch, create another worktree, reset, rebase, amend, force or stash. |
+| Binding | Workspace `wsb_local_orchestration_install_05c2c2a_20260814_01`; handoff `hnd_local_orchestration_install_05c2c2a_20260814`; allocation `aln_local_orchestration_install_05c2c2a_20260814`; receipt `rcpt_local_orchestration_install_05c2c2a_20260814`; correlation `corr-local-orchestration-install-05c2c2a-20260814`; question `q-local-orchestration-install-05c2c2a-20260814`; side context `scx-local-orchestration-install-05c2c2a-20260814-01`. |
+| Return | One implementation commit changing exactly the four frozen source/test paths, then append only reserved `PRG-20260814-410` in one WPR-only handoff commit. |
+
+This receipt authorizes only T1-T7. The owner must mechanically re-read this
+exact ticket before first red and return `HALT / TICKET_SCHEMA_INVALID` on any
+mismatch.

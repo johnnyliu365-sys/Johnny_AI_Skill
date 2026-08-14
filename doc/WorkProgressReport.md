@@ -4423,3 +4423,13 @@
 | Root cause | `CodexInstalledPathAbsenceProof.absent` is `Literal[True]`, so the frozen request for ordinary `absent=False` is impossible within the two-path adapter scope. Existing composition consumers already contain exact bool handling but valid false cases use `model_construct`, proving the contract and tests are inconsistent. |
 | Decomposition | 05C2C2 revision 02 is blocked and its receipt closed. New 05C2C2A owns only the strict bool proof contract plus three direct consumer tests; after independent integration, 05C2C2 will be refrozen as revision 03 for the two-path adapter mapping. |
 | Resource / boundary | One serial owner/no-helper prerequisite; no implementation-worktree mutation by reviewer, no live Codex/host/target-project effect, push/staging publication, package/install, Secret, release or deployment. |
+
+## PRG-20260814-409 - Ticket 05C2C2A exact dispatch registry
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `05C2C2A_FROZEN + TICKET_SCHEMA_PASS + OWNER_2_LANE_ADMITTED -> IMPLEMENTATION_DISPATCH_CONFIRMED / IMPLEMENT` |
+| Schema / type gate | Exact freeze `ca5e5cfb0bca0d7faaef03c5d6c7207ffd389a2a` explicitly contains T1-T7, Python 3.11 strict Pydantic/domain types, full-tree mypy, `STANDARD` one-owner/no-helper, `XSS_NOT_APPLICABLE`, exact four-path scope and unique binding. |
+| Lane readback | Owner-2 task `019ffb0c-db88-7303-895c-aecfadde7c8d`; clean permanent implementer-2 worktree at released 05C1 branch/head `codex/implementation-codex-receipt-removal-request-05c1` / `252a698b73191106a0c4551162d153be86491a08`; exact linked Git identity, zero tracked/ignored/cache residue, exactly three worktrees and absent target branch verified. |
+| Binding / dispatch | One-use 05C2C2A workspace/handoff/allocation/receipt/correlation/question/side-context from the ticket; create only `codex/implementation-codex-installed-path-proof-truth-05c2c2a` at the exact control commit carrying this registry and change only the four frozen paths. Reserved WPR handoff is PRG-410. |
+| Resource / boundary | Owner-2 receives one serial contract repair and no helper. Owner-1 remains released after invalid-ticket WIP cleanup; no overlapping implementation path or parallel dependent adapter work. No live effect, push/staging publication, package/install, Secret, release or deployment. |
