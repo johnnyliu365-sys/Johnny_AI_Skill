@@ -1,4 +1,4 @@
 interface:
   display_name: "Johnny Project Takeover"
-  short_description: "Safely guide a project takeover with a detachable workflow"
-  default_prompt: "Use $johnny-project-takeover to take over this project safely."
+  short_description: "Route projects with minimal context and governed handoffs"
+  default_prompt: "Use $johnny-project-takeover to route this project with minimal context and governed handoffs."

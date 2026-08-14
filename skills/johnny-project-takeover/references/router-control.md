@@ -1,0 +1,100 @@
+# Router control contract
+
+Read this reference when resolving a workflow event, emitting a decision, validating a
+completion return, or admitting an implementation dispatch. Do not load it merely to
+implement an already admitted ticket.
+
+## Closed state machine
+
+```text
+ProcessStage = INTAKE | WAYFINDER | ARCHITECTURE | GRILL | CONTEXT | SPEC | TICKETS
+             | IMPLEMENT | SMOKE_TEST | REVIEW | HANDOFF | BLOCKED | STOPPED
+
+RouterEvent = INTAKE | WAYFINDER_GO | WAYFINDER_NO_GO | ACTION_COMPLETED
+            | VALIDATION_PASSED | VALIDATION_FAILED
+            | APPROVAL_GRANTED | APPROVAL_DENIED | REQUIREMENT_CHANGED
+            | CONTEXT_REFERENCE_CLOSED | EXTERNAL_DECISION_REQUIRED
+            | TICKET_DISPATCH_REQUIRED | IMPLEMENTATION_DISPATCH_CONFIRMED
+```
+
+The executable typed contracts in `library/workflow_router/` are authoritative for field
+shape and validation. The policy invariants below are authoritative for routing behavior:
+
+- `RouterState` binds one `project_id`, stage, authority state, delivery stage, artifact
+  references and at most one live pending dispatch descriptor.
+- `RouterDecision` returns one outcome, one continuation, one optional next stage, the
+  minimum required source references, one optional `ContextView`, eligible capabilities
+  and typed blockers.
+- `CompletionEvidence` is attached to `ACTION_COMPLETED`; a commit digest is evidence, not
+  permission to select a next stage.
+- `ImplementationHandoff` contains approved artifact and role references only.
+- `ImplementationReturn` is exactly `COMPLETED`, `BLOCKED` or `CHANGE_DETECTED`.
+- `CHANGE_DETECTED` emits `REQUIREMENT_CHANGED` and returns to change control. It is never
+  patched silently inside an approved ticket.
+
+## Metadata-only boundary
+
+Serializable Router state, formatter output, telemetry and errors may contain only opaque
+identifiers, revisions, spans, fingerprints, evidence references and digests. They must not
+contain raw source text, `ContextPacket`, prompts, filesystem paths, URIs, secrets, PII or
+exception details.
+
+Policy documents are read only through an ephemeral source boundary. The boundary returns
+typed metadata such as source ID, revision and digest; policy text does not enter durable
+Router state.
+
+## Continuation
+
+Every decision declares exactly one continuation:
+
+1. `AUTO_CONTINUE` applies only when the declared transition, complete minimum sources,
+   valid evidence, one allowlisted capability and existing authority all agree. Execute one
+   action, emit a new event, then route again.
+2. `WAIT_FOR_HUMAN` applies only to a Profile-declared approval, an owner decision or an
+   irreversible external effect. State the exact decision required.
+3. `HALT` applies to missing or invalid sources, denied or absent authority, unavailable
+   capability, failed validation, replay or mismatch, unsafe external boundary, exceeded
+   budget, undeclared transition or `NO-GO`. Do not guess, use a local fallback, or wait
+   indefinitely.
+
+Automatic continuation has a bounded step/time ceiling. Reaching it is `HALT`.
+
+## Dispatch admission
+
+The Private Router owns the live `PendingDispatchDescriptor`. A typed
+`ApprovedDispatchArtifactRegistry` resolves the exact project, ticket, reviewed handoff,
+ticket and handoff commits, implementation owner, task/workspace binding, worktree and
+expected baseline.
+
+Only `IMPLEMENTATION_DISPATCH_CONFIRMED` may consume a matching, unconsumed receipt and
+create the implementation lane. Missing, copied, forged, replayed or mismatched project,
+ticket, handoff, owner, task, worktree, branch, baseline, action, question or correlation
+halts before source, capability, receipt, branch or host effect. Caller-provided commits are
+assertions to compare, never authority sources.
+
+`TICKETS + APPROVAL_GRANTED -> IMPLEMENT` is a retired transition and always halts. A ticket
+dispatch confirmation is asked once; `ACTION_COMPLETED` must not create a second ceremonial
+approval prompt.
+
+## Route table
+
+| Stage | Minimum source kind | Capability kind | Expected return |
+| --- | --- | --- | --- |
+| `INTAKE` | goal and approved profile | goal normalization | `WAYFINDER` or halt |
+| `WAYFINDER` | Wayfinder standard and confirmed facts | viability decision | `WAYFINDER_GO` or `WAYFINDER_NO_GO` |
+| `ARCHITECTURE` | GO context, constraints and risks | architecture | completed artifact or blocker |
+| `GRILL` | scoped requirements, architecture and change history | requirement convergence | confirmed facts or change event |
+| `CONTEXT` / `SPEC` / `TICKETS` | approved scoped artifacts | specification and slicing | draft, approval wait or completion |
+| `IMPLEMENT` / `SMOKE_TEST` | exact admitted ticket and direct contracts | implementation and verification | typed implementation return |
+| `REVIEW` / `HANDOFF` | closure set, diff and evidence | independent review | approval, correction route or halt |
+
+## Fail-closed execution boundary
+
+- LangGraph composes only validated transitions and persists descriptors, never raw packets.
+- Agent/skill resolution exposes only allowlisted capability references.
+- Temporal persists validated events and descriptors; nondeterministic I/O stays in an
+  activity/adapter boundary.
+- MCP reads only declared source references and normalizes them at the boundary.
+- Missing role, owner, workspace binding, source, capability or verification halts rather
+  than widening the search or context.
+

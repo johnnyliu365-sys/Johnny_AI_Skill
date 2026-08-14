@@ -1,127 +1,104 @@
 # AI 協作入口與索引
 
-> 本檔負責導覽、啟動規則與原始碼型別的 P0 要求。唯一工作標準以 [Workflow.md](Workflow.md) 為準；Code Review 的唯一實際驗證標準以 [CodeReview.md](CodeReview.md) 為準。不得在本檔或其他 Agent 指引建立競爭的流程或審閱規則。
+> 本檔相當於書的前言與目錄：只定義啟動順序、P0 與索引。流程與路由以
+> [Workflow.md](Workflow.md) 為準；Code Review 的入口、證據與結論以
+> [CodeReview.md](CodeReview.md) 為準；專業方法由 Router 指定的
+> [`johnny-project-takeover`](skills/johnny-project-takeover/SKILL.md) reference 定義。
 
-## 目前 Bootstrap 邊界
+## 啟動順序
 
-本次建立規範時，僅允許維護 `AGENTS.md`、`Workflow.md` 與 `CodeReview.md`，不得新增、複製、搬移或刪除任何其他檔案。`template/` 是唯讀參考來源，不是本次要部署的產物。
+在讀取 target source、執行工具或寫入前：
 
-未來若專案負責人明確啟用完整文件結構，才依 `template/README.md` 建立正式產物；未經明確授權，不得自行建立目錄、規格、工單、Context、ADR 或報告檔。
+1. 讀取 target project 自己的 `AGENTS.md` 與本次 authority。
+2. 讀 [Workflow 流程圖](Workflow.md#workflow-flow) 定位目前 stage。
+3. 讀 [Router 路由表](Workflow.md#workflow-router)，取得唯一 action、owner、必要
+   artifact refs、skill reference、typed return 與 continuation。
+4. 完整讀取被指定的 skill reference；不要載入完整 Workflow、全部 references、
+   library 或聊天歷史。
+5. 完成一個動作後回傳 typed event，回到 Router；不得自行選下一關。
 
-## 第一個必讀：唯一流程
+Router state 只保存 metadata；任何 pending implementation dispatch 都必須由 live
+descriptor、receipt 與精確 artifact references 綁定。
 
-在讀取程式碼、需求、資料、秘密或執行任何工具前，Agent 必須依序：
-
-1. 閱讀 [工作流程圖](Workflow.md#workflow-flow)，確認目前關卡。
-2. 完整閱讀 [Workflow.md](Workflow.md) 的適用章節與完成條件。
-3. 檢查使用者本次授權、既有專案文件與目前工作區狀態。
-
-流程圖只用來定位；完整 `Workflow.md` 才是每一關的強制規則。兩者不可互相取代。
+找不到、讀不到、版本不符或索引競爭時，在 mutation 前
+`HALT / ROUTE_REFERENCE_INVALID`，不得憑記憶補規則。
 
 <a id="p0-source-type"></a>
 
-## P0：原始碼型別要求
+## P0：原始碼型別
 
-此為所有實作與 Code Review 必須遵守的阻擋規則；任何違反均不得進入 commit、下一張 ticket 或交接。
+所有正式原始碼必須以 C++ 概念可讀的強型別表達資料意義、nullability、輸入／
+輸出與有限領域狀態。外部動態輸入在邊界驗證、正規化並轉成具名型別；不得把
+`Any`、隱含 `any`、未驗證動態物件或字串慣例向內傳遞。使用語言可用的 strict
+checker；ticket schema、preflight 與 TDD 由 Router 指向：
 
-- 所有原始碼必須以 **C++ 概念可讀的強型別**生成：不要求一律使用 C++，但必須讓讀者能從明確型別理解資料的意義、可否為空、輸入輸出與領域狀態。
-- 變數、欄位、函式參數與回傳值、API／事件契約及領域模型必須使用具名、明確且可檢查的型別；以 enum、值物件、DTO 或等價模型表達有限狀態與領域概念。
-- 禁止以 `any`、隱含型別、未驗證的動態物件或字串慣例掩蓋資料契約。外部輸入如不可避免為動態資料，必須在邊界立即驗證、正規化並轉換為強型別，且不得向內層傳遞未驗證資料。
-- 使用的語言或工具必須啟用其可用的嚴格型別檢查；具體執行與分層規則依 [實作流程](Workflow.md#implementation) 辦理。
-- strict checker 綠燈只是必要條件，不代表 ticket 的領域型別政策已被證明。凡「動態型別僅限具名邊界」、有限狀態、精確 primitive、nullability 或其他 checker 無法直接表達的限制，都必須依 [強型別 ticket schema preflight](Workflow.md#typed-ticket-preflight) 建立可執行 gate 與會轉紅的反向變異；缺少時是 `TICKET_DEFECT / NON_DISPATCHABLE`，不得靠 cast、bypass constructor 或實作者自行猜測補洞。
-- 本檔與 `Workflow.md`、`CodeReview.md` 的文件歸屬、插件隔離及 target project 零複製規則，唯一依據 [Workflow.md 的「治理文件歸屬與插件隔離」](Workflow.md#governance-document-ownership)；不得在本檔另建競爭規則。
+- [`specification-ticketing.md`](skills/johnny-project-takeover/references/specification-ticketing.md)
+- [`implementation-tdd.md`](skills/johnny-project-takeover/references/implementation-tdd.md)
 
-Policy／response P0：政策讀取只能在 ephemeral boundary 產生 metadata-only
-結果，不得把原文放進 Router model、formatter、telemetry 或 error。固定
-dispatch response 必須由同一個 Private Router 的 live pending descriptor
-綁定 ticket、reviewed handoff、commit 與具名 implementation owner；複製、
-偽造、replay、mismatch 或舊 `APPROVAL_GRANTED -> IMPLEMENT` 路徑一律
-`HALT`，只有 Router-owned plan 可以產生固定回應。
+違反此 P0 不得 dispatch、commit、review approve 或交接。
 
-## Workflow 導覽
+## P0：權限與所有權
 
-Router anchor: `#workflow-router`; implementation role anchor: `#role-boundary`.
+- 插件治理文件與 skills 只存在插件版本庫／bundle／安裝快取，不複製到 target
+  project；完整規則見 [治理文件歸屬](Workflow.md#governance-document-ownership)。
+- SPEC、ticket、Context、進度、審閱、程式與測試屬 target project，必須
+  target-owned、target-versioned。
+- reviewer 是唯一 Agent-to-Agent orchestrator；implementation owner 不得控制
+  其他 Agent。角色、task、worktree、receipt 與 correction 規則見
+  [Implementation role boundary](Workflow.md#role-boundary)。
+- Agent 只能修改與提交自己的 worktree。不得接收、輸出或保存明文 Secret。
+  Secret、正式 Log、Provider 與 external effect 的詳細規則見
+  [security-boundary](skills/johnny-project-takeover/references/security-boundary.md)。
+- 未核准、未提交、聊天宣稱、截圖或其他 worktree 的檔案不能作為 implementation
+  authority、review evidence 或 merge source。
 
-| 目前情境 | 必讀章節 | 允許的下一步 |
+## 流程索引
+
+| 情境 | Workflow 入口 | Router 指向的詳細 reference |
 | --- | --- | --- |
-| 流程事件、交付階段、context 或 skill／Agent 選擇 | [流程 Router](Workflow.md#workflow-router) | 讀取 Profile，解析最小 Context 視圖與唯一合法的下一步 |
-| 專案首次啟用，或需依規模／風險調整流程與 implementer | [自適應交付 Profile](Workflow.md#adaptive-delivery-profile) | 先做證據化 assessment，再決定文件深度、驗證、model tier 與最少 lane 數 |
-| 第一版 POC 已驗收，準備後續功能或架構開發 | [POC 後 staging 開發基線](Workflow.md#post-poc-staging-lifecycle) | 先凍結 POC 身分並建立／驗證 staging 基線；後續 ticket 分支只能從該基線衍生 |
-| 尋找可重用原始碼模組 | [模組選擇卡](library/MODULE_CATALOG.md)／`$apply-reusable-modules` | 先選最少 READY 模組，再回到本流程取得採用與實作授權 |
-| 需求、Bug、正式 UI 或邊界不清楚 | [需求釐清](Workflow.md#discovery) | `wayfinder → grill-with-docs` |
-| 需求、UI、資料契約或權限已改變 | [變更控制](Workflow.md#change-control) | 影響分析、更新 Context、重走核准閘門 |
-| 準備定義可驗收功能 | [規格](Workflow.md#specification) | 建立／修訂 SPEC，等待核准 |
-| 規格已核准，準備分工 | [工單](Workflow.md#tickets) | 垂直切片、指定責任；依唯一交付確認開立 ticket lane |
-| 已核准單張工單 | [實作](Workflow.md#implementation) | 逐行為 TDD：紅燈 → 最小實作 → 綠燈 |
-| 進行或交付 Code Review | [Code Review 標準](CodeReview.md) | 唯一驗證項目、證據與審閱結論 |
-| 多 Agent 或多 worktree | [協作](Workflow.md#collaboration) | 讀共同基準、確認 owner 與衝突 |
-| 涉及 Secret、正式 Log、權限或外部 Provider | [安全](Workflow.md#security) | 先確認安全邊界與授權 |
-| 不可信資料進入 Browser／WebView／HTML／DOM／JavaScript context | [XSS Review 強制閘門](Workflow.md#xss-review) | 先分類一般或 privileged XSS，將 source-to-sink 與 capability matrix 帶入 SPEC、ticket、TDD 與 review |
-| 工單或功能集群完成 | [審閱與交接](Workflow.md#review-handoff) | commit、驗證、review、handoff／UAT |
+| 任一事件、完成、等待或 HALT | [Router](Workflow.md#workflow-router) | [router-control](skills/johnny-project-takeover/references/router-control.md) |
+| POC/MVP/COMMERCIAL、模型或 lane 數量、staging | [Profile](Workflow.md#workflow-router) | [delivery-profile](skills/johnny-project-takeover/references/delivery-profile.md) |
+| 最小 Context、旁路引用、能力選擇 | [Router Context](Workflow.md#workflow-router) | [context-routing](skills/johnny-project-takeover/references/context-routing.md) |
+| 新專案、需求、Bug、架構或變更 | [Discovery](Workflow.md#discovery) | [discovery-change](skills/johnny-project-takeover/references/discovery-change.md) |
+| Browser/WebView/DOM/JavaScript 不可信資料 | [XSS gate](Workflow.md#xss-review) | [xss-review](skills/johnny-project-takeover/references/xss-review.md) |
+| Secret、正式 Log、Provider、Webhook、外部 effect | [Security](Workflow.md#security) | [security-boundary](skills/johnny-project-takeover/references/security-boundary.md) |
+| SPEC、ticket、DI、type preflight、dispatch | [Tickets](Workflow.md#tickets) | [specification-ticketing](skills/johnny-project-takeover/references/specification-ticketing.md) |
+| Owner、Agent control、task/worktree、correction | [Role boundary](Workflow.md#role-boundary) | [implementation-authority](skills/johnny-project-takeover/references/implementation-authority.md) |
+| TDD、strict type、smoke、completion | [Implementation](Workflow.md#implementation) | [implementation-tdd](skills/johnny-project-takeover/references/implementation-tdd.md) |
+| TDD matrix 或獨立 review | [Review](Workflow.md#review-handoff) | [review-checks](skills/johnny-project-takeover/references/review-checks.md) + [CodeReview.md](CodeReview.md) |
+| 實作語言決策或驗證 | [SPEC/Tickets](Workflow.md#specification) | [language-policy](skills/johnny-project-takeover/references/language-policy.md) |
 
-## 預設角色邊界
+## Router 返回規則
 
-除非專案負責人對單一 ticket 明確改派，使用本指引的控制面 Agent 的責任止於 `WAYFINDER`、Architecture／`grill-with-docs`、Context、SPEC、ticket、實作前 handoff、Code Review 與交接；正式原始碼與測試實作必須交給另一位具名 implementation owner。唯一詳細規則以 [Workflow.md §5.1](Workflow.md#role-boundary) 為準。
+任何 implementation 或 docs-only commit 都先產生 `ACTION_COMPLETED` 與 evidence，
+再由 Router 選下一步：
 
-完成的 implementation 必須以 typed `ACTION_COMPLETED` 回到 Router；`ImplementationReturn` 的 `CHANGE_DETECTED` 必須回到 `REQUIREMENT_CHANGED`，不得由控制面猜測或靜默擴張範圍。
+- `AUTO_CONTINUE`：執行唯一已宣告且不需新 authority 的下一動作。
+- `WAIT_FOR_HUMAN`：只等待具名核准、owner 決策或不可逆 effect。
+- `HALT`：來源、權限、能力、驗證、安全或 transition 不合法。
 
-Agent-to-Agent orchestration 的唯一 owner 是 ticket 具名 reviewer，唯一
-effect 入口是 Johnny reviewer-owned orchestration gateway。只有該 reviewer
-可經 gateway 建立／派送／追送／steer／wait／interrupt／close implementation
-Agent 或其 task；implementation owner 不得取得 gateway port／credential，
-其有效 host tool surface 也必須移除 multi-agent／thread-control 工具。它不
-得建立、委派、控制或等待任何其他 Agent，也不得自行派下一票或升格為
-reviewer。此限制必須由 host tool surface 與 receipt-bound authority gate
-共同強制，不得只依賴 prompt 或設定檔文字。未匹配 reviewer、project、
-ticket、handoff、receipt、target owner、worktree、branch、baseline、action
-與 correlation 的直接或間接 orchestration 一律 typed `HALT /
-ROLE_FORBIDDEN`。專案負責人仍保有最終改派與停止權；model 名稱或推理等級
-不構成 authority。
+`ImplementationReturn.CHANGE_DETECTED` 必須產生 `REQUIREMENT_CHANGED`；不得在已核准
+ticket 內猜測或擴張需求。
 
-任何工作或 commit 完成後，控制面 Agent 必須依 [流程 Router](Workflow.md#workflow-router) 產生 `ACTION_COMPLETED` 並先取得唯一 continuation；commit 不是可自行結束 task 的理由。`AUTO_CONTINUE`、`WAIT_FOR_HUMAN` 與 `HALT` 的唯一實際規則仍以 `Workflow.md` 為準。
+## Target project 正式來源
 
-## 唯一來源與未建立文件
-
-完整專案啟用後，需求、事實、規格、工單、進度、安全與審閱必須各有唯一正式來源，路徑與內容規格由 `Workflow.md` 定義。
-
-若該專案尚未建立必要產物，Agent 只能：
-
-- 讀取已存在的檔案並說明缺口；
-- 進入 `wayfinder`／`grill-with-docs` 收斂問題；
-- 請求建立或補齊文件的明確授權。
-
-不得猜測缺失內容、以聊天紀錄取代正式來源，或自行新增同用途的平行目錄。
-
-## 不可違反的入口規則
-
-- 不得從聊天內容直接修改正式程式、測試、資料庫或部署設定。
-- `to-tickets` 核准前，不得開始正式實作、修改測試或新增 migration。
-- Agent 只能寫入、stage、commit、merge、rebase、pull、push、stash 或切換自己的 worktree。
-- 不得接收、輸出或保存明文 Secret；Log 必須先 redact／sanitize。
-- 未核准、未提交、未簽署的 spike、截圖、聊天宣稱或其他 worktree 檔案，不能作為實作、審閱或合併依據。
-
-## 完整專案啟用後的正式路徑
-
-僅在專案負責人明確授權建立完整結構後，使用下列唯一位置：
+完整啟用後，沿用 target project 既有同用途路徑；若無，標準位置為：
 
 ```text
-Workflow.md
-AGENTS.md
 CONTEXT.md
 PRD.md
 ProjectSchedule.md
-doc/
-  RequirementChangeLog.md
-  WorkProgressReport.md
-  security-agent-boundary.md
-  context/<feature>/<worktree-id>.md
-  reviews/<feature>/<cluster>-code-review.md
-  adr/ADR-YYYYMMDD-NNN-<slug>.md
-modules/
-  spec/<feature>.md
-  tickets/<feature>/README.md
-  tickets/<feature>/NN-<slug>.md
-  element/{typescript,python,java}/<feature>/<ticket-id>/
+doc/RequirementChangeLog.md
+doc/WorkProgressReport.md
+doc/security-agent-boundary.md
+doc/context/<feature>/<worktree-id>.md
+doc/reviews/<feature>/<cluster>-code-review.md
+doc/adr/ADR-YYYYMMDD-NNN-<slug>.md
+modules/spec/<feature>.md
+modules/tickets/<feature>/README.md
+modules/tickets/<feature>/<ticket>.md
+modules/element/<language>/<feature>/<ticket-id>/
 ```
 
-實際專案已有同用途目錄時必須沿用；禁止建立 `doc/specs/`、`doc/tickets/` 或其他同用途的平行來源。
+必要來源尚未建立時，只能讀取現況、列出缺口並進入 Wayfinder／Grill；未經 owner
+authority 不得猜測內容或建立平行來源。
