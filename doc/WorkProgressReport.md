@@ -4949,3 +4949,15 @@
 | Correction | Remove only the reported terminal blank lines. No identifier, requirement, route, acceptance source, index edge or lifecycle rule changes. |
 | Verification | Final combined migration diff passes `git diff --check`; PRD/CHG pairing, archive isolation, catalog uniqueness, governed links, shared-Context byte identity, Router `99/99` and zero cache residue remain valid. |
 | Boundary | Additive docs formatting correction only; no amend/reset/force, implementation dispatch, source/test mutation or external effect. |
+
+## PRG-20260815-459 - Router Ticket R02A decomposition and dispatch proposal
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `R01_INTEGRATED + SPEC_REVISION_04 + TREE_MIGRATION_COMPLETE -> READY_LOW_MODEL / TICKET_DISPATCH_REQUIRED`; no receipt or implementation authority exists in this proposal. |
+| Exact closure | `modules/tickets/adaptive-project-orchestration/02a-shared-context-lifecycle-gate.md`; `CLOSURE-ADAPTIVE-ROUTER-R02A-01` SC1-SC8. One outcome only: pure Profile-bound create/revise/seal/read admission for shared Context. |
+| Split boundary | Ticket-scoped Agent Context lease/invalidation is R02B; artifact-tree and PRD/CHG/archive/catalog lineage is R02C. Model wake, low-model admission, UI routing, 06G0P and all installer/package work remain blocked. |
+| Strong-type preflight | The ticket freezes finite operations/lifecycle/roles/decisions, metadata-only manifest/state/request/result models, exact decision precedence and ordinary constructor rejection; no optional/callable writer port or raw content enters the gate. |
+| Proposed lane | Existing task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; permanent worktree `C:\Users\<user>\Desktop\AI控制工作workflow-implementation`; planned branch `codex/implementation-router-shared-context-r02a` only after exact registry synchronization. Reviewer task `019fb935-bbe1-7f71-8b4b-58ba20c81626` remains sole orchestrator. |
+| Planned binding | Handoff `hnd_adaptive_router_r02a_20260815`; allocation `aln_adaptive_router_r02a_20260815`; correlation `corr-adaptive-router-r02a-20260815`; question `q-adaptive-router-r02a-20260815`; side Context `scx-adaptive-router-r02a-20260815-01`. Receipt is created only in the dispatch registry. |
+| Boundary | `STANDARD`, one Luna owner, no helper. `XSS_NOT_APPLICABLE`; no implementation mutation, new worktree, Agent dispatch, external effect, push, package/install, Secret, release or deployment. |

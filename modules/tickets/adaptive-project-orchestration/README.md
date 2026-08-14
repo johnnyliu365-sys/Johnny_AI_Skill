@@ -9,7 +9,7 @@
 | Ticket | Observable closure | State | Dependency |
 | --- | --- | --- | --- |
 | [01-route-instruction-contract](01-route-instruction-contract.md) | Every Router decision carries one versioned skill reference and one exact expected typed return; technical halts use the Profile's router-control fallback. | `COMPLETE / APPROVED / INTEGRATED` | `5c3445f` |
-| `02A-shared-context-lifecycle-gate` | Architecture-stage draft/revise/seal and change-control-only revision admission; later roles are exact sealed-revision readers. | `ELIGIBLE / TICKET_NOT_CREATED` | R01 complete |
+| [02a-shared-context-lifecycle-gate](02a-shared-context-lifecycle-gate.md) | Architecture-stage draft/revise/seal and change-control-only revision admission; later roles are exact sealed-revision readers. | `PLANNED / DISPATCH_PROPOSED` | `fa47a87` |
 | `02B-agent-context-lease-invalidation` | One role-scoped, ticket-bound Agent Context lease; ticket switch closes the old view and creates a new identity. | `CANDIDATE / NON_DISPATCHABLE` | R02A approved/integrated |
 | `02C-artifact-tree-lineage-gate` | One-path artifact resolution plus active PRD/CHG pairing and bounded archive/library indexes. | `CANDIDATE / NON_DISPATCHABLE` | R02B approved/integrated |
 | `03-model-role-readiness-wake` | SPEC readiness and architecture-owner sleep/wake decision kernel. | `CANDIDATE / NON_DISPATCHABLE` | R02C approved/integrated |
