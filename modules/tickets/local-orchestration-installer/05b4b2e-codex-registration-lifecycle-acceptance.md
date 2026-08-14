@@ -3,6 +3,8 @@
 | Field | Value |
 | --- | --- |
 | State | `CONVERGENCE_DECOMPOSED / NON_DISPATCHABLE / CHILD_E0_FROZEN` |
+| Closure | `N/A` — immutable non-dispatchable decomposition parent; E0-E6 own separate closures |
+| Implementation language | `N/A` — immutable non-dispatchable decomposition parent; child tickets explicitly bind Python 3.11 strict typing |
 | Dependency | 05B4B2C and 05B4B2D independently approved and integrated |
 | Allocation | None; a parent ticket never receives implementation authority |
 

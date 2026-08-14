@@ -178,6 +178,17 @@ record、不產生 release claim，且未授權 remote 時不 push。
 3. 遠端變更逐項核對 authority、fetch/history、create-or-fast-forward-only 與 exact SHA readback；任何 force/reset/delete 或 divergence 都阻擋。
 4. 分別驗證 development staging、disposable effect environment 與 release record，禁止三者互相充當 authority。
 
+## 2.2 Ticket dispatch schema gate
+
+在審閱 implementation evidence 前，必須獨立讀回 dispatch receipt 綁定的
+精確 ticket blob。表頭必須明載 `State`、`Closure`、
+`Implementation language`、`Profile / resource`、XSS 分類，以及精確
+owner／worktree／branch／baseline／allocation／receipt／correlation registry。
+實作語言必須與已核准 SPEC 及 target-owned Context 一致，並具名 strict
+checker。欄位缺失、靠聊天／父工單／相鄰工單推定，或 ticket commit 與
+receipt 不一致，均為 `TICKET_DEFECT`；即使產出的程式碼碰巧符合強型別，
+審閱仍為 `BLOCKED`。正式 review 必須記錄此 gate 的獨立結果。
+
 ## 3. 審閱證據與結論
 
 - Review report 必須逐項記錄上述驗證結果，並附上相關檔案／位置、測試或命令輸出、smoke test 結果，以及未解決風險。

@@ -4,7 +4,9 @@
 | --- | --- |
 | SPEC / AC | Local installer SPEC / AC-01 through AC-05, AC-08 through AC-12 |
 | State | `PLANNED / DEPENDENCY_WAIT / NOT_DISPATCHED` |
+| Closure | `CLOSURE-LOCAL-INSTALL-T04G-01` / install acceptance cells below |
 | Dependency | 04E provider and exact 04F artifact approved |
+| Implementation language | Python 3.11 with strict Pydantic models and `mypy --strict`; the frozen Inno artifact is an injected system effect |
 | Environment | Fresh exact 04E-qualified boundary; never target project |
 | Implementation owner | `UNALLOCATED` |
 | XSS | Inherit 04B/04F classification |

@@ -4,8 +4,9 @@
 | --- | --- |
 | SPEC / AC | Local installer SPEC / AC-01, AC-03, AC-04, AC-08, AC-12 |
 | State | `PLANNED / DEPENDENCY_WAIT / NOT_DISPATCHED` |
+| Closure | `CLOSURE-LOCAL-INSTALL-T04A-01` / manifest TDD closure below |
 | Dependency | All runtime/host package prerequisites are resolved, approved and integrated |
-| Language | Python 3.11 strict |
+| Implementation language | Python 3.11 with strict Pydantic models and `mypy --strict` |
 | Owner / reviewer | Codex / current `main` worktree |
 | Implementation owner | `UNALLOCATED`; exact dispatch is still required |
 | Proposed source / test | `library/local_orchestration/windows_package_manifest.py`; `tests/test_windows_package_manifest.py` |

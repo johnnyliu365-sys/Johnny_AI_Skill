@@ -4,7 +4,9 @@
 | --- | --- |
 | SPEC / AC | Local installer SPEC / AC-12 |
 | State | `PLANNED / DEPENDENCY_WAIT / NOT_DISPATCHED` |
+| Closure | `CLOSURE-LOCAL-INSTALL-T04I-01` / required identity below |
 | Dependency | 04G/04H approved against same 04E provider and 04F artifacts |
+| Implementation language | `N/A` — reviewer-only evidence/handoff gate; no source or artifact edits |
 | Owner / reviewer | Codex / current `main` worktree |
 | Implementation owner | `N/A` — reviewer-only evidence/handoff gate |
 | Execution class | Reviewer-owned evidence gate; no source/artifact edits |

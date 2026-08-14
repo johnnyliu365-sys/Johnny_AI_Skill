@@ -705,3 +705,6 @@ implementation handoff 前，ticket 必須提交一個具 revision 的有限 `Ac
 2. 未指定實作語言的 ticket 不得進入 `implement`；審閱結論一律 `BLOCKED`，不得以「顯而易見」規避。
 3. 規格必須載明該功能集群的實作語言；工單不得與其所屬規格牴觸。
 4. 專案可自行決定本節閘門的生效階段（例如 POC 豁免、MVP 起強制），但該決定須寫入 `CONTEXT.md`。
+5. reviewer 在建立 dispatch registry 前，必須對**即將派送的精確 ticket blob**做機械式表頭讀回，至少驗證 `State`、`Closure`、`Implementation language`、`Profile / resource`、`XSS`、具名 owner、worktree、branch、baseline、allocation、receipt 與 correlation；缺一項即 `TICKET_DEFECT / NON_DISPATCHABLE`。
+6. dispatch registry 必須記錄上述 schema gate 的 `PASS` 與精確 ticket commit；不得引用聊天摘要、父工單、相鄰工單或專案慣例來補足缺失欄位。父工單與 reviewer-only gate 也必須明載 `Implementation language: N/A` 及原因，不能留空。
+7. implementer 開工前必須重讀同一 ticket blob；若 `Implementation language` 缺失、與 SPEC／Context 衝突或不含對應 strict checker，固定回 `HALT / TICKET_SCHEMA_INVALID`，不得自行選語言、補文件或開始紅燈測試。

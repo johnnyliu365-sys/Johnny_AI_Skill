@@ -4,6 +4,8 @@
 | --- | --- |
 | SPEC / change | `SPEC-AI-WORKFLOW-AUTONOMOUS-COLLABORATION-AUDIT-20260805-01KZ7A2C4E6G8J0L2N4P6R8T` revision 02 / `CHG-20260811-012` |
 | State | `PLANNED / DEPENDENCY_WAIT` |
+| Closure | `CLOSURE-AUTONOMOUS-COLLAB-T04-01` / R1-R4 |
+| Implementation language | Python 3.11 with strict Pydantic models and `mypy --strict` |
 | Dependency | Tickets 01-03 integrated; starts only after local 06A returns a reviewed `SUPPORTED` capability result and the sole implementation lane is released |
 | Implementation owner | Existing task `019fcc9c-f34f-7d53-a313-c70c90bf3245` in the sole implementation worktree after its own receipt |
 | Reviewer | Control-plane `main`; sole Agent-to-Agent orchestrator |

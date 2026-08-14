@@ -163,8 +163,10 @@
 | Ticket 05B4B2E6B target-project isolation acceptance | COMPLETE / APPROVED / INTEGRATED | B1-B8 review `ff00a03`, guarded merge `0e0934d`; post-merge focused/type pass. |
 | Ticket 05C receipt removal parent | CONVERGENCE_DECOMPOSED / NON_DISPATCHABLE | Cross-contract `host`/`HostRegistrationKey` defect removed; replaced by serial 05C1-05C3. |
 | Ticket 05C1 receipt removal request | COMPLETE / APPROVED / INTEGRATED | Correction `e07a9f5`, handoff `252a698`, review `43bae91`, guarded merge `9e0343a`; independent `476/476`, strict mypy and reversals pass; CR-173 closed. |
-| Ticket 05C2 receipt removal composition | PLANNED / REFREEZE_REQUIRED | 05C1 is integrated; restore mandatory language and refreeze against its exact API before dispatch. |
-| Ticket 05C3 receipt removal acceptance | PLANNED / DEPENDENCY_WAIT | Starts after 05C2 approved/integrated. |
+| Ticket 05C2 receipt removal composition parent | CONVERGENCE_DECOMPOSED / NON_DISPATCHABLE | Public response admission is private while the public historical composition requires a registration journal; replaced by serial 05C2A-05C2B. |
+| Ticket 05C2A compensation observation admission | FROZEN / READY_FOR_LANE_ADMISSION | Expose one pure exact observation admission API backed by integrated normalizers; one owner and no helper. |
+| Ticket 05C2B receipt removal composition | PLANNED / DEPENDENCY_WAIT | Starts after 05C2A independently approved/integrated. |
+| Ticket 05C3 receipt removal acceptance | PLANNED / DEPENDENCY_WAIT | Starts after 05C2B independently approved/integrated. |
 | Ticket 06A Codex role-profile capability proof | DONE / APPROVED_EVIDENCE / INSTALL_BLOCKED / INTEGRATED | Implementation `38e9a8b`, handoff `f6f186f`, review `62955ec`, guarded merge `de4141e`; actual installed-host result is `ROLE_ISOLATION_UNPROVEN / ACCESS_DENIED / OUTPUT_UNAVAILABLE`, so capability dependents stay blocked. |
 | Autonomous Ticket 04 reviewer-only authority | PLANNED / DEPENDENCY_WAIT | Starts only after reviewed 06A `SUPPORTED`; typed fake effect gate, not a real Agent turn. |
 | Tickets 06B/06C role-profile lifecycle/composition | PLANNED / DEPENDENCY_WAIT | Wait for 06A and autonomous Ticket 04; own/remove profiles, then compose exact reviewer authority. |

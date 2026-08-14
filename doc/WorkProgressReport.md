@@ -4198,3 +4198,24 @@
 | Post-merge verification | Focused `14/14` and strict mypy `146` pass on the integrated tree with a removed external cache. Merge scope is WPR, export-only root, receipt-removal source and direct test; no other conflict or silent resolution occurred. |
 | Adjacent ticket audit | 05C1/05C2/05C3 were created by one reduced decomposition pattern that omitted Workflow §9.3's mandatory implementation-language header. Revision-02 corrected 05C1; this record restores Python 3.11 / strict Pydantic / `mypy --strict` to 05C2 and 05C3 before either can dispatch. 05C2 remains `REFREEZE_REQUIRED` until its exact integrated API closure is complete. |
 | Boundary | Control documents and guarded integration only; no implementation-worktree write, new branch/worktree, live effect, push/staging publication, package/install, Secret, release or deployment. |
+
+## PRG-20260814-387 - Ticket 05C2 convergence decomposition and 05C2A freeze
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `SELECT_05C2_REFREEZE + NON_HIGH_RISK_TICKET_DEFECT -> CONVERGENCE_DECOMPOSED / CHILD_05C2A_FROZEN` |
+| Defect / root cause | Revision-01 told the coordinator to reuse integrated response admission, but all five exact observation normalizers are private and the only public composition requires registration-journal authority unavailable to persisted receipt removal. One-ticket implementation would force a private import, duplicated admission or a fabricated journal. This is reviewer-owned `TICKET_DEFECT`, not requirement change. |
+| Decomposition | Non-dispatchable 05C2 parent is replaced by serial 05C2A public pure observation admission and 05C2B receipt-removal effect coordination. 05C3 now depends on integrated 05C2B. |
+| 05C2A closure | `CLOSURE-LOCAL-INSTALL-T05C2A-01` / A1-A8; extend the existing composition and direct test plus export-only root. Python 3.11, strict Pydantic and `mypy --strict` are mandatory; invalid operation/request precedence, exact five-operation parity, response matrices, zero effects and three independent reversals are frozen. |
+| Resource decision | `STANDARD`, one existing implementation owner, no helper. The change is small, serial and shares one source/test pair; a second lane would create overlap instead of useful parallelism. |
+| Boundary | Control documents only. No implementation-worktree write, branch/worktree creation, live Codex/host/target-project effect, push/staging publication, package/build/install, Secret, release or deployment. |
+
+## PRG-20260814-388 - Pending-ticket language and schema gate repair
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `ADJACENT_TICKET_AUDIT + REPEATED_HEADER_OMISSION -> CONTROL_DEFECT_REPAIRED / PRE_DISPATCH_GATE_STRENGTHENED` |
+| Root cause | Workflow §9.3 contained a prose-only language requirement, while decomposition used a reduced ticket template and dispatch registries did not mechanically read back mandatory header fields. Strongly typed code could therefore be produced from a formally invalid ticket. The defect belongs to reviewer/ticket generation, not the implementer. |
+| Governance repair | Workflow now requires a machine-readable exact-ticket schema readback before dispatch and implementer-side `HALT / TICKET_SCHEMA_INVALID`; CodeReview requires independent verification of the same receipt-bound ticket blob. Chat, parent or adjacent-ticket inheritance is forbidden. |
+| Backlog repair | Every current planned/frozen/dependency-waiting ticket now explicitly records `Implementation language` or reviewer/non-dispatchable `N/A` with reason. Missing closure header identities were restored at the same control boundary. 05C2A remains the only eligible child. |
+| Boundary | Governance/ticket documents only; no source/test, implementation-worktree, branch/worktree, live effect, push/staging publication, package/install, Secret, release or deployment action. |

@@ -4,8 +4,9 @@
 | --- | --- |
 | SPEC / AC | Local installer SPEC / AC-01 through AC-12 |
 | State | `PLANNED / DEPENDENCY_WAIT / NOT_DISPATCHED` |
+| Closure | `CLOSURE-LOCAL-INSTALL-T04B-01` / build-source TDD closure below |
 | Dependency | 04A independently approved and guarded-integrated |
-| Language | Inno Setup 6.7.3 plus Python 3.11 strict build boundary |
+| Implementation language | Inno Setup 6.7.3 plus Python 3.11 with strict Pydantic models and `mypy --strict` at the build boundary |
 | Owner / reviewer | Codex / current `main` worktree |
 | Implementation owner | `UNALLOCATED`; exact dispatch is still required |
 | Proposed source / test | `installer/JohnnyAIWorkflow.iss`; `installer/build_package.py`; `tests/test_windows_installer_source.py` |

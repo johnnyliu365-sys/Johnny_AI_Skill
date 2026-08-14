@@ -4,8 +4,9 @@
 | --- | --- |
 | SPEC / AC | Local installer SPEC / AC-01 through AC-05, AC-09 through AC-12 |
 | State | `PLANNED / DEPENDENCY_WAIT / NOT_DISPATCHED` |
+| Closure | `CLOSURE-LOCAL-INSTALL-T04F-01` / evidence closure below |
 | Dependency | 04D staged SHA and 04E Windows environment approved |
-| Language | Inno Setup 6.7.3 plus approved Python runner |
+| Implementation language | `N/A` — reviewer-controlled build/evidence gate executing frozen Inno Setup 6.7.3 plus the approved Python 3.11 runner; no source edits |
 | Owner / reviewer | Codex / current `main` worktree |
 | Implementation owner | `N/A` — reviewer-controlled build/evidence gate; no source edits |
 | Execution class | Reviewer-controlled clean-export build; no source edits |

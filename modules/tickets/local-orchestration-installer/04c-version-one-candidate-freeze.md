@@ -4,7 +4,9 @@
 | --- | --- |
 | SPEC / AC | Local installer SPEC / AC-01 through AC-12 |
 | State | `PLANNED / DEPENDENCY_WAIT / NOT_DISPATCHED` |
+| Closure | `CLOSURE-LOCAL-INSTALL-T04C-01` / required evidence below |
 | Dependency | 04A/04B approved and integrated; all package prerequisites complete |
+| Implementation language | `N/A` — reviewer-only evidence gate; verifies frozen Python 3.11 and Inno Setup 6.7.3 sources without implementation |
 | Owner / reviewer | Codex / current `main` worktree |
 | Implementation owner | `N/A` — reviewer-only evidence gate |
 | Execution class | Reviewer-owned evidence gate; no source/test implementation lane |

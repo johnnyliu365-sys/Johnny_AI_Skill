@@ -4,6 +4,8 @@
 | --- | --- |
 | SPEC / AC | Local installer SPEC revision 02 / AC-02, AC-09 and AC-10 |
 | State | `PLANNED / DEPENDENCY_WAIT` |
+| Closure | `CLOSURE-LOCAL-INSTALL-T06C-01` / C1-C4 |
+| Implementation language | Python 3.11 with strict Pydantic models and `mypy --strict` |
 | Dependency | Autonomous Ticket 04 and local 06B independently approved/integrated |
 | Responsibility | Existing implementation task/worktree after a unique ticket receipt; control `main` reviews |
 

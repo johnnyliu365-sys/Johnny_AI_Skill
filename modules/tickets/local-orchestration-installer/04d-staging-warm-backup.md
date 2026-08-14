@@ -4,7 +4,9 @@
 | --- | --- |
 | SPEC / AC | Local installer SPEC / AC-11 |
 | State | `PLANNED / DEPENDENCY_WAIT / NOT_DISPATCHED` |
+| Closure | `CLOSURE-LOCAL-INSTALL-T04D-01` / safe remote gate below |
 | Dependency | 04C approved with one exact complete-source candidate SHA |
+| Implementation language | `N/A` — reviewer-only remote evidence gate; no source/test implementation |
 | Owner / reviewer | Codex / current `main` worktree |
 | Implementation owner | `N/A` — reviewer-only remote evidence gate |
 | Execution class | Reviewer-owned exact remote gate; no implementation lane |

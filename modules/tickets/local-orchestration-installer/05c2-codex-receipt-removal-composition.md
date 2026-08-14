@@ -1,37 +1,40 @@
-# 05C2 — Codex Receipt Removal Composition
+# 05C2 — Codex Receipt Removal Composition Parent
 
 | Field | Value |
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-02, AC-06 and AC-07 |
-| State | `PLANNED / REFREEZE_REQUIRED` |
-| Closure | `CLOSURE-LOCAL-INSTALL-T05C2-01` / C1-C8 |
-| Dependency | 05C1 independently approved and integrated |
-| Profile / XSS | `STANDARD`; one implementation owner, no helper / `XSS_NOT_APPLICABLE` |
+| Revision | `02` — control-plane convergence decomposition |
+| State | `CONVERGENCE_DECOMPOSED / NON_DISPATCHABLE` |
+| Dependency | 05C1 independently approved and integrated by `9e0343a` |
+| Replacement | Serial children 05C2A then 05C2B |
+| Profile / XSS | `STANDARD`; one implementation owner per child, no helper / `XSS_NOT_APPLICABLE` |
 | Implementation language | Python 3.11 with strict Pydantic models and `mypy --strict` |
 
-## Reserved responsibility
+## Why this parent cannot be implemented safely
 
-Compose the 05C1 request with the integrated closed five-operation compensation
-capability. Fresh absence yields mutation-free `NOT_INSTALLED`; otherwise the
-exact plugin is removed before the exact marketplace and only fresh conjunctive
-absence may yield `REMOVED`. Every incomplete or foreign result is a finite
-`UNINSTALL_BLOCKED`.
+The revision-01 ticket required the receipt-removal coordinator to reuse the
+integrated response admission and identity rules. Those rules exist only behind
+five private functions in `codex_compensation_composition.py`. Its public
+`compose_codex_compensation` entrypoint additionally requires a
+journal-authorized registration compensation plan that a persisted uninstall
+receipt neither has nor may synthesize.
 
-## Frozen behavior pending dependency readback
+Keeping this as one implementation ticket would therefore require at least one
+forbidden design: import private helpers, duplicate hundreds of lines of exact
+response admission, or invent a false registration journal. This is a
+reviewer-owned `TICKET_DEFECT`; it is not a product requirement change and
+creates no implementation authority.
 
-- One new composition module, one direct test and export-only root changes.
-- Admit the existing capability and 05C1 request before calls.
-- Pre-removal list/list/path evidence decides only the exact all-absent replay.
-  Any residue proceeds to removal; mismatch/malformed/declared failure blocks
-  without remove calls.
-- The mutation order is plugin remove, marketplace remove. Post-removal evidence
-  is fresh plugin list, marketplace list and installed-path proof; all three must
-  prove the exact receipt identity absent before `REMOVED`.
-- A partial retry continues the ordered removal attempt and terminal proof; it
-  never returns early `NOT_INSTALLED` from one or two absent components.
-- Reuse integrated response DTO admission and identity rules; do not duplicate
-  or weaken capability admission, use queued fake answers, or catch undeclared
-  runtime exceptions.
+## Convergence decomposition
 
-This child will be refrozen against the exact integrated 05C1 API before lane
-admission. No implementation authority exists now.
+1. **05C2A — compensation observation admission:** expose one pure public,
+   request-bound observation admission API backed by the existing private
+   normalizers. It invokes no operation and duplicates no response rules.
+2. **05C2B — receipt removal coordinator:** consume 05C1, the admitted closed
+   five-operation capability and 05C2A to perform pre-proof, ordered removal,
+   post-proof and replay classification.
+
+05C2B cannot dispatch until 05C2A is independently approved and integrated.
+05C3 cannot dispatch until 05C2B is independently approved and integrated.
+This parent remains immutable planning evidence and must never own a branch,
+allocation, receipt or implementation commit.

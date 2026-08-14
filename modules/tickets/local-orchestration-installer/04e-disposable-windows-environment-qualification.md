@@ -4,7 +4,9 @@
 | --- | --- |
 | SPEC / AC | Local installer SPEC / staging architecture and AC-08, AC-11 |
 | State | `PLANNED / DEPENDENCY_WAIT / NOT_DISPATCHED` |
+| Closure | `CLOSURE-LOCAL-INSTALL-T04E-01` / environment acceptance cells below |
 | Dependency | 04D remote staging SHA approved |
+| Implementation language | Python 3.11 with strict Pydantic models and `mypy --strict`; bounded PowerShell is an injected Windows effect boundary, not an untyped product contract |
 | Environment | Owner-authorized disposable Windows user/VM/sandbox; never target project |
 | Implementation owner | `UNALLOCATED` |
 | XSS | `XSS_NOT_APPLICABLE` |
