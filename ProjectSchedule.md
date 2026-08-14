@@ -192,10 +192,11 @@
 
 | Stage | State | Evidence / next gate |
 | --- | --- | --- |
-| Requirement / architecture | ROUTER PHASE DONE | `CHG-20260813-016/017`, `CHG-20260814-019`; `ADR-20260813-008/009`, `ADR-20260814-011`; tiered model handover, low-model admission and optional UI design-source routing confirmed. |
-| Exact specification | REVISION 02 / ROUTER_PHASE_APPROVED | `modules/spec/adaptive-project-orchestration.md`; AC-12 through AC-14 and Router portions of AC-05 through AC-10 are authorized. Other phases remain owner-review-required. |
-| Ticket decomposition | ROUTER_ONLY / IN_PROGRESS | Five serial Router closures are frozen as candidates; formal ticket/receipt/owner allocation starts only after document-contract verification. |
-| Router Ticket R01 | IN_PROGRESS / REVISION_03_CORRECTION_DISPATCH_CONFIRMED | `CLOSURE-ADAPTIVE-ROUTER-R01-03`; CR-R01-004; review baseline `51de13f`; same receipt/owner/branch/scope. |
+| Requirement / architecture | ROUTER POLICY APPROVED | `CHG-20260813-016/017`, `CHG-20260814-019`, `CHG-20260815-020`; tiered model handover, sealed shared Context, low-model admission and optional UI routing confirmed. |
+| Exact specification | REVISION 03 / ROUTER_PHASE_APPROVED | `modules/spec/adaptive-project-orchestration.md`; AC-12 through AC-15 and Router portions of AC-05 through AC-10 are authorized. Other phases remain owner-review-required. |
+| Ticket decomposition | ROUTER_ONLY / IN_PROGRESS | Six serial Router closures; only the next dependency-satisfied closure may receive a formal ticket and receipt. |
+| Router Ticket R01 | COMPLETE / APPROVED / INTEGRATED | Route instruction contract reviewed at `fefaa0c` and guarded-integrated at `5c3445f`; CR-R01-001 through CR-R01-004 closed. |
+| Router Ticket R02 | ELIGIBLE / TICKET_NOT_CREATED | Next closure: shared-Context lifecycle and mutation-authority gate. No later Router or non-Router ticket is eligible first. |
 | Other implementation lanes | PAUSED | 06G0P return is preserved pending review; 06G0-06G4, packaging and other rework/new tickets do not resume before Router acceptance. |
 
 ### Ticket 05 selection after external capability proof

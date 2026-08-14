@@ -131,7 +131,7 @@ independent ticket and is not smuggled into this correction.
 | Independent tests | PASS: six-module Router suite `99/99`; strict mypy `150` files with external cache removed; in-memory compile `150`. |
 | Independent semantic/type probe | PASS: all three canonical CRLF-to-LF policy hashes independently match ticket and Profile metadata; representative Wayfinder/no-return directions pass; seven named AST type/annotation assertions pass; no subprocess import exists. |
 | Worktree / effects | PASS: exact branch/head, clean tracked/ignored status, three registered worktrees and no cache/runtime residue. `XSS_NOT_APPLICABLE`; no target, host, network, push, package, install, Secret, release or deployment effect. |
-| Result | `APPROVED / INTEGRATION_PENDING` |
+| Result | `APPROVED / INTEGRATED` |
 
 CR-R01-001 through CR-R01-004 are closed. R1-R7 remain satisfied after the owner-approved policy
 change, and the exact current policy references fail closed instead of silently using stale
@@ -141,3 +141,11 @@ This approval does not claim that shared-Context writes are already blocked. R01
 trustworthy route instruction metadata only. The independently scoped
 `02-shared-context-lifecycle-gate` must implement and prove the operation/role/stage/revision
 authority boundary before model-role, ticket-admission or non-Router work resumes.
+
+## Guarded integration
+
+Approval commit `fefaa0cc55bb59292df9c0629a505856d19cc1db` preceded integration. Read-only
+`merge-tree` returned a clean result, and normal non-force merge
+`5c3445faedc639e90a1169d1c0e385aef6a9018a` integrated the exact reviewed handoff. Post-merge
+six-module regression is `99/99`, in-memory compile is `150`, diff check is clean and no
+tracked/ignored/cache residue exists. No push, release, deployment or external effect occurred.

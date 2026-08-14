@@ -8,8 +8,8 @@
 
 | Ticket | Observable closure | State | Dependency |
 | --- | --- | --- | --- |
-| [01-route-instruction-contract](01-route-instruction-contract.md) | Every Router decision carries one versioned skill reference and one exact expected typed return; technical halts use the Profile's router-control fallback. | `APPROVED / INTEGRATION_PENDING` | terminal review revision 04 |
-| `02-shared-context-lifecycle-gate` | Architecture-stage create/seal and change-control-only revision admission; all later roles are read/reference-only. | `CANDIDATE / NON_DISPATCHABLE` | R01 approved/integrated |
+| [01-route-instruction-contract](01-route-instruction-contract.md) | Every Router decision carries one versioned skill reference and one exact expected typed return; technical halts use the Profile's router-control fallback. | `COMPLETE / APPROVED / INTEGRATED` | `5c3445f` |
+| `02-shared-context-lifecycle-gate` | Architecture-stage create/seal and change-control-only revision admission; all later roles are read/reference-only. | `ELIGIBLE / TICKET_NOT_CREATED` | R01 complete |
 | `03-model-role-readiness-wake` | SPEC readiness and architecture-owner sleep/wake decision kernel. | `CANDIDATE / NON_DISPATCHABLE` | R02 approved/integrated |
 | `04-low-model-ticket-admission` | Four-way low-model decomposition/admission decision kernel. | `CANDIDATE / NON_DISPATCHABLE` | R03 approved/integrated |
 | `05-ui-design-source-routing` | Optional design-source capability decision kernel. | `CANDIDATE / NON_DISPATCHABLE` | R04 approved/integrated |

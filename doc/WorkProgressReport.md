@@ -4919,3 +4919,12 @@
 | Reversal | Temporarily restoring the old `context-routing` pair made the authenticity oracle red; the pair was restored exactly. The retained R03 `str` field and tuple-annotation reversals were also red and restored. |
 | Verification | Focused Router `32/32`; six-module regression `99/99`; full serial unittest `535/535`; strict full-tree mypy `150` source files with external cache removed; in-memory compile `150`; policy-byte readback, AST/source gate, exact two-path correction scope, merge ancestry, `git diff --check`, three-worktree topology, tracked/ignored porcelain and zero cache/runtime residue pass. |
 | Readback / boundary | Final implementation is metadata-only; no route/public/type behavior changed. `XSS_NOT_APPLICABLE`; no helper/subagent, new worktree, self-review/integration, live model/host/Codex/home/config/target-project/network effect, push/staging publication, package/install, Secret, release or deployment. |
+
+## PRG-20260815-456 - Router Ticket R01 approval and guarded integration
+
+| Field | Evidence |
+| --- | --- |
+| Independent review | Approval `fefaa0cc55bb59292df9c0629a505856d19cc1db`; exact merge/correction/handoff scope, three policy hashes, P0 AST types, six-module `99/99`, strict mypy `150`, compile `150`, topology and residue independently pass. CR-R01-001..004 are closed. |
+| Integration | Read-only merge-tree reported no conflict; normal guarded merge `5c3445faedc639e90a1169d1c0e385aef6a9018a` integrated exact handoff `9a789504365d8364b616479cda5b0d2c6e3f12f7` without force/reset/overwrite. Post-merge six-module `99/99` and compile `150` pass. |
+| Transition | R01 is `COMPLETE / APPROVED / INTEGRATED`; allocation `aln_adaptive_router_r01_20260814` is released. R02 shared-Context lifecycle gate becomes the only eligible next Router closure; later Router and all non-Router work remain paused. |
+| Effects | No push, release, deployment, target-project, live host/network, package/install or Secret effect. |
