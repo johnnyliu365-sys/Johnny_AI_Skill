@@ -66,3 +66,13 @@ The four hashes originally frozen under CR-177 are retained above only as the
 historical archive-frame evidence that exposed the reviewer mistake; they do
 not supersede PRG-410. Future provenance should label its byte frame explicitly,
 but that nonblocking hardening does not alter this ticket's frozen closure.
+
+## Guarded integration
+
+| Field | Evidence |
+| --- | --- |
+| Decision | `COMPLETE / APPROVED / INTEGRATED` |
+| Merge | Reviewer-owned guarded merge `1f6532a069fade0bfcf526ad0d49de7a88b281bb` integrates owner merge `50f151c0ec6e9abec9b4c13bdf65e702d97d468e`; Git resolved the predicted WPR append automatically with no unresolved conflict. |
+| Blob/readback | All four integrated implementation blob IDs exactly equal approved implementation `d407937d03e7dba49cf066599ac9d5c43e9b3624`; PRG-409 through PRG-413 each occur exactly once. |
+| Post-merge verification | Focused `52/52` and strict full-tree mypy over `148` files pass; the repository-external cache was removed and control status is clean. |
+| Continuation | 05C2C2A receipt/allocation is closed. 05C2C2 revision 03 is refrozen against the integrated strict-bool proof API and is the only serial continuation. |

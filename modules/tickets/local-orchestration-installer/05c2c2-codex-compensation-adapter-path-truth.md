@@ -4,10 +4,10 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-02, AC-06, AC-07 and AC-08 |
 | Change / PRD / Context | `CHG-20260808-011` / `PRD.md §15` / `doc/context/local-orchestration-installer/main.md` |
-| Revision | `02` |
-| State | `BLOCKED / TICKET_DEFECT / DEPENDENCY_WAIT` |
+| Revision | `03` |
+| State | `PLANNED / REFREEZE_COMPLETE / DISPATCH_PENDING` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05C2C2-01` / M1-M7 |
-| Dependency | 05C2C1 review `90dac00e92911f8c49049cf4915373374945332a`; guarded merge `fffbc616ee1870b69845cbcecf37a98e842106d3` |
+| Dependency | 05C2C1 guarded merge `fffbc616ee1870b69845cbcecf37a98e842106d3`; 05C2C2A approval `6cca1210b51e6d5d5e8105876c993540a12eea21` and guarded merge `1f6532a069fade0bfcf526ad0d49de7a88b281bb` |
 | Profile / resource | `STANDARD`; one implementation owner, no helper; serial consumer of the exact 05C2C1 result |
 | XSS | `XSS_NOT_APPLICABLE`: typed Python staging adapter only; no renderer or JavaScript context |
 | Implementation language | Python 3.11 with explicit Pydantic/dataclass contracts and full-tree `mypy --strict` |
@@ -32,6 +32,9 @@ remains a finite operation failure.
   action binding before invoking the oracle.
 - Only exact 05C2C1 response admission may create `absent=False`; never infer
   presence from `OracleBlocked`, child exit codes, raw output or generic errors.
+- Use the integrated 05C2C2A ordinary strict constructor. The result field is
+  exact built-in `bool`; no `model_construct`, cast, coercion, untyped object or
+  alternate DTO may bypass the manifest-bound proof contract.
 - `OracleAbsent` remains `absent=True`; `OracleInstalledPathPresent` becomes
   `absent=False`; every response rejection retains the existing finite failure
   mapping and no proof.
@@ -43,7 +46,7 @@ remains a finite operation failure.
 | ID | Required evidence |
 | --- | --- |
 | `M1` | First red proves exact `OracleInstalledPathPresent` currently reaches the adapter but is rejected as `EVIDENCE_INVALID` instead of producing a false proof. |
-| `M2` | Exact admitted absent/present map to true/false with the same rebuilt manifest and one ABSENCE action. |
+| `M2` | Exact admitted absent/present map through the ordinary strict proof constructor to built-in true/false with the same rebuilt manifest and one ABSENCE action; no model bypass is used. |
 | `M3` | Blocked/rejected/malformed/wrong-action/subclass/constructed/extra/private matrices remain finite failures. |
 | `M4` | Invalid or mismatched request performs zero oracle calls and cannot invoke candidate hooks. |
 | `M5` | Exact adapter exceptions preserve the frozen propagation/short-circuit policy. |
@@ -60,7 +63,7 @@ ticket is frozen against guarded merge
 `fffbc616ee1870b69845cbcecf37a98e842106d3`. There is no numeric line
 criterion.
 
-## Planned binding
+## Revision-02 planned binding (closed)
 
 | Field | Value |
 | --- | --- |
@@ -77,7 +80,7 @@ reviewer-reserved progress identifier. It may not self-review/integrate,
 orchestrate another Agent, create a worktree, touch live Codex/host/target
 project, push/publish staging, package/install, release or deploy.
 
-## Dispatch registry
+## Revision-02 dispatch registry (closed)
 
 | Field | Value |
 | --- | --- |
@@ -110,3 +113,32 @@ consumed absence predicate truthfully constructible as an exact strict bool,
 updates its direct consumers away from `model_construct`, and is independently
 approved and integrated. This ticket will then be refrozen as revision 03
 against that exact API; its revision-02 receipt is closed and cannot be replayed.
+
+## Revision-03 refreeze
+
+The integrated upstream proof now accepts exact built-in `True` and `False`
+through ordinary strict Pydantic construction. The first red remains the
+current adapter's exact admitted `OracleInstalledPathPresent` mapping to
+`EVIDENCE_INVALID`; it must become a manifest-bound false proof without
+changing response admission, request-before-effect ordering or failure policy.
+
+Before implementation, the owner must mechanically prove that
+`CodexInstalledPathAbsenceProof(manifest=..., absent=False)` constructs through
+the public validator and retains `type(absent) is bool`. A mismatch is a typed
+`HALT / TICKET_SCHEMA_INVALID`, not permission to widen types or resurrect
+`model_construct`. M1-M7 and the two-path scope remain otherwise unchanged.
+
+### Revision-03 binding
+
+| Field | Value |
+| --- | --- |
+| Project / closure | `prj-local-orchestration-installer-poc-20260808` / `CLOSURE-LOCAL-INSTALL-T05C2C2-01` |
+| Workspace / handoff | `wsb_local_orchestration_install_05c2c2_r03_20260814_01` / `hnd_local_orchestration_install_05c2c2_r03_20260814` |
+| Allocation / receipt | `aln_local_orchestration_install_05c2c2_r03_20260814` / `rcpt_local_orchestration_install_05c2c2_r03_20260814` |
+| Correlation / question | `corr-local-orchestration-install-05c2c2-r03-20260814` / `q-local-orchestration-install-05c2c2-r03-20260814` |
+| Side context | `scx-local-orchestration-install-05c2c2-r03-20260814-01` |
+| Authority | Project-owner standing auto-continue `PRG-20260809-042`; refreeze is not dispatch. |
+
+Revision-02's receipt and reserved PRG-408 remain closed historical evidence.
+Revision 03 will receive a fresh exact dispatch registry and reserved handoff;
+no identifier from revision 02 may authorize implementation.

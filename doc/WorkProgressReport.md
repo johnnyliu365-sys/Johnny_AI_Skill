@@ -4475,3 +4475,14 @@
 | Decision | CR-177 and the PRG-413 implementer-correction reservation are withdrawn. T1-T7, P0 typing, focused `52/52`, full `512/512`, strict mypy `148`, compile `148`, three reversals, scope, ancestry and immutable blob identity pass; 05C2C2A is approved. |
 | Continuation | Only reviewer-owned guarded integration of owner merge `50f151c0ec6e9abec9b4c13bdf65e702d97d468e`, followed by 05C2C2 revision-03 refreeze. Future hash evidence must label its byte frame; no new implementation ticket is required for this nonblocking documentation hardening. |
 | Boundary | Reviewer documentation correction only. No implementation-worktree write, source/test mutation, new worktree/helper, live effect, push/staging publication, package/install, Secret, release or deployment. |
+
+## PRG-20260814-414 - Ticket 05C2C2A guarded integration and 05C2C2 revision-03 refreeze
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `APPROVED(05C2C2A) -> GUARDED_INTEGRATION_COMPLETED -> ACTION_COMPLETED / 05C2C2_REVISION_03_REFREEZE_COMPLETE` |
+| Integration | Approval correction `6cca1210b51e6d5d5e8105876c993540a12eea21`; owner merge `50f151c0ec6e9abec9b4c13bdf65e702d97d468e`; guarded merge `1f6532a069fade0bfcf526ad0d49de7a88b281bb`. All four integrated blobs equal implementation `d407937d03e7dba49cf066599ac9d5c43e9b3624`, and PRG-409 through PRG-413 each occur once. |
+| Post-merge evidence | Focused `52/52` and strict full-tree mypy `148` pass; the exact repository-external cache was removed and control status is clean. |
+| Revision-03 type closure | 05C2C2 now explicitly requires the integrated ordinary strict `bool` proof constructor, built-in false/true readback, no model bypass/coercion/widening, exact response admission and request-before-effect. M1-M7 and the two-path scope remain frozen. |
+| Binding / resource | Fresh revision-03 workspace/handoff/allocation/receipt/correlation/question/side-context; `STANDARD`, one owner and no helper. Revision-02 receipt/PRG-408 remain closed historical evidence. |
+| Boundary | Reviewer integration and control-document refreeze only. No implementation-worktree write, live Codex/host/target-project effect, push/staging publication, package/install, Secret, release or deployment. |
