@@ -5243,3 +5243,14 @@
 | Synchronization | Additively merge this exact registry into the same branch. Only the expected append-only `doc/WorkProgressReport.md` overlap may be resolved, retaining PRG-480 through PRG-484 each once and in order. Any other conflict is `BLOCKED`. |
 | Revalidation | Read revision-02 ticket and exact Context; prove implementation `458791b470629fe7c0e3bb263af87560b58e54b9` four source/test blobs unchanged; rerun focused/Router/six-module/full/strict-mypy/compile/source/scope/topology/residue gates; append one WPR-only handoff. |
 | Boundary | All source/test paths are read-only. No new implementation commit, branch/worktree, helper, R02C2/R02C3 implementation, external effect, push, package/install, Secret, release or deployment. Changed candidate bytes return `CHANGE_DETECTED`. `XSS_NOT_APPLICABLE`. |
+
+## PRG-20260815-485 - Router R02C1 revision-02 revalidation handoff
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_DISPATCH_CONFIRMED(PRG-484) -> ACTION_COMPLETED / REVIEW_HANDOFF`; CR-R02C1-001 is closed by schema revalidation with unchanged candidate behavior. |
+| Synchronization | Same-branch registry merge `a952386f6de56c37463fbe09782809c71d55d3ca` synchronized exact `4c110a5c7d55711443387370dc3872aff53b937e`; only the predicted append-only WPR conflict was resolved, retaining PRG-480 through PRG-484 once and in order. |
+| Candidate preservation | Immutable implementation `458791b470629fe7c0e3bb263af87560b58e54b9` remains the candidate; all four authorized source/test blobs are byte-identical and no implementation commit was created. |
+| Verification | Dedicated plus Router focused `63/63`; Router regression `130/130`; explicit serial full suite `566/566` across `49` test modules; strict full-tree mypy `152/152`; in-memory compile `152/152`; source gate `1/1`; ACX8 reversal gate `1/1` covering all three red/restore reversals; scope, diff, ancestry and topology gates pass. |
+| Readback | Branch `codex/implementation-router-artifact-tree-r02c1`; permanent linked git-dir and exactly three worktrees retained; tracked and ignored porcelain empty before handoff; local cache/bytecode/runtime residue `0`; external mypy cache removed; `XSS_NOT_APPLICABLE`. |
+| Boundary | No source/test mutation, helper, Agent control, R02C2/R02C3 implementation, external effect, push, package/install, Secret, release or deployment. |
