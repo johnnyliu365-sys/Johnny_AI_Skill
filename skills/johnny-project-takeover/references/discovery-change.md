@@ -56,4 +56,3 @@ business rules change:
    regression tests.
 
 Return event: `REQUIREMENT_CHANGED` until the new approved ticket baseline exists.
-

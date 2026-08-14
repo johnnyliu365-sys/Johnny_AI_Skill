@@ -72,4 +72,3 @@ Create a new branch only with recorded `FRESH_BRANCH_REQUIRED` evidence:
 New defect discovery or a request for more tests is not sufficient. Preserve old branch/commit
 references and use traceable Git transfer with full re-verification. Active owners may clear
 known reproducible residue in their own worktree; no other Agent may edit across worktrees.
-

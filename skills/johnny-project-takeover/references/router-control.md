@@ -97,4 +97,3 @@ approval prompt.
 - MCP reads only declared source references and normalizes them at the boundary.
 - Missing role, owner, workspace binding, source, capability or verification halts rather
   than widening the search or context.
-

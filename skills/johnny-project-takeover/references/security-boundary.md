@@ -33,4 +33,3 @@ implementation or review does not imply effect authority.
 Before effect, bind exact owner, action, target, environment, receipt, baseline and correlation;
 after effect, read back the exact result. Missing, replayed or mismatched evidence halts. Never
 fallback from a denied/unavailable secure Provider to local plaintext handling.
-

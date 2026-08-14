@@ -44,4 +44,3 @@ target Context. Re-run the strong-type preflight from `specification-ticketing.m
 
 Missing or inferred fields are `TICKET_DEFECT / TICKET_SCHEMA_INVALID / NON_DISPATCHABLE`, even
 if the implementation happens to look correct.
-

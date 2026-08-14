@@ -30,4 +30,3 @@ checker; a non-implementation parent/reviewer-only artifact uses explicit `N/A` 
 Missing or conflicting language is `HALT / TICKET_SCHEMA_INVALID` before implementation.
 The target project may choose the delivery stage at which this gate becomes mandatory, but that
 choice must be target-owned and versioned in Context.
-

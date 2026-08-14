@@ -45,4 +45,3 @@ When reusable source is relevant, first use `library/MODULE_CATALOG.md` or
 `$apply-reusable-modules` to select the minimum `READY` module. The catalog limits reading;
 adoption still requires Grill, SPEC and ticket approval and must not create a runtime
 dependency from the target project to this plugin.
-

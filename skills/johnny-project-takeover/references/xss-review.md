@@ -71,4 +71,3 @@ For privileged cases, enumerate JavaScript-to-host paths in reverse and verify o
 schema, action allowlist, authorization, replay and effect-before-gate behavior. A missing or
 downgraded classification is `TICKET_DEFECT` or `REQUIREMENT_CHANGED`; a bypass of the frozen
 contract is `IMPLEMENTATION_DEFECT`.
-

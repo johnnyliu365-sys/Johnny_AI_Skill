@@ -54,4 +54,3 @@ A ticket is complete only when:
 
 Return `ImplementationReturn`: `COMPLETED`, `BLOCKED` or `CHANGE_DETECTED`. Do not claim review
 approval, merge, release or deployment.
-

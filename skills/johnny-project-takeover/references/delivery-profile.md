@@ -66,4 +66,3 @@ and plan digest.
 - Staging integration is not release. Packaging requires a separate promotion gate.
 - Staging is not an installation/effect sandbox. Host, installation, removal, migration and
   other effects require a receipt-bound disposable environment.
-

@@ -84,4 +84,3 @@ verification, safety and return contract from the exact committed ticket. Correc
 If an instruction needs behavior absent from the ticket, update and commit the canonical source
 first. Unreadable, unresolved, mismatched or competing references halt before mutation with
 `HALT / DISPATCH_REFERENCE_INVALID`.
-
