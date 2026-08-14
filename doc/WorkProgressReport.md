@@ -5287,3 +5287,16 @@
 | Planned lane | Existing idle task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; permanent implementation worktree; planned branch `codex/implementation-router-requirement-lineage-r02c2`; one Luna max owner, no helper. |
 | Planned binding | Handoff `hnd-adaptive-router-r02c2-20260815`; allocation `aln-adaptive-router-r02c2-20260815`; receipt `rcpt-adaptive-router-r02c2-20260815`; correlation `corr-adaptive-router-r02c2-20260815`; question `q-adaptive-router-r02c2-20260815`; side Context `scx-adaptive-router-r02c2-20260815-01`; expected return `ret-requirement-lineage-review-handoff-r02c2`. |
 | Boundary | No receipt yet, source/test mutation, new worktree, helper, R02C3-R06, external effect, push, package/install, Secret, release or deployment. `XSS_NOT_APPLICABLE`. |
+
+## PRG-20260815-489 - Router Ticket R02C2 implementation dispatch
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `TICKET_DISPATCH_REQUIRED(PRG-488) + STANDING_OWNER_AUTO_CONTINUE -> IMPLEMENTATION_DISPATCH_CONFIRMED / IMPLEMENT`; this record is the sole R02C2 dispatch registry. |
+| Registry / ticket | Proposal `efef364c4072947f32f5ee9f0d5932187ae811d0`; exact ticket `modules/tickets/adaptive-project-orchestration/02c2-requirement-retirement-archive-lineage.md`; closure `CLOSURE-ADAPTIVE-ROUTER-R02C2-01` ACX1-ACX8 revision `r02c2-01`; this registry commit is the dispatch baseline. |
+| Binding | Handoff `hnd-adaptive-router-r02c2-20260815`; allocation `aln-adaptive-router-r02c2-20260815`; receipt `rcpt-adaptive-router-r02c2-20260815`; correlation `corr-adaptive-router-r02c2-20260815`; question `q-adaptive-router-r02c2-20260815`; side Context `scx-adaptive-router-r02c2-20260815-01`; expected return `ret-requirement-lineage-review-handoff-r02c2`. |
+| Owner / lane | Existing idle task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; permanent clean implementation worktree currently at released R02C1 handoff `2c0469febc53226fab41eddfed0242781ac0b3e6`; create only `codex/implementation-router-requirement-lineage-r02c2` from this registry. Exactly three worktrees remain. |
+| Source authority | Exactly `library/workflow_router/contracts.py`, new `requirement_lineage.py`, `__init__.py` and new `tests/test_workflow_requirement_lineage.py`; then one WPR-only handoff. Integrated artifact-tree/Router source and existing tests are read-only. |
+| Context resolution | Resolve only the exact ticket, revision-05 SPEC AC-17, `requirement-lineage`, `artifact-tree-routing` and required TDD/authority references. Prior ticket prose, requirement bodies, archive contents and unrelated library branches are identifiers only. |
+| Pre-red / return | Import/call the absent public lineage surface before production mutation; implement only ACX1-ACX8; return one implementation commit plus one WPR-only handoff after focused/regression/full/mypy/compile/reversal/source/scope/topology/residue verification. |
+| Resource / safety | `STANDARD`; host mapping `gpt-5.6-luna`, reasoning `max`; no helper. Reviewer task `019fb935-bbe1-7f71-8b4b-58ba20c81626` is sole orchestrator. No next-ticket authority, new worktree, R02C3-R06, external effect, push, package/install, Secret, release or deployment. `XSS_NOT_APPLICABLE`. |

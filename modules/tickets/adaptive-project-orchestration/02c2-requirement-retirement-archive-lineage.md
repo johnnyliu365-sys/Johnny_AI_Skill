@@ -5,14 +5,14 @@
 | SPEC / AC | `SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2` revision 05 / AC-17 |
 | PRD / change | `PRD-20260815-022` / `CHG-20260815-022` |
 | Context / environment | `doc/context/adaptive-project-orchestration/main.md` at `SPEC_REVISION_05_APPROVED / ROUTER_PHASE_ACTIVE`; local pure-Python verification in the named permanent implementation worktree; no target, host or external environment effect |
-| State | `PLANNED / READY_LOW_MODEL / NON_DISPATCHED` |
+| State | `IN_PROGRESS / RECEIPT_BOUND` |
 | Closure | `CLOSURE-ADAPTIVE-ROUTER-R02C2-01` / ACX1-ACX8 / ticket revision `r02c2-01` |
-| Dependency / baseline | R02C1 guarded integration `5b887c726a91053190050abf7f0267b48503cb5e`; closure record `412cb0515d16a7c08b897b73333a898e5cf94d93`; proposal is the commit containing `PRG-20260815-488` |
+| Dependency / baseline | R02C1 guarded integration `5b887c726a91053190050abf7f0267b48503cb5e`; proposal `efef364c4072947f32f5ee9f0d5932187ae811d0`; exact dispatch registry is the commit containing `PRG-20260815-489` |
 | Implementation language / checker | Python 3.11; `python -m mypy --strict --explicit-package-bases --no-incremental` over every Python file under `library/` and `tests/` |
 | Delivery profile / resource plan | `STANDARD`; `PRG-20260815-488`; one `gpt-5.6-luna` max implementation owner; no helper |
 | Control owner / reviewer | Control task `019fb935-bbe1-7f71-8b4b-58ba20c81626`; sole Agent orchestrator |
 | Implementation owner / lane | Existing task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; permanent worktree `C:\Users\<user>\Desktop\AI控制工作workflow-implementation`; planned branch `codex/implementation-router-requirement-lineage-r02c2` |
-| Planned binding | Handoff `hnd-adaptive-router-r02c2-20260815`; allocation `aln-adaptive-router-r02c2-20260815`; receipt `rcpt-adaptive-router-r02c2-20260815`; question `q-adaptive-router-r02c2-20260815`; correlation `corr-adaptive-router-r02c2-20260815`; side Context `scx-adaptive-router-r02c2-20260815-01`; expected return `ret-requirement-lineage-review-handoff-r02c2`; inactive until a separate exact registry |
+| Dispatch binding | Handoff `hnd-adaptive-router-r02c2-20260815`; allocation `aln-adaptive-router-r02c2-20260815`; receipt `rcpt-adaptive-router-r02c2-20260815`; question `q-adaptive-router-r02c2-20260815`; correlation `corr-adaptive-router-r02c2-20260815`; side Context `scx-adaptive-router-r02c2-20260815-01`; expected return `ret-requirement-lineage-review-handoff-r02c2`; activated only by the exact registry containing `PRG-20260815-489` |
 | XSS / effects | `XSS_NOT_APPLICABLE`; pure metadata-only validation, no source/body read, filesystem, Git, Agent, host or network effect |
 | Operations / rollback | No runtime operation. Before integration, withhold approval; after guarded integration, use a separately reviewed additive revert. Never reset, force or delete reviewed evidence. |
 

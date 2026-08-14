@@ -199,7 +199,7 @@
 | Router Ticket R02A | COMPLETE / APPROVED / INTEGRATED | `CLOSURE-ADAPTIVE-ROUTER-R02A-01`; independently approved and guarded-integrated at `9bf7d340`; allocation released and its Agent Context closed. |
 | Router Ticket R02B | COMPLETE / APPROVED / INTEGRATED | `CLOSURE-ADAPTIVE-ROUTER-R02B-01`; independently approved at `8f43e5b` and guarded-integrated at `9e3d92b`; allocation released and correction Agent Context closed. R02C1 becomes the only eligible design closure. |
 | Router Ticket R02C1 | COMPLETE / APPROVED / INTEGRATED | `CLOSURE-ADAPTIVE-ROUTER-R02C1-01` revision `r02c1-02`; candidate `458791b`; terminal approval `043daea`; guarded integration `5b887c7`. Allocation released; R02C2 becomes the only ticket-design candidate. |
-| Router Ticket R02C2 | PLANNED / READY_LOW_MODEL / NON_DISPATCHED | `CLOSURE-ADAPTIVE-ROUTER-R02C2-01` ACX1-ACX8 revision `r02c2-01`; exact ticket owns active PRD/CHG pairing and archive-only retirement reachability. Receipt remains inactive until a separate registry. |
+| Router Ticket R02C2 | IN_PROGRESS / RECEIPT_BOUND | `CLOSURE-ADAPTIVE-ROUTER-R02C2-01` ACX1-ACX8 revision `r02c2-01`; proposal `efef364c`; exact registry `PRG-20260815-489`. Active PRD/CHG pairing and archive-only retirement reachability only. |
 | Other implementation lanes | PAUSED | 06G0P return is preserved pending review; 06G0-06G4, packaging and other rework/new tickets do not resume before Router acceptance. |
 
 ### Ticket 05 selection after external capability proof
