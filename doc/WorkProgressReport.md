@@ -4996,3 +4996,14 @@
 | Synchronization | Additively merge this registry into the same branch. Only the predicted `doc/WorkProgressReport.md` overlap may be resolved by retaining every unique PRG record exactly once; any other conflict is `HALT / FRESH_BRANCH_REQUIRED_EVIDENCE`. |
 | Exact correction | First-red the three review probes; change only `contracts.py`, `profile.py`, `test_workflow_router.py`; retain POC builder defaults, accept safe distinct Profile refs, accept semantically named opaque tree refs, reject all-zero expected revisions, preserve all SC1-SC8 behavior and run three reversals. Then one WPR-only handoff. |
 | Resource / boundary | Same Luna max owner; no helper, new branch/worktree, R02B/R02C, 06G0P, live host/network/target effect, push, package/install, Secret, release or deployment. `XSS_NOT_APPLICABLE`. |
+
+## PRG-20260815-465 - Router R02A revision-02 terminal review
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `ACTION_COMPLETED / REVIEW_HANDOFF(PRG-464) -> CHANGES_REQUESTED / CR-R02A-001_BOUNDARY_CORRECTION`; CR-R02A-002 and CR-R02A-003 close, R02B remains blocked. |
+| Submitted chain | Guarded sync `b361c17b788ce04840ebf164098ea0477a8eeca6`; correction `f38c212d51b9ebfb9cdcd28742ce316f04a0a771`; WPR-only handoff `f3ef5a412de84431c0dd0c6e689bd1fec1c535cc`; exact scope and clean lane pass. |
+| Green evidence | Implementer reports focused `43/43`, six-module `110/110`, full `546/546`, strict mypy/compile `150/150` and three restored reversals. |
+| Blocking reviewer probe | Safe distinct `ctx-profile-project` / `cap-profile-architecture-owner` is rejected because substring `"file"` matches inside `profile`; ordinary `ctx-another-project` is accepted and locator-like `file-ref` / `ctx-file-uri` are rejected. |
+| Final correction boundary | Same ticket/task/worktree/branch/allocation/receipt; only `profile.py`, `test_workflow_router.py`, then WPR-only handoff. The validator must distinguish hyphen-delimited `file` locator tokens from ordinary words. |
+| Effects | No new branch/worktree, R02B/R02C, 06G0P, live host/network/target effect, push, package/install, Secret, release or deployment. `XSS_NOT_APPLICABLE`. |
