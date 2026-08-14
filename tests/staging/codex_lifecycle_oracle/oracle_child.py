@@ -326,8 +326,24 @@ def _marketplace_list(state: dict[str, object]) -> dict[str, object]:
         assert isinstance(records, list)
         for record in records:
             assert isinstance(record, dict)
-            entries.append({"name": record["name"], "root": record["root"], "marketplaceSource": {"type": "local", "value": "oracle-source"}})
+            entries.append(
+                {
+                    "name": record["name"],
+                    "root": record["root"],
+                    "marketplaceSource": _marketplace_source(record),
+                }
+            )
     return {"marketplaces": entries}
+
+
+def _marketplace_source(record: dict[str, object]) -> dict[str, str]:
+    name = record["name"]
+    locator = record["locator"]
+    if not isinstance(name, str) or not isinstance(locator, str):
+        raise OracleFailure(STATE_INVALID)
+    if not _is_canonical_segment(name) or locator != f"marketplaces/{name}.json":
+        raise OracleFailure(STATE_INVALID)
+    return {"type": "local", "value": locator.removesuffix(".json")}
 
 
 def _marketplace_remove(state: dict[str, object], state_path: Path, codex_home: Path, identity: dict[str, object]) -> dict[str, object]:
