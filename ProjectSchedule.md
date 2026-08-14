@@ -164,7 +164,7 @@
 | Ticket 05C receipt removal parent | CONVERGENCE_DECOMPOSED / NON_DISPATCHABLE | Cross-contract `host`/`HostRegistrationKey` defect removed; replaced by serial 05C1-05C3. |
 | Ticket 05C1 receipt removal request | COMPLETE / APPROVED / INTEGRATED | Correction `e07a9f5`, handoff `252a698`, review `43bae91`, guarded merge `9e0343a`; independent `476/476`, strict mypy and reversals pass; CR-173 closed. |
 | Ticket 05C2 receipt removal composition parent | CONVERGENCE_DECOMPOSED / NON_DISPATCHABLE | Public response admission is private while the public historical composition requires a registration journal; replaced by serial 05C2A-05C2B. |
-| Ticket 05C2A compensation observation admission | FROZEN / READY_FOR_LANE_ADMISSION | Expose one pure exact observation admission API backed by integrated normalizers; one owner and no helper. |
+| Ticket 05C2A compensation observation admission | IN_PROGRESS / DISPATCH_READY | Exact schema/lane registry recorded; expose one pure exact observation admission API with one existing owner and no helper. |
 | Ticket 05C2B receipt removal composition | PLANNED / DEPENDENCY_WAIT | Starts after 05C2A independently approved/integrated. |
 | Ticket 05C3 receipt removal acceptance | PLANNED / DEPENDENCY_WAIT | Starts after 05C2B independently approved/integrated. |
 | Ticket 06A Codex role-profile capability proof | DONE / APPROVED_EVIDENCE / INSTALL_BLOCKED / INTEGRATED | Implementation `38e9a8b`, handoff `f6f186f`, review `62955ec`, guarded merge `de4141e`; actual installed-host result is `ROLE_ISOLATION_UNPROVEN / ACCESS_DENIED / OUTPUT_UNAVAILABLE`, so capability dependents stay blocked. |

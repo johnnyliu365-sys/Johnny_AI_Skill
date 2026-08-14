@@ -4219,3 +4219,13 @@
 | Governance repair | Workflow now requires a machine-readable exact-ticket schema readback before dispatch and implementer-side `HALT / TICKET_SCHEMA_INVALID`; CodeReview requires independent verification of the same receipt-bound ticket blob. Chat, parent or adjacent-ticket inheritance is forbidden. |
 | Backlog repair | Every current planned/frozen/dependency-waiting ticket now explicitly records `Implementation language` or reviewer/non-dispatchable `N/A` with reason. Missing closure header identities were restored at the same control boundary. 05C2A remains the only eligible child. |
 | Boundary | Governance/ticket documents only; no source/test, implementation-worktree, branch/worktree, live effect, push/staging publication, package/install, Secret, release or deployment action. |
+
+## PRG-20260814-389 - Ticket 05C2A exact dispatch registry
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `CHILD_05C2A_FROZEN + TICKET_SCHEMA_PASS + EXACT_LANE_ADMITTED -> IMPLEMENTATION_DISPATCH_CONFIRMED / IMPLEMENT` |
+| Schema / freeze | Exact ticket `f72ed955c92ae7790198d3c15e3c2b3c3565c602` mechanically contains State, Closure A1-A8, Python 3.11 plus strict Pydantic/`mypy --strict`, `STANDARD` resource decision, `XSS_NOT_APPLICABLE`, exact scope and return. No chat/parent inheritance was used. |
+| Lane readback | Owner task `019ffb0c-c9c7-7b30-b614-02dea7ed9042` is `notLoaded`/idle in permanent `C:\Users\<user>\Desktop\AI控制工作workflow-implementation`; clean released branch/head `codex/implementation-codex-foreign-state-isolation-05b4b2e6a` / `6f926995e0aa6250e34d095dd08406908c4834a2`; exact linked Git identity, zero tracked/ignored/cache residue, three worktrees and absent target branch verified. |
+| Binding / dispatch | One-use 05C2A workspace/handoff/allocation/receipt/correlation/question/side-context from the ticket; create only `codex/implementation-codex-compensation-observation-05c2a` at the exact commit carrying this registry in the same worktree. Implement only the three frozen paths and A1-A8; return implementation commit plus reserved PRG-390 WPR-only handoff. |
+| Resource / boundary | One owner, no helper or second lane because source/test ownership overlaps and 05C2B serially depends on this public contract. No reviewer implementation-worktree write, new worktree, live effect, push/staging publication, package/install, Secret, release or deployment. |
