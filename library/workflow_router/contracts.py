@@ -467,6 +467,147 @@ class AgentContextTransitionDecision(RouterModel):
         return self
 
 
+class ArtifactTreeFamily(str, Enum):
+    """The finite workflow artifact families routed through bounded trees."""
+
+    REQUIREMENT_CHANGE = "requirement_change"
+    SHARED_CONTEXT = "shared_context"
+    AGENT_CONTEXT = "agent_context"
+    SPECIFICATION = "specification"
+    TICKET = "ticket"
+    REVIEW = "review"
+    PROGRESS_EVIDENCE = "progress_evidence"
+    ADR_SECURITY = "adr_security"
+    ARCHIVE_LIBRARY = "archive_library"
+    REUSABLE_MODULE = "reusable_module"
+
+
+class ArtifactTreeNodeKind(str, Enum):
+    """The finite topology roles of one artifact-tree node."""
+
+    ROOT_INDEX = "root_index"
+    PARTITION_INDEX = "partition_index"
+    LEAF = "leaf"
+
+
+class ArtifactTreeLifecycle(str, Enum):
+    """The lifecycle metadata carried by an artifact-tree node or edge."""
+
+    ACTIVE = "active"
+    CLOSED = "closed"
+    ARCHIVED = "archived"
+
+
+class ArtifactTreeDecisionKind(str, Enum):
+    """The finite outcomes of exact artifact-tree resolution."""
+
+    RESOLVED = "resolved"
+    ARTIFACT_TREE_INVALID = "artifact_tree_invalid"
+    ARTIFACT_PATH_NOT_FOUND = "artifact_path_not_found"
+
+
+class ArtifactTreeInvalidReason(str, Enum):
+    """The finite fail-closed reasons for an artifact-tree request."""
+
+    REQUEST_BINDING_MISMATCH = "request_binding_mismatch"
+    DUPLICATE_NODE = "duplicate_node"
+    DUPLICATE_CHILD = "duplicate_child"
+    DUPLICATE_PARENT = "duplicate_parent"
+    CYCLE = "cycle"
+    DANGLING_PATH_NODE = "dangling_path_node"
+    FAMILY_MISMATCH = "family_mismatch"
+    KIND_TRANSITION = "kind_transition"
+    EDGE_METADATA_MISMATCH = "edge_metadata_mismatch"
+    PATH_SEGMENT_MISSING = "path_segment_missing"
+
+
+class ArtifactTreeChildRef(RouterModel):
+    """Metadata for one direct child edge in an artifact-tree index."""
+
+    child_ref: OpaqueMetadataId
+    child_kind: ArtifactTreeNodeKind
+    child_revision: RevisionDigest
+    child_digest: EvidenceDigest
+    child_lifecycle: ArtifactTreeLifecycle
+
+    @model_validator(mode="after")
+    def metadata_is_not_reserved(self) -> ArtifactTreeChildRef:
+        """Reject reserved all-zero revision and digest metadata."""
+
+        if _is_all_zero(self.child_revision, "rev-"):
+            raise ValueError("artifact child revisions must identify real content")
+        if _is_all_zero(self.child_digest, "sha256_"):
+            raise ValueError("artifact child digests must identify real content")
+        return self
+
+
+class ArtifactTreeNode(RouterModel):
+    """Metadata-only node with direct-child edges and no copied artifact body."""
+
+    node_ref: OpaqueMetadataId
+    family: ArtifactTreeFamily
+    node_kind: ArtifactTreeNodeKind
+    revision: RevisionDigest
+    content_digest: EvidenceDigest
+    lifecycle: ArtifactTreeLifecycle
+    child_refs: tuple[ArtifactTreeChildRef, ...] = ()
+
+    @model_validator(mode="after")
+    def metadata_is_exact(self) -> ArtifactTreeNode:
+        """Reject reserved node metadata and children on a leaf."""
+
+        if _is_all_zero(self.revision, "rev-"):
+            raise ValueError("artifact node revisions must identify real content")
+        if _is_all_zero(self.content_digest, "sha256_"):
+            raise ValueError("artifact node digests must identify real content")
+        if self.node_kind is ArtifactTreeNodeKind.LEAF and self.child_refs:
+            raise ValueError("artifact leaves cannot contain direct children")
+        return self
+
+
+class ArtifactTreeResolutionRequest(RouterModel):
+    """One caller-selected metadata path through an artifact tree."""
+
+    request_ref: OpaqueMetadataId
+    family: ArtifactTreeFamily
+    root_ref: OpaqueMetadataId
+    explicit_path_refs: tuple[OpaqueMetadataId, ...] = Field(min_length=3)
+    expected_leaf_ref: OpaqueMetadataId
+    path_nodes: tuple[ArtifactTreeNode, ...] = Field(min_length=3)
+
+
+class ArtifactTreeResolutionDecision(RouterModel):
+    """The exact finite result of artifact-tree path admission."""
+
+    request_ref: OpaqueMetadataId
+    family: ArtifactTreeFamily
+    decision: ArtifactTreeDecisionKind
+    invalid_reason: ArtifactTreeInvalidReason | None
+    resolved_leaf_ref: OpaqueMetadataId | None
+
+    @model_validator(mode="after")
+    def result_shape_is_exact(self) -> ArtifactTreeResolutionDecision:
+        """Keep decision, reason and resolved-leaf fields finite and coherent."""
+
+        if self.decision is ArtifactTreeDecisionKind.RESOLVED:
+            if self.invalid_reason is not None or self.resolved_leaf_ref is None:
+                raise ValueError("resolved decisions require only an exact leaf")
+        elif self.decision is ArtifactTreeDecisionKind.ARTIFACT_TREE_INVALID:
+            if (
+                self.invalid_reason is None
+                or self.invalid_reason is ArtifactTreeInvalidReason.PATH_SEGMENT_MISSING
+                or self.resolved_leaf_ref is not None
+            ):
+                raise ValueError("invalid tree decisions require a non-path failure reason")
+        elif self.decision is ArtifactTreeDecisionKind.ARTIFACT_PATH_NOT_FOUND:
+            if (
+                self.invalid_reason is not ArtifactTreeInvalidReason.PATH_SEGMENT_MISSING
+                or self.resolved_leaf_ref is not None
+            ):
+                raise ValueError("missing-path decisions require only PATH_SEGMENT_MISSING")
+        return self
+
+
 class SkillReference(RouterModel):
     """Versioned metadata identifying a later-resolved skill policy."""
 

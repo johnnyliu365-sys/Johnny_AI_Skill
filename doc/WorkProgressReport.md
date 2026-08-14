@@ -5199,6 +5199,17 @@
 | Pre-red / return | Import/call the absent R02C1 public contracts/resolver before production mutation; implement only ACX1-ACX8; return one implementation commit plus one WPR-only handoff after focused/Router/six-module/full/mypy/compile/reversal/source/scope/topology/residue verification. Progress-only final is not completion. |
 | Resource / safety | Host mapping `gpt-5.6-luna`, reasoning `max`; no helper. Reviewer task `019fb935-bbe1-7f71-8b4b-58ba20c81626` is sole orchestrator. R02C2-R06 remain blocked. `XSS_NOT_APPLICABLE`; no next-ticket authority, new worktree, live model/Codex/home/App/target/network effect, push, package/install, Secret, release or deployment. |
 
+## PRG-20260815-481 - Router R02C1 artifact-tree resolution implementation handoff
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_DISPATCH_CONFIRMED(PRG-480) -> ACTION_COMPLETED / REVIEW_HANDOFF`; the pure R02C1 topology and exact-path closure is implemented in the receipt-bound lane. |
+| Implementation | `458791b470629fe7c0e3bb263af87560b58e54b9` changes exactly `library/workflow_router/contracts.py`, `library/workflow_router/artifact_tree.py`, `library/workflow_router/__init__.py` and `tests/test_workflow_artifact_tree.py`. |
+| First red / closure | Before production mutation, the dedicated test failed at collection with `ImportError` for the absent public artifact-tree contract. ACX1 strict contracts/decision algebra, ACX2 ten-family exact paths, ACX3 sibling opacity, ACX4 topology reasons, ACX5 missing/stale edge distinction and ACX6 source gates are covered; ACX8 three reversals each turned red and were restored byte-for-byte. |
+| Verification | Dedicated plus Router focused `63/63`; six-module Router regression `130/130`; explicit serial full suite `566/566` across `49` files; strict full-tree mypy `152/152`; in-memory compile `152/152`; source/scope/diff/ancestry/topology gates pass. |
+| Readback | Branch `codex/implementation-router-artifact-tree-r02c1`; permanent linked git-dir and exactly three worktrees retained; tracked and ignored porcelain empty; cache/bytecode/runtime residue `0`; external mypy cache removed; `XSS_NOT_APPLICABLE`. |
+| Boundary | No helper, Agent control, `router.py` or existing Router-test edit, R02C2-R06, source/body read port, live model/Codex/home/App/target/network effect, push, package/install, Secret, release or deployment. |
+
 ## PRG-20260815-482 - Router R02C1 initial review requires ticket refreeze
 
 | Field | Evidence |
@@ -5232,6 +5243,17 @@
 | Synchronization | Additively merge this exact registry into the same branch. Only the expected append-only `doc/WorkProgressReport.md` overlap may be resolved, retaining PRG-480 through PRG-484 each once and in order. Any other conflict is `BLOCKED`. |
 | Revalidation | Read revision-02 ticket and exact Context; prove implementation `458791b470629fe7c0e3bb263af87560b58e54b9` four source/test blobs unchanged; rerun focused/Router/six-module/full/strict-mypy/compile/source/scope/topology/residue gates; append one WPR-only handoff. |
 | Boundary | All source/test paths are read-only. No new implementation commit, branch/worktree, helper, R02C2/R02C3 implementation, external effect, push, package/install, Secret, release or deployment. Changed candidate bytes return `CHANGE_DETECTED`. `XSS_NOT_APPLICABLE`. |
+
+## PRG-20260815-485 - Router R02C1 revision-02 revalidation handoff
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_DISPATCH_CONFIRMED(PRG-484) -> ACTION_COMPLETED / REVIEW_HANDOFF`; CR-R02C1-001 is closed by schema revalidation with unchanged candidate behavior. |
+| Synchronization | Same-branch registry merge `a952386f6de56c37463fbe09782809c71d55d3ca` synchronized exact `4c110a5c7d55711443387370dc3872aff53b937e`; only the predicted append-only WPR conflict was resolved, retaining PRG-480 through PRG-484 once and in order. |
+| Candidate preservation | Immutable implementation `458791b470629fe7c0e3bb263af87560b58e54b9` remains the candidate; all four authorized source/test blobs are byte-identical and no implementation commit was created. |
+| Verification | Dedicated plus Router focused `63/63`; Router regression `130/130`; explicit serial full suite `566/566` across `49` test modules; strict full-tree mypy `152/152`; in-memory compile `152/152`; source gate `1/1`; ACX8 reversal gate `1/1` covering all three red/restore reversals; scope, diff, ancestry and topology gates pass. |
+| Readback | Branch `codex/implementation-router-artifact-tree-r02c1`; permanent linked git-dir and exactly three worktrees retained; tracked and ignored porcelain empty before handoff; local cache/bytecode/runtime residue `0`; external mypy cache removed; `XSS_NOT_APPLICABLE`. |
+| Boundary | No source/test mutation, helper, Agent control, R02C2/R02C3 implementation, external effect, push, package/install, Secret, release or deployment. |
 
 ## PRG-20260815-486 - Router R02C1 revision-02 terminal approval
 

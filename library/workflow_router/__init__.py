@@ -10,6 +10,15 @@ from .contracts import (
     AgentContextTransitionDecision,
     AgentContextTransitionRequest,
     AgentContextUpstreamState,
+    ArtifactTreeChildRef,
+    ArtifactTreeDecisionKind,
+    ArtifactTreeFamily,
+    ArtifactTreeInvalidReason,
+    ArtifactTreeLifecycle,
+    ArtifactTreeNode,
+    ArtifactTreeNodeKind,
+    ArtifactTreeResolutionDecision,
+    ArtifactTreeResolutionRequest,
     ArtifactKind,
     ArtifactRef,
     AuthorityState,
@@ -81,6 +90,7 @@ from .guarded_integration import (
     ProposalState,
 )
 from .collaboration import CollaborationTopologyResolver
+from .artifact_tree import ArtifactTreeResolver
 from .profile import build_router_poc_profile
 from .private_router import (
     AutomaticContinuationRunner,
@@ -141,6 +151,16 @@ __all__ = (
     "AgentContextTransitionDecision",
     "AgentContextTransitionRequest",
     "AgentContextUpstreamState",
+    "ArtifactTreeChildRef",
+    "ArtifactTreeDecisionKind",
+    "ArtifactTreeFamily",
+    "ArtifactTreeInvalidReason",
+    "ArtifactTreeLifecycle",
+    "ArtifactTreeNode",
+    "ArtifactTreeNodeKind",
+    "ArtifactTreeResolver",
+    "ArtifactTreeResolutionDecision",
+    "ArtifactTreeResolutionRequest",
     "ArtifactKind",
     "ArtifactRef",
     "AutomaticContinuationRunner",
