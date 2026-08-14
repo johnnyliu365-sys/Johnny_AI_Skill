@@ -2,12 +2,13 @@
 
 | Field | Value |
 | --- | --- |
-| Decision | `CHANGES_REQUESTED / CORRECTION_REQUIRED` |
-| Finding | `CR-173` — constructed-invalid invocation identity is compared before validation |
+| Decision | `APPROVED / READY_TO_MERGE` |
+| Finding | `CR-173` — closed by same-lane additive correction |
 | Classification | `IMPLEMENTATION_DEFECT + EVIDENCE_DEFECT` against revision-02 R4 |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05C1-01` / R1-R7 revision 02 |
 | Implementation | `ec53d3af854348a2f7385e485d17f3e2a84b98d8` |
 | Docs-only handoff | `fb748f4fd1b7d1f5862c55fa1484151602f174e0` |
+| Correction / handoff | `e07a9f5c30b6d843ac81ef9d0dd198ee4832158b` / `252a698b73191106a0c4551162d153be86491a08` |
 | Control correction | `103ae5385e9571c8ebd7496145b945634738e99f` / `PRG-20260814-381` |
 | Immutable archive SHA-256 | `6CA7429DC5CB9100BAB2E85564FDC5D092B0B1A82BFE5D7EE9F14F646636CDE9` |
 | XSS | `XSS_NOT_APPLICABLE` |
@@ -75,3 +76,31 @@ On the same ticket, owner, worktree, branch, allocation and receipt:
 No export/API redesign, new path, new branch/worktree, new error code or 05C2
 behavior is authorized. The control-side missing language/root contradiction is
 already corrected by revision 02 and is not an implementer finding.
+
+## Final correction review
+
+The retained branch merged correction registry
+`1b1f0c08ddd39e4a04fc9ded8c697fe5f2a65127` through merge commit
+`febab8836cf311dc97416b406fb80fdee8954533`. Correction
+`e07a9f5c30b6d843ac81ef9d0dd198ee4832158b` changes exactly the authorized
+production module and direct test; handoff
+`252a698b73191106a0c4551162d153be86491a08` changes only WPR and carries unique
+PRG-384. The lane is clean and exactly three worktrees remain.
+
+From immutable handoff export SHA-256
+`FEFF10BE64585DAA100A44C14DA27AD63581C1A72F9A923EAB89F1F457158977`, the
+reviewer independently obtained focused `14/14`, full serial `476/476`, strict
+`mypy --strict --explicit-package-bases --no-incremental` over `146` files,
+in-memory compile over `146` files and a separate five-cell adversarial
+precedence matrix. Reversing the invalid-invocation classification, source
+mapping and plugin mapping independently made their named tests red; exact
+archive bytes were restored before the temporary export and external mypy
+cache were removed.
+
+R4 now validates/rebuilds invocation `InstallationId` and `InstallRoot` before
+receipt comparison. Constructed-invalid invocation identity is
+`INVALID_INVOCATION`, invalid receipt root is `INVALID_RECEIPT`, and only valid
+unequal installation IDs are `RECEIPT_MISMATCH`. CR-173 is closed. No Browser,
+WebView, HTML/DOM renderer, JavaScript execution context, privileged bridge,
+effect port, live Codex/host call or target-project access exists; XSS remains
+`XSS_NOT_APPLICABLE`.

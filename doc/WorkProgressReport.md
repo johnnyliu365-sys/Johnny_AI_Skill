@@ -4158,3 +4158,13 @@
 | Merge admission | Merge only the exact control commit carrying this registry. Read-only `merge-tree` reports only append-only WPR overlap; preserve PRG-378 through PRG-383 exactly once. Any other conflict, dirty lane, changed implementation blob or topology drift is typed `HALT`. |
 | Correction / return | Modify only the receipt-removal source and direct test named in the ticket, with invocation validation before comparison. Return one additive correction commit and then reserved PRG-384 in one WPR-only handoff. |
 | Boundary | Same ticket/owner/worktree/branch/allocation/receipt/correlation; no helper, new lane, reviewer implementation write, live effect, push/staging publication, package/install, Secret, release or deployment. |
+
+## PRG-20260814-385 - Ticket 05C1 final correction review
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05C1 / CR-173) -> TERMINAL_CODE_REVIEW -> APPROVED / READY_TO_MERGE` |
+| Reviewed chain | Correction registry `1b1f0c08ddd39e4a04fc9ded8c697fe5f2a65127` -> merge admission `febab8836cf311dc97416b406fb80fdee8954533` -> correction `e07a9f5c30b6d843ac81ef9d0dd198ee4832158b` -> PRG-384 WPR-only handoff `252a698b73191106a0c4551162d153be86491a08`. |
+| Independent verification | Immutable export SHA-256 `FEFF10BE64585DAA100A44C14DA27AD63581C1A72F9A923EAB89F1F457158977`; focused `14/14`; full serial `476/476`; strict mypy `146`; in-memory compile `146`; reviewer adversarial precedence matrix `5/5`; classification/source/plugin reversals each turn named tests red and exact bytes restore. |
+| Decision | CR-173 is closed. Invocation identities validate before comparison; invalid invocation and receipt identities remain distinct finite results; public exports and 05C2 scope are unchanged. `XSS_NOT_APPLICABLE`. |
+| Boundary | Reviewer used only an immutable TEMP export and removed it with its external cache after byte restoration. No implementation-worktree write, live effect, push/staging publication, package/install, Secret, release or deployment. |

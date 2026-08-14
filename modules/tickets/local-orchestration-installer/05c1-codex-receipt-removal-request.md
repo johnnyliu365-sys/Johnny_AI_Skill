@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-02, AC-03 and AC-07 |
 | Revision | `02` — non-high-risk ticket correction before independent review |
-| State | `CHANGES_REQUESTED / CR-173 / SAME_BRANCH_CORRECTION` |
+| State | `COMPLETE / APPROVED / READY_TO_MERGE` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05C1-01` / R1-R7 |
 | Dependency | 05A/05B and E0-E6 integrated; parent 05C decomposition recorded |
 | Profile / XSS | `STANDARD`; one implementation owner, no helper / `XSS_NOT_APPLICABLE` |
