@@ -4983,3 +4983,25 @@
 | Closure | SC1 strict constructors/JSON matrix; SC2 profile version `2` and exact `ctx-shared-project` / `cap-architecture-owner`; SC3 all allow rows; SC4 forbidden role/stage/lifecycle; SC5 stale and change-control precedence; SC6 metadata-only manifest/state serialization; SC8 supervisor-write and sealed-revise-without-proof reversals each turned red and were restored byte-for-byte. |
 | Verification | Focused Router `40/40`; six-module Router regression `107/107`; explicit serial full suite `543/543`; strict full-tree mypy `150` source files; in-memory compile `150` Python files; AST/source sentinel, `git diff --check`, exact five-path scope and registry ancestry pass. |
 | Readback | Permanent linked git-dir and exactly three worktrees retained; tracked and ignored porcelain empty after implementation commit; workspace cache/runtime residue `0`; repository-external mypy cache removed; `XSS_NOT_APPLICABLE`. No helper, live host/network/target effect, push, package/install, release or deployment. |
+## PRG-20260815-462 - Router R02A independent review changes requested
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `ACTION_COMPLETED / REVIEW_HANDOFF(PRG-461) -> CHANGES_REQUESTED / SAME_TICKET_ADDITIVE_CORRECTION`; R02B and all non-Router work remain blocked. |
+| Review record | `doc/reviews/adaptive-project-orchestration/02a-shared-context-lifecycle-gate-code-review.md`; findings `CR-R02A-001..003` are implementation defects, not a requirement or ticket change. |
+| Independent green | Repository-external detached clone at exact handoff passed focused `40/40`, six-module `107/107`, full serial `543/543`, strict mypy `150/150`, compile `150/150` and a 39-cell decision-table adversarial matrix; the temporary clone was removed. |
+| Blocking probes | A valid alternate project Profile pair is rejected; a typed tree leaf `idx-ticket-current` is rejected by semantic-substring filtering; reserved `rev-0000000000000000` is accepted as an expected revision. |
+| Correction lane | Same ticket/task/permanent worktree/branch/allocation/receipt. Additive correction is limited to `contracts.py`, `profile.py`, `test_workflow_router.py`, followed by one WPR-only handoff; only an append-only WPR sync conflict may retain every unique PRG entry once. |
+| Boundary | No new branch/worktree, R02B/R02C, 06G0P, live host/network/target effect, push, package/install, Secret, release or deployment. `XSS_NOT_APPLICABLE`. |
+
+## PRG-20260815-463 - Router R02A additive correction dispatch
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `CHANGES_REQUESTED(PRG-462) + STANDING_OWNER_AUTO_CONTINUE -> CORRECTION_DISPATCH_CONFIRMED / IMPLEMENT`; no ticket refreeze or new allocation/receipt is created. |
+| Review baseline | Formal review commit `9f3d5b3`; review record `doc/reviews/adaptive-project-orchestration/02a-shared-context-lifecycle-gate-code-review.md`; exact finding set `CR-R02A-001..003`. The dispatch registry is the commit containing this record. |
+| Retained binding | Ticket `02a-shared-context-lifecycle-gate` revision `r02a-01`; closure `CLOSURE-ADAPTIVE-ROUTER-R02A-01`; owner task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; permanent worktree and branch `codex/implementation-router-shared-context-r02a`; allocation `aln_adaptive_router_r02a_20260815`; receipt `rcpt_adaptive_router_r02a_20260815`. |
+| Correction Context | Handoff `hnd_adaptive_router_r02a_r02_20260815`; side Context `scx-adaptive-router-r02a-20260815-02`; expected submitted handoff `373cf6296312fe83b0029322b8adb5abd33b446d`; exact control review baseline above. |
+| Synchronization | Additively merge this registry into the same branch. Only the predicted `doc/WorkProgressReport.md` overlap may be resolved by retaining every unique PRG record exactly once; any other conflict is `HALT / FRESH_BRANCH_REQUIRED_EVIDENCE`. |
+| Exact correction | First-red the three review probes; change only `contracts.py`, `profile.py`, `test_workflow_router.py`; retain POC builder defaults, accept safe distinct Profile refs, accept semantically named opaque tree refs, reject all-zero expected revisions, preserve all SC1-SC8 behavior and run three reversals. Then one WPR-only handoff. |
+| Resource / boundary | Same Luna max owner; no helper, new branch/worktree, R02B/R02C, 06G0P, live host/network/target effect, push, package/install, Secret, release or deployment. `XSS_NOT_APPLICABLE`. |
