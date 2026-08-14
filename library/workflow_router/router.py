@@ -9,6 +9,13 @@ from uuid import NAMESPACE_URL, uuid5
 from pydantic import BaseModel, ConfigDict, Field
 
 from .contracts import (
+    AgentContextDecisionKind,
+    AgentContextLease,
+    AgentContextLifecycle,
+    AgentContextOperation,
+    AgentContextTransitionDecision,
+    AgentContextTransitionRequest,
+    AgentContextUpstreamState,
     ArtifactKind,
     ArtifactRef,
     AuthorityState,
@@ -571,6 +578,298 @@ class RouterEngine:
             request=request,
             decision=SharedContextMutationDecision.FORBID_ROLE_OR_STAGE,
             resulting_state=state,
+        )
+
+    def decide_agent_context_transition(
+        self,
+        *,
+        request: AgentContextTransitionRequest,
+        current_lease: AgentContextLease | None,
+    ) -> AgentContextTransitionDecision:
+        """Admit one pure, ticket-scoped Agent Context lease transition."""
+
+        if request.upstream_state is AgentContextUpstreamState.MISSING:
+            return self._agent_context_decision(
+                request=request,
+                decision=AgentContextDecisionKind.UPSTREAM_DECISION_REQUIRED,
+                prior_lease=current_lease,
+                active_lease=None,
+            )
+        if request.upstream_state is AgentContextUpstreamState.REQUIREMENT_CHANGED:
+            invalidated = (
+                None
+                if current_lease is None
+                else (
+                    self._lease_with_lifecycle(
+                        lease=current_lease,
+                        lifecycle=AgentContextLifecycle.INVALIDATED,
+                    )
+                    if current_lease.lifecycle is AgentContextLifecycle.ACTIVE
+                    else current_lease
+                )
+            )
+            return self._agent_context_decision(
+                request=request,
+                decision=AgentContextDecisionKind.REQUIREMENT_CHANGED,
+                prior_lease=invalidated,
+                active_lease=None,
+            )
+
+        if (
+            current_lease is not None
+            and current_lease.lifecycle is not AgentContextLifecycle.ACTIVE
+        ):
+            return self._agent_context_decision(
+                request=request,
+                decision=AgentContextDecisionKind.AGENT_CONTEXT_STALE,
+                prior_lease=current_lease,
+                active_lease=None,
+            )
+        if request.operation is not AgentContextOperation.OPEN and current_lease is None:
+            return self._agent_context_decision(
+                request=request,
+                decision=AgentContextDecisionKind.AGENT_CONTEXT_STALE,
+                prior_lease=None,
+                active_lease=None,
+            )
+        if current_lease is not None and (
+            request.expected_current_lease_ref != current_lease.lease_ref
+            or request.expected_current_side_context_id != current_lease.side_context_id
+        ):
+            return self._agent_context_decision(
+                request=request,
+                decision=AgentContextDecisionKind.AGENT_CONTEXT_BINDING_MISMATCH,
+                prior_lease=current_lease,
+                active_lease=None,
+            )
+
+        candidate = request.candidate_lease
+        if request.operation is AgentContextOperation.OPEN:
+            if (
+                current_lease is not None
+                or candidate is None
+                or candidate.invalidation_refs
+            ):
+                return self._agent_context_decision(
+                    request=request,
+                    decision=AgentContextDecisionKind.AGENT_CONTEXT_BINDING_MISMATCH,
+                    prior_lease=current_lease,
+                    active_lease=None,
+                )
+            return self._agent_context_decision(
+                request=request,
+                decision=AgentContextDecisionKind.ALLOW,
+                prior_lease=None,
+                active_lease=candidate,
+            )
+
+        if current_lease is None:
+            return self._agent_context_decision(
+                request=request,
+                decision=AgentContextDecisionKind.AGENT_CONTEXT_BINDING_MISMATCH,
+                prior_lease=current_lease,
+                active_lease=None,
+            )
+        if request.operation is AgentContextOperation.CLOSE:
+            return self._agent_context_decision(
+                request=request,
+                decision=AgentContextDecisionKind.ALLOW,
+                prior_lease=self._lease_with_lifecycle(
+                    lease=current_lease,
+                    lifecycle=AgentContextLifecycle.CLOSED,
+                ),
+                active_lease=None,
+            )
+        if candidate is None:
+            return self._agent_context_decision(
+                request=request,
+                decision=AgentContextDecisionKind.AGENT_CONTEXT_BINDING_MISMATCH,
+                prior_lease=current_lease,
+                active_lease=None,
+            )
+
+        if request.operation is AgentContextOperation.RESUME:
+            if candidate != current_lease:
+                return self._agent_context_decision(
+                    request=request,
+                    decision=AgentContextDecisionKind.AGENT_CONTEXT_BINDING_MISMATCH,
+                    prior_lease=current_lease,
+                    active_lease=None,
+                )
+            return self._agent_context_decision(
+                request=request,
+                decision=AgentContextDecisionKind.ALLOW,
+                prior_lease=current_lease,
+                active_lease=candidate,
+            )
+
+        if request.operation is AgentContextOperation.REBIND_CORRECTION:
+            if not (
+                self._same_correction_binding(current_lease, candidate)
+                and self._fresh_correction_values(current_lease, candidate)
+                and candidate.invalidation_refs == (current_lease.side_context_id,)
+            ):
+                return self._agent_context_decision(
+                    request=request,
+                    decision=AgentContextDecisionKind.AGENT_CONTEXT_BINDING_MISMATCH,
+                    prior_lease=current_lease,
+                    active_lease=None,
+                )
+            return self._agent_context_decision(
+                request=request,
+                decision=AgentContextDecisionKind.ALLOW,
+                prior_lease=self._lease_with_lifecycle(
+                    lease=current_lease,
+                    lifecycle=AgentContextLifecycle.INVALIDATED,
+                ),
+                active_lease=candidate,
+            )
+
+        if request.operation is AgentContextOperation.SWITCH_TICKET:
+            if not (
+                self._same_switch_binding(current_lease, candidate)
+                and self._fresh_switch_values(current_lease, candidate)
+                and candidate.invalidation_refs == (current_lease.side_context_id,)
+            ):
+                return self._agent_context_decision(
+                    request=request,
+                    decision=AgentContextDecisionKind.AGENT_CONTEXT_BINDING_MISMATCH,
+                    prior_lease=current_lease,
+                    active_lease=None,
+                )
+            return self._agent_context_decision(
+                request=request,
+                decision=AgentContextDecisionKind.ALLOW,
+                prior_lease=self._lease_with_lifecycle(
+                    lease=current_lease,
+                    lifecycle=AgentContextLifecycle.CLOSED,
+                ),
+                active_lease=candidate,
+            )
+
+        return self._agent_context_decision(
+            request=request,
+            decision=AgentContextDecisionKind.AGENT_CONTEXT_BINDING_MISMATCH,
+            prior_lease=current_lease,
+            active_lease=None,
+        )
+
+    @staticmethod
+    def _agent_context_decision(
+        *,
+        request: AgentContextTransitionRequest,
+        decision: AgentContextDecisionKind,
+        prior_lease: AgentContextLease | None,
+        active_lease: AgentContextLease | None,
+    ) -> AgentContextTransitionDecision:
+        """Build one deterministic metadata-only Agent Context decision."""
+
+        return AgentContextTransitionDecision(
+            request_ref=request.request_ref,
+            operation=request.operation,
+            decision=decision,
+            prior_lease_result=prior_lease,
+            active_lease=active_lease,
+        )
+
+    @staticmethod
+    def _lease_with_lifecycle(
+        *,
+        lease: AgentContextLease,
+        lifecycle: AgentContextLifecycle,
+    ) -> AgentContextLease:
+        """Create immutable audit metadata with only the lifecycle changed."""
+
+        return AgentContextLease(
+            lease_ref=lease.lease_ref,
+            project_id=lease.project_id,
+            context_kind=lease.context_kind,
+            lifecycle=lifecycle,
+            actor_role=lease.actor_role,
+            actor_capability_ref=lease.actor_capability_ref,
+            artifact_path_refs=lease.artifact_path_refs,
+            ticket_ref=lease.ticket_ref,
+            ticket_revision=lease.ticket_revision,
+            receipt_ref=lease.receipt_ref,
+            owner_ref=lease.owner_ref,
+            worktree_ref=lease.worktree_ref,
+            branch_ref=lease.branch_ref,
+            baseline_revision=lease.baseline_revision,
+            control_baseline_ref=lease.control_baseline_ref,
+            side_context_id=lease.side_context_id,
+            expected_return_ref=lease.expected_return_ref,
+            invalidation_refs=lease.invalidation_refs,
+        )
+
+    @staticmethod
+    def _same_correction_binding(
+        prior: AgentContextLease,
+        candidate: AgentContextLease,
+    ) -> bool:
+        """Compare the stable same-ticket correction binding."""
+
+        return (
+            candidate.project_id == prior.project_id
+            and candidate.context_kind is prior.context_kind
+            and candidate.actor_role is prior.actor_role
+            and candidate.actor_capability_ref == prior.actor_capability_ref
+            and candidate.ticket_ref == prior.ticket_ref
+            and candidate.ticket_revision == prior.ticket_revision
+            and candidate.receipt_ref == prior.receipt_ref
+            and candidate.owner_ref == prior.owner_ref
+            and candidate.worktree_ref == prior.worktree_ref
+            and candidate.branch_ref == prior.branch_ref
+            and candidate.expected_return_ref == prior.expected_return_ref
+        )
+
+    @staticmethod
+    def _fresh_correction_values(
+        prior: AgentContextLease,
+        candidate: AgentContextLease,
+    ) -> bool:
+        """Require fresh correction identity and source-bound metadata."""
+
+        return (
+            candidate.lease_ref != prior.lease_ref
+            and candidate.side_context_id != prior.side_context_id
+            and candidate.baseline_revision != prior.baseline_revision
+            and candidate.control_baseline_ref != prior.control_baseline_ref
+            and candidate.artifact_path_refs != prior.artifact_path_refs
+        )
+
+    @staticmethod
+    def _same_switch_binding(
+        prior: AgentContextLease,
+        candidate: AgentContextLease,
+    ) -> bool:
+        """Compare the stable cross-ticket ownership binding."""
+
+        return (
+            candidate.project_id == prior.project_id
+            and candidate.context_kind is prior.context_kind
+            and candidate.actor_role is prior.actor_role
+            and candidate.actor_capability_ref == prior.actor_capability_ref
+            and candidate.owner_ref == prior.owner_ref
+            and candidate.worktree_ref == prior.worktree_ref
+            and candidate.ticket_ref != prior.ticket_ref
+            and candidate.receipt_ref != prior.receipt_ref
+            and candidate.branch_ref != prior.branch_ref
+        )
+
+    @staticmethod
+    def _fresh_switch_values(
+        prior: AgentContextLease,
+        candidate: AgentContextLease,
+    ) -> bool:
+        """Require fresh switch lease, Context, baselines, return and artifact metadata."""
+
+        return (
+            candidate.lease_ref != prior.lease_ref
+            and candidate.side_context_id != prior.side_context_id
+            and candidate.baseline_revision != prior.baseline_revision
+            and candidate.control_baseline_ref != prior.control_baseline_ref
+            and candidate.expected_return_ref != prior.expected_return_ref
+            and candidate.artifact_path_refs != prior.artifact_path_refs
         )
 
     @staticmethod

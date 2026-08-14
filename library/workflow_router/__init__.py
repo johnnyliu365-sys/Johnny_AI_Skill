@@ -1,6 +1,15 @@
 """Reusable, profile-driven project workflow router POC."""
 
 from .contracts import (
+    AgentContextActorRole,
+    AgentContextDecisionKind,
+    AgentContextKind,
+    AgentContextLease,
+    AgentContextLifecycle,
+    AgentContextOperation,
+    AgentContextTransitionDecision,
+    AgentContextTransitionRequest,
+    AgentContextUpstreamState,
     ArtifactKind,
     ArtifactRef,
     AuthorityState,
@@ -123,6 +132,15 @@ from .telemetry import (
 )
 
 __all__ = (
+    "AgentContextActorRole",
+    "AgentContextDecisionKind",
+    "AgentContextKind",
+    "AgentContextLease",
+    "AgentContextLifecycle",
+    "AgentContextOperation",
+    "AgentContextTransitionDecision",
+    "AgentContextTransitionRequest",
+    "AgentContextUpstreamState",
     "ArtifactKind",
     "ArtifactRef",
     "AutomaticContinuationRunner",

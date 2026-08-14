@@ -14,6 +14,15 @@ from tempfile import TemporaryDirectory
 from pydantic import ValidationError
 
 from library.workflow_router import (
+    AgentContextActorRole,
+    AgentContextDecisionKind,
+    AgentContextKind,
+    AgentContextLease,
+    AgentContextLifecycle,
+    AgentContextOperation,
+    AgentContextTransitionDecision,
+    AgentContextTransitionRequest,
+    AgentContextUpstreamState,
     ArtifactKind,
     ArtifactRef,
     AgentUsage,
@@ -62,10 +71,14 @@ from library.workflow_router import (
 )
 from library.workflow_router.graph import RouterGraphState
 from library.workflow_router.contracts import (
+    BranchFingerprint,
     EvidenceDigest,
     OpaqueMetadataId,
+    ProjectId,
     RevisionDigest,
+    ReviewedCommitReference,
     RouterDecision,
+    WorktreeFingerprint,
 )
 from library.workflow_router.profile import ProjectWorkflowProfile, TransitionRule
 from library.workflow_router.telemetry_cli import main as telemetry_main
@@ -2605,6 +2618,15 @@ class RouteInstructionContractTests(unittest.TestCase):
             "SharedContextState",
             "SharedContextAccessRequest",
             "SharedContextAccessDecision",
+            "AgentContextKind",
+            "AgentContextActorRole",
+            "AgentContextLifecycle",
+            "AgentContextOperation",
+            "AgentContextUpstreamState",
+            "AgentContextDecisionKind",
+            "AgentContextLease",
+            "AgentContextTransitionRequest",
+            "AgentContextTransitionDecision",
             "_PolicyRoute",
             "_ExpectedRoute",
             "_ExpectedPolicy",
@@ -2614,6 +2636,9 @@ class RouteInstructionContractTests(unittest.TestCase):
             "SharedContextState",
             "SharedContextAccessRequest",
             "SharedContextAccessDecision",
+            "AgentContextLease",
+            "AgentContextTransitionRequest",
+            "AgentContextTransitionDecision",
         }
         field_names = {
             "reference_id",
@@ -2647,6 +2672,26 @@ class RouteInstructionContractTests(unittest.TestCase):
             "approved_change_ref",
             "decision",
             "resulting_state",
+            "project_id",
+            "context_kind",
+            "artifact_path_refs",
+            "ticket_ref",
+            "ticket_revision",
+            "receipt_ref",
+            "owner_ref",
+            "worktree_ref",
+            "branch_ref",
+            "baseline_revision",
+            "control_baseline_ref",
+            "side_context_id",
+            "expected_return_ref",
+            "invalidation_refs",
+            "upstream_state",
+            "expected_current_lease_ref",
+            "expected_current_side_context_id",
+            "candidate_lease",
+            "prior_lease_result",
+            "active_lease",
         }
         nullable_field_names = {
             "revision",
@@ -2654,6 +2699,11 @@ class RouteInstructionContractTests(unittest.TestCase):
             "expected_current_revision",
             "candidate_manifest",
             "approved_change_ref",
+            "expected_current_lease_ref",
+            "expected_current_side_context_id",
+            "candidate_lease",
+            "prior_lease_result",
+            "active_lease",
         }
         expected_class_fields = {
             "library/workflow_router/contracts.py": {
@@ -2689,6 +2739,41 @@ class RouteInstructionContractTests(unittest.TestCase):
                     "decision": "SharedContextMutationDecision",
                     "resulting_state": "SharedContextState",
                 },
+                "AgentContextLease": {
+                    "lease_ref": "OpaqueMetadataId",
+                    "project_id": "ProjectId",
+                    "context_kind": "AgentContextKind",
+                    "lifecycle": "AgentContextLifecycle",
+                    "actor_role": "AgentContextActorRole",
+                    "actor_capability_ref": "OpaqueMetadataId",
+                    "artifact_path_refs": "tuple[OpaqueMetadataId, ...]",
+                    "ticket_ref": "OpaqueMetadataId",
+                    "ticket_revision": "RevisionDigest",
+                    "receipt_ref": "OpaqueMetadataId",
+                    "owner_ref": "OpaqueMetadataId",
+                    "worktree_ref": "WorktreeFingerprint",
+                    "branch_ref": "BranchFingerprint",
+                    "baseline_revision": "RevisionDigest",
+                    "control_baseline_ref": "ReviewedCommitReference",
+                    "side_context_id": "OpaqueMetadataId",
+                    "expected_return_ref": "OpaqueMetadataId",
+                    "invalidation_refs": "tuple[OpaqueMetadataId, ...]",
+                },
+                "AgentContextTransitionRequest": {
+                    "request_ref": "OpaqueMetadataId",
+                    "operation": "AgentContextOperation",
+                    "upstream_state": "AgentContextUpstreamState",
+                    "expected_current_lease_ref": "OpaqueMetadataId | None",
+                    "expected_current_side_context_id": "OpaqueMetadataId | None",
+                    "candidate_lease": "AgentContextLease | None",
+                },
+                "AgentContextTransitionDecision": {
+                    "request_ref": "OpaqueMetadataId",
+                    "operation": "AgentContextOperation",
+                    "decision": "AgentContextDecisionKind",
+                    "prior_lease_result": "AgentContextLease | None",
+                    "active_lease": "AgentContextLease | None",
+                },
             },
             "library/workflow_router/profile.py": {
                 "_PolicyRoute": {"reference_id": "OpaqueMetadataId"},
@@ -2723,6 +2808,15 @@ class RouteInstructionContractTests(unittest.TestCase):
                     "state": "SharedContextState",
                     "profile": "ProjectWorkflowProfile",
                 },
+                "decide_agent_context_transition": {
+                    "request": "AgentContextTransitionRequest",
+                    "current_lease": "AgentContextLease | None",
+                },
+            },
+        }
+        expected_function_returns = {
+            "library/workflow_router/router.py": {
+                "decide_agent_context_transition": "AgentContextTransitionDecision",
             },
         }
         expected_local_annotations = {
@@ -2828,6 +2922,12 @@ class RouteInstructionContractTests(unittest.TestCase):
                         expected_annotation,
                         function_annotations.get(parameter_name),
                     )
+            functions_with_returns = expected_function_returns.get(source_key, {})
+            for function_name, expected_annotation in functions_with_returns.items():
+                function_node = functions.get(function_name)
+                self.assertIsNotNone(function_node)
+                if function_node is not None and function_node.returns is not None:
+                    self.assertEqual(expected_annotation, ast.unparse(function_node.returns))
             for function_name, locals_ in expected_local_annotations.get(source_key, {}).items():
                 function_node = functions.get(function_name)
                 self.assertIsNotNone(function_node)
@@ -2879,6 +2979,652 @@ class RouteInstructionContractTests(unittest.TestCase):
         )
         self.assertEqual(rule.skill_reference, decision.skill_reference)
         self.assertEqual(rule.expected_return, decision.expected_return)
+
+
+class AgentContextLeaseGateTests(unittest.TestCase):
+    """Exercise the ticket-scoped Agent Context lease lifecycle gate."""
+
+    def _lease(
+        self,
+        *,
+        lease_ref: OpaqueMetadataId = "lease-r02b",
+        project_id: ProjectId = "prj_0123456789abcdef",
+        lifecycle: AgentContextLifecycle = AgentContextLifecycle.ACTIVE,
+        actor_capability_ref: OpaqueMetadataId = "owner-r02b",
+        artifact_path_refs: tuple[OpaqueMetadataId, ...] = ("artifact-r02b-leaf",),
+        ticket_ref: OpaqueMetadataId = "ticket-r02b",
+        ticket_revision: RevisionDigest = "rev-0123456789abcdef",
+        receipt_ref: OpaqueMetadataId = "receipt-r02b",
+        owner_ref: OpaqueMetadataId = "owner-r02b",
+        worktree_ref: WorktreeFingerprint = "worktree-router-02",
+        branch_ref: BranchFingerprint = "branch-router-02",
+        baseline_revision: RevisionDigest = "rev-1123456789abcdef",
+        control_baseline_ref: ReviewedCommitReference = "0123456789abcdef",
+        side_context_id: OpaqueMetadataId = "side-context-r02b",
+        expected_return_ref: OpaqueMetadataId = "ret-agent-context-review-handoff-r02b",
+        invalidation_refs: tuple[OpaqueMetadataId, ...] = (),
+    ) -> AgentContextLease:
+        return AgentContextLease(
+            lease_ref=lease_ref,
+            project_id=project_id,
+            context_kind=AgentContextKind.IMPLEMENTATION_TICKET,
+            lifecycle=lifecycle,
+            actor_role=AgentContextActorRole.IMPLEMENTATION_OWNER,
+            actor_capability_ref=actor_capability_ref,
+            artifact_path_refs=artifact_path_refs,
+            ticket_ref=ticket_ref,
+            ticket_revision=ticket_revision,
+            receipt_ref=receipt_ref,
+            owner_ref=owner_ref,
+            worktree_ref=worktree_ref,
+            branch_ref=branch_ref,
+            baseline_revision=baseline_revision,
+            control_baseline_ref=control_baseline_ref,
+            side_context_id=side_context_id,
+            expected_return_ref=expected_return_ref,
+            invalidation_refs=invalidation_refs,
+        )
+
+    def _request(
+        self,
+        *,
+        request_ref: OpaqueMetadataId = "request-r02b",
+        operation: AgentContextOperation = AgentContextOperation.OPEN,
+        upstream_state: AgentContextUpstreamState = AgentContextUpstreamState.CURRENT,
+        expected_current_lease_ref: OpaqueMetadataId | None = None,
+        expected_current_side_context_id: OpaqueMetadataId | None = None,
+        candidate_lease: AgentContextLease | None = None,
+    ) -> AgentContextTransitionRequest:
+        return AgentContextTransitionRequest(
+            request_ref=request_ref,
+            operation=operation,
+            upstream_state=upstream_state,
+            expected_current_lease_ref=expected_current_lease_ref,
+            expected_current_side_context_id=expected_current_side_context_id,
+            candidate_lease=candidate_lease,
+        )
+
+    def _correction_lease(self, prior: AgentContextLease) -> AgentContextLease:
+        return self._lease(
+            lease_ref="lease-r02b-correction",
+            artifact_path_refs=("artifact-r02b-correction",),
+            baseline_revision="rev-2123456789abcdef",
+            control_baseline_ref="1123456789abcdef",
+            side_context_id="side-context-r02b-correction",
+            invalidation_refs=(prior.side_context_id,),
+        )
+
+    def _switch_lease(self, prior: AgentContextLease) -> AgentContextLease:
+        return self._lease(
+            lease_ref="lease-r02b-switch",
+            artifact_path_refs=("artifact-r02b-switch",),
+            ticket_ref="ticket-r02b-next",
+            ticket_revision="rev-2123456789abcdef",
+            receipt_ref="receipt-r02b-next",
+            branch_ref="branch-router-03",
+            baseline_revision="rev-3123456789abcdef",
+            control_baseline_ref="2123456789abcdef",
+            side_context_id="side-context-r02b-switch",
+            expected_return_ref="ret-agent-context-review-handoff-next",
+            invalidation_refs=(prior.side_context_id,),
+        )
+
+    def _decision_for(
+        self,
+        *,
+        request: AgentContextTransitionRequest,
+        current_lease: AgentContextLease | None,
+    ) -> AgentContextTransitionDecision:
+        return RouterEngine().decide_agent_context_transition(
+            request=request,
+            current_lease=current_lease,
+        )
+
+    def test_open_admits_one_active_implementation_lease(self) -> None:
+        lease = self._lease(lease_ref="lease-r02b-open")
+        request = self._request(
+            request_ref="request-r02b-open",
+            candidate_lease=lease,
+        )
+
+        decision = self._decision_for(
+            request=request,
+            current_lease=None,
+        )
+
+        self.assertEqual(AgentContextDecisionKind.ALLOW, decision.decision)
+        self.assertIsNone(decision.prior_lease_result)
+        self.assertEqual(lease, decision.active_lease)
+
+    def test_public_contracts_are_finite_and_json_round_trip_exactly(self) -> None:
+        self.assertEqual(
+            {member.value for member in AgentContextKind},
+            {"implementation_ticket"},
+        )
+        self.assertEqual(
+            {member.value for member in AgentContextActorRole},
+            {"implementation_owner"},
+        )
+        self.assertEqual(
+            {member.value for member in AgentContextLifecycle},
+            {"active", "closed", "invalidated"},
+        )
+        self.assertEqual(
+            {member.value for member in AgentContextOperation},
+            {"open", "resume", "rebind_correction", "switch_ticket", "close"},
+        )
+        self.assertEqual(
+            {member.value for member in AgentContextUpstreamState},
+            {"current", "missing", "requirement_changed"},
+        )
+        self.assertEqual(
+            {member.value for member in AgentContextDecisionKind},
+            {
+                "allow",
+                "agent_context_binding_mismatch",
+                "agent_context_stale",
+                "upstream_decision_required",
+                "requirement_changed",
+            },
+        )
+
+        current = self._lease()
+        correction = self._correction_lease(current)
+        switch = self._switch_lease(current)
+        requests = (
+            self._request(
+                request_ref="request-r02b-open-round-trip",
+                candidate_lease=current,
+            ),
+            self._request(
+                request_ref="request-r02b-row-two-round-trip",
+                operation=AgentContextOperation.RESUME,
+                expected_current_lease_ref=current.lease_ref,
+                expected_current_side_context_id=current.side_context_id,
+                candidate_lease=current,
+            ),
+            self._request(
+                request_ref="request-r02b-correction-round-trip",
+                operation=AgentContextOperation.REBIND_CORRECTION,
+                expected_current_lease_ref=current.lease_ref,
+                expected_current_side_context_id=current.side_context_id,
+                candidate_lease=correction,
+            ),
+            self._request(
+                request_ref="request-r02b-switch-round-trip",
+                operation=AgentContextOperation.SWITCH_TICKET,
+                expected_current_lease_ref=current.lease_ref,
+                expected_current_side_context_id=current.side_context_id,
+                candidate_lease=switch,
+            ),
+            self._request(
+                request_ref="request-r02b-close-round-trip",
+                operation=AgentContextOperation.CLOSE,
+                expected_current_lease_ref=current.lease_ref,
+                expected_current_side_context_id=current.side_context_id,
+            ),
+        )
+        for request in requests:
+            with self.subTest(operation=request.operation):
+                self.assertEqual(
+                    request,
+                    AgentContextTransitionRequest.model_validate_json(
+                        request.model_dump_json()
+                    ),
+                )
+
+        decision = self._decision_for(
+            request=requests[0],
+            current_lease=None,
+        )
+        self.assertEqual(
+            decision,
+            AgentContextTransitionDecision.model_validate_json(decision.model_dump_json()),
+        )
+        self.assertEqual(
+            {
+                "lease_ref",
+                "project_id",
+                "context_kind",
+                "lifecycle",
+                "actor_role",
+                "actor_capability_ref",
+                "artifact_path_refs",
+                "ticket_ref",
+                "ticket_revision",
+                "receipt_ref",
+                "owner_ref",
+                "worktree_ref",
+                "branch_ref",
+                "baseline_revision",
+                "control_baseline_ref",
+                "side_context_id",
+                "expected_return_ref",
+                "invalidation_refs",
+            },
+            set(current.model_dump()),
+        )
+
+    def test_public_contracts_reject_wrong_null_extra_and_duplicate_shapes(self) -> None:
+        current = self._lease()
+        open_request = self._request(candidate_lease=current)
+        invalid_open_payloads = (
+            {**open_request.model_dump(), "expected_current_lease_ref": current.lease_ref},
+            {**open_request.model_dump(), "expected_current_side_context_id": current.side_context_id},
+            {**open_request.model_dump(), "candidate_lease": None},
+            {**open_request.model_dump(), "unknown_field": "not-allowed"},
+            {**open_request.model_dump(), "operation": "unknown"},
+        )
+        resume_request = self._request(
+            operation=AgentContextOperation.RESUME,
+            expected_current_lease_ref=current.lease_ref,
+            expected_current_side_context_id=current.side_context_id,
+            candidate_lease=current,
+        )
+        invalid_replacement_payloads = (
+            {**resume_request.model_dump(), "expected_current_lease_ref": None},
+            {**resume_request.model_dump(), "expected_current_side_context_id": None},
+            {**resume_request.model_dump(), "candidate_lease": None},
+            {
+                **self._request(
+                    operation=AgentContextOperation.CLOSE,
+                    expected_current_lease_ref=current.lease_ref,
+                    expected_current_side_context_id=current.side_context_id,
+                ).model_dump(),
+                "candidate_lease": current,
+            },
+        )
+        for payload in invalid_open_payloads + invalid_replacement_payloads:
+            with self.subTest(payload=payload):
+                with self.assertRaises(ValidationError):
+                    AgentContextTransitionRequest.model_validate(payload)
+
+        invalid_lease_payloads = (
+            {**current.model_dump(), "artifact_path_refs": ("artifact-r02b-leaf", "artifact-r02b-leaf")},
+            {**current.model_dump(), "ticket_revision": "rev-0000000000000000"},
+            {**current.model_dump(), "baseline_revision": "rev-0000000000000000"},
+            {**current.model_dump(), "control_baseline_ref": "0000000000000000"},
+            {**current.model_dump(), "actor_capability_ref": "owner-r02b-other"},
+            {**current.model_dump(), "invalidation_refs": ("side-context-r02b",)},
+            {**current.model_dump(), "artifact_path_refs": ("uri-ref",)},
+            {**current.model_dump(), "ticket_ref": "prompt-ref"},
+        )
+        for payload in invalid_lease_payloads:
+            with self.subTest(invalid_lease=payload):
+                with self.assertRaises(ValidationError):
+                    AgentContextLease.model_validate(payload)
+
+    def test_all_five_transition_rows_have_exact_lifecycle_results(self) -> None:
+        current = self._lease()
+        correction = self._correction_lease(current)
+        switch = self._switch_lease(current)
+        rows = (
+            (
+                AgentContextOperation.OPEN,
+                self._request(request_ref="request-open-row", candidate_lease=current),
+                None,
+                AgentContextDecisionKind.ALLOW,
+                None,
+                current,
+            ),
+            (
+                AgentContextOperation.RESUME,
+                self._request(
+                    request_ref="request-row-two",
+                    operation=AgentContextOperation.RESUME,
+                    expected_current_lease_ref=current.lease_ref,
+                    expected_current_side_context_id=current.side_context_id,
+                    candidate_lease=current,
+                ),
+                current,
+                AgentContextDecisionKind.ALLOW,
+                AgentContextLifecycle.ACTIVE,
+                current,
+            ),
+            (
+                AgentContextOperation.REBIND_CORRECTION,
+                self._request(
+                    request_ref="request-correction-row",
+                    operation=AgentContextOperation.REBIND_CORRECTION,
+                    expected_current_lease_ref=current.lease_ref,
+                    expected_current_side_context_id=current.side_context_id,
+                    candidate_lease=correction,
+                ),
+                current,
+                AgentContextDecisionKind.ALLOW,
+                AgentContextLifecycle.INVALIDATED,
+                correction,
+            ),
+            (
+                AgentContextOperation.SWITCH_TICKET,
+                self._request(
+                    request_ref="request-switch-row",
+                    operation=AgentContextOperation.SWITCH_TICKET,
+                    expected_current_lease_ref=current.lease_ref,
+                    expected_current_side_context_id=current.side_context_id,
+                    candidate_lease=switch,
+                ),
+                current,
+                AgentContextDecisionKind.ALLOW,
+                AgentContextLifecycle.CLOSED,
+                switch,
+            ),
+            (
+                AgentContextOperation.CLOSE,
+                self._request(
+                    request_ref="request-close-row",
+                    operation=AgentContextOperation.CLOSE,
+                    expected_current_lease_ref=current.lease_ref,
+                    expected_current_side_context_id=current.side_context_id,
+                ),
+                current,
+                AgentContextDecisionKind.ALLOW,
+                AgentContextLifecycle.CLOSED,
+                None,
+            ),
+        )
+        for operation, request, prior, expected_decision, expected_lifecycle, active in rows:
+            with self.subTest(operation=operation):
+                decision = self._decision_for(request=request, current_lease=prior)
+                self.assertEqual(expected_decision, decision.decision)
+                self.assertEqual(active, decision.active_lease)
+                if expected_lifecycle is None:
+                    self.assertIsNone(decision.prior_lease_result)
+                else:
+                    self.assertIsNotNone(decision.prior_lease_result)
+                    if decision.prior_lease_result is not None:
+                        self.assertEqual(expected_lifecycle, decision.prior_lease_result.lifecycle)
+
+    def test_binding_mismatches_are_independent_and_do_not_replace_current(self) -> None:
+        current = self._lease()
+        cases = (
+            (
+                "expected lease",
+                current,
+                "lease-r02b-other",
+                current.side_context_id,
+            ),
+            (
+                "expected side context",
+                current,
+                current.lease_ref,
+                "side-context-r02b-other",
+            ),
+            ("project", self._lease(project_id="prj_fedcba9876543210"), current.lease_ref, current.side_context_id),
+            ("lease", self._lease(lease_ref="lease-r02b-other"), current.lease_ref, current.side_context_id),
+            ("ticket", self._lease(ticket_ref="ticket-r02b-other"), current.lease_ref, current.side_context_id),
+            (
+                "ticket revision",
+                self._lease(ticket_revision="rev-2123456789abcdef"),
+                current.lease_ref,
+                current.side_context_id,
+            ),
+            ("receipt", self._lease(receipt_ref="receipt-r02b-other"), current.lease_ref, current.side_context_id),
+            (
+                "owner",
+                self._lease(
+                    owner_ref="owner-r02b-other",
+                    actor_capability_ref="owner-r02b-other",
+                ),
+                current.lease_ref,
+                current.side_context_id,
+            ),
+            ("worktree", self._lease(worktree_ref="worktree-router-03"), current.lease_ref, current.side_context_id),
+            ("branch", self._lease(branch_ref="branch-router-03"), current.lease_ref, current.side_context_id),
+            (
+                "baseline",
+                self._lease(baseline_revision="rev-2123456789abcdef"),
+                current.lease_ref,
+                current.side_context_id,
+            ),
+            (
+                "control baseline",
+                self._lease(control_baseline_ref="fedcba9876543210"),
+                current.lease_ref,
+                current.side_context_id,
+            ),
+            (
+                "side context",
+                self._lease(side_context_id="side-context-r02b-other"),
+                current.lease_ref,
+                current.side_context_id,
+            ),
+            (
+                "expected return",
+                self._lease(expected_return_ref="ret-agent-context-review-handoff-other"),
+                current.lease_ref,
+                current.side_context_id,
+            ),
+            (
+                "artifact refs",
+                self._lease(artifact_path_refs=("artifact-r02b-other",)),
+                current.lease_ref,
+                current.side_context_id,
+            ),
+        )
+        for label, candidate, expected_lease, expected_side in cases:
+            with self.subTest(mismatch=label):
+                request = self._request(
+                    request_ref=f"request-mismatch-{label.replace(' ', '-')}",
+                    operation=AgentContextOperation.RESUME,
+                    expected_current_lease_ref=expected_lease,
+                    expected_current_side_context_id=expected_side,
+                    candidate_lease=candidate,
+                )
+                decision = self._decision_for(request=request, current_lease=current)
+                self.assertEqual(
+                    AgentContextDecisionKind.AGENT_CONTEXT_BINDING_MISMATCH,
+                    decision.decision,
+                )
+                self.assertEqual(current, decision.prior_lease_result)
+                self.assertIsNone(decision.active_lease)
+
+    def test_same_ticket_correction_requires_stable_binding_and_fresh_metadata(self) -> None:
+        current = self._lease()
+        valid = self._correction_lease(current)
+        valid_request = self._request(
+            operation=AgentContextOperation.REBIND_CORRECTION,
+            expected_current_lease_ref=current.lease_ref,
+            expected_current_side_context_id=current.side_context_id,
+            candidate_lease=valid,
+        )
+        valid_decision = self._decision_for(request=valid_request, current_lease=current)
+        self.assertEqual(AgentContextDecisionKind.ALLOW, valid_decision.decision)
+        self.assertEqual(AgentContextLifecycle.INVALIDATED, valid_decision.prior_lease_result.lifecycle if valid_decision.prior_lease_result is not None else None)
+
+        invalid_revision = self._lease(
+            lease_ref=valid.lease_ref,
+            artifact_path_refs=valid.artifact_path_refs,
+            ticket_revision="rev-2123456789abcdef",
+            baseline_revision=valid.baseline_revision,
+            control_baseline_ref=valid.control_baseline_ref,
+            side_context_id=valid.side_context_id,
+            invalidation_refs=(current.side_context_id,),
+        )
+        invalid_lease_ref = self._lease(
+            lease_ref=current.lease_ref,
+            artifact_path_refs=valid.artifact_path_refs,
+            baseline_revision=valid.baseline_revision,
+            control_baseline_ref=valid.control_baseline_ref,
+            side_context_id=valid.side_context_id,
+            invalidation_refs=(current.side_context_id,),
+        )
+        invalid_baseline = self._lease(
+            lease_ref=valid.lease_ref,
+            artifact_path_refs=valid.artifact_path_refs,
+            baseline_revision=current.baseline_revision,
+            control_baseline_ref=valid.control_baseline_ref,
+            side_context_id=valid.side_context_id,
+            invalidation_refs=(current.side_context_id,),
+        )
+        invalidation = self._lease(
+            lease_ref=valid.lease_ref,
+            artifact_path_refs=valid.artifact_path_refs,
+            baseline_revision=valid.baseline_revision,
+            control_baseline_ref=valid.control_baseline_ref,
+            side_context_id=valid.side_context_id,
+            invalidation_refs=(),
+        )
+        for label, candidate in (
+            ("ticket revision", invalid_revision),
+            ("lease", invalid_lease_ref),
+            ("baseline", invalid_baseline),
+            ("invalidation", invalidation),
+        ):
+            with self.subTest(correction=label):
+                decision = self._decision_for(
+                    request=self._request(
+                        request_ref=f"request-invalid-correction-{label.replace(' ', '-')}",
+                        operation=AgentContextOperation.REBIND_CORRECTION,
+                        expected_current_lease_ref=current.lease_ref,
+                        expected_current_side_context_id=current.side_context_id,
+                        candidate_lease=candidate,
+                    ),
+                    current_lease=current,
+                )
+                self.assertEqual(
+                    AgentContextDecisionKind.AGENT_CONTEXT_BINDING_MISMATCH,
+                    decision.decision,
+                )
+                self.assertEqual(current, decision.prior_lease_result)
+                self.assertIsNone(decision.active_lease)
+
+    def test_stale_upstream_and_requirement_precedence_are_exact(self) -> None:
+        current = self._lease()
+        closed = self._lease(lifecycle=AgentContextLifecycle.CLOSED)
+        invalidated = self._lease(lifecycle=AgentContextLifecycle.INVALIDATED)
+        resume_request = self._request(
+            operation=AgentContextOperation.RESUME,
+            expected_current_lease_ref=current.lease_ref,
+            expected_current_side_context_id=current.side_context_id,
+            candidate_lease=current,
+        )
+        for stale in (None, closed, invalidated):
+            with self.subTest(stale=stale):
+                decision = self._decision_for(request=resume_request, current_lease=stale)
+                self.assertEqual(AgentContextDecisionKind.AGENT_CONTEXT_STALE, decision.decision)
+                self.assertEqual(stale, decision.prior_lease_result)
+                self.assertIsNone(decision.active_lease)
+
+        correction = self._correction_lease(current)
+        switch = self._switch_lease(current)
+        for stale in (closed, invalidated):
+            for operation, candidate in (
+                (AgentContextOperation.RESUME, current),
+                (AgentContextOperation.REBIND_CORRECTION, correction),
+                (AgentContextOperation.SWITCH_TICKET, switch),
+                (AgentContextOperation.CLOSE, None),
+            ):
+                with self.subTest(stale=stale.lifecycle, operation=operation):
+                    decision = self._decision_for(
+                        request=self._request(
+                            request_ref=f"request-stale-{operation.value.replace('resume', 'row-two').replace('_', '-')}",
+                            operation=operation,
+                            expected_current_lease_ref=stale.lease_ref,
+                            expected_current_side_context_id=stale.side_context_id,
+                            candidate_lease=candidate,
+                        ),
+                        current_lease=stale,
+                    )
+                    self.assertEqual(
+                        AgentContextDecisionKind.AGENT_CONTEXT_STALE,
+                        decision.decision,
+                    )
+                    self.assertEqual(stale, decision.prior_lease_result)
+                    self.assertIsNone(decision.active_lease)
+
+        missing = self._decision_for(
+            request=self._request(
+                request_ref="request-upstream-missing",
+                upstream_state=AgentContextUpstreamState.MISSING,
+                candidate_lease=current,
+            ),
+            current_lease=current,
+        )
+        self.assertEqual(AgentContextDecisionKind.UPSTREAM_DECISION_REQUIRED, missing.decision)
+        self.assertEqual(current, missing.prior_lease_result)
+        self.assertIsNone(missing.active_lease)
+
+        changed = self._decision_for(
+            request=self._request(
+                request_ref="request-requirement-changed",
+                upstream_state=AgentContextUpstreamState.REQUIREMENT_CHANGED,
+                candidate_lease=current,
+            ),
+            current_lease=current,
+        )
+        self.assertEqual(AgentContextDecisionKind.REQUIREMENT_CHANGED, changed.decision)
+        self.assertIsNotNone(changed.prior_lease_result)
+        if changed.prior_lease_result is not None:
+            self.assertEqual(AgentContextLifecycle.INVALIDATED, changed.prior_lease_result.lifecycle)
+        self.assertIsNone(changed.active_lease)
+
+    def test_reversal_rows_reject_changed_revision_replay_and_reused_switch_context(self) -> None:
+        current = self._lease()
+        changed_revision = self._lease(
+            lease_ref="lease-r02b-correction",
+            artifact_path_refs=("artifact-r02b-correction",),
+            ticket_revision="rev-2123456789abcdef",
+            baseline_revision="rev-2123456789abcdef",
+            control_baseline_ref="1123456789abcdef",
+            side_context_id="side-context-r02b-correction",
+            invalidation_refs=(current.side_context_id,),
+        )
+        changed_revision_decision = self._decision_for(
+            request=self._request(
+                request_ref="request-reversal-revision",
+                operation=AgentContextOperation.REBIND_CORRECTION,
+                expected_current_lease_ref=current.lease_ref,
+                expected_current_side_context_id=current.side_context_id,
+                candidate_lease=changed_revision,
+            ),
+            current_lease=current,
+        )
+        self.assertEqual(
+            AgentContextDecisionKind.AGENT_CONTEXT_BINDING_MISMATCH,
+            changed_revision_decision.decision,
+        )
+
+        closed = self._lease(lifecycle=AgentContextLifecycle.CLOSED)
+        replay = self._decision_for(
+            request=self._request(
+                request_ref="request-reversal-replay",
+                operation=AgentContextOperation.RESUME,
+                expected_current_lease_ref=closed.lease_ref,
+                expected_current_side_context_id=closed.side_context_id,
+                candidate_lease=current,
+            ),
+            current_lease=closed,
+        )
+        self.assertEqual(AgentContextDecisionKind.AGENT_CONTEXT_STALE, replay.decision)
+
+        reused_side = self._lease(
+            lease_ref="lease-r02b-switch-reused-side",
+            artifact_path_refs=("artifact-r02b-switch-reused-side",),
+            ticket_ref="ticket-r02b-next",
+            ticket_revision="rev-2123456789abcdef",
+            receipt_ref="receipt-r02b-next",
+            branch_ref="branch-router-03",
+            baseline_revision="rev-3123456789abcdef",
+            control_baseline_ref="2123456789abcdef",
+            side_context_id=current.side_context_id,
+            expected_return_ref="ret-agent-context-review-handoff-next",
+            invalidation_refs=(),
+        )
+        reused_side_decision = self._decision_for(
+            request=self._request(
+                request_ref="request-reversal-side-context",
+                operation=AgentContextOperation.SWITCH_TICKET,
+                expected_current_lease_ref=current.lease_ref,
+                expected_current_side_context_id=current.side_context_id,
+                candidate_lease=reused_side,
+            ),
+            current_lease=current,
+        )
+        self.assertEqual(
+            AgentContextDecisionKind.AGENT_CONTEXT_BINDING_MISMATCH,
+            reused_side_decision.decision,
+        )
 
 
 if __name__ == "__main__":
