@@ -66,3 +66,26 @@ create a worktree.
 No requirement/public-contract change, helper Agent, new effect, live host
 mutation, push, staging publication, package/install, release or deployment is
 authorized.
+
+## Final correction review
+
+The retained lane merged correction registry
+`56abfe999777e0490042df0ede7b6bc9b70007ad` through the sole WPR-conflict
+merge `1edb1fac724367182686d7825476abcbe5441285`. Additive correction
+`1f58544cbee96c5f188ffbb27a8d2f533e8b392b` changes exactly the composition
+source and direct test; handoff
+`c4581e717dfe00af46af45bfa02f02bf56deea25` changes only WPR and carries
+PRG-400 once. The package export remains byte-identical.
+
+From immutable handoff archive SHA-256
+`38A33228FD474BE8F7EFAAD08FF7CCC8693FE0BF1E349AC321510A3948A80AA7`, the
+reviewer independently obtained focused `18/18`, full serial `501/501`, strict
+mypy over `148` files and in-memory compile over `148` files. Runtime type-hint
+readback proves the private request is exactly `CodexCompensationPortRequest`
+while both frozen public inputs remain `object`. Independently reversing the
+mismatch/unproved rejection and the candidate no-hook gate made both new named
+tests red; restoring runtime bindings returned focused `18/18`.
+
+CR-175 and CR-176 are closed. B1-B9 are approved; guarded integration remains
+reviewer-owned. No public contract, renderer/XSS sink, live effect, push,
+package/install, release or deployment is introduced.

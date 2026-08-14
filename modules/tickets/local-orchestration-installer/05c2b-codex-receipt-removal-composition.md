@@ -5,7 +5,7 @@
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-02, AC-06 and AC-07 |
 | Change / PRD / Context | `CHG-20260808-011` / `PRD.md §15` / `doc/context/local-orchestration-installer/main.md` |
 | Revision | `02` |
-| State | `IN_PROGRESS / CORRECTION_DISPATCH_READY` |
+| State | `APPROVED / READY_TO_MERGE` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05C2B-01` / B1-B9 |
 | Dependency | 05C2A independently approved and integrated |
 | Profile / resource | `STANDARD`; one implementation owner, no helper; no parallel lane because the public observation contract is a serial dependency |
@@ -177,3 +177,13 @@ implementation correction and reserved PRG-400 WPR-only handoff.
 
 This registry does not authorize a new branch, worktree, owner, helper, public
 contract, effect, package/install, push, release or deployment.
+
+## Revision-02 final review
+
+CR-175 and CR-176 are closed by correction
+`1f58544cbee96c5f188ffbb27a8d2f533e8b392b` and WPR-only handoff
+`c4581e717dfe00af46af45bfa02f02bf56deea25`. Independent immutable-snapshot
+review passed focused `18/18`, full serial `501/501`, strict mypy and compile
+over `148` files, exact internal/public type readback, and two targeted
+reversals that made the new mismatch/unproved and no-hook tests red before
+restoration. B1-B9 are approved; integration remains reviewer-owned.
