@@ -5067,3 +5067,15 @@
 | Post-merge verification | Six-module Router regression `110/110`; in-memory compile `150/150`; diff and control porcelain clean. Independent pre-merge full serial remains `546/546`, strict mypy `150/150`. |
 | Transition | R02A is `COMPLETE / APPROVED / INTEGRATED`; allocation `aln_adaptive_router_r02a_20260815` is released and its Agent Context view is closed. R02B becomes the only eligible next Router closure. |
 | Effects | No push, release, deployment, target-project, live host/network, package/install or Secret effect. `XSS_NOT_APPLICABLE`. |
+
+## PRG-20260815-470 - Router Ticket R02B decomposition and dispatch proposal
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `R02A_INTEGRATED(PRG-469) + AC-16 -> READY_LOW_MODEL / TICKET_DISPATCH_REQUIRED`; no implementation receipt or mutation authority exists in this proposal. |
+| Exact closure | `modules/tickets/adaptive-project-orchestration/02b-agent-context-lease-invalidation-gate.md`; `CLOSURE-ADAPTIVE-ROUTER-R02B-01` ACX1-ACX8. One pure outcome: exact open/resume/correction/switch/close admission for one implementation owner's ticket-scoped Agent Context. |
+| Tree boundary | R02B stores only opaque exact-leaf refs and lifecycle bindings. Root/partition/leaf traversal, PRD/CHG active/archive pairing, archive-library indexing and reusable-module catalog bounds remain R02C; no flat history or document body enters this lease. |
+| Low-model split | Finite five-operation state table, four production/test paths, no Profile/source resolver/effect port. Model wake, ticket decomposition policy, UI routing, R02C-R06, 06G0P and package work remain blocked. |
+| Planned lane | Existing idle task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; permanent worktree `C:\Users\<user>\Desktop\AI控制工作workflow-implementation`; planned branch `codex/implementation-router-agent-context-r02b` only after exact registry synchronization. Reviewer task `019fb935-bbe1-7f71-8b4b-58ba20c81626` remains sole orchestrator. |
+| Planned binding | Handoff `hnd-adaptive-router-r02b-20260815`; allocation `aln-adaptive-router-r02b-20260815`; correlation `corr-adaptive-router-r02b-20260815`; question `q-adaptive-router-r02b-20260815`; side Context `scx-adaptive-router-r02b-20260815-01`. Receipt is created only in the dispatch registry. |
+| Boundary | `STANDARD`, one Luna max owner, no helper. `XSS_NOT_APPLICABLE`; no implementer worktree mutation by control, new worktree, external effect, push, package/install, Secret, release or deployment. |
