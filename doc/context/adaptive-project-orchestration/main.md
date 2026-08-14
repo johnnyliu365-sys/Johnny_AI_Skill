@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| State | `SPEC_REVISION_02_APPROVED / ROUTER_PHASE_ACTIVE` |
-| Requirement / ADR | `CHG-20260813-016`, `CHG-20260813-017`, `CHG-20260814-019` / `ADR-20260813-008`, `ADR-20260813-009`, `ADR-20260814-011` |
+| State | `SPEC_REVISION_03_APPROVED / ROUTER_PHASE_ACTIVE` |
+| Requirement / ADR | `CHG-20260813-016`, `CHG-20260813-017`, `CHG-20260814-019`, `CHG-20260815-020` / `ADR-20260813-008`, `ADR-20260813-009`, `ADR-20260814-011` |
 | SPEC | `SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2` |
 | Control owner | Codex / current `main` |
 
@@ -40,6 +40,10 @@
   existing design system. Figma is not mandatory; unavailable input waits or
   halts according to the approved SPEC. Design metadata alone is not an XSS
   trigger.
+- Shared project Context is architecture-owned and sealed before SPEC. Later
+  roles bind its exact revision and bounded source spans only; missing or
+  changed facts return through change control and cannot be appended by a
+  ticket, dispatch, implementation, monitoring or review lane.
 
 ## Boundary
 

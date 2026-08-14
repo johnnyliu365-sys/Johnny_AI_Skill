@@ -257,6 +257,12 @@ acceptance or high-assurance boundaries are not closed; ordinary implementation 
 defects stay in same-ticket correction. Exact model IDs are versioned Profile mappings and do
 not confer authority.
 
+Shared project Context is created and sealed during the early architecture/Grill/Context
+sequence. After SPEC entry it is immutable input: supervisors, ticket splitters, dispatchers,
+implementers and reviewers may bind exact revisions and source spans but cannot append progress
+or new facts. A missing or changed shared fact wakes the architecture owner and requires an
+approved change-control revision before ticket work continues.
+
 A ticket is eligible for the default implementation model only when it contains one observable
 closure, one owner, one primary change/effect boundary, a finite TDD matrix, deterministic
 verification and no unresolved design decision. Decomposition follows behavior, state, effect,

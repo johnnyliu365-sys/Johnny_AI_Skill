@@ -119,6 +119,11 @@ Agent 只取得當前關卡的完整局部閉包，不取得完整治理庫或�
 不是缺少 Context：exact ticket、直接契約、適用 source span、skill reference 與
 驗證入口都必須可解析。
 
+共用專案 Context 只在 `ARCHITECTURE -> GRILL -> CONTEXT` 前期關卡建立並封存；
+`SPEC` 之後的 supervisor、切票者、派單者、implementer 與 reviewer 只能引用其
+revision。新事實或缺口必須經 `REQUIREMENT_CHANGED` 回到 change control，由
+architecture owner 產生新 revision，不得在 ticket／handoff／review 中順手追加。
+
 ### 0.3 Profile、資源與 staging
 
 涉及 POC／MVP／COMMERCIAL、`COMPACT`／`STANDARD`／`HIGH_ASSURANCE`、model

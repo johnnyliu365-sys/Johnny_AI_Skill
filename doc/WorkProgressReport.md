@@ -4841,3 +4841,70 @@
 | First red / reversals | The bounded AST source gate first failed on the existing `_PolicyRoute.reference_id: str`. Reversing that field to `str` made the named gate red; removing `_POLICY_ROUTES`' tuple annotation made the same gate red. Both reversals were restored exactly before final verification. |
 | Verification | Focused Router `32/32`; retained six-module Router regression `99/99`; full explicit serial unittest `535/535`; strict full-tree mypy `150` source files with an external cache removed; in-memory compile `150` files; direct source/hash oracle, `git diff --check`, exact implementation scope, additive ancestry, three-worktree topology, tracked/ignored porcelain and zero cache/runtime residue pass. |
 | Readback / boundary | Final implementation commit changes only `library/workflow_router/profile.py` and `tests/test_workflow_router.py`; final WPR append is the only docs change. `XSS_NOT_APPLICABLE`; no helper/subagent, new worktree, self-review/integration, live model/host/Codex/home/config/target-project/network effect, push/staging publication, package/install, Secret, release or deployment. |
+## PRG-20260814-446 - Router Ticket R01 independent review and revision-02 refreeze
+
+| Field | Evidence |
+| --- | --- |
+| Reviewed chain | Dispatch `11901565ca0dde46fc6913f4caa7d763fb5f0ab6`; implementation `bff21771d3dc10eae4b354097e40123eb2b13001`; WPR-only handoff `a16dfc38eb6141e2aef5fa480be741b1f057ca57`. Exact implementation/docs scope and clean branch readback pass. |
+| Independent verification | Focused `31/31`; six-module `98/98`; strict mypy `150` files with external cache removed; no tracked/ignored/cache residue. Full `534/534` and compile `150/150` remain valid implementer evidence. |
+| Blocking result | `CHANGES_REQUESTED`: the Profile echoes the incoming event as the expected next return, uses all-zero placeholder digest/revision metadata and synthetic references that resolve to no current policy chapter. Tests encode the same wrong direction. |
+| Review / refreeze | `doc/reviews/adaptive-project-orchestration/01-route-instruction-contract-code-review.md`; `CLOSURE-ADAPTIVE-ROUTER-R01-02` freezes the complete 19-row next-action mapping, seven real policy digests and CR-R01-001..003. |
+| Continuation | Same ticket/task/worktree/branch/allocation/receipt; additive correction only, one WPR-only return reserved as `PRG-20260814-448`. R02, 06G0P review, other rework, integration, push, package/install, release and deployment remain paused. |
+
+## PRG-20260814-447 - Router Ticket R01 revision-02 correction dispatch
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `CHANGES_REQUESTED(PRG-446) -> REVISION_02_CORRECTION_DISPATCH_CONFIRMED`; same ticket lane, no new worktree/branch/allocation/receipt. |
+| Review baseline | Formal review/refreeze `334935dfd557e7d244b31de37e80db8911f27069`; correction handoff `hnd_adaptive_router_r01_r02_20260814`; additive after submitted handoff `a16dfc38eb6141e2aef5fa480be741b1f057ca57`. |
+| Exact closure | `CLOSURE-ADAPTIVE-ROUTER-R01-02`; CR-R01-001..003 only. Complete 19-row policy/next-return map, seven real policy digests, zero-placeholder/conflicting-reference rejection and exact revision binding are frozen in the ticket. |
+| Owner / authority | Task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; worktree `C:\Users\<user>\Desktop\AI控制工作workflow-implementation`; branch `codex/implementation-router-route-instruction-r01`; allocation `aln_adaptive_router_r01_20260814`; retained receipt `rcpt_adaptive_router_r01_20260814`. |
+| Return / safety | Additive correction implementation in the same five files, then WPR-only `PRG-20260814-448`. No helper, R02, 06G0P review, other rework, new worktree, push, package/install, target-project/live host effect, release or deployment. |
+
+## PRG-20260815-449 - Router Ticket R01 revision-02 terminal review and revision-03 refreeze
+
+| Field | Evidence |
+| --- | --- |
+| Reviewed chain | Correction `a961b59d3db60dbd74a9388621adad3112b4f721`; WPR-only handoff `21ced7b7f84a351074f65566603b4a2793334134`; additive ancestry, exact scope and clean residue pass. |
+| Closed findings | CR-R01-001..003: independent focused `32/32` and semantic probe confirm correct next-action returns, real policy IDs/digests, zero rejection, conflict detection and revision binding. |
+| Remaining blocker | `CHANGES_REQUESTED / CR-R01-004`: new internal production/test route metadata uses raw `str` and unannotated constants; hash evidence unnecessarily invokes Git. This violates the P0 source-type gate despite strict mypy passing. |
+| Revision-03 closure | `CLOSURE-ADAPTIVE-ROUTER-R01-03`; mechanical domain annotations, typed policy path/direct hashing, expanded AST source gate and two exact reversals only. No route/public behavior change. |
+| Continuation | Same task/worktree/branch/allocation/receipt; WPR-only return reserved as `PRG-20260815-451`. R02, 06G0P, integration and all non-Router work remain paused. |
+
+## PRG-20260815-450 - Router Ticket R01 revision-03 P0 correction dispatch
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `CHANGES_REQUESTED(PRG-449) -> REVISION_03_CORRECTION_DISPATCH_CONFIRMED`; same ticket lane and retained authority. |
+| Review baseline | `51de13f1be7151a692675509e6ec9357ae64ec46`; handoff `hnd_adaptive_router_r01_r03_20260815`; additive after `21ced7b7f84a351074f65566603b4a2793334134`. |
+| Exact correction | CR-R01-004 only: named domain aliases and explicit tuple/map constants in production/test, `PurePosixPath` direct hash evidence, expanded AST P0 gate and two bounded reversals. Route table, policy values and public behavior are immutable. |
+| Owner / authority | Task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; same permanent worktree/branch/allocation `aln_adaptive_router_r01_20260814` and receipt `rcpt_adaptive_router_r01_20260814`. |
+| Safety / return | Original five-path ceiling, but only affected files may change; then WPR-only `PRG-20260815-451`. No helper, R02, 06G0P, new worktree, push, package/install, target/live effect, release or deployment. |
+
+## PRG-20260815-452 - Shared-Context lifecycle requirement and Router replan
+
+| Field | Evidence |
+| --- | --- |
+| Owner requirement | `CHG-20260815-020`: shared project Context is architecture-owned, sealed before SPEC and read/reference-only for every later role; no line-count limit substitutes for content/lifecycle admission. |
+| Context correction | `CONTEXT.md` is reduced from historical status prose to stable facts plus a metadata-only feature index. Ticket/handoff/commit/test/review/worktree state remains in its owning artifact. |
+| R01 disposition | Completed implementation `646a8b2d7052eba58ff623133942a976920acffc` and WPR-only handoff `7d6c2f2a066a9d039eb13ae0a8e339e04f372f61` remain immutable evidence. Terminal approval is paused because the newly approved policy revision makes its embedded policy references stale; this is `REQUIREMENT_CHANGED`, not an implementation defect. |
+| Router order | Refreeze only R01 policy metadata, then independently implement the shared-Context lifecycle/mutation-authority gate before model-role readiness, low-model admission, UI routing or integrated acceptance. All non-Router work remains paused. |
+
+## PRG-20260815-453 - Router R01 revision-04 requirement-change refreeze
+
+| Field | Evidence |
+| --- | --- |
+| Refreeze source | `CHG-20260815-020`; policy baseline `3469e20bcbddce0c55b7ad7e92be68eca4257052`; formal review records `REQUIREMENT_CHANGED`, not a revision-03 defect. |
+| Exact correction | Rebind only `router-control`, `context-routing` and `specification-ticketing` revision/digest pairs in typed production/test constants after guarded baseline sync; no route/public/type behavior change. |
+| Lane | Same ticket/task/worktree/branch/allocation/receipt; handoff `hnd_adaptive_router_r01_r04_20260815`; additive after revision-03 handoff `7d6c2f2a066a9d039eb13ae0a8e339e04f372f61`. |
+| Conflict boundary | Only the expected append-only WPR overlap may be resolved by retaining every unique PRG entry exactly once. Any other conflict halts. R02 and all non-Router work remain paused. |
+
+## PRG-20260815-454 - Router R01 revision-04 correction dispatch
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `REQUIREMENT_CHANGED(PRG-452) + REFROZEN(PRG-453) -> REVISION_04_CORRECTION_DISPATCH_CONFIRMED`; retained R01 authority, no new ticket/branch/worktree/allocation/receipt. |
+| Registry / review | Exact review baseline `2f54843ce95fa15eea4ee0422c2d0cba7dabf5ed`; registry is the commit containing this record; correction handoff `hnd_adaptive_router_r01_r04_20260815`. |
+| Admission | Implementation lane must be clean at branch `codex/implementation-router-route-instruction-r01`, HEAD `7d6c2f2a066a9d039eb13ae0a8e339e04f372f61`, then guarded-merge this registry commit. Only an append-only WPR conflict may retain every unique PRG entry exactly once; any other conflict halts. |
+| Exact correction | First-red the three stale policy pairs, update only typed production/test constants for `router-control`, `context-routing` and `specification-ticketing`, perform the bounded old-context reversal and all revision-03 gates, then one WPR-only handoff. |
+| Owner / safety | Same implementation task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`, permanent worktree, branch, allocation `aln_adaptive_router_r01_20260814` and receipt `rcpt_adaptive_router_r01_20260814`; no helper, R02, 06G0P, new worktree, push, package/install, target/live effect, release or deployment. |

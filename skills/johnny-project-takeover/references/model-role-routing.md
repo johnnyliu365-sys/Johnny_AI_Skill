@@ -18,7 +18,8 @@ SpecificationReadinessDecision = READY_FOR_SUPERVISION
 ```
 
 - The human owner and `ARCHITECTURE_OWNER` converge intake, Wayfinder, architecture, Grill and
-  the formal SPEC. The architecture owner does not implement or review its own production work.
+  the formal SPEC, and owns creation/change-control revision of shared project Context. The
+  architecture owner does not implement or review its own production work.
 - `SUPERVISOR_REVIEWER` owns approved-SPEC ticket decomposition, schema/type preflight,
   dispatch, monitoring, independent review, correction routing and guarded integration.
 - `IMPLEMENTATION_OWNER` receives one admitted ticket, implements it and returns only the
@@ -53,6 +54,11 @@ The supervisor behaves as a compiler over the approved SPEC. It may normalize id
 split closed behavior into tickets and repair a ticket omission only when the exact meaning is
 already present in the approved SPEC. It may not create new product behavior, choose among
 unresolved architecture alternatives, weaken an AC or reinterpret a public failure.
+
+The supervisor has no shared-Context write capability. Ticket planning, dispatch, monitoring,
+correction and review may bind only the exact sealed Context revision and bounded source spans.
+Any needed shared fact that is absent or changed is an architecture-owner wake condition, not a
+reason to append Context from the ticket lane.
 
 The supervisor routes implementation/test/evidence defects through same-ticket correction.
 Model capability failure is not inferred from one defect. Only after the allowed initial review

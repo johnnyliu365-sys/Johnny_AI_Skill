@@ -3,11 +3,11 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2` |
-| Status | `REVISION_02 / ROUTER_PHASE_APPROVED / OTHER_PHASES_OWNER_REVIEW_REQUIRED` |
+| Status | `REVISION_03 / ROUTER_PHASE_APPROVED / OTHER_PHASES_OWNER_REVIEW_REQUIRED` |
 | Author / baseline | Codex control plane / current `main` |
 | Context | `doc/context/adaptive-project-orchestration/main.md` |
 | PRD | `PRD.md §17` |
-| Requirement change / ADR | `CHG-20260813-016`, `CHG-20260813-017`, `CHG-20260814-019` / `ADR-20260813-008`, `ADR-20260813-009`, `ADR-20260814-011` |
+| Requirement change / ADR | `CHG-20260813-016`, `CHG-20260813-017`, `CHG-20260814-019`, `CHG-20260815-020` / `ADR-20260813-008`, `ADR-20260813-009`, `ADR-20260814-011` |
 | Implementation language | Python 3.11 strict typed contracts/adapters; host-specific integration only after capability proof |
 
 ## Problem and goal
@@ -185,6 +185,17 @@ returns `HALT / DESIGN_SOURCE_UNAVAILABLE` only when the approved SPEC requires
 that source. UI tickets deliver complete observable component/frame slices.
 Design metadata alone does not trigger XSS; runtime source-to-renderer flow does.
 
+### AC-15 — Architecture-owned shared Context
+
+Shared project Context is drafted only by the architecture owner during
+`ARCHITECTURE`/`GRILL` and sealed at `CONTEXT` before SPEC approval. It contains stable
+cross-feature facts, invariant boundaries and metadata-only artifact indexes; ticket state,
+handoffs, commits, tests, findings, branches/worktrees and duplicated SPEC/policy prose are
+invalid content. After sealing, every supervisor, ticket splitter/dispatcher, implementer and
+reviewer receives read/reference capability only. Missing facts return
+`UPSTREAM_DECISION_REQUIRED`; changed facts return `REQUIREMENT_CHANGED`. A revision requires
+the architecture owner, an approved change reference and the exact prior sealed revision.
+
 ## Typed contracts
 
 ```text
@@ -206,6 +217,10 @@ DesignSourceKind = FIGMA | SCREENSHOT | DESIGN_BRIEF
                  | EXISTING_DESIGN_SYSTEM | NONE
 DesignCapabilityState = AVAILABLE_AUTHORIZED | AVAILABLE_NOT_AUTHORIZED
                       | UNAVAILABLE | DECLINED
+SharedContextOperation = CREATE | REVISE | READ_REFERENCE
+SharedContextLifecycle = ARCHITECTURE_DRAFT | SEALED
+SharedContextMutationDecision = ALLOW | REQUIRE_CHANGE_CONTROL
+                              | FORBID_ROLE_OR_STAGE | STALE_REVISION
 
 DeliveryAssessment = {
   project_id, ticket_ref?, change_surface, coupling, ambiguity,
@@ -254,6 +269,11 @@ UIImplementationContract = {
   component_frame_ref, semantic_dom_ref, state_matrix_ref,
   responsive_ref, token_asset_refs, accessibility_ref,
   visual_acceptance_ref, xss_classification_ref
+}
+
+SharedContextMutationRequest = {
+  project_id, context_ref, expected_revision?, operation, actor_role,
+  process_stage, approved_change_ref?
 }
 ```
 
@@ -304,6 +324,11 @@ than raw project paths, source, prompts, Secrets or PII.
 15. Every new decision returns the exact versioned policy reference and expected
     typed return. Missing, stale or competing route references halt before
     capability, task, worktree, Git or host effect.
+16. Shared-Context tests admit create only in the early architecture sequence,
+    admit revision only with architecture ownership, exact prior revision and
+    approved change authority, and reject every ticket/supervisor/implementation/
+    review write before filesystem effect. Content-schema tests reject progress,
+    ticket, commit, test and review material without using a line-count limit.
 
 ## Candidate vertical ticket sequence
 
@@ -312,10 +337,11 @@ item is a separate low-model-admitted closure and must pass independent review
 before its dependent starts:
 
 1. Versioned skill-reference and expected-return Router contracts.
-2. SPEC-readiness plus model-role sleep/wake decision kernel.
-3. Low-model ticket-admission decision kernel.
-4. Optional UI design-source decision kernel.
-5. Integrated Profile/Router acceptance across references, wake, admission and
+2. Shared-Context lifecycle and mutation-authority gate.
+3. SPEC-readiness plus model-role sleep/wake decision kernel.
+4. Low-model ticket-admission decision kernel.
+5. Optional UI design-source decision kernel.
+6. Integrated Profile/Router acceptance across references, Context authority, wake, admission and
    metadata-only serialization.
 
 Initialization, project-local worktree lifecycle, post-POC staging, installer
@@ -326,10 +352,11 @@ review/integration and dependent 06G tickets are paused until Router acceptance.
 ## Approval
 
 The project owner approved the product direction and post-POC staging
-requirement on `2026-08-13`, then approved the tiered model/decomposition/UI
-direction and Router-first implementation on `2026-08-14`. Revision 02
-authorizes only AC-12 through AC-14 together with the Router portions of
-AC-05 through AC-10 and the five Router ticket candidates above. Exact
+requirement on `2026-08-13`, approved the tiered model/decomposition/UI
+direction and Router-first implementation on `2026-08-14`, and required
+architecture-owned sealed shared Context on `2026-08-15`. Revision 03
+authorizes only AC-12 through AC-15 together with the Router portions of
+AC-05 through AC-10 and the six Router ticket candidates above. Exact
 initialization and staging implementation tickets under AC-01 through AC-04 and
 AC-11 remain `OWNER_REVIEW_REQUIRED`.
 
