@@ -4546,3 +4546,15 @@
 | Scope / residue | Correction source commit is exact one-path; handoff is WPR-only; PRG-416 through PRG-419 each occur once; owner tracked/ignored status is clean and topology remains exactly three worktrees. Reviewer fixed TEMP export/archive/cache were removed and read back absent. |
 | Continuation | Reviewer-only guarded integration of exact handoff `9ba22b3f8328ba7fffc5ec767488bcfdab125608`, then refreeze 05C3 against the integrated 05C2C1/05C2C2 APIs. No other implementation/effect authority. |
 | Boundary | `XSS_NOT_APPLICABLE`; no helper, live Codex/host/target-project effect, push/staging publication, package/build/install, Secret, release or deployment. |
+
+## PRG-20260814-421 - Ticket 05C2C2 guarded integration and 05C3 marketplace-source gap split
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `APPROVED(05C2C2) -> GUARDED_INTEGRATION_COMPLETED -> ACTION_COMPLETED / 05C3_DEPENDENCY_READBACK -> UPSTREAM_EVIDENCE_GAP / SPLIT_05C2C3` |
+| Integration | Review `8762f23b706b40a2adc1d899248f363eea5cef9f`; exact handoff `9ba22b3f8328ba7fffc5ec767488bcfdab125608`; guarded merge `bc97a42638540cb56e0b2b0c716bd93ddeb5dbba`. The only conflict was append-only WPR; PRG-416 through PRG-420 each remain once and no other conflict was resolved. |
+| Post-merge verification | Focused adapter `15/15`; strict full-tree mypy `148`; in-memory compile `148`; exact direct-test blob and three-worktree topology pass. Fixed external caches were removed; control and owner tracked/ignored readbacks are clean. |
+| Exact dependency probe | In a freshly provisioned project-owned disposable lease, registration returned `RegistrationSuccessAccepted`, receipt conversion `CodexReceiptRemovalReady` and adapter admission `CodexCompensationOracleAdapter`. Plugin observation was `RESIDUE / PROVED_ABSENT`; path observation `RESIDUE`; marketplace observation `MISMATCH`; composition remained `PRE_REMOVAL_EVIDENCE_INVALID` with owned state retained. Exact teardown returned `REMOVED` and runtime residue was absent. |
+| Root cause / split | Staging `MARKETPLACE_LIST` hard-codes `marketplaceSource.value = oracle-source`, while the exact persisted record locator and receipt manifest bind `marketplaces/<name>`. New 05C2C3 owns only relative marketplace-source truth in `oracle_child.py` plus its direct lifecycle test; no product/SPEC change. |
+| Continuation | 05C3 remains non-dispatchable. Select 05C2C3 with one owner/no helper under a fresh receipt; after independent approval/integration, rerun the exact disposable dependency probe and refreeze 05C3 revision 03. |
+| Boundary | `XSS_NOT_APPLICABLE`; disposable staging proof only. No live Codex/home/config, target-project, network, push/staging publication, package/build/install, Secret, release or deployment. |

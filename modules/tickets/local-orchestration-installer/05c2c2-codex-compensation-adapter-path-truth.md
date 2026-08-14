@@ -5,7 +5,7 @@
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-02, AC-06, AC-07 and AC-08 |
 | Change / PRD / Context | `CHG-20260808-011` / `PRD.md §15` / `doc/context/local-orchestration-installer/main.md` |
 | Revision | `03` |
-| State | `COMPLETE / APPROVED / READY_FOR_GUARDED_INTEGRATION` |
+| State | `COMPLETE / APPROVED / INTEGRATED` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05C2C2-01` / M1-M7 |
 | Dependency | 05C2C1 guarded merge `fffbc616ee1870b69845cbcecf37a98e842106d3`; 05C2C2A approval `6cca1210b51e6d5d5e8105876c993540a12eea21` and guarded merge `1f6532a069fade0bfcf526ad0d49de7a88b281bb` |
 | Profile / resource | `STANDARD`; one implementation owner, no helper; serial consumer of the exact 05C2C1 result |
@@ -191,3 +191,8 @@ CR-178 is closed by source-only correction
 strict mypy `148`, in-memory compile `148`, direct-test blob identity, exact
 diff/scope, clean lane and three-worktree topology pass. Revision-03 M1-M7 are
 approved for guarded integration; the receipt grants no other effect.
+
+Guarded integration `bc97a42638540cb56e0b2b0c716bd93ddeb5dbba`
+consumed only the exact approved handoff and retained PRG-416 through PRG-420
+once. Post-merge focused `15/15`, strict full-tree mypy `148` and in-memory
+compile `148` pass.

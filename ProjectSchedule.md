@@ -167,9 +167,10 @@
 | Ticket 05C2A compensation observation admission | COMPLETE / APPROVED / INTEGRATED | CR-174 closed; review `5e7e489`, guarded merge `e2e2fe9`; post-merge focused/type checks pass. |
 | Ticket 05C2B receipt removal composition | COMPLETE / APPROVED / INTEGRATED | CR-175/CR-176 closed; review `355da84`; guarded merge `75eec43`; post-merge focused/type checks pass. |
 | Ticket 05C2C1 oracle installed-path presence | COMPLETE / APPROVED / INTEGRATED | Review `90dac00`; guarded merge `fffbc61`; post-merge focused 46/46 and strict mypy 148 pass. |
-| Ticket 05C2C2 adapter installed-path truth | COMPLETE / APPROVED / READY_FOR_GUARDED_INTEGRATION | Correction `e801646`, handoff `9ba22b3`; CR-178 closed by independent terminal review. |
+| Ticket 05C2C2 adapter installed-path truth | COMPLETE / APPROVED / INTEGRATED | Correction `e801646`, handoff `9ba22b3`, review `8762f23`, guarded merge `bc97a42`; post-merge focused 15/15 and strict mypy 148 pass. |
 | Ticket 05C2C2A installed-path proof truth contract | COMPLETE / APPROVED / INTEGRATED | Review correction `6cca121`; guarded merge `1f6532a`; post-merge focused 52/52 and strict mypy 148 pass. |
-| Ticket 05C3 receipt removal acceptance | PLANNED / UPSTREAM_EVIDENCE_GAP | Disposable probe reproduced `PRE_REMOVAL_EVIDENCE_INVALID`; starts after 05C2C1/C2 integrate. |
+| Ticket 05C2C3 oracle marketplace-source truth | PLANNED / DEPENDENCY_SATISFIED / NOT_DISPATCHED | Exact probe: plugin/path are `RESIDUE`, marketplace is `MISMATCH` because staging list hard-codes `oracle-source`; two-path correction only. |
+| Ticket 05C3 receipt removal acceptance | PLANNED / UPSTREAM_MARKETPLACE_SOURCE_GAP / BLOCKED_BY_05C2C3 | Refreeze after 05C2C3 independently approves/integrates; no 05C3 authority now. |
 | Ticket 06A Codex role-profile capability proof | DONE / APPROVED_EVIDENCE / INSTALL_BLOCKED / INTEGRATED | Implementation `38e9a8b`, handoff `f6f186f`, review `62955ec`, guarded merge `de4141e`; actual installed-host result is `ROLE_ISOLATION_UNPROVEN / ACCESS_DENIED / OUTPUT_UNAVAILABLE`, so capability dependents stay blocked. |
 | Autonomous Ticket 04 reviewer-only authority | PLANNED / DEPENDENCY_WAIT | Starts only after reviewed 06A `SUPPORTED`; typed fake effect gate, not a real Agent turn. |
 | Tickets 06B/06C role-profile lifecycle/composition | PLANNED / DEPENDENCY_WAIT | Wait for 06A and autonomous Ticket 04; own/remove profiles, then compose exact reviewer authority. |

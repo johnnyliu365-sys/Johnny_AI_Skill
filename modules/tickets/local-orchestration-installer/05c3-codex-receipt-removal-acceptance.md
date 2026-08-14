@@ -4,9 +4,9 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-02, AC-06, AC-07 and AC-08 |
 | Revision | `02` |
-| State | `PLANNED / UPSTREAM_EVIDENCE_GAP` |
+| State | `PLANNED / UPSTREAM_MARKETPLACE_SOURCE_GAP / BLOCKED_BY_05C2C3` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05C3-01` / A1-A8 |
-| Dependency | 05C2B integrated; 05C2C1 and 05C2C2 must be independently approved and integrated |
+| Dependency | 05C2B, 05C2C1 and 05C2C2 integrated; 05C2C3 marketplace-source truth must be independently approved and integrated |
 | Profile / XSS | `STANDARD`; one implementation owner, no helper / `XSS_NOT_APPLICABLE` |
 | Implementation language | Python 3.11 with strict Pydantic models and `mypy --strict` |
 
@@ -56,3 +56,21 @@ failure as residue. Mapping generic blocked/error results to presence, weakening
 05C2C2 maps only that admitted evidence to `absent=False`. This child will be
 refrozen against both exact integrated APIs. No 05C3 implementation authority
 exists now.
+
+## Post-05C2C2 dependency readback
+
+Guarded integration `bc97a42638540cb56e0b2b0c716bd93ddeb5dbba`
+closed installed-path truth, but an exact disposable probe still returned
+`UNINSTALL_BLOCKED / PRE_REMOVAL_EVIDENCE_INVALID` with zero removal calls.
+The three pure observations were:
+
+- plugin lists: installed `RESIDUE`, available `PROVED_ABSENT`;
+- installed path: `RESIDUE`;
+- marketplace: `MISMATCH`.
+
+The marketplace list hard-codes source `oracle-source`, while the exact
+receipt/manifest binds `marketplaces/acceptance-market`. Ticket 05C2C3 owns
+only this staging source-truth defect. 05C3 remains non-dispatchable until
+05C2C3 is independently approved/integrated and this ticket is revision-03
+refrozen against the resulting exact API. Generic mismatch must never be
+weakened to residue.
