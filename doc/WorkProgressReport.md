@@ -5265,3 +5265,13 @@
 | Closure | Revision `r02c1-02` explicitly binds the feature Context, Python 3.11, strict checker, resource/environment and operations boundaries. ACX1-ACX8 behavior is unchanged and complete. |
 | Integration boundary | Guarded integration may merge only exact handoff `2c0469febc53226fab41eddfed0242781ac0b3e6`; only the predicted append-only WPR overlap is eligible for explicit resolution with every PRG record retained once and in order. Any other conflict halts. |
 | Effects | No source/test mutation, helper, Agent control, R02C2/R02C3 implementation, push, package/install, target-project, live host/model/network, Secret, release or deployment. `XSS_NOT_APPLICABLE`. |
+
+## PRG-20260815-487 - Router R02C1 guarded integration complete
+
+| Field | Evidence |
+| --- | --- |
+| Integration | Read-only merge-tree predicted only the append-only WPR overlap. Normal non-force merge `5b887c726a91053190050abf7f0267b48503cb5e` integrated exact approved handoff `2c0469febc53226fab41eddfed0242781ac0b3e6` after approval `043daeac252ff77d5d526e4d072dd421b88d4ee9`. |
+| Resolution | The only unmerged path was `doc/WorkProgressReport.md`; PRG-480 through PRG-486 are each present once and in order. No source, test, ticket or review conflict occurred. |
+| Post-merge verification | Artifact-tree plus Router focused `63/63`; in-memory compile `152/152`; diff check, clean main and exact three-worktree topology pass. Exact candidate bytes retain independent full serial `566/566`, strict mypy `152/152` and reviewer probes `9/9`. |
+| Transition | R02C1 is `COMPLETE / APPROVED / INTEGRATED`; allocation `aln-adaptive-router-r02c1-20260815` is released; both side Context revisions are closed/invalidated. R02C2 becomes the only dependency-satisfied ticket-design candidate; no R02C2 receipt exists yet. |
+| Effects | No push, release, deployment, target-project, live host/model/network, package/install or Secret effect. `XSS_NOT_APPLICABLE`. |

@@ -4,9 +4,9 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2` revision 05 / AC-17 |
 | PRD / change | `PRD-20260815-022` / `CHG-20260815-022` |
-| State | `IN_PROGRESS / REVISION_02_REVALIDATION_REQUIRED` |
+| State | `COMPLETE / APPROVED / INTEGRATED` |
 | Closure | `CLOSURE-ADAPTIVE-ROUTER-R02C1-01` / ACX1-ACX8 / ticket revision `r02c1-02`; supersedes schema-incomplete `r02c1-01` without changing behavior or public contracts |
-| Baseline | Change-control refreeze `3139bccc3ab08093519b91cc55e162bd98b6718b`; initial review `c71d06d795a31c1a71189dd718c1a326a2522636`; revision-02 refreeze is the commit containing `PRG-20260815-483` |
+| Baseline | Change-control refreeze `3139bccc3ab08093519b91cc55e162bd98b6718b`; terminal approval `043daeac252ff77d5d526e4d072dd421b88d4ee9`; guarded integration `5b887c726a91053190050abf7f0267b48503cb5e` |
 | Context / environment | `doc/context/adaptive-project-orchestration/main.md` at `SPEC_REVISION_05_APPROVED / ROUTER_PHASE_ACTIVE`; local pure-Python verification in the named permanent implementation worktree; no target, host or external environment effect |
 | Implementation language / checker | Python 3.11; `python -m mypy --strict --explicit-package-bases --no-incremental` over every Python file under `library/` and `tests/` |
 | Delivery profile / resource plan | `STANDARD`; `PRG-20260815-479`; one `gpt-5.6-luna` max implementation owner; no helper |
@@ -14,7 +14,7 @@
 | Implementation owner | Existing task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; permanent worktree `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` |
 | Branch | `codex/implementation-router-artifact-tree-r02c1` from the exact dispatch-registry commit |
 | Prior dispatch | Registry `db9bc7d9d9e4b14ddda7082633e71148cdcc3ed2`; candidate implementation `458791b470629fe7c0e3bb263af87560b58e54b9`; handoff `b1ba51ccc13b0893783b5fd5e2b9e99e4d120d84`; prior side Context `scx-adaptive-router-r02c1-20260815-01` is invalidated by this ticket revision |
-| Revalidation binding | Handoff `hnd-adaptive-router-r02c1-revalidation-20260815-02`; allocation `aln-adaptive-router-r02c1-20260815`; receipt `rcpt-adaptive-router-r02c1-revalidation-20260815-02`; question `q-adaptive-router-r02c1-revalidation-20260815-02`; correlation `corr-adaptive-router-r02c1-revalidation-20260815-02`; side Context `scx-adaptive-router-r02c1-20260815-02`; expected return `ret-artifact-tree-review-handoff-r02c1-r02`; inactive until the exact registry commit containing `PRG-20260815-484` |
+| Closed revalidation | Handoff `hnd-adaptive-router-r02c1-revalidation-20260815-02`; receipt `rcpt-adaptive-router-r02c1-revalidation-20260815-02`; correlation `corr-adaptive-router-r02c1-revalidation-20260815-02`; side Context `scx-adaptive-router-r02c1-20260815-02`; handoff `2c0469febc53226fab41eddfed0242781ac0b3e6`; allocation released by `PRG-20260815-487` |
 | XSS / effects | `XSS_NOT_APPLICABLE`; pure metadata-only resolver, no source/body read, Agent, filesystem, Git, host or network effect |
 | Operations / rollback | No runtime operation. Before integration, discard the candidate by withholding approval; after guarded integration, use a separately reviewed additive revert. Never reset, force or delete reviewed evidence. |
 
