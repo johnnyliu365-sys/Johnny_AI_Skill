@@ -5015,3 +5015,24 @@
 | First red / reversals | Alternate Profile, `idx-ticket-current`, and all-zero expected-revision probes were red before correction; profile, tree-reference and reserved-revision guards each independently turned their governing test red and were restored. |
 | Verification | Focused Router `43/43`; six-module Router regression `110/110`; explicit serial full suite `546/546`; strict full-tree mypy `150` source files; in-memory compile `150` Python files; source/scope/diff/ancestry/topology checks pass. |
 | Readback | Branch `codex/implementation-router-shared-context-r02a`; tracked and ignored porcelain empty; exactly three worktrees; cache/runtime residue `0`; external mypy cache removed; `XSS_NOT_APPLICABLE`. No helper, live host/network/target effect, push, package/install, release or deployment. |
+## PRG-20260815-465 - Router R02A revision-02 terminal review
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `ACTION_COMPLETED / REVIEW_HANDOFF(PRG-464) -> CHANGES_REQUESTED / CR-R02A-001_BOUNDARY_CORRECTION`; CR-R02A-002 and CR-R02A-003 close, R02B remains blocked. |
+| Submitted chain | Guarded sync `b361c17b788ce04840ebf164098ea0477a8eeca6`; correction `f38c212d51b9ebfb9cdcd28742ce316f04a0a771`; WPR-only handoff `f3ef5a412de84431c0dd0c6e689bd1fec1c535cc`; exact scope and clean lane pass. |
+| Green evidence | Implementer reports focused `43/43`, six-module `110/110`, full `546/546`, strict mypy/compile `150/150` and three restored reversals. |
+| Blocking reviewer probe | Safe distinct `ctx-profile-project` / `cap-profile-architecture-owner` is rejected because substring `"file"` matches inside `profile`; ordinary `ctx-another-project` is accepted and locator-like `file-ref` / `ctx-file-uri` are rejected. |
+| Final correction boundary | Same ticket/task/worktree/branch/allocation/receipt; only `profile.py`, `test_workflow_router.py`, then WPR-only handoff. The validator must distinguish hyphen-delimited `file` locator tokens from ordinary words. |
+| Effects | No new branch/worktree, R02B/R02C, 06G0P, live host/network/target effect, push, package/install, Secret, release or deployment. `XSS_NOT_APPLICABLE`. |
+
+## PRG-20260815-466 - Router R02A final boundary correction dispatch
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `CHANGES_REQUESTED(PRG-465) + STANDING_OWNER_AUTO_CONTINUE -> CORRECTION_DISPATCH_CONFIRMED / IMPLEMENT`; same ticket revision and retained authority. |
+| Review baseline | Formal revision-02 review commit `5b04cf5`; exact open finding `CR-R02A-001`; registry is the commit containing this record. |
+| Retained lane | Task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; branch `codex/implementation-router-shared-context-r02a`; allocation `aln_adaptive_router_r02a_20260815`; receipt `rcpt_adaptive_router_r02a_20260815`; expected handoff `f3ef5a412de84431c0dd0c6e689bd1fec1c535cc`. |
+| Correction Context | Handoff `hnd_adaptive_router_r02a_r03_20260815`; side Context `scx-adaptive-router-r02a-20260815-03`; additively merge this registry, retaining unique WPR records. Any non-WPR conflict halts. |
+| Exact correction | First-red safe `profile` metadata beside locator-token negatives; change only `profile.py` and `test_workflow_router.py`; use hyphen-token-aware `file` rejection, preserve every other R02A behavior and run one exact reversal plus full gates. Then WPR-only handoff. |
+| Boundary | Same Luna max owner; no helper, branch/worktree creation, R02B/R02C, 06G0P, live host/network/target effect, push, package/install, Secret, release or deployment. `XSS_NOT_APPLICABLE`. |

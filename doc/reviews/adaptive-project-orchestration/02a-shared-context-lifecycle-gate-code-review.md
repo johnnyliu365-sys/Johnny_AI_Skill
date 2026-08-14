@@ -85,3 +85,24 @@ plus three bounded reversals for the corrected profile, tree-ref and all-zero-re
 
 No ticket refreeze, new branch/worktree, R02B/R02C, 06G0P, package/install, live host, network,
 target-project, push, release, deployment or Secret effect is authorized. `XSS_NOT_APPLICABLE`.
+
+## Revision-02 terminal review
+
+| Field | Value |
+| --- | --- |
+| Guarded sync / correction / handoff | `b361c17b788ce04840ebf164098ea0477a8eeca6` / `f38c212d51b9ebfb9cdcd28742ce316f04a0a771` / `f3ef5a412de84431c0dd0c6e689bd1fec1c535cc` |
+| Scope / ancestry | PASS: the predicted WPR-only conflict retained PRG-461..463 once; correction is exactly `contracts.py`, `profile.py`, `test_workflow_router.py`; handoff is WPR-only; lane clean. |
+| Implementer evidence | PASS: focused `43/43`, six-module `110/110`, full serial `546/546`, strict mypy `150`, compile `150`, three reversals and zero residue. |
+| Terminal result | `CHANGES_REQUESTED / CR-R02A-001_BOUNDARY_CORRECTION` |
+
+CR-R02A-002 and CR-R02A-003 are closed. CR-R02A-001 remains blocking because the revised
+Profile validator uses substring marker `"file"`. A valid, distinct metadata-only pair
+`ctx-profile-project` / `cap-profile-architecture-owner` is rejected only because `profile`
+contains those four letters. The correction must distinguish a hyphen-delimited locator token
+(`file-ref`, `ctx-file-uri`) from an ordinary word (`profile`).
+
+Retain the same ticket/lane/bindings. The final additive correction is limited to
+`library/workflow_router/profile.py`, `tests/test_workflow_router.py` and one WPR-only handoff.
+First-red a positive `profile` pair while retaining negative `file-ref` and `ctx-file-uri`
+cases; use boundary-aware typed metadata validation, then reverse that exact guard and rerun all
+R02A gates. No other validation, route or lifecycle behavior may change.
