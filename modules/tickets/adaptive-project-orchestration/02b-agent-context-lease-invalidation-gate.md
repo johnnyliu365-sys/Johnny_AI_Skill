@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2` revision 04 / AC-16 |
 | PRD / change | `PRD-20260815-021` / `CHG-20260815-021` |
-| State | `IN_PROGRESS / DISPATCH_CONFIRMED` |
+| State | `COMPLETE / APPROVED / INTEGRATED` |
 | Closure | `CLOSURE-ADAPTIVE-ROUTER-R02B-01` / ACX1-ACX8 |
 | Baseline | Proposal `ec41373ba29f363c95d4083a7549053c0588d661`; exact dispatch registry is the commit containing `PRG-20260815-471` |
 | Delivery profile | `STANDARD`; one Luna implementation owner; no helper |

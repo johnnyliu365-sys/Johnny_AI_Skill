@@ -5151,3 +5151,13 @@
 | Integration boundary | Guarded integration may merge only exact handoff `744d8d7`; only the predicted append-only WPR overlap is eligible for explicit resolution with each PRG record retained once and in order. Any other conflict halts. |
 | Transition | R02C tree traversal and active/archive/library index lifecycle remain blocked until this exact R02B handoff is integrated; no R02C source or document redesign is included here. |
 | Effects | No push, release, deployment, target-project, live host/model/network, package/install or Secret effect. `XSS_NOT_APPLICABLE`. |
+
+## PRG-20260815-477 - Router R02B guarded integration complete
+
+| Field | Evidence |
+| --- | --- |
+| Integration | Read-only merge-tree predicted only the append-only WPR overlap. Normal non-force merge `9e3d92bc42c5bc7320a71ecec6eb7b3a56848d94` integrated exact handoff `744d8d7a52713c641f17306782b050f5e1415bdc` after approval `8f43e5b362d30f00df5b7a7a90b825c83d0cbc80`. |
+| Resolution | The only unmerged path was `doc/WorkProgressReport.md`; PRG-472 through PRG-476 are each present once and in order. No source, test, ticket or review conflict occurred. |
+| Post-merge verification | Six-module Router regression `120/120`; in-memory compile `150/150`; diff, tracked/ignored porcelain and exact three-worktree topology pass. Independent pre-merge full serial remains `556/556`, strict mypy `150/150`, reviewer matrix `43/43`. |
+| Transition | R02B is `COMPLETE / APPROVED / INTEGRATED`; allocation `aln-adaptive-router-r02b-20260815` is released, prior side Context `scx-adaptive-router-r02b-20260815-01` remains invalidated and correction side Context `scx-adaptive-router-r02b-20260815-02` is closed. R02C becomes the only eligible design closure; no implementation receipt exists yet. |
+| Effects | No push, release, deployment, target-project, live host/model/network, package/install or Secret effect. `XSS_NOT_APPLICABLE`. |
