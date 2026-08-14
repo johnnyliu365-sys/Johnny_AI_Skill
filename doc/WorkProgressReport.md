@@ -4809,6 +4809,38 @@
 | Pre-red / return | Reproduce public `ImportError: SkillReference` before source change; execute exact committed R1-R7 and return one implementation commit plus one WPR-only handoff. Progress-only final is not completion. |
 | Resource / safety | Host model mapping `gpt-5.6-luna`, highest supported reasoning; one owner, no helper. `XSS_NOT_APPLICABLE`; no Agent delegation/control, new worktree, self-review/integration, 06G0P mutation, live model/Figma/Codex/home/App/target/network effect, push, package/install, Secret, release or deployment. |
 
+## PRG-20260814-445 - Router Ticket R01 implementation handoff
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_DISPATCH_CONFIRMED(PRG-444) -> ACTION_COMPLETED / REVIEW_HANDOFF`; R1-R7 are implemented on the admitted owner lane. |
+| Exact chain | Branch `codex/implementation-router-route-instruction-r01`; implementation `bff21771d3dc10eae4b354097e40123eb2b13001`; WPR-only handoff is this entry. |
+| First red / contract | Public imports of `ExpectedReturnContract`, `ReturnContractKind` and `SkillReference` produced the required `ImportError` before production mutation. R1 finite strict models and JSON round-trips, R2 profile contracts/fallback, R3 success/retry/wait copying, R4 fail-closed fallback, R5 metadata-only serialization and R6 regression coverage are green. |
+| Reversals | Making `TransitionRule.skill_reference` optional made `test_required_skill_reference_is_required` fail; substituting Profile fallback metadata in the final successful route made `test_successful_decision_copies_exact_rule_contract` fail. Both edits were restored with exact source bytes and the final focused suite is green. |
+| Verification | Focused Router `31/31`; existing six-module Router suite `98/98`; full explicit serial unittest `534/534`; strict full-tree mypy `150` source files with external cache removed; in-memory compile `150` files; `git diff --check` and exact five-path scope pass. |
+| Readback / boundary | Final branch/worktree is clean except the WPR append before this handoff commit; exact three-worktree topology, registry ancestry, tracked/ignored porcelain, cache/bytecode/runtime residue are clean/zero. `XSS_NOT_APPLICABLE`; no helper, live model/host/Codex/home/config/target-project/network effect, push/staging publication, package/install, Secret, release or deployment. |
+
+## PRG-20260814-448 - Router Ticket R01 revision-02 correction handoff
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `REVISION_02_CORRECTION_DISPATCH_CONFIRMED(PRG-447) -> ACTION_COMPLETED / REVIEW_HANDOFF`; CR-R01-001 through CR-R01-003 are closed on the retained lane. |
+| Exact chain | Branch `codex/implementation-router-route-instruction-r01`; parent handoff `a16dfc38eb6141e2aef5fa480be741b1f057ca57`; correction implementation `a961b59d3db60dbd74a9388621adad3112b4f721`; WPR-only handoff is this entry. |
+| Correction | The exhaustive 19-row Profile route table now names the primary next action and exact typed return; seven real policy references/digests are stored as metadata-only values; all-zero reference metadata, conflicting repeated IDs and contract/reference revision mismatches fail Profile construction. |
+| First red / reversals | The new exact route/hash tests first failed against the incoming-event echo and placeholder metadata. Restoring the input-event echo made the intake direction assertion red; replacing a real digest with the all-zero placeholder was rejected before policy admission. Both mutations were restored exactly. |
+| Verification | Focused Router `32/32`; existing six-module Router suite `99/99`; full explicit serial unittest `535/535`; strict full-tree mypy `150` source files with external cache removed; in-memory compile `150` files; exact three-path correction scope and `git diff --check` pass. |
+| Readback / boundary | Correction parent is the prior WPR handoff; final tracked/ignored status is clean, exactly three worktrees remain, and cache/bytecode/runtime residue is zero. `XSS_NOT_APPLICABLE`; no helper, new branch/worktree, live model/host/Codex/home/config/target-project/network effect, push/staging publication, package/install, Secret, release or deployment. |
+
+## PRG-20260815-451 - Router Ticket R01 revision-03 P0 correction handoff
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `REVISION_03_CORRECTION_DISPATCH_CONFIRMED(PRG-450) -> ACTION_COMPLETED / REVIEW_HANDOFF`; CR-R01-004 is closed on the retained lane. |
+| Exact chain | Branch `codex/implementation-router-route-instruction-r01`; parent handoff `21ced7b7f84a351074f65566603b4a2793334134`; additive implementation `646a8b2d7052eba58ff623133942a976920acffc`; this entry is the WPR-only handoff. |
+| Correction | Production `_PolicyRoute`, Profile reference-map keys, `_policy_reference_for`, and generated contract IDs use `OpaqueMetadataId`; policy constants are explicitly typed. Test route/policy oracles use `OpaqueMetadataId`, `RevisionDigest`, `EvidenceDigest`, and `PurePosixPath` with explicit tuple annotations. Policy evidence hashes the typed checkout path after CRLF-to-LF canonicalization without Git/subprocess access. |
+| First red / reversals | The bounded AST source gate first failed on the existing `_PolicyRoute.reference_id: str`. Reversing that field to `str` made the named gate red; removing `_POLICY_ROUTES`' tuple annotation made the same gate red. Both reversals were restored exactly before final verification. |
+| Verification | Focused Router `32/32`; retained six-module Router regression `99/99`; full explicit serial unittest `535/535`; strict full-tree mypy `150` source files with an external cache removed; in-memory compile `150` files; direct source/hash oracle, `git diff --check`, exact implementation scope, additive ancestry, three-worktree topology, tracked/ignored porcelain and zero cache/runtime residue pass. |
+| Readback / boundary | Final implementation commit changes only `library/workflow_router/profile.py` and `tests/test_workflow_router.py`; final WPR append is the only docs change. `XSS_NOT_APPLICABLE`; no helper/subagent, new worktree, self-review/integration, live model/host/Codex/home/config/target-project/network effect, push/staging publication, package/install, Secret, release or deployment. |
 ## PRG-20260814-446 - Router Ticket R01 independent review and revision-02 refreeze
 
 | Field | Evidence |
@@ -4876,3 +4908,14 @@
 | Admission | Implementation lane must be clean at branch `codex/implementation-router-route-instruction-r01`, HEAD `7d6c2f2a066a9d039eb13ae0a8e339e04f372f61`, then guarded-merge this registry commit. Only an append-only WPR conflict may retain every unique PRG entry exactly once; any other conflict halts. |
 | Exact correction | First-red the three stale policy pairs, update only typed production/test constants for `router-control`, `context-routing` and `specification-ticketing`, perform the bounded old-context reversal and all revision-03 gates, then one WPR-only handoff. |
 | Owner / safety | Same implementation task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`, permanent worktree, branch, allocation `aln_adaptive_router_r01_20260814` and receipt `rcpt_adaptive_router_r01_20260814`; no helper, R02, 06G0P, new worktree, push, package/install, target/live effect, release or deployment. |
+
+## PRG-20260815-455 - Router Ticket R01 revision-04 policy rebind handoff
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `REVISION_04_CORRECTION_DISPATCH_CONFIRMED(PRG-454) -> ACTION_COMPLETED / REVIEW_HANDOFF`; the three stale policy pairs are rebound on the retained lane. |
+| Sync / chain | Guarded control-baseline merge `0f1926764ebb395f6beac7dbd4d11502f7a36425`; only the predicted WPR overlap conflicted, every unique PRG entry from both histories is retained once, and R03 source/test blobs remained byte-identical. Additive correction `e69b15e632f74820eb07a6e76f227b413ed24416`; this entry is the WPR-only handoff. |
+| First red / correction | After synchronization, the policy authenticity oracle reported exactly three stale pairs: `router-control`, `context-routing`, and `specification-ticketing`, with their old and refrozen digests. Only those typed production/test metadata pairs plus the duplicated router-control expected-revision assertion were updated. Canonical CRLF-to-LF policy hashes match the refrozen values. |
+| Reversal | Temporarily restoring the old `context-routing` pair made the authenticity oracle red; the pair was restored exactly. The retained R03 `str` field and tuple-annotation reversals were also red and restored. |
+| Verification | Focused Router `32/32`; six-module regression `99/99`; full serial unittest `535/535`; strict full-tree mypy `150` source files with external cache removed; in-memory compile `150`; policy-byte readback, AST/source gate, exact two-path correction scope, merge ancestry, `git diff --check`, three-worktree topology, tracked/ignored porcelain and zero cache/runtime residue pass. |
+| Readback / boundary | Final implementation is metadata-only; no route/public/type behavior changed. `XSS_NOT_APPLICABLE`; no helper/subagent, new worktree, self-review/integration, live model/host/Codex/home/config/target-project/network effect, push/staging publication, package/install, Secret, release or deployment. |

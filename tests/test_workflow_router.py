@@ -2,10 +2,13 @@
 
 from __future__ import annotations
 
+import ast
+import hashlib
 import unittest
 from contextlib import redirect_stdout
+from dataclasses import dataclass
 from io import StringIO
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from tempfile import TemporaryDirectory
 
 from pydantic import ValidationError
@@ -18,11 +21,13 @@ from library.workflow_router import (
     CitationLedger,
     CompletionActionKind,
     CompletionEvidence,
+    ContinuationDirective,
     ConsumerFingerprint,
     ContextResolver,
     ContextUsageRecord,
     ContextUsageValidator,
     DeliveryStage,
+    ExpectedReturnContract,
     FrontendCompositionContract,
     HandoffArtifactReference,
     HandoffConsumerFingerprint,
@@ -39,6 +44,8 @@ from library.workflow_router import (
     RouterEventKind,
     RouterOutcome,
     RouterState,
+    ReturnContractKind,
+    SkillReference,
     RunAcceptance,
     SourceSnippet,
     TicketScope,
@@ -46,8 +53,238 @@ from library.workflow_router import (
     build_router_poc_profile,
 )
 from library.workflow_router.graph import RouterGraphState
+from library.workflow_router.contracts import (
+    EvidenceDigest,
+    OpaqueMetadataId,
+    RevisionDigest,
+    RouterDecision,
+)
 from library.workflow_router.profile import ProjectWorkflowProfile, TransitionRule
 from library.workflow_router.telemetry_cli import main as telemetry_main
+
+
+@dataclass(frozen=True)
+class _ExpectedRoute:
+    current_stage: ProcessStage
+    input_event: RouterEventKind
+    reference_id: OpaqueMetadataId
+    return_kind: ReturnContractKind
+    router_events: tuple[RouterEventKind, ...]
+    implementation_statuses: tuple[ImplementationReturnStatus, ...]
+
+
+@dataclass(frozen=True)
+class _ExpectedPolicy:
+    reference_id: OpaqueMetadataId
+    source_revision: RevisionDigest
+    content_digest: EvidenceDigest
+    relative_path: PurePosixPath
+
+
+_EXPECTED_ROUTES: tuple[_ExpectedRoute, ...] = (
+    _ExpectedRoute(
+        ProcessStage.INTAKE,
+        RouterEventKind.INTAKE,
+        "discovery-change",
+        ReturnContractKind.ROUTER_EVENT,
+        (RouterEventKind.WAYFINDER_GO, RouterEventKind.WAYFINDER_NO_GO),
+        (),
+    ),
+    _ExpectedRoute(
+        ProcessStage.WAYFINDER,
+        RouterEventKind.WAYFINDER_GO,
+        "discovery-change",
+        ReturnContractKind.ROUTER_EVENT,
+        (RouterEventKind.ACTION_COMPLETED,),
+        (),
+    ),
+    _ExpectedRoute(
+        ProcessStage.WAYFINDER,
+        RouterEventKind.WAYFINDER_NO_GO,
+        "router-control",
+        ReturnContractKind.NO_RETURN,
+        (),
+        (),
+    ),
+    _ExpectedRoute(
+        ProcessStage.ARCHITECTURE,
+        RouterEventKind.ACTION_COMPLETED,
+        "discovery-change",
+        ReturnContractKind.ROUTER_EVENT,
+        (RouterEventKind.ACTION_COMPLETED,),
+        (),
+    ),
+    _ExpectedRoute(
+        ProcessStage.GRILL,
+        RouterEventKind.ACTION_COMPLETED,
+        "context-routing",
+        ReturnContractKind.ROUTER_EVENT,
+        (RouterEventKind.ACTION_COMPLETED,),
+        (),
+    ),
+    _ExpectedRoute(
+        ProcessStage.CONTEXT,
+        RouterEventKind.ACTION_COMPLETED,
+        "specification-ticketing",
+        ReturnContractKind.ROUTER_EVENT,
+        (RouterEventKind.ACTION_COMPLETED,),
+        (),
+    ),
+    _ExpectedRoute(
+        ProcessStage.SPEC,
+        RouterEventKind.ACTION_COMPLETED,
+        "specification-ticketing",
+        ReturnContractKind.ROUTER_EVENT,
+        (RouterEventKind.APPROVAL_GRANTED, RouterEventKind.APPROVAL_DENIED),
+        (),
+    ),
+    _ExpectedRoute(
+        ProcessStage.SPEC,
+        RouterEventKind.APPROVAL_GRANTED,
+        "specification-ticketing",
+        ReturnContractKind.ROUTER_EVENT,
+        (RouterEventKind.TICKET_DISPATCH_REQUIRED,),
+        (),
+    ),
+    _ExpectedRoute(
+        ProcessStage.TICKETS,
+        RouterEventKind.TICKET_DISPATCH_REQUIRED,
+        "implementation-authority",
+        ReturnContractKind.ROUTER_EVENT,
+        (RouterEventKind.IMPLEMENTATION_DISPATCH_CONFIRMED,),
+        (),
+    ),
+    _ExpectedRoute(
+        ProcessStage.TICKETS,
+        RouterEventKind.IMPLEMENTATION_DISPATCH_CONFIRMED,
+        "discovery-change",
+        ReturnContractKind.ROUTER_EVENT,
+        (RouterEventKind.ACTION_COMPLETED,),
+        (),
+    ),
+    _ExpectedRoute(
+        ProcessStage.IMPLEMENT,
+        RouterEventKind.IMPLEMENTATION_RETURNED,
+        "implementation-tdd",
+        ReturnContractKind.ROUTER_EVENT,
+        (RouterEventKind.VALIDATION_PASSED, RouterEventKind.VALIDATION_FAILED),
+        (),
+    ),
+    _ExpectedRoute(
+        ProcessStage.GRILL,
+        RouterEventKind.INTEGRATION_COMPLETED,
+        "discovery-change",
+        ReturnContractKind.ROUTER_EVENT,
+        (RouterEventKind.ACTION_COMPLETED,),
+        (),
+    ),
+    _ExpectedRoute(
+        ProcessStage.GRILL,
+        RouterEventKind.AUDIT_COMPLETED,
+        "review-checks",
+        ReturnContractKind.ROUTER_EVENT,
+        (RouterEventKind.ACTION_COMPLETED,),
+        (),
+    ),
+    _ExpectedRoute(
+        ProcessStage.IMPLEMENT,
+        RouterEventKind.ACTION_COMPLETED,
+        "implementation-tdd",
+        ReturnContractKind.ROUTER_EVENT,
+        (RouterEventKind.VALIDATION_PASSED, RouterEventKind.VALIDATION_FAILED),
+        (),
+    ),
+    _ExpectedRoute(
+        ProcessStage.SMOKE_TEST,
+        RouterEventKind.VALIDATION_PASSED,
+        "review-checks",
+        ReturnContractKind.ROUTER_EVENT,
+        (RouterEventKind.ACTION_COMPLETED,),
+        (),
+    ),
+    _ExpectedRoute(
+        ProcessStage.SMOKE_TEST,
+        RouterEventKind.VALIDATION_FAILED,
+        "implementation-tdd",
+        ReturnContractKind.IMPLEMENTATION_RETURN,
+        (),
+        (
+            ImplementationReturnStatus.COMPLETED,
+            ImplementationReturnStatus.BLOCKED,
+            ImplementationReturnStatus.CHANGE_DETECTED,
+        ),
+    ),
+    _ExpectedRoute(
+        ProcessStage.REVIEW,
+        RouterEventKind.ACTION_COMPLETED,
+        "review-checks",
+        ReturnContractKind.ROUTER_EVENT,
+        (RouterEventKind.ACTION_COMPLETED,),
+        (),
+    ),
+    _ExpectedRoute(
+        ProcessStage.HANDOFF,
+        RouterEventKind.ACTION_COMPLETED,
+        "router-control",
+        ReturnContractKind.NO_RETURN,
+        (),
+        (),
+    ),
+    _ExpectedRoute(
+        ProcessStage.IMPLEMENT,
+        RouterEventKind.REQUIREMENT_CHANGED,
+        "discovery-change",
+        ReturnContractKind.ROUTER_EVENT,
+        (RouterEventKind.ACTION_COMPLETED,),
+        (),
+    ),
+)
+
+
+_EXPECTED_POLICIES: tuple[_ExpectedPolicy, ...] = (
+    _ExpectedPolicy(
+        "router-control",
+        "rev-d6660247fa53789c",
+        "sha256_d6660247fa53789c4a14498aaaae2e15a49fa3335e84fe585480f08ba564de5d",
+        PurePosixPath("skills/johnny-project-takeover/references/router-control.md"),
+    ),
+    _ExpectedPolicy(
+        "discovery-change",
+        "rev-5d432a8246bce4ed",
+        "sha256_5d432a8246bce4ed890289e24c50e2e29360df165eeb7f9355cb02228e1d10ef",
+        PurePosixPath("skills/johnny-project-takeover/references/discovery-change.md"),
+    ),
+    _ExpectedPolicy(
+        "context-routing",
+        "rev-db155a0be96c756f",
+        "sha256_db155a0be96c756f4b79270ada14c088b338a21e878caff994ae31a41638859d",
+        PurePosixPath("skills/johnny-project-takeover/references/context-routing.md"),
+    ),
+    _ExpectedPolicy(
+        "specification-ticketing",
+        "rev-26e443dfca8e8434",
+        "sha256_26e443dfca8e84342bb2ca40d748ac155a2b34010fcd6dc7fd5b59c6de5936b3",
+        PurePosixPath("skills/johnny-project-takeover/references/specification-ticketing.md"),
+    ),
+    _ExpectedPolicy(
+        "implementation-authority",
+        "rev-855117ed19c9c952",
+        "sha256_855117ed19c9c952f8903bc56ce070d2cf3805fb51d7a450c46bbf8a00480f50",
+        PurePosixPath("skills/johnny-project-takeover/references/implementation-authority.md"),
+    ),
+    _ExpectedPolicy(
+        "implementation-tdd",
+        "rev-38408006f23df3b6",
+        "sha256_38408006f23df3b66a4368e2b8794cc099b84ea20417e56d881ff19512345574",
+        PurePosixPath("skills/johnny-project-takeover/references/implementation-tdd.md"),
+    ),
+    _ExpectedPolicy(
+        "review-checks",
+        "rev-4b8527305609194a",
+        "sha256_4b8527305609194ae9dd26c16a05ff72d22b1f20a8cb925175d6793766bb5f54",
+        PurePosixPath("skills/johnny-project-takeover/references/review-checks.md"),
+    ),
+)
 
 
 class WorkflowRouterTests(unittest.TestCase):
@@ -465,8 +702,32 @@ class WorkflowRouterTests(unittest.TestCase):
             profile_id="legacy-router-profile",
             profile_version="1",
             delivery_stage=DeliveryStage.POC,
+            router_control_reference=SkillReference(
+                reference_id="router-control",
+                source_revision="rev-5d432a8246bce4ed",
+                content_digest="sha256_5d432a8246bce4ed890289e24c50e2e29360df165eeb7f9355cb02228e1d10ef",
+            ),
+            halt_return_contract=ExpectedReturnContract(
+                contract_id="router-control-no-return",
+                contract_revision="rev-5d432a8246bce4ed",
+                return_kind=ReturnContractKind.NO_RETURN,
+                router_events=(),
+                implementation_statuses=(),
+            ),
             transition_rules=(
                 TransitionRule(
+                    skill_reference=SkillReference(
+                        reference_id="legacy-route-architecture-action-completed",
+                        source_revision="rev-5d432a8246bce4ed",
+                        content_digest="sha256_5d432a8246bce4ed890289e24c50e2e29360df165eeb7f9355cb02228e1d10ef",
+                    ),
+                    expected_return=ExpectedReturnContract(
+                        contract_id="return-action-completed",
+                        contract_revision="rev-5d432a8246bce4ed",
+                        return_kind=ReturnContractKind.ROUTER_EVENT,
+                        router_events=(RouterEventKind.ACTION_COMPLETED,),
+                        implementation_statuses=(),
+                    ),
                     current_stage=ProcessStage.ARCHITECTURE,
                     event_kind=RouterEventKind.ACTION_COMPLETED,
                     outcome=RouterOutcome.ADVANCE,
@@ -1208,6 +1469,670 @@ class ContextLoadTelemetryTests(unittest.TestCase):
                 target_artifact=self.target,
                 consumer=self.agent.consumer,
             )
+
+
+class RouteInstructionContractTests(unittest.TestCase):
+    """Exercise the versioned policy reference and finite return contract boundary."""
+
+    _revision = "rev-5d432a8246bce4ed"
+    _digest = "sha256_5d432a8246bce4ed890289e24c50e2e29360df165eeb7f9355cb02228e1d10ef"
+
+    def _skill(self, reference_id: str = "route-test-policy") -> SkillReference:
+        return SkillReference(
+            reference_id=reference_id,
+            source_revision=self._revision,
+            content_digest=self._digest,
+        )
+
+    def _router_contract(self) -> ExpectedReturnContract:
+        return ExpectedReturnContract(
+            contract_id="return-action-completed",
+            contract_revision=self._revision,
+            return_kind=ReturnContractKind.ROUTER_EVENT,
+            router_events=(RouterEventKind.ACTION_COMPLETED,),
+            implementation_statuses=(),
+        )
+
+    def _assert_profile_fallback(
+        self,
+        decision: RouterDecision,
+        profile: ProjectWorkflowProfile,
+    ) -> None:
+        self.assertEqual(profile.router_control_reference, decision.skill_reference)
+        self.assertEqual(profile.halt_return_contract, decision.expected_return)
+
+    def test_finite_contracts_round_trip_and_reject_complete_invalid_matrix(self) -> None:
+        implementation_contract = ExpectedReturnContract(
+            contract_id="return-implementation",
+            contract_revision=self._revision,
+            return_kind=ReturnContractKind.IMPLEMENTATION_RETURN,
+            router_events=(),
+            implementation_statuses=(
+                ImplementationReturnStatus.COMPLETED,
+                ImplementationReturnStatus.CHANGE_DETECTED,
+            ),
+        )
+        no_return_contract = ExpectedReturnContract(
+            contract_id="return-no-return",
+            contract_revision=self._revision,
+            return_kind=ReturnContractKind.NO_RETURN,
+            router_events=(),
+            implementation_statuses=(),
+        )
+        valid_contracts = (self._router_contract(), implementation_contract, no_return_contract)
+        for contract in valid_contracts:
+            with self.subTest(return_kind=contract.return_kind):
+                rebuilt = ExpectedReturnContract.model_validate_json(contract.model_dump_json())
+                self.assertEqual(contract, rebuilt)
+
+        rebuilt_skill = SkillReference.model_validate_json(self._skill().model_dump_json())
+        self.assertEqual(self._skill(), rebuilt_skill)
+
+        with self.assertRaises(ValidationError):
+            SkillReference(
+                reference_id="route-policy",
+                source_revision="rev-0000000000000000",
+                content_digest=self._digest,
+            )
+        with self.assertRaises(ValidationError):
+            SkillReference(
+                reference_id="route-policy",
+                source_revision=self._revision,
+                content_digest="sha256_0000000000000000000000000000000000000000000000000000000000000000",
+            )
+
+        for reference_id in ("route-prompt", "route-secret", "route://policy", "route\\policy"):
+            with self.subTest(reference_id=reference_id), self.assertRaises(ValidationError):
+                self._skill(reference_id)
+        with self.assertRaises(ValidationError):
+            SkillReference.model_validate(
+                {"source_revision": self._revision, "content_digest": self._digest}
+            )
+        with self.assertRaises(ValidationError):
+            SkillReference.model_validate(
+                {
+                    "reference_id": "route-policy",
+                    "source_revision": self._revision,
+                    "content_digest": None,
+                }
+            )
+        with self.assertRaises(ValidationError):
+            SkillReference.model_validate(
+                {
+                    "reference_id": "route-policy",
+                    "source_revision": self._revision,
+                    "content_digest": self._digest,
+                    "extra": "forbidden",
+                }
+            )
+
+        with self.assertRaises(ValidationError):
+            ExpectedReturnContract(
+                contract_id="return-empty-router",
+                contract_revision=self._revision,
+                return_kind=ReturnContractKind.ROUTER_EVENT,
+                router_events=(),
+                implementation_statuses=(),
+            )
+        with self.assertRaises(ValidationError):
+            ExpectedReturnContract(
+                contract_id="return-mixed-router",
+                contract_revision=self._revision,
+                return_kind=ReturnContractKind.ROUTER_EVENT,
+                router_events=(RouterEventKind.ACTION_COMPLETED,),
+                implementation_statuses=(ImplementationReturnStatus.COMPLETED,),
+            )
+        with self.assertRaises(ValidationError):
+            ExpectedReturnContract(
+                contract_id="return-duplicate-router",
+                contract_revision=self._revision,
+                return_kind=ReturnContractKind.ROUTER_EVENT,
+                router_events=(RouterEventKind.ACTION_COMPLETED, RouterEventKind.ACTION_COMPLETED),
+                implementation_statuses=(),
+            )
+        with self.assertRaises(ValidationError):
+            ExpectedReturnContract(
+                contract_id="return-empty-implementation",
+                contract_revision=self._revision,
+                return_kind=ReturnContractKind.IMPLEMENTATION_RETURN,
+                router_events=(),
+                implementation_statuses=(),
+            )
+        with self.assertRaises(ValidationError):
+            ExpectedReturnContract(
+                contract_id="return-mixed-implementation",
+                contract_revision=self._revision,
+                return_kind=ReturnContractKind.IMPLEMENTATION_RETURN,
+                router_events=(RouterEventKind.ACTION_COMPLETED,),
+                implementation_statuses=(ImplementationReturnStatus.COMPLETED,),
+            )
+        with self.assertRaises(ValidationError):
+            ExpectedReturnContract(
+                contract_id="return-duplicate-implementation",
+                contract_revision=self._revision,
+                return_kind=ReturnContractKind.IMPLEMENTATION_RETURN,
+                router_events=(),
+                implementation_statuses=(
+                    ImplementationReturnStatus.COMPLETED,
+                    ImplementationReturnStatus.COMPLETED,
+                ),
+            )
+        with self.assertRaises(ValidationError):
+            ExpectedReturnContract(
+                contract_id="return-nonempty-no-return",
+                contract_revision=self._revision,
+                return_kind=ReturnContractKind.NO_RETURN,
+                router_events=(RouterEventKind.ACTION_COMPLETED,),
+                implementation_statuses=(),
+            )
+        with self.assertRaises(ValidationError):
+            ExpectedReturnContract.model_validate(
+                {
+                    **self._router_contract().model_dump(),
+                    "return_kind": None,
+                }
+            )
+        with self.assertRaises(ValidationError):
+            ExpectedReturnContract.model_validate(
+                {
+                    **self._router_contract().model_dump(),
+                    "router_events": None,
+                }
+            )
+        with self.assertRaises(ValidationError):
+            ExpectedReturnContract.model_validate(
+                {
+                    **self._router_contract().model_dump(),
+                    "unexpected": "forbidden",
+                }
+            )
+
+    def test_profile_route_table_and_policy_metadata_are_exact(self) -> None:
+        profile = build_router_poc_profile()
+        self.assertEqual("router-control", profile.router_control_reference.reference_id)
+        self.assertEqual(
+            "rev-d6660247fa53789c",
+            profile.router_control_reference.source_revision,
+        )
+        self.assertEqual(
+            ReturnContractKind.NO_RETURN,
+            profile.halt_return_contract.return_kind,
+        )
+        self.assertEqual((), profile.halt_return_contract.router_events)
+        self.assertEqual((), profile.halt_return_contract.implementation_statuses)
+
+        expected_keys = {(route.current_stage, route.input_event) for route in _EXPECTED_ROUTES}
+        actual_keys = {(rule.current_stage, rule.event_kind) for rule in profile.transition_rules}
+        self.assertEqual(expected_keys, actual_keys)
+        self.assertEqual(len(_EXPECTED_ROUTES), len(profile.transition_rules))
+        for expected in _EXPECTED_ROUTES:
+            with self.subTest(route=(expected.current_stage, expected.input_event)):
+                rule = profile.rule_for(
+                    current_stage=expected.current_stage,
+                    event_kind=expected.input_event,
+                )
+                if rule is None:
+                    self.fail("expected route is missing from the POC profile")
+                self.assertEqual(expected.reference_id, rule.skill_reference.reference_id)
+                self.assertEqual(expected.return_kind, rule.expected_return.return_kind)
+                self.assertEqual(expected.router_events, rule.expected_return.router_events)
+                self.assertEqual(
+                    expected.implementation_statuses,
+                    rule.expected_return.implementation_statuses,
+                )
+                expected_contract_id = (
+                    f"return-{expected.current_stage.value.replace('_', '-')}-"
+                    f"{expected.input_event.value.replace('_', '-')}"
+                )
+                self.assertEqual(expected_contract_id, rule.expected_return.contract_id)
+                self.assertEqual(
+                    rule.skill_reference.source_revision,
+                    rule.expected_return.contract_revision,
+                )
+
+        references = (profile.router_control_reference,) + tuple(
+            rule.skill_reference for rule in profile.transition_rules
+        )
+        for expected_policy in _EXPECTED_POLICIES:
+            with self.subTest(policy=expected_policy.reference_id):
+                policy_path = (
+                    Path(__file__).resolve().parents[1] / expected_policy.relative_path
+                )
+                repository_bytes = policy_path.read_bytes().replace(b"\r\n", b"\n")
+                self.assertEqual(
+                    expected_policy.content_digest,
+                    "sha256_" + hashlib.sha256(repository_bytes).hexdigest(),
+                )
+                matching = tuple(
+                    reference
+                    for reference in references
+                    if reference.reference_id == expected_policy.reference_id
+                )
+                self.assertGreaterEqual(len(matching), 1)
+                for reference in matching:
+                    self.assertEqual(expected_policy.source_revision, reference.source_revision)
+                    self.assertEqual(expected_policy.content_digest, reference.content_digest)
+
+    def test_profile_rejects_conflicting_reference_metadata_and_revision_mismatch(self) -> None:
+        profile = build_router_poc_profile()
+        first_rule = profile.transition_rules[0]
+        conflicting_rule = TransitionRule.model_validate(
+            {
+                **first_rule.model_dump(),
+                "skill_reference": {
+                    "reference_id": first_rule.skill_reference.reference_id,
+                    "source_revision": "rev-5f1e7958c70c8493",
+                    "content_digest": "sha256_5f1e7958c70c8493de83aa1481e0f3f3e59c5a40e745a12077eb372fa6e0815e",
+                },
+            }
+        )
+        with self.assertRaises(ValidationError):
+            ProjectWorkflowProfile.model_validate(
+                {
+                    **profile.model_dump(),
+                    "transition_rules": (conflicting_rule,) + profile.transition_rules[1:],
+                }
+            )
+
+        mismatched_rule = TransitionRule.model_validate(
+            {
+                **first_rule.model_dump(),
+                "expected_return": {
+                    **first_rule.expected_return.model_dump(),
+                    "contract_revision": "rev-5f1e7958c70c8493",
+                },
+            }
+        )
+        with self.assertRaises(ValidationError):
+            ProjectWorkflowProfile.model_validate(
+                {
+                    **profile.model_dump(),
+                    "transition_rules": (mismatched_rule,) + profile.transition_rules[1:],
+                }
+            )
+
+        with self.assertRaises(ValidationError):
+            ProjectWorkflowProfile.model_validate(
+                {
+                    **profile.model_dump(),
+                    "halt_return_contract": {
+                        **profile.halt_return_contract.model_dump(),
+                        "contract_revision": "rev-5f1e7958c70c8493",
+                    },
+                }
+            )
+
+    def test_success_retry_and_declared_wait_copy_the_exact_rule_contract(self) -> None:
+        profile = build_router_poc_profile()
+        engine = RouterEngine()
+        goal = ArtifactRef(
+            kind=ArtifactKind.PROJECT_GOAL,
+            identifier="router-contract-goal",
+            uri="project://router-contract/goal",
+            revision="1",
+        )
+        intake_rule = profile.rule_for(
+            current_stage=ProcessStage.INTAKE,
+            event_kind=RouterEventKind.INTAKE,
+        )
+        if intake_rule is None:
+            self.fail("POC profile must declare the intake rule")
+        intake = engine.decide(
+            state=RouterState(
+                project_id="router-framework-poc",
+                stage=ProcessStage.INTAKE,
+                authority_state=AuthorityState.NOT_REQUIRED,
+                delivery_stage=DeliveryStage.POC,
+                artifact_refs=(goal,),
+            ),
+            event=RouterEvent(event_id="evt-contract-intake", kind=RouterEventKind.INTAKE),
+            profile=profile,
+        )
+        self.assertEqual(intake_rule.skill_reference, intake.skill_reference)
+        self.assertEqual(intake_rule.expected_return, intake.expected_return)
+
+        ticket = ArtifactRef(
+            kind=ArtifactKind.TICKET,
+            identifier="router-contract-ticket",
+            uri="ticket://router-contract/ticket",
+            revision="1",
+        )
+        retry_rule = profile.rule_for(
+            current_stage=ProcessStage.SMOKE_TEST,
+            event_kind=RouterEventKind.VALIDATION_FAILED,
+        )
+        if retry_rule is None:
+            self.fail("POC profile must declare the validation retry rule")
+        retry = engine.decide(
+            state=RouterState(
+                project_id="router-framework-poc",
+                stage=ProcessStage.SMOKE_TEST,
+                authority_state=AuthorityState.NOT_REQUIRED,
+                delivery_stage=DeliveryStage.POC,
+                artifact_refs=(ticket,),
+            ),
+            event=RouterEvent(
+                event_id="evt-contract-retry",
+                kind=RouterEventKind.VALIDATION_FAILED,
+            ),
+            profile=profile,
+        )
+        self.assertEqual(retry_rule.skill_reference, retry.skill_reference)
+        self.assertEqual(retry_rule.expected_return, retry.expected_return)
+
+        wait_rule = profile.rule_for(
+            current_stage=ProcessStage.SPEC,
+            event_kind=RouterEventKind.ACTION_COMPLETED,
+        )
+        if wait_rule is None:
+            self.fail("POC profile must declare the specification wait rule")
+        specification = ArtifactRef(
+            kind=ArtifactKind.SPEC,
+            identifier="router-contract-spec",
+            uri="spec://router-contract/spec",
+            revision="1",
+        )
+        wait = engine.decide(
+            state=RouterState(
+                project_id="router-framework-poc",
+                stage=ProcessStage.SPEC,
+                authority_state=AuthorityState.PENDING,
+                delivery_stage=DeliveryStage.POC,
+                artifact_refs=(specification,),
+            ),
+            event=RouterEvent(
+                event_id="evt-contract-wait",
+                kind=RouterEventKind.ACTION_COMPLETED,
+            ),
+            profile=profile,
+        )
+        self.assertEqual(wait_rule.skill_reference, wait.skill_reference)
+        self.assertEqual(wait_rule.expected_return, wait.expected_return)
+        self.assertEqual(ContinuationDirective.WAIT_FOR_HUMAN, wait.continuation)
+
+    def test_fail_closed_paths_use_the_profile_router_control_no_return(self) -> None:
+        profile = build_router_poc_profile()
+        engine = RouterEngine()
+        delivery_mismatch = engine.decide(
+            state=RouterState(
+                project_id="router-framework-poc",
+                stage=ProcessStage.INTAKE,
+                authority_state=AuthorityState.NOT_REQUIRED,
+                delivery_stage=DeliveryStage.MVP,
+                artifact_refs=(),
+            ),
+            event=RouterEvent(event_id="evt-contract-delivery", kind=RouterEventKind.INTAKE),
+            profile=profile,
+        )
+        self._assert_profile_fallback(delivery_mismatch, profile)
+
+        missing_source = engine.decide(
+            state=RouterState(
+                project_id="router-framework-poc",
+                stage=ProcessStage.INTAKE,
+                authority_state=AuthorityState.NOT_REQUIRED,
+                delivery_stage=DeliveryStage.POC,
+                artifact_refs=(),
+            ),
+            event=RouterEvent(event_id="evt-contract-missing", kind=RouterEventKind.INTAKE),
+            profile=profile,
+        )
+        self._assert_profile_fallback(missing_source, profile)
+
+        undeclared = engine.decide(
+            state=RouterState(
+                project_id="router-framework-poc",
+                stage=ProcessStage.STOPPED,
+                authority_state=AuthorityState.NOT_REQUIRED,
+                delivery_stage=DeliveryStage.POC,
+                artifact_refs=(),
+            ),
+            event=RouterEvent(event_id="evt-contract-undeclared", kind=RouterEventKind.INTAKE),
+            profile=profile,
+        )
+        self._assert_profile_fallback(undeclared, profile)
+
+    def test_decision_serialization_contains_only_the_new_finite_metadata_contract(self) -> None:
+        profile = build_router_poc_profile()
+        goal = ArtifactRef(
+            kind=ArtifactKind.PROJECT_GOAL,
+            identifier="router-contract-serialization-goal",
+            uri="project://router-contract/serialization-goal",
+            revision="1",
+        )
+        decision = RouterEngine().decide(
+            state=RouterState(
+                project_id="router-framework-poc",
+                stage=ProcessStage.INTAKE,
+                authority_state=AuthorityState.NOT_REQUIRED,
+                delivery_stage=DeliveryStage.POC,
+                artifact_refs=(goal,),
+            ),
+            event=RouterEvent(
+                event_id="evt-contract-serialization",
+                kind=RouterEventKind.INTAKE,
+            ),
+            profile=profile,
+        )
+        serialized = decision.model_dump()
+        self.assertEqual(
+            {"reference_id", "source_revision", "content_digest"},
+            set(serialized["skill_reference"]),
+        )
+        self.assertEqual(
+            {
+                "contract_id",
+                "contract_revision",
+                "return_kind",
+                "router_events",
+                "implementation_statuses",
+            },
+            set(serialized["expected_return"]),
+        )
+        self.assertNotIn("uri", serialized["skill_reference"])
+        self.assertNotIn("prompt", serialized["skill_reference"]["reference_id"])
+        self.assertNotIn("secret", serialized["skill_reference"]["reference_id"])
+
+    def test_new_contract_surface_has_strong_annotations_and_no_bypass_constructs(self) -> None:
+        source_paths = (
+            Path("library/workflow_router/contracts.py"),
+            Path("library/workflow_router/profile.py"),
+            Path("library/workflow_router/router.py"),
+            Path("tests/test_workflow_router.py"),
+        )
+        class_names = {
+            "SkillReference",
+            "ExpectedReturnContract",
+            "TransitionRule",
+            "ProjectWorkflowProfile",
+            "RouterDecision",
+            "_PolicyRoute",
+            "_ExpectedRoute",
+            "_ExpectedPolicy",
+        }
+        field_names = {
+            "reference_id",
+            "source_revision",
+            "content_digest",
+            "contract_id",
+            "contract_revision",
+            "return_kind",
+            "router_events",
+            "implementation_statuses",
+            "skill_reference",
+            "expected_return",
+            "router_control_reference",
+            "halt_return_contract",
+        }
+        expected_class_fields = {
+            "library/workflow_router/profile.py": {
+                "_PolicyRoute": {"reference_id": "OpaqueMetadataId"},
+            },
+            "tests/test_workflow_router.py": {
+                "_ExpectedRoute": {"reference_id": "OpaqueMetadataId"},
+                "_ExpectedPolicy": {
+                    "reference_id": "OpaqueMetadataId",
+                    "source_revision": "RevisionDigest",
+                    "content_digest": "EvidenceDigest",
+                    "relative_path": "PurePosixPath",
+                },
+            },
+        }
+        expected_module_annotations = {
+            "library/workflow_router/profile.py": {
+                "_POLICY_REFERENCES": "tuple[SkillReference, ...]",
+                "_POLICY_ROUTES": "tuple[_PolicyRoute, ...]",
+            },
+            "tests/test_workflow_router.py": {
+                "_EXPECTED_ROUTES": "tuple[_ExpectedRoute, ...]",
+                "_EXPECTED_POLICIES": "tuple[_ExpectedPolicy, ...]",
+            },
+        }
+        expected_function_parameters = {
+            "library/workflow_router/profile.py": {
+                "_policy_reference_for": {"reference_id": "OpaqueMetadataId"},
+            },
+        }
+        expected_local_annotations = {
+            "library/workflow_router/profile.py": {
+                "has_unique_transition_keys": {
+                    "references": "dict[OpaqueMetadataId, SkillReference]",
+                },
+                "_expected_return_for": {"contract_id": "OpaqueMetadataId"},
+            },
+        }
+        for source_path in source_paths:
+            source = source_path.read_text(encoding="utf-8")
+            tree = ast.parse(source)
+            class_nodes = {
+                class_node.name: class_node
+                for class_node in ast.walk(tree)
+                if isinstance(class_node, ast.ClassDef) and class_node.name in class_names
+            }
+            for class_name in class_names.intersection(class_nodes):
+                node = class_nodes[class_name]
+                surface = ast.unparse(node)
+                for forbidden in (
+                    "Any",
+                    "object",
+                    "cast(",
+                    "model_construct",
+                    "model_copy",
+                    "getattr(",
+                    "hasattr(",
+                    "setattr(",
+                    "type: ignore",
+                ):
+                    self.assertNotIn(forbidden, surface)
+                for child_node in ast.walk(node):
+                    if isinstance(child_node, ast.ExceptHandler):
+                        self.assertIsNotNone(child_node.type)
+            for ast_node in ast.walk(tree):
+                if isinstance(ast_node, (ast.Import, ast.ImportFrom)):
+                    self.assertNotIn("inspect", ast.unparse(ast_node))
+            for ast_node in ast.walk(tree):
+                if isinstance(ast_node, ast.AnnAssign) and isinstance(ast_node.target, ast.Name):
+                    if ast_node.target.id in field_names:
+                        annotation = ast.unparse(ast_node.annotation)
+                        self.assertNotIn("Optional", annotation)
+                        self.assertNotIn("None", annotation)
+                        self.assertNotIn("Any", annotation)
+                        self.assertNotIn("object", annotation)
+            source_key = source_path.as_posix()
+            for class_name, fields in expected_class_fields.get(source_key, {}).items():
+                class_node = class_nodes.get(class_name)
+                self.assertIsNotNone(class_node)
+                if class_node is None:
+                    continue
+                annotations = {
+                    node.target.id: ast.unparse(node.annotation)
+                    for node in class_node.body
+                    if isinstance(node, ast.AnnAssign)
+                    and isinstance(node.target, ast.Name)
+                    and node.target.id in fields
+                }
+                for field_name, expected_annotation in fields.items():
+                    self.assertEqual(expected_annotation, annotations.get(field_name))
+            module_annotations = {
+                node.target.id: ast.unparse(node.annotation)
+                for node in tree.body
+                if isinstance(node, ast.AnnAssign) and isinstance(node.target, ast.Name)
+            }
+            for name, expected_annotation in expected_module_annotations.get(source_key, {}).items():
+                self.assertEqual(expected_annotation, module_annotations.get(name))
+            functions = {
+                node.name: node
+                for node in ast.walk(tree)
+                if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+            }
+            for function_name, parameters in expected_function_parameters.get(
+                source_key, {}
+            ).items():
+                function_node = functions.get(function_name)
+                self.assertIsNotNone(function_node)
+                if function_node is None:
+                    continue
+                function_annotations = {
+                    parameter.arg: ast.unparse(parameter.annotation)
+                    for parameter in (*function_node.args.posonlyargs, *function_node.args.args)
+                    if parameter.annotation is not None
+                }
+                for parameter_name, expected_annotation in parameters.items():
+                    self.assertEqual(
+                        expected_annotation,
+                        function_annotations.get(parameter_name),
+                    )
+            for function_name, locals_ in expected_local_annotations.get(source_key, {}).items():
+                function_node = functions.get(function_name)
+                self.assertIsNotNone(function_node)
+                if function_node is None:
+                    continue
+                local_annotations = {
+                    node.target.id: ast.unparse(node.annotation)
+                    for node in ast.walk(function_node)
+                    if isinstance(node, ast.AnnAssign) and isinstance(node.target, ast.Name)
+                }
+                for local_name, expected_annotation in locals_.items():
+                    self.assertEqual(expected_annotation, local_annotations.get(local_name))
+    def test_required_skill_reference_is_required(self) -> None:
+        with self.assertRaises(ValidationError):
+            TransitionRule.model_validate(
+                {
+                    "expected_return": self._router_contract(),
+                    "current_stage": ProcessStage.ARCHITECTURE,
+                    "event_kind": RouterEventKind.ACTION_COMPLETED,
+                    "outcome": RouterOutcome.ADVANCE,
+                    "next_stage": ProcessStage.GRILL,
+                }
+            )
+
+    def test_successful_decision_copies_exact_rule_contract(self) -> None:
+        profile = build_router_poc_profile()
+        rule = profile.rule_for(
+            current_stage=ProcessStage.INTAKE,
+            event_kind=RouterEventKind.INTAKE,
+        )
+        if rule is None:
+            self.fail("POC profile must declare the intake rule")
+        goal = ArtifactRef(
+            kind=ArtifactKind.PROJECT_GOAL,
+            identifier="router-contract-reversal-goal",
+            uri="project://router-contract/reversal-goal",
+            revision="1",
+        )
+        decision = RouterEngine().decide(
+            state=RouterState(
+                project_id="router-framework-poc",
+                stage=ProcessStage.INTAKE,
+                authority_state=AuthorityState.NOT_REQUIRED,
+                delivery_stage=DeliveryStage.POC,
+                artifact_refs=(goal,),
+            ),
+            event=RouterEvent(event_id="evt-contract-reversal", kind=RouterEventKind.INTAKE),
+            profile=profile,
+        )
+        self.assertEqual(rule.skill_reference, decision.skill_reference)
+        self.assertEqual(rule.expected_return, decision.expected_return)
 
 
 if __name__ == "__main__":
