@@ -4973,3 +4973,13 @@
 | Source authority | Exactly `library/workflow_router/contracts.py`, `profile.py`, `router.py`, `__init__.py` and `tests/test_workflow_router.py`; then one WPR-only handoff. No other source/test/docs path is writable. |
 | Pre-red / return | Import/call the absent public shared-Context contracts/method before production mutation; implement only SC1-SC8; return one implementation commit plus one WPR-only handoff after focused/six-module/full/mypy/compile/reversal/scope/topology/residue verification. Progress-only final is not completion. |
 | Resource / safety | Host mapping `gpt-5.6-luna`, reasoning `max`; no helper. Reviewer task `019fb935-bbe1-7f71-8b4b-58ba20c81626` is sole orchestrator. `XSS_NOT_APPLICABLE`; no next-ticket authority, new worktree, live model/Codex/home/App/target/network effect, push, package/install, Secret, release or deployment. |
+
+## PRG-20260815-461 - Router R02A shared Context lifecycle gate implementation handoff
+
+| Field | Evidence |
+| --- | --- |
+| Implementation | Exact five-path implementation commit `191135405e2e57f211a9432ed7893dc611221477` on `codex/implementation-router-shared-context-r02a`; pure `RouterEngine.decide_shared_context_access(...)` with strict metadata-only contracts, profile-bound refs and finite lifecycle decisions. |
+| First red | Before production mutation, `py -3.11 -B -m unittest tests.test_workflow_router` failed at collection with the required missing public `SharedContextAccessDecision` import. |
+| Closure | SC1 strict constructors/JSON matrix; SC2 profile version `2` and exact `ctx-shared-project` / `cap-architecture-owner`; SC3 all allow rows; SC4 forbidden role/stage/lifecycle; SC5 stale and change-control precedence; SC6 metadata-only manifest/state serialization; SC8 supervisor-write and sealed-revise-without-proof reversals each turned red and were restored byte-for-byte. |
+| Verification | Focused Router `40/40`; six-module Router regression `107/107`; explicit serial full suite `543/543`; strict full-tree mypy `150` source files; in-memory compile `150` Python files; AST/source sentinel, `git diff --check`, exact five-path scope and registry ancestry pass. |
+| Readback | Permanent linked git-dir and exactly three worktrees retained; tracked and ignored porcelain empty after implementation commit; workspace cache/runtime residue `0`; repository-external mypy cache removed; `XSS_NOT_APPLICABLE`. No helper, live host/network/target effect, push, package/install, release or deployment. |
