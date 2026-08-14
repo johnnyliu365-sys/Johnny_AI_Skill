@@ -4413,3 +4413,13 @@
 | Lane readback | Owner task `019ffb0c-c9c7-7b30-b614-02dea7ed9042` idle in the permanent implementation worktree; clean released branch/head `codex/implementation-codex-oracle-installed-path-presence-05c2c1` / `b625d3991a3d68b630d6a4c1a61c2cb8475eb7ae`; linked Git identity, zero tracked/ignored/cache residue, exactly three worktrees and absent target branch verified. |
 | Binding / dispatch | One-use 05C2C2 workspace/handoff/allocation/receipt/correlation/question/side-context from the ticket; create only `codex/implementation-codex-compensation-adapter-path-truth-05c2c2` at the exact control commit carrying this registry and change only the two frozen paths. Reserved WPR handoff is PRG-408. |
 | Resource / boundary | One owner and no helper because source and direct test form one small serial adapter projection. No reviewer implementation-worktree write, new worktree, live effect, push/staging publication, package/install, Secret, release or deployment. |
+
+## PRG-20260814-408 - Ticket 05C2C2 typed HALT and 05C2C2A decomposition
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENT_FIRST_RED(05C2C2) -> HALT / TICKET_DEFECT -> DECOMPOSE_05C2C2A` |
+| First-red readback | Integrated `OracleInstalledPathPresent` reached the adapter and produced the expected current `EVIDENCE_INVALID`; no implementation or handoff commit was created. The reserved PRG-408 implementer handoff was not emitted and this control record closes that reservation. |
+| Root cause | `CodexInstalledPathAbsenceProof.absent` is `Literal[True]`, so the frozen request for ordinary `absent=False` is impossible within the two-path adapter scope. Existing composition consumers already contain exact bool handling but valid false cases use `model_construct`, proving the contract and tests are inconsistent. |
+| Decomposition | 05C2C2 revision 02 is blocked and its receipt closed. New 05C2C2A owns only the strict bool proof contract plus three direct consumer tests; after independent integration, 05C2C2 will be refrozen as revision 03 for the two-path adapter mapping. |
+| Resource / boundary | One serial owner/no-helper prerequisite; no implementation-worktree mutation by reviewer, no live Codex/host/target-project effect, push/staging publication, package/install, Secret, release or deployment. |

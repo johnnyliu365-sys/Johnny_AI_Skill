@@ -5,7 +5,7 @@
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-02, AC-06, AC-07 and AC-08 |
 | Change / PRD / Context | `CHG-20260808-011` / `PRD.md §15` / `doc/context/local-orchestration-installer/main.md` |
 | Revision | `02` |
-| State | `IN_PROGRESS / DISPATCH_READY` |
+| State | `BLOCKED / TICKET_DEFECT / DEPENDENCY_WAIT` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05C2C2-01` / M1-M7 |
 | Dependency | 05C2C1 review `90dac00e92911f8c49049cf4915373374945332a`; guarded merge `fffbc616ee1870b69845cbcecf37a98e842106d3` |
 | Profile / resource | `STANDARD`; one implementation owner, no helper; serial consumer of the exact 05C2C1 result |
@@ -93,3 +93,20 @@ This receipt authorizes only M1-M7. The implementation owner must mechanically
 re-read this exact ticket before first red and return
 `HALT / TICKET_SCHEMA_INVALID` if any type, identity, scope or closure field is
 missing or different.
+
+## Revision-02 typed HALT
+
+The exact first red reached the integrated `OracleInstalledPathPresent`, but
+the requested `CodexInstalledPathAbsenceProof(absent=False)` cannot be
+constructed: the existing contract fixes `absent` as `Literal[True]` in
+`library/local_orchestration/codex_compensation_port.py`, outside this ticket's
+two-path scope. The implementation owner correctly returned
+`HALT / TICKET_DEFECT`, created no implementation or PRG-408 handoff commit,
+and was instructed to remove only its two-file uncommitted WIP by explicit
+reverse patch.
+
+No adapter implementation may resume until child 05C2C2A makes the already
+consumed absence predicate truthfully constructible as an exact strict bool,
+updates its direct consumers away from `model_construct`, and is independently
+approved and integrated. This ticket will then be refrozen as revision 03
+against that exact API; its revision-02 receipt is closed and cannot be replayed.

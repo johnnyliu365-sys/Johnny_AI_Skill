@@ -167,7 +167,8 @@
 | Ticket 05C2A compensation observation admission | COMPLETE / APPROVED / INTEGRATED | CR-174 closed; review `5e7e489`, guarded merge `e2e2fe9`; post-merge focused/type checks pass. |
 | Ticket 05C2B receipt removal composition | COMPLETE / APPROVED / INTEGRATED | CR-175/CR-176 closed; review `355da84`; guarded merge `75eec43`; post-merge focused/type checks pass. |
 | Ticket 05C2C1 oracle installed-path presence | COMPLETE / APPROVED / INTEGRATED | Review `90dac00`; guarded merge `fffbc61`; post-merge focused 46/46 and strict mypy 148 pass. |
-| Ticket 05C2C2 adapter installed-path truth | IN_PROGRESS / DISPATCH_READY | Revision 02 exact one-owner/no-helper registry; reserved handoff PRG-408. |
+| Ticket 05C2C2 adapter installed-path truth | BLOCKED / TICKET_DEFECT / DEPENDENCY_WAIT | Revision 02 requested `absent=False` from a true-only literal outside scope; resume as revision 03 after 05C2C2A. |
+| Ticket 05C2C2A installed-path proof truth contract | PLANNED / DISPATCH_PENDING | Strict bool predicate contract plus direct consumer removal of valid-truth model bypasses; serial prerequisite. |
 | Ticket 05C3 receipt removal acceptance | PLANNED / UPSTREAM_EVIDENCE_GAP | Disposable probe reproduced `PRE_REMOVAL_EVIDENCE_INVALID`; starts after 05C2C1/C2 integrate. |
 | Ticket 06A Codex role-profile capability proof | DONE / APPROVED_EVIDENCE / INSTALL_BLOCKED / INTEGRATED | Implementation `38e9a8b`, handoff `f6f186f`, review `62955ec`, guarded merge `de4141e`; actual installed-host result is `ROLE_ISOLATION_UNPROVEN / ACCESS_DENIED / OUTPUT_UNAVAILABLE`, so capability dependents stay blocked. |
 | Autonomous Ticket 04 reviewer-only authority | PLANNED / DEPENDENCY_WAIT | Starts only after reviewed 06A `SUPPORTED`; typed fake effect gate, not a real Agent turn. |
@@ -243,7 +244,7 @@ control-plane decomposition.
 | Superseded parent | `PRG-20260810-082`; `codex-cli-host-adapter-and-detachable-installer`; `CLOSURE-LOCAL-INSTALL-T05-02` |
 | Child 05A | `05a-codex-cli-preflight-contract`; integrated by `b22c6c4` |
 | Child 05B | `05b-codex-cli-transactional-registration`; current references below |
-| Child 05C | 05C1, 05C2A, 05C2B and 05C2C1 are integrated. The verified oracle-presence gap continues serially through 05C2C2 before refrozen 05C3. |
+| Child 05C | 05C1, 05C2A, 05C2B and 05C2C1 are integrated. The proof-contract defect is isolated to serial 05C2C2A, then adapter 05C2C2 revision 03, before refrozen 05C3. |
 
 ### Ticket 05B selection and dispatch
 
