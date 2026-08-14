@@ -5,7 +5,7 @@
 | Context state | `TICKET_05B4B2D_COMPLETE / E0_E1_E2A_E3A_INTEGRATED / E2B_E3B_FROZEN / PACKAGE_04_DECOMPOSED` |
 | Router event | `ACTION_COMPLETED(E2A,E3A) / TICKET_DEFECT_DECOMPOSED(E2B,E3B)` |
 | Delivery stage | `POC` |
-| Requirement change | `CHG-20260808-011`; reviewer-role revision `CHG-20260811-012`; governance security overlay `CHG-20260812-013`; version-one delivery revision `CHG-20260812-014` |
+| Requirement change | `CHG-20260808-011`; reviewer-role revision `CHG-20260811-012`; governance security overlay `CHG-20260812-013`; version-one delivery revision `CHG-20260812-014`; reviewer-gateway revision `CHG-20260814-018` |
 | Baseline | Current clean `main`; dispatch must cite the final exact control commit |
 | Control-plane owner | Codex / current `main` worktree |
 | Implementation owner | Planned E2B: task `019fcc9c-f34f-7d53-a313-c70c90bf3245` in existing `workflow-implementation`; planned E3B: task `019ff01a-3afc-79e3-aa7e-a467b8da9b9d` in existing `workflow-implementer-2`; no new worktree. |
@@ -341,6 +341,46 @@ PRG-141 return is recorded on main as unique PRG-146. Post-merge focused
 11/11, full 216/216 and strict mypy/compile over 106 files passed. 06A is
 complete and integrated as truthful blocked evidence; its allocation is
 released and receipt closed.
+
+## Reviewer-owned Johnny orchestration gateway revision
+
+Owner choice `CHG-20260814-018` replaces the unstarted host-profile-only
+continuation, not the truthful 06A evidence. Johnny's local control plane is the
+sole orchestration gateway and the named reviewer is its only permitted caller.
+Every effect must match one live pending descriptor and exact project, ticket,
+reviewed handoff, unconsumed receipt, target owner, worktree, branch, expected
+baseline, action and correlation. The implementation owner receives no gateway
+port, credential or alias. Its effective Codex session must independently prove
+that built-in multi-agent/thread-control tools are disabled or absent.
+
+The official Codex configuration surface documents custom-agent configuration
+layers plus `agents.enabled` and `features.multi_agent` controls. These facts
+make a restricted session representable; they do not prove that the current
+host actually bound the profile. Local readback still resolves the desktop
+WindowsApps executable but shell invocation returns `Access is denied`, and the
+currently exposed App task-creation contract has no custom-agent/profile input.
+Therefore 06G0 first proves one supported exact-worktree launch/binding path in
+a disposable config boundary. No fallback wildcard, hidden config edit,
+synthetic inventory, prompt assertion or caller-provided success is accepted.
+
+06B and 06C are `SUPERSEDED / REPLACED_BY_06G0P_06G4`. Dispatch preflight
+constructed a `SUPPORTED / PROVEN / EFFECTIVE` result carrying
+`MALFORMED_OBSERVATION`; the integrated model allows this because it never binds
+supported status to successful process evidence. Planned sequence:
+
+1. `06G0P` — finite process-evidence/result-contract correction;
+2. `06G0` — supported restricted-session transport capability proof;
+3. `06G1` — pure receipt-bound gateway authority and replay/mismatch denial;
+4. `06G2` — exact owned restricted-profile/gateway lifecycle;
+5. `06G3` — reviewer gateway adapter/composition with no implementer port;
+6. `06G4` — disposable reviewer-positive/implementer-negative end-to-end
+   isolation and removal acceptance.
+
+Only 06G0P may be selected first. After its independent integration, a truthful
+06G0 unsupported result stays
+`INSTALL_BLOCKED / ROLE_ISOLATION_UNPROVEN`; it cannot unblock later tickets or
+package 04A-04I. This revision adds no network/MCP service, live Codex mutation,
+target-project effect, new worktree, push, package, install or deployment.
 
 Owner decision `PRG-20260811-106` supersedes combined 05S as an implementation
 lane. New children are serial and single-purpose: 05S1 owns only disposable

@@ -3,13 +3,17 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | Local installer SPEC revision 02 / AC-02, AC-09 and AC-10 |
-| State | `PLANNED / DEPENDENCY_WAIT` |
+| State | `SUPERSEDED / REPLACED_BY_06G0_06G4 / NOT_DISPATCHED` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T06C-01` / C1-C4 |
 | Implementation language | Python 3.11 with strict Pydantic models and `mypy --strict` |
 | Dependency | Autonomous Ticket 04 and local 06B independently approved/integrated |
 | Responsibility | Existing implementation task/worktree after a unique ticket receipt; control `main` reviews |
 
 ## One outcome
+
+> `CHG-20260814-018` replaces this unstarted shared-profile composition with the
+> sole Johnny gateway sequence. This file remains historical planning evidence
+> and grants no implementation authority.
 
 Compose the receipt-owned Codex profiles with the typed reviewer-only Router
 authority gate. One exact reviewer action reaches a recorded host fake once;

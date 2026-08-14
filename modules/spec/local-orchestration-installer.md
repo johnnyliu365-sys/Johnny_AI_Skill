@@ -7,7 +7,7 @@
 | Author | Codex / current `main` worktree / baseline `e04c2be` |
 | Context | `doc/context/local-orchestration-installer/main.md` |
 | PRD | `PRD.md §15` |
-| Requirement change | `CHG-20260808-011`; reviewer-only role revision `CHG-20260811-012`; version-one delivery revision `CHG-20260812-014`; project-owned disposable test runtime revision `CHG-20260813-015` |
+| Requirement change | `CHG-20260808-011`; reviewer-only role revision `CHG-20260811-012`; version-one delivery revision `CHG-20260812-014`; project-owned disposable test runtime revision `CHG-20260813-015`; reviewer-owned gateway revision `CHG-20260814-018` |
 | Common Context backlink | `CONTEXT.md › 衍生 SPEC 索引` |
 | Implementation language | Python 3.11 for typed adapter/runtime contracts; Inno Setup script for the Windows installer package after its toolchain is pinned and verified. |
 
@@ -53,15 +53,45 @@ This POC includes a Windows per-user `Setup.exe` / uninstaller, installer-owned 
 
 **AC-08 — Target-project non-interference.** Install, status, failed uninstall and successful uninstall must leave both an existing and an empty representative target repository byte-for-byte and Git-status unchanged.
 
-### Install reviewer and implementation role profiles
+### Install the reviewer-owned gateway and restricted implementation profile
 
-1. A disposable Codex home first proves the documented custom-agent schema and exact multi-agent tool behavior without mutating the user's live Codex home.
-2. Installation writes one reviewer profile with the required orchestration surface and one implementation profile whose multi-agent/thread-control surface is disabled, then records exact owned-profile receipts.
-3. Removal deletes only receipt-matched owned profiles and verifies their absence while preserving foreign profiles byte-for-byte.
+1. A disposable Codex home first proves a supported transport can bind the
+   exact implementation custom-agent configuration to a session in the exact
+   assigned worktree and read back its effective multi-agent tool absence,
+   without mutating the user's live Codex home.
+2. Installation owns the exact restricted implementation profile and local
+   Johnny gateway registration only after digest and effective host readback.
+   It does not install a second Agent-control route.
+3. The Router grants only the ticket's named reviewer a consumable gateway
+   capability bound to one live pending descriptor. The implementation owner
+   receives no gateway port, credential or alias.
+4. Removal deletes only receipt-matched owned profile/gateway artifacts and
+   verifies their absence while preserving foreign/global host state and target
+   repositories byte-for-byte.
 
-**AC-09 — Reviewer-only tool surface.** Only the reviewer profile may expose create/spawn/fork, dispatch/follow-up, steer, wait, interrupt and close. The implementation profile must prove these tools unavailable and the shared Router gate must return `HALT / ROLE_FORBIDDEN` for direct and indirect implementation-side attempts. If the current Codex custom-agent layer cannot reliably enforce this, Codex role-profile support is `INSTALL_BLOCKED`; prompt instructions are not an acceptable substitute.
+**AC-09 — Sole reviewer gateway and defense in depth.** Johnny's local
+reviewer-owned orchestration gateway is the only permitted create/spawn/fork,
+dispatch/follow-up, steer, wait, interrupt and close effect entrypoint. Every
+effect binds the exact reviewer role/capability, project, ticket, reviewed
+handoff, unconsumed receipt, target implementation owner, worktree, branch,
+expected baseline, action, correlation and live `PendingDispatchDescriptor`.
+The implementation owner receives no gateway port/credential and its effective
+host session separately proves built-in multi-agent/thread-control tools absent.
+Direct tools, MCP aliases, indirect adapters, copied/forged/replayed grants,
+role substitution or any mismatch return `HALT / ROLE_FORBIDDEN` or the exact
+typed binding error before effect. Config text and prompt assertions are not
+proof. If a supported exact-profile launch/binding and effective-session
+readback cannot be proven, support remains `INSTALL_BLOCKED /
+ROLE_ISOLATION_UNPROVEN`.
 
-**AC-10 — Role-profile ownership and removal.** Reviewer and implementation profile files/config entries are installer-owned only after exact digest and host readback. Normal uninstall removes both in one invocation and proves absence; foreign/manual profiles, global settings and target projects remain byte-for-byte/Git-status unchanged. Missing/tampered/foreign receipts block without broad deletion.
+**AC-10 — Restricted-profile/gateway ownership and removal.** Implementation
+profile files/config entries and local gateway registration/state are
+installer-owned only after exact digest and host readback. Normal uninstall
+removes every receipt-matched owned artifact in one invocation and proves
+absence; foreign/manual profiles, global settings, unrelated gateways and
+target projects remain byte-for-byte/Git-status unchanged. Missing, tampered,
+foreign or replayed receipts block without broad deletion. No network or MCP
+service is introduced by this POC.
 
 ### Freeze and preserve the first packaged version
 
@@ -91,9 +121,9 @@ the residue. Tracked and ignored Git readback must expose any final residue.
 
 | Layer | Named types / responsibility | Prohibited responsibility |
 | --- | --- | --- |
-| Domain | `InstallationId`, fixed `InstallRoot` (`%LOCALAPPDATA%\\JohnnyAIWorkflow`), `OwnedRelativePath`, `ArtifactDigest`, `HostId`, `HostRegistrationReceipt`, `HostRemovalProof`, `ProjectId`, `InstallerState`, `RuntimeState`, `UninstallResult` validate finite states and ownership invariants. | Strings/dynamic dictionaries used as paths, secrets, host state or project identity. |
-| Application | `InstallControlPlane`, `ResumeOrchestration`, `ReadRuntimeStatus`, `UninstallControlPlane`, `GuardedIntegration` coordinate ports and map typed failures. | Direct filesystem, subprocess, host config or Git access. |
-| Infrastructure | `OwnedFilesystemPort`, `InstallLedgerPort`, `RuntimeLifecyclePort`, `EventStorePort`, `HostLifecyclePort`, `ProjectRegistryPort`, `GuardedGitPort`, `ClockPort`, `ProcessPort` provide isolated effects. | Persisting raw Context or operating on unverified/foreign ownership. |
+| Domain | `InstallationId`, fixed `InstallRoot` (`%LOCALAPPDATA%\\JohnnyAIWorkflow`), `OwnedRelativePath`, `ArtifactDigest`, `HostId`, `HostRegistrationReceipt`, `HostRemovalProof`, `ProjectId`, `InstallerState`, `RuntimeState`, `UninstallResult`, `ReviewerGatewayGrant`, `RestrictedSessionBinding`, `OrchestrationAction`, `GatewayDenial` validate finite states and ownership invariants. | Strings/dynamic dictionaries used as paths, secrets, host state, orchestration authority or project identity. |
+| Application | `InstallControlPlane`, `ResumeOrchestration`, `ReadRuntimeStatus`, `AuthorizeReviewerGateway`, `ExecuteOrchestrationAction`, `UninstallControlPlane`, `GuardedIntegration` coordinate ports and map typed failures. | Direct filesystem, subprocess, host config, Agent task or Git access. |
+| Infrastructure | `OwnedFilesystemPort`, `InstallLedgerPort`, `RuntimeLifecyclePort`, `EventStorePort`, `HostLifecyclePort`, `RestrictedSessionTransportPort`, `ReviewerOrchestrationPort`, `ProjectRegistryPort`, `GuardedGitPort`, `ClockPort`, `ProcessPort` provide isolated effects. | Persisting raw Context, exposing Agent-control to implementers or operating on unverified/foreign ownership. |
 | Installer / equivalent UI | Setup/uninstaller displays typed progress/status and submits a validated command. | Business rules, filesystem deletion, direct host config or implicit singleton creation. |
 
 The installer owns its root. The runtime owns only metadata inside that root. The host owns its own registration mechanism. A target project owns all of its files, Git state, code and data. No layer may infer another layer's ownership from a product name.
@@ -106,7 +136,13 @@ The installer owns its root. The runtime owns only metadata inside that root. Th
 - `HostLifecyclePort` is a capability boundary. A Codex/Claude adapter is production-supported only after a live lifecycle test proves user-scope registration and `HostRemovalProof` for every receipt-owned registration/payload it creates. Installer code must not edit hidden/unpublished host configuration formats.
 - Installer and runtime logs use typed error codes plus redacted correlation/installation IDs. They may not include subprocess command arguments when those could reveal target/project data.
 - Runtime process start/stop uses a recorded child process identity. Stop has a bounded timeout and requires exact ownership before termination.
-- Codex role-profile records use finite `AgentRole`, `AgentProfileId`, `AgentToolPolicy`, `ReviewerOrchestrationGrant` and `AgentProfileRemovalProof` types. `agents.enabled=false` or any equivalent implementation-profile setting is accepted only after disposable behavioral proof in the installed Codex version; config shape alone is insufficient.
+- Codex role/gateway records use finite `AgentRole`, `AgentProfileId`,
+  `AgentToolPolicy`, `ReviewerGatewayGrant`, `RestrictedSessionBinding`,
+  `OrchestrationAction`, `GatewayDenial` and `AgentProfileRemovalProof` types.
+  `agents.enabled=false`, `features.multi_agent=false` or any equivalent
+  implementation-profile setting is accepted only after a supported disposable
+  transport binds that exact profile/worktree and effective-session readback
+  proves the forbidden tools absent; config shape alone is insufficient.
 
 ## Frontend composition and dependency injection
 
@@ -166,8 +202,20 @@ The ticket set must begin each listed behavior with a red test and retain its fi
 4. **Runtime / Git regression:** malformed/replayed/cross-installation event, raw-content sentinel, unregistered project, dirty/stale/non-fast-forward Git request and duplicate queue claim halt before side effects.
 5. **Target non-interference:** snapshot and Git-status tests across representative target repositories cover install, failed install, status, failed uninstall and successful uninstall.
 6. **Packaging smoke:** a clean Windows user sandbox installs from the released `Setup.exe`, starts/stops only the owned runner, removes it once and confirms no registered owned host integration remains.
-7. **Role-profile capability proof:** isolated Codex config loads the exact reviewer and implementation custom agents. Reviewer positive orchestration is observable; every implementation direct/indirect thread-control attempt is unavailable or `ROLE_FORBIDDEN`. Unsupported per-agent config is a typed block, not a green prompt assertion.
-8. **Role-profile lifecycle:** exact owned install/readback/remove/absence, tampered receipt, same-name foreign profile, replay and foreign/global config preservation. Representative target repositories remain unchanged.
+7. **Restricted-session transport proof:** isolated Codex config uses a supported
+   transport to bind the exact implementation profile and exact assigned
+   worktree. Effective readback proves built-in multi-agent/thread-control tools
+   absent. Missing transport/profile binding, access denied, ambiguous output or
+   config-only evidence is a typed block, not a green prompt assertion.
+8. **Reviewer gateway authority:** one exact reviewer grant and live pending
+   descriptor reaches each named fake orchestration effect once. Implementation
+   direct tools, gateway calls, MCP aliases, indirect adapters, forged/copied/
+   replayed grants and every project/ticket/handoff/receipt/owner/worktree/
+   branch/baseline/action/correlation mismatch reach zero effects.
+9. **Restricted-profile/gateway lifecycle:** exact owned install/readback/remove/
+   absence, tampered receipt, same-name foreign profile, unrelated gateway,
+   replay and foreign/global config preservation. Representative target
+   repositories remain unchanged.
 
 ### Verification staging architecture
 
@@ -227,9 +275,10 @@ uninstall, host support or binary correctness.
 | 2026-08-12 | Project owner / `CHG-20260812-013` | Added the mandatory XSS classification. Current POC remains `XSS_NOT_APPLICABLE`; future renderer or privileged JavaScript work must re-enter the tiered XSS gate. |
 | 2026-08-12 | Project owner / `CHG-20260812-014` / ADR-20260812-006 | Required exact complete-source publication to remote `staging` before release build/system integration, decomposed manifest/source/environment/build/install/uninstall acceptance into serial tickets and made the first packaged version an immutable source/toolchain/manifest/artifact evidence record. |
 | 2026-08-13 | Project owner / `CHG-20260813-015` / ADR-20260813-007 | Replaced the shared OS-TEMP 05S1 test root with one exact project-owned runtime namespace per plugin checkout/worktree. Added AC-13 and returned dependent in-flight acceptance tickets to change control. |
+| 2026-08-14 | Project owner / `CHG-20260814-018` / ADR-20260814-010 | Approved revision 03: Johnny becomes the sole reviewer-owned orchestration gateway; implementers receive no gateway capability and must also prove effective host multi-agent tools absent. 06A remains evidence, 06B/06C are superseded by 06G0P-06G4; schema preflight places 06G0P before transport proof. |
 
 ## Approval record
 
 - Decision maker: Project owner
 - Date: `2026-08-08 (Asia/Taipei)`
-- Approval scope: Full `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X`, including owner-approved revisions AC-09 through AC-13; tickets may now be planned, but each implementation still requires its own delivery-confirmation receipt and only the named reviewer may orchestrate the implementation task. The owner separately authorized only the future exact 04D staging publication after 04A/04B integration and 04C approval.
+- Approval scope: Full `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X`, including owner-approved revision 03 of AC-09/AC-10 and AC-11 through AC-13; tickets may now be planned, but each implementation still requires its own delivery-confirmation receipt and only the named reviewer through Johnny's gateway may orchestrate the implementation task. The owner separately authorized only the future exact 04D staging publication after 04A/04B integration and 04C approval.

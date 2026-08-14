@@ -65,14 +65,18 @@ Router anchor: `#workflow-router`; implementation role anchor: `#role-boundary`.
 
 完成的 implementation 必須以 typed `ACTION_COMPLETED` 回到 Router；`ImplementationReturn` 的 `CHANGE_DETECTED` 必須回到 `REQUIREMENT_CHANGED`，不得由控制面猜測或靜默擴張範圍。
 
-Agent-to-Agent orchestration 的唯一 owner 是 ticket 具名 reviewer。只有該
-reviewer 可建立／派送／追送／steer／wait／interrupt／close implementation
-Agent 或其 task；implementation owner 不得建立、委派、控制或等待任何
-其他 Agent，也不得自行派下一票或升格為 reviewer。此限制必須由 host
-tool surface 與 receipt-bound authority gate 強制，不得只依賴 prompt。
-未匹配 reviewer、ticket、handoff、receipt、target owner 與 correlation 的
-直接或間接 orchestration 一律 typed `HALT / ROLE_FORBIDDEN`。專案負責人
-仍保有最終改派與停止權；model 名稱或推理等級不構成 authority。
+Agent-to-Agent orchestration 的唯一 owner 是 ticket 具名 reviewer，唯一
+effect 入口是 Johnny reviewer-owned orchestration gateway。只有該 reviewer
+可經 gateway 建立／派送／追送／steer／wait／interrupt／close implementation
+Agent 或其 task；implementation owner 不得取得 gateway port／credential，
+其有效 host tool surface 也必須移除 multi-agent／thread-control 工具。它不
+得建立、委派、控制或等待任何其他 Agent，也不得自行派下一票或升格為
+reviewer。此限制必須由 host tool surface 與 receipt-bound authority gate
+共同強制，不得只依賴 prompt 或設定檔文字。未匹配 reviewer、project、
+ticket、handoff、receipt、target owner、worktree、branch、baseline、action
+與 correlation 的直接或間接 orchestration 一律 typed `HALT /
+ROLE_FORBIDDEN`。專案負責人仍保有最終改派與停止權；model 名稱或推理等級
+不構成 authority。
 
 任何工作或 commit 完成後，控制面 Agent 必須依 [流程 Router](Workflow.md#workflow-router) 產生 `ACTION_COMPLETED` 並先取得唯一 continuation；commit 不是可自行結束 task 的理由。`AUTO_CONTINUE`、`WAIT_FOR_HUMAN` 與 `HALT` 的唯一實際規則仍以 `Workflow.md` 為準。
 

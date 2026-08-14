@@ -22,7 +22,7 @@
 | 測試覆蓋 | 測試覆蓋新增或變更的核心行為、重要分支、邊界與異常；測試可重跑，且 smoke test 已通過。覆蓋是否足夠以風險與行為證據判斷，不僅以百分比判斷。 |
 | 依賴合理 | 新增、升級或保留的依賴有必要性、相容性與維護性依據；沒有可避免的重複、過時或高風險依賴。 |
 | 專案規格符合性 | 實作、測試、設定與文件符合已核准的 spec、ticket 與 `CONTEXT.md`；差異已取得核准並完成追溯。 |
-| Agent 角色權限 | 涉及多 Agent／task 控制時，reviewer 是唯一可達 orchestration effect 的角色；implementation owner 的直接與間接 create/spawn/fork/send/follow-up/steer/wait/interrupt/close 均在 effect 前固定回 `HALT / ROLE_FORBIDDEN`。必須反證 copied/forged/replayed reviewer、錯 ticket/handoff/receipt/target/correlation 與一般 capability 字串不能授權；prompt 或 model 選擇不得充當安全邊界。 |
+| Agent 角色權限 | 涉及多 Agent／task 控制時，Johnny reviewer-owned orchestration gateway 是唯一 effect 入口，reviewer 是唯一可取得該 gateway capability 的角色；implementation owner 必須同時拿不到 gateway port／credential，且有效 host tool surface 不含 multi-agent／thread-control。其直接與間接 create/spawn/fork/send/follow-up/steer/wait/interrupt/close 均在 effect 前固定回 `HALT / ROLE_FORBIDDEN`。必須反證 copied/forged/replayed reviewer、錯 project/ticket/handoff/receipt/target/worktree/branch/baseline/action/correlation、MCP alias、間接 adapter 與一般 capability 字串不能授權；prompt、model 或設定檔文字不得充當安全邊界。 |
 | Task／worktree 綁定 | implementation task 的產品層 active workspace root 必須精確綁定 ticket 的 owner worktree，且正規化絕對根、解析後 filesystem identity 與 Git worktree metadata 三者一致。prompt／handoff 路徑、shell `cd`、command working directory、環境變數或 sibling 可讀權限均不是綁定；缺失、不可讀回或不一致必須在問題、pending、receipt、branch、source 或 host／Git effect 前固定回 `HALT / TASK_WORKSPACE_MISMATCH`。不得用控制面 project 或新建 Codex-managed worktree代替既有永久 implementation worktree。 |
 | 自適應 Profile／資源計畫 | 依實際 diff、風險、耦合、可逆性、驗證環境與外部效果獨立重算 `COMPACT / STANDARD / HIGH_ASSURANCE`，不得只相信 Router 標籤。逐項確認 hard escalation 未被專案大小、行數、成本或 model 名稱降級；多 implementer 必須有互斥 ownership、獨立 AC 與整合順序，helper 必須 reviewer-owned、read-only、no-code。 |
 | POC 後 staging 基線 | 第一版 POC 必須先有獨立 review、owner acceptance 與精確 commit／版本身分。後續 ticket 的 branch/worktree 必須證明衍生自已 admitted 的 staging SHA；stale／dirty／diverged／wrong-ancestry／readback mismatch 在 effect 前 fail closed。遠端 publication 必須另有 authority 且只能 create／verified-fast-forward；staging 不得覆寫 POC、冒充 release 或取代 disposable effect test。 |
@@ -68,10 +68,14 @@
 
 **CR 必要動作**：**從唯一系統組裝入口出發列舉所有可達路徑**，確認每條都經過同一判定點。繞過路徑通常存在於另一張 ticket，因此必須在功能集群層審閱執行。
 
-多 Agent 功能另須從 reviewer 與 implementation owner 兩個 profile 各自
-列舉所有 thread-control 工具。reviewer 的正向案例必須精確綁定 receipt；
-implementation owner 的直接工具、間接 adapter、偽造 reviewer identity、
-重播 receipt 與錯 target 都必須在任何 host effect 前 `ROLE_FORBIDDEN`。
+多 Agent 功能另須從 reviewer 與 implementation owner 的有效 session 各自
+列舉所有 thread-control 工具，並列舉 Johnny gateway 的實際 caller surface。
+reviewer 的正向案例必須精確綁定 receipt 與 live pending descriptor；
+implementation owner 必須同時證明內建工具缺席與 gateway 不可達。直接工具、
+MCP alias、間接 adapter、偽造 reviewer identity、重播 receipt 與錯 project／
+target／worktree／branch／baseline／action／correlation 都必須在任何 host
+effect 前 `ROLE_FORBIDDEN`。只有 profile/config source scan 而沒有受支援
+transport 的 effective-session readback，不得判定通過。
 
 ### 4. Token 格式與比較
 

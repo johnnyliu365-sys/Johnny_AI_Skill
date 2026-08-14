@@ -123,7 +123,8 @@
 - Specification: `modules/spec/local-orchestration-installer.md` (`APPROVED` on `2026-08-08`; ticket-specific dispatch is still required for implementation authority).
 - Worktree Context: `doc/context/local-orchestration-installer/main.md`.
 - Scope: Windows per-user installer/uninstaller, owned-install ledger, metadata-only local orchestration adapter, injected host registration adapters, and a guarded local Git port. The installer deletes only its recorded, verified owned payload and state; it never changes target projects.
-- PRD / change: `PRD.md §15`; `CHG-20260808-011`.
+- PRD / change: `PRD.md §15`; `CHG-20260808-011`; reviewer-gateway
+  revision `CHG-20260814-018`.
 - Handoff state: owner-approved specification is ready for ticket planning. Actual Codex/Claude host registration commands remain a capability contract to be validated in an approved implementation ticket; absent or non-removable host capability is an install-time fail-closed result, not a silent partial install.
 - Revision `CHG-20260811-012`: add disposable Codex reviewer/implementer
   profile proof and receipt-bound lifecycle. Only reviewer receives orchestration
@@ -131,6 +132,17 @@
   the host remains `INSTALL_BLOCKED`. This adds Tickets 06A-06C and changes
   Ticket 04 dependencies; it does not reopen completed tickets or change
   05A-05C/05S4 plugin lifecycle acceptance.
+- Revision `CHG-20260814-018`: Johnny now owns the sole local orchestration
+  gateway. Only the named reviewer may receive its exact receipt-bound
+  capability; the implementation owner receives no gateway port/credential and
+  its effective host session must separately prove built-in multi-agent tools
+  absent. Integrated 06A remains truthful blocked evidence, planned 06B/06C are
+  superseded by 06G0P-06G4. Dispatch preflight found that the integrated 06A
+  result permits `SUPPORTED` with malformed process evidence, so 06G0P is the
+  only eligible first child; 06G0 transport proof follows it. Current desktop
+  CLI access denial and the profile-unaware App task
+  creation contract remain measured blockers, not authorization for a prompt or
+  undocumented-config workaround.
 - Revision `CHG-20260812-014`: the exact reviewed version-one candidate must be
   pushed to remote `staging` with create-or-fast-forward-only semantics and SHA
   readback before release-build/system-integration begins. The former package

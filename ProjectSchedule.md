@@ -172,8 +172,11 @@
 | Ticket 05C2C3 oracle marketplace-source truth | COMPLETE / APPROVED / INTEGRATED | CR-179 closed by canonical EOF handoff `cd43b45`; guarded merge `1e6872a`; post-merge focused/type/compile and exact register/remove/replay pass. |
 | Ticket 05C3 receipt removal acceptance | COMPLETE / APPROVED / INTEGRATED | Guarded merge `d898d73`; post-merge focused/type/compile and residue gates pass. |
 | Ticket 06A Codex role-profile capability proof | DONE / APPROVED_EVIDENCE / INSTALL_BLOCKED / INTEGRATED | Implementation `38e9a8b`, handoff `f6f186f`, review `62955ec`, guarded merge `de4141e`; actual installed-host result is `ROLE_ISOLATION_UNPROVEN / ACCESS_DENIED / OUTPUT_UNAVAILABLE`, so capability dependents stay blocked. |
-| Autonomous Ticket 04 reviewer-only authority | PLANNED / DEPENDENCY_WAIT | Starts only after reviewed 06A `SUPPORTED`; typed fake effect gate, not a real Agent turn. |
-| Tickets 06B/06C role-profile lifecycle/composition | PLANNED / DEPENDENCY_WAIT | Wait for 06A and autonomous Ticket 04; own/remove profiles, then compose exact reviewer authority. |
+| Autonomous Ticket 04 reviewer-only authority | SUPERSEDED / REPLACED_BY_LOCAL_06G1 | `CHG-20260814-018`; never dispatched. |
+| Tickets 06B/06C role-profile lifecycle/composition | SUPERSEDED / REPLACED_BY_06G0P_06G4 | `CHG-20260814-018`; never dispatched. |
+| Ticket 06G0P role-probe result contract | PLANNED / DELIVERY_CONFIRMATION_REQUIRED | Only eligible first child; preflight proved current `SUPPORTED` can carry malformed process evidence. |
+| Ticket 06G0 restricted-session transport proof | PLANNED / DEPENDENCY_WAIT | After 06G0P; must prove supported exact-profile/worktree effective binding or return truthful `ROLE_ISOLATION_UNPROVEN`. |
+| Tickets 06G1-06G4 reviewer gateway sequence | PLANNED / DEPENDENCY_WAIT | Pure authority, owned lifecycle, composition and end-to-end acceptance run serially after independently approved 06G0 `SUPPORTED`. |
 | Ticket 04 package parent | DECOMPOSED / NON_DISPATCHABLE | `CHG-20260812-014`; replaced by serial 04A-04I. |
 | Ticket 04A payload manifest contract | PLANNED / DEPENDENCY_WAIT | After runtime/host prerequisites; pure typed source/test only. |
 | Ticket 04B Inno installer build source | PLANNED / DEPENDENCY_WAIT | After 04A integration; `.iss`/build source and disposable compile only. |

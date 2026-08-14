@@ -3,13 +3,17 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | Local installer SPEC revision 02 / AC-03, AC-06 through AC-10 |
-| State | `PLANNED / DEPENDENCY_WAIT` |
+| State | `SUPERSEDED / REPLACED_BY_06G0_06G4 / NOT_DISPATCHED` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T06B-01` / L1-L4 |
 | Implementation language | Python 3.11 with strict Pydantic models and `mypy --strict` |
 | Dependency | 06A independently approved as `SUPPORTED`; autonomous Ticket 04 approved/integrated |
 | Responsibility | Existing implementation task/worktree after a unique ticket receipt; control `main` reviews |
 
 ## One outcome
+
+> `CHG-20260814-018` replaces this unstarted host-profile-only continuation with
+> the reviewer-owned Johnny gateway sequence. This file remains historical
+> planning evidence and grants no implementation authority.
 
 Install, read back, receipt-bind, remove and prove absence for exactly one
 reviewer and one implementation custom-agent profile inside the disposable

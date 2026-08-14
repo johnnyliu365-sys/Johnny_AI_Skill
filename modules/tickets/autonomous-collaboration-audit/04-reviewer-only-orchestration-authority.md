@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / change | `SPEC-AI-WORKFLOW-AUTONOMOUS-COLLABORATION-AUDIT-20260805-01KZ7A2C4E6G8J0L2N4P6R8T` revision 02 / `CHG-20260811-012` |
-| State | `PLANNED / DEPENDENCY_WAIT` |
+| State | `SUPERSEDED / REPLACED_BY_LOCAL_06G1 / NOT_DISPATCHED` |
 | Closure | `CLOSURE-AUTONOMOUS-COLLAB-T04-01` / R1-R4 |
 | Implementation language | Python 3.11 with strict Pydantic models and `mypy --strict` |
 | Dependency | Tickets 01-03 integrated; starts only after local 06A returns a reviewed `SUPPORTED` capability result and the sole implementation lane is released |
@@ -12,6 +12,10 @@
 | Environment | Python 3.11 typed fake effect port; no real Agent/thread, target-project, network, Secret, push, release or deployment |
 
 ## One outcome
+
+> `CHG-20260814-018` replaces this unstarted shared authority gate with local
+> installer Ticket 06G1's Johnny gateway authority. This file remains
+> historical planning evidence and grants no implementation authority.
 
 Add a typed authorization boundary in front of every Agent-to-Agent effect.
 Only the exact reviewer grant may invoke one finite action against the named

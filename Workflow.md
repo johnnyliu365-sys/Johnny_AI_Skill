@@ -535,20 +535,27 @@ implementation owner 是 ticket 具名指定的另一位 Agent／worktree，負�
 
 每張 ticket 必須同時標示控制面 owner、implementation owner 與 reviewer。缺任一 owner 或同一 Agent 未經明確改派同時承擔兩者時，不得進入 `implement`。
 
-reviewer 是唯一 Agent-to-Agent orchestrator。只有 ticket 與 receipt
-精確綁定的 reviewer capability 可以 create／spawn／fork implementation
-task、傳送或追送工單、steer、wait、interrupt 或 close 該具名
-implementation owner。implementation owner 的 host tool surface 必須移除
+reviewer 是唯一 Agent-to-Agent orchestrator，Johnny reviewer-owned
+orchestration gateway 是唯一可達 Agent-control effect 的入口。只有 ticket
+與 receipt 精確綁定的 reviewer capability 可以經該 gateway
+create／spawn／fork implementation task、傳送或追送工單、steer、wait、
+interrupt 或 close 該具名 implementation owner；host 內建工具、MCP alias、
+間接 adapter 或其他旁路都不得形成第二個入口。implementation owner 不得
+取得 gateway port／credential，其有效 host tool surface 另須移除
 multi-agent／thread-control 工具；它不得直接或間接建立、委派、控制、
 等待或關閉其他 Agent，不得派下一票，也不得自行升格 reviewer。任何
 嘗試一律在 host effect 前回 `HALT / ROLE_FORBIDDEN`。
 
-此邊界不可只靠 developer prompt、agent 名稱、model 名稱或一般
-`CapabilityRef` 字串。每個 orchestration effect 必須驗證具名 reviewer
-role、reviewer capability、project、ticket、reviewed handoff、未消耗
-receipt、target implementation owner、action 與 correlation；copy、forge、
-replay、role substitution 或 indirect adapter path 均 fail closed。專案負責
-人的明確改派是唯一上位例外，且必須先留下 owner override record。
+此邊界不可只靠 developer prompt、agent 名稱、model 名稱、設定檔文字或一般
+`CapabilityRef` 字串。每個 gateway effect 必須驗證具名 reviewer role、
+reviewer capability、project、ticket、reviewed handoff、未消耗 receipt、
+target implementation owner、worktree、branch、expected baseline、action 與
+correlation，並匹配同一個 live `PendingDispatchDescriptor`；copy、forge、
+replay、role substitution、跨 worktree 或 indirect adapter path 均 fail
+closed。受限 implementation session 的有效工具缺席及 gateway 不可達性都
+必須以支援的 host transport 實證；任一項無法讀回即 `INSTALL_BLOCKED /
+ROLE_ISOLATION_UNPROVEN`。專案負責人的明確改派是唯一上位例外，且必須先
+留下 owner override record。
 
 實作完成後，implementation owner 必須以 `ImplementationReturn` 回交控制面；只有 `ACTION_COMPLETED` 經 Router 重新分類後，才可進入 Smoke Test、Review 或 Handoff。
 

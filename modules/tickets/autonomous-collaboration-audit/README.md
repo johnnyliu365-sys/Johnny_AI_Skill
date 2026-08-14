@@ -23,7 +23,7 @@ The project owner selected this topology on `2026-08-05`:
 1：main control-plane session + existing separate implementation session/worktree
 ```
 
-The named implementation owner is Codex implementation Agent; the control-plane/reviewer is Codex/current `main` worktree. A positive delivery confirmation is the ticket-scoped approval and implementation authority; no second approval is requested. Tickets 01 through 03 are integrated. `CHG-20260811-012` adds planned Ticket 04 without rewriting them. Only the named reviewer may control an implementation Agent; the implementation owner may not orchestrate any Agent. Ticket 03's receipt and blocked branch remain historical audit evidence only.
+The named implementation owner is Codex implementation Agent; the control-plane/reviewer is Codex/current `main` worktree. A positive delivery confirmation is the ticket-scoped approval and implementation authority; no second approval is requested. Tickets 01 through 03 are integrated. Historical `CHG-20260811-012` added Ticket 04 without rewriting them; `CHG-20260814-018` now marks that unstarted ticket `SUPERSEDED / REPLACED_BY_LOCAL_06G1`. Only the named reviewer through Johnny's gateway may control an implementation Agent; the implementation owner may not receive that gateway or orchestrate any Agent. Ticket 03's receipt and blocked branch remain historical audit evidence only.
 
 ## Shared baseline
 
