@@ -5275,3 +5275,15 @@
 | Post-merge verification | Artifact-tree plus Router focused `63/63`; in-memory compile `152/152`; diff check, clean main and exact three-worktree topology pass. Exact candidate bytes retain independent full serial `566/566`, strict mypy `152/152` and reviewer probes `9/9`. |
 | Transition | R02C1 is `COMPLETE / APPROVED / INTEGRATED`; allocation `aln-adaptive-router-r02c1-20260815` is released; both side Context revisions are closed/invalidated. R02C2 becomes the only dependency-satisfied ticket-design candidate; no R02C2 receipt exists yet. |
 | Effects | No push, release, deployment, target-project, live host/model/network, package/install or Secret effect. `XSS_NOT_APPLICABLE`. |
+
+## PRG-20260815-488 - Router Ticket R02C2 freeze and dispatch proposal
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `R02C1_INTEGRATED(PRG-487) -> READY_LOW_MODEL / TICKET_DISPATCH_REQUIRED`; this proposal creates no active receipt or implementation authority. |
+| Exact closure | `modules/tickets/adaptive-project-orchestration/02c2-requirement-retirement-archive-lineage.md`; `CLOSURE-ADAPTIVE-ROUTER-R02C2-01` ACX1-ACX8 revision `r02c2-01`. One pure result validates an active pair or an archive-only retirement branch. |
+| Context / schema | Exact revision-05 feature Context, Python 3.11/strict mypy, local environment, resource plan, public contracts, finite reasons, source scope, TDD/reversals and operations/rollback are all in the ticket. Dispatch needs only ticket/receipt/owner identifiers. |
+| Decomposition | R02C2 uses integrated R02C1 exact-path resolution but never scans or selects library partitions. R02C3 exclusively owns bounded archive/reusable-library selection; model wake and later Router tickets remain blocked. |
+| Planned lane | Existing idle task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; permanent implementation worktree; planned branch `codex/implementation-router-requirement-lineage-r02c2`; one Luna max owner, no helper. |
+| Planned binding | Handoff `hnd-adaptive-router-r02c2-20260815`; allocation `aln-adaptive-router-r02c2-20260815`; receipt `rcpt-adaptive-router-r02c2-20260815`; correlation `corr-adaptive-router-r02c2-20260815`; question `q-adaptive-router-r02c2-20260815`; side Context `scx-adaptive-router-r02c2-20260815-01`; expected return `ret-requirement-lineage-review-handoff-r02c2`. |
+| Boundary | No receipt yet, source/test mutation, new worktree, helper, R02C3-R06, external effect, push, package/install, Secret, release or deployment. `XSS_NOT_APPLICABLE`. |
