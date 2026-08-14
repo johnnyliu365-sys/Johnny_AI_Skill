@@ -170,7 +170,7 @@
 | Ticket 05C2C2 adapter installed-path truth | COMPLETE / APPROVED / INTEGRATED | Correction `e801646`, handoff `9ba22b3`, review `8762f23`, guarded merge `bc97a42`; post-merge focused 15/15 and strict mypy 148 pass. |
 | Ticket 05C2C2A installed-path proof truth contract | COMPLETE / APPROVED / INTEGRATED | Review correction `6cca121`; guarded merge `1f6532a`; post-merge focused 52/52 and strict mypy 148 pass. |
 | Ticket 05C2C3 oracle marketplace-source truth | COMPLETE / APPROVED / INTEGRATED | CR-179 closed by canonical EOF handoff `cd43b45`; guarded merge `1e6872a`; post-merge focused/type/compile and exact register/remove/replay pass. |
-| Ticket 05C3 receipt removal acceptance | IN_PROGRESS / DISPATCHED | Revision 03 A1-A8; owner1 permanent lane, exact two-path scope, behavior-level red and explicit public-constructor/P0 strong-type gate. |
+| Ticket 05C3 receipt removal acceptance | IN_PROGRESS / CORRECTION_DISPATCHED | CR-180 through CR-182; one same owner/worktree/branch additive correction cycle. |
 | Ticket 06A Codex role-profile capability proof | DONE / APPROVED_EVIDENCE / INSTALL_BLOCKED / INTEGRATED | Implementation `38e9a8b`, handoff `f6f186f`, review `62955ec`, guarded merge `de4141e`; actual installed-host result is `ROLE_ISOLATION_UNPROVEN / ACCESS_DENIED / OUTPUT_UNAVAILABLE`, so capability dependents stay blocked. |
 | Autonomous Ticket 04 reviewer-only authority | PLANNED / DEPENDENCY_WAIT | Starts only after reviewed 06A `SUPPORTED`; typed fake effect gate, not a real Agent turn. |
 | Tickets 06B/06C role-profile lifecycle/composition | PLANNED / DEPENDENCY_WAIT | Wait for 06A and autonomous Ticket 04; own/remove profiles, then compose exact reviewer authority. |
@@ -245,7 +245,7 @@ control-plane decomposition.
 | Superseded parent | `PRG-20260810-082`; `codex-cli-host-adapter-and-detachable-installer`; `CLOSURE-LOCAL-INSTALL-T05-02` |
 | Child 05A | `05a-codex-cli-preflight-contract`; integrated by `b22c6c4` |
 | Child 05B | `05b-codex-cli-transactional-registration`; current references below |
-| Child 05C | 05C1 through 05C2C3 are independently approved and integrated. 05C3 revision 03 is the sole active serial implementation. |
+| Child 05C | 05C1 through 05C2C3 are independently approved and integrated. 05C3 revision 03 is the sole active serial correction after initial review. |
 
 ### Ticket 05B selection and dispatch
 

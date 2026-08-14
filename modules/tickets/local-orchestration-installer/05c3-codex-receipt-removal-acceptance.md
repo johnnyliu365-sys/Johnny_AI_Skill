@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-02, AC-06, AC-07 and AC-08 |
 | Revision | `03` |
-| State | `IN_PROGRESS / DISPATCHED` |
+| State | `IN_PROGRESS / CORRECTION_DISPATCHED` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05C3-01` / A1-A8 |
 | Dependency | 05C1, 05C2A, 05C2B, 05C2C1, 05C2C2, 05C2C2A and 05C2C3 are independently approved and integrated; 05C2C3 merge is `1e6872acac7df28b5d5bd44991348354a1cd9779` |
 | Profile / XSS | `STANDARD`; one implementation owner, no helper / `XSS_NOT_APPLICABLE` |
@@ -96,6 +96,43 @@ contracts, readable decomposition and complete evidence determine completion.
 This registry converts the reservation into implementation authority for A1-A8
 only. It grants no authority to self-review, integrate, dispatch a next ticket
 or invoke a live host/target-project effect.
+
+## Initial review result and same-ticket correction boundary
+
+Initial review of implementation `78cd32da2490e999227f8409c4fcb52eed6e7e37`
+and handoff `6f90e65c7206db21c80b03180c92c132b2b2659c` is
+`CHANGES_REQUESTED` under the unchanged A1-A8 closure:
+
+- CR-180 (`IMPLEMENTATION_DEFECT`, A7): internal `observed_run` retains
+  `object` although only the public acceptance boundary may use it.
+- CR-181 (`EVIDENCE_DEFECT`, A6/A8): mutating external sentinel
+  `.git/config` bytes keeps the current A6 test green.
+- CR-182 (`EVIDENCE_DEFECT`, A7/A8): the committed source gate does not reject
+  unauthorized internal `object` or mechanically distinguish the three
+  authorized public parameters.
+
+The sole correction keeps revision 03, the same owner/worktree/branch,
+allocation, receipt, correlation and exact two-path scope. It must type the
+internal command as `OracleCommand`, snapshot the complete external Git
+sentinel tree byte-for-byte, and add the bounded AST/source admission described
+by the formal review. One additive implementation correction commit is followed
+by one appended WPR-only handoff; no other change is authorized.
+
+## CR-180 through CR-182 correction dispatch registry
+
+| Field | Value |
+| --- | --- |
+| Exact review baseline | `209fd3f7f929aee6cd59ed0fb88e40a15e99c78c`; formal initial review and PRG-431. |
+| Lane readback | Exact owner task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; permanent worktree `C:\Users\<user>\Desktop\AI控制工作workflow-implementation`; same branch `codex/implementation-codex-receipt-removal-acceptance-05c3`; clean head `6f90e65c7206db21c80b03180c92c132b2b2659c`; exactly three worktrees and zero ignored residue. |
+| History-preserving admission | Merge the exact control commit carrying this registry into the same branch. Resolve only the predicted append-only WPR overlap, preserving PRG-430, PRG-431, PRG-432 and all earlier records exactly once in numeric order. No reset, rebase, amend, force, stash, source copy or silent conflict resolution. |
+| Exact correction | Change only the two already-authorized 05C3 paths. Type internal `observed_run` with `OracleCommand`; add complete deterministic Git-sentinel tree-byte snapshot before/after acceptance; add committed AST/source admission enforcing the exact three public `object` parameters and all A7 forbidden constructs. |
+| Required red / green | Before correction, the AST gate must fail on internal `command_value: object`, and the reviewer `.git/config` mutation must leave the old A6 test green. After correction, the same internal-object reversal and the same Git-config byte mutation must each turn its governing test red, then exact source must pass focused/full serial/strict mypy/compile/source/scope/residue gates. |
+| Binding retained | Same workspace, handoff, allocation, receipt, correlation, question and side-context from revision 03; closure A1-A8 unchanged; one owner and no helper. |
+| Return | One additive implementation correction commit, then append only reserved `PRG-20260814-433` at physical WPR EOF in one WPR-only handoff. Independent correction review and integration remain reviewer-owned. |
+
+This is the single correction review cycle permitted for revision 03. A second
+failure must return `CONVERGENCE_REVIEW_REQUIRED`; it may not trigger another
+automatic implementation correction.
 
 ## Forbidden effects
 
