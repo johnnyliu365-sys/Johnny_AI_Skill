@@ -4818,3 +4818,13 @@
 | Blocking result | `CHANGES_REQUESTED`: the Profile echoes the incoming event as the expected next return, uses all-zero placeholder digest/revision metadata and synthetic references that resolve to no current policy chapter. Tests encode the same wrong direction. |
 | Review / refreeze | `doc/reviews/adaptive-project-orchestration/01-route-instruction-contract-code-review.md`; `CLOSURE-ADAPTIVE-ROUTER-R01-02` freezes the complete 19-row next-action mapping, seven real policy digests and CR-R01-001..003. |
 | Continuation | Same ticket/task/worktree/branch/allocation/receipt; additive correction only, one WPR-only return reserved as `PRG-20260814-448`. R02, 06G0P review, other rework, integration, push, package/install, release and deployment remain paused. |
+
+## PRG-20260814-447 - Router Ticket R01 revision-02 correction dispatch
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `CHANGES_REQUESTED(PRG-446) -> REVISION_02_CORRECTION_DISPATCH_CONFIRMED`; same ticket lane, no new worktree/branch/allocation/receipt. |
+| Review baseline | Formal review/refreeze `334935dfd557e7d244b31de37e80db8911f27069`; correction handoff `hnd_adaptive_router_r01_r02_20260814`; additive after submitted handoff `a16dfc38eb6141e2aef5fa480be741b1f057ca57`. |
+| Exact closure | `CLOSURE-ADAPTIVE-ROUTER-R01-02`; CR-R01-001..003 only. Complete 19-row policy/next-return map, seven real policy digests, zero-placeholder/conflicting-reference rejection and exact revision binding are frozen in the ticket. |
+| Owner / authority | Task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; worktree `C:\Users\<user>\Desktop\AI控制工作workflow-implementation`; branch `codex/implementation-router-route-instruction-r01`; allocation `aln_adaptive_router_r01_20260814`; retained receipt `rcpt_adaptive_router_r01_20260814`. |
+| Return / safety | Additive correction implementation in the same five files, then WPR-only `PRG-20260814-448`. No helper, R02, 06G0P review, other rework, new worktree, push, package/install, target-project/live host effect, release or deployment. |
