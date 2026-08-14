@@ -40,6 +40,11 @@ reattachment. One ticket is the complete implementation contract and records:
 - XSS classification and exact XSS matrix reference;
 - completion, operations and rollback evidence fields.
 
+The ticket owner and supervisor may only bind the sealed shared-Context revision and bounded
+feature/source references. They must not create or append shared Context. A missing fact is
+`UPSTREAM_DECISION_REQUIRED`; a changed fact is `REQUIREMENT_CHANGED`, both routed to the
+architecture owner before ticket admission.
+
 `modules/element/` is an index to target-owned source, types, contracts and tests. It never
 copies production source.
 

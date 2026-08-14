@@ -43,6 +43,20 @@ Policy documents are read only through an ephemeral source boundary. The boundar
 typed metadata such as source ID, revision and digest; policy text does not enter durable
 Router state.
 
+## Shared-Context authority
+
+Shared project Context supports `CREATE`, `REVISE` and `READ_REFERENCE` as distinct typed
+operations. `CREATE` is admitted only for the architecture owner during `ARCHITECTURE`,
+`GRILL` or `CONTEXT`. `REVISE` additionally requires an approved change reference and an exact
+expected sealed revision. The `CONTEXT` completion seals the new revision before SPEC approval.
+
+Every later stage and every supervisor/ticket/implementation/review role is limited to
+`READ_REFERENCE`. The effect gate validates project, actor role, stage, operation, artifact
+kind, expected revision and change authority before exposing a write capability. A forbidden
+role/stage/operation is `HALT / CONTEXT_WRITE_FORBIDDEN`; a missing or mismatched sealed
+revision is `HALT / CONTEXT_REVISION_STALE`. Prompt instructions and filesystem access do not
+override this gate.
+
 ## Continuation
 
 Every decision declares exactly one continuation:

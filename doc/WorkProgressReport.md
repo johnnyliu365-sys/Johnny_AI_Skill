@@ -4848,3 +4848,12 @@
 | Exact correction | CR-R01-004 only: named domain aliases and explicit tuple/map constants in production/test, `PurePosixPath` direct hash evidence, expanded AST P0 gate and two bounded reversals. Route table, policy values and public behavior are immutable. |
 | Owner / authority | Task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; same permanent worktree/branch/allocation `aln_adaptive_router_r01_20260814` and receipt `rcpt_adaptive_router_r01_20260814`. |
 | Safety / return | Original five-path ceiling, but only affected files may change; then WPR-only `PRG-20260815-451`. No helper, R02, 06G0P, new worktree, push, package/install, target/live effect, release or deployment. |
+
+## PRG-20260815-452 - Shared-Context lifecycle requirement and Router replan
+
+| Field | Evidence |
+| --- | --- |
+| Owner requirement | `CHG-20260815-020`: shared project Context is architecture-owned, sealed before SPEC and read/reference-only for every later role; no line-count limit substitutes for content/lifecycle admission. |
+| Context correction | `CONTEXT.md` is reduced from historical status prose to stable facts plus a metadata-only feature index. Ticket/handoff/commit/test/review/worktree state remains in its owning artifact. |
+| R01 disposition | Completed implementation `646a8b2d7052eba58ff623133942a976920acffc` and WPR-only handoff `7d6c2f2a066a9d039eb13ae0a8e339e04f372f61` remain immutable evidence. Terminal approval is paused because the newly approved policy revision makes its embedded policy references stale; this is `REQUIREMENT_CHANGED`, not an implementation defect. |
+| Router order | Refreeze only R01 policy metadata, then independently implement the shared-Context lifecycle/mutation-authority gate before model-role readiness, low-model admission, UI routing or integrated acceptance. All non-Router work remains paused. |

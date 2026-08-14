@@ -316,3 +316,15 @@
 | Out of scope | Provider API, live model invocation, forced Figma/plugin installation, target-project write, new worktree, push, packaging, install, release, deployment, Secret or other host effect. |
 | PRD / Context / ADR / SPEC | `PRD.md §17`; `doc/context/adaptive-project-orchestration/main.md`; `ADR-20260814-011`; adaptive orchestration SPEC revision 02 / AC-12 through AC-14. |
 | Owner approval | Approved in the control conversation on `2026-08-14`; implementation remains ticket/receipt/owner bound and independently reviewed. |
+
+## CHG-20260815-020 — Seal shared Context before ticket planning
+
+| Field | Decision |
+| --- | --- |
+| Status | `REQUIREMENT_APPROVED / SPEC_REVISION_03 / ROUTER_PHASE_ONLY` |
+| Previous rule | Minimal Context routing limited source loading, but did not prevent supervisors, ticket splitters or later lanes from appending shared `CONTEXT.md`; historical ticket/handoff state accumulated there. |
+| Changed rule | Shared project Context is architecture-owned, drafted only in `ARCHITECTURE`/`GRILL` and sealed at `CONTEXT` before SPEC approval. Every later role is read/reference-only. Missing or changed shared facts return upstream; revision requires architecture ownership, approved change authority and the exact prior sealed revision. |
+| Content boundary | Stable cross-feature facts, invariant boundaries and metadata-only indexes are allowed. Ticket/progress/handoff/commit/test/review/worktree state and duplicated SPEC/policy prose are forbidden. No hard line-count limit is used. |
+| Router impact | R01's completed revision-03 commits remain immutable evidence but their policy digests become stale. Refreeze R01 metadata, then implement one independent shared-Context lifecycle gate before model-role or ticket-admission work. |
+| Out of scope | Target-project mutation, new worktree, moving historical evidence, 06G0P review/integration, package, staging push, install, release, deployment or Secret handling. |
+| Owner approval | Required directly by the project owner in the control conversation on `2026-08-15`. |

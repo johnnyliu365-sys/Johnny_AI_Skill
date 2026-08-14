@@ -49,6 +49,16 @@ SPEC and target Context:
 The strong-type preflight in `specification-ticketing.md` remains mandatory. The first dispatch
 still carries identifiers only; this reference does not duplicate the ticket into the prompt.
 
+## Sealed Context input
+
+Ticket decomposition treats the exact sealed shared-Context revision as immutable input. The
+supervisor may select feature/ticket source spans and emit metadata references, but may not
+create, revise or append shared Context while splitting, admitting, dispatching, correcting or
+reviewing a ticket. If the approved SPEC cannot be compiled without a new shared fact, return
+`UPSTREAM_DECISION_REQUIRED`; if a previously sealed fact changed, return
+`REQUIREMENT_CHANGED`. Both routes wake the architecture owner instead of letting the
+supervisor manufacture or persist the missing meaning.
+
 ## Fail-closed routing
 
 - Use `SPLIT_REQUIRED` when the contract is complete but more than one observable closure,

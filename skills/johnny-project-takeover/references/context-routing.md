@@ -18,6 +18,27 @@ Expose only capability metadata needed for selection. Load the selected skill bo
 its directly applicable reference. Capability selection reduces context; runtime role and
 host gates still enforce authority.
 
+## Shared project Context lifecycle
+
+Shared project Context is an architecture artifact, not a progress log or a ticket scratchpad.
+The architecture owner may create its draft during `ARCHITECTURE` and `GRILL`; the `CONTEXT`
+stage seals one owner-approved revision before SPEC approval. Its content is limited to stable
+cross-feature facts, repository/trust identity, invariant ownership/security boundaries,
+approved architecture references and a metadata-only feature index.
+
+After sealing, `SPEC`, `TICKETS`, `IMPLEMENT`, `SMOKE_TEST`, `REVIEW` and `HANDOFF` receive
+read/reference capability only. A supervisor, ticket splitter, dispatcher, implementer or
+reviewer must not append ticket state, handoff text, commits, tests, findings, branches,
+worktrees or duplicated SPEC/policy prose to shared Context. They create bounded `ContextView`
+and side-context references to the owning artifact instead.
+
+A missing or changed shared fact returns `UPSTREAM_DECISION_REQUIRED` or
+`REQUIREMENT_CHANGED`. The Router wakes the architecture owner and requires an approved change
+reference before a new shared-Context revision can replace the sealed one. Replacement
+invalidates prior side-context mappings; it never edits a sealed revision in place. There is no
+line-count quality gate: admission is determined by the allowed content kinds, lifecycle,
+authority and reference completeness.
+
 ## Side-context mapping
 
 Each new Router event creates a new `side_context_id`; a retry of the same event keeps the
