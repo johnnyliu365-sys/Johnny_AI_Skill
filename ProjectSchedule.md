@@ -174,7 +174,7 @@
 | Ticket 06A Codex role-profile capability proof | DONE / APPROVED_EVIDENCE / INSTALL_BLOCKED / INTEGRATED | Implementation `38e9a8b`, handoff `f6f186f`, review `62955ec`, guarded merge `de4141e`; actual installed-host result is `ROLE_ISOLATION_UNPROVEN / ACCESS_DENIED / OUTPUT_UNAVAILABLE`, so capability dependents stay blocked. |
 | Autonomous Ticket 04 reviewer-only authority | SUPERSEDED / REPLACED_BY_LOCAL_06G1 | `CHG-20260814-018`; never dispatched. |
 | Tickets 06B/06C role-profile lifecycle/composition | SUPERSEDED / REPLACED_BY_06G0P_06G4 | `CHG-20260814-018`; never dispatched. |
-| Ticket 06G0P role-probe result contract | IN_PROGRESS / IMPLEMENTATION_DISPATCH_CONFIRMED | Receipt `rcpt_local_orchestration_install_06g0p_20260814`; implementer-2; exact three-file scope. |
+| Ticket 06G0P role-probe result contract | IMPLEMENTATION_COMPLETED / REVIEW_PAUSED_BY_CHG-019 | Implementation `d6cca42c`; handoff `42857fd`; immutable return awaits independent review after Router phase acceptance. |
 | Ticket 06G0 restricted-session transport proof | PLANNED / DEPENDENCY_WAIT | After 06G0P; must prove supported exact-profile/worktree effective binding or return truthful `ROLE_ISOLATION_UNPROVEN`. |
 | Tickets 06G1-06G4 reviewer gateway sequence | PLANNED / DEPENDENCY_WAIT | Pure authority, owned lifecycle, composition and end-to-end acceptance run serially after independently approved 06G0 `SUPPORTED`. |
 | Ticket 04 package parent | DECOMPOSED / NON_DISPATCHABLE | `CHG-20260812-014`; replaced by serial 04A-04I. |
@@ -192,10 +192,10 @@
 
 | Stage | State | Evidence / next gate |
 | --- | --- | --- |
-| Requirement / architecture | DONE | `CHG-20260813-016/017`; `ADR-20260813-008/009`; install/init separation, reviewer-first activation, adaptive delivery and post-POC staging lifecycle confirmed by owner. |
-| Exact specification | DRAFT / OWNER_REVIEW_REQUIRED | `modules/spec/adaptive-project-orchestration.md` AC-01 through AC-11. |
-| Ticket decomposition | BLOCKED / SPEC_APPROVAL_REQUIRED | Candidate sequence is recorded in the draft SPEC; no formal ticket, owner, receipt, branch or worktree allocation yet. |
-| Current implementation lanes | UNAFFECTED | 05S1R continues on its frozen baseline; owner2 E3D state remains preserved. |
+| Requirement / architecture | ROUTER PHASE DONE | `CHG-20260813-016/017`, `CHG-20260814-019`; `ADR-20260813-008/009`, `ADR-20260814-011`; tiered model handover, low-model admission and optional UI design-source routing confirmed. |
+| Exact specification | REVISION 02 / ROUTER_PHASE_APPROVED | `modules/spec/adaptive-project-orchestration.md`; AC-12 through AC-14 and Router portions of AC-05 through AC-10 are authorized. Other phases remain owner-review-required. |
+| Ticket decomposition | ROUTER_ONLY / IN_PROGRESS | Five serial Router closures are frozen as candidates; formal ticket/receipt/owner allocation starts only after document-contract verification. |
+| Other implementation lanes | PAUSED | 06G0P return is preserved pending review; 06G0-06G4, packaging and other rework/new tickets do not resume before Router acceptance. |
 
 ### Ticket 05 selection after external capability proof
 

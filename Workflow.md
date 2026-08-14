@@ -125,6 +125,7 @@ Agent 只取得當前關卡的完整局部閉包，不取得完整治理庫或�
 tier、implementer/helper 數量、POC freeze 或 staging 時，完整閱讀：
 
 - [`delivery-profile.md`](skills/johnny-project-takeover/references/delivery-profile.md)
+- [`model-role-routing.md`](skills/johnny-project-takeover/references/model-role-routing.md)（角色能力、SPEC readiness、休眠／喚醒時）
 
 專案大小、檔案數、行數與 model 名稱不授予 authority，也不得降低 hard
 escalation。預設一位 implementer、無 helper；只有互斥 ownership 與獨立 AC
@@ -138,6 +139,9 @@ escalation。預設一位 implementer、無 helper；只有互斥 ownership 與�
 | `WAYFINDER`／`ARCHITECTURE`／`GRILL` | scoped facts、Wayfinder、change history | [`discovery-change.md`](skills/johnny-project-takeover/references/discovery-change.md) | GO／NO-GO／completed／`REQUIREMENT_CHANGED` |
 | `CONTEXT` | confirmed facts and refs | [`context-routing.md`](skills/johnny-project-takeover/references/context-routing.md) | `ACTION_COMPLETED` |
 | `SPEC`／`TICKETS` | approved Context/CHG/architecture | [`specification-ticketing.md`](skills/johnny-project-takeover/references/specification-ticketing.md) | approval wait／`ACTION_COMPLETED` |
+| SPEC readiness／model handover | exact SPEC/Profile revision | [`model-role-routing.md`](skills/johnny-project-takeover/references/model-role-routing.md) | ready／architecture owner／owner approval |
+| low-model ticket admission | approved SPEC and exact ticket | [`ticket-decomposition.md`](skills/johnny-project-takeover/references/ticket-decomposition.md) | ready／split／upstream／high assurance |
+| formal UI／design source | approved UI requirement and capability state | [`ui-design-handoff.md`](skills/johnny-project-takeover/references/ui-design-handoff.md) | UI contract／human wait／source halt |
 | XSS trigger | untrusted-source/render/host graph | [`xss-review.md`](skills/johnny-project-takeover/references/xss-review.md) | classification／closure or halt |
 | dispatch／owner／workspace | exact ticket/receipt/task/worktree | [`implementation-authority.md`](skills/johnny-project-takeover/references/implementation-authority.md) | admitted dispatch or halt |
 | `IMPLEMENT`／`SMOKE_TEST` | exact admitted ticket and direct contracts | [`implementation-tdd.md`](skills/johnny-project-takeover/references/implementation-tdd.md) | `ImplementationReturn` |
@@ -198,6 +202,8 @@ SPEC 建立、內容、核准、revision 與 implementation-language gate：
 垂直切片、ticket schema、前端 composition/DI、Closure Set 與 dispatch normalization：
 
 - [`specification-ticketing.md`](skills/johnny-project-takeover/references/specification-ticketing.md)
+- [`ticket-decomposition.md`](skills/johnny-project-takeover/references/ticket-decomposition.md)（拆票與低階模型 admission）
+- [`ui-design-handoff.md`](skills/johnny-project-takeover/references/ui-design-handoff.md)（正式 UI 或 design source 時）
 - [`review-checks.md`](skills/johnny-project-takeover/references/review-checks.md)（設計 TDD matrix 時）
 
 每張 ticket 是單一 implementation owner 可完成、可獨立驗證的使用者可觀察行為。

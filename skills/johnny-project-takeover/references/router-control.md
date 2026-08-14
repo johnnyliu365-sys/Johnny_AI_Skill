@@ -85,6 +85,9 @@ approval prompt.
 | `ARCHITECTURE` | GO context, constraints and risks | architecture | completed artifact or blocker |
 | `GRILL` | scoped requirements, architecture and change history | requirement convergence | confirmed facts or change event |
 | `CONTEXT` / `SPEC` / `TICKETS` | approved scoped artifacts | specification and slicing | draft, approval wait or completion |
+| SPEC readiness / model handover | exact SPEC/Profile revision | role lifecycle and wake routing | ready, owner wait or architecture-owner wake |
+| low-model ticket admission | approved SPEC and exact ticket | decomposition validation | ready, split, upstream decision or high assurance |
+| formal UI / design source | approved UI requirement and capability state | UI contract preparation | contract, owner wait or source halt |
 | `IMPLEMENT` / `SMOKE_TEST` | exact admitted ticket and direct contracts | implementation and verification | typed implementation return |
 | `REVIEW` / `HANDOFF` | closure set, diff and evidence | independent review | approval, correction route or halt |
 

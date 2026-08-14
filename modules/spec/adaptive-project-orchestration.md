@@ -3,11 +3,11 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2` |
-| Status | `DRAFT / OWNER_REVIEW_REQUIRED` |
+| Status | `REVISION_02 / ROUTER_PHASE_APPROVED / OTHER_PHASES_OWNER_REVIEW_REQUIRED` |
 | Author / baseline | Codex control plane / current `main` |
 | Context | `doc/context/adaptive-project-orchestration/main.md` |
 | PRD | `PRD.md §17` |
-| Requirement change / ADR | `CHG-20260813-016`, `CHG-20260813-017` / `ADR-20260813-008`, `ADR-20260813-009` |
+| Requirement change / ADR | `CHG-20260813-016`, `CHG-20260813-017`, `CHG-20260814-019` / `ADR-20260813-008`, `ADR-20260813-009`, `ADR-20260814-011` |
 | Implementation language | Python 3.11 strict typed contracts/adapters; host-specific integration only after capability proof |
 
 ## Problem and goal
@@ -51,6 +51,12 @@ capacity must be evidence-based and proportional to risk and coupling.
 6. After the first POC is independently accepted, one exact staging transition
    freezes the POC identity and admits the staging baseline used by every later
    feature/architecture ticket.
+7. The architecture owner sleeps only after one exact owner-approved SPEC
+   revision passes readiness. A Terra supervisor/reviewer then decomposes that
+   revision into tickets admitted for a Luna implementation owner.
+8. Unresolved semantics, architecture or assurance wake the architecture owner
+   through the Router. Formal UI separately classifies an optional design
+   source; Figma is never an installation prerequisite.
 
 ### AC-01 — Install/init separation
 
@@ -144,6 +150,41 @@ mismatched refs halt before source/Git/Agent effect. Guarded integration may
 advance staging but cannot overwrite the frozen POC, imply release or replace
 receipt-bound disposable effect testing.
 
+### AC-12 — Tiered model lifecycle
+
+One versioned `ProjectWorkflowProfile` binds semantic roles to opaque model and
+capability references. The current default mapping is a highest-capability
+architecture owner, Terra supervisor/reviewer and Luna implementation owner;
+model identity grants no authority. The architecture owner may sleep only when
+the exact owner-approved SPEC revision closes public contracts, finite states,
+error meanings, ownership/dependency/effect boundaries, rollback, acceptance,
+delivery profile, security/XSS and UI-source classification. Missing owner
+approval waits for the owner; any other open design decision keeps or wakes the
+architecture owner.
+
+### AC-13 — Low-model ticket admission
+
+The supervisor treats the approved SPEC as immutable input and returns exactly
+`READY_LOW_MODEL`, `SPLIT_REQUIRED`, `UPSTREAM_DECISION_REQUIRED` or
+`HIGH_ASSURANCE_REQUIRED`. `READY_LOW_MODEL` requires one observable closure,
+one implementation owner, one primary change/effect boundary, a finite named
+TDD matrix, deterministic verification and zero unresolved design decisions.
+Decomposition follows behavior/state/effect/ownership/verification boundaries,
+never file count, line count or horizontal frontend/backend/test layers. The
+strong-type preflight and identifier-only dispatch remain mandatory.
+
+### AC-14 — Optional design-source routing
+
+Formal UI classifies `FIGMA`, `SCREENSHOT`, `DESIGN_BRIEF`,
+`EXISTING_DESIGN_SYSTEM` or `NONE` together with a finite capability state.
+Authorized Figma reads are bounded to exact files/nodes/frames/variants and
+required metadata/assets. Unavailable or declined Figma can use another
+approved source. Missing required visual input returns
+`WAIT_FOR_HUMAN / UI_DESIGN_SOURCE_REQUIRED`; inaccessible exact Figma input
+returns `HALT / DESIGN_SOURCE_UNAVAILABLE` only when the approved SPEC requires
+that source. UI tickets deliver complete observable component/frame slices.
+Design metadata alone does not trigger XSS; runtime source-to-renderer flow does.
+
 ## Typed contracts
 
 ```text
@@ -152,6 +193,19 @@ ImplementationModelTier = ECONOMY | BALANCED | FRONTIER
 ResearchSupport = NONE | REVIEWER_OWNED_READ_ONLY
 StagingRefState = ABSENT | EXACT_ACCEPTED_POC | VERIFIED_FAST_FORWARD
 RemotePublicationMode = LOCAL_ONLY | CREATE_REMOTE | FAST_FORWARD_REMOTE
+ModelRole = ARCHITECTURE_OWNER | SUPERVISOR_REVIEWER
+          | IMPLEMENTATION_OWNER | RESEARCH_HELPER
+RoleActivityState = ACTIVE | SLEEPING | WAKE_REQUIRED
+SpecificationReadinessDecision = READY_FOR_SUPERVISION
+                               | ARCHITECTURE_OWNER_REQUIRED
+                               | OWNER_APPROVAL_REQUIRED
+TicketDecompositionDecision = READY_LOW_MODEL | SPLIT_REQUIRED
+                            | UPSTREAM_DECISION_REQUIRED
+                            | HIGH_ASSURANCE_REQUIRED
+DesignSourceKind = FIGMA | SCREENSHOT | DESIGN_BRIEF
+                 | EXISTING_DESIGN_SYSTEM | NONE
+DesignCapabilityState = AVAILABLE_AUTHORIZED | AVAILABLE_NOT_AUTHORIZED
+                      | UNAVAILABLE | DECLINED
 
 DeliveryAssessment = {
   project_id, ticket_ref?, change_surface, coupling, ambiguity,
@@ -176,6 +230,30 @@ StagingTransitionPlan = {
   expected_staging_ref, expected_staging_state,
   frozen_version_record_ref, remote_publication_mode,
   remote_history_ref?, plan_digest
+}
+
+ModelRoleAssignment = {
+  project_profile_ref, role, model_ref, capability_refs,
+  activity_state, evidence_refs
+}
+
+SpecificationReadinessAssessment = {
+  project_profile_ref, specification_ref, specification_revision,
+  owner_approval_ref?, closed_contract_refs, classification_refs,
+  decision, wake_reason?
+}
+
+TicketAdmissionAssessment = {
+  specification_ref, ticket_ref, closure_ref, owner_ref,
+  change_effect_boundary_ref, tdd_matrix_ref, verification_ref,
+  open_decision_refs, decision
+}
+
+UIImplementationContract = {
+  design_source_kind, design_capability_state, design_source_ref?,
+  component_frame_ref, semantic_dom_ref, state_matrix_ref,
+  responsive_ref, token_asset_refs, accessibility_ref,
+  visual_acceptance_ref, xss_classification_ref
 }
 ```
 
@@ -210,33 +288,52 @@ than raw project paths, source, prompts, Secrets or PII.
     admitted staging SHA. Tests independently prove that staging integration
     cannot mutate the frozen POC/version record or claim release, and that
     disposable environment success cannot grant Git baseline authority.
+11. SPEC-readiness tests reject missing owner approval and every independently
+    omitted contract/classification field; only the exact complete revision can
+    put the architecture owner to sleep.
+12. Wake-routing tests cover ambiguous/contradictory SPEC, undefined contract,
+    architecture/cross-ticket conflict, requirement change, unprovable AC, new
+    external boundary, hard assurance trigger and bounded model insufficiency.
+13. Ticket-admission tests cover each missing closure dimension, multi-owner or
+    multi-effect slices, horizontal split and unresolved decisions. Reverse
+    mutation of every admission gate changes `READY_LOW_MODEL` to the exact
+    non-ready decision.
+14. UI-source tests cover every source/capability combination, exact Figma
+    required/unrequired distinctions, fallback, human wait and halt. XSS remains
+    based on runtime source/sink data rather than design-source kind.
+15. Every new decision returns the exact versioned policy reference and expected
+    typed return. Missing, stale or competing route references halt before
+    capability, task, worktree, Git or host effect.
 
 ## Candidate vertical ticket sequence
 
-Formal ticket files may be created only after this SPEC is approved:
+Only the Router phase below is currently authorized for formal tickets. Each
+item is a separate low-model-admitted closure and must pass independent review
+before its dependent starts:
 
-1. Pure delivery-assessment and resource-plan classifier.
-2. Pure project-initialization plan and manifest contract.
-3. Pure post-POC staging-transition plan and baseline contract.
-4. Guarded target-project initialization with idempotent rollback/absence.
-5. Reviewer task activation capability and finite manual fallback.
-6. Reviewer-owned project-local implementer worktree/task lifecycle.
-7. Guarded post-POC local/remote staging admission and ticket-base enforcement.
-8. Installer Getting Started/initialization entry-point composition and full
-   disposable acceptance.
+1. Versioned skill-reference and expected-return Router contracts.
+2. SPEC-readiness plus model-role sleep/wake decision kernel.
+3. Low-model ticket-admission decision kernel.
+4. Optional UI design-source decision kernel.
+5. Integrated Profile/Router acceptance across references, wake, admission and
+   metadata-only serialization.
 
-The active 05S1R implementation is not a dependency source and is not
-interrupted by this draft.
+Initialization, project-local worktree lifecycle, post-POC staging, installer
+composition and packaging remain later phases and are not ticket-authorized by
+this revision. The completed 06G0P return remains immutable but its independent
+review/integration and dependent 06G tickets are paused until Router acceptance.
 
 ## Approval
 
-The project owner approved the product direction and the post-POC staging
-requirement on `2026-08-13`. The exact AC-01 through AC-11 and candidate ticket
-decomposition remain
-`OWNER_REVIEW_REQUIRED`; no implementation or target-project mutation is
-authorized by this draft.
+The project owner approved the product direction and post-POC staging
+requirement on `2026-08-13`, then approved the tiered model/decomposition/UI
+direction and Router-first implementation on `2026-08-14`. Revision 02
+authorizes only AC-12 through AC-14 together with the Router portions of
+AC-05 through AC-10 and the five Router ticket candidates above. Exact
+initialization and staging implementation tickets under AC-01 through AC-04 and
+AC-11 remain `OWNER_REVIEW_REQUIRED`.
 
-Until that approval, the fixed topology selection in the previously approved
-autonomous-collaboration POC remains authoritative. Approval of this SPEC will
-supersede that intake-time `1 | 2` question with evidence-based per-ticket
-assessment; it will not rewrite the historical POC record.
+This approval does not rewrite historical POC evidence, review/integrate 06G0P,
+authorize target-project mutation, or authorize push, package, install, release
+or deployment. Every Router implementation still requires its own committed
+ticket, receipt, named implementation owner and independent review.

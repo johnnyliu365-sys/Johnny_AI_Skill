@@ -9,3 +9,4 @@
 | [ADR-20260811-004-safe-codex-compensation-boundary.md](ADR-20260811-004-safe-codex-compensation-boundary.md) | `ACCEPTED` | 將任意 callable 邊界收斂為零副作用 capability、純 reducer 與薄 composition。 |
 | [ADR-20260812-005-codex-registration-transaction-boundary.md](ADR-20260812-005-codex-registration-transaction-boundary.md) | `ACCEPTED` | 將 process-local 一次性交易 authority、forward effects、settlement 與 disposable lifecycle acceptance 分開驗收。 |
 | [ADR-20260812-006-version-one-staging-and-package-convergence.md](ADR-20260812-006-version-one-staging-and-package-convergence.md) | `ACCEPTED` | 以遠端 staging 溫備、串行小工單與不可變 evidence record 收斂第一版打包／系統整合。 |
+| [ADR-20260814-011-tiered-model-router-lifecycle.md](ADR-20260814-011-tiered-model-router-lifecycle.md) | `ACCEPTED / ROUTER_PHASE_AUTHORIZED` | 定義 architecture owner、supervisor、implementer 的 readiness／sleep／wake，以及低階 ticket admission 與選配 design source。 |

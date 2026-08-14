@@ -58,11 +58,14 @@ checker；ticket schema、preflight 與 TDD 由 Router 指向：
 | --- | --- | --- |
 | 任一事件、完成、等待或 HALT | [Router](Workflow.md#workflow-router) | [router-control](skills/johnny-project-takeover/references/router-control.md) |
 | POC/MVP/COMMERCIAL、模型或 lane 數量、staging | [Profile](Workflow.md#workflow-router) | [delivery-profile](skills/johnny-project-takeover/references/delivery-profile.md) |
+| 架構 owner、supervisor、implementer 休眠／喚醒 | [Model lifecycle](Workflow.md#workflow-router) | [model-role-routing](skills/johnny-project-takeover/references/model-role-routing.md) |
 | 最小 Context、旁路引用、能力選擇 | [Router Context](Workflow.md#workflow-router) | [context-routing](skills/johnny-project-takeover/references/context-routing.md) |
 | 新專案、需求、Bug、架構或變更 | [Discovery](Workflow.md#discovery) | [discovery-change](skills/johnny-project-takeover/references/discovery-change.md) |
 | Browser/WebView/DOM/JavaScript 不可信資料 | [XSS gate](Workflow.md#xss-review) | [xss-review](skills/johnny-project-takeover/references/xss-review.md) |
 | Secret、正式 Log、Provider、Webhook、外部 effect | [Security](Workflow.md#security) | [security-boundary](skills/johnny-project-takeover/references/security-boundary.md) |
 | SPEC、ticket、DI、type preflight、dispatch | [Tickets](Workflow.md#tickets) | [specification-ticketing](skills/johnny-project-takeover/references/specification-ticketing.md) |
+| 低階模型 ticket 拆分或 admission | [Tickets](Workflow.md#tickets) | [ticket-decomposition](skills/johnny-project-takeover/references/ticket-decomposition.md) |
+| 正式 UI、Figma／截圖／brief／既有 design system | [Tickets](Workflow.md#tickets) | [ui-design-handoff](skills/johnny-project-takeover/references/ui-design-handoff.md) |
 | Owner、Agent control、task/worktree、correction | [Role boundary](Workflow.md#role-boundary) | [implementation-authority](skills/johnny-project-takeover/references/implementation-authority.md) |
 | TDD、strict type、smoke、completion | [Implementation](Workflow.md#implementation) | [implementation-tdd](skills/johnny-project-takeover/references/implementation-tdd.md) |
 | TDD matrix 或獨立 review | [Review](Workflow.md#review-handoff) | [review-checks](skills/johnny-project-takeover/references/review-checks.md) + [CodeReview.md](CodeReview.md) |

@@ -37,6 +37,9 @@
 | XSS 或 Browser/WebView/DOM/JavaScript | [`xss-review.md`](skills/johnny-project-takeover/references/xss-review.md) |
 | Secret、正式 Log、Provider、Webhook 或 external effect | [`security-boundary.md`](skills/johnny-project-takeover/references/security-boundary.md) |
 | Profile、fan-out、POC/staging | [`delivery-profile.md`](skills/johnny-project-takeover/references/delivery-profile.md) |
+| 模型角色 handover、休眠／喚醒或 capability escalation | [`model-role-routing.md`](skills/johnny-project-takeover/references/model-role-routing.md) |
+| 低階模型 ticket admission 或 convergence replan | [`ticket-decomposition.md`](skills/johnny-project-takeover/references/ticket-decomposition.md) |
+| 正式 UI、design source 或 visual acceptance | [`ui-design-handoff.md`](skills/johnny-project-takeover/references/ui-design-handoff.md) |
 | 實作語言 | [`language-policy.md`](skills/johnny-project-takeover/references/language-policy.md) |
 
 不適用也必須記錄可驗證理由，尤其是 XSS、privileged capability、Agent control、

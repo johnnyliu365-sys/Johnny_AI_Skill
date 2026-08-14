@@ -28,11 +28,14 @@ file completely only when its condition applies.
 | --- | --- |
 | Any Router event, continuation, dispatch receipt or completion return | [Router control contract](references/router-control.md) |
 | Intake profile, resource plan, maturity change, POC freeze or staging | [Delivery profile and lifecycle](references/delivery-profile.md) |
+| Model-role assignment, SPEC readiness, architecture-owner sleep/wake or escalation | [Model role lifecycle](references/model-role-routing.md) |
 | ContextView, source selection, capability selection or side-context mapping | [Minimal Context routing](references/context-routing.md) |
 | Wayfinder, Architecture, Grill or requirement change | [Discovery and change control](references/discovery-change.md) |
 | Untrusted data enters Browser/WebView/HTML/DOM/JavaScript | [XSS review](references/xss-review.md) |
 | Secret, production log, Provider, webhook or external effect | [Security boundary](references/security-boundary.md) |
 | SPEC, ticket, type preflight, frontend contract or dispatch envelope | [Specification and ticketing](references/specification-ticketing.md) |
+| Approved-SPEC decomposition, low-model admission or convergence replan | [Ticket decomposition](references/ticket-decomposition.md) |
+| Formal UI, Figma/screenshot/brief/design-system input or visual acceptance | [UI design handoff](references/ui-design-handoff.md) |
 | Owner/task/worktree admission, Agent control or correction allocation | [Implementation authority](references/implementation-authority.md) |
 | Admitted ticket implementation, TDD, type, smoke or completion | [Implementation TDD](references/implementation-tdd.md) |
 | Ticket TDD design or independent code review | [Independent review checks](references/review-checks.md) and `../../CodeReview.md` |

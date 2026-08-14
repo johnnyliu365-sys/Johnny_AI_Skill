@@ -300,3 +300,19 @@
 | Impact on prior tickets | 06A remains immutable, integrated truthful blocked evidence. Planned autonomous Ticket 04 and local 06B/06C are `SUPERSEDED` by 06G0P-06G4. Package 04A-04I remain dependency-waiting. Dispatch preflight found that 06A's result contract permits `SUPPORTED` with malformed process evidence, so 06G0P is the only eligible first child; 06G0-06G4 remain dependency-waiting. |
 | PRD / Context / ADR / SPEC | `PRD.md §15`; `doc/context/local-orchestration-installer/main.md`; `doc/adr/ADR-20260814-010-reviewer-owned-orchestration-gateway.md`; `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` revision 03. |
 | Acceptance | 06G0P first makes supported process evidence a finite, constructible and enforced state. Then one supported local transport launches or binds the exact restricted implementation session in the exact assigned worktree and proves effective built-in tool absence; one reviewer-only gateway positive path reaches a fake effect; all implementation, replay, foreign, mismatch and alias paths reach zero effects; install/remove owns only exact profile/gateway artifacts and preserves foreign/global/target state. Any unavailable effective readback remains `INSTALL_BLOCKED / ROLE_ISOLATION_UNPROVEN`. |
+
+## CHG-20260814-019 — Make Router enforce tiered model handover and low-model admission
+
+| Field | Decision |
+| --- | --- |
+| Status | `REQUIREMENT_APPROVED / SPEC_REVISION_APPROVED / ROUTER_PHASE_ONLY` |
+| Previous rule | The Router POC selected generic capabilities and the adaptive orchestration draft selected model tiers/resources, but neither closed when the architecture owner may sleep, when the supervisor must wake it, whether a ticket is safe for a low-cost implementer, or how optional UI design sources affect routing. |
+| Changed rule | The human owner and highest-capability architecture owner converge and approve the SPEC; a typed readiness gate then hands control to a Terra supervisor/reviewer, which compiles the approved SPEC into admitted tickets for a Luna implementation owner. The Router owns finite sleep/wake, decomposition/admission and design-source decisions. Figma is optional and never forced. |
+| Ticket closure | One observable closure, one implementation owner, one primary change/effect boundary, a finite TDD matrix, deterministic verification and zero unresolved design decisions. Split by behavior/state/effect/ownership/verification, never by line or file count. |
+| Wake triggers | Ambiguous/contradictory SPEC, undefined public contract, architecture or cross-ticket conflict, changed requirement, unprovable AC, new external/privileged boundary, high-assurance trigger or bounded model-capability convergence failure. |
+| UI source rule | `FIGMA`, `SCREENSHOT`, `DESIGN_BRIEF`, `EXISTING_DESIGN_SYSTEM` and `NONE` are valid source kinds. Capability state determines use/wait/fallback/halt. Runtime renderer flow alone determines XSS applicability. |
+| In scope now | Governance references and adaptive SPEC revision; then pure typed Router contracts/profile/decision/preflight tests in bounded serial tickets. |
+| Paused | 06G0P independent review/integration, 06G0-06G4, package/staging/build/install/remove and all other rework/new feature tickets until Router acceptance. Existing commits remain immutable evidence. |
+| Out of scope | Provider API, live model invocation, forced Figma/plugin installation, target-project write, new worktree, push, packaging, install, release, deployment, Secret or other host effect. |
+| PRD / Context / ADR / SPEC | `PRD.md §17`; `doc/context/adaptive-project-orchestration/main.md`; `ADR-20260814-011`; adaptive orchestration SPEC revision 02 / AC-12 through AC-14. |
+| Owner approval | Approved in the control conversation on `2026-08-14`; implementation remains ticket/receipt/owner bound and independently reviewed. |

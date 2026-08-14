@@ -22,6 +22,9 @@ marks the old SPEC `SUPERSEDED`.
 
 ## Ticket
 
+Use `ticket-decomposition.md` for splitting and low-model admission. This section owns the
+canonical ticket schema; do not duplicate its fields in prompts or decomposition records.
+
 Create vertical, independently observable tickets only after SPEC approval and Context
 reattachment. One ticket is the complete implementation contract and records:
 
@@ -41,6 +44,9 @@ reattachment. One ticket is the complete implementation contract and records:
 copies production source.
 
 ## Frontend contract
+
+When a formal UI or design source is involved, also apply `ui-design-handoff.md` before ticket
+admission.
 
 A formal frontend ticket names component boundaries, input/output/state, Composition Root,
 dependency interfaces and lifetime, production bindings and test fakes. UI components do not

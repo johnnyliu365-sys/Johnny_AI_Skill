@@ -247,3 +247,23 @@ admitted staging SHA and return through guarded integration. The frozen POC or
 version-one record is never overwritten, and staging integration never implies
 release. Disposable effect-test environments remain separate from this Git
 development baseline.
+
+The model lifecycle is a typed Router handover rather than an informal prompt convention. The
+human owner and highest-capability architecture owner close and approve the SPEC. A readiness
+gate then allows that role to sleep while a Terra supervisor/reviewer compiles the approved
+meaning into small tickets for a Luna implementation owner. The supervisor must wake the
+architecture owner through the Router when requirements, public contracts, architecture,
+acceptance or high-assurance boundaries are not closed; ordinary implementation and evidence
+defects stay in same-ticket correction. Exact model IDs are versioned Profile mappings and do
+not confer authority.
+
+A ticket is eligible for the default implementation model only when it contains one observable
+closure, one owner, one primary change/effect boundary, a finite TDD matrix, deterministic
+verification and no unresolved design decision. Decomposition follows behavior, state, effect,
+ownership and verification boundaries, not line or file counts.
+
+Formal UI work accepts an authorized Figma node, screenshot, design brief or existing design
+system. Figma is optional and cannot be forced during installation or project adoption. Missing
+required visual input produces an exact owner wait; an unavailable exact Figma source halts only
+when that source is part of the approved SPEC. Runtime untrusted-data flow into a renderer, not
+design metadata alone, determines XSS review.

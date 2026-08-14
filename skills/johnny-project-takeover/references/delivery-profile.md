@@ -44,6 +44,11 @@ order is explicit. A high-search, low-authority, zero-write-conflict task may re
 reviewer-owned read-only/no-code research helper. The implementation owner never controls a
 helper or another Agent. Model tier is a cost/capability choice, not authority.
 
+Role assignment, the default Terra supervisor/Luna implementer mapping, SPEC-readiness sleep
+and typed wake conditions are defined only in `model-role-routing.md`. This Profile stores the
+versioned opaque model references and capability evidence; it does not turn a model name into
+authority.
+
 Reassess when requirements, risk, security/XSS classification, coupling or verification
 results change. Upgrade automatically when evidence requires it; downgrade only with recorded
 evidence and without removing required tests or findings.
