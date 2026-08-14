@@ -169,7 +169,7 @@
 | Ticket 05C2C1 oracle installed-path presence | COMPLETE / APPROVED / INTEGRATED | Review `90dac00`; guarded merge `fffbc61`; post-merge focused 46/46 and strict mypy 148 pass. |
 | Ticket 05C2C2 adapter installed-path truth | COMPLETE / APPROVED / INTEGRATED | Correction `e801646`, handoff `9ba22b3`, review `8762f23`, guarded merge `bc97a42`; post-merge focused 15/15 and strict mypy 148 pass. |
 | Ticket 05C2C2A installed-path proof truth contract | COMPLETE / APPROVED / INTEGRATED | Review correction `6cca121`; guarded merge `1f6532a`; post-merge focused 52/52 and strict mypy 148 pass. |
-| Ticket 05C2C3 oracle marketplace-source truth | COMPLETE / CHANGES_REQUESTED / EVIDENCE_CORRECTION_REQUIRED | Source/tests pass CR-179; append a canonical WPR-only handoff at physical EOF on the same lane. |
+| Ticket 05C2C3 oracle marketplace-source truth | CORRECTION_IN_PROGRESS / DISPATCHED | CR-179 same-lane WPR-only append correction; source/test blobs frozen. |
 | Ticket 05C3 receipt removal acceptance | PLANNED / UPSTREAM_MARKETPLACE_SOURCE_GAP / BLOCKED_BY_05C2C3 | Refreeze after 05C2C3 independently approves/integrates; no 05C3 authority now. |
 | Ticket 06A Codex role-profile capability proof | DONE / APPROVED_EVIDENCE / INSTALL_BLOCKED / INTEGRATED | Implementation `38e9a8b`, handoff `f6f186f`, review `62955ec`, guarded merge `de4141e`; actual installed-host result is `ROLE_ISOLATION_UNPROVEN / ACCESS_DENIED / OUTPUT_UNAVAILABLE`, so capability dependents stay blocked. |
 | Autonomous Ticket 04 reviewer-only authority | PLANNED / DEPENDENCY_WAIT | Starts only after reviewed 06A `SUPPORTED`; typed fake effect gate, not a real Agent turn. |

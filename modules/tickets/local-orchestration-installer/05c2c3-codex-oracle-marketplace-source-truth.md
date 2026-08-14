@@ -5,7 +5,7 @@
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-02, AC-06, AC-07 and AC-08 |
 | Change / Context | `CHG-20260808-011` / `doc/context/local-orchestration-installer/main.md`; non-requirement-changing staging-evidence defect |
 | Revision | `01` |
-| State | `COMPLETE / CHANGES_REQUESTED / EVIDENCE_CORRECTION_REQUIRED` |
+| State | `CORRECTION_IN_PROGRESS / DISPATCHED` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05C2C3-01` / S1-S7 |
 | Dependency | 05C2C1 guarded merge `fffbc616ee1870b69845cbcecf37a98e842106d3`; 05C2C2 guarded merge `bc97a42638540cb56e0b2b0c716bd93ddeb5dbba` |
 | Profile / resource | `STANDARD`; one implementation owner, no helper; exact two-path staging-only correction |
@@ -92,6 +92,21 @@ The implementation and tests are approved as submitted. The same owner,
 permanent worktree, branch, allocation, receipt and correlation must append a
 new canonical WPR-only handoff at the end of the file. PRG-423 and every prior
 commit remain immutable; no source, test or prior WPR line may be changed.
+
+## CR-179 correction dispatch registry
+
+| Field | Value |
+| --- | --- |
+| Review baseline | `fab2fbc341cb8c32736b9fdfc89cf9d25f04d165`; CR-179 authorizes evidence placement correction only. |
+| Owner / lane | Existing owner task `019ffb0c-db88-7303-895c-aecfadde7c8d`; permanent worktree `C:\Users\<user>\Desktop\AI控制工作workflow-implementer-2`; existing branch `codex/implementation-codex-oracle-marketplace-source-truth-05c2c3`; no helper, new branch or new worktree. |
+| Binding | Retain workspace `wsb_local_orchestration_install_05c2c3_20260814_01`, handoff `hnd_local_orchestration_install_05c2c3_20260814`, allocation `aln_local_orchestration_install_05c2c3_20260814`, receipt `rcpt_local_orchestration_install_05c2c3_20260814`, correlation `corr-local-orchestration-install-05c2c3-20260814`, question `q-local-orchestration-install-05c2c3-20260814` and side context `scx-local-orchestration-install-05c2c3-20260814-01`. |
+| Merge admission | Merge the exact control commit carrying this registry into the existing branch without reset, rebase, amend, force, stash or historical-source copy. Only the predicted append-only `doc/WorkProgressReport.md` overlap may be resolved; preserve PRG-423, PRG-424 and PRG-425 exactly once. |
+| Correction | After the merge, append only reserved PRG-20260814-426 at physical EOF in one new WPR-only commit. State that PRG-426 is the canonical integration handoff and that PRG-423 remains immutable historical evidence whose placement alone is superseded. |
+| Immutable source | `oracle_child.py` blob `86edacbbb43a36475071c5494b8c4e0cc2b81f60` and direct-test blob `d897552e65c506e49132b82e1eaccdf8f4004d37` must remain exact. No source/test/ticket/review or previous WPR line may change. |
+| Verification | Read back the two exact blobs, physical EOF, unique PRG-423 through PRG-426 headings, clean tracked/ignored status, exactly three worktrees and zero cache/runtime residue. Executable suites are not rerun because no executable blob may change. |
+
+Any mismatch returns typed `HALT`; otherwise return the history-preserving
+merge commit and the WPR-only PRG-426 correction commit for terminal review.
 
 ## Forbidden effects
 

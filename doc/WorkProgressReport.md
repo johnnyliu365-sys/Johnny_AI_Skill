@@ -4580,3 +4580,13 @@
 | Finding | CR-179 `EVIDENCE_DEFECT`: PRG-423 was inserted before historical PRG-413 through PRG-422 rather than appended at physical EOF. Its evidence is otherwise truthful; source and tests pass. |
 | Continuation | Same ticket/owner/permanent worktree/branch/allocation/receipt/correlation. Preserve PRG-423 and every earlier line; append one canonical WPR-only correction at physical EOF. No source/test or historical-WPR edit, new branch/worktree/helper or effect. |
 | Boundary | `XSS_NOT_APPLICABLE`; no live Codex/home/config, target-project, network, push/staging publication, package/build/install, Secret, release or deployment. |
+
+## PRG-20260814-425 - Ticket 05C2C3 CR-179 correction dispatch registry
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `CHANGES_REQUESTED(CR-179) + EXACT_LANE_READBACK -> CORRECTION_DISPATCH_CONFIRMED / IMPLEMENT`; correction is WPR-only. |
+| Review / lane | Exact review baseline `fab2fbc341cb8c32736b9fdfc89cf9d25f04d165`; owner task `019ffb0c-db88-7303-895c-aecfadde7c8d`; same permanent worktree/branch/binding, no helper or new lane. |
+| Merge admission | Merge the exact control commit carrying this registry. Resolve only the predicted append-only WPR overlap, preserving PRG-423 through PRG-425 exactly once; no reset, rebase, amend, force, stash or silent conflict resolution. |
+| Correction / return | Keep implementation blob `86edacbbb43a36475071c5494b8c4e0cc2b81f60` and direct-test blob `d897552e65c506e49132b82e1eaccdf8f4004d37` exact. Append only reserved PRG-20260814-426 at physical EOF in one WPR-only commit, then return merge plus correction commits. |
+| Boundary | No source/test/ticket/review or historical-WPR edit, executable rerun, new branch/worktree/helper, live Codex/home/config, target-project, network, push/staging publication, package/build/install, Secret, release or deployment. |
