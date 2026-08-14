@@ -166,7 +166,7 @@
 | Ticket 05C2 receipt removal composition parent | CONVERGENCE_DECOMPOSED / NON_DISPATCHABLE | Public response admission is private while the public historical composition requires a registration journal; replaced by serial 05C2A-05C2B. |
 | Ticket 05C2A compensation observation admission | COMPLETE / APPROVED / INTEGRATED | CR-174 closed; review `5e7e489`, guarded merge `e2e2fe9`; post-merge focused/type checks pass. |
 | Ticket 05C2B receipt removal composition | COMPLETE / APPROVED / INTEGRATED | CR-175/CR-176 closed; review `355da84`; guarded merge `75eec43`; post-merge focused/type checks pass. |
-| Ticket 05C2C1 oracle installed-path presence | PLANNED / FROZEN / NO_IMPLEMENTATION_AUTHORITY | Add exact typed present evidence; generic blocked/error results remain unproved. |
+| Ticket 05C2C1 oracle installed-path presence | IN_PROGRESS / DISPATCH_READY | Exact typed-present freeze and one-owner/no-helper lane registry; generic blocked/error results remain unproved. |
 | Ticket 05C2C2 adapter installed-path truth | PLANNED / DEPENDENCY_WAIT | After 05C2C1 integration, map only admitted present to `absent=False`. |
 | Ticket 05C3 receipt removal acceptance | PLANNED / UPSTREAM_EVIDENCE_GAP | Disposable probe reproduced `PRE_REMOVAL_EVIDENCE_INVALID`; starts after 05C2C1/C2 integrate. |
 | Ticket 06A Codex role-profile capability proof | DONE / APPROVED_EVIDENCE / INSTALL_BLOCKED / INTEGRATED | Implementation `38e9a8b`, handoff `f6f186f`, review `62955ec`, guarded merge `de4141e`; actual installed-host result is `ROLE_ISOLATION_UNPROVEN / ACCESS_DENIED / OUTPUT_UNAVAILABLE`, so capability dependents stay blocked. |

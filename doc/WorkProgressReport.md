@@ -4363,3 +4363,13 @@
 | Decomposition | 05C2C1 owns exact metadata-only `OracleInstalledPathPresent` generation/admission with logical+physical conjunct and foreign exclusion. 05C2C2 serially maps only admitted absent/present to manifest-bound true/false proof. 05C3 remains non-dispatchable until both are independently approved/integrated and its acceptance is refrozen. |
 | Type/resource gate | Both children explicitly require Python 3.11 named dataclass/Pydantic contracts, full-tree `mypy --strict`, exact finite unions, `STANDARD` one owner/no helper and `XSS_NOT_APPLICABLE`. No generic block/error may be treated as presence; no numeric line criterion applies. |
 | Boundary | Control documents and one fully removed disposable staging lease only. No implementation-worktree write, new worktree, live Codex/host/target-project mutation, push/staging publication, package/install, Secret, release or deployment. |
+
+## PRG-20260814-403 - Ticket 05C2C1 exact dispatch registry
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `05C2C1_FROZEN + TICKET_SCHEMA_PASS + EXACT_LANE_ADMITTED -> IMPLEMENTATION_DISPATCH_CONFIRMED / IMPLEMENT` |
+| Schema / type gate | Exact freeze `c81c02ef4933a3d64b114103409117dc87e5aa18` explicitly contains P1-P8, Python 3.11 named dataclass/Pydantic contracts, full-tree `mypy --strict`, `STANDARD` one-owner/no-helper, `XSS_NOT_APPLICABLE`, exact result algebra, truth table, six writable paths and binding. |
+| Lane readback | Owner task `019ffb0c-c9c7-7b30-b614-02dea7ed9042` idle in the permanent implementation worktree; clean released branch/head `codex/implementation-codex-receipt-removal-composition-05c2b` / `c4581e717dfe00af46af45bfa02f02bf56deea25`; linked Git identity, zero tracked/ignored/cache residue, exactly three worktrees and absent target branch verified. |
+| Binding / dispatch | One-use 05C2C1 workspace/handoff/allocation/receipt/correlation/question/side-context from the ticket; create only `codex/implementation-codex-oracle-installed-path-presence-05c2c1` at the exact registry commit and change only the six frozen paths. Reserved WPR handoff is PRG-404. |
+| Resource / boundary | One owner and no helper because 05C2C2 serially consumes the new result and the oracle/response-admission paths are one cohesive contract. No reviewer implementation-worktree write, new worktree, live effect, push/staging publication, package/install, Secret, release or deployment. |
