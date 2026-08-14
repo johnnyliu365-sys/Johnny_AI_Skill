@@ -127,7 +127,13 @@ from .codex_registration_contracts import (
     issue_registration_receipt,
     revalidate_current_attempt_journal,
 )
-from .codex_compensation_composition import compose_codex_compensation
+from .codex_compensation_composition import (
+    CodexCompensationObservationRejectReason,
+    CodexCompensationObservationRejected,
+    CodexCompensationObservationResult,
+    compose_codex_compensation,
+    observe_codex_compensation_operation,
+)
 from .codex_receipt_removal_request import (
     CodexReceiptRemovalBlockReason,
     CodexReceiptRemovalBlocked,
@@ -270,6 +276,10 @@ __all__ = [
     "issue_registration_receipt",
     "revalidate_current_attempt_journal",
     "compose_codex_compensation",
+    "CodexCompensationObservationRejectReason",
+    "CodexCompensationObservationRejected",
+    "CodexCompensationObservationResult",
+    "observe_codex_compensation_operation",
     "CodexReceiptRemovalBlockReason",
     "CodexReceiptRemovalBlocked",
     "CodexReceiptRemovalInvocation",

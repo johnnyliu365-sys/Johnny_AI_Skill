@@ -4230,6 +4230,15 @@
 | Binding / dispatch | One-use 05C2A workspace/handoff/allocation/receipt/correlation/question/side-context from the ticket; create only `codex/implementation-codex-compensation-observation-05c2a` at the exact commit carrying this registry in the same worktree. Implement only the three frozen paths and A1-A8; return implementation commit plus reserved PRG-390 WPR-only handoff. |
 | Resource / boundary | One owner, no helper or second lane because source/test ownership overlaps and 05C2B serially depends on this public contract. No reviewer implementation-worktree write, new worktree, live effect, push/staging publication, package/install, Secret, release or deployment. |
 
+## PRG-20260814-390 - Ticket 05C2A observation admission handoff
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05C2A) -> ACTION_COMPLETED / REVIEW_HANDOFF`; independent review remains required. |
+| Lane / binding | Branch `codex/implementation-codex-compensation-observation-05c2a`; exact permanent worktree and receipt-bound 05C2A workspace, handoff, allocation, receipt, correlation, question and side-context preserved. |
+| Implementation | Commit `3b1706889fbc6e5323ce9ba561825f908b4e0dca`; exactly `library/local_orchestration/codex_compensation_composition.py`, `tests/test_codex_compensation_composition.py`, and export-only `library/local_orchestration/__init__.py`. First red was the missing public observation/rejection/export import. Source SHA-256 `CB05A518B676DAF70B9918AC3517A800163760B7D5B9E73EB56E4C918C7608A1`; direct-test SHA-256 `7A914463C3E0EB2D33E57229E6E4B07746DFD478B8D03B97A55EFB6ED6FA8620`; export SHA-256 `764466D55CED474295B9FF53AFFE22B11972657BF2924223D7E0BB7626C2B00D`. |
+| Acceptance evidence | Focused direct composition `17/17`; full explicit serial suite `482/482`; strict full-tree mypy `146` source files with validated repository-external cache removed; in-memory compile `146` files. Operation-dispatch, request-precedence and response-identity reversals each turned the named test red and restored the exact pre-probe blobs. |
+| Boundary / security | Exact operation admission precedes request revalidation, which precedes response classification; no capability/callable/effect boundary is admitted or invoked. `XSS_NOT_APPLICABLE`; no `Any`, `type: ignore`, broad catch, filesystem/process/network/live Codex/host/target-project effect, package, push, release or deployment. Final exact three-path diff, ancestry, three-worktree topology, tracked/ignored porcelain and project cache/bytecode residue are clean/absent. |
 ## PRG-20260814-391 - Ticket 05C2A terminal review and revision-02 refreeze
 
 | Field | Evidence |
@@ -4251,6 +4260,16 @@
 | Merge admission | Merge only the exact control commit carrying this registry. Read-only merge-tree reports only append-only WPR overlap; preserve PRG-390, PRG-391 and PRG-392 exactly once. Any other conflict or topology/scope drift is typed `HALT`. |
 | Correction / return | Change only `codex_compensation_composition.py` and its direct test for CR-174 exact original response state; preserve package exports and ordinary mappings. Return one additive correction commit and then reserved PRG-393 WPR-only handoff. |
 | Boundary | Same ticket/owner/worktree/branch/binding; no helper, new lane, reviewer implementation write, live effect, push/staging publication, package/build/install, Secret, release or deployment. |
+
+## PRG-20260814-393 - Ticket 05C2A CR-174 correction handoff
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05C2A / CR-174) -> ACTION_COMPLETED / REVIEW_HANDOFF`; independent review remains required. |
+| Reviewed correction chain | Revision-02 registry `b5be2b0ee2b4cd3ac275738cec127f529f13f580`; finding/refreeze `e7738ba11310379437be5598ed68b2181c20eb71`; WPR-only merge admission `dfe486b70f98e91d0580f28fbd63539d2042a769`. Protected export `library/local_orchestration/__init__.py` remains byte-identical to `3b1706889fbc6e5323ce9ba561825f908b4e0dca`. |
+| Correction | Additive commit `5082cf9d34f3d555b12a2d34d9f21fff317e4568`; exactly `library/local_orchestration/codex_compensation_composition.py` and `tests/test_codex_compensation_composition.py`. Source SHA-256 `64BA184F5110825E6BC11680F391EB3838594B10E7E0B487153FC3E01E9BEC6D`; direct-test SHA-256 `92FF273FEF7CC6BC6F953B25C70D1D135857323758EC82B64AA0CDCC28AF4439`; export SHA-256 `764466D55CED474295B9FF53AFFE22B11972657BF2924223D7E0BB7626C2B00D`. |
+| TDD / acceptance evidence | First red was `test_cr174_corrupted_original_response_state_maps_to_finite_nonaffirmative_results`, with all 16 corruption cases still affirmative before the fix. Focused direct composition `18/18`; full explicit serial suite `483/483`; strict full-tree mypy `146` source files with repository-external cache removed; in-memory compile `146` files. Shared original-state reversal turned the CR-174 test red; the three original A7 reversals also turned their named tests red and all four probes restored exact bytes. |
+| Boundary / security | Corrupted top-level proofs now map to existing declared-failure/malformed outcomes; corrupted nested plugin/marketplace entry/source state cannot prove residue or absence. `XSS_NOT_APPLICABLE`; no capability/callable/effect admission, `Any`, `type: ignore`, broad catch, filesystem/process/network/live Codex/host/target-project effect, package, push, release or deployment. Final two-path scope, ancestry, three-worktree topology, tracked/ignored porcelain and cache/bytecode residue are clean/absent. |
 
 ## PRG-20260814-394 - Ticket 05C2A final correction review
 
