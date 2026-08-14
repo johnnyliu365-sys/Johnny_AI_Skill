@@ -4,13 +4,14 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2` revision 05 / AC-17 |
 | PRD / change | `PRD-20260815-022` / `CHG-20260815-022` |
-| State | `READY_FOR_DISPATCH_REGISTRY / NON_DISPATCHABLE` |
+| State | `IN_PROGRESS / RECEIPT_BOUND` |
 | Closure | `CLOSURE-ADAPTIVE-ROUTER-R02C1-01` / ACX1-ACX8 |
-| Baseline | Change-control refreeze `3139bccc3ab08093519b91cc55e162bd98b6718b`; proposal is the commit containing `PRG-20260815-479` |
+| Baseline | Change-control refreeze `3139bccc3ab08093519b91cc55e162bd98b6718b`; proposal `6897bcca655c7eb06f2b663c30d7447f561fc389`; exact dispatch registry is the commit containing `PRG-20260815-480` |
 | Delivery profile | `STANDARD`; one Luna implementation owner; no helper |
 | Control owner / reviewer | Control task `019fb935-bbe1-7f71-8b4b-58ba20c81626`; sole Agent orchestrator |
-| Planned implementation owner | Existing task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; permanent worktree `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` |
-| Planned branch | `codex/implementation-router-artifact-tree-r02c1` from the exact future dispatch-registry commit |
+| Implementation owner | Existing task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; permanent worktree `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` |
+| Branch | `codex/implementation-router-artifact-tree-r02c1` from the exact dispatch-registry commit |
+| Dispatch binding | Handoff `hnd-adaptive-router-r02c1-20260815`; allocation `aln-adaptive-router-r02c1-20260815`; receipt `rcpt-adaptive-router-r02c1-20260815`; question `q-adaptive-router-r02c1-20260815`; correlation `corr-adaptive-router-r02c1-20260815`; side Context `scx-adaptive-router-r02c1-20260815-01`; expected return `ret-artifact-tree-review-handoff-r02c1` |
 | XSS / effects | `XSS_NOT_APPLICABLE`; pure metadata-only resolver, no source/body read, Agent, filesystem, Git, host or network effect |
 
 ## One observable outcome
