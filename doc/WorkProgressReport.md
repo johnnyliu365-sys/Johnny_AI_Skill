@@ -4928,3 +4928,15 @@
 | Integration | Read-only merge-tree reported no conflict; normal guarded merge `5c3445faedc639e90a1169d1c0e385aef6a9018a` integrated exact handoff `9a789504365d8364b616479cda5b0d2c6e3f12f7` without force/reset/overwrite. Post-merge six-module `99/99` and compile `150` pass. |
 | Transition | R01 is `COMPLETE / APPROVED / INTEGRATED`; allocation `aln_adaptive_router_r01_20260814` is released. R02 shared-Context lifecycle gate becomes the only eligible next Router closure; later Router and all non-Router work remain paused. |
 | Effects | No push, release, deployment, target-project, live host/network, package/install or Secret effect. |
+
+## PRG-20260815-457 - Tree-shaped artifact governance and Router R02 decomposition
+
+| Field | Evidence |
+| --- | --- |
+| Owner requirement | `PRD-20260815-021` / `CHG-20260815-021`: workflow artifacts, Agent Context, active requirement lineage, archives and reusable-module catalogs are bounded trees; identifiers resolve exact leaves instead of copying context. |
+| Requirement migration | `PRD.md` and `doc/RequirementChangeLog.md` are root indexes. Eighteen active matching PRD/CHG pairs resolve through year/domain indexes; retired pairs `007`, `008` and `012` exist only in `ARCH-REQ-20260815-001..003` leaves with historical source `0d4ec55`. |
+| Context lifecycle | Shared Context remains byte-unchanged and sealed. Architecture feature Context templates seal before SPEC. Every implementation Agent Context is single-ticket and binds exact ticket revision, receipt, owner, worktree, branch, baseline and `side_context_id`; switching tickets closes the old view. |
+| Library lifecycle | `library/MODULE_CATALOG.md` now lists only capability partitions. Each partition index points to one exact READY module README; catalog growth is semantic, not line-count based. |
+| Router plan | Adaptive SPEC revision 04 adds AC-16/AC-17. R02 is decomposed serially into R02A shared-Context lifecycle authority, R02B Agent-Context lease/invalidation and R02C artifact-tree/PRD-CHG/archive lineage. Only R02A may receive a formal ticket next. |
+| Verification | Active PRD/CHG suffixes are one-to-one; no active/archive overlap; archive pairs are absent from active leaves; governed Markdown links resolve; `CONTEXT.md` has no diff; `git diff --check` passes; six-module Router regression is `99/99`. |
+| Boundary | Documentation, template and index migration only. No Router production/test mutation, implementer dispatch/worktree mutation, 06G0P review/integration, target-project/live host/network effect, push, package/install, Secret, release or deployment. |

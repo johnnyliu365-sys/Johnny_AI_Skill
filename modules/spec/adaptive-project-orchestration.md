@@ -3,11 +3,11 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2` |
-| Status | `REVISION_03 / ROUTER_PHASE_APPROVED / OTHER_PHASES_OWNER_REVIEW_REQUIRED` |
+| Status | `REVISION_04 / ROUTER_PHASE_APPROVED / OTHER_PHASES_OWNER_REVIEW_REQUIRED` |
 | Author / baseline | Codex control plane / current `main` |
 | Context | `doc/context/adaptive-project-orchestration/main.md` |
-| PRD | `PRD.md §17` |
-| Requirement change / ADR | `CHG-20260813-016`, `CHG-20260813-017`, `CHG-20260814-019`, `CHG-20260815-020` / `ADR-20260813-008`, `ADR-20260813-009`, `ADR-20260814-011` |
+| PRD | `PRD-20260813-016`, `PRD-20260813-017`, `PRD-20260814-019`, `PRD-20260815-020`, `PRD-20260815-021` |
+| Requirement change / ADR | `CHG-20260813-016`, `CHG-20260813-017`, `CHG-20260814-019`, `CHG-20260815-020`, `CHG-20260815-021` / `ADR-20260813-008`, `ADR-20260813-009`, `ADR-20260814-011` |
 | Implementation language | Python 3.11 strict typed contracts/adapters; host-specific integration only after capability proof |
 
 ## Problem and goal
@@ -196,6 +196,24 @@ reviewer receives read/reference capability only. Missing facts return
 `UPSTREAM_DECISION_REQUIRED`; changed facts return `REQUIREMENT_CHANGED`. A revision requires
 the architecture owner, an approved change reference and the exact prior sealed revision.
 
+### AC-16 — Ticket-scoped Agent Context
+
+Every Agent works from one bounded `ContextView` resolved through artifact-tree references.
+Durable Router state stores identifiers/revisions/digests only. An implementation view is bound
+to exactly one ticket ID/revision, receipt, owner, worktree, branch, baseline and side-context ID.
+A different ticket always closes the old view and creates a fresh identity; a same-ticket
+correction rebinds the exact revised ticket/review baseline. No transcript, raw packet, inferred
+decision or prior-ticket resume prose crosses either boundary.
+
+### AC-17 — Tree-shaped requirement and library lineage
+
+Formal artifacts use `root index -> partition index -> exact leaf`; an index lists direct
+children only. Each active product requirement is a one-to-one
+`PRD-YYYYMMDD-NNN <-> CHG-YYYYMMDD-NNN` leaf. A retired pair leaves the active tree and enters
+one immutable `ARCH-REQ-YYYYMMDD-NNN` archive-library leaf; active roots retain only that archive
+ID. Reusable-module discovery follows root capability-domain indexes to one module-card leaf.
+The Router never flattens, recursively loads or persists the whole tree.
+
 ## Typed contracts
 
 ```text
@@ -217,10 +235,15 @@ DesignSourceKind = FIGMA | SCREENSHOT | DESIGN_BRIEF
                  | EXISTING_DESIGN_SYSTEM | NONE
 DesignCapabilityState = AVAILABLE_AUTHORIZED | AVAILABLE_NOT_AUTHORIZED
                       | UNAVAILABLE | DECLINED
-SharedContextOperation = CREATE | REVISE | READ_REFERENCE
-SharedContextLifecycle = ARCHITECTURE_DRAFT | SEALED
+SharedContextOperation = CREATE_DRAFT | REVISE_DRAFT | SEAL | READ_REFERENCE
+SharedContextLifecycle = ABSENT | ARCHITECTURE_DRAFT | SEALED
 SharedContextMutationDecision = ALLOW | REQUIRE_CHANGE_CONTROL
                               | FORBID_ROLE_OR_STAGE | STALE_REVISION
+ArtifactNodeKind = ROOT_INDEX | PARTITION_INDEX | LEAF
+ArtifactLifecycle = ACTIVE | CLOSED | ARCHIVED
+AgentContextKind = ARCHITECTURE | SUPERVISION | IMPLEMENTATION | RESEARCH
+AgentContextLifecycle = OPEN | CLOSED | INVALIDATED
+RequirementLifecycle = ACTIVE | ARCHIVED
 
 DeliveryAssessment = {
   project_id, ticket_ref?, change_surface, coupling, ambiguity,
@@ -272,8 +295,20 @@ UIImplementationContract = {
 }
 
 SharedContextMutationRequest = {
-  project_id, context_ref, expected_revision?, operation, actor_role,
-  process_stage, approved_change_ref?
+  project_id, context_ref, expected_revision?, candidate_revision?,
+  candidate_content_digest?, content_kind_refs, operation, actor_role,
+  actor_capability_ref, process_stage, approved_change_ref?
+}
+
+AgentContextLease = {
+  lease_ref, project_id, context_kind, lifecycle, actor_role, actor_capability_ref,
+  artifact_path_refs, ticket_ref?, ticket_revision?, receipt_ref?, owner_ref?,
+  worktree_ref?, branch_ref?, baseline_revision?, side_context_id, invalidation_refs
+}
+
+RequirementLineageRef = {
+  prd_ref, change_ref, lifecycle, active_leaf_ref?, archive_bundle_ref?,
+  replacement_prd_ref?, replacement_change_ref?, revision, content_digest
 }
 ```
 
@@ -329,6 +364,13 @@ than raw project paths, source, prompts, Secrets or PII.
     approved change authority, and reject every ticket/supervisor/implementation/
     review write before filesystem effect. Content-schema tests reject progress,
     ticket, commit, test and review material without using a line-count limit.
+17. Agent-Context tests prove a different ticket, ticket revision, receipt, owner, worktree,
+    branch or baseline invalidates the prior view before source/Agent effect. Same-ticket
+    correction requires an exact revised binding; closed/invalidated views cannot be replayed.
+18. Artifact-tree and requirement-lineage tests reject cycles, duplicate parents/IDs, dangling
+    child refs, recursive flattening, active/archive overlap, unmatched PRD/CHG suffixes and
+    archive leaves reachable from the active tree. Module selection loads only the chosen
+    domain/card branch.
 
 ## Candidate vertical ticket sequence
 
@@ -337,11 +379,13 @@ item is a separate low-model-admitted closure and must pass independent review
 before its dependent starts:
 
 1. Versioned skill-reference and expected-return Router contracts.
-2. Shared-Context lifecycle and mutation-authority gate.
-3. SPEC-readiness plus model-role sleep/wake decision kernel.
-4. Low-model ticket-admission decision kernel.
-5. Optional UI design-source decision kernel.
-6. Integrated Profile/Router acceptance across references, Context authority, wake, admission and
+2. R02A shared-Context lifecycle and mutation-authority gate.
+3. R02B ticket-scoped Agent-Context lease and invalidation gate.
+4. R02C artifact-tree and PRD/CHG/archive lineage gate.
+5. R03 SPEC-readiness plus model-role sleep/wake decision kernel.
+6. R04 low-model ticket-admission decision kernel.
+7. R05 optional UI design-source decision kernel.
+8. R06 integrated Profile/Router acceptance across references, Context authority, wake, admission and
    metadata-only serialization.
 
 Initialization, project-local worktree lifecycle, post-POC staging, installer
@@ -354,9 +398,9 @@ review/integration and dependent 06G tickets are paused until Router acceptance.
 The project owner approved the product direction and post-POC staging
 requirement on `2026-08-13`, approved the tiered model/decomposition/UI
 direction and Router-first implementation on `2026-08-14`, and required
-architecture-owned sealed shared Context on `2026-08-15`. Revision 03
-authorizes only AC-12 through AC-15 together with the Router portions of
-AC-05 through AC-10 and the six Router ticket candidates above. Exact
+architecture-owned sealed shared Context plus tree-shaped bounded artifact/Agent Context on
+`2026-08-15`. Revision 04 authorizes only AC-12 through AC-17 together with the Router portions of
+AC-05 through AC-10 and the eight Router ticket candidates above. Exact
 initialization and staging implementation tickets under AC-01 through AC-04 and
 AC-11 remain `OWNER_REVIEW_REQUIRED`.
 

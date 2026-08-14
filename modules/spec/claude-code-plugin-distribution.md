@@ -6,7 +6,7 @@
 | State | `APPROVED` |
 | Owner | `root/main` |
 | Context | `doc/context/claude-code-plugin-distribution/main.md` |
-| PRD reference | `PRD.md §9` |
+| PRD reference | `PRD-20260802-005` |
 | Change | `CHG-20260802-005` |
 
 ## Goal

@@ -6,7 +6,7 @@
 | 規格狀態 | `APPROVED` |
 | 撰寫 AI／worktree | Codex／目前工作區 |
 | 專屬 Context | `doc/context/router-framework/main.md` |
-| PRD 索引 | `PRD.md §6` |
+| PRD 索引 | `PRD-20260802-002` |
 | 需求變更 | `CHG-20260802-002` |
 | 共用 Context 回掛 | `CONTEXT.md §衍生 SPEC 索引` |
 

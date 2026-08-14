@@ -6,7 +6,7 @@
 | 規格狀態 | `APPROVED` |
 | 撰寫 AI 簽名 | `Codex／目前工作區／基準待提交` |
 | 排查起點 Context | `doc/context/reusable-module-library/main.md` |
-| PRD 索引 | `PRD.md §1–5` |
+| PRD 索引 | `PRD-20260801-001` |
 | 需求變更 | `CHG-20260801-001` |
 | 共用 Context 回掛 | `CONTEXT.md §衍生 SPEC 索引` |
 

@@ -6,8 +6,8 @@
 | Specification state | `APPROVED` |
 | Authoring AI / baseline | Codex / current worktree / `cbdfa7751c21c0355cb3aaaae5b7f045d9e84154` |
 | Investigation Context | `doc/context/private-router-saas/main.md` |
-| PRD reference | `PRD.md §12` |
-| Requirement change | `CHG-20260804-008` |
+| Requirement archive | `ARCH-REQ-20260815-002` |
+| Requirement change | Retired pair `PRD-20260804-008` / `CHG-20260804-008` |
 | Shared Context backlink | `CONTEXT.md §衍生 SPEC 索引` |
 | Implementation language | Python 3.11 for contracts and test-only service adapter; existing plugin metadata only after a separate approved ticket |
 
@@ -161,7 +161,7 @@ Each implementation ticket must start with a failing test and cover these observ
 
 ## Convergence and Backlinks
 
-- Shared Context backlink: `SPEC-AI-WORKFLOW-PRIVATE-ROUTER-SAAS-20260804-01KZ49YM6HA658QF7ME2A5BR26`, `modules/spec/private-router-saas.md`, POC contracts only, `PRD.md §12`, `CHG-20260804-008`.
+- Historical Context backlink: `SPEC-AI-WORKFLOW-PRIVATE-ROUTER-SAAS-20260804-01KZ49YM6HA658QF7ME2A5BR26`, `modules/spec/private-router-saas.md`, POC contracts only, retired pair `PRD-20260804-008` / `CHG-20260804-008`, archived as `ARCH-REQ-20260815-002`.
 - Requirement change convergence: this draft defines a private Router SaaS POC; real commercial operation is excluded and requires a separate MVP Wayfinder.
 - Shared baseline commit: `cbdfa7751c21c0355cb3aaaae5b7f045d9e84154`; docs-only baseline publication is pending owner approval.
 

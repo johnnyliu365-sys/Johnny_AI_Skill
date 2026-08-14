@@ -192,11 +192,11 @@
 
 | Stage | State | Evidence / next gate |
 | --- | --- | --- |
-| Requirement / architecture | ROUTER POLICY APPROVED | `CHG-20260813-016/017`, `CHG-20260814-019`, `CHG-20260815-020`; tiered model handover, sealed shared Context, low-model admission and optional UI routing confirmed. |
-| Exact specification | REVISION 03 / ROUTER_PHASE_APPROVED | `modules/spec/adaptive-project-orchestration.md`; AC-12 through AC-15 and Router portions of AC-05 through AC-10 are authorized. Other phases remain owner-review-required. |
-| Ticket decomposition | ROUTER_ONLY / IN_PROGRESS | Six serial Router closures; only the next dependency-satisfied closure may receive a formal ticket and receipt. |
+| Requirement / architecture | ROUTER POLICY APPROVED | `CHG-20260813-016/017`, `CHG-20260814-019`, `CHG-20260815-020/021`; tiered model handover, sealed shared Context, ticket-scoped Agent Context and tree-shaped artifact/requirement/library routing confirmed. |
+| Exact specification | REVISION 04 / ROUTER_PHASE_APPROVED | `modules/spec/adaptive-project-orchestration.md`; AC-12 through AC-17 and Router portions of AC-05 through AC-10 are authorized. Other phases remain owner-review-required. |
+| Ticket decomposition | ROUTER_ONLY / IN_PROGRESS | R02 is split into R02A shared Context, R02B Agent Context lease and R02C artifact-tree lineage; only the next dependency-satisfied closure may receive a formal ticket and receipt. |
 | Router Ticket R01 | COMPLETE / APPROVED / INTEGRATED | Route instruction contract reviewed at `fefaa0c` and guarded-integrated at `5c3445f`; CR-R01-001 through CR-R01-004 closed. |
-| Router Ticket R02 | ELIGIBLE / TICKET_NOT_CREATED | Next closure: shared-Context lifecycle and mutation-authority gate. No later Router or non-Router ticket is eligible first. |
+| Router Ticket R02A | ELIGIBLE / TICKET_NOT_CREATED | Next closure: shared-Context lifecycle and mutation-authority gate. R02B/R02C and non-Router tickets remain blocked on serial independent acceptance. |
 | Other implementation lanes | PAUSED | 06G0P return is preserved pending review; 06G0-06G4, packaging and other rework/new tickets do not resume before Router acceptance. |
 
 ### Ticket 05 selection after external capability proof

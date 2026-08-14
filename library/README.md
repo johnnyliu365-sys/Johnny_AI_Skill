@@ -4,19 +4,20 @@
 
 ## 責任
 
-- 提供 `NLP`、`金流串接` 與 `功能集群` 的單一導覽入口。
+- 提供樹狀索引，不在根目錄重複展開每張模組卡。
 - 對每個模組記錄公開契約、相依、測試命令、來源追溯與適用限制。
 - 讓後續工單在獨立資料夾內實作強型別、可測試的通用能力。
 
 ## AI 最小載入入口
 
-新 Agent 不得先讀完整 `library/`。先讀取 [MODULE_CATALOG.md](MODULE_CATALOG.md) 的選擇卡，只載入命中卡片指定的 README、公開 `__init__.py` 與必要契約；正式採用仍須走目標專案自己的 Wayfinder、Grill、SPEC 與 ticket。
+新 Agent 不得先讀完整 `library/`。先讀取 [MODULE_CATALOG.md](MODULE_CATALOG.md)，再沿一個 capability partition 到一個 exact leaf；只載入命中 leaf 指定的 README、公開 `__init__.py` 與必要契約。正式採用仍須走目標專案自己的 Wayfinder、Grill、SPEC 與 ticket。
 
 ## 目錄
 
 - `NLP/`：規則式文字理解、欄位抽取與模型 provider 邊界。
 - `金流串接/`：付款契約、帳本、fake provider 與對帳能力。
 - `功能集群/`：可靠性、訊息 transport、事件時間線、互動規則、地理與遊戲規則能力。
+- `workflow_router/`、`local_orchestration/`：流程控制與本機 orchestration 邊界。
 
 ## 來源追溯
 

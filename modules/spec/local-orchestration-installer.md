@@ -6,8 +6,8 @@
 | Status | `APPROVED` |
 | Author | Codex / current `main` worktree / baseline `e04c2be` |
 | Context | `doc/context/local-orchestration-installer/main.md` |
-| PRD | `PRD.md §15` |
-| Requirement change | `CHG-20260808-011`; reviewer-only role revision `CHG-20260811-012`; version-one delivery revision `CHG-20260812-014`; project-owned disposable test runtime revision `CHG-20260813-015`; reviewer-owned gateway revision `CHG-20260814-018` |
+| PRD | `PRD-20260808-011`, `PRD-20260812-014`, `PRD-20260813-015`, `PRD-20260814-018` |
+| Requirement change | `CHG-20260808-011`; version-one delivery revision `CHG-20260812-014`; project-owned disposable test runtime revision `CHG-20260813-015`; reviewer-owned gateway revision `CHG-20260814-018`; retired mechanism evidence `ARCH-REQ-20260815-003` |
 | Common Context backlink | `CONTEXT.md › 衍生 SPEC 索引` |
 | Implementation language | Python 3.11 for typed adapter/runtime contracts; Inno Setup script for the Windows installer package after its toolchain is pinned and verified. |
 
@@ -259,7 +259,7 @@ uninstall, host support or binary correctness.
 
 ## Convergence and backlink
 
-- Common Context backlink: add this SPEC ID, location, scope, `PRD.md §15` and `CHG-20260808-011` under `CONTEXT.md › 衍生 SPEC 索引`.
+- Common Context backlink: add this SPEC ID, location, scope, `PRD-20260808-011` and `CHG-20260808-011` under `CONTEXT.md › 衍生 SPEC 索引`.
 - Requirement-change convergence: `CHG-20260808-011` has this SPEC ID but remains `DRAFT` until explicit owner approval.
 - Docs baseline: pending the docs-only commit that contains this specification.
 

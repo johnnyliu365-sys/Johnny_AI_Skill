@@ -6,7 +6,7 @@
 | Specification state | `APPROVED` |
 | Authoring AI / baseline | Codex control plane / current worktree / `7769710` |
 | Investigation Context | `doc/context/workflow-governance/main.md` |
-| PRD reference | `PRD.md §13` |
+| PRD reference | `PRD-20260805-009` |
 | Requirement change | `CHG-20260805-009` |
 | Shared Context backlink | `CONTEXT.md §衍生 SPEC 索引` |
 | Delivery stage | `POC` |
@@ -137,7 +137,7 @@ The future implementation ticket must begin red and include the following explic
 
 ## Convergence and Backlinks
 
-- Shared Context backlink: `SPEC-AI-WORKFLOW-WORKFLOW-GOVERNANCE-20260805-01KZ6T8V2R4Y6B8D0F2H4J6M8P`, `modules/spec/workflow-governance.md`, control-plane POC only, `PRD.md §13`, `CHG-20260805-009`.
+- Shared Context backlink: `SPEC-AI-WORKFLOW-WORKFLOW-GOVERNANCE-20260805-01KZ6T8V2R4Y6B8D0F2H4J6M8P`, `modules/spec/workflow-governance.md`, control-plane POC only, `PRD-20260805-009`, `CHG-20260805-009`.
 - Grill convergence: `doc/context/workflow-governance/main.md` confirms a GO to specification. This draft is the only active specification for the change.
 - Baseline: `7769710` (`docs: require frontend composition handoff`). Its documentation remains the current policy baseline until a future ticket is approved and implemented.
 

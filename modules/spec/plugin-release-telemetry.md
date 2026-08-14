@@ -6,8 +6,8 @@
 | State | `APPROVED` |
 | Owner | `root/main` |
 | Context | `doc/context/plugin-release-telemetry/main.md` |
-| PRD reference | `PRD.md §11` |
-| Change | `CHG-20260803-007` |
+| Requirement archive | `ARCH-REQ-20260815-001` |
+| Change | Retired pair `PRD-20260803-007` / `CHG-20260803-007` |
 
 ## Goal
 

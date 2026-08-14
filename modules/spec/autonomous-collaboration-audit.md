@@ -6,8 +6,8 @@
 | Status | `APPROVED` |
 | Author / baseline | Codex control plane / `main` / `4feeb94` |
 | Context | `doc/context/autonomous-collaboration-audit/main.md` |
-| PRD | `PRD.md §14` |
-| Change | `CHG-20260805-010`; reviewer-only authority revision `CHG-20260811-012` |
+| PRD | `PRD-20260805-010`, `PRD-20260814-018` |
+| Change | `CHG-20260805-010`; reviewer-owned gateway revision `CHG-20260814-018`; retired mechanism evidence `ARCH-REQ-20260815-003` |
 | Shared Context | `CONTEXT.md §衍生 SPEC 索引` |
 | Implementation language | Python 3.11 for Router contracts/tests; Markdown for workflow/skill/templates |
 
@@ -101,7 +101,7 @@ The approved implementation ticket must first produce executable red evidence fo
 
 ## Convergence and backlinks
 
-- Shared Context: `CONTEXT.md`, this SPEC, PRD §14 and `CHG-20260805-010`.
+- Shared Context: `CONTEXT.md`, this SPEC, `PRD-20260805-010` and `CHG-20260805-010`.
 - Grill result: `GO to specification`; ticket planning is authorised.
 - Required approval: project owner approved this exact SPEC on `2026-08-05`. For each named ticket, a positive dispatch confirmation is the separate, ticket-scoped implementation authority.
 

@@ -9,14 +9,18 @@
 ├─ Workflow.md
 ├─ AGENTS.md
 ├─ CONTEXT.md
-├─ PRD.md
+├─ PRD.md                         # active requirement root index
 ├─ ProjectSchedule.md
 ├─ modules/
 │  ├─ spec/
 │  ├─ tickets/
 │  └─ element/{typescript,python,java}/
 └─ doc/
-   ├─ context/
+   ├─ context/                    # architecture feature Context leaves
+   ├─ requirements/
+   │  └─ active/<year>/<domain>/
+   ├─ archive/
+   │  └─ requirements/<year>/
    ├─ reviews/
    ├─ adr/
    ├─ RequirementChangeLog.md
@@ -28,7 +32,8 @@
 
 1. 從通用發行版複製 `Workflow.md` 與 `AGENTS.md` 至新專案根目錄。
 2. 建立上方固定目錄；不得建立 `doc/specs/` 或 `doc/tickets/`。
-3. 複製並填寫 `CONTEXT.TEMPLATE.md`、`doc/context/TEMPLATE.md`、`doc/RequirementChangeLog.TEMPLATE.md`、`modules/spec/TEMPLATE.md`、
+3. 複製並填寫 `CONTEXT.TEMPLATE.md`、`doc/context/TEMPLATE.md`、`doc/RequirementChangeLog.TEMPLATE.md`、
+   `doc/requirements/REQ.TEMPLATE.md`、`doc/archive/requirements/ARCH-REQ.TEMPLATE.md`、`modules/spec/TEMPLATE.md`、
    `modules/tickets/TEMPLATE.md`、`doc/reviews/TEMPLATE.md`、`doc/adr/TEMPLATE.md` 與相符語言的 element 模板。
 4. 先完成 `CONTEXT.md`、`PRD.md`、`ProjectSchedule.md`、需求變更與安全邊界的最小內容，再開始第一個 Grill。
 

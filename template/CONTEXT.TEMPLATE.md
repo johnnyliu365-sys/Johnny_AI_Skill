@@ -1,6 +1,16 @@
 # <專案名稱>
 
-本檔案是多 AI 協作的共用專案事實來源。專屬 Context 只能引用並補充已分派範圍，不得覆寫本檔。
+本檔案是 architecture/Grill 階段建立的共用專案事實來源。進入 SPEC 前必須封存
+精確 revision/digest；後續角色只能引用，不能追加進度、ticket、commit、review
+或新事實。缺失／變更事實必須回到 change control 建立新 revision。
+
+| 欄位 | 內容 |
+| --- | --- |
+| Lifecycle | `ARCHITECTURE_DRAFT`／`SEALED`／`SUPERSEDED` |
+| Context revision | `<opaque revision ID>` |
+| Content digest | `<sha256>` |
+| Architecture owner | `<owner ID>` |
+| Active change authority | `<CHG-YYYYMMDD-NNN>` |
 
 ## 已確認事實與共同邊界
 
@@ -40,17 +50,16 @@
 | --- | --- |
 | `<language>` | `<measurable trigger>` |
 
-## 衍生 SPEC 索引
+## Architecture feature index
 
-> 任一專屬 Context 引用本檔後，其 SPEC 核准時，原引用章節必須在此回掛。由本檔 owner 在自己的 worktree
-> 以 docs-only commit 發布；未發布者不得成為跨 worktree ticket 的共同基準。
+> 本索引與同一 Context revision 一起封存；只列 direct child，不回填後續產物。
 
-### `<SPEC-<PROJECT>-<FEATURE>-<YYYYMMDD>-<ULID>｜<功能名稱>`
+| Feature ID | Active PRD / CHG | Exact architecture Context leaf |
+| --- | --- | --- |
+| `<feature-id>` | `PRD-YYYYMMDD-NNN` / `CHG-YYYYMMDD-NNN` | `doc/context/<feature>/<worktree-id>.md` |
 
-- 規格路徑：`modules/spec/<feature>.md`
-- 專屬 Context：`doc/context/<feature>/<worktree-id>.md`
-- 原引用章節：`<heading hierarchy> › <entry name>`，指紋 `<sha256-8>`，基準 `<SHA>`
-- 收斂結果摘要：`<approved facts / decisions>`
-- 責任範圍：`<In Scope / Out of Scope>`
-- PRD／需求變更：`PRD.md §...`／`CHG-YYYYMMDD-NNN`／不適用
-- 回掛 commit：`<docs-only SHA>`
+## Seal record
+
+- Seal event／authority：`<event ID / owner authority>`
+- Sealed revision／digest：`<revision / sha256>`
+- 後續 SPEC、ticket、Agent Context 與 review 只保存此 revision/digest 參照，不回寫本檔。

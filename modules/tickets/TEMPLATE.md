@@ -5,9 +5,10 @@
 | 對應規格 ID | 完整 `SPEC-<PROJECT>-<FEATURE>-<YYYYMMDD>-<ULID>`（`§x、AC-y`） |
 | 規格撰寫 AI | `<AI>` |
 | 第一步排查起點 | `doc/context/<feature>/<worktree-id>.md` |
-| PRD 索引 | `PRD.md §...`／不適用 |
+| PRD 索引 | `PRD-YYYYMMDD-NNN`／不適用 |
 | 需求變更 | `CHG-YYYYMMDD-NNN`／不適用 |
-| 共用 Context 回掛 | `CONTEXT.md §...／衍生 SPEC 索引`／不適用 |
+| Sealed Context binding | `<shared revision/digest + exact feature Context revision/digest>`／不適用 |
+| Agent Context binding | `<ticket revision / receipt / owner / worktree / branch / baseline / side_context_id>` |
 | 實作語言 | 填入 `CONTEXT.md` › `## 實作語言規範` 的**統一後端語言**（不是從清單挑選）。偏離須先滿足該節觸發條件、有實測依據並經需求變更核准。**實作者不得自行決定**；未填不得進入 `implement`，審閱一律 `BLOCKED`。 |
 | 狀態 | `PLANNED`／`IN_PROGRESS`／`BLOCKED`／`DONE`／`SUPERSEDED` |
 | 共同基準 | `<docs-only commit SHA>` |

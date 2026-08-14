@@ -114,6 +114,8 @@ Router 每次輸出必須包含：
 Context/source/capability 或旁路引用解析，完整閱讀：
 
 - [`context-routing.md`](skills/johnny-project-takeover/references/context-routing.md)
+- [`artifact-tree-routing.md`](skills/johnny-project-takeover/references/artifact-tree-routing.md)（索引樹與 leaf 定位時）
+- [`agent-context-lifecycle.md`](skills/johnny-project-takeover/references/agent-context-lifecycle.md)（Agent working Context 建立、換票或關閉時）
 
 Agent 只取得當前關卡的完整局部閉包，不取得完整治理庫或聊天歷史。最少 Context
 不是缺少 Context：exact ticket、直接契約、適用 source span、skill reference 與
@@ -123,6 +125,11 @@ Agent 只取得當前關卡的完整局部閉包，不取得完整治理庫或�
 `SPEC` 之後的 supervisor、切票者、派單者、implementer 與 reviewer 只能引用其
 revision。新事實或缺口必須經 `REQUIREMENT_CHANGED` 回到 change control，由
 architecture owner 產生新 revision，不得在 ticket／handoff／review 中順手追加。
+
+所有正式 artifact 與 Agent Context 都以樹狀索引解析；root 只列直接子節點，詳細
+內容只存在 exact leaf。Router 每次只能沿目前工作所需的一條路徑載入 leaf，不得
+掃描或持久化整棵樹。implementer Context 僅綁一張 ticket；換票必須關閉舊 view
+並建立新 `side_context_id`，不得帶入上一票的 raw／推論 Context。
 
 ### 0.3 Profile、資源與 staging
 
@@ -143,6 +150,9 @@ escalation。預設一位 implementer、無 helper；只有互斥 ownership 與�
 | `INTAKE`／maturity／resource | goal、authority、Profile | [`delivery-profile.md`](skills/johnny-project-takeover/references/delivery-profile.md) | `WAYFINDER` 或 blocker |
 | `WAYFINDER`／`ARCHITECTURE`／`GRILL` | scoped facts、Wayfinder、change history | [`discovery-change.md`](skills/johnny-project-takeover/references/discovery-change.md) | GO／NO-GO／completed／`REQUIREMENT_CHANGED` |
 | `CONTEXT` | confirmed facts and refs | [`context-routing.md`](skills/johnny-project-takeover/references/context-routing.md) | `ACTION_COMPLETED` |
+| artifact tree／Agent Context lifecycle | root/partition/leaf refs or one ticket binding | [`artifact-tree-routing.md`](skills/johnny-project-takeover/references/artifact-tree-routing.md)、[`agent-context-lifecycle.md`](skills/johnny-project-takeover/references/agent-context-lifecycle.md) | exact leaf／closed view／typed halt |
+| PRD／CHG create、replace 或 archive | active requirement edge or archive bundle | [`requirement-lineage.md`](skills/johnny-project-takeover/references/requirement-lineage.md) | active pair／archive ID／typed halt |
+| reusable module lookup／catalog maintenance | capability-domain index | [`module-catalog-routing.md`](skills/johnny-project-takeover/references/module-catalog-routing.md) | exact module card／gap |
 | `SPEC`／`TICKETS` | approved Context/CHG/architecture | [`specification-ticketing.md`](skills/johnny-project-takeover/references/specification-ticketing.md) | approval wait／`ACTION_COMPLETED` |
 | SPEC readiness／model handover | exact SPEC/Profile revision | [`model-role-routing.md`](skills/johnny-project-takeover/references/model-role-routing.md) | ready／architecture owner／owner approval |
 | low-model ticket admission | approved SPEC and exact ticket | [`ticket-decomposition.md`](skills/johnny-project-takeover/references/ticket-decomposition.md) | ready／split／upstream／high assurance |

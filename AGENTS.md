@@ -60,6 +60,9 @@ checker；ticket schema、preflight 與 TDD 由 Router 指向：
 | POC/MVP/COMMERCIAL、模型或 lane 數量、staging | [Profile](Workflow.md#workflow-router) | [delivery-profile](skills/johnny-project-takeover/references/delivery-profile.md) |
 | 架構 owner、supervisor、implementer 休眠／喚醒 | [Model lifecycle](Workflow.md#workflow-router) | [model-role-routing](skills/johnny-project-takeover/references/model-role-routing.md) |
 | 最小 Context、旁路引用、能力選擇 | [Router Context](Workflow.md#workflow-router) | [context-routing](skills/johnny-project-takeover/references/context-routing.md) |
+| artifact tree、Agent Context 建立／換票／關閉 | [Router Context](Workflow.md#workflow-router) | [artifact-tree-routing](skills/johnny-project-takeover/references/artifact-tree-routing.md) + [agent-context-lifecycle](skills/johnny-project-takeover/references/agent-context-lifecycle.md) |
+| PRD／CHG 建立、取代、封存 | [Change control](Workflow.md#change-control) | [requirement-lineage](skills/johnny-project-takeover/references/requirement-lineage.md) |
+| reusable module catalog 查找／分區 | [Router Context](Workflow.md#workflow-router) | [module-catalog-routing](skills/johnny-project-takeover/references/module-catalog-routing.md) |
 | 新專案、需求、Bug、架構或變更 | [Discovery](Workflow.md#discovery) | [discovery-change](skills/johnny-project-takeover/references/discovery-change.md) |
 | Browser/WebView/DOM/JavaScript 不可信資料 | [XSS gate](Workflow.md#xss-review) | [xss-review](skills/johnny-project-takeover/references/xss-review.md) |
 | Secret、正式 Log、Provider、Webhook、外部 effect | [Security](Workflow.md#security) | [security-boundary](skills/johnny-project-takeover/references/security-boundary.md) |
@@ -92,6 +95,8 @@ CONTEXT.md
 PRD.md
 ProjectSchedule.md
 doc/RequirementChangeLog.md
+doc/requirements/active/<year>/<domain>/REQ-YYYYMMDD-NNN.md
+doc/archive/requirements/<year>/ARCH-REQ-YYYYMMDD-NNN.md
 doc/WorkProgressReport.md
 doc/security-agent-boundary.md
 doc/context/<feature>/<worktree-id>.md
@@ -101,6 +106,8 @@ modules/spec/<feature>.md
 modules/tickets/<feature>/README.md
 modules/tickets/<feature>/<ticket>.md
 modules/element/<language>/<feature>/<ticket-id>/
+library/MODULE_CATALOG.md
+library/catalog/<capability-domain>/README.md
 ```
 
 必要來源尚未建立時，只能讀取現況、列出缺口並進入 Wayfinder／Grill；未經 owner

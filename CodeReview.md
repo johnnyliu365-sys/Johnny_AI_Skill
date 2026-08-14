@@ -40,6 +40,9 @@
 | 模型角色 handover、休眠／喚醒或 capability escalation | [`model-role-routing.md`](skills/johnny-project-takeover/references/model-role-routing.md) |
 | 低階模型 ticket admission 或 convergence replan | [`ticket-decomposition.md`](skills/johnny-project-takeover/references/ticket-decomposition.md) |
 | 正式 UI、design source 或 visual acceptance | [`ui-design-handoff.md`](skills/johnny-project-takeover/references/ui-design-handoff.md) |
+| artifact tree、Agent Context 換票／關閉 | [`artifact-tree-routing.md`](skills/johnny-project-takeover/references/artifact-tree-routing.md)、[`agent-context-lifecycle.md`](skills/johnny-project-takeover/references/agent-context-lifecycle.md) |
+| PRD／CHG lineage 或 archive | [`requirement-lineage.md`](skills/johnny-project-takeover/references/requirement-lineage.md) |
+| reusable module catalog／card | [`module-catalog-routing.md`](skills/johnny-project-takeover/references/module-catalog-routing.md) |
 | 實作語言 | [`language-policy.md`](skills/johnny-project-takeover/references/language-policy.md) |
 
 不適用也必須記錄可驗證理由，尤其是 XSS、privileged capability、Agent control、

@@ -1,7 +1,7 @@
 # Adaptive Project Orchestration — Router Phase Tickets
 
 > Approved Router scope: [adaptive-project-orchestration.md](../../spec/adaptive-project-orchestration.md)
-> revision 03 / AC-12 through AC-15 and the Router portions of AC-05 through AC-10.
+> revision 04 / AC-12 through AC-17 and the Router portions of AC-05 through AC-10.
 > This set does not authorize initialization, staging, packaging or target-project effects.
 
 ## Serial closure order
@@ -9,11 +9,13 @@
 | Ticket | Observable closure | State | Dependency |
 | --- | --- | --- | --- |
 | [01-route-instruction-contract](01-route-instruction-contract.md) | Every Router decision carries one versioned skill reference and one exact expected typed return; technical halts use the Profile's router-control fallback. | `COMPLETE / APPROVED / INTEGRATED` | `5c3445f` |
-| `02-shared-context-lifecycle-gate` | Architecture-stage create/seal and change-control-only revision admission; all later roles are read/reference-only. | `ELIGIBLE / TICKET_NOT_CREATED` | R01 complete |
-| `03-model-role-readiness-wake` | SPEC readiness and architecture-owner sleep/wake decision kernel. | `CANDIDATE / NON_DISPATCHABLE` | R02 approved/integrated |
+| `02A-shared-context-lifecycle-gate` | Architecture-stage draft/revise/seal and change-control-only revision admission; later roles are exact sealed-revision readers. | `ELIGIBLE / TICKET_NOT_CREATED` | R01 complete |
+| `02B-agent-context-lease-invalidation` | One role-scoped, ticket-bound Agent Context lease; ticket switch closes the old view and creates a new identity. | `CANDIDATE / NON_DISPATCHABLE` | R02A approved/integrated |
+| `02C-artifact-tree-lineage-gate` | One-path artifact resolution plus active PRD/CHG pairing and bounded archive/library indexes. | `CANDIDATE / NON_DISPATCHABLE` | R02B approved/integrated |
+| `03-model-role-readiness-wake` | SPEC readiness and architecture-owner sleep/wake decision kernel. | `CANDIDATE / NON_DISPATCHABLE` | R02C approved/integrated |
 | `04-low-model-ticket-admission` | Four-way low-model decomposition/admission decision kernel. | `CANDIDATE / NON_DISPATCHABLE` | R03 approved/integrated |
 | `05-ui-design-source-routing` | Optional design-source capability decision kernel. | `CANDIDATE / NON_DISPATCHABLE` | R04 approved/integrated |
 | `06-router-policy-acceptance` | Integrated Profile/Router acceptance and metadata-only serialization closure. | `CANDIDATE / NON_DISPATCHABLE` | R01-R05 approved/integrated |
 
-Only R01 may become dispatchable now. Later files are created from the independently accepted
+Only R02A may become dispatchable now. Later files are created from the independently accepted
 predecessor baseline; their candidate labels are not implementation authority.

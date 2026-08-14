@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| State | `SPEC_REVISION_03_APPROVED / ROUTER_PHASE_ACTIVE` |
-| Requirement / ADR | `CHG-20260813-016`, `CHG-20260813-017`, `CHG-20260814-019`, `CHG-20260815-020` / `ADR-20260813-008`, `ADR-20260813-009`, `ADR-20260814-011` |
+| State | `SPEC_REVISION_04_APPROVED / ROUTER_PHASE_ACTIVE` |
+| Requirement / ADR | `CHG-20260813-016`, `CHG-20260813-017`, `CHG-20260814-019`, `CHG-20260815-020`, `CHG-20260815-021` / `ADR-20260813-008`, `ADR-20260813-009`, `ADR-20260814-011` |
 | SPEC | `SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2` |
 | Control owner | Codex / current `main` |
 
@@ -44,6 +44,13 @@
   roles bind its exact revision and bounded source spans only; missing or
   changed facts return through change control and cannot be appended by a
   ticket, dispatch, implementation, monitoring or review lane.
+- Formal artifacts and reusable-module catalogs are tree-indexed. Root and partition indexes list
+  direct children only; one Router action follows only the branch needed for its exact leaf.
+- Agent working Context is bounded by role and current closure. Implementation Context is
+  single-ticket and is closed/replaced on ticket switch; prior ticket content never becomes
+  implicit input to the next ticket.
+- Active product requirements are one-to-one PRD/CHG leaves. Retired pairs move to an immutable
+  archive-library leaf, while active root indexes retain only the archive identifier.
 
 ## Boundary
 

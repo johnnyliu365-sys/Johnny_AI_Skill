@@ -131,7 +131,7 @@ boundary: Do not treat the POC's fake adapters as real host/Git operations. Do n
 - Specification: `modules/spec/local-orchestration-installer.md` (`APPROVED` on `2026-08-08`).
 - Context: `doc/context/local-orchestration-installer/main.md`.
 - Scope: installer-owned Windows local control plane and clean owned uninstall; no target-project dependency.
-- PRD / change: `PRD.md §15` / `CHG-20260808-011`.
+- PRD / change: `PRD-20260808-011` / `CHG-20260808-011`.
 - Common Context backlink: published by `d94d8d5`; ticket-set backlink pending the next docs-only commit.
 
 ## Ticket 01 completion and released allocation

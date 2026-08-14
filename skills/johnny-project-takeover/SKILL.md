@@ -30,6 +30,10 @@ file completely only when its condition applies.
 | Intake profile, resource plan, maturity change, POC freeze or staging | [Delivery profile and lifecycle](references/delivery-profile.md) |
 | Model-role assignment, SPEC readiness, architecture-owner sleep/wake or escalation | [Model role lifecycle](references/model-role-routing.md) |
 | ContextView, source selection, capability selection or side-context mapping | [Minimal Context routing](references/context-routing.md) |
+| Artifact index creation/traversal, leaf replacement or lifecycle movement | [Artifact tree routing](references/artifact-tree-routing.md) |
+| Agent working Context, ticket switch, correction rebind or view closure | [Agent Context lifecycle](references/agent-context-lifecycle.md) |
+| PRD/CHG creation, one-to-one identity, retirement or archive lookup | [Requirement lineage](references/requirement-lineage.md) |
+| Reusable library catalog traversal or partition maintenance | [Module catalog routing](references/module-catalog-routing.md) |
 | Wayfinder, Architecture, Grill or requirement change | [Discovery and change control](references/discovery-change.md) |
 | Untrusted data enters Browser/WebView/HTML/DOM/JavaScript | [XSS review](references/xss-review.md) |
 | Secret, production log, Provider, webhook or external effect | [Security boundary](references/security-boundary.md) |
@@ -68,7 +72,8 @@ emits `REQUIREMENT_CHANGED` rather than changing the ticket locally.
 ## Minimal implementation handoff
 
 The implementer receives identifiers, not copied governance text: exact ticket/registry commit,
-receipt, owner task and at most one bounded resume state. The exact ticket supplies scope,
+receipt, owner task, one fresh ticket-bound ContextView and at most one bounded resume state. A
+different ticket closes that view and creates a new side-context identity. The exact ticket supplies scope,
 contracts, TDD, verification and return format. The selected reference supplies the applicable
 method. The Router and host gateway supply authority.
 

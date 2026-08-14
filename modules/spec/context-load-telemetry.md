@@ -6,7 +6,7 @@
 | State | `APPROVED` |
 | Owner | `root/main` |
 | Context | `doc/context/context-load-telemetry/main.md` |
-| PRD reference | `PRD.md §10` |
+| PRD reference | `PRD-20260803-006` |
 | Change | `CHG-20260803-006` |
 
 ## Goal

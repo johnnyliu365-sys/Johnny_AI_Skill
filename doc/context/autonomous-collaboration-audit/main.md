@@ -455,7 +455,7 @@ The audit retains the POC boundary: policy reads are metadata-only, fixed dispat
 | Field | Value |
 | --- | --- |
 | Trigger | Ticket-03 integration and post-integration audit completed at `43033bf` / `f3519ab` |
-| Required sources | PRD §14; approved autonomous-collaboration SPEC; Ticket 01 through Ticket 03; current Router POC boundary; current ticket ledger and Context |
+| Required sources | `PRD-20260805-010`; approved autonomous-collaboration SPEC; Ticket 01 through Ticket 03; current Router POC boundary; current ticket ledger and Context |
 | G-06: delivery traceability | `GO -> documentation reconciliation` — approved Ticket-01 commit `67b049a` and on-main `0dc4da5` have identical stable patch IDs, so Ticket 01 is integrated through the Ticket-02 baseline. The ticket ledger and Ticket-03 active-allocation language must reflect the completed state. This is a factual documentation correction, not a requirement change. |
 | G-07: real external orchestration | `DEFERRED_BY_SCOPE` — the POC uses injected fake integration/event ports and explicitly does not create host turns, physical worktrees, real Git operations, Temporal workers or MCP servers. This is an intentional approved boundary, not an implementation defect. Any real local orchestration adapter requires `REQUIREMENT_CHANGED -> WAYFINDER -> Architecture -> Grill -> SPEC -> ticket`; it must not be silently started from this Grill. |
 | G-08: next implementation candidate | None. No ticket remains `PLANNED` or has a valid new dispatch authority; opening implementation would violate the one-ticket and fail-closed rules. |

@@ -172,5 +172,5 @@ flowchart LR
 - Shared Context reference: `CONTEXT.md › 已確認事實與共同邊界`, fingerprint `6dc4857b`, baseline `cbdfa7751c21c0355cb3aaaae5b7f045d9e84154`
 - Convergence: private typed Router decision service with source-local Context resolution; no billing, raw-content transfer, model hosting, or production deployment in the POC.
 - Responsibility boundary: POC contracts and in-process/private-transport validation only; no target-project change or commercial operation.
-- PRD / change: `PRD.md §12` / `CHG-20260804-008`
+- Retired requirement: `PRD-20260804-008` / `CHG-20260804-008`, archived as `ARCH-REQ-20260815-002`
 - Shared Context backlink state: `TICKET_PLAN_PENDING_OWNER_APPROVAL`
