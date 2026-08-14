@@ -5127,3 +5127,15 @@
 | Sync / source authority | Additively merge this registry commit into the existing branch; preserve PRG-472 through PRG-474 once and in order in the sole expected WPR conflict. Then change exactly `library/workflow_router/contracts.py` and `tests/test_workflow_router.py`, followed by one WPR-only handoff. |
 | Verification / return | Preserve the 43-cell behavior, add five semantic-ID positives and complete contradictory-decision negatives, reverse the decision guard, rerun focused/six-module/full/mypy/compile/source/scope/topology/residue/original reversals, and return `COMPLETED`, `BLOCKED` or `CHANGE_DETECTED`. |
 | Boundary | Same ticket and branch only; no reset/amend/force, new branch/worktree, Router method change, R02C-R06, 06G0P, helper, package/install, live host/model/network/target-project effect, push, release, deployment or Secret. `XSS_NOT_APPLICABLE`. |
+
+## PRG-20260815-475 - Router R02B context lease boundary correction handoff
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_DISPATCH_CONFIRMED(PRG-474) -> ACTION_COMPLETED / REVIEW_HANDOFF`; CR-R02B-001 and CR-R02B-002 are closed by this same-ticket additive correction. |
+| Synchronization | Same-branch additive merge `8e75a2f5ae5ceff301585d9d247c6900c6d76cf9` synchronized registry `97887e5f669d110b42a72f212e5efc2545059ada`; only the predicted append-only WPR conflict was resolved, retaining PRG-472 through PRG-474 once and in order. |
+| Correction | Implementation `ec2cdb8721967781e4865c3cb6eeabf99c07684a` changes only `library/workflow_router/contracts.py` and `tests/test_workflow_router.py`: semantic leaf IDs remain portable while structural locators/raw fields reject, and public decisions enforce the finite operation/lifecycle result algebra. |
+| First red / reversals | The bounded correction probe was red before the guards: semantic IDs were rejected and contradictory decisions constructed. Reversing the decision guard made its named test red; the three original ticket reversals (changed revision, closed replay, reused switch Context) also turned red; all exact bytes were restored. |
+| Verification | Focused Router `53/53`; six-module Router regression `120/120`; explicit serial full suite `556/556` across `48` test files; strict full-tree mypy `150/150`; in-memory compile `150/150`; source sentinel `1/1`; diff/scope/ancestry/topology gates pass. |
+| Readback | Branch `codex/implementation-router-agent-context-r02b`; three worktrees retained; final tracked and ignored porcelain empty; local cache/bytecode/runtime residue `0`; external mypy cache removed; `XSS_NOT_APPLICABLE`. |
+| Boundary | No helper, Agent control, R02C-R06, 06G0P, new branch/worktree, live model/Codex/home/App/target/network effect, push, package/install, Secret, release or deployment. |
