@@ -5,7 +5,7 @@
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-02, AC-06 and AC-07 |
 | Change / PRD / Context | `CHG-20260808-011` / `PRD.md §15` / `doc/context/local-orchestration-installer/main.md` |
 | Revision | `02` |
-| State | `APPROVED / READY_TO_MERGE` |
+| State | `COMPLETE / APPROVED / INTEGRATED` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05C2A-01` / A1-A8 |
 | Dependency | 05C1 and existing compensation port/composition independently approved and integrated |
 | Profile / resource | `STANDARD`; one implementation owner, no helper; high reasoning preferred but model identity grants no authority |
@@ -162,3 +162,13 @@ Independent immutable-snapshot review passed focused `18/18`, full serial
 original-state/optional-field matrix, and a shared-guard reversal that failed
 all 16 committed CR-174 cells before exact restoration. A1-A8 are approved;
 guarded integration remains reviewer-owned.
+
+## Guarded integration
+
+Review `5e7e489b62174ef10b16358e938a065e10f39fa8` and exact handoff
+`7ba15c9d5513d08d2d2f1ef23e4ca06d164d3525` were guarded-merged as
+`e2e2fe986243fa64f7ce9a67903904310341597b`. The only conflict was the
+predicted append-only WPR overlap; PRG-390 through PRG-394 remain exactly once.
+Post-merge focused `18/18` and strict mypy over `146` files pass with the
+external cache removed. This ticket is complete and releases 05C2B for exact
+refreeze; it creates no authority to package, install, push or deploy.

@@ -4281,3 +4281,14 @@
 | Mutation truth | Reversing the shared extra/private-state guard made all 16 committed CR-174 cells fail. Exact source/test Git blobs restored to `8cce40a989da3bda6b0b0b5663aae8aedec9925e` / `13ad81bd0e13a914a1f7bed9c18e24d691fa3db3`, then the named test passed. |
 | Decision | CR-174 closed. Corrupted envelope/entry/source state cannot confirm removal or prove absence; valid optional omission and all ordinary mappings remain accepted. `XSS_NOT_APPLICABLE`. |
 | Boundary | Reviewer used and removed one exact TEMP export with its external mypy cache. No implementation-worktree write, live effect, push/staging publication, package/build/install, Secret, release or deployment. |
+
+## PRG-20260814-395 - Ticket 05C2A guarded integration and 05C2B refreeze
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `APPROVED(05C2A) -> GUARDED_INTEGRATION_COMPLETED -> ACTION_COMPLETED / SELECT_05C2B_REFREEZE` |
+| Integration | Review `5e7e489b62174ef10b16358e938a065e10f39fa8`; handoff `7ba15c9d5513d08d2d2f1ef23e4ca06d164d3525`; guarded merge `e2e2fe986243fa64f7ce9a67903904310341597b`. Only the predicted WPR conflict occurred; PRG-390 through PRG-394 are each preserved once. |
+| Post-merge verification | Focused composition `18/18` and strict full-tree mypy `146` pass; the repository-external cache was removed. Integrated source/test/export blobs equal the approved handoff. |
+| 05C2B refreeze | Revision 02 binds exact public result/function names, same rebuilt request identity, three/eight-call sequences, explicit 05C1 error mapping, 05C2A-only observation admission, owned four-conjunct absence, unrelated foreign preservation, failure short-circuit and exception propagation. Closure remains B1-B9. |
+| Resource decision | `STANDARD`, one owner and no helper. 05C2B owns one new source/test plus export and 05C3 is a serial acceptance dependency; parallel work would either overlap exports or implement against an unreviewed coordinator. |
+| Boundary | Control documents and guarded integration only. No live Codex/host/target-project effect, new worktree, push/staging publication, package/build/install, Secret, release or deployment. |

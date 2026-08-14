@@ -105,3 +105,12 @@ CR-174 is closed. Exact original state is required before any removal
 confirmation or absence proof, while valid optional-field omission and all
 ordinary mappings remain compatible. No capability/callable/effect boundary,
 renderer/XSS sink, live Codex/host/target-project action or residue exists.
+
+## Guarded integration
+
+The approved handoff was merged into control by
+`e2e2fe986243fa64f7ce9a67903904310341597b`. Read-only merge-tree and the
+actual merge found only the expected WPR conflict; the reviewer preserved
+PRG-390 through PRG-394 once and did not resolve any source/test conflict.
+Integrated focused `18/18` and strict mypy over `146` files pass. Ticket 05C2A
+is `COMPLETE / APPROVED / INTEGRATED`.
