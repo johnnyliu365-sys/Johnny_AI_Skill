@@ -5,7 +5,7 @@
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-02, AC-06, AC-07 and AC-08 |
 | Change / PRD / Context | `CHG-20260808-011` / `PRD.md §15` / `doc/context/local-orchestration-installer/main.md` |
 | Revision | `01` |
-| State | `CHANGES_REQUESTED / EVIDENCE_ONLY_CORRECTION` |
+| State | `REVIEW_COMPLETED / APPROVED / READY_FOR_GUARDED_INTEGRATION` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05C2C2A-01` / T1-T7 |
 | Dependency | 05C2C1 guarded merge `fffbc616ee1870b69845cbcecf37a98e842106d3`; 05C2C2 revision-02 typed HALT at dispatch `41564b2e1087ede7bc156c68ec4aec715f3fe8bd` |
 | Profile / resource | `STANDARD`; one implementation owner, no helper; serial prerequisite for 05C2C2 revision 03 |
@@ -124,3 +124,13 @@ must read back as a one-file WPR-only additive commit with a clean lane.
 This correction does not authorize amend, reset, rebase, force, stash, new
 branch/worktree, helper Agent, implementation change, live effect, package,
 install, push, release or deployment.
+
+## Reviewer frame correction
+
+CR-177 is withdrawn. PRG-410's four hashes exactly match the clean submitted
+Windows checkout. The reviewer had compared them with a Git archive whose text
+entries were normalized to another EOL frame; canonical Git blob IDs remained
+unchanged throughout. Owner steer stopped before PRG-20260814-413 and created
+no correction commit. T1-T7 are approved; only reviewer-owned guarded
+integration is authorized next. Future hash evidence should label
+`WORKTREE_BYTES`, `ARCHIVE_BYTES` or `GIT_BLOB` explicitly.

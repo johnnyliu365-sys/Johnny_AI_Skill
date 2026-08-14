@@ -49,3 +49,20 @@ The implementation is not being rejected or rewritten. CR-177 is the single
 blocking item in this closure revision, and only an additive WPR-only evidence
 correction at reserved PRG-20260814-413 on the same
 owner/worktree/branch/allocation/receipt is authorized.
+
+## Reviewer evidence-frame correction and final decision
+
+| Field | Evidence |
+| --- | --- |
+| Verdict | `APPROVED / READY_TO_MERGE`; the initial `CHANGES_REQUESTED` decision and CR-177 are superseded by this reviewer correction. |
+| Cause | The reviewer compared three distinct byte frames without labeling them: mixed-EOL Windows checkout bytes, Git-for-Windows archive bytes normalized to CRLF, and canonical LF Git blobs. Different SHA-256 values across those frames do not show a changed implementation. |
+| Submitted evidence | PASS. In the clean owner worktree, all four checked-out SHA-256 values exactly equal PRG-410. PRG-410 accurately reports its submitted worktree frame. |
+| Immutable commit identity | PASS. The four Git blob IDs at implementation `d407937d03e7dba49cf066599ac9d5c43e9b3624` are respectively `a160355be24bab4ab8ff2623293c49f4fbbb5011`, `fa9989c5ce6828f40e84f20b543881cfc62d6f13`, `d19d6a7cd3e723fe10cc0683adf2445c18b8ffc1`, and `c75d3be8b042a5699584e77b1c6dc3948868e045`. The owner branch retains those exact blobs. |
+| Raw blob SHA-256 | Canonical LF Git-blob bytes are respectively `072F6F72ED2014DFD079D9F9B3E13D3E25A26507142E7D772C5C6D0382234153`, `9958B97CFC1A74E0F164C07662960FF7C0FCBEC7CF873409F6C7E90485DCA53F`, `AE5FC1F8B36FDF3EE86654E47AF759E31D098021FD3ADCC325E9A014FC66B254`, and `D3871C450078A24EB1C716175380FD3867531A3E9A6035EF4CC773BE6079AECE`. |
+| Invalid correction stopped | Owner steer returned `HALT / REVIEWER_EVIDENCE_FRAME_MISMATCH` after merge `50f151c0ec6e9abec9b4c13bdf65e702d97d468e`; no PRG-413 or evidence-correction commit was created, and tracked/ignored porcelain remained empty. |
+| Final closure | T1-T7, P0 typing, executable evidence, exact scope and immutable blob identity pass. No blocking finding remains. |
+
+The four hashes originally frozen under CR-177 are retained above only as the
+historical archive-frame evidence that exposed the reviewer mistake; they do
+not supersede PRG-410. Future provenance should label its byte frame explicitly,
+but that nonblocking hardening does not alter this ticket's frozen closure.

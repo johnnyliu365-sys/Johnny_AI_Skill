@@ -4453,3 +4453,14 @@
 | Lane / merge admission | Owner-2 task `019ffb0c-db88-7303-895c-aecfadde7c8d`; same permanent worktree/branch; clean handoff `6695b146b28d33faeb341f32c92c79bd2b82e66e`; ignored residue 0; exactly three worktrees. Read-only merge-tree predicts only append-only WPR overlap; PRG-409 through PRG-412 plus submitted PRG-410 must each remain once. |
 | Binding / return | Existing workspace/handoff/allocation/receipt/correlation/question/side-context retained. Merge the exact review baseline, change no implementation blob, then append only reserved PRG-20260814-413 in one WPR-only evidence correction commit. |
 | Boundary | No new branch/worktree/helper, source/test/ticket/review edit, live Codex/host/target-project effect, push/staging publication, package/build/install, Secret, release or deployment. |
+
+## PRG-20260814-413 - Ticket 05C2C2A reviewer evidence-frame correction and approval
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `HALT / REVIEWER_EVIDENCE_FRAME_MISMATCH -> REVIEWER_CORRECTION -> REVIEW_COMPLETED / APPROVED / READY_FOR_GUARDED_INTEGRATION` |
+| Owner halt | Owner-2 merged the exact correction registry as `50f151c0ec6e9abec9b4c13bdf65e702d97d468e`, then stopped before a PRG-413/correction commit. Read-only evidence showed all four checked-out hashes equal PRG-410, source/test Git blobs equal implementation `d407937d03e7dba49cf066599ac9d5c43e9b3624`, and porcelain is clean. |
+| Reviewer cause | CR-177 compared mixed-EOL Windows worktree hashes with Git-for-Windows archive hashes normalized to a different CRLF frame. Canonical LF Git blob SHA-256 is a third frame. The unequal hashes did not indicate changed code or false owner evidence. |
+| Decision | CR-177 and the PRG-413 implementer-correction reservation are withdrawn. T1-T7, P0 typing, focused `52/52`, full `512/512`, strict mypy `148`, compile `148`, three reversals, scope, ancestry and immutable blob identity pass; 05C2C2A is approved. |
+| Continuation | Only reviewer-owned guarded integration of owner merge `50f151c0ec6e9abec9b4c13bdf65e702d97d468e`, followed by 05C2C2 revision-03 refreeze. Future hash evidence must label its byte frame; no new implementation ticket is required for this nonblocking documentation hardening. |
+| Boundary | Reviewer documentation correction only. No implementation-worktree write, source/test mutation, new worktree/helper, live effect, push/staging publication, package/install, Secret, release or deployment. |

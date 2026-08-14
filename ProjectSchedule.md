@@ -168,7 +168,7 @@
 | Ticket 05C2B receipt removal composition | COMPLETE / APPROVED / INTEGRATED | CR-175/CR-176 closed; review `355da84`; guarded merge `75eec43`; post-merge focused/type checks pass. |
 | Ticket 05C2C1 oracle installed-path presence | COMPLETE / APPROVED / INTEGRATED | Review `90dac00`; guarded merge `fffbc61`; post-merge focused 46/46 and strict mypy 148 pass. |
 | Ticket 05C2C2 adapter installed-path truth | BLOCKED / TICKET_DEFECT / DEPENDENCY_WAIT | Revision 02 requested `absent=False` from a true-only literal outside scope; resume as revision 03 after 05C2C2A. |
-| Ticket 05C2C2A installed-path proof truth contract | CHANGES_REQUESTED / EVIDENCE_ONLY_CORRECTION | Implementation behavior and P0 typing pass; CR-177 requires one WPR-only hash correction before integration. |
+| Ticket 05C2C2A installed-path proof truth contract | REVIEW_COMPLETED / APPROVED / READY_FOR_GUARDED_INTEGRATION | CR-177 withdrawn after reviewer EOL/hash-frame correction; T1-T7 and immutable blobs pass. |
 | Ticket 05C3 receipt removal acceptance | PLANNED / UPSTREAM_EVIDENCE_GAP | Disposable probe reproduced `PRE_REMOVAL_EVIDENCE_INVALID`; starts after 05C2C1/C2 integrate. |
 | Ticket 06A Codex role-profile capability proof | DONE / APPROVED_EVIDENCE / INSTALL_BLOCKED / INTEGRATED | Implementation `38e9a8b`, handoff `f6f186f`, review `62955ec`, guarded merge `de4141e`; actual installed-host result is `ROLE_ISOLATION_UNPROVEN / ACCESS_DENIED / OUTPUT_UNAVAILABLE`, so capability dependents stay blocked. |
 | Autonomous Ticket 04 reviewer-only authority | PLANNED / DEPENDENCY_WAIT | Starts only after reviewed 06A `SUPPORTED`; typed fake effect gate, not a real Agent turn. |
