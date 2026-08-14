@@ -4403,3 +4403,13 @@
 | 05C2C2 dependency readback | Integrated API exposes exact frozen `OracleInstalledPathPresent(action=ABSENCE)` in both oracle-result and response-admission unions. Existing adapter admits that response but still returns `EVIDENCE_INVALID` because its proof projection recognizes only exact `OracleAbsent`; this is the reserved 05C2C2 first red. |
 | Revision-02 closure | M1-M7, Python 3.11 named types, strict full-tree mypy, `STANDARD` one-owner/no-helper, `XSS_NOT_APPLICABLE`, exact two-path scope and unique binding are explicit. Only exact admitted absent/present may create manifest-bound true/false proof; blocked/errors remain unproved. |
 | Boundary | Documentation/refreeze and reviewed integration only. No live Codex/host/target-project effect, push/staging publication, package/install, Secret, release or deployment. |
+
+## PRG-20260814-407 - Ticket 05C2C2 exact dispatch registry
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `05C2C2_REVISION_02_FROZEN + TICKET_SCHEMA_PASS + EXACT_LANE_ADMITTED -> IMPLEMENTATION_DISPATCH_CONFIRMED / IMPLEMENT` |
+| Schema / type gate | Exact freeze `bb37376ef7bfb3a2615ba68a9e8f0d5e4533ad44` explicitly contains M1-M7, Python 3.11 named Pydantic/dataclass contracts, strict full-tree mypy, `STANDARD` one-owner/no-helper, `XSS_NOT_APPLICABLE`, exact result mapping, two writable paths and unique binding. |
+| Lane readback | Owner task `019ffb0c-c9c7-7b30-b614-02dea7ed9042` idle in the permanent implementation worktree; clean released branch/head `codex/implementation-codex-oracle-installed-path-presence-05c2c1` / `b625d3991a3d68b630d6a4c1a61c2cb8475eb7ae`; linked Git identity, zero tracked/ignored/cache residue, exactly three worktrees and absent target branch verified. |
+| Binding / dispatch | One-use 05C2C2 workspace/handoff/allocation/receipt/correlation/question/side-context from the ticket; create only `codex/implementation-codex-compensation-adapter-path-truth-05c2c2` at the exact control commit carrying this registry and change only the two frozen paths. Reserved WPR handoff is PRG-408. |
+| Resource / boundary | One owner and no helper because source and direct test form one small serial adapter projection. No reviewer implementation-worktree write, new worktree, live effect, push/staging publication, package/install, Secret, release or deployment. |
