@@ -72,3 +72,22 @@ behavior is `CHANGE_DETECTED` and requires a new review decision.
 No new branch/worktree, source/test edit, R02C2/R02C3 implementation, helper, package/install,
 live host/model/network, target-project, push, release, deployment or Secret effect is
 authorized.
+
+## Revision-02 terminal review
+
+| Field | Result / evidence |
+| --- | --- |
+| Submitted revalidation | Registry merge `a952386f6de56c37463fbe09782809c71d55d3ca`; WPR-only handoff `2c0469febc53226fab41eddfed0242781ac0b3e6` / `PRG-20260815-485`; implementation candidate remains `458791b470629fe7c0e3bb263af87560b58e54b9`. |
+| Review result | `APPROVED / GUARDED_INTEGRATION_AUTHORIZED`; `CR-R02C1-001` is closed. |
+| Ticket schema | PASS: exact revision-05 feature Context, Python 3.11, strict-mypy command, resource plan, environment, operations/rollback and fresh receipt/side-Context bindings are present in `r02c1-02`. Fresh detached schema probe `7/7`. |
+| Candidate identity | PASS: all four source/test blob IDs at the terminal handoff exactly equal implementation `458791b470629fe7c0e3bb263af87560b58e54b9`; no correction implementation commit exists. |
+| Independent behavior | PASS: fresh terminal detached checkout focused `63/63`. The byte-identical candidate already passed the initial independent full serial `566/566`, strict mypy `152/152`, compile `152/152` and reviewer probes `9/9`. |
+| Submitted revalidation | PASS: Router regression `130/130`, full serial `566/566`, strict mypy `152/152`, compile `152/152`, source gate `1/1` and three ACX8 reversals. |
+| Scope / ancestry / residue | PASS: exact registry and candidate ancestry, WPR-only handoff, diff check, clean permanent lane, exactly three worktrees and zero residue. Detached reviewer clone was clean, removed and read back absent. |
+| Security / effects | PASS: pure metadata-only resolution, no privileged capability or external effect. `XSS_NOT_APPLICABLE`. |
+
+All mandatory review dimensions pass, and revision `r02c1-02` closes the ticket-admission defect
+without altering the reviewed behavior. Guarded integration may merge only exact handoff
+`2c0469febc53226fab41eddfed0242781ac0b3e6`. Any conflict beyond the expected append-only
+`doc/WorkProgressReport.md` overlap must halt. R02C2/R02C3, package, push, release, deployment,
+target-project, live host/model/network and Secret effects remain out of scope.

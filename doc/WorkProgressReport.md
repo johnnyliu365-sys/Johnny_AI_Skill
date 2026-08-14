@@ -5232,3 +5232,14 @@
 | Synchronization | Additively merge this exact registry into the same branch. Only the expected append-only `doc/WorkProgressReport.md` overlap may be resolved, retaining PRG-480 through PRG-484 each once and in order. Any other conflict is `BLOCKED`. |
 | Revalidation | Read revision-02 ticket and exact Context; prove implementation `458791b470629fe7c0e3bb263af87560b58e54b9` four source/test blobs unchanged; rerun focused/Router/six-module/full/strict-mypy/compile/source/scope/topology/residue gates; append one WPR-only handoff. |
 | Boundary | All source/test paths are read-only. No new implementation commit, branch/worktree, helper, R02C2/R02C3 implementation, external effect, push, package/install, Secret, release or deployment. Changed candidate bytes return `CHANGE_DETECTED`. `XSS_NOT_APPLICABLE`. |
+
+## PRG-20260815-486 - Router R02C1 revision-02 terminal approval
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `ACTION_COMPLETED / REVIEW_HANDOFF(PRG-485) -> APPROVED / GUARDED_INTEGRATION_AUTHORIZED`; `CR-R02C1-001` is closed. |
+| Submitted chain | Candidate `458791b470629fe7c0e3bb263af87560b58e54b9`; registry merge `a952386f6de56c37463fbe09782809c71d55d3ca`; WPR-only handoff `2c0469febc53226fab41eddfed0242781ac0b3e6`; exact ancestry, candidate blob identity, scope and clean lane pass. |
+| Independent terminal evidence | Fresh repository-external detached checkout passed focused `63/63` and ticket schema `7/7`, then was cleanly removed. The exact candidate blobs retain initial independent full serial `566/566`, strict mypy `152/152`, compile `152/152` and reviewer probes `9/9`. |
+| Closure | Revision `r02c1-02` explicitly binds the feature Context, Python 3.11, strict checker, resource/environment and operations boundaries. ACX1-ACX8 behavior is unchanged and complete. |
+| Integration boundary | Guarded integration may merge only exact handoff `2c0469febc53226fab41eddfed0242781ac0b3e6`; only the predicted append-only WPR overlap is eligible for explicit resolution with every PRG record retained once and in order. Any other conflict halts. |
+| Effects | No source/test mutation, helper, Agent control, R02C2/R02C3 implementation, push, package/install, target-project, live host/model/network, Secret, release or deployment. `XSS_NOT_APPLICABLE`. |
