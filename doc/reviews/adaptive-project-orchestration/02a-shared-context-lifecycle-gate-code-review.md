@@ -106,3 +106,20 @@ Retain the same ticket/lane/bindings. The final additive correction is limited t
 First-red a positive `profile` pair while retaining negative `file-ref` and `ctx-file-uri`
 cases; use boundary-aware typed metadata validation, then reverse that exact guard and rerun all
 R02A gates. No other validation, route or lifecycle behavior may change.
+
+## Revision-03 terminal review
+
+| Field | Value |
+| --- | --- |
+| Guarded sync / correction / handoff | `9c5d7b7da817afba0dfb927a0415b524b276a71d` / `ccc653c211a38e429bb2818925e32865091c3859` / `6f36d7d45f0c2ca25d26cfa7e71bf3eac3559349` |
+| Scope / ancestry | PASS: only the predicted WPR append overlap was resolved; correction is exactly `profile.py` and `test_workflow_router.py`; handoff is WPR-only; lane clean. |
+| Independent tests | PASS in a repository-external detached clone: focused `43/43`, six-module `110/110`, full serial `546/546`, strict mypy `150/150`, in-memory compile `150/150`. |
+| Independent boundary probes | PASS `10/10`: two safe distinct project/Profile pairs; four file/prompt/Secret token negatives; two semantic ticket/review tree-index refs; three all-zero expected-revision negatives. |
+| Worktree / effects | PASS: exactly three permanent worktrees, clean submitted lane, zero submitted residue; external review clone removed. `XSS_NOT_APPLICABLE`. |
+| Result | `APPROVED / GUARDED_INTEGRATION_AUTHORIZED` |
+
+CR-R02A-001 through CR-R02A-003 are closed. The shared Context gate now preserves safe
+project-specific Profile metadata, rejects actual locator/sensitive tokens without substring
+false positives, admits semantically named opaque tree references, rejects reserved revisions
+at construction, and retains the exact finite lifecycle/precedence table. No review finding
+remains. Approval does not authorize R02B behavior inside this merge.

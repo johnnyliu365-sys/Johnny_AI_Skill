@@ -5018,3 +5018,14 @@
 | Correction Context | Handoff `hnd_adaptive_router_r02a_r03_20260815`; side Context `scx-adaptive-router-r02a-20260815-03`; additively merge this registry, retaining unique WPR records. Any non-WPR conflict halts. |
 | Exact correction | First-red safe `profile` metadata beside locator-token negatives; change only `profile.py` and `test_workflow_router.py`; use hyphen-token-aware `file` rejection, preserve every other R02A behavior and run one exact reversal plus full gates. Then WPR-only handoff. |
 | Boundary | Same Luna max owner; no helper, branch/worktree creation, R02B/R02C, 06G0P, live host/network/target effect, push, package/install, Secret, release or deployment. `XSS_NOT_APPLICABLE`. |
+
+## PRG-20260815-468 - Router R02A final approval
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `ACTION_COMPLETED / REVIEW_HANDOFF(PRG-467) -> APPROVED / GUARDED_INTEGRATION_AUTHORIZED`; CR-R02A-001..003 are closed. |
+| Submitted chain | Guarded sync `9c5d7b7da817afba0dfb927a0415b524b276a71d`; final correction `ccc653c211a38e429bb2818925e32865091c3859`; WPR-only handoff `6f36d7d45f0c2ca25d26cfa7e71bf3eac3559349`; exact scope/ancestry/clean lane pass. |
+| Independent matrix | Repository-external detached clone passed focused `43/43`, six-module `110/110`, full serial `546/546`, strict mypy `150/150`, compile `150/150` and 10 final boundary probes; the clone was removed and read back absent. |
+| Closure | Safe distinct Profile refs and semantic tree-index IDs are admitted; actual file/prompt/Secret tokens, strict extra fields, duplicates and all-zero expected revisions reject; the original lifecycle/role/stage/change-control table remains exact. |
+| Integration boundary | Guarded integration may merge only exact handoff `6f36d7d`; any conflict beyond the predicted append-only WPR record overlap halts. No R02B source or test is included. |
+| Effects | No push, release, deployment, target-project, live host/network, package/install or Secret effect. `XSS_NOT_APPLICABLE`. |
