@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-02, AC-06, AC-07 and AC-08 |
 | Revision | `03` |
-| State | `IN_PROGRESS / DISPATCHED` |
+| State | `IN_PROGRESS / INITIAL_REVIEW_CHANGES_REQUESTED` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05C3-01` / A1-A8 |
 | Dependency | 05C1, 05C2A, 05C2B, 05C2C1, 05C2C2, 05C2C2A and 05C2C3 are independently approved and integrated; 05C2C3 merge is `1e6872acac7df28b5d5bd44991348354a1cd9779` |
 | Profile / XSS | `STANDARD`; one implementation owner, no helper / `XSS_NOT_APPLICABLE` |
@@ -96,6 +96,27 @@ contracts, readable decomposition and complete evidence determine completion.
 This registry converts the reservation into implementation authority for A1-A8
 only. It grants no authority to self-review, integrate, dispatch a next ticket
 or invoke a live host/target-project effect.
+
+## Initial review result and same-ticket correction boundary
+
+Initial review of implementation `78cd32da2490e999227f8409c4fcb52eed6e7e37`
+and handoff `6f90e65c7206db21c80b03180c92c132b2b2659c` is
+`CHANGES_REQUESTED` under the unchanged A1-A8 closure:
+
+- CR-180 (`IMPLEMENTATION_DEFECT`, A7): internal `observed_run` retains
+  `object` although only the public acceptance boundary may use it.
+- CR-181 (`EVIDENCE_DEFECT`, A6/A8): mutating external sentinel
+  `.git/config` bytes keeps the current A6 test green.
+- CR-182 (`EVIDENCE_DEFECT`, A7/A8): the committed source gate does not reject
+  unauthorized internal `object` or mechanically distinguish the three
+  authorized public parameters.
+
+The sole correction keeps revision 03, the same owner/worktree/branch,
+allocation, receipt, correlation and exact two-path scope. It must type the
+internal command as `OracleCommand`, snapshot the complete external Git
+sentinel tree byte-for-byte, and add the bounded AST/source admission described
+by the formal review. One additive implementation correction commit is followed
+by one appended WPR-only handoff; no other change is authorized.
 
 ## Forbidden effects
 
