@@ -4908,3 +4908,14 @@
 | Admission | Implementation lane must be clean at branch `codex/implementation-router-route-instruction-r01`, HEAD `7d6c2f2a066a9d039eb13ae0a8e339e04f372f61`, then guarded-merge this registry commit. Only an append-only WPR conflict may retain every unique PRG entry exactly once; any other conflict halts. |
 | Exact correction | First-red the three stale policy pairs, update only typed production/test constants for `router-control`, `context-routing` and `specification-ticketing`, perform the bounded old-context reversal and all revision-03 gates, then one WPR-only handoff. |
 | Owner / safety | Same implementation task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`, permanent worktree, branch, allocation `aln_adaptive_router_r01_20260814` and receipt `rcpt_adaptive_router_r01_20260814`; no helper, R02, 06G0P, new worktree, push, package/install, target/live effect, release or deployment. |
+
+## PRG-20260815-455 - Router Ticket R01 revision-04 policy rebind handoff
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `REVISION_04_CORRECTION_DISPATCH_CONFIRMED(PRG-454) -> ACTION_COMPLETED / REVIEW_HANDOFF`; the three stale policy pairs are rebound on the retained lane. |
+| Sync / chain | Guarded control-baseline merge `0f1926764ebb395f6beac7dbd4d11502f7a36425`; only the predicted WPR overlap conflicted, every unique PRG entry from both histories is retained once, and R03 source/test blobs remained byte-identical. Additive correction `e69b15e632f74820eb07a6e76f227b413ed24416`; this entry is the WPR-only handoff. |
+| First red / correction | After synchronization, the policy authenticity oracle reported exactly three stale pairs: `router-control`, `context-routing`, and `specification-ticketing`, with their old and refrozen digests. Only those typed production/test metadata pairs plus the duplicated router-control expected-revision assertion were updated. Canonical CRLF-to-LF policy hashes match the refrozen values. |
+| Reversal | Temporarily restoring the old `context-routing` pair made the authenticity oracle red; the pair was restored exactly. The retained R03 `str` field and tuple-annotation reversals were also red and restored. |
+| Verification | Focused Router `32/32`; six-module regression `99/99`; full serial unittest `535/535`; strict full-tree mypy `150` source files with external cache removed; in-memory compile `150`; policy-byte readback, AST/source gate, exact two-path correction scope, merge ancestry, `git diff --check`, three-worktree topology, tracked/ignored porcelain and zero cache/runtime residue pass. |
+| Readback / boundary | Final implementation is metadata-only; no route/public/type behavior changed. `XSS_NOT_APPLICABLE`; no helper/subagent, new worktree, self-review/integration, live model/host/Codex/home/config/target-project/network effect, push/staging publication, package/install, Secret, release or deployment. |
