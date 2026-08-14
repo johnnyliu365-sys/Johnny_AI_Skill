@@ -5102,3 +5102,15 @@
 | Blocking findings | `CR-R02B-001`: semantic words inside valid opaque tree/ticket/return IDs are over-rejected. `CR-R02B-002`: five contradictory public decision shapes construct instead of failing closed. |
 | Correction lane | Same ticket/owner/worktree/branch/allocation/receipt. The submitted side Context `scx-adaptive-router-r02b-20260815-01` is invalidated; the correction registry must bind a fresh side Context to this exact review commit. Only `contracts.py`, `test_workflow_router.py` and a WPR-only handoff are eligible. |
 | Boundary | Additive correction only; no reset/amend/force, new branch/worktree, Router method change, R02C-R06, 06G0P, package/install, host/model/network/target-project effect, push, release, deployment or Secret. `XSS_NOT_APPLICABLE`. |
+
+## PRG-20260815-474 - Router R02B additive correction dispatch
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `CHANGES_REQUESTED(PRG-473) + SAME_TICKET_AUTO_CONTINUE -> IMPLEMENTATION_DISPATCH_CONFIRMED / CORRECT`; this is the sole correction registry. |
+| Review / closure | Formal review `2add45754c66f0a9af685f54b7fae94aa77b82c2`; exact ticket `02b-agent-context-lease-invalidation-gate` revision `r02b-01`; closure remains ACX1-ACX8. Correct only `CR-R02B-001` and `CR-R02B-002`. |
+| Retained binding | Owner task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; permanent implementation worktree; branch `codex/implementation-router-agent-context-r02b`; allocation `aln-adaptive-router-r02b-20260815`; receipt `rcpt-adaptive-router-r02b-20260815`; question `q-adaptive-router-r02b-20260815`; expected return `ret-agent-context-review-handoff-r02b`. |
+| Fresh correction view | Correction handoff `hnd-adaptive-router-r02b-correction-20260815-02`; correlation `corr-adaptive-router-r02b-correction-20260815-02`; side Context `scx-adaptive-router-r02b-20260815-02`; review baseline is the exact commit above. The prior side Context `scx-adaptive-router-r02b-20260815-01` remains invalidated. |
+| Sync / source authority | Additively merge this registry commit into the existing branch; preserve PRG-472 through PRG-474 once and in order in the sole expected WPR conflict. Then change exactly `library/workflow_router/contracts.py` and `tests/test_workflow_router.py`, followed by one WPR-only handoff. |
+| Verification / return | Preserve the 43-cell behavior, add five semantic-ID positives and complete contradictory-decision negatives, reverse the decision guard, rerun focused/six-module/full/mypy/compile/source/scope/topology/residue/original reversals, and return `COMPLETED`, `BLOCKED` or `CHANGE_DETECTED`. |
+| Boundary | Same ticket and branch only; no reset/amend/force, new branch/worktree, Router method change, R02C-R06, 06G0P, helper, package/install, live host/model/network/target-project effect, push, release, deployment or Secret. `XSS_NOT_APPLICABLE`. |
