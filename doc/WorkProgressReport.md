@@ -4127,6 +4127,16 @@
 | Parallel/resource decision | One owner, no helper or second lane. 05C2 depends on the exact integrated 05C1 API, so speculative parallel work would duplicate or conflict with the contract. |
 | Boundary | No reviewer write to an implementation worktree, new worktree, live Codex/host/target-project effect, push, staging publication, package/build/install, Secret, release or deployment. |
 
+## PRG-20260814-380 - Ticket 05C1 receipt-removal request handoff
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05C1) -> ACTION_COMPLETED -> REVIEW_HANDOFF`; independent review remains required. |
+| Binding / lane | `CLOSURE-LOCAL-INSTALL-T05C1-01` / R1-R7; owner2 task `019ffb0c-db88-7303-895c-aecfadde7c8d`; branch `codex/implementation-codex-receipt-removal-request-05c1`; permanent bound worktree and three-worktree topology preserved. |
+| Implementation | Commit `ec53d3af854348a2f7385e485d17f3e2a84b98d8`; exactly `library/local_orchestration/codex_receipt_removal_request.py`, `tests/test_codex_receipt_removal_request.py`, and export-only `library/local_orchestration/__init__.py`. First red was the missing module. |
+| Acceptance evidence | Focused `12/12`; full serial `474/474`; strict full-tree mypy `146` files with external cache removed; in-memory compile `146` files; three named R6 reversal probes each turned the relevant assertion red and restored exact serialized bytes. All receipt fields map once, including `source_locator -> marketplace_source` and `plugin_name -> plugin`; installation/root identity mismatches return `RECEIPT_MISMATCH`. |
+| Boundary / security | Exact type/state admission rejects null/scalar/container, missing/extra/private, subclass, malformed constructed and invalid nested values without invoking descriptor/equality/serialization traps. `XSS_NOT_APPLICABLE`; no host/HostRegistrationKey, effect port, dynamic lookup, live Codex/host/target-project, package, push, release or deployment effect. Final tracked/ignored porcelain and project-owned caches are clean/absent. |
+
 ## PRG-20260814-381 - Ticket 05C1 revision-02 control correction
 
 | Field | Evidence |
@@ -4158,6 +4168,16 @@
 | Merge admission | Merge only the exact control commit carrying this registry. Read-only `merge-tree` reports only append-only WPR overlap; preserve PRG-378 through PRG-383 exactly once. Any other conflict, dirty lane, changed implementation blob or topology drift is typed `HALT`. |
 | Correction / return | Modify only the receipt-removal source and direct test named in the ticket, with invocation validation before comparison. Return one additive correction commit and then reserved PRG-384 in one WPR-only handoff. |
 | Boundary | Same ticket/owner/worktree/branch/allocation/receipt/correlation; no helper, new lane, reviewer implementation write, live effect, push/staging publication, package/install, Secret, release or deployment. |
+
+## PRG-20260814-384 - Ticket 05C1 CR-173 correction handoff
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_COMPLETED(05C1 / CR-173) -> ACTION_COMPLETED / REVIEW_HANDOFF`; independent review remains required. |
+| Correction commit | `e07a9f5c30b6d843ac81ef9d0dd198ee4832158b`; exactly `library/local_orchestration/codex_receipt_removal_request.py` and `tests/test_codex_receipt_removal_request.py`; export-only `library/local_orchestration/__init__.py` is unchanged. Source SHA-256 `43126583B7643A2E8DAEB69D4E72F2E367A9193073E8B1688E7A1AD67DD15350`; test SHA-256 `F3E7E1A9F808F4FDCDB05D1C72871B4416432D9699DA02430BB796580FA663EE`. |
+| Supersession boundary | This record supersedes only PRG-20260814-380's root-classification claim: invocation `InstallationId` and `InstallRoot` are rebuilt/validated before comparison; constructed noncanonical invocation root and constructed invalid invocation ID return `INVALID_INVOCATION`; constructed invalid receipt root returns `INVALID_RECEIPT`; only valid unequal installation IDs return `RECEIPT_MISMATCH`. All other PRG-380 mapping, public-export and acceptance claims remain unchanged. |
+| Verification | Focused `14/14`; full serial `476/476`; strict full-tree mypy `146` files with external cache removed; in-memory compile `146` files; unchanged R6 reversals `3/3`. Final tracked/ignored porcelain, project-owned caches and bytecode are clean/absent; exactly three worktrees and registry ancestry remain verified. |
+| Boundary / security | `XSS_NOT_APPLICABLE`; same ticket/owner/worktree/branch/allocation/receipt/correlation; no `__init__.py` change, new lane, helper, live Codex/host/target-project effect, push/staging publication, package/install, Secret, release or deployment. |
 
 ## PRG-20260814-385 - Ticket 05C1 final correction review
 
