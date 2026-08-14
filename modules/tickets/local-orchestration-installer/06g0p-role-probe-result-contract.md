@@ -4,13 +4,13 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` revision 03 / AC-09 precondition |
 | Change / ADR | `CHG-20260814-018`; `ADR-20260814-010` |
-| State | `IN_PROGRESS / AWAITING_DELIVERY_CONFIRMATION` |
+| State | `IN_PROGRESS / IMPLEMENTATION_DISPATCH_CONFIRMED` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T06G0P-01` / P1-P5 |
 | Delivery profile | `STANDARD` with security escalation; one implementer; no helper |
 | Reviewer | Control-plane `main`; sole Johnny gateway owner |
 | Implementation owner | Task `019ffb0c-db88-7303-895c-aecfadde7c8d`; permanent worktree `C:\Users\<user>\Desktop\AI控制工作workflow-implementer-2` |
 | Planned branch | `codex/implementation-codex-role-probe-result-contract-06g0p` from exact dispatch baseline after confirmation |
-| Dispatch binding | `hnd_local_orchestration_install_06g0p_20260814`; `aln_local_orchestration_install_06g0p_20260814`; question `q-local-orchestration-install-06g0p-20260814`; no receipt before positive confirmation |
+| Dispatch binding | `hnd_local_orchestration_install_06g0p_20260814`; `aln_local_orchestration_install_06g0p_20260814`; receipt `rcpt_local_orchestration_install_06g0p_20260814`; question `q-local-orchestration-install-06g0p-20260814`; correlation `corr-local-orchestration-install-06g0p-20260814` |
 
 ## Preflight defect and one outcome
 
