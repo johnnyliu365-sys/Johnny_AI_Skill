@@ -4,8 +4,8 @@
 | --- | --- |
 | SPEC / AC | `SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2` revision 02 / AC-12 through AC-14 shared route precondition |
 | Change / ADR | `CHG-20260814-019`; `ADR-20260814-011` |
-| State | `IN_PROGRESS / IMPLEMENTATION_DISPATCH_CONFIRMED` |
-| Closure | `CLOSURE-ADAPTIVE-ROUTER-R01-01` / R1-R7 revision 01 |
+| State | `CHANGES_REQUESTED / REVISION_02_REFROZEN` |
+| Closure | `CLOSURE-ADAPTIVE-ROUTER-R01-02` / R1-R7 plus CR-R01-001 through CR-R01-003 |
 | Baseline | Router policy freeze `ffc2197f4ac9be495651fd970c0c3f21737aa3bc` |
 | Delivery profile | `STANDARD`; one Luna implementation owner; no helper |
 | Control owner / reviewer | Control task `019fb935-bbe1-7f71-8b4b-58ba20c81626`; sole Agent orchestrator |
@@ -20,6 +20,10 @@ A caller can evaluate any existing Router state/event and receive one decision t
 exact versioned skill policy to read and the exact typed return family/events expected from the
 selected action. A technical halt or undeclared transition returns the Profile's versioned
 `router-control` reference and a no-return contract. No action is selected from model memory.
+
+`expected_return` always describes the typed result expected from the **primary next action
+selected by this decision**. It never repeats the event that entered the Router merely because
+that event selected the transition.
 
 This ticket does not implement model-role readiness/wake, ticket decomposition, UI/design-source
 routing, a policy-file reader/registry, or `ArtifactRef.uri` removal. Those are later closures.
@@ -87,6 +91,64 @@ behavior are preserved byte-for-behavior in this closure.
 | `R5` | Decision serialization contains only the three reference metadata fields and finite expected-return fields; it contains no raw path, URI, policy text, prompt, Secret or exception detail introduced by this ticket. |
 | `R6` | Existing Router/private-router/collaboration/guarded-integration behavior remains green. No new policy reader, model invocation, task/worktree/Git/host/network effect or `ArtifactRef` migration occurs. |
 | `R7` | Two bounded reversals are proven and exactly restored: making `TransitionRule.skill_reference` optional turns the required-field test red; substituting the Profile fallback for one successful declared route turns the exact-copy test red. |
+
+## Revision-02 exact Profile route table
+
+The following table is exhaustive for the existing POC Profile. `EVENT(...)` means
+`ReturnContractKind.ROUTER_EVENT`; `IMPLEMENTATION(...)` means
+`ReturnContractKind.IMPLEMENTATION_RETURN`. The contract ID is
+`return-<current-stage>-<input-event>`, and its revision equals the selected skill reference's
+`source_revision`. The `IMPLEMENTATION_DISPATCH_CONFIRMED` row describes the primary planning
+lane continuation; the independently admitted ticket lane continues to use its already frozen
+`ImplementationReturn` handoff contract.
+
+| Current stage / input event | Exact skill reference ID | Exact expected return |
+| --- | --- | --- |
+| `INTAKE / INTAKE` | `discovery-change` | `EVENT(WAYFINDER_GO, WAYFINDER_NO_GO)` |
+| `WAYFINDER / WAYFINDER_GO` | `discovery-change` | `EVENT(ACTION_COMPLETED)` |
+| `WAYFINDER / WAYFINDER_NO_GO` | `router-control` | `NO_RETURN` |
+| `ARCHITECTURE / ACTION_COMPLETED` | `discovery-change` | `EVENT(ACTION_COMPLETED)` |
+| `GRILL / ACTION_COMPLETED` | `context-routing` | `EVENT(ACTION_COMPLETED)` |
+| `CONTEXT / ACTION_COMPLETED` | `specification-ticketing` | `EVENT(ACTION_COMPLETED)` |
+| `SPEC / ACTION_COMPLETED` | `specification-ticketing` | `EVENT(APPROVAL_GRANTED, APPROVAL_DENIED)` |
+| `SPEC / APPROVAL_GRANTED` | `specification-ticketing` | `EVENT(TICKET_DISPATCH_REQUIRED)` |
+| `TICKETS / TICKET_DISPATCH_REQUIRED` | `implementation-authority` | `EVENT(IMPLEMENTATION_DISPATCH_CONFIRMED)` |
+| `TICKETS / IMPLEMENTATION_DISPATCH_CONFIRMED` | `discovery-change` | `EVENT(ACTION_COMPLETED)` |
+| `IMPLEMENT / IMPLEMENTATION_RETURNED` | `implementation-tdd` | `EVENT(VALIDATION_PASSED, VALIDATION_FAILED)` |
+| `GRILL / INTEGRATION_COMPLETED` | `discovery-change` | `EVENT(ACTION_COMPLETED)` |
+| `GRILL / AUDIT_COMPLETED` | `review-checks` | `EVENT(ACTION_COMPLETED)` |
+| `IMPLEMENT / ACTION_COMPLETED` | `implementation-tdd` | `EVENT(VALIDATION_PASSED, VALIDATION_FAILED)` |
+| `SMOKE_TEST / VALIDATION_PASSED` | `review-checks` | `EVENT(ACTION_COMPLETED)` |
+| `SMOKE_TEST / VALIDATION_FAILED` | `implementation-tdd` | `IMPLEMENTATION(COMPLETED, BLOCKED, CHANGE_DETECTED)` |
+| `REVIEW / ACTION_COMPLETED` | `review-checks` | `EVENT(ACTION_COMPLETED)` |
+| `HANDOFF / ACTION_COMPLETED` | `router-control` | `NO_RETURN` |
+| `IMPLEMENT / REQUIREMENT_CHANGED` | `discovery-change` | `EVENT(ACTION_COMPLETED)` |
+
+## Revision-02 exact policy metadata
+
+Production does not read these files. The Profile stores the following real metadata frozen
+from the Router policy baseline; tests independently hash the files and compare exact bytes.
+
+| Reference ID | Source revision | Content digest |
+| --- | --- | --- |
+| `router-control` | `rev-23dd53ad68e5562f` | `sha256_23dd53ad68e5562f39a35f06f9c21a970b6eb94eab3aeeae468cc8b5cd68b091` |
+| `discovery-change` | `rev-5d432a8246bce4ed` | `sha256_5d432a8246bce4ed890289e24c50e2e29360df165eeb7f9355cb02228e1d10ef` |
+| `context-routing` | `rev-5f1e7958c70c8493` | `sha256_5f1e7958c70c8493de83aa1481e0f3f3e59c5a40e745a12077eb372fa6e0815e` |
+| `specification-ticketing` | `rev-c7011f440caa3ec8` | `sha256_c7011f440caa3ec8fe83e119a110aa368ec4cc130cf71671d0199987140c8af7` |
+| `implementation-authority` | `rev-855117ed19c9c952` | `sha256_855117ed19c9c952f8903bc56ce070d2cf3805fb51d7a450c46bbf8a00480f50` |
+| `implementation-tdd` | `rev-38408006f23df3b6` | `sha256_38408006f23df3b66a4368e2b8794cc099b84ea20417e56d881ff19512345574` |
+| `review-checks` | `rev-4b8527305609194a` | `sha256_4b8527305609194ae9dd26c16a05ff72d22b1f20a8cb925175d6793766bb5f54` |
+
+`SkillReference` rejects an all-zero revision or all-zero content digest. Within one Profile,
+one `reference_id` may repeat only with identical revision/digest metadata. Every rule's return
+contract revision must equal its skill reference revision; the fallback pair follows the same
+rule. A conflicting reference ID or revision mismatch fails Profile construction before any
+Router capability/effect.
+
+Revision-02 tests replace the incoming-event assertion with the exhaustive table above and
+verify real file hashes. Required reversals: restoring the incoming-event echo makes the
+`INTAKE` direction test red; replacing one real digest with the all-zero placeholder makes the
+policy-authenticity test red. Both are restored exactly before final verification.
 
 ## TDD and source gates
 

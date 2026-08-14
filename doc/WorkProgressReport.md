@@ -4808,3 +4808,13 @@
 | Source authority | Exactly `library/workflow_router/contracts.py`, `profile.py`, `router.py`, `__init__.py` and `tests/test_workflow_router.py`; then one append-only WPR handoff reserved as `PRG-20260814-445`. No other source/test/docs path is writable. |
 | Pre-red / return | Reproduce public `ImportError: SkillReference` before source change; execute exact committed R1-R7 and return one implementation commit plus one WPR-only handoff. Progress-only final is not completion. |
 | Resource / safety | Host model mapping `gpt-5.6-luna`, highest supported reasoning; one owner, no helper. `XSS_NOT_APPLICABLE`; no Agent delegation/control, new worktree, self-review/integration, 06G0P mutation, live model/Figma/Codex/home/App/target/network effect, push, package/install, Secret, release or deployment. |
+
+## PRG-20260814-446 - Router Ticket R01 independent review and revision-02 refreeze
+
+| Field | Evidence |
+| --- | --- |
+| Reviewed chain | Dispatch `11901565ca0dde46fc6913f4caa7d763fb5f0ab6`; implementation `bff21771d3dc10eae4b354097e40123eb2b13001`; WPR-only handoff `a16dfc38eb6141e2aef5fa480be741b1f057ca57`. Exact implementation/docs scope and clean branch readback pass. |
+| Independent verification | Focused `31/31`; six-module `98/98`; strict mypy `150` files with external cache removed; no tracked/ignored/cache residue. Full `534/534` and compile `150/150` remain valid implementer evidence. |
+| Blocking result | `CHANGES_REQUESTED`: the Profile echoes the incoming event as the expected next return, uses all-zero placeholder digest/revision metadata and synthetic references that resolve to no current policy chapter. Tests encode the same wrong direction. |
+| Review / refreeze | `doc/reviews/adaptive-project-orchestration/01-route-instruction-contract-code-review.md`; `CLOSURE-ADAPTIVE-ROUTER-R01-02` freezes the complete 19-row next-action mapping, seven real policy digests and CR-R01-001..003. |
+| Continuation | Same ticket/task/worktree/branch/allocation/receipt; additive correction only, one WPR-only return reserved as `PRG-20260814-448`. R02, 06G0P review, other rework, integration, push, package/install, release and deployment remain paused. |
