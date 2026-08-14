@@ -5,7 +5,7 @@
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-02, AC-06, AC-07 and AC-08 |
 | Change / PRD / Context | `CHG-20260808-011` / `PRD.md §15` / `doc/context/local-orchestration-installer/main.md` |
 | Revision | `03` |
-| State | `PLANNED / REFREEZE_COMPLETE / DISPATCH_PENDING` |
+| State | `IN_PROGRESS / DISPATCH_READY` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05C2C2-01` / M1-M7 |
 | Dependency | 05C2C1 guarded merge `fffbc616ee1870b69845cbcecf37a98e842106d3`; 05C2C2A approval `6cca1210b51e6d5d5e8105876c993540a12eea21` and guarded merge `1f6532a069fade0bfcf526ad0d49de7a88b281bb` |
 | Profile / resource | `STANDARD`; one implementation owner, no helper; serial consumer of the exact 05C2C1 result |
@@ -142,3 +142,19 @@ the public validator and retains `type(absent) is bool`. A mismatch is a typed
 Revision-02's receipt and reserved PRG-408 remain closed historical evidence.
 Revision 03 will receive a fresh exact dispatch registry and reserved handoff;
 no identifier from revision 02 may authorize implementation.
+
+### Revision-03 dispatch registry
+
+| Field | Value |
+| --- | --- |
+| Ticket schema gate | `PASS` against exact revision-03 refreeze `08734370f9682496d013e9e38032ec23de421006`: M1-M7, integrated ordinary strict-bool constructor, Python 3.11 explicit Pydantic/dataclass contracts plus full-tree `mypy --strict`, `STANDARD` one-owner/no-helper, `XSS_NOT_APPLICABLE`, exact two-path scope and all fresh binding identities are explicit. |
+| Authority / reviewer | Project-owner standing auto-continue `PRG-20260809-042`; sole reviewer/orchestrator task `019fb935-bbe1-7f71-8b4b-58ba20c81626`. |
+| Exact implementation owner | Existing task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; permanent worktree `C:\Users\<user>\Desktop\AI控制工作workflow-implementation`; same existing 05C2C2 branch, no helper/subagent/second owner. |
+| Lane readback | Task idle; branch/head `codex/implementation-codex-compensation-adapter-path-truth-05c2c2` / `41564b2e1087ede7bc156c68ec4aec715f3fe8bd`; invalid-ticket WIP removed, tracked/ignored/cache/runtime residue zero, exactly three worktrees. The branch head is an exact ancestor of the refreeze. |
+| Baseline admission | Fast-forward only the same branch to the exact control commit carrying this registry. Do not merge/copy a historical implementation branch, create another branch/worktree, reset, rebase, amend, force or stash. |
+| Binding | Workspace `wsb_local_orchestration_install_05c2c2_r03_20260814_01`; handoff `hnd_local_orchestration_install_05c2c2_r03_20260814`; allocation `aln_local_orchestration_install_05c2c2_r03_20260814`; receipt `rcpt_local_orchestration_install_05c2c2_r03_20260814`; correlation `corr-local-orchestration-install-05c2c2-r03-20260814`; question `q-local-orchestration-install-05c2c2-r03-20260814`; side context `scx-local-orchestration-install-05c2c2-r03-20260814-01`. |
+| Return | One implementation commit changing exactly the two frozen source/test paths, then append only reserved `PRG-20260814-416` in one WPR-only handoff commit. |
+
+This receipt authorizes only revision-03 M1-M7. Mechanically re-read the exact
+ticket and constructor before the first red; any mismatch returns typed
+`HALT / TICKET_SCHEMA_INVALID` without source/test mutation.

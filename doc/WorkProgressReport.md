@@ -4486,3 +4486,13 @@
 | Revision-03 type closure | 05C2C2 now explicitly requires the integrated ordinary strict `bool` proof constructor, built-in false/true readback, no model bypass/coercion/widening, exact response admission and request-before-effect. M1-M7 and the two-path scope remain frozen. |
 | Binding / resource | Fresh revision-03 workspace/handoff/allocation/receipt/correlation/question/side-context; `STANDARD`, one owner and no helper. Revision-02 receipt/PRG-408 remain closed historical evidence. |
 | Boundary | Reviewer integration and control-document refreeze only. No implementation-worktree write, live Codex/host/target-project effect, push/staging publication, package/install, Secret, release or deployment. |
+
+## PRG-20260814-415 - Ticket 05C2C2 revision-03 exact dispatch registry
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `05C2C2_REVISION_03_REFROZEN + TICKET_SCHEMA_PASS + EXACT_LANE_ADMITTED -> IMPLEMENTATION_DISPATCH_CONFIRMED / IMPLEMENT` |
+| Schema / type gate | Exact refreeze `08734370f9682496d013e9e38032ec23de421006` explicitly contains M1-M7, integrated ordinary strict-bool proof construction, no model bypass/coercion/widening, full-tree mypy, `STANDARD` one-owner/no-helper, `XSS_NOT_APPLICABLE`, exact two-path scope and fresh revision-03 binding. |
+| Lane readback | Owner task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; clean permanent worktree on existing branch/head `codex/implementation-codex-compensation-adapter-path-truth-05c2c2` / `41564b2e1087ede7bc156c68ec4aec715f3fe8bd`; zero tracked/ignored/cache/runtime residue and exactly three worktrees. The head is an exact ancestor of the dispatch and permits only same-branch fast-forward. |
+| Binding / return | Fresh revision-03 workspace/handoff/allocation/receipt/correlation/question/side-context from the ticket; fast-forward to this registry, change exactly the adapter and its direct test, then append only reserved PRG-20260814-416 in a WPR-only handoff. Revision-02 identifiers remain closed. |
+| Boundary | One owner and no helper. No new branch/worktree, live Codex/host/target-project effect, push/staging publication, package/install, Secret, release or deployment. |
