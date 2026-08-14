@@ -174,7 +174,7 @@
 | Ticket 06A Codex role-profile capability proof | DONE / APPROVED_EVIDENCE / INSTALL_BLOCKED / INTEGRATED | Implementation `38e9a8b`, handoff `f6f186f`, review `62955ec`, guarded merge `de4141e`; actual installed-host result is `ROLE_ISOLATION_UNPROVEN / ACCESS_DENIED / OUTPUT_UNAVAILABLE`, so capability dependents stay blocked. |
 | Autonomous Ticket 04 reviewer-only authority | SUPERSEDED / REPLACED_BY_LOCAL_06G1 | `CHG-20260814-018`; never dispatched. |
 | Tickets 06B/06C role-profile lifecycle/composition | SUPERSEDED / REPLACED_BY_06G0P_06G4 | `CHG-20260814-018`; never dispatched. |
-| Ticket 06G0P role-probe result contract | PLANNED / DELIVERY_CONFIRMATION_REQUIRED | Only eligible first child; preflight proved current `SUPPORTED` can carry malformed process evidence. |
+| Ticket 06G0P role-probe result contract | IN_PROGRESS / AWAITING_DELIVERY_CONFIRMATION | Selected for implementer-2; preflight proved current `SUPPORTED` can carry malformed process evidence; no receipt/source authority yet. |
 | Ticket 06G0 restricted-session transport proof | PLANNED / DEPENDENCY_WAIT | After 06G0P; must prove supported exact-profile/worktree effective binding or return truthful `ROLE_ISOLATION_UNPROVEN`. |
 | Tickets 06G1-06G4 reviewer gateway sequence | PLANNED / DEPENDENCY_WAIT | Pure authority, owned lifecycle, composition and end-to-end acceptance run serially after independently approved 06G0 `SUPPORTED`. |
 | Ticket 04 package parent | DECOMPOSED / NON_DISPATCHABLE | `CHG-20260812-014`; replaced by serial 04A-04I. |
