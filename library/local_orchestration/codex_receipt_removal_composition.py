@@ -15,6 +15,7 @@ from .codex_compensation_composition import (
 from .codex_compensation_port import (
     CodexCompensationPortCapability,
     CodexCompensationPortOperation,
+    CodexCompensationPortRequest,
     admit_codex_compensation_port,
 )
 from .codex_compensation_reducer import (
@@ -185,7 +186,7 @@ def _blocked(reason: CodexReceiptRemovalCompositionBlockReason) -> CodexReceiptR
 def _observe(
     operation: CodexCompensationPortOperation,
     value: object,
-    request: object,
+    request: CodexCompensationPortRequest,
 ) -> CodexCompensationObservationResult:
     return observe_codex_compensation_operation(operation, value, request)
 
