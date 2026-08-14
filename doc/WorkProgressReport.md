@@ -4700,3 +4700,14 @@
 | Adversarial closure | Reverting internal command type to `object` made the committed AST gate red; mutating external sentinel `.git/config` bytes made A6 red before Git diagnostics. Both were restored to exact corrected source blob `97b919b1b51b64c2da644b803da71a2da441e233`, then both governing tests were green. |
 | Continuation | Reviewer-only guarded integration of exact handoff `fc8709e4d26811072c6399a12252eafae2eae522`. No further correction or implementation dispatch is authorized for revision 03. |
 | Boundary | `XSS_NOT_APPLICABLE`; no helper, live Codex/home/config, target-project, network, push/staging publication, package/build/install, Secret, release or deployment. |
+
+## PRG-20260814-435 - Ticket 05C3 guarded integration
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `APPROVED(PRG-434) -> GUARDED_INTEGRATION_COMPLETED / ACTION_COMPLETED`; revision 03 is `COMPLETE / APPROVED / INTEGRATED`. |
+| Exact merge | `d898d73fda650fc45d2028d1bbe71fab6111119c`; parents `4b1b69ce3f877a3a98e86258ed15d137d7fb3f25` and exact handoff `fc8709e4d26811072c6399a12252eafae2eae522`. |
+| Conflict handling | Read-only merge prediction identified only append-only WPR overlap. The guarded merge retained PRG-430 through PRG-434 in numeric event order; no source conflict, reset, rebase, amend, force or silent resolution occurred. |
+| Post-merge evidence | Focused `9/9`; strict full-tree mypy `150/150`; in-memory compile `150/150`; terminal-review full serial `526/526` remains bound to the exact integrated source. Exact ancestry, three-worktree topology, tracked/ignored porcelain and cache/bytecode absence pass. |
+| Continuation | Return to the Router and select only an actually unblocked planned ticket. 05C3 has no further implementation continuation. |
+| Boundary | `XSS_NOT_APPLICABLE`; no helper, live Codex/home/config, target-project, network, push/staging publication, package/build/install, Secret, release or deployment. |
