@@ -4974,6 +4974,15 @@
 | Pre-red / return | Import/call the absent public shared-Context contracts/method before production mutation; implement only SC1-SC8; return one implementation commit plus one WPR-only handoff after focused/six-module/full/mypy/compile/reversal/scope/topology/residue verification. Progress-only final is not completion. |
 | Resource / safety | Host mapping `gpt-5.6-luna`, reasoning `max`; no helper. Reviewer task `019fb935-bbe1-7f71-8b4b-58ba20c81626` is sole orchestrator. `XSS_NOT_APPLICABLE`; no next-ticket authority, new worktree, live model/Codex/home/App/target/network effect, push, package/install, Secret, release or deployment. |
 
+## PRG-20260815-461 - Router R02A shared Context lifecycle gate implementation handoff
+
+| Field | Evidence |
+| --- | --- |
+| Implementation | Exact five-path implementation commit `191135405e2e57f211a9432ed7893dc611221477` on `codex/implementation-router-shared-context-r02a`; pure `RouterEngine.decide_shared_context_access(...)` with strict metadata-only contracts, profile-bound refs and finite lifecycle decisions. |
+| First red | Before production mutation, `py -3.11 -B -m unittest tests.test_workflow_router` failed at collection with the required missing public `SharedContextAccessDecision` import. |
+| Closure | SC1 strict constructors/JSON matrix; SC2 profile version `2` and exact `ctx-shared-project` / `cap-architecture-owner`; SC3 all allow rows; SC4 forbidden role/stage/lifecycle; SC5 stale and change-control precedence; SC6 metadata-only manifest/state serialization; SC8 supervisor-write and sealed-revise-without-proof reversals each turned red and were restored byte-for-byte. |
+| Verification | Focused Router `40/40`; six-module Router regression `107/107`; explicit serial full suite `543/543`; strict full-tree mypy `150` source files; in-memory compile `150` Python files; AST/source sentinel, `git diff --check`, exact five-path scope and registry ancestry pass. |
+| Readback | Permanent linked git-dir and exactly three worktrees retained; tracked and ignored porcelain empty after implementation commit; workspace cache/runtime residue `0`; repository-external mypy cache removed; `XSS_NOT_APPLICABLE`. No helper, live host/network/target effect, push, package/install, release or deployment. |
 ## PRG-20260815-462 - Router R02A independent review changes requested
 
 | Field | Evidence |
@@ -4997,6 +5006,15 @@
 | Exact correction | First-red the three review probes; change only `contracts.py`, `profile.py`, `test_workflow_router.py`; retain POC builder defaults, accept safe distinct Profile refs, accept semantically named opaque tree refs, reject all-zero expected revisions, preserve all SC1-SC8 behavior and run three reversals. Then one WPR-only handoff. |
 | Resource / boundary | Same Luna max owner; no helper, new branch/worktree, R02B/R02C, 06G0P, live host/network/target effect, push, package/install, Secret, release or deployment. `XSS_NOT_APPLICABLE`. |
 
+## PRG-20260815-464 - Router R02A metadata-boundary correction handoff
+
+| Field | Evidence |
+| --- | --- |
+| Synchronization | Same-branch additive merge `b361c17b788ce04840ebf164098ea0477a8eeca6` retained unique PRG-461, PRG-462 and PRG-463 records in order; the only conflict was append-only WPR content. |
+| Correction | `f38c212d51b9ebfb9cdcd28742ce316f04a0a771` changes only the three authorized paths and closes CR-R02A-001..003: reusable distinct Profile metadata, semantically named opaque tree refs, and reserved expected-revision rejection. |
+| First red / reversals | Alternate Profile, `idx-ticket-current`, and all-zero expected-revision probes were red before correction; profile, tree-reference and reserved-revision guards each independently turned their governing test red and were restored. |
+| Verification | Focused Router `43/43`; six-module Router regression `110/110`; explicit serial full suite `546/546`; strict full-tree mypy `150` source files; in-memory compile `150` Python files; source/scope/diff/ancestry/topology checks pass. |
+| Readback | Branch `codex/implementation-router-shared-context-r02a`; tracked and ignored porcelain empty; exactly three worktrees; cache/runtime residue `0`; external mypy cache removed; `XSS_NOT_APPLICABLE`. No helper, live host/network/target effect, push, package/install, release or deployment. |
 ## PRG-20260815-465 - Router R02A revision-02 terminal review
 
 | Field | Evidence |
@@ -5018,6 +5036,16 @@
 | Correction Context | Handoff `hnd_adaptive_router_r02a_r03_20260815`; side Context `scx-adaptive-router-r02a-20260815-03`; additively merge this registry, retaining unique WPR records. Any non-WPR conflict halts. |
 | Exact correction | First-red safe `profile` metadata beside locator-token negatives; change only `profile.py` and `test_workflow_router.py`; use hyphen-token-aware `file` rejection, preserve every other R02A behavior and run one exact reversal plus full gates. Then WPR-only handoff. |
 | Boundary | Same Luna max owner; no helper, branch/worktree creation, R02B/R02C, 06G0P, live host/network/target effect, push, package/install, Secret, release or deployment. `XSS_NOT_APPLICABLE`. |
+
+## PRG-20260815-467 - Router R02A final profile-boundary correction handoff
+
+| Field | Evidence |
+| --- | --- |
+| Synchronization | Same-branch additive merge `9c5d7b7da817afba0dfb927a0415b524b276a71d` retained unique PRG-461 through PRG-466 records; only append-only WPR overlap was resolved. |
+| Correction | `ccc653c211a38e429bb2818925e32865091c3859` changes only `library/workflow_router/profile.py` and `tests/test_workflow_router.py`; `ctx-profile-project` / `cap-profile-architecture-owner` is accepted while `file-ref` and `ctx-file-uri` remain rejected. |
+| First red / reversal | The exact positive `profile` probe was red before correction; removing the boundary-aware guard made the existing locator/sensitive negative matrix red, then the guard was restored. |
+| Verification | Focused Router `43/43`; six-module Router regression `110/110`; explicit serial full suite `546/546`; strict full-tree mypy `150` source files; in-memory compile `150` Python files; source/scope/diff/ancestry/topology checks pass. |
+| Readback | Branch `codex/implementation-router-shared-context-r02a`; tracked and ignored porcelain empty; exactly three worktrees; cache/runtime residue `0`; external mypy cache removed; `XSS_NOT_APPLICABLE`. No helper, live host/network/target effect, push, package/install, release or deployment. |
 
 ## PRG-20260815-468 - Router R02A final approval
 
