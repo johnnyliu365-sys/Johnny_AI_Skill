@@ -165,7 +165,7 @@
 | Ticket 05C1 receipt removal request | COMPLETE / APPROVED / INTEGRATED | Correction `e07a9f5`, handoff `252a698`, review `43bae91`, guarded merge `9e0343a`; independent `476/476`, strict mypy and reversals pass; CR-173 closed. |
 | Ticket 05C2 receipt removal composition parent | CONVERGENCE_DECOMPOSED / NON_DISPATCHABLE | Public response admission is private while the public historical composition requires a registration journal; replaced by serial 05C2A-05C2B. |
 | Ticket 05C2A compensation observation admission | COMPLETE / APPROVED / INTEGRATED | CR-174 closed; review `5e7e489`, guarded merge `e2e2fe9`; post-merge focused/type checks pass. |
-| Ticket 05C2B receipt removal composition | PLANNED / REFREEZE_COMPLETE | Revision 02 is bound to integrated 05C1/05C2A; exact lane dispatch is next. |
+| Ticket 05C2B receipt removal composition | IN_PROGRESS / DISPATCH_READY | Exact revision-02 schema/lane registry; one owner, no helper. |
 | Ticket 05C3 receipt removal acceptance | PLANNED / DEPENDENCY_WAIT | Starts after 05C2B independently approved/integrated. |
 | Ticket 06A Codex role-profile capability proof | DONE / APPROVED_EVIDENCE / INSTALL_BLOCKED / INTEGRATED | Implementation `38e9a8b`, handoff `f6f186f`, review `62955ec`, guarded merge `de4141e`; actual installed-host result is `ROLE_ISOLATION_UNPROVEN / ACCESS_DENIED / OUTPUT_UNAVAILABLE`, so capability dependents stay blocked. |
 | Autonomous Ticket 04 reviewer-only authority | PLANNED / DEPENDENCY_WAIT | Starts only after reviewed 06A `SUPPORTED`; typed fake effect gate, not a real Agent turn. |

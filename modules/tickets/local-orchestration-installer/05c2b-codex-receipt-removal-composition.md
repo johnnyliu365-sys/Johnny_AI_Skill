@@ -5,7 +5,7 @@
 | SPEC / AC | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / AC-02, AC-06 and AC-07 |
 | Change / PRD / Context | `CHG-20260808-011` / `PRD.md §15` / `doc/context/local-orchestration-installer/main.md` |
 | Revision | `02` |
-| State | `PLANNED / REFREEZE_COMPLETE` |
+| State | `IN_PROGRESS / DISPATCH_READY` |
 | Closure | `CLOSURE-LOCAL-INSTALL-T05C2B-01` / B1-B9 |
 | Dependency | 05C2A independently approved and integrated |
 | Profile / resource | `STANDARD`; one implementation owner, no helper; no parallel lane because the public observation contract is a serial dependency |
@@ -121,3 +121,21 @@ or deployment is authorized. There is no numeric line criterion.
 `e2e2fe986243fa64f7ce9a67903904310341597b`. Revision 02 closes the former
 public-name and foreign-state ambiguity against the integrated 05C1 and 05C2A
 contracts; it is a control refreeze, not a requirement change.
+
+## Dispatch registry
+
+| Field | Value |
+| --- | --- |
+| Ticket schema gate | `PASS` against exact refreeze commit `ef1638e0de5048674079b4b015a7e0254f37f8bd`: State, Closure B1-B9, Python 3.11 strict implementation language, `STANDARD` one-owner/no-helper profile, `XSS_NOT_APPLICABLE`, exact public contract, three-path scope and binding are explicit. |
+| Authority / reviewer | Project-owner standing auto-continue `PRG-20260809-042`; sole reviewer/orchestrator task `019fb935-bbe1-7f71-8b4b-58ba20c81626`. |
+| Exact implementation owner | Existing task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; permanent worktree `C:\Users\<user>\Desktop\AI控制工作workflow-implementation`; no helper or second owner. |
+| Released lane readback | Task idle; clean released 05C2A branch/head `codex/implementation-codex-compensation-observation-05c2a` / `7ba15c9d5513d08d2d2f1ef23e4ca06d164d3525`; exact top-level/linked git-dir, zero tracked/ignored/cache residue, exactly three worktrees and absent target branch verified. |
+| Branch / baseline | In the same permanent worktree create only `codex/implementation-codex-receipt-removal-composition-05c2b` at the exact control commit carrying this registry. Do not merge/copy a historical branch, create another worktree, reset, rebase, amend, force or stash. |
+| Binding | Workspace `wsb_local_orchestration_install_05c2b_20260814_01`; handoff `hnd_local_orchestration_install_05c2b_20260814`; allocation `aln_local_orchestration_install_05c2b_20260814`; receipt `rcpt_local_orchestration_install_05c2b_20260814`; correlation `corr-local-orchestration-install-05c2b-20260814`; question `q-local-orchestration-install-05c2b-20260814`; side context `scx-local-orchestration-install-05c2b-20260814-01`. |
+| Return | One implementation commit changing exactly the three frozen paths, then append only reserved `PRG-20260814-397` in one WPR-only handoff commit. |
+
+This receipt authorizes only B1-B9. The implementation owner must re-read this
+exact ticket blob and return `HALT / TICKET_SCHEMA_INVALID` before first red if
+any identity differs. The owner may not self-review/integrate, dispatch another
+ticket, orchestrate a helper, push/publish staging, package/install, release or
+deploy.

@@ -4292,3 +4292,13 @@
 | 05C2B refreeze | Revision 02 binds exact public result/function names, same rebuilt request identity, three/eight-call sequences, explicit 05C1 error mapping, 05C2A-only observation admission, owned four-conjunct absence, unrelated foreign preservation, failure short-circuit and exception propagation. Closure remains B1-B9. |
 | Resource decision | `STANDARD`, one owner and no helper. 05C2B owns one new source/test plus export and 05C3 is a serial acceptance dependency; parallel work would either overlap exports or implement against an unreviewed coordinator. |
 | Boundary | Control documents and guarded integration only. No live Codex/host/target-project effect, new worktree, push/staging publication, package/build/install, Secret, release or deployment. |
+
+## PRG-20260814-396 - Ticket 05C2B exact dispatch registry
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `05C2B_REFREEZE_COMPLETE + TICKET_SCHEMA_PASS + EXACT_LANE_ADMITTED -> IMPLEMENTATION_DISPATCH_CONFIRMED / IMPLEMENT` |
+| Schema / dependency | Exact refreeze `ef1638e0de5048674079b4b015a7e0254f37f8bd` explicitly contains revision-02 B1-B9, Python 3.11 strict typing, `STANDARD` one-owner/no-helper, `XSS_NOT_APPLICABLE`, exact public contract/scope/binding; 05C1 and 05C2A are integrated. |
+| Lane readback | Owner task `019ffb0c-c9c7-7b30-b614-02dea7ed9042` idle in the permanent implementation worktree; clean released branch/head `codex/implementation-codex-compensation-observation-05c2a` / `7ba15c9d5513d08d2d2f1ef23e4ca06d164d3525`; linked Git identity, zero tracked/ignored/cache residue, exactly three worktrees and absent target branch verified. |
+| Binding / dispatch | One-use 05C2B workspace/handoff/allocation/receipt/correlation/question/side-context from the ticket; create only `codex/implementation-codex-receipt-removal-composition-05c2b` at the exact commit carrying this registry and implement only the three frozen paths. Reserved WPR handoff is PRG-397. |
+| Resource / boundary | One owner, no helper or second lane because 05C3 serially depends on the coordinator and export ownership overlaps. No reviewer implementation-worktree write, new worktree, live effect, push/staging publication, package/build/install, Secret, release or deployment. |
