@@ -521,6 +521,40 @@ SPEC 核准範圍內的 ticket 規劃可由控制面建立；ticket 文件 commi
 
 `mypy --strict`、Pyright strict 或其他語言的等價 checker 仍是必要 gate，但它們只證明工具可表達的型別規則；不得單獨宣稱符合本節。
 
+<a id="compact-ticket-dispatch"></a>
+
+### 4.4 正規化 ticket 與最小派送訊息
+
+派單必須以 identifier 作為 committed canonical source 的索引，不得把已存在
+的內容再次複製進 Agent 訊息。資料歸屬固定如下：
+
+- `AGENTS.md`、本檔與 `CodeReview.md` 只保存全域治理、流程與審閱規則；
+- SPEC 只保存核准的產品行為、架構與驗收邊界；
+- ticket 是 scope、公開契約、TDD、型別政策、驗證、禁止事項與 return
+  contract 的唯一完整實作來源；
+- `WorkProgressReport.md` 只追加 Router 狀態轉移、識別碼、commit／review
+  結果與具體例外，不重抄完整 ticket；
+- dispatch／correction／steer 訊息只攜帶解析上述 committed sources 所需的
+  最小索引與一個執行動詞，不構成新的需求或驗收來源。
+
+首次派送訊息的固定最小 envelope 只有：`ACTION_REQUIRED`、
+`dispatch_ref`、`registry_commit`、`ticket`、`receipt` 與 `owner_task`。
+需要從已完成 admission 或中斷點續作時，只可再加一行有限 resume state；
+worktree、branch、baseline、SPEC／AC、scope、TDD、型別矩陣、驗證命令、
+安全條款與回傳格式一律從 `registry_commit` 上的 exact ticket 解析，不得在
+訊息重抄。correction 訊息等價使用 `correction_ref`、exact `review_commit`、
+原 ticket／receipt／owner 索引，不重新發送完整 finding 或 ticket。
+
+若訊息中需要增加 ticket 未記錄的行為、檔案、測試、權限、例外或驗收，
+控制面必須先回到對應流程，更新正式來源並形成新的 committed baseline；
+不得用較長 prompt 暗中擴張 ticket。implementation owner 無法讀取 exact
+ticket blob、識別碼無法解析、內容與 registry／receipt 不一致或 envelope
+含有競爭規則時，必須在 mutation 前回 `HALT / DISPATCH_REFERENCE_INVALID`。
+
+此規則同時是 context／token 預算規則：不得以「保險」為由重複貼上已提交
+內容。必要安全性來自 immutable commit、typed registry 與 receipt 綁定，
+不是來自 prompt 長度。
+
 <a id="implementation"></a>
 
 ## 5. `implement`：逐張 ticket 的 TDD
