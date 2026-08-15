@@ -39,4 +39,4 @@ rewrites the Revision 06 decision leaf nor reopens the Router phase.
 
 | ID | Kind | Revision | Digest | Lifecycle | Exact reference |
 | --- | --- | --- | --- | --- | --- |
-| `PROGRESS-ARTIFACT-TREE` | `PARTITION_INDEX` | `r02` | `sha256:63400993612fe33d4893f06feacd8b90b924c450f4425a478646c7c1277de29c` | `PLANNED` | [`progress-artifact-tree/README.md`](progress-artifact-tree/README.md) |
+| `PROGRESS-ARTIFACT-TREE` | `PARTITION_INDEX` | `r03` | `sha256:1a25ee27a16d06c1ce531c7d6472528d1788d03c1391bd2487bf7df7abe881f5` | `PLANNED` | [`progress-artifact-tree/README.md`](progress-artifact-tree/README.md) |

@@ -7,7 +7,7 @@
 | Ticket ID | `PAG-02-progress-leaf-reference-policy` |
 | State | `PLANNED / READY_LOW_MODEL / NON_DISPATCHED` |
 | Closure set | `PAG-02-CS-02` |
-| Authority | `PRD-20260815-022` / `CHG-20260815-022`; [`REQ-20260815-022`](../../../../doc/requirements/active/2026/adaptive-orchestration/REQ-20260815-022.md); [`adaptive-project-orchestration.md`](../../../spec/adaptive-project-orchestration.md) Revision 05 AC-17; [`DEC-20260816-519`](DEC-20260816-519.md) |
+| Authority | `PRD-20260815-022` / `CHG-20260815-022`; [`REQ-20260815-022`](../../../../doc/requirements/active/2026/adaptive-orchestration/REQ-20260815-022.md); [`adaptive-project-orchestration.md`](../../../spec/adaptive-project-orchestration.md) Revision 05 AC-17; [`DEC-20260816-520`](DEC-20260816-520.md) |
 | Baseline | reviewed integration commit of `PAG-01`, recorded by the later receipt; no baseline is inferred now |
 | Context | sealed `CONTEXT.md`; no Context append/revision is authorised |
 | Logical implementation owner | one `IMPLEMENTATION_OWNER`, `gpt-5.6-luna`, xhigh reasoning; task/worktree/branch/receipt are `UNBOUND` until later Router admission |
