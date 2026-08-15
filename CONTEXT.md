@@ -1,6 +1,6 @@
 # Johnny AI Skill project shared Context
 
-> State: `SEALED` by `CHG-20260815-024`. This artifact is architecture-owned.
+> State: `SEALED` by `CHG-20260816-025`. This artifact is architecture-owned.
 > Later stages bind its revision and exact source spans; they do not append to it.
 
 ## Stable project facts and boundaries
@@ -9,9 +9,15 @@
   tickets, tests, reviews and product source remain in the user's repository; this plugin is
   not its runtime, CI, build or deployment dependency.
 - Active implementation supervision is receipt-bound and event-driven: an exact Git ref event
-  can wake only the named reviewer through a separately proved role-wake capability after a
+  can wake only the named Senior through a separately proved role-wake capability after a
   committed handoff validates. Heartbeat is never implied and requires separate, explicit user
   approval.
+- Each controlled project has at most one active architecture owner and one active Senior.
+  Implementer and diagnostic roles are project-scoped and created only when admitted work needs
+  them; one active role identity cannot be shared across projects.
+- A persistent project Implementer slot may own a tree-shaped Context Library. Each ticket model
+  call resolves one immutable `context_epoch_id`; closed ticket epochs remain exact indexed
+  evidence and never become implicit input to later work.
 - An execution binding identifies the task/session that owns write authority, not its shell or
   IDE. While Johnny is attached, replacement of the task, writer, host or machine revokes the
   old binding before a new one writes. The user may remove Johnny at any time; removal does not
@@ -20,17 +26,29 @@
   reused first; Johnny-owned tools, environments, caches, grants and capability evidence stay
   under the per-user Johnny root. Target projects receive no `.johnny`, `.johnny-router`,
   plugin-specific manifest, runtime, worktree or cache path.
+- Johnny-owned standalone ticket workspaces may use an append-only, content-addressed immutable
+  Git seed/object pool. Baseline generations are digest-bound and ledger-owned; target Git
+  storage and project runtime never reference or depend on the pool.
 - `CONTROL_PYTHON` is Johnny-owned pinned Python 3.11 and is never implicit project Python.
   Environment checks occur only at declared gates, and every Johnny-launched process/container
   is hard-limited by an exact resource plan before project work begins.
+- Local inference and training capacity is reserved before Johnny's resource plan. Insufficient
+  residual capacity stops the workflow without killing, reconfiguring or taking resources from
+  the local model.
 - Authorized historical source repositories (`SourceProjectA`, `來源專案B`, 來源專案C
   `來源專案C`, `來源專案D`) are read-only references. No source repository is
   modified, and no Secret, PII, operational data or domain-specific business rule is copied.
 - The current product direction is a local, removable, metadata-only multi-Agent workflow
   control plane. Historical SaaS/payment/entitlement work is evidence, not a current product
   commitment.
-- Only the ticket's named reviewer may orchestrate an implementation Agent. Every source,
+- Only the ticket's named Senior may orchestrate an implementation Agent. Every source,
   workspace, Git or host effect remains role-, receipt-, baseline- and correlation-bound.
+- `TicketReceipt` is the only implementation receipt. `StageWorkReceipt` traces Architecture,
+  Grill, SPEC and Senior planning without granting implementation or external-effect authority.
+- Runtime telemetry persists only receipt-indexed metadata references. Token/cost reports are
+  recalculated item by item only when the user asks, and default no-takeover comparison performs
+  no model inference. Raw Context, prompts, source paths and target-local report files are never
+  telemetry state.
 - Shared Context lifecycle and content admission are defined only by
   `skills/johnny-project-takeover/references/context-routing.md`. Ticket, dispatch,
   implementation, monitoring and review lanes are read/reference-only.

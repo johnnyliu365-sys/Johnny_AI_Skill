@@ -3,12 +3,12 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-RECEIPT-BOUND-ROLE-SUPERVISION-20260815-01M0R2S4T6V8X0Z2B4D6F8H0J2` |
-| Status | `APPROVED / REVIEWER_DECOMPOSITION_AUTHORIZED` |
+| Status | `REVISION_01_APPROVED / REVISION_02_OWNER_REVIEW_REQUIRED` |
 | Author / baseline | Architecture owner / `main` / `f7eb3d3c9c88c23c3bc29bc9565ebc5b3b7096f9` |
 | Context | `doc/context/receipt-bound-role-supervision/main.md` |
-| Shared Context | `CONTEXT.md` at `f7eb3d3c9c88c23c3bc29bc9565ebc5b3b7096f9`, latest seal `CHG-20260815-024`; role-supervision facts originate from `CHG-20260815-023` |
-| PRD / change | `PRD-20260815-023` / `CHG-20260815-023` |
-| Architecture decision | `ADR-20260815-012` |
+| Shared Context | `CONTEXT.md` sealed by `CHG-20260816-025`; original role-supervision facts from `CHG-20260815-023` |
+| PRD / change | `PRD-20260815-023`, `PRD-20260816-025` / `CHG-20260815-023`, `CHG-20260816-025` |
+| Architecture decision | `ADR-20260815-012`, `ADR-20260816-014` |
 | Implementation language | Python 3.11 with `mypy --strict`; Markdown and validated JSON are artifact formats, not additional runtimes |
 | Delivery profile | `HIGH_ASSURANCE` for live role wake, task replacement and external-effect boundaries; pure reducers/schemas may be decomposed only after exact ticket admission |
 
@@ -19,7 +19,8 @@ capability that subscribes to one implementation task and wakes its named review
 thread reads or heartbeats waste model tokens. Interval Git polling wastes CPU and I/O. A host
 handoff-operation status cannot stand in for the implementation task.
 
-The goal is the least-total-cost supervision path that still produces stable, traceable work:
+The reviewer role's user-facing project name is **Senior**. The goal is the least-total-cost
+supervision path that still produces stable, traceable work:
 
 ```text
 exact Git ref event
@@ -329,7 +330,50 @@ binding isolation. During a deterministic ten-minute quiet qualification:
 - no repository-wide handle or cross-ticket event is registered.
 
 Structural zero-call evidence proves the behavior but not a percentage token saving. Any saved-
-token claim requires matched provider-reported usage under the existing telemetry policy.
+token claim requires provider-reported Johnny usage plus the exact user-requested counterfactual
+method, tokenizer evidence and assumptions defined by Context Load Telemetry Revision 03.
+
+### AC-20 — Closed receipt algebra
+
+Every governed role action binds exactly one member of this non-interchangeable union:
+
+```text
+WorkReceipt = TicketReceipt | StageWorkReceipt
+```
+
+`TicketReceipt` is one-to-one with one ticket and is the only member that can enter
+implementation dispatch admission. Same-ticket correction retains the one valid receipt unless
+a receipt-bound identity changes, in which case Router revocation precedes replacement.
+
+`StageWorkReceipt` records Architecture, Grill, SPEC or Senior decomposition/audit work. It binds
+one project, stage, role/task, exact artifact inputs, context epoch, expected return and evidence
+revision. It cannot name an implementation workspace/branch as writable, consume a ticket
+dispatch descriptor, authorize source mutation or grant any external effect. Converting or
+copying one receipt kind into the other is `HALT / RECEIPT_KIND_MISMATCH`.
+
+### AC-21 — Receipt-bound runtime event adapters
+
+A host adapter may register `MODEL_USAGE_REPORTED`, `ACTION_COMPLETED`, `REVIEW_HANDOFF` or a
+trusted supervision fault only when registration returns an exact `event_source_ref`,
+`subscription_id`, receipt, role/task and adapter revision. A callback performs ordinary bounded
+code and persists metadata without waking a model. At receipt closure, one exact terminal
+readback may reconcile missing/duplicate provider usage or completion events. There is no
+recurring read, timer, heartbeat or polling fallback; absent capability produces a typed
+unavailable/not-reported state.
+
+### AC-22 — On-demand diagnostic owner
+
+Only the Senior may activate a `DIAGNOSTIC_OWNER` through an admitted diagnosis ticket. The
+fixed profile is `gpt-5.6-sol` with `xhigh` reasoning. It receives read-only evidence refs,
+returns a bounded finding set to the Senior and cannot change source, Context, SPEC or ticket;
+dispatch, review, integration and Agent control are forbidden. The role becomes inactive after
+its one return. It has no heartbeat and no standing wake subscription.
+
+### AC-23 — Revision-02 transition fence
+
+Revision 02 adds receipt union, runtime event registration and diagnostic-owner boundaries. It
+does not change the immutable Revision-01 approval evidence or existing implementation receipts.
+Its exact text requires owner approval before the Senior may decompose or ticket it.
 
 ## Strongly typed contracts
 
@@ -349,6 +393,12 @@ enum LeaseKind { TOTAL_EXECUTION, INACTIVITY }
 enum ExecutionBindingLifecycle { ACTIVE, REPLACEMENT_PENDING, REPLACED, CLOSED }
 enum ArtifactLifecycle { ACTIVE, CLOSED, SUPERSEDED, ARCHIVED }
 enum ObservedControlPlaneState { ATTACHED, DETACHING, DETACHED, ADOPTING }
+enum WorkReceiptKind { TICKET, STAGE_WORK }
+enum StageWorkStage { ARCHITECTURE, GRILL, SPECIFICATION, SENIOR }
+enum RuntimeEventKind {
+  MODEL_USAGE_REPORTED, ACTION_COMPLETED, REVIEW_HANDOFF, SUPERVISION_FAULT
+}
+enum DiagnosticRoleLifecycle { INACTIVE, ACTIVE, RETURNED }
 
 struct RoleWakeCapabilityProof {
   ProjectId project_id;
@@ -454,6 +504,41 @@ struct ExecutionReplacement {
   ExecutionBindingRef new_binding_ref;
   CorrelationId new_correlation_id;
 }
+
+struct StageWorkReceipt {
+  StageWorkReceiptId receipt_id;
+  ProjectId project_id;
+  StageWorkStage stage;
+  RoleRef role_ref;
+  TaskRef task_ref;
+  ArtifactRefs input_refs;
+  ContextEpochRef context_epoch_ref;
+  ExpectedReturnRef expected_return_ref;
+  EvidenceRevision evidence_revision;
+  ContentDigest receipt_digest;
+}
+
+struct RuntimeEventRegistration {
+  EventSourceRef event_source_ref;
+  SubscriptionId subscription_id;
+  WorkReceiptRef receipt_ref;
+  RoleRef role_ref;
+  TaskRef task_ref;
+  RuntimeEventKind event_kind;
+  AdapterRevision adapter_revision;
+  ContentDigest registration_digest;
+}
+
+struct DiagnosticRoleBinding {
+  ProjectId project_id;
+  TicketReceiptRef diagnosis_ticket_receipt_ref;
+  RoleRef senior_ref;
+  RoleRef diagnostic_owner_ref;
+  ModelRef model_ref;
+  ReasoningEffort reasoning_effort;
+  DiagnosticRoleLifecycle lifecycle;
+  EvidenceRefs bounded_read_refs;
+}
 ```
 
 Opaque refs and IDs must be validated named types. Dynamic JSON, Git output and host payloads are
@@ -501,6 +586,17 @@ Secrets, PII or untrusted handoff bodies.
     comparisons are reported separately and never inferred from structural tests.
 14. Live wake, task replacement and effect-boundary review use `HIGH_ASSURANCE`; fake success,
     lower model choice or source inspection never upgrades an unproved host capability.
+15. Receipt-union tests reject StageWork-to-ticket conversion, source/workspace authority on a
+    StageWork receipt, a second live ticket receipt, wrong stage/role/task/context epoch and
+    replay before Agent or filesystem effect.
+16. Runtime-event tests require exact event source, subscription, receipt, role/task and adapter
+    revision; callback deduplication and one closure reconciliation are deterministic. Missing
+    capability never selects heartbeat, recurring read or polling.
+17. Diagnostic-role tests enforce the exact Sol xhigh profile, Senior-only activation,
+    read-only finding return, one-shot lifecycle and denial of source/spec/ticket/context writes,
+    dispatch, review, integration and Agent control.
+18. Transition tests preserve all Revision-01 receipts and evidence and reject Revision-02
+    decomposition/ticketing before exact owner approval.
 
 ## Reviewer decomposition constraints
 
@@ -513,7 +609,13 @@ closures. A safe dependency order is:
 4. proved `RoleWakePort` composition and capability preflight;
 5. controlled execution/model replacement;
 6. target-owned tree/bootstrap and root README integration;
-7. integrated high-assurance acceptance and resource qualification.
+7. integrated high-assurance acceptance and resource qualification;
+8. closed TicketReceipt/StageWorkReceipt algebra and admission fence;
+9. receipt-bound runtime event registration and terminal reconciliation;
+10. on-demand diagnostic-owner lifecycle and read-only finding return.
+
+Items 8 through 10 are Revision-02 boundaries and remain non-ticketable until exact owner
+approval and fresh Senior decomposition. Existing Revision-01 admission evidence is immutable.
 
 These are decomposition boundaries, not tickets or dispatch authority. The reviewer must split
 further when one candidate contains more than one observable closure or effect owner, and must
@@ -538,21 +640,21 @@ route any missing meaning back to architecture.
 
 ## Convergence and lineage
 
-- Sealed shared Context: `CONTEXT.md` at
-  `f7eb3d3c9c88c23c3bc29bc9565ebc5b3b7096f9`; role-supervision facts are authorized by
-  `CHG-20260815-023` and the latest shared seal includes `CHG-20260815-024`.
+- Sealed shared Context: `CONTEXT.md` under `CHG-20260816-025`; original role-supervision facts
+  are authorized by `CHG-20260815-023` and Revision-02 facts by `CHG-20260816-025`.
 - Feature Context: `doc/context/receipt-bound-role-supervision/main.md`.
-- Active requirement leaf:
-  `doc/requirements/active/2026/workflow-governance/REQ-20260815-023.md`.
-- ADR: `doc/adr/ADR-20260815-012-receipt-bound-event-driven-completion-supervision.md`.
+- Active requirement leaves:
+  `doc/requirements/active/2026/workflow-governance/REQ-20260815-023.md` and
+  `doc/requirements/active/2026/workflow-governance/REQ-20260816-025.md`.
+- ADRs: `doc/adr/ADR-20260815-012-receipt-bound-event-driven-completion-supervision.md` and
+  `doc/adr/ADR-20260816-014-project-neutral-orchestration-evidence-and-counterfactual-telemetry.md`.
 - XSS classification: `N/A`; this feature has no Browser/WebView/HTML/DOM/JavaScript renderer
   flow. A future UI or untrusted renderer integration re-runs the XSS gate.
 - New external effects: role wake and task replacement are privileged Agent-control effects and
   therefore `HIGH_ASSURANCE`. Push, release and deployment remain out of scope.
-- Open architecture questions: none after owner Grill decisions D11, D12 and D8a through D8e as
-  corrected on `2026-08-15`.
-- Current Router return: `ACTION_COMPLETED -> TICKETS / REVIEWER_DECOMPOSITION`; no dispatch
-  authority exists until the reviewer creates and admits exact tickets through the Router.
+- Open architecture questions: none after owner Grill convergence through `2026-08-16`.
+- Current Router return: `ACTION_COMPLETED -> WAIT_FOR_HUMAN / REVISION_02_SPEC_APPROVAL`; no
+  Revision-02 ticket or dispatch authority exists.
 
 ## Revision signatures
 
@@ -561,11 +663,13 @@ route any missing meaning back to architecture.
 | 2026-08-15 | Architecture owner / `main` / `2701ed563f26e116db69e8e4fcb84024754c9498` | Independent draft after completed Grill; replaces the unapproved attempt to revise the collaboration-audit SPEC. |
 | 2026-08-15 | Architecture owner / `main` / `f7eb3d3c9c88c23c3bc29bc9565ebc5b3b7096f9` | Removed the separate execution-receipt concept, bound supervision to the ticket's sole active Router receipt and reattached the draft to the latest sealed shared Context. |
 | 2026-08-15 | Project owner | Approved the exact Receipt-bound Role Supervision SPEC including the single-active Router receipt revision and assigned ticket decomposition/opening to the reviewer. |
+| 2026-08-16 | Architecture owner / `main` / `2a8287831259243e230911e1082f0ec87895d3c5` | Drafted Revision 02 closed receipt algebra, runtime event registration and on-demand diagnostic owner under `CHG-20260816-025`; exact owner approval pending. |
 
 ## Approval record
 
 - Decision maker: project owner.
-- Architecture/Grill decisions: confirmed through `2026-08-15 (Asia/Taipei)`.
-- Exact SPEC revision: `APPROVED` on `2026-08-15 (Asia/Taipei)`.
-- Approval effect: authorizes reviewer decomposition and ticket drafting only. It
-  does not authorize dispatch, implementation, heartbeat, push, release or deployment.
+- Architecture/Grill direction: confirmed through `2026-08-16 (Asia/Taipei)`.
+- Exact SPEC revision: Revision 01 `APPROVED`; Revision 02 `OWNER_REVIEW_REQUIRED`.
+- Approval effect: Revision 01 retains only its prior reviewer decomposition authority.
+  Revision 02 authorizes no Senior decomposition, ticket, dispatch, implementation, heartbeat,
+  push, release or deployment before exact approval.

@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| State | `SEALED / SPEC_APPROVED / REVIEWER_DECOMPOSITION_REQUIRED` |
-| Requirement / ADR | `PRD-20260815-023`, `CHG-20260815-023` / `ADR-20260815-012` |
+| State | `SEALED / REVISION_01_APPROVED / REVISION_02_OWNER_REVIEW_REQUIRED` |
+| Requirement / ADR | `PRD-20260815-023`, `CHG-20260815-023`, `PRD-20260816-025`, `CHG-20260816-025` / `ADR-20260815-012`, `ADR-20260816-014` |
 | SPEC | `SPEC-AI-WORKFLOW-RECEIPT-BOUND-ROLE-SUPERVISION-20260815-01M0R2S4T6V8X0Z2B4D6F8H0J2` |
 | Shared Context | `main@f7eb3d3c9c88c23c3bc29bc9565ebc5b3b7096f9`; role facts from `CHG-20260815-023`, latest seal `CHG-20260815-024` |
 | Control owner | Architecture owner / current `main` |
@@ -12,7 +12,7 @@
 
 - The design must minimize total token cost without weakening correctness, authority or stable
   project delivery. Among designs that pass those hard gates, lower CPU and I/O cost wins.
-- The reviewer is the sole Agent-to-Agent orchestrator. The architecture owner defines the
+- The Senior (the reviewer role) is the sole Agent-to-Agent orchestrator. The architecture owner defines the
   contract and wakes only on existing typed architecture conditions; the implementation owner
   never wakes or controls another Agent.
 - A Git ref event is a detection hint. Only a committed, exact, receipt/task/branch/baseline-
@@ -29,6 +29,9 @@
   evidence and leases bind that receipt; there is no separate execution receipt. Same-ticket
   correction reuses it. A receipt-bound identity change requires Router revocation before one
   same-ticket replacement receipt can become valid.
+- Architecture, Grill, SPEC and Senior planning may receive a `StageWorkReceipt` for provenance.
+  It is a distinct non-execution receipt and can never dispatch an Implementer, mutate source or
+  authorize an external effect. `TicketReceipt` remains the only implementation receipt.
 - Luna xhigh is the default implementer. Its total execution ceiling is thirty minutes and never
   resets. Terra-or-higher uses a two-hour inactivity lease; validated ref activity resets that
   lease inside the adapter without waking a model.
@@ -47,6 +50,9 @@
 - The user may remove the plugin before handoff without checkpoint, push, readback or Router
   permission. A successor may use any workflow. If the successor voluntarily re-adopts Johnny,
   takeover creates new receipts and bindings; historical live receipts are not replayable.
+- A `DIAGNOSTIC_OWNER` is created only by a Senior diagnosis ticket, uses `gpt-5.6-sol` at
+  `xhigh`, and is read-only. It returns findings to the Senior, cannot implement, review,
+  dispatch or integrate, and becomes inactive after the diagnosis. It has no heartbeat.
 
 ## Boundaries
 
