@@ -5501,3 +5501,16 @@
 | Independent checks | Focused readiness/Router `61/61`; strict mypy clean across `158` files with external cache removed; in-memory Python compile `158/158`. The independent full serial replay reached the local 64-second ceiling without an observed failure stream, so submitted `604/604` is retained as submitted, not replayed evidence. |
 | Finding / decision | `CHANGES_REQUESTED / EVIDENCE_DEFECT / SAME_BRANCH_CORRECTION`. CR-R03-001: ACX7's committed source gate accepts closure `!=` -> `<=`, closure `!=` -> `>=`, supervisor `is` -> `is not`, and blocker truthiness -> `and False` source-only mutations. The exact ticket predicates remain present; this is a bounded test-truthfulness defect, not a behavior or requirement change. |
 | Boundary | Preserve ticket, owner, permanent worktree, branch, allocation and receipt. The next legal action is one test-only additive correction plus WPR-only handoff; no new branch/worktree/receipt/allocation, helper, integration, push, package/install, target-project, external effect, Secret, release or deployment. `XSS_NOT_APPLICABLE`. |
+
+## PRG-20260815-510 - Router R03 ACX7 same-branch correction dispatch
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `CHANGES_REQUESTED(PRG-509) -> SAME_BRANCH_CORRECTION / IMPLEMENT`; this is the sole additive correction authority for CR-R03-001. |
+| Review / reviewed evidence | Review commit `599fdccfa589612e70efd8692323112ea218c640`; implementation `77d86a047767e797ddbb3fc86e5c6b320434ee35`; prior WPR handoff `3a8e306f534e59b22c054c6debd01008d93c978f`. |
+| Binding | Keep ticket `03-model-role-readiness-wake`, handoff `hnd-adaptive-router-r03-20260815`, allocation `aln-adaptive-router-r03-20260815`, receipt `rcpt-adaptive-router-r03-20260815`, correlation `corr-adaptive-router-r03-20260815`, question `q-adaptive-router-r03-20260815`, side Context `scx-adaptive-router-r03-20260815-01` and expected return `ret-model-role-readiness-review-handoff-r03`. |
+| Owner / lane | Same task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`, permanent worktree and branch `codex/implementation-router-model-role-readiness-r03`; no fresh branch/worktree/receipt/allocation. |
+| Writable scope | Only `tests/test_workflow_model_role_readiness.py`, then one WPR-only handoff. All production source, existing Router fixtures, ticket and prior implementation/review commits are immutable read-only evidence. |
+| Exact correction | Make `_source_gate` assert direct blocker truthiness, `closure_kinds != expected_closure_kinds` with `ast.NotEq` and exact operands, and `supervisor.activity_state is RoleActivityState.ACTIVE` with `ast.Is` and exact operands. Add the four CR-R03-001 in-memory reversals and prove rejection without write/compile/import/execute; retain the ticket's five reversals. |
+| Return / verification | One test-only implementation commit, then WPR-only handoff. Re-run dedicated/Router/full serial/strict-mypy/in-memory-compile/source/scope/diff/ancestry/topology/porcelain/cache gates. Any production or out-of-scope modification returns `CHANGE_DETECTED`. |
+| Boundary | No helper, self-review/integration, R04-R06, external effect, push, package/install, target-project, Secret, release or deployment. `XSS_NOT_APPLICABLE`. |
