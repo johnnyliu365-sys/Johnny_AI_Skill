@@ -5567,3 +5567,15 @@
 | Artifact evidence | The commit containing this record seals `modules/spec/adaptive-project-orchestration.md` Revision 06, `modules/spec/context-load-telemetry.md` Revision 02, their feature Contexts, the partial-supersession note for `ADR-20260813-008`, and operator/index documentation. |
 | Continuation | `AUTO_CONTINUE -> TICKETS / DECOMPOSE_APPROVED_SPEC`: reviewer may decompose/open independently observable tickets for the exact two approved isolation closures. Each later dispatch requires its own admitted ticket, one valid Router receipt, named implementation owner and independent review. |
 | Boundary | Architecture/docs-only approval. No ticket was created, no source/test changed, no dispatch receipt or Agent/workspace was created, and no migration/cleanup, target-project, Git, telemetry, install, push, release, deployment or other external effect occurred. `XSS_NOT_APPLICABLE`. |
+
+## PRG-20260815-515 - Approved isolation SPEC ticket-admission decomposition
+
+| Field | Evidence |
+| --- | --- |
+| Router action / baseline | `TICKETS / DECOMPOSE_APPROVED_SPECS`; reviewer/Senior action from clean `main` at `7e7ddea5edf1a879eda1ee29f628a945eb0424d6`. |
+| Exact authority | Adaptive Project Orchestration Revision 06 AC-01--AC-04 and Context-load Telemetry Revision 02 AC-06--AC-08, each bound to `PRD-20260815-024`, `CHG-20260815-024`, the exact feature Context and `ADR-20260815-013`. |
+| Adaptive decision | `UPSTREAM_DECISION_REQUIRED / PROJECT_ISOLATION_PUBLIC_CONTRACTS_UNDEFINED`; active decision leaf: `modules/tickets/adaptive-project-orchestration/project-isolation/r06-project-isolation-upstream-decision.md`. Missing: target-artifact manifest schema/error algebra, receipt-bound workspace request/result/decision algebra, reviewer activation/manual-handoff result algebra. |
+| Telemetry decision | `UPSTREAM_DECISION_REQUIRED / TELEMETRY_STORAGE_ADAPTER_CONTRACT_UNDEFINED`; active decision leaf: `modules/tickets/context-load-telemetry/02-opaque-johnny-owned-storage-admission.md`. Missing: opaque-ref/ledger proof and error mapping, adapter/Composition Root interface, operation-specific result nullability/lifecycle precedence. |
+| Admission result | No implementation ticket, receipt, allocation, task, worktree, branch, source/test scope or resource plan was created. Marking either closure `READY_LOW_MODEL` would require the reviewer to invent public behavior, so both remain `NON_DISPATCHABLE`. |
+| Boundary | Docs-only ticket-tree/progress update. No production/test/SPEC/Context/PRD/CHG/ADR/Workflow/skill change; no Git, filesystem, telemetry, target, Agent, host, network, install, push, release or deployment effect. `XSS_NOT_APPLICABLE`. |
+| Next Router route | `UPSTREAM_DECISION_REQUIRED -> ARCHITECTURE_OWNER / SPEC_AMENDMENT`; after sealed replacement contracts, return to `TICKETS / DECOMPOSE_APPROVED_SPECS`. |
