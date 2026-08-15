@@ -20,6 +20,7 @@
 | `05-ui-design-source-routing` | Optional design-source capability decision kernel. | `CANDIDATE / NON_DISPATCHABLE` | R04 approved/integrated |
 | `06-router-policy-acceptance` | Integrated Profile/Router acceptance and metadata-only serialization closure. | `CANDIDATE / NON_DISPATCHABLE` | R01-R05 approved/integrated |
 | [project-isolation](project-isolation/README.md) | Revision 06 project-isolation admission partition. | `UPSTREAM_DECISION_REQUIRED / NON_DISPATCHABLE` | revision `01`; SHA-256 `68508a80a36ff23a2515bb1cee5ff8d5810ca707620ebe9a52f5fe948a8f25a2`; exact Revision 06 contract completion |
+| [revision-07](revision-07/README.md) | Revision 07 fresh admission partition. | `UPSTREAM_DECISION_REQUIRED / NON_DISPATCHABLE` | revision `01`; SHA-256 `d0654c93909f3dca942d0fa10927a8a42fac297732d8d2f1cc13e3bf3ab30eed`; exact Revision 07 Port contracts required |
 
 R02C1, R02C2, R02C2A, R02C3 and R03 are complete. R04 is the next serial candidate, but it
 remains `CANDIDATE / NON_DISPATCHABLE` until its own approved ticket freeze, handoff and receipt
@@ -30,3 +31,6 @@ registry exist. Candidate labels are not implementation authority.
 Revision 06 is a separate direct-child ticket partition. It does not reopen the completed Router
 phase. Its admission decision is reachable only through
 [`project-isolation/README.md`](project-isolation/README.md).
+
+Revision 07 is separately indexed at [revision-07/README.md](revision-07/README.md). It neither
+rewrites the Revision 06 decision leaf nor reopens the Router phase.

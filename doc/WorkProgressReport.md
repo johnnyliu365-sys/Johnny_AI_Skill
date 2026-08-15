@@ -5606,3 +5606,16 @@
 | Safety boundary | Heartbeat remains forbidden without separate explicit approval. No provider/model call, report calculation, telemetry stream, source/test mutation, install, target-project effect, push, release or deployment occurred. `XSS_NOT_APPLICABLE`. |
 | Evidence | The commit containing this record updates only SPEC status/signatures, feature Context states, ADR/SPEC indexes and this approval record; it must pass docs-only scope, Markdown link and `git diff --check` readback. |
 | Continuation | `AUTO_CONTINUE -> TICKETS / SENIOR_DECOMPOSITION` is the next legal Router action. This approval-sealing action does not itself wake the Senior or open tickets. |
+
+## PRG-20260816-518 - Senior decomposition of Revision 07/02/02/03 specifications
+
+| Field | Evidence |
+| --- | --- |
+| Router action / baseline | `TICKETS / SENIOR_DECOMPOSITION`; existing Senior on clean `main` at `b6183658b7c16f9b0723482cee62fe89e677ebf3`. |
+| Authority | `PRD-20260816-025` / `CHG-20260816-025` / `ADR-20260816-014`, sealed `CONTEXT.md`, and the exact four feature Contexts. Historical Revision 06 and Telemetry Revision 02 decision leaves remain unchanged. |
+| Adaptive Rev07 | `UPSTREAM_DECISION_REQUIRED / R07_PORT_INPUT_OUTPUT_AND_FAILURE_ALGEBRA_UNDEFINED`; missing target-probe, role-readback, ledger and seed/workspace Port contracts. |
+| Environment Rev02 | `UPSTREAM_DECISION_REQUIRED / ENVIRONMENT_OBSERVATION_AND_PLAN_RESULT_CONTRACT_UNDEFINED`; missing discovery/constraint/capacity observation and plan/enforcement result contracts. |
+| Supervision Rev02 | `UPSTREAM_DECISION_REQUIRED / TICKET_RECEIPT_EVENT_AND_DIAGNOSTIC_RESULT_CONTRACT_UNDEFINED`; `TicketReceipt` itself and event/diagnostic operation result contracts are absent. |
+| Telemetry Rev03 | `UPSTREAM_DECISION_REQUIRED / TELEMETRY_OPERATION_RECEIPT_AND_REPORT_RESULT_CONTRACT_UNDEFINED`; Revision 03 does not replace the Revision 02 storage request/result algebra for SEAL/cursor/authority and depends on the undefined receipt union. |
+| Admission / dependency | No candidate is `READY_LOW_MODEL`: all four require a sealed upstream amendment before a finite TDD, strict type preflight, Composition Root binding, source scope, resource plan, rollback and typed implementation return can exist. Resolve Adaptive/Environment/Supervision contracts first; Telemetry then resolves against the sealed receipt union and storage/report contracts. |
+| Boundary / next route | Docs-only indexes and decision leaves; no implementation ticket, receipt, task, worktree, branch, source/test scope, telemetry/provider/report execution, installation, target/external effect, push, release or deployment. `UPSTREAM_DECISION_REQUIRED -> ARCHITECTURE_OWNER / SPEC_AMENDMENT`. |
