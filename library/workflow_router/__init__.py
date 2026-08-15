@@ -77,6 +77,12 @@ from .contracts import (
     TicketProposal,
     TicketProposalState,
     LaneKind,
+    LibrarySelectionDecision,
+    LibrarySelectionDecisionKind,
+    LibrarySelectionInvalidReason,
+    LibrarySelectionKind,
+    LibrarySelectionRecord,
+    LibrarySelectionRequest,
     TicketScope,
 )
 from .graph import build_router_graph
@@ -101,6 +107,7 @@ from .guarded_integration import (
 )
 from .collaboration import CollaborationTopologyResolver
 from .artifact_tree import ArtifactTreeResolver
+from .library_selection import LibrarySelectionGate
 from .requirement_lineage import RequirementLineageGate
 from .profile import build_router_poc_profile
 from .private_router import (
@@ -174,6 +181,13 @@ __all__ = (
     "ArtifactTreeResolutionRequest",
     "ArtifactKind",
     "ArtifactRef",
+    "LibrarySelectionDecision",
+    "LibrarySelectionDecisionKind",
+    "LibrarySelectionGate",
+    "LibrarySelectionInvalidReason",
+    "LibrarySelectionKind",
+    "LibrarySelectionRecord",
+    "LibrarySelectionRequest",
     "AutomaticContinuationRunner",
     "ApprovedDispatchArtifact",
     "ApprovedDispatchArtifactRegistry",

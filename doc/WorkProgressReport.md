@@ -5427,3 +5427,34 @@
 | Independent review | Focused library-selection/artifact-tree/Router `82/82`; strict mypy `156/156`; in-memory compile `156/156`; scope/ancestry/topology/porcelain/cache pass. Reviewer replayed each exact ACX6 mutation and the source gate rejected all three without write or execution. Submitted full serial evidence is `596/596`. |
 | Decision | `APPROVED / GUARDED_INTEGRATION_AUTHORIZED`; CR-R02C3-001 is closed. Integrate only exact handoff `3f8a1fb...` after a merge-tree proves no source/test conflict; append-only WPR overlap is the sole pre-authorized conflict class. |
 | Boundary | No next ticket dispatch before integration closure. No push, package/install, target-project, external effect, release, deployment or Secret work. `XSS_NOT_APPLICABLE`. |
+## PRG-20260815-499 - Router R02C3 implementation handoff
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_DISPATCH_CONFIRMED(PRG-498) -> ACTION_COMPLETED / REVIEW_HANDOFF`; this is the receipt-bound R02C3 implementation return. |
+| First red | At registry baseline `1e292e2f1524b99fa91f36cb845f718b54087cad`, `python -B -m unittest -v tests.test_workflow_library_selection.LibrarySelectionGateTests.test_exact_archive_selection_returns_selected_leaf` failed before production mutation with the expected missing-public-surface `ImportError`. |
+| Implementation | Commit `7f9c678406936e01709165e95d88431857a5aa77` adds the four exact authorized paths: strict public selection contracts/exports, pure `LibrarySelectionGate`, and the bounded ACX test suite. Branch `codex/implementation-router-library-selection-r02c3`; registry baseline is an ancestor. |
+| ACX closure | ACX1: strict ordinary construction, JSON round trips, reserved/extra/null/wrong/contradictory rejection; ACX2: exact ARCHIVE/ARCHIVED and REUSABLE_MODULE/ACTIVE selections; ACX3: binding, family, lifecycle, topology, digest and finite-reason matrix; ACX4: selected branch only with opaque unselected sibling; ACX5: metadata-only effect-free boundary; ACX6: bounded AST source/import policy gate plus three named reversals. Dedicated library-selection `18/18`; artifact-tree/Router regression `81/81`. |
+| Reversal evidence | Family-binding reversal made `test_acx6_reversal_kind_family_binding_remains_fail_closed` red; lifecycle reversal made `test_acx6_reversal_archived_reusable_leaf_remains_fail_closed` red; exact path-binding reversal made `test_acx6_reversal_unselected_sibling_remains_opaque` red. Each mutation was restored immediately; the pre-final-guard module bytes returned to SHA-256 `BA310D1AF1EA7835BF39A9B90FC4B0739B6252807BF41B3512C7B2291DAB2499` before final readback. |
+| Verification | Explicit serial full unittest `595/595`; strict `python -B -m mypy --strict --explicit-package-bases --no-incremental library tests` `156/156`; in-memory compile `156/156`; source policy, `git diff --check`, exact four-path scope, ancestry, topology and porcelain gates pass. `XSS_NOT_APPLICABLE`. |
+| Final blobs | `contracts.py` `2EB92BE8A9A23F2713224BFA1C3B8776ED1FB96967580E663D264CE349471F8C`; `library_selection.py` `E21585DB6169DCED2978920281799D2E9C6DE735F6CB319A2E63A5B2004B00ED`; `__init__.py` `070E1673ABB428E83C2F668075D2E1EF13CA0C0341C1FCD689667E2D51030C91`; direct test `C59BB11D3C3642CEA52B41787A4EC4D22064DCFB758B60CA3EB305E0A9E1FF9B`. |
+| Readback / boundary | Current branch is at the implementation commit with exactly three worktrees; tracked and ignored porcelain are empty; no cache, bytecode or runtime residue remains after removal of the exact project-local `.mypy_cache`. No helper/subagent, source outside scope, target/host/network/Git product effect, push, package/install, Secret, release or deployment occurred. |
+
+## PRG-20260815-502 - Router R02C3 ACX6 semantic source-gate correction handoff
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_DISPATCH_CONFIRMED(PRG-501) -> ACTION_COMPLETED / REVIEW_HANDOFF`; same-branch evidence correction for the ACX6 review finding in `56a169eb88f27b690698825d3df31b6bc0e23eb5`. |
+| Correction scope | Test-only commit `360b556d29d4f10906dfdd0542a6b772722aff6f` changes exactly `tests/test_workflow_library_selection.py`. The four-path implementation commit `7f9c678406936e01709165e95d88431857a5aa77` and prior WPR handoff `e62192514132342cd49d2c0fbfcd1fd69de70df5` remain immutable; no production source changed. |
+| ACX6 source gate | The committed gate now requires the canonical family rejection predicate `path.family is not expected_family`, the explicit three-reference/path-node binding predicates including `path.explicit_path_refs != expected_refs`, and the exact reusable mapping `ArtifactTreeFamily.REUSABLE_MODULE -> ArtifactTreeLifecycle.ACTIVE`. |
+| In-memory reversals | Three exact review mutations were created only as source strings and rejected by the gate without `compile`, `exec`, `eval` or file writes: family predicate replaced with `if False`; reusable `ACTIVE` replaced with `ARCHIVED`; explicit path-reference predicate replaced with `or False`. Canonical source remains accepted. |
+| Verification | Dedicated library-selection `19/19`; artifact-tree/Router regression `82/82`; explicit serial full unittest `596/596`; strict `python -B -m mypy --strict --explicit-package-bases --no-incremental library tests` `156/156`; in-memory compile `156/156`. Source/scope, `git diff --check`, ancestry, exactly-three-worktree topology, tracked/ignored porcelain and cache/runtime/bytecode residue checks pass. |
+| Boundary | XSS_NOT_APPLICABLE. No helper/subagent, production/source mutation, external effect, target project, host/network/Git product effect, push, package/install, Secret, release or deployment occurred. |
+
+## PRG-20260815-504 - R02C3 guarded integration preservation record
+
+| Field | Evidence |
+| --- | --- |
+| Merge input | Reviewer approval `c7342abb429fe63fd1ff639e7f3578e7b7da4548`; exact implementation/correction handoff `3f8a1fbc5861acd51122204aadea9542c7d04b66`. |
+| Conflict guard | Read-only merge-tree predicted only `doc/WorkProgressReport.md`. The actual merge had no source/test conflict. The overlapping append sections retain PRG-499 through PRG-503 exactly once; their immutable branch/control commits remain the authoritative chronology. |
+| Boundary | Non-force merge only; no reset, amend, overwrite of reviewed source/test evidence, push, package/install, target-project, external effect, release, deployment or Secret work. `XSS_NOT_APPLICABLE`. |
