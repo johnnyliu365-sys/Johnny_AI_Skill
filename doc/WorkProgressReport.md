@@ -5331,3 +5331,14 @@
 | Fresh branch evidence | The parent candidate must remain immutable for terminal review. One named child branch from exact `5cbe34f2...` in the existing permanent implementation worktree is required; the stopped one-file WIP is preserved as untrusted candidate input, never reset/deleted. |
 | Planned owner / bindings | Existing owner task only; `hnd-adaptive-router-r02c2a-20260815`, `aln-adaptive-router-r02c2a-20260815`, `rcpt-adaptive-router-r02c2a-20260815`, `corr-adaptive-router-r02c2a-20260815`, `scx-adaptive-router-r02c2a-20260815-01`. No receipt is active until the separate dispatch registry. |
 | Boundary | No production source, external effect, package/install, target project, push, release, deployment or Secret work. `XSS_NOT_APPLICABLE`. |
+
+## PRG-20260815-494 - R02C2A source-gate evidence continuation dispatch
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `R02C2_EVIDENCE_CONTINUATION_PROPOSED(PRG-493) -> IMPLEMENTATION_DISPATCH_CONFIRMED / IMPLEMENT`; this commit is the exact child-ticket dispatch registry. |
+| Ticket / baseline | `02c2a-requirement-lineage-source-gate-closure`; closure `CLOSURE-ADAPTIVE-ROUTER-R02C2A-01` ACX-A1 through ACX-A6 revision `r02c2a-01`; exact parent candidate/WPR handoff `5cbe34f2fba1e5bfad3227132394dfcc782916cd`. |
+| Binding | `hnd-adaptive-router-r02c2a-20260815`; `aln-adaptive-router-r02c2a-20260815`; `rcpt-adaptive-router-r02c2a-20260815`; `corr-adaptive-router-r02c2a-20260815`; `q-adaptive-router-r02c2a-20260815`; `scx-adaptive-router-r02c2a-20260815-01`; expected return `ret-requirement-lineage-source-gate-review-handoff-r02c2a`. |
+| Owner / workspace | Existing task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`, one Luna max, no helper; same permanent implementation worktree. The only authorized branch is `codex/implementation-router-requirement-lineage-source-gate-r02c2a`, created from the exact parent handoff while preserving the one stopped test WIP as untrusted candidate input. |
+| Source / verification | Only `tests/test_workflow_requirement_lineage.py`, then WPR-only handoff. Read the ticket by identifier; prove in-memory forbidden-import/helper-bypass/raw-field mutations plus focused/Router/full/mypy/compile/source/scope/diff/topology/residue gates. |
+| Boundary | No production mutation, new worktree, unlisted branch, R02C3-R06, Agent control, external effect, push, package/install, Secret, release or deployment. `XSS_NOT_APPLICABLE`. |

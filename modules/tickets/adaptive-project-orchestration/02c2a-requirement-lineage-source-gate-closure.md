@@ -4,12 +4,12 @@
 | --- | --- |
 | Parent / reason | R02C2 candidate `5cbe34f2fba1e5bfad3227132394dfcc782916cd`; `CR-R02C2-001` and `CR-R02C2-002` exposed incomplete ACX6 evidence coverage, not a behavior or product-requirement defect. |
 | SPEC / Context | Existing R02C2 ACX6 only; `SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2` revision 05 / `doc/context/adaptive-project-orchestration/main.md` at `SPEC_REVISION_05_APPROVED / ROUTER_PHASE_ACTIVE`. No Context or SPEC fact is changed. |
-| State / closure | `PLANNED / NON_DISPATCHED`; `CLOSURE-ADAPTIVE-ROUTER-R02C2A-01`, ACX-A1 through ACX-A6, revision `r02c2a-01`. |
+| State / closure | `IN_PROGRESS / RECEIPT_BOUND`; `CLOSURE-ADAPTIVE-ROUTER-R02C2A-01`, ACX-A1 through ACX-A6, revision `r02c2a-01`. |
 | Implementation language / checker | Python 3.11; `python -B -m mypy --strict --explicit-package-bases --no-incremental library tests`. |
 | Delivery profile | `STANDARD`; one `gpt-5.6-luna` max implementation owner; no helper. |
 | Control / implementation owner | Reviewer task `019fb935-bbe1-7f71-8b4b-58ba20c81626`; existing implementation task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`. |
 | Lane / branch evidence | Same permanent implementation worktree only. `FRESH_BRANCH_REQUIRED`: R02C2's reviewed candidate is immutable evidence; a child ticket must branch from exact handoff `5cbe34f2fba1e5bfad3227132394dfcc782916cd` into `codex/implementation-router-requirement-lineage-source-gate-r02c2a`, carrying only the stopped, uncommitted test WIP after exact diff admission. No new worktree. |
-| Planned binding | Handoff `hnd-adaptive-router-r02c2a-20260815`; allocation `aln-adaptive-router-r02c2a-20260815`; receipt `rcpt-adaptive-router-r02c2a-20260815`; correlation `corr-adaptive-router-r02c2a-20260815`; question `q-adaptive-router-r02c2a-20260815`; side Context `scx-adaptive-router-r02c2a-20260815-01`; expected return `ret-requirement-lineage-source-gate-review-handoff-r02c2a`. |
+| Dispatch binding | Handoff `hnd-adaptive-router-r02c2a-20260815`; allocation `aln-adaptive-router-r02c2a-20260815`; receipt `rcpt-adaptive-router-r02c2a-20260815`; correlation `corr-adaptive-router-r02c2a-20260815`; question `q-adaptive-router-r02c2a-20260815`; side Context `scx-adaptive-router-r02c2a-20260815-01`; expected return `ret-requirement-lineage-source-gate-review-handoff-r02c2a`; activated only by the exact registry containing `PRG-20260815-494`. |
 | XSS / effects | `XSS_NOT_APPLICABLE`; test-only AST/text analysis of repository source. No Browser/WebView/HTML/DOM/JS context, source body parsing, filesystem/product effect, Git effect, Agent, host or network port. |
 
 ## One observable outcome
