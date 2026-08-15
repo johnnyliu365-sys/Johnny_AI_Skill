@@ -611,6 +611,100 @@ class ArtifactTreeResolutionDecision(RouterModel):
         return self
 
 
+class LibrarySelectionKind(str, Enum):
+    """The two bounded library families selectable by the Router."""
+
+    ARCHIVE = "archive"
+    REUSABLE_MODULE = "reusable_module"
+
+
+class LibrarySelectionDecisionKind(str, Enum):
+    """The finite outcome of one caller-selected library path."""
+
+    SELECTED = "selected"
+    LIBRARY_SELECTION_INVALID = "library_selection_invalid"
+
+
+class LibrarySelectionInvalidReason(str, Enum):
+    """The finite fail-closed reasons for one library selection."""
+
+    REQUEST_BINDING_MISMATCH = "request_binding_mismatch"
+    FAMILY_MISMATCH = "family_mismatch"
+    PATH_INVALID = "path_invalid"
+    LEAF_LIFECYCLE_MISMATCH = "leaf_lifecycle_mismatch"
+    LEAF_METADATA_MISMATCH = "leaf_metadata_mismatch"
+
+
+class LibrarySelectionRecord(RouterModel):
+    """Metadata-only identity and lifecycle for one selectable library leaf."""
+
+    selection_ref: OpaqueMetadataId
+    kind: LibrarySelectionKind
+    root_ref: OpaqueMetadataId
+    partition_ref: OpaqueMetadataId
+    leaf_ref: OpaqueMetadataId
+    leaf_lifecycle: ArtifactTreeLifecycle
+    leaf_digest: EvidenceDigest
+
+    @model_validator(mode="after")
+    def leaf_digest_is_not_reserved(self) -> LibrarySelectionRecord:
+        """Reject the reserved all-zero digest sentinel."""
+
+        if _is_all_zero(self.leaf_digest, "sha256_"):
+            raise ValueError("library selection leaves must identify real content")
+        return self
+
+
+class LibrarySelectionRequest(RouterModel):
+    """One exact caller-supplied three-node library path."""
+
+    request_ref: OpaqueMetadataId
+    selection: LibrarySelectionRecord
+    path: ArtifactTreeResolutionRequest
+
+    @model_validator(mode="after")
+    def path_is_exactly_bound(self) -> LibrarySelectionRequest:
+        """Bind the supplied path identity to the selected record."""
+
+        expected_refs = (
+            self.selection.root_ref,
+            self.selection.partition_ref,
+            self.selection.leaf_ref,
+        )
+        supplied_node_refs = tuple(node.node_ref for node in self.path.path_nodes)
+        if (
+            len(self.path.explicit_path_refs) != 3
+            or len(self.path.path_nodes) != 3
+            or self.path.explicit_path_refs != expected_refs
+            or supplied_node_refs != expected_refs
+            or self.path.root_ref != self.selection.root_ref
+            or self.path.expected_leaf_ref != self.selection.leaf_ref
+        ):
+            raise ValueError("library selection requests require one exact three-node path")
+        return self
+
+
+class LibrarySelectionDecision(RouterModel):
+    """The exact finite result of one library selection admission."""
+
+    request_ref: OpaqueMetadataId
+    selection_ref: OpaqueMetadataId
+    decision: LibrarySelectionDecisionKind
+    invalid_reason: LibrarySelectionInvalidReason | None
+    selected_leaf_ref: OpaqueMetadataId | None
+
+    @model_validator(mode="after")
+    def result_shape_is_exact(self) -> LibrarySelectionDecision:
+        """Keep decision, reason and selected leaf fields coherent."""
+
+        if self.decision is LibrarySelectionDecisionKind.SELECTED:
+            if self.invalid_reason is not None or self.selected_leaf_ref is None:
+                raise ValueError("selected results require only one selected leaf")
+        elif self.invalid_reason is None or self.selected_leaf_ref is not None:
+            raise ValueError("invalid results require one finite reason and no leaf")
+        return self
+
+
 class RequirementLifecycle(str, Enum):
     """The two lifecycle states of one requirement lineage record."""
 
