@@ -81,3 +81,19 @@ change, broader test scope or any requirement change is `CHANGE_DETECTED`.
 
 No new ticket, branch, worktree, receipt, allocation, helper, integration, push, package/install,
 target-project, external/host/network effect, Secret, release or deployment is authorized.
+
+## Correction terminal recheck
+
+| Field | Result / evidence |
+| --- | --- |
+| Returned correction | Test-only `283f975f6be438e25227c0e2605f42e7d42bb2d3`; WPR-only `2f1d0d67e8ae70f15e0d11bd34d8b8c73444a197`; parent implementation `77d86a047767e797ddbb3fc86e5c6b320434ee35` remains immutable. |
+| Exact source-gate replay | PASS: pristine source is accepted; closure `!=` -> `<=`, closure `!=` -> `>=`, supervisor `is` -> `is not`, and blocker truthiness -> `and False` are all rejected in memory without writing, compiling, importing or executing altered source. |
+| Independent verification | PASS: readiness plus Router `62/62`; strict mypy has no issue in `158` files with external cache removed; in-memory Python compile `158/158`; correction scope is only the authorized test and handoff is WPR-only; ancestry, diff check, clean porcelain and exact three-worktree topology pass. Submitted serial evidence is `605/605`. |
+| CR-R03-001 | CLOSED. The committed test source gate now binds the direct blocker condition, exact closure `ast.NotEq` operands and exact supervisor `ast.Is` operands, with the review's four mutation proofs. |
+| Review result | `APPROVED / GUARDED_INTEGRATION_AUTHORIZED` |
+
+Integrate only `2f1d0d67e8ae70f15e0d11bd34d8b8c73444a197` after a read-only merge guard proves
+there is no source/test conflict. An append-only WPR overlap, if any, may be resolved only by
+retaining the distinct PRG-509, PRG-510 and PRG-511 records exactly once and without altering
+reviewed source/test commits. No push, release, deployment, package/install, target-project,
+external or Secret effect is authorized.

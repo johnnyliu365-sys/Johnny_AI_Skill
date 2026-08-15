@@ -5514,3 +5514,12 @@
 | Exact correction | Make `_source_gate` assert direct blocker truthiness, `closure_kinds != expected_closure_kinds` with `ast.NotEq` and exact operands, and `supervisor.activity_state is RoleActivityState.ACTIVE` with `ast.Is` and exact operands. Add the four CR-R03-001 in-memory reversals and prove rejection without write/compile/import/execute; retain the ticket's five reversals. |
 | Return / verification | One test-only implementation commit, then WPR-only handoff. Re-run dedicated/Router/full serial/strict-mypy/in-memory-compile/source/scope/diff/ancestry/topology/porcelain/cache gates. Any production or out-of-scope modification returns `CHANGE_DETECTED`. |
 | Boundary | No helper, self-review/integration, R04-R06, external effect, push, package/install, target-project, Secret, release or deployment. `XSS_NOT_APPLICABLE`. |
+
+## PRG-20260815-512 - Router R03 ACX7 correction terminal review
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `ACTION_COMPLETED(PRG-511) -> REVIEW`; corrected test commit `283f975f6be438e25227c0e2605f42e7d42bb2d3` and WPR-only handoff `2f1d0d67e8ae70f15e0d11bd34d8b8c73444a197` are bound to the original receipt. |
+| Independent replay | Pristine gate accepted; all four CR-R03-001 in-memory bypasses reject. Readiness/Router `62/62`, strict mypy `158/158`, in-memory Python compile `158/158`, correction/WPR scope, ancestry, diff check, three-worktree topology, clean porcelain and cache readback pass. Submitted full serial evidence is `605/605`. |
+| Decision | `APPROVED / GUARDED_INTEGRATION_AUTHORIZED`; CR-R03-001 is closed. Integrate only the exact WPR handoff after a read-only merge guard confirms no source/test conflict. |
+| Guard | An append-only WPR overlap may retain PRG-509, PRG-510 and PRG-511 exactly once. No reset, amend, force, source/test overwrite, push, package/install, target-project, external effect, Secret, release or deployment. `XSS_NOT_APPLICABLE`. |
