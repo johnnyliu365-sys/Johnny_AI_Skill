@@ -18,7 +18,9 @@
 5. 完成一個動作後回傳 typed event，回到 Router；不得自行選下一關。
 
 Router state 只保存 metadata；任何 pending implementation dispatch 都必須由 live
-descriptor、receipt 與精確 artifact references 綁定。
+descriptor、receipt 與精確 artifact references 綁定。唯一例外是
+[Workflow self-host bootstrap](Workflow.md#workflow-bootstrap-exception) 所列、本版本庫
+R03-01～R03-03 的 project-specific route；它不得推廣、複製或宣稱 normal capability。
 
 找不到、讀不到、版本不符或索引競爭時，在 mutation 前
 `HALT / ROUTE_REFERENCE_INVALID`，不得憑記憶補規則。

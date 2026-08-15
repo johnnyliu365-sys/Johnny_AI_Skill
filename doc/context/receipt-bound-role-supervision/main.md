@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| State | `SEALED / REVISION_01_APPROVED / REVISION_02_APPROVED / REVISION_03_APPROVED / SENIOR_DECOMPOSITION_AUTHORIZED` |
-| Requirement / ADR | `PRD-20260815-023`, `CHG-20260815-023`, `PRD-20260816-025`, `CHG-20260816-025`, `PRD-20260816-026`, `CHG-20260816-026` / `ADR-20260815-012`, `ADR-20260816-014`, `ADR-20260816-015` |
+| State | `SEALED / REVISION_01_APPROVED / REVISION_02_APPROVED / REVISION_03_APPROVED / REVISION_04_APPROVED / SENIOR_DECOMPOSITION_AUTHORIZED` |
+| Requirement / ADR | `PRD-20260815-023`, `CHG-20260815-023`, `PRD-20260816-025`, `CHG-20260816-025`, `PRD-20260816-026`, `CHG-20260816-026`, `PRD-20260816-027`, `CHG-20260816-027` / `ADR-20260815-012`, `ADR-20260816-014`, `ADR-20260816-015`, `ADR-20260816-016` |
 | SPEC | `SPEC-AI-WORKFLOW-RECEIPT-BOUND-ROLE-SUPERVISION-20260815-01M0R2S4T6V8X0Z2B4D6F8H0J2` |
 | Shared Context | `main@f7eb3d3c9c88c23c3bc29bc9565ebc5b3b7096f9`; role facts from `CHG-20260815-023`, latest seal `CHG-20260815-024` |
 | Control owner | Architecture owner / current `main` |
@@ -42,6 +42,26 @@
 - Host delivery has only `DELIVERED`, `NO_EFFECT` or `EFFECT_UNCERTAIN`. A proved no-effect may
   retry only the same dispatch operation. An uncertain effect quarantines the operation and
   receipt; there is no automatic retry, replacement receipt or second dispatch.
+- This repository has one finite self-host bootstrap route for R03-01 through R03-03. It is not
+  available to any other project/ticket and permanently closes after real R03-03 capability
+  proof. Architecture defines the route but never selects or dispatches an Implementer.
+- R03-01 uses an owner-approved no-receipt `BootstrapDispatchGrant`. R03-02 and R03-03 require a
+  real active `TicketReceipt` plus a separate one-shot `BootstrapTransportGrant`; neither grant
+  is a `WorkReceipt` member or live-capability evidence.
+- Senior commits an immutable attempt leaf before every bootstrap host call. The attempt consumes
+  the grant. Crash, timeout, ambiguous error or missing exact readback is `EFFECT_UNCERTAIN` and
+  cannot retry. Every correction receives a new grant; R03-02/R03-03 retain their receipt only
+  when ordinary same-ticket identity remains unchanged.
+- Until `NORMAL_ACTIVE`, the user may relay only `BOOTSTRAP_RETURN_AVAILABLE` plus `grant_ref` to
+  wake the Senior. Senior independently reads Git/handoff evidence; the relay is not authority or
+  completion proof.
+- Approved review may create a distinct exact bootstrap integration grant without a second owner
+  prompt. R03-03 still requires explicit ticket-specific high-assurance approval. Only reviewed
+  integration plus real positive host/supervision readback closes bootstrap and enables normal
+  automatic dispatch.
+- Normal automatic dispatch is limited to one unique dependency-complete, already-approved
+  low/standard ticket with all normal receipt/workspace/baseline/supervision gates. High assurance,
+  external effects, changes, ambiguity and multiple candidates still require the owner.
 - Architecture, Grill, SPEC and Senior planning may receive a `StageWorkReceipt` for provenance.
   It is a distinct non-execution receipt and can never dispatch an Implementer, mutate source or
   authorize an external effect. `TicketReceipt` remains the only implementation receipt.
@@ -75,5 +95,7 @@
   external effect. Development receipts never imply push, release or deployment authority.
 - Revision 03 does not create a task-event subscription, `RoleWakePort`, host gateway or current
   capability claim. The separately required supervision chain still halts dispatch when absent.
+- Revision 04 is an explicit self-host exception, not a generic fallback. It cannot be inferred
+  from `CAPABILITY_UNAVAILABLE`, copied into a target project or used after `NORMAL_ACTIVE`.
 - Exact approval authorizes fresh Senior decomposition only. No ticket, receipt, dispatch or
   implementation exists until the Senior creates and admits it through the normal Router.

@@ -3,12 +3,12 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-RECEIPT-BOUND-ROLE-SUPERVISION-20260815-01M0R2S4T6V8X0Z2B4D6F8H0J2` |
-| Status | `REVISION_01_APPROVED / REVISION_02_APPROVED / REVISION_03_APPROVED / SENIOR_DECOMPOSITION_AUTHORIZED` |
-| Author / baseline | Architecture owner / `main` / `a8a27e6b61f4a50debd90f421da8cd53661b965b` |
+| Status | `REVISION_01_APPROVED / REVISION_02_APPROVED / REVISION_03_APPROVED / REVISION_04_APPROVED / SENIOR_DECOMPOSITION_AUTHORIZED` |
+| Author / baseline | Architecture owner / `main` / `48e8ca8b9e404d81694415c7c4e9a9c81b3f859d` |
 | Context | `doc/context/receipt-bound-role-supervision/main.md` |
 | Shared Context | `CONTEXT.md` sealed by `CHG-20260816-025`; original role-supervision facts from `CHG-20260815-023` |
-| PRD / change | `PRD-20260815-023`, `PRD-20260816-025`, `PRD-20260816-026` / `CHG-20260815-023`, `CHG-20260816-025`, `CHG-20260816-026` |
-| Architecture decision | `ADR-20260815-012`, `ADR-20260816-014`, `ADR-20260816-015` |
+| PRD / change | `PRD-20260815-023`, `PRD-20260816-025`, `PRD-20260816-026`, `PRD-20260816-027` / `CHG-20260815-023`, `CHG-20260816-025`, `CHG-20260816-026`, `CHG-20260816-027` |
+| Architecture decision | `ADR-20260815-012`, `ADR-20260816-014`, `ADR-20260816-015`, `ADR-20260816-016` |
 | Implementation language | Python 3.11 with `mypy --strict`; Markdown and validated JSON are artifact formats, not additional runtimes |
 | Delivery profile | `HIGH_ASSURANCE` for live role wake, task replacement and external-effect boundaries; pure reducers/schemas may be decomposed only after exact ticket admission |
 
@@ -39,6 +39,11 @@ adds durable approved-artifact and `TicketReceipt` state, one-shot dispatch clai
 task/workspace admission and finite host-effect settlement. It does not weaken the independent
 Git-event/wake-chain gate or pretend that presence of a Codex thread tool is a subscription.
 
+Revision 04 breaks the self-hosting cycle without weakening normal dispatch. It creates one
+project-specific, finite bootstrap route for R03-01 through R03-03. The route uses committed
+grant/attempt/result evidence, user relay only as a wake hint and an explicit positive activation
+gate. It permanently disappears after the complete live capability is proven.
+
 ## Out of scope
 
 - No heartbeat implementation or implicit heartbeat approval.
@@ -47,6 +52,8 @@ Git-event/wake-chain gate or pretend that presence of a Codex thread tool is a s
 - No new network service, MCP service, database, paid Provider or model host.
 - No host capability claim inferred from tool inventory, prompt text, profile/config bytes,
   screenshot or a process-local fake.
+- No generic bootstrap fallback, implicit exception after `CAPABILITY_UNAVAILABLE`, bootstrap
+  grant for another project/ticket or use after normal activation.
 - No automatic creation of an architecture owner, reviewer or implementation task without the
   existing receipt-bound gateway authority.
 - No production push, release, signing, deployment, migration or Secret authority.
@@ -63,6 +70,10 @@ Pure Router
 Live dispatch composition
   durable artifact registry + TicketReceiptStorePort + DispatchClaimStorePort
   + TaskWorkspaceAdmissionPort + ReviewerDispatchGatewayPort
+
+Self-host bootstrap governance
+  project-owner policy + Senior-owned immutable grant/attempt/result/review/integration leaves
+  + user return-available relay + exact normal-activation proof
 
 Local supervision composition
   GitRefEventAdapter + HandoffValidator + SupervisionLeasePort + RoleWakePort
@@ -350,7 +361,8 @@ method, tokenizer evidence and assumptions defined by Context Load Telemetry Rev
 
 ### AC-20 — Closed receipt algebra
 
-Every governed role action binds exactly one member of this non-interchangeable union:
+Outside the exact Revision-04 R03 self-host bootstrap route, every governed role action binds
+exactly one member of this non-interchangeable union:
 
 ```text
 WorkReceipt = TicketReceipt | StageWorkReceipt
@@ -365,6 +377,10 @@ one project, stage, role/task, exact artifact inputs, context epoch, expected re
 revision. It cannot name an implementation workspace/branch as writable, consume a ticket
 dispatch descriptor, authorize source mutation or grant any external effect. Converting or
 copying one receipt kind into the other is `HALT / RECEIPT_KIND_MISMATCH`.
+
+The R03-01 `BootstrapDispatchGrant` is neither a third union member nor a receipt. It is the
+separately owner-approved, project/ticket-limited exception in AC-31–AC-38 and permanently closes
+after normal activation.
 
 ### AC-21 — Receipt-bound runtime event adapters
 
@@ -502,6 +518,123 @@ not by itself prove the exact live gateway or supervision subscription. If the i
 environment cannot prove the required host result and wake chain, it returns the matching typed
 capability halt. It may not substitute a fake, manual claim, heartbeat, repeated read or polling.
 
+<a id="bootstrap-ac-31"></a>
+
+### AC-31 — Project-specific bootstrap allowlist and role ownership
+
+The bootstrap route exists only for this repository and the exact R03-01, R03-02 and R03-03
+ticket revisions admitted by the Senior. It cannot be inferred from capability failure, reused
+for PAG-01/PAG-02, copied to a controlled target project or extended by ticket prose. Any fourth
+ticket, project mismatch, revised closure without change control or post-activation use returns
+`HALT / BOOTSTRAP_SCOPE_FORBIDDEN`.
+
+Architecture owns the policy and types only. The Senior remains the sole Agent-to-Agent
+orchestrator and owns exact ticket admission, implementation owner/task, worktree, branch,
+baseline, model/profile, Context epoch, expected return and dispatch action binding. Architecture
+must not populate, select or send those execution fields.
+
+### AC-32 — Immutable bootstrap artifact tree and claim-before-effect
+
+The Senior records bootstrap state in a bounded target-owned direct-child tree below the existing
+R03 ticket partition. The tree contains separate immutable grant, attempt, delivery-result,
+relay-observation, review-decision, correction-grant, integration-grant/result and activation
+leaves. Indexes contain only ID, kind, revision, digest, lifecycle and exact direct reference;
+sealed leaves never change in place.
+
+Before every host message the Senior commits one `BootstrapDispatchAttempt` that binds and
+consumes one exact grant. Only after that commit may the Senior call the host once. A later result
+leaf records `DELIVERED`, `NO_EFFECT` or `EFFECT_UNCERTAIN`. Crash after claim, timeout, ambiguous
+exception, missing delivery identity or absent exact readback is uncertain and receives no retry,
+new operation ID or automatic reconciliation. A new attempt requires a new owner-approved grant.
+
+### AC-33 — R03-01 no-receipt bootstrap authority
+
+R03-01 alone may start without a `TicketReceipt`. Its `BootstrapDispatchGrant` is an explicit
+project-owner authority that binds every Senior-selected execution field, exact ticket/registry
+commits, one initial action and expected return. It is not a `WorkReceipt` member, cannot create a
+normal implementation lane, cannot be projected as `TicketDispatchReceipt` and cannot claim that
+the live registry/issuer exists.
+
+The identifiers-only bootstrap envelope replaces the ordinary `receipt` field with
+`bootstrap_grant` and contains exactly:
+
+```text
+ACTION_REQUIRED
+dispatch_ref
+registry_commit
+ticket
+bootstrap_grant
+owner_task
+```
+
+No source, prompt body, path, branch, baseline, TDD or copied contract may be added. The owner
+resolves them from the committed grant/ticket inside its fixed task/worktree before mutation.
+
+### AC-34 — User relay is wake hint, never evidence
+
+Before normal activation the user may wake the Senior with exactly
+`BOOTSTRAP_RETURN_AVAILABLE` plus `grant_ref`. The relay contains no commit claim, test result,
+review conclusion or copied handoff. It cannot change state or prove completion.
+
+After wake, the Senior performs read-only task/worktree/branch/commit/handoff validation against
+the grant. Only an exact committed implementation return may enter review. No heartbeat,
+automation, cron, watchdog, active-turn blocking wait, recurring thread/Git/filesystem read or
+timed polling is permitted while waiting for the relay.
+
+### AC-35 — Correction, review and integration authority
+
+Every bootstrap review correction uses a new owner-approved one-shot correction/transport grant
+bound to the same ticket and exact review decision. It is claimed before one correction message.
+No previous initial/correction grant is reusable. For R03-02/R03-03, the same real receipt is
+retained only when every ordinary same-ticket receipt-bound identity remains unchanged.
+
+An independently `APPROVED` review may automatically create one separate
+`BootstrapIntegrationGrant` under the already-approved policy. It binds the exact implementation
+commit, review decision/commit, current main baseline, integration action/correlation and result
+digest. The Senior may perform only the existing guarded local integration. `CHANGES_REQUESTED`,
+stale/dirty main, mismatch, conflict, failed checks or absent review returns a typed halt and no
+integration grant. Integration never authorizes push, release or deployment.
+
+### AC-36 — Real receipt plus temporary transport for R03-02/R03-03
+
+After reviewed R03-01 integration, R03-02 and R03-03 must use a real active `TicketReceipt` from
+the integrated store. Their `BootstrapTransportGrant` authorizes only the still-missing transport
+effect; it cannot issue, replace, bypass or repair the receipt and cannot label the dispatch as a
+complete normal receipt-bound path.
+
+The ordinary six-field envelope remains unchanged and carries the real receipt. Each transport
+attempt still follows AC-32 and waits for the user relay at return. R03-03 is
+`HIGH_ASSURANCE_REQUIRED` and requires a separate ticket-specific owner approval before its first
+grant. Revision-04 approval alone is not R03-03 implementation authority.
+
+### AC-37 — Normal activation and bounded automatic dispatch
+
+Only all of the following can create one immutable `NormalActivationProof`:
+
+- R03-01, R03-02 and R03-03 are independently reviewed and integrated in dependency order;
+- R03-03 real host readback proves the Senior-only gateway and exact delivery semantics;
+- the receipt-bound Git-event, lease and `RoleWakePort` supervision chain is real and proven;
+- bootstrap grants/attempts are terminal and no uncertain effect or correction remains open;
+- current main and capability revisions match the activation candidate.
+
+The sole positive decision is `NORMAL_ACTIVE`. A fake, source/config inspection, tool inventory,
+unit test or `CAPABILITY_UNAVAILABLE` is `NORMAL_CAPABILITY_UNPROVEN` and keeps bootstrap closed
+to new tickets without enabling normal dispatch.
+
+After `NORMAL_ACTIVE`, bootstrap authority is permanently `CLOSED`. Router may auto-dispatch only
+one unique dependency-complete, already-approved low/standard ticket when exact receipt, owner,
+task/worktree, branch/baseline, resource/model and supervision gates all pass. `HIGH_ASSURANCE`,
+external/irreversible effect, requirement/architecture change, ambiguity, missing authority or
+multiple eligible candidates remains `WAIT_FOR_HUMAN` or `HALT` as ordinarily defined.
+
+### AC-38 — Revision-04 transition fence
+
+Revision 04 authorizes only additive Senior correction/admission artifacts for the existing R03
+ticket set. It creates no grant, attempt, receipt, task, worktree, branch, dispatch, review,
+integration, wake or automatic ticket selection. `DEC-20260816-521` and existing R03 ticket leaves
+remain immutable; Senior must add a correction decision and exact bootstrap leaves rather than
+rewrite them.
+
 ## Strongly typed contracts
 
 The following is contract notation, not an alternative implementation language. Python
@@ -552,6 +685,18 @@ enum LiveDispatchDecisionKind { DISPATCH_DELIVERED, ALREADY_DELIVERED,
                                 PENDING_DESCRIPTOR_REJECTED,
                                 RECEIPT_REJECTED, TASK_WORKSPACE_REJECTED,
                                 GATEWAY_UNAVAILABLE, STORAGE_UNAVAILABLE }
+enum BootstrapRoutePhase { R03_01_NO_RECEIPT, R03_02_RECEIPT_TRANSPORT,
+                           R03_03_RECEIPT_TRANSPORT, NORMAL_ACTIVE, CLOSED }
+enum BootstrapGrantKind { INITIAL_DISPATCH, CORRECTION_DISPATCH, TRANSPORT_DISPATCH,
+                          TRANSPORT_CORRECTION, INTEGRATION }
+enum BootstrapArtifactKind { POLICY, DISPATCH_GRANT, DISPATCH_ATTEMPT, DISPATCH_RESULT,
+                             RELAY_OBSERVATION, REVIEW_DECISION, INTEGRATION_GRANT,
+                             INTEGRATION_RESULT, NORMAL_ACTIVATION }
+enum BootstrapDispatchOutcome { DELIVERED, NO_EFFECT, EFFECT_UNCERTAIN }
+enum BootstrapReviewDecisionKind { APPROVED, CHANGES_REQUESTED, BLOCKED }
+enum BootstrapIntegrationDecisionKind { INTEGRATED, INTEGRATION_BLOCKED }
+enum NormalActivationDecisionKind { NORMAL_ACTIVE, NORMAL_CAPABILITY_UNPROVEN,
+                                    NORMAL_ACTIVATION_BLOCKED }
 enum RuntimeEventKind {
   MODEL_USAGE_REPORTED, ACTION_COMPLETED, REVIEW_HANDOFF, SUPERVISION_FAULT
 }
@@ -869,6 +1014,132 @@ struct LiveDispatchResult {
   ContentDigest result_digest;
 }
 
+struct BootstrapRoutePolicy {
+  BootstrapPolicyId policy_id;
+  ProjectId project_id;
+  SpecRef spec_ref;
+  SpecRevision spec_revision;
+  RequirementChangeRef change_ref;
+  BootstrapTicketRefs allowlisted_ticket_refs;
+  BootstrapRoutePhase current_phase;
+  RoleRef architecture_owner_ref;
+  RoleRef senior_ref;
+  OwnerAuthorityRef owner_authority_ref;
+  ArtifactRevision policy_revision;
+  ContentDigest policy_digest;
+}
+
+struct BootstrapDispatchGrant {
+  BootstrapGrantId grant_id;
+  BootstrapPolicyId policy_id;
+  BootstrapGrantKind grant_kind;
+  BootstrapRoutePhase phase;
+  ProjectId project_id;
+  TicketRef ticket_ref;
+  TicketRevision ticket_revision;
+  ContentDigest ticket_digest;
+  CommitId registry_commit;
+  std::optional<TicketReceiptId> ticket_receipt_id;
+  RoleRef senior_ref;
+  TaskRef senior_task_ref;
+  RoleRef implementation_owner_ref;
+  TaskRef implementation_task_ref;
+  WorktreeRef worktree_ref;
+  BranchRef branch_ref;
+  CommitId expected_baseline_commit;
+  ModelProfileRef model_profile_ref;
+  ContextEpochRef context_epoch_ref;
+  ExpectedReturnRef expected_return_ref;
+  std::optional<ReviewDecisionRef> correction_review_ref;
+  OwnerAuthorityRef owner_authority_ref;
+  ContentDigest grant_digest;
+}
+
+struct BootstrapDispatchAttempt {
+  BootstrapAttemptId attempt_id;
+  BootstrapGrantId grant_id;
+  BootstrapGrantKind grant_kind;
+  ProjectId project_id;
+  TicketRef ticket_ref;
+  RoleRef senior_ref;
+  TaskRef owner_task_ref;
+  CommitId claim_commit;
+  DispatchOperationId dispatch_ref;
+  ContentDigest envelope_digest;
+  ArtifactRevision attempt_revision;
+  ContentDigest attempt_digest;
+}
+
+struct BootstrapDispatchResult {
+  BootstrapResultId result_id;
+  BootstrapAttemptId attempt_id;
+  BootstrapDispatchOutcome outcome;
+  std::optional<HostDeliveryRef> delivery_ref;
+  std::optional<HostTaskRevision> observed_task_revision;
+  EvidenceRefs readback_refs;
+  ArtifactRevision result_revision;
+  ContentDigest result_digest;
+}
+
+struct BootstrapRelayObservation {
+  BootstrapRelayObservationId observation_id;
+  BootstrapGrantId grant_id;
+  BootstrapReturnAvailableLiteral event_kind;
+  RoleRef target_senior_ref;
+  EvidenceRevision observation_revision;
+  ContentDigest observation_digest;
+}
+
+struct BootstrapReviewDecision {
+  BootstrapReviewDecisionId decision_id;
+  BootstrapGrantId grant_id;
+  BootstrapReviewDecisionKind decision;
+  TicketRef ticket_ref;
+  RoleRef reviewer_ref;
+  CommitId implementation_commit;
+  ReviewRef review_ref;
+  CommitId review_commit;
+  EvidenceRefs verification_refs;
+  ContentDigest decision_digest;
+}
+
+struct BootstrapIntegrationGrant {
+  BootstrapIntegrationGrantId grant_id;
+  BootstrapPolicyId policy_id;
+  BootstrapReviewDecisionId approved_review_decision_id;
+  TicketRef ticket_ref;
+  CommitId implementation_commit;
+  CommitId review_commit;
+  CommitId expected_main_commit;
+  IntegrationActionRef integration_action_ref;
+  CorrelationId correlation_id;
+  ContentDigest grant_digest;
+}
+
+struct BootstrapIntegrationResult {
+  BootstrapIntegrationResultId result_id;
+  BootstrapIntegrationGrantId grant_id;
+  BootstrapIntegrationDecisionKind decision;
+  std::optional<CommitId> integration_commit;
+  std::optional<IntegrationFailureRef> failure_ref;
+  EvidenceRefs readback_refs;
+  ContentDigest result_digest;
+}
+
+struct NormalActivationProof {
+  NormalActivationProofId proof_id;
+  BootstrapPolicyId policy_id;
+  IntegrationRefs r03_integration_refs;
+  HostGatewayCapabilityProof host_gateway_proof;
+  SupervisionCapabilityProof supervision_capability_proof;
+  OpenBootstrapArtifactRefs open_artifact_refs;
+  CommitId expected_main_commit;
+  CapabilityRevision capability_revision;
+  NormalActivationDecisionKind decision;
+  std::optional<NormalActivationFailureRef> failure_ref;
+  ContentDigest proof_digest;
+}
+
 port LiveApprovedDispatchArtifactRegistryPort {
   ApprovedDispatchArtifactRegisterResult register(
       ApprovedDispatchArtifactRegisterRequest request);
@@ -936,6 +1207,27 @@ receipt/claim; task/workspace/branch/baseline; model/profile/tool policy/Context
 chain; gateway capability; durable claim transition; host delivery/readback. An earlier failure
 prevents every later port call. Storage failure always fails closed and never falls back to
 process-local state.
+
+Bootstrap nullability and identity are also closed:
+
+- the policy allowlist contains exactly the current R03-01/R03-02/R03-03 revisions and no other
+  ticket; `NORMAL_ACTIVE` can transition only to `CLOSED`, never back to a bootstrap phase;
+- `R03_01_NO_RECEIPT` requires `ticket_receipt_id = None`; both receipt-transport phases require
+  one exact active receipt. Any opposite shape is `BOOTSTRAP_RECEIPT_KIND_MISMATCH`;
+- correction grant kinds require one exact `correction_review_ref`; initial/transport initial
+  grants forbid it. Architecture owner identity never substitutes for the Senior-selected
+  implementation bindings;
+- one grant has exactly one attempt. The attempt's committed claim predates its host call and
+  prevents a second call regardless of whether a result leaf exists;
+- bootstrap `DELIVERED` requires delivery/task revision; `NO_EFFECT` forbids them;
+  `EFFECT_UNCERTAIN` carries only trustworthy readback and never permits reuse;
+- a relay observation contains only the return-available literal, grant and target Senior. It
+  carries no implementation, test or review evidence;
+- integration `INTEGRATED` requires one integration commit and no failure; blocked integration
+  requires one failure and no integration commit;
+- `NORMAL_ACTIVE` requires the three exact integration refs, positive real host/supervision
+  proofs, an empty open-artifact set and no failure. Every other decision requires a failure and
+  grants no normal dispatch.
 
 Opaque refs and IDs must be validated named types. Dynamic JSON, Git output and host payloads are
 validated and normalized at the adapter boundary before entering these contracts. Durable
@@ -1020,6 +1312,27 @@ Secrets, PII or untrusted handoff bodies.
     fake/adapter boundary. Tool inventory or synthetic success remains `CAPABILITY_UNAVAILABLE`;
     the test creates no live task, message, branch, target write or wake unless a later ticket
     carries the exact effect authority.
+28. Bootstrap policy/schema tests cover the exact three-ticket allowlist, phase order, no-receipt
+    R03-01 shape, receipt-required R03-02/R03-03 shape, architecture/Senior role separation and
+    rejection of every other project/ticket/revision or post-activation use.
+29. Artifact-tree tests prove direct-child-only indexes, immutable additive leaves, exact digests
+    and one grant/one attempt. A claimed grant with no result is uncertain and never callable.
+30. Envelope tests prove R03-01 substitutes only `bootstrap_grant` for `receipt`; R03-02/R03-03
+    retain the ordinary real-receipt envelope. Extra/missing/copied contract fields fail before
+    the Senior host call.
+31. Relay tests prove `BOOTSTRAP_RETURN_AVAILABLE + grant_ref` can only select Senior readback;
+    copied commit/test/handoff claims never become evidence and no recurring wait/read exists.
+32. Review/correction tests require a new owner-approved grant for every correction, retain an
+    R03-02/R03-03 receipt only under unchanged identity and reject replay of every prior grant.
+33. Integration tests issue a distinct grant only from exact `APPROVED` review and prove
+    implementation/review/main baseline binding, guarded integration, stale/conflict failure and
+    absence of push/release/deploy authority.
+34. Activation tests require three reviewed integrations, real positive gateway/supervision
+    proofs and zero open/uncertain bootstrap artifacts. Fake/unsupported evidence stays unproven;
+    positive activation permanently closes bootstrap.
+35. Auto-dispatch tests admit exactly one unique approved dependency-ready low/standard ticket
+    after activation and preserve owner waits/halts for high assurance, external effects,
+    change/ambiguity, missing gate or multiple candidates.
 
 ## Reviewer decomposition constraints
 
@@ -1039,6 +1352,8 @@ closures. A safe dependency order is:
 11. canonical live `TicketReceipt`, durable artifact registry and receipt-store reducers;
 12. task/workspace admission plus one-shot dispatch-claim settlement;
 13. Senior-only host adapter and integrated high-assurance capability proof.
+14. additive Revision-04 bootstrap admission/correction artifacts for the existing R03 sequence;
+    no new implementation ticket is created merely to represent the exception.
 
 Items 8 through 10 are approved Revision-02 boundaries available for fresh Senior decomposition.
 Existing Revision-01 admission evidence is immutable; approval itself creates no ticket.
@@ -1046,6 +1361,10 @@ Existing Revision-01 admission evidence is immutable; approval itself creates no
 Items 11 through 13 are approved Revision-03 prerequisite boundaries. The Senior must keep pure
 metadata/storage work separate from the privileged host effect. Item 13 cannot be admitted as
 `READY_LOW_MODEL`; a truthful unsupported result is valid evidence but does not unblock dispatch.
+
+Item 14 is the approved Revision-04 re-admission route. Senior must amend status through additive
+decision/grant leaves, not rewrite `DEC-20260816-521` or the three ticket bodies. Selecting exact
+owners/workspaces and performing dispatch remain Senior actions outside architecture scope.
 
 These are decomposition boundaries, not tickets or dispatch authority. The reviewer must split
 further when one candidate contains more than one observable closure or effect owner, and must
@@ -1072,6 +1391,13 @@ route any missing meaning back to architecture.
   higher-risk failure.
 - Revision-03 rollback closes/quarantines live claims, removes only installer-ledger-owned state
   and restores the prior fail-closed no-live-dispatch condition. It never deletes target history.
+- Bootstrap commit-before-effect can conservatively strand a grant when failure occurs between
+  claim commit and host call. A new owner-approved grant is required; no inference or replay is
+  allowed.
+- User relay adds a temporary manual interaction but no background token/CPU cost. It disappears
+  only after real activation proof; inability to prove R03-03 leaves normal dispatch disabled.
+- Revision-04 rollback closes the allowlisted policy and leaves immutable bootstrap provenance in
+  Git. It cannot reactivate a consumed grant or alter an already-integrated implementation.
 - Deployment implementation is not authorized here. Any future deployment ticket independently
   applies the security effect boundary and exact environment/artifact readback.
 
@@ -1081,22 +1407,27 @@ route any missing meaning back to architecture.
   are authorized by `CHG-20260815-023` and Revision-02 facts by `CHG-20260816-025`.
 - Revision-03 live-dispatch facts are authorized by `PRD-20260816-026` /
   `CHG-20260816-026`; they do not alter the sealed shared Context body.
+- Revision-04 self-host bootstrap facts are authorized by `PRD-20260816-027` /
+  `CHG-20260816-027`; they do not create a generic target-project exception.
 - Feature Context: `doc/context/receipt-bound-role-supervision/main.md`.
 - Active requirement leaves:
   `doc/requirements/active/2026/workflow-governance/REQ-20260815-023.md` and
   `doc/requirements/active/2026/workflow-governance/REQ-20260816-025.md` and
-  `doc/requirements/active/2026/workflow-governance/REQ-20260816-026.md`.
+  `doc/requirements/active/2026/workflow-governance/REQ-20260816-026.md` and
+  `doc/requirements/active/2026/workflow-governance/REQ-20260816-027.md`.
 - ADRs: `doc/adr/ADR-20260815-012-receipt-bound-event-driven-completion-supervision.md` and
   `doc/adr/ADR-20260816-014-project-neutral-orchestration-evidence-and-counterfactual-telemetry.md`
   and `doc/adr/ADR-20260816-015-live-receipt-dispatch-settlement.md`.
+- Bootstrap ADR: `doc/adr/ADR-20260816-016-self-host-bootstrap-dispatch-exception.md`.
 - XSS classification: `N/A`; this feature has no Browser/WebView/HTML/DOM/JavaScript renderer
   flow. A future UI or untrusted renderer integration re-runs the XSS gate.
 - New external effects: role wake and task replacement are privileged Agent-control effects and
   therefore `HIGH_ASSURANCE`. Push, release and deployment remain out of scope.
 - Open architecture questions: none after owner Grill convergence through `2026-08-16`.
 - Current Router return: `APPROVAL_GRANTED -> ACTION_COMPLETED / SPEC`; next route may enter
-  `TICKETS / SENIOR_DECOMPOSITION` for the Revision-03 prerequisite through a separate Router
-  action. No ticket, receipt, claim, host effect or dispatch authority exists from approval alone.
+  `TICKETS / SENIOR_READMISSION` for additive Revision-04 bootstrap artifacts through a separate
+  Router action. Architecture does not select an execution owner or dispatch. No grant, attempt,
+  receipt, host effect or implementation authority exists from approval alone.
 
 ## Revision signatures
 
@@ -1109,13 +1440,16 @@ route any missing meaning back to architecture.
 | 2026-08-16 | Project owner | Approved the exact Receipt-bound Role Supervision Revision 02 and authorized fresh Senior decomposition only. |
 | 2026-08-16 | Architecture owner / `main` / `a8a27e6b61f4a50debd90f421da8cd53661b965b` | Added Revision 03 durable live TicketReceipt, approved-artifact registry, exact task/workspace admission and one-shot host dispatch settlement under `CHG-20260816-026`. |
 | 2026-08-16 | Project owner | Approved the Revision-03 live receipt dispatch prerequisite and authorized fresh Senior decomposition only; four previously recorded Revision blockers remain a later sequence. |
+| 2026-08-16 | Architecture owner / `main` / `48e8ca8b9e404d81694415c7c4e9a9c81b3f859d` | Added Revision 04 finite self-host bootstrap grant/attempt/relay/review/integration and normal-activation contracts under `CHG-20260816-027`. |
+| 2026-08-16 | Project owner | Approved Revision 04 decisions: project-only R03 scope, user return relay, new grant per correction, separate automatic integration grant, real-receipt transport bridge for R03-02/R03-03, high-assurance R03-03 approval and bounded normal auto-dispatch. |
 
 ## Approval record
 
 - Decision maker: project owner.
 - Architecture/Grill direction: confirmed through `2026-08-16 (Asia/Taipei)`.
 - Exact SPEC revision: Revision 01 `APPROVED`; Revision 02 `APPROVED`; Revision 03
-  `APPROVED` on `2026-08-16`.
+  `APPROVED`; Revision 04 `APPROVED` on `2026-08-16`.
 - Approval effect: authorizes fresh Senior decomposition/ticket drafting only. It creates no
-  ticket, receipt, claim, host effect, dispatch, implementation, heartbeat, push, release or
-  deployment authority.
+  execution binding, grant, attempt, receipt, host effect, dispatch, implementation, heartbeat,
+  push, release or deployment authority. The Senior alone may create exact additive bootstrap
+  admission artifacts and later request/perform the permitted effects.

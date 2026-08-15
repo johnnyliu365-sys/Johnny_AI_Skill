@@ -21,9 +21,10 @@ flowchart TD
     GR --> C[CONTEXT]
     C --> S[SPEC]
     S --> T[TICKETS]
-    T --> D{dispatch receipt?}
+    T --> D{normal receipt or exact approved bootstrap?}
     D -- 否 --> WH[WAIT_FOR_HUMAN]
-    D -- 是 --> I[IMPLEMENT]
+    D -- normal receipt --> I[IMPLEMENT]
+    D -- exact bootstrap --> I
     I --> ST[SMOKE_TEST]
     ST --> RV[REVIEW]
     RV -- correction --> I
@@ -109,6 +110,21 @@ Router 每次輸出必須包含：
 自動接續有步數／時間 ceiling。`ACTION_COMPLETED` 必須先附
 `CompletionEvidence`；commit 不能自行選下一關。
 
+<a id="workflow-bootstrap-exception"></a>
+
+### 0.1a 自我託管 bootstrap 例外
+
+正常 receipt-bound dispatch 尚未具備、且待實作 ticket 正是該能力本身時，仍固定
+`HALT`，除非 project owner 已核准一個 exact project/ticket allowlist 的 bootstrap
+policy。例外不得由 `CAPABILITY_UNAVAILABLE`、聊天、工具存在或 ticket 自行推導。
+
+目前唯一核准例外是本版本庫 Receipt-bound Role Supervision Revision 04／
+`CHG-20260816-027` 的 R03-01～R03-03 self-host route。完整 grant、claim-before-effect、
+人工 relay、correction、integration、activation 與永久關閉規則只存在
+[`receipt-bound-role-supervision.md`](modules/spec/receipt-bound-role-supervision.md#bootstrap-ac-31)；
+digest-bound Router references 與 executable normal receipt policy在正式 implementation
+correction 前維持不變，其他專案與 ticket 一律不得套用。
+
 ### 0.2 最小 Context
 
 Context/source/capability 或旁路引用解析，完整閱讀：
@@ -158,7 +174,7 @@ escalation。預設一位 implementer、無 helper；只有互斥 ownership 與�
 | low-model ticket admission | approved SPEC and exact ticket | [`ticket-decomposition.md`](skills/johnny-project-takeover/references/ticket-decomposition.md) | ready／split／upstream／high assurance |
 | formal UI／design source | approved UI requirement and capability state | [`ui-design-handoff.md`](skills/johnny-project-takeover/references/ui-design-handoff.md) | UI contract／human wait／source halt |
 | XSS trigger | untrusted-source/render/host graph | [`xss-review.md`](skills/johnny-project-takeover/references/xss-review.md) | classification／closure or halt |
-| dispatch／owner／workspace | exact ticket/receipt/task/worktree | [`implementation-authority.md`](skills/johnny-project-takeover/references/implementation-authority.md) | admitted dispatch or halt |
+| dispatch／owner／workspace | exact ticket/receipt/task/worktree；或唯一核准的 project-specific bootstrap policy/grant | [`implementation-authority.md`](skills/johnny-project-takeover/references/implementation-authority.md)、[`router-control.md`](skills/johnny-project-takeover/references/router-control.md) | admitted normal dispatch、bounded bootstrap action or halt |
 | `IMPLEMENT`／`SMOKE_TEST` | exact admitted ticket and direct contracts | [`implementation-tdd.md`](skills/johnny-project-takeover/references/implementation-tdd.md) | `ImplementationReturn` |
 | `REVIEW`／`HANDOFF` | Closure Set、diff、evidence | [CodeReview.md](CodeReview.md) | approved／correction／change／halt |
 | language decision | Context、SPEC、ticket | [`language-policy.md`](skills/johnny-project-takeover/references/language-policy.md) | decision or schema halt |
@@ -245,6 +261,10 @@ baseline、SPEC/AC、scope、TDD、型別矩陣、驗證、安全或 return cont
 - [`specification-ticketing.md#dispatch-normalization`](skills/johnny-project-takeover/references/specification-ticketing.md#dispatch-normalization)
 
 `TICKETS + APPROVAL_GRANTED -> IMPLEMENT` 是已淘汰 transition，固定 `HALT`。
+
+唯一 self-host bootstrap 例外不恢復這條舊 transition，也不偽造 receipt。它必須引用
+Revision 04 的 exact committed grant／attempt artifact；架構者不得選 owner 或派工，
+Senior 才能執行該一次性 action。例外關閉後只剩正常六欄 receipt envelope。
 
 <a id="implementation"></a>
 
