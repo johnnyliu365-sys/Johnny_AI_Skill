@@ -144,3 +144,119 @@ fail-closed，不產生回應或 capability。
 `MVP` 與 `COMMERCIAL` 是歷史／Profile-gated delivery stage，不是 plugin
 自行推論的 active product objective；在核准的 project artifact 與 change
 record 另行宣告前，預設仍是 `POC`。
+
+## 環境能力啟動
+
+> 正式契約為已核准的
+> [`modules/spec/environment-capability-bootstrap.md`](modules/spec/environment-capability-bootstrap.md)。
+> Reviewer 已可依該 SPEC 拆票；實作與驗證完成前，不得宣稱 Johnny 已能自動安裝或
+> 限制專案工具。
+
+Johnny 優先使用使用者與專案既有且相容的 Git、Python、Docker、SDK 與建置工具，
+不會靜默升級、降級、取代或修改全域設定。控制平面使用獨立、固定 Python 3.11 的
+`CONTROL_PYTHON`；專案自己的 Python／SDK 仍由專案原生 manifest 與 lockfile 決定。
+
+能力依三個邊界驗證：
+
+1. `CONTROL_BOOTSTRAP`：Router 所需 Git、控制 Python 與基本宿主能力。
+2. `PROJECT_BASELINE`：專案原生 runtime、lockfile、建置與測試基準。
+3. `TICKET_OVERLAY`：單一 ticket 額外需要的工具與有限資源計畫。
+
+Johnny 只能自動安裝可逆、per-user、Johnny-owned 且已固定版本／hash／signature 的
+artifact。需要管理員、全域／系統修改、EULA、重開機、登入或 credential 的步驟只會
+引導並要求分離核准。Implementation 期間不安裝、不更新、不重設工具。
+
+所有 Johnny-owned environment、cache、grant、evidence 與 receipt binding 都位於
+per-user Johnny root，使用 opaque project/capability/lock identity；不在 target project
+建立 `.johnny`、`.johnny-router`、隱藏 worktree、plugin manifest、runtime 或 cache。
+每個 Johnny 啟動的 process/container 在執行專案工作前都必須有可讀回的 CPU、RAM、
+disk/temp、process/container、worker 與 lane 硬限制；無法硬限制即停止，不降級為提示。
+
+`PROJECT_DETACH` 只移除該專案的 Johnny-owned mapping／可寫狀態；
+`PLUGIN_UNINSTALL` 依 ownership ledger 移除全部 Johnny-owned runtime、tool、environment、
+cache、grant、evidence 與 receipt binding。兩者都不得修改 target project 或刪除使用者／
+外部工具。新工程師可直接依專案原生文件與 manifests 接手。
+
+## Receipt-bound 角色監督與可拔除交接流程
+
+> 狀態：架構草稿，正式契約以待核准的
+> [`modules/spec/receipt-bound-role-supervision.md`](modules/spec/receipt-bound-role-supervision.md)
+> 為準。規格核准與實作驗證前，不得宣稱自動監督能力已可用。
+
+這套流程的目標是在不犧牲權限、正確性與穩定交付的前提下減少模型喚醒。正常
+implementation 期間不使用 heartbeat、定時 polling、cron、watchdog 或重複 thread
+readback。任何 heartbeat 都必須另行取得使用者明確、範圍限定的同意；ticket 核准、
+dispatch、`AUTO_CONTINUE` 或「持續監控」都不構成該同意。
+
+### 快速判斷
+
+| 情況 | 是否需要受控替換 | 處理方式 |
+| --- | --- | --- |
+| 同一 task 重開 PowerShell、IDE、命令或子程序 | 否 | 保留原 execution binding。 |
+| 同一 task 經 Host 證明原地換模型 | 否 | 建立新 binding revision 並 readback。 |
+| 更換 Agent task、有效寫入者、主機或機器 | 是 | checkpoint（可用時）→撤銷舊寫入權→readback→新 task/receipt/correlation。 |
+| Luna xhigh 三十分鐘仍未完成或停止未完成 | 是 | 先判定 ticket 複雜度；可拆則拆小，不可拆才將當票替換為 Terra high。 |
+| Terra-or-higher 兩小時無 Git ref 活動且停止未完成 | 否（第一次） | Reviewer 唯讀診斷後可送一次同票 `CONTINUE_IMPLEMENTATION`。 |
+| Terra-or-higher 再次停止未完成 | 升級決策 | `MODEL_CAPABILITY_INSUFFICIENT` 經 Router 喚醒架構者。 |
+| 使用者拔除插件 | 不受 Router 阻擋 | 插件立即失去控制作用；新工程師可自由選擇自己的流程。 |
+
+### Attached 狀態下的正常流程
+
+```text
+Reviewer 派送 exact ticket
+→ Host readback 證明 task/worktree/branch/baseline 且可執行
+→ 開始模型對應的一次性監督期限
+→ exact Git ref 事件（普通 source commit 不喚醒模型）
+→ git show 讀取 committed handoff leaf
+→ 驗證 receipt/task/branch/ancestry/digest/terminal kind
+→ RoleWakePort 喚醒 named Reviewer 一次
+→ Reviewer 唯讀診斷並交回 Router 決策
+```
+
+完整 `GitRefEventAdapter -> HandoffValidator -> RoleWakePort` 與
+`SupervisionLeasePort -> RoleWakePort` 能力在 dispatch 前必須可讀回證明。缺少任何一段即
+`HALT / ROLE_WAKE_CHAIN_UNAVAILABLE`，不改用 active-turn wait、heartbeat 或 polling。
+
+### 換終端、模型與工程師
+
+綁定單位是持有寫入權的 execution session/task，不是終端視窗。受控替換時，舊 task
+和新 task 不得同時寫入。舊 task 可用時先提交 bounded checkpoint；不可用時只能從最後
+已提交且驗證過的 commit/handoff 恢復。新機器使用乾淨 checkout/worktree，不搬移舊機器
+路徑。
+
+同一票因 Luna 無法合法拆分而升級 Terra high 時，override 僅限當次 ticket。提交 terminal
+handoff 後 override 失效，下一張新票回到 Profile 預設 Luna xhigh。
+
+### Handoff 台帳
+
+目標專案保存自己的 plugin-neutral handoff tree；本專案的設計索引位於
+[`doc/handoffs/README.md`](doc/handoffs/README.md)。正式結構為：
+
+```text
+doc/handoffs/index.json
+doc/handoffs/<year>/index.json
+doc/handoffs/<year>/<feature>/index.json
+doc/handoffs/<year>/<feature>/<ticket-id>/index.json
+doc/handoffs/<year>/<feature>/<ticket-id>/<handoff-id>.json
+```
+
+每層 index 只列直接子節點的 ID、kind、revision、digest、lifecycle 與 exact ref；內容只在
+exact leaf。更正建立新 leaf 並指向前一 leaf，不改寫 sealed 歷史。不得保存 Secret、PII、
+prompt、raw Context 或未驗證 host payload。
+
+### 插件拔除與新工程師接手
+
+使用者可以先拔除插件，不需要 Router 核准，也不必先 checkpoint、push、readback 或等待
+外部 effect 完成。拔除不得修改或刪除目標專案的 source、CI、資料或正式 artifacts。
+
+拔除後，新工程師可以使用任何工具與流程；舊 README、manifest、handoff 與 receipt 只是
+歷史線索，不再對新工程師形成 authority。插件不保證保存未提交內容，也不保證取消或完成
+正在進行的外部操作。新工程師若自願重新採用 Johnny，必須重新 takeover 並建立新的
+task、receipt 與 correlation；舊 live receipt 不得重播。
+
+### 部署邊界
+
+開發 task/receipt 不授權 push、merge、release、signing、migration 或 deployment。部署可在
+不同 runner/終端執行，但必須另外綁定 exact owner、action、environment、accepted commit／
+artifact digest、effect receipt 與 correlation，並在 effect 後讀回結果。插件不是 runtime、
+CI、build 或 deployment dependency；拔除插件不會變更已部署系統。

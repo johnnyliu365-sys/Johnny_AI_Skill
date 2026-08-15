@@ -1,6 +1,6 @@
 # Johnny AI Skill project shared Context
 
-> State: `SEALED` by `CHG-20260815-020`. This artifact is architecture-owned.
+> State: `SEALED` by `CHG-20260815-024`. This artifact is architecture-owned.
 > Later stages bind its revision and exact source spans; they do not append to it.
 
 ## Stable project facts and boundaries
@@ -8,6 +8,21 @@
 - Johnny is an external, detachable control plane. Target-owned requirements, Context, SPEC,
   tickets, tests, reviews and product source remain in the user's repository; this plugin is
   not its runtime, CI, build or deployment dependency.
+- Active implementation supervision is receipt-bound and event-driven: an exact Git ref event
+  can wake only the named reviewer through a separately proved role-wake capability after a
+  committed handoff validates. Heartbeat is never implied and requires separate, explicit user
+  approval.
+- An execution binding identifies the task/session that owns write authority, not its shell or
+  IDE. While Johnny is attached, replacement of the task, writer, host or machine revokes the
+  old binding before a new one writes. The user may remove Johnny at any time; removal does not
+  constrain the successor's workflow or guarantee uncommitted/in-flight cleanup.
+- Environment control is side-by-side and project-neutral. Compatible user/project tools are
+  reused first; Johnny-owned tools, environments, caches, grants and capability evidence stay
+  under the per-user Johnny root. Target projects receive no `.johnny`, `.johnny-router`,
+  plugin-specific manifest, runtime, worktree or cache path.
+- `CONTROL_PYTHON` is Johnny-owned pinned Python 3.11 and is never implicit project Python.
+  Environment checks occur only at declared gates, and every Johnny-launched process/container
+  is hard-limited by an exact resource plan before project work begins.
 - Authorized historical source repositories (`SourceProjectA`, `來源專案B`, 來源專案C
   `來源專案C`, `來源專案D`) are read-only references. No source repository is
   modified, and no Secret, PII, operational data or domain-specific business rule is copied.
@@ -39,3 +54,5 @@ or review. This index records identity and location only.
 | Collaboration audit | `SPEC-AI-WORKFLOW-AUTONOMOUS-COLLABORATION-AUDIT-20260805-01KZ7A2C4E6G8J0L2N4P6R8T` / `modules/spec/autonomous-collaboration-audit.md` | `doc/context/autonomous-collaboration-audit/main.md` |
 | Local orchestration installer | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / `modules/spec/local-orchestration-installer.md` | `doc/context/local-orchestration-installer/main.md` |
 | Adaptive project orchestration | `SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2` / `modules/spec/adaptive-project-orchestration.md` | `doc/context/adaptive-project-orchestration/main.md` |
+| Receipt-bound role supervision | `SPEC-AI-WORKFLOW-RECEIPT-BOUND-ROLE-SUPERVISION-20260815-01M0R2S4T6V8X0Z2B4D6F8H0J2` / `modules/spec/receipt-bound-role-supervision.md` | `doc/context/receipt-bound-role-supervision/main.md` |
+| Environment capability bootstrap | `SPEC-AI-WORKFLOW-ENVIRONMENT-CAPABILITY-BOOTSTRAP-20260815-01M0E2C4B6S8T0R2A4P6D8F0H2` / `modules/spec/environment-capability-bootstrap.md` | `doc/context/environment-capability-bootstrap/main.md` |
