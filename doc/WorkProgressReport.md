@@ -5556,3 +5556,14 @@
 | Post-merge verification | Readiness/Router `62/62`, `git diff --check`, clean main porcelain and exact three-worktree topology pass. |
 | State / next route | R03 is `COMPLETE / APPROVED / INTEGRATED`; its allocation is released. Router selects R04 as the next serial candidate, but its current `CANDIDATE / NON_DISPATCHABLE` state requires separate ticket freeze/handoff/receipt authority before any implementation dispatch. |
 | Boundary | No push, package/install, target-project, external effect, Secret, release or deployment. `XSS_NOT_APPLICABLE`. |
+
+## PRG-20260815-514 - Project-neutral workspace and telemetry storage SPEC approval
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `WAIT_FOR_HUMAN(SPEC_APPROVAL) -> APPROVAL_GRANTED -> ACTION_COMPLETED / SPEC`; exact owner authority is `核准 Project-neutral Workspace / Telemetry Storage 修訂`. |
+| Approved closure | Adaptive Project Orchestration Revision 06 replaces only target-local Johnny ignore/worktree semantics with receipt-bound standalone ticket checkouts below the per-user Johnny root. Context-load Telemetry Revision 02 replaces controlled-target raw paths with opaque `TelemetryStorageRef` resolution below that root. Both remain bound to `CHG-20260815-024` and `ADR-20260815-013`. |
+| Isolation invariant | Dispatch creates no linked target `.git/worktrees` metadata and no `.johnny`, `.johnny-router`, ignore rule, plugin manifest, runtime, cache, telemetry or worktree path in a controlled target. Raw telemetry JSONL remains Johnny-owned; the existing raw-path POC is not admitted for controlled-target use. |
+| Artifact evidence | The commit containing this record seals `modules/spec/adaptive-project-orchestration.md` Revision 06, `modules/spec/context-load-telemetry.md` Revision 02, their feature Contexts, the partial-supersession note for `ADR-20260813-008`, and operator/index documentation. |
+| Continuation | `AUTO_CONTINUE -> TICKETS / DECOMPOSE_APPROVED_SPEC`: reviewer may decompose/open independently observable tickets for the exact two approved isolation closures. Each later dispatch requires its own admitted ticket, one valid Router receipt, named implementation owner and independent review. |
+| Boundary | Architecture/docs-only approval. No ticket was created, no source/test changed, no dispatch receipt or Agent/workspace was created, and no migration/cleanup, target-project, Git, telemetry, install, push, release, deployment or other external effect occurred. `XSS_NOT_APPLICABLE`. |

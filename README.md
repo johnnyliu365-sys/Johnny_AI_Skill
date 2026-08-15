@@ -8,7 +8,7 @@
 
 0.3.2 將前端的組合式設計與依賴注入列為 SPEC／ticket 的阻擋規則，並將控制面 Agent 固定為 Wayfinder／Grill／ticket／review；正式實作必須交給另一位具名 implementation owner。
 
-本版包含 Router 的 metadata-only context-load telemetry。它可在本機比對 baseline 與 Router run 的 provider input token、ContextView 預算、來源宣告與驗收品質；資料只寫入你指定的 ignored JSONL，絕不輸出原文、prompt、來源 URI 或 Secret。
+本版包含 Router 的 metadata-only context-load telemetry POC。它可在本機比對 baseline 與 Router run 的 provider input token、ContextView 預算、來源宣告與驗收品質；資料不含原文、prompt、來源 URI 或 Secret。受控專案正式使用仍需等待隔離修訂完成，raw JSONL 必須留在 Johnny-owned per-user storage，不得寫進 target project。
 
 它不會自動截取 Codex 或 Claude Code 的 token。只有 Agent runner 回填 provider 實際 input token，且 JSONL 配對驗證通過時，才可宣稱 Router 真的降低了 context 負載。
 
@@ -58,7 +58,7 @@ codex plugin marketplace add johnnyliu365-sys/Johnny_AI_Skill --ref main
 
 第一個 skill 會先讀取目標專案本地規範；只有在目標專案未建立流程時，才以本外掛的 Workflow 當作備援流程。
 
-若要驗證 Router 是否降低 context，依 `library/workflow_router/README.md` 在本機 ignored `.johnny-router/router-usage.jsonl` 保存配對資料，再執行 telemetry CLI；不要把公司原文或 prompt 交給外掛。
+若要驗證 Router 是否降低 context，依 `library/workflow_router/README.md` 使用 Johnny-owned telemetry storage 保存配對資料，再執行 telemetry CLI；在隔離修訂實作完成前，不得把現有 raw-path POC API 指向受控 target project，也不要把公司原文或 prompt 交給外掛。
 
 ### 更新或拔除
 
@@ -169,6 +169,9 @@ artifact。需要管理員、全域／系統修改、EULA、重開機、登入�
 所有 Johnny-owned environment、cache、grant、evidence 與 receipt binding 都位於
 per-user Johnny root，使用 opaque project/capability/lock identity；不在 target project
 建立 `.johnny`、`.johnny-router`、隱藏 worktree、plugin manifest、runtime 或 cache。
+實作 ticket 的 workspace 使用該 root 內的獨立 checkout／clone，不連結到 target 的
+`.git/worktrees`；dispatch 不改 target Git，只有之後具名且 receipt-bound 的 integration
+動作才能產生標準 Git effect。
 每個 Johnny 啟動的 process/container 在執行專案工作前都必須有可讀回的 CPU、RAM、
 disk/temp、process/container、worker 與 lane 硬限制；無法硬限制即停止，不降級為提示。
 

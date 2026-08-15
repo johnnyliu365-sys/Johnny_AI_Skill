@@ -3,11 +3,11 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2` |
-| Status | `REVISION_05 / ROUTER_PHASE_APPROVED / OTHER_PHASES_OWNER_REVIEW_REQUIRED` |
+| Status | `REVISION_05_ROUTER_PHASE_APPROVED / REVISION_06_PROJECT_ISOLATION_APPROVED / REVIEWER_DECOMPOSITION_AUTHORIZED / OTHER_PHASES_OWNER_REVIEW_REQUIRED` |
 | Author / baseline | Codex control plane / current `main` |
 | Context | `doc/context/adaptive-project-orchestration/main.md` |
-| PRD | `PRD-20260813-016`, `PRD-20260813-017`, `PRD-20260814-019`, `PRD-20260815-020`, `PRD-20260815-022` |
-| Requirement change / ADR | `CHG-20260813-016`, `CHG-20260813-017`, `CHG-20260814-019`, `CHG-20260815-020`, `CHG-20260815-022` / `ADR-20260813-008`, `ADR-20260813-009`, `ADR-20260814-011` |
+| PRD | `PRD-20260813-016`, `PRD-20260813-017`, `PRD-20260814-019`, `PRD-20260815-020`, `PRD-20260815-022`, `PRD-20260815-024` |
+| Requirement change / ADR | `CHG-20260813-016`, `CHG-20260813-017`, `CHG-20260814-019`, `CHG-20260815-020`, `CHG-20260815-022`, `CHG-20260815-024` / `ADR-20260813-008`, `ADR-20260813-009`, `ADR-20260814-011`, `ADR-20260815-013` |
 | Implementation language | Python 3.11 strict typed contracts/adapters; host-specific integration only after capability proof |
 
 ## Problem and goal
@@ -38,13 +38,15 @@ capacity must be evidence-based and proportional to risk and coupling.
 1. Installation exposes a Johnny-owned Getting Started README and an
    initialization command/action; it leaves every target repository unchanged.
 2. The user selects a Git repository. Read-only preflight resolves its canonical
-   identity, status, existing Johnny artifacts, host capabilities and proposed
-   local execution layout.
+   identity, status, existing target-owned artifacts, host capabilities and the
+   opaque Johnny-owned ticket-workspace storage reference. It does not persist the raw
+   target path in Router state.
 3. Johnny renders an exact initialization plan. One explicit confirmation
    authorizes only that plan.
-4. Initialization writes the target-owned project artifacts and narrow ignore
-   rule, establishes `.johnny/worktrees/` as the local execution root, and
-   opens/binds the reviewer when supported. It creates no implementer yet.
+4. Initialization writes only the explicitly approved target-owned project
+   artifacts, records the opaque project-to-storage mapping below the per-user
+   Johnny root, and opens/binds the reviewer when supported. It does not modify
+   `.gitignore`, create a Johnny path in the target, or create an implementer.
 5. At intake and before each ticket dispatch, the reviewer selects a delivery
    profile and resource plan from typed evidence. Approved tickets then cause
    the reviewer to create or reuse the minimum required implementer lanes.
@@ -62,24 +64,46 @@ capacity must be evidence-based and proportional to risk and coupling.
 
 The installer writes only its owned payload/README/entry point. Target project
 files, Git configuration, branches, worktrees and Agent tasks remain unchanged
-until a target repository passes preflight and the user confirms one exact
-`ProjectInitializationPlan`.
+through installation and preflight. One exact confirmed
+`ProjectInitializationPlan` may write only its listed target-owned project
+artifacts and external Johnny mapping; it grants no target Git or task-workspace
+effect.
 
 ### AC-02 — Target-owned project material
 
 After confirmation, Context, PRD, requirement changes, specifications, tickets,
 progress/review evidence, tests and product source remain target-owned and
 target-versioned. Johnny's `AGENTS.md`, `Workflow.md` and `CodeReview.md` remain
-plugin-owned and are not copied into the target repository.
+plugin-owned and are not copied into the target repository. Johnny-specific
+manifests, runtime, cache, telemetry and worktree directories are forbidden in
+the target. Dispatch must not attach a linked Git worktree to the target's
+common directory, because `.git/worktrees` would persist a Johnny workspace
+path. Standard target Git state may change only under the exact later
+integration receipt that authorizes that Git effect.
 
-### AC-03 — Project-local execution root
+### AC-03 — Project-neutral ticket workspace
 
-Implementation worktrees are exact marker/receipt-bound children of the target
-repository's ignored `.johnny/worktrees/` root. A path escape, reparse/symlink,
-foreign child, dirty/stale base, ownership mismatch or non-empty unauthorized
-root halts before Git or host effect. Existing worktrees are never moved by
-path manipulation; adoption requires a separate verified migration or fresh
-receipt-bound creation.
+Each implementation workspace is an exact receipt-bound standalone Git checkout
+or isolated clone beneath a Johnny-owned per-user root selected by opaque
+`ProjectId`; it is neither a child of the target repository nor a linked
+`git worktree` of the target's common Git directory. Creation reads only the
+exact committed baseline and immediately removes any persisted raw target-path
+remote; later synchronization/integration resolves both endpoints transiently
+inside the guarded Git adapter. Dispatch therefore leaves target bytes, refs,
+config and `.git/worktrees` unchanged.
+
+A path escape, reparse/symlink, hardlink/object-sharing dependency, foreign
+child, dirty/stale base, wrong baseline, ownership mismatch or non-empty
+unauthorized root halts before Git or host effect. Initialization creates no
+workspace. Existing linked or target-local worktrees are never moved or deleted
+by path manipulation: an already valid binding may finish only its existing
+ticket, and a separately reviewed migration/cleanup ticket must retire legacy
+target state. Every new or replacement workspace uses the isolated root.
+Detach/uninstall revokes Johnny authority and removes only safely identified
+Johnny-owned standalone workspace state; it never edits the target and never
+blocks a successor from using native Git. Any legacy target Git residue is
+reported as non-authoritative migration evidence, not kept as a runtime
+dependency or silently removed.
 
 ### AC-04 — Reviewer-first activation
 
@@ -257,6 +281,7 @@ ArtifactTreeDecision = RESOLVED | ARTIFACT_TREE_INVALID | ARTIFACT_PATH_NOT_FOUN
 AgentContextKind = ARCHITECTURE | SUPERVISION | IMPLEMENTATION | RESEARCH
 AgentContextLifecycle = OPEN | CLOSED | INVALIDATED
 RequirementLifecycle = ACTIVE | ARCHIVED
+JohnnyTicketWorkspaceStorageLifecycle = REGISTERED | DETACHED | REMOVED
 
 DeliveryAssessment = {
   project_id, ticket_ref?, change_surface, coupling, ambiguity,
@@ -272,8 +297,13 @@ ImplementationResourcePlan = {
 
 ProjectInitializationPlan = {
   project_id, repository_identity_ref, expected_base,
-  target_artifact_manifest, ignore_rule, execution_root_ref,
+  target_artifact_manifest, johnny_ticket_workspace_storage_ref,
   reviewer_profile_ref, host_capability_refs, plan_digest
+}
+
+JohnnyTicketWorkspaceStorageRef = {
+  storage_ref, project_id, ownership_ledger_ref,
+  root_identity_digest, lifecycle
 }
 
 StagingTransitionPlan = {
@@ -347,53 +377,62 @@ than raw project paths, source, prompts, Secrets or PII.
 2. Initialization rejects wrong repository identity, dirty/stale base, missing
    confirmation, altered plan digest, path escape/reparse, foreign workspace,
    unsupported reviewer activation and replay before effect.
-3. Exact confirmed initialization writes only the manifest, ignore rule and
-   owned execution root, then readbacks reviewer binding; retry is idempotent.
-4. Classification tables cover every factor and hard escalation trigger;
+3. Exact confirmed initialization writes only the approved target-owned artifact
+   manifest and an external opaque project/storage mapping, then reads back the
+   reviewer binding; retry is idempotent. Target bytes and Git status differ only
+   by the explicitly listed project artifacts: no `.gitignore`, `.johnny`,
+   `.johnny-router`, plugin manifest, runtime, cache, telemetry or worktree path
+   is added.
+4. Workspace-creation tests prove no target ref/config/index/object/worktree
+   metadata change, no linked common Git directory, no hardlink/object-sharing
+   dependency and no persisted raw target-path remote. The isolated checkout is
+   bound to the exact baseline commit, and target integration remains a separate
+   guarded effect.
+5. Classification tables cover every factor and hard escalation trigger;
    missing/constructed/extra/null/wrong finite values fail closed.
-5. A tiny but privileged-XSS/payment/Secret example selects
+6. A tiny but privileged-XSS/payment/Secret example selects
    `HIGH_ASSURANCE`; a large generated but local reversible change cannot gain
    more implementers without disjoint ownership evidence.
-6. Resource plans reject unavailable model tiers, zero implementers for source
+7. Resource plans reject unavailable model tiers, zero implementers for source
    work, overlapping lanes, excessive counts, implementation-owned helpers and
    copied/replayed authority.
-7. Reverse mutations must expose removal of each hard escalation rule,
+8. Reverse mutations must expose removal of each hard escalation rule,
    default-one implementer, disjoint-lane gate, reviewer-only helper ownership,
    plan-digest binding and exact workspace-root validation.
-8. Review must independently verify the selected profile against the actual
+9. Review must independently verify the selected profile against the actual
    diff/risk, not merely accept the Router label.
-9. Post-POC transition rejects an unreviewed/ambiguous POC commit, altered plan,
+10. Post-POC transition rejects an unreviewed/ambiguous POC commit, altered plan,
    dirty or stale base, wrong ancestry, unexpected local/remote ref, divergence,
    force/reset/delete semantics and mismatched SHA readback before effect.
-10. Every later ticket rejects a branch/worktree not descended from its exact
+11. Every later ticket rejects a branch/worktree not descended from its exact
     admitted staging SHA. Tests independently prove that staging integration
     cannot mutate the frozen POC/version record or claim release, and that
     disposable environment success cannot grant Git baseline authority.
-11. SPEC-readiness tests reject missing owner approval and every independently
+12. SPEC-readiness tests reject missing owner approval and every independently
     omitted contract/classification field; only the exact complete revision can
     put the architecture owner to sleep.
-12. Wake-routing tests cover ambiguous/contradictory SPEC, undefined contract,
+13. Wake-routing tests cover ambiguous/contradictory SPEC, undefined contract,
     architecture/cross-ticket conflict, requirement change, unprovable AC, new
     external boundary, hard assurance trigger and bounded model insufficiency.
-13. Ticket-admission tests cover each missing closure dimension, multi-owner or
+14. Ticket-admission tests cover each missing closure dimension, multi-owner or
     multi-effect slices, horizontal split and unresolved decisions. Reverse
     mutation of every admission gate changes `READY_LOW_MODEL` to the exact
     non-ready decision.
-14. UI-source tests cover every source/capability combination, exact Figma
+15. UI-source tests cover every source/capability combination, exact Figma
     required/unrequired distinctions, fallback, human wait and halt. XSS remains
     based on runtime source/sink data rather than design-source kind.
-15. Every new decision returns the exact versioned policy reference and expected
+16. Every new decision returns the exact versioned policy reference and expected
     typed return. Missing, stale or competing route references halt before
     capability, task, worktree, Git or host effect.
-16. Shared-Context tests admit create only in the early architecture sequence,
+17. Shared-Context tests admit create only in the early architecture sequence,
     admit revision only with architecture ownership, exact prior revision and
     approved change authority, and reject every ticket/supervisor/implementation/
     review write before filesystem effect. Content-schema tests reject progress,
     ticket, commit, test and review material without using a line-count limit.
-17. Agent-Context tests prove a different ticket, ticket revision, receipt, owner, worktree,
+18. Agent-Context tests prove a different ticket, ticket revision, receipt, owner, worktree,
     branch or baseline invalidates the prior view before source/Agent effect. Same-ticket
     correction requires an exact revised binding; closed/invalidated views cannot be replayed.
-18. Generic artifact-tree tests cover every declared process/document family and reject cycles,
+19. Generic artifact-tree tests cover every declared process/document family and reject cycles,
     duplicate parents/IDs, dangling child refs, stale revision/digest edges, leaf bodies in
     indexes, recursive flattening and cross-root aliases. Requirement-lineage tests reject
     active/archive overlap, unmatched PRD/CHG suffixes and archived leaves reachable through an
@@ -418,7 +457,8 @@ before its dependent starts:
 10. R06 integrated Profile/Router acceptance across references, Context authority, wake, admission and
    metadata-only serialization.
 
-Initialization, project-local worktree lifecycle, post-POC staging, installer
+Initialization, project-neutral isolated-workspace lifecycle, legacy-worktree
+migration, post-POC staging, installer
 composition and packaging remain later phases and are not ticket-authorized by
 this revision. The completed 06G0P return remains immutable but its independent
 review/integration and dependent 06G tickets are paused until Router acceptance.
@@ -439,3 +479,18 @@ This approval does not rewrite historical POC evidence, review/integrate 06G0P,
 authorize target-project mutation, or authorize push, package, install, release
 or deployment. Every Router implementation still requires its own committed
 ticket, receipt, named implementation owner and independent review.
+
+Revision 06 was approved by the project owner on `2026-08-15` under
+`CHG-20260815-024` and `ADR-20260815-013`. It replaces only the target-local
+worktree/ignore-path semantics in AC-01 through AC-04 and their contracts/tests;
+it does not reopen or broaden the approved Revision 05 Router phase. The
+reviewer may now decompose this exact isolation closure into independently
+admitted tickets. This approval creates no dispatch receipt and grants no
+source, target-Git, migration/cleanup or external-effect authority.
+
+## Revision signatures
+
+| Date | AI / worktree / baseline | Summary |
+| --- | --- | --- |
+| 2026-08-15 | Architecture owner / `main` / `72438a30a4ad698be33292de8d63a7f2dc289daf` | Drafted Revision 06 to remove target-local Johnny ignore/worktree paths under `CHG-20260815-024`; owner approval pending. |
+| 2026-08-15 | Project owner | Approved the exact Project-neutral Workspace Revision 06 and assigned ticket decomposition/opening to the reviewer. |

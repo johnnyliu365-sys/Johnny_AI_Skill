@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| State | `SPEC_REVISION_05_APPROVED / ROUTER_PHASE_ACTIVE` |
-| Requirement / ADR | `CHG-20260813-016`, `CHG-20260813-017`, `CHG-20260814-019`, `CHG-20260815-020`, `CHG-20260815-022` / `ADR-20260813-008`, `ADR-20260813-009`, `ADR-20260814-011` |
+| State | `SPEC_REVISION_05_APPROVED / REVISION_06_APPROVED / REVIEWER_DECOMPOSITION_AUTHORIZED / ROUTER_PHASE_ACTIVE` |
+| Requirement / ADR | `CHG-20260813-016`, `CHG-20260813-017`, `CHG-20260814-019`, `CHG-20260815-020`, `CHG-20260815-022`, `CHG-20260815-024` / `ADR-20260813-008`, `ADR-20260813-009`, `ADR-20260814-011`, `ADR-20260815-013` |
 | SPEC | `SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2` |
 | Control owner | Codex / current `main` |
 
@@ -14,6 +14,13 @@
 - Installation cannot choose or mutate a target repository. It provides a
   README and initialization entry point; one explicit project initialization
   confirmation precedes target writes or reviewer activation.
+- Target repositories contain only target-owned project artifacts and standard
+  Git state. Johnny-specific ignore entries, manifests, runtime, cache,
+  telemetry and worktree directories are forbidden. Ticket workspaces are
+  standalone checkouts/clones under an opaque `ProjectId` mapping to a
+  Johnny-owned per-user root, never linked `git worktree` entries in the
+  target's common Git directory. Raw target paths are resolved transiently by
+  the guarded Git boundary.
 - Reviewer activation precedes implementer provisioning. Only a reviewer with
   an exact ticket receipt may create/reuse and control implementer tasks.
 - Workflow depth, implementation model capability and lane count must adapt to
@@ -57,6 +64,8 @@
 
 ## Boundary
 
-This context authorizes the Router policy phase only. It does not move existing
-worktrees, modify a target project, review/integrate the completed 06G0P return,
-resume 06G0-06G4, package, push, release or deploy anything.
+This context authorizes the existing Router policy phase and reviewer
+decomposition of the exact approved Revision 06 project-isolation closure. It
+does not create a dispatch receipt, move or clean an existing worktree, modify a
+target project, review/integrate the completed 06G0P return, resume 06G0-06G4,
+package, push, release or deploy anything.

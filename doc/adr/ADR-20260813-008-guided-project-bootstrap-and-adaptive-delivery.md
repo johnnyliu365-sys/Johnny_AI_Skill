@@ -2,7 +2,15 @@
 
 ## Status
 
-`ACCEPTED_REQUIREMENT / SPECIFICATION_IN_PROGRESS`
+`PARTIALLY_SUPERSEDED / SPECIFICATION_IN_PROGRESS`
+
+The adaptive-delivery decision remains accepted. The guided-initialization
+statements that require a target `.gitignore` entry, a project-local Johnny
+execution root, or migration into that root are superseded by
+`CHG-20260815-024` and
+`ADR-20260815-013-isolated-environment-capability-bootstrap.md`. They remain
+below only as historical decision text and grant no current implementation
+authority.
 
 ## Context
 
@@ -82,3 +90,17 @@ independently bounded work and remains its sole orchestrator.
   frozen baseline.
 - Post-POC branch/version lifecycle is defined separately by
   `ADR-20260813-009`; adaptive delivery cannot bypass its staging admission.
+
+## Superseding project-isolation decision
+
+The current architecture keeps target-owned Context, PRD, requirement changes,
+SPEC, tickets, review/progress evidence, tests and product source in the target
+repository. Johnny-specific runtime, manifest, cache, telemetry and ticket
+workspace directories stay below the per-user Johnny root and are addressed
+through opaque project-scoped references. A ticket workspace is a standalone
+checkout/isolated clone, not a linked `git worktree` that records its path in
+the target's common Git directory. Initialization does not change `.gitignore`
+or create a Johnny directory in the target. Standard target Git effects occur
+only later under an exact integration receipt. The corresponding Adaptive SPEC
+Revision 06 was approved on `2026-08-15`; only reviewer decomposition is now
+authorized, not dispatch or target/source mutation.
