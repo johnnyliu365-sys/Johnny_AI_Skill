@@ -1,7 +1,7 @@
 # ADR-20260816-014 — Project-neutral orchestration, evidence, and counterfactual telemetry
 
 - Date: `2026-08-16 (Asia/Taipei)`
-- Status: `ACCEPTED — exact SPEC revisions pending owner approval`
+- Status: `ACCEPTED — exact SPEC revisions approved`
 - Decision makers: project owner and architecture owner
 - Related change: `CHG-20260816-025`
 - Related specifications: Adaptive Project Orchestration Revision 07, Environment Capability

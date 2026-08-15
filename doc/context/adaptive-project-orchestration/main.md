@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| State | `REVISION_05_APPROVED / REVISION_06_APPROVED / REVISION_07_OWNER_REVIEW_REQUIRED` |
+| State | `REVISION_05_APPROVED / REVISION_06_APPROVED / REVISION_07_APPROVED / SENIOR_DECOMPOSITION_AUTHORIZED` |
 | Requirement / ADR | `CHG-20260813-016`, `CHG-20260813-017`, `CHG-20260814-019`, `CHG-20260815-020`, `CHG-20260815-022`, `CHG-20260815-024`, `CHG-20260816-025` / `ADR-20260813-008`, `ADR-20260813-009`, `ADR-20260814-011`, `ADR-20260815-013`, `ADR-20260816-014` |
 | SPEC | `SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2` |
 | Control owner | Codex / current `main` |
@@ -81,7 +81,7 @@
 
 ## Boundary
 
-This Context seals the confirmed Revision 07 architecture facts for owner review. It preserves
-the existing approved Router phase and Revision 06 evidence, but does not authorize new Senior
-decomposition, rewrite the existing non-dispatchable admission leaf, create a receipt, move or
-clean a worktree, modify a target project, package, push, release or deploy anything.
+This Context seals the approved Revision 07 architecture facts and authorizes fresh Senior
+decomposition against the exact revised SPEC. It preserves the existing Router phase, Revision
+06 evidence and historical non-dispatchable admission leaf. It creates no ticket or receipt and
+does not move/clean a worktree, modify a target project, package, push, release or deploy.

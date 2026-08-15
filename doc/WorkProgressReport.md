@@ -5594,3 +5594,15 @@
 | Historical preservation | Senior admission leaves `r06-project-isolation-upstream-decision.md` and `02-opaque-johnny-owned-storage-admission.md` remain immutable `UPSTREAM_DECISION_REQUIRED` evidence. No existing implementation, receipt, ticket or review was rewritten or promoted. |
 | Verification boundary | Documentation-only change. The commit containing this record must pass requirement/index/link validation, `git diff --check`, Markdown hygiene and exact docs-only scope readback. No production/test source, ticket, dispatch, Agent/task/workspace, telemetry run, provider call, install, target-project, push, release or deployment effect is authorized. `XSS_NOT_APPLICABLE`. |
 | Continuation | `WAIT_FOR_HUMAN / EXACT_SPEC_REVISION_APPROVAL`; only after owner approval may the Router wake the existing Senior for fresh ticket decomposition. No heartbeat or new role is created by this record. |
+
+## PRG-20260816-517 - Exact orchestration and telemetry SPEC revision approval
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `WAIT_FOR_HUMAN(PRG-516 / EXACT_SPEC_REVISION_APPROVAL) -> APPROVAL_GRANTED -> ACTION_COMPLETED / SPEC`; exact user authority is `核准`. |
+| Approved revisions | Adaptive Project Orchestration Revision 07; Environment Capability Bootstrap Revision 02; Receipt-bound Role Supervision Revision 02; Context Load Telemetry Revision 03, all exactly as committed in draft `1a66ccbfc39fa0e0f00595b256d8c61b36d349f8`. |
+| Requirement / Context | Approval remains bound to active `PRD-20260816-025` / `CHG-20260816-025`, `ADR-20260816-014`, sealed `CONTEXT.md` and the four exact feature Contexts. No requirement or architecture meaning changed during sealing. |
+| Approval effect | Authorizes the existing project Senior to perform fresh decomposition and ticket drafting from the approved revisions. It does not promote or rewrite the historical `UPSTREAM_DECISION_REQUIRED` leaves and does not create a ticket, admission decision, receipt, allocation, task, branch, workspace or implementation authority. |
+| Safety boundary | Heartbeat remains forbidden without separate explicit approval. No provider/model call, report calculation, telemetry stream, source/test mutation, install, target-project effect, push, release or deployment occurred. `XSS_NOT_APPLICABLE`. |
+| Evidence | The commit containing this record updates only SPEC status/signatures, feature Context states, ADR/SPEC indexes and this approval record; it must pass docs-only scope, Markdown link and `git diff --check` readback. |
+| Continuation | `AUTO_CONTINUE -> TICKETS / SENIOR_DECOMPOSITION` is the next legal Router action. This approval-sealing action does not itself wake the Senior or open tickets. |

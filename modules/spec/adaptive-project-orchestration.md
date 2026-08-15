@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2` |
-| Status | `REVISION_05_ROUTER_PHASE_APPROVED / REVISION_06_PROJECT_ISOLATION_APPROVED / REVISION_07_OWNER_REVIEW_REQUIRED` |
+| Status | `REVISION_05_ROUTER_PHASE_APPROVED / REVISION_06_PROJECT_ISOLATION_APPROVED / REVISION_07_APPROVED / SENIOR_DECOMPOSITION_AUTHORIZED` |
 | Author / baseline | Codex control plane / current `main` |
 | Context | `doc/context/adaptive-project-orchestration/main.md` |
 | PRD | `PRD-20260813-016`, `PRD-20260813-017`, `PRD-20260814-019`, `PRD-20260815-020`, `PRD-20260815-022`, `PRD-20260815-024`, `PRD-20260816-025` |
@@ -624,7 +624,8 @@ before its dependent starts:
 Initialization, project-neutral isolated-workspace lifecycle, immutable seed-pool lifecycle,
 project role roster, Context Library, legacy-worktree migration, post-POC staging, installer
 composition and packaging remain later phases and are not ticket-authorized by
-the previous Router approval or this pending Revision 07. The completed 06G0P return remains immutable but its independent
+the previous Router approval alone. Approved Revision 07 now permits fresh Senior decomposition
+only for its exact closures. The completed 06G0P return remains immutable but its independent
 review/integration and dependent 06G tickets are paused until Router acceptance.
 
 ## Approval
@@ -634,10 +635,11 @@ requirement on `2026-08-13`, approved the tiered model/decomposition/UI
 direction and Router-first implementation on `2026-08-14`, and required
 architecture-owned sealed shared Context, ticket-scoped Agent Context and bounded trees for every
 workflow/process/document family, including recursively bounded archive and reusable libraries,
-on `2026-08-15`. Revision 05 authorizes only AC-12 through AC-17 together with the Router portions
-of AC-05 through AC-10 and the ten Router ticket candidates above. Exact
-initialization and staging implementation tickets under AC-01 through AC-04 and
-AC-11 remain `OWNER_REVIEW_REQUIRED`.
+on `2026-08-15`. Revision 05 authorized only AC-12 through AC-17 together with the Router portions
+of AC-05 through AC-10 and the ten Router ticket candidates above. Revision 06 later approved
+the named project-isolation portions of AC-01 through AC-04, and Revision 07 approves their
+role/manifest/workspace corrections plus AC-18 through AC-22. Post-POC staging implementation
+under AC-11 remains `OWNER_REVIEW_REQUIRED`.
 
 This approval does not rewrite historical POC evidence, review/integrate 06G0P,
 authorize target-project mutation, or authorize push, package, install, release
@@ -652,10 +654,11 @@ reviewer may now decompose this exact isolation closure into independently
 admitted tickets. This approval creates no dispatch receipt and grants no
 source, target-Git, migration/cleanup or external-effect authority.
 
-Revision 07 was drafted under `CHG-20260816-025` and `ADR-20260816-014` after the owner approved
-the converged architecture/Grill direction. Its exact text remains
-`OWNER_REVIEW_REQUIRED`. Until approval, it grants no Senior decomposition, admission, ticket,
-dispatch, source, workspace, seed-pool, role-binding or target-project authority.
+Revision 07 was approved by the project owner on `2026-08-16` under `CHG-20260816-025` and
+`ADR-20260816-014`. It authorizes the Senior to perform fresh decomposition/admission against
+AC-18 through AC-22 and their Revision-07 corrections. It does not rewrite the historical
+non-dispatchable leaves, create a ticket/receipt or grant dispatch, source, workspace, seed-pool,
+role-binding or target-project effect authority.
 
 ## Revision signatures
 
@@ -664,3 +667,4 @@ dispatch, source, workspace, seed-pool, role-binding or target-project authority
 | 2026-08-15 | Architecture owner / `main` / `72438a30a4ad698be33292de8d63a7f2dc289daf` | Drafted Revision 06 to remove target-local Johnny ignore/worktree paths under `CHG-20260815-024`; owner approval pending. |
 | 2026-08-15 | Project owner | Approved the exact Project-neutral Workspace Revision 06 and assigned ticket decomposition/opening to the reviewer. |
 | 2026-08-16 | Architecture owner / `main` / `2a8287831259243e230911e1082f0ec87895d3c5` | Drafted Revision 07 project roles, Context Library, immutable Johnny seed generations, minimal initialization and uninstall transition fence under `CHG-20260816-025`; exact owner approval pending. |
+| 2026-08-16 | Project owner | Approved the exact Adaptive Project Orchestration Revision 07 and authorized fresh Senior decomposition only. |

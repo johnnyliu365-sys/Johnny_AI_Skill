@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-RECEIPT-BOUND-ROLE-SUPERVISION-20260815-01M0R2S4T6V8X0Z2B4D6F8H0J2` |
-| Status | `REVISION_01_APPROVED / REVISION_02_OWNER_REVIEW_REQUIRED` |
+| Status | `REVISION_01_APPROVED / REVISION_02_APPROVED / SENIOR_DECOMPOSITION_AUTHORIZED` |
 | Author / baseline | Architecture owner / `main` / `f7eb3d3c9c88c23c3bc29bc9565ebc5b3b7096f9` |
 | Context | `doc/context/receipt-bound-role-supervision/main.md` |
 | Shared Context | `CONTEXT.md` sealed by `CHG-20260816-025`; original role-supervision facts from `CHG-20260815-023` |
@@ -614,8 +614,8 @@ closures. A safe dependency order is:
 9. receipt-bound runtime event registration and terminal reconciliation;
 10. on-demand diagnostic-owner lifecycle and read-only finding return.
 
-Items 8 through 10 are Revision-02 boundaries and remain non-ticketable until exact owner
-approval and fresh Senior decomposition. Existing Revision-01 admission evidence is immutable.
+Items 8 through 10 are approved Revision-02 boundaries available for fresh Senior decomposition.
+Existing Revision-01 admission evidence is immutable; approval itself creates no ticket.
 
 These are decomposition boundaries, not tickets or dispatch authority. The reviewer must split
 further when one candidate contains more than one observable closure or effect owner, and must
@@ -653,8 +653,9 @@ route any missing meaning back to architecture.
 - New external effects: role wake and task replacement are privileged Agent-control effects and
   therefore `HIGH_ASSURANCE`. Push, release and deployment remain out of scope.
 - Open architecture questions: none after owner Grill convergence through `2026-08-16`.
-- Current Router return: `ACTION_COMPLETED -> WAIT_FOR_HUMAN / REVISION_02_SPEC_APPROVAL`; no
-  Revision-02 ticket or dispatch authority exists.
+- Current Router return: `APPROVAL_GRANTED -> ACTION_COMPLETED / SPEC`; next route may enter
+  `TICKETS / SENIOR_DECOMPOSITION` through a separate Router action. No ticket or dispatch
+  authority exists from approval alone.
 
 ## Revision signatures
 
@@ -664,12 +665,12 @@ route any missing meaning back to architecture.
 | 2026-08-15 | Architecture owner / `main` / `f7eb3d3c9c88c23c3bc29bc9565ebc5b3b7096f9` | Removed the separate execution-receipt concept, bound supervision to the ticket's sole active Router receipt and reattached the draft to the latest sealed shared Context. |
 | 2026-08-15 | Project owner | Approved the exact Receipt-bound Role Supervision SPEC including the single-active Router receipt revision and assigned ticket decomposition/opening to the reviewer. |
 | 2026-08-16 | Architecture owner / `main` / `2a8287831259243e230911e1082f0ec87895d3c5` | Drafted Revision 02 closed receipt algebra, runtime event registration and on-demand diagnostic owner under `CHG-20260816-025`; exact owner approval pending. |
+| 2026-08-16 | Project owner | Approved the exact Receipt-bound Role Supervision Revision 02 and authorized fresh Senior decomposition only. |
 
 ## Approval record
 
 - Decision maker: project owner.
 - Architecture/Grill direction: confirmed through `2026-08-16 (Asia/Taipei)`.
-- Exact SPEC revision: Revision 01 `APPROVED`; Revision 02 `OWNER_REVIEW_REQUIRED`.
-- Approval effect: Revision 01 retains only its prior reviewer decomposition authority.
-  Revision 02 authorizes no Senior decomposition, ticket, dispatch, implementation, heartbeat,
-  push, release or deployment before exact approval.
+- Exact SPEC revision: Revision 01 `APPROVED`; Revision 02 `APPROVED` on `2026-08-16`.
+- Approval effect: authorizes fresh Senior decomposition/ticket drafting only. It creates no
+  ticket, receipt, dispatch, implementation, heartbeat, push, release or deployment authority.

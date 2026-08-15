@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| State | `SEALED / REVISION_01_APPROVED / REVISION_02_OWNER_REVIEW_REQUIRED` |
+| State | `SEALED / REVISION_01_APPROVED / REVISION_02_APPROVED / SENIOR_DECOMPOSITION_AUTHORIZED` |
 | Requirement / ADR | `PRD-20260815-023`, `CHG-20260815-023`, `PRD-20260816-025`, `CHG-20260816-025` / `ADR-20260815-012`, `ADR-20260816-014` |
 | SPEC | `SPEC-AI-WORKFLOW-RECEIPT-BOUND-ROLE-SUPERVISION-20260815-01M0R2S4T6V8X0Z2B4D6F8H0J2` |
 | Shared Context | `main@f7eb3d3c9c88c23c3bc29bc9565ebc5b3b7096f9`; role facts from `CHG-20260815-023`, latest seal `CHG-20260815-024` |
@@ -60,5 +60,5 @@
   repository-wide scan.
 - No production deployment implementation, Provider integration, Secret handling or automatic
   external effect. Development receipts never imply push, release or deployment authority.
-- No tickets, dispatch or implementation are authorized until the project owner approves the
-  exact independent SPEC revision and the reviewer compiles it through the normal Router.
+- Exact approval authorizes fresh Senior decomposition only. No ticket, receipt, dispatch or
+  implementation exists until the Senior creates and admits it through the normal Router.

@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| State | `SEALED / REVISION_01_APPROVED / REVISION_02_OWNER_REVIEW_REQUIRED` |
+| State | `SEALED / REVISION_01_APPROVED / REVISION_02_APPROVED / SENIOR_DECOMPOSITION_AUTHORIZED` |
 | Requirement / ADR | `PRD-20260815-024`, `CHG-20260815-024`, `PRD-20260816-025`, `CHG-20260816-025` / `ADR-20260815-013`, `ADR-20260816-014` |
 | SPEC | `SPEC-AI-WORKFLOW-ENVIRONMENT-CAPABILITY-BOOTSTRAP-20260815-01M0E2C4B6S8T0R2A4P6D8F0H2` |
 | Prior shared Context | `main@2701ed563f26e116db69e8e4fcb84024754c9498` |
@@ -64,7 +64,7 @@
   runtime import, CI dependency, submodule, symlink or hidden worktree root.
 - No Secret in Router state, receipts, logs or capability evidence. Login uses an official UI,
   device-code or OS credential-store flow and stores only an opaque credential alias.
-- No ticket, implementation, installer download, system mutation, login, deployment or other
-  external effect is authorized by this draft.
+- Exact approval authorizes Senior decomposition only. No ticket, implementation, installer
+  download, system mutation, login, deployment or other external effect exists from approval.
 - The root README must explain reuse, guided setup, project detach, plugin uninstall and
   successor freedom before the feature can be considered complete.

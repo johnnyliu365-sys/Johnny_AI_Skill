@@ -4,7 +4,7 @@
 | --- | --- |
 | Feature | `context-load-telemetry` |
 | Worktree | `root/main` |
-| State | `BASELINE_DONE / REVISION_02_APPROVED / REVISION_03_OWNER_REVIEW_REQUIRED` |
+| State | `BASELINE_DONE / REVISION_02_APPROVED / REVISION_03_APPROVED / SENIOR_DECOMPOSITION_AUTHORIZED` |
 | Requirement / ADR | `PRD-20260803-006`, `PRD-20260816-025` / `CHG-20260803-006`, `CHG-20260816-025` / `ADR-20260815-013`, `ADR-20260816-014` |
 | In scope | Receipt-indexed runtime evidence, provider usage/cost metadata, user-requested itemized report calculation, zero-inference no-takeover counterfactuals, charts and Johnny-owned opaque telemetry storage. |
 | Out of scope | Raw prompt/source/path persistence, Provider credentials, Agent-estimated actual usage, automatic reports, baseline inference runs by default, target-local Johnny storage, or changes to target company repositories. |
@@ -67,5 +67,5 @@
 Baseline feature implementation committed as `319ae97` (`feat: add router
 context load telemetry`). Revision 02 storage isolation is approved but its Senior admission
 returned `UPSTREAM_DECISION_REQUIRED`; it is not implemented, reviewed or integrated. Revision
-03 supplies the missing architecture for owner review. The legacy raw-path API remains
-non-admitted for controlled targets.
+03 supplies the approved replacement architecture for fresh Senior decomposition. The legacy
+raw-path API remains non-admitted for controlled targets.

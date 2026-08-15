@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-ENVIRONMENT-CAPABILITY-BOOTSTRAP-20260815-01M0E2C4B6S8T0R2A4P6D8F0H2` |
-| Status | `REVISION_01_APPROVED / REVISION_02_OWNER_REVIEW_REQUIRED` |
+| Status | `REVISION_01_APPROVED / REVISION_02_APPROVED / SENIOR_DECOMPOSITION_AUTHORIZED` |
 | Author / baseline | Architecture owner / `main` / `2701ed563f26e116db69e8e4fcb84024754c9498` |
 | Context | `doc/context/environment-capability-bootstrap/main.md` |
 | Shared Context | `CONTEXT.md` sealed by `CHG-20260816-025` |
@@ -494,9 +494,9 @@ vertical closures, expected to include:
 7. project detach/plugin uninstall settlement and target/foreign isolation acceptance;
 8. integrated Windows high-assurance acceptance and root README operations guide.
 
-Revision 02 adds the exact cap, one-shot immutability and local-model reservation contracts. It
-is not an authorized ticket sequence until the owner approves the exact revision and the Senior
-performs a fresh decomposition. Existing admission evidence remains immutable.
+Revision 02 adds the exact cap, one-shot immutability and local-model reservation contracts. The
+owner approved its exact text for fresh Senior decomposition. Existing admission evidence
+remains immutable; approval itself creates no ticket or execution authority.
 
 These are not tickets and grant no dispatch authority. Shared contracts and transaction
 boundaries must be frozen before dependent adapter tickets. Reviewer returns
@@ -510,7 +510,8 @@ an architecture gap.
 - XSS classification: `N/A`; no Browser/WebView/HTML/DOM/JavaScript renderer is introduced.
 - Secret, login, acquisition, install, process launch, Docker and removal are effect/security
   boundaries and require exact ticket-level treatment after approval.
-- Current Router return: `ACTION_COMPLETED -> WAIT_FOR_HUMAN / REVISION_02_SPEC_APPROVAL`.
+- Current Router return: `APPROVAL_GRANTED -> ACTION_COMPLETED / SPEC`; next route may enter
+  `TICKETS / SENIOR_DECOMPOSITION` through a separate Router action.
 - No ticket, dispatch, implementation, install, download, login, push, release or deployment is
   authorized by this draft.
 
@@ -521,13 +522,14 @@ an architecture gap.
 | 2026-08-15 | Architecture owner / `main` / `2701ed563f26e116db69e8e4fcb84024754c9498` | Initial independent draft after owner-completed environment Grill. |
 | 2026-08-15 | Project owner | Approved the exact Environment Capability Bootstrap SPEC and assigned ticket decomposition/opening to the reviewer. |
 | 2026-08-16 | Architecture owner / `main` / `2a8287831259243e230911e1082f0ec87895d3c5` | Drafted Revision 02 exact LIGHT/STANDARD caps, immutable ticket plans and local-model resource reservation under `CHG-20260816-025`; exact owner approval pending. |
+| 2026-08-16 | Project owner | Approved the exact Environment Capability Bootstrap Revision 02 and authorized fresh Senior decomposition only. |
 
 ## Approval record
 
 - Decision maker: project owner.
 - Exact SPEC revision: Revision 01 `APPROVED` on `2026-08-15 (Asia/Taipei)`; Revision 02
-  `OWNER_REVIEW_REQUIRED`.
-- Approval effect: Revision 01 authorizes only its prior reviewer decomposition; Revision 02
-  grants no Senior decomposition or ticket authority before exact approval.
+  `APPROVED` on `2026-08-16 (Asia/Taipei)`.
+- Approval effect: authorizes fresh Senior decomposition and ticket drafting only. It creates no
+  ticket, receipt, dispatch or implementation authority.
 - It does not authorize dispatch, implementation, install, download, login, heartbeat, push,
   release or deployment.

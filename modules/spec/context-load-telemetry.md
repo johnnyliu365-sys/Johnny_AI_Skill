@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-CONTEXT-LOAD-TELEMETRY-20260803-01KZ5E7F9G1H3J5K7M9N1P3Q5R` |
-| State | `APPROVED_BASELINE / REVISION_02_PROJECT_ISOLATION_APPROVED / REVISION_03_OWNER_REVIEW_REQUIRED` |
+| State | `APPROVED_BASELINE / REVISION_02_PROJECT_ISOLATION_APPROVED / REVISION_03_APPROVED / SENIOR_DECOMPOSITION_AUTHORIZED` |
 | Owner | `root/main` |
 | Context | `doc/context/context-load-telemetry/main.md` |
 | PRD reference | `PRD-20260803-006`, `PRD-20260816-025` |
@@ -55,8 +55,8 @@ total_tokens = input_tokens + output_tokens
 total. Missing provider fields are `USAGE_NOT_REPORTED`, never estimated as actual.
 
 The existing paired baseline/router record and median calculation are retained only as legacy
-POC evidence. Revision 03 replaces them for controlled-target savings reports with the
-receipt-indexed counterfactual contract below after exact owner approval.
+POC evidence. Approved Revision 03 replaces them for controlled-target savings reports with the
+receipt-indexed counterfactual contract below.
 
 ### Revision 02 storage boundary
 
@@ -337,9 +337,9 @@ target-project, telemetry-write, cleanup or external-effect authority. The
 legacy raw-path POC remains prohibited for controlled-target use until the
 approved tickets are implemented, independently reviewed and integrated.
 
-Revision 03 was drafted under `CHG-20260816-025` and `ADR-20260816-014` after owner-approved
-Architecture/Grill convergence. Its exact text remains `OWNER_REVIEW_REQUIRED`. It supersedes
-the matched-provider-run default only after approval and grants no Senior decomposition, ticket,
+Revision 03 was approved by the project owner on `2026-08-16` under `CHG-20260816-025` and
+`ADR-20260816-014`. It supersedes the matched-provider-run default for future controlled-target
+work and authorizes fresh Senior decomposition only. Approval creates no ticket, receipt,
 dispatch, telemetry write, provider call, report execution or target-project authority.
 
 ## Revision signatures
@@ -349,3 +349,4 @@ dispatch, telemetry write, provider call, report execution or target-project aut
 | 2026-08-15 | Architecture owner / `main` / `72438a30a4ad698be33292de8d63a7f2dc289daf` | Drafted Revision 02 to replace caller-selected target-local telemetry paths with a Johnny-owned opaque storage reference; owner approval pending. |
 | 2026-08-15 | Project owner | Approved the exact Telemetry Storage Revision 02 and assigned ticket decomposition/opening to the reviewer. |
 | 2026-08-16 | Architecture owner / `main` / `2a8287831259243e230911e1082f0ec87895d3c5` | Drafted Revision 03 receipt-indexed runtime evidence, provider usage/cost, user-requested calculation and zero-inference no-takeover counterfactual under `CHG-20260816-025`; exact owner approval pending. |
+| 2026-08-16 | Project owner | Approved the exact Context Load Telemetry Revision 03 and authorized fresh Senior decomposition only. |
