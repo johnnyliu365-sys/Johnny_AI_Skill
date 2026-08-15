@@ -5,7 +5,7 @@
 | SPEC / AC | `SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2` revision 05 / AC-17 |
 | PRD / change | `PRD-20260815-022` / `CHG-20260815-022` |
 | Context / environment | `doc/context/adaptive-project-orchestration/main.md` at `SPEC_REVISION_05_APPROVED / ROUTER_PHASE_ACTIVE`; local pure-Python verification in the named permanent implementation worktree; no target, host or external environment effect |
-| State | `SUSPENDED / EVIDENCE_CONTINUATION_REQUIRED` |
+| State | `COMPLETE / APPROVED / INTEGRATED` |
 | Closure | `CLOSURE-ADAPTIVE-ROUTER-R02C2-01` / ACX1-ACX8 / ticket revision `r02c2-01` |
 | Dependency / baseline | R02C1 guarded integration `5b887c726a91053190050abf7f0267b48503cb5e`; proposal `efef364c4072947f32f5ee9f0d5932187ae811d0`; exact dispatch registry is the commit containing `PRG-20260815-489` |
 | Implementation language / checker | Python 3.11; `python -m mypy --strict --explicit-package-bases --no-incremental` over every Python file under `library/` and `tests/` |
@@ -177,5 +177,6 @@ release or deployment.
 The production candidate is frozen at WPR handoff `5cbe34f2fba1e5bfad3227132394dfcc782916cd`.
 Review findings `CR-R02C2-001` and `CR-R02C2-002` concern ACX6 source-gate truthfulness only;
 they do not reopen the active/retirement behavior, public contract or library-selection design.
-Ticket `02c2a-requirement-lineage-source-gate-closure` owns the one bounded evidence closure. No
-R02C2 code may be integrated until its child is approved together with the frozen candidate.
+Ticket `02c2a-requirement-lineage-source-gate-closure` owned the one bounded evidence closure.
+Both parent candidate and child closure were independently approved and guarded-integrated at
+`701df3e448e316d3edf7bdc115e66693e3f54c61`.

@@ -4,7 +4,7 @@
 | --- | --- |
 | Parent / reason | R02C2 candidate `5cbe34f2fba1e5bfad3227132394dfcc782916cd`; `CR-R02C2-001` and `CR-R02C2-002` exposed incomplete ACX6 evidence coverage, not a behavior or product-requirement defect. |
 | SPEC / Context | Existing R02C2 ACX6 only; `SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2` revision 05 / `doc/context/adaptive-project-orchestration/main.md` at `SPEC_REVISION_05_APPROVED / ROUTER_PHASE_ACTIVE`. No Context or SPEC fact is changed. |
-| State / closure | `IN_PROGRESS / RECEIPT_BOUND`; `CLOSURE-ADAPTIVE-ROUTER-R02C2A-01`, ACX-A1 through ACX-A6, revision `r02c2a-01`. |
+| State / closure | `COMPLETE / APPROVED / INTEGRATED`; `CLOSURE-ADAPTIVE-ROUTER-R02C2A-01`, ACX-A1 through ACX-A6, revision `r02c2a-01`. |
 | Implementation language / checker | Python 3.11; `python -B -m mypy --strict --explicit-package-bases --no-incremental library tests`. |
 | Delivery profile | `STANDARD`; one `gpt-5.6-luna` max implementation owner; no helper. |
 | Control / implementation owner | Reviewer task `019fb935-bbe1-7f71-8b4b-58ba20c81626`; existing implementation task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`. |
@@ -74,3 +74,9 @@ with first-red output, ACX mapping, mutation proofs, exact commands and clean re
 No new worktree, branch other than the named child branch, production-source change, R02C3-R06,
 helper/subagent, self-review/integration, external effect, push, package/install, Secret, release
 or deployment is authorized.
+
+## Integration closure
+
+Independent review approved the parent candidate plus this child evidence closure, then guarded
+integration committed `701df3e448e316d3edf7bdc115e66693e3f54c61`. The parent/child receipt and
+branch evidence remain immutable; allocation `aln-adaptive-router-r02c2a-20260815` is released.

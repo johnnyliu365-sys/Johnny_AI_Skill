@@ -5361,3 +5361,12 @@
 | First correction return | `PRG-20260815-491`: test-only `35b5cfae1776e8d5fdde34d6c8ad8c0787564732` guarded public R02C2 contract declarations. Its evidence remains immutable but was superseded by the child closure after CR-R02C2-002 narrowed the missing helper/import scope. |
 | Child return | `PRG-20260815-494`: R02C2A test-only `c4f8765ccefef9b7fca3c6705cdecf757d5df848` proves canonical source acceptance and in-memory rejection of the forbidden import, helper bypass and raw-field mutations without executing mutated source. Its WPR-only handoff is `e1e006cb90ffd1d588b5665ade61433183a49c9a`. |
 | Integration preservation | The source/test commits and their original handoff commits remain immutable branch evidence. This consolidated root record resolves only the append-only WPR merge overlap; it neither rewrites historical commits nor changes the approved implementation boundary. |
+
+## PRG-20260815-496 - R02C2/R02C2A guarded integration closure
+
+| Field | Evidence |
+| --- | --- |
+| Integration | Exact approved handoff `e1e006cb90ffd1d588b5665ade61433183a49c9a` merged into `main` as `701df3e448e316d3edf7bdc115e66693e3f54c61`. |
+| Conflict guard | Only the pre-authorized append-only WPR overlap conflicted. Both evidence streams were retained through one consolidated root record; no source/test conflict, reset, force, overwrite of reviewed commit, or silent unrelated resolution occurred. |
+| State | R02C2 and R02C2A are `COMPLETE / APPROVED / INTEGRATED`; both allocations are released. R02C3 is now the only dependency-satisfied ticket-design candidate. |
+| Post-merge boundary | Select and dispatch R02C3 only after its own exact ticket/receipt registry is frozen. No push, package/install, target-project, external effect, release, deployment or Secret work. `XSS_NOT_APPLICABLE`. |
