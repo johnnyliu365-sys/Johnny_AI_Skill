@@ -3,12 +3,12 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-RECEIPT-BOUND-ROLE-SUPERVISION-20260815-01M0R2S4T6V8X0Z2B4D6F8H0J2` |
-| Status | `REVISION_01_APPROVED / REVISION_02_APPROVED / SENIOR_DECOMPOSITION_AUTHORIZED` |
-| Author / baseline | Architecture owner / `main` / `f7eb3d3c9c88c23c3bc29bc9565ebc5b3b7096f9` |
+| Status | `REVISION_01_APPROVED / REVISION_02_APPROVED / REVISION_03_APPROVED / SENIOR_DECOMPOSITION_AUTHORIZED` |
+| Author / baseline | Architecture owner / `main` / `a8a27e6b61f4a50debd90f421da8cd53661b965b` |
 | Context | `doc/context/receipt-bound-role-supervision/main.md` |
 | Shared Context | `CONTEXT.md` sealed by `CHG-20260816-025`; original role-supervision facts from `CHG-20260815-023` |
-| PRD / change | `PRD-20260815-023`, `PRD-20260816-025` / `CHG-20260815-023`, `CHG-20260816-025` |
-| Architecture decision | `ADR-20260815-012`, `ADR-20260816-014` |
+| PRD / change | `PRD-20260815-023`, `PRD-20260816-025`, `PRD-20260816-026` / `CHG-20260815-023`, `CHG-20260816-025`, `CHG-20260816-026` |
+| Architecture decision | `ADR-20260815-012`, `ADR-20260816-014`, `ADR-20260816-015` |
 | Implementation language | Python 3.11 with `mypy --strict`; Markdown and validated JSON are artifact formats, not additional runtimes |
 | Delivery profile | `HIGH_ASSURANCE` for live role wake, task replacement and external-effect boundaries; pure reducers/schemas may be decomposed only after exact ticket admission |
 
@@ -34,12 +34,19 @@ Correctness, authority and stable project delivery are hard gates. Among designs
 gates, choose the lowest total token cost, then the lowest idle CPU and I/O cost. Rework tokens
 count as cost.
 
+Revision 03 closes the earlier gap between pure Router admission and a live host dispatch. It
+adds durable approved-artifact and `TicketReceipt` state, one-shot dispatch claims, exact
+task/workspace admission and finite host-effect settlement. It does not weaken the independent
+Git-event/wake-chain gate or pretend that presence of a Codex thread tool is a subscription.
+
 ## Out of scope
 
 - No heartbeat implementation or implicit heartbeat approval.
 - No scheduled automation, cron, watchdog, recurring model/thread/Git/filesystem polling or
   active-turn blocking model wait.
 - No new network service, MCP service, database, paid Provider or model host.
+- No host capability claim inferred from tool inventory, prompt text, profile/config bytes,
+  screenshot or a process-local fake.
 - No automatic creation of an architecture owner, reviewer or implementation task without the
   existing receipt-bound gateway authority.
 - No production push, release, signing, deployment, migration or Secret authority.
@@ -52,6 +59,10 @@ count as cost.
 ```text
 Pure Router
   consumes validated metadata events and selects one typed continuation
+
+Live dispatch composition
+  durable artifact registry + TicketReceiptStorePort + DispatchClaimStorePort
+  + TaskWorkspaceAdmissionPort + ReviewerDispatchGatewayPort
 
 Local supervision composition
   GitRefEventAdapter + HandoffValidator + SupervisionLeasePort + RoleWakePort
@@ -75,6 +86,10 @@ Plugin
 Nondeterministic Git, clock, host-task and wake operations stay behind injected ports. The pure
 Router and policy reducers receive only validated strong types. A notification is evidence to
 re-read an exact authoritative source; it is never authority itself.
+
+The live dispatch composition is not the host. It validates and persists metadata around one
+injected Senior-only host effect. Its first envelope remains identifiers only; the adapter
+resolves the committed ticket and handoff from the exact registry revision.
 
 ## Acceptance criteria
 
@@ -375,6 +390,118 @@ Revision 02 adds receipt union, runtime event registration and diagnostic-owner 
 does not change the immutable Revision-01 approval evidence or existing implementation receipts.
 Its exact text requires owner approval before the Senior may decompose or ticket it.
 
+### AC-24 — Canonical live TicketReceipt
+
+`TicketReceipt` is the only durable live implementation authority. It binds one project, exact
+ticket revision/digest, reviewed ticket and handoff commits, Senior, implementation owner/task,
+opaque worktree and branch fingerprints, expected baseline, Context epoch, pending-dispatch
+descriptor digest, dispatch question/correlation, expected return and receipt digest. It contains
+no raw path, URI, prompt, source, Context body, Secret or PII.
+
+One project/ticket has at most one receipt in `ACTIVE` or `QUARANTINED`. A receipt does not expire.
+`DELIVERED` does not consume it: it remains active through execution, same-ticket correction and
+terminal handoff. Only Router-controlled revocation or terminal close changes that authority.
+When a receipt-bound identity changes, revocation readback must precede one replacement; active
+or quarantined lifecycles never overlap.
+
+The existing `TicketDispatchReceipt` is retained as a compatibility projection used by
+`IMPLEMENTATION_DISPATCH_CONFIRMED`. The projection is derived from one validated active
+`TicketReceipt`; it is never issued, persisted or accepted as a second authority.
+
+### AC-25 — Durable approved-artifact registry and issuance
+
+The live registry atomically registers an immutable record containing project, ticket reference,
+ticket revision/digest, ticket-doc commit, reviewed handoff reference, handoff-doc commit and
+implementation owner. An identical registration is idempotent. The same registry identity with
+different bytes is `ARTIFACT_IDENTITY_CONFLICT`; a missing, stale, closed or unreadable record
+cannot issue a receipt.
+
+Receipt issuance is compare-and-swap against the exact live `PendingDispatchDescriptor`, its
+digest/revision and the registry record. Duplicate same-request issuance returns the existing
+receipt; conflicting issuance returns `RECEIPT_CONFLICT`. A process-local map, reconstructed chat
+state or caller-supplied receipt cannot satisfy this AC.
+
+### AC-26 — Exact task/workspace admission before effect
+
+Before a dispatch claim can reach the host, one exact readback validates:
+
+- caller is the receipt-bound Senior and the target is the receipt-bound implementation task;
+- task, opaque workspace/worktree fingerprint and restricted implementation profile agree;
+- worktree is clean at the expected baseline and belongs to the registered project slot;
+- Context Library resolves exactly the receipt-bound `context_epoch_ref` and no prior closed epoch
+  is implicit input;
+- branch mode is either `USE_BOUND_BRANCH` with an exact current branch or
+  `CREATE_FRESH_BRANCH_FROM_BASELINE` with an absent target branch and clean released worktree;
+- the complete receipt-bound Git-event/lease/`RoleWakePort` supervision capability is proven.
+
+The fresh-branch mode authorizes only the implementation owner to create/switch its own branch
+from the bound baseline after delivery. It does not let the Senior mutate the implementation
+worktree. A dirty tree, existing conflicting branch, wrong baseline, ambiguous task, unproved
+profile/Context or missing supervision chain halts before receipt claim or host effect.
+
+### AC-27 — One-shot dispatch claim and host envelope
+
+One active receipt may issue one `DispatchOperationClaim` for the finite action
+`DELIVER_TICKET`. The claim binds the receipt, pending descriptor, registry revision, Senior,
+owner task, operation ID and request digest. Claim is an internal one-shot capability; serialized
+metadata, copied objects or the public envelope cannot recreate it.
+
+The host-facing first envelope has exactly these fields and no copied contract body:
+
+```text
+ACTION_REQUIRED
+dispatch_ref
+registry_commit
+ticket
+receipt
+owner_task
+```
+
+The Senior is the sole permitted caller. The implementation owner receives no dispatch/wake/
+thread-control port, credential or alias. Port admission and claim consumption complete before
+the first host call, and each admitted claim can reach the host at most once per attempt.
+
+### AC-28 — Delivery settlement and uncertain-effect quarantine
+
+The host adapter returns exactly one synchronous `HostDispatchOutcome`:
+
+- `DELIVERED`: exact readback proves the envelope was accepted by the bound owner task. The
+  dispatch claim becomes `SETTLED`; the `TicketReceipt` remains `ACTIVE`. This is delivery
+  evidence, not `IMPLEMENTATION_EXECUTION_STARTED`.
+- `NO_EFFECT`: exact adapter evidence proves no message/task/workspace effect occurred. The same
+  operation ID may return from `CLAIMED` to `ISSUED` for one idempotent retry; no new receipt,
+  correlation or operation is created.
+- `EFFECT_UNCERTAIN`: timeout, ambiguous exception, missing result identity or unprovable
+  readback quarantines both claim and receipt. No retry, replacement dispatch or execution-start
+  event is legal until one separately invoked exact reconciliation proves delivered/no-effect or
+  the Router revokes the receipt.
+
+There is no recurring status read, timer, heartbeat, polling or automatic reconciliation. A
+replay of `DELIVERED`, a settled claim or a quarantined operation reaches zero host effects.
+
+### AC-29 — Metadata ownership, removal and compatibility
+
+The production registry, receipt and claim adapters persist only bounded validated metadata in
+the existing installer-owned journal/checkpoint boundary below
+`%LOCALAPPDATA%\JohnnyAIWorkflow`. No database or target-local state is added. Atomic append and
+checkpoint replacement must survive interruption without duplicate active receipts or claims.
+
+Uninstall removes only ledger-proved Johnny-owned live registry/receipt/claim records and never
+edits a target repository. Target-owned handoff history may retain only an opaque non-replayable
+receipt reference. Existing process-local fakes remain test seams and historical evidence but
+cannot be selected by a production composition root.
+
+### AC-30 — Revision-03 transition fence and capability truth
+
+Revision 03 is a prerequisite contract, not a dispatch. Its approval authorizes fresh Senior
+decomposition only. Ticket admission must separate pure contract/reducer/storage work from the
+privileged host adapter and integrated high-assurance proof.
+
+Presence of `send_message_to_thread`, one-shot thread readback or handoff-operation status does
+not by itself prove the exact live gateway or supervision subscription. If the implementation
+environment cannot prove the required host result and wake chain, it returns the matching typed
+capability halt. It may not substitute a fake, manual claim, heartbeat, repeated read or polling.
+
 ## Strongly typed contracts
 
 The following is contract notation, not an alternative implementation language. Python
@@ -395,6 +522,36 @@ enum ArtifactLifecycle { ACTIVE, CLOSED, SUPERSEDED, ARCHIVED }
 enum ObservedControlPlaneState { ATTACHED, DETACHING, DETACHED, ADOPTING }
 enum WorkReceiptKind { TICKET, STAGE_WORK }
 enum StageWorkStage { ARCHITECTURE, GRILL, SPECIFICATION, SENIOR }
+enum TicketReceiptLifecycle { ACTIVE, REVOKED, CLOSED, QUARANTINED }
+enum ApprovedDispatchArtifactLifecycle { ACTIVE, CLOSED }
+enum ArtifactRegistrationKind { REGISTERED, ALREADY_REGISTERED, IDENTITY_CONFLICT,
+                                STORAGE_UNAVAILABLE }
+enum ArtifactReadKind { FOUND, NOT_FOUND, STALE_REVISION, CLOSED, STORAGE_UNAVAILABLE }
+enum ReceiptIssueKind { ISSUED, ALREADY_ISSUED, ARTIFACT_NOT_APPROVED,
+                        PENDING_DESCRIPTOR_MISMATCH, RECEIPT_CONFLICT,
+                        STORAGE_UNAVAILABLE }
+enum ReceiptReadKind { FOUND, NOT_FOUND, STALE_REVISION, STORAGE_UNAVAILABLE }
+enum WorkspacePreparationMode { USE_BOUND_BRANCH, CREATE_FRESH_BRANCH_FROM_BASELINE }
+enum TaskWorkspaceAdmissionKind { READY, PREPARATION_REQUIRED, ROLE_FORBIDDEN,
+                                  TASK_UNAVAILABLE, TASK_MISMATCH,
+                                  WORKTREE_UNREGISTERED, WORKTREE_DIRTY,
+                                  BRANCH_MISMATCH, BRANCH_CONFLICT,
+                                  BASELINE_MISMATCH, PROFILE_UNPROVEN,
+                                  CONTEXT_EPOCH_UNPROVEN,
+                                  SUPERVISION_CHAIN_UNAVAILABLE,
+                                  HOST_UNAVAILABLE }
+enum DispatchOperationKind { DELIVER_TICKET }
+enum DispatchClaimLifecycle { ISSUED, CLAIMED, SETTLED, CANCELLED, QUARANTINED }
+enum DispatchClaimResultKind { ISSUED, ALREADY_ISSUED, CLAIMED, SETTLED,
+                               CANCELLED, QUARANTINED, RECEIPT_NOT_ACTIVE,
+                               CLAIM_MISMATCH, REPLAYED, STORAGE_UNAVAILABLE }
+enum HostDispatchOutcome { DELIVERED, NO_EFFECT, EFFECT_UNCERTAIN }
+enum LiveDispatchDecisionKind { DISPATCH_DELIVERED, ALREADY_DELIVERED,
+                                NO_EFFECT_RETRYABLE, EFFECT_UNCERTAIN_QUARANTINED,
+                                ARTIFACT_REGISTRY_REJECTED,
+                                PENDING_DESCRIPTOR_REJECTED,
+                                RECEIPT_REJECTED, TASK_WORKSPACE_REJECTED,
+                                GATEWAY_UNAVAILABLE, STORAGE_UNAVAILABLE }
 enum RuntimeEventKind {
   MODEL_USAGE_REPORTED, ACTION_COMPLETED, REVIEW_HANDOFF, SUPERVISION_FAULT
 }
@@ -518,6 +675,227 @@ struct StageWorkReceipt {
   ContentDigest receipt_digest;
 }
 
+struct ApprovedDispatchArtifactRecord {
+  ApprovedDispatchArtifactRef artifact_ref;
+  ApprovedDispatchArtifactLifecycle lifecycle;
+  ProjectId project_id;
+  TicketRef ticket_ref;
+  TicketRevision ticket_revision;
+  ContentDigest ticket_digest;
+  CommitId ticket_docs_commit;
+  HandoffRef reviewed_handoff_ref;
+  CommitId handoff_docs_commit;
+  RoleRef implementation_owner_ref;
+  RegistryRevision registry_revision;
+  ContentDigest record_digest;
+}
+
+struct ApprovedDispatchArtifactRegisterRequest {
+  DispatchRegistryOperationId operation_id;
+  RegistryRevision expected_registry_revision;
+  ApprovedDispatchArtifactRecord candidate;
+  ContentDigest request_digest;
+}
+
+struct ApprovedDispatchArtifactRegisterResult {
+  ArtifactRegistrationKind kind;
+  std::optional<ApprovedDispatchArtifactRecord> record;
+  std::optional<DispatchFailureRef> failure_ref;
+  RegistryRevision observed_registry_revision;
+  ContentDigest result_digest;
+}
+
+struct ApprovedDispatchArtifactReadRequest {
+  ApprovedDispatchArtifactRef artifact_ref;
+  RegistryRevision expected_registry_revision;
+  ContentDigest request_digest;
+}
+
+struct ApprovedDispatchArtifactReadResult {
+  ArtifactReadKind kind;
+  std::optional<ApprovedDispatchArtifactRecord> record;
+  std::optional<DispatchFailureRef> failure_ref;
+  RegistryRevision observed_registry_revision;
+  ContentDigest result_digest;
+}
+
+struct TicketReceipt {
+  TicketReceiptId receipt_id;
+  TicketReceiptLifecycle lifecycle;
+  ProjectId project_id;
+  TicketRef ticket_ref;
+  TicketRevision ticket_revision;
+  ContentDigest ticket_digest;
+  CommitId ticket_docs_commit;
+  HandoffRef reviewed_handoff_ref;
+  CommitId handoff_docs_commit;
+  RoleRef senior_ref;
+  TaskRef senior_task_ref;
+  RoleRef implementation_owner_ref;
+  TaskRef implementation_task_ref;
+  WorktreeRef worktree_ref;
+  BranchRef branch_ref;
+  CommitId expected_baseline_commit;
+  WorkspacePreparationMode workspace_preparation_mode;
+  ContextEpochRef context_epoch_ref;
+  PendingDispatchDescriptorRef pending_dispatch_ref;
+  ContentDigest pending_dispatch_digest;
+  DispatchQuestionId dispatch_question_id;
+  CorrelationId correlation_id;
+  ExpectedReturnRef expected_return_ref;
+  ReceiptRevision receipt_revision;
+  ContentDigest receipt_digest;
+}
+
+struct TicketReceiptIssueRequest {
+  ReceiptIssueOperationId operation_id;
+  ApprovedDispatchArtifactRef artifact_ref;
+  RegistryRevision expected_registry_revision;
+  PendingDispatchDescriptorRef pending_dispatch_ref;
+  ContentDigest pending_dispatch_digest;
+  TicketReceipt candidate;
+  ContentDigest request_digest;
+}
+
+struct TicketReceiptIssueResult {
+  ReceiptIssueKind kind;
+  std::optional<TicketReceipt> receipt;
+  std::optional<DispatchFailureRef> failure_ref;
+  ContentDigest result_digest;
+}
+
+struct TicketReceiptReadRequest {
+  TicketReceiptId receipt_id;
+  ReceiptRevision expected_receipt_revision;
+  ContentDigest request_digest;
+}
+
+struct TicketReceiptReadResult {
+  ReceiptReadKind kind;
+  std::optional<TicketReceipt> receipt;
+  std::optional<DispatchFailureRef> failure_ref;
+  ContentDigest result_digest;
+}
+
+struct TaskWorkspaceAdmissionRequest {
+  DispatchAdmissionOperationId operation_id;
+  TicketReceiptId receipt_id;
+  RoleRef caller_senior_ref;
+  TaskRef implementation_task_ref;
+  WorktreeRef expected_worktree_ref;
+  BranchRef expected_branch_ref;
+  CommitId expected_baseline_commit;
+  WorkspacePreparationMode workspace_preparation_mode;
+  ModelProfileRef expected_model_profile_ref;
+  ContextEpochRef expected_context_epoch_ref;
+  RestrictedToolPolicyRef expected_tool_policy_ref;
+  SupervisionCapabilityRef expected_supervision_capability_ref;
+  ContentDigest request_digest;
+}
+
+struct TaskWorkspaceAdmissionResult {
+  TaskWorkspaceAdmissionKind kind;
+  TicketReceiptId receipt_id;
+  std::optional<TaskRef> observed_task_ref;
+  std::optional<WorktreeRef> observed_worktree_ref;
+  std::optional<BranchRef> observed_branch_ref;
+  std::optional<CommitId> observed_head_commit;
+  std::optional<ModelProfileRef> observed_model_profile_ref;
+  std::optional<ContextEpochRef> observed_context_epoch_ref;
+  EvidenceRefs readback_refs;
+  ContentDigest result_digest;
+}
+
+struct DispatchOperationClaim {
+  DispatchClaimId claim_id;
+  DispatchClaimLifecycle lifecycle;
+  DispatchOperationKind operation_kind;
+  DispatchOperationId dispatch_ref;
+  TicketReceiptId receipt_id;
+  PendingDispatchDescriptorRef pending_dispatch_ref;
+  RegistryRevision registry_revision;
+  RoleRef senior_ref;
+  TaskRef owner_task_ref;
+  ContentDigest envelope_digest;
+  ClaimRevision claim_revision;
+  ContentDigest claim_digest;
+}
+
+struct DispatchClaimTransitionRequest {
+  DispatchClaimOperationId operation_id;
+  DispatchClaimId claim_id;
+  ClaimRevision expected_claim_revision;
+  DispatchClaimLifecycle expected_lifecycle;
+  DispatchClaimLifecycle requested_lifecycle;
+  EvidenceRefs evidence_refs;
+  ContentDigest request_digest;
+}
+
+struct DispatchClaimTransitionResult {
+  DispatchClaimResultKind kind;
+  std::optional<DispatchOperationClaim> claim;
+  std::optional<DispatchFailureRef> failure_ref;
+  ContentDigest result_digest;
+}
+
+struct ReviewerDispatchEnvelope {
+  ActionRequiredLiteral action_required;
+  DispatchOperationId dispatch_ref;
+  CommitId registry_commit;
+  TicketRef ticket;
+  TicketReceiptId receipt;
+  TaskRef owner_task;
+}
+
+struct ReviewerDispatchReadback {
+  HostDispatchOutcome outcome;
+  DispatchOperationId dispatch_ref;
+  TicketReceiptId receipt_id;
+  TaskRef owner_task_ref;
+  std::optional<HostDeliveryRef> delivery_ref;
+  std::optional<HostTaskRevision> observed_task_revision;
+  EvidenceRefs readback_refs;
+  ContentDigest result_digest;
+}
+
+struct LiveDispatchResult {
+  LiveDispatchDecisionKind kind;
+  TicketReceiptId receipt_id;
+  DispatchOperationId dispatch_ref;
+  std::optional<DispatchClaimId> claim_id;
+  std::optional<HostDeliveryRef> delivery_ref;
+  std::optional<DispatchFailureRef> failure_ref;
+  EvidenceRefs evidence_refs;
+  ContentDigest result_digest;
+}
+
+port LiveApprovedDispatchArtifactRegistryPort {
+  ApprovedDispatchArtifactRegisterResult register(
+      ApprovedDispatchArtifactRegisterRequest request);
+  ApprovedDispatchArtifactReadResult read_exact(
+      ApprovedDispatchArtifactReadRequest request);
+}
+
+port TicketReceiptStorePort {
+  TicketReceiptIssueResult issue_exact(TicketReceiptIssueRequest request);
+  TicketReceiptReadResult read_exact(TicketReceiptReadRequest request);
+}
+
+port DispatchClaimStorePort {
+  DispatchClaimTransitionResult issue_exact(DispatchOperationClaim candidate);
+  DispatchClaimTransitionResult transition_exact(
+      DispatchClaimTransitionRequest request);
+}
+
+port TaskWorkspaceAdmissionPort {
+  TaskWorkspaceAdmissionResult admit(TaskWorkspaceAdmissionRequest request);
+}
+
+port ReviewerDispatchGatewayPort {
+  ReviewerDispatchReadback deliver(
+      DispatchOperationClaim claim, ReviewerDispatchEnvelope envelope);
+}
+
 struct RuntimeEventRegistration {
   EventSourceRef event_source_ref;
   SubscriptionId subscription_id;
@@ -540,6 +918,24 @@ struct DiagnosticRoleBinding {
   EvidenceRefs bounded_read_refs;
 }
 ```
+
+Result nullability is closed:
+
+- registration/read/issue success kinds require their exact record/receipt and no failure;
+  rejection kinds require one failure and no record/receipt;
+- `TaskWorkspaceAdmissionResult` requires exact observed values and non-empty readback refs for
+  `READY`/`PREPARATION_REQUIRED`; an unavailable value stays absent and may never be fabricated;
+- `DELIVERED` requires one `delivery_ref` and exact task revision; `NO_EFFECT` forbids a delivery
+  ref; `EFFECT_UNCERTAIN` may carry only the last trustworthy readback fields;
+- `DISPATCH_DELIVERED`/`ALREADY_DELIVERED` require claim and delivery refs with no failure;
+  rejection/quarantine kinds require the corresponding failure and forbid invented success refs.
+
+The live use case evaluates failures in this fixed order before the first effect: public schema
+and digest; project and Senior role; approved artifact/revision; pending descriptor; existing
+receipt/claim; task/workspace/branch/baseline; model/profile/tool policy/Context epoch; supervision
+chain; gateway capability; durable claim transition; host delivery/readback. An earlier failure
+prevents every later port call. Storage failure always fails closed and never falls back to
+process-local state.
 
 Opaque refs and IDs must be validated named types. Dynamic JSON, Git output and host payloads are
 validated and normalized at the adapter boundary before entering these contracts. Durable
@@ -597,6 +993,33 @@ Secrets, PII or untrusted handoff bodies.
     dispatch, review, integration and Agent control.
 18. Transition tests preserve all Revision-01 receipts and evidence and reject Revision-02
     decomposition/ticketing before exact owner approval.
+19. `TicketReceipt` constructor/schema tests cover every named field and lifecycle, reject raw
+    locators/content, expiration fields, a second active/quarantined receipt and any attempt to
+    use the legacy `TicketDispatchReceipt` projection as live authority.
+20. Durable registry tests prove exact registration, identical idempotence, commit/digest/owner/
+    project collision, closed/stale/unavailable reads, interruption recovery and zero receipt or
+    host calls after an earlier failure.
+21. Receipt-store tests prove compare-and-swap issuance from one exact pending descriptor,
+    duplicate same-request readback, conflicting issuance, revocation-before-replacement, no
+    expiry and receipt survival after dispatch-claim settlement.
+22. Task/workspace admission tests cover both branch modes and every finite rejection. Fresh
+    branch admission requires absent target branch plus a clean released worktree at the exact
+    baseline; the Senior never mutates that worktree.
+23. Dispatch-claim tests prove one live non-transferable claim, synchronized duplicate consume,
+    copied/forged/replayed claims, wrong Senior/task/receipt/descriptor/registry revision and
+    storage failure all reach zero host effects.
+24. Envelope tests assert exactly the six canonical identifier fields, no copied ticket body,
+    prompt, path, URI or extra field, and exact re-resolution from the registered commit.
+25. Host-result tests prove `DELIVERED` settles only the claim, `NO_EFFECT` permits only the same
+    operation retry and `EFFECT_UNCERTAIN` quarantines without retry. Timeout/exception/ambiguous
+    readback reverse mutations must turn red.
+26. Composition/source gates reject the process-local registry/fake in production, heartbeat,
+    recurring reads, polling, timer loops, new DB/service/MCP state and target-local receipt
+    persistence. Each gate has one bounded reverse-mutation proof.
+27. Integrated high-assurance acceptance uses a disposable owned metadata root and a proved host
+    fake/adapter boundary. Tool inventory or synthetic success remains `CAPABILITY_UNAVAILABLE`;
+    the test creates no live task, message, branch, target write or wake unless a later ticket
+    carries the exact effect authority.
 
 ## Reviewer decomposition constraints
 
@@ -613,9 +1036,16 @@ closures. A safe dependency order is:
 8. closed TicketReceipt/StageWorkReceipt algebra and admission fence;
 9. receipt-bound runtime event registration and terminal reconciliation;
 10. on-demand diagnostic-owner lifecycle and read-only finding return.
+11. canonical live `TicketReceipt`, durable artifact registry and receipt-store reducers;
+12. task/workspace admission plus one-shot dispatch-claim settlement;
+13. Senior-only host adapter and integrated high-assurance capability proof.
 
 Items 8 through 10 are approved Revision-02 boundaries available for fresh Senior decomposition.
 Existing Revision-01 admission evidence is immutable; approval itself creates no ticket.
+
+Items 11 through 13 are approved Revision-03 prerequisite boundaries. The Senior must keep pure
+metadata/storage work separate from the privileged host effect. Item 13 cannot be admitted as
+`READY_LOW_MODEL`; a truthful unsupported result is valid evidence but does not unblock dispatch.
 
 These are decomposition boundaries, not tickets or dispatch authority. The reviewer must split
 further when one candidate contains more than one observable closure or effect owner, and must
@@ -635,6 +1065,13 @@ route any missing meaning back to architecture.
   README must state that uncommitted work and in-flight effects may need independent recovery.
 - Rollback closes exact subscriptions/deadlines, disables the wake composition and leaves target
   source, Git history and committed handoff artifacts intact.
+- A durable receipt store prevents process loss from manufacturing authority, but it cannot make
+  an unavailable host task/wake API available. Capability truth remains a separate hard gate.
+- An ambiguous host timeout may leave a quarantined ticket unable to dispatch until exact manual
+  reconciliation or Router revocation. This is intentional; duplicate implementation is the
+  higher-risk failure.
+- Revision-03 rollback closes/quarantines live claims, removes only installer-ledger-owned state
+  and restores the prior fail-closed no-live-dispatch condition. It never deletes target history.
 - Deployment implementation is not authorized here. Any future deployment ticket independently
   applies the security effect boundary and exact environment/artifact readback.
 
@@ -642,20 +1079,24 @@ route any missing meaning back to architecture.
 
 - Sealed shared Context: `CONTEXT.md` under `CHG-20260816-025`; original role-supervision facts
   are authorized by `CHG-20260815-023` and Revision-02 facts by `CHG-20260816-025`.
+- Revision-03 live-dispatch facts are authorized by `PRD-20260816-026` /
+  `CHG-20260816-026`; they do not alter the sealed shared Context body.
 - Feature Context: `doc/context/receipt-bound-role-supervision/main.md`.
 - Active requirement leaves:
   `doc/requirements/active/2026/workflow-governance/REQ-20260815-023.md` and
-  `doc/requirements/active/2026/workflow-governance/REQ-20260816-025.md`.
+  `doc/requirements/active/2026/workflow-governance/REQ-20260816-025.md` and
+  `doc/requirements/active/2026/workflow-governance/REQ-20260816-026.md`.
 - ADRs: `doc/adr/ADR-20260815-012-receipt-bound-event-driven-completion-supervision.md` and
-  `doc/adr/ADR-20260816-014-project-neutral-orchestration-evidence-and-counterfactual-telemetry.md`.
+  `doc/adr/ADR-20260816-014-project-neutral-orchestration-evidence-and-counterfactual-telemetry.md`
+  and `doc/adr/ADR-20260816-015-live-receipt-dispatch-settlement.md`.
 - XSS classification: `N/A`; this feature has no Browser/WebView/HTML/DOM/JavaScript renderer
   flow. A future UI or untrusted renderer integration re-runs the XSS gate.
 - New external effects: role wake and task replacement are privileged Agent-control effects and
   therefore `HIGH_ASSURANCE`. Push, release and deployment remain out of scope.
 - Open architecture questions: none after owner Grill convergence through `2026-08-16`.
 - Current Router return: `APPROVAL_GRANTED -> ACTION_COMPLETED / SPEC`; next route may enter
-  `TICKETS / SENIOR_DECOMPOSITION` through a separate Router action. No ticket or dispatch
-  authority exists from approval alone.
+  `TICKETS / SENIOR_DECOMPOSITION` for the Revision-03 prerequisite through a separate Router
+  action. No ticket, receipt, claim, host effect or dispatch authority exists from approval alone.
 
 ## Revision signatures
 
@@ -666,11 +1107,15 @@ route any missing meaning back to architecture.
 | 2026-08-15 | Project owner | Approved the exact Receipt-bound Role Supervision SPEC including the single-active Router receipt revision and assigned ticket decomposition/opening to the reviewer. |
 | 2026-08-16 | Architecture owner / `main` / `2a8287831259243e230911e1082f0ec87895d3c5` | Drafted Revision 02 closed receipt algebra, runtime event registration and on-demand diagnostic owner under `CHG-20260816-025`; exact owner approval pending. |
 | 2026-08-16 | Project owner | Approved the exact Receipt-bound Role Supervision Revision 02 and authorized fresh Senior decomposition only. |
+| 2026-08-16 | Architecture owner / `main` / `a8a27e6b61f4a50debd90f421da8cd53661b965b` | Added Revision 03 durable live TicketReceipt, approved-artifact registry, exact task/workspace admission and one-shot host dispatch settlement under `CHG-20260816-026`. |
+| 2026-08-16 | Project owner | Approved the Revision-03 live receipt dispatch prerequisite and authorized fresh Senior decomposition only; four previously recorded Revision blockers remain a later sequence. |
 
 ## Approval record
 
 - Decision maker: project owner.
 - Architecture/Grill direction: confirmed through `2026-08-16 (Asia/Taipei)`.
-- Exact SPEC revision: Revision 01 `APPROVED`; Revision 02 `APPROVED` on `2026-08-16`.
+- Exact SPEC revision: Revision 01 `APPROVED`; Revision 02 `APPROVED`; Revision 03
+  `APPROVED` on `2026-08-16`.
 - Approval effect: authorizes fresh Senior decomposition/ticket drafting only. It creates no
-  ticket, receipt, dispatch, implementation, heartbeat, push, release or deployment authority.
+  ticket, receipt, claim, host effect, dispatch, implementation, heartbeat, push, release or
+  deployment authority.

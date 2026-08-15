@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| State | `SEALED / REVISION_01_APPROVED / REVISION_02_APPROVED / SENIOR_DECOMPOSITION_AUTHORIZED` |
-| Requirement / ADR | `PRD-20260815-023`, `CHG-20260815-023`, `PRD-20260816-025`, `CHG-20260816-025` / `ADR-20260815-012`, `ADR-20260816-014` |
+| State | `SEALED / REVISION_01_APPROVED / REVISION_02_APPROVED / REVISION_03_APPROVED / SENIOR_DECOMPOSITION_AUTHORIZED` |
+| Requirement / ADR | `PRD-20260815-023`, `CHG-20260815-023`, `PRD-20260816-025`, `CHG-20260816-025`, `PRD-20260816-026`, `CHG-20260816-026` / `ADR-20260815-012`, `ADR-20260816-014`, `ADR-20260816-015` |
 | SPEC | `SPEC-AI-WORKFLOW-RECEIPT-BOUND-ROLE-SUPERVISION-20260815-01M0R2S4T6V8X0Z2B4D6F8H0J2` |
 | Shared Context | `main@f7eb3d3c9c88c23c3bc29bc9565ebc5b3b7096f9`; role facts from `CHG-20260815-023`, latest seal `CHG-20260815-024` |
 | Control owner | Architecture owner / current `main` |
@@ -29,6 +29,19 @@
   evidence and leases bind that receipt; there is no separate execution receipt. Same-ticket
   correction reuses it. A receipt-bound identity change requires Router revocation before one
   same-ticket replacement receipt can become valid.
+- The live `TicketReceipt` remains active after delivery; a separate one-shot dispatch claim is
+  settled by the host delivery result. The historical `TicketDispatchReceipt` contract is only
+  a pure Router-confirmation projection and cannot be persisted as independent authority.
+- Approved dispatch artifacts and live receipt/claim lifecycle are durable metadata under the
+  installer-owned Johnny root. One project/ticket has at most one active or quarantined receipt,
+  receipts have no expiry, and plugin removal deletes only ledger-proved Johnny-owned live state.
+- Before any Agent-control effect, exact readback must admit the Senior, pending descriptor,
+  implementation task, worktree, branch preparation mode, baseline, model/profile, Context epoch,
+  restricted-tool posture and complete supervision chain. Identifiers, prompts and config bytes
+  alone are not readback.
+- Host delivery has only `DELIVERED`, `NO_EFFECT` or `EFFECT_UNCERTAIN`. A proved no-effect may
+  retry only the same dispatch operation. An uncertain effect quarantines the operation and
+  receipt; there is no automatic retry, replacement receipt or second dispatch.
 - Architecture, Grill, SPEC and Senior planning may receive a `StageWorkReceipt` for provenance.
   It is a distinct non-execution receipt and can never dispatch an Implementer, mutate source or
   authorize an external effect. `TicketReceipt` remains the only implementation receipt.
@@ -60,5 +73,7 @@
   repository-wide scan.
 - No production deployment implementation, Provider integration, Secret handling or automatic
   external effect. Development receipts never imply push, release or deployment authority.
+- Revision 03 does not create a task-event subscription, `RoleWakePort`, host gateway or current
+  capability claim. The separately required supervision chain still halts dispatch when absent.
 - Exact approval authorizes fresh Senior decomposition only. No ticket, receipt, dispatch or
   implementation exists until the Senior creates and admits it through the normal Router.
