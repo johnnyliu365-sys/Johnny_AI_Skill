@@ -83,7 +83,17 @@ from .contracts import (
     LibrarySelectionKind,
     LibrarySelectionRecord,
     LibrarySelectionRequest,
+    ModelRole,
+    ModelRoleAssignment,
     TicketScope,
+    RoleActivityState,
+    SpecificationClosureEvidence,
+    SpecificationClosureKind,
+    SpecificationReadinessAssessment,
+    SpecificationReadinessBlocker,
+    SpecificationReadinessDecision,
+    SpecificationReadinessRequest,
+    SpecificationWakeReason,
 )
 from .graph import build_router_graph
 from .guarded_integration import (
@@ -109,6 +119,7 @@ from .collaboration import CollaborationTopologyResolver
 from .artifact_tree import ArtifactTreeResolver
 from .library_selection import LibrarySelectionGate
 from .requirement_lineage import RequirementLineageGate
+from .model_role_readiness import ModelRoleReadinessGate
 from .profile import build_router_poc_profile
 from .private_router import (
     AutomaticContinuationRunner,
@@ -188,6 +199,9 @@ __all__ = (
     "LibrarySelectionKind",
     "LibrarySelectionRecord",
     "LibrarySelectionRequest",
+    "ModelRole",
+    "ModelRoleAssignment",
+    "ModelRoleReadinessGate",
     "AutomaticContinuationRunner",
     "ApprovedDispatchArtifact",
     "ApprovedDispatchArtifactRegistry",
@@ -276,6 +290,7 @@ __all__ = (
     "StaticApprovedDispatchArtifactRegistry",
     "ReferenceStatus",
     "ReturnContractKind",
+    "RoleActivityState",
     "RouterEngine",
     "RouterEvent",
     "RouterEventKind",
@@ -293,6 +308,13 @@ __all__ = (
     "SharedContextOperation",
     "SharedContextState",
     "SkillReference",
+    "SpecificationClosureEvidence",
+    "SpecificationClosureKind",
+    "SpecificationReadinessAssessment",
+    "SpecificationReadinessBlocker",
+    "SpecificationReadinessDecision",
+    "SpecificationReadinessRequest",
+    "SpecificationWakeReason",
     "RunAcceptance",
     "SourceSnippet",
     "TicketDispatchConfirmation",

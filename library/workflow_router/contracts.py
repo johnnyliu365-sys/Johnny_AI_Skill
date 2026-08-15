@@ -46,6 +46,17 @@ def _agent_context_metadata_is_safe(references: tuple[OpaqueMetadataId, ...]) ->
     )
 
 
+def _readiness_metadata_is_safe(references: tuple[OpaqueMetadataId, ...]) -> bool:
+    """Keep readiness identifiers opaque and free of content or locator markers."""
+
+    forbidden_markers = ("://", "\\", "/", "prompt", "body", "source", "secret")
+    return not any(
+        marker in reference.casefold()
+        for reference in references
+        for marker in forbidden_markers
+    )
+
+
 class RouterModel(BaseModel):
     """Immutable, strict base model for values that cross router boundaries."""
 
@@ -76,6 +87,63 @@ class DeliveryStage(str, Enum):
     POC = "poc"
     MVP = "mvp"
     COMMERCIAL = "commercial"
+
+
+class ModelRole(str, Enum):
+    """The four finite model roles that may participate in the router."""
+
+    ARCHITECTURE_OWNER = "architecture_owner"
+    SUPERVISOR_REVIEWER = "supervisor_reviewer"
+    IMPLEMENTATION_OWNER = "implementation_owner"
+    RESEARCH_HELPER = "research_helper"
+
+
+class RoleActivityState(str, Enum):
+    """The finite lifecycle state of one declared model role."""
+
+    ACTIVE = "active"
+    SLEEPING = "sleeping"
+    WAKE_REQUIRED = "wake_required"
+
+
+class SpecificationReadinessDecision(str, Enum):
+    """The finite outcomes of specification readiness admission."""
+
+    READY_FOR_SUPERVISION = "ready_for_supervision"
+    ARCHITECTURE_OWNER_REQUIRED = "architecture_owner_required"
+    OWNER_APPROVAL_REQUIRED = "owner_approval_required"
+
+
+class SpecificationClosureKind(str, Enum):
+    """The nine finite closure dimensions required before supervision."""
+
+    PUBLIC_CONTRACTS = "public_contracts"
+    FINITE_STATES = "finite_states"
+    ERROR_MEANINGS = "error_meanings"
+    OWNERSHIP_DEPENDENCY_EFFECT_BOUNDARIES = "ownership_dependency_effect_boundaries"
+    ROLLBACK_FORWARD_FIX = "rollback_forward_fix"
+    ACCEPTANCE_CRITERIA = "acceptance_criteria"
+    DELIVERY_PROFILE = "delivery_profile"
+    SECURITY_XSS = "security_xss"
+    UI_SOURCE_CLASSIFICATION = "ui_source_classification"
+
+
+class SpecificationWakeReason(str, Enum):
+    """The finite reasons that wake or retain the architecture owner."""
+
+    SPEC_AMBIGUOUS = "spec_ambiguous"
+    SPEC_CONTRADICTORY = "spec_contradictory"
+    PUBLIC_CONTRACT_UNDEFINED = "public_contract_undefined"
+    ACCEPTANCE_UNPROVABLE = "acceptance_unprovable"
+    ARCHITECTURE_CONFLICT = "architecture_conflict"
+    CROSS_TICKET_DESIGN_CONFLICT = "cross_ticket_design_conflict"
+    REQUIREMENT_CHANGED = "requirement_changed"
+    NEW_EXTERNAL_PRIVILEGED_BOUNDARY = "new_external_privileged_boundary"
+    HIGH_ASSURANCE_TRIGGER = "high_assurance_trigger"
+    MODEL_CAPABILITY_INSUFFICIENT = "model_capability_insufficient"
+    CLOSURE_INCOMPLETE = "closure_incomplete"
+    OPEN_DESIGN_DECISION = "open_design_decision"
+    SUPERVISOR_CAPABILITY_UNAVAILABLE = "supervisor_capability_unavailable"
 
 
 class RouterEventKind(str, Enum):
@@ -1352,6 +1420,142 @@ class CapabilityRef(RouterModel):
 
         if self.capability_id == self.agent_profile:
             raise ValueError("capability ID must not equal an agent profile")
+        return self
+
+
+class ModelRoleAssignment(RouterModel):
+    """One profile-bound model role and its finite metadata evidence."""
+
+    project_profile_ref: OpaqueMetadataId
+    role: ModelRole
+    model_ref: OpaqueMetadataId
+    capability_refs: tuple[OpaqueMetadataId, ...] = Field(min_length=1)
+    activity_state: RoleActivityState
+    evidence_refs: tuple[OpaqueMetadataId, ...] = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def metadata_identity_is_exact(self) -> ModelRoleAssignment:
+        """Reject duplicated, colliding or content-shaped role metadata."""
+
+        all_references = (
+            self.project_profile_ref,
+            self.model_ref,
+            *self.capability_refs,
+            *self.evidence_refs,
+        )
+        if not _readiness_metadata_is_safe(all_references):
+            raise ValueError("model role references must remain opaque metadata")
+        if len(self.capability_refs) != len(set(self.capability_refs)):
+            raise ValueError("model role capabilities must be unique")
+        if len(self.evidence_refs) != len(set(self.evidence_refs)):
+            raise ValueError("model role evidence must be unique")
+        if set(self.capability_refs).intersection(self.evidence_refs):
+            raise ValueError("model role capabilities and evidence must be disjoint")
+        if self.model_ref == self.project_profile_ref:
+            raise ValueError("model and profile references must be distinct")
+        if self.model_ref in self.capability_refs or self.model_ref in self.evidence_refs:
+            raise ValueError("model and capability/evidence references must be distinct")
+        if self.project_profile_ref in self.capability_refs or self.project_profile_ref in self.evidence_refs:
+            raise ValueError("profile and capability/evidence references must be distinct")
+        return self
+
+
+class SpecificationClosureEvidence(RouterModel):
+    """One metadata proof for a closed specification dimension."""
+
+    kind: SpecificationClosureKind
+    evidence_ref: OpaqueMetadataId
+
+    @model_validator(mode="after")
+    def metadata_is_opaque(self) -> SpecificationClosureEvidence:
+        """Reject content-shaped closure evidence references."""
+
+        if not _readiness_metadata_is_safe((self.evidence_ref,)):
+            raise ValueError("closure evidence must remain opaque metadata")
+        return self
+
+
+class SpecificationReadinessBlocker(RouterModel):
+    """One finite blocker that requires an architecture-owner wake."""
+
+    reason: SpecificationWakeReason
+    evidence_ref: OpaqueMetadataId
+
+    @model_validator(mode="after")
+    def metadata_is_opaque(self) -> SpecificationReadinessBlocker:
+        """Reject content-shaped blocker evidence references."""
+
+        if not _readiness_metadata_is_safe((self.evidence_ref,)):
+            raise ValueError("blocker evidence must remain opaque metadata")
+        return self
+
+
+class SpecificationReadinessRequest(RouterModel):
+    """The exact metadata request submitted to the readiness gate."""
+
+    project_profile_ref: OpaqueMetadataId
+    project_profile_version: NonBlankText
+    specification_ref: OpaqueMetadataId
+    specification_revision: RevisionDigest
+    owner_approval_ref: OpaqueMetadataId | None
+    closure_evidence: tuple[SpecificationClosureEvidence, ...]
+    open_design_decision_refs: tuple[OpaqueMetadataId, ...]
+    blockers: tuple[SpecificationReadinessBlocker, ...]
+
+    @model_validator(mode="after")
+    def metadata_and_collection_shape_is_exact(self) -> SpecificationReadinessRequest:
+        """Reject duplicate finite facts and every non-metadata identifier."""
+
+        references = (
+            self.project_profile_ref,
+            self.specification_ref,
+            self.owner_approval_ref,
+            *tuple(evidence.evidence_ref for evidence in self.closure_evidence),
+            *self.open_design_decision_refs,
+            *tuple(blocker.evidence_ref for blocker in self.blockers),
+        )
+        if not _readiness_metadata_is_safe(tuple(reference for reference in references if reference is not None)):
+            raise ValueError("readiness request identifiers must remain opaque metadata")
+        if _is_all_zero(self.specification_revision, "rev-"):
+            raise ValueError("specification revisions must identify real content")
+        closure_kinds = tuple(evidence.kind for evidence in self.closure_evidence)
+        if len(closure_kinds) != len(set(closure_kinds)):
+            raise ValueError("closure kinds must be unique")
+        blocker_reasons = tuple(blocker.reason for blocker in self.blockers)
+        if len(blocker_reasons) != len(set(blocker_reasons)):
+            raise ValueError("blocker reasons must be unique")
+        if len(self.open_design_decision_refs) != len(set(self.open_design_decision_refs)):
+            raise ValueError("open design decisions must be unique")
+        return self
+
+
+class SpecificationReadinessAssessment(RouterModel):
+    """The finite, metadata-only result of one readiness admission."""
+
+    project_profile_ref: OpaqueMetadataId
+    project_profile_version: NonBlankText
+    specification_ref: OpaqueMetadataId
+    specification_revision: RevisionDigest
+    decision: SpecificationReadinessDecision
+    wake_reason: SpecificationWakeReason | None
+
+    @model_validator(mode="after")
+    def decision_shape_is_exact(self) -> SpecificationReadinessAssessment:
+        """Keep owner, architecture and ready results disjoint."""
+
+        references = (
+            self.project_profile_ref,
+            self.specification_ref,
+        )
+        if not _readiness_metadata_is_safe(references):
+            raise ValueError("readiness assessment identifiers must remain opaque metadata")
+        if _is_all_zero(self.specification_revision, "rev-"):
+            raise ValueError("assessment revisions must identify real content")
+        if self.decision is SpecificationReadinessDecision.ARCHITECTURE_OWNER_REQUIRED:
+            if self.wake_reason is None:
+                raise ValueError("architecture-owner results require a wake reason")
+        elif self.wake_reason is not None:
+            raise ValueError("owner and ready results cannot carry a wake reason")
         return self
 
 
