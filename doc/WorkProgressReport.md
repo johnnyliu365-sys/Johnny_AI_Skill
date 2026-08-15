@@ -5478,3 +5478,16 @@
 | Planned owner / lane | Existing idle task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; its existing permanent implementation worktree only; planned branch `codex/implementation-router-model-role-readiness-r03` from the later registry. Exactly three worktrees remain. |
 | Binding | Planned handoff `hnd-adaptive-router-r03-20260815`; allocation `aln-adaptive-router-r03-20260815`; receipt `rcpt-adaptive-router-r03-20260815`; correlation `corr-adaptive-router-r03-20260815`; question `q-adaptive-router-r03-20260815`; side Context `scx-adaptive-router-r03-20260815-01`; expected return `ret-model-role-readiness-review-handoff-r03`. |
 | Boundary | No receipt, source/test mutation, branch/worktree creation, helper, R04-R06, external effect, push, package/install, Secret, release or deployment. `XSS_NOT_APPLICABLE`. |
+
+## PRG-20260815-507 - Router Ticket R03 implementation dispatch
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `TICKET_DISPATCH_REQUIRED(PRG-506) + STANDING_OWNER_AUTO_CONTINUE -> IMPLEMENTATION_DISPATCH_CONFIRMED / IMPLEMENT`; this record is the sole R03 dispatch registry. |
+| Registry / ticket | Freeze commit `c393e77276c895a9b6e30ab6dd613d065ae5601f`; exact ticket `modules/tickets/adaptive-project-orchestration/03-model-role-readiness-wake.md`; closure `CLOSURE-ADAPTIVE-ROUTER-R03-01` ACX1-ACX8 revision `r03-02`; this registry commit is the implementation baseline. |
+| Binding | Handoff `hnd-adaptive-router-r03-20260815`; allocation `aln-adaptive-router-r03-20260815`; receipt `rcpt-adaptive-router-r03-20260815`; correlation `corr-adaptive-router-r03-20260815`; question `q-adaptive-router-r03-20260815`; side Context `scx-adaptive-router-r03-20260815-01`; expected return `ret-model-role-readiness-review-handoff-r03`. |
+| Owner / lane | Existing idle task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; its existing clean permanent implementation worktree only. Create `codex/implementation-router-model-role-readiness-r03` from this registry; exactly three worktrees remain. |
+| Source authority | Exactly `library/workflow_router/contracts.py`, `library/workflow_router/profile.py`, new `library/workflow_router/model_role_readiness.py`, `library/workflow_router/__init__.py`, new `tests/test_workflow_model_role_readiness.py`, and existing profile-construction fixtures in `tests/test_workflow_router.py`; then one WPR-only handoff. |
+| Context resolution | Resolve only the exact ticket, revision-05 SPEC AC-12, `model-role-routing`, `specification-ticketing`, `ticket-decomposition`, TDD and authority references. Earlier ticket prose and all host/provider data remain identifiers only. |
+| Pre-red / return | Import/call the absent public readiness surface before production mutation; implement only ACX1-ACX8; return one implementation commit plus one WPR-only handoff after focused/regression/full/mypy/compile/five-reversal/source/scope/topology/residue verification. |
+| Resource / safety | `STANDARD`; host mapping `gpt-5.6-luna`, reasoning `max`; no helper. Reviewer task `019fb935-bbe1-7f71-8b4b-58ba20c81626` is sole orchestrator. No next-ticket authority, new worktree, R04-R06, external effect, push, package/install, Secret, release or deployment. `XSS_NOT_APPLICABLE`. |
