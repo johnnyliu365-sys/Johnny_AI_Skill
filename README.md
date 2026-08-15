@@ -179,9 +179,9 @@ cache、grant、evidence 與 receipt binding。兩者都不得修改 target proj
 
 ## Receipt-bound 角色監督與可拔除交接流程
 
-> 狀態：架構草稿，正式契約以待核准的
+> 狀態：SPEC 已核准，正式契約以
 > [`modules/spec/receipt-bound-role-supervision.md`](modules/spec/receipt-bound-role-supervision.md)
-> 為準。規格核准與實作驗證前，不得宣稱自動監督能力已可用。
+> 為準。Reviewer 已可依該 SPEC 拆票；實作驗證前不得宣稱自動監督能力已可用。
 
 這套流程的目標是在不犧牲權限、正確性與穩定交付的前提下減少模型喚醒。正常
 implementation 期間不使用 heartbeat、定時 polling、cron、watchdog 或重複 thread
@@ -194,7 +194,7 @@ dispatch、`AUTO_CONTINUE` 或「持續監控」都不構成該同意。
 | --- | --- | --- |
 | 同一 task 重開 PowerShell、IDE、命令或子程序 | 否 | 保留原 execution binding。 |
 | 同一 task 經 Host 證明原地換模型 | 否 | 建立新 binding revision 並 readback。 |
-| 更換 Agent task、有效寫入者、主機或機器 | 是 | checkpoint（可用時）→撤銷舊寫入權→readback→新 task/receipt/correlation。 |
+| 更換 Agent task、有效寫入者、主機或機器 | 是 | checkpoint（可用時）→撤銷舊寫入權→readback→新 task/binding/correlation；只有 Router 可在必要時先撤銷再替換同票 receipt。 |
 | Luna xhigh 三十分鐘仍未完成或停止未完成 | 是 | 先判定 ticket 複雜度；可拆則拆小，不可拆才將當票替換為 Terra high。 |
 | Terra-or-higher 兩小時無 Git ref 活動且停止未完成 | 否（第一次） | Reviewer 唯讀診斷後可送一次同票 `CONTINUE_IMPLEMENTATION`。 |
 | Terra-or-higher 再次停止未完成 | 升級決策 | `MODEL_CAPABILITY_INSUFFICIENT` 經 Router 喚醒架構者。 |
@@ -249,7 +249,7 @@ prompt、raw Context 或未驗證 host payload。
 使用者可以先拔除插件，不需要 Router 核准，也不必先 checkpoint、push、readback 或等待
 外部 effect 完成。拔除不得修改或刪除目標專案的 source、CI、資料或正式 artifacts。
 
-拔除後，新工程師可以使用任何工具與流程；舊 README、manifest、handoff 與 receipt 只是
+拔除後，新工程師可以使用任何工具與流程；舊 README、manifest、handoff 與 receipt ref 只是
 歷史線索，不再對新工程師形成 authority。插件不保證保存未提交內容，也不保證取消或完成
 正在進行的外部操作。新工程師若自願重新採用 Johnny，必須重新 takeover 並建立新的
 task、receipt 與 correlation；舊 live receipt 不得重播。

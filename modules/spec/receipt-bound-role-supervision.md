@@ -3,10 +3,10 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-RECEIPT-BOUND-ROLE-SUPERVISION-20260815-01M0R2S4T6V8X0Z2B4D6F8H0J2` |
-| Status | `DRAFT / OWNER_APPROVAL_REQUIRED` |
-| Author / baseline | Architecture owner / `main` / `2701ed563f26e116db69e8e4fcb84024754c9498` |
+| Status | `APPROVED / REVIEWER_DECOMPOSITION_AUTHORIZED` |
+| Author / baseline | Architecture owner / `main` / `f7eb3d3c9c88c23c3bc29bc9565ebc5b3b7096f9` |
 | Context | `doc/context/receipt-bound-role-supervision/main.md` |
-| Shared Context | `CONTEXT.md` sealed by `CHG-20260815-023` |
+| Shared Context | `CONTEXT.md` at `f7eb3d3c9c88c23c3bc29bc9565ebc5b3b7096f9`, latest seal `CHG-20260815-024`; role-supervision facts originate from `CHG-20260815-023` |
 | PRD / change | `PRD-20260815-023` / `CHG-20260815-023` |
 | Architecture decision | `ADR-20260815-012` |
 | Implementation language | Python 3.11 with `mypy --strict`; Markdown and validated JSON are artifact formats, not additional runtimes |
@@ -86,8 +86,8 @@ GitRefEventAdapter -> HandoffValidator -> RoleWakePort -> named reviewer
 SupervisionLeasePort -> RoleWakePort -> named reviewer
 ```
 
-The proof binds project, ticket, unconsumed dispatch receipt, reviewer, implementation owner,
-task, workspace/worktree, branch, baseline, correlation, event source revision, monotonic
+The proof binds project, ticket, the Router-admitted ticket receipt, reviewer, implementation
+owner, task, workspace/worktree, branch, baseline, correlation, event source revision, monotonic
 deadline capability and wake-port
 revision. Missing or mismatched proof returns `HALT / ROLE_WAKE_CHAIN_UNAVAILABLE` before task,
 worktree, source or host effect. A one-shot thread read, handoff-operation status, fake or
@@ -142,7 +142,8 @@ event:
 - the implementation owner received the exact ticket;
 - task/workspace/worktree/branch/baseline bindings match;
 - the task is active and the ticket is executable;
-- the execution receipt has not been replayed or replaced.
+- the ticket's Router receipt is the only currently valid receipt for that ticket and the active
+  execution binding has not been replayed, closed or replaced.
 
 Each active binding owns at most one one-shot native deadline. A one-shot deadline is not a
 heartbeat: it emits no intermediate wake and fires once at the declared boundary.
@@ -209,9 +210,13 @@ ACTIVE -> REPLACEMENT_PENDING -> REPLACED -> CLOSED
 Old and new bindings never write concurrently. If the old task is available, it first commits a
 bounded checkpoint handoff. The gateway then revokes the old write lease/subscription and host
 readback proves it cannot write. The new binding validates project/ticket/branch/checkpoint,
-receives a new task, correlation and execution receipt, and rejects stale old events. If the old
-task is unavailable, only its last committed validated state is recoverable. A new machine uses
-a fresh clean checkout/worktree; an old machine path is not provenance.
+receives a new task and correlation, and rejects stale old events. There is no separate
+`ExecutionReceipt`: when every receipt-bound field remains valid, the replacement binding uses
+the same ticket Router receipt; when a receipt-bound owner/worktree/branch/baseline field changes,
+only the Router may first revoke the old receipt and issue one replacement receipt bound to the
+same ticket. At no point may two receipts for the ticket be valid concurrently. If the old task
+is unavailable, only its last committed validated state is recoverable. A new machine uses a
+fresh clean checkout/worktree; an old machine path is not provenance.
 
 ### AC-12 — Model rebind and one-ticket override
 
@@ -262,8 +267,11 @@ mismatched edges return `HALT / HANDOFF_PROVENANCE_INVALID`.
 `doc/handoffs/index.json` is a plugin-neutral, machine-readable root manifest. It records project
 and protocol identity, schema/compatibility revision, direct-child partitions, exact active-leaf
 references/digests, minimum adoption capabilities, last observed control-plane lifecycle and the
-last known non-replayable receipt reference when present. The observed lifecycle is historical
-metadata, not proof that a plugin remains installed and not authority over a successor.
+last known non-replayable receipt reference when present. A receipt value committed in a handoff
+or manifest is only an opaque historical provenance reference; the live private Router receipt,
+grant and execution binding remain outside the target project and are removed with Johnny-owned
+state. The observed lifecycle is historical metadata, not proof that a plugin remains installed
+and not authority over a successor.
 
 The project root `README.md` provides a concise human operation entry point covering normal
 handoff, shell versus task replacement, model escalation, team ownership, deployment separation,
@@ -355,7 +363,7 @@ struct GitEventRegistration {
   SubscriptionId subscription_id;
   ProjectId project_id;
   TicketRef ticket_ref;
-  ReceiptRef dispatch_receipt_ref;
+  ReceiptRef router_receipt_ref;
   TaskRef implementation_task_ref;
   WorktreeRef worktree_ref;
   BranchRef branch_ref;
@@ -366,7 +374,8 @@ struct GitEventRegistration {
 }
 
 struct ExecutionStartedEvidence {
-  ExecutionReceiptRef execution_receipt_ref;
+  TicketRef ticket_ref;
+  ReceiptRef router_receipt_ref;
   TaskRef task_ref;
   WorktreeRef worktree_ref;
   BranchRef branch_ref;
@@ -377,7 +386,8 @@ struct ExecutionStartedEvidence {
 
 struct SupervisionLease {
   LeaseId lease_id;
-  ExecutionReceiptRef execution_receipt_ref;
+  TicketRef ticket_ref;
+  ReceiptRef router_receipt_ref;
   SupervisionClass supervision_class;
   LeaseKind lease_kind;
   MonotonicInstant origin;
@@ -394,7 +404,7 @@ struct HandoffLeaf {
   SpecRevision spec_revision;
   TicketRef ticket_ref;
   TicketRevision ticket_revision;
-  ReceiptRef receipt_ref;
+  ReceiptRef router_receipt_ref;
   RoleRef source_role_ref;
   TaskRef source_task_ref;
   RoleRef target_role_ref;
@@ -435,12 +445,13 @@ struct HandoffRootManifest {
 
 struct ExecutionReplacement {
   ReplacementId replacement_id;
+  TicketRef ticket_ref;
+  ReceiptRef active_router_receipt_ref;
   ExecutionBindingRef old_binding_ref;
   ExecutionBindingLifecycle old_lifecycle;
   std::optional<HandoffRef> checkpoint_ref;
   EvidenceRefs revocation_readback_refs;
   ExecutionBindingRef new_binding_ref;
-  ExecutionReceiptRef new_execution_receipt_ref;
   CorrelationId new_correlation_id;
 }
 ```
@@ -474,9 +485,10 @@ Secrets, PII or untrusted handoff bodies.
    continuation and second-stop architecture routing.
 8. Luna ticket-repair tests cover every legal split dimension, reject horizontal/file/line
    splits and prove Terra-high replacement occurs only when no independent closure exists.
-9. Replacement tests prove old/new non-overlap, revocation readback, fresh receipt/correlation,
-   stale-event rejection, same-shell no-op, new-machine clean worktree and last-commit-only crash
-   recovery.
+9. Replacement tests prove old/new non-overlap, revocation readback, one-active-ticket-receipt
+   semantics, new binding/correlation, stale-event rejection, same-shell no-op, new-machine clean
+   worktree and last-commit-only crash recovery. They reject `ExecutionReceiptRef`, concurrent
+   same-ticket receipts and non-Router receipt replacement.
 10. Artifact-tree tests validate direct-child-only indexes, exact path resolution, digest and
     lifecycle edges, immutable correction leaves, plugin-neutral manifest parsing and absence of
     raw prompts/Secrets/PII. Cycles, duplicate parents and stale digests halt.
@@ -526,7 +538,9 @@ route any missing meaning back to architecture.
 
 ## Convergence and lineage
 
-- Sealed shared Context: `CONTEXT.md`, revision authorized by `CHG-20260815-023`.
+- Sealed shared Context: `CONTEXT.md` at
+  `f7eb3d3c9c88c23c3bc29bc9565ebc5b3b7096f9`; role-supervision facts are authorized by
+  `CHG-20260815-023` and the latest shared seal includes `CHG-20260815-024`.
 - Feature Context: `doc/context/receipt-bound-role-supervision/main.md`.
 - Active requirement leaf:
   `doc/requirements/active/2026/workflow-governance/REQ-20260815-023.md`.
@@ -537,18 +551,21 @@ route any missing meaning back to architecture.
   therefore `HIGH_ASSURANCE`. Push, release and deployment remain out of scope.
 - Open architecture questions: none after owner Grill decisions D11, D12 and D8a through D8e as
   corrected on `2026-08-15`.
-- Current Router return: `OWNER_APPROVAL_REQUIRED`; no ticket planning or dispatch yet.
+- Current Router return: `ACTION_COMPLETED -> TICKETS / REVIEWER_DECOMPOSITION`; no dispatch
+  authority exists until the reviewer creates and admits exact tickets through the Router.
 
 ## Revision signatures
 
 | Date | AI / worktree / baseline | Summary |
 | --- | --- | --- |
 | 2026-08-15 | Architecture owner / `main` / `2701ed563f26e116db69e8e4fcb84024754c9498` | Independent draft after completed Grill; replaces the unapproved attempt to revise the collaboration-audit SPEC. |
+| 2026-08-15 | Architecture owner / `main` / `f7eb3d3c9c88c23c3bc29bc9565ebc5b3b7096f9` | Removed the separate execution-receipt concept, bound supervision to the ticket's sole active Router receipt and reattached the draft to the latest sealed shared Context. |
+| 2026-08-15 | Project owner | Approved the exact Receipt-bound Role Supervision SPEC including the single-active Router receipt revision and assigned ticket decomposition/opening to the reviewer. |
 
 ## Approval record
 
 - Decision maker: project owner.
 - Architecture/Grill decisions: confirmed through `2026-08-15 (Asia/Taipei)`.
-- Exact SPEC revision: `OWNER_APPROVAL_REQUIRED`.
-- Approval effect when granted: authorizes reviewer decomposition and ticket drafting only. It
+- Exact SPEC revision: `APPROVED` on `2026-08-15 (Asia/Taipei)`.
+- Approval effect: authorizes reviewer decomposition and ticket drafting only. It
   does not authorize dispatch, implementation, heartbeat, push, release or deployment.

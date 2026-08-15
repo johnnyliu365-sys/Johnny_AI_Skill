@@ -2,10 +2,10 @@
 
 | Field | Value |
 | --- | --- |
-| State | `SEALED / SPEC_DRAFT_OWNER_REVIEW_REQUIRED` |
+| State | `SEALED / SPEC_APPROVED / REVIEWER_DECOMPOSITION_REQUIRED` |
 | Requirement / ADR | `PRD-20260815-023`, `CHG-20260815-023` / `ADR-20260815-012` |
 | SPEC | `SPEC-AI-WORKFLOW-RECEIPT-BOUND-ROLE-SUPERVISION-20260815-01M0R2S4T6V8X0Z2B4D6F8H0J2` |
-| Prior shared Context | `main@2701ed563f26e116db69e8e4fcb84024754c9498` / SHA-256 `CD333B787670AC78F5B4A5DB495D7759B92AEA52F194D67559EF05142A6CD073` |
+| Shared Context | `main@f7eb3d3c9c88c23c3bc29bc9565ebc5b3b7096f9`; role facts from `CHG-20260815-023`, latest seal `CHG-20260815-024` |
 | Control owner | Architecture owner / current `main` |
 
 ## Confirmed facts
@@ -25,6 +25,10 @@
 - Reviewer supervision starts only after host readback proves the implementer received the
   ticket, exact task/worktree binding and executable state. Pre-dispatch handoff time is not
   counted.
+- A ticket has exactly one valid private Router receipt at a time. Supervision, execution-start
+  evidence and leases bind that receipt; there is no separate execution receipt. Same-ticket
+  correction reuses it. A receipt-bound identity change requires Router revocation before one
+  same-ticket replacement receipt can become valid.
 - Luna xhigh is the default implementer. Its total execution ceiling is thirty minutes and never
   resets. Terra-or-higher uses a two-hour inactivity lease; validated ref activity resets that
   lease inside the adapter without waking a model.
@@ -37,6 +41,9 @@
   attached; old and new writers never overlap.
 - Target projects own a plugin-neutral handoff tree, root manifest and root README operation
   guide. They contain no Secret, prompt, raw Context or plugin runtime dependency.
+- A receipt reference committed in a handoff is opaque historical provenance only. Live Router
+  receipts, grants and bindings stay in Johnny-owned private state and are removed with the
+  plugin.
 - The user may remove the plugin before handoff without checkpoint, push, readback or Router
   permission. A successor may use any workflow. If the successor voluntarily re-adopts Johnny,
   takeover creates new receipts and bindings; historical live receipts are not replayable.
