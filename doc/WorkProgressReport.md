@@ -5405,3 +5405,16 @@
 | Review decision | `CHANGES_REQUESTED / EVIDENCE_DEFECT / SAME_BRANCH_CORRECTION`. CR-R02C3-001 is limited to ACX6 truthfulness: its three required in-memory semantic reversals are accepted by the committed source gate. |
 | Required correction | Same ticket/owner/permanent worktree/branch/allocation/receipt. Change only `tests/test_workflow_library_selection.py`, then WPR-only handoff. The bounded gate must reject in-memory family-binding bypass, reusable ACTIVE-to-ARCHIVED mapping and explicit-path binding bypass variants without executing or writing them. |
 | Boundary | No production behavior change, new ticket/branch/worktree/receipt, helper, R03-R06, external effect, push, package/install, Secret, release or deployment. `XSS_NOT_APPLICABLE`. |
+
+## PRG-20260815-501 - Router R02C3 ACX6 same-branch correction dispatch
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `CHANGES_REQUESTED(PRG-500) -> SAME_BRANCH_CORRECTION / IMPLEMENT`; this is the only additive correction authority for CR-R02C3-001. |
+| Review / baseline | Exact review `56a169eb88f27b690698825d3df31b6bc0e23eb5`; implementation `7f9c678406936e01709165e95d88431857a5aa77`; WPR handoff `e62192514132342cd49d2c0fbfcd1fd69de70df5`. |
+| Binding | Keep handoff `hnd-adaptive-router-r02c3-20260815`, allocation `aln-adaptive-router-r02c3-20260815`, receipt `rcpt-adaptive-router-r02c3-20260815`, correlation `corr-adaptive-router-r02c3-20260815`, question `q-adaptive-router-r02c3-20260815`, side Context `scx-adaptive-router-r02c3-20260815-01` and expected return `ret-library-selection-review-handoff-r02c3`. |
+| Owner / lane | Same task `019ffb0c-db88-7303-895c-aecfadde7c8d`, permanent worktree and branch `codex/implementation-router-library-selection-r02c3`; no fresh branch/worktree/receipt/allocation. |
+| Writable scope | Only `tests/test_workflow_library_selection.py`, then one WPR-only handoff. `contracts.py`, `library_selection.py`, `__init__.py`, R02C1/R02C2 and all other paths are immutable read-only evidence. |
+| Exact correction | Extend the existing bounded source gate to assert the canonical family-rejection predicate, reusable `REUSABLE_MODULE -> ACTIVE` mapping and explicit three-ref/path-node binding predicate. In-memory source mutations must make each gate rejection red: family bypass, reusable ACTIVE-to-ARCHIVED mapping, and explicit-path binding bypass. Do not write or execute mutated source. |
+| Return / verification | One test-only correction commit, then one WPR-only handoff. Re-run dedicated/Router/full serial/strict-mypy/in-memory-compile/source/scope/diff/ancestry/topology/porcelain/cache gates. Any production behavior/scope change returns `CHANGE_DETECTED`. |
+| Boundary | No helper, self-review/integration, R03-R06, external effect, push, package/install, Secret, release or deployment. `XSS_NOT_APPLICABLE`. |
