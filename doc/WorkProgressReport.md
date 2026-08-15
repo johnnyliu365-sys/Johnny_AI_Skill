@@ -5395,3 +5395,13 @@
 | Context resolution | Resolve only exact ticket, revision-05 SPEC AC-17, `artifact-tree-routing`, `module-catalog-routing` and required TDD/authority references. Prior ticket prose, archive/library contents and unselected branches remain identifiers only. |
 | Pre-red / return | Import/call the absent public library-selection surface before production mutation; implement only ACX1-ACX7; return one implementation commit plus one WPR-only handoff after focused/regression/full/mypy/compile/reversal/source/scope/topology/residue verification. |
 | Resource / safety | `STANDARD`; host mapping `gpt-5.6-luna`, reasoning `max`; no helper. Reviewer task `019fb935-bbe1-7f71-8b4b-58ba20c81626` is sole orchestrator. No next-ticket authority, new worktree, R03-R06, external effect, push, package/install, Secret, release or deployment. `XSS_NOT_APPLICABLE`. |
+
+## PRG-20260815-500 - Router R02C3 independent review
+
+| Field | Evidence |
+| --- | --- |
+| Review target | Receipt-bound implementation `7f9c678406936e01709165e95d88431857a5aa77`; WPR-only handoff `e62192514132342cd49d2c0fbfcd1fd69de70df5`; registry `1e292e2f1524b99fa91f36cb845f718b54087cad`. |
+| Independent green evidence | Focused library-selection/artifact-tree/Router `81/81`; strict mypy `156/156`; in-memory compile `156/156`; scope/ancestry/topology/porcelain/cache checks pass. Independent full serial discovery had no failure stream but reached the 64-second tool limit before aggregate completion, so submitted `595/595` is not replayed review evidence. |
+| Review decision | `CHANGES_REQUESTED / EVIDENCE_DEFECT / SAME_BRANCH_CORRECTION`. CR-R02C3-001 is limited to ACX6 truthfulness: its three required in-memory semantic reversals are accepted by the committed source gate. |
+| Required correction | Same ticket/owner/permanent worktree/branch/allocation/receipt. Change only `tests/test_workflow_library_selection.py`, then WPR-only handoff. The bounded gate must reject in-memory family-binding bypass, reusable ACTIVE-to-ARCHIVED mapping and explicit-path binding bypass variants without executing or writing them. |
+| Boundary | No production behavior change, new ticket/branch/worktree/receipt, helper, R03-R06, external effect, push, package/install, Secret, release or deployment. `XSS_NOT_APPLICABLE`. |
