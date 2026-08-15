@@ -5342,3 +5342,13 @@
 | Owner / workspace | Existing task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`, one Luna max, no helper; same permanent implementation worktree. The only authorized branch is `codex/implementation-router-requirement-lineage-source-gate-r02c2a`, created from the exact parent handoff while preserving the one stopped test WIP as untrusted candidate input. |
 | Source / verification | Only `tests/test_workflow_requirement_lineage.py`, then WPR-only handoff. Read the ticket by identifier; prove in-memory forbidden-import/helper-bypass/raw-field mutations plus focused/Router/full/mypy/compile/source/scope/diff/topology/residue gates. |
 | Boundary | No production mutation, new worktree, unlisted branch, R02C3-R06, Agent control, external effect, push, package/install, Secret, release or deployment. `XSS_NOT_APPLICABLE`. |
+
+## PRG-20260815-495 - R02C2/R02C2A terminal independent review
+
+| Field | Evidence |
+| --- | --- |
+| Review target | Frozen R02C2 candidate plus R02C2A test-only closure at exact handoff `e1e006cb90ffd1d588b5665ade61433183a49c9a`; parent production implementation remains `e24ad619...`, child test implementation is `c4f8765c...`. |
+| Independent verification | Detached focused Router/lineage `74/74`; explicit serial full `577/577` across `50` modules; strict mypy `154/154`; in-memory compile `154/154`; exact ancestry/scope/diff/topology/clean-lane checks pass. |
+| ACX6 closure | Canonical sources pass the bounded source gate. Its three in-memory reverse mutations—effect import, private-helper dynamic bypass and raw contract field—each fail without executing mutated source. No production behavior changed. |
+| Decision | `APPROVED / GUARDED_INTEGRATION_AUTHORIZED`. CR-R02C2-001 and CR-R02C2-002 are closed; integrate only exact `e1e006cb...`, resolving only the expected append-only WPR overlap. |
+| Boundary | No next ticket dispatch until integration closure. No push, package/install, target project, external effect, release, deployment or Secret work. `XSS_NOT_APPLICABLE`. |
