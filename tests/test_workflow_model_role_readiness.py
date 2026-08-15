@@ -222,6 +222,13 @@ def _source_gate(source: str) -> bool:
             blocker_branch = True
         if (
             isinstance(node.test, ast.Compare)
+            and len(node.test.ops) == 1
+            and isinstance(node.test.ops[0], ast.NotEq)
+            and isinstance(node.test.left, ast.Name)
+            and node.test.left.id == "closure_kinds"
+            and len(node.test.comparators) == 1
+            and isinstance(node.test.comparators[0], ast.Name)
+            and node.test.comparators[0].id == "expected_closure_kinds"
             and _source_has_attribute(tuple(ast.walk(node)), "SpecificationReadinessDecision", "ARCHITECTURE_OWNER_REQUIRED")
             and _source_has_attribute(tuple(ast.walk(node)), "SpecificationWakeReason", "CLOSURE_INCOMPLETE")
         ):
@@ -236,7 +243,17 @@ def _source_gate(source: str) -> bool:
             open_decision_branch = True
         if any(
             isinstance(candidate, ast.Compare)
-            and _source_has_attribute(tuple(ast.walk(candidate)), "RoleActivityState", "ACTIVE")
+            and len(candidate.ops) == 1
+            and isinstance(candidate.ops[0], ast.Is)
+            and isinstance(candidate.left, ast.Attribute)
+            and isinstance(candidate.left.value, ast.Name)
+            and candidate.left.value.id == "supervisor"
+            and candidate.left.attr == "activity_state"
+            and len(candidate.comparators) == 1
+            and isinstance(candidate.comparators[0], ast.Attribute)
+            and isinstance(candidate.comparators[0].value, ast.Name)
+            and candidate.comparators[0].value.id == "RoleActivityState"
+            and candidate.comparators[0].attr == "ACTIVE"
             for candidate in ast.walk(node.test)
         ):
             supervisor_branch = True
@@ -418,6 +435,36 @@ class ModelRoleReadinessAcceptanceTests(unittest.TestCase):
             ("supervisor-activity-bypass", "RoleActivityState.ACTIVE", "RoleActivityState.SLEEPING"),
         )
         for label, original, replacement in mutations:
+            with self.subTest(label=label):
+                self.assertIn(original, source)
+                mutated = source.replace(original, replacement, 1)
+                self.assertFalse(_source_gate(mutated))
+
+    def test_committed_source_gate_rejects_reviewed_exact_bypasses(self) -> None:
+        source = _SOURCE_PATH.read_text(encoding="utf-8")
+        reviewed_mutations = (
+            (
+                "closure-subset-bypass",
+                "closure_kinds != expected_closure_kinds",
+                "closure_kinds <= expected_closure_kinds",
+            ),
+            (
+                "closure-superset-bypass",
+                "closure_kinds != expected_closure_kinds",
+                "closure_kinds >= expected_closure_kinds",
+            ),
+            (
+                "supervisor-inverse-bypass",
+                "supervisor.activity_state is RoleActivityState.ACTIVE",
+                "supervisor.activity_state is not RoleActivityState.ACTIVE",
+            ),
+            (
+                "blocker-compound-bypass",
+                "if request.blockers:",
+                "if request.blockers and False:",
+            ),
+        )
+        for label, original, replacement in reviewed_mutations:
             with self.subTest(label=label):
                 self.assertIn(original, source)
                 mutated = source.replace(original, replacement, 1)
