@@ -5311,3 +5311,13 @@
 | Correction authority | Keep the same ticket, owner, permanent worktree, branch, allocation and valid receipt. Read the exact review commit and make one additive test-only correction in `tests/test_workflow_requirement_lineage.py`; no new branch/worktree/receipt, no production behavior change and no ticket rewrite. Return one correction commit followed by one WPR-only handoff. |
 | Required proof | The source sentinel must inspect only R02C2-owned `Requirement*` aliases/enums/models in `contracts.py` plus `requirement_lineage.py`, reject the frozen ACX6 bypass forms there, and retain the existing public-import, behavior and three reversal checks. Re-run dedicated/Router/full/strict-mypy/in-memory-compile/source/scope/diff/topology/residue gates. |
 | Boundary | No R02C3-R06, helper, Agent control, filesystem/Git/host/network product effect, push, package/install, Secret, release or deployment. `XSS_NOT_APPLICABLE`. |
+
+## PRG-20260815-492 - Router R02C2 ACX6 convergence-only evidence closure
+
+| Field | Evidence |
+| --- | --- |
+| Rechecked return | Correction implementation `35b5cfae1776e8d5fdde34d6c8ad8c0787564732`; WPR-only handoff `5cbe34f2fba1e5bfad3227132394dfcc782916cd`; all submitted scope, ancestry, clean-lane and three-worktree evidence remains valid. |
+| Independent replay | Exact detached correction snapshot passed lineage `11/11`. Submitted correction additionally binds full serial `577/577`, strict mypy `154/154`, compile `154/154` and Router regression `63/63`. |
+| Convergence finding | `CR-R02C2-002 / EVIDENCE_DEFECT`: the first ACX6 correction guards public `Requirement*` aliases/enums/models but omits the R02C2-owned `_lineage_metadata_is_safe` helper and module import boundary in `contracts.py`. This is a reviewer-owned boundary omission, not a new product requirement or behavior defect. |
+| One permitted closure | Same ticket/owner/worktree/branch/allocation/receipt; add only the missing bounded helper/import AST guard to `tests/test_workflow_requirement_lineage.py`. Preserve all production bytes and existing guard assertions. Return one additive test-only commit and one WPR-only handoff. This is the final R02C2 evidence-convergence attempt; any further finding routes to architecture/review convergence instead of another implementation dispatch. |
+| Boundary | No new ticket/branch/worktree/receipt, helper, R02C3-R06, Agent control, source-body/archive scan, filesystem/Git/host/network product effect, push, package/install, Secret, release or deployment. `XSS_NOT_APPLICABLE`. |

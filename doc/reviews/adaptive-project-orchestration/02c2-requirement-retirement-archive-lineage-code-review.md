@@ -45,3 +45,25 @@ the ACX6 committed source guard does not cover all R02C2-owned source: it scans
 Keep the ticket, implementation owner, permanent worktree, branch, allocation and receipt. Add one test-only correction in `tests/test_workflow_requirement_lineage.py` that parses and guards the R02C2-owned `Requirement*` public contract declarations in `contracts.py`, in addition to the existing `requirement_lineage.py` scan. The guard must remain bounded to those exact declarations; it must not falsely reject older unrelated Router code. It must prove that the new contract fields remain named, explicitly typed and free of the frozen ACX6 bypass forms.
 
 No production-source change, new ticket/branch/worktree, helper, R02C3-R06 work, external effect, push, package/install, Secret, release or deployment is authorized. Return one additive correction commit and one WPR-only handoff after re-running the frozen gates. Any behavior or scope change is `CHANGE_DETECTED`.
+
+## Correction terminal recheck and convergence closure
+
+| Field | Result / evidence |
+| --- | --- |
+| Returned correction | Test-only `35b5cfae1776e8d5fdde34d6c8ad8c0787564732`; WPR-only `5cbe34f2fba1e5bfad3227132394dfcc782916cd`. It retains original implementation bytes, exact branch/registry ancestry, a clean owner lane and exactly three worktrees. |
+| Independent replay | PASS for the exact detached handoff's lineage suite `11/11`; submitted serial full `577/577`, Router/artifact-tree `63/63`, strict mypy `154/154` and compile `154/154` remain tied to its exact source/test snapshot. |
+| CR-R02C2-001 | Partially closed. The committed AST sentinel now guards the named public ID aliases, enums and models in `contracts.py`, as required by the first correction handoff. |
+| Review result | `CHANGES_REQUESTED / EVIDENCE_DEFECT / CONVERGENCE_ONLY`. |
+
+**CR-R02C2-002 — `EVIDENCE_DEFECT`, blocking.** The R02C2 diff also introduced
+`_lineage_metadata_is_safe` in `contracts.py`. That helper executes during each public contract
+validation, yet the new sentinel selects only `Requirement*` class declarations. It also does
+not assert the bounded module import surface. An ACX6-banned dynamic/effect construct could be
+introduced through this helper or an import without failing the committed source gate.
+
+This is a reviewer-owned omission in CR-R02C2-001's original correction boundary. One and only
+one convergence-only test correction is authorized: extend the existing source-gate test to
+cover the helper's exact typed signature/body and the `contracts.py` module import boundary,
+while retaining its existing bounded aliases/enums/models checks. No production change, new
+ticket, new receipt, new branch/worktree or other scope is allowed. A later failure must return
+to architecture/review convergence rather than receive another implementation dispatch.
