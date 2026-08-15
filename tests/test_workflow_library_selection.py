@@ -519,6 +519,55 @@ class LibrarySelectionGateTests(unittest.TestCase):
         self.assertNotIn("filesystem_path", decision.model_dump())
 
     @staticmethod
+    def _assert_selection_source_semantics(source: str) -> None:
+        """Require the exact frozen admission predicates in the pure gate."""
+
+        tree = ast.parse(source)
+        gate_nodes = [
+            node
+            for node in tree.body
+            if isinstance(node, ast.ClassDef) and node.name == "LibrarySelectionGate"
+        ]
+        if len(gate_nodes) != 1:
+            raise AssertionError("library selection gate class is not unique")
+        gate_node = gate_nodes[0]
+        method_names = {
+            node.name
+            for node in gate_node.body
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+        }
+        if not {"validate", "_kind_contract"}.issubset(method_names):
+            raise AssertionError("library selection gate methods are incomplete")
+
+        comparisons = {
+            ast.unparse(node)
+            for node in ast.walk(gate_node)
+            if isinstance(node, ast.Compare)
+        }
+        required_comparisons = {
+            "len(path.explicit_path_refs) != 3",
+            "len(path.path_nodes) != 3",
+            "path.root_ref != selection.root_ref",
+            "path.expected_leaf_ref != selection.leaf_ref",
+            "path.explicit_path_refs != expected_refs",
+            "supplied_node_refs != expected_refs",
+            "path.family is not expected_family",
+        }
+        if not required_comparisons.issubset(comparisons):
+            raise AssertionError("canonical library selection predicates are incomplete")
+
+        return_values = {
+            ast.unparse(node.value)
+            for node in ast.walk(gate_node)
+            if isinstance(node, ast.Return) and node.value is not None
+        }
+        if (
+            "(ArtifactTreeFamily.REUSABLE_MODULE, ArtifactTreeLifecycle.ACTIVE)"
+            not in return_values
+        ):
+            raise AssertionError("reusable-module lifecycle mapping is not canonical")
+
+    @staticmethod
     def _assert_module_source_policy(source: str) -> None:
         tree = ast.parse(source)
         forbidden_imports = {
@@ -581,6 +630,7 @@ class LibrarySelectionGateTests(unittest.TestCase):
                 raise AssertionError(f"forbidden token: {token}")
         if "ArtifactTreeResolver.resolve" not in source:
             raise AssertionError("integrated resolver is not used")
+        LibrarySelectionGateTests._assert_selection_source_semantics(source)
 
     @staticmethod
     def _assert_contract_surface(source: str) -> None:
@@ -713,6 +763,44 @@ class LibrarySelectionGateTests(unittest.TestCase):
                     1,
                 )
             )
+
+    def test_acx6_semantic_source_gate_rejects_exact_review_mutations_without_execution(
+        self,
+    ) -> None:
+        repository_root = Path(__file__).parents[1]
+        module_path = repository_root / "library" / "workflow_router" / "library_selection.py"
+        module_source = module_path.read_text(encoding="utf-8")
+        mutations = (
+            (
+                "family binding bypass",
+                module_source.replace(
+                    "if path.family is not expected_family:",
+                    "if False:",
+                    1,
+                ),
+            ),
+            (
+                "archived reusable leaf acceptance",
+                module_source.replace(
+                    "return ArtifactTreeFamily.REUSABLE_MODULE, ArtifactTreeLifecycle.ACTIVE",
+                    "return ArtifactTreeFamily.REUSABLE_MODULE, ArtifactTreeLifecycle.ARCHIVED",
+                    1,
+                ),
+            ),
+            (
+                "explicit path binding bypass",
+                module_source.replace(
+                    "or path.explicit_path_refs != expected_refs",
+                    "or False",
+                    1,
+                ),
+            ),
+        )
+        for mutation_name, mutated_source in mutations:
+            with self.subTest(mutation=mutation_name):
+                self.assertNotEqual(module_source, mutated_source)
+                with self.assertRaises(AssertionError):
+                    self._assert_module_source_policy(mutated_source)
 
     def test_acx6_reversal_kind_family_binding_remains_fail_closed(self) -> None:
         request = self._request(
