@@ -5321,3 +5321,14 @@
 | Verification | Dedicated lineage `11/11`; artifact-tree/Router `63/63`; explicit serial full suite `577/577` across `50` test modules; strict full-tree mypy `154/154` with explicit package bases, no incremental mode and the external cache removed; in-memory compile `154/154`; ACX6 source gate `1/1`; `git diff --check` pass. |
 | Readback | Correction commit is directly additive on `49037f60b1061a1c893c8d5c0c15bc54388a4221`; only the authorized test path changed, library source is byte-identical, tracked/ignored porcelain and local cache/runtime residue are empty, and exactly three worktrees remain. |
 | Boundary | `XSS_NOT_APPLICABLE`; no helper/subagent, new branch/worktree, production-source change, behavior change, external effect, push, package/install, Secret, release or deployment. |
+
+## PRG-20260815-494 - Router R02C2A requirement-lineage source-gate closure handoff
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_DISPATCH_CONFIRMED(PRG-494) -> ACTION_COMPLETED / REVIEW_HANDOFF`; child closure `CLOSURE-ADAPTIVE-ROUTER-R02C2A-01` is complete. |
+| First red / correction | The carried stopped WIP had canonical contract checks but no in-memory mutation assertions. The final bounded gate adds three in-memory, non-executed mutation proofs: forbidden module import, `_lineage_metadata_is_safe` dynamic/effect bypass, and raw `RequirementArchiveBundle.archive_id` field. Each mutation is rejected by the same source-shape helper and the canonical source remains accepted. |
+| Implementation | `c4f8765ccefef9b7fca3c6705cdecf757d5df848` changes only `tests/test_workflow_requirement_lineage.py`; no production source, public behavior or unrelated Router declaration changed. |
+| Verification | Focused lineage/artifact-tree/Router `74/74`; explicit serial full suite `577/577` across `50` test modules; strict full-tree mypy `154/154` with `--strict --explicit-package-bases --no-incremental`; in-memory compile `154/154`; canonical source gate `1/1` plus three mutation proofs; `git diff --check` pass. |
+| Readback | Child branch is based on exact `5cbe34f2fba1e5bfad3227132394dfcc782916cd`; exact three-worktree topology retained; tracked/ignored porcelain and local cache/runtime residue are empty; external mypy cache was removed. |
+| Boundary | `XSS_NOT_APPLICABLE`; no helper/subagent, additional branch/worktree, production-source change, self-review/integration, external effect, push, package/install, Secret, release or deployment. |
