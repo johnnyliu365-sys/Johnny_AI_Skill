@@ -34,3 +34,9 @@ phase. Its admission decision is reachable only through
 
 Revision 07 is separately indexed at [revision-07/README.md](revision-07/README.md). It neither
 rewrites the Revision 06 decision leaf nor reopens the Router phase.
+
+## Direct-child ticket partitions
+
+| ID | Kind | Revision | Digest | Lifecycle | Exact reference |
+| --- | --- | --- | --- | --- | --- |
+| `PROGRESS-ARTIFACT-TREE` | `PARTITION_INDEX` | `r01` | `sha256:ca24fab251b38412ec5d9be22b53cdb1d6203742ddce26a18de033a8adc80431` | `PLANNED` | [`progress-artifact-tree/README.md`](progress-artifact-tree/README.md) |
