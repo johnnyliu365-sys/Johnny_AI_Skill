@@ -5352,3 +5352,12 @@
 | ACX6 closure | Canonical sources pass the bounded source gate. Its three in-memory reverse mutations—effect import, private-helper dynamic bypass and raw contract field—each fail without executing mutated source. No production behavior changed. |
 | Decision | `APPROVED / GUARDED_INTEGRATION_AUTHORIZED`. CR-R02C2-001 and CR-R02C2-002 are closed; integrate only exact `e1e006cb...`, resolving only the expected append-only WPR overlap. |
 | Boundary | No next ticket dispatch until integration closure. No push, package/install, target project, external effect, release, deployment or Secret work. `XSS_NOT_APPLICABLE`. |
+
+## R02C2 / R02C2A merged implementation-handoff evidence
+
+| Field | Evidence |
+| --- | --- |
+| Parent return | `PRG-20260815-490`: R02C2 implementation `e24ad619684dfd08d7faa4161ab3dbe91170b7cb` added the bounded requirement-lineage contracts/gate/test surface after its first-red public-import failure. Its submitted dedicated/Router/full/mypy/compile evidence is superseded and independently rechecked by `PRG-495`. |
+| First correction return | `PRG-20260815-491`: test-only `35b5cfae1776e8d5fdde34d6c8ad8c0787564732` guarded public R02C2 contract declarations. Its evidence remains immutable but was superseded by the child closure after CR-R02C2-002 narrowed the missing helper/import scope. |
+| Child return | `PRG-20260815-494`: R02C2A test-only `c4f8765ccefef9b7fca3c6705cdecf757d5df848` proves canonical source acceptance and in-memory rejection of the forbidden import, helper bypass and raw-field mutations without executing mutated source. Its WPR-only handoff is `e1e006cb90ffd1d588b5665ade61433183a49c9a`. |
+| Integration preservation | The source/test commits and their original handoff commits remain immutable branch evidence. This consolidated root record resolves only the append-only WPR merge overlap; it neither rewrites historical commits nor changes the approved implementation boundary. |

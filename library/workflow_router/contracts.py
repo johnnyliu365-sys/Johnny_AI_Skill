@@ -19,6 +19,9 @@ RevisionDigest = Annotated[str, Field(pattern=r"^rev-[0-9a-f]{16,64}$")]
 EvidenceDigest = Annotated[str, Field(pattern=r"^sha256_[0-9a-f]{64}$")]
 CommitDigest = Annotated[str, Field(pattern=r"^git_[0-9a-f]{12,64}$")]
 ReviewedCommitReference = Annotated[str, Field(pattern=r"^[0-9a-f]{7,64}$")]
+RequirementId = Annotated[str, Field(pattern=r"^PRD-[0-9]{8}-[0-9]{3}$")]
+RequirementChangeId = Annotated[str, Field(pattern=r"^CHG-[0-9]{8}-[0-9]{3}$")]
+RequirementArchiveId = Annotated[str, Field(pattern=r"^ARCH-REQ-[0-9]{8}-[0-9]{3}$")]
 
 
 def _is_all_zero(value: str, prefix: str) -> bool:
@@ -605,6 +608,185 @@ class ArtifactTreeResolutionDecision(RouterModel):
                 or self.resolved_leaf_ref is not None
             ):
                 raise ValueError("missing-path decisions require only PATH_SEGMENT_MISSING")
+        return self
+
+
+class RequirementLifecycle(str, Enum):
+    """The two lifecycle states of one requirement lineage record."""
+
+    ACTIVE = "active"
+    ARCHIVED = "archived"
+
+
+class RequirementLineageDecisionKind(str, Enum):
+    """The finite outcomes of requirement-lineage validation."""
+
+    ACTIVE_PAIR_VALID = "active_pair_valid"
+    RETIREMENT_VALID = "retirement_valid"
+    REQUIREMENT_LINEAGE_INVALID = "requirement_lineage_invalid"
+
+
+class RequirementLineageInvalidReason(str, Enum):
+    """The finite fail-closed reasons for one requirement lineage request."""
+
+    REQUEST_BINDING_MISMATCH = "request_binding_mismatch"
+    IDENTIFIER_PAIR_MISMATCH = "identifier_pair_mismatch"
+    ACTIVE_PATH_INVALID = "active_path_invalid"
+    ACTIVE_LEAF_MISMATCH = "active_leaf_mismatch"
+    RETIRED_PATH_STILL_ACTIVE = "retired_path_still_active"
+    ARCHIVE_PATH_INVALID = "archive_path_invalid"
+    ARCHIVE_BUNDLE_MISMATCH = "archive_bundle_mismatch"
+    REPLACEMENT_PAIR_MISMATCH = "replacement_pair_mismatch"
+
+
+def _lineage_metadata_is_safe(references: tuple[OpaqueMetadataId, ...]) -> bool:
+    """Keep lineage references opaque without rejecting portable semantic IDs."""
+
+    return all(
+        "://" not in reference and "\\" not in reference and "/" not in reference
+        for reference in references
+    )
+
+
+class RequirementArchiveBundle(RouterModel):
+    """Immutable metadata binding a retired pair to one archive leaf."""
+
+    archive_id: RequirementArchiveId
+    archive_leaf_ref: OpaqueMetadataId
+    retired_prd_id: RequirementId
+    retired_change_id: RequirementChangeId
+    retired_leaf_ref: OpaqueMetadataId
+    last_active_revision: RevisionDigest
+    retirement_reason_ref: OpaqueMetadataId
+    replacement_prd_id: RequirementId | None
+    replacement_change_id: RequirementChangeId | None
+    historical_source_commit: CommitDigest
+    content_digest: EvidenceDigest
+
+    @model_validator(mode="after")
+    def metadata_shape_is_exact(self) -> RequirementArchiveBundle:
+        """Reject raw-looking references, reserved evidence and partial replacements."""
+
+        references = (
+            self.archive_leaf_ref,
+            self.retired_leaf_ref,
+            self.retirement_reason_ref,
+        )
+        if not _lineage_metadata_is_safe(references):
+            raise ValueError("requirement archive references must remain metadata-only")
+        if _is_all_zero(self.last_active_revision, "rev-"):
+            raise ValueError("archive revisions must identify real retired content")
+        if _is_all_zero(self.historical_source_commit, "git_"):
+            raise ValueError("archive source commits must identify real history")
+        if _is_all_zero(self.content_digest, "sha256_"):
+            raise ValueError("archive digests must identify real content")
+        if (self.replacement_prd_id is None) != (self.replacement_change_id is None):
+            raise ValueError("replacement identifiers must be supplied as a pair")
+        return self
+
+
+class RequirementLineageRecord(RouterModel):
+    """The lifecycle and exact leaf metadata for one PRD/CHG pair."""
+
+    lineage_ref: OpaqueMetadataId
+    prd_id: RequirementId
+    change_id: RequirementChangeId
+    lifecycle: RequirementLifecycle
+    active_leaf_ref: OpaqueMetadataId | None
+    archive_id: RequirementArchiveId | None
+    archive_leaf_ref: OpaqueMetadataId | None
+    revision: RevisionDigest
+    content_digest: EvidenceDigest
+
+    @model_validator(mode="after")
+    def lifecycle_shape_is_exact(self) -> RequirementLineageRecord:
+        """Require active and archived records to expose disjoint leaf metadata."""
+
+        if not _lineage_metadata_is_safe(
+            tuple(
+                reference
+                for reference in (
+                    self.lineage_ref,
+                    self.active_leaf_ref,
+                    self.archive_leaf_ref,
+                )
+                if reference is not None
+            )
+        ):
+            raise ValueError("requirement lineage references must remain metadata-only")
+        if _is_all_zero(self.revision, "rev-"):
+            raise ValueError("lineage revisions must identify real content")
+        if _is_all_zero(self.content_digest, "sha256_"):
+            raise ValueError("lineage digests must identify real content")
+        if self.lifecycle is RequirementLifecycle.ACTIVE:
+            if (
+                self.active_leaf_ref is None
+                or self.archive_id is not None
+                or self.archive_leaf_ref is not None
+            ):
+                raise ValueError("active lineages require only an active leaf")
+        elif (
+            self.active_leaf_ref is not None
+            or self.archive_id is None
+            or self.archive_leaf_ref is None
+        ):
+            raise ValueError("archived lineages require only archive metadata")
+        return self
+
+
+class RequirementLineageValidationRequest(RouterModel):
+    """One caller-selected active or retirement lineage branch."""
+
+    request_ref: OpaqueMetadataId
+    lineage: RequirementLineageRecord
+    prd_root_ref: OpaqueMetadataId
+    change_root_ref: OpaqueMetadataId
+    prd_active_path: ArtifactTreeResolutionRequest
+    change_active_path: ArtifactTreeResolutionRequest
+    archive_root_ref: OpaqueMetadataId | None
+    archive_path: ArtifactTreeResolutionRequest | None
+    archive_bundle: RequirementArchiveBundle | None
+
+    @model_validator(mode="after")
+    def lifecycle_shape_is_exact(self) -> RequirementLineageValidationRequest:
+        """Keep archive request fields aligned with the lineage lifecycle."""
+
+        references = tuple(
+            reference
+            for reference in (self.request_ref, self.prd_root_ref, self.change_root_ref)
+            if reference is not None
+        )
+        if not _lineage_metadata_is_safe(references):
+            raise ValueError("lineage request references must remain metadata-only")
+        archive_fields = (self.archive_root_ref, self.archive_path, self.archive_bundle)
+        if self.lineage.lifecycle is RequirementLifecycle.ACTIVE:
+            if any(field is not None for field in archive_fields):
+                raise ValueError("active lineage requests cannot carry archive fields")
+        elif any(field is None for field in archive_fields):
+            raise ValueError("archived lineage requests require all archive fields")
+        return self
+
+
+class RequirementLineageValidationDecision(RouterModel):
+    """The exact finite result of one requirement-lineage admission."""
+
+    request_ref: OpaqueMetadataId
+    lineage_ref: OpaqueMetadataId
+    decision: RequirementLineageDecisionKind
+    invalid_reason: RequirementLineageInvalidReason | None
+    resolved_lineage_leaf_ref: OpaqueMetadataId | None
+
+    @model_validator(mode="after")
+    def result_shape_is_exact(self) -> RequirementLineageValidationDecision:
+        """Keep success and failure results disjoint and metadata-only."""
+
+        if not _lineage_metadata_is_safe((self.request_ref, self.lineage_ref)):
+            raise ValueError("lineage decision references must remain metadata-only")
+        if self.decision is RequirementLineageDecisionKind.REQUIREMENT_LINEAGE_INVALID:
+            if self.invalid_reason is None or self.resolved_lineage_leaf_ref is not None:
+                raise ValueError("invalid lineage results require only a finite reason")
+        elif self.invalid_reason is not None or self.resolved_lineage_leaf_ref is None:
+            raise ValueError("valid lineage results require only an exact leaf")
         return self
 
 
