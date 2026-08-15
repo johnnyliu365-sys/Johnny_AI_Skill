@@ -5418,3 +5418,12 @@
 | Exact correction | Extend the existing bounded source gate to assert the canonical family-rejection predicate, reusable `REUSABLE_MODULE -> ACTIVE` mapping and explicit three-ref/path-node binding predicate. In-memory source mutations must make each gate rejection red: family bypass, reusable ACTIVE-to-ARCHIVED mapping, and explicit-path binding bypass. Do not write or execute mutated source. |
 | Return / verification | One test-only correction commit, then one WPR-only handoff. Re-run dedicated/Router/full serial/strict-mypy/in-memory-compile/source/scope/diff/ancestry/topology/porcelain/cache gates. Any production behavior/scope change returns `CHANGE_DETECTED`. |
 | Boundary | No helper, self-review/integration, R03-R06, external effect, push, package/install, Secret, release or deployment. `XSS_NOT_APPLICABLE`. |
+
+## PRG-20260815-503 - Router R02C3 correction terminal review
+
+| Field | Evidence |
+| --- | --- |
+| Review target | Correction `360b556d29d4f10906dfdd0542a6b772722aff6f`; WPR handoff `3f8a1fbc5861acd51122204aadea9542c7d04b66`; parent implementation `7f9c678406936e01709165e95d88431857a5aa77`. |
+| Independent review | Focused library-selection/artifact-tree/Router `82/82`; strict mypy `156/156`; in-memory compile `156/156`; scope/ancestry/topology/porcelain/cache pass. Reviewer replayed each exact ACX6 mutation and the source gate rejected all three without write or execution. Submitted full serial evidence is `596/596`. |
+| Decision | `APPROVED / GUARDED_INTEGRATION_AUTHORIZED`; CR-R02C3-001 is closed. Integrate only exact handoff `3f8a1fb...` after a merge-tree proves no source/test conflict; append-only WPR overlap is the sole pre-authorized conflict class. |
+| Boundary | No next ticket dispatch before integration closure. No push, package/install, target-project, external effect, release, deployment or Secret work. `XSS_NOT_APPLICABLE`. |

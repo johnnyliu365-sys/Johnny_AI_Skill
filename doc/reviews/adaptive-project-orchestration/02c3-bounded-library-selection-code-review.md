@@ -51,3 +51,15 @@ The existing `test_acx6_reversal_*` functions submit invalid runtime data to can
 Keep ticket, owner, permanent worktree, branch, allocation and receipt. Change only `tests/test_workflow_library_selection.py`, then make one WPR-only handoff. Extend the bounded source gate to assert the exact family rejection predicate, `REUSABLE_MODULE -> ACTIVE` mapping and explicit three-ref/path-node binding predicate. Create those three variants in memory and prove each is rejected without writing or executing mutated source. Retain the generic typing/effect and public-contract checks.
 
 No production-source change, new ticket/branch/worktree, helper, next-ticket work, external effect, push, package/install, Secret, release or deployment is authorized. Re-run the frozen verification matrix; a behavior or scope change is `CHANGE_DETECTED`.
+
+## Correction terminal recheck
+
+| Field | Result / evidence |
+| --- | --- |
+| Returned correction | Test-only `360b556d29d4f10906dfdd0542a6b772722aff6f`; WPR-only `3f8a1fbc5861acd51122204aadea9542c7d04b66`. Production R02C3 blobs remain unchanged from `7f9c678`. |
+| Independent replay | PASS: library-selection/artifact-tree/Router `82/82`; strict mypy `156/156`; in-memory compile `156/156`; each exact review mutation rejects in memory without write or execution. |
+| Scope / residue | PASS: correction changes only `tests/test_workflow_library_selection.py`; handoff changes only WPR; diff/ancestry/porcelain/topology/cache readback pass. Submitted serial full evidence is `596/596`. |
+| CR-R02C3-001 | CLOSED. The committed source gate binds the frozen family predicate, reusable ACTIVE mapping and explicit path predicate, and dedicated in-memory mutations prove each rejection. |
+| Review result | `APPROVED / GUARDED_INTEGRATION_AUTHORIZED` |
+
+Integrate only handoff `3f8a1fbc5861acd51122204aadea9542c7d04b66`. A read-only merge-tree must show no source/test conflict; only an append-only WPR overlap may be resolved by retaining each distinct evidence record once and in order. No push, release, deployment, package/install, target-project, external or Secret effect is authorized.
