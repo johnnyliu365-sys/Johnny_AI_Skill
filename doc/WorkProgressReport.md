@@ -5321,3 +5321,13 @@
 | Convergence finding | `CR-R02C2-002 / EVIDENCE_DEFECT`: the first ACX6 correction guards public `Requirement*` aliases/enums/models but omits the R02C2-owned `_lineage_metadata_is_safe` helper and module import boundary in `contracts.py`. This is a reviewer-owned boundary omission, not a new product requirement or behavior defect. |
 | One permitted closure | Same ticket/owner/worktree/branch/allocation/receipt; add only the missing bounded helper/import AST guard to `tests/test_workflow_requirement_lineage.py`. Preserve all production bytes and existing guard assertions. Return one additive test-only commit and one WPR-only handoff. This is the final R02C2 evidence-convergence attempt; any further finding routes to architecture/review convergence instead of another implementation dispatch. |
 | Boundary | No new ticket/branch/worktree/receipt, helper, R02C3-R06, Agent control, source-body/archive scan, filesystem/Git/host/network product effect, push, package/install, Secret, release or deployment. `XSS_NOT_APPLICABLE`. |
+
+## PRG-20260815-493 - R02C2A source-gate evidence continuation proposal
+
+| Field | Evidence |
+| --- | --- |
+| Router decision | R02C2 is suspended at immutable candidate handoff `5cbe34f2...`; two incomplete source-gate corrections are replaced by one fresh, bounded evidence-closure ticket rather than a third opaque correction loop. |
+| New closure | `02c2a-requirement-lineage-source-gate-closure`; only `tests/test_workflow_requirement_lineage.py`; ACX-A1 through ACX-A6 define an exact contract-source manifest, three in-memory mutations and no production behavior change. |
+| Fresh branch evidence | The parent candidate must remain immutable for terminal review. One named child branch from exact `5cbe34f2...` in the existing permanent implementation worktree is required; the stopped one-file WIP is preserved as untrusted candidate input, never reset/deleted. |
+| Planned owner / bindings | Existing owner task only; `hnd-adaptive-router-r02c2a-20260815`, `aln-adaptive-router-r02c2a-20260815`, `rcpt-adaptive-router-r02c2a-20260815`, `corr-adaptive-router-r02c2a-20260815`, `scx-adaptive-router-r02c2a-20260815-01`. No receipt is active until the separate dispatch registry. |
+| Boundary | No production source, external effect, package/install, target project, push, release, deployment or Secret work. `XSS_NOT_APPLICABLE`. |
