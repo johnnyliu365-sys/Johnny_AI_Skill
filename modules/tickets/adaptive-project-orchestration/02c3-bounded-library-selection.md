@@ -5,7 +5,7 @@
 | SPEC / AC | `SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2` revision 05 / AC-17 |
 | PRD / change | `PRD-20260815-022` / `CHG-20260815-022` |
 | Context / environment | `doc/context/adaptive-project-orchestration/main.md` at `SPEC_REVISION_05_APPROVED / ROUTER_PHASE_ACTIVE`; local pure-Python verification only; no target, host or external environment effect |
-| State / closure | `APPROVED / GUARDED_INTEGRATION_AUTHORIZED`; `CLOSURE-ADAPTIVE-ROUTER-R02C3-01`, ACX1-ACX7, revision `r02c3-01` |
+| State / closure | `COMPLETE / APPROVED / INTEGRATED`; `CLOSURE-ADAPTIVE-ROUTER-R02C3-01`, ACX1-ACX7, revision `r02c3-01` |
 | Dependency / baseline | R02C2/R02C2A guarded integration `701df3e448e316d3edf7bdc115e66693e3f54c61`; this ticket receives authority only from its separate exact dispatch registry |
 | Implementation language / checker | Python 3.11; `python -B -m mypy --strict --explicit-package-bases --no-incremental library tests` |
 | Delivery profile / resource plan | `STANDARD`; one `gpt-5.6-luna` max implementation owner; no helper |
