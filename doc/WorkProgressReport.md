@@ -5546,3 +5546,13 @@
 | Independent replay | Pristine gate accepted; all four CR-R03-001 in-memory bypasses reject. Readiness/Router `62/62`, strict mypy `158/158`, in-memory Python compile `158/158`, correction/WPR scope, ancestry, diff check, three-worktree topology, clean porcelain and cache readback pass. Submitted full serial evidence is `605/605`. |
 | Decision | `APPROVED / GUARDED_INTEGRATION_AUTHORIZED`; CR-R03-001 is closed. Integrate only the exact WPR handoff after a read-only merge guard confirms no source/test conflict. |
 | Guard | An append-only WPR overlap may retain PRG-509, PRG-510 and PRG-511 exactly once. No reset, amend, force, source/test overwrite, push, package/install, target-project, external effect, Secret, release or deployment. `XSS_NOT_APPLICABLE`. |
+
+## PRG-20260815-513 - Router R03 guarded integration closure
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `APPROVED(PRG-512) -> GUARDED_INTEGRATION -> ACTION_COMPLETED`; exact correction handoff `2f1d0d67e8ae70f15e0d11bd34d8b8c73444a197` merged non-force into `main` as `aa313bff6f4bfa811cffb3eb142c1fb66fef7bb7`. |
+| Merge guard / resolution | Read-only merge-tree found no source/test conflict and only the pre-authorized append-only WPR overlap. Resolution retains PRG-508, PRG-509, PRG-510, PRG-511 and PRG-512 exactly once and in order; reviewed source/test commits were not rewritten. |
+| Post-merge verification | Readiness/Router `62/62`, `git diff --check`, clean main porcelain and exact three-worktree topology pass. |
+| State / next route | R03 is `COMPLETE / APPROVED / INTEGRATED`; its allocation is released. Router selects R04 as the next serial candidate, but its current `CANDIDATE / NON_DISPATCHABLE` state requires separate ticket freeze/handoff/receipt authority before any implementation dispatch. |
+| Boundary | No push, package/install, target-project, external effect, Secret, release or deployment. `XSS_NOT_APPLICABLE`. |
