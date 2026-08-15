@@ -5311,3 +5311,13 @@
 | Verification | Dedicated plus artifact-tree/Router focused `74/74`; broader Router regression `141/141`; explicit serial full suite `577/577` across `50` test modules; strict full-tree mypy `154/154`; in-memory compile `154/154`; source gate `1/1`; scope/diff/ancestry/topology gates pass. |
 | Readback | Branch `codex/implementation-router-requirement-lineage-r02c2`; registry `4bd9fb19ac5ee9c8ca38348e103fec0877d53885` is an ancestor; permanent linked git-dir and exactly three worktrees retained; tracked and ignored porcelain empty; local cache/bytecode/runtime residue `0`; external mypy cache removed; `XSS_NOT_APPLICABLE`. |
 | Boundary | No helper, Agent control, R02C3-R06 implementation, source/body/archive scan, filesystem/Git/host/network effect, push, package/install, Secret, release or deployment. |
+
+## PRG-20260815-491 - Router R02C2 CR-R02C2-001 evidence correction handoff
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `ACTION_COMPLETED / REVIEW_HANDOFF(PRG-490) -> SAME_BRANCH_CORRECTION`; CR-R02C2-001 is the sole blocking evidence defect. |
+| Correction | `35b5cfae1776e8d5fdde34d6c8ad8c0787564732` changes only `tests/test_workflow_requirement_lineage.py`. The ACX6 source gate now parses the exact R02C2 public aliases, finite enums and four `Requirement*` strict model declarations in `library/workflow_router/contracts.py`, checking their names, finite values, explicit field annotations and forbidden bypass forms while leaving unrelated Router declarations unscanned. |
+| Verification | Dedicated lineage `11/11`; artifact-tree/Router `63/63`; explicit serial full suite `577/577` across `50` test modules; strict full-tree mypy `154/154` with explicit package bases, no incremental mode and the external cache removed; in-memory compile `154/154`; ACX6 source gate `1/1`; `git diff --check` pass. |
+| Readback | Correction commit is directly additive on `49037f60b1061a1c893c8d5c0c15bc54388a4221`; only the authorized test path changed, library source is byte-identical, tracked/ignored porcelain and local cache/runtime residue are empty, and exactly three worktrees remain. |
+| Boundary | `XSS_NOT_APPLICABLE`; no helper/subagent, new branch/worktree, production-source change, behavior change, external effect, push, package/install, Secret, release or deployment. |
