@@ -5300,3 +5300,14 @@
 | Context resolution | Resolve only the exact ticket, revision-05 SPEC AC-17, `requirement-lineage`, `artifact-tree-routing` and required TDD/authority references. Prior ticket prose, requirement bodies, archive contents and unrelated library branches are identifiers only. |
 | Pre-red / return | Import/call the absent public lineage surface before production mutation; implement only ACX1-ACX8; return one implementation commit plus one WPR-only handoff after focused/regression/full/mypy/compile/reversal/source/scope/topology/residue verification. |
 | Resource / safety | `STANDARD`; host mapping `gpt-5.6-luna`, reasoning `max`; no helper. Reviewer task `019fb935-bbe1-7f71-8b4b-58ba20c81626` is sole orchestrator. No next-ticket authority, new worktree, R02C3-R06, external effect, push, package/install, Secret, release or deployment. `XSS_NOT_APPLICABLE`. |
+
+## PRG-20260815-491 - Router R02C2 independent review and same-branch correction handoff
+
+| Field | Evidence |
+| --- | --- |
+| Review target | Receipt-bound R02C2 implementation `e24ad619684dfd08d7faa4161ab3dbe91170b7cb`, WPR-only handoff `49037f60b1061a1c893c8d5c0c15bc54388a4221`, exact dispatch registry `4bd9fb19ac5ee9c8ca38348e103fec0877d53885`. |
+| Independent green evidence | Detached handoff export passed dedicated lineage `11/11`, artifact-tree/Router `63/63`, full serial `577/577`, strict `mypy --strict --explicit-package-bases --no-incremental` `154/154`, in-memory compile `154/154`, and reviewer adversarial probes `5/5`. Exact implementation scope, WPR-only handoff, ancestry, diff and three-worktree topology pass. |
+| Review decision | `CHANGES_REQUESTED / EVIDENCE_DEFECT / SAME_BRANCH_CORRECTION`. CR-R02C2-001 is limited to ACX6 evidence: the committed source sentinel only scans `requirement_lineage.py`; it does not guard the R02C2 public contract declarations added in `contracts.py`. |
+| Correction authority | Keep the same ticket, owner, permanent worktree, branch, allocation and valid receipt. Read the exact review commit and make one additive test-only correction in `tests/test_workflow_requirement_lineage.py`; no new branch/worktree/receipt, no production behavior change and no ticket rewrite. Return one correction commit followed by one WPR-only handoff. |
+| Required proof | The source sentinel must inspect only R02C2-owned `Requirement*` aliases/enums/models in `contracts.py` plus `requirement_lineage.py`, reject the frozen ACX6 bypass forms there, and retain the existing public-import, behavior and three reversal checks. Re-run dedicated/Router/full/strict-mypy/in-memory-compile/source/scope/diff/topology/residue gates. |
+| Boundary | No R02C3-R06, helper, Agent control, filesystem/Git/host/network product effect, push, package/install, Secret, release or deployment. `XSS_NOT_APPLICABLE`. |
