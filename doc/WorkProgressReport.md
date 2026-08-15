@@ -5382,3 +5382,16 @@
 | Planned lane | Existing idle task `019ffb0c-db88-7303-895c-aecfadde7c8d`; its existing permanent implementation worktree; planned branch `codex/implementation-router-library-selection-r02c3`; one Luna max owner, no helper. |
 | Planned binding | Handoff `hnd-adaptive-router-r02c3-20260815`; allocation `aln-adaptive-router-r02c3-20260815`; receipt `rcpt-adaptive-router-r02c3-20260815`; correlation `corr-adaptive-router-r02c3-20260815`; question `q-adaptive-router-r02c3-20260815`; side Context `scx-adaptive-router-r02c3-20260815-01`; expected return `ret-library-selection-review-handoff-r02c3`. |
 | Boundary | No receipt yet, source/test mutation, new worktree, helper, R03-R06, external effect, push, package/install, Secret, release or deployment. `XSS_NOT_APPLICABLE`. |
+
+## PRG-20260815-498 - Router Ticket R02C3 implementation dispatch
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `TICKET_DISPATCH_REQUIRED(PRG-497) + STANDING_OWNER_AUTO_CONTINUE -> IMPLEMENTATION_DISPATCH_CONFIRMED / IMPLEMENT`; this record is the sole R02C3 dispatch registry. |
+| Registry / ticket | Proposal `eee48cc275d3bc7eebf0b4283a4ed007a16e96e8`; exact ticket `modules/tickets/adaptive-project-orchestration/02c3-bounded-library-selection.md`; closure `CLOSURE-ADAPTIVE-ROUTER-R02C3-01` ACX1-ACX7 revision `r02c3-01`; this registry commit is the dispatch baseline. |
+| Binding | Handoff `hnd-adaptive-router-r02c3-20260815`; allocation `aln-adaptive-router-r02c3-20260815`; receipt `rcpt-adaptive-router-r02c3-20260815`; correlation `corr-adaptive-router-r02c3-20260815`; question `q-adaptive-router-r02c3-20260815`; side Context `scx-adaptive-router-r02c3-20260815-01`; expected return `ret-library-selection-review-handoff-r02c3`. |
+| Owner / lane | Existing idle task `019ffb0c-db88-7303-895c-aecfadde7c8d`; its existing clean permanent implementation worktree, currently preserving its independent 06G0P branch evidence. Create only `codex/implementation-router-library-selection-r02c3` from this registry. Exactly three worktrees remain. |
+| Source authority | Exactly `library/workflow_router/contracts.py`, new `library/workflow_router/library_selection.py`, `library/workflow_router/__init__.py` and new `tests/test_workflow_library_selection.py`; then one WPR-only handoff. Integrated R02C1/R02C2 source and tests are read-only. |
+| Context resolution | Resolve only exact ticket, revision-05 SPEC AC-17, `artifact-tree-routing`, `module-catalog-routing` and required TDD/authority references. Prior ticket prose, archive/library contents and unselected branches remain identifiers only. |
+| Pre-red / return | Import/call the absent public library-selection surface before production mutation; implement only ACX1-ACX7; return one implementation commit plus one WPR-only handoff after focused/regression/full/mypy/compile/reversal/source/scope/topology/residue verification. |
+| Resource / safety | `STANDARD`; host mapping `gpt-5.6-luna`, reasoning `max`; no helper. Reviewer task `019fb935-bbe1-7f71-8b4b-58ba20c81626` is sole orchestrator. No next-ticket authority, new worktree, R03-R06, external effect, push, package/install, Secret, release or deployment. `XSS_NOT_APPLICABLE`. |

@@ -5,13 +5,13 @@
 | SPEC / AC | `SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2` revision 05 / AC-17 |
 | PRD / change | `PRD-20260815-022` / `CHG-20260815-022` |
 | Context / environment | `doc/context/adaptive-project-orchestration/main.md` at `SPEC_REVISION_05_APPROVED / ROUTER_PHASE_ACTIVE`; local pure-Python verification only; no target, host or external environment effect |
-| State / closure | `PLANNED / NON_DISPATCHED`; `CLOSURE-ADAPTIVE-ROUTER-R02C3-01`, ACX1-ACX7, revision `r02c3-01` |
+| State / closure | `IN_PROGRESS / RECEIPT_BOUND`; `CLOSURE-ADAPTIVE-ROUTER-R02C3-01`, ACX1-ACX7, revision `r02c3-01` |
 | Dependency / baseline | R02C2/R02C2A guarded integration `701df3e448e316d3edf7bdc115e66693e3f54c61`; this ticket receives authority only from its separate exact dispatch registry |
 | Implementation language / checker | Python 3.11; `python -B -m mypy --strict --explicit-package-bases --no-incremental library tests` |
 | Delivery profile / resource plan | `STANDARD`; one `gpt-5.6-luna` max implementation owner; no helper |
 | Control / implementation owner | Reviewer task `019fb935-bbe1-7f71-8b4b-58ba20c81626`; planned implementation task `019ffb0c-db88-7303-895c-aecfadde7c8d` in its existing permanent worktree only |
-| Planned lane | `codex/implementation-router-library-selection-r02c3` from the exact dispatch registry; no new worktree |
-| Planned binding | Handoff `hnd-adaptive-router-r02c3-20260815`; allocation `aln-adaptive-router-r02c3-20260815`; receipt `rcpt-adaptive-router-r02c3-20260815`; question `q-adaptive-router-r02c3-20260815`; correlation `corr-adaptive-router-r02c3-20260815`; side Context `scx-adaptive-router-r02c3-20260815-01`; expected return `ret-library-selection-review-handoff-r02c3` |
+| Lane | `codex/implementation-router-library-selection-r02c3` from dispatch registry `PRG-20260815-498`; no new worktree |
+| Dispatch binding | Handoff `hnd-adaptive-router-r02c3-20260815`; allocation `aln-adaptive-router-r02c3-20260815`; receipt `rcpt-adaptive-router-r02c3-20260815`; question `q-adaptive-router-r02c3-20260815`; correlation `corr-adaptive-router-r02c3-20260815`; side Context `scx-adaptive-router-r02c3-20260815-01`; expected return `ret-library-selection-review-handoff-r02c3`; activated only by the exact registry containing `PRG-20260815-498` |
 | XSS / effects | `XSS_NOT_APPLICABLE`; metadata-only pure validation, no Browser/WebView/HTML/DOM/JavaScript context, body/source read, filesystem, Git, Agent, host or network effect |
 | Operations / rollback | No runtime operation. Before guarded integration, withhold approval; after it, a separately reviewed additive revert only. Never reset, force or delete reviewed evidence. |
 
