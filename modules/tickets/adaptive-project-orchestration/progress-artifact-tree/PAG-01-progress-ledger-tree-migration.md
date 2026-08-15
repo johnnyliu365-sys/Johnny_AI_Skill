@@ -6,11 +6,12 @@
 | --- | --- |
 | Ticket ID | `PAG-01-progress-ledger-tree-migration` |
 | State | `PLANNED / READY_LOW_MODEL / NON_DISPATCHED` |
-| Closure set | `PAG-01-CS-01` |
+| Closure set | `PAG-01-CS-02` |
 | Authority | `PRD-20260815-022` / `CHG-20260815-022`; [`REQ-20260815-022`](../../../../doc/requirements/active/2026/adaptive-orchestration/REQ-20260815-022.md); [`adaptive-project-orchestration.md`](../../../spec/adaptive-project-orchestration.md) Revision 05 AC-17; [`DEC-20260816-519`](DEC-20260816-519.md) |
 | Baseline | `471608b2abd361eeb16c29dc8728f85d173d8f57` |
+| Canonical legacy source | bytes after Git clean filtering from `471608b2abd361eeb16c29dc8728f85d173d8f57:doc/WorkProgressReport.md`; blob `146d9f54beee4de6c2f315fe767e85a170711d87`; exactly `855317` bytes |
 | Context | sealed `CONTEXT.md`; no Context revision or append is authorised by this ticket |
-| Logical implementation owner | one `IMPLEMENTATION_OWNER`, `gpt-5.6-luna`, high reasoning; task/worktree/branch/receipt are `UNBOUND` until a later Router admission |
+| Logical implementation owner | one `IMPLEMENTATION_OWNER`, `gpt-5.6-luna`, xhigh reasoning; task/worktree/branch/receipt are `UNBOUND` until a later Router admission |
 | Reviewer | receipt-bound `SUPERVISOR_REVIEWER`, unbound until dispatch |
 | Environment / resource plan | local Python 3.11; one implementation lane; no helper, network, provider, install, host, target-project, or external resource capability |
 | Dependency | none; `PAG-02` depends on this ticket being `COMPLETE / APPROVED / INTEGRATED` |
@@ -18,11 +19,12 @@
 
 ## One observable closure
 
-Given the legacy flat `doc/WorkProgressReport.md` at this ticket's admitted baseline, one local
-migration produces a compatibility root index plus the complete deterministic date tree
+Given the canonical Git-clean legacy blob bound above, one local migration produces a compatibility
+root index plus the complete deterministic date tree
 `doc/progress/<year>/<month>/<day>/<PRG-ID>.md`. Every unique legacy PRG record is represented
-once by an immutable exact leaf that preserves its source record bytes, and the typed validator
-accepts the resulting tree only when its source-to-leaf proof and all index invariants hold.
+once by an immutable exact leaf that preserves its canonical source bytes. The typed validator
+accepts the resulting tree only when reconstruction equals that immutable blob and all index
+invariants hold. Host working-tree bytes and their EOL form are never byte authority.
 
 This is one data/effect boundary: the repository filesystem inside the exact paths below. No
 runtime dependency or product behavior is introduced.
@@ -51,10 +53,14 @@ inventory, ticket/spec prose, chat, or migration narrative. The `doc/progress` d
 path container, not a second root index. Each `README.md` may contain only direct-child rows with
 exactly `ID`, `Kind`, `Revision`, `Digest`, `Lifecycle`, and `Exact reference` columns.
 
-The legacy parser owns conversion from one flat report to `LegacyProgressRecord`; the pure domain
-and validator own identity, byte-preservation, digest, direct-edge and lookup invariants; the
-command composition root owns input/output paths and atomic staged replacement. No domain type
-may perform filesystem I/O. The command must not inspect unrelated repository files.
+The command composition root first resolves `471608b2abd361eeb16c29dc8728f85d173d8f57:doc/WorkProgressReport.md`
+with `git rev-parse`, requires blob `146d9f54beee4de6c2f315fe767e85a170711d87`, requires
+`git cat-file -s` to equal `855317`, then reads `git cat-file blob` as binary bytes. It passes only
+those canonical bytes to the legacy parser; it must not open the host working-tree report as a
+byte source. The legacy parser owns conversion to `LegacyProgressRecord`; the pure domain and
+validator own identity, canonical-byte preservation, digest, direct-edge and lookup invariants;
+the composition root owns input/output paths and atomic staged replacement. No domain type may
+perform filesystem I/O, and the command must not inspect unrelated repository files.
 
 ## Frozen contract and errors
 
@@ -65,10 +71,11 @@ boundary:
 | Contract | Required meaning |
 | --- | --- |
 | `ProgressRecordId` | exact `PRG-YYYYMMDD-NNN`, with year/month/day derived only from its ID |
-| `LegacyProgressRecord` | non-empty raw record bytes, exact heading, ID, source ordinal, and derived date; no nullable field |
+| `CanonicalLedgerSource` | exact baseline commit, path, blob ID, byte count, and binary bytes; no working-tree path or nullable authority field |
+| `LegacyProgressRecord` | non-empty canonical raw record bytes, exact valid PRG heading, ID, source ordinal, and derived date; no nullable field |
 | `ProgressLeafRef` | one relative leaf reference under the bounded `doc/progress` date tree; no absolute path or traversal segment |
 | `ProgressIndexEntry` | direct child ID/kind/revision/digest/lifecycle/exact reference only |
-| `ProgressMigrationPlan` / `ProgressMigrationResult` | source IDs and digest, planned leaf refs, resulting IDs and digest; set equality proves completeness and uniqueness |
+| `ProgressMigrationPlan` / `ProgressMigrationResult` | canonical source blob ID/size, source IDs, planned leaf refs, resulting IDs and reconstructed blob digest; set equality proves completeness and uniqueness |
 | `ProgressTreeValidationResult` | `VALID` or one finite failure reason, never a partial-success result |
 
 The finite failure reasons are `MALFORMED_HEADING`, `IDENTITY_COLLISION`, `SOURCE_LEAF_MISMATCH`,
@@ -76,27 +83,35 @@ The finite failure reasons are `MALFORMED_HEADING`, `IDENTITY_COLLISION`, `SOURC
 `INDEX_BODY_FORBIDDEN`, `ROOT_BODY_FORBIDDEN`, and `INDEX_SHAPE_INVALID`. Any one failure
 prevents replacement of the legacy root and produces no partial migration commit.
 
-Each historical leaf is the original record span, including its `## PRG-...` heading and original
-body, byte-for-byte. Index metadata uses `legacy-ledger-r01` and `FROZEN_HISTORICAL`; this is
-provenance metadata only and must not reclassify a historical event. A new event writer writes one
-new exact leaf and updates only its direct day/month/year/root indexes; it never appends event
-content to `doc/WorkProgressReport.md`.
+Only a valid `^## PRG-[0-9]{8}-[0-9]{3}(?:$|[\s｜-])` heading is a record boundary. A `## PRG-`-prefixed candidate
+that fails the exact grammar is `MALFORMED_HEADING`; a generic H2 is neither a boundary nor a
+malformed record and remains in the preceding owning PRG leaf. Thus `## Plugin Release 0.3.0`
+belongs to `PRG-20260803-006`, and `## R02C2 / R02C2A merged implementation-handoff evidence`
+belongs to `PRG-20260815-495`. Each historical leaf is its canonical original span, including its
+valid PRG heading and all intervening generic-H2 body bytes. Rejoining leaves in source ordinal
+order must reconstruct the exact `146d9f54beee4de6c2f315fe767e85a170711d87` blob bytes.
+Index metadata uses `legacy-ledger-r01` and `FROZEN_HISTORICAL`; this is provenance metadata only
+and must not reclassify a historical event. A new event writer writes one exact leaf and updates
+only its direct day/month/year/root indexes; it never appends event content to
+`doc/WorkProgressReport.md`.
 
 ## TDD and strong-type preflight
 
 | Cell | First-red command and expected failure | Green acceptance |
 | --- | --- | --- |
-| `PAG-01-T01` source completeness | `python -m unittest tests.test_progress_artifact_tree.ProgressMigrationTests.test_every_legacy_record_has_one_byte_identical_leaf` fails because the module/contract is absent | all source IDs equal leaf IDs, every raw record span is byte-identical, and no leaf is duplicated |
-| `PAG-01-T02` root and direct indexes | `python -m unittest tests.test_progress_artifact_tree.ProgressIndexTests.test_root_and_indexes_reject_event_bodies_and_descendant_rows` fails before validation exists | root/year/month/day indexes contain only direct metadata; malformed body or descendant row fails closed |
-| `PAG-01-T03` order-independent exact lookup | `python -m unittest tests.test_progress_artifact_tree.ProgressLookupTests.test_lookup_is_independent_of_index_row_order` fails before the resolver exists | shuffled valid direct rows resolve the same one exact leaf without sibling discovery |
-| `PAG-01-T04` malformed/collision boundary | `python -m unittest tests.test_progress_artifact_tree.ProgressFailureTests.test_malformed_heading_and_identity_collision_leave_no_migration_output` fails before the parser/transaction exists | malformed heading, duplicate ID, collision, orphan, stale digest and bad reference each fail closed and leave the legacy input untouched |
-| `PAG-01-T05` new-event fixture | `python -m unittest tests.test_progress_artifact_tree.ProgressFixtureTests.test_new_event_fixture_writes_leaf_and_direct_indexes_not_root_body` fails before the writer exists | checked fixture proves one new PRG leaf plus direct indexes and proves no root event-body append |
-| `PAG-01-T06` type/source gate | `python -m unittest tests.test_progress_artifact_tree.ProgressSourceGateTests.test_progress_tree_source_is_strict_typed_and_effect_bounded` fails before the module exists | source gate rejects dynamic/bypass forms; one bounded reverse mutation for each explicit gate turns red and restoration returns green |
+| `PAG-01-T01` canonical source authority | `python -m unittest tests.test_progress_artifact_tree.ProgressCanonicalSourceTests.test_migration_uses_the_exact_baseline_blob_not_working_tree_eol_bytes` fails because the module/contract is absent | the command rejects a changed blob ID/size and proves leaves reconstruct the bound Git-clean blob, not host EOL bytes |
+| `PAG-01-T02` source completeness | `python -m unittest tests.test_progress_artifact_tree.ProgressMigrationTests.test_every_legacy_record_has_one_canonical_byte_identical_leaf` fails because the module/contract is absent | all source IDs equal leaf IDs, every canonical record span is byte-identical, and no leaf is duplicated |
+| `PAG-01-T03` root and direct indexes | `python -m unittest tests.test_progress_artifact_tree.ProgressIndexTests.test_root_and_indexes_reject_event_bodies_and_descendant_rows` fails before validation exists | root/year/month/day indexes contain only direct metadata; malformed body or descendant row fails closed |
+| `PAG-01-T04` order-independent exact lookup | `python -m unittest tests.test_progress_artifact_tree.ProgressLookupTests.test_lookup_is_independent_of_index_row_order` fails before the resolver exists | shuffled valid direct rows resolve the same one exact leaf without sibling discovery |
+| `PAG-01-T05` record-boundary and collision boundary | `python -m unittest tests.test_progress_artifact_tree.ProgressRecordBoundaryTests.test_generic_h2_stays_in_its_owning_prg_leaf_and_only_prg_prefix_malformed_fails` fails before the parser exists | the small fixture includes `## Plugin Release 0.3.0` and `## R02C2 / R02C2A merged implementation-handoff evidence` inside prior PRG bodies; only invalid PRG-prefixed candidates, duplicate ID, collision, orphan, stale digest and bad reference fail closed |
+| `PAG-01-T06` new-event fixture | `python -m unittest tests.test_progress_artifact_tree.ProgressFixtureTests.test_new_event_fixture_writes_leaf_and_direct_indexes_not_root_body` fails before the writer exists | checked small fixture proves one new PRG leaf plus direct indexes and proves no root event-body append; it does not copy the historical ledger |
+| `PAG-01-T07` type/source gate | `python -m unittest tests.test_progress_artifact_tree.ProgressSourceGateTests.test_progress_tree_source_is_strict_typed_and_effect_bounded` fails before the module exists | source gate rejects dynamic/bypass forms; one bounded reverse mutation for each explicit gate turns red and restoration returns green |
 
 Before the first green claim, construct and round-trip every public success DTO/value/enum through
-ordinary validation, then reverse-mutate the ID pattern, relative-reference allowlist, digest
-comparison, body-exclusion guard, and duplicate-ID guard. The command uses staged output and
-validates the complete staged tree before replacing the compatibility root/tree paths.
+ordinary validation, then reverse-mutate the baseline blob binding, ID pattern, relative-reference
+allowlist, digest comparison, body-exclusion guard, and duplicate-ID guard. The command uses
+staged output and validates the complete staged tree before replacing the compatibility root/tree
+paths.
 
 ## Verification and completion evidence
 
@@ -105,15 +120,18 @@ python -m unittest tests.test_progress_artifact_tree
 python -m unittest discover -s tests
 python -m mypy --strict library tests tools/migrate_work_progress_report.py
 Get-ChildItem -LiteralPath 'library/workflow_router' -Filter '*.py' -File | ForEach-Object { python -m py_compile $_.FullName }
-python -m tools.migrate_work_progress_report --verify-tree --root doc/WorkProgressReport.md --progress-root doc/progress
+python -m tools.migrate_work_progress_report --migrate --source-commit 471608b2abd361eeb16c29dc8728f85d173d8f57 --source-path doc/WorkProgressReport.md --expected-blob 146d9f54beee4de6c2f315fe767e85a170711d87 --expected-size 855317 --root doc/WorkProgressReport.md --progress-root doc/progress
+python -m tools.migrate_work_progress_report --verify-tree --source-commit 471608b2abd361eeb16c29dc8728f85d173d8f57 --source-path doc/WorkProgressReport.md --expected-blob 146d9f54beee4de6c2f315fe767e85a170711d87 --expected-size 855317 --root doc/WorkProgressReport.md --progress-root doc/progress
 git diff --check
 git status --short
 ```
 
-The primary smoke path is a disposable checked fixture: migrate a copied flat fixture, validate
-it, look up one leaf after a permutation of legal index rows, and assert that the root has no PRG
-body. Evidence names source/result counts and digests, exact focused/full/type/compile output,
-and no-cache readback.
+The primary smoke path is a disposable checked small fixture: migrate canonical fixture bytes,
+validate them, look up one leaf after a permutation of legal index rows, assert that generic H2
+text remains in the preceding leaf, and assert that the root has no PRG body. It must not copy the
+840 KiB historical ledger into a monolithic fixture. Evidence names source/result counts, the
+baseline blob ID/size, reconstructed-blob result, exact focused/full/type/compile output, and
+no-cache readback.
 
 Completion is one reviewed migration integration commit containing only this ticket's source,
 tests, fixture, compatibility root, and generated progress tree. The sole rollback is to revert
