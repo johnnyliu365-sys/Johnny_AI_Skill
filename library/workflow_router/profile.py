@@ -15,10 +15,13 @@ from .contracts import (
     ExpectedReturnContract,
     HumanWaitReason,
     ImplementationReturnStatus,
+    ModelRole,
+    ModelRoleAssignment,
     NonBlankText,
     OpaqueMetadataId,
     ProcessStage,
     ReturnContractKind,
+    RoleActivityState,
     RouterEventKind,
     RouterModel,
     RouterOutcome,
@@ -97,6 +100,7 @@ class ProjectWorkflowProfile(RouterModel):
     transition_rules: tuple[TransitionRule, ...]
     shared_context_ref: OpaqueMetadataId
     architecture_owner_capability_ref: OpaqueMetadataId
+    model_role_assignments: tuple[ModelRoleAssignment, ...]
 
     @model_validator(mode="after")
     def has_unique_transition_keys(self) -> ProjectWorkflowProfile:
@@ -116,6 +120,25 @@ class ProjectWorkflowProfile(RouterModel):
             raise ValueError("profile fallback contract revision must match its reference")
         if self.shared_context_ref == self.architecture_owner_capability_ref:
             raise ValueError("shared Context and architecture capability IDs must be distinct")
+        roles = tuple(assignment.role for assignment in self.model_role_assignments)
+        if len(roles) != len(ModelRole) or set(roles) != set(ModelRole):
+            raise ValueError("profiles require exactly one assignment for every model role")
+        if any(
+            assignment.project_profile_ref != self.profile_id
+            for assignment in self.model_role_assignments
+        ):
+            raise ValueError("model role assignments must bind the exact profile")
+        role_references = tuple(
+            reference
+            for assignment in self.model_role_assignments
+            for reference in (
+                assignment.model_ref,
+                *assignment.capability_refs,
+                *assignment.evidence_refs,
+            )
+        )
+        if len(role_references) != len(set(role_references)):
+            raise ValueError("model role references must be distinct within a profile")
         metadata_references = (
             self.shared_context_ref,
             self.architecture_owner_capability_ref,
@@ -476,6 +499,40 @@ def build_router_poc_profile() -> ProjectWorkflowProfile:
         version="1",
         agent_profile="handoff",
     )
+    model_role_assignments = (
+        ModelRoleAssignment(
+            project_profile_ref="router-framework-poc",
+            role=ModelRole.ARCHITECTURE_OWNER,
+            model_ref="model-architecture-owner",
+            capability_refs=("cap-architecture-owner",),
+            activity_state=RoleActivityState.ACTIVE,
+            evidence_refs=("evidence-architecture-owner",),
+        ),
+        ModelRoleAssignment(
+            project_profile_ref="router-framework-poc",
+            role=ModelRole.SUPERVISOR_REVIEWER,
+            model_ref="model-supervisor-reviewer",
+            capability_refs=("cap-supervisor-reviewer",),
+            activity_state=RoleActivityState.ACTIVE,
+            evidence_refs=("evidence-supervisor-reviewer",),
+        ),
+        ModelRoleAssignment(
+            project_profile_ref="router-framework-poc",
+            role=ModelRole.IMPLEMENTATION_OWNER,
+            model_ref="model-implementation-owner",
+            capability_refs=("cap-implementation-owner",),
+            activity_state=RoleActivityState.ACTIVE,
+            evidence_refs=("evidence-implementation-owner",),
+        ),
+        ModelRoleAssignment(
+            project_profile_ref="router-framework-poc",
+            role=ModelRole.RESEARCH_HELPER,
+            model_ref="model-research-helper",
+            capability_refs=("cap-research-helper",),
+            activity_state=RoleActivityState.SLEEPING,
+            evidence_refs=("evidence-research-helper",),
+        ),
+    )
     return ProjectWorkflowProfile(
         profile_id="router-framework-poc",
         profile_version="2",
@@ -809,4 +866,5 @@ def build_router_poc_profile() -> ProjectWorkflowProfile:
         ),
         shared_context_ref="ctx-shared-project",
         architecture_owner_capability_ref="cap-architecture-owner",
+        model_role_assignments=model_role_assignments,
     )

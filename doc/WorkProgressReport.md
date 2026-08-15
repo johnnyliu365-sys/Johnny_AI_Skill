@@ -5492,6 +5492,18 @@
 | Pre-red / return | Import/call the absent public readiness surface before production mutation; implement only ACX1-ACX8; return one implementation commit plus one WPR-only handoff after focused/regression/full/mypy/compile/five-reversal/source/scope/topology/residue verification. |
 | Resource / safety | `STANDARD`; host mapping `gpt-5.6-luna`, reasoning `max`; no helper. Reviewer task `019fb935-bbe1-7f71-8b4b-58ba20c81626` is sole orchestrator. No next-ticket authority, new worktree, R04-R06, external effect, push, package/install, Secret, release or deployment. `XSS_NOT_APPLICABLE`. |
 
+## PRG-20260815-508 - Router R03 implementation handoff
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_DISPATCH_CONFIRMED(PRG-507) -> ACTION_COMPLETED / REVIEW_HANDOFF`; this is the receipt-bound R03 implementation return. |
+| First red | At exact registry baseline `599c5d5cf24e35143752937306e1ec64ba39f4b9`, focused import of `tests.test_workflow_model_role_readiness` failed before production mutation with the expected missing-public-surface `ImportError` for `ModelRole`. |
+| Implementation | Commit `77d86a047767e797ddbb3fc86e5c6b320434ee35` changes exactly the six frozen paths: strict model-role/readiness contracts and export, profile role binding/default assignments, the pure `ModelRoleReadinessGate`, the ACX test suite, and the permitted existing Router fixture. |
+| ACX closure | ACX1: strict enum/model construction and JSON round trips plus invalid metadata, duplicate and cross-profile rejection; ACX2: exactly four profile-bound roles with distinct model/capability/evidence metadata and no authority from model identity; ACX3: owner-approval precedence; ACX4: ten blocker reasons and deterministic declaration-order minimum; ACX5: all nine closure kinds and open-design precedence; ACX6: ready versus sleeping/wake-required supervisor outcomes; ACX7: bounded AST/source policy gate; ACX8: complete verification and final readback. |
+| Reversal evidence | The committed source gate accepts pristine `model_role_readiness.py` and rejects each exact in-memory semantic mutation: owner-approval `is None`, blocker truthiness, closure completeness, open-decision truthiness and supervisor `RoleActivityState.ACTIVE`. Mutated source was parsed only in memory and never executed, compiled, written or imported; each mutation was restored by discarding the in-memory string. |
+| Verification | Dedicated R03 plus Router regression `61/61`; explicit serial full unittest `604/604`; strict `python -B -m mypy --strict --explicit-package-bases --no-incremental library tests` passed with no issues in `158` source files using an external cache; in-memory compile `158/158`; `git diff --check`, exact six-path scope, ancestry and source gate pass. `XSS_NOT_APPLICABLE`. |
+| Readback / boundary | Implementation HEAD `77d86a047767e797ddbb3fc86e5c6b320434ee35` on `codex/implementation-router-model-role-readiness-r03`; permanent root and linked git-dir remain exact, exactly three worktrees remain, tracked/ignored porcelain is clean, and cache/bytecode/runtime residue is zero. No helper/subagent, target/host/network effect, push, package/install, Secret, release or deployment occurred. |
+
 ## PRG-20260815-509 - Router R03 independent review
 
 | Field | Evidence |
@@ -5514,6 +5526,17 @@
 | Exact correction | Make `_source_gate` assert direct blocker truthiness, `closure_kinds != expected_closure_kinds` with `ast.NotEq` and exact operands, and `supervisor.activity_state is RoleActivityState.ACTIVE` with `ast.Is` and exact operands. Add the four CR-R03-001 in-memory reversals and prove rejection without write/compile/import/execute; retain the ticket's five reversals. |
 | Return / verification | One test-only implementation commit, then WPR-only handoff. Re-run dedicated/Router/full serial/strict-mypy/in-memory-compile/source/scope/diff/ancestry/topology/porcelain/cache gates. Any production or out-of-scope modification returns `CHANGE_DETECTED`. |
 | Boundary | No helper, self-review/integration, R04-R06, external effect, push, package/install, target-project, Secret, release or deployment. `XSS_NOT_APPLICABLE`. |
+
+## PRG-20260815-511 - Router R03 ACX7 correction handoff
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `IMPLEMENTATION_DISPATCH_CONFIRMED(PRG-510) -> ACTION_COMPLETED / REVIEW_HANDOFF`; same-branch closure of CR-R03-001. |
+| Review / correction | Formal review `599fdccfa589612e70efd8692323112ea218c640`; additive test-only commit `283f975f6be438e25227c0e2605f42e7d42bb2d3`; parent implementation `77d86a047767e797ddbb3fc86e5c6b320434ee35` and prior handoff `3a8e306f534e59b22c054c6debd01008d93c978f` remain immutable. |
+| First correction red | The newly added CR-R03-001 matrix first failed on the closure `<=`, closure `>=` and supervisor `is not` source-only mutations; the blocker `and False` mutation was already rejected by the existing direct-condition check. No mutated source was written, compiled, imported or executed. |
+| Exact correction | Only `tests/test_workflow_model_role_readiness.py` changed. `_source_gate` now requires direct `request.blockers` truthiness, exact `closure_kinds != expected_closure_kinds` with `ast.NotEq` and exact Name operands, and exact `supervisor.activity_state is RoleActivityState.ACTIVE` with `ast.Is` and exact member operands. All four reviewed in-memory reversals are rejected; the original five ticket reversals remain green and rejected when mutated. |
+| Verification | Commit-bound R03 plus Router `62/62`; explicit serial full unittest `605/605`; strict `python -B -m mypy --strict --explicit-package-bases --no-incremental library tests` clean across `158` files with external cache removed; in-memory compile `158/158`; `git diff --check`, exact one-path correction scope, ancestry, topology, porcelain and residue checks pass. `XSS_NOT_APPLICABLE`. |
+| Readback / boundary | Same branch/worktree/receipt/allocation/correlation retained; no production source or existing Router fixture changed. No helper/subagent, integration, target/host/network effect, push, package/install, Secret, release or deployment occurred. |
 
 ## PRG-20260815-512 - Router R03 ACX7 correction terminal review
 
