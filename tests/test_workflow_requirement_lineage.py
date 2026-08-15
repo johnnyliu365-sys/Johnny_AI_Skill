@@ -767,6 +767,162 @@ class RequirementLineageTests(unittest.TestCase):
                     model_fields[class_name],
                 )
 
+        helper_nodes = [
+            node
+            for node in contracts_tree.body
+            if isinstance(node, ast.FunctionDef) and node.name == "_lineage_metadata_is_safe"
+        ]
+        self.assertEqual(len(helper_nodes), 1)
+        helper_node = helper_nodes[0]
+        self.assertEqual(len(helper_node.args.args), 1)
+        helper_argument = helper_node.args.args[0]
+        self.assertEqual(helper_argument.arg, "references")
+        self.assertIsNotNone(helper_argument.annotation)
+        if helper_argument.annotation is not None:
+            self.assertEqual(
+                ast.unparse(helper_argument.annotation),
+                "tuple[OpaqueMetadataId, ...]",
+            )
+        self.assertIsNotNone(helper_node.returns)
+        if helper_node.returns is not None:
+            self.assertEqual(ast.unparse(helper_node.returns), "bool")
+        helper_surface = ast.unparse(helper_node)
+        helper_source = "\n".join(
+            contracts_lines[helper_node.lineno - 1 : helper_node.end_lineno]
+        )
+        for forbidden in forbidden_contract_tokens:
+            self.assertNotIn(forbidden, helper_surface)
+            self.assertNotIn(forbidden, helper_source)
+        self.assertEqual(
+            [
+                ast.unparse(node.func)
+                for node in ast.walk(helper_node)
+                if isinstance(node, ast.Call)
+            ],
+            ["all"],
+        )
+        for child_node in ast.walk(helper_node):
+            if isinstance(child_node, ast.ExceptHandler):
+                self.assertIsNotNone(child_node.type)
+            if isinstance(child_node, ast.Attribute):
+                self.assertNotIn(child_node.attr, {"__dict__", "__class__"})
+
+        forbidden_contract_imports = {
+            "importlib",
+            "inspect",
+            "os",
+            "pathlib",
+            "requests",
+            "shutil",
+            "socket",
+            "subprocess",
+            "sys",
+            "tempfile",
+            "urllib",
+        }
+        for import_node in contracts_tree.body:
+            if isinstance(import_node, ast.Import):
+                for alias in import_node.names:
+                    self.assertNotIn(alias.name.split(".")[0], forbidden_contract_imports)
+            if isinstance(import_node, ast.ImportFrom) and import_node.module is not None:
+                self.assertNotIn(
+                    import_node.module.split(".")[0],
+                    forbidden_contract_imports,
+                )
+
+        def assert_contract_source_shape(source_text: str) -> None:
+            """Apply the bounded manifest gate to canonical or mutated source text."""
+
+            source_tree = ast.parse(source_text)
+            for import_node in source_tree.body:
+                if isinstance(import_node, ast.Import):
+                    for alias in import_node.names:
+                        self.assertNotIn(alias.name.split(".")[0], forbidden_contract_imports)
+                if isinstance(import_node, ast.ImportFrom) and import_node.module is not None:
+                    self.assertNotIn(
+                        import_node.module.split(".")[0],
+                        forbidden_contract_imports,
+                    )
+            helper_nodes = [
+                node
+                for node in source_tree.body
+                if isinstance(node, ast.FunctionDef)
+                and node.name == "_lineage_metadata_is_safe"
+            ]
+            self.assertEqual(len(helper_nodes), 1)
+            helper = helper_nodes[0]
+            self.assertEqual(len(helper.args.args), 1)
+            argument = helper.args.args[0]
+            self.assertEqual(argument.arg, "references")
+            self.assertIsNotNone(argument.annotation)
+            if argument.annotation is not None:
+                self.assertEqual(ast.unparse(argument.annotation), "tuple[OpaqueMetadataId, ...]")
+            self.assertIsNotNone(helper.returns)
+            if helper.returns is not None:
+                self.assertEqual(ast.unparse(helper.returns), "bool")
+            helper_surface = ast.unparse(helper)
+            for forbidden in forbidden_contract_tokens:
+                self.assertNotIn(forbidden, helper_surface)
+            self.assertEqual(
+                [
+                    ast.unparse(node.func)
+                    for node in ast.walk(helper)
+                    if isinstance(node, ast.Call)
+                ],
+                ["all"],
+            )
+            class_nodes = {
+                node.name: node
+                for node in source_tree.body
+                if isinstance(node, ast.ClassDef) and node.name in model_fields
+            }
+            self.assertEqual(set(model_fields), set(class_nodes))
+            for class_name, expected_fields in model_fields.items():
+                class_node = class_nodes[class_name]
+                self.assertIn(
+                    "RouterModel",
+                    {ast.unparse(base) for base in class_node.bases},
+                )
+                self.assertEqual(
+                    {
+                        statement.target.id: ast.unparse(statement.annotation)
+                        for statement in class_node.body
+                        if isinstance(statement, ast.AnnAssign)
+                        and isinstance(statement.target, ast.Name)
+                        and statement.annotation is not None
+                    },
+                    expected_fields,
+                )
+
+        assert_contract_source_shape(contracts_source)
+        mutation_cases = (
+            (
+                "forbidden module import",
+                contracts_source.replace(
+                    "from dataclasses import dataclass",
+                    "import inspect\nfrom dataclasses import dataclass",
+                    1,
+                ),
+            ),
+            (
+                "dynamic helper bypass",
+                contracts_source.replace("return all(", "return getattr(", 1),
+            ),
+            (
+                "raw contract field",
+                contracts_source.replace(
+                    "archive_id: RequirementArchiveId",
+                    "archive_id: object",
+                    1,
+                ),
+            ),
+        )
+        for mutation_name, mutated_source in mutation_cases:
+            self.assertNotEqual(mutated_source, contracts_source)
+            with self.subTest(mutation=mutation_name):
+                with self.assertRaises(AssertionError):
+                    assert_contract_source_shape(mutated_source)
+
     def test_bounded_reversals_require_suffix_overlap_and_archive_edge_guards(self) -> None:
         active = self._active_request()
         changed_ids = RequirementLineageRecord(
