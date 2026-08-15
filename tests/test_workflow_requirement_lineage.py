@@ -596,6 +596,177 @@ class RequirementLineageTests(unittest.TestCase):
         self.assertIn("class RequirementLineageGate", source)
         self.assertIn("ArtifactTreeResolver.resolve", source)
 
+        contracts_path = Path(__file__).parents[1] / "library" / "workflow_router" / "contracts.py"
+        contracts_source = contracts_path.read_text(encoding="utf-8")
+        contracts_tree = ast.parse(contracts_source)
+        contract_aliases = {
+            "RequirementId": "^PRD-[0-9]{8}-[0-9]{3}$",
+            "RequirementChangeId": "^CHG-[0-9]{8}-[0-9]{3}$",
+            "RequirementArchiveId": "^ARCH-REQ-[0-9]{8}-[0-9]{3}$",
+        }
+        alias_nodes = {
+            target.id: node
+            for node in contracts_tree.body
+            if isinstance(node, ast.Assign)
+            for target in node.targets
+            if isinstance(target, ast.Name) and target.id in contract_aliases
+        }
+        self.assertEqual(set(contract_aliases), set(alias_nodes))
+        for alias_name, expected_pattern in contract_aliases.items():
+            value = alias_nodes[alias_name].value
+            self.assertIsInstance(value, ast.Subscript)
+            if not isinstance(value, ast.Subscript):
+                continue
+            self.assertEqual(ast.unparse(value.value), "Annotated")
+            self.assertIsInstance(value.slice, ast.Tuple)
+            if not isinstance(value.slice, ast.Tuple):
+                continue
+            self.assertEqual(ast.unparse(value.slice.elts[0]), "str")
+            field_call = value.slice.elts[1]
+            self.assertIsInstance(field_call, ast.Call)
+            if not isinstance(field_call, ast.Call):
+                continue
+            self.assertEqual(ast.unparse(field_call.func), "Field")
+            self.assertEqual(len(field_call.keywords), 1)
+            self.assertEqual(field_call.keywords[0].arg, "pattern")
+            self.assertIsInstance(field_call.keywords[0].value, ast.Constant)
+            if isinstance(field_call.keywords[0].value, ast.Constant):
+                self.assertEqual(field_call.keywords[0].value.value, expected_pattern)
+
+        enum_members = {
+            "RequirementLifecycle": {"ACTIVE": "active", "ARCHIVED": "archived"},
+            "RequirementLineageDecisionKind": {
+                "ACTIVE_PAIR_VALID": "active_pair_valid",
+                "RETIREMENT_VALID": "retirement_valid",
+                "REQUIREMENT_LINEAGE_INVALID": "requirement_lineage_invalid",
+            },
+            "RequirementLineageInvalidReason": {
+                "REQUEST_BINDING_MISMATCH": "request_binding_mismatch",
+                "IDENTIFIER_PAIR_MISMATCH": "identifier_pair_mismatch",
+                "ACTIVE_PATH_INVALID": "active_path_invalid",
+                "ACTIVE_LEAF_MISMATCH": "active_leaf_mismatch",
+                "RETIRED_PATH_STILL_ACTIVE": "retired_path_still_active",
+                "ARCHIVE_PATH_INVALID": "archive_path_invalid",
+                "ARCHIVE_BUNDLE_MISMATCH": "archive_bundle_mismatch",
+                "REPLACEMENT_PAIR_MISMATCH": "replacement_pair_mismatch",
+            },
+        }
+        model_fields = {
+            "RequirementArchiveBundle": {
+                "archive_id": "RequirementArchiveId",
+                "archive_leaf_ref": "OpaqueMetadataId",
+                "retired_prd_id": "RequirementId",
+                "retired_change_id": "RequirementChangeId",
+                "retired_leaf_ref": "OpaqueMetadataId",
+                "last_active_revision": "RevisionDigest",
+                "retirement_reason_ref": "OpaqueMetadataId",
+                "replacement_prd_id": "RequirementId | None",
+                "replacement_change_id": "RequirementChangeId | None",
+                "historical_source_commit": "CommitDigest",
+                "content_digest": "EvidenceDigest",
+            },
+            "RequirementLineageRecord": {
+                "lineage_ref": "OpaqueMetadataId",
+                "prd_id": "RequirementId",
+                "change_id": "RequirementChangeId",
+                "lifecycle": "RequirementLifecycle",
+                "active_leaf_ref": "OpaqueMetadataId | None",
+                "archive_id": "RequirementArchiveId | None",
+                "archive_leaf_ref": "OpaqueMetadataId | None",
+                "revision": "RevisionDigest",
+                "content_digest": "EvidenceDigest",
+            },
+            "RequirementLineageValidationRequest": {
+                "request_ref": "OpaqueMetadataId",
+                "lineage": "RequirementLineageRecord",
+                "prd_root_ref": "OpaqueMetadataId",
+                "change_root_ref": "OpaqueMetadataId",
+                "prd_active_path": "ArtifactTreeResolutionRequest",
+                "change_active_path": "ArtifactTreeResolutionRequest",
+                "archive_root_ref": "OpaqueMetadataId | None",
+                "archive_path": "ArtifactTreeResolutionRequest | None",
+                "archive_bundle": "RequirementArchiveBundle | None",
+            },
+            "RequirementLineageValidationDecision": {
+                "request_ref": "OpaqueMetadataId",
+                "lineage_ref": "OpaqueMetadataId",
+                "decision": "RequirementLineageDecisionKind",
+                "invalid_reason": "RequirementLineageInvalidReason | None",
+                "resolved_lineage_leaf_ref": "OpaqueMetadataId | None",
+            },
+        }
+        owned_classes = set(enum_members) | set(model_fields)
+        class_nodes = {
+            node.name: node
+            for node in contracts_tree.body
+            if isinstance(node, ast.ClassDef) and node.name in owned_classes
+        }
+        self.assertEqual(owned_classes, set(class_nodes))
+        contracts_lines = contracts_source.splitlines()
+        forbidden_contract_tokens = (
+            "Any",
+            "object",
+            "cast(",
+            "typing.cast",
+            "getattr(",
+            "hasattr(",
+            "setattr(",
+            "model_construct",
+            "model_copy",
+            "type: ignore",
+        )
+        for class_name, class_node in class_nodes.items():
+            class_surface = ast.unparse(class_node)
+            class_source = "\n".join(contracts_lines[class_node.lineno - 1 : class_node.end_lineno])
+            for forbidden in forbidden_contract_tokens:
+                self.assertNotIn(forbidden, class_surface)
+                self.assertNotIn(forbidden, class_source)
+            for child_node in ast.walk(class_node):
+                if isinstance(child_node, ast.ExceptHandler):
+                    self.assertIsNotNone(child_node.type)
+                if isinstance(child_node, ast.Call) and isinstance(child_node.func, ast.Name):
+                    self.assertNotIn(child_node.func.id, {"eval", "exec"})
+                if isinstance(child_node, ast.Attribute):
+                    self.assertNotIn(child_node.attr, {"__dict__", "__class__"})
+                if isinstance(child_node, (ast.Import, ast.ImportFrom)):
+                    self.assertNotIn("inspect", ast.unparse(child_node))
+                if isinstance(child_node, ast.FunctionDef):
+                    self.assertIsNotNone(child_node.returns)
+                    for argument in (
+                        *child_node.args.posonlyargs,
+                        *child_node.args.args,
+                        *child_node.args.kwonlyargs,
+                    ):
+                        if argument.arg != "self":
+                            self.assertIsNotNone(argument.annotation)
+            if class_name in enum_members:
+                self.assertEqual(
+                    {
+                        statement.targets[0].id: statement.value.value
+                        for statement in class_node.body
+                        if isinstance(statement, ast.Assign)
+                        and len(statement.targets) == 1
+                        and isinstance(statement.targets[0], ast.Name)
+                        and isinstance(statement.value, ast.Constant)
+                    },
+                    enum_members[class_name],
+                )
+            else:
+                self.assertIn(
+                    "RouterModel",
+                    {ast.unparse(base) for base in class_node.bases},
+                )
+                self.assertEqual(
+                    {
+                        statement.target.id: ast.unparse(statement.annotation)
+                        for statement in class_node.body
+                        if isinstance(statement, ast.AnnAssign)
+                        and isinstance(statement.target, ast.Name)
+                        and statement.annotation is not None
+                    },
+                    model_fields[class_name],
+                )
+
     def test_bounded_reversals_require_suffix_overlap_and_archive_edge_guards(self) -> None:
         active = self._active_request()
         changed_ids = RequirementLineageRecord(
