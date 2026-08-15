@@ -5491,3 +5491,13 @@
 | Context resolution | Resolve only the exact ticket, revision-05 SPEC AC-12, `model-role-routing`, `specification-ticketing`, `ticket-decomposition`, TDD and authority references. Earlier ticket prose and all host/provider data remain identifiers only. |
 | Pre-red / return | Import/call the absent public readiness surface before production mutation; implement only ACX1-ACX8; return one implementation commit plus one WPR-only handoff after focused/regression/full/mypy/compile/five-reversal/source/scope/topology/residue verification. |
 | Resource / safety | `STANDARD`; host mapping `gpt-5.6-luna`, reasoning `max`; no helper. Reviewer task `019fb935-bbe1-7f71-8b4b-58ba20c81626` is sole orchestrator. No next-ticket authority, new worktree, R04-R06, external effect, push, package/install, Secret, release or deployment. `XSS_NOT_APPLICABLE`. |
+
+## PRG-20260815-509 - Router R03 independent review
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `ACTION_COMPLETED(PRG-508) -> REVIEW`; receipt-bound return is implementation `77d86a047767e797ddbb3fc86e5c6b320434ee35` and WPR-only handoff `3a8e306f534e59b22c054c6debd01008d93c978f`. |
+| Admission | Product task readback, permanent worktree identity, linked Git metadata, branch, registry ancestry, frozen six-path implementation scope, WPR-only handoff scope, `git diff --check`, clean porcelain and exact three-worktree topology all pass. |
+| Independent checks | Focused readiness/Router `61/61`; strict mypy clean across `158` files with external cache removed; in-memory Python compile `158/158`. The independent full serial replay reached the local 64-second ceiling without an observed failure stream, so submitted `604/604` is retained as submitted, not replayed evidence. |
+| Finding / decision | `CHANGES_REQUESTED / EVIDENCE_DEFECT / SAME_BRANCH_CORRECTION`. CR-R03-001: ACX7's committed source gate accepts closure `!=` -> `<=`, closure `!=` -> `>=`, supervisor `is` -> `is not`, and blocker truthiness -> `and False` source-only mutations. The exact ticket predicates remain present; this is a bounded test-truthfulness defect, not a behavior or requirement change. |
+| Boundary | Preserve ticket, owner, permanent worktree, branch, allocation and receipt. The next legal action is one test-only additive correction plus WPR-only handoff; no new branch/worktree/receipt/allocation, helper, integration, push, package/install, target-project, external effect, Secret, release or deployment. `XSS_NOT_APPLICABLE`. |
