@@ -5467,3 +5467,14 @@
 | Post-merge verification | Library-selection/artifact-tree/Router `82/82`, `git diff --check`, clean main and exact three-worktree topology pass. |
 | State | R02C3 is `COMPLETE / APPROVED / INTEGRATED`; allocation is released. R03 is the next serial candidate but requires its own ticket freeze and receipt registry before implementation authority. |
 | Boundary | No push, package/install, target-project, external effect, release, deployment or Secret work. `XSS_NOT_APPLICABLE`. |
+
+## PRG-20260815-506 - Router Ticket R03 refreeze
+
+| Field | Evidence |
+| --- | --- |
+| Router event | `ACTION_COMPLETED(PRG-505) + R02C3_INTEGRATED -> TICKETS / TICKET_FROZEN`; R03 is the next serial candidate and no implementation authority exists in this record. |
+| Ticket / closure | `modules/tickets/adaptive-project-orchestration/03-model-role-readiness-wake.md`; `CLOSURE-ADAPTIVE-ROUTER-R03-01` revision `r03-02`, ACX1-ACX8. The amended closure fixes the prior ambiguity by binding exact public contracts, decision precedence and five semantic source-gate mutations to their required rejection test. |
+| Decomposition | `READY_LOW_MODEL`: one pure observable readiness decision, one implementation owner, one Profile/readiness boundary, finite typed input/output/error matrix and deterministic local verification. R04-R06 remain non-dispatchable. |
+| Planned owner / lane | Existing idle task `019ffb0c-c9c7-7b30-b614-02dea7ed9042`; its existing permanent implementation worktree only; planned branch `codex/implementation-router-model-role-readiness-r03` from the later registry. Exactly three worktrees remain. |
+| Binding | Planned handoff `hnd-adaptive-router-r03-20260815`; allocation `aln-adaptive-router-r03-20260815`; receipt `rcpt-adaptive-router-r03-20260815`; correlation `corr-adaptive-router-r03-20260815`; question `q-adaptive-router-r03-20260815`; side Context `scx-adaptive-router-r03-20260815-01`; expected return `ret-model-role-readiness-review-handoff-r03`. |
+| Boundary | No receipt, source/test mutation, branch/worktree creation, helper, R04-R06, external effect, push, package/install, Secret, release or deployment. `XSS_NOT_APPLICABLE`. |

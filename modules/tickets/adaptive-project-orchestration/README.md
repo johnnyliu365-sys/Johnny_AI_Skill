@@ -15,11 +15,12 @@
 | [02c2-requirement-retirement-archive-lineage](02c2-requirement-retirement-archive-lineage.md) | One-to-one active PRD/CHG pairing, retirement and archive-only reachability. | `COMPLETE / APPROVED / INTEGRATED` | `701df3e` / R02C2A closed |
 | [02c2a-requirement-lineage-source-gate-closure](02c2a-requirement-lineage-source-gate-closure.md) | One bounded test-only ACX6 guard covers every R02C2-owned `contracts.py` declaration/helper/import boundary and proves its own three rejection mutations. | `COMPLETE / APPROVED / INTEGRATED` | `701df3e` / `PRG-20260815-496` |
 | [02c3-bounded-library-selection](02c3-bounded-library-selection.md) | One selected archive/reusable-library partition path resolves to one exact eligible leaf without discovery or sibling loading. | `COMPLETE / APPROVED / INTEGRATED` | `93a66a4` / `PRG-20260815-505` |
-| `03-model-role-readiness-wake` | SPEC readiness and architecture-owner sleep/wake decision kernel. | `CANDIDATE / TICKET_FREEZE_REQUIRED` | R02C3 integrated `93a66a4` |
+| [03-model-role-readiness-wake](03-model-role-readiness-wake.md) | Exact SPEC readiness and architecture-owner sleep/wake decision kernel. | `PLANNED / TICKET_FROZEN` | R02C3 integrated `93a66a4`; dispatch registry required |
 | `04-low-model-ticket-admission` | Four-way low-model decomposition/admission decision kernel. | `CANDIDATE / NON_DISPATCHABLE` | R03 approved/integrated |
 | `05-ui-design-source-routing` | Optional design-source capability decision kernel. | `CANDIDATE / NON_DISPATCHABLE` | R04 approved/integrated |
 | `06-router-policy-acceptance` | Integrated Profile/Router acceptance and metadata-only serialization closure. | `CANDIDATE / NON_DISPATCHABLE` | R01-R05 approved/integrated |
 
-R02C1, R02C2 and R02C2A are complete. R02C3 is the only dependency-satisfied implementation
-ticket. Later candidates remain blocked until their serial predecessor is independently approved
-and integrated. Candidate labels are not implementation authority.
+R02C1, R02C2, R02C2A and R02C3 are complete. R03 is the only dependency-satisfied planned
+implementation ticket, but it remains non-dispatchable until its separate registry/receipt is
+committed. Later candidates remain blocked until their serial predecessor is independently
+approved and integrated. Candidate labels are not implementation authority.
