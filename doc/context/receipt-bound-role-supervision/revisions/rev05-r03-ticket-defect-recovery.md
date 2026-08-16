@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| Lifecycle | `ARCHITECTURE_COMPLETE / GRILL_CONVERGED / SPEC_DRAFT_PENDING_OWNER_APPROVAL` |
+| Lifecycle | `SEALED / REVISION_05_APPROVED / SENIOR_DECOMPOSITION_AUTHORIZED` |
 | Trigger | `CR-R03-01-001` at `6569cd41bbf3ecbc04108da4150c30267951dda5` |
 | Prior implementation | `224b0242df876f6a41fd1b7e8f139195e9f40e42` / `NON_INTEGRABLE / EVIDENCE_ONLY` |
 | Requirement | `PRD-20260816-028` / `CHG-20260816-028` |
@@ -58,5 +58,13 @@
   selected by Architecture.
 - No heartbeat, recurring wait/read, polling, scheduler, watchdog, database, network service,
   external dependency, target-project state, push, release or deployment.
-- Revision 05 is not effective before exact owner approval. Until then no replacement ticket is
-  dispatchable and R03-02/R03-03 remain blocked.
+- Revision 05 approval authorizes decomposition/ticket drafting only. Replacement tickets remain
+  non-dispatchable and R03-02/R03-03 remain blocked until the separate Workflow/executable policy
+  correction is admitted, implemented and reviewed.
+
+## Approval record
+
+- Project owner approved the exact Architecture/Grill result on `2026-08-16 (Asia/Taipei)`.
+- Approved draft commit: `c64681e847c1a6847c2588d127ed7f2749c914b5`.
+- Router return: `APPROVAL_GRANTED -> ACTION_COMPLETED / SPEC`.
+- Next route: `TICKETS / SENIOR_READMISSION`; no implementation or dispatch authority is created.

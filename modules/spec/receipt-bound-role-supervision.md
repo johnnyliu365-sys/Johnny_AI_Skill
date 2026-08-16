@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-RECEIPT-BOUND-ROLE-SUPERVISION-20260815-01M0R2S4T6V8X0Z2B4D6F8H0J2` |
-| Status | `REVISION_01_APPROVED / REVISION_02_APPROVED / REVISION_03_APPROVED / REVISION_04_APPROVED / REVISION_05_DRAFT / R03_BOOTSTRAP_BLOCKED` |
+| Status | `REVISION_01_APPROVED / REVISION_02_APPROVED / REVISION_03_APPROVED / REVISION_04_APPROVED / REVISION_05_APPROVED / SENIOR_DECOMPOSITION_AUTHORIZED` |
 | Author / baseline | Architecture owner / `main` / `6569cd41bbf3ecbc04108da4150c30267951dda5` |
 | Context | `doc/context/receipt-bound-role-supervision/main.md` |
 | Shared Context | `CONTEXT.md` sealed by `CHG-20260816-025`; original role-supervision facts from `CHG-20260815-023` |
@@ -44,13 +44,13 @@ project-specific, finite bootstrap route for R03-01 through R03-03. The route us
 grant/attempt/result evidence, user relay only as a wake hint and an explicit positive activation
 gate. It permanently disappears after the complete live capability is proven.
 
-Revision 05 is a pending ticket-defect recovery. It seals the failed first R03-01 attempt,
+Revision 05 is the owner-approved ticket-defect recovery. It seals the failed first R03-01 attempt,
 replaces that umbrella closure with contracts, a real durable transaction substrate, registry
 behavior and receipt CAS behavior, fixes the strict-type command identity, and moves
 write-producing review into reviewer-owned disposable storage. Its exact bounded detail is
 indexed at
 [`receipt-bound-role-supervision/r05-r03-ticket-defect-recovery.md`](receipt-bound-role-supervision/r05-r03-ticket-defect-recovery.md).
-It grants nothing before project-owner approval.
+It authorizes Senior decomposition/ticket drafting only and creates no implementation authority.
 
 ## Out of scope
 
@@ -643,15 +643,16 @@ integration, wake or automatic ticket selection. `DEC-20260816-521` and existing
 remain immutable; Senior must add a correction decision and exact bootstrap leaves rather than
 rewrite them.
 
-### Revision 05 draft — ticket-defect recovery
+### Revision 05 — approved ticket-defect recovery
 
 The current Router event is `TICKET_DEFECT -> ARCHITECTURE / CHANGE_CONTROL`; the exact proposed
 AC-39 through AC-47, typed durable-state contracts, replacement bootstrap dependency graph and
 verification matrix are in
 [`r05-r03-ticket-defect-recovery.md`](receipt-bound-role-supervision/r05-r03-ticket-defect-recovery.md).
-This indexed leaf is part of this one feature SPEC and is `NON_DISPATCHABLE` until exact owner
-approval. Existing Revision-04 rules remain the last approved policy, but their consumed R03-01
-grant cannot be replayed and no new/revised ticket is currently allowlisted.
+This indexed leaf is part of this one feature SPEC and is owner-approved for Senior decomposition.
+The consumed R03-01 grant cannot be replayed. Workflow, CodeReview and executable Router rules
+remain unchanged until a separate policy-correction ticket is admitted, implemented and reviewed;
+therefore no replacement bootstrap grant or dispatch is currently legal.
 
 ## Strongly typed contracts
 
@@ -1461,14 +1462,14 @@ route any missing meaning back to architecture.
 | 2026-08-16 | Architecture owner / `main` / `48e8ca8b9e404d81694415c7c4e9a9c81b3f859d` | Added Revision 04 finite self-host bootstrap grant/attempt/relay/review/integration and normal-activation contracts under `CHG-20260816-027`. |
 | 2026-08-16 | Project owner | Approved Revision 04 decisions: project-only R03 scope, user return relay, new grant per correction, separate automatic integration grant, real-receipt transport bridge for R03-02/R03-03, high-assurance R03-03 approval and bounded normal auto-dispatch. |
 | 2026-08-16 | Architecture owner / `main` / baseline `6569cd41bbf3ecbc04108da4150c30267951dda5` | Drafted Revision 05 after `CR-R03-01-001`: immutable failed-attempt fence, four-stage R03-01 replacement, real owned-file durable transaction contract, truthful strict-type baseline and reviewer-owned disposable verification. Exact owner approval pending. |
+| 2026-08-16 | Project owner / approved draft `c64681e847c1a6847c2588d127ed7f2749c914b5` | Approved Revision 05 for Senior decomposition and policy-correction/replacement-ticket drafting only; no grant, dispatch, implementation or executable policy mutation is authorized by approval alone. |
 
 ## Approval record
 
 - Decision maker: project owner.
 - Architecture/Grill direction: confirmed through `2026-08-16 (Asia/Taipei)`.
 - Exact SPEC revision: Revision 01 `APPROVED`; Revision 02 `APPROVED`; Revision 03
-  `APPROVED`; Revision 04 `APPROVED` on `2026-08-16`; Revision 05 `DRAFT /
-  OWNER_APPROVAL_PENDING`.
+  `APPROVED`; Revision 04 `APPROVED`; Revision 05 `APPROVED` on `2026-08-16`.
 - Approval effect: authorizes fresh Senior decomposition/ticket drafting only. It creates no
   execution binding, grant, attempt, receipt, host effect, dispatch, implementation, heartbeat,
   push, release or deployment authority. The Senior alone may create exact additive bootstrap

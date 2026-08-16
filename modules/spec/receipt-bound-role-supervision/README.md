@@ -7,4 +7,4 @@ SPEC.
 
 | Revision | Lifecycle | Leaf |
 | --- | --- | --- |
-| `REVISION_05` | `DRAFT / OWNER_APPROVAL_PENDING` | [`r05-r03-ticket-defect-recovery.md`](r05-r03-ticket-defect-recovery.md) |
+| `REVISION_05` | `APPROVED / SENIOR_DECOMPOSITION_AUTHORIZED` | [`r05-r03-ticket-defect-recovery.md`](r05-r03-ticket-defect-recovery.md) |

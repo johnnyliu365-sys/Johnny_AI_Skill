@@ -1,7 +1,7 @@
 # ADR-20260816-017: R03 durable metadata recovery and review isolation
 
 - Date: `2026-08-16 (Asia/Taipei)`
-- Status: `PROPOSED / OWNER_APPROVAL_PENDING`
+- Status: `ACCEPTED`
 - Decision maker: Project owner
 - Trigger: `CR-R03-01-001` / review commit `6569cd41bbf3ecbc04108da4150c30267951dda5`
 - Related change: `PRD-20260816-028` / `CHG-20260816-028`
@@ -74,3 +74,11 @@ the role/worktree isolation objective and made clean-state evidence harder to in
   capability result; they do not select a fake or database fallback.
 - Review consumes bounded disk/CPU in a disposable root but avoids extra model turns caused by
   residue disputes. No heartbeat, automation, cron, watchdog or polling is added.
+
+## Approval
+
+- Project owner approved the exact decision on `2026-08-16 (Asia/Taipei)` from draft commit
+  `c64681e847c1a6847c2588d127ed7f2749c914b5`.
+- Approval authorizes SPEC sealing and Senior decomposition only. Workflow, CodeReview and
+  executable Router policy remain unchanged until a separate policy-correction ticket is
+  admitted, implemented and reviewed.

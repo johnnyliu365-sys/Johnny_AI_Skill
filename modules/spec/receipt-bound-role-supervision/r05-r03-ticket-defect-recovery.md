@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | Kind | `SPEC_REVISION_LEAF` |
-| Lifecycle | `DRAFT / OWNER_APPROVAL_PENDING / NON_DISPATCHABLE` |
+| Lifecycle | `APPROVED / SENIOR_DECOMPOSITION_AUTHORIZED` |
 | Parent SPEC | `SPEC-AI-WORKFLOW-RECEIPT-BOUND-ROLE-SUPERVISION-20260815-01M0R2S4T6V8X0Z2B4D6F8H0J2` |
 | Requirement | `PRD-20260816-028` / `CHG-20260816-028` |
 | Context | `doc/context/receipt-bound-role-supervision/revisions/rev05-r03-ticket-defect-recovery.md` |
@@ -13,8 +13,11 @@
 | XSS | `N/A`; no renderer or JavaScript path |
 
 This leaf is additive detail of the parent SPEC, not a second effective feature specification.
-It becomes effective only after the project owner approves its exact revision. Until then the
-Router remains `WAIT_FOR_HUMAN` and the original failed R03-01 cannot be corrected or replayed.
+The project owner approved its exact draft at commit
+`c64681e847c1a6847c2588d127ed7f2749c914b5`. It is now effective for Senior decomposition and
+ticket drafting only. The original failed R03-01 cannot be corrected or replayed, and no
+replacement phase can dispatch before the separate Workflow/executable policy correction is
+admitted, implemented and reviewed.
 
 ## Dependency graph and observable closures
 
@@ -46,7 +49,7 @@ the new closure; historical tests are not evidence for the new ticket.
 
 ### AC-40 — Replacement bootstrap allowlist and phase order
 
-After owner approval, the effective project-specific bootstrap policy replaces the original
+Under this owner-approved revision, the effective project-specific bootstrap design replaces the original
 R03-01 phase with exactly `R03-01A`, `R03-01B`, `R03-01C` and `R03-01D`, followed by the existing
 R03-02 and R03-03 logical stages. No other project, ticket ID, revision or ordering is allowed.
 
@@ -256,8 +259,9 @@ leaves only. Every ticket must still pass schema, low-model/capability admission
 own bootstrap grant. Approval creates no execution owner/task/worktree/branch/model selection,
 grant, receipt, dispatch, integration, normal activation, push, release or deployment.
 
-No Workflow, CodeReview or executable Router rule changes before this revision is approved and a
-separate implementation/policy correction is admitted. All no-heartbeat, manual-relay,
+Workflow, CodeReview and executable Router rules remain unchanged by this docs-only approval.
+Senior must first draft a separate policy-correction ticket; only its later admission,
+implementation and independent review may update those sources. All no-heartbeat, manual-relay,
 claim-before-effect, uncertain-effect and normal-activation rules remain in force.
 
 ## Required verification matrix for later ticketing
@@ -280,7 +284,8 @@ claim-before-effect, uncertain-effect and normal-activation rules remain in forc
 
 ## Rollback and compatibility
 
-- Before approval, delete/revert only this draft's docs commit; no runtime/source effect exists.
+- Reverting the Revision-05 docs-only approval returns the route to the sealed failed-attempt
+  blocker; no runtime/source effect exists from approval alone.
 - After approval, a future implementation rollback reverts only the independently integrated
   stage commit in reverse dependency order. It never rewrites the failed historical branch or a
   target repository.

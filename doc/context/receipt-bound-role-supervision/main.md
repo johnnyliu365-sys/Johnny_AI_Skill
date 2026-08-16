@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| State | `SEALED / REVISION_01_APPROVED / REVISION_02_APPROVED / REVISION_03_APPROVED / REVISION_04_APPROVED / REVISION_05_DRAFT / R03_BOOTSTRAP_BLOCKED` |
+| State | `SEALED / REVISION_01_APPROVED / REVISION_02_APPROVED / REVISION_03_APPROVED / REVISION_04_APPROVED / REVISION_05_APPROVED / SENIOR_DECOMPOSITION_AUTHORIZED` |
 | Requirement / ADR | `PRD-20260815-023`, `CHG-20260815-023`, `PRD-20260816-025`, `CHG-20260816-025`, `PRD-20260816-026`, `CHG-20260816-026`, `PRD-20260816-027`, `CHG-20260816-027`, `PRD-20260816-028`, `CHG-20260816-028` / `ADR-20260815-012`, `ADR-20260816-014`, `ADR-20260816-015`, `ADR-20260816-016`, `ADR-20260816-017` |
 | SPEC | `SPEC-AI-WORKFLOW-RECEIPT-BOUND-ROLE-SUPERVISION-20260815-01M0R2S4T6V8X0Z2B4D6F8H0J2` |
 | Shared Context | `main@f7eb3d3c9c88c23c3bc29bc9565ebc5b3b7096f9`; role facts from `CHG-20260815-023`, latest seal `CHG-20260815-024` |
@@ -87,14 +87,16 @@
   `xhigh`, and is read-only. It returns findings to the Senior, cannot implement, review,
   dispatch or integrate, and becomes inactive after the diagnosis. It has no heartbeat.
 
-## Revision 05 draft route
+## Revision 05 approved route
 
 The failed R03-01 review returned `TICKET_DEFECT -> ARCHITECTURE / CHANGE_CONTROL`. The bounded
-Grill result and proposed replacement facts are indexed at
+Grill result and approved replacement facts are indexed at
 [`revisions/rev05-r03-ticket-defect-recovery.md`](revisions/rev05-r03-ticket-defect-recovery.md).
-They are not implementation authority. Until exact owner approval, the original grant remains
-consumed, R03-01 is non-integrable, R03-02/R03-03 remain blocked and the Router continuation is
-`WAIT_FOR_HUMAN`.
+They are not implementation authority. The original grant remains consumed, R03-01 is
+non-integrable and R03-02/R03-03 remain blocked. The Router return is `APPROVAL_GRANTED ->
+ACTION_COMPLETED / SPEC`; the next action belongs to `TICKETS / SENIOR_READMISSION`. Senior may
+draft decomposition and policy-correction tickets but may not create a bootstrap grant or
+dispatch until the Workflow/executable policy correction is separately reviewed and integrated.
 
 ## Boundaries
 
