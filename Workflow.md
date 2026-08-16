@@ -65,10 +65,15 @@ INTAKE → WAYFINDER → ARCHITECTURE → GRILL → CONTEXT → SPEC → TICKETS
 | `CodeReview.md` | 審閱入口、證據、finding 與結論 | 重複專業 skill 的完整規則 |
 | target SPEC | 核准的產品行為、架構與驗收邊界 | 全域流程規則 |
 | target ticket | 單張實作的完整局部契約 | 未核准需求或全域規則副本 |
-| Work Progress Report | 狀態、識別碼、commit/review 與例外 | 完整 ticket 副本 |
+| Work Progress Report | 專案層級正式來源的短索引 | 事件台帳、完整 ticket／review／handoff、receipt 或逐動作證據 |
 
 完整 target 文件結構只能在專案負責人授權後依 `template/README.md` 建立。既有
 同用途目錄優先；不得建立平行的 Context、SPEC、ticket 或 review 來源。
+
+`WorkProgressReport.md` 不得作為 implementation 或 review 的寫入／return target；
+每個動作只回傳 typed event 與 exact commit／artifact identifiers。既有 ticket 中的
+`WPR-only handoff` 文字屬已退役的舊傳輸方式，不得再建立獨立 WPR commit；詳細證據
+留在該 ticket／review exact leaf，歷史由 Git 定點溯源。
 
 <a id="workflow-router"></a>
 
