@@ -21,10 +21,9 @@ flowchart TD
     GR --> C[CONTEXT]
     C --> S[SPEC]
     S --> T[TICKETS]
-    T --> D{normal receipt or exact approved bootstrap?}
+    T --> D{dispatch receipt?}
     D -- 否 --> WH[WAIT_FOR_HUMAN]
-    D -- normal receipt --> I[IMPLEMENT]
-    D -- exact bootstrap --> I
+    D -- 是 --> I[IMPLEMENT]
     I --> ST[SMOKE_TEST]
     ST --> RV[REVIEW]
     RV -- correction --> I
@@ -110,33 +109,6 @@ Router 每次輸出必須包含：
 自動接續有步數／時間 ceiling。`ACTION_COMPLETED` 必須先附
 `CompletionEvidence`；commit 不能自行選下一關。
 
-<a id="workflow-bootstrap-exception"></a>
-
-### 0.1a 自我託管 bootstrap 例外
-
-正常 receipt-bound dispatch 尚未具備、且待實作 ticket 正是該能力本身時，仍固定
-`HALT`，除非 project owner 已核准一個 exact project/ticket allowlist 的 bootstrap
-policy。例外不得由 `CAPABILITY_UNAVAILABLE`、聊天、工具存在或 ticket 自行推導。
-
-核准例外只有本版本庫 Receipt-bound Role Supervision Revision 04／`CHG-20260816-027`
-的 R03-01～R03-03 self-host route，以及為解除其政策修正循環而核准的單票 R03-00
-bridge。第一版
-[`BPB-R03-00-20260816-001`](modules/spec/receipt-bound-role-supervision/r05-r03-00-policy-bridge.md)
-與其 grant／attempt 已消耗，只是不可重用的歷史證據。現行候選
-[`BPB-R03-00-20260816-002`](modules/spec/receipt-bound-role-supervision/r06-r03-00-policy-bridge-02.md)
-先只允許 Senior 獨立 review；review `APPROVED` 後，Senior 才能新增本身標示
-`ADMITTED_FOR_BPB_ROUTE / HIGH_ASSURANCE_REQUIRED / OWNER_GRANT_REQUIRED` 的
-`R03-00-CS-02` 與新 registry，之後仍須另行 owner-approved grant。
-
-該 grant 使用 `baseline_rule=CLAIM_INTRODUCTION_COMMIT`。Senior 提交 consuming attempt
-後，以 Git readback 取得 introduction commit，將其作為 execution baseline 與一次性
-envelope 的 `claim_commit`；不得在 attempt leaf 內自我引用 commit hash。這仍是人工
-claim-before-effect route，不是 executable allowlist、receipt、live Router 或 normal
-capability。R03-01A～R03-01D 固定 blocked，直到 R03-00 review/integration 完成。完整
-grant、人工 relay、correction、integration、activation 與永久關閉規則仍由
-[`receipt-bound-role-supervision.md`](modules/spec/receipt-bound-role-supervision.md#bootstrap-ac-31)
-及 BPB-002 的更窄限制共同約束；其他專案與 ticket 一律不得套用。
-
 ### 0.2 最小 Context
 
 Context/source/capability 或旁路引用解析，完整閱讀：
@@ -186,7 +158,7 @@ escalation。預設一位 implementer、無 helper；只有互斥 ownership 與�
 | low-model ticket admission | approved SPEC and exact ticket | [`ticket-decomposition.md`](skills/johnny-project-takeover/references/ticket-decomposition.md) | ready／split／upstream／high assurance |
 | formal UI／design source | approved UI requirement and capability state | [`ui-design-handoff.md`](skills/johnny-project-takeover/references/ui-design-handoff.md) | UI contract／human wait／source halt |
 | XSS trigger | untrusted-source/render/host graph | [`xss-review.md`](skills/johnny-project-takeover/references/xss-review.md) | classification／closure or halt |
-| dispatch／owner／workspace | exact ticket/receipt/task/worktree；或唯一核准的 project-specific bootstrap policy/grant | [`implementation-authority.md`](skills/johnny-project-takeover/references/implementation-authority.md)、[`router-control.md`](skills/johnny-project-takeover/references/router-control.md) | admitted normal dispatch、bounded bootstrap action or halt |
+| dispatch／owner／workspace | exact ticket/receipt/task/worktree | [`implementation-authority.md`](skills/johnny-project-takeover/references/implementation-authority.md) | admitted dispatch or halt |
 | `IMPLEMENT`／`SMOKE_TEST` | exact admitted ticket and direct contracts | [`implementation-tdd.md`](skills/johnny-project-takeover/references/implementation-tdd.md) | `ImplementationReturn` |
 | `REVIEW`／`HANDOFF` | Closure Set、diff、evidence | [CodeReview.md](CodeReview.md) | approved／correction／change／halt |
 | language decision | Context、SPEC、ticket | [`language-policy.md`](skills/johnny-project-takeover/references/language-policy.md) | decision or schema halt |
@@ -273,15 +245,6 @@ baseline、SPEC/AC、scope、TDD、型別矩陣、驗證、安全或 return cont
 - [`specification-ticketing.md#dispatch-normalization`](skills/johnny-project-takeover/references/specification-ticketing.md#dispatch-normalization)
 
 `TICKETS + APPROVAL_GRANTED -> IMPLEMENT` 是已淘汰 transition，固定 `HALT`。
-
-Self-host bootstrap 例外不恢復這條舊 transition，也不偽造 receipt。Revision-04 動作
-必須引用其 exact committed grant／attempt artifact；R03-00 CS-02 則必須同時引用
-exact BPB-002、Senior `APPROVED` bridge review、新 ticket registry 與另行
-owner-approved grant／attempt。其最小 bootstrap envelope 以 `bootstrap_grant` 取代
-`receipt`，並增加由 Git readback 得到的 `claim_commit`；Implementer mutation 前必須
-驗證該 commit 是 attempt introduction commit 且包含全部 authority bytes。架構者不得選
-owner 或派工，Senior 才能執行該一次性 action。例外關閉後只剩正常六欄 receipt
-envelope。
 
 <a id="implementation"></a>
 

@@ -6,12 +6,12 @@
 
 | 功能集群 | 規格 | 狀態 |
 | --- | --- | --- |
-| Receipt-bound role supervision | [`receipt-bound-role-supervision.md`](receipt-bound-role-supervision.md) | Revision 01／02 `APPROVED`；Senior 可依 receipt union／event／Debugger 新修訂重新拆票，仍不得自行 dispatch 或啟用 heartbeat。 |
-| Environment capability bootstrap | [`environment-capability-bootstrap.md`](environment-capability-bootstrap.md) | Revision 01／02 `APPROVED`；Senior 可依精確資源上限／本地模型 reservation 新修訂重新拆票，仍不得自行 dispatch、安裝或執行外部 effect。 |
+| Receipt-bound role supervision | [`receipt-bound-role-supervision.md`](receipt-bound-role-supervision.md) | `APPROVED / REVIEWER_DECOMPOSITION_AUTHORIZED`；reviewer 可拆票／開票，仍不得自行 dispatch 或啟用 heartbeat。 |
+| Environment capability bootstrap | [`environment-capability-bootstrap.md`](environment-capability-bootstrap.md) | `APPROVED / REVIEWER_DECOMPOSITION_AUTHORIZED`；reviewer 可拆票／開票，仍不得自行 dispatch、安裝工具或執行外部 effect。 |
 
 ## 已核准隔離衝突修訂
 
 | 功能集群 | 規格 | 狀態 |
 | --- | --- | --- |
-| Adaptive project orchestration | [`adaptive-project-orchestration.md`](adaptive-project-orchestration.md) | Revision 06／07 `APPROVED`；Senior 可依角色／Context Library／seed／manifest 新修訂重新拆票；既有 admission leaf 不改寫。 |
-| Context-load telemetry | [`context-load-telemetry.md`](context-load-telemetry.md) | Revision 02／03 `APPROVED`；Senior 可依 receipt evidence／按需報表／zero-inference baseline 新修訂重新拆票；未授權報表執行或 provider call。 |
+| Adaptive project orchestration | [`adaptive-project-orchestration.md`](adaptive-project-orchestration.md) Revision 06 | `APPROVED / REVIEWER_DECOMPOSITION_AUTHORIZED`；只取代 target-local Johnny ignore/worktree 路徑，不重開 Revision 05 Router phase；尚未授權 dispatch。 |
+| Context-load telemetry | [`context-load-telemetry.md`](context-load-telemetry.md) Revision 02 | `APPROVED / REVIEWER_DECOMPOSITION_AUTHORIZED`；raw JSONL 改為 Johnny-owned opaque storage；尚未授權 dispatch 或受控專案使用。 |

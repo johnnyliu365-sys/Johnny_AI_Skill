@@ -18,15 +18,7 @@
 5. 完成一個動作後回傳 typed event，回到 Router；不得自行選下一關。
 
 Router state 只保存 metadata；任何 pending implementation dispatch 都必須由 live
-descriptor、receipt 與精確 artifact references 綁定。唯一例外是
-[Workflow self-host bootstrap](Workflow.md#workflow-bootstrap-exception) 所列、本版本庫
-R03-01～R03-03 的 project-specific route，以及僅供修正該 route 的 R03-00 bridge。
-[`BPB-R03-00-20260816-001`](modules/spec/receipt-bound-role-supervision/r05-r03-00-policy-bridge.md)
-與其 grant 已消耗，只是不可重用的歷史證據；目前唯一候選是
-[`BPB-R03-00-20260816-002`](modules/spec/receipt-bound-role-supervision/r06-r03-00-policy-bridge-02.md)。
-BPB-002 必須先經 Senior 獨立審查，之後另建本身已 admission 的 `R03-00-CS-02` 與
-registry，再以另行 owner 核准的 grant／attempt introduction commit 執行。它只涵蓋
-exact R03-00，不涵蓋 R03-01A～R03-01D，也不得推廣、複製或宣稱 normal capability。
+descriptor、receipt 與精確 artifact references 綁定。
 
 找不到、讀不到、版本不符或索引競爭時，在 mutation 前
 `HALT / ROUTE_REFERENCE_INVALID`，不得憑記憶補規則。

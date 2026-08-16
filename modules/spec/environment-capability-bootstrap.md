@@ -3,12 +3,12 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-ENVIRONMENT-CAPABILITY-BOOTSTRAP-20260815-01M0E2C4B6S8T0R2A4P6D8F0H2` |
-| Status | `REVISION_01_APPROVED / REVISION_02_APPROVED / SENIOR_DECOMPOSITION_AUTHORIZED` |
+| Status | `APPROVED / REVIEWER_DECOMPOSITION_AUTHORIZED` |
 | Author / baseline | Architecture owner / `main` / `2701ed563f26e116db69e8e4fcb84024754c9498` |
 | Context | `doc/context/environment-capability-bootstrap/main.md` |
-| Shared Context | `CONTEXT.md` sealed by `CHG-20260816-025` |
-| PRD / change | `PRD-20260815-024`, `PRD-20260816-025` / `CHG-20260815-024`, `CHG-20260816-025` |
-| Architecture decision | `ADR-20260815-013`, `ADR-20260816-014` |
+| Shared Context | `CONTEXT.md` sealed by `CHG-20260815-024` |
+| PRD / change | `PRD-20260815-024` / `CHG-20260815-024` |
+| Architecture decision | `ADR-20260815-013` |
 | Implementation language | Python 3.11, Pydantic/frozen typed contracts and `mypy --strict`; platform adapters remain injected boundaries |
 | Delivery profile | `HIGH_ASSURANCE` for acquisition, activation, resource enforcement, credential and removal effects; pure planners/reducers may be separately admitted after approval |
 
@@ -34,9 +34,6 @@ authority.
 - Immutable side-by-side environment identity, cache/write isolation and resource enforcement.
 - Boundary-only capability evidence, event-based install grants, drift handling, detach and
   plugin uninstall cleanup.
-- Local-inference compatibility and one-shot CPU/RAM/GPU/VRAM reservation evidence. Local model
-  download, training implementation, weights and dataset governance remain a future independent
-  high-assurance scope.
 - Root README guidance for setup, team handoff and removal.
 
 ## Out of scope
@@ -141,19 +138,7 @@ revision and result. It stores no Secret, raw path, URI, command output or devic
 
 Every launch plan contains finite positive caps for CPU, memory, disk/temp, processes,
 containers, build workers and active lanes; unused dimensions are explicitly zero. The plan is
-classified `LIGHT`, `STANDARD` or `HEAVY_APPROVAL` and is immutable for one exact work receipt;
-an implementation plan must also bind its exact ticket. Retry, correction, commit, role
-replacement and task restart do not reset or expand it.
-
-| Class | CPU cap | Memory cap | Halt floor | Disk/temp | Processes | Containers | Workers | Lanes |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `LIGHT` | lower of 25% of currently available CPU or one core-equivalent | lower of 25% of currently available RAM or 2 GiB | less than 1 GiB currently available RAM | 1 GiB | 8 | 0 | 1 | 1 |
-| `STANDARD` | lower of 50% of currently available CPU or two core-equivalents | lower of 50% of currently available RAM or 4 GiB | less than 2 GiB currently available RAM | 5 GiB | 24 | 0 | 2 | 1 |
-| `HEAVY_APPROVAL` | no default | no default | exact displayed plan | no default | no default | no default | no default | no default |
-
-Only a ticket that explicitly requires the Docker capability may have a nonzero container cap.
-`HEAVY_APPROVAL` is not a larger implicit preset: every dimension requires separate exact owner
-approval.
+classified `LIGHT`, `STANDARD` or `HEAVY_APPROVAL`.
 
 - Windows Johnny-launched processes attach to a proved Job Object before untrusted/project work
   begins.
@@ -165,19 +150,6 @@ approval.
 
 Capacity discovery is one-shot and stores only normalized available/cap values needed for the
 decision, never hardware serials or a persistent device fingerprint.
-
-### EC-10A — Local-model reservation priority
-
-Every plan declares `HOSTED_INFERENCE`, `LOCAL_INFERENCE` or `LOCAL_TRAINING`.
-`LOCAL_INFERENCE` first reserves the current model's required CPU, RAM, GPU and VRAM; Johnny may
-plan only from the proved remainder. Insufficient residual capacity stops or postpones Johnny
-work. It never terminates, pauses, reconfigures or steals resources from the local model.
-
-`LOCAL_TRAINING` is always `HEAVY_APPROVAL`. While it is active, only Router/Senior control and
-bounded read-only checks may run; Docker work, full test suites and other heavy tickets are
-forbidden concurrently. This revision defines only resource/compatibility contracts. Model
-download, tokenizer/model installation, training code, weight lifecycle, dataset ownership,
-evaluation and release require a future separately approved high-assurance SPEC.
 
 ### EC-11 — Authority separation and one ticket receipt
 
@@ -274,7 +246,6 @@ enum CapabilityResult {
 }
 enum OwnershipKind { FOREIGN_READ_ONLY, PROJECT_NATIVE, JOHNNY_OWNED }
 enum ResourceClass { LIGHT, STANDARD, HEAVY_APPROVAL }
-enum ComputeWorkloadKind { HOSTED_INFERENCE, LOCAL_INFERENCE, LOCAL_TRAINING }
 enum EnvironmentLifecycle { CANDIDATE, ACTIVE, SUPERSEDED, DETACHING, REMOVED, RECOVERY_REQUIRED }
 
 struct CapabilityRequirement {
@@ -331,10 +302,7 @@ struct CapabilityEvidence {
 
 struct ResourcePlan {
   ResourcePlanId plan_id;
-  WorkReceiptRef work_receipt_ref;
-  optional<TicketRef> ticket_ref;
   ResourceClass class;
-  ComputeWorkloadKind workload_kind;
   PositiveCpuCap cpu;
   PositiveByteCap memory;
   PositiveByteCap disk_and_temp;
@@ -342,20 +310,7 @@ struct ResourcePlan {
   NonNegativeCount container_cap;
   NonNegativeCount worker_cap;
   NonNegativeCount lane_cap;
-  optional<LocalModelReservationRef> local_model_reservation_ref;
   ResourceEnforcerRevision enforcer_revision;
-  ContentDigest plan_digest;
-}
-
-struct LocalModelReservation {
-  LocalModelReservationId reservation_id;
-  ComputeWorkloadKind workload_kind;
-  PositiveCpuCap reserved_cpu;
-  PositiveByteCap reserved_memory;
-  optional<PositiveGpuCap> reserved_gpu;
-  optional<PositiveByteCap> reserved_vram;
-  CapacityObservationRevision observation_revision;
-  ContentDigest reservation_digest;
 }
 
 struct ExecutionEnvironmentBinding {
@@ -437,12 +392,6 @@ staging acceptance before a production capability claim.
     returns a finite halt without partial install.
 20. The root README explains existing-tool priority, three gates, permissions, resource plans,
     detach/uninstall, team handoff and the absence of target-project coupling.
-21. Exact-cap tests prove every `LIGHT`/`STANDARD` lower-of calculation, RAM halt floor, fixed
-    disk/process/container/worker/lane cap and immutable no-reset behavior. Only Docker tickets
-    admit nonzero containers; every `HEAVY_APPROVAL` dimension requires exact approval.
-22. Local-model matrices deduct CPU/RAM/GPU/VRAM reservations before Johnny planning, halt on
-    insufficient remainder without model process effect, prohibit heavy concurrency during
-    training and reject download/training/dataset/weight behavior as out of scope.
 
 ## TDD and independent review matrix
 
@@ -494,10 +443,6 @@ vertical closures, expected to include:
 7. project detach/plugin uninstall settlement and target/foreign isolation acceptance;
 8. integrated Windows high-assurance acceptance and root README operations guide.
 
-Revision 02 adds the exact cap, one-shot immutability and local-model reservation contracts. The
-owner approved its exact text for fresh Senior decomposition. Existing admission evidence
-remains immutable; approval itself creates no ticket or execution authority.
-
 These are not tickets and grant no dispatch authority. Shared contracts and transaction
 boundaries must be frozen before dependent adapter tickets. Reviewer returns
 `SPLIT_REQUIRED`, `UPSTREAM_DECISION_REQUIRED` or `HIGH_ASSURANCE_REQUIRED` rather than filling
@@ -505,13 +450,12 @@ an architecture gap.
 
 ## Convergence and approval
 
-- Architecture/Grill direction was confirmed by the project owner through `2026-08-16
+- Architecture/Grill decisions were confirmed by the project owner through `2026-08-15
   (Asia/Taipei)`.
 - XSS classification: `N/A`; no Browser/WebView/HTML/DOM/JavaScript renderer is introduced.
 - Secret, login, acquisition, install, process launch, Docker and removal are effect/security
   boundaries and require exact ticket-level treatment after approval.
-- Current Router return: `APPROVAL_GRANTED -> ACTION_COMPLETED / SPEC`; next route may enter
-  `TICKETS / SENIOR_DECOMPOSITION` through a separate Router action.
+- Current Router return: `ACTION_COMPLETED -> TICKETS / REVIEWER_DECOMPOSITION`.
 - No ticket, dispatch, implementation, install, download, login, push, release or deployment is
   authorized by this draft.
 
@@ -521,15 +465,11 @@ an architecture gap.
 | --- | --- | --- |
 | 2026-08-15 | Architecture owner / `main` / `2701ed563f26e116db69e8e4fcb84024754c9498` | Initial independent draft after owner-completed environment Grill. |
 | 2026-08-15 | Project owner | Approved the exact Environment Capability Bootstrap SPEC and assigned ticket decomposition/opening to the reviewer. |
-| 2026-08-16 | Architecture owner / `main` / `2a8287831259243e230911e1082f0ec87895d3c5` | Drafted Revision 02 exact LIGHT/STANDARD caps, immutable ticket plans and local-model resource reservation under `CHG-20260816-025`; exact owner approval pending. |
-| 2026-08-16 | Project owner | Approved the exact Environment Capability Bootstrap Revision 02 and authorized fresh Senior decomposition only. |
 
 ## Approval record
 
 - Decision maker: project owner.
-- Exact SPEC revision: Revision 01 `APPROVED` on `2026-08-15 (Asia/Taipei)`; Revision 02
-  `APPROVED` on `2026-08-16 (Asia/Taipei)`.
-- Approval effect: authorizes fresh Senior decomposition and ticket drafting only. It creates no
-  ticket, receipt, dispatch or implementation authority.
+- Exact SPEC revision: `APPROVED` on `2026-08-15 (Asia/Taipei)`.
+- Approval effect: authorizes reviewer decomposition and ticket drafting only.
 - It does not authorize dispatch, implementation, install, download, login, heartbeat, push,
   release or deployment.
