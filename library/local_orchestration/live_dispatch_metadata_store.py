@@ -26,7 +26,7 @@ from library.workflow_router.live_dispatch_contracts import (
 )
 
 
-class LiveDispatchMetadataBoundary(Protocol):
+class LiveDispatchMetadataBoundaryPort(Protocol):
     """Installer-owned journal/checkpoint boundary supplied by composition."""
 
     def register_artifact(
@@ -106,7 +106,7 @@ class LiveDispatchMetadataStore(
 ):
     """Composition adapter over one injected installer-owned metadata boundary."""
 
-    def __init__(self, boundary: LiveDispatchMetadataBoundary) -> None:
+    def __init__(self, boundary: LiveDispatchMetadataBoundaryPort) -> None:
         self._boundary = boundary
 
     def register_artifact(
@@ -162,7 +162,7 @@ class LiveDispatchMetadataStore(
 
 __all__ = [
     "LiveApprovedDispatchArtifactRegistryPort",
-    "LiveDispatchMetadataBoundary",
+    "LiveDispatchMetadataBoundaryPort",
     "LiveDispatchMetadataStore",
     "TicketReceiptStorePort",
 ]

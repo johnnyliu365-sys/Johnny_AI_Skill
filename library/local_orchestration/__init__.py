@@ -183,9 +183,13 @@ from .codex_registration_port import (
 )
 from .live_dispatch_metadata_store import (
     LiveApprovedDispatchArtifactRegistryPort,
-    LiveDispatchMetadataBoundary,
+    LiveDispatchMetadataBoundaryPort,
     LiveDispatchMetadataStore,
     TicketReceiptStorePort,
+)
+from .live_dispatch_metadata_boundary import (
+    JohnnyMetadataRoot,
+    LiveDispatchMetadataBoundary,
 )
 from library.workflow_router.live_dispatch_contracts import (
     ApprovedArtifactLifecycle,
@@ -404,7 +408,9 @@ __all__ = [
     "TicketRevision",
     "to_legacy_ticket_dispatch_receipt",
     "LiveApprovedDispatchArtifactRegistryPort",
+    "JohnnyMetadataRoot",
     "LiveDispatchMetadataBoundary",
+    "LiveDispatchMetadataBoundaryPort",
     "LiveDispatchMetadataStore",
     "TicketReceiptStorePort",
 ]

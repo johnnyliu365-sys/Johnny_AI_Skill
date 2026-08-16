@@ -1,0 +1,440 @@
+"""Windows durable checkpoint boundary for live-dispatch metadata."""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+from pathlib import Path
+from types import TracebackType
+from typing import BinaryIO, Literal, Self
+import msvcrt
+import os
+import tempfile
+
+from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
+
+from library.workflow_router.live_dispatch_contracts import (
+    ApprovedArtifactLifecycle,
+    ApprovedDispatchArtifactReadRequest,
+    ApprovedDispatchArtifactReadResult,
+    ApprovedDispatchArtifactRecord,
+    ApprovedDispatchArtifactRegisterRequest,
+    ApprovedDispatchArtifactRegisterResult,
+    ArtifactReadFailure,
+    ArtifactReadStatus,
+    ArtifactRegistrationFailure,
+    ArtifactRegistrationStatus,
+    ReceiptIssueFailure,
+    ReceiptIssueStatus,
+    ReceiptLifecycle,
+    ReceiptReadFailure,
+    ReceiptReadStatus,
+    TicketReceipt,
+    TicketReceiptIssueRequest,
+    TicketReceiptIssueResult,
+    TicketReceiptReadRequest,
+    TicketReceiptReadResult,
+)
+
+
+_SCHEMA_REVISION: Literal["live-dispatch-metadata-v1"] = "live-dispatch-metadata-v1"
+_CHECKPOINT_NAME = "live-dispatch-metadata-v1.json"
+_LOCK_NAME = "live-dispatch-metadata-v1.lock"
+_TEMP_PREFIX = ".live-dispatch-metadata-v1-"
+
+
+@dataclass(frozen=True, slots=True)
+class JohnnyMetadataRoot:
+    """An installer-resolved, existing Johnny-owned metadata directory."""
+
+    root: Path
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.root, Path):
+            raise TypeError("metadata root must be a Path")
+        if not self.root.is_absolute():
+            raise ValueError("metadata root must be absolute")
+        resolved = self.root.resolve(strict=True)
+        if resolved != self.root or not resolved.is_dir():
+            raise ValueError("metadata root must be an existing resolved directory")
+
+
+class _Checkpoint(BaseModel):
+    """Strict deterministic state persisted beneath one Johnny-owned root."""
+
+    model_config = ConfigDict(
+        extra="forbid",
+        frozen=True,
+        strict=True,
+        revalidate_instances="always",
+    )
+
+    schema_revision: Literal["live-dispatch-metadata-v1"] = _SCHEMA_REVISION
+    generation: int = Field(ge=0)
+    artifacts: tuple[ApprovedDispatchArtifactRecord, ...] = ()
+    receipts: tuple[TicketReceipt, ...] = ()
+
+    @model_validator(mode="after")
+    def unique_authority_keys(self) -> Self:
+        artifact_keys = tuple(_artifact_key(record) for record in self.artifacts)
+        receipt_keys = tuple(_receipt_key(receipt) for receipt in self.receipts)
+        if len(artifact_keys) != len(set(artifact_keys)):
+            raise ValueError("checkpoint contains duplicate artifact identities")
+        if len(receipt_keys) != len(set(receipt_keys)):
+            raise ValueError("checkpoint contains duplicate receipt identities")
+        return self
+
+    @classmethod
+    def empty(cls) -> _Checkpoint:
+        return cls(generation=0)
+
+
+class _ExclusiveWindowsFileLock:
+    """One-byte OS-visible exclusive lock shared by independent processes."""
+
+    def __init__(self, path: Path) -> None:
+        self._path = path
+        self._handle: BinaryIO | None = None
+
+    def __enter__(self) -> Self:
+        handle = self._path.open("a+b")
+        try:
+            handle.seek(0, os.SEEK_END)
+            if handle.tell() == 0:
+                handle.write(b"\x00")
+                handle.flush()
+                os.fsync(handle.fileno())
+            handle.seek(0)
+            msvcrt.locking(handle.fileno(), msvcrt.LK_LOCK, 1)
+        except OSError:
+            handle.close()
+            raise
+        self._handle = handle
+        return self
+
+    def __exit__(
+        self,
+        exception_type: type[BaseException] | None,
+        exception: BaseException | None,
+        traceback: TracebackType | None,
+    ) -> None:
+        del exception_type, exception, traceback
+        handle = self._handle
+        self._handle = None
+        if handle is None:
+            return
+        try:
+            handle.seek(0)
+            msvcrt.locking(handle.fileno(), msvcrt.LK_UNLCK, 1)
+        finally:
+            handle.close()
+
+
+def _artifact_key(record: ApprovedDispatchArtifactRecord) -> tuple[str, str, str, str]:
+    return (
+        record.project_id,
+        record.ticket_reference,
+        record.handoff_reference,
+        record.implementation_owner_id,
+    )
+
+
+def _artifact_request_key(
+    request: ApprovedDispatchArtifactReadRequest,
+) -> tuple[str, str, str, str]:
+    identity = request.identity
+    return (
+        identity.project_id,
+        identity.ticket_reference,
+        identity.handoff_reference,
+        identity.implementation_owner_id,
+    )
+
+
+def _receipt_key(receipt: TicketReceipt) -> tuple[str, str]:
+    return (receipt.project_id, receipt.ticket_reference)
+
+
+def _receipt_request_key(request: TicketReceiptReadRequest) -> tuple[str, str]:
+    return (request.project_id, request.ticket_reference)
+
+
+def _receipt_from_request(request: TicketReceiptIssueRequest) -> TicketReceipt:
+    identity = request.artifact_identity
+    return TicketReceipt(
+        project_id=identity.project_id,
+        receipt_id=request.receipt_id,
+        ticket_reference=identity.ticket_reference,
+        ticket_revision=request.ticket_revision,
+        ticket_digest=request.ticket_digest,
+        ticket_document_commit=request.ticket_document_commit,
+        handoff_reference=identity.handoff_reference,
+        handoff_revision=request.handoff_revision,
+        handoff_digest=request.handoff_digest,
+        handoff_document_commit=request.handoff_document_commit,
+        implementation_owner_id=identity.implementation_owner_id,
+        expected_return=request.expected_return,
+        descriptor_binding=request.descriptor_binding,
+        correlation_id=request.correlation_id,
+        dispatch_question_id=request.dispatch_question_id,
+        worktree_fingerprint=request.worktree_fingerprint,
+        branch_fingerprint=request.branch_fingerprint,
+    )
+
+
+def _storage_register_failure() -> ApprovedDispatchArtifactRegisterResult:
+    return ApprovedDispatchArtifactRegisterResult(
+        status=ArtifactRegistrationStatus.STORAGE_UNAVAILABLE,
+        failure=ArtifactRegistrationFailure.STORAGE_UNAVAILABLE,
+    )
+
+
+def _storage_artifact_read_failure() -> ApprovedDispatchArtifactReadResult:
+    return ApprovedDispatchArtifactReadResult(
+        status=ArtifactReadStatus.STORAGE_UNAVAILABLE,
+        failure=ArtifactReadFailure.STORAGE_UNAVAILABLE,
+    )
+
+
+def _storage_issue_failure() -> TicketReceiptIssueResult:
+    return TicketReceiptIssueResult(
+        status=ReceiptIssueStatus.STORAGE_UNAVAILABLE,
+        failure=ReceiptIssueFailure.STORAGE_UNAVAILABLE,
+    )
+
+
+def _storage_receipt_read_failure() -> TicketReceiptReadResult:
+    return TicketReceiptReadResult(
+        status=ReceiptReadStatus.STORAGE_UNAVAILABLE,
+        failure=ReceiptReadFailure.STORAGE_UNAVAILABLE,
+    )
+
+
+class LiveDispatchMetadataBoundary:
+    """Durable registry and receipt CAS boundary over one atomic checkpoint."""
+
+    def __init__(self, metadata_root: JohnnyMetadataRoot) -> None:
+        if type(metadata_root) is not JohnnyMetadataRoot:
+            raise TypeError("boundary requires JohnnyMetadataRoot")
+        self._checkpoint_path = metadata_root.root / _CHECKPOINT_NAME
+        self._lock_path = metadata_root.root / _LOCK_NAME
+
+    def _load_checkpoint(self) -> _Checkpoint:
+        if not self._checkpoint_path.exists():
+            return _Checkpoint.empty()
+        payload = self._checkpoint_path.read_bytes()
+        return _Checkpoint.model_validate_json(payload, strict=True)
+
+    def _commit_checkpoint(self, checkpoint: _Checkpoint) -> None:
+        payload = checkpoint.model_dump_json().encode("utf-8") + b"\n"
+        descriptor, temporary_name = tempfile.mkstemp(
+            prefix=_TEMP_PREFIX,
+            suffix=".tmp",
+            dir=self._checkpoint_path.parent,
+        )
+        temporary_path = Path(temporary_name)
+        try:
+            with os.fdopen(descriptor, "wb") as temporary:
+                temporary.write(payload)
+                temporary.flush()
+                os.fsync(temporary.fileno())
+            os.replace(temporary_path, self._checkpoint_path)
+        finally:
+            temporary_path.unlink(missing_ok=True)
+
+    def register_artifact(
+        self,
+        request: ApprovedDispatchArtifactRegisterRequest,
+    ) -> ApprovedDispatchArtifactRegisterResult:
+        if type(request) is not ApprovedDispatchArtifactRegisterRequest:
+            return _storage_register_failure()
+        try:
+            with _ExclusiveWindowsFileLock(self._lock_path):
+                checkpoint = self._load_checkpoint()
+                key = _artifact_key(request.artifact)
+                existing = next(
+                    (record for record in checkpoint.artifacts if _artifact_key(record) == key),
+                    None,
+                )
+                if existing is not None:
+                    if existing == request.artifact:
+                        return ApprovedDispatchArtifactRegisterResult(
+                            status=ArtifactRegistrationStatus.ALREADY_REGISTERED,
+                            record=existing,
+                        )
+                    return ApprovedDispatchArtifactRegisterResult(
+                        status=ArtifactRegistrationStatus.IDENTITY_CONFLICT,
+                        failure=ArtifactRegistrationFailure.IDENTITY_CONFLICT,
+                    )
+                artifacts = tuple(
+                    sorted(
+                        (*checkpoint.artifacts, request.artifact),
+                        key=_artifact_key,
+                    )
+                )
+                updated = _Checkpoint(
+                    schema_revision=checkpoint.schema_revision,
+                    generation=checkpoint.generation + 1,
+                    artifacts=artifacts,
+                    receipts=checkpoint.receipts,
+                )
+                self._commit_checkpoint(updated)
+                return ApprovedDispatchArtifactRegisterResult(
+                    status=ArtifactRegistrationStatus.REGISTERED,
+                    record=request.artifact,
+                )
+        except (OSError, UnicodeError, ValidationError):
+            return _storage_register_failure()
+
+    def read_artifact(
+        self,
+        request: ApprovedDispatchArtifactReadRequest,
+    ) -> ApprovedDispatchArtifactReadResult:
+        if type(request) is not ApprovedDispatchArtifactReadRequest:
+            return _storage_artifact_read_failure()
+        try:
+            with _ExclusiveWindowsFileLock(self._lock_path):
+                checkpoint = self._load_checkpoint()
+                key = _artifact_request_key(request)
+                record = next(
+                    (item for item in checkpoint.artifacts if _artifact_key(item) == key),
+                    None,
+                )
+                if record is None:
+                    return ApprovedDispatchArtifactReadResult(
+                        status=ArtifactReadStatus.NOT_FOUND,
+                        failure=ArtifactReadFailure.NOT_FOUND,
+                    )
+                if record.lifecycle is ApprovedArtifactLifecycle.CLOSED:
+                    return ApprovedDispatchArtifactReadResult(
+                        status=ArtifactReadStatus.CLOSED,
+                        failure=ArtifactReadFailure.CLOSED,
+                    )
+                if (
+                    record.ticket_revision != request.ticket_revision
+                    or record.handoff_revision != request.handoff_revision
+                ):
+                    return ApprovedDispatchArtifactReadResult(
+                        status=ArtifactReadStatus.STALE_REVISION,
+                        failure=ArtifactReadFailure.STALE_REVISION,
+                    )
+                return ApprovedDispatchArtifactReadResult(
+                    status=ArtifactReadStatus.FOUND,
+                    record=record,
+                )
+        except (OSError, UnicodeError, ValidationError):
+            return _storage_artifact_read_failure()
+
+    def issue_receipt(self, request: TicketReceiptIssueRequest) -> TicketReceiptIssueResult:
+        if type(request) is not TicketReceiptIssueRequest:
+            return _storage_issue_failure()
+        try:
+            with _ExclusiveWindowsFileLock(self._lock_path):
+                checkpoint = self._load_checkpoint()
+                identity = request.artifact_identity
+                artifact_key = (
+                    identity.project_id,
+                    identity.ticket_reference,
+                    identity.handoff_reference,
+                    identity.implementation_owner_id,
+                )
+                artifact = next(
+                    (
+                        record
+                        for record in checkpoint.artifacts
+                        if _artifact_key(record) == artifact_key
+                    ),
+                    None,
+                )
+                if artifact is None or artifact.lifecycle is ApprovedArtifactLifecycle.CLOSED:
+                    return TicketReceiptIssueResult(
+                        status=ReceiptIssueStatus.ARTIFACT_NOT_APPROVED,
+                        failure=ReceiptIssueFailure.ARTIFACT_NOT_APPROVED,
+                    )
+                if (
+                    artifact.ticket_revision != request.ticket_revision
+                    or artifact.ticket_digest != request.ticket_digest
+                    or artifact.ticket_document_commit != request.ticket_document_commit
+                    or artifact.handoff_revision != request.handoff_revision
+                    or artifact.handoff_digest != request.handoff_digest
+                    or artifact.handoff_document_commit != request.handoff_document_commit
+                    or artifact.expected_return != request.expected_return
+                    or artifact.descriptor_binding != request.descriptor_binding
+                ):
+                    return TicketReceiptIssueResult(
+                        status=ReceiptIssueStatus.PENDING_DESCRIPTOR_MISMATCH,
+                        failure=ReceiptIssueFailure.PENDING_DESCRIPTOR_MISMATCH,
+                    )
+                candidate = _receipt_from_request(request)
+                receipt_key = _receipt_key(candidate)
+                existing = next(
+                    (receipt for receipt in checkpoint.receipts if _receipt_key(receipt) == receipt_key),
+                    None,
+                )
+                if existing is not None:
+                    if (
+                        existing.lifecycle in (ReceiptLifecycle.ACTIVE, ReceiptLifecycle.QUARANTINED)
+                        and existing == candidate
+                    ):
+                        return TicketReceiptIssueResult(
+                            status=ReceiptIssueStatus.ALREADY_ISSUED,
+                            receipt=existing,
+                        )
+                    return TicketReceiptIssueResult(
+                        status=ReceiptIssueStatus.RECEIPT_CONFLICT,
+                        failure=ReceiptIssueFailure.RECEIPT_CONFLICT,
+                    )
+                receipts = tuple(
+                    sorted(
+                        (*checkpoint.receipts, candidate),
+                        key=_receipt_key,
+                    )
+                )
+                updated = _Checkpoint(
+                    schema_revision=checkpoint.schema_revision,
+                    generation=checkpoint.generation + 1,
+                    artifacts=checkpoint.artifacts,
+                    receipts=receipts,
+                )
+                self._commit_checkpoint(updated)
+                return TicketReceiptIssueResult(
+                    status=ReceiptIssueStatus.ISSUED,
+                    receipt=candidate,
+                )
+        except (OSError, UnicodeError, ValidationError):
+            return _storage_issue_failure()
+
+    def read_receipt(self, request: TicketReceiptReadRequest) -> TicketReceiptReadResult:
+        if type(request) is not TicketReceiptReadRequest:
+            return _storage_receipt_read_failure()
+        try:
+            with _ExclusiveWindowsFileLock(self._lock_path):
+                checkpoint = self._load_checkpoint()
+                key = _receipt_request_key(request)
+                receipt = next(
+                    (item for item in checkpoint.receipts if _receipt_key(item) == key),
+                    None,
+                )
+                if receipt is None:
+                    return TicketReceiptReadResult(
+                        status=ReceiptReadStatus.NOT_FOUND,
+                        failure=ReceiptReadFailure.NOT_FOUND,
+                    )
+                if receipt.ticket_revision != request.ticket_revision:
+                    return TicketReceiptReadResult(
+                        status=ReceiptReadStatus.STALE_REVISION,
+                        failure=ReceiptReadFailure.STALE_REVISION,
+                    )
+                if receipt.lifecycle in (ReceiptLifecycle.CLOSED, ReceiptLifecycle.REVOKED):
+                    return TicketReceiptReadResult(
+                        status=ReceiptReadStatus.CLOSED,
+                        failure=ReceiptReadFailure.CLOSED,
+                    )
+                return TicketReceiptReadResult(
+                    status=ReceiptReadStatus.FOUND,
+                    receipt=receipt,
+                )
+        except (OSError, UnicodeError, ValidationError):
+            return _storage_receipt_read_failure()
+
+
+__all__ = ["JohnnyMetadataRoot", "LiveDispatchMetadataBoundary"]
