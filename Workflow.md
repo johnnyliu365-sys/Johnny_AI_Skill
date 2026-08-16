@@ -137,16 +137,6 @@ grant、人工 relay、correction、integration、activation 與永久關閉規�
 [`receipt-bound-role-supervision.md`](modules/spec/receipt-bound-role-supervision.md#bootstrap-ac-31)
 及 BPB-002 的更窄限制共同約束；其他專案與 ticket 一律不得套用。
 
-BPB-002 後續已建立 CS-02／BDG-003／BDA-003；其 host call 因錯誤 calling-host lookup
-在 manager resolution 前失敗。依 owner-approved
-[`Revision 08`](modules/spec/receipt-bound-role-supervision/r08-senior-pre-effect-admission-correction.md)，
-這個 exact operation 的 recovery 不進入空的 `REVIEW` stage。既有 Senior 先執行一次
-`MANUAL_BOOTSTRAP / SENIOR_PRE_EFFECT_ADMISSION`，調和 user-origin
-`01a00b7d-580f-7c41-a462-067659223f33` non-operational halt，然後提交 additive
-correction/continuation record，以 explicit `hostId=local` 傳送原始 R03-00 ticket，最後
-只讀回一次。這是 `AUTO_CONTINUE` 的既有 authority，不新增 Reviewer、owner prompt、
-grant、attempt 或 heartbeat；correction control ticket 永不得送給 Implementer。
-
 ### 0.2 最小 Context
 
 Context/source/capability 或旁路引用解析，完整閱讀：
@@ -292,12 +282,6 @@ owner-approved grant／attempt。其最小 bootstrap envelope 以 `bootstrap_gra
 驗證該 commit 是 attempt introduction commit 且包含全部 authority bytes。架構者不得選
 owner 或派工，Senior 才能執行該一次性 action。例外關閉後只剩正常六欄 receipt
 envelope。
-
-Exact BDA-003 的 proved-no-effect recovery 另依 Revision 08：Senior-owned correction
-control ticket 只供 pre-effect admission，絕不 dispatch。Admission 成功後，唯一
-Implementer envelope 仍是原始 `R03-00-policy-correction-prerequisite`、既有
-`dispatch_ref`／`claim_commit`，並以 `hostId=local` 作 port argument。空工作不進
-Code Review；真實 `ImplementationReturn` 後才進正常 review。
 
 <a id="implementation"></a>
 

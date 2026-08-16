@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| State | `SEALED / REVISION_01_APPROVED / REVISION_02_APPROVED / REVISION_03_APPROVED / REVISION_04_APPROVED / REVISION_05_APPROVED / REVISION_06_APPROVED / REVISION_07_OWNER_APPROVED / REVISION_08_OWNER_APPROVED / REVISION_09_OWNER_APPROVED / IMMEDIATE_SENIOR_ACTION_AUTHORIZED` |
-| Requirement / ADR | `PRD-20260815-023`, `CHG-20260815-023`, `PRD-20260816-025`, `CHG-20260816-025`, `PRD-20260816-026`, `CHG-20260816-026`, `PRD-20260816-027`, `CHG-20260816-027`, `PRD-20260816-028`, `CHG-20260816-028`, `PRD-20260816-029`, `CHG-20260816-029`, `PRD-20260816-030`, `CHG-20260816-030`, `PRD-20260817-031`, `CHG-20260817-031`, `PRD-20260817-032`, `CHG-20260817-032` / `ADR-20260815-012`, `ADR-20260816-014`, `ADR-20260816-015`, `ADR-20260816-016`, `ADR-20260816-017`, `ADR-20260817-018`, `ADR-20260817-019` |
+| State | `SEALED / REVISION_01_APPROVED / REVISION_02_APPROVED / REVISION_03_APPROVED / REVISION_04_APPROVED / REVISION_05_APPROVED / REVISION_06_APPROVED / REVISION_07_OWNER_APPROVED / REVISION_08_OWNER_APPROVED / SENIOR_CORRECTION_TICKETING_AUTHORIZED` |
+| Requirement / ADR | `PRD-20260815-023`, `CHG-20260815-023`, `PRD-20260816-025`, `CHG-20260816-025`, `PRD-20260816-026`, `CHG-20260816-026`, `PRD-20260816-027`, `CHG-20260816-027`, `PRD-20260816-028`, `CHG-20260816-028`, `PRD-20260816-029`, `CHG-20260816-029`, `PRD-20260816-030`, `CHG-20260816-030`, `PRD-20260817-031`, `CHG-20260817-031` / `ADR-20260815-012`, `ADR-20260816-014`, `ADR-20260816-015`, `ADR-20260816-016`, `ADR-20260816-017`, `ADR-20260817-018` |
 | SPEC | `SPEC-AI-WORKFLOW-RECEIPT-BOUND-ROLE-SUPERVISION-20260815-01M0R2S4T6V8X0Z2B4D6F8H0J2` |
 | Shared Context | `main@f7eb3d3c9c88c23c3bc29bc9565ebc5b3b7096f9`; role facts from `CHG-20260815-023`, latest seal `CHG-20260815-024` |
 | Control owner | Architecture owner / current `main` |
@@ -139,18 +139,8 @@ New bootstrap authority binds `target_host_id` from target-task readback and adm
 manager before claim. For BDA-003 only, additive correction evidence may classify the rejected
 manager lookup as proved no-effect and permit one continuation of the existing dispatch/claim at
 explicit host `local`. BDG/BDA/BDR-003 remain immutable; no BDG-004, BDA-004 or new owner grant is
-created. Revision 09 below supersedes only the empty-work independent-review gate.
-
-## Revision 09 approved Senior pre-effect admission
-
-The corrected facts are sealed at
-[`revisions/rev09-senior-pre-effect-admission.md`](revisions/rev09-senior-pre-effect-admission.md).
-The Senior is the sole Reviewer/orchestrator, but no implementation exists before this control
-effect, so formal Code Review is inapplicable. User-origin turn
-`01a00b7d-580f-7c41-a462-067659223f33` is a reconciled non-operational halt with no worktree
-mutation and consumes no continuation call. The immediate next action is one Senior-owned
-pre-effect admission, additive correction/continuation commit, one original-ticket delivery at
-`hostId=local`, and one bounded readback. Normal review begins only after implementation return.
+created. The next action belongs to Senior correction ticketing and independent review, not
+Architecture dispatch.
 
 ## Boundaries
 
@@ -165,7 +155,7 @@ pre-effect admission, additive correction/continuation commit, one original-tick
 - Exact BPB-002 approval authorizes independent Senior bridge review only. No CS-02 ticket,
   registry, grant, attempt, receipt, dispatch or implementation exists from approval alone. The
   historical BPB-001 route remains consumed and cannot satisfy any new gate.
-- Revision 09 owner approval replaces the Revision-08 empty-work review gate. Senior immediately
-  performs the exact pre-effect admission and, on `READY`, continues the same BDA-003 operation
-  once at `hostId=local`. The control ticket never reaches Implementer; heartbeat and recurring
-  readback remain forbidden.
+- Revision 08 owner approval authorizes Senior to create and independently review one exact
+  correction ticket. It does not itself call the host. Only the reviewed correction may continue
+  the same BDA-003 operation once at `hostId=local`; heartbeat and recurring readback remain
+  forbidden.

@@ -3,12 +3,12 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-RECEIPT-BOUND-ROLE-SUPERVISION-20260815-01M0R2S4T6V8X0Z2B4D6F8H0J2` |
-| Status | `REVISION_01_APPROVED / REVISION_02_APPROVED / REVISION_03_APPROVED / REVISION_04_APPROVED / REVISION_05_APPROVED / REVISION_06_APPROVED / REVISION_07_APPROVED / REVISION_08_APPROVED / IMMEDIATE_SENIOR_PRE_EFFECT_ACTION_AUTHORIZED` |
+| Status | `REVISION_01_APPROVED / REVISION_02_APPROVED / REVISION_03_APPROVED / REVISION_04_APPROVED / REVISION_05_APPROVED / REVISION_06_APPROVED / REVISION_07_APPROVED / ATTEMPT_003_PROVED_NO_EFFECT_CORRECTION / SENIOR_CORRECTION_TICKETING_AUTHORIZED` |
 | Author / baseline | Architecture owner / `main` / `6569cd41bbf3ecbc04108da4150c30267951dda5` |
 | Context | `doc/context/receipt-bound-role-supervision/main.md` |
 | Shared Context | `CONTEXT.md` sealed by `CHG-20260816-025`; original role-supervision facts from `CHG-20260815-023` |
-| PRD / change | `PRD-20260815-023`, `PRD-20260816-025`, `PRD-20260816-026`, `PRD-20260816-027`, `PRD-20260816-028`, `PRD-20260816-029`, `PRD-20260816-030`, `PRD-20260817-031`, `PRD-20260817-032` / `CHG-20260815-023`, `CHG-20260816-025`, `CHG-20260816-026`, `CHG-20260816-027`, `CHG-20260816-028`, `CHG-20260816-029`, `CHG-20260816-030`, `CHG-20260817-031`, `CHG-20260817-032` |
-| Architecture decision | `ADR-20260815-012`, `ADR-20260816-014`, `ADR-20260816-015`, `ADR-20260816-016`, `ADR-20260816-017`, `ADR-20260817-018`, `ADR-20260817-019` |
+| PRD / change | `PRD-20260815-023`, `PRD-20260816-025`, `PRD-20260816-026`, `PRD-20260816-027`, `PRD-20260816-028`, `PRD-20260816-029`, `PRD-20260816-030`, `PRD-20260817-031` / `CHG-20260815-023`, `CHG-20260816-025`, `CHG-20260816-026`, `CHG-20260816-027`, `CHG-20260816-028`, `CHG-20260816-029`, `CHG-20260816-030`, `CHG-20260817-031` |
+| Architecture decision | `ADR-20260815-012`, `ADR-20260816-014`, `ADR-20260816-015`, `ADR-20260816-016`, `ADR-20260816-017`, `ADR-20260817-018` |
 | Implementation language | Python 3.11 with `mypy --strict`; Markdown and validated JSON are artifact formats, not additional runtimes |
 | Delivery profile | `HIGH_ASSURANCE` for live role wake, task replacement and external-effect boundaries; pure reducers/schemas may be decomposed only after exact ticket admission |
 
@@ -68,9 +68,7 @@ created BDA-003. Senior explicitly sent the calling environment host, so the too
 call before resolving an `AppServerManager`; target task readback proves no delivery. The bounded
 contract and exact one-operation recovery are at
 [`receipt-bound-role-supervision/r07-host-bound-bootstrap-recovery.md`](receipt-bound-role-supervision/r07-host-bound-bootstrap-recovery.md).
-At its seal it authorized Senior correction ticketing and a pre-effect review gate. Revision 08
-below replaces only that empty-work gate with Senior pre-effect admission; Architecture still
-does not dispatch.
+It authorizes Senior correction ticketing and independent review, not Architecture dispatch.
 
 ## Out of scope
 
@@ -699,17 +697,6 @@ preserve historical BDR-003 and permit one same-operation continuation after a c
 and independent review at
 [`r07-host-bound-bootstrap-recovery.md`](receipt-bound-role-supervision/r07-host-bound-bootstrap-recovery.md).
 No new grant, attempt or owner approval is created by that continuation.
-
-### Revision 08 — approved Senior pre-effect admission correction
-
-No implementation, diff or correction result exists before the Senior performs this control
-effect, so formal Code Review has no Closure Set to inspect. AC-66 through AC-73 replace only the
-Revision-07 pre-effect independent-review requirement with one deterministic Senior-owned
-admission. They also reconcile user-origin non-operational halt turn
-`01a00b7d-580f-7c41-a462-067659223f33`, forbid the control ticket from every Implementer message,
-and route directly to the existing owner-approved same-operation continuation at
-[`r08-senior-pre-effect-admission-correction.md`](receipt-bound-role-supervision/r08-senior-pre-effect-admission-correction.md).
-Normal Code Review remains mandatory after a real implementation return.
 
 ## Strongly typed contracts
 
@@ -1454,8 +1441,6 @@ closures. A safe dependency order is:
     no new implementation ticket is created merely to represent the exception.
 15. Revision-07 target-host binding, pre-claim host admission and the exact BDA-003 no-effect
     correction/continuation; no BDG-004 or BDA-004 may represent that continuation.
-16. Revision-08 Senior pre-effect admission and out-of-band halt reconciliation; no empty Review
-    stage or Implementer delivery of the correction control ticket is legal.
 
 Items 8 through 10 are approved Revision-02 boundaries available for fresh Senior decomposition.
 Existing Revision-01 admission evidence is immutable; approval itself creates no ticket.
@@ -1468,13 +1453,9 @@ Item 14 is the approved Revision-04 re-admission route. Senior must amend status
 decision/grant leaves, not rewrite `DEC-20260816-521` or the three ticket bodies. Selecting exact
 owners/workspaces and performing dispatch remain Senior actions outside architecture scope.
 
-Item 15 is the approved Revision-07 correction boundary. Its earlier pre-effect review wording is
-superseded by Item 16. Senior compiles the correction control ticket but never dispatches it.
-
-Item 16 is the approved Revision-08 immediate action boundary. Senior performs one read-only
-pre-effect admission, commits the additive correction/continuation state, sends the original
-R03-00 implementation ticket once at host `local`, and performs one bounded readback. Architecture
-does not create the ticket decision or call the host.
+Item 15 is the approved Revision-07 correction boundary. Senior compiles one exact correction
+ticket and obtains independent review before creating the additive correction/continuation leaf
+or making the one permitted host call. Architecture does not create the ticket or call the host.
 
 These are decomposition boundaries, not tickets or dispatch authority. The reviewer must split
 further when one candidate contains more than one observable closure or effect owner, and must
@@ -1529,9 +1510,6 @@ route any missing meaning back to architecture.
   `CHG-20260816-030`; they preserve the consumed BPB-001 route as historical evidence.
 - Revision-07 host-bound bootstrap recovery is authorized by `PRD-20260817-031` /
   `CHG-20260817-031`; it preserves BDG/BDA/BDR-003 while correcting the proved pre-manager result.
-- Revision-08 Senior pre-effect admission is authorized by `PRD-20260817-032` /
-  `CHG-20260817-032`; it removes only the empty-work review gate and reconciles the user-origin
-  non-operational halt.
 - Feature Context: `doc/context/receipt-bound-role-supervision/main.md`.
 - Active requirement leaves:
   `doc/requirements/active/2026/workflow-governance/REQ-20260815-023.md` and
@@ -1541,25 +1519,22 @@ route any missing meaning back to architecture.
   `doc/requirements/active/2026/workflow-governance/REQ-20260816-028.md` and
   `doc/requirements/active/2026/workflow-governance/REQ-20260816-029.md` and
   `doc/requirements/active/2026/workflow-governance/REQ-20260816-030.md` and
-  `doc/requirements/active/2026/workflow-governance/REQ-20260817-031.md` and
-  `doc/requirements/active/2026/workflow-governance/REQ-20260817-032.md`.
+  `doc/requirements/active/2026/workflow-governance/REQ-20260817-031.md`.
 - ADRs: `doc/adr/ADR-20260815-012-receipt-bound-event-driven-completion-supervision.md` and
   `doc/adr/ADR-20260816-014-project-neutral-orchestration-evidence-and-counterfactual-telemetry.md`
   and `doc/adr/ADR-20260816-015-live-receipt-dispatch-settlement.md`.
 - Bootstrap ADR: `doc/adr/ADR-20260816-016-self-host-bootstrap-dispatch-exception.md`.
 - Host-bound recovery ADR:
   `doc/adr/ADR-20260817-018-host-bound-bootstrap-no-effect-recovery.md`.
-- Pre-effect admission ADR:
-  `doc/adr/ADR-20260817-019-pre-effect-admission-is-not-code-review.md`.
 - XSS classification: `N/A`; this feature has no Browser/WebView/HTML/DOM/JavaScript renderer
   flow. A future UI or untrusted renderer integration re-runs the XSS gate.
 - New external effects: role wake and task replacement are privileged Agent-control effects and
   therefore `HIGH_ASSURANCE`. Push, release and deployment remain out of scope.
 - Open architecture questions: none after owner Grill convergence through `2026-08-17`.
 - Current governed return: `APPROVAL_GRANTED -> ACTION_COMPLETED / SPEC`; the only next route is
-  `MANUAL_BOOTSTRAP / SENIOR_PRE_EFFECT_ADMISSION / AUTO_CONTINUE` under Revision 08. Architecture
-  does not create the ticket decision or call the host. No Review stage or new approval exists
-  before this exact action.
+  `TICKETS / SENIOR_CORRECTION_TICKET` for Revision 07 followed by independent review.
+  Architecture does not select an execution owner, create the ticket or call the host. Approval
+  alone creates no continuation record or implementation effect.
 
 ## Revision signatures
 
@@ -1579,7 +1554,6 @@ route any missing meaning back to architecture.
 | 2026-08-16 | Project owner / Architecture Grill | Approved `BPB-R03-00-20260816-001` as a review-gated, one-ticket bridge for R03-00 only; direct R03-01A–D coverage remains forbidden. |
 | 2026-08-16 | Project owner / Architecture Grill | Approved Revision 06 and `BPB-R03-00-20260816-002`: preserve the consumed CS-01 route, require a new self-admitting CS-02 registry, and use the consuming attempt introduction commit as execution baseline. |
 | 2026-08-17 | Project owner / Architecture Grill | Approved Revision 07: bind target host from target-task readback, admit host manager before claim, correct BDR-003 through an additive proved-no-effect decision and permit one same-operation continuation at `hostId=local` without BDG-004/BDA-004 or another owner grant. |
-| 2026-08-17 | Project owner / Architecture correction | Approved Revision 08: remove the empty-work independent-review gate, reconcile the user-origin non-operational halt, forbid the control ticket from Implementer dispatch and authorize immediate Senior pre-effect admission plus the existing one-call continuation. |
 
 ## Approval record
 
@@ -1587,10 +1561,9 @@ route any missing meaning back to architecture.
 - Architecture/Grill direction: confirmed through `2026-08-16 (Asia/Taipei)`.
 - Exact SPEC revision: Revision 01 `APPROVED`; Revision 02 `APPROVED`; Revision 03
   `APPROVED`; Revision 04 `APPROVED`; Revision 05 `APPROVED`; Revision 06 `APPROVED`;
-  Revision 07 `APPROVED / PARTIALLY_SUPERSEDED`; Revision 08 `APPROVED`; BPB-001
-  `HISTORICAL / CONSUMED`; BDG/BDA/BDR-003
+  Revision 07 `APPROVED`; BPB-001 `HISTORICAL / CONSUMED`; BDG/BDA/BDR-003
   `HISTORICAL / IMMUTABLE` on `2026-08-17`.
-- Approval effect: authorizes Senior to perform one exact pre-effect admission, commit additive
-  ticket/correction/continuation decisions and continue only the existing BDA-003 operation once
-  at explicit `hostId=local`. It creates no Review stage, new grant, new attempt, receipt, second
-  host call, heartbeat, push, release or deployment authority.
+- Approval effect: authorizes Senior to create and independently review one exact Revision-07
+  correction ticket, then continue only the existing BDA-003 operation once at explicit
+  `hostId=local`. It creates no ticket itself, new grant, new attempt, receipt, second host call,
+  heartbeat, push, release or deployment authority.
