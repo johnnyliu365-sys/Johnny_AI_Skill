@@ -20,7 +20,10 @@
 Router state 只保存 metadata；任何 pending implementation dispatch 都必須由 live
 descriptor、receipt 與精確 artifact references 綁定。唯一例外是
 [Workflow self-host bootstrap](Workflow.md#workflow-bootstrap-exception) 所列、本版本庫
-R03-01～R03-03 的 project-specific route；它不得推廣、複製或宣稱 normal capability。
+R03-01～R03-03 的 project-specific route，以及僅供修正該 route 的
+[`BPB-R03-00-20260816-001`](modules/spec/receipt-bound-role-supervision/r05-r03-00-policy-bridge.md)。
+BPB 必須先經 Senior 獨立審查，再以另行 owner 核准的 grant 執行；它只涵蓋 exact
+R03-00，不涵蓋 R03-01A～R03-01D，也不得推廣、複製或宣稱 normal capability。
 
 找不到、讀不到、版本不符或索引競爭時，在 mutation 前
 `HALT / ROUTE_REFERENCE_INVALID`，不得憑記憶補規則。

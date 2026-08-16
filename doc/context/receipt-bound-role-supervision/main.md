@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| State | `SEALED / REVISION_01_APPROVED / REVISION_02_APPROVED / REVISION_03_APPROVED / REVISION_04_APPROVED / REVISION_05_APPROVED / SENIOR_DECOMPOSITION_AUTHORIZED` |
-| Requirement / ADR | `PRD-20260815-023`, `CHG-20260815-023`, `PRD-20260816-025`, `CHG-20260816-025`, `PRD-20260816-026`, `CHG-20260816-026`, `PRD-20260816-027`, `CHG-20260816-027`, `PRD-20260816-028`, `CHG-20260816-028` / `ADR-20260815-012`, `ADR-20260816-014`, `ADR-20260816-015`, `ADR-20260816-016`, `ADR-20260816-017` |
+| State | `SEALED / REVISION_01_APPROVED / REVISION_02_APPROVED / REVISION_03_APPROVED / REVISION_04_APPROVED / REVISION_05_APPROVED / REVISION_06_OWNER_APPROVED / SENIOR_BRIDGE_REVIEW_REQUIRED` |
+| Requirement / ADR | `PRD-20260815-023`, `CHG-20260815-023`, `PRD-20260816-025`, `CHG-20260816-025`, `PRD-20260816-026`, `CHG-20260816-026`, `PRD-20260816-027`, `CHG-20260816-027`, `PRD-20260816-028`, `CHG-20260816-028`, `PRD-20260816-029`, `CHG-20260816-029` / `ADR-20260815-012`, `ADR-20260816-014`, `ADR-20260816-015`, `ADR-20260816-016`, `ADR-20260816-017` |
 | SPEC | `SPEC-AI-WORKFLOW-RECEIPT-BOUND-ROLE-SUPERVISION-20260815-01M0R2S4T6V8X0Z2B4D6F8H0J2` |
 | Shared Context | `main@f7eb3d3c9c88c23c3bc29bc9565ebc5b3b7096f9`; role facts from `CHG-20260815-023`, latest seal `CHG-20260815-024` |
 | Control owner | Architecture owner / current `main` |
@@ -42,9 +42,11 @@
 - Host delivery has only `DELIVERED`, `NO_EFFECT` or `EFFECT_UNCERTAIN`. A proved no-effect may
   retry only the same dispatch operation. An uncertain effect quarantines the operation and
   receipt; there is no automatic retry, replacement receipt or second dispatch.
-- This repository has one finite self-host bootstrap route for R03-01 through R03-03. It is not
-  available to any other project/ticket and permanently closes after real R03-03 capability
-  proof. Architecture defines the route but never selects or dispatches an Implementer.
+- Revision 04 has one finite self-host bootstrap route for R03-01 through R03-03. The separate
+  owner-approved BPB may bridge only exact R03-00 so that the Revision-05 executable policy can be
+  implemented; it does not widen that three-ticket allowlist. Neither route is available to
+  another project/ticket. Architecture defines policy but never selects or dispatches an
+  Implementer.
 - R03-01 uses an owner-approved no-receipt `BootstrapDispatchGrant`. R03-02 and R03-03 require a
   real active `TicketReceipt` plus a separate one-shot `BootstrapTransportGrant`; neither grant
   is a `WorkReceipt` member or live-capability evidence.
@@ -95,8 +97,17 @@ Grill result and approved replacement facts are indexed at
 They are not implementation authority. The original grant remains consumed, R03-01 is
 non-integrable and R03-02/R03-03 remain blocked. The Router return is `APPROVAL_GRANTED ->
 ACTION_COMPLETED / SPEC`; the next action belongs to `TICKETS / SENIOR_READMISSION`. Senior may
-draft decomposition and policy-correction tickets but may not create a bootstrap grant or
-dispatch until the Workflow/executable policy correction is separately reviewed and integrated.
+draft decomposition and policy-correction tickets but may not create any R03-01A through R03-01D
+grant or dispatch until the Workflow/executable policy correction is separately reviewed and
+integrated. Exact R03-00 bridge review follows Revision 06 below.
+
+## Revision 06 approved policy bridge
+
+The exact one-ticket bridge facts are sealed at
+[`revisions/rev06-r03-00-policy-bridge.md`](revisions/rev06-r03-00-policy-bridge.md). The bridge
+does not make R03-00 dispatchable by approval alone: the only next action is an independent Senior
+review of its exact commit. Only an `APPROVED` bridge review may precede a separately committed and
+owner-approved R03-00 grant. R03-01A through R03-01D remain blocked.
 
 ## Boundaries
 
@@ -108,5 +119,6 @@ dispatch until the Workflow/executable policy correction is separately reviewed 
   capability claim. The separately required supervision chain still halts dispatch when absent.
 - Revision 04 is an explicit self-host exception, not a generic fallback. It cannot be inferred
   from `CAPABILITY_UNAVAILABLE`, copied into a target project or used after `NORMAL_ACTIVE`.
-- Exact approval authorizes fresh Senior decomposition only. No ticket, receipt, dispatch or
-  implementation exists until the Senior creates and admits it through the normal Router.
+- Exact bridge approval authorizes independent Senior bridge review only. No grant, attempt,
+  receipt, dispatch or implementation exists from approval alone; R03-00 remains non-dispatched
+  until bridge review and a separate owner-approved grant both exist.

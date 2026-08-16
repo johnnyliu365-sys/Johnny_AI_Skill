@@ -118,12 +118,15 @@ Router 每次輸出必須包含：
 `HALT`，除非 project owner 已核准一個 exact project/ticket allowlist 的 bootstrap
 policy。例外不得由 `CAPABILITY_UNAVAILABLE`、聊天、工具存在或 ticket 自行推導。
 
-目前唯一核准例外是本版本庫 Receipt-bound Role Supervision Revision 04／
-`CHG-20260816-027` 的 R03-01～R03-03 self-host route。完整 grant、claim-before-effect、
-人工 relay、correction、integration、activation 與永久關閉規則只存在
-[`receipt-bound-role-supervision.md`](modules/spec/receipt-bound-role-supervision.md#bootstrap-ac-31)；
-digest-bound Router references 與 executable normal receipt policy在正式 implementation
-correction 前維持不變，其他專案與 ticket 一律不得套用。
+核准例外只有本版本庫 Receipt-bound Role Supervision Revision 04／`CHG-20260816-027`
+的 R03-01～R03-03 self-host route，以及為解除其政策修正循環而核准的單票
+[`BPB-R03-00-20260816-001`](modules/spec/receipt-bound-role-supervision/r05-r03-00-policy-bridge.md)。
+BPB 只使 exact R03-00 在 Senior 獨立 review `APPROVED` 且另有 owner-approved grant
+後可走一次 claim-before-effect 人工 relay；它不是 executable allowlist、receipt 或
+normal capability。R03-01A～R03-01D 仍固定 blocked，直到 R03-00 review/integration
+完成。完整 grant、人工 relay、correction、integration、activation 與永久關閉規則
+仍由 [`receipt-bound-role-supervision.md`](modules/spec/receipt-bound-role-supervision.md#bootstrap-ac-31)
+及 BPB 的更窄限制共同約束；其他專案與 ticket 一律不得套用。
 
 ### 0.2 最小 Context
 
@@ -262,9 +265,11 @@ baseline、SPEC/AC、scope、TDD、型別矩陣、驗證、安全或 return cont
 
 `TICKETS + APPROVAL_GRANTED -> IMPLEMENT` 是已淘汰 transition，固定 `HALT`。
 
-唯一 self-host bootstrap 例外不恢復這條舊 transition，也不偽造 receipt。它必須引用
-Revision 04 的 exact committed grant／attempt artifact；架構者不得選 owner 或派工，
-Senior 才能執行該一次性 action。例外關閉後只剩正常六欄 receipt envelope。
+Self-host bootstrap 例外不恢復這條舊 transition，也不偽造 receipt。Revision-04 動作
+必須引用其 exact committed grant／attempt artifact；R03-00 則必須同時引用 exact BPB、
+Senior `APPROVED` bridge review 與另行 owner-approved grant／attempt。架構者不得選
+owner 或派工，Senior 才能執行該一次性 action。例外關閉後只剩正常六欄 receipt
+envelope。
 
 <a id="implementation"></a>
 

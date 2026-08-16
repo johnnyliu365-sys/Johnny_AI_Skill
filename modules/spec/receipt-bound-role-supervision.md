@@ -3,11 +3,11 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-RECEIPT-BOUND-ROLE-SUPERVISION-20260815-01M0R2S4T6V8X0Z2B4D6F8H0J2` |
-| Status | `REVISION_01_APPROVED / REVISION_02_APPROVED / REVISION_03_APPROVED / REVISION_04_APPROVED / REVISION_05_APPROVED / SENIOR_DECOMPOSITION_AUTHORIZED` |
+| Status | `REVISION_01_APPROVED / REVISION_02_APPROVED / REVISION_03_APPROVED / REVISION_04_APPROVED / REVISION_05_APPROVED / R03_00_POLICY_BRIDGE_OWNER_APPROVED / SENIOR_REVIEW_REQUIRED` |
 | Author / baseline | Architecture owner / `main` / `6569cd41bbf3ecbc04108da4150c30267951dda5` |
 | Context | `doc/context/receipt-bound-role-supervision/main.md` |
 | Shared Context | `CONTEXT.md` sealed by `CHG-20260816-025`; original role-supervision facts from `CHG-20260815-023` |
-| PRD / change | `PRD-20260815-023`, `PRD-20260816-025`, `PRD-20260816-026`, `PRD-20260816-027`, `PRD-20260816-028` / `CHG-20260815-023`, `CHG-20260816-025`, `CHG-20260816-026`, `CHG-20260816-027`, `CHG-20260816-028` |
+| PRD / change | `PRD-20260815-023`, `PRD-20260816-025`, `PRD-20260816-026`, `PRD-20260816-027`, `PRD-20260816-028`, `PRD-20260816-029` / `CHG-20260815-023`, `CHG-20260816-025`, `CHG-20260816-026`, `CHG-20260816-027`, `CHG-20260816-028`, `CHG-20260816-029` |
 | Architecture decision | `ADR-20260815-012`, `ADR-20260816-014`, `ADR-20260816-015`, `ADR-20260816-016`, `ADR-20260816-017` |
 | Implementation language | Python 3.11 with `mypy --strict`; Markdown and validated JSON are artifact formats, not additional runtimes |
 | Delivery profile | `HIGH_ASSURANCE` for live role wake, task replacement and external-effect boundaries; pure reducers/schemas may be decomposed only after exact ticket admission |
@@ -51,6 +51,12 @@ write-producing review into reviewer-owned disposable storage. Its exact bounded
 indexed at
 [`receipt-bound-role-supervision/r05-r03-ticket-defect-recovery.md`](receipt-bound-role-supervision/r05-r03-ticket-defect-recovery.md).
 It authorizes Senior decomposition/ticket drafting only and creates no implementation authority.
+
+The owner-approved R03-00 policy bridge is a separate, narrower authority leaf at
+[`receipt-bound-role-supervision/r05-r03-00-policy-bridge.md`](receipt-bound-role-supervision/r05-r03-00-policy-bridge.md).
+It permits only independent Senior review of the exact bridge commit. A later R03-00 host effect
+still requires that review plus its own committed, owner-approved grant; R03-01A through R03-01D
+remain blocked.
 
 ## Out of scope
 
@@ -1229,8 +1235,10 @@ process-local state.
 
 Bootstrap nullability and identity are also closed:
 
-- the policy allowlist contains exactly the current R03-01/R03-02/R03-03 revisions and no other
-  ticket; `NORMAL_ACTIVE` can transition only to `CLOSED`, never back to a bootstrap phase;
+- the Revision-04 executable policy allowlist contains exactly the current
+  R03-01/R03-02/R03-03 revisions and no other ticket. The separately approved BPB is a manual
+  pre-policy bridge for exact R03-00, not an allowlist member; `NORMAL_ACTIVE` can transition only
+  to `CLOSED`, never back to a bootstrap phase;
 - `R03_01_NO_RECEIPT` requires `ticket_receipt_id = None`; both receipt-transport phases require
   one exact active receipt. Any opposite shape is `BOOTSTRAP_RECEIPT_KIND_MISMATCH`;
 - correction grant kinds require one exact `correction_review_ref`; initial/transport initial
@@ -1331,9 +1339,10 @@ Secrets, PII or untrusted handoff bodies.
     fake/adapter boundary. Tool inventory or synthetic success remains `CAPABILITY_UNAVAILABLE`;
     the test creates no live task, message, branch, target write or wake unless a later ticket
     carries the exact effect authority.
-28. Bootstrap policy/schema tests cover the exact three-ticket allowlist, phase order, no-receipt
-    R03-01 shape, receipt-required R03-02/R03-03 shape, architecture/Senior role separation and
-    rejection of every other project/ticket/revision or post-activation use.
+28. Revision-04 bootstrap policy/schema tests cover the exact three-ticket allowlist, phase order,
+    no-receipt R03-01 shape, receipt-required R03-02/R03-03 shape, architecture/Senior role
+    separation and rejection of every other project/ticket/revision or post-activation use. The
+    separate BPB review proves it is not projected into that executable allowlist.
 29. Artifact-tree tests prove direct-child-only indexes, immutable additive leaves, exact digests
     and one grant/one attempt. A claimed grant with no result is uncertain and never callable.
 30. Envelope tests prove R03-01 substitutes only `bootstrap_grant` for `receipt`; R03-02/R03-03
@@ -1417,6 +1426,8 @@ route any missing meaning back to architecture.
   only after real activation proof; inability to prove R03-03 leaves normal dispatch disabled.
 - Revision-04 rollback closes the allowlisted policy and leaves immutable bootstrap provenance in
   Git. It cannot reactivate a consumed grant or alter an already-integrated implementation.
+- R03-00 bridge rollback closes only BPB authority and restores the fail-closed policy-correction
+  blocker. It cannot widen Revision 04, dispatch A–D or alter any grant/attempt evidence.
 - Deployment implementation is not authorized here. Any future deployment ticket independently
   applies the security effect boundary and exact environment/artifact readback.
 
@@ -1428,12 +1439,16 @@ route any missing meaning back to architecture.
   `CHG-20260816-026`; they do not alter the sealed shared Context body.
 - Revision-04 self-host bootstrap facts are authorized by `PRD-20260816-027` /
   `CHG-20260816-027`; they do not create a generic target-project exception.
+- Revision-05 recovery facts are authorized by `PRD-20260816-028` / `CHG-20260816-028`;
+  the one-ticket R03-00 bridge is authorized by `PRD-20260816-029` / `CHG-20260816-029`.
 - Feature Context: `doc/context/receipt-bound-role-supervision/main.md`.
 - Active requirement leaves:
   `doc/requirements/active/2026/workflow-governance/REQ-20260815-023.md` and
   `doc/requirements/active/2026/workflow-governance/REQ-20260816-025.md` and
   `doc/requirements/active/2026/workflow-governance/REQ-20260816-026.md` and
-  `doc/requirements/active/2026/workflow-governance/REQ-20260816-027.md`.
+  `doc/requirements/active/2026/workflow-governance/REQ-20260816-027.md` and
+  `doc/requirements/active/2026/workflow-governance/REQ-20260816-028.md` and
+  `doc/requirements/active/2026/workflow-governance/REQ-20260816-029.md`.
 - ADRs: `doc/adr/ADR-20260815-012-receipt-bound-event-driven-completion-supervision.md` and
   `doc/adr/ADR-20260816-014-project-neutral-orchestration-evidence-and-counterfactual-telemetry.md`
   and `doc/adr/ADR-20260816-015-live-receipt-dispatch-settlement.md`.
@@ -1443,10 +1458,10 @@ route any missing meaning back to architecture.
 - New external effects: role wake and task replacement are privileged Agent-control effects and
   therefore `HIGH_ASSURANCE`. Push, release and deployment remain out of scope.
 - Open architecture questions: none after owner Grill convergence through `2026-08-16`.
-- Current Router return: `APPROVAL_GRANTED -> ACTION_COMPLETED / SPEC`; next route may enter
-  `TICKETS / SENIOR_READMISSION` for additive Revision-04 bootstrap artifacts through a separate
-  Router action. Architecture does not select an execution owner or dispatch. No grant, attempt,
-  receipt, host effect or implementation authority exists from approval alone.
+- Current Router return: `APPROVAL_GRANTED -> ACTION_COMPLETED / SPEC`; the only next route is
+  `REVIEW / SENIOR_POLICY_BRIDGE_REVIEW` over the exact bridge commit. Architecture does not
+  select an execution owner or dispatch. No grant, attempt, receipt, host effect or implementation
+  authority exists from approval alone.
 
 ## Revision signatures
 
@@ -1463,14 +1478,15 @@ route any missing meaning back to architecture.
 | 2026-08-16 | Project owner | Approved Revision 04 decisions: project-only R03 scope, user return relay, new grant per correction, separate automatic integration grant, real-receipt transport bridge for R03-02/R03-03, high-assurance R03-03 approval and bounded normal auto-dispatch. |
 | 2026-08-16 | Architecture owner / `main` / baseline `6569cd41bbf3ecbc04108da4150c30267951dda5` | Drafted Revision 05 after `CR-R03-01-001`: immutable failed-attempt fence, four-stage R03-01 replacement, real owned-file durable transaction contract, truthful strict-type baseline and reviewer-owned disposable verification. Exact owner approval pending. |
 | 2026-08-16 | Project owner / approved draft `c64681e847c1a6847c2588d127ed7f2749c914b5` | Approved Revision 05 for Senior decomposition and policy-correction/replacement-ticket drafting only; no grant, dispatch, implementation or executable policy mutation is authorized by approval alone. |
+| 2026-08-16 | Project owner / Architecture Grill | Approved `BPB-R03-00-20260816-001` as a review-gated, one-ticket bridge for R03-00 only; direct R03-01A–D coverage remains forbidden. |
 
 ## Approval record
 
 - Decision maker: project owner.
 - Architecture/Grill direction: confirmed through `2026-08-16 (Asia/Taipei)`.
 - Exact SPEC revision: Revision 01 `APPROVED`; Revision 02 `APPROVED`; Revision 03
-  `APPROVED`; Revision 04 `APPROVED`; Revision 05 `APPROVED` on `2026-08-16`.
-- Approval effect: authorizes fresh Senior decomposition/ticket drafting only. It creates no
+  `APPROVED`; Revision 04 `APPROVED`; Revision 05 `APPROVED`; R03-00 policy bridge
+  `OWNER_APPROVED / SENIOR_REVIEW_REQUIRED` on `2026-08-16`.
+- Approval effect: authorizes independent Senior review of the exact bridge commit. It creates no
   execution binding, grant, attempt, receipt, host effect, dispatch, implementation, heartbeat,
-  push, release or deployment authority. The Senior alone may create exact additive bootstrap
-  admission artifacts and later request/perform the permitted effects.
+  push, release or deployment authority.
