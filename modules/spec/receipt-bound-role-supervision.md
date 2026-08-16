@@ -3,11 +3,11 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-RECEIPT-BOUND-ROLE-SUPERVISION-20260815-01M0R2S4T6V8X0Z2B4D6F8H0J2` |
-| Status | `REVISION_01_APPROVED / REVISION_02_APPROVED / REVISION_03_APPROVED / REVISION_04_APPROVED / REVISION_05_APPROVED / R03_00_POLICY_BRIDGE_OWNER_APPROVED / SENIOR_REVIEW_REQUIRED` |
+| Status | `REVISION_01_APPROVED / REVISION_02_APPROVED / REVISION_03_APPROVED / REVISION_04_APPROVED / REVISION_05_APPROVED / REVISION_06_APPROVED / BPB_001_CONSUMED / BPB_002_OWNER_APPROVED / SENIOR_REVIEW_REQUIRED` |
 | Author / baseline | Architecture owner / `main` / `6569cd41bbf3ecbc04108da4150c30267951dda5` |
 | Context | `doc/context/receipt-bound-role-supervision/main.md` |
 | Shared Context | `CONTEXT.md` sealed by `CHG-20260816-025`; original role-supervision facts from `CHG-20260815-023` |
-| PRD / change | `PRD-20260815-023`, `PRD-20260816-025`, `PRD-20260816-026`, `PRD-20260816-027`, `PRD-20260816-028`, `PRD-20260816-029` / `CHG-20260815-023`, `CHG-20260816-025`, `CHG-20260816-026`, `CHG-20260816-027`, `CHG-20260816-028`, `CHG-20260816-029` |
+| PRD / change | `PRD-20260815-023`, `PRD-20260816-025`, `PRD-20260816-026`, `PRD-20260816-027`, `PRD-20260816-028`, `PRD-20260816-029`, `PRD-20260816-030` / `CHG-20260815-023`, `CHG-20260816-025`, `CHG-20260816-026`, `CHG-20260816-027`, `CHG-20260816-028`, `CHG-20260816-029`, `CHG-20260816-030` |
 | Architecture decision | `ADR-20260815-012`, `ADR-20260816-014`, `ADR-20260816-015`, `ADR-20260816-016`, `ADR-20260816-017` |
 | Implementation language | Python 3.11 with `mypy --strict`; Markdown and validated JSON are artifact formats, not additional runtimes |
 | Delivery profile | `HIGH_ASSURANCE` for live role wake, task replacement and external-effect boundaries; pure reducers/schemas may be decomposed only after exact ticket admission |
@@ -52,11 +52,16 @@ indexed at
 [`receipt-bound-role-supervision/r05-r03-ticket-defect-recovery.md`](receipt-bound-role-supervision/r05-r03-ticket-defect-recovery.md).
 It authorizes Senior decomposition/ticket drafting only and creates no implementation authority.
 
-The owner-approved R03-00 policy bridge is a separate, narrower authority leaf at
+The first owner-approved R03-00 policy bridge is a separate, narrower authority leaf at
 [`receipt-bound-role-supervision/r05-r03-00-policy-bridge.md`](receipt-bound-role-supervision/r05-r03-00-policy-bridge.md).
-It permits only independent Senior review of the exact bridge commit. A later R03-00 host effect
-still requires that review plus its own committed, owner-approved grant; R03-01A through R03-01D
-remain blocked.
+Its route and grant were consumed; they are historical evidence and cannot be retried. Revision 06
+corrects the immutable-admission and stale-baseline defects at
+[`receipt-bound-role-supervision/r06-r03-00-immutable-admission.md`](receipt-bound-role-supervision/r06-r03-00-immutable-admission.md),
+with successor bridge
+[`BPB-R03-00-20260816-002`](receipt-bound-role-supervision/r06-r03-00-policy-bridge-02.md).
+BPB-002 permits only independent Senior review of the exact bridge commit. The later sequence must
+create a new ticket source and registry before any separately owner-approved grant; R03-01A
+through R03-01D remain blocked.
 
 ## Out of scope
 
@@ -659,6 +664,18 @@ This indexed leaf is part of this one feature SPEC and is owner-approved for Sen
 The consumed R03-01 grant cannot be replayed. Workflow, CodeReview and executable Router rules
 remain unchanged until a separate policy-correction ticket is admitted, implemented and reviewed;
 therefore no replacement bootstrap grant or dispatch is currently legal.
+
+### Revision 06 — approved immutable-admission recovery
+
+The first R03-00 route named an immutable `BLOCKED / NON_DISPATCHED` ticket and a baseline that
+predated its own grant. Its delivery and Implementer halt are valid historical evidence, but no
+retry is legal. AC-48 through AC-56 define a successor CS-02 admission source, additive registry,
+exact bridge review and `CLAIM_INTRODUCTION_COMMIT` baseline at
+[`r06-r03-00-immutable-admission.md`](receipt-bound-role-supervision/r06-r03-00-immutable-admission.md).
+The exact bridge is
+[`BPB-R03-00-20260816-002`](receipt-bound-role-supervision/r06-r03-00-policy-bridge-02.md).
+Owner approval authorizes only independent Senior review of that bridge commit; no CS-02 ticket,
+grant, attempt or implementation authority exists yet.
 
 ## Strongly typed contracts
 
@@ -1426,8 +1443,9 @@ route any missing meaning back to architecture.
   only after real activation proof; inability to prove R03-03 leaves normal dispatch disabled.
 - Revision-04 rollback closes the allowlisted policy and leaves immutable bootstrap provenance in
   Git. It cannot reactivate a consumed grant or alter an already-integrated implementation.
-- R03-00 bridge rollback closes only BPB authority and restores the fail-closed policy-correction
-  blocker. It cannot widen Revision 04, dispatch A–D or alter any grant/attempt evidence.
+- R03-00 bridge rollback closes only the current BPB-002 authority and restores the fail-closed
+  policy-correction blocker. BPB-001 remains consumed history. Rollback cannot widen Revision 04,
+  dispatch A–D or alter any ticket/grant/attempt evidence.
 - Deployment implementation is not authorized here. Any future deployment ticket independently
   applies the security effect boundary and exact environment/artifact readback.
 
@@ -1441,6 +1459,8 @@ route any missing meaning back to architecture.
   `CHG-20260816-027`; they do not create a generic target-project exception.
 - Revision-05 recovery facts are authorized by `PRD-20260816-028` / `CHG-20260816-028`;
   the one-ticket R03-00 bridge is authorized by `PRD-20260816-029` / `CHG-20260816-029`.
+- Revision-06 immutable-admission recovery and BPB-002 are authorized by `PRD-20260816-030` /
+  `CHG-20260816-030`; they preserve the consumed BPB-001 route as historical evidence.
 - Feature Context: `doc/context/receipt-bound-role-supervision/main.md`.
 - Active requirement leaves:
   `doc/requirements/active/2026/workflow-governance/REQ-20260815-023.md` and
@@ -1448,7 +1468,8 @@ route any missing meaning back to architecture.
   `doc/requirements/active/2026/workflow-governance/REQ-20260816-026.md` and
   `doc/requirements/active/2026/workflow-governance/REQ-20260816-027.md` and
   `doc/requirements/active/2026/workflow-governance/REQ-20260816-028.md` and
-  `doc/requirements/active/2026/workflow-governance/REQ-20260816-029.md`.
+  `doc/requirements/active/2026/workflow-governance/REQ-20260816-029.md` and
+  `doc/requirements/active/2026/workflow-governance/REQ-20260816-030.md`.
 - ADRs: `doc/adr/ADR-20260815-012-receipt-bound-event-driven-completion-supervision.md` and
   `doc/adr/ADR-20260816-014-project-neutral-orchestration-evidence-and-counterfactual-telemetry.md`
   and `doc/adr/ADR-20260816-015-live-receipt-dispatch-settlement.md`.
@@ -1458,10 +1479,11 @@ route any missing meaning back to architecture.
 - New external effects: role wake and task replacement are privileged Agent-control effects and
   therefore `HIGH_ASSURANCE`. Push, release and deployment remain out of scope.
 - Open architecture questions: none after owner Grill convergence through `2026-08-16`.
-- Current Router return: `APPROVAL_GRANTED -> ACTION_COMPLETED / SPEC`; the only next route is
-  `REVIEW / SENIOR_POLICY_BRIDGE_REVIEW` over the exact bridge commit. Architecture does not
-  select an execution owner or dispatch. No grant, attempt, receipt, host effect or implementation
-  authority exists from approval alone.
+- Current governed return: `APPROVAL_GRANTED -> ACTION_COMPLETED / SPEC`; the only next route is
+  `REVIEW / SENIOR_POLICY_BRIDGE_02_REVIEW` over the exact BPB-002 commit. This is the manual
+  bootstrap policy, not a claim that the live Router is active. Architecture does not select an
+  execution owner or dispatch. No CS-02 ticket, grant, attempt, receipt, host effect or
+  implementation authority exists from approval alone.
 
 ## Revision signatures
 
@@ -1479,14 +1501,16 @@ route any missing meaning back to architecture.
 | 2026-08-16 | Architecture owner / `main` / baseline `6569cd41bbf3ecbc04108da4150c30267951dda5` | Drafted Revision 05 after `CR-R03-01-001`: immutable failed-attempt fence, four-stage R03-01 replacement, real owned-file durable transaction contract, truthful strict-type baseline and reviewer-owned disposable verification. Exact owner approval pending. |
 | 2026-08-16 | Project owner / approved draft `c64681e847c1a6847c2588d127ed7f2749c914b5` | Approved Revision 05 for Senior decomposition and policy-correction/replacement-ticket drafting only; no grant, dispatch, implementation or executable policy mutation is authorized by approval alone. |
 | 2026-08-16 | Project owner / Architecture Grill | Approved `BPB-R03-00-20260816-001` as a review-gated, one-ticket bridge for R03-00 only; direct R03-01A–D coverage remains forbidden. |
+| 2026-08-16 | Project owner / Architecture Grill | Approved Revision 06 and `BPB-R03-00-20260816-002`: preserve the consumed CS-01 route, require a new self-admitting CS-02 registry, and use the consuming attempt introduction commit as execution baseline. |
 
 ## Approval record
 
 - Decision maker: project owner.
 - Architecture/Grill direction: confirmed through `2026-08-16 (Asia/Taipei)`.
 - Exact SPEC revision: Revision 01 `APPROVED`; Revision 02 `APPROVED`; Revision 03
-  `APPROVED`; Revision 04 `APPROVED`; Revision 05 `APPROVED`; R03-00 policy bridge
-  `OWNER_APPROVED / SENIOR_REVIEW_REQUIRED` on `2026-08-16`.
-- Approval effect: authorizes independent Senior review of the exact bridge commit. It creates no
-  execution binding, grant, attempt, receipt, host effect, dispatch, implementation, heartbeat,
-  push, release or deployment authority.
+  `APPROVED`; Revision 04 `APPROVED`; Revision 05 `APPROVED`; Revision 06 `APPROVED`;
+  BPB-001 `HISTORICAL / CONSUMED`; BPB-002 `OWNER_APPROVED / SENIOR_REVIEW_REQUIRED` on
+  `2026-08-16`.
+- Approval effect: authorizes independent Senior review of the exact BPB-002 commit. It creates no
+  CS-02 ticket, execution binding, grant, attempt, receipt, host effect, dispatch, implementation,
+  heartbeat, push, release or deployment authority.

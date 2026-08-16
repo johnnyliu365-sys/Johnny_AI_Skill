@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| State | `SEALED / REVISION_01_APPROVED / REVISION_02_APPROVED / REVISION_03_APPROVED / REVISION_04_APPROVED / REVISION_05_APPROVED / REVISION_06_OWNER_APPROVED / SENIOR_BRIDGE_REVIEW_REQUIRED` |
-| Requirement / ADR | `PRD-20260815-023`, `CHG-20260815-023`, `PRD-20260816-025`, `CHG-20260816-025`, `PRD-20260816-026`, `CHG-20260816-026`, `PRD-20260816-027`, `CHG-20260816-027`, `PRD-20260816-028`, `CHG-20260816-028`, `PRD-20260816-029`, `CHG-20260816-029` / `ADR-20260815-012`, `ADR-20260816-014`, `ADR-20260816-015`, `ADR-20260816-016`, `ADR-20260816-017` |
+| State | `SEALED / REVISION_01_APPROVED / REVISION_02_APPROVED / REVISION_03_APPROVED / REVISION_04_APPROVED / REVISION_05_APPROVED / REVISION_06_APPROVED / REVISION_07_OWNER_APPROVED / SENIOR_BRIDGE_02_REVIEW_REQUIRED` |
+| Requirement / ADR | `PRD-20260815-023`, `CHG-20260815-023`, `PRD-20260816-025`, `CHG-20260816-025`, `PRD-20260816-026`, `CHG-20260816-026`, `PRD-20260816-027`, `CHG-20260816-027`, `PRD-20260816-028`, `CHG-20260816-028`, `PRD-20260816-029`, `CHG-20260816-029`, `PRD-20260816-030`, `CHG-20260816-030` / `ADR-20260815-012`, `ADR-20260816-014`, `ADR-20260816-015`, `ADR-20260816-016`, `ADR-20260816-017` |
 | SPEC | `SPEC-AI-WORKFLOW-RECEIPT-BOUND-ROLE-SUPERVISION-20260815-01M0R2S4T6V8X0Z2B4D6F8H0J2` |
 | Shared Context | `main@f7eb3d3c9c88c23c3bc29bc9565ebc5b3b7096f9`; role facts from `CHG-20260815-023`, latest seal `CHG-20260815-024` |
 | Control owner | Architecture owner / current `main` |
@@ -42,10 +42,11 @@
 - Host delivery has only `DELIVERED`, `NO_EFFECT` or `EFFECT_UNCERTAIN`. A proved no-effect may
   retry only the same dispatch operation. An uncertain effect quarantines the operation and
   receipt; there is no automatic retry, replacement receipt or second dispatch.
-- Revision 04 has one finite self-host bootstrap route for R03-01 through R03-03. The separate
-  owner-approved BPB may bridge only exact R03-00 so that the Revision-05 executable policy can be
-  implemented; it does not widen that three-ticket allowlist. Neither route is available to
-  another project/ticket. Architecture defines policy but never selects or dispatches an
+- Revision 04 has one finite self-host bootstrap route for R03-01 through R03-03. BPB-001's
+  R03-00 route is consumed historical evidence and cannot be reused. The owner-approved BPB-002
+  may bridge only future closure R03-00-CS-02 after independent Senior review, a new ticket source
+  that admits its own BPB route, a new registry and a later exact owner-approved grant. It does not
+  widen the three-ticket allowlist. Architecture defines policy but never selects or dispatches an
   Implementer.
 - R03-01 uses an owner-approved no-receipt `BootstrapDispatchGrant`. R03-02 and R03-03 require a
   real active `TicketReceipt` plus a separate one-shot `BootstrapTransportGrant`; neither grant
@@ -109,6 +110,22 @@ does not make R03-00 dispatchable by approval alone: the only next action is an 
 review of its exact commit. Only an `APPROVED` bridge review may precede a separately committed and
 owner-approved R03-00 grant. R03-01A through R03-01D remain blocked.
 
+That first route is now historical: its registry immutably named a `BLOCKED / NON_DISPATCHED`
+ticket and the consumed grant named a baseline that predated its own authority bytes. Implementer-2
+correctly halted before mutation. CS-01, BPB-001, the old reviews, grant, attempt, result and halt
+are never retried or rewritten.
+
+## Revision 07 approved immutable-admission recovery
+
+The successor facts are sealed at
+[`revisions/rev07-r03-00-immutable-admission.md`](revisions/rev07-r03-00-immutable-admission.md).
+The only next action is independent Senior review of the exact BPB-002 commit. An approved review
+may later precede Senior creation of a new CS-02 ticket/registry; it does not create that ticket or
+permit a grant. CS-02 must itself admit the BPB route and bind the actual execution identity. A
+later owner-approved grant uses `CLAIM_INTRODUCTION_COMMIT`, so its consuming attempt's
+introduction commit—not a stale earlier commit—is the implementation baseline. R03-01A through
+R03-01D remain blocked.
+
 ## Boundaries
 
 - No heartbeat, scheduled automation, cron, watchdog, recurring thread read, Git polling or
@@ -119,6 +136,6 @@ owner-approved R03-00 grant. R03-01A through R03-01D remain blocked.
   capability claim. The separately required supervision chain still halts dispatch when absent.
 - Revision 04 is an explicit self-host exception, not a generic fallback. It cannot be inferred
   from `CAPABILITY_UNAVAILABLE`, copied into a target project or used after `NORMAL_ACTIVE`.
-- Exact bridge approval authorizes independent Senior bridge review only. No grant, attempt,
-  receipt, dispatch or implementation exists from approval alone; R03-00 remains non-dispatched
-  until bridge review and a separate owner-approved grant both exist.
+- Exact BPB-002 approval authorizes independent Senior bridge review only. No CS-02 ticket,
+  registry, grant, attempt, receipt, dispatch or implementation exists from approval alone. The
+  historical BPB-001 route remains consumed and cannot satisfy any new gate.
