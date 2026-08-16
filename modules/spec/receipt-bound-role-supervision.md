@@ -3,12 +3,12 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-RECEIPT-BOUND-ROLE-SUPERVISION-20260815-01M0R2S4T6V8X0Z2B4D6F8H0J2` |
-| Status | `REVISION_01_APPROVED / REVISION_02_APPROVED / REVISION_03_APPROVED / REVISION_04_APPROVED / REVISION_05_APPROVED / REVISION_06_APPROVED / BPB_001_CONSUMED / BPB_002_OWNER_APPROVED / SENIOR_REVIEW_REQUIRED` |
+| Status | `REVISION_01_APPROVED / REVISION_02_APPROVED / REVISION_03_APPROVED / REVISION_04_APPROVED / REVISION_05_APPROVED / REVISION_06_APPROVED / REVISION_07_APPROVED / ATTEMPT_003_PROVED_NO_EFFECT_CORRECTION / SENIOR_CORRECTION_TICKETING_AUTHORIZED` |
 | Author / baseline | Architecture owner / `main` / `6569cd41bbf3ecbc04108da4150c30267951dda5` |
 | Context | `doc/context/receipt-bound-role-supervision/main.md` |
 | Shared Context | `CONTEXT.md` sealed by `CHG-20260816-025`; original role-supervision facts from `CHG-20260815-023` |
-| PRD / change | `PRD-20260815-023`, `PRD-20260816-025`, `PRD-20260816-026`, `PRD-20260816-027`, `PRD-20260816-028`, `PRD-20260816-029`, `PRD-20260816-030` / `CHG-20260815-023`, `CHG-20260816-025`, `CHG-20260816-026`, `CHG-20260816-027`, `CHG-20260816-028`, `CHG-20260816-029`, `CHG-20260816-030` |
-| Architecture decision | `ADR-20260815-012`, `ADR-20260816-014`, `ADR-20260816-015`, `ADR-20260816-016`, `ADR-20260816-017` |
+| PRD / change | `PRD-20260815-023`, `PRD-20260816-025`, `PRD-20260816-026`, `PRD-20260816-027`, `PRD-20260816-028`, `PRD-20260816-029`, `PRD-20260816-030`, `PRD-20260817-031` / `CHG-20260815-023`, `CHG-20260816-025`, `CHG-20260816-026`, `CHG-20260816-027`, `CHG-20260816-028`, `CHG-20260816-029`, `CHG-20260816-030`, `CHG-20260817-031` |
+| Architecture decision | `ADR-20260815-012`, `ADR-20260816-014`, `ADR-20260816-015`, `ADR-20260816-016`, `ADR-20260816-017`, `ADR-20260817-018` |
 | Implementation language | Python 3.11 with `mypy --strict`; Markdown and validated JSON are artifact formats, not additional runtimes |
 | Delivery profile | `HIGH_ASSURANCE` for live role wake, task replacement and external-effect boundaries; pure reducers/schemas may be decomposed only after exact ticket admission |
 
@@ -62,6 +62,13 @@ with successor bridge
 BPB-002 permits only independent Senior review of the exact bridge commit. The later sequence must
 create a new ticket source and registry before any separately owner-approved grant; R03-01A
 through R03-01D remain blocked.
+
+Revision 07 closes the host identity and effect-boundary defect exposed after that sequence
+created BDA-003. Senior explicitly sent the calling environment host, so the tool rejected the
+call before resolving an `AppServerManager`; target task readback proves no delivery. The bounded
+contract and exact one-operation recovery are at
+[`receipt-bound-role-supervision/r07-host-bound-bootstrap-recovery.md`](receipt-bound-role-supervision/r07-host-bound-bootstrap-recovery.md).
+It authorizes Senior correction ticketing and independent review, not Architecture dispatch.
 
 ## Out of scope
 
@@ -560,11 +567,14 @@ relay-observation, review-decision, correction-grant, integration-grant/result a
 leaves. Indexes contain only ID, kind, revision, digest, lifecycle and exact direct reference;
 sealed leaves never change in place.
 
-Before every host message the Senior commits one `BootstrapDispatchAttempt` that binds and
-consumes one exact grant. Only after that commit may the Senior call the host once. A later result
-leaf records `DELIVERED`, `NO_EFFECT` or `EFFECT_UNCERTAIN`. Crash after claim, timeout, ambiguous
-exception, missing delivery identity or absent exact readback is uncertain and receives no retry,
-new operation ID or automatic reconciliation. A new attempt requires a new owner-approved grant.
+Before every new bootstrap claim the Senior first proves the exact target task/host and resolves
+the host manager read-only. It then commits one `BootstrapDispatchAttempt` that binds and consumes
+one exact grant. Only after that commit may the Senior invoke the delivery adapter once. A later
+result leaf records `DELIVERED`, `NO_EFFECT` or `EFFECT_UNCERTAIN`. Crash after adapter invocation,
+timeout, ambiguous exception, missing delivery identity or absent exact readback is uncertain and
+receives no retry, new operation ID or automatic reconciliation. A new attempt normally requires
+a new owner-approved grant. The sole BDA-003 pre-manager correction is governed by Revision 07
+and continues the same operation rather than creating an attempt.
 
 ### AC-33 — R03-01 no-receipt bootstrap authority
 
@@ -674,8 +684,19 @@ exact bridge review and `CLAIM_INTRODUCTION_COMMIT` baseline at
 [`r06-r03-00-immutable-admission.md`](receipt-bound-role-supervision/r06-r03-00-immutable-admission.md).
 The exact bridge is
 [`BPB-R03-00-20260816-002`](receipt-bound-role-supervision/r06-r03-00-policy-bridge-02.md).
-Owner approval authorizes only independent Senior review of that bridge commit; no CS-02 ticket,
-grant, attempt or implementation authority exists yet.
+At the Revision-06 seal, owner approval authorized only independent Senior review of that bridge
+commit; no CS-02 ticket, grant, attempt or implementation authority existed at that time.
+
+### Revision 07 — approved host-bound bootstrap no-effect recovery
+
+The CS-02 route later reached BDA-003, but the Senior host call passed the calling environment
+host instead of Implementer-2's authoritative host `local`. The manager lookup rejected the call
+before adapter invocation and target readback proves no new delivery turn. AC-57 through AC-65
+bind target host identity, require pre-claim manager admission, distinguish the effect boundary,
+preserve historical BDR-003 and permit one same-operation continuation after a correction ticket
+and independent review at
+[`r07-host-bound-bootstrap-recovery.md`](receipt-bound-role-supervision/r07-host-bound-bootstrap-recovery.md).
+No new grant, attempt or owner approval is created by that continuation.
 
 ## Strongly typed contracts
 
@@ -683,6 +704,9 @@ The following is contract notation, not an alternative implementation language. 
 implementation uses frozen/validated equivalents with no `Any` and passes `mypy --strict`.
 
 ```text
+opaque HostId
+opaque ThreadHostBindingRef
+
 enum GitObservationMode { NATIVE_REF_EVENT, UNAVAILABLE }
 enum WakeCapabilityState { PROVEN, UNAVAILABLE }
 enum ImplementationTerminalKind { COMPLETED, BLOCKED, CHANGE_DETECTED }
@@ -721,6 +745,8 @@ enum DispatchClaimResultKind { ISSUED, ALREADY_ISSUED, CLAIMED, SETTLED,
                                CANCELLED, QUARANTINED, RECEIPT_NOT_ACTIVE,
                                CLAIM_MISMATCH, REPLAYED, STORAGE_UNAVAILABLE }
 enum HostDispatchOutcome { DELIVERED, NO_EFFECT, EFFECT_UNCERTAIN }
+enum DeliveryEffectBoundary { BEFORE_MANAGER_RESOLUTION, BEFORE_ADAPTER_INVOCATION,
+                              ADAPTER_INVOCATION_STARTED, DELIVERY_ACKNOWLEDGED }
 enum LiveDispatchDecisionKind { DISPATCH_DELIVERED, ALREADY_DELIVERED,
                                 NO_EFFECT_RETRYABLE, EFFECT_UNCERTAIN_QUARANTINED,
                                 ARTIFACT_REGISTRY_REJECTED,
@@ -1086,6 +1112,8 @@ struct BootstrapDispatchGrant {
   TaskRef senior_task_ref;
   RoleRef implementation_owner_ref;
   TaskRef implementation_task_ref;
+  HostId target_host_id;
+  ThreadHostBindingRef host_binding_ref;
   WorktreeRef worktree_ref;
   BranchRef branch_ref;
   CommitId expected_baseline_commit;
@@ -1105,6 +1133,8 @@ struct BootstrapDispatchAttempt {
   TicketRef ticket_ref;
   RoleRef senior_ref;
   TaskRef owner_task_ref;
+  HostId target_host_id;
+  ThreadHostBindingRef host_binding_ref;
   CommitId claim_commit;
   DispatchOperationId dispatch_ref;
   ContentDigest envelope_digest;
@@ -1116,8 +1146,11 @@ struct BootstrapDispatchResult {
   BootstrapResultId result_id;
   BootstrapAttemptId attempt_id;
   BootstrapDispatchOutcome outcome;
+  HostId target_host_id;
+  DeliveryEffectBoundary effect_boundary;
   std::optional<HostDeliveryRef> delivery_ref;
   std::optional<HostTaskRevision> observed_task_revision;
+  std::optional<DispatchFailureRef> failure_ref;
   EvidenceRefs readback_refs;
   ArtifactRevision result_revision;
   ContentDigest result_digest;
@@ -1261,10 +1294,14 @@ Bootstrap nullability and identity are also closed:
 - correction grant kinds require one exact `correction_review_ref`; initial/transport initial
   grants forbid it. Architecture owner identity never substitutes for the Senior-selected
   implementation bindings;
-- one grant has exactly one attempt. The attempt's committed claim predates its host call and
-  prevents a second call regardless of whether a result leaf exists;
-- bootstrap `DELIVERED` requires delivery/task revision; `NO_EFFECT` forbids them;
-  `EFFECT_UNCERTAIN` carries only trustworthy readback and never permits reuse;
+- one grant has exactly one attempt. The attempt's committed claim predates adapter invocation and
+  prevents a second effect-bearing invocation regardless of whether a result leaf exists. The
+  exact Revision-07 BDA-003 correction proves the first tool rejection occurred before manager/
+  adapter invocation and therefore permits its one remaining same-operation call;
+- bootstrap `DELIVERED` requires exact target host, `DELIVERY_ACKNOWLEDGED`, delivery/task revision
+  and no failure; `NO_EFFECT` requires an explicit pre-invocation boundary and failure proof while
+  forbidding delivery/task revision; `EFFECT_UNCERTAIN` carries only trustworthy readback plus its
+  last known boundary/failure and never permits reuse;
 - a relay observation contains only the return-available literal, grant and target Senior. It
   carries no implementation, test or review evidence;
 - integration `INTEGRATED` requires one integration commit and no failure; blocked integration
@@ -1361,14 +1398,17 @@ Secrets, PII or untrusted handoff bodies.
     separation and rejection of every other project/ticket/revision or post-activation use. The
     separate BPB review proves it is not projected into that executable allowlist.
 29. Artifact-tree tests prove direct-child-only indexes, immutable additive leaves, exact digests
-    and one grant/one attempt. A claimed grant with no result is uncertain and never callable.
+    and one grant/one attempt. A claimed grant with no result is uncertain and never callable
+    unless a Revision-07 typed pre-adapter proof authorizes the exact same-operation continuation.
 30. Envelope tests prove R03-01 substitutes only `bootstrap_grant` for `receipt`; R03-02/R03-03
     retain the ordinary real-receipt envelope. Extra/missing/copied contract fields fail before
     the Senior host call.
 31. Relay tests prove `BOOTSTRAP_RETURN_AVAILABLE + grant_ref` can only select Senior readback;
     copied commit/test/handoff claims never become evidence and no recurring wait/read exists.
-32. Review/correction tests require a new owner-approved grant for every correction, retain an
+32. Review/correction tests require a new owner-approved grant for every new attempt, retain an
     R03-02/R03-03 receipt only under unchanged identity and reject replay of every prior grant.
+    The exact Revision-07 BDA-003 continuation is settlement of the existing operation, not a new
+    attempt or grant.
 33. Integration tests issue a distinct grant only from exact `APPROVED` review and prove
     implementation/review/main baseline binding, guarded integration, stale/conflict failure and
     absence of push/release/deploy authority.
@@ -1399,6 +1439,8 @@ closures. A safe dependency order is:
 13. Senior-only host adapter and integrated high-assurance capability proof.
 14. additive Revision-04 bootstrap admission/correction artifacts for the existing R03 sequence;
     no new implementation ticket is created merely to represent the exception.
+15. Revision-07 target-host binding, pre-claim host admission and the exact BDA-003 no-effect
+    correction/continuation; no BDG-004 or BDA-004 may represent that continuation.
 
 Items 8 through 10 are approved Revision-02 boundaries available for fresh Senior decomposition.
 Existing Revision-01 admission evidence is immutable; approval itself creates no ticket.
@@ -1410,6 +1452,10 @@ metadata/storage work separate from the privileged host effect. Item 13 cannot b
 Item 14 is the approved Revision-04 re-admission route. Senior must amend status through additive
 decision/grant leaves, not rewrite `DEC-20260816-521` or the three ticket bodies. Selecting exact
 owners/workspaces and performing dispatch remain Senior actions outside architecture scope.
+
+Item 15 is the approved Revision-07 correction boundary. Senior compiles one exact correction
+ticket and obtains independent review before creating the additive correction/continuation leaf
+or making the one permitted host call. Architecture does not create the ticket or call the host.
 
 These are decomposition boundaries, not tickets or dispatch authority. The reviewer must split
 further when one candidate contains more than one observable closure or effect owner, and must
@@ -1436,9 +1482,10 @@ route any missing meaning back to architecture.
   higher-risk failure.
 - Revision-03 rollback closes/quarantines live claims, removes only installer-ledger-owned state
   and restores the prior fail-closed no-live-dispatch condition. It never deletes target history.
-- Bootstrap commit-before-effect can conservatively strand a grant when failure occurs between
-  claim commit and host call. A new owner-approved grant is required; no inference or replay is
-  allowed.
+- Bootstrap commit-before-effect conservatively strands a grant only when the effect boundary is
+  uncertain. A trusted rejection before manager/adapter invocation is proved no-effect and may
+  continue only the same operation identity under Revision 07; it cannot create a new grant,
+  attempt or second call.
 - User relay adds a temporary manual interaction but no background token/CPU cost. It disappears
   only after real activation proof; inability to prove R03-03 leaves normal dispatch disabled.
 - Revision-04 rollback closes the allowlisted policy and leaves immutable bootstrap provenance in
@@ -1461,6 +1508,8 @@ route any missing meaning back to architecture.
   the one-ticket R03-00 bridge is authorized by `PRD-20260816-029` / `CHG-20260816-029`.
 - Revision-06 immutable-admission recovery and BPB-002 are authorized by `PRD-20260816-030` /
   `CHG-20260816-030`; they preserve the consumed BPB-001 route as historical evidence.
+- Revision-07 host-bound bootstrap recovery is authorized by `PRD-20260817-031` /
+  `CHG-20260817-031`; it preserves BDG/BDA/BDR-003 while correcting the proved pre-manager result.
 - Feature Context: `doc/context/receipt-bound-role-supervision/main.md`.
 - Active requirement leaves:
   `doc/requirements/active/2026/workflow-governance/REQ-20260815-023.md` and
@@ -1469,21 +1518,23 @@ route any missing meaning back to architecture.
   `doc/requirements/active/2026/workflow-governance/REQ-20260816-027.md` and
   `doc/requirements/active/2026/workflow-governance/REQ-20260816-028.md` and
   `doc/requirements/active/2026/workflow-governance/REQ-20260816-029.md` and
-  `doc/requirements/active/2026/workflow-governance/REQ-20260816-030.md`.
+  `doc/requirements/active/2026/workflow-governance/REQ-20260816-030.md` and
+  `doc/requirements/active/2026/workflow-governance/REQ-20260817-031.md`.
 - ADRs: `doc/adr/ADR-20260815-012-receipt-bound-event-driven-completion-supervision.md` and
   `doc/adr/ADR-20260816-014-project-neutral-orchestration-evidence-and-counterfactual-telemetry.md`
   and `doc/adr/ADR-20260816-015-live-receipt-dispatch-settlement.md`.
 - Bootstrap ADR: `doc/adr/ADR-20260816-016-self-host-bootstrap-dispatch-exception.md`.
+- Host-bound recovery ADR:
+  `doc/adr/ADR-20260817-018-host-bound-bootstrap-no-effect-recovery.md`.
 - XSS classification: `N/A`; this feature has no Browser/WebView/HTML/DOM/JavaScript renderer
   flow. A future UI or untrusted renderer integration re-runs the XSS gate.
 - New external effects: role wake and task replacement are privileged Agent-control effects and
   therefore `HIGH_ASSURANCE`. Push, release and deployment remain out of scope.
-- Open architecture questions: none after owner Grill convergence through `2026-08-16`.
+- Open architecture questions: none after owner Grill convergence through `2026-08-17`.
 - Current governed return: `APPROVAL_GRANTED -> ACTION_COMPLETED / SPEC`; the only next route is
-  `REVIEW / SENIOR_POLICY_BRIDGE_02_REVIEW` over the exact BPB-002 commit. This is the manual
-  bootstrap policy, not a claim that the live Router is active. Architecture does not select an
-  execution owner or dispatch. No CS-02 ticket, grant, attempt, receipt, host effect or
-  implementation authority exists from approval alone.
+  `TICKETS / SENIOR_CORRECTION_TICKET` for Revision 07 followed by independent review.
+  Architecture does not select an execution owner, create the ticket or call the host. Approval
+  alone creates no continuation record or implementation effect.
 
 ## Revision signatures
 
@@ -1502,6 +1553,7 @@ route any missing meaning back to architecture.
 | 2026-08-16 | Project owner / approved draft `c64681e847c1a6847c2588d127ed7f2749c914b5` | Approved Revision 05 for Senior decomposition and policy-correction/replacement-ticket drafting only; no grant, dispatch, implementation or executable policy mutation is authorized by approval alone. |
 | 2026-08-16 | Project owner / Architecture Grill | Approved `BPB-R03-00-20260816-001` as a review-gated, one-ticket bridge for R03-00 only; direct R03-01A–D coverage remains forbidden. |
 | 2026-08-16 | Project owner / Architecture Grill | Approved Revision 06 and `BPB-R03-00-20260816-002`: preserve the consumed CS-01 route, require a new self-admitting CS-02 registry, and use the consuming attempt introduction commit as execution baseline. |
+| 2026-08-17 | Project owner / Architecture Grill | Approved Revision 07: bind target host from target-task readback, admit host manager before claim, correct BDR-003 through an additive proved-no-effect decision and permit one same-operation continuation at `hostId=local` without BDG-004/BDA-004 or another owner grant. |
 
 ## Approval record
 
@@ -1509,8 +1561,9 @@ route any missing meaning back to architecture.
 - Architecture/Grill direction: confirmed through `2026-08-16 (Asia/Taipei)`.
 - Exact SPEC revision: Revision 01 `APPROVED`; Revision 02 `APPROVED`; Revision 03
   `APPROVED`; Revision 04 `APPROVED`; Revision 05 `APPROVED`; Revision 06 `APPROVED`;
-  BPB-001 `HISTORICAL / CONSUMED`; BPB-002 `OWNER_APPROVED / SENIOR_REVIEW_REQUIRED` on
-  `2026-08-16`.
-- Approval effect: authorizes independent Senior review of the exact BPB-002 commit. It creates no
-  CS-02 ticket, execution binding, grant, attempt, receipt, host effect, dispatch, implementation,
+  Revision 07 `APPROVED`; BPB-001 `HISTORICAL / CONSUMED`; BDG/BDA/BDR-003
+  `HISTORICAL / IMMUTABLE` on `2026-08-17`.
+- Approval effect: authorizes Senior to create and independently review one exact Revision-07
+  correction ticket, then continue only the existing BDA-003 operation once at explicit
+  `hostId=local`. It creates no ticket itself, new grant, new attempt, receipt, second host call,
   heartbeat, push, release or deployment authority.

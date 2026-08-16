@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| State | `SEALED / REVISION_01_APPROVED / REVISION_02_APPROVED / REVISION_03_APPROVED / REVISION_04_APPROVED / REVISION_05_APPROVED / REVISION_06_APPROVED / REVISION_07_OWNER_APPROVED / SENIOR_BRIDGE_02_REVIEW_REQUIRED` |
-| Requirement / ADR | `PRD-20260815-023`, `CHG-20260815-023`, `PRD-20260816-025`, `CHG-20260816-025`, `PRD-20260816-026`, `CHG-20260816-026`, `PRD-20260816-027`, `CHG-20260816-027`, `PRD-20260816-028`, `CHG-20260816-028`, `PRD-20260816-029`, `CHG-20260816-029`, `PRD-20260816-030`, `CHG-20260816-030` / `ADR-20260815-012`, `ADR-20260816-014`, `ADR-20260816-015`, `ADR-20260816-016`, `ADR-20260816-017` |
+| State | `SEALED / REVISION_01_APPROVED / REVISION_02_APPROVED / REVISION_03_APPROVED / REVISION_04_APPROVED / REVISION_05_APPROVED / REVISION_06_APPROVED / REVISION_07_OWNER_APPROVED / REVISION_08_OWNER_APPROVED / SENIOR_CORRECTION_TICKETING_AUTHORIZED` |
+| Requirement / ADR | `PRD-20260815-023`, `CHG-20260815-023`, `PRD-20260816-025`, `CHG-20260816-025`, `PRD-20260816-026`, `CHG-20260816-026`, `PRD-20260816-027`, `CHG-20260816-027`, `PRD-20260816-028`, `CHG-20260816-028`, `PRD-20260816-029`, `CHG-20260816-029`, `PRD-20260816-030`, `CHG-20260816-030`, `PRD-20260817-031`, `CHG-20260817-031` / `ADR-20260815-012`, `ADR-20260816-014`, `ADR-20260816-015`, `ADR-20260816-016`, `ADR-20260816-017`, `ADR-20260817-018` |
 | SPEC | `SPEC-AI-WORKFLOW-RECEIPT-BOUND-ROLE-SUPERVISION-20260815-01M0R2S4T6V8X0Z2B4D6F8H0J2` |
 | Shared Context | `main@f7eb3d3c9c88c23c3bc29bc9565ebc5b3b7096f9`; role facts from `CHG-20260815-023`, latest seal `CHG-20260815-024` |
 | Control owner | Architecture owner / current `main` |
@@ -51,9 +51,11 @@
 - R03-01 uses an owner-approved no-receipt `BootstrapDispatchGrant`. R03-02 and R03-03 require a
   real active `TicketReceipt` plus a separate one-shot `BootstrapTransportGrant`; neither grant
   is a `WorkReceipt` member or live-capability evidence.
-- Senior commits an immutable attempt leaf before every bootstrap host call. The attempt consumes
-  the grant. Crash, timeout, ambiguous error or missing exact readback is `EFFECT_UNCERTAIN` and
-  cannot retry. Every correction receives a new grant; R03-02/R03-03 retain their receipt only
+- Senior binds the target task's authoritative `target_host_id` and proves read-only host-manager
+  admission before committing a new bootstrap attempt. Pre-claim failure consumes nothing.
+  Failure proved before manager/adapter invocation is `PROVED_NO_EFFECT` and may continue only the
+  same operation identity; ambiguity at or after adapter invocation is `EFFECT_UNCERTAIN` and
+  cannot retry. Other corrections receive a new grant; R03-02/R03-03 retain their receipt only
   when ordinary same-ticket identity remains unchanged.
 - Until `NORMAL_ACTIVE`, the user may relay only `BOOTSTRAP_RETURN_AVAILABLE` plus `grant_ref` to
   wake the Senior. Senior independently reads Git/handoff evidence; the relay is not authority or
@@ -119,12 +121,26 @@ are never retried or rewritten.
 
 The successor facts are sealed at
 [`revisions/rev07-r03-00-immutable-admission.md`](revisions/rev07-r03-00-immutable-admission.md).
-The only next action is independent Senior review of the exact BPB-002 commit. An approved review
-may later precede Senior creation of a new CS-02 ticket/registry; it does not create that ticket or
-permit a grant. CS-02 must itself admit the BPB route and bind the actual execution identity. A
-later owner-approved grant uses `CLAIM_INTRODUCTION_COMMIT`, so its consuming attempt's
-introduction commit—not a stale earlier commit—is the implementation baseline. R03-01A through
-R03-01D remain blocked.
+At the Revision-07 seal, the only next action was independent Senior review of the exact BPB-002
+commit. That review later preceded Senior creation of the new CS-02 ticket/registry and BDG/BDA-
+003. CS-02 admitted the BPB route and bound the execution identity. Its owner-approved grant used
+`CLAIM_INTRODUCTION_COMMIT`, so the consuming attempt's introduction commit—not a stale earlier
+commit—became the implementation baseline. R03-01A through R03-01D remain blocked.
+
+That route progressed through CS-02, BDG-003 and BDA-003, but the Senior supplied the calling
+environment host to the host tool. `BDR-R03-00-20260817-003` recorded a pre-manager rejection;
+the target task at host `local` received no new turn.
+
+## Revision 08 approved host-bound bootstrap recovery
+
+The root-cause correction is sealed at
+[`revisions/rev08-host-bound-bootstrap-recovery.md`](revisions/rev08-host-bound-bootstrap-recovery.md).
+New bootstrap authority binds `target_host_id` from target-task readback and admits the host
+manager before claim. For BDA-003 only, additive correction evidence may classify the rejected
+manager lookup as proved no-effect and permit one continuation of the existing dispatch/claim at
+explicit host `local`. BDG/BDA/BDR-003 remain immutable; no BDG-004, BDA-004 or new owner grant is
+created. The next action belongs to Senior correction ticketing and independent review, not
+Architecture dispatch.
 
 ## Boundaries
 
@@ -139,3 +155,7 @@ R03-01D remain blocked.
 - Exact BPB-002 approval authorizes independent Senior bridge review only. No CS-02 ticket,
   registry, grant, attempt, receipt, dispatch or implementation exists from approval alone. The
   historical BPB-001 route remains consumed and cannot satisfy any new gate.
+- Revision 08 owner approval authorizes Senior to create and independently review one exact
+  correction ticket. It does not itself call the host. Only the reviewed correction may continue
+  the same BDA-003 operation once at `hostId=local`; heartbeat and recurring readback remain
+  forbidden.
