@@ -12,26 +12,23 @@
 
 ```mermaid
 flowchart TD
-    A[流程事件] --> R[Router：狀態、權責、來源與 skill 索引]
-    R --> W[WAYFINDER]
-    W --> G{GO?}
-    G -- NO-GO --> H[HALT]
-    G -- GO --> AR[ARCHITECTURE]
-    AR --> GR[GRILL]
-    GR --> C[CONTEXT]
-    C --> S[SPEC]
-    S --> T[TICKETS]
-    T --> D{dispatch receipt?}
-    D -- 否 --> WH[WAIT_FOR_HUMAN]
-    D -- 是 --> I[IMPLEMENT]
-    I --> ST[SMOKE_TEST]
-    ST --> RV[REVIEW]
-    RV -- correction --> I
-    RV -- approved --> HO[HANDOFF]
-    HO --> R
+    E["流程事件"] --> R{"Router<br/>驗證狀態、權責、來源、證據與 capability"}
+    R --> C{"唯一 continuation"}
+    C -->|"AUTO_CONTINUE"| A{"Router 選定的一個 action"}
+    C -->|"WAIT_FOR_HUMAN"| W["等待具名核准、owner 決策或不可逆 effect"]
+    C -->|"HALT"| H["停止；不得 fallback 或自行跨關"]
+
+    A -->|"Stage action"| S["單一獲准 Stage<br/>INTAKE / WAYFINDER / ARCHITECTURE / GRILL / CONTEXT / SPEC / TICKETS / IMPLEMENT / SMOKE_TEST / REVIEW / HANDOFF"]
+    A -->|"Implementation dispatch"| D["receipt、descriptor、owner、task、worktree、branch、baseline 與 host gate"]
+
+    S --> T["Typed return + CompletionEvidence"]
+    D --> T
+    T --> R
+    W -->|"APPROVAL_GRANTED / APPROVAL_DENIED / EXTERNAL_DECISION_REQUIRED"| R
 ```
 
-主線不可跳過：
+以下只表示合法的 Stage 順序，不表示 Stage 之間可以直接 transition；每一個箭頭都必須
+先以 typed event 回到 Router，再由 Router 驗證並選出唯一下一動作：
 
 ```text
 INTAKE → WAYFINDER → ARCHITECTURE → GRILL → CONTEXT → SPEC → TICKETS
