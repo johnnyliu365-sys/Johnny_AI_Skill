@@ -3,28 +3,37 @@
 | Field | Binding |
 | --- | --- |
 | SPEC / AC / Context | Plugin Distribution Revision 02 / AC-12 / `ctx-plugin-distribution-r02` |
-| Dependency / planning baseline | 06 / `a45686dd0238d69fac6c0b740a2b91ba51d5d90a` |
-| Control / reviewer | Senior `01a00e7d-7ef4-7ac1-96ce-e6c2b7592f5b`; live implementation binding required |
-| Profile / state / XSS | Luna xhigh, no helper / `PLANNED / LOW_MODEL_CANDIDATE / ALLOCATION_REQUIRED` / `XSS_NOT_APPLICABLE` |
+| Dependency | Ticket 06 integrated at `e431df38354b248f65dcbb005b975487215ea07f` / closure `510408e7ef9b58041cf1c685e8c192f629978ecb` |
+| Control / reviewer | Current architecture owner and reviewer task `019fbda1-2365-77d2-b510-dff079d02bff`; prior Senior has no authority |
+| Implementation allocation | None. A Luna dispatch is prohibited: the complete closure is already integrated on this baseline. |
+| Implementation language / strict checker | Python 3.11.9 / `python -B -m mypy --strict library/local_orchestration/senior_review_inbox.py library/local_orchestration/senior_review_inbox_state.py library/local_orchestration/windows_senior_review_inbox_store.py` |
+| State / XSS | `CLOSED / VERIFIED_EXISTING / INTEGRATED / NO_DISPATCH` / `XSS_NOT_APPLICABLE` |
 
-## Sole closure and boundary
+## Closure and evidence
 
-Committed candidates enter FIFO. One Senior claim freezes the current batch; later arrivals wait
-without a second wake. Tickets retain individual states, declared dependency clusters are reviewed
-together, and a new cluster revision invalidates only affected inspections before a decision.
+The exact AC-12 implementation already entered this repository in
+`5bf3ad243a23027fe896b7984f6ca23551dbee4c` and is an unchanged ancestor of the
+current baseline. Its complete vertical closure is the FIFO queue, closed-on-claim batch,
+individual ticket status, dependency-cluster inspection, and cluster-revision invalidation;
+it performs no host wake fallback, heartbeat, polling, automation, Router binding, or target
+project effect.
 
-Writable scope: `library/local_orchestration/senior_review_inbox.py`,
-`library/local_orchestration/senior_review_inbox_state.py`,
-`library/local_orchestration/windows_senior_review_inbox_store.py`,
-`tests/test_plugin_distribution_review_queue.py`.
+The four unchanged closure paths are:
 
-## TDD, verification and return
+```text
+library/local_orchestration/senior_review_inbox.py
+library/local_orchestration/senior_review_inbox_state.py
+library/local_orchestration/windows_senior_review_inbox_store.py
+tests/test_senior_review_inbox.py
+```
 
-Closure `CLOSURE-PD-07-R03-01`: Q1 FIFO; Q2 closed batch; Q3 busy Senior no second wake; Q4
-individual status; Q5 cluster consistency; Q6 revision invalidation. First red:
-`python -m pytest -q tests/test_plugin_distribution_review_queue.py -k test_arrival_after_claim_waits_for_next_batch_without_second_wake`.
-Verify with `python -m pytest -q tests/test_plugin_distribution_review_queue.py`,
-`python -m mypy --strict library/local_orchestration/senior_review_inbox.py library/local_orchestration/senior_review_inbox_state.py library/local_orchestration/windows_senior_review_inbox_store.py`
-and `python -m pytest -q`; reverse-mutate claim closure. Delete fixture store;
-return typed commit/cell/digest/cleanup evidence.
-Return is exactly `ImplementationReturn.COMPLETED | BLOCKED | CHANGE_DETECTED`.
+Independent readback at baseline `510408e7ef9b58041cf1c685e8c192f629978ecb` proved the
+four-path diff from `5bf3ad243a23027fe896b7984f6ca23551dbee4c` is empty. Focused closure
+`python -B -m unittest -q tests.test_senior_review_inbox` passed `6` tests, covering Q1 FIFO,
+Q2 closed batch, Q3 no second wake while busy, Q4 individual status, Q5 dependency-cluster
+decision, and Q6 revision invalidation. The named strict check passed for all three source files.
+
+No source, test, fixture, cache, bytecode, worktree, receipt, task, branch, host, or target
+project effect was created by this verification. Re-dispatching the same immutable code to Luna
+would produce no observable implementation result and is therefore not a legal or useful ticket
+closure. Ticket 08 may depend on this integrated evidence.
