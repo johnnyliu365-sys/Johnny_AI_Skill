@@ -78,6 +78,10 @@ class GitNativeRegistrationStatus(str, Enum):
     REJECTED = "REJECTED"
 
 
+class GitNativeFailureKind(str, Enum):
+    NOTIFICATION_UNAVAILABLE = "NOTIFICATION_UNAVAILABLE"
+
+
 class GitEventRegistrationLifecycle(str, Enum):
     ACTIVE = "ACTIVE"
     HALTED = "HALTED"
@@ -215,6 +219,14 @@ class GitRefSignal(_StrictModel):
     subscription_id: SubscriptionId
 
 
+class GitNativeFailureSignal(_StrictModel):
+    """Sanitized terminal signal when the armed native source is lost."""
+
+    event_source_ref: EventSourceRef
+    subscription_id: SubscriptionId
+    failure: GitNativeFailureKind
+
+
 class GitEventRegistrationState(_StrictModel):
     """Metadata-only, persistable exact-ref registration state."""
 
@@ -303,6 +315,8 @@ __all__ = [
     "GitNativeRegistrationRequest",
     "GitNativeRegistrationResult",
     "GitNativeRegistrationStatus",
+    "GitNativeFailureKind",
+    "GitNativeFailureSignal",
     "GitObservationMode",
     "GitPathChangeResult",
     "GitPathChangeStatus",
