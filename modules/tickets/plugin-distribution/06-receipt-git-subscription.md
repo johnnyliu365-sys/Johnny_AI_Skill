@@ -156,3 +156,43 @@ Return exactly `ImplementationReturn.COMPLETED -> ACTION_COMPLETED`, `BLOCKED ->
 failed cell and preserved branch state, or `CHANGE_DETECTED -> REQUIREMENT_CHANGED` only for a
 conflict in the frozen dependencies. Do not alter this ticket, Ticket 05, any Router source, Git
 adapter, receipt contract, supervision type, composition root or external project.
+
+## Correction admission 01 — peer lifecycle and terminal cleanup
+
+| Field | Binding |
+| --- | --- |
+| State | `CHANGES_REQUESTED / IMPLEMENTATION_AND_EVIDENCE_DEFECT / SAME_TICKET_ADDITIVE_CORRECTION` |
+| Reviewed candidate | `42c1343578e626ec392766c6ff66555218dd8201` |
+| Allocation | Retain ticket `ticket-pd06-receipt-git-subscription-01`, receipt `receipt-pd06-20260817-001`, owner `01a00eac-b464-7ee1-ac76-465477768e02`, worktree `worktree-pluginimpl2-01` and branch `codex/plugin-distribution-06-receipt-git-subscription`; no new branch, receipt, task or effect authority. |
+
+Independent review reproduced two defects against the frozen S4/S5 closure.
+
+1. `test_two_subscriptions_close_only_their_own_runner_and_git_registration` creates two
+   independent `ProjectRunnerRegistry` instances, so closing the first stops the shared fake
+   runner even though the second subscription remains live. It does not prove peer isolation.
+2. `ProjectSubscriptionRuntime.close` immediately returns `CLOSED` when its Git registration is
+   already `CLOSED`. After an adapter terminal state and `RUNNER_STOP_UNAVAILABLE`, this skips the
+   required later retry of `remove_subscription`, leaving the runtime's own runner subscription
+   retained while reporting closure.
+
+Within the original two writable paths only, make all peer tests share one
+`ProjectRunnerRegistry` while retaining distinct injected exact-Git adapters. Closing the first
+of two active subscriptions must return `REMOVED`, cancel only its own adapter registration and
+make zero `stop` calls; closing the remaining subscription then performs the sole stop. Do not
+test peer isolation with separate registries.
+
+Remove the closed-registration shortcut from `close`. Every valid state, including an adapter
+terminal `CLOSED` or `HALTED` state, must first retry removal of its own runner subscription. Only
+`REMOVED` may yield `CLOSED`; every other removal decision yields `CLOSE_BLOCKED`, retains the
+state and reports `RUNNER_CLOSE_REJECTED`. After a recovered stop, close the exact Git
+registration idempotently. The same non-`REMOVED` preservation rule applies when terminal
+observation attempts its own release. No peer may be removed, cancelled or discarded.
+
+Add bounded S4/S5 tests for: a foreign signal being silent with neither runner nor peer mutation;
+a terminal closed registration whose first removal is unavailable and whose later `close` retries
+and completes; replay, stale and malformed adapter outcomes never mapping to a completion
+candidate. The test adapter must make these outcomes explicit from its input/configuration; it
+must not turn a foreign signal into a candidate merely because a fixture is configured as one.
+Reverse-mutate the new terminal-close removal guard so its named retry cell turns red, restore
+exact bytes, then rerun focused, strict, full, in-memory compile, AST no-effect gate and residue
+cleanup before one additive correction commit.
