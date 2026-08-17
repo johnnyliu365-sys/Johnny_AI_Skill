@@ -9,6 +9,7 @@ from pathlib import Path
 from types import ModuleType
 from typing import Iterator
 from unittest import TestCase
+from unittest.mock import patch
 
 from pydantic import ValidationError
 
@@ -187,6 +188,12 @@ class PayloadManifestTests(TestCase):
 
     def test_payload_manifest_rejects_escape_and_self_entry_paths(self) -> None:
         for path in (
+            "",
+            " ",
+            ".",
+            "skills/./x",
+            "skills//x",
+            "//server/share",
             "../README.md",
             "/absolute.txt",
             "C:/absolute.txt",
@@ -238,6 +245,45 @@ class PayloadManifestTests(TestCase):
 
         with self.assertRaises(PayloadManifestBuildError):
             build_payload_manifest(_repository_root(), _SOURCE_COMMIT, mismatched_lock)
+
+    def test_payload_manifest_rejects_invalid_identity_before_file_read(self) -> None:
+        source_root = _repository_root()
+        required_files = (
+            ".codex-plugin/plugin.json",
+            "AGENTS.md",
+            "Workflow.md",
+            "CodeReview.md",
+            "README.md",
+            "requirements-runtime.lock",
+        )
+        with tempfile.TemporaryDirectory(prefix="pd03-invalid-path-") as temp_name:
+            fixture_root = Path(temp_name)
+            for relative_path in required_files:
+                source = source_root.joinpath(*relative_path.split("/"))
+                target = fixture_root.joinpath(*relative_path.split("/"))
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_bytes(source.read_bytes())
+            (fixture_root / "skills").mkdir()
+            library_root = fixture_root / "library"
+            library_root.mkdir()
+            invalid_path = library_root / "invalid%2Fname.txt"
+            invalid_path.write_bytes(b"must not be read")
+            read_paths: list[Path] = []
+            original_read_bytes = Path.read_bytes
+
+            def tracked_read(path: Path) -> bytes:
+                read_paths.append(path)
+                return original_read_bytes(path)
+
+            with patch.object(Path, "read_bytes", autospec=True, side_effect=tracked_read):
+                with self.assertRaises(PayloadManifestBuildError):
+                    build_payload_manifest(
+                        fixture_root,
+                        _SOURCE_COMMIT,
+                        build_approved_runtime_lock(),
+                    )
+
+            self.assertNotIn(invalid_path, read_paths)
 
     def test_payload_manifest_rejects_invalid_digest_and_length(self) -> None:
         with self.assertRaises(ValidationError):

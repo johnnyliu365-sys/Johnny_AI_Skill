@@ -322,8 +322,11 @@ def _payload_files(root: Path) -> tuple[tuple[str, Path], ...]:
                 raise PayloadManifestBuildError("payload tree contains a symlink")
             if candidate.is_file():
                 relative_path = candidate.relative_to(root).as_posix()
-                if not _is_excluded_archive_path(relative_path):
-                    files.append((relative_path, candidate))
+                if not _is_admitted_archive_path(relative_path):
+                    if _is_excluded_archive_path(relative_path):
+                        continue
+                    raise PayloadManifestBuildError("payload path identity is invalid")
+                files.append((relative_path, candidate))
     return tuple(sorted(files, key=lambda item: item[0]))
 
 
