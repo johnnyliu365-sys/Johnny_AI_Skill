@@ -2,12 +2,17 @@
 
 | Field | Binding |
 | --- | --- |
-| SPEC / AC / Context | Plugin Distribution Revision 02 / AC-03, AC-04, AC-05 / `ctx-plugin-distribution-r02` |
-| Requirement / planning baseline | `REQ-20260802-004` / `a45686dd0238d69fac6c0b740a2b91ba51d5d90a` |
-| Control / reviewer | Senior `01a00e7d-7ef4-7ac1-96ce-e6c2b7592f5b` |
-| Implementation allocation | ticket ref `ticket-pd02-runtime-lock-02`; role `role-impl-pd02-luna-001`; task `01a00eac-b464-7ee1-ac76-465477768e02`; worktree `worktree-pd02impl2-01` at `C:\Users\<user>\Desktop\AI控制工作workflow-implementer-2`; branch `codex/plugin-distribution-02-runtime-lock` / `branch-pd02runtime-01`; baseline `496971ccfaa9db25bde3d69c526166b82b9c4ca4`; receipt `receipt-pd02-20260817-002`; dispatch `dispatch-pd02-20260817-002` |
-| Profile / environment | `plugin-distribution-poc-r02` v2; Luna xhigh; Windows x64; CPython 3.11.9; no helper |
-| State / XSS | `READY_LOW_MODEL / RECEIPT_BOUND / DISPATCH_PENDING`; `XSS_NOT_APPLICABLE` |
+| SPEC / AC / requirement | `SPEC-AI-WORKFLOW-PLUGIN-DISTRIBUTION-20260802-01KZ3N5P7R9T1V3X5Z7B9D1F3H` Revision 02 / AC-03, AC-04, AC-05 / `PRD-20260802-004` / `CHG-20260802-004` / `REQ-20260802-004` |
+| Context / planning baseline | `doc/context/plugin-distribution/main.md` / `ctx-plugin-distribution-r02` / `a45686dd0238d69fac6c0b740a2b91ba51d5d90a` |
+| Closure | `CLOSURE-PD-02-R03-02`; schema-only replacement of R03-01 with unchanged product behavior and AC |
+| Control / reviewer | Architecture owner and replacement reviewer task `019fbda1-2365-77d2-b510-dff079d02bff`; prior Senior task is retired from this ticket |
+| Implementation allocation | ticket ref `ticket-pd02-runtime-lock-03`; role `role-impl-pd02-luna-001`; task `01a00eac-b464-7ee1-ac76-465477768e02`; worktree `worktree-pd02impl2-01` at `C:\Users\<user>\Desktop\AI控制工作workflow-implementer-2`; branch `codex/plugin-distribution-02-runtime-lock` / `branch-pd02runtime-01`; baseline `496971ccfaa9db25bde3d69c526166b82b9c4ca4`; receipt `receipt-pd02-20260817-003`; correlation `corr-pd02-20260817-003`; rebind `review-rebind-pd02-20260817-003` |
+| Implementation language | Python 3.11.9; matches approved SPEC Revision 02 |
+| Strict checker | `python -m mypy --strict library/local_orchestration/runtime_dependency_lock.py` |
+| Profile / resource / environment | `plugin-distribution-poc-r02` v2 / POC / one Luna xhigh implementation lane / no helper / Windows x64 |
+| Candidate commit | `241cbec8d2f33b537379698c597df2204892ec77` |
+| State / XSS | `IMPLEMENTATION_COMPLETED / REVIEW_REQUIRED`; `XSS_NOT_APPLICABLE` |
+| Boundary classification | No UI, Browser, privileged host, Secret, Provider, network, install or target-project effect |
 
 ## Sole closure and public boundary
 
@@ -27,10 +32,17 @@ network, pip install, host, Git or target effect. Dependencies: none.
 
 ## TDD, verification and return
 
-Closure `CLOSURE-PD-02-R03-01`: L1 ordinary parse/serialize; L2 exact six-entry identity; L3
+Closure `CLOSURE-PD-02-R03-02`: L1 ordinary parse/serialize; L2 exact six-entry identity; L3
 unknown/duplicate/hash/platform rejection; L4 canonical digest stability. First red:
 `python -m pytest -q tests/test_plugin_distribution_dependency_lock.py -k test_runtime_lock_rejects_unhashed_wheel_before_install`.
 Verify with `python -m pytest -q tests/test_plugin_distribution_dependency_lock.py`,
 `python -m mypy --strict library/local_orchestration/runtime_dependency_lock.py` and
-`python -m pytest -q`; reverse-mutate the hash gate once and restore bytes. `ImplementationReturn.COMPLETED`
-returns commit, cell results, output digests and zero residue; `CHANGE_DETECTED` returns upstream.
+`python -m pytest -q`; reverse-mutate the hash gate once and restore bytes.
+
+`ImplementationReturn` is exactly: `COMPLETED → ACTION_COMPLETED` with commit, L1–L4 results,
+verification-output digests and zero-residue readback; `BLOCKED → HALT` with the exact failed
+capability or verification cell and preserved branch/commit state; `CHANGE_DETECTED →
+REQUIREMENT_CHANGED` with the conflicting frozen contract reference. No return authorizes merge,
+installation, publication or target effect. Rollback before integration is branch non-selection;
+after integration it is an additive forward-fix. No runtime process or external resource requires
+compensation.
