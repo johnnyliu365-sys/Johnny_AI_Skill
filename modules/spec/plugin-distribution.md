@@ -1,27 +1,222 @@
-# Johnny AI Skill Plugin Distribution POC 規格
+# Johnny AI Skill Codex Plugin Distribution Specification
 
-| 欄位 | 內容 |
+| Field | Value |
 | --- | --- |
-| 規格 ID | `SPEC-AI-WORKFLOW-PLUGIN-DISTRIBUTION-20260802-01KZ3N5P7R9T1V3X5Z7B9D1F3H` |
-| 狀態 | `APPROVED` |
-| 專屬 Context | `doc/context/plugin-distribution/main.md` |
-| 需求變更 | `CHG-20260802-004` |
+| Specification ID | `SPEC-AI-WORKFLOW-PLUGIN-DISTRIBUTION-20260802-01KZ3N5P7R9T1V3X5Z7B9D1F3H` |
+| Status | `APPROVED_REVISION_02 / IMPLEMENTATION_PENDING` |
+| Package version | `johnny-ai-skill 0.4.0` |
+| Author / worktree / baseline | Codex / `main` / `5bf3ad243a23027fe896b7984f6ca23551dbee4c` |
+| Context | `doc/context/plugin-distribution/main.md` |
+| PRD / change | `PRD-20260802-004` / `CHG-20260802-004` |
+| Platform | Windows per-user |
+| Implementation language | Python with `mypy --strict`; PowerShell only as the Windows bootstrap boundary |
+| XSS classification | `XSS_NOT_APPLICABLE` |
 
-## 目標
+## Problem, outcome and non-goals
 
-將 `Johnny_AI_Skill` 包裝為 private GitHub 可安裝、可停用、可拔除的 Codex plugin，並確保它不是任何被接管公司專案的 runtime dependency。
+The previous skill-only Git distribution cannot prove that the executable Router, reusable
+library, event supervision and reversible runtime actually survive packaging. Revision 02
+produces one deterministic, detachable Codex plugin bundle that can be installed, verified and
+removed without adding a runtime, cache, governance checkout or hidden control file to a target
+project.
 
-## 範圍
+The formal candidate is `johnny-ai-skill-0.4.0.zip` plus an externally recorded SHA-256. It is
+eligible for Router binding only after clean package verification and the SourceProjectA acceptance
+sequence in this specification.
 
-- `.codex-plugin/plugin.json`：`johnny-ai-skill` metadata 與 `./skills/` 入口。
-- `.agents/plugins/marketplace.json`：同一 private repository 的 Git repository-root source。
-- `skills/johnny-project-takeover/`：目標專案規範優先、Router 最小載入、Wayfinder 與可拔除邊界。
-- `README.md`：安裝、接管、更新與移除操作說明。
+This revision does not include `Setup.exe`, a public release, signing, auto-update, system-wide
+installation, MCP server, Codex App, plugin hook, heartbeat, automation, cron, polling, Windows
+service, paid Provider, Secret, push, tag, deployment or target-project dependency.
 
-## 驗收條件
+## Deterministic payload boundary
 
-1. `quick_validate.py` 對 `johnny-project-takeover` 與 `apply-reusable-modules` 都輸出 `Skill is valid!`。
-2. `validate_plugin.py .` 通過，兩份 JSON 可解析，且 `git diff --check` 無輸出。
-3. manifest 未宣告 `mcpServers`、`apps` 或 hooks；repository root 沒有 `.mcp.json`、`.app.json`、`hooks/` 或 `assets/`。
-4. skill 與 README 禁止 target project 建立 plugin cache／checkout 的 symlink、submodule、runtime import、CI dependency 或 hook。
-5. 不修改公司專案、使用者的 `~/.codex` 設定或任何外部 Provider。
+The archive builder starts from one exact clean Git commit and accepts only this logical payload:
+
+- `.codex-plugin/plugin.json`;
+- `skills/` and every directly referenced skill reference;
+- `library/`, including Router, local orchestration and delivered reusable modules;
+- `AGENTS.md`, `Workflow.md`, `CodeReview.md` and the existing `README.md`;
+- the `install.ps1` bootstrap, `johnny-router` launcher/runtime composition root;
+- a runtime dependency lock, package payload manifest and per-file SHA-256 values.
+
+The archive excludes Git metadata, worktrees, `doc/`, `modules/spec/`, `modules/tickets/`,
+`modules/element/`, `tests/`, Claude plugin metadata, build/staging/review evidence, caches,
+coverage, telemetry data, receipts, queues, `.env`, Secrets and target content.
+
+Archive order, path separators, timestamps, permissions and compression settings are
+canonicalized. Two builds from the same source commit and toolchain must be byte-identical. The
+plugin manifest has at most three default prompts and declares no MCP server, App or hook.
+
+## Runtime composition and lifetime
+
+Router domain decisions execute as short-lived Python CLI calls. The first admitted
+implementation dispatch for a project starts one hidden, Johnny-owned temporary runner for that
+project. Further active tickets share the process but receive distinct receipt-bound
+subscriptions. Each subscription binds:
+
+- project, ticket, receipt and correlation;
+- implementation task/thread/host;
+- exact worktree, branch, baseline and Git ref;
+- exact reserved handoff path and event-source identity.
+
+The Windows adapter uses `ReadDirectoryChangesW` to receive exact ref hints. It performs no
+recurring Git, filesystem or thread read. A hint causes bounded ref, ancestry, changed-path and
+committed-blob readback. Ordinary source commits do not wake a model. A terminal handoff candidate
+is accepted only after its complete binding validates.
+
+The runner may outlive the terminal that started it. It must not register startup, a scheduled
+task, service, automation, watchdog or heartbeat. It exits after the last subscription closes,
+project detach or plugin uninstall. After an OS restart it remains stopped; the next explicit
+plugin invocation may reconstruct only exact active metadata and reconcile the Git ref. It never
+replays a consumed handoff.
+
+## Host wake capability gate
+
+Git proves a committed candidate, not a Codex callback. Production automatic wake requires an
+injected `HostWakePort` that independently proves exact Senior task/thread/host availability,
+receipt-bound event registration, claim-before-effect, one effect invocation and exact readback.
+An uncertain effect is settled once and never retried.
+
+When that capability is unavailable, the result is
+`HOST_WAKE_CAPABILITY_UNAVAILABLE`. The runner may persist the candidate and issue a local
+user-facing manual-forward notice, but may not claim automatic supervision, start a read loop or
+bind Router. Heartbeat, recurring automation, cron, Git polling, thread polling and
+`WAIT_FOR_HUMAN` masquerading as an event subscription are prohibited fallbacks.
+
+The current Codex host does not expose a verified receipt-bound completion subscription.
+Implementation may complete the port, fakes and fail-closed production boundary; the live
+Router-ready claim remains blocked until the host capability passes.
+
+## Role, queue and model behavior
+
+Plugin-created identity is not authority. A pre-existing Codex role becomes legal only after the
+user designates it and exact role/model/task/thread/host/project/worktree/branch/baseline/receipt
+readback succeeds. An unregistered branch is ignored. An ordinary source commit on a watched ref
+is not completion. An invalid or foreign handoff halts and isolates that ticket. Git author name
+or email is never identity proof.
+
+Each project has at most one Architecture Owner and one Senior; Implementer count follows the
+approved resource plan. Completion candidates enter the existing FIFO review inbox. A busy Senior
+receives no second wake. Claim closes one batch snapshot. Tickets retain individual states;
+dependent tickets form a review cluster and must be inspected together before dependency-
+consistent decisions. A new committed revision in a cluster invalidates affected prior
+inspections. Wake instructions contain only exact commit, artifact reference, section anchor and
+digest.
+
+The current default Profile maps the highest-capability model to Architecture Owner, Terra to
+Senior and Luna xhigh to Implementer. Debugger is GPT-5.6 Sol xhigh. Luna's non-resettable limit,
+ticket-repair-first rule and one-run Terra-high escalation remain defined by receipt-bound role
+supervision. Model identity grants no authority.
+
+## Python and dependency isolation
+
+Bootstrap prefers a user-installed Python 3.11-or-newer interpreter only after an exact
+compatibility probe succeeds. An unqualified future version is unsupported rather than assumed
+compatible. The installer creates a Johnny-owned venv and never edits global site-packages,
+`PATH`, a target venv, target manifest or target lockfile.
+
+Core runtime dependencies are hash-locked `pydantic` and, on Windows, `pywin32`. LangGraph,
+Temporal, OpenAI Agents SDK and MCP integrations are optional and lazy; their absence cannot make
+the core Router import fail. The regular ZIP carries no third-party wheels. `install.ps1` displays
+the exact package/version/source plan and obtains user confirmation before using a local pip cache
+or network download. A missing hash or incompatible wheel blocks and rolls back. `mypy`, type
+stubs and test tools are development-only.
+
+## Install, status and uninstall interfaces
+
+`install.ps1` validates the archive/payload identity, detects Codex/Git/Python/native-notification
+capability, creates the owned venv/root, registers the local plugin through supported Codex
+plugin/marketplace commands and reads back the exact plugin ID, version and installed path. It
+does not edit private Codex configuration or any target project. A failed attempt removes only
+receipt-proven content created by that attempt.
+
+The logical CLI exposes strict finite operations for preflight, project registration/detach,
+subscription registration/cancel, event routing, status and uninstall. Machine-facing results are
+typed JSON with stable status/error codes; raw exception text, prompts, source and target content
+do not enter durable state.
+
+`johnny-router uninstall` is the only route allowed to claim complete removal. It blocks new
+dispatch, stops owned runners, closes subscriptions, removes receipts, ledger, queue, telemetry,
+venv and owned launcher, invokes the supported Codex plugin removal and verifies absence.
+Direct UI/native plugin removal cannot claim Johnny runtime cleanup. A later install must detect
+orphan state and fail closed rather than silently adopt or delete it.
+
+## Data and document ownership
+
+Johnny-owned durable storage contains only opaque identifiers, finite states, digests, numeric
+usage and original-currency pricing metadata. It contains no raw Context, prompt, source,
+target-project URI/path, Secret or PII. A live runner may hold the exact repository path only in
+memory; restart recovery requires the project to be explicitly reopened and rebound.
+
+Plugin governance, skills, runtime and receipts remain in the plugin/user boundary. Target
+Context, PRD/CHG, SPEC, ticket, review evidence, source and tests remain target-owned and
+target-versioned. Install, preflight, failure, detach and uninstall never write or delete a target
+file. Authorized workflow stages may write target-owned artifacts only through their existing
+contracts; they never copy plugin governance into the project.
+
+Telemetry retains separate input, cached-input and output token counts, role, model, reasoning
+level, receipt, price snapshot and original currency. It runs only on explicit user request,
+derives report inputs from receipt-indexed committed evidence, and can export JSON, CSV, terminal
+tables and bar-chart data. It does not run or wake a model in the background.
+
+## Acceptance criteria
+
+| AC | Required evidence |
+| --- | --- |
+| AC-01 | Two builds from the same clean source/toolchain produce identical ZIP bytes and SHA-256. |
+| AC-02 | The payload allowlist is complete and every excluded tree/sentinel is absent. |
+| AC-03 | A machine without the development checkout loads both skills, Router core and module catalog from the extracted package. |
+| AC-04 | Core import and routing pass when every optional dependency is absent. |
+| AC-05 | Success, missing Git/Python, incompatible Python, hash mismatch, dependency failure and interruption return finite install results with exact rollback. |
+| AC-06 | Representative existing and empty target repositories remain byte- and Git-status-identical across install, failure, runtime and uninstall. |
+| AC-07 | One project has one runner; multiple receipt subscriptions remain isolated and one failure cannot close another. |
+| AC-08 | Terminal closure does not stop active supervision; OS restart does not auto-start it; explicit restart safely reconciles exact refs. |
+| AC-09 | Source commits stay silent; only an exact committed handoff becomes a completion candidate. |
+| AC-10 | Foreign role/receipt/task/host/worktree/branch/baseline/correlation, malformed handoff and replay all fail before accepted completion. |
+| AC-11 | Missing production host callback returns `HOST_WAKE_CAPABILITY_UNAVAILABLE` and cannot become an automatic-supervision or Router-ready claim. |
+| AC-12 | FIFO, closed batch snapshot, individual status, dependency-cluster review and revision invalidation pass the complete scripted matrix. |
+| AC-13 | Canonical uninstall removes every receipt-owned effect, preserves foreign/user/target state and makes repeat uninstall idempotent. |
+| AC-14 | Telemetry is user-triggered, model/role/token-class separated and exportable without raw Context. |
+| AC-15 | The SourceProjectA sequence passes completely before `ROUTER_BINDING_ELIGIBLE`; manual host forwarding cannot satisfy the live automatic-wake cell. |
+
+## SourceProjectA package verification
+
+The original `D:\SourceProjectA\SourceProjectA\private-target-repo` is read-only. Record its HEAD and tracked
+status, create a Johnny-owned disposable copy, install only from the candidate ZIP and run:
+
+1. a no-model script matrix for new/changed requirement, Grill, Context, SPEC, ticket, document
+   management, stage changes, assignment, model selection, role boundaries, FIFO/cluster review
+   and invalid commits;
+2. one real isolated Python ticket with no business route, network, database, Provider, Secret or
+   production effect, using Terra Senior and Luna xhigh Implementer;
+3. exact implementation commit, committed handoff, queue admission and independent review;
+4. canonical uninstall, owned-residue absence and deletion of the disposable copy.
+
+The original repository must end at the same HEAD and status. Every verification-only file,
+cache and runtime is deleted. When the host wake capability is absent, manual forwarding may
+exercise the remaining path but the live wake cell and AC-15 stay blocked.
+
+## Release, ticketing and rollback
+
+This approval authorizes only specification revision and later ticket planning. It does not
+authorize package publication, push, tag, GitHub release, deployment or Router binding. After all
+acceptance gates, the owner may separately approve publication of the exact tested ZIP digest;
+rebuilding creates a different candidate.
+
+Senior decomposes the approved revision into independently observable vertical tickets for:
+payload/import isolation, CLI/bootstrap, runner/subscription lifecycle, host wake capability,
+deterministic build, clean install/uninstall, scripted Vita verification and real-role smoke.
+Every implementation ticket uses first-red TDD, `mypy --strict` and temporary-artifact cleanup.
+It may add only its ticket and approved source/test/config changes; it does not create another
+SPEC, ADR or review document and never modifies the original SourceProjectA repository.
+
+Rollback before publication deletes only the local candidate and receipt-owned test/runtime
+state. Rollback after installation uses `johnny-router uninstall`. Target projects are never a
+rollback target.
+
+## Revision signature
+
+| Date | Decision |
+| --- | --- |
+| 2026-08-02 | Project owner approved the skill-only private Git plugin POC. |
+| 2026-08-17 | Project owner approved Revision 02: complete versioned Codex bundle, isolated dependency/runtime, native Git event runner, fail-closed host wake gate, reversible install/uninstall and SourceProjectA package verification. |

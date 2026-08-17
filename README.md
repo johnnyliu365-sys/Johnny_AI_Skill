@@ -31,15 +31,16 @@
 
 ## Codex 使用方式
 
-### 只需安裝一次
+### 0.4.0 完整 bundle 安裝
 
-在個人終端機、且不在公司專案資料夾內執行：
+正式入口是經核准且 SHA-256 相符的 `johnny-ai-skill-0.4.0.zip` 內
+`install.ps1`。在個人終端機、且不在公司專案資料夾內執行它。bootstrap 會先顯示
+Codex、Git、Python 與核心 dependency 計畫；需要下載時必須由使用者確認。它只建立
+per-user Johnny-owned runtime，不會把 plugin、venv、receipt 或 cache 複製到公司 repo。
 
-```powershell
-codex plugin marketplace add johnnyliu365-sys/Johnny_AI_Skill --ref main
-```
-
-重新啟動 Codex（或重新整理 Plugins Directory），找到 **Johnny AI Skill** marketplace，安裝 `johnny-ai-skill`。這個動作不會把任何檔案複製到公司 repo。
+`0.4.0` 實作與 SourceProjectA 驗證完成前，不得把目前的原始碼 checkout 或 `main` 當成已
+核准 bundle。既有 `0.3.x` skill-only 安裝仍可使用 private Git marketplace，但不包含
+Router runtime、event runner 或完整清除保證。
 
 ### 接管公司專案
 
@@ -62,12 +63,18 @@ codex plugin marketplace add johnnyliu365-sys/Johnny_AI_Skill --ref main
 
 ### 更新或拔除
 
+`0.4.0` 的完整移除入口是：
+
 ```powershell
-codex plugin marketplace upgrade johnny-ai-skill
-codex plugin marketplace remove johnny-ai-skill
+johnny-router uninstall
 ```
 
-拔除的只有你 Codex 環境中的 skill 與指引；公司 repository 不會被修改。
+它會先停止 owned runner、取消 subscriptions、移除 ledger、receipt、queue、telemetry、
+venv 與 launcher，再呼叫 Codex plugin remove 並驗證不存在。直接從 Codex UI 或
+marketplace remove 只能移除 Codex 可見的 plugin，不能宣稱 Johnny runtime 已完整清除。
+
+既有 `0.3.x` skill-only 安裝沒有 `0.4.0` runtime；其 marketplace 更新／移除流程仍以
+該已安裝版本的 Codex 指令為準。任何版本的拔除都不得修改公司 repository。
 
 ## Claude Code 使用方式
 
@@ -149,12 +156,14 @@ record 另行宣告前，預設仍是 `POC`。
 
 > 正式契約為已核准的
 > [`modules/spec/environment-capability-bootstrap.md`](modules/spec/environment-capability-bootstrap.md)。
-> Reviewer 已可依該 SPEC 拆票；實作與驗證完成前，不得宣稱 Johnny 已能自動安裝或
-> 限制專案工具。
+> Senior 已可依該 SPEC 與 Plugin Distribution Revision 02 拆票；實作與驗證完成前，
+> 不得宣稱 Johnny 已能自動安裝、限制專案工具或自動喚醒角色。
 
 Johnny 優先使用使用者與專案既有且相容的 Git、Python、Docker、SDK 與建置工具，
-不會靜默升級、降級、取代或修改全域設定。控制平面使用獨立、固定 Python 3.11 的
-`CONTROL_PYTHON`；專案自己的 Python／SDK 仍由專案原生 manifest 與 lockfile 決定。
+不會靜默升級、降級、取代或修改全域設定。控制平面優先選用使用者已安裝、Python
+3.11 以上且通過 compatibility probe 的 interpreter，並在 Johnny-owned root 建立獨立
+`CONTROL_PYTHON` venv；不合格的較新版本也會停止而非猜測相容。專案自己的
+Python／SDK 仍由專案原生 manifest 與 lockfile 決定。
 
 能力依三個邊界驗證：
 
@@ -179,6 +188,11 @@ disk/temp、process/container、worker 與 lane 硬限制；無法硬限制即�
 `PLUGIN_UNINSTALL` 依 ownership ledger 移除全部 Johnny-owned runtime、tool、environment、
 cache、grant、evidence 與 receipt binding。兩者都不得修改 target project 或刪除使用者／
 外部工具。新工程師可直接依專案原生文件與 manifests 接手。
+
+Codex plugin manifest 沒有可依賴的 Johnny uninstall callback，因此 `0.4.0` 只有
+`johnny-router uninstall` 可以宣稱完成上述 `PLUGIN_UNINSTALL`。若 host 缺少合法的
+receipt-bound completion callback，Git event runner 只能登記完成候選並請使用者手動轉發；
+不得改用 heartbeat、automation、cron、polling 或假稱 Router 已可綁定。
 
 ## Receipt-bound 角色監督與可拔除交接流程
 
