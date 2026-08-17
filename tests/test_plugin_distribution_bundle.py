@@ -17,6 +17,7 @@ from pydantic import ValidationError
 from library.local_orchestration.plugin_bundle_builder import (
     PluginBundleBuildFailure,
     PluginBundleBuildRequest,
+    PluginBundleBuildResult,
     PluginBundleBuildStatus,
     PluginBundleBuilder,
 )
@@ -131,6 +132,25 @@ def _request(
 
 
 class PluginBundleBuilderTests(TestCase):
+    def test_bundled_result_rejects_noncanonical_success_digests(self) -> None:
+        valid = PluginBundleBuildResult(
+            status=PluginBundleBuildStatus.BUNDLED,
+            source_commit="a" * 40,
+            manifest_digest="b" * 64,
+            archive_sha256="c" * 64,
+            archive_byte_length=1,
+        )
+        for field, malformed in (
+            ("source_commit", "A" * 40),
+            ("manifest_digest", "g" * 64),
+            ("archive_sha256", "C" * 64),
+        ):
+            with self.subTest(field=field):
+                payload = valid.model_dump()
+                payload[field] = malformed
+                with self.assertRaises(ValidationError):
+                    PluginBundleBuildResult.model_validate(payload, strict=True)
+
     def test_same_commit_and_toolchain_emit_identical_zip_bytes(self) -> None:
         template = _template_manifest()
         with tempfile.TemporaryDirectory(prefix="pd09-identical-") as temp_name:

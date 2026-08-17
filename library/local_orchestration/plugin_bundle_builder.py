@@ -12,7 +12,7 @@ import tempfile
 from typing import Final
 import zipfile
 
-from pydantic import BaseModel, ConfigDict, ValidationError, model_validator
+from pydantic import BaseModel, ConfigDict, ValidationError, field_validator, model_validator
 
 from .runtime_dependency_lock import (
     RuntimeDependencyLockReadError,
@@ -26,6 +26,7 @@ from .windows_package_manifest import (
 
 
 _SOURCE_COMMIT_PATTERN: Final[re.Pattern[str]] = re.compile(r"[0-9a-f]{40}\Z")
+_SHA256_PATTERN: Final[re.Pattern[str]] = re.compile(r"[0-9a-f]{64}\Z")
 _CANDIDATE_NAME: Final[str] = "johnny-ai-skill-0.4.0.zip"
 _MANIFEST_NAME: Final[str] = "payload-manifest.json"
 _UTF8_FLAG: Final[int] = 0x800
@@ -74,6 +75,20 @@ class PluginBundleBuildResult(_StrictModel):
     archive_sha256: str | None = None
     archive_byte_length: int | None = None
     failure: PluginBundleBuildFailure | None = None
+
+    @field_validator("source_commit")
+    @classmethod
+    def canonical_source_commit(cls, value: str | None) -> str | None:
+        if value is not None and _SOURCE_COMMIT_PATTERN.fullmatch(value) is None:
+            raise ValueError("source_commit must be a canonical lowercase Git identity")
+        return value
+
+    @field_validator("manifest_digest", "archive_sha256")
+    @classmethod
+    def canonical_sha256(cls, value: str | None) -> str | None:
+        if value is not None and _SHA256_PATTERN.fullmatch(value) is None:
+            raise ValueError("digest must be canonical lowercase SHA-256")
+        return value
 
     @model_validator(mode="after")
     def exact_success_or_failure(self) -> "PluginBundleBuildResult":
