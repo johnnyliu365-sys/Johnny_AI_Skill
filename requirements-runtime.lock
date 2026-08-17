@@ -21,7 +21,7 @@
       "source_kind": "wheel",
       "artifacts": [
         {
-          "filename": "pydantic_core-2.46.4-cp311-win_amd64.whl",
+          "filename": "pydantic_core-2.46.4-cp311-cp311-win_amd64.whl",
           "sha256": "6f2eeda33a839975441c86a4119e1383c50b47faf0cbb5176985565c6bb02c33"
         }
       ]
@@ -33,7 +33,7 @@
       "source_kind": "wheel",
       "artifacts": [
         {
-          "filename": "pywin32-311-cp311-win_amd64.whl",
+          "filename": "pywin32-311-cp311-cp311-win_amd64.whl",
           "sha256": "3ce80b34b22b17ccbd937a6e78e7225d80c52f5ab9940fe0506a1a16f3dab503"
         }
       ]
@@ -75,5 +75,5 @@
       ]
     }
   ],
-  "lock_digest": "5e157d62f63b7ee9952276519188d98134b57ff489349c69fe736f51654d4d06"
+  "lock_digest": "f31cc1ac9a4414a58d18549f1c3d6935817e5cb0fbbaac6b00847d680680efa8"
 }

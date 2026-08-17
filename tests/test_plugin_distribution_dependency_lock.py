@@ -130,13 +130,13 @@ class RuntimeDependencyLockTests(unittest.TestCase):
                 (
                     "pydantic_core",
                     "2.46.4",
-                    "pydantic_core-2.46.4-cp311-win_amd64.whl",
+                    "pydantic_core-2.46.4-cp311-cp311-win_amd64.whl",
                     "6f2eeda33a839975441c86a4119e1383c50b47faf0cbb5176985565c6bb02c33",
                 ),
                 (
                     "pywin32",
                     "311",
-                    "pywin32-311-cp311-win_amd64.whl",
+                    "pywin32-311-cp311-cp311-win_amd64.whl",
                     "3ce80b34b22b17ccbd937a6e78e7225d80c52f5ab9940fe0506a1a16f3dab503",
                 ),
                 (
