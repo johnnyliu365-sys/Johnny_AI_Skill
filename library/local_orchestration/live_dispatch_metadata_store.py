@@ -24,6 +24,16 @@ from library.workflow_router.live_dispatch_contracts import (
     ReceiptReadFailure,
     ReceiptReadStatus,
 )
+from library.workflow_router.thread_dispatch_contracts import (
+    CodexThreadDispatchClaimRequest,
+    CodexThreadDispatchClaimResult,
+    CodexThreadDispatchSettlementRequest,
+    CodexThreadDispatchSettlementResult,
+    DispatchClaimFailure,
+    DispatchClaimStatus,
+    DispatchSettlementFailure,
+    DispatchSettlementStatus,
+)
 
 
 class LiveDispatchMetadataBoundaryPort(Protocol):
@@ -72,6 +82,34 @@ class TicketReceiptStorePort(Protocol):
     def read_receipt(self, request: TicketReceiptReadRequest) -> TicketReceiptReadResult: ...
 
 
+class ThreadDispatchAttemptStorePort(Protocol):
+    """Durable compare-and-swap port for one-shot host attempts."""
+
+    def claim_dispatch_attempt(
+        self,
+        request: CodexThreadDispatchClaimRequest,
+    ) -> CodexThreadDispatchClaimResult: ...
+
+    def settle_dispatch_attempt(
+        self,
+        request: CodexThreadDispatchSettlementRequest,
+    ) -> CodexThreadDispatchSettlementResult: ...
+
+
+class ThreadDispatchAttemptBoundaryPort(Protocol):
+    """Installer-owned durable boundary for host-attempt metadata."""
+
+    def claim_dispatch_attempt(
+        self,
+        request: CodexThreadDispatchClaimRequest,
+    ) -> CodexThreadDispatchClaimResult: ...
+
+    def settle_dispatch_attempt(
+        self,
+        request: CodexThreadDispatchSettlementRequest,
+    ) -> CodexThreadDispatchSettlementResult: ...
+
+
 def _invalid_register_result() -> ApprovedDispatchArtifactRegisterResult:
     return ApprovedDispatchArtifactRegisterResult(
         status=ArtifactRegistrationStatus.STORAGE_UNAVAILABLE,
@@ -97,6 +135,20 @@ def _invalid_receipt_read_result() -> TicketReceiptReadResult:
     return TicketReceiptReadResult(
         status=ReceiptReadStatus.STORAGE_UNAVAILABLE,
         failure=ReceiptReadFailure.STORAGE_UNAVAILABLE,
+    )
+
+
+def _invalid_dispatch_claim_result() -> CodexThreadDispatchClaimResult:
+    return CodexThreadDispatchClaimResult(
+        status=DispatchClaimStatus.STORAGE_UNAVAILABLE,
+        failure=DispatchClaimFailure.STORAGE_UNAVAILABLE,
+    )
+
+
+def _invalid_dispatch_settlement_result() -> CodexThreadDispatchSettlementResult:
+    return CodexThreadDispatchSettlementResult(
+        status=DispatchSettlementStatus.STORAGE_UNAVAILABLE,
+        failure=DispatchSettlementFailure.STORAGE_UNAVAILABLE,
     )
 
 
@@ -160,9 +212,47 @@ class LiveDispatchMetadataStore(
             return _invalid_receipt_read_result()
 
 
+class ThreadDispatchAttemptStore(ThreadDispatchAttemptStorePort):
+    """Composition adapter over the durable host-attempt boundary."""
+
+    def __init__(self, boundary: ThreadDispatchAttemptBoundaryPort) -> None:
+        self._boundary = boundary
+
+    def claim_dispatch_attempt(
+        self,
+        request: CodexThreadDispatchClaimRequest,
+    ) -> CodexThreadDispatchClaimResult:
+        if type(request) is not CodexThreadDispatchClaimRequest:
+            return _invalid_dispatch_claim_result()
+        try:
+            result = self._boundary.claim_dispatch_attempt(request)
+            if type(result) is not CodexThreadDispatchClaimResult:
+                return _invalid_dispatch_claim_result()
+            return CodexThreadDispatchClaimResult.model_validate(result)
+        except ValidationError:
+            return _invalid_dispatch_claim_result()
+
+    def settle_dispatch_attempt(
+        self,
+        request: CodexThreadDispatchSettlementRequest,
+    ) -> CodexThreadDispatchSettlementResult:
+        if type(request) is not CodexThreadDispatchSettlementRequest:
+            return _invalid_dispatch_settlement_result()
+        try:
+            result = self._boundary.settle_dispatch_attempt(request)
+            if type(result) is not CodexThreadDispatchSettlementResult:
+                return _invalid_dispatch_settlement_result()
+            return CodexThreadDispatchSettlementResult.model_validate(result)
+        except ValidationError:
+            return _invalid_dispatch_settlement_result()
+
+
 __all__ = [
     "LiveApprovedDispatchArtifactRegistryPort",
     "LiveDispatchMetadataBoundaryPort",
     "LiveDispatchMetadataStore",
+    "ThreadDispatchAttemptBoundaryPort",
+    "ThreadDispatchAttemptStore",
+    "ThreadDispatchAttemptStorePort",
     "TicketReceiptStorePort",
 ]
