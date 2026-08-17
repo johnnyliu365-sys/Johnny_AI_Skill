@@ -62,6 +62,7 @@ class RoleWakeChainStatus(str, Enum):
 
 class RoleWakeChainFailure(str, Enum):
     ROLE_WAKE_CHAIN_UNAVAILABLE = "ROLE_WAKE_CHAIN_UNAVAILABLE"
+    HOST_WAKE_CAPABILITY_UNAVAILABLE = "HOST_WAKE_CAPABILITY_UNAVAILABLE"
 
 
 class RoleWakeTriggerKind(str, Enum):
@@ -260,6 +261,16 @@ def _chain_bindings_match(request: RoleWakeChainPreflightRequest) -> bool:
     )
 
 
+def _preflight_failure(
+    request: RoleWakeChainPreflightRequest,
+) -> RoleWakeChainFailure:
+    """Keep a missing host capability distinct from an invalid bound chain."""
+
+    if request.wake_capability.state is RoleWakeCapabilityState.UNAVAILABLE:
+        return RoleWakeChainFailure.HOST_WAKE_CAPABILITY_UNAVAILABLE
+    return RoleWakeChainFailure.ROLE_WAKE_CHAIN_UNAVAILABLE
+
+
 def preflight_role_wake_chain(
     request: RoleWakeChainPreflightRequest,
 ) -> RoleWakeChainPreflightResult:
@@ -280,7 +291,7 @@ def preflight_role_wake_chain(
     if not _chain_bindings_match(trusted):
         return RoleWakeChainPreflightResult(
             status=RoleWakeChainStatus.REJECTED,
-            failure=RoleWakeChainFailure.ROLE_WAKE_CHAIN_UNAVAILABLE,
+            failure=_preflight_failure(trusted),
         )
     proof = RoleWakeChainProof(
         receipt=trusted.receipt,
