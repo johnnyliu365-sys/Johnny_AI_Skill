@@ -85,3 +85,23 @@ failed cell and preserved branch state, or `CHANGE_DETECTED -> REQUIREMENT_CHANG
 conflicting frozen reference. A need for persistence, restart recovery, Git, a receipt, a host
 callback, process launcher, composition root or another operation is `CHANGE_DETECTED`; it does
 not expand this ticket.
+
+## Correction admission 01
+
+| Field | Binding |
+| --- | --- |
+| State | `CHANGES_REQUESTED / IMPLEMENTATION_DEFECT / SAME_TICKET_ADDITIVE_CORRECTION` |
+| Reviewed candidate | `51efa7cd508dfa645b2654d80759060e17536088` |
+| Receipt / allocation | Retain `receipt-pd05-20260817-001`, the exact owner, worktree and branch already bound above; no new branch, receipt, task, source scope or effect authority |
+
+Independent reproduction registered `subscription-one` for `project-alpha`, then called
+`remove_subscription("project-beta", "subscription-one")`; it returned `NOT_FOUND`. This violates
+the R3 row requiring a subscription ID owned by another project to return
+`FOREIGN_SUBSCRIPTION` before a lifecycle call and without peer mutation.
+
+Within the original two writable paths only, make `remove_subscription` distinguish a foreign
+owner from an unknown subscription before its `NOT_FOUND` branch. Add the bounded removal case to
+the existing R3 test: it must return `FOREIGN_SUBSCRIPTION`, make zero additional `start`/`stop`
+call, and prove Alpha retains its subscription/runner. Reverse-mutate this foreign-owner guard so
+that exact R3 cell turns red, restore exact bytes, rerun focused, strict, full and residue gates,
+and create one additive implementation commit.
