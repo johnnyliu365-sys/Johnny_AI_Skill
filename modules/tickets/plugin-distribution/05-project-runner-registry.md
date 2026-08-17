@@ -151,3 +151,15 @@ composition roots, host behavior or Ticket 06 is `CHANGE_DETECTED`.
 | Review | `APPROVED`; only injected in-memory lifecycle fakes were exercised. No process, filesystem, Git, host, network, receipt-store or target-project effect was introduced. |
 
 Canonical Git-blob SHA-256: `project_runner_registry.py` `B83F50266D996F7CA71A87B8F32286A0B158EE8CF595FB1EE684CBAA8899D66C`; `test_plugin_distribution_runner_registry.py` `1BBFD26DFDD15A7392484A4369D1A6FB01592284B3181F03DFD37092961C26F3`.
+
+## Correction admission 02 — integrated evidence
+
+| Field | Evidence |
+| --- | --- |
+| State | `INTEGRATED / CLOSED` |
+| Correction / integration | `cca249f35b51cc6bd0b97a6f358f84fe7180228a` / `31b3c79bc117c71c2059b6b4bb029387272e5f7e` |
+| Closure | Valid `ProjectId` passes through registry and lifecycle state; legacy `project-alpha` rejects before lifecycle; subscription and runner IDs remain opaque; all prior lifecycle/isolation closure cells remain intact. |
+| Verification | focused `11 passed`; strict mypy passed; full `745 passed, 2,537 subtests`; 208 Python files compiled in memory; bounded `ProjectId` reverse mutation failed the named cell then was byte-restored; zero cache/bytecode residue. |
+| Independent review | two-file scope and ancestry passed; no external effect or new dependency; standalone `ProjectId` admission smoke passed in the reviewer runtime. |
+
+Canonical Git-blob SHA-256 after correction 02: `project_runner_registry.py` `18C78B7C4967F4D682DF46994D9B33284494562F4FE774DCBDF2358D0E36894F`; `test_plugin_distribution_runner_registry.py` `A6A8225096950E84BDAB684D765894CC622585D30A4357D88BC16F75CB763FAD`.
