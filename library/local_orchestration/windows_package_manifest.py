@@ -10,7 +10,11 @@ from typing import Final, Literal, Self, TypedDict
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
-from .runtime_dependency_lock import RuntimeDependencyLock
+from .runtime_dependency_lock import (
+    RuntimeDependencyLock,
+    RuntimeDependencyLockReadError,
+    load_runtime_dependency_lock,
+)
 
 
 _SHA256_PATTERN: Final[re.Pattern[str]] = re.compile(r"[0-9a-f]{64}\Z")
@@ -41,6 +45,7 @@ _REQUIRED_FILES: Final[tuple[str, ...]] = (
 _EXCLUDED_SEGMENTS: Final[frozenset[str]] = frozenset(
     {
         ".agents",
+        ".cache",
         ".claude-plugin",
         ".coverage",
         ".git",
@@ -48,6 +53,8 @@ _EXCLUDED_SEGMENTS: Final[frozenset[str]] = frozenset(
         ".pytest_cache",
         "__pycache__",
         "build",
+        "cache",
+        "caches",
         "coverage",
         "dist",
         "doc",
@@ -56,7 +63,11 @@ _EXCLUDED_SEGMENTS: Final[frozenset[str]] = frozenset(
         "receipts",
         "review",
         "reviews",
+        "secret",
+        "secrets",
         "staging",
+        "target",
+        "targets",
         "telemetry",
         "tests",
     }
@@ -198,13 +209,14 @@ class _ManifestRecord(TypedDict):
 
 def _is_excluded_archive_path(value: str) -> bool:
     parts = value.split("/")
-    if value == "payload-manifest.json":
+    folded_parts = tuple(part.casefold() for part in parts)
+    if value.casefold() == "payload-manifest.json":
         return True
-    if any(part in _EXCLUDED_SEGMENTS for part in parts):
+    if any(part in _EXCLUDED_SEGMENTS for part in folded_parts):
         return True
-    if any(part == ".env" or part.startswith(".env.") for part in parts):
+    if any(part == ".env" or part.startswith(".env.") for part in folded_parts):
         return True
-    return value.endswith(_EXCLUDED_SUFFIXES)
+    return value.casefold().endswith(_EXCLUDED_SUFFIXES)
 
 
 def _is_admitted_archive_path(value: str) -> bool:
@@ -212,6 +224,8 @@ def _is_admitted_archive_path(value: str) -> bool:
         not value
         or value != value.strip()
         or "\\" in value
+        or ":" in value
+        or "%" in value
         or value.startswith("/")
         or re.match(r"[A-Za-z]:", value) is not None
         or any(ord(character) < 32 for character in value)
@@ -340,6 +354,14 @@ def build_payload_manifest(
         raise PayloadManifestBuildError("repository root cannot be resolved") from error
     if not root.is_dir():
         raise PayloadManifestBuildError("repository root is not a directory")
+
+    lock_path = _required_file(root, "requirements-runtime.lock")
+    try:
+        committed_lock = load_runtime_dependency_lock(lock_path)
+    except RuntimeDependencyLockReadError as error:
+        raise PayloadManifestBuildError("committed dependency lock is invalid") from error
+    if committed_lock != dependency_lock:
+        raise PayloadManifestBuildError("committed dependency lock does not match supplied lock")
 
     metadata_path = _required_file(root, ".codex-plugin/plugin.json")
     try:

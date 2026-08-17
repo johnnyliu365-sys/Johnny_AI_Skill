@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import importlib
+from importlib.abc import MetaPathFinder
 import sys
 import tempfile
 from contextlib import contextmanager
@@ -11,9 +12,13 @@ from unittest import TestCase
 
 from pydantic import ValidationError
 
-from library.local_orchestration.runtime_dependency_lock import build_approved_runtime_lock
+from library.local_orchestration.runtime_dependency_lock import (
+    RuntimeDependencyLock,
+    build_approved_runtime_lock,
+)
 from library.local_orchestration.windows_package_manifest import (
     PayloadManifest,
+    PayloadManifestBuildError,
     PayloadManifestEntry,
     build_payload_manifest,
 )
@@ -51,6 +56,52 @@ def _copy_manifest_entries(manifest: PayloadManifest, source_root: Path, target_
         target = target_root.joinpath(*entry.archive_relative_path.split("/"))
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes(source.read_bytes())
+
+
+class _BlockedOptionalFinder(MetaPathFinder):
+    def __init__(self, package_names: tuple[str, ...]) -> None:
+        self._package_names = package_names
+
+    def find_spec(
+        self,
+        fullname: str,
+        path: object | None = None,
+        target: ModuleType | None = None,
+    ) -> None:
+        del path, target
+        if any(
+            fullname == package_name or fullname.startswith(package_name + ".")
+            for package_name in self._package_names
+        ):
+            raise ModuleNotFoundError("optional package is blocked", name=fullname)
+        return None
+
+
+@contextmanager
+def _blocked_optional_packages() -> Iterator[None]:
+    package_names = ("langgraph", "temporalio", "mcp", "openai")
+    saved_modules: dict[str, ModuleType] = {}
+    for module_name in tuple(sys.modules):
+        if any(
+            module_name == package_name or module_name.startswith(package_name + ".")
+            for package_name in package_names
+        ):
+            module = sys.modules.pop(module_name)
+            if module is not None:
+                saved_modules[module_name] = module
+    finder = _BlockedOptionalFinder(package_names)
+    sys.meta_path.insert(0, finder)
+    try:
+        yield
+    finally:
+        sys.meta_path.remove(finder)
+        for module_name in tuple(sys.modules):
+            if any(
+                module_name == package_name or module_name.startswith(package_name + ".")
+                for package_name in package_names
+            ):
+                del sys.modules[module_name]
+        sys.modules.update(saved_modules)
 
 
 @contextmanager
@@ -145,6 +196,49 @@ class PayloadManifestTests(TestCase):
             with self.subTest(path=path), self.assertRaises(ValidationError):
                 _entry(path)
 
+    def test_payload_manifest_path_matrix_is_casefolded_without_prefix_overreach(self) -> None:
+        rejected = (
+            "library/TeStS/target.txt",
+            "library/SeCrEtS/key.txt",
+            "skills/.ENV/config",
+            "skills/.EnV.Local/config",
+            "library/build/output.zip",
+        )
+        accepted = (
+            "library/tests2/target.txt",
+            "library/secret2/key.txt",
+            "skills/.env2/config",
+            "skills/tests2/readme.md",
+        )
+
+        for path in rejected:
+            with self.subTest(rejected=path), self.assertRaises(ValidationError):
+                _entry(path)
+        for path in accepted:
+            with self.subTest(accepted=path):
+                self.assertEqual(path, _entry(path).archive_relative_path)
+
+    def test_payload_manifest_rejects_colon_and_percent_encoded_identity(self) -> None:
+        for path in (
+            "library/name:alternate.txt",
+            "library/name%2Falternate.txt",
+            "skills/%2e%2e/README.md",
+        ):
+            with self.subTest(path=path), self.assertRaises(ValidationError):
+                _entry(path)
+
+    def test_payload_manifest_rejects_committed_lock_mismatch(self) -> None:
+        lock = build_approved_runtime_lock()
+        mismatched_lock = RuntimeDependencyLock.model_construct(
+            schema_version=lock.schema_version,
+            python_constraint=lock.python_constraint,
+            dependencies=lock.dependencies,
+            lock_digest="f" * 64,
+        )
+
+        with self.assertRaises(PayloadManifestBuildError):
+            build_payload_manifest(_repository_root(), _SOURCE_COMMIT, mismatched_lock)
+
     def test_payload_manifest_rejects_invalid_digest_and_length(self) -> None:
         with self.assertRaises(ValidationError):
             PayloadManifestEntry(
@@ -184,8 +278,12 @@ class PayloadManifestTests(TestCase):
             )
             self.assertTrue((fixture_root / "library" / "MODULE_CATALOG.md").is_file())
 
-            with _isolated_library_import(fixture_root, source_root):
+            with _blocked_optional_packages(), _isolated_library_import(fixture_root, source_root):
                 router = importlib.import_module("library.workflow_router")
                 router_file = router.__file__
                 self.assertIsNotNone(router_file)
                 self.assertTrue(str(Path(router_file).resolve()).startswith(str(fixture_root.resolve())))
+                self.assertIn("build_router_graph", router.__all__)
+                self.assertNotIn("library.workflow_router.graph", sys.modules)
+                with self.assertRaises(ModuleNotFoundError):
+                    getattr(router, "build_router_graph")
