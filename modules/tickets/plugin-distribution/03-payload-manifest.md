@@ -4,11 +4,11 @@
 | --- | --- |
 | SPEC / AC / requirement | `SPEC-AI-WORKFLOW-PLUGIN-DISTRIBUTION-20260802-01KZ3N5P7R9T1V3X5Z7B9D1F3H` Revision 02 / AC-02, AC-03, AC-04 / `PRD-20260802-004` / `CHG-20260802-004` / `REQ-20260802-004` |
 | Context / planning baseline | `doc/context/plugin-distribution/main.md` / `ctx-plugin-distribution-r02` / `a45686dd0238d69fac6c0b740a2b91ba51d5d90a` |
-| Closure / dependency | `CLOSURE-PD-03-R03-03`; replaces R03-02 because its two-file scope could not make the existing Router package import-safe without optional `langgraph`; Ticket 02 integrated at `b5e73655eae8f6995cab803e1be276ced492dcff`; implementation baseline `33b04c7e4f322dae9ebc674ed7f263cdcded78d5` |
+| Closure / dependency | `CLOSURE-PD-03-R03-03`; replaces R03-02 because its two-file scope could not make the existing Router package import-safe without optional `langgraph`; Ticket 02 integrated at `b5e73655eae8f6995cab803e1be276ced492dcff`; implementation baseline `33b04c7e4f322dae9ebc674ed7f263cdcded78d5`; final implementation `85d34350f52f0b281a76b0647f975d4552cfc4a2`; integration `764b70ec0a87ea1818c1c8a1abcdaa4475a22af2` |
 | Control / reviewer | Architecture owner and replacement reviewer task `019fbda1-2365-77d2-b510-dff079d02bff`; prior Senior task is retired from this ticket |
-| Implementation allocation | ticket ref `ticket-pd03-payload-manifest-02`; role `role-impl-pd03-luna-001`; task `01a00eac-b464-7ee1-ac76-465477768e02`; worktree `worktree-pluginimpl2-01` at `C:\Users\<user>\Desktop\AI控制工作workflow-implementer-2`; branch `codex/plugin-distribution-03-payload-manifest` / `branch-pd03manifest-01`; receipt `receipt-pd03-20260817-002`; correlation `corr-pd03-20260817-002`; correction `correction-pd03-20260817-003` |
+| Implementation allocation | ticket ref `ticket-pd03-payload-manifest-02`; role `role-impl-pd03-luna-001`; task `01a00eac-b464-7ee1-ac76-465477768e02`; worktree `worktree-pluginimpl2-01` at `C:\Users\<user>\Desktop\AI控制工作workflow-implementer-2`; branch `codex/plugin-distribution-03-payload-manifest` / `branch-pd03manifest-01`; receipt `receipt-pd03-20260817-002`; correlation `corr-pd03-20260817-002`; corrections `correction-pd03-20260817-003`, `correction-pd03-20260817-004` |
 | Implementation language / strict checker | Python 3.11.9 / `python -m mypy --strict library/local_orchestration/windows_package_manifest.py library/workflow_router/__init__.py` |
-| Profile / state / XSS | `plugin-distribution-poc-r02` v2 / POC / Luna xhigh / one implementation lane / no helper / `TICKET_CORRECTED / CORRECTION_AUTHORIZED` / `XSS_NOT_APPLICABLE` |
+| Profile / state / XSS | `plugin-distribution-poc-r02` v2 / POC / Luna xhigh / one implementation lane / no helper / `DONE / REVIEW_APPROVED / INTEGRATED` / `XSS_NOT_APPLICABLE` |
 | Boundary classification | Read-only repository input and task-owned temporary extraction only; no archive publication, process, network, host, Secret, Provider or target-project effect |
 
 ## Sole closure and boundary
@@ -69,3 +69,12 @@ failed capability or verification cell and preserved branch/commit state; `CHANG
 REQUIREMENT_CHANGED` with the conflicting frozen contract reference. No return authorizes archive
 publication, installation, Router binding or target effect. Rollback before integration is branch
 non-selection; after integration it is an additive forward-fix.
+
+## Integrated result
+
+- Independent review: `APPROVED`; exact implementation scope is the three declared writable paths.
+- Focused closure: `11 passed, 23 subtests passed`; output SHA-256 `4A67FF6FAE973FE62342D03003B01BAE7B91E76D5EF5C61FC001DDCC79BC13E9`.
+- Strict checker: `Success: no issues found in 2 source files`; output SHA-256 `F9B031E5C45AA702CD4FEF028D465551CB20A2C4698E0913C7B00766B20AC4D8`.
+- Post-integration full regression: `727 passed, 2523 subtests passed`; output SHA-256 `3041E4DB9E0FEC2F3AD621DB735B4B4D7F9743A8FF987FF4037D28FA538809E8`.
+- Final file SHA-256: manifest `ED6EE7924575C9BEB86DD4AF1DB4DB2D89E6DEC56EB0635E5BF762ADF6F3DACF`; lazy Router package `3AE6A39700A6620ED514343C42A17C3096291B5CD61F58D3DABE4143A1B80797`; test `44A76FDBF3E34D3CB5C8CFC24D07BFA32F76C8E178DFDA3A82B071EEDCF93E69`.
+- Tracked and ignored porcelain are clean after verification; no archive, host, target-project or external effect occurred.
