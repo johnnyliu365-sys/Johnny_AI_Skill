@@ -42,6 +42,16 @@ class DeadlineSignalSink(Protocol):
     def on_deadline_failure(self, signal: DeadlineFailureSignal) -> None: ...
 
 
+class OneShotDeadlinePort(Protocol):
+    def arm(self, request: DeadlineArmRequest) -> DeadlineArmResult: ...
+
+    def cancel(self, request: DeadlineCancelRequest) -> DeadlineCancelResult: ...
+
+
+class OneShotDeadlineFactory(Protocol):
+    def create(self, sink: DeadlineSignalSink) -> OneShotDeadlinePort: ...
+
+
 class SystemMonotonicClock:
     def now_ms(self) -> int:
         return monotonic_ns() // 1_000_000
@@ -52,6 +62,19 @@ class ThreadingOneShotTimerFactory:
         timer = Timer(delay_seconds, callback)
         timer.daemon = True
         return timer
+
+
+@dataclass(frozen=True, slots=True)
+class MonotonicOneShotDeadlineFactory:
+    clock: MonotonicClockPort
+    timer_factory: OneShotTimerFactory | None = None
+
+    def create(self, sink: DeadlineSignalSink) -> MonotonicOneShotDeadlinePort:
+        return MonotonicOneShotDeadlinePort(
+            sink,
+            clock=self.clock,
+            timer_factory=self.timer_factory,
+        )
 
 
 _BindingKey = tuple[str, str, str, str]
@@ -211,6 +234,9 @@ __all__ = [
     "DeadlineSignalSink",
     "MonotonicClockPort",
     "MonotonicOneShotDeadlinePort",
+    "MonotonicOneShotDeadlineFactory",
+    "OneShotDeadlineFactory",
+    "OneShotDeadlinePort",
     "OneShotTimerFactory",
     "OneShotTimerPort",
     "SystemMonotonicClock",

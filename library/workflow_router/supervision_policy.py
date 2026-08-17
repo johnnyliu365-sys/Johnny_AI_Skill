@@ -521,6 +521,32 @@ def reduce_supervision_lease(
     return _event_rejected(current)
 
 
+def close_supervision_lease(
+    lease: SupervisionLease,
+    model_override: ModelOverrideState | None = None,
+) -> SupervisionDecision:
+    """Close an exact lease when its outer capability or binding is revoked."""
+
+    if type(lease) is not SupervisionLease:
+        raise TypeError("supervision closure requires exact lease state")
+    try:
+        current = SupervisionLease.model_validate(lease, strict=True)
+        override = (
+            None
+            if model_override is None
+            else ModelOverrideState.model_validate(model_override, strict=True)
+        )
+    except ValidationError as error:
+        raise TypeError("supervision closure received invalid state") from error
+    if current.lifecycle is LeaseLifecycle.CLOSED:
+        return SupervisionDecision(
+            decision=SupervisionDecisionKind.LEASE_CLOSED,
+            lease=current,
+            model_override=override,
+        )
+    return _close(current, SupervisionDecisionKind.LEASE_CLOSED, override)
+
+
 def resolve_ticket_repair(evidence: TicketSplitEvidence) -> TicketRepairDecision:
     """Split along an approved vertical closure or bind one Terra-high override."""
 
@@ -572,6 +598,7 @@ __all__ = [
     "TicketSplitDimension",
     "TicketSplitEvidence",
     "reduce_supervision_lease",
+    "close_supervision_lease",
     "resolve_ticket_repair",
     "start_supervision_lease",
 ]

@@ -109,6 +109,7 @@ class GitEventAdapterFailure(str, Enum):
 class SupervisionFaultKind(str, Enum):
     INVALID_HANDOFF = "INVALID_HANDOFF"
     STALE_BINDING = "STALE_BINDING"
+    WAKE_CHAIN_LOST = "WAKE_CHAIN_LOST"
 
 
 class GitRefSnapshotResult(_StrictModel):

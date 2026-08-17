@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 import subprocess
 from threading import current_thread, Lock, Thread
-from typing import cast, Final, Protocol, TYPE_CHECKING
+from typing import cast, Final, TYPE_CHECKING
 
 from pydantic import ValidationError
 import pywintypes
@@ -23,6 +23,7 @@ from library.workflow_router.git_handoff_contracts import (
     GitRefSignal,
     SubscriptionId,
 )
+from .git_handoff_event_adapter import NativeGitRefSignalSink
 
 if TYPE_CHECKING:
     import _win32typing
@@ -33,14 +34,6 @@ _NOTIFY_FILTER = (
     | win32con.FILE_NOTIFY_CHANGE_LAST_WRITE
 )
 _FILE_LIST_DIRECTORY: Final[int] = 0x0001
-
-
-class NativeGitRefSignalSink(Protocol):
-    """Thread-safe sink invoked only after a relevant native metadata change."""
-
-    def on_signal(self, signal: GitRefSignal) -> None: ...
-
-    def on_failure(self, signal: GitNativeFailureSignal) -> None: ...
 
 
 @dataclass(frozen=True, slots=True)
@@ -320,7 +313,19 @@ class WindowsNativeGitRefNotificationPort:
                 pass
 
 
+@dataclass(frozen=True, slots=True)
+class WindowsNativeGitRefNotificationFactory:
+    repository_root: Path
+
+    def create(
+        self,
+        sink: NativeGitRefSignalSink,
+    ) -> WindowsNativeGitRefNotificationPort:
+        return WindowsNativeGitRefNotificationPort(self.repository_root, sink)
+
+
 __all__ = [
     "NativeGitRefSignalSink",
+    "WindowsNativeGitRefNotificationFactory",
     "WindowsNativeGitRefNotificationPort",
 ]

@@ -18,6 +18,7 @@ from library.workflow_router.git_handoff_contracts import (
     GitEventAdapterFailure,
     GitEventRegistrationLifecycle,
     GitEventRegistrationState,
+    GitNativeFailureSignal,
     GitNativeRegistrationRequest,
     GitNativeRegistrationResult,
     GitNativeRegistrationStatus,
@@ -63,6 +64,18 @@ class NativeGitRefNotificationPort(Protocol):
     def register(self, request: GitNativeRegistrationRequest) -> GitNativeRegistrationResult: ...
 
     def cancel(self, subscription_id: SubscriptionId) -> bool: ...
+
+
+class NativeGitRefSignalSink(Protocol):
+    """Thread-safe destination for native exact-ref hints and capability loss."""
+
+    def on_signal(self, signal: GitRefSignal) -> None: ...
+
+    def on_failure(self, signal: GitNativeFailureSignal) -> None: ...
+
+
+class NativeGitRefNotificationFactory(Protocol):
+    def create(self, sink: NativeGitRefSignalSink) -> NativeGitRefNotificationPort: ...
 
 
 class GitCliReadbackPort:
@@ -605,5 +618,7 @@ __all__ = [
     "GitCliReadbackPort",
     "GitReadbackPort",
     "NativeGitRefNotificationPort",
+    "NativeGitRefNotificationFactory",
+    "NativeGitRefSignalSink",
     "ReceiptBoundGitEventAdapter",
 ]
