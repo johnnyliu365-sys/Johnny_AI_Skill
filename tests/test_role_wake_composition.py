@@ -46,6 +46,7 @@ from library.workflow_router.role_wake_contracts import (
     RoleWakeAttemptSettleResult,
     RoleWakeCapabilityProof,
     RoleWakeCapabilityState,
+    RoleWakeChainFailure,
     RoleWakeChainPreflightRequest,
     RoleWakeChainStatus,
     RoleWakeCommand,
@@ -278,7 +279,14 @@ class WakeChainPreflightTests(unittest.TestCase):
             {"registration": request.registration.model_copy(update={"mode": GitObservationMode.UNAVAILABLE})},
             {"registration": request.registration.model_copy(update={"subscription_id": "subscription-wrong"})},
             {"implementation_task_ref": "task-wrong"},
-            {"wake_capability": request.wake_capability.model_copy(update={"state": RoleWakeCapabilityState.UNAVAILABLE})},
+            {
+                "registration": request.registration.model_copy(
+                    update={"subscription_id": "subscription-wrong"}
+                ),
+                "wake_capability": request.wake_capability.model_copy(
+                    update={"state": RoleWakeCapabilityState.UNAVAILABLE}
+                ),
+            },
             {"deadline_capability": request.deadline_capability.model_copy(update={"one_shot_supported": False})},
             {"deadline_capability": request.deadline_capability.model_copy(update={"recurring_callback_required": True})},
         )
@@ -287,7 +295,30 @@ class WakeChainPreflightTests(unittest.TestCase):
                 bypassed = request.model_copy(update=update)
                 result = preflight_role_wake_chain(bypassed)
                 self.assertEqual(RoleWakeChainStatus.REJECTED, result.status)
+                self.assertEqual(
+                    RoleWakeChainFailure.ROLE_WAKE_CHAIN_UNAVAILABLE,
+                    result.failure,
+                )
                 self.assertIsNone(result.proof)
+
+    def test_unavailable_host_capability_has_exact_host_wake_failure(self) -> None:
+        request = _preflight_request().model_copy(
+            update={
+                "wake_capability": _preflight_request()
+                .wake_capability.model_copy(
+                    update={"state": RoleWakeCapabilityState.UNAVAILABLE}
+                )
+            }
+        )
+
+        result = preflight_role_wake_chain(request)
+
+        self.assertEqual(RoleWakeChainStatus.REJECTED, result.status)
+        self.assertEqual(
+            RoleWakeChainFailure.HOST_WAKE_CAPABILITY_UNAVAILABLE,
+            result.failure,
+        )
+        self.assertIsNone(result.proof)
 
     def test_contract_does_not_accept_missing_subscription_or_extra_heartbeat(self) -> None:
         payload = _preflight_request().model_dump(mode="json")
