@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "python_constraint": ">=3.11,<3.14",
+  "dependencies": [
+    {
+      "normalized_name": "pydantic",
+      "exact_version": "2.13.4",
+      "environment_marker": null,
+      "source_kind": "wheel",
+      "artifacts": [
+        {
+          "filename": "pydantic-2.13.4-py3-none-any.whl",
+          "sha256": "45a282cde31d808236fd7ea9d919b128653c8b38b393d1c4ab335c62924d9aba"
+        }
+      ]
+    },
+    {
+      "normalized_name": "pydantic_core",
+      "exact_version": "2.46.4",
+      "environment_marker": "platform_system == 'Windows'",
+      "source_kind": "wheel",
+      "artifacts": [
+        {
+          "filename": "pydantic_core-2.46.4-cp311-cp311-win_amd64.whl",
+          "sha256": "6f2eeda33a839975441c86a4119e1383c50b47faf0cbb5176985565c6bb02c33"
+        }
+      ]
+    },
+    {
+      "normalized_name": "pywin32",
+      "exact_version": "311",
+      "environment_marker": "platform_system == 'Windows'",
+      "source_kind": "wheel",
+      "artifacts": [
+        {
+          "filename": "pywin32-311-cp311-cp311-win_amd64.whl",
+          "sha256": "3ce80b34b22b17ccbd937a6e78e7225d80c52f5ab9940fe0506a1a16f3dab503"
+        }
+      ]
+    },
+    {
+      "normalized_name": "annotated_types",
+      "exact_version": "0.8.0",
+      "environment_marker": null,
+      "source_kind": "wheel",
+      "artifacts": [
+        {
+          "filename": "annotated_types-0.8.0-py3-none-any.whl",
+          "sha256": "f072f4d804ea359e4eaf198b1af7a8b0943881a87f31bb764f8bf219bb9419e0"
+        }
+      ]
+    },
+    {
+      "normalized_name": "typing_extensions",
+      "exact_version": "4.15.0",
+      "environment_marker": null,
+      "source_kind": "wheel",
+      "artifacts": [
+        {
+          "filename": "typing_extensions-4.15.0-py3-none-any.whl",
+          "sha256": "f0fa19c6845758ab08074a0cfa8b7aecb71c999ca73d62883bc25cc018c4e548"
+        }
+      ]
+    },
+    {
+      "normalized_name": "typing_inspection",
+      "exact_version": "0.4.2",
+      "environment_marker": null,
+      "source_kind": "wheel",
+      "artifacts": [
+        {
+          "filename": "typing_inspection-0.4.2-py3-none-any.whl",
+          "sha256": "4ed1cacbdc298c220f1bd249ed5287caa16f34d44ef4e9c3d0cbad5b521545e7"
+        }
+      ]
+    }
+  ],
+  "lock_digest": "f31cc1ac9a4414a58d18549f1c3d6935817e5cb0fbbaac6b00847d680680efa8"
+}
