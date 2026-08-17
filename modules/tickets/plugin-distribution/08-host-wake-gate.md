@@ -7,7 +7,7 @@
 | Control / reviewer | Current architecture owner and reviewer task `019fbda1-2365-77d2-b510-dff079d02bff`; prior Senior has no authority |
 | Implementation owner | Project-owner ticket-scoped direct-owner override: current architecture owner in `worktree-control-root-01`, branch `codex/plugin-distribution-08-host-wake-gate`; no implementer task, receipt, host dispatch, or live Router claim |
 | Implementation language / strict checker | Python 3.11.9 / `python -B -m mypy --strict library/workflow_router/role_wake_contracts.py library/local_orchestration/role_wake_composition.py` |
-| State / XSS | `TICKET_REFROZEN / HIGH_ASSURANCE_REQUIRED / DIRECT_OWNER_OVERRIDE / IMPLEMENTATION_READY`; `XSS_NOT_APPLICABLE` |
+| State / XSS | `INTEGRATED / CLOSED / DIRECT_OWNER_OVERRIDE`; `XSS_NOT_APPLICABLE` |
 
 ## Sole closure and boundary
 
@@ -49,3 +49,13 @@ paths, and the full `tests/test_role_wake_composition.py` module. Reverse-mutate
 capability classification so the H2 cell turns red, restore exact bytes, rerun the focused cell,
 and leave no cache or bytecode residue. The direct owner returns the normal completed evidence;
 live host capability and Router binding remain later owner-controlled gates.
+
+## Completion evidence
+
+Direct-owner implementation commits `63b9279774e21c9df3866c4aec471c8180c2d13f` and
+`e21303746cae9bc2a5567d6ef17d74969700b287` were merged at
+`aa52a2010a8368ba8b29b30b130b35e2de051ee5`. The final H1–H5 module run passed `9` tests and
+`6` subtests; the named strict check and two-path in-memory compile passed. Both reverse guards
+turned their named H2/H3 cells red and were byte-restored before the final green run. Scope,
+ancestry, no-new-import, tracked status and residue checks passed. No live host call, heartbeat,
+polling, Router binding, target-project effect or extra document was created.
