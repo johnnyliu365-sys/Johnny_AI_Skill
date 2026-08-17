@@ -39,6 +39,7 @@ from library.workflow_router.supervision_policy import (
     LeaseEvent,
     LeaseEventKind,
     LeaseLifecycle,
+    SupervisionClass,
     SupervisionDecision,
     SupervisionDecisionKind,
     SupervisionLease,
@@ -47,6 +48,12 @@ from library.workflow_router.supervision_policy import (
     start_supervision_lease,
 )
 from library.workflow_router.supervision_runtime_contracts import (
+    ContinuationAcceptedEvidence,
+    ContinuationResult,
+    ContinuationStatus,
+    ReviewerDiagnosisRequest,
+    ReviewerDiagnosisResult,
+    ReviewerDiagnosisRoute,
     SupervisionPreparationRequest,
     SupervisionPreparationResult,
     SupervisionPreparationStatus,
@@ -306,6 +313,192 @@ class ReceiptBoundSupervisionController(NativeGitRefSignalSink, DeadlineSignalSi
     def read_state(self, subscription_id: SubscriptionId) -> SupervisionRuntimeState | None:
         with self._lock:
             return self._states.get(subscription_id)
+
+    def diagnose(
+        self,
+        request: ReviewerDiagnosisRequest,
+    ) -> ReviewerDiagnosisResult:
+        """Route one exact read-only Senior diagnosis without performing task effects."""
+
+        if type(request) is not ReviewerDiagnosisRequest:
+            return ReviewerDiagnosisResult(route=ReviewerDiagnosisRoute.REJECTED)
+        try:
+            trusted = ReviewerDiagnosisRequest.model_validate(request, strict=True)
+        except ValidationError:
+            return ReviewerDiagnosisResult(route=ReviewerDiagnosisRoute.REJECTED)
+        with self._lock:
+            state = self._states.get(trusted.subscription_id)
+            if (
+                state is None
+                or state.lifecycle is not SupervisionRuntimeLifecycle.REVIEW_PENDING
+                or state.lease is None
+                or not self._diagnosis_matches(state, trusted)
+                or trusted.observed_at_ms < state.lease.origin_ms
+            ):
+                return ReviewerDiagnosisResult(route=ReviewerDiagnosisRoute.REJECTED)
+            if (
+                not trusted.task_stopped_incomplete
+                or not trusted.approved_closure_unchanged
+            ):
+                return ReviewerDiagnosisResult(
+                    route=ReviewerDiagnosisRoute.NO_ACTION,
+                    state=state,
+                )
+            lease = state.lease
+            if lease.supervision_class is SupervisionClass.LUNA_XHIGH_DEFAULT:
+                return ReviewerDiagnosisResult(
+                    route=ReviewerDiagnosisRoute.TICKET_REPAIR_REQUIRED,
+                    state=state,
+                )
+            if lease.continue_count == 0:
+                return ReviewerDiagnosisResult(
+                    route=ReviewerDiagnosisRoute.CONTINUE_IMPLEMENTATION_REQUIRED,
+                    state=state,
+                )
+            decision = reduce_supervision_lease(
+                lease,
+                LeaseEvent(
+                    kind=LeaseEventKind.DIAGNOSIS_STOPPED_INCOMPLETE,
+                    occurred_at_ms=trusted.observed_at_ms,
+                ),
+                state.model_override,
+            )
+            if (
+                decision.decision
+                is not SupervisionDecisionKind.MODEL_CAPABILITY_INSUFFICIENT
+                or decision.lease is None
+            ):
+                return ReviewerDiagnosisResult(route=ReviewerDiagnosisRoute.REJECTED)
+            closed_registration = self._git_adapter.close(state.registration)
+            halted = _replace_runtime(
+                state,
+                registration=closed_registration,
+                lease=decision.lease,
+                lifecycle=SupervisionRuntimeLifecycle.HALTED,
+                supervision_decision=decision,
+                failure=SupervisionRuntimeFailure.MODEL_CAPABILITY_INSUFFICIENT,
+            )
+            self._states[trusted.subscription_id] = halted
+            return ReviewerDiagnosisResult(
+                route=ReviewerDiagnosisRoute.MODEL_CAPABILITY_INSUFFICIENT,
+                state=halted,
+            )
+
+    def confirm_continuation(
+        self,
+        evidence: ContinuationAcceptedEvidence,
+    ) -> ContinuationResult:
+        """Resume Terra only after exact host readback proves the one continue effect."""
+
+        if type(evidence) is not ContinuationAcceptedEvidence:
+            return ContinuationResult(
+                status=ContinuationStatus.REJECTED,
+                failure=SupervisionRuntimeFailure.STALE_RUNTIME_EVENT,
+            )
+        try:
+            trusted = ContinuationAcceptedEvidence.model_validate(evidence, strict=True)
+        except ValidationError:
+            return ContinuationResult(
+                status=ContinuationStatus.REJECTED,
+                failure=SupervisionRuntimeFailure.STALE_RUNTIME_EVENT,
+            )
+        with self._lock:
+            state = self._states.get(trusted.subscription_id)
+            if (
+                state is None
+                or state.lifecycle is not SupervisionRuntimeLifecycle.REVIEW_PENDING
+                or state.lease is None
+                or state.lease.supervision_class is not SupervisionClass.TERRA_OR_HIGHER
+                or state.lease.lifecycle is not LeaseLifecycle.DIAGNOSIS_PENDING
+                or state.lease.continue_count != 0
+                or not self._continuation_matches(state, trusted)
+                or trusted.accepted_at_ms < state.lease.origin_ms
+            ):
+                return ContinuationResult(
+                    status=ContinuationStatus.REJECTED,
+                    failure=SupervisionRuntimeFailure.STALE_RUNTIME_EVENT,
+                )
+            decision = reduce_supervision_lease(
+                state.lease,
+                LeaseEvent(
+                    kind=LeaseEventKind.DIAGNOSIS_STOPPED_INCOMPLETE,
+                    occurred_at_ms=trusted.accepted_at_ms,
+                ),
+                state.model_override,
+            )
+            if (
+                decision.decision is not SupervisionDecisionKind.CONTINUE_IMPLEMENTATION
+                or decision.lease is None
+            ):
+                return ContinuationResult(
+                    status=ContinuationStatus.REJECTED,
+                    failure=SupervisionRuntimeFailure.STALE_RUNTIME_EVENT,
+                )
+            armed = self._deadline_port.arm(
+                DeadlineArmRequest(
+                    lease=decision.lease,
+                    capability=state.chain.deadline_capability,
+                )
+            )
+            if armed.status not in (DeadlineArmStatus.ARMED, DeadlineArmStatus.REPLACED):
+                wake = self._wake_capability_fault_locked(
+                    state,
+                    SupervisionRuntimeFailure.DEADLINE_UNAVAILABLE,
+                )
+                self._halt_capability_locked(
+                    state,
+                    SupervisionRuntimeFailure.DEADLINE_UNAVAILABLE,
+                    wake_result=wake,
+                )
+                return ContinuationResult(
+                    status=ContinuationStatus.CAPABILITY_UNAVAILABLE,
+                    failure=SupervisionRuntimeFailure.DEADLINE_UNAVAILABLE,
+                )
+            active = _replace_runtime(
+                state,
+                lease=decision.lease,
+                lifecycle=SupervisionRuntimeLifecycle.ACTIVE,
+                supervision_decision=decision,
+            )
+            self._states[trusted.subscription_id] = active
+            return ContinuationResult(
+                status=ContinuationStatus.RESUMED,
+                state=active,
+            )
+
+    @staticmethod
+    def _diagnosis_matches(
+        state: SupervisionRuntimeState,
+        request: ReviewerDiagnosisRequest,
+    ) -> bool:
+        lease = state.lease
+        return lease is not None and all(
+            (
+                request.project_id == lease.project_id,
+                request.ticket_ref == lease.ticket_ref,
+                request.router_receipt_ref == lease.router_receipt_ref,
+                request.task_ref == lease.task_ref,
+                request.worktree_ref == lease.worktree_ref,
+                request.branch_ref == lease.branch_ref,
+            )
+        )
+
+    @staticmethod
+    def _continuation_matches(
+        state: SupervisionRuntimeState,
+        evidence: ContinuationAcceptedEvidence,
+    ) -> bool:
+        lease = state.lease
+        return lease is not None and all(
+            (
+                evidence.project_id == lease.project_id,
+                evidence.ticket_ref == lease.ticket_ref,
+                evidence.router_receipt_ref == lease.router_receipt_ref,
+                evidence.task_ref == lease.task_ref,
+                evidence.worktree_ref == lease.worktree_ref,
+                evidence.branch_ref == lease.branch_ref,
+            )
+        )
 
     def on_signal(self, signal: GitRefSignal) -> None:
         with self._lock:

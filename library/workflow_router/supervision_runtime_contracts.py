@@ -7,7 +7,7 @@ from typing import Self
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-from .contracts import OpaqueMetadataId
+from .contracts import BranchFingerprint, OpaqueMetadataId, ProjectId, WorktreeFingerprint
 from .git_handoff_contracts import (
     GitEventAdapterDecision,
     GitEventRegistrationLifecycle,
@@ -72,6 +72,21 @@ class SupervisionRuntimeFailure(str, Enum):
     GIT_READBACK_UNAVAILABLE = "GIT_READBACK_UNAVAILABLE"
     ROLE_WAKE_UNAVAILABLE = "ROLE_WAKE_UNAVAILABLE"
     STALE_RUNTIME_EVENT = "STALE_RUNTIME_EVENT"
+    MODEL_CAPABILITY_INSUFFICIENT = "MODEL_CAPABILITY_INSUFFICIENT"
+
+
+class ReviewerDiagnosisRoute(str, Enum):
+    CONTINUE_IMPLEMENTATION_REQUIRED = "CONTINUE_IMPLEMENTATION_REQUIRED"
+    TICKET_REPAIR_REQUIRED = "TICKET_REPAIR_REQUIRED"
+    MODEL_CAPABILITY_INSUFFICIENT = "MODEL_CAPABILITY_INSUFFICIENT"
+    NO_ACTION = "NO_ACTION"
+    REJECTED = "REJECTED"
+
+
+class ContinuationStatus(str, Enum):
+    RESUMED = "RESUMED"
+    REJECTED = "REJECTED"
+    CAPABILITY_UNAVAILABLE = "CAPABILITY_UNAVAILABLE"
 
 
 class SupervisionPreparationRequest(_StrictModel):
@@ -91,8 +106,34 @@ class SupervisionStartRequest(_StrictModel):
     execution_started: ExecutionStartedEvidence
 
 
+class ReviewerDiagnosisRequest(_StrictModel):
+    subscription_id: SubscriptionId
+    project_id: ProjectId
+    ticket_ref: OpaqueMetadataId
+    router_receipt_ref: OpaqueMetadataId
+    task_ref: OpaqueMetadataId
+    worktree_ref: WorktreeFingerprint
+    branch_ref: BranchFingerprint
+    observed_at_ms: int = Field(ge=0)
+    task_stopped_incomplete: bool
+    approved_closure_unchanged: bool
+    host_readback_refs: tuple[OpaqueMetadataId, ...] = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def readback_is_unique(self) -> Self:
+        if len(self.host_readback_refs) != len(set(self.host_readback_refs)):
+            raise ValueError("diagnosis readback references must be unique")
+        return self
+
+
 class ContinuationAcceptedEvidence(_StrictModel):
     subscription_id: SubscriptionId
+    project_id: ProjectId
+    ticket_ref: OpaqueMetadataId
+    router_receipt_ref: OpaqueMetadataId
+    task_ref: OpaqueMetadataId
+    worktree_ref: WorktreeFingerprint
+    branch_ref: BranchFingerprint
     accepted_at_ms: int = Field(ge=0)
     host_readback_refs: tuple[OpaqueMetadataId, ...] = Field(min_length=1)
 
@@ -203,8 +244,42 @@ class SupervisionStartResult(_StrictModel):
         return self
 
 
+class ReviewerDiagnosisResult(_StrictModel):
+    route: ReviewerDiagnosisRoute
+    state: SupervisionRuntimeState | None = None
+
+    @model_validator(mode="after")
+    def accepted_routes_retain_state(self) -> Self:
+        if self.route is ReviewerDiagnosisRoute.REJECTED:
+            if self.state is not None:
+                raise ValueError("rejected diagnosis cannot return runtime state")
+        elif self.state is None:
+            raise ValueError("accepted diagnosis requires runtime state")
+        return self
+
+
+class ContinuationResult(_StrictModel):
+    status: ContinuationStatus
+    state: SupervisionRuntimeState | None = None
+    failure: SupervisionRuntimeFailure | None = None
+
+    @model_validator(mode="after")
+    def exact_result_shape(self) -> Self:
+        success = self.status is ContinuationStatus.RESUMED
+        if success != (self.state is not None and self.failure is None):
+            raise ValueError("continuation success requires only runtime state")
+        if not success and (self.state is not None or self.failure is None):
+            raise ValueError("continuation failure requires only a failure")
+        return self
+
+
 __all__ = [
     "ContinuationAcceptedEvidence",
+    "ContinuationResult",
+    "ContinuationStatus",
+    "ReviewerDiagnosisRequest",
+    "ReviewerDiagnosisResult",
+    "ReviewerDiagnosisRoute",
     "SupervisionPreparationRequest",
     "SupervisionPreparationResult",
     "SupervisionPreparationStatus",

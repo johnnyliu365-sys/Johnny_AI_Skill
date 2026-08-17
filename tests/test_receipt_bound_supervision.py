@@ -23,6 +23,7 @@ from library.local_orchestration.receipt_bound_supervision import (
     ReceiptBoundSupervisionController,
 )
 from library.local_orchestration.role_wake_composition import RoleWakeCoordinator
+from library.local_orchestration.role_wake_composition import RoleWakeAttemptStorePort
 from library.workflow_router.deadline_contracts import (
     DeadlineArmRequest,
     DeadlineArmResult,
@@ -48,8 +49,16 @@ from library.workflow_router.role_supervision_contracts import (
     seal_handoff_leaf,
 )
 from library.workflow_router.role_wake_contracts import (
+    RoleWakeAttemptClaimRequest,
+    RoleWakeAttemptClaimResult,
+    RoleWakeAttemptLifecycle,
+    RoleWakeAttemptRecord,
+    RoleWakeAttemptSettleRequest,
+    RoleWakeAttemptSettleResult,
     RoleWakeEffectResult,
     RoleWakeEffectStatus,
+    WakeAttemptClaimStatus,
+    WakeAttemptSettleStatus,
 )
 from library.workflow_router.supervision_policy import (
     ExecutionStartedEvidence,
@@ -57,6 +66,10 @@ from library.workflow_router.supervision_policy import (
     SupervisionDecisionKind,
 )
 from library.workflow_router.supervision_runtime_contracts import (
+    ContinuationAcceptedEvidence,
+    ContinuationStatus,
+    ReviewerDiagnosisRequest,
+    ReviewerDiagnosisRoute,
     SupervisionPreparationRequest,
     SupervisionPreparationStatus,
     SupervisionRuntimeLifecycle,
@@ -71,7 +84,6 @@ from tests.test_git_handoff_event_adapter import (
 )
 from tests.test_role_wake_composition import (
     _deadline_capability,
-    _MemoryWakeStore,
     _receipt,
     _RecordingWakePort,
     _wake_capability,
@@ -173,6 +185,49 @@ class _DeadlineFactory(OneShotDeadlineFactory):
         return self.port
 
 
+class _MultiWakeStore(RoleWakeAttemptStorePort):
+    def __init__(self) -> None:
+        self.records: dict[str, RoleWakeAttemptRecord] = {}
+
+    def claim(self, request: RoleWakeAttemptClaimRequest) -> RoleWakeAttemptClaimResult:
+        existing = self.records.get(request.identity.attempt_id)
+        if existing is not None:
+            if existing.identity == request.identity:
+                return RoleWakeAttemptClaimResult(
+                    status=WakeAttemptClaimStatus.ALREADY_CLAIMED,
+                    record=existing,
+                )
+            return RoleWakeAttemptClaimResult(
+                status=WakeAttemptClaimStatus.ATTEMPT_CONFLICT,
+            )
+        claimed = RoleWakeAttemptRecord(
+            identity=request.identity,
+            lifecycle=RoleWakeAttemptLifecycle.CLAIMED,
+        )
+        self.records[request.identity.attempt_id] = claimed
+        return RoleWakeAttemptClaimResult(
+            status=WakeAttemptClaimStatus.CLAIMED,
+            record=claimed,
+        )
+
+    def settle(self, request: RoleWakeAttemptSettleRequest) -> RoleWakeAttemptSettleResult:
+        existing = self.records.get(request.identity.attempt_id)
+        if existing is None or existing.identity != request.identity:
+            return RoleWakeAttemptSettleResult(
+                status=WakeAttemptSettleStatus.CLAIM_MISMATCH,
+            )
+        settled = RoleWakeAttemptRecord(
+            identity=existing.identity,
+            lifecycle=RoleWakeAttemptLifecycle(request.effect.status.value),
+            delivery_reference=request.effect.delivery_reference,
+        )
+        self.records[request.identity.attempt_id] = settled
+        return RoleWakeAttemptSettleResult(
+            status=WakeAttemptSettleStatus.SETTLED,
+            record=settled,
+        )
+
+
 def _controller(root: Path) -> tuple[
     ReceiptBoundSupervisionController,
     _NativePort,
@@ -194,7 +249,7 @@ def _controller(root: Path) -> tuple[
             GitCliReadbackPort(root),
             _NativeFactory(native),
             _DeadlineFactory(deadline),
-            RoleWakeCoordinator(_MemoryWakeStore(), wake),
+            RoleWakeCoordinator(_MultiWakeStore(), wake),
             clock,
         ),
         native,
@@ -443,6 +498,129 @@ class ReceiptBoundSupervisionTests(unittest.TestCase):
             self.assertEqual(1, len(wake.commands))
             self.assertIn("action=SUPERVISION_FAULT", wake.commands[0].payload)
             self.assertIn("fault_kind=WAKE_CHAIN_LOST", wake.commands[0].payload)
+
+    def test_terra_continue_requires_host_readback_and_second_expiry_converges(self) -> None:
+        with TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory).resolve(strict=True)
+            _run_git(root, "init", "-b", "main")
+            _run_git(root, "config", "user.email", "supervision@example.invalid")
+            _run_git(root, "config", "user.name", "Supervision")
+            (root / "source.txt").write_text("baseline\n", encoding="utf-8")
+            baseline = _commit(root, "baseline")
+            controller, _native, deadline, _wake, _clock = _controller(root)
+            controller.prepare(_prepare(controller, baseline))
+            controller.start(
+                SupervisionStartRequest(
+                    subscription_id="subscription-vita-feature-001",
+                    lease_id="lease-vita-feature-001",
+                    supervision_class=SupervisionClass.TERRA_OR_HIGHER,
+                    execution_started=_started(baseline),
+                )
+            )
+            first_deadline = deadline.active.lease.deadline_ms if deadline.active else 0
+            deadline.fire()
+            diagnosis = ReviewerDiagnosisRequest(
+                subscription_id="subscription-vita-feature-001",
+                project_id="prj_0123456789abcdef",
+                ticket_ref="ticket-vita-feature-001",
+                router_receipt_ref="receipt-vita-feature-001",
+                task_ref="task-vita-implementation",
+                worktree_ref="worktree-vitafeature-01",
+                branch_ref="branch-vitafeature-01",
+                observed_at_ms=first_deadline + 1,
+                task_stopped_incomplete=True,
+                approved_closure_unchanged=True,
+                host_readback_refs=("evidence-reviewer-diagnosis",),
+            )
+            routed = controller.diagnose(diagnosis)
+            self.assertEqual(
+                ReviewerDiagnosisRoute.CONTINUE_IMPLEMENTATION_REQUIRED,
+                routed.route,
+            )
+            self.assertEqual(1, len(deadline.arms))
+
+            wrong = controller.confirm_continuation(
+                ContinuationAcceptedEvidence(
+                    subscription_id=diagnosis.subscription_id,
+                    project_id=diagnosis.project_id,
+                    ticket_ref=diagnosis.ticket_ref,
+                    router_receipt_ref=diagnosis.router_receipt_ref,
+                    task_ref="task-wrong-implementation",
+                    worktree_ref=diagnosis.worktree_ref,
+                    branch_ref=diagnosis.branch_ref,
+                    accepted_at_ms=first_deadline + 2,
+                    host_readback_refs=("evidence-continue-host-readback",),
+                )
+            )
+            self.assertEqual(ContinuationStatus.REJECTED, wrong.status)
+            resumed = controller.confirm_continuation(
+                ContinuationAcceptedEvidence(
+                    subscription_id=diagnosis.subscription_id,
+                    project_id=diagnosis.project_id,
+                    ticket_ref=diagnosis.ticket_ref,
+                    router_receipt_ref=diagnosis.router_receipt_ref,
+                    task_ref=diagnosis.task_ref,
+                    worktree_ref=diagnosis.worktree_ref,
+                    branch_ref=diagnosis.branch_ref,
+                    accepted_at_ms=first_deadline + 2,
+                    host_readback_refs=("evidence-continue-host-readback",),
+                )
+            )
+            self.assertEqual(ContinuationStatus.RESUMED, resumed.status)
+            self.assertEqual(2, len(deadline.arms))
+            self.assertEqual(1, resumed.state.lease.continue_count if resumed.state and resumed.state.lease else -1)
+
+            second_deadline = deadline.active.lease.deadline_ms if deadline.active else 0
+            deadline.fire()
+            exhausted = controller.diagnose(
+                diagnosis.model_copy(update={"observed_at_ms": second_deadline + 1})
+            )
+            self.assertEqual(
+                ReviewerDiagnosisRoute.MODEL_CAPABILITY_INSUFFICIENT,
+                exhausted.route,
+            )
+            self.assertEqual(
+                SupervisionRuntimeLifecycle.HALTED,
+                exhausted.state.lifecycle if exhausted.state else None,
+            )
+
+    def test_luna_diagnosis_routes_ticket_repair_and_never_continue(self) -> None:
+        with TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory).resolve(strict=True)
+            _run_git(root, "init", "-b", "main")
+            _run_git(root, "config", "user.email", "supervision@example.invalid")
+            _run_git(root, "config", "user.name", "Supervision")
+            (root / "source.txt").write_text("baseline\n", encoding="utf-8")
+            baseline = _commit(root, "baseline")
+            controller, _native, deadline, _wake, _clock = _controller(root)
+            controller.prepare(_prepare(controller, baseline))
+            controller.start(
+                SupervisionStartRequest(
+                    subscription_id="subscription-vita-feature-001",
+                    lease_id="lease-vita-feature-001",
+                    supervision_class=SupervisionClass.LUNA_XHIGH_DEFAULT,
+                    execution_started=_started(baseline),
+                )
+            )
+            expires = deadline.active.lease.deadline_ms if deadline.active else 0
+            deadline.fire()
+            routed = controller.diagnose(
+                ReviewerDiagnosisRequest(
+                    subscription_id="subscription-vita-feature-001",
+                    project_id="prj_0123456789abcdef",
+                    ticket_ref="ticket-vita-feature-001",
+                    router_receipt_ref="receipt-vita-feature-001",
+                    task_ref="task-vita-implementation",
+                    worktree_ref="worktree-vitafeature-01",
+                    branch_ref="branch-vitafeature-01",
+                    observed_at_ms=expires + 1,
+                    task_stopped_incomplete=True,
+                    approved_closure_unchanged=True,
+                    host_readback_refs=("evidence-reviewer-diagnosis",),
+                )
+            )
+            self.assertEqual(ReviewerDiagnosisRoute.TICKET_REPAIR_REQUIRED, routed.route)
+            self.assertEqual(1, len(deadline.arms))
 
 
 if __name__ == "__main__":

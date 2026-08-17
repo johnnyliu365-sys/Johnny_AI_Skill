@@ -214,6 +214,11 @@ from .thread_dispatch_contracts import (
 )
 from .supervision_runtime_contracts import (
     ContinuationAcceptedEvidence,
+    ContinuationResult,
+    ContinuationStatus,
+    ReviewerDiagnosisRequest,
+    ReviewerDiagnosisResult,
+    ReviewerDiagnosisRoute,
     SupervisionPreparationRequest,
     SupervisionPreparationResult,
     SupervisionPreparationStatus,
@@ -227,6 +232,8 @@ from .supervision_runtime_contracts import (
 
 __all__ = (
     "ContinuationAcceptedEvidence",
+    "ContinuationResult",
+    "ContinuationStatus",
     "AgentContextActorRole",
     "AgentContextDecisionKind",
     "AgentContextKind",
@@ -368,6 +375,9 @@ __all__ = (
     "RequirementChangeId",
     "RequirementId",
     "RequirementLifecycle",
+    "ReviewerDiagnosisRequest",
+    "ReviewerDiagnosisResult",
+    "ReviewerDiagnosisRoute",
     "RequirementLineageDecisionKind",
     "RequirementLineageGate",
     "RequirementLineageInvalidReason",
