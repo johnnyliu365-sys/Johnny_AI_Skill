@@ -1,5 +1,10 @@
 """Reusable, profile-driven project workflow router POC."""
 
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .graph import build_router_graph
+
 from .contracts import (
     AgentContextActorRole,
     AgentContextDecisionKind,
@@ -95,7 +100,6 @@ from .contracts import (
     SpecificationReadinessRequest,
     SpecificationWakeReason,
 )
-from .graph import build_router_graph
 from .guarded_integration import (
     AuditDecision,
     AuditDeliveryState,
@@ -229,6 +233,14 @@ from .supervision_runtime_contracts import (
     SupervisionStartResult,
     SupervisionStartStatus,
 )
+
+def __getattr__(name: str) -> object:
+    if name == "build_router_graph":
+        from .graph import build_router_graph
+
+        return build_router_graph
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
 
 __all__ = (
     "ContinuationAcceptedEvidence",
