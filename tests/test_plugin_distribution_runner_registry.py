@@ -15,7 +15,11 @@ from library.local_orchestration.project_runner_registry import (
     RunnerStopResult,
     RunnerStopped,
 )
-from library.workflow_router.contracts import OpaqueMetadataId
+from library.workflow_router.contracts import OpaqueMetadataId, ProjectId
+
+
+_PROJECT_ALPHA: ProjectId = "prj_aaaaaaaaaaaaaaaa"
+_PROJECT_BETA: ProjectId = "prj_bbbbbbbbbbbbbbbb"
 
 
 class _RecordingLifecycle:
@@ -24,20 +28,20 @@ class _RecordingLifecycle:
         start_result: RunnerStartResult | None = None,
         stop_result: RunnerStopResult | None = None,
     ) -> None:
-        self.starts: list[str] = []
-        self.stops: list[tuple[str, str]] = []
+        self.starts: list[ProjectId] = []
+        self.stops: list[tuple[ProjectId, str]] = []
         self.start_result: RunnerStartResult = start_result or RunnerStarted(
             runner_ref="runner-alpha"
         )
         self.stop_result: RunnerStopResult = stop_result or RunnerStopped()
 
-    def start(self, project_ref: OpaqueMetadataId) -> RunnerStartResult:
+    def start(self, project_ref: ProjectId) -> RunnerStartResult:
         self.starts.append(project_ref)
         return self.start_result
 
     def stop(
         self,
-        project_ref: OpaqueMetadataId,
+        project_ref: ProjectId,
         runner_ref: OpaqueMetadataId,
     ) -> RunnerStopResult:
         self.stops.append((project_ref, runner_ref))
@@ -45,38 +49,49 @@ class _RecordingLifecycle:
 
 
 class ProjectRunnerRegistryTests(TestCase):
+    def test_project_id_is_required_and_receipt_compatible(self) -> None:
+        lifecycle = _RecordingLifecycle()
+        registry = ProjectRunnerRegistry(lifecycle)
+
+        accepted = registry.register_subscription(_PROJECT_ALPHA, "subscription-one")
+
+        self.assertEqual(accepted.project_ref, _PROJECT_ALPHA)
+        with self.assertRaises(ValidationError):
+            registry.register_subscription("project-alpha", "subscription-invalid")
+        self.assertEqual(lifecycle.starts, [_PROJECT_ALPHA])
+
     def test_first_subscription_starts_once_and_binds_runner(self) -> None:
         lifecycle = _RecordingLifecycle()
         registry = ProjectRunnerRegistry(lifecycle)
 
-        result = registry.register_subscription("project-alpha", "subscription-one")
+        result = registry.register_subscription(_PROJECT_ALPHA, "subscription-one")
 
         self.assertEqual(result.decision, ProjectRunnerRegistryDecision.SUBSCRIBED)
-        self.assertEqual(result.project_ref, "project-alpha")
+        self.assertEqual(result.project_ref, _PROJECT_ALPHA)
         self.assertEqual(result.subscription_id, "subscription-one")
         self.assertEqual(result.runner_ref, "runner-alpha")
-        self.assertEqual(lifecycle.starts, ["project-alpha"])
+        self.assertEqual(lifecycle.starts, [_PROJECT_ALPHA])
         self.assertEqual(lifecycle.stops, [])
 
     def test_second_runner_for_same_project_is_rejected_before_start(self) -> None:
         lifecycle = _RecordingLifecycle()
         registry = ProjectRunnerRegistry(lifecycle)
 
-        first = registry.register_subscription("project-alpha", "subscription-one")
-        second = registry.register_subscription("project-alpha", "subscription-two")
+        first = registry.register_subscription(_PROJECT_ALPHA, "subscription-one")
+        second = registry.register_subscription(_PROJECT_ALPHA, "subscription-two")
 
         self.assertEqual(first.decision, ProjectRunnerRegistryDecision.SUBSCRIBED)
         self.assertEqual(second.decision, ProjectRunnerRegistryDecision.REUSED)
-        self.assertEqual(lifecycle.starts, ["project-alpha"])
+        self.assertEqual(lifecycle.starts, [_PROJECT_ALPHA])
         self.assertEqual(lifecycle.stops, [])
 
     def test_duplicate_and_foreign_subscriptions_do_not_mutate_peers(self) -> None:
         lifecycle = _RecordingLifecycle()
         registry = ProjectRunnerRegistry(lifecycle)
 
-        registry.register_subscription("project-alpha", "subscription-one")
-        duplicate = registry.register_subscription("project-alpha", "subscription-one")
-        foreign = registry.register_subscription("project-beta", "subscription-one")
+        registry.register_subscription(_PROJECT_ALPHA, "subscription-one")
+        duplicate = registry.register_subscription(_PROJECT_ALPHA, "subscription-one")
+        foreign = registry.register_subscription(_PROJECT_BETA, "subscription-one")
 
         self.assertEqual(
             duplicate.decision,
@@ -86,33 +101,33 @@ class ProjectRunnerRegistryTests(TestCase):
             foreign.decision,
             ProjectRunnerRegistryDecision.FOREIGN_SUBSCRIPTION,
         )
-        self.assertEqual(lifecycle.starts, ["project-alpha"])
+        self.assertEqual(lifecycle.starts, [_PROJECT_ALPHA])
         self.assertEqual(lifecycle.stops, [])
-        foreign_removal = registry.remove_subscription("project-beta", "subscription-one")
+        foreign_removal = registry.remove_subscription(_PROJECT_BETA, "subscription-one")
         self.assertEqual(
             foreign_removal.decision,
             ProjectRunnerRegistryDecision.FOREIGN_SUBSCRIPTION,
         )
-        self.assertEqual(lifecycle.starts, ["project-alpha"])
+        self.assertEqual(lifecycle.starts, [_PROJECT_ALPHA])
         self.assertEqual(lifecycle.stops, [])
         retained_duplicate = registry.register_subscription(
-            "project-alpha", "subscription-one"
+            _PROJECT_ALPHA, "subscription-one"
         )
         self.assertEqual(
             retained_duplicate.decision,
             ProjectRunnerRegistryDecision.DUPLICATE_SUBSCRIPTION,
         )
         self.assertEqual(retained_duplicate.runner_ref, "runner-alpha")
-        retained = registry.register_subscription("project-alpha", "subscription-two")
+        retained = registry.register_subscription(_PROJECT_ALPHA, "subscription-two")
         self.assertEqual(retained.decision, ProjectRunnerRegistryDecision.REUSED)
         self.assertEqual(retained.runner_ref, "runner-alpha")
-        self.assertEqual(lifecycle.starts, ["project-alpha"])
+        self.assertEqual(lifecycle.starts, [_PROJECT_ALPHA])
 
     def test_unavailable_start_retains_no_state(self) -> None:
         lifecycle = _RecordingLifecycle(start_result=RunnerStartCapabilityUnavailable())
         registry = ProjectRunnerRegistry(lifecycle)
 
-        blocked = registry.register_subscription("project-alpha", "subscription-one")
+        blocked = registry.register_subscription(_PROJECT_ALPHA, "subscription-one")
 
         self.assertEqual(
             blocked.decision,
@@ -121,71 +136,71 @@ class ProjectRunnerRegistryTests(TestCase):
         self.assertIsNone(blocked.subscription_id)
         self.assertIsNone(blocked.runner_ref)
         lifecycle.start_result = RunnerStarted(runner_ref="runner-alpha")
-        retried = registry.register_subscription("project-alpha", "subscription-one")
+        retried = registry.register_subscription(_PROJECT_ALPHA, "subscription-one")
         self.assertEqual(retried.decision, ProjectRunnerRegistryDecision.SUBSCRIBED)
-        self.assertEqual(lifecycle.starts, ["project-alpha", "project-alpha"])
+        self.assertEqual(lifecycle.starts, [_PROJECT_ALPHA, _PROJECT_ALPHA])
 
     def test_nonfinal_and_final_removal_have_distinct_stop_effects(self) -> None:
         lifecycle = _RecordingLifecycle()
         registry = ProjectRunnerRegistry(lifecycle)
-        registry.register_subscription("project-alpha", "subscription-one")
-        registry.register_subscription("project-alpha", "subscription-two")
+        registry.register_subscription(_PROJECT_ALPHA, "subscription-one")
+        registry.register_subscription(_PROJECT_ALPHA, "subscription-two")
 
-        nonfinal = registry.remove_subscription("project-alpha", "subscription-one")
+        nonfinal = registry.remove_subscription(_PROJECT_ALPHA, "subscription-one")
         self.assertEqual(nonfinal.decision, ProjectRunnerRegistryDecision.REMOVED)
         self.assertEqual(lifecycle.stops, [])
 
-        final = registry.remove_subscription("project-alpha", "subscription-two")
+        final = registry.remove_subscription(_PROJECT_ALPHA, "subscription-two")
         self.assertEqual(final.decision, ProjectRunnerRegistryDecision.REMOVED)
-        self.assertEqual(lifecycle.stops, [("project-alpha", "runner-alpha")])
-        missing = registry.remove_subscription("project-alpha", "subscription-two")
+        self.assertEqual(lifecycle.stops, [(_PROJECT_ALPHA, "runner-alpha")])
+        missing = registry.remove_subscription(_PROJECT_ALPHA, "subscription-two")
         self.assertEqual(missing.decision, ProjectRunnerRegistryDecision.NOT_FOUND)
-        self.assertEqual(lifecycle.stops, [("project-alpha", "runner-alpha")])
+        self.assertEqual(lifecycle.stops, [(_PROJECT_ALPHA, "runner-alpha")])
 
     def test_detach_and_uninstall_stop_only_their_project(self) -> None:
         lifecycle = _RecordingLifecycle()
         registry = ProjectRunnerRegistry(lifecycle)
-        registry.register_subscription("project-alpha", "subscription-one")
+        registry.register_subscription(_PROJECT_ALPHA, "subscription-one")
 
-        detached = registry.detach_project("project-alpha")
+        detached = registry.detach_project(_PROJECT_ALPHA)
 
         self.assertEqual(detached.decision, ProjectRunnerRegistryDecision.DETACHED)
-        self.assertEqual(lifecycle.stops, [("project-alpha", "runner-alpha")])
-        missing = registry.detach_project("project-alpha")
+        self.assertEqual(lifecycle.stops, [(_PROJECT_ALPHA, "runner-alpha")])
+        missing = registry.detach_project(_PROJECT_ALPHA)
         self.assertEqual(missing.decision, ProjectRunnerRegistryDecision.NOT_FOUND)
-        registry.register_subscription("project-beta", "subscription-two")
-        uninstalled = registry.uninstall_project("project-beta")
+        registry.register_subscription(_PROJECT_BETA, "subscription-two")
+        uninstalled = registry.uninstall_project(_PROJECT_BETA)
         self.assertEqual(uninstalled.decision, ProjectRunnerRegistryDecision.UNINSTALLED)
         self.assertEqual(
             lifecycle.stops,
-            [("project-alpha", "runner-alpha"), ("project-beta", "runner-alpha")],
+            [(_PROJECT_ALPHA, "runner-alpha"), (_PROJECT_BETA, "runner-alpha")],
         )
 
     def test_unavailable_stop_retains_project_and_preserves_peer(self) -> None:
         lifecycle = _RecordingLifecycle()
         registry = ProjectRunnerRegistry(lifecycle)
-        registry.register_subscription("project-alpha", "subscription-one")
-        registry.register_subscription("project-beta", "subscription-two")
+        registry.register_subscription(_PROJECT_ALPHA, "subscription-one")
+        registry.register_subscription(_PROJECT_BETA, "subscription-two")
         lifecycle.stop_result = RunnerStopCapabilityUnavailable()
 
-        blocked = registry.detach_project("project-alpha")
+        blocked = registry.detach_project(_PROJECT_ALPHA)
 
         self.assertEqual(
             blocked.decision,
             ProjectRunnerRegistryDecision.RUNNER_STOP_UNAVAILABLE,
         )
-        self.assertEqual(lifecycle.stops, [("project-alpha", "runner-alpha")])
+        self.assertEqual(lifecycle.stops, [(_PROJECT_ALPHA, "runner-alpha")])
         lifecycle.stop_result = RunnerStopped()
-        removed_peer = registry.remove_subscription("project-beta", "subscription-two")
+        removed_peer = registry.remove_subscription(_PROJECT_BETA, "subscription-two")
         self.assertEqual(removed_peer.decision, ProjectRunnerRegistryDecision.REMOVED)
         self.assertEqual(
             lifecycle.stops,
             [
-                ("project-alpha", "runner-alpha"),
-                ("project-beta", "runner-alpha"),
+                (_PROJECT_ALPHA, "runner-alpha"),
+                (_PROJECT_BETA, "runner-alpha"),
             ],
         )
-        retained = registry.remove_subscription("project-alpha", "subscription-one")
+        retained = registry.remove_subscription(_PROJECT_ALPHA, "subscription-one")
         self.assertEqual(retained.decision, ProjectRunnerRegistryDecision.REMOVED)
 
     def test_fresh_registry_has_no_lifecycle_effect_or_recovery_api(self) -> None:
@@ -194,7 +209,7 @@ class ProjectRunnerRegistryTests(TestCase):
 
         self.assertEqual(lifecycle.starts, [])
         self.assertEqual(lifecycle.stops, [])
-        missing = registry.uninstall_project("project-alpha")
+        missing = registry.uninstall_project(_PROJECT_ALPHA)
         self.assertEqual(missing.decision, ProjectRunnerRegistryDecision.NOT_FOUND)
         self.assertEqual(lifecycle.starts, [])
         self.assertEqual(lifecycle.stops, [])
@@ -215,7 +230,7 @@ class ProjectRunnerRegistryTests(TestCase):
         )
         result = ProjectRunnerRegistryResult(
             decision=ProjectRunnerRegistryDecision.SUBSCRIBED,
-            project_ref="project-alpha",
+            project_ref=_PROJECT_ALPHA,
             subscription_id="subscription-one",
             runner_ref="runner-alpha",
         )
@@ -241,20 +256,20 @@ class ProjectRunnerRegistryTests(TestCase):
         malformed_lifecycle = _RecordingLifecycle(start_result=malformed_start)
         with self.assertRaises(ValidationError):
             ProjectRunnerRegistry(malformed_lifecycle).register_subscription(
-                "project-alpha", "subscription-one"
+                _PROJECT_ALPHA, "subscription-one"
             )
         malformed_stop = RunnerStopped.model_construct(status="BROKEN")
         malformed_stop_lifecycle = _RecordingLifecycle(stop_result=malformed_stop)
         malformed_stop_registry = ProjectRunnerRegistry(malformed_stop_lifecycle)
-        malformed_stop_registry.register_subscription("project-alpha", "subscription-one")
+        malformed_stop_registry.register_subscription(_PROJECT_ALPHA, "subscription-one")
         with self.assertRaises(ValidationError):
-            malformed_stop_registry.remove_subscription("project-alpha", "subscription-one")
+            malformed_stop_registry.remove_subscription(_PROJECT_ALPHA, "subscription-one")
         with self.assertRaises(ValidationError):
             RunnerStartCapabilityUnavailable(runner_ref="runner-alpha")
         with self.assertRaises(ValidationError):
             ProjectRunnerRegistryResult(
                 decision=ProjectRunnerRegistryDecision.RUNNER_START_UNAVAILABLE,
-                project_ref="project-alpha",
+                project_ref=_PROJECT_ALPHA,
                 subscription_id="subscription-one",
                 runner_ref=None,
             )

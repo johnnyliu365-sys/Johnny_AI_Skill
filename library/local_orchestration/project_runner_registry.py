@@ -7,7 +7,7 @@ from typing import Annotated, Literal, Protocol, Self, TypeAlias
 
 from pydantic import BaseModel, ConfigDict, Field, TypeAdapter, model_validator
 
-from library.workflow_router.contracts import OpaqueMetadataId
+from library.workflow_router.contracts import OpaqueMetadataId, ProjectId
 
 
 class _StrictModel(BaseModel):
@@ -62,12 +62,12 @@ RunnerStopResult: TypeAlias = Annotated[
 class RunnerLifecyclePort(Protocol):
     """The injected, effect-owning lifecycle boundary."""
 
-    def start(self, project_ref: OpaqueMetadataId) -> RunnerStartResult:
+    def start(self, project_ref: ProjectId) -> RunnerStartResult:
         """Start one project runner or return finite unavailability."""
 
     def stop(
         self,
-        project_ref: OpaqueMetadataId,
+        project_ref: ProjectId,
         runner_ref: OpaqueMetadataId,
     ) -> RunnerStopResult:
         """Stop one project runner or return finite unavailability."""
@@ -92,7 +92,7 @@ class ProjectRunnerRegistryResult(_StrictModel):
     """Closed result state with no raw lifecycle or caller diagnostics."""
 
     decision: ProjectRunnerRegistryDecision
-    project_ref: OpaqueMetadataId
+    project_ref: ProjectId
     subscription_id: OpaqueMetadataId | None
     runner_ref: OpaqueMetadataId | None
 
@@ -127,20 +127,20 @@ class ProjectRunnerRegistryResult(_StrictModel):
 class _SubscriptionRequest(_StrictModel):
     """Validated public registration/removal arguments."""
 
-    project_ref: OpaqueMetadataId
+    project_ref: ProjectId
     subscription_id: OpaqueMetadataId
 
 
 class _ProjectRequest(_StrictModel):
     """Validated public project-only arguments."""
 
-    project_ref: OpaqueMetadataId
+    project_ref: ProjectId
 
 
 class _ProjectRunnerState(_StrictModel):
     """One project state row; tuples avoid an unbounded dynamic map."""
 
-    project_ref: OpaqueMetadataId
+    project_ref: ProjectId
     runner_ref: OpaqueMetadataId
     subscription_ids: tuple[OpaqueMetadataId, ...] = Field(min_length=1)
 
@@ -159,7 +159,7 @@ _STOP_RESULT_ADAPTER: TypeAdapter[RunnerStopResult] = TypeAdapter(RunnerStopResu
 
 def _find_project_state(
     states: tuple[_ProjectRunnerState, ...],
-    project_ref: OpaqueMetadataId,
+    project_ref: ProjectId,
 ) -> _ProjectRunnerState | None:
     """Find a project row without exposing mutable storage."""
 
@@ -195,7 +195,7 @@ def _replace_project_state(
 
 def _remove_project_state(
     states: tuple[_ProjectRunnerState, ...],
-    project_ref: OpaqueMetadataId,
+    project_ref: ProjectId,
 ) -> tuple[_ProjectRunnerState, ...]:
     """Remove exactly one project row after a successful stop."""
 
@@ -223,7 +223,7 @@ class ProjectRunnerRegistry:
 
     def register_subscription(
         self,
-        project_ref: OpaqueMetadataId,
+        project_ref: ProjectId,
         subscription_id: OpaqueMetadataId,
     ) -> ProjectRunnerRegistryResult:
         """Register a subscription, starting at most one runner per project."""
@@ -293,7 +293,7 @@ class ProjectRunnerRegistry:
 
     def remove_subscription(
         self,
-        project_ref: OpaqueMetadataId,
+        project_ref: ProjectId,
         subscription_id: OpaqueMetadataId,
     ) -> ProjectRunnerRegistryResult:
         """Remove one subscription and stop only when it is the final one."""
@@ -357,7 +357,7 @@ class ProjectRunnerRegistry:
 
     def detach_project(
         self,
-        project_ref: OpaqueMetadataId,
+        project_ref: ProjectId,
     ) -> ProjectRunnerRegistryResult:
         """Stop and remove one active project registration."""
 
@@ -369,7 +369,7 @@ class ProjectRunnerRegistry:
 
     def uninstall_project(
         self,
-        project_ref: OpaqueMetadataId,
+        project_ref: ProjectId,
     ) -> ProjectRunnerRegistryResult:
         """Stop and remove one active project during uninstall."""
 
@@ -381,7 +381,7 @@ class ProjectRunnerRegistry:
 
     def _stop_project(
         self,
-        project_ref: OpaqueMetadataId,
+        project_ref: ProjectId,
         success_decision: Literal[
             ProjectRunnerRegistryDecision.DETACHED,
             ProjectRunnerRegistryDecision.UNINSTALLED,
