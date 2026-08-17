@@ -105,3 +105,16 @@ the existing R3 test: it must return `FOREIGN_SUBSCRIPTION`, make zero additiona
 call, and prove Alpha retains its subscription/runner. Reverse-mutate this foreign-owner guard so
 that exact R3 cell turns red, restore exact bytes, rerun focused, strict, full and residue gates,
 and create one additive implementation commit.
+
+## Integrated evidence
+
+| Field | Evidence |
+| --- | --- |
+| State | `INTEGRATED / CLOSED` |
+| Implementation / correction / integration | `51efa7cd508dfa645b2654d80759060e17536088` / `a184c2009ccbec8f281185b9d43541735b2a5bcf` / `eff1bc023c45f0a6de5459ce1b16d22a3c3a1018` |
+| Independent closure | focused `10 passed`; strict `mypy --no-incremental` passed; full `744 passed, 2,537 subtests`; 208 Python files compiled in memory. |
+| Correction closure | foreign Alpha subscription removed through Beta returns `FOREIGN_SUBSCRIPTION`, makes no additional lifecycle call, and Alpha retains its runner/subscription. |
+| Reverse / residue | Owner's R3 foreign-owner guard turned red and was byte-restored; reviewer rerun found `POST_CORRECTION_CLEAN=PASS` with no cache/bytecode residue. |
+| Review | `APPROVED`; only injected in-memory lifecycle fakes were exercised. No process, filesystem, Git, host, network, receipt-store or target-project effect was introduced. |
+
+Canonical Git-blob SHA-256: `project_runner_registry.py` `B83F50266D996F7CA71A87B8F32286A0B158EE8CF595FB1EE684CBAA8899D66C`; `test_plugin_distribution_runner_registry.py` `1BBFD26DFDD15A7392484A4369D1A6FB01592284B3181F03DFD37092961C26F3`.
