@@ -154,6 +154,7 @@ class ApprovedDispatchArtifactRecord(_StrictModel):
     handoff_revision: TicketRevision
     handoff_digest: ContentDigest
     handoff_document_commit: CommitId
+    baseline_commit: CommitId
     implementation_owner_id: RoleReference
     expected_return: ExpectedReturnReference
     descriptor_binding: DescriptorBinding
@@ -237,6 +238,7 @@ class TicketReceiptIssueRequest(_StrictModel):
     handoff_revision: TicketRevision
     handoff_digest: ContentDigest
     handoff_document_commit: CommitId
+    baseline_commit: CommitId
     receipt_id: ReceiptId
     expected_return: ExpectedReturnReference
     descriptor_binding: DescriptorBinding
@@ -267,6 +269,7 @@ class TicketReceipt(_StrictModel):
     handoff_revision: TicketRevision
     handoff_digest: ContentDigest
     handoff_document_commit: CommitId
+    baseline_commit: CommitId
     implementation_owner_id: RoleReference
     expected_return: ExpectedReturnReference
     descriptor_binding: DescriptorBinding

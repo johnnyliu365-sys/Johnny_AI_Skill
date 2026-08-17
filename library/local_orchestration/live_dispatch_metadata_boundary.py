@@ -207,6 +207,7 @@ def _receipt_from_request(request: TicketReceiptIssueRequest) -> TicketReceipt:
         handoff_revision=request.handoff_revision,
         handoff_digest=request.handoff_digest,
         handoff_document_commit=request.handoff_document_commit,
+        baseline_commit=request.baseline_commit,
         implementation_owner_id=identity.implementation_owner_id,
         expected_return=request.expected_return,
         descriptor_binding=request.descriptor_binding,
@@ -408,6 +409,7 @@ class LiveDispatchMetadataBoundary:
                     or artifact.handoff_revision != request.handoff_revision
                     or artifact.handoff_digest != request.handoff_digest
                     or artifact.handoff_document_commit != request.handoff_document_commit
+                    or artifact.baseline_commit != request.baseline_commit
                     or artifact.expected_return != request.expected_return
                     or artifact.descriptor_binding != request.descriptor_binding
                 ):

@@ -42,6 +42,7 @@ def _receipt(lifecycle: ReceiptLifecycle = ReceiptLifecycle.ACTIVE) -> TicketRec
         handoff_revision="rev-fedcba9876543210",
         handoff_digest=_DIGEST,
         handoff_document_commit="fedcba9876543210",
+        baseline_commit="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         implementation_owner_id="role-implementation-owner-1",
         expected_return="return-implementation-completed",
         descriptor_binding="descriptor-live-dispatch-r03-01",

@@ -51,6 +51,7 @@ def _artifact() -> ApprovedDispatchArtifactRecord:
         handoff_revision="rev-fedcba9876543210",
         handoff_digest=_DIGEST,
         handoff_document_commit="fedcba9876543210",
+        baseline_commit="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         implementation_owner_id="role-implementation-owner-1",
         expected_return="return-implementation-completed",
         descriptor_binding="descriptor-live-dispatch-r03-01",
@@ -66,6 +67,7 @@ def _issue_request(record: ApprovedDispatchArtifactRecord) -> TicketReceiptIssue
         handoff_revision=record.handoff_revision,
         handoff_digest=record.handoff_digest,
         handoff_document_commit=record.handoff_document_commit,
+        baseline_commit=record.baseline_commit,
         receipt_id="receipt-live-dispatch-r03-01",
         expected_return=record.expected_return,
         descriptor_binding=record.descriptor_binding,
@@ -187,6 +189,7 @@ class _Boundary:
             or record.handoff_revision != request.handoff_revision
             or record.handoff_digest != request.handoff_digest
             or record.handoff_document_commit != request.handoff_document_commit
+            or record.baseline_commit != request.baseline_commit
             or record.expected_return != request.expected_return
             or record.descriptor_binding != request.descriptor_binding
         ):
@@ -252,6 +255,7 @@ def _receipt_from_request(request: TicketReceiptIssueRequest) -> TicketReceipt:
         handoff_revision=request.handoff_revision,
         handoff_digest=request.handoff_digest,
         handoff_document_commit=request.handoff_document_commit,
+        baseline_commit=request.baseline_commit,
         implementation_owner_id=identity.implementation_owner_id,
         expected_return=request.expected_return,
         descriptor_binding=request.descriptor_binding,
