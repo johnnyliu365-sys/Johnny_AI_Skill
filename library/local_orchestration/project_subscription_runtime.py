@@ -278,8 +278,6 @@ class ProjectSubscriptionRuntime:
         validated_state = self._validated_state(state)
         if validated_state is None:
             return _rejected(ProjectSubscriptionFailure.INVALID_BINDING)
-        if validated_state.registration.lifecycle is GitEventRegistrationLifecycle.CLOSED:
-            return ProjectSubscriptionResult(decision=ProjectSubscriptionDecision.CLOSED)
 
         runner_result = ProjectRunnerRegistryResult.model_validate(
             self._runner_registry.remove_subscription(
@@ -402,18 +400,18 @@ class ProjectSubscriptionRuntime:
             ),
             strict=True,
         )
-        if runner_result.decision is ProjectRunnerRegistryDecision.RUNNER_STOP_UNAVAILABLE:
-            return ProjectSubscriptionResult(
-                decision=ProjectSubscriptionDecision.CLOSE_BLOCKED,
-                state=state,
+        if runner_result.decision is ProjectRunnerRegistryDecision.REMOVED:
+            return _rejected(
+                ProjectSubscriptionFailure.GIT_REGISTRATION_REJECTED,
                 runner_result=runner_result,
                 git_decision=git_decision,
-                failure=ProjectSubscriptionFailure.RUNNER_CLOSE_REJECTED,
             )
-        return _rejected(
-            ProjectSubscriptionFailure.GIT_REGISTRATION_REJECTED,
+        return ProjectSubscriptionResult(
+            decision=ProjectSubscriptionDecision.CLOSE_BLOCKED,
+            state=state,
             runner_result=runner_result,
             git_decision=git_decision,
+            failure=ProjectSubscriptionFailure.RUNNER_CLOSE_REJECTED,
         )
 
 

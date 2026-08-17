@@ -30,6 +30,8 @@ from library.workflow_router.git_handoff_contracts import (
     GitObservationMode,
     GitRefRegistrationRequest,
     GitRefSignal,
+    SupervisionFault,
+    SupervisionFaultKind,
 )
 from library.workflow_router.live_dispatch_contracts import ReceiptLifecycle, TicketReceipt
 from library.workflow_router.role_supervision_contracts import (
@@ -47,10 +49,15 @@ _COMMIT = "abcdef2"
 
 
 class _RecordingLifecycle:
-    def __init__(self, stop_result: RunnerStopResult | None = None) -> None:
+    def __init__(
+        self,
+        stop_result: RunnerStopResult | None = None,
+        stop_results: tuple[RunnerStopResult, ...] = (),
+    ) -> None:
         self.starts: list[str] = []
         self.stops: list[tuple[str, str]] = []
         self.stop_result = stop_result or RunnerStopped()
+        self.stop_results = list(stop_results)
 
     def start(self, project_ref: str) -> RunnerStartResult:
         self.starts.append(project_ref)
@@ -58,6 +65,8 @@ class _RecordingLifecycle:
 
     def stop(self, project_ref: str, runner_ref: str) -> RunnerStopResult:
         self.stops.append((project_ref, runner_ref))
+        if self.stop_results:
+            return self.stop_results.pop(0)
         return self.stop_result
 
 
@@ -165,12 +174,28 @@ def _registration(request: GitRefRegistrationRequest) -> GitEventRegistrationSta
     )
 
 
+def _fault(state: GitEventRegistrationState, kind: SupervisionFaultKind) -> SupervisionFault:
+    return SupervisionFault(
+        kind=kind,
+        event_source_ref=state.event_source_ref,
+        subscription_id=state.subscription_id,
+        ticket_ref=state.ticket_ref,
+        router_receipt_ref=state.router_receipt_ref,
+        observed_commit=_COMMIT,
+    )
+
+
 class _FakeGitAdapter(ReceiptBoundGitEventAdapter):
-    def __init__(self, observed: GitEventAdapterDecisionKind = GitEventAdapterDecisionKind.SILENT) -> None:
+    def __init__(
+        self,
+        observed: GitEventAdapterDecisionKind = GitEventAdapterDecisionKind.SILENT,
+        malformed: bool = False,
+    ) -> None:
         self.register_calls = 0
         self.observe_calls = 0
         self.close_calls: list[str] = []
         self.observed = observed
+        self.malformed = malformed
 
     def register(
         self,
@@ -190,8 +215,46 @@ class _FakeGitAdapter(ReceiptBoundGitEventAdapter):
         signal: GitRefSignal,
         context: HandoffAdmissionContext,
     ) -> GitEventAdapterDecision:
-        del signal, context
+        del context
         self.observe_calls += 1
+        if (
+            signal.event_source_ref != state.event_source_ref
+            or signal.subscription_id != state.subscription_id
+        ):
+            return GitEventAdapterDecision(
+                decision=GitEventAdapterDecisionKind.SILENT,
+                registration=state,
+            )
+        if self.malformed:
+            return cast(
+                GitEventAdapterDecision,
+                GitEventAdapterDecision.model_construct(
+                    decision=GitEventAdapterDecisionKind.TERMINAL_HANDOFF_ACCEPTED,
+                    registration=state,
+                    handoff=None,
+                ),
+            )
+        if self.observed in (
+            GitEventAdapterDecisionKind.INVALID_HANDOFF_FAULT,
+            GitEventAdapterDecisionKind.STALE_BINDING_FAULT,
+        ):
+            fault_kind = (
+                SupervisionFaultKind.INVALID_HANDOFF
+                if self.observed is GitEventAdapterDecisionKind.INVALID_HANDOFF_FAULT
+                else SupervisionFaultKind.STALE_BINDING
+            )
+            return GitEventAdapterDecision(
+                decision=self.observed,
+                registration=state,
+                fault=_fault(state, fault_kind),
+            )
+        if self.observed is GitEventAdapterDecisionKind.READBACK_FAILED:
+            return GitEventAdapterDecision(
+                decision=self.observed,
+                registration=state.model_copy(
+                    update={"lifecycle": GitEventRegistrationLifecycle.CLOSED}
+                ),
+            )
         if self.observed is GitEventAdapterDecisionKind.TERMINAL_HANDOFF_ACCEPTED:
             leaf = seal_handoff_leaf(
                 HandoffLeafBody(
@@ -300,8 +363,9 @@ class ProjectSubscriptionRuntimeTests(TestCase):
         first_adapter = _FakeGitAdapter()
         second_adapter = _FakeGitAdapter()
         lifecycle = _RecordingLifecycle()
-        first_runtime, _ = _runtime(first_adapter, lifecycle)
-        second_runtime, _ = _runtime(second_adapter, lifecycle)
+        registry = ProjectRunnerRegistry(lifecycle)
+        first_runtime = ProjectSubscriptionRuntime(registry, first_adapter)
+        second_runtime = ProjectSubscriptionRuntime(registry, second_adapter)
         first = first_runtime.register(_request())
         second_request = _request().model_copy(
             update={"git_request": _git_request(subscription_id="subscription-pd06-two")}
@@ -310,13 +374,77 @@ class ProjectSubscriptionRuntimeTests(TestCase):
 
         first_state = cast(ProjectSubscriptionState, first.state)
         second_state = cast(ProjectSubscriptionState, second.state)
-        closed = first_runtime.close(first_state)
+        first_closed = first_runtime.close(first_state)
+        second_closed = second_runtime.close(second_state)
 
-        self.assertEqual(ProjectSubscriptionDecision.CLOSED, closed.decision)
+        self.assertEqual(ProjectSubscriptionDecision.CLOSED, first_closed.decision)
+        self.assertEqual(ProjectSubscriptionDecision.CLOSED, second_closed.decision)
         self.assertEqual(["subscription-pd06"], first_adapter.close_calls)
-        self.assertEqual([], second_adapter.close_calls)
+        self.assertEqual(["subscription-pd06-two"], second_adapter.close_calls)
         self.assertEqual([(_PROJECT_ALPHA, "runner-pd06")], lifecycle.stops)
-        self.assertEqual("subscription-pd06-two", second_state.registration.subscription_id)
+
+    def test_foreign_signal_is_silent_without_runner_or_peer_mutation(self) -> None:
+        adapter = _FakeGitAdapter(GitEventAdapterDecisionKind.TERMINAL_HANDOFF_ACCEPTED)
+        runtime, lifecycle = _runtime(adapter)
+        registered = runtime.register(_request())
+        state = cast(ProjectSubscriptionState, registered.state)
+
+        observed = runtime.observe(
+            state,
+            GitRefSignal(event_source_ref="event-source-foreign", subscription_id="subscription-foreign"),
+        )
+
+        self.assertEqual(ProjectSubscriptionDecision.SILENT, observed.decision)
+        self.assertEqual(state, observed.state)
+        self.assertEqual([], lifecycle.stops)
+        self.assertEqual([], adapter.close_calls)
+
+    def test_terminal_closed_registration_retries_unavailable_removal_and_completes(self) -> None:
+        adapter = _FakeGitAdapter(GitEventAdapterDecisionKind.READBACK_FAILED)
+        lifecycle = _RecordingLifecycle(
+            stop_results=(RunnerStopCapabilityUnavailable(), RunnerStopped())
+        )
+        runtime, _ = _runtime(adapter, lifecycle)
+        registered = runtime.register(_request())
+        state = cast(ProjectSubscriptionState, registered.state)
+
+        blocked = runtime.observe(
+            state,
+            GitRefSignal(event_source_ref="event-source-pd06", subscription_id="subscription-pd06"),
+        )
+        blocked_state = cast(ProjectSubscriptionState, blocked.state)
+        closed = runtime.close(blocked_state)
+
+        self.assertEqual(ProjectSubscriptionDecision.CLOSE_BLOCKED, blocked.decision)
+        self.assertEqual(ProjectSubscriptionDecision.CLOSED, closed.decision)
+        self.assertEqual(2, len(lifecycle.stops))
+        self.assertEqual(["subscription-pd06"], adapter.close_calls)
+
+    def test_replay_stale_and_malformed_adapter_outcomes_never_become_candidates(self) -> None:
+        cases = (
+            (GitEventAdapterDecisionKind.SILENT, False),
+            (GitEventAdapterDecisionKind.STALE_BINDING_FAULT, False),
+            (GitEventAdapterDecisionKind.TERMINAL_HANDOFF_ACCEPTED, True),
+        )
+        for outcome, malformed in cases:
+            with self.subTest(outcome=outcome, malformed=malformed):
+                adapter = _FakeGitAdapter(outcome, malformed=malformed)
+                runtime, _ = _runtime(adapter)
+                registered = runtime.register(_request())
+                state = cast(ProjectSubscriptionState, registered.state)
+
+                observed = runtime.observe(
+                    state,
+                    GitRefSignal(
+                        event_source_ref="event-source-pd06",
+                        subscription_id="subscription-pd06",
+                    ),
+                )
+
+                self.assertNotEqual(
+                    ProjectSubscriptionDecision.COMPLETION_CANDIDATE,
+                    observed.decision,
+                )
 
     def test_unavailable_runner_stop_blocks_close_and_keeps_git_registration_active(self) -> None:
         adapter = _FakeGitAdapter()
