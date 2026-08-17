@@ -212,8 +212,21 @@ from .thread_dispatch_contracts import (
     derive_dispatch_payload_digest,
     derive_ticket_receipt_digest,
 )
+from .supervision_runtime_contracts import (
+    ContinuationAcceptedEvidence,
+    SupervisionPreparationRequest,
+    SupervisionPreparationResult,
+    SupervisionPreparationStatus,
+    SupervisionRuntimeFailure,
+    SupervisionRuntimeLifecycle,
+    SupervisionRuntimeState,
+    SupervisionStartRequest,
+    SupervisionStartResult,
+    SupervisionStartStatus,
+)
 
 __all__ = (
+    "ContinuationAcceptedEvidence",
     "AgentContextActorRole",
     "AgentContextDecisionKind",
     "AgentContextKind",
@@ -389,6 +402,15 @@ __all__ = (
     "SpecificationReadinessDecision",
     "SpecificationReadinessRequest",
     "SpecificationWakeReason",
+    "SupervisionPreparationRequest",
+    "SupervisionPreparationResult",
+    "SupervisionPreparationStatus",
+    "SupervisionRuntimeFailure",
+    "SupervisionRuntimeLifecycle",
+    "SupervisionRuntimeState",
+    "SupervisionStartRequest",
+    "SupervisionStartResult",
+    "SupervisionStartStatus",
     "RunAcceptance",
     "SourceSnippet",
     "TicketDispatchConfirmation",

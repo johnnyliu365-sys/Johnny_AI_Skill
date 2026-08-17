@@ -282,8 +282,10 @@ from library.workflow_router.live_dispatch_contracts import (
     TicketRevision,
     to_legacy_ticket_dispatch_receipt,
 )
+from .receipt_bound_supervision import ReceiptBoundSupervisionController
 
 __all__ = [
+    "ReceiptBoundSupervisionController",
     "CANONICAL_INSTALL_ROOT",
     "ArtifactDigest",
     "BlockReason",
