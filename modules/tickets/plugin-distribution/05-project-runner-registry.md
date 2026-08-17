@@ -106,6 +106,39 @@ call, and prove Alpha retains its subscription/runner. Reverse-mutate this forei
 that exact R3 cell turns red, restore exact bytes, rerun focused, strict, full and residue gates,
 and create one additive implementation commit.
 
+## Correction admission 02 — canonical receipt project identity
+
+| Field | Binding |
+| --- | --- |
+| State | `CHANGES_REQUESTED / UPSTREAM_CONTRACT_DEFECT / SAME_TICKET_ADDITIVE_CORRECTION` |
+| Reviewed baseline | `eff1bc023c45f0a6de5459ce1b16d22a3c3a1018` (Ticket 05 integrated closure) |
+| Trigger | Ticket 06 admission found that the runner registry's `OpaqueMetadataId` project key cannot equal or validate the receipt boundary's canonical `ProjectId` (`prj_[0-9a-f]{16}`). |
+| Allocation | Retain ticket `ticket-pd05-runner-registry-01`, receipt `receipt-pd05-20260817-001`, owner `01a00eac-b464-7ee1-ac76-465477768e02`, worktree `worktree-pluginimpl2-01`, and branch `codex/plugin-distribution-05-project-runner-registry`; user-authorized manual bootstrap forwarding only, with no live Router/host claim or new effect authority. |
+
+This correction supersedes only the original closure's use of `OpaqueMetadataId` for the
+*project* key.  Import and use the existing `ProjectId` value type for every project value at
+the `ProjectRunnerRegistry` boundary: `RunnerLifecyclePort.start`,
+`RunnerLifecyclePort.stop`, `ProjectRunnerRegistryResult.project_ref`, internal request/state
+models, lookup/replacement/removal helpers, and all four public registry methods.  The method
+and result field name remains `project_ref`; its type is now exactly `ProjectId`.  Do not create
+a conversion, derived key, alias, or parallel mapping.  `subscription_id` and `runner_ref`
+remain `OpaqueMetadataId` exactly as before.
+
+Within the original two writable paths only, replace project fixtures with distinct valid
+`ProjectId` values and add one named TDD cell proving that a valid receipt-compatible project ID
+flows through start/result state while `project-alpha` is rejected by the ordinary public
+validator before any fake lifecycle call.  Existing lifecycle, duplicate/foreign subscription,
+stop, isolation and no-recovery behavior must remain unchanged.  The first-red command is
+`python -B -m pytest -q -p no:cacheprovider tests/test_plugin_distribution_runner_registry.py -k test_project_id_is_required_and_receipt_compatible`.
+
+Run the focused closure, `python -m mypy --strict
+library/local_orchestration/project_runner_registry.py`, the cache-free full suite and the
+existing in-memory compile gate.  Reverse-mutate the `ProjectId` boundary (or its ordinary
+validator path) so the new named cell fails, byte-restore it, then remove all cache/bytecode
+residue.  Return one additive implementation commit with the named cell, strict/full results,
+reverse result and residue evidence.  Any need to change receipt contracts, Git adapters,
+composition roots, host behavior or Ticket 06 is `CHANGE_DETECTED`.
+
 ## Integrated evidence
 
 | Field | Evidence |
