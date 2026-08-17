@@ -47,6 +47,63 @@ Archive order, path separators, timestamps, permissions and compression settings
 canonicalized. Two builds from the same source commit and toolchain must be byte-identical. The
 plugin manifest has at most three default prompts and declares no MCP server, App or hook.
 
+### Exact contract and creation locations
+
+Ticket planning must use the following locations; no ticket may choose a parallel package,
+launcher, lock or manifest contract:
+
+| Concern | Public contract / composition source | Created or delivered artifact |
+| --- | --- | --- |
+| Runtime dependency lock | `library/local_orchestration/runtime_dependency_lock.py` | repository-root `requirements-runtime.lock` |
+| Payload manifest and digest | `library/local_orchestration/windows_package_manifest.py` | archive-root `payload-manifest.json` |
+| Deterministic payload selection and ZIP creation | `library/local_orchestration/plugin_bundle_builder.py` | Johnny-owned build output `johnny-ai-skill-0.4.0.zip`; never a target-project path |
+| Router CLI request/result contract | `library/local_orchestration/johnny_router_contracts.py` | finite typed JSON on stdout; no durable target artifact |
+| Router production dependency injection | `library/local_orchestration/johnny_router_composition.py` | one short-lived composition per CLI call and, only for admitted active tickets, one project runner |
+| Router argument/exit-code boundary | `library/local_orchestration/johnny_router_cli.py` | no import-time process, filesystem, Git or host effect |
+| User launch and bootstrap | repository-root `johnny-router.ps1` and `install.ps1` | receipt-owned launcher and venv under the per-user Johnny root |
+
+`RuntimeDependencyLock`, `RuntimeDependency`, `LockedArtifact`, `PayloadManifest`,
+`PayloadManifestEntry`, `JohnnyRouterRequest` and the closed `JohnnyRouterResult` union are the
+public strong types. The lock parser, manifest builder and CLI reject unknown fields, dynamic
+maps, unvalidated paths, unhashed dependencies and ambiguous commands before effect. Package
+creation reads the committed lock and allowlist, emits the manifest, and then emits the ZIP;
+`install.ps1` only consumes and verifies those artifacts. The old planned
+`04A — Payload Manifest Contract` location is therefore reused rather than duplicated.
+
+The minimum public fields are closed as follows; tickets may refine internal private types but
+may not rename, omit or widen these boundary fields:
+
+```text
+LockedArtifact = { filename, sha256 }
+RuntimeDependency = {
+  normalized_name, exact_version, environment_marker?, source_kind,
+  artifacts: tuple<LockedArtifact>[1..n]
+}
+RuntimeDependencyLock = {
+  schema_version = 1, python_constraint, dependencies: tuple<RuntimeDependency>[1..n],
+  lock_digest
+}
+PayloadManifestEntry = { archive_relative_path, sha256, byte_length }
+PayloadManifest = {
+  schema_version = 1, plugin_id, plugin_version, source_commit,
+  dependency_lock_digest, entries: tuple<PayloadManifestEntry>[1..n]
+}
+JohnnyRouterOperation = PREFLIGHT | REGISTER_PROJECT | DETACH_PROJECT
+                      | REGISTER_SUBSCRIPTION | CANCEL_SUBSCRIPTION
+                      | ROUTE_EVENT | STATUS | UNINSTALL
+JohnnyRouterRequest = one discriminated operation-specific request
+JohnnyRouterResult = SUCCEEDED | BLOCKED | CAPABILITY_UNAVAILABLE | NOT_FOUND
+                   | CONFLICT | HALTED
+```
+
+The lock digest is SHA-256 over canonical lock records excluding `lock_digest`. The payload
+manifest digest is SHA-256 over the canonical UTF-8 JSON bytes; the manifest does not recursively
+list itself. Entries are unique, ordinal-sorted canonical archive-relative paths and cover every
+other ZIP payload file. `JohnnyRouterRequest` reuses existing exact domain requests from
+`library/workflow_router` and `library/local_orchestration`; the CLI wrapper may add only
+`request_id` and the operation discriminator. Results contain stable status/error codes and
+opaque references, never raw exception text or target content.
+
 ## Runtime composition and lifetime
 
 Router domain decisions execute as short-lived Python CLI calls. The first admitted
@@ -88,6 +145,38 @@ Implementation may complete the port, fakes and fail-closed production boundary;
 Router-ready claim remains blocked until the host capability passes.
 
 ## Role, queue and model behavior
+
+### Versioned ProjectWorkflowProfile
+
+The ticket-admission profile reference is
+`plugin-distribution-poc-r02`; its `profile_version` is `2` and its versioned source is this exact
+SPEC revision and commit. `library/workflow_router/profile.py::build_plugin_distribution_profile`
+is the only creation location. It copies the transition rules, versioned policy references,
+halt-return contract and POC delivery stage from `build_router_poc_profile()`, then binds this
+profile identity and the following exact role metadata. It may not silently change Router
+transitions or infer roles from Git authorship.
+
+| ModelRole | Model ref | Capability ref | Capability evidence ref | Initial state |
+| --- | --- | --- | --- | --- |
+| `ARCHITECTURE_OWNER` | `model-gpt-5-6-sol-xhigh-architecture-r02` | `cap-plugin-distribution-architecture-r02` | `evidence-owner-approved-plugin-architecture-r02` | `ACTIVE` |
+| `SUPERVISOR_REVIEWER` | `model-gpt-5-6-terra-high-senior-r02` | `cap-plugin-distribution-ticket-review-r02` | `evidence-owner-approved-terra-senior-r02` | `ACTIVE` |
+| `IMPLEMENTATION_OWNER` | `model-gpt-5-6-luna-xhigh-implementer-r02` | `cap-plugin-distribution-implementation-r02` | `evidence-owner-approved-luna-implementer-r02` | `SLEEPING` |
+| `RESEARCH_HELPER` | `model-gpt-5-6-luna-readonly-helper-r02` | `cap-plugin-distribution-readonly-research-r02` | `evidence-reviewer-owned-helper-policy-r02` | `SLEEPING` |
+
+The profile uses `ctx-plugin-distribution-r02` as `shared_context_ref` and
+`cap-plugin-distribution-architecture-owner-r02` as
+`architecture_owner_capability_ref`. The four evidence references are capability-selection
+evidence resolved by the exact rows above and versioned by the enclosing SPEC commit; they are
+not implementation authority. Exact task/thread/host/worktree/branch/baseline and
+receipt evidence remains a separate live admission requirement. The current unavailable host
+wake observation is versioned as `evidence-host-wake-unavailable-r02` and can only select the
+fail-closed/manual-forward result; it cannot grant automatic wake or Router binding.
+
+The specialized Debugger policy remains GPT-5.6 Sol xhigh, but Debugger is not a fifth
+`ModelRole`: it is a Senior-requested, ticket-bound correction assignment using a fresh receipt.
+The implementation ticket for this Profile owns
+`tests/test_plugin_distribution_profile.py` and must prove exact construction, distinct opaque
+references, the unchanged transition graph and rejection of stale/mismatched profile refs.
 
 Plugin-created identity is not authority. A pre-existing Codex role becomes legal only after the
 user designates it and exact role/model/task/thread/host/project/worktree/branch/baseline/receipt

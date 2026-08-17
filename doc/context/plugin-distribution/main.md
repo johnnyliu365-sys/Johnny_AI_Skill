@@ -16,6 +16,7 @@ Authority: the project owner approved the complete Codex bundle, version 0.4.0, 
 
 - The formal artifact is `johnny-ai-skill-0.4.0.zip` plus an externally recorded SHA-256. A clean source commit must reproduce identical bytes.
 - The payload is an allowlist: Codex manifest, `skills/`, `library/`, plugin governance, existing README, bootstrap/CLI, dependency lock and payload manifest. Development, target-owned and runtime evidence trees do not enter the ZIP.
+- Ticket admission binds versioned Profile `plugin-distribution-poc-r02` from the approved SPEC. Its only builder is `library/workflow_router/profile.py::build_plugin_distribution_profile`; lock, manifest, bundle and CLI contracts use the exact `library/local_orchestration` locations declared by that SPEC.
 - Router decisions are short-lived Python executions. No MCP server is introduced.
 - One temporary runner exists per controlled project while tickets are active. It multiplexes one exact receipt-bound Git subscription per ticket through Windows native notifications, never polling.
 - The runner can outlive a terminal but cannot register an OS startup task, service, schedule or watchdog. After reboot, the next explicit plugin invocation may recover exact active metadata and Git ref ancestry.
