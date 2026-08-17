@@ -78,7 +78,7 @@ from .one_shot_deadline import (
     OneShotDeadlineFactory,
     OneShotDeadlinePort,
 )
-from .role_wake_composition import RoleWakeCoordinator
+from .senior_review_inbox import ReviewWakeSubmissionPort
 
 
 _PendingNativeSignal = GitRefSignal | GitNativeFailureSignal
@@ -131,7 +131,7 @@ class ReceiptBoundSupervisionController(NativeGitRefSignalSink, DeadlineSignalSi
         readback_port: GitReadbackPort,
         native_factory: NativeGitRefNotificationFactory,
         deadline_factory: OneShotDeadlineFactory,
-        wake_coordinator: RoleWakeCoordinator,
+        wake_coordinator: ReviewWakeSubmissionPort,
         clock: MonotonicClockPort,
     ) -> None:
         self._lock = Lock()
@@ -738,7 +738,10 @@ class ReceiptBoundSupervisionController(NativeGitRefSignalSink, DeadlineSignalSi
             wake = self._wake_coordinator.wake(wake_request)
             lifecycle = (
                 SupervisionRuntimeLifecycle.CLOSED
-                if wake.status is RoleWakeStatus.HOST_ACCEPTED
+                if wake.status in (
+                    RoleWakeStatus.HOST_ACCEPTED,
+                    RoleWakeStatus.QUEUED_NO_WAKE,
+                )
                 else SupervisionRuntimeLifecycle.HALTED
             )
             self._states[signal.subscription_id] = _replace_runtime(

@@ -60,6 +60,14 @@ from library.workflow_router.role_wake_contracts import (
     preflight_role_wake_chain,
     wake_request_from_git_decision,
 )
+from library.workflow_router.review_inbox_contracts import (
+    ReviewClusterReadInstruction,
+    ReviewDependencyNode,
+    ReviewSourceKind,
+    ReviewSourceSection,
+    ReviewTicketReadInstruction,
+    ReviewWakeInstruction,
+)
 from library.workflow_router.thread_host_contracts import (
     CodexHostId,
     CodexTaskId,
@@ -69,6 +77,48 @@ from library.workflow_router.thread_host_contracts import (
 _DIGEST_A = "sha256_" + ("a" * 64)
 _DIGEST_B = "sha256_" + ("b" * 64)
 _REVIEWER_TASK = "019ffb0c-c9c7-7b30-b614-02dea7ed9042"
+
+
+def _review_instruction() -> ReviewWakeInstruction:
+    sections = tuple(
+        ReviewSourceSection(
+            source_kind=kind,
+            artifact_ref="source-vita-" + kind.value.casefold().replace("_", "-"),
+            source_commit="6" * 40,
+            section_anchor="review-" + kind.value.casefold().replace("_", "-"),
+            content_digest="sha256_" + character * 64,
+        )
+        for kind, character in zip(
+            ReviewSourceKind,
+            ("1", "2", "3", "4", "5"),
+            strict=True,
+        )
+    )
+    return ReviewWakeInstruction(
+        batch_id="batch-vita-feature-001",
+        trigger_commit="6" * 40,
+        clusters=(
+            ReviewClusterReadInstruction(
+                cluster_id="cluster-vita-feature-001",
+                cluster_revision="rev-6666666666666666",
+                cluster_commit="6" * 40,
+                dependency_graph=(
+                    ReviewDependencyNode(
+                        ticket_ref="ticket-vita-feature-001",
+                        depends_on=(),
+                    ),
+                ),
+                tickets=(
+                    ReviewTicketReadInstruction(
+                        ticket_ref="ticket-vita-feature-001",
+                        receipt_ref="receipt-vita-feature-001",
+                        event_commit="6" * 40,
+                        source_sections=sections,
+                    ),
+                ),
+            ),
+        ),
+    )
 
 
 def _receipt() -> TicketReceipt:
@@ -265,6 +315,7 @@ class RoleWakeCoordinatorTests(unittest.TestCase):
             handoff_id="handoff-vita-feature-001",
             lease_id=None,
             fault_kind=None,
+            review_instruction=_review_instruction(),
         )
 
     def test_claim_before_effect_and_duplicate_wake_calls_host_once(self) -> None:
@@ -285,8 +336,24 @@ class RoleWakeCoordinatorTests(unittest.TestCase):
         payload = port.commands[0].payload
         self.assertIn("action=REVIEW_HANDOFF", payload)
         self.assertIn("subscription_id=subscription-vita-feature-001", payload)
+        self.assertIn("review_batch_id=batch-vita-feature-001", payload)
+        self.assertIn("review_read=", payload)
         self.assertNotIn("doc/handoffs", payload)
         self.assertNotIn("prompt", payload.casefold())
+
+    def test_review_handoff_cannot_bypass_the_committed_inbox_instruction(self) -> None:
+        store = _MemoryWakeStore()
+        port = _RecordingWakePort(
+            RoleWakeEffectResult(
+                status=RoleWakeEffectStatus.HOST_ACCEPTED,
+                delivery_reference="delivery-review-wake-002",
+            )
+        )
+        coordinator = RoleWakeCoordinator(store, port)
+        bypass = self._request().model_copy(update={"review_instruction": None})
+        result = coordinator.wake(bypass)
+        self.assertEqual(RoleWakeStatus.ATTEMPT_CONFLICT, result.status)
+        self.assertEqual([], port.commands)
 
     def test_uncertain_host_effect_is_never_retried(self) -> None:
         store = _MemoryWakeStore()

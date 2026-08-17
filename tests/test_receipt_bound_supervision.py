@@ -22,6 +22,11 @@ from library.local_orchestration.one_shot_deadline import (
 from library.local_orchestration.receipt_bound_supervision import (
     ReceiptBoundSupervisionController,
 )
+from library.local_orchestration.senior_review_inbox import (
+    ReviewClusterBindingResolverPort,
+    SeniorReviewInboxCoordinator,
+    WindowsSeniorReviewInboxStore,
+)
 from library.local_orchestration.role_wake_composition import RoleWakeCoordinator
 from library.local_orchestration.role_wake_composition import RoleWakeAttemptStorePort
 from library.workflow_router.deadline_contracts import (
@@ -59,6 +64,15 @@ from library.workflow_router.role_wake_contracts import (
     RoleWakeEffectStatus,
     WakeAttemptClaimStatus,
     WakeAttemptSettleStatus,
+)
+from library.workflow_router.review_inbox_contracts import (
+    CommittedReviewTicketEvent,
+    ReviewDependencyNode,
+    ReviewEventResolutionRequest,
+    ReviewEventResolutionResult,
+    ReviewEventResolutionStatus,
+    ReviewSourceKind,
+    ReviewSourceSection,
 )
 from library.workflow_router.supervision_policy import (
     ExecutionStartedEvidence,
@@ -228,6 +242,45 @@ class _MultiWakeStore(RoleWakeAttemptStorePort):
         )
 
 
+class _SingleTicketClusterResolver(ReviewClusterBindingResolverPort):
+    def resolve(self, request: ReviewEventResolutionRequest) -> ReviewEventResolutionResult:
+        sections = tuple(
+            ReviewSourceSection(
+                source_kind=kind,
+                artifact_ref="source-vita-" + kind.value.casefold().replace("_", "-"),
+                source_commit=request.event_commit,
+                section_anchor="review-" + kind.value.casefold().replace("_", "-"),
+                content_digest="sha256_" + character * 64,
+            )
+            for kind, character in zip(
+                ReviewSourceKind,
+                ("1", "2", "3", "4", "5"),
+                strict=True,
+            )
+        )
+        event = CommittedReviewTicketEvent(
+            project_id=request.project_id,
+            reviewer_ref=request.reviewer_ref,
+            cluster_id="cluster-vita-feature-001",
+            cluster_revision="rev-7777777777777777",
+            previous_cluster_revision=None,
+            cluster_commit=request.event_commit,
+            ticket_ref=request.ticket_ref,
+            receipt_ref=request.receipt_ref,
+            implementation_task_ref=request.implementation_task_ref,
+            handoff_id=request.handoff_id,
+            event_commit=request.event_commit,
+            dependency_graph=(
+                ReviewDependencyNode(ticket_ref=request.ticket_ref, depends_on=()),
+            ),
+            source_sections=sections,
+        )
+        return ReviewEventResolutionResult(
+            status=ReviewEventResolutionStatus.RESOLVED,
+            event=event,
+        )
+
+
 def _controller(root: Path) -> tuple[
     ReceiptBoundSupervisionController,
     _NativePort,
@@ -244,12 +297,19 @@ def _controller(root: Path) -> tuple[
         )
     )
     clock = _Clock()
+    review_metadata = root / ".test-senior-review-inbox"
+    review_metadata.mkdir(exist_ok=True)
+    wake_coordinator = RoleWakeCoordinator(_MultiWakeStore(), wake)
     return (
         ReceiptBoundSupervisionController(
             GitCliReadbackPort(root),
             _NativeFactory(native),
             _DeadlineFactory(deadline),
-            RoleWakeCoordinator(_MultiWakeStore(), wake),
+            SeniorReviewInboxCoordinator(
+                WindowsSeniorReviewInboxStore(review_metadata.resolve(strict=True)),
+                _SingleTicketClusterResolver(),
+                wake_coordinator,
+            ),
             clock,
         ),
         native,

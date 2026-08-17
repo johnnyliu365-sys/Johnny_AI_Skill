@@ -19,6 +19,7 @@ from library.workflow_router.role_wake_contracts import (
     RoleWakeRequest,
     RoleWakeResult,
     RoleWakeStatus,
+    RoleWakeTriggerKind,
     WakeAttemptClaimStatus,
     WakeAttemptSettleStatus,
     derive_role_wake_attempt_identity,
@@ -105,6 +106,11 @@ class RoleWakeCoordinator:
         try:
             trusted = RoleWakeRequest.model_validate(request, strict=True)
         except ValidationError:
+            return RoleWakeResult(status=RoleWakeStatus.ATTEMPT_CONFLICT)
+        if (
+            trusted.trigger is RoleWakeTriggerKind.REVIEW_HANDOFF
+            and trusted.review_instruction is None
+        ):
             return RoleWakeResult(status=RoleWakeStatus.ATTEMPT_CONFLICT)
         identity = derive_role_wake_attempt_identity(trusted)
         try:

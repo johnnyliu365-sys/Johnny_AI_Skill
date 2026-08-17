@@ -21,6 +21,7 @@ from .git_handoff_contracts import (
     SupervisionFaultKind,
 )
 from .live_dispatch_contracts import ReceiptLifecycle, TicketReceipt
+from .review_inbox_contracts import ReviewWakeInstruction
 from .thread_dispatch_contracts import derive_ticket_receipt_digest
 from .role_supervision_contracts import HandoffId
 from .thread_host_contracts import CodexHostId, CodexTaskId, CodexThreadId
@@ -98,6 +99,7 @@ class RoleWakeEffectStatus(str, Enum):
 
 class RoleWakeStatus(str, Enum):
     HOST_ACCEPTED = "HOST_ACCEPTED"
+    QUEUED_NO_WAKE = "QUEUED_NO_WAKE"
     NO_EFFECT = "NO_EFFECT"
     EFFECT_UNCERTAIN = "EFFECT_UNCERTAIN"
     ATTEMPT_CONFLICT = "ATTEMPT_CONFLICT"
@@ -312,6 +314,7 @@ class RoleWakeRequest(_StrictModel):
     handoff_id: HandoffId | None
     lease_id: LeaseId | None
     fault_kind: SupervisionFaultKind | None
+    review_instruction: ReviewWakeInstruction | None = None
 
     @model_validator(mode="after")
     def trigger_shape_is_exact(self) -> Self:
@@ -338,6 +341,11 @@ class RoleWakeRequest(_StrictModel):
             or self.fault_kind is None
         ):
             raise ValueError("fault wake requires commit and sanitized fault kind only")
+        if (
+            self.trigger is not RoleWakeTriggerKind.REVIEW_HANDOFF
+            and self.review_instruction is not None
+        ):
+            raise ValueError("only review handoff may carry review read instructions")
         return self
 
     def render_identifiers_only_payload(self) -> str:
@@ -364,7 +372,10 @@ class RoleWakeRequest(_StrictModel):
             ("lease_id", self.lease_id or "-"),
             ("fault_kind", self.fault_kind.value if self.fault_kind is not None else "-"),
         )
-        return "\n".join(key + "=" + value for key, value in values) + "\n"
+        lines = [key + "=" + value for key, value in values]
+        if self.review_instruction is not None:
+            lines.extend(self.review_instruction.render_identifiers_only_lines())
+        return "\n".join(lines) + "\n"
 
 
 class RoleWakeAttemptIdentity(_StrictModel):
@@ -538,6 +549,7 @@ def wake_request_from_git_decision(
             handoff_id=decision.handoff.handoff_id,
             lease_id=None,
             fault_kind=None,
+            review_instruction=None,
         )
     if decision.decision in (
         GitEventAdapterDecisionKind.INVALID_HANDOFF_FAULT,
@@ -553,6 +565,7 @@ def wake_request_from_git_decision(
             handoff_id=None,
             lease_id=None,
             fault_kind=decision.fault.kind,
+            review_instruction=None,
         )
     return None
 

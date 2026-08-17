@@ -10,13 +10,13 @@ from .one_shot_deadline import (
     SystemMonotonicClock,
 )
 from .receipt_bound_supervision import ReceiptBoundSupervisionController
-from .role_wake_composition import RoleWakeCoordinator
+from .senior_review_inbox import SeniorReviewInboxCoordinator
 from .windows_native_git_ref import WindowsNativeGitRefNotificationFactory
 
 
 def build_windows_receipt_bound_supervision(
     repository_root: Path,
-    wake_coordinator: RoleWakeCoordinator,
+    wake_coordinator: SeniorReviewInboxCoordinator,
 ) -> ReceiptBoundSupervisionController:
     """Bind production local ports while leaving Router and host wake ports injected."""
 
