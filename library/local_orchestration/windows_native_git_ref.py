@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 import subprocess
-from threading import Lock, Thread
+from threading import current_thread, Lock, Thread
 from typing import cast, Final, Protocol, TYPE_CHECKING
 
 from pydantic import ValidationError
@@ -288,6 +288,13 @@ class WindowsNativeGitRefNotificationPort:
                     failure=GitNativeFailureKind.NOTIFICATION_UNAVAILABLE,
                 )
             )
+        finally:
+            with self._lock:
+                current = self._subscriptions.get(subscription.request.subscription_id)
+                if current is subscription:
+                    self._subscriptions.pop(subscription.request.subscription_id, None)
+            self._close_watches(subscription.watches)
+            win32file.CloseHandle(subscription.stop_event)
 
     def cancel(self, subscription_id: SubscriptionId) -> bool:
         with self._lock:
@@ -296,13 +303,9 @@ class WindowsNativeGitRefNotificationPort:
             return True
         win32event.SetEvent(subscription.stop_event)
         thread = subscription.thread
-        if thread is not None:
+        if thread is not None and thread is not current_thread():
             thread.join(timeout=5.0)
-        self._close_watches(subscription.watches)
-        win32file.CloseHandle(subscription.stop_event)
-        if thread is not None and thread.is_alive():
-            thread.join(timeout=5.0)
-        return thread is None or not thread.is_alive()
+        return thread is None or thread is current_thread() or not thread.is_alive()
 
     @staticmethod
     def _close_watches(watches: tuple[_ArmedWatch, ...]) -> None:

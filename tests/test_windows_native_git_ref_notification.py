@@ -67,6 +67,23 @@ class _Sink(NativeGitRefSignalSink):
         self._event.clear()
         with self._lock:
             self.signals.clear()
+            self.failures.clear()
+
+
+class _SelfCancellingSink(NativeGitRefSignalSink):
+    def __init__(self) -> None:
+        self.port: WindowsNativeGitRefNotificationPort | None = None
+        self.cancelled = Event()
+
+    def on_signal(self, signal: GitRefSignal) -> None:
+        if self.port is None:
+            raise AssertionError("self-cancelling sink is not bound")
+        if not self.port.cancel(signal.subscription_id):
+            raise AssertionError("callback-local cancellation failed")
+        self.cancelled.set()
+
+    def on_failure(self, signal: GitNativeFailureSignal) -> None:
+        raise AssertionError(f"unexpected native failure: {signal.failure}")
 
 
 class WindowsNativeGitRefNotificationTests(unittest.TestCase):
@@ -137,6 +154,25 @@ class WindowsNativeGitRefNotificationTests(unittest.TestCase):
             _run_git(root, "pack-refs", "--all", "--prune")
             self.assertTrue(sink.wait())
             self.assertTrue(port.cancel(request.subscription_id))
+            self.assertTrue(port.cancel(request.subscription_id))
+
+    def test_callback_can_cancel_its_own_subscription_without_deadlock(self) -> None:
+        with TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory).resolve(strict=True)
+            _repository(root)
+            sink = _SelfCancellingSink()
+            port = WindowsNativeGitRefNotificationPort(root, sink)
+            sink.port = port
+            request = GitNativeRegistrationRequest(
+                event_source_ref="event-source-native-self-cancel",
+                subscription_id="subscription-native-self-cancel",
+                exact_git_ref="refs/heads/main",
+            )
+            self.assertEqual(GitNativeRegistrationStatus.REGISTERED, port.register(request).status)
+            (root / "source.txt").write_text("baseline\nself cancel\n", encoding="utf-8")
+            _run_git(root, "add", "source.txt")
+            _run_git(root, "commit", "-m", "trigger self cancellation")
+            self.assertTrue(sink.cancelled.wait(5.0))
             self.assertTrue(port.cancel(request.subscription_id))
 
 

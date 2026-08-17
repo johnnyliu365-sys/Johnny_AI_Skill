@@ -420,6 +420,26 @@ class ReceiptBoundGitEventAdapter:
             )
         return self._evaluate_change(current, snapshot.commit_id, trusted_context)
 
+    def close(self, state: GitEventRegistrationState) -> GitEventRegistrationState:
+        """Close one exact active registration; repeated closure is idempotent."""
+
+        if type(state) is not GitEventRegistrationState:
+            raise TypeError("Git registration closure requires exact strong state")
+        try:
+            current = GitEventRegistrationState.model_validate(state, strict=True)
+        except ValidationError as error:
+            raise TypeError("Git registration closure received invalid state") from error
+        if current.lifecycle is not GitEventRegistrationLifecycle.ACTIVE:
+            return current
+        self._cancel(current.subscription_id)
+        return _replace_state(
+            current,
+            lifecycle=GitEventRegistrationLifecycle.CLOSED,
+            last_observed_commit=current.last_observed_commit,
+            consumed_handoff_ids=current.consumed_handoff_ids,
+            fault_emitted=False,
+        )
+
     def _read_ref(self, exact_git_ref: str) -> GitRefSnapshotResult:
         try:
             result = self._readback_port.read_ref(exact_git_ref)
