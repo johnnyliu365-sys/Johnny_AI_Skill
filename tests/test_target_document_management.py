@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import os
 import subprocess
 from tempfile import TemporaryDirectory
 import unittest
@@ -189,9 +190,7 @@ class TargetDocumentTransactionTests(unittest.TestCase):
                     ),
                 ),
             )
-            from library.local_orchestration import target_document_management as module
-
-            real_replace = module.os.replace
+            real_replace = os.replace
             calls = 0
 
             def fail_second(source: Path, destination: Path) -> None:
@@ -201,7 +200,7 @@ class TargetDocumentTransactionTests(unittest.TestCase):
                     raise OSError("injected replace failure")
                 real_replace(source, destination)
 
-            with patch.object(module.os, "replace", side_effect=fail_second):
+            with patch.object(os, "replace", side_effect=fail_second):
                 result = TransactionalTargetDocumentWriter(TargetWorkspace(root)).apply(plan)
             self.assertEqual(DocumentWriteStatus.STORAGE_UNAVAILABLE, result.status)
             self.assertEqual(first_before, first.read_bytes())

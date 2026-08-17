@@ -58,7 +58,10 @@ def _body(**changes: str | None) -> HandoffLeafBody:
     return HandoffLeafBody.model_validate(values, strict=True)
 
 
-def _context(leaf: HandoffLeaf, **changes: str | bool | None) -> HandoffAdmissionContext:
+def _context(
+    leaf: HandoffLeaf,
+    **changes: str | bool | tuple[str, ...] | None,
+) -> HandoffAdmissionContext:
     values: dict[str, str | bool | None | tuple[str, ...]] = {
         "project_id": leaf.project_id,
         "spec_ref": leaf.spec_ref,
