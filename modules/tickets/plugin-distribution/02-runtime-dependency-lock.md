@@ -4,9 +4,10 @@
 | --- | --- |
 | SPEC / AC / Context | Plugin Distribution Revision 02 / AC-03, AC-04, AC-05 / `ctx-plugin-distribution-r02` |
 | Requirement / planning baseline | `REQ-20260802-004` / `a45686dd0238d69fac6c0b740a2b91ba51d5d90a` |
-| Control / reviewer | Senior `01a00e7d-7ef4-7ac1-96ce-e6c2b7592f5b`; implementation owner/task/worktree/branch/baseline/receipt must be bound before `READY_LOW_MODEL` |
+| Control / reviewer | Senior `01a00e7d-7ef4-7ac1-96ce-e6c2b7592f5b` |
+| Implementation allocation | role `role-impl-pd02-luna-001`; task `01a00ea7-6fcd-7ab0-b71f-5f5fad6aefd3`; worktree `worktree-pd02impl2-01` at `C:\Users\<user>\Desktop\AI控制工作workflow-implementer-2`; branch `codex/plugin-distribution-02-runtime-lock` / `branch-pd02runtime-01`; baseline `496971ccfaa9db25bde3d69c526166b82b9c4ca4`; receipt `receipt-pd02-20260817-001`; dispatch `dispatch-pd02-20260817-001` |
 | Profile / environment | `plugin-distribution-poc-r02` v2; Luna xhigh; Windows x64; CPython 3.11.9; no helper |
-| State / XSS | `PLANNED / LOW_MODEL_CANDIDATE / ALLOCATION_REQUIRED`; `XSS_NOT_APPLICABLE` |
+| State / XSS | `READY_LOW_MODEL / RECEIPT_BOUND / DISPATCH_PENDING`; `XSS_NOT_APPLICABLE` |
 
 ## Sole closure and public boundary
 
