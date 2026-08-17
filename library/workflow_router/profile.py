@@ -868,3 +868,54 @@ def build_router_poc_profile() -> ProjectWorkflowProfile:
         architecture_owner_capability_ref="cap-architecture-owner",
         model_role_assignments=model_role_assignments,
     )
+
+
+def build_plugin_distribution_profile() -> ProjectWorkflowProfile:
+    """Build the profile-bound policy for the plugin-distribution POC."""
+
+    base_profile = build_router_poc_profile()
+    profile_id = "plugin-distribution-poc-r02"
+    return ProjectWorkflowProfile(
+        profile_id=profile_id,
+        profile_version="2",
+        delivery_stage=base_profile.delivery_stage,
+        router_control_reference=base_profile.router_control_reference,
+        halt_return_contract=base_profile.halt_return_contract,
+        transition_rules=base_profile.transition_rules,
+        shared_context_ref="ctx-plugin-distribution-r02",
+        architecture_owner_capability_ref="cap-plugin-distribution-architecture-owner-r02",
+        model_role_assignments=(
+            ModelRoleAssignment(
+                project_profile_ref=profile_id,
+                role=ModelRole.ARCHITECTURE_OWNER,
+                model_ref="model-gpt-5-6-sol-xhigh-architecture-r02",
+                capability_refs=("cap-plugin-distribution-architecture-r02",),
+                activity_state=RoleActivityState.ACTIVE,
+                evidence_refs=("evidence-owner-approved-plugin-architecture-r02",),
+            ),
+            ModelRoleAssignment(
+                project_profile_ref=profile_id,
+                role=ModelRole.SUPERVISOR_REVIEWER,
+                model_ref="model-gpt-5-6-terra-high-senior-r02",
+                capability_refs=("cap-plugin-distribution-ticket-review-r02",),
+                activity_state=RoleActivityState.ACTIVE,
+                evidence_refs=("evidence-owner-approved-terra-senior-r02",),
+            ),
+            ModelRoleAssignment(
+                project_profile_ref=profile_id,
+                role=ModelRole.IMPLEMENTATION_OWNER,
+                model_ref="model-gpt-5-6-luna-xhigh-implementer-r02",
+                capability_refs=("cap-plugin-distribution-implementation-r02",),
+                activity_state=RoleActivityState.SLEEPING,
+                evidence_refs=("evidence-owner-approved-luna-implementer-r02",),
+            ),
+            ModelRoleAssignment(
+                project_profile_ref=profile_id,
+                role=ModelRole.RESEARCH_HELPER,
+                model_ref="model-gpt-5-6-luna-readonly-helper-r02",
+                capability_refs=("cap-plugin-distribution-readonly-research-r02",),
+                activity_state=RoleActivityState.SLEEPING,
+                evidence_refs=("evidence-reviewer-owned-helper-policy-r02",),
+            ),
+        ),
+    )
