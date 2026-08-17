@@ -97,3 +97,16 @@ Return exactly `ImplementationReturn.COMPLETED -> ACTION_COMPLETED`, `BLOCKED ->
 failed cell and preserved branch state, or `CHANGE_DETECTED -> REQUIREMENT_CHANGED` with the
 conflicting frozen reference. A need for a new operation, profile field, port, output field or
 effect boundary is `CHANGE_DETECTED`; it does not expand this ticket.
+
+## Integrated evidence
+
+| Field | Evidence |
+| --- | --- |
+| State | `INTEGRATED / CLOSED` |
+| Implementation / integration | `09ec98d0194f3bc84bbb6c0b182975e695682d8f` / `4fd29cdcb92a6afe304ebc5cd2d4a6a5f337136d` |
+| Independent closure | focused `7 passed, 14 subtests`; full `734 passed, 2,537 subtests`; strict `mypy --no-incremental` passed for the three named source files; 206 Python files compiled in memory. |
+| Boundary checks | Public DTO/result-union ordinary construction and JSON round-trip passed; a fresh `python -B` process imported all three modules with empty stdout/stderr; C2--C4 probe-call boundaries passed. |
+| Reverse / residue | Owner's named C4 operation-admission guard turned red and was byte-restored; reviewer rerun found `POST_TEST_CLEAN=PASS` with no cache/bytecode residue. |
+| Review | `APPROVED`; no XSS, host, network, filesystem, Git, runner, receipt-store or target-project effect was introduced. |
+
+Canonical Git-blob SHA-256: `profile.py` `D40B6E141F3655849F521C6883F15F3CB934FE5DA750AAB0C3F7416BDC80534D`; `johnny_router_contracts.py` `8E6CEB3FAC266EB9EEDE5BEC88645606A475AFB7BD0723D99D0DD542DF49168D`; `johnny_router_cli.py` `CBC87920C83973B1F57EBCC63D6846DBDA7499538A51EA81A4AEE0622FFA3AEA`; `test_plugin_distribution_profile.py` `71DC8CF35E0BEDD74DB0D79CA43D7D181A9D976B7B24D3E433F13C1906FC1C60`; `test_plugin_distribution_cli.py` `C03BDA311A163F0AD354505A499240A4058A10D11E13236D1B672D43ADB2F666`.
