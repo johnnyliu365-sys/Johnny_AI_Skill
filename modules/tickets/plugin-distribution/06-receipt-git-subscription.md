@@ -196,3 +196,18 @@ must not turn a foreign signal into a candidate merely because a fixture is conf
 Reverse-mutate the new terminal-close removal guard so its named retry cell turns red, restore
 exact bytes, then rerun focused, strict, full, in-memory compile, AST no-effect gate and residue
 cleanup before one additive correction commit.
+
+## Correction admission 01 — integrated evidence
+
+| Field | Evidence |
+| --- | --- |
+| State | `INTEGRATED / CLOSED` |
+| Implementation / correction / integration | `42c1343578e626ec392766c6ff66555218dd8201` / `c790d5c8afc09aeb7eea25d4392f6b0f8477168a` / `e431df38354b248f65dcbb005b975487215ea07f` |
+| Closure | Shared-registry first close performs no stop and leaves the peer live; final close performs the only stop. A terminal closed adapter state with unavailable stop preserves state; a later close retries removal and completes. Foreign, stale, replay and malformed outcomes never become completion candidates. |
+| Verification | focused `10 passed, 3 subtests`; strict mypy passed; full `755 passed, 2,540 subtests`; 210 Python files compiled in memory; terminal-close shortcut reverse mutation failed its named retry cell then was byte-restored; AST no-effect gate and zero cache/bytecode residue passed. |
+| Independent review | scope and ancestry passed; direct shared-registry/terminal-retry behavior smoke passed without writes; no Router, host wake, polling, process, filesystem, network or target-project effect introduced. |
+
+Canonical Git-blob SHA-256: `project_subscription_runtime.py`
+`99EA4C08F1F6E09F5D0E0C4FB599C075E02ADBB9BB09D91E41C611AE7DAB5A59`;
+`test_plugin_distribution_git_subscription.py`
+`8C41864F1E6741D93473DA3D68FEA27C3BCA86771F1310A4916355662E0971B1`.
