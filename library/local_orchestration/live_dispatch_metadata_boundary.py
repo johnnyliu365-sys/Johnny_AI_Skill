@@ -49,6 +49,17 @@ from library.workflow_router.thread_dispatch_contracts import (
     DispatchSettlementStatus,
     derive_ticket_receipt_digest,
 )
+from library.workflow_router.role_wake_contracts import (
+    RoleWakeAttemptClaimRequest,
+    RoleWakeAttemptClaimResult,
+    RoleWakeAttemptIdentity,
+    RoleWakeAttemptLifecycle,
+    RoleWakeAttemptRecord,
+    RoleWakeAttemptSettleRequest,
+    RoleWakeAttemptSettleResult,
+    WakeAttemptClaimStatus,
+    WakeAttemptSettleStatus,
+)
 
 
 _SCHEMA_REVISION: Literal["live-dispatch-metadata-v1"] = "live-dispatch-metadata-v1"
@@ -88,6 +99,7 @@ class _Checkpoint(BaseModel):
     artifacts: tuple[ApprovedDispatchArtifactRecord, ...] = ()
     receipts: tuple[TicketReceipt, ...] = ()
     dispatch_attempts: tuple[CodexThreadDispatchAttemptRecord, ...] = ()
+    wake_attempts: tuple[RoleWakeAttemptRecord, ...] = ()
 
     @model_validator(mode="after")
     def unique_authority_keys(self) -> Self:
@@ -99,6 +111,10 @@ class _Checkpoint(BaseModel):
         attempt_keys = tuple(
             _dispatch_attempt_key(record.identity) for record in self.dispatch_attempts
         )
+        wake_attempt_ids = tuple(record.identity.attempt_id for record in self.wake_attempts)
+        wake_attempt_keys = tuple(
+            _wake_attempt_key(record.identity) for record in self.wake_attempts
+        )
         if len(artifact_keys) != len(set(artifact_keys)):
             raise ValueError("checkpoint contains duplicate artifact identities")
         if len(receipt_keys) != len(set(receipt_keys)):
@@ -107,6 +123,10 @@ class _Checkpoint(BaseModel):
             raise ValueError("checkpoint contains duplicate dispatch attempt IDs")
         if len(attempt_keys) != len(set(attempt_keys)):
             raise ValueError("checkpoint contains duplicate dispatch authorities")
+        if len(wake_attempt_ids) != len(set(wake_attempt_ids)):
+            raise ValueError("checkpoint contains duplicate wake attempt IDs")
+        if len(wake_attempt_keys) != len(set(wake_attempt_keys)):
+            raise ValueError("checkpoint contains duplicate wake authorities")
         return self
 
     @classmethod
@@ -194,6 +214,18 @@ def _dispatch_attempt_key(
     )
 
 
+def _wake_attempt_key(
+    identity: RoleWakeAttemptIdentity,
+) -> tuple[str, str, str, str, str]:
+    return (
+        identity.project_id,
+        identity.ticket_ref,
+        identity.receipt_ref,
+        identity.trigger.value,
+        identity.payload_digest,
+    )
+
+
 def _receipt_from_request(request: TicketReceiptIssueRequest) -> TicketReceipt:
     identity = request.artifact_identity
     return TicketReceipt(
@@ -258,6 +290,14 @@ def _storage_dispatch_settlement_failure() -> CodexThreadDispatchSettlementResul
         status=DispatchSettlementStatus.STORAGE_UNAVAILABLE,
         failure=DispatchSettlementFailure.STORAGE_UNAVAILABLE,
     )
+
+
+def _storage_wake_claim_failure() -> RoleWakeAttemptClaimResult:
+    return RoleWakeAttemptClaimResult(status=WakeAttemptClaimStatus.STORAGE_UNAVAILABLE)
+
+
+def _storage_wake_settlement_failure() -> RoleWakeAttemptSettleResult:
+    return RoleWakeAttemptSettleResult(status=WakeAttemptSettleStatus.STORAGE_UNAVAILABLE)
 
 
 class LiveDispatchMetadataBoundary:
@@ -328,6 +368,7 @@ class LiveDispatchMetadataBoundary:
                     artifacts=artifacts,
                     receipts=checkpoint.receipts,
                     dispatch_attempts=checkpoint.dispatch_attempts,
+                    wake_attempts=checkpoint.wake_attempts,
                 )
                 self._commit_checkpoint(updated)
                 return ApprovedDispatchArtifactRegisterResult(
@@ -448,6 +489,7 @@ class LiveDispatchMetadataBoundary:
                     artifacts=checkpoint.artifacts,
                     receipts=receipts,
                     dispatch_attempts=checkpoint.dispatch_attempts,
+                    wake_attempts=checkpoint.wake_attempts,
                 )
                 self._commit_checkpoint(updated)
                 return TicketReceiptIssueResult(
@@ -558,6 +600,7 @@ class LiveDispatchMetadataBoundary:
                     artifacts=checkpoint.artifacts,
                     receipts=checkpoint.receipts,
                     dispatch_attempts=attempts,
+                    wake_attempts=checkpoint.wake_attempts,
                 )
                 self._commit_checkpoint(updated)
                 return CodexThreadDispatchClaimResult(
@@ -622,6 +665,7 @@ class LiveDispatchMetadataBoundary:
                     artifacts=checkpoint.artifacts,
                     receipts=checkpoint.receipts,
                     dispatch_attempts=attempts,
+                    wake_attempts=checkpoint.wake_attempts,
                 )
                 self._commit_checkpoint(updated)
                 return CodexThreadDispatchSettlementResult(
@@ -630,6 +674,138 @@ class LiveDispatchMetadataBoundary:
                 )
         except (OSError, UnicodeError, ValidationError, ValueError):
             return _storage_dispatch_settlement_failure()
+
+    def claim_role_wake_attempt(
+        self,
+        request: RoleWakeAttemptClaimRequest,
+    ) -> RoleWakeAttemptClaimResult:
+        """Durably claim one exact reviewer wake before the host effect."""
+
+        if type(request) is not RoleWakeAttemptClaimRequest:
+            return _storage_wake_claim_failure()
+        try:
+            with _ExclusiveWindowsFileLock(self._lock_path):
+                checkpoint = self._load_checkpoint()
+                identity = request.identity
+                canonical_receipt = next(
+                    (
+                        receipt
+                        for receipt in checkpoint.receipts
+                        if receipt.project_id == identity.project_id
+                        and receipt.ticket_reference == identity.ticket_ref
+                    ),
+                    None,
+                )
+                if (
+                    canonical_receipt is None
+                    or canonical_receipt.lifecycle is not ReceiptLifecycle.ACTIVE
+                    or canonical_receipt.receipt_id != identity.receipt_ref
+                    or derive_ticket_receipt_digest(canonical_receipt)
+                    != identity.receipt_digest
+                ):
+                    return RoleWakeAttemptClaimResult(
+                        status=WakeAttemptClaimStatus.ATTEMPT_CONFLICT
+                    )
+                existing = next(
+                    (
+                        record
+                        for record in checkpoint.wake_attempts
+                        if record.identity.attempt_id == identity.attempt_id
+                        or _wake_attempt_key(record.identity) == _wake_attempt_key(identity)
+                    ),
+                    None,
+                )
+                if existing is not None:
+                    if existing.identity == identity:
+                        return RoleWakeAttemptClaimResult(
+                            status=WakeAttemptClaimStatus.ALREADY_CLAIMED,
+                            record=existing,
+                        )
+                    return RoleWakeAttemptClaimResult(
+                        status=WakeAttemptClaimStatus.ATTEMPT_CONFLICT
+                    )
+                candidate = RoleWakeAttemptRecord(
+                    identity=identity,
+                    lifecycle=RoleWakeAttemptLifecycle.CLAIMED,
+                )
+                attempts = tuple(
+                    sorted(
+                        (*checkpoint.wake_attempts, candidate),
+                        key=lambda record: record.identity.attempt_id,
+                    )
+                )
+                updated = _Checkpoint(
+                    schema_revision=checkpoint.schema_revision,
+                    generation=checkpoint.generation + 1,
+                    artifacts=checkpoint.artifacts,
+                    receipts=checkpoint.receipts,
+                    dispatch_attempts=checkpoint.dispatch_attempts,
+                    wake_attempts=attempts,
+                )
+                self._commit_checkpoint(updated)
+                return RoleWakeAttemptClaimResult(
+                    status=WakeAttemptClaimStatus.CLAIMED,
+                    record=candidate,
+                )
+        except (OSError, UnicodeError, ValidationError):
+            return _storage_wake_claim_failure()
+
+    def settle_role_wake_attempt(
+        self,
+        request: RoleWakeAttemptSettleRequest,
+    ) -> RoleWakeAttemptSettleResult:
+        """Settle only an exact already-claimed reviewer wake."""
+
+        if type(request) is not RoleWakeAttemptSettleRequest:
+            return _storage_wake_settlement_failure()
+        try:
+            with _ExclusiveWindowsFileLock(self._lock_path):
+                checkpoint = self._load_checkpoint()
+                existing = next(
+                    (
+                        record
+                        for record in checkpoint.wake_attempts
+                        if record.identity.attempt_id == request.identity.attempt_id
+                    ),
+                    None,
+                )
+                if existing is None or existing.identity != request.identity:
+                    return RoleWakeAttemptSettleResult(
+                        status=WakeAttemptSettleStatus.CLAIM_MISMATCH
+                    )
+                candidate = RoleWakeAttemptRecord(
+                    identity=existing.identity,
+                    lifecycle=RoleWakeAttemptLifecycle(request.effect.status.value),
+                    delivery_reference=request.effect.delivery_reference,
+                )
+                if existing.lifecycle is not RoleWakeAttemptLifecycle.CLAIMED:
+                    if existing == candidate:
+                        return RoleWakeAttemptSettleResult(
+                            status=WakeAttemptSettleStatus.ALREADY_SETTLED,
+                            record=existing,
+                        )
+                    return RoleWakeAttemptSettleResult(
+                        status=WakeAttemptSettleStatus.CLAIM_MISMATCH
+                    )
+                attempts = tuple(
+                    candidate if record.identity == existing.identity else record
+                    for record in checkpoint.wake_attempts
+                )
+                updated = _Checkpoint(
+                    schema_revision=checkpoint.schema_revision,
+                    generation=checkpoint.generation + 1,
+                    artifacts=checkpoint.artifacts,
+                    receipts=checkpoint.receipts,
+                    dispatch_attempts=checkpoint.dispatch_attempts,
+                    wake_attempts=attempts,
+                )
+                self._commit_checkpoint(updated)
+                return RoleWakeAttemptSettleResult(
+                    status=WakeAttemptSettleStatus.SETTLED,
+                    record=candidate,
+                )
+        except (OSError, UnicodeError, ValidationError, ValueError):
+            return _storage_wake_settlement_failure()
 
 
 __all__ = ["JohnnyMetadataRoot", "LiveDispatchMetadataBoundary"]
