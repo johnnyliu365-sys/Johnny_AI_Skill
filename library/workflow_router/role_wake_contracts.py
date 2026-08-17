@@ -266,7 +266,17 @@ def _preflight_failure(
 ) -> RoleWakeChainFailure:
     """Keep a missing host capability distinct from an invalid bound chain."""
 
-    if request.wake_capability.state is RoleWakeCapabilityState.UNAVAILABLE:
+    if request.wake_capability.state is RoleWakeCapabilityState.UNAVAILABLE and (
+        _chain_bindings_match(
+            request.model_copy(
+                update={
+                    "wake_capability": request.wake_capability.model_copy(
+                        update={"state": RoleWakeCapabilityState.PROVEN}
+                    )
+                }
+            )
+        )
+    ):
         return RoleWakeChainFailure.HOST_WAKE_CAPABILITY_UNAVAILABLE
     return RoleWakeChainFailure.ROLE_WAKE_CHAIN_UNAVAILABLE
 

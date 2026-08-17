@@ -279,6 +279,14 @@ class WakeChainPreflightTests(unittest.TestCase):
             {"registration": request.registration.model_copy(update={"mode": GitObservationMode.UNAVAILABLE})},
             {"registration": request.registration.model_copy(update={"subscription_id": "subscription-wrong"})},
             {"implementation_task_ref": "task-wrong"},
+            {
+                "registration": request.registration.model_copy(
+                    update={"subscription_id": "subscription-wrong"}
+                ),
+                "wake_capability": request.wake_capability.model_copy(
+                    update={"state": RoleWakeCapabilityState.UNAVAILABLE}
+                ),
+            },
             {"deadline_capability": request.deadline_capability.model_copy(update={"one_shot_supported": False})},
             {"deadline_capability": request.deadline_capability.model_copy(update={"recurring_callback_required": True})},
         )
