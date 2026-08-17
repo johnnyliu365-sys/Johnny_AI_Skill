@@ -88,6 +88,21 @@ class ProjectRunnerRegistryTests(TestCase):
         )
         self.assertEqual(lifecycle.starts, ["project-alpha"])
         self.assertEqual(lifecycle.stops, [])
+        foreign_removal = registry.remove_subscription("project-beta", "subscription-one")
+        self.assertEqual(
+            foreign_removal.decision,
+            ProjectRunnerRegistryDecision.FOREIGN_SUBSCRIPTION,
+        )
+        self.assertEqual(lifecycle.starts, ["project-alpha"])
+        self.assertEqual(lifecycle.stops, [])
+        retained_duplicate = registry.register_subscription(
+            "project-alpha", "subscription-one"
+        )
+        self.assertEqual(
+            retained_duplicate.decision,
+            ProjectRunnerRegistryDecision.DUPLICATE_SUBSCRIPTION,
+        )
+        self.assertEqual(retained_duplicate.runner_ref, "runner-alpha")
         retained = registry.register_subscription("project-alpha", "subscription-two")
         self.assertEqual(retained.decision, ProjectRunnerRegistryDecision.REUSED)
         self.assertEqual(retained.runner_ref, "runner-alpha")

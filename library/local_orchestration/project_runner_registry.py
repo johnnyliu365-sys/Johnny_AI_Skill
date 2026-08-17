@@ -304,6 +304,13 @@ class ProjectRunnerRegistry:
         )
         existing = _find_project_state(self._states, request.project_ref)
         if existing is None or request.subscription_id not in existing.subscription_ids:
+            if _find_subscription_owner(self._states, request.subscription_id) is not None:
+                return ProjectRunnerRegistryResult(
+                    decision=ProjectRunnerRegistryDecision.FOREIGN_SUBSCRIPTION,
+                    project_ref=request.project_ref,
+                    subscription_id=request.subscription_id,
+                    runner_ref=None,
+                )
             return ProjectRunnerRegistryResult(
                 decision=ProjectRunnerRegistryDecision.NOT_FOUND,
                 project_ref=request.project_ref,
