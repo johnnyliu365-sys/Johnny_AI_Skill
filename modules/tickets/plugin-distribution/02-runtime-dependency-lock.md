@@ -4,14 +4,15 @@
 | --- | --- |
 | SPEC / AC / requirement | `SPEC-AI-WORKFLOW-PLUGIN-DISTRIBUTION-20260802-01KZ3N5P7R9T1V3X5Z7B9D1F3H` Revision 02 / AC-03, AC-04, AC-05 / `PRD-20260802-004` / `CHG-20260802-004` / `REQ-20260802-004` |
 | Context / planning baseline | `doc/context/plugin-distribution/main.md` / `ctx-plugin-distribution-r02` / `a45686dd0238d69fac6c0b740a2b91ba51d5d90a` |
-| Closure | `CLOSURE-PD-02-R03-03`; replaces R03-02 after official artifact-identity review found two missing CPython ABI tags |
+| Closure | `CLOSURE-PD-02-R03-03`; corrected by `395bcdd02ec0a0aa149b3565bc0e1276933060c7` and integrated by `b5e73655eae8f6995cab803e1be276ced492dcff` |
 | Control / reviewer | Architecture owner and replacement reviewer task `019fbda1-2365-77d2-b510-dff079d02bff`; prior Senior task is retired from this ticket |
 | Implementation allocation | ticket ref `ticket-pd02-runtime-lock-04`; role `role-impl-pd02-luna-001`; task `01a00eac-b464-7ee1-ac76-465477768e02`; worktree `worktree-pd02impl2-01` at `C:\Users\<user>\Desktop\AI控制工作workflow-implementer-2`; branch `codex/plugin-distribution-02-runtime-lock` / `branch-pd02runtime-01`; baseline `496971ccfaa9db25bde3d69c526166b82b9c4ca4`; receipt `receipt-pd02-20260817-004`; correlation `corr-pd02-20260817-004`; correction `correction-pd02-20260817-004` |
 | Implementation language | Python 3.11.9; matches approved SPEC Revision 02 |
 | Strict checker | `python -m mypy --strict library/local_orchestration/runtime_dependency_lock.py` |
 | Profile / resource / environment | `plugin-distribution-poc-r02` v2 / POC / one Luna xhigh implementation lane / no helper / Windows x64 |
-| Candidate commit | `241cbec8d2f33b537379698c597df2204892ec77` |
-| State / XSS | `TICKET_CORRECTED / IMPLEMENTATION_CORRECTION_REQUIRED`; `XSS_NOT_APPLICABLE` |
+| Candidate commit | `395bcdd02ec0a0aa149b3565bc0e1276933060c7`; additive successor of `241cbec8d2f33b537379698c597df2204892ec77` |
+| Review / integration | Replacement reviewer independently confirmed focused `13 passed`, strict mypy clean, exact scope/ancestry and zero residue; implementation full suite `716 passed, 2500 subtests passed`; merge `b5e73655eae8f6995cab803e1be276ced492dcff` |
+| State / XSS | `DONE / REVIEW_APPROVED / INTEGRATED`; `XSS_NOT_APPLICABLE` |
 | Boundary classification | No UI, Browser, privileged host, Secret, Provider, network, install or target-project effect |
 
 ## Sole closure and public boundary
