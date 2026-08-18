@@ -119,3 +119,19 @@ red, restore exact bytes, rerun the focused cell and remove every cache/bytecode
 one implementation commit. Return exactly `ImplementationReturn.COMPLETED → ACTION_COMPLETED`,
 `BLOCKED → HALT` with its failed closure cell and preserved branch state, or
 `CHANGE_DETECTED → REQUIREMENT_CHANGED` only for a conflict in the frozen read-only contracts.
+
+## Integrated evidence
+
+| Field | Evidence |
+| --- | --- |
+| State | `INTEGRATED / CLOSED` |
+| Implementation | `2e1baae` on `claude/skill-plugin-parallel-control-42c487` from frozen baseline `b0772dc`; owner-authorized controlled execution-binding replacement of the undispatched Luna lane (no prior branch, file or commit existed) |
+| Closure | J1–J5 pass: exact Profile/lock and passive counting fakes produce `COMPOSED` with every declared concrete component and value-preserved Profile/lock; ordinary construction invokes zero injected port methods; each mismatched/missing/malformed dependency returns only its own `BLOCKED` member with no composition and no peer-port call; nullability is exact and no result field exposes a raw injected port; unavailable `host_wake_port` blocks as `HOST_WAKE_PORT_UNAVAILABLE` before any subscription, inbox or wake binding. |
+| Verification | focused `5 passed, 18 subtests`; dependency regressions (profile, runner registry, git subscription, senior review inbox, role wake) `37 passed, 9 subtests`; `mypy --strict --no-incremental` clean over both new paths; full `769 passed, 2561 subtests`; 214 Python files compiled in memory; `-B` and `no:cacheprovider` kept zero cache/bytecode residue. |
+| Reverse mutation | `host_wake_port` availability gate bypassed → named J5 cell red (`COMPOSED is not BLOCKED`); exact bytes restored (empty `git diff`); focused rerun `5 passed, 18 subtests`. |
+| Boundary | No CLI transport, argv parsing, printing, operation dispatch, component invocation, bundle generation, Git readback, persistence, host call, installation or target-project effect; frozen read-only contracts untouched. |
+
+Canonical SHA-256: `johnny_router_composition.py`
+`83C8765D041DA350472A7475B0294A3FC7F753BD22EF14D3366A9BDBD26828D3`;
+`test_plugin_distribution_router_composition.py`
+`A08060B8480B6700848294FE10D1F134CEC2DF5AC5EF760B5DFD70F29393C8F4`.
