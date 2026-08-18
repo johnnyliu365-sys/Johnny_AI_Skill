@@ -41,10 +41,9 @@ def run_live_cli(argv: tuple[str, ...], johnny_root: Path) -> int:
         print(json.dumps(payload, sort_keys=True))
         return 0 if payload["status"] == "OK" else 3
     if command == "uninstall":
-        # Wired by the live-install line's L6 ticket; until then this stays a
-        # typed block rather than a silent no-op.
-        print('{"status":"CAPABILITY_UNAVAILABLE","code":"LIVE_UNINSTALL_NOT_WIRED"}')
-        return 3
+        from .live_uninstall_composition import run_live_uninstall
+
+        return run_live_uninstall(johnny_root)
     print('{"status":"CAPABILITY_UNAVAILABLE","code":"UNKNOWN_COMMAND"}')
     return 2
 
