@@ -26,3 +26,19 @@ Verify with `python -m pytest -q tests/test_plugin_distribution_uninstall_transa
 `python -m mypy --strict library/local_orchestration/plugin_uninstall_transaction.py` and
 `python -m pytest -q`; reverse-mutate ownership matching. Delete fake records only; return typed evidence.
 Return is exactly `ImplementationReturn.COMPLETED | BLOCKED | CHANGE_DETECTED`.
+
+## Integrated evidence
+
+| Field | Evidence |
+| --- | --- |
+| State | `INTEGRATED / CLOSED` |
+| Implementation | `feat: add receipt-owned uninstall transaction` on `claude/skill-plugin-parallel-control-42c487`; owner-authorized direct allocation |
+| Closure | U1 ordered removal: block → cancel subscriptions → stop runners → per-record ownership probe → remove in PLUGIN_PAYLOAD/VENV/LAUNCHER/QUEUE/TELEMETRY order → absence readback per record → ledger close last. U2 foreign preservation: one FOREIGN/UNKNOWN probe halts before any delete with every owned and foreign entry intact. U3 failed block/cancel/stop and failed removal halt with the ledger retained and exact removed/remaining split. U4 absence readback failure retains the ledger. U5 repeat run returns `NOT_INSTALLED`; an absent ledger with owned residue blocks as `RESIDUAL_OWNED_STATE`. Foreign ledger receipt and foreign request objects halt untouched. |
+| Verification | focused `6 passed, 10 subtests`; `mypy --strict --no-incremental` clean over module and test; full `782 passed, 2586 subtests`; 218 Python files compiled in memory; zero cache/bytecode residue. |
+| Reverse mutation | Ownership matching relaxed to admit FOREIGN probes → `test_foreign_path_halts_before_any_delete` red; exact bytes restored; focused rerun `6 passed, 10 subtests`. |
+| Boundary | Fake effect ports only; no live uninstall, filesystem, Git, host or target-project effect; launcher and install files untouched. |
+
+Canonical SHA-256: `plugin_uninstall_transaction.py`
+`B188432EA57DBBB5E3B3D59CD5A3162E071BA70408444DEA3DD1C07FCB8EE8C6`;
+`test_plugin_distribution_uninstall_transaction.py`
+`2A09E9927642FE410EC266A5AA7DAE75DE151742B283177EBDB9F73B588B13BD`.
