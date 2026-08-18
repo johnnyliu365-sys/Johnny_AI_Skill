@@ -26,7 +26,7 @@ _CREATE_TIMEOUT = 300
 _INSTALL_TIMEOUT = 900
 _COMPOSITION_TIMEOUT = 600
 _LOCK_NAME = "requirements-runtime.lock"
-_COMPOSITION_RELATIVE = "library/local_orchestration/johnny_live_install.py"
+_COMPOSITION_MODULE = "library.local_orchestration.johnny_live_install"
 
 
 def _emit(code: str, status: str = "BLOCKED") -> int:
@@ -77,10 +77,17 @@ def _render_requirements(lock_path: Path) -> str | None:
     return "\n".join(lines) + "\n"
 
 
-def _run(command: tuple[str, ...], timeout_seconds: int) -> int | None:
+def _run(
+    command: tuple[str, ...],
+    timeout_seconds: int,
+    working_directory: Path | None = None,
+) -> int | None:
     try:
         completed = subprocess.run(
-            command, shell=False, timeout=timeout_seconds
+            command,
+            shell=False,
+            timeout=timeout_seconds,
+            cwd=None if working_directory is None else str(working_directory),
         )
     except (OSError, ValueError, subprocess.TimeoutExpired):
         return None
@@ -136,19 +143,20 @@ def run_bootstrap(bundle_zip: Path, johnny_root: Path) -> int:
         if installed != 0:
             return _emit("WHEEL_INSTALL_FAILED")
 
-        composition = staging.joinpath(*_COMPOSITION_RELATIVE.split("/"))
         handed_off = _run(
             (
                 str(venv_python),
                 "-X",
                 "utf8",
-                str(composition),
+                "-m",
+                _COMPOSITION_MODULE,
                 "--bundle",
                 str(bundle_zip),
                 "--root",
                 str(johnny_root),
             ),
             _COMPOSITION_TIMEOUT,
+            working_directory=staging,
         )
         if handed_off is None:
             return _emit("COMPOSITION_UNREACHABLE")
