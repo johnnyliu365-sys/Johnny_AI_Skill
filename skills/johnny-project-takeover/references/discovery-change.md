@@ -6,7 +6,15 @@ changes. For Wayfinder's detailed evaluation procedure, also read `../../../Defi
 ## Wayfinder and architecture
 
 Every new or inherited project starts with Wayfinder. `NO-GO` stops the workflow until the
-declared reassessment conditions are met. `GO` produces a Shared Context in this order:
+declared reassessment conditions are met. When required input is missing, Wayfinder emits one
+typed `WAYFINDER_INFO_REQUIRED` round instead of guessing or free-form questioning: every
+currently blocking gap is listed at once from the closed `WayfinderInputField` set, each gap
+names the output field or strict-veto item it unblocks, answered fields are never re-asked,
+and the round counter is closed at two. Answers become authority only after they are committed
+into the intake goal record; `OWNER_INPUT_PROVIDED` then re-enters `WAYFINDER`. Round
+exhaustion forces a terminal decision: `GO` with explicitly marked assumptions, or
+`NO-GO / INSUFFICIENT_INPUT` whose gap list is the reassessment condition. `GO` produces a
+Shared Context in this order:
 
 ```text
 product position

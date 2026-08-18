@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum
-from typing import Annotated
+from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -152,6 +152,8 @@ class RouterEventKind(str, Enum):
     INTAKE = "intake"
     WAYFINDER_GO = "wayfinder_go"
     WAYFINDER_NO_GO = "wayfinder_no_go"
+    WAYFINDER_INFO_REQUIRED = "wayfinder_info_required"
+    OWNER_INPUT_PROVIDED = "owner_input_provided"
     ACTION_COMPLETED = "action_completed"
     VALIDATION_PASSED = "validation_passed"
     VALIDATION_FAILED = "validation_failed"
@@ -243,6 +245,7 @@ class HumanWaitReason(str, Enum):
     IMPLEMENTATION_OWNER_ASSIGNMENT_REQUIRED = "implementation_owner_assignment_required"
     TICKET_DISPATCH_CONFIRMATION_REQUIRED = "ticket_dispatch_confirmation_required"
     INTEGRATION_AUDIT_REQUIRED = "integration_audit_required"
+    WAYFINDER_INPUT_GAP = "wayfinder_input_gap"
 
 
 class CompletionActionKind(str, Enum):
@@ -1135,6 +1138,7 @@ class ArtifactKind(str, Enum):
 
     PROJECT_GOAL = "project_goal"
     WAYFINDER_OUTPUT = "wayfinder_output"
+    WAYFINDER_INFO_REQUEST = "wayfinder_info_request"
     ARCHITECTURE = "architecture"
     GRILL = "grill"
     CONTEXT = "context"
@@ -1865,3 +1869,81 @@ class ResolvedContext:
 
     view: ContextView
     packet: ContextPacket
+
+
+class WayfinderInputField(str, Enum):
+    """The closed set of Wayfinder inputs a gap request may name."""
+
+    PRODUCT_TARGET_USERS = "product_target_users"
+    PRODUCT_CORE_PROBLEM = "product_core_problem"
+    PRODUCT_VALUE_PROPOSITION = "product_value_proposition"
+    PRODUCT_MVP_SCOPE = "product_mvp_scope"
+    PRODUCT_OUT_OF_SCOPE = "product_out_of_scope"
+    SLICE_SET_INCOMPLETE = "slice_set_incomplete"
+    SLICE_ACTOR = "slice_actor"
+    SLICE_USER_GOAL = "slice_user_goal"
+    SLICE_BOUNDARY = "slice_boundary"
+    SLICE_ACTIONS = "slice_actions"
+    SLICE_OUTCOMES = "slice_outcomes"
+    SLICE_STATES = "slice_states"
+    CAPABILITY_USE_CASES = "capability_use_cases"
+    CAPABILITY_DOMAIN_RULES = "capability_domain_rules"
+    CAPABILITY_CONTRACTS = "capability_contracts"
+    CAPABILITY_AUTHZ_FAILURE = "capability_authz_failure"
+    DATA_PIPELINE = "data_pipeline"
+    DATA_OWNERSHIP = "data_ownership"
+    BUSINESS_MODEL = "business_model"
+    BUSINESS_VALIDATION = "business_validation"
+    BUSINESS_METRICS = "business_metrics"
+    BUSINESS_STOP_CONDITIONS = "business_stop_conditions"
+    TECH_LIMITS = "tech_limits"
+    COST_CEILING = "cost_ceiling"
+    RISK_MITIGATION = "risk_mitigation"
+
+
+class WayfinderBlockKind(str, Enum):
+    """What a Wayfinder input gap blocks: an output field or a strict veto check."""
+
+    OUTPUT_FIELD = "output_field"
+    STRICT_VETO = "strict_veto"
+
+
+class WayfinderInputGap(RouterModel):
+    """One enumerated missing input; every question must name what it unblocks."""
+
+    field: WayfinderInputField
+    feature_id: Annotated[str, Field(min_length=1, max_length=120)] | None = None
+    block_kind: WayfinderBlockKind
+    block_reference: Annotated[str, Field(min_length=1, max_length=120)]
+    question: Annotated[str, Field(min_length=1, max_length=300)]
+
+
+class WayfinderInfoRequest(RouterModel):
+    """One bounded, complete Wayfinder gap round; the type forbids a third round.
+
+    Convergence rules carried by this contract:
+    1. each round lists every currently blocking gap at once;
+    2. an answered field is never asked again (monotonic shrink);
+    3. the round counter is closed at two, so exhaustion forces a terminal
+       GO / NO-GO with explicit assumptions or INSUFFICIENT_INPUT;
+    4. every question names the exact output field or strict-veto item it
+       unblocks, so curiosity questions are untypable.
+    """
+
+    round_number: Literal[1, 2]
+    gaps: tuple[WayfinderInputGap, ...] = Field(min_length=1)
+    answered_fields: tuple[WayfinderInputField, ...] = ()
+
+    @model_validator(mode="after")
+    def rounds_shrink_and_never_reask(self) -> WayfinderInfoRequest:
+        if self.round_number == 1 and self.answered_fields:
+            raise ValueError("the first round has no previously answered fields")
+        if self.round_number == 2 and not self.answered_fields:
+            raise ValueError("a second round must name the fields already answered")
+        answered = set(self.answered_fields)
+        if any(gap.field in answered for gap in self.gaps):
+            raise ValueError("an answered field must not be asked again")
+        identities = tuple((gap.field, gap.feature_id) for gap in self.gaps)
+        if len(set(identities)) != len(identities):
+            raise ValueError("each round lists one gap per field and feature")
+        return self

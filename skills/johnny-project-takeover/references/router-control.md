@@ -10,7 +10,9 @@ implement an already admitted ticket.
 ProcessStage = INTAKE | WAYFINDER | ARCHITECTURE | GRILL | CONTEXT | SPEC | TICKETS
              | IMPLEMENT | SMOKE_TEST | REVIEW | HANDOFF | BLOCKED | STOPPED
 
-RouterEvent = INTAKE | WAYFINDER_GO | WAYFINDER_NO_GO | ACTION_COMPLETED
+RouterEvent = INTAKE | WAYFINDER_GO | WAYFINDER_NO_GO
+            | WAYFINDER_INFO_REQUIRED | OWNER_INPUT_PROVIDED
+            | ACTION_COMPLETED
             | VALIDATION_PASSED | VALIDATION_FAILED
             | APPROVAL_GRANTED | APPROVAL_DENIED | REQUIREMENT_CHANGED
             | CONTEXT_REFERENCE_CLOSED | EXTERNAL_DECISION_REQUIRED
@@ -65,7 +67,13 @@ Every decision declares exactly one continuation:
    valid evidence, one allowlisted capability and existing authority all agree. Execute one
    action, emit a new event, then route again.
 2. `WAIT_FOR_HUMAN` applies only to a Profile-declared approval, an owner decision or an
-   irreversible external effect. State the exact decision required.
+   irreversible external effect. State the exact decision required. The Wayfinder
+   information-gap round (`WAYFINDER_INFO_REQUIRED`, wait reason `WAYFINDER_INPUT_GAP`)
+   is such a declared owner decision: the typed `WayfinderInfoRequest` lists every
+   currently blocking enumerated gap at once, never re-asks an answered field, is closed
+   at two rounds, and resumes only through `OWNER_INPUT_PROVIDED` after the answers are
+   committed into the intake goal record. Round exhaustion forces a terminal
+   `WAYFINDER_GO` with explicit assumptions or `WAYFINDER_NO_GO / INSUFFICIENT_INPUT`.
 3. `HALT` applies to missing or invalid sources, denied or absent authority, unavailable
    capability, failed validation, replay or mismatch, unsafe external boundary, exceeded
    budget, undeclared transition or `NO-GO`. Do not guess, use a local fallback, or wait
@@ -95,7 +103,7 @@ approval prompt.
 | Stage | Minimum source kind | Capability kind | Expected return |
 | --- | --- | --- | --- |
 | `INTAKE` | goal and approved profile | goal normalization | `WAYFINDER` or halt |
-| `WAYFINDER` | Wayfinder standard and confirmed facts | viability decision | `WAYFINDER_GO` or `WAYFINDER_NO_GO` |
+| `WAYFINDER` | Wayfinder standard and confirmed facts | viability decision | `WAYFINDER_GO`, `WAYFINDER_NO_GO` or `WAYFINDER_INFO_REQUIRED` |
 | `ARCHITECTURE` | GO context, constraints and risks | architecture | completed artifact or blocker |
 | `GRILL` | scoped requirements, architecture and change history | requirement convergence | confirmed facts or change event |
 | `CONTEXT` / `SPEC` / `TICKETS` | approved scoped artifacts | specification and slicing | draft, approval wait or completion |

@@ -112,7 +112,11 @@ _EXPECTED_ROUTES: tuple[_ExpectedRoute, ...] = (
         RouterEventKind.INTAKE,
         "discovery-change",
         ReturnContractKind.ROUTER_EVENT,
-        (RouterEventKind.WAYFINDER_GO, RouterEventKind.WAYFINDER_NO_GO),
+        (
+            RouterEventKind.WAYFINDER_GO,
+            RouterEventKind.WAYFINDER_NO_GO,
+            RouterEventKind.WAYFINDER_INFO_REQUIRED,
+        ),
         (),
     ),
     _ExpectedRoute(
@@ -121,6 +125,26 @@ _EXPECTED_ROUTES: tuple[_ExpectedRoute, ...] = (
         "discovery-change",
         ReturnContractKind.ROUTER_EVENT,
         (RouterEventKind.ACTION_COMPLETED,),
+        (),
+    ),
+    _ExpectedRoute(
+        ProcessStage.WAYFINDER,
+        RouterEventKind.WAYFINDER_INFO_REQUIRED,
+        "discovery-change",
+        ReturnContractKind.ROUTER_EVENT,
+        (RouterEventKind.OWNER_INPUT_PROVIDED,),
+        (),
+    ),
+    _ExpectedRoute(
+        ProcessStage.WAYFINDER,
+        RouterEventKind.OWNER_INPUT_PROVIDED,
+        "discovery-change",
+        ReturnContractKind.ROUTER_EVENT,
+        (
+            RouterEventKind.WAYFINDER_GO,
+            RouterEventKind.WAYFINDER_NO_GO,
+            RouterEventKind.WAYFINDER_INFO_REQUIRED,
+        ),
         (),
     ),
     _ExpectedRoute(
@@ -269,14 +293,14 @@ _EXPECTED_ROUTES: tuple[_ExpectedRoute, ...] = (
 _EXPECTED_POLICIES: tuple[_ExpectedPolicy, ...] = (
     _ExpectedPolicy(
         "router-control",
-        "rev-d6660247fa53789c",
-        "sha256_d6660247fa53789c4a14498aaaae2e15a49fa3335e84fe585480f08ba564de5d",
+        "rev-d0536fa54930f121",
+        "sha256_d0536fa54930f121b8745b8110250aa2f3c5a0edfa51bcf13d746442a5bdcc47",
         PurePosixPath("skills/johnny-project-takeover/references/router-control.md"),
     ),
     _ExpectedPolicy(
         "discovery-change",
-        "rev-5d432a8246bce4ed",
-        "sha256_5d432a8246bce4ed890289e24c50e2e29360df165eeb7f9355cb02228e1d10ef",
+        "rev-eb4bf2ab4475699a",
+        "sha256_eb4bf2ab4475699aad7156f241455c5da129279854d2e2ac98fe3b86bc3dddb3",
         PurePosixPath("skills/johnny-project-takeover/references/discovery-change.md"),
     ),
     _ExpectedPolicy(
@@ -729,12 +753,12 @@ class WorkflowRouterTests(unittest.TestCase):
             delivery_stage=DeliveryStage.POC,
             router_control_reference=SkillReference(
                 reference_id="router-control",
-                source_revision="rev-5d432a8246bce4ed",
-                content_digest="sha256_5d432a8246bce4ed890289e24c50e2e29360df165eeb7f9355cb02228e1d10ef",
+                source_revision="rev-eb4bf2ab4475699a",
+                content_digest="sha256_eb4bf2ab4475699aad7156f241455c5da129279854d2e2ac98fe3b86bc3dddb3",
             ),
             halt_return_contract=ExpectedReturnContract(
                 contract_id="router-control-no-return",
-                contract_revision="rev-5d432a8246bce4ed",
+                contract_revision="rev-eb4bf2ab4475699a",
                 return_kind=ReturnContractKind.NO_RETURN,
                 router_events=(),
                 implementation_statuses=(),
@@ -743,12 +767,12 @@ class WorkflowRouterTests(unittest.TestCase):
                 TransitionRule(
                     skill_reference=SkillReference(
                         reference_id="legacy-route-architecture-action-completed",
-                        source_revision="rev-5d432a8246bce4ed",
-                        content_digest="sha256_5d432a8246bce4ed890289e24c50e2e29360df165eeb7f9355cb02228e1d10ef",
+                        source_revision="rev-eb4bf2ab4475699a",
+                        content_digest="sha256_eb4bf2ab4475699aad7156f241455c5da129279854d2e2ac98fe3b86bc3dddb3",
                     ),
                     expected_return=ExpectedReturnContract(
                         contract_id="return-action-completed",
-                        contract_revision="rev-5d432a8246bce4ed",
+                        contract_revision="rev-eb4bf2ab4475699a",
                         return_kind=ReturnContractKind.ROUTER_EVENT,
                         router_events=(RouterEventKind.ACTION_COMPLETED,),
                         implementation_statuses=(),
@@ -1535,8 +1559,8 @@ class ContextLoadTelemetryTests(unittest.TestCase):
 class RouteInstructionContractTests(unittest.TestCase):
     """Exercise the versioned policy reference and finite return contract boundary."""
 
-    _revision = "rev-5d432a8246bce4ed"
-    _digest = "sha256_5d432a8246bce4ed890289e24c50e2e29360df165eeb7f9355cb02228e1d10ef"
+    _revision = "rev-eb4bf2ab4475699a"
+    _digest = "sha256_eb4bf2ab4475699aad7156f241455c5da129279854d2e2ac98fe3b86bc3dddb3"
 
     def _skill(self, reference_id: str = "route-test-policy") -> SkillReference:
         return SkillReference(
@@ -2357,7 +2381,7 @@ class RouteInstructionContractTests(unittest.TestCase):
         profile = build_router_poc_profile()
         self.assertEqual("router-control", profile.router_control_reference.reference_id)
         self.assertEqual(
-            "rev-d6660247fa53789c",
+            "rev-d0536fa54930f121",
             profile.router_control_reference.source_revision,
         )
         self.assertEqual(

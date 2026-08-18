@@ -195,13 +195,13 @@ class _PolicyRoute:
 _POLICY_REFERENCES: tuple[SkillReference, ...] = (
     SkillReference(
         reference_id="router-control",
-        source_revision="rev-d6660247fa53789c",
-        content_digest="sha256_d6660247fa53789c4a14498aaaae2e15a49fa3335e84fe585480f08ba564de5d",
+        source_revision="rev-d0536fa54930f121",
+        content_digest="sha256_d0536fa54930f121b8745b8110250aa2f3c5a0edfa51bcf13d746442a5bdcc47",
     ),
     SkillReference(
         reference_id="discovery-change",
-        source_revision="rev-5d432a8246bce4ed",
-        content_digest="sha256_5d432a8246bce4ed890289e24c50e2e29360df165eeb7f9355cb02228e1d10ef",
+        source_revision="rev-eb4bf2ab4475699a",
+        content_digest="sha256_eb4bf2ab4475699aad7156f241455c5da129279854d2e2ac98fe3b86bc3dddb3",
     ),
     SkillReference(
         reference_id="context-routing",
@@ -237,7 +237,11 @@ _POLICY_ROUTES: tuple[_PolicyRoute, ...] = (
         RouterEventKind.INTAKE,
         "discovery-change",
         ReturnContractKind.ROUTER_EVENT,
-        (RouterEventKind.WAYFINDER_GO, RouterEventKind.WAYFINDER_NO_GO),
+        (
+            RouterEventKind.WAYFINDER_GO,
+            RouterEventKind.WAYFINDER_NO_GO,
+            RouterEventKind.WAYFINDER_INFO_REQUIRED,
+        ),
         (),
     ),
     _PolicyRoute(
@@ -246,6 +250,26 @@ _POLICY_ROUTES: tuple[_PolicyRoute, ...] = (
         "discovery-change",
         ReturnContractKind.ROUTER_EVENT,
         (RouterEventKind.ACTION_COMPLETED,),
+        (),
+    ),
+    _PolicyRoute(
+        ProcessStage.WAYFINDER,
+        RouterEventKind.WAYFINDER_INFO_REQUIRED,
+        "discovery-change",
+        ReturnContractKind.ROUTER_EVENT,
+        (RouterEventKind.OWNER_INPUT_PROVIDED,),
+        (),
+    ),
+    _PolicyRoute(
+        ProcessStage.WAYFINDER,
+        RouterEventKind.OWNER_INPUT_PROVIDED,
+        "discovery-change",
+        ReturnContractKind.ROUTER_EVENT,
+        (
+            RouterEventKind.WAYFINDER_GO,
+            RouterEventKind.WAYFINDER_NO_GO,
+            RouterEventKind.WAYFINDER_INFO_REQUIRED,
+        ),
         (),
     ),
     _PolicyRoute(
@@ -592,6 +616,39 @@ def build_router_poc_profile() -> ProjectWorkflowProfile:
                 outcome=RouterOutcome.STOP,
                 next_stage=ProcessStage.STOPPED,
                 required_source_kinds=(ArtifactKind.WAYFINDER_OUTPUT,),
+            ),
+            TransitionRule(
+                skill_reference=_skill_reference_for(
+                    current_stage=ProcessStage.WAYFINDER,
+                    event_kind=RouterEventKind.WAYFINDER_INFO_REQUIRED,
+                ),
+                expected_return=_expected_return_for(
+                    current_stage=ProcessStage.WAYFINDER,
+                    event_kind=RouterEventKind.WAYFINDER_INFO_REQUIRED,
+                ),
+                current_stage=ProcessStage.WAYFINDER,
+                event_kind=RouterEventKind.WAYFINDER_INFO_REQUIRED,
+                outcome=RouterOutcome.SUSPEND,
+                next_stage=None,
+                required_source_kinds=(ArtifactKind.WAYFINDER_INFO_REQUEST,),
+                requires_human_approval=True,
+                wait_reason=HumanWaitReason.WAYFINDER_INPUT_GAP,
+            ),
+            TransitionRule(
+                skill_reference=_skill_reference_for(
+                    current_stage=ProcessStage.WAYFINDER,
+                    event_kind=RouterEventKind.OWNER_INPUT_PROVIDED,
+                ),
+                expected_return=_expected_return_for(
+                    current_stage=ProcessStage.WAYFINDER,
+                    event_kind=RouterEventKind.OWNER_INPUT_PROVIDED,
+                ),
+                current_stage=ProcessStage.WAYFINDER,
+                event_kind=RouterEventKind.OWNER_INPUT_PROVIDED,
+                outcome=RouterOutcome.RETRY,
+                next_stage=ProcessStage.WAYFINDER,
+                required_source_kinds=(ArtifactKind.PROJECT_GOAL,),
+                eligible_capabilities=(wayfinder,),
             ),
             TransitionRule(
                 skill_reference=_skill_reference_for(

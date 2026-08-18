@@ -24,7 +24,7 @@ flowchart TD
     S --> T["Typed return + CompletionEvidence"]
     D --> T
     T --> R
-    W -->|"APPROVAL_GRANTED / APPROVAL_DENIED / EXTERNAL_DECISION_REQUIRED"| R
+    W -->|"APPROVAL_GRANTED / APPROVAL_DENIED / EXTERNAL_DECISION_REQUIRED / OWNER_INPUT_PROVIDED"| R
 ```
 
 以下只表示合法的 Stage 順序，不表示 Stage 之間可以直接 transition；每一個箭頭都必須
@@ -150,7 +150,7 @@ escalation。預設一位 implementer、無 helper；只有互斥 ownership 與�
 | Stage／條件 | 最小 target source | 必讀 reference | 合法返回 |
 | --- | --- | --- | --- |
 | `INTAKE`／maturity／resource | goal、authority、Profile | [`delivery-profile.md`](skills/johnny-project-takeover/references/delivery-profile.md) | `WAYFINDER` 或 blocker |
-| `WAYFINDER`／`ARCHITECTURE`／`GRILL` | scoped facts、Wayfinder、change history | [`discovery-change.md`](skills/johnny-project-takeover/references/discovery-change.md) | GO／NO-GO／completed／`REQUIREMENT_CHANGED` |
+| `WAYFINDER`／`ARCHITECTURE`／`GRILL` | scoped facts、Wayfinder、change history | [`discovery-change.md`](skills/johnny-project-takeover/references/discovery-change.md) | GO／NO-GO／`WAYFINDER_INFO_REQUIRED`／completed／`REQUIREMENT_CHANGED` |
 | `CONTEXT` | confirmed facts and refs | [`context-routing.md`](skills/johnny-project-takeover/references/context-routing.md) | `ACTION_COMPLETED` |
 | artifact tree／Agent Context lifecycle | root/partition/leaf refs or one ticket binding | [`artifact-tree-routing.md`](skills/johnny-project-takeover/references/artifact-tree-routing.md)、[`agent-context-lifecycle.md`](skills/johnny-project-takeover/references/agent-context-lifecycle.md) | exact leaf／closed view／typed halt |
 | PRD／CHG create、replace 或 archive | active requirement edge or archive bundle | [`requirement-lineage.md`](skills/johnny-project-takeover/references/requirement-lineage.md) | active pair／archive ID／typed halt |
@@ -176,7 +176,11 @@ Wayfinder、Architecture、Grill 與 change-control 的唯一詳細方法：
 
 - [`discovery-change.md`](skills/johnny-project-takeover/references/discovery-change.md)
 
-Wayfinder `NO-GO` 停止；`GO` 才能進 Architecture。需求、正式 UI、資料契約、
+Wayfinder `NO-GO` 停止；`GO` 才能進 Architecture。資訊不足時 Wayfinder 發出
+`WAYFINDER_INFO_REQUIRED`（型別化、一輪列全、不重問、上限兩輪；規則見
+`Defined_wayfinder.md` 的有界資訊缺口協議），Router 以宣告的
+`WAIT_FOR_HUMAN / WAYFINDER_INPUT_GAP` 等待 owner；答案落入 committed intake
+紀錄後以 `OWNER_INPUT_PROVIDED` 重入 `WAYFINDER`。需求、正式 UI、資料契約、
 權限、Provider 或商業規則改變時，停止受影響 ticket，產生
 `REQUIREMENT_CHANGED`，更新 target-owned Context/CHG，再重走受影響的 SPEC 與
 ticket 核准。

@@ -8,7 +8,29 @@ Wayfinder 先將產品定位轉成使用者可觀察的前端功能切片，再�
 
 在產品價值、具體前端功能、由功能反推的後端／資料需求、商業可行性、驗證方式、成本與技術限制明確前，不得進入 Architecture、Grill、Spec、Ticket 或 Implementation。
 
-最終必須輸出 `GO` 或 `NO-GO`。資訊不足時，先提問或驗證，不得猜測或提前決策。
+最終必須輸出 `GO` 或 `NO-GO`。資訊不足時，唯一合法動作是發出一次型別化的
+`WAYFINDER_INFO_REQUIRED`（見下方「有界資訊缺口協議」），不得猜測、不得提前決策、
+不得以自由對話追問。
+
+## 有界資訊缺口協議（Information Gap Protocol）
+
+正式契約為 `library/workflow_router/contracts.py` 的 `WayfinderInfoRequest`；
+Router 側對應 `WAYFINDER_INFO_REQUIRED → WAIT_FOR_HUMAN（WAYFINDER_INPUT_GAP）`
+與 `OWNER_INPUT_PROVIDED → 重入 WAYFINDER`。四條收斂規則：
+
+1. **一輪列全**：每次請求必須列出當前全部阻塞缺口；缺口欄位只能取
+   `WayfinderInputField` 枚舉值，枚舉外的問題不合法。
+2. **單調收縮**：已回答的欄位（`answered_fields`）不得重問；第 2 輪只能包含
+   第 1 輪未答或由答案新產生的缺口。
+3. **硬上限 2 輪**：`round_number` 型別封閉於 `1 | 2`。第 2 輪後仍缺的欄位，
+   若不觸及 Strict Veto 則寫入 `assumptions` 明確標記後照常判定；
+   若觸及 Strict Veto 則輸出 `NO-GO`，理由為 `INSUFFICIENT_INPUT`，
+   缺口清單即重新評估條件。保證有終態。
+4. **問題必須指向解鎖目標**：每個缺口必須宣告它阻塞的 Required Output 欄位
+   或 Strict Veto 條目（`block_kind` + `block_reference`）；指不出來的問題不合法。
+
+Owner 的回答必須先落入 committed intake 紀錄（更新後的 goal artifact），
+Wayfinder 從該紀錄重跑；聊天內容不構成 authority。
 
 ## Evaluation
 
@@ -43,6 +65,9 @@ Wayfinder 先將產品定位轉成使用者可觀察的前端功能切片，再�
 
 - `GO`：輸出 Shared Context 與「前端功能 → 後端能力 → 資料管線 → 組合／依賴邊界」的 Functional Architecture Brief，交由 Architecture Agent 建立高階架構，再進入 Grill。Architecture 不得跳過、刪減或以技術選擇取代這份可驗收的功能地圖。
 - `NO-GO`：停止流程，列出否決原因與重新評估條件。
+- `WAYFINDER_INFO_REQUIRED`：非終態。依有界資訊缺口協議暫停等待 owner 補件；
+  收到 `OWNER_INPUT_PROVIDED` 後重跑評估。兩輪用盡即強制終態（`GO` 附明確
+  assumptions，或 `NO-GO / INSUFFICIENT_INPUT`）。
 - 產品定位、MVP、商業模式或成本上限改變時，必須重跑 Wayfinder。
 
 ## Required Output
