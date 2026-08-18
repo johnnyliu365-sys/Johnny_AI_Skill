@@ -4,7 +4,16 @@
 
 它不是公司專案的 runtime service、MCP server、hook、CI 依賴、Git submodule、symlink、package dependency 或原始碼 import。因此拔除後，公司的建置、測試、部署與既有程式不會受影響。
 
-## 目前發行：0.3.2
+## 目前發行：0.4.0
+
+0.4.0 完成 Router runtime 主線（runner registry、receipt Git subscription、Senior review
+queue、host-wake gate、deterministic bundle、Router composition、install／uninstall
+transaction、telemetry report）與 SourceProjectA scripted + real-role 雙重驗證，並完成 Wayfinder
+收斂五連修（有界資訊缺口協議、範圍終止規則、intake 三模式、workload 強度自適應、
+red 證據重定義）。兩個誠實邊界仍然生效：`install.ps1` 於使用者確認後停在
+`LIVE_INSTALL_NOT_AUTHORIZED`（live 安裝效果綁定未落地），自動喚醒維持
+`HOST_WAKE_CAPABILITY_UNAVAILABLE`（event runner 未落地）；skill-only 安裝與使用
+不受影響。
 
 0.3.2 將前端的組合式設計與依賴注入列為 SPEC／ticket 的阻擋規則，並將控制面 Agent 固定為 Wayfinder／Grill／ticket／review；正式實作必須交給另一位具名 implementation owner。
 
