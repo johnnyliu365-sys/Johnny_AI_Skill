@@ -101,7 +101,34 @@ if ($confirmation -cne 'INSTALL') {
     exit 2
 }
 
-# The live per-user install effect binds through PluginInstallTransaction only
-# after the approved bundle passes scripted and owner-run Vita qualification.
-Write-TypedResult -Status 'BLOCKED' -Code 'LIVE_INSTALL_NOT_AUTHORIZED'
-exit 3
+# Live install: extract the stdlib-only bootstrap from the confirmed bundle
+# and hand it the bundle plus the per-user root. The bootstrap creates the
+# hash-locked control venv, then the typed transaction running inside that
+# venv verifies and installs everything else, journaled and compensable.
+$johnnyRoot = $env:JOHNNY_ROOT
+if ([string]::IsNullOrWhiteSpace($johnnyRoot)) {
+    $johnnyRoot = Join-Path $env:LOCALAPPDATA 'JohnnyRouter'
+}
+$resolvedBundle = (Resolve-Path -LiteralPath $BundleZip).Path
+$bootstrapStage = Join-Path ([System.IO.Path]::GetTempPath()) ('johnny-bootstrap-' + [Guid]::NewGuid().ToString('N'))
+New-Item -ItemType Directory -Path $bootstrapStage | Out-Null
+try {
+    $bootstrapArchive = [System.IO.Compression.ZipFile]::OpenRead($resolvedBundle)
+    try {
+        $bootstrapEntry = $bootstrapArchive.Entries | Where-Object {
+            $_.FullName -eq 'library/local_orchestration/bootstrap_install.py'
+        }
+        if ($null -eq $bootstrapEntry) {
+            Write-TypedResult -Status 'BLOCKED' -Code 'BOOTSTRAP_MISSING'
+            exit 2
+        }
+        $bootstrapPath = Join-Path $bootstrapStage 'bootstrap_install.py'
+        [System.IO.Compression.ZipFileExtensions]::ExtractToFile($bootstrapEntry, $bootstrapPath, $true)
+    } finally {
+        $bootstrapArchive.Dispose()
+    }
+    & py -3.11 -X utf8 $bootstrapPath --bundle $resolvedBundle --root $johnnyRoot
+    exit $LASTEXITCODE
+} finally {
+    Remove-Item -Recurse -Force $bootstrapStage -ErrorAction SilentlyContinue
+}
