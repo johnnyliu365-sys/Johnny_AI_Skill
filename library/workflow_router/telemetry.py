@@ -2,11 +2,13 @@
 
 from __future__ import annotations
 
+import re
 from collections import defaultdict
+from decimal import ROUND_HALF_UP, Decimal
 from enum import Enum
 from hashlib import sha256
 from pathlib import Path
-from typing import Annotated, Literal
+from typing import Annotated, Literal, Protocol
 
 from pydantic import Field, ValidationError, model_validator
 
@@ -569,3 +571,330 @@ def context_view_contains_text_field(*, resolved_context: ResolvedContext) -> bo
     """Detect a forbidden text field in the durable descriptor without persisting raw text."""
 
     return '"text"' in resolved_context.view.model_dump_json()
+
+
+# --- Explicit receipt-indexed telemetry report (Plugin Distribution AC-14) ---
+
+
+class TelemetryRole(str, Enum):
+    """The finite workflow roles a usage evidence record may claim."""
+
+    ARCHITECTURE_OWNER = "ARCHITECTURE_OWNER"
+    SUPERVISOR_REVIEWER = "SUPERVISOR_REVIEWER"
+    IMPLEMENTATION_OWNER = "IMPLEMENTATION_OWNER"
+    RESEARCH_HELPER = "RESEARCH_HELPER"
+
+
+class ReasoningLevel(str, Enum):
+    """The finite reasoning levels a usage evidence record may claim."""
+
+    LOW = "LOW"
+    MEDIUM = "MEDIUM"
+    HIGH = "HIGH"
+    XHIGH = "XHIGH"
+
+
+_OPAQUE_REF_PATTERN = re.compile(r"^[a-z][a-z0-9-]{2,127}$")
+
+
+class ModelPriceSnapshot(RouterModel):
+    """Original-currency prices per million tokens captured with the evidence."""
+
+    currency: str = Field(pattern=r"^[A-Z]{3}$")
+    input_price_per_million: str = Field(pattern=r"^[0-9]+(?:\.[0-9]{1,6})?$")
+    cached_input_price_per_million: str = Field(pattern=r"^[0-9]+(?:\.[0-9]{1,6})?$")
+    output_price_per_million: str = Field(pattern=r"^[0-9]+(?:\.[0-9]{1,6})?$")
+
+
+class RoleModelUsageEvidence(RouterModel):
+    """One receipt-indexed committed usage observation; identifiers only."""
+
+    schema_version: Literal["1"] = "1"
+    receipt_ref: str = Field(pattern=r"^[a-z][a-z0-9-]{2,127}$")
+    evidence_commit: str = Field(pattern=r"^[0-9a-f]{7,64}$")
+    role: TelemetryRole
+    provider: str = Field(pattern=r"^[a-z][a-z0-9-]{2,127}$")
+    model: str = Field(pattern=r"^[a-z0-9][a-z0-9.-]{0,127}$")
+    reasoning_level: ReasoningLevel
+    input_tokens: NonNegativeCount
+    cached_input_tokens: NonNegativeCount
+    output_tokens: NonNegativeCount
+    price: ModelPriceSnapshot
+
+
+class TelemetryReportStatus(str, Enum):
+    """Finite outcomes of one explicit report request."""
+
+    GENERATED = "GENERATED"
+    BLOCKED = "BLOCKED"
+
+
+class TelemetryReportFailure(str, Enum):
+    """Finite reasons an explicit report request produces no report."""
+
+    REQUEST_INVALID = "REQUEST_INVALID"
+    RECEIPT_NOT_FOUND = "RECEIPT_NOT_FOUND"
+    EVIDENCE_UNAVAILABLE = "EVIDENCE_UNAVAILABLE"
+    RAW_CONTENT_REJECTED = "RAW_CONTENT_REJECTED"
+    PRICE_SNAPSHOT_CONFLICT = "PRICE_SNAPSHOT_CONFLICT"
+
+
+class TelemetryReportRequest(RouterModel):
+    """One explicit user report request; the type admits no implicit run."""
+
+    receipt_refs: tuple[str, ...] = Field(min_length=1)
+    explicit_user_request: Literal[True]
+
+    @model_validator(mode="after")
+    def receipt_refs_are_opaque(self) -> TelemetryReportRequest:
+        if any(
+            _OPAQUE_REF_PATTERN.fullmatch(reference) is None
+            for reference in self.receipt_refs
+        ):
+            raise ValueError("receipt references must be opaque identifiers")
+        return self
+
+
+class TelemetryReportGroup(RouterModel):
+    """Aggregated token and cost evidence for one role/model/reasoning/currency."""
+
+    role: TelemetryRole
+    provider: str = Field(pattern=r"^[a-z][a-z0-9-]{2,127}$")
+    model: str = Field(pattern=r"^[a-z0-9][a-z0-9.-]{0,127}$")
+    reasoning_level: ReasoningLevel
+    currency: str = Field(pattern=r"^[A-Z]{3}$")
+    input_tokens: NonNegativeCount
+    cached_input_tokens: NonNegativeCount
+    output_tokens: NonNegativeCount
+    input_cost: str = Field(pattern=r"^[0-9]+(?:\.[0-9]{1,6})?$")
+    cached_input_cost: str = Field(pattern=r"^[0-9]+(?:\.[0-9]{1,6})?$")
+    output_cost: str = Field(pattern=r"^[0-9]+(?:\.[0-9]{1,6})?$")
+    total_cost: str = Field(pattern=r"^[0-9]+(?:\.[0-9]{1,6})?$")
+
+
+class TelemetryReport(RouterModel):
+    """Exactly one generated report or exactly one finite failure."""
+
+    status: TelemetryReportStatus
+    failure: TelemetryReportFailure | None = None
+    groups: tuple[TelemetryReportGroup, ...] = ()
+
+    @model_validator(mode="after")
+    def exact_report_shape(self) -> TelemetryReport:
+        if self.status is TelemetryReportStatus.GENERATED:
+            if self.failure is not None:
+                raise ValueError("a generated report cannot expose a failure")
+        elif self.failure is None or self.groups:
+            raise ValueError("a blocked report requires one failure and no groups")
+        return self
+
+
+class TelemetryBarDatum(RouterModel):
+    """One bar-chart value derived from exactly one report group."""
+
+    group_index: NonNegativeCount
+    label: NonBlankText
+    token_class: Literal["input", "cached_input", "output"]
+    value: NonNegativeCount
+
+
+class ReceiptUsageEvidenceSource(Protocol):
+    """Resolve committed usage evidence for one receipt reference."""
+
+    def resolve(
+        self, receipt_ref: str
+    ) -> tuple[RoleModelUsageEvidence, ...] | None: ...
+
+
+def _blocked_report(failure: TelemetryReportFailure) -> TelemetryReport:
+    return TelemetryReport(status=TelemetryReportStatus.BLOCKED, failure=failure)
+
+
+def _cost_amount(tokens: int, price_per_million: str) -> Decimal:
+    return (
+        Decimal(tokens) * Decimal(price_per_million) / Decimal(1_000_000)
+    ).quantize(Decimal("0.000001"), rounding=ROUND_HALF_UP)
+
+
+def generate_telemetry_report(
+    request: TelemetryReportRequest,
+    source: ReceiptUsageEvidenceSource,
+) -> TelemetryReport:
+    """Resolve receipt-indexed evidence and aggregate it; never run implicitly."""
+
+    if type(request) is not TelemetryReportRequest:
+        return _blocked_report(TelemetryReportFailure.REQUEST_INVALID)
+    try:
+        trusted = TelemetryReportRequest.model_validate(request, strict=True)
+    except ValidationError:
+        return _blocked_report(TelemetryReportFailure.REQUEST_INVALID)
+
+    evidence: list[RoleModelUsageEvidence] = []
+    for receipt_ref in trusted.receipt_refs:
+        try:
+            resolved = source.resolve(receipt_ref)
+        except Exception:
+            return _blocked_report(TelemetryReportFailure.EVIDENCE_UNAVAILABLE)
+        if resolved is None:
+            return _blocked_report(TelemetryReportFailure.RECEIPT_NOT_FOUND)
+        for record in resolved:
+            # Raw-content denial: forged records that bypassed construction
+            # validation are re-proven field by field before any aggregation.
+            try:
+                payload = (
+                    record.model_dump()
+                    if isinstance(record, RoleModelUsageEvidence)
+                    else record
+                )
+                evidence.append(RoleModelUsageEvidence.model_validate(payload))
+            except (ValidationError, AttributeError, TypeError):
+                return _blocked_report(TelemetryReportFailure.RAW_CONTENT_REJECTED)
+
+    grouped: dict[
+        tuple[TelemetryRole, str, str, ReasoningLevel, str],
+        list[RoleModelUsageEvidence],
+    ] = defaultdict(list)
+    for record in evidence:
+        grouped[
+            (
+                record.role,
+                record.provider,
+                record.model,
+                record.reasoning_level,
+                record.price.currency,
+            )
+        ].append(record)
+
+    groups: list[TelemetryReportGroup] = []
+    for key in sorted(grouped, key=lambda item: tuple(str(part) for part in item)):
+        members = grouped[key]
+        first_price = members[0].price
+        if any(member.price != first_price for member in members):
+            return _blocked_report(TelemetryReportFailure.PRICE_SNAPSHOT_CONFLICT)
+        input_tokens = sum(member.input_tokens for member in members)
+        cached_tokens = sum(member.cached_input_tokens for member in members)
+        output_tokens = sum(member.output_tokens for member in members)
+        input_cost = _cost_amount(input_tokens, first_price.input_price_per_million)
+        cached_cost = _cost_amount(
+            cached_tokens, first_price.cached_input_price_per_million
+        )
+        output_cost = _cost_amount(output_tokens, first_price.output_price_per_million)
+        groups.append(
+            TelemetryReportGroup(
+                role=key[0],
+                provider=key[1],
+                model=key[2],
+                reasoning_level=key[3],
+                currency=key[4],
+                input_tokens=input_tokens,
+                cached_input_tokens=cached_tokens,
+                output_tokens=output_tokens,
+                input_cost=format(input_cost, "f"),
+                cached_input_cost=format(cached_cost, "f"),
+                output_cost=format(output_cost, "f"),
+                total_cost=format(input_cost + cached_cost + output_cost, "f"),
+            )
+        )
+    return TelemetryReport(status=TelemetryReportStatus.GENERATED, groups=tuple(groups))
+
+
+_REPORT_CSV_COLUMNS: tuple[str, ...] = (
+    "role",
+    "provider",
+    "model",
+    "reasoning_level",
+    "currency",
+    "input_tokens",
+    "cached_input_tokens",
+    "output_tokens",
+    "input_cost",
+    "cached_input_cost",
+    "output_cost",
+    "total_cost",
+)
+
+
+def render_report_json(report: TelemetryReport) -> str:
+    """Render the exact typed report as JSON."""
+
+    return report.model_dump_json(indent=2)
+
+
+def render_report_csv(report: TelemetryReport) -> str:
+    """Render one CSV row per group with the exact aggregated values."""
+
+    lines = [",".join(_REPORT_CSV_COLUMNS)]
+    for group in report.groups:
+        record = group.model_dump()
+        lines.append(",".join(str(record[column]) for column in _REPORT_CSV_COLUMNS))
+    return "\n".join(lines) + "\n"
+
+
+def render_report_table(report: TelemetryReport) -> str:
+    """Render one aligned terminal row per group with the exact values."""
+
+    header = (
+        f"{'role':24} {'model':20} {'level':6} {'ccy':3} "
+        f"{'input':>10} {'cached':>10} {'output':>10} {'total_cost':>14}"
+    )
+    divider = "-" * len(header)
+    rows = [header, divider]
+    for group in report.groups:
+        rows.append(
+            f"{group.role.value:24} {group.model:20} "
+            f"{group.reasoning_level.value:6} {group.currency:3} "
+            f"{group.input_tokens:>10} {group.cached_input_tokens:>10} "
+            f"{group.output_tokens:>10} {group.total_cost:>14}"
+        )
+    return "\n".join(rows) + "\n"
+
+
+def report_bar_chart_data(report: TelemetryReport) -> tuple[TelemetryBarDatum, ...]:
+    """Return three bars per group carrying the exact token class values."""
+
+    data: list[TelemetryBarDatum] = []
+    token_classes: tuple[Literal["input", "cached_input", "output"], ...] = (
+        "input",
+        "cached_input",
+        "output",
+    )
+    for index, group in enumerate(report.groups):
+        label = f"{group.role.value}/{group.model}/{group.reasoning_level.value}"
+        values = (
+            group.input_tokens,
+            group.cached_input_tokens,
+            group.output_tokens,
+        )
+        for token_class, value in zip(token_classes, values, strict=True):
+            data.append(
+                TelemetryBarDatum(
+                    group_index=index,
+                    label=label,
+                    token_class=token_class,
+                    value=value,
+                )
+            )
+    return tuple(data)
+
+
+class JsonlReceiptUsageEvidenceStore:
+    """Read receipt-indexed usage evidence from one local JSONL file."""
+
+    def __init__(self, records: tuple[RoleModelUsageEvidence, ...]) -> None:
+        self._records = records
+
+    @classmethod
+    def read(cls, *, path: Path) -> JsonlReceiptUsageEvidenceStore:
+        records: list[RoleModelUsageEvidence] = []
+        for line in path.read_text(encoding="utf-8").splitlines():
+            stripped = line.strip()
+            if not stripped:
+                continue
+            records.append(RoleModelUsageEvidence.model_validate_json(stripped))
+        return cls(tuple(records))
+
+    def resolve(self, receipt_ref: str) -> tuple[RoleModelUsageEvidence, ...] | None:
+        matched = tuple(
+            record for record in self._records if record.receipt_ref == receipt_ref
+        )
+        return matched if matched else None
