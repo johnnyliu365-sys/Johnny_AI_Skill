@@ -127,15 +127,19 @@ class LiveInstallQualificationTests(unittest.TestCase):
 
     @classmethod
     def _run_pipeline(cls) -> None:
-        head = _run_git(_REPO_ROOT, "rev-parse", "HEAD")
+        # Build from a clean clone of HEAD so the live checkout's bytecode
+        # or editor residue can never dirty the deterministic build.
+        source = cls.workspace / "src"
+        _run_git(_REPO_ROOT, "clone", "--no-hardlinks", str(_REPO_ROOT), str(source))
+        head = _run_git(source, "rev-parse", "HEAD")
         manifest = build_payload_manifest(
-            _REPO_ROOT, head, build_approved_runtime_lock()
+            source, head, build_approved_runtime_lock()
         )
         dist = cls.workspace / "dist"
         dist.mkdir()
         build_result = PluginBundleBuilder().build(
             PluginBundleBuildRequest(
-                repository_root=_REPO_ROOT, output_root=dist, manifest=manifest
+                repository_root=source, output_root=dist, manifest=manifest
             )
         )
         assert build_result.status is PluginBundleBuildStatus.BUNDLED, (
