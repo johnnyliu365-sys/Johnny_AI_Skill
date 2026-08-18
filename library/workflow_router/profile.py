@@ -220,8 +220,8 @@ _POLICY_REFERENCES: tuple[SkillReference, ...] = (
     ),
     SkillReference(
         reference_id="implementation-tdd",
-        source_revision="rev-38408006f23df3b6",
-        content_digest="sha256_38408006f23df3b66a4368e2b8794cc099b84ea20417e56d881ff19512345574",
+        source_revision="rev-f9a82f514ca42a43",
+        content_digest="sha256_f9a82f514ca42a433eaa5a1e8c0caa960c78928f7fd99dabcb79acaa7f7ec6f3",
     ),
     SkillReference(
         reference_id="review-checks",

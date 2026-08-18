@@ -22,8 +22,8 @@ approved Project Workflow Profile must agree or the route suspends.
 `delivery_profile` describes the assurance needed by the current project or ticket:
 
 - `COMPACT`: one bounded, reversible change using an established pattern and deterministic
-  verification. Requirements, AC, owner, first red/green evidence and independent review
-  still apply.
+  verification. Requirements, AC, owner, green test evidence (baseline-red only for defect
+  corrections) and independent review still apply.
 - `STANDARD`: multiple local components, a shared contract, a new adapter or moderate
   uncertainty.
 - `HIGH_ASSURANCE`: high impact, difficult recovery, new architecture or a formal external
@@ -53,8 +53,18 @@ authority never change, only what each stage must produce:
 | `SPEC` | Micro-SPEC: acceptance criteria, public contract and rollback rule on one page | Full SPEC | Full SPEC plus adversarial acceptance review |
 | `TICKETS` | Exactly one ticket | Per decomposition reference | Per decomposition reference with high-assurance admission |
 | Review depth | Focused matrix and strict typing | Focused matrix plus full suite | Full suite plus reverse mutation and adversarial probes |
+| Red evidence | Baseline-red for defect corrections only; new behavior needs green tests | Baseline-red for defect corrections; green tests at the approved seam | Baseline-red for corrections plus reverse mutation proving test quality |
+| Handoff and closure | Commit-as-handoff: one implementation commit whose message carries AC, results and digests; no separate handoff leaf or evidence table | Ticket and handoff leaves per the artifact tree | Ticket and handoff leaves plus the adversarial review record |
 | Default model tier | Implementation and drafting stay on the low tier; the supervisor tier reviews once | Low-tier implementer, supervisor-tier reviewer | Supervisor-tier-or-higher implementer or reviewer; architecture-owner wake conditions widen |
 | Research helper | Not admitted | One optional read-only helper | One optional read-only helper |
+
+A change declared with a test-exempt `ChangeClass` (`DOCS_ONLY`, `COMMENT_ONLY`,
+`SCHEMA_VALIDATED_CONFIG`, `TYPE_CHECKED_RENAME`) skips test writing at every intensity; the
+exemption is a typed declaration whose own gate (schema validation, strict typing, compile)
+still runs, and any production-behavior effect voids it. Ceremony scales with future readers
+and writer distrust, not with project size: evidence tables and handoff leaves exist to
+compress state for later sessions and lanes, and reverse mutation exists to prove test
+quality — both stay wherever those consumers exist.
 
 `DELTA` intake combined with a derived `COMPACT` intensity is the minimal path: one combined
 discovery hop over the affected slices, one micro-SPEC, one ticket, focused review.

@@ -5,7 +5,12 @@ Read this reference only after exact ticket, receipt, owner and workspace admiss
 ## One behavior at a time
 
 1. Write an executable test at the ticket's approved seam.
-2. Run it and record the first failure caused by missing behavior.
+2. For a defect correction, run that test against the defective baseline and record the red
+   failure: baseline-red is mandatory at every intensity because it proves the test captures
+   the exact defect. For new behavior, no first-red claim is required — a red run against
+   code that does not exist yet proves nothing; test quality is proven instead by the
+   reverse-mutation gate at `HIGH_ASSURANCE`, and by green tests at the approved seam
+   elsewhere.
 3. Write the smallest production change that makes it pass.
 4. Run affected tests, strict type checks, lint, formatting, build and data validation.
 5. Run the ticket's primary-path smoke test.
@@ -13,13 +18,20 @@ Read this reference only after exact ticket, receipt, owner and workspace admiss
 Do not start another behavior, ticket or commit before the current behavior and smoke gate are
 green.
 
+A change declared with a test-exempt `ChangeClass` (`DOCS_ONLY`, `COMMENT_ONLY`,
+`SCHEMA_VALIDATED_CONFIG`, `TYPE_CHECKED_RENAME` in
+`library/workflow_router/contracts.py`) skips test writing entirely; the exemption is a typed
+declaration validated by its class's own gate (schema validation, strict type check and
+compile), never a free judgment. Any production-behavior effect makes the declaration invalid.
+
 The ticket must name every applicable TDD category from the canonical review checks. Generic
 labels such as “normal/invalid/external/regression” are insufficient. A relevant category
 missing from ticket design is a `TICKET_DEFECT`, not an instruction for the implementer to
 invent new scope.
 
-Record the first-red test name and failure reason in the ticket evidence. A test written after
-production behavior exists is regression evidence, not proof of red-first TDD.
+For defect corrections, record the baseline-red test name and failure reason in the ticket
+evidence. For new behavior, record the test names and their green results; do not stage or
+claim a ceremonial first-red run.
 
 ## Type and layering gate
 

@@ -323,8 +323,8 @@ _EXPECTED_POLICIES: tuple[_ExpectedPolicy, ...] = (
     ),
     _ExpectedPolicy(
         "implementation-tdd",
-        "rev-38408006f23df3b6",
-        "sha256_38408006f23df3b66a4368e2b8794cc099b84ea20417e56d881ff19512345574",
+        "rev-f9a82f514ca42a43",
+        "sha256_f9a82f514ca42a433eaa5a1e8c0caa960c78928f7fd99dabcb79acaa7f7ec6f3",
         PurePosixPath("skills/johnny-project-takeover/references/implementation-tdd.md"),
     ),
     _ExpectedPolicy(

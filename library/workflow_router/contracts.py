@@ -2119,3 +2119,31 @@ def derive_workflow_intensity(assessment: WorkloadAssessment) -> WorkflowIntensi
 
 
 NormalizedGoal.model_rebuild()
+
+
+class ChangeClass(str, Enum):
+    """The declared nature of one change; test exemption is typed, never judged."""
+
+    PRODUCTION_BEHAVIOR = "production_behavior"
+    DOCS_ONLY = "docs_only"
+    COMMENT_ONLY = "comment_only"
+    SCHEMA_VALIDATED_CONFIG = "schema_validated_config"
+    TYPE_CHECKED_RENAME = "type_checked_rename"
+
+
+TEST_EXEMPT_CHANGE_CLASSES: frozenset[ChangeClass] = frozenset(
+    {
+        ChangeClass.DOCS_ONLY,
+        ChangeClass.COMMENT_ONLY,
+        ChangeClass.SCHEMA_VALIDATED_CONFIG,
+        ChangeClass.TYPE_CHECKED_RENAME,
+    }
+)
+
+
+def is_test_exempt(change_class: ChangeClass) -> bool:
+    """Fail closed: anything but an exact exempt class member requires tests."""
+
+    if type(change_class) is not ChangeClass:
+        return False
+    return change_class in TEST_EXEMPT_CHANGE_CLASSES
