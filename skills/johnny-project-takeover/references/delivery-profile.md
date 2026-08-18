@@ -29,12 +29,38 @@ approved Project Workflow Profile must agree or the route suspends.
 - `HIGH_ASSURANCE`: high impact, difficult recovery, new architecture or a formal external
   boundary. Include alternatives, threat/failure matrix and adversarial verification.
 
-Assess change surface, coupling, uncertainty, failure impact, reversibility, verification
-environment and external effects. Missing evidence never defaults to `COMPACT`. Authentication,
-authorization, secrets, payment, regulated data, destructive migration, release/deployment,
-signing/supply chain, irreversible effects, distributed consistency, sandbox escape,
-privileged host capability and privileged XSS force `HIGH_ASSURANCE`. Project size, file count,
-line count and model name never lower the profile.
+Intensity is derived, never asserted. The typed authority is `WorkloadAssessment` plus
+`derive_workflow_intensity()` in `library/workflow_router/contracts.py`: five evidence-backed
+signals (change surface, uncertainty, recovery difficulty, security surface, external
+effects), each with a fixed intensity floor, combined by deterministic maximum. There is no
+override input, so a lower intensity cannot be claimed directly. The assessment is committed
+at INTAKE inside `NormalizedGoal.workload`; a missing assessment means minimum `STANDARD`
+and `COMPACT` is unclaimable. Authentication, authorization, secrets, payment, regulated
+data, destructive migration, release/deployment, signing/supply chain, irreversible effects,
+distributed consistency, sandbox escape, privileged host capability and privileged XSS map
+to the `PRIVILEGED` / `IRREVERSIBLE` / `NETWORK_OR_RELEASE` signal values and therefore force
+`HIGH_ASSURANCE`. Project size, file count, line count and model name never lower the
+profile.
+
+## Adaptive workflow shape
+
+The derived intensity scales the workflow deterministically; stage order and Router
+authority never change, only what each stage must produce:
+
+| Aspect | `COMPACT` | `STANDARD` | `HIGH_ASSURANCE` |
+| --- | --- | --- | --- |
+| Discovery (`WAYFINDER`/`ARCHITECTURE`/`GRILL`) | One combined discovery leaf may satisfy all three stages; the stages execute as three bounded `AUTO_CONTINUE` hops over that leaf in the same session, waking no additional model | One artifact per stage | One artifact per stage plus alternatives and a threat/failure matrix |
+| `SPEC` | Micro-SPEC: acceptance criteria, public contract and rollback rule on one page | Full SPEC | Full SPEC plus adversarial acceptance review |
+| `TICKETS` | Exactly one ticket | Per decomposition reference | Per decomposition reference with high-assurance admission |
+| Review depth | Focused matrix and strict typing | Focused matrix plus full suite | Full suite plus reverse mutation and adversarial probes |
+| Default model tier | Implementation and drafting stay on the low tier; the supervisor tier reviews once | Low-tier implementer, supervisor-tier reviewer | Supervisor-tier-or-higher implementer or reviewer; architecture-owner wake conditions widen |
+| Research helper | Not admitted | One optional read-only helper | One optional read-only helper |
+
+`DELTA` intake combined with a derived `COMPACT` intensity is the minimal path: one combined
+discovery hop over the affected slices, one micro-SPEC, one ticket, focused review.
+Reassessment is mandatory whenever new evidence raises any signal; the derivation then
+upgrades automatically. A downgrade requires new committed evidence lowering a signal plus
+owner approval, and never removes already-required tests or findings.
 
 ## Resource plan
 

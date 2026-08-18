@@ -1989,6 +1989,7 @@ class NormalizedGoal(RouterModel):
     delta_scope: tuple[
         Annotated[str, Field(min_length=1, max_length=200)], ...
     ] = ()
+    workload: "WorkloadAssessment | None" = None
 
     @model_validator(mode="after")
     def mode_shape_is_exact(self) -> NormalizedGoal:
@@ -2007,3 +2008,114 @@ class NormalizedGoal(RouterModel):
             if self.intake_mode is IntakeMode.TAKEOVER and self.delta_scope:
                 raise ValueError("delta_scope is valid only for delta goals")
         return self
+
+
+class ChangeSurface(str, Enum):
+    """How much of the target the goal touches."""
+
+    SINGLE_FILE = "single_file"
+    SINGLE_COMPONENT = "single_component"
+    MULTI_COMPONENT = "multi_component"
+    CROSS_BOUNDARY = "cross_boundary"
+
+
+class UncertaintyLevel(str, Enum):
+    """How well-established the required solution pattern is."""
+
+    ESTABLISHED_PATTERN = "established_pattern"
+    KNOWN_DOMAIN = "known_domain"
+    NOVEL = "novel"
+
+
+class RecoveryDifficulty(str, Enum):
+    """How hard a wrong outcome is to undo."""
+
+    REVERSIBLE = "reversible"
+    RECOVERABLE = "recoverable"
+    IRREVERSIBLE = "irreversible"
+
+
+class SecuritySurface(str, Enum):
+    """The security exposure the change can reach."""
+
+    NONE = "none"
+    UNTRUSTED_INPUT = "untrusted_input"
+    PRIVILEGED = "privileged"
+
+
+class ExternalEffectSurface(str, Enum):
+    """The widest external effect the change can produce."""
+
+    NONE = "none"
+    LOCAL_HOST = "local_host"
+    NETWORK_OR_RELEASE = "network_or_release"
+
+
+class WorkflowIntensity(str, Enum):
+    """The finite workflow shapes; ordering is COMPACT < STANDARD < HIGH_ASSURANCE."""
+
+    COMPACT = "compact"
+    STANDARD = "standard"
+    HIGH_ASSURANCE = "high_assurance"
+
+
+class WorkloadAssessment(RouterModel):
+    """Evidence-backed complexity signals; intensity is derived, never asserted."""
+
+    change_surface: ChangeSurface
+    uncertainty: UncertaintyLevel
+    recovery: RecoveryDifficulty
+    security_surface: SecuritySurface
+    external_effects: ExternalEffectSurface
+    evidence_refs: tuple[OpaqueMetadataId, ...] = Field(min_length=1)
+
+
+_INTENSITY_RANK: dict[WorkflowIntensity, int] = {
+    WorkflowIntensity.COMPACT: 0,
+    WorkflowIntensity.STANDARD: 1,
+    WorkflowIntensity.HIGH_ASSURANCE: 2,
+}
+
+_SIGNAL_FLOORS: dict[Enum, WorkflowIntensity] = {
+    ChangeSurface.SINGLE_FILE: WorkflowIntensity.COMPACT,
+    ChangeSurface.SINGLE_COMPONENT: WorkflowIntensity.COMPACT,
+    ChangeSurface.MULTI_COMPONENT: WorkflowIntensity.STANDARD,
+    ChangeSurface.CROSS_BOUNDARY: WorkflowIntensity.HIGH_ASSURANCE,
+    UncertaintyLevel.ESTABLISHED_PATTERN: WorkflowIntensity.COMPACT,
+    UncertaintyLevel.KNOWN_DOMAIN: WorkflowIntensity.STANDARD,
+    UncertaintyLevel.NOVEL: WorkflowIntensity.HIGH_ASSURANCE,
+    RecoveryDifficulty.REVERSIBLE: WorkflowIntensity.COMPACT,
+    RecoveryDifficulty.RECOVERABLE: WorkflowIntensity.STANDARD,
+    RecoveryDifficulty.IRREVERSIBLE: WorkflowIntensity.HIGH_ASSURANCE,
+    SecuritySurface.NONE: WorkflowIntensity.COMPACT,
+    SecuritySurface.UNTRUSTED_INPUT: WorkflowIntensity.STANDARD,
+    SecuritySurface.PRIVILEGED: WorkflowIntensity.HIGH_ASSURANCE,
+    ExternalEffectSurface.NONE: WorkflowIntensity.COMPACT,
+    ExternalEffectSurface.LOCAL_HOST: WorkflowIntensity.STANDARD,
+    ExternalEffectSurface.NETWORK_OR_RELEASE: WorkflowIntensity.HIGH_ASSURANCE,
+}
+
+
+def derive_workflow_intensity(assessment: WorkloadAssessment) -> WorkflowIntensity:
+    """Return the deterministic maximum floor of every committed signal.
+
+    Intensity can only be derived from a validated assessment; there is no
+    override input, so a lower intensity can never be claimed directly.
+    """
+
+    trusted = WorkloadAssessment.model_validate(
+        assessment.model_dump()
+        if isinstance(assessment, WorkloadAssessment)
+        else assessment
+    )
+    floors = (
+        _SIGNAL_FLOORS[trusted.change_surface],
+        _SIGNAL_FLOORS[trusted.uncertainty],
+        _SIGNAL_FLOORS[trusted.recovery],
+        _SIGNAL_FLOORS[trusted.security_surface],
+        _SIGNAL_FLOORS[trusted.external_effects],
+    )
+    return max(floors, key=lambda intensity: _INTENSITY_RANK[intensity])
+
+
+NormalizedGoal.model_rebuild()
