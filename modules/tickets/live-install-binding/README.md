@@ -13,11 +13,14 @@ compact evidence rows; no separate leaf tree).
 
 | # | Ticket | Sole closure | State |
 | --- | --- | --- | --- |
-| L1 | Root layout + durable stores | `JohnnyRootLayout`, file-backed install journal and uninstall ledger implementing the frozen Ticket 11/12 ports | `IN_PROGRESS` |
-| L2 | Real venv effect port | `py -3.11` venv plus `pip install --require-hashes` from the approved lock; finite subprocess failure semantics | `PLANNED` |
-| L3 | Payload + launcher ports + entry | Digest-verified extraction, launcher copy, `johnny_router_entry.py` | `PLANNED` |
-| L4 | Registration readback | Post-install typed proof that runtime, venv and launcher exist and execute | `PLANNED` |
-| L5 | install.ps1 live wiring | Confirmed plan invokes the real transaction; `LIVE_INSTALL_NOT_AUTHORIZED` retires | `PLANNED` |
-| L6 | Uninstall live wiring | `johnny-router uninstall` composes the real Ticket 12 transaction | `PLANNED` |
-| L7 | End-to-end qualification | Real bundle → real install into disposable root → readback → real uninstall → zero residue | `PLANNED` |
-| L8 | Owner real-machine smoke | Owner runs install → status → uninstall on the real per-user root | `OWNER_EFFECT_REQUIRED` |
+| L1 | Root layout + durable stores | `JohnnyRootLayout`, file-backed install journal and uninstall ledger implementing the frozen Ticket 11/12 ports | `CLOSED` — `0381939`; 9 tests / 16 subtests |
+| L2 | Real venv effect port | `py -3.11` venv plus `pip install --require-hashes` from the approved lock; finite subprocess failure semantics | `CLOSED` — `83b3636`; 5 tests / 9 subtests; real paths proven in L7 |
+| L3 | Payload + launcher ports + entry | Digest-verified extraction, launcher copy, `johnny_router_entry.py` | `CLOSED` — `fc4d25f`; 8 tests / 2 subtests |
+| L4 | Registration readback | Post-install typed proof through the real entry chain | `CLOSED` — `5fec8d5`; 3 tests / 5 subtests |
+| L5 | install.ps1 live wiring | Stdlib bootstrap → hash-locked venv → typed composition on the venv interpreter; `LIVE_INSTALL_NOT_AUTHORIZED` retired | `CLOSED` — `8771c0c` + module-context fix `dd8d959`; 6 tests; ps1 parse pass |
+| L6 | Uninstall live wiring | `johnny-router uninstall` composes the real Ticket 12 transaction over marker-proven state; bookkeeping and empty root cleared | `CLOSED` — `eea61ec`; 4 tests |
+| L7 | End-to-end qualification | Clean-clone bundle → real venv with real locked downloads → tampered-pin rejection → full install chain → entry self-proof → real uninstall to zero residue | `CLOSED` — gated `JOHNNY_LIVE_QUAL` run: Q1–Q5 `5 passed` (2026-08-19); staging/workspace residue zero; clone-build fix committed after a real `SOURCE_DIRTY` catch |
+| L8 | Owner real-machine smoke | Owner runs install → status → uninstall on the real per-user root | `OWNER_EFFECT_REQUIRED` — runbook delivered; requires the live-candidate bundle, not the `v0.4.0` release zip |
+
+Full suite after closure: `849 passed, 5 skipped (gated qualification), 2665 subtests`;
+`mypy --strict` clean over every new module and test.
