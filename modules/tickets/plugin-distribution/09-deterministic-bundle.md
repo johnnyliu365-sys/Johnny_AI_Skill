@@ -8,7 +8,7 @@
 | Implementation allocation | ticket `ticket-pd09-deterministic-bundle-01`; role `role-impl-pd09-luna-001`; task `01a00eac-b464-7ee1-ac76-465477768e02`; worktree `worktree-pluginimpl2-01`; branch `codex/plugin-distribution-09-deterministic-bundle` / `branch-pd09bundle-01`; receipt `receipt-pd09-20260818-001`; correlation `corr-pd09-20260818-001` |
 | Dispatch mode | User-authorized one-time manual bootstrap forwarding while live Router dispatch remains unavailable; no live descriptor, host subscription, heartbeat, polling, automation, publication, installation or target-project effect |
 | Implementation language / strict checker | Python 3.11.9 / `python -B -m mypy --strict library/local_orchestration/plugin_bundle_builder.py` |
-| Profile / state / XSS | `plugin-distribution-poc-r02` v2 / POC / Luna xhigh / one implementation lane / no helper / `TICKET_REFROZEN / READY_LOW_MODEL / DISPATCH_REQUIRED` / `XSS_NOT_APPLICABLE` |
+| Profile / state / XSS | `plugin-distribution-poc-r02` v2 / POC / Luna xhigh / one implementation lane / no helper / `INTEGRATED / CLOSED`; implementation `1000ebae1151b7a83fe81b7db884ac6162ec87d4`; correction `daea4146e2dfd3526632c6118197003fa20603c7` / `XSS_NOT_APPLICABLE` |
 
 ## Sole closure and boundary
 
