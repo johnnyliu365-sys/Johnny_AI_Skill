@@ -38,11 +38,11 @@ Wayfinder 從該紀錄重跑；聊天內容不構成 authority。
 
 1. **Product**：目標用戶、核心痛點、價值主張、初期目標、排除範圍與成功條件。
 2. **Frontend function map**：先列出最小可驗收的前端功能切片。每個切片必須有 actor、使用者目標、入口／畫面或等價互動邊界、主要操作、可觀察結果，以及成功、loading、empty、error、權限與可存取性狀態。不可用「做一個 App／網站」或純頁面清單取代功能切片。
-3. **Function-derived capability and data map**：由每個前端切片反推，而非由技術偏好正推：
-   - 需要的後端 use case、領域規則、讀／寫契約、授權與失敗行為；
-   - 資料從使用者輸入或外部來源，經驗證／正規化、命令或事件、資料 owner／保存邊界、讀取 projection，最後回到 UI state 的完整管線；
-   - 每筆核心資料的 owner、生命週期、隱私／保存限制與未知假設。
-4. **Changeability boundary**：每個正式前端切片必須先定義可替換的組合邊界與依賴邊界。page／screen／layout 只負責組合；規則與副作用放在具名 use case／view model／service 等可測試單元。API client、repository、state、navigation、clock、權限、feature flag 與外部 Provider 必須透過具名介面、props、constructor／factory 或框架等價機制注入；必須指出 Composition Root、生命週期／scope 與 test fake 的替換點。
+   **終止規則**：每個 `mvp_scope` 項目對應至少一個切片；切片總數以 `mvp_scope`
+   項目數為上界，超過即合併。全部 `mvp_scope` 項目被覆蓋時，本步即完整，
+   不得繼續展開。
+3. **Function-derived capability and data map**（粗粒度）：由每個前端切片反推，而非由技術偏好正推：需要的後端 use case、核心領域規則、每筆核心資料的 owner，以及未知假設。完整資料管線（驗證／正規化、命令或事件、保存邊界、讀取 projection、UI state 回傳、生命週期／隱私）是 **Architecture 階段的強制產出**，Wayfinder 不展開。
+4. **Changeability plausibility**（弱檢查）：只確認每個切片的規則與副作用*看起來*可與畫面／入口分離——即不存在「商業規則必然內嵌於視圖」的結構性障礙。Composition Root、依賴注入邊界、生命週期／scope 與 test fake 替換點的完整指定是 **Architecture 階段的強制產出與完成關卡**，Wayfinder 不得因尚未命名它們而否決。
 5. **Business**：商業模式、市場需求、最小驗證市場、成功與停止條件。
 6. **Feasibility**：技術限制、開發／部署／維運成本、成本上限、風險與緩解方案。
 7. **Decision**：根據證據與限制輸出 `GO` 或 `NO-GO`，並列明依據。
@@ -56,14 +56,16 @@ Wayfinder 從該紀錄重跑；聊天內容不構成 authority。
 - 核心需求無可執行的市場驗證方法。
 - 核心風險無可執行且可驗證的緩解方案。
 - 核心目標無法拆成至少一條可驗收的前端功能切片，或該切片沒有明確使用者結果與失敗狀態。
-- 任一核心前端切片無法追溯到後端 use case、資料 owner／管線與回傳 UI state，因而只能猜測實作。
-- 正式前端切片無法指出 Composition Root、依賴注入邊界或可替換的 test fake；不得把隱性 singleton、直接 I/O 或商業規則藏入畫面元件後仍判定 `GO`。
+- 任一核心前端切片無法追溯到後端 use case 與資料 owner，因而只能猜測實作。
+- 任一切片存在「規則與副作用必然內嵌於畫面元件」的結構性障礙，可分離性
+  不成立。（Composition Root／DI／test fake 的完整指定不在此否決；該關卡
+  屬 Architecture 完成條件。）
 
 決策只能基於證據、已確認限制及明確標記的假設。
 
 ## Handoff
 
-- `GO`：輸出 Shared Context 與「前端功能 → 後端能力 → 資料管線 → 組合／依賴邊界」的 Functional Architecture Brief，交由 Architecture Agent 建立高階架構，再進入 Grill。Architecture 不得跳過、刪減或以技術選擇取代這份可驗收的功能地圖。
+- `GO`：輸出 Shared Context 與「前端功能 → 後端能力 → 資料 owner」的 Functional Architecture Brief，交由 Architecture Agent 建立高階架構，再進入 Grill。Architecture 不得跳過、刪減或以技術選擇取代這份可驗收的功能地圖。**Architecture 的強制產出**包含每個切片的完整資料管線與 Composition Root／DI／lifetime／test fake 地圖；缺任一項即 Architecture 不得完成。
 - `NO-GO`：停止流程，列出否決原因與重新評估條件。
 - `WAYFINDER_INFO_REQUIRED`：非終態。依有界資訊缺口協議暫停等待 owner 補件；
   收到 `OWNER_INPUT_PROVIDED` 後重跑評估。兩輪用盡即強制終態（`GO` 附明確
@@ -106,24 +108,9 @@ Wayfinder 從該紀錄重跑；聊天內容不構成 authority。
       "feature_id": "string",
       "backend_use_cases": ["string"],
       "domain_rules": ["string"],
-      "read_write_contracts": ["string"],
-      "authorization_and_failure_behavior": ["string"],
-      "data_pipeline": {
-        "input_or_source": ["string"],
-        "validation_and_normalization": ["string"],
-        "command_or_event": ["string"],
-        "data_owner_and_storage_boundary": ["string"],
-        "read_projection": ["string"],
-        "ui_state_return": ["string"],
-        "lifecycle_privacy_and_retention": ["string"]
-      },
-      "composition_and_di": {
-        "composition_root": "string",
-        "replaceable_components": ["string"],
-        "injected_dependencies": ["string"],
-        "lifetime_scope": ["string"],
-        "test_fakes": ["string"]
-      }
+      "data_owners": ["string"],
+      "separability_confirmed": "boolean",
+      "open_assumptions": ["string"]
     }
   ],
   "business": {

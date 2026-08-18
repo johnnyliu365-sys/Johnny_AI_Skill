@@ -24,8 +24,13 @@ product position
 ```
 
 Architecture works from that approved input. It may select structure and technical boundaries;
-it must not infer missing user behavior or omit data ownership, UI state, Composition Root or
-replaceable dependencies.
+it must not infer missing user behavior or omit data ownership. Architecture's mandatory
+output additionally includes, for every approved slice, the complete data pipeline
+(validation/normalization, command or event, storage boundary, read projection, UI-state
+return, lifecycle/privacy) and the full composition map: Composition Root, injected
+dependencies, lifetime/scope and test-fake replacement points. Missing any of these is an
+Architecture completion blocker — this gate moved here from Wayfinder, which now checks only
+separability plausibility.
 
 ## Grill
 

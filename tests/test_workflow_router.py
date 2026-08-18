@@ -299,8 +299,8 @@ _EXPECTED_POLICIES: tuple[_ExpectedPolicy, ...] = (
     ),
     _ExpectedPolicy(
         "discovery-change",
-        "rev-eb4bf2ab4475699a",
-        "sha256_eb4bf2ab4475699aad7156f241455c5da129279854d2e2ac98fe3b86bc3dddb3",
+        "rev-9a15513b09e31cdb",
+        "sha256_9a15513b09e31cdb6115c74cc6c87793db25d3bb4998a4dff34af60412dbdb8e",
         PurePosixPath("skills/johnny-project-takeover/references/discovery-change.md"),
     ),
     _ExpectedPolicy(
@@ -753,12 +753,12 @@ class WorkflowRouterTests(unittest.TestCase):
             delivery_stage=DeliveryStage.POC,
             router_control_reference=SkillReference(
                 reference_id="router-control",
-                source_revision="rev-eb4bf2ab4475699a",
-                content_digest="sha256_eb4bf2ab4475699aad7156f241455c5da129279854d2e2ac98fe3b86bc3dddb3",
+                source_revision="rev-9a15513b09e31cdb",
+                content_digest="sha256_9a15513b09e31cdb6115c74cc6c87793db25d3bb4998a4dff34af60412dbdb8e",
             ),
             halt_return_contract=ExpectedReturnContract(
                 contract_id="router-control-no-return",
-                contract_revision="rev-eb4bf2ab4475699a",
+                contract_revision="rev-9a15513b09e31cdb",
                 return_kind=ReturnContractKind.NO_RETURN,
                 router_events=(),
                 implementation_statuses=(),
@@ -767,12 +767,12 @@ class WorkflowRouterTests(unittest.TestCase):
                 TransitionRule(
                     skill_reference=SkillReference(
                         reference_id="legacy-route-architecture-action-completed",
-                        source_revision="rev-eb4bf2ab4475699a",
-                        content_digest="sha256_eb4bf2ab4475699aad7156f241455c5da129279854d2e2ac98fe3b86bc3dddb3",
+                        source_revision="rev-9a15513b09e31cdb",
+                        content_digest="sha256_9a15513b09e31cdb6115c74cc6c87793db25d3bb4998a4dff34af60412dbdb8e",
                     ),
                     expected_return=ExpectedReturnContract(
                         contract_id="return-action-completed",
-                        contract_revision="rev-eb4bf2ab4475699a",
+                        contract_revision="rev-9a15513b09e31cdb",
                         return_kind=ReturnContractKind.ROUTER_EVENT,
                         router_events=(RouterEventKind.ACTION_COMPLETED,),
                         implementation_statuses=(),
@@ -1559,8 +1559,8 @@ class ContextLoadTelemetryTests(unittest.TestCase):
 class RouteInstructionContractTests(unittest.TestCase):
     """Exercise the versioned policy reference and finite return contract boundary."""
 
-    _revision = "rev-eb4bf2ab4475699a"
-    _digest = "sha256_eb4bf2ab4475699aad7156f241455c5da129279854d2e2ac98fe3b86bc3dddb3"
+    _revision = "rev-9a15513b09e31cdb"
+    _digest = "sha256_9a15513b09e31cdb6115c74cc6c87793db25d3bb4998a4dff34af60412dbdb8e"
 
     def _skill(self, reference_id: str = "route-test-policy") -> SkillReference:
         return SkillReference(
