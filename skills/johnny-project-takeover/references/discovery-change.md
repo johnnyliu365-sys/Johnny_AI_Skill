@@ -5,7 +5,12 @@ changes. For Wayfinder's detailed evaluation procedure, also read `../../../Defi
 
 ## Wayfinder and architecture
 
-Every new or inherited project starts with Wayfinder. `NO-GO` stops the workflow until the
+Every new or inherited project starts with Wayfinder. Its sole goal authority is the committed
+typed `NormalizedGoal` produced by INTAKE: `intake_mode` scopes the evaluation (`GREENFIELD`
+runs all seven steps; `TAKEOVER` binds an existing `baseline_reference` and skips business and
+cost derivation; `DELTA` re-converges only the slices named in `delta_scope`), and
+`product_kind` selects the slice interaction-boundary shape (screen/page/flow, API endpoint,
+CLI command or event contract). `NO-GO` stops the workflow until the
 declared reassessment conditions are met. When required input is missing, Wayfinder emits one
 typed `WAYFINDER_INFO_REQUIRED` round instead of guessing or free-form questioning: every
 currently blocking gap is listed at once from the closed `WayfinderInputField` set, each gap

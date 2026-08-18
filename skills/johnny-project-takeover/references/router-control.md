@@ -102,7 +102,7 @@ approval prompt.
 
 | Stage | Minimum source kind | Capability kind | Expected return |
 | --- | --- | --- | --- |
-| `INTAKE` | goal and approved profile | goal normalization | `WAYFINDER` or halt |
+| `INTAKE` | goal and approved profile | goal normalization into one typed `NormalizedGoal` (intake mode, product kind, baseline/delta binding) | `WAYFINDER` or halt |
 | `WAYFINDER` | Wayfinder standard and confirmed facts | viability decision | `WAYFINDER_GO`, `WAYFINDER_NO_GO` or `WAYFINDER_INFO_REQUIRED` |
 | `ARCHITECTURE` | GO context, constraints and risks | architecture | completed artifact or blocker |
 | `GRILL` | scoped requirements, architecture and change history | requirement convergence | confirmed facts or change event |

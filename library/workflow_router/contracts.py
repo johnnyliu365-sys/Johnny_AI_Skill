@@ -1947,3 +1947,63 @@ class WayfinderInfoRequest(RouterModel):
         if len(set(identities)) != len(identities):
             raise ValueError("each round lists one gap per field and feature")
         return self
+
+
+class IntakeMode(str, Enum):
+    """How a project enters the workflow; each mode scopes Wayfinder differently."""
+
+    GREENFIELD = "greenfield"
+    TAKEOVER = "takeover"
+    DELTA = "delta"
+
+
+class ProductKind(str, Enum):
+    """The observable product shape a goal targets; slices adapt to it."""
+
+    USER_FACING = "user_facing"
+    SERVICE = "service"
+    LIBRARY = "library"
+    CLI = "cli"
+    CONTROL_PLANE = "control_plane"
+
+
+class NormalizedGoal(RouterModel):
+    """The typed INTAKE output; Wayfinder accepts no other goal authority.
+
+    `baseline_reference` binds TAKEOVER/DELTA to one existing repository
+    identity as `<opaque-repo-id>@<commit>`; paths and URIs are untypable.
+    """
+
+    schema_version: Literal["1"] = "1"
+    intake_mode: IntakeMode
+    product_kind: ProductKind
+    goal_statement: Annotated[str, Field(min_length=1, max_length=500)]
+    known_constraints: tuple[
+        Annotated[str, Field(min_length=1, max_length=300)], ...
+    ] = ()
+    evidence_refs: tuple[OpaqueMetadataId, ...] = ()
+    baseline_reference: (
+        Annotated[str, Field(pattern=r"^[a-z0-9][a-z0-9.-]{0,80}@[0-9a-f]{7,64}$")]
+        | None
+    ) = None
+    delta_scope: tuple[
+        Annotated[str, Field(min_length=1, max_length=200)], ...
+    ] = ()
+
+    @model_validator(mode="after")
+    def mode_shape_is_exact(self) -> NormalizedGoal:
+        if self.intake_mode is IntakeMode.GREENFIELD:
+            if self.baseline_reference is not None or self.delta_scope:
+                raise ValueError(
+                    "a greenfield goal has no existing baseline or delta scope"
+                )
+        else:
+            if self.baseline_reference is None:
+                raise ValueError(
+                    "takeover and delta goals require the existing baseline reference"
+                )
+            if self.intake_mode is IntakeMode.DELTA and not self.delta_scope:
+                raise ValueError("a delta goal names its affected scope")
+            if self.intake_mode is IntakeMode.TAKEOVER and self.delta_scope:
+                raise ValueError("delta_scope is valid only for delta goals")
+        return self
