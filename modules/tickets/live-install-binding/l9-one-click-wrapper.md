@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | Plugin Distribution Revision 02 AC-05, AC-06 (approved-digest entry, explicit user confirmation) |
 | Requirement | Owner-direct request 2026-08-19: a double-clickable install entry for the released 0.4.1 bundle |
-| State | `OPEN` — awaiting a named implementation owner (profile default: Luna xhigh) |
+| State | `CLOSED` — delivery `7613aeb` plus two P1 control-plane corrections (CR-L9-01) |
 | Baseline | `v0.4.1` = `0f2af25` (pushed; release asset digest frozen) |
 | Workload | `SMALL` per CHG-028/CHG-029: no baseline-red (not a bugfix), compact evidence rows in the line README |
 | Language / XSS | Windows cmd batch + Python 3.11 strict tests / `XSS_NOT_APPLICABLE` |

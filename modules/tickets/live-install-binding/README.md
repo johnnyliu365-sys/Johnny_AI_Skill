@@ -21,10 +21,27 @@ compact evidence rows; no separate leaf tree).
 | L6 | Uninstall live wiring | `johnny-router uninstall` composes the real Ticket 12 transaction over marker-proven state; bookkeeping and empty root cleared | `CLOSED` — `eea61ec`; 4 tests |
 | L7 | End-to-end qualification | Clean-clone bundle → real venv with real locked downloads → tampered-pin rejection → full install chain → entry self-proof → real uninstall to zero residue | `CLOSED` — gated `JOHNNY_LIVE_QUAL` run: Q1–Q5 `5 passed` (2026-08-19); staging/workspace residue zero; clone-build fix committed after a real `SOURCE_DIRTY` catch |
 | L8 | Owner real-machine smoke | Owner runs install → status → uninstall on the real per-user root | `CLOSED / OWNER_EXECUTED` — 2026-08-19: first run caught CR-L8-01, second run on candidate `bb95089` (digest `f5791d93…`) green end to end: `INSTALLED` (receipt `receipt-live-20260819090130`) → status `OK 0.4.0` → launcher uninstall `REMOVED`, `root_deleted`, `ZERO_RESIDUE` |
-| L9 | One-click wrapper (`johnny-install.cmd`) | Digest-pinned double-click entry delegating to `install.ps1`; see [`l9-one-click-wrapper.md`](l9-one-click-wrapper.md) | `OPEN` — ticketed 2026-08-19, awaiting named implementation owner |
+| L9 | One-click wrapper (`johnny-install.cmd`) | Digest-pinned double-click entry delegating to `install.ps1`; see [`l9-one-click-wrapper.md`](l9-one-click-wrapper.md) | `CLOSED` — first delivery `7613aeb`, two P1 corrections applied. R1–R3/R5 by test (6 tests); R4 real-artifact chain executed by the control plane on the released 443,765-byte zip: digest `f67047f4…` verified → `install.ps1` extracted → dependency plan displayed → `INSTALL` gate reached → non-interactive run ended `USER_DECLINED` exit 2, no stray `install.ps1` beside the wrapper |
 
 Full suite after closure: `849 passed, 5 skipped (gated qualification), 2665 subtests`;
 `mypy --strict` clean over every new module and test.
+
+## CR-L9-01 — blocked exits were invisible to a double-click user (control-plane review)
+
+The first delivery exited straight out of every `BLOCKED` path. Explorer closes the console
+the moment a `.cmd` ends, so the digest refusal this wrapper exists to deliver was never
+readable: the window flashed and vanished. Every exit now holds the console first, pinned by
+`BlockedPathVisibilityTests`, which asserts structurally rather than matching the localized
+pause prompt (that would bind the test to the host codepage). Removing any one `pause` turns
+that cell red.
+
+Second correction: the recorded R4 evidence used a synthetic two-file zip with the pinned
+digest rewritten to match, which proves the mechanism but never exercises the real artifact —
+precisely where the control-plane probe had found `tar -xf` failing. That cell is now labelled
+a mechanism smoke, and the real-artifact chain is recorded above as a control-plane execution,
+following the L8 `OWNER_EXECUTED` precedent. `.gitattributes` was also narrowed back to the
+authorized scope (`*.cmd`/`*.bat` CRLF); the repo-wide `* text=auto` rule was measured to cause
+no digest regression but was outside this ticket's frozen scope.
 
 ## CR-L8-01 — venv self-deletion lock (caught by the owner smoke, as designed)
 

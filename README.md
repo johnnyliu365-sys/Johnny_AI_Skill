@@ -53,10 +53,7 @@ red 證據重定義）。該版的兩個誠實邊界（live 安裝停在
 
 ### 0.4.1 完整 bundle 安裝
 
-正式入口是經核准且 SHA-256 相符的 `johnny-ai-skill-0.4.1.zip` 內
-`install.ps1`。在個人終端機、且不在公司專案資料夾內執行它。bootstrap 會先顯示
-Codex、Git、Python 與核心 dependency 計畫；需要下載時必須由使用者確認。它只建立
-per-user Johnny-owned runtime，不會把 plugin、venv、receipt 或 cache 複製到公司 repo。
+正式的一鍵入口是隨 release 發布的 `johnny-install.cmd`，將其下載至與經核准且 SHA-256 相符的 `johnny-ai-skill-0.4.1.zip` 同一資料夾下雙擊執行（或在終端機直接執行 `install.ps1 -BundleZip <path>`）。它會先核驗 bundle SHA-256，並在確認相符後抽出 `install.ps1` 進行安裝引導。bootstrap 會先顯示 Codex、Git、Python 與核心 dependency 計畫；需要下載時必須由使用者輸入 `INSTALL` 確認。它只建立 per-user Johnny-owned runtime，不會把 plugin、venv、receipt 或 cache 複製到公司 repo。
 
 不得把原始碼 checkout 或 `main` 當成已核准 bundle；正式入口永遠是 digest 與已核准
 release 相符的 bundle。既有 `0.3.x` skill-only 安裝仍可使用 private Git
