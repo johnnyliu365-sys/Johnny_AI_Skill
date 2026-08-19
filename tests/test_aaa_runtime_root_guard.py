@@ -7,13 +7,18 @@ process is unclaimable by construction, so every provision is refused and
 roughly eighty unrelated tests fail with `project-runtime provisioning must
 succeed` — a message that names neither the cause nor the cure.
 
-The refusal is correct and deliberate: `ADR-20260813-007` forbids deleting
-residue whose ownership cannot be proven. This guard changes nothing about
-that. It only makes the situation legible, and it deliberately runs first:
-the file name sorts ahead of the suites that would otherwise fail in a heap.
+Two separate things, easily conflated. The *refusal* is correct and
+deliberate: `ADR-20260813-007` forbids deleting residue whose ownership
+cannot be proven, and this guard changes nothing about that. The *orphan* is
+not correct and never routine — it means a lease was created and never torn
+down. Single-process runs do not leak, verified across repeated runs
+including the tests that deliberately block teardown, so an orphan always
+means something abnormal happened.
 
-An orphan appears when two `pytest` processes run against the same checkout
-at once. If this guard fires, that is very likely what happened.
+The known cause is two `pytest` processes running against the same checkout
+at once; a crashed or killed run leaks the same way. The guard reports rather
+than repairs, and it runs first: the file name sorts ahead of the suites that
+would otherwise fail in a heap.
 """
 
 from __future__ import annotations
@@ -54,12 +59,19 @@ class ProjectRuntimeRootGuardTests(unittest.TestCase):
             "this run will be refused and roughly eighty unrelated tests will "
             "fail with 'project-runtime provisioning must succeed'.\n\n"
             f"Orphan leases:\n{listing}\n\n"
-            "This is not a code defect. The allocator refuses residue it "
-            "cannot prove it owns, by design (ADR-20260813-007), and nothing "
-            "deletes it automatically.\n\n"
-            "Most likely cause: two pytest processes ran against this "
-            "checkout at the same time.\n\n"
-            f"Remedy: remove {_RUNTIME_ROOT} and run again."
+            "An orphan lease is never normal: it means a lease was created "
+            "and never torn down. A single-process run does not leak, "
+            "including the tests that deliberately block teardown, so if this "
+            "fires something abnormal happened and is worth understanding "
+            "before deleting the evidence.\n\n"
+            "What is *not* a defect is the refusal itself: the allocator will "
+            "not delete residue whose ownership it cannot prove "
+            "(ADR-20260813-007), which is why nothing recovers automatically.\n\n"
+            "Known cause: two pytest processes running against this checkout "
+            "at the same time. A crashed or killed run can leak the same way. "
+            "If neither happened, treat this as an unexplained leak and find "
+            "out why before clearing it.\n\n"
+            f"Remedy once understood: remove {_RUNTIME_ROOT} and run again."
         )
 
 

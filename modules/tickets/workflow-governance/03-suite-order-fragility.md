@@ -83,3 +83,25 @@ residue that was already present, and the added file was innocent. The
 original claim is left visible above rather than edited away, because the
 mistake is the point: the same pattern-matching that produced it is what this
 guard exists to stop.
+
+## Follow-up correction: an orphan lease is not normal
+
+The closure above, and the guard's first wording, said "this is not a code
+defect" with an ambiguous subject. Read plainly it says an orphan lease is
+routine. It is not, and the distinction matters:
+
+- The **refusal** to auto-delete is correct and stays (`ADR-20260813-007`).
+- An **orphan lease** always means a lease was created and never torn down.
+  That is a leak, not housekeeping.
+
+Verified while making this correction: three consecutive single-process runs
+of the environment-core and Codex acceptance suites leaked nothing, including
+the cells that deliberately block teardown — those clean up after themselves.
+So a normal run does not produce orphans, and one appearing means something
+abnormal happened: concurrent `pytest` processes (reproduced), or a crashed
+or killed run.
+
+The guard's message now says so, and tells the reader to understand the cause
+before deleting the evidence rather than clearing it reflexively. Deleting
+first and asking later is the same habit that produced this ticket's wrong
+opening diagnosis.
