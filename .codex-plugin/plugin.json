@@ -1,6 +1,6 @@
 {
   "name": "johnny-ai-skill",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "description": "A detachable project-takeover workflow, context-load telemetry, and reusable-module selector for Codex with shared Claude Code skills.",
   "author": {
     "name": "Johnny AI Skill",

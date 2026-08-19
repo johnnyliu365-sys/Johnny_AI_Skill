@@ -48,7 +48,7 @@ from tests.staging.plugin_distribution_vita.harness import delete_disposable_tre
 from tests.test_plugin_distribution_bundle import _run_git
 
 _REPO_ROOT = Path(__file__).resolve().parents[1]
-_CANDIDATE_ZIP = "johnny-ai-skill-0.4.2.zip"
+_CANDIDATE_ZIP = "johnny-ai-skill-0.4.3.zip"
 
 
 def _plan() -> InstallDependencyPlan:
@@ -269,7 +269,7 @@ class LiveInstallQualificationTests(unittest.TestCase):
         self.assertIsNotNone(payload)
         assert payload is not None
         self.assertEqual(payload.get("status"), "OK")
-        self.assertEqual(payload.get("plugin_version"), "0.4.2")
+        self.assertEqual(payload.get("plugin_version"), "0.4.3")
         self.assertIs(payload.get("venv_present"), True)
         self.assertIs(payload.get("launcher_present"), True)
         self.assertIs(payload.get("ledger_present"), True)

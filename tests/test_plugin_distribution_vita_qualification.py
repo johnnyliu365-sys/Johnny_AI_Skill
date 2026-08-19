@@ -80,7 +80,7 @@ from tests.test_senior_review_inbox import _event as review_event
 from tests.test_senior_review_inbox import _request as review_wake_request
 
 _ORIGINAL = resolve_original_root()
-_CANDIDATE_ZIP = "johnny-ai-skill-0.4.2.zip"
+_CANDIDATE_ZIP = "johnny-ai-skill-0.4.3.zip"
 
 
 @unittest.skipIf(

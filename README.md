@@ -4,7 +4,21 @@
 
 它不是公司專案的 runtime service、MCP server、hook、CI 依賴、Git submodule、symlink、package dependency 或原始碼 import。因此拔除後，公司的建置、測試、部署與既有程式不會受影響。
 
-## 目前發行：0.4.2
+## 目前發行：0.4.3
+
+0.4.3 讓完整的自動化迴路進入已安裝的 runtime。新增三個 CLI 家族：
+`dispatch grant`／`dispatch issue`（受 owner 授權、worktree 包含性閘門與 journal
+保護的 receipt 發放）、`runner subscribe`（從已核發 receipt 推導訂閱）、
+`review submit`／`review consume`（verdict 綁定「已派工＋喚醒已送達」雙證據，
+恰好一次轉為 RouterEvent，且**跨行程**成立——review 臨界區與既有 durable 元件
+共用同一個 OS 級排它鎖）。隨附 Antigravity 喚醒命令（`antigravity_wake_command`，
+每次呼叫自行探索 session 動態的 LS 位址與 token）、全鏈 gated qualification
+（dispatch→runner→commit→喚醒→verdict→RouterEvent 一次跑完、零夾具）、
+runtime root 污染的單點揭露 guard，以及稽核入口
+`modules/tickets/PITFALL-REGISTER.md`。
+
+派工後的監督—喚醒—回傳全自動；派工本身仍是刻意保留的控制面動作。已知誠實
+缺口：被喚醒的 agent 自行執行 `review submit` 尚未實機驗證（機制已具備）。
 
 0.4.2 修復 handoff 驅動喚醒（E10／CR-E7-01，見下方修正紀錄）並補齊發行與
 安裝面：`johnny-install.cmd` 一鍵安裝入口（digest 釘死、所有 BLOCKED 退出可讀）、
@@ -70,9 +84,9 @@ red 證據重定義）。該版的兩個誠實邊界（live 安裝停在
 
 ## Codex 使用方式
 
-### 0.4.2 完整 bundle 安裝
+### 0.4.3 完整 bundle 安裝
 
-正式的一鍵入口是隨 release 發布的 `johnny-install.cmd`，將其下載至與經核准且 SHA-256 相符的 `johnny-ai-skill-0.4.2.zip` 同一資料夾下雙擊執行（或在終端機直接執行 `install.ps1 -BundleZip <path>`）。它會先核驗 bundle SHA-256，並在確認相符後抽出 `install.ps1` 進行安裝引導。bootstrap 會先顯示 Codex、Git、Python 與核心 dependency 計畫；需要下載時必須由使用者輸入 `INSTALL` 確認。它只建立 per-user Johnny-owned runtime，不會把 plugin、venv、receipt 或 cache 複製到公司 repo。
+正式的一鍵入口是隨 release 發布的 `johnny-install.cmd`，將其下載至與經核准且 SHA-256 相符的 `johnny-ai-skill-0.4.3.zip` 同一資料夾下雙擊執行（或在終端機直接執行 `install.ps1 -BundleZip <path>`）。它會先核驗 bundle SHA-256，並在確認相符後抽出 `install.ps1` 進行安裝引導。bootstrap 會先顯示 Codex、Git、Python 與核心 dependency 計畫；需要下載時必須由使用者輸入 `INSTALL` 確認。它只建立 per-user Johnny-owned runtime，不會把 plugin、venv、receipt 或 cache 複製到公司 repo。
 
 不得把原始碼 checkout 或 `main` 當成已核准 bundle；正式入口永遠是 digest 與已核准
 release 相符的 bundle。既有 `0.3.x` skill-only 安裝仍可使用 private Git

@@ -1,10 +1,10 @@
 @echo off
 setlocal EnableExtensions
-rem Johnny AI Skill one-click installer wrapper (release v0.4.2).
+rem Johnny AI Skill one-click installer wrapper (release v0.4.3).
 rem Every exit holds the console open first: this file is meant to be
 rem double-clicked from Explorer, where an unpaused exit closes the window
 rem before the user can read why the bundle was refused.
-set "BUNDLE_NAME=johnny-ai-skill-0.4.2.zip"
+set "BUNDLE_NAME=johnny-ai-skill-0.4.3.zip"
 set "APPROVED_DIGEST=90fd1579b6279cc0fe552dc0b5ad679a41dfe40077e77ee05f75fed84361998e"
 
 set "BUNDLE_PATH=%~dp0%BUNDLE_NAME%"
