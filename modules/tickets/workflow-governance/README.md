@@ -12,6 +12,7 @@ Deliver one control-plane policy vertical slice: completion evidence must re-ent
 | --- | --- | --- | --- |
 | [01-enforce-continuation-and-handoff](01-enforce-continuation-and-handoff.md) | Post-commit Router continuation, typed implementation return, and policy/template enforcement | `DONE` | Review approved; integrated into `main` by merge `2f545c8` (the ticket file records the closure; this row had gone stale) |
 | [02-repo-contained-worktree-layout](02-repo-contained-worktree-layout.md) | Every agent's worktree lives under the repository root, proven host-side | `CLOSED` | Owner-executed 2026-08-19; R1-R6 green, reverse mutation proven. The dispatch-admission gate its R3 anticipated is now wired by workstation-dispatch W1 |
+| [03-suite-order-fragility](03-suite-order-fragility.md) | The full suite's result depends on collection order | `OPEN` | Found while qualifying W4; a single trivial test file turns 989 passed into 984 passed, 7 failed |
 
 ## Shared baseline
 
