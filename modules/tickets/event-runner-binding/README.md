@@ -122,6 +122,19 @@ further additive correction:
   (composition holds no issuance-capable object) and the residual
   single-process limitation explicitly.
 
+The round-five review confirmed the correction but found the namespace and
+facade-surface regressions alias-evadable: reflowing the full boundary into
+the runner through an aliased import kept both green. The discriminator is
+now `P0RunnerBindingIdentityTests`, which runs the real runner composition
+with recording interceptors on `verify_receipt_claimable` and
+`DurableRoleWakeAttemptStore` and asserts on the *runtime objects actually
+bound*: every captured boundary must be exactly
+`type(...) is WakeScopedDispatchBoundary` with no `issue_receipt` or
+`register_artifact` attribute. The alias-reflow mutation (full boundary via
+aliased import inside the runner) was applied and turned this cell red while
+the name-based checks stayed green, proving the new cell closes exactly the
+reported false-green; the name-based checks remain as supplementary pins.
+
 | # | Ticket | State |
 | --- | --- | --- |
 | E8 | Runner receipt verification (CR-E6-01, CLOSURE-E8-02, CLOSURE-E8-03) | `CLOSED` — wake-scoped composition; discriminating junction regressions; E6 R3 green |

@@ -44,7 +44,37 @@ from library.local_orchestration.wake_capability import (
     probe_wake_capability,
     wake_config_path,
 )
+from library.local_orchestration import event_runner
+from library.local_orchestration.event_runner import (
+    RunnerSubscriptionFile,
+    RunnerSubscriptionSpec,
+    subscriptions_path,
+)
+from library.local_orchestration.role_wake_composition import (
+    DurableRoleWakeAttemptStore,
+    RoleWakeAttemptBoundaryPort,
+)
+from library.local_orchestration.runner_receipt_seeding import (
+    ReceiptVerificationFailure,
+    ReceiptVerificationStatus,
+)
+from library.local_orchestration.wake_scoped_boundary import (
+    WakeScopedDispatchBoundary,
+)
+from library.workflow_router.live_dispatch_contracts import TicketReceipt
+from library.workflow_router.supervision_policy import SupervisionClass
+from library.workflow_router.supervision_runtime_contracts import (
+    SupervisionPreparationRequest,
+    SupervisionStartRequest,
+)
+from tests.test_git_handoff_event_adapter import _admission, _registration_request
 from tests.test_live_payload_ports import _write_bundle
+from tests.test_receipt_bound_supervision import _started
+from tests.test_role_wake_composition import (
+    _deadline_capability,
+    _receipt,
+    _wake_capability,
+)
 
 _REPO_ROOT = Path(__file__).resolve().parents[1]
 
@@ -280,6 +310,85 @@ class P2ResidueWithoutLedgerTests(unittest.TestCase):
             port = LiveOwnedStatePort(layout, "receipt-live-absent-probe")
             self.assertTrue(port.has_owned_state("receipt-live-absent-probe"))
 
+
+
+class P0RunnerBindingIdentityTests(unittest.TestCase):
+    """Round five P0: observe the object the runner actually binds.
+
+    Name-based namespace checks stay green under alias or factory reflow, so
+    this cell records every boundary object the untouched production line
+    hands to the wake chain (the attempt store and the verification call) and
+    requires each to be exactly the canonical facade with no issuance
+    attribute. Any mutation that routes an issuance-capable object into the
+    runner turns this red, whatever it is named.
+    """
+
+    def test_the_runner_binds_exactly_the_wake_scoped_facade(self) -> None:
+        captured: list[object] = []
+
+        def recording_verify(
+            boundary: object, receipt: TicketReceipt
+        ) -> tuple[ReceiptVerificationStatus, ReceiptVerificationFailure | None]:
+            captured.append(boundary)
+            return (
+                ReceiptVerificationStatus.BLOCKED,
+                ReceiptVerificationFailure.RECEIPT_NOT_FOUND,
+            )
+
+        class RecordingStore(DurableRoleWakeAttemptStore):
+            def __init__(self, boundary: RoleWakeAttemptBoundaryPort) -> None:
+                captured.append(boundary)
+                super().__init__(boundary)
+
+        with TemporaryDirectory() as temporary:
+            layout = JohnnyRootLayout(base=Path(temporary).resolve())
+            layout.queue_root.mkdir(parents=True)
+            baseline = "c" * 40
+            receipt = _receipt().model_copy(update={"baseline_commit": baseline})
+            specification = RunnerSubscriptionSpec(
+                repository_root=str(layout.base),
+                preparation=SupervisionPreparationRequest(
+                    receipt=receipt,
+                    registration_request=_registration_request(baseline),
+                    handoff_context=_admission(
+                        baseline=baseline, observed_handoff_commit=baseline
+                    ),
+                    reviewer_ref="role-supervisor-reviewer",
+                    implementation_task_ref="task-vita-implementation",
+                    wake_capability=_wake_capability(receipt),
+                    deadline_capability=_deadline_capability(receipt),
+                ),
+                start=SupervisionStartRequest(
+                    subscription_id=_registration_request(
+                        baseline
+                    ).subscription_id,
+                    lease_id="lease-p0-binding-001",
+                    supervision_class=SupervisionClass.LUNA_XHIGH_DEFAULT,
+                    execution_started=_started(baseline),
+                ),
+            )
+            subscriptions_path(layout).write_text(
+                RunnerSubscriptionFile(
+                    subscriptions=(specification,)
+                ).model_dump_json(),
+                encoding="utf-8",
+            )
+            original_verify = getattr(event_runner, "verify_receipt_claimable")
+            original_store = getattr(event_runner, "DurableRoleWakeAttemptStore")
+            setattr(event_runner, "verify_receipt_claimable", recording_verify)
+            setattr(event_runner, "DurableRoleWakeAttemptStore", RecordingStore)
+            try:
+                exit_code = event_runner.run_event_runner(layout)
+            finally:
+                setattr(event_runner, "verify_receipt_claimable", original_verify)
+                setattr(event_runner, "DurableRoleWakeAttemptStore", original_store)
+
+        self.assertEqual(exit_code, 2)
+        self.assertGreaterEqual(len(captured), 2)
+        for bound in captured:
+            self.assertIs(type(bound), WakeScopedDispatchBoundary)
+            for forbidden in ("issue_receipt", "register_artifact"):
+                self.assertFalse(hasattr(bound, forbidden))
 
 
 class P0RunnerHoldsNoIssuanceTests(unittest.TestCase):
