@@ -24,3 +24,16 @@ compact evidence rows; no separate leaf tree).
 
 Full suite after closure: `849 passed, 5 skipped (gated qualification), 2665 subtests`;
 `mypy --strict` clean over every new module and test.
+
+## CR-L8-01 — venv self-deletion lock (caught by the owner smoke, as designed)
+
+The first owner run proved install and status, then hit `REMOVAL_FAILED` on uninstall: the
+live CLI ran on the owned venv's python, which locks its own executable and loaded native
+modules, so the venv could not delete itself. The in-process qualification could not see
+this class. Fix: the launcher's uninstall branch executes from a disposable copy of the venv
+(owned venv stays unlocked), and the gated qualification now drives uninstall through the
+installed launcher exactly as an owner does — rerun green `5 passed`. Secondary finding: the
+failed partial `rmtree` destroyed ownership markers, so the retry correctly halted as
+`FOREIGN_STATE_PRESENT`; the remnant (verified as same-day owned state via the ledger) was
+removed by owner-authorized manual recovery to zero residue. Known recovery procedure: a
+marker-destroyed root cannot re-prove ownership and requires owner manual removal.
