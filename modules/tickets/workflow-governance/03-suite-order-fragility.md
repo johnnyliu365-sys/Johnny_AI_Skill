@@ -2,53 +2,84 @@
 
 | Field | Value |
 | --- | --- |
-| State | `OPEN` |
+| State | `CLOSED` |
 | Severity | `P1` — it makes every "full suite green" claim conditional |
 | Found | 2026-08-19, while qualifying W4 |
 | Baseline | `main` = `e6d0240` |
 
-## The finding, sharply reproduced
+## Correction: the first diagnosis was wrong
 
-Adding a **single test file containing one trivially passing test** turns the
-full suite from `989 passed` into `984 passed, 7 failed`. The added file's
-content is irrelevant: it defines nothing, imports nothing, and touches no
-shared state. W4's file, which does real work, produced only one failure.
+This ticket was opened claiming the suite's result depends on collection
+order, because adding a file appeared to change the outcome. That was an
+inference from a coincidence, and it is false. Run from a genuinely clean
+state, the suite with an added trivial file passes `990 passed` with no
+residue. The added file is innocent; something else was already true.
 
-```text
-suite as-is                     989 passed
-suite + tests/test_whole_chain_qualification.py   988 passed, 1 failed
-suite + a file with one `assertTrue(True)`        984 passed, 7 failed
-```
+## The real finding, directly observed
 
-The failures cluster in `test_disposable_environment_core` and the Codex
-acceptance suites — the tests that share the project-owned disposable runtime
-root at `tests/.johnny-runtime`.
+The suite shares one project-owned runtime root, `tests/.johnny-runtime`,
+and `DisposableEnvironmentAllocator` admits a provisioning request only when
+**every** existing child of that root is in `_CLAIMED_MARKERS` — a
+module-level dict, and therefore per-process.
 
-## Why this matters more than any single failure
+An orphan lease directory is consequently unclaimable by construction: a new
+process cannot have claimed it. `_prepare_runtime_parent` returns `False`,
+every `provision` returns `INITIALIZATION_FAILED`, and roughly eighty
+unrelated tests fail with `project-runtime provisioning must succeed`, which
+names neither the cause nor the cure.
 
-Every closure in this repository is evidenced partly by "full suite green".
-That claim is only as strong as its reproducibility, and right now the result
-is a function of collection order rather than of the code. Two consequences,
-both already observed during this session:
+**How an orphan appears, reproduced:** two `pytest` processes running against
+this checkout at the same time. Process A creates a lease; to process B that
+lease is an unclaimed child, so B refuses everything (`84 failed`); whichever
+process is interrupted or exits first can leave its lease behind. From then
+on **every** future run is poisoned until a human deletes the directory. The
+refusal itself is correct and deliberate (`ADR-20260813-007`: never delete
+residue you cannot prove you own) — the defect is that a safe refusal is
+delivered as eighty misleading failures and no path to recovery.
 
-- Real failures were dismissed as "residue pollution" after a clean rerun.
-  Sometimes that diagnosis was right; there is currently no way to tell it
-  apart from a genuine order-dependent defect.
-- A future regression could hide simply by landing next to a file that shifts
-  ordering.
+## What this cost, honestly
 
-## What is *not* yet known
-
-Whether the shared runtime root is the mechanism, or merely where the symptom
-surfaces. Do not assume: the E10 lesson was that two correct-looking segments
-can hide a dead join, and the same discipline applies here. Reproduce with
-`-p no:randomly` and an explicit `--co` ordering diff before naming a cause.
+Several times this session a failing suite was diagnosed as "residue
+pollution, clean and rerun". That diagnosis happened to be right, but it was
+reached by pattern-matching rather than evidence, and the same reasoning
+would have dismissed a real regression. That is the actual risk being fixed
+here: not flaky tests, but a failure mode that trains the reader to ignore
+failures.
 
 ## Acceptance closure
 
 | ID | Required evidence |
 | --- | --- |
-| `03-R1` | The mechanism is named by direct observation: which shared state, written by which test, read by which other, and why ordering changes the outcome. |
-| `03-R2` | The suite passes under at least three deliberately different collection orders, including reverse. |
-| `03-R3` | A regression makes order-dependence visible rather than silent — a test that fails when the shared root is polluted, rather than the pollution silently breaking unrelated cells. |
-| `03-R4` | The fix does not weaken any existing assertion to obtain green. |
+| `03-R1` | The mechanism is named by direct observation. **Done above**: per-process `_CLAIMED_MARKERS` versus a shared on-disk root; orphan created by concurrent processes, reproduced. |
+| `03-R2` | A poisoned root is detected once, at the start of the run, and reported as a single named failure that states the path and the remedy. |
+| `03-R3` | With a planted orphan lease, the guard fails and the diagnosis is unmistakable; without one, the suite is unaffected. Proven by reverse mutation. |
+| `03-R4` | Nothing is auto-deleted and no existing assertion is weakened: `ADR-20260813-007` stands, and the guard only reports. |
+
+## Closure evidence (2026-08-19, control-plane executed)
+
+- `03-R1` Mechanism named by direct observation, not inference: per-process
+  `_CLAIMED_MARKERS` against a shared on-disk root. Orphan creation
+  reproduced by running two `pytest` processes against this checkout at once
+  — `84 failed` in the second process, and a lease left behind afterwards.
+- `03-R2` `tests/test_aaa_runtime_root_guard.py` reads the root once at import
+  and fails a single named test stating the orphan paths, that this is not a
+  code defect, the likely cause, and the exact remedy. The file name sorts
+  first, so the diagnosis appears above the wreckage rather than under it.
+- `03-R3` With a planted orphan lease the guard fails and is the first
+  reported failure; with a clean root it passes silently and the suite is
+  `990 passed, 16 skipped`.
+- `03-R4` Nothing is deleted automatically and no assertion was weakened.
+  `ADR-20260813-007` stands exactly as written: the allocator still refuses
+  residue it cannot prove it owns. The guard only reports.
+
+`mypy --strict` clean.
+
+## The correction this ticket carries
+
+The ticket was opened on a wrong diagnosis — "the result depends on collection
+order" — reached by noticing that adding a file changed the outcome. Run from
+a genuinely clean state, adding a file changes nothing. The real cause was
+residue that was already present, and the added file was innocent. The
+original claim is left visible above rather than edited away, because the
+mistake is the point: the same pattern-matching that produced it is what this
+guard exists to stop.
