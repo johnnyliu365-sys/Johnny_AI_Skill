@@ -51,9 +51,7 @@ Observed, in order:
 - `johnny-router.ps1 status` returned
   `{"launcher_present": true, "ledger_present": true, "plugin_version": "0.4.2", "status": "OK", "venv_present": true}`.
 
-Not exercised on that host: `uninstall`. The 0.4.2 removal path is covered by
-the gated qualification (real install to a disposable root, real uninstall,
-zero residue), not by this owner run.
+**Update 2026-08-20:** now exercised. Upgrading to 0.4.3, the owner ran the launcher uninstall on that same second machine: `REMOVED` with all five components listed (`PLUGIN_PAYLOAD`, `VENV`, `LAUNCHER`, `QUEUE`, `TELEMETRY`), `root_deleted: true`, `remaining: []`. The 0.4.2 lifecycle is owner-verified end to end on a host with no development checkout.
 
 Follow-up recorded, not a defect: the plugin deliberately does not modify
 `PATH`, so `johnny-router` is not a global command and the owner initially
