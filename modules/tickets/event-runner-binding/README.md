@@ -24,6 +24,7 @@ wake.
 | E5 | CLI wiring | `johnny-router runner start\|stop\|status`, `wake-inbox list`, `wake-capability probe` | `CLOSED` — `runner_cli.py` + `event_runner_main.py` |
 | E6 | Gated end-to-end qualification | Real repository, real commit to the exact ref, real detached runner, real wake delivery, zero residue | `CLOSED` — `5 passed` with the discriminating R3: delivered action is `REVIEW_HANDOFF` on the real commit, deadline not due |
 | E7 | Owner real-machine smoke | Owner runs the runner against a disposable repository and observes a real wake | `OWNER_EFFECT_REQUIRED` — unblocked by E10's closure; runbook `doc/runbooks/e7_owner_smoke.py` is exercised end-to-end by the control plane |
+| E11 | Agent wake channel (phase B) | Does any host command actually start an acting agent? | `CLOSED` — **proven**: `agentapi send-message` woke a real Antigravity agent that read the payload and wrote the ack; see [`e11-agent-wake-channel.md`](e11-agent-wake-channel.md) |
 
 ## E6 status — 4/5 real cells green, R3 blocked by CR-E6-01
 
