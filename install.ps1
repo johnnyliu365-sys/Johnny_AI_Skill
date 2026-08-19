@@ -5,10 +5,12 @@ Johnny AI Skill bundle bootstrap: verify, present the exact dependency plan,
 and require explicit user confirmation before any install effect.
 
 .DESCRIPTION
-This entry performs read-only verification only. The live install effect is
-owned by library/local_orchestration/plugin_install_transaction.py and stays
-unauthorized until the approved 0.4.0 bundle passes Tickets 14 and 15. Running
-this script never modifies a company repository, PATH, global Python or Git.
+This entry performs read-only verification and explicit user confirmation,
+then hands the confirmed bundle to the stdlib-only bootstrap, which builds
+the hash-locked control venv and runs the typed, journaled install
+transaction owned by library/local_orchestration/johnny_live_install.py.
+Running this script never modifies a company repository, PATH, global Python
+or Git.
 #>
 [CmdletBinding()]
 param(

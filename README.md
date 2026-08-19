@@ -4,15 +4,26 @@
 
 它不是公司專案的 runtime service、MCP server、hook、CI 依賴、Git submodule、symlink、package dependency 或原始碼 import。因此拔除後，公司的建置、測試、部署與既有程式不會受影響。
 
-## 目前發行：0.4.0
+## 目前發行：0.4.1
+
+0.4.1 落地 0.4.0 的兩個誠實邊界。**Live 安裝效果綁定**：`install.ps1` 於使用者
+確認後，由 stdlib-only bootstrap 建立 hash-locked control venv，再執行 typed、
+journaled 的 install transaction；`johnny-router status`／`uninstall` 已在實機驗證
+INSTALLED 與 ZERO_RESIDUE。**自動喚醒**：event runner 落地——wake capability 由
+probe 實際執行宣告的 wake 命令證明；exact Git ref 事件驅動、無 heartbeat／polling；
+runner 只對已在 durable checkpoint 中驗證為 claimable 的 receipt arm 監督，且
+composition 只持有 wake-scoped 三方法 boundary（read／claim／settle），不持有任何
+可發放 receipt 的物件。未證明 wake capability 時誠實落到 candidate inbox（只登記
+完成候選，不宣稱喚醒）。receipt 發放（dispatch authority）整合遞延至 multi-model
+workstation 線。本版經五輪外部審查後 APPROVED。
 
 0.4.0 完成 Router runtime 主線（runner registry、receipt Git subscription、Senior review
 queue、host-wake gate、deterministic bundle、Router composition、install／uninstall
 transaction、telemetry report）與 SourceProjectA scripted + real-role 雙重驗證，並完成 Wayfinder
 收斂五連修（有界資訊缺口協議、範圍終止規則、intake 三模式、workload 強度自適應、
-red 證據重定義）。兩個誠實邊界仍然生效：`install.ps1` 於使用者確認後停在
-`LIVE_INSTALL_NOT_AUTHORIZED`（live 安裝效果綁定未落地），自動喚醒維持
-`HOST_WAKE_CAPABILITY_UNAVAILABLE`（event runner 未落地）；skill-only 安裝與使用
+red 證據重定義）。該版的兩個誠實邊界（live 安裝停在
+`LIVE_INSTALL_NOT_AUTHORIZED`、自動喚醒維持
+`HOST_WAKE_CAPABILITY_UNAVAILABLE`）已由 0.4.1 落地取代；skill-only 安裝與使用
 不受影響。
 
 0.3.2 將前端的組合式設計與依賴注入列為 SPEC／ticket 的阻擋規則，並將控制面 Agent 固定為 Wayfinder／Grill／ticket／review；正式實作必須交給另一位具名 implementation owner。
@@ -40,16 +51,16 @@ red 證據重定義）。兩個誠實邊界仍然生效：`install.ps1` 於使�
 
 ## Codex 使用方式
 
-### 0.4.0 完整 bundle 安裝
+### 0.4.1 完整 bundle 安裝
 
-正式入口是經核准且 SHA-256 相符的 `johnny-ai-skill-0.4.0.zip` 內
+正式入口是經核准且 SHA-256 相符的 `johnny-ai-skill-0.4.1.zip` 內
 `install.ps1`。在個人終端機、且不在公司專案資料夾內執行它。bootstrap 會先顯示
 Codex、Git、Python 與核心 dependency 計畫；需要下載時必須由使用者確認。它只建立
 per-user Johnny-owned runtime，不會把 plugin、venv、receipt 或 cache 複製到公司 repo。
 
-`0.4.0` 實作與 SourceProjectA 驗證完成前，不得把目前的原始碼 checkout 或 `main` 當成已
-核准 bundle。既有 `0.3.x` skill-only 安裝仍可使用 private Git marketplace，但不包含
-Router runtime、event runner 或完整清除保證。
+不得把原始碼 checkout 或 `main` 當成已核准 bundle；正式入口永遠是 digest 與已核准
+release 相符的 bundle。既有 `0.3.x` skill-only 安裝仍可使用 private Git
+marketplace，但不包含 Router runtime、event runner 或完整清除保證。
 
 ### 接管公司專案
 
@@ -72,7 +83,7 @@ Router runtime、event runner 或完整清除保證。
 
 ### 更新或拔除
 
-`0.4.0` 的完整移除入口是：
+`0.4.x` 完整 bundle 安裝的移除入口是：
 
 ```powershell
 johnny-router uninstall
@@ -82,7 +93,7 @@ johnny-router uninstall
 venv 與 launcher，再呼叫 Codex plugin remove 並驗證不存在。直接從 Codex UI 或
 marketplace remove 只能移除 Codex 可見的 plugin，不能宣稱 Johnny runtime 已完整清除。
 
-既有 `0.3.x` skill-only 安裝沒有 `0.4.0` runtime；其 marketplace 更新／移除流程仍以
+既有 `0.3.x` skill-only 安裝沒有 `0.4.x` runtime；其 marketplace 更新／移除流程仍以
 該已安裝版本的 Codex 指令為準。任何版本的拔除都不得修改公司 repository。
 
 ## Claude Code 使用方式
@@ -198,7 +209,7 @@ disk/temp、process/container、worker 與 lane 硬限制；無法硬限制即�
 cache、grant、evidence 與 receipt binding。兩者都不得修改 target project 或刪除使用者／
 外部工具。新工程師可直接依專案原生文件與 manifests 接手。
 
-Codex plugin manifest 沒有可依賴的 Johnny uninstall callback，因此 `0.4.0` 只有
+Codex plugin manifest 沒有可依賴的 Johnny uninstall callback，因此 `0.4.x` 只有
 `johnny-router uninstall` 可以宣稱完成上述 `PLUGIN_UNINSTALL`。若 host 缺少合法的
 receipt-bound completion callback，Git event runner 只能登記完成候選並請使用者手動轉發；
 不得改用 heartbeat、automation、cron、polling 或假稱 Router 已可綁定。
@@ -207,7 +218,9 @@ receipt-bound completion callback，Git event runner 只能登記完成候選並
 
 > 狀態：SPEC 已核准，正式契約以
 > [`modules/spec/receipt-bound-role-supervision.md`](modules/spec/receipt-bound-role-supervision.md)
-> 為準。Reviewer 已可依該 SPEC 拆票；實作驗證前不得宣稱自動監督能力已可用。
+> 為準。0.4.1 的 event runner 已通過 gated qualification（exact Git ref 事件驅動、
+> receipt 驗證後喚醒一次）。自動喚醒仍以 probe 證明的 wake capability 為前提；
+> 未證明時 runner 只登記完成候選，不宣稱喚醒。
 
 這套流程的目標是在不犧牲權限、正確性與穩定交付的前提下減少模型喚醒。正常
 implementation 期間不使用 heartbeat、定時 polling、cron、watchdog 或重複 thread
