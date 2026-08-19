@@ -487,6 +487,43 @@ class RoleWakeEffectResult(_StrictModel):
         return self
 
 
+class WakeAttemptReadStatus(str, Enum):
+    """Finite outcomes of one wake-attempt read."""
+
+    FOUND = "FOUND"
+    NOT_FOUND = "NOT_FOUND"
+    STORAGE_UNAVAILABLE = "STORAGE_UNAVAILABLE"
+
+
+class RoleWakeAttemptReadRequest(_StrictModel):
+    """Ask whether a reviewer was really woken for one exact receipt.
+
+    Keyed by the dispatch identity rather than the attempt id, because the
+    caller proving a wake happened knows which ticket it is reviewing, not
+    which attempt the runner minted for it.
+    """
+
+    project_id: ProjectId
+    ticket_ref: OpaqueMetadataId
+    receipt_ref: OpaqueMetadataId
+
+
+class RoleWakeAttemptReadResult(_StrictModel):
+    """Every recorded attempt for that receipt, newest state included."""
+
+    status: WakeAttemptReadStatus
+    records: tuple[RoleWakeAttemptRecord, ...] = ()
+
+    @model_validator(mode="after")
+    def exact_read_shape(self) -> Self:
+        if self.status is WakeAttemptReadStatus.FOUND:
+            if not self.records:
+                raise ValueError("a found read must carry at least one record")
+        elif self.records:
+            raise ValueError("only a found read may carry records")
+        return self
+
+
 class RoleWakeAttemptSettleRequest(_StrictModel):
     identity: RoleWakeAttemptIdentity
     effect: RoleWakeEffectResult
@@ -598,6 +635,8 @@ __all__ = [
     "RoleWakeAttemptClaimResult",
     "RoleWakeAttemptIdentity",
     "RoleWakeAttemptLifecycle",
+    "RoleWakeAttemptReadRequest",
+    "RoleWakeAttemptReadResult",
     "RoleWakeAttemptRecord",
     "RoleWakeAttemptSettleRequest",
     "RoleWakeAttemptSettleResult",
@@ -616,6 +655,7 @@ __all__ = [
     "RoleWakeStatus",
     "RoleWakeTriggerKind",
     "WakeAttemptClaimStatus",
+    "WakeAttemptReadStatus",
     "WakeAttemptSettleStatus",
     "derive_role_wake_attempt_identity",
     "preflight_role_wake_chain",

@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| State | `OPEN` |
+| State | `CLOSED` |
 | Baseline | `main` = `ebb0ae7` |
 | Workload | `STANDARD`; `HIGH_ASSURANCE` — a verdict is an authority-bearing artifact |
 | Depends on | W1 (dispatch admission), E10/E12 (the wake actually reaches an agent) |
@@ -80,3 +80,35 @@ modules/tickets/workstation-dispatch/
 | `W2-R6` | The full loop composes in one test: dispatch admission issues, a wake attempt is settled `HOST_ACCEPTED`, the verdict returns and reads back. |
 | `W2-R7` | Reverse mutations: dropping the wake check turns R2 red; dropping the conflict check turns R4 red. |
 | `W2-R8` | `mypy --strict` clean; full suite green; zero residue; every existing wake and dispatch test still green (the boundary addition is additive). |
+
+## Closure evidence (2026-08-19, control-plane executed)
+
+- `W2-R1` A verdict for an undispatched receipt refuses
+  `RECEIPT_NOT_DISPATCHED`; the returns file is never created.
+- `W2-R2` A dispatched receipt with no wake refuses `WAKE_NOT_DELIVERED`, and
+  a wake settled `NO_EFFECT` or `EFFECT_UNCERTAIN` is equally insufficient —
+  only `HOST_ACCEPTED` counts as a delivery.
+- `W2-R3` With both facts true the verdict records and reads back carrying
+  reviewer, verdict, handoff and reviewed commit.
+- `W2-R4` Identical repeat reports `ALREADY_RECORDED` with one entry on file;
+  a contradicting verdict refuses `VERDICT_CONFLICT` and the recorded one is
+  unchanged. A second reviewer returns separately, as it should.
+- `W2-R5` The facade exposes exactly `read_receipt` and
+  `read_role_wake_attempt`; issuance and wake-claim methods are absent. The
+  discriminating cell asserts the runtime object the path actually builds.
+- `W2-R6` The loop closes in one test: `admit_dispatch` issues, a wake settles
+  `HOST_ACCEPTED`, the verdict returns and reads back against that receipt.
+- `W2-R7` Reverse mutations: removing the wake check turns three cells red;
+  removing the conflict check turns R4's cell red. Restored byte-identical.
+- `W2-R8` `mypy --strict` clean; full suite `980 passed, 11 skipped`; gated
+  qualifications `10 passed`; zero residue. The boundary addition is additive
+  and every existing wake and dispatch test stayed green.
+
+CLI smoke through `run_live_cli`: submit before any wake →
+`BLOCKED/WAKE_NOT_DELIVERED` exit 2; after a delivered wake → `RECORDED`
+exit 0; again → `ALREADY_RECORDED` exit 0; `review list` → the one return.
+
+Follow-ups, recorded not done: Router-side consumption of the returns file
+(this ticket delivers the durable, unforgeable record; deciding the next
+stage from it is Router work), and README documentation in the next release
+pass.

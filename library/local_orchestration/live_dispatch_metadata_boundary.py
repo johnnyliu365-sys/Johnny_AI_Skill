@@ -50,6 +50,9 @@ from library.workflow_router.thread_dispatch_contracts import (
     derive_ticket_receipt_digest,
 )
 from library.workflow_router.role_wake_contracts import (
+    RoleWakeAttemptReadRequest,
+    RoleWakeAttemptReadResult,
+    WakeAttemptReadStatus,
     RoleWakeAttemptClaimRequest,
     RoleWakeAttemptClaimResult,
     RoleWakeAttemptIdentity,
@@ -674,6 +677,45 @@ class LiveDispatchMetadataBoundary:
                 )
         except (OSError, UnicodeError, ValidationError, ValueError):
             return _storage_dispatch_settlement_failure()
+
+    def read_role_wake_attempt(
+        self,
+        request: RoleWakeAttemptReadRequest,
+    ) -> RoleWakeAttemptReadResult:
+        """Report every wake attempt recorded for one exact receipt.
+
+        Read-only, added for the reviewer return path: a verdict may only be
+        recorded for a review someone was actually woken to perform, and that
+        fact has to be readable without granting the reader any power to
+        claim or settle an attempt.
+        """
+
+        if type(request) is not RoleWakeAttemptReadRequest:
+            return RoleWakeAttemptReadResult(
+                status=WakeAttemptReadStatus.STORAGE_UNAVAILABLE
+            )
+        try:
+            with _ExclusiveWindowsFileLock(self._lock_path):
+                checkpoint = self._load_checkpoint()
+                records = tuple(
+                    record
+                    for record in checkpoint.wake_attempts
+                    if record.identity.project_id == request.project_id
+                    and record.identity.ticket_ref == request.ticket_ref
+                    and record.identity.receipt_ref == request.receipt_ref
+                )
+                if not records:
+                    return RoleWakeAttemptReadResult(
+                        status=WakeAttemptReadStatus.NOT_FOUND
+                    )
+                return RoleWakeAttemptReadResult(
+                    status=WakeAttemptReadStatus.FOUND,
+                    records=records,
+                )
+        except (OSError, UnicodeError, ValidationError):
+            return RoleWakeAttemptReadResult(
+                status=WakeAttemptReadStatus.STORAGE_UNAVAILABLE
+            )
 
     def claim_role_wake_attempt(
         self,

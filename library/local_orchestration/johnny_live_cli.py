@@ -52,6 +52,10 @@ def run_live_cli(argv: tuple[str, ...], johnny_root: Path) -> int:
         from .dispatch_cli import run_dispatch_family
 
         return run_dispatch_family(argv[1:], johnny_root)
+    if command == "review":
+        from .review_cli import run_review_family
+
+        return run_review_family(argv[1:], johnny_root)
     print('{"status":"CAPABILITY_UNAVAILABLE","code":"UNKNOWN_COMMAND"}')
     return 2
 
