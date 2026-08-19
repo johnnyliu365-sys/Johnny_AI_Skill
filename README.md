@@ -4,7 +4,15 @@
 
 它不是公司專案的 runtime service、MCP server、hook、CI 依賴、Git submodule、symlink、package dependency 或原始碼 import。因此拔除後，公司的建置、測試、部署與既有程式不會受影響。
 
-## 目前發行：0.4.1
+## 目前發行：0.4.2
+
+0.4.2 修復 handoff 驅動喚醒（E10／CR-E7-01，見下方修正紀錄）並補齊發行與
+安裝面：`johnny-install.cmd` 一鍵安裝入口（digest 釘死、所有 BLOCKED 退出可讀）、
+release pin guard（版本升級忘記更新 wrapper 會轉紅、發行前 preflight 比對實建
+bundle）、subscription builder（從已核發 receipt 推導 runner 訂閱，能力一律 probe
+不接受宣稱，含新增的 monotonic one-shot deadline probe）、Antigravity 載入面
+（`.agents/` 專案面與 per-user `skills.json` 註冊，單一真相來源零複製）、以及
+agent worktree 位置治理（`.worktrees/` 包含性驗證，junction 一律拒絕）。
 
 0.4.1 落地 0.4.0 的兩個誠實邊界。**Live 安裝效果綁定**：`install.ps1` 於使用者
 確認後，由 stdlib-only bootstrap 建立 hash-locked control venv，再執行 typed、
@@ -25,8 +33,8 @@ APPROVED。
 > detached runner、真 commit、期限未到期時送達 `action=REVIEW_HANDOFF`。反向突變
 > （移除該修正）使 R3 轉紅。詳見
 > [`modules/tickets/event-runner-binding/e10-handoff-driven-wake.md`](modules/tickets/event-runner-binding/e10-handoff-driven-wake.md)。
-> 此修正在 main 上，尚未進入任何已發行 bundle；0.4.1 zip 內的 runner 仍帶此缺陷，
-> 修正將隨下一版 release 發布。
+> 此修正隨 0.4.2 發行；0.4.1 zip 內的 runner 仍帶此缺陷，需要 commit 驅動喚醒者
+> 請升級至 0.4.2。
 
 0.4.0 完成 Router runtime 主線（runner registry、receipt Git subscription、Senior review
 queue、host-wake gate、deterministic bundle、Router composition、install／uninstall
@@ -62,9 +70,9 @@ red 證據重定義）。該版的兩個誠實邊界（live 安裝停在
 
 ## Codex 使用方式
 
-### 0.4.1 完整 bundle 安裝
+### 0.4.2 完整 bundle 安裝
 
-正式的一鍵入口是隨 release 發布的 `johnny-install.cmd`，將其下載至與經核准且 SHA-256 相符的 `johnny-ai-skill-0.4.1.zip` 同一資料夾下雙擊執行（或在終端機直接執行 `install.ps1 -BundleZip <path>`）。它會先核驗 bundle SHA-256，並在確認相符後抽出 `install.ps1` 進行安裝引導。bootstrap 會先顯示 Codex、Git、Python 與核心 dependency 計畫；需要下載時必須由使用者輸入 `INSTALL` 確認。它只建立 per-user Johnny-owned runtime，不會把 plugin、venv、receipt 或 cache 複製到公司 repo。
+正式的一鍵入口是隨 release 發布的 `johnny-install.cmd`，將其下載至與經核准且 SHA-256 相符的 `johnny-ai-skill-0.4.2.zip` 同一資料夾下雙擊執行（或在終端機直接執行 `install.ps1 -BundleZip <path>`）。它會先核驗 bundle SHA-256，並在確認相符後抽出 `install.ps1` 進行安裝引導。bootstrap 會先顯示 Codex、Git、Python 與核心 dependency 計畫；需要下載時必須由使用者輸入 `INSTALL` 確認。它只建立 per-user Johnny-owned runtime，不會把 plugin、venv、receipt 或 cache 複製到公司 repo。
 
 不得把原始碼 checkout 或 `main` 當成已核准 bundle；正式入口永遠是 digest 與已核准
 release 相符的 bundle。既有 `0.3.x` skill-only 安裝仍可使用 private Git

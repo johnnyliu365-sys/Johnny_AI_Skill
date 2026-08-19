@@ -29,7 +29,7 @@ from library.local_orchestration.windows_package_manifest import (
 )
 
 
-_CANDIDATE_NAME = "johnny-ai-skill-0.4.1.zip"
+_CANDIDATE_NAME = "johnny-ai-skill-0.4.2.zip"
 _SOURCE_COMMIT = "a" * 40
 
 

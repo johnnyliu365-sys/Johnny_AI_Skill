@@ -10,7 +10,7 @@ Deliver one control-plane policy vertical slice: completion evidence must re-ent
 
 | Ticket | User-observable capability | State | Required authority |
 | --- | --- | --- | --- |
-| [01-enforce-continuation-and-handoff](01-enforce-continuation-and-handoff.md) | Post-commit Router continuation, typed implementation return, and policy/template enforcement | `IN_PROGRESS` | Ticket approved; implementation worktree must fast-forward to `main` before the first red test |
+| [01-enforce-continuation-and-handoff](01-enforce-continuation-and-handoff.md) | Post-commit Router continuation, typed implementation return, and policy/template enforcement | `DONE` | Review approved; integrated into `main` by merge `2f545c8` (the ticket file records the closure; this row had gone stale) |
 | [02-repo-contained-worktree-layout](02-repo-contained-worktree-layout.md) | Every agent's worktree lives under the repository root, proven host-side | `CLOSED` | Owner-executed 2026-08-19; R1-R6 green, reverse mutation proven |
 
 ## Shared baseline
