@@ -99,15 +99,28 @@ marketplace，但不包含 Router runtime、event runner 或完整清除保證�
 
 ### 更新或拔除
 
-`0.4.x` 完整 bundle 安裝的移除入口是：
+安裝完成後的 runtime 位於 per-user 根目錄 `%LOCALAPPDATA%\JohnnyRouter`
+（可用 `JOHNNY_ROOT` 覆寫）。本外掛**刻意不修改 `PATH`**，所以沒有全域
+`johnny-router` 指令；入口是該根目錄下的 launcher 腳本，以完整路徑呼叫。
+
+確認安裝狀態：
 
 ```powershell
-johnny-router uninstall
+powershell -ExecutionPolicy Bypass -File "$env:LOCALAPPDATA\JohnnyRouter\launcher\johnny-router.ps1" status
+```
+
+`0.4.x` 完整 bundle 安裝的移除入口是同一個 launcher：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File "$env:LOCALAPPDATA\JohnnyRouter\launcher\johnny-router.ps1" uninstall
 ```
 
 它會先停止 owned runner、取消 subscriptions、移除 ledger、receipt、queue、telemetry、
 venv 與 launcher，再呼叫 Codex plugin remove 並驗證不存在。直接從 Codex UI 或
 marketplace remove 只能移除 Codex 可見的 plugin，不能宣稱 Johnny runtime 已完整清除。
+
+已安裝的情況下重跑 installer 會以 `VENV_ALREADY_PRESENT` 擋下且不動既有 runtime；
+要重裝請先執行上面的移除入口。
 
 既有 `0.3.x` skill-only 安裝沒有 `0.4.x` runtime；其 marketplace 更新／移除流程仍以
 該已安裝版本的 Codex 指令為準。任何版本的拔除都不得修改公司 repository。

@@ -27,6 +27,41 @@ compact evidence rows; no separate leaf tree).
 Full suite after closure: `849 passed, 5 skipped (gated qualification), 2665 subtests`;
 `mypy --strict` clean over every new module and test.
 
+## 0.4.2 owner smoke on a second machine (2026-08-19, OWNER_EXECUTED)
+
+The owner installed the published `v0.4.2` release on a **different machine**
+from the one that carries the development checkout, through the one-click
+wrapper alone. This is stronger evidence than L8: nothing on that host came
+from a source tree.
+
+Observed, in order:
+
+- The wrapper verified the bundle and printed
+  `Bundle archive SHA-256: 90fd1579b6279cc0fe552dc0b5ad679a41dfe40077e77ee05f75fed84361998e`,
+  equal to the approved release digest.
+- `Control Python probe: Python 3.11.9`, then the exact six-entry dependency
+  plan with per-artifact digests.
+- The owner typed `INSTALL`; the install completed.
+- Re-running the wrapper to check whether the install had succeeded was
+  correctly refused with `{"code": "VENV_ALREADY_PRESENT", "status": "BLOCKED"}`
+  and exit 2, without touching the existing runtime.
+- That refusal was **readable**: the console held on the localized pause prompt
+  instead of closing. This is CR-L9-01's fix meeting its real case, on the
+  exact path it was written for.
+- `johnny-router.ps1 status` returned
+  `{"launcher_present": true, "ledger_present": true, "plugin_version": "0.4.2", "status": "OK", "venv_present": true}`.
+
+Not exercised on that host: `uninstall`. The 0.4.2 removal path is covered by
+the gated qualification (real install to a disposable root, real uninstall,
+zero residue), not by this owner run.
+
+Follow-up recorded, not a defect: the plugin deliberately does not modify
+`PATH`, so `johnny-router` is not a global command and the owner initially
+could not find the installation. The launcher is invoked by full path at
+`%LOCALAPPDATA%\JohnnyRouter\launcher\johnny-router.ps1`. The README's
+removal instructions show the bare command name, which reads as if it were on
+`PATH`; worth a documentation pass.
+
 ## CR-L9-01 — blocked exits were invisible to a double-click user (control-plane review)
 
 The first delivery exited straight out of every `BLOCKED` path. Explorer closes the console
