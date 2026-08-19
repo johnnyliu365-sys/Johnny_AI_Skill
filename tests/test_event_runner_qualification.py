@@ -308,8 +308,31 @@ class EventRunnerQualificationTests(unittest.TestCase):
         self.assertEqual(self.wake_channel, "HOST_COMMAND")
 
     def test_r3_exact_ref_commit_delivers_a_real_wake(self) -> None:
+        """CR-E7-01: this must be the commit's wake, not the deadline's.
+
+        The previous assertion was `"handoff" in payload`, which a
+        `SUPERVISION_DEADLINE` payload also satisfies: it carries the field
+        `handoff_id=-`. Combined with the fixture's `started_at_ms=1_000`,
+        which puts the deadline permanently in the past, the cell passed on a
+        deadline wake that would have fired with no commit at all. The
+        assertion now names the action, so R3 proves what its title claims.
+        """
+
         self.assertIsNotNone(self.delivered_payload)
         assert self.delivered_payload is not None
+        action = next(
+            (
+                line.split("=", 1)[1]
+                for line in self.delivered_payload.splitlines()
+                if line.startswith("action=")
+            ),
+            "",
+        )
+        self.assertNotEqual(
+            action,
+            "SUPERVISION_DEADLINE",
+            "the observed wake is the deadline, not the committed handoff",
+        )
         self.assertIn("handoff", self.delivered_payload)
 
     def test_r4_stop_is_acknowledged_and_the_process_exits(self) -> None:

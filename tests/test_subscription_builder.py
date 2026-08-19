@@ -8,6 +8,7 @@ import sys
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from time import monotonic_ns
 
 from library.local_orchestration.deadline_capability import (
     DeadlineProbeStatus,
@@ -165,6 +166,40 @@ class ReceiptAuthorityTests(unittest.TestCase):
             self.assertIs(
                 preparation.wake_capability.state, RoleWakeCapabilityState.PROVEN
             )
+
+    def test_the_deadline_origin_is_the_hosts_own_monotonic_clock(self) -> None:
+        """CR-E7-01, caught by the owner smoke.
+
+        The supervision deadline is `started_at_ms + duration` compared
+        against `monotonic_ns() // 1_000_000`. A fixture constant put the
+        deadline permanently in the past, so supervision fired a deadline
+        wake the instant it armed and the committed handoff never drove one.
+        """
+
+        with TemporaryDirectory() as temporary:
+            base = Path(temporary)
+            layout = _layout(base)
+            _declare_wake_command(layout)
+            repository = _repository(base)
+            receipt = _receipt()
+            metadata_root = layout.queue_root / "metadata"
+            metadata_root.mkdir(parents=True, exist_ok=True)
+            _issue_receipt_fixture(
+                LiveDispatchMetadataBoundary(
+                    JohnnyMetadataRoot(metadata_root.resolve())
+                ),
+                receipt,
+            )
+            before = monotonic_ns() // 1_000_000
+            build_subscription(layout, receipt, _inputs(repository))
+            after = monotonic_ns() // 1_000_000
+
+            parsed = RunnerSubscriptionFile.model_validate_json(
+                subscriptions_path(layout).read_text(encoding="utf-8")
+            )
+            started = parsed.subscriptions[0].start.execution_started.started_at_ms
+            self.assertGreaterEqual(started, before)
+            self.assertLessEqual(started, after)
 
     def test_every_receipt_bound_field_is_derived_not_supplied(self) -> None:
         """The inputs model cannot carry a receipt-bound identifier at all."""

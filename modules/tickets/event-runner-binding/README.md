@@ -22,8 +22,8 @@ wake.
 | E3 | Durable wake candidate inbox | Unproven capability records one deduplicated candidate per attempt and stays typed-blocked | `CLOSED` — `wake_candidate_inbox.py`; always NO_EFFECT, recording is never reported as a wake |
 | E4 | Runner process + lifecycle port | Detached per-project runner hosting the supervision controller; start/stop/status through a real `RunnerLifecyclePort` | `CLOSED` — `runner_lifecycle_port.py` + `event_runner.py`; detached runner, stop sentinel, native ref watch |
 | E5 | CLI wiring | `johnny-router runner start\|stop\|status`, `wake-inbox list`, `wake-capability probe` | `CLOSED` — `runner_cli.py` + `event_runner_main.py` |
-| E6 | Gated end-to-end qualification | Real repository, real commit to the exact ref, real detached runner, real wake delivery, zero residue | `CLOSED` — gated `JOHNNY_LIVE_QUAL` run R1–R5 `5 passed` (re-verified 2026-08-19) |
-| E7 | Owner real-machine smoke | Owner runs the runner against a disposable repository and observes a real wake | `OWNER_EFFECT_REQUIRED` — no longer blocked: `subscription_builder.py` composes a subscription from an issued receipt (E9). The remaining step is the owner's own run. |
+| E6 | Gated end-to-end qualification | Real repository, real commit to the exact ref, real detached runner, real wake delivery, zero residue | `RED` — R1/R2/R4/R5 green; **R3 fails** with the discriminating assertion. See `E10`. |
+| E7 | Owner real-machine smoke | Owner runs the runner against a disposable repository and observes a real wake | `BLOCKED` by `E10` — the runbook `doc/runbooks/e7_owner_smoke.py` is written and exercised, but the handoff-driven wake it exists to observe does not fire. |
 
 ## E6 status — 4/5 real cells green, R3 blocked by CR-E6-01
 
@@ -171,3 +171,32 @@ admission context, and the host's own task id the wake port addresses.
 
 Evidence: 8 tests / 3 subtests; `mypy --strict` clean; full suite
 `929 passed, 11 skipped`.
+
+## E10 / CR-E7-01 — the handoff-driven wake does not fire
+
+Preparing the E7 owner smoke produced a runnable runbook and, with it, a
+controlled experiment the qualification could not perform. The result is a P0
+defect and a false-green that had hidden it. Full statement in
+[`e10-handoff-driven-wake.md`](e10-handoff-driven-wake.md).
+
+Proven: the runner arms, resolves a real `HOST_COMMAND` channel, and the
+**deadline** wake really reaches the declared host command. Also proven: with
+the deadline not yet due, a sealed terminal leaf committed to the exact watched
+ref at the reserved path produces **no wake at all**, and the failure is
+neither a field mismatch (all fourteen admission fields matched the committed
+leaf) nor the unbatched composition.
+
+The false-green: R3 asserted only `"handoff" in payload`, which a
+`SUPERVISION_DEADLINE` payload satisfies through its `handoff_id=-` field,
+while the fixture's `started_at_ms=1_000` guaranteed a deadline wake fired
+immediately. R3 therefore passed on a wake that needed no commit. The
+assertion now names the action and R3 is committed **red**, following the
+CR-E6-01 precedent of committing failing evidence rather than weakening it.
+
+Fixed on the way: `subscription_builder` had inherited the same fixture
+constant, so every composed subscription carried an already-expired deadline.
+It now reads the host's own monotonic clock, pinned by regression.
+
+Root cause is **not** isolated and must not be guessed: either the native ref
+watcher never signals, or the adapter classifies the event silently. E10
+requires direct observation.

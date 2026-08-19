@@ -24,6 +24,7 @@ from __future__ import annotations
 import hashlib
 from enum import Enum
 from pathlib import Path
+from time import monotonic_ns
 from typing import Self
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
@@ -190,7 +191,13 @@ def _execution_started(
         worktree_ref=receipt.worktree_fingerprint,
         branch_ref=receipt.branch_fingerprint,
         baseline_commit=receipt.baseline_commit,
-        started_at_ms=1_000,
+        # The supervision deadline is `started_at_ms + duration`, compared
+        # against the host's monotonic clock (`one_shot_deadline` reads
+        # `monotonic_ns() // 1_000_000`). A fixture constant here puts the
+        # deadline permanently in the past, so supervision fires a deadline
+        # wake the instant it arms and no handoff ever gets to drive one.
+        # The E7 owner smoke caught exactly that.
+        started_at_ms=monotonic_ns() // 1_000_000,
         host_readback_refs=("evidence-execution-start",),
         exact_ticket_received=True,
         task_active=True,

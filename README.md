@@ -10,12 +10,21 @@
 確認後，由 stdlib-only bootstrap 建立 hash-locked control venv，再執行 typed、
 journaled 的 install transaction；`johnny-router status`／`uninstall` 已在實機驗證
 INSTALLED 與 ZERO_RESIDUE。**自動喚醒**：event runner 落地——wake capability 由
-probe 實際執行宣告的 wake 命令證明；exact Git ref 事件驅動、無 heartbeat／polling；
-runner 只對已在 durable checkpoint 中驗證為 claimable 的 receipt arm 監督，且
-composition 只持有 wake-scoped 三方法 boundary（read／claim／settle），不持有任何
-可發放 receipt 的物件。未證明 wake capability 時誠實落到 candidate inbox（只登記
-完成候選，不宣稱喚醒）。receipt 發放（dispatch authority）整合遞延至 multi-model
-workstation 線。本版經五輪外部審查後 APPROVED。
+probe 實際執行宣告的 wake 命令證明；無 heartbeat／polling；runner 只對已在 durable
+checkpoint 中驗證為 claimable 的 receipt arm 監督，且 composition 只持有 wake-scoped
+三方法 boundary（read／claim／settle），不持有任何可發放 receipt 的物件。未證明 wake
+capability 時誠實落到 candidate inbox（只登記完成候選，不宣稱喚醒）。receipt 發放
+（dispatch authority）整合遞延至 multi-model workstation 線。本版經五輪外部審查後
+APPROVED。
+
+> **0.4.1 已知缺陷（`E10` / `CR-E7-01`，2026-08-19 發行後由 owner smoke 準備過程發現）**：
+> runner 會在 exact Git ref 上正確 arm 監督、解析出真實的 `HOST_COMMAND` 通道，
+> **但目前唯一經證實能送達的喚醒是「監督期限到期」**。把封裝好的 terminal handoff
+> leaf 提交到被監看的 ref、且期限尚未到期時，不會產生喚醒。原本的 E6 R3 斷言只檢查
+> payload 是否含 `"handoff"` 字串，而期限 payload 帶有 `handoff_id=-` 欄位剛好命中，
+> 因此長期偽綠。該斷言已改為具鑑別力並保持紅燈，詳見
+> [`modules/tickets/event-runner-binding/e10-handoff-driven-wake.md`](modules/tickets/event-runner-binding/e10-handoff-driven-wake.md)。
+> 在 E10 收斂前，請勿把「commit 完成後會自動喚醒 reviewer」當成可用能力。
 
 0.4.0 完成 Router runtime 主線（runner registry、receipt Git subscription、Senior review
 queue、host-wake gate、deterministic bundle、Router composition、install／uninstall
