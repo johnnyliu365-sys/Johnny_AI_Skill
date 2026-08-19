@@ -6,7 +6,6 @@ from dataclasses import dataclass
 from pathlib import Path
 from types import TracebackType
 from typing import BinaryIO, Literal, Self
-import msvcrt
 import os
 import tempfile
 
@@ -49,6 +48,7 @@ from library.workflow_router.thread_dispatch_contracts import (
     DispatchSettlementStatus,
     derive_ticket_receipt_digest,
 )
+from .file_lock import ExclusiveWindowsFileLock as _ExclusiveWindowsFileLock
 from library.workflow_router.role_wake_contracts import (
     RoleWakeAttemptReadRequest,
     RoleWakeAttemptReadResult,
@@ -135,47 +135,6 @@ class _Checkpoint(BaseModel):
     @classmethod
     def empty(cls) -> _Checkpoint:
         return cls(generation=0)
-
-
-class _ExclusiveWindowsFileLock:
-    """One-byte OS-visible exclusive lock shared by independent processes."""
-
-    def __init__(self, path: Path) -> None:
-        self._path = path
-        self._handle: BinaryIO | None = None
-
-    def __enter__(self) -> Self:
-        handle = self._path.open("a+b")
-        try:
-            handle.seek(0, os.SEEK_END)
-            if handle.tell() == 0:
-                handle.write(b"\x00")
-                handle.flush()
-                os.fsync(handle.fileno())
-            handle.seek(0)
-            msvcrt.locking(handle.fileno(), msvcrt.LK_LOCK, 1)
-        except OSError:
-            handle.close()
-            raise
-        self._handle = handle
-        return self
-
-    def __exit__(
-        self,
-        exception_type: type[BaseException] | None,
-        exception: BaseException | None,
-        traceback: TracebackType | None,
-    ) -> None:
-        del exception_type, exception, traceback
-        handle = self._handle
-        self._handle = None
-        if handle is None:
-            return
-        try:
-            handle.seek(0)
-            msvcrt.locking(handle.fileno(), msvcrt.LK_UNLCK, 1)
-        finally:
-            handle.close()
 
 
 def _artifact_key(record: ApprovedDispatchArtifactRecord) -> tuple[str, str, str, str]:

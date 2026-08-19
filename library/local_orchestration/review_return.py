@@ -43,10 +43,12 @@ from library.workflow_router.role_wake_contracts import (
     WakeAttemptReadStatus,
 )
 
+from .file_lock import ExclusiveWindowsFileLock
 from .johnny_root_layout import JohnnyRootLayout
 from .review_return_boundary import ReviewReturnScopedDispatchBoundary
 
 _RETURNS_FILE_NAME = "review-returns.jsonl"
+_RETURNS_LOCK_NAME = "review-returns.lock"
 _OPAQUE = r"^[a-z][a-z0-9-]{2,127}$"
 _REVISION = r"^rev-[0-9a-f]{16,64}$"
 _COMMIT = r"^[0-9a-f]{7,64}$"
@@ -118,6 +120,12 @@ class ReviewReturnRecord(BaseModel):
 
 def returns_path(layout: JohnnyRootLayout) -> Path:
     return layout.queue_root / _RETURNS_FILE_NAME
+
+
+def returns_lock_path(layout: JohnnyRootLayout) -> Path:
+    """One lock guards submit and consume: they contend for the same file."""
+
+    return layout.queue_root / _RETURNS_LOCK_NAME
 
 
 def read_returns(layout: JohnnyRootLayout) -> tuple[ReviewReturnRecord, ...]:
@@ -192,6 +200,22 @@ def submit_review_return(
     if not _wake_was_delivered(boundary, request):
         return ReviewReturnStatus.REFUSED, ReviewReturnFailure.WAKE_NOT_DELIVERED
 
+    # W5: the idempotence and conflict checks below are read-check-append.
+    # Correct within one process and worthless across two, exactly the
+    # orphan-lease family: shared durable state with per-process reasoning.
+    # The OS-visible lock makes the whole section mutually exclusive.
+    try:
+        returns_lock_path(layout).parent.mkdir(parents=True, exist_ok=True)
+        lock = ExclusiveWindowsFileLock(returns_lock_path(layout))
+    except OSError:
+        return ReviewReturnStatus.REFUSED, ReviewReturnFailure.RETURN_UNWRITABLE
+    with lock:
+        return _submit_locked(layout, request)
+
+
+def _submit_locked(
+    layout: JohnnyRootLayout, request: ReviewReturnRequest
+) -> tuple[ReviewReturnStatus, ReviewReturnFailure | None]:
     candidate = ReviewReturnRecord(
         project_id=request.project_id,
         ticket_reference=request.ticket_reference,
@@ -235,6 +259,7 @@ __all__ = [
     "ReviewReturnRequest",
     "ReviewReturnStatus",
     "read_returns",
+    "returns_lock_path",
     "returns_path",
     "submit_review_return",
 ]

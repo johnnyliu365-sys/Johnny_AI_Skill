@@ -18,3 +18,4 @@ boundary" — the question CLOSURE-E8-02 deliberately deferred.
 | W2 | Reviewer return path | `CLOSED` — verdicts bound to a dispatched receipt **and** a delivered wake; append-only durable returns behind `johnny-router review`; 10 tests, two reverse mutations, closed-loop cell |
 | W3 | Router consumption of reviewer returns | `CLOSED` — each verdict becomes exactly one validated `RouterEvent`; marker written before the event is handed back; 9 tests, two reverse mutations |
 | W4 | Whole-chain qualification | `CLOSED` — dispatch to Router event in one gated run, nothing simulated, no issuing fixture; surfaced governance 03 |
+| W5 | Exactly-once across processes | `CLOSED` — the review return/consume critical sections take the extracted OS-visible file lock; two-consumer and two-submit races proven single-effect; lock removal turns the race cell red |

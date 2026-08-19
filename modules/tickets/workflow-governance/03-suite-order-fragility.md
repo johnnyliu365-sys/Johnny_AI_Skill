@@ -120,3 +120,39 @@ Recorded rather than closed. One unexplained failure is not evidence of a
 defect, and it is not evidence of health either; it is an observation with a
 sample size of one. If it recurs, it deserves its own ticket and the same
 discipline this one ended up needing: reproduce before diagnosing.
+
+## Second re-investigation (2026-08-20, owner-directed): the complete chain
+
+The owner sent the investigation back with the observation that this family
+would matter for the Router. Both halves of that were right.
+
+**The leak mechanism, now fully closed.** The previous round established that
+concurrency leaks; this round established *why*, by reading the orphans'
+marker files instead of deleting them:
+
+1. Orphan `environment-owner-0000000000000004` is `test_cr167`'s lease
+   (`index + 1` formatted at width 16), and `…53` is the lifecycle oracle's
+   sequential owner. Both suites tear down through a single asserted attempt.
+2. Every `provision` scans **all** children of the shared root and reads
+   their markers — each provision is a burst of reads over everyone's leases.
+3. On Windows a directory being enumerated, or a file being read, cannot be
+   deleted. Isolated experiment: a single concurrent scanner made **16 of
+   200** teardowns fail `DELETE_FAILED`, each leaving a lease behind.
+4. The affected tests assert teardown success once, in `finally`, no retry —
+   a transiently blocked teardown becomes an abandoned lease.
+5. The abandoned lease is unclaimable by every later process — mass refusal.
+
+So the full sentence: *a Windows share-mode collision between one process's
+teardown and another's provision scan, amplified by assert-once teardown into
+persistent residue, amplified by the per-process claim map into total
+refusal.* The guard from the first round remains the right mitigation at the
+test layer; serializing pytest runs remains the operating rule.
+
+**The Router-side consequence, found and fixed.** The family signature —
+shared durable state, per-process reasoning, no cross-process lock — was
+audited across `library/`. Every older component takes an OS-visible
+exclusive file lock. The one place that did not was the newest code: the W2/W3
+review return and consumption paths, where two concurrent `review consume`
+calls could each emit a `RouterEvent` — the double-driven transition W3's
+marker ordering exists to refuse, broken exactly at the process boundary.
+Fixed and proven under `workstation-dispatch/W5`.

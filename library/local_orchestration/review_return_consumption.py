@@ -26,8 +26,9 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationError
 from library.workflow_router.contracts import RouterEvent, RouterEventKind
 from library.workflow_router.review_inbox_contracts import ReviewTicketVerdict
 
+from .file_lock import ExclusiveWindowsFileLock
 from .johnny_root_layout import JohnnyRootLayout
-from .review_return import ReviewReturnRecord, read_returns
+from .review_return import ReviewReturnRecord, read_returns, returns_lock_path
 
 _CONSUMED_FILE_NAME = "review-returns-consumed.jsonl"
 
@@ -143,8 +144,25 @@ def _mark_consumed(
 def consume_next_return(
     layout: JohnnyRootLayout,
 ) -> tuple[ConsumptionStatus, RouterEvent | None, ConsumptionFailure | None]:
-    """Emit the oldest pending verdict as one Router event, exactly once."""
+    """Emit the oldest pending verdict as one Router event, exactly once.
 
+    Exactly-once must hold across processes, not just within one (W5): the
+    pending read and the consumed-marker append are one critical section
+    under the same OS-visible lock the submit path takes.
+    """
+
+    try:
+        returns_lock_path(layout).parent.mkdir(parents=True, exist_ok=True)
+        lock = ExclusiveWindowsFileLock(returns_lock_path(layout))
+    except OSError:
+        return ConsumptionStatus.REFUSED, None, ConsumptionFailure.MARKER_UNWRITABLE
+    with lock:
+        return _consume_locked(layout)
+
+
+def _consume_locked(
+    layout: JohnnyRootLayout,
+) -> tuple[ConsumptionStatus, RouterEvent | None, ConsumptionFailure | None]:
     pending = pending_returns(layout)
     if not pending:
         return ConsumptionStatus.NOTHING_PENDING, None, None

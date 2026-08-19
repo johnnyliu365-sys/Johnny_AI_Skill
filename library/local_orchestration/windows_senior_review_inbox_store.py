@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import msvcrt
 import os
 from pathlib import Path
 import tempfile
@@ -39,6 +38,7 @@ from library.workflow_router.review_inbox_contracts import (
     SeniorReviewInboxState,
 )
 
+from .file_lock import ExclusiveWindowsFileLock as _ExclusiveWindowsFileLock
 from .senior_review_inbox_state import (
     _admit_event,
     _all_batch_tickets_inspected,
@@ -76,45 +76,6 @@ class _ReviewInboxCheckpoint(BaseModel):
         if len(identities) != len(set(identities)):
             raise ValueError("checkpoint inbox identities must be unique")
         return self
-
-
-class _ExclusiveWindowsFileLock:
-    def __init__(self, path: Path) -> None:
-        self._path = path
-        self._handle: BinaryIO | None = None
-
-    def __enter__(self) -> Self:
-        handle = self._path.open("a+b")
-        try:
-            handle.seek(0, os.SEEK_END)
-            if handle.tell() == 0:
-                handle.write(b"\x00")
-                handle.flush()
-                os.fsync(handle.fileno())
-            handle.seek(0)
-            msvcrt.locking(handle.fileno(), msvcrt.LK_LOCK, 1)
-        except OSError:
-            handle.close()
-            raise
-        self._handle = handle
-        return self
-
-    def __exit__(
-        self,
-        exception_type: type[BaseException] | None,
-        exception: BaseException | None,
-        traceback: TracebackType | None,
-    ) -> None:
-        del exception_type, exception, traceback
-        handle = self._handle
-        self._handle = None
-        if handle is None:
-            return
-        try:
-            handle.seek(0)
-            msvcrt.locking(handle.fileno(), msvcrt.LK_UNLCK, 1)
-        finally:
-            handle.close()
 
 
 class WindowsSeniorReviewInboxStore:
