@@ -28,6 +28,30 @@ _LAUNCHER_SCRIPT = "johnny-router.ps1"
 _ENTRY_RELATIVE = "library/local_orchestration/johnny_router_entry.py"
 
 
+def _resolves_within_root(target: Path, base: Path) -> bool:
+    """Reject a target whose own path or any ancestor redirects elsewhere.
+
+    Checking only an existing leaf misses two cases: a not-yet-created leaf
+    under a redirected parent, and a redirected ancestor above it. The nearest
+    existing ancestor is therefore resolved and required to stay inside the
+    resolved Johnny root, with the unresolved remainder appended unchanged.
+    """
+
+    try:
+        resolved_base = base.resolve()
+        existing = target
+        remainder: list[str] = []
+        while not existing.exists():
+            if existing.parent == existing:
+                return False
+            remainder.append(existing.name)
+            existing = existing.parent
+        resolved = existing.resolve().joinpath(*reversed(remainder))
+        return resolved == resolved_base or resolved_base in resolved.parents
+    except OSError:
+        return False
+
+
 def _unavailable() -> InstallEffectOutcome:
     return InstallEffectOutcome(status=InstallEffectOutcomeStatus.UNAVAILABLE)
 
@@ -60,17 +84,10 @@ class RealPluginPayloadEffectPort:
         self, attempt_id: str, manifest: PayloadManifest
     ) -> InstallEffectOutcome:
         plugin_root = self._layout.plugin_root
-        if plugin_root.exists():
-            if any(plugin_root.iterdir()):
-                return _unavailable()
-            # An existing but empty location may be a reparse point pointing
-            # outside the Johnny root; writing through it would place payload
-            # bytes somewhere this port does not own.
-            try:
-                if plugin_root.resolve() != plugin_root:
-                    return _unavailable()
-            except OSError:
-                return _unavailable()
+        if plugin_root.exists() and any(plugin_root.iterdir()):
+            return _unavailable()
+        if not _resolves_within_root(plugin_root, self._layout.base):
+            return _unavailable()
 
         expected = {
             entry.archive_relative_path: entry for entry in manifest.entries
@@ -124,14 +141,9 @@ class RealLauncherEffectPort:
         launcher_root = self._layout.launcher_root
         runtime_root = self._layout.runtime_root
         for owned_root in (launcher_root, runtime_root):
-            if not owned_root.exists():
-                continue
-            if any(owned_root.iterdir()):
+            if owned_root.exists() and any(owned_root.iterdir()):
                 return _unavailable()
-            try:
-                if owned_root.resolve() != owned_root:
-                    return _unavailable()
-            except OSError:
+            if not _resolves_within_root(owned_root, self._layout.base):
                 return _unavailable()
         try:
             launcher_root.mkdir(parents=True, exist_ok=True)

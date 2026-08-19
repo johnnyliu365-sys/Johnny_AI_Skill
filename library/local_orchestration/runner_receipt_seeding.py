@@ -1,11 +1,15 @@
-"""Seed the durable boundary with a subscription's receipt before arming.
+"""Verify a subscription's receipt is already claimable; never mint authority.
 
 `claim_role_wake_attempt` admits a wake only for a canonical `TicketReceipt`
 that already exists in the durable checkpoint as `ACTIVE` with a matching
-digest. A runner that arms supervision without seeding therefore reaches the
-wake stage and halts with `ROLE_WAKE_UNAVAILABLE` — the defect recorded as
-CR-E6-01. Seeding is derived entirely from the receipt the subscription
-already carries, and it is proven by reading the receipt back.
+digest. CR-E6-01 was that the runner never made this true; the first fix made
+the runner register and issue the receipt itself, which was worse: the
+subscription file is caller data, so a fabricated receipt would have been
+registered as approved and then satisfied its own wake claim.
+
+The runner therefore only *verifies*. Issuing dispatch authority belongs to
+whoever dispatched the ticket, and `issue_dispatch_receipt` below is that
+separate, explicitly named path — never called by the runner.
 """
 
 from __future__ import annotations
@@ -86,10 +90,32 @@ def _read_back(
     return None
 
 
-def seed_receipt(
+def verify_receipt_claimable(
     boundary: LiveDispatchMetadataBoundary, receipt: TicketReceipt
 ) -> tuple[ReceiptSeedStatus, ReceiptSeedFailure | None]:
-    """Make one subscription's receipt claimable, or report exactly why not."""
+    """Prove the receipt is already an active canonical receipt, or refuse.
+
+    This never writes. A runner that cannot find its receipt has not been
+    dispatched through an authorized path, and saying so is the correct
+    fail-closed outcome.
+    """
+
+    failure = _read_back(boundary, receipt)
+    if failure is None:
+        return ReceiptSeedStatus.ALREADY_PRESENT, None
+    return ReceiptSeedStatus.BLOCKED, failure
+
+
+def issue_dispatch_receipt(
+    boundary: LiveDispatchMetadataBoundary, receipt: TicketReceipt
+) -> tuple[ReceiptSeedStatus, ReceiptSeedFailure | None]:
+    """Register and issue one receipt as the dispatch authority.
+
+    Callers of this function assert they are the authorized dispatcher for the
+    ticket: it turns the supplied receipt into approved durable state, so the
+    supervision runner must never call it. It exists for the dispatch path and
+    for qualifications that stand in for one.
+    """
 
     already = _read_back(boundary, receipt)
     if already is None:
@@ -139,4 +165,9 @@ def seed_receipt(
     return ReceiptSeedStatus.SEEDED, None
 
 
-__all__ = ["ReceiptSeedFailure", "ReceiptSeedStatus", "seed_receipt"]
+__all__ = [
+    "ReceiptSeedFailure",
+    "ReceiptSeedStatus",
+    "issue_dispatch_receipt",
+    "verify_receipt_claimable",
+]

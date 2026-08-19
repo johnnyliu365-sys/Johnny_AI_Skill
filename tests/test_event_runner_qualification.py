@@ -24,6 +24,13 @@ from library.local_orchestration.event_runner import (
     subscriptions_path,
 )
 from library.local_orchestration.johnny_root_layout import JohnnyRootLayout
+from library.local_orchestration.live_dispatch_metadata_boundary import (
+    JohnnyMetadataRoot,
+    LiveDispatchMetadataBoundary,
+)
+from library.local_orchestration.runner_receipt_seeding import (
+    issue_dispatch_receipt,
+)
 from library.local_orchestration.project_runner_registry import (
     RunnerStarted,
     RunnerStopped,
@@ -194,6 +201,15 @@ class EventRunnerQualificationTests(unittest.TestCase):
         )
 
         receipt = _receipt().model_copy(update={"baseline_commit": baseline})
+        # The qualification stands in for the authorized dispatcher: it issues
+        # the receipt, exactly as a real dispatch would, before the runner —
+        # which only ever verifies — is started.
+        metadata_root = layout.queue_root / "metadata"
+        metadata_root.mkdir(parents=True, exist_ok=True)
+        issue_dispatch_receipt(
+            LiveDispatchMetadataBoundary(JohnnyMetadataRoot(metadata_root.resolve())),
+            receipt,
+        )
         specification = RunnerSubscriptionSpec(
             repository_root=str(repository),
             preparation=SupervisionPreparationRequest(

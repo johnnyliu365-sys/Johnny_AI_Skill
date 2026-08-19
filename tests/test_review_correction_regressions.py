@@ -6,6 +6,7 @@ silently.
 
 from __future__ import annotations
 
+import hashlib
 import json
 import subprocess
 import sys
@@ -108,6 +109,30 @@ class P0TamperedLockRejectedTests(unittest.TestCase):
                 path = base / "forged.lock"
                 path.write_text(json.dumps(forged), encoding="utf-8")
                 self.assertIsNone(_render_requirements(path))
+            with self.subTest(case="self_consistent_but_unapproved"):
+                # Only the approved-digest pin catches this: the attacker
+                # recomputes the lock's own digest so it is internally
+                # consistent. Removing that pin turns this cell red.
+                rogue = json.loads(json.dumps(canonical))
+                rogue["dependencies"][0]["exact_version"] = "9.9.9"
+                payload = json.dumps(
+                    {
+                        "schema_version": rogue["schema_version"],
+                        "python_constraint": rogue["python_constraint"],
+                        "dependencies": rogue["dependencies"],
+                    },
+                    ensure_ascii=False,
+                    allow_nan=False,
+                    separators=(",", ":"),
+                    sort_keys=True,
+                )
+                rogue["lock_digest"] = hashlib.sha256(
+                    payload.encode("utf-8")
+                ).hexdigest()
+                path = base / "rogue.lock"
+                path.write_text(json.dumps(rogue), encoding="utf-8")
+                self.assertIsNone(_render_requirements(path))
+
             with self.subTest(case="extra_dependency"):
                 extended = json.loads(json.dumps(canonical))
                 extended["dependencies"].append(

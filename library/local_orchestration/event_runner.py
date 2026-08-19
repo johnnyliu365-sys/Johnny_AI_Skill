@@ -32,7 +32,10 @@ from .live_dispatch_metadata_boundary import (
     LiveDispatchMetadataBoundary,
 )
 from .receipt_bound_supervision import ReceiptBoundSupervisionController
-from .runner_receipt_seeding import ReceiptSeedStatus, seed_receipt
+from .runner_receipt_seeding import (
+    ReceiptSeedStatus,
+    verify_receipt_claimable,
+)
 from .role_wake_composition import (
     DurableRoleWakeAttemptStore,
     RoleWakeCoordinator,
@@ -164,9 +167,10 @@ def run_event_runner(layout: JohnnyRootLayout) -> int:
     controllers: list[ReceiptBoundSupervisionController] = []
     for specification in parsed.subscriptions:
         # A wake claim is admitted only for a receipt that already exists in
-        # the durable checkpoint, so seeding must precede arming or every
-        # validated handoff would halt as ROLE_WAKE_UNAVAILABLE (CR-E6-01).
-        seed_status, seed_failure = seed_receipt(
+        # the durable checkpoint. The runner verifies that and never creates
+        # it: the subscription file is caller data, so minting the receipt
+        # here would let a fabricated one satisfy its own wake claim.
+        seed_status, seed_failure = verify_receipt_claimable(
             boundary, specification.preparation.receipt
         )
         if seed_status is ReceiptSeedStatus.BLOCKED:
@@ -174,7 +178,7 @@ def run_event_runner(layout: JohnnyRootLayout) -> int:
                 layout,
                 {
                     "status": "BLOCKED",
-                    "code": "RECEIPT_SEED_FAILED",
+                    "code": "RECEIPT_NOT_DISPATCHED",
                     "failure": seed_failure.value if seed_failure else None,
                 },
             )

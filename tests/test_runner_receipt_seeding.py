@@ -16,7 +16,8 @@ from library.local_orchestration.role_wake_composition import (
 from library.local_orchestration.runner_receipt_seeding import (
     ReceiptSeedFailure,
     ReceiptSeedStatus,
-    seed_receipt,
+    issue_dispatch_receipt,
+    verify_receipt_claimable,
 )
 from library.workflow_router.role_wake_contracts import (
     RoleWakeAttemptClaimRequest,
@@ -55,7 +56,7 @@ class RunnerReceiptSeedingTests(unittest.TestCase):
         with self.subTest(stage="seeded_boundary_admits"):
             with TemporaryDirectory() as temporary:
                 boundary = _boundary(Path(temporary))
-                status, failure = seed_receipt(boundary, receipt)
+                status, failure = issue_dispatch_receipt(boundary, receipt)
                 self.assertIs(status, ReceiptSeedStatus.SEEDED)
                 self.assertIsNone(failure)
                 store = DurableRoleWakeAttemptStore(boundary)
@@ -69,8 +70,8 @@ class RunnerReceiptSeedingTests(unittest.TestCase):
         receipt = _receipt()
         with TemporaryDirectory() as temporary:
             boundary = _boundary(Path(temporary))
-            first, _ = seed_receipt(boundary, receipt)
-            second, failure = seed_receipt(boundary, receipt)
+            first, _ = issue_dispatch_receipt(boundary, receipt)
+            second, failure = issue_dispatch_receipt(boundary, receipt)
             self.assertIs(first, ReceiptSeedStatus.SEEDED)
             self.assertIs(second, ReceiptSeedStatus.ALREADY_PRESENT)
             self.assertIsNone(failure)
@@ -79,11 +80,11 @@ class RunnerReceiptSeedingTests(unittest.TestCase):
         receipt = _receipt()
         with TemporaryDirectory() as temporary:
             boundary = _boundary(Path(temporary))
-            self.assertIs(seed_receipt(boundary, receipt)[0], ReceiptSeedStatus.SEEDED)
+            self.assertIs(issue_dispatch_receipt(boundary, receipt)[0], ReceiptSeedStatus.SEEDED)
             foreign = receipt.model_copy(
                 update={"receipt_id": "receipt-vita-feature-999"}
             )
-            status, failure = seed_receipt(boundary, foreign)
+            status, failure = issue_dispatch_receipt(boundary, foreign)
             self.assertIs(status, ReceiptSeedStatus.BLOCKED)
             self.assertIn(
                 failure,
@@ -96,3 +97,46 @@ class RunnerReceiptSeedingTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class RunnerNeverMintsAuthorityTests(unittest.TestCase):
+    """P0: the runner verifies a receipt; it must not create one."""
+
+    def test_verification_refuses_an_undispatched_receipt(self) -> None:
+        receipt = _receipt()
+        with TemporaryDirectory() as temporary:
+            boundary = _boundary(Path(temporary))
+            status, failure = verify_receipt_claimable(boundary, receipt)
+            self.assertIs(status, ReceiptSeedStatus.BLOCKED)
+            self.assertIs(failure, ReceiptSeedFailure.READBACK_FAILED)
+
+    def test_verification_creates_no_approved_state(self) -> None:
+        """Verification may touch its own lock file, but never authority."""
+
+        receipt = _receipt()
+        with TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            boundary = _boundary(root)
+            verify_receipt_claimable(boundary, receipt)
+            for path in root.rglob("*"):
+                if path.is_file():
+                    body = path.read_text(encoding="utf-8", errors="replace")
+                    self.assertNotIn(receipt.receipt_id, body)
+                    self.assertNotIn(receipt.ticket_reference, body)
+            self.assertIs(
+                verify_receipt_claimable(boundary, receipt)[0],
+                ReceiptSeedStatus.BLOCKED,
+            )
+
+    def test_a_dispatched_receipt_then_verifies(self) -> None:
+        receipt = _receipt()
+        with TemporaryDirectory() as temporary:
+            boundary = _boundary(Path(temporary))
+            self.assertIs(
+                issue_dispatch_receipt(boundary, receipt)[0],
+                ReceiptSeedStatus.SEEDED,
+            )
+            self.assertIs(
+                verify_receipt_claimable(boundary, receipt)[0],
+                ReceiptSeedStatus.ALREADY_PRESENT,
+            )
