@@ -20,7 +20,7 @@ compact evidence rows; no separate leaf tree).
 | L5 | install.ps1 live wiring | Stdlib bootstrap → hash-locked venv → typed composition on the venv interpreter; `LIVE_INSTALL_NOT_AUTHORIZED` retired | `CLOSED` — `8771c0c` + module-context fix `dd8d959`; 6 tests; ps1 parse pass |
 | L6 | Uninstall live wiring | `johnny-router uninstall` composes the real Ticket 12 transaction over marker-proven state; bookkeeping and empty root cleared | `CLOSED` — `eea61ec`; 4 tests |
 | L7 | End-to-end qualification | Clean-clone bundle → real venv with real locked downloads → tampered-pin rejection → full install chain → entry self-proof → real uninstall to zero residue | `CLOSED` — gated `JOHNNY_LIVE_QUAL` run: Q1–Q5 `5 passed` (2026-08-19); staging/workspace residue zero; clone-build fix committed after a real `SOURCE_DIRTY` catch |
-| L8 | Owner real-machine smoke | Owner runs install → status → uninstall on the real per-user root | `OWNER_EFFECT_REQUIRED` — runbook delivered; requires the live-candidate bundle, not the `v0.4.0` release zip |
+| L8 | Owner real-machine smoke | Owner runs install → status → uninstall on the real per-user root | `CLOSED / OWNER_EXECUTED` — 2026-08-19: first run caught CR-L8-01, second run on candidate `bb95089` (digest `f5791d93…`) green end to end: `INSTALLED` (receipt `receipt-live-20260819090130`) → status `OK 0.4.0` → launcher uninstall `REMOVED`, `root_deleted`, `ZERO_RESIDUE` |
 
 Full suite after closure: `849 passed, 5 skipped (gated qualification), 2665 subtests`;
 `mypy --strict` clean over every new module and test.
