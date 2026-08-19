@@ -48,16 +48,12 @@ def _command(attempt_id: str = _ATTEMPT) -> RoleWakeCommand:
 
 def _config(
     command: tuple[str, ...] | None = None,
-    probe_command: tuple[str, ...] | None = None,
     timeout_seconds: int = 60,
 ) -> WakeCommandConfig:
     return WakeCommandConfig(
         command=command
         if command is not None
         else (sys.executable, "-c", "import sys; sys.exit(0)", "{payload_file}"),
-        probe_command=probe_command
-        if probe_command is not None
-        else (sys.executable, "-c", "import sys; sys.exit(0)"),
         reviewer_ref="role-supervisor-reviewer",
         timeout_seconds=timeout_seconds,
     )
@@ -73,9 +69,6 @@ class WakeCommandConfigTests(unittest.TestCase):
                 _config(
                     command=(sys.executable, "{payload_file}", "{payload_file}")
                 )
-        with self.subTest(case="probe_may_not_reference_payload"):
-            with self.assertRaises(ValidationError):
-                _config(probe_command=(sys.executable, "{payload_file}"))
 
     def test_rendering_substitutes_only_declared_placeholders(self) -> None:
         config = _config(
@@ -118,21 +111,26 @@ class ProbeWakeCapabilityTests(unittest.TestCase):
             ("malformed_json", "{not json", WakeCapabilityFailure.CONFIG_INVALID),
             (
                 "missing_placeholder",
-                '{"schema_version":1,"command":["x"],"probe_command":["y"],'
+                '{"schema_version":1,"command":["x"],'
                 '"reviewer_ref":"role-supervisor-reviewer","timeout_seconds":60}',
                 WakeCapabilityFailure.CONFIG_INVALID,
             ),
             (
                 "missing_executable",
                 _config(
-                    probe_command=("johnny-nonexistent-probe-binary",)
+                    command=("johnny-nonexistent-probe-binary", "{payload_file}")
                 ).model_dump_json(),
                 WakeCapabilityFailure.EXECUTABLE_UNAVAILABLE,
             ),
             (
                 "failing_probe",
                 _config(
-                    probe_command=(sys.executable, "-c", "import sys; sys.exit(7)")
+                    command=(
+                        sys.executable,
+                        "-c",
+                        "import sys; sys.exit(7)",
+                        "{payload_file}",
+                    )
                 ).model_dump_json(),
                 WakeCapabilityFailure.PROBE_FAILED,
             ),
@@ -152,7 +150,12 @@ class ProbeWakeCapabilityTests(unittest.TestCase):
             layout = self._layout(temporary)
             wake_config_path(layout).write_text(
                 _config(
-                    probe_command=(sys.executable, "-c", "import time; time.sleep(30)")
+                    command=(
+                        sys.executable,
+                        "-c",
+                        "import time; time.sleep(30)",
+                        "{payload_file}",
+                    )
                 ).model_dump_json(),
                 encoding="utf-8",
             )

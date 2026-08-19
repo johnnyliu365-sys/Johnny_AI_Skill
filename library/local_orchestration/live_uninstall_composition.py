@@ -86,13 +86,17 @@ class LiveOwnedStatePort:
         for directory in directories:
             if not directory.exists():
                 continue
+            # Every existing directory this receipt would delete must carry its
+            # own ownership proof; a secondary directory is not covered by the
+            # primary's marker.
             marker = directory / _OWNED_MARKER_NAME
-            primary = directories[0]
-            if directory == primary:
-                if not marker.is_file():
-                    return UninstallOwnershipProbe.FOREIGN
+            if not marker.is_file():
+                return UninstallOwnershipProbe.FOREIGN
+            try:
                 if marker.read_text(encoding="utf-8") != self._receipt_id:
                     return UninstallOwnershipProbe.FOREIGN
+            except OSError:
+                return UninstallOwnershipProbe.UNKNOWN
         return UninstallOwnershipProbe.OWNED
 
     def remove(self, record: OwnedStateRecord) -> bool:
@@ -102,16 +106,21 @@ class LiveOwnedStatePort:
         )
 
     def has_owned_state(self, receipt_id: str) -> bool:
+        """Report any Johnny-owned residue, whichever receipt marked it.
+
+        With the ledger gone the caller has no receipt to compare against, so
+        matching only the caller's identity would report real owned residue as
+        "not installed". Any well-formed marker is residue.
+        """
+
         for names in _RECEIPT_DIRECTORIES.values():
-            marker = self._layout.base / names[0] / _OWNED_MARKER_NAME
-            try:
-                if (
-                    marker.is_file()
-                    and marker.read_text(encoding="utf-8") == receipt_id
-                ):
+            for name in names:
+                marker = self._layout.base / name / _OWNED_MARKER_NAME
+                try:
+                    if marker.is_file() and marker.read_text(encoding="utf-8"):
+                        return True
+                except OSError:
                     return True
-            except OSError:
-                continue
         return False
 
 

@@ -21,6 +21,9 @@ _CONFIG_FILE_NAME = "wake-capability.json"
 _PAYLOAD_PLACEHOLDER = "{payload_file}"
 _ATTEMPT_PLACEHOLDER = "{attempt_id}"
 _PROBE_TIMEOUT_SECONDS = 30
+_PROBE_PAYLOAD_NAME = "wake-capability-probe.json"
+_PROBE_ATTEMPT_ID = "wake-attempt-capability-probe"
+_PROBE_PAYLOAD_BODY = '{"probe":true,"note":"johnny wake capability probe"}'
 
 
 class _StrictModel(BaseModel):
@@ -66,7 +69,6 @@ class WakeCommandConfig(_StrictModel):
 
     schema_version: int = Field(default=1, ge=1, le=1)
     command: tuple[str, ...] = Field(min_length=1)
-    probe_command: tuple[str, ...] = Field(min_length=1)
     reviewer_ref: str = Field(pattern=r"^[a-z][a-z0-9-]{2,127}$")
     timeout_seconds: int = Field(default=120, ge=5, le=900)
 
@@ -81,8 +83,6 @@ class WakeCommandConfig(_StrictModel):
             raise ValueError(
                 "the wake command must carry exactly one payload-file placeholder"
             )
-        if any(_PAYLOAD_PLACEHOLDER in argument for argument in self.probe_command):
-            raise ValueError("the probe command must not reference a payload file")
         return self
 
     def rendered(self, payload_file: Path, attempt_id: str) -> tuple[str, ...]:
@@ -136,7 +136,13 @@ def _unavailable(failure: WakeCapabilityFailure) -> WakeCapabilityProbeResult:
 def probe_wake_capability(
     layout: JohnnyRootLayout, timeout_seconds: int = _PROBE_TIMEOUT_SECONDS
 ) -> WakeCapabilityProbeResult:
-    """Read and prove the declared wake command; never claim on absence."""
+    """Prove the capability by running the declared wake command itself.
+
+    A separate probe command would only prove that some unrelated process can
+    exit zero, so `PROVEN` would not mean the reviewer can actually be woken.
+    The probe therefore renders the exact wake command against a disposable
+    probe payload and requires that exact invocation to succeed.
+    """
 
     path = wake_config_path(layout)
     if not path.is_file():
@@ -147,17 +153,30 @@ def probe_wake_capability(
         )
     except (OSError, ValidationError, ValueError):
         return _unavailable(WakeCapabilityFailure.CONFIG_INVALID)
+
+    probe_payload = layout.queue_root / _PROBE_PAYLOAD_NAME
+    try:
+        probe_payload.parent.mkdir(parents=True, exist_ok=True)
+        probe_payload.write_text(_PROBE_PAYLOAD_BODY, encoding="utf-8")
+    except OSError:
+        return _unavailable(WakeCapabilityFailure.PROBE_FAILED)
+    rendered = config.rendered(probe_payload, _PROBE_ATTEMPT_ID)
     try:
         completed = subprocess.run(
-            config.probe_command,
+            rendered,
             capture_output=True,
             shell=False,
-            timeout=timeout_seconds,
+            timeout=min(timeout_seconds, config.timeout_seconds),
         )
     except subprocess.TimeoutExpired:
         return _unavailable(WakeCapabilityFailure.PROBE_TIMEOUT)
     except (OSError, ValueError):
         return _unavailable(WakeCapabilityFailure.EXECUTABLE_UNAVAILABLE)
+    finally:
+        try:
+            probe_payload.unlink(missing_ok=True)
+        except OSError:
+            pass
     if completed.returncode != 0:
         return _unavailable(WakeCapabilityFailure.PROBE_FAILED)
     return WakeCapabilityProbeResult(

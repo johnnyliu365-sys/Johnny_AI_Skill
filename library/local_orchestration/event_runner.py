@@ -44,7 +44,7 @@ from .wake_capability import (
     probe_wake_capability,
 )
 from .windows_supervision_composition import (
-    build_windows_receipt_bound_supervision,
+    build_windows_supervision_without_review_batching,
 )
 
 _SUBSCRIPTIONS_FILE_NAME = "runner-subscriptions.json"
@@ -162,7 +162,10 @@ def run_event_runner(layout: JohnnyRootLayout) -> int:
     armed: list[str] = []
     controllers: list[ReceiptBoundSupervisionController] = []
     for specification in parsed.subscriptions:
-        controller = build_windows_receipt_bound_supervision(
+        # No committed review-cluster resolver exists in 0.4.x, so this runner
+        # uses the explicitly named unbatched variant rather than presenting
+        # itself as the batched supervision path.
+        controller = build_windows_supervision_without_review_batching(
             Path(specification.repository_root), wake_coordinator
         )
         prepared = controller.prepare(specification.preparation)

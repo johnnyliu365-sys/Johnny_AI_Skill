@@ -61,7 +61,6 @@ class ResolveWakeChannelTests(unittest.TestCase):
             wake_config_path(layout).write_text(
                 WakeCommandConfig(
                     command=(sys.executable, "-c", "pass", "{payload_file}"),
-                    probe_command=(sys.executable, "-c", "pass"),
                     reviewer_ref="role-supervisor-reviewer",
                 ).model_dump_json(),
                 encoding="utf-8",

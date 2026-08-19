@@ -54,6 +54,11 @@ _LEDGER_RECEIPTS: tuple[tuple[OwnedStateKind, str], ...] = (
     (OwnedStateKind.TELEMETRY, "telemetry"),
 )
 
+# Uninstall proves ownership per directory before deleting it, so every
+# directory a receipt owns — including the ones it owns beyond its own name —
+# must be marked at install time or removal will correctly refuse.
+_SECONDARY_OWNED_DIRECTORIES: tuple[str, ...] = ("runtime",)
+
 
 class _ZipDigestPort:
     def __init__(self, bundle_zip: Path) -> None:
@@ -91,6 +96,12 @@ def _provision_owned_state(
         owned_root.mkdir(parents=True, exist_ok=True)
         (owned_root / _OWNED_MARKER_NAME).write_text(receipt_id, encoding="utf-8")
         records.append(OwnedStateRecord(kind=kind, receipt=receipt))
+    for secondary in _SECONDARY_OWNED_DIRECTORIES:
+        secondary_root = layout.owned_receipt_path(secondary)
+        secondary_root.mkdir(parents=True, exist_ok=True)
+        (secondary_root / _OWNED_MARKER_NAME).write_text(
+            receipt_id, encoding="utf-8"
+        )
     return PluginUninstallLedger(receipt_id=receipt_id, records=tuple(records))
 
 

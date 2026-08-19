@@ -60,8 +60,17 @@ class RealPluginPayloadEffectPort:
         self, attempt_id: str, manifest: PayloadManifest
     ) -> InstallEffectOutcome:
         plugin_root = self._layout.plugin_root
-        if plugin_root.exists() and any(plugin_root.iterdir()):
-            return _unavailable()
+        if plugin_root.exists():
+            if any(plugin_root.iterdir()):
+                return _unavailable()
+            # An existing but empty location may be a reparse point pointing
+            # outside the Johnny root; writing through it would place payload
+            # bytes somewhere this port does not own.
+            try:
+                if plugin_root.resolve() != plugin_root:
+                    return _unavailable()
+            except OSError:
+                return _unavailable()
 
         expected = {
             entry.archive_relative_path: entry for entry in manifest.entries
@@ -114,10 +123,16 @@ class RealLauncherEffectPort:
             return _unavailable()
         launcher_root = self._layout.launcher_root
         runtime_root = self._layout.runtime_root
-        if (launcher_root.exists() and any(launcher_root.iterdir())) or (
-            runtime_root.exists() and any(runtime_root.iterdir())
-        ):
-            return _unavailable()
+        for owned_root in (launcher_root, runtime_root):
+            if not owned_root.exists():
+                continue
+            if any(owned_root.iterdir()):
+                return _unavailable()
+            try:
+                if owned_root.resolve() != owned_root:
+                    return _unavailable()
+            except OSError:
+                return _unavailable()
         try:
             launcher_root.mkdir(parents=True, exist_ok=True)
             runtime_root.mkdir(parents=True, exist_ok=True)

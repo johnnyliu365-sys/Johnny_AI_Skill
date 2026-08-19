@@ -39,8 +39,11 @@ def _install_shape(layout: JohnnyRootLayout) -> None:
         owned_root.mkdir(parents=True)
         (owned_root / ".johnny-owned").write_text(_RECEIPT, encoding="utf-8")
         (owned_root / "content.bin").write_bytes(b"payload")
-    (layout.base / "runtime").mkdir()
-    (layout.base / "runtime" / "johnny_router_entry.py").write_text(
+    runtime_root = layout.base / "runtime"
+    runtime_root.mkdir()
+    # The launcher receipt owns runtime too, so install marks it as well.
+    (runtime_root / ".johnny-owned").write_text(_RECEIPT, encoding="utf-8")
+    (runtime_root / "johnny_router_entry.py").write_text(
         "# entry\n", encoding="utf-8"
     )
     layout.journal_path.write_text("", encoding="utf-8")

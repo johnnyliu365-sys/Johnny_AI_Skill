@@ -11,6 +11,7 @@ bootstrap created and exits with a typed JSON line.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import shutil
@@ -20,6 +21,13 @@ import sys
 import tempfile
 import zipfile
 from pathlib import Path
+
+# The one approved runtime lock digest. The bootstrap runs before any typed
+# contract is importable, so the constant is duplicated here on purpose and
+# pinned by a test that compares it with the canonical lock.
+_APPROVED_LOCK_DIGEST = (
+    "f31cc1ac9a4414a58d18549f1c3d6935817e5cb0fbbaac6b00847d680680efa8"
+)
 
 _BOOTSTRAP_COMMAND: tuple[str, ...] = ("py", "-3.11")
 _CREATE_TIMEOUT = 300
@@ -50,14 +58,52 @@ def _delete_tree(root: Path) -> None:
         pass
 
 
+def _canonical_lock_digest(recorded: dict[str, object]) -> str | None:
+    """Recompute the lock's own digest exactly as the typed lock defines it."""
+
+    try:
+        dependencies = recorded["dependencies"]
+        payload = json.dumps(
+            {
+                "schema_version": recorded["schema_version"],
+                "python_constraint": recorded["python_constraint"],
+                "dependencies": dependencies,
+            },
+            ensure_ascii=False,
+            allow_nan=False,
+            separators=(",", ":"),
+            sort_keys=True,
+        )
+    except (KeyError, TypeError, ValueError):
+        return None
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+
 def _render_requirements(lock_path: Path) -> str | None:
-    """Render hash-locked requirements from the committed lock; stdlib parity
-    with `venv_effect_port.render_locked_requirements`."""
+    """Render hash-locked requirements only from the exact approved lock.
+
+    A bundle carries its own lock file, so rendering whatever that file says
+    would let a tampered bundle choose both its packages and their hashes.
+    The lock is therefore admitted only when its recomputed digest matches the
+    digest it declares AND that digest equals the approved constant below.
+    """
 
     try:
         recorded = json.loads(lock_path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
+    if type(recorded) is not dict:
+        return None
+    declared_digest = recorded.get("lock_digest")
+    if (
+        type(declared_digest) is not str
+        or declared_digest != _APPROVED_LOCK_DIGEST
+        or _canonical_lock_digest(recorded) != declared_digest
+    ):
+        return None
+    try:
         dependencies = recorded["dependencies"]
-    except (OSError, ValueError, KeyError, TypeError):
+    except (KeyError, TypeError):
         return None
     lines = ["# Generated from the approved runtime dependency lock; do not edit."]
     try:
