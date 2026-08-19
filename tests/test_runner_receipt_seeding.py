@@ -1,4 +1,9 @@
-"""E8 closure tests: the runner makes its subscription receipt claimable."""
+"""CLOSURE-E8-02 tests: the runner verifies claimability and can mint nothing.
+
+`_issue_receipt_fixture` below is the dispatch-authority stand-in for tests:
+it drives the control-plane store directly, exactly like the established
+05B-series fixtures, and it exists only in test code.
+"""
 
 from __future__ import annotations
 
@@ -6,18 +11,27 @@ import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
+from library.local_orchestration import runner_receipt_seeding
 from library.local_orchestration.live_dispatch_metadata_boundary import (
     JohnnyMetadataRoot,
     LiveDispatchMetadataBoundary,
+)
+from library.local_orchestration.live_dispatch_metadata_store import (
+    LiveDispatchMetadataStore,
 )
 from library.local_orchestration.role_wake_composition import (
     DurableRoleWakeAttemptStore,
 )
 from library.local_orchestration.runner_receipt_seeding import (
-    ReceiptSeedFailure,
-    ReceiptSeedStatus,
-    issue_dispatch_receipt,
+    ReceiptVerificationFailure,
+    ReceiptVerificationStatus,
     verify_receipt_claimable,
+)
+from library.workflow_router.live_dispatch_contracts import (
+    ApprovedDispatchArtifactRecord,
+    ApprovedDispatchArtifactRegisterRequest,
+    TicketReceipt,
+    TicketReceiptIssueRequest,
 )
 from library.workflow_router.role_wake_contracts import (
     RoleWakeAttemptClaimRequest,
@@ -32,9 +46,54 @@ def _boundary(root: Path) -> LiveDispatchMetadataBoundary:
     return LiveDispatchMetadataBoundary(JohnnyMetadataRoot(root.resolve(strict=True)))
 
 
-class RunnerReceiptSeedingTests(unittest.TestCase):
-    def test_seeding_makes_a_wake_claim_admissible(self) -> None:
-        """CR-E6-01: without seeding the claim conflicts; with it, it claims."""
+def _issue_receipt_fixture(
+    boundary: LiveDispatchMetadataBoundary, receipt: TicketReceipt
+) -> None:
+    """Dispatch-authority stand-in: register and issue through the store."""
+
+    artifact = ApprovedDispatchArtifactRecord(
+        project_id=receipt.project_id,
+        ticket_reference=receipt.ticket_reference,
+        ticket_revision=receipt.ticket_revision,
+        ticket_digest=receipt.ticket_digest,
+        ticket_document_commit=receipt.ticket_document_commit,
+        handoff_reference=receipt.handoff_reference,
+        handoff_revision=receipt.handoff_revision,
+        handoff_digest=receipt.handoff_digest,
+        handoff_document_commit=receipt.handoff_document_commit,
+        baseline_commit=receipt.baseline_commit,
+        implementation_owner_id=receipt.implementation_owner_id,
+        expected_return=receipt.expected_return,
+        descriptor_binding=receipt.descriptor_binding,
+    )
+    store = LiveDispatchMetadataStore(boundary)
+    store.register_artifact(
+        ApprovedDispatchArtifactRegisterRequest(artifact=artifact)
+    )
+    store.issue_receipt(
+        TicketReceiptIssueRequest(
+            artifact_identity=artifact.identity,
+            ticket_revision=receipt.ticket_revision,
+            ticket_digest=receipt.ticket_digest,
+            ticket_document_commit=receipt.ticket_document_commit,
+            handoff_revision=receipt.handoff_revision,
+            handoff_digest=receipt.handoff_digest,
+            handoff_document_commit=receipt.handoff_document_commit,
+            baseline_commit=receipt.baseline_commit,
+            receipt_id=receipt.receipt_id,
+            expected_return=receipt.expected_return,
+            descriptor_binding=receipt.descriptor_binding,
+            correlation_id=receipt.correlation_id,
+            dispatch_question_id=receipt.dispatch_question_id,
+            worktree_fingerprint=receipt.worktree_fingerprint,
+            branch_fingerprint=receipt.branch_fingerprint,
+        )
+    )
+
+
+class ReceiptVerificationTests(unittest.TestCase):
+    def test_dispatched_receipt_verifies_and_admits_a_wake_claim(self) -> None:
+        """CR-E6-01 causal chain: dispatched → claimable → claim succeeds."""
 
         receipt = _receipt()
         wake_request = _request(
@@ -45,74 +104,39 @@ class RunnerReceiptSeedingTests(unittest.TestCase):
             commit="a" * 40,
         )
         identity = derive_role_wake_attempt_identity(wake_request)
-
-        with self.subTest(stage="unseeded_boundary_refuses"):
-            with TemporaryDirectory() as temporary:
-                boundary = _boundary(Path(temporary))
-                store = DurableRoleWakeAttemptStore(boundary)
-                claim = store.claim(RoleWakeAttemptClaimRequest(identity=identity))
-                self.assertIs(claim.status, WakeAttemptClaimStatus.ATTEMPT_CONFLICT)
-
-        with self.subTest(stage="seeded_boundary_admits"):
-            with TemporaryDirectory() as temporary:
-                boundary = _boundary(Path(temporary))
-                status, failure = issue_dispatch_receipt(boundary, receipt)
-                self.assertIs(status, ReceiptSeedStatus.SEEDED)
-                self.assertIsNone(failure)
-                store = DurableRoleWakeAttemptStore(boundary)
-                claim = store.claim(RoleWakeAttemptClaimRequest(identity=identity))
-                self.assertIsNot(
-                    claim.status, WakeAttemptClaimStatus.ATTEMPT_CONFLICT
-                )
-                self.assertIsNotNone(claim.record)
-
-    def test_seeding_is_idempotent(self) -> None:
-        receipt = _receipt()
         with TemporaryDirectory() as temporary:
             boundary = _boundary(Path(temporary))
-            first, _ = issue_dispatch_receipt(boundary, receipt)
-            second, failure = issue_dispatch_receipt(boundary, receipt)
-            self.assertIs(first, ReceiptSeedStatus.SEEDED)
-            self.assertIs(second, ReceiptSeedStatus.ALREADY_PRESENT)
+            _issue_receipt_fixture(boundary, receipt)
+            status, failure = verify_receipt_claimable(boundary, receipt)
+            self.assertIs(status, ReceiptVerificationStatus.CLAIMABLE)
             self.assertIsNone(failure)
-
-    def test_a_foreign_receipt_for_the_same_ticket_is_a_mismatch(self) -> None:
-        receipt = _receipt()
-        with TemporaryDirectory() as temporary:
-            boundary = _boundary(Path(temporary))
-            self.assertIs(issue_dispatch_receipt(boundary, receipt)[0], ReceiptSeedStatus.SEEDED)
-            foreign = receipt.model_copy(
-                update={"receipt_id": "receipt-vita-feature-999"}
+            claim = DurableRoleWakeAttemptStore(boundary).claim(
+                RoleWakeAttemptClaimRequest(identity=identity)
             )
-            status, failure = issue_dispatch_receipt(boundary, foreign)
-            self.assertIs(status, ReceiptSeedStatus.BLOCKED)
-            self.assertIn(
-                failure,
-                (
-                    ReceiptSeedFailure.RECEIPT_ISSUE_FAILED,
-                    ReceiptSeedFailure.RECEIPT_MISMATCH,
-                ),
-            )
+            self.assertIsNot(claim.status, WakeAttemptClaimStatus.ATTEMPT_CONFLICT)
+            self.assertIsNotNone(claim.record)
 
-
-if __name__ == "__main__":
-    unittest.main()
-
-
-class RunnerNeverMintsAuthorityTests(unittest.TestCase):
-    """P0: the runner verifies a receipt; it must not create one."""
-
-    def test_verification_refuses_an_undispatched_receipt(self) -> None:
+    def test_undispatched_receipt_is_refused_and_cannot_claim(self) -> None:
         receipt = _receipt()
+        wake_request = _request(
+            ticket_ref=receipt.ticket_reference,
+            receipt_ref=receipt.receipt_id,
+            task_ref=receipt.implementation_owner_id,
+            handoff_id="handoff-e8-002",
+            commit="b" * 40,
+        )
+        identity = derive_role_wake_attempt_identity(wake_request)
         with TemporaryDirectory() as temporary:
             boundary = _boundary(Path(temporary))
             status, failure = verify_receipt_claimable(boundary, receipt)
-            self.assertIs(status, ReceiptSeedStatus.BLOCKED)
-            self.assertIs(failure, ReceiptSeedFailure.READBACK_FAILED)
+            self.assertIs(status, ReceiptVerificationStatus.BLOCKED)
+            self.assertIs(failure, ReceiptVerificationFailure.RECEIPT_NOT_FOUND)
+            claim = DurableRoleWakeAttemptStore(boundary).claim(
+                RoleWakeAttemptClaimRequest(identity=identity)
+            )
+            self.assertIs(claim.status, WakeAttemptClaimStatus.ATTEMPT_CONFLICT)
 
-    def test_verification_creates_no_approved_state(self) -> None:
-        """Verification may touch its own lock file, but never authority."""
-
+    def test_verification_is_repeatable_and_writes_no_approved_state(self) -> None:
         receipt = _receipt()
         with TemporaryDirectory() as temporary:
             root = Path(temporary)
@@ -125,18 +149,37 @@ class RunnerNeverMintsAuthorityTests(unittest.TestCase):
                     self.assertNotIn(receipt.ticket_reference, body)
             self.assertIs(
                 verify_receipt_claimable(boundary, receipt)[0],
-                ReceiptSeedStatus.BLOCKED,
+                ReceiptVerificationStatus.BLOCKED,
             )
 
-    def test_a_dispatched_receipt_then_verifies(self) -> None:
+    def test_a_different_receipt_id_for_the_same_ticket_mismatches(self) -> None:
         receipt = _receipt()
         with TemporaryDirectory() as temporary:
             boundary = _boundary(Path(temporary))
-            self.assertIs(
-                issue_dispatch_receipt(boundary, receipt)[0],
-                ReceiptSeedStatus.SEEDED,
+            _issue_receipt_fixture(boundary, receipt)
+            foreign = receipt.model_copy(
+                update={"receipt_id": "receipt-vita-feature-999"}
             )
-            self.assertIs(
-                verify_receipt_claimable(boundary, receipt)[0],
-                ReceiptSeedStatus.ALREADY_PRESENT,
-            )
+            status, failure = verify_receipt_claimable(boundary, foreign)
+            self.assertIs(status, ReceiptVerificationStatus.BLOCKED)
+            self.assertIs(failure, ReceiptVerificationFailure.RECEIPT_MISMATCH)
+
+
+class RuntimePayloadMintsNothingTests(unittest.TestCase):
+    """P0 (round three): no issuing capability may exist in the runtime payload."""
+
+    def test_the_module_exports_verification_only(self) -> None:
+        self.assertEqual(
+            runner_receipt_seeding.__all__,
+            [
+                "ReceiptVerificationFailure",
+                "ReceiptVerificationStatus",
+                "verify_receipt_claimable",
+            ],
+        )
+        for forbidden in ("issue_dispatch_receipt", "seed_receipt"):
+            self.assertFalse(hasattr(runner_receipt_seeding, forbidden))
+
+
+if __name__ == "__main__":
+    unittest.main()

@@ -28,9 +28,6 @@ from library.local_orchestration.live_dispatch_metadata_boundary import (
     JohnnyMetadataRoot,
     LiveDispatchMetadataBoundary,
 )
-from library.local_orchestration.runner_receipt_seeding import (
-    issue_dispatch_receipt,
-)
 from library.local_orchestration.project_runner_registry import (
     RunnerStarted,
     RunnerStopped,
@@ -62,6 +59,7 @@ from tests.test_role_wake_composition import (
     _receipt,
     _wake_capability,
 )
+from tests.test_runner_receipt_seeding import _issue_receipt_fixture
 
 _REPO_ROOT = Path(__file__).resolve().parents[1]
 _PROJECT = "prj_0123456789abcdef"
@@ -202,11 +200,12 @@ class EventRunnerQualificationTests(unittest.TestCase):
 
         receipt = _receipt().model_copy(update={"baseline_commit": baseline})
         # The qualification stands in for the authorized dispatcher: it issues
-        # the receipt, exactly as a real dispatch would, before the runner —
-        # which only ever verifies — is started.
+        # the receipt through the control-plane store fixture, exactly as the
+        # 05B-series tests do, before the runner — which only ever verifies —
+        # is started. No issuing capability exists in the runtime payload.
         metadata_root = layout.queue_root / "metadata"
         metadata_root.mkdir(parents=True, exist_ok=True)
-        issue_dispatch_receipt(
+        _issue_receipt_fixture(
             LiveDispatchMetadataBoundary(JohnnyMetadataRoot(metadata_root.resolve())),
             receipt,
         )

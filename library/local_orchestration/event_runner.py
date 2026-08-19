@@ -33,7 +33,7 @@ from .live_dispatch_metadata_boundary import (
 )
 from .receipt_bound_supervision import ReceiptBoundSupervisionController
 from .runner_receipt_seeding import (
-    ReceiptSeedStatus,
+    ReceiptVerificationStatus,
     verify_receipt_claimable,
 )
 from .role_wake_composition import (
@@ -170,16 +170,20 @@ def run_event_runner(layout: JohnnyRootLayout) -> int:
         # the durable checkpoint. The runner verifies that and never creates
         # it: the subscription file is caller data, so minting the receipt
         # here would let a fabricated one satisfy its own wake claim.
-        seed_status, seed_failure = verify_receipt_claimable(
+        verification, verification_failure = verify_receipt_claimable(
             boundary, specification.preparation.receipt
         )
-        if seed_status is ReceiptSeedStatus.BLOCKED:
+        if verification is not ReceiptVerificationStatus.CLAIMABLE:
             _write_state(
                 layout,
                 {
                     "status": "BLOCKED",
                     "code": "RECEIPT_NOT_DISPATCHED",
-                    "failure": seed_failure.value if seed_failure else None,
+                    "failure": (
+                        verification_failure.value
+                        if verification_failure
+                        else None
+                    ),
                 },
             )
             return 2

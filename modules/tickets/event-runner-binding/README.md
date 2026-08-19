@@ -66,22 +66,36 @@ approved dispatch artifacts and issue the ticket receipt into the durable
 boundary from the subscription spec before arming supervision, and must halt
 with an exact typed failure when that seeding does not read back.
 
-### CR-E6-01 closed by E8
+### CR-E6-01 closed by CLOSURE-E8-02 (OVR-EVENT-RUNNER-E8-REFREEZE-20260819-01)
 
-`runner_receipt_seeding.seed_receipt` registers the approved dispatch artifact
-and issues the ticket receipt into the durable boundary from the subscription's
-own receipt, then proves it by reading the receipt back (exact id, `ACTIVE`
-lifecycle, field-for-field equality). The runner seeds before arming and halts
-with `RECEIPT_SEED_FAILED` plus the exact seed failure when the readback does
-not prove. Seeding is idempotent (`ALREADY_PRESENT`) and a different receipt id
-for the same ticket is refused.
+The E8 closure exceeded the allowed correction count across two rounds that
+both failed on the same authority-model defect (a runner minting approval from
+caller data, then the same minting renamed instead of removed). The reviewer
+escalated; the owner refroze the closure as CLOSURE-E8-02 with exactly one
+additive correction and this final design:
 
-The unit closure proves the causal chain directly: the same wake claim returns
-`ATTEMPT_CONFLICT` against an unseeded boundary and claims successfully with a
-record against a seeded one. The gated qualification is now `5 passed` with R3
-green, and its runtime dropped from 61s to under 2s because the wake is
-delivered immediately instead of the test waiting out its 60s timeout.
+- The runtime payload can mint nothing. `runner_receipt_seeding` exports only
+  `verify_receipt_claimable`, which never writes: the receipt must already be
+  the exact `ACTIVE` canonical one in the durable checkpoint, or the runner
+  halts with `RECEIPT_NOT_DISPATCHED` and the exact verification failure.
+- Receipt issuance is a dispatch-authority effect owned by the control plane
+  (`LiveDispatchMetadataStore.register_artifact` + `issue_receipt` behind the
+  dispatch flow's admission). Qualifications stand in for a dispatcher through
+  a test-only store fixture, the established 05B idiom; no issuing wrapper
+  ships in the payload for anything to misuse.
+- Containment additionally requires the Johnny base itself to resolve to
+  itself, closing the redirected-base circularity, and the regression suite
+  locks a real base-junction case plus a module-surface cell proving no
+  issuing export exists.
+
+The causal chain remains proven: the same wake claim conflicts against an
+unseeded boundary and succeeds once a dispatcher has issued the receipt; the
+gated qualification passes 5/5 with R3 green in under 2 seconds. The proper
+dispatch-authority integration (who may issue, from which principal, over
+which boundary) is deliberately out of scope here and belongs to the
+multi-model workstation line, where issuance becomes a control-plane-process
+privilege rather than an importable function.
 
 | # | Ticket | State |
 | --- | --- | --- |
-| E8 | Runner receipt seeding (CR-E6-01) | `CLOSED` — 3 tests / 2 subtests; E6 R3 green |
+| E8 | Runner receipt verification (CR-E6-01, CLOSURE-E8-02) | `CLOSED` — verification-only payload; 5 tests; E6 R3 green |

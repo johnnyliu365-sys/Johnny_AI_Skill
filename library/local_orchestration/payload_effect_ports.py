@@ -39,6 +39,10 @@ def _resolves_within_root(target: Path, base: Path) -> bool:
 
     try:
         resolved_base = base.resolve()
+        if resolved_base != base:
+            # The Johnny base itself redirects somewhere else; a containment
+            # check anchored to the redirected location would be circular.
+            return False
         existing = target
         remainder: list[str] = []
         while not existing.exists():

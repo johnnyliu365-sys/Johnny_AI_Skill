@@ -191,6 +191,25 @@ class P1ReparsePayloadRootTests(unittest.TestCase):
             self.assertEqual(list(outside.iterdir()), [])
 
 
+
+    def test_redirected_base_itself_is_refused(self) -> None:
+        """Round three P1: a junction at the Johnny base defeats containment
+        anchored to the resolved base, so the base must resolve to itself."""
+
+        with TemporaryDirectory() as temporary:
+            base = Path(temporary).resolve()
+            outside = base / "outside"
+            outside.mkdir()
+            link = base / "jr-link"
+            if not _make_reparse_point(link, outside):
+                self.skipTest("this host cannot create a directory reparse point")
+            layout = JohnnyRootLayout(base=link)
+            port = RealPluginPayloadEffectPort(layout, base / "absent.zip")
+            outcome = port.install("attempt-p1-base", _minimal_manifest())
+            self.assertIs(outcome.status, InstallEffectOutcomeStatus.UNAVAILABLE)
+            self.assertEqual(list(outside.iterdir()), [])
+
+
 class P1ProbeExercisesTheWakeCommandTests(unittest.TestCase):
     """P1: PROVEN must mean the declared wake command itself succeeded."""
 
