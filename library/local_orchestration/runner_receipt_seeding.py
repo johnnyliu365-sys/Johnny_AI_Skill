@@ -18,15 +18,23 @@ established 05B-series tests.
 from __future__ import annotations
 
 from enum import Enum
+from typing import Protocol
 
 from library.workflow_router.live_dispatch_contracts import (
     ReceiptLifecycle,
     ReceiptReadStatus,
     TicketReceipt,
     TicketReceiptReadRequest,
+    TicketReceiptReadResult,
 )
 
-from .live_dispatch_metadata_boundary import LiveDispatchMetadataBoundary
+
+class ReceiptReadPort(Protocol):
+    """The only durable-store capability verification needs: one read."""
+
+    def read_receipt(
+        self, request: TicketReceiptReadRequest
+    ) -> TicketReceiptReadResult: ...
 
 
 class ReceiptVerificationStatus(str, Enum):
@@ -44,7 +52,7 @@ class ReceiptVerificationFailure(str, Enum):
 
 
 def verify_receipt_claimable(
-    boundary: LiveDispatchMetadataBoundary, receipt: TicketReceipt
+    boundary: ReceiptReadPort, receipt: TicketReceipt
 ) -> tuple[ReceiptVerificationStatus, ReceiptVerificationFailure | None]:
     """Prove the receipt is already the exact active canonical one, or refuse.
 
@@ -79,6 +87,7 @@ def verify_receipt_claimable(
 
 
 __all__ = [
+    "ReceiptReadPort",
     "ReceiptVerificationFailure",
     "ReceiptVerificationStatus",
     "verify_receipt_claimable",

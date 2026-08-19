@@ -27,15 +27,12 @@ from library.workflow_router.supervision_runtime_contracts import (
 
 from .command_role_wake_port import CommandRoleWakePort
 from .johnny_root_layout import JohnnyRootLayout
-from .live_dispatch_metadata_boundary import (
-    JohnnyMetadataRoot,
-    LiveDispatchMetadataBoundary,
-)
 from .receipt_bound_supervision import ReceiptBoundSupervisionController
 from .runner_receipt_seeding import (
     ReceiptVerificationStatus,
     verify_receipt_claimable,
 )
+from .wake_scoped_boundary import WakeScopedDispatchBoundary
 from .role_wake_composition import (
     DurableRoleWakeAttemptStore,
     RoleWakeCoordinator,
@@ -152,9 +149,9 @@ def run_event_runner(layout: JohnnyRootLayout) -> int:
     channel = resolve_wake_channel(layout)
     metadata_root = layout.queue_root / "metadata"
     metadata_root.mkdir(parents=True, exist_ok=True)
-    boundary = LiveDispatchMetadataBoundary(
-        JohnnyMetadataRoot(metadata_root.resolve())
-    )
+    # The runner holds only the wake-scoped surface: read, claim, settle.
+    # No issuance-capable object exists anywhere in this composition.
+    boundary = WakeScopedDispatchBoundary(metadata_root)
     wake_coordinator = RoleWakeCoordinator(
         DurableRoleWakeAttemptStore(boundary), channel.port
     )

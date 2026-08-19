@@ -1,4 +1,4 @@
-"""CLOSURE-E8-02 tests: the runner verifies claimability and can mint nothing.
+"""CLOSURE-E8-02/03 tests: the runner verifies claimability and mints nothing.
 
 `_issue_receipt_fixture` below is the dispatch-authority stand-in for tests:
 it drives the control-plane store directly, exactly like the established
@@ -165,13 +165,14 @@ class ReceiptVerificationTests(unittest.TestCase):
             self.assertIs(failure, ReceiptVerificationFailure.RECEIPT_MISMATCH)
 
 
-class RuntimePayloadMintsNothingTests(unittest.TestCase):
-    """P0 (round three): no issuing capability may exist in the runtime payload."""
+class VerificationModuleSurfaceTests(unittest.TestCase):
+    """P0 (rounds three and four): the verification module exposes reads only."""
 
     def test_the_module_exports_verification_only(self) -> None:
         self.assertEqual(
             runner_receipt_seeding.__all__,
             [
+                "ReceiptReadPort",
                 "ReceiptVerificationFailure",
                 "ReceiptVerificationStatus",
                 "verify_receipt_claimable",

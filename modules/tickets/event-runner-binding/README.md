@@ -74,10 +74,15 @@ caller data, then the same minting renamed instead of removed). The reviewer
 escalated; the owner refroze the closure as CLOSURE-E8-02 with exactly one
 additive correction and this final design:
 
-- The runtime payload can mint nothing. `runner_receipt_seeding` exports only
-  `verify_receipt_claimable`, which never writes: the receipt must already be
-  the exact `ACTIVE` canonical one in the durable checkpoint, or the runner
-  halts with `RECEIPT_NOT_DISPATCHED` and the exact verification failure.
+- The runner composition holds no issuance-capable object.
+  `runner_receipt_seeding` exports only `verify_receipt_claimable` (a pure
+  read against a narrow `ReceiptReadPort`): the receipt must already be the
+  exact `ACTIVE` canonical one in the durable checkpoint, or the runner halts
+  with `RECEIPT_NOT_DISPATCHED` and the exact verification failure. The
+  payload necessarily still ships the boundary and store classes — any code
+  in the same Python process could import and construct them — so in-process
+  hard isolation is not claimed here; it arrives with the workstation process
+  boundary.
 - Receipt issuance is a dispatch-authority effect owned by the control plane
   (`LiveDispatchMetadataStore.register_artifact` + `issue_receipt` behind the
   dispatch flow's admission). Qualifications stand in for a dispatcher through
@@ -96,6 +101,27 @@ which boundary) is deliberately out of scope here and belongs to the
 multi-model workstation line, where issuance becomes a control-plane-process
 privilege rather than an importable function.
 
+### CLOSURE-E8-03 (OVR-EVENT-RUNNER-E8-R03-20260819-01)
+
+The E8-02 final review found three residuals and the owner authorized one
+further additive correction:
+
+- **P0** the runner composition itself still constructed the full
+  `LiveDispatchMetadataBoundary`, an object whose type carries issuance
+  methods. The runner now holds only `WakeScopedDispatchBoundary` — exactly
+  `read_receipt`, `claim_role_wake_attempt`, `settle_role_wake_attempt`; the
+  full boundary is a private detail of that facade and no issuance name
+  exists in the runner module's namespace (pinned by regression).
+- **P1** both junction regressions used an absent bundle, so a missing ZIP
+  produced the same `UNAVAILABLE` as the guard and removing the guard stayed
+  green. Both cells now use a real extractable bundle: without the guard,
+  extraction lands in the redirected target and the emptiness assertion
+  turns red.
+- **P1** the closure narrative claimed "the runtime payload can mint
+  nothing", which overstated the isolation; it now states the precise claim
+  (composition holds no issuance-capable object) and the residual
+  single-process limitation explicitly.
+
 | # | Ticket | State |
 | --- | --- | --- |
-| E8 | Runner receipt verification (CR-E6-01, CLOSURE-E8-02) | `CLOSED` — verification-only payload; 5 tests; E6 R3 green |
+| E8 | Runner receipt verification (CR-E6-01, CLOSURE-E8-02, CLOSURE-E8-03) | `CLOSED` — wake-scoped composition; discriminating junction regressions; E6 R3 green |

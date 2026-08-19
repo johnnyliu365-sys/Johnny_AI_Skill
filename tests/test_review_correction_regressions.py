@@ -44,10 +44,7 @@ from library.local_orchestration.wake_capability import (
     probe_wake_capability,
     wake_config_path,
 )
-from library.local_orchestration.windows_package_manifest import (
-    PayloadManifest,
-    PayloadManifestEntry,
-)
+from tests.test_live_payload_ports import _write_bundle
 
 _REPO_ROOT = Path(__file__).resolve().parents[1]
 
@@ -67,20 +64,6 @@ def _make_reparse_point(link: Path, target: Path) -> bool:
         timeout=30,
     )
     return completed.returncode == 0 and link.exists()
-
-
-def _minimal_manifest() -> PayloadManifest:
-    return PayloadManifest(
-        plugin_id="johnny-ai-skill",
-        plugin_version="0.4.0",
-        source_commit="a" * 40,
-        dependency_lock_digest=build_approved_runtime_lock().lock_digest,
-        entries=(
-            PayloadManifestEntry(
-                archive_relative_path="AGENTS.md", sha256="0" * 64, byte_length=1
-            ),
-        ),
-    )
 
 
 class P0TamperedLockRejectedTests(unittest.TestCase):
@@ -177,16 +160,22 @@ class P1ReparsePayloadRootTests(unittest.TestCase):
     """P1: an empty but redirected plugin root must not receive payload bytes."""
 
     def test_redirected_empty_root_is_refused(self) -> None:
+        """The bundle is real and extractable, so this cell stays green only
+        while the containment guard blocks: remove the guard and extraction
+        lands in `outside`, turning the emptiness assertion red."""
+
         with TemporaryDirectory() as temporary:
             base = Path(temporary).resolve()
             outside = base / "outside"
             outside.mkdir()
+            bundle = base / "bundle.zip"
+            manifest = _write_bundle(bundle)
             layout = JohnnyRootLayout(base=base / "jr")
             layout.base.mkdir()
             if not _make_reparse_point(layout.plugin_root, outside):
                 self.skipTest("this host cannot create a directory reparse point")
-            port = RealPluginPayloadEffectPort(layout, base / "absent.zip")
-            outcome = port.install("attempt-p1", _minimal_manifest())
+            port = RealPluginPayloadEffectPort(layout, bundle)
+            outcome = port.install("attempt-p1", manifest)
             self.assertIs(outcome.status, InstallEffectOutcomeStatus.UNAVAILABLE)
             self.assertEqual(list(outside.iterdir()), [])
 
@@ -194,18 +183,22 @@ class P1ReparsePayloadRootTests(unittest.TestCase):
 
     def test_redirected_base_itself_is_refused(self) -> None:
         """Round three P1: a junction at the Johnny base defeats containment
-        anchored to the resolved base, so the base must resolve to itself."""
+        anchored to the resolved base. The bundle is real and extractable, so
+        removing the base self-resolution guard makes extraction land in
+        `outside` and turns the emptiness assertion red."""
 
         with TemporaryDirectory() as temporary:
             base = Path(temporary).resolve()
             outside = base / "outside"
             outside.mkdir()
+            bundle = base / "bundle.zip"
+            manifest = _write_bundle(bundle)
             link = base / "jr-link"
             if not _make_reparse_point(link, outside):
                 self.skipTest("this host cannot create a directory reparse point")
             layout = JohnnyRootLayout(base=link)
-            port = RealPluginPayloadEffectPort(layout, base / "absent.zip")
-            outcome = port.install("attempt-p1-base", _minimal_manifest())
+            port = RealPluginPayloadEffectPort(layout, bundle)
+            outcome = port.install("attempt-p1-base", manifest)
             self.assertIs(outcome.status, InstallEffectOutcomeStatus.UNAVAILABLE)
             self.assertEqual(list(outside.iterdir()), [])
 
@@ -286,6 +279,39 @@ class P2ResidueWithoutLedgerTests(unittest.TestCase):
             )
             port = LiveOwnedStatePort(layout, "receipt-live-absent-probe")
             self.assertTrue(port.has_owned_state("receipt-live-absent-probe"))
+
+
+
+class P0RunnerHoldsNoIssuanceTests(unittest.TestCase):
+    """Round four P0: no issuance-capable object flows through the runner."""
+
+    def test_event_runner_namespace_has_no_issuance_names(self) -> None:
+        from library.local_orchestration import event_runner
+
+        for forbidden in (
+            "LiveDispatchMetadataBoundary",
+            "LiveDispatchMetadataStore",
+            "JohnnyMetadataRoot",
+        ):
+            self.assertFalse(hasattr(event_runner, forbidden))
+
+    def test_the_wake_scoped_surface_is_exactly_three_methods(self) -> None:
+        from library.local_orchestration.wake_scoped_boundary import (
+            WakeScopedDispatchBoundary,
+        )
+
+        surface = sorted(
+            name
+            for name in vars(WakeScopedDispatchBoundary)
+            if not name.startswith("_")
+        )
+        self.assertEqual(
+            surface,
+            ["claim_role_wake_attempt", "read_receipt", "settle_role_wake_attempt"],
+        )
+        for forbidden in ("issue_receipt", "register_artifact"):
+            self.assertNotIn(forbidden, surface)
+
 
 
 if __name__ == "__main__":
