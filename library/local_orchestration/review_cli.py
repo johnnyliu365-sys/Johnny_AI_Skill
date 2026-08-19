@@ -18,6 +18,11 @@ from .review_return import (
     read_returns,
     submit_review_return,
 )
+from .review_return_consumption import (
+    ConsumptionStatus,
+    consume_next_return,
+    pending_returns,
+)
 
 
 def _emit(payload: dict[str, object]) -> None:
@@ -59,6 +64,30 @@ def run_review_family(arguments: tuple[str, ...], johnny_root: Path) -> int:
                 "status": status.value,
                 "receipt_id": request.receipt_id,
                 "verdict": request.verdict.value,
+            }
+        )
+        return 0
+    if subcommand == "consume":
+        consumption, event, refusal = consume_next_return(layout)
+        if consumption is ConsumptionStatus.NOTHING_PENDING:
+            _emit({"status": consumption.value, "pending": 0})
+            return 0
+        if consumption is not ConsumptionStatus.EMITTED or event is None:
+            _emit(
+                {
+                    "status": "BLOCKED",
+                    "code": refusal.value if refusal else "REFUSED",
+                    "pending": len(pending_returns(layout)),
+                }
+            )
+            return 2
+        # The marker is already durable at this point: the event has been
+        # consumed whether or not the caller acts on this line.
+        _emit(
+            {
+                "status": consumption.value,
+                "event_id": event.event_id,
+                "event_kind": event.kind.value,
             }
         )
         return 0

@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| State | `OPEN` |
+| State | `CLOSED` |
 | Baseline | `main` = `8a46ee0` |
 | Workload | `STANDARD`; `HIGH_ASSURANCE` — an emitted event drives a workflow transition |
 | Depends on | W2 (durable, unforgeable returns) |
@@ -66,3 +66,35 @@ modules/tickets/workstation-dispatch/
 | `W3-R6` | The emitted event validates as a real `RouterEvent` and is accepted by `RouterEngine.decide` as a well-formed input (a decision is produced, whatever it is). |
 | `W3-R7` | Reverse mutations: removing the consumed-marker check turns R4 red; mapping `BLOCKED_BY_DEPENDENCY` to a decision turns R3 red. |
 | `W3-R8` | `mypy --strict` clean; full suite green; zero residue. |
+
+## Closure evidence (2026-08-19, control-plane executed)
+
+- `W3-R1` No returns → `NOTHING_PENDING`, no marker file created.
+- `W3-R2` `APPROVED` → `APPROVAL_GRANTED`; `MODIFY_AND_REOPEN` →
+  `APPROVAL_DENIED`. The event id is deterministic and contains every part of
+  the return's identity, so the same verdict cannot appear twice under two ids.
+- `W3-R3` `BLOCKED_BY_DEPENDENCY` refuses `VERDICT_NOT_A_DECISION`, emits
+  nothing, writes no marker, and stays pending — the dependency has to resolve
+  first, and inventing a transition would be this layer deciding policy.
+- `W3-R4` Consuming twice emits once; two distinct returns each emit once, in
+  file order, with distinct ids.
+- `W3-R5` The marker is durable before the event is handed back: a caller that
+  drops the event entirely gets `NOTHING_PENDING` on retry, which is what a
+  crash between the two looks like from outside.
+- `W3-R6` The emitted event re-validates strictly as a `RouterEvent` with no
+  stray completion or return metadata.
+- `W3-R7` Reverse mutations: ignoring the consumed markers turns three cells
+  red; mapping `BLOCKED_BY_DEPENDENCY` to a decision turns R3's cell red.
+- `W3-R8` `mypy --strict` clean; full suite `989 passed, 11 skipped`; zero
+  residue.
+
+CLI smoke: `review consume` with nothing pending → `NOTHING_PENDING` exit 0;
+with a recorded verdict → `EMITTED` carrying the event id and
+`approval_granted`; again → `NOTHING_PENDING`.
+
+## What remains, deliberately
+
+Feeding the emitted event to `RouterEngine.decide` needs router state and a
+project profile that this layer does not own. W3 stops at producing the
+validated event exactly once; whoever holds that state drives the transition.
+Moving it here would put workflow authority in the orchestration layer.

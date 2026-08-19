@@ -16,3 +16,4 @@ boundary" — the question CLOSURE-E8-02 deliberately deferred.
 | --- | --- | --- |
 | W1 | Dispatch authority admission | `CLOSED` — grant + containment-gated + journaled issuance behind `johnny-router dispatch`; 10 tests, two reverse mutations; fixture-free dispatch→subscription chain proven |
 | W2 | Reviewer return path | `CLOSED` — verdicts bound to a dispatched receipt **and** a delivered wake; append-only durable returns behind `johnny-router review`; 10 tests, two reverse mutations, closed-loop cell |
+| W3 | Router consumption of reviewer returns | `CLOSED` — each verdict becomes exactly one validated `RouterEvent`; marker written before the event is handed back; 9 tests, two reverse mutations |
