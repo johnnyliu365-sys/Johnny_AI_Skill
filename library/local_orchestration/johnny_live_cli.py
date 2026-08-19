@@ -44,6 +44,10 @@ def run_live_cli(argv: tuple[str, ...], johnny_root: Path) -> int:
         from .live_uninstall_composition import run_live_uninstall
 
         return run_live_uninstall(johnny_root)
+    if command in ("runner", "wake-inbox", "wake-capability"):
+        from .runner_cli import run_runner_command
+
+        return run_runner_command(command, argv[1:], johnny_root)
     print('{"status":"CAPABILITY_UNAVAILABLE","code":"UNKNOWN_COMMAND"}')
     return 2
 
