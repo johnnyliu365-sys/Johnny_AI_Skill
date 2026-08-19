@@ -23,7 +23,7 @@ wake.
 | E4 | Runner process + lifecycle port | Detached per-project runner hosting the supervision controller; start/stop/status through a real `RunnerLifecyclePort` | `CLOSED` — `runner_lifecycle_port.py` + `event_runner.py`; detached runner, stop sentinel, native ref watch |
 | E5 | CLI wiring | `johnny-router runner start\|stop\|status`, `wake-inbox list`, `wake-capability probe` | `CLOSED` — `runner_cli.py` + `event_runner_main.py` |
 | E6 | Gated end-to-end qualification | Real repository, real commit to the exact ref, real detached runner, real wake delivery, zero residue | `CLOSED` — gated `JOHNNY_LIVE_QUAL` run R1–R5 `5 passed` (re-verified 2026-08-19) |
-| E7 | Owner real-machine smoke | Owner runs the runner against a disposable repository and observes a real wake | `OWNER_EFFECT_REQUIRED` — still open: needs a subscription-generation story before an owner can run it |
+| E7 | Owner real-machine smoke | Owner runs the runner against a disposable repository and observes a real wake | `OWNER_EFFECT_REQUIRED` — no longer blocked: `subscription_builder.py` composes a subscription from an issued receipt (E9). The remaining step is the owner's own run. |
 
 ## E6 status — 4/5 real cells green, R3 blocked by CR-E6-01
 
@@ -138,3 +138,36 @@ reported false-green; the name-based checks remain as supplementary pins.
 | # | Ticket | State |
 | --- | --- | --- |
 | E8 | Runner receipt verification (CR-E6-01, CLOSURE-E8-02, CLOSURE-E8-03) | `CLOSED` — wake-scoped composition; discriminating junction regressions; E6 R3 green |
+
+## E9 — subscription composition (closed 2026-08-19)
+
+E7 could not be attempted because nothing outside the test suite produced a
+`RunnerSubscriptionFile`. An owner cannot hand-write the typed supervision
+requests, and both capability proofs inside them carry `state=PROVEN`, which
+supervision admits a dispatch on.
+
+`subscription_builder.build_subscription` closes that gap under the two
+authority rules the E8 review established:
+
+- **The receipt is read, never constructed.** Composition verifies the receipt
+  is already the exact `ACTIVE` canonical one in the durable checkpoint and
+  refuses `RECEIPT_NOT_DISPATCHED` otherwise, before writing anything. The
+  builder holds only `WakeScopedDispatchBoundary`, so no issuance-capable
+  object enters this path either.
+- **The capability proofs are probed, never supplied.** The wake proof exists
+  only when the owner's declared host command passes `probe_wake_capability`;
+  the deadline proof only when `probe_deadline_capability` schedules a real
+  one-shot monotonic timer and that timer actually fires late enough to have
+  been honoured. `MonotonicDeadlineCapabilityProof` previously had no probe at
+  all — only a contract — so this adds the missing host readback rather than
+  letting a caller assert `PROVEN`.
+
+`SubscriptionInputs` carries only what dispatch cannot know: which ref to
+watch, which handoff leaf is reserved, and who the reviewer is. Every
+receipt-bound identifier is derived from the stored receipt, pinned by a test
+asserting the inputs model cannot even name one. Two reviewer identities are
+kept deliberately distinct: the Johnny-side task reference used by the
+admission context, and the host's own task id the wake port addresses.
+
+Evidence: 8 tests / 3 subtests; `mypy --strict` clean; full suite
+`929 passed, 11 skipped`.
