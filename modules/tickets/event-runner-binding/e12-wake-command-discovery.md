@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| State | `OPEN` — awaiting named implementation owner (Antigravity/Gemini) |
+| State | `CLOSED` — control-plane executed after the dispatched lane produced nothing |
 | Baseline | `main` at the commit this ticket lands in |
 | Workload | `SMALL`; Python 3.11 strict, TDD, no baseline-red required (new capability, not a bugfix) |
 | Depends on | E11 (closed): the channel is proven; this ticket makes it declarable |
@@ -88,3 +88,49 @@ modules/tickets/event-runner-binding/e12-wake-command-discovery.md
 - Working copies are CRLF; mutation and edit scripts must normalize `\r\n`.
 - Worktree location is governed: create yours at `.worktrees/e12-wake-command`
   under the repository root, never as a sibling folder.
+
+## Closure evidence (2026-08-19, control-plane executed)
+
+The dispatched worktree stood at the ticket baseline for twenty minutes with
+no commits, no working-tree changes and neither target file created, so the
+owner reassigned the ticket to the control plane. Nothing was overwritten.
+
+- `E12-R1` The probe separates the authenticated endpoint from the rest: a
+  wrong port fails, the right (address, token) pair succeeds, and discovery
+  returns the first *proven* candidate out of a mixed pool. With no reachable
+  server the module refuses `NO_LANGUAGE_SERVER` and sends nothing. A cell
+  also pins that discovery only ever issues `get-conversation-metadata` — it
+  is read-only by test, not by comment.
+- `E12-R2` Exactly one `send-message`, carrying the conversation id and the
+  payload path, with the environment variables the module is responsible for
+  setting. A failing client is `SEND_FAILED`; an absent payload refuses before
+  discovery runs; an absent client refuses first of all.
+- `E12-R3` Declared as a real `WakeCommandConfig` and driven through
+  `CommandRoleWakePort`: `HOST_ACCEPTED` on success, `NO_EFFECT` when the
+  client fails.
+- `E12-R4` The `{payload_file}` placeholder contract holds end to end — the
+  port's substitution reaches the module and the attempt id appears in the
+  delivered path.
+- `E12-R5` `mypy --strict` clean; full suite `959 passed, 11 skipped`; zero
+  runtime residue.
+
+Reverse mutations, both discriminating: skipping the probe and returning the
+first candidate turns two discovery cells red; pasting the payload body into
+the message turns the identifiers-only cell red.
+
+### Design note: the injected endpoint
+
+`JOHNNY_ANTIGRAVITY_ENDPOINT` / `JOHNNY_ANTIGRAVITY_TOKEN` let an operator
+supply the endpoint for the two cases discovery cannot serve — a
+qualification driving the command deterministically, and a runner started as
+a service by whatever launched the IDE. This is not a bypass: an injected
+endpoint is probed by exactly the same read before anything is sent, so a
+stale value is refused rather than trusted.
+
+### Not yet done
+
+The owner still has to declare this command in `wake-capability.json` and
+name the reviewer conversation id. Doing so makes `probe_wake_capability`
+send its disposable probe payload into that conversation, which is the
+honest cost of a probe that runs the real command — noted in E11 and
+unchanged here.
