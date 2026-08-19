@@ -32,5 +32,25 @@ if (-not (Test-Path -LiteralPath $ownedPython -PathType Leaf) -or
     exit 3
 }
 
+if ($RouterArguments.Count -ge 1 -and $RouterArguments[0] -eq 'uninstall') {
+    # Self-deletion guard: a python running from the owned venv locks its own
+    # executable and loaded native modules, so the owned venv can never delete
+    # itself. Uninstall therefore executes from a disposable copy of the venv;
+    # the owned venv stays unlocked and fully removable, and the copy is
+    # deleted afterwards.
+    $uninstallStage = Join-Path ([System.IO.Path]::GetTempPath()) ('johnny-uninstall-' + [Guid]::NewGuid().ToString('N'))
+    New-Item -ItemType Directory -Path $uninstallStage | Out-Null
+    $exitCode = 3
+    try {
+        Copy-Item -Recurse -LiteralPath (Join-Path $johnnyRoot 'venv') -Destination (Join-Path $uninstallStage 'venv')
+        $stagePython = Join-Path $uninstallStage 'venv\Scripts\python.exe'
+        & $stagePython -X utf8 $ownedEntry @RouterArguments
+        $exitCode = $LASTEXITCODE
+    } finally {
+        Remove-Item -Recurse -Force $uninstallStage -ErrorAction SilentlyContinue
+    }
+    exit $exitCode
+}
+
 & $ownedPython -X utf8 $ownedEntry @RouterArguments
 exit $LASTEXITCODE

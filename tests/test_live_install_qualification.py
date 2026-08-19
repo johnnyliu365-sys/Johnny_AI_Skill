@@ -201,12 +201,35 @@ class LiveInstallQualificationTests(unittest.TestCase):
                 ).splitlines()
                 cls.entry_status_payload = json.loads(lines[-1]) if lines else None
 
-        # Q5: the real uninstall reaches zero residue and repeats cleanly.
-        captured = io.StringIO()
-        with redirect_stdout(captured):
-            cls.uninstall_exit = run_live_uninstall(root_b)
+        # Q5: the real uninstall runs THROUGH THE INSTALLED LAUNCHER, exactly
+        # as an owner would invoke it, so the venv self-deletion guard (the
+        # launcher executes uninstall from a disposable venv copy) is proven
+        # here rather than discovered on a real machine again.
+        launcher = layout_b.launcher_root / "johnny-router.ps1"
+        environment = dict(os.environ)
+        environment["JOHNNY_ROOT"] = str(root_b)
+        completed_uninstall = subprocess.run(
+            (
+                "powershell",
+                "-NoProfile",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                str(launcher),
+                "uninstall",
+            ),
+            capture_output=True,
+            shell=False,
+            timeout=300,
+            env=environment,
+        )
+        cls.uninstall_exit = completed_uninstall.returncode
         lines = [
-            line for line in captured.getvalue().splitlines() if line.strip()
+            line
+            for line in completed_uninstall.stdout.decode(
+                "utf-8", errors="replace"
+            ).splitlines()
+            if line.strip()
         ]
         cls.uninstall_payload = json.loads(lines[-1])
         repeat_captured = io.StringIO()
