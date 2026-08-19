@@ -46,6 +46,12 @@ checker；ticket schema、preflight 與 TDD 由 Router 指向：
 - reviewer 是唯一 Agent-to-Agent orchestrator；implementation owner 不得控制
   其他 Agent。角色、task、worktree、receipt 與 correction 規則見
   [Implementation role boundary](Workflow.md#role-boundary)。
+- Agent 建立 worktree 一律放在 repository root 底下的 `.worktrees/<ticket-id>`，
+  不得開在 repository 的同層或任何外部路徑。Claude Code harness 自建的
+  `.claude/worktrees/` 同屬受認可位置。兩者都已列入 `.gitignore`，
+  `library/local_orchestration/worktree_containment.py` 提供
+  `sanctioned_worktree_path()` 取得正確路徑與 `verify_worktree_contained()`
+  驗證；經 junction 或 reparse point 到達的路徑一律拒絕。
 - Agent 只能修改與提交自己的 worktree。不得接收、輸出或保存明文 Secret。
   Secret、正式 Log、Provider 與 external effect 的詳細規則見
   [security-boundary](skills/johnny-project-takeover/references/security-boundary.md)。
