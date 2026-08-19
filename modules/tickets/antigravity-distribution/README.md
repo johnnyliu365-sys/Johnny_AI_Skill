@@ -9,7 +9,7 @@
 
 | # | Ticket | State |
 | --- | --- | --- |
-| A1 | Antigravity plugin surface + registration/removal | `OPEN` — awaiting a named implementation owner |
+| A1 | Antigravity plugin surface + registration/removal | `CLOSED` — owner-executed 2026-08-19; A1-R1/R3/R4/R5/R6/R7 green (9 tests). A1-R2 (a real Antigravity session loading both skills) is the owner readback and is pending: the registration was written to the real `~/.gemini/config/skills.json` '"and both skills validate structurally, but no running-product evidence has been captured. |
 
 ## Claude Code status (no ticket needed)
 

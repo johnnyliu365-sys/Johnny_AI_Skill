@@ -96,6 +96,25 @@ marketplace remove 只能移除 Codex 可見的 plugin，不能宣稱 Johnny run
 既有 `0.3.x` skill-only 安裝沒有 `0.4.x` runtime；其 marketplace 更新／移除流程仍以
 該已安裝版本的 Codex 指令為準。任何版本的拔除都不得修改公司 repository。
 
+## Antigravity 使用方式
+
+Antigravity 從 customization root 的 `skills.json` 掃描 `entries[].path` 尋找
+skill 目錄，因此不需要複製任何 skill 檔案——註冊的是指向本 repo `skills/` 的
+單一項目，維持唯一真相來源。
+
+在本 repo 內工作時，`.agents/skills.json` 已提交在版控中，開啟工作區即自動生效
+（其 `path` 為 workspace-relative，由 Antigravity 相對 repository root 解析）。
+`.agents/plugins/johnny-ai-skill/` 另附一條 worktree 位置規則。
+
+要在所有專案都可用，註冊到 per-user customization root（`~/.gemini/config/`）：
+
+```powershell
+py -3.11 -c "from pathlib import Path; import sys; sys.path.insert(0, r'C:\Users\User\Desktop\AI控制工作workflow'); from library.local_orchestration.antigravity_registration import default_customization_root, register_johnny_skills; print(register_johnny_skills(default_customization_root(), Path(r'C:\Users\User\Desktop\AI控制工作workflow\skills'))[0].value)"
+```
+
+註冊是冪等的（重複執行只會有一個項目），移除只拿掉 Johnny 自己的項目，使用者原有
+的其他 entries 逐位元組保留，且不會刪除非 Johnny 建立的設定檔。
+
 ## Claude Code 使用方式
 
 Claude Code 透過 `.claude-plugin/plugin.json` 讀取同一個根目錄 `skills/`，因此 skill 會有 `johnny-ai-skill` 命名空間。
