@@ -5,7 +5,7 @@ rem Every exit holds the console open first: this file is meant to be
 rem double-clicked from Explorer, where an unpaused exit closes the window
 rem before the user can read why the bundle was refused.
 set "BUNDLE_NAME=johnny-ai-skill-0.4.3.zip"
-set "APPROVED_DIGEST=90fd1579b6279cc0fe552dc0b5ad679a41dfe40077e77ee05f75fed84361998e"
+set "APPROVED_DIGEST=016e466d96f664f80ffaaa02712eb72ef675cdb39fba500a3e055a51ff38771e"
 
 set "BUNDLE_PATH=%~dp0%BUNDLE_NAME%"
 
