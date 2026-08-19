@@ -24,3 +24,44 @@ wake.
 | E5 | CLI wiring | `johnny-router runner start\|stop\|status`, `wake-inbox list`, `wake-capability probe` | `PLANNED` |
 | E6 | Gated end-to-end qualification | Real repository, real commit to the exact ref, real detached runner, real wake delivery, zero residue | `PLANNED` |
 | E7 | Owner real-machine smoke | Owner runs the runner against a disposable repository and observes a real wake | `OWNER_EFFECT_REQUIRED` |
+
+## E6 status — 4/5 real cells green, R3 blocked by CR-E6-01
+
+The gated qualification runs the whole real chain and proves, against a real
+repository and a real detached process:
+
+| Cell | Result |
+| --- | --- |
+| R1 runner starts detached and records its channel | PASS |
+| R2 proven capability resolves the command channel | PASS |
+| R3 exact-ref commit delivers a real wake | **FAIL — CR-E6-01** |
+| R4 stop is acknowledged and the process exits | PASS |
+| R5 workspace is fully removable | PASS |
+
+Two earlier R3 failures were the qualification's own defects and are fixed:
+committing outside the exact reserved leaf (which the adapter correctly
+classified `SOURCE_ADVANCED` and kept silent — a real proof that ordinary
+source commits do not wake anyone), and an unsealed handoff payload.
+
+### CR-E6-01 — the runner never seeds the durable receipt
+
+Root cause, isolated by in-process tracing rather than inference: the native
+watcher fires (verified directly: four real signals from one commit),
+`prepare` returns `PREPARED`, `start` returns `ACTIVE`, and the supervision
+chain reaches the wake stage — but the injected host wake port is never
+called and the runtime halts with `ROLE_WAKE_UNAVAILABLE`. The cause is in
+`LiveDispatchMetadataBoundary.claim_role_wake_attempt`: it admits a claim only
+when the canonical `TicketReceipt` already exists in the durable checkpoint as
+`ACTIVE` with a matching digest. The runner composition arms supervision
+without ever registering the subscription's receipt into that boundary, so
+every claim returns `ATTEMPT_CONFLICT` and no wake can be attempted.
+
+This is a composition gap in the runner, not a defect in the frozen
+supervision, adapter or boundary contracts — each behaved exactly as
+specified, and the fail-closed posture held: no wake was claimed, nothing was
+reported as delivered, and the runtime halted visibly instead of going quiet.
+
+Defined fix (next ticket, not attempted here): the runner must register the
+approved dispatch artifacts and issue the ticket receipt into the durable
+boundary from the subscription spec before arming supervision, and must halt
+with an exact typed failure when that seeding does not read back.
