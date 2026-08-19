@@ -282,7 +282,7 @@ def check() -> int:
     )
     print("WAKE DELIVERED")
     print(f"  action: {action}")
-    if action != "HANDOFF_COMPLETED":
+    if action != "REVIEW_HANDOFF":
         print(
             "  NOTE: this is not the handoff-driven wake. A SUPERVISION_DEADLINE\n"
             "        action here means the deadline expired before the handoff\n"

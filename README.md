@@ -17,14 +17,16 @@ capability 時誠實落到 candidate inbox（只登記完成候選，不宣稱�
 （dispatch authority）整合遞延至 multi-model workstation 線。本版經五輪外部審查後
 APPROVED。
 
-> **0.4.1 已知缺陷（`E10` / `CR-E7-01`，2026-08-19 發行後由 owner smoke 準備過程發現）**：
-> runner 會在 exact Git ref 上正確 arm 監督、解析出真實的 `HOST_COMMAND` 通道，
-> **但目前唯一經證實能送達的喚醒是「監督期限到期」**。把封裝好的 terminal handoff
-> leaf 提交到被監看的 ref、且期限尚未到期時，不會產生喚醒。原本的 E6 R3 斷言只檢查
-> payload 是否含 `"handoff"` 字串，而期限 payload 帶有 `handoff_id=-` 欄位剛好命中，
-> 因此長期偽綠。該斷言已改為具鑑別力並保持紅燈，詳見
+> **0.4.1 發行後修正（`E10` / `CR-E7-01`，2026-08-19 當日發現並修復）**：發行當下
+> handoff 驅動的喚醒實際上不會送達——coordinator 拒絕未帶 review instruction 的
+> handoff 喚醒，而 unbatched 組合移除了負責填入該指令的批次層卻未移交責任；長期
+> 偽綠來自 E6 R3 只比對 `"handoff"` 子字串（期限 payload 的 `handoff_id=-` 欄位剛好
+> 命中）。已由 `SingleHandoffReviewSubmission` 修復並以具鑑別力的 R3 實證：真
+> detached runner、真 commit、期限未到期時送達 `action=REVIEW_HANDOFF`。反向突變
+> （移除該修正）使 R3 轉紅。詳見
 > [`modules/tickets/event-runner-binding/e10-handoff-driven-wake.md`](modules/tickets/event-runner-binding/e10-handoff-driven-wake.md)。
-> 在 E10 收斂前，請勿把「commit 完成後會自動喚醒 reviewer」當成可用能力。
+> 此修正在 main 上，尚未進入任何已發行 bundle；0.4.1 zip 內的 runner 仍帶此缺陷，
+> 修正將隨下一版 release 發布。
 
 0.4.0 完成 Router runtime 主線（runner registry、receipt Git subscription、Senior review
 queue、host-wake gate、deterministic bundle、Router composition、install／uninstall

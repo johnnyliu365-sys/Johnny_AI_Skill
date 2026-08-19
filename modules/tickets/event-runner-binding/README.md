@@ -22,8 +22,8 @@ wake.
 | E3 | Durable wake candidate inbox | Unproven capability records one deduplicated candidate per attempt and stays typed-blocked | `CLOSED` — `wake_candidate_inbox.py`; always NO_EFFECT, recording is never reported as a wake |
 | E4 | Runner process + lifecycle port | Detached per-project runner hosting the supervision controller; start/stop/status through a real `RunnerLifecyclePort` | `CLOSED` — `runner_lifecycle_port.py` + `event_runner.py`; detached runner, stop sentinel, native ref watch |
 | E5 | CLI wiring | `johnny-router runner start\|stop\|status`, `wake-inbox list`, `wake-capability probe` | `CLOSED` — `runner_cli.py` + `event_runner_main.py` |
-| E6 | Gated end-to-end qualification | Real repository, real commit to the exact ref, real detached runner, real wake delivery, zero residue | `RED` — R1/R2/R4/R5 green; **R3 fails** with the discriminating assertion. See `E10`. |
-| E7 | Owner real-machine smoke | Owner runs the runner against a disposable repository and observes a real wake | `BLOCKED` by `E10` — the runbook `doc/runbooks/e7_owner_smoke.py` is written and exercised, but the handoff-driven wake it exists to observe does not fire. |
+| E6 | Gated end-to-end qualification | Real repository, real commit to the exact ref, real detached runner, real wake delivery, zero residue | `CLOSED` — `5 passed` with the discriminating R3: delivered action is `REVIEW_HANDOFF` on the real commit, deadline not due |
+| E7 | Owner real-machine smoke | Owner runs the runner against a disposable repository and observes a real wake | `OWNER_EFFECT_REQUIRED` — unblocked by E10's closure; runbook `doc/runbooks/e7_owner_smoke.py` is exercised end-to-end by the control plane |
 
 ## E6 status — 4/5 real cells green, R3 blocked by CR-E6-01
 
@@ -197,6 +197,7 @@ Fixed on the way: `subscription_builder` had inherited the same fixture
 constant, so every composed subscription carried an already-expired deadline.
 It now reads the host's own monotonic clock, pinned by regression.
 
-Root cause is **not** isolated and must not be guessed: either the native ref
-watcher never signals, or the adapter classifies the event silently. E10
-requires direct observation.
+Root cause was isolated by direct observation and closed the same day: the
+coordinator refuses instruction-less handoff wakes and the unbatched
+composition never filled the instruction. See the closure section in
+[`e10-handoff-driven-wake.md`](e10-handoff-driven-wake.md).

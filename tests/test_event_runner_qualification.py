@@ -226,7 +226,14 @@ class EventRunnerQualificationTests(unittest.TestCase):
                 subscription_id=_registration_request(baseline).subscription_id,
                 lease_id="lease-e6-runner-001",
                 supervision_class=SupervisionClass.LUNA_XHIGH_DEFAULT,
-                execution_started=_started(baseline),
+                # CR-E7-01: the shared fixture's started_at_ms=1_000 puts the
+                # supervision deadline permanently in the past, so a deadline
+                # wake fires at arm time and closes the runtime before the
+                # committed handoff can drive its own wake. The qualification
+                # must start the lease on the host's real monotonic clock.
+                execution_started=_started(
+                    baseline, started_at_ms=time.monotonic_ns() // 1_000_000
+                ),
             ),
         )
         subscriptions_path(layout).write_text(
@@ -264,8 +271,18 @@ class EventRunnerQualificationTests(unittest.TestCase):
                 _sealed_leaf(baseline, result_commit), encoding="utf-8"
             )
             _commit(repository, "handoff")
+            # The capability probe already wrote this same file when the
+            # runner proved its wake command, so file existence is not
+            # evidence of a wake (CR-E7-01 hid behind exactly that): wait
+            # for a real ROLE_WAKE_V1 payload to replace the probe's.
             deadline_at = time.monotonic() + 60
-            while time.monotonic() < deadline_at and not delivered.is_file():
+            while time.monotonic() < deadline_at:
+                if (
+                    delivered.is_file()
+                    and "ROLE_WAKE_V1"
+                    in delivered.read_text(encoding="utf-8", errors="replace")
+                ):
+                    break
                 time.sleep(0.5)
         cls.delivered_payload = (
             delivered.read_text(encoding="utf-8") if delivered.is_file() else None
