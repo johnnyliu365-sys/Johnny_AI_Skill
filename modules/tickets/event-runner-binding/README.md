@@ -17,13 +17,13 @@ wake.
 
 | # | Ticket | Sole closure | State |
 | --- | --- | --- | --- |
-| E1 | Wake capability config + probe | Owner-declared host wake command is probed before any claim; absent/failing config yields `UNAVAILABLE` | `IN_PROGRESS` |
-| E2 | Command role-wake port | Real `RoleWakePort` over the declared command with exactly-once, never-retry-ambiguity semantics | `PLANNED` |
-| E3 | Durable wake candidate inbox | Unproven capability records one deduplicated candidate per attempt and stays typed-blocked | `PLANNED` |
-| E4 | Runner process + lifecycle port | Detached per-project runner hosting the supervision controller; start/stop/status through a real `RunnerLifecyclePort` | `PLANNED` |
-| E5 | CLI wiring | `johnny-router runner start\|stop\|status`, `wake-inbox list`, `wake-capability probe` | `PLANNED` |
-| E6 | Gated end-to-end qualification | Real repository, real commit to the exact ref, real detached runner, real wake delivery, zero residue | `PLANNED` |
-| E7 | Owner real-machine smoke | Owner runs the runner against a disposable repository and observes a real wake | `OWNER_EFFECT_REQUIRED` |
+| E1 | Wake capability config + probe | Owner-declared host wake command is probed before any claim; absent/failing config yields `UNAVAILABLE` | `CLOSED` — `wake_capability.py`; probe runs the declared command with a disposable payload |
+| E2 | Command role-wake port | Real `RoleWakePort` over the declared command with exactly-once, never-retry-ambiguity semantics | `CLOSED` — `command_role_wake_port.py`; EFFECT_UNCERTAIN on post-start timeout, never retried |
+| E3 | Durable wake candidate inbox | Unproven capability records one deduplicated candidate per attempt and stays typed-blocked | `CLOSED` — `wake_candidate_inbox.py`; always NO_EFFECT, recording is never reported as a wake |
+| E4 | Runner process + lifecycle port | Detached per-project runner hosting the supervision controller; start/stop/status through a real `RunnerLifecyclePort` | `CLOSED` — `runner_lifecycle_port.py` + `event_runner.py`; detached runner, stop sentinel, native ref watch |
+| E5 | CLI wiring | `johnny-router runner start\|stop\|status`, `wake-inbox list`, `wake-capability probe` | `CLOSED` — `runner_cli.py` + `event_runner_main.py` |
+| E6 | Gated end-to-end qualification | Real repository, real commit to the exact ref, real detached runner, real wake delivery, zero residue | `CLOSED` — gated `JOHNNY_LIVE_QUAL` run R1–R5 `5 passed` (re-verified 2026-08-19) |
+| E7 | Owner real-machine smoke | Owner runs the runner against a disposable repository and observes a real wake | `OWNER_EFFECT_REQUIRED` — still open: needs a subscription-generation story before an owner can run it |
 
 ## E6 status — 4/5 real cells green, R3 blocked by CR-E6-01
 
