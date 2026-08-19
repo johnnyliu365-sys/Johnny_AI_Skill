@@ -105,3 +105,18 @@ The guard's message now says so, and tells the reader to understand the cause
 before deleting the evidence rather than clearing it reflexively. Deleting
 first and asking later is the same habit that produced this ticket's wrong
 opening diagnosis.
+
+## One observation this ticket does not explain
+
+During the closing verification a single run failed
+`test_codex_registration_foreign_state_isolation_acceptance::test_a1_to_a8_...`
+with the runtime root **clean** — so not the mechanism this ticket fixes.
+
+It did not reproduce: the file passed five consecutive isolated runs, and the
+full suite then passed three consecutive times at `990 passed, 16 skipped`
+with zero residue each time.
+
+Recorded rather than closed. One unexplained failure is not evidence of a
+defect, and it is not evidence of health either; it is an observation with a
+sample size of one. If it recurs, it deserves its own ticket and the same
+discipline this one ended up needing: reproduce before diagnosing.
