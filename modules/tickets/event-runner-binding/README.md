@@ -34,7 +34,7 @@ repository and a real detached process:
 | --- | --- |
 | R1 runner starts detached and records its channel | PASS |
 | R2 proven capability resolves the command channel | PASS |
-| R3 exact-ref commit delivers a real wake | **FAIL — CR-E6-01** |
+| R3 exact-ref commit delivers a real wake | PASS (after E8) |
 | R4 stop is acknowledged and the process exits | PASS |
 | R5 workspace is fully removable | PASS |
 
@@ -65,3 +65,23 @@ Defined fix (next ticket, not attempted here): the runner must register the
 approved dispatch artifacts and issue the ticket receipt into the durable
 boundary from the subscription spec before arming supervision, and must halt
 with an exact typed failure when that seeding does not read back.
+
+### CR-E6-01 closed by E8
+
+`runner_receipt_seeding.seed_receipt` registers the approved dispatch artifact
+and issues the ticket receipt into the durable boundary from the subscription's
+own receipt, then proves it by reading the receipt back (exact id, `ACTIVE`
+lifecycle, field-for-field equality). The runner seeds before arming and halts
+with `RECEIPT_SEED_FAILED` plus the exact seed failure when the readback does
+not prove. Seeding is idempotent (`ALREADY_PRESENT`) and a different receipt id
+for the same ticket is refused.
+
+The unit closure proves the causal chain directly: the same wake claim returns
+`ATTEMPT_CONFLICT` against an unseeded boundary and claims successfully with a
+record against a seeded one. The gated qualification is now `5 passed` with R3
+green, and its runtime dropped from 61s to under 2s because the wake is
+delivered immediately instead of the test waiting out its 60s timeout.
+
+| # | Ticket | State |
+| --- | --- | --- |
+| E8 | Runner receipt seeding (CR-E6-01) | `CLOSED` — 3 tests / 2 subtests; E6 R3 green |

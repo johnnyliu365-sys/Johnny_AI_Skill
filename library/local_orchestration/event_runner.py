@@ -32,6 +32,7 @@ from .live_dispatch_metadata_boundary import (
     LiveDispatchMetadataBoundary,
 )
 from .receipt_bound_supervision import ReceiptBoundSupervisionController
+from .runner_receipt_seeding import ReceiptSeedStatus, seed_receipt
 from .role_wake_composition import (
     DurableRoleWakeAttemptStore,
     RoleWakeCoordinator,
@@ -162,6 +163,22 @@ def run_event_runner(layout: JohnnyRootLayout) -> int:
     armed: list[str] = []
     controllers: list[ReceiptBoundSupervisionController] = []
     for specification in parsed.subscriptions:
+        # A wake claim is admitted only for a receipt that already exists in
+        # the durable checkpoint, so seeding must precede arming or every
+        # validated handoff would halt as ROLE_WAKE_UNAVAILABLE (CR-E6-01).
+        seed_status, seed_failure = seed_receipt(
+            boundary, specification.preparation.receipt
+        )
+        if seed_status is ReceiptSeedStatus.BLOCKED:
+            _write_state(
+                layout,
+                {
+                    "status": "BLOCKED",
+                    "code": "RECEIPT_SEED_FAILED",
+                    "failure": seed_failure.value if seed_failure else None,
+                },
+            )
+            return 2
         # No committed review-cluster resolver exists in 0.4.x, so this runner
         # uses the explicitly named unbatched variant rather than presenting
         # itself as the batched supervision path.

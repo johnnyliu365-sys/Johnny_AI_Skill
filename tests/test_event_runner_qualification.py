@@ -187,7 +187,6 @@ class EventRunnerQualificationTests(unittest.TestCase):
                     "encoding='utf-8')",
                     "{payload_file}",
                 ),
-                probe_command=(sys.executable, "-c", "import sys; sys.exit(0)"),
                 reviewer_ref="role-supervisor-reviewer",
                 timeout_seconds=60,
             ).model_dump_json(),
