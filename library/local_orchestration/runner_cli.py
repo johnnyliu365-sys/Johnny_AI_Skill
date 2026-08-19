@@ -11,7 +11,13 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from pydantic import ValidationError
+
 from library.workflow_router.contracts import ProjectId
+from library.workflow_router.live_dispatch_contracts import (
+    ReceiptReadStatus,
+    TicketReceiptReadRequest,
+)
 
 from .event_runner import resolve_wake_channel, subscriptions_path
 from .johnny_root_layout import JohnnyRootLayout
@@ -21,8 +27,15 @@ from .runner_lifecycle_port import (
     read_runner_state,
     runner_pid_path,
 )
+from .subscription_builder import (
+    SubscriptionBuildFailure,
+    SubscriptionBuildStatus,
+    SubscriptionInputs,
+    build_subscription,
+)
 from .wake_candidate_inbox import read_candidates
 from .wake_capability import WakeCapabilityStatus, probe_wake_capability
+from .wake_scoped_boundary import WakeScopedDispatchBoundary
 
 _PLACEHOLDER_PROJECT: ProjectId = "prj_0000000000000000"
 
@@ -84,6 +97,85 @@ def _runner_status(layout: JohnnyRootLayout) -> int:
     return 0 if running else 3
 
 
+def _load_inputs_document(inputs_path: Path) -> object | None:
+    """Read and JSON-decode the inputs file, or None on any I/O/parse failure."""
+
+    try:
+        raw = inputs_path.read_text(encoding="utf-8")
+    except OSError:
+        return None
+    try:
+        parsed: object = json.loads(raw)
+    except ValueError:
+        return None
+    return parsed
+
+
+def _runner_subscribe(layout: JohnnyRootLayout, arguments: tuple[str, ...]) -> int:
+    if not arguments:
+        _emit({"status": "REFUSED", "failure": "INPUTS_FILE_UNREADABLE", "section": "file"})
+        return 2
+    document = _load_inputs_document(Path(arguments[0]))
+    if not isinstance(document, dict):
+        _emit({"status": "REFUSED", "failure": "INPUTS_FILE_INVALID", "section": "file"})
+        return 2
+
+    try:
+        locator = TicketReceiptReadRequest.model_validate_json(
+            json.dumps(document.get("receipt_locator"))
+        )
+    except ValidationError:
+        _emit(
+            {
+                "status": "REFUSED",
+                "failure": "INPUTS_FILE_INVALID",
+                "section": "receipt_locator",
+            }
+        )
+        return 2
+
+    try:
+        subscription_inputs = SubscriptionInputs.model_validate_json(
+            json.dumps(document.get("inputs"))
+        )
+    except ValidationError:
+        _emit(
+            {
+                "status": "REFUSED",
+                "failure": "INPUTS_FILE_INVALID",
+                "section": "inputs",
+            }
+        )
+        return 2
+
+    metadata_root = layout.queue_root / "metadata"
+    metadata_root.mkdir(parents=True, exist_ok=True)
+    boundary = WakeScopedDispatchBoundary(metadata_root)
+    read_result = boundary.read_receipt(locator)
+    if read_result.status is not ReceiptReadStatus.FOUND or read_result.receipt is None:
+        _emit(
+            {
+                "status": "REFUSED",
+                "failure": SubscriptionBuildFailure.RECEIPT_NOT_DISPATCHED.value,
+            }
+        )
+        return 2
+
+    status, failure = build_subscription(
+        layout, read_result.receipt, subscription_inputs
+    )
+    if status is not SubscriptionBuildStatus.WRITTEN:
+        _emit(
+            {
+                "status": "REFUSED",
+                "failure": failure.value if failure is not None else "UNKNOWN",
+            }
+        )
+        return 2
+    _emit({"status": "WRITTEN"})
+    return 0
+
+
 def run_runner_command(
     command: str, arguments: tuple[str, ...], johnny_root: Path
 ) -> int:
@@ -130,6 +222,8 @@ def run_runner_command(
         return _runner_stop(layout)
     if subcommand == "status":
         return _runner_status(layout)
+    if subcommand == "subscribe":
+        return _runner_subscribe(layout, arguments[1:])
     _emit({"status": "CAPABILITY_UNAVAILABLE", "code": "UNKNOWN_SUBCOMMAND"})
     return 2
 

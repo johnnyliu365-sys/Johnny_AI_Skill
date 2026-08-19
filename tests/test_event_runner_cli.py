@@ -4,19 +4,26 @@ from __future__ import annotations
 
 import io
 import json
+import subprocess
 import sys
 import unittest
 from contextlib import redirect_stdout
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
+from library.local_orchestration import runner_cli
 from library.local_orchestration.event_runner import (
+    RunnerSubscriptionFile,
     resolve_wake_channel,
     run_event_runner,
     runner_state_path,
     subscriptions_path,
 )
 from library.local_orchestration.johnny_root_layout import JohnnyRootLayout
+from library.local_orchestration.live_dispatch_metadata_boundary import (
+    JohnnyMetadataRoot,
+    LiveDispatchMetadataBoundary,
+)
 from library.local_orchestration.project_runner_registry import (
     RunnerStartCapabilityUnavailable,
 )
@@ -30,6 +37,10 @@ from library.local_orchestration.wake_capability import (
     WakeCommandConfig,
     wake_config_path,
 )
+from library.local_orchestration.wake_scoped_boundary import WakeScopedDispatchBoundary
+from library.workflow_router.supervision_policy import SupervisionClass
+from tests.test_role_wake_composition import _receipt
+from tests.test_runner_receipt_seeding import _issue_receipt_fixture
 
 _PROJECT = "prj_0123456789abcdef"
 
@@ -47,6 +58,75 @@ def _capture(command: str, arguments: tuple[str, ...], root: Path) -> tuple[int,
         code = run_runner_command(command, arguments, root)
     lines = [line for line in captured.getvalue().splitlines() if line.strip()]
     return code, json.loads(lines[-1])
+
+
+def _declare_wake_command(layout: JohnnyRootLayout) -> None:
+    """A real host command that succeeds, so the probe has something to prove."""
+
+    wake_config_path(layout).write_text(
+        WakeCommandConfig(
+            command=(sys.executable, "-c", "pass", "{payload_file}"),
+            reviewer_ref="role-supervisor-reviewer",
+        ).model_dump_json(),
+        encoding="utf-8",
+    )
+
+
+def _repository(base: Path) -> Path:
+    repository = base / "repo"
+    repository.mkdir(parents=True)
+    subprocess.run(
+        ("git", "-C", str(repository), "init", "--quiet"),
+        check=True,
+        capture_output=True,
+    )
+    return repository
+
+
+def _receipt_locator_payload() -> dict[str, object]:
+    receipt = _receipt()
+    return {
+        "project_id": receipt.project_id,
+        "ticket_reference": receipt.ticket_reference,
+        "ticket_revision": receipt.ticket_revision,
+    }
+
+
+def _subscription_inputs_payload(repository: Path) -> dict[str, object]:
+    return {
+        "repository_root": str(repository),
+        "event_source_ref": "event-source-e13-001",
+        "subscription_id": "subscription-e13-001",
+        "exact_git_ref": "refs/heads/main",
+        "reserved_handoff_ref": (
+            "doc/handoffs/2026/e13/ticket-e13-001/handoff-e13-001.json"
+        ),
+        "spec_ref": "spec-e13",
+        "spec_revision": "rev-1111111111111111",
+        "source_role_ref": "role-implementation-owner",
+        "reviewer_ref": "role-supervisor-reviewer",
+        "reviewer_task_ref": "task-e13-reviewer",
+        "reviewer_task_id": "3f2b1c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d",
+        "reviewer_host_id": "local",
+        "lease_id": "lease-e13-001",
+        "supervision_class": "LUNA_XHIGH_DEFAULT",
+    }
+
+
+def _write_inputs_file(path: Path, receipt_locator: object, inputs: object) -> None:
+    path.write_text(
+        json.dumps({"receipt_locator": receipt_locator, "inputs": inputs}),
+        encoding="utf-8",
+    )
+
+
+def _seed_receipt(layout: JohnnyRootLayout) -> None:
+    metadata_root = layout.queue_root / "metadata"
+    metadata_root.mkdir(parents=True, exist_ok=True)
+    _issue_receipt_fixture(
+        LiveDispatchMetadataBoundary(JohnnyMetadataRoot(metadata_root.resolve())),
+        _receipt(),
+    )
 
 
 class ResolveWakeChannelTests(unittest.TestCase):
@@ -150,6 +230,216 @@ class RunnerCliTests(unittest.TestCase):
                 code, payload = _capture("runner", ("frobnicate",), layout.base)
                 self.assertEqual(code, 2)
                 self.assertEqual(payload["code"], "UNKNOWN_SUBCOMMAND")
+
+
+class RunnerSubscribeCliTests(unittest.TestCase):
+    """E13: `runner subscribe <inputs.json>` reaches the subscription builder."""
+
+    def test_a_dispatched_receipt_writes_one_typed_line(self) -> None:
+        """E13-R1."""
+
+        with TemporaryDirectory() as temporary:
+            base = Path(temporary)
+            layout = _layout(str(base / "johnny"))
+            _declare_wake_command(layout)
+            repository = _repository(base)
+            _seed_receipt(layout)
+            inputs_path = base / "inputs.json"
+            _write_inputs_file(
+                inputs_path,
+                _receipt_locator_payload(),
+                _subscription_inputs_payload(repository),
+            )
+            code, payload = _capture(
+                "runner", ("subscribe", str(inputs_path)), layout.base
+            )
+            self.assertEqual(code, 0)
+            self.assertEqual(payload, {"status": "WRITTEN"})
+            parsed = RunnerSubscriptionFile.model_validate_json(
+                subscriptions_path(layout).read_text(encoding="utf-8")
+            )
+            self.assertEqual(len(parsed.subscriptions), 1)
+
+    def test_an_undispatched_receipt_is_refused_before_any_write(self) -> None:
+        """E13-R2."""
+
+        with TemporaryDirectory() as temporary:
+            base = Path(temporary)
+            layout = _layout(str(base / "johnny"))
+            _declare_wake_command(layout)
+            repository = _repository(base)
+            inputs_path = base / "inputs.json"
+            _write_inputs_file(
+                inputs_path,
+                _receipt_locator_payload(),
+                _subscription_inputs_payload(repository),
+            )
+            code, payload = _capture(
+                "runner", ("subscribe", str(inputs_path)), layout.base
+            )
+            self.assertNotEqual(code, 0)
+            self.assertEqual(payload["status"], "REFUSED")
+            self.assertEqual(payload["failure"], "RECEIPT_NOT_DISPATCHED")
+            self.assertFalse(subscriptions_path(layout).exists())
+
+    def test_a_missing_inputs_file_is_refused_and_names_the_file(self) -> None:
+        """E13-R3."""
+
+        with TemporaryDirectory() as temporary:
+            layout = _layout(temporary)
+            missing = Path(temporary) / "does-not-exist.json"
+            code, payload = _capture(
+                "runner", ("subscribe", str(missing)), layout.base
+            )
+            self.assertNotEqual(code, 0)
+            self.assertEqual(payload["status"], "REFUSED")
+            self.assertEqual(payload["section"], "file")
+            self.assertFalse(subscriptions_path(layout).exists())
+
+    def test_malformed_json_is_refused_and_names_the_file(self) -> None:
+        """E13-R3."""
+
+        with TemporaryDirectory() as temporary:
+            layout = _layout(temporary)
+            broken = Path(temporary) / "inputs.json"
+            broken.write_text("{not json", encoding="utf-8")
+            code, payload = _capture(
+                "runner", ("subscribe", str(broken)), layout.base
+            )
+            self.assertNotEqual(code, 0)
+            self.assertEqual(payload["status"], "REFUSED")
+            self.assertEqual(payload["section"], "file")
+
+    def test_an_invalid_receipt_locator_names_that_section(self) -> None:
+        """E13-R3."""
+
+        with TemporaryDirectory() as temporary:
+            base = Path(temporary)
+            layout = _layout(str(base / "johnny"))
+            repository = _repository(base)
+            inputs_path = base / "inputs.json"
+            _write_inputs_file(
+                inputs_path,
+                {},
+                _subscription_inputs_payload(repository),
+            )
+            code, payload = _capture(
+                "runner", ("subscribe", str(inputs_path)), layout.base
+            )
+            self.assertNotEqual(code, 0)
+            self.assertEqual(payload["status"], "REFUSED")
+            self.assertEqual(payload["section"], "receipt_locator")
+            self.assertFalse(subscriptions_path(layout).exists())
+
+    def test_an_invalid_subscription_inputs_section_names_that_section(self) -> None:
+        """E13-R3."""
+
+        with TemporaryDirectory() as temporary:
+            base = Path(temporary)
+            layout = _layout(str(base / "johnny"))
+            inputs_path = base / "inputs.json"
+            _write_inputs_file(inputs_path, _receipt_locator_payload(), {})
+            code, payload = _capture(
+                "runner", ("subscribe", str(inputs_path)), layout.base
+            )
+            self.assertNotEqual(code, 0)
+            self.assertEqual(payload["status"], "REFUSED")
+            self.assertEqual(payload["section"], "inputs")
+            self.assertFalse(subscriptions_path(layout).exists())
+
+    def test_an_unreadable_inputs_argument_names_the_file(self) -> None:
+        """E13-R3: no path argument at all is treated the same as unreadable."""
+
+        with TemporaryDirectory() as temporary:
+            layout = _layout(temporary)
+            code, payload = _capture("runner", ("subscribe",), layout.base)
+            self.assertNotEqual(code, 0)
+            self.assertEqual(payload["status"], "REFUSED")
+            self.assertEqual(payload["section"], "file")
+
+    def test_an_unprovable_wake_capability_is_refused(self) -> None:
+        """E13-R4: no wake command is declared in this test layout."""
+
+        with TemporaryDirectory() as temporary:
+            base = Path(temporary)
+            layout = _layout(str(base / "johnny"))
+            repository = _repository(base)
+            _seed_receipt(layout)
+            inputs_path = base / "inputs.json"
+            _write_inputs_file(
+                inputs_path,
+                _receipt_locator_payload(),
+                _subscription_inputs_payload(repository),
+            )
+            code, payload = _capture(
+                "runner", ("subscribe", str(inputs_path)), layout.base
+            )
+            self.assertNotEqual(code, 0)
+            self.assertEqual(payload["status"], "REFUSED")
+            self.assertEqual(payload["failure"], "WAKE_CAPABILITY_UNAVAILABLE")
+            self.assertFalse(subscriptions_path(layout).exists())
+
+
+class RunnerSubscribeIsolationTests(unittest.TestCase):
+    """E13-R5: no issuance-capable object flows through the subscribe path."""
+
+    def test_the_cli_module_holds_no_issuance_capable_name(self) -> None:
+        for forbidden in (
+            "LiveDispatchMetadataStore",
+            "LiveDispatchMetadataBoundary",
+            "JohnnyMetadataRoot",
+            "IssuanceScopedDispatchBoundary",
+            "TicketReceiptIssueRequest",
+            "ApprovedDispatchArtifactRegisterRequest",
+            "admit_dispatch",
+            "create_dispatch_grant",
+            "issue_receipt",
+            "register_artifact",
+        ):
+            with self.subTest(name=forbidden):
+                self.assertFalse(hasattr(runner_cli, forbidden))
+
+    def test_the_cli_source_never_imports_the_issuance_modules(self) -> None:
+        assert runner_cli.__file__ is not None
+        source = Path(runner_cli.__file__).read_text(encoding="utf-8")
+        for forbidden in (
+            "live_dispatch_metadata_store",
+            "issuance_scoped_boundary",
+            "dispatch_authority",
+        ):
+            with self.subTest(module=forbidden):
+                self.assertNotIn(forbidden, source)
+
+    def test_the_subscribe_path_binds_only_the_wake_scoped_boundary(self) -> None:
+        recorded: list[WakeScopedDispatchBoundary] = []
+
+        def _recording_boundary(metadata_root: Path) -> WakeScopedDispatchBoundary:
+            instance = WakeScopedDispatchBoundary(metadata_root)
+            recorded.append(instance)
+            return instance
+
+        original = getattr(runner_cli, "WakeScopedDispatchBoundary")
+        setattr(runner_cli, "WakeScopedDispatchBoundary", _recording_boundary)
+        try:
+            with TemporaryDirectory() as temporary:
+                base = Path(temporary)
+                layout = _layout(str(base / "johnny"))
+                repository = _repository(base)
+                inputs_path = base / "inputs.json"
+                _write_inputs_file(
+                    inputs_path,
+                    _receipt_locator_payload(),
+                    _subscription_inputs_payload(repository),
+                )
+                _capture("runner", ("subscribe", str(inputs_path)), layout.base)
+        finally:
+            setattr(runner_cli, "WakeScopedDispatchBoundary", original)
+
+        self.assertGreaterEqual(len(recorded), 1)
+        for bound in recorded:
+            self.assertIs(type(bound), original)
+            for forbidden in ("issue_receipt", "register_artifact"):
+                self.assertFalse(hasattr(bound, forbidden))
 
 
 if __name__ == "__main__":

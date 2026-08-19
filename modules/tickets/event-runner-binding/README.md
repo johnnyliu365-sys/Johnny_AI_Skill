@@ -26,7 +26,7 @@ wake.
 | E7 | Owner real-machine smoke | Owner runs the runner against a disposable repository and observes a real wake | `OWNER_EFFECT_REQUIRED` — unblocked by E10's closure; runbook `doc/runbooks/e7_owner_smoke.py` is exercised end-to-end by the control plane |
 | E11 | Agent wake channel (phase B) | Does any host command actually start an acting agent? | `CLOSED` — **proven**: `agentapi send-message` woke a real Antigravity agent that read the payload and wrote the ack; see [`e11-agent-wake-channel.md`](e11-agent-wake-channel.md) |
 | E12 | Antigravity wake command with session discovery | Owner-declarable wake command that survives per-launch address/token churn; see [`e12-wake-command-discovery.md`](e12-wake-command-discovery.md) | `CLOSED` — control-plane executed; 14 tests, two reverse mutations; `HOST_ACCEPTED` through the real port |
-| E13 | `runner subscribe` CLI | The E9 subscription builder reaches the installed CLI; see [`e13-runner-subscribe-cli.md`](e13-runner-subscribe-cli.md) | `OPEN` — dispatched to Antigravity/Gemini |
+| E13 | `runner subscribe` CLI | The E9 subscription builder reaches the installed CLI; see [`e13-runner-subscribe-cli.md`](e13-runner-subscribe-cli.md) | `CLOSED` — `johnny-router runner subscribe <inputs.json>` reads the receipt through `WakeScopedDispatchBoundary`, probes both capabilities, writes `runner-subscriptions.json`; 946 passed, zero residue |
 
 ## E6 status — 4/5 real cells green, R3 blocked by CR-E6-01
 
