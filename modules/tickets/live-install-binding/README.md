@@ -60,6 +60,23 @@ could not find the installation. The launcher is invoked by full path at
 removal instructions show the bare command name, which reads as if it were on
 `PATH`; worth a documentation pass.
 
+## 0.4.3 owner upgrade smoke on the second machine (2026-08-20, OWNER_EXECUTED)
+
+The full upgrade path, exercised by the owner on the host with no development
+checkout: launcher uninstall of 0.4.2 (`REMOVED`, five components,
+`root_deleted: true`, `remaining: []`), release-asset download, one-click
+wrapper with the digest verified against the approved
+`016e466d96f664f80ffaaa02712eb72ef675cdb39fba500a3e055a51ff38771e`, `INSTALL`
+confirmation, and
+
+```json
+{"launcher_present": true, "ledger_present": true, "plugin_version": "0.4.3", "status": "OK", "venv_present": true}
+```
+
+Three releases, three owner-verified installs on that machine; 0.4.2's full
+lifecycle closed end to end on the way. The installed runtime now carries the
+complete loop CLI: `dispatch`, `runner subscribe`, `review`.
+
 ## CR-L9-01 — blocked exits were invisible to a double-click user (control-plane review)
 
 The first delivery exited straight out of every `BLOCKED` path. Explorer closes the console
