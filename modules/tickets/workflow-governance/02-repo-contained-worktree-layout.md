@@ -34,7 +34,11 @@ so the rule binds models that never read this repository's documentation.
   ticket payload: caller data must not be able to mint its own approval.
 - AC-11 is unchanged in substance. This ticket constrains only *where* a
   worktree may live, not what it may write.
-- Migrating the existing worktrees and pruning stale registrations is in scope.
+- The rule governs worktrees an **agent** creates under this checkout. The
+  owner's own checkouts and clones are out of scope and must not be moved,
+  pruned or otherwise touched: the owner works from them directly and may
+  re-clone from GitHub at any time. `git worktree prune` is **not**
+  authorized by this ticket.
 
 ## Authorized implementation scope
 
@@ -54,7 +58,7 @@ modules/tickets/workflow-governance/README.md
 | `R2` | A worktree nested at `.worktrees/` is not collected by the test run (no double collection), and a clean-clone bundle build still returns `BUNDLED`. |
 | `R3` | Dispatch admission refuses a worktree outside the repository root with `HALT / WORKTREE_OUTSIDE_REPOSITORY_ROOT`; readback proves no receipt was issued and no approved state was written. |
 | `R4` | Containment resists reparse evasion: a junctioned repository root and a junctioned worktree path both refuse. Reverse mutation — removing the base self-resolution precheck turns this cell red. |
-| `R5` | Existing worktrees are migrated under `.worktrees/` and stale registrations pruned; `git worktree list` shows only repo-contained live entries. |
+| `R5` | Every agent-created worktree resolves under `.worktrees/`. Owner-owned checkouts, clones and their worktree registrations are byte-unchanged and still registered afterwards — evidence must show `git worktree prune` was never run. |
 | `R6` | `mypy --strict` clean; full suite green; `tests/.johnny-runtime` zero residue. |
 
 ## Control-plane findings the implementer must not rediscover
