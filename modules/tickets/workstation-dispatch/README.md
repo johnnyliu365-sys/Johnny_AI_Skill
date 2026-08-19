@@ -14,4 +14,4 @@ boundary" — the question CLOSURE-E8-02 deliberately deferred.
 
 | # | Ticket | State |
 | --- | --- | --- |
-| W1 | Dispatch authority admission | `OPEN` — control-plane executed |
+| W1 | Dispatch authority admission | `CLOSED` — grant + containment-gated + journaled issuance behind `johnny-router dispatch`; 10 tests, two reverse mutations; fixture-free dispatch→subscription chain proven |

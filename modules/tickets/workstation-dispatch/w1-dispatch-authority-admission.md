@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| State | `OPEN` |
+| State | `CLOSED` |
 | Baseline | `main` = `cf091c9` |
 | Workload | `STANDARD`; issuance is the highest-authority effect in the system, reviewed at `HIGH_ASSURANCE` depth |
 | Depends on | governance 02 (containment predicate), E8 closures (facade discipline), E11 (proves the downstream chain is worth feeding) |
@@ -86,3 +86,36 @@ instead of `_issue_receipt_fixture`, and OS-principal separation.
 | `W1-R5` | Runner isolation: the runner composition binds no issuance-scoped object (module-surface pin plus the existing runtime-identity cells staying green). |
 | `W1-R6` | Reverse mutations: removing the grant check turns R1 red; removing the containment call turns R2 red. |
 | `W1-R7` | `mypy --strict` clean; full suite green; zero runtime residue. |
+
+## Closure evidence (2026-08-19, control-plane executed)
+
+- `W1-R1` No grant → `DISPATCH_AUTHORITY_ABSENT`, zero checkpoint files
+  written. `dispatch grant` twice → `GRANTED` then `ALREADY_GRANTED` with the
+  same grant id.
+- `W1-R2` Sibling worktree → `WORKTREE_OUTSIDE_REPOSITORY_ROOT` before any
+  store effect; junctioned worktree refuses identically. The predicate is
+  `verify_worktree_contained`, reused — governance 02's dispatch gate is now
+  actually wired.
+- `W1-R3` Valid request → `DISPATCHED`; the receipt reads back `CLAIMABLE`
+  through the wake-scoped boundary (the runner's own read path); journal line
+  carries outcome, grant id, principal, receipt id. Identical repeat is
+  idempotent; a conflicting receipt id refuses without touching the stored
+  receipt.
+- `W1-R4` The fixture-free chain exists: a receipt issued through admission
+  fed `build_subscription` → `WRITTEN`. Dispatch → subscription no longer
+  requires any test fixture.
+- `W1-R5` Runner isolation pinned: no issuance name in the runner module,
+  no dispatch-module import in its source; the discriminating runtime-identity
+  cells stay green.
+- `W1-R6` Reverse mutations: dropping the grant check turned R1 red; dropping
+  the containment check turned both R2 cells red; restored byte-identical.
+- `W1-R7` `mypy --strict` clean over all four new/changed modules and the
+  test file; full suite `945 passed, 11 skipped`; zero runtime residue.
+
+CLI smoke: `dispatch issue` without grant → `BLOCKED/DISPATCH_AUTHORITY_ABSENT`
+exit 2; `dispatch grant` → `GRANTED` exit 0; `dispatch issue` → `DISPATCHED`
+with the receipt id, exit 0.
+
+Recorded follow-ups: root README documentation (next release pass), E7
+runbook upgrade to the real dispatch entry, OS-principal separation (the
+grant remains an intent marker, honestly labeled).
