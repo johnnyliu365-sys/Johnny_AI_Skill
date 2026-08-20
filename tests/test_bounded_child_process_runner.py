@@ -555,11 +555,10 @@ class BoundedChildProcessRunnerTests(unittest.TestCase):
             shell=False,
             check=False,
             capture_output=True,
-            encoding="utf-8",
-            errors="strict",
             timeout=5,
         )
-        self.assertEqual(0, result.returncode)
+        stderr = (result.stderr or b"").decode("utf-8", errors="replace")
+        self.assertEqual(0, result.returncode, stderr)
         attributes = source.lstat().st_file_attributes
         self.assertNotEqual(0, attributes & stat.FILE_ATTRIBUTE_REPARSE_POINT)
 
