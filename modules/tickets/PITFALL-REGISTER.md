@@ -169,6 +169,20 @@
 - **修法**：根規則 `__pycache__/`＋`*.py[cod]`；營運紀律：**永不截斷可能帶錯誤
   的命令輸出**。發行 bundle 未受影響（manifest 本就按副檔名排除 .pyc）。
 
+### D5. 文件寫了一個不存在的入口（每個使用者第一步就撞牆）
+- **雷**：README 從 0.3.x 起要求 Claude Code 使用者輸入
+  `/johnny-ai-skill:johnny-project-takeover`。Claude Code 的 slash command 來自
+  `commands/`，而本外掛**只有 `skills/`**——skill 由模型依 `description` 自行載入，
+  不會產生 slash command。該指令從未存在。
+- **證據**：owner 依文件操作，得到 `Unknown command`；已安裝 plugin 的目錄下
+  確認無 `commands/`。
+- **為何長期沒被發現**：所有安裝驗證都停在「plugin 裝好了」（`installed_plugins.json`
+  存在、skills 檔案在位），**沒有一次驗證過文件寫的呼叫方式真的可用**。
+  安裝成功 ≠ 文件正確。
+- **修法**：README 改為自然語言指名 skill，並說明兩種機制的差異（0.4.3 修正）。
+- **同族提醒**：README 的移除指令也曾寫成裸 `johnny-router uninstall`，讀起來
+  像在 PATH 上——同一種「文件描述了未經驗證的使用路徑」的雷。
+
 ---
 
 ## E. 環境／平台類（本機事實，違反即浪費一輪 debug）

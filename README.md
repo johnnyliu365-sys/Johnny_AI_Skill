@@ -182,20 +182,28 @@ gh auth setup-git
 
 ### 接管公司專案
 
+本外掛只提供 `skills/`，不提供 `commands/`。Claude Code 的 slash command 來自
+`commands/`，skill 則是由模型依 `description` 自行判斷何時載入——**因此沒有
+`/johnny-ai-skill:...` 這個指令**（先前版本的 README 誤植，已於 0.4.3 修正）。
+
 1. 如常用 Claude Code 開啟公司 repository。
-2. 輸入：
+2. 用自然語言指名 skill，例如：
 
    ```text
-   /johnny-ai-skill:johnny-project-takeover
+   Use the johnny-project-takeover skill to take over this project safely.
    ```
 
-3. 需要選擇通用模組時才輸入：
+3. 需要選擇通用模組時：
 
    ```text
-   /johnny-ai-skill:apply-reusable-modules
+   Use the apply-reusable-modules skill to select the smallest safe module set.
    ```
 
 接著補上本次專案目標即可。Claude Code 先取得此共用 skill，但在採取任何動作前仍必須遵守公司專案的本地規範。
+
+安裝後需重開 session（或 `/reload-plugins`）才會載入。若 `claude` 不在 `PATH`
+上，CLI 位於 `%APPDATA%\Claude\claude-code\<版本>\claude.exe`；該路徑含版本號，
+升級後會變動。
 
 Context-load telemetry 同樣由本機 Agent runner 建立 JSONL 證據；Claude Code plugin 本身不攔截 token，也不把公司內容上傳或寫進 repo。
 
