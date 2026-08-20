@@ -18,6 +18,16 @@
 | 禁止修改 | 任何會與五種狀態色碰撞的顏色 |
 | 環境 | `LOCAL` |
 
+## 邊界宣告（機器可讀，整合前由閘門讀取）
+
+```johnny-boundary
+modify = library/local_orchestration/ticket_status_template.py
+modify = tests/test_ticket_status_template.py
+forbid = library/local_orchestration/ticket_status_pipeline.py
+forbid = library/local_orchestration/document_mutation_gate.py
+forbid = modules/tickets/
+```
+
 ## 使用者拍板與可觀察結果
 
 未完成的階段方塊重新有「看這裡」的份量，而且不再與任何狀態色碰撞。

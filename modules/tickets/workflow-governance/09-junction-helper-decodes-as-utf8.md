@@ -76,13 +76,14 @@ reader thread 裡拋出，pytest 以 `PytestUnhandledThreadExceptionWarning` 呈
 
 ## 完成回寫
 
-- 實際檔案：`<待填>`
-- commit：`<待填>`
+- 實際檔案：`tests/test_bounded_child_process_runner.py`（`_make_junction`）
+- commit：`implement/gov-09-junction-decode`，經 `admit_document_mutation` 判為 `INTEGRATED`
+- 警告：該檔 7 → 0（**由審閱者實測**；實作者回報 baseline 為 0，其還原未生效，驗證不成立）
 
 ```johnny-status
 id = 09
 title = junction 輔助函式的 UTF-8 解碼
-state = IN_PROGRESS
-stage = F | 修法 | OPEN
-stage = V | 驗證 | OPEN
+state = DONE
+stage = F | 修法 | DONE
+stage = V | 驗證 | DONE
 ```

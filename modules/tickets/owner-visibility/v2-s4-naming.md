@@ -104,7 +104,8 @@ forbid = library/local_orchestration/document_mutation_gate.py
 ```johnny-status
 id = V2-S4
 title = 用詞與欄位名
-state = IN_PROGRESS
+state = NEEDS_OWNER
+reason = 改名那半已完成整合；「完成」要不要改成「完成待審」是你選的詞，要你裁決
 stage = N | 裁決用詞 | OPEN
 stage = R | 欄位改名 | OPEN
 ```
