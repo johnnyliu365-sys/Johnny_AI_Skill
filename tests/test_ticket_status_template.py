@@ -109,6 +109,16 @@ def _hue_gap(first: float, second: float) -> float:
     return min(gap, 360.0 - gap)
 
 
+def _chroma(colour: str) -> int:
+    """Absolute max-min across channels. Relative saturation calls #12161c
+    "saturated" because its channels differ by ten out of twenty-eight; this
+    does not, which is what makes it the right measure for near-black greys."""
+
+    digits = colour.strip().lstrip("#")
+    channels = [int(digits[at : at + 2], 16) for at in (0, 2, 4)]
+    return max(channels) - min(channels)
+
+
 def _luminance(colour: str) -> float:
     digits = colour.strip().lstrip("#")
     channels = [int(digits[at : at + 2], 16) / 255 for at in (0, 2, 4)]
@@ -205,7 +215,8 @@ class ApprovedLayoutTests(unittest.TestCase):
 
     def test_the_waiting_ticket_arrives_whole(self) -> None:
         self.assertIn('<div class="id">V1 · owner-visibility</div>', self.page)
-        self.assertIn('<p class="name">Owner 狀態頁</p>', self.page)
+        # The glyph sits inside the title line, ahead of the words.
+        self.assertIn('</svg>Owner 狀態頁</p>', self.page)
         self.assertIn('<span class="st" data-s="done">R1 樣張</span>', self.page)
         self.assertIn('<span class="st" data-s="open">R4 通知</span>', self.page)
         self.assertIn('<span class="val">f3a2981</span>', self.page)
@@ -332,7 +343,7 @@ class NullableFieldTests(unittest.TestCase):
             self.page,
         )
         self.assertIn('<div class="id">V9 · owner-visibility</div>', self.page)
-        self.assertIn('<p class="name">剛開的工單</p>', self.page)
+        self.assertIn('</svg>剛開的工單</p>', self.page)
         self.assertIn('<span class="badge" data-state="needs-owner">', self.page)
         self.assertIn("modules/tickets/owner-visibility/v9.md", self.page)
         self.assertIn("</article>", self.page)
@@ -515,6 +526,42 @@ class StateDistinctionTests(unittest.TestCase):
         self.assertIn('data-need="no"', page)
 
 
+class WarningGlyphTests(unittest.TestCase):
+    """The waiting state signals with a shape, so it survives without colour."""
+
+    def setUp(self) -> None:
+        self.page = render(_every_state())
+
+    def test_the_triangle_is_drawn_rather_than_typed(self) -> None:
+        """An emoji is a different glyph per platform, and fonts recolour it."""
+
+        self.assertIn('<svg class="warn"', self.page)
+        for typed in ("⚠", "⚠️", "❗", "‼", "🔺", "🔶"):
+            with self.subTest(typed=typed):
+                self.assertNotIn(typed, self.page)
+
+    def test_the_triangle_is_yellow_with_a_black_mark_inside(self) -> None:
+        glyph = self.page[self.page.index('<svg class="warn"') :]
+        glyph = glyph[: glyph.index("</svg>")]
+        self.assertIn('fill="var(--warn-fill)"', glyph)
+        self.assertIn('fill="var(--warn-glyph)"', glyph)
+        self.assertIn('stroke="var(--warn-glyph)"', glyph)
+
+    def test_only_the_waiting_state_carries_the_triangle(self) -> None:
+        self.assertEqual(self.page.count('<svg class="warn"'), 1)
+        approved = render(_document(_one_ticket(state="APPROVED", why_waiting=None)))
+        self.assertNotIn("<svg", approved)
+
+    def test_the_glyph_is_announced_rather_than_left_as_decoration(self) -> None:
+        self.assertIn('role="img"', self.page)
+        self.assertIn('aria-label="等你決定"', self.page)
+
+    def test_the_glyph_carries_no_namespace_url(self) -> None:
+        """Inline SVG needs none, and it would be the page's only http:// ."""
+
+        self.assertNotIn("xmlns", self.page)
+
+
 class PaletteTests(unittest.TestCase):
     """The owner split the states so they would read apart. This checks that."""
 
@@ -589,6 +636,51 @@ class PaletteTests(unittest.TestCase):
                     self.assertGreaterEqual(
                         _contrast(palette[background], palette[ink]), 4.5
                     )
+
+    def test_stage_chips_stay_out_of_the_states_hue_budget(self) -> None:
+        """They were green when IN_PROGRESS became green. Now they own no hue.
+
+        Stage completion and ticket verdict mean nothing to each other, so a
+        green chip inside a green-badged row reads as agreement that is not
+        there. Achromatic chips cannot collide with any state, including
+        whichever colour the owner picks next.
+        """
+
+        for ground, palette in self.palettes.items():
+            for token in ("--stage-done", "--stage-open", "--stage-ink"):
+                with self.subTest(ground=ground, token=token):
+                    self.assertLessEqual(
+                        _chroma(palette[token]),
+                        30,
+                        "a stage chip is carrying a hue it can collide with",
+                    )
+
+    def test_the_white_badge_declares_an_edge(self) -> None:
+        """A badge that does not separate from the card must draw its own line."""
+
+        for selector, body in _rules(self.css):
+            matched = re.fullmatch(r'\.badge\[data-state="([a-z-]+)"\]', selector.strip())
+            background = re.search(r"background:var\((--[a-z0-9-]+)\)", body)
+            if not matched or not background:
+                continue
+            for ground, palette in self.palettes.items():
+                separation = _contrast(palette[background.group(1)], palette["--card"])
+                if separation >= 1.2:
+                    continue
+                with self.subTest(ground=ground, state=matched.group(1)):
+                    self.assertIn(
+                        "border-color:var(--",
+                        body,
+                        "this badge is the same tone as the card and has no edge",
+                    )
+
+    def test_what_failed_is_louder_than_what_is_merely_waiting(self) -> None:
+        """Structural, because badge luminance alone would say the opposite."""
+
+        rejected = _rule_body(self.css, '.ticket[data-state="rejected"]{')
+        waiting = _rule_body(self.css, '.ticket[data-state="needs-owner"]{')
+        self.assertIn("box-shadow:inset", rejected)
+        self.assertNotIn("box-shadow", waiting)
 
     def test_the_unreadable_slab_is_the_loudest_thing_on_the_page(self) -> None:
         for ground, palette in self.palettes.items():

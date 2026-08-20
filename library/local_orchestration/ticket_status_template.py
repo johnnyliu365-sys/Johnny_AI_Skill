@@ -28,12 +28,18 @@ done more damage than no page at all. That is the defect in
 C of the pitfall register is the rest of its wardrobe.
 
 The layout and density come from `v2-approved-mockup.html`. The palette is the
-owner's revision of it: they split "finished" from "accepted", fixed DONE to a
-yellow ground, REJECTED to red and APPROVED to blue, and left the other two to
-this module. NEEDS_OWNER therefore moved out of the mockup's amber, which sat
-fourteen degrees of hue from the new yellow and would have made the two states
-that matter most look alike. The unreadable slab moved off amber for the same
-reason, and onto no hue at all, so it can never be read as a sixth state.
+owner's: DONE a yellow ground, REJECTED red, APPROVED blue, IN_PROGRESS grass
+green, and NEEDS_OWNER white with a warning triangle.
+
+Two consequences of that palette are load-bearing, and the tests pin both.
+NEEDS_OWNER carries no hue at all, so its signal is a drawn triangle rather
+than a colour -- which makes the state that most wants the owner the one state
+still legible with no colour vision whatever. And because the five states now
+spend four hues, nothing else on the page may spend one: stage chips are
+achromatic (they went green exactly when IN_PROGRESS did, and a green chip
+inside a green-badged row reads as an agreement that does not exist), and the
+unreadable slab inverts rather than tints, so it can never be read as a sixth
+state.
 """
 
 from __future__ import annotations
@@ -63,6 +69,23 @@ _WHY_LABEL = {"NEEDS_OWNER": "為什麼等你：", "REJECTED": "為什麼沒通�
 _NO_REASON = "這一列沒有附原因。照契約這不該發生，請直接開工單檔確認。"
 
 _STAGE_SLUG = {"DONE": "done", "OPEN": "open"}
+
+# Drawn, not typed. `⚠` and its emoji cousins render as a different glyph on
+# every platform and several fonts colour them themselves, which would put a
+# colour nobody chose beside a state whose colour the owner did choose. This is
+# three paths and it looks the same everywhere. It carries no xmlns on purpose:
+# inline SVG in HTML needs none, and the namespace URL would be the only
+# http:// on a page that must never reach for the network.
+_WARNING_GLYPH = (
+    '<svg class="warn" width="17" height="17" viewBox="0 0 20 20" '
+    'role="img" aria-label="等你決定">'
+    '<path d="M10 1.7 19.2 17.6H0.8Z" fill="var(--warn-fill)" '
+    'stroke="var(--warn-edge)" stroke-width="1.2" stroke-linejoin="round"/>'
+    '<path d="M10 7v4.9" stroke="var(--warn-glyph)" stroke-width="2" '
+    'stroke-linecap="round"/>'
+    '<circle cx="10" cy="14.9" r="1.15" fill="var(--warn-glyph)"/>'
+    "</svg>"
+)
 
 # Absences the page states out loud rather than leaving as a gap.
 _NO_TICKETS = "沒有工單——這是讀得到的來源給出的答案，不是猜的。"
@@ -240,6 +263,9 @@ def _ticket(ticket: object) -> str:
     state = _text(ticket.get("state"))
     slug, caption = _STATE.get(state, ("unknown", state or "未標示狀態"))
     need = "yes" if state in _REASON_STATES else "no"
+    # The waiting state is white, so its signal is a shape rather than a hue --
+    # which also makes it the one state legible without colour vision at all.
+    glyph = _WARNING_GLYPH if state == "NEEDS_OWNER" else ""
 
     identity = " · ".join(
         part
@@ -252,7 +278,7 @@ def _ticket(ticket: object) -> str:
     ]
     parts.append(
         f'<div class="who"><div class="id">{_esc(identity)}</div>'
-        f'<p class="name">{_esc(ticket.get("title"))}</p></div>'
+        f'<p class="name">{glyph}{_esc(ticket.get("title"))}</p></div>'
     )
     parts.append(f'<span class="badge" data-state="{_esc(slug)}">{_esc(caption)}</span>')
     parts.append(_stages(_sequence(ticket.get("stages"))))
@@ -277,13 +303,14 @@ _STYLE = """
   --bg:#f2f3f5; --card:#ffffff; --strip:#e9ebef; --line:#d5d9e0;
   --ink:#12161c; --dim:#5c6672; --faint:#858e9a;
   --accent:#3a4fb8;
-  --need:#8e2fb0; --need-bg:#f9ecfd;
+  --need:#ffffff; --need-bg:#f5f6f8; --need-ink:#12161c; --need-edge:#b3bac4;
   --rejected:#c0271f; --rejected-bg:#fdeceb;
   --done:#d9ae0f; --done-bg:#f7e496; --done-ink:#3a2c00;
   --approved:#2563c4;
-  --open:#6b7683;
-  --stage-done:#1d7a4a; --stage-open:#b4690e;
-  --badge-ink:#ffffff;
+  --open:#38801f;
+  --stage-done:#5c6672; --stage-open:#12161c; --stage-ink:#ffffff;
+  --badge-ink:#ffffff; --badge-bg:#6b7683;
+  --warn-fill:#f5c518; --warn-glyph:#12161c; --warn-edge:#7a5f00;
   --alarm:#1b1f27; --alarm-ink:#f4f6f9; --alarm-dim:#aab4c0;
   --mono:ui-monospace,"Cascadia Mono",Consolas,monospace;
 }
@@ -292,13 +319,13 @@ _STYLE = """
     --bg:#0f1216; --card:#171b21; --strip:#1d222a; --line:#2c333d;
     --ink:#e8ecf1; --dim:#98a2ad; --faint:#7a848f;
     --accent:#8b9bf0;
-    --need:#dd9bf0; --need-bg:#2e1638;
+    --need:#e8ecf1; --need-bg:#202632; --need-ink:#12161c; --need-edge:#4a5360;
     --rejected:#f08a8a; --rejected-bg:#3a1c1c;
     --done:#e3b53d; --done-bg:#3a300f; --done-ink:#241b00;
     --approved:#7fb0f8;
-    --open:#7d8794;
-    --stage-done:#4fbe86; --stage-open:#e3a544;
-    --badge-ink:#12161c;
+    --open:#8fd35c;
+    --stage-done:#98a2ad; --stage-open:#e8ecf1; --stage-ink:#171b21;
+    --badge-ink:#12161c; --badge-bg:#7d8794;
     --alarm:#e9edf3; --alarm-ink:#12161c; --alarm-dim:#545d69;
   }
 }
@@ -306,13 +333,13 @@ _STYLE = """
   --bg:#0f1216; --card:#171b21; --strip:#1d222a; --line:#2c333d;
   --ink:#e8ecf1; --dim:#98a2ad; --faint:#7a848f;
   --accent:#8b9bf0;
-  --need:#dd9bf0; --need-bg:#2e1638;
+  --need:#e8ecf1; --need-bg:#202632; --need-ink:#12161c; --need-edge:#4a5360;
   --rejected:#f08a8a; --rejected-bg:#3a1c1c;
   --done:#e3b53d; --done-bg:#3a300f; --done-ink:#241b00;
   --approved:#7fb0f8;
-  --open:#7d8794;
-  --stage-done:#4fbe86; --stage-open:#e3a544;
-  --badge-ink:#12161c;
+  --open:#8fd35c;
+  --stage-done:#98a2ad; --stage-open:#e8ecf1; --stage-ink:#171b21;
+  --badge-ink:#12161c; --badge-bg:#7d8794;
   --alarm:#e9edf3; --alarm-ink:#12161c; --alarm-dim:#545d69;
 }
 *{box-sizing:border-box}
@@ -356,8 +383,7 @@ body{margin:0;background:var(--bg);color:var(--ink);
 /* Three row treatments, so the five states separate at a glance: an edge bar
    for the two a human must clear, a filled ground for finished-awaiting-verdict,
    and a plain card for the two that want nothing. */
-.ticket[data-state="needs-owner"]{border-color:var(--need);
-  box-shadow:inset 3px 0 0 var(--need)}
+.ticket[data-state="needs-owner"]{border-color:var(--need-edge)}
 .ticket[data-state="rejected"]{border-color:var(--rejected);
   box-shadow:inset 3px 0 0 var(--rejected)}
 .ticket[data-state="done"]{background:var(--done-bg);border-color:var(--done)}
@@ -366,10 +392,13 @@ body{margin:0;background:var(--bg);color:var(--ink);
 .id{font-family:var(--mono);font-size:11.5px;color:var(--faint);
   letter-spacing:.06em}
 .name{font-size:15px;font-weight:600;margin:1px 0 0;text-wrap:balance}
+.warn{vertical-align:-3px;margin-right:6px;flex:none}
 .badge{grid-column:2;grid-row:1;justify-self:end;font-size:12px;font-weight:700;
   padding:3px 10px;border-radius:4px;white-space:nowrap;
-  background:var(--open);color:var(--badge-ink)}
-.badge[data-state="needs-owner"]{background:var(--need)}
+  border:1px solid transparent;
+  background:var(--badge-bg);color:var(--badge-ink)}
+.badge[data-state="needs-owner"]{background:var(--need);color:var(--need-ink);
+  border-color:var(--need-edge)}
 .badge[data-state="rejected"]{background:var(--rejected)}
 /* Yellow is too light to carry white text on either ground, so this badge
    brings its own ink rather than losing its edge. */
@@ -387,7 +416,7 @@ body{margin:0;background:var(--bg);color:var(--ink);
    about the ticket's verdict, so they keep their own two tokens rather than
    borrowing a state colour and turning a DONE row yellow-on-yellow. */
 .st[data-s="done"]{background:var(--stage-done);border-color:var(--stage-done);
-  color:var(--badge-ink)}
+  color:var(--stage-ink)}
 .st[data-s="open"]{border-color:var(--stage-open);color:var(--stage-open);
   font-weight:700}
 
@@ -408,8 +437,9 @@ body{margin:0;background:var(--bg);color:var(--ink);
 .why{grid-column:1 / -1;background:var(--strip);border:1px solid var(--line);
   border-radius:5px;padding:9px 11px;font-size:13px;color:var(--ink)}
 .why b{color:var(--ink)}
-[data-state="needs-owner"] .why{background:var(--need-bg);border-color:var(--need)}
-[data-state="needs-owner"] .why b{color:var(--need)}
+[data-state="needs-owner"] .why{background:var(--need-bg);
+  border-color:var(--need-edge)}
+[data-state="needs-owner"] .why b{color:var(--ink)}
 [data-state="rejected"] .why{background:var(--rejected-bg);
   border-color:var(--rejected)}
 [data-state="rejected"] .why b{color:var(--rejected)}
