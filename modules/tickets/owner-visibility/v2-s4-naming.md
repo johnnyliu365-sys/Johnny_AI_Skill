@@ -10,13 +10,26 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | 無紀錄（早於本欄要求） |
 | 實作語言 | Python 3.11（依 `CONTEXT.md` › 實作語言規範的統一後端語言） |
-| 狀態 | `BLOCKED`（board 記為 `NEEDS_OWNER`；等 owner 對用詞裁決） |
+| 狀態 | `IN_PROGRESS`（改名已派工；用詞裁決仍待 owner，兩者互不阻擋） |
 | 共同基準 | 無紀錄（早於本欄要求） |
-| 實作者 | 控制面（契約與管線）／UI implementation owner（畫面跟進） |
+| 實作者 | `.worktrees/v2-s4`／branch `implement/v2-s4-rename`（一人原子完成改名） |
 | 審閱者 | 無紀錄（早於本欄要求） |
 | 責任邊界 | 控制面：`ticket_status_pipeline.py`、其契約、工單宣告；UI：`ticket_status_template.py` |
-| 禁止修改 | 用詞裁決前不得改畫面文案；欄位改名須先改管線／契約／樣本，UI 才能跟著改讀取的鍵 |
+| 禁止修改 | 用詞裁決前不得改任何畫面文案（`完成`／`已通過` 等字樣） |
 | 環境 | `LOCAL` |
+
+## 邊界宣告（機器可讀，整合前由閘門讀取）
+
+```johnny-boundary
+modify = library/local_orchestration/ticket_status_pipeline.py
+modify = library/local_orchestration/ticket_status_template.py
+modify = tests/test_ticket_status_pipeline.py
+modify = tests/test_ticket_status_template.py
+modify = modules/tickets/owner-visibility/v2-document-sample.json
+modify = modules/tickets/owner-visibility/v2-ticket-status-surface.md
+forbid = modules/tickets/TEMPLATE.md
+forbid = library/local_orchestration/document_mutation_gate.py
+```
 
 ## 使用者拍板與可觀察結果
 
@@ -25,7 +38,7 @@
 兩件待決事項：
 
 1. **`完成` 這個詞看不出「還沒人審過」。** owner 指定了 `完成`，但 `完成` 和 `已通過` 放在一起時，光看「完成」兩個字並不會讓人想到「這件事還在等審查」——而那正是把兩個狀態拆開所要傳達的資訊。`完成待審` 會說出來。**這一項要 owner 先點頭才能改**，因為那是他選的詞。
-2. **`why_waiting` 現在裝的是退回原因。** `REJECTED` 用同一個欄位裝「為什麼沒過」，但那不是「在等什麼」。這個名字會誤導之後每一個讀這份資料的人。建議改成 `reason`。這是資料契約的改名：控制面先改管線、契約與樣本，UI 再跟著改讀取的鍵，順序不能顛倒，否則畫面會讀到一個不存在的欄位。
+2. **`why_waiting` 現在裝的是退回原因。** `REJECTED` 用同一個欄位裝「為什麼沒過」，但那不是「在等什麼」。這個名字會誤導之後每一個讀這份資料的人。建議改成 `reason`。這是資料契約的改名。**先前寫的「管線先、UI 後」是錯的**：分兩步只在兩個負責人平行工作時才有意義，由一個人做時，中間那一刻畫面正讀著一個不存在的鍵。改名要**原子落地**——管線、契約、樣本、畫面在同一次變更裡一起改。
 
 ## 實作範圍、依賴與 ticket elements
 
@@ -89,8 +102,7 @@
 ```johnny-status
 id = V2-S4
 title = 用詞與欄位名
-state = NEEDS_OWNER
-why_waiting = 「完成」要不要改成「完成待審」是你選的詞，要你裁決才能動
+state = IN_PROGRESS
 stage = N | 裁決用詞 | OPEN
 stage = R | 欄位改名 | OPEN
 ```
