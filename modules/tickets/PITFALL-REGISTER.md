@@ -179,9 +179,16 @@
 - **為何長期沒被發現**：所有安裝驗證都停在「plugin 裝好了」（`installed_plugins.json`
   存在、skills 檔案在位），**沒有一次驗證過文件寫的呼叫方式真的可用**。
   安裝成功 ≠ 文件正確。
-- **修法**：README 改為自然語言指名 skill，並說明兩種機制的差異（0.4.3 修正）。
+- **修法**：0.4.3 補上 `commands/`，讓文件寫了三個版本的那個指令**真的存在**
+  （而不是刪掉文件遷就實作）；README 同時說明兩種入口的差異：slash command
+  是確定性的、自然語言是模型判斷的。治理流程的進入點應該確定。
 - **同族提醒**：README 的移除指令也曾寫成裸 `johnny-router uninstall`，讀起來
   像在 PATH 上——同一種「文件描述了未經驗證的使用路徑」的雷。
+- **`claude plugin validate` 不驗 commands（實測）**：放一個完全無 frontmatter
+  的壞檔、或把整個 `commands/` 目錄移走，validate 輸出一字不變。
+  `plugin details` 的元件清單也沒有 Commands 分類。**在這台機器上沒有任何
+  離線方式能證明 slash command 真的會出現**——唯一的驗證是重開 Claude Code
+  後輸入 `/johnny` 看是否補全。撰寫此條時該驗證尚未執行。
 
 ---
 

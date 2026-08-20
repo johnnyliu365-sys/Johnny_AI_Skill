@@ -182,22 +182,31 @@ gh auth setup-git
 
 ### 接管公司專案
 
-本外掛只提供 `skills/`，不提供 `commands/`。Claude Code 的 slash command 來自
-`commands/`，skill 則是由模型依 `description` 自行判斷何時載入——**因此沒有
-`/johnny-ai-skill:...` 這個指令**（先前版本的 README 誤植，已於 0.4.3 修正）。
+兩種入口，用途不同：
+
+- **Slash command（確定性）**——治理流程的進入點應該是確定的，不取決於模型
+  是否判斷該載入。0.4.3 新增 `commands/`，因此 `/johnny-ai-skill:...` 現在
+  是真的存在的指令。（0.4.2 以前的 README 就寫著這個指令，但外掛當時只有
+  `skills/`、沒有 `commands/`，該指令從未存在——這是文件缺陷，已於 0.4.3
+  以「補上指令」而非「刪掉文件」的方式修正。）
+- **自然語言（機率性）**——模型依 skill 的 `description` 自行判斷何時載入。
+  適合你沒有明確要進入治理流程、只是在描述問題的情況。
 
 1. 如常用 Claude Code 開啟公司 repository。
-2. 用自然語言指名 skill，例如：
+2. 確定性入口：
 
    ```text
-   Use the johnny-project-takeover skill to take over this project safely.
+   /johnny-ai-skill:johnny-project-takeover 本次專案目標
    ```
 
 3. 需要選擇通用模組時：
 
    ```text
-   Use the apply-reusable-modules skill to select the smallest safe module set.
+   /johnny-ai-skill:apply-reusable-modules 你需要的能力
    ```
+
+   兩者都可改用自然語言指名，例如
+   `Use the johnny-project-takeover skill to take over this project safely.`
 
 接著補上本次專案目標即可。Claude Code 先取得此共用 skill，但在採取任何動作前仍必須遵守公司專案的本地規範。
 
