@@ -4,7 +4,25 @@
 
 它不是公司專案的 runtime service、MCP server、hook、CI 依賴、Git submodule、symlink、package dependency 或原始碼 import。因此拔除後，公司的建置、測試、部署與既有程式不會受影響。
 
-## 目前發行：0.4.4
+## 目前發行：0.4.5
+
+0.4.5 讓 Router 能驅動 **Claude Code 的對話分支**，一個 reviewer 一條分支，
+每次喚醒依 payload 的 `reviewer_ref` 查 owner 宣告的路由表決定目標
+（`claude_wake_command`）。實機驗證：能力 probe 5.2 秒通過、兩條分支各自種入不同
+token 後分別 resume 互不污染、具名 reviewer 的分支收到喚醒後自己說得出被交付的
+payload 路徑且仍保有先前歷史。
+
+**它不會驅動你正開著的對話。** 桌面 app 的三條顯示路徑都經實測堵死（驅動開著的
+分頁會寫入存檔但畫面不動、背景 agent 不顯示、CLI session 沒有 MCP server），
+所以外部驅動只會產生你看不見的工作，還會和 app 記憶體裡的舊歷史打架。兩道守衛
+因此拒絕投遞：目標被現役行程持有（`BRANCH_HELD_BY_LIVE_SESSION`）或被 app 分頁
+登記（`BRANCH_HELD_BY_APP_TAB`）都不送，讀不到清單時同樣拒絕——不知道不等於
+知道它是空的。
+
+誠實邊界：被喚醒的分支只驗到「它收到了」，未驗到它自行完成審查並提交 verdict；
+喚醒失敗的原因目前仍未持久化（`CommandRoleWakePort` 丟棄子行程 stdout），所以
+owner 狀態頁還讀不到那些代碼。本版另含尚未接線的 owner 狀態頁 generator
+（`owner_status_surface`），目前沒有任何東西呼叫它。
 
 0.4.4 修正一個 P0 誠實性缺陷（governance 04）：skill 通篇以直述句描寫喚醒
 （「The Router wakes …」），agent 會把協定敘述讀成系統行為，對未 arm 的專案
@@ -92,9 +110,9 @@ red 證據重定義）。該版的兩個誠實邊界（live 安裝停在
 
 ## Codex 使用方式
 
-### 0.4.4 完整 bundle 安裝
+### 0.4.5 完整 bundle 安裝
 
-正式的一鍵入口是隨 release 發布的 `johnny-install.cmd`，將其下載至與經核准且 SHA-256 相符的 `johnny-ai-skill-0.4.4.zip` 同一資料夾下雙擊執行（或在終端機直接執行 `install.ps1 -BundleZip <path>`）。它會先核驗 bundle SHA-256，並在確認相符後抽出 `install.ps1` 進行安裝引導。bootstrap 會先顯示 Codex、Git、Python 與核心 dependency 計畫；需要下載時必須由使用者輸入 `INSTALL` 確認。它只建立 per-user Johnny-owned runtime，不會把 plugin、venv、receipt 或 cache 複製到公司 repo。
+正式的一鍵入口是隨 release 發布的 `johnny-install.cmd`，將其下載至與經核准且 SHA-256 相符的 `johnny-ai-skill-0.4.5.zip` 同一資料夾下雙擊執行（或在終端機直接執行 `install.ps1 -BundleZip <path>`）。它會先核驗 bundle SHA-256，並在確認相符後抽出 `install.ps1` 進行安裝引導。bootstrap 會先顯示 Codex、Git、Python 與核心 dependency 計畫；需要下載時必須由使用者輸入 `INSTALL` 確認。它只建立 per-user Johnny-owned runtime，不會把 plugin、venv、receipt 或 cache 複製到公司 repo。
 
 不得把原始碼 checkout 或 `main` 當成已核准 bundle；正式入口永遠是 digest 與已核准
 release 相符的 bundle。既有 `0.3.x` skill-only 安裝仍可使用 private Git

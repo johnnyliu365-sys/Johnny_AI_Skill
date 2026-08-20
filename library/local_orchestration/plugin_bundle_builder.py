@@ -27,7 +27,7 @@ from .windows_package_manifest import (
 
 _SOURCE_COMMIT_PATTERN: Final[re.Pattern[str]] = re.compile(r"[0-9a-f]{40}\Z")
 _SHA256_PATTERN: Final[re.Pattern[str]] = re.compile(r"[0-9a-f]{64}\Z")
-_CANDIDATE_NAME: Final[str] = "johnny-ai-skill-0.4.4.zip"
+_CANDIDATE_NAME: Final[str] = "johnny-ai-skill-0.4.5.zip"
 _MANIFEST_NAME: Final[str] = "payload-manifest.json"
 _UTF8_FLAG: Final[int] = 0x800
 _REGULAR_FILE_MODE: Final[int] = 0o100644
@@ -320,7 +320,7 @@ class PluginBundleBuilder:
         try:
             with tempfile.NamedTemporaryFile(
                 mode="wb",
-                prefix=".johnny-ai-skill-0.4.4-",
+                prefix=".johnny-ai-skill-0.4.5-",
                 suffix=".tmp",
                 dir=output_root,
                 delete=False,
