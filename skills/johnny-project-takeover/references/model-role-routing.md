@@ -63,13 +63,16 @@ reason to append Context from the ticket lane.
 The supervisor routes implementation/test/evidence defects through same-ticket correction.
 Model capability failure is not inferred from one defect. Only after the allowed initial review
 and one bounded correction review both fail against the same complete Closure revision may the
-supervisor return `MODEL_CAPABILITY_INSUFFICIENT`; this wakes the architecture owner or requests
+supervisor return `MODEL_CAPABILITY_INSUFFICIENT`; this marks the architecture owner
+`WAKE_REQUIRED` (delivered by an armed runner, else relayed by the owner) or requests
 an owner-approved Profile change and does not grant the supervisor implementation authority.
 
 ## Mandatory wake triggers
 
 The Router changes the architecture owner to `WAKE_REQUIRED` before further ticket/source/host
-effect when any of these typed conditions is present:
+effect when any of these typed conditions is present. `WAKE_REQUIRED` is a state, not a
+delivery: only a runner armed for this project turns it into an actual wake, and when none is
+armed the owner must be told to relay it (SKILL.md § Automation readiness):
 
 - `SPEC_AMBIGUOUS` or `SPEC_CONTRADICTORY`;
 - `PUBLIC_CONTRACT_UNDEFINED` or an unprovable acceptance criterion;

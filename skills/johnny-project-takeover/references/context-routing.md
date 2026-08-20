@@ -33,7 +33,8 @@ worktrees or duplicated SPEC/policy prose to shared Context. They create bounded
 and side-context references to the owning artifact instead.
 
 A missing or changed shared fact returns `UPSTREAM_DECISION_REQUIRED` or
-`REQUIREMENT_CHANGED`. The Router wakes the architecture owner and requires an approved change
+`REQUIREMENT_CHANGED`. The Router marks the architecture owner `WAKE_REQUIRED`; an armed runner delivers that wake
+(see SKILL.md § Automation readiness — without one, the owner relays it). The route requires an approved change
 reference before a new shared-Context revision can replace the sealed one. Replacement
 invalidates prior side-context mappings; it never edits a sealed revision in place. There is no
 line-count quality gate: admission is determined by the allowed content kinds, lifecycle,

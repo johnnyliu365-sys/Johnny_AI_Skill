@@ -56,7 +56,8 @@ supervisor may select feature/ticket source spans and emit metadata references, 
 create, revise or append shared Context while splitting, admitting, dispatching, correcting or
 reviewing a ticket. If the approved SPEC cannot be compiled without a new shared fact, return
 `UPSTREAM_DECISION_REQUIRED`; if a previously sealed fact changed, return
-`REQUIREMENT_CHANGED`. Both routes wake the architecture owner instead of letting the
+`REQUIREMENT_CHANGED`. Both routes mark the architecture owner `WAKE_REQUIRED` (delivered only where a runner is
+armed; otherwise the owner relays) instead of letting the
 supervisor manufacture or persist the missing meaning.
 
 ## Fail-closed routing

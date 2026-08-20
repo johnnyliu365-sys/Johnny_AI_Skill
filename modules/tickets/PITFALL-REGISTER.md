@@ -190,6 +190,21 @@
   離線方式能證明 slash command 真的會出現**——唯一的驗證是重開 Claude Code
   後輸入 `/johnny` 看是否補全。撰寫此條時該驗證尚未執行。
 
+### D6. Skill 用直述句描寫沒有在跑的機制（假完成敘事）
+- **雷**：skill 通篇寫「The Router wakes …」。agent 把協定敘述讀成系統行為，
+  對真實專案報告「Router 應把案件喚醒交給 SUPERVISOR_REVIEWER」——而那台機器
+  **連 runtime 都沒裝**。owner 一句話戳破：「根本沒有喚醒阿」。
+- **證據**：[workflow-governance/04](workflow-governance/04-skill-implies-a-runtime-that-may-not-exist.md)。
+  實查：無 JohnnyRouter root、無 subscription、無 runner、無 wake capability。
+- **為何沒被抓到**：armed 路徑測到滴水不漏（全鏈 qualification），
+  **unarmed 路徑——每個真實專案的起始狀態——從未被測過**。skill 文字就是
+  unarmed 路徑的行為，沒人帶著這個問題讀過它。
+- **修法**：每句喚醒改為「狀態＋機制＋前提」（`WAKE_REQUIRED` 是狀態不是送達；
+  armed runner 才會送達；沒有就由 owner 轉達）；SKILL.md 新增 Automation
+  readiness 四條可觀察前提；明文規定 agent 不得報告未觀察到的喚醒——
+  committed handoff 是 commit 的證據，不是送達的證據。0.4.4 發行。
+- **同族**：D5 的上一層——這次讀者是 agent，輸出被當成事實交給 owner。
+
 ---
 
 ## E. 環境／平台類（本機事實，違反即浪費一輪 debug）

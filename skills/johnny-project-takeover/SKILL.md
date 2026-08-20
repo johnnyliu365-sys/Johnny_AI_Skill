@@ -65,6 +65,23 @@ INTAKE → WAYFINDER → ARCHITECTURE → GRILL → CONTEXT → SPEC → TICKETS
 An implementation or docs-only commit emits `ACTION_COMPLETED`; a commit does not itself select
 the next stage. This skill cannot bypass host approval, permission or receipt enforcement.
 
+### Automation readiness — check before narrating any automatic effect
+
+Every wake, automatic continuation or supervision effect this skill describes is a **protocol**.
+The mechanism that performs it is the installed Johnny runtime, armed for the specific project.
+Before stating that any automatic effect will happen or has happened, verify all four:
+
+1. the per-user runtime root exists (`%LOCALAPPDATA%\JohnnyRouter`, or `JOHNNY_ROOT`);
+2. a subscription for this project's exact ref exists (`runner-subscriptions.json`);
+3. a runner is running for it (`johnny-router runner status` reports `RUNNING`);
+4. a wake capability is proven (`johnny-router wake-capability probe`).
+
+If any of the four is absent, the honest statement is: *the handoff is committed; no automation
+is armed for this project, so the owner must notify the reviewer.* Never report a wake you did
+not observe: a committed handoff leaf is evidence of a commit, not of a delivery. Reporting an
+unobserved wake manufactures a false completion narrative, which is precisely the failure this
+workflow exists to prevent.
+
 Durable Router state contains metadata only. A pending dispatch remains bound to its live
 descriptor. The implementation owner returns an `ImplementationReturn`; `CHANGE_DETECTED`
 emits `REQUIREMENT_CHANGED` rather than changing the ticket locally.

@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| State | `OPEN` |
+| State | `CLOSED` |
 | Severity | `P0` — it manufactures false completion narratives, the failure mode this whole project exists to prevent |
 | Found | 2026-08-20 by the owner, watching an agent report a wake that never happened |
 | Baseline | `main` = `36ede46` |
@@ -82,3 +82,30 @@ modules/tickets/PITFALL-REGISTER.md
 | `04-R2` | The readiness section states the four observable conditions and the exact honest wording for the not-armed case. |
 | `04-R3` | The skill states that a wake may only be reported when observed, and that a committed handoff is not a delivery. |
 | `04-R4` | `skills/` is a payload root: the bundle digest changes, so this ships in the next release rather than silently diverging from the released artifact. Recorded, not worked around. |
+
+## Closure evidence (2026-08-20, control-plane executed)
+
+- `04-R1` Every indicative wake sentence is gone: `grep` for "Router wakes",
+  "routes wake the", "this wakes the" across the skill returns nothing. Each
+  site now names the state (`WAKE_REQUIRED`), the mechanism (an armed runner),
+  and the fallback (the owner relays).
+- `04-R2` SKILL.md gains "Automation readiness" with the four observable
+  conditions (root, subscription, running runner, proven capability) and the
+  exact honest wording for the not-armed case.
+- `04-R3` Stated verbatim in the skill: never report a wake you did not
+  observe; a committed handoff leaf is evidence of a commit, not of a
+  delivery.
+- `04-R4` `skills/` is a payload root, so this changes the bundle digest.
+  Shipped as 0.4.4 by owner direction ("A") immediately after 0.4.3, rather
+  than left to diverge from the released artifact.
+
+## The accountability note this ticket carries
+
+The whole-chain qualification proved the armed path end to end, and the owner
+was told the loop worked, installed it, and then watched an agent narrate a
+wake that never happened. The gap: **the armed path was tested exhaustively;
+the unarmed path — every real project's starting state — was never tested at
+all.** The skill's text was the unarmed path's behavior, and nobody had read
+it with that question in mind. Same family as D5 (documentation describing an
+entry point nobody verified), one level up: this time the reader was an agent
+and the output was handed to the owner as fact.
