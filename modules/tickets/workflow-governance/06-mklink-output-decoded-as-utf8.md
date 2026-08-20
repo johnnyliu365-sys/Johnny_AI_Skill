@@ -1,60 +1,88 @@
-# 06 — mklink 的輸出用 UTF-8 解，這台是 cp950
+# 06｜mklink 輸出解碼
 
-| Field | Value |
+| 欄位 | 內容 |
 | --- | --- |
-| State | `IN_PROGRESS` — 已有 session 在做，本票為補開 |
-| Baseline | `main`，governance 05 整合之後 |
-| Workload | `SMALL`；規則明確、可單一 cell 驗證 |
-| 來源 | governance 05 的實作者在範圍外發現並標記；owner 按下 chip 啟動 |
+| 對應規格 ID | 不適用（治理／測試基礎設施缺陷，非產品行為；來源為 `PITFALL-REGISTER.md` E 族） |
+| 規格撰寫 AI | 不適用 |
+| 第一步排查起點 | `modules/tickets/PITFALL-REGISTER.md` › E 族（cp950 主控台） |
+| PRD 索引 | 不適用 |
+| 需求變更 | 不適用 |
+| Sealed Context binding | 不適用 |
+| Agent Context binding | 本票 revision／無 receipt／owner 待填／worktree 待填／branch 待填／baseline `bed244d` |
+| 實作語言 | Python 3.11（依 `CONTEXT.md` › 實作語言規範的統一後端語言） |
+| 狀態 | `IN_PROGRESS` |
+| 共同基準 | `bed244d` |
+| 實作者 | 由 chip 啟動的獨立 session（root checkout，見「Owner override record」） |
+| 審閱者 | 控制面（Opus 5） |
+| 責任邊界 | `tests/test_disposable_environment_core.py` 的 `t3` cell 之解碼方式 |
+| 禁止修改 | `shell=False`、`check=False`、5 秒逾時；`library/` 下任何產品程式碼；其他 cell |
+| 環境 | `LOCAL` |
 
-## 一個結果
+## 使用者拍板與可觀察結果
 
-`test_t3_physical_root_junction_blocks_before_marker_read_through` 不再因為解碼失敗
-而丟掉 `mklink` 的 stderr，套件也不再為此產生
-`PytestUnhandledThreadExceptionWarning`。
+`t3` 執行後不再產生 `PytestUnhandledThreadExceptionWarning`，且 `mklink` 失敗時
+stderr 會出現在斷言訊息裡。
 
-## 事實（已證實，不要重新推導）
+## 實作範圍、依賴與 ticket elements
 
-`tests/test_disposable_environment_core.py` 的 t3 用
-`subprocess.run(..., encoding="utf-8", errors="strict")` 執行
-`cmd.exe /d /c mklink /J ...`。這台主機主控台是 **cp950**，`mklink` 的在地化輸出
-解不動，`UnicodeDecodeError` 在 subprocess 的 `_readerthread` 裡被拋出，pytest 以
-`PytestUnhandledThreadExceptionWarning` 呈現（八個警告之一）。
+### 角色指派（必填）
 
-**在 HEAD 上就存在**，以乾淨副本執行該 cell 確認過，與 governance 05 無關。
+- 流程／ticket owner：控制面（Opus 5）；不得實作此 ticket。
+- implementation owner：由 chip 啟動的獨立 session。
+- reviewer：控制面（Opus 5）。
+- **Owner override record**：本票為**補開**。實作者由 chip 直接啟動，未經派工，
+  且在 root checkout 而非綁定 worktree 工作，與 `Workflow.md` §5 不一致。
+  owner 於 2026-08-20 按下 chip 即為啟動授權；審閱者與實作者不同 worktree，
+  控制面未實作，故無控制面兼任實作之例外。
+- `ImplementationHandoff`：本票 revision；chip prompt 內容不作為契約來源。
+- `ImplementationReturn`：`COMPLETED → ACTION_COMPLETED`／`BLOCKED → HALT`／
+  `CHANGE_DETECTED → REQUIREMENT_CHANGED`。
 
-**影響**：測試仍然會過，因為它只斷言 `junction.returncode == 0`；但
-`junction.stderr` 是被當成斷言訊息傳進去的，解碼一炸就沒了——**真的 mklink 失敗時，
-錯誤訊息會是沒有用的那一種**。這是登記簿 E 族（環境）的形狀：cp950 主控台。
+### 前端組合與依賴注入
 
-## 邊界
+**N/A reason**：本票只改測試內的 subprocess 解碼方式，不觸及任何正式 UI 邊界。
 
-`shell=False`、`check=False` 與 5 秒逾時維持不變。修的是解碼，不是執行方式。
+- element 路徑：不適用（既有測試檔內修正）
+- 實際原始碼路徑：`tests/test_disposable_environment_core.py`
+- 公開契約／資料模型：無變更
 
-## 驗收
+## TDD 設計
 
-| Ref | 要求 | 證據 |
-| --- | --- | --- |
-| 06-R1 | 該 cell 執行後不再出現 `PytestUnhandledThreadExceptionWarning` | 單跑該 cell，警告數比修前少一 |
-| 06-R2 | `mklink` 真的失敗時，stderr 會出現在斷言訊息裡 | 測試或實證：注入一個會失敗的 mklink，確認訊息帶得出內容 |
-| 06-R3 | 全套件綠且零殘留 | 跑完印出**完整**的 `FAILED`／`SUBFAILED` 清單（登記簿 D4） |
+1. 正常行為：`mklink` 成功時，cell 通過且不產生 unhandled thread exception。
+2. 規則違反／輸入錯誤：`mklink` 因參數錯誤失敗時，斷言訊息包含 stderr 內容。
+3. 外部失敗／fail-closed：輸出含無法以 cp950 或 UTF-8 解碼的位元組時，不拋例外。
+4. 回歸保護：`t3` 原本要證明的性質（junction 實體 root 在讀 marker 前被擋下）不變。
 
-## 流程備註（給之後看的人）
+### 適用的缺陷類別（依 `CodeReview.md` §2.1）
 
-這張票是**補開**的。實作者在自己票的範圍外發現缺陷，正確地標記成 chip 而不是順手夾帶
-修改；owner 按下之後才有 session 開始做。因此該 session：
+| # | 類別 | 是否適用 | 本工單的必要案例 |
+| --- | --- | --- | --- |
+| 1 | 路徑前綴誤匹配 | 否 | 本票不涉路徑比對；`t3` 既有的 junction 斷言不變動 |
+| 2 | null／空字串／陣列 | 是 | stderr 為空、只有空白、以及 `None`（未擷取）三種都不得拋例外 |
+| 3 | 權限繞過 | 否 | 不涉權限判斷 |
+| 4 | Token 格式與比較 | 否 | 不涉憑證 |
+| 5 | 錯誤碼是否一致 | 否 | 不新增對外錯誤碼 |
+| 6 | 例外是否會拋出 | 是 | 解碼失敗不得傳播為 unhandled thread exception；`returncode` 判斷不受影響 |
 
-- **沒有經過工單**就開始工作（票是派工的單位，也是狀態頁唯一讀得到的東西）；
-- **在根目錄 checkout 上工作**，不是綁定的實作者 worktree，與 `Workflow.md` §5
-  「Agent 只能寫入自己的 worktree」不一致。
+## 完成定義與證據
 
-兩者都不是那位實作者的錯——chip 的機制不會經過主管的 worktree 配置。**這是機制與流程
-之間的缺口**：chip 能讓「該讓 owner 知道的事」浮到介面上（目前唯一在 app 裡真的看得見
-的通道），但它繞過了派工。要不要讓 chip 走工單，是 owner 的決定。
+- 單跑 `t3` 通過且該次執行的警告數比修前少一。
+- 全套件綠、零殘留，且列出**完整**的 `FAILED`／`SUBFAILED` 清單。
+- **紅燈輸出**：`<待填：每個行為第一次失敗的測試名稱與失敗原因>`
+
+## 正式環境移植 SOP
+
+不適用（僅測試程式碼，無 migration、環境變數或部署影響）。
+
+## 完成回寫
+
+- 實際檔案：`<待填>`
+- commit：`<待填>`
+- WorkProgress：不適用
 
 ```johnny-status
 id = 06
-title = mklink 的輸出用 UTF-8 解
+title = mklink 輸出解碼
 state = IN_PROGRESS
 stage = F | 修法 | OPEN
 stage = V | 驗證 | OPEN
