@@ -246,6 +246,50 @@ class DocumentTests(unittest.TestCase):
             self.assertIsNone(document["rollback"])
 
 
+class DeclaredCommitTests(unittest.TestCase):
+    """Where the work stands is declared; editing the file is not doing work."""
+
+    def test_a_declared_commit_outranks_the_files_last_touch(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = _repository(Path(temporary))
+            _write_ticket(root, "demo", "v9-demo.md", _ticket("內容"))
+            _commit(root, "feat: the work itself")
+            work = subprocess.run(
+                ("git", "-C", str(root), "rev-parse", "--short", "HEAD"),
+                capture_output=True, check=True,
+            ).stdout.decode().strip()
+
+            path = root / "modules" / "tickets" / "demo" / "v9-demo.md"
+            path.write_text(
+                _ticket("內容", block=_GOOD_BLOCK + f"commit = {work}\n"),
+                encoding="utf-8",
+            )
+            _commit(root, "docs: only touch the status block")
+
+            ticket = build_document(root)["tickets"][0]
+            self.assertEqual(ticket["commit"]["sha"], work)
+            self.assertEqual(ticket["commit"]["subject"], "feat: the work itself")
+            self.assertIn(work, ticket["handoff_command"])
+
+    def test_a_declared_commit_that_does_not_resolve_is_reported(self) -> None:
+        """A typo must not become a handoff command that fails on use."""
+
+        with tempfile.TemporaryDirectory() as temporary:
+            root = _repository(Path(temporary))
+            _write_ticket(
+                root,
+                "demo",
+                "v9-demo.md",
+                _ticket("內容", block=_GOOD_BLOCK + "commit = deadbee\n"),
+            )
+            _commit(root, "ticket: open V9")
+
+            document = build_document(root)
+            self.assertEqual(document["tickets"], [])
+            self.assertEqual(len(document["unreadable"]), 1)
+            self.assertIn("deadbee", document["unreadable"][0]["reason"])
+
+
 class DependencyTests(unittest.TestCase):
     """The runtime venv is hash-locked; this module may not widen it."""
 

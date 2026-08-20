@@ -37,7 +37,9 @@ _SKIPPED_STEMS = frozenset({"README", "TEMPLATE", "README.TEMPLATE", "PITFALL-RE
 
 _TICKET_STATES = ("NEEDS_OWNER", "IN_PROGRESS", "DONE")
 _STAGE_STATES = ("DONE", "OPEN")
-_SCALAR_KEYS = frozenset({"id", "title", "state", "why_waiting", "released_in"})
+_SCALAR_KEYS = frozenset(
+    {"id", "title", "state", "why_waiting", "released_in", "commit"}
+)
 _REQUIRED_KEYS = ("id", "title", "state")
 _STATE_ORDER = {name: index for index, name in enumerate(_TICKET_STATES)}
 
@@ -113,7 +115,9 @@ def parse_status_block(body: str) -> dict[str, object]:
         raise ValueError("只有 NEEDS_OWNER 才可以寫 why_waiting")
 
     released = scalars.get("released_in", _NULL)
+    named = scalars.get("commit", _NULL)
     return {
+        "declared_commit": None if named in ("", _NULL) else named,
         "id": scalars["id"],
         "title": scalars["title"],
         "state": state,
@@ -137,7 +141,23 @@ def discover_ticket_files(repository_root: Path) -> tuple[Path, ...]:
     return tuple(found)
 
 
+def _named_commit(repository_root: Path, sha: str) -> dict[str, str] | None:
+    """Resolve a declared commit. A sha that does not resolve is not a commit.
+
+    Falling back silently here would hand the owner a handoff command built
+    from a typo, which fails only once they are already depending on it.
+    """
+
+    line = _git(repository_root, "log", "-1", "--format=%h%x1f%s", sha)
+    if not line or "\x1f" not in line:
+        return None
+    resolved, subject = line.split("\x1f", 1)
+    return {"sha": resolved, "subject": subject}
+
+
 def _last_commit(repository_root: Path, path: Path) -> dict[str, str] | None:
+    """Where the file was last touched; used only when none is declared."""
+
     relative = path.relative_to(repository_root).as_posix()
     line = _git(
         repository_root, "log", "-1", "--format=%h%x1f%s", "--", relative
@@ -198,7 +218,20 @@ def build_document(repository_root: Path) -> dict[str, object]:
             )
             continue
 
-        commit = _last_commit(repository_root, path)
+        named = declared.pop("declared_commit")
+        if named is None:
+            commit = _last_commit(repository_root, path)
+        else:
+            commit = _named_commit(repository_root, named)
+            if commit is None:
+                unreadable.append(
+                    {
+                        "label": relative,
+                        "path": relative,
+                        "reason": f"宣告的 commit {named!r} 在這個 repo 找不到",
+                    }
+                )
+                continue
         anchor = commit["sha"] if commit is not None else head["commit"]
         declared.update(
             {
