@@ -88,7 +88,12 @@ forbid = library/local_orchestration/document_mutation_gate.py
 | S4-3 | 欄位改名後，管線、契約、樣本、畫面四處一致 | 全套件綠，且樣本能被畫面渲染 |
 | S4-4 | 沒有任何地方還讀得到舊欄位名 | 全庫搜尋，斷言零命中 |
 
-- **反向突變證據**（規則見 `implementation-tdd.md`，本欄只填證據）：`<待填：裁決落地後補上>`
+- **反向突變證據**（規則見 `implementation-tdd.md`，本欄只填證據）：把
+  `library/local_orchestration/ticket_status_template.py` 的 `_STATE["DONE"]`
+  標籤從 `"完成待審"` 改回 `"完成"`，`tests/test_ticket_status_template.py::
+  ApprovedLayoutTests::test_the_done_ticket_arrives_whole` 轉紅，失敗訊息為
+  `AssertionError: '<span class="badge" data-state="done">完成待審</span>'
+  not found in`（頁面實際輸出 `完成`）；改回 `"完成待審"` 後同一測試轉綠。
 - **缺陷修正** baseline-red：不適用（新行為，非缺陷修正）。
 
 ## 正式環境移植 SOP
@@ -97,8 +102,12 @@ forbid = library/local_orchestration/document_mutation_gate.py
 
 ## 完成回寫
 
-- 實際檔案：`<待填>`
-- commit：`<待填>`
+- 實際檔案（僅事項 1，用詞裁決落地）：
+  `library/local_orchestration/ticket_status_template.py`（`_STATE["DONE"]`
+  標籤）、`tests/test_ticket_status_template.py`（新增 badge 文案斷言）。
+  事項 2（欄位改名）已在別的 worktree 原子完成並整合進本分支基準
+  （commit `7141776`），本次未重做。
+- commit：`<待填：未提交，交由 dispatcher／reviewer 決定提交時機>`
 - WorkProgress：不適用
 
 ```johnny-status

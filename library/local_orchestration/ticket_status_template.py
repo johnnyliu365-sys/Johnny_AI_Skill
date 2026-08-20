@@ -76,7 +76,7 @@ _PAGE_TITLE = "Johnny 工單狀態"
 _STATE = {
     "NEEDS_OWNER": ("needs-owner", "等你決定"),
     "REJECTED": ("rejected", "未通過／須修正"),
-    "DONE": ("done", "完成"),
+    "DONE": ("done", "完成待審"),
     "IN_PROGRESS": ("in-progress", "進行中"),
     "APPROVED": ("approved", "已通過"),
 }

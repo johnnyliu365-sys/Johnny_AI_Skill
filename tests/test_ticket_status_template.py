@@ -328,6 +328,9 @@ class ApprovedLayoutTests(unittest.TestCase):
     def test_the_done_ticket_arrives_whole(self) -> None:
         self.assertIn('<div class="id">E14 · event-runner-binding</div>', self.page)
         self.assertIn('<span class="st" data-s="done">R10 守衛</span>', self.page)
+        # DONE is finished work still waiting on a verdict, not a verdict
+        # itself -- the owner ruled 2026-08-21 that the badge must say so.
+        self.assertIn('<span class="badge" data-state="done">完成待審</span>', self.page)
         self.assertIn('<span class="val">da33781</span>', self.page)
         self.assertIn(
             '<span class="lab">已發行於</span><span class="val">v0.4.5</span>',
