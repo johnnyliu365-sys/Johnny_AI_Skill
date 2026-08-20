@@ -131,6 +131,6 @@ id = P1
 title = 用 Router 記帳管多個平行工人
 state = IN_PROGRESS
 stage = T | 並行證明 | DONE
-stage = G | 黏合層 | OPEN
+stage = G | 黏合層（已拆為 P2） | OPEN
 stage = V | 工人回傳 | OPEN
 ```
