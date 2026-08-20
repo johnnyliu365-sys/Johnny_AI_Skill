@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Johnny 工單狀態</title>
+<style>
+:root{
+  --bg:#f2f3f5; --card:#ffffff; --strip:#e9ebef; --line:#d5d9e0;
+  --ink:#12161c; --dim:#5c6672; --faint:#858e9a;
+  --accent:#3a4fb8;
+  --need:#b4690e; --need-bg:#fdf3e3;
+  --done:#1d7a4a; --open:#6b7683;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f1216; --card:#171b21; --strip:#1d222a; --line:#2c333d;
+    --ink:#e8ecf1; --dim:#98a2ad; --faint:#7a848f;
+    --accent:#8b9bf0;
+    --need:#e3a544; --need-bg:#2b2313;
+    --done:#4fbe86; --open:#7d8794;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f1216; --card:#171b21; --strip:#1d222a; --line:#2c333d;
+  --ink:#e8ecf1; --dim:#98a2ad; --faint:#7a848f;
+  --accent:#8b9bf0;
+  --need:#e3a544; --need-bg:#2b2313;
+  --done:#4fbe86; --open:#7d8794;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:"Segoe UI","Microsoft JhengHei",system-ui,sans-serif;
+  font-size:15px;line-height:1.5}
+.wrap{max-width:1080px;margin:0 auto;padding:22px 18px 44px;
+  display:flex;flex-direction:column;gap:16px}
+
+.bar{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 20px;
+  background:var(--strip);border:1px solid var(--line);border-radius:7px;
+  padding:11px 14px}
+.bar h1{font-size:16px;margin:0;letter-spacing:.02em;margin-right:auto}
+.bar .kv{font-size:12.5px;color:var(--dim);font-variant-numeric:tabular-nums}
+.bar .kv b{color:var(--ink);font-weight:600}
+.bar code{font-family:var(--mono);font-size:12px;color:var(--accent)}
+
+.ticket{background:var(--card);border:1px solid var(--line);border-radius:7px;
+  padding:14px 15px;display:grid;gap:11px;
+  grid-template-columns:minmax(0,1fr) auto;align-items:start}
+.ticket[data-need="yes"]{border-color:var(--need);
+  box-shadow:inset 3px 0 0 var(--need)}
+
+.who{grid-column:1;min-width:0}
+.id{font-family:var(--mono);font-size:11.5px;color:var(--faint);
+  letter-spacing:.06em}
+.name{font-size:15px;font-weight:600;margin:1px 0 0;text-wrap:balance}
+.badge{grid-column:2;grid-row:1;justify-self:end;font-size:12px;font-weight:700;
+  padding:3px 10px;border-radius:4px;white-space:nowrap;color:#fff}
+.badge[data-state="need"]{background:var(--need)}
+.badge[data-state="done"]{background:var(--done)}
+.badge[data-state="open"]{background:var(--open)}
+
+.stages{grid-column:1 / -1;display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.stages .lab{font-size:11px;color:var(--faint);margin-right:3px;
+  letter-spacing:.05em}
+.st{font-family:var(--mono);font-size:11px;padding:2px 7px;border-radius:3px;
+  border:1px solid var(--line);color:var(--dim)}
+.st[data-s="done"]{background:var(--done);border-color:var(--done);color:#fff}
+.st[data-s="open"]{border-color:var(--need);color:var(--need);font-weight:700}
+
+.where{grid-column:1 / -1;display:flex;flex-wrap:wrap;gap:6px 22px;
+  border-top:1px dashed var(--line);padding-top:10px}
+.cell{min-width:0}
+.cell .lab{display:block;font-size:11px;color:var(--faint);letter-spacing:.05em}
+.cell .val{font-family:var(--mono);font-size:12.5px;color:var(--ink)}
+.cell .sub{font-size:12px;color:var(--dim)}
+
+.handoff{grid-column:1 / -1;background:var(--strip);border:1px solid var(--line);
+  border-radius:5px;padding:8px 10px;overflow-x:auto}
+.handoff .lab{font-size:11px;color:var(--faint);letter-spacing:.05em}
+.handoff code{display:block;margin-top:3px;font-family:var(--mono);
+  font-size:12.5px;color:var(--ink);white-space:pre}
+
+.why{grid-column:1 / -1;background:var(--need-bg);border:1px solid var(--need);
+  border-radius:5px;padding:9px 11px;font-size:13px}
+.why b{color:var(--need)}
+
+.foot{color:var(--faint);font-size:12px;border-top:1px solid var(--line);
+  padding-top:11px}
+@media (max-width:640px){
+  .ticket{grid-template-columns:1fr}
+  .badge{grid-column:1;grid-row:auto;justify-self:start}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="bar">
+    <h1>Johnny 工單狀態</h1>
+    <span class="kv">main <code>c1bb040</code></span>
+    <span class="kv">發行 <b>v0.4.5</b> <code>1233e45</code></span>
+    <span class="kv">回滾點 <code>f3a2981</code></span>
+    <span class="kv">更新於 <b>2026-08-20 20:14</b></span>
+  </div>
+
+  <article class="ticket" data-need="yes">
+    <div class="who">
+      <div class="id">V1 · owner-visibility</div>
+      <p class="name">Owner 狀態頁</p>
+    </div>
+    <span class="badge" data-state="need">等你決定</span>
+
+    <div class="stages">
+      <span class="lab">階段</span>
+      <span class="st" data-s="done">R1 樣張</span>
+      <span class="st" data-s="done">R2 產生器</span>
+      <span class="st" data-s="done">R3 狀態來源</span>
+      <span class="st" data-s="open">R4 通知</span>
+    </div>
+
+    <div class="why">
+      <b>為什麼等你：</b>做出來的是「工人進度」頁，你要的是「工單狀態」頁，
+      內容方向要換。R4 另外卡在喚醒失敗的原因沒有持久化。
+    </div>
+
+    <div class="where">
+      <div class="cell"><span class="lab">停在</span>
+        <span class="val">f3a2981</span>
+        <span class="sub">feat: render the owner status surface</span></div>
+      <div class="cell"><span class="lab">工單</span>
+        <span class="sub">modules/tickets/owner-visibility/v1-owner-status-surface.md</span></div>
+    </div>
+
+    <div class="handoff"><span class="lab">要接手就把這行給對話</span>
+      <code>git show f3a2981 -- modules/tickets/owner-visibility/v1-owner-status-surface.md</code></div>
+  </article>
+
+  <article class="ticket" data-need="no">
+    <div class="who">
+      <div class="id">E14 · event-runner-binding</div>
+      <p class="name">Claude 分支喚醒命令</p>
+    </div>
+    <span class="badge" data-state="done">已完成</span>
+
+    <div class="stages">
+      <span class="lab">階段</span>
+      <span class="st" data-s="done">R1</span>
+      <span class="st" data-s="done">R2</span>
+      <span class="st" data-s="done">R3</span>
+      <span class="st" data-s="done">R4</span>
+      <span class="st" data-s="done">R5</span>
+      <span class="st" data-s="done">R6</span>
+      <span class="st" data-s="done">R7</span>
+      <span class="st" data-s="done">R8 實機</span>
+      <span class="st" data-s="done">R9 守衛</span>
+      <span class="st" data-s="done">R10 守衛</span>
+    </div>
+
+    <div class="where">
+      <div class="cell"><span class="lab">停在</span>
+        <span class="val">da33781</span>
+        <span class="sub">refuse to drive a conversation an app tab wraps</span></div>
+      <div class="cell"><span class="lab">已發行於</span>
+        <span class="val">v0.4.5</span></div>
+      <div class="cell"><span class="lab">工單</span>
+        <span class="sub">modules/tickets/event-runner-binding/e14-claude-branch-wake-command.md</span></div>
+    </div>
+
+    <div class="handoff"><span class="lab">要接手就把這行給對話</span>
+      <code>git show da33781 -- modules/tickets/event-runner-binding/e14-claude-branch-wake-command.md</code></div>
+  </article>
+
+  <article class="ticket" data-need="no">
+    <div class="who">
+      <div class="id">04 · workflow-governance</div>
+      <p class="name">Skill 敘述了沒有發生的喚醒</p>
+    </div>
+    <span class="badge" data-state="done">已完成</span>
+
+    <div class="stages">
+      <span class="lab">階段</span>
+      <span class="st" data-s="done">R1</span>
+      <span class="st" data-s="done">R2</span>
+      <span class="st" data-s="done">R3</span>
+      <span class="st" data-s="done">R4 發行</span>
+    </div>
+
+    <div class="where">
+      <div class="cell"><span class="lab">停在</span>
+        <span class="val">9a85e45</span>
+        <span class="sub">the skill no longer narrates wakes nothing performs</span></div>
+      <div class="cell"><span class="lab">已發行於</span>
+        <span class="val">v0.4.4</span></div>
+      <div class="cell"><span class="lab">工單</span>
+        <span class="sub">modules/tickets/workflow-governance/04-skill-implies-a-runtime-that-may-not-exist.md</span></div>
+    </div>
+
+    <div class="handoff"><span class="lab">要接手就把這行給對話</span>
+      <code>git show 9a85e45 -- modules/tickets/workflow-governance/04-skill-implies-a-runtime-that-may-not-exist.md</code></div>
+  </article>
+
+  <p class="foot">每一列都來自 git 與工單檔本身。讀不到的來源會就地標示，不會靜靜地變成空白。</p>
+</div>
+</body>
+</html>

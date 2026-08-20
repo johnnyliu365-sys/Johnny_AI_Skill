@@ -1,0 +1,125 @@
+{
+  "generated_at": "2026-08-20T20:14:00+08:00",
+  "head": {
+    "branch": "main",
+    "commit": "c1bb040"
+  },
+  "release": {
+    "version": "v0.4.5",
+    "commit": "1233e45"
+  },
+  "rollback": {
+    "commit": "f3a2981"
+  },
+  "tickets": [
+    {
+      "id": "V1",
+      "module": "owner-visibility",
+      "title": "Owner 狀態頁",
+      "state": "NEEDS_OWNER",
+      "why_waiting": "做出來的是工人進度頁，你要的是工單狀態頁，內容方向要換。",
+      "stages": [
+        {
+          "ref": "R1",
+          "label": "樣張",
+          "state": "DONE"
+        },
+        {
+          "ref": "R2",
+          "label": "產生器",
+          "state": "DONE"
+        },
+        {
+          "ref": "R3",
+          "label": "狀態來源",
+          "state": "DONE"
+        },
+        {
+          "ref": "R4",
+          "label": "通知",
+          "state": "OPEN"
+        }
+      ],
+      "commit": {
+        "sha": "f3a2981",
+        "subject": "feat: render the owner status surface"
+      },
+      "released_in": null,
+      "ticket_path": "modules/tickets/owner-visibility/v1-owner-status-surface.md",
+      "handoff_command": "git show f3a2981 -- modules/tickets/owner-visibility/v1-owner-status-surface.md"
+    },
+    {
+      "id": "E14",
+      "module": "event-runner-binding",
+      "title": "Claude 分支喚醒命令",
+      "state": "DONE",
+      "why_waiting": null,
+      "stages": [
+        {
+          "ref": "R1",
+          "label": "",
+          "state": "DONE"
+        },
+        {
+          "ref": "R2",
+          "label": "",
+          "state": "DONE"
+        },
+        {
+          "ref": "R3",
+          "label": "",
+          "state": "DONE"
+        },
+        {
+          "ref": "R4",
+          "label": "",
+          "state": "DONE"
+        },
+        {
+          "ref": "R5",
+          "label": "",
+          "state": "DONE"
+        },
+        {
+          "ref": "R6",
+          "label": "",
+          "state": "DONE"
+        },
+        {
+          "ref": "R7",
+          "label": "",
+          "state": "DONE"
+        },
+        {
+          "ref": "R8",
+          "label": "實機",
+          "state": "DONE"
+        },
+        {
+          "ref": "R9",
+          "label": "守衛",
+          "state": "DONE"
+        },
+        {
+          "ref": "R10",
+          "label": "守衛",
+          "state": "DONE"
+        }
+      ],
+      "commit": {
+        "sha": "da33781",
+        "subject": "refuse to drive a conversation an app tab wraps"
+      },
+      "released_in": "v0.4.5",
+      "ticket_path": "modules/tickets/event-runner-binding/e14-claude-branch-wake-command.md",
+      "handoff_command": "git show da33781 -- modules/tickets/event-runner-binding/e14-claude-branch-wake-command.md"
+    }
+  ],
+  "unreadable": [
+    {
+      "label": "工單 03 的狀態宣告",
+      "path": "modules/tickets/workflow-governance/03-suite-fragility.md",
+      "reason": "找不到 johnny-status 區塊"
+    }
+  ]
+}

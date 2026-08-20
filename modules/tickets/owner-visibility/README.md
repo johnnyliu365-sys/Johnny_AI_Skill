@@ -37,4 +37,5 @@ record first; a swallowed toast then costs latency, never the item.
 
 | # | Ticket | Sole closure | State |
 | --- | --- | --- | --- |
-| V1 | Owner status surface | The owner sees, at a glance and without opening a terminal, which workers are running, what is waiting on their decision, and what finished | `OPEN` — see [`v1-owner-status-surface.md`](v1-owner-status-surface.md) |
+| V1 | Owner status surface | Superseded in content by V2: it built a worker board where the owner wanted a ticket board. Its mechanisms (atomic write, per-source honesty) carry forward; see [`v1-owner-status-surface.md`](v1-owner-status-surface.md) | `SUPERSEDED` — R2/R3 landed at `f3a2981`; R4 never started |
+| V2 | Ticket status surface | One page answering which ticket is at which stage, at which commit, and what to hand a conversation on handover; see [`v2-ticket-status-surface.md`](v2-ticket-status-surface.md) | `OPEN` — design approved by the owner; UI dispatched, pipeline held by the control plane |
