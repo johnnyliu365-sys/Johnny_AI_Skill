@@ -30,7 +30,8 @@ Measured on the owner's Windows workstation against CLI `2.1.234`:
   named branch, `--resume <id>` continues a stored one, `--fork-session`
   branches it. These are the primitives that make "different branches" real.
 - `claude auth status` prints `{"loggedIn": …, "authMethod": …}` and needs no
-  model call. It is the only honest source for whether a drive can succeed.
+  model call. It is a cheap *necessary* condition -- and only that, per the
+  next point.
 - **`claude auth status` does not validate the token.** It reports
   `{"loggedIn": true, "authMethod": "oauth_token"}` whenever a token is present
   in the environment, and the first real call can still fail
