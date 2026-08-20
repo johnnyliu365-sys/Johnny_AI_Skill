@@ -1,79 +1,74 @@
-# E14 — Claude Branch Wake Command
+# E14｜Claude 分支喚醒命令
 
-| Field | Value |
+| 欄位 | 內容 |
 | --- | --- |
-| State | `CLOSED` — the dispatcher ships and the live drive is evidenced end to end on the owner's host |
-| Baseline | `main` at the commit this ticket lands in |
-| Workload | `MEDIUM`; Python 3.11 strict, TDD, reverse mutation required |
-| Depends on | E12 (closed): establishes the wake-command contract this module implements for a second host |
+| 對應規格 ID | 不適用（治理／基礎設施功能票；標準見 `modules/tickets/TEMPLATE.md`） |
+| 規格撰寫 AI | 不適用 |
+| 第一步排查起點 | `modules/tickets/event-runner-binding/e12-wake-command-discovery.md`（E12，已結案：本模組把同一份喚醒命令契約實作到第二個 host 上） |
+| PRD 索引 | 不適用 |
+| 需求變更 | 不適用 |
+| Sealed Context binding | 不適用 |
+| Agent Context binding | 無紀錄（早於本欄要求） |
+| 實作語言 | Python 3.11 strict（TDD、需反向突變） |
+| 狀態 | `DONE`（board 記為 `APPROVED`；已隨 v0.4.5 發行） |
+| 共同基準 | `main`；本票落地並發行於 commit `da33781`（見完成回寫） |
+| 實作者 | 無紀錄（早於本欄要求） |
+| 審閱者 | 控制面（Opus 5） |
+| 責任邊界 | `library/local_orchestration/claude_wake_command.py` 及其測試 |
+| 禁止修改 | 不得對使用者當下開啟的分頁／分支寫入（見下方「不授權事項」）；E12 建立的喚醒命令契約 |
+| 環境 | `LOCAL`（對照 owner 的 Windows workstation 實測；`STAGING`／`PRODUCTION` 不適用） |
 
-## One outcome
+## 使用者拍板與可觀察結果
 
-The Router can drive Claude Code conversation branches, one branch per
-reviewer, resolved per attempt. Deliverable:
-`library/local_orchestration/claude_wake_command.py`, runnable as
+Router 能驅動 Claude Code 對話分支，每個 reviewer 一個分支，每次嘗試各自解析。交付物：
+`library/local_orchestration/claude_wake_command.py`，可用
 
 ```text
 py -3.11 -m library.local_orchestration.claude_wake_command {payload_file}
 ```
 
-which becomes the owner's `WakeCommandConfig.command` vector.
+執行，這會成為 owner 的 `WakeCommandConfig.command` 向量。
 
-## What the host actually offers — measured, not assumed
+**這台 host 實際提供什麼——量測而非假設**（對照 owner 的 Windows workstation，CLI
+`2.1.234`）：
 
-Measured on the owner's Windows workstation against CLI `2.1.234`:
+- CLI 裝在 `PATH` 之外的 `%APPDATA%\Claude\claude-code\<version>\claude.exe`，每個版本
+  一個目錄。探索邏輯必須挑最高版本，不是找到的第一個。
+- `claude -p` 恰好跑一個 turn 就結束。`--session-id <uuid>` 開一個具名分支，
+  `--resume <id>` 接續一個已存的分支，`--fork-session` 分岔它——這些是讓「不同分支」成真
+  的基本操作。
+- `claude auth status` 印出 `{"loggedIn": …, "authMethod": …}`，不需要呼叫模型，是一個
+  便宜的**必要**條件——僅止於必要，見下一點。
+- **`claude auth status` 不驗證 token。** 只要環境裡有 token 就回報
+  `{"loggedIn": true, "authMethod": "oauth_token"}`，而第一次真正呼叫仍可能失敗
+  `401 Invalid bearer token`。這台 host 上量測到：status 說已登入，驅動卻回 401。只靠
+  auth-status 的能力檢查因此會在一個什麼都驅動不了的 host 上回報 `PROVEN`——這正是探測
+  路徑要求跑完一整個 turn 而非只看結束碼的原因。
+- `claude setup-token` 發出的長期 token 以 `sk-ant-oat01-` 開頭（前綴寫死在 CLI 二進位
+  檔裡）。存起來的值若不帶這個前綴就不是那個 issued token；瀏覽器步驟的 authorization
+  code 是最容易被誤認成它的值。
+- `claude agents --json` 列出現役 session（pid、sessionId、cwd），**不需要**認證就能
+  跑——列舉是免費的，驅動不是。
+- `claude setup-token` 發出長期 token，這是自動化該用的正確憑證：互動式 OAuth session
+  會過期且無法無人值守地刷新，這正是這台 host 一開始被發現的方式（`loggedIn: false`，
+  `claude -p` → `OAuth session expired and could not be refreshed`）。
 
-- The CLI installs off `PATH` at
-  `%APPDATA%\Claude\claude-code\<version>\claude.exe`, one directory per
-  version. Discovery must pick the highest version, not the first found.
-- `claude -p` runs exactly one turn and exits. `--session-id <uuid>` opens a
-  named branch, `--resume <id>` continues a stored one, `--fork-session`
-  branches it. These are the primitives that make "different branches" real.
-- `claude auth status` prints `{"loggedIn": …, "authMethod": …}` and needs no
-  model call. It is a cheap *necessary* condition -- and only that, per the
-  next point.
-- **`claude auth status` does not validate the token.** It reports
-  `{"loggedIn": true, "authMethod": "oauth_token"}` whenever a token is present
-  in the environment, and the first real call can still fail
-  `401 Invalid bearer token`. Measured on this host: status said logged in,
-  the drive returned 401. An auth-status-only capability check would therefore
-  report `PROVEN` on a host that cannot drive anything -- which is precisely
-  why the probe requires a completed turn instead.
-- The long-lived token issued by `claude setup-token` begins `sk-ant-oat01-`
-  (the prefix is in the CLI binary). A stored value that does not carry that
-  prefix is not the issued token; the browser step's authorization code is the
-  value most easily mistaken for it.
-- `claude agents --json` lists live sessions (pid, sessionId, cwd) and works
-  **without** authentication. Enumeration is free; driving is not.
-- `claude setup-token` issues a long-lived token, which is the correct
-  credential for automation: an interactive OAuth session expires and cannot
-  refresh headlessly, which is exactly how this host was found (`loggedIn:
-  false`, `claude -p` → `OAuth session expired and could not be refreshed`).
+**讀完整個介面之後確立的負面結果**：沒有任何介面能把一個 turn 送進使用者已經坐在裡面的
+對話。所有頂層命令都列舉過了（`agents`、`auth`、`auto-mode`、`doctor`、`gateway`、
+`import`、`install`、`mcp`、`plugin`、`project`、`setup-token`、`ultrareview`、
+`update`）；沒有一個能把輸入注入正在跑的 session，`claude agents` 的選項全是給*未來*
+被派發的 session 用的預設值，不是對現有 session 的控制。app 內建的 session-message 工具
+只能被已經在 session 裡面的 agent 呼叫，而它自己的契約就排除了 orchestrate 背景工作。所以
+這個通道跟 Antigravity 的形狀不同，這個差異絕不能被混淆：Antigravity **喚醒一個既有對話**
+（E11 證明過一個真的 agent 讀了 payload 並採取行動）；Claude **驅動一個 Router 擁有的
+分支**。owner 開著的視窗在這台 host 上不是喚醒目標。
 
-### The negative result, established by reading the whole surface
+## 實作範圍、依賴與 ticket elements
 
-**No interface delivers a turn into a conversation someone is already sitting
-in.** Every top-level command was enumerated (`agents`, `auth`, `auto-mode`,
-`doctor`, `gateway`, `import`, `install`, `mcp`, `plugin`, `project`,
-`setup-token`, `ultrareview`, `update`); none injects input into a running
-session, and `claude agents`' options are all defaults for *future* dispatched
-sessions, not controls over live ones. The in-app session-message tool is
-callable only by an agent already inside a session, and its own contract
-excludes orchestrating background work.
-
-So this channel is shaped differently from Antigravity's, and the difference
-must never be blurred: Antigravity **wakes an existing conversation** (E11
-proved a real agent read the payload and acted). Claude **drives a branch the
-Router owns**. The owner's open window is not a wake target on this host.
-
-## Design
-
-Target resolution is per attempt, which is what makes the plural in
-"different branches" true. The wake payload the Router renders is
-identifiers-only `key=value` text carrying `reviewer_ref` and `project_id`
-(`RoleWakeRequest.render_identifiers_only_payload`). The dispatcher reads
-those two keys and resolves them through an owner-declared table at
-`<johnny-root>/claude-branch-routes.json`:
+**目標解析是逐次嘗試進行的**，這正是「不同分支」這個複數會成真的原因。Router 渲染的喚醒
+payload 是只帶識別碼的 `key=value` 文字，帶著 `reviewer_ref` 與 `project_id`
+（`RoleWakeRequest.render_identifiers_only_payload`）。dispatcher 讀這兩個鍵，透過一份
+owner 宣告的表在 `<johnny-root>/claude-branch-routes.json` 解析：
 
 ```json
 {
@@ -87,153 +82,154 @@ those two keys and resolves them through an owner-declared table at
 }
 ```
 
-A project-scoped route outranks a project-agnostic one. An unmapped reviewer
-is refused by name as `REVIEWER_NOT_MAPPED`; it is never delivered to some
-other branch, which is the failure that would be worst to have.
+專案限定的路由優先於不限專案的路由。沒被對應到的 reviewer 以具名方式被拒絕為
+`REVIEWER_NOT_MAPPED`；絕不會被送去別的分支——那是最不該發生的失敗。送到分支的訊息只帶
+payload 的**路徑**，絕不帶內容本身，沿用 E12 的原則：識別碼留在檔案裡，不上命令列、不進
+聊天訊息。
 
-The message sent to the branch names the payload **path** and never its body,
-following E12: identifiers stay in the file, not on a command line or in a
-chat message.
+**探測誠實性——最容易腐壞的部分。** `probe_wake_capability` 對一個不點名任何 reviewer 的
+拋棄式 payload（`{"probe":true,…}`）渲染宣告的命令，要求結束碼 0。若只要結束碼 0 就算
+成功，`PROVEN` 就會變成「dispatcher 能讀一個檔案」的意思——這正是本專案反覆被咬過的假綠色
+形狀（見 `PITFALL-REGISTER.md` family C）。所以探測路徑會對一個拋棄式分支做**真正端到端
+的驅動**，並要求看到一個完成的模型 turn（stdout 裡的標記）才回報成功，光有結束碼不算數；
+對應的反向突變在測試組裡。有兩個限制是刻意保留、日後不得抹掉的：探測只證明 host 能驅動
+*某個* Claude 分支，**不**證明 reviewer 自己的分支可達，因為探測 payload 不點名任何
+reviewer，路由失敗要在喚醒當下才會浮現；探測驅動的是一個全新的 `--session-id`，而真正的
+喚醒用 `--resume`——這是被探測的呼叫與真正送出的呼叫之間唯一刻意的差異。探測也用一個快的
+模型跑，因為 `probe_wake_capability` 把探測上限設在 30 秒，大模型的冷啟動 turn 可能超過。
+探測逾時的 owner 會拿到 `PROBE_TIMEOUT` 與誠實的 `CANDIDATE_INBOX` 後備，絕不會拿到一個
+假的喚醒宣稱。
 
-## Probe honesty — the part most likely to rot
+### 角色指派（必填）
 
-`probe_wake_capability` renders the declared command against a disposable
-payload (`{"probe":true,…}`) that names no reviewer, and requires exit 0.
-Exiting 0 on a payload the dispatcher cannot deliver would make `PROVEN` mean
-"the dispatcher can read a file" — the false-green shape this project has
-been bitten by repeatedly (see `PITFALL-REGISTER.md` family C). So the probe
-path performs a **real end-to-end drive of a throwaway branch** and requires a
-completed model turn (a marker in stdout) before reporting success. Exit code
-alone is not accepted; the reverse mutation for this is in the suite.
+- 流程／ticket owner：控制面（Opus 5）；不得實作此 ticket。
+- implementation owner：無紀錄（早於本欄要求）。
+- reviewer：控制面（Opus 5）；與實作者不同 worktree。
+- **Owner override record**：`N/A`
+- `ImplementationHandoff`：本票 revision。
+- `ImplementationReturn`：`COMPLETED → ACTION_COMPLETED`／`BLOCKED → HALT`／
+  `CHANGE_DETECTED → REQUIREMENT_CHANGED`。
 
-Two limits are deliberate and are not to be papered over later:
+### 前端組合與依賴注入
 
-1. The probe proves the host can drive *a* Claude branch. It does **not**
-   prove the reviewer's own branch is reachable, because the probe payload
-   names no reviewer. Route failures surface at wake time.
-2. The probe drives a fresh `--session-id` where a real wake uses `--resume`.
-   That is the single intentional difference between the probed invocation
-   and the delivered one.
+**N/A reason**：純後端 dispatcher 模組（CLI 呼叫、路由表解析、subprocess 驅動），不觸及
+任何正式 UI 邊界。
 
-The probe also runs with a fast model, because `probe_wake_capability` caps
-the probe at 30 seconds and a cold turn on a large model can exceed it. An
-owner whose probe times out gets `PROBE_TIMEOUT` and the honest
-`CANDIDATE_INBOX` fallback — never a claimed wake.
+- 實際原始碼路徑：`library/local_orchestration/claude_wake_command.py`
+- 公開契約／資料模型：`<johnny-root>/claude-branch-routes.json` 的路由表格式（見上方
+  JSON 範例）；`RoleWakeRequest.render_identifiers_only_payload` 的識別碼 payload；
+  `probe_wake_capability` 的探測契約
 
-## Acceptance
+## TDD 設計
 
-| Ref | Requirement | Evidence |
+1. 正常行為：探索邏輯挑最高版本已安裝的 CLI（E14-R1）；不同 reviewer 各自到達不同分支
+   且都能送達（E14-R3）。
+2. 規則違反／輸入錯誤：未對應的 reviewer 以具名方式被拒絕，不會被誤送到別的分支
+   （E14-R4）；未認證的 host 在花費一個 turn 之前就拒絕（E14-R2）。
+3. 外部失敗／fail-closed：探測沒有真的跑完一個 turn 就不算成功，只有結束碼 0 不算數
+   （E14-R6）；被現役 session 佔用的分支拒絕遞送，連清單讀不到時也拒絕，而不是放行
+   （E14-R9）；被 app 分頁宣告佔用的分支拒絕遞送，即使背後的行程已經不在了（E14-R10）；
+   探測逾時回報 `PROBE_TIMEOUT` 與 `CANDIDATE_INBOX`，絕不宣稱喚醒發生。
+4. 回歸保護：訊息只帶 payload 路徑，不帶內容本身（E14-R5）；反向突變鑑別力（E14-R7）。
+
+### 適用的缺陷類別（依 `CodeReview.md` §2.1）
+
+| # | 類別 | 是否適用 | 本工單的必要案例 |
+| --- | --- | --- | --- |
+| 1 | 路徑前綴誤匹配 | 否 | 不涉路徑前綴比對（CLI 版本目錄挑選是取最大值，非前綴匹配） |
+| 2 | null／空字串／陣列 | 否 | 不涉一般輸入格式驗證 |
+| 3 | 權限繞過 | 是 | 直接：對現役 session（E14-R9）或 app 分頁（E14-R10）佔用的分支遞送被拒絕；間接：唯一的遞送路徑就是 dispatcher 本身，沒有另一條可繞過同一守衛的入口 |
+| 4 | Token 格式與比較 | 是 | `sk-ant-oat01-` 前綴判斷，避免把瀏覽器 authorization code 誤認成 issued token；`AuthenticationGateTests` 斷言唯一的 subprocess 呼叫是 `auth status` |
+| 5 | 錯誤碼是否一致 | 是 | 每個具名拒絕碼（`REVIEWER_NOT_MAPPED`、`BRANCH_HELD_BY_LIVE_SESSION`、`BRANCH_HELD_BY_APP_TAB`、`LIVE_SESSION_CHECK_FAILED`、`APP_CLAIM_CHECK_FAILED`、`PROBE_TIMEOUT`）必須各自唯一、可區分 |
+| 6 | 例外是否會拋出 | 是 | 現役 session 清單讀不到、app 分頁宣告記錄讀不到時，兩者都必須 fail-closed（`LIVE_SESSION_CHECK_FAILED`／`APP_CLAIM_CHECK_FAILED`），不知道不等於知道分支是空的 |
+
+## 完成定義與證據
+
+| Ref | 要求 | 證據 |
 | --- | --- | --- |
-| E14-R1 | Discovery picks the highest installed CLI version; a non-version directory is ignored; an env override wins | `ExecutableDiscoveryTests` |
-| E14-R2 | An unauthenticated host refuses before spending a turn | `AuthenticationGateTests` — asserts the only subprocess call was `auth status` |
-| E14-R3 | Distinct reviewers reach distinct branches | `DeliveryTests.test_two_reviewers_reach_two_different_branches` — asserts the two recorded `--resume` ids differ |
-| E14-R4 | An unmapped reviewer is refused, not misdelivered | `DeliveryTests.test_unmapped_reviewer_is_refused_by_name_not_delivered_elsewhere` — asserts zero drive calls |
-| E14-R5 | The message names the payload path and not its body | same cell — asserts `receipt_id` and the action are absent from the message |
-| E14-R6 | The probe requires a completed turn, not exit 0 | `ProbeHonestyTests.test_exit_zero_without_a_completed_turn_is_refused` |
-| E14-R9 | A conversation held by a live session is refused, and an unreadable inventory refuses too | `LiveSessionGuardTests`; verified live below |
-| E14-R10 | A conversation an app tab wraps is refused even with no process alive | `AppTabClaimTests`; verified live below |
-| E14-R7 | Tests discriminate | Reverse mutation run: routing→always-first turned 6 cells red; dropping the probe marker check turned R6 red; both restored green |
+| E14-R1 | 探索挑最高版本已安裝的 CLI；非版本目錄被忽略；環境變數覆寫優先 | `ExecutableDiscoveryTests` |
+| E14-R2 | 未認證的 host 在花費一個 turn 之前就拒絕 | `AuthenticationGateTests`——斷言唯一的 subprocess 呼叫是 `auth status` |
+| E14-R3 | 不同 reviewer 到達不同分支 | `DeliveryTests.test_two_reviewers_reach_two_different_branches`——斷言兩筆記錄的 `--resume` id 不同 |
+| E14-R4 | 未對應的 reviewer 被拒絕，不被誤送 | `DeliveryTests.test_unmapped_reviewer_is_refused_by_name_not_delivered_elsewhere`——斷言零次驅動呼叫 |
+| E14-R5 | 訊息只帶 payload 路徑，不帶內容 | 同一格測試——斷言 `receipt_id` 與 action 都不在訊息裡 |
+| E14-R6 | 探測要求跑完一個 turn，不是結束碼 0 | `ProbeHonestyTests.test_exit_zero_without_a_completed_turn_is_refused` |
+| E14-R9 | 現役 session 佔用的對話被拒絕，清單讀不到也拒絕 | `LiveSessionGuardTests`；下方另有實機驗證 |
+| E14-R10 | app 分頁宣告佔用的對話被拒絕，即使沒有活著的行程 | `AppTabClaimTests`；下方另有實機驗證 |
+| E14-R7 | 測試有鑑別力 | 反向突變：路由改成永遠選第一筆，6 格轉紅；拿掉探測標記檢查，R6 轉紅；兩者皆已還原成綠 |
 
-All cells drive the real subprocess path through a stub CLI that records the
-exact argv, rather than patching module internals — a mocked runner cannot
-catch the command shape drifting away from what the CLI accepts.
+所有格子都透過一個記錄真實 argv 的 stub CLI 驅動真正的 subprocess 路徑，而不是 patch
+模組內部——mock 過的 runner 抓不到命令形狀偷偷偏離 CLI 實際接受格式這件事。
 
-## E14-R8 closed — the live drive, measured
+**E14-R8 已關閉——實機量測。** 對照 owner 的 host、CLI `2.1.234`，用 `claude setup-token`
+發出的 `sk-ant-oat01-` token（108 字元）經 `CLAUDE_CODE_OAUTH_TOKEN` 帶入，已認證：
 
-Run on the owner's host against CLI `2.1.234`, authenticated with an
-`sk-ant-oat01-` token from `claude setup-token` (108 characters), supplied
-through `CLAUDE_CODE_OAUTH_TOKEN`.
+1. **能力探測真的通過。** dispatcher 的探測路徑回傳
+   `{"status": "CAPABILITY_PROVEN"}`，結束碼 0，耗時 **5.2 秒**——在 runtime 30 秒上限
+   之內還有餘裕，這正是加入 deadline 預算的目的。
+2. **分支各自獨立且持久。** 用 `--session-id` 開了兩個全新 session id，一個被告知
+   `ALPHA-7731`，另一個 `BRAVO-4402`。分別用 `--resume` 接續，各自回傳**自己的** token，
+   沒有一個帶到另一個的。所以平行的 Claude 分支是真的、彼此隔離、能撐過行程結束——不是
+   剛好跑成功的單次呼叫。
+3. **具名 reviewer 的分支真的收到喚醒。** 一份把 `supervisor-reviewer` 對應到分支 A 的
+   路由表，加上一份指名該 reviewer 的 `ROLE_WAKE_V1` payload，在 8.7 秒內產出
+   `{"status": "DELIVERED"}`。事後從分支 A **內部**詢問，該分支說出了它被交付的 payload
+   路徑，被問到先前被告知什麼時仍答 `ALPHA-7731`。所以喚醒真的落進了 reviewer 自己的
+   分支並延續它，而不是開了一個新的。
 
-1. **The capability probe passes for real.** The dispatcher's probe path
-   returned `{"status": "CAPABILITY_PROVEN"}`, exit 0, in **5.2 s** — inside
-   the runtime's 30-second cap with room to spare, which is what the deadline
-   budget was added for.
-2. **Branches are distinct and durable.** Two fresh session ids were opened
-   with `--session-id`, one told `ALPHA-7731` and the other `BRAVO-4402`.
-   Resumed separately with `--resume`, each returned **its own** token and
-   neither carried the other's. Parallel Claude branches are therefore real,
-   isolated, and survive process exit — not one invocation that happened to
-   work.
-3. **A named reviewer's branch really receives the wake.** A route table
-   mapping `supervisor-reviewer` to branch A, plus a `ROLE_WAKE_V1` payload
-   naming that reviewer, produced `{"status": "DELIVERED"}` in 8.7 s. Asked
-   from *inside* branch A afterwards, the branch named the payload path it had
-   been handed, and still answered `ALPHA-7731` when asked what it had been
-   told earlier. So the wake landed in the reviewer's own branch and continued
-   it, rather than opening a fresh one.
+第 3 點是最關鍵的證據，是這個 host 版本的 E11：交付是從**接收端**確認的，不是從送出端自己
+的回傳值。`DELIVERED` 狀態是對一個命令的宣稱；分支說出 payload 是對「什麼真的送達」的事實。
 
-Point 3 is the evidence that matters, and it is the E11-equivalent for this
-host: the delivery was confirmed from the receiving side, not from the
-sender's own return value. A `DELIVERED` status is a claim about a command;
-the branch naming the payload is a fact about what arrived.
+**owner 正在看的分頁——量測後禁止。** owner 問過自己的分頁會不會被看到移動。量測自 owner
+特意開的一個拋棄式空白 workspace：`claude agents --json` 回報一個 app 分頁背後真實的
+session id（`07199111-…`），所以 Router 確實能找到開著的分頁；先前「這在結構上不可能」的
+說法講得太重——沒有*注入*介面，但接續同一個對話需要的 id 就在那裡。用 `claude -p
+--resume` 驅動那個 id **成功**：4 秒內結束碼 0，那個對話自己的 transcript 從 31 行／
+41,042 bytes 長到 41 行／49,516 bytes，沒有建立第二個檔案，那個 turn 真的落進了分頁的
+對話裡。app 畫面**什麼都沒變**：owner 全程盯著那個分頁，回報沒有任何變化，而 app 的登記檔
+時間戳仍停在它剛收到的那次寫入之前 76 秒。所以外部驅動一個開著的分頁，會產生 owner 看不到
+的工作，而 app 繼續拿著一份跟檔案對不上的記憶體歷史——一份 transcript 兩個寫入者。能做這件
+事不代表值得提供這個功能。
 
-## The tab the owner is watching — measured, then forbidden
+**E14-R9。** `live_session_ids` 在每次遞送前讀取清單，目標被佔用的喚醒以
+`BRANCH_HELD_BY_LIVE_SESSION` 拒絕；讀不到清單也一樣拒絕（`LIVE_SESSION_CHECK_FAILED`）
+——不知道不等於知道分支是空的，這個守衛若 fail-open 就沒有存在的意義。對同一個分頁實機
+驗證：`{"code": "BRANCH_HELD_BY_LIVE_SESSION", "status": "REFUSED"}`，transcript
+byte 數在前後完全一致，所以是拒絕真的阻止了寫入，不只是事後回報。
 
-The owner asked whether they would see their own tab move. Measured on a
-disposable empty workspace the owner opened for the test:
+**E14-R10——行程存活不是該問的問題。** owner 回報一個他沒碰過的分頁離開了現役清單，之後
+再查發現它的行程又回來了。行程來來去去，分頁本身卻整段時間開在螢幕上，所以只靠
+`live_session_ids` 會在每一次行程空窗期都把那個對話當成是空的，並無聲寫進去。桌面 app 在
+`%APPDATA%\Claude\claude-code-sessions\**\local_*.json` 底下每個 session 存一份 JSON
+檔，每筆記錄同時帶著 app 自己的 `sessionId` 和它包住的 `cliSessionId`，所以這個宣稱比
+行程活得久，且能從磁碟讀到。`app_claimed_session_ids` 在每次遞送前讀它，以
+`BRANCH_HELD_BY_APP_TAB` 拒絕；解析不了的記錄，或裝了 app 卻沒有這份存放區，都以
+`APP_CLAIM_CHECK_FAILED` 拒絕——讀不到的那筆記錄可能正是要緊的那筆。實機驗證：對照
+owner 真實的登記檔，dispatcher 回傳 `BRANCH_HELD_BY_APP_TAB`，transcript byte 數不變。
+這個守衛讀的是 app 自己擁有、卻沒有文件記載的狀態，這是刻意接受的，因為失敗模式只有一個
+方向是安全的：格式一旦變動，讀取失敗，喚醒就被**拒絕**，絕不會被無聲放行；一個 fail-open
+的守衛不值得擁有。
 
-- `claude agents --json` reports the real session id behind an app tab
-  (`07199111-…`), so the Router can in fact find open tabs. The earlier
-  statement that this was structurally impossible was too strong: there is no
-  *injection* interface, but the id needed to resume the same conversation is
-  right there.
-- Driving that id with `claude -p --resume` **succeeded**: exit 0 in 4 s, and
-  that conversation's own transcript grew from 31 lines / 41,042 bytes to 41
-  lines / 49,516 bytes. No second file was created. The turn landed inside the
-  tab's conversation.
-- The app rendered **nothing**. The owner watched the tab throughout and
-  reported no change of any kind, and the app's registry still timestamped
-  that conversation 76 seconds *before* the write it had just received.
+被喚醒的分支被問到收到了什麼；沒有被觀察到真的執行一次審閱並送出裁決——這最後一哩，跟
+Antigravity 通道一樣，在這裡仍未被證明。這個結果也沒有改變上面的負面結論：沒有任何介面能
+寫進 owner 正坐在裡面的對話，Router 驅動的是它自己擁有的分支。
 
-So an external drive of an open tab produces work the owner cannot see, while
-the app goes on holding an in-memory history that no longer matches the file:
-two writers over one transcript. Being able to do this is not a reason to
-offer it.
+- **反向突變證據**：E14-R7——路由改成永遠選第一筆，6 格轉紅；拿掉探測標記檢查，R6 轉紅；
+  兩者皆已還原成綠。
+- **缺陷修正** baseline-red：不適用（新行為，非缺陷修正）。
 
-**E14-R9.** `live_session_ids` reads the inventory before every delivery, and
-a wake whose target is held is refused as `BRANCH_HELD_BY_LIVE_SESSION`. An
-inventory that cannot be read refuses as well
-(`LIVE_SESSION_CHECK_FAILED`) — not knowing is not the same as knowing the
-branch is free, and the fail-open version of this guard would be worth
-nothing. Verified live against the same tab:
-`{"code": "BRANCH_HELD_BY_LIVE_SESSION", "status": "REFUSED"}` with the
-transcript byte count identical before and after, so the refusal prevented
-the write rather than merely reporting one.
+## 正式環境移植 SOP
 
-**E14-R10 — process liveness is not the right question.** The owner reported
-that the tab they had *not* touched left the live inventory anyway, and a
-later check found its process back again. A process behind a tab comes and
-goes; the tab stays open on screen throughout. So `live_session_ids` alone
-would have called that conversation free and written into it invisibly during
-every gap.
+無 migration。執行環境需在目標主機設定環境變數 `CLAUDE_CODE_OAUTH_TOKEN`，值為
+`claude setup-token` 發出、`sk-ant-oat01-` 開頭的長期 token（互動式 OAuth token 無法
+無人值守刷新，不適用）。路由表 `<johnny-root>/claude-branch-routes.json` 是每台 host
+各自宣告的設定檔，隨 host 建立，不隨程式碼部署，也不需要遷移腳本。回滾：無紀錄（早於本欄
+要求）。
 
-The desktop app records one JSON file per session under
-`%APPDATA%\Claude\claude-code-sessions\**\local_*.json`, and each record
-carries the app's own `sessionId` *and* the `cliSessionId` it wraps. The claim
-therefore outlives the process and is readable from disk.
-`app_claimed_session_ids` reads it before every delivery and refuses as
-`BRANCH_HELD_BY_APP_TAB`. A record that will not parse, or a missing store
-sitting beside an installed app, refuses as `APP_CLAIM_CHECK_FAILED` — the
-record that cannot be read may be the one that mattered. Verified live: the
-dispatcher returned `BRANCH_HELD_BY_APP_TAB` against the owner's real registry
-with the transcript byte count unchanged.
+## 完成回寫
 
-This guard reads state the app owns and does not document. That is accepted
-deliberately, because the failure mode is safe in one direction only: if the
-format moves, the read fails and the wake is **refused**, never silently
-allowed. A guard that fails open would not be worth having.
-
-### What this does *not* license
-
-The woken branch was asked what it received; it was not observed carrying out
-a review and submitting a verdict. That last mile stays unproven here exactly
-as it does for the Antigravity channel. And nothing in this result changes the
-negative above: no interface delivers into a conversation the owner is sitting
-in. The Router drives branches it owns.
-
-## 狀態宣告
-
-這個區塊是工單狀態頁唯一讀取的來源。改狀態就改這裡；不要期待任何工具去讀上面的英文句子。
+- 實際檔案：`library/local_orchestration/claude_wake_command.py`
+- commit：`da33781`（見上方共同基準；發行版本 `v0.4.5`）
+- WorkProgress：不適用
 
 ```johnny-status
 id = E14
