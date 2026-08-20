@@ -39,6 +39,8 @@ from pathlib import Path
 _EXECUTABLE_ENVIRONMENT_KEY = "JOHNNY_CLAUDE_EXECUTABLE"
 _ROUTES_FILE_NAME = "claude-branch-routes.json"
 _INSTALL_RELATIVE = Path("Claude") / "claude-code"
+_APP_ROOT_RELATIVE = Path("Claude")
+_APP_SESSIONS_RELATIVE = Path("Claude") / "claude-code-sessions"
 _EXECUTABLE_NAME = "claude.exe"
 
 _PROBE_MODEL = "haiku"
@@ -87,6 +89,8 @@ class ClaudeWakeFailure(str, Enum):
     ROUTES_UNREADABLE = "ROUTES_UNREADABLE"
     ROUTES_INVALID = "ROUTES_INVALID"
     REVIEWER_NOT_MAPPED = "REVIEWER_NOT_MAPPED"
+    BRANCH_HELD_BY_APP_TAB = "BRANCH_HELD_BY_APP_TAB"
+    APP_CLAIM_CHECK_FAILED = "APP_CLAIM_CHECK_FAILED"
     BRANCH_HELD_BY_LIVE_SESSION = "BRANCH_HELD_BY_LIVE_SESSION"
     LIVE_SESSION_CHECK_FAILED = "LIVE_SESSION_CHECK_FAILED"
     DRIVE_FAILED = "DRIVE_FAILED"
@@ -168,6 +172,51 @@ def is_authenticated(executable: Path) -> bool:
     except (ValueError, UnicodeDecodeError):
         return False
     return isinstance(payload, dict) and payload.get("loggedIn") is True
+
+
+def app_claimed_session_ids(
+    environ: dict[str, str] | None = None,
+) -> frozenset[str] | None:
+    """Read which CLI conversations the desktop app holds a tab for.
+
+    A tab open on screen and a live process are not the same thing. Measured
+    on the owner's host: the process behind an open tab left the live
+    inventory while the owner had not touched the tab at all. A guard that
+    only asks which processes are running would therefore hand the Router a
+    conversation the owner still has in front of them and call it free.
+
+    The app writes one record per session carrying its own id *and* the
+    `cliSessionId` it wraps, so the claim survives the process and is readable
+    from disk. `None` means the claim could not be established, and the caller
+    must refuse rather than proceed: a record that cannot be read may be the
+    one that mattered.
+    """
+
+    source = os.environ if environ is None else environ
+    roaming = source.get("APPDATA")
+    if not roaming:
+        return None
+    root = Path(roaming) / _APP_SESSIONS_RELATIVE
+    if not root.is_dir():
+        if (Path(roaming) / _APP_ROOT_RELATIVE).is_dir():
+            return None
+        return frozenset()
+    try:
+        records = list(root.rglob("local_*.json"))
+    except OSError:
+        return None
+    claimed: set[str] = set()
+    for record in records:
+        try:
+            parsed = json.loads(record.read_text(encoding="utf-8"))
+        except (OSError, ValueError, UnicodeDecodeError):
+            return None
+        if not isinstance(parsed, dict):
+            return None
+        value = parsed.get("cliSessionId")
+        if isinstance(value, str) and value:
+            claimed.add(value)
+    return frozenset(claimed)
 
 
 def live_session_ids(executable: Path) -> frozenset[str] | None:
@@ -408,6 +457,12 @@ def wake(
     if branch is None:
         return ClaudeWakeStatus.REFUSED, ClaudeWakeFailure.REVIEWER_NOT_MAPPED
 
+    claimed = app_claimed_session_ids()
+    if claimed is None:
+        return ClaudeWakeStatus.REFUSED, ClaudeWakeFailure.APP_CLAIM_CHECK_FAILED
+    if branch.session_id in claimed:
+        return ClaudeWakeStatus.REFUSED, ClaudeWakeFailure.BRANCH_HELD_BY_APP_TAB
+
     held = live_session_ids(resolved)
     if held is None:
         return ClaudeWakeStatus.REFUSED, ClaudeWakeFailure.LIVE_SESSION_CHECK_FAILED
@@ -475,6 +530,7 @@ __all__ = [
     "ClaudeBranch",
     "ClaudeWakeFailure",
     "ClaudeWakeStatus",
+    "app_claimed_session_ids",
     "default_claude_executable",
     "default_routes_path",
     "drive_branch",

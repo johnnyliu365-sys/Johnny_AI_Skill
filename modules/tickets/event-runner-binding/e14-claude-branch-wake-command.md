@@ -131,6 +131,7 @@ owner whose probe times out gets `PROBE_TIMEOUT` and the honest
 | E14-R5 | The message names the payload path and not its body | same cell — asserts `receipt_id` and the action are absent from the message |
 | E14-R6 | The probe requires a completed turn, not exit 0 | `ProbeHonestyTests.test_exit_zero_without_a_completed_turn_is_refused` |
 | E14-R9 | A conversation held by a live session is refused, and an unreadable inventory refuses too | `LiveSessionGuardTests`; verified live below |
+| E14-R10 | A conversation an app tab wraps is refused even with no process alive | `AppTabClaimTests`; verified live below |
 | E14-R7 | Tests discriminate | Reverse mutation run: routing→always-first turned 6 cells red; dropping the probe marker check turned R6 red; both restored green |
 
 All cells drive the real subprocess path through a stub CLI that records the
@@ -198,6 +199,29 @@ nothing. Verified live against the same tab:
 `{"code": "BRANCH_HELD_BY_LIVE_SESSION", "status": "REFUSED"}` with the
 transcript byte count identical before and after, so the refusal prevented
 the write rather than merely reporting one.
+
+**E14-R10 — process liveness is not the right question.** The owner reported
+that the tab they had *not* touched left the live inventory anyway, and a
+later check found its process back again. A process behind a tab comes and
+goes; the tab stays open on screen throughout. So `live_session_ids` alone
+would have called that conversation free and written into it invisibly during
+every gap.
+
+The desktop app records one JSON file per session under
+`%APPDATA%\Claude\claude-code-sessions\**\local_*.json`, and each record
+carries the app's own `sessionId` *and* the `cliSessionId` it wraps. The claim
+therefore outlives the process and is readable from disk.
+`app_claimed_session_ids` reads it before every delivery and refuses as
+`BRANCH_HELD_BY_APP_TAB`. A record that will not parse, or a missing store
+sitting beside an installed app, refuses as `APP_CLAIM_CHECK_FAILED` — the
+record that cannot be read may be the one that mattered. Verified live: the
+dispatcher returned `BRANCH_HELD_BY_APP_TAB` against the owner's real registry
+with the transcript byte count unchanged.
+
+This guard reads state the app owns and does not document. That is accepted
+deliberately, because the failure mode is safe in one direction only: if the
+format moves, the read fails and the wake is **refused**, never silently
+allowed. A guard that fails open would not be worth having.
 
 ### What this does *not* license
 

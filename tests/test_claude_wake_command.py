@@ -9,14 +9,17 @@ mocked runner cannot see that. The stub records the exact argv it received.
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import sys
 import tempfile
 import unittest
+from unittest import mock
 from pathlib import Path
 
 from library.local_orchestration.claude_wake_command import (
     ClaudeBranch,
+    app_claimed_session_ids,
     ClaudeWakeFailure,
     ClaudeWakeStatus,
     default_claude_executable,
@@ -115,6 +118,20 @@ def _payload(directory: Path, reviewer_ref: str, project_id: str = "SourceProjec
         encoding="utf-8",
     )
     return path
+
+
+def _app_registry(directory: Path, cli_session_ids: tuple[str, ...]) -> Path:
+    """Build a stand-in for the desktop app's session store."""
+
+    roaming = directory / "roaming"
+    store = roaming / "Claude" / "claude-code-sessions" / "ws" / "proj"
+    store.mkdir(parents=True)
+    for index, cli_id in enumerate(cli_session_ids):
+        (store / f"local_record-{index}.json").write_text(
+            json.dumps({"sessionId": f"local_{index}", "cliSessionId": cli_id}),
+            encoding="utf-8",
+        )
+    return roaming
 
 
 class ExecutableDiscoveryTests(unittest.TestCase):
@@ -334,7 +351,10 @@ class DeliveryTests(unittest.TestCase):
                 ],
             )
 
-            status, failure = wake(payload, executable=shim, routes_file=routes)
+            with mock.patch.dict(os.environ, {"APPDATA": str(directory)}):
+                status, failure = wake(
+                    payload, executable=shim, routes_file=routes
+                )
             self.assertIs(status, ClaudeWakeStatus.DELIVERED)
             self.assertIsNone(failure)
 
@@ -376,14 +396,15 @@ class DeliveryTests(unittest.TestCase):
                 encoding="utf-8",
             )
 
-            self.assertIs(
-                wake(first, executable=shim, routes_file=routes)[0],
-                ClaudeWakeStatus.DELIVERED,
-            )
-            self.assertIs(
-                wake(second, executable=shim, routes_file=routes)[0],
-                ClaudeWakeStatus.DELIVERED,
-            )
+            with mock.patch.dict(os.environ, {"APPDATA": str(directory)}):
+                self.assertIs(
+                    wake(first, executable=shim, routes_file=routes)[0],
+                    ClaudeWakeStatus.DELIVERED,
+                )
+                self.assertIs(
+                    wake(second, executable=shim, routes_file=routes)[0],
+                    ClaudeWakeStatus.DELIVERED,
+                )
 
             drives = [call for call in _recorded(directory) if call[0] == "-p"]
             self.assertEqual(len(drives), 2)
@@ -424,6 +445,87 @@ class DeliveryTests(unittest.TestCase):
             self.assertIs(failure, ClaudeWakeFailure.PAYLOAD_MALFORMED)
 
 
+class AppTabClaimTests(unittest.TestCase):
+    """A tab the owner has open is off limits even with no process alive.
+
+    Measured on the owner's host: the process behind an open tab left the
+    live inventory while the tab itself was untouched. Asking only which
+    processes run would call that conversation free.
+    """
+
+    def test_a_conversation_an_app_tab_wraps_is_refused_without_any_process(
+        self,
+    ) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary)
+            held = "11111111-1111-4111-8111-111111111111"
+            roaming = _app_registry(directory, (held,))
+            shim = _write_stub(directory, live_sessions=())
+            routes = _routes(
+                directory, [{"reviewer_ref": "reviewer-a", "session_id": held}]
+            )
+            with mock.patch.dict(os.environ, {"APPDATA": str(roaming)}):
+                status, failure = wake(
+                    _payload(directory, "reviewer-a"),
+                    executable=shim,
+                    routes_file=routes,
+                )
+            self.assertIs(status, ClaudeWakeStatus.REFUSED)
+            self.assertIs(failure, ClaudeWakeFailure.BRANCH_HELD_BY_APP_TAB)
+            self.assertEqual(
+                [call for call in _recorded(directory) if call[0] == "-p"], []
+            )
+
+    def test_an_unrelated_tab_does_not_block_the_wake(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary)
+            roaming = _app_registry(
+                directory, ("99999999-9999-4999-8999-999999999999",)
+            )
+            shim = _write_stub(directory, drive_stdout="done")
+            routes = _routes(
+                directory,
+                [
+                    {
+                        "reviewer_ref": "reviewer-a",
+                        "session_id": "11111111-1111-4111-8111-111111111111",
+                    }
+                ],
+            )
+            with mock.patch.dict(os.environ, {"APPDATA": str(roaming)}):
+                status, _ = wake(
+                    _payload(directory, "reviewer-a"),
+                    executable=shim,
+                    routes_file=routes,
+                )
+            self.assertIs(status, ClaudeWakeStatus.DELIVERED)
+
+    def test_an_unreadable_record_refuses_rather_than_skipping_it(self) -> None:
+        """The record that will not parse may be the one that mattered."""
+
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary)
+            roaming = _app_registry(directory, ("aaa",))
+            broken = next(
+                (roaming / "Claude" / "claude-code-sessions").rglob("local_*.json")
+            )
+            broken.write_text("{ not json", encoding="utf-8")
+            with mock.patch.dict(os.environ, {"APPDATA": str(roaming)}):
+                self.assertIsNone(app_claimed_session_ids())
+
+    def test_a_missing_store_beside_an_installed_app_refuses(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            roaming = Path(temporary) / "roaming"
+            (roaming / "Claude").mkdir(parents=True)
+            self.assertIsNone(app_claimed_session_ids({"APPDATA": str(roaming)}))
+
+    def test_no_app_data_at_all_claims_nothing(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            self.assertEqual(
+                app_claimed_session_ids({"APPDATA": temporary}), frozenset()
+            )
+
+
 class LiveSessionGuardTests(unittest.TestCase):
     """A conversation the owner has open is never driven behind their back.
 
@@ -442,9 +544,12 @@ class LiveSessionGuardTests(unittest.TestCase):
                 directory,
                 [{"reviewer_ref": "reviewer-a", "session_id": held}],
             )
-            status, failure = wake(
-                _payload(directory, "reviewer-a"), executable=shim, routes_file=routes
-            )
+            with mock.patch.dict(os.environ, {"APPDATA": str(directory)}):
+                status, failure = wake(
+                    _payload(directory, "reviewer-a"),
+                    executable=shim,
+                    routes_file=routes,
+                )
             self.assertIs(status, ClaudeWakeStatus.REFUSED)
             self.assertIs(failure, ClaudeWakeFailure.BRANCH_HELD_BY_LIVE_SESSION)
             self.assertEqual(
@@ -468,9 +573,12 @@ class LiveSessionGuardTests(unittest.TestCase):
                     }
                 ],
             )
-            status, _ = wake(
-                _payload(directory, "reviewer-a"), executable=shim, routes_file=routes
-            )
+            with mock.patch.dict(os.environ, {"APPDATA": str(directory)}):
+                status, _ = wake(
+                    _payload(directory, "reviewer-a"),
+                    executable=shim,
+                    routes_file=routes,
+                )
             self.assertIs(status, ClaudeWakeStatus.DELIVERED)
 
     def test_an_unreadable_inventory_refuses_rather_than_assuming_free(
@@ -490,9 +598,12 @@ class LiveSessionGuardTests(unittest.TestCase):
                     }
                 ],
             )
-            status, failure = wake(
-                _payload(directory, "reviewer-a"), executable=shim, routes_file=routes
-            )
+            with mock.patch.dict(os.environ, {"APPDATA": str(directory)}):
+                status, failure = wake(
+                    _payload(directory, "reviewer-a"),
+                    executable=shim,
+                    routes_file=routes,
+                )
             self.assertIs(status, ClaudeWakeStatus.REFUSED)
             self.assertIs(failure, ClaudeWakeFailure.LIVE_SESSION_CHECK_FAILED)
             self.assertEqual(
@@ -540,6 +651,7 @@ class CommandEntryTests(unittest.TestCase):
                 ),
                 capture_output=True,
                 cwd=str(Path(__file__).resolve().parents[1]),
+                env={**os.environ, "APPDATA": str(directory)},
                 timeout=120,
             )
             self.assertEqual(completed.returncode, 0, completed.stderr)
