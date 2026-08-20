@@ -28,18 +28,24 @@ done more damage than no page at all. That is the defect in
 C of the pitfall register is the rest of its wardrobe.
 
 The layout and density come from `v2-approved-mockup.html`. The palette is the
-owner's: DONE a yellow ground, REJECTED red, APPROVED blue, IN_PROGRESS grass
+owner's: DONE a grey ground, REJECTED red, APPROVED blue, IN_PROGRESS grass
 green, and NEEDS_OWNER white with a warning triangle.
 
-Two consequences of that palette are load-bearing, and the tests pin both.
-NEEDS_OWNER carries no hue at all, so its signal is a drawn triangle rather
-than a colour -- which makes the state that most wants the owner the one state
-still legible with no colour vision whatever. And because the five states now
-spend four hues, nothing else on the page may spend one: stage chips are
-achromatic (they went green exactly when IN_PROGRESS did, and a green chip
-inside a green-badged row reads as an agreement that does not exist), and the
-unreadable slab inverts rather than tints, so it can never be read as a sixth
-state.
+Two of the five states are now achromatic, which changes what the tests have
+to measure. Hue separates red from green from blue; it says nothing at all
+about white against grey, so those two are held apart by brightness instead,
+and the suite checks each pair by the rule that actually applies to it. A cell
+that only measured hue would stay green while NEEDS_OWNER and DONE collapsed
+into the same tone.
+
+The rest follows from having only three hues left to spend. NEEDS_OWNER spends
+none: its signal is a drawn triangle, which also makes the state that most
+wants the owner the one state legible with no colour vision at all. Stage chips
+spend none either -- and since DONE went grey they cannot be separated from the
+verdict badge by tone (both are forced into the same narrow band by their own
+legibility floors, about 1.10:1 apart), so the separation is form: a filled
+pill is a verdict, an outline is a stage, always. The unreadable slab inverts
+rather than tints, so it can never be read as a sixth state.
 """
 
 from __future__ import annotations
@@ -305,11 +311,11 @@ _STYLE = """
   --accent:#3a4fb8;
   --need:#ffffff; --need-bg:#f5f6f8; --need-ink:#12161c; --need-edge:#b3bac4;
   --rejected:#c0271f; --rejected-bg:#fdeceb;
-  --done:#d9ae0f; --done-bg:#f7e496; --done-ink:#3a2c00;
+  --done:#4e5763; --done-bg:#dfe4ea; --done-ink:#ffffff;
   --approved:#2563c4;
   --open:#38801f;
-  --stage-done:#5c6672; --stage-open:#12161c; --stage-ink:#ffffff;
-  --badge-ink:#ffffff; --badge-bg:#6b7683;
+  --stage-done:#545d69; --stage-open:#12161c;
+  --badge-ink:#ffffff;
   --warn-fill:#f5c518; --warn-glyph:#12161c; --warn-edge:#7a5f00;
   --alarm:#1b1f27; --alarm-ink:#f4f6f9; --alarm-dim:#aab4c0;
   --mono:ui-monospace,"Cascadia Mono",Consolas,monospace;
@@ -321,11 +327,11 @@ _STYLE = """
     --accent:#8b9bf0;
     --need:#e8ecf1; --need-bg:#202632; --need-ink:#12161c; --need-edge:#4a5360;
     --rejected:#f08a8a; --rejected-bg:#3a1c1c;
-    --done:#e3b53d; --done-bg:#3a300f; --done-ink:#241b00;
+    --done:#545e6b; --done-bg:#2b323c; --done-ink:#e8ecf1;
     --approved:#7fb0f8;
     --open:#8fd35c;
-    --stage-done:#98a2ad; --stage-open:#e8ecf1; --stage-ink:#171b21;
-    --badge-ink:#12161c; --badge-bg:#7d8794;
+    --stage-done:#98a2ad; --stage-open:#e8ecf1;
+    --badge-ink:#12161c;
     --alarm:#e9edf3; --alarm-ink:#12161c; --alarm-dim:#545d69;
   }
 }
@@ -335,11 +341,11 @@ _STYLE = """
   --accent:#8b9bf0;
   --need:#e8ecf1; --need-bg:#202632; --need-ink:#12161c; --need-edge:#4a5360;
   --rejected:#f08a8a; --rejected-bg:#3a1c1c;
-  --done:#e3b53d; --done-bg:#3a300f; --done-ink:#241b00;
+  --done:#545e6b; --done-bg:#2b323c; --done-ink:#e8ecf1;
   --approved:#7fb0f8;
   --open:#8fd35c;
-  --stage-done:#98a2ad; --stage-open:#e8ecf1; --stage-ink:#171b21;
-  --badge-ink:#12161c; --badge-bg:#7d8794;
+  --stage-done:#98a2ad; --stage-open:#e8ecf1;
+  --badge-ink:#12161c;
   --alarm:#e9edf3; --alarm-ink:#12161c; --alarm-dim:#545d69;
 }
 *{box-sizing:border-box}
@@ -393,18 +399,22 @@ body{margin:0;background:var(--bg);color:var(--ink);
   letter-spacing:.06em}
 .name{font-size:15px;font-weight:600;margin:1px 0 0;text-wrap:balance}
 .warn{vertical-align:-3px;margin-right:6px;flex:none}
+/* Every state badge is a filled pill and no stage chip ever is. That is the
+   whole separation between the two vocabularies now that both wear grey: the
+   verdict grey and the stage grey are forced into the same narrow tonal band
+   by their own legibility floors (measured 1.10:1 apart), so tone cannot tell
+   them apart and form has to. An unrecognised state falls through to the
+   alarm treatment, because it is a defect rather than a sixth state. */
 .badge{grid-column:2;grid-row:1;justify-self:end;font-size:12px;font-weight:700;
   padding:3px 10px;border-radius:4px;white-space:nowrap;
   border:1px solid transparent;
-  background:var(--badge-bg);color:var(--badge-ink)}
+  background:var(--alarm);color:var(--alarm-ink)}
 .badge[data-state="needs-owner"]{background:var(--need);color:var(--need-ink);
   border-color:var(--need-edge)}
-.badge[data-state="rejected"]{background:var(--rejected)}
-/* Yellow is too light to carry white text on either ground, so this badge
-   brings its own ink rather than losing its edge. */
+.badge[data-state="rejected"]{background:var(--rejected);color:var(--badge-ink)}
 .badge[data-state="done"]{background:var(--done);color:var(--done-ink)}
-.badge[data-state="in-progress"]{background:var(--open)}
-.badge[data-state="approved"]{background:var(--approved)}
+.badge[data-state="in-progress"]{background:var(--open);color:var(--badge-ink)}
+.badge[data-state="approved"]{background:var(--approved);color:var(--badge-ink)}
 
 .stages{grid-column:1 / -1;display:flex;flex-wrap:wrap;gap:5px;align-items:center}
 .stages .lab{font-size:11px;color:var(--faint);margin-right:3px;
@@ -412,11 +422,10 @@ body{margin:0;background:var(--bg);color:var(--ink);
 .stages .none{font-size:11px;color:var(--faint)}
 .st{font-family:var(--mono);font-size:11px;padding:2px 7px;border-radius:3px;
   border:1px solid var(--line);color:var(--dim)}
-/* Stage chips are their own vocabulary: a stage being finished says nothing
-   about the ticket's verdict, so they keep their own two tokens rather than
-   borrowing a state colour and turning a DONE row yellow-on-yellow. */
-.st[data-s="done"]{background:var(--stage-done);border-color:var(--stage-done);
-  color:var(--stage-ink)}
+/* Never filled -- see the badge block. A stage being finished says nothing
+   about the ticket's verdict, and an outline can sit on a grey DONE row
+   without reading as a second verdict badge. */
+.st[data-s="done"]{border-color:var(--stage-done);color:var(--stage-done)}
 .st[data-s="open"]{border-color:var(--stage-open);color:var(--stage-open);
   font-weight:700}
 

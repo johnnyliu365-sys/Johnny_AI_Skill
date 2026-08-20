@@ -38,7 +38,7 @@
 ```johnny-status
 id = V2-S1
 title = 完成改灰色
-state = IN_PROGRESS
-stage = C | 配色 | OPEN
-stage = T | 測試 | OPEN
+state = DONE
+stage = C | 配色 | DONE
+stage = T | 測試 | DONE
 ```

@@ -59,6 +59,16 @@ _REASON_STATES = ("NEEDS_OWNER", "REJECTED")
 _STATE_TOKENS = ("--need", "--rejected", "--done", "--approved", "--open")
 _MIN_HUE_GAP = 35.0
 _CHROMATIC = 0.25
+# Achromatic states cannot be told apart by hue, so brightness has to do it.
+# 3.0 is the WCAG floor for a non-text UI boundary; white against the grey
+# DONE badge measures far above it, and a grey nudged toward white falls under.
+_MIN_ACHROMATIC_CONTRAST = 3.0
+# The finished row is a grey ground beside white ones. With no hue to help,
+# the fill has to be visibly darker than the card it replaces.
+_MIN_ROW_FILL_VS_CARD = 1.25
+_MIN_ROW_FILL_VS_PAGE = 1.12
+_MAX_NEUTRAL_CHROMA = 30
+_YELLOW_BAND = (35.0, 70.0)
 
 _TOKEN_DEFINITION = re.compile(r"(--[a-z0-9-]+)\s*:", re.IGNORECASE)
 _TOKEN_USE = re.compile(r"var\((--[a-z0-9-]+)\)", re.IGNORECASE)
@@ -589,8 +599,6 @@ class PaletteTests(unittest.TestCase):
                     neutrals.append(token)
                 else:
                     hues[token] = hue
-            with self.subTest(ground=ground, check="one neutral at most"):
-                self.assertLessEqual(len(neutrals), 1)
             for left, right in itertools.combinations(sorted(hues), 2):
                 with self.subTest(ground=ground, pair=(left, right)):
                     self.assertGreaterEqual(
@@ -606,20 +614,53 @@ class PaletteTests(unittest.TestCase):
         self.assertIn("background:var(--done-bg)", body)
         self.assertIn("border-color:var(--done)", body)
 
-    def test_the_yellow_fill_keeps_an_edge_on_both_grounds(self) -> None:
-        """A pale yellow can match the page in brightness and lose its border.
+    def test_finished_work_is_grey_rather_than_a_hue(self) -> None:
+        """S1-1: the owner moved DONE out of the chromatic palette entirely."""
 
-        Hue alone is not enough: a fill that differs only in hue disappears for
-        a reader who cannot separate those hues, and on a poorly calibrated
-        panel. The fill has to be measurably darker than what surrounds it.
+        for ground, palette in self.palettes.items():
+            with self.subTest(ground=ground):
+                self.assertLessEqual(
+                    _chroma(palette["--done"]), _MAX_NEUTRAL_CHROMA
+                )
+
+    def test_the_achromatic_states_are_separated_by_brightness(self) -> None:
+        """S1-2. Hue cannot separate white from grey, so nothing else may try.
+
+        The hue-gap cell skips these two by construction -- it only compares
+        chromatic tokens -- so without this cell the palette could collapse
+        NEEDS_OWNER and DONE into the same tone and stay green.
         """
 
         for ground, palette in self.palettes.items():
-            for neighbour in ("--bg", "--card"):
+            neutrals = [
+                token
+                for token in _STATE_TOKENS
+                if _hue_and_saturation(palette[token])[1] < _CHROMATIC
+            ]
+            for left, right in itertools.combinations(sorted(neutrals), 2):
+                with self.subTest(ground=ground, pair=(left, right)):
+                    self.assertGreaterEqual(
+                        _contrast(palette[left], palette[right]),
+                        _MIN_ACHROMATIC_CONTRAST,
+                        f"{left} and {right} are both grey and the same weight",
+                    )
+
+    def test_the_grey_fill_keeps_an_edge_on_both_grounds(self) -> None:
+        """A grey ground beside a white one has only brightness to work with.
+
+        This threshold is higher than the yellow fill needed, because the
+        yellow had hue in reserve and this does not.
+        """
+
+        for ground, palette in self.palettes.items():
+            for neighbour, floor in (
+                ("--card", _MIN_ROW_FILL_VS_CARD),
+                ("--bg", _MIN_ROW_FILL_VS_PAGE),
+            ):
                 with self.subTest(ground=ground, against=neighbour):
                     self.assertGreaterEqual(
                         _contrast(palette["--done-bg"], palette[neighbour]),
-                        1.12,
+                        floor,
                         "the finished row blends into what surrounds it",
                     )
 
@@ -647,13 +688,62 @@ class PaletteTests(unittest.TestCase):
         """
 
         for ground, palette in self.palettes.items():
-            for token in ("--stage-done", "--stage-open", "--stage-ink"):
+            for token in ("--stage-done", "--stage-open"):
                 with self.subTest(ground=ground, token=token):
                     self.assertLessEqual(
                         _chroma(palette[token]),
                         30,
                         "a stage chip is carrying a hue it can collide with",
                     )
+
+    def test_a_verdict_and_a_stage_are_not_the_same_vocabulary(self) -> None:
+        """S1-3, and the reason it is structural rather than a threshold.
+
+        Both wear grey now, and tone cannot separate them: the badge grey needs
+        white ink and the chip grey needs to sit on white and on the grey DONE
+        ground, which forces both into the same narrow band (they measure about
+        1.10:1 apart). So the rule is form, not tone -- a filled pill is always
+        a verdict on the ticket, an outline is always a stage. Picking two
+        greys far enough apart to pass an eye test is the thing this cell
+        exists to stop somebody doing instead.
+        """
+
+        filled, outlined = [], []
+        for selector, body in _rules(self.css):
+            selector = selector.strip()
+            declares_fill = re.search(r"background:var\(--[a-z0-9-]+\)", body)
+            if re.fullmatch(r'\.badge\[data-state="[a-z-]+"\]', selector):
+                filled.append((selector, bool(declares_fill)))
+            if re.fullmatch(r'\.st(\[data-s="[a-z-]+"\])?', selector):
+                outlined.append((selector, bool(declares_fill)))
+
+        self.assertEqual(len(filled), 5)
+        self.assertTrue(outlined)
+        for selector, declares_fill in filled:
+            with self.subTest(rule=selector):
+                self.assertTrue(declares_fill, "a state badge stopped being filled")
+        for selector, declares_fill in outlined:
+            with self.subTest(rule=selector):
+                self.assertFalse(declares_fill, "a stage chip took a filled ground")
+
+    def test_the_only_yellow_left_on_the_page_is_the_warning_glyph(self) -> None:
+        """Confirmed, not assumed: DONE leaving takes yellow with it."""
+
+        low, high = _YELLOW_BAND
+        found = []
+        for ground, palette in self.palettes.items():
+            for token, value in palette.items():
+                if not value.startswith("#") or _chroma(value) <= _MAX_NEUTRAL_CHROMA:
+                    continue
+                hue, _ = _hue_and_saturation(value)
+                if low <= hue <= high:
+                    found.append((ground, token))
+                    with self.subTest(ground=ground, token=token):
+                        self.assertTrue(
+                            token.startswith("--warn"),
+                            f"{token} is yellow and is not the warning triangle",
+                        )
+        self.assertTrue(found, "the warning triangle stopped being yellow")
 
     def test_the_white_badge_declares_an_edge(self) -> None:
         """A badge that does not separate from the card must draw its own line."""
