@@ -269,6 +269,10 @@ reviewer 是唯一 Agent-to-Agent orchestrator。implementation owner 無 orches
 capability，只能在精確綁定的 owner worktree 實作一張 admitted ticket。錯 role 固定
 `HALT / ROLE_FORBIDDEN`；錯 workspace 固定 `HALT / TASK_WORKSPACE_MISMATCH`。
 
+現行的角色→模型對應與實作者派法（依難度分派，以及「合理拆不動就升級、不硬拆」的
+判準）記在 [`doc/runbooks/dispatch-model-profile.md`](doc/runbooks/dispatch-model-profile.md)。
+對應會換而權責不會換，所以換模型只改那一份，不動這裡。
+
 ### 4.2 TDD、型別、Smoke Test 與 completion
 
 實作者完整閱讀：
