@@ -27,6 +27,8 @@ modify = tests/test_ticket_status_pipeline.py
 modify = tests/test_ticket_status_template.py
 modify = modules/tickets/owner-visibility/v2-document-sample.json
 modify = modules/tickets/owner-visibility/v2-ticket-status-surface.md
+modify = tests/test_ticket_status_publish.py
+modify = modules/tickets/owner-visibility/v2-s4-naming.md
 forbid = modules/tickets/TEMPLATE.md
 forbid = library/local_orchestration/document_mutation_gate.py
 ```
