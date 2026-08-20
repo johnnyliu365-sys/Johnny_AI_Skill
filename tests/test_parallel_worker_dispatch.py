@@ -90,6 +90,16 @@ print(
 
 
 def _run_child(script: Path, layout: JohnnyRootLayout, request_file: Path) -> dict:
+    """Run one dispatch in its own process, rooted outside the checkout.
+
+    The child is given the temporary directory as its working directory
+    rather than inheriting pytest's. This suite has a documented sensitivity
+    to concurrent processes around the shared runtime root (governance 03:
+    a concurrent reader blocks a lease teardown on Windows and the abandoned
+    lease poisons later runs), and a child that never stands inside the
+    checkout cannot take part in that.
+    """
+
     completed = subprocess.run(
         (
             sys.executable,
@@ -98,6 +108,7 @@ def _run_child(script: Path, layout: JohnnyRootLayout, request_file: Path) -> di
             str(layout.base),
             str(request_file),
         ),
+        cwd=str(request_file.parent),
         capture_output=True,
         timeout=180,
     )
