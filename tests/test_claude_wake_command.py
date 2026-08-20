@@ -21,6 +21,7 @@ from library.local_orchestration.claude_wake_command import (
     ClaudeWakeStatus,
     default_claude_executable,
     is_capability_probe,
+    live_session_ids,
     load_routes,
     main,
     parse_identifiers,
@@ -45,6 +46,12 @@ if argv[:2] == ["auth", "status"]:
     print(json.dumps({"loggedIn": config["logged_in"], "authMethod": "token"}))
     raise SystemExit(0)
 
+if argv[:2] == ["agents", "--json"]:
+    if config["agents_returncode"] != 0:
+        raise SystemExit(config["agents_returncode"])
+    print(json.dumps([{"sessionId": s} for s in config["live_sessions"]]))
+    raise SystemExit(0)
+
 print(config["drive_stdout"])
 raise SystemExit(config["drive_returncode"])
 '''
@@ -55,6 +62,8 @@ def _write_stub(
     logged_in: bool = True,
     drive_stdout: str = "JOHNNY_PROBE_OK",
     drive_returncode: int = 0,
+    live_sessions: tuple[str, ...] = (),
+    agents_returncode: int = 0,
 ) -> Path:
     """Build a stub CLI that answers `auth status` and records every argv."""
 
@@ -65,6 +74,8 @@ def _write_stub(
                 "logged_in": logged_in,
                 "drive_stdout": drive_stdout,
                 "drive_returncode": drive_returncode,
+                "live_sessions": list(live_sessions),
+                "agents_returncode": agents_returncode,
             }
         ),
         encoding="utf-8",
@@ -411,6 +422,88 @@ class DeliveryTests(unittest.TestCase):
             status, failure = wake(payload, executable=shim)
             self.assertIs(status, ClaudeWakeStatus.REFUSED)
             self.assertIs(failure, ClaudeWakeFailure.PAYLOAD_MALFORMED)
+
+
+class LiveSessionGuardTests(unittest.TestCase):
+    """A conversation the owner has open is never driven behind their back.
+
+    Measured on the owner's host: an external drive of an open tab lands in
+    the transcript, the app renders nothing and registers nothing, and the app
+    keeps a stale in-memory history. Invisible work plus two writers over one
+    file is worse than a refusal, so the refusal is the contract.
+    """
+
+    def test_a_branch_held_by_a_live_session_is_refused_not_driven(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary)
+            held = "11111111-1111-4111-8111-111111111111"
+            shim = _write_stub(directory, live_sessions=(held,))
+            routes = _routes(
+                directory,
+                [{"reviewer_ref": "reviewer-a", "session_id": held}],
+            )
+            status, failure = wake(
+                _payload(directory, "reviewer-a"), executable=shim, routes_file=routes
+            )
+            self.assertIs(status, ClaudeWakeStatus.REFUSED)
+            self.assertIs(failure, ClaudeWakeFailure.BRANCH_HELD_BY_LIVE_SESSION)
+            self.assertEqual(
+                [call for call in _recorded(directory) if call[0] == "-p"], []
+            )
+
+    def test_an_unrelated_live_session_does_not_block_the_wake(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary)
+            shim = _write_stub(
+                directory,
+                drive_stdout="done",
+                live_sessions=("99999999-9999-4999-8999-999999999999",),
+            )
+            routes = _routes(
+                directory,
+                [
+                    {
+                        "reviewer_ref": "reviewer-a",
+                        "session_id": "11111111-1111-4111-8111-111111111111",
+                    }
+                ],
+            )
+            status, _ = wake(
+                _payload(directory, "reviewer-a"), executable=shim, routes_file=routes
+            )
+            self.assertIs(status, ClaudeWakeStatus.DELIVERED)
+
+    def test_an_unreadable_inventory_refuses_rather_than_assuming_free(
+        self,
+    ) -> None:
+        """Not knowing is not the same as knowing nothing holds the branch."""
+
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary)
+            shim = _write_stub(directory, agents_returncode=3)
+            routes = _routes(
+                directory,
+                [
+                    {
+                        "reviewer_ref": "reviewer-a",
+                        "session_id": "11111111-1111-4111-8111-111111111111",
+                    }
+                ],
+            )
+            status, failure = wake(
+                _payload(directory, "reviewer-a"), executable=shim, routes_file=routes
+            )
+            self.assertIs(status, ClaudeWakeStatus.REFUSED)
+            self.assertIs(failure, ClaudeWakeFailure.LIVE_SESSION_CHECK_FAILED)
+            self.assertEqual(
+                [call for call in _recorded(directory) if call[0] == "-p"], []
+            )
+
+    def test_inventory_reads_every_live_session_id(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary)
+            shim = _write_stub(directory, live_sessions=("aaa", "bbb"))
+            self.assertEqual(live_session_ids(shim), frozenset({"aaa", "bbb"}))
 
 
 class CommandEntryTests(unittest.TestCase):

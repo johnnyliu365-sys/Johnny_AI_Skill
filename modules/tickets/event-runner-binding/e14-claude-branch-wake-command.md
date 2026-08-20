@@ -130,6 +130,7 @@ owner whose probe times out gets `PROBE_TIMEOUT` and the honest
 | E14-R4 | An unmapped reviewer is refused, not misdelivered | `DeliveryTests.test_unmapped_reviewer_is_refused_by_name_not_delivered_elsewhere` — asserts zero drive calls |
 | E14-R5 | The message names the payload path and not its body | same cell — asserts `receipt_id` and the action are absent from the message |
 | E14-R6 | The probe requires a completed turn, not exit 0 | `ProbeHonestyTests.test_exit_zero_without_a_completed_turn_is_refused` |
+| E14-R9 | A conversation held by a live session is refused, and an unreadable inventory refuses too | `LiveSessionGuardTests`; verified live below |
 | E14-R7 | Tests discriminate | Reverse mutation run: routing→always-first turned 6 cells red; dropping the probe marker check turned R6 red; both restored green |
 
 All cells drive the real subprocess path through a stub CLI that records the
@@ -164,6 +165,39 @@ Point 3 is the evidence that matters, and it is the E11-equivalent for this
 host: the delivery was confirmed from the receiving side, not from the
 sender's own return value. A `DELIVERED` status is a claim about a command;
 the branch naming the payload is a fact about what arrived.
+
+## The tab the owner is watching — measured, then forbidden
+
+The owner asked whether they would see their own tab move. Measured on a
+disposable empty workspace the owner opened for the test:
+
+- `claude agents --json` reports the real session id behind an app tab
+  (`07199111-…`), so the Router can in fact find open tabs. The earlier
+  statement that this was structurally impossible was too strong: there is no
+  *injection* interface, but the id needed to resume the same conversation is
+  right there.
+- Driving that id with `claude -p --resume` **succeeded**: exit 0 in 4 s, and
+  that conversation's own transcript grew from 31 lines / 41,042 bytes to 41
+  lines / 49,516 bytes. No second file was created. The turn landed inside the
+  tab's conversation.
+- The app rendered **nothing**. The owner watched the tab throughout and
+  reported no change of any kind, and the app's registry still timestamped
+  that conversation 76 seconds *before* the write it had just received.
+
+So an external drive of an open tab produces work the owner cannot see, while
+the app goes on holding an in-memory history that no longer matches the file:
+two writers over one transcript. Being able to do this is not a reason to
+offer it.
+
+**E14-R9.** `live_session_ids` reads the inventory before every delivery, and
+a wake whose target is held is refused as `BRANCH_HELD_BY_LIVE_SESSION`. An
+inventory that cannot be read refuses as well
+(`LIVE_SESSION_CHECK_FAILED`) — not knowing is not the same as knowing the
+branch is free, and the fail-open version of this guard would be worth
+nothing. Verified live against the same tab:
+`{"code": "BRANCH_HELD_BY_LIVE_SESSION", "status": "REFUSED"}` with the
+transcript byte count identical before and after, so the refusal prevented
+the write rather than merely reporting one.
 
 ### What this does *not* license
 

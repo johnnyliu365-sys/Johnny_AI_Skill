@@ -48,6 +48,7 @@ _PROBE_PROMPT = (
     "This is an automated capability probe; take no other action."
 )
 _AUTH_TIMEOUT_SECONDS = 10
+_AGENTS_TIMEOUT_SECONDS = 15
 _PROBE_DRIVE_TIMEOUT_SECONDS = 18
 _DRIVE_TIMEOUT_SECONDS = 120
 
@@ -86,6 +87,8 @@ class ClaudeWakeFailure(str, Enum):
     ROUTES_UNREADABLE = "ROUTES_UNREADABLE"
     ROUTES_INVALID = "ROUTES_INVALID"
     REVIEWER_NOT_MAPPED = "REVIEWER_NOT_MAPPED"
+    BRANCH_HELD_BY_LIVE_SESSION = "BRANCH_HELD_BY_LIVE_SESSION"
+    LIVE_SESSION_CHECK_FAILED = "LIVE_SESSION_CHECK_FAILED"
     DRIVE_FAILED = "DRIVE_FAILED"
     DRIVE_TIMEOUT = "DRIVE_TIMEOUT"
     PROBE_NOT_COMPLETED = "PROBE_NOT_COMPLETED"
@@ -165,6 +168,38 @@ def is_authenticated(executable: Path) -> bool:
     except (ValueError, UnicodeDecodeError):
         return False
     return isinstance(payload, dict) and payload.get("loggedIn") is True
+
+
+def live_session_ids(executable: Path) -> frozenset[str] | None:
+    """Read which conversations a live process currently holds.
+
+    Driving a conversation the owner has open in the app was measured on the
+    owner's host: the turn is appended to the transcript, the app neither
+    renders nor registers it, and the app goes on holding an in-memory history
+    that no longer matches the file. That produces work the owner cannot see
+    and two writers over one transcript, so it is refused rather than offered.
+
+    Needs no authentication. `None` means the inventory could not be read,
+    which is not the same as "nothing is live" and must not be treated as it.
+    """
+
+    completed = _run((str(executable), "agents", "--json"), _AGENTS_TIMEOUT_SECONDS)
+    if completed is None or completed.returncode != 0:
+        return None
+    try:
+        parsed = json.loads(completed.stdout.decode("utf-8", errors="replace"))
+    except (ValueError, UnicodeDecodeError):
+        return None
+    if not isinstance(parsed, list):
+        return None
+    held: set[str] = set()
+    for entry in parsed:
+        if not isinstance(entry, dict):
+            continue
+        value = entry.get("sessionId")
+        if isinstance(value, str) and value:
+            held.add(value)
+    return frozenset(held)
 
 
 def is_capability_probe(body: str) -> bool:
@@ -372,6 +407,15 @@ def wake(
     branch = resolve_branch(branches, reviewer_ref, project_id)
     if branch is None:
         return ClaudeWakeStatus.REFUSED, ClaudeWakeFailure.REVIEWER_NOT_MAPPED
+
+    held = live_session_ids(resolved)
+    if held is None:
+        return ClaudeWakeStatus.REFUSED, ClaudeWakeFailure.LIVE_SESSION_CHECK_FAILED
+    if branch.session_id in held:
+        return (
+            ClaudeWakeStatus.REFUSED,
+            ClaudeWakeFailure.BRANCH_HELD_BY_LIVE_SESSION,
+        )
     return drive_branch(resolved, branch.session_id, payload_file)
 
 
@@ -436,6 +480,7 @@ __all__ = [
     "drive_branch",
     "is_authenticated",
     "is_capability_probe",
+    "live_session_ids",
     "load_routes",
     "main",
     "parse_identifiers",
