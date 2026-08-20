@@ -127,3 +127,17 @@ This is the same defect as
 where narrating an unperformed wake cost the owner their trust in the system.
 Read `modules/tickets/PITFALL-REGISTER.md` before starting; family C is this
 failure in its other costumes.
+
+## 狀態宣告
+
+這個區塊是工單狀態頁唯一讀取的來源。改狀態就改這裡；不要期待任何工具去讀上面的英文句子。
+
+```johnny-status
+id = V2
+title = 工單狀態頁
+state = IN_PROGRESS
+stage = D | 設計核准 | DONE
+stage = U | UI 樣板 | OPEN
+stage = P | 資料管線 | OPEN
+stage = W | 接線 | OPEN
+```

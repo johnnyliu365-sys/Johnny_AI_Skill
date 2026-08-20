@@ -113,3 +113,18 @@ and the output was handed to the owner as fact.
 ## 發行紀錄
 
 已隨 v0.4.4 發行：commit A `ed8055b`（版本升級＋本修正）、commit B `f033ec7`（digest 釘死 `c2216b6e…`、479,704 bytes、preflight MATCHED）。發行前全套件 992 passed 零殘留；gated qualifications（live install、whole chain、vita）16 passed。回滾點 `rollback-pre-044` → `b1a61ca`。
+
+## 狀態宣告
+
+這個區塊是工單狀態頁唯一讀取的來源。改狀態就改這裡；不要期待任何工具去讀上面的英文句子。
+
+```johnny-status
+id = 04
+title = Skill 敘述了沒有發生的喚醒
+state = DONE
+released_in = v0.4.4
+stage = R1 | 事實查證 | DONE
+stage = R2 | 措辭修正 | DONE
+stage = R3 | 就緒檢查節 | DONE
+stage = R4 | 發行 | DONE
+```

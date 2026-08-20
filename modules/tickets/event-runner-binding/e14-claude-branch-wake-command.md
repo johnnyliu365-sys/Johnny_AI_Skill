@@ -230,3 +230,24 @@ a review and submitting a verdict. That last mile stays unproven here exactly
 as it does for the Antigravity channel. And nothing in this result changes the
 negative above: no interface delivers into a conversation the owner is sitting
 in. The Router drives branches it owns.
+
+## 狀態宣告
+
+這個區塊是工單狀態頁唯一讀取的來源。改狀態就改這裡；不要期待任何工具去讀上面的英文句子。
+
+```johnny-status
+id = E14
+title = Claude 分支喚醒命令
+state = DONE
+released_in = v0.4.5
+stage = R1 | 探索 | DONE
+stage = R2 | 認證閘門 | DONE
+stage = R3 | 分支路由 | DONE
+stage = R4 | 具名拒絕 | DONE
+stage = R5 | 訊息只帶路徑 | DONE
+stage = R6 | probe 誠實性 | DONE
+stage = R7 | 突變鑑別力 | DONE
+stage = R8 | 實機驅動 | DONE
+stage = R9 | 現役行程守衛 | DONE
+stage = R10 | app 分頁守衛 | DONE
+```
