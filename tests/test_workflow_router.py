@@ -305,8 +305,8 @@ _EXPECTED_POLICIES: tuple[_ExpectedPolicy, ...] = (
     ),
     _ExpectedPolicy(
         "context-routing",
-        "rev-db155a0be96c756f",
-        "sha256_db155a0be96c756f4b79270ada14c088b338a21e878caff994ae31a41638859d",
+        "rev-e1ce913609aa6971",
+        "sha256_e1ce913609aa6971c75155eace49562dace117c270f82d358c57ba7be238d867",
         PurePosixPath("skills/johnny-project-takeover/references/context-routing.md"),
     ),
     _ExpectedPolicy(

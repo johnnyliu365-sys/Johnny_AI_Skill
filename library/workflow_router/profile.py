@@ -205,8 +205,8 @@ _POLICY_REFERENCES: tuple[SkillReference, ...] = (
     ),
     SkillReference(
         reference_id="context-routing",
-        source_revision="rev-db155a0be96c756f",
-        content_digest="sha256_db155a0be96c756f4b79270ada14c088b338a21e878caff994ae31a41638859d",
+        source_revision="rev-e1ce913609aa6971",
+        content_digest="sha256_e1ce913609aa6971c75155eace49562dace117c270f82d358c57ba7be238d867",
     ),
     SkillReference(
         reference_id="specification-ticketing",
