@@ -2,11 +2,11 @@
 
 | Field | Value |
 | --- | --- |
-| State | `OPEN` — allocated to a UI implementation owner |
+| State | `PARTIALLY CLOSED` — R1 approved by the owner; R2/R3 landed; R4 open |
 | Baseline | `main` at `da33781` (E14 closed) |
 | Workload | `STANDARD`; Python 3.11 strict for the generator, TDD, reverse mutation required. The mockup phase is HTML/CSS only |
 | Depends on | E14 (closed): the wake channel exists and is invisible; this ticket makes it observable |
-| Gate | **R1 must be approved by the owner before any other requirement is started.** |
+| Gate | R1 approved. The owner then reassigned implementation to the control plane directly, so the boundary note at the foot of this ticket no longer describes who built it. |
 
 ## One outcome
 
@@ -160,6 +160,40 @@ The toast is a pointer, not the record.
 | V1-R5 | The durable record precedes the toast, and a failed toast leaves the item intact | Test with a failing toast path asserting the record exists and the item still renders |
 | V1-R6 | Nothing on the page is decorative | Review: each element traces to a field in R3 |
 | V1-R7 | Tests discriminate | Reverse mutation for at least R3 and R5, both restored green |
+
+## Delivery log
+
+**R1 — approved.** The mockup landed as `v1-owner-status-surface.html` and the
+owner approved the direction. Three ticket requirements were missing from it
+and were implemented in R2 rather than carried forward: the four refusal codes
+shared one chip style, no row said what the owner should do, and there was no
+unreadable-source state. The mockup also came back in English rather than the
+Traditional Chinese the dispatch asked for.
+
+**R2/R3 — landed.** `library/local_orchestration/owner_status_surface.py`,
+stdlib-only, renders and writes atomically to `<johnny-root>/owner-status.html`
+and refreshes itself in the browser every 30 seconds. Every source is read
+independently, so one failure marks its own lane and never silences a peer. A
+missing file is reported as genuinely empty; a file that will not parse is
+reported as unreadable with its path and the parse error, and the lane carries
+a `不完整` flag while the page header says the page is incomplete. Reverse
+mutation confirms the suite discriminates: rendering the reassuring empty
+message under an unreadable lane turns one cell red, and swallowing a source
+error turns two red; both restored green. 17 cells, 19 subtests.
+
+**R4 — open, and blocked on a missing record.** `CommandRoleWakePort` runs the
+wake command with `capture_output=True` and then **discards stdout**: on a
+non-zero exit it returns `NO_EFFECT` carrying no reason. So the dispatcher's
+typed refusal codes — `BRANCH_HELD_BY_APP_TAB`, `REVIEWER_NOT_MAPPED`,
+`NOT_AUTHENTICATED` — are written to a pipe nobody reads and exist nowhere on
+disk. The surface already knows how to present all of them, and the owner
+action text for each is written and tested, but today only `CANDIDATE_INBOX`
+and `RUNNER_NOT_RUNNING` can actually reach the page from real state.
+
+Closing R4 means making the reason durable: record the child's typed code as an
+observation next to the attempt, without letting it influence any control
+decision — the port's typed effect statuses must keep coming from the exit
+code and timeout behaviour alone, never from something a child process printed.
 
 ## Boundary for the implementation owner
 
