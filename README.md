@@ -4,7 +4,15 @@
 
 它不是公司專案的 runtime service、MCP server、hook、CI 依賴、Git submodule、symlink、package dependency 或原始碼 import。因此拔除後，公司的建置、測試、部署與既有程式不會受影響。
 
-## 目前發行：0.4.3
+## 目前發行：0.4.4
+
+0.4.4 修正一個 P0 誠實性缺陷（governance 04）：skill 通篇以直述句描寫喚醒
+（「The Router wakes …」），agent 會把協定敘述讀成系統行為，對未 arm 的專案
+報告從未發生的喚醒——owner 在真實專案上親眼抓到。現在每句喚醒都寫明
+「狀態（`WAKE_REQUIRED`）＋機制（armed runner 才會送達）＋後備（否則由 owner
+轉達）」，SKILL.md 新增 Automation readiness 節（agent 宣稱任何自動效果前必須
+驗證四個可觀察前提），並明文規定：**不得報告未觀察到的喚醒——committed handoff
+是 commit 的證據，不是送達的證據。**
 
 0.4.3 讓完整的自動化迴路進入已安裝的 runtime。新增三個 CLI 家族：
 `dispatch grant`／`dispatch issue`（受 owner 授權、worktree 包含性閘門與 journal
@@ -84,9 +92,9 @@ red 證據重定義）。該版的兩個誠實邊界（live 安裝停在
 
 ## Codex 使用方式
 
-### 0.4.3 完整 bundle 安裝
+### 0.4.4 完整 bundle 安裝
 
-正式的一鍵入口是隨 release 發布的 `johnny-install.cmd`，將其下載至與經核准且 SHA-256 相符的 `johnny-ai-skill-0.4.3.zip` 同一資料夾下雙擊執行（或在終端機直接執行 `install.ps1 -BundleZip <path>`）。它會先核驗 bundle SHA-256，並在確認相符後抽出 `install.ps1` 進行安裝引導。bootstrap 會先顯示 Codex、Git、Python 與核心 dependency 計畫；需要下載時必須由使用者輸入 `INSTALL` 確認。它只建立 per-user Johnny-owned runtime，不會把 plugin、venv、receipt 或 cache 複製到公司 repo。
+正式的一鍵入口是隨 release 發布的 `johnny-install.cmd`，將其下載至與經核准且 SHA-256 相符的 `johnny-ai-skill-0.4.4.zip` 同一資料夾下雙擊執行（或在終端機直接執行 `install.ps1 -BundleZip <path>`）。它會先核驗 bundle SHA-256，並在確認相符後抽出 `install.ps1` 進行安裝引導。bootstrap 會先顯示 Codex、Git、Python 與核心 dependency 計畫；需要下載時必須由使用者輸入 `INSTALL` 確認。它只建立 per-user Johnny-owned runtime，不會把 plugin、venv、receipt 或 cache 複製到公司 repo。
 
 不得把原始碼 checkout 或 `main` 當成已核准 bundle；正式入口永遠是 digest 與已核准
 release 相符的 bundle。既有 `0.3.x` skill-only 安裝仍可使用 private Git
