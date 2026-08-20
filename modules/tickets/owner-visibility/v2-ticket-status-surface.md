@@ -135,9 +135,10 @@ failure in its other costumes.
 ```johnny-status
 id = V2
 title = 工單狀態頁
-state = IN_PROGRESS
+state = NEEDS_OWNER
+why_waiting = 「讀不到」區塊與 IN_PROGRESS 的外觀你沒核准過——核准的樣張裡沒有畫，是實作時補的
 stage = D | 設計核准 | DONE
-stage = U | UI 樣板 | OPEN
-stage = P | 資料管線 | OPEN
-stage = W | 接線 | OPEN
+stage = U | UI 樣板 | DONE
+stage = P | 資料管線 | DONE
+stage = W | 接線 | DONE
 ```

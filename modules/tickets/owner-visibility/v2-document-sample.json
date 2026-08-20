@@ -42,7 +42,7 @@
       ],
       "commit": {
         "sha": "f3a2981",
-        "subject": "feat: render the owner status surface"
+        "subject": "feat: render the owner status surface (V1-R2/R3)"
       },
       "released_in": null,
       "ticket_path": "modules/tickets/owner-visibility/v1-owner-status-surface.md",
@@ -108,11 +108,23 @@
       ],
       "commit": {
         "sha": "da33781",
-        "subject": "refuse to drive a conversation an app tab wraps"
+        "subject": "feat: refuse to drive a conversation an app tab wraps (E14-R10)"
       },
       "released_in": "v0.4.5",
       "ticket_path": "modules/tickets/event-runner-binding/e14-claude-branch-wake-command.md",
       "handoff_command": "git show da33781 -- modules/tickets/event-runner-binding/e14-claude-branch-wake-command.md"
+    },
+    {
+      "id": "V7",
+      "module": "owner-visibility",
+      "title": "還沒動工的票",
+      "state": "IN_PROGRESS",
+      "why_waiting": null,
+      "stages": [],
+      "commit": null,
+      "released_in": null,
+      "ticket_path": "modules/tickets/owner-visibility/v7-not-started.md",
+      "handoff_command": "git show c1bb040 -- modules/tickets/owner-visibility/v7-not-started.md"
     }
   ],
   "unreadable": [
