@@ -31,6 +31,17 @@ Measured on the owner's Windows workstation against CLI `2.1.234`:
   branches it. These are the primitives that make "different branches" real.
 - `claude auth status` prints `{"loggedIn": …, "authMethod": …}` and needs no
   model call. It is the only honest source for whether a drive can succeed.
+- **`claude auth status` does not validate the token.** It reports
+  `{"loggedIn": true, "authMethod": "oauth_token"}` whenever a token is present
+  in the environment, and the first real call can still fail
+  `401 Invalid bearer token`. Measured on this host: status said logged in,
+  the drive returned 401. An auth-status-only capability check would therefore
+  report `PROVEN` on a host that cannot drive anything -- which is precisely
+  why the probe requires a completed turn instead.
+- The long-lived token issued by `claude setup-token` begins `sk-ant-oat01-`
+  (the prefix is in the CLI binary). A stored value that does not carry that
+  prefix is not the issued token; the browser step's authorization code is the
+  value most easily mistaken for it.
 - `claude agents --json` lists live sessions (pid, sessionId, cwd) and works
   **without** authentication. Enumeration is free; driving is not.
 - `claude setup-token` issues a long-lived token, which is the correct
@@ -132,7 +143,10 @@ development. When the owner has run `claude setup-token` and
 `claude auth status` reports logged in, the outstanding evidence is:
 
 1. `probe_drive` against the real CLI returns `CAPABILITY_PROVEN` within the
-   30-second probe cap.
+   30-second probe cap. First live attempt: `DRIVE_FAILED` in 2.8s against a
+   host whose `auth status` claimed `loggedIn: true` -- the stored token was
+   not an `sk-ant-oat01-` token. The refusal was correct and is retained
+   here as evidence that the probe discriminates.
 2. Branch isolation end to end: open two branches with known session ids,
    plant a distinct token in each, resume each and confirm each returns its
    own — proving durable, non-contaminating parallel branches rather than one
