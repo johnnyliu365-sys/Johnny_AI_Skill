@@ -764,13 +764,82 @@ class PaletteTests(unittest.TestCase):
                         "this badge is the same tone as the card and has no edge",
                     )
 
-    def test_what_failed_is_louder_than_what_is_merely_waiting(self) -> None:
-        """Structural, because badge luminance alone would say the opposite."""
+    def _row(self, slug: str) -> str:
+        """The row rule for a state, or empty when it declares none."""
 
-        rejected = _rule_body(self.css, '.ticket[data-state="rejected"]{')
-        waiting = _rule_body(self.css, '.ticket[data-state="needs-owner"]{')
-        self.assertIn("box-shadow:inset", rejected)
-        self.assertNotIn("box-shadow", waiting)
+        try:
+            return _rule_body(self.css, f'.ticket[data-state="{slug}"]{{')
+        except ValueError:
+            return ""
+
+    def test_the_loudness_ordering_holds_end_to_end(self) -> None:
+        """S2-3, extended onto the cell that already owned this question.
+
+        Structural, because badge luminance alone would say the opposite: in
+        dark mode the white NEEDS_OWNER badge measures louder than the red
+        REJECTED one, and the row treatments are what put that right.
+        """
+
+        self.assertIn("box-shadow:inset", self._row("rejected"))
+        self.assertNotIn("box-shadow", self._row("needs-owner"))
+
+        # Accepted work carries no emphasis mechanism whatsoever.
+        approved = self._row("approved")
+        for mechanism in ("box-shadow", "background:var(", "border-width"):
+            with self.subTest(mechanism=mechanism):
+                self.assertNotIn(mechanism, approved)
+        page = render(_document(_one_ticket(state="APPROVED", why_waiting=None)))
+        self.assertNotIn("<svg", page)
+
+    def test_the_two_quiet_states_differ_without_colour(self) -> None:
+        """S2-1: the difference is an edge style, not a second hue."""
+
+        self.assertIn("border-style:dashed", self._row("in-progress"))
+        self.assertNotIn("dashed", self._row("approved"))
+
+    def test_all_five_stay_separable_with_colour_removed(self) -> None:
+        """S2-2, and the cell that shows why S2 was worth doing at all.
+
+        Converted to greyscale the badges very nearly collapse: the closest
+        pair measures about 1.03:1 in light mode, so hue is carrying almost
+        none of the distinction and row form is carrying almost all of it. Two
+        states with no form were therefore two states that did not exist for
+        anyone who could not separate blue from green.
+
+        So a pair counts as separable only if their rows differ structurally,
+        or their badges differ by a real amount once colour is discarded.
+        """
+
+        shapes = {}
+        for state, slug in _SLUG.items():
+            page = render(
+                _document(
+                    _one_ticket(
+                        state=state,
+                        why_waiting="因為" if state in _REASON_STATES else None,
+                    )
+                )
+            )
+            body = self._row(slug)
+            shapes[slug] = (
+                '<svg class="warn"' in page,
+                bool(re.search(r"background:var\(--[a-z0-9-]+\)", body)),
+                "box-shadow" in body,
+                "border-style:dashed" in body,
+            )
+
+        inks = _badge_inks(self.css)
+        for left, right in itertools.combinations(sorted(shapes), 2):
+            if shapes[left] != shapes[right]:
+                continue
+            for ground, palette in self.palettes.items():
+                with self.subTest(ground=ground, pair=(left, right)):
+                    self.assertGreaterEqual(
+                        _contrast(palette[inks[left][0]], palette[inks[right][0]]),
+                        _MIN_ACHROMATIC_CONTRAST,
+                        f"{left} and {right} are the same row with the same "
+                        "brightness once the colour is gone",
+                    )
 
     def test_the_unreadable_slab_is_the_loudest_thing_on_the_page(self) -> None:
         for ground, palette in self.palettes.items():

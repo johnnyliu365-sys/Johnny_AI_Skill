@@ -33,7 +33,7 @@
 ```johnny-status
 id = V2-S2
 title = 兩個安靜的狀態要能不靠顏色分辨
-state = IN_PROGRESS
-stage = D | 設計 | OPEN
-stage = T | 測試 | OPEN
+state = DONE
+stage = D | 設計 | DONE
+stage = T | 測試 | DONE
 ```

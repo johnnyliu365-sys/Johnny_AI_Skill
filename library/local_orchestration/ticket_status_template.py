@@ -393,6 +393,13 @@ body{margin:0;background:var(--bg);color:var(--ink);
 .ticket[data-state="rejected"]{border-color:var(--rejected);
   box-shadow:inset 3px 0 0 var(--rejected)}
 .ticket[data-state="done"]{background:var(--done-bg);border-color:var(--done)}
+/* In flight, so the edge is not closed yet. Dashed is already this design's
+   word for a softer line (the .where separator uses it), it survives being
+   converted to greyscale, and it is the one mark quiet enough to give a state
+   that asks nothing of the owner. APPROVED deliberately gets nothing at all:
+   accepted work is the quietest row on the page, and having no mark is what
+   distinguishes it from the one beside it. */
+.ticket[data-state="in-progress"]{border-style:dashed}
 
 .who{grid-column:1;min-width:0}
 .id{font-family:var(--mono);font-size:11.5px;color:var(--faint);
