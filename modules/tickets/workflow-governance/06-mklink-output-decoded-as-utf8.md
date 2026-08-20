@@ -84,14 +84,15 @@ stderr 會出現在斷言訊息裡。
 
 ## 完成回寫
 
-- 實際檔案：`<待填>`
-- commit：`<待填>`
+- 實際檔案：`tests/test_disposable_environment_core.py` 的 `t3`
+- commit：`implement/gov-06-mklink-decode`，經 `admit_document_mutation` 判為 `INTEGRATED`——本專案第一次由閘門而非人手完成的整合
+- 警告：`t3` 由 1 降為 0，全套件 8 降為 7；其餘 7 個是另一個檔案的同族缺陷，在邊界外未動，另開 governance 09 處理並已完成
 - WorkProgress：不適用
 
 ```johnny-status
 id = 06
 title = mklink 輸出解碼
-state = IN_PROGRESS
-stage = F | 修法 | OPEN
-stage = V | 驗證 | OPEN
+state = DONE
+stage = F | 修法 | DONE
+stage = V | 驗證 | DONE
 ```
