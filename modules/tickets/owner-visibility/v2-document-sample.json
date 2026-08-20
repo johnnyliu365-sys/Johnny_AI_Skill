@@ -17,7 +17,7 @@
       "module": "owner-visibility",
       "title": "Owner 狀態頁",
       "state": "NEEDS_OWNER",
-      "why_waiting": "做出來的是工人進度頁，你要的是工單狀態頁，內容方向要換。",
+      "reason": "做出來的是工人進度頁，你要的是工單狀態頁，內容方向要換。",
       "stages": [
         {
           "ref": "R1",
@@ -53,7 +53,7 @@
       "module": "router-framework",
       "title": "Context 預算上限",
       "state": "REJECTED",
-      "why_waiting": "審查退回：邊界值沒有測試，超出預算時的行為未定義",
+      "reason": "審查退回：邊界值沒有測試，超出預算時的行為未定義",
       "stages": [
         {
           "ref": "R1",
@@ -84,7 +84,7 @@
       "module": "event-runner-binding",
       "title": "Claude 分支喚醒命令",
       "state": "DONE",
-      "why_waiting": null,
+      "reason": null,
       "stages": [
         {
           "ref": "R1",
@@ -150,7 +150,7 @@
       "module": "owner-visibility",
       "title": "還沒動工的票",
       "state": "IN_PROGRESS",
-      "why_waiting": null,
+      "reason": null,
       "stages": [],
       "commit": null,
       "released_in": null,
@@ -162,7 +162,7 @@
       "module": "event-runner-binding",
       "title": "runner subscribe CLI",
       "state": "APPROVED",
-      "why_waiting": null,
+      "reason": null,
       "stages": [
         {
           "ref": "R1",

@@ -48,7 +48,7 @@ _TICKET_STATES = (
 )
 _STAGE_STATES = ("DONE", "OPEN")
 _SCALAR_KEYS = frozenset(
-    {"id", "title", "state", "why_waiting", "released_in", "commit"}
+    {"id", "title", "state", "reason", "released_in", "commit"}
 )
 _REQUIRED_KEYS = ("id", "title", "state")
 _REASON_REQUIRED = frozenset({"NEEDS_OWNER", "REJECTED"})
@@ -118,14 +118,14 @@ def parse_status_block(body: str) -> dict[str, object]:
     if state not in _TICKET_STATES:
         raise ValueError(f"state 只能是 {_TICKET_STATES}：{state!r}")
 
-    why = scalars.get("why_waiting", _NULL)
-    why_waiting = None if why in ("", _NULL) else why
+    why = scalars.get("reason", _NULL)
+    reason = None if why in ("", _NULL) else why
     # A row that says someone is blocked without saying on what is a row the
     # owner cannot act on, so both states that block demand their reason.
-    if state in _REASON_REQUIRED and why_waiting is None:
-        raise ValueError(f"state 是 {state} 就必須寫 why_waiting")
-    if state not in _REASON_REQUIRED and why_waiting is not None:
-        raise ValueError(f"state 是 {state} 不該寫 why_waiting")
+    if state in _REASON_REQUIRED and reason is None:
+        raise ValueError(f"state 是 {state} 就必須寫 reason")
+    if state not in _REASON_REQUIRED and reason is not None:
+        raise ValueError(f"state 是 {state} 不該寫 reason")
 
     released = scalars.get("released_in", _NULL)
     named = scalars.get("commit", _NULL)
@@ -134,7 +134,7 @@ def parse_status_block(body: str) -> dict[str, object]:
         "id": scalars["id"],
         "title": scalars["title"],
         "state": state,
-        "why_waiting": why_waiting,
+        "reason": reason,
         "stages": stages,
         "released_in": None if released in ("", _NULL) else released,
     }

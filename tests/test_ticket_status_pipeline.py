@@ -33,7 +33,7 @@ _MODULE_PATH = (
 _GOOD_BLOCK = """id = V9
 title = 測試用工單
 state = NEEDS_OWNER
-why_waiting = 等你決定方向
+reason = 等你決定方向
 stage = R1 | 樣張 | DONE
 stage = R2 | 產生器 | OPEN
 released_in = -
@@ -80,7 +80,7 @@ class BlockParsingTests(unittest.TestCase):
         declared = parse_status_block(_GOOD_BLOCK)
         self.assertEqual(declared["id"], "V9")
         self.assertEqual(declared["state"], "NEEDS_OWNER")
-        self.assertEqual(declared["why_waiting"], "等你決定方向")
+        self.assertEqual(declared["reason"], "等你決定方向")
         self.assertEqual(
             declared["stages"],
             [
@@ -119,7 +119,7 @@ class BlockParsingTests(unittest.TestCase):
     def test_a_reason_without_needs_owner_is_refused(self) -> None:
         with self.assertRaises(ValueError):
             parse_status_block(
-                "id = V9\ntitle = t\nstate = DONE\nwhy_waiting = 隨便\n"
+                "id = V9\ntitle = t\nstate = DONE\nreason = 隨便\n"
             )
 
     def test_a_missing_required_field_is_refused(self) -> None:
@@ -132,9 +132,9 @@ class BlockParsingTests(unittest.TestCase):
         approved = parse_status_block("id = A\ntitle = t\nstate = APPROVED\n")
         self.assertEqual(approved["state"], "APPROVED")
         rejected = parse_status_block(
-            "id = B\ntitle = t\nstate = REJECTED\nwhy_waiting = 要補測試\n"
+            "id = B\ntitle = t\nstate = REJECTED\nreason = 要補測試\n"
         )
-        self.assertEqual(rejected["why_waiting"], "要補測試")
+        self.assertEqual(rejected["reason"], "要補測試")
 
     def test_rejected_without_a_reason_is_refused(self) -> None:
         """Work sent back without saying what to fix cannot be acted on."""
@@ -248,7 +248,7 @@ class DocumentTests(unittest.TestCase):
                     "內容",
                     block=(
                         "id = C1\ntitle = 須修正\nstate = REJECTED\n"
-                        "why_waiting = 審查退回，要補回歸測試\n"
+                        "reason = 審查退回，要補回歸測試\n"
                     ),
                 ),
             )
@@ -338,6 +338,44 @@ class DeclaredCommitTests(unittest.TestCase):
             self.assertEqual(document["tickets"], [])
             self.assertEqual(len(document["unreadable"]), 1)
             self.assertIn("deadbee", document["unreadable"][0]["reason"])
+
+
+class FieldRenameRegressionTests(unittest.TestCase):
+    """V2-S4 item 2: the old field name must not survive anywhere it can be read.
+
+    A rename that only touches the two production modules is not finished --
+    a stray declaration left anywhere else Git tracks is a silent trap for
+    the next file that copies it. This walks every tracked file rather than a
+    fixed list, because a fixed list is exactly the kind of list that goes
+    stale the day after it is written.
+    """
+
+    def test_no_tracked_file_still_declares_the_old_field(self) -> None:
+        # Built rather than written so this assertion is never its own hit.
+        old_field = "why" + "_waiting"
+        repo_root = Path(__file__).resolve().parents[1]
+        listing = subprocess.run(
+            ("git", "ls-files"),
+            cwd=str(repo_root),
+            capture_output=True,
+            check=True,
+        ).stdout.decode("utf-8").splitlines()
+
+        offenders = []
+        for relative in listing:
+            path = repo_root / relative
+            try:
+                text = path.read_text(encoding="utf-8")
+            except (OSError, UnicodeDecodeError):
+                continue
+            if old_field in text:
+                offenders.append(relative)
+
+        self.assertEqual(
+            offenders,
+            [],
+            f"still reads the old field name {old_field!r} from: {offenders}",
+        )
 
 
 class DependencyTests(unittest.TestCase):

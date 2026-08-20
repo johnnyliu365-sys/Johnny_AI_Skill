@@ -180,7 +180,7 @@ def _one_ticket(**overrides: object) -> dict:
         "module": "owner-visibility",
         "title": "剛開的工單",
         "state": "NEEDS_OWNER",
-        "why_waiting": None,
+        "reason": None,
         "stages": [],
         "commit": None,
         "released_in": None,
@@ -210,7 +210,7 @@ def _every_state(order: tuple = _PIPELINE_ORDER) -> dict:
             _one_ticket(
                 id=f"T{index}",
                 state=state,
-                why_waiting="因為卡在這裡" if state in _REASON_STATES else None,
+                reason="因為卡在這裡" if state in _REASON_STATES else None,
             )
             for index, state in enumerate(order)
         ]
@@ -298,7 +298,7 @@ class EscapingTests(unittest.TestCase):
                     title='<script>alert("boom")</script>',
                     module='"><b>module</b>',
                     commit={"sha": "abc1234", "subject": '<script>alert("git")</script>'},
-                    why_waiting="<img onerror=x src=y>",
+                    reason="<img onerror=x src=y>",
                     handoff_command='git show "<script>"',
                 ),
                 unreadable=[
@@ -369,7 +369,7 @@ class NullableFieldTests(unittest.TestCase):
         self.assertNotIn("已發行於", self.page)
 
     def test_a_state_that_needs_no_reason_draws_no_reason_block(self) -> None:
-        page = render(_document(_one_ticket(state="APPROVED", why_waiting=None)))
+        page = render(_document(_one_ticket(state="APPROVED", reason=None)))
         self.assertNotIn('class="why"', page)
         self.assertNotIn("為什麼", page)
 
@@ -390,7 +390,7 @@ class NullableFieldTests(unittest.TestCase):
                 stages=None,
                 commit=None,
                 released_in=None,
-                why_waiting=None,
+                reason=None,
                 ticket_path=None,
                 handoff_command=None,
             )
@@ -407,7 +407,7 @@ class ReasonTests(unittest.TestCase):
     def test_a_rejected_ticket_shows_its_reason(self) -> None:
         page = render(
             _document(
-                _one_ticket(state="REJECTED", why_waiting="喚醒證據沒有持久化，要補。")
+                _one_ticket(state="REJECTED", reason="喚醒證據沒有持久化，要補。")
             )
         )
         self.assertIn('<span class="badge" data-state="rejected">', page)
@@ -415,7 +415,7 @@ class ReasonTests(unittest.TestCase):
         self.assertIn("為什麼沒通過", page)
 
     def test_a_rejected_reason_is_not_captioned_as_a_needs_owner_reason(self) -> None:
-        page = render(_document(_one_ticket(state="REJECTED", why_waiting="要補。")))
+        page = render(_document(_one_ticket(state="REJECTED", reason="要補。")))
         self.assertNotIn("為什麼等你", page)
 
     def test_a_missing_reason_is_stated_rather_than_swallowed(self) -> None:
@@ -423,7 +423,7 @@ class ReasonTests(unittest.TestCase):
 
         for state in _REASON_STATES:
             with self.subTest(state=state):
-                page = render(_document(_one_ticket(state=state, why_waiting=None)))
+                page = render(_document(_one_ticket(state=state, reason=None)))
                 self.assertIn('data-missing="yes"', page)
                 self.assertIn("這一列沒有附原因", page)
 
@@ -432,7 +432,7 @@ class ReasonTests(unittest.TestCase):
     ) -> None:
         """Dropping it silently would hide a pipeline defect from the owner."""
 
-        page = render(_document(_one_ticket(state="DONE", why_waiting="不該在這")))
+        page = render(_document(_one_ticket(state="DONE", reason="不該在這")))
         self.assertIn("不該在這", page)
 
 
@@ -559,7 +559,7 @@ class WarningGlyphTests(unittest.TestCase):
 
     def test_only_the_waiting_state_carries_the_triangle(self) -> None:
         self.assertEqual(self.page.count('<svg class="warn"'), 1)
-        approved = render(_document(_one_ticket(state="APPROVED", why_waiting=None)))
+        approved = render(_document(_one_ticket(state="APPROVED", reason=None)))
         self.assertNotIn("<svg", approved)
 
     def test_the_glyph_is_announced_rather_than_left_as_decoration(self) -> None:
@@ -788,7 +788,7 @@ class PaletteTests(unittest.TestCase):
         for mechanism in ("box-shadow", "background:var(", "border-width"):
             with self.subTest(mechanism=mechanism):
                 self.assertNotIn(mechanism, approved)
-        page = render(_document(_one_ticket(state="APPROVED", why_waiting=None)))
+        page = render(_document(_one_ticket(state="APPROVED", reason=None)))
         self.assertNotIn("<svg", page)
 
     def test_the_two_quiet_states_differ_without_colour(self) -> None:
@@ -816,7 +816,7 @@ class PaletteTests(unittest.TestCase):
                 _document(
                     _one_ticket(
                         state=state,
-                        why_waiting="因為" if state in _REASON_STATES else None,
+                        reason="因為" if state in _REASON_STATES else None,
                     )
                 )
             )

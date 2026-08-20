@@ -33,7 +33,7 @@ def _repository(directory: Path) -> Path:
     (folder / "v9-demo.md").write_text(
         "# 測試工單\n\n```johnny-status\n"
         "id = V9\ntitle = 測試用工單\nstate = NEEDS_OWNER\n"
-        "why_waiting = 等你決定方向\nstage = R1 | 樣張 | DONE\n"
+        "reason = 等你決定方向\nstage = R1 | 樣張 | DONE\n"
         "```\n",
         encoding="utf-8",
     )

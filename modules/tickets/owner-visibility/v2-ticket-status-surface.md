@@ -98,7 +98,7 @@ ticket
 ├─ title           str
 ├─ state           "NEEDS_OWNER" | "REJECTED" | "DONE" | "IN_PROGRESS" | "APPROVED"
 │                  DONE 是完成但還沒裁決；APPROVED／REJECTED 是兩種裁決。完成不等於核准。
-├─ why_waiting     str | null   NEEDS_OWNER／REJECTED 必填，其餘不得填
+├─ reason          str | null   NEEDS_OWNER／REJECTED 必填，其餘不得填
 ├─ stages          [{ref: str, label: str, state: "DONE"|"OPEN"}, …]
 ├─ commit          {sha: str, subject: str} | null
 ├─ released_in     str | null
@@ -115,7 +115,7 @@ ticket
    refs、commit sha、handoff command 全部出現（V2-U1）。
 2. 規則違反／輸入錯誤：未逃逸的不受信任文字（title、commit subject 內含 `<script>`、
    `"`）不得以標記形式進入輸出（V2-U2）；每個可為 null 的欄位（`commit`／
-   `released_in`／`why_waiting`／空 `stages`）都必須渲染出完整列而不拋例外（V2-U3）。
+   `released_in`／`reason`／空 `stages`）都必須渲染出完整列而不拋例外（V2-U3）。
 3. 外部失敗／fail-closed：`unreadable` 非空時頁面必須顯著陳述，反向突變拿掉該區塊要
    轉紅（V2-U4）；pipeline 讀不到來源一律進 `unreadable`，絕不用猜的（同族缺陷見上方
    「一條規則凌駕版面」）。
@@ -128,7 +128,7 @@ ticket
 | # | 類別 | 是否適用 | 本工單的必要案例 |
 | --- | --- | --- | --- |
 | 1 | 路徑前綴誤匹配 | 否 | 不涉路徑比對 |
-| 2 | null／空字串／陣列 | 是 | 見 V2-U3：`commit`／`released_in`／`why_waiting` 為 null、`stages` 為空陣列 |
+| 2 | null／空字串／陣列 | 是 | 見 V2-U3：`commit`／`released_in`／`reason` 為 null、`stages` 為空陣列 |
 | 3 | 權限繞過 | 否 | 單一 owner 本機頁面，無多使用者權限模型 |
 | 4 | Token 格式與比較 | 否 | 不涉憑證 |
 | 5 | 錯誤碼是否一致 | 否 | 純渲染頁面，不是 API，無對外錯誤碼 |
@@ -140,7 +140,7 @@ ticket
 | --- | --- | --- |
 | V2-U1 | `render` 重現核准樣張中的欄位 | 用 `v2-document-sample.json` 渲染並斷言 id、stage refs、commit sha、handoff command 全部出現 |
 | V2-U2 | 不受信任文字被逃逸 | 渲染含 `<script>` 與 `"` 的 title 與 commit subject，斷言兩者都不以標記形式出現 |
-| V2-U3 | 每個可為 null 的欄位都可以是 null | 渲染 `commit`／`released_in`／`why_waiting` 皆 null、`stages` 為空的票，斷言仍產生完整列且不拋例外 |
+| V2-U3 | 每個可為 null 的欄位都可以是 null | 渲染 `commit`／`released_in`／`reason` 皆 null、`stages` 為空的票，斷言仍產生完整列且不拋例外 |
 | V2-U4 | `unreadable` 非空時被顯著陳述 | 斷言頁面明講；反向突變拿掉該區塊要轉紅 |
 | V2-U5 | 五種狀態不靠文字也能兩兩分辨 | 對區辨屬性或 class 的結構性斷言，不是對文案 |
 | V2-U6 | 只用 stdlib | AST 斷言無第三方 import，比對 `tests/test_owner_status_surface.py::DependencyTests` |
@@ -163,7 +163,7 @@ ticket
 id = V2
 title = 工單狀態頁
 state = NEEDS_OWNER
-why_waiting = 「讀不到」區塊與 IN_PROGRESS 的外觀你沒核准過——核准的樣張裡沒有畫，是實作時補的
+reason = 「讀不到」區塊與 IN_PROGRESS 的外觀你沒核准過——核准的樣張裡沒有畫，是實作時補的
 stage = D | 設計核准 | DONE
 stage = U | UI 樣板 | DONE
 stage = P | 資料管線 | DONE

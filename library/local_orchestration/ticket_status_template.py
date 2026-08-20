@@ -288,7 +288,7 @@ def _ticket(ticket: object) -> str:
     )
     parts.append(f'<span class="badge" data-state="{_esc(slug)}">{_esc(caption)}</span>')
     parts.append(_stages(_sequence(ticket.get("stages"))))
-    parts.append(_why(state, ticket.get("why_waiting")))
+    parts.append(_why(state, ticket.get("reason")))
     parts.append(_where(ticket))
 
     handoff = ticket.get("handoff_command")
