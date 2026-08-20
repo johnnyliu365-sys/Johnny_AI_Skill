@@ -259,11 +259,14 @@ class DisposableEnvironmentCoreTests(unittest.TestCase):
                 shell=False,
                 check=False,
                 capture_output=True,
-                encoding="utf-8",
-                errors="strict",
                 timeout=5,
             )
-            self.assertEqual(0, junction.returncode, junction.stderr)
+            # Register E族 (cp950 主控台): decode raw bytes on this thread with
+            # errors="replace" instead of letting subprocess's reader thread decode
+            # in-flight, which raised UnicodeDecodeError there as an unhandled
+            # thread exception whenever mklink's output was not valid UTF-8.
+            junction_stderr = (junction.stderr or b"").decode("utf-8", errors="replace")
+            self.assertEqual(0, junction.returncode, junction_stderr)
             attributes = lease.root.path.lstat().st_file_attributes
             self.assertNotEqual(0, attributes & stat.FILE_ATTRIBUTE_REPARSE_POINT)
             with patch.object(Path, "read_text", side_effect=AssertionError("marker read-through")) as marker_reads:
