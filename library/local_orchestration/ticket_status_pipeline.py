@@ -35,12 +35,23 @@ _NULL = "-"
 _TICKETS_RELATIVE = Path("modules") / "tickets"
 _SKIPPED_STEMS = frozenset({"README", "TEMPLATE", "README.TEMPLATE", "PITFALL-REGISTER"})
 
-_TICKET_STATES = ("NEEDS_OWNER", "IN_PROGRESS", "DONE")
+# The lifecycle the owner actually runs: work finishes, then it is reviewed,
+# and "finished" is not "accepted". DONE means the work is done and waiting for
+# a verdict; APPROVED and REJECTED are the two verdicts. Collapsing DONE into
+# APPROVED would hide the queue of things waiting on a review nobody has done.
+_TICKET_STATES = (
+    "NEEDS_OWNER",
+    "REJECTED",
+    "DONE",
+    "IN_PROGRESS",
+    "APPROVED",
+)
 _STAGE_STATES = ("DONE", "OPEN")
 _SCALAR_KEYS = frozenset(
     {"id", "title", "state", "why_waiting", "released_in", "commit"}
 )
 _REQUIRED_KEYS = ("id", "title", "state")
+_REASON_REQUIRED = frozenset({"NEEDS_OWNER", "REJECTED"})
 _STATE_ORDER = {name: index for index, name in enumerate(_TICKET_STATES)}
 
 
@@ -109,10 +120,12 @@ def parse_status_block(body: str) -> dict[str, object]:
 
     why = scalars.get("why_waiting", _NULL)
     why_waiting = None if why in ("", _NULL) else why
-    if state == "NEEDS_OWNER" and why_waiting is None:
-        raise ValueError("state 是 NEEDS_OWNER 就必須寫 why_waiting")
-    if state != "NEEDS_OWNER" and why_waiting is not None:
-        raise ValueError("只有 NEEDS_OWNER 才可以寫 why_waiting")
+    # A row that says someone is blocked without saying on what is a row the
+    # owner cannot act on, so both states that block demand their reason.
+    if state in _REASON_REQUIRED and why_waiting is None:
+        raise ValueError(f"state 是 {state} 就必須寫 why_waiting")
+    if state not in _REASON_REQUIRED and why_waiting is not None:
+        raise ValueError(f"state 是 {state} 不該寫 why_waiting")
 
     released = scalars.get("released_in", _NULL)
     named = scalars.get("commit", _NULL)

@@ -126,6 +126,22 @@ class BlockParsingTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             parse_status_block("title = t\nstate = DONE\n")
 
+    def test_both_review_verdicts_are_declarable_states(self) -> None:
+        """Finished and accepted are different answers, and both are states."""
+
+        approved = parse_status_block("id = A\ntitle = t\nstate = APPROVED\n")
+        self.assertEqual(approved["state"], "APPROVED")
+        rejected = parse_status_block(
+            "id = B\ntitle = t\nstate = REJECTED\nwhy_waiting = 要補測試\n"
+        )
+        self.assertEqual(rejected["why_waiting"], "要補測試")
+
+    def test_rejected_without_a_reason_is_refused(self) -> None:
+        """Work sent back without saying what to fix cannot be acted on."""
+
+        with self.assertRaises(ValueError):
+            parse_status_block("id = B\ntitle = t\nstate = REJECTED\n")
+
     def test_a_file_without_a_block_declares_nothing(self) -> None:
         self.assertIsNone(find_status_block("# 一般工單\n\n沒有宣告區塊。\n"))
 
@@ -206,6 +222,40 @@ class DocumentTests(unittest.TestCase):
 
             states = [item["state"] for item in build_document(root)["tickets"]]
             self.assertEqual(states, ["NEEDS_OWNER", "DONE"])
+
+    def test_work_waiting_for_a_verdict_outranks_work_already_accepted(self) -> None:
+        """Waiting for a review is a queue somebody has to clear; accepted is not."""
+
+        with tempfile.TemporaryDirectory() as temporary:
+            root = _repository(Path(temporary))
+            _write_ticket(
+                root,
+                "demo",
+                "a.md",
+                _ticket("內容", block="id = A1\ntitle = 通過\nstate = APPROVED\n"),
+            )
+            _write_ticket(
+                root,
+                "demo",
+                "b.md",
+                _ticket("內容", block="id = B1\ntitle = 待審\nstate = DONE\n"),
+            )
+            _write_ticket(
+                root,
+                "demo",
+                "c.md",
+                _ticket(
+                    "內容",
+                    block=(
+                        "id = C1\ntitle = 須修正\nstate = REJECTED\n"
+                        "why_waiting = 審查退回，要補回歸測試\n"
+                    ),
+                ),
+            )
+            _commit(root, "ticket: three verdicts")
+
+            states = [i["state"] for i in build_document(root)["tickets"]]
+            self.assertEqual(states, ["REJECTED", "DONE", "APPROVED"])
 
     def test_registries_and_templates_are_not_mistaken_for_tickets(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

@@ -47,8 +47,10 @@ ticket
 ├─ id              str        e.g. "V1", "E14"
 ├─ module          str        the ticket folder
 ├─ title           str
-├─ state           "NEEDS_OWNER" | "IN_PROGRESS" | "DONE"
-├─ why_waiting     str | null   present exactly when state is NEEDS_OWNER
+├─ state           "NEEDS_OWNER" | "REJECTED" | "DONE" | "IN_PROGRESS" | "APPROVED"
+│                  DONE means finished and waiting for a verdict; APPROVED and
+│                  REJECTED are the two verdicts. Finished is not accepted.
+├─ why_waiting     str | null   required for NEEDS_OWNER and REJECTED, absent otherwise
 ├─ stages          [{ref: str, label: str, state: "DONE"|"OPEN"}, …]
 ├─ commit          {sha: str, subject: str} | null
 ├─ released_in     str | null
