@@ -113,7 +113,7 @@ forbid = library/local_orchestration/document_mutation_gate.py
 ```johnny-status
 id = V2-S4
 title = 用詞與欄位名
-state = IN_PROGRESS
+state = DONE
 stage = N | 裁決用詞 | OPEN
 stage = R | 欄位改名 | OPEN
 ```
