@@ -61,7 +61,7 @@
 ```johnny-status
 id = 05
 title = 改名被擋住就留下孤兒
-state = IN_PROGRESS
-stage = F | 修法 | OPEN
-stage = M | 突變驗證 | OPEN
+state = DONE
+stage = F | 修法 | DONE
+stage = M | 突變驗證 | DONE
 ```
