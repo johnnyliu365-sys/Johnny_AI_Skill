@@ -239,6 +239,7 @@ in. The Router drives branches it owns.
 id = E14
 title = Claude 分支喚醒命令
 state = DONE
+commit = da33781
 released_in = v0.4.5
 stage = R1 | 探索 | DONE
 stage = R2 | 認證閘門 | DONE
