@@ -12,11 +12,19 @@
 | 實作語言 | Python 3.11（依 `CONTEXT.md` › 實作語言規範的統一後端語言） |
 | 狀態 | `IN_PROGRESS` |
 | 共同基準 | `bed244d` |
-| 實作者 | 由 chip 啟動的獨立 session（root checkout，見「Owner override record」） |
+| 實作者 | 重派：`.worktrees/gov-06`／branch `implement/gov-06-mklink-decode` |
 | 審閱者 | 控制面（Opus 5） |
 | 責任邊界 | `tests/test_disposable_environment_core.py` 的 `t3` cell 之解碼方式 |
 | 禁止修改 | `shell=False`、`check=False`、5 秒逾時；`library/` 下任何產品程式碼；其他 cell |
 | 環境 | `LOCAL` |
+
+## 邊界宣告（機器可讀，整合前由閘門讀取）
+
+```johnny-boundary
+modify = tests/test_disposable_environment_core.py
+forbid = library/
+forbid = modules/tickets/
+```
 
 ## 使用者拍板與可觀察結果
 
