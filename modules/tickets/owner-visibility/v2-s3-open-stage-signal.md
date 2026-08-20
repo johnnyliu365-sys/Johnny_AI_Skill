@@ -90,14 +90,16 @@ forbid = modules/tickets/
 
 ## 完成回寫
 
-- 實際檔案：`<待填>`
-- commit：`<待填>`
+- 實際檔案：`library/local_orchestration/ticket_status_template.py`、`tests/test_ticket_status_template.py`
+- commit：`implement/v2-s3-stage-signal`，經 `admit_document_mutation` 判為 `INTEGRATED`
+- **反向突變**：實作者——把兩種方塊做成相同 → S3-1 的兩個 cell 轉紅；審閱者（反方向）——把完成方塊的邊框加回去 → 三個 cell 轉紅，含「無法分類的階段不得讀成已完成」。兩者還原後皆轉綠。
+- **量測**：邊框差 2.0px（下限 2.0）、字重差 300（下限 300）、色調差 2.719／2.183（下限 2.0）。深色模式下兩個合格無彩色墨水的最大差距只有 2.873:1，低於門檻 3.0——**色調通道無解**，該上限已釘成 cell。顏色 token 變更數 0。
 - WorkProgress：不適用
 
 ```johnny-status
 id = V2-S3
 title = 找回未完成階段的訊號
-state = IN_PROGRESS
-stage = D | 設計 | OPEN
-stage = T | 測試 | OPEN
+state = DONE
+stage = D | 設計 | DONE
+stage = T | 測試 | DONE
 ```
