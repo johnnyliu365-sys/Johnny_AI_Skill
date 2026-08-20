@@ -3,3 +3,6 @@
 /.claude/worktrees/
 __pycache__/
 *.py[cod]
+
+# 發行產物：建置輸出，不進版控（閘門要求整合工作區乾淨）
+/dist/
