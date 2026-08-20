@@ -14,14 +14,14 @@ import subprocess
 import sys
 import tempfile
 import unittest
-from unittest import mock
 from pathlib import Path
+from unittest import mock
 
 from library.local_orchestration.claude_wake_command import (
     ClaudeBranch,
-    app_claimed_session_ids,
     ClaudeWakeFailure,
     ClaudeWakeStatus,
+    app_claimed_session_ids,
     default_claude_executable,
     is_capability_probe,
     live_session_ids,
