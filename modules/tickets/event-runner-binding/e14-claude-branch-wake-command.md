@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| State | `PARTIALLY CLOSED` — the dispatcher ships and is proven against a stub; the live drive is gated on owner authentication |
+| State | `CLOSED` — the dispatcher ships and the live drive is evidenced end to end on the owner's host |
 | Baseline | `main` at the commit this ticket lands in |
 | Workload | `MEDIUM`; Python 3.11 strict, TDD, reverse mutation required |
 | Depends on | E12 (closed): establishes the wake-command contract this module implements for a second host |
@@ -136,25 +136,39 @@ All cells drive the real subprocess path through a stub CLI that records the
 exact argv, rather than patching module internals — a mocked runner cannot
 catch the command shape drifting away from what the CLI accepts.
 
-## What remains open
+## E14-R8 closed — the live drive, measured
 
-**E14-R8 (open): the live drive.** No cell in this suite has driven a real
-Claude branch, because the host's CLI reported `loggedIn: false` throughout
-development. When the owner has run `claude setup-token` and
-`claude auth status` reports logged in, the outstanding evidence is:
+Run on the owner's host against CLI `2.1.234`, authenticated with an
+`sk-ant-oat01-` token from `claude setup-token` (108 characters), supplied
+through `CLAUDE_CODE_OAUTH_TOKEN`.
 
-1. `probe_drive` against the real CLI returns `CAPABILITY_PROVEN` within the
-   30-second probe cap. First live attempt: `DRIVE_FAILED` in 2.8s against a
-   host whose `auth status` claimed `loggedIn: true` -- the stored token was
-   not an `sk-ant-oat01-` token. The refusal was correct and is retained
-   here as evidence that the probe discriminates.
-2. Branch isolation end to end: open two branches with known session ids,
-   plant a distinct token in each, resume each and confirm each returns its
-   own — proving durable, non-contaminating parallel branches rather than one
-   working invocation.
-3. A real reviewer branch receives a wake and the woken agent acts on the
-   payload, which is the E11-equivalent evidence for this host.
+1. **The capability probe passes for real.** The dispatcher's probe path
+   returned `{"status": "CAPABILITY_PROVEN"}`, exit 0, in **5.2 s** — inside
+   the runtime's 30-second cap with room to spare, which is what the deadline
+   budget was added for.
+2. **Branches are distinct and durable.** Two fresh session ids were opened
+   with `--session-id`, one told `ALPHA-7731` and the other `BRAVO-4402`.
+   Resumed separately with `--resume`, each returned **its own** token and
+   neither carried the other's. Parallel Claude branches are therefore real,
+   isolated, and survive process exit — not one invocation that happened to
+   work.
+3. **A named reviewer's branch really receives the wake.** A route table
+   mapping `supervisor-reviewer` to branch A, plus a `ROLE_WAKE_V1` payload
+   naming that reviewer, produced `{"status": "DELIVERED"}` in 8.7 s. Asked
+   from *inside* branch A afterwards, the branch named the payload path it had
+   been handed, and still answered `ALPHA-7731` when asked what it had been
+   told earlier. So the wake landed in the reviewer's own branch and continued
+   it, rather than opening a fresh one.
 
-Until R8 is evidenced, this channel is implemented but unproven on any live
-host, and nothing may report otherwise — the skill's Automation readiness
-gate (governance 04) applies to it exactly as written.
+Point 3 is the evidence that matters, and it is the E11-equivalent for this
+host: the delivery was confirmed from the receiving side, not from the
+sender's own return value. A `DELIVERED` status is a claim about a command;
+the branch naming the payload is a fact about what arrived.
+
+### What this does *not* license
+
+The woken branch was asked what it received; it was not observed carrying out
+a review and submitting a verdict. That last mile stays unproven here exactly
+as it does for the Antigravity channel. And nothing in this result changes the
+negative above: no interface delivers into a conversation the owner is sitting
+in. The Router drives branches it owns.
