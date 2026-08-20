@@ -109,3 +109,7 @@ all.** The skill's text was the unarmed path's behavior, and nobody had read
 it with that question in mind. Same family as D5 (documentation describing an
 entry point nobody verified), one level up: this time the reader was an agent
 and the output was handed to the owner as fact.
+
+## 發行紀錄
+
+已隨 v0.4.4 發行：commit A `ed8055b`（版本升級＋本修正）、commit B `f033ec7`（digest 釘死 `c2216b6e…`、479,704 bytes、preflight MATCHED）。發行前全套件 992 passed 零殘留；gated qualifications（live install、whole chain、vita）16 passed。回滾點 `rollback-pre-044` → `b1a61ca`。
