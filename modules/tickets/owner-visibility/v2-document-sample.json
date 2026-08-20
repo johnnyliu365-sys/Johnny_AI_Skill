@@ -49,6 +49,37 @@
       "handoff_command": "git show f3a2981 -- modules/tickets/owner-visibility/v1-owner-status-surface.md"
     },
     {
+      "id": "R7",
+      "module": "router-framework",
+      "title": "Context 預算上限",
+      "state": "REJECTED",
+      "why_waiting": "審查退回：邊界值沒有測試，超出預算時的行為未定義",
+      "stages": [
+        {
+          "ref": "R1",
+          "label": "設計",
+          "state": "DONE"
+        },
+        {
+          "ref": "R2",
+          "label": "實作",
+          "state": "DONE"
+        },
+        {
+          "ref": "R3",
+          "label": "回歸測試",
+          "state": "OPEN"
+        }
+      ],
+      "commit": {
+        "sha": "b1a61ca",
+        "subject": "feat: context budget ceiling"
+      },
+      "released_in": null,
+      "ticket_path": "modules/tickets/router-framework/r7-context-budget.md",
+      "handoff_command": "git show b1a61ca -- modules/tickets/router-framework/r7-context-budget.md"
+    },
+    {
       "id": "E14",
       "module": "event-runner-binding",
       "title": "Claude 分支喚醒命令",
@@ -125,6 +156,32 @@
       "released_in": null,
       "ticket_path": "modules/tickets/owner-visibility/v7-not-started.md",
       "handoff_command": "git show c1bb040 -- modules/tickets/owner-visibility/v7-not-started.md"
+    },
+    {
+      "id": "E13",
+      "module": "event-runner-binding",
+      "title": "runner subscribe CLI",
+      "state": "APPROVED",
+      "why_waiting": null,
+      "stages": [
+        {
+          "ref": "R1",
+          "label": "",
+          "state": "DONE"
+        },
+        {
+          "ref": "R2",
+          "label": "",
+          "state": "DONE"
+        }
+      ],
+      "commit": {
+        "sha": "6ff8c3f",
+        "subject": "feat: runner subscribe CLI"
+      },
+      "released_in": "v0.4.3",
+      "ticket_path": "modules/tickets/event-runner-binding/e13-runner-subscribe-cli.md",
+      "handoff_command": "git show 6ff8c3f -- modules/tickets/event-runner-binding/e13-runner-subscribe-cli.md"
     }
   ],
   "unreadable": [

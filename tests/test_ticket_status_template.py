@@ -5,21 +5,26 @@ source failed. Several cells therefore assert what the page must *not* say --
 a page that renders "no tickets" over the top of a file it could not parse is
 worse than no page, and no positive assertion catches that.
 
-The other half of the suite is about text the repository did not write for us.
-Titles come from ticket files and subjects come from `git log`; both are
-attacker-shaped in the ordinary case where somebody commits an angle bracket.
-Escaping is asserted on attribute values too, which is where it is usually
-missing.
+The second half is about text the repository did not write for us. Titles come
+from ticket files and subjects come from `git log`; both are attacker-shaped in
+the ordinary case where somebody commits an angle bracket. Escaping is asserted
+on attribute values too, which is where it is usually missing.
 
-Cells are written against the committed sample document rather than against
-invented fixtures wherever possible, so the renderer is tested on the data it
-will actually receive (pitfall register C6).
+The third half -- since the owner split "finished" from "accepted" -- is the
+palette. Five states have to separate at a glance, so `PaletteTests` asserts
+the *colours themselves* are far apart in hue rather than trusting that a
+human looked once. That cell is what stops NEEDS_OWNER drifting back into the
+amber band beside a yellow DONE row.
+
+Cells are written against the committed sample document wherever possible, so
+the renderer is tested on the data it will actually receive (pitfall C6).
 """
 
 from __future__ import annotations
 
 import ast
 import copy
+import itertools
 import json
 import re
 import unittest
@@ -38,8 +43,28 @@ _SAMPLE_PATH = (
 # The reassuring sentence. It may only ever appear when nothing failed to read.
 _CALM = "沒有工單"
 
+# The order the pipeline sorts into: things a human must clear first, accepted
+# work last. The template reproduces it and never re-derives it.
+_PIPELINE_ORDER = ("NEEDS_OWNER", "REJECTED", "DONE", "IN_PROGRESS", "APPROVED")
+_SLUG = {
+    "NEEDS_OWNER": "needs-owner",
+    "REJECTED": "rejected",
+    "DONE": "done",
+    "IN_PROGRESS": "in-progress",
+    "APPROVED": "approved",
+}
+_REASON_STATES = ("NEEDS_OWNER", "REJECTED")
+
+# The five colours a state can be wearing. `--open` is the deliberate neutral.
+_STATE_TOKENS = ("--need", "--rejected", "--done", "--approved", "--open")
+_MIN_HUE_GAP = 35.0
+_CHROMATIC = 0.25
+
 _TOKEN_DEFINITION = re.compile(r"(--[a-z0-9-]+)\s*:", re.IGNORECASE)
 _TOKEN_USE = re.compile(r"var\((--[a-z0-9-]+)\)", re.IGNORECASE)
+_TOKEN_VALUE = re.compile(r"(--[a-z0-9-]+)\s*:\s*([^;}]+)")
+_RULE = re.compile(r"([^{}]+)\{([^{}]*)\}")
+_ROW = re.compile(r'<article class="ticket" data-state="([a-z-]+)"')
 
 
 def _sample() -> dict:
@@ -55,6 +80,78 @@ def _rule_body(css: str, header: str) -> str:
 
     start = css.index(header) + len(header)
     return css[start : css.index("}", start)]
+
+
+def _palette(block: str) -> dict:
+    return {name: value.strip() for name, value in _TOKEN_VALUE.findall(block)}
+
+
+def _hue_and_saturation(colour: str) -> tuple[float, float]:
+    """HSV hue in degrees and saturation in 0..1, straight from the hex."""
+
+    digits = colour.strip().lstrip("#")
+    red, green, blue = (int(digits[at : at + 2], 16) for at in (0, 2, 4))
+    high, low = max(red, green, blue), min(red, green, blue)
+    span = high - low
+    if not span:
+        return 0.0, 0.0
+    if high == red:
+        hue = 60.0 * (((green - blue) / span) % 6)
+    elif high == green:
+        hue = 60.0 * ((blue - red) / span + 2)
+    else:
+        hue = 60.0 * ((red - green) / span + 4)
+    return hue, span / high
+
+
+def _hue_gap(first: float, second: float) -> float:
+    gap = abs(first - second) % 360.0
+    return min(gap, 360.0 - gap)
+
+
+def _luminance(colour: str) -> float:
+    digits = colour.strip().lstrip("#")
+    channels = [int(digits[at : at + 2], 16) / 255 for at in (0, 2, 4)]
+    linear = [
+        value / 12.92 if value <= 0.04045 else ((value + 0.055) / 1.055) ** 2.4
+        for value in channels
+    ]
+    return 0.2126 * linear[0] + 0.7152 * linear[1] + 0.0722 * linear[2]
+
+
+def _contrast(first: str, second: str) -> float:
+    high, low = sorted((_luminance(first), _luminance(second)), reverse=True)
+    return (high + 0.05) / (low + 0.05)
+
+
+def _rules(css: str) -> list:
+    """(selector, declarations) pairs, with comments stripped off the front."""
+
+    return _RULE.findall(re.sub(r"/\*.*?\*/", "", css, flags=re.S))
+
+
+def _badge_inks(css: str) -> dict:
+    """Map each badge state to the (background, ink) tokens its rules resolve to."""
+
+    base_background = base_ink = None
+    per_state: dict = {}
+    for selector, body in _rules(css):
+        selector = selector.strip()
+        background = re.search(r"background:var\((--[a-z0-9-]+)\)", body)
+        ink = re.search(r"color:var\((--[a-z0-9-]+)\)", body)
+        if selector == ".badge":
+            base_background = background.group(1) if background else base_background
+            base_ink = ink.group(1) if ink else base_ink
+        matched = re.fullmatch(r'\.badge\[data-state="([a-z-]+)"\]', selector)
+        if matched:
+            per_state[matched.group(1)] = (
+                background.group(1) if background else None,
+                ink.group(1) if ink else None,
+            )
+    return {
+        state: (background or base_background, ink or base_ink)
+        for state, (background, ink) in per_state.items()
+    }
 
 
 def _one_ticket(**overrides: object) -> dict:
@@ -85,6 +182,19 @@ def _document(*tickets: dict, **overrides: object) -> dict:
     }
     document.update(overrides)
     return document
+
+
+def _every_state(order: tuple = _PIPELINE_ORDER) -> dict:
+    return _document(
+        *[
+            _one_ticket(
+                id=f"T{index}",
+                state=state,
+                why_waiting="因為卡在這裡" if state in _REASON_STATES else None,
+            )
+            for index, state in enumerate(order)
+        ]
+    )
 
 
 class ApprovedLayoutTests(unittest.TestCase):
@@ -129,14 +239,6 @@ class ApprovedLayoutTests(unittest.TestCase):
         self.assertIn('<time datetime="2026-08-20T20:14:00+08:00">', self.page)
         self.assertIn("2026-08-20 20:14", self.page)
 
-    def test_the_order_the_pipeline_promised_is_the_order_rendered(self) -> None:
-        """NEEDS_OWNER first is the pipeline's job; re-sorting here would fork it."""
-
-        self.assertLess(
-            self.page.index("V1 · owner-visibility"),
-            self.page.index("E14 · event-runner-binding"),
-        )
-
     def test_a_populated_page_never_claims_to_be_empty(self) -> None:
         self.assertNotIn(_CALM, self.page)
 
@@ -144,6 +246,25 @@ class ApprovedLayoutTests(unittest.TestCase):
         """No clock, no randomness: the document is the only input."""
 
         self.assertEqual(render(_sample()), render(_sample()))
+
+
+class OrderingTests(unittest.TestCase):
+    """Sorting is the pipeline's job; reproducing it exactly is this one's."""
+
+    def test_the_order_the_pipeline_emitted_is_the_order_rendered(self) -> None:
+        page = render(_every_state())
+        self.assertEqual(
+            _ROW.findall(page), [_SLUG[state] for state in _PIPELINE_ORDER]
+        )
+
+    def test_the_template_does_not_re_sort_what_it_is_given(self) -> None:
+        """Two orderings in one system is one ordering nobody can test."""
+
+        reversed_order = tuple(reversed(_PIPELINE_ORDER))
+        page = render(_every_state(reversed_order))
+        self.assertEqual(
+            _ROW.findall(page), [_SLUG[state] for state in reversed_order]
+        )
 
 
 class EscapingTests(unittest.TestCase):
@@ -184,6 +305,16 @@ class EscapingTests(unittest.TestCase):
         self.assertNotIn('" onload=', page)
         self.assertIn("&quot; onload=&quot;alert(1)", page)
 
+    def test_a_hostile_state_cannot_escape_the_row_attribute(self) -> None:
+        page = render(_document(_one_ticket(state='" data-need="yes')))
+        # The slug is looked up in a table, never interpolated from input, so a
+        # hostile state cannot forge an attribute; the raw text survives only
+        # as escaped characters in the badge caption.
+        self.assertIn(
+            '<article class="ticket" data-state="unknown" data-need="no">', page
+        )
+        self.assertIn("&quot; data-need=&quot;yes", page)
+
     def test_an_unparseable_timestamp_is_shown_rather_than_dropped(self) -> None:
         page = render(_document(_one_ticket(), generated_at="not a timestamp"))
         self.assertIn("not a timestamp", page)
@@ -196,10 +327,13 @@ class NullableFieldTests(unittest.TestCase):
         self.page = render(_document(_one_ticket()))
 
     def test_a_brand_new_ticket_still_renders_a_complete_row(self) -> None:
-        self.assertIn('<article class="ticket" data-need="yes">', self.page)
+        self.assertIn(
+            '<article class="ticket" data-state="needs-owner" data-need="yes">',
+            self.page,
+        )
         self.assertIn('<div class="id">V9 · owner-visibility</div>', self.page)
         self.assertIn('<p class="name">剛開的工單</p>', self.page)
-        self.assertIn('<span class="badge" data-state="need">', self.page)
+        self.assertIn('<span class="badge" data-state="needs-owner">', self.page)
         self.assertIn("modules/tickets/owner-visibility/v9.md", self.page)
         self.assertIn("</article>", self.page)
 
@@ -212,7 +346,11 @@ class NullableFieldTests(unittest.TestCase):
 
     def test_absent_optional_blocks_are_omitted_rather_than_drawn_empty(self) -> None:
         self.assertNotIn("已發行於", self.page)
-        self.assertNotIn("為什麼等你", self.page)
+
+    def test_a_state_that_needs_no_reason_draws_no_reason_block(self) -> None:
+        page = render(_document(_one_ticket(state="APPROVED", why_waiting=None)))
+        self.assertNotIn('class="why"', page)
+        self.assertNotIn("為什麼", page)
 
     def test_a_document_with_no_release_and_no_rollback_says_so(self) -> None:
         self.assertIn("尚未發行", self.page)
@@ -240,6 +378,41 @@ class NullableFieldTests(unittest.TestCase):
         page = render(document)
         self.assertIn('<article class="ticket"', page)
         self.assertTrue(page.rstrip().endswith("</html>"))
+
+
+class ReasonTests(unittest.TestCase):
+    """A row may never say work failed without saying what to fix."""
+
+    def test_a_rejected_ticket_shows_its_reason(self) -> None:
+        page = render(
+            _document(
+                _one_ticket(state="REJECTED", why_waiting="喚醒證據沒有持久化，要補。")
+            )
+        )
+        self.assertIn('<span class="badge" data-state="rejected">', page)
+        self.assertIn("喚醒證據沒有持久化，要補。", page)
+        self.assertIn("為什麼沒通過", page)
+
+    def test_a_rejected_reason_is_not_captioned_as_a_needs_owner_reason(self) -> None:
+        page = render(_document(_one_ticket(state="REJECTED", why_waiting="要補。")))
+        self.assertNotIn("為什麼等你", page)
+
+    def test_a_missing_reason_is_stated_rather_than_swallowed(self) -> None:
+        """The pipeline refuses to emit this; if one arrives, it must show."""
+
+        for state in _REASON_STATES:
+            with self.subTest(state=state):
+                page = render(_document(_one_ticket(state=state, why_waiting=None)))
+                self.assertIn('data-missing="yes"', page)
+                self.assertIn("這一列沒有附原因", page)
+
+    def test_a_reason_carried_by_a_state_that_should_not_have_one_still_shows(
+        self,
+    ) -> None:
+        """Dropping it silently would hide a pipeline defect from the owner."""
+
+        page = render(_document(_one_ticket(state="DONE", why_waiting="不該在這")))
+        self.assertIn("不該在這", page)
 
 
 class UnreadableTests(unittest.TestCase):
@@ -312,38 +485,136 @@ class StateDistinctionTests(unittest.TestCase):
     """V2-U5 -- the row is marked, not merely captioned."""
 
     def setUp(self) -> None:
-        self.page = render(
-            _document(
-                _one_ticket(id="A", state="NEEDS_OWNER"),
-                _one_ticket(id="B", state="IN_PROGRESS"),
-                _one_ticket(id="C", state="DONE"),
-            )
-        )
+        self.page = render(_every_state())
 
-    def test_the_row_itself_carries_the_distinction(self) -> None:
-        rows = re.findall(r'<article class="ticket"[^>]*>', self.page)
-        self.assertEqual(len(rows), 3)
+    def test_the_row_itself_carries_the_state(self) -> None:
         self.assertEqual(
-            [re.search(r'data-need="(\w+)"', row).group(1) for row in rows],
-            ["yes", "no", "no"],
+            _ROW.findall(self.page), [_SLUG[state] for state in _PIPELINE_ORDER]
         )
 
     def test_the_distinction_survives_deleting_every_badge(self) -> None:
         """If the caption were the only carrier, this is where it would show."""
 
         stripped = re.sub(r'<span class="badge".*?</span>', "", self.page)
-        self.assertIn('data-need="yes"', stripped)
-        self.assertIn('data-need="no"', stripped)
+        self.assertEqual(len(set(_ROW.findall(stripped))), len(_PIPELINE_ORDER))
 
-    def test_the_three_states_do_not_collapse_into_one_badge(self) -> None:
-        slugs = re.findall(r'<span class="badge" data-state="([a-z]+)"', self.page)
-        self.assertEqual(slugs, ["need", "open", "done"])
-        self.assertEqual(len(set(slugs)), 3, "two states share a badge treatment")
+    def test_the_five_states_do_not_collapse_into_one_badge(self) -> None:
+        slugs = re.findall(r'<span class="badge" data-state="([a-z-]+)"', self.page)
+        self.assertEqual(slugs, [_SLUG[state] for state in _PIPELINE_ORDER])
+        self.assertEqual(len(set(slugs)), 5, "two states share a badge treatment")
+
+    def test_only_the_states_a_human_must_clear_are_flagged_for_the_owner(self) -> None:
+        flags = re.findall(r'<article class="ticket" data-state="[a-z-]+" '
+                           r'data-need="(\w+)"', self.page)
+        self.assertEqual(flags, ["yes", "yes", "no", "no", "no"])
 
     def test_an_unrecognised_state_is_shown_rather_than_guessed_at(self) -> None:
         page = render(_document(_one_ticket(state="SOMETHING_NOBODY_WROTE_DOWN")))
         self.assertIn("SOMETHING_NOBODY_WROTE_DOWN", page)
+        self.assertIn('data-state="unknown"', page)
         self.assertIn('data-need="no"', page)
+
+
+class PaletteTests(unittest.TestCase):
+    """The owner split the states so they would read apart. This checks that."""
+
+    def setUp(self) -> None:
+        self.css = _stylesheet(render(_sample()))
+        self.palettes = {
+            "light": _palette(_rule_body(self.css, ":root{")),
+            "dark": _palette(_rule_body(self.css, ':root[data-theme="dark"]{')),
+        }
+
+    def test_every_state_has_its_own_colour_on_both_grounds(self) -> None:
+        for ground, palette in self.palettes.items():
+            with self.subTest(ground=ground):
+                values = [palette[token] for token in _STATE_TOKENS]
+                self.assertEqual(len(set(values)), len(_STATE_TOKENS))
+
+    def test_the_chromatic_states_are_far_apart_in_hue(self) -> None:
+        """NEEDS_OWNER sat in the amber band beside a yellow DONE. Never again."""
+
+        for ground, palette in self.palettes.items():
+            hues, neutrals = {}, []
+            for token in _STATE_TOKENS:
+                hue, saturation = _hue_and_saturation(palette[token])
+                if saturation < _CHROMATIC:
+                    neutrals.append(token)
+                else:
+                    hues[token] = hue
+            with self.subTest(ground=ground, check="one neutral at most"):
+                self.assertLessEqual(len(neutrals), 1)
+            for left, right in itertools.combinations(sorted(hues), 2):
+                with self.subTest(ground=ground, pair=(left, right)):
+                    self.assertGreaterEqual(
+                        _hue_gap(hues[left], hues[right]),
+                        _MIN_HUE_GAP,
+                        f"{left} and {right} read as the same colour at a glance",
+                    )
+
+    def test_finished_work_is_a_filled_row_not_only_a_chip(self) -> None:
+        """The owner asked for a yellow 底, which means the ground, not a badge."""
+
+        body = _rule_body(self.css, '.ticket[data-state="done"]{')
+        self.assertIn("background:var(--done-bg)", body)
+        self.assertIn("border-color:var(--done)", body)
+
+    def test_the_yellow_fill_keeps_an_edge_on_both_grounds(self) -> None:
+        """A pale yellow can match the page in brightness and lose its border.
+
+        Hue alone is not enough: a fill that differs only in hue disappears for
+        a reader who cannot separate those hues, and on a poorly calibrated
+        panel. The fill has to be measurably darker than what surrounds it.
+        """
+
+        for ground, palette in self.palettes.items():
+            for neighbour in ("--bg", "--card"):
+                with self.subTest(ground=ground, against=neighbour):
+                    self.assertGreaterEqual(
+                        _contrast(palette["--done-bg"], palette[neighbour]),
+                        1.12,
+                        "the finished row blends into what surrounds it",
+                    )
+
+    def test_every_badge_is_legible_on_both_grounds(self) -> None:
+        """Yellow is the one that loses its text, so nothing may assume white."""
+
+        inks = _badge_inks(self.css)
+        self.assertEqual(len(inks), 5)
+        for ground, palette in self.palettes.items():
+            for state, (background, ink) in sorted(inks.items()):
+                with self.subTest(ground=ground, state=state):
+                    self.assertIsNotNone(background)
+                    self.assertIsNotNone(ink)
+                    self.assertGreaterEqual(
+                        _contrast(palette[background], palette[ink]), 4.5
+                    )
+
+    def test_the_unreadable_slab_is_the_loudest_thing_on_the_page(self) -> None:
+        for ground, palette in self.palettes.items():
+            with self.subTest(ground=ground):
+                self.assertGreater(_contrast(palette["--alarm"], palette["--bg"]), 8.0)
+                self.assertGreater(
+                    _contrast(palette["--alarm"], palette["--alarm-ink"]), 8.0
+                )
+
+    def test_the_unreadable_block_borrows_no_state_colour(self) -> None:
+        """It is not a sixth state, and must not be readable as one."""
+
+        for selector, body in _RULE.findall(self.css):
+            if ".unreadable" not in selector:
+                continue
+            for token in _STATE_TOKENS + ("--need-bg", "--done-bg", "--rejected-bg"):
+                with self.subTest(selector=selector.strip(), token=token):
+                    self.assertNotIn(f"var({token})", body)
+
+    def test_no_badge_hardcodes_its_ink(self) -> None:
+        """White on a light ground is the way yellow loses its text."""
+
+        for selector, body in _RULE.findall(self.css):
+            if ".badge" in selector and "color:" in body:
+                with self.subTest(selector=selector.strip()):
+                    self.assertIn("color:var(--", body)
 
 
 class ThemeTests(unittest.TestCase):
@@ -384,6 +655,12 @@ class ThemeTests(unittest.TestCase):
 
     def test_the_toggle_and_the_system_preference_agree(self) -> None:
         self.assertEqual(set(self.system), set(self.stamped))
+
+    def test_every_state_colour_is_redefined_for_dark(self) -> None:
+        for token in _STATE_TOKENS:
+            with self.subTest(token=token):
+                self.assertIn(token, self.system)
+                self.assertIn(token, self.stamped)
 
     def test_body_paints_an_explicit_token_background(self) -> None:
         self.assertIn("background:var(--bg)", _rule_body(self.css, "body{"))

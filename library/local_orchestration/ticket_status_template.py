@@ -19,18 +19,21 @@ complete row, and the absences must be *stated* rather than left as gaps --
 "no commit yet" is a real answer, an empty space is an ambiguous one.
 
 **A short list must never be short because something failed to parse.** When
-`unreadable` is non-empty the page says so above the tickets, with a count, in
-the accent colour reserved for things that want the owner. An owner who
-glances at a short page and sees no `NEEDS_OWNER` row will stop watching; if
-one of the sources that failed held a ticket waiting on them, a page that
-stayed calm about it has done more damage than no page at all. That is the
-defect in `modules/tickets/workflow-governance/04-...` wearing a new costume,
-and family C of the pitfall register is the rest of its wardrobe.
+`unreadable` is non-empty the page says so above the tickets, with a count, on
+an inverted slab that no state row wears. An owner who glances at a short page
+and sees no `NEEDS_OWNER` row will stop watching; if one of the sources that
+failed held a ticket waiting on them, a page that stayed calm about it has
+done more damage than no page at all. That is the defect in
+`modules/tickets/workflow-governance/04-...` wearing a new costume, and family
+C of the pitfall register is the rest of its wardrobe.
 
-The layout, palette and density come from `v2-approved-mockup.html`, which the
-owner has already approved. This module ports that design; it does not revise
-it. The one thing the mockup does not draw is the unreadable banner, which is
-built here from the mockup's own tokens.
+The layout and density come from `v2-approved-mockup.html`. The palette is the
+owner's revision of it: they split "finished" from "accepted", fixed DONE to a
+yellow ground, REJECTED to red and APPROVED to blue, and left the other two to
+this module. NEEDS_OWNER therefore moved out of the mockup's amber, which sat
+fourteen degrees of hue from the new yellow and would have made the two states
+that matter most look alike. The unreadable slab moved off amber for the same
+reason, and onto no hue at all, so it can never be read as a sixth state.
 """
 
 from __future__ import annotations
@@ -40,12 +43,25 @@ from datetime import datetime
 
 _PAGE_TITLE = "Johnny 工單狀態"
 
-# The mockup draws two of these; `open` has a badge colour waiting for it.
-_BADGE = {
-    "NEEDS_OWNER": ("need", "等你決定"),
-    "IN_PROGRESS": ("open", "進行中"),
-    "DONE": ("done", "已完成"),
+# Five states, because finished is not accepted. DONE is work waiting for a
+# verdict; APPROVED and REJECTED are the two verdicts. Collapsing DONE into
+# APPROVED would hide the queue of work waiting on a review nobody has done,
+# which is the whole reason the owner split them.
+_STATE = {
+    "NEEDS_OWNER": ("needs-owner", "等你決定"),
+    "REJECTED": ("rejected", "未通過／須修正"),
+    "DONE": ("done", "完成"),
+    "IN_PROGRESS": ("in-progress", "進行中"),
+    "APPROVED": ("approved", "已通過"),
 }
+
+# The two states a human has to clear. The contract requires a reason for both,
+# so the block is drawn for both -- and says so when the reason is missing,
+# rather than showing a row that says work failed without saying what to fix.
+_REASON_STATES = ("NEEDS_OWNER", "REJECTED")
+_WHY_LABEL = {"NEEDS_OWNER": "為什麼等你：", "REJECTED": "為什麼沒通過："}
+_NO_REASON = "這一列沒有附原因。照契約這不該發生，請直接開工單檔確認。"
+
 _STAGE_SLUG = {"DONE": "done", "OPEN": "open"}
 
 # Absences the page states out loud rather than leaving as a gap.
@@ -198,11 +214,32 @@ def _where(ticket: dict) -> str:
     return f'<div class="where">{"".join(cells)}</div>'
 
 
+def _why(state: str, reason: object) -> str:
+    """The reason block, drawn for every state the contract requires one for.
+
+    A REJECTED row that names no correction is the same defect as a calm page
+    over an unread file: it tells the owner something failed and leaves them
+    without the one thing they need to act. The pipeline refuses to emit that,
+    so this states the gap loudly if one ever arrives anyway.
+    """
+
+    text = _text(reason).strip()
+    if not text and state not in _REASON_STATES:
+        return ""
+    label = _WHY_LABEL.get(state, "為什麼：")
+    if not text:
+        return (
+            f'<div class="why" data-missing="yes"><b>{_esc(label)}</b>'
+            f"{_esc(_NO_REASON)}</div>"
+        )
+    return f'<div class="why"><b>{_esc(label)}</b>{_esc(text)}</div>'
+
+
 def _ticket(ticket: object) -> str:
     ticket = _mapping(ticket)
     state = _text(ticket.get("state"))
-    slug, caption = _BADGE.get(state, ("open", state or "未標示狀態"))
-    need = "yes" if state == "NEEDS_OWNER" else "no"
+    slug, caption = _STATE.get(state, ("unknown", state or "未標示狀態"))
+    need = "yes" if state in _REASON_STATES else "no"
 
     identity = " · ".join(
         part
@@ -210,18 +247,16 @@ def _ticket(ticket: object) -> str:
         if part
     )
 
-    parts = [f'<article class="ticket" data-need="{need}">']
+    parts = [
+        f'<article class="ticket" data-state="{_esc(slug)}" data-need="{need}">'
+    ]
     parts.append(
         f'<div class="who"><div class="id">{_esc(identity)}</div>'
         f'<p class="name">{_esc(ticket.get("title"))}</p></div>'
     )
     parts.append(f'<span class="badge" data-state="{_esc(slug)}">{_esc(caption)}</span>')
     parts.append(_stages(_sequence(ticket.get("stages"))))
-
-    why = ticket.get("why_waiting")
-    if why:
-        parts.append(f'<div class="why"><b>為什麼等你：</b>{_esc(why)}</div>')
-
+    parts.append(_why(state, ticket.get("why_waiting")))
     parts.append(_where(ticket))
 
     handoff = ticket.get("handoff_command")
@@ -242,8 +277,14 @@ _STYLE = """
   --bg:#f2f3f5; --card:#ffffff; --strip:#e9ebef; --line:#d5d9e0;
   --ink:#12161c; --dim:#5c6672; --faint:#858e9a;
   --accent:#3a4fb8;
-  --need:#b4690e; --need-bg:#fdf3e3;
-  --done:#1d7a4a; --open:#6b7683;
+  --need:#8e2fb0; --need-bg:#f9ecfd;
+  --rejected:#c0271f; --rejected-bg:#fdeceb;
+  --done:#d9ae0f; --done-bg:#f7e496; --done-ink:#3a2c00;
+  --approved:#2563c4;
+  --open:#6b7683;
+  --stage-done:#1d7a4a; --stage-open:#b4690e;
+  --badge-ink:#ffffff;
+  --alarm:#1b1f27; --alarm-ink:#f4f6f9; --alarm-dim:#aab4c0;
   --mono:ui-monospace,"Cascadia Mono",Consolas,monospace;
 }
 @media (prefers-color-scheme:dark){
@@ -251,16 +292,28 @@ _STYLE = """
     --bg:#0f1216; --card:#171b21; --strip:#1d222a; --line:#2c333d;
     --ink:#e8ecf1; --dim:#98a2ad; --faint:#7a848f;
     --accent:#8b9bf0;
-    --need:#e3a544; --need-bg:#2b2313;
-    --done:#4fbe86; --open:#7d8794;
+    --need:#dd9bf0; --need-bg:#2e1638;
+    --rejected:#f08a8a; --rejected-bg:#3a1c1c;
+    --done:#e3b53d; --done-bg:#3a300f; --done-ink:#241b00;
+    --approved:#7fb0f8;
+    --open:#7d8794;
+    --stage-done:#4fbe86; --stage-open:#e3a544;
+    --badge-ink:#12161c;
+    --alarm:#e9edf3; --alarm-ink:#12161c; --alarm-dim:#545d69;
   }
 }
 :root[data-theme="dark"]{
   --bg:#0f1216; --card:#171b21; --strip:#1d222a; --line:#2c333d;
   --ink:#e8ecf1; --dim:#98a2ad; --faint:#7a848f;
   --accent:#8b9bf0;
-  --need:#e3a544; --need-bg:#2b2313;
-  --done:#4fbe86; --open:#7d8794;
+  --need:#dd9bf0; --need-bg:#2e1638;
+  --rejected:#f08a8a; --rejected-bg:#3a1c1c;
+  --done:#e3b53d; --done-bg:#3a300f; --done-ink:#241b00;
+  --approved:#7fb0f8;
+  --open:#7d8794;
+  --stage-done:#4fbe86; --stage-open:#e3a544;
+  --badge-ink:#12161c;
+  --alarm:#e9edf3; --alarm-ink:#12161c; --alarm-dim:#545d69;
 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);
@@ -277,35 +330,52 @@ body{margin:0;background:var(--bg);color:var(--ink);
 .bar .kv b{color:var(--ink);font-weight:600}
 .bar code{font-family:var(--mono);font-size:12px;color:var(--accent)}
 
-.unreadable{background:var(--need-bg);border:1px solid var(--need);
-  border-radius:7px;padding:12px 14px}
-.unreadable h2{font-size:14px;margin:0;color:var(--need);letter-spacing:.02em}
-.unreadable p{margin:6px 0 0;font-size:13px;color:var(--ink)}
-.unreadable strong{color:var(--need)}
+/* Inverted slab on purpose. Every state row is a light card on a light ground
+   (or dark on dark); this is the only element that flips, so it cannot be
+   mistaken for a sixth state, and it stays unmistakable beside a yellow DONE
+   row without spending one of the five state hues. */
+.unreadable{background:var(--alarm);color:var(--alarm-ink);
+  border:1px solid var(--alarm);border-radius:7px;padding:13px 15px}
+.unreadable h2{font-size:14px;margin:0;color:var(--alarm-ink);
+  letter-spacing:.02em}
+.unreadable p{margin:6px 0 0;font-size:13px;color:var(--alarm-ink)}
+.unreadable strong{color:var(--alarm-ink);text-decoration:underline;
+  text-underline-offset:3px}
 .unreadable ul{margin:9px 0 0;padding:0;list-style:none;
   display:flex;flex-direction:column;gap:6px}
 .unreadable li{display:flex;flex-wrap:wrap;gap:2px 12px;align-items:baseline;
   min-width:0}
-.unreadable .src{font-size:13px;font-weight:600;color:var(--ink)}
-.unreadable code{font-family:var(--mono);font-size:11.5px;color:var(--dim);
-  word-break:break-all}
-.unreadable .reason{font-size:12.5px;color:var(--dim)}
+.unreadable .src{font-size:13px;font-weight:600;color:var(--alarm-ink)}
+.unreadable code{font-family:var(--mono);font-size:11.5px;
+  color:var(--alarm-dim);word-break:break-all}
+.unreadable .reason{font-size:12.5px;color:var(--alarm-dim)}
 
 .ticket{background:var(--card);border:1px solid var(--line);border-radius:7px;
   padding:14px 15px;display:grid;gap:11px;
   grid-template-columns:minmax(0,1fr) auto;align-items:start}
-.ticket[data-need="yes"]{border-color:var(--need);
+/* Three row treatments, so the five states separate at a glance: an edge bar
+   for the two a human must clear, a filled ground for finished-awaiting-verdict,
+   and a plain card for the two that want nothing. */
+.ticket[data-state="needs-owner"]{border-color:var(--need);
   box-shadow:inset 3px 0 0 var(--need)}
+.ticket[data-state="rejected"]{border-color:var(--rejected);
+  box-shadow:inset 3px 0 0 var(--rejected)}
+.ticket[data-state="done"]{background:var(--done-bg);border-color:var(--done)}
 
 .who{grid-column:1;min-width:0}
 .id{font-family:var(--mono);font-size:11.5px;color:var(--faint);
   letter-spacing:.06em}
 .name{font-size:15px;font-weight:600;margin:1px 0 0;text-wrap:balance}
 .badge{grid-column:2;grid-row:1;justify-self:end;font-size:12px;font-weight:700;
-  padding:3px 10px;border-radius:4px;white-space:nowrap;color:#fff}
-.badge[data-state="need"]{background:var(--need)}
-.badge[data-state="done"]{background:var(--done)}
-.badge[data-state="open"]{background:var(--open)}
+  padding:3px 10px;border-radius:4px;white-space:nowrap;
+  background:var(--open);color:var(--badge-ink)}
+.badge[data-state="needs-owner"]{background:var(--need)}
+.badge[data-state="rejected"]{background:var(--rejected)}
+/* Yellow is too light to carry white text on either ground, so this badge
+   brings its own ink rather than losing its edge. */
+.badge[data-state="done"]{background:var(--done);color:var(--done-ink)}
+.badge[data-state="in-progress"]{background:var(--open)}
+.badge[data-state="approved"]{background:var(--approved)}
 
 .stages{grid-column:1 / -1;display:flex;flex-wrap:wrap;gap:5px;align-items:center}
 .stages .lab{font-size:11px;color:var(--faint);margin-right:3px;
@@ -313,8 +383,13 @@ body{margin:0;background:var(--bg);color:var(--ink);
 .stages .none{font-size:11px;color:var(--faint)}
 .st{font-family:var(--mono);font-size:11px;padding:2px 7px;border-radius:3px;
   border:1px solid var(--line);color:var(--dim)}
-.st[data-s="done"]{background:var(--done);border-color:var(--done);color:#fff}
-.st[data-s="open"]{border-color:var(--need);color:var(--need);font-weight:700}
+/* Stage chips are their own vocabulary: a stage being finished says nothing
+   about the ticket's verdict, so they keep their own two tokens rather than
+   borrowing a state colour and turning a DONE row yellow-on-yellow. */
+.st[data-s="done"]{background:var(--stage-done);border-color:var(--stage-done);
+  color:var(--badge-ink)}
+.st[data-s="open"]{border-color:var(--stage-open);color:var(--stage-open);
+  font-weight:700}
 
 .where{grid-column:1 / -1;display:flex;flex-wrap:wrap;gap:6px 22px;
   border-top:1px dashed var(--line);padding-top:10px}
@@ -330,9 +405,15 @@ body{margin:0;background:var(--bg);color:var(--ink);
 .handoff code{display:block;margin-top:3px;font-family:var(--mono);
   font-size:12.5px;color:var(--ink);white-space:pre}
 
-.why{grid-column:1 / -1;background:var(--need-bg);border:1px solid var(--need);
-  border-radius:5px;padding:9px 11px;font-size:13px}
-.why b{color:var(--need)}
+.why{grid-column:1 / -1;background:var(--strip);border:1px solid var(--line);
+  border-radius:5px;padding:9px 11px;font-size:13px;color:var(--ink)}
+.why b{color:var(--ink)}
+[data-state="needs-owner"] .why{background:var(--need-bg);border-color:var(--need)}
+[data-state="needs-owner"] .why b{color:var(--need)}
+[data-state="rejected"] .why{background:var(--rejected-bg);
+  border-color:var(--rejected)}
+[data-state="rejected"] .why b{color:var(--rejected)}
+.why[data-missing="yes"]{font-style:italic}
 
 .empty{margin:0;color:var(--faint);font-size:13px}
 .foot{color:var(--faint);font-size:12px;border-top:1px solid var(--line);

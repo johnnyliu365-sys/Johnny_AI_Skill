@@ -88,7 +88,7 @@ Requirements:
 | V2-U2 | Untrusted text is escaped | A cell rendering a title and a commit subject containing `<script>` and `"` and asserting neither reaches the output as markup |
 | V2-U3 | Every nullable field may be null | A cell rendering a ticket with `commit`, `released_in`, `why_waiting` null and empty `stages`, asserting it still produces a complete row and does not raise |
 | V2-U4 | A non-empty `unreadable` list is stated prominently | A cell asserting the page says so, and a reverse mutation that drops the block turns it red |
-| V2-U5 | `NEEDS_OWNER` reads differently from `DONE` without reading words | Structural assertion on the distinguishing attribute or class, not on prose |
+| V2-U5 | All five states read differently from each other without reading words | Structural assertion on the distinguishing attribute or class, not on prose |
 | V2-U6 | Stdlib only | An AST cell asserting no third-party import, matching `tests/test_owner_status_surface.py::DependencyTests` |
 | V2-U7 | Light, dark, and the unstamped "system" state all resolve | Every colour defined as a token on bare `:root`; no colour whose only definition sits inside a media query or `[data-theme]` block; `body` paints an explicit token background |
 

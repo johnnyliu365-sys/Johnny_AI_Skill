@@ -121,7 +121,7 @@ and the output was handed to the owner as fact.
 ```johnny-status
 id = 04
 title = Skill 敘述了沒有發生的喚醒
-state = DONE
+state = APPROVED
 commit = 9a85e45
 released_in = v0.4.4
 stage = R1 | 事實查證 | DONE

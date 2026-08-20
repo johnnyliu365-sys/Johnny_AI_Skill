@@ -238,7 +238,7 @@ in. The Router drives branches it owns.
 ```johnny-status
 id = E14
 title = Claude 分支喚醒命令
-state = DONE
+state = APPROVED
 commit = da33781
 released_in = v0.4.5
 stage = R1 | 探索 | DONE
