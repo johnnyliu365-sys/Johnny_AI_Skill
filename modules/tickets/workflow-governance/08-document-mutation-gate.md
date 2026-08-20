@@ -116,15 +116,15 @@ host 上。若日後要做，是 host adapter 的責任。
 
 ## 完成回寫
 
-- 實際檔案：`<待填>`
-- commit：`<待填>`
+- 實際檔案：`library/local_orchestration/document_mutation_gate.py`、`tests/test_document_mutation_gate.py`、`modules/tickets/TEMPLATE.md`（`johnny-boundary` 宣告區塊）
+- commit：`implement/gov-08-doc-gate`；65 cells、六組實作者突變、審閱者另做一組獨立突變（合併移到邊界檢查之前 → 5 cells 轉紅）
 - WorkProgress：不適用
 
 ```johnny-status
 id = 08
 title = 文件變更閘門
-state = IN_PROGRESS
-stage = B | 邊界機器可讀 | OPEN
-stage = G | 閘門 | OPEN
-stage = M | 突變驗證 | OPEN
+state = DONE
+stage = B | 邊界機器可讀 | DONE
+stage = G | 閘門 | DONE
+stage = M | 突變驗證 | DONE
 ```

@@ -101,14 +101,14 @@
 
 ## 完成回寫
 
-- 實際檔案：`<待填>`
-- commit：`<待填>`
+- 實際檔案：十張活票（`modules/tickets/` 下 e14／v1／v2／v2-s1~s4／04／05／p1）
+- commit：`implement/gov-07-ticket-format`，看板比對逐字相同（11 張）
 - WorkProgress：不適用
 
 ```johnny-status
 id = 07
 title = 活票轉換為標準格式
-state = IN_PROGRESS
-stage = C | 轉換 | OPEN
-stage = V | 看板比對 | OPEN
+state = DONE
+stage = C | 轉換 | DONE
+stage = V | 看板比對 | DONE
 ```
