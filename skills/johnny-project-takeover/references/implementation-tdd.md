@@ -33,6 +33,14 @@ For defect corrections, record the baseline-red test name and failure reason in 
 evidence. For new behavior, record the test names and their green results; do not stage or
 claim a ceremonial first-red run.
 
+Ordering cannot be verified from the artifact, so it is not the evidence. What a test was
+written before is unobservable after the fact and a claim about it is a claim about a process
+nobody can check. **Discriminating power is observable, and it is what the ordering was ever
+for.**每個具名行為都要交出反向突變證據：把該行為拿掉，指名哪個測試轉紅、失敗訊息是
+什麼，還原後轉綠。突變沒有讓任何測試轉紅，表示那個行為沒有被測到——不論測試是先寫還
+是後寫。Both directions must be reported; a mutation that was never restored is not evidence
+either.
+
 ## Type and layering gate
 
 Use named domain types, immutable models, explicit nullability and complete parameter/return
