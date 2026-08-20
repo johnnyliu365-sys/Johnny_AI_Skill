@@ -70,6 +70,93 @@ _MIN_ROW_FILL_VS_PAGE = 1.12
 _MAX_NEUTRAL_CHROMA = 30
 _YELLOW_BAND = (35.0, 70.0)
 
+# V2-S3. The unfinished stage chip had gone quiet: achromatic by rule, and
+# separated from the finished chip by tone alone, which is the one channel the
+# grounds do not leave room for (see the ceiling cell). So the difference is
+# carried by form, and these are the steps it has to clear.
+#
+# The edge step is in CSS pixels of *visible* border: finished stages paint
+# theirs `transparent`, so the whole doubled edge of the open chip is the step.
+_MIN_STAGE_EDGE_STEP = 2.0
+_MIN_STAGE_WEIGHT_STEP = 300
+# Tone is a supporting channel, never the load-bearing one -- the floor is set
+# below `_MIN_ACHROMATIC_CONTRAST` on purpose, because the ceiling cell proves
+# that floor is unreachable here. It is pinned so the tonal help cannot be
+# quietly given away while the form channels are being edited.
+_MIN_STAGE_TONE_STEP = 2.0
+# Small text. A stage chip is 11px monospace, so this is the floor it has to
+# clear against every ground it can land on, and the thing that caps tone.
+_MIN_CHIP_TEXT_CONTRAST = 4.5
+
+_PX = re.compile(r"([\d.]+)px")
+
+
+def _declared(body: str, name: str) -> str | None:
+    """One declaration's value, or None when the rule does not set it."""
+
+    matched = re.search(rf"(?:^|;)\s*{re.escape(name)}\s*:\s*([^;]+)", body)
+    return matched.group(1).strip() if matched else None
+
+
+def _border_width(body: str, inherited: float = 0.0) -> float:
+    for name in ("border-width", "border"):
+        value = _declared(body, name)
+        if value:
+            found = _PX.search(value)
+            if found:
+                return float(found.group(1))
+    return inherited
+
+
+def _border_paint(body: str, inherited: str | None = None) -> str | None:
+    """What the rule paints its edge with: a token, a keyword, or nothing."""
+
+    value = _declared(body, "border-color")
+    if value:
+        return value
+    shorthand = _declared(body, "border")
+    if shorthand:
+        parts = shorthand.split(None, 2)
+        return parts[2] if len(parts) > 2 else None
+    return inherited
+
+
+def _visible_edge(width: float, paint: str | None) -> float:
+    """An edge painted `transparent` is not an edge, whatever it measures."""
+
+    if not paint or paint.strip() == "transparent":
+        return 0.0
+    return width
+
+
+def _contrast_between(first: float, second: float) -> float:
+    """Contrast straight from two luminances, for colours not yet chosen."""
+
+    high, low = sorted((first, second), reverse=True)
+    return (high + 0.05) / (low + 0.05)
+
+
+def _widest_legible_gap(grounds: tuple, floor: float = _MIN_CHIP_TEXT_CONTRAST) -> float:
+    """The best two achromatic inks could ever do against these grounds.
+
+    An achromatic ink can be placed at essentially any luminance, so the only
+    question is which luminances stay readable on *every* ground the chip can
+    land on. Sweeping that admissible set and taking its two ends gives the
+    widest tonal gap the design could buy, regardless of which greys anybody
+    picks -- which is what makes it a ceiling rather than a measurement of the
+    greys currently in the file.
+    """
+
+    lit = [_luminance(ground) for ground in grounds]
+    admissible = [
+        step / 2000
+        for step in range(2001)
+        if all(_contrast_between(step / 2000, ground) >= floor for ground in lit)
+    ]
+    if len(admissible) < 2:
+        return 0.0
+    return _contrast_between(max(admissible), min(admissible))
+
 _TOKEN_DEFINITION = re.compile(r"(--[a-z0-9-]+)\s*:", re.IGNORECASE)
 _TOKEN_USE = re.compile(r"var\((--[a-z0-9-]+)\)", re.IGNORECASE)
 _TOKEN_VALUE = re.compile(r"(--[a-z0-9-]+)\s*:\s*([^;}]+)")
@@ -866,6 +953,198 @@ class PaletteTests(unittest.TestCase):
             if ".badge" in selector and "color:" in body:
                 with self.subTest(selector=selector.strip()):
                     self.assertIn("color:var(--", body)
+
+
+class StageSignalTests(unittest.TestCase):
+    """V2-S3 -- the unfinished stage is worth looking at again, without a hue.
+
+    The approved mockup gave the open chip an amber outline. Amber left when
+    the chips went achromatic to stop colliding with IN_PROGRESS green, and
+    what remained -- an ink-coloured 1px box identical in construction to the
+    box beside it -- is not a signal, because every chip in the row was the
+    same object at a different brightness.
+
+    Both channels that would normally fix that are closed. A hue is closed by
+    rule: `test_stage_chips_stay_out_of_the_states_hue_budget` caps chip chroma
+    so a chip can never collide with a state colour, including one the owner
+    has not picked yet, and the yellow band is reserved for the warning
+    triangle. Tone is closed by measurement rather than by rule, which is what
+    the ceiling cell below records.
+
+    So the signal is form, and the form is enclosure: finished stages give up
+    their box, the unfinished one keeps it and doubles it. That also means no
+    colour on the page changed, so S3-2 holds by construction -- there is no
+    new value that could collide with anything.
+    """
+
+    def setUp(self) -> None:
+        self.css = _stylesheet(render(_sample()))
+        self.palettes = {
+            "light": _palette(_rule_body(self.css, ":root{")),
+            "dark": _palette(_rule_body(self.css, ':root[data-theme="dark"]{')),
+        }
+        base = _rule_body(self.css, ".st{")
+        self.base_width = _border_width(base)
+        self.base_paint = _border_paint(base)
+        self.chip_size = float(_PX.search(_declared(base, "font-size")).group(1))
+        self.chips = {}
+        for slug in ("done", "open"):
+            body = _rule_body(self.css, f'.st[data-s="{slug}"]{{')
+            self.chips[slug] = {
+                "body": body,
+                "paint": _border_paint(body, self.base_paint),
+                "edge": _visible_edge(
+                    _border_width(body, self.base_width),
+                    _border_paint(body, self.base_paint),
+                ),
+                "weight": int(_declared(body, "font-weight") or 400),
+                "ink": _declared(body, "color"),
+            }
+
+    def test_the_unfinished_stage_is_the_only_boxed_chip_in_the_row(self) -> None:
+        """S3-1. Being the sole enclosure is what the amber was really doing.
+
+        The colour only made the outline visible; the outline was the signal.
+        A box nothing else in the row has does the same work with no hue.
+        """
+
+        self.assertEqual(self.chips["done"]["paint"], "transparent")
+        self.assertGreater(self.chips["open"]["edge"], 0.0)
+        self.assertEqual(
+            self.chips["done"]["edge"],
+            0.0,
+            "finished stages took their box back and the open chip is one of a set again",
+        )
+
+    def test_the_step_between_the_two_chips_clears_every_channel(self) -> None:
+        """S3-1, with the thresholds in the assertions rather than the prose.
+
+        Three independent channels, all of which survive being converted to
+        greyscale. Making the two chips the same on any one of them is meant
+        to turn this cell red on that channel alone.
+        """
+
+        self.assertGreaterEqual(
+            self.chips["open"]["edge"] - self.chips["done"]["edge"],
+            _MIN_STAGE_EDGE_STEP,
+            "the unfinished chip's edge no longer outweighs the finished one's",
+        )
+        self.assertGreaterEqual(
+            self.chips["open"]["weight"] - self.chips["done"]["weight"],
+            _MIN_STAGE_WEIGHT_STEP,
+            "the two chips are set at the same ink weight",
+        )
+        for ground, palette in self.palettes.items():
+            with self.subTest(ground=ground):
+                self.assertGreaterEqual(
+                    _contrast(palette["--stage-open"], palette["--stage-done"]),
+                    _MIN_STAGE_TONE_STEP,
+                    "the supporting tonal difference was given away",
+                )
+
+    def test_both_chips_stay_readable_on_both_grounds_they_land_on(self) -> None:
+        """A chip sits on a plain card or on the grey DONE row, never one only.
+
+        This is the floor that caps the tonal channel, so it is asserted rather
+        than assumed -- the ceiling cell's arithmetic is only true while this
+        is the floor being applied.
+        """
+
+        for ground, palette in self.palettes.items():
+            for token in ("--stage-open", "--stage-done"):
+                for under in ("--card", "--done-bg"):
+                    with self.subTest(ground=ground, token=token, under=under):
+                        self.assertGreaterEqual(
+                            _contrast(palette[token], palette[under]),
+                            _MIN_CHIP_TEXT_CONTRAST,
+                            f"{token} is not readable on {under}",
+                        )
+
+    def test_tone_could_not_have_carried_this_signal(self) -> None:
+        """The measurement that forced S3-1 onto form, kept as a live premise.
+
+        Not a measurement of the greys in the file -- a ceiling on every grey
+        anybody could pick. A chip ink has to clear the small-text floor on the
+        card *and* on the grey DONE row, and in dark mode those two grounds sit
+        close enough together that the surviving band is narrow: the widest gap
+        two achromatic inks can reach measures about 2.87:1, under the 3.0 this
+        suite requires of two achromatic things that must read apart, and the
+        ink that reaches it is pure white with zero margin left on the DONE
+        ground. Pushing the chip greys apart therefore cannot work, and this
+        cell exists to stop the next person spending a round finding that out.
+
+        It fails if the grounds ever move far enough apart to reopen the tonal
+        channel. That is not a regression; it means the reason this ticket
+        chose form has expired and the choice is worth making again.
+        """
+
+        palette = self.palettes["dark"]
+        ceiling = _widest_legible_gap((palette["--card"], palette["--done-bg"]))
+        self.assertLess(
+            ceiling,
+            _MIN_ACHROMATIC_CONTRAST,
+            f"two achromatic chip inks can now reach {ceiling:.3f}:1 on these "
+            "grounds, so tone could separate the stage chips on its own; the "
+            "form-carries-it reasoning behind V2-S3 is worth revisiting",
+        )
+
+    def test_a_stage_the_page_cannot_classify_never_reads_as_finished(self) -> None:
+        """The one direction an unrecognised stage must not fail in.
+
+        Finished work is what gives up its box, so a chip falling through to
+        the base treatment must not also arrive boxless -- that would render a
+        stage nobody could classify as one that is complete.
+        """
+
+        page = render(
+            _document(
+                _one_ticket(
+                    stages=[
+                        {"ref": "R1", "label": "樣張", "state": "HALF_WAY"},
+                        {"ref": "R2", "label": "通知", "state": "DONE"},
+                    ]
+                )
+            )
+        )
+        self.assertIn('<span class="st" data-s="unknown">R1 樣張</span>', page)
+        self.assertGreater(
+            _visible_edge(self.base_width, self.base_paint),
+            self.chips["done"]["edge"],
+            "an unclassified stage is drawn exactly like a finished one",
+        )
+
+    def test_the_stage_chip_stays_quieter_than_the_row_it_sits_in(self) -> None:
+        """S3-3. A stage is a detail of the row, never the row's conclusion.
+
+        Structural, for the reason `test_the_loudness_ordering_holds_end_to_end`
+        already records: measured luminance ranks these the wrong way round,
+        because the open chip wears the page's full ink and a badge does not.
+        What actually orders them is which mechanisms each is allowed to use.
+        The row owns the loud ones -- a filled ground, an inset bar -- and the
+        chip owns none of them, so the chip cannot win however dark its edge.
+        """
+
+        badge = _rule_body(self.css, ".badge{")
+        badge_size = float(_PX.search(_declared(badge, "font-size")).group(1))
+        bar = _PX.search(_declared(_rule_body(
+            self.css, '.ticket[data-state="rejected"]{'), "box-shadow"))
+
+        for slug, chip in sorted(self.chips.items()):
+            with self.subTest(chip=slug):
+                # The two mechanisms that belong to the row and the badge.
+                self.assertIsNone(_declared(chip["body"], "background"))
+                self.assertIsNone(_declared(chip["body"], "box-shadow"))
+                # A chip's edge never outweighs the row's own emphasis bar.
+                self.assertLess(chip["edge"], float(bar.group(1)))
+                self.assertLessEqual(chip["weight"], 700)
+        self.assertLess(
+            self.chip_size, badge_size, "a stage chip is set larger than a verdict"
+        )
+
+        # And the drawn signal stays the row's alone: no chip smuggles a glyph.
+        page = render(_sample())
+        stages = page[page.index('<div class="stages">') :]
+        self.assertNotIn("<svg", stages[: stages.index("</div>")])
 
 
 class ThemeTests(unittest.TestCase):

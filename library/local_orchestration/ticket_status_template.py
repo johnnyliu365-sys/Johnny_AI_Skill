@@ -44,8 +44,22 @@ wants the owner the one state legible with no colour vision at all. Stage chips
 spend none either -- and since DONE went grey they cannot be separated from the
 verdict badge by tone (both are forced into the same narrow band by their own
 legibility floors, about 1.10:1 apart), so the separation is form: a filled
-pill is a verdict, an outline is a stage, always. The unreadable slab inverts
+pill is a verdict, a chip is a stage, always. The unreadable slab inverts
 rather than tints, so it can never be read as a sixth state.
+
+Form then has to do a second job, because the same squeeze that separates a
+chip from a badge also separates the two chips from each other. An unfinished
+stage has to be worth looking at, and neither of the usual channels is open to
+it: a hue would re-enter the collision the chips were made achromatic to
+escape, and tone runs out before it arrives. The binding measurement is in dark
+mode, where a chip ink must stay legible on the grey DONE ground as well as on
+the card; that floor caps the gap between the two chip greys at 2.873:1 even
+when the other one is pure white, against the 3.0 this design requires of two
+achromatic things that must read apart. So the difference is carried by
+enclosure and weight: finished stages give up their box and read as plain
+words, and the unfinished chip is the only boxed thing in its row, doubled and
+bold. Nothing on the page changed colour to achieve it, which is why it cannot
+collide with a state colour at all.
 """
 
 from __future__ import annotations
@@ -427,13 +441,31 @@ body{margin:0;background:var(--bg);color:var(--ink);
 .stages .lab{font-size:11px;color:var(--faint);margin-right:3px;
   letter-spacing:.05em}
 .stages .none{font-size:11px;color:var(--faint)}
+/* The base treatment is deliberately the *unclassified* one: a faint edge and
+   dim ink. A stage state the page does not recognise is a defect, and the one
+   direction it must never fail in is looking finished, so it keeps an edge
+   that finished work has given up. */
 .st{font-family:var(--mono);font-size:11px;padding:2px 7px;border-radius:3px;
   border:1px solid var(--line);color:var(--dim)}
 /* Never filled -- see the badge block. A stage being finished says nothing
-   about the ticket's verdict, and an outline can sit on a grey DONE row
-   without reading as a second verdict badge. */
-.st[data-s="done"]{border-color:var(--stage-done);color:var(--stage-done)}
-.st[data-s="open"]{border-color:var(--stage-open);color:var(--stage-open);
+   about the ticket's verdict, and a chip that is not a filled pill can sit on
+   a grey DONE row without reading as a second verdict badge.
+
+   Which chip gets the box is the whole signal. Hue is spent (chips are
+   achromatic so they cannot collide with a state colour) and tone is not
+   merely tight but provably short: an ink light enough to stay legible on the
+   dark DONE ground caps the gap between the two chip greys at 2.873:1 against
+   pure white, under the 3.0 this suite requires of any two achromatic things
+   that must read apart. Tone therefore cannot carry this, and no amount of
+   nudging the greys will change that -- so form carries it. Finished work
+   gives up its enclosure entirely and settles into plain words; the unfinished
+   chip is the only boxed thing in the row, and its box is doubled. Enclosure
+   is the channel the amber outline was really using: the colour only made the
+   box visible, and being the *sole* box does the same work without a hue. */
+.st[data-s="done"]{border-color:transparent;color:var(--stage-done)}
+/* Padding pays back the extra border so the chips keep one baseline. */
+.st[data-s="open"]{border-width:2px;padding:1px 6px;
+  border-color:var(--stage-open);color:var(--stage-open);
   font-weight:700}
 
 .where{grid-column:1 / -1;display:flex;flex-wrap:wrap;gap:6px 22px;
