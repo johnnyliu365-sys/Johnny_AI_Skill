@@ -18,7 +18,13 @@ platform, phases C and D build on nothing.
 
 ## Host inventory (2026-08-19, this machine)
 
-- `claude` CLI: **absent** (desktop app only, no PATH-exposed CLI)
+- `claude` CLI: **present but not on `PATH`** — corrected 2026-08-20. The
+  original entry said "absent", which was a PATH lookup mistaken for an
+  inventory. It lives at
+  `%APPDATA%\Claude\claude-code\<version>\claude.exe` (versioned directory,
+  so any hardcoded path ages out). This does not change E11's conclusion —
+  the wake channel was proven through Antigravity — but it does mean this
+  host has a second automatable agent CLI that the inventory wrote off.
 - `codex` CLI: **absent**
 - Antigravity `agentapi`: **present** at
   `~/.gemini/antigravity[-ide]/bin/agentapi.bat`, backed by
@@ -71,8 +77,9 @@ creating a new one.
    declared command, so with this channel the probe deposits its disposable
    probe payload into the reviewer conversation. Acceptable (the payload is
    labeled), but worth a probe-aware wrapper message.
-4. **Host inventory.** No `claude` or `codex` CLI exists on this machine, so
-   Antigravity is currently the only automatable reviewer host here.
+4. **Host inventory.** No `codex` CLI exists on this machine. The `claude`
+   CLI does exist but is not on `PATH` (see the corrected entry above), so
+   Antigravity was the channel proven here, not the only possible one.
 
 ## What this unlocks
 
