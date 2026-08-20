@@ -266,6 +266,25 @@ class ProbeHonestyTests(unittest.TestCase):
             self.assertIn("--session-id", drive)
             self.assertNotIn("--resume", drive)
 
+    def test_probe_budget_fits_inside_the_runtime_probe_cap(self) -> None:
+        """The runtime kills the probe at 30s; our worst case must land first.
+
+        Bound to the runtime constant rather than to a copied number, so
+        raising either dispatcher timeout turns this red instead of shipping
+        a host that probes correctly and is killed for being slow.
+        """
+
+        from library.local_orchestration import claude_wake_command as module
+        from library.local_orchestration.wake_capability import (
+            _PROBE_TIMEOUT_SECONDS,
+        )
+
+        worst_case = (
+            module._AUTH_TIMEOUT_SECONDS + module._PROBE_DRIVE_TIMEOUT_SECONDS
+        )
+        self.assertLess(worst_case, _PROBE_TIMEOUT_SECONDS)
+        self.assertLess(module._PROBE_BUDGET_SECONDS, _PROBE_TIMEOUT_SECONDS)
+
     def test_exit_zero_without_a_completed_turn_is_refused(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             directory = Path(temporary)

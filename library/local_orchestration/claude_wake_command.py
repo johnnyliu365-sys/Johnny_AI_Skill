@@ -30,6 +30,7 @@ import os
 import re
 import subprocess
 import sys
+import time
 import uuid
 from dataclasses import dataclass
 from enum import Enum
@@ -46,9 +47,17 @@ _PROBE_PROMPT = (
     "Reply with exactly " + _PROBE_MARKER + " and nothing else. "
     "This is an automated capability probe; take no other action."
 )
-_AUTH_TIMEOUT_SECONDS = 20
-_PROBE_DRIVE_TIMEOUT_SECONDS = 25
+_AUTH_TIMEOUT_SECONDS = 10
+_PROBE_DRIVE_TIMEOUT_SECONDS = 18
 _DRIVE_TIMEOUT_SECONDS = 120
+
+# `probe_wake_capability` kills the whole rendered command at
+# `min(30, config.timeout_seconds)`, so the probe path's own worst case -- the
+# auth read plus the throwaway drive -- has to finish inside that, or a working
+# host would be reported as PROBE_TIMEOUT. The budget is spent against a
+# monotonic deadline rather than assumed, and a cell binds it to the runtime's
+# cap so raising either timeout turns red instead of silently overrunning.
+_PROBE_BUDGET_SECONDS = 28
 
 _VERSION_PATTERN = re.compile(r"^\d+(?:\.\d+)*$")
 _SESSION_ID_PATTERN = re.compile(
@@ -322,6 +331,7 @@ def wake(
 ) -> tuple[ClaudeWakeStatus, ClaudeWakeFailure | None]:
     """Deliver one wake, or prove the capability when handed a probe payload."""
 
+    started = time.monotonic()
     resolved = default_claude_executable() if executable is None else executable
     if resolved is None or not resolved.is_file():
         return ClaudeWakeStatus.REFUSED, ClaudeWakeFailure.EXECUTABLE_UNAVAILABLE
@@ -334,7 +344,12 @@ def wake(
         return ClaudeWakeStatus.REFUSED, ClaudeWakeFailure.NOT_AUTHENTICATED
 
     if is_capability_probe(body):
-        return probe_drive(resolved)
+        remaining = _PROBE_BUDGET_SECONDS - (time.monotonic() - started)
+        if remaining < 1:
+            return ClaudeWakeStatus.REFUSED, ClaudeWakeFailure.DRIVE_TIMEOUT
+        return probe_drive(
+            resolved, min(_PROBE_DRIVE_TIMEOUT_SECONDS, int(remaining))
+        )
 
     identifiers = parse_identifiers(body)
     if identifiers.get("protocol") != _REQUIRED_PROTOCOL:
