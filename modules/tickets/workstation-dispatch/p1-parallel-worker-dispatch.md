@@ -132,5 +132,5 @@ title = 用 Router 記帳管多個平行工人
 state = IN_PROGRESS
 stage = T | 並行證明 | DONE
 stage = G | 黏合層（已拆為 P2） | OPEN
-stage = V | 工人回傳 | OPEN
+stage = V | 工人回傳（改由子代理結構性回傳，佇列見 P3） | OPEN
 ```
