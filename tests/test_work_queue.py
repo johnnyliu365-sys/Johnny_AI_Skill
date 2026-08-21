@@ -28,8 +28,10 @@ import json
 import subprocess
 import sys
 import unittest
+import uuid
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from unittest.mock import patch
 
 from pydantic import ValidationError
 
@@ -839,6 +841,65 @@ class StorageFailClosedTests(unittest.TestCase):
                 WorkEnqueueFailure.STORAGE_UNAVAILABLE,
             )
             self.assertIs(_pull(layout).failure, WorkPullFailure.STORAGE_UNAVAILABLE)
+
+
+class InvariantViolationTests(unittest.TestCase):
+    """Governance 16: the queue's own rule failing is not the disk failing.
+
+    `enqueue_work` only ever checks `origin_ref` explicitly before committing;
+    `item_id` has no explicit check anywhere because it is generated fresh by
+    this module and assumed never to collide. Forcing that assumption to fail
+    (rather than weakening the origin_ref check, which would remove real
+    defense and duplicate `DuplicateOriginTests`) reaches the same second line
+    of defense the P5 review's sibling defect described in P2 hits here too:
+    `_WorkLedger.identities_and_positions_are_unique`.
+    """
+
+    def test_an_item_id_collision_is_named_as_an_invariant_not_as_storage(
+        self,
+    ) -> None:
+        with TemporaryDirectory() as temporary:
+            layout, _ = _seed(temporary)
+            enqueue_work(layout, _return_request("claim-aaa"))
+
+            with patch(
+                "library.local_orchestration.work_queue.uuid.uuid4",
+                return_value=uuid.UUID(int=0),
+            ):
+                first = enqueue_work(layout, _return_request("claim-bbb"))
+                second = enqueue_work(layout, _return_request("claim-ccc"))
+
+            self.assertIs(first.status, WorkEnqueueStatus.ENQUEUED, f"{first.failure}")
+            self.assertIs(second.status, WorkEnqueueStatus.REFUSED)
+            self.assertIs(
+                second.failure, WorkEnqueueFailure.QUEUE_INVARIANT_VIOLATED
+            )
+            self.assertIsNot(
+                second.failure,
+                WorkEnqueueFailure.STORAGE_UNAVAILABLE,
+                "a rule the queue enforces on itself is not a disk problem",
+            )
+
+    def test_an_invariant_violation_still_fails_closed_and_writes_nothing(
+        self,
+    ) -> None:
+        with TemporaryDirectory() as temporary:
+            layout, _ = _seed(temporary)
+            enqueue_work(layout, _return_request("claim-aaa"))
+
+            with patch(
+                "library.local_orchestration.work_queue.uuid.uuid4",
+                return_value=uuid.UUID(int=0),
+            ):
+                enqueue_work(layout, _return_request("claim-bbb"))
+                before = queue_path(layout).read_text(encoding="utf-8")
+                refused = enqueue_work(layout, _return_request("claim-ccc"))
+                after = queue_path(layout).read_text(encoding="utf-8")
+
+            self.assertIs(refused.status, WorkEnqueueStatus.REFUSED)
+            self.assertEqual(
+                before, after, "a refused write must not partially land"
+            )
 
 
 class EmptyAndAbsentTests(unittest.TestCase):

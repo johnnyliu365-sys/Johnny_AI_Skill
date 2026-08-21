@@ -144,6 +144,7 @@ class WorkEnqueueFailure(str, Enum):
     REQUEST_INVALID = "REQUEST_INVALID"
     ORIGIN_SOURCE_MISMATCH = "ORIGIN_SOURCE_MISMATCH"
     ORIGIN_ALREADY_QUEUED = "ORIGIN_ALREADY_QUEUED"
+    QUEUE_INVARIANT_VIOLATED = "QUEUE_INVARIANT_VIOLATED"
     STORAGE_UNAVAILABLE = "STORAGE_UNAVAILABLE"
 
 
@@ -491,7 +492,18 @@ def enqueue_work(
                 ticket_ref=trusted.ticket_ref,
                 lifecycle=WorkItemLifecycle.PENDING,
             )
-            _commit(layout, _WorkLedger(items=(*ledger.items, item)))
+            try:
+                next_ledger = _WorkLedger(items=(*ledger.items, item))
+            except (ValidationError, ValueError):
+                # The check above already cleared this origin_ref; only the
+                # ledger's own identity invariant (also guarding item_id and
+                # sequence, which nothing above checks) can still refuse this
+                # write. That is the ledger's rule being violated, not the
+                # disk being unavailable, and the two must not share a name.
+                return WorkEnqueueResult.refused(
+                    WorkEnqueueFailure.QUEUE_INVARIANT_VIOLATED
+                )
+            _commit(layout, next_ledger)
     except (OSError, ValidationError, ValueError):
         return WorkEnqueueResult.refused(WorkEnqueueFailure.STORAGE_UNAVAILABLE)
     return WorkEnqueueResult(status=WorkEnqueueStatus.ENQUEUED, item=item)

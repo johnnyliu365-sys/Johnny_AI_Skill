@@ -20,8 +20,10 @@ import json
 import subprocess
 import sys
 import unittest
+import uuid
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from unittest.mock import patch
 
 from pydantic import ValidationError
 
@@ -658,6 +660,71 @@ class StorageFailClosedTests(unittest.TestCase):
             self.assertIs(
                 claim_worker_assignment(layout, _claim_request(repository)).failure,
                 WorkerClaimFailure.STORAGE_UNAVAILABLE,
+            )
+
+
+class InvariantViolationTests(unittest.TestCase):
+    """Governance 16: the ledger's own rule failing is not the disk failing.
+
+    `claim_worker_assignment` only ever checks `receipt_ref` explicitly before
+    committing; `claim_id` has no explicit check anywhere because it is
+    generated fresh by this module and assumed never to collide. Forcing that
+    assumption to fail (rather than weakening the receipt_ref check, which
+    would remove real defense and duplicate `DuplicateClaimTests`) reaches the
+    same second line of defense the P5 review actually hit:
+    `_AssignmentLedger.identities_are_unique`.
+    """
+
+    def test_a_claim_id_collision_is_named_as_an_invariant_not_as_storage(
+        self,
+    ) -> None:
+        with TemporaryDirectory() as temporary:
+            layout, repository = _seed(temporary)
+            claim_worker_assignment(layout, _claim_request(repository, "aaa"))
+
+            with patch(
+                "library.local_orchestration.worker_assignment.uuid.uuid4",
+                return_value=uuid.UUID(int=0),
+            ):
+                first = claim_worker_assignment(
+                    layout, _claim_request(repository, "bbb")
+                )
+                second = claim_worker_assignment(
+                    layout, _claim_request(repository, "ccc")
+                )
+
+            self.assertIs(first.status, WorkerClaimStatus.CLAIMED, f"{first.failure}")
+            self.assertIs(second.status, WorkerClaimStatus.REFUSED)
+            self.assertIs(
+                second.failure, WorkerClaimFailure.ASSIGNMENT_INVARIANT_VIOLATED
+            )
+            self.assertIsNot(
+                second.failure,
+                WorkerClaimFailure.STORAGE_UNAVAILABLE,
+                "a rule the ledger enforces on itself is not a disk problem",
+            )
+
+    def test_an_invariant_violation_still_fails_closed_and_writes_nothing(
+        self,
+    ) -> None:
+        with TemporaryDirectory() as temporary:
+            layout, repository = _seed(temporary)
+            claim_worker_assignment(layout, _claim_request(repository, "aaa"))
+
+            with patch(
+                "library.local_orchestration.worker_assignment.uuid.uuid4",
+                return_value=uuid.UUID(int=0),
+            ):
+                claim_worker_assignment(layout, _claim_request(repository, "bbb"))
+                before = ledger_path(layout).read_text(encoding="utf-8")
+                refused = claim_worker_assignment(
+                    layout, _claim_request(repository, "ccc")
+                )
+                after = ledger_path(layout).read_text(encoding="utf-8")
+
+            self.assertIs(refused.status, WorkerClaimStatus.REFUSED)
+            self.assertEqual(
+                before, after, "a refused write must not partially land"
             )
 
 

@@ -116,6 +116,7 @@ class WorkerClaimFailure(str, Enum):
     REQUEST_INVALID = "REQUEST_INVALID"
     WORKTREE_OUTSIDE_REPOSITORY_ROOT = "WORKTREE_OUTSIDE_REPOSITORY_ROOT"
     RECEIPT_ALREADY_CLAIMED = "RECEIPT_ALREADY_CLAIMED"
+    ASSIGNMENT_INVARIANT_VIOLATED = "ASSIGNMENT_INVARIANT_VIOLATED"
     STORAGE_UNAVAILABLE = "STORAGE_UNAVAILABLE"
 
 
@@ -371,10 +372,20 @@ def claim_worker_assignment(
                 return WorkerClaimResult.refused(
                     WorkerClaimFailure.RECEIPT_ALREADY_CLAIMED
                 )
-            _commit(
-                layout,
-                _AssignmentLedger(assignments=(*ledger.assignments, assignment)),
-            )
+            try:
+                next_ledger = _AssignmentLedger(
+                    assignments=(*ledger.assignments, assignment)
+                )
+            except (ValidationError, ValueError):
+                # The check above already cleared this receipt_ref; only the
+                # ledger's own identity invariant (also guarding claim_id,
+                # which nothing above checks) can still refuse this write.
+                # That is the ledger's rule being violated, not the disk
+                # being unavailable, and the two must not share a name.
+                return WorkerClaimResult.refused(
+                    WorkerClaimFailure.ASSIGNMENT_INVARIANT_VIOLATED
+                )
+            _commit(layout, next_ledger)
     except (OSError, ValidationError, ValueError):
         return WorkerClaimResult.refused(WorkerClaimFailure.STORAGE_UNAVAILABLE)
     return WorkerClaimResult(status=WorkerClaimStatus.CLAIMED, assignment=assignment)
