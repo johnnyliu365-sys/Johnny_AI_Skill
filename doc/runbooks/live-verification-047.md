@@ -118,7 +118,7 @@ worker：
 
 ## 五、第二段：完整往返（排程器實機）
 
-**狀態：進行中。**
+**狀態：完成（2026-08-21 14:35 UTC）。**
 
 第一段最後一步的真 spawn 已經發生（即本文件的作者，見上一節）。第二段要驗的是
 「worker 回報後」的路徑：`record_worker_return`（settle ＋入列）→ 控制面審閱 →
@@ -134,15 +134,27 @@ worker 的 branch 就緒 → `integrate_next_work` 拉取並經閘門完成真�
 
 | 欄位 | 內容 |
 | --- | --- |
-| `record_worker_return` journal 條目（settle ＋入列） | 待補 |
-| 控制面審閱結論 | 待補 |
-| worker branch 就緒判定 | 待補 |
-| `integrate_next_work` 的 `document-mutation-journal.jsonl` 條目（`outcome`、`candidate_ref`、`detail`） | 待補 |
-| 是否全程沒有手動 merge／手動組 `DocumentMutationRequest` | 待補 |
+| `record_worker_return` journal 條目（settle ＋入列） | `RECORDED`。佇列本身無 journal（P3 設計），證據是 store 狀態：work item `work-e225adf125d9444fb309585f86a70be0` 產生（後由拉取轉 `PULLED`）；claim `claim-c62c4574260c4c52a02053041c1ea850` 轉 `SETTLED` |
+| 控制面審閱結論 | 通過；交付物由控制面以 `f68be93` 提交於 `implement/p6-live-verification`（審閱與 branch 記帳是控制面的常規工作，不在被驗的 Router 步驟清單內） |
+| worker branch 就緒判定 | `implement/p6-live-verification` @ `f68be93`，可 ff |
+| `integrate_next_work` 的 `document-mutation-journal.jsonl` 條目（`outcome`、`candidate_ref`、`detail`） | `14:35:55.508767+00:00`／`outcome: INTEGRATED`／`candidate_ref: implement/p6-live-verification`／`detail: f68be9357ecedb15b3a08d64cd7faca3ea1ad6ed`——**main 移到 f68be93，merge 由閘門在 `integrate_next_work` 內執行** |
+| 是否全程沒有手動 merge／手動組 `DocumentMutationRequest` | 是。控制面呼叫的只有 `record_worker_return` 與 `integrate_next_work` 兩個進入點（driver 腳本 `p6_stage_b.py` 全文可查）；`DocumentMutationRequest` 由 `integrate_next_work` 內部從 `TicketResolution` 構造 |
 
 ## 六、第三段：commit 觸發（實機首次）
 
-**狀態：未開始。**
+**狀態：BLOCKED——這條腿端到端不存在，已開 P7。**
+
+依 P6 的規則（卡住 → 停下、記錄、開新票，不得手動代勞後宣稱通過），第三段在
+arm 訂閱之前的機制清查就停了：
+
+- `WorkSource.COMMIT_TRIGGER` 在整個 library **沒有任何生產者**——只有
+  `work_queue`（收）與 `dispatch_session`（正確擱置）認識它。
+- `event_runner` 的產品是**喚醒**，與 work queue 之間零引用。
+- `work_queue.py:284` 有現成的 commit-trigger 建構子——插座在，線不在。
+
+控制面**沒有**手動呼叫 `enqueue_work` 假造一筆觸發項目來讓表格變綠。
+接線是 `modules/tickets/workstation-dispatch/p7-commit-event-reaches-no-queue.md`；
+P7 整合後回到這裡收尾第三段。
 
 第三段要驗的是用既有 `runner subscribe` CLI（E13）對本 repo arm 一個訂閱、落一個
 真 commit，觀察它以 `COMMIT_TRIGGER` 來源進入佇列，且消費端正確回報

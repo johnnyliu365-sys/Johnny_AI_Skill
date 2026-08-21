@@ -112,7 +112,7 @@ gov-15 那張舊的 brick receipt（historical record，留在 journal 作為 P5
 id = P6
 title = 實機功能驗證：三隻腳合起來走一遍
 state = IN_PROGRESS
-stage = A | 失敗演練＋重派（P5 實機） | OPEN
-stage = B | 完整往返（排程器實機） | OPEN
-stage = C | commit 觸發（實機首次） | OPEN
+stage = A | 失敗演練＋重派（P5 實機） | DONE
+stage = B | 完整往返（排程器實機） | DONE
+stage = C | commit 觸發（BLOCKED，等 P7 接線） | OPEN
 ```
