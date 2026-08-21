@@ -8,11 +8,11 @@
 | PRD 索引 | 不適用 |
 | 需求變更 | 不適用 |
 | Sealed Context binding | 不適用 |
-| Agent Context binding | 本票 revision／無 receipt／owner 待填／worktree 待填／branch 待填／baseline `2a6a3e7` |
+| Agent Context binding | 本票 revision／無 receipt／worktree `.worktrees/gov-08`／branch `implement/gov-08-doc-gate`／baseline `2a6a3e7` |
 | 實作語言 | Python 3.11 |
 | 狀態 | `IN_PROGRESS` |
 | 共同基準 | `2a6a3e7` |
-| 實作者 | `<派工時填入>` |
+| 實作者 | Opus 5（困難票：需判斷執行點與邊界 schema） |
 | 審閱者 | 控制面（Opus 5） |
 | 責任邊界 | 新增 `library/local_orchestration/document_mutation_gate.py` 與其測試；`TEMPLATE.md` 的邊界欄位改為機器可讀 |
 | 禁止修改 | `dispatch_authority.py`、`worktree_containment.py`、任何既有票的內容、`AGENTS.md`、`Workflow.md` |
@@ -67,7 +67,7 @@ host 上。若日後要做，是 host adapter 的責任。
 ### 角色指派（必填）
 
 - 流程／ticket owner：控制面（Opus 5）；不得實作此 ticket。
-- implementation owner：`<派工時填入>`；於自己的 worktree 實作。
+- implementation owner：Opus 5，於 `.worktrees/gov-08` 實作。
 - reviewer：控制面（Opus 5）。
 - **Owner override record**：`N/A`
 - `ImplementationHandoff`：本票 revision。

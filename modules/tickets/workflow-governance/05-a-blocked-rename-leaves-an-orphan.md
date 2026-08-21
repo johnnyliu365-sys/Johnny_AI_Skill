@@ -98,7 +98,7 @@
 
 ## 完成回寫
 
-- 實際檔案：`<待填>`
+- 實際檔案：`tests/test_disposable_environment_core.py`（`cr167` 的改名與拆除路徑）
 - commit：無紀錄（早於本欄要求）
 - WorkProgress：不適用
 

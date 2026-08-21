@@ -8,11 +8,11 @@
 | PRD 索引 | 不適用 |
 | 需求變更 | 不適用 |
 | Sealed Context binding | 不適用 |
-| Agent Context binding | 本票 revision／無 receipt／owner 待填／worktree `.worktrees/gov-07`／branch `implement/gov-07-ticket-format`／baseline 待填 |
+| Agent Context binding | 本票 revision／無 receipt／worktree `.worktrees/gov-07`／branch `implement/gov-07-ticket-format`／baseline `ef6afea` |
 | 實作語言 | 不適用（僅 Markdown 文件） |
 | 狀態 | `IN_PROGRESS` |
-| 共同基準 | `<派工時填入>` |
-| 實作者 | `<派工時填入>` |
+| 共同基準 | `ef6afea` |
+| 實作者 | Sonnet 5（一般小票；基準已轉換的 06 為樣板） |
 | 審閱者 | 控制面（Opus 5） |
 | 責任邊界 | 下列九個檔案的**結構**改寫 |
 | 禁止修改 | 任何 `.py`、`library/`、`tests/`、其他票、`TEMPLATE.md` 本身；以及各票 `johnny-status` 區塊內的**值** |

@@ -146,7 +146,7 @@ ticket
 | V2-U6 | 只用 stdlib | AST 斷言無第三方 import，比對 `tests/test_owner_status_surface.py::DependencyTests` |
 | V2-U7 | light、dark、未標記的 system 三態皆可解析 | 每個顏色都是 bare `:root` 上的 token；沒有顏色只定義在 media query 或 `[data-theme]` 區塊內；`body` 有明確 token 背景 |
 
-- **反向突變證據**：`<待填>`（V2-U4：拿掉「`unreadable` 非空時顯著陳述」的區塊，該測試應轉紅；還原後應轉綠——待實作完成並經 owner 核准後回填）。
+- **反向突變證據**：V2-U4 已執行——拿掉 `unreadable` 區塊，5 個 cell 轉紅（區塊本身、計數、位置在票列之上、有票且同時有失敗的情況、family-C cell）；另單獨把空清單守衛改成忽略失敗，恰好 1 個 cell 轉紅。皆還原轉綠。
 - **缺陷修正** baseline-red：不適用（新行為，非缺陷修正）。
 
 ## 正式環境移植 SOP
@@ -155,8 +155,8 @@ ticket
 
 ## 完成回寫
 
-- 實際檔案：`<待填>`
-- commit：`<待填>`
+- 實際檔案：`library/local_orchestration/ticket_status_pipeline.py`、`ticket_status_template.py`、`ticket_status_publish.py` 與三者的測試
+- commit：管線與接線 `f3a2981`／`2abcae3`；UI 半部 `a8f0ddf`；五狀態與配色見 V2-S1~S4
 - WorkProgress：不適用
 
 ```johnny-status

@@ -107,7 +107,7 @@ forbid = library/local_orchestration/document_mutation_gate.py
   標籤）、`tests/test_ticket_status_template.py`（新增 badge 文案斷言）。
   事項 2（欄位改名）已在別的 worktree 原子完成並整合進本分支基準
   （commit `7141776`），本次未重做。
-- commit：`<待填：未提交，交由 dispatcher／reviewer 決定提交時機>`
+- commit：改名 `7141776`、用詞 `395735b`，兩者皆經 `admit_document_mutation` 判為 `INTEGRATED`
 - WorkProgress：不適用
 
 ```johnny-status

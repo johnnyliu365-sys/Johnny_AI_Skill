@@ -8,7 +8,7 @@
 | PRD 索引 | 不適用 |
 | 需求變更 | 不適用 |
 | Sealed Context binding | 不適用 |
-| Agent Context binding | 本票 revision／無 receipt／owner 待填／worktree 待填／branch 待填／baseline `bed244d` |
+| Agent Context binding | 本票 revision／無 receipt／worktree `.worktrees/gov-06`／branch `implement/gov-06-mklink-decode`／baseline `bed244d` |
 | 實作語言 | Python 3.11（依 `CONTEXT.md` › 實作語言規範的統一後端語言） |
 | 狀態 | `IN_PROGRESS` |
 | 共同基準 | `bed244d` |
@@ -76,7 +76,7 @@ stderr 會出現在斷言訊息裡。
 
 - 單跑 `t3` 通過且該次執行的警告數比修前少一。
 - 全套件綠、零殘留，且列出**完整**的 `FAILED`／`SUBFAILED` 清單。
-- **紅燈輸出**：`<待填：每個行為第一次失敗的測試名稱與失敗原因>`
+- **缺陷修正 baseline**：本缺陷以警告呈現而非測試失敗，故以警告數為證：`t3` 修法前 1、修法後 0（由審閱者實測）。
 
 ## 正式環境移植 SOP
 

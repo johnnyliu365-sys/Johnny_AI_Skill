@@ -113,7 +113,7 @@ worktree 上為某張票工作」這個模型已經存在，只是從來沒有�
 | P1-R4 | journal 記得下每一次嘗試，包含被拒絕的 | 讀 journal 斷言 |
 | P1-R5 | Router 這側不含任何 host 名詞 | 掃原始碼斷言 `subagent`／`claude`／`codex` 零命中——通用性用測試守住 |
 
-- **反向突變證據**：`<待填>`（P1-R6：拿掉包含性閘門，P1-R3 應轉紅；還原後應轉綠——待實作完成後回填）。
+- **反向突變證據**：P1-R6 已執行——拿掉 `admit_dispatch` 的包含性閘門，`ContainmentTests::test_an_outside_worktree_is_refused_and_issues_no_receipt` 與 `JournalTests::test_a_refused_attempt_still_reaches_the_journal` 共 2 個 cell 轉紅；還原後 6 passed。
 - **缺陷修正** baseline-red：不適用（新行為，非缺陷修正）。
 
 ## 正式環境移植 SOP
@@ -122,8 +122,8 @@ worktree 上為某張票工作」這個模型已經存在，只是從來沒有�
 
 ## 完成回寫
 
-- 實際檔案：`<待填>`
-- commit：`<待填>`
+- 實際檔案：`tests/test_parallel_worker_dispatch.py`
+- commit：`78fff8b`（並行證明）、`77a5000`（子行程移出 checkout）
 - WorkProgress：不適用
 
 ```johnny-status
