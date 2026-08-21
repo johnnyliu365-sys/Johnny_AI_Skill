@@ -7,11 +7,11 @@
 | PRD 索引 | 不適用 |
 | 需求變更 | 不適用 |
 | Sealed Context binding | 不適用 |
-| Agent Context binding | 本票 revision；worktree／branch 待派工時建立 |
+| Agent Context binding | 本票 revision／worktree `.worktrees/gov-16`／branch `implement/gov-16-named-invariant-failure` |
 | 實作語言 | Python 3.11 |
 | 狀態 | `IN_PROGRESS` |
-| 共同基準 | `<派工時填入>` |
-| 實作者 | `<派工時填入>` |
+| 共同基準 | `9125a91`（程式碼基準；worktree HEAD 為綁定 commit，派工訊息載明） |
+| 實作者 | Sonnet 5 high（一般小票，依 `dispatch-model-profile.md` 分層） |
 | 審閱者 | 控制面（Opus 5） |
 | 責任邊界 | `worker_assignment.py` 與 `work_queue.py` 的例外分流與失敗碼 |
 | 禁止修改 | `dispatch_authority.py`、`dispatch_session.py`、`document_mutation_gate.py`、`live_dispatch_metadata_boundary.py` |
@@ -96,6 +96,8 @@ except (OSError, ValidationError, ValueError):
   （C9→C10、governance 10 的全族掃描）。
 - 實作者只跑邊界內測試檔；全套件與殘留檢查由審閱者於整合前執行。
 - venv 建在 repo 外 ASCII 路徑，`pytest==9.1.1`。
+
+- **全套件責任**：兩張票並行實作，實作者只跑本票邊界內的測試檔；全套件與殘留檢查由審閱者於整合前執行（比照 governance 11 的責任轉移，這是審閱者的未完成義務，不得因實作者回報綠即視為滿足）。
 
 ## 不在本票範圍
 

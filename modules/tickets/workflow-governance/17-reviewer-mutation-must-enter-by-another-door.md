@@ -7,11 +7,11 @@
 | PRD 索引 | 不適用 |
 | 需求變更 | 不適用 |
 | Sealed Context binding | 不適用 |
-| Agent Context binding | 本票 revision；worktree／branch 待派工時建立 |
+| Agent Context binding | 本票 revision／worktree `.worktrees/gov-17`／branch `implement/gov-17-reviewer-mutation` |
 | 實作語言 | Markdown（policy reference）＋ Python 3.11（digest repin） |
 | 狀態 | `IN_PROGRESS` |
-| 共同基準 | `<派工時填入>` |
-| 實作者 | `<派工時填入>` |
+| 共同基準 | `9125a91`（程式碼基準；worktree HEAD 為綁定 commit，派工訊息載明） |
+| 實作者 | Sonnet 5 high（一般小票，依 `dispatch-model-profile.md` 分層） |
 | 審閱者 | 控制面（Opus 5） |
 | 責任邊界 | `review-checks.md` 的 `Test truthfulness` 列與必要的新段落，加上兩處 digest repin |
 | 禁止修改 | 其他 reference；`CodeReview.md`；`library/` 下 `profile.py` 以外的任何檔案 |
@@ -100,6 +100,8 @@ forbid = modules/tickets/
 - 另一組：從 reference 移除新增的其中一點，指名的測試要轉紅。
 - 實作者只跑 `tests/test_workflow_router.py`；全套件與殘留檢查由審閱者於整合前執行。
 - venv 建在 repo 外 ASCII 路徑，`pytest==9.1.1`。
+
+- **全套件責任**：兩張票並行實作，實作者只跑本票邊界內的測試檔；全套件與殘留檢查由審閱者於整合前執行（比照 governance 11 的責任轉移，這是審閱者的未完成義務，不得因實作者回報綠即視為滿足）。
 
 ## 不在本票範圍
 
