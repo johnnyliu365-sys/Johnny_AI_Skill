@@ -9,7 +9,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | 本票 revision／worktree `.worktrees/gov-18`／branch `implement/gov-18-scrub` |
 | 實作語言 | Markdown＋Python 3.11（第一階段）；git filter-repo（第二階段，控制面） |
-| 狀態 | `IN_PROGRESS` |
+| 狀態 | `DONE` |
 | 共同基準 | 綁定 commit（worktree HEAD，派工訊息載明） |
 | 實作者 | 第一階段 Sonnet 5 high；第二、三階段控制面（發行工程，比照 D2） |
 | 審閱者 | 控制面（Opus 5）＋ owner（公開鍵由 owner 已明示授權） |
@@ -137,14 +137,37 @@ memory 目錄（repo 外）；`JohnnyRouter` root（repo 外）；已安裝機�
 
 ## 完成回寫
 
-- 實際檔案：待填
-- commit：待填
+- 實際檔案：87 個檔案（doc／modules／library／tests／specs／CONTEXT.md／README.md
+  與 vita harness），逐檔清單見 `3cf8c25`（清洗前 SHA）的 commit
+- commit：清洗 `3cf8c25`（經 `admit_document_mutation` 判為 `INTEGRATED`），
+  歷史重寫後對應 `ae20c8cc`；0.4.9 發行 `9073ac54`（commit A）＋`7f397970`（commit B）
+- **第一階段（工作樹）**：對照表正本逐條 grep 零命中，**含票 18 自身**——票原本帶著
+  它自己下令移除的字面，實作者發現後停下來問，裁決是「也要清」，正本移出 repo 外
+- **第二階段（歷史）**：`git filter-repo --replace-text` 用同一份正本，1111 個 commit
+  全部重寫。**HEAD tree 逐位元不變**（`cb130017739587ec2d983de7d46eec77b760759b`）
+  ——內容一個位元組都沒被動到，只有 commit 身分換了，這是重寫正確性的關鍵不變量
+- **第三階段（資產）**：0.4.0–0.4.8 共九個 release 刪除（payload 內 library README
+  帶著識別詞，公開即洩）；從清洗後的 main 發 0.4.9 為第一個公開版
+- **公開後最終審計**（重新 clone 公開 repo）：對照表全表 × 全歷史零命中；
+  憑證形狀 × 全歷史零命中；重新下載的 0.4.9 資產 digest 相符、wrapper 會放行、
+  221 個 payload entry 逐檔掃描零命中
+- **審計漏掉、由後續發現補上的兩項**：`GameBoy`（本機更早的使用者名，散在約 50 個
+  歷史票的 worktree 綁定欄位——第一輪只搜了現任使用者名的路徑，沒想到機器改過名，
+  由第一階段實作者回報）；`CHAMPIONBIOMEDICINE`（來源專案所屬 org 名，公開後才
+  由環境掃描揭露——**實測全歷史與 payload 皆零命中**，從未進過本 repo，屬虛驚）
+- **備份**：`C:\Users\User\Desktop\johnny-pre-rewrite-backup\`——重寫前完整
+  bundle（`--all`，已 `git bundle verify`）＋對照表正本。**這是唯一還存著原始字面的
+  地方，不得放進任何會公開的位置**
+- **不可逆的代價（已知並接受）**：1111 個 commit 的 SHA 全部改變，舊 clone 必須重 clone；
+  0.4.9 之前的 release 從 GitHub 永久消失；已安裝機器不受影響
+- 全套件（受閘測試開啟）：1426 passed、7 skipped、3279 subtests、零 FAILED、無殘留
+  （skip 從 1 增為 7 是 vita qual 因寫死路徑移除而改走環境變數的預期位移）
 
 ```johnny-status
 id = 18
 title = 公開前清洗：三層
-state = IN_PROGRESS
-stage = S | 工作樹清洗 | OPEN
-stage = H | 歷史重寫 | OPEN
-stage = R | release 重建與公開 | OPEN
+state = DONE
+stage = S | 工作樹清洗 | DONE
+stage = H | 歷史重寫 | DONE
+stage = R | release 重建與公開 | DONE
 ```
