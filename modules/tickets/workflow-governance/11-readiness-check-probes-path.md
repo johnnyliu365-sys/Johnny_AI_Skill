@@ -9,7 +9,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | 本票 revision／worktree `.worktrees/gov-11`／branch `implement/gov-11-readiness-path` |
 | 實作語言 | Markdown（skill 文件）＋ Python 3.11（釘住用的測試） |
-| 狀態 | `IN_PROGRESS` |
+| 狀態 | `DONE` |
 | 共同基準 | `82866fb` |
 | 實作者 | Sonnet 5 high（owner 指定） |
 | 審閱者 | 控制面（Opus 5） |
@@ -113,14 +113,18 @@ launcher\johnny-router.ps1 wake-capability probe
 
 ## 完成回寫
 
-- 實際檔案：待填
-- commit：待填
+- 實際檔案：`skills/johnny-project-takeover/SKILL.md`、`tests/test_workflow_router.py`
+- commit：`7a00c35`，經 `admit_document_mutation` 判為 `INTEGRATED`
+- **修法**：第 3、4 點改用 `<runtime root>\launcher\johnny-router.ps1`，`<runtime root>` **只定義一次**為「第 1 點解析出的同一個 root」。單一定義＋兩處引用，而不是把字面路徑寫兩遍——這讓「三點跟隨同一個 root」在語法上就不可能漂移。比本票原本要求的更強。
+- **反向突變**：實作者一組（第 3 點改回裸指令 → 2 紅）。審閱者另做一組不同方向的：第 4 點寫死 `%LOCALAPPDATA%`、第 1 點仍跟隨覆寫（＝本票點名的漂移）→ **恰好 1 紅**，還原後 57 passed。
+- **名實不符，未修**：`test_..._honor_the_johnny_root_override` 抓不到它名字所講的漂移——審閱者的突變破壞的正是該性質，它卻是綠的，真正抓到的是計數測試。性質有被覆蓋，覆蓋它的不是名字對應的那個測試。
+- **本修正要下一次發行才會到使用者手上**：`SKILL.md` 在 payload 的 218 個條目內，已安裝的 0.4.7 仍是舊文字。
 
 ```johnny-status
 id = 11
 title = 就緒檢查探測 PATH，而安裝器從不碰 PATH
-state = IN_PROGRESS
-stage = F | 改為推導路徑 | OPEN
-stage = T | 測試釘住 | OPEN
-stage = M | 突變驗證 | OPEN
+state = DONE
+stage = F | 改為推導路徑 | DONE
+stage = T | 測試釘住 | DONE
+stage = M | 突變驗證 | DONE
 ```

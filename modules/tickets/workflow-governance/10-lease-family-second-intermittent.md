@@ -9,7 +9,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | 本票 revision／worktree `.worktrees/gov-10`／branch `implement/gov-10-lease-family` |
 | 實作語言 | Python 3.11 |
-| 狀態 | `IN_PROGRESS` |
+| 狀態 | `DONE` |
 | 共同基準 | `09ec337`（worktree HEAD） |
 | 實作者 | Sonnet 5 high（一般票，依 `dispatch-model-profile.md` 分層） |
 | 審閱者 | 控制面（Opus 5） |
@@ -81,14 +81,20 @@ C9 的因果鏈已定位：Windows share-mode 讓**改名**（不只刪除）被
 
 ## 完成回寫
 
-- 實際檔案：待填
-- commit：待填
+- 實際檔案：`tests/staging/environment_core/environment.py`、`tests/test_codex_receipt_removal_acceptance.py`、`tests/test_disposable_environment_core.py`
+- commit：`733168e`，經 `admit_document_mutation` 判為 `INTEGRATED`（第一次提交時被判 `INTEGRATION_FAILED`／不能 ff，rebase 到 main 後重驗才通過）
+- **根因修在共用配置器**：`_unlink_past_transient_block`／`_rmdir_past_transient_block`，比照既有的 `_rename_past_transient_block`。最後一次嘗試在 try 之外，所以永久性封鎖仍會拋出——會吞掉最後一次失敗的 retry 等於回報一個沒發生的拆除。17 個檔案的所有 cell 都受益，不用逐一改。
+- **兩個呼叫點漏了拆除**：`_ready()` 在 `provision()` 之後、呼叫端的 try 之外呼叫 `initialize()`；核心檔兩個 cell 完全沒有 cleanup。
+- **反向突變**：實作者一組（拿掉 unlink retry → `05_r3_a` 紅）。審閱者另做一組**不同方向**的：把永久封鎖吞掉 → **25 passed，零轉紅**。
+- **為什麼原本抓不到**：`05_r3_b` 只釘 `teardown()` 的可觀察狀態，而那個狀態有兩條路可以抵達——unlink 真的拋出，或 unlink 吞掉後父目錄非空、`rmdir` 以 `OSError [WinError 145]` 失敗，被寬 `except OSError` 報成同一個 `BLOCKED`／`DELETE_FAILED`。**同一個結果，兩條路**，所以它分不出真修好和假修好。補的 `test_05_r3_c_a_...` 直接測 helper 本身，審閱者重跑突變後**恰好 1 紅**，還原後 26 passed。
+- **未達成且未偽裝**：`test_codex_registration_foreign_state_isolation_acceptance.py` 有同族的**已確認活缺陷**（兩個 lease 在 try 之前取得，第二個失敗會漏掉兩個），在 `modify` 白名單外，實作者停在邊界沒有擅自擴大。另開票處理。
+- 全套件（受閘測試開啟）：1318 passed、1 skipped、3134 subtests、零 FAILED、無殘留。
 
 ```johnny-status
 id = 10
 title = lease 家族的第二個間歇
-state = IN_PROGRESS
-stage = S | 掃描全族 | OPEN
-stage = F | 無條件拆除 | OPEN
-stage = M | 突變驗證 | OPEN
+state = DONE
+stage = S | 掃描全族 | DONE
+stage = F | 無條件拆除 | DONE
+stage = M | 突變驗證 | DONE
 ```
