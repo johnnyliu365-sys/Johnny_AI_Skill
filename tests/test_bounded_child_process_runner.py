@@ -15,6 +15,7 @@ import unittest
 from pydantic import ValidationError
 
 from tests.staging.environment_core.contracts import (
+    EnvironmentFault,
     EnvironmentLease,
     EnvironmentId,
     EnvironmentLocator,
@@ -194,9 +195,16 @@ class BoundedChildProcessRunnerTests(unittest.TestCase):
 
     def test_t3_success_nonzero_and_timeout_are_distinct_and_timeout_has_no_late_completion(self) -> None:
         runner = self._runner()
-        success_allocator, success_lease = self._lease("environment-owner-2222333344445555")
-        nonzero_allocator, nonzero_lease = self._lease("environment-owner-3333444455556666")
-        timeout_allocator, timeout_lease = self._lease("environment-owner-4444555566667777")
+        active: list[tuple[DisposableEnvironmentAllocator, EnvironmentLease]] = []
+        _, success_lease = self._lease_into(
+            active, DisposableEnvironmentAllocator.from_project_runtime(), "environment-owner-2222333344445555"
+        )
+        _, nonzero_lease = self._lease_into(
+            active, DisposableEnvironmentAllocator.from_project_runtime(), "environment-owner-3333444455556666"
+        )
+        _, timeout_lease = self._lease_into(
+            active, DisposableEnvironmentAllocator.from_project_runtime(), "environment-owner-4444555566667777"
+        )
         try:
             success = runner.run(self._request(success_lease, arguments=(str(FIXTURE_CHILD), "success")))
             nonzero = runner.run(self._request(nonzero_lease, arguments=(str(FIXTURE_CHILD), "nonzero")))
@@ -212,15 +220,21 @@ class BoundedChildProcessRunnerTests(unittest.TestCase):
             time.sleep(LATE_WRITE_DELAY_SECONDS + 0.2)
             self.assertFalse(self._fixture_path(timeout_lease, "fixture-complete.json").exists())
         finally:
-            self._teardown(success_allocator, success_lease)
-            self._teardown(nonzero_allocator, nonzero_lease)
-            self._teardown(timeout_allocator, timeout_lease)
+            for allocator, lease in active:
+                self._teardown(allocator, lease)
 
     def test_t3_windows_launch_errors_use_winerror_not_exception_class(self) -> None:
         runner = self._runner()
-        missing_allocator, missing_lease = self._lease("environment-owner-5555666677778888")
-        denied_allocator, denied_lease = self._lease("environment-owner-6666777788889999")
-        generic_allocator, generic_lease = self._lease("environment-owner-777788889999aaaa")
+        active: list[tuple[DisposableEnvironmentAllocator, EnvironmentLease]] = []
+        _, missing_lease = self._lease_into(
+            active, DisposableEnvironmentAllocator.from_project_runtime(), "environment-owner-5555666677778888"
+        )
+        _, denied_lease = self._lease_into(
+            active, DisposableEnvironmentAllocator.from_project_runtime(), "environment-owner-6666777788889999"
+        )
+        _, generic_lease = self._lease_into(
+            active, DisposableEnvironmentAllocator.from_project_runtime(), "environment-owner-777788889999aaaa"
+        )
         try:
             missing = runner.run(
                 self._request_with(
@@ -254,9 +268,20 @@ class BoundedChildProcessRunnerTests(unittest.TestCase):
             self.assertEqual(5, denied.launch.winerror)
             self.assertEqual(206, generic.launch.winerror)
         finally:
-            self._teardown(missing_allocator, missing_lease)
-            self._teardown(denied_allocator, denied_lease)
-            self._teardown(generic_allocator, generic_lease)
+            for allocator, lease in active:
+                self._teardown(allocator, lease)
+
+    def test_second_of_two_lease_acquisitions_failing_still_tears_down_the_first(self) -> None:
+        active: list[tuple[DisposableEnvironmentAllocator, EnvironmentLease]] = []
+        self._lease_into(
+            active, DisposableEnvironmentAllocator.from_project_runtime(), "environment-owner-eeee111122223333"
+        )
+        second_allocator = DisposableEnvironmentAllocator.from_project_runtime()
+        second_allocator.configure_fault(EnvironmentFault.AFTER_ROOT)
+        with self.assertRaises(AssertionError):
+            self._lease_into(active, second_allocator, "environment-owner-ffff222233334444")
+        self.assertFalse(active[0][1].root.path.exists())
+        self.assertEqual(set(), self._owned_environment_roots())
 
     def test_t4_every_outcome_has_exact_invocation_and_no_raw_output(self) -> None:
         outcomes = self._all_real_outcomes()
@@ -544,6 +569,33 @@ class BoundedChildProcessRunnerTests(unittest.TestCase):
         self.assertIsInstance(provisioned, ProvisionedEnvironment)
         assert isinstance(provisioned, ProvisionedEnvironment)
         return allocator, provisioned.environment
+
+    def _lease_into(
+        self,
+        active: list[tuple[DisposableEnvironmentAllocator, EnvironmentLease]],
+        allocator: DisposableEnvironmentAllocator,
+        owner: str,
+    ) -> tuple[DisposableEnvironmentAllocator, EnvironmentLease]:
+        """The only place multi-lease acquisition order is allowed to live (governance 12).
+
+        Provisions one lease on `allocator` and tracks it in `active`. If this
+        acquisition fails, every lease already tracked in `active` is torn down
+        before the failure propagates — so no caller can leak an earlier successful
+        acquisition by getting its own try/finally placement wrong. `except
+        BaseException` is deliberate: a fail-closed acquisition guarantee should not
+        have gaps for exception subtype.
+        """
+        try:
+            provisioned = allocator.provision(EnvironmentOwnerId(value=owner))
+            self.assertIsInstance(provisioned, ProvisionedEnvironment)
+            assert isinstance(provisioned, ProvisionedEnvironment)
+            lease = provisioned.environment
+        except BaseException:
+            for prior_allocator, prior_lease in reversed(active):
+                self._teardown(prior_allocator, prior_lease)
+            raise
+        active.append((allocator, lease))
+        return allocator, lease
 
     def _teardown(self, allocator: DisposableEnvironmentAllocator, lease: EnvironmentLease) -> None:
         result = allocator.teardown(lease)

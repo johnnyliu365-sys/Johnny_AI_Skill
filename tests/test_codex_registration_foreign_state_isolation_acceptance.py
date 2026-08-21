@@ -47,6 +47,7 @@ from tests.staging.codex_lifecycle_oracle.registration_success_acceptance import
     run_registration_success_acceptance,
 )
 from tests.staging.environment_core.contracts import (
+    EnvironmentFault,
     EnvironmentLease,
     EnvironmentOwnerId,
     ProvisionedEnvironment,
@@ -157,6 +158,29 @@ def _ready_oracle(
     return provisioned.environment, oracle
 
 
+def _ready_oracle_into(
+    allocator: DisposableEnvironmentAllocator,
+    acquired: list[EnvironmentLease],
+    owner_suffix: str,
+) -> tuple[EnvironmentLease, CodexLifecycleOracle]:
+    """The only place multi-lease acquisition order is allowed to live (governance 12).
+
+    Acquires one ready oracle and tracks its lease in `acquired`. If this acquisition
+    fails, every lease already tracked in `acquired` is torn down before the failure
+    propagates — so no caller can leak an earlier successful acquisition by getting
+    its own try/finally placement wrong. `except BaseException` is deliberate: a
+    fail-closed acquisition guarantee should not have gaps for exception subtype.
+    """
+    try:
+        lease, oracle = _ready_oracle(allocator, owner_suffix)
+    except BaseException:
+        for prior in reversed(acquired):
+            _teardown(allocator, prior)
+        raise
+    acquired.append(lease)
+    return lease, oracle
+
+
 def _teardown(allocator: DisposableEnvironmentAllocator, lease: EnvironmentLease) -> None:
     root = lease.root.path
     result = allocator.teardown(lease)
@@ -249,8 +273,9 @@ def _assert_owned_compensation_absent(lease: EnvironmentLease, oracle: CodexLife
 class CodexRegistrationForeignStateIsolationAcceptanceTests(unittest.TestCase):
     def test_a1_to_a8_success_and_compensation_preserve_prefix_similar_foreign_state(self) -> None:
         allocator = DisposableEnvironmentAllocator.from_project_runtime()
-        success_lease, success_oracle = _ready_oracle(allocator, "000000000000e6a1")
-        compensation_lease, compensation_oracle = _ready_oracle(allocator, "000000000000e6a2")
+        acquired: list[EnvironmentLease] = []
+        success_lease, success_oracle = _ready_oracle_into(allocator, acquired, "000000000000e6a1")
+        compensation_lease, compensation_oracle = _ready_oracle_into(allocator, acquired, "000000000000e6a2")
         try:
             with patch.dict(os.environ, {"LOCALAPPDATA": r"C:\Users\oracle\AppData\Local"}):
                 _seed_foreign_state(success_lease, success_oracle)
@@ -286,8 +311,18 @@ class CodexRegistrationForeignStateIsolationAcceptanceTests(unittest.TestCase):
                 _assert_owned_compensation_absent(compensation_lease, compensation_oracle)
                 _assert_foreign_unchanged(compensation_lease, compensation_oracle, compensation_foreign)
         finally:
-            _teardown(allocator, compensation_lease)
-            _teardown(allocator, success_lease)
+            for lease in reversed(acquired):
+                _teardown(allocator, lease)
+
+    def test_a1_to_a8_second_lease_acquisition_failure_still_tears_down_the_first_lease(self) -> None:
+        allocator = DisposableEnvironmentAllocator.from_project_runtime()
+        acquired: list[EnvironmentLease] = []
+        _ready_oracle_into(allocator, acquired, "000000000000e6a5")
+        allocator.configure_fault(EnvironmentFault.AFTER_ROOT)
+        with self.assertRaises(AssertionError):
+            _ready_oracle_into(allocator, acquired, "000000000000e6a6")
+        if acquired[0].root.path.exists():
+            raise AssertionError("the first lease was not torn down after the second acquisition failed")
 
 
 if __name__ == "__main__":
