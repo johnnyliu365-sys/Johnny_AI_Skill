@@ -4,7 +4,22 @@
 
 它不是公司專案的 runtime service、MCP server、hook、CI 依賴、Git submodule、symlink、package dependency 或原始碼 import。因此拔除後，公司的建置、測試、部署與既有程式不會受影響。
 
-## 目前發行：0.4.6
+## 目前發行：0.4.7
+
+0.4.7 補上排程佇列（`work_queue`）。子代理回傳或 commit 觸發成立時，該做的下一件事
+**落到持久佇列上**；主 session 手上的工作做完再拉下一件。**拉取而非推送**，所以不需要
+偵測誰在忙、不需要中斷機制，而拉取發生在「一件工作結束」這個事件上，不是計時器上。
+
+順序是**宣告的**：跨兩種來源的嚴格 FIFO，`sequence` 在序列化寫入的同一把鎖內指派，
+而磁碟上的陣列順序刻意不要求與它一致——那個自由度是唯一能證明「服務順序來自紀錄欄位
+而非檔案順序」的辦法。**佇列讀不到會具名拒絕，絕不回傳空佇列**：把兩者折疊會讓主
+session 安靜停工且毫無訊號。
+
+**誠實邊界**：閒置的消費者沒有「完成」可以抵達，所以無人執行時入列的工作要等下一件事
+做完才被拿走——持久性成立，及時性不成立；拉走後死掉的消費者會讓 item 停在 `PULLED`，
+讀得到但不會被重新入列。兩者都沒有用計時器假裝解決。
+
+**尚未接線**：綁定、佇列、閘門三者都要控制面主動呼叫（見工單 P4）。
 
 0.4.6 把治理從「寫在文件裡」變成「擋得住」。
 
@@ -135,9 +150,9 @@ red 證據重定義）。該版的兩個誠實邊界（live 安裝停在
 
 ## Codex 使用方式
 
-### 0.4.6 完整 bundle 安裝
+### 0.4.7 完整 bundle 安裝
 
-正式的一鍵入口是隨 release 發布的 `johnny-install.cmd`，將其下載至與經核准且 SHA-256 相符的 `johnny-ai-skill-0.4.6.zip` 同一資料夾下雙擊執行（或在終端機直接執行 `install.ps1 -BundleZip <path>`）。它會先核驗 bundle SHA-256，並在確認相符後抽出 `install.ps1` 進行安裝引導。bootstrap 會先顯示 Codex、Git、Python 與核心 dependency 計畫；需要下載時必須由使用者輸入 `INSTALL` 確認。它只建立 per-user Johnny-owned runtime，不會把 plugin、venv、receipt 或 cache 複製到公司 repo。
+正式的一鍵入口是隨 release 發布的 `johnny-install.cmd`，將其下載至與經核准且 SHA-256 相符的 `johnny-ai-skill-0.4.7.zip` 同一資料夾下雙擊執行（或在終端機直接執行 `install.ps1 -BundleZip <path>`）。它會先核驗 bundle SHA-256，並在確認相符後抽出 `install.ps1` 進行安裝引導。bootstrap 會先顯示 Codex、Git、Python 與核心 dependency 計畫；需要下載時必須由使用者輸入 `INSTALL` 確認。它只建立 per-user Johnny-owned runtime，不會把 plugin、venv、receipt 或 cache 複製到公司 repo。
 
 不得把原始碼 checkout 或 `main` 當成已核准 bundle；正式入口永遠是 digest 與已核准
 release 相符的 bundle。既有 `0.3.x` skill-only 安裝仍可使用 private Git
