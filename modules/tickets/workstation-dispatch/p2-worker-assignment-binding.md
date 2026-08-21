@@ -93,14 +93,17 @@ owner 的路線是通用的（Codex 也有子代理）。**本模組不得出現
 
 ## 完成回寫
 
-- 實際檔案：待填
-- commit：待填
+- 實際檔案：`library/local_orchestration/worker_assignment.py`、`tests/test_worker_assignment.py`
+- commit：`implement/p2-worker-binding`，經 `admit_document_mutation` 判為 `INTEGRATED`
+- **反向突變**：實作者三組——拿掉重複 claim 檢查（5 紅）、儲存失敗回傳空（4 紅）、settle 不比對 receipt（1 紅）。審閱者另做一組：停用三處跨行程鎖，**5 次全紅**，還原後 40 passed。
+- **實作者自己抓到的假綠**：第一版跨行程 cell 在拿掉檔案鎖後仍會通過，因為子行程各自載入完才開始 claim，時間差遠大於被保護的窗口。改用起跑閘門＋四個 claimant 後才具鑑別力。
+- **未達成且未偽裝**：本模組讓死掉的工人**可被發現**，不是**被偵測**。孤兒只在有人呼叫 `read_orphan_assignments` 的當下浮現。「一小時沒人知道」只解決了一半——事實現在活得比對話久，但**及時性**在不加計時器的前提下無法達成。實作者沒有加掃描、沒有加過期門檻、沒有加 `last_seen` 假裝解決。
 
 ```johnny-status
 id = P2
 title = 工人與 receipt 的綁定
-state = IN_PROGRESS
-stage = C | claim／settle | OPEN
-stage = O | 孤兒可見 | OPEN
-stage = M | 突變驗證 | OPEN
+state = DONE
+stage = C | claim／settle | DONE
+stage = O | 孤兒可見 | DONE
+stage = M | 突變驗證 | DONE
 ```
