@@ -5,6 +5,11 @@ receipt-bound supervision controller and then blocks on a stop sentinel; every
 wake decision happens on the watcher's own signal callback. When no wake
 capability is proven, the resolved channel is the candidate inbox and the
 runner truthfully records a completion candidate instead of claiming a wake.
+
+The same signal callback also feeds the work queue's second source: a commit
+on a watched ref becomes one `COMMIT_TRIGGER` item. That wire lives in
+`commit_trigger_intake`, is composed here and nowhere else, and cannot delay
+or fail a wake -- see that module for why the ordering is what it is.
 """
 
 from __future__ import annotations
@@ -26,6 +31,7 @@ from library.workflow_router.supervision_runtime_contracts import (
 )
 
 from .command_role_wake_port import CommandRoleWakePort
+from .commit_trigger_intake import build_supervision_with_commit_trigger_intake
 from .johnny_root_layout import JohnnyRootLayout
 from .receipt_bound_supervision import ReceiptBoundSupervisionController
 from .runner_receipt_seeding import (
@@ -43,9 +49,6 @@ from .wake_capability import (
     WakeCapabilityStatus,
     WakeChannelKind,
     probe_wake_capability,
-)
-from .windows_supervision_composition import (
-    build_windows_supervision_without_review_batching,
 )
 
 _SUBSCRIPTIONS_FILE_NAME = "runner-subscriptions.json"
@@ -187,8 +190,17 @@ def run_event_runner(layout: JohnnyRootLayout) -> int:
         # No committed review-cluster resolver exists in 0.4.x, so this runner
         # uses the explicitly named unbatched variant rather than presenting
         # itself as the batched supervision path.
-        controller = build_windows_supervision_without_review_batching(
-            Path(specification.repository_root), wake_coordinator
+        #
+        # The commit-trigger intake joins the same native signal callback the
+        # wake path already uses (P7). The runner supplies only the two facts
+        # it already holds -- where work is written down, and which exact
+        # registration this subscription is -- and owns nothing about how a
+        # signal becomes a queued item.
+        controller = build_supervision_with_commit_trigger_intake(
+            Path(specification.repository_root),
+            wake_coordinator,
+            layout,
+            specification.preparation.registration_request,
         )
         prepared = controller.prepare(specification.preparation)
         if prepared.status is not SupervisionPreparationStatus.PREPARED:
