@@ -60,6 +60,9 @@ raise SystemExit(config["drive_returncode"])
 '''
 
 
+_STUB_PYTHON_ENV_KEY = "JOHNNY_TEST_STUB_PYTHON"
+
+
 def _write_stub(
     directory: Path,
     logged_in: bool = True,
@@ -84,8 +87,22 @@ def _write_stub(
         encoding="utf-8",
     )
     shim = directory / "claude.cmd"
+    # `sys.executable` lives under this checkout's own (possibly non-ASCII)
+    # path when the venv is built in-tree. `cmd.exe` decodes a batch file's
+    # bytes through its active console code page before re-encoding for
+    # `CreateProcess`, and that round trip cannot be trusted for arbitrary
+    # Unicode -- Windows 8.3 "short" names don't help either, since they stay
+    # non-ASCII whenever the OEM code page can represent the source
+    # characters (true for this host's cp950 console). Passing the
+    # interpreter path through an environment variable sidesteps the file's
+    # byte encoding entirely: `cmd.exe` resolves `%VAR%` from the process's
+    # already-Unicode environment block, so the script body itself never has
+    # to carry anything but fixed ASCII text.
+    os.environ[_STUB_PYTHON_ENV_KEY] = sys.executable
     shim.write_bytes(
-        ('@echo off\r\n"%s" "%%~dp0stub.py" %%*\r\n' % sys.executable).encode("ascii")
+        (
+            f'@echo off\r\n"%{_STUB_PYTHON_ENV_KEY}%" "%~dp0stub.py" %*\r\n'
+        ).encode("ascii")
     )
     return shim
 
@@ -664,6 +681,47 @@ class CommandEntryTests(unittest.TestCase):
             self.assertEqual(
                 json.loads(lines[0]), {"status": ClaudeWakeStatus.DELIVERED.value}
             )
+
+
+class ShimEncodingTests(unittest.TestCase):
+    """The written shim must stay ASCII no matter what `sys.executable` is.
+
+    Every other cell in this file only sees the non-ASCII-path defect when
+    actually run from an in-tree venv built under this repository's own
+    (non-ASCII) checkout path -- so a regression here would pass every
+    ASCII-path venv run and only resurface the next time someone builds a
+    venv inside the tree (that surfacing cost 24 misattributed red cells
+    once already; see the governance-14 ticket). Patching `sys.executable`
+    directly makes the non-ASCII path environment-independent: this cell
+    must turn red on the pre-fix code no matter where it runs.
+    """
+
+    def test_a_non_ascii_executable_path_still_produces_an_ascii_shim(self) -> None:
+        fake_python = (
+            r"C:\Users\測試使用者\AI控制工作workflow\.venv\Scripts\python.exe"
+        )
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary)
+            with mock.patch.object(sys, "executable", fake_python), mock.patch.dict(
+                os.environ, {}
+            ):
+                shim = _write_stub(directory)
+                carried = os.environ[_STUB_PYTHON_ENV_KEY]
+
+                # (a) reaching this line at all means _write_stub did not
+                #     raise UnicodeEncodeError (or anything else) for the
+                #     non-ASCII path.
+                # (b) the shim's own bytes are plain ASCII -- the file
+                #     content never carries the interpreter path directly.
+                decoded = shim.read_bytes().decode("ascii")
+                self.assertIn(f"%{_STUB_PYTHON_ENV_KEY}%", decoded)
+                # (c) the environment variable the shim reads from carried
+                #     the exact non-ASCII path, unmangled.
+                self.assertEqual(carried, fake_python)
+
+        # mock.patch.dict restored os.environ on exiting the `with` above;
+        # the fake path never leaked into any later cell's subprocess env.
+        self.assertNotEqual(os.environ.get(_STUB_PYTHON_ENV_KEY), fake_python)
 
 
 if __name__ == "__main__":

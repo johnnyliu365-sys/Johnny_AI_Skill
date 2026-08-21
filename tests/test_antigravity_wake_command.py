@@ -15,6 +15,7 @@ import unittest
 from dataclasses import dataclass
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from unittest import mock
 
 from library.local_orchestration.antigravity_wake_command import (
     LanguageServerCandidate,
@@ -37,6 +38,10 @@ from library.workflow_router.role_wake_contracts import (
 _REPO_ROOT = Path(__file__).resolve().parents[1]
 _GOOD_TOKEN = "015657dd-21d9-4b11-8830-e35378f41d83"
 _GOOD_ADDRESS = "127.0.0.1:61164"
+
+
+_STUB_PYTHON_ENV_KEY = "JOHNNY_TEST_STUB_PYTHON"
+_STUB_RECORDER_ENV_KEY = "JOHNNY_TEST_STUB_RECORDER"
 
 
 def _fake_agentapi(directory: Path, *, send_exit: int = 0) -> Path:
@@ -75,10 +80,26 @@ def _fake_agentapi(directory: Path, *, send_exit: int = 0) -> Path:
         encoding="utf-8",
     )
     client = directory / "agentapi.bat"
+    # `sys.executable` and `recorder` both live under this checkout's own
+    # (possibly non-ASCII) path when the venv is built in-tree, or under a
+    # temp directory that could in principle be non-ASCII too. `cmd.exe`
+    # decodes a batch file's bytes through its active console code page
+    # before re-encoding for `CreateProcess`, and that round trip cannot be
+    # trusted for arbitrary Unicode -- Windows 8.3 "short" names don't help
+    # either, since they stay non-ASCII whenever the OEM code page can
+    # represent the source characters (true for this host's cp950 console).
+    # `library.local_orchestration.antigravity_wake_command._invoke` merges
+    # the current `os.environ` into the child's environment block, so
+    # routing both paths through environment variables sidesteps the file's
+    # byte encoding entirely: `cmd.exe` resolves `%VAR%` from the
+    # already-Unicode environment, and the script body itself never has to
+    # carry anything but fixed ASCII text.
+    os.environ[_STUB_PYTHON_ENV_KEY] = sys.executable
+    os.environ[_STUB_RECORDER_ENV_KEY] = str(recorder)
     client.write_bytes(
         (
             "@echo off\r\n"
-            f'"{sys.executable}" "{recorder}" %*\r\n'
+            f'"%{_STUB_PYTHON_ENV_KEY}%" "%{_STUB_RECORDER_ENV_KEY}%" %*\r\n'
         ).encode("ascii")
     )
     return client
@@ -358,6 +379,54 @@ class EnumerationShapeTests(unittest.TestCase):
             with self.subTest(address=candidate.address):
                 self.assertTrue(candidate.address.startswith("127.0.0.1:"))
                 self.assertTrue(candidate.token)
+
+
+class ShimEncodingTests(unittest.TestCase):
+    """The written client script must stay ASCII no matter the host paths.
+
+    Every other cell in this file only sees the non-ASCII-path defect when
+    actually run from an in-tree venv built under this repository's own
+    (non-ASCII) checkout path -- so a regression here would pass every
+    ASCII-path venv run and only resurface the next time someone builds a
+    venv inside the tree. Patching `sys.executable` and writing into a
+    directory whose own name is non-ASCII makes the defect
+    environment-independent: this cell must turn red on the pre-fix code no
+    matter where it runs.
+    """
+
+    def test_non_ascii_executable_and_recorder_paths_still_produce_an_ascii_client(
+        self,
+    ) -> None:
+        fake_python = (
+            r"C:\Users\測試使用者\AI控制工作workflow\.venv\Scripts\python.exe"
+        )
+        with TemporaryDirectory() as temporary:
+            directory = Path(temporary) / "測試目錄"
+            directory.mkdir()
+            with mock.patch.object(sys, "executable", fake_python), mock.patch.dict(
+                os.environ, {}
+            ):
+                client = _fake_agentapi(directory)
+                carried_python = os.environ[_STUB_PYTHON_ENV_KEY]
+                carried_recorder = os.environ[_STUB_RECORDER_ENV_KEY]
+
+                # (a) reaching this line at all means _fake_agentapi did not
+                #     raise for either non-ASCII path.
+                # (b) the client's own bytes are plain ASCII.
+                decoded = client.read_bytes().decode("ascii")
+                self.assertIn(f"%{_STUB_PYTHON_ENV_KEY}%", decoded)
+                self.assertIn(f"%{_STUB_RECORDER_ENV_KEY}%", decoded)
+                # (c) both environment variables carried their exact
+                #     non-ASCII values, unmangled.
+                self.assertEqual(carried_python, fake_python)
+                self.assertEqual(carried_recorder, str(directory / "recorder.py"))
+
+        # mock.patch.dict restored os.environ on exiting the `with` above;
+        # neither fake value leaked into any later cell's subprocess env.
+        self.assertNotEqual(os.environ.get(_STUB_PYTHON_ENV_KEY), fake_python)
+        self.assertNotEqual(
+            os.environ.get(_STUB_RECORDER_ENV_KEY), str(directory / "recorder.py")
+        )
 
 
 if __name__ == "__main__":
