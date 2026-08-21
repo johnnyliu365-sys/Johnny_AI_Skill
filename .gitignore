@@ -6,3 +6,7 @@ __pycache__/
 
 # 發行產物：建置輸出，不進版控（閘門要求整合工作區乾淨）
 /dist/
+
+# in-tree 驗收殘留：worktree 根目錄下的 venv 與套件輸出 log（governance 15）
+/.venv/
+/suite.log
