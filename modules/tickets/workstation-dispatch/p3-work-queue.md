@@ -96,14 +96,17 @@ Router 是**帳本＋commit 觸發＋工作排程器**。工人由 host 生（�
 
 ## 完成回寫
 
-- 實際檔案：待填
-- commit：待填
+- 實際檔案：`library/local_orchestration/work_queue.py`、`tests/test_work_queue.py`
+- commit：`implement/p3-work-queue`，經 `admit_document_mutation` 判為 `INTEGRATED`
+- **順序**：跨兩種來源的嚴格 FIFO，`sequence` 在序列化寫入的同一把鎖內指派。**磁碟上的陣列順序刻意不要求與 sequence 一致**——那個自由度正是讓測試能證明「服務順序來自紀錄欄位而非檔案順序」的唯一辦法。捨棄「來源優先權」是因為它會餓死，而無限延後的回傳就等於消失。
+- **反向突變**：實作者三組——拿掉跨行程鎖（5 紅，三個 cell）、讀取失敗折疊成空佇列（9 紅）、拿掉順序保證（**恰好 1 紅**）。審閱者另做一組同向獨立驗證：把排序改成用陣列順序，同樣恰好 1 紅，還原後 56 passed。
+- **未達成且未偽裝**：閒置的消費者沒有「完成」這個邊界可以抵達，所以無人執行時入列的工作要等到下一件事做完才會被拿走——**持久性成立，及時性不成立**。拉走item後死掉的消費者會讓它停在 `PULLED`，讀得到但不會被重新入列；「什麼時候算被放棄」的任何規則都是換了名字的計時器。
 
 ```johnny-status
 id = P3
 title = 排程佇列
-state = IN_PROGRESS
-stage = Q | 佇列 | OPEN
-stage = X | 跨行程恰好一次 | OPEN
-stage = M | 突變驗證 | OPEN
+state = DONE
+stage = Q | 佇列 | DONE
+stage = X | 跨行程恰好一次 | DONE
+stage = M | 突變驗證 | DONE
 ```
