@@ -7,11 +7,11 @@
 | PRD 索引 | 不適用 |
 | 需求變更 | 不適用 |
 | Sealed Context binding | 不適用 |
-| Agent Context binding | 本票 revision；worktree／branch 待派工時建立 |
+| Agent Context binding | 本票 revision／worktree `.worktrees/gov-10`／branch `implement/gov-10-lease-family` |
 | 實作語言 | Python 3.11 |
 | 狀態 | `IN_PROGRESS` |
-| 共同基準 | `<派工時填入>` |
-| 實作者 | `<派工時填入>` |
+| 共同基準 | `7585f00` |
+| 實作者 | Sonnet 5 high（一般票，依 `dispatch-model-profile.md` 分層） |
 | 審閱者 | 控制面（Opus 5） |
 | 責任邊界 | `tests/staging/environment_core/` 與使用 disposable environment 的測試檔 |
 | 禁止修改 | `library/` 下任何產品程式碼 |
