@@ -4,7 +4,15 @@
 
 它不是公司專案的 runtime service、MCP server、hook、CI 依賴、Git submodule、symlink、package dependency 或原始碼 import。因此拔除後，公司的建置、測試、部署與既有程式不會受影響。
 
-## 目前發行：0.4.8
+## 目前發行：0.4.9
+
+0.4.9 是**第一個公開版**。功能與 0.4.8 相同——這一版存在的理由是公開前的清洗：
+本 repo 原先是私有的，工作樹、全部歷史 commit 與每一個已發行 zip 的 payload 裡都帶著
+來源專案的識別詞與個人機器路徑。清洗覆蓋三層（工作樹替換、`git filter-repo` 重寫全歷史、
+刪除並重建 release 資產），因此 0.4.9 之前的所有 release 都已從 GitHub 移除，
+歷代 commit 的 SHA 也全部改變。舊 clone 請重新 clone。
+
+已安裝的機器不受影響；下次更新裝 0.4.9 即可。
 
 0.4.8 把零件接成一條路，並且**在真安裝的 store 上驗證過整條路**。派工＝admit →
 claim → spawn 一條路徑（`dispatch_session`），claim 先於 spawn，spawn 失敗立即補償；
@@ -161,9 +169,9 @@ red 證據重定義）。該版的兩個誠實邊界（live 安裝停在
 
 ## Codex 使用方式
 
-### 0.4.8 完整 bundle 安裝
+### 0.4.9 完整 bundle 安裝
 
-正式的一鍵入口是隨 release 發布的 `johnny-install.cmd`，將其下載至與經核准且 SHA-256 相符的 `johnny-ai-skill-0.4.8.zip` 同一資料夾下雙擊執行（或在終端機直接執行 `install.ps1 -BundleZip <path>`）。它會先核驗 bundle SHA-256，並在確認相符後抽出 `install.ps1` 進行安裝引導。bootstrap 會先顯示 Codex、Git、Python 與核心 dependency 計畫；需要下載時必須由使用者輸入 `INSTALL` 確認。它只建立 per-user Johnny-owned runtime，不會把 plugin、venv、receipt 或 cache 複製到公司 repo。
+正式的一鍵入口是隨 release 發布的 `johnny-install.cmd`，將其下載至與經核准且 SHA-256 相符的 `johnny-ai-skill-0.4.9.zip` 同一資料夾下雙擊執行（或在終端機直接執行 `install.ps1 -BundleZip <path>`）。它會先核驗 bundle SHA-256，並在確認相符後抽出 `install.ps1` 進行安裝引導。bootstrap 會先顯示 Codex、Git、Python 與核心 dependency 計畫；需要下載時必須由使用者輸入 `INSTALL` 確認。它只建立 per-user Johnny-owned runtime，不會把 plugin、venv、receipt 或 cache 複製到公司 repo。
 
 不得把原始碼 checkout 或 `main` 當成已核准 bundle；正式入口永遠是 digest 與已核准
 release 相符的 bundle。既有 `0.3.x` skill-only 安裝仍可使用 private Git
