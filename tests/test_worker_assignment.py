@@ -279,6 +279,43 @@ class DuplicateClaimTests(unittest.TestCase):
             self.assertIs(repeat.status, WorkerClaimStatus.REFUSED)
             self.assertIs(repeat.failure, WorkerClaimFailure.RECEIPT_ALREADY_CLAIMED)
 
+    def test_a_settled_claim_still_refuses_a_second_claim_on_that_receipt(
+        self,
+    ) -> None:
+        """The settled row is a tombstone, and P5 leans its whole weight on it.
+
+        A receipt reference that has ever appeared here can never be claimed
+        again, whatever lifecycle its row reached. That is what makes ending a
+        compensated receipt safe: the retired receipt cannot come back into
+        somebody's hands beside its successor, so the successor really is the
+        only claimable receipt on the ticket. If a settled row stopped
+        blocking, the redispatch route would hand one ticket out twice.
+        """
+
+        with TemporaryDirectory() as temporary:
+            layout, repository = _seed(temporary)
+            claimed = claim_worker_assignment(layout, _claim_request(repository))
+            assert claimed.assignment is not None
+            settled = settle_worker_assignment(
+                layout,
+                WorkerSettlementRequest(
+                    claim_id=claimed.assignment.claim_id, receipt_ref="receipt-aaa"
+                ),
+            )
+            self.assertIs(settled.status, WorkerSettlementStatus.SETTLED)
+
+            again = claim_worker_assignment(
+                layout, _claim_request(repository, worker_ref="worker-two")
+            )
+
+            self.assertIs(again.status, WorkerClaimStatus.REFUSED)
+            self.assertIs(again.failure, WorkerClaimFailure.RECEIPT_ALREADY_CLAIMED)
+            read = read_worker_assignments(layout)
+            assert read.assignments is not None
+            self.assertEqual(len(read.assignments), 1)
+            self.assertIs(read.assignments[0].lifecycle, AssignmentLifecycle.SETTLED)
+            self.assertEqual(read.assignments[0].worker_ref, "worker-one")
+
     def test_two_different_receipts_each_get_their_own_assignment(self) -> None:
         with TemporaryDirectory() as temporary:
             layout, repository = _seed(temporary)

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from enum import Enum
 from pathlib import Path
 from types import TracebackType
 from typing import BinaryIO, Literal, Self
@@ -11,6 +12,7 @@ import tempfile
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
 
+from library.workflow_router.contracts import ProjectId
 from library.workflow_router.live_dispatch_contracts import (
     ApprovedArtifactLifecycle,
     ApprovedDispatchArtifactReadRequest,
@@ -22,6 +24,7 @@ from library.workflow_router.live_dispatch_contracts import (
     ArtifactReadStatus,
     ArtifactRegistrationFailure,
     ArtifactRegistrationStatus,
+    ReceiptId,
     ReceiptIssueFailure,
     ReceiptIssueStatus,
     ReceiptLifecycle,
@@ -32,6 +35,7 @@ from library.workflow_router.live_dispatch_contracts import (
     TicketReceiptIssueResult,
     TicketReceiptReadRequest,
     TicketReceiptReadResult,
+    TicketReference,
 )
 from library.workflow_router.thread_dispatch_contracts import (
     CodexThreadDispatchAttemptRecord,
@@ -69,6 +73,82 @@ _SCHEMA_REVISION: Literal["live-dispatch-metadata-v1"] = "live-dispatch-metadata
 _CHECKPOINT_NAME = "live-dispatch-metadata-v1.json"
 _LOCK_NAME = "live-dispatch-metadata-v1.lock"
 _TEMP_PREFIX = ".live-dispatch-metadata-v1-"
+
+# The lifecycles that end a receipt's authority. `read_receipt` already
+# reported both as CLOSED; naming the pair once means "terminal" has a single
+# definition rather than one copy per call site, and the copies cannot drift.
+_TERMINAL_RECEIPT_LIFECYCLES = (ReceiptLifecycle.CLOSED, ReceiptLifecycle.REVOKED)
+
+
+class ReceiptRevokeStatus(str, Enum):
+    """Finite outcomes of one receipt revocation."""
+
+    REVOKED = "REVOKED"
+    ALREADY_REVOKED = "ALREADY_REVOKED"
+    NOT_FOUND = "NOT_FOUND"
+    RECEIPT_MISMATCH = "RECEIPT_MISMATCH"
+    NOT_REVOCABLE = "NOT_REVOCABLE"
+    STORAGE_UNAVAILABLE = "STORAGE_UNAVAILABLE"
+
+
+class ReceiptRevokeFailure(str, Enum):
+    """Finite reasons a revocation is refused, one name per refusal status."""
+
+    NOT_FOUND = "NOT_FOUND"
+    RECEIPT_MISMATCH = "RECEIPT_MISMATCH"
+    NOT_REVOCABLE = "NOT_REVOCABLE"
+    STORAGE_UNAVAILABLE = "STORAGE_UNAVAILABLE"
+
+
+class TicketReceiptRevokeRequest(BaseModel):
+    """Which canonical receipt to end, named exactly.
+
+    The receipt id is carried beside the (project, ticket) key for the reason
+    a settlement carries its receipt: a request keyed only by the ticket would
+    end whichever receipt happened to hold the key, so a stale request from a
+    caller that has not seen the current books would silently retire somebody
+    else's live authority.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+        frozen=True,
+        strict=True,
+        revalidate_instances="always",
+    )
+
+    project_id: ProjectId
+    ticket_reference: TicketReference
+    receipt_id: ReceiptId
+
+
+class TicketReceiptRevokeResult(BaseModel):
+    """Exactly one ended receipt, or exactly one finite refusal."""
+
+    model_config = ConfigDict(
+        extra="forbid",
+        frozen=True,
+        strict=True,
+        revalidate_instances="always",
+    )
+
+    status: ReceiptRevokeStatus
+    receipt: TicketReceipt | None = None
+    failure: ReceiptRevokeFailure | None = None
+
+    @model_validator(mode="after")
+    def exact_revocation_shape(self) -> Self:
+        ended = self.status in (
+            ReceiptRevokeStatus.REVOKED,
+            ReceiptRevokeStatus.ALREADY_REVOKED,
+        )
+        if ended and (self.receipt is None or self.failure is not None):
+            raise ValueError("an ended receipt requires one receipt and no failure")
+        if not ended and (self.receipt is not None or self.failure is None):
+            raise ValueError("a refused revocation requires one failure and no receipt")
+        if not ended and self.failure is not None and self.failure.value != self.status.value:
+            raise ValueError("revocation status and failure must match")
+        return self
 
 
 @dataclass(frozen=True, slots=True)
@@ -212,6 +292,40 @@ def _receipt_from_request(request: TicketReceiptIssueRequest) -> TicketReceipt:
     )
 
 
+def _receipt_with_lifecycle(
+    receipt: TicketReceipt, lifecycle: ReceiptLifecycle
+) -> TicketReceipt:
+    """Rebuild one receipt at a new lifecycle, field for field.
+
+    Written out rather than copied through a model helper so that adding a
+    field to `TicketReceipt` breaks this function loudly instead of letting a
+    silently dropped field travel into the checkpoint. The router's own
+    `execution_replacement._replace_receipt_lifecycle` is the precedent.
+    """
+
+    return TicketReceipt(
+        project_id=receipt.project_id,
+        receipt_id=receipt.receipt_id,
+        ticket_reference=receipt.ticket_reference,
+        ticket_revision=receipt.ticket_revision,
+        ticket_digest=receipt.ticket_digest,
+        ticket_document_commit=receipt.ticket_document_commit,
+        handoff_reference=receipt.handoff_reference,
+        handoff_revision=receipt.handoff_revision,
+        handoff_digest=receipt.handoff_digest,
+        handoff_document_commit=receipt.handoff_document_commit,
+        baseline_commit=receipt.baseline_commit,
+        implementation_owner_id=receipt.implementation_owner_id,
+        expected_return=receipt.expected_return,
+        descriptor_binding=receipt.descriptor_binding,
+        correlation_id=receipt.correlation_id,
+        dispatch_question_id=receipt.dispatch_question_id,
+        worktree_fingerprint=receipt.worktree_fingerprint,
+        branch_fingerprint=receipt.branch_fingerprint,
+        lifecycle=lifecycle,
+    )
+
+
 def _storage_register_failure() -> ApprovedDispatchArtifactRegisterResult:
     return ApprovedDispatchArtifactRegisterResult(
         status=ArtifactRegistrationStatus.STORAGE_UNAVAILABLE,
@@ -230,6 +344,13 @@ def _storage_issue_failure() -> TicketReceiptIssueResult:
     return TicketReceiptIssueResult(
         status=ReceiptIssueStatus.STORAGE_UNAVAILABLE,
         failure=ReceiptIssueFailure.STORAGE_UNAVAILABLE,
+    )
+
+
+def _storage_revoke_failure() -> TicketReceiptRevokeResult:
+    return TicketReceiptRevokeResult(
+        status=ReceiptRevokeStatus.STORAGE_UNAVAILABLE,
+        failure=ReceiptRevokeFailure.STORAGE_UNAVAILABLE,
     )
 
 
@@ -427,21 +548,37 @@ class LiveDispatchMetadataBoundary:
                     None,
                 )
                 if existing is not None:
-                    if (
-                        existing.lifecycle in (ReceiptLifecycle.ACTIVE, ReceiptLifecycle.QUARANTINED)
-                        and existing == candidate
-                    ):
+                    if existing.lifecycle not in _TERMINAL_RECEIPT_LIFECYCLES:
+                        # A live receipt still holds the key: identical repeats
+                        # converge, everything else conflicts, exactly as before.
+                        if existing == candidate:
+                            return TicketReceiptIssueResult(
+                                status=ReceiptIssueStatus.ALREADY_ISSUED,
+                                receipt=existing,
+                            )
                         return TicketReceiptIssueResult(
-                            status=ReceiptIssueStatus.ALREADY_ISSUED,
-                            receipt=existing,
+                            status=ReceiptIssueStatus.RECEIPT_CONFLICT,
+                            failure=ReceiptIssueFailure.RECEIPT_CONFLICT,
                         )
-                    return TicketReceiptIssueResult(
-                        status=ReceiptIssueStatus.RECEIPT_CONFLICT,
-                        failure=ReceiptIssueFailure.RECEIPT_CONFLICT,
-                    )
+                    # A terminal receipt has no authority left to defend, so it
+                    # stops holding (project, ticket) and a successor may be
+                    # issued. Its own id, though, is spent: reissuing it would
+                    # undo a revocation by replay, and the router's replacement
+                    # policy already requires a successor to differ from the
+                    # receipt it replaces.
+                    if existing.receipt_id == candidate.receipt_id:
+                        return TicketReceiptIssueResult(
+                            status=ReceiptIssueStatus.RECEIPT_CONFLICT,
+                            failure=ReceiptIssueFailure.RECEIPT_CONFLICT,
+                        )
+                retained = tuple(
+                    receipt
+                    for receipt in checkpoint.receipts
+                    if _receipt_key(receipt) != receipt_key
+                )
                 receipts = tuple(
                     sorted(
-                        (*checkpoint.receipts, candidate),
+                        (*retained, candidate),
                         key=_receipt_key,
                     )
                 )
@@ -482,7 +619,7 @@ class LiveDispatchMetadataBoundary:
                         status=ReceiptReadStatus.STALE_REVISION,
                         failure=ReceiptReadFailure.STALE_REVISION,
                     )
-                if receipt.lifecycle in (ReceiptLifecycle.CLOSED, ReceiptLifecycle.REVOKED):
+                if receipt.lifecycle in _TERMINAL_RECEIPT_LIFECYCLES:
                     return TicketReceiptReadResult(
                         status=ReceiptReadStatus.CLOSED,
                         failure=ReceiptReadFailure.CLOSED,
@@ -493,6 +630,86 @@ class LiveDispatchMetadataBoundary:
                 )
         except (OSError, UnicodeError, ValidationError):
             return _storage_receipt_read_failure()
+
+    def revoke_receipt(
+        self, request: TicketReceiptRevokeRequest
+    ) -> TicketReceiptRevokeResult:
+        """End one exact canonical receipt, releasing its (project, ticket) key.
+
+        Until this method existed the terminal lifecycles were read-only: every
+        reader knew what `REVOKED` meant and no writer could ever produce it,
+        so one failed spawn ended a ticket's life on the wired path for good.
+        The compensation closed the books correctly and nobody could reopen
+        them.
+
+        This is the CAS half of reopening them, and only the CAS half. It
+        proves nothing about whether reopening is *allowed* — that the claim
+        came back, that the caller may dispatch at all — and it deliberately
+        cannot: the assignment ledger and the owner grant are not readable from
+        here. `dispatch_authority.revoke_dispatch_receipt` is the entry that
+        holds those proofs, and it is the only caller that should exist.
+
+        Ending an already-ended receipt converges rather than refusing, so a
+        revocation interrupted before its successor was issued can be resumed
+        by repeating it. Every other disagreement with the books — no receipt,
+        a different receipt on the key, a lifecycle with no route to REVOKED —
+        refuses under its own name and writes nothing.
+        """
+
+        if type(request) is not TicketReceiptRevokeRequest:
+            return _storage_revoke_failure()
+        try:
+            with _ExclusiveWindowsFileLock(self._lock_path):
+                checkpoint = self._load_checkpoint()
+                key = (request.project_id, request.ticket_reference)
+                existing = next(
+                    (
+                        receipt
+                        for receipt in checkpoint.receipts
+                        if _receipt_key(receipt) == key
+                    ),
+                    None,
+                )
+                if existing is None:
+                    return TicketReceiptRevokeResult(
+                        status=ReceiptRevokeStatus.NOT_FOUND,
+                        failure=ReceiptRevokeFailure.NOT_FOUND,
+                    )
+                if existing.receipt_id != request.receipt_id:
+                    return TicketReceiptRevokeResult(
+                        status=ReceiptRevokeStatus.RECEIPT_MISMATCH,
+                        failure=ReceiptRevokeFailure.RECEIPT_MISMATCH,
+                    )
+                if existing.lifecycle is ReceiptLifecycle.REVOKED:
+                    return TicketReceiptRevokeResult(
+                        status=ReceiptRevokeStatus.ALREADY_REVOKED,
+                        receipt=existing,
+                    )
+                if existing.lifecycle is not ReceiptLifecycle.ACTIVE:
+                    return TicketReceiptRevokeResult(
+                        status=ReceiptRevokeStatus.NOT_REVOCABLE,
+                        failure=ReceiptRevokeFailure.NOT_REVOCABLE,
+                    )
+                revoked = _receipt_with_lifecycle(existing, ReceiptLifecycle.REVOKED)
+                receipts = tuple(
+                    revoked if _receipt_key(receipt) == key else receipt
+                    for receipt in checkpoint.receipts
+                )
+                updated = _Checkpoint(
+                    schema_revision=checkpoint.schema_revision,
+                    generation=checkpoint.generation + 1,
+                    artifacts=checkpoint.artifacts,
+                    receipts=receipts,
+                    dispatch_attempts=checkpoint.dispatch_attempts,
+                    wake_attempts=checkpoint.wake_attempts,
+                )
+                self._commit_checkpoint(updated)
+                return TicketReceiptRevokeResult(
+                    status=ReceiptRevokeStatus.REVOKED,
+                    receipt=revoked,
+                )
+        except (OSError, UnicodeError, ValidationError):
+            return _storage_revoke_failure()
 
     def claim_dispatch_attempt(
         self,
@@ -809,4 +1026,11 @@ class LiveDispatchMetadataBoundary:
             return _storage_wake_settlement_failure()
 
 
-__all__ = ["JohnnyMetadataRoot", "LiveDispatchMetadataBoundary"]
+__all__ = [
+    "JohnnyMetadataRoot",
+    "LiveDispatchMetadataBoundary",
+    "ReceiptRevokeFailure",
+    "ReceiptRevokeStatus",
+    "TicketReceiptRevokeRequest",
+    "TicketReceiptRevokeResult",
+]

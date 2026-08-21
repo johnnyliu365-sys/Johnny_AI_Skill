@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import ast
+import json
 from pathlib import Path
 import subprocess
 import sys
@@ -20,10 +21,16 @@ from library.local_orchestration import (
     LiveDispatchMetadataBoundary,
     LiveDispatchMetadataStore,
     ReceiptIssueStatus,
+    ReceiptLifecycle,
     ReceiptReadStatus,
     TicketReceiptIssueRequest,
     TicketReceiptIssueResult,
     TicketReceiptReadRequest,
+)
+from library.local_orchestration.live_dispatch_metadata_boundary import (
+    ReceiptRevokeFailure,
+    ReceiptRevokeStatus,
+    TicketReceiptRevokeRequest,
 )
 
 
@@ -397,6 +404,262 @@ class DurableLiveDispatchBoundaryTests(unittest.TestCase):
                     )
                     self.assertEqual(payload, checkpoint_path.read_bytes())
                     self.assertEqual((), tuple(root.glob(_TEMP_GLOB)))
+
+
+class ReceiptRevocationBoundaryTests(unittest.TestCase):
+    """P5-R1: the terminal lifecycles finally have a writer, and only one.
+
+    Every reader in the tree already knew what `REVOKED` meant. Nothing could
+    produce it, so a receipt outlived its own dead dispatch and kept the
+    (project, ticket) key for good. These cells pin the CAS half of ending
+    one: what it frees, what it refuses, and what it writes when it refuses,
+    which is nothing.
+    """
+
+    def _seed(self, root: Path) -> ApprovedDispatchArtifactRecord:
+        record = _artifact()
+        store = _store(root)
+        store.register_artifact(
+            ApprovedDispatchArtifactRegisterRequest(artifact=record)
+        )
+        issued = store.issue_receipt(_issue_request(record))
+        self.assertEqual(ReceiptIssueStatus.ISSUED, issued.status)
+        return record
+
+    def _revoke_request(
+        self,
+        record: ApprovedDispatchArtifactRecord,
+        receipt_id: str = "receipt-live-dispatch-r03-01",
+    ) -> TicketReceiptRevokeRequest:
+        return TicketReceiptRevokeRequest(
+            project_id=record.project_id,
+            ticket_reference=record.ticket_reference,
+            receipt_id=receipt_id,
+        )
+
+    def _read_request(
+        self, record: ApprovedDispatchArtifactRecord
+    ) -> TicketReceiptReadRequest:
+        return TicketReceiptReadRequest(
+            project_id=record.project_id,
+            ticket_reference=record.ticket_reference,
+            ticket_revision=record.ticket_revision,
+        )
+
+    def test_a_revoked_receipt_frees_the_key_for_a_successor(self) -> None:
+        """The whole point: the key is released, and a successor may be issued."""
+
+        with TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory).resolve(strict=True)
+            record = self._seed(root)
+            boundary = LiveDispatchMetadataBoundary(JohnnyMetadataRoot(root))
+
+            revoked = boundary.revoke_receipt(self._revoke_request(record))
+
+            self.assertEqual(ReceiptRevokeStatus.REVOKED, revoked.status)
+            self.assertIsNotNone(revoked.receipt)
+            if revoked.receipt is None:
+                self.fail("a revocation must carry the receipt it ended")
+            self.assertIs(revoked.receipt.lifecycle, ReceiptLifecycle.REVOKED)
+            self.assertEqual(
+                "receipt-live-dispatch-r03-01", revoked.receipt.receipt_id
+            )
+
+            store = _store(root)
+            self.assertEqual(
+                ReceiptReadStatus.CLOSED,
+                store.read_receipt(self._read_request(record)).status,
+            )
+
+            successor = store.issue_receipt(
+                _issue_request(record, "receipt-live-dispatch-r03-02")
+            )
+            self.assertEqual(ReceiptIssueStatus.ISSUED, successor.status)
+            reread = store.read_receipt(self._read_request(record))
+            self.assertEqual(ReceiptReadStatus.FOUND, reread.status)
+            if reread.receipt is None:
+                self.fail("the successor must be the canonical receipt")
+            self.assertEqual("receipt-live-dispatch-r03-02", reread.receipt.receipt_id)
+            checkpoint = (root / _CHECKPOINT_NAME).read_text(encoding="utf-8")
+            self.assertEqual(1, checkpoint.count('"lifecycle":"ACTIVE"'))
+            self.assertEqual((), tuple(root.glob(_TEMP_GLOB)))
+
+    def test_a_live_receipt_still_holds_the_key_against_every_successor(self) -> None:
+        """The property being preserved, not the one being added."""
+
+        with TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory).resolve(strict=True)
+            record = self._seed(root)
+
+            conflicting = _store(root).issue_receipt(
+                _issue_request(record, "receipt-live-dispatch-r03-02")
+            )
+
+            self.assertEqual(ReceiptIssueStatus.RECEIPT_CONFLICT, conflicting.status)
+
+    def test_a_revoked_receipt_id_is_spent_and_cannot_be_reissued(self) -> None:
+        """Otherwise a replay of the original request would undo the revocation."""
+
+        with TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory).resolve(strict=True)
+            record = self._seed(root)
+            boundary = LiveDispatchMetadataBoundary(JohnnyMetadataRoot(root))
+            boundary.revoke_receipt(self._revoke_request(record))
+
+            replayed = _store(root).issue_receipt(_issue_request(record))
+
+            self.assertEqual(ReceiptIssueStatus.RECEIPT_CONFLICT, replayed.status)
+            self.assertEqual(
+                ReceiptReadStatus.CLOSED,
+                _store(root).read_receipt(self._read_request(record)).status,
+            )
+
+    def test_revoking_twice_converges_and_writes_nothing_the_second_time(self) -> None:
+        """Convergence is what makes an interrupted redispatch resumable."""
+
+        with TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory).resolve(strict=True)
+            record = self._seed(root)
+            boundary = LiveDispatchMetadataBoundary(JohnnyMetadataRoot(root))
+            first = boundary.revoke_receipt(self._revoke_request(record))
+            self.assertEqual(ReceiptRevokeStatus.REVOKED, first.status)
+            after_first = (root / _CHECKPOINT_NAME).read_bytes()
+
+            second = boundary.revoke_receipt(self._revoke_request(record))
+
+            self.assertEqual(ReceiptRevokeStatus.ALREADY_REVOKED, second.status)
+            self.assertEqual(first.receipt, second.receipt)
+            self.assertEqual(after_first, (root / _CHECKPOINT_NAME).read_bytes())
+
+    def test_revoking_by_the_wrong_receipt_id_refuses_and_the_receipt_stands(
+        self,
+    ) -> None:
+        """A stale request must never end whichever receipt holds the key now."""
+
+        with TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory).resolve(strict=True)
+            record = self._seed(root)
+            boundary = LiveDispatchMetadataBoundary(JohnnyMetadataRoot(root))
+            before = (root / _CHECKPOINT_NAME).read_bytes()
+
+            refused = boundary.revoke_receipt(
+                self._revoke_request(record, "receipt-live-dispatch-r03-09")
+            )
+
+            self.assertEqual(ReceiptRevokeStatus.RECEIPT_MISMATCH, refused.status)
+            self.assertIs(refused.failure, ReceiptRevokeFailure.RECEIPT_MISMATCH)
+            self.assertIsNone(refused.receipt)
+            self.assertEqual(before, (root / _CHECKPOINT_NAME).read_bytes())
+            self.assertEqual(
+                ReceiptReadStatus.FOUND,
+                _store(root).read_receipt(self._read_request(record)).status,
+            )
+
+    def test_revoking_a_ticket_that_holds_no_receipt_is_named_not_found(self) -> None:
+        with TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory).resolve(strict=True)
+            record = _artifact()
+            boundary = LiveDispatchMetadataBoundary(JohnnyMetadataRoot(root))
+
+            refused = boundary.revoke_receipt(self._revoke_request(record))
+
+            self.assertEqual(ReceiptRevokeStatus.NOT_FOUND, refused.status)
+            self.assertIs(refused.failure, ReceiptRevokeFailure.NOT_FOUND)
+            self.assertIsNot(
+                refused.failure,
+                ReceiptRevokeFailure.RECEIPT_MISMATCH,
+                "no receipt at all and the wrong receipt are different facts",
+            )
+
+    def test_a_foreign_request_is_refused_without_touching_the_store(self) -> None:
+        with TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory).resolve(strict=True)
+            record = self._seed(root)
+            boundary = LiveDispatchMetadataBoundary(JohnnyMetadataRoot(root))
+            before = (root / _CHECKPOINT_NAME).read_bytes()
+
+            refused = boundary.revoke_receipt(object())  # type: ignore[arg-type]
+
+            self.assertEqual(ReceiptRevokeStatus.STORAGE_UNAVAILABLE, refused.status)
+            self.assertEqual(before, (root / _CHECKPOINT_NAME).read_bytes())
+            self.assertEqual(
+                ReceiptReadStatus.FOUND,
+                _store(root).read_receipt(self._read_request(record)).status,
+            )
+
+    def test_an_interrupted_revocation_preserves_the_previous_checkpoint(self) -> None:
+        with TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory).resolve(strict=True)
+            record = self._seed(root)
+            boundary = LiveDispatchMetadataBoundary(JohnnyMetadataRoot(root))
+            before = (root / _CHECKPOINT_NAME).read_bytes()
+
+            with patch(
+                "library.local_orchestration.live_dispatch_metadata_boundary.os.replace",
+                side_effect=OSError("injected atomic replace interruption"),
+            ):
+                interrupted = boundary.revoke_receipt(self._revoke_request(record))
+
+            self.assertEqual(
+                ReceiptRevokeStatus.STORAGE_UNAVAILABLE, interrupted.status
+            )
+            self.assertEqual(before, (root / _CHECKPOINT_NAME).read_bytes())
+            self.assertEqual((), tuple(root.glob(_TEMP_GLOB)))
+            self.assertEqual(
+                ReceiptReadStatus.FOUND,
+                _store(root).read_receipt(self._read_request(record)).status,
+            )
+
+    def test_an_unreadable_checkpoint_refuses_the_revocation_without_repair(
+        self,
+    ) -> None:
+        with TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory).resolve(strict=True)
+            record = _artifact()
+            payload = b'{"schema_revision":'
+            (root / _CHECKPOINT_NAME).write_bytes(payload)
+            boundary = LiveDispatchMetadataBoundary(JohnnyMetadataRoot(root))
+
+            refused = boundary.revoke_receipt(self._revoke_request(record))
+
+            self.assertEqual(ReceiptRevokeStatus.STORAGE_UNAVAILABLE, refused.status)
+            self.assertIsNot(
+                refused.failure,
+                ReceiptRevokeFailure.NOT_FOUND,
+                "an unreadable checkpoint must never look like an absent receipt",
+            )
+            self.assertEqual(payload, (root / _CHECKPOINT_NAME).read_bytes())
+
+    def test_the_persisted_schema_revision_is_unchanged_by_the_new_route(self) -> None:
+        """No field was added and no shape changed, so the revision holds.
+
+        `REVOKED` was already a representable lifecycle in this schema; what
+        was missing was a writer, not a place to write. A checkpoint carrying
+        a revoked receipt is a valid v1 checkpoint and an older build reads it
+        without misreading anything — it simply refuses the successor that
+        this build admits, which is the stricter direction and safe. So the
+        revision stays where it is, pinned here so that a future change which
+        *does* alter the shape has to move it deliberately.
+        """
+
+        with TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory).resolve(strict=True)
+            record = self._seed(root)
+            boundary = LiveDispatchMetadataBoundary(JohnnyMetadataRoot(root))
+            boundary.revoke_receipt(self._revoke_request(record))
+
+            stored = json.loads(
+                (root / _CHECKPOINT_NAME).read_text(encoding="utf-8")
+            )
+            self.assertEqual("live-dispatch-metadata-v1", stored["schema_revision"])
+            self.assertEqual(
+                ["REVOKED"], [item["lifecycle"] for item in stored["receipts"]]
+            )
+            reopened = _store(root)
+            self.assertEqual(
+                ReceiptReadStatus.CLOSED,
+                reopened.read_receipt(self._read_request(record)).status,
+            )
 
 
 class DurableLiveDispatchSourceGateTests(unittest.TestCase):

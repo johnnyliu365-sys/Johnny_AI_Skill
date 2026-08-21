@@ -25,6 +25,9 @@ from library.local_orchestration.dispatch_authority import (
     admit_dispatch,
     create_dispatch_grant,
 )
+from library.local_orchestration.dispatch_authority import (
+    ReceiptRevocationFailure,
+)
 from library.local_orchestration.dispatch_session import (
     TicketResolution,
     WorkIntegrationFailure,
@@ -34,6 +37,9 @@ from library.local_orchestration.dispatch_session import (
     WorkerDispatchRequest,
     WorkerDispatchResult,
     WorkerDispatchStatus,
+    WorkerRedispatchFailure,
+    WorkerRedispatchRequest,
+    WorkerRedispatchStatus,
     WorkerReturnFailure,
     WorkerReturnRequest,
     WorkerReturnStatus,
@@ -41,6 +47,7 @@ from library.local_orchestration.dispatch_session import (
     dispatch_worker,
     integrate_next_work,
     record_worker_return,
+    redispatch_worker,
 )
 from library.local_orchestration.document_mutation_gate import (
     DocumentMutationFailure,
@@ -79,9 +86,64 @@ from tests.test_document_mutation_gate import (
     _ticket_text,
     _write,
 )
+from tests.test_worker_assignment import _race_children
 
 _WORKER = "worker-p4-cell-01"
 _CONSUMER = "consumer-p4-main-01"
+_METADATA_CHECKPOINT = "live-dispatch-metadata-v1.json"
+
+_REDISPATCH_CHILD = '''\
+import json
+import sys
+from pathlib import Path
+
+sys.path.insert(0, sys.argv[1])
+
+from library.local_orchestration.dispatch_session import (
+    WorkerRedispatchRequest,
+    WorkerSpawnStatus,
+    redispatch_worker,
+)
+from library.local_orchestration.johnny_root_layout import JohnnyRootLayout
+
+
+class _SpawningPort:
+    def spawn_worker(self, receipt, assignment):
+        return WorkerSpawnStatus.SPAWNED
+
+
+layout = JohnnyRootLayout(base=Path(sys.argv[2]))
+request = WorkerRedispatchRequest.model_validate_json(
+    Path(sys.argv[3]).read_text(encoding="utf-8")
+)
+
+# Same gate as the P2 race: pay the import cost, say so, then block until
+# released, so the race is decided by the locks and not by startup jitter.
+print("ready", flush=True)
+sys.stdin.readline()
+
+result = redispatch_worker(layout, request, _SpawningPort())
+print(
+    json.dumps(
+        {
+            "status": result.status.value,
+            "failure": None if result.failure is None else result.failure.value,
+            "upstream": result.upstream_failure,
+            "receipt_id": (
+                None
+                if result.dispatch is None or result.dispatch.receipt is None
+                else result.dispatch.receipt.receipt_id
+            ),
+            "claim_id": (
+                None
+                if result.dispatch is None or result.dispatch.assignment is None
+                else result.dispatch.assignment.claim_id
+            ),
+        }
+    ),
+    flush=True,
+)
+'''
 
 
 # ---------------------------------------------------------------------------
@@ -228,6 +290,32 @@ def _return_request(dispatched: WorkerDispatchResult) -> WorkerReturnRequest:
     )
 
 
+def _receipt_lifecycles(layout: JohnnyRootLayout) -> list[str]:
+    """Every receipt lifecycle in the durable checkpoint, in stored order."""
+
+    checkpoint = layout.queue_root / "metadata" / _METADATA_CHECKPOINT
+    stored = json.loads(checkpoint.read_text(encoding="utf-8"))
+    return [item["lifecycle"] for item in stored["receipts"]]
+
+
+def _redispatch_request(
+    repository: Path,
+    superseded: str,
+    receipt_id: str,
+    worker_ref: str = "worker-p5-cell-02",
+    host_worktree_path: str | None = None,
+) -> WorkerRedispatchRequest:
+    admission = _admission_request(repository, receipt_id)
+    if host_worktree_path is not None:
+        admission = admission.model_copy(
+            update={"host_worktree_path": host_worktree_path}
+        )
+    return WorkerRedispatchRequest(
+        dispatch=WorkerDispatchRequest(admission=admission, worker_ref=worker_ref),
+        superseded_receipt_ref=superseded,
+    )
+
+
 def _poison_queue(layout: JohnnyRootLayout) -> None:
     work_queue.queue_path(layout).write_text("not a queue", encoding="utf-8")
 
@@ -371,6 +459,413 @@ class DispatchPathTests(unittest.TestCase):
                 result.failure, WorkerDispatchFailure.SPAWN_COMPENSATION_FAILED
             )
             self.assertEqual(result.upstream_failure, "STORAGE_UNAVAILABLE")
+
+
+# ---------------------------------------------------------------------------
+# P5: after a compensation, the same ticket can be dispatched again — once
+# ---------------------------------------------------------------------------
+
+
+class RedispatchPathTests(unittest.TestCase):
+    """P5-R4: the dead end from the first live run, ended differently.
+
+    The evidence these cells replay is a real dispatch journal, not a
+    hypothetical: a spawn port fell over, the compensation settled the claim
+    exactly as designed, and then three separate attempts to send the ticket
+    out again were refused in three different ways. The first four cells here
+    are those four moments; the fifth is the one that used to be impossible.
+    """
+
+    def _spawn_failed(
+        self, layout: JohnnyRootLayout, repository: Path
+    ) -> WorkerDispatchResult:
+        """Step one of the live evidence: dispatched, spawn failed, compensated."""
+
+        result = dispatch_worker(
+            layout,
+            WorkerDispatchRequest(
+                admission=_admission_request(repository), worker_ref=_WORKER
+            ),
+            _FailingSpawnPort(),
+        )
+        self.assertIs(result.status, WorkerDispatchStatus.REFUSED)
+        self.assertIs(result.failure, WorkerDispatchFailure.WORKER_SPAWN_FAILED)
+        self.assertEqual(read_orphan_assignments(layout).assignments, ())
+        return result
+
+    def test_the_four_step_dead_end_now_ends_in_a_dispatch(self) -> None:
+        """The whole ticket in one cell: the journal's four steps, then a fifth."""
+
+        with TemporaryDirectory() as temporary:
+            layout, repository = _plain_world(Path(temporary))
+
+            # 13:15:12 — DISPATCHED, spawn failed, compensation settled.
+            self._spawn_failed(layout, repository)
+
+            # 13:15:39 — admission converges idempotently, the claim does not.
+            repeated = dispatch_worker(
+                layout,
+                WorkerDispatchRequest(
+                    admission=_admission_request(repository), worker_ref=_WORKER
+                ),
+                _RecordingSpawnPort(),
+            )
+            self.assertIs(repeated.status, WorkerDispatchStatus.REFUSED)
+            self.assertIs(repeated.failure, WorkerDispatchFailure.CLAIM_REFUSED)
+            self.assertEqual(repeated.upstream_failure, "RECEIPT_ALREADY_CLAIMED")
+
+            # 13:15:58 — a new receipt on the same handoff: the key is taken.
+            new_receipt = dispatch_worker(
+                layout,
+                WorkerDispatchRequest(
+                    admission=_admission_request(
+                        repository, "receipt-vita-feature-002"
+                    ),
+                    worker_ref=_WORKER,
+                ),
+                _RecordingSpawnPort(),
+            )
+            self.assertIs(new_receipt.status, WorkerDispatchStatus.REFUSED)
+            self.assertIs(new_receipt.failure, WorkerDispatchFailure.RECEIPT_REFUSED)
+            self.assertEqual(new_receipt.upstream_failure, "RECEIPT_CONFLICT")
+
+            # 13:17:01 — a whole new identity: the key does not care who asks.
+            fresh_admission = _admission_request(
+                repository, "receipt-vita-feature-003"
+            )
+            fresh_identity = fresh_admission.model_copy(
+                update={
+                    "artifact": fresh_admission.artifact.model_copy(
+                        update={"handoff_reference": "handoff-vita-feature-002"}
+                    )
+                }
+            )
+            new_identity = dispatch_worker(
+                layout,
+                WorkerDispatchRequest(
+                    admission=fresh_identity, worker_ref="worker-p5-cell-03"
+                ),
+                _RecordingSpawnPort(),
+            )
+            self.assertIs(new_identity.status, WorkerDispatchStatus.REFUSED)
+            self.assertIs(new_identity.failure, WorkerDispatchFailure.RECEIPT_REFUSED)
+            self.assertEqual(new_identity.upstream_failure, "RECEIPT_CONFLICT")
+
+            # The fifth step: the named route back.
+            port = _RecordingSpawnPort()
+            redispatched = redispatch_worker(
+                layout,
+                _redispatch_request(
+                    repository,
+                    superseded="receipt-vita-feature-001",
+                    receipt_id="receipt-vita-feature-004",
+                ),
+                port,
+            )
+
+            self.assertIs(
+                redispatched.status,
+                WorkerRedispatchStatus.DISPATCHED,
+                f"{redispatched.failure}/{redispatched.upstream_failure}",
+            )
+            self.assertEqual(
+                "receipt-vita-feature-001", redispatched.superseded_receipt_ref
+            )
+            assert redispatched.revoked_receipt is not None
+            self.assertEqual(
+                "REVOKED", redispatched.revoked_receipt.lifecycle.value
+            )
+            assert redispatched.dispatch is not None
+            assert redispatched.dispatch.receipt is not None
+            assert redispatched.dispatch.assignment is not None
+            self.assertEqual(
+                "receipt-vita-feature-004",
+                redispatched.dispatch.receipt.receipt_id,
+            )
+            self.assertEqual(len(port.calls), 1)
+
+            # One live receipt, and the new claim beside the compensated one.
+            self.assertEqual(["ACTIVE"], _receipt_lifecycles(layout))
+            ledger = read_worker_assignments(layout)
+            assert ledger.assignments is not None
+            self.assertEqual(
+                {
+                    ("receipt-vita-feature-001", AssignmentLifecycle.SETTLED),
+                    ("receipt-vita-feature-004", AssignmentLifecycle.CLAIMED),
+                },
+                {(item.receipt_ref, item.lifecycle) for item in ledger.assignments},
+            )
+            orphans = read_orphan_assignments(layout)
+            assert orphans.assignments is not None
+            self.assertEqual(
+                ["receipt-vita-feature-004"],
+                [item.receipt_ref for item in orphans.assignments],
+            )
+
+            # And the round trip closes: the redispatched worker returns.
+            returned = record_worker_return(
+                layout, _return_request(redispatched.dispatch)
+            )
+            self.assertIs(
+                returned.status, WorkerReturnStatus.RECORDED, f"{returned.failure}"
+            )
+            assert returned.item is not None
+            self.assertEqual(
+                redispatched.dispatch.assignment.claim_id, returned.item.origin_ref
+            )
+            self.assertIs(returned.item.source, WorkSource.WORKER_RETURN)
+            queue = read_work_queue(layout)
+            assert queue.items is not None
+            self.assertEqual(len(queue.items), 1)
+            self.assertIs(queue.items[0].lifecycle, WorkItemLifecycle.PENDING)
+            self.assertEqual(read_orphan_assignments(layout).assignments, ())
+
+    def test_a_redispatch_over_an_open_claim_is_refused_and_spawns_nothing(
+        self,
+    ) -> None:
+        """The door that must not open: an uncompensated ticket stays where it is."""
+
+        with TemporaryDirectory() as temporary:
+            layout, repository = _plain_world(Path(temporary))
+            dispatched = _dispatched(layout, repository)
+            assert dispatched.receipt is not None
+            port = _RecordingSpawnPort()
+
+            result = redispatch_worker(
+                layout,
+                _redispatch_request(
+                    repository,
+                    superseded=dispatched.receipt.receipt_id,
+                    receipt_id="receipt-vita-feature-004",
+                ),
+                port,
+            )
+
+            self.assertIs(result.status, WorkerRedispatchStatus.REFUSED)
+            self.assertIs(result.failure, WorkerRedispatchFailure.REVOCATION_REFUSED)
+            self.assertEqual(
+                result.upstream_failure,
+                ReceiptRevocationFailure.CLAIM_STILL_OPEN.value,
+            )
+            self.assertIsNone(result.dispatch)
+            self.assertEqual(port.calls, [], "a refused revocation tries nothing")
+            self.assertEqual(["ACTIVE"], _receipt_lifecycles(layout))
+            ledger = read_worker_assignments(layout)
+            assert ledger.assignments is not None
+            self.assertEqual(len(ledger.assignments), 1)
+            self.assertIs(ledger.assignments[0].lifecycle, AssignmentLifecycle.CLAIMED)
+
+    def test_an_interrupted_redispatch_leaves_one_readable_state_and_resumes(
+        self,
+    ) -> None:
+        """Old books closed, new books not open — readable, and carried forward.
+
+        The dispatch half is made to refuse after the revocation has already
+        happened, which is the only intermediate state this path may leave.
+        The cell reads that state, then calls again and finishes it.
+        """
+
+        with TemporaryDirectory() as temporary:
+            base = Path(temporary)
+            layout, repository = _plain_world(base)
+            self._spawn_failed(layout, repository)
+            sibling = base / "repo-p5"
+            sibling.mkdir()
+
+            interrupted = redispatch_worker(
+                layout,
+                _redispatch_request(
+                    repository,
+                    superseded="receipt-vita-feature-001",
+                    receipt_id="receipt-vita-feature-004",
+                    host_worktree_path=str(sibling),
+                ),
+                _RecordingSpawnPort(),
+            )
+
+            self.assertIs(interrupted.status, WorkerRedispatchStatus.REFUSED)
+            self.assertIs(
+                interrupted.failure, WorkerRedispatchFailure.DISPATCH_REFUSED
+            )
+            self.assertEqual(
+                interrupted.upstream_failure,
+                WorkerDispatchFailure.RECEIPT_REFUSED.value,
+            )
+            assert interrupted.dispatch is not None
+            self.assertEqual(
+                interrupted.dispatch.upstream_failure,
+                "WORKTREE_OUTSIDE_REPOSITORY_ROOT",
+            )
+            assert interrupted.revoked_receipt is not None
+
+            # The state left behind, read rather than assumed.
+            self.assertEqual(["REVOKED"], _receipt_lifecycles(layout))
+            ledger = read_worker_assignments(layout)
+            assert ledger.assignments is not None
+            self.assertEqual(len(ledger.assignments), 1)
+            self.assertIs(ledger.assignments[0].lifecycle, AssignmentLifecycle.SETTLED)
+            self.assertEqual(read_orphan_assignments(layout).assignments, ())
+            self.assertEqual(read_work_queue(layout).items, ())
+
+            resumed = redispatch_worker(
+                layout,
+                _redispatch_request(
+                    repository,
+                    superseded="receipt-vita-feature-001",
+                    receipt_id="receipt-vita-feature-005",
+                ),
+                _RecordingSpawnPort(),
+            )
+
+            self.assertIs(
+                resumed.status,
+                WorkerRedispatchStatus.DISPATCHED,
+                f"{resumed.failure}/{resumed.upstream_failure}",
+            )
+            self.assertEqual(["ACTIVE"], _receipt_lifecycles(layout))
+
+    def test_a_second_redispatch_naming_the_stale_receipt_is_refused(self) -> None:
+        """After a redispatch the superseded id is history, and saying so is named."""
+
+        with TemporaryDirectory() as temporary:
+            layout, repository = _plain_world(Path(temporary))
+            self._spawn_failed(layout, repository)
+            first = redispatch_worker(
+                layout,
+                _redispatch_request(
+                    repository,
+                    superseded="receipt-vita-feature-001",
+                    receipt_id="receipt-vita-feature-004",
+                ),
+                _RecordingSpawnPort(),
+            )
+            self.assertIs(first.status, WorkerRedispatchStatus.DISPATCHED)
+
+            stale = redispatch_worker(
+                layout,
+                _redispatch_request(
+                    repository,
+                    superseded="receipt-vita-feature-001",
+                    receipt_id="receipt-vita-feature-005",
+                ),
+                _RecordingSpawnPort(),
+            )
+
+            self.assertIs(stale.status, WorkerRedispatchStatus.REFUSED)
+            self.assertIs(stale.failure, WorkerRedispatchFailure.REVOCATION_REFUSED)
+            self.assertEqual(
+                stale.upstream_failure,
+                ReceiptRevocationFailure.RECEIPT_MISMATCH.value,
+            )
+            self.assertEqual(["ACTIVE"], _receipt_lifecycles(layout))
+
+    def test_a_foreign_request_is_refused_as_invalid(self) -> None:
+        with TemporaryDirectory() as temporary:
+            layout, _ = _plain_world(Path(temporary))
+
+            result = redispatch_worker(layout, object(), _RecordingSpawnPort())  # type: ignore[arg-type]
+
+            self.assertIs(result.status, WorkerRedispatchStatus.REFUSED)
+            self.assertIs(result.failure, WorkerRedispatchFailure.REQUEST_INVALID)
+
+
+class CrossProcessRedispatchTests(unittest.TestCase):
+    """P5-R5: exactly one redispatch wins, proven between real processes.
+
+    Threads share this interpreter's file handles, so a threaded version of
+    this cell would pass against a build with no file lock at all — the same
+    lesson W5 paid for and P1 and P2 pinned. The redispatch route touches two
+    locked stores in sequence, which is exactly the arrangement where a
+    plausible-looking implementation quietly hands one ticket to two workers.
+    """
+
+    def test_four_processes_redispatching_one_ticket_dispatch_exactly_once(
+        self,
+    ) -> None:
+        with TemporaryDirectory() as temporary:
+            base = Path(temporary).resolve()
+            layout, repository = _plain_world(base)
+            failed = dispatch_worker(
+                layout,
+                WorkerDispatchRequest(
+                    admission=_admission_request(repository), worker_ref=_WORKER
+                ),
+                _FailingSpawnPort(),
+            )
+            self.assertIs(failed.failure, WorkerDispatchFailure.WORKER_SPAWN_FAILED)
+
+            script = base / "redispatch-child.py"
+            script.write_text(_REDISPATCH_CHILD, encoding="utf-8")
+            paths = []
+            for index, name in enumerate(("a", "b", "c", "d")):
+                request = _redispatch_request(
+                    repository,
+                    superseded="receipt-vita-feature-001",
+                    receipt_id=f"receipt-vita-race-{name}",
+                    worker_ref=f"worker-p5-race-{name}",
+                )
+                path = base / f"race-{name}.json"
+                path.write_text(request.model_dump_json(), encoding="utf-8")
+                paths.append(path)
+
+            results = _race_children(script, layout, tuple(paths))
+
+            self.assertEqual(len(results), 4, "every child must produce a verdict")
+            dispatched = [
+                item
+                for item in results
+                if item["status"] == WorkerRedispatchStatus.DISPATCHED.value
+            ]
+            refused = [
+                item
+                for item in results
+                if item["status"] == WorkerRedispatchStatus.REFUSED.value
+            ]
+            self.assertEqual(
+                len(dispatched),
+                1,
+                f"exactly one process may redispatch the ticket: {results}",
+            )
+            self.assertEqual(len(refused), 3, f"{results}")
+            for item in refused:
+                with self.subTest(failure=item["failure"], upstream=item["upstream"]):
+                    self.assertIn(
+                        (item["failure"], item["upstream"]),
+                        (
+                            (
+                                WorkerRedispatchFailure.REVOCATION_REFUSED.value,
+                                ReceiptRevocationFailure.RECEIPT_MISMATCH.value,
+                            ),
+                            (
+                                WorkerRedispatchFailure.DISPATCH_REFUSED.value,
+                                WorkerDispatchFailure.RECEIPT_REFUSED.value,
+                            ),
+                        ),
+                        "a loser must lose at a named door, not by storage error",
+                    )
+
+            # One live receipt, one open claim, and the compensated one intact.
+            self.assertEqual(["ACTIVE"], _receipt_lifecycles(layout))
+            orphans = read_orphan_assignments(layout)
+            assert orphans.assignments is not None
+            self.assertEqual(
+                len(orphans.assignments),
+                1,
+                f"exactly one unsettled claim may exist: {orphans.assignments}",
+            )
+            self.assertEqual(
+                orphans.assignments[0].receipt_ref, dispatched[0]["receipt_id"]
+            )
+            self.assertEqual(
+                orphans.assignments[0].claim_id, dispatched[0]["claim_id"]
+            )
+            ledger = read_worker_assignments(layout)
+            assert ledger.assignments is not None
+            self.assertEqual(
+                len(ledger.assignments),
+                2,
+                f"only the compensated claim and the winner: {ledger.assignments}",
+            )
 
 
 # ---------------------------------------------------------------------------

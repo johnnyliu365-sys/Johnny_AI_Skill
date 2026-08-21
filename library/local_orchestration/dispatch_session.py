@@ -24,6 +24,18 @@ whole:
   name — never folded into the spawn failure it failed to clean up — and the
   orphan it leaves is exactly what `read_orphan_assignments` exists to surface.
 
+**Path one, taken twice — redispatch.** The compensation above closes the
+claim honestly, and the first live run of this route found what closing
+honestly was not enough for: the receipt survives its own dead dispatch. It
+holds the (project, ticket) key that issuance is keyed on, so the ticket that
+lost a spawn could never be dispatched again — the same receipt refused
+because its claim was spent, a new receipt refused because the key was taken,
+a whole new identity refused because the key does not care about identity.
+`redispatch_worker` is the way back, and it is deliberately not a second
+dispatch path: it ends the old receipt through the authority's revocation
+gate, which refuses unless the ledger shows the claim genuinely settled, and
+then calls `dispatch_worker` itself. One path, entered again.
+
 **Path two — return, then integration, with the queue between them.** A
 worker's return settles its claim and lands on the durable queue in one call;
 the main session pulls at its own completion boundary and the pulled work is
@@ -81,7 +93,10 @@ from library.workflow_router.live_dispatch_contracts import TicketReceipt
 from .dispatch_authority import (
     DispatchAdmissionRequest,
     DispatchAdmissionStatus,
+    ReceiptRevocationRequest,
+    ReceiptRevocationStatus,
     admit_dispatch,
+    revoke_dispatch_receipt,
 )
 from .document_mutation_gate import (
     DocumentMutationFailure,
@@ -333,6 +348,172 @@ def dispatch_worker(
         status=WorkerDispatchStatus.DISPATCHED,
         receipt=receipt,
         assignment=assignment,
+    )
+
+
+# --------------------------------------------------------------------------
+# Path one again: the same path, after a compensation closed the books
+# --------------------------------------------------------------------------
+
+
+class WorkerRedispatchStatus(str, Enum):
+    """Finite outcomes of one redispatch."""
+
+    DISPATCHED = "DISPATCHED"
+    REFUSED = "REFUSED"
+
+
+class WorkerRedispatchFailure(str, Enum):
+    """Finite reasons a redispatch is refused, one name per half.
+
+    Two names, because a redispatch is exactly two acts. `REVOCATION_REFUSED`
+    means the books were never reopened and nothing was attempted;
+    `DISPATCH_REFUSED` means they were reopened and the ordinary dispatch path
+    then refused under its own name. Reading them as one code would erase the
+    only distinction that tells an operator whether the old receipt is still
+    standing.
+    """
+
+    REQUEST_INVALID = "REQUEST_INVALID"
+    REVOCATION_REFUSED = "REVOCATION_REFUSED"
+    DISPATCH_REFUSED = "DISPATCH_REFUSED"
+
+
+class WorkerRedispatchRequest(_StrictModel):
+    """One redispatch: the whole next dispatch, plus the receipt it supersedes.
+
+    Carrying an entire `WorkerDispatchRequest` rather than restating its
+    fields is the point: the second half of a redispatch is not a variant of
+    dispatch, it *is* dispatch, and a request shaped this way cannot drift
+    away from the one the ordinary path takes.
+    """
+
+    schema_version: Literal[1] = 1
+    dispatch: WorkerDispatchRequest
+    superseded_receipt_ref: OpaqueMetadataId
+
+
+class WorkerRedispatchResult(_StrictModel):
+    """One redispatched worker, or one finite refusal naming which half failed.
+
+    The dispatch half's own result is carried whole rather than summarised,
+    so every distinction that path draws — claim refused, spawn failed,
+    compensation failed — survives the trip through this one unchanged.
+    """
+
+    status: WorkerRedispatchStatus
+    superseded_receipt_ref: OpaqueMetadataId | None = None
+    revoked_receipt: TicketReceipt | None = None
+    dispatch: WorkerDispatchResult | None = None
+    failure: WorkerRedispatchFailure | None = None
+    upstream_failure: str | None = None
+
+    @model_validator(mode="after")
+    def outcome_is_exclusive(self) -> Self:
+        if self.status is WorkerRedispatchStatus.DISPATCHED:
+            if (
+                self.dispatch is None
+                or self.dispatch.status is not WorkerDispatchStatus.DISPATCHED
+            ):
+                raise ValueError("a redispatch must carry the dispatch it completed")
+            if self.superseded_receipt_ref is None or self.revoked_receipt is None:
+                raise ValueError("a redispatch must name the receipt it superseded")
+            if self.failure is not None or self.upstream_failure is not None:
+                raise ValueError("a redispatch carries no failure")
+        elif self.failure is None:
+            raise ValueError("a refusal must carry a reason")
+        return self
+
+
+def redispatch_worker(
+    layout: JohnnyRootLayout,
+    request: WorkerRedispatchRequest,
+    spawn_port: WorkerSpawnPort,
+) -> WorkerRedispatchResult:
+    """Reopen a compensated ticket's books, then take the ordinary path.
+
+    A failed spawn used to be terminal for a ticket. Not because anything was
+    broken — the compensation settled the claim exactly as it should — but
+    because closing was the only direction that existed. The receipt kept the
+    (project, ticket) key, issuance is keyed there, and so every later
+    attempt refused: the same receipt because its claim was spent, a new
+    receipt because the key was taken, a new identity because the key does not
+    care about identity.
+
+    So the route back is two acts and not one. **End the old receipt**, which
+    `revoke_dispatch_receipt` will only do once the ledger shows the claim
+    came home, and which frees the key. **Then dispatch**, through
+    `dispatch_worker` unchanged — not a redispatch-flavoured copy of it, the
+    function itself, so that everything the ordinary path guarantees about
+    issuing, claiming, spawning and compensating is inherited rather than
+    re-implemented and re-argued.
+
+    **What a mid-way failure leaves.** Revocation first is deliberate. If the
+    revocation refuses, nothing moved at all. If it succeeds and the dispatch
+    then refuses, the books say old receipt ended, no successor issued — the
+    one intermediate state this path may leave, and the readable one: the
+    ticket's receipt reads `CLOSED`, its claim reads `SETTLED`, no worker is
+    implied anywhere. Calling again resumes it, because ending an already
+    ended receipt converges. The reverse order has no such story: a successor
+    issued before the old receipt ends cannot be issued at all, since the key
+    is still held.
+    """
+
+    if type(request) is not WorkerRedispatchRequest:
+        return WorkerRedispatchResult(
+            status=WorkerRedispatchStatus.REFUSED,
+            failure=WorkerRedispatchFailure.REQUEST_INVALID,
+        )
+    try:
+        trusted = WorkerRedispatchRequest.model_validate(request, strict=True)
+    except ValidationError:
+        return WorkerRedispatchResult(
+            status=WorkerRedispatchStatus.REFUSED,
+            failure=WorkerRedispatchFailure.REQUEST_INVALID,
+        )
+
+    artifact = trusted.dispatch.admission.artifact
+    try:
+        revocation_request = ReceiptRevocationRequest(
+            project_id=artifact.project_id,
+            ticket_reference=artifact.ticket_reference,
+            receipt_id=trusted.superseded_receipt_ref,
+            replacement_receipt_id=trusted.dispatch.admission.receipt_id,
+        )
+    except ValidationError:
+        return WorkerRedispatchResult(
+            status=WorkerRedispatchStatus.REFUSED,
+            failure=WorkerRedispatchFailure.REQUEST_INVALID,
+        )
+    revoked = revoke_dispatch_receipt(layout, revocation_request)
+    if revoked.status is ReceiptRevocationStatus.REFUSED or revoked.receipt is None:
+        return WorkerRedispatchResult(
+            status=WorkerRedispatchStatus.REFUSED,
+            superseded_receipt_ref=trusted.superseded_receipt_ref,
+            failure=WorkerRedispatchFailure.REVOCATION_REFUSED,
+            upstream_failure=(
+                None if revoked.failure is None else revoked.failure.value
+            ),
+        )
+
+    dispatched = dispatch_worker(layout, trusted.dispatch, spawn_port)
+    if dispatched.status is not WorkerDispatchStatus.DISPATCHED:
+        return WorkerRedispatchResult(
+            status=WorkerRedispatchStatus.REFUSED,
+            superseded_receipt_ref=trusted.superseded_receipt_ref,
+            revoked_receipt=revoked.receipt,
+            dispatch=dispatched,
+            failure=WorkerRedispatchFailure.DISPATCH_REFUSED,
+            upstream_failure=(
+                None if dispatched.failure is None else dispatched.failure.value
+            ),
+        )
+
+    return WorkerRedispatchResult(
+        status=WorkerRedispatchStatus.DISPATCHED,
+        superseded_receipt_ref=trusted.superseded_receipt_ref,
+        revoked_receipt=revoked.receipt,
+        dispatch=dispatched,
     )
 
 
@@ -757,6 +938,10 @@ __all__ = [
     "WorkerDispatchRequest",
     "WorkerDispatchResult",
     "WorkerDispatchStatus",
+    "WorkerRedispatchFailure",
+    "WorkerRedispatchRequest",
+    "WorkerRedispatchResult",
+    "WorkerRedispatchStatus",
     "WorkerReturnFailure",
     "WorkerReturnRequest",
     "WorkerReturnResult",
@@ -766,4 +951,5 @@ __all__ = [
     "dispatch_worker",
     "integrate_next_work",
     "record_worker_return",
+    "redispatch_worker",
 ]
