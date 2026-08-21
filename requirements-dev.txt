@@ -1,4 +1,8 @@
-# Development-time static type checking required by AGENTS.md P0.
+# Development-time dependencies.
+# - Static type checking required by AGENTS.md P0 (mypy).
+# - pytest is the pinned dev-time test runner. It must never enter
+#   requirements-runtime.lock (that is the shipped bundle's lock; pytest is
+#   not a runtime dependency). See governance ticket 13.
 mypy==2.3.0
 pydantic>=2.12.2,<3
 pywin32==311; sys_platform == "win32"
@@ -7,3 +11,4 @@ langgraph>=1.2.10,<2
 temporalio>=1.30.0,<2
 openai-agents>=0.19.2,<1
 mcp>=1.19.0,<2
+pytest==9.1.1
