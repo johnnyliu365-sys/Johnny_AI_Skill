@@ -190,6 +190,32 @@
 - **下次要做的**：跑套件時保留 `--tb=short` 的輸出到檔案，而不是只 grep 失敗行。
   重現時一併封存 `tests/.johnny-runtime` 內容。
 
+### C11. lease 家族在 governance 10 落地之後仍有目擊（未結案，但這次有原因）
+
+- **雷**：2026-08-21，governance 10（無條件拆除＋共用配置器的 unlink／rmdir 有限重試）
+  整合之後，另一位實作者跑完整套件三次（綠／紅／綠），第二次出現：
+
+  ```
+  SUBFAILED(collection='foreign-plugin')
+  test_codex_lifecycle_oracle.py::CodexLifecycleOracleTests::
+    test_cr126_duplicate_foreign_identities_are_blocked_before_fresh_child_list
+  AssertionError: OracleBlocked(reason=STATE_INVALID) is not an instance of OracleForeignSeeded
+  ```
+
+- **與 C9／C10 不同的地方**：C9、C10 的症狀是**拆除失敗留下孤兒**。這次的症狀是
+  **狀態被污染**——收到 `STATE_INVALID` 而不是預期的 `ForeignSeeded`。是同一個因果鏈的
+  下游（前一個 cell 的殘留被讀到），還是另一條路徑，**沒有證據可以判定**。
+- **落點值得注意**：`test_codex_lifecycle_oracle.py` 正是 governance 10 的實作者逐一審過、
+  判定「所有呼叫點都已無條件拆除、不需修改」的那個檔案。所以要嘛 10 的稽核漏了什麼，
+  要嘛這不是拆除問題。
+- **這次沒有重蹈 C10 的取證缺口**：失敗原因被保留下來了（`STATE_INVALID` 這個具體 reason），
+  而 C10 只剩一行 `FAILED`。**「列出所有失敗」和「保留失敗原因」是兩件事**——這一次做對了。
+- **旁證**：`test_aaa_runtime_root_guard.py`（最先跑、會揭露被污染或孤兒的 lease）三次全綠；
+  失敗那次之後 `tests/.johnny-runtime` 也沒有殘留目錄。所以**沒有留下孤兒**，
+  這跟 C9／C10 的形狀不一樣。
+- **狀態**：未結案。governance 12 處理的是「多個 lease 在 try 之前取得」那一半，
+  跟這次的落點不同，**不要預設 12 會順便修掉它**。
+
 ## D. 發行工程類
 
 ### D1. Wrapper 的 digest pin 手寫、無人校驗

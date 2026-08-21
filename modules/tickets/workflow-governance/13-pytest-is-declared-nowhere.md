@@ -9,7 +9,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | 本票 revision／worktree `.worktrees/gov-13`／branch `implement/gov-13-pytest-declaration` |
 | 實作語言 | 相依宣告（`requirements-dev.txt`）＋ Python 3.11（釘住用的測試） |
-| 狀態 | `IN_PROGRESS` |
+| 狀態 | `DONE` |
 | 共同基準 | `c2b720f` |
 | 實作者 | Sonnet 5 high（一般小票，依 `dispatch-model-profile.md` 分層） |
 | 審閱者 | 控制面（Opus 5） |
@@ -90,14 +90,19 @@ forbid = modules/tickets/
 
 ## 完成回寫
 
-- 實際檔案：待填
-- commit：待填
+- 實際檔案：`requirements-dev.txt`、`tests/test_runtime_dependency_lock.py`（新增）
+- commit：`973e079`，經 `admit_document_mutation` 判為 `INTEGRATED`
+- **釘住三件事**：宣告必須是精確 `==`；pytest **不得**出現在 `requirements-runtime.lock`（出貨的 bundle 沒有測試框架，也不需要）；**正在執行的 pytest 版本必須等於宣告的版本**。第三件才是本票的重點——檔案寫 9.1.1 而實際跑 9.2 的情況會通過前兩項檢查。
+- **反向突變**：實作者三組（無版本、範圍宣告、pytest 注入 runtime lock）。審閱者另做一組不同方向的：追加一行 `pytest>=8` 與 `pytest==9.1.1` **並存且矛盾** → **6 passed 零轉紅**，因為解析器抓到第一個就停。補 `test_exactly_one_pytest_declaration_line_is_present` 後重跑同一組突變，**恰好 1 紅**，還原後 8 passed。
+- **審閱者發現的第二個缺口**：宣告從未跟實際執行的 pytest 對照（`__version__` 零命中），補 `RunningPytestVersionMatchesDeclarationTests`，失敗訊息同時帶出兩個版本值。
+- **控制面自己的錯**：本票的 `johnny-boundary` 只寫了 `modify`、沒寫 `create`，與票的文字要求（新增測試）矛盾。閘門會據此拒絕一個合法交付。已於 `1569619` 補上——修的是宣告去對齊票，不是放寬邊界去遷就實作者。
+- 全套件（受閘測試開啟）：1326 passed、1 skipped、3133 subtests、零 FAILED、無殘留。
 
 ```johnny-status
 id = 13
 title = pytest 沒有被任何地方宣告
-state = IN_PROGRESS
-stage = D | 補上宣告 | OPEN
-stage = T | 測試釘住分工 | OPEN
-stage = M | 突變驗證 | OPEN
+state = DONE
+stage = D | 補上宣告 | DONE
+stage = T | 測試釘住分工 | DONE
+stage = M | 突變驗證 | DONE
 ```
