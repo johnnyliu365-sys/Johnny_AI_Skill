@@ -7,11 +7,11 @@
 | PRD 索引 | 不適用 |
 | 需求變更 | 不適用 |
 | Sealed Context binding | 不適用 |
-| Agent Context binding | 本票 revision；worktree／branch 待派工時建立 |
+| Agent Context binding | 本票 revision／worktree `.worktrees/p4`／branch `implement/p4-dispatch-session` |
 | 實作語言 | Python 3.11 |
 | 狀態 | `IN_PROGRESS` |
-| 共同基準 | `<派工時填入>` |
-| 實作者 | `<派工時填入>` |
+| 共同基準 | `5567520`（程式碼基準；worktree HEAD 為綁定 commit，派工訊息載明） |
+| 實作者 | Fable 5（**Owner override record**：owner 於 2026-08-21 指定；依 `dispatch-model-profile.md` 分層，難票本應先派 Opus 5 Extra、失敗後才升 Fable——此為 owner 直接指派，非控制面選擇） | |
 | 審閱者 | 控制面（Opus 5） |
 | 責任邊界 | 新增 `library/local_orchestration/dispatch_session.py` 與其測試 |
 | 禁止修改 | `work_queue.py`、`worker_assignment.py`、`document_mutation_gate.py`、`dispatch_authority.py`、任何既有票 |
@@ -74,6 +74,8 @@ P2 的綁定、P3 的佇列、08 的閘門都已完成並整合，但**三者都
 - **反向突變證據**：至少三組——讓中途失敗留下半套狀態、讓整合繞過閘門、
   讓失敗代碼折疊；各指名哪個測試轉紅、還原後轉綠。
 - 全套件綠、零殘留，列出**完整**的 `FAILED`／`SUBFAILED` 清單。
+
+- **全套件責任**：三張票並行實作，實作者只跑本票邊界內的測試檔；全套件與殘留檢查由審閱者於整合前逐張執行（比照 governance 11 的責任轉移，這是審閱者的未完成義務，不得因實作者回報綠即視為滿足）。
 
 ## 不在本票範圍
 

@@ -7,11 +7,11 @@
 | PRD 索引 | 不適用 |
 | 需求變更 | 不適用 |
 | Sealed Context binding | 不適用 |
-| Agent Context binding | 本票 revision；worktree／branch 待派工時建立 |
+| Agent Context binding | 本票 revision／worktree `.worktrees/gov-14`／branch `implement/gov-14-ascii-shim` |
 | 實作語言 | Python 3.11 |
 | 狀態 | `IN_PROGRESS` |
-| 共同基準 | `<派工時填入>` |
-| 實作者 | `<派工時填入>` |
+| 共同基準 | `5567520`（程式碼基準；worktree HEAD 為綁定 commit，派工訊息載明） |
+| 實作者 | Sonnet 5 high（一般票，依 `dispatch-model-profile.md` 分層） |
 | 審閱者 | 控制面（Opus 5） |
 | 責任邊界 | `tests/` 底下所有把路徑編成 ASCII 的位置 |
 | 禁止修改 | `library/` 下任何產品程式碼；`tests/staging/environment_core/` |
@@ -85,6 +85,8 @@ tests/test_claude_wake_command.py:88
 - **驗收必須在 repo tree 內的 venv 跑一次**——這張票的整個意義就是那個情境，
   在 ASCII 路徑下驗收等於沒驗。
 - 全套件綠、零殘留，列出**完整**的 `FAILED`／`SUBFAILED` 清單。
+
+- **全套件責任**：三張票並行實作，實作者只跑本票邊界內的測試檔；全套件與殘留檢查由審閱者於整合前逐張執行（比照 governance 11 的責任轉移，這是審閱者的未完成義務，不得因實作者回報綠即視為滿足）。
 
 ## 不在本票範圍
 

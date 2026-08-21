@@ -7,11 +7,11 @@
 | PRD 索引 | 不適用 |
 | 需求變更 | 不適用 |
 | Sealed Context binding | 不適用 |
-| Agent Context binding | 本票 revision；worktree／branch 待派工時建立 |
+| Agent Context binding | 本票 revision／worktree `.worktrees/gov-12`／branch `implement/gov-12-lease-acquisition` |
 | 實作語言 | Python 3.11 |
 | 狀態 | `IN_PROGRESS` |
-| 共同基準 | `<派工時填入>` |
-| 實作者 | `<派工時填入>` |
+| 共同基準 | `5567520`（程式碼基準；worktree HEAD 為綁定 commit，派工訊息載明） |
+| 實作者 | Sonnet 5 high（一般票，依 `dispatch-model-profile.md` 分層） |
 | 審閱者 | 控制面（Opus 5） |
 | 責任邊界 | `tests/test_codex_registration_foreign_state_isolation_acceptance.py` 與 `tests/test_bounded_child_process_runner.py` 的取得順序 |
 | 禁止修改 | `tests/staging/environment_core/`（10 已修好共用配置器，不要再動）；`library/` 下任何產品程式碼 |
@@ -79,6 +79,8 @@ try:
 - **不要在 repo tree 內建 venv**——中文路徑會讓 24 個無關 cell 假紅，見本資料夾 14。
   在 ASCII 路徑下建 venv。
 - 全套件綠、零殘留，保留完整 `--tb=short` 輸出到檔案。
+
+- **全套件責任**：三張票並行實作，實作者只跑本票邊界內的測試檔；全套件與殘留檢查由審閱者於整合前逐張執行（比照 governance 11 的責任轉移，這是審閱者的未完成義務，不得因實作者回報綠即視為滿足）。
 
 ## 正式環境移植 SOP
 
