@@ -17,7 +17,7 @@
 
 - 前置依賴：Ticket 02。
 - 預定實際程式碼：`library/NLP/python/provider_ports/`。
-- 參考：SourceProjectA `來源專案的AI服務層` 的錯誤分類與結構化分析輸出；排除 prompt、個人化、營養、憑證與 HTTP 實作。
+- 參考：來源專案A `來源專案的AI服務層` 的錯誤分類與結構化分析輸出；排除 prompt、個人化、營養、憑證與 HTTP 實作。
 
 ## TDD 設計
 

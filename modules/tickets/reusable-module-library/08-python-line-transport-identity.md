@@ -7,7 +7,7 @@
 | 狀態 | `DONE` |
 | 環境 | `LOCAL` |
 | 責任邊界 | 訊息 request／result port、redacted failure 與 stable identity／display label 分離 |
-| 禁止修改 | LINE credentials、webhook、租戶檔、SourceProjectA／Dispatch 的 router 與外部發訊 |
+| 禁止修改 | LINE credentials、webhook、租戶檔、來源專案A／Dispatch 的 router 與外部發訊 |
 
 ## 可觀察結果
 

@@ -270,7 +270,7 @@ tables and bar-chart data. It does not run or wake a model in the background.
 
 ## SourceProjectA package verification
 
-The original `D:\SourceProjectA\SourceProjectA\private-target-repo` is read-only. Record its HEAD and tracked
+The original `D:\SourceProjectA\SourceProjectA` is read-only. Record its HEAD and tracked
 status, create a Johnny-owned disposable copy, install only from the candidate ZIP and run:
 
 1. a no-model script matrix for new/changed requirement, Grill, Context, SPEC, ticket, document

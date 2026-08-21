@@ -17,7 +17,7 @@
 
 - 前置依賴：Ticket 05。
 - 預定實際程式碼：`library/金流串接/python/provider_ports/`、`reconciliation/`。
-- 參考：SourceProjectA 支付provider丙／支付provider甲 對帳與續訂流程的狀態分解，不重用其路由、簽章、設定或 API 格式。
+- 參考：來源專案A 支付provider丙／支付provider甲 對帳與續訂流程的狀態分解，不重用其路由、簽章、設定或 API 格式。
 
 ## TDD 設計
 

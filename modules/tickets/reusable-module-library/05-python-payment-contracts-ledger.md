@@ -7,7 +7,7 @@
 | 狀態 | `DONE` |
 | 環境 | `LOCAL` |
 | 責任邊界 | `Money`、付款意圖、交易狀態、idempotency key、訂閱權益與 append-only 帳本事件 |
-| 禁止修改 | SourceProjectA 的資料表、支付provider丙、支付provider甲、發票、真實付款與資料庫 |
+| 禁止修改 | 來源專案A 的資料表、支付provider丙、支付provider甲、發票、真實付款與資料庫 |
 
 ## 可觀察結果
 
@@ -16,7 +16,7 @@
 ## 實作範圍與來源追溯
 
 - 預定實際程式碼：`library/金流串接/python/payment_contracts/`、`subscription_ledger/`。
-- 參考：SourceProjectA `來源專案的訂閱模組`、交易／分潤設計與 來源專案D 的 expected-state／outbox 模式。
+- 參考：來源專案A `來源專案的訂閱模組`、交易／分潤設計與 來源專案D 的 expected-state／outbox 模式。
 - 不採用：來源 schema、會員／經銷／分潤商業規則與所有 provider 設定。
 
 ## TDD 設計

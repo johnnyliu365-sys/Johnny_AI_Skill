@@ -7,7 +7,7 @@
 | 狀態 | `DONE` |
 | 環境 | `LOCAL` |
 | 責任邊界 | 可設定的推薦資格、獎勵限額與任務進度規則 |
-| 禁止修改 | SourceProjectA 健康資料、會員、經銷、點數、推播、資料庫與商業規則 |
+| 禁止修改 | 來源專案A 健康資料、會員、經銷、點數、推播、資料庫與商業規則 |
 
 ## 可觀察結果
 
@@ -16,7 +16,7 @@
 ## 實作範圍與來源追溯
 
 - 預定實際程式碼：`library/功能集群/python/engagement_rules/`。
-- 參考：SourceProjectA referral、reward、mission service 的去重與資格概念；排除所有健康、經銷、會員與資料庫欄位。
+- 參考：來源專案A referral、reward、mission service 的去重與資格概念；排除所有健康、經銷、會員與資料庫欄位。
 
 ## TDD 設計
 

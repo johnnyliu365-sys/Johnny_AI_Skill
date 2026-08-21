@@ -23,8 +23,8 @@
 - `CONTROL_PYTHON` is Johnny-owned pinned Python 3.11 and is never implicit project Python.
   Environment checks occur only at declared gates, and every Johnny-launched process/container
   is hard-limited by an exact resource plan before project work begins.
-- Authorized historical source repositories (`SourceProjectA`, `來源專案B`, 來源專案C
-  `來源專案C`, `來源專案D`) are read-only references. No source repository is
+- Authorized historical source repositories (`SourceProjectA`, `來源專案B`, `來源專案C`,
+  `來源專案D`) are read-only references. No source repository is
   modified, and no Secret, PII, operational data or domain-specific business rule is copied.
 - The current product direction is a local, removable, metadata-only multi-Agent workflow
   control plane. Historical SaaS/payment/entitlement work is evidence, not a current product

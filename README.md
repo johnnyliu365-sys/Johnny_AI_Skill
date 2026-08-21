@@ -129,7 +129,7 @@ APPROVED。
 
 0.4.0 完成 Router runtime 主線（runner registry、receipt Git subscription、Senior review
 queue、host-wake gate、deterministic bundle、Router composition、install／uninstall
-transaction、telemetry report）與 SourceProjectA scripted + real-role 雙重驗證，並完成 Wayfinder
+transaction、telemetry report）與 來源專案A scripted + real-role 雙重驗證，並完成 Wayfinder
 收斂五連修（有界資訊缺口協議、範圍終止規則、intake 三模式、workload 強度自適應、
 red 證據重定義）。該版的兩個誠實邊界（live 安裝停在
 `LIVE_INSTALL_NOT_AUTHORIZED`、自動喚醒維持
@@ -229,7 +229,7 @@ skill 目錄，因此不需要複製任何 skill 檔案——註冊的是指向�
 要在所有專案都可用，註冊到 per-user customization root（`~/.gemini/config/`）：
 
 ```powershell
-py -3.11 -c "from pathlib import Path; import sys; sys.path.insert(0, r'C:\Users\User\Desktop\AI控制工作workflow'); from library.local_orchestration.antigravity_registration import default_customization_root, register_johnny_skills; print(register_johnny_skills(default_customization_root(), Path(r'C:\Users\User\Desktop\AI控制工作workflow\skills'))[0].value)"
+py -3.11 -c "from pathlib import Path; import sys; sys.path.insert(0, r'<repo-root>'); from library.local_orchestration.antigravity_registration import default_customization_root, register_johnny_skills; print(register_johnny_skills(default_customization_root(), Path(r'<repo-root>\skills'))[0].value)"
 ```
 
 註冊是冪等的（重複執行只會有一個項目），移除只拿掉 Johnny 自己的項目，使用者原有

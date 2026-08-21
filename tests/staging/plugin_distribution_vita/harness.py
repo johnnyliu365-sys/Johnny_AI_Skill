@@ -27,10 +27,6 @@ from library.local_orchestration.plugin_uninstall_transaction import (
 from library.local_orchestration.windows_package_manifest import PayloadManifest
 
 _ORIGINAL_ENVIRONMENT_KEY = "JOHNNY_VITA_ORIGINAL"
-_ORIGINAL_CANDIDATES = (
-    Path("D:/SourceProjectA/SourceProjectA/private-target-repo"),
-    Path("C:/Users/User/Desktop/SourceProjectA/private-target-repo"),
-)
 _OWNED_MARKER_NAME = ".johnny-owned"
 _LEDGER_FILE_NAME = "ledger.json"
 
@@ -44,15 +40,14 @@ _KIND_RECEIPTS: tuple[tuple[OwnedStateKind, str], ...] = (
 
 
 def resolve_original_root() -> Path | None:
-    """Resolve the read-only original Vita repository on this host."""
+    """Resolve the read-only original repository from the explicit environment override."""
 
     override = os.environ.get(_ORIGINAL_ENVIRONMENT_KEY)
-    candidates = (
-        (Path(override),) if override else _ORIGINAL_CANDIDATES
-    )
-    for candidate in candidates:
-        if candidate.is_dir() and (candidate / ".git").exists():
-            return candidate
+    if not override:
+        return None
+    candidate = Path(override)
+    if candidate.is_dir() and (candidate / ".git").exists():
+        return candidate
     return None
 
 

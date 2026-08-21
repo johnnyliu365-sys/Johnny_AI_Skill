@@ -12,7 +12,7 @@
 
 ## 來源追溯
 
-設計僅參考 SourceProjectA 的訂閱／交易邊界與 來源專案D 的 expected-state、append-only outbox 概念。未複製資料表、會員、分潤、Provider、資料庫或外部服務程式碼；所有來源專案持續唯讀。
+設計僅參考 來源專案A 的訂閱／交易邊界與 來源專案D 的 expected-state、append-only outbox 概念。未複製資料表、會員、分潤、Provider、資料庫或外部服務程式碼；所有來源專案持續唯讀。
 
 ## 禁止用途
 

@@ -10,7 +10,7 @@
 
 ## 來源追溯
 
-設計僅參考 SourceProjectA 的付款流程狀態分解。未複製 支付provider丙、支付provider甲、支付provider乙 的路由、簽章、HTTP、Webhook、憑證、請求格式或來源程式碼；所有來源專案持續唯讀。
+設計僅參考 來源專案A 的付款流程狀態分解。未複製 支付provider丙、支付provider甲、支付provider乙 的路由、簽章、HTTP、Webhook、憑證、請求格式或來源程式碼；所有來源專案持續唯讀。
 
 ## 禁止用途
 

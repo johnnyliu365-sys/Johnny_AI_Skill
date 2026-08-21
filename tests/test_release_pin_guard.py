@@ -22,9 +22,7 @@ from library.local_orchestration.release_pin_guard import (
 _REPO_ROOT = Path(__file__).resolve().parents[1]
 _WRAPPER = _REPO_ROOT / "johnny-install.cmd"
 _MANIFEST = _REPO_ROOT / ".codex-plugin" / "plugin.json"
-_RELEASED_BUNDLE = Path(
-    r"C:\Users\User\Desktop\johnny-ai-skill-dist\live-candidate"
-)
+_RELEASED_BUNDLE = Path.home() / "Desktop" / "johnny-ai-skill-dist" / "live-candidate"
 
 
 def _write_wrapper(path: Path, bundle_name: str, digest: str) -> None:

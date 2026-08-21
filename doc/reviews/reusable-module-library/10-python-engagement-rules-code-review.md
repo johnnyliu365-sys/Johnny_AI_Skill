@@ -16,7 +16,7 @@
 | 項目 | 結果 | 證據 |
 | --- | --- | --- |
 | 清晰易懂與 P0 強型別 | 通過 | policy ID、event ID、unknown code、三種限制值、有限事件、action、rejection reason、policy、state、catalog 與 union evaluation 均以具名值物件、Enum、不可變 DTO 表達；無 `Any`、裸 `dict` 或隱含狀態。 |
-| 編碼規範與分層 | 通過 | `engagement_rules/` 僅含純 policy／state 評估及 catalog，不含 provider、資料庫、會員、點數、任務資料、通知、router 或 SourceProjectA 專有欄位。 |
+| 編碼規範與分層 | 通過 | `engagement_rules/` 僅含純 policy／state 評估及 catalog，不含 provider、資料庫、會員、點數、任務資料、通知、router 或 來源專案A 專有欄位。 |
 | 邏輯正確 | 通過 | 資格達門檻後才允許 progress，進度達目標後才允許 reward permission；每個 accepted event key 寫入 state；同一 key 重播、第二次 reward、未資格與上限皆不改變 state。 |
 | 邊界與異常 | 通過 | unknown policy／event、policy 與 state 不符、重複 event、資格不足、目標未達、目標已滿、獎勵上限與 externally constructed impossible state 都回傳具名拒絕；安全 ID／code、計數與限制值皆有格式與範圍檢查。 |
 | 安全與效能 | 通過 | 無健康、會員、經銷、帳戶、點數、PII、payload、token、網路或 I/O。已接受 event key 使用不可變 `frozenset` 去重，避免長序列反覆複製；輸出僅為本地規則允許次數，非真實權益。 |

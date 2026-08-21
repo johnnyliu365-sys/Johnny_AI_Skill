@@ -22,7 +22,7 @@
 | 安全與效能 | 通過 | 無 HTTP、Provider、付款、退款、發票、資料庫、Webhook、憑證、PII 或 raw transaction 資料；每次操作只掃描本地不可變事件 tuple。 |
 | 測試覆蓋與 smoke test | 通過 | `python -m unittest discover -s tests`：20 passed；同一 idempotency key 不重複授與權益的 smoke test 通過。 |
 | 依賴合理 | 通過 | 未新增執行期依賴；僅使用 Python 標準函式庫與既有 `mypy` 開發期檢查。 |
-| 專案規格符合性 | 通過 | 僅重建通用付款契約與本地帳本，未帶入 SourceProjectA schema、會員、分潤、發票或 Provider 設定。 |
+| 專案規格符合性 | 通過 | 僅重建通用付款契約與本地帳本，未帶入 來源專案A schema、會員、分潤、發票或 Provider 設定。 |
 
 ## 可重跑命令
 

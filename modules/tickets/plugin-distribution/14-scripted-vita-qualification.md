@@ -12,7 +12,7 @@
 One deterministic qualification report installs the candidate only into a Johnny-owned disposable
 copy and runs two bounded matrices: target preservation/install/uninstall, then Router transitions,
 invalid handoffs, roles, FIFO and dependency clusters. The original
-`D:\SourceProjectA\SourceProjectA\private-target-repo` is read-only pre/post evidence. Missing host wake remains
+`D:\SourceProjectA\SourceProjectA` is read-only pre/post evidence. Missing host wake remains
 non-binding. All disposable copies, runtime, cache and generated evidence are deleted afterward.
 
 Writable scope: `tests/test_plugin_distribution_vita_qualification.py` and
@@ -35,7 +35,7 @@ Return is exactly `ImplementationReturn.COMPLETED | BLOCKED | CHANGE_DETECTED`.
 | --- | --- |
 | State | `INTEGRATED / CLOSED` |
 | Implementation | `feat: add scripted SourceProjectA package qualification` on `claude/skill-plugin-parallel-control-42c487`; owner-authorized direct allocation |
-| Original resolution | `D:\SourceProjectA\SourceProjectA\private-target-repo` does not exist on this host; the harness resolves the same original repository at `C:\Users\User\Desktop\SourceProjectA\private-target-repo` (its own Git repository, HEAD `8aee42f6`), with `JOHNNY_VITA_ORIGINAL` as explicit override. Hosts without the original skip as `VITA_ORIGINAL_UNAVAILABLE` instead of faking a result. |
+| Original resolution | `D:\SourceProjectA\SourceProjectA` does not exist on this host; the harness resolves the same original repository at `%USERPROFILE%\Desktop\SourceProjectA` (its own Git repository, HEAD `8aee42f6`), with `JOHNNY_VITA_ORIGINAL` as explicit override. Hosts without the original skip as `VITA_ORIGINAL_UNAVAILABLE` instead of faking a result. |
 | Closure | V1 candidate bundle `BUNDLED` and extracted only manifest-listed paths plus `payload-manifest.json` into the Johnny-owned disposable root; the disposable target copy stayed digest-identical and carried no johnny path. V2 the original repository's HEAD and porcelain-status digest are identical before and after the whole pipeline; only read-only Git queries touched it. V3 composition `COMPOSED`, valid subscription `REGISTERED`, review wake flow `HOST_ACCEPTED` then `QUEUED_NO_WAKE`. V4 foreign project binding `REJECTED / INVALID_BINDING`; unavailable host wake preflight `REJECTED / HOST_WAKE_CAPABILITY_UNAVAILABLE` (non-binding). V5 claimed batch clusters `(cluster-a, cluster-b)` in exact FIFO admission order. V6 receipt-owned uninstall `REMOVED`, repeat `NOT_INSTALLED`, only the seeded foreign entry remained, target digest unchanged, and the whole disposable workspace was deleted with read-only Git objects cleared. |
 | Verification | qualification `6 passed`; `mypy --strict --no-incremental --explicit-package-bases` clean over both new files (the sole transitive finding is a pre-existing `redundant-cast` in frozen `test_plugin_distribution_git_subscription.py:229`, untouched by this ticket); full `795 passed, 2594 subtests`; 222 Python files compiled in memory; `johnny-vita-qual-*` residue count zero after runs (five stale trees from pre-fix iterations were deleted with the same harness cleaner). |
 | Boundary | No original-Vita write, no production effect, no model call during the matrix, no heartbeat/polling; all writes confined to one `tempfile.mkdtemp` workspace deleted in the same run. |
