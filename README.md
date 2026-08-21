@@ -4,7 +4,18 @@
 
 它不是公司專案的 runtime service、MCP server、hook、CI 依賴、Git submodule、symlink、package dependency 或原始碼 import。因此拔除後，公司的建置、測試、部署與既有程式不會受影響。
 
-## 目前發行：0.4.7
+## 目前發行：0.4.8
+
+0.4.8 把零件接成一條路，並且**在真安裝的 store 上驗證過整條路**。派工＝admit →
+claim → spawn 一條路徑（`dispatch_session`），claim 先於 spawn，spawn 失敗立即補償；
+補償後有具名的重派路（`redispatch_worker`）：撤銷舊 receipt、發後繼、走一模一樣的派工，
+恰好一次由閘門自己讀帳本保全。整合只有一個出口——`integrate_next_work` 拉取佇列並經
+文件閘門完成合併；實機驗證中 main 的移動第一次不經人手。commit 觸發從此有腳掌：
+runner 的原生 ref watch 多了一個 tee，喚醒永遠先行，之後把 commit 交給佇列，重複由
+`ORIGIN_ALREADY_QUEUED` 收斂。逐行實錄見 `doc/runbooks/live-verification-047.md`。
+
+**誠實邊界**：`COMMIT_TRIGGER` 項目被拉到之後的處理政策尚未定義（消費端目前具名擱置、
+不取走）；重派路要求 owner grant 與已補償的 claim，從未 claim 的 receipt 拒絕撤銷。
 
 0.4.7 補上排程佇列（`work_queue`）。子代理回傳或 commit 觸發成立時，該做的下一件事
 **落到持久佇列上**；主 session 手上的工作做完再拉下一件。**拉取而非推送**，所以不需要
@@ -150,9 +161,9 @@ red 證據重定義）。該版的兩個誠實邊界（live 安裝停在
 
 ## Codex 使用方式
 
-### 0.4.7 完整 bundle 安裝
+### 0.4.8 完整 bundle 安裝
 
-正式的一鍵入口是隨 release 發布的 `johnny-install.cmd`，將其下載至與經核准且 SHA-256 相符的 `johnny-ai-skill-0.4.7.zip` 同一資料夾下雙擊執行（或在終端機直接執行 `install.ps1 -BundleZip <path>`）。它會先核驗 bundle SHA-256，並在確認相符後抽出 `install.ps1` 進行安裝引導。bootstrap 會先顯示 Codex、Git、Python 與核心 dependency 計畫；需要下載時必須由使用者輸入 `INSTALL` 確認。它只建立 per-user Johnny-owned runtime，不會把 plugin、venv、receipt 或 cache 複製到公司 repo。
+正式的一鍵入口是隨 release 發布的 `johnny-install.cmd`，將其下載至與經核准且 SHA-256 相符的 `johnny-ai-skill-0.4.8.zip` 同一資料夾下雙擊執行（或在終端機直接執行 `install.ps1 -BundleZip <path>`）。它會先核驗 bundle SHA-256，並在確認相符後抽出 `install.ps1` 進行安裝引導。bootstrap 會先顯示 Codex、Git、Python 與核心 dependency 計畫；需要下載時必須由使用者輸入 `INSTALL` 確認。它只建立 per-user Johnny-owned runtime，不會把 plugin、venv、receipt 或 cache 複製到公司 repo。
 
 不得把原始碼 checkout 或 `main` 當成已核准 bundle；正式入口永遠是 digest 與已核准
 release 相符的 bundle。既有 `0.3.x` skill-only 安裝仍可使用 private Git
