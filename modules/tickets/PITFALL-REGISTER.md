@@ -174,6 +174,22 @@
 - **教訓**：獵捕間歇性失敗要**保留完整現場**再談修法。第一次之所以查不下去，
   唯一原因是輸出被截斷。
 
+### C10. lease 家族的第二次間歇（未結案，且我又漏了證據）
+
+- **雷**：2026-08-21，完整套件出現一次
+  `test_codex_receipt_removal_acceptance.py::test_a4_trace_is_exact_and_plugin_removal_precedes_marketplace`
+  失敗。該 cell 用 `DisposableEnvironmentAllocator.from_project_runtime()`——
+  **跟 C9 同一族（共用 runtime root 的 lease）**，只是不同的 cell。
+- **重現嘗試**：單獨跑該檔 9 passed；完整套件連跑 3 次全綠（各 1295 passed）。1 紅 4 綠。
+- **我的取證缺口**：我只抓了 `FAILED` 那一行，**沒有保留 traceback**，所以知道是哪個
+  cell、不知道失敗原因。C9 的教訓是「不要截斷」，我沒截斷失敗清單，但仍然沒有保留
+  足以診斷的內容——**「列出所有失敗」和「保留失敗原因」是兩件事**。
+- **狀態**：未結案。C9 修的是 cr167 那個 cell 的拆除路徑；**B2（Windows share-mode
+  擋住改名／刪除）這個根因並沒有消失**，只是那一個 cell 不再因此留下孤兒。同族的其他
+  cell 是否有同樣的拆除缺口，沒有查過。
+- **下次要做的**：跑套件時保留 `--tb=short` 的輸出到檔案，而不是只 grep 失敗行。
+  重現時一併封存 `tests/.johnny-runtime` 內容。
+
 ## D. 發行工程類
 
 ### D1. Wrapper 的 digest pin 手寫、無人校驗
