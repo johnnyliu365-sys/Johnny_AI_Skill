@@ -9,7 +9,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | 本票 revision／worktree `.worktrees/p6`／branch `implement/p6-live-verification` |
 | 實作語言 | Python 3.11（driver 腳本與 worker 交付物） |
-| 狀態 | `IN_PROGRESS` |
+| 狀態 | `DONE` |
 | 共同基準 | 綁定 commit（worktree HEAD，派工訊息載明） |
 | 實作者 | 分工特殊：**driver＝控制面**（派工與整合本來就是控制面的動作，也正是被驗的對象）；**worker＝Sonnet 5**（收到真派工、交真交付物） |
 | 審閱者 | 控制面（Opus 5）＋ **owner**（本票的證據是 journal 實錄，owner 可自行核對） |
@@ -105,14 +105,18 @@ gov-15 那張舊的 brick receipt（historical record，留在 journal 作為 P5
 
 ## 完成回寫
 
-- 實際檔案：待填
-- commit：待填
+- 實際檔案：`doc/runbooks/live-verification-047.md`
+- commit：worker 交付 `f68be93`（**由 `integrate_next_work` 經閘門整合，非手動**）；第三段收尾回填隨本結案 commit
+- **三段全數在真 store 完成**：A＝演練失敗→補償→`REVOCATION_REVOKED`→重派成功（P5 實機首航）；B＝`record_worker_return`→`integrate_next_work`→**main 移到 `f68be93` 而無人打 merge**（本專案第一次）；C＝owner 宣告收件匣喚醒命令→probe `PROVEN`→訂閱 `WRITTEN`→runner `RUNNING`（repo 程式碼，pid 44908）→真 commit `62b35f6`→`COMMIT_TRIGGER` 入列→消費端 `COMMIT_TRIGGER_PENDING` 擱置→runner `STOPPED`
+- **驗證的產出**：第三段第一次嘗試就抓到整條腿不存在（P7 因此而生、當日落地）；控制面代勞清單全程為空
+- **保留的觀察（未裁決）**：arm 當下多出一筆指向前一個 HEAD 的觸發項目，候選解釋見 runbook；觸發項目的處理政策票開出前，兩筆 `PENDING` 留在佇列作為證據
+- **0.4.8 的前置條件已滿足**（owner 拍板的順序：驗證先於發行）
 
 ```johnny-status
 id = P6
 title = 實機功能驗證：三隻腳合起來走一遍
-state = IN_PROGRESS
+state = DONE
 stage = A | 失敗演練＋重派（P5 實機） | DONE
 stage = B | 完整往返（排程器實機） | DONE
-stage = C | commit 觸發（BLOCKED，等 P7 接線） | OPEN
+stage = C | commit 觸發（實機首次） | DONE
 ```

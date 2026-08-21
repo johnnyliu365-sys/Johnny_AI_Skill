@@ -142,7 +142,7 @@ worker 的 branch 就緒 → `integrate_next_work` 拉取並經閘門完成真�
 
 ## 六、第三段：commit 觸發（實機首次）
 
-**狀態：BLOCKED——這條腿端到端不存在，已開 P7。**
+**狀態：完成（2026-08-21 14:5x UTC，P7 接線落地後當日收尾）。**
 
 依 P6 的規則（卡住 → 停下、記錄、開新票，不得手動代勞後宣稱通過），第三段在
 arm 訂閱之前的機制清查就停了：
@@ -153,8 +153,33 @@ arm 訂閱之前的機制清查就停了：
 - `work_queue.py:284` 有現成的 commit-trigger 建構子——插座在，線不在。
 
 控制面**沒有**手動呼叫 `enqueue_work` 假造一筆觸發項目來讓表格變綠。
-接線是 `modules/tickets/workstation-dispatch/p7-commit-event-reaches-no-queue.md`；
-P7 整合後回到這裡收尾第三段。
+接線是 `modules/tickets/workstation-dispatch/p7-commit-event-reaches-no-queue.md`，
+同日整合（`ae514a8`），以下為收尾實錄。
+
+### 第三段收尾實錄
+
+| 步驟 | 證據 |
+| --- | --- |
+| 喚醒命令宣告 | owner 於 2026-08-21 拍板「檔案收件匣」：`wake-capability.json` 宣告 `py -3.11 wake-inbox.py {payload_file} {attempt_id}`，payload 落在 `JohnnyRouter\wake-inbox\` |
+| 喚醒能力 probe | `PROVEN`／channel `HOST_COMMAND`——probe 真的執行了宣告的命令 |
+| 訂閱 | `runner subscribe`（E13 CLI，經 repo 程式碼呼叫）→ `WRITTEN`，`subscription-p6-live-verification` armed 於 `refs/heads/main`。過程中被三道具名驗證擋回三次（locator 缺 `ticket_revision`、handoff ref 非 `doc/handoffs/` 前綴、非 `.json` leaf）——每一道都是契約在做事 |
+| runner 啟動 | `RealRunnerLifecyclePort`（`python_executable`／`plugin_root` 覆寫指向 **repo 工作副本**——已安裝的 0.4.7 早於 P7 的線，這正是「發行前先驗證」的意義）→ `RUNNING`，pid 44908 |
+| 真 commit | `62b35f6`（P7 的結案回填——真實應做的工作，不是為觸發而造的 commit）ff 進 `main` |
+| 入列 | 佇列出現 `work-7766defc…`／`COMMIT_TRIGGER`／`origin_ref=git_62b35f6…`／`PENDING`。另有 `work-6d752f5f…` 指向 arm 當下的 HEAD（`git_ae514a8…`）——候選解釋：watch 啟動或 ff 過程的多重訊號各讀到一次 ref 值；兩筆都是真 commit、各恰好一筆，重複已由 `ORIGIN_ALREADY_QUEUED` 收斂。**此為觀察，未裁決** |
+| 消費端擱置 | `integrate_next_work` → `COMMIT_TRIGGER_PENDING`，項目留在佇列未被取走（P4 契約實機兌現） |
+| runner 停止 | `runner stop` → `STOPPED`，乾淨 |
+
+佇列事後狀態：兩筆 `COMMIT_TRIGGER` `PENDING` 為本段證據，依票的規劃保留至
+「觸發項目處理政策」的票開出；`WORKER_RETURN` 項目維持 `PULLED`（第二段已消費）。
+
+### 哪一步是誰做的（第三段）
+
+| 步驟 | 誰 | 手動代勞？ |
+| --- | --- | --- |
+| 喚醒命令內容 | **owner 拍板**，控制面依宣告寫入 config | 否（宣告本來就是 owner 的動作） |
+| probe／subscribe／start／stop | 控制面經產品自己的入口（`probe_wake_capability`、`run_runner_command`、`RealRunnerLifecyclePort`） | 否 |
+| 入列 | **runner 的 tee（P7）**，無人手動呼叫 `enqueue_work` | 否 |
+| 擱置判定 | `integrate_next_work` | 否 |
 
 第三段要驗的是用既有 `runner subscribe` CLI（E13）對本 repo arm 一個訂閱、落一個
 真 commit，觀察它以 `COMMIT_TRIGGER` 來源進入佇列，且消費端正確回報
