@@ -9,7 +9,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | 本票 revision／worktree `.worktrees/gov-17`／branch `implement/gov-17-reviewer-mutation` |
 | 實作語言 | Markdown（policy reference）＋ Python 3.11（digest repin） |
-| 狀態 | `IN_PROGRESS` |
+| 狀態 | `DONE` |
 | 共同基準 | `9125a91`（程式碼基準；worktree HEAD 為綁定 commit，派工訊息載明） |
 | 實作者 | Sonnet 5 high（一般小票，依 `dispatch-model-profile.md` 分層） |
 | 審閱者 | 控制面（Opus 5） |
@@ -114,14 +114,22 @@ forbid = modules/tickets/
 
 ## 完成回寫
 
-- 實際檔案：待填
-- commit：待填
+- 實際檔案：`skills/johnny-project-takeover/references/review-checks.md`、`library/workflow_router/profile.py`、`tests/test_workflow_router.py`
+- commit：`ca384c1`，經 `admit_document_mutation` 判為 `INTEGRATED`
+- **落點**：新增 `## Reviewer counter-mutation` 段落，`Test truthfulness` 列指向它；四點各自成條，四種錯位形狀（Copy／First match／Environment-scoped／Overlap-masking）具名列出
+- **repin 做對了**：`rev-4b8527305609194a` → `rev-0589a1d06beafc2b`，兩處一致，**審閱者獨立重算驗證相符**。這是控制面自己漏過兩次的步驟
+- **反向突變**：實作者兩組（只還原 profile.py 的 rev-；移除第 2 點不重釘）——兩組都經 digest 轉紅
+- **審閱者從第三道門進去，零轉紅**：把四點**整段反轉**（改成「重跑實作者的突變就足夠」「零轉紅代表釘得很穩」），並把兩處 digest **正確重釘** → **57 passed，零轉紅**
+- **依本票自己剛寫下的規則，預設結論是「沒有被釘住」，追查後判為具名限制而非缺陷**：digest 是變更偵測器，不是內容斷言；真正擋住未授權改寫的是**整合閘門**——任何 candidate 要動 `review-checks.md`，票的 `johnny-boundary` 必須宣告 `modify`，否則 `admit_document_mutation` 拒絕（governance 08）。七份被釘的 reference 全數如此，要求本票獨自加內容斷言是超出專案慣例
+- **仍然成立的限制**：一張宣告了 `modify = review-checks.md` 的票可以改寫這份規範而測試不反對。這與任何檔案相同，記錄在案而非假裝不存在
+- **審閱者自己的錯**：第一次突變的 repin regex 改到了**所有** policy 條目，紅的是 shared-context 而非 review-checks——工具壞了不是發現。改成逐條目定點替換（加「舊值必須恰好出現一次」斷言）後才取得可信結果
+- 全套件（受閘測試開啟）：1404 passed、1 skipped、3254 subtests、零 FAILED、無殘留
 
 ```johnny-status
 id = 17
 title = 審閱端的突變必須從另一道門進去
-state = IN_PROGRESS
-stage = W | 寫進 reference | OPEN
-stage = R | digest 重釘 | OPEN
-stage = M | 突變驗證 | OPEN
+state = DONE
+stage = W | 寫進 reference | DONE
+stage = R | digest 重釘 | DONE
+stage = M | 突變驗證 | DONE
 ```

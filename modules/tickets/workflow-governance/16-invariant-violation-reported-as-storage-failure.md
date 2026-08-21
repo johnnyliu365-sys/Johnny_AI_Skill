@@ -9,7 +9,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | 本票 revision／worktree `.worktrees/gov-16`／branch `implement/gov-16-named-invariant-failure` |
 | 實作語言 | Python 3.11 |
-| 狀態 | `IN_PROGRESS` |
+| 狀態 | `DONE` |
 | 共同基準 | `9125a91`（程式碼基準；worktree HEAD 為綁定 commit，派工訊息載明） |
 | 實作者 | Sonnet 5 high（一般小票，依 `dispatch-model-profile.md` 分層） |
 | 審閱者 | 控制面（Opus 5） |
@@ -110,14 +110,20 @@ except (OSError, ValidationError, ValueError):
 
 ## 完成回寫
 
-- 實際檔案：待填
-- commit：待填
+- 實際檔案：`library/local_orchestration/worker_assignment.py`、`work_queue.py` 與兩個測試檔
+- commit：`e7cc1f0`，經 `admit_document_mutation` 判為 `INTEGRATED`
+- **掃描**：六處同形狀 except，**分流兩處**（`claim_worker_assignment`、`enqueue_work`），其餘四處逐一追可達性後判定不需分流：`settle_worker_assignment`／`pull_work` 只把已驗證的項目一對一替換（lifecycle 翻轉），不可能新造重複；兩個 read 路徑必須維持 `STORAGE_UNAVAILABLE`，既有 cell 有此要求
+- **可達路徑比審閱者發現的更深**：`receipt_ref`／`origin_ref` 有顯式守衛，**`claim_id`／`item_id` 是新 UUID、全域沒有任何顯式檢查**，validator 是它們背後唯一的防線。新測試從這個未守衛的欄位觸發碰撞，所以既有的 `RECEIPT_ALREADY_CLAIMED`／`ORIGIN_ALREADY_QUEUED` 語意完全未動
+- **分流的形狀**：在帳本建構那一行外面包一層窄 try，而**不是**把外層 except 依例外型別拆開——外層仍必須接住 `_load()` 讀到壞檔時的 `ValidationError`
+- 新失敗碼：`ASSIGNMENT_INVARIANT_VIOLATED`、`QUEUE_INVARIANT_VIOLATED`
+- **反向突變**：實作者兩組（折回 `STORAGE_UNAVAILABLE`；讓例外逸出）。審閱者從第三道門進去——**兩個 handler 一字未動**，只把建構搬出內層 try（未來為了可讀性把值提前的典型重構）→ `InvariantViolationTests` 轉紅，跨行程 cell 也跟著具名失敗；還原後 101 綠。這證明釘子釘在**被走的那條路**上，不是釘在 handler 上
+- 全套件（受閘測試開啟）：1408 passed、1 skipped、3254 subtests、零 FAILED、無殘留
 
 ```johnny-status
 id = 16
 title = 不變式違反被報成儲存問題
-state = IN_PROGRESS
-stage = S | 掃描同形狀分流 | OPEN
-stage = F | 具名分流 | OPEN
-stage = M | 突變驗證 | OPEN
+state = DONE
+stage = S | 掃描同形狀分流 | DONE
+stage = F | 具名分流 | DONE
+stage = M | 突變驗證 | DONE
 ```
