@@ -27,7 +27,7 @@ from tests.test_plugin_distribution_bundle import _run_git
 
 _REPO_ROOT = Path(__file__).resolve().parents[1]
 _WRAPPER_NAME = "johnny-install.cmd"
-_BUNDLE_NAME = "johnny-ai-skill-0.4.5.zip"
+_BUNDLE_NAME = "johnny-ai-skill-0.4.6.zip"
 _APPROVED_DIGEST = (
     "4119da06ce7a59624bc52c2f4d6e37c2272ffc0bb95dccfc1ead2a5212fa675d"
 )

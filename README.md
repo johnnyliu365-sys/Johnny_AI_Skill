@@ -4,7 +4,32 @@
 
 它不是公司專案的 runtime service、MCP server、hook、CI 依賴、Git submodule、symlink、package dependency 或原始碼 import。因此拔除後，公司的建置、測試、部署與既有程式不會受影響。
 
-## 目前發行：0.4.5
+## 目前發行：0.4.6
+
+0.4.6 把治理從「寫在文件裡」變成「擋得住」。
+
+**文件變更閘門**（`document_mutation_gate`）：每張票以機器可讀的 `johnny-boundary`
+區塊宣告可改／可新增／可刪除的路徑，變更整合進 `main` 之前由閘門比對實際動到的檔案，
+三種門檻各自具名拒絕。**邊界從 `main` 上的票讀，不從候選分支讀**——否則一個變更能在
+同一個 commit 裡放寬用來審它自己的規則。刪除只接受精確路徑，不接受萬用字元。
+
+**工單狀態頁**（`ticket_status_pipeline` + `ticket_status_template` +
+`ticket_status_publish`）：一頁回答「哪張票、哪個階段、停在哪個 commit、接手要給對話
+什麼指令」。狀態一律**讀票裡的宣告**，不從散文推測；解析失敗的票會就地標示為「讀不到」，
+**絕不靜靜地變成空欄位**——短清單看起來像「沒事」，那是這頁最危險的失敗。
+
+**工人與 receipt 的綁定**（`worker_assignment`）：claim／settle 配對寫在持久帳上，
+跨行程恰好一次。「哪張票在誰手上」不再只存在於某個對話裡。
+
+另含並行派工的實證（兩張票同時發放各拿到自己的 receipt、同票並行只成立一份、
+repo 外的 worktree 被拒且不留發放紀錄）、`CLAUDE.md` 入口（本專案的規範入口是
+`AGENTS.md`，但 Claude Code 只自動載入 `CLAUDE.md`），以及測試基礎設施的兩個
+cp950 解碼修正與一個 1/11 機率的孤兒環境缺陷。
+
+**誠實邊界**：閘門擋在整合而非按鍵——Router 是函式庫不是檔案系統掛鉤，擋不住 agent
+落鍵，能保證的是「未宣告的變更進不了 main」。`worker_assignment` 讓死掉的工人
+**可被發現**而非**被偵測**：孤兒在有人讀取時浮現，不由計時器浮現；不加輪詢是刻意的，
+代價是及時性。
 
 0.4.5 讓 Router 能驅動 **Claude Code 的對話分支**，一個 reviewer 一條分支，
 每次喚醒依 payload 的 `reviewer_ref` 查 owner 宣告的路由表決定目標
@@ -110,9 +135,9 @@ red 證據重定義）。該版的兩個誠實邊界（live 安裝停在
 
 ## Codex 使用方式
 
-### 0.4.5 完整 bundle 安裝
+### 0.4.6 完整 bundle 安裝
 
-正式的一鍵入口是隨 release 發布的 `johnny-install.cmd`，將其下載至與經核准且 SHA-256 相符的 `johnny-ai-skill-0.4.5.zip` 同一資料夾下雙擊執行（或在終端機直接執行 `install.ps1 -BundleZip <path>`）。它會先核驗 bundle SHA-256，並在確認相符後抽出 `install.ps1` 進行安裝引導。bootstrap 會先顯示 Codex、Git、Python 與核心 dependency 計畫；需要下載時必須由使用者輸入 `INSTALL` 確認。它只建立 per-user Johnny-owned runtime，不會把 plugin、venv、receipt 或 cache 複製到公司 repo。
+正式的一鍵入口是隨 release 發布的 `johnny-install.cmd`，將其下載至與經核准且 SHA-256 相符的 `johnny-ai-skill-0.4.6.zip` 同一資料夾下雙擊執行（或在終端機直接執行 `install.ps1 -BundleZip <path>`）。它會先核驗 bundle SHA-256，並在確認相符後抽出 `install.ps1` 進行安裝引導。bootstrap 會先顯示 Codex、Git、Python 與核心 dependency 計畫；需要下載時必須由使用者輸入 `INSTALL` 確認。它只建立 per-user Johnny-owned runtime，不會把 plugin、venv、receipt 或 cache 複製到公司 repo。
 
 不得把原始碼 checkout 或 `main` 當成已核准 bundle；正式入口永遠是 digest 與已核准
 release 相符的 bundle。既有 `0.3.x` skill-only 安裝仍可使用 private Git
