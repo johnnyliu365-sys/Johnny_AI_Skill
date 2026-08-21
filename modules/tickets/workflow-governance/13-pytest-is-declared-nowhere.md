@@ -22,6 +22,7 @@
 ```johnny-boundary
 modify = requirements-dev.txt
 modify = tests/test_runtime_dependency_lock.py
+create = tests/test_runtime_dependency_lock.py
 forbid = requirements-runtime.lock
 forbid = library/
 forbid = modules/tickets/
