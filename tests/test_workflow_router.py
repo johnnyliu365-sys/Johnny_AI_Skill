@@ -1013,6 +1013,59 @@ class WorkflowRouterTests(unittest.TestCase):
                     with self.subTest(term=term):
                         self.assertIn(term, document)
 
+    def _read_automation_readiness_section(self) -> str:
+        root = Path(__file__).resolve().parents[1]
+        skill_document = (root / "skills/johnny-project-takeover/SKILL.md").read_text(
+            encoding="utf-8"
+        )
+        section_start = skill_document.index("### Automation readiness")
+        section_end = skill_document.index("\n## ", section_start)
+        return skill_document[section_start:section_end]
+
+    def test_automation_readiness_points_probe_the_derived_launcher_path(self) -> None:
+        # Ticket governance/11: the four checks must name a path derived from the runtime
+        # root (same root as point 1), never a bare command name that relies on PATH --
+        # install.ps1 never puts the launcher on PATH, so a bare name never resolves.
+        section = self._read_automation_readiness_section()
+        derived_launcher = "<runtime root>\\launcher\\johnny-router.ps1"
+        self.assertEqual(
+            2,
+            section.count(derived_launcher),
+            "points 3 and 4 must both invoke the derived launcher path",
+        )
+        self.assertIn(
+            "`<runtime root>` in points 3 and 4 is the exact root resolved in point 1",
+            section,
+        )
+
+    def test_automation_readiness_never_names_a_bare_johnny_router_command(self) -> None:
+        section = self._read_automation_readiness_section()
+        for bare_invocation in (
+            "`johnny-router runner status`",
+            "`johnny-router wake-capability probe`",
+        ):
+            with self.subTest(bare_invocation=bare_invocation):
+                self.assertNotIn(bare_invocation, section)
+
+    def test_automation_readiness_points_three_and_four_honor_the_johnny_root_override(
+        self,
+    ) -> None:
+        # Point 1 already acknowledges the JOHNNY_ROOT override. Points 3 and 4 derive from
+        # "<runtime root>", the same override-aware root -- they must not fall back to a
+        # hardcoded default while point 1 alone follows the override.
+        section = self._read_automation_readiness_section()
+        self.assertIn("`JOHNNY_ROOT` when set", section)
+        self.assertGreaterEqual(section.count("JOHNNY_ROOT"), 3)
+
+    def test_automation_readiness_four_point_semantics_are_unchanged(self) -> None:
+        section = self._read_automation_readiness_section()
+        self.assertIn("verify all four", section)
+        self.assertIn(
+            "If any of the four is absent, the honest statement is: "
+            "*the handoff is committed; no automation",
+            section,
+        )
+
     def test_delivery_stage_must_match_the_approved_profile(self) -> None:
         decision = self.engine.decide(
             state=RouterState(

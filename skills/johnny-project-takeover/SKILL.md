@@ -71,10 +71,17 @@ Every wake, automatic continuation or supervision effect this skill describes is
 The mechanism that performs it is the installed Johnny runtime, armed for the specific project.
 Before stating that any automatic effect will happen or has happened, verify all four:
 
-1. the per-user runtime root exists (`%LOCALAPPDATA%\JohnnyRouter`, or `JOHNNY_ROOT`);
+1. the per-user runtime root exists (`%LOCALAPPDATA%\JohnnyRouter`, or `JOHNNY_ROOT` when set);
 2. a subscription for this project's exact ref exists (`runner-subscriptions.json`);
-3. a runner is running for it (`johnny-router runner status` reports `RUNNING`);
-4. a wake capability is proven (`johnny-router wake-capability probe`).
+3. a runner is running for it (`<runtime root>\launcher\johnny-router.ps1 runner status` reports
+   `RUNNING`);
+4. a wake capability is proven
+   (`<runtime root>\launcher\johnny-router.ps1 wake-capability probe`).
+
+`<runtime root>` in points 3 and 4 is the exact root resolved in point 1: `JOHNNY_ROOT` when set,
+else `%LOCALAPPDATA%\JohnnyRouter`. Never invoke a bare `johnny-router` name — `install.ps1` never
+modifies PATH by design, so a bare command name never resolves; always invoke the derived launcher
+path instead. An overridden `JOHNNY_ROOT` relocates all four checks together, not point 1 alone.
 
 If any of the four is absent, the honest statement is: *the handoff is committed; no automation
 is armed for this project, so the owner must notify the reviewer.* Never report a wake you did
