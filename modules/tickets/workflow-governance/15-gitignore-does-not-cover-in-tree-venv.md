@@ -9,7 +9,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | 本票 revision／worktree `.worktrees/gov-15`／branch `implement/gov-15-ignore-venv` |
 | 實作語言 | gitignore ＋ Python 3.11（釘住用的測試） |
-| 狀態 | `IN_PROGRESS` |
+| 狀態 | `DONE` |
 | 共同基準 | `d3498d1`（程式碼基準；worktree HEAD 為綁定 commit，派工訊息載明） |
 | 實作者 | Sonnet 5 high（一般小票，依 `dispatch-model-profile.md` 分層） |
 | 審閱者 | 控制面（Opus 5） |
@@ -76,14 +76,20 @@ ignore 條目約束所有人。
 
 ## 完成回寫
 
-- 實際檔案：待填
-- commit：待填
+- 實際檔案：`.gitignore`、`tests/test_repository_hygiene.py`（新增）
+- commit：`b830870`，經 `admit_document_mutation` 判為 `INTEGRATED`
+- **修法**：`/.venv/` 與 `/suite.log` 兩行 root-anchored。不需要為每個 worktree 各寫一條——被追蹤的 `.gitignore` 會被 checkout 進每個 worktree，而開頭斜線永遠相對於該檔所在位置
+- **baseline-red**：修前 `git check-ignore .venv/x`、`suite.log`、`.venv/lib/site-packages/foo.py` 皆 exit 1；修後皆 exit 0
+- **第一版的缺口（審閱者突變抓到）**：逐行回歸釘只斷言 exit code。拔掉**既有的** `__pycache__/` 行 → **14 passed 零轉紅**，因為探測路徑 `__pycache__/foo.pyc` 同時被 `*.py[cod]` 接住。exit code 回答「這條路徑有沒有被某條規則忽略」，不回答「還是不是這一行在決定」——而後者才是逐行回歸釘要證明的事
+- **修正**：全部探測改用 `git check-ignore -v`，斷言**匹配到的 pattern 文字**等於被釘的那一行。這是機械式的，不靠挑探測路徑閃避重疊——未來 `.gitignore` 再加任何行都不會讓釘子失明。審閱者重跑同一組突變 → **恰好 1 紅**，訊息指名 `'*.py[cod]' != '__pycache__/'`，還原後 14 綠
+- **落地經過**：第一位實作者的寫入被工具層安全分類器全面封鎖，交出診斷與原始碼草稿並**拒絕捏造沒跑過的測試輸出**；由第二位實作者驗證後原樣落地（逐條核對 9 行歸因，未發現需要修改）
+- 全套件（受閘測試開啟）：1404 passed、1 skipped、3254 subtests、零 FAILED、無殘留
 
 ```johnny-status
 id = 15
 title = .gitignore 不擋 in-tree venv
-state = IN_PROGRESS
-stage = F | ignore 條目 | OPEN
-stage = T | 測試釘住 | OPEN
-stage = M | 突變驗證 | OPEN
+state = DONE
+stage = F | ignore 條目 | DONE
+stage = T | 測試釘住 | DONE
+stage = M | 突變驗證 | DONE
 ```

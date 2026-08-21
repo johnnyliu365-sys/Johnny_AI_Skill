@@ -9,7 +9,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | 本票 revision／worktree `.worktrees/p5`／branch `implement/p5-redispatch` |
 | 實作語言 | Python 3.11 |
-| 狀態 | `IN_PROGRESS` |
+| 狀態 | `DONE` |
 | 共同基準 | worktree HEAD（派工訊息載明） |
 | 實作者 | Opus 5（難票，依 `dispatch-model-profile.md` 先派 Opus） |
 | 審閱者 | 控制面（Opus 5）；與實作者不同 worktree |
@@ -100,14 +100,22 @@ governance 15 首次走接線路徑，driver 的 spawn port 有 bug（AttributeE
 
 ## 完成回寫
 
-- 實際檔案：待填
-- commit：待填
+- 實際檔案：`library/local_orchestration/dispatch_authority.py`、`dispatch_session.py`、`live_dispatch_metadata_boundary.py` 與四個測試檔
+- commit：`07d9960`，經 `admit_document_mutation` 判為 `INTEGRATED`
+- **三個落點**：store CAS 層新增 `revoke_receipt`（終態的唯一寫入者，開在 receipt CAS 與檔案鎖所在之處）；policy 層新增 `revoke_dispatch_receipt`（順序即保證：grant → 驗證 → 相異後繼 → **補償證明** → store 寫入 → journal）；composition 層 `redispatch_worker` 撤銷後**呼叫 `dispatch_worker` 本身**，不是重派風味的副本，所以正常路徑的每個區分都原樣存活
+- **恰好一次的支點**：閘門**自己**讀帳本，要求該 receipt 有一筆 `SETTLED` 紀錄。`SETTLED` 證明補償真的發生；**紀錄存在本身**則讓退役 receipt 永久不可 claim（`claim_worker_assignment` 對帳本裡已有的 receipt 一律拒絕，不論該列 lifecycle）。從未被 claim 過的 receipt 撤銷會讓它與後繼並存且可手動 claim，故以 `ASSIGNMENT_ABSENT` 拒絕而非放行
+- **證明放在閘門內而非其上**：呼叫端提供的證明就是呼叫端可偽造的證明
+- **跨行程證據**：四個真行程（起跑閘門）並行重派同一張票，恰好一個 `DISPATCHED`，三個敗者各自敗在具名的門而非儲存錯誤；事後恰好一個 `ACTIVE` receipt、一個孤兒 claim 且是贏家的
+- **反向突變**：實作者三組（放行開著的 claim → 3 紅；終態 receipt 仍佔鍵 → 5 紅；已結清紀錄不再阻擋 → 2 紅）。審閱者另做一組同族但不同入口的：直接把重複 claim 檢查改成只擋 `CLAIMED` → **2 紅**，還原後 116 綠，`worker_assignment.py` 逐位元回到 HEAD
+- **審閱者發現、不在本票範圍**：帳本不變式（`_AssignmentLedger.identities_are_unique`）被違反時，`ValueError` 被 `except (OSError, ValidationError, ValueError)` 接住並回報 `STORAGE_UNAVAILABLE`——**不變式違反被報成儲存問題**。屬 P2 既有程式碼，本票未改動，另開 governance 16
+- **schema_revision 刻意不動**：沒有新增欄位、沒有改變形狀（`REVOKED` 一直可表示，缺的只是寫入者），該決定連同理由由測試釘住
+- 全套件（受閘測試開啟）：1390 passed、1 skipped、3251 subtests、零 FAILED、無殘留
 
 ```johnny-status
 id = P5
 title = 補償之後沒有重派的路
-state = IN_PROGRESS
-stage = D | 設計與重派路 | OPEN
-stage = X | 恰好一次保全 | OPEN
-stage = M | 突變驗證 | OPEN
+state = DONE
+stage = D | 設計與重派路 | DONE
+stage = X | 恰好一次保全 | DONE
+stage = M | 突變驗證 | DONE
 ```
