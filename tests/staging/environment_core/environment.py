@@ -5,6 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 import re
 import stat
+import time
 import uuid
 
 from pydantic import ValidationError
@@ -39,6 +40,13 @@ _RUNTIME_PARENT_NAME = ".johnny-runtime"
 _TESTS_DIRECTORY = Path(__file__).resolve(strict=True).parents[2]
 _PROJECT_RUNTIME_PARENT = _TESTS_DIRECTORY / _RUNTIME_PARENT_NAME
 _CLAIMED_MARKERS: dict[Path, EnvironmentMarker] = {}
+
+# Register B2/C9/C10: a reader can hold a transient Windows share-mode lock on a
+# freshly-written marker file or a just-vacated directory, which turns an
+# ordinary unlink/rmdir into `PermissionError [WinError 5]` for a beat. A single
+# such failure must not strand the tree — bounded retry absorbs the transient
+# case; a permanent block still surfaces as DELETE_FAILED on the final attempt.
+_DELETE_RETRY_DELAYS: tuple[float, ...] = (0.05, 0.1, 0.2, 0.4)
 
 
 class DisposableEnvironmentAllocator:
@@ -233,7 +241,7 @@ class DisposableEnvironmentAllocator:
             return
         try:
             if next(parent.iterdir(), None) is None:
-                parent.rmdir()
+                self._rmdir_past_transient_block(parent)
         except (OSError, StopIteration):
             return
 
@@ -269,8 +277,30 @@ class DisposableEnvironmentAllocator:
             if child.is_dir():
                 self._remove_exact_tree(child)
             else:
-                child.unlink()
-        directory.rmdir()
+                self._unlink_past_transient_block(child)
+        self._rmdir_past_transient_block(directory)
+
+    @staticmethod
+    def _unlink_past_transient_block(path: Path) -> None:
+        """Survive a transient Windows share-mode block on delete (B2/C9/C10), finitely."""
+        for delay in _DELETE_RETRY_DELAYS:
+            try:
+                path.unlink()
+                return
+            except PermissionError:
+                time.sleep(delay)
+        path.unlink()
+
+    @staticmethod
+    def _rmdir_past_transient_block(path: Path) -> None:
+        """Survive a transient Windows share-mode block on rmdir (B2/C9/C10), finitely."""
+        for delay in _DELETE_RETRY_DELAYS:
+            try:
+                path.rmdir()
+                return
+            except PermissionError:
+                time.sleep(delay)
+        path.rmdir()
 
     @staticmethod
     def _is_reparse_point(path: Path) -> bool:

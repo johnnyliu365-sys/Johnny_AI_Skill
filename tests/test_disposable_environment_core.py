@@ -155,6 +155,77 @@ class DisposableEnvironmentCoreTests(unittest.TestCase):
         self.assertEqual(set(), self._owned_environment_roots())
         self.assertFalse(PROJECT_RUNTIME_ROOT.exists())
 
+    def test_05_r3_a_transient_delete_block_still_tears_the_environment_down(self) -> None:
+        """Register C10: B2 also blocks the marker unlink inside teardown() itself,
+        not just cr167's own rename. A single transient PermissionError there must
+        not surface as DELETE_FAILED and strand the root."""
+        self.addCleanup(self._purge_runtime_residue)
+        allocator = DisposableEnvironmentAllocator.from_project_runtime()
+        lease = self._provisioned(allocator, "environment-owner-8888999900001111")
+        attempts: list[Path] = []
+        real_unlink = Path.unlink
+
+        def blocked_once(path: Path, *args: object, **kwargs: object) -> None:
+            attempts.append(path)
+            if len(attempts) == 1:
+                raise PermissionError(13, "Access is denied", str(path), 5)
+            real_unlink(path, *args, **kwargs)
+
+        with patch.object(Path, "unlink", blocked_once):
+            result = allocator.teardown(lease)
+        self.assertEqual(TeardownStatus.REMOVED, result.status)
+        self.assertGreaterEqual(len(attempts), 2)
+        self.assertFalse(lease.root.path.exists())
+        self.assertFalse(PROJECT_RUNTIME_ROOT.exists())
+
+    def test_05_r3_b_a_permanently_blocked_delete_is_finite_and_retains_live_claim(self) -> None:
+        """Register C10: the retry that survives a transient block must still give
+        up and report DELETE_FAILED (not hang or silently drop the claim) when the
+        block never clears."""
+        self.addCleanup(self._purge_runtime_residue)
+        allocator = DisposableEnvironmentAllocator.from_project_runtime()
+        lease = self._provisioned(allocator, "environment-owner-2222333388889999")
+
+        def always_blocked(path: Path, *args: object, **kwargs: object) -> None:
+            raise PermissionError(13, "Access is denied", str(path), 5)
+
+        with patch.object(Path, "unlink", always_blocked):
+            result = allocator.teardown(lease)
+        self.assertEqual(TeardownStatus.BLOCKED, result.status)
+        self.assertEqual(TeardownBlockReason.DELETE_FAILED, result.reason)
+        self.assertTrue(lease.root.path.exists())
+        self.assertTrue(lease.marker_path.exists())
+        self.assertEqual(TeardownStatus.REMOVED, allocator.teardown(lease).status)
+
+    def test_05_r3_c_a_permanently_blocked_delete_raises_rather_than_reporting_done(self) -> None:
+        """Register C10 (control-plane correction): 05_r3_b only pins the
+        observable `teardown()` status/reason for a permanent block, and that
+        observable turns out to be reachable by two different roads — the
+        correct one (the final unlink attempt itself raises) and a broken one
+        (the final attempt swallows the error, but the parent directory it
+        left behind is then non-empty, so its rmdir fails for an unrelated
+        reason and still reports BLOCKED/DELETE_FAILED by coincidence). That
+        coincidence means 05_r3_b cannot tell a real fix from one that quietly
+        swallows the last attempt and calls it done. This cell pins the
+        narrower, load-bearing property directly on the unit itself: a
+        permanently blocked delete must raise out of
+        `_unlink_past_transient_block`, full stop — not be caught and turned
+        into a silent return that would let some future caller mistake it for
+        success while the target is still on disk."""
+        self.addCleanup(self._purge_runtime_residue)
+        allocator = DisposableEnvironmentAllocator.from_project_runtime()
+        lease = self._provisioned(allocator, "environment-owner-4444555511119999")
+        target = lease.marker_path
+
+        def always_blocked(path: Path, *args: object, **kwargs: object) -> None:
+            raise PermissionError(13, "Access is denied", str(path), 5)
+
+        with patch.object(Path, "unlink", always_blocked):
+            with self.assertRaises(PermissionError):
+                DisposableEnvironmentAllocator._unlink_past_transient_block(target)
+        self.assertTrue(target.exists())
+        self.assertEqual(TeardownStatus.REMOVED, allocator.teardown(lease).status)
+
     def test_t1_two_distinct_owners_provision_unique_direct_project_roots_and_reject_replay(self) -> None:
         from tests.staging.environment_core.contracts import EnvironmentOwnerId, ProvisionBlockReason, ProvisionedEnvironment
         from tests.staging.environment_core.environment import DisposableEnvironmentAllocator
@@ -194,6 +265,9 @@ class DisposableEnvironmentCoreTests(unittest.TestCase):
         from tests.staging.environment_core.contracts import EnvironmentOwnerId, ProvisionedEnvironment
         from tests.staging.environment_core.environment import DisposableEnvironmentAllocator
 
+        # Register C10: the body below asserts before it tears down, so a failed
+        # assertion here used to skip teardown outright and orphan the root.
+        self.addCleanup(self._purge_runtime_residue)
         snapshot = {key: os.environ.get(key) for key in ENVIRONMENT_KEYS}
         allocator = DisposableEnvironmentAllocator.from_project_runtime()
         result = allocator.provision(EnvironmentOwnerId(value="environment-owner-0011223344556677"))
@@ -212,6 +286,14 @@ class DisposableEnvironmentCoreTests(unittest.TestCase):
         from tests.staging.environment_core.contracts import EnvironmentOwnerId, ProvisionedEnvironment, TeardownBlockReason, TeardownStatus
         from tests.staging.environment_core.environment import DisposableEnvironmentAllocator
 
+        # Register C10: three environments are provisioned in this cell (missing,
+        # wrong, reparse), each with an assertion between provisioning and its
+        # restorative teardown. Any one of those assertions failing used to skip
+        # teardown for that environment (and any not-yet-reached one) and orphan
+        # the root(s). The allocator's own semantic teardown can itself refuse a
+        # deliberately-corrupted marker, so the backstop purges by path instead of
+        # going back through the marker-validating gate.
+        self.addCleanup(self._purge_runtime_residue)
         allocator = DisposableEnvironmentAllocator.from_project_runtime()
         missing = self._provisioned(allocator, "environment-owner-1111222233334444")
         missing.marker_path.unlink()

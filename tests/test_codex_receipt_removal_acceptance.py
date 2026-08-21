@@ -82,12 +82,21 @@ def _ready() -> tuple[DisposableEnvironmentAllocator, EnvironmentLease, CodexLif
     provisioned = allocator.provision(EnvironmentOwnerId(value="environment-owner-000000000000c3a1"))
     if type(provisioned) is not ProvisionedEnvironment:
         raise AssertionError("failed to provision the acceptance lease")
-    oracle = CodexLifecycleOracle(
-        CodexLifecycleOracleRunner(BoundedChildProcessRunner(SubprocessProcessPort()))
-    )
-    if type(oracle.initialize(provisioned.environment)) is not OracleCompleted:
-        raise AssertionError("failed to initialize the acceptance oracle")
-    return allocator, provisioned.environment, oracle
+    lease = provisioned.environment
+    # Register C10: every cell calls `allocator, lease, oracle = _ready()` before
+    # its own try/finally opens, so a failure in here — after provision() already
+    # created the root on disk — must tear the lease back down itself, or the
+    # caller never gets a reference to do it and the root is orphaned.
+    try:
+        oracle = CodexLifecycleOracle(
+            CodexLifecycleOracleRunner(BoundedChildProcessRunner(SubprocessProcessPort()))
+        )
+        if type(oracle.initialize(lease)) is not OracleCompleted:
+            raise AssertionError("failed to initialize the acceptance oracle")
+    except BaseException:
+        _teardown(allocator, lease)
+        raise
+    return allocator, lease, oracle
 
 
 def _teardown(allocator: DisposableEnvironmentAllocator, lease: EnvironmentLease) -> None:
@@ -501,6 +510,18 @@ class CodexReceiptRemovalAcceptanceTests(unittest.TestCase):
             self.assertFalse(proof_false_round_trip.absent)
         finally:
             _teardown(allocator, lease)
+
+    def test_c10_ready_tears_down_when_oracle_initialize_fails_after_provision(self) -> None:
+        """Register C10: every cell above calls `_ready()` before its own
+        try/finally opens, so a failure inside `_ready()` after provision()
+        already created the root must tear that root back down itself."""
+        runtime_parent = Path(__file__).resolve().parent / ".johnny-runtime"
+        before = set(runtime_parent.iterdir()) if runtime_parent.is_dir() else set()
+        with patch.object(CodexLifecycleOracle, "initialize", return_value=object()):
+            with self.assertRaises(AssertionError):
+                _ready()
+        after = set(runtime_parent.iterdir()) if runtime_parent.is_dir() else set()
+        self.assertEqual(before, after)
 
 
 if __name__ == "__main__":
