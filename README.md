@@ -12,6 +12,52 @@ Johnny AI Skill installs **into your user account**, never into the project you 
 
 Consequently your project's own `AGENTS.md`, `CLAUDE.md`, security policy, test policy and Git policy stay authoritative. This plugin is an outside control plane that helps an agent choose a safe next step; when your project already declares a rule, that rule wins. Remove the plugin and your build, tests, deployment, dependencies and history are exactly what they were.
 
+## How the loop is closed
+
+Work reaches your default branch through exactly one door, and that door reads the boundary the ticket declared before any agent started.
+
+```mermaid
+flowchart TB
+    subgraph yours["Your project"]
+        rules["Your own rules<br/>read first, outrank everything"]
+        main["main"]
+    end
+
+    ticket["Ticket<br/>declares which paths may change"]
+
+    subgraph plane["Control plane — installed in your user account"]
+        dispatch["dispatch_worker<br/>admit → claim → spawn"]
+        ledger["Ledger<br/>one receipt per ticket<br/>one open claim at a time"]
+        queue["Work queue<br/>durable, pulled not pushed"]
+        gate["admit_document_mutation<br/>the only way in"]
+    end
+
+    worker["Agent<br/>works in its own worktree"]
+    commit["Commit on a watched ref"]
+
+    rules -.-> dispatch
+    ticket --> dispatch
+    dispatch <--> ledger
+    dispatch --> worker
+    worker -->|returns| settle["record_worker_return<br/>settle + enqueue"]
+    settle <--> ledger
+    settle --> queue
+    queue --> integrate["integrate_next_work<br/>pull → resolve"]
+    integrate --> gate
+    ticket ==>|boundary| gate
+    gate -->|admitted| main
+    gate -.->|"refused — main never moved"| integrate
+    commit --> tee["Ref-watch tee"]
+    tee -->|wake first, always| worker
+    tee --> queue
+```
+
+Three properties are what the shape is for:
+
+- **The gate performs the merge itself.** A refusal is therefore provable — a candidate that touches an undeclared path leaves `main` exactly where it was, rather than being merged and reported on afterwards.
+- **The claim precedes the spawn.** The record exists before the thing it records, so an agent can never be running against a ticket with no durable trace of who holds it. A failed spawn settles its own claim in the same call that reports the failure.
+- **The queue is pulled, never pushed.** Nothing has to detect whether a session is busy, and nothing interrupts one; a consumer takes the next item when it finishes the current one. That is an event, not a timer.
+
 ## Install
 
 There are two levels. Start with the first.
