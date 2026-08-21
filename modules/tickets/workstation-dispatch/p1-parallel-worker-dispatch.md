@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | 無紀錄（早於本欄要求） |
 | 實作語言 | Python 3.11（依 `CONTEXT.md` › 實作語言規範的統一後端語言） |
-| 狀態 | `IN_PROGRESS` |
+| 狀態 | `DONE` |
 | 共同基準 | `main`，V2-S2 之後 |
 | 實作者 | 控制面 |
 | 審閱者 | 控制面（Opus 5）；與實作者不同 worktree |
@@ -125,12 +125,13 @@ worktree 上為某張票工作」這個模型已經存在，只是從來沒有�
 - 實際檔案：`tests/test_parallel_worker_dispatch.py`
 - commit：`78fff8b`（並行證明）、`77a5000`（子行程移出 checkout）
 - WorkProgress：不適用
+- **結案**：本票的並行證明（T）於 `78fff8b` 完成；黏合層拆為 P2（`worker_assignment`，已整合）、回傳拆為 P3（`work_queue`，已整合，0.4.7 發行）；P4（`dispatch_session`，`64cb1a2`）把三者接成唯一路徑。三張下游票全部 DONE，本票無剩餘範圍
 
 ```johnny-status
 id = P1
 title = 用 Router 記帳管多個平行工人
-state = IN_PROGRESS
+state = DONE
 stage = T | 並行證明 | DONE
-stage = G | 黏合層（已拆為 P2） | OPEN
-stage = V | 工人回傳（改由子代理結構性回傳，佇列見 P3） | OPEN
+stage = G | 黏合層（已拆為 P2，已整合） | DONE
+stage = V | 工人回傳（佇列 P3＋接線 P4，已整合） | DONE
 ```

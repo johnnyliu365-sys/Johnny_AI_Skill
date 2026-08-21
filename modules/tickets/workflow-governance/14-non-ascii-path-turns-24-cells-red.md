@@ -9,7 +9,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | 本票 revision／worktree `.worktrees/gov-14`／branch `implement/gov-14-ascii-shim` |
 | 實作語言 | Python 3.11 |
-| 狀態 | `IN_PROGRESS` |
+| 狀態 | `DONE` |
 | 共同基準 | `5567520`（程式碼基準；worktree HEAD 為綁定 commit，派工訊息載明） |
 | 實作者 | Sonnet 5 high（一般票，依 `dispatch-model-profile.md` 分層） |
 | 審閱者 | 控制面（Opus 5） |
@@ -99,14 +99,19 @@ tests/test_claude_wake_command.py:88
 
 ## 完成回寫
 
-- 實際檔案：待填
-- commit：待填
+- 實際檔案：`tests/test_claude_wake_command.py`、`tests/test_antigravity_wake_command.py`
+- commit：`e916ccf`，經 `admit_document_mutation` 判為 `INTEGRATED`
+- **6 處全數清點**：2 處承載路徑（本票邊界內，已修）；其餘 4 處是 digest／版本字串／已被 ASCII 讀入的內容，不承載路徑，未動。`library/` 實測 0 處——票面「tests 與 library 共 6 處」實為全在 tests
+- **修法**：路徑改走環境變數，`cmd.exe` 從 Unicode 環境區塊解析 `%VAR%`，批次檔位元組永遠純 ASCII。先試過的死路留在註解裡：8.3 短名在 cp950 下不會把中文換掉
+- **baseline-red**：in-tree venv 修前 24 紅（全為 `UnicodeEncodeError`）、修後綠；兩個 venv 結果逐檔一致
+- **第一版的缺口（審閱者突變抓到）**：回歸防護只活在 in-tree venv 情境——把修法退掉，ASCII venv 下 32 passed 零轉紅，而整合閘門跑的正是 ASCII venv。修正後每檔補一個環境無關 cell（mock 假中文路徑），審閱者獨立重跑同向突變 → 恰好 1 紅，還原後 48 綠
+- 全套件（受閘測試開啟）：1328 passed、1 skipped、3135 subtests、零 FAILED、無殘留
 
 ```johnny-status
 id = 14
 title = 非 ASCII 路徑讓 24 個 cell 假紅
-state = IN_PROGRESS
-stage = S | 掃描全部 6 處 | OPEN
-stage = F | 修正編碼 | OPEN
-stage = M | 突變驗證 | OPEN
+state = DONE
+stage = S | 掃描全部 6 處 | DONE
+stage = F | 修正編碼 | DONE
+stage = M | 突變驗證 | DONE
 ```

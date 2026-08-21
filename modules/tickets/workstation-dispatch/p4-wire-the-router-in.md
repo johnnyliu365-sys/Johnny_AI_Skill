@@ -9,7 +9,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | 本票 revision／worktree `.worktrees/p4`／branch `implement/p4-dispatch-session` |
 | 實作語言 | Python 3.11 |
-| 狀態 | `IN_PROGRESS` |
+| 狀態 | `DONE` |
 | 共同基準 | `5567520`（程式碼基準；worktree HEAD 為綁定 commit，派工訊息載明） |
 | 實作者 | Fable 5（**Owner override record**：owner 於 2026-08-21 指定；依 `dispatch-model-profile.md` 分層，難票本應先派 Opus 5 Extra、失敗後才升 Fable——此為 owner 直接指派，非控制面選擇） | |
 | 審閱者 | 控制面（Opus 5） |
@@ -87,14 +87,20 @@ commit 觸發的實機驗證（需要真的 runner），以及跨 host 的工人
 
 ## 完成回寫
 
-- 實際檔案：待填
-- commit：待填
+- 實際檔案：`library/local_orchestration/dispatch_session.py`、`tests/test_dispatch_session.py`
+- commit：`64cb1a2`，經 `admit_document_mutation` 判為 `INTEGRATED`
+- **兩條路徑**：派工＝admit → claim → spawn（claim 先於 spawn：帳先於被記的事；spawn 失敗立即補償 settle，補償失敗獨立具名 `SPAWN_COMPENSATION_FAILED`）。整合＝settle → 入列（`record_worker_return`）與 peek → resolve → pull → 閘門（`integrate_next_work`），兩個進入點刻意分開以保住 P3 的解耦
+- **沒有第二條整合路徑的證明是命名空間性質**：模組不持 subprocess／filesystem／發放面；六個上游進入點全部身分釘住（`is` 斷言）；越界 candidate 經此路徑必 REFUSED 且 main HEAD 不動（真 git repo 驗證）
+- **誠實邊界**：settle 與 enqueue 之間無跨檔交易，中斷的回傳以 `RETURN_ENQUEUE_FAILED` 具名，下一次呼叫補完入列而非重複 settle；入列了卻沒 settle 的帳（本模組不可能產生）以 `RETURN_LEDGER_INCONSISTENT` 拒絕不修補
+- **反向突變**：實作者四組（佇列 pre-flight、spawn 補償、subprocess 繞閘門、失敗碼折疊），SHA-256 驗證還原。審閱者另做一組不同方向的：整合端把佇列讀取失敗折疊成 `QUEUE_EMPTY`（C 族形狀）→ 恰好 1 紅（`test_an_unreadable_queue_is_never_reported_as_empty`），還原後 27 綠
+- mypy --strict 對新模組無誤
+- 全套件（受閘測試開啟）：1355 passed、1 skipped、3164 subtests、零 FAILED、無殘留
 
 ```johnny-status
 id = P4
 title = 把 Router 接進實際流程
-state = IN_PROGRESS
-stage = D | 派工路徑 | OPEN
-stage = I | 整合路徑 | OPEN
-stage = M | 突變驗證 | OPEN
+state = DONE
+stage = D | 派工路徑 | DONE
+stage = I | 整合路徑 | DONE
+stage = M | 突變驗證 | DONE
 ```

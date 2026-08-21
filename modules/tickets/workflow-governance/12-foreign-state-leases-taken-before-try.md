@@ -9,7 +9,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | 本票 revision／worktree `.worktrees/gov-12`／branch `implement/gov-12-lease-acquisition` |
 | 實作語言 | Python 3.11 |
-| 狀態 | `IN_PROGRESS` |
+| 狀態 | `DONE` |
 | 共同基準 | `5567520`（程式碼基準；worktree HEAD 為綁定 commit，派工訊息載明） |
 | 實作者 | Sonnet 5 high（一般票，依 `dispatch-model-profile.md` 分層） |
 | 審閱者 | 控制面（Opus 5） |
@@ -88,14 +88,19 @@ try:
 
 ## 完成回寫
 
-- 實際檔案：待填
-- commit：待填
+- 實際檔案：`tests/test_codex_registration_foreign_state_isolation_acceptance.py`、`tests/test_bounded_child_process_runner.py`
+- commit：`79535d2`，經 `admit_document_mutation` 判為 `INTEGRATED`
+- **掃描**：需要修的 3 個 cell（1＋2），其餘全部單一 lease 或已是 `_all_real_outcomes` 的保護模式
+- **修法**：每檔一個取得 helper（`_ready_oracle_into`／`_lease_into`），「逐一取得、成功立刻累積、任一失敗反向拆除已累積者再 re-raise」只活在這一個地方；三個 cell 與兩個 fail-closed 測試走同一條路
+- **第一版的缺口（審閱者突變抓到）**：fail-closed 測試原本自帶模式副本，把原始 cell 退回缺陷形狀 → 15 passed 零轉紅。釘在副本上的性質只保護副本。修正後對 helper 內部突變 → 兩個 fail-closed 測試紅、cell 仍綠——這正是釘子要在 choke point 而非 cell 上的原因（同 governance 10 的 `_ready()` 前例）
+- **fail-closed 證據是磁碟層級**：注入配置器自己的 `AFTER_ROOT` 確定性故障，斷言第一個 root 已從磁碟消失
+- 全套件（受閘測試開啟）：1357 passed、1 skipped、3164 subtests、零 FAILED、無殘留
 
 ```johnny-status
 id = 12
 title = foreign-state 的兩個 lease 在 try 之前取得
-state = IN_PROGRESS
-stage = S | 掃描多 lease cell | OPEN
-stage = F | 取得納入保護 | OPEN
-stage = M | 突變驗證 | OPEN
+state = DONE
+stage = S | 掃描多 lease cell | DONE
+stage = F | 取得納入保護 | DONE
+stage = M | 突變驗證 | DONE
 ```
