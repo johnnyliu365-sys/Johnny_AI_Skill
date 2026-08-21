@@ -29,7 +29,7 @@ _REPO_ROOT = Path(__file__).resolve().parents[1]
 _WRAPPER_NAME = "johnny-install.cmd"
 _BUNDLE_NAME = "johnny-ai-skill-0.4.7.zip"
 _APPROVED_DIGEST = (
-    "bf154457e050747e5b282bad054764808b1bfca78506f600b4b21fa90e7554e3"
+    "7d56314fe31961af25f2f501decef9923b6014e288144f2c9720f37c58d9a016"
 )
 
 
