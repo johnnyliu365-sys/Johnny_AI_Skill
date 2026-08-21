@@ -10,7 +10,7 @@
 | Agent Context binding | 本票 revision／worktree `.worktrees/gov-10`／branch `implement/gov-10-lease-family` |
 | 實作語言 | Python 3.11 |
 | 狀態 | `IN_PROGRESS` |
-| 共同基準 | `7585f00` |
+| 共同基準 | `09ec337`（worktree HEAD） |
 | 實作者 | Sonnet 5 high（一般票，依 `dispatch-model-profile.md` 分層） |
 | 審閱者 | 控制面（Opus 5） |
 | 責任邊界 | `tests/staging/environment_core/` 與使用 disposable environment 的測試檔 |
