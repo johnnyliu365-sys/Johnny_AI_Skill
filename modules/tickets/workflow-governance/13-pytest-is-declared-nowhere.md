@@ -7,11 +7,11 @@
 | PRD 索引 | 不適用 |
 | 需求變更 | 不適用 |
 | Sealed Context binding | 不適用 |
-| Agent Context binding | 本票 revision；worktree／branch 待派工時建立 |
+| Agent Context binding | 本票 revision／worktree `.worktrees/gov-13`／branch `implement/gov-13-pytest-declaration` |
 | 實作語言 | 相依宣告（`requirements-dev.txt`）＋ Python 3.11（釘住用的測試） |
 | 狀態 | `IN_PROGRESS` |
-| 共同基準 | `<派工時填入>` |
-| 實作者 | `<派工時填入>` |
+| 共同基準 | `c2b720f` |
+| 實作者 | Sonnet 5 high（一般小票，依 `dispatch-model-profile.md` 分層） |
 | 審閱者 | 控制面（Opus 5） |
 | 責任邊界 | `requirements-dev.txt` 與釘住它的測試 |
 | 禁止修改 | `requirements-runtime.lock`（那是執行期鎖定，pytest 不屬於執行期）；`library/` |
