@@ -9,7 +9,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | 本票 revision／worktree `.worktrees/p7`／branch `implement/p7-commit-trigger-wire` |
 | 實作語言 | Python 3.11 |
-| 狀態 | `IN_PROGRESS` |
+| 狀態 | `DONE` |
 | 共同基準 | 綁定 commit（worktree HEAD，派工訊息載明） |
 | 實作者 | Opus 5（難票：訊號 callback 語境＋跨兩份契約，依 `dispatch-model-profile.md` 先派 Opus） |
 | 審閱者 | 控制面（Opus 5）；與實作者不同 worktree |
@@ -101,14 +101,21 @@ commit-trigger 項目被拉到之後的處理政策（P6 也明文排除）；ru
 
 ## 完成回寫
 
-- 實際檔案：待填
-- commit：待填
+- 實際檔案：`library/local_orchestration/commit_trigger_intake.py`（新增）、`event_runner.py`、`tests/test_commit_trigger_intake.py`（新增）
+- commit：`ae514a8`，經 `admit_document_mutation` 判為 `INTEGRATED`
+- **接點**：包住 supervision controller 交給 native factory 的 sink（tee），不開第二個 watch。**順序是決定**：controller 先、intake 後、不看 intake 結果——佇列問題永不延遲或吃掉喚醒；controller 自己的例外照舊上傳（吞掉會蓋住 supervision fault）
+- **callback 全域契約**：`on_signal` total；失敗各自具名（`SIGNAL_INVALID`／`COMMIT_ABSENT`／`COMMIT_UNREADABLE`／`ENQUEUE_REFUSED` 帶佇列自己的原因／`INTAKE_FAULTED`），durable 記錄於 `commit-trigger-failures.jsonl`；連記錄都寫不進去的極限在 docstring 具名
+- **重複收斂**：一個 commit 一個 origin，交給佇列的 `ORIGIN_ALREADY_QUEUED` 拒絕；**刻意不設「看過的 commit」備忘錄**——同一個問題的第二個答案終究會不一致。native watch 本來就會為一次更新觸發多次（loose ref 與 packed-refs），重複是常態
+- **反向突變**：實作者三組（拿掉入列 → 7 紅＋1 SUBFAILED；失敗無聲 → 2 紅，設計使然——生產路徑沒人讀回傳值，記錄斷言正是這個 bug 的真實形狀；重複雙筆 → 7 紅）。審閱者從另一道門：**把 tee 反轉成 intake 先、喚醒只在 intake 成功後**——`test_supervision_sees_the_signal_before_the_queue_does` 恰好指名轉紅，還原後 44 綠。順序性質有被釘住
+- **控制面的邊界錯誤（第三次）**：票宣告了不存在的 `tests/test_event_runner.py`。實作者未創建、未越界，把 runner 接線 cell 放進自己的測試檔並回報。無害（閘門不管未使用的宣告），記錄在案
+- 全套件（受閘測試開啟）：1432 passed、1 skipped、3278 subtests、零 FAILED、無殘留
+- **本 commit 本身就是第三段的實機觸發**：runner（pid 44908，repo 程式碼，armed 於 `refs/heads/main`）正在看著這次 ff——它入列的那筆 `COMMIT_TRIGGER` 就是 P6 第三段的證據
 
 ```johnny-status
 id = P7
 title = commit 事件到佇列之間沒有線
-state = IN_PROGRESS
-stage = W | 接線 | OPEN
-stage = H | 誠實失敗 | OPEN
-stage = M | 突變驗證 | OPEN
+state = DONE
+stage = W | 接線 | DONE
+stage = H | 誠實失敗 | DONE
+stage = M | 突變驗證 | DONE
 ```
