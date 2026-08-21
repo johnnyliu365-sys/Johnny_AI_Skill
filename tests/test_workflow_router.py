@@ -329,8 +329,8 @@ _EXPECTED_POLICIES: tuple[_ExpectedPolicy, ...] = (
     ),
     _ExpectedPolicy(
         "review-checks",
-        "rev-4b8527305609194a",
-        "sha256_4b8527305609194ae9dd26c16a05ff72d22b1f20a8cb925175d6793766bb5f54",
+        "rev-0589a1d06beafc2b",
+        "sha256_0589a1d06beafc2ba42b8c24b448497f7973e7f6f88d18e349891e5769b9cf4d",
         PurePosixPath("skills/johnny-project-takeover/references/review-checks.md"),
     ),
 )
