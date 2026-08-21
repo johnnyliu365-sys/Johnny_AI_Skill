@@ -162,8 +162,7 @@ ticket
 ```johnny-status
 id = V2
 title = 工單狀態頁
-state = NEEDS_OWNER
-reason = 「讀不到」區塊與 IN_PROGRESS 的外觀你沒核准過——核准的樣張裡沒有畫，是實作時補的
+state = APPROVED
 stage = D | 設計核准 | DONE
 stage = U | UI 樣板 | DONE
 stage = P | 資料管線 | DONE
