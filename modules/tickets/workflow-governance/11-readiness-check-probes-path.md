@@ -7,11 +7,11 @@
 | PRD 索引 | 不適用 |
 | 需求變更 | 不適用 |
 | Sealed Context binding | 不適用 |
-| Agent Context binding | 本票 revision；worktree／branch 待派工時建立 |
+| Agent Context binding | 本票 revision／worktree `.worktrees/gov-11`／branch `implement/gov-11-readiness-path` |
 | 實作語言 | Markdown（skill 文件）＋ Python 3.11（釘住用的測試） |
 | 狀態 | `IN_PROGRESS` |
-| 共同基準 | `<派工時填入>` |
-| 實作者 | `<派工時填入>` |
+| 共同基準 | `82866fb` |
+| 實作者 | Sonnet 5 high（owner 指定） |
 | 審閱者 | 控制面（Opus 5） |
 | 責任邊界 | `skills/johnny-project-takeover/SKILL.md` 的就緒檢查段落，與釘住它的測試 |
 | 禁止修改 | `install.ps1`（不碰 PATH 是設計，不是缺陷）；`launcher/`；`library/` 下任何產品程式碼；其他 reference |
@@ -95,6 +95,9 @@ launcher\johnny-router.ps1 wake-capability probe
 - 由測試釘住：就緒檢查段落不含隱含 PATH 的裸指令，且四點指向同一個 root 推導。
 - **反向突變證據**：把第 3 點改回裸指令形式，指名的測試要轉紅；還原後轉綠。
 - 全套件綠、零殘留，列出**完整**的 `FAILED`／`SUBFAILED` 清單。
+  **本票的全套件由審閱者跑，不由實作者跑**：governance 10 同時在跑，兩個行程並行會踩共享
+  runtime root（登記簿 C1／B2）。實作者只跑 `tests/test_workflow_router.py`；
+  全套件與殘留檢查是**審閱者的未完成義務**，不得因為實作者回報綠就視為已滿足。
 - **已代為查證，實作者仍須自行確認**：`SKILL.md` **不在** `_EXPECTED_POLICIES`
   的 digest 釘死清單內（該清單目前是 7 份 `references/*.md`），故本票**不需要 repin**
   `profile.py` 與 `test_workflow_router.py` 的 rev-。動手前自己再確認一次——
