@@ -20,6 +20,12 @@ This declaration is intentionally *independent data* from
 ``library/local_orchestration/windows_package_manifest.py``.  Level 1 and Level 2
 publish different sets over different transports; sharing one literal would let a
 change to either silently change the other.
+
+Reading the declaration, matching a path against it and reading the pin are *not*
+independent data: they are the same rules the publication step applies, so they
+live once in ``plugin_publication`` and are imported here.  A copy kept in this
+file would let these tests keep agreeing with themselves while the step that
+builds the shipped tree drifted away from both.
 """
 
 from __future__ import annotations
@@ -27,11 +33,20 @@ from __future__ import annotations
 import ast
 import json
 import re
-import subprocess
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Final
+
+from library.local_orchestration.plugin_publication import (
+    PayloadDeclarationError,
+    _is_forbidden,
+    commit_exists,
+    declared_payload_files,
+    is_payload_path,
+    load_payload_declaration,
+    pinned_plugin_source,
+)
 
 _REPO_ROOT: Final[Path] = Path(__file__).resolve().parents[1]
 _PLUGIN_MANIFEST: Final[Path] = _REPO_ROOT / ".claude-plugin" / "plugin.json"
@@ -42,19 +57,12 @@ _LEVEL_TWO_MANIFEST: Final[Path] = (
 
 _FULL_SHA: Final[re.Pattern[str]] = re.compile(r"[0-9a-f]{40}\Z")
 _SEMVER: Final[re.Pattern[str]] = re.compile(r"[0-9]+(?:\.[0-9]+){2}\Z")
-_MOVING_REFS: Final[frozenset[str]] = frozenset(
-    {"main", "master", "head", "trunk", "default", "latest", "tip"}
-)
 
-# The three trees a plugin user can never reach a use for.  Held as *segment tuples*
-# so that "modules/tickets" is expressible without also excluding "modules/spec":
-# prefix comparison on raw strings would not be able to tell those apart, and would
-# additionally let "skills-old/" match a "skills" root.
-_FORBIDDEN_PREFIXES: Final[tuple[tuple[str, ...], ...]] = (
-    ("tests",),
-    ("doc",),
-    ("modules", "tickets"),
-)
+# The three trees a plugin user can never reach a use for are held as *segment
+# tuples* in :mod:`plugin_publication`, so that "modules/tickets" is expressible
+# without also excluding "modules/spec": prefix comparison on raw strings would
+# not tell those apart, and would additionally let "skills-old/" match a "skills"
+# root.  :func:`_is_forbidden` is imported from there rather than restated here.
 
 _MD_LINK: Final[re.Pattern[str]] = re.compile(r"\[[^\]]*\]\(([^)\s]+)\)")
 _INLINE_CODE: Final[re.Pattern[str]] = re.compile(r"`([^`\n]+)`")
@@ -109,10 +117,6 @@ _UNRESOLVED_REFERENCE_TOKENS: Final[dict[str, str]] = {
 }
 
 
-class PayloadDeclarationError(ValueError):
-    """Raised when the declared payload or its pinned version is itself illegal."""
-
-
 class PayloadClosureError(ValueError):
     """Raised when payload content references a path the payload does not carry."""
 
@@ -123,89 +127,6 @@ class ReferenceScanError(ValueError):
     Never returned as an empty reference set: "unreadable" is not "has no
     references", and a scan that conflates them proves nothing.
     """
-
-
-def load_payload_declaration(manifest_path: Path) -> dict[str, object]:
-    """Read and validate the Level 1 payload enumeration."""
-
-    try:
-        document = json.loads(manifest_path.read_text(encoding="utf-8"))
-    except OSError as error:
-        raise PayloadDeclarationError("plugin manifest cannot be read") from error
-    except ValueError as error:
-        raise PayloadDeclarationError("plugin manifest is not valid JSON") from error
-
-    payload = document.get("payload")
-    if not isinstance(payload, dict):
-        raise PayloadDeclarationError("plugin manifest declares no payload")
-    trees = payload.get("trees")
-    files = payload.get("files")
-    if not isinstance(trees, list) or not trees:
-        raise PayloadDeclarationError("payload trees must be a non-empty list")
-    if not isinstance(files, list) or not files:
-        raise PayloadDeclarationError("payload files must be a non-empty list")
-    for entry in (*trees, *files):
-        if not isinstance(entry, str) or not entry or entry != entry.strip():
-            raise PayloadDeclarationError("payload entry is not a clean path")
-    for entry in trees:
-        if "/" in entry or entry in (".", ".."):
-            raise PayloadDeclarationError("payload tree must be a single segment")
-    for entry in (*trees, *files):
-        if _is_forbidden(tuple(entry.split("/"))):
-            raise PayloadDeclarationError(f"payload enumerates an excluded tree: {entry}")
-    return payload
-
-
-def _is_forbidden(parts: tuple[str, ...]) -> bool:
-    return any(parts[: len(prefix)] == prefix for prefix in _FORBIDDEN_PREFIXES)
-
-
-def is_payload_path(relative_path: str, payload: dict[str, object]) -> bool:
-    """Segment-exact membership test for one repository-relative path."""
-
-    trees = frozenset(str(entry) for entry in payload["trees"])  # type: ignore[arg-type]
-    files = frozenset(str(entry) for entry in payload["files"])  # type: ignore[arg-type]
-    excluded_segments = frozenset(
-        str(entry) for entry in payload.get("excludedSegments", ())  # type: ignore[arg-type]
-    )
-    excluded_suffixes = tuple(
-        str(entry) for entry in payload.get("excludedSuffixes", ())  # type: ignore[arg-type]
-    )
-
-    cleaned = relative_path.strip("/")
-    if not cleaned:
-        return False
-    parts = tuple(cleaned.split("/"))
-    if any(part in ("", ".", "..") for part in parts):
-        return False
-    if any(part in excluded_segments for part in parts):
-        return False
-    if excluded_suffixes and cleaned.endswith(excluded_suffixes):
-        return False
-    if _is_forbidden(parts):
-        return False
-    return cleaned in files or parts[0] in trees
-
-
-def declared_payload_files(root: Path, payload: dict[str, object]) -> tuple[Path, ...]:
-    """Every real file the declaration admits, in sorted order."""
-
-    found: list[Path] = []
-    for name in payload["files"]:  # type: ignore[union-attr]
-        candidate = root / str(name)
-        if candidate.is_symlink() or not candidate.is_file():
-            raise PayloadDeclarationError(f"declared payload file is absent: {name}")
-        found.append(candidate)
-    for name in payload["trees"]:  # type: ignore[union-attr]
-        tree = root / str(name)
-        if tree.is_symlink() or not tree.is_dir():
-            raise PayloadDeclarationError(f"declared payload tree is absent: {name}")
-        for candidate in tree.rglob("*"):
-            if not candidate.is_file() or candidate.is_symlink():
-                continue
-            if is_payload_path(candidate.relative_to(root).as_posix(), payload):
-                found.append(candidate)
-    return tuple(sorted(set(found), key=lambda path: path.as_posix()))
 
 
 def scan_file_references(path: Path) -> frozenset[str]:
@@ -287,47 +208,6 @@ def assert_payload_closed(root: Path, payload: dict[str, object]) -> None:
         raise PayloadClosureError(
             "payload content names paths that do not exist: " + ", ".join(stray)
         )
-
-
-def pinned_plugin_source(manifest_path: Path) -> dict[str, object]:
-    """Read the marketplace entry's source and reject every floating form."""
-
-    try:
-        document = json.loads(manifest_path.read_text(encoding="utf-8"))
-    except OSError as error:
-        raise PayloadDeclarationError("marketplace manifest cannot be read") from error
-    except ValueError as error:
-        raise PayloadDeclarationError("marketplace manifest is not valid JSON") from error
-
-    plugins = document.get("plugins")
-    if not isinstance(plugins, list) or len(plugins) != 1:
-        raise PayloadDeclarationError("marketplace must declare exactly one plugin")
-    source = plugins[0].get("source")
-    if isinstance(source, str):
-        raise PayloadDeclarationError(
-            "a string source publishes the rest of the repository, not an enumeration"
-        )
-    if not isinstance(source, dict):
-        raise PayloadDeclarationError("plugin source must be a pinned source object")
-    sha = source.get("sha")
-    if not isinstance(sha, str) or _FULL_SHA.fullmatch(sha) is None:
-        raise PayloadDeclarationError("plugin source must pin a full 40-hex commit sha")
-    ref = source.get("ref")
-    if isinstance(ref, str) and ref.strip().casefold() in _MOVING_REFS:
-        raise PayloadDeclarationError(f"plugin source pins a moving ref: {ref}")
-    return source
-
-
-def commit_exists(root: Path, sha: str) -> bool:
-    """Whether the pinned sha names a real commit in this repository."""
-
-    completed = subprocess.run(
-        ["git", "cat-file", "-e", f"{sha}^{{commit}}"],
-        cwd=root,
-        capture_output=True,
-        check=False,
-    )
-    return completed.returncode == 0
 
 
 class PayloadDeclarationTests(unittest.TestCase):
