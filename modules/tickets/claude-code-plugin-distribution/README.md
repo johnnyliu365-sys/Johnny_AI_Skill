@@ -1,9 +1,30 @@
 # Claude Code Plugin Distribution Tickets
 
-| Ticket | State | Scope |
-| --- | --- | --- |
-| `01-claude-code-plugin` | `DONE` | Add the shared-skill Claude Code plugin/marketplace entry and operator guide. |
-| `02-the-plugin-ships-the-whole-development-repository` | `DONE` | Declare what the Level 1 plugin ships, prove the closure, and pin its version. |
-| `03-the-pin-and-the-tree-are-unrelated` | `DONE` | Materialise the declared payload and tie the pinned sha to that tree. |
-| `04-the-pin-is-not-bound-to-reachability` | `DONE` | Anchor the publication commit on a pushable ref and pin reachability by test. |
-| `05-reachability-measures-the-wrong-thing` | `DONE` | Measure whether a user can fetch the pin, not whether a local branch exists. |
+| Field | Binding |
+| --- | --- |
+| SPEC / Context | `SPEC-AI-WORKFLOW-CLAUDE-CODE-PLUGIN-DISTRIBUTION-20260802-01KZ4C6D8E0F2G4H6J8K0M2N4P` Revision 02 / sealed Context Revision 01, blob `0fef3f1e4c8ce317873cdf2f73dc1bd793579217` |
+| Requirement / architecture | `PRD-20260823-034` / `CHG-20260823-034` / `ADR-20260823-015` |
+| Planning baseline | `9be8ee4b6e713e858dfb4909de1ef4a940c05594` |
+| Control owner / reviewer | Terra `ticket-review` profile; profile selection remains capability-verified at dispatch. |
+| State | `REVISION_02 / SERIAL_DECOMPOSITION_AUTHORIZED` |
+
+Tickets 01–05 remain completed evidence for payload declaration, content binding and old-source
+reachability. They are not authority for publication-repository isolation. New tickets are serial:
+06 establishes the read-only closure proof, 07 establishes a no-effect promotion contract, and 08
+performs the one owner-authorized live cutover.
+
+| Ticket | State | Sole observable closure | Admission / dependency |
+| --- | --- | --- | --- |
+| `01-claude-code-plugin` | `DONE` | Shared-skill plugin entry | Historical |
+| `02-the-plugin-ships-the-whole-development-repository` | `DONE` | Payload declaration closure | Historical |
+| `03-the-pin-and-the-tree-are-unrelated` | `DONE` | Pin/tree binding | Historical |
+| `04-the-pin-is-not-bound-to-reachability` | `DONE` | Publication-anchor reachability | Historical |
+| `05-reachability-measures-the-wrong-thing` | `DONE` | Clean-clone fetchability evidence | Historical |
+| [06-publication-repository-closure.md](06-publication-repository-closure.md) | `APPROVED / NOT_DISPATCHED` | A Git object graph is accepted only when every reachable ref/tree is declared payload. | `POC / STANDARD`; exact baseline above. |
+| [07-publication-promotion-compare-and-swap.md](07-publication-promotion-compare-and-swap.md) | `PLANNED / BASELINE_PENDING` | A promotion plan either binds one exact old/new/tag transaction or returns a finite refusal. | After 06 integration. |
+| [08-isolated-publication-live-cutover.md](08-isolated-publication-live-cutover.md) | `PLANNED / OWNER_EFFECT_AUTHORITY_REQUIRED` | A real isolated Claude install from README reaches only the publication object graph. | After 07 integration and named owner authority for repository creation/push/release. |
+
+No ticket authorizes a runner, queue, receipt, host gateway, remote Git mutation, repository
+creation, public release or user-installation effect by implication. Same-lifetime POC coding and
+review use the reviewer dispatch/wait/receive loop; the guarded integration gate remains the only
+main mutation control. Ticket 08 separately names its real external effects.
