@@ -7,21 +7,69 @@ within a process and silently failed across two. A second implementation of a
 mutual-exclusion primitive is how a subtle divergence gets reintroduced:
 import this one.
 
-The lock is a one-byte `msvcrt` region lock on a dedicated lock file. It is
-advisory between cooperating processes, blocking, and released on file-handle
-close, so an abnormally terminated holder cannot leave it stuck.
+The lock is a one-byte region lock on a dedicated lock file. It is advisory
+between cooperating processes, blocking, and released on file-handle close, so
+an abnormally terminated holder cannot leave it stuck.
+
+Governance 20 made the primitive portable without moving any of those four
+properties. The platform is decided once, at import time, and bound to
+``_acquire`` and ``_release``; the lock object itself names no platform and
+takes no branch per acquisition.
+
+Windows keeps ``msvcrt``, byte for byte what W5 shipped. POSIX uses
+``fcntl.flock`` rather than ``fcntl.lockf``, and the reason is ownership. A
+``flock`` lock belongs to the open file description, exactly as the ``msvcrt``
+region lock belongs to the handle, so on both platforms the lock is held and
+dropped through the one handle this object opened and nothing else. ``lockf``
+locks belong to the *process*: closing any unrelated descriptor for the same
+path anywhere in the process would silently drop a lock still believed held,
+and a second acquisition inside one process would succeed on POSIX while
+blocking on Windows. Those are exactly the subtle divergences the extraction
+exists to prevent — one primitive, one meaning, two platforms.
+
+``ExclusiveWindowsFileLock`` survives as an alias because six modules import
+it under that name and this ticket may not touch them. The new name is the
+true one; retiring the alias is a later ticket's work.
 """
 
 from __future__ import annotations
 
-import msvcrt
 import os
+import sys
 from pathlib import Path
 from types import TracebackType
 from typing import BinaryIO, Self
 
+if sys.platform == "win32":
+    import msvcrt
 
-class ExclusiveWindowsFileLock:
+    def _acquire(handle: BinaryIO) -> None:
+        """Block until the one-byte region at offset zero is ours."""
+
+        handle.seek(0)
+        msvcrt.locking(handle.fileno(), msvcrt.LK_LOCK, 1)
+
+    def _release(handle: BinaryIO) -> None:
+        """Drop the region lock the matching acquisition took."""
+
+        handle.seek(0)
+        msvcrt.locking(handle.fileno(), msvcrt.LK_UNLCK, 1)
+
+else:
+    import fcntl
+
+    def _acquire(handle: BinaryIO) -> None:
+        """Block until this open file description owns the file exclusively."""
+
+        fcntl.flock(handle.fileno(), fcntl.LOCK_EX)
+
+    def _release(handle: BinaryIO) -> None:
+        """Drop the exclusive lock the matching acquisition took."""
+
+        fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
+
+
+class ExclusiveFileLock:
     """One-byte OS-visible exclusive lock shared by independent processes."""
 
     def __init__(self, path: Path) -> None:
@@ -36,8 +84,7 @@ class ExclusiveWindowsFileLock:
                 handle.write(b"\x00")
                 handle.flush()
                 os.fsync(handle.fileno())
-            handle.seek(0)
-            msvcrt.locking(handle.fileno(), msvcrt.LK_LOCK, 1)
+            _acquire(handle)
         except OSError:
             handle.close()
             raise
@@ -56,10 +103,14 @@ class ExclusiveWindowsFileLock:
         if handle is None:
             return
         try:
-            handle.seek(0)
-            msvcrt.locking(handle.fileno(), msvcrt.LK_UNLCK, 1)
+            _release(handle)
         finally:
             handle.close()
 
 
-__all__ = ["ExclusiveWindowsFileLock"]
+# The name six importers still use. Same object, not a subclass and not a
+# wrapper: a second class here would be a second implementation.
+ExclusiveWindowsFileLock = ExclusiveFileLock
+
+
+__all__ = ["ExclusiveFileLock", "ExclusiveWindowsFileLock"]
