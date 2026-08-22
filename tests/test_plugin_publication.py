@@ -35,12 +35,16 @@ import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Final
+from unittest.mock import patch
 
 from library.local_orchestration.plugin_publication import (
     PayloadDeclarationError,
     PinnedCommitError,
     PublicationError,
     PublicationMismatchError,
+    PublicationReachabilityError,
+    PublicationRefError,
+    PublicationRefQueryError,
     PublicationTreeError,
     assert_commit_matches_declaration,
     compare_commit_to_declaration,
@@ -50,8 +54,10 @@ from library.local_orchestration.plugin_publication import (
     load_payload_declaration,
     materialise_publication_tree,
     pinned_plugin_source,
+    publication_refs_reaching_commit,
     repin_marketplace,
     require_existing_commit,
+    require_reachable_publication_ref,
     tree_blob_ids,
     write_publication_commit,
 )
@@ -59,6 +65,7 @@ from library.local_orchestration.plugin_publication import (
 _REPO_ROOT: Final[Path] = Path(__file__).resolve().parents[1]
 _PLUGIN_MANIFEST: Final[Path] = _REPO_ROOT / ".claude-plugin" / "plugin.json"
 _MARKETPLACE_MANIFEST: Final[Path] = _REPO_ROOT / ".claude-plugin" / "marketplace.json"
+_PUBLICATION_ANCHOR_REF: Final[str] = "refs/heads/publication-0.4.9"
 _GENERATOR: Final[Path] = (
     _REPO_ROOT / "library" / "local_orchestration" / "plugin_publication.py"
 )
@@ -625,6 +632,102 @@ class PinnedTreeBindingTests(unittest.TestCase):
         self.assertEqual(set(declared), set(declared_payload_paths(_REPO_ROOT, self.payload)))
         self.assertGreater(len(declared), 0)
 
+
+class PublicationReachabilityTests(unittest.TestCase):
+    """A pinned tree is publishable only while a pushable ref can reach it."""
+
+    def _publish_with_ref(
+        self,
+        scratch: _ScratchRepository,
+        ref: str = "refs/heads/publication-1.2.3",
+    ) -> tuple[str, str]:
+        sha = write_publication_commit(scratch.root, scratch.manifest, ref=ref)
+        return sha, ref
+
+    def test_the_pinned_commit_is_reachable_from_a_pushable_ref(self) -> None:
+        with TemporaryDirectory(ignore_cleanup_errors=True) as raw:
+            scratch = _ScratchRepository(Path(raw))
+            sha, ref = self._publish_with_ref(scratch)
+            self.assertEqual(require_reachable_publication_ref(scratch.root, sha, ref), sha)
+            self.assertEqual(publication_refs_reaching_commit(scratch.root, sha), (ref,))
+
+    def test_the_pinned_commit_is_reachable_from_a_pushable_tag(self) -> None:
+        with TemporaryDirectory(ignore_cleanup_errors=True) as raw:
+            scratch = _ScratchRepository(Path(raw))
+            sha, ref = self._publish_with_ref(scratch, "refs/tags/publication-1.2.3")
+            self.assertEqual(require_reachable_publication_ref(scratch.root, sha, ref), sha)
+
+    def test_the_marketplace_pin_is_bound_to_the_actual_publication_anchor(self) -> None:
+        sha = str(pinned_plugin_source(_MARKETPLACE_MANIFEST)["sha"])
+        anchored = _git(_REPO_ROOT, "rev-parse", _PUBLICATION_ANCHOR_REF).strip()
+        self.assertEqual(anchored, sha)
+        self.assertEqual(
+            require_reachable_publication_ref(
+                _REPO_ROOT, sha, _PUBLICATION_ANCHOR_REF
+            ),
+            sha,
+        )
+
+    def test_deleting_the_actual_publication_anchor_makes_the_marketplace_pin_unreachable(
+        self,
+    ) -> None:
+        """The real anchor deletion mutation must turn this proof red."""
+
+        sha = str(pinned_plugin_source(_MARKETPLACE_MANIFEST)["sha"])
+        original = _git(_REPO_ROOT, "rev-parse", _PUBLICATION_ANCHOR_REF).strip()
+        self.assertEqual(original, sha)
+        try:
+            _git(_REPO_ROOT, "update-ref", "-d", _PUBLICATION_ANCHOR_REF)
+            with self.assertRaises(PublicationReachabilityError):
+                require_reachable_publication_ref(
+                    _REPO_ROOT, sha, _PUBLICATION_ANCHOR_REF
+                )
+        finally:
+            _git(_REPO_ROOT, "update-ref", _PUBLICATION_ANCHOR_REF, original)
+        self.assertEqual(
+            _git(_REPO_ROOT, "rev-parse", _PUBLICATION_ANCHOR_REF).strip(),
+            original,
+        )
+
+    def test_removing_the_anchor_ref_makes_reachability_fail(self) -> None:
+        """The reviewer's mutation must turn this proof red."""
+
+        with TemporaryDirectory(ignore_cleanup_errors=True) as raw:
+            scratch = _ScratchRepository(Path(raw))
+            sha, ref = self._publish_with_ref(scratch)
+            _git(scratch.root, "update-ref", "-d", ref)
+            with self.assertRaises(PublicationReachabilityError):
+                require_reachable_publication_ref(scratch.root, sha, ref)
+
+    def test_moving_the_anchor_to_an_unpushable_namespace_makes_reachability_fail(self) -> None:
+        with TemporaryDirectory(ignore_cleanup_errors=True) as raw:
+            scratch = _ScratchRepository(Path(raw))
+            sha, ref = self._publish_with_ref(scratch)
+            _git(scratch.root, "update-ref", "-d", ref)
+            _git(scratch.root, "update-ref", "refs/publication/1.2.3", sha)
+            with self.assertRaises(PublicationReachabilityError):
+                require_reachable_publication_ref(scratch.root, sha, ref)
+
+    def test_an_unpushable_anchor_ref_is_rejected_as_input(self) -> None:
+        with TemporaryDirectory(ignore_cleanup_errors=True) as raw:
+            scratch = _ScratchRepository(Path(raw))
+            with self.assertRaises(PublicationRefError):
+                write_publication_commit(
+                    scratch.root,
+                    scratch.manifest,
+                    ref="refs/publication/1.2.3",
+                )
+
+    def test_a_ref_query_failure_is_not_silently_reported_as_no_ref(self) -> None:
+        with TemporaryDirectory(ignore_cleanup_errors=True) as raw:
+            scratch = _ScratchRepository(Path(raw))
+            sha, _ref = self._publish_with_ref(scratch)
+            with patch(
+                "library.local_orchestration.plugin_publication._run_git",
+                side_effect=PublicationTreeError("for-each-ref failed"),
+            ):
+                with self.assertRaises(PublicationRefQueryError):
+                    publication_refs_reaching_commit(scratch.root, sha)
 
 if __name__ == "__main__":
     unittest.main()

@@ -58,6 +58,9 @@ __all__ = [
     "PublicationDiff",
     "PublicationError",
     "PublicationMismatchError",
+    "PublicationReachabilityError",
+    "PublicationRefError",
+    "PublicationRefQueryError",
     "PublicationTreeError",
     "assert_commit_matches_declaration",
     "commit_exists",
@@ -69,10 +72,12 @@ __all__ = [
     "load_payload_declaration",
     "materialise_publication_tree",
     "pinned_plugin_source",
+    "publication_refs_reaching_commit",
     "publication_commit_message",
     "read_plugin_manifest",
     "repin_marketplace",
     "require_existing_commit",
+    "require_reachable_publication_ref",
     "tree_blob_ids",
     "write_publication_commit",
 ]
@@ -80,6 +85,10 @@ __all__ = [
 _FULL_SHA: Final[re.Pattern[str]] = re.compile(r"[0-9a-f]{40}\Z")
 _MOVING_REFS: Final[frozenset[str]] = frozenset(
     {"main", "master", "head", "trunk", "default", "latest", "tip"}
+)
+_PUSHABLE_REF_PREFIXES: Final[tuple[str, ...]] = ("refs/heads/", "refs/tags/")
+_REF_ALLOWED: Final[re.Pattern[str]] = re.compile(
+    r"refs/(?:heads|tags)/[A-Za-z0-9][A-Za-z0-9._/-]*\Z"
 )
 
 # The three development trees a plugin user can never reach a use for.  Held as
@@ -127,6 +136,18 @@ class PinnedCommitError(PublicationError, ValueError):
 
 class PublicationMismatchError(PublicationError, ValueError):
     """Raised when the pinned commit's tree is not the declared payload."""
+
+
+class PublicationRefError(PayloadDeclarationError):
+    """Raised when an anchor is not a valid pushable Git ref."""
+
+
+class PublicationReachabilityError(PinnedCommitError):
+    """Raised when no pushable anchor reaches the pinned commit."""
+
+
+class PublicationRefQueryError(PublicationTreeError):
+    """Raised when pushable-ref reachability cannot be determined."""
 
 
 # --------------------------------------------------------------------------- #
@@ -322,6 +343,68 @@ def require_existing_commit(root: Path, sha: str) -> str:
         raise PayloadDeclarationError("pinned sha must be a full 40-hex lowercase id")
     if not commit_exists(root, sha):
         raise PinnedCommitError(f"the pinned sha names no commit in this repository: {sha}")
+    return sha
+
+
+def _validate_pushable_publication_ref(ref: str) -> str:
+    """Validate the complete ref name, including its pushable namespace."""
+
+    if (
+        not isinstance(ref, str)
+        or not any(ref.startswith(prefix) for prefix in _PUSHABLE_REF_PREFIXES)
+        or _REF_ALLOWED.fullmatch(ref) is None
+    ):
+        raise PublicationRefError(
+            "publication anchor must be a complete refs/heads/* or refs/tags/* name"
+        )
+    if ".." in ref or "@{" in ref or ref.endswith("."):
+        raise PublicationRefError(f"publication anchor is not a valid Git ref: {ref}")
+    segments = ref.split("/")
+    if any(segment in ("", ".", "..") or segment.endswith(".lock") for segment in segments):
+        raise PublicationRefError(f"publication anchor is not a valid Git ref: {ref}")
+    return ref
+
+
+def publication_refs_reaching_commit(root: Path, sha: str) -> tuple[str, ...]:
+    """Return pushable refs whose history reaches ``sha``.
+
+    An empty tuple is a repository fact: no eligible ref currently reaches the
+    commit.  Failure to enumerate refs is a separate named error so a broken
+    Git query cannot masquerade as that fact.
+    """
+
+    sha = require_existing_commit(root, sha)
+    try:
+        raw = _run_git(
+            root,
+            [
+                "for-each-ref",
+                "--contains",
+                sha,
+                "--format=%(refname)",
+                "refs/heads",
+                "refs/tags",
+            ],
+        )
+    except PublicationTreeError as error:
+        raise PublicationRefQueryError(
+            "pushable publication refs could not be enumerated"
+        ) from error
+    refs = tuple(line for line in raw.splitlines() if line)
+    if any(_validate_pushable_publication_ref(ref) != ref for ref in refs):
+        raise PublicationRefQueryError("Git returned a malformed pushable publication ref")
+    return refs
+
+
+def require_reachable_publication_ref(root: Path, sha: str, ref: str) -> str:
+    """Require ``sha`` to be reachable from the named pushable anchor ref."""
+
+    ref = _validate_pushable_publication_ref(ref)
+    sha = require_existing_commit(root, sha)
+    if ref not in publication_refs_reaching_commit(root, sha):
+        raise PublicationReachabilityError(
+            f"the pinned sha is not reachable from its pushable anchor: {ref}"
+        )
     return sha
 
 
@@ -622,6 +705,8 @@ def write_publication_commit(
     """
 
     root = Path(root)
+    if ref is not None:
+        ref = _validate_pushable_publication_ref(ref)
     document = read_plugin_manifest(manifest_path)
     payload = load_payload_declaration(manifest_path)
     relatives = list(declared_payload_paths(root, payload))
@@ -682,8 +767,9 @@ def write_publication_commit(
     ).strip()
     if _FULL_SHA.fullmatch(commit) is None:
         raise PublicationTreeError(f"the publication commit did not hash: {commit!r}")
-    if ref:
+    if ref is not None:
         _run_git(root, ["update-ref", ref, commit])
+        require_reachable_publication_ref(root, commit, ref)
     return commit
 
 
@@ -745,10 +831,16 @@ def main(argv: Sequence[str] | None = None) -> int:
     if parsed.verify_only:
         if parsed.marketplace is None:
             raise PayloadDeclarationError("verification needs the manifest that records the pin")
+        if parsed.ref is None:
+            raise PublicationRefError("verification needs the pushable publication anchor ref")
         sha = str(pinned_plugin_source(parsed.marketplace)["sha"])
         assert_commit_matches_declaration(root, payload, sha, pin_carrier=carrier)
+        require_reachable_publication_ref(root, sha, parsed.ref)
         print(f"verified {sha}")
         return 0
+
+    if parsed.ref is None:
+        raise PublicationRefError("publication requires a pushable anchor ref")
 
     if parsed.into is not None:
         written = materialise_publication_tree(
