@@ -19,7 +19,7 @@
 | `04-low-model-ticket-admission` | Four-way low-model decomposition/admission decision kernel. | `CANDIDATE / NON_DISPATCHABLE` | R03 approved/integrated |
 | `05-ui-design-source-routing` | Optional design-source capability decision kernel. | `CANDIDATE / NON_DISPATCHABLE` | R04 approved/integrated |
 | `06-router-policy-acceptance` | Integrated Profile/Router acceptance and metadata-only serialization closure. | `CANDIDATE / NON_DISPATCHABLE` | R01-R05 approved/integrated |
-| [project-isolation](project-isolation/README.md) | Revision 06 project-isolation partition, amended by the approved Revision 07 host-gateway contract. | `R07A_APPROVED_NOT_DISPATCHED` | revision `02`; SHA-256 `fe177bb6b527ff60419c53b2c339ea50c9aaab2ab703fd031c0ff1e090ce4109`; `TAD-ADAPTIVE-R07-HOST-CAPABILITY-01` is the only authorized direct implementation child |
+| [project-isolation](project-isolation/README.md) | Revision 06 project-isolation partition, amended by the approved Revision 07 host-gateway contract. | `R07A_BLOCKED_REQUIREMENT_CHANGED` | revision `02`; SHA-256 `9ce090d772813047f47689be76b9f80bd7bceba53659008366e9209f99f4c416`; `TAD-ADAPTIVE-R07-HOST-CAPABILITY-01` is blocked by `CHG-20260822-032` and is not an authorized implementation child |
 
 R02C1, R02C2, R02C2A, R02C3 and R03 are complete. R04 is the next serial candidate, but it
 remains `CANDIDATE / NON_DISPATCHABLE` until its own approved ticket freeze, handoff and receipt
@@ -28,7 +28,7 @@ registry exist. Candidate labels are not implementation authority.
 ## Revision 06 / Revision 07 partition
 
 Revision 06 is a separate direct-child ticket partition. Approved Revision 07 closes its
-host-gateway public-contract prerequisite without reopening the completed Router phase. Its first
-authorized no-effect implementation ticket is reachable only through
-[`project-isolation/README.md`](project-isolation/README.md); the leaf's own ticket and receipt
-remain mandatory before any implementation lane.
+host-gateway public-contract prerequisite without reopening the completed Router phase.
+`CHG-20260822-032` blocks its first candidate before dispatch and returns the POC main line to
+the scoped change-control route; no R07A ticket or receipt currently authorizes an implementation
+lane.
