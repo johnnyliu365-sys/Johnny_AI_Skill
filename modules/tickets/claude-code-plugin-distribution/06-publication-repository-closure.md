@@ -17,10 +17,10 @@
 ## Boundary declaration
 
 ```johnny-boundary
-modify = library/local_orchestration/publication_repository_closure.py
-modify = library/local_orchestration/claude_plugin_cache_closure.py
-modify = tests/test_publication_repository_closure.py
-modify = tests/test_claude_plugin_cache_closure.py
+create = library/local_orchestration/publication_repository_closure.py
+create = library/local_orchestration/claude_plugin_cache_closure.py
+create = tests/test_publication_repository_closure.py
+create = tests/test_claude_plugin_cache_closure.py
 modify = .claude-plugin/marketplace.json
 forbid = .claude-plugin/plugin.json
 forbid = .codex-plugin/
