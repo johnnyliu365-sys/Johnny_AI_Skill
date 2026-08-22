@@ -646,6 +646,27 @@ class PinnedTreeBindingTests(unittest.TestCase):
 class PublicationReachabilityTests(unittest.TestCase):
     """A pinned tree is publishable only while a pushable ref can reach it."""
 
+    def _clone_real_publication(self, raw: Path) -> tuple[Path, str, str]:
+        """Build the real-pin checkout shape from a temporary bare remote."""
+
+        bare = raw / "real-publication.git"
+        clone = raw / "real-publication-clone"
+        remote_ref = "refs/remotes/origin/publication-0.4.9"
+        _git(_REPO_ROOT, "init", "--bare", "-q", str(bare))
+        _git(_REPO_ROOT, "push", "-q", str(bare), "HEAD:refs/heads/main")
+        _git(
+            _REPO_ROOT,
+            "push",
+            "-q",
+            str(bare),
+            f"{_PUBLICATION_ANCHOR_REF}:{_PUBLICATION_ANCHOR_REF}",
+        )
+        _git(_REPO_ROOT, "-C", str(bare), "symbolic-ref", "HEAD", "refs/heads/main")
+        _git(_REPO_ROOT, "clone", "-q", str(bare), str(clone))
+        marketplace = clone / ".claude-plugin" / "marketplace.json"
+        sha = str(pinned_plugin_source(marketplace)["sha"])
+        return clone, sha, remote_ref
+
     def _publish_with_ref(
         self,
         scratch: _ScratchRepository,
@@ -776,36 +797,43 @@ class PublicationReachabilityTests(unittest.TestCase):
                 )
 
     def test_the_marketplace_pin_is_bound_to_the_actual_publication_anchor(self) -> None:
-        sha = str(pinned_plugin_source(_MARKETPLACE_MANIFEST)["sha"])
-        anchored = _git(_REPO_ROOT, "rev-parse", _PUBLICATION_ANCHOR_REF).strip()
-        self.assertEqual(anchored, sha)
-        self.assertEqual(
-            require_reachable_publication_ref(
-                _REPO_ROOT, sha, _PUBLICATION_ANCHOR_REF
-            ),
-            sha,
-        )
+        with TemporaryDirectory(ignore_cleanup_errors=True) as raw:
+            clone, sha, remote_ref = self._clone_real_publication(Path(raw))
+            anchored = _git(clone, "rev-parse", remote_ref).strip()
+            self.assertEqual(anchored, sha)
+            reachability = publication_refs_reaching_commit(clone, sha)
+            self.assertEqual(
+                reachability.remote_state,
+                RemotePublicationReachability.REMOTE_REACHABLE_AT_LAST_FETCH,
+            )
+            self.assertIn(RemoteTrackingRefName(remote_ref), reachability.remote_tracking_refs)
+            self.assertEqual(
+                require_fetchable_publication_ref(clone, sha, _PUBLICATION_ANCHOR_REF),
+                sha,
+            )
 
     def test_deleting_the_actual_publication_anchor_makes_the_marketplace_pin_unreachable(
         self,
     ) -> None:
-        """The real anchor deletion mutation must turn this proof red."""
+        """Deleting the clean-clone tracking anchor must turn fetchability red."""
 
-        sha = str(pinned_plugin_source(_MARKETPLACE_MANIFEST)["sha"])
-        original = _git(_REPO_ROOT, "rev-parse", _PUBLICATION_ANCHOR_REF).strip()
-        self.assertEqual(original, sha)
-        try:
-            _git(_REPO_ROOT, "update-ref", "-d", _PUBLICATION_ANCHOR_REF)
-            with self.assertRaises(PublicationReachabilityError):
-                require_reachable_publication_ref(
-                    _REPO_ROOT, sha, _PUBLICATION_ANCHOR_REF
-                )
-        finally:
-            _git(_REPO_ROOT, "update-ref", _PUBLICATION_ANCHOR_REF, original)
-        self.assertEqual(
-            _git(_REPO_ROOT, "rev-parse", _PUBLICATION_ANCHOR_REF).strip(),
-            original,
-        )
+        with TemporaryDirectory(ignore_cleanup_errors=True) as raw:
+            clone, sha, remote_ref = self._clone_real_publication(Path(raw))
+            original = _git(clone, "rev-parse", remote_ref).strip()
+            self.assertEqual(original, sha)
+            try:
+                _git(clone, "update-ref", "-d", remote_ref)
+                with self.assertRaises(PublicationReachabilityError):
+                    require_fetchable_publication_ref(
+                        clone, sha, _PUBLICATION_ANCHOR_REF
+                    )
+            finally:
+                _git(clone, "update-ref", remote_ref, original)
+            self.assertEqual(_git(clone, "rev-parse", remote_ref).strip(), original)
+            self.assertEqual(
+                require_fetchable_publication_ref(clone, sha, _PUBLICATION_ANCHOR_REF),
+                sha,
+            )
 
     def test_removing_the_anchor_ref_makes_reachability_fail(self) -> None:
         """The reviewer's mutation must turn this proof red."""
