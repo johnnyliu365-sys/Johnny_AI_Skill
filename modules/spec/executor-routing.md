@@ -3,10 +3,10 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-EXECUTOR-ROUTING-20260822-01M4P6R8T0V2X4Z6B8D0F2H4J6` |
-| Status | `APPROVED / REVIEWER_DECOMPOSITION_AUTHORIZED / REVISION_02` |
-| Author / baseline | Codex architecture owner / `c0b52f7ff48002c09726aebcbf1186e624bd0a57` |
-| Feature Context | `doc/context/executor-routing/codex-provider-neutral-executor-routing-r02.md` (`SEALED / CTX-EXECUTOR-ROUTING-20260823-02`) |
-| PRD / change | `PRD-20260822-030` / `CHG-20260822-030`, amended by `PRD-20260822-032` / `CHG-20260822-032` |
+| Status | `APPROVED / REVIEWER_DECOMPOSITION_AUTHORIZED / REVISION_03` |
+| Author / baseline | Codex architecture owner / `cd85017418aaca999c69ba11f81d38bdd64b860d` |
+| Feature Context | `doc/context/executor-routing/codex-provider-neutral-executor-routing-r03.md` (`SEALED / CTX-EXECUTOR-ROUTING-20260823-03`) |
+| PRD / change | `PRD-20260822-030` / `CHG-20260822-030`, amended by `PRD-20260822-032` / `CHG-20260822-032` and `PRD-20260823-033` / `CHG-20260823-033` |
 | Delivery stage / profile | `POC` / `STANDARD`: a single, reversible pure resolver has a known-domain contract, no security surface and no external effect. |
 | Implementation language | Python 3.11; frozen Pydantic contracts, explicit finite enums and `mypy --strict`. |
 | XSS classification | `N/A`: this feature accepts no Browser/WebView/HTML/DOM/JavaScript input or renderer. |
@@ -67,7 +67,8 @@ enum ProfileAvailability { AVAILABLE, UNAVAILABLE, STALE, UNKNOWN }
 enum VerifiedCapabilityRank { TIER_1, TIER_2, TIER_3 }
 enum ResolutionStatus {
   SELECTED, ROUTE_NOT_FOUND, ROUTE_AMBIGUOUS, PROFILE_NOT_FOUND,
-  PROFILE_UNAVAILABLE, HARD_TICKET_ASSESSMENT_MISSING,
+  PROFILE_UNAVAILABLE, ROUTING_TABLE_INVALID, PROFILE_REGISTRY_INVALID,
+  HARD_TICKET_ASSESSMENT_MISSING,
   HARD_TICKET_ASSESSMENT_INVALID, REVIEWER_CAPABILITY_INSUFFICIENT,
   OVERRIDE_RECORD_MISSING, OVERRIDE_PROFILE_INVALID,
   MODEL_CAPABILITY_INSUFFICIENT, ARCHITECTURE_OWNER_REQUIRED
@@ -83,6 +84,15 @@ struct ExecutorProfile {
   ProfileAvailability availability;
   CapabilityEvidenceRef availability_evidence;
 }
+enum AssessmentProvenance { INDEPENDENTLY_VERIFIED, SELF_ASSERTED, UNVERIFIED }
+enum AssessmentFreshness { CURRENT, STALE, UNKNOWN }
+struct AssessmentVerification {
+  AssessmentProvenance provenance;
+  AssessmentFreshness freshness;
+  TicketRef verified_ticket;
+  ClosureRevision verified_closure_revision;
+  optional<IndependentVerificationEvidenceRef> verification_record;
+}
 struct RoutingKey {
   ModelRole role;
   RoutingPurpose purpose;
@@ -92,6 +102,7 @@ struct HardTicketAssessment {
   ClosureRevision closure_revision;
   NoFurtherDecompositionEvidenceRef no_further_decomposition;
   CapabilityGapEvidenceRef exceeds_standard_implementation;
+  AssessmentVerification verification;
 }
 struct ReviewBinding {
   ExecutorProfileRef implementation_profile;
@@ -137,7 +148,9 @@ ticket cannot be further decomposed without breaking its observable closure and 
 reasoning need exceeds the standard implementation profile. That same resolution must bind
 Sol/high review for that ticket alone. Validation requires the review profile's
 `verified_capability_rank` to be greater than or equal to the implementation profile's rank;
-the resolver rejects a weaker reviewer rather than selecting a fallback.
+the resolver rejects a weaker reviewer rather than selecting a fallback. The assessment contains
+typed verification facts; the resolver never infers provenance, freshness, forgery, or authority
+from identifier text.
 
 Sol/high is not a general ticket-opening or implementation profile. It is selectable only for
 `PROJECT_INITIAL_REVIEW`, `REQUIREMENT_CHANGE_COMPLEX_DECISION_REVIEW`, or the reviewer side of
@@ -154,8 +167,26 @@ bypass a required hard-ticket assessment, weaken the reviewer binding or grant a
 `ExecutorRoutingResolver` is a pure domain service. It receives an
 `ExecutorRoutingTable`, an `ExecutorProfileRegistry` and a `RouteRequest`; it returns only a
 `RouteResolution`. Registry loading/parsing is an injected boundary that normalizes raw
-configuration before construction. Read failure, malformed data, duplicate key, duplicate
-profile reference, missing profile, unknown availability or stale evidence is a named rejection.
+configuration before construction. The resolver nevertheless canonicalizes the full table graph
+through ordinary strict validation first and then the full registry graph before normal lookup.
+Malformed table data returns `ROUTING_TABLE_INVALID`; malformed registry data returns
+`PROFILE_REGISTRY_INVALID`; neither condition may escape as a validation exception or select a
+profile. The current strict table contract treats duplicate route keys as
+`ROUTING_TABLE_INVALID`; `ROUTE_AMBIGUOUS` remains reserved for a later multiplicity-preserving
+valid routing source. A valid missing profile returns `PROFILE_NOT_FOUND`.
+
+`model_construct`, `model_copy`, casts, historical instances and unvalidated dynamic objects are
+negative-only inputs. A nested malformed profile such as `availability=AVAILABLE` with null
+`availability_evidence`, or malformed assessment verification, must be rejected by canonical
+admission even if an outer table or registry was constructed without validators.
+
+A hard-ticket assessment is valid only when its `AssessmentVerification` is
+`INDEPENDENTLY_VERIFIED` and `CURRENT`, has one non-null verification record, and binds the same
+ticket and closure as both the assessment and request. That record must be distinct from the two
+underlying assessment evidence references. `SELF_ASSERTED`, `UNVERIFIED`, `STALE`, `UNKNOWN`,
+absent, cross-ticket, wrong-closure, and bypass-built verification states return
+`HARD_TICKET_ASSESSMENT_INVALID`; no identifier substring or other string convention may stand in
+for those typed facts.
 
 The resolver imports neither host adapters nor `dispatch_session`, `dispatch_authority`,
 `worker_assignment`, `work_queue`, `document_mutation_gate`, credential stores, process
@@ -174,13 +205,18 @@ assert a host workspace/profile binding, consume a receipt, or claim automatic d
 3. A normal implementation resolves its configured implementation profile and a reviewer
    binding whose verified capability rank is not lower than the implementation profile's rank.
 4. Terra implementation is selected only from a valid same-ticket hard-ticket assessment and
-   binds the configured higher-capability reviewer for that ticket alone. Missing, stale,
-   cross-ticket, wrong-closure or self-asserted assessments reject.
+   binds the configured higher-capability reviewer for that ticket alone. Missing,
+   self-asserted, unverified, stale, unknown, recordless, cross-ticket, wrong-closure, and
+   bypass-built assessment-verification states return
+   `HARD_TICKET_ASSESSMENT_INVALID`.
 5. A reviewer binding with a lower verified capability rank than its implementation profile
    returns `REVIEWER_CAPABILITY_INSUFFICIENT`; it cannot fall back to a weaker reviewer.
-6. Missing/empty/malformed table, duplicate/ambiguous key, absent profile, unavailable/stale/
-   unknown profile and registry-read failure each return distinct finite fail-closed results;
-   no default profile exists.
+6. Malformed table and registry graphs return `ROUTING_TABLE_INVALID` and
+   `PROFILE_REGISTRY_INVALID`, respectively, in that precedence order. The current table contract
+   classifies duplicate keys as table-invalid; `ROUTE_AMBIGUOUS` remains a reserved finite status
+   for a later multiplicity-preserving valid source. Missing/empty table, absent profile,
+   unavailable/stale/unknown profile and registry-read failure each return a finite fail-closed
+   result; no default profile exists.
 7. An owner override without a decision record, with an unknown profile or with an unavailable
    profile rejects. A valid override is auditable and cannot bypass a hard-ticket assessment or
    weaken the reviewer binding.
@@ -188,9 +224,10 @@ assert a host workspace/profile binding, consume a receipt, or claim automatic d
    `ARCHITECTURE_OWNER_REQUIRED`; it never chooses another implementer by heuristic.
 9. Static namespace tests prove the resolver has no receipt, dispatch, host-launch, credential
    or runner authority.
-10. Reverse mutations make red: adding a default fallback; accepting a forged hard-ticket
-    assessment; accepting a weaker reviewer binding; accepting an unavailable override profile;
-    and adding a provider/model literal to resolver source. Exact restoration returns green.
+10. Reverse mutations make red: adding a default fallback; bypassing canonical table/registry
+    admission or accepting a bypass-built assessment verification; accepting a weaker reviewer
+    binding; accepting an unavailable override profile; and adding a provider/model literal to
+    resolver source. Exact restoration returns green.
 11. The replacement P8R ticket records the `POC` / `STANDARD` assessment, the named
     `KNOWN_GAP_WORKSPACE_BINDING_READBACK_UNAVAILABLE`, the applicable document-mutation gate,
     and a reviewer-run counter-mutation through a distinct test path. None of these artifacts may
@@ -198,10 +235,11 @@ assert a host workspace/profile binding, consume a receipt, or claim automatic d
 
 ## Verification and approval path
 
-The replacement implementation ticket must contain focused TDD, strict typing, source-boundary
-checks, all named negative cases and the five reverse mutations above. The reviewer runs the
-full suite and independent mutation review before integration. It replaces the old P8R leaf,
-which is not dispatch authority after `CHG-20260822-032`.
+The replacement implementation ticket must contain focused TDD, strict typing, canonical nested
+DTO admission, typed assessment-verification and source-boundary checks, all named negative cases
+and the reverse mutations above. The reviewer runs the full suite and independent mutation review
+before integration. It replaces the blocked P8R-R03 leaf, which is not dispatch authority after
+`CHG-20260823-033`.
 
 Owner approval must name this exact SPEC revision. Approval then seals the feature Context,
 permits a replacement P8 ticket to bind this SPEC/Context/PRD/CHG baseline, and permits a
@@ -222,3 +260,4 @@ contracts remain read-only dependencies and retain their high-assurance requirem
 | --- | --- | --- |
 | 01 | Project owner, 2026-08-22 (Asia/Taipei) | Approved this exact provider-neutral routing policy, the single-ticket Terra implementation exception, and the reviewer-strength invariant. Reviewer decomposition is authorized; dispatch and host effects are not. |
 | 02 | Project owner, 2026-08-23 (Asia/Taipei) / `CHG-20260822-032` | Reclassified the pure P8R closure as `POC` / `STANDARD`, bound Context revision 02, and requires explicit manual-evidence/known-gap recording. Host binding remains a separate `HIGH_ASSURANCE` path. |
+| 03 | Project owner, 2026-08-23 (Asia/Taipei) / `CHG-20260823-033` | Adds canonical injected-graph admission, the two finite invalid-input outcomes, and typed hard-ticket assessment verification. It blocks R03 and requires a replacement POC ticket; host binding remains a separate `HIGH_ASSURANCE` path. |
