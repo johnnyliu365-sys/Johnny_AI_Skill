@@ -3,11 +3,11 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2` |
-| Status | `REVISION_05_ROUTER_PHASE_APPROVED / REVISION_06_PROJECT_ISOLATION_APPROVED / REVIEWER_DECOMPOSITION_AUTHORIZED / OTHER_PHASES_OWNER_REVIEW_REQUIRED` |
-| Author / baseline | Codex control plane / current `main` |
-| Context | `doc/context/adaptive-project-orchestration/main.md` |
-| PRD | `PRD-20260813-016`, `PRD-20260813-017`, `PRD-20260814-019`, `PRD-20260815-020`, `PRD-20260815-022`, `PRD-20260815-024` |
-| Requirement change / ADR | `CHG-20260813-016`, `CHG-20260813-017`, `CHG-20260814-019`, `CHG-20260815-020`, `CHG-20260815-022`, `CHG-20260815-024` / `ADR-20260813-008`, `ADR-20260813-009`, `ADR-20260814-011`, `ADR-20260815-013` |
+| Status | `REVISION_05_ROUTER_PHASE_APPROVED / REVISION_06_PROJECT_ISOLATION_APPROVED / REVISION_07_HOST_GATEWAY_DRAFT / REVIEWER_DECOMPOSITION_AUTHORIZED / OTHER_PHASES_OWNER_REVIEW_REQUIRED` |
+| Author / baseline | Codex architecture owner / `bce019090819390d4368ec68e09392508aacbd2c` |
+| Context | `doc/context/adaptive-project-orchestration/main.md` (sealed) and `doc/context/host-gateway-workspace-binding/codex-desktop-readback.md` (`ARCHITECTURE_DRAFT`) |
+| PRD | `PRD-20260813-016`, `PRD-20260813-017`, `PRD-20260814-019`, `PRD-20260815-020`, `PRD-20260815-022`, `PRD-20260815-024`, `PRD-20260822-031` |
+| Requirement change / ADR | `CHG-20260813-016`, `CHG-20260813-017`, `CHG-20260814-019`, `CHG-20260815-020`, `CHG-20260815-022`, `CHG-20260815-024`, `CHG-20260822-031` / `ADR-20260813-008`, `ADR-20260813-009`, `ADR-20260814-011`, `ADR-20260815-013` |
 | Implementation language | Python 3.11 strict typed contracts/adapters; host-specific integration only after capability proof |
 
 ## Problem and goal
@@ -112,6 +112,64 @@ capability and workspace identity readback. It creates no implementer.
 Implementer worktrees/tasks are created or reused only by that reviewer after
 a ticket-specific dispatch receipt. Unsupported automation returns a finite
 manual-handoff/block result and cannot claim automatic activation.
+
+### Revision 07 draft amendment — host-gateway workspace and profile binding
+
+This draft completes the public contract surfaces that
+`TAD-ADAPTIVE-R06-ISOLATION-01` leaves open for AC-03 and AC-04. It does not
+approve an implementation ticket, issue a receipt, create a workspace/task,
+call a host, deliver a handoff, or change the already-approved Revision 06
+workspace-isolation rule.
+
+The three contract families below are serial. First validate an already
+active receipt and the reviewer capability; next reserve an idle host task
+through that receipt-bound capability; next take exact host/profile and
+workspace readback; only a valid admission may expose the existing one-shot
+identifier-only delivery port. A host that cannot reserve a task without
+starting an Agent turn, cannot read back the exact task workspace, or cannot
+read back the effective profile and verified rank is unsupported. It returns a
+finite no-effect result rather than using prompt text, a shell working
+directory, a static configuration value, a model request, a CLI login or task
+self-report as evidence.
+
+`HIGH_ASSURANCE` applies: this is a new privileged host boundary. XSS is
+`N/A`; untrusted host JSON is normalized at the adapter boundary and never
+rendered as HTML/DOM/JavaScript. Provider credentials, provider invocation,
+runner/subscription lifecycle and automatic wake remain outside this amendment.
+
+#### AC-03R7 — Workspace identity verification
+
+The Workspace Identity contract receives only one transient host workspace
+root plus exact expected project/worktree/branch/baseline references. It must
+prove all of the following before emitting an opaque proof:
+
+1. platform-normalized absolute root equality;
+2. resolved filesystem identity after reparse/symlink resolution; and
+3. exact registered Git worktree metadata, branch and baseline ancestry.
+
+Path equality alone, a prompt/handoff path, shell `cd`, environment value,
+sibling access or task self-report is not proof. Any missing or disagreement
+returns `TASK_WORKSPACE_MISMATCH` or a more specific finite workspace failure
+before source, Git, task or host delivery effect. Durable records contain only
+opaque project/task/workspace/worktree references, evidence digest and
+revision; raw paths never cross the boundary.
+
+#### AC-04R7 — Receipt-bound host admission
+
+Only the exact reviewer capability for the exact approved artifact and active
+receipt may reserve or reuse one idle implementation task. The reservation
+must not start an Agent turn, expose ticket source, or deliver a prompt. Its
+readback must attest the same host/project/task, effective semantic profile,
+effective effort reference and verified capability rank that the request
+expects. The implementation reviewer rank must be at least the implementation
+rank. A host that offers only active prompt-driven task creation does not meet
+this contract.
+
+An exact descriptor/correlation check then combines the active receipt, host
+readback and workspace proof. Only `ADMITTED` exposes a single downstream
+delivery capability; every other result exposes no task-control port. The
+delivery capability remains subject to the existing one-shot dispatch
+composition and creates no automatic wake claim.
 
 ### AC-05 — Evidence-based delivery profile
 
@@ -306,6 +364,70 @@ JohnnyTicketWorkspaceStorageRef = {
   root_identity_digest, lifecycle
 }
 
+HostTaskReservationLifecycle = IDLE_RESERVED | BOUND | RELEASED
+HostCapabilityReadbackStatus = VERIFIED | CAPABILITY_UNAVAILABLE
+                             | PAYLOAD_INVALID | PROJECT_REQUIRED
+                             | TASK_NOT_READY | PROFILE_UNVERIFIED
+                             | PROFILE_MISMATCH
+WorkspaceIdentityVerificationStatus = VERIFIED | TASK_WORKSPACE_MISMATCH
+                                      | GIT_METADATA_UNAVAILABLE
+                                      | WORKTREE_UNREGISTERED | BASELINE_MISMATCH
+ReceiptBoundHostAdmissionStatus = ADMITTED | REVIEWER_FORBIDDEN
+                                 | RECEIPT_UNAVAILABLE | DESCRIPTOR_MISMATCH
+                                 | REPLAY_DETECTED | CAPABILITY_UNAVAILABLE
+                                 | TASK_WORKSPACE_MISMATCH
+                                 | REVIEWER_CAPABILITY_INSUFFICIENT
+
+HostTaskReservationRequest = {
+  reviewer_capability_ref, approved_artifact_ref, receipt_ref,
+  expected_project_ref, expected_worktree_ref, expected_branch_ref,
+  expected_baseline_ref, implementation_profile_ref, correlation_ref
+}
+
+HostTaskReservationReadback = {
+  reservation_ref, host_ref, project_ref, task_ref, lifecycle,
+  reservation_evidence_ref, observation_digest
+}
+
+HostCapabilityReadbackRequest = {
+  reservation_ref, expected_host_ref, expected_project_ref, expected_task_ref,
+  expected_profile_ref, expected_effort_ref, minimum_capability_rank
+}
+
+HostCapabilityObservation = {
+  host_ref, project_ref, task_ref, effective_profile_ref,
+  effective_effort_ref, verified_capability_rank, capability_evidence_ref,
+  observation_digest
+}
+
+HostCapabilityReadbackResult = {
+  status, observation?, failure?
+}
+
+WorkspaceIdentityVerificationRequest = {
+  host_observation_ref, expected_project_ref, expected_worktree_ref,
+  expected_branch_ref, expected_baseline_ref, transient_workspace_root
+}
+
+WorkspaceIdentityProof = {
+  project_ref, workspace_ref, worktree_ref, branch_ref, baseline_ref,
+  filesystem_identity_ref, git_metadata_ref, evidence_digest
+}
+
+WorkspaceIdentityVerificationResult = {
+  status, proof?, failure?
+}
+
+ReceiptBoundHostAdmissionRequest = {
+  reviewer_capability_ref, approved_artifact_ref, active_receipt_ref,
+  descriptor_ref, correlation_ref, host_observation_ref,
+  workspace_proof_ref, implementation_profile_ref, reviewer_profile_ref
+}
+
+ReceiptBoundHostAdmissionResult = {
+  status, downstream_delivery_capability_ref?, failure?
+}
+
 StagingTransitionPlan = {
   project_id, repository_identity_ref, accepted_poc_commit,
   expected_staging_ref, expected_staging_state,
@@ -370,6 +492,20 @@ RequirementLineageRef = {
 
 All persisted forms are metadata-only and contain opaque references rather
 than raw project paths, source, prompts, Secrets or PII.
+
+For each `*Result`, success requires its one named success value and every
+success payload; every non-success value requires exactly one matching failure
+and no success payload. Optional fields above are nullable only in the matching
+finite result shape; they are not dynamic/default values. All public DTOs are
+frozen, strict and extra-free Python 3.11 contracts.
+
+Host-gateway admission evaluates in this fixed order: strict request shape;
+reviewer capability; exact approved artifact and active receipt; descriptor and
+correlation/replay identity; idle-reservation lifecycle; exact host/project/task
+readback; effective profile/effort/rank; three-part workspace proof; then
+`ADMITTED`. A failure at any position returns its named status and exposes no
+later capability. The delivery port is therefore unreachable before all prior
+checks succeed.
 
 ## TDD and review closure
 
@@ -438,6 +574,13 @@ than raw project paths, source, prompts, Secrets or PII.
     active/archive overlap, unmatched PRD/CHG suffixes and archived leaves reachable through an
     active edge. Archive/reusable-library tests prove bounded direct-child indexes and load only
     the selected partition/card/archive branch.
+20. Revision 07 tests construct every public host-gateway DTO through ordinary validators and
+    reject extra/unknown states, nullability violations, bypass constructors, path-only proof,
+    stale/absent profile evidence, lower-rank reviewer, active-task reservation, receipt replay,
+    descriptor mismatch and directory/readback drift. Reverse mutations must prove that removing
+    each of the three workspace checks, accepting an asserted profile, or exposing delivery before
+    `ADMITTED` turns the closure red. The current host's missing effective-profile readback must
+    produce the named no-effect `CAPABILITY_UNAVAILABLE` result.
 
 ## Candidate vertical ticket sequence
 
@@ -462,6 +605,11 @@ migration, post-POC staging, installer
 composition and packaging remain later phases and are not ticket-authorized by
 this revision. The completed 06G0P return remains immutable but its independent
 review/integration and dependent 06G tickets are paused until Router acceptance.
+
+Revision 07 is not ticket-authorized while it is a draft. After owner approval,
+the first candidate must be a no-effect strict-contract/readback closure. Host
+task reservation and identifier-only delivery remain subsequent serial closures
+and require their own approved tickets and receipts.
 
 ## Approval
 
@@ -488,9 +636,17 @@ reviewer may now decompose this exact isolation closure into independently
 admitted tickets. This approval creates no dispatch receipt and grants no
 source, target-Git, migration/cleanup or external-effect authority.
 
+Revision 07 is a draft amendment under `CHG-20260822-031`, bounded by
+`CTX-HOST-GATEWAY-20260822-01` and `TAD-ADAPTIVE-R06-ISOLATION-01`. It supplies
+the missing host capability/readback, workspace-identity and receipt-bound
+admission algebra for AC-03/AC-04. Owner approval of this exact revision is
+required before the Context is sealed, any ticket is opened, or any host,
+workspace, task, receipt or source effect occurs.
+
 ## Revision signatures
 
 | Date | AI / worktree / baseline | Summary |
 | --- | --- | --- |
 | 2026-08-15 | Architecture owner / `main` / `72438a30a4ad698be33292de8d63a7f2dc289daf` | Drafted Revision 06 to remove target-local Johnny ignore/worktree paths under `CHG-20260815-024`; owner approval pending. |
 | 2026-08-15 | Project owner | Approved the exact Project-neutral Workspace Revision 06 and assigned ticket decomposition/opening to the reviewer. |
+| 2026-08-22 | Codex architecture owner / `control/executor-routing-p8-owner-override` / `bce019090819390d4368ec68e09392508aacbd2c` | Drafted Revision 07 host-gateway workspace/profile binding amendment under `CHG-20260822-031`; owner approval pending. |
