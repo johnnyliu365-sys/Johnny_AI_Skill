@@ -17,8 +17,8 @@
 ## Boundary declaration
 
 ```johnny-boundary
-modify = library/local_orchestration/publication_promotion.py
-modify = tests/test_publication_promotion.py
+create = library/local_orchestration/publication_promotion.py
+create = tests/test_publication_promotion.py
 modify = .claude-plugin/marketplace.json
 forbid = .claude-plugin/plugin.json
 forbid = .codex-plugin/
