@@ -81,19 +81,15 @@ _SCANNED_SUFFIXES: Final[frozenset[str]] = frozenset({".md", ".yaml", ".yml"})
 #                    links in published prose and belong on the reviewer's list for
 #                    the README/Workflow pass that lands with this mechanism.
 _REFERENCES_OUTSIDE_PAYLOAD: Final[dict[str, str]] = {
-    ".codex-plugin/": "DEVELOPMENT_ONLY",
     "CLAUDE.md": "TARGET_OWNED",
     "CONTEXT.md": "TARGET_OWNED",
     "PRD.md": "TARGET_OWNED",
     "ProjectSchedule.md": "TARGET_OWNED",
     "doc/RequirementChangeLog.md": "TARGET_OWNED",
     "doc/runbooks/dispatch-model-profile.md": "DEVELOPMENT_ONLY",
-    "doc/runbooks/live-verification-047.md": "DEVELOPMENT_ONLY",
     "johnny-install.cmd": "DEVELOPMENT_ONLY",
     "modules/element/": "TARGET_OWNED",
     "modules/spec/context-load-telemetry.md": "DEVELOPMENT_ONLY",
-    "modules/tickets/PITFALL-REGISTER.md": "DEVELOPMENT_ONLY",
-    "modules/tickets/TEMPLATE.md": "DEVELOPMENT_ONLY",
 }
 
 # Path-shaped tokens that name no repository path at all.  Kept explicit so that a

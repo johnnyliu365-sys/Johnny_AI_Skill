@@ -1,4 +1,18 @@
 A local-first control plane for structured, traceable and safer AI-assisted software development with Codex and Claude Code.
+## 它會對你的 repository 做什麼、不做什麼
+
+**Router 是 metadata-only 的控制平面。** 政策來源文字以型別化 metadata 進入一個暫時
+作用域，不被儲存、不被回放、不被回傳——把它指向一個 repository，不等於把那個
+repository 的內容交給治理它的平面。
+
+**派工回應只由一個活的 pending descriptor 產生**，且必須綁定已審閱的票、其 handoff
+receipt、commit 與具名的實作負責人。偽造、重放、缺失或不相符的 descriptor 產生的
+不是降級的回應，而是沒有回應、沒有能力。
+
+交付階段停在 `POC`，直到被核准的產出與變更紀錄另行說明。`MVP` 與 `COMMERCIAL` 是
+profile 控制的階段，兩者都不是 plugin 可以自己從「進度看起來不錯」推斷出來的
+active product objective。
+
 ## 安裝前先確認
 
 先確認電腦有：
