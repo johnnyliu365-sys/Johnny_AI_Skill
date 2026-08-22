@@ -90,10 +90,20 @@ from here.
 | Claude Code | After a feature cluster completes: **architectural consistency** | Cluster review needs a correct model of the project; alignment between architecture and function is this model's default bias |
 | Antigravity | Red-team testing, risk-boundary audit, technical-debt review | An outsider with no stake in the design sees outside our framing |
 
-One constraint holds at every scale: **the author of a ticket does not review that ticket.**
-That costs nothing and needs no second vendor.
+No prohibition is attached to this split, and in particular the author of a ticket is not barred
+from reviewing work done against it. Writing a specification and scanning an implementation for
+conformance and security are different acts, and the implementer sits between them: **an attempt
+to satisfy a ticket is itself the test of whether that ticket is coherent.** That is how
+distribution ticket 04's internal contradiction surfaced — the implementer hit it, not the
+reviewer who had written it. The independence is already in the loop's shape, so a rule placing
+it somewhere else buys nothing and forbids a configuration that is deliberate: a divergent model
+reviewing each ticket's implementation is defence in depth, because breadth scanning is what that
+disposition is good at.
 
-Everything else scales with the delivery profile, because how many models a person has is not a
+Matching disposition to review kind is therefore the whole of this decision. Get that right and
+the work lands where it fits without a rule enforcing it.
+
+What remains scales with the delivery profile, because how many models a person has is not a
 property of the work. A vibe coder normally has one. A software team or an enterprise may have
 several, and only then does the full split become available.
 
@@ -188,6 +198,6 @@ only treating that mechanism as a precondition for work that is synchronous.
 
 | Date | Actor / baseline | Summary |
 | --- | --- | --- |
-| 2026-08-23 | Architecture owner / `main` | Decision 5 amended on the owner's word: the reviewer table is rationale rather than binding, and cross-model review scales with the delivery profile instead of gating anyone who has a single model. |
+| 2026-08-23 | Architecture owner / `main` | Decision 5 amended on the owner's word: the reviewer table is rationale rather than binding, and cross-model review scales with the delivery profile instead of gating anyone who has a single model. A second amendment removed a prohibition on a ticket's author reviewing work done against it: the implementer already tests the ticket's coherence by trying to satisfy it, and the rule would have forbidden the deliberate use of a divergent reviewer for breadth. |
 | 2026-08-23 | Architecture owner / `main` | Drafted as `PROPOSED`. Decision 3 reverses an alternative ADR-012 recorded as owner-rejected and is held pending the owner's explicit word; the remaining decisions stand independently of it. |
 | 2026-08-23 | Project owner / owner confirmation | Accepted Decision 3 and therefore the ADR. Same-lifecycle `dispatch → wait → review → guarded integration` is the default; the runner remains only a cross-lifetime handoff bridge. |
