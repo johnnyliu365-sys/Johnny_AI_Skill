@@ -4,8 +4,9 @@
 | --- | --- |
 | SPEC / AC | Revision 02, AC-1 through AC-4 |
 | PRD / CHG / Context | `PRD-20260823-034` / `CHG-20260823-034` / sealed Context Revision 01, blob `0fef3f1e4c8ce317873cdf2f73dc1bd793579217` |
-| State / closure | `APPROVED / NOT_DISPATCHED / CONVERGENCE_REFROZEN` / `CLOSURE_02` |
+| State / closure | `DONE / APPROVED / INTEGRATED` / `CLOSURE_02` |
 | Baseline | `46ad6d391f27294bd42c35eef47479529472b5c6` |
+| Integrated candidate | `4a77414e017131c1fda581250c38dd3d0a86e4e2` |
 | Dependency | Ticket 06 integrated at the exact baseline above. |
 | Control owner / reviewer | `ticket-review` — Terra / xhigh, capability readback required at dispatch |
 | Implementation owner | `implementation-standard` — Luna / xhigh; one ticket only, no helper |
