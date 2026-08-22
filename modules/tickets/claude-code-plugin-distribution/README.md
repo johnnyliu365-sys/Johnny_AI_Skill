@@ -21,7 +21,7 @@ performs the one owner-authorized live cutover.
 | `04-the-pin-is-not-bound-to-reachability` | `DONE` | Publication-anchor reachability | Historical |
 | `05-reachability-measures-the-wrong-thing` | `DONE` | Clean-clone fetchability evidence | Historical |
 | [06-publication-repository-closure.md](06-publication-repository-closure.md) | `DONE / APPROVED / INTEGRATED` — `46ad6d3` | A Git object graph is accepted only when every reachable ref/tree is declared payload. | `POC / STANDARD`; no remote publication effect. |
-| [07-publication-promotion-compare-and-swap.md](07-publication-promotion-compare-and-swap.md) | `APPROVED / NOT_DISPATCHED` | A promotion plan either binds one exact old/new/tag transaction or returns a finite refusal. | Exact baseline `46ad6d3`; serial successor to 06. |
+| [07-publication-promotion-compare-and-swap.md](07-publication-promotion-compare-and-swap.md) | `APPROVED / NOT_DISPATCHED / CLOSURE_02` | A promotion plan either binds one exact old/new/tag transaction or returns a finite refusal. | CLOSURE_01 is `CONVERGENCE_REVIEW_REQUIRED`; CLOSURE_02 adds only the omitted P5 regression evidence. |
 | [08-isolated-publication-live-cutover.md](08-isolated-publication-live-cutover.md) | `PLANNED / OWNER_EFFECT_AUTHORITY_REQUIRED` | A real isolated Claude install from README reaches only the publication object graph. | After 07 integration and named owner authority for repository creation/push/release. |
 
 No ticket authorizes a runner, queue, receipt, host gateway, remote Git mutation, repository

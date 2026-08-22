@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | Revision 02, AC-1 through AC-4 |
 | PRD / CHG / Context | `PRD-20260823-034` / `CHG-20260823-034` / sealed Context Revision 01, blob `0fef3f1e4c8ce317873cdf2f73dc1bd793579217` |
-| State / closure | `APPROVED / NOT_DISPATCHED` / `CLOSURE_01` |
+| State / closure | `APPROVED / NOT_DISPATCHED / CONVERGENCE_REFROZEN` / `CLOSURE_02` |
 | Baseline | `46ad6d391f27294bd42c35eef47479529472b5c6` |
 | Dependency | Ticket 06 integrated at the exact baseline above. |
 | Control owner / reviewer | `ticket-review` — Terra / xhigh, capability readback required at dispatch |
@@ -34,6 +34,22 @@ Ticket 06's closure modules are read-only inputs. The owner changes only the new
 module/tests. The reviewer may generate the required marketplace pin after source review; neither
 role may create a GitHub repository, call `git push` against a non-disposable remote, create a
 real tag or repin `main` by hand.
+
+## Closure 01 convergence and Closure 02 refreeze
+
+`CLOSURE_01` submitted `9ffedeb` and its sole additive correction `2ca8743`. The final Terra
+review found `EVIDENCE_DEFECT / CONVERGENCE_REVIEW_REQUIRED`: P5 exercised a bypass-built partial
+SHA but did not preserve direct regressions for a malformed version, malformed ref, or null and
+missing-field snapshots. The runtime fails closed for those inputs, but a reviewer probe is not a
+replacement for the frozen TDD matrix. These commits are retained, unintegrated evidence; they
+are not merge authority.
+
+`CLOSURE_02` changes no SPEC, topology, public contract, profile or boundary. It reuses the same
+worktree/branch and one Luna/xhigh implementer, but permits exactly one additive test correction
+inside `tests/test_publication_promotion.py`. That correction must add the four direct P5 cases,
+then re-run P1–P6, ticket 06 closure tests and the payload boundary. The source module is read-only
+in this refreeze unless a newly added P5 test demonstrates a finite-result defect. A fresh Terra
+review is required before any reviewer pin generation or guarded integration.
 
 ## Sole observable closure
 
