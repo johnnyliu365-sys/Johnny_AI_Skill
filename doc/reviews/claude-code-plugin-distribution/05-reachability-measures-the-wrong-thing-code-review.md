@@ -42,3 +42,33 @@ Revision 03 creates a new candidate branch and review closure. Reapply the retai
 evidence only, run a new Terra initial review including the reverse mutations and true fresh-clone
 proof, then generate and verify the publication pin on that same candidate branch. No existing
 commit is reset, amended, deleted, or presented as integrated.
+
+## Revision 03 closure
+
+| Field | Result |
+| --- | --- |
+| Reviewer / outcome | Terra / `xhigh` — `APPROVED / INTEGRATED` |
+| Source/test commits | `b6989c6`, `d4ea78c`, `d7bb1c6`, `92ac317` |
+| Generated payload pin | `c3cb81c4550e6493f9d8478c4be31ffdad642f87` |
+| Integration | `admit_document_mutation` → `7458e8d26f015215dcb2f503704a2feaf33c2a97` |
+| Candidate boundary suite | `53 passed, 283 subtests passed` |
+| True fresh-clone boundary suite | `53 passed, 283 subtests passed` |
+| Full candidate suite | `1676 passed, 22 skipped, 3996 subtests passed`; three unrelated baseline failures below |
+| Remote effect | None; no actual origin push or ref update |
+
+The one permitted Revision 03 correction fixed a P0 boundary defect: non-string `ref` values had
+reached `startswith` before validation. `None`, empty, malformed local, and malformed remote
+values now raise `PublicationRefError`. Focused reachability tests, `mypy --strict`, and
+`compileall` passed.
+
+Reviewer reverse mutations all made their named tests fail, then were restored byte-for-byte:
+
+1. Removing `refs/remotes` from the ref query made the clean-clone last-fetch state test fail.
+2. Accepting a local branch as fetchability evidence made the local-only rejection test fail.
+3. Collapsing remote state to `NOT_PUSHED` made the clean-clone remote-state test fail.
+
+The full candidate suite's three failures are pre-existing environment failures. The same three
+individual cells were run against unintegrated main with identical results: two expect machine-
+readable stdout through Windows `cmd.exe` but receive the console prompt/encoding output, and the
+active pytest is `9.0.3` while `requirements-dev.txt` declares `9.1.1`. None shares a modified
+path with ticket 05. They are recorded rather than waived.

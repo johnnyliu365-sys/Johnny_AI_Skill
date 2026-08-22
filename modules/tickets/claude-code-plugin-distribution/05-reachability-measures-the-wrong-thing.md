@@ -9,7 +9,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | Revision 03／worktree `.worktrees/plugin-05-r03`／branch `implement/plugin-05-fetchable-pin-r03` |
 | 實作語言 | Python 3.11 |
-| 狀態 | `OPEN / CONVERGENCE_REPLAN / REVISION_03` |
+| 狀態 | `DONE / INTEGRATED / REVISION_03` |
 | 共同基準 | 見派工訊息（worktree HEAD 為綁定 commit） |
 | 實作者 | Luna / `xhigh`（一般票：判準明確、範圍小，但要動的是一個安全性質的量測對象） |
 | 票級審閱者 | Terra / `xhigh`；能力強度不得低於實作者 |
@@ -208,15 +208,26 @@ C13 是閉包測試依賴 harness 建的目錄；本票是可達性測試依賴�
 
 ## 完成回寫
 
-- 實際檔案：待填
-- commit：待填
+- 實際檔案：`library/local_orchestration/plugin_publication.py`、
+  `tests/test_plugin_publication.py`、`.claude-plugin/marketplace.json`
+- source/test evidence commits：`b6989c6`、`d4ea78c`、`d7bb1c6`、`92ac317`
+- reviewer-generated pin：`c3cb81c4550e6493f9d8478c4be31ffdad642f87`；產生器與
+  `--verify-only` 均通過，無手改 SHA。
+- guarded integration：`7458e8d26f015215dcb2f503704a2feaf33c2a97`，
+  `admit_document_mutation.integrated_commit` 與候選 branch tip 精確相同。
+- 票級 review：candidate 與真正 temporary-bare-remote fresh clone 各為
+  `53 passed, 283 subtests passed`；三組反向突變均使指定 cell 轉紅後逐位元還原。
+- 全套件：`1676 passed, 22 skipped, 3996 subtests passed`；另有三個既有環境失敗，
+  已在未整合 main 重跑同三 cell 得到相同結果：兩個 Windows `cmd.exe` stdout
+  編碼預期失敗與執行中的 pytest `9.0.3` 對宣告 `9.1.1`。它們不涉及本票修改的路徑。
+- remote push：未執行（仍不在本票範圍）。
 
 ```johnny-status
 id = 05
 title = 可達性量錯了對象
-state = OPEN
-stage = M | 量測對象改為抓得到 | OPEN
-stage = S | 本機／遠端兩個具名狀態 | OPEN
-stage = C | 乾淨 clone 上全綠 | OPEN
-stage = X | 突變驗證 | OPEN
+state = DONE
+stage = M | 量測對象改為抓得到 | DONE
+stage = S | 本機／遠端兩個具名狀態 | DONE
+stage = C | 乾淨 clone 上全綠 | DONE
+stage = X | 突變驗證 | DONE
 ```
