@@ -7,11 +7,11 @@
 | PRD 索引 | 不適用 |
 | 需求變更 | 不適用 |
 | Sealed Context binding | 不適用 |
-| Agent Context binding | 本票 revision；worktree／branch 待派工時建立 |
+| Agent Context binding | 本票 revision／worktree `.worktrees/gov-20`／branch `implement/gov-20-portable-lock` |
 | 實作語言 | Python 3.11 |
 | 狀態 | `IN_PROGRESS` |
-| 共同基準 | `<派工時填入>` |
-| 實作者 | `<派工時填入>` |
+| 共同基準 | `cc9deda`（程式碼基準；worktree HEAD 為綁定 commit，派工訊息載明） |
+| 實作者 | Opus 5（難票：換掉恰好一次的地基原語，依 `dispatch-model-profile.md` 先派 Opus） |
 | 審閱者 | 控制面（Opus 5） |
 | 責任邊界 | `library/local_orchestration/file_lock.py` 與其測試 |
 | 禁止修改 | **六個消費者一行都不准動**：`live_dispatch_metadata_boundary.py`、`review_return.py`、`review_return_consumption.py`、`windows_senior_review_inbox_store.py`、`worker_assignment.py`、`work_queue.py` |
@@ -97,6 +97,8 @@ POSIX 側用 `fcntl.flock`（或 `lockf`，由實作者論證取捨並寫下理�
   ——`windows_native_git_ref.py` 仍是 Windows-only（票 21）。回報時要說清楚剩下什麼。
 - 實作者只跑邊界內測試檔＋上述三個既有跨行程測試檔；全套件與殘留檢查由審閱者於整合前執行。
 - venv 建在 repo 外 ASCII 路徑，`pytest==9.1.1`。
+
+- **全套件責任**：多張票並行實作，實作者只跑本票指定的測試檔；全套件與殘留檢查由審閱者於整合前執行（比照 governance 11 的責任轉移，這是審閱者的未完成義務，不得因實作者回報綠即視為滿足）。
 
 ## 不在本票範圍
 

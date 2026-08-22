@@ -7,11 +7,11 @@
 | PRD 索引 | 不適用 |
 | 需求變更 | 不適用 |
 | Sealed Context binding | 不適用 |
-| Agent Context binding | 本票 revision；worktree／branch 待派工時建立 |
+| Agent Context binding | 本票 revision／worktree `.worktrees/gov-21`／branch `implement/gov-21-ref-watch-capability` |
 | 實作語言 | Python 3.11 |
 | 狀態 | `IN_PROGRESS` |
-| 共同基準 | `<派工時填入>` |
-| 實作者 | `<派工時填入>` |
+| 共同基準 | `cc9deda`（程式碼基準；worktree HEAD 為綁定 commit，派工訊息載明） |
+| 實作者 | Sonnet 5 high（一般票：能力宣告與降級，形狀已有前例） |
 | 審閱者 | 控制面（Opus 5） |
 | 責任邊界 | 原生 watcher 的平台能力宣告與非 Windows 的降級路徑 |
 | 禁止修改 | `commit_trigger_intake.py`（P7 的 tee 不動）；`work_queue.py`；`file_lock.py`（票 20 的範圍） |
@@ -94,6 +94,8 @@ governance 04——skill 用直述句描寫沒在跑的機制，導致 agent 對
   應改為「commit 觸發是 Windows-only，其餘可攜」。**這一行由審閱者在整合時改，
   不在實作者邊界內**（README 不在本票的 modify 清單）。
 - 實作者只跑邊界內測試檔；全套件與殘留檢查由審閱者於整合前執行。
+
+- **全套件責任**：多張票並行實作，實作者只跑本票指定的測試檔；全套件與殘留檢查由審閱者於整合前執行（比照 governance 11 的責任轉移，這是審閱者的未完成義務，不得因實作者回報綠即視為滿足）。
 
 ## 不在本票範圍
 
