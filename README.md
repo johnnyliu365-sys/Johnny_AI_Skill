@@ -160,6 +160,14 @@ claude plugin uninstall johnny-ai-skill@johnny-ai-skill --scope user
 claude plugin marketplace remove johnny-ai-skill --scope user
 ```
 
+## What the control plane holds, and what it refuses to hold
+
+The Router is a metadata-only control plane. Policy source text crosses its boundary as typed metadata inside an ephemeral scope and is never stored, echoed, or returned — so pointing this at a repository does not hand its contents to the plane that governs it.
+
+A dispatch response is produced only from a live pending descriptor owned by the same Router, bound to a reviewed ticket, its handoff receipt, the commits and a named implementation owner. A descriptor that is forged, replayed, missing or mismatched produces no response and no capability, rather than a degraded one.
+
+The delivery stage stays `POC` until an approved artifact and change record say otherwise. `MVP` and `COMMERCIAL` are profile-gated stages that exist in the history; neither is an active product objective the plugin may infer for itself from how the work is going.
+
 ## Honest limits
 
 This project's own rule is that a mechanism which does not exist must not be described as if it does. So:
