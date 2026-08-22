@@ -3,14 +3,14 @@
 | 欄位 | 內容 |
 | --- | --- |
 | 對應規格 ID | 不適用（票 03 的殘留缺口，審閱者以突變證實） |
-| 第一步排查起點 | `refs/publication/0.4.9`——它是唯一指向釘住 commit 的 ref，而那個 namespace GitHub 不服務 |
+| 第一步排查起點 | `tests/test_plugin_publication.py`——沒有任何 cell 提到 ref 或可達性 |
 | PRD 索引 | 不適用 |
 | 需求變更 | 不適用 |
 | Sealed Context binding | 不適用 |
 | Agent Context binding | 本票 revision／worktree `.worktrees/plugin-04`／branch `implement/plugin-04-reachable-pin` |
 | 實作語言 | Python 3.11 |
 | 狀態 | `OPEN` |
-| 共同基準 | `53c6d4e3`（worktree HEAD 為綁定 commit，派工訊息載明） |
+| 共同基準 | `10e3eb33`（worktree HEAD 為綁定 commit，派工訊息載明） |
 | 實作者 | Sonnet 5 high（一般票：形狀明確，判準可量——一個 cell 加一個 namespace 決定） |
 | 審閱者 | 控制面（Opus 5） |
 | 責任邊界 | 發佈 commit 的錨定 ref 與證明它可達的測試 |
@@ -47,6 +47,16 @@ forbid = modules/tickets/
 再查證：`git ls-remote origin 'refs/publication/*'` 回 **0 個**。
 那個 namespace GitHub 不收。票 03 的實作者自己備註要改推成
 `refs/heads/publication-0.4.9`——**他們知道，但沒有任何測試釘住它。**
+
+## 範圍已縮小一半（2026-08-22 推送時）
+
+推送 main 時，審閱者把錨定換成了可推送的分支：`refs/publication/0.4.9` 已刪除，
+本機與 origin 都是 `refs/heads/publication-0.4.9` → `696319f8`。
+**所以不可讓性質第 1 條（namespace）已經滿足，本票不需要再改它。**
+
+**剩下的是第 2 條，也是本票真正的內容**：可達性仍然不是一個被測試釘住的事實。
+刪掉錨定 ref，套件仍然全綠。釘子在兩次 README 重生後已是 `696319f8`，
+但那不影響本票——**問題從來不是釘哪個 sha，是沒有任何東西檢查它還被指著。**
 
 ## 這是 D7 往上一層
 

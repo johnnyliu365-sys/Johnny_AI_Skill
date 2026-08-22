@@ -34,7 +34,7 @@ debug 任何「奇怪」的問題先查 [`PITFALL-REGISTER.md`](../../modules/ti
 票已寫好，直接派即可（`Sonnet 5 high`，理由寫在票裡）。
 
 ```
-git worktree add -b implement/plugin-04-reachable-pin .worktrees/plugin-04 53c6d4e3
+git worktree add -b implement/plugin-04-reachable-pin .worktrees/plugin-04 10e3eb33
 ```
 
 派工訊息只放：要做什麼、票在哪、worktree／branch、跑測試的指令、不要 commit、回報什麼。
@@ -45,16 +45,16 @@ git worktree add -b implement/plugin-04-reachable-pin .worktrees/plugin-04 53c6d
 本次交接連同以下兩者一起推上 `origin`：
 
 - **`main`** — 含票 02／03 的整合與票 04
-- **`refs/heads/publication-0.4.9`** → `b856cf88` — 發佈樹本身
+- **`refs/heads/publication-0.4.9`** → `696319f8` — 發佈樹本身
 
 發佈 commit 必須跟著推，否則你在本機 clone 之後
 `test_the_pinned_sha_exists` 會直接紅——那個 commit 是 parentless，
 不會跟著 `main` 一起過來。
 
-**但票 04 仍然要做。** 推上去只是讓 commit 拿得到；票 04 要的是
-**把「可達」變成一個被測試釘住的事實**——目前刪掉錨定 ref，套件仍然全綠。
-本機的錨定 ref 還在 `refs/publication/0.4.9`（GitHub 不收的 namespace），
-要不要讓本機也改成分支，由票 04 的實作者論證。
+**但票 04 仍然要做，範圍已縮小。** 推送時順手把錨定換成了可推送的分支
+（`refs/publication/0.4.9` 已刪除，本機與 origin 都是 `publication-0.4.9`），
+所以「namespace 選錯」那一半沒了。**剩下的那一半才是重點**：
+刪掉錨定 ref，套件仍然全綠——**可達性還不是一個被測試釘住的事實。**
 
 **其餘一律不推。** 本專案規則：沒有被明確指示就不 push。
 
