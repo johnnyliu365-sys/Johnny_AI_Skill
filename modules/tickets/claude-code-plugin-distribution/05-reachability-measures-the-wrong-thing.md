@@ -2,7 +2,7 @@
 
 | 欄位 | 內容 |
 | --- | --- |
-| 對應規格 ID | 不適用（票 04 的殘留缺陷；跨模型審閱者在乾淨 clone 上實測發現） |
+| 對應規格 ID | 不適用（票 04 的殘留缺陷；票級獨立審查在乾淨 clone 上實測發現） |
 | 第一步排查起點 | `library/local_orchestration/plugin_publication.py` 的 `publication_refs_reaching_commit`——它只掃 `refs/heads` 與 `refs/tags` |
 | PRD 索引 | 不適用 |
 | 需求變更 | 不適用 |
@@ -11,9 +11,9 @@
 | 實作語言 | Python 3.11 |
 | 狀態 | `DONE / INTEGRATED / REVISION_03` |
 | 共同基準 | 見派工訊息（worktree HEAD 為綁定 commit） |
-| 實作者 | Luna / `xhigh`（一般票：判準明確、範圍小，但要動的是一個安全性質的量測對象） |
-| 票級審閱者 | Terra / `xhigh`；能力強度不得低於實作者 |
-| 功能集群審閱 | 全部票級整合後才由 Claude Code 進行架構一致性審閱；它不是本票的派工、票級審閱或整合前提。 |
+| 實作者 | `implementation-standard`（一般票：判準明確、範圍小；若實作者論證不可再拆且有具名能力缺口，才走 `HardTicketAssessment` 升 `implementation-elevated`） |
+| 票級審閱者 | `ticket-review`（本 closure 的 Luna / `xhigh` 實作與 Terra / `xhigh` 審閱證據見 review record）。這是依 profile 與風險匹配的獨立審查建議，不是把 provider／model 名稱寫成派工閘門。 |
+| 功能集群審閱 | 功能集群完成後可由 Claude Code 進行架構一致性審閱；它不是本票的派工、票級審閱或整合前提。 |
 | 責任邊界 | 可達性的量測對象與其具名狀態 |
 | 禁止修改 | 票 03 的內容綁定（釘子與樹逐檔相符）；`payload` 宣告；釘住的 sha 值 |
 | 環境 | `LOCAL` |
