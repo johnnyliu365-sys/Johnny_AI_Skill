@@ -526,7 +526,8 @@ def require_fetchable_publication_ref(root: Path, sha: str, ref: str) -> str:
     tracking ref and therefore cannot satisfy this requirement.
     """
 
-    sha = require_existing_commit(root, sha)
+    if not isinstance(ref, str):
+        raise PublicationRefError("publication ref must be a string")
     if ref.startswith(_REMOTE_TRACKING_REF_PREFIX):
         requested_remote = _validate_remote_tracking_ref(ref)
         requested_local: str | None = None
@@ -534,6 +535,7 @@ def require_fetchable_publication_ref(root: Path, sha: str, ref: str) -> str:
         requested_local = _validate_pushable_publication_ref(ref)
         requested_remote = None
 
+    sha = require_existing_commit(root, sha)
     reachability = publication_refs_reaching_commit(root, sha)
     matches: tuple[RemoteTrackingRefName, ...]
     if requested_remote is not None:

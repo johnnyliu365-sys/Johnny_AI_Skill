@@ -34,7 +34,7 @@ import subprocess
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Final
+from typing import Final, cast
 from unittest.mock import patch
 
 from library.local_orchestration.plugin_publication import (
@@ -798,6 +798,21 @@ class PublicationReachabilityTests(unittest.TestCase):
                 require_fetchable_publication_ref(
                     scratch.root, sha, "refs/remotes/origin/../publication-1.2.3"
                 )
+
+    def test_null_empty_and_malformed_fetchable_refs_are_named_input_errors(self) -> None:
+        with TemporaryDirectory(ignore_cleanup_errors=True) as raw:
+            scratch = _ScratchRepository(Path(raw))
+            sha, _ref = self._publish_with_ref(scratch)
+            malformed: tuple[str, ...] = (
+                cast(str, None),
+                "",
+                "refs/notes/publication-1.2.3",
+                "refs/remotes/origin/",
+            )
+            for ref in malformed:
+                with self.subTest(ref=ref):
+                    with self.assertRaises(PublicationRefError):
+                        require_fetchable_publication_ref(scratch.root, sha, ref)
 
     def test_the_marketplace_pin_is_bound_to_the_actual_publication_anchor(self) -> None:
         with TemporaryDirectory(ignore_cleanup_errors=True) as raw:
