@@ -76,7 +76,13 @@ the workflow changes model between phases, every phase change necessarily crosse
 and context. That is far more frequent than the unattended case, which ADR-012 treated as the
 motivating scenario.
 
-**5. Review is split by kind, and each kind is matched to a model's disposition.**
+**5. Review is split by kind, and each kind is matched to a disposition. This decision is a
+recommendation with its reasoning, not a mandate.**
+
+The table below names hosts to explain *why* a disposition suits a kind of review. It is
+rationale, not a binding: the actual role-to-capability mapping belongs to the dispatch profile
+registry, and no ticket, resolver or configuration may embed a provider or model value taken
+from here.
 
 | Reviewer | Reviews | Why that model |
 | --- | --- | --- |
@@ -84,9 +90,25 @@ motivating scenario.
 | Claude Code | After a feature cluster completes: **architectural consistency** | Cluster review needs a correct model of the project; alignment between architecture and function is this model's default bias |
 | Antigravity | Red-team testing, risk-boundary audit, technical-debt review | An outsider with no stake in the design sees outside our framing |
 
-Two constraints on this split. The author of a ticket does not review that ticket. Independent
-review must be **cross-model**: another instance of the same lineage is not independent, because
-context contamination is what changes between instances and disposition is not.
+One constraint holds at every scale: **the author of a ticket does not review that ticket.**
+That costs nothing and needs no second vendor.
+
+Everything else scales with the delivery profile, because how many models a person has is not a
+property of the work. A vibe coder normally has one. A software team or an enterprise may have
+several, and only then does the full split become available.
+
+| Available | What independence you get | What you do not get |
+| --- | --- | --- |
+| One model | A separate context with no shared history, and the counter-mutation discipline — the reviewer must break the change from a door the implementer did not use, and zero red is a finding rather than a pass | Protection against a blind spot the lineage itself carries |
+| Two or more | The above, plus a reviewer whose disposition differs from the implementer's | An outsider's framing |
+| Plus a third party | The above, plus red-team, boundary and debt review from someone with no stake in the design | — |
+
+The single-model row is not a degraded mode to apologise for. Measured on 2026-08-22, two
+same-lineage actors each found real defects in the other's work through exactly that discipline.
+What they did not find is recorded below, and that is the honest boundary of what one model buys:
+**cross-model review is the strongest available form of independence, and it is a recommendation
+whose strength should follow the risk, not a gate that stops a person who has one model from
+working at all.**
 
 **6. The bridge does not restore a session; it carries an artifact.** Codex's `thread/start`
 creates a new actor rather than resuming the original, and that is acceptable rather than a
@@ -166,5 +188,6 @@ only treating that mechanism as a precondition for work that is synchronous.
 
 | Date | Actor / baseline | Summary |
 | --- | --- | --- |
+| 2026-08-23 | Architecture owner / `main` | Decision 5 amended on the owner's word: the reviewer table is rationale rather than binding, and cross-model review scales with the delivery profile instead of gating anyone who has a single model. |
 | 2026-08-23 | Architecture owner / `main` | Drafted as `PROPOSED`. Decision 3 reverses an alternative ADR-012 recorded as owner-rejected and is held pending the owner's explicit word; the remaining decisions stand independently of it. |
 | 2026-08-23 | Project owner / owner confirmation | Accepted Decision 3 and therefore the ADR. Same-lifecycle `dispatch → wait → review → guarded integration` is the default; the runner remains only a cross-lifetime handoff bridge. |
