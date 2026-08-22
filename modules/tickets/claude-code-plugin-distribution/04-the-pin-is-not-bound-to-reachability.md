@@ -9,7 +9,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | 本票 revision／worktree `.worktrees/plugin-04`／branch `implement/plugin-04-reachable-pin` |
 | 實作語言 | Python 3.11 |
-| 狀態 | `OPEN` |
+| 狀態 | `DONE`（可達性已被測試釘住；**但量錯對象，使用者拍板要到票 05 才成立**） |
 | 共同基準 | `10e3eb33`（worktree HEAD 為綁定 commit，派工訊息載明） |
 | 實作者 | Sonnet 5 high（一般票：形狀明確，判準可量——一個 cell 加一個 namespace 決定） |
 | 審閱者 | 控制面（Opus 5） |
@@ -128,14 +128,46 @@ forbid = modules/tickets/
 
 ## 完成回寫
 
-- 實際檔案：待填
-- commit：待填
+- 實際檔案：`library/local_orchestration/plugin_publication.py`、`tests/test_plugin_publication.py`
+- commit：`9bb7097c`，經控制面閘門整合；釘子重生為 `f7b1c377`
+- 新增 `_PUSHABLE_REF_PREFIXES`、`publication_refs_reaching_commit`、
+  `require_reachable_publication_ref`、`PublicationReachabilityError`
+- **實作者三組突變**（其回報）：拿掉可達性檢查、接受所有 namespace、
+  讓 `for-each-ref` 失敗靜默——各自具名轉紅
+
+### 審閱者獨立審查（跨模型，依 ADR-20260823-014 決策 5）
+
+- **票指定的那組突變確實轉紅**：刪掉錨定 ref → 2 紅
+  （`test_the_marketplace_pin_is_bound_to_the_actual_publication_anchor`、
+  `test_deleting_the_actual_publication_anchor_makes_the_marketplace_pin_unreachable`）。
+  票 04 之前同樣的動作是**零紅**。最低成功條件達成。基準 87 綠。
+- **但從第四道門進去發現量錯對象。** `publication_refs_reaching_commit` 只掃
+  `refs/heads` 與 `refs/tags`，也就是**本機分支**。於是兩個方向都會錯：
+
+  | 情況 | 使用者抓得到嗎 | 檢查判定 |
+  | --- | --- | --- |
+  | 本機分支、從未 push | **抓不到** | 可達（假綠） |
+  | 在 origin 上、本機無分支（**每一個 fresh clone**） | **抓得到** | 不可達（假紅） |
+
+- **實測**：`git clone` 只建立 `refs/heads/main`，於是 fresh clone 上
+  `refs/heads|refs/tags` 可達釘子的數量是 **0**，那兩個 cell 直接紅
+  （`2 failed, 46 passed`）。而同一個 clone 裡
+  `refs/remotes/origin/publication-0.4.9` **確實指到 `f7b1c377`**——
+  那正是「在 origin 上、抓得到」的正面證據，卻沒被算進去。
+- **因此本票的使用者拍板未達成**：釘住的 commit 仍未被證明是「推得出去、拿得回來」的東西，
+  被證明的是「本機有一個分支」。不可讓性質第 3 條要求「可達 ≠ 已推送」兩者可區分具名，
+  目前兩者沒有分開，而且量到的是錯的那一個。**缺口開票 05。**
+- **這是登記簿 C13 那一族第二次出現**：測試綁在做事那台機器的本機狀態上，
+  而不是綁在 repo 事實上，於是在 fresh clone 上翻臉。已記為 C13 的復發。
+- 稽核方式：在**乾淨 clone**上跑，而不是只在 worktree 上跑——那條紀律正是 C13 教的。
+  所有探針已還原，`main`／`publication-0.4.9`／工作區皆與稽核前一致。
+
 
 ```johnny-status
 id = 04
 title = 釘子沒有綁到可達性
-state = OPEN
-stage = R | 可推送 namespace 的錨定 | OPEN
-stage = T | 可達性被測試釘住 | OPEN
-stage = M | 突變驗證（含審閱者那一組） | OPEN
+state = DONE
+stage = R | 可推送 namespace 的錨定 | DONE
+stage = T | 可達性被測試釘住 | DONE
+stage = M | 突變驗證（含審閱者那一組） | DONE
 ```

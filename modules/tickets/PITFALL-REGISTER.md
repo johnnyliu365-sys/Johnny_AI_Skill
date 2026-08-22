@@ -254,6 +254,19 @@
   **綠燈甚至不代表在別的地方也會綠**。
 - **狀態**：未開票。修法方向是讓分類不依賴工作副本的存在性（改為只依 repo 事實），
   或明確宣告該掃描的環境前提並在前提不符時具名拒絕而不是靜默改變分類。
+- **復發（2026-08-23，不同機制、同一形狀）**：票 04 的可達性檢查
+  `publication_refs_reaching_commit` 只掃 `refs/heads` 與 `refs/tags`，也就是**本機分支**。
+  在做過發佈的 checkout 上全綠；在**乾淨 clone** 上兩紅——因為 `git clone`
+  只建立 `refs/heads/main` 一個本機分支。而同一個 clone 裡
+  `refs/remotes/origin/publication-0.4.9` 確實指到釘住的 commit，
+  那正是「使用者抓得到」的正面證據，卻沒被算進去。
+  **兩個方向都錯**：從未 push 的本機分支判成可達（假綠）；
+  在 origin 上但本機無分支判成不可達（假紅）。已開票
+  [claude-code-plugin-distribution/05](claude-code-plugin-distribution/05-reachability-measures-the-wrong-thing.md)。
+- **兩次的共同判準（這是要記住的那一句）**：**測試如果讀工作副本或本機 ref，
+  它量的就是「做事那台機器的狀態」，不是 repo 事實。** 前者在乾淨 clone 上必然不同。
+  所以整合前的驗證至少要有一次跑在 `git clone` 出來的形狀上——
+  worktree 不算，它與 clone 的差異不只是 `.git`。
 
 ## D. 發行工程類
 
