@@ -94,6 +94,13 @@ C:\Users\User\AppData\Local\Temp\v04\Scripts\python.exe -m pip install -q -r req
 python -m pytest -q -p no:cacheprovider 2>&1 | grep -E "^(FAILED|SUBFAIL|ERROR)"
 ```
 
+**同一個 commit 在 worktree 與 main checkout 會給出不同答案**（登記簿 C13）。
+`PayloadClosureTests` 在 `.worktrees/*` 全綠，在 main checkout 4 紅——變數是
+`.claude/worktrees/`，那是 Claude Code harness 建的目錄，只存在於 main checkout，
+而閉包掃描會 stat 檔案系統。**乾淨 clone 上會是綠的**（沒有那個目錄），
+但這代表整合前的全套件必須至少在「使用者會拿到的那個形狀」上跑過一次，
+否則閘門會綠在一個被環境遮住的缺陷上——這已經發生過一次了。
+
 受閘測試要 `JOHNNY_LIVE_QUAL=1`，涉及五個檔（`test_whole_chain_qualification.py` 等）。
 基準：全套件 1641 passed／22 skipped／零 FAILED；受閘 28 passed／1 skipped／零 FAILED。
 
@@ -138,6 +145,7 @@ python -m pytest -q -p no:cacheprovider 2>&1 | grep -E "^(FAILED|SUBFAIL|ERROR)"
 | 44 個未分類的 `Failure` enum | governance 22 的後續 |
 | `johnny-install.cmd` 三個拒絕代碼已分類未印出 | governance 22 宣告的缺口 |
 | 出貨文件裡的死連結 | 票 02 實作者列於 `_REFERENCES_OUTSIDE_PAYLOAD`，標記 `DEVELOPMENT_ONLY` |
+| 閉包測試依賴工作副本狀態（C13） | 未開票；修法方向是讓分類只依 repo 事實 |
 
 ## 一句話的方法論
 
