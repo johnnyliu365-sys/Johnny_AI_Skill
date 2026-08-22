@@ -1,21 +1,29 @@
-# P8｜模型分層是資料，不是 runbook
+# P8｜模型分層是資料，不是 runbook（SUPERSEDED）
 
 | 欄位 | 內容 |
 | --- | --- |
-| 對應規格 ID | 不適用（外部參考啟發：GAL 的 `config.json#executorRouting` 與 `routing.rs`） |
+| 對應規格 ID | `SUPERSEDED`；replacement draft: `SPEC-AI-WORKFLOW-EXECUTOR-ROUTING-20260822-01M4P6R8T0V2X4Z6B8D0F2H4J6` |
 | 第一步排查起點 | `doc/runbooks/dispatch-model-profile.md`（規則現在活在這裡，只靠人記得讀） |
-| PRD 索引 | 不適用 |
-| 需求變更 | 不適用 |
-| Sealed Context binding | 不適用 |
+| PRD 索引 | `PRD-20260822-030` |
+| 需求變更 | `CHG-20260822-030` |
+| Sealed Context binding | Draft only: `doc/context/executor-routing/codex-provider-neutral-executor-routing.md` |
 | Agent Context binding | 本票 revision；worktree／branch 待派工時建立 |
 | 實作語言 | Python 3.11 |
-| 狀態 | `IN_PROGRESS` |
+| 狀態 | `SUPERSEDED / REQUIREMENT_CHANGED / NOT_DISPATCHED` |
 | 共同基準 | `<派工時填入>` |
 | 實作者 | `<派工時填入>` |
-| 審閱者 | 控制面（Opus 5） |
+| 審閱者 | 無；replacement SPEC 尚待 owner approval |
 | 責任邊界 | 新增 `library/local_orchestration/executor_routing.py` 與其測試 |
 | 禁止修改 | `dispatch_session.py`、`dispatch_authority.py`、`worker_assignment.py`、`work_queue.py`、`document_mutation_gate.py` |
 | 環境 | `LOCAL` |
+
+## Supersedure (2026-08-22)
+
+`CHG-20260822-030` records that this ticket's provider-specific rule is no longer the
+requirement. It has no dispatch receipt, task, branch or implementation authority. Retain its
+historical diagnosis and proposed boundary below as evidence only; do not amend it into the new
+contract or dispatch it. After owner approval of the replacement SPEC, a new ticket must bind
+the sealed Context, exact SPEC revision and new provider-neutral acceptance closure.
 
 ## 邊界宣告（機器可讀，整合前由閘門讀取）
 
@@ -105,8 +113,8 @@ Opus 實作且未通過審閱），路由表必須要求那個事實，不接受
 ```johnny-status
 id = P8
 title = 模型分層是資料，不是 runbook
-state = IN_PROGRESS
-stage = D | 路由表與解析 | OPEN
-stage = E | 升級條件是狀態 | OPEN
-stage = M | 突變驗證 | OPEN
+state = SUPERSEDED
+stage = D | 路由表與解析 | NOT_DISPATCHABLE
+stage = E | 升級條件是狀態 | NOT_DISPATCHABLE
+stage = M | 突變驗證 | NOT_DISPATCHABLE
 ```
