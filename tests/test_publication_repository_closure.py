@@ -10,6 +10,7 @@ from tempfile import TemporaryDirectory
 from typing import Final
 from unittest.mock import patch
 
+from library.local_orchestration import publication_repository_closure as closure_module
 from library.local_orchestration.publication_repository_closure import (
     PublicationClosureStatus,
     PublicationCommit,
@@ -278,6 +279,86 @@ class PublicationRepositoryClosureTests(unittest.TestCase):
             ):
                 malformed = verify_publication_repository(remote, payload, _REMOTE_URL)
             self.assertEqual(malformed.status, PublicationClosureStatus.REF_SET_INVALID)
+
+    def test_c5_non_commit_object_ref_is_a_named_rejection(self) -> None:
+        with TemporaryDirectory() as temporary:
+            source, remote, _commit, payload = _fixture(Path(temporary))
+            blob = _git(source, "hash-object", "-w", "payload.txt")
+
+            def non_commit_git(_root: Path, *arguments: str) -> str:
+                command = arguments[0]
+                if command == "symbolic-ref":
+                    return "refs/heads/main\n"
+                if command == "for-each-ref":
+                    return (
+                        f"refs/heads/main\t{blob}\t\n"
+                        f"refs/tags/plugin-v1.2.3\t{blob}\t\n"
+                    )
+                if command == "cat-file":
+                    return "blob\n"
+                if command == "rev-list":
+                    return ""
+                raise AssertionError(f"unexpected Git command: {command}")
+
+            with patch.object(closure_module, "_git", side_effect=non_commit_git):
+                result = verify_publication_repository(remote, payload, _REMOTE_URL)
+            self.assertEqual(result.status, PublicationClosureStatus.COMMIT_NOT_ROOT)
+
+    def test_c5_full_but_absent_sha_is_a_named_rejection(self) -> None:
+        with TemporaryDirectory() as temporary:
+            _source, remote, _commit, payload = _fixture(Path(temporary))
+            absent = "f" * 40
+
+            def absent_git(_root: Path, *arguments: str) -> str:
+                command = arguments[0]
+                if command == "symbolic-ref":
+                    return "refs/heads/main\n"
+                if command == "for-each-ref":
+                    return (
+                        f"refs/heads/main\t{absent}\t\n"
+                        f"refs/tags/plugin-v1.2.3\t{absent}\t\n"
+                    )
+                if command == "cat-file":
+                    raise closure_module._GitReadFailure
+                raise AssertionError(f"unexpected Git command: {command}")
+
+            with patch.object(closure_module, "_git", side_effect=absent_git):
+                result = verify_publication_repository(remote, payload, _REMOTE_URL)
+            self.assertEqual(result.status, PublicationClosureStatus.COMMIT_NOT_ROOT)
+
+    def test_c5_unreadable_and_malformed_ls_tree_are_named_rejections(self) -> None:
+        with TemporaryDirectory() as temporary:
+            _source, remote, commit, payload = _fixture(Path(temporary))
+
+            def tree_git(_root: Path, *arguments: str) -> str:
+                command = arguments[0]
+                if command == "symbolic-ref":
+                    return "refs/heads/main\n"
+                if command == "for-each-ref":
+                    return (
+                        f"refs/heads/main\t{commit.value}\t\n"
+                        f"refs/tags/plugin-v1.2.3\t{commit.value}\t\n"
+                    )
+                if command == "cat-file":
+                    return "commit\n"
+                if command == "rev-list":
+                    return f"{commit.value}\n"
+                if command == "ls-tree":
+                    return "not-a-tree\x00"
+                raise AssertionError(f"unexpected Git command: {command}")
+
+            with patch.object(closure_module, "_git", side_effect=tree_git):
+                malformed = verify_publication_repository(remote, payload, _REMOTE_URL)
+            self.assertEqual(malformed.status, PublicationClosureStatus.REMOTE_UNREACHABLE)
+
+            def unreadable_git(_root: Path, *arguments: str) -> str:
+                if arguments[0] == "ls-tree":
+                    raise closure_module._GitReadFailure
+                return tree_git(_root, *arguments)
+
+            with patch.object(closure_module, "_git", side_effect=unreadable_git):
+                unreadable = verify_publication_repository(remote, payload, _REMOTE_URL)
+            self.assertEqual(unreadable.status, PublicationClosureStatus.REMOTE_UNREACHABLE)
 
     def test_manifest_adapter_returns_frozen_typed_payload(self) -> None:
         with TemporaryDirectory() as temporary:
