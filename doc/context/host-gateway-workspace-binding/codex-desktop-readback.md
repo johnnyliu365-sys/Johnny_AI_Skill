@@ -5,7 +5,7 @@
 | Feature cluster | `host-gateway-workspace-binding` |
 | Agent / worktree | Codex / `control/executor-routing-p8-owner-override` |
 | Shared baseline | `db936db802a0c12decb28c40ea58aed228a962d1` |
-| State | `ARCHITECTURE_DRAFT / CTX-HOST-GATEWAY-20260822-01` |
+| State | `SEALED / CTX-HOST-GATEWAY-20260822-01` |
 | Responsibility boundary | Reviewer-owned, receipt-bound host capability/readback admission for a prospective implementation task; no provider or task effect in this architecture action. |
 | Forbidden changes | Provider login/invocation, credential storage, task creation, message delivery, receipt consumption, runner/subscription/wake lifecycle, Git/worktree creation, P8R source, and shared `CONTEXT.md` mutation. |
 
@@ -88,24 +88,29 @@ login, static model label, agent self-report, runner state, or owner message.
 | Directory and exact readback change between observations | `READBACK_MISMATCH` | None |
 | Valid admitted binding followed by one host delivery call | Existing one-shot dispatch composition determines settlement | Only that receipt-bound delivery effect |
 
-## Pending decision and downstream binding
+## Approved decision and downstream binding
 
 - `TAD-ADAPTIVE-R06-ISOLATION-01` requires an approved Revision 06 SPEC amendment (or linked
   ADR with that amendment) to close the three contract families and declare their serial
   dependency. A standalone host-gateway SPEC is not an admissible substitute.
-- The owner must approve the exact amended parent SPEC before a reviewer can create tickets.
-  Until then the correct Router return is
-  `UPSTREAM_DECISION_REQUIRED / PROJECT_ISOLATION_PUBLIC_CONTRACTS_UNDEFINED`.
+- The project owner approved the exact amended parent SPEC on `2026-08-22`.
+  The approved draft-content baseline is
+  `1897339679312d92944403747aa7a2b1595d9c3e`; this Context is now sealed as its
+  supporting architecture reference. The reviewer may decompose only the first
+  no-effect strict-contract/readback closure; implementation still requires that
+  ticket's own approval and receipt.
 - P8R remains `APPROVED_NOT_DISPATCHED`; it gains no receipt, worktree, task, source or provider
   authority from this draft.
 
 ## Seal and downstream binding
 
-- Feature Context revision: `CTX-HOST-GATEWAY-20260822-01` / `ARCHITECTURE_DRAFT`
+- Feature Context revision: `CTX-HOST-GATEWAY-20260822-01` / `SEALED`
 - Shared Context sealed revision/digest: `CONTEXT.md` / `e8eabdd8` reference span
 - PRD / requirement change: `PRD-20260822-031` / `CHG-20260822-031`
 - Required downstream artifact: approved amendment to
   `SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2`
   Revision 06.
-- This draft is sealed only after the owner approves the exact amendment; later changed host
-  capability or external effect requires a new change-controlled architecture revision.
+- The project owner approved the exact Revision 07 draft content on `2026-08-22` at
+  `1897339679312d92944403747aa7a2b1595d9c3e`; this record is the resulting
+  seal-only authority transition. Later changed host capability or external effect
+  requires a new change-controlled architecture revision.

@@ -3,9 +3,9 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2` |
-| Status | `REVISION_05_ROUTER_PHASE_APPROVED / REVISION_06_PROJECT_ISOLATION_APPROVED / REVISION_07_HOST_GATEWAY_DRAFT / REVIEWER_DECOMPOSITION_AUTHORIZED / OTHER_PHASES_OWNER_REVIEW_REQUIRED` |
+| Status | `REVISION_05_ROUTER_PHASE_APPROVED / REVISION_06_PROJECT_ISOLATION_APPROVED / REVISION_07_HOST_GATEWAY_APPROVED / REVIEWER_DECOMPOSITION_AUTHORIZED / OTHER_PHASES_OWNER_REVIEW_REQUIRED` |
 | Author / baseline | Codex architecture owner / `bce019090819390d4368ec68e09392508aacbd2c` |
-| Context | `doc/context/adaptive-project-orchestration/main.md` (sealed) and `doc/context/host-gateway-workspace-binding/codex-desktop-readback.md` (`ARCHITECTURE_DRAFT`) |
+| Context | `doc/context/adaptive-project-orchestration/main.md` (sealed) and `doc/context/host-gateway-workspace-binding/codex-desktop-readback.md` (`SEALED`) |
 | PRD | `PRD-20260813-016`, `PRD-20260813-017`, `PRD-20260814-019`, `PRD-20260815-020`, `PRD-20260815-022`, `PRD-20260815-024`, `PRD-20260822-031` |
 | Requirement change / ADR | `CHG-20260813-016`, `CHG-20260813-017`, `CHG-20260814-019`, `CHG-20260815-020`, `CHG-20260815-022`, `CHG-20260815-024`, `CHG-20260822-031` / `ADR-20260813-008`, `ADR-20260813-009`, `ADR-20260814-011`, `ADR-20260815-013` |
 | Implementation language | Python 3.11 strict typed contracts/adapters; host-specific integration only after capability proof |
@@ -113,9 +113,9 @@ Implementer worktrees/tasks are created or reused only by that reviewer after
 a ticket-specific dispatch receipt. Unsupported automation returns a finite
 manual-handoff/block result and cannot claim automatic activation.
 
-### Revision 07 draft amendment — host-gateway workspace and profile binding
+### Revision 07 approved amendment — host-gateway workspace and profile binding
 
-This draft completes the public contract surfaces that
+This owner-approved amendment completes the public contract surfaces that
 `TAD-ADAPTIVE-R06-ISOLATION-01` leaves open for AC-03 and AC-04. It does not
 approve an implementation ticket, issue a receipt, create a workspace/task,
 call a host, deliver a handoff, or change the already-approved Revision 06
@@ -606,10 +606,11 @@ composition and packaging remain later phases and are not ticket-authorized by
 this revision. The completed 06G0P return remains immutable but its independent
 review/integration and dependent 06G tickets are paused until Router acceptance.
 
-Revision 07 is not ticket-authorized while it is a draft. After owner approval,
-the first candidate must be a no-effect strict-contract/readback closure. Host
-task reservation and identifier-only delivery remain subsequent serial closures
-and require their own approved tickets and receipts.
+Revision 07 authorizes reviewer decomposition only. Its first candidate must be a
+no-effect strict-contract/readback closure; that candidate still requires its own
+approved ticket and receipt before any implementation lane. Host-task reservation
+and identifier-only delivery remain subsequent serial closures and require their
+own approved tickets and receipts.
 
 ## Approval
 
@@ -636,12 +637,15 @@ reviewer may now decompose this exact isolation closure into independently
 admitted tickets. This approval creates no dispatch receipt and grants no
 source, target-Git, migration/cleanup or external-effect authority.
 
-Revision 07 is a draft amendment under `CHG-20260822-031`, bounded by
-`CTX-HOST-GATEWAY-20260822-01` and `TAD-ADAPTIVE-R06-ISOLATION-01`. It supplies
-the missing host capability/readback, workspace-identity and receipt-bound
-admission algebra for AC-03/AC-04. Owner approval of this exact revision is
-required before the Context is sealed, any ticket is opened, or any host,
-workspace, task, receipt or source effect occurs.
+Revision 07 was approved by the project owner on `2026-08-22` under
+`CHG-20260822-031`, bounded by `CTX-HOST-GATEWAY-20260822-01` and
+`TAD-ADAPTIVE-R06-ISOLATION-01`. The approved draft-content baseline is
+`1897339679312d92944403747aa7a2b1595d9c3e`; this approval record adds only the
+seal and authority transition. It supplies the missing host capability/readback,
+workspace-identity and receipt-bound admission algebra for AC-03/AC-04. It seals
+the Context and authorizes reviewer decomposition of the first no-effect ticket
+only; it neither opens an implementation lane nor authorizes any host, workspace,
+task, receipt, source or external effect.
 
 ## Revision signatures
 
@@ -650,3 +654,4 @@ workspace, task, receipt or source effect occurs.
 | 2026-08-15 | Architecture owner / `main` / `72438a30a4ad698be33292de8d63a7f2dc289daf` | Drafted Revision 06 to remove target-local Johnny ignore/worktree paths under `CHG-20260815-024`; owner approval pending. |
 | 2026-08-15 | Project owner | Approved the exact Project-neutral Workspace Revision 06 and assigned ticket decomposition/opening to the reviewer. |
 | 2026-08-22 | Codex architecture owner / `control/executor-routing-p8-owner-override` / `bce019090819390d4368ec68e09392508aacbd2c` | Drafted Revision 07 host-gateway workspace/profile binding amendment under `CHG-20260822-031`; owner approval pending. |
+| 2026-08-22 | Project owner | Approved the exact Revision 07 draft content at `1897339679312d92944403747aa7a2b1595d9c3e`; sealed its Context and authorized reviewer decomposition of the first no-effect ticket only. |
