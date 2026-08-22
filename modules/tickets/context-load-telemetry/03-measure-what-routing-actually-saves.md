@@ -9,7 +9,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | 本票 revision／worktree `.worktrees/telem-03`／branch `implement/telem-03-context-load-report` |
 | 實作語言 | Python 3.11 |
-| 狀態 | `IN_PROGRESS` |
+| 狀態 | `DONE` |
 | 共同基準 | `58c5830`（程式碼基準；worktree HEAD 為綁定 commit，派工訊息載明） |
 | 實作者 | Sonnet 5 high（一般票：唯讀報表，資料來源已定） |
 | 審閱者 | 控制面（Opus 5） |
@@ -136,15 +136,21 @@ reference」還是只存在我的判斷裡，記錄下來也無法交叉比對�
 
 ## 完成回寫
 
-- 實際檔案：待填
-- commit：待填
-- **實測數字**：待填
+- 實際檔案：`library/workflow_router/context_load_report.py`（新增）、`tests/test_context_load_report.py`（新增）
+- commit：`dbb400ba`，經 `admit_document_mutation` 判為 `INTEGRATED`
+- **實測數字**：基線（無路由，18 份 references 全載）**69,069 bytes，估算 17,274 tokens**。路由後 21 個路由列的**平均比值 0.070281（約 7%）**。最壞情況 `wayfinder`／`WAYFINDER_NO_GO` → `router-control.md`：69,069 → **7,556 bytes（11%）**，估算 17,274 → 1,889 tokens。最佳 `grill`／`ACTION_COMPLETED` → `context-routing.md`：69,069 → 3,718 bytes（5.4%），估算 930 tokens
+- **本票原本寫錯，實作者查證後修正**：票裡假設「每個 stage 一份 reference」。實測 `build_router_poc_profile().transition_rules` 後發現 **11 個路由 stage 有 5 個依事件指向不同 reference**（`wayfinder` 三個事件走 `discovery-change`、`WAYFINDER_NO_GO` 走 `router-control`；`grill` 三個事件走三份不同的）。因此報表的原子單位是 `(current_stage, event_kind)` 而非 `ProcessStage`——照票原本寫的做會誤述超過一半的路由
+- **終端 stage 不算節省**：`blocked`／`stopped` 在路由表中零列（永不被「進入」），列在 `summary.unrouted_stages` 而非省略——沒有人進入的 stage 不得被計為節省
+- **不寫死清單**：不 import 私有的 `_POLICY_ROUTES`／`_POLICY_REFERENCES`，只消費公開的 `transition_rules`；references 每次呼叫重新 `glob`，路由指名而檔案不存在時 `ROUTED_REFERENCE_FILE_MISSING` 具名拒絕，不當成 0 bytes
+- **估算標示拔不掉**：`LoadEstimate.is_estimate` 是 `Literal[True]` 而非 `bool`，Pydantic 在型別層拒絕任何宣稱已測量的建構，且序列化必定包含該欄位。它掛在最小的共用值物件上，所以不存在一個「估算」橫幅可以被渲染端剝掉
+- **反向突變**：實作者三組（凍結檔案清單 → `100 != 350` 紅；缺檔當 0 bytes → 3 紅；標示改成可省 → `ValidationError not raised` 紅）。審閱者從第四道門進去：**把基線悄悄縮成只算被路由到的那 7 份**（討好式錯誤——基線變小，數字更好看）→ **6 紅**，其中「新增一份 reference 基線必須改變」直接命中，還原後 20 綠
+- 全套件（受閘測試開啟）：1537 passed、7 skipped、3311 subtests、零 FAILED、無殘留
 
 ```johnny-status
 id = 03
 title = 量出路由實際省下什麼
-state = IN_PROGRESS
-stage = R | 報表推導 | OPEN
-stage = H | 估算標示不可省 | OPEN
-stage = M | 突變驗證 | OPEN
+state = DONE
+stage = R | 報表推導 | DONE
+stage = H | 估算標示不可省 | DONE
+stage = M | 突變驗證 | DONE
 ```

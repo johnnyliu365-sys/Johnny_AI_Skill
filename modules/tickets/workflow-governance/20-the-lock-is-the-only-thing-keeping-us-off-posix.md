@@ -9,7 +9,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | 本票 revision／worktree `.worktrees/gov-20`／branch `implement/gov-20-portable-lock` |
 | 實作語言 | Python 3.11 |
-| 狀態 | `IN_PROGRESS` |
+| 狀態 | `DONE` |
 | 共同基準 | `cc9deda`（程式碼基準；worktree HEAD 為綁定 commit，派工訊息載明） |
 | 實作者 | Opus 5（難票：換掉恰好一次的地基原語，依 `dispatch-model-profile.md` 先派 Opus） |
 | 審閱者 | 控制面（Opus 5） |
@@ -112,14 +112,23 @@ POSIX 側用 `fcntl.flock`（或 `lockf`，由實作者論證取捨並寫下理�
 
 ## 完成回寫
 
-- 實際檔案：待填
-- commit：待填
+- 實際檔案：`library/local_orchestration/file_lock.py`、`tests/test_file_lock.py`（新增）
+- commit：`31e03849`，經 `admit_document_mutation` 判為 `INTEGRATED`
+- **六個消費者一行未動**（`git diff --stat` 為空），舊名 `ExclusiveWindowsFileLock` 為裸重綁別名，測試以 `assertIs` 逐一斷言六個模組持有同一個物件
+- **選 `flock` 不選 `lockf`，理由是所有權**：`flock` 的鎖屬於 **open file description**，正如 `msvcrt` 區域鎖屬於 **handle**；`lockf` 的鎖屬於**行程**，會帶來兩個歧異——行程內任何無關的 close 會悄悄放掉仍被認為持有的鎖，且行程內第二次取得在 POSIX 成功而在 Windows 阻塞。那正是 W5 合併兩份私有複本要防的「細微歧異」
+- **平台在 import 時綁定**，`__enter__`／`__exit__` 各只呼叫一次，共用路徑不含任何平台殘跡（三個測試釘住：只綁定其中一個模組、class 之後的原始碼不含平台名、bytecode 的 `co_names` 只引用被綁定的原語）
+- **最有價值的發現不是可攜性**：把 OS 鎖換成行程內 threading 鎖，既有跨行程 cell **確實轉紅**（它們有鑑別力）；但把 release 換成 no-op，**三個既有檔案 134 passed，完全失明**——六個消費者都把鎖建成 `with` 內的匿名暫存，CPython refcount 在區塊結束當下關 handle，OS 於是釋放，**不論 `__exit__` 有沒有做事**。實測：匿名暫存 0.00s 重取成功；保持引用的物件第二次取鎖 9.08s 後 `Resource deadlock avoided`。實作者據此中途強化新測試，改為在已離開區塊但仍被引用時從**另一個行程**取鎖，垃圾回收遮不住
+- **審閱者從第四道門進去**：不動行為，改**這台機器永不執行的分支**——`LOCK_EX` → `LOCK_SH`（共享鎖，POSIX 上互斥完全消失）。**pytest 15 綠、`mypy --strict --platform linux` 也綠**。實作者先前用 `LOCK_NOT_A_THING` 證明 mypy 有牙齒，那個證明只涵蓋「不存在的屬性」，涵蓋不了「存在但語義相反」
+- **修正**：AST 守衛釘住 POSIX 呼叫點（第二引數必須 unparse 成 `fcntl.LOCK_EX`／`LOCK_UN` 且為 `ast.Attribute`——型別檢查即防 `| LOCK_NB` 被 OR 回來），class 名為 `PosixBranchSourceGuardTests`、摘要行明寫 **Not a behaviour test**。審閱者重跑同一組突變恰好 1 紅，還原後 18 綠
+- **誠實邊界**：POSIX 分支從未在真機執行，行為驗證仍欠一台 POSIX 機器；守衛只釘 canonical 呼叫形狀，重構成 `from fcntl import flock` 會誤紅——刻意的嚴格，失敗訊息載明
+- **runtime 此時仍非 POSIX 可用**（`windows_native_git_ref.py` 見票 21）
+- 全套件（受閘測試開啟）：1498 passed、7 skipped、3309 subtests、零 FAILED、無殘留
 
 ```johnny-status
 id = 20
 title = 把鎖換成跨平台，其餘一行不動
-state = IN_PROGRESS
-stage = P | 平台分支實作 | OPEN
-stage = C | 契約四條不變 | OPEN
-stage = M | 突變驗證 | OPEN
+state = DONE
+stage = P | 平台分支實作 | DONE
+stage = C | 契約四條不變 | DONE
+stage = M | 突變驗證 | DONE
 ```

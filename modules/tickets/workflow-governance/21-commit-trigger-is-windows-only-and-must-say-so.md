@@ -9,7 +9,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | 本票 revision／worktree `.worktrees/gov-21`／branch `implement/gov-21-ref-watch-capability` |
 | 實作語言 | Python 3.11 |
-| 狀態 | `IN_PROGRESS` |
+| 狀態 | `DONE` |
 | 共同基準 | `cc9deda`（程式碼基準；worktree HEAD 為綁定 commit，派工訊息載明） |
 | 實作者 | Sonnet 5 high（一般票：能力宣告與降級，形狀已有前例） |
 | 審閱者 | 控制面（Opus 5） |
@@ -109,14 +109,21 @@ governance 04——skill 用直述句描寫沒在跑的機制，導致 agent 對
 
 ## 完成回寫
 
-- 實際檔案：待填
-- commit：待填
+- 實際檔案：`library/local_orchestration/windows_native_git_ref.py`、`event_runner.py`、`tests/test_event_runner_cli.py`、`tests/test_ref_watch_capability.py`（新增）
+- commit：`267ce6a0`，經 `admit_document_mutation` 判為 `INTEGRATED`
+- **能力查詢**：`probe_ref_watch_capability()` 比照 `probe_wake_capability` 的形狀——`AVAILABLE`／`UNAVAILABLE`，失敗具名為 `PLATFORM_UNSUPPORTED`（不在 win32）或 `NATIVE_BINDING_UNAVAILABLE`（在 win32 但 pywin32 未 import），兩者分開因為補救方式不同；`model_validator` 強制互斥
+- **import 安全**：四個 pywin32 import 移入 `TYPE_CHECKING`／`try-except`，結果一次記進模組層 `_NATIVE_IMPORT_ERROR`；`register()` 先檢查它再碰任何原生符號。結構性測試證明全 `library/` 只有這一個檔案 import 那四個名字，所以這一道守衛關住整條鏈（`event_runner` → `commit_trigger_intake` → 本模組）
+- **「沒有 watcher」與「watcher 有但沒訊號」是兩個可區分的事實**：能力每次執行只探測一次，結果併入**每一次**狀態寫入（含 `NO_SUBSCRIPTIONS`／`SUBSCRIPTIONS_INVALID`／`SUBSCRIPTION_REJECTED`／`RUNNING`／`STOPPED`），讀者永不需要從空佇列推論。A/B 測試證明它是真訊號：同一個 repo／訂閱跑兩次，佇列都因**同一個**原因為空，而能力欄位正確不同
+- **反向突變**：實作者三組（拿掉 import 守衛 → 2 紅並顯示真實 import 鏈；能力硬編 `AVAILABLE` → 5 紅；拿掉互斥驗證器 → 2 紅）。審閱者從第四道門進去：**計算正確但傳播在一條路徑漏掉**（`NO_SUBSCRIPTIONS` 繞過 wrapper 直接呼叫 `_write_state`）→ 恰好 2 紅，還原後 63 綠
+- **架構限制（回報而非修改）**：`receipt_bound_supervision.prepare()` 要求原生 ref 註冊成功才能到 `PREPARED`，沒有「活著但降級」的生命週期狀態，所以喚醒偵測與 commit 觸發**共用同一次原生註冊**。因此「runner 仍啟動」的實作意義是：行程／CLI 永不崩潰且總是抵達受控且誠實標示的終態，**不是**「單一訂閱的喚醒成功而 commit 觸發獨立降級」——後者需要動本票禁改的模組
+- **誠實邊界**：平台分支僅以 `mock.patch("sys.platform")` 與強制 `ImportError` 的子行程手法模擬驗證，**未在任何非 Windows 真機執行**
+- 全套件（受閘測試開啟）：1517 passed、7 skipped、3311 subtests、零 FAILED、無殘留
 
 ```johnny-status
 id = 21
 title = commit 觸發只在 Windows 有，非 Windows 要誠實地說
-state = IN_PROGRESS
-stage = C | 能力以值回報 | OPEN
-stage = D | 降級不假裝 | OPEN
-stage = M | 突變驗證 | OPEN
+state = DONE
+stage = C | 能力以值回報 | DONE
+stage = D | 降級不假裝 | DONE
+stage = M | 突變驗證 | DONE
 ```

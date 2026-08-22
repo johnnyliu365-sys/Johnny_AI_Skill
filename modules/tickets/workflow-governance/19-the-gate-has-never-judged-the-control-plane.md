@@ -9,7 +9,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | 本票 revision／worktree `.worktrees/gov-19`／branch `implement/gov-19-control-plane-gate` |
 | 實作語言 | Python 3.11 |
-| 狀態 | `IN_PROGRESS` |
+| 狀態 | `DONE` |
 | 共同基準 | `e0d318b`（程式碼基準；worktree HEAD 為綁定 commit，派工訊息載明） |
 | 實作者 | Opus 5（難票：改變控制面自身義務，依 `dispatch-model-profile.md` 先派 Opus） |
 | 審閱者 | 控制面（Opus 5）＋ owner（本票改變控制面自己的義務，值得 owner 過目） |
@@ -112,14 +112,27 @@ receipt 關窗。我們的 ff-only 讓那個特定窗口不存在（main 動過�
 
 ## 完成回寫
 
-- 實際檔案：待填
-- commit：待填
+- 實際檔案：`library/local_orchestration/control_plane_mutation.py`（新增）、`tests/test_control_plane_mutation.py`（新增）
+- commit：`a291a54f`（實作，經 `admit_document_mutation` 判為 `INTEGRATED`——實作在實作者分支上，本門依設計拒絕它）
+- **本票的驗收**：本結案回寫走 `control/` 分支經 `admit_control_plane_mutation` 整合，journal 條目見下方
+- **設計**：入口不要求票、不要求邊界宣告——控制面必須能開票，而一系列票的第一張無法引用尚不存在的票。它要求的是**歸屬與紀錄**：principal 必須是主機 principal、候選在自己的命名空間、加上兩條控制面自己不得違反的規則
+- **判定順序即保證**：型別 → principal → 命名空間（純字面，最便宜，錯門的候選不得讓本 repo 被檢查）→ repo 事實 → 變更集（**從 git 讀，不從請求者讀**）→ 兩條規則 → journal → merge → 驗證 HEAD 落在被許可的 commit
+- **粒度刻意不同**：混合變更**逐 commit**判（commit 是審閱者閱讀的單位，兩件事分屬兩個 commit 仍可入）；repin 在**候選 tip** 判（tip 才是將成為 main 的狀態），且 digest 由內容重算而非從「`profile.py` 被碰過」推論
+- **路徑語義 import 自姊妹閘門而非重寫**——同一條路徑不得在兩道門有兩種意思
+- **比姊妹閘門更嚴的一點**：許可行（載明 main 即將成為哪個 commit）寫在 merge **之前**，寫入失敗回 `JOURNAL_UNWRITABLE` 而不 merge。姊妹閘門的 journal 是 best-effort；這裡遺失紀錄等於結果是錯的
+- **反向突變**：實作者五組（規則不報 pair、journal 失敗仍整合、先合後記、命名空間放行、只拿掉禁止規則）。**第六組（digest 比對停用）第一次跑零轉紅，實作者依 governance 17 當成發現回報**——追出是重疊遮蔽（既有的 repin cell 全部也被 regression-file 分支接住），補了「只在 regression 檔重釘」的 cell 後才紅
+- **審閱者從第六道門進去**：把 per-commit 迴圈縮成只看第一個 commit——**53 passed，零轉紅**。粒度是刻意的設計決定，卻沒有任何測試釘住。補 cell 後審閱者獨立重跑**兩個截斷方向**（`[:1]` 與 `[-1:]`），同一個 cell 各紅一次，還原後 54 綠
+- **實作者把要求做得更強**：把「違規在第二個 commit」升級為「違規在**中間**的三 commit」——第二個 of 兩個剛好在 tip，tip-only 崩塌會漏掉；中間的兩種崩塌都漏不掉
+- **具名限制（記錄不隱藏）**：`--no-ff` 併入一個橫跨 `library/` 與 `modules/tickets/` 的側分支會被誤拒（merge 的 first-parent diff 涵蓋整個側分支）。方向安全、繞法簡單（ff 或 rebase），實作者**刻意不為它加特徵化測試**——那會把誤拒凍結成預期行為
+- **仍然成立的限制**：指向實作者 commit 的 `control/` ref 仍通過命名空間檢查；與姊妹閘門「流程中任何東西都能自己跑 git merge」同一族，寫在模組 docstring 裡
+- 全套件（受閘測試開啟）：1480 passed、7 skipped、3292 subtests、零 FAILED、無殘留
+- **整合前抓到控制面把 main 弄壞**：本票的全套件跑出 `test_workflow_skill_template_and_readme_publish_the_same_boundary` 失敗——控制面重寫 README 時刪掉 metadata-only 邊界那一節、未跑套件即 ff 進 main。**那正是本票存在的理由的形狀**，發生在本票正被實作的視窗裡。已於 `d0b579c9` 修復
 
 ```johnny-status
 id = 19
 title = 閘門從來沒有判過控制面
-state = IN_PROGRESS
-stage = E | 具名入口 | OPEN
-stage = R | 控制面自己的規則 | OPEN
-stage = M | 突變驗證 | OPEN
+state = DONE
+stage = E | 具名入口 | DONE
+stage = R | 控制面自己的規則 | DONE
+stage = M | 突變驗證 | DONE
 ```
