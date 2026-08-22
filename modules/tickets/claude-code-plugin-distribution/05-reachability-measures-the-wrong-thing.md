@@ -7,9 +7,9 @@
 | PRD 索引 | 不適用 |
 | 需求變更 | 不適用 |
 | Sealed Context binding | 不適用 |
-| Agent Context binding | 本票 revision／worktree `.worktrees/plugin-05`／branch `implement/plugin-05-fetchable-pin` |
+| Agent Context binding | Revision 03／worktree `.worktrees/plugin-05-r03`／branch `implement/plugin-05-fetchable-pin-r03` |
 | 實作語言 | Python 3.11 |
-| 狀態 | `OPEN / TICKET_CORRECTION / REVISION_02` |
+| 狀態 | `OPEN / CONVERGENCE_REPLAN / REVISION_03` |
 | 共同基準 | 見派工訊息（worktree HEAD 為綁定 commit） |
 | 實作者 | Luna / `xhigh`（一般票：判準明確、範圍小，但要動的是一個安全性質的量測對象） |
 | 票級審閱者 | Terra / `xhigh`；能力強度不得低於實作者 |
@@ -39,6 +39,34 @@ that source commit, Terra runs the declared generator on the same candidate bran
 the local publication anchor and `.claude-plugin/marketplace.json`, verifies the generated pin,
 and creates the generated-pin commit before `admit_document_mutation`.  The SHA is never
 hand-edited.  Remote push remains out of scope.
+
+## Revision 03 — convergence replan
+
+本票 Revision 02 的同一 closure 已完成一次 initial review 與一次 correction review。
+初始實作 `539133f`、審閱者產生器／重釘 `8d28216`、第一個 correction `b7e17ec`
+均保留為不可改寫的證據。在第二次 review 中，雖然候選 worktree 的 52 個 cell 都綠，
+但以真正 fresh clone 執行時仍有兩個 real-pin cell 失敗：測試 helper 把
+`refs/heads/publication-0.4.9` 當成 clone 一定存在的來源。這是 C13 型的
+**evidence defect**，不是已核准的整合結果。
+
+後續的 `e890c25` 已把測試暫時 remote 的 publication anchor 改為從已驗證的完整 pin SHA
+建立；它在 fresh clone 得到 52 passed／279 subtests passed。但它是發現第二次 review
+defect 後的補救證據，依 `CodeReview.md` 的 closure 上限，**不得直接合併或作為第三次
+correction**。
+
+因此本 Revision 03 明確授權新的 closure，而非 reset、amend、force 或刪除既有證據：
+
+1. 同一位 Luna / `xhigh` 實作者在新的 worktree／branch 重新套用已留存的 source/test
+   證據；可逐一 traceable cherry-pick `539133f`、`b7e17ec`、`e890c25`，或等價重作，
+   但不可 cherry-pick `8d28216`，也不可產生 payload 或改 marketplace pin。
+2. 重新套用後，實作者只提交 `library/local_orchestration/plugin_publication.py` 與
+   `tests/test_plugin_publication.py`。其 fresh-clone helper 必須由**已驗證的完整 pin SHA**
+   建立僅供測試的暫時 remote，不得假設任何本機 publication branch 在 clone 中存在。
+3. Terra / `xhigh` 對 Revision 03 作新的 initial review；通過 source/test、反向突變與
+   candidate 及 true fresh-clone 的測試後，才在同一候選 branch 跑產生器、驗證並提交
+   `.claude-plugin/marketplace.json`。遠端 push 仍不在本票範圍。
+4. 此 replan 不擴張任何可觀察行為、boundary 或外部權限；它只重置受 review-closure
+   上限約束的審閱循環，並保留上述 commits 與 failure 為可稽核證據。
 
 The ticket distinguishes the facts that require different remedies with the following strict,
 public Python contracts:
