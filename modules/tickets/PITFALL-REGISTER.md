@@ -216,6 +216,26 @@
 - **狀態**：未結案。governance 12 處理的是「多個 lease 在 try 之前取得」那一半，
   跟這次的落點不同，**不要預設 12 會順便修掉它**。
 
+### C12. 阻塞鎖的有界重試把工作弄丟（已開票 23）
+
+- **雷**：2026-08-22 全套件執行中，
+  `test_work_queue.py::CrossProcessPullTests::test_four_processes_enqueueing_at_once_lose_no_return`
+  失敗——四個行程並行入列，其中一個回 `REFUSED`／`STORAGE_UNAVAILABLE`，
+  **`claim-bbb` 的工作真的消失**。
+- **重現性**：全套件中一次；事後在 main 與候選 worktree 上單獨連跑該 cell **8 次全綠**。
+  只在整套件執行、機器負載高時出現——**負載才是變數，不是程式碼路徑**。
+- **診斷**：`msvcrt.locking(..., LK_LOCK, 1)` 是有界重試（約 10 秒），耗盡後拋 `OSError`，
+  被消費者的 `except (OSError, ValidationError, ValueError)` 折成 `STORAGE_UNAVAILABLE`。
+  於是「我等不到鎖」與「磁碟讀不到」同名。
+- **與 governance 16 的關係**：16 把「不變式違反」從 `STORAGE_UNAVAILABLE` 分流出去，
+  但**沒有分流競爭**。同一族的第三種來源。
+- **這次的取證做對了**：失敗原因、四個行程的完整結果陣列、以及 8 次重跑的陰性結果都留下了。
+  對照 C10——那次只剩一行 `FAILED`。
+- **為什麼審閱者該早點抓到**：票 20 的實作者在回報中**明文寫下這個不對稱**
+  （「Windows 阻塞約 10 秒後拋出，POSIX 無限期阻塞……改動任一側會變更該票不得觸碰的契約」）。
+  他的判斷在當時是對的；審閱者讀過那段話、沒有追下去，也沒有開票。
+  **實作者誠實標示的限制，如果審閱者不接手，就等於沒有被標示。**
+
 ## D. 發行工程類
 
 ### D1. Wrapper 的 digest pin 手寫、無人校驗
