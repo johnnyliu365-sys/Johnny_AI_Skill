@@ -21,12 +21,100 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
+# Every refusal below carries the way out of it. A code alone is exact and
+# useless to the person who ran this: the rules it names are rules they had no
+# way to know. The real reader is usually an agent standing between them and
+# this window, so each entry also declares whether the refusal is the kind an
+# agent may settle by itself.
+#
+# This table is a copy of the one in
+# library/local_orchestration/refusal_guidance.py, because PowerShell cannot
+# reach into a Python module. It is not kept in step by hand:
+# tests/test_refusal_guidance.py parses this block and compares every category
+# and every line against that module.
+#
+# Categories: AGENT_MAY_RESOLVE, OWNER_MUST_DECIDE, NEVER_AUTO_RESOLVE.
+$script:RefusalGuidance = @{
+    'INSTALL_BLOCKED_INSIDE_REPOSITORY' = @{
+        Category = 'AGENT_MAY_RESOLVE'
+        NextSteps = @(
+            'The installer refuses to bootstrap from inside a Git checkout, and the folder it was started in is one.',
+            'Move the release zip and the installer into a folder that is not inside any Git checkout, such as a new folder on the Desktop, and start it again from there.',
+            'Nothing is written into the folder it is launched from either way; the install goes to the per-user root under LOCALAPPDATA.'
+        )
+    }
+    'GIT_UNAVAILABLE' = @{
+        Category = 'OWNER_MUST_DECIDE'
+        NextSteps = @(
+            'Stop: the installer needs the git command and this machine has none on PATH.',
+            'Ask the person running this whether to install Git for Windows. Installing software on their machine is theirs to decide.',
+            'After they install it, open a new terminal so PATH is picked up, then start the installer again.'
+        )
+    }
+    'BUNDLE_NOT_FOUND' = @{
+        Category = 'AGENT_MAY_RESOLVE'
+        NextSteps = @(
+            'The release zip named on the command line is not there.',
+            'Put the published zip beside the installer under exactly the name it was published with, and start the installer again from that folder.',
+            'Do not reach for a different archive: the digest check refuses one, and that refusal is not yours to settle.'
+        )
+    }
+    'PYTHON_311_UNAVAILABLE' = @{
+        Category = 'OWNER_MUST_DECIDE'
+        NextSteps = @(
+            'Stop: the control runtime needs Python 3.11 reachable as py -3.11, and this machine has no such interpreter.',
+            'Ask the person running this whether to install Python 3.11 from python.org with the py launcher enabled. That is a change to their machine and theirs to decide.',
+            'After they install it, start the installer again.'
+        )
+    }
+    'RUNTIME_LOCK_MISSING' = @{
+        Category = 'NEVER_AUTO_RESOLVE'
+        NextSteps = @(
+            'Stop. The archive holds no dependency lock, and the published release holds one, so this archive is not the published release.',
+            'What is missing is the list of exact versions and artifact hashes the install was going to be held to. Supplying that list locally would produce an install held to whatever was supplied.',
+            'Tell the person running this that the archive they have is not the approved release, show them this code, and let them fetch the release again from where the owner published it.'
+        )
+    }
+    'USER_DECLINED' = @{
+        Category = 'NEVER_AUTO_RESOLVE'
+        NextSteps = @(
+            'Stop. A person read the exact dependency plan and did not type the confirmation word, so consent for this install does not exist.',
+            'That prompt is there to reach a human at the keyboard. Whatever an agent puts into it is not consent carried, it is consent manufactured, and afterwards nothing tells an unconsented install apart from a consented one.',
+            'Tell the person what the plan contained and let them decide. If they want it, they start the installer themselves.'
+        )
+    }
+    'BOOTSTRAP_MISSING' = @{
+        Category = 'NEVER_AUTO_RESOLVE'
+        NextSteps = @(
+            'Stop. The archive holds no bootstrap module, and the published release holds one, so this archive is not the published release.',
+            'The bootstrap is the code that builds the hash-locked control venv. An archive missing it and an archive carrying a different one look the same from here.',
+            'Tell the person running this that the archive they have is not the approved release, show them this code, and let them fetch the release again from where the owner published it.'
+        )
+    }
+}
+
 function Write-TypedResult {
     param(
         [Parameter(Mandatory = $true)][string]$Status,
         [Parameter(Mandatory = $true)][string]$Code
     )
-    Write-Output ('{{"status":"{0}","code":"{1}"}}' -f $Status, $Code)
+    # No default category. A code with no entry is reported as exactly that and
+    # exits on its own number, rather than being handed the mildest category
+    # available -- because if forgetting were quiet, and the quiet answer were
+    # the permissive one, forgetting would mean admitting.
+    if (-not $script:RefusalGuidance.ContainsKey($Code)) {
+        Write-Output ('{{"status":"{0}","code":"{1}","category":"UNCLASSIFIED","next_steps":["This refusal code carries no guidance entry. Report the code as it stands and do not treat the refusal as settled."]}}' -f $Status, $Code)
+        exit 3
+    }
+    $entry = $script:RefusalGuidance[$Code]
+    $steps = ($entry.NextSteps | ForEach-Object { '"' + $_ + '"' }) -join ','
+    # status and code keep their exact leading position: the released wrapper
+    # and the acceptance suite already read this line, and this ticket adds
+    # fields rather than moving them.
+    Write-Output ('{{"status":"{0}","code":"{1}","category":"{2}","next_steps":[{3}]}}' -f $Status, $Code, $entry.Category, $steps)
+    foreach ($step in $entry.NextSteps) {
+        Write-Output ("  - {0}" -f $step)
+    }
 }
 
 # P0 boundary: never bootstrap from inside any Git repository checkout.
