@@ -9,7 +9,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | 本票 revision／worktree `.worktrees/plugin-02`／branch `implement/plugin-02-payload-boundary` |
 | 實作語言 | JSON 宣告 ＋ Python 3.11（測試） |
-| 狀態 | `OPEN` |
+| 狀態 | `DONE`（宣告與證明；**使用者拍板要到票 03 才成立**） |
 | 共同基準 | `5bfdc2a8`（worktree HEAD 為綁定 commit，派工訊息載明） |
 | 實作者 | Opus 5（難票：出貨閉包算錯的後果在本機看不見——我們永遠有完整 repo） |
 | 審閱者 | 控制面（Opus 5） |
@@ -179,15 +179,46 @@ Level 2 bundle 的任何改動；把 payload 搬進子目錄的 repo 重構若�
 
 ## 完成回寫
 
-- 實際檔案：待填
-- commit：待填
+- 實際檔案：`.claude-plugin/plugin.json`、`.claude-plugin/marketplace.json`、
+  `skills/apply-reusable-modules/SKILL.md`、`tests/test_plugin_payload_boundary.py`（新增）
+- commit：`45b7c914`，經 `admit_document_mutation` 判為 `INTEGRATED`
+- **本票交付的是宣告與證明，不是使用者硬碟上的差異。** `payload` 這個 key
+  Claude Code 不讀（`--strict`：`Unknown field 'payload'`，審閱者複驗過），
+  釘住的 `9073ac54` 樹仍是整個 repo 的 797 個檔。使用者拍板要到票 03 落地才成立。
+- **落點**：拒絕 `git-subdir`，論證成立且經審閱者複驗——閉包跨 5 棵樹 ＋ 7 個根檔，
+  滿足它得把 `AGENTS.md`／`install.ps1` 等搬進子目錄，而那些正是
+  `windows_package_manifest.py` 以 `_required_file(root, …)` 解析的，會**靜默弄壞 Level 2**。
+- **閉包修正了審閱者估計的四處**：`CLAUDE.md`／`PRD.md`／`ProjectSchedule.md` 是把
+  `doc/` 與 `modules/tickets/` 拖進來的橋，天真的傳遞閉包會掃到整個 repo（已排除）；
+  `modules/spec/`＋`modules/element/` 是 **target-owned**，不該由我們出貨；
+  漏了 `LICENSE` 與 `install.ps1`；`library/**/*.md` 實測 40 KB 而非 107 KB。
+- **`library/**/*.py` 出貨**，由規則決定而非偏好：`router-control.md:22`、
+  `delivery-profile.md:33`、`implementation-tdd.md:23`、`AGENTS.md` 四處各自具名
+  指向可執行契約，排除它們等於改寫規則，而本票禁止改規則。
+- **反向突變**：實作者五組（payload 納入 `tests` ／掃描回空集合而不拋 ／sha 換浮動 ref ／
+  payload 拿掉 `template/` ／`source` 退回 `"./"`），各自具名轉紅、還原後 39 綠。
+  實作者並在首輪後把 `PinnedVersionTests` 拆成驗證器單元測試與 committed pin 測試，
+  因為一個 `setUp` 例外會一次折疊 8 個 cell 而摧毀歸因。
+- **審閱者從第六道門進去：零紅**。把 `sha` 釘到 root commit `fcb46045`
+  （樹裡只有 3 個檔、無 `skills/`），39 cell／295 subtest 全綠——宣告與釘子互不相干。
+  依 governance 17，零紅是發現。已記為登記簿 **D7**，修法即票 03。
+- **實作者誠實標示的缺口**（回報第 5 節第 1 條）：沒有 `create` 欄位可放產生器，
+  所以只到宣告。**那是審閱者寫票時的缺陷**，不是實作者的迴避——原型留在 scratchpad，
+  沒有偷偷 commit。這正是 ticket 23 所補救的那個疏漏的反面。
+- **對實作者的一個發現**：回報第 3 節表格把「After ~2.6 MB」呈現為結果，
+  但 commit 出來的狀態是 797 個檔；同一份回報第 5 節否定了那個數字。兩者不能都當標題。
+- 端到端安裝驗證在隔離的 `CLAUDE_CONFIG_DIR` 中進行，owner 的設定自始未參與；
+  審閱者複驗 `known_marketplaces.json`／`installed_plugins.json` 位元相同。
+- 全套件（審閱者執行）：1601 passed、22 skipped、3704 subtests、零 FAILED；
+  受閘（`JOHNNY_LIVE_QUAL=1`）：28 passed、1 skipped、零 FAILED。
+
 
 ```johnny-status
 id = 02
 title = plugin 出貨的是整個開發庫
-state = OPEN
-stage = D | 出貨閉包 | OPEN
-stage = P | 宣告與釘版 | OPEN
-stage = E | 端到端安裝驗證 | OPEN
-stage = M | 突變驗證 | OPEN
+state = DONE
+stage = D | 出貨閉包 | DONE
+stage = P | 宣告與釘版 | DONE
+stage = E | 端到端安裝驗證 | DONE
+stage = M | 突變驗證 | DONE
 ```

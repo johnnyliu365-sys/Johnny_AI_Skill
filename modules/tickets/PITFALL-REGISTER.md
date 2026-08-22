@@ -306,6 +306,22 @@
   committed handoff 是 commit 的證據，不是送達的證據。0.4.4 發行。
 - **同族**：D5 的上一層——這次讀者是 agent，輸出被當成事實交給 owner。
 
+### D7. 釘子只驗「存在」，不驗「它指向的東西」
+- **雷**：`test_the_pinned_sha_exists` 只問那個 commit 存不存在。把 plugin 的
+  `sha` 改釘到 root commit（**樹裡只有 3 個檔、連 `skills/` 都沒有**），
+  39 個 cell、295 個 subtest **全綠**。宣告的 payload 與釘住的 sha 是兩件
+  互不相干的事實。
+- **為何沒被抓到**：測試的名字看起來就是在驗釘子，而它**確實驗了一件真事**
+  ——只是那件事不是我們要保證的那件事。這種測試不會壞，所以永遠不會提醒你。
+- **修法**：[claude-code-plugin-distribution/03](claude-code-plugin-distribution/03-the-pin-and-the-tree-are-unrelated.md)
+  ——把釘子綁到樹：給定 `sha`，該 commit 的樹必須**逐檔等於**宣告的 payload。
+- **可轉用的判準**：看到一個測試在驗「某個外部識別符有效」，就問它有沒有驗
+  「**那個識別符指向的內容正是我們要的**」。D1 是同一句話落在 digest 上，
+  這一條是它落在 git sha 上——**下一次會落在別的識別符上**。
+- **發現方式**：審閱者反向突變。實作者的 5 組突變全部打在宣告上，
+  沒有一組打在「宣告與釘子之間那條不存在的線」——這正是 governance 17
+  要求審閱者從實作者沒走的門進去的理由。
+
 ---
 
 ## E. 環境／平台類（本機事實，違反即浪費一輪 debug）
@@ -354,3 +370,4 @@
 | handoff 喚醒鑑別 | `test_event_runner_qualification.py` R3（gated） |
 | worktree 包含性 | `test_worktree_containment.py` |
 | 一鍵安裝可讀拒絕 | `test_one_click_installer.py` |
+| 出貨宣告與釘子 | `test_plugin_payload_boundary.py`、`test_plugin_publication.py` |
