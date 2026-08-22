@@ -9,7 +9,7 @@ Use this skill as a selector. It does not authorize source copying, implementati
 
 ## Select before reading
 
-1. Locate the checked-out `Johnny_AI_Skill` repository containing `library/MODULE_CATALOG.md`. If it is absent, request a versioned installation or repository path; do not reconstruct cards from memory.
+1. Locate `library/MODULE_CATALOG.md` among this plugin's own installed files. If it is absent, request a versioned installation or repository path; do not reconstruct cards from memory.
 2. Search that file for the user need and read only the matching card. Use its `ID`, public import, dependency and minimum reading path.
 3. Select only delivered cards. If there is no explicit card, state the gap and use the target project's Wayfinder/Grill process; do not invent a near match.
 4. Read each selected module in order: README, public `__init__.py`, then the exact contract or implementation named by the card. Read tests only when behavior or an integration boundary must be verified.
