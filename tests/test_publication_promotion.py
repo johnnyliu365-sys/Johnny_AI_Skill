@@ -5,7 +5,7 @@ from __future__ import annotations
 import subprocess
 import unittest
 from pathlib import Path
-from typing import Final
+from typing import Final, cast
 from unittest.mock import patch
 
 from library.local_orchestration.publication_repository_closure import (
@@ -344,6 +344,56 @@ class PublicationPromotionPlanTests(unittest.TestCase):
             malformed_plan, _post_closure(_snapshot())
         )
         self.assertEqual(readback.status, PublicationClosureStatus.READBACK_MISMATCH)
+
+    def test_p5_malformed_version_is_a_finite_planless_refusal(self) -> None:
+        malformed_version = PublicationPromotionRequest.model_construct(
+            repository=_REPO,
+            expected_main=None,
+            candidate=_CANDIDATE,
+            version=PublicationVersion.model_construct(value="0.4"),
+            correlation=CorrelationId(value="promotion-test-01"),
+        )
+        result = plan_publication_promotion(
+            malformed_version, _snapshot(), _candidate_closure()
+        )
+        self.assertEqual(result.status, PublicationClosureStatus.READBACK_MISMATCH)
+        self.assertIsNone(result.plan)
+
+    def test_p5_malformed_ref_is_a_finite_planless_refusal(self) -> None:
+        malformed_ref = PublicationRef.model_construct(
+            kind=PublicationRefKind.MAIN,
+            name="refs/heads/not-main",
+            target=_OLD,
+        )
+        malformed_snapshot = PublicationRemoteSnapshot.model_construct(
+            repository=_REPO,
+            default_branch="refs/heads/main",
+            refs=(malformed_ref,),
+        )
+        result = plan_publication_promotion(
+            _request(expected_main=_OLD), malformed_snapshot, _candidate_closure()
+        )
+        self.assertEqual(result.status, PublicationClosureStatus.REF_SET_INVALID)
+        self.assertIsNone(result.plan)
+
+    def test_p5_null_snapshot_is_a_finite_planless_refusal(self) -> None:
+        null_snapshot = cast(PublicationRemoteSnapshot, None)
+        result = plan_publication_promotion(
+            _request(expected_main=None), null_snapshot, _candidate_closure()
+        )
+        self.assertEqual(result.status, PublicationClosureStatus.REF_SET_INVALID)
+        self.assertIsNone(result.plan)
+
+    def test_p5_missing_snapshot_field_is_a_finite_planless_refusal(self) -> None:
+        missing_repository = PublicationRemoteSnapshot.model_construct(
+            default_branch="refs/heads/main",
+            refs=(),
+        )
+        result = plan_publication_promotion(
+            _request(expected_main=None), missing_repository, _candidate_closure()
+        )
+        self.assertEqual(result.status, PublicationClosureStatus.REF_SET_INVALID)
+        self.assertIsNone(result.plan)
 
     def test_p6_planner_is_pure_and_never_calls_a_process_or_effect(self) -> None:
         with patch.object(subprocess, "run", side_effect=AssertionError("effect")):
