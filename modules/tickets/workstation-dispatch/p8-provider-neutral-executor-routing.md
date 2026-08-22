@@ -5,9 +5,10 @@
 | SPEC / acceptance source | `SPEC-AI-WORKFLOW-EXECUTOR-ROUTING-20260822-01M4P6R8T0V2X4Z6B8D0F2H4J6` revision 01 / AC-01 through AC-10 |
 | PRD / change | `PRD-20260822-030` / `CHG-20260822-030` |
 | Sealed Context | `CTX-EXECUTOR-ROUTING-20260822-01` / `doc/context/executor-routing/codex-provider-neutral-executor-routing.md` / baseline `67e8fea352029a1156bb661c1613988fea3d3a6f` |
-| State | `APPROVED / NOT_DISPATCHED` |
+| State | `APPROVED / NOT_DISPATCHED / REVISION_02` |
 | Acceptance Closure Set | `CLOSURE-EXECUTOR-ROUTING-P8R-01` / revision 01 |
 | Control owner | Current-session Codex reviewer; the reviewer is the sole Agent-to-Agent orchestrator. |
+| Owner override record | Project owner directive, 2026-08-22 (Asia/Taipei): the implementation owner does not commit; after review, the reviewer writes the candidate commit and alone submits it to the integration gate. |
 | Implementation owner | Unassigned until receipt admission. Standard profile reference: `implementation-standard` (current profile data: Luna/xhigh). |
 | Independent reviewer | Standard profile reference: `ticket-review` (current profile data: Terra/xhigh); verified capability rank must be greater than or equal to the implementation profile's rank. |
 | Worktree / branch / task / receipt / correlation | Unissued. The admitted dispatch descriptor is the sole authority to populate them. |
