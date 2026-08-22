@@ -6,12 +6,30 @@
 | 共同基準 | `27916912e47bd00cbbd90dce24ecf8c1f80ca2d3` |
 | 受審 commit | `45b7c914`（02）、`53c6d4e3`（03）、`9bb7097c`（04）、票 05 的整合鏈至 `27916912` |
 | 審閱者 | 控制面（架構一致性審查，依 `ADR-20260823-014` 決策 5） |
+| 修訂 | `REVISION_01`（2026-08-23）—— live CLI 證據推翻原 F1 處置，結論不變 |
 | 結論 | `CHANGES_REQUESTED` —— **逐層通過，合成未通過** |
+
+## Revision 01：原 F1 處置更正
+
+原審查把缺陷定位在 marketplace cache，因而提出「README 改用 raw marketplace URL」。
+這只修到第一個 cache。2026-08-23 在 repo 公開後以 Claude Code CLI `2.1.231`、隔離的
+`CLAUDE_CONFIG_DIR` 實裝，raw URL 確實只快取 marketplace descriptor；然而
+`plugin install` 仍 clone `source.url` 指向的開發 repository，checkout 釘住的 payload
+commit 後把開發 `main` 與 object store 留在 plugin cache。
+
+因此原 F1 的根因與處置均錯誤，不能再當 ticket authority。正確根因是
+**plugin source repository 本身帶著開發 refs/history**；正確處置是
+[`ADR-20260823-015`](../../adr/ADR-20260823-015-dedicated-plugin-publication-repository.md)
+決定的獨立 payload-only publication repository。raw URL 仍是必要的 marketplace-cache
+控制，但單獨使用不構成修復。
 
 ## 規格／需求變更追溯
 
-本集群無對應 SPEC 條目，源頭是 owner 的直述要求：
+原集群審查時沒有對應這項合成承諾的 SPEC 條目，源頭是 owner 的直述要求：
 「讓使用者看到的安裝指引不是要他們 clone，而是直接可以安裝」（2026-08-22）。
+Revision 01 已將 live evidence 與 topology change 正式登記為
+`PRD-20260823-034` / `CHG-20260823-034`；既有 Claude distribution SPEC 現為
+`STALE / REVISION_REQUIRED`，不是後續開票 authority。
 
 該要求即是本次審查的驗收對象。逐票的追溯各自寫在
 [`modules/tickets/claude-code-plugin-distribution/`](../../../modules/tickets/claude-code-plugin-distribution/) 內，
@@ -37,28 +55,31 @@ claude plugin marketplace add johnnyliu365-sys/Johnny_AI_Skill
 ```
 
 那是 **owner/repo 形式**。2026-08-22 實測：該形式會把整個開發庫 clone 成 marketplace
-快取（12 MB、89 個 commit）。**那是 Claude Code CLI 的取得行為，不是本專案的程式碼，
-改宣告改不動它。** 不 clone 的路徑是 `marketplace add <指向 marketplace.json 的 raw URL>`
-（同日實測：成功且只快取一個 4 KB 檔），而 README 沒有那一行。
+快取（12 MB、89 個 commit）。raw URL 可以把這一端縮成單一 descriptor，但 marketplace
+entry 內的 `source.url` 仍是
+`https://github.com/johnnyliu365-sys/Johnny_AI_Skill.git`。Claude 接著 clone 該 source，
+所以換入口無法阻止開發 repository 進入 plugin cache。
 
-因此合成後的實際結果是：plugin 快取確實只拿到 243 檔，**但 marketplace 快取仍是整包**。
-使用者硬碟上依然有整個開發庫，只是換了一個目錄。
+修訂後的合成結果是：checkout 確實只有 243 檔；**兩種入口中 owner/repo 形式污染
+marketplace cache，而 raw 形式仍會讓 plugin cache 的 `.git` 保留整個開發 object graph。**
+兩個 cache 要由兩個不同控制關閉。
 
 **沒有任何一張票寫錯。** 每張票的邊界內都正確，而且各自有反向突變證據。
 錯的是它們合起來——這正是逐票審查在定義上看不到的那一類。
 
 ## 發現、風險與處置
 
-### F1｜文件描述的入口繞過了整套機制（`CHANGES_REQUESTED`）
+### F1｜plugin source 與 development source 未隔離（`CHANGES_REQUESTED`）
 
-票 02–05 把出貨從 797 檔壓到 243 檔、釘住版本、證明可達，而使用者被告知要打的那一行
-把這些全部繞過。這是 governance 04 那一族的變體：**不是文件描述了不存在的機制，
-是文件描述的入口用不到已經存在的機制。**
+票 02–05 把出貨從 797 檔壓到 243 檔、釘住版本、證明可達；但它們在開發 repository
+裡產生與錨定 payload commit。Claude 為了取得該 commit 先 clone 同一 repository，
+因此正確 checkout 與錯誤 object graph 可以同時成立。
 
-處置：README 的 Level 1 入口改為 raw URL 形式。**但 repo 目前是 `PRIVATE`，
-`raw.githubusercontent.com` 只服務公開 repo，該路徑現在回 404**——所以此改動
-要嘛等公開後再落地並實測，要嘛落地時明文標示「未在線上驗證」。
-**不得寫成已驗證。**
+處置：開發 repo 保留 payload 產生器與公開 raw marketplace descriptor；descriptor 的
+`source.url` 改指獨立 publication repo。該 repo 的 default `main` 與版本 tags 只可達
+parentless、精確 payload commits。README 同時改用 raw marketplace URL，分別關閉兩端。
+repo 已公開，raw descriptor 與 pinned archive 均已線上驗證；尚未建立的 publication
+repo 不得寫成存在或已驗證。
 
 ### F2｜合成承諾零測試覆蓋（`CHANGES_REQUESTED`，且應先於 F1）
 
@@ -68,10 +89,14 @@ claude plugin marketplace add johnnyliu365-sys/Johnny_AI_Skill
 （`marketplace add`／`plugin install`／`plugins/cache` 的字面命中全部落在
 Codex lifecycle 的 staging 檔，與本集群無關。）
 
-處置：新增端到端測試，斷言「照 README 的指令做，落地內容等於宣告的 payload」。
+處置：新增端到端測試，斷言「照 README 的指令做，兩個 cache 都符合宣告」。除了
+visible checkout 的 path/blob equality，必須列舉 plugin cache 的每個可達 ref/commit，
+對每棵樹執行 payload difference；`.git` 中不得存在可達的 payload 外樹。已知開發
+sentinel 必須不可讀，但 sentinel 不能取代全列舉。
 
-**順序依賴**：F2 必須先於 F1。沒有 F2，F1 改完也只是把一個沒被守住的敘述換成
-另一個沒被守住的敘述——而本集群已經證明，敘述與機制會各自漂移。
+**順序依賴**：先建立 F2 verifier 與本地正／反 fixture；F1 的 live cutover candidate
+再以真實 CLI 跑到 green，才可一起整合 source URL、version、pin 與 README。沒有 F2，
+F1 仍只是把一個沒被守住的敘述換成另一個。
 
 ### 風險：本集群的既有品質不受此二項影響
 
@@ -93,21 +118,33 @@ clone HEAD = 27916912
 **這是本集群第一次在乾淨 clone 上被完整驗證。** 2026-08-22 同樣形狀上量到的兩紅
 （票 05 的可達性缺陷）已消失，登記簿 C13 的形狀在本集群內不再現形。
 
-鏈的前兩環實測：
+鏈的前兩環與新增失敗邊界實測：
 
 ```text
 釘住的 c3cb81c4 → 243 檔；tests/ doc/ modules/ 各 0
 可達性         → refs/remotes/origin/publication-0.4.9 指向同一個 sha
-repo 可見性    → PRIVATE
+repo 可見性    → PUBLIC
+raw marketplace cache → descriptor only
+plugin checkout        → 243 files
+plugin refs/heads/main → d35689a8 / 841 files
+plugin .git            → 989 packed objects / 2,477,546 bytes
+main:tests/test_plugin_publication.py → readable
 ```
 
 ## 未解項與 handoff 結論
 
 | 項目 | 處置 |
 | --- | --- |
-| F2 端到端測試 | 需開票；**先做** |
-| F1 README 入口 | 需開票；依賴 F2，且在 repo 公開前無法線上驗證 |
-| repo 公開 | owner 決定，不在本審查範圍 |
+| `CHG-20260823-034` / `ADR-20260823-015` | 架構決策已完成；Context/SPEC 尚待重訂 |
+| F2 repository-closure verifier | 需開票；**先做**，含反向 fixture 與 real-CLI seam |
+| F1 publication repo 與 source cutover | 需開票；依賴 F2；remote 建立/推送須具名 owner authority |
+| README raw 入口與 live acceptance | 與 cutover 同候選落地；不得先讓 `main` 出現半套發布狀態 |
 
-逐層 `APPROVED`；集群 `CHANGES_REQUESTED`。本審查未修改任何檔案，未動任何 ref，
-所有探針已還原，工作區乾淨。
+逐層 `APPROVED`；集群 `CHANGES_REQUESTED`。Revision 01 只更正 finding authority，
+沒有開票、建立 publication repo、移動 publication ref 或發布 release。
+
+## 審查修訂紀錄
+
+| Date | Baseline | Change |
+| --- | --- | --- |
+| 2026-08-23 | `d35689a8` | 公開 repo 上的隔離 live install 證明 raw URL 只修 marketplace cache；F1 改為 dedicated publication repository，F2 擴張為 installed Git reachable-tree closure。 |
