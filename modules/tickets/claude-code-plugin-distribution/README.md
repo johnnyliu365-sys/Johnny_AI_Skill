@@ -4,4 +4,5 @@
 | --- | --- | --- |
 | `01-claude-code-plugin` | `DONE` | Add the shared-skill Claude Code plugin/marketplace entry and operator guide. |
 | `02-the-plugin-ships-the-whole-development-repository` | `DONE` | Declare what the Level 1 plugin ships, prove the closure, and pin its version. |
-| `03-the-pin-and-the-tree-are-unrelated` | `OPEN` | Materialise the declared payload and tie the pinned sha to that tree. |
+| `03-the-pin-and-the-tree-are-unrelated` | `DONE` | Materialise the declared payload and tie the pinned sha to that tree. |
+| `04-the-pin-is-not-bound-to-reachability` | `OPEN` | Anchor the publication commit on a pushable ref and pin reachability by test. |

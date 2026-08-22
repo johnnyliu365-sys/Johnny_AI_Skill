@@ -9,7 +9,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | 本票 revision／worktree `.worktrees/plugin-03`／branch `implement/plugin-03-publication-tree` |
 | 實作語言 | Python 3.11 |
-| 狀態 | `OPEN` |
+| 狀態 | `DONE`（釘子綁到樹；**可達性另見票 04**） |
 | 共同基準 | 票 02 整合後的 main（worktree HEAD 為綁定 commit，派工訊息載明） |
 | 實作者 | Opus 5（難票：這是供應鏈的釘子，釘錯的後果是使用者拿到我們沒審過的東西） |
 | 審閱者 | 控制面（Opus 5） |
@@ -128,15 +128,46 @@ repo 目前是 private，公開前必須先確認這條路徑通。
 
 ## 完成回寫
 
-- 實際檔案：待填
-- commit：待填
+- 實際檔案：`library/local_orchestration/plugin_publication.py`（新增）、
+  `tests/test_plugin_publication.py`（新增，38 cell）、
+  `tests/test_plugin_payload_boundary.py`（僅改 import，無任何 cell 被動）、
+  `.claude-plugin/marketplace.json`（僅改 `sha`）
+- commit：`53c6d4e3`，經 `admit_document_mutation` 判為 `INTEGRATED`
+- **發佈樹 `b856cf88`**：242 個檔（原 797），零 `tests/`／`doc/`／`modules/`、
+  無根 `CLAUDE.md`；parentless 且時間戳固定，因此可重現
+- **產生器不自帶清單**：以 AST 走訪自身，斷言沒有任何字串常數是 payload 路徑，
+  且其字面值與宣告條目交集為空；行為面則以「改宣告→樹跟著變」的擴/縮測試佐證。
+  順手把票 02 測試檔裡重複的 `_FORBIDDEN_PREFIXES` 等收斂到生成器單一處，
+  刪 141 行、加 21 行，**無任何 test 方法被改動**
+- **SHA-1 不動點**：commit 無法包含一個記載自己 id 的檔案。發佈的那份
+  `marketplace.json` 記 40 個零——解析不到任何物件因此 fail closed；
+  記上一版的真實 id 會**出貨一個指向 797 檔整包的活釘子**，正是本票要擋的失敗
+- **反向突變**：實作者五組，最值得指的是第五組——釘到**上一棵真實的發佈樹**
+  （形狀對、內容舊），路徑檢查正確保持綠而內容檢查轉紅，證明綁的是內容不是形狀
+- **審閱者打了三道門，兩道是關的**：
+  1. 把佔位符換成活的 commit（0.4.9 整包），讓所有內部一致性檢查照樣通過
+     → **5 紅**，含 `test_the_published_copy_records_an_id_that_names_nothing`
+  2. 逐檔雜湊能否靜默漏掉非 ASCII 路徑（42/242 是中文路徑）
+     → 關著（`ls-tree -r -z` ＋ `len(produced) != len(relatives)` 計數守衛）
+  3. **刪掉唯一指向 `b856cf88` 的 ref → 零紅，79 passed**
+- **第三道門是真的洞，已開票 04。** 釘子綁到了樹，沒綁到可達性；
+  `refs/publication/*` 這個 namespace GitHub 不收（`git ls-remote origin` 回 0）
+- **實作者回報的 fail-open，值得記登記簿**：`git update-index --add --stdin`
+  對被忽略的路徑印 stderr 但**回傳 0**，payload 曾靜默變空；起因是文字模式 stdin
+  把 `
+` 改寫成 `
+`，餵給 git 的路徑帶了尾隨 CR。兩條教訓：
+  餵路徑給 git 一律用二進位模式；**零退出碼不是任何東西被暫存的證據**
+- 全套件（審閱者執行）：1641 passed、22 skipped、3983 subtests、零 FAILED；
+  受閘（`JOHNNY_LIVE_QUAL=1`）：28 passed、1 skipped、零 FAILED
+
 
 ```johnny-status
 id = 03
 title = 釘住的 sha 與它指向的樹互不相干
-state = OPEN
-stage = G | 由宣告產生發佈樹 | OPEN
-stage = B | 釘子綁到樹 | OPEN
-stage = E | 端到端逐檔比對 | OPEN
-stage = M | 突變驗證（含審閱者那一組） | OPEN
+state = DONE
+stage = G | 由宣告產生發佈樹 | DONE
+stage = B | 釘子綁到樹 | DONE
+stage = E | 端到端逐檔比對 | DONE
+stage = M | 突變驗證（含審閱者那一組） | DONE
 ```
