@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / Context | `SPEC-AI-WORKFLOW-CLAUDE-CODE-PLUGIN-DISTRIBUTION-20260802-01KZ4C6D8E0F2G4H6J8K0M2N4P` Revision 02 / sealed Context Revision 01, blob `0fef3f1e4c8ce317873cdf2f73dc1bd793579217` |
 | Requirement / architecture | `PRD-20260823-034` / `CHG-20260823-034` / `ADR-20260823-015` |
-| Planning baseline | `9be8ee4b6e713e858dfb4909de1ef4a940c05594` |
+| Planning baseline | `8033a01ba2f3fc1a07bfa7c1c5bf41d9cd50f0b0` |
 | Control owner / reviewer | Terra `ticket-review` profile; profile selection remains capability-verified at dispatch. |
 | State | `REVISION_02 / SERIAL_DECOMPOSITION_AUTHORIZED` |
 
@@ -20,7 +20,7 @@ performs the one owner-authorized live cutover.
 | `03-the-pin-and-the-tree-are-unrelated` | `DONE` | Pin/tree binding | Historical |
 | `04-the-pin-is-not-bound-to-reachability` | `DONE` | Publication-anchor reachability | Historical |
 | `05-reachability-measures-the-wrong-thing` | `DONE` | Clean-clone fetchability evidence | Historical |
-| [06-publication-repository-closure.md](06-publication-repository-closure.md) | `APPROVED / NOT_DISPATCHED` | A Git object graph is accepted only when every reachable ref/tree is declared payload. | `POC / STANDARD`; exact baseline above. |
+| [06-publication-repository-closure.md](06-publication-repository-closure.md) | `APPROVED / REVIEW_IN_PROGRESS` | A Git object graph is accepted only when every reachable ref/tree is declared payload. | `POC / STANDARD`; exact baseline above. |
 | [07-publication-promotion-compare-and-swap.md](07-publication-promotion-compare-and-swap.md) | `PLANNED / BASELINE_PENDING` | A promotion plan either binds one exact old/new/tag transaction or returns a finite refusal. | After 06 integration. |
 | [08-isolated-publication-live-cutover.md](08-isolated-publication-live-cutover.md) | `PLANNED / OWNER_EFFECT_AUTHORITY_REQUIRED` | A real isolated Claude install from README reaches only the publication object graph. | After 07 integration and named owner authority for repository creation/push/release. |
 
