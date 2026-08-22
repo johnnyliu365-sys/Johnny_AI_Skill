@@ -6,7 +6,7 @@
 | SPEC / acceptance source | `SPEC-AI-WORKFLOW-EXECUTOR-ROUTING-20260822-01M4P6R8T0V2X4Z6B8D0F2H4J6` revision `02` / AC-01 through AC-11 |
 | PRD / change | `PRD-20260822-030` / `CHG-20260822-030`, amended by `PRD-20260822-032` / `CHG-20260822-032` |
 | Sealed Context / baseline | `CTX-EXECUTOR-ROUTING-20260823-02` / `doc/context/executor-routing/codex-provider-neutral-executor-routing-r02.md` / `f90d200b914aa91e0ffe63ef778668ac4024cc84` |
-| State | `APPROVED / NOT_DISPATCHED / REVISION_03` |
+| State | `BLOCKED / REQUIREMENT_CHANGED / CHG-20260823-033` |
 | Replaces | `p8-provider-neutral-executor-routing.md` revision `02`, which is `SUPERSEDED / CHG-20260822-032` and is not dispatch authority. |
 | Control owner / reviewer | Current-session Codex reviewer; semantic `ticket-review` profile, Terra/xhigh. |
 | Implementation owner | One current-session implementation owner; semantic `implementation-standard` profile, Luna/xhigh. |
@@ -107,11 +107,22 @@ Return exactly `ImplementationReturn.COMPLETED -> ACTION_COMPLETED` with named t
 evidence, `BLOCKED -> HALT` with the failed cell, or `CHANGE_DETECTED -> REQUIREMENT_CHANGED`.
 No return authorizes provider invocation/login, runner start, merge, push, release or deployment.
 
+## Requirement-change block
+
+Review reproduced a bypass path in which a malformed `ExecutorProfile` constructed outside
+ordinary validation (`availability=AVAILABLE`, `availability_evidence=None`) inside a bypass-built
+registry selected successfully from a valid ticket-opening route. Revision 02 also has no finite
+status for malformed table/registry data and cannot represent stale or self-asserted assessment
+facts without string conventions. Under `CHG-20260823-033`, this ticket is blocked: its uncommitted
+source and tests are not implementation authority and must not be committed, integrated, pushed,
+or reused as a replacement baseline. The replacement ticket may be opened only after the scoped
+Context and SPEC revisions are approved.
+
 ```johnny-status
 id = P8R-EXECUTOR-ROUTING-03
 title = Provider-neutral executor routing
-state = APPROVED_NOT_DISPATCHED
-stage = D | typed route/profile resolver | OPEN
-stage = E | capability/rank/rejection gates | OPEN
-stage = M | five implementer and one reviewer reverse mutation | OPEN
+state = BLOCKED_REQUIREMENT_CHANGED_CHG_20260823_033
+stage = D | typed route/profile resolver | BLOCKED
+stage = E | capability/rank/rejection gates | BLOCKED
+stage = M | five implementer and one reviewer reverse mutation | BLOCKED
 ```
