@@ -86,6 +86,23 @@ def _candidate_closure(
     )
 
 
+def _post_closure(
+    snapshot: PublicationRemoteSnapshot,
+    *,
+    status: PublicationClosureStatus = PublicationClosureStatus.VERIFIED,
+    difference: PublicationTreeDifference | None = None,
+) -> PublicationClosureResult:
+    return PublicationClosureResult(
+        status=status,
+        snapshot=snapshot,
+        difference=(
+            PublicationTreeDifference()
+            if status is PublicationClosureStatus.VERIFIED
+            else difference
+        ),
+    )
+
+
 class PublicationPromotionPlanTests(unittest.TestCase):
     def test_p1_first_release_plans_create_main_and_absent_tag(self) -> None:
         result = plan_publication_promotion(
@@ -132,12 +149,15 @@ class PublicationPromotionPlanTests(unittest.TestCase):
         )
         mutated_plan = PublicationPromotionPlan.model_construct(
             request=plan.request,
+            pre_effect_snapshot=plan.pre_effect_snapshot,
             main=mutated_main,
             tag=plan.tag,
         )
-        mutated = verify_publication_promotion_readback(mutated_plan, post)
+        mutated = verify_publication_promotion_readback(
+            mutated_plan, _post_closure(post)
+        )
         self.assertEqual(mutated.status, PublicationClosureStatus.READBACK_MISMATCH)
-        restored = verify_publication_promotion_readback(plan, post)
+        restored = verify_publication_promotion_readback(plan, _post_closure(post))
         self.assertEqual(restored.status, PublicationClosureStatus.VERIFIED)
 
     def test_p3_pre_effect_failures_are_finite_and_planless(self) -> None:
@@ -210,46 +230,96 @@ class PublicationPromotionPlanTests(unittest.TestCase):
             _ref("refs/heads/main", _CANDIDATE),
             _ref("refs/tags/plugin-v0.4.10", _CANDIDATE),
         )
-        verified = verify_publication_promotion_readback(plan, post)
+        verified = verify_publication_promotion_readback(plan, _post_closure(post))
         self.assertEqual(verified.status, PublicationClosureStatus.VERIFIED)
 
         wrong_main = verify_publication_promotion_readback(
             plan,
-            _snapshot(
-                _ref("refs/heads/main", _OTHER),
-                _ref("refs/tags/plugin-v0.4.10", _CANDIDATE),
+            _post_closure(
+                _snapshot(
+                    _ref("refs/heads/main", _OTHER),
+                    _ref("refs/tags/plugin-v0.4.10", _CANDIDATE),
+                )
             ),
         )
         self.assertEqual(wrong_main.status, PublicationClosureStatus.PIN_MISMATCH)
 
         absent_tag = verify_publication_promotion_readback(
-            plan, _snapshot(_ref("refs/heads/main", _CANDIDATE))
+            plan, _post_closure(_snapshot(_ref("refs/heads/main", _CANDIDATE)))
         )
         self.assertEqual(absent_tag.status, PublicationClosureStatus.READBACK_MISMATCH)
 
         moved_tag = verify_publication_promotion_readback(
             plan,
-            _snapshot(
-                _ref("refs/heads/main", _CANDIDATE),
-                _ref("refs/tags/plugin-v0.4.10", _OTHER),
+            _post_closure(
+                _snapshot(
+                    _ref("refs/heads/main", _CANDIDATE),
+                    _ref("refs/tags/plugin-v0.4.10", _OTHER),
+                )
             ),
         )
         self.assertEqual(moved_tag.status, PublicationClosureStatus.TAG_COLLISION)
 
-        extra = PublicationRef.model_construct(
-            kind=PublicationRefKind.MAIN,
-            name="refs/heads/development",
-            target=_CANDIDATE,
-        )
         extra_result = verify_publication_promotion_readback(
             plan,
-            PublicationRemoteSnapshot.model_construct(
-                repository=_REPO,
-                default_branch="refs/heads/main",
-                refs=(_ref("refs/heads/main", _CANDIDATE), extra),
+            _post_closure(
+                _snapshot(
+                    _ref("refs/heads/main", _CANDIDATE),
+                    _ref("refs/tags/plugin-v0.4.10", _CANDIDATE),
+                    _ref("refs/tags/plugin-v0.4.11", _CANDIDATE),
+                )
             ),
         )
         self.assertEqual(extra_result.status, PublicationClosureStatus.REF_SET_INVALID)
+
+        changed_tree = verify_publication_promotion_readback(
+            plan,
+            _post_closure(
+                post,
+                status=PublicationClosureStatus.TREE_MISMATCH,
+                difference=PublicationTreeDifference(content_mismatch=("payload.txt",)),
+            ),
+        )
+        self.assertEqual(changed_tree.status, PublicationClosureStatus.TREE_MISMATCH)
+
+        missing_candidate = verify_publication_promotion_readback(
+            plan,
+            _post_closure(
+                _snapshot(_ref("refs/heads/main", _OLD)),
+                status=PublicationClosureStatus.PIN_MISMATCH,
+            ),
+        )
+        self.assertEqual(missing_candidate.status, PublicationClosureStatus.PIN_MISMATCH)
+
+    def test_p4_retains_admitted_tags_but_rejects_extra_allowed_tag(self) -> None:
+        pre = _snapshot(
+            _ref("refs/heads/main", _OLD),
+            _ref("refs/tags/plugin-v0.4.9", _OLD),
+        )
+        result = plan_publication_promotion(
+            _request(expected_main=_OLD), pre, _candidate_closure()
+        )
+        assert result.plan is not None
+        plan = result.plan
+        retained = _snapshot(
+            _ref("refs/heads/main", _CANDIDATE),
+            _ref("refs/tags/plugin-v0.4.9", _OLD),
+            _ref("refs/tags/plugin-v0.4.10", _CANDIDATE),
+        )
+        self.assertEqual(
+            verify_publication_promotion_readback(plan, _post_closure(retained)).status,
+            PublicationClosureStatus.VERIFIED,
+        )
+        extra = _snapshot(
+            _ref("refs/heads/main", _CANDIDATE),
+            _ref("refs/tags/plugin-v0.4.9", _OLD),
+            _ref("refs/tags/plugin-v0.4.10", _CANDIDATE),
+            _ref("refs/tags/plugin-v0.4.11", _OTHER),
+        )
+        self.assertEqual(
+            verify_publication_promotion_readback(plan, _post_closure(extra)).status,
+            PublicationClosureStatus.REF_SET_INVALID,
+        )
 
     def test_p5_bypass_built_inputs_cannot_create_a_plan(self) -> None:
         malformed_request = PublicationPromotionRequest.model_construct(
@@ -271,7 +341,7 @@ class PublicationPromotionPlanTests(unittest.TestCase):
             tag=None,
         )
         readback = verify_publication_promotion_readback(
-            malformed_plan, _snapshot()
+            malformed_plan, _post_closure(_snapshot())
         )
         self.assertEqual(readback.status, PublicationClosureStatus.READBACK_MISMATCH)
 

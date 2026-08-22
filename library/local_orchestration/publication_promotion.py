@@ -17,6 +17,7 @@ from .publication_repository_closure import (
     PublicationClosureStatus,
     PublicationCommit,
     PublicationPromotionRequest,
+    PublicationRef,
     PublicationRefKind,
     PublicationRemoteSnapshot,
     PublicationTreeDifference,
@@ -102,6 +103,7 @@ class PublicationPromotionPlan(_StrictModel):
     """One exact main CAS and one absent-only tag creation."""
 
     request: PublicationPromotionRequest
+    pre_effect_snapshot: PublicationRemoteSnapshot
     main: PublicationMainUpdate
     tag: PublicationTagUpdate
 
@@ -113,13 +115,28 @@ class PublicationPromotionPlan(_StrictModel):
             else PublicationMainUpdateMode.FORCE_WITH_LEASE
         )
         if (
-            self.main.new_target != self.request.candidate
+            self.pre_effect_snapshot.repository != self.request.repository
+            or self.pre_effect_snapshot.default_branch != _MAIN_REF
+            or self.main.ref_name != _MAIN_REF
+            or self.main.new_target != self.request.candidate
             or self.main.mode is not expected_mode
             or self.main.old_target != self.request.expected_main
             or self.tag.target != self.request.candidate
             or self.tag.ref_name != f"refs/tags/{self.request.version.tag_name}"
         ):
             raise ValueError("promotion plan does not match its request")
+        pre_main = tuple(
+            ref.target
+            for ref in self.pre_effect_snapshot.refs
+            if ref.kind is PublicationRefKind.MAIN
+        )
+        if self.request.expected_main is None:
+            if self.pre_effect_snapshot.refs:
+                raise ValueError("CREATE requires an empty admitted pre-effect ref set")
+        elif pre_main != (self.request.expected_main,):
+            raise ValueError("the admitted pre-effect main must match the request lease")
+        if any(ref.name == self.tag.ref_name for ref in self.pre_effect_snapshot.refs):
+            raise ValueError("the planned release tag must be absent before promotion")
         return self
 
 
@@ -233,18 +250,57 @@ def plan_publication_promotion(
     tag = PublicationTagUpdate(ref_name=tag_name, target=request.candidate)
     return PublicationPromotionPlanResult(
         status=PublicationClosureStatus.VERIFIED,
-        plan=PublicationPromotionPlan(request=request, main=main, tag=tag),
+        plan=PublicationPromotionPlan(
+            request=request,
+            pre_effect_snapshot=snapshot,
+            main=main,
+            tag=tag,
+        ),
     )
 
 
 build_publication_promotion_plan = plan_publication_promotion
 
 
+def _ref_signatures(
+    refs: tuple[PublicationRef, ...],
+) -> tuple[tuple[str, str, str], ...]:
+    return tuple(
+        sorted(
+            ((ref.name, ref.target.value, ref.kind.value) for ref in refs),
+            key=lambda value: (value[0], value[1], value[2]),
+        )
+    )
+
+
+def _expected_post_refs(
+    plan: PublicationPromotionPlan,
+) -> tuple[tuple[str, str, str], ...]:
+    retained = tuple(
+        ref
+        for ref in plan.pre_effect_snapshot.refs
+        if ref.name != _MAIN_REF
+    )
+    planned = retained + (
+        PublicationRef(
+            kind=PublicationRefKind.MAIN,
+            name=_MAIN_REF,
+            target=plan.main.new_target,
+        ),
+        PublicationRef(
+            kind=PublicationRefKind.RELEASE_TAG,
+            name=plan.tag.ref_name,
+            target=plan.tag.target,
+        ),
+    )
+    return _ref_signatures(planned)
+
+
 def verify_publication_promotion_readback(
     plan: PublicationPromotionPlan,
-    snapshot: PublicationRemoteSnapshot,
+    post_effect_closure: PublicationClosureResult,
 ) -> PublicationClosureResult:
-    """Compare exact post-effect refs to a plan without performing an effect."""
+    """Compare closure-proven post-effect refs to a plan without an effect."""
 
     def result(
         status: PublicationClosureStatus,
@@ -263,9 +319,14 @@ def verify_publication_promotion_readback(
     except ValueError:
         return result(PublicationClosureStatus.READBACK_MISMATCH)
     try:
-        snapshot = PublicationRemoteSnapshot.model_validate(snapshot)
+        post_effect_closure = PublicationClosureResult.model_validate(post_effect_closure)
     except ValueError:
-        return result(PublicationClosureStatus.REF_SET_INVALID)
+        return result(PublicationClosureStatus.READBACK_MISMATCH)
+    if post_effect_closure.status is not PublicationClosureStatus.VERIFIED:
+        return result(post_effect_closure.status, post_effect_closure.snapshot)
+    snapshot = post_effect_closure.snapshot
+    if snapshot is None:
+        return result(PublicationClosureStatus.READBACK_MISMATCH)
     if snapshot.repository != plan.request.repository:
         return result(PublicationClosureStatus.READBACK_MISMATCH, snapshot)
     if snapshot.default_branch != _MAIN_REF:
@@ -280,6 +341,10 @@ def verify_publication_promotion_readback(
         return result(PublicationClosureStatus.READBACK_MISMATCH, snapshot)
     if tags[0].target != plan.tag.target:
         return result(PublicationClosureStatus.TAG_COLLISION, snapshot)
+    expected_refs = _expected_post_refs(plan)
+    actual_refs = _ref_signatures(snapshot.refs)
+    if actual_refs != expected_refs:
+        return result(PublicationClosureStatus.REF_SET_INVALID, snapshot)
     return result(PublicationClosureStatus.VERIFIED, snapshot)
 
 
