@@ -4,8 +4,9 @@
 | --- | --- |
 | SPEC / AC | Revision 02, AC-2, AC-5, AC-6 and AC-7 |
 | PRD / CHG / Context | `PRD-20260823-034` / `CHG-20260823-034` / sealed Context Revision 01, blob `0fef3f1e4c8ce317873cdf2f73dc1bd793579217` |
-| State / closure | `APPROVED / IMPLEMENTATION_RETURNED / REVIEW_IN_PROGRESS` / `CLOSURE_01` |
+| State / closure | `DONE / APPROVED / INTEGRATED` / `CLOSURE_01` |
 | Baseline | `8033a01ba2f3fc1a07bfa7c1c5bf41d9cd50f0b0` |
+| Integration | `admit_document_mutation` → `46ad6d391f27294bd42c35eef47479529472b5c6` |
 | Control owner / reviewer | `ticket-review` — Terra / xhigh, capability readback required at dispatch |
 | Implementation owner | `implementation-standard` — Luna / xhigh; one ticket only, no helper |
 | Delivery profile | `POC / STANDARD`: deterministic local Git fixtures and read-only closure classification; no remote, host, credential, repository or user-installation effect. This ticket is prerequisite evidence for the feature's later high-assurance cutover. |

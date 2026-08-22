@@ -4,8 +4,9 @@
 | --- | --- |
 | SPEC / AC | Revision 02, AC-1 through AC-4 |
 | PRD / CHG / Context | `PRD-20260823-034` / `CHG-20260823-034` / sealed Context Revision 01, blob `0fef3f1e4c8ce317873cdf2f73dc1bd793579217` |
-| State / closure | `PLANNED / BASELINE_PENDING` / `CLOSURE_01` |
-| Dependency | Ticket 06 integrated; this ticket's exact baseline is that integration commit and must be written before dispatch. |
+| State / closure | `APPROVED / NOT_DISPATCHED` / `CLOSURE_01` |
+| Baseline | `46ad6d391f27294bd42c35eef47479529472b5c6` |
+| Dependency | Ticket 06 integrated at the exact baseline above. |
 | Control owner / reviewer | `ticket-review` — Terra / xhigh, capability readback required at dispatch |
 | Implementation owner | `implementation-standard` — Luna / xhigh; one ticket only, no helper |
 | Delivery profile | `POC / STANDARD`: the contract plans and verifies deterministic local fixture transactions; it does not create or mutate a real remote. |
