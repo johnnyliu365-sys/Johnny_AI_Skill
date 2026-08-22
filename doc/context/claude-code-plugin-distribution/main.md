@@ -4,7 +4,7 @@
 | --- | --- |
 | Feature | `claude-code-plugin-distribution` |
 | Worktree | `root/main` |
-| State | `REQUIREMENT_CHANGED / ARCHITECTURE_DECIDED / SPEC_UPDATE_REQUIRED` |
+| State | `SEALED / REVISION_01 / SPEC_REVISION_02_APPROVED` |
 | Current change | `PRD-20260823-034` / `CHG-20260823-034`; `ADR-20260823-015` |
 | In scope | Public raw marketplace entry, dedicated payload-only publication repository, shared skills, operator instructions, and static plus real-CLI repository-closure validation. |
 | Out of scope | Installing into a company repository, copying skills into a target project, hooks, MCP servers, runtime code, or secrets. |
@@ -58,3 +58,4 @@ no replacement ticket exists yet by owner instruction.
 | Date | Revision | Summary |
 | --- | --- | --- |
 | 2026-08-23 | `REVISION_01` | Live CLI evidence corrected the boundary from checkout-only to source object-graph closure and selected the dedicated publication-repository topology in `ADR-20260823-015`. |
+| 2026-08-23 | `REVISION_01 / SEALED` | Project owner approved this exact Context revision together with Claude distribution SPEC Revision 02; later stages are read/reference-only. |

@@ -3,9 +3,9 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-CLAUDE-CODE-PLUGIN-DISTRIBUTION-20260802-01KZ4C6D8E0F2G4H6J8K0M2N4P` |
-| Status | `DRAFT / REVISION_02 / OWNER_APPROVAL_REQUIRED` |
+| Status | `APPROVED / REVISION_02 / REVIEWER_DECOMPOSITION_AUTHORIZED` |
 | Author / baseline | Architecture-owner draft / `control/claude-plugin-publication-spec-r02` / `295de85297b9d2e7720b6aa592aac3418490595b` |
-| Feature Context | `doc/context/claude-code-plugin-distribution/main.md`, proposed seal `REVISION_01` at `295de85297b9d2e7720b6aa592aac3418490595b`, blob `69b06e1ca07d45651b67ae5f7e6fcdbcb91ebf17` |
+| Feature Context | `doc/context/claude-code-plugin-distribution/main.md`, sealed `REVISION_01`, blob `0fef3f1e4c8ce317873cdf2f73dc1bd793579217` in this approval candidate |
 | PRD / change | `PRD-20260802-005` / `CHG-20260802-005`, amended by `PRD-20260823-034` / `CHG-20260823-034` |
 | Architecture | `ADR-20260823-015-dedicated-plugin-publication-repository.md` |
 | Delivery stage / profile | `POC / HIGH_ASSURANCE`: public repository creation, remote ref mutation, release publication and a user-installed supply-chain boundary are external effects. |
@@ -245,9 +245,8 @@ forward-fix/revert decision for the owner, not an automatic retry.
 - `ImplementationReturn.COMPLETED` emits `ACTION_COMPLETED`; `BLOCKED` halts; and
   `CHANGE_DETECTED` emits `REQUIREMENT_CHANGED` and returns to change control. An implementer
   cannot alter repository topology, effect authority, release acceptance or public contract.
-- Required Context seal: `doc/context/claude-code-plugin-distribution/main.md` Revision 01,
-  blob `69b06e1ca07d45651b67ae5f7e6fcdbcb91ebf17` at commit
-  `295de85297b9d2e7720b6aa592aac3418490595b`.
+- Sealed Context binding: `doc/context/claude-code-plugin-distribution/main.md` Revision 01,
+  blob `0fef3f1e4c8ce317873cdf2f73dc1bd793579217` in this approval candidate.
 - Active requirement leaf: `PRD-20260823-034` / `CHG-20260823-034` at
   `doc/requirements/active/2026/distribution/REQ-20260823-034.md`.
 - No shared Context may be amended from the ticket/implementation/review lanes. Any topology,
@@ -259,7 +258,8 @@ forward-fix/revert decision for the owner, not an automatic retry.
 | --- | --- | --- |
 | 2026-08-02 | Project owner | Approved the original private-development-repository Claude distribution POC. |
 | 2026-08-23 | Architecture-owner draft / `295de85297b9d2e7720b6aa592aac3418490595b` | Drafted Revision 02 under `CHG-20260823-034` and `ADR-20260823-015`; owner approval is pending. |
+| 2026-08-23 | Project owner / exact draft `f3af1736b0f292476fb555a553a1c40d6416c3e2` | Approved Revision 02 and sealed Context Revision 01; reviewer decomposition is authorized. |
 
-Owner approval must explicitly accept this exact Revision 02 and seal the Context Revision 01
-binding above. Only then may the status become `APPROVED / REVISION_02 /
-REVIEWER_DECOMPOSITION_AUTHORIZED` and ticket planning begin.
+The approval applies to the exact draft named above. This candidate changes only lifecycle and
+approval metadata, binds the resulting sealed Context blob, and opens the `TICKETS` stage; it does
+not authorize repository creation, remote ref mutation, release publication or user installation.
