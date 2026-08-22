@@ -7,11 +7,11 @@
 | PRD 索引 | 不適用 |
 | 需求變更 | 不適用 |
 | Sealed Context binding | 不適用 |
-| Agent Context binding | 本票 revision；worktree／branch 待派工時建立 |
+| Agent Context binding | 本票 revision／worktree `.worktrees/gov-19`／branch `implement/gov-19-control-plane-gate` |
 | 實作語言 | Python 3.11 |
 | 狀態 | `IN_PROGRESS` |
-| 共同基準 | `<派工時填入>` |
-| 實作者 | `<派工時填入>` |
+| 共同基準 | `e0d318b`（程式碼基準；worktree HEAD 為綁定 commit，派工訊息載明） |
+| 實作者 | Opus 5（難票：改變控制面自身義務，依 `dispatch-model-profile.md` 先派 Opus） |
 | 審閱者 | 控制面（Opus 5）＋ owner（本票改變控制面自己的義務，值得 owner 過目） |
 | 責任邊界 | 新增 `library/local_orchestration/control_plane_mutation.py` 與其測試 |
 | 禁止修改 | `document_mutation_gate.py`（閘門本體不動，本票只是讓它多看見一類 commit） |
