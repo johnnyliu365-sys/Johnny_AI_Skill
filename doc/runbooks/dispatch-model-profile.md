@@ -1,82 +1,76 @@
 # 派工模型 Profile（現行主機對應）
 
-這份檔案記錄**目前**的角色→模型對應。`model-role-routing.md` 刻意不寫具體模型名字，
-因為對應會換而權責不會換（ADR-20260814-011：「Model identity never grants authority」）。
-要換模型改這裡，不要去改流程散文或 skill。
-
-## 角色對應
-
-| 角色 | 是誰 | 說明 |
-| --- | --- | --- |
-| `ARCHITECTURE_OWNER` | **人類 owner** | 方向與方案。目前沒有模型擔任這個角色。 |
-| `SUPERVISOR_REVIEWER` | **Opus 5** | 拆票、派票、監看、獨立審查、退回路由、受控整合。**不實作。** |
-| `IMPLEMENTATION_OWNER` | 見下表 | 收一張已 admit 的票，在自己的 worktree 實作，回傳型別化結果。 |
-
-## 實作者的派法（owner 明示）
-
-| 票的性質 | 模型 |
+| Field | Value |
 | --- | --- |
-| 一般小票 | **Sonnet 5 high** |
-| 不能再合理拆分的、比較困難的 | **Opus 5 Extra** |
-| Opus 做不成的 | **Fable 5**（owner 明示的升級路徑） |
+| Revision | `2026-08-22 / REVISION_02` |
+| Requirement lineage | `PRD-20260822-030` / `CHG-20260822-030` / `doc/requirements/active/2026/adaptive-orchestration/REQ-20260822-030.md` |
+| Policy source | `modules/spec/executor-routing.md` revision 01 and `modules/tickets/workstation-dispatch/p8-provider-neutral-executor-routing.md` revision 02 |
+| Authority | Project owner directive, 2026-08-22 (Asia/Taipei) |
+| Scope | Current semantic role-to-profile intent. This file does not grant a role, issue a receipt, prove a credential, or start a host process. |
 
-升級只在**同一張票已經被 Opus 做過且做不成**時發生，不是預先判斷「這題很難所以直接上
-Fable」。做不成的證據要留在票裡——是卡在哪、缺什麼——否則下一個模型會重蹈同一條路。
+This document records current **profile data**, not permanent workflow policy. Role authority,
+receipt/worktree admission, and the fact that model identity never grants authority remain governed
+by `Workflow.md` and the corresponding typed control-plane contracts. A provider/model/effort
+tuple must be verified as available by the relevant host capability boundary at dispatch time;
+configuration in this document is not availability evidence.
 
-判斷標準是**這張票實際的難度**，不是它有多少行程式碼。要動判斷的（例如「加韌性但不能
-削弱原本的安全斷言」）算困難；規則明確、門檻可量的（例如配色達到某個對比值）算一般。
+## Semantic profile registry
 
-## 兩個容易讀歪的地方
+| Semantic profile reference | Provider/model/effort intent | Permitted routing purpose | Capability status at dispatch |
+| --- | --- | --- | --- |
+| `decision-support` | Sol / high | Project-initial review; requirement-change review requiring a complex-decision inventory | Verify before selection |
+| `ticket-review` | Terra / xhigh | General ticket opening and independent ticket review | Verify before selection |
+| `implementation-standard` | Luna / xhigh | Normal single-ticket implementation | Verify before selection |
+| `implementation-elevated` | Terra / xhigh | One ticket only after a valid hard-ticket assessment | Verify before selection |
+| `elevated-review` | Sol / high | Review binding for that same elevated implementation ticket only | Verify before selection |
 
-**「超時當拆票缺陷」不等於「永遠不准升級」。** 那條規則講的是**拆得不合理**的情況——
-一張票塞了三件事所以做不完，該做的是拆開。**合理拆不動的困難工作硬拆，只會變成好幾個
-做不好的小任務**，那不是拆票，是推卸。困難就派 Opus。
+An authenticated Claude Code profile may be represented by an analogous registered profile only
+after its credential and host capability have been separately proved. It is not selected merely
+because its CLI is installed. Likewise, no resolver source may embed any of the provider/model
+values above; the values belong in injected profile data.
 
-**便宜不是選擇標準，正確才是。** owner 的原話：一次高階重工比五次低階重工還浪費。這句
-話兩個方向都成立——把困難工作派給低階模型，換來的是一次高階重工加一次低階重工。
+## Selection and escalation rules
 
-## 已知的實證
+1. `ARCHITECTURE_OWNER` is always the human project owner. Sol is not an implementation owner
+   and is not a general ticket-opening/review default.
+2. A normal implementation ticket uses `implementation-standard` (Luna/xhigh) and binds
+   `ticket-review` (Terra/xhigh). The reviewer's verified capability rank must be greater than
+   or equal to the implementation profile's rank.
+3. Before any elevation, the reviewer must decide whether the ticket can be decomposed without
+   breaking its observable closure. A ticket that can be reasonably decomposed is split rather
+   than elevated.
+4. An indivisible ticket may use `implementation-elevated` (Terra/xhigh) only when the exact
+   ticket and closure carry a `HardTicketAssessment` proving both no further valid decomposition
+   and a named capability gap beyond Luna. The same ticket then binds `elevated-review`
+   (Sol/high). This is a one-ticket exception, not a global profile switch.
+5. If the bounded implementation/review cycle still lacks capability, return
+   `MODEL_CAPABILITY_INSUFFICIENT` and route to the human architecture owner. Do not infer a
+   further implementer elevation or fallback.
 
-2026-08-20，`governance 05`（改名被擋住就留下孤兒）先派給了低階模型。結果：
+## Dispatch and reporting discipline
 
-- 機械的部分做對了——有上限的重試、保留最後一個例外。
-- 判斷的部分做出**假綠**：R2 的測試自己丟例外、自己接住、自己在 `finally` 拆除，
-  然後斷言拆除成功。**那個測試就算受測程式碼完全壞掉也會綠。**
-- 而且真正的病因（`finally` 只在改名成功時才拆除）完全沒被碰到，卻回報為完成。
+- The reviewer is the only Agent-to-Agent orchestrator. A profile name, prompt, CLI login, or
+  model setting is never dispatch authority.
+- Dispatch requires the live descriptor, exact ticket/handoff artifacts, receipt, verified task
+  workspace/worktree/branch/baseline binding, and the host gateway. A stopped runner does not
+  prevent manual receipt admission, but it means no automatic wake may be claimed.
+- The implementation owner receives identifier-only dispatch, modifies only its declared
+  boundary, and returns a typed result. The owner directive for P8R says the reviewer writes
+  the candidate commit after review and is the only role that submits it to integration.
+- A provider credential or host execution failure is a named capability result. It is neither
+  permission to substitute another profile nor evidence that a selected profile ran.
 
-票本身沒有問題——結果明確、五條驗收、邊界清楚。**是層級配錯。** 這條記在這裡，
-免得下次又用「票拆得夠細所以低階應該做得動」說服自己。
+## 最小派工訊息
 
-## 工具面的限制（實測）
+派工訊息只傳一次性的 `ACTION_REQUIRED`、`dispatch_ref`、registry commit、ticket、receipt
+與 owner task；需要時可加一行有界 resume state。不要重抄 ticket 已定義的 scope、驗收、
+TDD、邊界、安全或 return contract。實作者從精確 ticket 讀取那些規則，並依 ticket 的
+owner override 決定是否 commit；P8R 的 override 明定實作者不 commit。
 
-Agent 工具可以指定 `model`（opus／sonnet／haiku／fable），**但沒有 effort 參數**。
-所以「Extra」「high」那一層在派工時控制不到，只能選模型。要真的控制 effort，得走
-agent 定義檔的 frontmatter 或別的機制——尚未驗證。
+## Revision record
 
-## 派工訊息的長度（owner 指出的違反）
-
-`Workflow.md` §3.2 的「最小派送」目的**不是文書整潔，是壓低 implementer 要讀的
-context**，順帶避免兩份會漂移的來源。
-
-**派工訊息只放這些**：要做什麼（ACTION_REQUIRED）、票在哪、worktree 在哪、
-分支、跑測試的指令、不要 commit、回報什麼。
-
-**不准重抄**：診斷、證據、影響分析、修法建議、scope、驗收、TDD 規則、邊界、
-安全要求、回傳契約。這些**全部寫進票**——票是唯一來源。
-
-判準很簡單：**如果那段文字下次還有用，它屬於票；只有這一次有用的，才屬於派工訊息。**
-
-### 已經發生的違反
-
-- 2026-08-20，governance 05 的派工訊息裡寫了一整段「前一次嘗試錯在哪」。那是可重複
-  使用的知識，該進票裡的「已知陷阱」節，派工只要一行指過去。
-- 同日，governance 06 的 chip 把完整診斷、影響、修法建議、驗證指令全部重抄。
-  當下沒有票可指，所以它**被機制逼著重抄**——見下。
-- 兩次都是同一個藉口：「這樣接手的人不用回頭查」。自足如果是靠重抄達成的，
-  就是把 context 成本從寫的人身上搬到讀的人身上，而讀的人正是要省 context 的那個。
-
-### chip 的結構性問題
-
-agent 在自己票的範圍外發現缺陷時，**沒有票可以指**——於是 chip 只能重抄。
-要讓 chip 也符合最小派送，發現必須先落到一個持久的地方（登記簿條目或票的殘根），
-chip 再指過去。這是機制缺口，不是使用者的錯。
+`REVISION_02` supersedes the previous provider-specific Sonnet/Opus/Fable mapping. It applies
+the owner-approved provider-neutral policy in `REQ-20260822-030`: Luna/xhigh is the standard
+implementation profile; Terra/xhigh is normal review and the sole single-ticket implementation
+elevation; Sol/high is limited to decision support and the corresponding elevated review. The
+previous mapping remains available through Git history, not as active dispatch policy.
