@@ -22,6 +22,7 @@
 ```johnny-boundary
 modify = library/local_orchestration/plugin_publication.py
 modify = tests/test_plugin_publication.py
+modify = .claude-plugin/marketplace.json
 forbid = .claude-plugin/plugin.json
 forbid = library/local_orchestration/windows_package_manifest.py
 forbid = skills/
@@ -79,7 +80,9 @@ forbid = modules/tickets/
    **但重生不是手改。** `library/` 在 payload 白名單內，所以本票要改的
    `plugin_publication.py` 必然改變出貨內容，釘子必然對不上——這是本票的**預期後果**，
    不是違規。正確處置是由產生器從宣告重生（sha 是內容的純函數），
-   而**重生與重釘是審閱者整合時的步驟，不在實作者邊界內**。
+   **重生與重釘由審閱者在整合時執行**——邊界允許動 `.claude-plugin/marketplace.json`，
+   但那一步是審閱者的，不是實作者的。且它必須與產生器的改動在**同一個候選分支**：
+   拆成兩次整合會讓 main 出現「產生器已改、釘子還舊」的中間狀態，那是 2 紅。
    實作者遇到那兩個 binding 測試轉紅時，**回報並停下即為正確**，
    不得自行重釘，也不得把它當成綠。
 
