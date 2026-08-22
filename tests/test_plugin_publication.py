@@ -652,6 +652,9 @@ class PublicationReachabilityTests(unittest.TestCase):
         bare = raw / "real-publication.git"
         clone = raw / "real-publication-clone"
         remote_ref = "refs/remotes/origin/publication-0.4.9"
+        source_marketplace = _REPO_ROOT / ".claude-plugin" / "marketplace.json"
+        sha = str(pinned_plugin_source(source_marketplace)["sha"])
+        require_existing_commit(_REPO_ROOT, sha)
         _git(_REPO_ROOT, "init", "--bare", "-q", str(bare))
         _git(_REPO_ROOT, "push", "-q", str(bare), "HEAD:refs/heads/main")
         _git(
@@ -659,12 +662,12 @@ class PublicationReachabilityTests(unittest.TestCase):
             "push",
             "-q",
             str(bare),
-            f"{_PUBLICATION_ANCHOR_REF}:{_PUBLICATION_ANCHOR_REF}",
+            f"{sha}:{_PUBLICATION_ANCHOR_REF}",
         )
         _git(_REPO_ROOT, "-C", str(bare), "symbolic-ref", "HEAD", "refs/heads/main")
         _git(_REPO_ROOT, "clone", "-q", str(bare), str(clone))
         marketplace = clone / ".claude-plugin" / "marketplace.json"
-        sha = str(pinned_plugin_source(marketplace)["sha"])
+        self.assertEqual(str(pinned_plugin_source(marketplace)["sha"]), sha)
         return clone, sha, remote_ref
 
     def _publish_with_ref(
