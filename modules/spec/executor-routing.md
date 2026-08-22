@@ -3,11 +3,11 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-EXECUTOR-ROUTING-20260822-01M4P6R8T0V2X4Z6B8D0F2H4J6` |
-| Status | `APPROVED / REVIEWER_DECOMPOSITION_AUTHORIZED / REVISION_01` |
-| Author / baseline | Codex architecture owner / `0fc6bbf05e2f5cd970f5b97b1386811b3fed401d` |
-| Feature Context | `doc/context/executor-routing/codex-provider-neutral-executor-routing.md` (`ARCHITECTURE_DRAFT`) |
-| PRD / change | `PRD-20260822-030` / `CHG-20260822-030` |
-| Delivery profile | `HIGH_ASSURANCE`: a wrong or unavailable executor selection can undermine independent implementation and review boundaries. |
+| Status | `APPROVED / REVIEWER_DECOMPOSITION_AUTHORIZED / REVISION_02` |
+| Author / baseline | Codex architecture owner / `c0b52f7ff48002c09726aebcbf1186e624bd0a57` |
+| Feature Context | `doc/context/executor-routing/codex-provider-neutral-executor-routing-r02.md` (`SEALED / CTX-EXECUTOR-ROUTING-20260823-02`) |
+| PRD / change | `PRD-20260822-030` / `CHG-20260822-030`, amended by `PRD-20260822-032` / `CHG-20260822-032` |
+| Delivery stage / profile | `POC` / `STANDARD`: a single, reversible pure resolver has a known-domain contract, no security surface and no external effect. |
 | Implementation language | Python 3.11; frozen Pydantic contracts, explicit finite enums and `mypy --strict`. |
 | XSS classification | `N/A`: this feature accepts no Browser/WebView/HTML/DOM/JavaScript input or renderer. |
 
@@ -19,8 +19,8 @@ valid selection, and permits a caller to narrate an escalation without typed evi
 
 The goal is a pure, typed resolver that selects one already-registered executor profile from
 semantic routing data. It must fail closed for every absent, ambiguous, unavailable or
-insufficient-evidence case. It returns a profile reference only; dispatch and host invocation
-remain separate, receipt-bound effects.
+insufficient-evidence case. It returns a profile reference only; host invocation remains a
+separate high-assurance, receipt-bound effect.
 
 ## User, data, error and effect boundary
 
@@ -50,7 +50,8 @@ Out of scope:
 - persistence or UI for profile configuration;
 - replacing an unavailable profile with another provider, automatically elevating an
   implementer, or selecting another implementer after a bounded cycle is exhausted;
-- changing the sealed shared Context or dispatching any ticket before owner approval.
+- changing shared Context outside the approved revision path or dispatching any ticket before its
+  replacement ticket is approved.
 
 ## Typed contract and route semantics
 
@@ -158,8 +159,10 @@ profile reference, missing profile, unknown availability or stale evidence is a 
 
 The resolver imports neither host adapters nor `dispatch_session`, `dispatch_authority`,
 `worker_assignment`, `work_queue`, `document_mutation_gate`, credential stores, process
-launchers or runner modules. A later approved adapter may consume a selected profile only after
-normal receipt/host admission; this SPEC grants no such effect.
+launchers or runner modules. A later approved host adapter may consume a selected profile only
+after high-assurance receipt/host admission; this SPEC grants no such effect. The POC ticket may
+use reviewer-owned manual orchestration, but that route is integration evidence only: it does not
+assert a host workspace/profile binding, consume a receipt, or claim automatic delivery/wake.
 
 ## Acceptance criteria
 
@@ -188,12 +191,17 @@ normal receipt/host admission; this SPEC grants no such effect.
 10. Reverse mutations make red: adding a default fallback; accepting a forged hard-ticket
     assessment; accepting a weaker reviewer binding; accepting an unavailable override profile;
     and adding a provider/model literal to resolver source. Exact restoration returns green.
+11. The replacement P8R ticket records the `POC` / `STANDARD` assessment, the named
+    `KNOWN_GAP_WORKSPACE_BINDING_READBACK_UNAVAILABLE`, the applicable document-mutation gate,
+    and a reviewer-run counter-mutation through a distinct test path. None of these artifacts may
+    assert host binding, receipt delivery, runner activation or automatic wake.
 
 ## Verification and approval path
 
 The replacement implementation ticket must contain focused TDD, strict typing, source-boundary
 checks, all named negative cases and the five reverse mutations above. The reviewer runs the
-full suite and independent mutation review before integration. No source ticket exists yet.
+full suite and independent mutation review before integration. It replaces the old P8R leaf,
+which is not dispatch authority after `CHG-20260822-032`.
 
 Owner approval must name this exact SPEC revision. Approval then seals the feature Context,
 permits a replacement P8 ticket to bind this SPEC/Context/PRD/CHG baseline, and permits a
@@ -204,12 +212,13 @@ are explicitly authorized.
 
 The principal risk is an incorrect profile or reviewer choice weakening independent review.
 Every resolution remains pure and fail-closed, so a rejection causes no host or source effect;
-correction is an additive profile/spec/ticket revision rather than a hidden fallback. Existing
-dispatch, receipt, host-adapter and runner contracts are read-only dependencies and remain
-compatible because this feature exposes no integration point yet.
+correction is an additive profile/spec/ticket revision rather than a hidden fallback. POC manual
+evidence is deliberately not host evidence. Existing dispatch, receipt, host-adapter and runner
+contracts remain read-only dependencies and retain their high-assurance requirements.
 
 ## Revision signature and approval record
 
 | Revision | Authority | Decision |
 | --- | --- | --- |
 | 01 | Project owner, 2026-08-22 (Asia/Taipei) | Approved this exact provider-neutral routing policy, the single-ticket Terra implementation exception, and the reviewer-strength invariant. Reviewer decomposition is authorized; dispatch and host effects are not. |
+| 02 | Project owner, 2026-08-23 (Asia/Taipei) / `CHG-20260822-032` | Reclassified the pure P8R closure as `POC` / `STANDARD`, bound Context revision 02, and requires explicit manual-evidence/known-gap recording. Host binding remains a separate `HIGH_ASSURANCE` path. |

@@ -25,7 +25,9 @@ capacity must be evidence-based and proportional to risk and coupling.
 - No silent task/model/worktree creation, host-login bypass or unverified host
   automation.
 - No reduction of reviewer-only orchestration, TDD, typed contracts, XSS,
-  Secret, ownership, workspace-binding or guarded-integration gates.
+  Secret, ownership or guarded-integration gates. Exact workspace binding remains mandatory for
+  `HIGH_ASSURANCE` host effects; an approved POC manual-evidence path records an absent binding
+  as a named gap rather than representing it as proof.
 - No model name, project file count or source-line count as authority or the
   sole complexity classifier.
 - No unbounded Agent fan-out and no implementation-owner delegation.
@@ -170,6 +172,40 @@ readback and workspace proof. Only `ADMITTED` exposes a single downstream
 delivery capability; every other result exposes no task-control port. The
 delivery capability remains subject to the existing one-shot dispatch
 composition and creates no automatic wake claim.
+
+### Revision 08 approved amendment — POC-proportional admission evidence
+
+`PRD-20260822-032` separates a bounded POC resolver closure from the privileged R07 host
+boundary. It does not weaken R07, issue a receipt, create a task/worktree, bind a host profile,
+invoke a provider, start a runner, or claim automatic wake.
+
+#### AC-04R8 — POC manual-evidence path
+
+Only a ticket that is explicitly `delivery_stage = POC`, has a committed evidence-backed
+assessment without a hard `HIGH_ASSURANCE` trigger, and has no host/provider/process/Git/receipt
+effect may use this path. Its implementation boundary remains ticket-scoped and reviewer-owned.
+The completion evidence is the applicable document-mutation gate plus one reviewer-run
+counter-mutation through a test path distinct from the implementation owner's recorded mutation.
+
+If host workspace/profile/effort/rank readback is absent, the ticket records exactly
+`KNOWN_GAP_WORKSPACE_BINDING_READBACK_UNAVAILABLE`. The gap cannot serve as a binding, receipt,
+delivery, runner or wake assertion. It permits no privilege, task-control or host-control port.
+Any request for those effects routes to the R07 `HIGH_ASSURANCE` admission path.
+
+#### AC-05R8 — Stage and intensity remain distinct
+
+`POC` is a delivery stage. `COMPACT`, `STANDARD` and `HIGH_ASSURANCE` remain intensities derived
+from the committed workload evidence. The owner and reviewer record the selected POC manual path
+from that evidence; intent to dispatch, a model label, prompt, repository size or source-line
+count cannot lower an intensity. A hard trigger remains `HIGH_ASSURANCE` regardless of POC stage.
+
+#### AC-07R8 — Proportional ceremony without false proof
+
+The POC manual path retains target-owned requirements, a sealed Context revision, a bounded
+ticket, strict typing, focused verification, independent review and reviewer counter-mutation.
+It may omit high-assurance host-readback ceremony only because it exposes no host effect and
+names the unavailable workspace binding as a known gap. The high-assurance path retains the full
+R07 adversarial workspace/profile/readback verification.
 
 ### AC-05 — Evidence-based delivery profile
 
@@ -581,6 +617,11 @@ checks succeed.
     each of the three workspace checks, accepting an asserted profile, or exposing delivery before
     `ADMITTED` turns the closure red. The current host's missing effective-profile readback must
     produce the named no-effect `CAPABILITY_UNAVAILABLE` result.
+21. Revision 08 tests prove that a POC no-effect ticket records the exact known workspace-binding
+    gap and still requires document-gate plus reviewer counter-mutation evidence; it must reject
+    a claim that the gap proves host binding, receipt delivery, runner activation or automatic
+    wake. A `HIGH_ASSURANCE` ticket with the same missing/asserted/stale/mismatched/lower-rank
+    readback must reject before any source or Agent-control effect.
 
 ## Candidate vertical ticket sequence
 
@@ -647,6 +688,13 @@ the Context and authorizes reviewer decomposition of the first no-effect ticket
 only; it neither opens an implementation lane nor authorizes any host, workspace,
 task, receipt, source or external effect.
 
+Revision 08 was approved by the project owner on `2026-08-23` under
+`CHG-20260822-032`, bounded by `CTX-EXECUTOR-ROUTING-20260823-02` and
+`CTX-HOST-GATEWAY-20260823-02`. It returns the P8R pure resolver to a POC/
+`STANDARD` manual-evidence route, preserves R07 as a separate `HIGH_ASSURANCE` host boundary,
+and authorizes reviewer decomposition of the replacement P8R ticket only. It does not authorize
+host, task, workspace, receipt, runner, provider, source or external effects.
+
 ## Revision signatures
 
 | Date | AI / worktree / baseline | Summary |
@@ -655,3 +703,4 @@ task, receipt, source or external effect.
 | 2026-08-15 | Project owner | Approved the exact Project-neutral Workspace Revision 06 and assigned ticket decomposition/opening to the reviewer. |
 | 2026-08-22 | Codex architecture owner / `control/executor-routing-p8-owner-override` / `bce019090819390d4368ec68e09392508aacbd2c` | Drafted Revision 07 host-gateway workspace/profile binding amendment under `CHG-20260822-031`; owner approval pending. |
 | 2026-08-22 | Project owner | Approved the exact Revision 07 draft content at `1897339679312d92944403747aa7a2b1595d9c3e`; sealed its Context and authorized reviewer decomposition of the first no-effect ticket only. |
+| 2026-08-23 | Project owner / `CHG-20260822-032` | Approved Revision 08: POC manual evidence records the workspace-binding gap; R07 readback stays mandatory only for high-assurance host effects; replacement P8R decomposition is authorized. |
