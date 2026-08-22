@@ -7,11 +7,11 @@
 | PRD 索引 | 不適用 |
 | 需求變更 | 不適用 |
 | Sealed Context binding | 不適用 |
-| Agent Context binding | 本票 revision；worktree／branch 待派工時建立 |
+| Agent Context binding | 本票 revision／worktree `.worktrees/gov-23`／branch `implement/gov-23-unbounded-wait` |
 | 實作語言 | Python 3.11 |
 | 狀態 | `IN_PROGRESS` |
-| 共同基準 | `<派工時填入>` |
-| 實作者 | `<派工時填入>` |
+| 共同基準 | `603a98db`（worktree HEAD 為綁定 commit，派工訊息載明） |
+| 實作者 | Opus 5（難票：動的是所有恰好一次保證的地基等待語義） |
 | 審閱者 | 控制面（Opus 5） |
 | 責任邊界 | `file_lock.py` 的等待語義與其測試；受影響消費者的失敗分流 |
 | 禁止修改 | 鎖的**互斥**語義（票 20 剛釘住的四條契約中的其餘三條） |
