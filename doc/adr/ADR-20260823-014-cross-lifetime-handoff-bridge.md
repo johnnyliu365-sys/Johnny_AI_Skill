@@ -1,19 +1,20 @@
 # ADR-20260823-014 — The runner is a cross-lifetime handoff bridge, not a dispatch precondition
 
 - Date: `2026-08-23 (Asia/Taipei)`
-- Status: `PROPOSED` — one item below reverses an alternative ADR-20260815-012 recorded as
-  owner-rejected, so this cannot be `ACCEPTED` without the owner's explicit word on that item.
-- Decision makers: project owner (pending) and architecture owner
+- Status: `ACCEPTED` — the owner has explicitly accepted Decision 3, which reverses the
+  same-turn-wait alternative recorded as owner-rejected in ADR-20260815-012.
+- Decision makers: project owner and architecture owner
 - Related specification: `SPEC-AI-WORKFLOW-RECEIPT-BOUND-ROLE-SUPERVISION-20260815-01M0R2S4T6V8X0Z2B4D6F8H0J2`
 - Related change: pending
 - Narrows: `ADR-20260815-012`
 
-## The reversal that needs the owner's word
+## Owner acceptance of the reversal
 
 ADR-012 lists `Same-turn blocking model wait` under **Alternatives rejected**: "rejected by the
 owner; only the event adapter plus wake port is admissible."
 
-Decision 3 below makes exactly that the default. The reversal is proposed on one ground: ADR-012
+Decision 3 below makes exactly that the default. The owner accepted this reversal on
+`2026-08-23 (Asia/Taipei)`. Its ground is that ADR-012
 grouped blocking wait with heartbeat and polling under "spends tokens without evidence", and the
 three do not share a cost profile. Polling and heartbeat **re-read** on an interval, so cost grows
 with elapsed time. A blocking wait is one call that returns when the child settles: it **holds**
@@ -21,9 +22,9 @@ the parent's context rather than re-sending it, and costs one notification regar
 the child runs. Measured on 2026-08-22: thirteen dispatches, one completion notification each,
 zero interval reads.
 
-Everything else in this ADR stands without the reversal. If the owner declines it, decision 3
-becomes "the owner relays completion" — the unarmed path governance 04 already documents — and
-the rest is unaffected.
+The accepted default does not remove the unarmed path: when a producer and consumer have different
+lifetimes and the bridge is unavailable, a person still relays completion as governance 04
+documents.
 
 ## Context
 
@@ -166,3 +167,4 @@ only treating that mechanism as a precondition for work that is synchronous.
 | Date | Actor / baseline | Summary |
 | --- | --- | --- |
 | 2026-08-23 | Architecture owner / `main` | Drafted as `PROPOSED`. Decision 3 reverses an alternative ADR-012 recorded as owner-rejected and is held pending the owner's explicit word; the remaining decisions stand independently of it. |
+| 2026-08-23 | Project owner / owner confirmation | Accepted Decision 3 and therefore the ADR. Same-lifecycle `dispatch → wait → review → guarded integration` is the default; the runner remains only a cross-lifetime handoff bridge. |
