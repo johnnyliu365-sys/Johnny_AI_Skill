@@ -6,7 +6,7 @@
 | SPEC / acceptance source | `SPEC-AI-WORKFLOW-EXECUTOR-ROUTING-20260822-01M4P6R8T0V2X4Z6B8D0F2H4J6` revision `03` / AC-01 through AC-11 |
 | PRD / change | `PRD-20260822-030` / `CHG-20260822-030`, amended by `PRD-20260822-032` / `CHG-20260822-032` and `PRD-20260823-033` / `CHG-20260823-033` |
 | Sealed Context / baseline | `CTX-EXECUTOR-ROUTING-20260823-03` / `doc/context/executor-routing/codex-provider-neutral-executor-routing-r03.md` / `de7a935546a4229add2439bfdc37f40e1f22f30f` |
-| State | `APPROVED / NOT_DISPATCHED / REVISION_04` |
+| State | `APPROVED / REVIEW_CORRECTION / REVISION_05` |
 | Replaces | `P8R-EXECUTOR-ROUTING-03`, `BLOCKED / REQUIREMENT_CHANGED / CHG-20260823-033`; its uncommitted source is not a baseline or merge source. |
 | Control owner / reviewer | Current-session Codex reviewer; semantic `ticket-review` profile, Terra/xhigh. |
 | Implementation owner | One current-session implementation owner; semantic `implementation-standard` profile, Luna/xhigh. |
@@ -15,13 +15,14 @@
 | Worktree / branch | Reviewer creates only `.worktrees/p8r-provider-neutral-executor-routing-r04` at this ticket's committed `main` baseline on `implement/p8r-provider-neutral-executor-routing-r04`. |
 | Known host gap | `KNOWN_GAP_WORKSPACE_BINDING_READBACK_UNAVAILABLE`; it is not task/workspace/profile/rank, receipt-delivery, runner, or wake evidence. |
 | Language / checker | Python 3.11; frozen Pydantic contracts, complete annotations, finite enums; `mypy --strict`. |
-| XSS / effects | `N/A`; no Browser/WebView/HTML/DOM/JavaScript, host, process, credential, provider, receipt, task, worktree-control, runner, network, or Git effect in the implementation boundary. |
+| XSS / effects | `N/A`; the implementation boundary has no Browser/WebView/HTML/DOM/JavaScript, host, process, credential, provider, receipt, task, worktree-control, runner, network, or Git effect. The reviewer-only publication transaction is an integration artifact, not resolver behavior. |
 
 ## Boundary declaration
 
 ```johnny-boundary
 create = library/local_orchestration/executor_routing.py
 create = tests/test_executor_routing.py
+modify = .claude-plugin/marketplace.json
 forbid = library/local_orchestration/dispatch_session.py
 forbid = library/local_orchestration/dispatch_authority.py
 forbid = library/local_orchestration/worker_assignment.py
@@ -55,6 +56,27 @@ The implementation defines the revision-03 public contracts exactly: `RoutingPur
 `IndependentVerificationEvidenceRef` is a named opaque type. No provenance, freshness, forgery,
 or authority rule may inspect string contents.
 
+## Reviewer-only publication binding
+
+`library/` is a declared plugin payload tree. Therefore, after the reviewer has accepted the
+source/test diff and written the candidate source commit, but before
+`admit_document_mutation`, the reviewer alone must run the committed publication generator on the
+same candidate worktree:
+
+```text
+py -3.11 -m library.local_orchestration.plugin_publication --repo . --manifest .claude-plugin/plugin.json --marketplace .claude-plugin/marketplace.json --ref refs/heads/publication-0.4.9
+py -3.11 -m library.local_orchestration.plugin_publication --repo . --manifest .claude-plugin/plugin.json --marketplace .claude-plugin/marketplace.json --ref refs/heads/publication-0.4.9 --verify-only
+```
+
+The first command creates the declared payload tree commit, updates the local pushable publication
+anchor, and changes only the marketplace pin through the generator. Hand-editing the SHA is
+forbidden. The reviewer commits that generated marketplace change on the same candidate branch as
+the resolver source, then reruns the pin/tree/reachability checks. The implementation owner must
+not invoke the generator, alter the pin, or modify `.claude-plugin/marketplace.json`.
+
+This is local publication-integrity evidence only. It does not authorize a remote publication-ref
+push, a plugin release, marketplace publication, provider invocation, or automatic wake claim.
+
 ## TDD, preflight and verification
 
 | Cell | Required executable behavior / finite outcome |
@@ -70,6 +92,7 @@ or authority rule may inspect string contents.
 | T9 | A bounded failed implementation/review cycle returns `MODEL_CAPABILITY_INSUFFICIENT` then `ARCHITECTURE_OWNER_REQUIRED`, never an inferred fallback. |
 | T10 | Source-boundary checks reject any dispatch, receipt, host-launch, credential, process, runner, provider/model literal, or effectful callable exposure. |
 | T11 | Every public DTO and enum is constructed through its ordinary validator on a success path, and rejects wrong primitive, nullability, extra field, malformed opaque reference, and bypass success forms. `model_construct`, `model_copy`, casts, `Any`, dynamic member lookup, and historical-object reuse are negative-only test inputs. |
+| T12 | After the reviewer-only generator transaction, the marketplace pin names a declared payload commit containing the candidate resolver module and reachable from local `refs/heads/publication-0.4.9`; the candidate test remains development-only, and the publication pin/tree/reachability tests are green. |
 | M1 | Add a default route/fallback: T4/T6 turns red; restore byte-for-byte and return green. |
 | M2 | Skip canonical table validation: T4 turns red; restore and return green. |
 | M3 | Skip canonical registry validation: T5 turns red; restore and return green. |
@@ -94,8 +117,8 @@ py -3.11 -m compileall -q library/local_orchestration/executor_routing.py
 ```
 
 The reviewer re-runs the focused commands, full regression suite, strict DTO preflight, declared
-boundary diff, M1-M7, and RM1. A zero-red mutation is a finding; restore every mutation byte for
-byte before recording green evidence.
+boundary diff, M1-M7, RM1, and T12. A zero-red mutation is a finding; restore every mutation byte
+for byte before recording green evidence.
 
 ## POC manual admission, ownership and return
 
@@ -105,11 +128,13 @@ the sealed Context. This is not a host task binding and does not create a
 `PendingDispatchDescriptor`, issue or consume a receipt, or claim automatic delivery/wake. The
 known host gap is recorded exactly above.
 
-The implementation owner modifies only the declared boundary and does not commit, integrate,
-push, control another Agent, or create a worktree/task. After its return, the Terra/xhigh reviewer
-inspects the worktree, runs review evidence and RM1, writes the candidate commit on the declared
-branch, then invokes `admit_document_mutation` from `main`. The ticket must already be on `main`;
-the gate and reviewer counter-mutation are the POC integration evidence.
+The implementation owner modifies only the two resolver/test files and does not commit, integrate,
+push, control another Agent, create a worktree/task, invoke the publication generator, or alter
+the marketplace pin. After its return, the Terra/xhigh reviewer inspects the worktree, runs review
+evidence and RM1, writes the candidate source commit on the declared branch, performs the
+reviewer-only publication transaction, commits the generated marketplace pin on that same branch,
+then invokes `admit_document_mutation` from `main`. The ticket must already be on `main`; the gate
+and reviewer counter-mutation are the POC integration evidence.
 
 Return exactly `ImplementationReturn.COMPLETED -> ACTION_COMPLETED` with named test/type/mutation
 evidence, `BLOCKED -> HALT` with the failed cell, or `CHANGE_DETECTED -> REQUIREMENT_CHANGED`.
@@ -118,8 +143,9 @@ No return authorizes provider invocation/login, runner start, merge, push, relea
 ```johnny-status
 id = P8R-EXECUTOR-ROUTING-04
 title = Canonical provider-neutral executor routing
-state = APPROVED_NOT_DISPATCHED
+state = APPROVED_REVIEW_CORRECTION_REVISION_05
 stage = D | canonical typed route/profile resolver | OPEN
 stage = E | invalid-input/verification/rank/override gates | OPEN
 stage = M | seven implementer and one reviewer reverse mutation | OPEN
+stage = P | reviewer-only generated publication pin / local reachability | OPEN
 ```
