@@ -38,14 +38,19 @@ from typing import Final
 from unittest.mock import patch
 
 from library.local_orchestration.plugin_publication import (
+    LocalPublicationReachability,
     PayloadDeclarationError,
     PinnedCommitError,
     PublicationError,
     PublicationMismatchError,
+    PublicationReachability,
     PublicationReachabilityError,
     PublicationRefError,
     PublicationRefQueryError,
     PublicationTreeError,
+    PushableRefName,
+    RemotePublicationReachability,
+    RemoteTrackingRefName,
     assert_commit_matches_declaration,
     compare_commit_to_declaration,
     declared_blob_ids,
@@ -57,6 +62,7 @@ from library.local_orchestration.plugin_publication import (
     publication_refs_reaching_commit,
     repin_marketplace,
     require_existing_commit,
+    require_fetchable_publication_ref,
     require_reachable_publication_ref,
     tree_blob_ids,
     write_publication_commit,
@@ -203,7 +209,11 @@ class DeclarationDrivenTreeTests(unittest.TestCase):
         }
         offenders = sorted(text for text in literals if is_payload_path(text, payload))
         self.assertEqual(offenders, [], f"the generator names payload paths: {offenders}")
-        declared = set(payload["trees"]) | set(payload["files"])  # type: ignore[arg-type]
+        trees = payload.get("trees")
+        files = payload.get("files")
+        if not isinstance(trees, list) or not isinstance(files, list):
+            raise AssertionError("the loaded payload must contain tree and file lists")
+        declared = {str(entry) for entry in trees} | {str(entry) for entry in files}
         self.assertEqual(literals & declared, set())
 
     def test_the_generator_cannot_guess_which_manifest_to_read(self) -> None:
@@ -649,13 +659,121 @@ class PublicationReachabilityTests(unittest.TestCase):
             scratch = _ScratchRepository(Path(raw))
             sha, ref = self._publish_with_ref(scratch)
             self.assertEqual(require_reachable_publication_ref(scratch.root, sha, ref), sha)
-            self.assertEqual(publication_refs_reaching_commit(scratch.root, sha), (ref,))
+            reachability = publication_refs_reaching_commit(scratch.root, sha)
+            self.assertEqual(
+                reachability,
+                PublicationReachability(
+                    local_state=LocalPublicationReachability.LOCAL_REACHABLE,
+                    remote_state=RemotePublicationReachability.NOT_PUSHED,
+                    local_refs=(PushableRefName(ref),),
+                    remote_tracking_refs=(),
+                ),
+            )
 
     def test_the_pinned_commit_is_reachable_from_a_pushable_tag(self) -> None:
         with TemporaryDirectory(ignore_cleanup_errors=True) as raw:
             scratch = _ScratchRepository(Path(raw))
             sha, ref = self._publish_with_ref(scratch, "refs/tags/publication-1.2.3")
             self.assertEqual(require_reachable_publication_ref(scratch.root, sha, ref), sha)
+            reachability = publication_refs_reaching_commit(scratch.root, sha)
+            self.assertEqual(reachability.local_state, LocalPublicationReachability.LOCAL_REACHABLE)
+            self.assertEqual(reachability.remote_state, RemotePublicationReachability.NOT_PUSHED)
+            self.assertEqual(reachability.local_refs, (PushableRefName(ref),))
+            self.assertEqual(reachability.remote_tracking_refs, ())
+            with self.assertRaises(PublicationReachabilityError):
+                require_fetchable_publication_ref(scratch.root, sha, ref)
+
+    def test_a_clean_clone_proves_local_and_last_fetch_remote_reachability(self) -> None:
+        """The proof is about the checkout a user can clone, not this worktree."""
+
+        with TemporaryDirectory(ignore_cleanup_errors=True) as raw:
+            scratch = _ScratchRepository(Path(raw) / "source")
+            sha, ref = self._publish_with_ref(scratch)
+            bare = Path(raw) / "remote.git"
+            clone = Path(raw) / "clean-clone"
+            _git(scratch.root, "init", "--bare", "-q", str(bare))
+            _git(scratch.root, "push", "-q", str(bare), "HEAD:refs/heads/main")
+            _git(scratch.root, "push", "-q", str(bare), f"{ref}:{ref}")
+            _git(scratch.root, "-C", str(bare), "symbolic-ref", "HEAD", "refs/heads/main")
+            _git(scratch.root, "clone", "-q", str(bare), str(clone))
+
+            reachability = publication_refs_reaching_commit(clone, sha)
+            self.assertEqual(
+                reachability.local_state,
+                LocalPublicationReachability.LOCAL_UNREACHABLE,
+            )
+            self.assertEqual(
+                reachability.remote_state,
+                RemotePublicationReachability.REMOTE_REACHABLE_AT_LAST_FETCH,
+            )
+            self.assertEqual(reachability.local_refs, ())
+            remote_ref = "refs/remotes/origin/publication-1.2.3"
+            self.assertEqual(
+                reachability.remote_tracking_refs,
+                (RemoteTrackingRefName(remote_ref),),
+            )
+            self.assertEqual(require_fetchable_publication_ref(clone, sha, ref), sha)
+            self.assertEqual(require_fetchable_publication_ref(clone, sha, remote_ref), sha)
+
+            anchor_clone = Path(raw) / "anchor-clone"
+            _git(
+                scratch.root,
+                "clone",
+                "-q",
+                "-b",
+                ref.removeprefix("refs/heads/"),
+                str(bare),
+                str(anchor_clone),
+            )
+            checked_out = publication_refs_reaching_commit(anchor_clone, sha)
+            self.assertEqual(
+                checked_out.local_state,
+                LocalPublicationReachability.LOCAL_REACHABLE,
+            )
+            self.assertEqual(
+                checked_out.remote_state,
+                RemotePublicationReachability.REMOTE_REACHABLE_AT_LAST_FETCH,
+            )
+            self.assertEqual(checked_out.local_refs, (PushableRefName(ref),))
+
+    def test_a_local_only_branch_is_not_fetchability_evidence(self) -> None:
+        with TemporaryDirectory(ignore_cleanup_errors=True) as raw:
+            scratch = _ScratchRepository(Path(raw))
+            sha, ref = self._publish_with_ref(scratch)
+            reachability = publication_refs_reaching_commit(scratch.root, sha)
+            self.assertEqual(reachability.local_state, LocalPublicationReachability.LOCAL_REACHABLE)
+            self.assertEqual(reachability.remote_state, RemotePublicationReachability.NOT_PUSHED)
+            with self.assertRaises(PublicationReachabilityError):
+                require_fetchable_publication_ref(scratch.root, sha, ref)
+
+    def test_a_remote_tracking_ref_is_explicitly_last_fetch_evidence(self) -> None:
+        with TemporaryDirectory(ignore_cleanup_errors=True) as raw:
+            scratch = _ScratchRepository(Path(raw) / "source")
+            sha, ref = self._publish_with_ref(scratch)
+            bare = Path(raw) / "remote.git"
+            clone = Path(raw) / "clean-clone"
+            _git(scratch.root, "init", "--bare", "-q", str(bare))
+            _git(scratch.root, "push", "-q", str(bare), f"{ref}:{ref}")
+            _git(
+                scratch.root,
+                "clone",
+                "-q",
+                "-b",
+                ref.removeprefix("refs/heads/"),
+                str(bare),
+                str(clone),
+            )
+            remote_ref = "refs/remotes/origin/publication-1.2.3"
+            self.assertEqual(require_fetchable_publication_ref(clone, sha, remote_ref), sha)
+
+    def test_an_invalid_remote_tracking_ref_is_rejected_as_input(self) -> None:
+        with TemporaryDirectory(ignore_cleanup_errors=True) as raw:
+            scratch = _ScratchRepository(Path(raw))
+            sha, _ref = self._publish_with_ref(scratch)
+            with self.assertRaises(PublicationRefError):
+                require_fetchable_publication_ref(
+                    scratch.root, sha, "refs/remotes/origin/../publication-1.2.3"
+                )
 
     def test_the_marketplace_pin_is_bound_to_the_actual_publication_anchor(self) -> None:
         sha = str(pinned_plugin_source(_MARKETPLACE_MANIFEST)["sha"])

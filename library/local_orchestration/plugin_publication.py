@@ -49,19 +49,28 @@ import shutil
 import subprocess
 import tempfile
 from dataclasses import dataclass
+from enum import Enum
 from pathlib import Path
-from typing import Final, Mapping, Sequence
+from typing import Final, Mapping, NewType, Sequence
+
+PushableRefName = NewType("PushableRefName", str)
+RemoteTrackingRefName = NewType("RemoteTrackingRefName", str)
 
 __all__ = [
     "PayloadDeclarationError",
     "PinnedCommitError",
+    "LocalPublicationReachability",
     "PublicationDiff",
     "PublicationError",
     "PublicationMismatchError",
+    "PublicationReachability",
     "PublicationReachabilityError",
     "PublicationRefError",
     "PublicationRefQueryError",
     "PublicationTreeError",
+    "PushableRefName",
+    "RemotePublicationReachability",
+    "RemoteTrackingRefName",
     "assert_commit_matches_declaration",
     "commit_exists",
     "compare_commit_to_declaration",
@@ -77,6 +86,7 @@ __all__ = [
     "read_plugin_manifest",
     "repin_marketplace",
     "require_existing_commit",
+    "require_fetchable_publication_ref",
     "require_reachable_publication_ref",
     "tree_blob_ids",
     "write_publication_commit",
@@ -87,8 +97,12 @@ _MOVING_REFS: Final[frozenset[str]] = frozenset(
     {"main", "master", "head", "trunk", "default", "latest", "tip"}
 )
 _PUSHABLE_REF_PREFIXES: Final[tuple[str, ...]] = ("refs/heads/", "refs/tags/")
+_REMOTE_TRACKING_REF_PREFIX: Final[str] = "refs/remotes/"
 _REF_ALLOWED: Final[re.Pattern[str]] = re.compile(
     r"refs/(?:heads|tags)/[A-Za-z0-9][A-Za-z0-9._/-]*\Z"
+)
+_REMOTE_REF_ALLOWED: Final[re.Pattern[str]] = re.compile(
+    r"refs/remotes/[A-Za-z0-9][A-Za-z0-9._-]*/[A-Za-z0-9][A-Za-z0-9._/-]*\Z"
 )
 
 # The three development trees a plugin user can never reach a use for.  Held as
@@ -136,6 +150,30 @@ class PinnedCommitError(PublicationError, ValueError):
 
 class PublicationMismatchError(PublicationError, ValueError):
     """Raised when the pinned commit's tree is not the declared payload."""
+
+
+class LocalPublicationReachability(str, Enum):
+    """Whether a local pushable ref currently reaches the publication commit."""
+
+    LOCAL_REACHABLE = "LOCAL_REACHABLE"
+    LOCAL_UNREACHABLE = "LOCAL_UNREACHABLE"
+
+
+class RemotePublicationReachability(str, Enum):
+    """What the local checkout last fetched from a remote about the commit."""
+
+    REMOTE_REACHABLE_AT_LAST_FETCH = "REMOTE_REACHABLE_AT_LAST_FETCH"
+    NOT_PUSHED = "NOT_PUSHED"
+
+
+@dataclass(frozen=True)
+class PublicationReachability:
+    """Separate local-anchor reachability from stale remote-fetch evidence."""
+
+    local_state: LocalPublicationReachability
+    remote_state: RemotePublicationReachability
+    local_refs: tuple[PushableRefName, ...]
+    remote_tracking_refs: tuple[RemoteTrackingRefName, ...]
 
 
 class PublicationRefError(PayloadDeclarationError):
@@ -198,16 +236,35 @@ def _is_forbidden(parts: tuple[str, ...]) -> bool:
     return any(parts[: len(prefix)] == prefix for prefix in _EXCLUDED_PREFIXES)
 
 
+def _payload_string_entries(payload: Mapping[str, object], key: str) -> tuple[str, ...]:
+    """Read one validated string-list field from a payload mapping."""
+
+    entries = payload.get(key)
+    if not isinstance(entries, list) or not all(isinstance(entry, str) for entry in entries):
+        raise PayloadDeclarationError(f"payload {key} must be a list of strings")
+    return tuple(entries)
+
+
 def is_payload_path(relative_path: str, payload: Mapping[str, object]) -> bool:
     """Segment-exact membership test for one repository-relative path."""
 
-    trees = frozenset(str(entry) for entry in payload["trees"])  # type: ignore[union-attr]
-    files = frozenset(str(entry) for entry in payload["files"])  # type: ignore[union-attr]
+    trees = frozenset(_payload_string_entries(payload, "trees"))
+    files = frozenset(_payload_string_entries(payload, "files"))
+    excluded_segment_entries = payload.get("excludedSegments", ())
+    if not isinstance(excluded_segment_entries, (list, tuple)) or not all(
+        isinstance(entry, str) for entry in excluded_segment_entries
+    ):
+        raise PayloadDeclarationError("payload excludedSegments must be a string list")
     excluded_segments = frozenset(
-        str(entry) for entry in payload.get("excludedSegments", ())  # type: ignore[union-attr]
+        excluded_segment_entries
     )
+    excluded_suffix_entries = payload.get("excludedSuffixes", ())
+    if not isinstance(excluded_suffix_entries, (list, tuple)) or not all(
+        isinstance(entry, str) for entry in excluded_suffix_entries
+    ):
+        raise PayloadDeclarationError("payload excludedSuffixes must be a string list")
     excluded_suffixes = tuple(
-        str(entry) for entry in payload.get("excludedSuffixes", ())  # type: ignore[union-attr]
+        excluded_suffix_entries
     )
 
     cleaned = relative_path.strip("/")
@@ -230,13 +287,13 @@ def declared_payload_files(root: Path, payload: Mapping[str, object]) -> tuple[P
 
     root = Path(root)
     found: list[Path] = []
-    for name in payload["files"]:  # type: ignore[union-attr]
-        candidate = root / str(name)
+    for name in _payload_string_entries(payload, "files"):
+        candidate = root / name
         if candidate.is_symlink() or not candidate.is_file():
             raise PayloadDeclarationError(f"declared payload file is absent: {name}")
         found.append(candidate)
-    for name in payload["trees"]:  # type: ignore[union-attr]
-        tree = root / str(name)
+    for name in _payload_string_entries(payload, "trees"):
+        tree = root / name
         if tree.is_symlink() or not tree.is_dir():
             raise PayloadDeclarationError(f"declared payload tree is absent: {name}")
         for candidate in tree.rglob("*"):
@@ -365,12 +422,33 @@ def _validate_pushable_publication_ref(ref: str) -> str:
     return ref
 
 
-def publication_refs_reaching_commit(root: Path, sha: str) -> tuple[str, ...]:
-    """Return pushable refs whose history reaches ``sha``.
+def _validate_remote_tracking_ref(ref: str) -> RemoteTrackingRefName:
+    """Validate a complete ``refs/remotes/<remote>/<branch>`` ref name."""
 
-    An empty tuple is a repository fact: no eligible ref currently reaches the
-    commit.  Failure to enumerate refs is a separate named error so a broken
-    Git query cannot masquerade as that fact.
+    if (
+        not isinstance(ref, str)
+        or not ref.startswith(_REMOTE_TRACKING_REF_PREFIX)
+        or _REMOTE_REF_ALLOWED.fullmatch(ref) is None
+    ):
+        raise PublicationRefError(
+            "remote publication evidence must be a complete "
+            "refs/remotes/<remote>/<branch> name"
+        )
+    if ".." in ref or "@{" in ref or ref.endswith("."):
+        raise PublicationRefError(f"remote tracking ref is not a valid Git ref: {ref}")
+    segments = ref.split("/")
+    if any(segment in ("", ".", "..") or segment.endswith(".lock") for segment in segments):
+        raise PublicationRefError(f"remote tracking ref is not a valid Git ref: {ref}")
+    return RemoteTrackingRefName(ref)
+
+
+def publication_refs_reaching_commit(root: Path, sha: str) -> PublicationReachability:
+    """Return named local reachability and last-fetch remote evidence for ``sha``.
+
+    ``refs/remotes`` is deliberately reported as last-fetch evidence.  It is a
+    local tracking ref, not a live probe of the remote, so this function never
+    calls that evidence current remote truth.  Failure to enumerate refs is a
+    separate named error so a broken Git query cannot masquerade as no ref.
     """
 
     sha = require_existing_commit(root, sha)
@@ -384,16 +462,46 @@ def publication_refs_reaching_commit(root: Path, sha: str) -> tuple[str, ...]:
                 "--format=%(refname)",
                 "refs/heads",
                 "refs/tags",
+                "refs/remotes",
             ],
         )
     except PublicationTreeError as error:
         raise PublicationRefQueryError(
             "pushable publication refs could not be enumerated"
         ) from error
-    refs = tuple(line for line in raw.splitlines() if line)
-    if any(_validate_pushable_publication_ref(ref) != ref for ref in refs):
-        raise PublicationRefQueryError("Git returned a malformed pushable publication ref")
-    return refs
+    local_refs: list[PushableRefName] = []
+    remote_tracking_refs: list[RemoteTrackingRefName] = []
+    for ref in (line for line in raw.splitlines() if line):
+        if ref.startswith(_REMOTE_TRACKING_REF_PREFIX):
+            try:
+                remote_tracking_refs.append(_validate_remote_tracking_ref(ref))
+            except PublicationRefError as error:
+                raise PublicationRefQueryError(
+                    "Git returned a malformed remote tracking publication ref"
+                ) from error
+            continue
+        try:
+            validated = _validate_pushable_publication_ref(ref)
+        except PublicationRefError as error:
+            raise PublicationRefQueryError(
+                "Git returned a malformed pushable publication ref"
+            ) from error
+        local_refs.append(PushableRefName(validated))
+
+    return PublicationReachability(
+        local_state=(
+            LocalPublicationReachability.LOCAL_REACHABLE
+            if local_refs
+            else LocalPublicationReachability.LOCAL_UNREACHABLE
+        ),
+        remote_state=(
+            RemotePublicationReachability.REMOTE_REACHABLE_AT_LAST_FETCH
+            if remote_tracking_refs
+            else RemotePublicationReachability.NOT_PUSHED
+        ),
+        local_refs=tuple(local_refs),
+        remote_tracking_refs=tuple(remote_tracking_refs),
+    )
 
 
 def require_reachable_publication_ref(root: Path, sha: str, ref: str) -> str:
@@ -401,9 +509,50 @@ def require_reachable_publication_ref(root: Path, sha: str, ref: str) -> str:
 
     ref = _validate_pushable_publication_ref(ref)
     sha = require_existing_commit(root, sha)
-    if ref not in publication_refs_reaching_commit(root, sha):
+    reachability = publication_refs_reaching_commit(root, sha)
+    if PushableRefName(ref) not in reachability.local_refs:
         raise PublicationReachabilityError(
             f"the pinned sha is not reachable from its pushable anchor: {ref}"
+        )
+    return sha
+
+
+def require_fetchable_publication_ref(root: Path, sha: str, ref: str) -> str:
+    """Require last-fetch evidence that a user can obtain ``sha``.
+
+    The public ``ref`` may be the named local branch anchor, in which case any
+    matching remote branch tracking ref is accepted, or the complete tracking
+    ref itself.  A tag is a valid local anchor but has no corresponding branch
+    tracking ref and therefore cannot satisfy this requirement.
+    """
+
+    sha = require_existing_commit(root, sha)
+    if ref.startswith(_REMOTE_TRACKING_REF_PREFIX):
+        requested_remote = _validate_remote_tracking_ref(ref)
+        requested_local: str | None = None
+    else:
+        requested_local = _validate_pushable_publication_ref(ref)
+        requested_remote = None
+
+    reachability = publication_refs_reaching_commit(root, sha)
+    matches: tuple[RemoteTrackingRefName, ...]
+    if requested_remote is not None:
+        matches = (requested_remote,)
+    elif requested_local is not None and requested_local.startswith("refs/heads/"):
+        branch = requested_local.removeprefix("refs/heads/")
+        matches = tuple(
+            tracking
+            for tracking in reachability.remote_tracking_refs
+            if tracking.removeprefix(_REMOTE_TRACKING_REF_PREFIX).split("/", 1)[1]
+            == branch
+        )
+    else:
+        matches = ()
+
+    if not any(match in reachability.remote_tracking_refs for match in matches):
+        raise PublicationReachabilityError(
+            "the pinned sha has no corresponding remote-tracking ref at last fetch: "
+            f"{ref}"
         )
     return sha
 
