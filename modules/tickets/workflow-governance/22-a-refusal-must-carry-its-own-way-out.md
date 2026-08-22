@@ -7,11 +7,11 @@
 | PRD 索引 | 不適用 |
 | 需求變更 | 不適用 |
 | Sealed Context binding | 不適用 |
-| Agent Context binding | 本票 revision；worktree／branch 待派工時建立 |
+| Agent Context binding | 本票 revision／worktree `.worktrees/gov-22`／branch `implement/gov-22-refusal-guidance` |
 | 實作語言 | Python 3.11 ＋ PowerShell（安裝器） |
 | 狀態 | `IN_PROGRESS` |
-| 共同基準 | `<派工時填入>` |
-| 實作者 | `<派工時填入>` |
+| 共同基準 | `23239d84`（worktree HEAD 為綁定 commit，派工訊息載明） |
+| 實作者 | Opus 5（難票：本票定義的分類會約束往後每一張票，分類定錯比實作錯難修） |
 | 審閱者 | 控制面（Opus 5）＋ owner（本票定義的分類會約束往後每一張票） |
 | 責任邊界 | 新增 `library/local_orchestration/refusal_guidance.py` 與其測試；`install.ps1` 的輸出結構；**首批**具名拒絕的分類 |
 | 禁止修改 | 任何拒絕的**判定邏輯**——本票只加「這個拒絕之後怎麼辦」，不改「什麼時候拒絕」 |
