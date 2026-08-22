@@ -10,8 +10,9 @@ import unittest
 from contextlib import redirect_stdout
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from unittest import mock
 
-from library.local_orchestration import runner_cli
+from library.local_orchestration import runner_cli, windows_native_git_ref
 from library.local_orchestration.event_runner import (
     RunnerSubscriptionFile,
     resolve_wake_channel,
@@ -38,9 +39,12 @@ from library.local_orchestration.wake_capability import (
     wake_config_path,
 )
 from library.local_orchestration.wake_scoped_boundary import WakeScopedDispatchBoundary
+from library.local_orchestration.work_queue import read_work_queue
 from library.workflow_router.supervision_policy import SupervisionClass
 from tests.test_role_wake_composition import _receipt
 from tests.test_runner_receipt_seeding import _issue_receipt_fixture
+
+_SIMULATED_NATIVE_IMPORT_ERROR = "simulated: pywin32 did not import (ticket 21 test)"
 
 _PROJECT = "prj_0123456789abcdef"
 
@@ -80,6 +84,35 @@ def _repository(base: Path) -> Path:
         check=True,
         capture_output=True,
     )
+    return repository
+
+
+def _repository_with_baseline_commit(base: Path) -> Path:
+    """A repo whose `refs/heads/main` actually resolves.
+
+    `_repository` above is deliberately commit-less: the existing subscribe
+    tests only exercise input validation and never reach Git registration.
+    The ticket-21 tests below need `exact_git_ref` to resolve so a run is
+    blocked by ref-watch capability specifically, not by an unrelated
+    `REF_UNAVAILABLE` that would be true regardless of that capability.
+    """
+
+    repository = base / "repo-with-commit"
+    repository.mkdir(parents=True)
+
+    def _run(*arguments: str) -> None:
+        subprocess.run(
+            ("git", "-C", str(repository), *arguments),
+            check=True,
+            capture_output=True,
+        )
+
+    _run("init", "--quiet", "-b", "main")
+    _run("config", "user.email", "ref-watch-capability@example.invalid")
+    _run("config", "user.name", "Ref Watch Capability")
+    (repository / "source.txt").write_text("baseline\n", encoding="utf-8")
+    _run("add", "source.txt")
+    _run("commit", "--quiet", "-m", "baseline")
     return repository
 
 
@@ -168,6 +201,164 @@ class RunEventRunnerGateTests(unittest.TestCase):
                 runner_state_path(layout).read_text(encoding="utf-8")
             )
             self.assertEqual(recorded["code"], "SUBSCRIPTIONS_INVALID")
+
+    def test_a_gate_failure_still_names_the_real_ref_watch_capability(self) -> None:
+        """Ticket 21 TDD-1: normal behaviour.
+
+        This machine really is Windows with `pywin32` present, so the probe
+        used here is unmocked -- the gate write happens before any
+        subscription is touched, and the capability fact is additive, so it
+        must show up even this early.
+        """
+
+        with TemporaryDirectory() as temporary:
+            layout = _layout(temporary)
+            self.assertEqual(run_event_runner(layout), 2)
+            recorded = json.loads(
+                runner_state_path(layout).read_text(encoding="utf-8")
+            )
+            self.assertEqual(recorded["commit_trigger_capability"], "AVAILABLE")
+            self.assertIsNone(recorded["commit_trigger_failure"])
+
+    def test_a_gate_failure_names_capability_unavailable_when_forced(self) -> None:
+        """Ticket 21 TDD-3: the fail-closed leg, simulated on this machine.
+
+        Forcing the underlying import flag off must not change the gate's
+        own behaviour (still `NO_SUBSCRIPTIONS`, still exit code 2) -- only
+        add the honest capability fact. That is the "only increases, never
+        changes existing field semantics" regression rule from the ticket.
+        """
+
+        with TemporaryDirectory() as temporary:
+            layout = _layout(temporary)
+            with mock.patch.object(
+                windows_native_git_ref,
+                "_NATIVE_IMPORT_ERROR",
+                _SIMULATED_NATIVE_IMPORT_ERROR,
+            ):
+                code = run_event_runner(layout)
+            self.assertEqual(code, 2)
+            recorded = json.loads(
+                runner_state_path(layout).read_text(encoding="utf-8")
+            )
+            self.assertEqual(recorded["code"], "NO_SUBSCRIPTIONS")
+            self.assertEqual(recorded["commit_trigger_capability"], "UNAVAILABLE")
+            self.assertEqual(
+                recorded["commit_trigger_failure"], "NATIVE_BINDING_UNAVAILABLE"
+            )
+
+
+class RefWatchCapabilityNeverInferredFromAnEmptyQueueTests(unittest.TestCase):
+    """Ticket 21 completion evidence.
+
+    The runner never fakes a trigger, and its state distinguishes "no
+    watcher" from "a watcher with nothing to report" -- the defect-class-2
+    case named in the ticket. What must differ between the scenarios below
+    is the named capability fact, never something inferred from the queue
+    being empty, which is equally true either way.
+    """
+
+    def _armed_inputs_path(
+        self, layout: JohnnyRootLayout, base: Path, repository: Path
+    ) -> Path:
+        _declare_wake_command(layout)
+        _seed_receipt(layout)
+        inputs_path = base / "inputs.json"
+        _write_inputs_file(
+            inputs_path,
+            _receipt_locator_payload(),
+            _subscription_inputs_payload(repository),
+        )
+        return inputs_path
+
+    def test_real_and_forced_unavailable_capability_are_told_apart(self) -> None:
+        """Both ends land on the same `REGISTRATION_REJECTED`-flavoured
+
+        `SUBSCRIPTION_REJECTED` -- this repository has no commit, so
+        `refs/heads/main` never resolves and native registration is never
+        even attempted, on either side of the comparison. That is
+        deliberate: it isolates the one thing that must differ, the named
+        capability fact, from an unrelated reason both sides would fail for
+        anyway, and it keeps this test from ever reaching a state where the
+        runner could enter its blocking wait.
+        """
+
+        with TemporaryDirectory() as temporary:
+            base = Path(temporary)
+            layout = _layout(str(base / "johnny"))
+            repository = _repository(base)
+            inputs_path = self._armed_inputs_path(layout, base, repository)
+            subscribe_code, subscribe_payload = _capture(
+                "runner", ("subscribe", str(inputs_path)), layout.base
+            )
+            self.assertEqual(subscribe_code, 0, subscribe_payload)
+
+            with self.subTest(capability="real (this machine has pywin32)"):
+                code = run_event_runner(layout)
+                self.assertEqual(code, 2)
+                recorded = json.loads(
+                    runner_state_path(layout).read_text(encoding="utf-8")
+                )
+                self.assertEqual(recorded["code"], "SUBSCRIPTION_REJECTED")
+                self.assertEqual(recorded["commit_trigger_capability"], "AVAILABLE")
+                self.assertIsNone(recorded["commit_trigger_failure"])
+                queue = read_work_queue(layout)
+                self.assertEqual(queue.items, ())
+
+            with self.subTest(capability="forced unavailable"):
+                with mock.patch.object(
+                    windows_native_git_ref,
+                    "_NATIVE_IMPORT_ERROR",
+                    _SIMULATED_NATIVE_IMPORT_ERROR,
+                ):
+                    code = run_event_runner(layout)
+                self.assertEqual(code, 2)
+                recorded = json.loads(
+                    runner_state_path(layout).read_text(encoding="utf-8")
+                )
+                self.assertEqual(recorded["code"], "SUBSCRIPTION_REJECTED")
+                self.assertEqual(recorded["commit_trigger_capability"], "UNAVAILABLE")
+                self.assertEqual(
+                    recorded["commit_trigger_failure"], "NATIVE_BINDING_UNAVAILABLE"
+                )
+                queue = read_work_queue(layout)
+                self.assertEqual(queue.items, ())
+
+    def test_forced_unavailable_never_lets_a_real_commit_reach_the_queue(self) -> None:
+        """Property 4, end to end, with a ref that actually resolves.
+
+        This repository does carry a commit, so it is specifically the
+        forced-unavailable capability -- not an unrelated `REF_UNAVAILABLE`
+        -- that keeps `run_event_runner` from ever getting past a degraded
+        registration to arm any watcher that could have reported it. The
+        capability is forced unavailable for the whole call, so this never
+        risks reaching a state where the runner could enter its blocking
+        wait either.
+        """
+
+        with TemporaryDirectory() as temporary:
+            base = Path(temporary)
+            layout = _layout(str(base / "johnny"))
+            repository = _repository_with_baseline_commit(base)
+            inputs_path = self._armed_inputs_path(layout, base, repository)
+            _capture("runner", ("subscribe", str(inputs_path)), layout.base)
+
+            with mock.patch.object(
+                windows_native_git_ref,
+                "_NATIVE_IMPORT_ERROR",
+                _SIMULATED_NATIVE_IMPORT_ERROR,
+            ):
+                code = run_event_runner(layout)
+
+            self.assertEqual(code, 2)
+            recorded = json.loads(
+                runner_state_path(layout).read_text(encoding="utf-8")
+            )
+            self.assertEqual(recorded["status"], "BLOCKED")
+            self.assertEqual(recorded["code"], "SUBSCRIPTION_REJECTED")
+            self.assertEqual(recorded["commit_trigger_capability"], "UNAVAILABLE")
+            queue = read_work_queue(layout)
+            self.assertEqual(queue.items, ())
 
 
 class RealRunnerLifecyclePortTests(unittest.TestCase):

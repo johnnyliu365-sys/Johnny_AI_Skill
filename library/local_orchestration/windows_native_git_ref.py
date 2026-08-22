@@ -1,18 +1,27 @@
-"""Windows-native exact Git ref hints using overlapped directory notifications."""
+"""Windows-native exact Git ref hints using overlapped directory notifications.
+
+The native bindings this module needs (`pywin32`) exist only on Windows, and
+`requirements-dev.txt` installs them only under `sys_platform == "win32"` --
+so importing this module on any other platform, or on Windows without the
+package present, must still succeed. Ticket 21 is what makes that true:
+whether a native watch can actually be armed is reported by value through
+`probe_ref_watch_capability`, in the same finite shape
+`wake_capability.probe_wake_capability` already uses for the (unrelated) host
+wake command -- a bounded status plus, on failure, exactly one named reason,
+never a boolean and never inferred from something else being empty.
+"""
 
 from __future__ import annotations
 
 from dataclasses import dataclass
+from enum import Enum
 from pathlib import Path, PurePosixPath
 import subprocess
+import sys
 from threading import current_thread, Lock, Thread
-from typing import cast, Final, TYPE_CHECKING
+from typing import cast, Final, Self, TYPE_CHECKING
 
-from pydantic import ValidationError
-import pywintypes
-import win32con
-import win32event
-import win32file
+from pydantic import BaseModel, ConfigDict, ValidationError, model_validator
 
 from library.workflow_router.git_handoff_contracts import (
     GitNativeFailureKind,
@@ -25,13 +34,116 @@ from library.workflow_router.git_handoff_contracts import (
 )
 from .git_handoff_event_adapter import NativeGitRefSignalSink
 
+# `_NATIVE_IMPORT_ERROR` is the one fact every other name in this module
+# ultimately depends on: `None` only when the four modules below both exist
+# and imported cleanly. It is computed once, here, rather than re-probed on
+# every call -- an interpreter that has already imported (or already failed
+# to import) a module gets the same answer for the rest of the process.
+_NATIVE_IMPORT_ERROR: str | None
+
 if TYPE_CHECKING:
     import _win32typing
+    import pywintypes
+    import win32con
+    import win32event
+    import win32file
+
+    _NATIVE_IMPORT_ERROR = None
+else:
+    try:
+        import pywintypes
+        import win32con
+        import win32event
+        import win32file
+    except ImportError as _import_error:
+        pywintypes = None  # type: ignore[assignment]
+        win32con = None  # type: ignore[assignment]
+        win32event = None  # type: ignore[assignment]
+        win32file = None  # type: ignore[assignment]
+        _NATIVE_IMPORT_ERROR = str(_import_error)
+    else:
+        _NATIVE_IMPORT_ERROR = None
 
 
-_NOTIFY_FILTER = (
-    win32con.FILE_NOTIFY_CHANGE_FILE_NAME
-    | win32con.FILE_NOTIFY_CHANGE_LAST_WRITE
+class RefWatchCapabilityStatus(str, Enum):
+    """Finite outcomes of asking whether this process can arm a native watch."""
+
+    AVAILABLE = "AVAILABLE"
+    UNAVAILABLE = "UNAVAILABLE"
+
+
+class RefWatchCapabilityFailure(str, Enum):
+    """Finite reasons a native exact-ref watch cannot be armed here.
+
+    `PLATFORM_UNSUPPORTED` and `NATIVE_BINDING_UNAVAILABLE` are kept apart on
+    purpose: the first is "this OS has no such API", the second is "this is
+    Windows but the optional `pywin32` dependency did not import". Collapsing
+    them would hide which of two very different remedies applies.
+    """
+
+    PLATFORM_UNSUPPORTED = "PLATFORM_UNSUPPORTED"
+    NATIVE_BINDING_UNAVAILABLE = "NATIVE_BINDING_UNAVAILABLE"
+
+
+class _StrictModel(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+        frozen=True,
+        strict=True,
+        revalidate_instances="always",
+    )
+
+
+class RefWatchCapabilityResult(_StrictModel):
+    """Exactly one available capability or exactly one named failure.
+
+    Mirrors `WakeCapabilityProbeResult`'s shape so "no watcher" (this type,
+    `UNAVAILABLE` with a name) and "a watcher with nothing to report" (an
+    empty queue elsewhere) can never be read as the same fact -- one is a
+    capability result, the other is a queue being quiet, and nothing here
+    lets a caller confuse the two by construction.
+    """
+
+    status: RefWatchCapabilityStatus
+    failure: RefWatchCapabilityFailure | None = None
+
+    @model_validator(mode="after")
+    def exact_capability_shape(self) -> Self:
+        if self.status is RefWatchCapabilityStatus.AVAILABLE:
+            if self.failure is not None:
+                raise ValueError("an available capability carries no failure")
+        elif self.failure is None:
+            raise ValueError("an unavailable capability names exactly one failure")
+        return self
+
+
+def probe_ref_watch_capability() -> RefWatchCapabilityResult:
+    """Whether this process can arm a native exact-ref watch, and why not.
+
+    Takes no argument and trusts no caller-supplied claim: the answer comes
+    only from facts this interpreter can observe about itself (the running
+    platform, and whether the native bindings actually imported), the same
+    "prove it, do not take it on faith" rule `probe_wake_capability` follows
+    for the host wake command.
+    """
+
+    if sys.platform != "win32":
+        return RefWatchCapabilityResult(
+            status=RefWatchCapabilityStatus.UNAVAILABLE,
+            failure=RefWatchCapabilityFailure.PLATFORM_UNSUPPORTED,
+        )
+    if _NATIVE_IMPORT_ERROR is not None:
+        return RefWatchCapabilityResult(
+            status=RefWatchCapabilityStatus.UNAVAILABLE,
+            failure=RefWatchCapabilityFailure.NATIVE_BINDING_UNAVAILABLE,
+        )
+    return RefWatchCapabilityResult(status=RefWatchCapabilityStatus.AVAILABLE)
+
+
+_NOTIFY_FILTER: int | None = (
+    None
+    if _NATIVE_IMPORT_ERROR is not None
+    else win32con.FILE_NOTIFY_CHANGE_FILE_NAME | win32con.FILE_NOTIFY_CHANGE_LAST_WRITE
 )
 _FILE_LIST_DIRECTORY: Final[int] = 0x0001
 
@@ -140,6 +252,12 @@ class WindowsNativeGitRefNotificationPort:
             trusted = GitNativeRegistrationRequest.model_validate(request, strict=True)
         except ValidationError:
             return GitNativeRegistrationResult(status=GitNativeRegistrationStatus.REJECTED)
+        if _NATIVE_IMPORT_ERROR is not None:
+            # No native binding imported, so no `win32*` name below this line
+            # is safe to touch. Reported by value, the same as any other
+            # native-side failure this method already returns -- not raised,
+            # and never a silent pretence that a watch was armed.
+            return GitNativeRegistrationResult(status=GitNativeRegistrationStatus.UNAVAILABLE)
         with self._lock:
             existing = self._subscriptions.get(trusted.subscription_id)
             if existing is not None:
@@ -326,6 +444,10 @@ class WindowsNativeGitRefNotificationFactory:
 
 __all__ = [
     "NativeGitRefSignalSink",
+    "RefWatchCapabilityFailure",
+    "RefWatchCapabilityResult",
+    "RefWatchCapabilityStatus",
     "WindowsNativeGitRefNotificationFactory",
     "WindowsNativeGitRefNotificationPort",
+    "probe_ref_watch_capability",
 ]

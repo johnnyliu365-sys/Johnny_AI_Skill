@@ -10,6 +10,15 @@ The same signal callback also feeds the work queue's second source: a commit
 on a watched ref becomes one `COMMIT_TRIGGER` item. That wire lives in
 `commit_trigger_intake`, is composed here and nowhere else, and cannot delay
 or fail a wake -- see that module for why the ordering is what it is.
+
+Both of those rely on the same native exact-ref watch, and that watch exists
+only on Windows (ticket 21). Every state this runner writes therefore also
+names the ref-watch capability this process actually has, probed fresh each
+run rather than assumed: on a platform or environment without it, this
+runner still starts, the wake-channel resolution above is untouched, and the
+state says plainly that commit triggers are unavailable here -- instead of
+letting a reader infer that from an empty queue, which is exactly as true
+when a watch is armed and simply has nothing to report yet.
 """
 
 from __future__ import annotations
@@ -50,6 +59,7 @@ from .wake_capability import (
     WakeChannelKind,
     probe_wake_capability,
 )
+from .windows_native_git_ref import probe_ref_watch_capability
 
 _SUBSCRIPTIONS_FILE_NAME = "runner-subscriptions.json"
 _STOP_SENTINEL_NAME = "runner.stop"
@@ -137,16 +147,35 @@ def _write_state(layout: JohnnyRootLayout, payload: dict[str, object]) -> None:
 def run_event_runner(layout: JohnnyRootLayout) -> int:
     """Arm every committed subscription, then sleep until a stop is requested."""
 
+    # Probed once per run, not re-derived from anything this loop later does:
+    # whether commit triggers can happen here is a fact about this process
+    # and this platform, unrelated to whether any particular subscription
+    # goes on to succeed. Every state below carries it, gate failures
+    # included, so a reader never has to infer it from an empty queue.
+    ref_watch = probe_ref_watch_capability()
+
+    def _write(payload: dict[str, object]) -> None:
+        _write_state(
+            layout,
+            {
+                **payload,
+                "commit_trigger_capability": ref_watch.status.value,
+                "commit_trigger_failure": (
+                    ref_watch.failure.value if ref_watch.failure is not None else None
+                ),
+            },
+        )
+
     subscriptions_file = subscriptions_path(layout)
     if not subscriptions_file.is_file():
-        _write_state(layout, {"status": "BLOCKED", "code": "NO_SUBSCRIPTIONS"})
+        _write({"status": "BLOCKED", "code": "NO_SUBSCRIPTIONS"})
         return 2
     try:
         parsed = RunnerSubscriptionFile.model_validate_json(
             subscriptions_file.read_text(encoding="utf-8")
         )
     except (OSError, ValueError):
-        _write_state(layout, {"status": "BLOCKED", "code": "SUBSCRIPTIONS_INVALID"})
+        _write({"status": "BLOCKED", "code": "SUBSCRIPTIONS_INVALID"})
         return 2
 
     channel = resolve_wake_channel(layout)
@@ -174,8 +203,7 @@ def run_event_runner(layout: JohnnyRootLayout) -> int:
             boundary, specification.preparation.receipt
         )
         if verification is not ReceiptVerificationStatus.CLAIMABLE:
-            _write_state(
-                layout,
+            _write(
                 {
                     "status": "BLOCKED",
                     "code": "RECEIPT_NOT_DISPATCHED",
@@ -204,8 +232,7 @@ def run_event_runner(layout: JohnnyRootLayout) -> int:
         )
         prepared = controller.prepare(specification.preparation)
         if prepared.status is not SupervisionPreparationStatus.PREPARED:
-            _write_state(
-                layout,
+            _write(
                 {
                     "status": "BLOCKED",
                     "code": "SUBSCRIPTION_REJECTED",
@@ -216,8 +243,7 @@ def run_event_runner(layout: JohnnyRootLayout) -> int:
             return 2
         started = controller.start(specification.start)
         if started.status is not SupervisionStartStatus.ACTIVE:
-            _write_state(
-                layout,
+            _write(
                 {
                     "status": "BLOCKED",
                     "code": "SUBSCRIPTION_REJECTED",
@@ -229,8 +255,7 @@ def run_event_runner(layout: JohnnyRootLayout) -> int:
         controllers.append(controller)
         armed.append(specification.preparation.registration_request.subscription_id)
 
-    _write_state(
-        layout,
+    _write(
         {
             "status": "RUNNING",
             "pid": os.getpid(),
@@ -245,8 +270,7 @@ def run_event_runner(layout: JohnnyRootLayout) -> int:
             # observes the owner's stop request and never inspects Git.
             time.sleep(_STOP_POLL_SECONDS)
     finally:
-        _write_state(
-            layout,
+        _write(
             {
                 "status": "STOPPED",
                 "wake_channel": channel.kind.value,
