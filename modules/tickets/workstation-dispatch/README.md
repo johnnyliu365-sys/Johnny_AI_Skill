@@ -19,3 +19,5 @@ boundary" — the question CLOSURE-E8-02 deliberately deferred.
 | W3 | Router consumption of reviewer returns | `CLOSED` — each verdict becomes exactly one validated `RouterEvent`; marker written before the event is handed back; 9 tests, two reverse mutations |
 | W4 | Whole-chain qualification | `CLOSED` — dispatch to Router event in one gated run, nothing simulated, no issuing fixture; surfaced governance 03 |
 | W5 | Exactly-once across processes | `CLOSED` — the review return/consume critical sections take the extracted OS-visible file lock; two-consumer and two-submit races proven single-effect; lock removal turns the race cell red |
+| P8R-R02 | [Provider-neutral executor routing (superseded)](p8-provider-neutral-executor-routing.md) | `SUPERSEDED / CHG-20260822-032` — old high-assurance admission assumptions; not dispatch authority |
+| P8R-R03 | [Provider-neutral executor routing](p8r-provider-neutral-executor-routing-r03.md) | `APPROVED / NOT_DISPATCHED` — POC/standard pure resolver; Luna/xhigh implementation, Terra/xhigh review, named host-readback gap |
