@@ -12,7 +12,7 @@
       "source": {
         "source": "url",
         "url": "https://github.com/johnnyliu365-sys/Johnny_AI_Skill.git",
-        "sha": "c877ac48d0a8321dcd77e01f618728f94d408100"
+        "sha": "f7b1c377fd6b4f7b1b23d3055d594a3f2bb5e851"
       },
       "description": "A detachable project-takeover workflow, context-load telemetry, and reusable-module selector.",
       "author": {
