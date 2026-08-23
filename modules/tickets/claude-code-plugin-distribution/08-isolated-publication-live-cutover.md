@@ -83,6 +83,41 @@ run README's real commands in a disposable isolated `CLAUDE_CONFIG_DIR`; prove L
 source integration and source-main push only after L1--L6. Any changed source/publication
 readback, absent candidate binding, cache/CLI failure or ref collision is a named halt.
 
+## CLOSURE 06 — completed live cutover
+
+Ticket 13 integrated at `7a7000ba0affd8573ba5a646bfffe3ec46ca0ebf`, fixing the installed-cache
+checker’s lossless UTF-8 path handling without changing the Level 1 payload. Terra then
+independently re-admitted the rebased, clean Ticket 08 candidate
+`d181c547f4afca566694711729978ea29aae2abd`, bound it with reproduced parentless
+`C=5c1cb9aec837a2fc8c76634404bccd393a0b9281` to correlation
+`claude-publication-08-v0411-r02-20260824`, and reran the complete source suite:
+`1739 passed, 22 skipped, 3857 subtests`.
+
+Before every remaining effect, fresh readback required the exact public state: default
+publication `main` and immutable `plugin-v0.4.11` at `C`; retained immutable
+`plugin-v0.4.10=b52215eb3ee5dfa101e65c189441e62c20ca45e6`; and no other publication head/tag.
+The one temporary development raw-descriptor ref was lease-updated from the prior reviewed
+candidate only after its exact preimage was read, and read back at the newly bound candidate.
+
+L1 and L2 remained verified: the source metadata is version `0.4.11`, names the independent
+publication URL and pins `C`; its generator, carrier, parentless root and publication ref/tag
+closure agree. L3–L5 were then proven using README's real Claude commands in fresh disposable
+isolated configurations. Both the temporary-candidate raw descriptor and the post-integration
+development-`main` raw descriptor produced a descriptor-only marketplace cache and an enabled
+`johnny-ai-skill@johnny-ai-skill` version `0.4.11` checkout at `C`. The full installed ref/tree
+closure verified. The reviewer’s actual-cache mutation made a reachable development tree return
+`SENTINEL_REACHABLE`; restoring the exact ref/object graph returned `VERIFIED`.
+
+L6 pre-integration evidence verified that development `main` remained
+`7a3f032e72f42db04808b6195d5ebe12f734ec7a` until all L1–L5 evidence was green. The guarded
+source gate then integrated the exact candidate and returned the same SHA
+`d181c547f4afca566694711729978ea29aae2abd`; `origin/main` read back that exact commit. The
+temporary raw-descriptor ref was subsequently read against the integrated main/candidate and
+deleted. Its removal left only the formal development `main` entry.
+
+No tag moved, no historical release was altered, and no undeclared remote ref remains. This
+closes the ticket's authorized live cutover as `DONE / APPROVED / INTEGRATED / CLOSURE_06`.
+
 ## Revision 06 convergence replan — L3 raw-descriptor exclusivity
 
 The revision-05 correction review found an `EVIDENCE_DEFECT`: it rejected a publication-repository
