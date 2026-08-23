@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | Revision 02, AC-5 through AC-7; Ticket 06 installed-cache closure contract; Ticket 08 CLOSURE_02 L4 blocker record |
 | PRD / CHG / Context | `PRD-20260823-034` / `CHG-20260823-034` / sealed Context Revision 01, blob `0fef3f1e4c8ce317873cdf2f73dc1bd793579217` |
-| State / closure | `DRAFT / PENDING_OWNER_APPROVAL` / `CLOSURE_01` |
+| State / closure | `APPROVED / DISPATCH_READY` / `CLOSURE_01` |
 | Exact baseline | `0c2d71a311e4c2748082b61df6219d1d108e06db` |
 | Dependency | Ticket 06 and Ticket 09 integrated; Ticket 08 CLOSURE_02 has an actual isolated-cache L4 failure. |
 | Control owner / reviewer | `ticket-review` — Terra / xhigh |
