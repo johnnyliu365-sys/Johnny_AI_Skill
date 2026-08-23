@@ -147,6 +147,17 @@ class InstalledPluginCacheClosureTests(unittest.TestCase):
             self.assertEqual(invalid_ref.status, InstallClosureStatus.PLUGIN_CHECKOUT_MISMATCH)
             self.assertEqual(commit, PublicationCommit.model_validate(commit))
 
+    def test_l5_missing_cli_cache_data_is_named_and_not_verified(self) -> None:
+        with TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            _initialise(root)
+            payload = PublicationPayload(
+                paths=("payload.txt",),
+                blob_ids=(("payload.txt", "0" * 40),),
+            )
+            result = verify_installed_plugin_cache(root, payload)
+            self.assertEqual(result.status, InstallClosureStatus.PLUGIN_CHECKOUT_MISMATCH)
+
 
 if __name__ == "__main__":
     unittest.main()

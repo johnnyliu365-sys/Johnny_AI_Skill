@@ -185,6 +185,16 @@ class PublicationRepositoryClosureTests(unittest.TestCase):
             result = verify_publication_repository(remote, payload, _REMOTE_URL)
             self.assertEqual(result.status, PublicationClosureStatus.DEFAULT_BRANCH_INVALID)
 
+    def test_l5_stale_publication_main_is_named_without_fallback(self) -> None:
+        with TemporaryDirectory() as temporary:
+            _source, remote, commit, payload = _fixture(Path(temporary))
+            stale = PublicationCommit(value="f" * 40)
+            result = verify_publication_repository(
+                remote, payload, _REMOTE_URL, expected_main=stale
+            )
+            self.assertEqual(result.status, PublicationClosureStatus.STALE_MAIN)
+            self.assertNotEqual(commit, stale)
+
     def test_c3_parent_and_tree_differences_are_rejected(self) -> None:
         with TemporaryDirectory() as temporary:
             source, remote, commit, payload = _fixture(Path(temporary))
