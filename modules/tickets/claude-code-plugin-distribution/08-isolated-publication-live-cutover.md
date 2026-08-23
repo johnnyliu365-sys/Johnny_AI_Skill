@@ -4,8 +4,8 @@
 | --- | --- |
 | SPEC / AC | Revision 05, AC-1 through AC-11 |
 | PRD / CHG / Context | `PRD-20260823-034` / `CHG-20260823-034`, amended by `PRD-20260823-035` / `CHG-20260823-035`, `PRD-20260823-036` / `CHG-20260823-036` and `PRD-20260823-037` / `CHG-20260823-037` / sealed Context Revision 04, blob `f175d6a6842ca1d24a3cfd85e3a24542e7d7b9a3` |
-| State / closure | `BLOCKED / OWNER_EFFECT_AUTHORITY_REQUIRED / VERSION_SPECIFIC_TAG_CLOSURE_COMPLETE` / `CLOSURE_04` |
-| Dependency | Tickets 06, 07, 09, 10, 11 and 12 are integrated. Ticket 12 closed the version-specific retained-tag contract at `9a244db4a9c4342476b2a1f59d49b9c15abc59e7`; a fresh exact owner effect authority is now the sole admission prerequisite. The CLOSURE_03 source candidate remains review evidence only. |
+| State / closure | `READY / OWNER_EFFECT_AUTHORITY_RECORDED / CLOSURE_04` |
+| Dependency | Tickets 06, 07, 09, 10, 11 and 12 are integrated. Ticket 12 closed the version-specific retained-tag contract at `9a244db4a9c4342476b2a1f59d49b9c15abc59e7`; the fresh CLOSURE_04 authority below replaces the suspended CLOSURE_03 authority. The CLOSURE_03 source candidate remains review evidence only. |
 | Historical 0.4.10 development baseline | `f099ff7f5c7472c38fd0353e31556e06d4016e27` |
 | Historical 0.4.10 candidate branch / temporary raw ref | `implement/claude-publication-08-live-cutover` / `refs/heads/verify/claude-publication-08-live-cutover` |
 | Historical effect correlation | `claude-publication-08-20260823` |
@@ -26,6 +26,37 @@ The owner selected successor version `0.4.11`. That selection is not a release a
 Ticket 12 is integrated. This ticket remains blocked until the owner records a fresh exact effect
 authority for one rebased candidate, remote snapshot, expected-old SHA and correlation. It must
 not reuse `0.4.10`, hand-edit a SHA, or advance its historical candidate.
+
+## CLOSURE 04 fresh owner effect authority — 2026-08-24
+
+The project owner authorized this one `0.4.11` live-cutover attempt after P8R-R04 closure. This
+record replaces, and does not revive, CLOSURE_03. It authorizes no effect until the Terra reviewer
+has committed and bound the fresh candidate described below.
+
+| Binding | Authorized value |
+| --- | --- |
+| Development baseline | `2fd6908eb0c304ce0dbc48f52ab6268d6d6b204f`, plus this authority record once integrated |
+| Candidate worktree / branch | `.worktrees/claude-publication-08-v0411-r02` / `implement/claude-publication-08-v0411-r02` |
+| Temporary raw-descriptor ref | `refs/heads/verify/claude-publication-08-v0411-r02-live-cutover` |
+| Correlation | `claude-publication-08-v0411-r02-20260824` |
+| Publication target / version | `https://github.com/johnnyliu365-sys/Johnny_AI_Skill_publication.git` / `0.4.11` |
+| Read-only remote snapshot | default `main`; `main` = `b52215eb3ee5dfa101e65c189441e62c20ca45e6`; immutable `plugin-v0.4.10` = the same SHA; `plugin-v0.4.11` absent (read 2026-08-24) |
+
+Before every external mutation, Terra must re-read that publication remote and halt unless its
+default branch, expected-old `main`, retained tag and absent `plugin-v0.4.11` exactly match this
+record. It must bind the reviewer-written candidate SHA, its generator-produced parentless root
+`C`, and the exact version/tag/correlation to that fresh readback; a local implementer commit,
+historical candidate/root, copied SHA or changed ref set is not authority.
+
+Subject to the preceding source review, reviewer commit, local generator/reachability proof and
+fresh readback, this record authorizes Terra only to: (1) publish `C` from the stated expected-old
+`main` through Ticket 07's CAS plan and create absent-only `plugin-v0.4.11` at `C`; (2) push the
+named development temporary ref solely for the immutable raw-descriptor check, then remove it
+only after guarded source integration or owner-directed abandonment; (3) run Ticket 08's actual
+README commands in a disposable isolated `CLAUDE_CONFIG_DIR`; and (4) only after verified L1--L6,
+integrate and push that same reviewed development candidate. No tag movement, retry on changed
+readback, provider invocation, runner/wake claim, user-profile installation, credential output,
+other remote mutation or use of CLOSURE_03 is authorized.
 
 ## CLOSURE 03 historical owner effect authority — suspended
 
