@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | Revision 02, AC-1 through AC-9 |
 | PRD / CHG / Context | `PRD-20260823-034` / `CHG-20260823-034` / sealed Context Revision 01, blob `0fef3f1e4c8ce317873cdf2f73dc1bd793579217` |
-| State / closure | `BLOCKED / TICKET_DEFECT / UPSTREAM_CLOSURE_CONTRACT` / `CLOSURE_02` |
+| State / closure | `BLOCKED / REQUIREMENT_CHANGED / VERSION_TAG_COLLISION` / `CLOSURE_02` |
 | Dependency | Tickets 06, 07 and 09 integrated and independently reviewed; exact baseline then recorded before effect admission. |
 | Exact development baseline | `f099ff7f5c7472c38fd0353e31556e06d4016e27` |
 | Authorized candidate branch / temporary raw ref | `implement/claude-publication-08-live-cutover` / `refs/heads/verify/claude-publication-08-live-cutover` |
@@ -91,6 +91,23 @@ the unintegrated candidate. Neither ref is moved or removed by this blocker reco
 ticket must make the installed-cache checker distinguish an admitted normal remote-default
 symbolic ref from a foreign/default-branch mismatch, with actual-cache and reverse-mutation
 evidence, before Ticket 08 can be re-admitted.
+
+## Post-Ticket-10 requirement change — payload version/tag collision
+
+Ticket 10 is now integrated and changes
+`library/local_orchestration/claude_plugin_cache_closure.py`. `library/` is an enumerated Level 1
+publication payload tree, so rebasing this Ticket 08 candidate and regenerating its payload would
+produce a root different from the already published
+`b52215eb3ee5dfa101e65c189441e62c20ca45e6`. The public publication repository already has that
+root on `main` and immutable `plugin-v0.4.10`.
+
+This ticket authorizes only version `0.4.10` and creating that tag when absent; it forbids moving
+a tag, hand-editing a SHA and a broader push. Therefore no fresh Ticket 08 candidate can both
+contain the integrated cache-closure repair and satisfy its current version/tag authority. The
+next action is `ImplementationReturn.CHANGE_DETECTED -> REQUIREMENT_CHANGED`: the architecture
+owner must decide the successor release/version and its publication/migration authority, then
+update the requirement lineage, SPEC and tickets. Neither descriptor repinning nor Ticket 08
+re-admission is legal until that decision is recorded.
 
 ## CLOSURE 01 blocker
 
