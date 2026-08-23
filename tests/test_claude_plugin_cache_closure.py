@@ -211,6 +211,20 @@ class InstalledPluginCacheClosureTests(unittest.TestCase):
                 malformed = cache_module._read_refs(root)
             self.assertIsNone(malformed)
 
+    def test_s3_loose_symbolic_ref_requires_exact_target_content(self) -> None:
+        with TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            commit, payload = _normal_clone_fixture(root)
+            head_file = root / ".git" / "refs" / "remotes" / "origin" / "HEAD"
+            before = head_file.read_bytes()
+            head_file.write_bytes(b"ref: refs/remotes/origin/main \n")
+            rejected = verify_installed_plugin_cache(root, payload, expected_head=commit)
+            self.assertEqual(rejected.status, InstallClosureStatus.INSTALLED_REF_SET_INVALID)
+            head_file.write_bytes(before)
+            restored = verify_installed_plugin_cache(root, payload, expected_head=commit)
+            self.assertEqual(restored.status, InstallClosureStatus.VERIFIED)
+            self.assertEqual(head_file.read_bytes(), before)
+
     def test_s4_development_ref_remains_rejected_with_normal_remote_head(self) -> None:
         with TemporaryDirectory() as temporary:
             root = Path(temporary)

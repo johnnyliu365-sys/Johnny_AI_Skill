@@ -149,13 +149,17 @@ def _loose_symbolic_remote_heads(
             head = remote_directory / "HEAD"
             if not head.is_file():
                 continue
-            raw_target = head.read_text(encoding="ascii").strip()
-            if not raw_target.startswith("ref: "):
+            raw_target = head.read_text(encoding="ascii")
+            if (
+                not raw_target.startswith("ref: ")
+                or not raw_target.endswith("\n")
+                or raw_target.count("\n") != 1
+            ):
                 return None
             symbols.append(
                 (
                     f"{_REMOTE_PREFIX}{remote_directory.name}/HEAD",
-                    raw_target.removeprefix("ref: "),
+                    raw_target.removeprefix("ref: ").removesuffix("\n"),
                 )
             )
     except (OSError, UnicodeError):
