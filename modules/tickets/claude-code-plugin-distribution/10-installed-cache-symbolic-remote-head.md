@@ -4,8 +4,8 @@
 | --- | --- |
 | SPEC / AC | Revision 02, AC-5 through AC-7; Ticket 06 installed-cache closure contract; Ticket 08 CLOSURE_02 L4 blocker record |
 | PRD / CHG / Context | `PRD-20260823-034` / `CHG-20260823-034` / sealed Context Revision 01, blob `0fef3f1e4c8ce317873cdf2f73dc1bd793579217` |
-| State / closure | `BLOCKED / CONVERGENCE_REVIEW_REQUIRED / IMPLEMENTATION_DEFECT` / `CLOSURE_01` |
-| Exact baseline | `0c2d71a311e4c2748082b61df6219d1d108e06db` |
+| State / closure | `APPROVED / DISPATCH_READY` / `CLOSURE_02` |
+| Exact baseline | `bb14e9623292dce65d8f1bfe00f2a869fb43c1ea` |
 | Dependency | Ticket 06 and Ticket 09 integrated; Ticket 08 CLOSURE_02 has an actual isolated-cache L4 failure. |
 | Control owner / reviewer | `ticket-review` — Terra / xhigh |
 | Implementation owner | `implementation-standard` — Luna / xhigh; one ticket only, no helper |
@@ -54,7 +54,9 @@ mapping crosses the public result boundary.
 
 1. A direct cache ref still passes only Ticket 06's existing allowlist and full-SHA validation.
 2. A symbolic ref is admitted only under `refs/remotes/`, only at that remote's `HEAD` name, and
-   only when its symbolic target is exactly the same remote's `main` ref.
+   only when its raw loose-ref bytes are exactly ASCII `ref: refs/remotes/<remote>/main\n` and
+   its symbolic target is exactly the same remote's `main` ref. CRLF, trailing whitespace, extra
+   newline, non-ASCII and every other byte variation are finite rejections.
 3. The symbolic target must be present in the enumerated ref set and both its object target and
    cache `HEAD` must participate in the existing parentless, declared-payload tree checks.
 4. A symbolic head/tag, a remote `HEAD` targeting another remote, a non-`main` branch, a missing
@@ -70,7 +72,7 @@ mapping crosses the public result boundary.
 | --- | --- |
 | S1 normal clone ref | A disposable payload-only cache with direct `main`, `origin/main`, release tag and `origin/HEAD -> origin/main` returns `VERIFIED`; each unique target is parentless with zero path/blob difference. The implementer records this new expectation first red before the adapter change. |
 | S2 target binding | The same symbolic remote HEAD is rejected when `origin/main` is absent, points at a different root, or does not equal the checked-out expected root. Exact restoration is green. |
-| S3 grammar rejection | Symbolic heads/tags, `origin/HEAD` to `origin/release`, cross-remote targets, malformed remote names and malformed symbolic targets are named non-successes. |
+| S3 grammar rejection | Symbolic heads/tags, `origin/HEAD` to `origin/release`, cross-remote targets, malformed remote names and malformed symbolic targets are named non-successes. A raw CRLF loose target and a raw target with trailing whitespace must each return the named non-success; byte-exact LF restoration is green. |
 | S4 closure retained | A reachable development ref/tree, parented commit, extra/missing/changing payload blob or sentinel remains red even when a syntactically normal remote HEAD is present. |
 | S5 independent review mutation | Terra uses a fresh fixture: `VERIFIED →` one bounded forbidden symbolic-target or development-ref mutation `→` named red `→ VERIFIED` after exact restoration. A zero-red mutation blocks approval. |
 
@@ -107,3 +109,14 @@ automatic correction may be dispatched. The unintegrated candidate commits remai
 evidence only. A control-plane convergence decision must revise the closure with an exact
 raw-byte line-ending regression and obtain owner approval before any additional implementation
 cycle; no Ticket 08 re-admission or external effect follows from this record.
+
+## CLOSURE 02 convergence decision — 2026-08-23
+
+The owner approved one new bounded cycle for the existing, unintegrated Ticket 10 branch. This
+revision makes the raw-byte LF requirement explicit in Frozen Contract 2 and S3; it does not
+change the observable closure, source boundary, profiles, external-effect prohibition or Ticket
+08 dependency. The implementation owner must first rebase the preserved candidate commits onto
+this control-plane commit, then add exactly one correction commit within the same two-file
+boundary. The Terra reviewer must independently prove both raw CRLF and one different forbidden
+symbolic-target mutation red before approval. A further defect in `CLOSURE_02` returns to control
+plane again; it is not an automatic third correction.
