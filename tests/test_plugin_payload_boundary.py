@@ -113,6 +113,13 @@ _UNRESOLVED_REFERENCE_TOKENS: Final[dict[str, str]] = {
 }
 
 
+def _payload_entries(payload: dict[str, object], key: str) -> tuple[str, ...]:
+    entries = payload.get(key)
+    if not isinstance(entries, list) or not all(isinstance(entry, str) for entry in entries):
+        raise AssertionError(f"payload {key} is not a string list")
+    return tuple(entries)
+
+
 class PayloadClosureError(ValueError):
     """Raised when payload content references a path the payload does not carry."""
 
@@ -213,9 +220,10 @@ class PayloadDeclarationTests(unittest.TestCase):
         self.payload = load_payload_declaration(_PLUGIN_MANIFEST)
 
     def test_the_plugin_surface_is_declared(self) -> None:
+        trees = _payload_entries(self.payload, "trees")
         for required in (".claude-plugin", "skills", "commands"):
             with self.subTest(tree=required):
-                self.assertIn(required, self.payload["trees"])
+                self.assertIn(required, trees)
 
     def test_the_declared_payload_is_a_list_not_a_remainder(self) -> None:
         """Every repository top-level entry is either enumerated or not shipped."""
@@ -225,8 +233,85 @@ class PayloadDeclarationTests(unittest.TestCase):
             for entry in _REPO_ROOT.iterdir()
             if is_payload_path(entry.name if entry.is_file() else entry.name + "/", self.payload)
         }
-        declared = set(self.payload["trees"]) | set(self.payload["files"])  # type: ignore[arg-type]
+        declared = set(_payload_entries(self.payload, "trees")) | set(
+            _payload_entries(self.payload, "files")
+        )
         self.assertTrue(shipped <= declared, f"undeclared entries would ship: {shipped - declared}")
+
+    def test_nested_trees_are_segment_exact_and_clean_at_the_manifest_boundary(self) -> None:
+        with TemporaryDirectory() as raw:
+            manifest = Path(raw) / "plugin.json"
+            manifest.write_text(
+                json.dumps(
+                    {
+                        "payload": {
+                            "trees": ["library/NLP", "library/功能集群"],
+                            "files": ["AGENTS.md"],
+                        }
+                    }
+                ),
+                encoding="utf-8",
+            )
+            payload = load_payload_declaration(manifest)
+            self.assertTrue(is_payload_path("library/NLP/python/model.py", payload))
+            self.assertTrue(is_payload_path("library/功能集群/README.md", payload))
+            for sibling in (
+                "library/NLP-old/model.py",
+                "library/NLPx/model.py",
+                "library/新功能集群/README.md",
+            ):
+                with self.subTest(path=sibling):
+                    self.assertFalse(is_payload_path(sibling, payload))
+
+            malformed_trees = (
+                ["library/../NLP"],
+                ["/library/NLP"],
+                ["library//NLP"],
+                [" library/NLP"],
+                ["library/NLP "],
+                ["."],
+                [".."],
+                ["C:/library/NLP"],
+                ["library/NLP", "library/NLP/models"],
+            )
+            for trees in malformed_trees:
+                with self.subTest(trees=trees):
+                    manifest.write_text(
+                        json.dumps({"payload": {"trees": trees, "files": ["AGENTS.md"]}}),
+                        encoding="utf-8",
+                    )
+                    with self.assertRaises(PayloadDeclarationError):
+                        load_payload_declaration(manifest)
+
+    def test_excluded_payload_admission_is_a_reversible_red_mutation(self) -> None:
+        original = _PLUGIN_MANIFEST.read_bytes()
+        committed = load_payload_declaration(_PLUGIN_MANIFEST)
+        self.assertFalse(is_payload_path("library/local_orchestration/README.md", committed))
+        self.assertFalse(is_payload_path("install.ps1", committed))
+        committed_paths = {
+            path.relative_to(_REPO_ROOT).as_posix()
+            for path in declared_payload_files(_REPO_ROOT, committed)
+        }
+        self.assertFalse(
+            any(path.startswith("library/local_orchestration/") for path in committed_paths)
+        )
+        self.assertNotIn("install.ps1", committed_paths)
+
+        with TemporaryDirectory() as raw:
+            manifest = Path(raw) / "plugin.json"
+            candidate = json.loads(original.decode("utf-8"))
+            candidate["payload"]["trees"].append("library/local_orchestration")
+            manifest.write_text(json.dumps(candidate), encoding="utf-8")
+            widened = load_payload_declaration(manifest)
+            with self.assertRaises(AssertionError):
+                self.assertFalse(
+                    is_payload_path("library/local_orchestration/README.md", widened)
+                )
+
+            manifest.write_bytes(original)
+            restored = load_payload_declaration(manifest)
+            self.assertEqual(manifest.read_bytes(), original)
+            self.assertFalse(is_payload_path("library/local_orchestration/README.md", restored))
 
     def test_every_declared_entry_exists(self) -> None:
         self.assertGreater(len(declared_payload_files(_REPO_ROOT, self.payload)), 0)
@@ -446,10 +531,14 @@ class PayloadClosureTests(unittest.TestCase):
         """Dropping a tree the skills read must be caught, not tolerated."""
 
         narrowed = dict(self.payload)
-        narrowed["trees"] = [t for t in self.payload["trees"] if t != "library"]  # type: ignore[union-attr]
+        narrowed["trees"] = [
+            t
+            for t in _payload_entries(self.payload, "trees")
+            if t != "library/workflow_router"
+        ]
         with self.assertRaises(PayloadClosureError) as caught:
             assert_payload_closed(_REPO_ROOT, narrowed)
-        self.assertIn("library/MODULE_CATALOG.md", str(caught.exception))
+        self.assertIn("library/workflow_router/contracts.py", str(caught.exception))
 
     def test_a_closure_error_is_not_a_declaration_error(self) -> None:
         """Two failures, two names: the gate must say which one it hit."""
@@ -567,8 +656,9 @@ class ManifestIndependenceTests(unittest.TestCase):
 
         payload = load_payload_declaration(_PLUGIN_MANIFEST)
         level_two = _read_level_two_tree_roots()
-        self.assertNotEqual(set(payload["trees"]), level_two)  # type: ignore[arg-type]
-        self.assertIn("template", set(payload["trees"]))  # type: ignore[arg-type]
+        trees = set(_payload_entries(payload, "trees"))
+        self.assertNotEqual(trees, level_two)
+        self.assertIn("template", trees)
         self.assertNotIn("template", level_two)
 
     def test_the_level_two_manifest_is_untouched_by_this_ticket(self) -> None:

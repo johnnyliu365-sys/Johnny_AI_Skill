@@ -24,9 +24,13 @@
     "trees": [
       ".claude-plugin",
       "commands",
-      "library",
       "skills",
-      "template"
+      "template",
+      "library/NLP",
+      "library/功能集群",
+      "library/金流串接",
+      "library/catalog",
+      "library/workflow_router"
     ],
     "files": [
       "AGENTS.md",
@@ -35,7 +39,8 @@
       "LICENSE",
       "README.md",
       "Workflow.md",
-      "install.ps1"
+      "library/__init__.py",
+      "library/MODULE_CATALOG.md"
     ],
     "excludedSegments": ["__pycache__", ".git"],
     "excludedSuffixes": [".pyc", ".pyo"]

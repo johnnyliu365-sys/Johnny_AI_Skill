@@ -363,16 +363,38 @@ def load_payload_declaration(manifest_path: Path) -> dict[str, object]:
         raise PayloadDeclarationError("payload trees must be a non-empty list")
     if not isinstance(files, list) or not files:
         raise PayloadDeclarationError("payload files must be a non-empty list")
-    for entry in (*trees, *files):
-        if not isinstance(entry, str) or not entry or entry != entry.strip():
-            raise PayloadDeclarationError("payload entry is not a clean path")
-    for entry in trees:
-        if "/" in entry or entry in (".", ".."):
-            raise PayloadDeclarationError("payload tree must be a single segment")
+    tree_parts = tuple(_validate_payload_entry(entry, "tree") for entry in trees)
+    for entry in files:
+        _validate_payload_entry(entry, "file")
+    if len(set(trees)) != len(trees) or len(set(files)) != len(files):
+        raise PayloadDeclarationError("payload entries must be unique")
+    if any(
+        left != right
+        and (left[: len(right)] == right or right[: len(left)] == left)
+        for index, left in enumerate(tree_parts)
+        for right in tree_parts[index + 1 :]
+    ):
+        raise PayloadDeclarationError("payload trees must not overlap by prefix")
     for entry in (*trees, *files):
         if _is_forbidden(tuple(entry.split("/"))):
             raise PayloadDeclarationError(f"payload enumerates an excluded tree: {entry}")
     return payload
+
+
+def _validate_payload_entry(entry: object, kind: str) -> tuple[str, ...]:
+    if not isinstance(entry, str) or not entry or entry != entry.strip():
+        raise PayloadDeclarationError(f"payload {kind} is not a clean path")
+    if (
+        entry.startswith(("/", "\\"))
+        or "\\" in entry
+        or "\x00" in entry
+        or re.match(r"^[A-Za-z]:[\\/]", entry) is not None
+    ):
+        raise PayloadDeclarationError(f"payload {kind} is not repository-relative")
+    parts = tuple(entry.split("/"))
+    if any(not part or part in (".", "..") or part != part.strip() for part in parts):
+        raise PayloadDeclarationError(f"payload {kind} is not a clean path")
+    return parts
 
 
 def _is_forbidden(parts: tuple[str, ...]) -> bool:
@@ -410,11 +432,21 @@ def is_payload_path(relative_path: str, payload: Mapping[str, object]) -> bool:
         excluded_suffix_entries
     )
 
-    cleaned = relative_path.strip("/")
+    if (
+        not isinstance(relative_path, str)
+        or not relative_path
+        or relative_path != relative_path.strip()
+        or relative_path.startswith(("/", "\\"))
+        or "\\" in relative_path
+        or "\x00" in relative_path
+        or re.match(r"^[A-Za-z]:[\\/]", relative_path) is not None
+    ):
+        return False
+    cleaned = relative_path[:-1] if relative_path.endswith("/") else relative_path
     if not cleaned:
         return False
     parts = tuple(cleaned.split("/"))
-    if any(part in ("", ".", "..") for part in parts):
+    if any(not part or part in (".", "..") for part in parts):
         return False
     if any(part in excluded_segments for part in parts):
         return False
@@ -422,7 +454,10 @@ def is_payload_path(relative_path: str, payload: Mapping[str, object]) -> bool:
         return False
     if _is_forbidden(parts):
         return False
-    return cleaned in files or parts[0] in trees
+    tree_parts = tuple(tuple(tree.split("/")) for tree in trees)
+    return cleaned in files or any(
+        parts[: len(tree)] == tree for tree in tree_parts
+    )
 
 
 def declared_payload_files(root: Path, payload: Mapping[str, object]) -> tuple[Path, ...]:
