@@ -6,7 +6,7 @@
 | SPEC / acceptance source | `SPEC-AI-WORKFLOW-EXECUTOR-ROUTING-20260822-01M4P6R8T0V2X4Z6B8D0F2H4J6` revision `03` / AC-01 through AC-11 |
 | PRD / change | `PRD-20260822-030` / `CHG-20260822-030`, amended by `PRD-20260822-032` / `CHG-20260822-032` and `PRD-20260823-033` / `CHG-20260823-033` |
 | Sealed Context / baseline | `CTX-EXECUTOR-ROUTING-20260823-03` / `doc/context/executor-routing/codex-provider-neutral-executor-routing-r03.md` / `de7a935546a4229add2439bfdc37f40e1f22f30f` |
-| State | `APPROVED / REVIEW_CORRECTION / REVISION_05` |
+| State | `DONE / APPROVED / INTEGRATED / REVISION_05` |
 | Replaces | `P8R-EXECUTOR-ROUTING-03`, `BLOCKED / REQUIREMENT_CHANGED / CHG-20260823-033`; its uncommitted source is not a baseline or merge source. |
 | Control owner / reviewer | Current-session Codex reviewer; semantic `ticket-review` profile, Terra/xhigh. |
 | Implementation owner | One current-session implementation owner; semantic `implementation-standard` profile, Luna/xhigh. |
@@ -140,12 +140,36 @@ Return exactly `ImplementationReturn.COMPLETED -> ACTION_COMPLETED` with named t
 evidence, `BLOCKED -> HALT` with the failed cell, or `CHANGE_DETECTED -> REQUIREMENT_CHANGED`.
 No return authorizes provider invocation/login, runner start, merge, push, release, or deployment.
 
+## Completion record
+
+- The historical candidate was independently approved and gate-integrated as source commit
+  `a23861e7cba3ccadca720c028cef815e3a9d602b` plus reviewer-generated pin commit
+  `e86dbae946de355f94fcadd9eefe8b5b241567cc`. The committed review is
+  `doc/reviews/workstation-dispatch/04-canonical-executor-routing-code-review.md`.
+- Current `main` contains the rebased, boundary-equivalent history
+  `df419c27ddf263af40175abab1331238e7db9278` then
+  `e2d58e720b3d126d93e2e94537a03974eb1a1e8c`; its cumulative diff is exactly
+  `.claude-plugin/marketplace.json`, `library/local_orchestration/executor_routing.py`, and
+  `tests/test_executor_routing.py`. `git diff --check` is clean.
+- Terra/xhigh independently re-ran the focused suite (25 passed), strict `mypy`, `compileall`,
+  and the payload-boundary suite (41 passed, 204 subtests). M1--M7 and the distinct RM1
+  counter-mutation each produced its named failure in a disposable clone and were restored
+  byte-for-byte.
+- The reviewer also re-read the historical T12 transaction: its parentless payload root contains
+  the resolver, has no missing or extra declared path, no non-carrier blob mismatch, and its
+  carrier healing reaches the generated pin commit.
+- The later Level 1 payload-topology change deliberately leaves the current `0.4.9` anchor stale
+  against the new declaration. That is a current-release integrity defect owned by Ticket 08; it
+  does not retroactively alter this transaction-specific P8R closure and is not claimed green here.
+  No host binding, receipt delivery, runner activation, automatic wake, provider invocation, push,
+  release, or deployment is asserted by this ticket.
+
 ```johnny-status
 id = P8R-EXECUTOR-ROUTING-04
 title = Canonical provider-neutral executor routing
-state = APPROVED_REVIEW_CORRECTION_REVISION_05
-stage = D | canonical typed route/profile resolver | OPEN
-stage = E | invalid-input/verification/rank/override gates | OPEN
-stage = M | seven implementer and one reviewer reverse mutation | OPEN
-stage = P | reviewer-only generated publication pin / local reachability | OPEN
+state = DONE
+stage = D | canonical typed route/profile resolver | DONE
+stage = E | invalid-input/verification/rank/override gates | DONE
+stage = M | seven implementer and one reviewer reverse mutation | DONE
+stage = P | reviewer-only generated publication pin / local reachability | DONE
 ```
