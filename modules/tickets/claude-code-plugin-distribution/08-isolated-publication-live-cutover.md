@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | Revision 02, AC-1 through AC-9 |
 | PRD / CHG / Context | `PRD-20260823-034` / `CHG-20260823-034` / sealed Context Revision 01, blob `0fef3f1e4c8ce317873cdf2f73dc1bd793579217` |
-| State / closure | `APPROVED / DISPATCH_AUTHORIZED / OWNER_EFFECT_AUTHORITY_RECORDED` / `CLOSURE_01` |
+| State / closure | `BLOCKED / TICKET_DEFECT / UPSTREAM_CLOSURE_CONTRACT` / `CLOSURE_01` |
 | Dependency | Tickets 06 and 07 integrated and independently reviewed; exact baseline then recorded before dispatch. |
 | Exact development baseline | `2f458316ccfe191cdc5548344f2e323df20ae215` |
 | Authorized candidate branch / temporary raw ref | `implement/claude-publication-08-live-cutover` / `refs/heads/verify/claude-publication-08-live-cutover` |
@@ -45,6 +45,24 @@ record. The preflight on 2026-08-23 found the publication repository absent and 
 development ref absent. A changed remote, non-empty or foreign publication ref set, candidate
 branch divergence, missing CLI or a failed generated/readback binding remains a named blocker;
 this authority does not permit fallback, tag movement, hand-edited SHA, or a broader push.
+
+## CLOSURE 01 blocker
+
+The reviewer created the authorized public repository and confirmed it was empty, then generated
+parentless root `758a7187f6cee5dbb231cd85fe2c4f5d3e03f4b3`; regeneration and generator
+verification reproduced that exact root. It committed the permitted generated marketplace pin as
+candidate commit `1a536fb781644d79a5b34735839f48a1c5e8c1fa`.
+
+Ticket 06's required local closure proof then returned `TREE_MISMATCH` with only
+`.claude-plugin/marketplace.json` in `content_mismatch`. The generator intentionally neutralizes
+the self-referential pin carrier while producing `C`, but the repository-closure verifier derives
+its expected blob from the live, newly pinned marketplace manifest and has no matching carrier
+exception. This is an upstream closure-contract defect, not an admissible Ticket 08 change.
+
+No publication payload, `main`, tag or temporary development ref was pushed. No Claude CLI/cache
+operation, source integration or source-main push occurred. The newly created publication
+repository remains empty. A corrective Ticket 06/closure-contract decision is required before
+this ticket may be re-admitted; this ticket must not bypass, hand-edit or weaken the L2 proof.
 
 ## Boundary declaration
 
