@@ -7,7 +7,9 @@ import subprocess
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from unittest.mock import patch
 
+from library.local_orchestration import claude_plugin_cache_closure as cache_module
 from library.local_orchestration.claude_plugin_cache_closure import (
     InstallClosureStatus,
     verify_installed_plugin_cache,
@@ -90,7 +92,153 @@ def _cache_fixture(root: Path) -> tuple[PublicationCommit, PublicationPayload]:
     return commit, payload
 
 
+def _normal_clone_fixture(root: Path) -> tuple[PublicationCommit, PublicationPayload]:
+    _initialise(root)
+    commit, payload = _parentless_commit(root, {"payload.txt": b"payload\n"})
+    _git(root, "update-ref", "refs/heads/main", commit.value)
+    _git(root, "update-ref", "refs/remotes/origin/main", commit.value)
+    _git(root, "update-ref", "refs/tags/plugin-v1.2.3", commit.value)
+    _git(root, "symbolic-ref", "HEAD", "refs/heads/main")
+    _git(root, "symbolic-ref", "refs/remotes/origin/HEAD", "refs/remotes/origin/main")
+    return commit, payload
+
+
 class InstalledPluginCacheClosureTests(unittest.TestCase):
+    def test_s1_normal_clone_remote_head_is_verified(self) -> None:
+        with TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            commit, payload = _normal_clone_fixture(root)
+            result = verify_installed_plugin_cache(root, payload, expected_head=commit)
+            self.assertEqual(result.status, InstallClosureStatus.VERIFIED)
+            self.assertEqual(
+                result.reachable_refs,
+                (
+                    "refs/heads/main",
+                    "refs/remotes/origin/HEAD",
+                    "refs/remotes/origin/main",
+                    "refs/tags/plugin-v1.2.3",
+                ),
+            )
+            self.assertEqual(result.reachable_commits, (commit,))
+
+    def test_s2_remote_head_requires_present_target_and_checked_out_root(self) -> None:
+        with TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            commit, payload = _normal_clone_fixture(root)
+            before = _git(
+                root,
+                "for-each-ref",
+                "--format=%(refname)=%(objectname)",
+            )
+            _git(root, "update-ref", "-d", "refs/remotes/origin/main")
+            missing = verify_installed_plugin_cache(root, payload, expected_head=commit)
+            self.assertEqual(missing.status, InstallClosureStatus.INSTALLED_REF_SET_INVALID)
+            _git(root, "update-ref", "refs/remotes/origin/main", commit.value)
+            restored = verify_installed_plugin_cache(root, payload, expected_head=commit)
+            self.assertEqual(restored.status, InstallClosureStatus.VERIFIED)
+
+            tree = _git(root, "rev-parse", f"{commit.value}^{{tree}}")
+            other = PublicationCommit(
+                value=_git(root, "commit-tree", tree, "-m", "same tree, different root")
+            )
+            _git(root, "update-ref", "refs/remotes/origin/main", other.value)
+            different_root = verify_installed_plugin_cache(
+                root, payload, expected_head=commit
+            )
+            self.assertEqual(
+                different_root.status, InstallClosureStatus.INSTALLED_REF_SET_INVALID
+            )
+            _git(root, "update-ref", "refs/remotes/origin/main", commit.value)
+            restored = verify_installed_plugin_cache(root, payload, expected_head=commit)
+            self.assertEqual(restored.status, InstallClosureStatus.VERIFIED)
+            self.assertEqual(
+                _git(
+                    root,
+                    "for-each-ref",
+                    "--format=%(refname)=%(objectname)",
+                ),
+                before,
+            )
+
+    def test_s3_symbolic_head_grammar_is_fail_closed(self) -> None:
+        with TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            commit, payload = _normal_clone_fixture(root)
+            invalid_targets = (
+                "refs/tags/plugin-v1.2.3",
+                "refs/remotes/origin/plugin-v1.2.3",
+                "refs/remotes/upstream/main",
+            )
+            for target in invalid_targets:
+                with self.subTest(target=target):
+                    _git(
+                        root,
+                        "symbolic-ref",
+                        "refs/remotes/origin/HEAD",
+                        target,
+                    )
+                    rejected = verify_installed_plugin_cache(
+                        root, payload, expected_head=commit
+                    )
+                    self.assertEqual(
+                        rejected.status, InstallClosureStatus.INSTALLED_REF_SET_INVALID
+                    )
+                    _git(
+                        root,
+                        "symbolic-ref",
+                        "refs/remotes/origin/HEAD",
+                        "refs/remotes/origin/main",
+                    )
+                    restored = verify_installed_plugin_cache(
+                        root, payload, expected_head=commit
+                    )
+                    self.assertEqual(restored.status, InstallClosureStatus.VERIFIED)
+
+            raw = (
+                f"refs/heads/main\t{commit.value}\t\n"
+                f"refs/remotes/bad../HEAD\t{commit.value}\t"
+                "refs/remotes/bad../main\n"
+            )
+
+            def malformed_refs(_root: Path, *arguments: str) -> str:
+                if arguments[0] == "for-each-ref":
+                    return raw
+                if arguments[:3] == ("rev-parse", "--git-path", "refs/remotes"):
+                    return str(_root / ".git" / "refs/remotes")
+                raise AssertionError(f"unexpected Git command: {arguments[0]}")
+
+            with patch.object(cache_module, "_git", side_effect=malformed_refs):
+                malformed = cache_module._read_refs(root)
+            self.assertIsNone(malformed)
+
+    def test_s4_development_ref_remains_rejected_with_normal_remote_head(self) -> None:
+        with TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            commit, payload = _normal_clone_fixture(root)
+            before = _git(
+                root,
+                "for-each-ref",
+                "--format=%(refname)=%(objectname)",
+            )
+            development, _ = _parentless_commit(
+                root,
+                {"payload.txt": b"payload\n", "tests/development.py": b"development\n"},
+            )
+            _git(root, "update-ref", "refs/heads/development", development.value)
+            rejected = verify_installed_plugin_cache(root, payload, expected_head=commit)
+            self.assertEqual(rejected.status, InstallClosureStatus.INSTALLED_REF_SET_INVALID)
+            _git(root, "update-ref", "-d", "refs/heads/development")
+            restored = verify_installed_plugin_cache(root, payload, expected_head=commit)
+            self.assertEqual(restored.status, InstallClosureStatus.VERIFIED)
+            self.assertEqual(
+                _git(
+                    root,
+                    "for-each-ref",
+                    "--format=%(refname)=%(objectname)",
+                ),
+                before,
+            )
+
     def test_c4_detached_payload_only_cache_is_verified(self) -> None:
         with TemporaryDirectory() as temporary:
             root = Path(temporary)

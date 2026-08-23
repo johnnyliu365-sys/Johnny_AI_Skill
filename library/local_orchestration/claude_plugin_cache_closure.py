@@ -110,6 +110,59 @@ def _valid_installed_ref(name: str) -> bool:
     return False
 
 
+def _symbolic_remote_head_target(name: str) -> str | None:
+    if not name.startswith(_REMOTE_PREFIX):
+        return None
+    remainder = name.removeprefix(_REMOTE_PREFIX)
+    if "/" not in remainder:
+        return None
+    remote, branch = remainder.split("/", 1)
+    if (
+        branch != "HEAD"
+        or not remote
+        or remote in (".", "..")
+        or "\\" in remote
+        or any(part in ("", ".", "..") for part in remote.split("/"))
+    ):
+        return None
+    return f"{_REMOTE_PREFIX}{remote}/main"
+
+
+def _loose_symbolic_remote_heads(
+    root: Path,
+) -> tuple[tuple[str, str], ...] | None:
+    try:
+        raw_path = _git(root, "rev-parse", "--git-path", "refs/remotes").strip()
+    except _GitFailure:
+        return None
+    if not raw_path:
+        return None
+    refs_root = Path(raw_path)
+    if not refs_root.is_absolute():
+        refs_root = Path(root) / refs_root
+    if not refs_root.exists():
+        return ()
+    symbols: list[tuple[str, str]] = []
+    try:
+        remote_directories = tuple(refs_root.iterdir())
+        for remote_directory in remote_directories:
+            head = remote_directory / "HEAD"
+            if not head.is_file():
+                continue
+            raw_target = head.read_text(encoding="ascii").strip()
+            if not raw_target.startswith("ref: "):
+                return None
+            symbols.append(
+                (
+                    f"{_REMOTE_PREFIX}{remote_directory.name}/HEAD",
+                    raw_target.removeprefix("ref: "),
+                )
+            )
+    except (OSError, UnicodeError):
+        return None
+    return tuple(sorted(symbols))
+
+
 def _read_refs(root: Path) -> tuple[tuple[str, PublicationCommit], ...] | None:
     try:
         raw = _git(
@@ -121,16 +174,52 @@ def _read_refs(root: Path) -> tuple[tuple[str, PublicationCommit], ...] | None:
     except _GitFailure:
         return None
     refs: list[tuple[str, PublicationCommit]] = []
+    symbolic_targets: dict[str, str] = {}
+    symbolic_objects: dict[str, PublicationCommit] = {}
     for line in raw.splitlines():
         fields = line.split("\t")
-        if len(fields) != 3 or fields[2] or not _valid_installed_ref(fields[0]):
+        if len(fields) != 3:
             return None
-        if _FULL_SHA.fullmatch(fields[1]) is None:
+        name, object_name, symbolic_target = fields
+        if _FULL_SHA.fullmatch(object_name) is None:
             return None
         try:
-            refs.append((fields[0], PublicationCommit(value=fields[1])))
+            commit = PublicationCommit(value=object_name)
         except ValueError:
             return None
+        if symbolic_target:
+            target = _symbolic_remote_head_target(name)
+            if target is None or symbolic_target != target:
+                return None
+            symbolic_targets[name] = target
+            symbolic_objects[name] = commit
+        elif _valid_installed_ref(name):
+            refs.append((name, commit))
+        else:
+            return None
+    loose_symbols = _loose_symbolic_remote_heads(root)
+    if loose_symbols is None:
+        return None
+    for name, target in loose_symbols:
+        expected_target = _symbolic_remote_head_target(name)
+        if expected_target is None or target != expected_target:
+            return None
+        if name in symbolic_targets and symbolic_targets[name] != target:
+            return None
+        symbolic_targets[name] = target
+    direct = dict(refs)
+    symbolic: list[tuple[str, str, PublicationCommit]] = []
+    for name, target in symbolic_targets.items():
+        resolved_commit: PublicationCommit | None = direct.get(target)
+        if resolved_commit is None or (
+            name in symbolic_objects and symbolic_objects[name] != resolved_commit
+        ):
+            return None
+        symbolic.append((name, target, resolved_commit))
+    for name, target, commit in symbolic:
+        if direct.get(target) != commit:
+            return None
+        refs.append((name, commit))
     if len({name for name, _ in refs}) != len(refs):
         return None
     return tuple(sorted(refs))
@@ -197,6 +286,11 @@ def verify_installed_plugin_cache(
     except _GitFailure:
         symbolic_head = ""
     if symbolic_head and not _valid_installed_ref(symbolic_head):
+        return InstallClosureResult(status=InstallClosureStatus.INSTALLED_REF_SET_INVALID)
+    if any(
+        _symbolic_remote_head_target(name) is not None and target != head
+        for name, target in refs
+    ):
         return InstallClosureResult(status=InstallClosureStatus.INSTALLED_REF_SET_INVALID)
 
     targets: list[PublicationCommit] = [head]
