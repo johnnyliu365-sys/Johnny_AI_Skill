@@ -4,8 +4,8 @@
 | --- | --- |
 | SPEC / AC | Revision 04, AC-1 through AC-10 |
 | PRD / CHG / Context | `PRD-20260823-034` / `CHG-20260823-034`, amended by `PRD-20260823-035` / `CHG-20260823-035` and `PRD-20260823-036` / `CHG-20260823-036` / sealed Context Revision 03, blob `c87425feabc5e6147098c636abf2f604aa129e89` |
-| State / closure | `BLOCKED / OWNER_EFFECT_AUTHORITY_REQUIRED / SUCCESSOR_VERSION_0.4.11` / `CLOSURE_03_PENDING` |
-| Dependency | Tickets 06, 07, 09, 10 and 11 integrated; F3 is closed and successor version `0.4.11` is selected. Fresh exact owner effect authority is still required before re-admission. |
+| State / closure | `OPEN / OWNER_EFFECT_AUTHORITY_RECORDED / CLOSURE_03` |
+| Dependency | Tickets 06, 07, 09, 10 and 11 integrated; F3 is closed, successor version `0.4.11` is selected, and the CLOSURE_03 authority below is the sole admitted effect scope. |
 | Historical 0.4.10 development baseline | `f099ff7f5c7472c38fd0353e31556e06d4016e27` |
 | Historical 0.4.10 candidate branch / temporary raw ref | `implement/claude-publication-08-live-cutover` / `refs/heads/verify/claude-publication-08-live-cutover` |
 | Historical effect correlation | `claude-publication-08-20260823` |
@@ -26,6 +26,44 @@ The owner selected successor version `0.4.11`. That selection is not a release a
 this ticket remains blocked until the owner records a fresh exact effect authority for one
 candidate, remote snapshot, expected-old SHA and correlation. It must not reuse `0.4.10`,
 hand-edit a SHA, or advance its historical candidate.
+
+## CLOSURE 03 owner effect authority — 2026-08-23
+
+The project owner authorizes this exact `0.4.11` Ticket 08 attempt:
+
+| Binding | Authorized value |
+| --- | --- |
+| Development baseline | `cf2c96ffc4401b493f7a59213a46f80f2b013c45` |
+| Candidate worktree / branch | `.worktrees/claude-publication-08-v0411` / `implement/claude-publication-08-v0411` |
+| Temporary raw-descriptor ref | `refs/heads/verify/claude-publication-08-v0411-live-cutover` |
+| Correlation | `claude-publication-08-v0411-20260823` |
+| Publication target | `https://github.com/johnnyliu365-sys/Johnny_AI_Skill_publication.git` (public, default branch `main`) |
+| Read-only pre-authority snapshot | `main` / `HEAD` = `b52215eb3ee5dfa101e65c189441e62c20ca45e6`; `plugin-v0.4.10` = the same SHA; `plugin-v0.4.11` is absent. |
+
+The implementation owner may create and commit only the ticket's source candidate in its declared
+worktree. Before every external mutation, Terra must re-read the publication remote and bind the
+reviewed candidate SHA, the generator-produced root `C`, the exact current `main` SHA and an
+absent `plugin-v0.4.11` to this correlation. A changed/default-branch-invalid/foreign-ref/tag-
+present/expected-old mismatch is a named halt; it does not inherit this authority.
+
+Subject to that fresh preflight and the full L1–L6 review evidence, the owner authorizes Terra
+only to:
+
+1. update publication `main` from the fresh expected-old SHA to `C` through Ticket 07's guarded
+   CAS plan and create immutable `plugin-v0.4.11` at exactly `C` if, and only if, it is absent;
+2. push the exact reviewed development candidate to the named temporary ref solely for the
+   immutable raw-descriptor test, then remove that temporary ref only after guarded source
+   integration or an owner-directed abandonment;
+3. run the documented Claude commands using a disposable isolated `CLAUDE_CONFIG_DIR` and read
+   only sanitized closure results; and
+4. on `VERIFIED` L1–L6 evidence, integrate that same reviewed candidate through
+   `admit_document_mutation` and push development `main`.
+
+No other ref, tag, branch, repository, source URL, version, user configuration, credential,
+cache, release, deletion or retry is authorized. Credentials remain in the already authenticated
+host session and are never read, printed or persisted. A candidate commit/root discovered after
+this record is an assertion to bind and re-read before effect, not permission to substitute a
+different branch or baseline.
 
 ## Required owner effect authority before dispatch
 
