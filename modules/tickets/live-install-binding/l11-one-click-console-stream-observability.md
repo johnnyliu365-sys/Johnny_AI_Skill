@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `environment-capability-bootstrap` `EC-09`; L9 `R3`, `R4`, `R5` |
 | Requirement | Existing L9 refusal messages must remain observable from the complete Windows console stream even when PowerShell module discovery is unavailable. |
-| State | `CONVERGENCE_REVIEW_REQUIRED / NOT_DISPATCHED / REVISION_04` |
+| State | `DONE / APPROVED / INTEGRATED / CLOSURE_01` |
 | Baseline | `32bbf8d8122c3449de0dfabe9572d4d377c3b12d` |
 | Delivery / model | `POC / STANDARD`; Luna / xhigh implementation, Terra / xhigh review. |
 | Language / XSS | Python 3.11 strict test code / `XSS_NOT_APPLICABLE` |
@@ -77,6 +77,28 @@ make its own focused/refusal-guidance partition green and record the full-suite 
 After L11 integration, Ticket 08 must rebase and run its own AC-9 full-suite gate before any
 publication or installation. This resolves the ordering dependency without lowering either
 ticket's release control.
+
+## Completion evidence — CLOSURE_01
+
+The reviewer-written candidate `84f41fc0f47da4c021600b585666e7c8158d7cf6` is integrated by
+`admit_document_mutation` from this ticket's main-branch boundary. Independent Terra/xhigh review
+confirmed the exact four-path cumulative boundary and, in the locked `pytest==9.1.1` venv:
+
+- `63 passed, 1 skipped, 109 subtests` across the L11/L9/L10/runtime-lock/refusal-guidance
+  partition, strict mypy and compile checks; ASCII/CRLF/diff/JSON checks passed;
+- a suppressed-module tampered bundle returned `DIGEST_MISMATCH`, exit 2 and no extraction;
+  a matching synthetic bundle reached `USER_DECLINED`; an unreadable bundle returned the
+  classified `DIGEST_UNREADABLE` before extraction;
+- the complete decoded stdout/stderr observation retained both streams without asserting which
+  stream carried the named code; and
+- removing the sole new guidance entry in memory produced `INCOMPLETE`, while byte-exact
+  restoration produced `COMPLETE`.
+
+The same locked full-suite run recorded `107 failed, 1725 passed, 22 skipped, 3845 subtests`.
+Every failure belonged to the unintegrated Ticket 08 publication pin/tree state in
+`tests/test_plugin_publication.py`; none belonged to L11. Those failures remain Ticket 08's
+release blocker and are not waived by this closure. No remote, package, release, marketplace,
+cache, runner or user-install effect occurred in L11.
 
 ## Boundary declaration
 
