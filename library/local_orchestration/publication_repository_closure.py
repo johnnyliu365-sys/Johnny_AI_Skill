@@ -8,11 +8,12 @@ blob with one typed payload declaration.
 
 from __future__ import annotations
 
+import json
 import re
 import subprocess
 from enum import Enum
 from pathlib import Path
-from typing import Final, Self
+from typing import Final, Mapping, Self
 from urllib.parse import urlsplit
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
@@ -26,6 +27,8 @@ __all__ = [
     "PublicationClosureResult",
     "PublicationClosureStatus",
     "PublicationCommit",
+    "PublicationGeneratedPinCarrier",
+    "PublicationReleaseDeclaration",
     "PublicationPayload",
     "PublicationPromotionRequest",
     "PublicationRef",
@@ -48,6 +51,16 @@ _SEMVER: Final[re.Pattern[str]] = re.compile(
 )
 _TAG_PREFIX: Final[str] = "refs/tags/plugin-v"
 _MAIN_REF: Final[str] = "refs/heads/main"
+_PLUGIN_MANIFEST_PATH: Final[str] = ".claude-plugin/plugin.json"
+_MARKETPLACE_MANIFEST_PATH: Final[str] = ".claude-plugin/marketplace.json"
+_UNPINNABLE_SHA: Final[str] = "0" * 40
+_FORBIDDEN_PAYLOAD_PREFIXES: Final[tuple[tuple[str, ...], ...]] = (
+    ("tests",),
+    ("doc",),
+    ("modules", "tickets"),
+)
+
+
 class _StrictModel(BaseModel):
     model_config = ConfigDict(
         extra="forbid",
@@ -204,6 +217,90 @@ class PublicationPayload(_StrictModel):
 InstallPayload = PublicationPayload
 
 
+class PublicationGeneratedPinCarrier(_StrictModel):
+    """Typed state of the canonical generated marketplace pin carrier."""
+
+    pin_carrier: str = Field(min_length=1, max_length=512)
+    recorded_sha: str = Field(min_length=40, max_length=40)
+
+    @field_validator("pin_carrier")
+    @classmethod
+    def _path(cls, value: str) -> str:
+        return _relative_path(value)
+
+    @field_validator("recorded_sha")
+    @classmethod
+    def _placeholder(cls, value: str) -> str:
+        if value != _UNPINNABLE_SHA:
+            raise ValueError("generated carrier must record the unpinnable SHA")
+        return value
+
+
+class PublicationReleaseDeclaration(_StrictModel):
+    """The immutable declaration read from one release-tag target."""
+
+    version: PublicationVersion
+    paths: tuple[str, ...] = Field(min_length=1)
+    carrier: PublicationGeneratedPinCarrier
+
+    @field_validator("paths")
+    @classmethod
+    def _paths(cls, values: tuple[str, ...]) -> tuple[str, ...]:
+        normalized = tuple(sorted(values))
+        if len(set(normalized)) != len(normalized):
+            raise ValueError("release declaration paths must be unique")
+        return tuple(_relative_path(value) for value in normalized)
+
+    @model_validator(mode="after")
+    def _generated_carrier_is_declared(self) -> Self:
+        if self.carrier.pin_carrier != _MARKETPLACE_MANIFEST_PATH:
+            raise ValueError("release declaration carrier must be marketplace.json")
+        if self.carrier.pin_carrier not in self.paths:
+            raise ValueError("release declaration carrier must be declared")
+        return self
+
+
+class _TargetPayloadDeclaration(_StrictModel):
+    trees: tuple[str, ...] = Field(min_length=1)
+    files: tuple[str, ...] = Field(min_length=1)
+    excluded_segments: tuple[str, ...] = ()
+    excluded_suffixes: tuple[str, ...] = ()
+
+    @field_validator("trees", "files")
+    @classmethod
+    def _entries(cls, values: tuple[str, ...]) -> tuple[str, ...]:
+        normalized = tuple(sorted(values))
+        if len(set(normalized)) != len(normalized):
+            raise ValueError("payload entries must be unique")
+        for value in normalized:
+            if value != value.strip():
+                raise ValueError("payload entries must not be whitespace padded")
+            _relative_path(value)
+            if any(
+                tuple(value.split("/"))[: len(prefix)] == prefix
+                for prefix in _FORBIDDEN_PAYLOAD_PREFIXES
+            ):
+                raise ValueError("payload entry is forbidden")
+        return normalized
+
+    @field_validator("excluded_segments", "excluded_suffixes")
+    @classmethod
+    def _string_lists(cls, values: tuple[str, ...]) -> tuple[str, ...]:
+        normalized = tuple(values)
+        if len(set(normalized)) != len(normalized):
+            raise ValueError("payload exclusions must be unique")
+        return normalized
+
+    @model_validator(mode="after")
+    def _trees_do_not_overlap(self) -> Self:
+        tree_parts = tuple(tuple(tree.split("/")) for tree in self.trees)
+        for index, left in enumerate(tree_parts):
+            for right in tree_parts[index + 1 :]:
+                if left[: len(right)] == right or right[: len(left)] == left:
+                    raise ValueError("payload trees must not overlap by prefix")
+        return self
+
+
 class PublicationRemoteSnapshot(_StrictModel):
     """Normalized readback of the publication repository's allowed refs."""
 
@@ -231,6 +328,8 @@ class PublicationClosureStatus(str, Enum):
     COMMIT_NOT_ROOT = "COMMIT_NOT_ROOT"
     TREE_MISMATCH = "TREE_MISMATCH"
     PIN_MISMATCH = "PIN_MISMATCH"
+    RELEASE_DECLARATION_INVALID = "RELEASE_DECLARATION_INVALID"
+    RELEASE_VERSION_MISMATCH = "RELEASE_VERSION_MISMATCH"
     READBACK_MISMATCH = "READBACK_MISMATCH"
 
 
@@ -268,6 +367,12 @@ class _SnapshotRead(_StrictModel):
     failure: PublicationClosureStatus | None = None
 
 
+class _ReleaseDeclarationRead(_StrictModel):
+    declaration: PublicationReleaseDeclaration | None = None
+    difference: PublicationTreeDifference | None = None
+    failure: PublicationClosureStatus | None = None
+
+
 def _git(root: Path, *arguments: str) -> str:
     try:
         completed = subprocess.run(
@@ -281,6 +386,173 @@ def _git(root: Path, *arguments: str) -> str:
     if completed.returncode != 0:
         raise _GitReadFailure
     return completed.stdout.decode("utf-8", errors="replace")
+
+
+def _json_object(text: str) -> dict[str, object] | None:
+    try:
+        parsed: object = json.loads(text)
+    except (TypeError, ValueError, UnicodeDecodeError):
+        return None
+    if not isinstance(parsed, dict):
+        return None
+    result: dict[str, object] = {}
+    for key, value in parsed.items():
+        if not isinstance(key, str):
+            return None
+        result[key] = value
+    return result
+
+
+def _string_list(value: object) -> tuple[str, ...] | None:
+    if not isinstance(value, list) or not all(isinstance(item, str) for item in value):
+        return None
+    return tuple(item for item in value if isinstance(item, str))
+
+
+def _target_payload_declaration(document: Mapping[str, object]) -> _TargetPayloadDeclaration | None:
+    payload_value = document.get("payload")
+    if not isinstance(payload_value, dict):
+        return None
+    trees = _string_list(payload_value.get("trees"))
+    files = _string_list(payload_value.get("files"))
+    excluded_segments = _string_list(payload_value.get("excludedSegments", []))
+    excluded_suffixes = _string_list(payload_value.get("excludedSuffixes", []))
+    if trees is None or files is None or excluded_segments is None or excluded_suffixes is None:
+        return None
+    try:
+        return _TargetPayloadDeclaration(
+            trees=trees,
+            files=files,
+            excluded_segments=excluded_segments,
+            excluded_suffixes=excluded_suffixes,
+        )
+    except ValueError:
+        return None
+
+
+def _target_path_is_declared(
+    path: str, declaration: _TargetPayloadDeclaration
+) -> bool:
+    parts = tuple(path.split("/"))
+    if any(part in declaration.excluded_segments for part in parts):
+        return False
+    if any(path.endswith(suffix) for suffix in declaration.excluded_suffixes):
+        return False
+    return any(
+        parts[: len(tuple(tree.split("/")))] == tuple(tree.split("/"))
+        for tree in declaration.trees
+    )
+
+
+def _target_payload_paths(
+    actual: tuple[tuple[str, str], ...], declaration: _TargetPayloadDeclaration
+) -> tuple[tuple[str, ...], PublicationTreeDifference]:
+    actual_paths = {path for path, _ in actual}
+    expected: set[str] = set(declaration.files)
+    missing: set[str] = {path for path in declaration.files if path not in actual_paths}
+    for tree in declaration.trees:
+        prefix = f"{tree}/"
+        descendants = tuple(
+            path
+            for path in sorted(actual_paths)
+            if path.startswith(prefix) and _target_path_is_declared(path, declaration)
+        )
+        if not descendants:
+            missing.add(tree)
+        expected.update(descendants)
+    extra = actual_paths - expected
+    paths = tuple(sorted(expected | missing))
+    return paths, PublicationTreeDifference(
+        missing=tuple(sorted(missing)), extra=tuple(sorted(extra))
+    )
+
+
+def _target_blob(root: Path, commit: PublicationCommit, path: str) -> str | None:
+    try:
+        return _git(root, "cat-file", "blob", f"{commit.value}:{path}")
+    except _GitReadFailure:
+        return None
+
+
+def _release_version(document: Mapping[str, object]) -> PublicationVersion | None:
+    value = document.get("version")
+    if not isinstance(value, str):
+        return None
+    try:
+        return PublicationVersion(value=value)
+    except ValueError:
+        return None
+
+
+def _read_release_declaration(
+    root: Path,
+    commit: PublicationCommit,
+    tag_version: PublicationVersion,
+    actual: tuple[tuple[str, str], ...],
+) -> _ReleaseDeclarationRead:
+    plugin_text = _target_blob(root, commit, _PLUGIN_MANIFEST_PATH)
+    marketplace_text = _target_blob(root, commit, _MARKETPLACE_MANIFEST_PATH)
+    if plugin_text is None or marketplace_text is None:
+        return _ReleaseDeclarationRead(
+            failure=PublicationClosureStatus.RELEASE_DECLARATION_INVALID
+        )
+    plugin_document = _json_object(plugin_text)
+    marketplace_document = _json_object(marketplace_text)
+    if plugin_document is None or marketplace_document is None:
+        return _ReleaseDeclarationRead(
+            failure=PublicationClosureStatus.RELEASE_DECLARATION_INVALID
+        )
+    plugin_version = _release_version(plugin_document)
+    payload = _target_payload_declaration(plugin_document)
+    if plugin_version is None or payload is None:
+        return _ReleaseDeclarationRead(
+            failure=PublicationClosureStatus.RELEASE_DECLARATION_INVALID
+        )
+    marketplace_plugins = marketplace_document.get("plugins")
+    if not isinstance(marketplace_plugins, list) or len(marketplace_plugins) != 1:
+        return _ReleaseDeclarationRead(
+            failure=PublicationClosureStatus.RELEASE_DECLARATION_INVALID
+        )
+    marketplace_entry = marketplace_plugins[0]
+    if not isinstance(marketplace_entry, dict):
+        return _ReleaseDeclarationRead(
+            failure=PublicationClosureStatus.RELEASE_DECLARATION_INVALID
+        )
+    marketplace_version = _release_version(marketplace_entry)
+    marketplace_source = marketplace_entry.get("source")
+    if not isinstance(marketplace_source, dict):
+        return _ReleaseDeclarationRead(
+            failure=PublicationClosureStatus.RELEASE_DECLARATION_INVALID
+        )
+    if marketplace_version is None:
+        return _ReleaseDeclarationRead(
+            failure=PublicationClosureStatus.RELEASE_DECLARATION_INVALID
+        )
+    if plugin_version != tag_version or marketplace_version != tag_version:
+        return _ReleaseDeclarationRead(
+            failure=PublicationClosureStatus.RELEASE_VERSION_MISMATCH
+        )
+    try:
+        normalized_carrier = plugin_publication.normalize_pin_carrier(
+            marketplace_text,
+            _MARKETPLACE_MANIFEST_PATH,
+            mode=plugin_publication.PinCarrierMode.GENERATED,
+        )
+        carrier = PublicationGeneratedPinCarrier(
+            pin_carrier=normalized_carrier.pin_carrier,
+            recorded_sha=normalized_carrier.recorded_sha,
+        )
+        paths, difference = _target_payload_paths(actual, payload)
+        declaration = PublicationReleaseDeclaration(
+            version=tag_version,
+            paths=paths,
+            carrier=carrier,
+        )
+    except (ValueError, plugin_publication.PublicationError):
+        return _ReleaseDeclarationRead(
+            failure=PublicationClosureStatus.RELEASE_DECLARATION_INVALID
+        )
+    return _ReleaseDeclarationRead(declaration=declaration, difference=difference)
 
 
 def payload_from_manifest(root: Path, manifest_path: Path) -> PublicationPayload:
@@ -525,37 +797,158 @@ def verify_publication_repository(
             status=PublicationClosureStatus.STALE_MAIN,
             snapshot=snapshot,
         )
-    for ref in snapshot.refs:
-        if not _is_root_commit(root, ref.target):
-            return PublicationClosureResult(
-                status=PublicationClosureStatus.COMMIT_NOT_ROOT,
-                snapshot=snapshot,
-            )
-        difference = payload_tree_difference(root, payload, ref.target)
-        if difference is None:
-            return PublicationClosureResult(
-                status=PublicationClosureStatus.REMOTE_UNREACHABLE,
-                snapshot=snapshot,
-            )
-        if carrier is not None and carrier_pin is not None:
-            if not _pin_carrier_matches(root, ref.target, carrier, carrier_pin):
+    versioned = (
+        _MARKETPLACE_MANIFEST_PATH in payload.paths
+        or carrier == _MARKETPLACE_MANIFEST_PATH
+    )
+    if not versioned:
+        # Ticket 06/09 fixtures may deliberately use a non-marketplace carrier.
+        # They retain the original single-payload closure contract; the
+        # version-specific declaration contract is selected only by the real
+        # marketplace payload surface.
+        for ref in snapshot.refs:
+            if not _is_root_commit(root, ref.target):
+                return PublicationClosureResult(
+                    status=PublicationClosureStatus.COMMIT_NOT_ROOT,
+                    snapshot=snapshot,
+                )
+            difference = payload_tree_difference(root, payload, ref.target)
+            if difference is None:
+                return PublicationClosureResult(
+                    status=PublicationClosureStatus.REMOTE_UNREACHABLE,
+                    snapshot=snapshot,
+                )
+            if carrier is not None and carrier_pin is not None:
+                if not _pin_carrier_matches(root, ref.target, carrier, carrier_pin):
+                    return PublicationClosureResult(
+                        status=PublicationClosureStatus.TREE_MISMATCH,
+                        snapshot=snapshot,
+                        difference=difference,
+                    )
+                difference = PublicationTreeDifference(
+                    missing=difference.missing,
+                    extra=difference.extra,
+                    content_mismatch=tuple(
+                        path for path in difference.content_mismatch if path != carrier
+                    ),
+                )
+            if not difference.is_empty:
                 return PublicationClosureResult(
                     status=PublicationClosureStatus.TREE_MISMATCH,
                     snapshot=snapshot,
                     difference=difference,
                 )
-            difference = PublicationTreeDifference(
-                missing=difference.missing,
-                extra=difference.extra,
-                content_mismatch=tuple(
-                    path for path in difference.content_mismatch if path != carrier
-                ),
-            )
-        if not difference.is_empty:
+    else:
+        release_carrier = _MARKETPLACE_MANIFEST_PATH
+        release_pin = carrier_pin if carrier_pin is not None else main
+        prove_live_carrier = carrier is not None or expected_pin is not None
+        current_version: PublicationVersion | None = None
+        main_plugin_text = _target_blob(root, main, _PLUGIN_MANIFEST_PATH)
+        if main_plugin_text is not None:
+            main_plugin_document = _json_object(main_plugin_text)
+            if main_plugin_document is not None:
+                current_version = _release_version(main_plugin_document)
+        if current_version is None:
             return PublicationClosureResult(
-                status=PublicationClosureStatus.TREE_MISMATCH,
+                status=PublicationClosureStatus.RELEASE_DECLARATION_INVALID,
                 snapshot=snapshot,
-                difference=difference,
+            )
+        current_tag_count = 0
+        for ref in snapshot.refs:
+            if not _is_root_commit(root, ref.target):
+                return PublicationClosureResult(
+                    status=PublicationClosureStatus.COMMIT_NOT_ROOT,
+                    snapshot=snapshot,
+                )
+            actual = _tree_blobs(root, ref.target)
+            if actual is None:
+                return PublicationClosureResult(
+                    status=PublicationClosureStatus.REMOTE_UNREACHABLE,
+                    snapshot=snapshot,
+                )
+            if ref.kind is PublicationRefKind.MAIN:
+                difference = _difference(payload.blob_ids, actual)
+                if prove_live_carrier and not _pin_carrier_matches(
+                    root, ref.target, release_carrier, release_pin
+                ):
+                    return PublicationClosureResult(
+                        status=PublicationClosureStatus.TREE_MISMATCH,
+                        snapshot=snapshot,
+                        difference=difference,
+                    )
+                if prove_live_carrier:
+                    difference = PublicationTreeDifference(
+                        missing=difference.missing,
+                        extra=difference.extra,
+                        content_mismatch=tuple(
+                            path
+                            for path in difference.content_mismatch
+                            if path != release_carrier
+                        ),
+                    )
+            else:
+                tag_version = PublicationVersion(
+                    value=ref.name.removeprefix(_TAG_PREFIX)
+                )
+                if tag_version == current_version:
+                    if ref.target != main:
+                        return PublicationClosureResult(
+                            status=PublicationClosureStatus.PIN_MISMATCH,
+                            snapshot=snapshot,
+                        )
+                    current_tag_count += 1
+                declaration_read = _read_release_declaration(
+                    root, ref.target, tag_version, actual
+                )
+                if declaration_read.failure is not None:
+                    return PublicationClosureResult(
+                        status=declaration_read.failure,
+                        snapshot=snapshot,
+                    )
+                declaration_difference = declaration_read.difference
+                if declaration_difference is None:
+                    return PublicationClosureResult(
+                        status=PublicationClosureStatus.RELEASE_DECLARATION_INVALID,
+                        snapshot=snapshot,
+                    )
+                if not declaration_difference.is_empty:
+                    return PublicationClosureResult(
+                        status=PublicationClosureStatus.TREE_MISMATCH,
+                        snapshot=snapshot,
+                        difference=declaration_difference,
+                    )
+                if ref.target == main:
+                    difference = _difference(payload.blob_ids, actual)
+                    if prove_live_carrier and not _pin_carrier_matches(
+                        root, ref.target, release_carrier, release_pin
+                    ):
+                        return PublicationClosureResult(
+                            status=PublicationClosureStatus.TREE_MISMATCH,
+                            snapshot=snapshot,
+                            difference=difference,
+                        )
+                    if prove_live_carrier:
+                        difference = PublicationTreeDifference(
+                            missing=difference.missing,
+                            extra=difference.extra,
+                            content_mismatch=tuple(
+                                path
+                                for path in difference.content_mismatch
+                                if path != release_carrier
+                            ),
+                        )
+                else:
+                    difference = PublicationTreeDifference()
+            if not difference.is_empty:
+                return PublicationClosureResult(
+                    status=PublicationClosureStatus.TREE_MISMATCH,
+                    snapshot=snapshot,
+                    difference=difference,
+                )
+        if current_tag_count != 1:
+            return PublicationClosureResult(
+                status=PublicationClosureStatus.RELEASE_VERSION_MISMATCH,
+                snapshot=snapshot,
             )
     return PublicationClosureResult(
         status=PublicationClosureStatus.VERIFIED,

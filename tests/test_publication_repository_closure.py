@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import os
 import subprocess
 import unittest
@@ -14,9 +15,12 @@ from library.local_orchestration import publication_repository_closure as closur
 from library.local_orchestration.publication_repository_closure import (
     PublicationClosureStatus,
     PublicationCommit,
+    PublicationGeneratedPinCarrier,
     PublicationPayload,
+    PublicationReleaseDeclaration,
     PublicationRepositoryRef,
     PublicationTreeDifference,
+    PublicationVersion,
     payload_from_manifest,
     verify_publication_repository,
 )
@@ -133,7 +137,303 @@ def _fixture(
     return source, remote, commit, payload
 
 
+def _versioned_entries(
+    version: str,
+    filename: str,
+    content: bytes,
+    pin: str,
+    *,
+    extra: tuple[str, bytes] | None = None,
+) -> dict[str, bytes]:
+    plugin = {
+        "name": "fixture-plugin",
+        "version": version,
+        "payload": {
+            "trees": [".claude-plugin"],
+            "files": [filename],
+            "excludedSegments": ["__pycache__", ".git"],
+            "excludedSuffixes": [".pyc", ".pyo"],
+        },
+    }
+    marketplace = {
+        "plugins": [
+            {
+                "name": "fixture-plugin",
+                "version": version,
+                "source": {
+                    "source": "url",
+                    "url": "https://example.invalid/publication.git",
+                    "sha": pin,
+                },
+            }
+        ]
+    }
+    entries = {
+        ".claude-plugin/plugin.json": (
+            json.dumps(plugin, indent=2) + "\n"
+        ).encode("utf-8"),
+        ".claude-plugin/marketplace.json": (
+            json.dumps(marketplace, indent=2) + "\n"
+        ).encode("utf-8"),
+        filename: content,
+    }
+    if extra is not None:
+        entries[extra[0]] = extra[1]
+    return entries
+
+
+def _versioned_fixture(
+    directory: Path,
+) -> tuple[Path, PublicationCommit, PublicationPayload, PublicationCommit]:
+    source = directory / "versioned-source"
+    _initialise(source)
+    old_entries = _versioned_entries("0.4.10", "old.txt", b"old\n", "0" * 40)
+    old_commit, _ = _parentless_commit(source, old_entries)
+    current_entries = _versioned_entries(
+        "0.4.11", "current.txt", b"current\n", "0" * 40
+    )
+    current_commit, _ = _parentless_commit(source, current_entries)
+    _git(source, "update-ref", "refs/heads/main", current_commit.value)
+    _git(
+        source,
+        "update-ref",
+        "refs/tags/plugin-v0.4.11",
+        current_commit.value,
+    )
+    _git(source, "update-ref", "refs/tags/plugin-v0.4.10", old_commit.value)
+    _git(source, "symbolic-ref", "HEAD", "refs/heads/main")
+    live_entries = _versioned_entries(
+        "0.4.11", "current.txt", b"current\n", current_commit.value
+    )
+    for relative, content in live_entries.items():
+        target = source / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(content)
+    blob_ids = tuple(
+        (relative, _git(source, "rev-parse", f"{current_commit.value}:{relative}"))
+        for relative in sorted(live_entries)
+    )
+    payload = PublicationPayload(
+        paths=tuple(relative for relative, _ in blob_ids),
+        blob_ids=blob_ids,
+    )
+    return source, current_commit, payload, old_commit
+
+
+def _restore_current_source(source: Path, current: PublicationCommit) -> None:
+    entries = _versioned_entries(
+        "0.4.11", "current.txt", b"current\n", current.value
+    )
+    for relative, content in entries.items():
+        target = source / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(content)
+
+
 class PublicationRepositoryClosureTests(unittest.TestCase):
+    def test_t12_release_dto_constructors_are_strongly_validated(self) -> None:
+        carrier = PublicationGeneratedPinCarrier(
+            pin_carrier=".claude-plugin/marketplace.json",
+            recorded_sha="0" * 40,
+        )
+        declaration = PublicationReleaseDeclaration(
+            version=PublicationVersion(value="0.4.11"),
+            paths=(".claude-plugin/marketplace.json", "payload.txt"),
+            carrier=carrier,
+        )
+        self.assertEqual(declaration.carrier.recorded_sha, "0" * 40)
+        with self.assertRaises(ValueError):
+            PublicationGeneratedPinCarrier(
+                pin_carrier=".claude-plugin/marketplace.json",
+                recorded_sha="1" * 40,
+            )
+
+    def test_t12_current_release_binding_and_blob_mutation(self) -> None:
+        with TemporaryDirectory() as temporary:
+            source, current, payload, _old = _versioned_fixture(Path(temporary))
+            result = verify_publication_repository(
+                source,
+                payload,
+                _REMOTE_URL,
+                expected_main=current,
+                pin_carrier=".claude-plugin/marketplace.json",
+                expected_pin=current,
+            )
+            self.assertEqual(result.status, PublicationClosureStatus.VERIFIED)
+
+            _git(source, "update-ref", "-d", "refs/tags/plugin-v0.4.11")
+            missing_current_tag = verify_publication_repository(
+                source,
+                payload,
+                _REMOTE_URL,
+                expected_main=current,
+                pin_carrier=".claude-plugin/marketplace.json",
+                expected_pin=current,
+            )
+            self.assertEqual(
+                missing_current_tag.status,
+                PublicationClosureStatus.RELEASE_VERSION_MISMATCH,
+            )
+            _git(
+                source,
+                "update-ref",
+                "refs/tags/plugin-v0.4.11",
+                current.value,
+            )
+
+            changed_entries = _versioned_entries(
+                "0.4.11", "current.txt", b"changed\n", "0" * 40
+            )
+            changed, _ = _parentless_commit(source, changed_entries)
+            _git(source, "update-ref", "refs/heads/main", changed.value)
+            _git(
+                source,
+                "update-ref",
+                "refs/tags/plugin-v0.4.11",
+                changed.value,
+            )
+            for relative, content in _versioned_entries(
+                "0.4.11", "current.txt", b"current\n", current.value
+            ).items():
+                target = source / relative
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_bytes(content)
+            mutated = verify_publication_repository(
+                source,
+                payload,
+                _REMOTE_URL,
+                expected_main=changed,
+                pin_carrier=".claude-plugin/marketplace.json",
+                expected_pin=changed,
+            )
+            self.assertEqual(mutated.status, PublicationClosureStatus.TREE_MISMATCH)
+            self.assertIsNotNone(mutated.difference)
+            assert mutated.difference is not None
+            self.assertEqual(mutated.difference.content_mismatch, ("current.txt",))
+
+            moved_current_entries = _versioned_entries(
+                "0.4.11", "old.txt", b"old root\n", "0" * 40
+            )
+            moved_current, _ = _parentless_commit(source, moved_current_entries)
+            _git(
+                source,
+                "update-ref",
+                "refs/heads/main",
+                current.value,
+            )
+            _git(
+                source,
+                "update-ref",
+                "refs/tags/plugin-v0.4.11",
+                moved_current.value,
+            )
+            _restore_current_source(source, current)
+            moved = verify_publication_repository(
+                source,
+                payload,
+                _REMOTE_URL,
+                expected_main=current,
+                pin_carrier=".claude-plugin/marketplace.json",
+                expected_pin=current,
+            )
+            self.assertEqual(moved.status, PublicationClosureStatus.PIN_MISMATCH)
+
+    def test_t12_retained_older_release_uses_its_own_path_declaration(self) -> None:
+        with TemporaryDirectory() as temporary:
+            source, current, payload, old = _versioned_fixture(Path(temporary))
+            result = verify_publication_repository(
+                source,
+                payload,
+                _REMOTE_URL,
+                expected_main=current,
+                pin_carrier=".claude-plugin/marketplace.json",
+                expected_pin=current,
+            )
+            self.assertEqual(result.status, PublicationClosureStatus.VERIFIED)
+
+            changed_old_entries = _versioned_entries(
+                "0.4.10", "old.txt", b"historical bytes changed\n", "0" * 40
+            )
+            changed_old, _ = _parentless_commit(source, changed_old_entries)
+            _git(source, "update-ref", "refs/tags/plugin-v0.4.10", changed_old.value)
+            _restore_current_source(source, current)
+            historical_bytes = verify_publication_repository(
+                source,
+                payload,
+                _REMOTE_URL,
+                expected_main=current,
+                pin_carrier=".claude-plugin/marketplace.json",
+                expected_pin=current,
+            )
+            self.assertEqual(historical_bytes.status, PublicationClosureStatus.VERIFIED)
+
+            bad_old_entries = _versioned_entries(
+                "0.4.10",
+                "old.txt",
+                b"old\n",
+                "0" * 40,
+                extra=("undeclared.txt", b"x\n"),
+            )
+            bad_old, _ = _parentless_commit(source, bad_old_entries)
+            _git(source, "update-ref", "refs/tags/plugin-v0.4.10", bad_old.value)
+            _restore_current_source(source, current)
+            rejected = verify_publication_repository(
+                source,
+                payload,
+                _REMOTE_URL,
+                expected_main=current,
+                pin_carrier=".claude-plugin/marketplace.json",
+                expected_pin=current,
+            )
+            self.assertEqual(rejected.status, PublicationClosureStatus.TREE_MISMATCH)
+            self.assertIsNotNone(rejected.difference)
+            assert rejected.difference is not None
+            self.assertEqual(rejected.difference.extra, ("undeclared.txt",))
+            _git(source, "update-ref", "refs/tags/plugin-v0.4.10", old.value)
+
+    def test_t12_target_declaration_and_version_failures_are_distinct(self) -> None:
+        with TemporaryDirectory() as temporary:
+            source, current, payload, old = _versioned_fixture(Path(temporary))
+            wrong_version_entries = _versioned_entries(
+                "0.4.12", "old.txt", b"old\n", "0" * 40
+            )
+            wrong_version, _ = _parentless_commit(source, wrong_version_entries)
+            _git(source, "update-ref", "refs/tags/plugin-v0.4.10", wrong_version.value)
+            _restore_current_source(source, current)
+            version_result = verify_publication_repository(
+                source,
+                payload,
+                _REMOTE_URL,
+                expected_main=current,
+                pin_carrier=".claude-plugin/marketplace.json",
+                expected_pin=current,
+            )
+            self.assertEqual(
+                version_result.status,
+                PublicationClosureStatus.RELEASE_VERSION_MISMATCH,
+            )
+
+            malformed_entries = _versioned_entries(
+                "0.4.10", "old.txt", b"old\n", "1" * 40
+            )
+            malformed_entries.pop(".claude-plugin/plugin.json")
+            malformed, _ = _parentless_commit(source, malformed_entries)
+            _git(source, "update-ref", "refs/tags/plugin-v0.4.10", malformed.value)
+            _restore_current_source(source, current)
+            declaration_result = verify_publication_repository(
+                source,
+                payload,
+                _REMOTE_URL,
+                expected_main=current,
+                pin_carrier=".claude-plugin/marketplace.json",
+                expected_pin=current,
+            )
+            self.assertEqual(
+                declaration_result.status,
+                PublicationClosureStatus.RELEASE_DECLARATION_INVALID,
+            )
+            _git(source, "update-ref", "refs/tags/plugin-v0.4.10", old.value)
+
     def test_c1_valid_main_and_release_tag_are_verified(self) -> None:
         with TemporaryDirectory() as temporary:
             _source, remote, commit, payload = _fixture(Path(temporary))
