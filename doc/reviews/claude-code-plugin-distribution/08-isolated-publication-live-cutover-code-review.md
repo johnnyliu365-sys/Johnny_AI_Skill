@@ -41,3 +41,32 @@ or temporary development ref was pushed. No Claude CLI/cache action occurred. De
 `main` remains `3089b460f312e4401e7e1e47e533a407f1be3bf7`. The only external action was the
 authorized creation of the empty public repository; deletion is not implied by the authority and
 was not attempted.
+
+## CLOSURE 02 live-cutover evidence — blocked L4
+
+The candidate `055d4d2478103420bc69ec7e46f6ddfc921fb0e5` descended from its re-admitted
+development baseline `136bc2c6807de3b898fc2144a061ecc531e39af9`, changed exactly the six
+admitted source paths, and generated root
+`b52215eb3ee5dfa101e65c189441e62c20ca45e6`. The focused closure suite passed with 121 tests
+and 582 subtests, strict mypy passed, and the generator's verify-only readback passed.
+
+The reviewer then published that root to the authorized public repository's `main` and immutable
+`plugin-v0.4.10` tag using the ticket-07 plan, read back both refs at that exact root, and
+independently verified the remote root/tree/ref closure. The candidate was pushed only to its
+authorized temporary raw ref. A fresh disposable `CLAUDE_CONFIG_DIR` installed the plugin from
+the immutable raw candidate descriptor; marketplace and installed-plugin readback reported
+`johnny-ai-skill` enabled at version `0.4.10`, with checkout `HEAD` equal to the generated root.
+
+L4 is nevertheless red. The actual installed clone exposes these refs at that root:
+`refs/heads/main`, `refs/remotes/origin/main`, `refs/remotes/origin/HEAD` and
+`refs/tags/plugin-v0.4.10`; the third is a normal symbolic ref to
+`refs/remotes/origin/main`. `verify_installed_plugin_cache()` returns
+`INSTALLED_REF_SET_INVALID`, because its parser treats any symbolic ref as invalid before tree
+closure can run. This is not a safe success: Ticket 08 requires every actual cache ref and
+reachable commit to be accepted and independently reverse-mutated.
+
+Ticket 08 forbids the required module, so the reviewer did not integrate the candidate or push
+development `main`. The public publication `main`/tag and temporary candidate ref are retained
+as authorized, read-back external state; no ref was moved or deleted. The correct continuation
+is a separate bounded corrective ticket for the installed-cache closure contract, followed by a
+fresh Ticket 08 re-admission and complete L1–L6 readback.

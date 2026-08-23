@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | Revision 02, AC-1 through AC-9 |
 | PRD / CHG / Context | `PRD-20260823-034` / `CHG-20260823-034` / sealed Context Revision 01, blob `0fef3f1e4c8ce317873cdf2f73dc1bd793579217` |
-| State / closure | `APPROVED / RE-ADMITTED` / `CLOSURE_02` |
+| State / closure | `BLOCKED / TICKET_DEFECT / UPSTREAM_CLOSURE_CONTRACT` / `CLOSURE_02` |
 | Dependency | Tickets 06, 07 and 09 integrated and independently reviewed; exact baseline then recorded before effect admission. |
 | Exact development baseline | `f099ff7f5c7472c38fd0353e31556e06d4016e27` |
 | Authorized candidate branch / temporary raw ref | `implement/claude-publication-08-live-cutover` / `refs/heads/verify/claude-publication-08-live-cutover` |
@@ -66,6 +66,31 @@ Claude install, remains required.
 No source boundary, version, tag policy, effect target or rollback rule changed in `CLOSURE_02`.
 The previous empty-repository observation and the previously created empty public repository are
 facts to re-read, not assumptions or additional authority.
+
+## CLOSURE 02 blocker — installed-cache symbolic remote HEAD
+
+The required fresh, isolated Claude CLI install completed from the immutable candidate raw
+descriptor. Its visible plugin checkout resolved to generated root
+`b52215eb3ee5dfa101e65c189441e62c20ca45e6`, with `main`,
+`origin/main` and `plugin-v0.4.10` naming that root. Claude's ordinary clone also created the
+normal symbolic remote-default ref `refs/remotes/origin/HEAD` pointing to
+`refs/remotes/origin/main`.
+
+`verify_installed_plugin_cache()` returned the named non-success
+`INSTALLED_REF_SET_INVALID` before it could enumerate the otherwise payload-only reachable
+commit. Its current ref parser rejects every symbolic ref, including that normal clone ref. L4
+requires the actual installed cache's complete ref/commit graph to be accepted; it cannot be
+claimed from the visible checkout alone.
+
+This is a second upstream closure-contract defect. It is not repairable in this ticket because
+the admitted boundary forbids `library/local_orchestration/claude_plugin_cache_closure.py`.
+Accordingly, no development-source integration or development-`main` push occurred. The
+authorized publication repository currently has its independently read-back payload root on
+`main` and immutable `plugin-v0.4.10`; the temporary candidate source ref remains present for
+the unintegrated candidate. Neither ref is moved or removed by this blocker record. A separate
+ticket must make the installed-cache checker distinguish an admitted normal remote-default
+symbolic ref from a foreign/default-branch mismatch, with actual-cache and reverse-mutation
+evidence, before Ticket 08 can be re-admitted.
 
 ## CLOSURE 01 blocker
 
