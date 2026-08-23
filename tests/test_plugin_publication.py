@@ -773,19 +773,53 @@ class CandidateMetadataTests(unittest.TestCase):
 
     def test_l5_stale_candidate_pin_is_named_before_generation(self) -> None:
         payload = load_payload_declaration(_PLUGIN_MANIFEST)
-        source = pinned_plugin_source(_MARKETPLACE_MANIFEST)
-        sha = source["sha"]
-        self.assertIsInstance(sha, str)
-        assert isinstance(sha, str)
-        diff = compare_commit_to_declaration(
-            _REPO_ROOT, payload, sha, pin_carrier=_PIN_CARRIER
+        live_manifest = _MARKETPLACE_MANIFEST.read_bytes()
+        live_source = pinned_plugin_source(_MARKETPLACE_MANIFEST)
+        live_sha = live_source["sha"]
+        self.assertIsInstance(live_sha, str)
+        assert isinstance(live_sha, str)
+        live_diff = compare_commit_to_declaration(
+            _REPO_ROOT, payload, live_sha, pin_carrier=_PIN_CARRIER
         )
-        with self.assertRaises(PublicationMismatchError):
-            assert_commit_matches_declaration(
-                _REPO_ROOT, payload, sha, pin_carrier=_PIN_CARRIER
+        self.assertTrue(live_diff.is_empty)
+        assert_commit_matches_declaration(
+            _REPO_ROOT, payload, live_sha, pin_carrier=_PIN_CARRIER
+        )
+        self.assertNotEqual(live_source["url"], _DEVELOPMENT_URL)
+
+        with TemporaryDirectory(ignore_cleanup_errors=True) as raw:
+            fixture = Path(raw) / "marketplace.json"
+            fixture.write_bytes(live_manifest)
+            stale_sha = _ROOT_COMMIT
+            self.assertNotEqual(stale_sha, live_sha)
+            self.assertEqual(require_existing_commit(_REPO_ROOT, stale_sha), stale_sha)
+
+            previous = repin_marketplace(fixture, stale_sha)
+            self.assertEqual(previous, live_sha)
+            stale_source = pinned_plugin_source(fixture)
+            self.assertEqual(stale_source["sha"], stale_sha)
+            stale_diff = compare_commit_to_declaration(
+                _REPO_ROOT, payload, stale_sha, pin_carrier=_PIN_CARRIER
             )
-        self.assertFalse(diff.is_empty)
-        self.assertNotEqual(source["url"], _DEVELOPMENT_URL)
+            self.assertFalse(stale_diff.is_empty)
+            with self.assertRaises(PublicationMismatchError):
+                assert_commit_matches_declaration(
+                    _REPO_ROOT, payload, stale_sha, pin_carrier=_PIN_CARRIER
+                )
+
+            fixture.write_bytes(live_manifest)
+            self.assertEqual(fixture.read_bytes(), live_manifest)
+            restored_source = pinned_plugin_source(fixture)
+            self.assertEqual(restored_source["sha"], live_sha)
+            restored_diff = compare_commit_to_declaration(
+                _REPO_ROOT, payload, live_sha, pin_carrier=_PIN_CARRIER
+            )
+            self.assertTrue(restored_diff.is_empty)
+            assert_commit_matches_declaration(
+                _REPO_ROOT, payload, live_sha, pin_carrier=_PIN_CARRIER
+            )
+
+        self.assertEqual(_MARKETPLACE_MANIFEST.read_bytes(), live_manifest)
 
 
 class FailClosedTests(unittest.TestCase):
