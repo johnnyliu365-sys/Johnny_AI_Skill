@@ -4,7 +4,8 @@
 | --- | --- |
 | SPEC / AC | Revision 02, AC-5 through AC-7; Ticket 06 installed-cache closure contract; Ticket 08 CLOSURE_02 L4 blocker record |
 | PRD / CHG / Context | `PRD-20260823-034` / `CHG-20260823-034` / sealed Context Revision 01, blob `0fef3f1e4c8ce317873cdf2f73dc1bd793579217` |
-| State / closure | `APPROVED / DISPATCH_READY` / `CLOSURE_02` |
+| State / closure | `DONE / APPROVED / INTEGRATED` / `CLOSURE_02` |
+| Integration | `admit_document_mutation` → `829aaa0b7e9b9c455b162fcb41e532964c824e62` |
 | Exact baseline | `bb14e9623292dce65d8f1bfe00f2a869fb43c1ea` |
 | Dependency | Ticket 06 and Ticket 09 integrated; Ticket 08 CLOSURE_02 has an actual isolated-cache L4 failure. |
 | Control owner / reviewer | `ticket-review` — Terra / xhigh |
@@ -120,3 +121,21 @@ this control-plane commit, then add exactly one correction commit within the sam
 boundary. The Terra reviewer must independently prove both raw CRLF and one different forbidden
 symbolic-target mutation red before approval. A further defect in `CLOSURE_02` returns to control
 plane again; it is not an automatic third correction.
+
+## CLOSURE 02 completion evidence
+
+The owner-authorized second cycle preserved the prior source patches by rebasing them onto the
+approved control baseline as `da65c4497e26c50741695202930356711bd49d94` and
+`05c96d68ae655223665c607ac75042465c58fd1e`, then added the sole raw-CRLF correction
+`829aaa0b7e9b9c455b162fcb41e532964c824e62`. The cumulative diff changed only the two declared
+paths. The S3 raw CRLF case was red at the rebased parent, returns
+`INSTALLED_REF_SET_INVALID` at the candidate, and exact LF restoration returns `VERIFIED`.
+
+Luna/xhigh reported the full closure run as `60 passed, 299 subtests passed`; strict mypy,
+compileall and diff check passed. Terra/xhigh independently verified ancestry and boundary,
+repeated the raw-byte CRLF proof, and performed a different same-root remote-development-ref
+mutation `VERIFIED -> INSTALLED_REF_SET_INVALID -> VERIFIED`. The integration reviewer repeated
+the raw-byte proof, ran the focused installed-cache suite (`10 passed, 3 subtests`), strict mypy,
+compileall and diff check. `admit_document_mutation` read this exact boundary from `main` and
+integrated the candidate at the stated commit. No Claude CLI, user cache, remote, repository,
+ref, tag, descriptor, generation or Ticket 08 action occurred in Ticket 10.
