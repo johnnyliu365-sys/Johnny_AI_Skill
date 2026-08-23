@@ -576,6 +576,25 @@ class InstallScriptTests(unittest.TestCase):
             with self.subTest(code=code):
                 self.assertIn((INSTALL_WRAPPER_SURFACE, code), REGISTRY)
 
+    def test_unreadable_wrapper_digest_has_owner_decision_guidance(self) -> None:
+        entry = REGISTRY[(INSTALL_WRAPPER_SURFACE, "DIGEST_UNREADABLE")]
+
+        self.assertEqual(entry.surface, INSTALL_WRAPPER_SURFACE)
+        self.assertEqual(entry.code, "DIGEST_UNREADABLE")
+        self.assertIs(entry.category, RefusalCategory.OWNER_MUST_DECIDE)
+        self.assertEqual(
+            entry.next_steps,
+            (
+                "Stop. The archive cannot be read, so its approved digest cannot be "
+                "checked.",
+                "Tell the person running this that the archive cannot be read, and ask "
+                "them to provide the published archive again.",
+                "Preserve the approved digest printed by johnny-install.cmd; do not "
+                "recalculate it or bypass this check.",
+            ),
+        )
+        self.assertTrue(guidance_is_transport_safe(entry))
+
     def test_the_script_refuses_in_the_same_order_it_always_has(self) -> None:
         # This ticket adds what happens after a refusal and changes nothing
         # about when one happens. The call sites in source order are that

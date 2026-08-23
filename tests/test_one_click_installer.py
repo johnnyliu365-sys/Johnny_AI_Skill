@@ -33,6 +33,53 @@ _APPROVED_DIGEST = (
 )
 
 
+def _decoded_console_stream(stream: bytes | None, name: str) -> str:
+    """Decode one captured Windows console stream without a code-page assumption."""
+
+    if stream is None:
+        raise AssertionError(f"{name} was not captured")
+    return stream.decode("utf-8", errors="replace")
+
+
+def _console_observation(completed: subprocess.CompletedProcess[bytes]) -> str:
+    """Return the complete decoded observation from both console output streams."""
+
+    stdout = _decoded_console_stream(completed.stdout, "stdout")
+    stderr = _decoded_console_stream(completed.stderr, "stderr")
+    observation = f"stdout:\n{stdout}\nstderr:\n{stderr}"
+    if not stdout and not stderr:
+        raise AssertionError("console observation was empty")
+    return observation
+
+
+def _module_suppressed_environment(module_root: Path) -> dict[str, str]:
+    """Mask the utility module in a disposable environment."""
+
+    module_root.mkdir()
+    (module_root / "Microsoft.PowerShell.Utility.psd1").write_text(
+        "@{\n"
+        "ModuleVersion = '1.0.0'\n"
+        "GUID = '5a7e1c9d-6ad9-4df9-8f07-4d5e12eb4f14'\n"
+        "FunctionsToExport = @()\n"
+        "CmdletsToExport = @()\n"
+        "VariablesToExport = @()\n"
+        "AliasesToExport = @()\n"
+        "}\n",
+        encoding="ascii",
+    )
+    environment = os.environ.copy()
+    environment["PSModulePath"] = str(module_root)
+    return environment
+
+
+def _system_powershell_environment() -> dict[str, str]:
+    """Use the Windows PowerShell modules for the delegated install prompt."""
+
+    environment = os.environ.copy()
+    environment["PSModulePath"] = r"C:\Windows\System32\WindowsPowerShell\v1.0\Modules"
+    return environment
+
+
 class OneClickInstallerWrapperFormatTests(unittest.TestCase):
     """R1: wrapper format, double-entry digest pin, and line endings."""
 
@@ -55,6 +102,13 @@ class OneClickInstallerWrapperFormatTests(unittest.TestCase):
 
         self.assertIn(f'set "BUNDLE_NAME={_BUNDLE_NAME}"', text)
         self.assertIn(f'set "APPROVED_DIGEST={_APPROVED_DIGEST}"', text)
+        self.assertNotIn("Get-FileHash", text)
+        self.assertIn("[System.Security.Cryptography.SHA256]::Create()", text)
+        self.assertIn(".Replace('-', '').ToLowerInvariant()", text)
+        self.assertIn("DIGEST_UNREADABLE", text)
+        self.assertLess(
+            text.index("DIGEST_UNREADABLE"), text.index("Add-Type -AssemblyName")
+        )
 
 
 class OneClickInstallerGateTests(unittest.TestCase):
@@ -72,14 +126,15 @@ class OneClickInstallerGateTests(unittest.TestCase):
                 capture_output=True,
                 check=False,
             )
-            stdout = completed.stdout.decode("utf-8", errors="replace")
+            console = _console_observation(completed)
             self.assertEqual(completed.returncode, 2)
-            self.assertIn("BUNDLE_NOT_FOUND", stdout)
+            self.assertIn("BUNDLE_NOT_FOUND", console)
             self.assertFalse((temp_dir / "install.ps1").exists())
 
     def test_tampered_bundle_fails_with_digest_mismatch(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             temp_dir = Path(temporary)
+            module_root = temp_dir / "suppressed-powershell-modules"
             wrapper_dst = temp_dir / _WRAPPER_NAME
             shutil.copy2(_REPO_ROOT / _WRAPPER_NAME, wrapper_dst)
 
@@ -92,10 +147,11 @@ class OneClickInstallerGateTests(unittest.TestCase):
                 cwd=str(temp_dir),
                 capture_output=True,
                 check=False,
+                env=_module_suppressed_environment(module_root),
             )
-            stdout = completed.stdout.decode("utf-8", errors="replace")
+            console = _console_observation(completed)
             self.assertEqual(completed.returncode, 2)
-            self.assertIn("DIGEST_MISMATCH", stdout)
+            self.assertIn("DIGEST_MISMATCH", console)
             self.assertFalse((temp_dir / "install.ps1").exists())
 
 
@@ -173,10 +229,11 @@ class OneClickInstallerSmokeAndPayloadTests(unittest.TestCase):
                 input=b"\n",
                 capture_output=True,
                 check=False,
+                env=_system_powershell_environment(),
             )
-            stdout = completed.stdout.decode("utf-8", errors="replace")
+            console = _console_observation(completed)
             self.assertEqual(completed.returncode, 2)
-            self.assertIn("USER_DECLINED", stdout)
+            self.assertIn("USER_DECLINED", console)
             self.assertFalse((temp_dir / "install.ps1").exists())
 
     def test_clean_clone_bundle_build_remains_bundled(self) -> None:

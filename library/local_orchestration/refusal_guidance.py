@@ -334,6 +334,19 @@ GUIDANCE: tuple[RefusalGuidance, ...] = (
     ),
     RefusalGuidance(
         surface=INSTALL_WRAPPER_SURFACE,
+        code="DIGEST_UNREADABLE",
+        category=_O,
+        next_steps=_steps(
+            "Stop. The archive cannot be read, so its approved digest cannot be "
+            "checked.",
+            "Tell the person running this that the archive cannot be read, and ask "
+            "them to provide the published archive again.",
+            "Preserve the approved digest printed by johnny-install.cmd; do not "
+            "recalculate it or bypass this check.",
+        ),
+    ),
+    RefusalGuidance(
+        surface=INSTALL_WRAPPER_SURFACE,
         code="INSTALL_SCRIPT_MISSING",
         category=_N,
         next_steps=_steps(
