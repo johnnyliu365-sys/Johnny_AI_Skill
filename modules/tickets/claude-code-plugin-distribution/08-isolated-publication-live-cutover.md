@@ -4,9 +4,9 @@
 | --- | --- |
 | SPEC / AC | Revision 02, AC-1 through AC-9 |
 | PRD / CHG / Context | `PRD-20260823-034` / `CHG-20260823-034` / sealed Context Revision 01, blob `0fef3f1e4c8ce317873cdf2f73dc1bd793579217` |
-| State / closure | `BLOCKED / TICKET_DEFECT / UPSTREAM_CLOSURE_CONTRACT` / `CLOSURE_01` |
-| Dependency | Tickets 06 and 07 integrated and independently reviewed; exact baseline then recorded before dispatch. |
-| Exact development baseline | `2f458316ccfe191cdc5548344f2e323df20ae215` |
+| State / closure | `APPROVED / RE-ADMITTED` / `CLOSURE_02` |
+| Dependency | Tickets 06, 07 and 09 integrated and independently reviewed; exact baseline then recorded before effect admission. |
+| Exact development baseline | `f099ff7f5c7472c38fd0353e31556e06d4016e27` |
 | Authorized candidate branch / temporary raw ref | `implement/claude-publication-08-live-cutover` / `refs/heads/verify/claude-publication-08-live-cutover` |
 | Effect correlation | `claude-publication-08-20260823` |
 | Delivery profile | `POC / HIGH_ASSURANCE`: public repository provisioning, non-fast-forward ref publication, public release metadata and real user-scope installation are named external effects. |
@@ -45,6 +45,27 @@ record. The preflight on 2026-08-23 found the publication repository absent and 
 development ref absent. A changed remote, non-empty or foreign publication ref set, candidate
 branch divergence, missing CLI or a failed generated/readback binding remains a named blocker;
 this authority does not permit fallback, tag movement, hand-edited SHA, or a broader push.
+
+## CLOSURE 02 re-admission — 2026-08-23
+
+Ticket 09 was independently approved and integrated at
+`ca9e988b5b93492de42f604ccf6ef76221111501`; its control-plane closure landed at this ticket's
+baseline `f099ff7f5c7472c38fd0353e31556e06d4016e27`. Its shared carrier proof repairs the sole
+`CLOSURE_01` L2 contract defect without weakening the ref/tree closure. The earlier candidate,
+root and pin remain historical evidence only: they must not be reused as a current source
+candidate, publication root or remote plan.
+
+The owner reconfirmed all five already-enumerated effects for this exact new development baseline,
+the same candidate branch, temporary raw ref, public repositories, version `0.4.10` and
+correlation `claude-publication-08-20260823`. This is a fresh authority binding, not permission to
+reuse the old remote readback. Before any mutation, the Terra reviewer must rebase the candidate,
+generate and verify one new `C`, bind it to a fresh remote ref-set/default-branch readback and
+execute only the ticket-07 plan for that exact `C`. Every L1–L6 proof, including the isolated
+Claude install, remains required.
+
+No source boundary, version, tag policy, effect target or rollback rule changed in `CLOSURE_02`.
+The previous empty-repository observation and the previously created empty public repository are
+facts to re-read, not assumptions or additional authority.
 
 ## CLOSURE 01 blocker
 
