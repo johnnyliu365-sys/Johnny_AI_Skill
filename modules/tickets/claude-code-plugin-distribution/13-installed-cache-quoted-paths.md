@@ -4,7 +4,8 @@
 | --- | --- |
 | SPEC / AC | Revision 05, AC-5 through AC-7; Ticket 06 installed-cache closure contract; Ticket 08 L4 actual-cache evidence |
 | PRD / CHG / Context | `PRD-20260823-037` / `CHG-20260823-037` / sealed Context Revision 04, blob `f175d6a6842ca1d24a3cfd85e3a24542e7d7b9a3` |
-| State / closure | `READY / OWNER_DIRECTED / CLOSURE_01` |
+| State / closure | `DONE / APPROVED / INTEGRATED / CLOSURE_01` |
+| Integration | `admit_document_mutation` → `7a7000ba0affd8573ba5a646bfffe3ec46ca0ebf` |
 | Exact defective baseline | `2101c02bcf1e53380146f9c95dea689703dca1ee` |
 | Dependency | Tickets 06, 09, 10, 11 and 12 are integrated. Ticket 08's actual isolated 0.4.11 cache returns `INSTALLED_TREE_MISMATCH` before its live L4 closure. |
 | Control owner / reviewer | `ticket-review` — Terra / xhigh |
@@ -105,3 +106,21 @@ candidate commit, `admit_document_mutation` and `origin/main` readback. It autho
 CLI, release or user installation. The only continuation is Ticket 08 CLOSURE_05 re-admission,
 fresh source binding and fresh isolated L1–L6 proof; a changed requirement or external effect
 request returns `CHANGE_DETECTED → REQUIREMENT_CHANGED`.
+
+## Completion evidence
+
+The actual 0.4.11 isolated Claude cache proved the defect against the exact baseline: its
+path/blob difference was empty, all named refs targeted parentless
+`5c1cb9aec837a2fc8c76634404bccd393a0b9281`, yet display-form CJK path quoting made the prior
+sentinel adapter return `INSTALLED_TREE_MISMATCH`. Luna/xhigh changed only the two declared
+files, recorded the deterministic `core.quotePath=true` baseline-red cell, and returned its
+uncommitted candidate. Terra/xhigh required and then approved explicit dot/empty-component
+negative cells, independently repeated the reachable `modules/審閱.py` mutation
+`VERIFIED → SENTINEL_REACHABLE → VERIFIED`, and confirmed exact fixture ref/HEAD/tree
+restoration.
+
+The reviewer reran 15 installed-cache tests, 15 publication-closure tests and 41 payload-boundary
+tests; strict mypy, compileall and `git diff --check` passed. The reviewer committed the exact
+candidate at the integration SHA above; the source mutation gate admitted it and `origin/main`
+read back that same SHA. No Claude CLI, user cache, remote publication ref/tag, descriptor,
+generation or release effect occurred in Ticket 13.
