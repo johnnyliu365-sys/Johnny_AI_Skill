@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | `environment-capability-bootstrap` `EC-09`; L9 `R3`, `R4`, `R5` |
 | Requirement | Existing L9 refusal messages must remain observable from the complete Windows console stream even when PowerShell module discovery is unavailable. |
-| State | `CONVERGENCE_REVIEW_REQUIRED / NOT_DISPATCHED / REVISION_02` |
+| State | `CONVERGENCE_REVIEW_REQUIRED / NOT_DISPATCHED / REVISION_03` |
 | Baseline | `32bbf8d8122c3449de0dfabe9572d4d377c3b12d` |
 | Delivery / model | `POC / STANDARD`; Luna / xhigh implementation, Terra / xhigh review. |
 | Language / XSS | Python 3.11 strict test code / `XSS_NOT_APPLICABLE` |
@@ -36,6 +36,24 @@ extraction, and combine decoded stdout plus stderr when asserting user-visible m
 must retain the synthetic matching-bundle proof that reaches named `USER_DECLINED`. No live
 bundle, package, release, installation, remote, tag or user configuration is in scope.
 
+## Revision 03 convergence replan — stream-placement neutrality
+
+Revision 02's module-independent .NET digest correction satisfies the real R3 contract: with
+module discovery suppressed, a tampered bundle returns `DIGEST_MISMATCH`, exits 2 and remains
+unextracted. Unlike the old failed command, the corrected wrapper's `Write-Output` is observed on
+stdout on this host. The previous O5 requirement that stdout alone be insufficient therefore
+contradicted the corrected implementation. Stream placement is not a release contract; observing
+both streams is. This is a `TICKET_DEFECT` in the test evidence only, not a new product behavior
+or an authorization change.
+
+One Luna/xhigh additive correction may modify `tests/test_one_click_installer.py` only: remove
+the stdout-negative placement assertion while retaining named-code assertions against the complete
+decoded observation and the disposable suppressed-module fixture. The current uncommitted wrapper
+and test changes are evidence only; rebase them onto this revision before the one permitted test
+correction. A fresh Terra/xhigh review must independently run the suppressed-module tamper case,
+assert the named refusal in the complete observation, and confirm that neither stream was
+discarded. No generator, package, release or installation effect is authorized.
+
 ## Boundary declaration
 
 ```johnny-boundary
@@ -59,7 +77,7 @@ forbid = doc/
 | O2 | The synthetic matching-bundle test preserves `exit 2` and no-stray-extraction assertions, and observes named `USER_DECLINED` in the same complete console observation. |
 | O3 | The wrapper has no `Get-FileHash` dependency; it computes an exact lowercase SHA-256 through .NET, retains ASCII-only CRLF output, and its finite hash failure cannot proceed to extraction. The test helper does not discard either stream, use codepage-sensitive `text=True`, or accept an empty/pause-only transcript. |
 | O4 | The focused L9/L10 and runtime-lock tests pass under the exact `pytest==9.1.1` declared in `requirements-dev.txt`; strict mypy, compile, JSON/diff checks and the whole suite are green in that environment. |
-| O5 | Terra independently proves one negative: observing stdout alone is insufficient for the tampered fixture on this host, while the completed console observation contains the named refusal; restoration remains green. |
+| O5 | Terra independently runs the suppressed-module tamper fixture and proves the named refusal in the complete observation while retaining both captured streams. The test must not make stdout-versus-stderr placement a contract. |
 
 ## Implementation and review constraints
 
