@@ -61,7 +61,7 @@ exception. This is an upstream closure-contract defect, not an admissible Ticket
 
 No publication payload, `main`, tag or temporary development ref was pushed. No Claude CLI/cache
 operation, source integration or source-main push occurred. The newly created publication
-repository remains empty. A corrective Ticket 06/closure-contract decision is required before
+repository remains empty. [Ticket 09](09-pin-carrier-closure-normalization.md) is required before
 this ticket may be re-admitted; this ticket must not bypass, hand-edit or weaken the L2 proof.
 
 ## Boundary declaration
