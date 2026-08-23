@@ -4,8 +4,11 @@
 | --- | --- |
 | SPEC / AC | Revision 02, AC-1 through AC-9 |
 | PRD / CHG / Context | `PRD-20260823-034` / `CHG-20260823-034` / sealed Context Revision 01, blob `0fef3f1e4c8ce317873cdf2f73dc1bd793579217` |
-| State / closure | `PLANNED / OWNER_EFFECT_AUTHORITY_REQUIRED` / `CLOSURE_01` |
+| State / closure | `APPROVED / DISPATCH_AUTHORIZED / OWNER_EFFECT_AUTHORITY_RECORDED` / `CLOSURE_01` |
 | Dependency | Tickets 06 and 07 integrated and independently reviewed; exact baseline then recorded before dispatch. |
+| Exact development baseline | `2f458316ccfe191cdc5548344f2e323df20ae215` |
+| Authorized candidate branch / temporary raw ref | `implement/claude-publication-08-live-cutover` / `refs/heads/verify/claude-publication-08-live-cutover` |
+| Effect correlation | `claude-publication-08-20260823` |
 | Delivery profile | `POC / HIGH_ASSURANCE`: public repository provisioning, non-fast-forward ref publication, public release metadata and real user-scope installation are named external effects. |
 | Model selection | Reassess exact closure after 06/07. Default implementation remains Luna / xhigh with Terra / xhigh review; Terra elevation is allowed only upon a ticket-bound `HardTicketAssessment` proving this closure cannot be further decomposed and exceeds Luna. |
 | XSS classification | `N/A` |
@@ -27,6 +30,21 @@ The owner must authorize one exact candidate against one exact baseline, naming 
 
 Without this authority the only legal outcome is `WAIT_FOR_HUMAN / OWNER_EFFECT_AUTHORITY_REQUIRED`.
 No implementation/review approval substitutes for it.
+
+## Owner authority record — 2026-08-23
+
+The owner approved all five effects above for exactly this source baseline, candidate branch,
+temporary raw ref and correlation. The authorized destinations are development repository
+`https://github.com/johnnyliu365-sys/Johnny_AI_Skill.git` and publication repository
+`https://github.com/johnnyliu365-sys/Johnny_AI_Skill_publication.git`; the release is public,
+uses default branch `main`, version `0.4.10`, and may create only `plugin-v0.4.10` if absent.
+
+Before every remote mutation, the Terra reviewer must bind the reviewed candidate commit, the
+generated publication root `C`, its exact generated SHA, and the fresh remote readback to this
+record. The preflight on 2026-08-23 found the publication repository absent and the temporary
+development ref absent. A changed remote, non-empty or foreign publication ref set, candidate
+branch divergence, missing CLI or a failed generated/readback binding remains a named blocker;
+this authority does not permit fallback, tag movement, hand-edited SHA, or a broader push.
 
 ## Boundary declaration
 
