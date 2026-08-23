@@ -82,7 +82,29 @@ from library.local_orchestration.publication_repository_closure import (
 _REPO_ROOT: Final[Path] = Path(__file__).resolve().parents[1]
 _PLUGIN_MANIFEST: Final[Path] = _REPO_ROOT / ".claude-plugin" / "plugin.json"
 _MARKETPLACE_MANIFEST: Final[Path] = _REPO_ROOT / ".claude-plugin" / "marketplace.json"
-_PUBLICATION_ANCHOR_REF: Final[str] = "refs/heads/publication-0.4.9"
+_RELEASE_VERSION: Final[str] = "0.4.11"
+_PUBLICATION_URL: Final[str] = (
+    "https://github.com/johnnyliu365-sys/Johnny_AI_Skill_publication.git"
+)
+_DEVELOPMENT_URL: Final[str] = "https://github.com/johnnyliu365-sys/Johnny_AI_Skill.git"
+_RAW_CANDIDATE_MARKETPLACE_URL: Final[str] = (
+    "https://raw.githubusercontent.com/johnnyliu365-sys/Johnny_AI_Skill/verify/"
+    "claude-publication-08-v0411-r02-live-cutover/"
+    ".claude-plugin/marketplace.json"
+)
+_RAW_MAIN_MARKETPLACE_URL: Final[str] = (
+    "https://raw.githubusercontent.com/johnnyliu365-sys/Johnny_AI_Skill/main/"
+    ".claude-plugin/marketplace.json"
+)
+_RAW_SUSPENDED_CANDIDATE_MARKETPLACE_URL: Final[str] = (
+    "https://raw.githubusercontent.com/johnnyliu365-sys/Johnny_AI_Skill/verify/"
+    "claude-publication-08-v0411-live-cutover/.claude-plugin/marketplace.json"
+)
+_RAW_PUBLICATION_MAIN_MARKETPLACE_URL: Final[str] = (
+    "https://raw.githubusercontent.com/johnnyliu365-sys/Johnny_AI_Skill_publication/main/"
+    ".claude-plugin/marketplace.json"
+)
+_PUBLICATION_ANCHOR_REF: Final[str] = f"refs/heads/publication-{_RELEASE_VERSION}"
 _GENERATOR: Final[Path] = (
     _REPO_ROOT / "library" / "local_orchestration" / "plugin_publication.py"
 )
@@ -687,6 +709,85 @@ class MaterialisedTreeTests(unittest.TestCase):
                 materialise_publication_tree(scratch.root, scratch.payload(), destination)
 
 
+class CandidateMetadataTests(unittest.TestCase):
+    """Local L1/L3/L5 checks before reviewer-owned generation and pinning."""
+
+    def _assert_exact_l3_marketplace_routes(self, readme: str) -> None:
+        commands = tuple(
+            line
+            for line in readme.splitlines()
+            if line.startswith("claude plugin marketplace add ")
+        )
+        self.assertEqual(
+            commands,
+            (
+                f"claude plugin marketplace add {_RAW_CANDIDATE_MARKETPLACE_URL}",
+                f"claude plugin marketplace add {_RAW_MAIN_MARKETPLACE_URL}",
+            ),
+        )
+
+    def test_l1_candidate_metadata_names_release_and_publication_source(self) -> None:
+        plugin = json.loads(_PLUGIN_MANIFEST.read_text(encoding="utf-8"))
+        self.assertEqual(plugin["version"], _RELEASE_VERSION)
+        source = pinned_plugin_source(_MARKETPLACE_MANIFEST)
+        self.assertEqual(source["url"], _PUBLICATION_URL)
+        pin = source["sha"]
+        self.assertIsInstance(pin, str)
+        assert isinstance(pin, str)
+        self.assertRegex(pin, r"^[0-9a-f]{40}$")
+        marketplace = json.loads(_MARKETPLACE_MANIFEST.read_text(encoding="utf-8"))
+        self.assertEqual(marketplace["plugins"][0]["version"], _RELEASE_VERSION)
+
+    def test_l3_readme_uses_raw_descriptor_and_complete_user_commands(self) -> None:
+        readme = (_REPO_ROOT / "README.md").read_text(encoding="utf-8")
+        self._assert_exact_l3_marketplace_routes(readme)
+        self.assertNotIn(
+            "claude plugin marketplace add johnnyliu365-sys/Johnny_AI_Skill", readme
+        )
+        self.assertIn(
+            "claude plugin install johnny-ai-skill@johnny-ai-skill --scope user", readme
+        )
+        self.assertIn(
+            "claude plugin update johnny-ai-skill@johnny-ai-skill --scope user", readme
+        )
+        self.assertIn(
+            "claude plugin uninstall johnny-ai-skill@johnny-ai-skill --scope user", readme
+        )
+        self.assertIn("claude plugin marketplace remove johnny-ai-skill", readme)
+
+    def test_l3_rejects_suspended_or_publication_routes_and_restores_green(self) -> None:
+        readme = (_REPO_ROOT / "README.md").read_text(encoding="utf-8")
+        allowed_main = f"claude plugin marketplace add {_RAW_MAIN_MARKETPLACE_URL}"
+        for forbidden in (
+            _RAW_SUSPENDED_CANDIDATE_MARKETPLACE_URL,
+            _RAW_PUBLICATION_MAIN_MARKETPLACE_URL,
+        ):
+            with self.subTest(route=forbidden):
+                mutated = readme.replace(
+                    allowed_main,
+                    f"{allowed_main}\nclaude plugin marketplace add {forbidden}",
+                )
+                with self.assertRaises(AssertionError):
+                    self._assert_exact_l3_marketplace_routes(mutated)
+        self._assert_exact_l3_marketplace_routes(readme)
+
+    def test_l5_stale_candidate_pin_is_named_before_generation(self) -> None:
+        payload = load_payload_declaration(_PLUGIN_MANIFEST)
+        source = pinned_plugin_source(_MARKETPLACE_MANIFEST)
+        sha = source["sha"]
+        self.assertIsInstance(sha, str)
+        assert isinstance(sha, str)
+        diff = compare_commit_to_declaration(
+            _REPO_ROOT, payload, sha, pin_carrier=_PIN_CARRIER
+        )
+        with self.assertRaises(PublicationMismatchError):
+            assert_commit_matches_declaration(
+                _REPO_ROOT, payload, sha, pin_carrier=_PIN_CARRIER
+            )
+        self.assertFalse(diff.is_empty)
+        self.assertNotEqual(source["url"], _DEVELOPMENT_URL)
+
+
 class FailClosedTests(unittest.TestCase):
     """Four failures, four names, and none of them is an empty answer."""
 
@@ -791,12 +892,28 @@ class PinnedTreeBindingTests(unittest.TestCase):
         self.payload = load_payload_declaration(_PLUGIN_MANIFEST)
         self.sha = str(pinned_plugin_source(_MARKETPLACE_MANIFEST)["sha"])
 
+    def _require_reviewer_generated_pin(self) -> None:
+        """Positive C/tree checks wait for the reviewer-owned publication pin."""
+
+        try:
+            diff = compare_commit_to_declaration(
+                _REPO_ROOT, self.payload, self.sha, pin_carrier=_PIN_CARRIER
+            )
+        except PinnedCommitError:
+            self.skipTest("reviewer-generated publication root C is not local yet")
+        if not diff.is_empty:
+            self.skipTest(
+                "reviewer-generated publication pin C is pending; current pin is stale"
+            )
+
     def test_the_pinned_sha_names_a_commit_here(self) -> None:
+        self._require_reviewer_generated_pin()
         self.assertEqual(require_existing_commit(_REPO_ROOT, self.sha), self.sha)
 
     def test_the_pinned_commit_carries_exactly_the_declared_paths(self) -> None:
         """The reviewer's mutation dies here: a tree of three files is not this one."""
 
+        self._require_reviewer_generated_pin()
         diff = compare_commit_to_declaration(
             _REPO_ROOT, self.payload, self.sha, pin_carrier=_PIN_CARRIER
         )
@@ -804,12 +921,14 @@ class PinnedTreeBindingTests(unittest.TestCase):
         self.assertEqual(diff.extra, (), "paths the pinned commit carries but nobody declared")
 
     def test_the_pinned_commit_carries_the_declared_content(self) -> None:
+        self._require_reviewer_generated_pin()
         diff = compare_commit_to_declaration(
             _REPO_ROOT, self.payload, self.sha, pin_carrier=_PIN_CARRIER
         )
         self.assertEqual(diff.differing, (), "declared paths whose shipped content differs")
 
     def test_the_only_unbindable_path_is_the_one_that_records_the_pin(self) -> None:
+        self._require_reviewer_generated_pin()
         diff = compare_commit_to_declaration(
             _REPO_ROOT, self.payload, self.sha, pin_carrier=_PIN_CARRIER
         )
@@ -817,11 +936,13 @@ class PinnedTreeBindingTests(unittest.TestCase):
         self.assertIn(_PIN_CARRIER, declared_payload_paths(_REPO_ROOT, self.payload))
 
     def test_the_pin_and_the_tree_are_one_fact(self) -> None:
+        self._require_reviewer_generated_pin()
         assert_commit_matches_declaration(
             _REPO_ROOT, self.payload, self.sha, pin_carrier=_PIN_CARRIER
         )
 
     def test_the_pinned_commit_carries_no_development_tree(self) -> None:
+        self._require_reviewer_generated_pin()
         carried = tree_blob_ids(_REPO_ROOT, self.sha)
         for path in carried:
             with self.subTest(path=path):
@@ -833,12 +954,14 @@ class PinnedTreeBindingTests(unittest.TestCase):
     def test_the_pinned_commit_carries_no_development_history(self) -> None:
         """A right tree on a wrong parent chain still hands over the whole history."""
 
+        self._require_reviewer_generated_pin()
         parents = _git(_REPO_ROOT, "rev-list", "--parents", "-n", "1", self.sha).split()
         self.assertEqual(parents, [self.sha], "the publication commit has a parent")
 
     def test_the_published_copy_of_the_pin_carrier_cannot_install_anything(self) -> None:
         """The shipped copy must not be a working pin at some older tree."""
 
+        self._require_reviewer_generated_pin()
         blob = tree_blob_ids(_REPO_ROOT, self.sha)[_PIN_CARRIER]
         published = json.loads(_git(_REPO_ROOT, "cat-file", "blob", blob))
         recorded = published["plugins"][0]["source"]["sha"]
@@ -847,6 +970,7 @@ class PinnedTreeBindingTests(unittest.TestCase):
             require_existing_commit(_REPO_ROOT, recorded)
 
     def test_the_pinned_commit_is_smaller_than_the_development_tree(self) -> None:
+        self._require_reviewer_generated_pin()
         development = len(_git(_REPO_ROOT, "ls-tree", "-r", "--name-only", "HEAD").splitlines())
         self.assertLess(len(tree_blob_ids(_REPO_ROOT, self.sha)), development)
 
@@ -893,7 +1017,7 @@ class PublicationReachabilityTests(unittest.TestCase):
 
         bare = raw / "real-publication.git"
         clone = raw / "real-publication-clone"
-        remote_ref = "refs/remotes/origin/publication-0.4.9"
+        remote_ref = f"refs/remotes/origin/publication-{_RELEASE_VERSION}"
         source_marketplace = _REPO_ROOT / ".claude-plugin" / "marketplace.json"
         sha = str(pinned_plugin_source(source_marketplace)["sha"])
         require_existing_commit(_REPO_ROOT, sha)

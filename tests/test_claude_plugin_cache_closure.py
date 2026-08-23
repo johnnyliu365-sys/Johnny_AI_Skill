@@ -242,6 +242,16 @@ class InstalledPluginCacheClosureTests(unittest.TestCase):
                 _git(root, "for-each-ref", "--format=%(refname)=%(objectname)"),
                 before,
             )
+    def test_l5_missing_cli_cache_data_is_named_and_not_verified(self) -> None:
+        with TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            _initialise(root)
+            payload = PublicationPayload(
+                paths=("payload.txt",),
+                blob_ids=(("payload.txt", "0" * 40),),
+            )
+            result = verify_installed_plugin_cache(root, payload)
+            self.assertEqual(result.status, InstallClosureStatus.PLUGIN_CHECKOUT_MISMATCH)
 
     def test_s1_normal_clone_remote_head_is_verified(self) -> None:
         with TemporaryDirectory() as temporary:

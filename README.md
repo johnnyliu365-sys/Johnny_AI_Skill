@@ -33,12 +33,30 @@ active product objective。
 
 ## Level 1：只安裝 Claude Code Plugin
 
-在終端機執行：
+審查 candidate 時，使用 development repository 的 immutable raw descriptor；raw descriptor
+只提供 marketplace metadata，plugin source 則由 descriptor 指向獨立的 publication repository：
 
 ```bash
-claude plugin marketplace add johnnyliu365-sys/Johnny_AI_Skill
+claude plugin marketplace add https://raw.githubusercontent.com/johnnyliu365-sys/Johnny_AI_Skill/verify/claude-publication-08-v0411-r02-live-cutover/.claude-plugin/marketplace.json
 claude plugin install johnny-ai-skill@johnny-ai-skill --scope user
 ```
+
+development `main` 完成 guarded integration 後，改用 development `main` 的 raw descriptor：
+
+```bash
+claude plugin marketplace add https://raw.githubusercontent.com/johnnyliu365-sys/Johnny_AI_Skill/main/.claude-plugin/marketplace.json
+```
+
+更新或移除 user-scope plugin：
+
+```bash
+claude plugin update johnny-ai-skill@johnny-ai-skill --scope user
+claude plugin uninstall johnny-ai-skill@johnny-ai-skill --scope user
+claude plugin marketplace remove johnny-ai-skill
+```
+
+Publication repository 的建立、promotion、pin 與 release readback 是 owner-controlled
+release operation；使用者安裝不會替 owner 建立 repository 或移動 release refs。
 
 完成後重新開啟 Claude Code session，或輸入：
 
