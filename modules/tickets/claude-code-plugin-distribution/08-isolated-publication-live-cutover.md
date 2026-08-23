@@ -4,8 +4,8 @@
 | --- | --- |
 | SPEC / AC | Revision 04, AC-1 through AC-10 |
 | PRD / CHG / Context | `PRD-20260823-034` / `CHG-20260823-034`, amended by `PRD-20260823-035` / `CHG-20260823-035` and `PRD-20260823-036` / `CHG-20260823-036` / sealed Context Revision 03, blob `c87425feabc5e6147098c636abf2f604aa129e89` |
-| State / closure | `OPEN / OWNER_EFFECT_AUTHORITY_RECORDED / CLOSURE_03` |
-| Dependency | Tickets 06, 07, 09, 10 and 11 integrated; F3 is closed, successor version `0.4.11` is selected, and the CLOSURE_03 authority below is the sole admitted effect scope. |
+| State / closure | `BLOCKED / REQUIREMENT_CHANGED / MULTI_RELEASE_TAG_DECLARATION_CONFLICT` / `CLOSURE_03` |
+| Dependency | Tickets 06, 07, 09, 10 and 11 integrated. The CLOSURE_03 source candidate is review evidence only; a requirement/SPEC/ticket revision must resolve L2 before any effect re-admission. |
 | Historical 0.4.10 development baseline | `f099ff7f5c7472c38fd0353e31556e06d4016e27` |
 | Historical 0.4.10 candidate branch / temporary raw ref | `implement/claude-publication-08-live-cutover` / `refs/heads/verify/claude-publication-08-live-cutover` |
 | Historical effect correlation | `claude-publication-08-20260823` |
@@ -64,6 +64,29 @@ cache, release, deletion or retry is authorized. Credentials remain in the alrea
 host session and are never read, printed or persisted. A candidate commit/root discovered after
 this record is an assertion to bind and re-read before effect, not permission to substitute a
 different branch or baseline.
+
+## CLOSURE 03 blocker — immutable historical tag versus current declaration
+
+Luna's local source candidate `73a421d827794f7cf059b74c096d041471b6044f` regenerated the
+parentless `0.4.11` root `08330633ef31acdc54e8fa8c38414476faed598a`; it changed only the six
+declared paths and performed no external effect. Terra independently verified the candidate,
+root, L1/L3/L5 fixtures, focused tests, strict type and compile gates.
+
+On a fresh local publication fixture, `main=C` and `plugin-v0.4.11=C` verify green. A reviewer
+development ref correctly returns `REF_SET_INVALID` and restores green after exact deletion. The
+authority-required retained `plugin-v0.4.10=b52215eb3ee5dfa101e65c189441e62c20ca45e6`, however,
+returns `TREE_MISMATCH`: it has 104 extra paths and six content mismatches against F3's current
+declaration, including both Claude manifests and `AGENTS.md`.
+
+The cause is structural: the current L2 verifier evaluates every retained release tag against one
+new candidate declaration, while ADR-015 requires immutable historical tags to remain reachable.
+F3 intentionally changed that declaration. The two rules cannot both hold for `0.4.10` and
+`0.4.11`; moving/deleting the old tag would violate the ticket, ADR and CLOSURE_03 authority.
+
+No publication CAS, new tag, temporary raw ref, Claude CLI/cache operation, source integration
+or source-main push occurred. L3–L6 are unexecuted, not passed or waived. This is
+`ImplementationReturn.CHANGE_DETECTED -> REQUIREMENT_CHANGED`; CLOSURE_03 authority is suspended
+and cannot be reused after the required contract decision.
 
 ## Required owner effect authority before dispatch
 
