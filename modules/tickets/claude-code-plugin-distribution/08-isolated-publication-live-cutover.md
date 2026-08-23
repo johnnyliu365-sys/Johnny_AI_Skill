@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | Revision 05, AC-1 through AC-11 |
 | PRD / CHG / Context | `PRD-20260823-034` / `CHG-20260823-034`, amended by `PRD-20260823-035` / `CHG-20260823-035`, `PRD-20260823-036` / `CHG-20260823-036` and `PRD-20260823-037` / `CHG-20260823-037` / sealed Context Revision 04, blob `f175d6a6842ca1d24a3cfd85e3a24542e7d7b9a3` |
-| State / closure | `READY / OWNER_EFFECT_AUTHORITY_RECORDED / CLOSURE_04` |
+| State / closure | `CONVERGENCE_REVIEW_REQUIRED / OWNER_EFFECT_AUTHORITY_RECORDED / REVISION_06` |
 | Dependency | Tickets 06, 07, 09, 10, 11 and 12 are integrated. Ticket 12 closed the version-specific retained-tag contract at `9a244db4a9c4342476b2a1f59d49b9c15abc59e7`; the fresh CLOSURE_04 authority below replaces the suspended CLOSURE_03 authority. The CLOSURE_03 source candidate remains review evidence only. |
 | Historical 0.4.10 development baseline | `f099ff7f5c7472c38fd0353e31556e06d4016e27` |
 | Historical 0.4.10 candidate branch / temporary raw ref | `implement/claude-publication-08-live-cutover` / `refs/heads/verify/claude-publication-08-live-cutover` |
@@ -57,6 +57,27 @@ README commands in a disposable isolated `CLAUDE_CONFIG_DIR`; and (4) only after
 integrate and push that same reviewed development candidate. No tag movement, retry on changed
 readback, provider invocation, runner/wake claim, user-profile installation, credential output,
 other remote mutation or use of CLOSURE_03 is authorized.
+
+## Revision 06 convergence replan — L3 raw-descriptor exclusivity
+
+The revision-05 correction review found an `EVIDENCE_DEFECT`: it rejected a publication-repository
+`main` raw URL but accepted an added suspended historical
+`verify/claude-publication-08-v0411-live-cutover` URL beside the authorized r02 route. This is
+already within L3's approved requirement that the real install use one current development raw
+descriptor; no product, version, target, authority or external-effect boundary changes.
+
+The one remaining source correction is limited to `tests/test_plugin_publication.py`. It must pin
+the exact two allowed README marketplace-add commands: the authorized r02 candidate raw descriptor
+and the post-integration development `main` raw descriptor. Adding either the suspended r01 raw
+route or a publication-repository `main` raw route alongside valid text must make the named L3
+test red; exact restoration must return green. The reviewer must independently perform at least
+one of those additions. The current uncommitted source diff is not a candidate or merge source;
+it must be rebound to this revision before one Luna/xhigh correction and a new Terra/xhigh review.
+
+The CLOSURE_04 remote snapshot, expected target, version, temporary r02 ref and correlation remain
+binding. Generator execution, publication promotion, temporary-ref push, Claude CLI/cache proof,
+source integration and every L1--L6 external effect remain forbidden until this new source closure
+is approved and the reviewer writes its candidate commit.
 
 ## CLOSURE 03 historical owner effect authority — suspended
 
