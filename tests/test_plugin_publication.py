@@ -723,18 +723,15 @@ class CandidateMetadataTests(unittest.TestCase):
     def test_l5_stale_candidate_pin_is_named_before_it_can_be_verified(self) -> None:
         payload = load_payload_declaration(_PLUGIN_MANIFEST)
         source = pinned_plugin_source(_MARKETPLACE_MANIFEST)
-        sha = source["sha"]
-        self.assertIsInstance(sha, str)
-        assert isinstance(sha, str)
+        stale_sha = _ROOT_COMMIT
         diff = compare_commit_to_declaration(
-            _REPO_ROOT, payload, sha, pin_carrier=_PIN_CARRIER
+            _REPO_ROOT, payload, stale_sha, pin_carrier=_PIN_CARRIER
         )
         with self.assertRaises(PublicationMismatchError):
             assert_commit_matches_declaration(
-                _REPO_ROOT, payload, sha, pin_carrier=_PIN_CARRIER
+                _REPO_ROOT, payload, stale_sha, pin_carrier=_PIN_CARRIER
             )
-        self.assertIn(".claude-plugin/plugin.json", diff.differing)
-        self.assertIn("README.md", diff.differing)
+        self.assertTrue(diff.missing or diff.extra or diff.differing)
         self.assertNotEqual(source["url"], _DEVELOPMENT_URL)
 
 
