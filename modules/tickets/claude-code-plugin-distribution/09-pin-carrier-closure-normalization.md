@@ -4,8 +4,9 @@
 | --- | --- |
 | SPEC / AC | Revision 02, AC-1 through AC-4; Ticket 06 closure contract; Ticket 08 L2 blocker record |
 | PRD / CHG / Context | `PRD-20260823-034` / `CHG-20260823-034` / sealed Context Revision 01, blob `0fef3f1e4c8ce317873cdf2f73dc1bd793579217` |
-| State / closure | `APPROVED / DISPATCH_READY` / `CLOSURE_01` |
+| State / closure | `DONE / APPROVED / INTEGRATED` / `CLOSURE_01` |
 | Exact baseline | `3f510ff816cb012b4efaed679720bc7721848169` |
+| Integration | `admit_document_mutation` → `ca9e988b5b93492de42f604ccf6ef76221111501` |
 | Dependency | Ticket 06 integrated closure modules; Ticket 08 blocked L2 record. |
 | Control owner / reviewer | `ticket-review` — Terra / xhigh |
 | Implementation owner | `implementation-standard` — Luna / xhigh; one ticket only, no helper |
@@ -90,3 +91,27 @@ can obtain `VERIFIED` only after the full carrier proof is present.
 `COMPLETED` returns `ACTION_COMPLETED`. A request to reuse the empty publication repository,
 push a payload/tag/ref, modify the Ticket 08 candidate or run Claude is `BLOCKED` or
 `CHANGE_DETECTED`; it does not become an effect through this ticket.
+
+## Closure evidence
+
+The Luna/xhigh implementation returned candidate
+`65c7bde4b0341d17455b6de9a23c44d2b3be0e2e`. Terra/xhigh independently reviewed that exact
+source change and returned `APPROVED`: all four declared paths were clean; N1–N6 and the strict
+type boundary passed; and its independent mutations produced
+`VERIFIED → REF_SET_INVALID → VERIFIED` and `VERIFIED → TREE_MISMATCH → VERIFIED`.
+Ticket 08's recorded root `758a7187f6cee5dbb231cd85fe2c4f5d3e03f4b3` likewise produced
+`VERIFIED → TREE_MISMATCH → VERIFIED` under the repaired carrier proof.
+
+The candidate was then rebased over the docs-only `d5c6949` main advance. The four source/test
+blob IDs remained byte-identical and the resulting candidate was
+`ca9e988b5b93492de42f604ccf6ef76221111501`. Reviewer readback passed strict mypy over all four
+changed files, compileall and `git diff --check`. The combined focused generator, closure and
+payload run produced `110 passed, 582 subtests passed` plus exactly two known failures: the
+unchanged `0.4.9` pin `b16151c` predates the two corrected payload modules. This ticket explicitly
+forbids regenerating that pin; Ticket 08 must regenerate and re-pin its single publication
+candidate before its own integration, and may not describe the current development checkout as a
+green pinned publication.
+
+`admit_document_mutation` read this boundary from `main`, admitted exactly the four declared
+paths and fast-forwarded `main` to `ca9e988b5b93492de42f604ccf6ef76221111501`. Ticket 09 made no
+remote repository, ref, tag, Claude CLI, credential, publication or installation effect.
