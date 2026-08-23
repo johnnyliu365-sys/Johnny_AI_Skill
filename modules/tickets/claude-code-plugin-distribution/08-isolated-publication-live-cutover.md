@@ -2,17 +2,17 @@
 
 | Field | Binding |
 | --- | --- |
-| SPEC / AC | Revision 03, AC-1 through AC-10 |
-| PRD / CHG / Context | `PRD-20260823-034` / `CHG-20260823-034`, amended by `PRD-20260823-035` / `CHG-20260823-035` / sealed Context Revision 02, blob `f53b2a7dedf055e50ad44804e590f22991a3d5c9` |
-| State / closure | `BLOCKED / REQUIREMENT_CHANGED / PAYLOAD_TOPOLOGY_STALE` / `CLOSURE_03_PENDING` |
-| Dependency | Tickets 06, 07, 09 and 10 integrated; F3's bounded payload-topology ticket must be approved, reviewed and integrated before any successor-version or effect re-admission. |
-| Exact development baseline | `f099ff7f5c7472c38fd0353e31556e06d4016e27` |
-| Authorized candidate branch / temporary raw ref | `implement/claude-publication-08-live-cutover` / `refs/heads/verify/claude-publication-08-live-cutover` |
-| Effect correlation | `claude-publication-08-20260823` |
+| SPEC / AC | Revision 04, AC-1 through AC-10 |
+| PRD / CHG / Context | `PRD-20260823-034` / `CHG-20260823-034`, amended by `PRD-20260823-035` / `CHG-20260823-035` and `PRD-20260823-036` / `CHG-20260823-036` / sealed Context Revision 03, blob `c87425feabc5e6147098c636abf2f604aa129e89` |
+| State / closure | `BLOCKED / OWNER_EFFECT_AUTHORITY_REQUIRED / SUCCESSOR_VERSION_0.4.11` / `CLOSURE_03_PENDING` |
+| Dependency | Tickets 06, 07, 09, 10 and 11 integrated; F3 is closed and successor version `0.4.11` is selected. Fresh exact owner effect authority is still required before re-admission. |
+| Historical 0.4.10 development baseline | `f099ff7f5c7472c38fd0353e31556e06d4016e27` |
+| Historical 0.4.10 candidate branch / temporary raw ref | `implement/claude-publication-08-live-cutover` / `refs/heads/verify/claude-publication-08-live-cutover` |
+| Historical effect correlation | `claude-publication-08-20260823` |
 | Delivery profile | `POC / HIGH_ASSURANCE`: public repository provisioning, non-fast-forward ref publication, public release metadata and real user-scope installation are named external effects. |
 | Model selection | Reassess exact closure after 06/07. Default implementation remains Luna / xhigh with Terra / xhigh review; Terra elevation is allowed only upon a ticket-bound `HardTicketAssessment` proving this closure cannot be further decomposed and exceeds Luna. |
 | XSS classification | `N/A` |
-| Proposed worktree / branch | `.worktrees/claude-publication-08` / `implement/claude-publication-08-live-cutover` |
+| Future worktree / branch | Record only with fresh owner effect authority; historical branch/ref cannot be advanced as a `0.4.11` candidate. |
 
 ## Current authority boundary — 2026-08-23
 
@@ -21,30 +21,30 @@ record is historical evidence only. `plugin-v0.4.10` already exists and is immut
 authorizes F3 nor a new generated root, descriptor pin, remote mutation, temporary ref, Claude
 CLI run, source integration or public release.
 
-F3 is the sole next prerequisite: it removes host-local publication/cache tooling from the Level
-1 declaration and proves the resulting topology locally. Only after F3 source integration and
-independent review may the owner choose one successor version and record a fresh exact Ticket 08
-effect authority. This ticket must not infer that choice, reuse `0.4.10`, hand-edit a SHA, or
-advance its historical candidate.
+F3 is integrated and independently reviewed at `7a64f6312d8cd2a84a8821eb1dac2f00e205c8b7`.
+The owner selected successor version `0.4.11`. That selection is not a release authorization:
+this ticket remains blocked until the owner records a fresh exact effect authority for one
+candidate, remote snapshot, expected-old SHA and correlation. It must not reuse `0.4.10`,
+hand-edit a SHA, or advance its historical candidate.
 
 ## Required owner effect authority before dispatch
 
 The owner must authorize one exact candidate against one exact baseline, naming all of:
 
-1. create/configure public `https://github.com/johnnyliu365-sys/Johnny_AI_Skill_publication.git`,
+1. re-read/configure public `https://github.com/johnnyliu365-sys/Johnny_AI_Skill_publication.git`,
    with default branch `main` and no foreign refs;
-2. publish one generated root to the repository, creating `plugin-v0.4.10` only if absent and
-   updating `main` through the ticket-07 CAS plan/readback;
+2. publish one generated root to the repository, creating `plugin-v0.4.11` only if absent and
+   updating `main` through the ticket-07 CAS plan/readback using the fresh expected-old SHA;
 3. publish one temporary development candidate ref solely to make its immutable raw descriptor
    testable, then remove that temporary ref only after the candidate is integrated or abandoned;
-4. integrate and push source URL, Claude version `0.4.10`, generated SHA and README together;
+4. integrate and push source URL, Claude version `0.4.11`, generated SHA and README together;
    and
 5. run the documented Claude CLI commands in a disposable isolated `CLAUDE_CONFIG_DIR`.
 
 Without this authority the only legal outcome is `WAIT_FOR_HUMAN / OWNER_EFFECT_AUTHORITY_REQUIRED`.
 No implementation/review approval substitutes for it.
 
-## Owner authority record — 2026-08-23
+## Historical owner authority record — 0.4.10 only
 
 The owner approved all five effects above for exactly this source baseline, candidate branch,
 temporary raw ref and correlation. The authorized destinations are development repository
@@ -105,7 +105,7 @@ ticket must make the installed-cache checker distinguish an admitted normal remo
 symbolic ref from a foreign/default-branch mismatch, with actual-cache and reverse-mutation
 evidence, before Ticket 08 can be re-admitted.
 
-## Post-Ticket-10 requirement change — F3 payload topology prerequisite
+## Post-Ticket-10 requirement change — F3 resolution and successor selection
 
 Ticket 10 is now integrated and changes
 `library/local_orchestration/claude_plugin_cache_closure.py`. The old Level 1 declaration names
@@ -115,11 +115,10 @@ produce a root different from the already published
 root on `main` and immutable `plugin-v0.4.10`.
 
 The old authority permits only version `0.4.10` and creating that tag when absent; it forbids
-moving a tag, hand-editing a SHA and a broader push. F3 (`CHG-20260823-035`) is now the required
-first correction: reduce the payload to its reachable reusable surface, remove host-local tools
-from the declaration, and independently prove that boundary. Version selection follows that
-integration. Neither descriptor repinning nor Ticket 08 re-admission is legal before both steps
-are recorded.
+moving a tag, hand-editing a SHA and a broader push. F3 (`CHG-20260823-035`) reduced the payload
+to its reachable reusable surface and integrated at `7a64f6312d8cd2a84a8821eb1dac2f00e205c8b7`.
+The owner then selected `0.4.11` under `CHG-20260823-036`. Neither descriptor repinning nor
+Ticket 08 re-admission is legal until a fresh exact external-effect record is added.
 
 ## CLOSURE 01 blocker
 
@@ -168,14 +167,14 @@ publication-source release, not a Codex bundle release. The SHA is generated, ne
 
 The exact README commands, run through the real Claude CLI in an isolated config root, install
 `johnny-ai-skill@johnny-ai-skill` from the independent publication repository at the generated
-`0.4.10` SHA. The raw marketplace cache contains only the descriptor; the plugin cache checkout,
+`0.4.11` SHA. The raw marketplace cache contains only the descriptor; the plugin cache checkout,
 refs and every reachable tree contain only declared payload. The plugin cache may retain `.git`;
 it may not retain a reachable development repository tree/object graph.
 
 ## Required candidate sequence
 
 1. From the candidate branch set the marketplace `source.url` to the publication repository,
-   update Claude manifest/marketplace version to `0.4.10`, and prepare README's raw marketplace
+   update Claude manifest/marketplace version to `0.4.11`, and prepare README's raw marketplace
    URL. Generate parentless payload root `C` with the ticket-07 contract.
 2. Verify `C` is an exact payload root. Provision/read the publication remote and execute only the
    approved CAS/tag plan. Fetch into a fresh clone and use ticket 06 to prove its full ref/tree
@@ -192,7 +191,7 @@ it may not retain a reachable development repository tree/object graph.
 
 | Cell | Required proof |
 | --- | --- |
-| L1 metadata/pin | Claude manifest/marketplace JSON validate, use the publication URL, contain version `0.4.10` and full generated SHA; source/pin/tree regeneration agrees. |
+| L1 metadata/pin | Claude manifest/marketplace JSON validate, use the publication URL, contain version `0.4.11` and full generated SHA; source/pin/tree regeneration agrees. |
 | L2 repository closure | Fresh publication clone has only allowed `main`/version-tag refs and parentless declared-payload trees. |
 | L3 real marketplace cache | README raw URL adds a descriptor-only marketplace cache; owner/repo marketplace form is not documented as the Level 1 entry. |
 | L4 real plugin cache | Actual isolated install has path/blob equality, all reachable refs/commits/trees accepted by ticket 06, and development sentinels unreadable. |

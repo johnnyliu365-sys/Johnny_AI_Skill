@@ -4,7 +4,8 @@
 | --- | --- |
 | SPEC / AC | Revision 03, AC-10; AC-3 compatibility guard |
 | PRD / CHG / Context | `PRD-20260823-035` / `CHG-20260823-035` / sealed Context Revision 02, blob `f53b2a7dedf055e50ad44804e590f22991a3d5c9` |
-| State / closure | `OPEN / OWNER_APPROVED / DISPATCH_AUTHORIZED` / `F3` |
+| State / closure | `DONE / APPROVED / INTEGRATED` / `F3` |
+| Integration | `admit_document_mutation` → `7a64f6312d8cd2a84a8821eb1dac2f00e205c8b7` |
 | Exact baseline | `e5278cde35f2b956d62508564407f6bfd419c6bb` |
 | Dependency | Tickets 02–05, 06, 07, 09 and 10 remain historical evidence. Ticket 08 is blocked and has no successor-version/effect authority. |
 | Control owner / reviewer | `ticket-review` — Terra / xhigh |
@@ -122,3 +123,17 @@ cells, strict type/compile/diff gates, and independently runs F3-5. Passing revi
 `admit_document_mutation` from this ticket's boundary, followed by a readback/push of its source
 commit. It does not re-admit Ticket 08. The next Router event is the owner decision selecting a
 successor version/tag; no agent infers that value from this ticket.
+
+## Completion evidence
+
+Luna/xhigh implemented the declared six-path candidate at
+`7a64f6312d8cd2a84a8821eb1dac2f00e205c8b7`. The focused payload-boundary suite passed 41 tests;
+strict mypy, compileall, JSON validation and diff check were green. The implementer recorded F3-2
+and F3-3 red-to-green reverse mutations.
+
+Terra/xhigh independently verified clean ancestry and the exact six-path boundary, then ran F3-5
+through the production materializer: adding only
+`library/local_orchestration/plugin_publication.py` produced
+`GREEN -> TOPOLOGY_ASSERTION_RED -> GREEN` after byte-exact restoration. The reviewer found no
+Level 2, marketplace, installer, version, pin, source-URL or external-effect change. The document
+mutation gate integrated the exact candidate and `origin/main` read back the stated commit.

@@ -1,12 +1,12 @@
-# Claude Code plugin distribution — Revision 03 publication isolation and payload topology
+# Claude Code plugin distribution — Revision 04 publication isolation, payload topology and successor version
 
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-CLAUDE-CODE-PLUGIN-DISTRIBUTION-20260802-01KZ4C6D8E0F2G4H6J8K0M2N4P` |
-| Status | `APPROVED / REVISION_03 / REVIEWER_DECOMPOSITION_AUTHORIZED` |
-| Author / baseline | Architecture owner / `control/claude-plugin-payload-topology-r03` / `1caa2f2355638c75610dc848b5bd23d8f97d0bcb` |
-| Feature Context | `doc/context/claude-code-plugin-distribution/claude-code-plugin-distribution-r02-payload-topology.md`, sealed `REVISION_02`, blob `f53b2a7dedf055e50ad44804e590f22991a3d5c9` |
-| PRD / change | `PRD-20260802-005` / `CHG-20260802-005`, amended by `PRD-20260823-034` / `CHG-20260823-034` and `PRD-20260823-035` / `CHG-20260823-035` |
+| Status | `APPROVED / REVISION_04 / REVIEWER_DECOMPOSITION_AUTHORIZED` |
+| Author / baseline | Architecture owner / `control/claude-publication-08-successor-version` / `7a64f6312d8cd2a84a8821eb1dac2f00e205c8b7` |
+| Feature Context | `doc/context/claude-code-plugin-distribution/claude-code-plugin-distribution-r03-successor-version.md`, sealed `REVISION_03`, blob `c87425feabc5e6147098c636abf2f604aa129e89` |
+| PRD / change | `PRD-20260802-005` / `CHG-20260802-005`, amended by `PRD-20260823-034` / `CHG-20260823-034`, `PRD-20260823-035` / `CHG-20260823-035` and `PRD-20260823-036` / `CHG-20260823-036` |
 | Architecture | `ADR-20260823-015-dedicated-plugin-publication-repository.md`; `ADR-20260823-017-level-one-payload-topology.md` |
 | Delivery stage / profile | `POC / STANDARD` for F3's local declaration closure; `POC / HIGH_ASSURANCE` remains mandatory for repository creation, remote ref mutation, release publication and a user-installed supply-chain boundary. |
 | Implementation language | Python 3.11 for publication verification/promotion contracts; frozen Pydantic DTOs, finite enums and `mypy --strict`. Manifests remain JSON validated at their boundary. |
@@ -262,9 +262,9 @@ forward-fix/revert decision for the owner, not an automatic retry.
 ## Compatibility, security and deployment prerequisites
 
 - Existing installed version `0.4.9` remains usable from its current source until a complete new
-  candidate is published and verified. `plugin-v0.4.10` is immutable. F3 deliberately chooses no
-  successor version; a changed F3 payload requires an owner-selected new version/tag before the
-  Ticket 08 release path can resume.
+  candidate is published and verified. `plugin-v0.4.10` is immutable. F3's successor is exactly
+  `0.4.11`: only a fresh verified candidate may create immutable `plugin-v0.4.11`; version
+  selection itself grants no remote/tag/pin/CLI effect.
 - Company projects receive no files or configuration. Removing the plugin remains user-scoped.
 - The publication repository is public read and least-privilege write. No token, SSH private key,
   cookie, authorization header or credential diagnostic becomes project evidence.
@@ -280,10 +280,11 @@ forward-fix/revert decision for the owner, not an automatic retry.
 - `ImplementationReturn.COMPLETED` emits `ACTION_COMPLETED`; `BLOCKED` halts; and
   `CHANGE_DETECTED` emits `REQUIREMENT_CHANGED` and returns to change control. An implementer
   cannot alter repository topology, effect authority, release acceptance or public contract.
-- Sealed Context binding: `doc/context/claude-code-plugin-distribution/claude-code-plugin-distribution-r02-payload-topology.md`
-  Revision 02, blob `f53b2a7dedf055e50ad44804e590f22991a3d5c9`.
+- Sealed Context binding: `doc/context/claude-code-plugin-distribution/claude-code-plugin-distribution-r03-successor-version.md`
+  Revision 03, blob `c87425feabc5e6147098c636abf2f604aa129e89`.
 - Active requirement leaves: `PRD-20260823-034` / `CHG-20260823-034` and
-  `PRD-20260823-035` / `CHG-20260823-035` at
+  `PRD-20260823-035` / `CHG-20260823-035` and `PRD-20260823-036` /
+  `CHG-20260823-036` at
   `doc/requirements/active/2026/distribution/`.
 - No shared Context may be amended from the ticket/implementation/review lanes. Any topology,
   ownership, capability or acceptance change is `REQUIREMENT_CHANGED`.
@@ -296,6 +297,7 @@ forward-fix/revert decision for the owner, not an automatic retry.
 | 2026-08-23 | Architecture-owner draft / `295de85297b9d2e7720b6aa592aac3418490595b` | Drafted Revision 02 under `CHG-20260823-034` and `ADR-20260823-015`; owner approval is pending. |
 | 2026-08-23 | Project owner / exact draft `f3af1736b0f292476fb555a553a1c40d6416c3e2` | Approved Revision 02 and sealed Context Revision 01; reviewer decomposition is authorized. |
 | 2026-08-23 | Project owner / `PRD-20260823-035` / `CHG-20260823-035` | Approved Revision 03 and sealed Context Revision 02: Level 1 names only the reachable reusable-source surface; host-local control tooling and installer entrypoints are excluded before a successor version is chosen. |
+| 2026-08-23 | Project owner / `PRD-20260823-036` / `CHG-20260823-036` | Approved Revision 04 and sealed Context Revision 03: `0.4.11` is the successor release version after F3; a new Ticket 08 effect authority remains required. |
 
 The approval applies to the exact draft named above. This candidate changes only lifecycle and
 approval metadata, binds the resulting sealed Context blob, and opens the `TICKETS` stage; it does
