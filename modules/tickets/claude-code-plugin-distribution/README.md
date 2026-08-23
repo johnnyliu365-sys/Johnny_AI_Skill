@@ -2,11 +2,11 @@
 
 | Field | Binding |
 | --- | --- |
-| SPEC / Context | `SPEC-AI-WORKFLOW-CLAUDE-CODE-PLUGIN-DISTRIBUTION-20260802-01KZ4C6D8E0F2G4H6J8K0M2N4P` Revision 02 / sealed Context Revision 01, blob `0fef3f1e4c8ce317873cdf2f73dc1bd793579217` |
-| Requirement / architecture | `PRD-20260823-034` / `CHG-20260823-034` / `ADR-20260823-015` |
-| Planning baseline | `8033a01ba2f3fc1a07bfa7c1c5bf41d9cd50f0b0` |
+| SPEC / Context | `SPEC-AI-WORKFLOW-CLAUDE-CODE-PLUGIN-DISTRIBUTION-20260802-01KZ4C6D8E0F2G4H6J8K0M2N4P` Revision 03 / sealed Context Revision 02, blob `f53b2a7dedf055e50ad44804e590f22991a3d5c9` |
+| Requirement / architecture | `PRD-20260823-034` / `CHG-20260823-034`, amended by `PRD-20260823-035` / `CHG-20260823-035` / `ADR-20260823-015` and `ADR-20260823-017` |
+| Planning baseline | `1caa2f2355638c75610dc848b5bd23d8f97d0bcb` |
 | Control owner / reviewer | Terra `ticket-review` profile; profile selection remains capability-verified at dispatch. |
-| State | `REVISION_02 / SERIAL_DECOMPOSITION_AUTHORIZED` |
+| State | `REVISION_03 / F3_SERIAL_DECOMPOSITION_AUTHORIZED` |
 
 Tickets 01–05 remain completed evidence for payload declaration, content binding and old-source
 reachability. They are not authority for publication-repository isolation. New tickets are serial:
@@ -22,7 +22,7 @@ performs the one owner-authorized live cutover.
 | `05-reachability-measures-the-wrong-thing` | `DONE` | Clean-clone fetchability evidence | Historical |
 | [06-publication-repository-closure.md](06-publication-repository-closure.md) | `DONE / APPROVED / INTEGRATED` — `46ad6d3` | A Git object graph is accepted only when every reachable ref/tree is declared payload. | `POC / STANDARD`; no remote publication effect. |
 | [07-publication-promotion-compare-and-swap.md](07-publication-promotion-compare-and-swap.md) | `DONE / APPROVED / INTEGRATED` — `4a77414` | A promotion plan either binds one exact old/new/tag transaction or returns a finite refusal. | CLOSURE_01 converged on its evidence defect; CLOSURE_02 added the four direct P5 regressions and passed fresh Terra review. |
-| [08-isolated-publication-live-cutover.md](08-isolated-publication-live-cutover.md) | `BLOCKED / REQUIREMENT_CHANGED / VERSION_TAG_COLLISION` / `CLOSURE_02` | A real isolated Claude install from README reaches only the publication object graph. | Ticket 10 repairs L4 but is published payload; a regenerated root differs from immutable `plugin-v0.4.10`. Architecture must choose a successor version/tag and update requirement/SPEC/tickets before re-admission. |
+| [08-isolated-publication-live-cutover.md](08-isolated-publication-live-cutover.md) | `BLOCKED / REQUIREMENT_CHANGED / PAYLOAD_TOPOLOGY_STALE` / `CLOSURE_03_PENDING` | A real isolated Claude install from README reaches only the publication object graph. | F3 must first remove host-local tooling from Level 1 and prove the narrower declaration. Only then may the owner select a successor version/tag and record fresh effect authority. |
 | [09-pin-carrier-closure-normalization.md](09-pin-carrier-closure-normalization.md) | `DONE / APPROVED / INTEGRATED` — `ca9e988` | The Ticket 06 closure treats the self-pin carrier by the same strict, reversible normalizer as the generator. | Ticket 08 L2 blocker is repaired locally; its publication candidate still requires regeneration, re-pin and full L2 readback. |
 | [10-installed-cache-symbolic-remote-head.md](10-installed-cache-symbolic-remote-head.md) | `DONE / APPROVED / INTEGRATED` — `829aaa0` | A normal clone's symbolic remote default head is admitted only when it is strictly bound to the same remote `main` root and payload closure. | CLOSURE_02 admits only exact raw LF and rejects CRLF/trailing whitespace; independent reverse mutations and strict checks passed. Ticket 08 still requires a fresh owner re-admission and full live L1–L6 proof. |
 

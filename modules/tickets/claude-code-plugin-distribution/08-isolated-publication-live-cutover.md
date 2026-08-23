@@ -2,10 +2,10 @@
 
 | Field | Binding |
 | --- | --- |
-| SPEC / AC | Revision 02, AC-1 through AC-9 |
-| PRD / CHG / Context | `PRD-20260823-034` / `CHG-20260823-034` / sealed Context Revision 01, blob `0fef3f1e4c8ce317873cdf2f73dc1bd793579217` |
-| State / closure | `BLOCKED / REQUIREMENT_CHANGED / VERSION_TAG_COLLISION` / `CLOSURE_02` |
-| Dependency | Tickets 06, 07 and 09 integrated and independently reviewed; exact baseline then recorded before effect admission. |
+| SPEC / AC | Revision 03, AC-1 through AC-10 |
+| PRD / CHG / Context | `PRD-20260823-034` / `CHG-20260823-034`, amended by `PRD-20260823-035` / `CHG-20260823-035` / sealed Context Revision 02, blob `f53b2a7dedf055e50ad44804e590f22991a3d5c9` |
+| State / closure | `BLOCKED / REQUIREMENT_CHANGED / PAYLOAD_TOPOLOGY_STALE` / `CLOSURE_03_PENDING` |
+| Dependency | Tickets 06, 07, 09 and 10 integrated; F3's bounded payload-topology ticket must be approved, reviewed and integrated before any successor-version or effect re-admission. |
 | Exact development baseline | `f099ff7f5c7472c38fd0353e31556e06d4016e27` |
 | Authorized candidate branch / temporary raw ref | `implement/claude-publication-08-live-cutover` / `refs/heads/verify/claude-publication-08-live-cutover` |
 | Effect correlation | `claude-publication-08-20260823` |
@@ -13,6 +13,19 @@
 | Model selection | Reassess exact closure after 06/07. Default implementation remains Luna / xhigh with Terra / xhigh review; Terra elevation is allowed only upon a ticket-bound `HardTicketAssessment` proving this closure cannot be further decomposed and exceeds Luna. |
 | XSS classification | `N/A` |
 | Proposed worktree / branch | `.worktrees/claude-publication-08` / `implement/claude-publication-08-live-cutover` |
+
+## Current authority boundary — 2026-08-23
+
+All text below that names version `0.4.10`, its tag, its former candidate or its external-effect
+record is historical evidence only. `plugin-v0.4.10` already exists and is immutable. It neither
+authorizes F3 nor a new generated root, descriptor pin, remote mutation, temporary ref, Claude
+CLI run, source integration or public release.
+
+F3 is the sole next prerequisite: it removes host-local publication/cache tooling from the Level
+1 declaration and proves the resulting topology locally. Only after F3 source integration and
+independent review may the owner choose one successor version and record a fresh exact Ticket 08
+effect authority. This ticket must not infer that choice, reuse `0.4.10`, hand-edit a SHA, or
+advance its historical candidate.
 
 ## Required owner effect authority before dispatch
 
@@ -92,22 +105,21 @@ ticket must make the installed-cache checker distinguish an admitted normal remo
 symbolic ref from a foreign/default-branch mismatch, with actual-cache and reverse-mutation
 evidence, before Ticket 08 can be re-admitted.
 
-## Post-Ticket-10 requirement change — payload version/tag collision
+## Post-Ticket-10 requirement change — F3 payload topology prerequisite
 
 Ticket 10 is now integrated and changes
-`library/local_orchestration/claude_plugin_cache_closure.py`. `library/` is an enumerated Level 1
-publication payload tree, so rebasing this Ticket 08 candidate and regenerating its payload would
+`library/local_orchestration/claude_plugin_cache_closure.py`. The old Level 1 declaration names
+the whole `library/` tree, so rebasing this Ticket 08 candidate and regenerating its payload would
 produce a root different from the already published
 `b52215eb3ee5dfa101e65c189441e62c20ca45e6`. The public publication repository already has that
 root on `main` and immutable `plugin-v0.4.10`.
 
-This ticket authorizes only version `0.4.10` and creating that tag when absent; it forbids moving
-a tag, hand-editing a SHA and a broader push. Therefore no fresh Ticket 08 candidate can both
-contain the integrated cache-closure repair and satisfy its current version/tag authority. The
-next action is `ImplementationReturn.CHANGE_DETECTED -> REQUIREMENT_CHANGED`: the architecture
-owner must decide the successor release/version and its publication/migration authority, then
-update the requirement lineage, SPEC and tickets. Neither descriptor repinning nor Ticket 08
-re-admission is legal until that decision is recorded.
+The old authority permits only version `0.4.10` and creating that tag when absent; it forbids
+moving a tag, hand-editing a SHA and a broader push. F3 (`CHG-20260823-035`) is now the required
+first correction: reduce the payload to its reachable reusable surface, remove host-local tools
+from the declaration, and independently prove that boundary. Version selection follows that
+integration. Neither descriptor repinning nor Ticket 08 re-admission is legal before both steps
+are recorded.
 
 ## CLOSURE 01 blocker
 

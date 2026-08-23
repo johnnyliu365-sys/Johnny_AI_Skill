@@ -1,14 +1,14 @@
-# Claude Code plugin distribution — Revision 02 publication isolation
+# Claude Code plugin distribution — Revision 03 publication isolation and payload topology
 
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-CLAUDE-CODE-PLUGIN-DISTRIBUTION-20260802-01KZ4C6D8E0F2G4H6J8K0M2N4P` |
-| Status | `APPROVED / REVISION_02 / REVIEWER_DECOMPOSITION_AUTHORIZED` |
-| Author / baseline | Architecture-owner draft / `control/claude-plugin-publication-spec-r02` / `295de85297b9d2e7720b6aa592aac3418490595b` |
-| Feature Context | `doc/context/claude-code-plugin-distribution/main.md`, sealed `REVISION_01`, blob `0fef3f1e4c8ce317873cdf2f73dc1bd793579217` in this approval candidate |
-| PRD / change | `PRD-20260802-005` / `CHG-20260802-005`, amended by `PRD-20260823-034` / `CHG-20260823-034` |
-| Architecture | `ADR-20260823-015-dedicated-plugin-publication-repository.md` |
-| Delivery stage / profile | `POC / HIGH_ASSURANCE`: public repository creation, remote ref mutation, release publication and a user-installed supply-chain boundary are external effects. |
+| Status | `APPROVED / REVISION_03 / REVIEWER_DECOMPOSITION_AUTHORIZED` |
+| Author / baseline | Architecture owner / `control/claude-plugin-payload-topology-r03` / `1caa2f2355638c75610dc848b5bd23d8f97d0bcb` |
+| Feature Context | `doc/context/claude-code-plugin-distribution/claude-code-plugin-distribution-r02-payload-topology.md`, sealed `REVISION_02`, blob `f53b2a7dedf055e50ad44804e590f22991a3d5c9` |
+| PRD / change | `PRD-20260802-005` / `CHG-20260802-005`, amended by `PRD-20260823-034` / `CHG-20260823-034` and `PRD-20260823-035` / `CHG-20260823-035` |
+| Architecture | `ADR-20260823-015-dedicated-plugin-publication-repository.md`; `ADR-20260823-017-level-one-payload-topology.md` |
+| Delivery stage / profile | `POC / STANDARD` for F3's local declaration closure; `POC / HIGH_ASSURANCE` remains mandatory for repository creation, remote ref mutation, release publication and a user-installed supply-chain boundary. |
 | Implementation language | Python 3.11 for publication verification/promotion contracts; frozen Pydantic DTOs, finite enums and `mypy --strict`. Manifests remain JSON validated at their boundary. |
 | XSS classification | `N/A`: this feature accepts no Browser/WebView/HTML/DOM/JavaScript input or renderer. |
 
@@ -24,6 +24,8 @@ development-only test file in the cache.
 The goal is that an ordinary user installs the same detachable skill from the documented Claude
 commands without receiving the development repository's reachable Git object graph. Git metadata
 owned by Claude may remain; every reachable tree inside it must be an exact declared payload.
+The declared payload itself must exclude host-local publication/cache/installer tooling, so a
+repair to that tooling cannot continually change the release root it is trying to verify.
 
 In scope:
 
@@ -33,6 +35,8 @@ In scope:
 - marketplace source URL, semantic version and SHA repinning as one release candidate;
 - a raw development-repository marketplace descriptor at
   `https://raw.githubusercontent.com/johnnyliu365-sys/Johnny_AI_Skill/main/.claude-plugin/marketplace.json`;
+- a segment-exact Level 1 reusable-source topology that excludes
+  `library/local_orchestration/` and standalone host installer entrypoints;
 - real Claude CLI closure evidence in an isolated `CLAUDE_CONFIG_DIR`; and
 - README installation, update and rollback instructions that name only verified behavior.
 
@@ -43,7 +47,8 @@ Out of scope:
 - deleting or modifying Claude-owned cache metadata after installation;
 - a package registry, service, runner, queue, webhook, hook, MCP server, secret or automatic
   release mechanism; and
-- changing Codex plugin distribution, shared skill semantics or the user's detach guarantee.
+- changing Codex plugin distribution, target-project workflow semantics or the user's detach
+  guarantee.
 
 ## User flow, error flow and external-effect boundary
 
@@ -150,6 +155,26 @@ enum InstallClosureStatus {
 }
 ```
 
+### Level 1 payload topology
+
+The payload declaration is an allowlist of the following directory trees:
+
+```text
+.claude-plugin/                 commands/                 skills/                 template/
+library/NLP/                    library/功能集群/          library/金流串接/
+library/catalog/                library/workflow_router/
+```
+
+It additionally names exact `library/__init__.py` and `library/MODULE_CATALOG.md` files and the
+existing root skill-governance documents. Tree membership is a clean, segment-exact relative-path
+prefix; it never arises from merely sharing the top-level `library` segment. The declaration must
+not name `library/`, `library/local_orchestration/`, `install.ps1` or `johnny-install.cmd`.
+
+`library/local_orchestration/` contains host-local installation, publication, cache and runner
+tools. It is not a Level 1 Claude runtime and its catalog entry is not `READY` in the installed
+payload. `AGENTS.md` still defines repository-contained worktree policy directly. Level 2 keeps
+its separately owned payload declaration untouched.
+
 All source input is normalized at the Git/CLI boundary. Full SHAs, version strings, ref names,
 paths, command results and JSON are validated before they enter these contracts. `Any`, casts,
 unvalidated JSON/dicts, partial SHAs, inferred default branches and source-text heuristics cannot
@@ -208,6 +233,11 @@ forward-fix/revert decision for the owner, not an automatic retry.
 9. JSON validation, payload/publication tests, strict typing and the full project suite pass in a
    clean clone. The feature-cluster review remains `CHANGES_REQUESTED` until the live cutover
    evidence is independently reviewed.
+10. F3's source candidate proves that every declared nested tree is clean and segment-exact; no
+    `library/local_orchestration/` path or standalone installer enters Level 1. A reviewer-owned
+    reverse mutation adds one such forbidden declaration/path and turns the topology proof red;
+    byte-for-byte restoration returns it green. Removing a retained catalog/router surface path
+    also turns the closure red. No Level 2 payload-list change is admitted.
 
 ## Test seams, TDD and verification
 
@@ -216,6 +246,10 @@ forward-fix/revert decision for the owner, not an automatic retry.
   difference, stale main, tag collision and readback mismatch without a network effect.
 - A disposable bare local repository supplies positive and negative publication fixtures. Its
   negative fixture adds a development branch/tree; the verifier must return a finite failure.
+- F3's declaration tests use a manifest fixture with nested tree paths, an undeclared
+  `library/local_orchestration/` probe and a retained catalog/router closure probe. They prove
+  nested-path validation once in the generator and use its same membership rules in the release
+  tree and closure scanner.
 - The real-CLI seam receives an explicit executable path, isolated config root, raw descriptor
   URI, publication URL and expected SHA. It does not discover credentials, alter the user's
   configured marketplaces or substitute a mock for acceptance evidence.
@@ -228,8 +262,9 @@ forward-fix/revert decision for the owner, not an automatic retry.
 ## Compatibility, security and deployment prerequisites
 
 - Existing installed version `0.4.9` remains usable from its current source until a complete new
-  candidate is published and verified. The first isolated-publication release must increment the
-  plugin version.
+  candidate is published and verified. `plugin-v0.4.10` is immutable. F3 deliberately chooses no
+  successor version; a changed F3 payload requires an owner-selected new version/tag before the
+  Ticket 08 release path can resume.
 - Company projects receive no files or configuration. Removing the plugin remains user-scoped.
 - The publication repository is public read and least-privilege write. No token, SSH private key,
   cookie, authorization header or credential diagnostic becomes project evidence.
@@ -245,10 +280,11 @@ forward-fix/revert decision for the owner, not an automatic retry.
 - `ImplementationReturn.COMPLETED` emits `ACTION_COMPLETED`; `BLOCKED` halts; and
   `CHANGE_DETECTED` emits `REQUIREMENT_CHANGED` and returns to change control. An implementer
   cannot alter repository topology, effect authority, release acceptance or public contract.
-- Sealed Context binding: `doc/context/claude-code-plugin-distribution/main.md` Revision 01,
-  blob `0fef3f1e4c8ce317873cdf2f73dc1bd793579217` in this approval candidate.
-- Active requirement leaf: `PRD-20260823-034` / `CHG-20260823-034` at
-  `doc/requirements/active/2026/distribution/REQ-20260823-034.md`.
+- Sealed Context binding: `doc/context/claude-code-plugin-distribution/claude-code-plugin-distribution-r02-payload-topology.md`
+  Revision 02, blob `f53b2a7dedf055e50ad44804e590f22991a3d5c9`.
+- Active requirement leaves: `PRD-20260823-034` / `CHG-20260823-034` and
+  `PRD-20260823-035` / `CHG-20260823-035` at
+  `doc/requirements/active/2026/distribution/`.
 - No shared Context may be amended from the ticket/implementation/review lanes. Any topology,
   ownership, capability or acceptance change is `REQUIREMENT_CHANGED`.
 
@@ -259,6 +295,7 @@ forward-fix/revert decision for the owner, not an automatic retry.
 | 2026-08-02 | Project owner | Approved the original private-development-repository Claude distribution POC. |
 | 2026-08-23 | Architecture-owner draft / `295de85297b9d2e7720b6aa592aac3418490595b` | Drafted Revision 02 under `CHG-20260823-034` and `ADR-20260823-015`; owner approval is pending. |
 | 2026-08-23 | Project owner / exact draft `f3af1736b0f292476fb555a553a1c40d6416c3e2` | Approved Revision 02 and sealed Context Revision 01; reviewer decomposition is authorized. |
+| 2026-08-23 | Project owner / `PRD-20260823-035` / `CHG-20260823-035` | Approved Revision 03 and sealed Context Revision 02: Level 1 names only the reachable reusable-source surface; host-local control tooling and installer entrypoints are excluded before a successor version is chosen. |
 
 The approval applies to the exact draft named above. This candidate changes only lifecycle and
 approval metadata, binds the resulting sealed Context blob, and opens the `TICKETS` stage; it does
