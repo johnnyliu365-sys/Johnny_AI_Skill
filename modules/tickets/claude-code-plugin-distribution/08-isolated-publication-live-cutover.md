@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | Revision 05, AC-1 through AC-11 |
 | PRD / CHG / Context | `PRD-20260823-034` / `CHG-20260823-034`, amended by `PRD-20260823-035` / `CHG-20260823-035`, `PRD-20260823-036` / `CHG-20260823-036` and `PRD-20260823-037` / `CHG-20260823-037` / sealed Context Revision 04, blob `f175d6a6842ca1d24a3cfd85e3a24542e7d7b9a3` |
-| State / closure | `CONVERGENCE_REVIEW_REQUIRED / OWNER_EFFECT_AUTHORITY_RECORDED / REVISION_07` |
+| State / closure | `ACTIVE / OWNER_EFFECT_AUTHORITY_RECORDED / CLOSURE_05` |
 | Dependency | Tickets 06, 07, 09, 10, 11 and 12 are integrated. Ticket 12 closed the version-specific retained-tag contract at `9a244db4a9c4342476b2a1f59d49b9c15abc59e7`; the fresh CLOSURE_04 authority below replaces the suspended CLOSURE_03 authority. The CLOSURE_03 source candidate remains review evidence only. |
 | Historical 0.4.10 development baseline | `f099ff7f5c7472c38fd0353e31556e06d4016e27` |
 | Historical 0.4.10 candidate branch / temporary raw ref | `implement/claude-publication-08-live-cutover` / `refs/heads/verify/claude-publication-08-live-cutover` |
@@ -57,6 +57,31 @@ README commands in a disposable isolated `CLAUDE_CONFIG_DIR`; and (4) only after
 integrate and push that same reviewed development candidate. No tag movement, retry on changed
 readback, provider invocation, runner/wake claim, user-profile installation, credential output,
 other remote mutation or use of CLOSURE_03 is authorized.
+
+## CLOSURE 05 — post-promotion readback binding
+
+The CLOSURE_04 pre-effect guard was discharged by the exact pre-publication snapshot
+`main=plugin-v0.4.10=b52215eb3ee5dfa101e65c189441e62c20ca45e6` with absent
+`plugin-v0.4.11`, followed by the Ticket 07 atomic CAS plan. Its verified post-publication
+readback is now: default `main`; `main=plugin-v0.4.11=5c1cb9aec837a2fc8c76634404bccd393a0b9281`;
+the immutable retained `plugin-v0.4.10` remains
+`b52215eb3ee5dfa101e65c189441e62c20ca45e6`; and no other publication head/tag is admitted.
+
+The former sentence requiring the *pre*-publication main/tag-absence snapshot before every
+subsequent effect would make the already-authorized temporary-ref and isolated-install steps
+unreachable after a successful promotion. This closure corrects only that chronological guard:
+before each remaining external effect, the reviewer must freshly read the publication remote and
+halt unless the exact verified **post** state above holds. It does not authorize another
+publication mutation, a tag move, a retry, a different version/root/source URL, a user-profile
+install or an additional ref.
+
+After the declared candidate branch has been rebased onto this integrated control record, the
+reviewer must bind its exact clean SHA and the reproduced root `C` to correlation
+`claude-publication-08-v0411-r02-20260824`. Only then does the already-recorded CLOSURE_04 scope
+resume for its remaining actions: push the one named temporary development raw-descriptor ref;
+run README's real commands in a disposable isolated `CLAUDE_CONFIG_DIR`; prove L3--L5; guarded
+source integration and source-main push only after L1--L6. Any changed source/publication
+readback, absent candidate binding, cache/CLI failure or ref collision is a named halt.
 
 ## Revision 06 convergence replan — L3 raw-descriptor exclusivity
 
