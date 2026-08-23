@@ -5,7 +5,7 @@
 | SPEC / AC | Revision 05, AC-2, AC-3, AC-7 and AC-11 |
 | PRD / CHG / Context | `PRD-20260823-037` / `CHG-20260823-037` / sealed Context Revision 04, blob `f175d6a6842ca1d24a3cfd85e3a24542e7d7b9a3` |
 | State / closure | `OPEN / OWNER_APPROVED / DISPATCHABLE` / `CLOSURE_04` |
-| Exact baseline | `475e01b96693c33251e77eed2bbff3116f2bc713` |
+| Exact baseline | `449ecd7714fb7f7339f4997d3f3349fc063f32b3` |
 | Dependency | Tickets 06, 07, 09, 10 and 11 are integrated. Ticket 08 CLOSURE_03 is blocked on this ticket; it has no active effect authority. |
 | Control owner / reviewer | `ticket-review` — Terra / xhigh |
 | Implementation owner | `implementation-standard` — Luna / xhigh; one ticket, no helper lane |

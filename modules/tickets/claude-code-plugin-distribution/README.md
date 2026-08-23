@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / Context | `SPEC-AI-WORKFLOW-CLAUDE-CODE-PLUGIN-DISTRIBUTION-20260802-01KZ4C6D8E0F2G4H6J8K0M2N4P` Revision 05 / sealed Context Revision 04, blob `f175d6a6842ca1d24a3cfd85e3a24542e7d7b9a3` |
 | Requirement / architecture | `PRD-20260823-034` / `CHG-20260823-034`, amended through `PRD-20260823-037` / `CHG-20260823-037` / `ADR-20260823-015`, `ADR-20260823-017` and `ADR-20260823-018` |
-| Planning baseline | `475e01b96693c33251e77eed2bbff3116f2bc713` |
+| Planning baseline | `449ecd7714fb7f7339f4997d3f3349fc063f32b3` |
 | Control owner / reviewer | Terra `ticket-review` profile; profile selection remains capability-verified at dispatch. |
 | State | `REVISION_05 / VERSION_SPECIFIC_TAG_CLOSURE_AUTHORIZED` |
 
