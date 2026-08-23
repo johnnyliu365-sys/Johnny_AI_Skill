@@ -4,9 +4,10 @@
 | --- | --- |
 | SPEC / AC | Revision 05, AC-2, AC-3, AC-7 and AC-11 |
 | PRD / CHG / Context | `PRD-20260823-037` / `CHG-20260823-037` / sealed Context Revision 04, blob `f175d6a6842ca1d24a3cfd85e3a24542e7d7b9a3` |
-| State / closure | `OPEN / OWNER_APPROVED / DISPATCHABLE` / `CLOSURE_04` |
+| State / closure | `DONE / APPROVED / INTEGRATED` / `CLOSURE_04` |
+| Integration | `admit_document_mutation` → `9a244db4a9c4342476b2a1f59d49b9c15abc59e7` |
 | Exact baseline | `449ecd7714fb7f7339f4997d3f3349fc063f32b3` |
-| Dependency | Tickets 06, 07, 09, 10 and 11 are integrated. Ticket 08 CLOSURE_03 is blocked on this ticket; it has no active effect authority. |
+| Dependency | Tickets 06, 07, 09, 10 and 11 are integrated. This ticket closes Ticket 08's L2 version-specific-tag prerequisite; Ticket 08 still has no active effect authority. |
 | Control owner / reviewer | `ticket-review` — Terra / xhigh |
 | Implementation owner | `implementation-standard` — Luna / xhigh; one ticket, no helper lane |
 | Delivery profile | `POC / STANDARD`: deterministic disposable local Git fixtures and read-only closure classification only. |
@@ -116,3 +117,20 @@ candidate commit, `admit_document_mutation` and `origin/main` readback. It does 
 Ticket 08's CLOSURE_03 external effects. The Router next evaluates Ticket 08 against this
 integrated contract; any later publication/cache/source action requires a fresh owner effect
 authority bound to its then-current candidate and remote readback.
+
+## Completion evidence
+
+Luna/xhigh changed only the two declared files and returned an uncommitted candidate. Terra/xhigh
+first found that an absent current `plugin-v0.4.11` tag incorrectly returned `VERIFIED`; the
+same Luna worktree added the smallest current-tag binding and direct regression. The independent
+re-review then proved both `VERIFIED → RELEASE_VERSION_MISMATCH → VERIFIED` after deleting and
+exactly restoring only the current tag, and `VERIFIED → TREE_MISMATCH → VERIFIED` after a fresh
+retained-tag undeclared-path mutation/restoration. It also confirmed that changing a valid
+historical declared-file byte remains `VERIFIED`, exactly as the ADR-018 provenance boundary
+requires.
+
+The reviewer reran the current-tag cell, strict mypy, compileall and diff check; Terra reran the
+15 closure tests, 12 promotion tests and 41 payload-boundary tests. No remote, public ref/tag,
+cache, Claude CLI, credential or publication effect occurred. The reviewer committed the approved
+candidate as `9a244db4a9c4342476b2a1f59d49b9c15abc59e7`; `admit_document_mutation` integrated that
+same SHA and `origin/main` read back the same SHA.
