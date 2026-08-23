@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | Revision 05, AC-1 through AC-11 |
 | PRD / CHG / Context | `PRD-20260823-034` / `CHG-20260823-034`, amended by `PRD-20260823-035` / `CHG-20260823-035`, `PRD-20260823-036` / `CHG-20260823-036` and `PRD-20260823-037` / `CHG-20260823-037` / sealed Context Revision 04, blob `f175d6a6842ca1d24a3cfd85e3a24542e7d7b9a3` |
-| State / closure | `CONVERGENCE_REVIEW_REQUIRED / OWNER_EFFECT_AUTHORITY_RECORDED / REVISION_06` |
+| State / closure | `CONVERGENCE_REVIEW_REQUIRED / OWNER_EFFECT_AUTHORITY_RECORDED / REVISION_07` |
 | Dependency | Tickets 06, 07, 09, 10, 11 and 12 are integrated. Ticket 12 closed the version-specific retained-tag contract at `9a244db4a9c4342476b2a1f59d49b9c15abc59e7`; the fresh CLOSURE_04 authority below replaces the suspended CLOSURE_03 authority. The CLOSURE_03 source candidate remains review evidence only. |
 | Historical 0.4.10 development baseline | `f099ff7f5c7472c38fd0353e31556e06d4016e27` |
 | Historical 0.4.10 candidate branch / temporary raw ref | `implement/claude-publication-08-live-cutover` / `refs/heads/verify/claude-publication-08-live-cutover` |
@@ -78,6 +78,33 @@ The CLOSURE_04 remote snapshot, expected target, version, temporary r02 ref and 
 binding. Generator execution, publication promotion, temporary-ref push, Claude CLI/cache proof,
 source integration and every L1--L6 external effect remain forbidden until this new source closure
 is approved and the reviewer writes its candidate commit.
+
+## Revision 07 convergence replan — L5 post-generation lifecycle
+
+The independent post-generation local-closure review accepted the generated parentless root
+`5c1cb9aec837a2fc8c76634404bccd393a0b9281`, its sole pin-carrier normalization and its local
+anchor, but the required focused suite was red. The existing
+`CandidateMetadataTests.test_l5_stale_candidate_pin_is_named_before_generation` asserted that the
+*live* working marketplace descriptor must remain stale after reviewer generation. A correct
+post-generation descriptor instead pins that root and must verify. This is a `TICKET_DEFECT` in
+the TDD lifecycle—not a changed release requirement, generated root, version, source URL,
+payload declaration, external-effect authority or a permission to publish.
+
+This revision permits one Luna/xhigh correction in
+`tests/test_plugin_publication.py` only. It must express L5 as an explicit disposable
+fixture/reverse mutation: the generated live descriptor/root is green; substituting a resolved,
+different stale full pin into the test fixture makes `assert_commit_matches_declaration` raise the
+named `PublicationMismatchError`; exact restoration returns green. It must not require the live
+post-generation descriptor to be stale, hand-edit the candidate marketplace pin, weaken the
+pin/tree comparison, or use an unresolved/malformed SHA in place of the stale-payload case.
+
+The already generated candidate commits `a72c23274255d825e6a5fd022bd32155a31cbe5e` and
+`230c63949bec5a2d1ada130aff11ab7b8fdf00ef` plus root `C` are local review evidence only. Before
+the correction, the reviewer must rebase the declared candidate branch onto this integrated
+revision; the same generator must then reproduce the root and pin. No generator run, publication
+promotion, temporary-ref push, remote read/write, Claude CLI/cache action, source integration or
+L1--L6 live effect is allowed during the correction. A fresh Terra/xhigh source-and-generation
+review is required before CLOSURE_04 may resume.
 
 ## CLOSURE 03 historical owner effect authority — suspended
 
