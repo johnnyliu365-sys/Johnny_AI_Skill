@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | Revision 02, AC-5 through AC-7; Ticket 06 installed-cache closure contract; Ticket 08 CLOSURE_02 L4 blocker record |
 | PRD / CHG / Context | `PRD-20260823-034` / `CHG-20260823-034` / sealed Context Revision 01, blob `0fef3f1e4c8ce317873cdf2f73dc1bd793579217` |
-| State / closure | `APPROVED / DISPATCH_READY` / `CLOSURE_01` |
+| State / closure | `BLOCKED / CONVERGENCE_REVIEW_REQUIRED / IMPLEMENTATION_DEFECT` / `CLOSURE_01` |
 | Exact baseline | `0c2d71a311e4c2748082b61df6219d1d108e06db` |
 | Dependency | Ticket 06 and Ticket 09 integrated; Ticket 08 CLOSURE_02 has an actual isolated-cache L4 failure. |
 | Control owner / reviewer | `ticket-review` — Terra / xhigh |
@@ -86,3 +86,24 @@ publication/source ref action, descriptor repin or Ticket 08 integration is `BLO
 `CHANGE_DETECTED`; it never becomes an implicit effect of this ticket. After owner approval and
 successful source integration, the only continuation is Ticket 08 re-admission with fresh live
 evidence.
+
+## CLOSURE 01 convergence blocker
+
+The implementation owner first returned `3fd34100d47532145c62775e70123d652f3f4787`. Terra
+found an S3 bypass: trailing whitespace in a loose `origin/HEAD` target was erased by broad
+string trimming. The owner preserved that commit and added correction
+`cc5c718db0569b7ceccccfb544554a1c09eba36d`; Terra's correction review confirmed the trailing
+space now rejected and its independent non-`main` target mutation turned red then restored green.
+
+The integration reviewer then performed a different raw-file counter-mutation against the
+complete candidate. `ref: refs/remotes/origin/main\r\n` returned `VERIFIED` because
+`Path.read_text()` applies universal-newline translation before the adapter's single-LF check.
+That silently normalizes a malformed raw symbolic ref and violates Frozen Contract 2 and S3.
+The nine focused installed-cache tests, strict mypy, compileall and diff check are green but do
+not close this observable defect.
+
+This is the second review outcome in `CLOSURE_01`. Per the bounded-convergence rule, no third
+automatic correction may be dispatched. The unintegrated candidate commits remain review
+evidence only. A control-plane convergence decision must revise the closure with an exact
+raw-byte line-ending regression and obtain owner approval before any additional implementation
+cycle; no Ticket 08 re-admission or external effect follows from this record.
