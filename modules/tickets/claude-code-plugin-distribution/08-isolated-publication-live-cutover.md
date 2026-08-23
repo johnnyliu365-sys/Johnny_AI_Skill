@@ -2,10 +2,10 @@
 
 | Field | Binding |
 | --- | --- |
-| SPEC / AC | Revision 04, AC-1 through AC-10 |
-| PRD / CHG / Context | `PRD-20260823-034` / `CHG-20260823-034`, amended by `PRD-20260823-035` / `CHG-20260823-035` and `PRD-20260823-036` / `CHG-20260823-036` / sealed Context Revision 03, blob `c87425feabc5e6147098c636abf2f604aa129e89` |
-| State / closure | `BLOCKED / REQUIREMENT_CHANGED / MULTI_RELEASE_TAG_DECLARATION_CONFLICT` / `CLOSURE_03` |
-| Dependency | Tickets 06, 07, 09, 10 and 11 integrated. The CLOSURE_03 source candidate is review evidence only; a requirement/SPEC/ticket revision must resolve L2 before any effect re-admission. |
+| SPEC / AC | Revision 05, AC-1 through AC-11 |
+| PRD / CHG / Context | `PRD-20260823-034` / `CHG-20260823-034`, amended by `PRD-20260823-035` / `CHG-20260823-035`, `PRD-20260823-036` / `CHG-20260823-036` and `PRD-20260823-037` / `CHG-20260823-037` / sealed Context Revision 04, blob `f175d6a6842ca1d24a3cfd85e3a24542e7d7b9a3` |
+| State / closure | `BLOCKED / UPSTREAM_IMPLEMENTATION_REQUIRED / VERSION_SPECIFIC_TAG_CLOSURE` / `CLOSURE_03` |
+| Dependency | Tickets 06, 07, 09, 10 and 11 are integrated. Ticket 12 must integrate the version-specific retained-tag closure before any fresh effect re-admission. The CLOSURE_03 source candidate is review evidence only. |
 | Historical 0.4.10 development baseline | `f099ff7f5c7472c38fd0353e31556e06d4016e27` |
 | Historical 0.4.10 candidate branch / temporary raw ref | `implement/claude-publication-08-live-cutover` / `refs/heads/verify/claude-publication-08-live-cutover` |
 | Historical effect correlation | `claude-publication-08-20260823` |
@@ -23,11 +23,11 @@ CLI run, source integration or public release.
 
 F3 is integrated and independently reviewed at `7a64f6312d8cd2a84a8821eb1dac2f00e205c8b7`.
 The owner selected successor version `0.4.11`. That selection is not a release authorization:
-this ticket remains blocked until the owner records a fresh exact effect authority for one
-candidate, remote snapshot, expected-old SHA and correlation. It must not reuse `0.4.10`,
-hand-edit a SHA, or advance its historical candidate.
+this ticket remains blocked until Ticket 12 closes and the owner then records a fresh exact
+effect authority for one rebased candidate, remote snapshot, expected-old SHA and correlation.
+It must not reuse `0.4.10`, hand-edit a SHA, or advance its historical candidate.
 
-## CLOSURE 03 owner effect authority — 2026-08-23
+## CLOSURE 03 historical owner effect authority — suspended
 
 The project owner authorizes this exact `0.4.11` Ticket 08 attempt:
 
@@ -88,7 +88,23 @@ or source-main push occurred. L3–L6 are unexecuted, not passed or waived. This
 `ImplementationReturn.CHANGE_DETECTED -> REQUIREMENT_CHANGED`; CLOSURE_03 authority is suspended
 and cannot be reused after the required contract decision.
 
-## Required owner effect authority before dispatch
+## CLOSURE 03 resolution — version-specific tag declarations
+
+The owner selected `PRD-20260823-037` / `CHG-20260823-037` and ADR-018. `main` and the fresh
+`plugin-v0.4.11` root must remain exact path/blob matches for the reviewed current candidate.
+Each retained immutable `plugin-v<semver>` tag instead must be checked against the payload
+declaration, generated carrier form and plugin/marketplace version embedded in that tag target.
+This preserves strict ref/parent/tree-shape/version closure while truthfully not claiming that an
+old target's declared blobs were compared to today's working tree.
+
+Ticket 12 is the only permitted local implementation of that contract. Until it is integrated,
+L2 is unclosed and all former CLOSURE_03 effect bindings remain suspended. Its candidate/root may
+not be rebased, published, pinned, pushed, installed or otherwise advanced under this record.
+
+## Historical owner-effect authority template — not current authority
+
+The following historical record describes the fields a later authority must bind. It is not a
+current effect permission: CLOSURE_03 is suspended by the Ticket 12 dependency above.
 
 The owner must authorize one exact candidate against one exact baseline, naming all of:
 
@@ -253,7 +269,7 @@ it may not retain a reachable development repository tree/object graph.
 | Cell | Required proof |
 | --- | --- |
 | L1 metadata/pin | Claude manifest/marketplace JSON validate, use the publication URL, contain version `0.4.11` and full generated SHA; source/pin/tree regeneration agrees. |
-| L2 repository closure | Fresh publication clone has only allowed `main`/version-tag refs and parentless declared-payload trees. |
+| L2 repository closure | Fresh publication clone has only allowed `main`/version-tag refs and parentless trees. Current `main`/`plugin-v0.4.11` match the exact current candidate payload; retained tags match only their own in-target declaration, carrier and versions. |
 | L3 real marketplace cache | README raw URL adds a descriptor-only marketplace cache; owner/repo marketplace form is not documented as the Level 1 entry. |
 | L4 real plugin cache | Actual isolated install has path/blob equality, all reachable refs/commits/trees accepted by ticket 06, and development sentinels unreadable. |
 | L5 negative paths | Wrong publication URL, stale pin, extra development ref/tree, changed blob, moved/colliding tag and missing CLI/cache data return a named failure; none is reported as installed/verified. |
@@ -266,7 +282,8 @@ reusing the implementer's cache. Zero-red mutation is a blocking evidence defect
 
 ## Completion
 
-This ticket cannot start until owner effect authority is recorded. Once authorized, all external
+This ticket cannot start until Ticket 12 is integrated and a new exact owner effect authority is
+recorded. Once authorized, all external
 commands bind exact target, baseline, candidate SHA, expected old SHA, version tag and correlation,
 then capture sanitized readback. The reviewer—not the implementation owner—executes the named
 remote/publication effects and guarded integration. A live CLI, remote readback, full suite,

@@ -1,14 +1,14 @@
-# Claude Code plugin distribution — Revision 04 publication isolation, payload topology and successor version
+# Claude Code plugin distribution — Revision 05 multi-release publication-tag closure
 
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-CLAUDE-CODE-PLUGIN-DISTRIBUTION-20260802-01KZ4C6D8E0F2G4H6J8K0M2N4P` |
-| Status | `APPROVED / REVISION_04 / REVIEWER_DECOMPOSITION_AUTHORIZED` |
-| Author / baseline | Architecture owner / `control/claude-publication-08-successor-version` / `7a64f6312d8cd2a84a8821eb1dac2f00e205c8b7` |
-| Feature Context | `doc/context/claude-code-plugin-distribution/claude-code-plugin-distribution-r03-successor-version.md`, sealed `REVISION_03`, blob `c87425feabc5e6147098c636abf2f604aa129e89` |
-| PRD / change | `PRD-20260802-005` / `CHG-20260802-005`, amended by `PRD-20260823-034` / `CHG-20260823-034`, `PRD-20260823-035` / `CHG-20260823-035` and `PRD-20260823-036` / `CHG-20260823-036` |
-| Architecture | `ADR-20260823-015-dedicated-plugin-publication-repository.md`; `ADR-20260823-017-level-one-payload-topology.md` |
-| Delivery stage / profile | `POC / STANDARD` for F3's local declaration closure; `POC / HIGH_ASSURANCE` remains mandatory for repository creation, remote ref mutation, release publication and a user-installed supply-chain boundary. |
+| Status | `APPROVED / REVISION_05 / TICKET_12_AUTHORIZED` |
+| Author / baseline | Architecture owner / `control/claude-publication-12-version-specific-tags` / `475e01b96693c33251e77eed2bbff3116f2bc713` |
+| Feature Context | `doc/context/claude-code-plugin-distribution/claude-code-plugin-distribution-r04-version-specific-release-tags.md`, sealed `REVISION_04`, blob `f175d6a6842ca1d24a3cfd85e3a24542e7d7b9a3` |
+| PRD / change | `PRD-20260802-005` / `CHG-20260802-005`, amended by `PRD-20260823-034` / `CHG-20260823-034`, `PRD-20260823-035` / `CHG-20260823-035`, `PRD-20260823-036` / `CHG-20260823-036` and `PRD-20260823-037` / `CHG-20260823-037` |
+| Architecture | `ADR-20260823-015-dedicated-plugin-publication-repository.md`; `ADR-20260823-017-level-one-payload-topology.md`; `ADR-20260823-018-version-specific-publication-tag-payloads.md` |
+| Delivery stage / profile | `POC / STANDARD` for F3 and Ticket 12 deterministic local closure; `POC / HIGH_ASSURANCE` remains mandatory for repository creation, remote ref mutation, release publication and a user-installed supply-chain boundary. |
 | Implementation language | Python 3.11 for publication verification/promotion contracts; frozen Pydantic DTOs, finite enums and `mypy --strict`. Manifests remain JSON validated at their boundary. |
 | XSS classification | `N/A`: this feature accepts no Browser/WebView/HTML/DOM/JavaScript input or renderer. |
 
@@ -91,15 +91,18 @@ development repository
 
 publication repository
   ├─ refs/heads/main → current parentless generated payload root
-  ├─ refs/tags/plugin-v<semver> → immutable same root for each retained release
+  ├─ refs/tags/plugin-v<semver> → immutable parentless root for that retained release
   └─ no development ref, parent, tree, blob or hand-authored source
 ```
 
-`main` and lightweight `plugin-v<semver>` tags are the only allowed publication refs. Every
-reachable commit is parentless and has a tree whose paths and blob IDs exactly equal the payload
-declared by the same candidate. An unknown ref, a non-`main` default branch, a parent, an
-undeclared/missing/different blob, a moved tag or a stale `main` is a named rejection, never a
-warning or automatic cleanup.
+`main` and lightweight `plugin-v<semver>` tags are the only allowed publication refs. `main` and
+the fresh tag for its current candidate are parentless and have trees whose paths and blob IDs
+exactly equal that candidate payload. A retained immutable tag is parentless and is validated
+from its own target declaration: exact declared path set, canonical generated pin carrier, and
+tag/plugin/marketplace version equality. The old target is not compared to a mutable current
+declaration. An unknown ref, a non-`main` default branch, a parent, malformed target declaration,
+version disagreement, undeclared/missing path, moved tag or stale `main` is a named rejection,
+never a warning or automatic cleanup.
 
 The existing generator remains the only payload author. It neutralizes the self-referential
 marketplace SHA inside the generated payload; after the remote root is proved reachable, the
@@ -126,10 +129,16 @@ struct PublicationTreeDifference {
   tuple<RelativePayloadPath> extra;
   tuple<RelativePayloadPath> content_mismatch;
 }
+struct PublicationReleaseDeclaration {
+  PublicationVersion version;
+  tuple<RelativePayloadPath> paths;
+  GeneratedPinCarrier carrier;
+}
 enum PublicationClosureStatus {
   VERIFIED, REMOTE_UNREACHABLE, REMOTE_NOT_EMPTY, DEFAULT_BRANCH_INVALID,
   REF_SET_INVALID, MAIN_MISSING, TAG_COLLISION, STALE_MAIN,
-  COMMIT_NOT_ROOT, TREE_MISMATCH, PIN_MISMATCH, READBACK_MISMATCH
+  COMMIT_NOT_ROOT, TREE_MISMATCH, PIN_MISMATCH, RELEASE_DECLARATION_INVALID,
+  RELEASE_VERSION_MISMATCH, READBACK_MISMATCH
 }
 struct PublicationRemoteSnapshot {
   PublicationRepositoryRef repository;
@@ -192,8 +201,9 @@ For one candidate, in this exact order:
    `--force-with-lease=refs/heads/main:<expected-old-sha>` on updates. Create the immutable
    `plugin-v<semver>` tag only when it is absent.
 4. Read back the remote and fetch it into a clean repository. Repeat allowed-ref, root-parent and
-   path/blob closure checks. Only then repin the development candidate to `C`; regeneration must
-   still yield `C`.
+   version-specific closure checks: `main`/the fresh tag match candidate paths and blobs; each
+   retained tag matches only its own target declaration, carrier and versions. Only then repin the
+   development candidate to `C`; regeneration must still yield `C`.
 5. Publish the candidate descriptor at an immutable candidate commit URL and run the real CLI
    closure verifier. Only `VERIFIED` can enter guarded integration; source URL, version, SHA and
    README land in the same development-repository candidate.
@@ -210,8 +220,11 @@ forward-fix/revert decision for the owner, not an automatic retry.
    while its one plugin entry names the exact publication repository URL and a full 40-hex
    publication SHA; it never names the development repository as `source.url`.
 2. The publication repository's default branch is exactly `main`; its complete remote ref set is
-   only `main` plus zero or more immutable `plugin-v<semver>` tags. Every ref resolves to a
-   parentless generator-produced commit whose tree has zero payload difference.
+   only `main` plus zero or more immutable `plugin-v<semver>` tags. `main` and the current
+   release tag resolve to the current parentless candidate root with zero path/blob difference.
+   Each retained historical tag resolves to a parentless target whose own in-tree declaration has
+   zero path difference, a canonical generated carrier and matching tag/plugin/marketplace
+   version; it is never compared to the current declaration.
 3. A fresh release creates a new versioned root and immutable tag. A changed payload cannot reuse
    a version/tag. A stale expected `main`, unexpected remote ref, moved/colliding tag, missing
    root, wrong default branch or tree difference is rejected before repinning development main.
@@ -238,12 +251,19 @@ forward-fix/revert decision for the owner, not an automatic retry.
     reverse mutation adds one such forbidden declaration/path and turns the topology proof red;
     byte-for-byte restoration returns it green. Removing a retained catalog/router surface path
     also turns the closure red. No Level 2 payload-list change is admitted.
+11. A disposable two-release repository accepts a retained `plugin-v0.4.10` with its pre-F3
+    declaration and `main`/`plugin-v0.4.11` with the current declaration, while still rejecting
+    a foreign ref, parent, target declaration/carrier defect, tag-version mismatch, missing or
+    extra path. The proof distinguishes historical immutable-target provenance from current
+    candidate blob equality and makes no false historical blob-comparison claim.
 
 ## Test seams, TDD and verification
 
-- Unit seams accept a typed `PublicationRemoteSnapshot` and an injected Git boundary; they prove
-  empty-first-release, valid update, unknown ref, wrong default branch, non-root commit, payload
-  difference, stale main, tag collision and readback mismatch without a network effect.
+- Unit seams accept a typed `PublicationRemoteSnapshot`, exact current payload and injected Git
+  boundary; they prove empty-first-release, valid update, a two-release retained-tag set, target
+  declaration/version/carrier failures, unknown ref, wrong default branch, non-root commit,
+  current-payload difference, stale main, tag collision and readback mismatch without a network
+  effect.
 - A disposable bare local repository supplies positive and negative publication fixtures. Its
   negative fixture adds a development branch/tree; the verifier must return a finite failure.
 - F3's declaration tests use a manifest fixture with nested tree paths, an undeclared
@@ -280,11 +300,11 @@ forward-fix/revert decision for the owner, not an automatic retry.
 - `ImplementationReturn.COMPLETED` emits `ACTION_COMPLETED`; `BLOCKED` halts; and
   `CHANGE_DETECTED` emits `REQUIREMENT_CHANGED` and returns to change control. An implementer
   cannot alter repository topology, effect authority, release acceptance or public contract.
-- Sealed Context binding: `doc/context/claude-code-plugin-distribution/claude-code-plugin-distribution-r03-successor-version.md`
-  Revision 03, blob `c87425feabc5e6147098c636abf2f604aa129e89`.
+- Sealed Context binding: `doc/context/claude-code-plugin-distribution/claude-code-plugin-distribution-r04-version-specific-release-tags.md`
+  Revision 04, blob `f175d6a6842ca1d24a3cfd85e3a24542e7d7b9a3`.
 - Active requirement leaves: `PRD-20260823-034` / `CHG-20260823-034` and
   `PRD-20260823-035` / `CHG-20260823-035` and `PRD-20260823-036` /
-  `CHG-20260823-036` at
+  `CHG-20260823-036` and `PRD-20260823-037` / `CHG-20260823-037` at
   `doc/requirements/active/2026/distribution/`.
 - No shared Context may be amended from the ticket/implementation/review lanes. Any topology,
   ownership, capability or acceptance change is `REQUIREMENT_CHANGED`.
@@ -298,6 +318,7 @@ forward-fix/revert decision for the owner, not an automatic retry.
 | 2026-08-23 | Project owner / exact draft `f3af1736b0f292476fb555a553a1c40d6416c3e2` | Approved Revision 02 and sealed Context Revision 01; reviewer decomposition is authorized. |
 | 2026-08-23 | Project owner / `PRD-20260823-035` / `CHG-20260823-035` | Approved Revision 03 and sealed Context Revision 02: Level 1 names only the reachable reusable-source surface; host-local control tooling and installer entrypoints are excluded before a successor version is chosen. |
 | 2026-08-23 | Project owner / `PRD-20260823-036` / `CHG-20260823-036` | Approved Revision 04 and sealed Context Revision 03: `0.4.11` is the successor release version after F3; a new Ticket 08 effect authority remains required. |
+| 2026-08-23 | Project owner / `PRD-20260823-037` / `CHG-20260823-037` | Approved Revision 05 and sealed Context Revision 04: release tags validate their own in-tree declaration, carrier and version; current `main`/new tag retain exact candidate blob binding. Ticket 12 is authorized before Ticket 08 can be re-admitted. |
 
 The approval applies to the exact draft named above. This candidate changes only lifecycle and
 approval metadata, binds the resulting sealed Context blob, and opens the `TICKETS` stage; it does
