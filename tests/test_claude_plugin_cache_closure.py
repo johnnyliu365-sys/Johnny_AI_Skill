@@ -93,8 +93,15 @@ def _cache_fixture(root: Path) -> tuple[PublicationCommit, PublicationPayload]:
 
 
 def _normal_clone_fixture(root: Path) -> tuple[PublicationCommit, PublicationPayload]:
+    return _normal_clone_fixture_with_entries(root, {"payload.txt": b"payload\n"})
+
+
+def _normal_clone_fixture_with_entries(
+    root: Path, entries: dict[str, bytes]
+) -> tuple[PublicationCommit, PublicationPayload]:
     _initialise(root)
-    commit, payload = _parentless_commit(root, {"payload.txt": b"payload\n"})
+    commit, payload = _parentless_commit(root, entries)
+    _git(root, "config", "core.quotePath", "true")
     _git(root, "update-ref", "refs/heads/main", commit.value)
     _git(root, "update-ref", "refs/remotes/origin/main", commit.value)
     _git(root, "update-ref", "refs/tags/plugin-v1.2.3", commit.value)
@@ -103,7 +110,139 @@ def _normal_clone_fixture(root: Path) -> tuple[PublicationCommit, PublicationPay
     return commit, payload
 
 
+def _normal_clone_unicode_fixture(
+    root: Path,
+) -> tuple[PublicationCommit, PublicationPayload]:
+    return _normal_clone_fixture_with_entries(
+        root,
+        {
+            "library/功能集群/規則.py": b"payload\n",
+            "payload.txt": b"payload\n",
+        },
+    )
+
+
+def _unicode_cache_fixture(
+    root: Path,
+) -> tuple[PublicationCommit, PublicationPayload]:
+    _initialise(root)
+    commit, payload = _parentless_commit(
+        root,
+        {"library/功能集群/規則.py": b"payload\n"},
+    )
+    _git(root, "update-ref", "refs/heads/main", commit.value)
+    _git(root, "clean", "-fdx")
+    _git(root, "checkout", "-q", "--detach", commit.value)
+    _git(root, "update-ref", "-d", "refs/heads/main")
+    return commit, payload
+
+
 class InstalledPluginCacheClosureTests(unittest.TestCase):
+    def test_t13_1_normal_clone_unicode_payload_path_is_verified(self) -> None:
+        with TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            commit, payload = _normal_clone_unicode_fixture(root)
+            result = verify_installed_plugin_cache(root, payload, expected_head=commit)
+            self.assertEqual(result.status, InstallClosureStatus.VERIFIED)
+
+    def test_t13_2_lossless_unicode_payload_keeps_exact_cache_evidence(self) -> None:
+        with TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            commit, payload = _normal_clone_unicode_fixture(root)
+            result = verify_installed_plugin_cache(root, payload, expected_head=commit)
+            self.assertEqual(result.status, InstallClosureStatus.VERIFIED)
+            self.assertIsNone(result.difference)
+            self.assertEqual(
+                result.reachable_refs,
+                (
+                    "refs/heads/main",
+                    "refs/remotes/origin/HEAD",
+                    "refs/remotes/origin/main",
+                    "refs/tags/plugin-v1.2.3",
+                ),
+            )
+            self.assertEqual(result.reachable_commits, (commit,))
+
+    def test_t13_3_malformed_tree_bytes_are_fail_closed(self) -> None:
+        malformed = (
+            ("invalid UTF-8", b"library/\xff.py\0"),
+            ("missing terminal NUL", b"payload.txt"),
+            ("empty entry", b"payload.txt\0\0"),
+            ("absolute path", b"/payload.txt\0"),
+            ("backslash", b"payload\\file.txt\0"),
+            ("dot component", b"payload/./file.txt\0"),
+            ("empty component", b"payload//file.txt\0"),
+            ("traversal", b"payload/../file.txt\0"),
+        )
+        for label, listing in malformed:
+            with self.subTest(case=label), TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                commit, payload = _cache_fixture(root)
+                original_git_bytes = cache_module._git_bytes
+
+                def malformed_listing(
+                    candidate_root: Path, *arguments: str
+                ) -> bytes:
+                    if arguments == (
+                        "ls-tree",
+                        "-r",
+                        "-z",
+                        "--name-only",
+                        commit.value,
+                    ):
+                        return listing
+                    return original_git_bytes(candidate_root, *arguments)
+
+                with patch.object(
+                    cache_module, "_git_bytes", side_effect=malformed_listing
+                ):
+                    result = verify_installed_plugin_cache(
+                        root, payload, expected_head=commit
+                    )
+                self.assertEqual(
+                    result.status, InstallClosureStatus.INSTALLED_TREE_MISMATCH
+                )
+
+    def test_t13_4_unicode_sentinel_remains_reachable(self) -> None:
+        with TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            commit, payload = _normal_clone_fixture_with_entries(
+                root,
+                {
+                    "payload.txt": b"payload\n",
+                    "tests/功能.py": b"development\n",
+                },
+            )
+            result = verify_installed_plugin_cache(root, payload, expected_head=commit)
+            self.assertEqual(result.status, InstallClosureStatus.SENTINEL_REACHABLE)
+
+    def test_t13_5_reachable_unicode_development_ref_restores_to_verified(self) -> None:
+        with TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            commit, payload = _unicode_cache_fixture(root)
+            before = _git(root, "for-each-ref", "--format=%(refname)=%(objectname)")
+            initial = verify_installed_plugin_cache(root, payload, expected_head=commit)
+            self.assertEqual(initial.status, InstallClosureStatus.VERIFIED)
+
+            development, _ = _parentless_commit(
+                root,
+                {
+                    "library/功能集群/規則.py": b"payload\n",
+                    "modules/審閱.py": b"development\n",
+                },
+            )
+            _git(root, "update-ref", "refs/heads/main", development.value)
+            rejected = verify_installed_plugin_cache(root, payload, expected_head=commit)
+            self.assertEqual(rejected.status, InstallClosureStatus.SENTINEL_REACHABLE)
+
+            _git(root, "update-ref", "-d", "refs/heads/main")
+            restored = verify_installed_plugin_cache(root, payload, expected_head=commit)
+            self.assertEqual(restored.status, InstallClosureStatus.VERIFIED)
+            self.assertEqual(
+                _git(root, "for-each-ref", "--format=%(refname)=%(objectname)"),
+                before,
+            )
+
     def test_s1_normal_clone_remote_head_is_verified(self) -> None:
         with TemporaryDirectory() as temporary:
             root = Path(temporary)

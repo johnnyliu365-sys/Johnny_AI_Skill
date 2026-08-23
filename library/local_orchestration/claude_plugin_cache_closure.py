@@ -70,7 +70,7 @@ class _GitFailure(Exception):
     pass
 
 
-def _git(root: Path, *arguments: str) -> str:
+def _git_bytes(root: Path, *arguments: str) -> bytes:
     try:
         completed = subprocess.run(
             ["git", *arguments],
@@ -82,7 +82,11 @@ def _git(root: Path, *arguments: str) -> str:
         raise _GitFailure from error
     if completed.returncode != 0:
         raise _GitFailure
-    return completed.stdout.decode("utf-8", errors="replace")
+    return completed.stdout
+
+
+def _git(root: Path, *arguments: str) -> str:
+    return _git_bytes(root, *arguments).decode("utf-8", errors="replace")
 
 
 def _valid_installed_ref(name: str) -> bool:
@@ -254,10 +258,18 @@ def _root_commit(root: Path, commit: PublicationCommit) -> bool:
 
 def _tree_contains_sentinel(root: Path, commit: PublicationCommit) -> bool | None:
     try:
-        raw = _git(root, "ls-tree", "-r", "--name-only", commit.value)
+        raw = _git_bytes(root, "ls-tree", "-r", "-z", "--name-only", commit.value)
     except _GitFailure:
         return None
-    paths = raw.splitlines()
+    if not raw or not raw.endswith(b"\0"):
+        return None
+    records = raw[:-1].split(b"\0")
+    if any(not record for record in records):
+        return None
+    try:
+        paths = tuple(record.decode("utf-8") for record in records)
+    except UnicodeDecodeError:
+        return None
     if any(
         not path
         or path.startswith("/")
