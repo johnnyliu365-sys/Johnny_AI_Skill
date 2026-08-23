@@ -37,8 +37,10 @@ from tempfile import TemporaryDirectory
 from typing import Final, cast
 from unittest.mock import patch
 
+from library.local_orchestration import plugin_publication as publication_module
 from library.local_orchestration.plugin_publication import (
     LocalPublicationReachability,
+    PinCarrierMode,
     PayloadDeclarationError,
     PinnedCommitError,
     PublicationError,
@@ -58,6 +60,7 @@ from library.local_orchestration.plugin_publication import (
     is_payload_path,
     load_payload_declaration,
     materialise_publication_tree,
+    normalize_pin_carrier,
     pinned_plugin_source,
     publication_refs_reaching_commit,
     repin_marketplace,
@@ -66,6 +69,14 @@ from library.local_orchestration.plugin_publication import (
     require_reachable_publication_ref,
     tree_blob_ids,
     write_publication_commit,
+)
+from library.local_orchestration.publication_repository_closure import (
+    PublicationClosureStatus,
+    PublicationCommit,
+    PublicationPayload,
+    PublicationRepositoryRef,
+    payload_from_manifest,
+    verify_publication_repository,
 )
 
 _REPO_ROOT: Final[Path] = Path(__file__).resolve().parents[1]
@@ -320,6 +331,229 @@ class PinCarrierTests(unittest.TestCase):
         blob = tree_blob_ids(scratch.root, sha)["MARKET.json"]
         return sha, _git(scratch.root, "cat-file", "blob", blob)
 
+    def _closure_fixture(
+        self, scratch: _ScratchRepository
+    ) -> tuple[str, PublicationPayload]:
+        scratch.declare(["alpha"], ["ROOT.md", "MARKET.json"])
+        sha = write_publication_commit(
+            scratch.root,
+            scratch.manifest,
+            pin_carrier="MARKET.json",
+            ref="refs/heads/main",
+        )
+        repin_marketplace(scratch.root / "MARKET.json", sha)
+        _git(scratch.root, "symbolic-ref", "HEAD", "refs/heads/main")
+        _git(scratch.root, "update-ref", "-d", "refs/heads/master")
+        return sha, payload_from_manifest(scratch.root, scratch.manifest)
+
+    def _verify_closure(
+        self,
+        scratch: _ScratchRepository,
+        sha: str,
+        payload: PublicationPayload,
+        *,
+        expected_pin: str | None = None,
+    ) -> PublicationClosureStatus:
+        expected = sha if expected_pin is None else expected_pin
+        result = verify_publication_repository(
+            scratch.root,
+            payload,
+            PublicationRepositoryRef(value="https://example.invalid/publication.git"),
+            expected_main=PublicationCommit(value=sha),
+            pin_carrier="MARKET.json",
+            expected_pin=PublicationCommit(value=expected),
+        )
+        return result.status
+
+    def test_the_shared_carrier_codec_round_trips_source_and_generated_forms(self) -> None:
+        with TemporaryDirectory(ignore_cleanup_errors=True) as raw:
+            scratch = _ScratchRepository(Path(raw))
+            scratch.declare(["alpha"], ["ROOT.md", "MARKET.json"])
+            source = (scratch.root / "MARKET.json").read_text(encoding="utf-8")
+            normalized = normalize_pin_carrier(
+                source, "MARKET.json", mode=PinCarrierMode.SOURCE
+            )
+            generated = normalize_pin_carrier(
+                normalized.normalized_text,
+                "MARKET.json",
+                mode=PinCarrierMode.GENERATED,
+            )
+            self.assertEqual(generated.heal("a" * 40), source)
+
+    def test_closure_rejects_non_pin_carrier_mutation_and_restores_green(self) -> None:
+        with TemporaryDirectory(ignore_cleanup_errors=True) as raw:
+            scratch = _ScratchRepository(Path(raw))
+            sha, payload = self._closure_fixture(scratch)
+            before = (scratch.root / "MARKET.json").read_bytes()
+            document = json.loads(before)
+            document["plugins"][0]["description"] = "changed outside the pin"
+            (scratch.root / "MARKET.json").write_text(
+                json.dumps(document, indent=2) + "\n", encoding="utf-8"
+            )
+            self.assertEqual(
+                self._verify_closure(scratch, sha, payload),
+                PublicationClosureStatus.TREE_MISMATCH,
+            )
+            (scratch.root / "MARKET.json").write_bytes(before)
+            self.assertEqual(
+                self._verify_closure(scratch, sha, payload),
+                PublicationClosureStatus.VERIFIED,
+            )
+
+    def test_closure_rejects_wrong_live_pin_and_restores_green(self) -> None:
+        with TemporaryDirectory(ignore_cleanup_errors=True) as raw:
+            scratch = _ScratchRepository(Path(raw))
+            sha, payload = self._closure_fixture(scratch)
+            before = (scratch.root / "MARKET.json").read_bytes()
+            repin_marketplace(scratch.root / "MARKET.json", "f" * 40)
+            self.assertEqual(
+                self._verify_closure(scratch, sha, payload),
+                PublicationClosureStatus.TREE_MISMATCH,
+            )
+            (scratch.root / "MARKET.json").write_bytes(before)
+            self.assertEqual(
+                self._verify_closure(scratch, sha, payload),
+                PublicationClosureStatus.VERIFIED,
+            )
+
+    def test_closure_rejects_malformed_live_pin_and_restores_green(self) -> None:
+        with TemporaryDirectory(ignore_cleanup_errors=True) as raw:
+            scratch = _ScratchRepository(Path(raw))
+            sha, payload = self._closure_fixture(scratch)
+            before = (scratch.root / "MARKET.json").read_bytes()
+            document = json.loads(before)
+            document["plugins"][0]["source"]["sha"] = "malformed"
+            (scratch.root / "MARKET.json").write_text(
+                json.dumps(document, indent=2) + "\n", encoding="utf-8"
+            )
+            self.assertEqual(
+                self._verify_closure(scratch, sha, payload),
+                PublicationClosureStatus.TREE_MISMATCH,
+            )
+            (scratch.root / "MARKET.json").write_bytes(before)
+            self.assertEqual(
+                self._verify_closure(scratch, sha, payload),
+                PublicationClosureStatus.VERIFIED,
+            )
+
+    def test_second_pin_occurrence_is_refused_and_restored(self) -> None:
+        with TemporaryDirectory(ignore_cleanup_errors=True) as raw:
+            scratch = _ScratchRepository(Path(raw))
+            scratch.declare(["alpha"], ["ROOT.md", "MARKET.json"])
+            before = (scratch.root / "MARKET.json").read_bytes()
+            document = json.loads(before)
+            document["plugins"][0]["mirror"] = "a" * 40
+            (scratch.root / "MARKET.json").write_text(
+                json.dumps(document, indent=2) + "\n", encoding="utf-8"
+            )
+            with self.assertRaises(PayloadDeclarationError):
+                write_publication_commit(
+                    scratch.root, scratch.manifest, pin_carrier="MARKET.json"
+                )
+            (scratch.root / "MARKET.json").write_bytes(before)
+            write_publication_commit(
+                scratch.root, scratch.manifest, pin_carrier="MARKET.json"
+            )
+
+    def test_closure_rejects_a_usable_generated_pin(self) -> None:
+        with TemporaryDirectory(ignore_cleanup_errors=True) as raw:
+            scratch = _ScratchRepository(Path(raw))
+            sha, payload = self._closure_fixture(scratch)
+            unneutralised = write_publication_commit(
+                scratch.root, scratch.manifest, ref="refs/heads/main"
+            )
+            result = verify_publication_repository(
+                scratch.root,
+                payload,
+                PublicationRepositoryRef(value="https://example.invalid/publication.git"),
+                expected_main=PublicationCommit(value=unneutralised),
+                pin_carrier="MARKET.json",
+                expected_pin=PublicationCommit(value=sha),
+            )
+            self.assertEqual(result.status, PublicationClosureStatus.TREE_MISMATCH)
+
+    def test_closure_rejects_a_second_generated_placeholder_occurrence(self) -> None:
+        with TemporaryDirectory(ignore_cleanup_errors=True) as raw:
+            scratch = _ScratchRepository(Path(raw))
+            sha, payload = self._closure_fixture(scratch)
+            before = (scratch.root / "MARKET.json").read_bytes()
+            document = json.loads(before)
+            document["plugins"][0]["mirror"] = "0" * 40
+            (scratch.root / "MARKET.json").write_text(
+                json.dumps(document, indent=2) + "\n", encoding="utf-8"
+            )
+            malformed = write_publication_commit(
+                scratch.root,
+                scratch.manifest,
+                pin_carrier="MARKET.json",
+                ref="refs/heads/main",
+            )
+            repin_marketplace(scratch.root / "MARKET.json", malformed)
+            malformed_payload = payload_from_manifest(scratch.root, scratch.manifest)
+            result = verify_publication_repository(
+                scratch.root,
+                malformed_payload,
+                PublicationRepositoryRef(value="https://example.invalid/publication.git"),
+                expected_main=PublicationCommit(value=malformed),
+                pin_carrier="MARKET.json",
+                expected_pin=PublicationCommit(value=malformed),
+            )
+            self.assertEqual(result.status, PublicationClosureStatus.TREE_MISMATCH)
+            (scratch.root / "MARKET.json").write_bytes(before)
+            _git(scratch.root, "update-ref", "refs/heads/main", sha)
+            self.assertEqual(
+                self._verify_closure(scratch, sha, payload),
+                PublicationClosureStatus.VERIFIED,
+            )
+
+    def test_carrier_outside_payload_and_bypass_pin_are_named_refusals(self) -> None:
+        with TemporaryDirectory(ignore_cleanup_errors=True) as raw:
+            scratch = _ScratchRepository(Path(raw))
+            sha, payload = self._closure_fixture(scratch)
+            outside = verify_publication_repository(
+                scratch.root,
+                payload,
+                PublicationRepositoryRef(value="https://example.invalid/publication.git"),
+                expected_main=PublicationCommit(value=sha),
+                pin_carrier="not-declared.json",
+                expected_pin=PublicationCommit(value=sha),
+            )
+            self.assertEqual(outside.status, PublicationClosureStatus.READBACK_MISMATCH)
+            bypass = verify_publication_repository(
+                scratch.root,
+                payload,
+                PublicationRepositoryRef(value="https://example.invalid/publication.git"),
+                expected_main=PublicationCommit(value=sha),
+                pin_carrier="MARKET.json",
+                expected_pin=PublicationCommit.model_construct(value=None),
+            )
+            self.assertEqual(bypass.status, PublicationClosureStatus.READBACK_MISMATCH)
+
+    def test_the_generator_and_closure_share_the_same_codec(self) -> None:
+        with TemporaryDirectory(ignore_cleanup_errors=True) as raw:
+            scratch = _ScratchRepository(Path(raw))
+            sha, payload = self._closure_fixture(scratch)
+            with patch.object(
+                publication_module,
+                "normalize_pin_carrier",
+                side_effect=PayloadDeclarationError("codec disabled"),
+            ):
+                with self.assertRaises(PayloadDeclarationError):
+                    write_publication_commit(
+                        scratch.root,
+                        scratch.manifest,
+                        pin_carrier="MARKET.json",
+                    )
+                result = verify_publication_repository(
+                    scratch.root,
+                    payload,
+                    PublicationRepositoryRef(value="https://example.invalid/publication.git"),
+                    expected_main=PublicationCommit(value=sha),
+                    pin_carrier="MARKET.json",
+                    expected_pin=PublicationCommit(value=sha),
+                )
+            self.assertEqual(result.status, PublicationClosureStatus.TREE_MISMATCH)
+
     def test_the_published_copy_records_an_id_that_names_nothing(self) -> None:
         with TemporaryDirectory(ignore_cleanup_errors=True) as raw:
             scratch = _ScratchRepository(Path(raw))
@@ -366,6 +600,14 @@ class PinCarrierTests(unittest.TestCase):
             with self.assertRaises(PayloadDeclarationError):
                 materialise_publication_tree(
                     scratch.root, scratch.payload(), Path(raw) / "out",
+                    pin_carrier="MARKET.json",
+                )
+            unbound = write_publication_commit(scratch.root, scratch.manifest)
+            with self.assertRaises(PayloadDeclarationError):
+                assert_commit_matches_declaration(
+                    scratch.root,
+                    scratch.payload(),
+                    unbound,
                     pin_carrier="MARKET.json",
                 )
 

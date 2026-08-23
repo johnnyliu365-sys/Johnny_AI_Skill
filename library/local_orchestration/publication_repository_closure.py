@@ -17,6 +17,7 @@ from urllib.parse import urlsplit
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
+from . import plugin_publication
 from .plugin_publication import declared_blob_ids, load_payload_declaration
 from .runtime_contracts import CorrelationId
 
@@ -427,11 +428,54 @@ def payload_tree_difference(
     return _difference(payload.blob_ids, actual)
 
 
+def _pin_carrier_matches(
+    root: Path,
+    commit: PublicationCommit,
+    pin_carrier: str,
+    expected_pin: PublicationCommit,
+) -> bool:
+    """Prove the only permitted difference is one reversible carrier pin."""
+
+    actual = _tree_blobs(root, commit)
+    if actual is None:
+        return False
+    carried = dict(actual).get(pin_carrier)
+    if carried is None:
+        return False
+    try:
+        published = _git(root, "cat-file", "blob", carried)
+        working = (root / pin_carrier).read_text(encoding="utf-8")
+        source = plugin_publication.normalize_pin_carrier(
+            working,
+            pin_carrier,
+            mode=plugin_publication.PinCarrierMode.SOURCE,
+        )
+        if source.recorded_sha != expected_pin.value:
+            return False
+        generated = plugin_publication.normalize_pin_carrier(
+            published,
+            pin_carrier,
+            mode=plugin_publication.PinCarrierMode.GENERATED,
+        )
+        healed = plugin_publication.heal_pin_carrier(generated, expected_pin.value)
+    except (
+        OSError,
+        UnicodeDecodeError,
+        ValueError,
+        _GitReadFailure,
+    ):
+        return False
+    return healed.replace("\r\n", "\n") == working.replace("\r\n", "\n")
+
+
 def verify_publication_repository(
     root: Path,
     payload: PublicationPayload,
     repository: PublicationRepositoryRef,
     expected_main: PublicationCommit | None = None,
+    *,
+    pin_carrier: str | None = None,
+    expected_pin: PublicationCommit | None = None,
 ) -> PublicationClosureResult:
     """Verify every admitted publication ref without creating or moving refs."""
 
@@ -439,7 +483,19 @@ def verify_publication_repository(
         payload = PublicationPayload.model_validate(payload)
         repository = PublicationRepositoryRef.model_validate(repository)
         expected = None if expected_main is None else PublicationCommit.model_validate(expected_main)
+        carrier = pin_carrier
+        pin = None if expected_pin is None else PublicationCommit.model_validate(expected_pin)
     except ValueError:
+        return PublicationClosureResult(status=PublicationClosureStatus.READBACK_MISMATCH)
+    if carrier is None:
+        if expected_pin is not None:
+            return PublicationClosureResult(status=PublicationClosureStatus.READBACK_MISMATCH)
+        carrier_pin: PublicationCommit | None = None
+    else:
+        carrier_pin = pin if pin is not None else expected
+        if carrier_pin is None:
+            return PublicationClosureResult(status=PublicationClosureStatus.READBACK_MISMATCH)
+    if carrier is not None and (not isinstance(carrier, str) or carrier not in payload.paths):
         return PublicationClosureResult(status=PublicationClosureStatus.READBACK_MISMATCH)
 
     read = _read_snapshot(root, repository)
@@ -480,6 +536,20 @@ def verify_publication_repository(
             return PublicationClosureResult(
                 status=PublicationClosureStatus.REMOTE_UNREACHABLE,
                 snapshot=snapshot,
+            )
+        if carrier is not None and carrier_pin is not None:
+            if not _pin_carrier_matches(root, ref.target, carrier, carrier_pin):
+                return PublicationClosureResult(
+                    status=PublicationClosureStatus.TREE_MISMATCH,
+                    snapshot=snapshot,
+                    difference=difference,
+                )
+            difference = PublicationTreeDifference(
+                missing=difference.missing,
+                extra=difference.extra,
+                content_mismatch=tuple(
+                    path for path in difference.content_mismatch if path != carrier
+                ),
             )
         if not difference.is_empty:
             return PublicationClosureResult(

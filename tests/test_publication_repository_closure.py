@@ -304,6 +304,19 @@ class PublicationRepositoryClosureTests(unittest.TestCase):
                 result = verify_publication_repository(remote, payload, _REMOTE_URL)
             self.assertEqual(result.status, PublicationClosureStatus.COMMIT_NOT_ROOT)
 
+    def test_n6_declared_carrier_requires_a_local_live_source(self) -> None:
+        with TemporaryDirectory() as temporary:
+            _source, remote, commit, payload = _fixture(Path(temporary))
+            result = verify_publication_repository(
+                remote,
+                payload,
+                _REMOTE_URL,
+                expected_main=commit,
+                pin_carrier="payload.txt",
+                expected_pin=commit,
+            )
+            self.assertEqual(result.status, PublicationClosureStatus.TREE_MISMATCH)
+
     def test_c5_full_but_absent_sha_is_a_named_rejection(self) -> None:
         with TemporaryDirectory() as temporary:
             _source, remote, _commit, payload = _fixture(Path(temporary))

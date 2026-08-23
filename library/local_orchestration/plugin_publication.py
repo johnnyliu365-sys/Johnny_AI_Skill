@@ -67,6 +67,8 @@ __all__ = [
     "PublicationReachabilityError",
     "PublicationRefError",
     "PublicationRefQueryError",
+    "PinCarrierMode",
+    "PinCarrierNormalization",
     "PublicationTreeError",
     "PushableRefName",
     "RemotePublicationReachability",
@@ -85,6 +87,8 @@ __all__ = [
     "publication_commit_message",
     "read_plugin_manifest",
     "repin_marketplace",
+    "normalize_pin_carrier",
+    "heal_pin_carrier",
     "require_existing_commit",
     "require_fetchable_publication_ref",
     "require_reachable_publication_ref",
@@ -186,6 +190,145 @@ class PublicationReachabilityError(PinnedCommitError):
 
 class PublicationRefQueryError(PublicationTreeError):
     """Raised when pushable-ref reachability cannot be determined."""
+
+
+class PinCarrierMode(str, Enum):
+    """The one of two typed carrier documents accepted by the shared codec."""
+
+    SOURCE = "SOURCE"
+    GENERATED = "GENERATED"
+
+
+@dataclass(frozen=True)
+class PinCarrierNormalization:
+    """A validated carrier document and its one reversible pin substitution."""
+
+    normalized_text: str
+    pin_carrier: str
+    recorded_sha: str
+    mode: PinCarrierMode
+
+    def heal(self, live_sha: str) -> str:
+        """Replace exactly the generated dead SHA with one validated live SHA."""
+
+        if (
+            not isinstance(self.normalized_text, str)
+            or not isinstance(self.pin_carrier, str)
+            or not isinstance(self.recorded_sha, str)
+            or not isinstance(self.mode, PinCarrierMode)
+        ):
+            raise PublicationMismatchError("the pin carrier normalization is invalid")
+        _validate_pin_carrier_name(self.pin_carrier)
+        if self.mode is not PinCarrierMode.GENERATED:
+            raise PublicationMismatchError(
+                f"only a generated pin carrier can be healed: {self.pin_carrier}"
+            )
+        if not isinstance(live_sha, str) or _FULL_SHA.fullmatch(live_sha) is None:
+            raise PayloadDeclarationError(
+                f"the live pin is not a full id: {self.pin_carrier}"
+            )
+        if self.normalized_text.count(_UNPINNABLE) != 1:
+            raise PublicationMismatchError(
+                f"the generated pin carrier has an invalid placeholder: {self.pin_carrier}"
+            )
+        return self.normalized_text.replace(_UNPINNABLE, live_sha)
+
+
+def _validate_pin_carrier_name(pin_carrier: str) -> None:
+    if (
+        not isinstance(pin_carrier, str)
+        or not pin_carrier
+        or pin_carrier.startswith("/")
+        or "\\" in pin_carrier
+        or "\x00" in pin_carrier
+        or any(part in ("", ".", "..") for part in pin_carrier.split("/"))
+    ):
+        raise PayloadDeclarationError(
+            f"the pin carrier must be a clean repository-relative path: {pin_carrier!r}"
+        )
+
+
+def _recorded_pin_carrier_sha(text: str, pin_carrier: str) -> str:
+    try:
+        parsed: object = json.loads(text)
+    except (TypeError, ValueError) as error:
+        raise PayloadDeclarationError(
+            f"the pin carrier records no readable pin: {pin_carrier}"
+        ) from error
+    if not isinstance(parsed, Mapping):
+        raise PayloadDeclarationError(
+            f"the pin carrier records no readable pin: {pin_carrier}"
+        )
+    plugins: object = parsed.get("plugins")
+    if not isinstance(plugins, list) or len(plugins) != 1:
+        raise PayloadDeclarationError(
+            f"the pin carrier records no readable pin: {pin_carrier}"
+        )
+    plugin: object = plugins[0]
+    if not isinstance(plugin, Mapping):
+        raise PayloadDeclarationError(
+            f"the pin carrier records no readable pin: {pin_carrier}"
+        )
+    source: object = plugin.get("source")
+    if not isinstance(source, Mapping):
+        raise PayloadDeclarationError(
+            f"the pin carrier records no readable pin: {pin_carrier}"
+        )
+    recorded: object = source.get("sha")
+    if not isinstance(recorded, str):
+        raise PayloadDeclarationError(
+            f"the recorded pin is not a full id: {pin_carrier}"
+        )
+    return recorded
+
+
+def normalize_pin_carrier(
+    text: str,
+    pin_carrier: str,
+    *,
+    mode: PinCarrierMode,
+) -> PinCarrierNormalization:
+    """Validate one carrier document and normalize its single pin slot.
+
+    SOURCE mode replaces one live full SHA with the unpinnable placeholder;
+    GENERATED mode accepts only that placeholder.  Both modes use the same
+    typed JSON/cardinality checks so generation and closure cannot drift.
+    """
+
+    _validate_pin_carrier_name(pin_carrier)
+    if not isinstance(text, str):
+        raise PayloadDeclarationError(f"the pin carrier is not text: {pin_carrier}")
+    if not isinstance(mode, PinCarrierMode):
+        raise PayloadDeclarationError(f"the pin carrier mode is invalid: {pin_carrier}")
+    recorded = _recorded_pin_carrier_sha(text, pin_carrier)
+    if _FULL_SHA.fullmatch(recorded) is None:
+        raise PayloadDeclarationError(f"the recorded pin is not a full id: {pin_carrier}")
+    if text.count(recorded) != 1:
+        raise PayloadDeclarationError(
+            f"the recorded pin does not appear exactly once: {pin_carrier}"
+        )
+    if mode is PinCarrierMode.SOURCE:
+        normalized = text.replace(recorded, _UNPINNABLE)
+    elif recorded == _UNPINNABLE:
+        normalized = text
+    else:
+        raise PublicationMismatchError(
+            f"the published copy records a usable pin instead of a placeholder: {pin_carrier}"
+        )
+    return PinCarrierNormalization(
+        normalized_text=normalized,
+        pin_carrier=pin_carrier,
+        recorded_sha=recorded,
+        mode=mode,
+    )
+
+
+def heal_pin_carrier(normalized: PinCarrierNormalization, live_sha: str) -> str:
+    """Apply the shared reversible generated-carrier healing operation."""
+
+    if not isinstance(normalized, PinCarrierNormalization):
+        raise PublicationMismatchError("the pin carrier normalization is invalid")
+    return normalized.heal(live_sha)
 
 
 # --------------------------------------------------------------------------- #
@@ -669,21 +812,15 @@ def _healed_pin_carrier_matches(
         working = (Path(root) / pin_carrier).read_text(encoding="utf-8")
     except (OSError, UnicodeDecodeError) as error:
         raise PublicationTreeError(f"the pin carrier cannot be read: {pin_carrier}") from error
-    try:
-        recorded = json.loads(published)["plugins"][0]["source"]["sha"]
-    except (ValueError, LookupError, TypeError) as error:
-        raise PublicationTreeError(
-            f"the carried pin carrier records no readable pin: {pin_carrier}"
-        ) from error
-    if recorded != _UNPINNABLE:
-        raise PublicationMismatchError(
-            f"the published copy records a usable pin instead of a placeholder: {pin_carrier}"
-        )
-    if published.count(recorded) != 1:
-        raise PublicationTreeError(
-            f"the placeholder does not appear exactly once: {pin_carrier}"
-        )
-    healed = published.replace(recorded, sha)
+    generated = normalize_pin_carrier(
+        published, pin_carrier, mode=PinCarrierMode.GENERATED
+    )
+    source = normalize_pin_carrier(
+        working, pin_carrier, mode=PinCarrierMode.SOURCE
+    )
+    if source.recorded_sha != sha:
+        return False
+    healed = heal_pin_carrier(generated, sha)
     return healed.replace("\r\n", "\n") == working.replace("\r\n", "\n")
 
 
@@ -696,6 +833,10 @@ def assert_commit_matches_declaration(
 ) -> PublicationDiff:
     """Raise unless the pinned commit carries exactly the declared payload."""
 
+    if pin_carrier is not None and pin_carrier not in declared_blob_ids(root, payload):
+        raise PayloadDeclarationError(
+            f"the pin carrier is not part of the declared payload: {pin_carrier}"
+        )
     diff = compare_commit_to_declaration(root, payload, sha, pin_carrier=pin_carrier)
     if diff.missing:
         raise PublicationMismatchError(
@@ -804,19 +945,9 @@ def _neutralised_pin_carrier_text(root: Path, pin_carrier: str) -> str:
         text = (Path(root) / pin_carrier).read_text(encoding="utf-8")
     except (OSError, UnicodeDecodeError) as error:
         raise PublicationTreeError(f"the pin carrier cannot be read: {pin_carrier}") from error
-    try:
-        recorded = json.loads(text)["plugins"][0]["source"]["sha"]
-    except (ValueError, LookupError, TypeError) as error:
-        raise PayloadDeclarationError(
-            f"the pin carrier records no readable pin: {pin_carrier}"
-        ) from error
-    if not isinstance(recorded, str) or _FULL_SHA.fullmatch(recorded) is None:
-        raise PayloadDeclarationError(f"the recorded pin is not a full id: {pin_carrier}")
-    if text.count(recorded) != 1:
-        raise PayloadDeclarationError(
-            f"the recorded pin does not appear exactly once: {pin_carrier}"
-        )
-    return text.replace(recorded, _UNPINNABLE)
+    return normalize_pin_carrier(
+        text, pin_carrier, mode=PinCarrierMode.SOURCE
+    ).normalized_text
 
 
 def _neutralise_pin_carrier(
