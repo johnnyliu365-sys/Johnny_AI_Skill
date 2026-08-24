@@ -4,7 +4,7 @@
 | --- | --- |
 | Feature | `context-load-telemetry` |
 | Worktree | `root/main` |
-| State | `BASELINE_DONE / REVISION_02_APPROVED / REVIEWER_DECOMPOSITION_AUTHORIZED` |
+| State | `BASELINE_DONE / REVISION_02_APPROVED / REVISION_03_PROVIDER_USAGE_ARCHITECTURE_ACCEPTED / REVIEWER_DECOMPOSITION_AUTHORIZED` |
 | In scope | Router context measurement, metadata-only JSONL evidence, baseline/router comparison, local validation, and Johnny-owned opaque telemetry storage. |
 | Out of scope | Raw prompt capture, source text or path persistence, provider credentials, a production Agent supervisor, target-local Johnny storage, or changes to target company repositories. |
 
@@ -21,6 +21,21 @@
 - The current raw-path `JsonlContextUsageStore` is legacy POC behavior. It is not
   admitted for controlled-target use and requires an approved Revision 02
   implementation ticket before production use.
+- Actual provider usage has three distinct report classes: `LOAD_ESTIMATE`,
+  `OBSERVED_USAGE`, and `MATCHED_REDUCTION`. Only the last may say that tokens were reduced;
+  it requires two fresh isolated, randomized-order, quality-preserving runs with identical
+  provider/model/configuration/snapshot/task bindings.
+- A provider adapter receives one terminal host event ephemerally, validates it into typed
+  metadata and discards its raw contents. Missing or malformed usage is named unavailable, not
+  zero or an estimate. Host probes are paid external effects and require their own ticket-bound
+  owner authority.
+- The opaque storage contract now fixes the lifecycle/operation matrix and validation precedence.
+  `TelemetryStoragePort.execute` is the sole caller contract; its `READ` response is a complete,
+  immutable metadata-only record tuple, and the Johnny-root composition adapter is the only path
+  resolver and user of the legacy codec. `DETACHED` and `REMOVED` stores cannot be recreated by a
+  telemetry request.
+- Cost and billing claims remain out of scope. Provider token reduction cannot be converted to
+  money without a separately approved pricing requirement.
 
 ## Related sources
 
@@ -30,6 +45,7 @@
 | `library/workflow_router/contracts.py` | `READY` | Extend only with strongly typed telemetry contracts. |
 | `library/workflow_router/router.py` | `READY` | Reuse ContextResolver output without persisting packet text. |
 | `tests/test_workflow_router.py` | `READY` | Preserve current router and citation invariants. |
+| `doc/adr/ADR-20260824-019-provider-usage-telemetry-evidence.md` | `ACCEPTED` | Defines the Revision 03 storage, host-evidence, comparison and probe boundary. |
 
 ## Acceptance evidence
 
@@ -41,6 +57,6 @@
 ## Owner-backlink status
 
 Baseline feature implementation committed as `319ae97` (`feat: add router
-context load telemetry`). Revision 02 storage isolation is approved for
-reviewer ticket decomposition but is not implemented, reviewed or integrated;
-the legacy raw-path API remains non-admitted for controlled targets.
+context load telemetry`). Revision 03 now authorizes decomposition of pure storage and
+provider-event-admission tickets. No host usage schema has yet been proven, no real provider usage
+has been collected, and the legacy raw-path API remains non-admitted for controlled targets.

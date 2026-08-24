@@ -3,11 +3,11 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-CONTEXT-LOAD-TELEMETRY-20260803-01KZ5E7F9G1H3J5K7M9N1P3Q5R` |
-| State | `APPROVED_BASELINE / REVISION_02_PROJECT_ISOLATION_APPROVED / REVIEWER_DECOMPOSITION_AUTHORIZED` |
+| State | `APPROVED_BASELINE / REVISION_02_PROJECT_ISOLATION_APPROVED / REVISION_03_PROVIDER_USAGE_ARCHITECTURE_ACCEPTED / REVIEWER_DECOMPOSITION_AUTHORIZED` |
 | Owner | `root/main` |
 | Context | `doc/context/context-load-telemetry/main.md` |
 | PRD reference | `PRD-20260803-006` |
-| Change | `CHG-20260803-006`; project-isolation revision `CHG-20260815-024` / `ADR-20260815-013` |
+| Change | `CHG-20260803-006`; project-isolation revision `CHG-20260815-024` / `ADR-20260815-013`; provider-usage architecture `ADR-20260824-019` |
 
 ## Goal
 
@@ -21,6 +21,8 @@ Produce local, shareable evidence that a Router-selected ContextPacket reduces a
   `TelemetryStorageRef` resolved only beneath the per-user Johnny root.
 - Fail-closed validation of router guards and matched baseline/router pairs.
 - Aggregate median reduction only where both records supply provider-reported input-token counts.
+- A provider-neutral terminal-usage evidence port and a separately authorized host capability
+  probe; no unverified CLI/UI output is provider usage evidence.
 - Unit tests and usage documentation.
 
 ## Non-goals
@@ -28,6 +30,8 @@ Produce local, shareable evidence that a Router-selected ContextPacket reduces a
 - Do not capture raw ContextPacket text, prompts, source URIs, provider credentials, source files, or company code.
 - Do not make a production Agent supervisor, enforce all Agent tool I/O, install a service, or write raw telemetry into a target repository either automatically or through a caller-supplied path.
 - Do not substitute an estimated token count for actual provider input usage when claiming reduction.
+- Do not report a cost, currency, price, subscription allowance, or inferred saving. This
+  revision measures actual provider token counts only.
 
 ## Data contract
 
@@ -66,15 +70,55 @@ TelemetryStorageRef = {
   ownership_ledger_ref, storage_revision, lifecycle
 }
 
-TelemetryStorageRequest = {
+AppendTelemetryStorageRequest = {
   storage_ref, expected_project_id, expected_storage_revision,
-  operation, record?
+  operation=APPEND, record: ContextUsageRecord
 }
 
-TelemetryStorageResult = {
-  storage_ref, storage_revision, operation, decision,
-  record_count?, validation_report_ref?, failure_ref?
+NoRecordTelemetryStorageRequest = {
+  storage_ref, expected_project_id, expected_storage_revision,
+  operation=READ | VALIDATE | DETACH | UNINSTALL
 }
+
+TelemetryStorageRequest = AppendTelemetryStorageRequest
+                      | NoRecordTelemetryStorageRequest
+
+TelemetryStorageReadPayload = {
+  records: tuple[ContextUsageRecord, ...]
+}
+
+CompletedAppendResponse = {
+  storage_ref, storage_revision, operation=APPEND, decision=COMPLETED,
+  lifecycle=ACTIVE, record_count
+}
+CompletedReadResponse = {
+  storage_ref, storage_revision, operation=READ, decision=COMPLETED,
+  lifecycle=ACTIVE, record_count, read_payload: TelemetryStorageReadPayload
+}
+CompletedValidateResponse = {
+  storage_ref, storage_revision, operation=VALIDATE, decision=COMPLETED,
+  lifecycle=ACTIVE, record_count, validation_report_ref
+}
+CompletedDetachResponse = {
+  storage_ref, storage_revision, operation=DETACH, decision=COMPLETED,
+  lifecycle=DETACHED, record_count
+}
+CompletedUninstallResponse = {
+  storage_ref, storage_revision, operation=UNINSTALL, decision=COMPLETED,
+  lifecycle=REMOVED, record_count
+}
+TelemetryStorageFailure = {
+  storage_ref, storage_revision, operation,
+  decision=STORAGE_REF_INVALID | STORAGE_OWNERSHIP_MISMATCH | STORAGE_CLOSED
+         | STORAGE_BOUNDARY_VIOLATION | RECORD_INVALID,
+  failure_ref
+}
+
+TelemetryStorageResponse = CompletedAppendResponse | CompletedReadResponse
+                         | CompletedValidateResponse | CompletedDetachResponse
+                         | CompletedUninstallResponse | TelemetryStorageFailure
+
+TelemetryStoragePort.execute(request: TelemetryStorageRequest) -> TelemetryStorageResponse
 ```
 
 Every identifier is a validated named type with a finite pattern. `record` is
@@ -83,6 +127,67 @@ No production request or result has a filesystem-path field. Boundary adapters
 validate dynamic JSON and filesystem/Git/provider output before constructing
 these contracts; `Any`, implicit `any`, unvalidated mappings and stringly typed
 lifecycle/decision values cannot enter the core.
+
+### Revision 03 provider-usage evidence and comparison boundary
+
+The `ADR-20260824-019` architecture closes the previously missing storage-operation matrix and
+adds a provider-neutral boundary. A future `ProviderUsageEvidencePort` consumes only an
+ephemeral terminal host event and returns one finite result:
+
+```text
+ProviderUsageEvidenceDecision = OBSERVED | HOST_USAGE_UNAVAILABLE
+                              | HOST_USAGE_MALFORMED | HOST_USAGE_MISMATCH
+
+ProviderUsageObservation = {
+  host_run_fingerprint, provider, model,
+  host_configuration_fingerprint, project_snapshot_id,
+  provider_input_tokens, provider_output_tokens?, cached_input_tokens?
+}
+```
+
+`provider_input_tokens` is mandatory only for `OBSERVED`; absent or non-finite usage is never
+coerced to zero. The raw terminal event is validated at the adapter boundary then discarded. No
+result carries prompt/response text, URI, raw host event, credential or a filesystem path.
+Adapters first admit fake event fixtures only. A real host command is a separately authorized
+provider effect and is not implied by this specification approval.
+
+Usage reports have a finite class:
+
+```text
+UsageReportClass = LOAD_ESTIMATE | OBSERVED_USAGE | MATCHED_REDUCTION
+```
+
+Only `MATCHED_REDUCTION` may state a token reduction. It requires two fresh isolated records with
+identical comparison group, attempt, project snapshot, provider, exact model, host-configuration
+fingerprint, cache mode and frozen task contract, with randomized execution order and passing
+quality gates. Resume, shared conversation, handoff, missing usage, mismatch or quality
+regression rejects the pair. `OBSERVED_USAGE` may report one run's actual counts but never a
+saving; `LOAD_ESTIMATE` remains explicitly estimated.
+
+Revision 02's storage operation matrix is now fixed: `APPEND`, `READ`, `VALIDATE`, `DETACH` and
+`UNINSTALL` require `ACTIVE`; only `APPEND` carries a record. The five validation precedence
+classes and each operation's successful result are defined in `ADR-20260824-019`. `DETACHED` and
+`REMOVED` reject every operation as `STORAGE_CLOSED`. The composition root alone resolves the
+opaque ref through the ownership ledger and is the sole caller of the legacy path-taking codec.
+
+The response fields above have this exact matrix. `storage_revision` is always present: it is the
+new ledger revision after successful `APPEND`/`DETACH`/`UNINSTALL`, the expected revision after
+successful `READ`/`VALIDATE`, and only the request's expected revision after a failure. Every
+successful result has `lifecycle` and `record_count`; `APPEND` reports the post-append count,
+`READ` the snapshot count, `VALIDATE` the validated count, and `DETACH`/`UNINSTALL` the removed
+count. `validation_report_ref` is present only for successful `VALIDATE`; `failure_ref` is absent
+on every success and required on every failure as an opaque finite-decision fingerprint. A failed
+result has no `lifecycle`, `record_count` or `validation_report_ref`. These presence rules are
+part of the strict constructor/preflight matrix, not renderer convention.
+
+`READ` has no caller-selected query, filter, page or path. Its successful payload is the complete
+immutable tuple of validated metadata-only `ContextUsageRecord` values in ledger append order, and
+its `record_count` must equal its tuple length. The composition root supplies the only
+`TelemetryStoragePort`; callers cannot instantiate its adapter. The future source direction is
+`contracts <- johnny_owned_adapter <- composition`, while product callers depend only on
+`contracts`. Only `johnny_owned_adapter` may import the legacy raw-path
+`JsonlContextUsageStore`; `telemetry.py` is value types only and the legacy path-taking CLI is
+unreachable from any controlled-target composition root.
 
 ## Acceptance criteria
 
@@ -100,6 +205,15 @@ lifecycle/decision values cannot enter the core.
    malformed or cross-project reference, missing revision, dynamic extra field,
    raw path field and invalid finite value under Pydantic strict validation and
    `mypy --strict`.
+9. Provider-usage adapters reject a missing, malformed, mismatched, replayed or extra-field
+   terminal event before a telemetry record is appended; the discarded raw event cannot appear in
+   state, JSONL, report or error output.
+10. `OBSERVED_USAGE` cannot serialize or render a reduction claim; only a valid,
+    quality-preserving `MATCHED_REDUCTION` pair can report actual provider input-token reduction.
+11. A host capability probe has one ticket-bound, owner-authorized external-effect attempt. A
+    missing/changed host schema returns a named unavailable/malformed result and creates no claim.
+12. Pair experiments use fresh isolated sessions and preserve target-project bytes/Git state;
+    they never reuse a conversation or read the paired run's content.
 
 ## Approval
 
@@ -112,9 +226,15 @@ target-project, telemetry-write, cleanup or external-effect authority. The
 legacy raw-path POC remains prohibited for controlled-target use until the
 approved tickets are implemented, independently reviewed and integrated.
 
+The project owner additionally authorized Revision 03's provider-usage architecture on
+`2026-08-24`. It authorizes reviewer decomposition and pure no-effect tickets only; it grants no
+provider invocation, credential access, host configuration, telemetry write, cleanup or external
+effect authority.
+
 ## Revision signatures
 
 | Date | AI / worktree / baseline | Summary |
 | --- | --- | --- |
 | 2026-08-15 | Architecture owner / `main` / `72438a30a4ad698be33292de8d63a7f2dc289daf` | Drafted Revision 02 to replace caller-selected target-local telemetry paths with a Johnny-owned opaque storage reference; owner approval pending. |
 | 2026-08-15 | Project owner | Approved the exact Telemetry Storage Revision 02 and assigned ticket decomposition/opening to the reviewer. |
+| 2026-08-24 | Project owner / `main` / `1849515f911d1376d800fe1b19e0e07b5227028b` | Accepted Revision 03 provider-usage evidence architecture: typed storage matrix, provider-neutral terminal evidence, observed-versus-matched reporting, and isolated authorized probes. |
