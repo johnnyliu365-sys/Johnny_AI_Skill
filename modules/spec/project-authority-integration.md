@@ -3,8 +3,8 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | SPEC-AI-WORKFLOW-PROJECT-AUTHORITY-INTEGRATION-20260824-01M2A4C6E8G0I2K4M6O8Q0S2U4 |
-| Status | APPROVED / REVISION_03 / REVIEWER_DECOMPOSITION_AUTHORIZED |
-| Author / baseline | Architecture owner / main / 926c2b75ce9933d181220a3a48ec1aae9c38ab0a |
+| Status | APPROVED / REVISION_04 / REVIEWER_DECOMPOSITION_AUTHORIZED |
+| Author / baseline | Architecture owner / main / a3c08309697f9fa9baa3dca442f35abdc39a6a0d |
 | Context | doc/context/project-authority-integration/main.md |
 | Shared Context | CONTEXT.md revision 02 sealed by CHG-20260824-038 |
 | PRD / change | PRD-20260824-038 / CHG-20260824-038 |
@@ -65,6 +65,26 @@ cannot establish authority.
 GitObservationSource contains WORKTREE_HEAD, LOCAL_AUTHORITY_REF, REMOTE_TRACKING_CACHE,
 DIRECT_REMOTE_REF, PROVIDER_PR_READBACK and PROVIDER_POLICY_READBACK. Only DIRECT_REMOTE_REF is
 remote authority proof; REMOTE_TRACKING_CACHE is diagnostic only even after fetch.
+
+## Revision 04 — public validation and pre-push lifecycle API
+
+Ticket 01 uses these exact public, pure interfaces. They remove the distinction that revision 03
+left implicit: malformed structure is rejected by strict model construction, while semantically
+well-formed string input receives a finite domain result.
+
+| Interface | Exact contract |
+| --- | --- |
+| AuthorityContractInput | Strict input model with project_id, topology, authority_line_role, project_authority_ref string, remote provider/host/repository key/alias strings, declaration artifact ref/revision SHA, gate ID/revision and effective datetime. Null, wrong primitive type, coercion and extra fields fail ordinary strict model validation before domain admission. |
+| AuthorityContractAdmission | Strict result model: decision is ACCEPTED, AUTHORITY_REF_INVALID, or SECRET_MATERIAL_DETECTED; accepted result carries exactly one ProjectAuthorityContract and no failure; rejected result carries no contract and its finite decision. |
+| admit_authority_contract | Accepts AuthorityContractInput and returns AuthorityContractAdmission. A syntactically valid but noncanonical branch string returns AUTHORITY_REF_INVALID; credential-bearing repository identity returns SECRET_MATERIAL_DETECTED. It makes no port or effect call. |
+| AuthorityObservationAdmission | Strict result model: decision is DIRECT_REMOTE_REF_ACCEPTED or DIRECT_REMOTE_READ_UNAVAILABLE; accepted result carries exactly one GitObservation and rejected result carries none. |
+| admit_authority_observation | Accepts a validated GitObservation and returns AuthorityObservationAdmission. DIRECT_REMOTE_REF is accepted; REMOTE_TRACKING_CACHE returns DIRECT_REMOTE_READ_UNAVAILABLE. It makes no port or effect call. |
+| PrePushLifecycleRequest / PrePushLifecycleTransition | Strict request carries current and requested AuthorityIntegrationState. The transition result carries state and optional finite failure. Only CANDIDATE to REVIEW_ACCEPTED and REVIEW_ACCEPTED to LOCAL_INTEGRATED are admitted in Ticket 01. A request for LOCAL_INTEGRATED to AUTHORITY_INTEGRATED returns PUSH_UNCONFIRMED and remains LOCAL_INTEGRATED. |
+| advance_pre_push_lifecycle | Pure function over PrePushLifecycleRequest returning PrePushLifecycleTransition. It has no NonForcePushPort parameter, import, ambient state or effect. Ticket 03 alone adds the separately validated push/readback finalization path. |
+
+Pydantic structural validation failures are not reported as a false domain decision. Ticket 01
+tests them as strict construction rejection. The three result models above are the only source of
+the named finite decisions that Ticket 01 asserts.
 
 AuthorityIntegrationState is exactly CANDIDATE, REVIEW_ACCEPTED, GATE_REJECTED,
 LOCAL_INTEGRATED, PUSH_UNCONFIRMED and AUTHORITY_INTEGRATED. BridgeCapability remains exactly
@@ -251,3 +271,4 @@ can never be inferred from a pure-source success.
 | --- | --- | --- |
 | 2026-08-24 | Architecture owner / main / 926c2b75ce9933d181220a3a48ec1aae9c38ab0a | Ticket opening returned UPSTREAM_DECISION_REQUIRED because revision 01 named no focused test creation seam or deterministic command. Revision 02 adds only that already-required executable detail; the requirement, architecture, authority, effects and ticket order are unchanged. |
 | 2026-08-24 | Architecture owner / main / 926c2b75ce9933d181220a3a48ec1aae9c38ab0a | Revision-02 review found its local-to-remote shortcut mutation could not reach the production reducer because integration.py was omitted from the ticket boundary. Revision 03 adds that pure reducer only, keeps all ports/effects out, and extends the fixed type/compile commands. |
+| 2026-08-24 | Architecture owner / main / a3c08309697f9fa9baa3dca442f35abdc39a6a0d | Ticket-tree review found revision 03 left the public distinction between strict structural rejection and named domain failure implicit. Revision 04 names the pure input/result/transition interfaces and confines AUTHORITY_INTEGRATED finalization to the later validated push/readback closure. |
