@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | Ticket ID | PAI-04-HIGH-COLLABORATION-EVIDENCE |
-| State | READY_LOW_MODEL / NOT_DISPATCHED |
+| State | COMPLETED / INTEGRATED at `75d1ed9477c54312ed55d4d532e098b51d240928` |
 | Acceptance Closure Set | ACS-PAI-04 Rev.01 |
 | Dependencies | PAI-01 integrated at `6df6885ea093f1e37899f5252f8e4a1cc4feadb9`; PAI-02 integrated at `9b8e82a48b0997fc63deaf04d931e93857d96246`; PAI-03 integrated at `98bafbab01e51d2bd3edf6079cda981710651e80`. |
 | Source specification | Project authority integration SPEC Revision 10, owner-selected provider-neutral admission seam. |
@@ -11,6 +11,7 @@
 | Planning baseline | main at `8db99208d6b363f7b34a731989a4a7085cb0da00`; the implementation-admission baseline is the clean current integration main recorded by the reviewer at dispatch. |
 | Delivery / model | POC pure-source closure; Luna/xhigh implementation owner, Terra/xhigh supervisor-reviewer. The reviewer capability is not lower than the implementer capability. |
 | Effect boundary | Deterministic in-memory fake `PullRequestReadPort` and `ProviderPolicyReadPort` only. No provider read, UI action, policy configuration, merge, remote mutation, credential, shell, Git executable, process, network, filesystem, environment, clock, runner, queue, receipt, descriptor, host gateway, or second integration gate. |
+| Completion evidence | Terra review approved the five-path candidate after 29 focused tests, strict mypy, compileall, exact scope evidence, seven implementer reverse mutations, two corrective reverse mutations, and an independent base-ref source counter-mutation. `admit_document_mutation` integrated candidate `75d1ed9477c54312ed55d4d532e098b51d240928`; local, tracking, and direct `origin/main` readback matched it. |
 
 ## One observable closure
 
