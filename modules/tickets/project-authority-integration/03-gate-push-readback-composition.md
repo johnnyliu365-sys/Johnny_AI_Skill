@@ -6,7 +6,7 @@
 | State | READY_LOW_MODEL / NOT_DISPATCHED |
 | Acceptance Closure Set | ACS-PAI-03 Rev.01 |
 | Dependencies | PAI-01 integrated at `6df6885ea093f1e37899f5252f8e4a1cc4feadb9`; PAI-02 integrated at `9b8e82a48b0997fc63deaf04d931e93857d96246` |
-| Source specification | Project authority integration SPEC Revision 07, Ticket 03 seam |
+| Source specification | Project authority integration SPEC Revision 08, Ticket 03 seam and frozen-gate correction |
 | Context / change / architecture | `doc/context/project-authority-integration/main.md`; `PRD-20260824-038` / `CHG-20260824-038`; `ADR-20260824-020` |
 | Planning baseline | main at `381a089a8519875134c0f597c1c20f1be51fdb4a`; the implementation-admission baseline is the clean current integration main recorded by the reviewer at dispatch. |
 | Delivery / model | POC pure-source closure; Luna/xhigh implementation owner, Terra/xhigh supervisor-reviewer. The reviewer capability is not lower than the implementer capability. |
@@ -33,6 +33,7 @@ mechanism is required or authorized.
 modify: library/local_orchestration/project_authority/__init__.py
 modify: library/local_orchestration/project_authority/integration.py
 create: tests/test_project_authority_finalization.py
+modify: tests/test_project_authority_contracts.py
 forbid: library/local_orchestration/project_authority/contracts.py
 forbid: library/local_orchestration/project_authority/observation.py
 forbid: library/local_orchestration/project_authority/collaboration.py
@@ -55,9 +56,17 @@ $implementationScopeEvidence = @(
   $committedScopePaths + $worktreeTrackedScopePaths + $untrackedScopePaths |
     Sort-Object -Unique
 )
+$declaredScopePaths = @(
+  "library/local_orchestration/project_authority/__init__.py"
+  "library/local_orchestration/project_authority/integration.py"
+  "tests/test_project_authority_contracts.py"
+  "tests/test_project_authority_finalization.py"
+) | Sort-Object
+$scopeDifference = @(Compare-Object -ReferenceObject $declaredScopePaths -DifferenceObject $implementationScopeEvidence)
+if ($scopeDifference.Count -ne 0) { $scopeDifference | Format-Table -AutoSize; throw "HALT / CANDIDATE_SCOPE_MISMATCH" }
 ```
 
-It must equal exactly the three declared paths, including an uncommitted new test file. No ticket,
+It must equal exactly the four declared paths, including an uncommitted new test file. No ticket,
 SPEC, Context, review, worktree metadata, copied source, provider or untracked path is admitted.
 The implementation owner does not commit, integrate, push, create a branch, or dispatch.
 
@@ -71,6 +80,17 @@ types and field shapes are those in SPEC Revision 07. All new models are strict,
 `extra="forbid"`, non-coercing and revalidate instances. Every SHA is a full lower-case SHA;
 every time is timezone-aware; nonblank strings reject blank values; all durable values remain
 credential-free metadata.
+
+The Ticket 01 test `test_pure_boundary_ast_gate_targets_owned_production_modules` is in scope
+only to extend its `integration.py` expected `__all__` and declaration allowlists from the exact
+three frozen Ticket 01 names to those three names plus the eight Revision-07 names; permit only
+`DirectRemoteObservationPort`, `DirectRemoteObservationRequest`,
+`DirectRemoteObservationResult`, `DirectRemoteObservationDecision`, and
+`observe_declared_remote` from the observation import root; and replace only its historical
+`NonForcePushPort` deny with the exact new declaration/import allowlist. Its `contracts.py`
+allowlist, all other negative
+assertions, and the equality (not subset) property remain unchanged. Any other change to that
+historical test is out of scope.
 
 The function takes positional-only `request`, `push_port`, and `observation_port`. It may call
 `push_port.push` once and only after validated local lifecycle/pre-push identity. `REJECTED`
@@ -100,7 +120,7 @@ historical object may substitute for an ordinary public contract path.
 | PAI-03-T04 | push integrity | A fake push result with foreign repository/ref, wrong attempt, expected base or requested SHA fails closed. `REJECTED` gives `PUSH_REJECTED`; `UNCONFIRMED` gives `PUSH_UNCONFIRMED`; each performs zero readbacks. |
 | PAI-03-T05 | post-push readback | Unavailable, missing, ambiguous, stale, identity-mismatched and credential-bearing direct readbacks map to finite failures and remain `PUSH_UNCONFIRMED`; no cache source may become authority. |
 | PAI-03-T06 | equality/race | A direct post-push SHA unequal to `local_integrated_sha` returns `REMOTE_READBACK_SHA_MISMATCH`; a base mismatch returns `AUTHORITY_REF_MOVED`; neither returns authority success or retries/forces. |
-| PAI-03-T07 | actual-source gate | Parses actual `integration.py` and `__init__.py`, pins exactly the allowed new public surface/imports and rejects `Any`, `cast`, `getattr`, `setattr`, `__import__`, `eval`, `exec`, `model_construct`, `model_copy`, `open`, `os`, `pathlib`, `subprocess`, `socket`, `urllib`, `http`, `requests`, `git`, `shutil`, `time`, `datetime.now`, `datetime.utcnow`, loops/retries, force operations, Provider branches and cache fallback. |
+| PAI-03-T07 | actual-source gate | Extends the existing Ticket 01 actual-source gate to retain its original exact `contracts.py` surface and require the exact three frozen plus eight Revision-07 `integration.py` exports; the focused finalization test parses actual `integration.py` and `__init__.py`, pins the same full public surface/imports and rejects `Any`, `cast`, `getattr`, `setattr`, `__import__`, `eval`, `exec`, `model_construct`, `model_copy`, `open`, `os`, `pathlib`, `subprocess`, `socket`, `urllib`, `http`, `requests`, `git`, `shutil`, `time`, `datetime.now`, `datetime.utcnow`, loops/retries, force operations, Provider branches and cache fallback. |
 
 ## Required reverse mutations
 
@@ -108,7 +128,7 @@ historical object may substitute for an ordinary public contract path.
 | --- | --- | --- |
 | Replace the exact accepted-readback SHA comparison with unconditional `AUTHORITY_INTEGRATED` success | PAI-03-T06 | A matching push exit or arbitrary direct read cannot be relabelled as remote authority. |
 | Accept `REMOTE_TRACKING_CACHE` as a post-push source | PAI-03-T05 | Cache can never substitute for direct remote proof. |
-| Add an undeclared public top-level symbol or a `subprocess` import to `integration.py` | PAI-03-T07 | The focused gate pins the actual pure fake-port boundary. |
+| Add an undeclared public top-level symbol or a `subprocess` import to `integration.py` | PAI-03-T07 | Both retained historical and focused gates pin the actual pure fake-port boundary. |
 
 The Terra reviewer performs at least one different-path source counter-mutation, observes its
 named focused test turn red, restores byte-identically, and records the evidence. A zero-red

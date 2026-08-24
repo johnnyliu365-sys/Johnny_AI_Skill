@@ -290,6 +290,25 @@ receipt, descriptor, queue, or bridge. Its actual-source reverse mutation replac
 post-readback SHA comparison with unconditional authority success; the mismatch test must turn
 red and be restored byte-identically.
 
+## Revision 08 — Ticket 03 frozen-gate allowlist correction
+
+Revision 07's owner-selected public boundary adds eight names to `integration.py`, while the
+historical Ticket 01 actual-source gate correctly pinned that module to its then-complete three
+exports. The new names cannot satisfy both statements unless Ticket 03 owns the minimal test
+allowlist extension. Ticket 03 may therefore modify only
+`tests/test_project_authority_contracts.py` in addition to its Revision-07 three paths. That
+change retains every Ticket 01 `contracts.py` assertion and requires the `integration.py`
+allowlist to equal exactly the original three names plus the eight Revision-07 names; it may not
+weaken the test into a subset or open-ended check. It replaces exactly two historical
+Ticket-01-only restrictions in `integration.py`: `NonForcePushPort` is no longer a forbidden
+undeclared name, and the existing observation import root is allowed only for
+`DirectRemoteObservationPort`, `DirectRemoteObservationRequest`,
+`DirectRemoteObservationResult`, `DirectRemoteObservationDecision`, and
+`observe_declared_remote`. The focused Ticket 03 AST gate pins both exceptions to the full exact
+export/import surface. This is a test-scope correction only: the Revision-07 public
+contract, authority topology, effect boundary, frozen Ticket 01 contracts and frozen Ticket 02
+observation contract are unchanged.
+
 ## Authority and integration flow
 
 1. Validate the authority contract, full ref, credential-free repository identity and reviewed
@@ -462,3 +481,4 @@ can never be inferred from a pure-source success.
 | 2026-08-24 | Architecture owner / main / ecbee4319ff6f7ceab878a3ddce5471154571890 | Ticket-tree admission review found Revision 04 referenced topology, authority-line role, provider kind and admission decisions without naming their finite enum types, leaving the public/AST surface incomplete. Revision 05 names and closes those enums only. |
 | 2026-08-24 | Project owner-approved Sol decision / Terra supervisor reviewer / main / 6df6885ea093f1e37899f5252f8e4a1cc4feadb9 | Revision 06 closes the previously undefined Ticket 02 direct-observation public contract: strict request/read/result shapes, finite disposition and decision enums, one-call fake-port semantics, fail-closed precedence, C13-independent seam, exact three-path boundary, deterministic commands, and restore-backed reverse mutations. It changes neither Ticket 01's frozen API nor Ticket 03's push/readback finalization, requirement, architecture authority, or effect authority. |
 | 2026-08-25 | Project owner / Terra supervisor reviewer / main / 381a089a8519875134c0f597c1c20f1be51fdb4a | Revision 07 records the owner-selected single provider-neutral Ticket 03 finalization boundary. It closes the fake non-force push/result, one-call direct-readback, final result, finite failure and exact three-path seam without changing requirement, authority topology, external-effect authority, or frozen Ticket 01/02 contracts. |
+| 2026-08-25 | Terra supervisor reviewer / main / 28d484179576b80d7583ea3b5601850042dfabda | Revision 08 repairs only a Ticket 03 admission omission found before source mutation: the existing Ticket 01 actual-source test otherwise makes Revision-07's explicitly approved eight new `integration.py` exports impossible. Ticket 03 may extend that precise test allowlist while retaining every original frozen assertion; no public meaning, requirement, architecture, authority, effect or acceptance criterion changes. |
