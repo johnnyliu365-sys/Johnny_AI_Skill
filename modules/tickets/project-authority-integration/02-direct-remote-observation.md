@@ -4,7 +4,7 @@
 | --- | --- |
 | Ticket ID | PAI-02-DIRECT-REMOTE-OBSERVATION |
 | State | READY_LOW_MODEL / NOT_DISPATCHED |
-| Acceptance Closure Set | PAI-02-ACS-REVISION-01 |
+| Acceptance Closure Set | PAI-02-ACS-REVISION-02 |
 | Dependency | PAI-01 completed and integrated at 6df6885ea093f1e37899f5252f8e4a1cc4feadb9; its Revision-05 public contract remains frozen. |
 | Source specification | SPEC-AI-WORKFLOW-PROJECT-AUTHORITY-INTEGRATION-20260824-01M2A4C6E8G0I2K4M6O8Q0S2U4, Revision 06, ticket order item 02 |
 | Requirement / decision / Context | PRD-20260824-038 / CHG-20260824-038 / ADR-20260824-020 / doc/context/project-authority-integration/main.md |
@@ -166,11 +166,13 @@ Run one command at a time in the reviewer-established same-lifetime implementati
     py -3.11 -m pytest -q -p no:cacheprovider tests/test_project_authority_observation.py
     py -3.11 -m mypy --strict library/local_orchestration/project_authority/__init__.py library/local_orchestration/project_authority/observation.py tests/test_project_authority_observation.py
     py -3.11 -m compileall -q library/local_orchestration/project_authority/__init__.py library/local_orchestration/project_authority/observation.py
-    git diff --check <implementation-admission-baseline> HEAD
-    $trackedScopePaths = @(git diff --name-only <implementation-admission-baseline> HEAD)
+    git diff --check <implementation-admission-baseline>
+    $committedScopePaths = @(git diff --name-only <implementation-admission-baseline> HEAD)
+    $worktreeTrackedScopePaths = @(git diff --name-only <implementation-admission-baseline>)
     $untrackedScopePaths = @(git ls-files --others --exclude-standard)
     $implementationScopeEvidence = @(
-        $trackedScopePaths
+        $committedScopePaths
+        $worktreeTrackedScopePaths
         $untrackedScopePaths
     ) | Where-Object { $_ -ne "" } | Sort-Object -Unique
     $declaredScopePaths = @(
@@ -185,17 +187,19 @@ Run one command at a time in the reviewer-established same-lifetime implementati
 Each command exits zero only after the named green cells and restored mutations. Before either
 diff command, the reviewer substitutes the actual runtime-bound SHA for
 `<implementation-admission-baseline>`; the literal placeholder is never a source-diff value. The
-sorted duplicate-free `implementation-scope-evidence` union must equal exactly the three declared
-paths, with no ticket document or other path. The tracked diff alone is insufficient because the
-two new candidate paths may remain untracked. No command reads a real remote or performs a
-provider, repository, host, or other external effect.
+sorted duplicate-free `implementation-scope-evidence` union combines committed-range paths,
+working-tree tracked paths, and untracked paths, and must equal exactly the three declared paths
+with no ticket document or other path. The committed range alone is insufficient while the
+implementation owner is forbidden to commit; the working-tree tracked input covers the modified
+`__init__.py`, while the untracked input covers new paths. Record all three inputs. No command
+reads a real remote or performs a provider, repository, host, or other external effect.
 
 ## Completion, rollback, and return
 
 The Luna implementation owner changes only the three declared paths and does not commit,
 integrate, or push. It returns `ImplementationReturn.COMPLETED` with ticket ID, ACS revision, exact
 runtime-bound `<implementation-admission-baseline>`, candidate-worktree identity, named
-`implementation-scope-evidence` and its tracked/untracked inputs, changed paths, green
+`implementation-scope-evidence` and its committed-range/working-tree-tracked/untracked inputs, changed paths, green
 test/type/compile/diff results, and every mutation's red/restored-green evidence. `BLOCKED`
 returns its exact finite reason without workaround. `CHANGE_DETECTED` emits
 `REQUIREMENT_CHANGED` and stops source work.
