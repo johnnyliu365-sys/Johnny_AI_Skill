@@ -5,7 +5,8 @@
 | Ticket ID | PAI-04-HIGH-COLLABORATION-EVIDENCE |
 | State | PLANNED / NOT_ADMITTED / NON_DISPATCHABLE |
 | Dependencies | PAI-01, PAI-02, and PAI-03 accepted |
-| Source specification | Project authority integration SPEC Revision 03, ticket order item 04 |
+| Source specification | Project authority integration SPEC Revision 04, ticket order item 04 |
+| Planning baseline | main at ecbee4319ff6f7ceab878a3ddce5471154571890 |
 | Declared source ownership | library/local_orchestration/project_authority/collaboration.py owns PullRequestReadPort and ProviderPolicyReadPort validation/profile admission. |
 | Effect boundary | Deterministic fake PR/policy ports only; no provider read, UI action, policy configuration, merge, or credential. |
 

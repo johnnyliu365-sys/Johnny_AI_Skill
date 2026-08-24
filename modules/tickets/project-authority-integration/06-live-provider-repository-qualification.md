@@ -5,7 +5,8 @@
 | Ticket ID | PAI-06-LIVE-PROVIDER-REPOSITORY-QUALIFICATION |
 | State | BLOCKED_OWNER_EFFECT_AUTHORITY / NOT_ADMITTED / NON_DISPATCHABLE |
 | Dependencies | PAI-01 through PAI-05 accepted, plus a later exact scope-bound owner effect authority |
-| Source specification | Project authority integration SPEC Revision 03, ticket order item 06 |
+| Source specification | Project authority integration SPEC Revision 04, ticket order item 06 |
+| Planning baseline | main at ecbee4319ff6f7ceab878a3ddce5471154571890 |
 | Required future effects | Qualified live remote/provider readback only after exact owner, action, target, environment, receipt, baseline, correlation, and readback authority are committed. |
 
 ## Vertical closure reserved
