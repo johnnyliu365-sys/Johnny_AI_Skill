@@ -5,7 +5,7 @@
 | Artifact ID / kind | TICKET-CONTEXT-TELEMETRY-05-STORAGE-CONTRACTS / IMPLEMENTATION_TICKET |
 | SPEC / acceptance source | SPEC-AI-WORKFLOW-CONTEXT-LOAD-TELEMETRY-20260803-01KZ5E7F9G1H3J5K7M9N1P3Q5R Revision 03 / AC-06 through AC-08 |
 | Requirement / Context / upstream | PRD-20260803-006 / CHG-20260803-006 / doc/context/context-load-telemetry/main.md Revision 03 / ADR-20260824-019 / TAD-TELEMETRY-R03-ARCHITECTURE-01 (c249a5b8885b73a8cb08b4940c4e9a378b89084f683f7e939a95026f421e664a, canonical Git blob) |
-| State / closure | CONVERGENCE_REVIEW_REQUIRED; CLOSURE-CONTEXT-TELEMETRY-05-STORAGE-CONTRACTS, revision 04 |
+| State / closure | DONE; CLOSURE-CONTEXT-TELEMETRY-05-STORAGE-CONTRACTS, revision 04 |
 | Approval authority | Project-owner directive, 2026-08-24 (Asia/Taipei): Revision 03 authorizes reviewer-owned decomposition and pure no-effect tickets. This opening grants no dispatch or external-effect authority. |
 | Baseline / dependency | c1ee1fee384ad2109b672707e10a56e4bc66976d; no implementation ticket precedes it. |
 | Control owner / reviewer | Current-session Codex reviewer; semantic ticket-review profile (current intent: Terra/xhigh), to be host-verified before dispatch. |
@@ -276,11 +276,22 @@ pin the two allowed decorator forms. SM7 must first turn SC6 red on the real own
 restore byte-for-byte. No production module, router contract, public storage API, scope, model or
 effect boundary may change; one Terra/xhigh correction review follows.
 
+## Completion record
+
+The final Luna/xhigh candidate `e509174eeeefda2b011f136a969a86a4d5b181d9` was independently
+approved by Terra/xhigh and integrated by `admit_document_mutation`; local and `origin/main`
+read back to that exact commit. The focused suite reports 15 passed, strict mypy and compileall
+pass, and the declared four-file boundary is clean. The final structural SC6 proof and SM1–SM7,
+including independent `globals()` and decorator counter-mutations, each produced authentic red
+evidence and byte-exact restoration. Closure revisions 02–04 were control-plane convergence
+records for evidence only: no public contract, source API, effect, model or ownership boundary
+changed.
+
 ~~~johnny-status
 id = 05
 title = Opaque storage port contracts
-state = CONVERGENCE_REVIEW_REQUIRED / CLOSURE_04_REDISPATCH_AUTHORIZED
-stage = C | strict public request/response contracts | OPEN
-stage = R | metadata-only READ and response exclusivity | OPEN
-stage = M | seven reverse mutations | OPEN
+state = DONE
+stage = C | strict public request/response contracts | DONE
+stage = R | metadata-only READ and response exclusivity | DONE
+stage = M | seven reverse mutations | DONE
 ~~~
