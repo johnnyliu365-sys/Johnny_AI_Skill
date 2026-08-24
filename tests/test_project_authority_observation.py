@@ -422,7 +422,17 @@ def test_direct_remote_observation_ast_gate_targets_owned_production_modules() -
         "admit_authority_observation",
         "advance_pre_push_lifecycle",
     )
-    init_all = frozen_init_all + observation_all
+    finalization_all = (
+        "NonForcePushDisposition",
+        "NonForcePushRequest",
+        "NonForcePushResult",
+        "NonForcePushPort",
+        "AuthorityFinalizationFailure",
+        "AuthorityFinalizationRequest",
+        "AuthorityFinalizationResult",
+        "finalize_authority_integration",
+    )
+    init_all = frozen_init_all + observation_all + finalization_all
     allowed_modules = {
         "__future__",
         "datetime",
@@ -442,7 +452,6 @@ def test_direct_remote_observation_ast_gate_targets_owned_production_modules() -
         "exec",
         "model_construct",
         "model_copy",
-        "NonForcePushPort",
         "open",
         "os",
         "pathlib",

@@ -283,11 +283,29 @@ def test_pure_boundary_ast_gate_targets_owned_production_modules() -> None:
             "PrePushLifecycleRequest",
             "PrePushLifecycleTransition",
             "advance_pre_push_lifecycle",
+            "NonForcePushDisposition",
+            "NonForcePushRequest",
+            "NonForcePushResult",
+            "NonForcePushPort",
+            "AuthorityFinalizationFailure",
+            "AuthorityFinalizationRequest",
+            "AuthorityFinalizationResult",
+            "finalize_authority_integration",
         ),
     }
     expected_module_declarations: dict[str, set[str]] = {
         "contracts.py": expected_classes | expected_functions,
-        "integration.py": {"advance_pre_push_lifecycle"},
+        "integration.py": {
+            "advance_pre_push_lifecycle",
+            "NonForcePushDisposition",
+            "NonForcePushRequest",
+            "NonForcePushResult",
+            "NonForcePushPort",
+            "AuthorityFinalizationFailure",
+            "AuthorityFinalizationRequest",
+            "AuthorityFinalizationResult",
+            "finalize_authority_integration",
+        },
     }
     allowed_import_modules = {"__future__", "datetime", "enum", "re", "typing", "pydantic"}
     forbidden = {
@@ -300,7 +318,6 @@ def test_pure_boundary_ast_gate_targets_owned_production_modules() -> None:
         "exec",
         "model_construct",
         "model_copy",
-        "NonForcePushPort",
     }
     seen_names: set[str] = set()
     for path in production_paths:
@@ -318,7 +335,16 @@ def test_pure_boundary_ast_gate_targets_owned_production_modules() -> None:
             if isinstance(node, ast.ImportFrom):
                 assert node.module is not None
                 if node.module not in allowed_import_modules:
-                    assert node.module == "library.local_orchestration.project_authority.contracts"
+                    if node.module == "library.local_orchestration.project_authority.observation":
+                        assert tuple(alias.name for alias in node.names) == (
+                            "DirectRemoteObservationPort",
+                            "DirectRemoteObservationRequest",
+                            "DirectRemoteObservationResult",
+                            "DirectRemoteObservationDecision",
+                            "observe_declared_remote",
+                        )
+                    else:
+                        assert node.module == "library.local_orchestration.project_authority.contracts"
 
         for node in tree.body:
             if isinstance(node, (ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)):

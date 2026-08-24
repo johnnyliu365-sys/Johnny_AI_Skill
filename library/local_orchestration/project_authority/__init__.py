@@ -20,9 +20,17 @@ from .contracts import (
     admit_authority_observation,
 )
 from .integration import (
+    AuthorityFinalizationFailure,
+    AuthorityFinalizationRequest,
+    AuthorityFinalizationResult,
+    NonForcePushDisposition,
+    NonForcePushPort,
+    NonForcePushRequest,
+    NonForcePushResult,
     PrePushLifecycleRequest,
     PrePushLifecycleTransition,
     advance_pre_push_lifecycle,
+    finalize_authority_integration,
 )
 from .observation import (
     DirectRemoteObservationDecision,
@@ -62,4 +70,12 @@ __all__ = (
     "DirectRemoteReadDisposition",
     "DirectRemoteReadResult",
     "observe_declared_remote",
+    "NonForcePushDisposition",
+    "NonForcePushRequest",
+    "NonForcePushResult",
+    "NonForcePushPort",
+    "AuthorityFinalizationFailure",
+    "AuthorityFinalizationRequest",
+    "AuthorityFinalizationResult",
+    "finalize_authority_integration",
 )
