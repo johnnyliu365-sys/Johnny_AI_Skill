@@ -5,7 +5,7 @@
 | Artifact ID / kind | TICKET-CONTEXT-TELEMETRY-05-STORAGE-CONTRACTS / IMPLEMENTATION_TICKET |
 | SPEC / acceptance source | SPEC-AI-WORKFLOW-CONTEXT-LOAD-TELEMETRY-20260803-01KZ5E7F9G1H3J5K7M9N1P3Q5R Revision 03 / AC-06 through AC-08 |
 | Requirement / Context / upstream | PRD-20260803-006 / CHG-20260803-006 / doc/context/context-load-telemetry/main.md Revision 03 / ADR-20260824-019 / TAD-TELEMETRY-R03-ARCHITECTURE-01 (c249a5b8885b73a8cb08b4940c4e9a378b89084f683f7e939a95026f421e664a, canonical Git blob) |
-| State / closure | APPROVED_NOT_DISPATCHED; CLOSURE-CONTEXT-TELEMETRY-05-STORAGE-CONTRACTS, revision 01 |
+| State / closure | CONVERGENCE_REVIEW_REQUIRED; CLOSURE-CONTEXT-TELEMETRY-05-STORAGE-CONTRACTS, revision 02 |
 | Approval authority | Project-owner directive, 2026-08-24 (Asia/Taipei): Revision 03 authorizes reviewer-owned decomposition and pure no-effect tickets. This opening grants no dispatch or external-effect authority. |
 | Baseline / dependency | c1ee1fee384ad2109b672707e10a56e4bc66976d; no implementation ticket precedes it. |
 | Control owner / reviewer | Current-session Codex reviewer; semantic ticket-review profile (current intent: Terra/xhigh), to be host-verified before dispatch. |
@@ -171,6 +171,7 @@ boundary: storage semantics, port and response union are new Revision 03 contrac
 | SM2 | Permit a record on a no-record operation or omit it from APPEND; SC3 turns red, then restoration returns green. |
 | SM3 | Remove the read count invariant or permit a read/report/failure field on the wrong response; SC4 turns red, then restoration returns green. |
 | SM4 | Add one forbidden I/O/host import or typing bypass to an owned source module; SC6 turns red, then restoration returns green. |
+| SM5 | Add a direct `library.local_orchestration` package-root import to an owned source module; SC6 turns red, then restoration returns green. |
 
 Strong-type preflight runs before implementation and again before review. It constructs every
 ordinary public success path, then proves negative primitive, nullability, enum, extra-field and
@@ -223,11 +224,30 @@ evidence, BLOCKED -> HALT with the failed cell, or CHANGE_DETECTED -> REQUIREMEN
 No return authorizes adapter composition, storage write, target-project mutation, host delivery,
 runner wake, merge, push, release or deployment.
 
+## Convergence review disposition — revision 02
+
+Closure revision 01 consumed its initial review and one additive correction review. The second
+review found that SC6's frozen package-root-import prohibition had no authentic first-red proof:
+a disposable `from library.local_orchestration import plugin_publication` mutation remained green.
+
+This is an `EVIDENCE_DEFECT`, not a changed requirement, architecture, public contract, ownership
+boundary, or a second independently observable responsibility. `TicketDecompositionDecision`
+therefore remains `READY_LOW_MODEL`: do not split the ticket and do not elevate its
+implementation model. The existing ticket worktree and branch remain the only implementation
+lane; previously reviewed work is preserved as evidence and must not be reset, amended or
+discarded.
+
+Revision 02 authorizes exactly one further additive correction and one Terra/xhigh correction
+review. The correction must make SC6 reject the direct package-root import in SM5 on the actual
+owned contract path, restore it byte-for-byte, and rerun the complete frozen closure. A further
+blocking review finding returns to control-plane convergence again; it does not authorize an
+unbounded correction loop.
+
 ~~~johnny-status
 id = 05
 title = Opaque storage port contracts
-state = APPROVED_NOT_DISPATCHED
+state = CONVERGENCE_REVIEW_REQUIRED / CLOSURE_02_REDISPATCH_AUTHORIZED
 stage = C | strict public request/response contracts | OPEN
 stage = R | metadata-only READ and response exclusivity | OPEN
-stage = M | four reverse mutations | OPEN
+stage = M | five reverse mutations | OPEN
 ~~~
