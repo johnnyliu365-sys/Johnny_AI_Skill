@@ -1,6 +1,6 @@
 {
   "name": "johnny-ai-skill",
-  "version": "0.4.11",
+  "version": "0.4.12",
   "description": "A detachable project-takeover workflow with safe automatic stage continuation, context-load telemetry, and reusable-module selection for Claude Code.",
   "author": {
     "name": "Johnny AI Skill",

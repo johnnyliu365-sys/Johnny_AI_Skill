@@ -19,25 +19,29 @@ Agent-to-Agent orchestrator.
 
 ## Orchestration gateway
 
-Johnny's reviewer-owned gateway is the only Agent-control effect entry. A reviewer capability
-bound to the exact project, ticket, reviewed handoff, receipt and target owner may create/fork
-the implementation task, send/follow up/steer, wait, interrupt or close it.
+For a cross-lifetime handoff, Johnny's reviewer-owned gateway is the only Agent-control effect
+entry. A reviewer capability bound to the exact project, ticket, reviewed handoff, unconsumed
+receipt and target owner may create/fork the implementation task, send/follow up/steer, wait,
+interrupt or close it. This gateway, its receipt and its host readback are not prerequisites for a
+same-lifetime synchronous lane: the reviewer directly dispatches, waits and receives the owner,
+and an unavailable bridge must not halt that lane.
 
-The implementation owner receives no gateway port/credential and no multi-agent or
-thread-control tool. Direct or indirect spawn/delegate/send/follow-up/steer/wait/interrupt/close
+The implementation owner receives no gateway port/credential and no multi-agent or thread-control
+tool in either path. Direct or indirect spawn/delegate/send/follow-up/steer/wait/interrupt/close
 returns `HALT / ROLE_FORBIDDEN` before effect.
 
 Prompt text, model name, role name, configuration, `CapabilityRef`, MCP alias and indirect
-adapter are not authority. Each gateway effect validates reviewer role/capability, project,
-ticket, handoff, unconsumed receipt, target owner, worktree, branch, baseline, action and
+adapter are not authority. Each cross-lifetime gateway effect validates reviewer role/capability,
+project, ticket, handoff, unconsumed receipt, target owner, worktree, branch, baseline, action and
 correlation against the live pending descriptor. Copy, forgery, replay or substitution fails
-closed. Effective-session tool absence and gateway unreachability require supported host
-readback; source/config inspection alone is insufficient.
+closed. Effective-session tool absence and gateway unreachability require supported host readback
+only on that cross-lifetime path; source/config inspection alone is insufficient. A missing bridge
+is `UNAVAILABLE`, not evidence that a wake was delivered.
 
 ## Task/worktree admission
 
-Before dispatch, obtain the task's active workspace root from product/task readback and the
-ticket worktree from Git metadata. Admit only when all are equal:
+For a cross-lifetime resumed task, obtain the task's active workspace root from product/task
+readback and the ticket worktree from Git metadata. Admit only when all are equal:
 
 1. platform-normalized absolute root;
 2. filesystem identity after resolving reparse points/symlinks;
@@ -52,6 +56,13 @@ Missing/unreadable/mismatched identity returns `HALT / TASK_WORKSPACE_MISMATCH` 
 pending descriptor, receipt, branch, source access or host/Git effect. Persist only opaque
 project/task/workspace/worktree references, evidence digest, revision and verification-time
 reference, never raw paths.
+
+For a same-lifetime synchronous lane, the reviewer directly allocates a repository-contained
+worktree and binds the owner to its exact ticket, branch and baseline. The reviewer validates the
+worktree's Git metadata and containment as part of that allocation, but absent product/task host
+readback, a receipt or a live descriptor may not block the lane. The three-way normalized-root,
+filesystem-identity and Git-metadata proof above remains required whenever a task is resumed
+across lifetimes.
 
 ## Allocation and correction
 

@@ -83,16 +83,29 @@ Automatic continuation has a bounded step/time ceiling. Reaching it is `HALT`.
 
 ## Dispatch admission
 
-The Private Router owns the live `PendingDispatchDescriptor`. A typed
-`ApprovedDispatchArtifactRegistry` resolves the exact project, ticket, reviewed handoff,
-ticket and handoff commits, implementation owner, task/workspace binding, worktree and
-expected baseline.
+Dispatch admission has two lifetime-scoped paths. A same-lifetime synchronous reviewer-owned
+lane is direct: the reviewer dispatches, waits, receives, reviews and integrates. It does not
+consume a receipt or require a runner, queue, live descriptor, host gateway or host workspace
+readback, and an unavailable bridge must not halt that lane. The reviewer directly allocates the
+repository-contained owner worktree and binds it to the exact ticket, branch and baseline.
+The synchronous path must not invent a receipt issuer, durable queue or runner.
 
-Only `IMPLEMENTATION_DISPATCH_CONFIRMED` may consume a matching, unconsumed receipt and
-create the implementation lane. Missing, copied, forged, replayed or mismatched project,
-ticket, handoff, owner, task, worktree, branch, baseline, action, question or correlation
-halts before source, capability, receipt, branch or host effect. Caller-provided commits are
-assertions to compare, never authority sources.
+The receipt-bound bridge remains mandatory for a cross-lifetime handoff. In that path, the Private
+Router owns the live `PendingDispatchDescriptor`, and a typed `ApprovedDispatchArtifactRegistry`
+resolves the exact project, ticket, reviewed handoff, ticket and handoff commits, implementation
+owner, task/workspace binding, worktree and expected baseline.
+
+Only `IMPLEMENTATION_DISPATCH_CONFIRMED` may consume a matching, unconsumed receipt and create a
+cross-lifetime implementation lane. Missing, copied, forged, replayed or mismatched project,
+ticket, handoff, owner, task, worktree, branch, baseline, action, question or correlation halts
+before source, capability, receipt, branch or host effect. Caller-provided commits are assertions
+to compare, never authority sources. A cross-lifetime handoff with no proved bridge is
+`UNAVAILABLE`: it is an unarmed wake and must not be reported as delivered.
+
+Wake capability has exactly three finite dispositions: `NOT_REQUIRED` when the host delivers
+natively (including a same-lifetime synchronous lane), `AVAILABLE` when a cross-lifetime bridge is
+present and actual delivery is proved, and `UNAVAILABLE` when that bridge is absent. These states
+must not be folded together; only a person may relay an `UNAVAILABLE` completion.
 
 `TICKETS + APPROVAL_GRANTED -> IMPLEMENT` is a retired transition and always halts. A ticket
 dispatch confirmation is asked once; `ACTION_COMPLETED` must not create a second ceremonial
