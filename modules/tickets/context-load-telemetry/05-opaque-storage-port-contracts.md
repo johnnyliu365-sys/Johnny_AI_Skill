@@ -5,7 +5,7 @@
 | Artifact ID / kind | TICKET-CONTEXT-TELEMETRY-05-STORAGE-CONTRACTS / IMPLEMENTATION_TICKET |
 | SPEC / acceptance source | SPEC-AI-WORKFLOW-CONTEXT-LOAD-TELEMETRY-20260803-01KZ5E7F9G1H3J5K7M9N1P3Q5R Revision 03 / AC-06 through AC-08 |
 | Requirement / Context / upstream | PRD-20260803-006 / CHG-20260803-006 / doc/context/context-load-telemetry/main.md Revision 03 / ADR-20260824-019 / TAD-TELEMETRY-R03-ARCHITECTURE-01 (c249a5b8885b73a8cb08b4940c4e9a378b89084f683f7e939a95026f421e664a, canonical Git blob) |
-| State / closure | CONVERGENCE_REVIEW_REQUIRED; CLOSURE-CONTEXT-TELEMETRY-05-STORAGE-CONTRACTS, revision 02 |
+| State / closure | CONVERGENCE_REVIEW_REQUIRED; CLOSURE-CONTEXT-TELEMETRY-05-STORAGE-CONTRACTS, revision 03 |
 | Approval authority | Project-owner directive, 2026-08-24 (Asia/Taipei): Revision 03 authorizes reviewer-owned decomposition and pure no-effect tickets. This opening grants no dispatch or external-effect authority. |
 | Baseline / dependency | c1ee1fee384ad2109b672707e10a56e4bc66976d; no implementation ticket precedes it. |
 | Control owner / reviewer | Current-session Codex reviewer; semantic ticket-review profile (current intent: Terra/xhigh), to be host-verified before dispatch. |
@@ -165,13 +165,14 @@ boundary: storage semantics, port and response union are new Revision 03 contrac
 | SC3 | APPEND requires exactly one record. READ, VALIDATE, DETACH and UNINSTALL reject a record or another payload field. The pure models do not decide ledger ownership or filesystem state. |
 | SC4 | READ requires only matching read payload and record_count == len(records); VALIDATE only its report ref; append/detach/uninstall neither. Every failure requires a finite non-completed decision and failure ref, and exposes no completed-only field. |
 | SC5 | A local typed fake implementing TelemetryStoragePort accepts a validated request and returns a validated response without filesystem, process, Git, network, provider, task or host operation. |
-| SC6 | A bounded AST/source gate proves both owned Python modules contain complete annotations and no Any, object, cast, dynamic lookup, model_construct, model_copy, legacy codec/package-root local-orchestration import, pathlib, os, subprocess, socket, open, or process/network/dispatch/runner/host/provider import or callable effect entry. |
+| SC6 | A bounded AST/source gate proves both owned Python modules contain complete annotations and no Any, object, cast, dynamic lookup, model_construct, model_copy, legacy codec/package-root local-orchestration import, pathlib, os, subprocess, socket, open, or process/network/dispatch/runner/host/provider import or callable effect entry. For workflow-router imports it also proves the exact module/imported-symbol/alias set is limited to the six frozen value types; plain and star imports are rejected. |
 | SC7 | Focused tests, strict typecheck, compile validation, declared-boundary diff and no cache/runtime residue are green. New behavior records named green evidence; it must not manufacture a baseline-red claim. |
 | SM1 | Remove a strict/extra-field or ordinary-validator guard; SC2 turns red, then byte-for-byte restoration returns green. |
 | SM2 | Permit a record on a no-record operation or omit it from APPEND; SC3 turns red, then restoration returns green. |
 | SM3 | Remove the read count invariant or permit a read/report/failure field on the wrong response; SC4 turns red, then restoration returns green. |
 | SM4 | Add one forbidden I/O/host import or typing bypass to an owned source module; SC6 turns red, then restoration returns green. |
 | SM5 | Add a direct `library.local_orchestration` package-root import to an owned source module; SC6 turns red, then restoration returns green. |
+| SM6 | Add `RouterState` to the real `library.workflow_router.contracts` import block in the owned contract module; SC6 turns red, then restoration returns green. |
 
 Strong-type preflight runs before implementation and again before review. It constructs every
 ordinary public success path, then proves negative primitive, nullability, enum, extra-field and
@@ -243,11 +244,28 @@ owned contract path, restore it byte-for-byte, and rerun the complete frozen clo
 blocking review finding returns to control-plane convergence again; it does not authorize an
 unbounded correction loop.
 
+## Convergence review disposition — revision 03
+
+Closure revision 02 consumed its initial review and correction review. The second review found
+that SC6 accepted an undeclared `RouterState` from `library.workflow_router.contracts`, even
+though the frozen dependency direction already names the only four permitted contracts types and
+two permitted telemetry types.
+
+This remains an `EVIDENCE_DEFECT`: no requirement, architecture, public contract, ownership
+boundary, effect or source API changes. The Terra/xhigh convergence decision is
+`READY_LOW_MODEL`; do not split or elevate the ticket. Revision 03 authorizes exactly one
+test-only additive correction plus the corresponding element README revision update. It must
+prove the exact `(module, imported symbol, alias)` sets, reject plain/star imports, preserve the
+existing relative re-export check, and make SM6 turn red on the actual contract source before
+byte-exact restoration. `contracts.py`, `__init__.py`, router contracts and public storage API
+remain unchanged. One Terra/xhigh correction review follows; a further blocking finding returns
+to control-plane convergence.
+
 ~~~johnny-status
 id = 05
 title = Opaque storage port contracts
-state = CONVERGENCE_REVIEW_REQUIRED / CLOSURE_02_REDISPATCH_AUTHORIZED
+state = CONVERGENCE_REVIEW_REQUIRED / CLOSURE_03_REDISPATCH_AUTHORIZED
 stage = C | strict public request/response contracts | OPEN
 stage = R | metadata-only READ and response exclusivity | OPEN
-stage = M | five reverse mutations | OPEN
+stage = M | six reverse mutations | OPEN
 ~~~
