@@ -4,7 +4,7 @@
 | --- | --- |
 | Ticket ID | PAI-01-AUTHORITY-CONTRACT-LIFECYCLE |
 | State | READY_LOW_MODEL / NOT_DISPATCHED |
-| Acceptance Closure Set | PAI-01-ACS-REVISION-06 |
+| Acceptance Closure Set | PAI-01-ACS-REVISION-07 |
 | Source specification | SPEC-AI-WORKFLOW-PROJECT-AUTHORITY-INTEGRATION-20260824-01M2A4C6E8G0I2K4M6O8Q0S2U4, Revision 05 |
 | Requirement / decision / Context | PRD-20260824-038 / CHG-20260824-038 / ADR-20260824-020 / doc/context/project-authority-integration/main.md |
 | Source-specification provenance baseline | main at b6353ac5a79ce2fd968862b55184ea04eeeeb1eb |
@@ -48,7 +48,7 @@ remote URL, credential, target-project path, NonForcePushPort declaration, impor
 or receipt/runner/queue/bridge machinery belongs in this closure. The reducer in integration.py
 is pure; Ticket 03 alone adds injected NonForcePushPort orchestration.
 
-~~~johnny-boundary
+```johnny-boundary
 modify = library/local_orchestration/project_authority/__init__.py
 create = library/local_orchestration/project_authority/__init__.py
 modify = library/local_orchestration/project_authority/contracts.py
@@ -63,7 +63,7 @@ forbid = library/local_orchestration/project_authority/composition.py
 forbid = modules/tickets/
 forbid = doc/
 forbid = skills/
-~~~
+```
 
 ## Public contract and error boundary
 
