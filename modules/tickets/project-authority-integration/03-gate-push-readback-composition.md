@@ -5,8 +5,8 @@
 | Ticket ID | PAI-03-GATE-PUSH-READBACK-COMPOSITION |
 | State | PLANNED / NOT_ADMITTED / NON_DISPATCHABLE |
 | Dependencies | PAI-01 and PAI-02 accepted |
-| Source specification | Project authority integration SPEC Revision 04, ticket order item 03 |
-| Planning baseline | main at ecbee4319ff6f7ceab878a3ddce5471154571890 |
+| Source specification | Project authority integration SPEC Revision 05, ticket order item 03 |
+| Planning baseline | main at b6353ac5a79ce2fd968862b55184ea04eeeeb1eb |
 | Declared source ownership | library/local_orchestration/project_authority/integration.py owns injected NonForcePushPort orchestration. |
 | Effect boundary | Fake NonForcePushPort and fake direct-readback only; no target remote mutation, push, force, credential, or provider invocation. |
 

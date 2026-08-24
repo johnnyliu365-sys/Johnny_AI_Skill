@@ -3,10 +3,10 @@
 | Field | Value |
 | --- | --- |
 | Feature | project-authority-integration |
-| Source specification | SPEC-AI-WORKFLOW-PROJECT-AUTHORITY-INTEGRATION-20260824-01M2A4C6E8G0I2K4M6O8Q0S2U4, Revision 04 |
+| Source specification | SPEC-AI-WORKFLOW-PROJECT-AUTHORITY-INTEGRATION-20260824-01M2A4C6E8G0I2K4M6O8Q0S2U4, Revision 05 |
 | Requirement / decision | PRD-20260824-038 / CHG-20260824-038; ADR-20260824-020 |
 | Context | doc/context/project-authority-integration/main.md |
-| Registry baseline | main at ecbee4319ff6f7ceab878a3ddce5471154571890 |
+| Registry baseline | main at b6353ac5a79ce2fd968862b55184ea04eeeeb1eb |
 | Index state | ACTIVE / TICKETS_OPENED / NO_DISPATCH |
 
 This index contains direct-child metadata only. It opens no worktree, branch, receipt,

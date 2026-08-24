@@ -5,8 +5,8 @@
 | Ticket ID | PAI-05-PROFILE-AND-BRIDGE-ALIGNMENT |
 | State | PLANNED / NOT_ADMITTED / NON_DISPATCHABLE |
 | Dependencies | PAI-01 through PAI-04 accepted |
-| Source specification | Project authority integration SPEC Revision 04, ticket order item 05 |
-| Planning baseline | main at ecbee4319ff6f7ceab878a3ddce5471154571890 |
+| Source specification | Project authority integration SPEC Revision 05, ticket order item 05 |
+| Planning baseline | main at b6353ac5a79ce2fd968862b55184ea04eeeeb1eb |
 | Writable-source status | No additional exact writable/test seam is declared for this planned closure. |
 | Effect boundary | Documentation/control-plane alignment only when later admitted; no runner, queue, receipt issuer, polling, wake probe, or host effect. |
 

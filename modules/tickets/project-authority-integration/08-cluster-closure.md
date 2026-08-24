@@ -5,8 +5,8 @@
 | Ticket ID | PAI-08-CLUSTER-CLOSURE |
 | State | PLANNED / NOT_ADMITTED / NON_DISPATCHABLE |
 | Dependencies | PAI-01 through PAI-07 accepted with their exact reviewed evidence |
-| Source specification | Project authority integration SPEC Revision 04, ticket order item 08 |
-| Planning baseline | main at ecbee4319ff6f7ceab878a3ddce5471154571890 |
+| Source specification | Project authority integration SPEC Revision 05, ticket order item 08 |
+| Planning baseline | main at b6353ac5a79ce2fd968862b55184ea04eeeeb1eb |
 | Effect boundary | Review and release-gate decision only after prerequisites; no integration, push, release, or deployment authority. |
 
 ## Vertical closure reserved

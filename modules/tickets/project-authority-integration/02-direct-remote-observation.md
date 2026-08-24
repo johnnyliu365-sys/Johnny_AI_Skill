@@ -5,8 +5,8 @@
 | Ticket ID | PAI-02-DIRECT-REMOTE-OBSERVATION |
 | State | PLANNED / NOT_ADMITTED / NON_DISPATCHABLE |
 | Dependency | PAI-01 accepted with its public contract revision frozen |
-| Source specification | Project authority integration SPEC Revision 04, ticket order item 02 |
-| Planning baseline | main at ecbee4319ff6f7ceab878a3ddce5471154571890 |
+| Source specification | Project authority integration SPEC Revision 05, ticket order item 02 |
+| Planning baseline | main at b6353ac5a79ce2fd968862b55184ea04eeeeb1eb |
 | Declared source ownership | library/local_orchestration/project_authority/observation.py owns DirectRemoteObservationPort and its validated adapter boundary. |
 | Effect boundary | Fake/local deterministic observation only until a later exact ticket has owner-authorized live remote authority. |
 
