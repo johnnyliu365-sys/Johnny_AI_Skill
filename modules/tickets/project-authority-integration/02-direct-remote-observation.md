@@ -192,8 +192,8 @@ provider, repository, host, or other external effect.
 
 ## Completion, rollback, and return
 
-The Luna implementation owner changes only the three declared paths, creates one candidate commit
-for this ticket, and returns `ImplementationReturn.COMPLETED` with ticket ID, ACS revision, exact
+The Luna implementation owner changes only the three declared paths and does not commit,
+integrate, or push. It returns `ImplementationReturn.COMPLETED` with ticket ID, ACS revision, exact
 runtime-bound `<implementation-admission-baseline>`, candidate-worktree identity, named
 `implementation-scope-evidence` and its tracked/untracked inputs, changed paths, green
 test/type/compile/diff results, and every mutation's red/restored-green evidence. `BLOCKED`
@@ -201,8 +201,8 @@ returns its exact finite reason without workaround. `CHANGE_DETECTED` emits
 `REQUIREMENT_CHANGED` and stops source work.
 
 The independent Terra reviewer validates that same runtime baseline and scope evidence, reruns the
-declared checks, and records its own different-path counter-mutation before any guarded
-integration decision. Rollback is an additive local forward correction or revert of the Ticket 02
+declared checks, and records its own different-path counter-mutation. Only after approval, the
+Terra reviewer writes the candidate commit and alone submits guarded integration. Rollback is an additive local forward correction or revert of the Ticket 02
 candidate; never force-push, rewrite authority history, relabel local success as remote authority,
 or create a remote effect. Same-lifetime allocation, wait, review, and guarded integration remain
 bridge-free and do not require a receipt, descriptor, host gateway, or runner.

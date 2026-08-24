@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | Feature | project-authority-integration |
-| Source specification | SPEC-AI-WORKFLOW-PROJECT-AUTHORITY-INTEGRATION-20260824-01M2A4C6E8G0I2K4M6O8Q0S2U4, Revision 05 |
+| Source specification | SPEC-AI-WORKFLOW-PROJECT-AUTHORITY-INTEGRATION-20260824-01M2A4C6E8G0I2K4M6O8Q0S2U4, Revision 06 |
 | Requirement / decision | PRD-20260824-038 / CHG-20260824-038; ADR-20260824-020 |
 | Context | doc/context/project-authority-integration/main.md |
 | Registry provenance baseline | main at b6353ac5a79ce2fd968862b55184ea04eeeeb1eb |
@@ -25,9 +25,10 @@ release, deployment, or credential access.
 | [07-governance-reference-release.md](07-governance-reference-release.md) | BLOCKED_OWNER_EFFECT_AUTHORITY | 01 through 06 accepted plus exact release authority | Level 1 governance-reference publication |
 | [08-cluster-closure.md](08-cluster-closure.md) | PLANNED / NOT_ADMITTED | 01 through 07 accepted | Independent cluster review and release-gate closure |
 
-No row is an implementation dispatch authorization. Ticket 01 alone has a complete
-admission closure; every other leaf is a dependency-bound planning record until it receives its
-own exact writable/test seam and the required approval or effect authority. At a later
+No row is an implementation dispatch authorization. Ticket 01 is completed and integrated.
+Ticket 02 alone is the current complete `READY_LOW_MODEL` admission closure; every other leaf
+remains a dependency-bound planning record until it receives its own exact writable/test seam and
+the required approval or effect authority. At a later
 same-lifetime synchronous dispatch, the reviewer creates the implementation worktree and branch
 from clean current integration main that already contains this approved ticket tree, then records
 that exact HEAD SHA as the reviewer-established `implementation-admission-baseline` in the
