@@ -30,19 +30,19 @@ mechanism is required or authorized.
 ## Exact writable boundary
 
 ```johnny-boundary
-modify: library/local_orchestration/project_authority/__init__.py
-modify: library/local_orchestration/project_authority/integration.py
-create: tests/test_project_authority_finalization.py
-modify: tests/test_project_authority_contracts.py
-modify: tests/test_project_authority_observation.py
-forbid: library/local_orchestration/project_authority/contracts.py
-forbid: library/local_orchestration/project_authority/observation.py
-forbid: library/local_orchestration/project_authority/collaboration.py
-forbid: library/local_orchestration/project_authority/composition.py
-forbid: library/local_orchestration/document_mutation_gate.py
-forbid: modules/
-forbid: doc/
-forbid: skills/
+modify = library/local_orchestration/project_authority/__init__.py
+modify = library/local_orchestration/project_authority/integration.py
+create = tests/test_project_authority_finalization.py
+modify = tests/test_project_authority_contracts.py
+modify = tests/test_project_authority_observation.py
+forbid = library/local_orchestration/project_authority/contracts.py
+forbid = library/local_orchestration/project_authority/observation.py
+forbid = library/local_orchestration/project_authority/collaboration.py
+forbid = library/local_orchestration/project_authority/composition.py
+forbid = library/local_orchestration/document_mutation_gate.py
+forbid = modules/
+forbid = doc/
+forbid = skills/
 ```
 
 At dispatch, the Terra reviewer records clean current integration main as
