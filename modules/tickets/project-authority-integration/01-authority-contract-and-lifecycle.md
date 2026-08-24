@@ -4,7 +4,7 @@
 | --- | --- |
 | Ticket ID | PAI-01-AUTHORITY-CONTRACT-LIFECYCLE |
 | State | READY_LOW_MODEL / NOT_DISPATCHED |
-| Acceptance Closure Set | PAI-01-ACS-REVISION-05 |
+| Acceptance Closure Set | PAI-01-ACS-REVISION-06 |
 | Source specification | SPEC-AI-WORKFLOW-PROJECT-AUTHORITY-INTEGRATION-20260824-01M2A4C6E8G0I2K4M6O8Q0S2U4, Revision 05 |
 | Requirement / decision / Context | PRD-20260824-038 / CHG-20260824-038 / ADR-20260824-020 / doc/context/project-authority-integration/main.md |
 | Source-specification provenance baseline | main at b6353ac5a79ce2fd968862b55184ea04eeeeb1eb |
@@ -159,32 +159,52 @@ review. A zero-red mutation is a finding, not completion.
 
 ## Verification commands and deterministic result
 
-Run these exact Revision-05 commands one at a time in the reviewer-established same-lifetime
+Run these exact ACS-Revision-06 commands one at a time in the reviewer-established same-lifetime
 implementation worktree:
 
     py -3.11 -m pytest -q -p no:cacheprovider tests/test_project_authority_contracts.py
     py -3.11 -m mypy --strict library/local_orchestration/project_authority/__init__.py library/local_orchestration/project_authority/contracts.py library/local_orchestration/project_authority/integration.py tests/test_project_authority_contracts.py
     py -3.11 -m compileall -q library/local_orchestration/project_authority/__init__.py library/local_orchestration/project_authority/contracts.py library/local_orchestration/project_authority/integration.py
     git diff --check <implementation-admission-baseline> HEAD
-    git diff --name-only <implementation-admission-baseline> HEAD
+    $trackedScopePaths = @(git diff --name-only <implementation-admission-baseline> HEAD)
+    $untrackedScopePaths = @(git ls-files --others --exclude-standard)
+    $implementationScopeEvidence = @(
+        $trackedScopePaths
+        $untrackedScopePaths
+    ) | Where-Object { $_ -ne "" } | Sort-Object -Unique
+    $declaredScopePaths = @(
+        "library/local_orchestration/project_authority/__init__.py"
+        "library/local_orchestration/project_authority/contracts.py"
+        "library/local_orchestration/project_authority/integration.py"
+        "tests/test_project_authority_contracts.py"
+    ) | Sort-Object
+    $scopeDifference = @(Compare-Object -ReferenceObject $declaredScopePaths -DifferenceObject $implementationScopeEvidence)
+    if ($scopeDifference.Count -ne 0) { $scopeDifference | Format-Table -AutoSize; throw "HALT / CANDIDATE_SCOPE_MISMATCH" }
+    $implementationScopeEvidence
 
 Expected result: each command exits zero after the named green cells and restored reverse
 mutations. Before running the two diff commands, the reviewer substitutes the exact runtime-bound
 SHA recorded at same-lifetime dispatch for `<implementation-admission-baseline>`; the literal
-placeholder is not a shell value. `git diff --name-only` from that SHA lists only the four
-declared paths and no ticket document. The focused pytest cell is the local smoke path. No
-network, provider, repository, or host effect is part of any command.
+placeholder is not a shell value. `implementation-scope-evidence` is the sorted, duplicate-free
+union of the tracked `git diff --name-only` output from that SHA and `git ls-files --others
+--exclude-standard`; the explicit PowerShell 5.1 comparison above requires it to equal exactly the
+four declared paths. It therefore rejects every ticket document and every other path, including a
+new untracked candidate path that tracked `git diff` alone cannot show. Record the named scope
+evidence with its two inputs in the implementation return and independent-review evidence. The
+focused pytest cell is the local smoke path. No network, provider, repository, or host effect is
+part of any command.
 
 ## Completion, rollback, and return
 
 The implementation owner modifies only the four paths and does not commit, integrate, or control
 another Agent. It returns ImplementationReturn.COMPLETED with ticket ID, ACS revision, the exact
 runtime-bound `<implementation-admission-baseline>` SHA and candidate-worktree identity,
-changed-path list, named test/type/compile/diff evidence, and each mutation's red/restored-green
-result. The independent reviewer records and checks that same SHA in its review evidence, writes
-the candidate commit after approval, and alone may submit it to the integration gate. BLOCKED
-returns the exact finite reason with no workaround. CHANGE_DETECTED returns REQUIREMENT_CHANGED
-and stops source work.
+the named `implementation-scope-evidence` and its tracked/untracked inputs, changed-path list,
+named test/type/compile/diff evidence, and each mutation's red/restored-green result. The
+independent reviewer records and checks that same SHA and scope evidence in its review evidence,
+writes the candidate commit after approval, and alone may submit it to the integration gate.
+BLOCKED returns the exact finite reason with no workaround. CHANGE_DETECTED returns
+REQUIREMENT_CHANGED and stops source work.
 
 Rollback is a new local forward correction or revert of the Ticket 01 commit; never force-push,
 rewrite authority history, relabel local state as remote authority, or create a remote effect.

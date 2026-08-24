@@ -36,4 +36,8 @@ are explicitly NOT_REQUIRED. Those cross-lifetime controls remain separate and d
 synchronous lane. Ticket 01's source candidate starts from that runtime-bound SHA; neither this
 ticket's registry provenance SHA nor any source-specification SHA may be used as a source-diff
 start point. This rule keeps later documents-only ticket corrections from making an implementation
-baseline stale.
+baseline stale. Its named `implementation-scope-evidence` is the sorted, duplicate-free union of
+the tracked `git diff --name-only` paths from that SHA and
+`git ls-files --others --exclude-standard`; it must equal Ticket 01's four declared paths, with no
+ticket document or any other path. The tracked diff alone is intentionally insufficient when the
+candidate creates untracked paths.
