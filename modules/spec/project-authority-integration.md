@@ -3,8 +3,8 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | SPEC-AI-WORKFLOW-PROJECT-AUTHORITY-INTEGRATION-20260824-01M2A4C6E8G0I2K4M6O8Q0S2U4 |
-| Status | APPROVED / REVISION_04 / REVIEWER_DECOMPOSITION_AUTHORIZED |
-| Author / baseline | Architecture owner / main / a3c08309697f9fa9baa3dca442f35abdc39a6a0d |
+| Status | APPROVED / REVISION_05 / REVIEWER_DECOMPOSITION_AUTHORIZED |
+| Author / baseline | Architecture owner / main / ecbee4319ff6f7ceab878a3ddce5471154571890 |
 | Context | doc/context/project-authority-integration/main.md |
 | Shared Context | CONTEXT.md revision 02 sealed by CHG-20260824-038 |
 | PRD / change | PRD-20260824-038 / CHG-20260824-038 |
@@ -74,7 +74,7 @@ well-formed string input receives a finite domain result.
 
 | Interface | Exact contract |
 | --- | --- |
-| AuthorityContractInput | Strict input model with project_id, topology, authority_line_role, project_authority_ref string, remote provider/host/repository key/alias strings, declaration artifact ref/revision SHA, gate ID/revision and effective datetime. Null, wrong primitive type, coercion and extra fields fail ordinary strict model validation before domain admission. |
+| AuthorityContractInput | Strict input model with project_id, ProjectTopology, AuthorityLineRole, project_authority_ref string, RemoteProviderKind, remote host/repository key/alias strings, declaration artifact ref/revision SHA, gate ID/revision and effective datetime. Null, wrong primitive type, coercion and extra fields fail ordinary strict model validation before domain admission. |
 | AuthorityContractAdmission | Strict result model: decision is ACCEPTED, AUTHORITY_REF_INVALID, or SECRET_MATERIAL_DETECTED; accepted result carries exactly one ProjectAuthorityContract and no failure; rejected result carries no contract and its finite decision. |
 | admit_authority_contract | Accepts AuthorityContractInput and returns AuthorityContractAdmission. A syntactically valid but noncanonical branch string returns AUTHORITY_REF_INVALID; credential-bearing repository identity returns SECRET_MATERIAL_DETECTED. It makes no port or effect call. |
 | AuthorityObservationAdmission | Strict result model: decision is DIRECT_REMOTE_REF_ACCEPTED or DIRECT_REMOTE_READ_UNAVAILABLE; accepted result carries exactly one GitObservation and rejected result carries none. |
@@ -85,6 +85,26 @@ well-formed string input receives a finite domain result.
 Pydantic structural validation failures are not reported as a false domain decision. Ticket 01
 tests them as strict construction rejection. The three result models above are the only source of
 the named finite decisions that Ticket 01 asserts.
+
+## Revision 05 — finite public enum closure
+
+The following named enums are part of the exact Ticket 01 public surface; strings may enter only
+at the strict boundary model and are normalized to these values before a result is constructed.
+
+| Enum | Exact members |
+| --- | --- |
+| ProjectTopology | SINGLE_BRANCH, HIGH_COLLABORATION |
+| AuthorityLineRole | SINGLE, DEVELOPMENT, STAGING, RELEASE |
+| RemoteProviderKind | GIT_GENERIC, GITHUB, OTHER |
+| AuthorityContractAdmissionDecision | ACCEPTED, AUTHORITY_REF_INVALID, SECRET_MATERIAL_DETECTED |
+| AuthorityObservationDecision | DIRECT_REMOTE_REF_ACCEPTED, DIRECT_REMOTE_READ_UNAVAILABLE |
+
+AuthorityContractInput uses ProjectTopology, AuthorityLineRole and RemoteProviderKind rather than
+unconstrained strings for those fields. AuthorityContractAdmission uses
+AuthorityContractAdmissionDecision, and AuthorityObservationAdmission uses
+AuthorityObservationDecision. Every member must construct through its ordinary validator and every
+unknown value must be rejected. The source AST allowlist and strong-type preflight must include all
+five named enums; a gate that omits them has not pinned the public surface.
 
 AuthorityIntegrationState is exactly CANDIDATE, REVIEW_ACCEPTED, GATE_REJECTED,
 LOCAL_INTEGRATED, PUSH_UNCONFIRMED and AUTHORITY_INTEGRATED. BridgeCapability remains exactly
@@ -272,3 +292,4 @@ can never be inferred from a pure-source success.
 | 2026-08-24 | Architecture owner / main / 926c2b75ce9933d181220a3a48ec1aae9c38ab0a | Ticket opening returned UPSTREAM_DECISION_REQUIRED because revision 01 named no focused test creation seam or deterministic command. Revision 02 adds only that already-required executable detail; the requirement, architecture, authority, effects and ticket order are unchanged. |
 | 2026-08-24 | Architecture owner / main / 926c2b75ce9933d181220a3a48ec1aae9c38ab0a | Revision-02 review found its local-to-remote shortcut mutation could not reach the production reducer because integration.py was omitted from the ticket boundary. Revision 03 adds that pure reducer only, keeps all ports/effects out, and extends the fixed type/compile commands. |
 | 2026-08-24 | Architecture owner / main / a3c08309697f9fa9baa3dca442f35abdc39a6a0d | Ticket-tree review found revision 03 left the public distinction between strict structural rejection and named domain failure implicit. Revision 04 names the pure input/result/transition interfaces and confines AUTHORITY_INTEGRATED finalization to the later validated push/readback closure. |
+| 2026-08-24 | Architecture owner / main / ecbee4319ff6f7ceab878a3ddce5471154571890 | Ticket-tree admission review found Revision 04 referenced topology, authority-line role, provider kind and admission decisions without naming their finite enum types, leaving the public/AST surface incomplete. Revision 05 names and closes those enums only. |
