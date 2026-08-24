@@ -3,8 +3,8 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | SPEC-AI-WORKFLOW-PROJECT-AUTHORITY-INTEGRATION-20260824-01M2A4C6E8G0I2K4M6O8Q0S2U4 |
-| Status | APPROVED / REVIEWER_DECOMPOSITION_AUTHORIZED |
-| Author / baseline | Architecture owner / main / 5d74f27d797e05cb9845d9ebf35dcb76cff22212 |
+| Status | APPROVED / REVISION_03 / REVIEWER_DECOMPOSITION_AUTHORIZED |
+| Author / baseline | Architecture owner / main / 926c2b75ce9933d181220a3a48ec1aae9c38ab0a |
 | Context | doc/context/project-authority-integration/main.md |
 | Shared Context | CONTEXT.md revision 02 sealed by CHG-20260824-038 |
 | PRD / change | PRD-20260824-038 / CHG-20260824-038 |
@@ -126,6 +126,41 @@ these ports and cannot return credentials, raw responses, unrestricted command o
 uncommitted source. No public contract permits a caller-selected path, remote URL, policy
 payload, credential, shell command or target-project root.
 
+## Revision 03 — exact first-ticket seam
+
+Ticket 01 creates one complete, independently observable typed-contract closure and no adapter,
+remote, provider, process, Git or target-project effect. Its complete writable boundary is exactly:
+
+- library/local_orchestration/project_authority/__init__.py;
+- library/local_orchestration/project_authority/contracts.py;
+- library/local_orchestration/project_authority/integration.py;
+- tests/test_project_authority_contracts.py.
+
+The new test file is the one focused seam. It must contain named cells for: valid full-ref and
+authority-contract construction; tag/symbolic/abbreviated/SHA and null/blank/extra/coercion
+rejection; credential-bearing repository identity rejection; exact finite integration and bridge
+state construction; cache observation being rejected as remote authority; and the forbidden
+LOCAL_INTEGRATED to AUTHORITY_INTEGRATED shortcut. New behavior records green tests, not a
+ceremonial first-red claim. Each named property has a reverse mutation: admit a tag ref, permit a
+credential-bearing identity, treat REMOTE_TRACKING_CACHE as direct authority, and collapse the
+local-to-remote transition. Each mutation must turn its named cell red and restore byte-identical.
+The shortcut mutation must enter the production reducer in integration.py, not a fixture or a
+re-derived test transition. In this ticket that file contains only the pure state reducer; it must
+not declare, invoke or receive a NonForcePushPort. The later push/readback ticket alone extends
+the same module with its injected effect orchestration.
+
+Ticket 01 commands are deterministic and fixed:
+
+    py -3.11 -m pytest -q -p no:cacheprovider tests/test_project_authority_contracts.py
+    py -3.11 -m mypy --strict library/local_orchestration/project_authority/__init__.py library/local_orchestration/project_authority/contracts.py library/local_orchestration/project_authority/integration.py tests/test_project_authority_contracts.py
+    py -3.11 -m compileall -q library/local_orchestration/project_authority/__init__.py library/local_orchestration/project_authority/contracts.py library/local_orchestration/project_authority/integration.py
+    git diff --check <ticket-baseline> HEAD
+
+This closure applies the required missing-value, path-identity, error-code-consistency, exception
+behavior and test-truthfulness review categories. Authorization, token parsing, task/worktree,
+staging, XSS and provider-effect categories are N/A for Ticket 01 with its pure boundary; the
+later ticket that crosses each boundary must reclassify it rather than inherit that N/A claim.
+
 ## Security, data and lifecycle boundary
 
 Persisted evidence contains only normalized identifiers, full refs, SHAs, finite state/failure,
@@ -166,6 +201,8 @@ runner, queue, receipt, descriptor, gateway or workspace/profile readback.
     SHAs and independent counter-mutation. A zero-red mutation is a finding.
 12. Changing skills to align governance prose triggers Level 1 regeneration, fresh immutable
     plugin release and real CLI verification; library-only work cannot claim a release.
+13. Ticket 01 creates only the four Revision-03 seam paths, executes the four fixed commands,
+    and supplies a discriminating reverse mutation for every named typed-contract property.
 
 ## Verification and ticket order
 
@@ -207,3 +244,10 @@ can never be inferred from a pure-source success.
   those decisions authorizes reviewer decomposition and ticket drafting.
 - No target remote, GitHub policy, provider, push, release, deployment or credential effect is
   authorized. Each remains a later ticket-specific owner boundary.
+
+## Revision signatures
+
+| Date | Actor / baseline | Summary |
+| --- | --- | --- |
+| 2026-08-24 | Architecture owner / main / 926c2b75ce9933d181220a3a48ec1aae9c38ab0a | Ticket opening returned UPSTREAM_DECISION_REQUIRED because revision 01 named no focused test creation seam or deterministic command. Revision 02 adds only that already-required executable detail; the requirement, architecture, authority, effects and ticket order are unchanged. |
+| 2026-08-24 | Architecture owner / main / 926c2b75ce9933d181220a3a48ec1aae9c38ab0a | Revision-02 review found its local-to-remote shortcut mutation could not reach the production reducer because integration.py was omitted from the ticket boundary. Revision 03 adds that pure reducer only, keeps all ports/effects out, and extends the fixed type/compile commands. |
