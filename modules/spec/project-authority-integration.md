@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | SPEC-AI-WORKFLOW-PROJECT-AUTHORITY-INTEGRATION-20260824-01M2A4C6E8G0I2K4M6O8Q0S2U4 |
-| Status | APPROVED / REVISION_06 / REVIEWER_DECOMPOSITION_AUTHORIZED |
+| Status | APPROVED / REVISION_10 / REVIEWER_DECOMPOSITION_AUTHORIZED |
 | Author / baseline | Project-owner-approved Sol decision / Terra supervisor reviewer / specification provenance main at 6df6885ea093f1e37899f5252f8e4a1cc4feadb9; not an implementation-admission baseline |
 | Context | doc/context/project-authority-integration/main.md |
 | Shared Context | CONTEXT.md revision 02 sealed by CHG-20260824-038 |
@@ -325,6 +325,63 @@ this package surface. This fixes ticket closure only and changes no public meani
 architecture, authority, effect, frozen Ticket-01 contract, or frozen Ticket-02 observation
 contract.
 
+## Revision 10 — owner-selected high-collaboration admission boundary and Ticket 04 seam
+
+The owner selected one provider-neutral high-collaboration evidence-admission API, rather than
+separate public PR and provider-policy admission functions or a provider-specific implementation.
+`library/local_orchestration/project_authority/collaboration.py` owns that pure boundary. It
+receives one strict request and injected fake `PullRequestReadPort` / `ProviderPolicyReadPort`
+values. It has no provider SDK, credential, UI, network, shell, Git, process, filesystem,
+environment, clock, retry, loop, polling, cache fallback, document gate, integration reducer,
+push port, or direct-observation call.
+
+`SINGLE_BRANCH` returns `NOT_APPLICABLE` without reading either port. This is the already
+approved no-ceremony consequence of the topology declaration, not a degraded high-collaboration
+claim. `HIGH_COLLABORATION` requires one current ticket PR and one provider-enforcement proof.
+The sole accepted result remains review/visibility evidence: it neither invokes nor replaces the
+existing guarded integration and finalization path.
+
+The new exact public surface is:
+
+```text
+PullRequestReadDisposition = OBSERVED | UNAVAILABLE | NOT_FOUND | AMBIGUOUS
+PullRequestState = OPEN | DRAFT | CLOSED | MERGED
+ProviderPolicyReadDisposition = OBSERVED | UNAVAILABLE | AMBIGUOUS
+ProviderEnforcementCapability = NOT_APPLICABLE | PROVEN | UNPROVEN | UNSUPPORTED
+HighCollaborationAdmissionDecision = ACCEPTED | NOT_APPLICABLE | PR_REQUIRED
+    | PR_NOT_REVIEWABLE | PR_HEAD_SHA_MISMATCH | PR_BASE_REF_MISMATCH
+    | PR_APPROVAL_STALE | PROVIDER_ENFORCEMENT_UNPROVEN
+    | PROVIDER_ENFORCEMENT_UNSUPPORTED | REMOTE_IDENTITY_MISMATCH
+    | SECRET_MATERIAL_DETECTED
+```
+
+`PullRequestReadRequest` / `ProviderPolicyReadRequest` each bind the authority contract, ticket,
+candidate SHA, named read correlation, and one closed decision window. Their strict port results
+have an `OBSERVED` all-evidence shape and a non-observed null-evidence shape. Normalized
+`PullRequestEvidence` preserves PR repository, ticket/PR identity, state, head ref/SHA, base ref,
+approval-head SHA, and metadata-only observation proof. `ProviderEnforcementEvidence` preserves
+repository/ref/gate identity, capability, independently named UI-bypass and stale-approval
+outcomes, policy IDs, and metadata-only read proof. Both port Protocol `read` parameters are
+positional-only. `HighCollaborationAdmissionResult` contains both normalized evidence objects only
+for `ACCEPTED`, none for `NOT_APPLICABLE`, and no partial evidence for every finite failure.
+
+Precedence is fixed: strict construction; single-branch no-call return; one PR fake read;
+credential and authority repository checks; normal PR availability/state/freshness; exact PR
+head/base/approval comparison; one provider-policy fake read; credential and
+repository/ref/gate identity; capability and two separate enforcement outcomes. A missing PR is
+`PR_REQUIRED`; unreadable/ambiguous/not-reviewable PR is `PR_NOT_REVIEWABLE`; policy absence,
+ambiguity, `UNPROVEN`, or either false outcome is `PROVIDER_ENFORCEMENT_UNPROVEN`; `UNSUPPORTED`
+is `PROVIDER_ENFORCEMENT_UNSUPPORTED`. Unexpected port exceptions stay defects and are not
+converted into authority decisions.
+
+Ticket 04 has exactly five writable paths: package `__init__.py`, new `collaboration.py`, the two
+historical observation/finalization package-surface gates, and new
+`tests/test_project_authority_collaboration.py`. The historical tests retain their frozen
+production-module assertions while extending their expected package export sequence exactly by
+the sixteen named collaboration exports. The new test parses the actual collaboration module and
+package export surface. No Ticket 01 contracts, Ticket 02 observation code, Ticket 03 integration
+code, production composition, live provider capability, or external effect changes.
+
 ## Authority and integration flow
 
 1. Validate the authority contract, full ref, credential-free repository identity and reviewed
@@ -499,3 +556,4 @@ can never be inferred from a pure-source success.
 | 2026-08-25 | Project owner / Terra supervisor reviewer / main / 381a089a8519875134c0f597c1c20f1be51fdb4a | Revision 07 records the owner-selected single provider-neutral Ticket 03 finalization boundary. It closes the fake non-force push/result, one-call direct-readback, final result, finite failure and exact three-path seam without changing requirement, authority topology, external-effect authority, or frozen Ticket 01/02 contracts. |
 | 2026-08-25 | Terra supervisor reviewer / main / 28d484179576b80d7583ea3b5601850042dfabda | Revision 08 repairs only a Ticket 03 admission omission found before source mutation: the existing Ticket 01 actual-source test otherwise makes Revision-07's explicitly approved eight new `integration.py` exports impossible. Ticket 03 may extend that precise test allowlist while retaining every original frozen assertion; no public meaning, requirement, architecture, authority, effect or acceptance criterion changes. |
 | 2026-08-25 | Terra supervisor reviewer / main / c99add58297d71d8e9d6d5b85978f2a68980d45c | Revision 09 completes the same pre-mutation ticket-closure correction after enumerating every committed project-authority package-surface gate. It adds only the Ticket 02 observation test, which must retain its immutable observation-module checks while extending `__init__.py` to the exact already-approved Revision-07 surface. No public meaning or external boundary changes. |
+| 2026-08-25 | Project owner / Terra supervisor reviewer / main / 8db99208d6b363f7b34a731989a4a7085cb0da00 | Revision 10 records the owner-selected single provider-neutral high-collaboration admission API. It closes Ticket 04's strict fake PR/policy port contracts, `SINGLE_BRANCH` no-call result, finite evidence failures, exact five-path seam, historical package-surface updates, deterministic verification, and restore-backed mutations. It changes no authority topology, integration authority, live provider capability, remote, policy, credential, runner, queue, or release authority. |
