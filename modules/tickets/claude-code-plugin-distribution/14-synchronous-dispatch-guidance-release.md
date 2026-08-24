@@ -130,11 +130,34 @@ After this cluster closes, the Router returns to the already-approved
 `context-load-telemetry/05-opaque-storage-port-contracts` ticket and dispatches it through the
 same-lifetime `wait_agent` loop.
 
+## Completion record
+
+- Candidate and guarded integration: `47502bb112934feb6efead3af89a9ca3b54404c4`, integrated
+  by `admit_document_mutation` and pushed as development `main`; local `main`, `origin/main`
+  and the candidate all read back to that exact commit.
+- Publication pre-state was `main = 5c1cb9aec837a2fc8c76634404bccd393a0b9281`, retained
+  `plugin-v0.4.10 = b52215eb3ee5dfa101e65c189441e62c20ca45e6`, retained
+  `plugin-v0.4.11 = 5c1cb9aec837a2fc8c76634404bccd393a0b9281`, and no `plugin-v0.4.12`.
+  The authorized promotion produced parentless root
+  `C = 3b84c5f0f7df0582bd2459e83c6067ed45fb7613`; publication `main` and the new,
+  absent-only `plugin-v0.4.12` tag now name exactly `C`, while both retained tags are unchanged.
+- The temporary raw candidate ref named in this ticket read back to the candidate before
+  deletion and was removed only after source-main integration.
+- Candidate and fresh main-descriptor isolated Claude installs both reported marketplace
+  `johnny-ai-skill`, plugin `johnny-ai-skill@johnny-ai-skill`, version `0.4.12`, and only the
+  two declared skills. The sanitized cache verifier reported `VERIFIED` at `C`.
+- The independent installed-cache counter-mutation made an exact reachable
+  `modules/review.py` development sentinel and returned `SENTINEL_REACHABLE`; exact ref and
+  `HEAD` restoration then returned `VERIFIED`.
+- Candidate scope/ancestry checks, JSON/generator/remote-closure checks, the three focused
+  publication/cache suites, `git diff --check`, and the textual synchronous-guidance reverse
+  mutation all passed before integration.
+
 ```johnny-status
 id = 14
 title = Synchronous-dispatch guidance qualification and Level 1 release
-state = APPROVED_NOT_DISPATCHED
-stage = A | Source guidance and candidate metadata | OPEN
-stage = B | Reviewer-generated root and remote closure | OPEN
-stage = C | Isolated candidate/main install and guarded integration | OPEN
+state = DONE
+stage = A | Source guidance and candidate metadata | DONE
+stage = B | Reviewer-generated root and remote closure | DONE
+stage = C | Isolated candidate/main install and guarded integration | DONE
 ```
