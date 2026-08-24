@@ -251,6 +251,45 @@ the three declared paths, including an uncommitted creation. Same-lifetime revie
 wait, review, and guarded integration remain bridge-free: no receipt, descriptor, gateway, or
 runner is required or authorized by this pure closure.
 
+## Revision 07 — owner-selected single finalization boundary and Ticket 03 seam
+
+The owner selected one provider-neutral finalization boundary rather than separate public push
+and readback APIs. `integration.py` owns that one boundary. It receives a validated record that
+gate-local integration has already reached `LOCAL_INTEGRATED`, invokes one injected fake
+non-force push port, then invokes the existing injected direct-observation port exactly once
+after an accepted push. It is the only Ticket 03 path that can return
+`AUTHORITY_INTEGRATED`; it neither invokes the document-mutation gate nor performs real I/O.
+
+`library/local_orchestration/project_authority/integration.py` owns exactly these new public
+names. Every named model is strict, frozen, `extra="forbid"`, non-coercing, and revalidating;
+every SHA is full lower-case and every timestamp timezone-aware:
+
+| Interface | Exact contract |
+| --- | --- |
+| NonForcePushDisposition | Finite enum exactly `ACCEPTED`, `REJECTED`, `UNCONFIRMED`. `ACCEPTED` is a port claim only; it never itself proves remote completion. |
+| NonForcePushRequest | `authority_contract: ProjectAuthorityContract`; nonblank `attempt_id`; `expected_remote_base: GitObservation`; full lower-case `local_integrated_sha`; `requested_at: datetime`. The base must be `DIRECT_REMOTE_REF` and match the contract repository/ref. |
+| NonForcePushResult | `disposition`; `repository: RemoteRepositoryId`; `full_ref: FullBranchRef`; nonblank `attempt_id`; full lower-case `expected_base_sha` and `requested_sha`; nonblank `executor`, `method`, and evidence digest; bounded integer exit status; `completed_at: datetime`. It rejects credential-bearing executor, method, or digest. Identity, attempt, expected base and requested SHA must echo the request before disposition is trusted. |
+| NonForcePushPort | `push(self, request: NonForcePushRequest, /) -> NonForcePushResult`. It is injected; Ticket 03 supplies deterministic fakes only. |
+| AuthorityFinalizationFailure | Finite enum exactly `LOCAL_INTEGRATION_EVIDENCE_INVALID`, `PRE_PUSH_OBSERVATION_INVALID`, `REMOTE_IDENTITY_MISMATCH`, `AUTHORITY_REF_MOVED`, `PUSH_REJECTED`, `PUSH_UNCONFIRMED`, `DIRECT_REMOTE_READ_UNAVAILABLE`, `REMOTE_REF_NOT_FOUND`, `REMOTE_REF_AMBIGUOUS`, `DIRECT_REMOTE_OBSERVATION_STALE`, `REMOTE_READBACK_SHA_MISMATCH`, `SECRET_MATERIAL_DETECTED`. |
+| AuthorityFinalizationRequest | `authority_contract: ProjectAuthorityContract`; `local_lifecycle: PrePushLifecycleTransition`; full lower-case `local_integrated_sha`; `pre_push_observation: GitObservation`; nonblank `attempt_id` and `post_push_observation_id`; `requested_at: datetime`; `decision_at: datetime`. Construction requires `requested_at <= decision_at`; finalization requires `LOCAL_INTEGRATED` with no lifecycle failure and a direct pre-push observation matching the contract. |
+| AuthorityFinalizationResult | `state: AuthorityIntegrationState`; nullable `failure: AuthorityFinalizationFailure | None`; nullable `push: NonForcePushResult | None`; nullable `readback: GitObservation | None`. `AUTHORITY_INTEGRATED` carries accepted push and one direct readback equal to `local_integrated_sha`, with no failure. Every failure is exactly `PUSH_UNCONFIRMED`, carries one finite failure, and never carries nonmatching or non-direct readback as authority proof. |
+| finalize_authority_integration | `finalize_authority_integration(request: AuthorityFinalizationRequest, push_port: NonForcePushPort, observation_port: DirectRemoteObservationPort, /) -> AuthorityFinalizationResult`. It has no retry, loop, fallback, ambient lookup, shell, Git executable, network, filesystem, clock, or provider call. |
+
+Fixed precedence is: strict construction; local lifecycle and direct pre-push identity; one push
+result credential/identity/attempt/base/requested-SHA validation; rejected or unconfirmed push;
+one post-push direct observation; exact SHA equality. A base mismatch is
+`AUTHORITY_REF_MOVED`; a post-push direct SHA different from the local integrated SHA is
+`REMOTE_READBACK_SHA_MISMATCH`; unproved direct readback remains `PUSH_UNCONFIRMED`. The
+post-push observation window starts at `completed_at`, has no cache fallback, and never trusts a
+push exit status as authority.
+
+Ticket 03 modifies only package `__init__.py` and `integration.py`, and creates
+`tests/test_project_authority_finalization.py`. It does not change the frozen Ticket 01/02
+contracts, document gate, composition root, Provider adapter, remote, credential path, runner,
+receipt, descriptor, queue, or bridge. Its actual-source reverse mutation replaces the exact
+post-readback SHA comparison with unconditional authority success; the mismatch test must turn
+red and be restored byte-identically.
+
 ## Authority and integration flow
 
 1. Validate the authority contract, full ref, credential-free repository identity and reviewed
@@ -422,3 +461,4 @@ can never be inferred from a pure-source success.
 | 2026-08-24 | Architecture owner / main / a3c08309697f9fa9baa3dca442f35abdc39a6a0d | Ticket-tree review found revision 03 left the public distinction between strict structural rejection and named domain failure implicit. Revision 04 names the pure input/result/transition interfaces and confines AUTHORITY_INTEGRATED finalization to the later validated push/readback closure. |
 | 2026-08-24 | Architecture owner / main / ecbee4319ff6f7ceab878a3ddce5471154571890 | Ticket-tree admission review found Revision 04 referenced topology, authority-line role, provider kind and admission decisions without naming their finite enum types, leaving the public/AST surface incomplete. Revision 05 names and closes those enums only. |
 | 2026-08-24 | Project owner-approved Sol decision / Terra supervisor reviewer / main / 6df6885ea093f1e37899f5252f8e4a1cc4feadb9 | Revision 06 closes the previously undefined Ticket 02 direct-observation public contract: strict request/read/result shapes, finite disposition and decision enums, one-call fake-port semantics, fail-closed precedence, C13-independent seam, exact three-path boundary, deterministic commands, and restore-backed reverse mutations. It changes neither Ticket 01's frozen API nor Ticket 03's push/readback finalization, requirement, architecture authority, or effect authority. |
+| 2026-08-25 | Project owner / Terra supervisor reviewer / main / 381a089a8519875134c0f597c1c20f1be51fdb4a | Revision 07 records the owner-selected single provider-neutral Ticket 03 finalization boundary. It closes the fake non-force push/result, one-call direct-readback, final result, finite failure and exact three-path seam without changing requirement, authority topology, external-effect authority, or frozen Ticket 01/02 contracts. |
