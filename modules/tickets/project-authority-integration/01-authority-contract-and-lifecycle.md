@@ -4,17 +4,17 @@
 | --- | --- |
 | Ticket ID | PAI-01-AUTHORITY-CONTRACT-LIFECYCLE |
 | State | READY_LOW_MODEL / NOT_DISPATCHED |
-| Acceptance Closure Set | PAI-01-ACS-REVISION-04 |
+| Acceptance Closure Set | PAI-01-ACS-REVISION-05 |
 | Source specification | SPEC-AI-WORKFLOW-PROJECT-AUTHORITY-INTEGRATION-20260824-01M2A4C6E8G0I2K4M6O8Q0S2U4, Revision 05 |
 | Requirement / decision / Context | PRD-20260824-038 / CHG-20260824-038 / ADR-20260824-020 / doc/context/project-authority-integration/main.md |
 | Source-specification provenance baseline | main at b6353ac5a79ce2fd968862b55184ea04eeeeb1eb |
-| Implementation admission baseline | main at de22c287db538c8545120ac468ae086fdafcee1e |
+| Implementation admission baseline | Reviewer-established at same-lifetime dispatch: exact HEAD SHA of clean current integration main that already contains this approved ticket tree; recorded as `<implementation-admission-baseline>` in dispatch, return, and independent-review evidence. |
 | Delivery profile | POC maturity unchanged; STANDARD intensity, derived from a new shared contract and moderate uncertainty; no external-effect signal |
 | Control owner | Current-session Terra / xhigh supervisor-reviewer; the sole Agent-to-Agent orchestrator |
 | Owner override record | Project owner directive: the implementation owner does not commit; after independent review, the reviewer writes the candidate commit and alone submits it to the integration gate. |
 | Implementation owner | Unassigned until reviewer-established same-lifetime allocation. Standard profile reference: implementation-standard (current profile data: Luna / xhigh); one owner and no helper. |
 | Independent reviewer | Standard profile reference: ticket-review (current profile data: Terra / xhigh); verified capability rank must be at least the implementation profile rank. |
-| Worktree / branch / task / correlation | Unissued until synchronous dispatch. The reviewer establishes the exact ticket/worktree/branch/task/correlation binding from the committed ticket and Git metadata. Receipt, live descriptor, and host gateway are NOT_REQUIRED for this same-lifetime lane; they remain cross-lifetime-only controls. |
+| Worktree / branch / task / correlation | Unissued until synchronous dispatch. The reviewer establishes the exact ticket/worktree/branch/task/correlation binding from the committed ticket and Git metadata, creates the worktree and branch from clean current integration main containing this approved ticket, and records that exact HEAD SHA as `<implementation-admission-baseline>`. Receipt, live descriptor, and host gateway are NOT_REQUIRED for this same-lifetime lane; they remain cross-lifetime-only controls. |
 | XSS classification | N/A: no Browser, WebView, HTML/DOM renderer, JavaScript execution, Native bridge, or provider effect |
 | Environment | Local pure Python tests only. Claude/Codex credential, CLI, host execution, runner, and remote/provider capability are not dependencies of this ticket. |
 
@@ -25,10 +25,14 @@ The local observable result is that valid contract/state construction succeeds; 
 refs, credential material, cache-as-authority, and a direct LOCAL_INTEGRATED to
 AUTHORITY_INTEGRATED shortcut are rejected before any port or effect call.
 
-The implementation worktree starts from the implementation admission baseline
-`de22c287db538c8545120ac468ae086fdafcee1e`, which already contains this committed ticket tree.
-`b6353ac5a79ce2fd968862b55184ea04eeeeb1eb` is SPEC provenance only and must never be substituted
-into a candidate source-diff or scope command.
+At same-lifetime synchronous dispatch, the reviewer starts the implementation worktree and branch
+from clean current integration main that already contains this committed ticket tree, and records
+that exact HEAD SHA as `<implementation-admission-baseline>` in the dispatch, implementation
+return, and independent-review evidence. This runtime-bound SHA is the candidate source-diff and
+scope-command start point. `b6353ac5a79ce2fd968862b55184ea04eeeeb1eb` is SPEC provenance only;
+neither it nor any ticket/source-provenance SHA may be substituted into a candidate source-diff
+or scope command. This prevents later documents-only ticket corrections from making a fixed
+implementation baseline stale.
 
 ## Exact writable boundary
 
@@ -161,23 +165,26 @@ implementation worktree:
     py -3.11 -m pytest -q -p no:cacheprovider tests/test_project_authority_contracts.py
     py -3.11 -m mypy --strict library/local_orchestration/project_authority/__init__.py library/local_orchestration/project_authority/contracts.py library/local_orchestration/project_authority/integration.py tests/test_project_authority_contracts.py
     py -3.11 -m compileall -q library/local_orchestration/project_authority/__init__.py library/local_orchestration/project_authority/contracts.py library/local_orchestration/project_authority/integration.py
-    git diff --check de22c287db538c8545120ac468ae086fdafcee1e HEAD
-    git diff --name-only de22c287db538c8545120ac468ae086fdafcee1e HEAD
+    git diff --check <implementation-admission-baseline> HEAD
+    git diff --name-only <implementation-admission-baseline> HEAD
 
 Expected result: each command exits zero after the named green cells and restored reverse
-mutations; the source diff from the implementation admission baseline contains only the four
+mutations. Before running the two diff commands, the reviewer substitutes the exact runtime-bound
+SHA recorded at same-lifetime dispatch for `<implementation-admission-baseline>`; the literal
+placeholder is not a shell value. `git diff --name-only` from that SHA lists only the four
 declared paths and no ticket document. The focused pytest cell is the local smoke path. No
 network, provider, repository, or host effect is part of any command.
 
 ## Completion, rollback, and return
 
 The implementation owner modifies only the four paths and does not commit, integrate, or control
-another Agent. It returns ImplementationReturn.COMPLETED with ticket ID, ACS revision,
-implementation-admission-baseline/candidate worktree identity, changed-path list, named
-test/type/compile/diff evidence, and each mutation's red/restored-green result. The independent
-reviewer inspects that returned worktree, writes the candidate commit after approval, and alone
-may submit it to the integration gate. BLOCKED returns the exact finite reason with no workaround.
-CHANGE_DETECTED returns REQUIREMENT_CHANGED and stops source work.
+another Agent. It returns ImplementationReturn.COMPLETED with ticket ID, ACS revision, the exact
+runtime-bound `<implementation-admission-baseline>` SHA and candidate-worktree identity,
+changed-path list, named test/type/compile/diff evidence, and each mutation's red/restored-green
+result. The independent reviewer records and checks that same SHA in its review evidence, writes
+the candidate commit after approval, and alone may submit it to the integration gate. BLOCKED
+returns the exact finite reason with no workaround. CHANGE_DETECTED returns REQUIREMENT_CHANGED
+and stops source work.
 
 Rollback is a new local forward correction or revert of the Ticket 01 commit; never force-push,
 rewrite authority history, relabel local state as remote authority, or create a remote effect.
