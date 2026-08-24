@@ -432,7 +432,25 @@ def test_direct_remote_observation_ast_gate_targets_owned_production_modules() -
         "AuthorityFinalizationResult",
         "finalize_authority_integration",
     )
-    init_all = frozen_init_all + observation_all + finalization_all
+    collaboration_all = (
+        "PullRequestReadDisposition",
+        "PullRequestState",
+        "PullRequestReadRequest",
+        "PullRequestReadResult",
+        "PullRequestEvidence",
+        "PullRequestReadPort",
+        "ProviderPolicyReadDisposition",
+        "ProviderEnforcementCapability",
+        "ProviderPolicyReadRequest",
+        "ProviderPolicyReadResult",
+        "ProviderEnforcementEvidence",
+        "ProviderPolicyReadPort",
+        "HighCollaborationAdmissionDecision",
+        "HighCollaborationAdmissionRequest",
+        "HighCollaborationAdmissionResult",
+        "admit_high_collaboration_evidence",
+    )
+    init_all = frozen_init_all + observation_all + finalization_all + collaboration_all
     allowed_modules = {
         "__future__",
         "datetime",
@@ -522,8 +540,9 @@ def test_direct_remote_observation_ast_gate_targets_owned_production_modules() -
                 assert node.module is not None
                 if node.module not in allowed_modules:
                     assert node.module in {
-                        "contracts",
-                        "integration",
-                        "observation",
-                        "library.local_orchestration.project_authority.observation",
+                            "contracts",
+                            "integration",
+                            "observation",
+                            "collaboration",
+                            "library.local_orchestration.project_authority.observation",
                     }

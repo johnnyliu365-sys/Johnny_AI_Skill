@@ -444,8 +444,10 @@ def test_readback_sha_and_base_race_never_claim_authority() -> None:
 def test_finalization_ast_gate_targets_owned_production_modules() -> None:
     root = Path(__file__).resolve().parents[1]
     integration_path = root / "library/local_orchestration/project_authority/integration.py"
+    collaboration_path = root / "library/local_orchestration/project_authority/collaboration.py"
     init_path = root / "library/local_orchestration/project_authority/__init__.py"
     integration_tree = ast.parse(integration_path.read_text(encoding="utf-8"))
+    collaboration_tree = ast.parse(collaboration_path.read_text(encoding="utf-8"))
     init_tree = ast.parse(init_path.read_text(encoding="utf-8"))
     integration_all = (
         "PrePushLifecycleRequest",
@@ -501,6 +503,24 @@ def test_finalization_ast_gate_targets_owned_production_modules() -> None:
         "AuthorityFinalizationResult",
         "finalize_authority_integration",
     )
+    collaboration_all = (
+        "PullRequestReadDisposition",
+        "PullRequestState",
+        "PullRequestReadRequest",
+        "PullRequestReadResult",
+        "PullRequestEvidence",
+        "PullRequestReadPort",
+        "ProviderPolicyReadDisposition",
+        "ProviderEnforcementCapability",
+        "ProviderPolicyReadRequest",
+        "ProviderPolicyReadResult",
+        "ProviderEnforcementEvidence",
+        "ProviderPolicyReadPort",
+        "HighCollaborationAdmissionDecision",
+        "HighCollaborationAdmissionRequest",
+        "HighCollaborationAdmissionResult",
+        "admit_high_collaboration_evidence",
+    )
     allowed_modules = {
         "__future__",
         "datetime",
@@ -513,6 +533,7 @@ def test_finalization_ast_gate_targets_owned_production_modules() -> None:
         "contracts",
         "integration",
         "observation",
+        "collaboration",
     }
     forbidden_names = {
         "Any",
@@ -560,7 +581,8 @@ def test_finalization_ast_gate_targets_owned_production_modules() -> None:
         raise AssertionError("missing __all__")
 
     assert literal_all(integration_tree) == integration_all
-    assert literal_all(init_tree) == frozen_init_all + observation_all + finalization_all
+    assert literal_all(collaboration_tree) == collaboration_all
+    assert literal_all(init_tree) == frozen_init_all + observation_all + finalization_all + collaboration_all
     declarations = {
         node.name
         for node in integration_tree.body
@@ -586,7 +608,29 @@ def test_finalization_ast_gate_targets_owned_production_modules() -> None:
         and not node.target.id.startswith("_")
     )
     assert public_assignments == set()
-    for tree in (integration_tree, init_tree):
+    collaboration_declarations = {
+        node.name
+        for node in collaboration_tree.body
+        if isinstance(node, (ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef))
+        and not node.name.startswith("_")
+    }
+    assert collaboration_declarations == set(collaboration_all)
+    collaboration_public_assignments = {
+        target.id
+        for node in collaboration_tree.body
+        if isinstance(node, ast.Assign)
+        for target in node.targets
+        if isinstance(target, ast.Name) and not target.id.startswith("_")
+    }
+    collaboration_public_assignments.update(
+        node.target.id
+        for node in collaboration_tree.body
+        if isinstance(node, ast.AnnAssign)
+        and isinstance(node.target, ast.Name)
+        and not node.target.id.startswith("_")
+    )
+    assert collaboration_public_assignments == set()
+    for tree in (integration_tree, collaboration_tree, init_tree):
         for node in ast.walk(tree):
             if isinstance(node, ast.Name):
                 assert node.id not in forbidden_names
