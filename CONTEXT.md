@@ -1,17 +1,19 @@
 # Johnny AI Skill project shared Context
 
-> State: `SEALED` by `CHG-20260815-024`. This artifact is architecture-owned.
-> Later stages bind its revision and exact source spans; they do not append to it.
+> State: `SEALED / REVISION_02` by `CHG-20260824-038`. This architecture-owned revision
+> replaces the prior seal linked to `CHG-20260815-024`; provenance remains in Git. Later stages
+> bind this revision and exact source spans; they do not append to it.
 
 ## Stable project facts and boundaries
 
 - Johnny is an external, detachable control plane. Target-owned requirements, Context, SPEC,
   tickets, tests, reviews and product source remain in the user's repository; this plugin is
   not its runtime, CI, build or deployment dependency.
-- Active implementation supervision is receipt-bound and event-driven: an exact Git ref event
+- Receipt-bound, event-driven supervision remains the cross-lifetime path: an exact Git ref event
   can wake only the named reviewer through a separately proved role-wake capability after a
-  committed handoff validates. Heartbeat is never implied and requires separate, explicit user
-  approval.
+  committed handoff validates. Same-lifetime `reviewer → wait → review → gate` is synchronous and
+  is never blocked for absent runner, queue, receipt, descriptor, host gateway, or workspace/
+  profile readback. Heartbeat is never implied and requires separate, explicit user approval.
 - An execution binding identifies the task/session that owns write authority, not its shell or
   IDE. While Johnny is attached, replacement of the task, writer, host or machine revokes the
   old binding before a new one writes. The user may remove Johnny at any time; removal does not
@@ -29,8 +31,13 @@
 - The current product direction is a local, removable, metadata-only multi-Agent workflow
   control plane. Historical SaaS/payment/entitlement work is evidence, not a current product
   commitment.
+- Controlled integration binds a versioned, declared `project_authority_ref` and credential-free
+  remote identity. `origin/<ref>` is diagnostic cache evidence only. A guarded local merge is
+  `LOCAL_INTEGRATED`; only non-force push plus exact direct remote SHA readback is
+  `AUTHORITY_INTEGRATED`. A failed or unproved readback remains `PUSH_UNCONFIRMED`.
 - Only the ticket's named reviewer may orchestrate an implementation Agent. Every source,
-  workspace, Git or host effect remains role-, receipt-, baseline- and correlation-bound.
+  workspace, Git or host effect remains role-, baseline- and correlation-bound; receipt and
+  bridge evidence are required only where the selected cross-lifetime mechanism declares them.
 - Shared Context lifecycle and content admission are defined only by
   `skills/johnny-project-takeover/references/context-routing.md`. Ticket, dispatch,
   implementation, monitoring and review lanes are read/reference-only.
@@ -45,6 +52,7 @@ or review. This index records identity and location only.
 | Reusable module library | `SPEC-AI-WORKFLOW-REUSABLE-MODULE-LIBRARY-20260801-01KYYV8YJFZ467BC1RGDNY64QP` / `modules/spec/reusable-module-library.md` | `doc/context/reusable-module-library/main.md` |
 | Router framework | `SPEC-AI-WORKFLOW-ROUTER-FRAMEWORK-20260802-01KZ2M4P6R8T0V2X4Z6B8D0F2H` / `modules/spec/router-framework.md` | `doc/context/router-framework/main.md` |
 | Module application skill | `SPEC-AI-WORKFLOW-MODULE-APPLICATION-SKILL-20260802-01KZ2Q8V4N6R9T1X3Z5B7C9D1F3H` / `modules/spec/module-application-skill.md` | `doc/context/module-application-skill/main.md` |
+| Project authority integration | `PENDING / CHG-20260824-038` / `modules/spec/project-authority-integration.md` | `doc/context/project-authority-integration/main.md` |
 | Plugin distribution | `SPEC-AI-WORKFLOW-PLUGIN-DISTRIBUTION-20260802-01KZ3N5P7R9T1V3X5Z7B9D1F3H` / `modules/spec/plugin-distribution.md` | `doc/context/plugin-distribution/main.md` |
 | Claude plugin distribution | `SPEC-AI-WORKFLOW-CLAUDE-CODE-PLUGIN-DISTRIBUTION-20260802-01KZ4C6D8E0F2G4H6J8K0M2N4P` / `modules/spec/claude-code-plugin-distribution.md` | `doc/context/claude-code-plugin-distribution/main.md` |
 | Context telemetry | `SPEC-AI-WORKFLOW-CONTEXT-LOAD-TELEMETRY-20260803-01KZ5E7F9G1H3J5K7M9N1P3Q5R` / `modules/spec/context-load-telemetry.md` | `doc/context/context-load-telemetry/main.md` |
