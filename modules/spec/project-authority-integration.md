@@ -309,6 +309,22 @@ export/import surface. This is a test-scope correction only: the Revision-07 pub
 contract, authority topology, effect boundary, frozen Ticket 01 contracts and frozen Ticket 02
 observation contract are unchanged.
 
+## Revision 09 — complete historical package-surface gate correction
+
+A complete search of the committed PAI-01/02 source tests finds exactly two tests that parse the
+package public surface: the Ticket-01 contracts gate and the Ticket-02 observation gate. The
+latter correctly pins `__init__.py` to the then-complete base plus seven observation exports, and
+also contains the historical Ticket-01-only `NonForcePushPort` deny. Revision 09 gives Ticket 03
+the minimal fifth writable path, `tests/test_project_authority_observation.py`, so both gates
+require the same exact package export sequence: the frozen Ticket-01 base exports, the unchanged
+seven Ticket-02 observation exports, then the eight Revision-07 finalization exports. The
+observation module's own exact seven-name export/declaration assertion remains unchanged. The
+historical `NonForcePushPort` deny is replaced only by the exact Revision-07 allowlist; every
+other deny/import/source assertion remains. No additional test in the committed suite references
+this package surface. This fixes ticket closure only and changes no public meaning, requirement,
+architecture, authority, effect, frozen Ticket-01 contract, or frozen Ticket-02 observation
+contract.
+
 ## Authority and integration flow
 
 1. Validate the authority contract, full ref, credential-free repository identity and reviewed
@@ -482,3 +498,4 @@ can never be inferred from a pure-source success.
 | 2026-08-24 | Project owner-approved Sol decision / Terra supervisor reviewer / main / 6df6885ea093f1e37899f5252f8e4a1cc4feadb9 | Revision 06 closes the previously undefined Ticket 02 direct-observation public contract: strict request/read/result shapes, finite disposition and decision enums, one-call fake-port semantics, fail-closed precedence, C13-independent seam, exact three-path boundary, deterministic commands, and restore-backed reverse mutations. It changes neither Ticket 01's frozen API nor Ticket 03's push/readback finalization, requirement, architecture authority, or effect authority. |
 | 2026-08-25 | Project owner / Terra supervisor reviewer / main / 381a089a8519875134c0f597c1c20f1be51fdb4a | Revision 07 records the owner-selected single provider-neutral Ticket 03 finalization boundary. It closes the fake non-force push/result, one-call direct-readback, final result, finite failure and exact three-path seam without changing requirement, authority topology, external-effect authority, or frozen Ticket 01/02 contracts. |
 | 2026-08-25 | Terra supervisor reviewer / main / 28d484179576b80d7583ea3b5601850042dfabda | Revision 08 repairs only a Ticket 03 admission omission found before source mutation: the existing Ticket 01 actual-source test otherwise makes Revision-07's explicitly approved eight new `integration.py` exports impossible. Ticket 03 may extend that precise test allowlist while retaining every original frozen assertion; no public meaning, requirement, architecture, authority, effect or acceptance criterion changes. |
+| 2026-08-25 | Terra supervisor reviewer / main / c99add58297d71d8e9d6d5b85978f2a68980d45c | Revision 09 completes the same pre-mutation ticket-closure correction after enumerating every committed project-authority package-surface gate. It adds only the Ticket 02 observation test, which must retain its immutable observation-module checks while extending `__init__.py` to the exact already-approved Revision-07 surface. No public meaning or external boundary changes. |
