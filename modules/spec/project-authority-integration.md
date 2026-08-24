@@ -3,8 +3,8 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | SPEC-AI-WORKFLOW-PROJECT-AUTHORITY-INTEGRATION-20260824-01M2A4C6E8G0I2K4M6O8Q0S2U4 |
-| Status | APPROVED / REVISION_05 / REVIEWER_DECOMPOSITION_AUTHORIZED |
-| Author / baseline | Architecture owner / main / ecbee4319ff6f7ceab878a3ddce5471154571890 |
+| Status | APPROVED / REVISION_06 / REVIEWER_DECOMPOSITION_AUTHORIZED |
+| Author / baseline | Project-owner-approved Sol decision / Terra supervisor reviewer / specification provenance main at 6df6885ea093f1e37899f5252f8e4a1cc4feadb9; not an implementation-admission baseline |
 | Context | doc/context/project-authority-integration/main.md |
 | Shared Context | CONTEXT.md revision 02 sealed by CHG-20260824-038 |
 | PRD / change | PRD-20260824-038 / CHG-20260824-038 |
@@ -115,13 +115,141 @@ The finite error surface includes:
 
 - AUTHORITY_CONTRACT_MISSING, AUTHORITY_CONTRACT_INVALID and AUTHORITY_REF_INVALID;
 - REMOTE_IDENTITY_MISMATCH, DIRECT_REMOTE_READ_UNAVAILABLE, REMOTE_REF_NOT_FOUND,
-  REMOTE_REF_AMBIGUOUS and AUTHORITY_REF_MOVED;
+  REMOTE_REF_AMBIGUOUS, DIRECT_REMOTE_OBSERVATION_STALE and AUTHORITY_REF_MOVED;
 - CANDIDATE_NOT_A_COMMIT, CANDIDATE_SCOPE_MISMATCH, REVIEW_EVIDENCE_MISSING and
   COUNTER_MUTATION_EVIDENCE_MISSING;
 - PR_REQUIRED, PR_NOT_REVIEWABLE, PR_HEAD_SHA_MISMATCH, PR_BASE_REF_MISMATCH and
   PR_APPROVAL_STALE;
 - PROVIDER_ENFORCEMENT_UNPROVEN, PROVIDER_ENFORCEMENT_UNSUPPORTED, GATE_REJECTED,
   PUSH_REJECTED, PUSH_UNCONFIRMED, REMOTE_READBACK_SHA_MISMATCH and SECRET_MATERIAL_DETECTED.
+
+## Revision 06 — direct remote observation contract and Ticket 02 seam
+
+The owner-approved direct-observation closure is Ticket 02 in the declared ticket order. It is a
+pure, fake-port closure: it validates and classifies one supplied direct-read result, without a
+live remote, provider, shell, Git executable, process, network, environment, filesystem or clock
+lookup. It neither changes the frozen Ticket 01 API nor consumes an observation to push or finalise
+integration; Ticket 03 alone owns that consumption, injected non-force push, post-push readback,
+and every transition to `AUTHORITY_INTEGRATED`.
+
+`library/local_orchestration/project_authority/observation.py` owns exactly these new public types
+and function. Each named model below is a strict Pydantic model: frozen, `extra="forbid"`, strict,
+and revalidating instances. Ordinary construction rejects null where the annotation is non-null,
+wrong primitive types, coercion and extra fields before a domain decision is constructed.
+
+| Interface | Exact contract |
+| --- | --- |
+| DirectRemoteReadDisposition | Finite enum exactly `OBSERVED`, `UNAVAILABLE`, `NOT_FOUND`, `AMBIGUOUS`. |
+| DirectRemoteObservationDecision | Finite enum exactly `ACCEPTED`, `DIRECT_REMOTE_READ_UNAVAILABLE`, `REMOTE_REF_NOT_FOUND`, `REMOTE_REF_AMBIGUOUS`, `REMOTE_IDENTITY_MISMATCH`, `DIRECT_REMOTE_OBSERVATION_STALE`, `AUTHORITY_REF_MOVED`, `SECRET_MATERIAL_DETECTED`. |
+| DirectRemoteObservationRequest | Strict request with non-null `authority_contract: ProjectAuthorityContract`, `observation_id: str`, timezone-aware `valid_from: datetime`, timezone-aware `decision_at: datetime`, and nullable `expected_sha: str | None = None`. `valid_from <= decision_at` is mandatory. A null `expected_sha` denotes an initial observation; a non-null value is revalidated as one full lower-case SHA. |
+| DirectRemoteReadResult | Strict port result with non-null `disposition: DirectRemoteReadDisposition`, `source: GitObservationSource`, `repository: RemoteRepositoryId`, `full_ref: FullBranchRef`, nullable `sha: str | None`, `observer: str`, `method: str`, `exit_status: int`, timezone-aware `observed_at: datetime`, and `normalized_evidence_digest: str`. `OBSERVED` requires exactly one SHA; each other disposition requires `sha is None`. |
+| DirectRemoteObservationResult | Strict result with `decision: DirectRemoteObservationDecision`, nullable `observation: GitObservation | None = None`, and nullable `failure: DirectRemoteObservationDecision | None = None`. `ACCEPTED` carries exactly one direct `GitObservation` and no failure. Every failure carries no observation and its finite failure decision. |
+| DirectRemoteObservationPort | A `Protocol` with exactly `observe(self, request: DirectRemoteObservationRequest, /) -> DirectRemoteReadResult`. Its input is positional-only at the public boundary. |
+| observe_declared_remote | Pure function with exactly `observe_declared_remote(request: DirectRemoteObservationRequest, port: DirectRemoteObservationPort, /) -> DirectRemoteObservationResult`. It calls `port.observe(request)` exactly once. |
+
+`observe_declared_remote` has this exact, fail-closed precedence:
+
+1. strict request/read-result construction;
+2. credential-bearing `observer`, `method`, or `normalized_evidence_digest` metadata, yielding
+   `SECRET_MATERIAL_DETECTED` without copying that material to a public observation;
+3. read-result repository or full ref differing from the request's authority contract, yielding
+   `REMOTE_IDENTITY_MISMATCH`;
+4. `UNAVAILABLE`, `NOT_FOUND`, and `AMBIGUOUS`, mapping one-to-one to
+   `DIRECT_REMOTE_READ_UNAVAILABLE`, `REMOTE_REF_NOT_FOUND`, and `REMOTE_REF_AMBIGUOUS`;
+5. a source other than `DIRECT_REMOTE_REF`, including `REMOTE_TRACKING_CACHE`, yielding
+   `DIRECT_REMOTE_READ_UNAVAILABLE`;
+6. freshness: `valid_from <= observed_at <= decision_at`, else
+   `DIRECT_REMOTE_OBSERVATION_STALE`;
+7. a non-null `expected_sha` unequal to the observed SHA, yielding `AUTHORITY_REF_MOVED`;
+8. only then construct a `GitObservation` with `DIRECT_REMOTE_REF` and return `ACCEPTED`.
+
+Normal unavailable/not-found/ambiguous outcomes are typed port result values, not exceptions.
+Unexpected port exceptions are defects and are not converted into an authority decision. There is
+no retry, loop, polling, fetch, clock fallback, cache fallback, provider fallback or implicit
+effect. In particular, a fake result or a successful process exit cannot claim a live capability.
+
+The complete recommended Ticket 02 source/test boundary is exactly:
+
+- modify `library/local_orchestration/project_authority/__init__.py` to export only the new public
+  observation contract;
+- create `library/local_orchestration/project_authority/observation.py`;
+- create `tests/test_project_authority_observation.py`.
+
+Ticket 02 must forbid changes to `library/local_orchestration/project_authority/contracts.py` and
+`library/local_orchestration/project_authority/integration.py`. It cannot introduce
+`NonForcePushPort`, production composition, a live adapter, lifecycle finalisation, or an
+`AUTHORITY_INTEGRATED` result.
+
+Its strong-type preflight constructs every `DirectRemoteReadDisposition` and
+`DirectRemoteObservationDecision` member, each public request/read/result shape, and the Protocol
+through a deterministic in-memory fake. It rejects unknown enum values, null non-nullable fields,
+extra/coercible fields, naive or inverted decision times, non-full expected SHAs, an `OBSERVED`
+result without a SHA, and a non-observed result with one. This is new behaviour: record named green
+cells, not a ceremonial baseline-red claim.
+
+| Cell | Category | Required assertion |
+| --- | --- | --- |
+| PAI-02-T01 | positive / error-code consistency | A valid direct fake response produces `ACCEPTED`, preserves the declared repository/ref/SHA/observer/method/time/digest in one `GitObservation`, has no failure, and calls `observe` exactly once. |
+| PAI-02-T02 | strong-type preflight / missing values | Every new enum member and ordinary public model/Protocol construction succeeds; unknown enum, null, wrong primitive, coercion, extra field, naive/inverted time, invalid expected SHA, and invalid disposition/SHA shape fail ordinary validation. |
+| PAI-02-T03 | exception behavior / error-code consistency | Each of `UNAVAILABLE`, `NOT_FOUND`, and `AMBIGUOUS` maps one-to-one to its declared finite failure and no observation; an unexpected fake-port exception is not converted into a success or finite authority decision. |
+| PAI-02-T04 | cache boundary | `REMOTE_TRACKING_CACHE` cannot substitute for `DIRECT_REMOTE_REF` and returns `DIRECT_REMOTE_READ_UNAVAILABLE` with no observation. |
+| PAI-02-T05 | path identity | A fake response with repository or full ref different from `authority_contract` returns `REMOTE_IDENTITY_MISMATCH` before source/freshness/SHA success. |
+| PAI-02-T06 | staleness / race | `observed_at` before `valid_from` or after `decision_at` returns `DIRECT_REMOTE_OBSERVATION_STALE`; a non-null unequal expected SHA returns `AUTHORITY_REF_MOVED`. |
+| PAI-02-T07 | security / metadata boundary | Credential-bearing `observer`, `method`, or digest returns `SECRET_MATERIAL_DETECTED`, carries no observation, and does not copy the credential-bearing string into a public result. |
+| PAI-02-T08 | test truthfulness / source boundary | An actual-source AST gate parses only the declared `__init__.py` and `observation.py`, confirms the observation module declares exactly the seven approved public names and that `__init__.py` retains the frozen Ticket 01 exports while importing/exporting exactly those seven additions. It denies `Any`, `cast`, `getattr`, `setattr`, `__import__`, `eval`, `exec`, `model_construct`, `model_copy`, `NonForcePushPort`, `open`, `os`, `pathlib`, `subprocess`, `socket`, `urllib`, `http`, `requests`, `git`, `shutil`, `time`, `datetime.now`, and `datetime.utcnow`, including aliases. |
+
+The source gate permits only the finite production import roots `__future__`, `datetime`, `enum`,
+`re`, `typing`, `pydantic`, and
+`library.local_orchestration.project_authority.contracts` in `observation.py`; it may add only the
+relative observation re-export to the existing `__init__.py` imports. It never reads a copied
+fixture or test representation.
+
+The TDD cells must use only in-memory deterministic fakes and must not inspect `.git`, local refs,
+`.worktrees`, `.claude/worktrees`, environment-dependent paths, or the surrounding checkout. This
+is the C13 independence rule: a green result depends on explicit request/read-result values and
+the declared production sources, not on worktree residue or local repository facts.
+
+Every following reverse mutation is performed in a disposable overlay, must make its named cell
+red, and must be byte-for-byte restored before return:
+
+- mutate production to call the fake port twice (`PAI-02-T01` red);
+- relax a strict field/enum/disposition validator (`PAI-02-T02` red);
+- collapse `UNAVAILABLE`, `NOT_FOUND`, or `AMBIGUOUS` into success, or swallow an unexpected port
+  exception (`PAI-02-T03` red);
+- admit `REMOTE_TRACKING_CACHE` as direct authority (`PAI-02-T04` red);
+- remove repository/ref equality (`PAI-02-T05` red);
+- remove freshness comparison or expected-SHA equality (`PAI-02-T06` red);
+- remove credential-metadata rejection (`PAI-02-T07` red);
+- add a forbidden effect import/call or dynamic/bypass symbol to the real `observation.py`, or
+  add an undeclared public export (`PAI-02-T08` red).
+
+Ticket 02's deterministic local commands are:
+
+    py -3.11 -m pytest -q -p no:cacheprovider tests/test_project_authority_observation.py
+    py -3.11 -m mypy --strict library/local_orchestration/project_authority/__init__.py library/local_orchestration/project_authority/observation.py tests/test_project_authority_observation.py
+    py -3.11 -m compileall -q library/local_orchestration/project_authority/__init__.py library/local_orchestration/project_authority/observation.py
+    git diff --check <implementation-admission-baseline> HEAD
+    $trackedScopePaths = @(git diff --name-only <implementation-admission-baseline> HEAD)
+    $untrackedScopePaths = @(git ls-files --others --exclude-standard)
+    $implementationScopeEvidence = @(
+        $trackedScopePaths
+        $untrackedScopePaths
+    ) | Where-Object { $_ -ne "" } | Sort-Object -Unique
+    $declaredScopePaths = @(
+        "library/local_orchestration/project_authority/__init__.py"
+        "library/local_orchestration/project_authority/observation.py"
+        "tests/test_project_authority_observation.py"
+    ) | Sort-Object
+    $scopeDifference = @(Compare-Object -ReferenceObject $declaredScopePaths -DifferenceObject $implementationScopeEvidence)
+    if ($scopeDifference.Count -ne 0) { $scopeDifference | Format-Table -AutoSize; throw "HALT / CANDIDATE_SCOPE_MISMATCH" }
+    $implementationScopeEvidence
+
+The reviewer establishes the exact clean-current-integration-main SHA at same-lifetime dispatch as
+`<implementation-admission-baseline>`; neither this SPEC provenance SHA nor a ticket SHA may be
+substituted. The sorted duplicate-free `implementation-scope-evidence` union must equal exactly
+the three declared paths, including an uncommitted creation. Same-lifetime reviewer allocation,
+wait, review, and guarded integration remain bridge-free: no receipt, descriptor, gateway, or
+runner is required or authorized by this pure closure.
 
 ## Authority and integration flow
 
@@ -293,3 +421,4 @@ can never be inferred from a pure-source success.
 | 2026-08-24 | Architecture owner / main / 926c2b75ce9933d181220a3a48ec1aae9c38ab0a | Revision-02 review found its local-to-remote shortcut mutation could not reach the production reducer because integration.py was omitted from the ticket boundary. Revision 03 adds that pure reducer only, keeps all ports/effects out, and extends the fixed type/compile commands. |
 | 2026-08-24 | Architecture owner / main / a3c08309697f9fa9baa3dca442f35abdc39a6a0d | Ticket-tree review found revision 03 left the public distinction between strict structural rejection and named domain failure implicit. Revision 04 names the pure input/result/transition interfaces and confines AUTHORITY_INTEGRATED finalization to the later validated push/readback closure. |
 | 2026-08-24 | Architecture owner / main / ecbee4319ff6f7ceab878a3ddce5471154571890 | Ticket-tree admission review found Revision 04 referenced topology, authority-line role, provider kind and admission decisions without naming their finite enum types, leaving the public/AST surface incomplete. Revision 05 names and closes those enums only. |
+| 2026-08-24 | Project owner-approved Sol decision / Terra supervisor reviewer / main / 6df6885ea093f1e37899f5252f8e4a1cc4feadb9 | Revision 06 closes the previously undefined Ticket 02 direct-observation public contract: strict request/read/result shapes, finite disposition and decision enums, one-call fake-port semantics, fail-closed precedence, C13-independent seam, exact three-path boundary, deterministic commands, and restore-backed reverse mutations. It changes neither Ticket 01's frozen API nor Ticket 03's push/readback finalization, requirement, architecture authority, or effect authority. |
