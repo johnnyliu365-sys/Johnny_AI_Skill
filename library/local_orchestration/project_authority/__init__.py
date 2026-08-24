@@ -24,6 +24,15 @@ from .integration import (
     PrePushLifecycleTransition,
     advance_pre_push_lifecycle,
 )
+from .observation import (
+    DirectRemoteObservationDecision,
+    DirectRemoteObservationPort,
+    DirectRemoteObservationRequest,
+    DirectRemoteObservationResult,
+    DirectRemoteReadDisposition,
+    DirectRemoteReadResult,
+    observe_declared_remote,
+)
 
 __all__ = (
     "AuthorityContractAdmission",
@@ -46,4 +55,11 @@ __all__ = (
     "admit_authority_contract",
     "admit_authority_observation",
     "advance_pre_push_lifecycle",
+    "DirectRemoteObservationDecision",
+    "DirectRemoteObservationPort",
+    "DirectRemoteObservationRequest",
+    "DirectRemoteObservationResult",
+    "DirectRemoteReadDisposition",
+    "DirectRemoteReadResult",
+    "observe_declared_remote",
 )
