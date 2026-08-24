@@ -6,7 +6,8 @@
 | Source specification | SPEC-AI-WORKFLOW-PROJECT-AUTHORITY-INTEGRATION-20260824-01M2A4C6E8G0I2K4M6O8Q0S2U4, Revision 05 |
 | Requirement / decision | PRD-20260824-038 / CHG-20260824-038; ADR-20260824-020 |
 | Context | doc/context/project-authority-integration/main.md |
-| Registry baseline | main at b6353ac5a79ce2fd968862b55184ea04eeeeb1eb |
+| Registry provenance baseline | main at b6353ac5a79ce2fd968862b55184ea04eeeeb1eb |
+| Ticket 01 implementation admission baseline | main at de22c287db538c8545120ac468ae086fdafcee1e |
 | Index state | ACTIVE / TICKETS_OPENED / NO_DISPATCH |
 
 This index contains direct-child metadata only. It opens no worktree, branch, receipt,
@@ -30,4 +31,6 @@ own exact writable/test seam and the required approval or effect authority. At a
 same-lifetime synchronous dispatch, the reviewer establishes the exact ticket, worktree, branch,
 task, and correlation binding from this committed tree and Git metadata; a receipt, live
 descriptor, and host gateway are explicitly NOT_REQUIRED. Those cross-lifetime controls remain
-separate and do not block the synchronous lane.
+separate and do not block the synchronous lane. Ticket 01's source candidate starts from the
+implementation admission baseline above, which already contains this ticket tree; the registry
+provenance baseline is SPEC lineage only and is never its source-diff start point.
