@@ -194,10 +194,36 @@ the finding is that our artifacts are insufficient, not that the reviewer is.
 start work with no person and no live parent, the bridge is the mechanism for it. This ADR forbids
 only treating that mechanism as a precondition for work that is synchronous.
 
+## Outstanding follow-up, and what it has already cost
+
+The consequences above record that `references/router-control.md` and
+`references/implementation-authority.md` still state the receipt-bound gateway in the present
+indicative, and that a separate ticket must carry the same qualification. **That ticket was never
+opened.** Both files still read as though a live descriptor and an unconsumed receipt gate every
+dispatch.
+
+The cost is measured, not hypothetical. On 2026-08-24 a second host stopped
+`context-load-telemetry/05-opaque-storage-port-contracts` at dispatch admission and reported that
+completing it required first building a Codex worktree host gateway. It was not diverging: the
+ticket itself said `The live approved-dispatch descriptor is the sole authority to allocate or
+bind` a worktree, because it had been written from the un-updated references. The ticket has been
+corrected; the references have not.
+
+This is the second block from the same source. The first is recorded in the Context above.
+
+**Why the fix is not free.** `skills/` is an enumerated Level 1 payload tree, so editing either
+reference changes the published payload and therefore requires a regenerated publication root, a
+new version and a new immutable tag — owner-authorized release work under the distribution SPEC,
+not a documentation edit. Any ticket that carries it must be written against that cost.
+
+Until it lands, every new ticket written from those references will import the same precondition,
+and each occurrence costs a stopped dispatch.
+
 ## Revision and supersession record
 
 | Date | Actor / baseline | Summary |
 | --- | --- | --- |
+| 2026-08-24 | Architecture owner / `main` | Recorded that the skill-reference follow-up named in the consequences was never opened, and that it has now blocked a second dispatch. No decision changed. |
 | 2026-08-23 | Architecture owner / `main` | Decision 5 amended on the owner's word: the reviewer table is rationale rather than binding, and cross-model review scales with the delivery profile instead of gating anyone who has a single model. A second amendment removed a prohibition on a ticket's author reviewing work done against it: the implementer already tests the ticket's coherence by trying to satisfy it, and the rule would have forbidden the deliberate use of a divergent reviewer for breadth. |
 | 2026-08-23 | Architecture owner / `main` | Drafted as `PROPOSED`. Decision 3 reverses an alternative ADR-012 recorded as owner-rejected and is held pending the owner's explicit word; the remaining decisions stand independently of it. |
 | 2026-08-23 | Project owner / owner confirmation | Accepted Decision 3 and therefore the ADR. Same-lifecycle `dispatch → wait → review → guarded integration` is the default; the runner remains only a cross-lifetime handoff bridge. |

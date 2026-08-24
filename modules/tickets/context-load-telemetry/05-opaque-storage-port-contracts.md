@@ -10,7 +10,7 @@
 | Baseline / dependency | c1ee1fee384ad2109b672707e10a56e4bc66976d; no implementation ticket precedes it. |
 | Control owner / reviewer | Current-session Codex reviewer; semantic ticket-review profile (current intent: Terra/xhigh), to be host-verified before dispatch. |
 | Implementation owner | Unassigned until receipt admission; semantic implementation-standard profile (current intent: Luna/xhigh). READY_LOW_MODEL; no hard-ticket elevation is authorized. |
-| Worktree / branch / task / receipt / correlation | Unissued. The live approved-dispatch descriptor is the sole authority to allocate or bind them. |
+| Worktree / branch / task | Allocated by the reviewer at dispatch. This closure is synchronous, so no receipt or descriptor is issued or required — see `ADR-20260823-014` Decisions 2 and 3. |
 | Delivery stage / profile / resources | POC delivery stage; STANDARD floor because this creates a public typed contract boundary and no committed WorkloadAssessment may claim COMPACT. One implementation lane, one independent reviewer, zero helpers. |
 | Implementation language / checker | Python 3.11; frozen strict Pydantic models, explicit finite enums and complete annotations; mypy --strict. |
 | XSS / effects | XSS_NOT_APPLICABLE; no Browser/WebView/HTML/DOM/JavaScript. No filesystem, process, Git, network, provider, credential, runner, task, receipt-consumption, host-control or target-project effect is authorized. |
@@ -207,11 +207,16 @@ integration.
 
 ## Ownership, receipt and return
 
-The implementation owner receives only the identifier-only dispatch envelope after a live
-descriptor, matching unconsumed receipt, verified Luna/xhigh task profile and three-way workspace
-proof. It modifies only this ticket's boundary and cannot control another Agent, integrate, push,
-reserve a task, consume a receipt or invoke a provider. The reviewer is the sole orchestrator and
-may not bypass ticket/receipt/workspace/profile admission through a generic subagent interface.
+Dispatch for this closure is synchronous: the reviewer dispatches, waits for completion, reviews,
+and integrates through `admit_document_mutation`. Per `ADR-20260823-014` Decision 3 that path
+requires no live descriptor, receipt, queue or host gateway, and Decision 2 forbids blocking a
+synchronous flow because such a bridge is absent. A receipt-bound descriptor is required only when
+the dispatching reviewer and the returning implementer occupy different lifetimes — a handoff
+across hosts, sessions or machines. This closure does not.
+
+The implementation owner receives an identifier-only dispatch envelope. It modifies only this
+ticket's boundary and cannot control another Agent, integrate, push, reserve a task, consume a
+receipt or invoke a provider. The reviewer remains the sole orchestrator.
 
 Return exactly ImplementationReturn.COMPLETED -> ACTION_COMPLETED with named TDD/type/mutation
 evidence, BLOCKED -> HALT with the failed cell, or CHANGE_DETECTED -> REQUIREMENT_CHANGED.
