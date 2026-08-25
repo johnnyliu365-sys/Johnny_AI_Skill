@@ -64,6 +64,19 @@ readback, a receipt or a live descriptor may not block the lane. The three-way n
 filesystem-identity and Git-metadata proof above remains required whenever a task is resumed
 across lifetimes.
 
+## High-collaboration evidence
+
+When a project declares `HIGH_COLLABORATION`, each ticket carries one current pull request whose
+`head_sha` equals the candidate SHA and whose base equals the declared authority ref, with any
+approval bound to that exact head. The pull request and its CI are visibility and audit
+evidence only; the gate remains the sole integration authority, and a provider merge control is
+never an alternative integration path.
+
+Provider enforcement is claimed only from a recorded qualification — `PROVEN`, `UNPROVEN` or
+`UNSUPPORTED` by actual provider readback — never inferred from documentation or from settings
+alone. A `SINGLE_BRANCH` project records this whole surface as not applicable; the absence of a
+pull request is not a defect there, and high-collaboration ceremony must not be imposed on it.
+
 ## Allocation and correction
 
 One implementation owner holds at most one active lane. Release a completed/integrated

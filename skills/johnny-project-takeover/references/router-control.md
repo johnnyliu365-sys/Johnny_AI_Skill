@@ -111,6 +111,28 @@ must not be folded together; only a person may relay an `UNAVAILABLE` completion
 dispatch confirmation is asked once; `ACTION_COMPLETED` must not create a second ceremonial
 approval prompt.
 
+## Authority line and topology
+
+A project's integration source of truth is its declared authority-line contract: a credential-free
+remote repository identity, a validated full branch ref, and a declared topology of
+`SINGLE_BRANCH` or `HIGH_COLLABORATION`. No branch name, including `main`, has inherent
+authority; a three-line `dev`/`staging`/`main` layout is a recommended default for
+multi-session projects, and the names are project data, never assumptions.
+
+Remote truth is directly observed. Admission resolves the declared ref by a fresh direct remote
+readback at decision time; a local branch or a possibly stale `origin/<ref>` tracking entry is a
+diagnostic, never admission or completion proof. A worktree whose document topology cannot be
+derived from the observed authority commit halts as `TOPOLOGY_DRIFT_DETECTED` before any
+source, Git or Agent effect — it must not be auto-merged, reset or pushed around.
+
+Integration has two completed-looking but non-equivalent states. Gate success alone is
+`LOCAL_INTEGRATED`. Only a non-force push to the declared ref followed by an exact direct remote
+SHA readback is `AUTHORITY_INTEGRATED`; a missing, failed or mismatched readback is
+`PUSH_UNCONFIRMED`, and no process exit code upgrades it. A topology-changing migration must
+reach `AUTHORITY_INTEGRATED` before any further session or machine starts work from that
+project, because every new session boots from the remote's shape, not from the machine that did
+the work.
+
 ## Route table
 
 | Stage | Minimum source kind | Capability kind | Expected return |

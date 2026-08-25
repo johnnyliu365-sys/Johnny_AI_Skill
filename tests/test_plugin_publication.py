@@ -92,7 +92,7 @@ _IMPLEMENTATION_AUTHORITY_REFERENCE: Final[Path] = (
     / "references"
     / "implementation-authority.md"
 )
-_RELEASE_VERSION: Final[str] = "0.4.12"
+_RELEASE_VERSION: Final[str] = "0.4.13"
 _PUBLICATION_URL: Final[str] = (
     "https://github.com/johnnyliu365-sys/Johnny_AI_Skill_publication.git"
 )
