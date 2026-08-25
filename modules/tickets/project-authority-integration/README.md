@@ -23,12 +23,12 @@ release, deployment, or credential access.
 | [05-profile-and-bridge-alignment.md](05-profile-and-bridge-alignment.md) | COMPLETED / INTEGRATED at 7e46c00aec6c03960ac7f1049ae13072b36a43b7 | 01 through 04 accepted | Exact three-state bridge assertion with implementation and independent reviewer mutations; prose remains deferred to 07 |
 | [06-live-provider-repository-qualification.md](06-live-provider-repository-qualification.md) | FUTURE_VERIFICATION / DEFERRED_EXTERNAL_EFFECT | 01 through 05 accepted; later exact per-project owner effect authority | Per-project live provider/repository qualification; not a PAI-08 predecessor |
 | [07-governance-reference-release.md](07-governance-reference-release.md) | FUTURE_VERIFICATION / DEFERRED_RELEASE_EFFECT | 01 through 05 accepted; later exact owner release authority | Shipped governance/payload/release verification; not a PAI-08 predecessor |
-| [08-cluster-closure.md](08-cluster-closure.md) | READY_REVIEWER_CLOSURE / NO_IMPLEMENTATION_DISPATCH | 01 through 05 completed; 06 and 07 deferred contracts | Independent local-core closure; it cannot claim provider or release completion |
+| [08-cluster-closure.md](08-cluster-closure.md) | COMPLETED / `CORE_CLUSTER_CLOSED_WITH_DEFERRED_OPERATIONAL_VALIDATION` | 01 through 05 completed; 06 and 07 deferred contracts | Independent local-core closure; it cannot claim provider or release completion |
 
 No row is an implementation dispatch authorization. Tickets 01 through 05 are completed and
 integrated or closed with their stated source evidence. Tickets 06 and 07 are explicit
-future-verification records and retain their own effect authority. Ticket 08 is a reviewer-owned,
-read-only local-core closure, not a release gate. At a later
+future-verification records and retain their own effect authority. Ticket 08 is a completed
+reviewer-owned, read-only local-core closure, not a release gate. At a later
 same-lifetime synchronous dispatch, the reviewer creates the implementation worktree and branch
 from clean current integration main that already contains this approved ticket tree, then records
 that exact HEAD SHA as the reviewer-established `implementation-admission-baseline` in the
