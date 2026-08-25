@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | Ticket ID | PAI-02-DIRECT-REMOTE-OBSERVATION |
-| State | READY_LOW_MODEL / NOT_DISPATCHED |
+| State | COMPLETED / INTEGRATED at `9b8e82a48b0997fc63deaf04d931e93857d96246` |
 | Acceptance Closure Set | PAI-02-ACS-REVISION-02 |
 | Dependency | PAI-01 completed and integrated at 6df6885ea093f1e37899f5252f8e4a1cc4feadb9; its Revision-05 public contract remains frozen. |
 | Source specification | SPEC-AI-WORKFLOW-PROJECT-AUTHORITY-INTEGRATION-20260824-01M2A4C6E8G0I2K4M6O8Q0S2U4, Revision 06, ticket order item 02 |
@@ -17,6 +17,7 @@
 | Worktree / branch / task / correlation | Unissued until same-lifetime dispatch. The reviewer alone allocates a repository-contained worktree and branch from clean current integration main, validates Git metadata, binds task/worktree/branch/correlation, and records its exact HEAD as `<implementation-admission-baseline>`. Receipt, live descriptor, host gateway, and runner are NOT_REQUIRED for this same-lifetime lane; they are cross-lifetime-only controls. |
 | XSS classification | N/A: no Browser, WebView, HTML/DOM renderer, JavaScript execution, Native bridge, or provider effect. |
 | Environment | Local Python 3.11, deterministic in-memory fakes, and `mypy --strict` only. No remote/provider credential, remote/provider CLI, host, runner, process, shell, Git executable, network, environment, filesystem, or clock capability is a dependency. |
+| Completion evidence | The integrated source candidate is `9b8e82a48b0997fc63deaf04d931e93857d96246`, a current-main ancestor. Its completion index record is `381a089a8519875134c0f597c1c20f1be51fdb4a`; the feature index records the same integrated commit. |
 
 ## One observable closure
 

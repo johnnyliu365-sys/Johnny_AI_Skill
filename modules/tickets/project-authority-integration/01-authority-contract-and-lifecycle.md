@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | Ticket ID | PAI-01-AUTHORITY-CONTRACT-LIFECYCLE |
-| State | READY_LOW_MODEL / NOT_DISPATCHED |
+| State | COMPLETED / INTEGRATED at `6df6885ea093f1e37899f5252f8e4a1cc4feadb9` |
 | Acceptance Closure Set | PAI-01-ACS-REVISION-07 |
 | Source specification | SPEC-AI-WORKFLOW-PROJECT-AUTHORITY-INTEGRATION-20260824-01M2A4C6E8G0I2K4M6O8Q0S2U4, Revision 05 |
 | Requirement / decision / Context | PRD-20260824-038 / CHG-20260824-038 / ADR-20260824-020 / doc/context/project-authority-integration/main.md |
@@ -17,6 +17,7 @@
 | Worktree / branch / task / correlation | Unissued until synchronous dispatch. The reviewer establishes the exact ticket/worktree/branch/task/correlation binding from the committed ticket and Git metadata, creates the worktree and branch from clean current integration main containing this approved ticket, and records that exact HEAD SHA as `<implementation-admission-baseline>`. Receipt, live descriptor, and host gateway are NOT_REQUIRED for this same-lifetime lane; they remain cross-lifetime-only controls. |
 | XSS classification | N/A: no Browser, WebView, HTML/DOM renderer, JavaScript execution, Native bridge, or provider effect |
 | Environment | Local pure Python tests only. Claude/Codex credential, CLI, host execution, runner, and remote/provider capability are not dependencies of this ticket. |
+| Completion evidence | The integrated source candidate is `6df6885ea093f1e37899f5252f8e4a1cc4feadb9`, a current-main ancestor. Its scope-evidence closure record is `51e734f67c576c0727cd482f68a93ff8867226eb`; the feature index records the same integrated commit. |
 
 ## One observable closure
 

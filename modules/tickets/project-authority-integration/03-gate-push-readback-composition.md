@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | Ticket ID | PAI-03-GATE-PUSH-READBACK-COMPOSITION |
-| State | READY_LOW_MODEL / NOT_DISPATCHED |
+| State | COMPLETED / INTEGRATED at `98bafbab01e51d2bd3edf6079cda981710651e80` |
 | Acceptance Closure Set | ACS-PAI-03 Rev.01 |
 | Dependencies | PAI-01 integrated at `6df6885ea093f1e37899f5252f8e4a1cc4feadb9`; PAI-02 integrated at `9b8e82a48b0997fc63deaf04d931e93857d96246` |
 | Source specification | Project authority integration SPEC Revision 09, Ticket 03 seam and complete historical-gate correction |
@@ -11,6 +11,7 @@
 | Planning baseline | main at `381a089a8519875134c0f597c1c20f1be51fdb4a`; the implementation-admission baseline is the clean current integration main recorded by the reviewer at dispatch. |
 | Delivery / model | POC pure-source closure; Luna/xhigh implementation owner, Terra/xhigh supervisor-reviewer. The reviewer capability is not lower than the implementer capability. |
 | Effect boundary | Deterministic fake `NonForcePushPort` and fake `DirectRemoteObservationPort` only. No target remote mutation, push, force, credential, provider, shell, Git executable, process, network, filesystem, environment or clock access. |
+| Completion evidence | The integrated source candidate is `98bafbab01e51d2bd3edf6079cda981710651e80`, a current-main ancestor. Its ticket-closure and completion-index records are `01d28c8f5f83ee31f61bf00053a575945e1b29e1` and `8db99208d6b363f7b34a731989a4a7085cb0da00`; the feature index records the same integrated commit. |
 
 ## One observable closure
 
