@@ -145,6 +145,16 @@ def test_public_enums_and_lifecycle_request_are_closed() -> None:
         AuthorityObservationDecision.DIRECT_REMOTE_REF_ACCEPTED,
         AuthorityObservationDecision.DIRECT_REMOTE_READ_UNAVAILABLE,
     }
+    assert set(BridgeCapability) == {
+        BridgeCapability.NOT_REQUIRED,
+        BridgeCapability.AVAILABLE,
+        BridgeCapability.UNAVAILABLE,
+    }
+    assert tuple(capability.value for capability in BridgeCapability) == (
+        "NOT_REQUIRED",
+        "AVAILABLE",
+        "UNAVAILABLE",
+    )
     assert AuthorityContractInput.model_fields["topology"].annotation is ProjectTopology
     assert AuthorityContractInput.model_fields["authority_line_role"].annotation is AuthorityLineRole
     assert AuthorityContractInput.model_fields["remote_provider_kind"].annotation is RemoteProviderKind
