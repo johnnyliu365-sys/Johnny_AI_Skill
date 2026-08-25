@@ -293,8 +293,8 @@ _EXPECTED_ROUTES: tuple[_ExpectedRoute, ...] = (
 _EXPECTED_POLICIES: tuple[_ExpectedPolicy, ...] = (
     _ExpectedPolicy(
         "router-control",
-        "rev-9b005bbc31dca89d",
-        "sha256_9b005bbc31dca89d7e2e9394f095543c03c0ae5dd7eeaca70197d2a887466c0c",
+        "rev-8ac507168f938503",
+        "sha256_8ac507168f938503ad92fc3b2ec42128438efdff2e7daadc586254c5435a38b4",
         PurePosixPath("skills/johnny-project-takeover/references/router-control.md"),
     ),
     _ExpectedPolicy(
@@ -317,8 +317,8 @@ _EXPECTED_POLICIES: tuple[_ExpectedPolicy, ...] = (
     ),
     _ExpectedPolicy(
         "implementation-authority",
-        "rev-855117ed19c9c952",
-        "sha256_855117ed19c9c952f8903bc56ce070d2cf3805fb51d7a450c46bbf8a00480f50",
+        "rev-0c75d40550cb3e27",
+        "sha256_0c75d40550cb3e27d49b48cc7ed52630f2c930f58969c1b2fb5fc07a3232cbf8",
         PurePosixPath("skills/johnny-project-takeover/references/implementation-authority.md"),
     ),
     _ExpectedPolicy(
@@ -753,12 +753,12 @@ class WorkflowRouterTests(unittest.TestCase):
             delivery_stage=DeliveryStage.POC,
             router_control_reference=SkillReference(
                 reference_id="router-control",
-                source_revision="rev-9b005bbc31dca89d",
-                content_digest="sha256_9b005bbc31dca89d7e2e9394f095543c03c0ae5dd7eeaca70197d2a887466c0c",
+                source_revision="rev-8ac507168f938503",
+                content_digest="sha256_8ac507168f938503ad92fc3b2ec42128438efdff2e7daadc586254c5435a38b4",
             ),
             halt_return_contract=ExpectedReturnContract(
                 contract_id="router-control-no-return",
-                contract_revision="rev-9b005bbc31dca89d",
+                contract_revision="rev-8ac507168f938503",
                 return_kind=ReturnContractKind.NO_RETURN,
                 router_events=(),
                 implementation_statuses=(),
@@ -2434,7 +2434,7 @@ class RouteInstructionContractTests(unittest.TestCase):
         profile = build_router_poc_profile()
         self.assertEqual("router-control", profile.router_control_reference.reference_id)
         self.assertEqual(
-            "rev-9b005bbc31dca89d",
+            "rev-8ac507168f938503",
             profile.router_control_reference.source_revision,
         )
         self.assertEqual(
