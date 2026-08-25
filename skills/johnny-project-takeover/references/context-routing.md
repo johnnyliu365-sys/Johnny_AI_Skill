@@ -18,6 +18,39 @@ Expose only capability metadata needed for selection. Load the selected skill bo
 its directly applicable reference. Capability selection reduces context; runtime role and
 host gates still enforce authority.
 
+## Output-reducing capabilities
+
+An output-reducing capability sits between an Agent and a command or provider call and shrinks
+what the Agent reads. Two kinds exist and they do not carry the same risk:
+
+```text
+OutputReduction = LOSSLESS   # compressed in transit, restored byte-exact before use
+                | LOSSY      # content selected, collapsed, trimmed or truncated away
+```
+
+Classify before enabling, from the capability's own documented behavior. An unclassifiable
+capability is `LOSSY`.
+
+`LOSSLESS` reduction is transport and may stay enabled throughout. `LOSSY` reduction changes what
+the Agent can observe, so it is bounded by stage:
+
+| Stage | `LOSSY` reduction |
+| --- | --- |
+| `INTAKE` … `TICKETS` | allowed — exploration and orientation read no verdict from output |
+| `IMPLEMENT` | allowed for navigation; prohibited for the TDD red/green transitions themselves |
+| `SMOKE_TEST`, `REVIEW` | prohibited |
+
+The prohibition is not about token cost. `review-checks.md` § "Reviewer counter-mutation" requires
+the reviewer to see which cell turned red and why; a wrapper that keeps failures only, collapses
+passing cases to a count or trims tracebacks deletes that signal. `implementation-tdd.md` makes
+baseline-red mandatory for a defect correction and requires its failure reason in the ticket
+evidence — a trimmed traceback is exactly that reason removed.
+
+A stage that prohibits `LOSSY` reduction records in its evidence that the reported output was read
+unreduced. Absent that statement, treat the output as reduced and the check as not performed.
+Reduction never applies to Secret handling, security boundaries or provider effects, which stay
+governed by `security-boundary.md`.
+
 ## Shared project Context lifecycle
 
 Shared project Context is an architecture artifact, not a progress log or a ticket scratchpad.

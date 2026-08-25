@@ -37,6 +37,62 @@ dependencies, lifetime/scope and test-fake replacement points. Missing any of th
 Architecture completion blocker — this gate moved here from Wayfinder, which now checks only
 separability plausibility.
 
+## Optional codebase-map capability
+
+Read this section when `intake_mode` is `TAKEOVER` or `DELTA` and an existing codebase must be
+located before Wayfinder can bind `baseline_reference` or before Grill can scope a change. A
+codebase-map generator is an optional input capability, never an installation prerequisite.
+
+```text
+CodebaseMapState = AVAILABLE_AUTHORIZED | AVAILABLE_NOT_AUTHORIZED
+                 | UNAVAILABLE | DECLINED
+```
+
+Classify during Wayfinder and persist only metadata in Router state. `UNAVAILABLE` or `DECLINED`
+continues with direct source reading; an absent map never blocks a stage and never returns
+`ROUTE_REFERENCE_INVALID`. Do not install a map generator merely because a project is unfamiliar.
+
+### Evidence rank
+
+A generated map is **lead**, not evidence. It narrows what to read; it does not establish what is
+true.
+
+- An edge the generator marks as inferred rather than extracted from the source is a hypothesis.
+  Confirm it against the source before it enters a Grill answer, SPEC, ticket or review finding.
+- No map output may serve as `baseline_reference`, implementation authority, review evidence or
+  merge source. The Strict Veto on locating an existing runtime, build and test baseline is
+  satisfied by the real runtime, build and test surfaces, not by a map that describes them.
+- When map and source disagree, the source wins. A stale map is a defect to regenerate or
+  discard, not a discrepancy to reconcile.
+
+### Boundary conditions
+
+- The map artifact is target-owned and target-versioned under the target's own output path. It
+  must not be written into plugin trees, and the plugin must not read it as governance input.
+- Code-only extraction that runs entirely on the local machine has no external effect and needs
+  no security review.
+- Extraction that sends document, PDF, image or transcript content to a model provider is an
+  external effect: apply `security-boundary.md` and pin the backend explicitly. Provider
+  selection by auto-detection over ambient environment variables is prohibited — an unrelated
+  credential present in the environment must never decide where target content is sent, and
+  provider choice determines data residency.
+- The generator's always-on instruction block in the target's own auto-loaded agent file is
+  **required**, not optional. A rule that lives only in a reference an Agent must choose to read
+  is a rule that gets skipped; the auto-loaded file is the only channel that binds every session.
+  Install it.
+- That block is target-owned from the moment it is written. The owner reviews its text like any
+  other target rule, and it must be bounded to orientation: it may direct an Agent to consult the
+  map first, and it must not grant the map evidence authority or tell an Agent to stop reading
+  source. Where its wording exceeds that bound, the owner edits the block; this reference states
+  the bound, the target file carries it.
+- Advisory read hooks are permitted. A hook that emits a nudge, exits zero and fails open on any
+  error leaves independent source reading intact, so it may stay enabled at every stage.
+- A hook mode that denies or defers a read — including one that blocks only the first raw read
+  per session — is prohibited at `SMOKE_TEST` and `REVIEW`. The reviewer's first raw read of the
+  product, filesystem and Git evidence is the one `review-checks.md` depends on, and it is
+  exactly the read such a mode intercepts. Enable that mode only in stages where no verdict is
+  read from source.
+
 ## Grill
 
 Before a new feature, cross-module change, requirement redefinition or formal UI change,

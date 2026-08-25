@@ -50,6 +50,13 @@ implementer already reported. Apply all four points below whenever this row is i
 4. **Pin the property on the path production actually walks.** The assertion must reach the real
    production choke point, not a copy of the test's own pattern; if the reviewer's mutation only
    proves the test agrees with itself, it has not pinned anything.
+5. **Read the unfiltered output before judging red or green.** An output-reducing capability
+   between the Agent and the command — a wrapper that collapses passing cases to a count, keeps
+   failures only, trims tracebacks or truncates long lines — removes exactly the signal this
+   check depends on: which cell turned red, and whether it turned red for the intended reason.
+   Disable it for the run, or run the command directly, and say in the review evidence which was
+   done. A counter-mutation judged on reduced output is not independent evidence, and "no
+   failures reported" under such a wrapper does not discharge point 2.
 
 ## Multi-Agent authority review
 
