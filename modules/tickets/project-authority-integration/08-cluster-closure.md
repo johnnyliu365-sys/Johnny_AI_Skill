@@ -3,8 +3,8 @@
 | Field | Value |
 | --- | --- |
 | Ticket ID | PAI-08-LOCAL-CORE-CLUSTER-CLOSURE |
-| State | READY_REVIEWER_CLOSURE / NO_IMPLEMENTATION_DISPATCH |
-| Dependencies | PAI-01 through PAI-05 completed with exact reviewed evidence; PAI-06 and PAI-07 recorded as explicit deferred future-verification contracts. |
+| State | BLOCKED_TICKET_DEFECT / PAI-05-EVIDENCE-CORRECTION |
+| Dependencies | PAI-01 through PAI-04 completed; PAI-05 must supply exact reviewed three-state evidence; PAI-06 and PAI-07 remain explicit deferred future-verification contracts. |
 | Source specification | Project authority integration SPEC Revision 11, ticket order item 08 |
 | Planning baseline | main at 4df52d0df1fbe479cc9737d390df34d36e402b66 |
 | Effect boundary | Read-only independent review only; no live read, integration, push, release, deployment, provider, or CLI authority. |
@@ -15,7 +15,8 @@ Independently review PAI-01 through PAI-05 against REQ-038 as amended by REQ-039
 ADR-021, the sealed Context, exact ticket Closure Sets, strict typing, and the committed
 cache/race/push-readback/PR/provider/credential/bridge counter-mutation evidence. Verify that
 PAI-06 and PAI-07 state their future live/release verification requirements and explicitly deny
-current effect authority. The only green result is
+current effect authority. PAI-05's exact three-state reverse mutation must be green after the
+reviewer has independently observed its red state. The only green result is
 `CORE_CLUSTER_CLOSED_WITH_DEFERRED_OPERATIONAL_VALIDATION`; any missing, contradictory, or false
 completion claim is a finding routed to the owning ticket or change control.
 
