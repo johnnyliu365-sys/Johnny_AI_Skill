@@ -3,14 +3,14 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | SPEC-AI-WORKFLOW-PROJECT-AUTHORITY-INTEGRATION-20260824-01M2A4C6E8G0I2K4M6O8Q0S2U4 |
-| Status | APPROVED / REVISION_10 / REVIEWER_DECOMPOSITION_AUTHORIZED |
-| Author / baseline | Project-owner-approved Sol decision / Terra supervisor reviewer / specification provenance main at 6df6885ea093f1e37899f5252f8e4a1cc4feadb9; not an implementation-admission baseline |
+| Status | APPROVED / REVISION_11 / REVIEWER_DECOMPOSITION_AUTHORIZED |
+| Author / baseline | Project-owner-approved delivery reclassification / Terra supervisor reviewer / specification provenance main at 4df52d0df1fbe479cc9737d390df34d36e402b66; not an implementation-admission baseline |
 | Context | doc/context/project-authority-integration/main.md |
-| Shared Context | CONTEXT.md revision 02 sealed by CHG-20260824-038 |
-| PRD / change | PRD-20260824-038 / CHG-20260824-038 |
-| Architecture decision | doc/adr/ADR-20260824-020-declared-project-authority-line-and-provider-enforcement.md |
+| Shared Context | CONTEXT.md revision 03 sealed by CHG-20260825-039 |
+| PRD / change | PRD-20260825-039 / CHG-20260825-039; amends PRD-20260824-038 / CHG-20260824-038 delivery sequencing only |
+| Architecture decision | doc/adr/ADR-20260824-020-declared-project-authority-line-and-provider-enforcement.md; doc/adr/ADR-20260825-021-core-cluster-closure-and-deferred-operational-verification.md |
 | Implementation language | Python 3.11 with mypy --strict; Markdown is an artifact format, not a runtime |
-| Maturity / intensity | Existing POC maturity is unchanged. Pure local source/fake-port tickets derive intensity from committed WorkloadAssessment; live remote, provider, policy, push and release effects are HIGH_ASSURANCE and require separate effect authority. |
+| Maturity / intensity | Existing POC maturity is unchanged. PAI-01 through PAI-05 and PAI-08 are local source/evidence work; any later live remote, provider, policy, push or release effect is HIGH_ASSURANCE and requires separate effect authority. |
 | XSS classification | N/A: this boundary has no Browser, WebView, HTML/DOM renderer, JavaScript execution surface or Native bridge. |
 
 ## Problem and user result
@@ -34,6 +34,9 @@ In scope:
 - controlled local integration followed by injected non-force push and direct readback ports;
 - profile-scaled review evidence and alignment of shipped governance wording that currently makes
   asynchronous mechanisms appear universal.
+
+The local core may be independently closed without claiming that the deferred operational
+qualification or shipped release has occurred.
 
 Out of scope until an exact later ticket has separate owner effect authority:
 
@@ -498,8 +501,9 @@ runner, queue, receipt, descriptor, gateway or workspace/profile readback.
     cross-lifetime automatic handoff stays unavailable.
 11. Ticket/review records bind authority-contract/context/spec revisions, candidate/base/integrated
     SHAs and independent counter-mutation. A zero-red mutation is a finding.
-12. Changing skills to align governance prose triggers Level 1 regeneration, fresh immutable
-    plugin release and real CLI verification; library-only work cannot claim a release.
+12. PAI-07 may claim aligned shipped governance only after Level 1 regeneration, fresh immutable
+    plugin release and real CLI verification; PAI-08 cannot infer any of those from library-only
+    or source-only work.
 13. Ticket 01 creates only the four Revision-03 seam paths, executes the four fixed commands,
     and supplies a discriminating reverse mutation for every named typed-contract property.
 
@@ -512,15 +516,15 @@ The reviewer splits only along independently observable closures:
 3. gate/push/readback composition using fake non-force push;
 4. high-collaboration PR/provider-policy evidence validation using fake ports;
 5. profile-scaled counter-mutation and synchronous/bridge three-state alignment;
-6. owner-authorized live provider/repository capability qualification;
-7. governance-reference alignment, Level 1 regeneration and new plugin release;
-8. independent cluster review and release-gate closure.
+6. deferred, per-project live provider/repository qualification contract;
+7. deferred shipped-governance source/payload/release verification contract;
+8. independent local core-cluster review that records those two deferred operational validations.
 
-Every implementation ticket uses Python 3.11, mypy --strict, strong-type preflight, focused
-verification and full-regression review. Pure tickets use the normal implementation profile unless
-a committed hard-ticket assessment proves indivisible elevation; reviewer capability is at least
-the implementer capability. Live provider/repository and release effects are HIGH_ASSURANCE and
-can never be inferred from a pure-source success.
+Every source implementation ticket uses Python 3.11, mypy --strict, strong-type preflight,
+focused verification and full-regression review. Pure tickets use the normal implementation
+profile unless a committed hard-ticket assessment proves indivisible elevation; reviewer
+capability is at least the implementer capability. Live provider/repository and release effects
+are HIGH_ASSURANCE and can never be inferred from a pure-source success or the PAI-08 core result.
 
 ## Risks, compatibility and recovery
 
@@ -557,3 +561,4 @@ can never be inferred from a pure-source success.
 | 2026-08-25 | Terra supervisor reviewer / main / 28d484179576b80d7583ea3b5601850042dfabda | Revision 08 repairs only a Ticket 03 admission omission found before source mutation: the existing Ticket 01 actual-source test otherwise makes Revision-07's explicitly approved eight new `integration.py` exports impossible. Ticket 03 may extend that precise test allowlist while retaining every original frozen assertion; no public meaning, requirement, architecture, authority, effect or acceptance criterion changes. |
 | 2026-08-25 | Terra supervisor reviewer / main / c99add58297d71d8e9d6d5b85978f2a68980d45c | Revision 09 completes the same pre-mutation ticket-closure correction after enumerating every committed project-authority package-surface gate. It adds only the Ticket 02 observation test, which must retain its immutable observation-module checks while extending `__init__.py` to the exact already-approved Revision-07 surface. No public meaning or external boundary changes. |
 | 2026-08-25 | Project owner / Terra supervisor reviewer / main / 8db99208d6b363f7b34a731989a4a7085cb0da00 | Revision 10 records the owner-selected single provider-neutral high-collaboration admission API. It closes Ticket 04's strict fake PR/policy port contracts, `SINGLE_BRANCH` no-call result, finite evidence failures, exact five-path seam, historical package-surface updates, deterministic verification, and restore-backed mutations. It changes no authority topology, integration authority, live provider capability, remote, policy, credential, runner, queue, or release authority. |
+| 2026-08-25 | Project owner / Terra supervisor reviewer / main / 4df52d0df1fbe479cc9737d390df34d36e402b66 | Revision 11 implements CHG-20260825-039: PAI-06 and PAI-07 become explicit future operational-verification contracts, while PAI-08 receives the finite local-only closure `CORE_CLUSTER_CLOSED_WITH_DEFERRED_OPERATIONAL_VALIDATION`. It preserves every authority-line, direct-readback, provider-proof and Level 1 release condition; no external effect is authorized or claimed. |

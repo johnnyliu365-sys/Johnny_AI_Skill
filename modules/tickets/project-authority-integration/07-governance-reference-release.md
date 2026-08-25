@@ -1,19 +1,24 @@
-# Ticket 07 — governance-reference release
+# Ticket 07 — deferred shipped-governance verification
 
 | Field | Value |
 | --- | --- |
-| Ticket ID | PAI-07-GOVERNANCE-REFERENCE-RELEASE |
-| State | BLOCKED_OWNER_EFFECT_AUTHORITY / NOT_ADMITTED / NON_DISPATCHABLE |
-| Dependencies | PAI-01 through PAI-06 accepted, plus a later exact owner release authority |
-| Source specification | Project authority integration SPEC Revision 05, ticket order item 07 |
-| Planning baseline | main at b6353ac5a79ce2fd968862b55184ea04eeeeb1eb |
-| Required future effect | Level 1 payload alignment followed by regenerated publication root, new version, immutable tag, and real CLI verification. |
+| Ticket ID | PAI-07-DEFERRED-SHIPPED-GOVERNANCE-VERIFICATION |
+| State | FUTURE_VERIFICATION / DEFERRED_RELEASE_EFFECT / NOT_ADMITTED |
+| Dependencies | PAI-01 through PAI-05 accepted; PAI-06 is not a release prerequisite. Exact owner release authority is required only when this verification is activated. |
+| Source specification | Project authority integration SPEC Revision 11, ticket order item 07 |
+| Planning baseline | main at 4df52d0df1fbe479cc9737d390df34d36e402b66 |
+| Required future effect | Governance wording alignment followed by regenerated Level 1 publication root, new version, immutable tag, real installation/reload, and CLI readback. |
 
 ## Vertical closure reserved
 
-Align shipped governance wording only after its exact source scope and release authority are
-committed. The observable release closure is a regenerated, versioned, immutable publication
-whose verified payload expresses the approved bridge and authority-line decisions.
+When an owner authorizes a release, align the named governance source files with the approved
+bridge and authority-line decisions, regenerate the exact Level 1 payload, assign a new version,
+create an immutable tag, install or reload the named target, and verify the actual CLI-visible
+payload/version. The later exact ticket must bind source paths, generator revision, payload tree,
+release target, version, tag, installation target, pre/post baselines, correlation, readback and
+rollback/forward-fix evidence.
 
-This record authorizes none of that work now. It creates no payload change, version, tag, CLI
-command, provider use, publication, deployment, receipt, descriptor, runner, or dispatch.
+This is a future verification contract, not a current PAI-08 predecessor and not a release grant.
+It creates no payload change, version, tag, CLI command, provider use, publication, deployment,
+receipt, descriptor, runner, or dispatch. PAI-08 may record only its deferred state; it may not
+claim that the installed plugin already conveys this governance update.

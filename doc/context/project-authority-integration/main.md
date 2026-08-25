@@ -2,11 +2,11 @@
 
 | Field | Value |
 | --- | --- |
-| Context state | `SEALED / CONTEXT_READY_FOR_SPEC` |
+| Context state | `SEALED / CONTEXT_REVISION_03 / SPEC_REVISION_REQUIRED` |
 | Router event | `REQUIREMENT_CHANGED → ARCHITECTURE / GRILL → CONTEXT → ACTION_COMPLETED` |
-| Requirement change | `PRD-20260824-038` / `CHG-20260824-038` / `doc/requirements/active/2026/workflow-governance/REQ-20260824-038.md` |
-| Architecture decision | `doc/adr/ADR-20260824-020-declared-project-authority-line-and-provider-enforcement.md` |
-| Baseline | `main@48da01d1d57aed938571de9b9a01df813401357b` |
+| Requirement change | `PRD-20260825-039` / `CHG-20260825-039` / `doc/requirements/active/2026/workflow-governance/REQ-20260825-039.md`; amends `PRD-20260824-038` / `CHG-20260824-038` delivery sequencing only |
+| Architecture decision | `doc/adr/ADR-20260824-020-declared-project-authority-line-and-provider-enforcement.md`; `doc/adr/ADR-20260825-021-core-cluster-closure-and-deferred-operational-verification.md` |
+| Baseline | `main@4df52d0df1fbe479cc9737d390df34d36e402b66` |
 | Delivery scope | Workflow-governance control plane; no target-project, provider, GitHub-policy, push, release, deployment, or credential effect is authorized by this Context. |
 
 ## Confirmed facts and scope
@@ -68,13 +68,24 @@ shell, local repository path, credential, Router transcript or target-project so
   release and deployment are distinct external effects. A later ticket requires exact owner
   authority for each; this Context authorizes only typed local source design and fake-port tests.
 
+## Delivery reclassification
+
+PAI-01 through PAI-05 are the reviewable local core. PAI-06 is a future per-project live
+qualification and PAI-07 is a future shipped-governance verification; neither is admitted or
+executed by this Context. PAI-08 may close only the local core with
+`CORE_CLUSTER_CLOSED_WITH_DEFERRED_OPERATIONAL_VALIDATION`. That result explicitly leaves provider
+enforcement, target-repository qualification, plugin publication, immutable tag, and CLI
+installation verification unproved.
+
 ## Specification handoff
 
-The next exact artifact is `modules/spec/project-authority-integration.md`. It must preserve the
+The next exact artifact is `modules/spec/project-authority-integration.md` Revision 11. It must preserve the
 separate maturity/assurance/topology axes; declare the direct-observation freshness/race boundary;
 make `PUSH_UNCONFIRMED` durable and recoverable without force push; define provider capability as
 `PROVEN`, `UNPROVEN`, `UNSUPPORTED` or `NOT_APPLICABLE`; bind reviewer counter-mutations; and
-separate pure source/test tickets from live provider-policy qualification and shipped skill release.
+separate pure source/test tickets from live provider-policy qualification and shipped skill release,
+while making the latter two future verification records rather than predecessors to the core
+closure.
 
 No ticket is approved, no agent is dispatched, and no external effect is authorized until that
 specification and its exact ticket are independently approved.
