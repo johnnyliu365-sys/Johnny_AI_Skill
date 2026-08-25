@@ -20,13 +20,13 @@ release, deployment, or credential access.
 | [02-direct-remote-observation.md](02-direct-remote-observation.md) | COMPLETED / INTEGRATED at 9b8e82a48b0997fc63deaf04d931e93857d96246 | 01 completed/integrated at 6df6885ea093f1e37899f5252f8e4a1cc4feadb9 | Direct-observation and cache-staleness port boundary |
 | [03-gate-push-readback-composition.md](03-gate-push-readback-composition.md) | COMPLETED / INTEGRATED at 98bafbab01e51d2bd3edf6079cda981710651e80 | 01 and 02 integrated | Fake-port gate/push/readback composition |
 | [04-high-collaboration-evidence.md](04-high-collaboration-evidence.md) | COMPLETED / INTEGRATED at 75d1ed9477c54312ed55d4d532e098b51d240928 | 01 through 03 accepted | One provider-neutral fake PR/provider-policy evidence admission API |
-| [05-profile-and-bridge-alignment.md](05-profile-and-bridge-alignment.md) | PLANNED / NOT_ADMITTED | 01 through 04 accepted | Profile-scaled review and bridge-state alignment |
+| [05-profile-and-bridge-alignment.md](05-profile-and-bridge-alignment.md) | COMPLETED / ALREADY_SATISFIED; PAI-01 source at 6df6885ea093f1e37899f5252f8e4a1cc4feadb9 | 01 through 04 accepted | Three-state bridge capability already integrated; profile/governance prose deferred to 07 |
 | [06-live-provider-repository-qualification.md](06-live-provider-repository-qualification.md) | BLOCKED_OWNER_EFFECT_AUTHORITY | 01 through 05 accepted plus exact owner effect authority | Live provider/repository qualification |
 | [07-governance-reference-release.md](07-governance-reference-release.md) | BLOCKED_OWNER_EFFECT_AUTHORITY | 01 through 06 accepted plus exact release authority | Level 1 governance-reference publication |
 | [08-cluster-closure.md](08-cluster-closure.md) | PLANNED / NOT_ADMITTED | 01 through 07 accepted | Independent cluster review and release-gate closure |
 
-No row is an implementation dispatch authorization. Tickets 01 through 04 are completed and
-integrated. Every remaining leaf is a dependency-bound planning record until it receives its own
+No row is an implementation dispatch authorization. Tickets 01 through 05 are completed and
+integrated or already satisfied by their stated source evidence. Every remaining leaf is a dependency-bound planning record until it receives its own
 exact writable/test seam and the required approval or effect authority. At a later
 same-lifetime synchronous dispatch, the reviewer creates the implementation worktree and branch
 from clean current integration main that already contains this approved ticket tree, then records
