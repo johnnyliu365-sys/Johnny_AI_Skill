@@ -41,34 +41,26 @@ separability plausibility.
 
 Read this section when `intake_mode` is `TAKEOVER` or `DELTA` and an existing codebase must be
 located before Wayfinder can bind `baseline_reference` or before Grill can scope a change. A
-codebase-map generator is an optional input capability, never an installation prerequisite.
-
-```text
-CodebaseMapState = AVAILABLE_AUTHORIZED | AVAILABLE_NOT_AUTHORIZED
-                 | UNAVAILABLE | DECLINED
-```
-
-Classify during Wayfinder and persist only metadata in Router state. `UNAVAILABLE` or `DECLINED`
-continues with direct source reading; an absent map never blocks a stage and never returns
-`ROUTE_REFERENCE_INVALID`. Do not install a map generator merely because a project is unfamiliar.
+codebase-map generator admits as `CapabilityKind = CODEBASE_MAP` under
+[`capability-admission.md`](capability-admission.md), which owns state typing, installation
+scope, authority rank and artifact landing for every capability kind. Classify during Wayfinder;
+`UNAVAILABLE` or `DECLINED` continues with direct source reading.
 
 ### Evidence rank
 
-A generated map is **lead**, not evidence. It narrows what to read; it does not establish what is
-true.
+The rank rule is `capability-admission.md` rule 4; a map narrows what to read, it does not
+establish what is true. In this domain that means:
 
 - An edge the generator marks as inferred rather than extracted from the source is a hypothesis.
   Confirm it against the source before it enters a Grill answer, SPEC, ticket or review finding.
-- No map output may serve as `baseline_reference`, implementation authority, review evidence or
-  merge source. The Strict Veto on locating an existing runtime, build and test baseline is
-  satisfied by the real runtime, build and test surfaces, not by a map that describes them.
+- `baseline_reference` never binds to map output: the Strict Veto on locating an existing
+  runtime, build and test baseline is satisfied by the real runtime, build and test surfaces,
+  not by a map that describes them.
 - When map and source disagree, the source wins. A stale map is a defect to regenerate or
   discard, not a discrepancy to reconcile.
 
 ### Boundary conditions
 
-- The map artifact is target-owned and target-versioned under the target's own output path. It
-  must not be written into plugin trees, and the plugin must not read it as governance input.
 - Code-only extraction that runs entirely on the local machine has no external effect and needs
   no security review.
 - Extraction that sends document, PDF, image or transcript content to a model provider is an

@@ -200,13 +200,13 @@ _POLICY_REFERENCES: tuple[SkillReference, ...] = (
     ),
     SkillReference(
         reference_id="discovery-change",
-        source_revision="rev-a1687d4fa9960e43",
-        content_digest="sha256_a1687d4fa9960e439e7e390c4d9cdc4d62db6d93d69e4123dce0cc970b72216a",
+        source_revision="rev-973a99e6b2ce604f",
+        content_digest="sha256_973a99e6b2ce604f31560f8e193440b3f18baa8845e97b8363d144e95feb85ef",
     ),
     SkillReference(
         reference_id="context-routing",
-        source_revision="rev-e1ce913609aa6971",
-        content_digest="sha256_e1ce913609aa6971c75155eace49562dace117c270f82d358c57ba7be238d867",
+        source_revision="rev-7d09ec0fa4f362d1",
+        content_digest="sha256_7d09ec0fa4f362d1a98f9fb767d5cb7de6f208f5f557357a925a00f407374015",
     ),
     SkillReference(
         reference_id="specification-ticketing",
@@ -225,8 +225,8 @@ _POLICY_REFERENCES: tuple[SkillReference, ...] = (
     ),
     SkillReference(
         reference_id="review-checks",
-        source_revision="rev-0589a1d06beafc2b",
-        content_digest="sha256_0589a1d06beafc2ba42b8c24b448497f7973e7f6f88d18e349891e5769b9cf4d",
+        source_revision="rev-ba7970edfd359766",
+        content_digest="sha256_ba7970edfd359766b4b6dd4a67643088e26ee842057f3d9f7e8697ae80a2b3b7",
     ),
 )
 

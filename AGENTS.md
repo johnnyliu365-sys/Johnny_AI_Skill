@@ -67,6 +67,7 @@ checker；ticket schema、preflight 與 TDD 由 Router 指向：
 | artifact tree、Agent Context 建立／換票／關閉 | [Router Context](Workflow.md#workflow-router) | [artifact-tree-routing](skills/johnny-project-takeover/references/artifact-tree-routing.md) + [agent-context-lifecycle](skills/johnny-project-takeover/references/agent-context-lifecycle.md) |
 | PRD／CHG 建立、取代、封存 | [Change control](Workflow.md#change-control) | [requirement-lineage](skills/johnny-project-takeover/references/requirement-lineage.md) |
 | reusable module catalog 查找／分區 | [Router Context](Workflow.md#workflow-router) | [module-catalog-routing](skills/johnny-project-takeover/references/module-catalog-routing.md) |
+| 外部能力(map／craft／reduction)admission、tier／target 適配 | [Router Context](Workflow.md#workflow-router) | [capability-admission](skills/johnny-project-takeover/references/capability-admission.md) |
 | 新專案、需求、Bug、架構或變更 | [Discovery](Workflow.md#discovery) | [discovery-change](skills/johnny-project-takeover/references/discovery-change.md) |
 | Browser/WebView/DOM/JavaScript 不可信資料 | [XSS gate](Workflow.md#xss-review) | [xss-review](skills/johnny-project-takeover/references/xss-review.md) |
 | Secret、正式 Log、Provider、Webhook、外部 effect | [Security](Workflow.md#security) | [security-boundary](skills/johnny-project-takeover/references/security-boundary.md) |

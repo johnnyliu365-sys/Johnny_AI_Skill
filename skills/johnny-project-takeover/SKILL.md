@@ -34,6 +34,7 @@ file completely only when its condition applies.
 | Agent working Context, ticket switch, correction rebind or view closure | [Agent Context lifecycle](references/agent-context-lifecycle.md) |
 | PRD/CHG creation, one-to-one identity, retirement or archive lookup | [Requirement lineage](references/requirement-lineage.md) |
 | Reusable library catalog traversal or partition maintenance | [Module catalog routing](references/module-catalog-routing.md) |
+| External capability admission, state, tier or target fit | [Capability admission](references/capability-admission.md) |
 | Wayfinder, Architecture, Grill or requirement change | [Discovery and change control](references/discovery-change.md) |
 | Untrusted data enters Browser/WebView/HTML/DOM/JavaScript | [XSS review](references/xss-review.md) |
 | Secret, production log, Provider, webhook or external effect | [Security boundary](references/security-boundary.md) |

@@ -21,7 +21,10 @@ host gates still enforce authority.
 ## Output-reducing capabilities
 
 An output-reducing capability sits between an Agent and a command or provider call and shrinks
-what the Agent reads. Two kinds exist and they do not carry the same risk:
+what the Agent reads. It admits as `CapabilityKind = OUTPUT_REDUCTION` under
+[`capability-admission.md`](capability-admission.md), which owns the shared admission rules; the
+classification below and its stage table are this kind's owning rules. Two reduction classes
+exist and they do not carry the same risk:
 
 ```text
 OutputReduction = LOSSLESS   # compressed in transit, restored byte-exact before use

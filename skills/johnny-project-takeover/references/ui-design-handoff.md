@@ -65,12 +65,15 @@ design-craft tool being present in order to build against its own sealed regime.
 ### Design-craft capabilities
 
 A design-craft capability generates or audits visual and motion craft — theme and token systems,
-macrostructure vocabulary, animation construction, library selection, craft review. It is an
-optional input, never an installation prerequisite, and is classified with the same
-`DesignCapabilityState` as a design source.
+macrostructure vocabulary, animation construction, library selection, craft review. It admits as
+`CapabilityKind = DESIGN_CRAFT` under [`capability-admission.md`](capability-admission.md), which
+owns state typing, installation scope, authority rank and artifact landing.
 
-- Scope the installation to the target that approved it. A machine-wide installation applies its
-  triggers to every project, including work with no UI in scope.
+- A design-craft capability usually spans both tiers: colour, type, spacing and motion
+  conventions are `REGIME` and admissible on any platform; components, macrostructures and
+  generated markup are `ARTIFACT` and admissible only where the capability's `CapabilityTarget`
+  matches the target's UI platform. A `DOM`-targeted generator contributes regime input to a
+  `NATIVE_ENGINE` project and nothing else.
 - Such a capability supplies craft; it does not hold authority. Finite UI states, responsive
   breakpoint policy, accessibility behavior, renderer security class, file-change authority and
   the review conclusion remain governed here and by `implementation-authority.md`,
