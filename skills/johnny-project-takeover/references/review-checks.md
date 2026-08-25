@@ -22,6 +22,7 @@ Additionally apply the specialized categories below when relevant.
 | Exception behavior | inject each dependency failure; assert observable state/effect and throw/no-throw | detect swallowed errors and auxiliary failures that break primary flow |
 | Test truthfulness | AC-to-test mapping and bounded reverse mutation | confirm assertions cover observable behavior and authentic first-red order; run the reviewer's own counter-mutation from `Reviewer counter-mutation` below |
 | XSS/privileged JS | use `xss-review.md` matrix | trace every source/sink and privileged path |
+| UI craft / motion | loading, empty, error, permission and success at each declared breakpoint; reduced-motion path | compare against the sealed UI regime from `ui-design-handoff.md`, not personal taste or a capability's default; craft output is a finding only, and the conclusion stays with `CodeReview.md` |
 | Task/worktree binding | control/sibling/parent/child/prefix-similar roots, prompt-only `cd`, unreadable root, wrong Git pointer/identity | independently read product, filesystem and Git evidence |
 | Adaptive profile/resources | every factor/hard escalation, default one implementer, disjoint lanes, reviewer-only helper | recompute from actual diff/effects; reject model/size-based authority |
 | POC/staging ancestry | unreviewed/ambiguous POC, wrong repo/base/ancestry, dirty/stale/diverged ref, altered plan, force/reset/delete | independently verify acceptance, Git ancestry, publication authority and release separation |

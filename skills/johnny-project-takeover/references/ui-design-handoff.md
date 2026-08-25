@@ -46,6 +46,44 @@ permission states together; do not split markup and styling into incomplete tick
 supervisor independently reviews behavior and visual evidence with an available browser/test
 capability, and does not author the implementation it reviews.
 
+## UI regime source and sealing
+
+A `UIImplementationContract` is per-feature. The facts it maps onto — breakpoint policy, type and
+colour system, component-library selection, interaction and motion convention, macrostructure
+vocabulary — are cross-feature and invariant, so they are decided once and sealed, not re-decided
+per ticket. Deciding them per ticket produces drift that no per-feature contract can detect.
+
+Architecture selects the UI technical boundary; Grill closes the remaining UI questions; `CONTEXT`
+seals one owner-approved revision. Major difficult-to-reverse choices additionally receive an ADR,
+per `discovery-change.md`. After sealing, every downstream feature resolves
+`DesignSourceKind = EXISTING_DESIGN_SYSTEM` and reads the sealed regime rather than re-deriving it.
+
+The sealed regime is target-owned: tokens, reference implementations and the ADR live in the
+target repository and are readable without any capability installed. A target must not depend on a
+design-craft tool being present in order to build against its own sealed regime.
+
+### Design-craft capabilities
+
+A design-craft capability generates or audits visual and motion craft — theme and token systems,
+macrostructure vocabulary, animation construction, library selection, craft review. It is an
+optional input, never an installation prerequisite, and is classified with the same
+`DesignCapabilityState` as a design source.
+
+- Scope the installation to the target that approved it. A machine-wide installation applies its
+  triggers to every project, including work with no UI in scope.
+- Such a capability supplies craft; it does not hold authority. Finite UI states, responsive
+  breakpoint policy, accessibility behavior, renderer security class, file-change authority and
+  the review conclusion remain governed here and by `implementation-authority.md`,
+  `security-boundary.md` and `CodeReview.md`. Where a capability's own text asserts one of these,
+  this reference is canonical.
+- A generator that deliberately varies structure between briefs is producing variety this regime
+  exists to prevent. Use it to choose the regime once, then disable its variation before sealing.
+- When an approved human design source exists, the generator does not author the design. Its
+  admissible uses narrow to extracting a design source the owner approved and to auditing
+  implemented output. Audit targets the implementation, never the approved design source.
+- Craft findings enter review as findings only, under the `UI craft / motion` category in
+  `review-checks.md`. They do not carry a review conclusion.
+
 ## XSS boundary
 
 External design metadata alone does not trigger XSS review. Apply `xss-review.md` only when
