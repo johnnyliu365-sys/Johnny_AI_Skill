@@ -14,7 +14,7 @@
 | Binding | Value |
 | --- | --- |
 | Owner release authority | Owner instruction, 2026-08-25: "你來跑06-07,跑完重安裝" |
-| Source paths | `skills/johnny-project-takeover/references/router-control.md`, `skills/johnny-project-takeover/references/implementation-authority.md`, `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json`, `tests/test_plugin_publication.py` (release-version pin only) |
+| Source paths | `skills/johnny-project-takeover/references/router-control.md`, `skills/johnny-project-takeover/references/implementation-authority.md`, `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json`, `tests/test_plugin_publication.py` (release-version pin only), `library/workflow_router/profile.py` and `tests/test_workflow_router.py` (R01 versioned-reference registry: a changed reference must re-register its revision/digest — required by `RouteInstructionContractTests`) |
 | Governance decisions carried | `ADR-20260824-020` decisions 1–6 (declared authority line, direct remote observation, `LOCAL_INTEGRATED` vs `AUTHORITY_INTEGRATED`, declared topology, high-collaboration PR evidence, provider enforcement qualification) |
 | Generator | `write_publication_commit` at the candidate's own revision |
 | Version / tag | `0.4.13` / `plugin-v0.4.13`, create-only; existing tags immutable |
@@ -30,9 +30,11 @@ modify = skills/johnny-project-takeover/references/implementation-authority.md
 modify = .claude-plugin/plugin.json
 modify = .claude-plugin/marketplace.json
 modify = tests/test_plugin_publication.py
+modify = library/workflow_router/profile.py
+modify = tests/test_workflow_router.py
 forbid = .codex-plugin/
 forbid = commands/
-forbid = library/
+forbid = library/local_orchestration/
 forbid = modules/spec/
 forbid = modules/tickets/
 forbid = doc/
