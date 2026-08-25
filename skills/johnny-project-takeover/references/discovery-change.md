@@ -93,6 +93,35 @@ true.
   exactly the read such a mode intercepts. Enable that mode only in stages where no verdict is
   read from source.
 
+### Approved instruction block
+
+The block below meets the bound above and may be adopted verbatim, with tool and path names
+substituted for the generator actually in use. It carries no project-specific fact, so it does
+not go stale and needs no owner edit per project.
+
+```text
+## <generator>
+
+Rules:
+- For codebase questions, first run `<query command>` when <graph artifact> exists. Use
+  `<path command>` for relationships and `<explain command>` for focused concepts. These
+  return a scoped subgraph, usually much smaller than <report artifact> or raw grep output.
+- If <navigation index> exists, use it for broad navigation instead of raw source browsing.
+- The map is orientation, not evidence. An inferred edge is a hypothesis until the source
+  confirms it; where map and source disagree, the source wins. Read the source before a SPEC,
+  ticket, review finding or commit depends on a claim.
+- Read <report artifact> only for broad architecture review or when the scoped queries do not
+  surface enough context.
+- After modifying code, run `<update command>` to keep the map current.
+```
+
+Two edits distinguish it from a generator's own default block. The opening declarative that
+states what the project has is dropped: the heading already names the section, every rule guards
+on its own artifact's existence, and an always-on block should assert no fact that a deleted map
+would falsify. The evidence-rank rule is added, because a generator's default block ranks the map
+against grep for cost and never ranks it against the source for truth — and a rank that lives
+only in this reference is a rank the running Agent never reads.
+
 ## Grill
 
 Before a new feature, cross-module change, requirement redefinition or formal UI change,
