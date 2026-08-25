@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | Ticket ID | PAI-06-DEFERRED-PER-PROJECT-LIVE-QUALIFICATION |
-| State | FUTURE_VERIFICATION / DEFERRED_EXTERNAL_EFFECT / NOT_ADMITTED |
+| State | QUALIFIED_FOR_DEVELOPMENT_REPOSITORY / ORDINARY_ACTOR_ENFORCEMENT_PROVEN / ADMIN_ACTOR_UNPROVEN — evidence in [06-live-provider-qualification-evidence.md](../../../doc/reviews/project-authority-integration/06-live-provider-qualification-evidence.md); per-project qualification for any other project remains future verification |
 | Dependencies | PAI-01 through PAI-05 accepted; exact per-project owner effect authority is required only when this verification is activated. |
 | Source specification | Project authority integration SPEC Revision 11, ticket order item 06 |
 | Planning baseline | main at 4df52d0df1fbe479cc9737d390df34d36e402b66 |
