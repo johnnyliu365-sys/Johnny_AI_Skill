@@ -20,13 +20,13 @@ release, deployment, or credential access.
 | [02-direct-remote-observation.md](02-direct-remote-observation.md) | COMPLETED / INTEGRATED at 9b8e82a48b0997fc63deaf04d931e93857d96246 | 01 completed/integrated at 6df6885ea093f1e37899f5252f8e4a1cc4feadb9 | Direct-observation and cache-staleness port boundary |
 | [03-gate-push-readback-composition.md](03-gate-push-readback-composition.md) | COMPLETED / INTEGRATED at 98bafbab01e51d2bd3edf6079cda981710651e80 | 01 and 02 integrated | Fake-port gate/push/readback composition |
 | [04-high-collaboration-evidence.md](04-high-collaboration-evidence.md) | COMPLETED / INTEGRATED at 75d1ed9477c54312ed55d4d532e098b51d240928 | 01 through 03 accepted | One provider-neutral fake PR/provider-policy evidence admission API |
-| [05-profile-and-bridge-alignment.md](05-profile-and-bridge-alignment.md) | READY_LOW_MODEL / EVIDENCE_CORRECTION_REQUIRED | 01 through 04 accepted | Pin the already-integrated three-state bridge type with a real-source reverse mutation; prose remains deferred to 07 |
+| [05-profile-and-bridge-alignment.md](05-profile-and-bridge-alignment.md) | COMPLETED / INTEGRATED at 7e46c00aec6c03960ac7f1049ae13072b36a43b7 | 01 through 04 accepted | Exact three-state bridge assertion with implementation and independent reviewer mutations; prose remains deferred to 07 |
 | [06-live-provider-repository-qualification.md](06-live-provider-repository-qualification.md) | FUTURE_VERIFICATION / DEFERRED_EXTERNAL_EFFECT | 01 through 05 accepted; later exact per-project owner effect authority | Per-project live provider/repository qualification; not a PAI-08 predecessor |
 | [07-governance-reference-release.md](07-governance-reference-release.md) | FUTURE_VERIFICATION / DEFERRED_RELEASE_EFFECT | 01 through 05 accepted; later exact owner release authority | Shipped governance/payload/release verification; not a PAI-08 predecessor |
-| [08-cluster-closure.md](08-cluster-closure.md) | BLOCKED_TICKET_DEFECT / PAI-05-EVIDENCE-CORRECTION | 01 through 04 completed; PAI-05 evidence correction; 06 and 07 deferred contracts | Independent local-core closure; it cannot claim provider or release completion |
+| [08-cluster-closure.md](08-cluster-closure.md) | READY_REVIEWER_CLOSURE / NO_IMPLEMENTATION_DISPATCH | 01 through 05 completed; 06 and 07 deferred contracts | Independent local-core closure; it cannot claim provider or release completion |
 
-No row is an implementation dispatch authorization. Tickets 01 through 04 are completed and
-integrated. Ticket 05 is a bounded evidence correction of an already-integrated type. Tickets 06 and 07 are explicit
+No row is an implementation dispatch authorization. Tickets 01 through 05 are completed and
+integrated or closed with their stated source evidence. Tickets 06 and 07 are explicit
 future-verification records and retain their own effect authority. Ticket 08 is a reviewer-owned,
 read-only local-core closure, not a release gate. At a later
 same-lifetime synchronous dispatch, the reviewer creates the implementation worktree and branch

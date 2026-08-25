@@ -3,10 +3,10 @@
 | Field | Value |
 | --- | --- |
 | Ticket ID | PAI-08-LOCAL-CORE-CLUSTER-CLOSURE |
-| State | BLOCKED_TICKET_DEFECT / PAI-05-EVIDENCE-CORRECTION |
-| Dependencies | PAI-01 through PAI-04 completed; PAI-05 must supply exact reviewed three-state evidence; PAI-06 and PAI-07 remain explicit deferred future-verification contracts. |
+| State | READY_REVIEWER_CLOSURE / NO_IMPLEMENTATION_DISPATCH |
+| Dependencies | PAI-01 through PAI-05 completed with exact reviewed evidence; PAI-06 and PAI-07 remain explicit deferred future-verification contracts. |
 | Source specification | Project authority integration SPEC Revision 11, ticket order item 08 |
-| Planning baseline | main at 4df52d0df1fbe479cc9737d390df34d36e402b66 |
+| Planning baseline | main at 7e46c00aec6c03960ac7f1049ae13072b36a43b7 |
 | Effect boundary | Read-only independent review only; no live read, integration, push, release, deployment, provider, or CLI authority. |
 
 ## Vertical closure reserved

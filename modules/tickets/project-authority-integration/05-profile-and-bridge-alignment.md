@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | Ticket ID | PAI-05-PROFILE-AND-BRIDGE-ALIGNMENT |
-| State | READY_LOW_MODEL / EVIDENCE_CORRECTION_REQUIRED |
+| State | COMPLETED / INTEGRATED at `7e46c00aec6c03960ac7f1049ae13072b36a43b7` |
 | Acceptance Closure Set | ACS-PAI-05-REVISION-01 |
 | Dependencies | PAI-01 through PAI-04 accepted |
 | Source specification | Project authority integration SPEC Revision 11, ticket order item 05 and its existing exact `BridgeCapability` contract |
@@ -65,3 +65,14 @@ first-red/green/restore evidence, and no commit. The reviewer alone writes a can
 after approval and submits it through `admit_document_mutation`. The profile/governance prose
 alignment remains deferred to PAI-07; this correction cannot alter skills, payload, or plugin
 version.
+
+## Completion evidence
+
+The Terra reviewer admitted candidate `7e46c00aec6c03960ac7f1049ae13072b36a43b7`; its only
+changed path is `tests/test_project_authority_contracts.py`. Focused pytest passed **7/7** and
+`mypy --strict` passed. The implementation evidence removed actual production `NOT_REQUIRED`
+and changed it to an `UNAVAILABLE` alias; each mutation produced **1 failed, 6 passed**, then the
+production file was restored Git-clean and tests returned green. The Terra reviewer independently
+changed actual production `AVAILABLE` to `UNAVAILABLE`; the literal-value assertion produced
+**1 failed, 6 passed**, then the disposable overlay was byte-restored and removed. No provider,
+remote, payload, release, or host effect occurred.
