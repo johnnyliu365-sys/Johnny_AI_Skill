@@ -3,12 +3,12 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-CLAUDE-CODE-PLUGIN-DISTRIBUTION-20260802-01KZ4C6D8E0F2G4H6J8K0M2N4P` |
-| Status | `APPROVED / REVISION_05 / TICKET_12_AUTHORIZED` |
-| Author / baseline | Architecture owner / `control/claude-publication-12-version-specific-tags` / `475e01b96693c33251e77eed2bbff3116f2bc713` |
-| Feature Context | `doc/context/claude-code-plugin-distribution/claude-code-plugin-distribution-r04-version-specific-release-tags.md`, sealed `REVISION_04`, blob `f175d6a6842ca1d24a3cfd85e3a24542e7d7b9a3` |
-| PRD / change | `PRD-20260802-005` / `CHG-20260802-005`, amended by `PRD-20260823-034` / `CHG-20260823-034`, `PRD-20260823-035` / `CHG-20260823-035`, `PRD-20260823-036` / `CHG-20260823-036` and `PRD-20260823-037` / `CHG-20260823-037` |
-| Architecture | `ADR-20260823-015-dedicated-plugin-publication-repository.md`; `ADR-20260823-017-level-one-payload-topology.md`; `ADR-20260823-018-version-specific-publication-tag-payloads.md` |
-| Delivery stage / profile | `POC / STANDARD` for F3 and Ticket 12 deterministic local closure; `POC / HIGH_ASSURANCE` remains mandatory for repository creation, remote ref mutation, release publication and a user-installed supply-chain boundary. |
+| Status | `APPROVED / REVISION_06 / TICKET_15_AUTHORIZED` |
+| Author / baseline | Architecture owner / `control/codex-native-same-lifetime-dispatch` / `b56ac2d20068a4da7eb82950c64e471247c8fc61` |
+| Feature Context | `doc/context/claude-code-plugin-distribution/claude-code-plugin-distribution-r05-codex-native-same-lifetime-dispatch.md`, sealed `REVISION_05`, blob `1dbdf84d0abc5e732f3915e2195321a44db29056` |
+| PRD / change | `PRD-20260802-005` / `CHG-20260802-005`, amended by `PRD-20260823-034` / `CHG-20260823-034`, `PRD-20260823-035` / `CHG-20260823-035`, `PRD-20260823-036` / `CHG-20260823-036`, `PRD-20260823-037` / `CHG-20260823-037` and `PRD-20260826-040` / `CHG-20260826-040` |
+| Architecture | `ADR-20260823-014-cross-lifetime-handoff-bridge.md`; `ADR-20260823-015-dedicated-plugin-publication-repository.md`; `ADR-20260823-016-codex-cli-cross-lifetime-wake-bridge.md`; `ADR-20260823-017-level-one-payload-topology.md`; `ADR-20260823-018-version-specific-publication-tag-payloads.md` |
+| Delivery stage / profile | `POC / STANDARD` for F3, Ticket 12 and Ticket 15's deterministic source closure; `POC / HIGH_ASSURANCE` remains mandatory for repository creation, remote ref mutation, release publication and an isolated user-installed supply-chain boundary. |
 | Implementation language | Python 3.11 for publication verification/promotion contracts; frozen Pydantic DTOs, finite enums and `mypy --strict`. Manifests remain JSON validated at their boundary. |
 | XSS classification | `N/A`: this feature accepts no Browser/WebView/HTML/DOM/JavaScript input or renderer. |
 
@@ -49,6 +49,36 @@ Out of scope:
   release mechanism; and
 - changing Codex plugin distribution, target-project workflow semantics or the user's detach
   guarantee.
+
+### Revision 06 — Codex native same-lifetime continuation
+
+The final out-of-scope bullet remains true for a second package format, runtime, daemon, queue,
+or hidden cross-session dispatcher. It is superseded narrowly for the **already-installed shared
+payload**: its command and skill must tell Codex to invoke the host-native implementation-owner
+delegation only after a same-lifetime Router decision has admitted an exact ticket. This is
+instruction-level continuation, not a new Codex runtime or plugin package.
+
+The command/skill boundary is finite:
+
+1. A direct lane is admitted only from an exact committed ticket, a clean reviewer-created
+   repository-contained worktree, named branch/baseline, and a ticket/profile-bound
+   implementation capability.
+2. Codex invokes its native subagent operation for exactly that owner, then awaits the owner
+   completion without polling. The reviewer, not the implementation owner, reviews and
+   integrates after the returned result.
+3. The direct path has `NOT_REQUIRED` bridge disposition. It neither issues/consumes a receipt
+   nor requires a runner, queue, descriptor, gateway, or host workspace readback.
+4. Absent native delegation or profile capability is the finite
+   `HALT / CODEX_NATIVE_DELEGATION_UNAVAILABLE`; it must not be silently replaced by reviewer
+   implementation, an unverified adapter, or a cross-lifetime runtime.
+5. Exact underlying model and effort values stay in the approved ticket/profile. The source
+   guidance may name the host delegation operation, but contains no provider/model literal.
+
+Ticket 15 is the only authorized successor-release contract. It changes the Level 1 command and
+skill source, bumps `.claude-plugin/plugin.json` to `0.4.14`, regenerates the publication root,
+creates the absent-only `plugin-v0.4.14` tag, and verifies a Codex isolated installed cache. It
+does not modify `.codex-plugin/`, create a durable host adapter, or authorize any new provider
+integration.
 
 ## User flow, error flow and external-effect boundary
 
@@ -319,6 +349,7 @@ forward-fix/revert decision for the owner, not an automatic retry.
 | 2026-08-23 | Project owner / `PRD-20260823-035` / `CHG-20260823-035` | Approved Revision 03 and sealed Context Revision 02: Level 1 names only the reachable reusable-source surface; host-local control tooling and installer entrypoints are excluded before a successor version is chosen. |
 | 2026-08-23 | Project owner / `PRD-20260823-036` / `CHG-20260823-036` | Approved Revision 04 and sealed Context Revision 03: `0.4.11` is the successor release version after F3; a new Ticket 08 effect authority remains required. |
 | 2026-08-23 | Project owner / `PRD-20260823-037` / `CHG-20260823-037` | Approved Revision 05 and sealed Context Revision 04: release tags validate their own in-tree declaration, carrier and version; current `main`/new tag retain exact candidate blob binding. Ticket 12 is authorized before Ticket 08 can be re-admitted. |
+| 2026-08-26 | Project owner / `PRD-20260826-040` / `CHG-20260826-040` | Approved Revision 06 and sealed Context Revision 05: an already-installed Codex payload must continue an admitted same-lifetime implementation lane through its native subagent capability, while all receipt/runner machinery remains cross-lifetime only. Ticket 15 is authorized for the bounded `0.4.14` source and release transaction. |
 
 The approval applies to the exact draft named above. This candidate changes only lifecycle and
 approval metadata, binds the resulting sealed Context blob, and opens the `TICKETS` stage; it does
