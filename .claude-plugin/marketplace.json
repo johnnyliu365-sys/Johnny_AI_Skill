@@ -8,11 +8,11 @@
   "plugins": [
     {
       "name": "johnny-ai-skill",
-      "version": "0.4.13",
+      "version": "0.4.14",
       "source": {
         "source": "url",
         "url": "https://github.com/johnnyliu365-sys/Johnny_AI_Skill_publication.git",
-        "sha": "97e9d1aecc4dbf06adc9eb4b9e45dbeefc6e574c"
+        "sha": "0b3afd3645946f97662c336f0e6ac0dcae502e69"
       },
       "description": "A detachable project-takeover workflow, context-load telemetry, and reusable-module selector.",
       "author": {
