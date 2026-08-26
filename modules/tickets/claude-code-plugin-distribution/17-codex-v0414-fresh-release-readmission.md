@@ -9,7 +9,7 @@
 | Control owner / reviewer | Current-session Codex reviewer; `ticket-review` profile. The reviewer personally performs every release readback, cache proof, candidate commit, gate admission and push. |
 | Implementation owner | None. This is reviewer-only evidence and integration work; it does not delegate source changes. |
 | Delivery profile | `POC / HIGH_ASSURANCE`: fresh public-ref snapshot, isolated actual Codex install/cache proof and guarded authority-line integration. |
-| Worktree / branch | Reviewer rebases the preserved reviewed Ticket-15 source candidate onto the post-Ticket-16 authority SHA, records the exact branch and candidate SHA, and creates no replacement payload by hand. |
+| Worktree / branch | Reviewer rebases the preserved reviewed Ticket-15 source candidate onto the post-Ticket-16 authority SHA, records the exact branch and candidate SHA, and creates one temporary Git marketplace ref for the isolated Codex proof. No replacement payload is made by hand. |
 | Language / checker | Python 3.11 verification contracts plus the real Codex plugin CLI. |
 | XSS / effects | `N/A`; all named Git, cache, CLI and authority-line effects are reviewer-only and must be directly read back. |
 
@@ -43,11 +43,20 @@ profile/cache, or reuse Ticket 15’s stale effect authority.
 ## Sole observable closure
 
 The development authority line advertises the existing `0.4.14` payload only after a fresh
-isolated Codex install proves `VERIFIED` with the Ticket-16 cache verifier: the current checkout
+isolated Codex install proves `VERIFIED` with the Ticket-16 cache verifier: the plugin checkout
 binds to the expected generated root, and any retained historical release tags validate against
 their own immutable target declarations. The current source candidate's generated root, public
 publication `main` and `plugin-v0.4.14` tag must all be the same parentless commit. Any changed,
 unknown, missing or mismatched fact halts before development integration.
+
+Codex's effective `plugin marketplace add` capability admits a local or Git marketplace source;
+it does not admit the raw descriptor URL used by Claude's documented marketplace flow. This POC
+therefore uses the candidate development repository and its exact temporary Git ref only inside a
+fresh disposable `CODEX_HOME`. That host-owned marketplace clone is a named limitation, not
+plugin-cache closure evidence and not a claim that Codex avoided cloning development history. The
+plugin install still resolves its declared `source.url` to the independent publication repository.
+Eliminating this marketplace clone, and retaining no historical release payload in either cache,
+is the separately deferred next-major-version archive/snapshot objective.
 
 ## Reviewer-only effect authority
 
@@ -62,10 +71,12 @@ Allowed effects, in order:
    generate and verify its root against its declaration. The root must equal existing publication
    `main` and the existing immutable `plugin-v0.4.14` target.
 2. Update only the generator-owned marketplace pin in that candidate when regeneration proves the
-   same root; commit the reviewed candidate and push one newly named temporary raw ref.
-3. Install the temporary raw descriptor in a short-path disposable `CODEX_HOME`, install
-   `johnny-ai-skill@johnny-ai-skill`, and directly verify version, checkout root, ref grammar and
-   the installed-cache closure. Do not alter the user’s global configuration/cache.
+   same root; commit the reviewed candidate and push one newly named temporary Git marketplace
+   ref.
+3. In a short-path disposable `CODEX_HOME`, add the development repository as a Git marketplace at
+   that exact temporary ref, install `johnny-ai-skill@johnny-ai-skill`, and directly verify the
+   installed plugin version, checkout root, ref grammar and installed-cache closure. Do not alter
+   the user’s global configuration/cache or describe the host marketplace clone as payload closure.
 4. Only after all source, ref and cache evidence is green, invoke `admit_document_mutation`,
    non-force push the resulting development `main`, and directly read back its exact SHA.
 
