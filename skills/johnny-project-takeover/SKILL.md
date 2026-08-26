@@ -19,6 +19,35 @@ target project's runtime, CI, hook, import, submodule or symlink dependency.
 
 Default delivery maturity is `POC` unless an approved target artifact proves otherwise.
 
+## Codex same-lifetime implementation continuation
+
+The entry command may continue implementation only after the Router has emitted
+an exact ticket-bound same-lifetime `AUTO_CONTINUE → IMPLEMENT` decision. This
+is a direct synchronous lane, not a new runtime or a cross-lifetime handoff.
+The current-session reviewer is the owner of delegation, waiting, review and
+integration; the implementation owner is the one owner named by the ticket.
+
+Before delegating, the reviewer must bind all of the following to the exact
+committed ticket: the reviewer-created repository-contained worktree, branch,
+baseline, selected delivery/profile capability and the direct same-lifetime
+lane. The reviewer then invokes the host-native `collaboration.spawn_agent`
+operation exactly once for that ticket-bound owner. The selected model and
+effort are read from the ticket/profile; this skill does not choose or spell a
+provider/model literal.
+
+After delegation, wait with `wait_agent` for the owner's completion. Do not
+poll activity, status or an equivalent progress signal. On return, the
+reviewer receives the typed `ImplementationReturn`, performs the declared
+review and reverse-mutation gates, and only then routes the result onward.
+The direct lane's bridge disposition is `NOT_REQUIRED`: it does not require or
+create a receipt, runner, queue, pending descriptor, gateway or fabricated
+adapter. Cross-lifetime handoffs retain their receipt-bound route.
+
+If native delegation or the selected ticket/profile capability is missing, the
+only result for this lane is `HALT / CODEX_NATIVE_DELEGATION_UNAVAILABLE`.
+The reviewer must not implement the ticket as a fallback, wake another owner,
+or invent a bridge.
+
 ## Reference router
 
 All references are one level below this file and canonical for the named concern. Read each
@@ -43,6 +72,7 @@ file completely only when its condition applies.
 | Formal UI, Figma/screenshot/brief/design-system input or visual acceptance | [UI design handoff](references/ui-design-handoff.md) |
 | Owner/task/worktree admission, Agent control or correction allocation | [Implementation authority](references/implementation-authority.md) |
 | Admitted ticket implementation, TDD, type, smoke or completion | [Implementation TDD](references/implementation-tdd.md) |
+| Admitted same-lifetime Codex native delegation and completion wait | [Codex native same-lifetime delegation](references/codex-native-same-lifetime-delegation.md) |
 | Ticket TDD design or independent code review | [Independent review checks](references/review-checks.md) and `../../CodeReview.md` |
 | Architecture/SPEC/ticket language decision | [Implementation language policy](references/language-policy.md) |
 
@@ -68,7 +98,12 @@ the next stage. This skill cannot bypass host approval, permission or receipt en
 
 ### Automation readiness — check before narrating any automatic effect
 
-Every wake, automatic continuation or supervision effect this skill describes is a **protocol**.
+This readiness gate applies to cross-lifetime wake and supervision protocols. The admitted
+same-lifetime Codex native lane above has `NOT_REQUIRED` bridge disposition and uses the host's
+`collaboration.spawn_agent`/`wait_agent` capabilities directly; it does not require a Johnny
+runner, subscription or wake probe.
+
+Every other wake, automatic continuation or supervision effect this skill describes is a **protocol**.
 The mechanism that performs it is the installed Johnny runtime, armed for the specific project.
 Before stating that any automatic effect will happen or has happened, verify all four:
 
