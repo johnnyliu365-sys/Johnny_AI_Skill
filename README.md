@@ -12,6 +12,20 @@ repository 的內容交給治理它的平面。
 同一生命週期的 `reviewer dispatch → wait → receive → review → guarded integration` 不使用
 live pending descriptor 或 handoff receipt，也不得因這些 bridge 缺席而被阻塞。
 
+在 Router 已經針對 exact committed ticket 宣告同一生命週期的
+`AUTO_CONTINUE → IMPLEMENT` 後，當前 session 的 reviewer 才能繼續實作派工：確認
+ticket、reviewer 建立的 worktree、branch、baseline、selected profile 與 direct lane，
+再用 Codex 原生的 `collaboration.spawn_agent` 建立唯一的 ticket-bound implementation
+owner，並用 `wait_agent` 等待完成。等待期間不做 activity/status polling；回傳後由
+reviewer 做 review、反向突變與既有 gate。model 與 effort 只從 ticket/profile 讀取，這段
+指引不指定 provider 或 model literal。
+
+這條 direct lane 的 bridge disposition 是 `NOT_REQUIRED`，不需要也不建立 receipt、runner、
+queue 或 pending descriptor。若 native delegation 或 selected ticket/profile capability
+不存在，只回傳 `HALT / CODEX_NATIVE_DELEGATION_UNAVAILABLE`，不得由 reviewer 實作、偽造
+adapter 或改走另一條派工路徑；尚未有 admitted ticket 時，entry command 仍只做 pre-ticket
+敘述。跨生命週期 handoff 仍維持 receipt-bound。
+
 交付階段停在 `POC`，直到被核准的產出與變更紀錄另行說明。`MVP` 與 `COMMERCIAL` 是
 profile 控制的階段，兩者都不是 plugin 可以自己從「進度看起來不錯」推斷出來的
 active product objective。
@@ -40,7 +54,7 @@ active product objective。
 只提供 marketplace metadata，plugin source 則由 descriptor 指向獨立的 publication repository：
 
 ```bash
-claude plugin marketplace add https://raw.githubusercontent.com/johnnyliu365-sys/Johnny_AI_Skill/verify/claude-publication-14-v0412-synchronous-dispatch/.claude-plugin/marketplace.json
+claude plugin marketplace add https://raw.githubusercontent.com/johnnyliu365-sys/Johnny_AI_Skill/verify/claude-publication-15-v0414-codex-native-dispatch/.claude-plugin/marketplace.json
 claude plugin install johnny-ai-skill@johnny-ai-skill --scope user
 ```
 
