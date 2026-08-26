@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import os
 import subprocess
 import unittest
@@ -137,7 +138,207 @@ def _unicode_cache_fixture(
     return commit, payload
 
 
+def _versioned_entries(
+    version: str,
+    filename: str,
+    content: bytes,
+    pin: str,
+    *,
+    extra: tuple[str, bytes] | None = None,
+) -> dict[str, bytes]:
+    plugin = {
+        "name": "fixture-plugin",
+        "version": version,
+        "payload": {
+            "trees": [".claude-plugin"],
+            "files": [filename],
+            "excludedSegments": ["__pycache__", ".git"],
+            "excludedSuffixes": [".pyc", ".pyo"],
+        },
+    }
+    marketplace = {
+        "plugins": [
+            {
+                "name": "fixture-plugin",
+                "version": version,
+                "source": {
+                    "source": "url",
+                    "url": "https://example.invalid/publication.git",
+                    "sha": pin,
+                },
+            }
+        ]
+    }
+    entries = {
+        ".claude-plugin/plugin.json": (json.dumps(plugin, indent=2) + "\n").encode(
+            "utf-8"
+        ),
+        ".claude-plugin/marketplace.json": (
+            json.dumps(marketplace, indent=2) + "\n"
+        ).encode("utf-8"),
+        filename: content,
+    }
+    if extra is not None:
+        entries[extra[0]] = extra[1]
+    return entries
+
+
+def _versioned_cache_fixture(
+    root: Path,
+) -> tuple[PublicationCommit, PublicationPayload, PublicationCommit]:
+    _initialise(root)
+    old_entries = _versioned_entries("0.4.10", "old.txt", b"old\n", "0" * 40)
+    old_commit, _ = _parentless_commit(root, old_entries)
+    current_entries = _versioned_entries(
+        "0.4.11", "current.txt", b"current\n", "0" * 40
+    )
+    current_commit, current_payload = _parentless_commit(root, current_entries)
+    _git(root, "update-ref", "refs/heads/main", current_commit.value)
+    _git(root, "update-ref", "refs/remotes/origin/main", current_commit.value)
+    _git(root, "update-ref", "refs/tags/plugin-v0.4.11", current_commit.value)
+    _git(root, "update-ref", "refs/tags/plugin-v0.4.10", old_commit.value)
+    _git(root, "symbolic-ref", "HEAD", "refs/heads/main")
+    _git(root, "symbolic-ref", "refs/remotes/origin/HEAD", "refs/remotes/origin/main")
+    return current_commit, current_payload, old_commit
+
+
 class InstalledPluginCacheClosureTests(unittest.TestCase):
+    def test_t16_retained_older_release_uses_target_declaration(self) -> None:
+        with TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            current, payload, _old = _versioned_cache_fixture(root)
+            result = verify_installed_plugin_cache(
+                root, payload, expected_head=current
+            )
+            self.assertEqual(result.status, InstallClosureStatus.VERIFIED)
+            self.assertEqual(
+                result.reachable_refs,
+                (
+                    "refs/heads/main",
+                    "refs/remotes/origin/HEAD",
+                    "refs/remotes/origin/main",
+                    "refs/tags/plugin-v0.4.10",
+                    "refs/tags/plugin-v0.4.11",
+                ),
+            )
+            self.assertEqual(result.reachable_commits, (current, _old))
+
+    def test_t16_main_refs_bind_head_without_remote_symbolic_head(self) -> None:
+        with TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            current, payload, old = _versioned_cache_fixture(root)
+            _git(root, "update-ref", "-d", "refs/remotes/origin/HEAD")
+            _git(root, "update-ref", "refs/remotes/origin/main", old.value)
+            rejected_remote = verify_installed_plugin_cache(
+                root, payload, expected_head=current
+            )
+            self.assertEqual(
+                rejected_remote.status, InstallClosureStatus.INSTALLED_REF_SET_INVALID
+            )
+
+            _git(root, "update-ref", "refs/remotes/origin/main", current.value)
+            _git(
+                root,
+                "symbolic-ref",
+                "refs/remotes/origin/HEAD",
+                "refs/remotes/origin/main",
+            )
+            restored = verify_installed_plugin_cache(
+                root, payload, expected_head=current
+            )
+            self.assertEqual(restored.status, InstallClosureStatus.VERIFIED)
+
+            _git(root, "update-ref", "--no-deref", "HEAD", current.value)
+            _git(root, "update-ref", "refs/heads/main", old.value)
+            rejected_local = verify_installed_plugin_cache(
+                root, payload, expected_head=current
+            )
+            self.assertEqual(
+                rejected_local.status, InstallClosureStatus.INSTALLED_REF_SET_INVALID
+            )
+            _git(root, "update-ref", "refs/heads/main", current.value)
+            restored_detached = verify_installed_plugin_cache(
+                root, payload, expected_head=current
+            )
+            self.assertEqual(
+                restored_detached.status, InstallClosureStatus.VERIFIED
+            )
+
+    def test_t16_historical_tag_sentinels_fail_closed_and_restore(self) -> None:
+        with TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            current, payload, old = _versioned_cache_fixture(root)
+            for sentinel_path in ("tests/legacy.py", "doc/legacy.md", "modules/legacy.py"):
+                with self.subTest(sentinel_path=sentinel_path):
+                    entries = _versioned_entries(
+                        "0.4.10",
+                        "old.txt",
+                        b"old\n",
+                        "0" * 40,
+                        extra=(sentinel_path, b"sentinel\n"),
+                    )
+                    mutated, _ = _parentless_commit(root, entries)
+                    _git(root, "update-ref", "refs/tags/plugin-v0.4.10", mutated.value)
+                    rejected = verify_installed_plugin_cache(
+                        root, payload, expected_head=current
+                    )
+                    self.assertEqual(
+                        rejected.status, InstallClosureStatus.SENTINEL_REACHABLE
+                    )
+                    _git(root, "update-ref", "refs/tags/plugin-v0.4.10", old.value)
+                    restored = verify_installed_plugin_cache(
+                        root, payload, expected_head=current
+                    )
+                    self.assertEqual(restored.status, InstallClosureStatus.VERIFIED)
+
+    def test_t16_historical_declaration_failures_fail_closed_and_restore(self) -> None:
+        with TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            current, payload, old = _versioned_cache_fixture(root)
+            valid = _versioned_entries("0.4.10", "old.txt", b"old\n", "0" * 40)
+            malformed_plugin = dict(valid)
+            malformed_plugin[".claude-plugin/plugin.json"] = b"{not json\n"
+            malformed_marketplace = dict(valid)
+            malformed_marketplace[".claude-plugin/marketplace.json"] = b"[]\n"
+            malformed_carrier = _versioned_entries(
+                "0.4.10", "old.txt", b"old\n", "1" * 40
+            )
+            wrong_version = _versioned_entries(
+                "0.4.11", "old.txt", b"old\n", "0" * 40
+            )
+            missing_path = dict(valid)
+            missing_path.pop("old.txt")
+            extra_path = _versioned_entries(
+                "0.4.10",
+                "old.txt",
+                b"old\n",
+                "0" * 40,
+                extra=("undeclared.txt", b"extra\n"),
+            )
+            cases = (
+                ("malformed plugin", malformed_plugin),
+                ("malformed marketplace", malformed_marketplace),
+                ("malformed carrier", malformed_carrier),
+                ("version disagreement", wrong_version),
+                ("missing path", missing_path),
+                ("extra path", extra_path),
+            )
+            for label, entries in cases:
+                with self.subTest(case=label):
+                    mutated, _ = _parentless_commit(root, entries)
+                    _git(root, "update-ref", "refs/tags/plugin-v0.4.10", mutated.value)
+                    rejected = verify_installed_plugin_cache(
+                        root, payload, expected_head=current
+                    )
+                    self.assertEqual(
+                        rejected.status, InstallClosureStatus.INSTALLED_TREE_MISMATCH
+                    )
+                    _git(root, "update-ref", "refs/tags/plugin-v0.4.10", old.value)
+                    restored = verify_installed_plugin_cache(
+                        root, payload, expected_head=current
+                    )
+                    self.assertEqual(restored.status, InstallClosureStatus.VERIFIED)
+
     def test_t13_1_normal_clone_unicode_payload_path_is_verified(self) -> None:
         with TemporaryDirectory() as temporary:
             root = Path(temporary)
@@ -233,7 +434,9 @@ class InstalledPluginCacheClosureTests(unittest.TestCase):
             )
             _git(root, "update-ref", "refs/heads/main", development.value)
             rejected = verify_installed_plugin_cache(root, payload, expected_head=commit)
-            self.assertEqual(rejected.status, InstallClosureStatus.SENTINEL_REACHABLE)
+            self.assertEqual(
+                rejected.status, InstallClosureStatus.INSTALLED_REF_SET_INVALID
+            )
 
             _git(root, "update-ref", "-d", "refs/heads/main")
             restored = verify_installed_plugin_cache(root, payload, expected_head=commit)
@@ -436,7 +639,9 @@ class InstalledPluginCacheClosureTests(unittest.TestCase):
             )
             _git(root, "update-ref", "refs/heads/main", development.value)
             rejected = verify_installed_plugin_cache(root, payload, expected_head=commit)
-            self.assertEqual(rejected.status, InstallClosureStatus.SENTINEL_REACHABLE)
+            self.assertEqual(
+                rejected.status, InstallClosureStatus.INSTALLED_REF_SET_INVALID
+            )
             _git(root, "update-ref", "-d", "refs/heads/main")
             restored = verify_installed_plugin_cache(root, payload, expected_head=commit)
             self.assertEqual(restored.status, InstallClosureStatus.VERIFIED)

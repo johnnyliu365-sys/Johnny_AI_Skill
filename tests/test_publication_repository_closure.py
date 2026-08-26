@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import inspect
 import json
 import os
 import subprocess
@@ -18,10 +19,12 @@ from library.local_orchestration.publication_repository_closure import (
     PublicationGeneratedPinCarrier,
     PublicationPayload,
     PublicationReleaseDeclaration,
+    PublicationReleaseDeclarationRead,
     PublicationRepositoryRef,
     PublicationTreeDifference,
     PublicationVersion,
     payload_from_manifest,
+    read_publication_release_declaration,
     verify_publication_repository,
 )
 
@@ -231,6 +234,27 @@ def _restore_current_source(source: Path, current: PublicationCommit) -> None:
 
 
 class PublicationRepositoryClosureTests(unittest.TestCase):
+    def test_t16_public_reader_returns_typed_target_declaration(self) -> None:
+        self.assertEqual(
+            tuple(inspect.signature(read_publication_release_declaration).parameters),
+            ("root", "commit", "tag_version"),
+        )
+        with TemporaryDirectory() as temporary:
+            source, _current, _payload, old = _versioned_fixture(Path(temporary))
+            result = read_publication_release_declaration(
+                source, old, PublicationVersion(value="0.4.10")
+            )
+            self.assertIsInstance(result, PublicationReleaseDeclarationRead)
+            self.assertIsNone(result.failure)
+            self.assertIsNotNone(result.declaration)
+            self.assertIsNotNone(result.difference)
+            assert result.declaration is not None
+            assert result.difference is not None
+            self.assertEqual(result.declaration.version.value, "0.4.10")
+            self.assertTrue(result.difference.is_empty)
+            with self.assertRaises(ValueError):
+                PublicationReleaseDeclarationRead()
+
     def test_t12_release_dto_constructors_are_strongly_validated(self) -> None:
         carrier = PublicationGeneratedPinCarrier(
             pin_carrier=".claude-plugin/marketplace.json",

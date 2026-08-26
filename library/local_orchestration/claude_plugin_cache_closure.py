@@ -14,7 +14,9 @@ from .publication_repository_closure import (
     PublicationCommit,
     PublicationPayload,
     PublicationTreeDifference,
+    PublicationVersion,
     payload_tree_difference,
+    read_publication_release_declaration,
 )
 
 __all__ = [
@@ -112,6 +114,37 @@ def _valid_installed_ref(name: str) -> bool:
             branch.removeprefix("plugin-v")
         ) is not None
     return False
+
+
+def _is_direct_main_ref(name: str) -> bool:
+    if name == _MAIN_REF:
+        return True
+    if not name.startswith(_REMOTE_PREFIX):
+        return False
+    remainder = name.removeprefix(_REMOTE_PREFIX)
+    if "/" not in remainder:
+        return False
+    _remote, branch = remainder.split("/", 1)
+    return branch == "main"
+
+
+def _release_tag_version(name: str) -> PublicationVersion | None:
+    if name.startswith(_TAG_PREFIX):
+        value = name.removeprefix(_TAG_PREFIX)
+    elif name.startswith(_REMOTE_PREFIX):
+        remainder = name.removeprefix(_REMOTE_PREFIX)
+        if "/" not in remainder:
+            return None
+        _remote, branch = remainder.split("/", 1)
+        if not branch.startswith("plugin-v"):
+            return None
+        value = branch.removeprefix("plugin-v")
+    else:
+        return None
+    try:
+        return PublicationVersion(value=value)
+    except ValueError:
+        return None
 
 
 def _symbolic_remote_head_target(name: str) -> str | None:
@@ -314,49 +347,85 @@ def verify_installed_plugin_cache(
         for name, target in refs
     ):
         return InstallClosureResult(status=InstallClosureStatus.INSTALLED_REF_SET_INVALID)
+    if any(
+        _is_direct_main_ref(name) and target != head for name, target in refs
+    ):
+        return InstallClosureResult(status=InstallClosureStatus.INSTALLED_REF_SET_INVALID)
 
     targets: list[PublicationCommit] = [head]
     for _name, target in refs:
         if target not in targets:
             targets.append(target)
+    ref_values = tuple(refs)
+    reachable_refs = tuple(name for name, _ in ref_values)
+    reachable_commits = tuple(targets)
     for commit in targets:
         sentinel = _tree_contains_sentinel(root, commit)
         if sentinel is None:
             return InstallClosureResult(
                 status=InstallClosureStatus.INSTALLED_TREE_MISMATCH,
-                reachable_refs=tuple(name for name, _ in refs),
-                reachable_commits=tuple(targets),
+                reachable_refs=reachable_refs,
+                reachable_commits=reachable_commits,
             )
         if sentinel:
             return InstallClosureResult(
                 status=InstallClosureStatus.SENTINEL_REACHABLE,
-                reachable_refs=tuple(name for name, _ in refs),
-                reachable_commits=tuple(targets),
+                reachable_refs=reachable_refs,
+                reachable_commits=reachable_commits,
             )
         if not _root_commit(root, commit):
             return InstallClosureResult(
                 status=InstallClosureStatus.INSTALLED_HISTORY_INVALID,
-                reachable_refs=tuple(name for name, _ in refs),
-                reachable_commits=tuple(targets),
+                reachable_refs=reachable_refs,
+                reachable_commits=reachable_commits,
             )
+
+        historical_versions = tuple(
+            version
+            for name, target in ref_values
+            if target == commit
+            for version in (_release_tag_version(name),)
+            if version is not None
+        )
+        if commit != head and historical_versions:
+            for version in historical_versions:
+                declaration_read = read_publication_release_declaration(
+                    root, commit, version
+                )
+                if declaration_read.failure is not None:
+                    return InstallClosureResult(
+                        status=InstallClosureStatus.INSTALLED_TREE_MISMATCH,
+                        reachable_refs=reachable_refs,
+                        reachable_commits=reachable_commits,
+                    )
+                difference = declaration_read.difference
+                if difference is None or not difference.is_empty:
+                    return InstallClosureResult(
+                        status=InstallClosureStatus.INSTALLED_TREE_MISMATCH,
+                        difference=difference,
+                        reachable_refs=reachable_refs,
+                        reachable_commits=reachable_commits,
+                    )
+            continue
+
         difference = payload_tree_difference(root, payload, commit)
         if difference is None:
             return InstallClosureResult(
                 status=InstallClosureStatus.INSTALLED_TREE_MISMATCH,
-                reachable_refs=tuple(name for name, _ in refs),
-                reachable_commits=tuple(targets),
+                reachable_refs=reachable_refs,
+                reachable_commits=reachable_commits,
             )
         if not difference.is_empty:
             return InstallClosureResult(
                 status=InstallClosureStatus.INSTALLED_TREE_MISMATCH,
                 difference=difference,
-                reachable_refs=tuple(name for name, _ in refs),
-                reachable_commits=tuple(targets),
+                reachable_refs=reachable_refs,
+                reachable_commits=reachable_commits,
             )
     return InstallClosureResult(
         status=InstallClosureStatus.VERIFIED,
-        reachable_refs=tuple(name for name, _ in refs),
-        reachable_commits=tuple(targets),
+        reachable_refs=reachable_refs,
+        reachable_commits=reachable_commits,
     )
 
 

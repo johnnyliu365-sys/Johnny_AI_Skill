@@ -29,6 +29,7 @@ __all__ = [
     "PublicationCommit",
     "PublicationGeneratedPinCarrier",
     "PublicationReleaseDeclaration",
+    "PublicationReleaseDeclarationRead",
     "PublicationPayload",
     "PublicationPromotionRequest",
     "PublicationRef",
@@ -40,6 +41,7 @@ __all__ = [
     "check_publication_repository",
     "inspect_publication_repository",
     "payload_from_manifest",
+    "read_publication_release_declaration",
     "verify_publication_repository",
 ]
 
@@ -367,10 +369,21 @@ class _SnapshotRead(_StrictModel):
     failure: PublicationClosureStatus | None = None
 
 
-class _ReleaseDeclarationRead(_StrictModel):
+class PublicationReleaseDeclarationRead(_StrictModel):
+    """Typed target-commit release declaration read at the Git boundary."""
+
     declaration: PublicationReleaseDeclaration | None = None
     difference: PublicationTreeDifference | None = None
     failure: PublicationClosureStatus | None = None
+
+    @model_validator(mode="after")
+    def _complete_success_or_failure(self) -> Self:
+        if self.failure is None:
+            if self.declaration is None or self.difference is None:
+                raise ValueError("successful declaration read requires declaration and difference")
+        elif self.declaration is not None or self.difference is not None:
+            raise ValueError("failed declaration read cannot carry success evidence")
+        return self
 
 
 def _git(root: Path, *arguments: str) -> str:
@@ -484,52 +497,52 @@ def _release_version(document: Mapping[str, object]) -> PublicationVersion | Non
         return None
 
 
-def _read_release_declaration(
+def _read_publication_release_declaration_from_tree(
     root: Path,
     commit: PublicationCommit,
     tag_version: PublicationVersion,
     actual: tuple[tuple[str, str], ...],
-) -> _ReleaseDeclarationRead:
+) -> PublicationReleaseDeclarationRead:
     plugin_text = _target_blob(root, commit, _PLUGIN_MANIFEST_PATH)
     marketplace_text = _target_blob(root, commit, _MARKETPLACE_MANIFEST_PATH)
     if plugin_text is None or marketplace_text is None:
-        return _ReleaseDeclarationRead(
+        return PublicationReleaseDeclarationRead(
             failure=PublicationClosureStatus.RELEASE_DECLARATION_INVALID
         )
     plugin_document = _json_object(plugin_text)
     marketplace_document = _json_object(marketplace_text)
     if plugin_document is None or marketplace_document is None:
-        return _ReleaseDeclarationRead(
+        return PublicationReleaseDeclarationRead(
             failure=PublicationClosureStatus.RELEASE_DECLARATION_INVALID
         )
     plugin_version = _release_version(plugin_document)
     payload = _target_payload_declaration(plugin_document)
     if plugin_version is None or payload is None:
-        return _ReleaseDeclarationRead(
+        return PublicationReleaseDeclarationRead(
             failure=PublicationClosureStatus.RELEASE_DECLARATION_INVALID
         )
     marketplace_plugins = marketplace_document.get("plugins")
     if not isinstance(marketplace_plugins, list) or len(marketplace_plugins) != 1:
-        return _ReleaseDeclarationRead(
+        return PublicationReleaseDeclarationRead(
             failure=PublicationClosureStatus.RELEASE_DECLARATION_INVALID
         )
     marketplace_entry = marketplace_plugins[0]
     if not isinstance(marketplace_entry, dict):
-        return _ReleaseDeclarationRead(
+        return PublicationReleaseDeclarationRead(
             failure=PublicationClosureStatus.RELEASE_DECLARATION_INVALID
         )
     marketplace_version = _release_version(marketplace_entry)
     marketplace_source = marketplace_entry.get("source")
     if not isinstance(marketplace_source, dict):
-        return _ReleaseDeclarationRead(
+        return PublicationReleaseDeclarationRead(
             failure=PublicationClosureStatus.RELEASE_DECLARATION_INVALID
         )
     if marketplace_version is None:
-        return _ReleaseDeclarationRead(
+        return PublicationReleaseDeclarationRead(
             failure=PublicationClosureStatus.RELEASE_DECLARATION_INVALID
         )
     if plugin_version != tag_version or marketplace_version != tag_version:
-        return _ReleaseDeclarationRead(
+        return PublicationReleaseDeclarationRead(
             failure=PublicationClosureStatus.RELEASE_VERSION_MISMATCH
         )
     try:
@@ -549,10 +562,25 @@ def _read_release_declaration(
             carrier=carrier,
         )
     except (ValueError, plugin_publication.PublicationError):
-        return _ReleaseDeclarationRead(
+        return PublicationReleaseDeclarationRead(
             failure=PublicationClosureStatus.RELEASE_DECLARATION_INVALID
         )
-    return _ReleaseDeclarationRead(declaration=declaration, difference=difference)
+    return PublicationReleaseDeclarationRead(declaration=declaration, difference=difference)
+
+
+def read_publication_release_declaration(
+    root: Path,
+    commit: PublicationCommit,
+    tag_version: PublicationVersion,
+) -> PublicationReleaseDeclarationRead:
+    actual = _tree_blobs(root, commit)
+    if actual is None:
+        return PublicationReleaseDeclarationRead(
+            failure=PublicationClosureStatus.RELEASE_DECLARATION_INVALID
+        )
+    return _read_publication_release_declaration_from_tree(
+        root, commit, tag_version, actual
+    )
 
 
 def payload_from_manifest(root: Path, manifest_path: Path) -> PublicationPayload:
@@ -897,7 +925,7 @@ def verify_publication_repository(
                             snapshot=snapshot,
                         )
                     current_tag_count += 1
-                declaration_read = _read_release_declaration(
+                declaration_read = _read_publication_release_declaration_from_tree(
                     root, ref.target, tag_version, actual
                 )
                 if declaration_read.failure is not None:
