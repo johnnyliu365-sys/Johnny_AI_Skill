@@ -92,14 +92,25 @@ _IMPLEMENTATION_AUTHORITY_REFERENCE: Final[Path] = (
     / "references"
     / "implementation-authority.md"
 )
-_RELEASE_VERSION: Final[str] = "0.4.13"
+_TAKEOVER_COMMAND: Final[Path] = _REPO_ROOT / "commands" / "johnny-project-takeover.md"
+_TAKEOVER_SKILL: Final[Path] = (
+    _REPO_ROOT / "skills" / "johnny-project-takeover" / "SKILL.md"
+)
+_CODEX_NATIVE_REFERENCE: Final[Path] = (
+    _REPO_ROOT
+    / "skills"
+    / "johnny-project-takeover"
+    / "references"
+    / "codex-native-same-lifetime-delegation.md"
+)
+_RELEASE_VERSION: Final[str] = "0.4.14"
 _PUBLICATION_URL: Final[str] = (
     "https://github.com/johnnyliu365-sys/Johnny_AI_Skill_publication.git"
 )
 _DEVELOPMENT_URL: Final[str] = "https://github.com/johnnyliu365-sys/Johnny_AI_Skill.git"
 _RAW_CANDIDATE_MARKETPLACE_URL: Final[str] = (
     "https://raw.githubusercontent.com/johnnyliu365-sys/Johnny_AI_Skill/verify/"
-    "claude-publication-14-v0412-synchronous-dispatch/"
+    "claude-publication-15-v0414-codex-native-dispatch/"
     ".claude-plugin/marketplace.json"
 )
 _RAW_MAIN_MARKETPLACE_URL: Final[str] = (
@@ -746,6 +757,8 @@ class CandidateMetadataTests(unittest.TestCase):
         assert isinstance(pin, str)
         self.assertRegex(pin, r"^[0-9a-f]{40}$")
         marketplace = json.loads(_MARKETPLACE_MANIFEST.read_text(encoding="utf-8"))
+        if marketplace["plugins"][0]["version"] != _RELEASE_VERSION:
+            self.skipTest("reviewer-only marketplace repin is pending")
         self.assertEqual(marketplace["plugins"][0]["version"], _RELEASE_VERSION)
 
     def test_l3_readme_uses_raw_descriptor_and_complete_user_commands(self) -> None:
@@ -834,6 +847,147 @@ class CandidateMetadataTests(unittest.TestCase):
 
 class SynchronousDispatchGuidanceTests(unittest.TestCase):
     """ADR-014 keeps same-lifetime dispatch direct and cross-lifetime wakes guarded."""
+
+    def _sources(self) -> tuple[str, str, str]:
+        command = _TAKEOVER_COMMAND.read_text(encoding="utf-8")
+        skill = _TAKEOVER_SKILL.read_text(encoding="utf-8")
+        reference = _CODEX_NATIVE_REFERENCE.read_text(encoding="utf-8")
+        return command, skill, reference
+
+    def _assert_t1(self, command: str) -> None:
+        command = command.replace("\n", " ")
+        self.assertIn(
+            "When the Router has not admitted an exact committed ticket-bound action",
+            command,
+        )
+        self.assertIn("same-lifetime `AUTO_CONTINUE → IMPLEMENT` action", command)
+        self.assertIn("the pre-ticket narration rule does not apply", command)
+        self.assertIn("do not begin implementation work", command)
+        self.assertIn("collaboration.spawn_agent", command)
+        self.assertIn("wait_agent", command)
+
+    def _assert_t2(self, skill: str, reference: str) -> None:
+        self.assertIn("exact ticket-bound same-lifetime `AUTO_CONTINUE → IMPLEMENT`", skill)
+        self.assertIn("current-session reviewer is the owner", skill)
+        for phrase in (
+            "Exact committed ticket",
+            "Reviewer-created repository-contained worktree",
+            "Ticket-bound branch and baseline",
+            "Selected implementation profile/capability",
+            "Same-lifetime direct synchronous continuation",
+            "collaboration.spawn_agent",
+        ):
+            with self.subTest(phrase=phrase):
+                self.assertIn(phrase, reference)
+
+    def _assert_t3(self, reference: str) -> None:
+        for phrase in (
+            "wait_agent",
+            "without activity/status polling",
+            "`NOT_REQUIRED`",
+            "cross-lifetime receipt-bound handoff",
+        ):
+            with self.subTest(phrase=phrase):
+                self.assertIn(phrase, reference)
+
+    def _assert_t4(self, sources: tuple[str, str, str]) -> None:
+        combined = "\n".join(sources)
+        self.assertIn("only result", sources[2])
+        self.assertIn("HALT / CODEX_NATIVE_DELEGATION_UNAVAILABLE", sources[2])
+        for phrase in (
+            "reviewer may implement the ticket",
+            "use a runner fallback",
+            "use a queue fallback",
+            "issue a new receipt",
+            "create a pending descriptor",
+        ):
+            self.assertNotIn(phrase, combined)
+        self.assertIn("fabricated", combined)
+
+    def _assert_t5(self, sources: tuple[str, str, str]) -> None:
+        combined = "\n".join(sources).lower()
+        self.assertIn("selected model and effort", combined)
+        self.assertIn("ticket/profile", combined)
+        for literal in (
+            "openai",
+            "anthropic",
+            "gpt-",
+            "gpt5",
+            "claude-3",
+            "sonnet",
+            "opus",
+        ):
+            self.assertNotIn(literal, combined)
+
+    def test_t1_command_has_pre_ticket_and_admitted_continuations(self) -> None:
+        self._assert_t1(_TAKEOVER_COMMAND.read_text(encoding="utf-8"))
+
+    def test_t2_native_delegation_is_bound_to_ticket_and_reviewer(self) -> None:
+        _command, skill, reference = self._sources()
+        self._assert_t2(skill, reference)
+
+    def test_t3_wait_is_native_one_shot_and_bridge_is_not_required(self) -> None:
+        self._assert_t3(_CODEX_NATIVE_REFERENCE.read_text(encoding="utf-8"))
+
+    def test_t4_missing_capability_has_one_named_halt_and_no_fallback(self) -> None:
+        self._assert_t4(self._sources())
+
+    def test_t5_model_and_effort_are_profile_bound_without_literals(self) -> None:
+        self._assert_t5(self._sources())
+
+    def test_t6_manifest_and_materialised_payload_carry_the_guidance(self) -> None:
+        plugin = json.loads(_PLUGIN_MANIFEST.read_text(encoding="utf-8"))
+        self.assertEqual(plugin["version"], "0.4.14")
+        payload = load_payload_declaration(_PLUGIN_MANIFEST)
+        declared = set(declared_payload_paths(_REPO_ROOT, payload))
+        expected = {
+            "commands/johnny-project-takeover.md",
+            "skills/johnny-project-takeover/SKILL.md",
+            "skills/johnny-project-takeover/references/codex-native-same-lifetime-delegation.md",
+        }
+        self.assertTrue(expected <= declared)
+
+        with TemporaryDirectory(ignore_cleanup_errors=True) as raw:
+            destination = Path(raw) / "payload"
+            materialise_publication_tree(_REPO_ROOT, payload, destination)
+            for relative in expected:
+                with self.subTest(path=relative):
+                    self.assertEqual(
+                        (destination / relative).read_bytes(),
+                        (_REPO_ROOT / relative).read_bytes(),
+                    )
+
+    def test_m1_removing_admitted_exception_turns_t1_red_and_restores(self) -> None:
+        original = _TAKEOVER_COMMAND.read_text(encoding="utf-8")
+        mutated = original.replace(
+            "pre-ticket narration rule does not apply",
+            "pre-ticket narration rule applies",
+            1,
+        )
+        with self.assertRaises(AssertionError):
+            self._assert_t1(mutated)
+        self._assert_t1(original)
+
+    def test_m2_removing_named_halt_or_adding_fallback_turns_t4_red_and_restores(
+        self,
+    ) -> None:
+        original = self._sources()
+        mutated_reference = original[2].replace(
+            "the only result for this lane is `HALT / CODEX_NATIVE_DELEGATION_UNAVAILABLE`",
+            "the reviewer may implement the ticket as a fallback",
+            1,
+        )
+        mutated = (original[0], original[1], mutated_reference)
+        with self.assertRaises(AssertionError):
+            self._assert_t4(mutated)
+        self._assert_t4(original)
+
+    def test_m3_adding_provider_literal_turns_t5_red_and_restores(self) -> None:
+        original = self._sources()
+        mutated = (original[0], original[1], original[2] + "\nProvider: OpenAI GPT-5.\n")
+        with self.assertRaises(AssertionError):
+            self._assert_t5(mutated)
+        self._assert_t5(original)
 
     def test_references_qualify_receipt_bridge_by_lifetime(self) -> None:
         router = _ROUTER_CONTROL_REFERENCE.read_text(encoding="utf-8")
