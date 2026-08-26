@@ -2,11 +2,11 @@
 
 | Field | Binding |
 | --- | --- |
-| SPEC / Context | `SPEC-AI-WORKFLOW-CLAUDE-CODE-PLUGIN-DISTRIBUTION-20260802-01KZ4C6D8E0F2G4H6J8K0M2N4P` Revision 05 / sealed Context Revision 04, blob `f175d6a6842ca1d24a3cfd85e3a24542e7d7b9a3` |
+| SPEC / Context | `SPEC-AI-WORKFLOW-CLAUDE-CODE-PLUGIN-DISTRIBUTION-20260802-01KZ4C6D8E0F2G4H6J8K0M2N4P` Revision 07 / sealed Context Revision 06, blob `59363cf1309d8905e1064e76126dbe3fde9bd8e3` |
 | Requirement / architecture | `PRD-20260823-034` / `CHG-20260823-034`, amended through `PRD-20260823-037` / `CHG-20260823-037` / `ADR-20260823-015`, `ADR-20260823-017` and `ADR-20260823-018` |
 | Planning baseline | `449ecd7714fb7f7339f4997d3f3349fc063f32b3` |
 | Control owner / reviewer | Terra `ticket-review` profile; profile selection remains capability-verified at dispatch. |
-| State | `REVISION_05 / VERSION_SPECIFIC_TAG_CLOSURE_AUTHORIZED` |
+| State | `REVISION_07 / INSTALLED_CACHE_VERSION_SPECIFIC_TAG_REPAIR_AUTHORIZED` |
 
 Tickets 01–05 remain completed evidence for payload declaration, content binding and old-source
 reachability. They are not authority for publication-repository isolation. New tickets are serial:
@@ -29,7 +29,9 @@ performs the one owner-authorized live cutover.
 | [12-version-specific-publication-tag-closure.md](12-version-specific-publication-tag-closure.md) | `DONE / APPROVED / INTEGRATED` — `9a244db` / `CLOSURE_04` | Current release keeps exact candidate path/blob closure; a retained tag proves its own exact declaration/path/version/carrier closure. | `POC / STANDARD`; Luna/xhigh implementation and Terra/xhigh review passed independent current-tag and retained-tag reverse mutations. No remote/ref/tag/cache/CLI effect occurred. |
 | [13-installed-cache-quoted-paths.md](13-installed-cache-quoted-paths.md) | `DONE / APPROVED / INTEGRATED` — `7a7000b` / `CLOSURE_01` | A lossless installed-cache path reader admits valid UTF-8 non-ASCII payload paths while retaining fail-closed malformed-byte and development-sentinel rejection. | Ticket 08's real isolated 0.4.11 cache exposed a `core.quotePath` display-parser defect. Luna/xhigh implementation and Terra/xhigh review passed deterministic quote-path, malformed-byte and independent CJK development-sentinel mutations. No external effect occurred. |
 | [14-synchronous-dispatch-guidance-release.md](14-synchronous-dispatch-guidance-release.md) | `DONE / APPROVED / INTEGRATED / CLOSURE_01` — `47502bb` | The shipped guidance distinguishes same-lifetime synchronous dispatch from the optional receipt-bound cross-lifetime bridge. | Generated parentless root `3b84c5f` is publication `main` and `plugin-v0.4.12`; candidate and fresh main-descriptor installs both verified the isolated cache closure, and the temporary raw ref was removed after integration. |
-| [15-codex-native-same-lifetime-dispatch-release.md](15-codex-native-same-lifetime-dispatch-release.md) | `APPROVED_NOT_DISPATCHED / CLOSURE_01` | A Codex-loaded takeover command directly dispatches the ticket-bound implementation owner only in the already-admitted same-lifetime lane, then waits without polling. | `POC / STANDARD` source closure plus `POC / HIGH_ASSURANCE` exact `0.4.14` publication/tag/Codex-cache transaction. |
+| [15-codex-native-same-lifetime-dispatch-release.md](15-codex-native-same-lifetime-dispatch-release.md) | `BLOCKED / RELEASE_READBACK_MISMATCH / CLOSURE_02` | A Codex-loaded takeover command directly dispatches the ticket-bound implementation owner only in the already-admitted same-lifetime lane, then waits without polling. | Its sole `0.4.14` attempt reached an actual normal-clone cache whose valid retained tags exposed the installed-cache ADR-018 omission; no development integration occurred. |
+| [16-installed-cache-version-specific-tags.md](16-installed-cache-version-specific-tags.md) | `APPROVED_NOT_DISPATCHED / CLOSURE_01` | A normal installed cache accepts valid retained release tags using each tag’s own immutable declaration while still rejecting foreign refs and development trees. | `POC / STANDARD`; deterministic local Git/cache fixtures only. No release, cache, CLI, ref/tag or remote effect. |
+| [17-codex-v0414-fresh-release-readmission.md](17-codex-v0414-fresh-release-readmission.md) | `APPROVED_NOT_DISPATCHED / CLOSURE_01` | The already-created immutable `0.4.14` publication object is freshly verified and its reviewed development candidate is integrated only after Ticket 16 closes. | `POC / HIGH_ASSURANCE`; fresh remote snapshot, isolated Codex cache and guarded development-authority integration. No tag move, delete or retry of Ticket 15. |
 
 No ticket authorizes a runner, queue, receipt, host gateway, remote Git mutation, repository
 creation, public release or user-installation effect by implication. Same-lifetime POC coding and

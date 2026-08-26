@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | Specification Revision 06, AC-1 through AC-7 and Revision-06 continuation clauses 1–5 |
 | Requirement / Context / architecture | `PRD-20260826-040` / `CHG-20260826-040`; Context Revision 05 (`CTX-CLAUDE-CODE-PLUGIN-DISTRIBUTION-20260826-05`, sealed blob `1dbdf84d0abc5e732f3915e2195321a44db29056`); ADR-014 through ADR-018. |
-| State / closure | `APPROVED_NOT_DISPATCHED / CLOSURE_01` |
+| State / closure | `BLOCKED / RELEASE_READBACK_MISMATCH / CLOSURE_02` |
 | Control owner / reviewer | Current-session Codex reviewer; semantic `ticket-review` profile. The reviewer personally performs review, reverse mutation, candidate commits, gate admission and every release effect. |
 | Implementation owner | One current-session owner selected from this ticket's `implementation-standard` profile; the ordinary model/effort binding is recorded only at dispatch. One owner; no helpers. |
 | Delivery stage / profile | `POC / STANDARD` for source and deterministic tests; `POC / HIGH_ASSURANCE` for publication, remote refs/tag, development-main push, and isolated Codex cache verification. |
@@ -84,6 +84,16 @@ After a green source review, this owner directive authorizes one reviewer-operat
 | Allowed effects | Generate `C`; CAS-push only publication `main`; create only the absent `plugin-v0.4.14` tag at `C`; push only the named temporary candidate ref; use the documented main descriptor only in an isolated Codex plugin configuration/cache; gate-integrate then non-force-push development `main`; and directly read back every named result. |
 
 Any changed development authority SHA, publication main, retained ref, unknown ref, existing `plugin-v0.4.14`, failed cache closure, failed install/update, or mismatched readback is `HALT / RELEASE_READBACK_MISMATCH`. No retry, force, tag move, cache edit, source-pin hand edit, or broader user-profile mutation is authorized.
+
+## Attempt 01 blocker
+
+The single authorized attempt completed its bounded source candidate and generated a parentless
+publication root, but the isolated normal Codex cache retained the admitted historic
+`plugin-v0.4.10` through `plugin-v0.4.13` tags. The cache verifier correctly enumerated them, then
+incorrectly compared their valid historical trees to the current `0.4.14` payload and returned
+`INSTALLED_TREE_MISMATCH`. The development authority line was not integrated or pushed. Under the
+one-attempt rule this ticket is terminally blocked; Ticket 16 repairs the local verifier and
+Ticket 17, not this ticket, may perform a fresh readback-based admission.
 
 ## Completion and continuation
 

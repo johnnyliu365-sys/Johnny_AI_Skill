@@ -1,11 +1,11 @@
-# Claude Code plugin distribution — Revision 05 multi-release publication-tag closure
+# Claude Code plugin distribution — Revision 07 installed-cache version-specific tag closure
 
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-CLAUDE-CODE-PLUGIN-DISTRIBUTION-20260802-01KZ4C6D8E0F2G4H6J8K0M2N4P` |
-| Status | `APPROVED / REVISION_06 / TICKET_15_AUTHORIZED` |
-| Author / baseline | Architecture owner / `control/codex-native-same-lifetime-dispatch` / `b56ac2d20068a4da7eb82950c64e471247c8fc61` |
-| Feature Context | `doc/context/claude-code-plugin-distribution/claude-code-plugin-distribution-r05-codex-native-same-lifetime-dispatch.md`, sealed `REVISION_05`, blob `1dbdf84d0abc5e732f3915e2195321a44db29056` |
+| Status | `APPROVED / REVISION_07 / TICKETS_16_17_AUTHORIZED` |
+| Author / baseline | Project owner authority / `control/claude-publication-16-installed-cache-tags` / `53fd19fab45783aaa31f224fdf699760621a4664` |
+| Feature Context | `doc/context/claude-code-plugin-distribution/claude-code-plugin-distribution-r06-installed-cache-version-specific-tags.md`, sealed `REVISION_06`, blob `59363cf1309d8905e1064e76126dbe3fde9bd8e3` |
 | PRD / change | `PRD-20260802-005` / `CHG-20260802-005`, amended by `PRD-20260823-034` / `CHG-20260823-034`, `PRD-20260823-035` / `CHG-20260823-035`, `PRD-20260823-036` / `CHG-20260823-036`, `PRD-20260823-037` / `CHG-20260823-037` and `PRD-20260826-040` / `CHG-20260826-040` |
 | Architecture | `ADR-20260823-014-cross-lifetime-handoff-bridge.md`; `ADR-20260823-015-dedicated-plugin-publication-repository.md`; `ADR-20260823-016-codex-cli-cross-lifetime-wake-bridge.md`; `ADR-20260823-017-level-one-payload-topology.md`; `ADR-20260823-018-version-specific-publication-tag-payloads.md` |
 | Delivery stage / profile | `POC / STANDARD` for F3, Ticket 12 and Ticket 15's deterministic source closure; `POC / HIGH_ASSURANCE` remains mandatory for repository creation, remote ref mutation, release publication and an isolated user-installed supply-chain boundary. |
@@ -74,11 +74,34 @@ The command/skill boundary is finite:
 5. Exact underlying model and effort values stay in the approved ticket/profile. The source
    guidance may name the host delegation operation, but contains no provider/model literal.
 
-Ticket 15 is the only authorized successor-release contract. It changes the Level 1 command and
-skill source, bumps `.claude-plugin/plugin.json` to `0.4.14`, regenerates the publication root,
-creates the absent-only `plugin-v0.4.14` tag, and verifies a Codex isolated installed cache. It
-does not modify `.codex-plugin/`, create a durable host adapter, or authorize any new provider
-integration.
+Ticket 15 was the bounded successor-release contract. It changed the Level 1 command and skill
+source, selected `.claude-plugin/plugin.json` version `0.4.14`, generated the publication root,
+created the absent-only `plugin-v0.4.14` tag, and then halted at the installed-cache verifier.
+It is terminally blocked under its one-attempt rule. Ticket 17 is the only fresh-readback
+readmission contract; neither ticket modifies `.codex-plugin/`, creates a durable host adapter,
+or authorizes a new provider integration.
+
+### Revision 07 — Installed-cache version-specific retained tags
+
+ADR-018 already distinguishes the current payload from immutable historical releases. The remote
+publication verifier implements that rule, but the installed-cache verifier still compares every
+clone-retained tag against the current `PublicationPayload`. A normal clone therefore rejects a
+valid older release solely because that tag was correctly generated from its own older declaration.
+
+This revision applies the existing rule at the cache boundary:
+
+1. `HEAD`, local `refs/heads/main`, the remote-tracking `*/main` reference and the current
+   release tag remain exact-current-root/current-payload checks.
+2. Every other admitted `plugin-v<semver>` target is parentless and is validated solely from its
+   target-commit plugin declaration, marketplace carrier and matching three-way semantic version.
+   Its declared paths must equal that target tree; it is not compared to current payload blobs.
+3. The installed-cache ref grammar, symbolic-head binding, sentinel scan and finite failure
+   surface stay fail-closed. A foreign ref or development sentinel is never made acceptable by
+   the version-specific branch.
+4. This is a verifier repair only. It does not alter the Level 1 payload, publication source,
+   immutable tags or semantic version. The blocked `0.4.14` development integration requires a
+   later ticket with a fresh snapshot and isolated Codex cache proof; it may not retry Ticket 15
+   or move its tag.
 
 ## User flow, error flow and external-effect boundary
 
@@ -265,9 +288,11 @@ forward-fix/revert decision for the owner, not an automatic retry.
    marketplace cache contains only the expected descriptor; its visible plugin checkout's paths
    and blobs equal the payload declaration.
 6. The same real install enumerates every installed plugin-cache ref and each reachable commit.
-   Every commit is parentless and every `git ls-tree -r` result has zero payload difference.
-   Development-only `tests/`, `doc/` and `modules/` sentinels are unreachable; a visible
-   checkout that is correct while a development ref remains reachable is a failure.
+   Every commit is parentless. The current root has zero difference from the supplied current
+   payload; each retained historical release tag has zero difference from its own in-target
+   declaration, canonical generated carrier and matching tag/plugin/marketplace versions.
+   Development-only `tests/`, `doc/` and `modules/` sentinels are unreachable; a visible checkout
+   that is correct while a development ref remains reachable is a failure.
 7. The verifier has a reviewer-run reverse mutation that adds a development ref/tree to a
    publication fixture and turns the closure red. Byte-for-byte restoration returns it green.
 8. README tells users the exact add/install/update/removal commands, does not claim that Claude
@@ -296,6 +321,10 @@ forward-fix/revert decision for the owner, not an automatic retry.
   effect.
 - A disposable bare local repository supplies positive and negative publication fixtures. Its
   negative fixture adds a development branch/tree; the verifier must return a finite failure.
+- An installed-cache fixture retains one older valid release tag whose declared payload differs
+  from the current root. It verifies only when the cache boundary applies ADR-018 to that tag;
+  a malformed historical declaration, version disagreement, development sentinel or foreign ref
+  remains a distinct red path.
 - F3's declaration tests use a manifest fixture with nested tree paths, an undeclared
   `library/local_orchestration/` probe and a retained catalog/router closure probe. They prove
   nested-path validation once in the generator and use its same membership rules in the release
@@ -350,6 +379,7 @@ forward-fix/revert decision for the owner, not an automatic retry.
 | 2026-08-23 | Project owner / `PRD-20260823-036` / `CHG-20260823-036` | Approved Revision 04 and sealed Context Revision 03: `0.4.11` is the successor release version after F3; a new Ticket 08 effect authority remains required. |
 | 2026-08-23 | Project owner / `PRD-20260823-037` / `CHG-20260823-037` | Approved Revision 05 and sealed Context Revision 04: release tags validate their own in-tree declaration, carrier and version; current `main`/new tag retain exact candidate blob binding. Ticket 12 is authorized before Ticket 08 can be re-admitted. |
 | 2026-08-26 | Project owner / `PRD-20260826-040` / `CHG-20260826-040` | Approved Revision 06 and sealed Context Revision 05: an already-installed Codex payload must continue an admitted same-lifetime implementation lane through its native subagent capability, while all receipt/runner machinery remains cross-lifetime only. Ticket 15 is authorized for the bounded `0.4.14` source and release transaction. |
+| 2026-08-26 | Project owner / existing `PRD-20260823-037` / `CHG-20260823-037` and ADR-018 | Approved Revision 07 and sealed Context Revision 06: repair the installed-cache omission of ADR-018’s version-specific retained-tag rule, then use a separate fresh-snapshot ticket for any `0.4.14` development integration. |
 
 The approval applies to the exact draft named above. This candidate changes only lifecycle and
 approval metadata, binds the resulting sealed Context blob, and opens the `TICKETS` stage; it does
