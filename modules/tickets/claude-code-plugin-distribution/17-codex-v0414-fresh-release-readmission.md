@@ -9,7 +9,7 @@
 | Control owner / reviewer | Current-session Codex reviewer; `ticket-review` profile. The reviewer personally performs every release readback, cache proof, candidate commit, gate admission and push. |
 | Implementation owner | None. This is reviewer-only evidence and integration work; it does not delegate source changes. |
 | Delivery profile | `POC / HIGH_ASSURANCE`: fresh public-ref snapshot, isolated actual Codex install/cache proof and guarded authority-line integration. |
-| Worktree / branch | Reviewer rebases the preserved reviewed Ticket-15 source candidate onto the current authority SHA, records the exact branch and candidate SHA, and pushes only `refs/heads/verify/claude-publication-17-v0414-codex-readmission-r02` for the isolated Codex proof. No replacement payload is made by hand. |
+| Worktree / branch | Reviewer rebases the preserved reviewed Ticket-15 source candidate onto the current authority SHA, records the exact branch and candidate SHA, and pushes only `refs/heads/verify/claude-publication-17-v0414-codex-readmission-r03` for the isolated Codex proof. No replacement payload is made by hand. |
 | Language / checker | Python 3.11 verification contracts plus the real Codex plugin CLI. |
 | XSS / effects | `N/A`; all named Git, cache, CLI and authority-line effects are reviewer-only and must be directly read back. |
 
@@ -27,7 +27,6 @@ forbid = template/
 forbid = library/
 forbid = modules/
 forbid = doc/
-forbid = README.md
 forbid = .codex-plugin/
 forbid = install.ps1
 forbid = johnny-install.cmd
@@ -72,9 +71,10 @@ Allowed effects, in order:
    `main` and the existing immutable `plugin-v0.4.14` target.
 2. Update only the generator-owned marketplace pin in that candidate when regeneration proves the
    same root; commit the reviewed candidate and push only
-   `refs/heads/verify/claude-publication-17-v0414-codex-readmission-r02`. The previously pushed
-   `refs/heads/verify/claude-publication-17-v0414-codex-readmission` is pre-rebind audit evidence:
-   it must not be moved, deleted or used as this ticket's admission source.
+   `refs/heads/verify/claude-publication-17-v0414-codex-readmission-r03`. The previously pushed
+   `refs/heads/verify/claude-publication-17-v0414-codex-readmission` and
+   `refs/heads/verify/claude-publication-17-v0414-codex-readmission-r02` are pre-rebind audit
+   evidence: neither may be moved, deleted or used as this ticket's admission source.
 3. In a short-path disposable `CODEX_HOME`, add the development repository as a Git marketplace at
    that exact temporary ref, install `johnny-ai-skill@johnny-ai-skill`, and directly verify the
    installed plugin version, checkout root, ref grammar and installed-cache closure. Do not alter
