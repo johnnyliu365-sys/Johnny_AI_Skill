@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | Revision 07, AC-1 through AC-11; Revision-07 clauses 1–4 |
 | PRD / CHG / Context / architecture | `PRD-20260823-037` / `CHG-20260823-037`, `PRD-20260826-040` / `CHG-20260826-040`; Context Revision 06 (`CTX-CLAUDE-CODE-PLUGIN-DISTRIBUTION-20260826-06`, sealed blob `59363cf1309d8905e1064e76126dbe3fde9bd8e3`); ADR-015 and ADR-018. |
-| State / closure | `APPROVED_NOT_DISPATCHED / CLOSURE_01` |
+| State / closure | `DONE / APPROVED / AUTHORITY_INTEGRATED / CLOSURE_01` — candidate and integrated commit `01b810f096b1201005d26922e2c8a474bdd5a0a0` |
 | Dependency | Ticket 16 must be `DONE / APPROVED / INTEGRATED` on the observed development authority line. Ticket 15 is terminally blocked and is not retried. |
 | Control owner / reviewer | Current-session Codex reviewer; `ticket-review` profile. The reviewer personally performs every release readback, cache proof, candidate commit, gate admission and push. |
 | Implementation owner | None. This is reviewer-only evidence and integration work; it does not delegate source changes. |
@@ -98,3 +98,32 @@ the non-force push succeeds and direct `origin/main` readback equals it.
 The next major-version goal—archive/snapshot installation with no retained historical payload in
 the cache—is not an alternative path here. It needs a separate requirement and architecture
 decision after this corrective release is closed.
+
+## Completion evidence
+
+- Ticket 16's reviewed candidate was admitted and integrated as
+  `0aeb5935714d113569274d5304832b4c913738d4`; its local fixture reverse mutation and strict
+  checks were green before this readmission.
+- The preserved Ticket-15 source candidate was rebased onto authority
+  `f4f905e7d678f86a979f8b2679d4f2ca80eb14a4`. Its resulting candidate, and the exact r03
+  temporary ref used by Codex, were both `01b810f096b1201005d26922e2c8a474bdd5a0a0`.
+- Generator reproduction and verify-only both produced
+  `0b3afd3645946f97662c336f0e6ac0dcae502e69`; direct public readback found that same root at
+  publication `main` and immutable `plugin-v0.4.14`. The existing `plugin-v0.4.10` through
+  `plugin-v0.4.13` tags were observed unchanged.
+- The source/payload, publication-closure and installed-cache suites ran 154 tests successfully;
+  `mypy --strict` on Ticket 16's four modules, `compileall`, generator verification and
+  `git diff --check` were green.
+- A fresh disposable Codex home installed `johnny-ai-skill@johnny-ai-skill` version `0.4.14`.
+  Its plugin checkout reported the public publication URL and root `0b3afd3645946f97662c336f0e6ac0dcae502e69`.
+  The installed-cache verifier returned `VERIFIED` with only `main`, `origin/HEAD`,
+  `origin/main` and immutable `plugin-v0.4.10` through `plugin-v0.4.14` refs reachable; no
+  difference was reported.
+- `admit_document_mutation` returned integrated commit
+  `01b810f096b1201005d26922e2c8a474bdd5a0a0`; the non-force push succeeded and direct
+  `origin/main` readback returned the same SHA. This is `AUTHORITY_INTEGRATED`.
+
+The isolated Codex marketplace carrier remains a Git clone of the temporary development ref, and
+the installed publication checkout still retains legitimate historical release payloads. Neither
+is concealed by this closure: removing both is explicitly deferred to the next-major-version
+archive/snapshot requirement and architecture decision.

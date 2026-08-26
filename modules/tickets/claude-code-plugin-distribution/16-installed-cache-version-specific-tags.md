@@ -4,7 +4,7 @@
 | --- | --- |
 | SPEC / AC | Revision 07, AC-2, AC-5 through AC-7 and AC-11; Revision-07 clauses 1–4 |
 | PRD / CHG / Context / architecture | `PRD-20260823-037` / `CHG-20260823-037`; Context Revision 06 (`CTX-CLAUDE-CODE-PLUGIN-DISTRIBUTION-20260826-06`, sealed blob `59363cf1309d8905e1064e76126dbe3fde9bd8e3`); ADR-018 Decision 3. |
-| State / closure | `APPROVED_NOT_DISPATCHED / CLOSURE_01` |
+| State / closure | `DONE / APPROVED / INTEGRATED / CLOSURE_01` — candidate and integrated commit `0aeb5935714d113569274d5304832b4c913738d4` |
 | Exact baseline | The committed `origin/main` authority SHA containing this ticket, recorded at dispatch. |
 | Dependency | Tickets 10, 12 and 13 are integrated. Ticket 15 is terminally blocked by its one-attempt rule; this ticket repairs its local verifier prerequisite only. |
 | Control owner / reviewer | `ticket-review` profile — Terra / xhigh, capability verified at dispatch. |
