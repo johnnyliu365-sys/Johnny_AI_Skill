@@ -6,7 +6,7 @@
 | Ticket / closure | `11-per-stream-ownership-ledger-readiness` / `CLOSURE-CONTEXT-TELEMETRY-11-PER-STREAM-OWNERSHIP-LEDGER-READINESS` revision 01 |
 | Source baseline / final candidate | `b8a5dfdc7f482812451e336f6293510eedaa75ad` / `e05f03adf8751f635df8fba6eb204a3922727ec4` |
 | Reviewer | `ticket-review` semantic profile — Terra/xhigh, root session |
-| Conclusion | `APPROVED / INTEGRATED` |
+| Conclusion | `APPROVED / INTEGRATED / AUTHORITY_PUSH_CONFIRMED` |
 
 ## Admission and scope
 
@@ -60,3 +60,8 @@ delivered lock port, a durable transaction journal and the strict legacy-codec b
 five storage operations. It must add restart/phase interruption, TOCTOU and release-failure
 evidence; it may not create a public provision surface, silently migrate the aggregate ledger or
 weaken Ticket 11's exact-identity guard.
+
+The docs-only closure record `32ef7d82ba6477816c7365d06121f9ae8534b9ce` was non-force pushed
+to `origin/main`; fresh direct remote SHA readback matched it exactly. This proves the review and
+closure evidence are authority-integrated. The reviewed source candidate remains the distinct
+ancestor `e05f03adf8751f635df8fba6eb204a3922727ec4` recorded above.

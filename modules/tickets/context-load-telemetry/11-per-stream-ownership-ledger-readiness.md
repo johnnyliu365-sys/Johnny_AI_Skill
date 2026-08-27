@@ -5,8 +5,8 @@
 | Artifact ID / kind | `TICKET-CONTEXT-TELEMETRY-11-PER-STREAM-OWNERSHIP-LEDGER-READINESS` / `IMPLEMENTATION_TICKET` |
 | SPEC / acceptance source | `SPEC-AI-WORKFLOW-CONTEXT-LOAD-TELEMETRY-20260803-01KZ5E7F9G1H3J5K7M9N1P3Q5R` Revision 08 / AC-16 through AC-18 |
 | Requirement / Context / ADR | `PRD-20260827-041` / `CHG-20260827-041` / `doc/context/context-load-telemetry/main.md` Revision 08 / `ADR-20260827-025` and `ADR-20260827-026` |
-| State / closure | `CLOSED / DONE / APPROVED / INTEGRATED`; `CLOSURE-CONTEXT-TELEMETRY-11-PER-STREAM-OWNERSHIP-LEDGER-READINESS`, revision 01 |
-| Document revision | `02` — completion evidence only; the frozen acceptance closure remains revision 01. |
+| State / closure | `CLOSED / DONE / APPROVED / INTEGRATED / AUTHORITY_PUSH_CONFIRMED`; `CLOSURE-CONTEXT-TELEMETRY-11-PER-STREAM-OWNERSHIP-LEDGER-READINESS`, revision 01 |
+| Document revision | `03` — authority-readback evidence only; the frozen acceptance closure remains revision 01. |
 | Approval authority | Project owner, 2026-08-27 (Asia/Taipei): Revision 07 authorizes architecture-conformant private ledger/CAS and transaction decomposition. Revision 08 / `ADR-20260827-026` closes this representation correction; no public behavior or new external effect is introduced. |
 | Source baseline / dependency | `88ddf04bfc8751b6ad27b6727c61af6f4ab37d49`; candidate must descend from the committed ticket authority. Ticket 09 (`096d471`) supplies the exact lock port; Ticket 10 (`a06c0fd`) supplies the private ledger seam. Ticket 06 remains `SUPERSEDED` and non-integrable. |
 | Control owner / reviewer | `ticket-review` semantic profile — Terra/xhigh. |
@@ -192,3 +192,8 @@ The formal review record is
 It records LRA/LRM, strict type, independent reviewer counter-mutation and full-suite
 baseline-equivalence evidence. The next separate closure is the lock-bound transaction adapter;
 it may use this private seam but may not widen its public surface or re-open Ticket 06.
+
+The closure/review documentation commit `32ef7d82ba6477816c7365d06121f9ae8534b9ce` was
+non-force pushed to `origin/main`; a fresh direct remote readback returned that exact SHA. This
+confirms the closure evidence itself is authority-integrated. The distinct reviewed source
+candidate remains ancestor evidence at `e05f03adf8751f635df8fba6eb204a3922727ec4`.
