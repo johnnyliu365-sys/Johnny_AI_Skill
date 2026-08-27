@@ -31,6 +31,7 @@
 | 條件 | 必讀 reference |
 | --- | --- |
 | 所有 implementation review；也用於 ticket TDD matrix | [`review-checks.md`](skills/johnny-project-takeover/references/review-checks.md) |
+| Adversarial review or deployment readiness | [`adversarial-review.md`](skills/johnny-project-takeover/references/adversarial-review.md) |
 | 強型別 ticket/schema/dispatch | [`specification-ticketing.md`](skills/johnny-project-takeover/references/specification-ticketing.md) |
 | Agent authority、task/worktree、correction | [`implementation-authority.md`](skills/johnny-project-takeover/references/implementation-authority.md) |
 | TDD、strict type、smoke、completion | [`implementation-tdd.md`](skills/johnny-project-takeover/references/implementation-tdd.md) |
@@ -44,6 +45,10 @@
 | PRD／CHG lineage 或 archive | [`requirement-lineage.md`](skills/johnny-project-takeover/references/requirement-lineage.md) |
 | reusable module catalog／card | [`module-catalog-routing.md`](skills/johnny-project-takeover/references/module-catalog-routing.md) |
 | 實作語言 | [`language-policy.md`](skills/johnny-project-takeover/references/language-policy.md) |
+
+The reviewer alone owns the final review conclusion. The reviewer alone owns integration. An
+adversarial helper may return evidence and findings, but it is never a co-reviewer and cannot
+replace that conclusion.
 
 不適用也必須記錄可驗證理由，尤其是 XSS、privileged capability、Agent control、
 task/worktree、Profile fan-out 與 POC/staging ancestry。

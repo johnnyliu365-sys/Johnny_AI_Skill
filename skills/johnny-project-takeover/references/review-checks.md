@@ -61,12 +61,18 @@ implementer already reported. Apply all four points below whenever this row is i
 
 ## Multi-Agent authority review
 
-From effective reviewer and implementation sessions, enumerate actual thread-control tools and
-the Johnny gateway caller surface. The reviewer positive path must bind one live descriptor and
-receipt. The implementation session must prove both built-in tool absence and gateway
-unreachability. Direct tool, MCP alias, indirect adapter, forged identity, replay and every wrong
+For a cross-lifetime implementation or review handoff, enumerate actual thread-control tools and
+the Johnny gateway caller surface. That route must bind one live descriptor and receipt, and the
+implementation session must prove both built-in tool absence and gateway unreachability. Direct
+tool, MCP alias, indirect adapter, forged identity, replay and every wrong
 project/ticket/handoff/target/worktree/branch/baseline/action/correlation combination must fail
 before host effect.
+
+A same-lifetime reviewer-owned helper is a direct call followed by one finite completion wait.
+Its runner, queue, receipt, live descriptor and host readback are `NOT_REQUIRED`; the reviewer
+still binds the candidate identity and independently checks the source and behavior before using
+the helper's evidence. Same-lifetime direct use never widens Agent, host or external-effect
+authority.
 
 ## Ticket dispatch schema review
 

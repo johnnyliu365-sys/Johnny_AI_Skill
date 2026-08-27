@@ -74,6 +74,7 @@ file completely only when its condition applies.
 | Admitted ticket implementation, TDD, type, smoke or completion | [Implementation TDD](references/implementation-tdd.md) |
 | Admitted same-lifetime Codex native delegation and completion wait | [Codex native same-lifetime delegation](references/codex-native-same-lifetime-delegation.md) |
 | Ticket TDD design or independent code review | [Independent review checks](references/review-checks.md) and `../../CodeReview.md` |
+| Adversarial review or deployment readiness | [Adversarial review policy](references/adversarial-review.md) |
 | Architecture/SPEC/ticket language decision | [Implementation language policy](references/language-policy.md) |
 
 If an indexed reference is absent, unreadable, version-mismatched or ambiguous, halt before

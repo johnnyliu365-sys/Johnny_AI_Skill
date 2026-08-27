@@ -56,7 +56,7 @@ authority never change, only what each stage must produce:
 | Red evidence | Baseline-red for defect corrections only; new behavior needs green tests | Baseline-red for defect corrections; green tests at the approved seam | Baseline-red for corrections plus reverse mutation proving test quality |
 | Handoff and closure | Commit-as-handoff: one implementation commit whose message carries AC, results and digests; no separate handoff leaf or evidence table | Ticket and handoff leaves per the artifact tree | Ticket and handoff leaves plus the adversarial review record |
 | Default model tier | Implementation and drafting stay on the low tier; the supervisor tier reviews once | Low-tier implementer, supervisor-tier reviewer | Supervisor-tier-or-higher implementer or reviewer; architecture-owner wake conditions widen |
-| Research helper | Not admitted | One optional read-only helper | One optional read-only helper |
+| Research helper | Not admitted | One optional ordinary read-only helper; a required `AdversarialReviewPlan` consumes one | One optional ordinary read-only helper; the mandatory `AdversarialReviewPlan` audit consumes one |
 
 A change declared with a test-exempt `ChangeClass` (`DOCS_ONLY`, `COMMENT_ONLY`,
 `SCHEMA_VALIDATED_CONFIG`, `TYPE_CHECKED_RENAME`) skips test writing at every intensity; the
@@ -65,6 +65,15 @@ still runs, and any production-behavior effect voids it. Ceremony scales with fu
 and writer distrust, not with project size: evidence tables and handoff leaves exist to
 compress state for later sessions and lanes, and reverse mutation exists to prove test
 quality — both stay wherever those consumers exist.
+
+## Adversarial review readiness
+
+An ordinary research helper remains optional. Separately, an adversarial audit is optional for
+`COMPACT` and `STANDARD` unless the approved ticket matrix makes it required. It is mandatory for
+`HIGH_ASSURANCE` and before any proposed release/deployment; that required `AdversarialReviewPlan`
+consumes one reviewer-owned `RESEARCH_HELPER`. The reviewer retains the final review conclusion
+and integration. If mandatory audit or isolation evidence is unavailable, the review is `BLOCKED`;
+it is never replaced by an invented pass or a claim that a capability exists.
 
 `DELTA` intake combined with a derived `COMPACT` intensity is the minimal path: one combined
 discovery hop over the affected slices, one micro-SPEC, one ticket, focused review.

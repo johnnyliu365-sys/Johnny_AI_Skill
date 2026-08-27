@@ -24,8 +24,16 @@ SpecificationReadinessDecision = READY_FOR_SUPERVISION
   dispatch, monitoring, independent review, correction routing and guarded integration.
 - `IMPLEMENTATION_OWNER` receives one admitted ticket, implements it and returns only the
   ticket's typed result. It cannot alter the SPEC, architecture, public contract or AC.
-- `RESEARCH_HELPER` is optional, reviewer-owned, read-only and no-code as defined by
-  `delivery-profile.md`.
+- `RESEARCH_HELPER` is an optional ordinary research helper: reviewer-owned, read-only and no-code
+  as defined by `delivery-profile.md`. When the reviewer admits the required
+  `AdversarialReviewPlan` at `HIGH_ASSURANCE` or before a proposed release/deployment, that plan
+  consumes one reviewer-owned `RESEARCH_HELPER`; it returns finite evidence only and cannot
+  approve, integrate, dispatch, modify code or perform an external effect.
+
+For same-lifetime use, the reviewer calls the helper directly and waits once for its finite
+return. A runner, queue, receipt, live descriptor or host readback is `NOT_REQUIRED` on that
+route; those controls remain required only for a cross-lifetime handoff. Missing mandatory
+helper evidence is `BLOCKED`, never a fabricated success.
 
 The versioned `ProjectWorkflowProfile` records opaque model references and capability evidence
 for these roles. The current default host mapping is a highest-capability architecture owner,
