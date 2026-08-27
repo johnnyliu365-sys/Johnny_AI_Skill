@@ -4,7 +4,7 @@
 | --- | --- |
 | Feature | `context-load-telemetry` |
 | Worktree | `root/main` |
-| State | `BASELINE_DONE / REVISION_02_APPROVED / REVISION_03_PROVIDER_USAGE_ARCHITECTURE_ACCEPTED / REVISION_04_LOCKED_STORAGE_APPROVED / REVISION_05_CLASSIFIED_FILE_LOCK_CAPABILITY_APPROVED / REVIEWER_DECOMPOSITION_AUTHORIZED` |
+| State | `BASELINE_DONE / REVISION_02_APPROVED / REVISION_03_PROVIDER_USAGE_ARCHITECTURE_ACCEPTED / REVISION_04_LOCKED_STORAGE_APPROVED / REVISION_05_CLASSIFIED_FILE_LOCK_CAPABILITY_APPROVED / REVISION_06_LOCK_PORT_ADAPTER_AUTHORIZED / REVIEWER_DECOMPOSITION_AUTHORIZED` |
 | In scope | Router context measurement, metadata-only JSONL evidence, baseline/router comparison, local validation, and Johnny-owned opaque telemetry storage. |
 | Out of scope | Raw prompt capture, source text or path persistence, provider credentials, a production Agent supervisor, target-local Johnny storage, or changes to target company repositories. |
 
@@ -46,6 +46,14 @@
   only `ACQUIRED` or `CONTENDED`: Windows contention is the locally observed immediate
   `LK_NBLCK`/`errno.EACCES` outcome after a successful open; unrelated `OSError` values remain
   errors. This infrastructure closure is not a telemetry adapter and does not produce telemetry.
+- Revision 06 authorizes exactly one local `TelemetryStorageLockPort` implementation. It derives
+  one opaque lock identity and one internal dedicated path from the complete immutable storage
+  reference, uses the delivered `exclusive-file-lock` only after
+  `path-containment` rejects redirected roots/ancestors, and returns the existing strict acquire
+  and release DTOs. The adapter may hold lock-file state only; it does not read or create a
+  ledger/stream, invoke `JsonlContextUsageStore`, re-admit a storage operation, or touch a target
+  project. The future storage adapter retains all preliminary and under-lock ledger/lifecycle/
+  containment admission.
 
 ## Related sources
 
@@ -78,3 +86,8 @@ strict lock-contract closure before any durable adapter or actual Accounting dat
 Revision 05 additionally authorizes the classified nonblocking file-lock prerequisite under
 `ADR-20260827-024`. Its only permitted implementation is the reusable primitive and disposable
 process fixtures; Ticket 06 remains blocked until a later lock adapter is separately opened.
+
+Revision 06 now authorizes that independently scoped local lock-port adapter from the current
+authority line. It selects `exclusive-file-lock@60d2ab0` and the existing containment predicate
+newly cataloged as `path-containment@42b2be1`; it does not reactivate or reuse Ticket 06's
+preserved candidate.

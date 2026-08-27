@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-CONTEXT-LOAD-TELEMETRY-20260803-01KZ5E7F9G1H3J5K7M9N1P3Q5R` |
-| State | `APPROVED_BASELINE / REVISION_02_PROJECT_ISOLATION_APPROVED / REVISION_03_PROVIDER_USAGE_ARCHITECTURE_ACCEPTED / REVISION_04_LOCKED_STORAGE_APPROVED / REVISION_05_CLASSIFIED_FILE_LOCK_CAPABILITY_APPROVED / REVIEWER_DECOMPOSITION_AUTHORIZED` |
+| State | `APPROVED_BASELINE / REVISION_02_PROJECT_ISOLATION_APPROVED / REVISION_03_PROVIDER_USAGE_ARCHITECTURE_ACCEPTED / REVISION_04_LOCKED_STORAGE_APPROVED / REVISION_05_CLASSIFIED_FILE_LOCK_CAPABILITY_APPROVED / REVISION_06_LOCK_PORT_ADAPTER_AUTHORIZED / REVIEWER_DECOMPOSITION_AUTHORIZED` |
 | Owner | `root/main` |
 | Context | `doc/context/context-load-telemetry/main.md` |
 | PRD reference | `PRD-20260803-006` |
@@ -196,6 +196,39 @@ lock token, storage/ledger effect, host/provider call, cost claim, target-projec
 release in this capability closure. The later telemetry adapter alone maps a selected capability's
 finite `CONTENDED` result to its metadata-only `LOCK_CONTENDED` response.
 
+### Revision 06 local lock-port adapter
+
+The owner authorizes one local implementation of the existing `TelemetryStorageLockPort` after
+the selected `exclusive-file-lock` and `path-containment` cards are delivered. It receives only a
+strict `TelemetryStorageLockRequest`; it derives no public path and exposes none. Its one
+dedicated lock-file identity is the SHA-256 digest of the complete immutable
+`(storage_ref, project_id, stream_id, ownership_ledger_ref, storage_revision)` tuple, encoded
+with fixed labels and NUL separators. The adapter constructs the opaque `lock_ref` and all opaque
+failure references from that digest, not from a caller-supplied string.
+
+The adapter's sole owned effect is to create and retain a dedicated `*.lock` file below an
+internally derived `JohnnyRootLayout.telemetry_root` child. Before directory creation or file
+open, the exact candidate and its root must pass the selected containment predicate; a redirected
+base or ancestor raises a sanitized adapter failure and leaves no outside effect. An independent
+holder of the same derived location returns the existing `TelemetryStorageLockContended` result;
+it owns no handle and receives no token. No retry, timeout, queue, runner or polling is allowed.
+
+On acquisition, one adapter instance retains the real `ExclusiveFileLock` and the exact original
+`TelemetryStorageLockToken` object. `release()` succeeds only for that still-held original
+object; copied, forged, stale, cross-adapter or mismatched tokens return the existing finite
+`TelemetryStorageLockReleaseFailed` result without unlocking anything. Release always clears the
+retained state in a bounded `finally` path. A non-contention acquisition I/O failure stays a
+sanitized adapter error; a release I/O failure becomes the finite release-failed DTO. Neither
+failure contains a filesystem path, exception text, prompt, source text, credential or provider
+data.
+
+This adapter deliberately does not decide expected-project/revision equality, read a ledger or
+stream, call `JsonlContextUsageStore`, advance a lifecycle/revision, convert lock results to
+`TelemetryStorageResponse`, or perform the under-lock storage re-admission. Those remain the
+next lock-bound storage-adapter closure. The adapter itself is one independently observable
+`READY_LOW_MODEL` outcome: real same-location cross-process acquisition is classified as exactly
+`LOCK_ACQUIRED` or `LOCK_CONTENDED`, then an acquired original token can be released.
+
 Every identifier is a validated named type with a finite pattern. `record` is
 present only for `APPEND`; other operation/payload combinations fail before I/O.
 No production request or result has a filesystem-path field. Boundary adapters
@@ -327,6 +360,13 @@ closure described above, but not a telemetry adapter, telemetry stream/ledger ef
 provider/host invocation, cost claim, target-project mutation, publication, release, or
 deployment.
 
+The project owner additionally authorized Revision 06's one local lock-port adapter on
+`2026-08-27`. It authorizes the strict `TelemetryStorageLockPort` implementation and disposable
+root/process evidence defined above, plus only its dedicated Johnny-root lock-file effect. It
+does not authorize telemetry stream/ledger work, the legacy codec, a storage operation adapter,
+provider/host invocation, cost claim, target-project mutation, publication, release, or
+deployment.
+
 ## Revision signatures
 
 | Date | AI / worktree / baseline | Summary |
@@ -336,3 +376,4 @@ deployment.
 | 2026-08-24 | Project owner / `main` / `1849515f911d1376d800fe1b19e0e07b5227028b` | Accepted Revision 03 provider-usage evidence architecture: typed storage matrix, provider-neutral terminal evidence, observed-versus-matched reporting, and isolated authorized probes. |
 | 2026-08-27 | Project owner / `main` / `39f5d883622572f10323527ce32c9eecaaafd5d0` | Selected Revision 04: telemetry storage must be lock-bound; contention is a named no-effect result and the un-catalogued lock module is not implicitly reusable. |
 | 2026-08-27 | Project owner / `main` / `6b5a7c163aa6c2eb2834956f9486072d0047d988` | Authorized Revision 05: preserve the blocking reusable lock API while adding a separately classified nonblocking primitive; all unrelated I/O errors remain errors. |
+| 2026-08-27 | Project owner / `main` / `42b2be1b0659c3e1cb9f8e039d1b827f7b74be85` | Authorized Revision 06: implement one separately scoped local `TelemetryStorageLockPort` with selected lock/containment capabilities and no storage-operation effect. |

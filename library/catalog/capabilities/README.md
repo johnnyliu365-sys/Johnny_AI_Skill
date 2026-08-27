@@ -9,3 +9,4 @@
 | `engagement-rules` | `READY` | [`engagement_rules/README.md`](../../功能集群/python/engagement_rules/README.md) |
 | `kotlin-offline-geo-resolution` | `READY` | [`offline_geo_resolution/README.md`](../../功能集群/kotlin/offline_geo_resolution/README.md) |
 | `exclusive-file-lock` | `READY` | [`exclusive_file_lock/README.md`](../../功能集群/python/exclusive_file_lock/README.md) |
+| `path-containment` | `READY` | [`path_containment/README.md`](../../功能集群/python/path_containment/README.md) |
