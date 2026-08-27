@@ -7,10 +7,10 @@
 | Requirement / Context / ADR | `PRD-20260827-041` / `CHG-20260827-041` / `doc/context/context-load-telemetry/main.md` Revision 06 / `ADR-20260827-022` through `ADR-20260827-024` |
 | State / closure | `OPEN / APPROVED / READY_LOW_MODEL`; `CLOSURE-CONTEXT-TELEMETRY-09-LOCAL-LOCK-PORT`, revision 01 |
 | Approval authority | Project owner, 2026-08-27 (Asia/Taipei): authorized the one independently scoped local `TelemetryStorageLockPort` closure recorded by Specification Revision 06. |
-| Baseline / dependency | `dda74a25a5c83cf09500b886701c5e99d4b04c20`; Ticket 07 (`0ded2ed`) freezes lock DTOs, Ticket 08 (`60d2ab0`) delivers the classified lock, and Revision 06 catalogs `path-containment`. Ticket 06 remains blocked and non-integrable. |
+| Source baseline / dependency | `dda74a25a5c83cf09500b886701c5e99d4b04c20`; the candidate must also descend from the committed current-main ticket authority. Ticket 07 (`0ded2ed`) freezes lock DTOs, Ticket 08 (`60d2ab0`) delivers the classified lock, and Revision 06 catalogs `path-containment`. Ticket 06 remains blocked and non-integrable. |
 | Control owner / reviewer | `ticket-review` semantic profile — Terra/xhigh. |
 | Implementation owner | `implementation-standard` semantic profile — Luna/xhigh; `READY_LOW_MODEL`, one synchronous owner lane and no helpers. |
-| Worktree / branch / task | Reviewer allocates `.worktrees/context-load-telemetry-09-local-lock-port` on `implement/context-load-telemetry-09-local-lock-port` from this exact baseline. No runner, queue, receipt, descriptor, gateway, or host workspace readback is required. |
+| Worktree / branch / task | Reviewer allocates `.worktrees/context-load-telemetry-09-local-lock-port` on `implement/context-load-telemetry-09-local-lock-port` from current committed `main` that descends from the source baseline, then binds that exact ticket revision and baseline to the owner. No runner, queue, receipt, descriptor, gateway, or host workspace readback is required. |
 | Delivery / language | `POC / STANDARD` floor; Python 3.11, complete annotations, frozen strict DTOs, and `mypy --strict`. |
 | XSS / effects | `XSS_NOT_APPLICABLE`. The adapter's only authorized effect is a dedicated lock file below an injected Johnny `telemetry` root. Tests may create/remove only disposable roots and child processes. No ledger/stream/JSONL, provider, credential, host CLI, target-project, Git, network, runner, queue, receipt, publication, release, or deployment effect is authorized. |
 
