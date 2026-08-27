@@ -5,8 +5,8 @@
 | Artifact ID / kind | `TICKET-CONTEXT-TELEMETRY-12-LOCK-BOUND-TRANSACTION-ADAPTER` / `IMPLEMENTATION_TICKET` |
 | SPEC / acceptance source | `SPEC-AI-WORKFLOW-CONTEXT-LOAD-TELEMETRY-20260803-01KZ5E7F9G1H3J5K7M9N1P3Q5R` Revision 09 / AC-13, AC-14, AC-16–AC-20 |
 | Requirement / Context / ADR | `PRD-20260827-041` / `CHG-20260827-041` / `doc/context/context-load-telemetry/main.md` Revision 09 / `ADR-20260827-022`, `025`–`027` |
-| State / closure | `OPEN / HIGH_ASSURANCE_REQUIRED`; `CLOSURE-CONTEXT-TELEMETRY-12-LOCK-BOUND-TRANSACTION-ADAPTER`, revision 01 |
-| Document revision | `01` |
+| State / closure | `CLOSED / DONE / APPROVED / INTEGRATED`; `CLOSURE-CONTEXT-TELEMETRY-12-LOCK-BOUND-TRANSACTION-ADAPTER`, revision 02 |
+| Document revision | `02` |
 | Approval authority | Project owner, 2026-08-27 (Asia/Taipei): Revision 07 authorizes the durable controlled storage boundary. Revisions 08–09 / ADR `026`–`027` close its private ledger and transaction protocol; no new owner product decision or public contract is introduced. |
 | Source baseline / dependency | `589b85bad484a2bced18d035ac716ebde0e4bc2d`; candidate must descend from committed ticket authority. Ticket 09 (`096d471`) supplies exact locking; Ticket 11 (`e05f03a`) supplies corrected private per-stream ledger/CAS. Ticket 06 remains `SUPERSEDED` and non-integrable. |
 | Control owner / reviewer | `ticket-review` semantic profile — Terra/xhigh. |
@@ -194,3 +194,31 @@ Return exactly one `ImplementationReturn`: `COMPLETED` with command/evidence ref
 contradiction in committed authority. The implementation owner does not commit, push, call the
 document gate, edit ticket/docs, create another worktree or delegate. The reviewer alone reviews,
 commits, admits document mutation, pushes and reads back the authority ref.
+
+## Completion record
+
+Luna/xhigh returned `ImplementationReturn.COMPLETED -> ACTION_COMPLETED` with no commit, push,
+document-gate call, ticket/document edit or scope expansion. Terra/xhigh independently reviewed
+the two declared candidate paths, source direction and response construction; reran the focused,
+storage-contract, strict-type and compilation gates; and verified all five operation/recovery
+matrices.
+
+The independent reviewer counter-mutation changed the real `STREAM_APPLIED` recovery condition
+from `ledger_pre` to `ledger_post`. The forced `AFTER_LEDGER_CAS` restart then retained one
+pre-state record where TTA4 requires the two-record post-state; restoring the exact production
+condition returned TTA4 to green. This is reviewer evidence distinct from the implementation
+owner's recorded mutation set.
+
+The reviewer committed candidate `c359d92efc6eb2ca4aeb5c613f4fe7c976cd6e74` on
+`implement/context-load-telemetry-12-lock-bound-transaction-adapter`. It descends from committed
+Ticket 12 authority `4d747f6253c6d2741af980f3b9ff82c68df8fedb` and changes only
+`johnny_owned_adapter.py` and its direct test. `admit_document_mutation` read the ticket boundary
+from `main`, read the candidate change set from Git, and returned `INTEGRATED` with that exact
+candidate SHA. The source integration was non-force pushed to `origin/main`; fresh direct remote
+readback returned `c359d92efc6eb2ca4aeb5c613f4fe7c976cd6e74`.
+
+The exact source review is
+`doc/reviews/context-load-telemetry/12-lock-bound-transaction-adapter-code-review.md`. Its full
+suite result records only the three failures reproduced against clean main; no global-green claim
+is made. This closure does not bind the private adapter into composition or widen its public
+surface.
