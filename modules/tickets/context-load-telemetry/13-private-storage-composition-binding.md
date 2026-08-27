@@ -5,8 +5,8 @@
 | Artifact ID / kind | `TICKET-CONTEXT-TELEMETRY-13-PRIVATE-STORAGE-COMPOSITION-BINDING` / `IMPLEMENTATION_TICKET` |
 | SPEC / acceptance source | `SPEC-AI-WORKFLOW-CONTEXT-LOAD-TELEMETRY-20260803-01KZ5E7F9G1H3J5K7M9N1P3Q5R` Revision 10 / AC-21 |
 | Requirement / Context / ADR | `PRD-20260827-041` / `CHG-20260827-041` / `doc/context/context-load-telemetry/main.md` Revision 10 / `ADR-20260827-025`–`028` |
-| State / closure | `OPEN / READY_LOW_MODEL`; `CLOSURE-CONTEXT-TELEMETRY-13-PRIVATE-STORAGE-COMPOSITION-BINDING`, revision 01 |
-| Document revision | `01` |
+| State / closure | `CLOSED / DONE / APPROVED / INTEGRATED`; `CLOSURE-CONTEXT-TELEMETRY-13-PRIVATE-STORAGE-COMPOSITION-BINDING`, revision 02 |
+| Document revision | `02` |
 | Approval authority | Project owner, 2026-08-27 (Asia/Taipei): explicitly authorized Revision 10's one source-only private composition binding after Ticket 12 integration. |
 | Source baseline / dependency | `3b11f71ae10e338841aede1adddbbd93d6aec704`; candidate must descend from this committed ticket authority. Ticket 09 (`096d471`) supplies the local lock port, Ticket 11 (`e05f03a`) the per-stream ledger, and Ticket 12 (`c359d92`) the private transaction adapter. Ticket 06 remains superseded and non-integrable. |
 | Control owner / reviewer | `ticket-review` semantic profile — Terra/xhigh. |
@@ -156,3 +156,31 @@ Return exactly `ImplementationReturn.COMPLETED -> ACTION_COMPLETED` with CPA/CPM
 evidence; `BLOCKED -> HALT` with the failed cell; or `CHANGE_DETECTED -> REQUIREMENT_CHANGED`.
 No return authorizes a storage operation, provision, provider/host use, cost claim, target
 mutation, integration, push, publication, release or deployment.
+
+## Completion record
+
+Luna/xhigh returned `ImplementationReturn.COMPLETED -> ACTION_COMPLETED` with no commit, push,
+document-gate call, ticket/document edit or scope expansion. Terra/xhigh independently reviewed
+the two declared candidate paths, direct import graph, lifetime/no-effect proof and reusable
+selection record; reran focused, regression, strict-type and compilation gates; and verified the
+declared CPM1–CPM3 mutation evidence.
+
+The independent reviewer counter-mutation reversed the real adapter constructor argument order.
+CPA1 then failed at the production `TelemetryOwnershipLedgerPort` runtime type guard rather than
+constructing a false graph; restoring the exact `(layout, ledger, lock)` order returned the
+focused suite to green. This is distinct from the implementer's layout/lifetime/no-effect
+mutations.
+
+The reviewer committed candidate `108ea43e8b8a8f8bccbe3e6ced1eac59f26dda35` on
+`implement/context-load-telemetry-13-private-storage-composition-binding`. It descends from
+committed Ticket 13 authority `bb3217a417bbce5e129139a98dbb63b2366a29f9` and changes only
+`composition.py` and its direct test. `admit_document_mutation` read this ticket boundary from
+`main`, read the candidate change set from Git, and returned `INTEGRATED` with that same exact
+candidate SHA. The source integration was non-force pushed to `origin/main`; fresh direct remote
+readback returned `108ea43e8b8a8f8bccbe3e6ced1eac59f26dda35`.
+
+The exact source review is
+`doc/reviews/context-load-telemetry/13-private-storage-composition-binding-code-review.md`. Its
+full-suite result records only the three failures reproduced against clean main; no global-green
+claim is made. Composition is now bound, but no caller integration, provisioning or storage
+operation was performed by this closure.
