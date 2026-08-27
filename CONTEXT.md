@@ -56,6 +56,7 @@ or review. This index records identity and location only.
 | Plugin distribution | `SPEC-AI-WORKFLOW-PLUGIN-DISTRIBUTION-20260802-01KZ3N5P7R9T1V3X5Z7B9D1F3H` / `modules/spec/plugin-distribution.md` | `doc/context/plugin-distribution/main.md` |
 | Claude plugin distribution | `SPEC-AI-WORKFLOW-CLAUDE-CODE-PLUGIN-DISTRIBUTION-20260802-01KZ4C6D8E0F2G4H6J8K0M2N4P` / `modules/spec/claude-code-plugin-distribution.md` | `doc/context/claude-code-plugin-distribution/main.md` |
 | Context telemetry | `SPEC-AI-WORKFLOW-CONTEXT-LOAD-TELEMETRY-20260803-01KZ5E7F9G1H3J5K7M9N1P3Q5R` / `modules/spec/context-load-telemetry.md` | `doc/context/context-load-telemetry/main.md` |
+| Review assurance | `SPEC-AI-WORKFLOW-REVIEW-ASSURANCE-20260827-01KZ9A1B2C3D4E5F6G7H8J9K0L` / `modules/spec/review-assurance.md` | `doc/context/review-assurance/main.md` |
 | Plugin release telemetry | `SPEC-AI-WORKFLOW-PLUGIN-RELEASE-TELEMETRY-20260803-01KZ6F8G0H2J4K6M8N0P2Q4R6S` / `modules/spec/plugin-release-telemetry.md` | `doc/context/plugin-release-telemetry/main.md` |
 | Private Router POC | `SPEC-AI-WORKFLOW-PRIVATE-ROUTER-SAAS-20260804-01KZ49YM6HA658QF7ME2A5BR26` / `modules/spec/private-router-saas.md` | `doc/context/private-router-saas/main.md` |
 | Workflow governance | `SPEC-AI-WORKFLOW-WORKFLOW-GOVERNANCE-20260805-01KZ6T8V2R4Y6B8D0F2H4J6M8P` / `modules/spec/workflow-governance.md` | `doc/context/workflow-governance/main.md` |
