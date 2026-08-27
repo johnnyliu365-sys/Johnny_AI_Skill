@@ -5,7 +5,7 @@
 | Artifact ID / kind | TICKET-CONTEXT-TELEMETRY-07-LOCK-BOUND-STORAGE-CONTRACTS / IMPLEMENTATION_TICKET |
 | SPEC / acceptance source | SPEC-AI-WORKFLOW-CONTEXT-LOAD-TELEMETRY-20260803-01KZ5E7F9G1H3J5K7M9N1P3Q5R Revision 04 / AC-06 through AC-08 and AC-13 through AC-14 |
 | Requirement / Context / ADR | PRD-20260827-041 / CHG-20260827-041 / doc/context/context-load-telemetry/main.md Revision 04 / ADR-20260827-022 |
-| State / closure | OPEN / READY_LOW_MODEL; CLOSURE-CONTEXT-TELEMETRY-07-LOCK-CONTRACTS, revision 02 |
+| State / closure | CLOSED / DONE; CLOSURE-CONTEXT-TELEMETRY-07-LOCK-CONTRACTS, revision 03 |
 | Approval authority | Project owner, 2026-08-27 (Asia/Taipei): selected the Revision 04 lock-bound Accounting path. ADR-20260827-022 authorizes this pure strict-contract closure only. |
 | Baseline / dependency | 95811446cb56a777a31c0f37e04b283fa819e42c; Ticket 05 (e509174) is integrated; Ticket 06 is blocked and non-integrable. |
 | Control owner / reviewer | ticket-review semantic profile — Terra/xhigh. |
@@ -204,11 +204,29 @@ evidence; BLOCKED -> HALT with the failed cell; or CHANGE_DETECTED -> REQUIREMEN
 No return authorizes a real adapter, storage change, target mutation, host delivery, merge, push,
 release or deployment.
 
+## Completion record
+
+The Luna/xhigh implementation owner returned `ImplementationReturn.COMPLETED` with the exact
+four-file boundary, 21 focused tests, strict mypy, compile validation and restored LM1–LM4
+mutations. Terra/xhigh independently reran the focused suite, strict type and compile gates; its
+separate result-discriminant counter-mutation made
+`TestValidContracts.test_lc1_valid_lock_shapes_and_typed_fake_round_trip` red, then restored
+byte-exactly to green. The initial gate attempt correctly refused `BOUNDARY_UNDECLARED` because
+revision 01 used a tilde fence; revision 02 corrected only that ticket schema, and the reviewed
+source blobs were proved unchanged across rebase.
+
+Candidate `0ded2ed4055fb4199f963395a45fb337e3e05ee8` was admitted by
+`admit_document_mutation` with `status=INTEGRATED` and that exact `integrated_commit`. It was
+then pushed to declared authority `origin/main` and directly read back as the same SHA. The formal
+review record is `doc/reviews/context-load-telemetry/07-lock-bound-storage-contracts-code-review.md`.
+No real lock, stream, ledger, provider, host, process, network, target-project or release effect
+was exercised or claimed.
+
 ~~~johnny-status
 id = 07
 title = Lock-bound telemetry storage contracts
-state = OPEN
-stage = C | strict lock DTO and Protocol contract | OPEN
-stage = M | reverse-mutation proof | PENDING
-stage = R | Terra/xhigh review | PENDING
+state = DONE
+stage = C | strict lock DTO and Protocol contract | DONE
+stage = M | reverse-mutation proof | DONE
+stage = R | Terra/xhigh review and guarded integration | DONE
 ~~~
