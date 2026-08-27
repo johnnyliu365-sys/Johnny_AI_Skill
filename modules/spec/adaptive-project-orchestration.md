@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2` |
-| Status | `REVISION_05_ROUTER_PHASE_APPROVED / REVISION_06_PROJECT_ISOLATION_APPROVED / REVISION_07_HOST_GATEWAY_APPROVED / REVISION_09_PROCEDURAL_MANAGED_ARTIFACT_BEHAVIOR_OWNER_REVIEW_REQUIRED / OTHER_APPROVED_SCOPES_UNCHANGED` |
+| Status | `REVISION_05_ROUTER_PHASE_APPROVED / REVISION_06_PROJECT_ISOLATION_APPROVED / REVISION_07_HOST_GATEWAY_APPROVED / REVISION_09_PROCEDURAL_MANAGED_ARTIFACT_BEHAVIOR_APPROVED / R09A_TICKET_OPENING_AUTHORIZED / OTHER_APPROVED_SCOPES_UNCHANGED` |
 | Author / baseline | Codex architecture owner / `4a43b182b2913b1ea9a00b8dbec212eb84c89a33` |
 | Context | `doc/context/adaptive-project-orchestration/main.md` (prior sealed facts), `doc/context/adaptive-project-orchestration/adaptive-project-orchestration-r09-procedural-managed-artifact-behavior.md` (`SEALED / REVISION_09`) and `doc/context/host-gateway-workspace-binding/codex-desktop-readback.md` (`SEALED`) |
 | PRD | `PRD-20260813-016`, `PRD-20260813-017`, `PRD-20260814-019`, `PRD-20260815-020`, `PRD-20260815-022`, `PRD-20260815-024`, `PRD-20260822-031`, `PRD-20260828-043` |
@@ -344,8 +344,9 @@ flattens, recursively loads or persists a whole tree.
 ### AC-17R9 — Procedural managed-artifact mutation and behavior feedback
 
 Revision 09 makes correct index maintenance part of the managed-artifact operation instead of a
-second instruction an Agent must remember. This amendment is `OWNER_REVIEW_REQUIRED`; it creates
-no ticket or implementation authority until the project owner approves this exact SPEC revision.
+second instruction an Agent must remember. The project owner approved the exact draft at
+`ef1cd4a0c74023c58e04fd44d06c58c41b8daadf`; this authorizes reviewer opening of R09A only, not
+dispatch, implementation, host hooks or publication.
 
 `CREATE`, `REVISE`, `REPLACE` and `ARCHIVE` are distinct tagged requests with no nullable
 action-dependent fields. `CREATE` and `REVISE` carry one exact selected path. `REPLACE` carries
@@ -771,9 +772,8 @@ approved ticket and receipt before any implementation lane. Host-task reservatio
 and identifier-only delivery remain subsequent serial closures and require their
 own approved tickets and receipts.
 
-Revision 09 remains a proposed amendment. After exact project-owner approval, the reviewer may
-decompose only this serial closure set; each item still requires its own approved ticket before
-dispatch:
+Revision 09 is approved. The reviewer may decompose only this serial closure set; each item still
+requires its own approved ticket before dispatch:
 
 1. R09A — pure tagged-request planner returns a complete leaf/direct-parent mutation plan or one
    finite no-effect rejection.
@@ -833,10 +833,10 @@ and authorizes reviewer decomposition of the replacement P8R ticket only. It doe
 host, task, workspace, receipt, runner, provider, source or external effects.
 
 Revision 09 was drafted after the project owner accepted `ADR-20260828-031` at candidate commit
-`4a43b182b2913b1ea9a00b8dbec212eb84c89a33`. The accepted ADR authorizes this Context/SPEC
-change-control step, but it does not itself approve the exact SPEC text. Revision 09 remains
-`OWNER_REVIEW_REQUIRED`; no R09 ticket, dispatch, hook, publication or installation is authorized
-until the owner approves this exact draft.
+`4a43b182b2913b1ea9a00b8dbec212eb84c89a33`. The project owner then approved the exact Revision 09
+draft at `ef1cd4a0c74023c58e04fd44d06c58c41b8daadf`. This authorizes reviewer creation of the R09A
+ticket only. It does not approve that ticket, open a dispatch lane or authorize hook, publication
+or installation effects.
 
 ## Revision signatures
 
@@ -848,3 +848,4 @@ until the owner approves this exact draft.
 | 2026-08-22 | Project owner | Approved the exact Revision 07 draft content at `1897339679312d92944403747aa7a2b1595d9c3e`; sealed its Context and authorized reviewer decomposition of the first no-effect ticket only. |
 | 2026-08-23 | Project owner / `CHG-20260822-032` | Approved Revision 08: POC manual evidence records the workspace-binding gap; R07 readback stays mandatory only for high-assurance host effects; replacement P8R decomposition is authorized. |
 | 2026-08-28 | Codex architecture owner / `codex/managed-artifact-behavior-architecture` / `4a43b182b2913b1ea9a00b8dbec212eb84c89a33` | Drafted Revision 09 from accepted ADR-031 and sealed Context `CTX-ADAPTIVE-PROJECT-ORCHESTRATION-20260828-09`; exact SPEC owner approval pending. |
+| 2026-08-28 | Project owner / exact candidate `ef1cd4a0c74023c58e04fd44d06c58c41b8daadf` | Approved Revision 09 procedural managed-artifact behavior and authorized reviewer opening of R09A only; ticket approval, dispatch and effects remain separate. |

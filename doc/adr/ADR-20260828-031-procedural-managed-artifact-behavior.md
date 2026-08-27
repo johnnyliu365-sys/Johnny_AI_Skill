@@ -204,9 +204,9 @@ Owner 已接受本 ADR。Router 現可：
 4. 各 ticket 分別核准後才 dispatch；plugin publication/release 仍需另一張具名 effect
    ticket與直接 readback。
 
-前兩步已成為本候選的 architecture change-control 工作。現在的具名停止點是 exact
-SPEC Revision 09 owner approval；在該核准前仍沒有 ticket、implementation 或 release
-authority。
+前兩步已完成，project owner 也已核准 exact SPEC Revision 09 draft
+`ef1cd4a0c74023c58e04fd44d06c58c41b8daadf`。現在只授權 reviewer 開立 R09A；R09A 本身
+仍須另行核准，且沒有 implementation 或 release authority。
 
 ## 修訂／淘汰紀錄
 
@@ -214,3 +214,5 @@ authority。
 - `2026-08-28`：Project owner 核准候選 commit
   `4a43b182b2913b1ea9a00b8dbec212eb84c89a33` 中的 ADR-031；授權建立新的 sealed
   Adaptive Project Orchestration Context revision 與既有 SPEC 的 owner-review draft。
+- `2026-08-28`：Project owner 核准 exact SPEC Revision 09 draft
+  `ef1cd4a0c74023c58e04fd44d06c58c41b8daadf`；只授權 reviewer 開立 R09A ticket。
