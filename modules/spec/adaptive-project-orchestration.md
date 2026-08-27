@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2` |
-| Status | `REVISION_05_ROUTER_PHASE_APPROVED / REVISION_06_PROJECT_ISOLATION_APPROVED / REVISION_07_HOST_GATEWAY_APPROVED / REVISION_09_PROCEDURAL_MANAGED_ARTIFACT_BEHAVIOR_APPROVED / R09A_TICKET_OPENING_AUTHORIZED / OTHER_APPROVED_SCOPES_UNCHANGED` |
+| Status | `REVISION_05_ROUTER_PHASE_APPROVED / REVISION_06_PROJECT_ISOLATION_APPROVED / REVISION_07_HOST_GATEWAY_APPROVED / REVISION_09_PROCEDURAL_MANAGED_ARTIFACT_BEHAVIOR_APPROVED / REVISION_10_MUTATION_STATE_ALGEBRA_OWNER_REVIEW_REQUIRED / R09A_TICKET_OPENING_SUSPENDED_UPSTREAM_DECISION_REQUIRED / OTHER_APPROVED_SCOPES_UNCHANGED` |
 | Author / baseline | Codex architecture owner / `4a43b182b2913b1ea9a00b8dbec212eb84c89a33` |
 | Context | `doc/context/adaptive-project-orchestration/main.md` (prior sealed facts), `doc/context/adaptive-project-orchestration/adaptive-project-orchestration-r09-procedural-managed-artifact-behavior.md` (`SEALED / REVISION_09`) and `doc/context/host-gateway-workspace-binding/codex-desktop-readback.md` (`SEALED`) |
 | PRD | `PRD-20260813-016`, `PRD-20260813-017`, `PRD-20260814-019`, `PRD-20260815-020`, `PRD-20260815-022`, `PRD-20260815-024`, `PRD-20260822-031`, `PRD-20260828-043` |
@@ -388,6 +388,55 @@ or count; once an artifact is required or intentionally created, the same mutati
 under `COMPACT`, `STANDARD` and `HIGH_ASSURANCE`. Plugin detach removes the adapter/control plane
 only and leaves target-owned documents, indexes and Git history unchanged.
 
+### AC-17R10 — Proposed complete mutation-state and ancestor-cascade correction
+
+R09A ticket decomposition exposed two missing public facts in approved Revision 09. First,
+`REPLACE` and `ARCHIVE` need an exact `PRESENT -> ABSENT` source transition, but the Revision 09
+node mutation always requires a present `next_*` state and the existing target-document mutation
+supports only create/update. Second, changing a leaf digest changes its parent-index bytes and
+digest, which changes that index's parent edge; valid post-state therefore cascades through every
+ancestor on the selected path up to the root, not only the nearest parent.
+
+Revision 10 is a correction proposal, not a new feature. Until the project owner approves this
+exact correction, R09A ticket opening is suspended as `UPSTREAM_DECISION_REQUIRED` and no R09
+implementation may be dispatched.
+
+Every selected path snapshot has one explicit terminal state:
+
+```text
+PRESENT = path_nodes contains exactly root, every selected partition and the terminal leaf
+ABSENT  = path_nodes contains exactly root and every selected partition; the final parent has no
+          edge to expected_leaf_ref, and no terminal leaf node is supplied
+```
+
+Both shapes preserve explicit path order and reject missing intermediate nodes, a terminal edge in
+an `ABSENT` snapshot, duplicate/cyclic/cross-family nodes, stale edge metadata and unselected nodes.
+The planner never treats an earlier missing segment as terminal absence.
+
+The action transition matrix is fixed:
+
+| Action | Exact current state | Exact candidate state |
+| --- | --- | --- |
+| `CREATE` | selected destination path `ABSENT` | the same path `PRESENT` |
+| `REVISE` | selected path `PRESENT` | the same leaf identity `PRESENT` with changed revision/digest and allowed lifecycle |
+| `REPLACE` | current path `PRESENT`; explicit replacement path `ABSENT` | current path `ABSENT`; replacement path `PRESENT` |
+| `ARCHIVE` | active path `PRESENT`; explicit archive-library path `ABSENT` | active path `ABSENT`; archive-library path `PRESENT / ARCHIVED` |
+
+For each transition, the candidate supplies exact replacement bytes only through a tagged document
+create/update mutation. A tagged delete carries only path, kind and expected current digest; it has
+no content, next digest or sealed flag. The planner verifies the document digest against canonical
+LF UTF-8 bytes, binds every semantic node transition to exactly one document mutation and rejects
+extra or missing mutations. Existing `TargetDocumentMutation` and `TargetDocumentPlan` remain
+unchanged for current consumers; R09 introduces additive managed-document variants.
+
+Ancestor closure is deterministic. Starting at every changed terminal node, the plan updates its
+direct parent edge to the candidate child kind/revision/digest/lifecycle or removes that edge for an
+absent terminal. Because that index document changed, the plan repeats the same rule for its parent,
+continuing only along the caller-selected path until the root mutation is included. Unselected
+sibling edge metadata is copied byte-for-byte and no sibling node/body is loaded. A plan missing any
+induced ancestor mutation returns `ANCESTOR_CASCADE_INCOMPLETE`; a mutation outside the selected
+path set returns `UNRELATED_MUTATION`.
+
 ## Typed contracts
 
 ```text
@@ -573,6 +622,10 @@ ManagedArtifactPlanDecision = PLANNED | ARTIFACT_PATH_NOT_FOUND
                             | PARENT_INDEX_NOT_FOUND | EDGE_STATE_MISMATCH
                             | DUPLICATE_PARENT | LIFECYCLE_CONFLICT
                             | BASELINE_MISMATCH | ARTIFACT_TREE_INVALID
+                            | TERMINAL_STATE_MISMATCH
+                            | ANCESTOR_CASCADE_INCOMPLETE
+                            | DOCUMENT_MUTATION_MISMATCH
+                            | UNRELATED_MUTATION
 ManagedArtifactMutationStatus = APPLIED | BASELINE_MISMATCH
                               | TRANSACTION_FAILED | ARTIFACT_TREE_INVALID
 ManagedArtifactHostDecision = MANAGED_OPERATION_ALLOWED
@@ -581,33 +634,35 @@ ManagedArtifactHostDecision = MANAGED_OPERATION_ALLOWED
                             | BEHAVIOR_REPAIR_EXHAUSTED
                             | CAPABILITY_UNAVAILABLE
 
-ManagedArtifactPath = {
-  family, root_ref, partition_refs, leaf_ref
+ManagedArtifactTerminalState = PRESENT | ABSENT
+
+ManagedArtifactPathSnapshot = {
+  family, root_ref, explicit_path_refs, expected_leaf_ref,
+  terminal_state, path_nodes
 }
 
-ManagedArtifactDesiredLeaf = {
-  artifact_ref, next_revision, next_digest, next_lifecycle,
-  replacement_bytes_ref
+ManagedArtifactPathTransition = {
+  current_snapshot, candidate_snapshot
 }
 
 CreateManagedArtifactRequest = {
   project_id, baseline_commit, action = CREATE,
-  selected_path, desired_leaf
+  destination_transition, proposed_document_mutations
 }
 
 ReviseManagedArtifactRequest = {
   project_id, baseline_commit, action = REVISE,
-  selected_path, expected_leaf, desired_leaf
+  selected_transition, proposed_document_mutations
 }
 
 ReplaceManagedArtifactRequest = {
   project_id, baseline_commit, action = REPLACE,
-  current_path, replacement_path, expected_current_leaf, desired_replacement_leaf
+  current_transition, replacement_transition, proposed_document_mutations
 }
 
 ArchiveManagedArtifactRequest = {
   project_id, baseline_commit, action = ARCHIVE,
-  active_path, archive_path, expected_active_leaf, desired_archive_leaf
+  active_transition, archive_transition, proposed_document_mutations
 }
 
 ManagedArtifactRequest = CreateManagedArtifactRequest
@@ -615,20 +670,35 @@ ManagedArtifactRequest = CreateManagedArtifactRequest
                        | ReplaceManagedArtifactRequest
                        | ArchiveManagedArtifactRequest
 
-ManagedArtifactNodeBaseline = AbsentNodeBaseline { state = ABSENT }
-                            | PresentNodeBaseline {
-                                state = PRESENT, revision, digest, lifecycle
-                              }
+ManagedArtifactNodeState = AbsentNodeState { state = ABSENT }
+                         | PresentNodeState {
+                             state = PRESENT, revision, digest, lifecycle
+                           }
 
 ManagedArtifactNodeMutation = {
-  artifact_ref, expected_baseline,
-  next_revision, next_digest, next_lifecycle, replacement_bytes_ref
+  artifact_ref, expected_state, next_state
 }
 
+ManagedDocumentCreate = {
+  mode = CREATE, path, artifact_kind, content, content_digest, sealed
+}
+
+ManagedDocumentUpdate = {
+  mode = UPDATE, path, artifact_kind, expected_current_digest,
+  content, content_digest, sealed = false
+}
+
+ManagedDocumentDelete = {
+  mode = DELETE, path, artifact_kind, expected_current_digest
+}
+
+ManagedDocumentMutation = ManagedDocumentCreate
+                        | ManagedDocumentUpdate
+                        | ManagedDocumentDelete
+
 ManagedArtifactPlan = {
-  project_id, baseline_commit, action, selected_paths,
-  leaf_mutations, direct_parent_index_mutations,
-  expected_post_state_resolutions
+  project_id, baseline_commit, action, path_transitions,
+  node_mutations, document_mutations, expected_post_state_snapshots
 }
 
 RequirementLineageRef = {
@@ -741,6 +811,12 @@ checks succeed.
     missing/disabled hooks return `UNAVAILABLE`. Repository-gate counter-mutations remove one
     required parent co-mutation and one archive/replacement edge and must turn red before merge.
     Detach qualification proves target documents and indexes are unchanged.
+23. Revision 10 correction tests cover all four action rows with ordinary tagged constructors;
+    distinguish terminal absence from a missing intermediate path; and reject contradictory
+    present/absent node and create/update/delete document shapes. A leaf digest mutation must induce
+    every selected ancestor index mutation through the root while leaving sibling metadata exact.
+    Reverse mutations omit one grandparent update, accept an earlier missing segment as terminal
+    absence and add content to a delete; each turns its governing test red and restores green.
 
 ## Candidate vertical ticket sequence
 
@@ -775,8 +851,9 @@ own approved tickets and receipts.
 Revision 09 is approved. The reviewer may decompose only this serial closure set; each item still
 requires its own approved ticket before dispatch:
 
-1. R09A — pure tagged-request planner returns a complete leaf/direct-parent mutation plan or one
-   finite no-effect rejection.
+1. R09A — after Revision 10 approval, the pure tagged-request planner returns one complete
+   present/absent path-transition plan, including every induced selected ancestor mutation through
+   root, or one finite no-effect rejection.
 2. R09B — transactional writer applies one admitted plan atomically and proves every affected
    candidate path through the existing resolver before success.
 3. R09C — repository admission derives affected managed paths from candidate diff and rejects an
@@ -838,6 +915,12 @@ draft at `ef1cd4a0c74023c58e04fd44d06c58c41b8daadf`. This authorizes reviewer cr
 ticket only. It does not approve that ticket, open a dispatch lane or authorize hook, publication
 or installation effects.
 
+Revision 10 was drafted after R09A decomposition proved that approved Revision 09 could not express
+delete/absence and did not explicitly close digest propagation through all selected ancestors. It
+is a fail-closed contract correction under the same `PRD-20260828-043` / `CHG-20260828-043`; it
+does not change the owner-approved feature direction or authorize a ticket. Exact owner approval is
+required before R09A may be opened.
+
 ## Revision signatures
 
 | Date | AI / worktree / baseline | Summary |
@@ -849,3 +932,4 @@ or installation effects.
 | 2026-08-23 | Project owner / `CHG-20260822-032` | Approved Revision 08: POC manual evidence records the workspace-binding gap; R07 readback stays mandatory only for high-assurance host effects; replacement P8R decomposition is authorized. |
 | 2026-08-28 | Codex architecture owner / `codex/managed-artifact-behavior-architecture` / `4a43b182b2913b1ea9a00b8dbec212eb84c89a33` | Drafted Revision 09 from accepted ADR-031 and sealed Context `CTX-ADAPTIVE-PROJECT-ORCHESTRATION-20260828-09`; exact SPEC owner approval pending. |
 | 2026-08-28 | Project owner / exact candidate `ef1cd4a0c74023c58e04fd44d06c58c41b8daadf` | Approved Revision 09 procedural managed-artifact behavior and authorized reviewer opening of R09A only; ticket approval, dispatch and effects remain separate. |
+| 2026-08-28 | Codex architecture owner / `control/adaptive-r09a-upstream-correction` / `c33b87cb27ca49a94cce0ae315923652a930667f` | R09A decomposition returned `UPSTREAM_DECISION_REQUIRED`; drafted Revision 10 additive mutation-state and ancestor-cascade correction, owner approval pending. |
