@@ -3,11 +3,11 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-CONTEXT-LOAD-TELEMETRY-20260803-01KZ5E7F9G1H3J5K7M9N1P3Q5R` |
-| State | `APPROVED_BASELINE / REVISION_02_PROJECT_ISOLATION_APPROVED / REVISION_03_PROVIDER_USAGE_ARCHITECTURE_ACCEPTED / REVISION_04_LOCKED_STORAGE_APPROVED / REVISION_05_CLASSIFIED_FILE_LOCK_CAPABILITY_APPROVED / REVISION_06_LOCK_PORT_ADAPTER_AUTHORIZED / REVISION_07_DURABLE_STORAGE_TRANSACTION_APPROVED / REVIEWER_DECOMPOSITION_AUTHORIZED` |
+| State | `APPROVED_BASELINE / REVISION_02_PROJECT_ISOLATION_APPROVED / REVISION_03_PROVIDER_USAGE_ARCHITECTURE_ACCEPTED / REVISION_04_LOCKED_STORAGE_APPROVED / REVISION_05_CLASSIFIED_FILE_LOCK_CAPABILITY_APPROVED / REVISION_06_LOCK_PORT_ADAPTER_AUTHORIZED / REVISION_07_DURABLE_STORAGE_TRANSACTION_APPROVED / REVISION_08_PER_STREAM_LEDGER_REFINEMENT_ACCEPTED / REVIEWER_DECOMPOSITION_AUTHORIZED` |
 | Owner | `root/main` |
 | Context | `doc/context/context-load-telemetry/main.md` |
 | PRD reference | `PRD-20260803-006` |
-| Change | `CHG-20260803-006`; project-isolation revision `CHG-20260815-024` / `ADR-20260815-013`; provider-usage architecture `ADR-20260824-019`; lock-bound storage `CHG-20260827-041` / `ADR-20260827-022`; classified lock capability `ADR-20260827-024`; durable storage transaction `ADR-20260827-025` |
+| Change | `CHG-20260803-006`; project-isolation revision `CHG-20260815-024` / `ADR-20260815-013`; provider-usage architecture `ADR-20260824-019`; lock-bound storage `CHG-20260827-041` / `ADR-20260827-022`; classified lock capability `ADR-20260827-024`; durable storage transaction `ADR-20260827-025`; per-stream ledger refinement `ADR-20260827-026` |
 
 ## Goal
 
@@ -269,6 +269,28 @@ independent-process contention, forced failures at every transaction phase, rest
 compare-and-swap conflict, ledger/stream mismatch, redirected-path rejection, and proof that
 both the controlled root and target repository remain unchanged outside the declared operation.
 
+### Revision 08 per-stream ownership-ledger readiness
+
+The private ownership ledger is physically partitioned by exact four-coordinate storage identity.
+No two independent streams share a mutable ledger document, so the exact stream lock serialized
+by `TelemetryStorageLockPort` also serializes the entry's compare-and-swap lifecycle/revision
+advance. A private entry location is derived only from a fixed domain-separated SHA-256 digest of
+the identity; the location is never a caller input or public output and passes containment before
+any read or write.
+
+The private port additionally exposes a recovery-only immutable-identity lookup. It ignores the
+caller-provided storage revision while matching the other four coordinates and returns the current
+entry without provisioning or lifecycle admission. The later adapter may use this lookup under
+the exact lock to decide whether a journal is pre- or post-state; it must then perform ordinary
+exact expected-revision/lifecycle admission before its operation. Public contracts and the finite
+storage responses remain unchanged.
+
+The earlier aggregate ledger format is not a valid controlled entry and is neither migrated nor
+silently interpreted. This is a private POC representation correction, not a public storage
+format migration. Before the transaction adapter, the implementation must prove independent
+processes that update distinct stream entries preserve both post-states, and that a forged caller
+revision cannot affect recovery lookup or CAS admission.
+
 Every identifier is a validated named type with a finite pattern. `record` is
 present only for `APPEND`; other operation/payload combinations fail before I/O.
 No production request or result has a filesystem-path field. Boundary adapters
@@ -378,6 +400,10 @@ unreachable from any controlled-target composition root.
     durable transaction phase recovers under the exact lock to either the complete pre-operation
     state or complete post-operation state; no subsequent `READ` or `VALIDATE` observes mixed
     stream bytes, lifecycle or revision.
+18. A private ledger mutation for one exact opaque stream cannot overwrite a concurrently
+    successful mutation for another exact opaque stream. Recovery identity lookup ignores a
+    caller revision but never provisions, admits or advances an entry; subsequent operation
+    admission still validates lifecycle and the exact expected revision.
 
 ## Approval
 
@@ -421,6 +447,12 @@ compare-and-swap and transaction/recovery closures. It does not authorize provid
 invocation, credential access, pricing or cost claims, target-project mutation, publication,
 release or deployment.
 
+Revision 08 is an architecture-conformant private representation refinement under the same
+Revision 07 authority. It authorizes decomposition of the per-stream ownership-ledger readiness
+correction before the later transaction adapter. It grants no telemetry operation, provisioning,
+provider/host invocation, credential access, pricing or cost claim, target-project mutation,
+publication, release or deployment.
+
 ## Revision signatures
 
 | Date | AI / worktree / baseline | Summary |
@@ -432,3 +464,4 @@ release or deployment.
 | 2026-08-27 | Project owner / `main` / `6b5a7c163aa6c2eb2834956f9486072d0047d988` | Authorized Revision 05: preserve the blocking reusable lock API while adding a separately classified nonblocking primitive; all unrelated I/O errors remain errors. |
 | 2026-08-27 | Project owner / `main` / `42b2be1b0659c3e1cb9f8e039d1b827f7b74be85` | Authorized Revision 06: implement one separately scoped local `TelemetryStorageLockPort` with selected lock/containment capabilities and no storage-operation effect. |
 | 2026-08-27 | Project owner / `main` / `d2e899e341edcc3a31529e80e2f4e3526a9fd100` | Authorized Revision 07: accept only pre-provisioned owned storage and recoverable all-or-nothing durable transactions for the future controlled storage adapter. |
+| 2026-08-27 | Architecture owner / `main` / `7d0c927f83467f54d5a68b18024941643f6341a4` | Recorded Revision 08's architecture-conformant per-stream ledger refinement: exact stream locks must serialize the only ledger entry they can advance, and restart recovery needs immutable-identity lookup before ordinary revision admission. |

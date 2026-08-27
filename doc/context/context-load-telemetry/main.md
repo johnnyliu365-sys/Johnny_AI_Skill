@@ -3,8 +3,9 @@
 | Field | Value |
 | --- | --- |
 | Feature | `context-load-telemetry` |
+| Revision | `08` |
 | Worktree | `root/main` |
-| State | `BASELINE_DONE / REVISION_02_APPROVED / REVISION_03_PROVIDER_USAGE_ARCHITECTURE_ACCEPTED / REVISION_04_LOCKED_STORAGE_APPROVED / REVISION_05_CLASSIFIED_FILE_LOCK_CAPABILITY_APPROVED / REVISION_06_LOCK_PORT_ADAPTER_AUTHORIZED / REVISION_07_DURABLE_STORAGE_TRANSACTION_AUTHORIZED / REVIEWER_DECOMPOSITION_AUTHORIZED` |
+| State | `BASELINE_DONE / REVISION_02_APPROVED / REVISION_03_PROVIDER_USAGE_ARCHITECTURE_ACCEPTED / REVISION_04_LOCKED_STORAGE_APPROVED / REVISION_05_CLASSIFIED_FILE_LOCK_CAPABILITY_APPROVED / REVISION_06_LOCK_PORT_ADAPTER_AUTHORIZED / REVISION_07_DURABLE_STORAGE_TRANSACTION_AUTHORIZED / REVISION_08_PER_STREAM_LEDGER_REFINEMENT_ACCEPTED / REVIEWER_DECOMPOSITION_AUTHORIZED` |
 | In scope | Router context measurement, metadata-only JSONL evidence, baseline/router comparison, local validation, and Johnny-owned opaque telemetry storage. |
 | Out of scope | Raw prompt capture, source text or path persistence, provider credentials, a production Agent supervisor, target-local Johnny storage, or changes to target company repositories. |
 
@@ -62,6 +63,12 @@
   re-admit under the same exact lock. A subsequent operation observes the exact pre-transaction
   state or post-transaction state, never a mixed state. The controlled adapter may not call
   `JsonlContextUsageStore.append` directly.
+- Revision 08 closes a private implementation prerequisite without changing public storage
+  contracts: each exact opaque stream has its own durable ownership-ledger entry, so the exact
+  stream lock serializes every mutation of that entry. A private immutable-identity lookup may
+  obtain the current entry for journal recovery without trusting a caller revision; ordinary
+  admission still requires the exact revision. Aggregate-ledger migration, compatibility
+  interpretation and auto-repair remain out of scope.
 
 ## Related sources
 
@@ -107,3 +114,9 @@ containment. No ownership-ledger reusable card exists, so the ledger port, local
 durable transaction journal and recovery behavior are new target-owned private infrastructure.
 The first successor ticket must establish that private ledger/CAS substrate; Ticket 06 remains
 superseded and its candidate must not be read, rebased or integrated.
+
+Revision 08 is an architecture-conformant refinement under the same active authority. It records
+the private per-stream ledger representation and recovery lookup required before the durable
+transaction adapter can be admitted. The next ticket corrects only that private substrate and
+proves concurrent independent-stream preservation; it does not create a public provision API or
+perform a telemetry storage operation.
