@@ -5,8 +5,8 @@
 | Artifact ID / kind | `TICKET-CONTEXT-TELEMETRY-09-LOCAL-LOCK-PORT` / `IMPLEMENTATION_TICKET` |
 | SPEC / acceptance source | `SPEC-AI-WORKFLOW-CONTEXT-LOAD-TELEMETRY-20260803-01KZ5E7F9G1H3J5K7M9N1P3Q5R` Revision 06 / AC-06, AC-13 through AC-15 |
 | Requirement / Context / ADR | `PRD-20260827-041` / `CHG-20260827-041` / `doc/context/context-load-telemetry/main.md` Revision 06 / `ADR-20260827-022` through `ADR-20260827-024` |
-| State / closure | `OPEN / APPROVED / READY_LOW_MODEL`; `CLOSURE-CONTEXT-TELEMETRY-09-LOCAL-LOCK-PORT`, revision 03 |
-| Document revision | `03` — admission corrections preserve the pure contract package surface and keep worktree-state proof out of a persisted regression test. |
+| State / closure | `OPEN / APPROVED / READY_LOW_MODEL`; `CLOSURE-CONTEXT-TELEMETRY-09-LOCAL-LOCK-PORT`, revision 04 |
+| Document revision | `04` — admission corrections preserve the pure contract package surface, keep worktree-state proof out of a persisted regression test, and declare the gate-required modification allow-list. |
 | Approval authority | Project owner, 2026-08-27 (Asia/Taipei): authorized the one independently scoped local `TelemetryStorageLockPort` closure recorded by Specification Revision 06. |
 | Source baseline / dependency | `dda74a25a5c83cf09500b886701c5e99d4b04c20`; the candidate must also descend from the committed current-main ticket authority. Ticket 07 (`0ded2ed`) freezes lock DTOs, Ticket 08 (`60d2ab0`) delivers the classified lock, and Revision 06 catalogs `path-containment`. Ticket 06 remains blocked and non-integrable. |
 | Control owner / reviewer | `ticket-review` semantic profile — Terra/xhigh. |
@@ -18,8 +18,11 @@
 ## Boundary declaration
 
 ```johnny-boundary
+modify = library/local_orchestration/telemetry_storage/local_lock_adapter.py
 create = library/local_orchestration/telemetry_storage/local_lock_adapter.py
+modify = tests/test_telemetry_storage_lock_adapter.py
 create = tests/test_telemetry_storage_lock_adapter.py
+modify = modules/element/python/context-load-telemetry/09-local-telemetry-storage-lock-port/
 create = modules/element/python/context-load-telemetry/09-local-telemetry-storage-lock-port/
 forbid = library/local_orchestration/telemetry_storage/__init__.py
 forbid = library/local_orchestration/telemetry_storage/contracts.py
@@ -58,6 +61,14 @@ diff and clean-worktree proof are review evidence, not a production regression p
 the element-index/content checks in LPA8; remove every `git status`/candidate-path assertion from
 the persisted test. The reviewer must instead inspect the exact Git diff before staging and again
 the committed diff before integration.
+
+## Admission correction — revision 04
+
+The integration gate rejected revision 03 as `BOUNDARY_UNPARSABLE`: its closed schema requires a
+non-empty `modify` allow-list even when every candidate path is newly created. The predecessor
+new-file ticket records each such path as both `modify` and `create`; this revision follows that
+machine-readable form for the same three already-authorized paths. It changes neither the
+candidate boundary nor the authorized behavior.
 
 ## One observable closure
 
