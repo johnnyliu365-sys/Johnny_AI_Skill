@@ -3,11 +3,11 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-CONTEXT-LOAD-TELEMETRY-20260803-01KZ5E7F9G1H3J5K7M9N1P3Q5R` |
-| State | `APPROVED_BASELINE / REVISION_02_PROJECT_ISOLATION_APPROVED / REVISION_03_PROVIDER_USAGE_ARCHITECTURE_ACCEPTED / REVISION_04_LOCKED_STORAGE_APPROVED / REVIEWER_DECOMPOSITION_AUTHORIZED` |
+| State | `APPROVED_BASELINE / REVISION_02_PROJECT_ISOLATION_APPROVED / REVISION_03_PROVIDER_USAGE_ARCHITECTURE_ACCEPTED / REVISION_04_LOCKED_STORAGE_APPROVED / REVISION_05_CLASSIFIED_FILE_LOCK_CAPABILITY_APPROVED / REVIEWER_DECOMPOSITION_AUTHORIZED` |
 | Owner | `root/main` |
 | Context | `doc/context/context-load-telemetry/main.md` |
 | PRD reference | `PRD-20260803-006` |
-| Change | `CHG-20260803-006`; project-isolation revision `CHG-20260815-024` / `ADR-20260815-013`; provider-usage architecture `ADR-20260824-019`; lock-bound storage `CHG-20260827-041` / `ADR-20260827-022` |
+| Change | `CHG-20260803-006`; project-isolation revision `CHG-20260815-024` / `ADR-20260815-013`; provider-usage architecture `ADR-20260824-019`; lock-bound storage `CHG-20260827-041` / `ADR-20260827-022`; classified lock capability `ADR-20260827-024` |
 
 ## Goal
 
@@ -162,6 +162,40 @@ implemented, its capability must be catalogued and selected by the reusable-modu
 new catalogued capability must be approved. Ticket 06's pre-Revision-04 candidate is preserved
 as uncommitted review evidence and is non-integrable.
 
+### Revision 05 classified nonblocking file-lock prerequisite
+
+The owner authorizes one reusable-capability closure before any telemetry lock adapter. It
+preserves the blocking public behavior of `ExclusiveFileLock` and
+`ExclusiveWindowsFileLock`, including all six current consumers, and adds only this separate
+public surface:
+
+```text
+FileLockAcquireDecision = ACQUIRED | CONTENDED
+
+ExclusiveFileLock.try_acquire() -> FileLockAcquireDecision
+ExclusiveFileLock.release() -> None
+```
+
+`try_acquire` is valid only for an idle lock object. `ACQUIRED` means this instance owns the one
+opened handle until its matching `release()`; `CONTENDED` means it owns no handle and created no
+guarded-state effect. Repeated acquire, release without a successful acquire, and use after a
+failed release are programming-state errors, not a third success-like decision. The established
+`with ExclusiveFileLock(path):` path remains blocking and semantically unchanged.
+
+The platform is still bound once at import. On Windows the nonblocking binding uses
+`msvcrt.LK_NBLCK`. A real independent-holder probe on this Windows host observed the exact
+contention signal `OSError(errno=EACCES)`, no `winerror`, and zero-millisecond elapsed time after
+the instance opened its own handle. Only that signal from this owned `LK_NBLCK` call becomes
+`CONTENDED`; every other `OSError` from opening, acquiring, releasing, or filesystem handling
+propagates unchanged. On POSIX the source branch must request `fcntl.LOCK_EX | fcntl.LOCK_NB` and
+may classify only `EACCES` or `EAGAIN`; its runtime behavior remains unproven on this Windows
+host and must be recorded as such.
+
+There is no timeout, retry, polling loop, background worker, process fallback, telemetry import,
+lock token, storage/ledger effect, host/provider call, cost claim, target-project mutation, or
+release in this capability closure. The later telemetry adapter alone maps a selected capability's
+finite `CONTENDED` result to its metadata-only `LOCK_CONTENDED` response.
+
 Every identifier is a validated named type with a finite pattern. `record` is
 present only for `APPEND`; other operation/payload combinations fail before I/O.
 No production request or result has a filesystem-path field. Boundary adapters
@@ -261,6 +295,9 @@ unreachable from any controlled-target composition root.
 14. A competing-process fixture proves that only the lock holder can advance a lifecycle or
     change owned stream bytes; malformed/revoked/stale input is re-admitted under lock before
     any codec operation.
+15. Before an adapter is opened, the reusable file-lock primitive proves a finite immediate
+    `ACQUIRED`/`CONTENDED` result against a real independent holder, preserves every existing
+    blocking consumer, and propagates non-contention I/O errors rather than relabeling them.
 
 ## Approval
 
@@ -284,6 +321,12 @@ strict-contract decomposition only. It does not authorize a real lock implementa
 telemetry storage, host/provider invocation, cost claim, target-project mutation or external
 effect.
 
+The project owner additionally authorized the Revision 05 classified nonblocking file-lock
+capability on `2026-08-27`. It authorizes the isolated primitive and disposable process-fixture
+closure described above, but not a telemetry adapter, telemetry stream/ledger effect,
+provider/host invocation, cost claim, target-project mutation, publication, release, or
+deployment.
+
 ## Revision signatures
 
 | Date | AI / worktree / baseline | Summary |
@@ -292,3 +335,4 @@ effect.
 | 2026-08-15 | Project owner | Approved the exact Telemetry Storage Revision 02 and assigned ticket decomposition/opening to the reviewer. |
 | 2026-08-24 | Project owner / `main` / `1849515f911d1376d800fe1b19e0e07b5227028b` | Accepted Revision 03 provider-usage evidence architecture: typed storage matrix, provider-neutral terminal evidence, observed-versus-matched reporting, and isolated authorized probes. |
 | 2026-08-27 | Project owner / `main` / `39f5d883622572f10323527ce32c9eecaaafd5d0` | Selected Revision 04: telemetry storage must be lock-bound; contention is a named no-effect result and the un-catalogued lock module is not implicitly reusable. |
+| 2026-08-27 | Project owner / `main` / `6b5a7c163aa6c2eb2834956f9486072d0047d988` | Authorized Revision 05: preserve the blocking reusable lock API while adding a separately classified nonblocking primitive; all unrelated I/O errors remain errors. |

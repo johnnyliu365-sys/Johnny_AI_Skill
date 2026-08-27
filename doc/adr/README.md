@@ -21,3 +21,6 @@
 | [ADR-20260824-019-provider-usage-telemetry-evidence.md](ADR-20260824-019-provider-usage-telemetry-evidence.md) | `ACCEPTED` | 區分載入估算、一次 host usage 觀測與可比較的實際 token reduction，並將 provider usage 保持 metadata-only。 |
 | [ADR-20260824-020-declared-project-authority-line-and-provider-enforcement.md](ADR-20260824-020-declared-project-authority-line-and-provider-enforcement.md) | `ACCEPTED` | 以宣告的遠端權威線與直接 readback 定義整合完成；高協作 PR 可見但不取代 gate，provider enforcement 必須以實測讀回證明。 |
 | [ADR-20260825-021-core-cluster-closure-and-deferred-operational-verification.md](ADR-20260825-021-core-cluster-closure-and-deferred-operational-verification.md) | `ACCEPTED` | 將純核心 closure 與日後 per-project qualification／shipped governance verification 分開；核心完成不虛稱 provider 或發布完成。 |
+| [ADR-20260827-022-lock-bound-telemetry-storage.md](ADR-20260827-022-lock-bound-telemetry-storage.md) | `ACCEPTED` | 將 Context Governor 的 durable storage 收斂為 exact-identity lock、持鎖重驗與無副作用 contention。 |
+| [ADR-20260827-023-exclusive-file-lock-catalog-admission.md](ADR-20260827-023-exclusive-file-lock-catalog-admission.md) | `ACCEPTED` | 將既有 blocking exclusive file lock 誠實 catalog；不把未知錯誤偽裝為 contention。 |
+| [ADR-20260827-024-classified-nonblocking-file-lock.md](ADR-20260827-024-classified-nonblocking-file-lock.md) | `ACCEPTED` | 在不改既有 blocking consumers 下，新增有證據界定的 finite nonblocking acquisition。 |

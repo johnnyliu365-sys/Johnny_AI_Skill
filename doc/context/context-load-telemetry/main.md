@@ -4,7 +4,7 @@
 | --- | --- |
 | Feature | `context-load-telemetry` |
 | Worktree | `root/main` |
-| State | `BASELINE_DONE / REVISION_02_APPROVED / REVISION_03_PROVIDER_USAGE_ARCHITECTURE_ACCEPTED / REVISION_04_LOCKED_STORAGE_APPROVED / REVIEWER_DECOMPOSITION_AUTHORIZED` |
+| State | `BASELINE_DONE / REVISION_02_APPROVED / REVISION_03_PROVIDER_USAGE_ARCHITECTURE_ACCEPTED / REVISION_04_LOCKED_STORAGE_APPROVED / REVISION_05_CLASSIFIED_FILE_LOCK_CAPABILITY_APPROVED / REVIEWER_DECOMPOSITION_AUTHORIZED` |
 | In scope | Router context measurement, metadata-only JSONL evidence, baseline/router comparison, local validation, and Johnny-owned opaque telemetry storage. |
 | Out of scope | Raw prompt capture, source text or path persistence, provider credentials, a production Agent supervisor, target-local Johnny storage, or changes to target company repositories. |
 
@@ -39,8 +39,13 @@
 - Johnny-owned durable telemetry storage is a cross-process boundary. Every operation must
   acquire an exact opaque-stream lock before its final ownership/lifecycle/containment admission;
   unavailable ownership is distinct from `LOCK_CONTENDED`, and lock contention performs no
-  stream or ledger effect. The existing un-catalogued `file_lock.py` is not selected or imported
-  by this feature until a delivered catalog card admits it.
+  stream or ledger effect. The existing `exclusive-file-lock` catalog card is READY only for
+  blocking exclusion and remains forbidden for direct telemetry `try_acquire` use until its
+  separately approved classified nonblocking successor closure is delivered and selected.
+- The classified successor preserves all six current blocking consumers. Its new API may return
+  only `ACQUIRED` or `CONTENDED`: Windows contention is the locally observed immediate
+  `LK_NBLCK`/`errno.EACCES` outcome after a successful open; unrelated `OSError` values remain
+  errors. This infrastructure closure is not a telemetry adapter and does not produce telemetry.
 
 ## Related sources
 
@@ -69,3 +74,7 @@ has been collected, and the legacy raw-path API remains non-admitted for control
 Revision 04 is authorized by `PRD-20260827-041` / `CHG-20260827-041` and
 `ADR-20260827-022`. It blocks Ticket 06's pre-lock candidate from integration and requires a
 strict lock-contract closure before any durable adapter or actual Accounting data path.
+
+Revision 05 additionally authorizes the classified nonblocking file-lock prerequisite under
+`ADR-20260827-024`. Its only permitted implementation is the reusable primitive and disposable
+process fixtures; Ticket 06 remains blocked until a later lock adapter is separately opened.
