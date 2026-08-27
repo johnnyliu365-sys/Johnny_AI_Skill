@@ -5,8 +5,8 @@
 | Artifact ID / kind | `TICKET-CONTEXT-TELEMETRY-10-OWNERSHIP-LEDGER-CAS` / `IMPLEMENTATION_TICKET` |
 | SPEC / acceptance source | `SPEC-AI-WORKFLOW-CONTEXT-LOAD-TELEMETRY-20260803-01KZ5E7F9G1H3J5K7M9N1P3Q5R` Revision 07 / AC-06 through AC-08 and AC-16 |
 | Requirement / Context / ADR | `PRD-20260827-041` / `CHG-20260827-041` / `doc/context/context-load-telemetry/main.md` Revision 07 / `ADR-20260827-022` through `ADR-20260827-025` |
-| State / closure | `OPEN / APPROVED / HIGH_ASSURANCE_REQUIRED`; `CLOSURE-CONTEXT-TELEMETRY-10-OWNERSHIP-LEDGER-CAS`, revision 01 |
-| Document revision | `01` |
+| State / closure | `CLOSED / DONE / APPROVED / INTEGRATED`; `CLOSURE-CONTEXT-TELEMETRY-10-OWNERSHIP-LEDGER-CAS`, revision 01 |
+| Document revision | `02` — completion evidence only; the frozen acceptance closure remains revision 01. |
 | Approval authority | Project owner, 2026-08-27 (Asia/Taipei): authorized Revision 07's private pre-provisioned ownership-ledger and compare-and-swap substrate. |
 | Source baseline / dependency | `8a41419d84001105d38814329e23f214adf43c36`; candidate must descend from the committed ticket authority. Ticket 09 (`096d471`) supplies the local exact lock port. Ticket 06 remains `SUPERSEDED` and non-integrable. |
 | Control owner / reviewer | `ticket-review` semantic profile — Terra/xhigh. |
@@ -182,3 +182,22 @@ Return exactly `ImplementationReturn.COMPLETED -> ACTION_COMPLETED` with OLA/OLM
 evidence; `BLOCKED -> HALT` with the failed cell; or `CHANGE_DETECTED -> REQUIREMENT_CHANGED`.
 No return authorizes stream or transaction-journal implementation, provider/host use, cost claim,
 target mutation, integration, push, publication, release or deployment.
+
+## Completion record
+
+Luna/xhigh returned `ImplementationReturn.COMPLETED -> ACTION_COMPLETED` without a commit or
+push. Terra/xhigh reviewed the exact two-path candidate, requested and verified removal of its
+ignored `.mypy_cache` residue, then committed candidate
+`a06c0fd5d2dc78e8b77eb671d9a304b74a0202a6`. It descends from the committed ticket authority
+`23f4ae1ff68df48a7e02368690cc86236b3abe1d`.
+
+`admit_document_mutation` read this ticket's boundary from `main`, read the candidate diff from
+Git, and returned `INTEGRATED` with the same exact `integrated_commit` SHA. Its only candidate
+paths are `ownership_ledger.py` and `test_telemetry_ownership_ledger.py`; the element index was
+already part of the committed ticket authority and was not modified by the candidate.
+
+The review record is
+`doc/reviews/context-load-telemetry/10-private-ownership-ledger-cas-code-review.md`. It contains
+the OLA/OLM, strict-type, independent reviewer counter-mutation and full-suite baseline evidence.
+The succeeding lock-bound stream transaction/recovery and composition closures remain separate
+work; this ticket neither implements nor authorizes them.
