@@ -47,8 +47,9 @@
   `LK_NBLCK`/`errno.EACCES` outcome after a successful open; unrelated `OSError` values remain
   errors. This infrastructure closure is not a telemetry adapter and does not produce telemetry.
 - Revision 06 authorizes exactly one local `TelemetryStorageLockPort` implementation. It derives
-  one opaque lock identity and one internal dedicated path from the complete immutable storage
-  reference, uses the delivered `exclusive-file-lock` only after
+  one opaque lock identity and one internal dedicated path from the exact four-coordinate stream
+  identity, while its acquired token retains the full supplied storage reference including
+  revision. It uses the delivered `exclusive-file-lock` only after
   `path-containment` rejects redirected roots/ancestors, and returns the existing strict acquire
   and release DTOs. The adapter may hold lock-file state only; it does not read or create a
   ledger/stream, invoke `JsonlContextUsageStore`, re-admit a storage operation, or touch a target

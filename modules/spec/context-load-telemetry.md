@@ -201,9 +201,11 @@ finite `CONTENDED` result to its metadata-only `LOCK_CONTENDED` response.
 The owner authorizes one local implementation of the existing `TelemetryStorageLockPort` after
 the selected `exclusive-file-lock` and `path-containment` cards are delivered. It receives only a
 strict `TelemetryStorageLockRequest`; it derives no public path and exposes none. Its one
-dedicated lock-file identity is the SHA-256 digest of the complete immutable
-`(storage_ref, project_id, stream_id, ownership_ledger_ref, storage_revision)` tuple, encoded
-with fixed labels and NUL separators. The adapter constructs the opaque `lock_ref` and all opaque
+dedicated lock-file identity is the SHA-256 digest of the exact stream
+`(storage_ref, project_id, stream_id, ownership_ledger_ref)` tuple, encoded with fixed labels
+and NUL separators. `storage_revision` remains in the acquired token and is re-admitted by the
+later storage adapter; it is deliberately not a lock key, so stale and current requests for one
+stream cannot enter concurrently. The adapter constructs the opaque `lock_ref` and all opaque
 failure references from that digest, not from a caller-supplied string.
 
 The adapter's sole owned effect is to create and retain a dedicated `*.lock` file below an
