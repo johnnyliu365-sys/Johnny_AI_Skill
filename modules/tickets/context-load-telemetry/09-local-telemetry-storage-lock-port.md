@@ -199,4 +199,3 @@ stage = C | Revision 06 lock-port contract and TDD matrix | READY_LOW_MODEL
 stage = M | Luna/xhigh same-lifetime implementation | PENDING
 stage = R | Terra/xhigh review and guarded integration | PENDING
 ```
-
