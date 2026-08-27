@@ -10,3 +10,4 @@
 | 11 | [Per-stream ownership-ledger readiness](11-per-stream-ownership-ledger-readiness-code-review.md) | APPROVED / INTEGRATED / AUTHORITY_PUSH_CONFIRMED |
 | 12 | [Lock-bound telemetry transaction adapter](12-lock-bound-transaction-adapter-code-review.md) | APPROVED / INTEGRATED / AUTHORITY_PUSH_CONFIRMED |
 | 13 | [Private telemetry-storage composition binding](13-private-storage-composition-binding-code-review.md) | APPROVED / INTEGRATED / AUTHORITY_PUSH_CONFIRMED |
+| 14 | [Router-owned provisioning delegation contracts](14-router-owned-provisioning-delegation-contracts-code-review.md) | APPROVED / INTEGRATED / AUTHORITY_PUSH_CONFIRMED |

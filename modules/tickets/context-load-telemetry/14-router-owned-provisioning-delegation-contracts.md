@@ -5,8 +5,8 @@
 | Artifact ID / kind | `TICKET-CONTEXT-TELEMETRY-14-ROUTER-PROVISIONING-DELEGATION-CONTRACTS` / `IMPLEMENTATION_TICKET` |
 | SPEC / acceptance source | `SPEC-AI-WORKFLOW-CONTEXT-LOAD-TELEMETRY-20260803-01KZ5E7F9G1H3J5K7M9N1P3Q5R` Revision 11 / AC-22 |
 | Requirement / Context / ADR | `PRD-20260827-041` / `CHG-20260827-041` / `doc/context/context-load-telemetry/main.md` Revision 11 / `ADR-20260827-029` |
-| State / closure | `OPEN / APPROVED / DISPATCH_READY`; `CLOSURE-CONTEXT-TELEMETRY-14-ROUTER-PROVISIONING-DELEGATION-CONTRACTS`, revision 01 |
-| Document revision | `01` |
+| State / closure | `CLOSED / DONE / APPROVED / INTEGRATED / AUTHORITY_PUSH_CONFIRMED`; `CLOSURE-CONTEXT-TELEMETRY-14-ROUTER-PROVISIONING-DELEGATION-CONTRACTS`, revision 02 |
+| Document revision | `02` |
 | Approval authority | Project owner, 2026-08-27 (Asia/Taipei): approved Revision 11 and exactly one source-only Router grant/denial contract closure. |
 | Source baseline / dependency | `b2ed02ecaf87d19557d76da27402493c2d482094`; candidate must descend from this committed ticket authority. Ticket 13 (`108ea43`) supplies the separate composition consumer; this ticket may depend only on the existing private `ApprovedDispatchArtifactRegistry` contract. |
 | Control owner / reviewer | `ticket-review` semantic profile — Terra/xhigh. |
@@ -174,3 +174,35 @@ evidence; `BLOCKED -> HALT` with the failed cell; or `CHANGE_DETECTED -> REQUIRE
 No return authorizes root bootstrap, durable provisioning, a ledger/lock/stream/journal/report
 effect, provider/host use, cost claim, target mutation, integration, push, publication, release
 or deployment.
+
+## Completion record
+
+Luna/xhigh returned `ImplementationReturn.COMPLETED -> ACTION_COMPLETED` with no commit, push,
+document edit, gate call or scope expansion. Its candidate changed only the two declared
+source/test paths. TPA focused evidence was `5 passed, 11 subtests`; the Router regression was
+`57 passed, 216 subtests`; `mypy --strict`, `compileall`, diff check and restored TPM1–TPM3 all
+passed.
+
+Terra/xhigh initially requested one additive correction: the grant digest incorrectly included
+the caller correlation `request_ref`, although the frozen grant is over the six validated
+dispatch coordinates only. The same owner lane corrected it and added the distinct-request-ref
+acceptance case. The reviewer independently reverse-mutated the real dispatch-material function
+to include `request_ref`; TPA1 failed with a mismatched authority reference, and exact
+restoration returned the focused suite to green. This counter-mutation is distinct from the
+implementer's registry-bypass, omitted-commit and forbidden-source mutations.
+
+The candidate `9364fc89428df1a448d2ac60e4867bfe0d63e55e` on
+`implement/context-load-telemetry-14-router-owned-provisioning-delegation-contracts` descends
+from the committed ticket authority `ba01836183513b4f8c4b3a2e0bf88707bee4f5c6` and changes only
+`library/workflow_router/telemetry_provisioning_contracts.py` and
+`tests/test_telemetry_provisioning_contracts.py`. `admit_document_mutation` read this exact
+ticket boundary from `main`, read the candidate change set from Git, and returned `INTEGRATED`
+with that same candidate SHA. The source integration was non-force pushed to `origin/main`; fresh
+direct remote readback returned `9364fc89428df1a448d2ac60e4867bfe0d63e55e`.
+
+The final candidate full-suite result was `1841 passed, 31 skipped, 3805 subtests passed` with
+three failures. Each was independently reproduced, untruncated, against clean `main` in the
+same runtime: stale plugin-publication pin, refusal-guidance enum roster drift, and running
+pytest `9.0.3` versus declared `9.1.1`. They are existing baseline failures outside this
+boundary; no global-green claim is made. The exact review is
+`doc/reviews/context-load-telemetry/14-router-owned-provisioning-delegation-contracts-code-review.md`.
