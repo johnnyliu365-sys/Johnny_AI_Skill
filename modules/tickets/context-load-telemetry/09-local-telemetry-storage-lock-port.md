@@ -5,7 +5,8 @@
 | Artifact ID / kind | `TICKET-CONTEXT-TELEMETRY-09-LOCAL-LOCK-PORT` / `IMPLEMENTATION_TICKET` |
 | SPEC / acceptance source | `SPEC-AI-WORKFLOW-CONTEXT-LOAD-TELEMETRY-20260803-01KZ5E7F9G1H3J5K7M9N1P3Q5R` Revision 06 / AC-06, AC-13 through AC-15 |
 | Requirement / Context / ADR | `PRD-20260827-041` / `CHG-20260827-041` / `doc/context/context-load-telemetry/main.md` Revision 06 / `ADR-20260827-022` through `ADR-20260827-024` |
-| State / closure | `OPEN / APPROVED / READY_LOW_MODEL`; `CLOSURE-CONTEXT-TELEMETRY-09-LOCAL-LOCK-PORT`, revision 01 |
+| State / closure | `OPEN / APPROVED / READY_LOW_MODEL`; `CLOSURE-CONTEXT-TELEMETRY-09-LOCAL-LOCK-PORT`, revision 02 |
+| Document revision | `02` — admission correction: preserve the pre-existing pure contract package surface. |
 | Approval authority | Project owner, 2026-08-27 (Asia/Taipei): authorized the one independently scoped local `TelemetryStorageLockPort` closure recorded by Specification Revision 06. |
 | Source baseline / dependency | `dda74a25a5c83cf09500b886701c5e99d4b04c20`; the candidate must also descend from the committed current-main ticket authority. Ticket 07 (`0ded2ed`) freezes lock DTOs, Ticket 08 (`60d2ab0`) delivers the classified lock, and Revision 06 catalogs `path-containment`. Ticket 06 remains blocked and non-integrable. |
 | Control owner / reviewer | `ticket-review` semantic profile — Terra/xhigh. |
@@ -17,10 +18,10 @@
 ## Boundary declaration
 
 ```johnny-boundary
-modify = library/local_orchestration/telemetry_storage/__init__.py
 create = library/local_orchestration/telemetry_storage/local_lock_adapter.py
 create = tests/test_telemetry_storage_lock_adapter.py
 create = modules/element/python/context-load-telemetry/09-local-telemetry-storage-lock-port/
+forbid = library/local_orchestration/telemetry_storage/__init__.py
 forbid = library/local_orchestration/telemetry_storage/contracts.py
 forbid = library/local_orchestration/file_lock.py
 forbid = library/local_orchestration/path_containment.py
@@ -35,6 +36,18 @@ forbid = skills/
 forbid = .claude-plugin/
 forbid = README.md
 ```
+
+## Admission correction — revision 02
+
+Revision 01 incorrectly required a package-root re-export. The pre-existing strict-contract
+closure source-guards `telemetry_storage/__init__.py` as a pure `.contracts` re-export only;
+adding a local filesystem adapter there turns every package-contract import into infrastructure
+import and makes `tests/test_telemetry_storage_contracts.py::TestSourceBoundary::test_sc6_owned_modules_are_strict_and_effect_free`
+red. The existing guard is the controlling source fact, so this correction changes no adapter
+behavior or public lock DTO: the adapter is imported only from its exact module path and the
+package init remains untouched. Rebase the same candidate branch onto this committed correction,
+restore its out-of-bound init modification, and retain every permitted source/test change
+additively.
 
 ## One observable closure
 
@@ -63,7 +76,8 @@ lock-bound storage-adapter ticket owns those responsibilities.
 
 Create only `library/local_orchestration/telemetry_storage/local_lock_adapter.py`. It exports
 only `LocalTelemetryStorageLockAdapter` and the sanitized
-`TelemetryStorageLockAdapterError`. Add exactly those two names to package `__init__.py`.
+`TelemetryStorageLockAdapterError`; callers import those names from that exact module, never
+the package root. `telemetry_storage/__init__.py` remains byte-identical to the source baseline.
 `LocalTelemetryStorageLockAdapter(layout: JohnnyRootLayout)` is the only constructor; it accepts
 no caller path, raw root string, digest, lock reference, callback, resolver, dynamic mapping, or
 unvalidated input.
@@ -143,7 +157,7 @@ boundary: neither selected capability supplies ownership-ledger admission, lifec
 | LPA4 | Reconstructed, stale, cross-adapter and mismatched tokens return `TelemetryStorageLockReleaseFailed` without releasing the held lock; the held original token still releases exactly once. After release the original/replayed token fails and a fresh adapter can acquire. |
 | LPA5 | A redirected Johnny root or existing lock-root ancestor is rejected before any lock-file effect and raises only `TelemetryStorageLockAdapterError` without a raw path/exception. Normal disposable-root creation remains contained under its telemetry root. |
 | LPA6 | Injected non-contention acquire/open/mkdir `OSError` becomes the sanitized adapter error, never contention. An injected release `OSError` returns only `TelemetryStorageLockReleaseFailed`, clears retained state, and leaves no completed/released claim. |
-| LPA7 | Bounded source/AST gates prove exact selected imports, SHA-256/four-coordinate key construction, two containment checks before effect, original-token identity (`is`), no raw-path constructor/output, no legacy codec/ledger/storage operation/provider/host import, and no retry/sleep/polling/queue/runner/dynamic lookup/`Any`/cast/fallback. |
+| LPA7 | Bounded source/AST gates prove exact selected imports, SHA-256/four-coordinate key construction, two containment checks before effect, original-token identity (`is`), no raw-path constructor/output, no legacy codec/ledger/storage operation/provider/host import, and no retry/sleep/polling/queue/runner/dynamic lookup/`Any`/cast/fallback. They also prove `telemetry_storage/__init__.py` has no candidate diff and retains its existing pure `.contracts` imports. |
 | LPA8 | Focused tests, strict type check, compilation, declared-boundary diff, clean worktree and no cache/runtime residue pass. The element index names exact evidence and limitations honestly. |
 | LM1 | Add `storage_revision` to the lock-key payload; LPA3 turns red, then byte-exact restoration returns green. |
 | LM2 | Change the contention path to `LOCK_ACQUIRED` or permit an acquired token for it; LPA2 turns red, then restoration returns green. |
@@ -162,8 +176,9 @@ Implementation-owner commands:
 
 ```text
 py -3.11 -m pytest -q -p no:cacheprovider tests/test_telemetry_storage_lock_adapter.py
-py -3.11 -m mypy --strict library/local_orchestration/telemetry_storage/__init__.py library/local_orchestration/telemetry_storage/local_lock_adapter.py tests/test_telemetry_storage_lock_adapter.py
-py -3.11 -m compileall -q library/local_orchestration/telemetry_storage/__init__.py library/local_orchestration/telemetry_storage/local_lock_adapter.py
+py -3.11 -m pytest -q -p no:cacheprovider tests/test_telemetry_storage_contracts.py
+py -3.11 -m mypy --strict library/local_orchestration/telemetry_storage/local_lock_adapter.py tests/test_telemetry_storage_lock_adapter.py
+py -3.11 -m compileall -q library/local_orchestration/telemetry_storage/local_lock_adapter.py
 git diff --check dda74a25a5c83cf09500b886701c5e99d4b04c20 HEAD
 git status --short
 ```
