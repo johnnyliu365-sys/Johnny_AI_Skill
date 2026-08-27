@@ -1,8 +1,8 @@
 # Review Assurance Tickets
 
-| Ticket | Capability | Lifecycle / state |
-| --- | --- | --- |
-| [01-adversarial-review-and-deployment-readiness-policy](01-adversarial-review-and-deployment-readiness-policy.md) | Ticket-level independent adversarial audit contract, corrected same-lifetime multi-Agent review policy, and deployment readiness matrix | `APPROVED / DISPATCHABLE / CLOSURE_REVISION_02` |
+| Child ID / leaf | Kind | Revision | SHA-256 | Lifecycle | State |
+| --- | --- | --- | --- | --- | --- |
+| [01-adversarial-review-and-deployment-readiness-policy](01-adversarial-review-and-deployment-readiness-policy.md) | `IMPLEMENTATION_TICKET` | `02` | `934d096f5dfe0b257cf55e63515859e7d2ad85d4e9e1301d51c0d0875446d902` | `CLOSED` | `DONE / APPROVED / INTEGRATED / AUTHORITY_PUSH_CONFIRMED` — `9c87915` |
 
 ## Shared baseline
 

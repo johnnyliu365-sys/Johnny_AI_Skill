@@ -2,7 +2,40 @@
 
 | Field | Value |
 | --- | --- |
-| State | `APPROVED / DISPATCHABLE / CLOSURE_REVISION_02` |
+| State | `CLOSED / DONE / APPROVED / INTEGRATED / AUTHORITY_PUSH_CONFIRMED / CLOSURE_REVISION_02` |
+
+## Completion record
+
+`ImplementationReturn.COMPLETED → ACTION_COMPLETED` was returned by the reused Luna/xhigh
+implementation owner without commit, push, integration, agent/auditor invocation or external
+effect. Revision 01 initially received one additive policy correction. Its later review exposed
+the inherited `COMPACT` helper-table contradiction; this was correctly treated as
+`TICKET_DEFECT / CONVERGENCE_REVIEW_REQUIRED`, not as a third correction. The reviewer updated
+the closure to revision 02, pushed that document baseline, rebased the candidate and obtained a
+new bounded implementation return.
+
+Candidate branch
+`control/review-assurance-01-adversarial-review-and-deployment-readiness-policy` changed exactly
+the nine declared policy/test paths and landed at
+`9c87915267d909c88ac9f3490609d4ccb6c4a0e7`. It explicitly separates an ordinary COMPACT
+research helper (not admitted) from one optional reviewer-owned COMPACT adversarial audit;
+STANDARD remains optional, while HIGH_ASSURANCE/proposed release/deployment require the audit.
+
+The reviewer independently ran the focused policy, Router and control-plane suites
+(`118 passed, 298 subtests passed`), strict mypy and compilation. Two reviewer-owned
+counter-mutations entered through different production policy doors: changing same-lifetime
+`NOT_REQUIRED` to `BRIDGE_REQUIRED` made TARA2 fail; changing the HIGH_ASSURANCE role rule from
+`must consume` to `may consume` made TARA3 fail. Each was exactly restored before admission.
+
+`admit_control_plane_mutation` returned `INTEGRATED` with the exact candidate SHA. The reviewer
+then non-force pushed `main` and direct remote readback returned the same SHA. The complete
+evidence and residual baseline failures are recorded at
+`doc/reviews/review-assurance/01-adversarial-review-and-deployment-readiness-policy-code-review.md`.
+
+The candidate full suite was `1848 passed, 31 skipped, 3873 subtests passed` with three failures.
+All three were rerun on clean `main` unchanged: stale plugin-publication metadata pin,
+refusal-guidance enum roster drift, and running pytest `9.0.3` versus the declared `9.1.1`.
+They are outside this ticket boundary; no global-green claim is made.
 | Feature / ticket | `review-assurance / 01-adversarial-review-and-deployment-readiness-policy` |
 | Requirement / specification | `PRD-20260827-042` / `CHG-20260827-042`; `SPEC-AI-WORKFLOW-REVIEW-ASSURANCE-20260827-01KZ9A1B2C3D4E5F6G7H8J9K0L` |
 | Context / ADR | `doc/context/review-assurance/main.md`; `ADR-20260827-030-adversarial-review-and-deployment-readiness.md` |
