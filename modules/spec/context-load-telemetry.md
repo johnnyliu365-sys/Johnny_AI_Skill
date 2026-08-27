@@ -3,11 +3,11 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-CONTEXT-LOAD-TELEMETRY-20260803-01KZ5E7F9G1H3J5K7M9N1P3Q5R` |
-| State | `APPROVED_BASELINE / REVISION_02_PROJECT_ISOLATION_APPROVED / REVISION_03_PROVIDER_USAGE_ARCHITECTURE_ACCEPTED / REVISION_04_LOCKED_STORAGE_APPROVED / REVISION_05_CLASSIFIED_FILE_LOCK_CAPABILITY_APPROVED / REVISION_06_LOCK_PORT_ADAPTER_AUTHORIZED / REVISION_07_DURABLE_STORAGE_TRANSACTION_APPROVED / REVISION_08_PER_STREAM_LEDGER_REFINEMENT_ACCEPTED / REVIEWER_DECOMPOSITION_AUTHORIZED` |
+| State | `APPROVED_BASELINE / REVISION_02_PROJECT_ISOLATION_APPROVED / REVISION_03_PROVIDER_USAGE_ARCHITECTURE_ACCEPTED / REVISION_04_LOCKED_STORAGE_APPROVED / REVISION_05_CLASSIFIED_FILE_LOCK_CAPABILITY_APPROVED / REVISION_06_LOCK_PORT_ADAPTER_AUTHORIZED / REVISION_07_DURABLE_STORAGE_TRANSACTION_APPROVED / REVISION_08_PER_STREAM_LEDGER_REFINEMENT_ACCEPTED / REVISION_09_LOCK_BOUND_TRANSACTION_PROTOCOL_ACCEPTED / REVIEWER_DECOMPOSITION_AUTHORIZED` |
 | Owner | `root/main` |
 | Context | `doc/context/context-load-telemetry/main.md` |
 | PRD reference | `PRD-20260803-006` |
-| Change | `CHG-20260803-006`; project-isolation revision `CHG-20260815-024` / `ADR-20260815-013`; provider-usage architecture `ADR-20260824-019`; lock-bound storage `CHG-20260827-041` / `ADR-20260827-022`; classified lock capability `ADR-20260827-024`; durable storage transaction `ADR-20260827-025`; per-stream ledger refinement `ADR-20260827-026` |
+| Change | `CHG-20260803-006`; project-isolation revision `CHG-20260815-024` / `ADR-20260815-013`; provider-usage architecture `ADR-20260824-019`; lock-bound storage `CHG-20260827-041` / `ADR-20260827-022`; classified lock capability `ADR-20260827-024`; durable storage transaction `ADR-20260827-025`; per-stream ledger refinement `ADR-20260827-026`; transaction protocol `ADR-20260827-027` |
 
 ## Goal
 
@@ -291,6 +291,54 @@ format migration. Before the transaction adapter, the implementation must prove 
 processes that update distinct stream entries preserve both post-states, and that a forged caller
 revision cannot affect recovery lookup or CAS admission.
 
+### Revision 09 lock-bound transaction adapter protocol
+
+The adapter is a private direct module implementing the existing `TelemetryStoragePort` with the
+dependency direction `contracts <- johnny_owned_adapter <- composition`. It receives the injected
+Johnny layout, `TelemetryOwnershipLedgerPort` and `TelemetryStorageLockPort`; composition stays
+out of this closure. It is the sole controlled caller of `JsonlContextUsageStore.read` and never
+calls its path-taking `append`. It strictly decodes existing records then writes canonical
+metadata-only JSONL itself.
+
+For one exact immutable stream identity, private state is:
+
+```text
+telemetry_root/storage-transactions/<sha256(identity)>/
+  journal.json
+  pre.stream
+  post.stream
+```
+
+`journal.json` is strict/schema-versioned and records only operation, opaque identity/ref,
+expected and next revisions, pre/post lifecycle, internally derived stream locator, pre/post
+existence, hashes and record counts, and phase `PREPARED | STREAM_APPLIED | LEDGER_APPLIED`.
+Every journal, snapshot and stream path is internally derived and containment-checked. Snapshot
+and journal writes use same-directory temporary files, flush/fsync and owned replacement.
+
+The next revision is deterministic:
+
+```text
+rev-<sha256("telemetry-storage-revision-v1" + NUL + storage_ref + NUL + project_id + NUL +
+            stream_id + NUL + ownership_ledger_ref + NUL + expected_revision + NUL + operation +
+            NUL + post_lifecycle + NUL + sha256(stream_locator) + NUL + pre_sha256 + NUL +
+            post_sha256)>
+```
+
+`APPEND` uses an empty missing stream as pre-state, appends one canonical record and remains
+`ACTIVE`. `DETACH` and `UNINSTALL` use absent post-stream states and advance a ledger tombstone
+to `DETACHED` or `REMOVED`. `READ` returns the full immutable decoded tuple at the unchanged
+expected revision. `VALIDATE` returns the unchanged revision plus
+`validation-<sha256(identity + revision + canonical-report-json)>`; it persists no separate
+report and uses the validator's fixed default threshold.
+
+Recovery runs before final admission under the exact lock. `PREPARED` with pre stream/ledger
+discards the journal; a prepared post stream or `STREAM_APPLIED` post stream plus pre ledger
+restores exact pre-state then discards; `STREAM_APPLIED` post stream plus post ledger and
+`LEDGER_APPLIED` post/post keep post-state then discard. Any malformed, third or incompatible
+state is `STORAGE_BOUNDARY_VIOLATION`, retains journal and never guesses repair. Final admission
+then checks exact project/revision/lifecycle. `LOCK_CONTENDED` has zero effect. A release failure
+overrides any otherwise completed response.
+
 Every identifier is a validated named type with a finite pattern. `record` is
 present only for `APPEND`; other operation/payload combinations fail before I/O.
 No production request or result has a filesystem-path field. Boundary adapters
@@ -404,6 +452,13 @@ unreachable from any controlled-target composition root.
     successful mutation for another exact opaque stream. Recovery identity lookup ignores a
     caller revision but never provisions, admits or advances an entry; subsequent operation
     admission still validates lifecycle and the exact expected revision.
+19. All five `TelemetryStoragePort` operations acquire the exact lock, recover first and perform
+    fresh owned-entry/revision/lifecycle/containment admission before codec effect. A failed or
+    interrupted mutating operation leaves only the complete pre-state or complete post-state for
+    the next operation; release failure cannot report completion.
+20. `APPEND`, `READ`, `VALIDATE`, `DETACH` and `UNINSTALL` preserve the existing finite public
+    response matrix. Post revisions and `VALIDATE` report refs are deterministic opaque metadata;
+    no stream path, journal detail, raw text or persisted validation report reaches a response.
 
 ## Approval
 
@@ -453,6 +508,11 @@ correction before the later transaction adapter. It grants no telemetry operatio
 provider/host invocation, credential access, pricing or cost claim, target-project mutation,
 publication, release or deployment.
 
+Revision 09 is an architecture-conformant private adapter protocol under the same authority. It
+authorizes one lock-bound transaction adapter decomposition with disposable-root evidence, but
+not composition, provisioning, provider/host invocation, credential access, pricing/cost claim,
+target-project mutation, publication, release or deployment.
+
 ## Revision signatures
 
 | Date | AI / worktree / baseline | Summary |
@@ -465,3 +525,4 @@ publication, release or deployment.
 | 2026-08-27 | Project owner / `main` / `42b2be1b0659c3e1cb9f8e039d1b827f7b74be85` | Authorized Revision 06: implement one separately scoped local `TelemetryStorageLockPort` with selected lock/containment capabilities and no storage-operation effect. |
 | 2026-08-27 | Project owner / `main` / `d2e899e341edcc3a31529e80e2f4e3526a9fd100` | Authorized Revision 07: accept only pre-provisioned owned storage and recoverable all-or-nothing durable transactions for the future controlled storage adapter. |
 | 2026-08-27 | Architecture owner / `main` / `7d0c927f83467f54d5a68b18024941643f6341a4` | Recorded Revision 08's architecture-conformant per-stream ledger refinement: exact stream locks must serialize the only ledger entry they can advance, and restart recovery needs immutable-identity lookup before ordinary revision admission. |
+| 2026-08-27 | Architecture owner / `main` / `da3e1d6f4b4f5a42e2d544dea6aebcd1f8e1a1d2` | Recorded Revision 09's closed private lock-bound transaction protocol: journal phases/recovery, deterministic revisions, five-operation response behavior and validation-report fingerprinting. |

@@ -3,9 +3,9 @@
 | Field | Value |
 | --- | --- |
 | Feature | `context-load-telemetry` |
-| Revision | `08` |
+| Revision | `09` |
 | Worktree | `root/main` |
-| State | `BASELINE_DONE / REVISION_02_APPROVED / REVISION_03_PROVIDER_USAGE_ARCHITECTURE_ACCEPTED / REVISION_04_LOCKED_STORAGE_APPROVED / REVISION_05_CLASSIFIED_FILE_LOCK_CAPABILITY_APPROVED / REVISION_06_LOCK_PORT_ADAPTER_AUTHORIZED / REVISION_07_DURABLE_STORAGE_TRANSACTION_AUTHORIZED / REVISION_08_PER_STREAM_LEDGER_REFINEMENT_ACCEPTED / REVIEWER_DECOMPOSITION_AUTHORIZED` |
+| State | `BASELINE_DONE / REVISION_02_APPROVED / REVISION_03_PROVIDER_USAGE_ARCHITECTURE_ACCEPTED / REVISION_04_LOCKED_STORAGE_APPROVED / REVISION_05_CLASSIFIED_FILE_LOCK_CAPABILITY_APPROVED / REVISION_06_LOCK_PORT_ADAPTER_AUTHORIZED / REVISION_07_DURABLE_STORAGE_TRANSACTION_AUTHORIZED / REVISION_08_PER_STREAM_LEDGER_REFINEMENT_ACCEPTED / REVISION_09_LOCK_BOUND_TRANSACTION_PROTOCOL_ACCEPTED / REVIEWER_DECOMPOSITION_AUTHORIZED` |
 | In scope | Router context measurement, metadata-only JSONL evidence, baseline/router comparison, local validation, and Johnny-owned opaque telemetry storage. |
 | Out of scope | Raw prompt capture, source text or path persistence, provider credentials, a production Agent supervisor, target-local Johnny storage, or changes to target company repositories. |
 
@@ -69,6 +69,11 @@
   obtain the current entry for journal recovery without trusting a caller revision; ordinary
   admission still requires the exact revision. Aggregate-ledger migration, compatibility
   interpretation and auto-repair remain out of scope.
+- Revision 09 closes the adapter protocol under the same authority: the private journal has
+  `PREPARED`, `STREAM_APPLIED` and `LEDGER_APPLIED` phases plus exact snapshots; recovery under
+  the exact stream lock accepts only a complete pre-state or post-state. Post revisions and
+  validation report refs are deterministic metadata digests. The adapter is the sole controlled
+  legacy-codec reader and writes canonical records itself; it never calls legacy `append`.
 
 ## Related sources
 
@@ -120,3 +125,8 @@ the private per-stream ledger representation and recovery lookup required before
 transaction adapter can be admitted. The next ticket corrects only that private substrate and
 proves concurrent independent-stream preservation; it does not create a public provision API or
 perform a telemetry storage operation.
+
+Revision 09 makes no owner product choice and changes no public contract. It records the already
+authorized durable transaction protocol as a complete private adapter contract, so the reviewer
+can open one high-assurance adapter ticket rather than ask an implementation owner to infer
+journal phases, revision derivation, validation evidence or failure recovery.

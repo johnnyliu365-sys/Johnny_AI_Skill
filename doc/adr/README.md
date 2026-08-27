@@ -26,3 +26,4 @@
 | [ADR-20260827-024-classified-nonblocking-file-lock.md](ADR-20260827-024-classified-nonblocking-file-lock.md) | `ACCEPTED` | 在不改既有 blocking consumers 下，新增有證據界定的 finite nonblocking acquisition。 |
 | [ADR-20260827-025-preprovisioned-telemetry-storage-transactions.md](ADR-20260827-025-preprovisioned-telemetry-storage-transactions.md) | `ACCEPTED` | 受控 telemetry storage 僅接受預先 provision 的 owned ledger，並以可恢復 all-or-nothing transaction 協調 stream 與 lifecycle。 |
 | [ADR-20260827-026-per-stream-ownership-ledger-readiness.md](ADR-20260827-026-per-stream-ownership-ledger-readiness.md) | `ACCEPTED` | 將私有 ledger 分割為 exact-stream entry，令 per-stream lock 真正序列化 CAS；另提供 recovery-only immutable-identity lookup。 |
+| [ADR-20260827-027-lock-bound-telemetry-transaction-protocol.md](ADR-20260827-027-lock-bound-telemetry-transaction-protocol.md) | `ACCEPTED` | 封閉私有 journal/recovery、deterministic revision 與五項 storage operation adapter 協定，不改公開 contracts。 |

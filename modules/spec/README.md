@@ -14,4 +14,4 @@
 | 功能集群 | 規格 | 狀態 |
 | --- | --- | --- |
 | Adaptive project orchestration | [`adaptive-project-orchestration.md`](adaptive-project-orchestration.md) Revision 06 | `APPROVED / REVIEWER_DECOMPOSITION_AUTHORIZED`；只取代 target-local Johnny ignore/worktree 路徑，不重開 Revision 05 Router phase；尚未授權 dispatch。 |
-| Context-load telemetry | [`context-load-telemetry.md`](context-load-telemetry.md) Revision 08 | `APPROVED / REVIEWER_DECOMPOSITION_AUTHORIZED`；opaque Johnny-owned storage、per-stream private ledger/CAS and recoverable transaction boundary are defined. The next private ledger-readiness correction may be opened; controlled telemetry operations, provider probes and release remain separately gated. |
+| Context-load telemetry | [`context-load-telemetry.md`](context-load-telemetry.md) Revision 09 | `APPROVED / REVIEWER_DECOMPOSITION_AUTHORIZED`；opaque Johnny-owned storage、per-stream ledger/CAS and lock-bound transaction adapter protocol are defined. The private adapter ticket may be opened; composition, provider probes and release remain separately gated. |
