@@ -5,8 +5,8 @@
 | Module ID | `path-containment` |
 | Lifecycle | `READY` |
 | Public import | `library.local_orchestration.path_containment: resolves_within_root` |
-| Contract source | `library/local_orchestration/path_containment.py` |
-| Behavior evidence | `tests/test_worktree_containment.py` — contained path, sibling escape, redirected child and redirected base cases |
+| Contract source | The exact public import named above |
+| Behavior evidence | Existing worktree-containment regression suite — contained path, sibling escape, redirected child and redirected base cases |
 | Dependencies | Standard library only; no reusable-module dependency |
 
 ## Public capability
@@ -20,8 +20,8 @@ create, delete, open, lock, serialize, log, or disclose a path.
 ## Minimum reading path
 
 1. This card.
-2. `library/local_orchestration/path_containment.py`.
-3. `tests/test_worktree_containment.py` when containment or redirected-path behavior matters.
+2. The exact public import named above.
+3. Its existing worktree-containment regression suite when redirected-path behavior matters.
 
 ## Required use and prohibited use
 
@@ -40,7 +40,7 @@ create, delete, open, lock, serialize, log, or disclose a path.
 selected: path-containment@42b2be1 (pre-existing source, newly cataloged without source change)
 why: a later local telemetry lock adapter must keep its internally derived lock file beneath the
      Johnny-owned telemetry root while rejecting redirected ancestors.
-read: this README -> path_containment.py -> test_worktree_containment.py.
+read: this README -> named public import -> existing worktree-containment regression suite.
 dependency: none.
 boundary: it establishes neither telemetry ownership nor a filesystem effect; the calling
           adapter must continue to bind exact metadata identity and own its own error handling.
