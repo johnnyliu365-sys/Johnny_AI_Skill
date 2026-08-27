@@ -67,44 +67,45 @@ class AdversarialReviewPolicyTests(unittest.TestCase):
         )
 
     def test_tara3_requiredness_scales_and_unavailable_required_evidence_blocks(self) -> None:
-        adversarial = _read(_ADVERSARIAL)
-        delivery = _read(_DELIVERY_PROFILE)
+        adversarial = " ".join(_read(_ADVERSARIAL).split())
+        delivery = " ".join(_read(_DELIVERY_PROFILE).split())
         model_roles = " ".join(_read(_MODEL_ROLES).split())
-        _assert_terms(
-            self,
+
+        self.assertIn(
+            "The audit is optional for `COMPACT` and `STANDARD` unless an approved ticket matrix requires it.",
             adversarial,
-            (
-                "The audit is optional for `COMPACT` and `STANDARD`",
-                "mandatory for `HIGH_ASSURANCE`",
-                "before a proposed release/deployment",
-                "returns `BLOCKED`",
-            ),
-        )
-        _assert_terms(
-            self,
-            delivery,
-            (
-                "COMPACT",
-                "STANDARD",
-                "HIGH_ASSURANCE",
-                "An ordinary research helper remains optional.",
-                "that required `AdversarialReviewPlan`",
-                "consumes one reviewer-owned `RESEARCH_HELPER`",
-                "If mandatory audit or isolation evidence is unavailable, the review is `BLOCKED`",
-            ),
         )
         self.assertIn(
-            "| Research helper | Not admitted | One optional ordinary read-only helper; a required `AdversarialReviewPlan` consumes one | One optional ordinary read-only helper; the mandatory `AdversarialReviewPlan` audit consumes one |",
+            "It is mandatory for `HIGH_ASSURANCE` and before a proposed release/deployment.",
+            adversarial,
+        )
+        self.assertIn(
+            "If a mandatory audit or required isolation/evidence capability is unavailable, the reviewer returns `BLOCKED`;",
+            adversarial,
+        )
+        self.assertIn(
+            "| Research helper | Not admitted for ordinary research; exactly one optional reviewer-owned `AdversarialReviewPlan` audit | One optional ordinary read-only helper; a required `AdversarialReviewPlan` consumes one | One optional ordinary read-only helper; the mandatory `AdversarialReviewPlan` audit consumes one |",
             delivery,
         )
-        _assert_terms(
-            self,
+        self.assertIn(
+            "An ordinary research helper is not admitted for `COMPACT`; `STANDARD` may use one optional ordinary read-only helper.",
+            delivery,
+        )
+        self.assertIn(
+            "exactly one optional reviewer-owned `AdversarialReviewPlan` audit may be used at `COMPACT` and `STANDARD` unless the approved ticket matrix makes it required.",
+            delivery,
+        )
+        self.assertIn(
+            "It is mandatory for `HIGH_ASSURANCE` and before any proposed release/deployment; that required `AdversarialReviewPlan` consumes one reviewer-owned `RESEARCH_HELPER`.",
+            delivery,
+        )
+        self.assertIn(
+            "An ordinary research helper is not admitted for `COMPACT`; `STANDARD` may use one optional ordinary read-only helper.",
             model_roles,
-            (
-                "optional ordinary research helper",
-                "required `AdversarialReviewPlan`",
-                "consumes one reviewer-owned `RESEARCH_HELPER`",
-            ),
+        )
+        self.assertIn(
+            "A reviewer-owned `AdversarialReviewPlan` may consume exactly one helper at `COMPACT`/`STANDARD` when optional, and must consume one at `HIGH_ASSURANCE` or before a proposed release/deployment;",
+            model_roles,
         )
 
     def test_tara4_attack_and_deployment_vectors_have_finite_evidence_states(self) -> None:
