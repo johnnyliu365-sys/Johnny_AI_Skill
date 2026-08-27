@@ -5,8 +5,8 @@
 | Artifact ID / kind | `TICKET-CONTEXT-TELEMETRY-12-LOCK-BOUND-TRANSACTION-ADAPTER` / `IMPLEMENTATION_TICKET` |
 | SPEC / acceptance source | `SPEC-AI-WORKFLOW-CONTEXT-LOAD-TELEMETRY-20260803-01KZ5E7F9G1H3J5K7M9N1P3Q5R` Revision 09 / AC-13, AC-14, AC-16–AC-20 |
 | Requirement / Context / ADR | `PRD-20260827-041` / `CHG-20260827-041` / `doc/context/context-load-telemetry/main.md` Revision 09 / `ADR-20260827-022`, `025`–`027` |
-| State / closure | `CLOSED / DONE / APPROVED / INTEGRATED`; `CLOSURE-CONTEXT-TELEMETRY-12-LOCK-BOUND-TRANSACTION-ADAPTER`, revision 02 |
-| Document revision | `02` |
+| State / closure | `CLOSED / DONE / APPROVED / INTEGRATED / AUTHORITY_PUSH_CONFIRMED`; `CLOSURE-CONTEXT-TELEMETRY-12-LOCK-BOUND-TRANSACTION-ADAPTER`, revision 03 |
+| Document revision | `03` |
 | Approval authority | Project owner, 2026-08-27 (Asia/Taipei): Revision 07 authorizes the durable controlled storage boundary. Revisions 08–09 / ADR `026`–`027` close its private ledger and transaction protocol; no new owner product decision or public contract is introduced. |
 | Source baseline / dependency | `589b85bad484a2bced18d035ac716ebde0e4bc2d`; candidate must descend from committed ticket authority. Ticket 09 (`096d471`) supplies exact locking; Ticket 11 (`e05f03a`) supplies corrected private per-stream ledger/CAS. Ticket 06 remains `SUPERSEDED` and non-integrable. |
 | Control owner / reviewer | `ticket-review` semantic profile — Terra/xhigh. |
@@ -222,3 +222,9 @@ The exact source review is
 suite result records only the three failures reproduced against clean main; no global-green claim
 is made. This closure does not bind the private adapter into composition or widen its public
 surface.
+
+The closure/review documentation commit
+`88a742dc88199c8b52faaf18ac73c21ee119c711` was non-force pushed to `origin/main`; a fresh
+direct remote readback returned that exact SHA. This confirms the closure evidence itself is
+authority-integrated. The distinct reviewed source candidate remains ancestor evidence at
+`c359d92efc6eb2ca4aeb5c613f4fe7c976cd6e74`.

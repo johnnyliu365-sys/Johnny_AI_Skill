@@ -6,7 +6,7 @@
 | Ticket / closure | `12-lock-bound-transaction-adapter` / `CLOSURE-CONTEXT-TELEMETRY-12-LOCK-BOUND-TRANSACTION-ADAPTER` revision 02 |
 | Source baseline / final candidate | `4d747f6253c6d2741af980f3b9ff82c68df8fedb` / `c359d92efc6eb2ca4aeb5c613f4fe7c976cd6e74` |
 | Reviewer | `ticket-review` semantic profile — Terra/xhigh, root session |
-| Conclusion | `APPROVED / INTEGRATED` |
+| Conclusion | `APPROVED / INTEGRATED / AUTHORITY_PUSH_CONFIRMED` |
 
 ## Admission and scope
 
@@ -57,3 +57,9 @@ No blocking source, evidence, scope, type, security or requirement finding remai
 private adapter is integrated at `c359d92efc6eb2ca4aeb5c613f4fe7c976cd6e74`. Any subsequent
 composition work must be a separately authorized ticket and may not widen the closed public
 storage contract or treat this private adapter as provisioned by default.
+
+The closure/review documentation commit
+`88a742dc88199c8b52faaf18ac73c21ee119c711` was non-force pushed to `origin/main`; fresh direct
+remote SHA readback matched it exactly. This proves the review and closure evidence are
+authority-integrated. The reviewed source candidate remains the distinct ancestor
+`c359d92efc6eb2ca4aeb5c613f4fe7c976cd6e74` recorded above.
