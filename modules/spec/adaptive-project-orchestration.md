@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2` |
-| Status | `REVISION_05_ROUTER_PHASE_APPROVED / REVISION_06_PROJECT_ISOLATION_APPROVED / REVISION_07_HOST_GATEWAY_APPROVED / REVISION_09_PROCEDURAL_MANAGED_ARTIFACT_BEHAVIOR_APPROVED / REVISION_10_MUTATION_STATE_ALGEBRA_OWNER_REVIEW_REQUIRED / R09A_TICKET_OPENING_SUSPENDED_UPSTREAM_DECISION_REQUIRED / OTHER_APPROVED_SCOPES_UNCHANGED` |
+| Status | `REVISION_05_ROUTER_PHASE_APPROVED / REVISION_06_PROJECT_ISOLATION_APPROVED / REVISION_07_HOST_GATEWAY_APPROVED / REVISION_09_PROCEDURAL_MANAGED_ARTIFACT_BEHAVIOR_APPROVED / REVISION_10_MUTATION_STATE_ALGEBRA_APPROVED / R09A_TICKET_OPENING_AUTHORIZED / OTHER_APPROVED_SCOPES_UNCHANGED` |
 | Author / baseline | Codex architecture owner / `4a43b182b2913b1ea9a00b8dbec212eb84c89a33` |
 | Context | `doc/context/adaptive-project-orchestration/main.md` (prior sealed facts), `doc/context/adaptive-project-orchestration/adaptive-project-orchestration-r09-procedural-managed-artifact-behavior.md` (`SEALED / REVISION_09`) and `doc/context/host-gateway-workspace-binding/codex-desktop-readback.md` (`SEALED`) |
 | PRD | `PRD-20260813-016`, `PRD-20260813-017`, `PRD-20260814-019`, `PRD-20260815-020`, `PRD-20260815-022`, `PRD-20260815-024`, `PRD-20260822-031`, `PRD-20260828-043` |
@@ -397,9 +397,9 @@ supports only create/update. Second, changing a leaf digest changes its parent-i
 digest, which changes that index's parent edge; valid post-state therefore cascades through every
 ancestor on the selected path up to the root, not only the nearest parent.
 
-Revision 10 is a correction proposal, not a new feature. Until the project owner approves this
-exact correction, R09A ticket opening is suspended as `UPSTREAM_DECISION_REQUIRED` and no R09
-implementation may be dispatched.
+Revision 10 is a correction, not a new feature. The project owner approved the exact correction at
+`b0a973a8a66d0dbbd88e94990eaa8dc6716b7954`; this authorizes reviewer opening of R09A only.
+R09A ticket approval and every implementation/effect transition remain separate.
 
 Every selected path snapshot has one explicit terminal state:
 
@@ -851,7 +851,7 @@ own approved tickets and receipts.
 Revision 09 is approved. The reviewer may decompose only this serial closure set; each item still
 requires its own approved ticket before dispatch:
 
-1. R09A — after Revision 10 approval, the pure tagged-request planner returns one complete
+1. R09A — the pure tagged-request planner returns one complete
    present/absent path-transition plan, including every induced selected ancestor mutation through
    root, or one finite no-effect rejection.
 2. R09B — transactional writer applies one admitted plan atomically and proves every affected
@@ -916,10 +916,11 @@ ticket only. It does not approve that ticket, open a dispatch lane or authorize 
 or installation effects.
 
 Revision 10 was drafted after R09A decomposition proved that approved Revision 09 could not express
-delete/absence and did not explicitly close digest propagation through all selected ancestors. It
-is a fail-closed contract correction under the same `PRD-20260828-043` / `CHG-20260828-043`; it
-does not change the owner-approved feature direction or authorize a ticket. Exact owner approval is
-required before R09A may be opened.
+delete/absence and did not explicitly close digest propagation through all selected ancestors. The
+project owner approved the exact correction at
+`b0a973a8a66d0dbbd88e94990eaa8dc6716b7954`. It is a fail-closed contract correction under the same
+`PRD-20260828-043` / `CHG-20260828-043`; it does not change the owner-approved feature direction.
+Only reviewer opening of R09A is now authorized; ticket approval and dispatch remain separate.
 
 ## Revision signatures
 
@@ -933,3 +934,4 @@ required before R09A may be opened.
 | 2026-08-28 | Codex architecture owner / `codex/managed-artifact-behavior-architecture` / `4a43b182b2913b1ea9a00b8dbec212eb84c89a33` | Drafted Revision 09 from accepted ADR-031 and sealed Context `CTX-ADAPTIVE-PROJECT-ORCHESTRATION-20260828-09`; exact SPEC owner approval pending. |
 | 2026-08-28 | Project owner / exact candidate `ef1cd4a0c74023c58e04fd44d06c58c41b8daadf` | Approved Revision 09 procedural managed-artifact behavior and authorized reviewer opening of R09A only; ticket approval, dispatch and effects remain separate. |
 | 2026-08-28 | Codex architecture owner / `control/adaptive-r09a-upstream-correction` / `c33b87cb27ca49a94cce0ae315923652a930667f` | R09A decomposition returned `UPSTREAM_DECISION_REQUIRED`; drafted Revision 10 additive mutation-state and ancestor-cascade correction, owner approval pending. |
+| 2026-08-28 | Project owner / exact candidate `b0a973a8a66d0dbbd88e94990eaa8dc6716b7954` | Approved Revision 10 mutation-state and ancestor-cascade correction; authorized reviewer opening of R09A only. |

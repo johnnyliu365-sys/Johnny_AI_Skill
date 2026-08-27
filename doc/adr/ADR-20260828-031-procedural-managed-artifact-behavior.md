@@ -206,9 +206,9 @@ Owner 已接受本 ADR。Router 現可：
 
 前兩步已完成，project owner 也已核准 exact SPEC Revision 09 draft
 `ef1cd4a0c74023c58e04fd44d06c58c41b8daadf`。R09A 分解後因 absent/delete 與 ancestor
-digest-cascade 公開契約未閉合而回到 `UPSTREAM_DECISION_REQUIRED`；其開票 authority
-暫停至 exact SPEC Revision 10 correction 另經 owner 核准。仍沒有 implementation 或
-release authority。
+digest-cascade 公開契約未閉合而回到 `UPSTREAM_DECISION_REQUIRED`；project owner 已核准
+exact SPEC Revision 10 correction `b0a973a8a66d0dbbd88e94990eaa8dc6716b7954`，恢復 reviewer
+開立 R09A 的 authority。R09A 仍須另行核准，且沒有 implementation 或 release authority。
 
 ## 修訂／淘汰紀錄
 
@@ -221,3 +221,5 @@ release authority。
 - `2026-08-28`：R09A 分解發現 Revision 09 無法完整表示 present-to-absent delete，且未
   明訂 leaf digest 變更必須沿選定祖先鏈更新至 root；開票暫停，等待 Revision 10
   correction owner decision。
+- `2026-08-28`：Project owner 核准 exact SPEC Revision 10 correction
+  `b0a973a8a66d0dbbd88e94990eaa8dc6716b7954`；恢復 reviewer 開立 R09A ticket 的 authority。
