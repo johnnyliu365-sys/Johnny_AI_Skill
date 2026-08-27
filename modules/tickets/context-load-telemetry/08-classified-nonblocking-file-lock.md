@@ -5,7 +5,8 @@
 | Artifact ID / kind | `TICKET-CONTEXT-TELEMETRY-08-CLASSIFIED-NONBLOCKING-FILE-LOCK` / `IMPLEMENTATION_TICKET` |
 | SPEC / acceptance source | `SPEC-AI-WORKFLOW-CONTEXT-LOAD-TELEMETRY-20260803-01KZ5E7F9G1H3J5K7M9N1P3Q5R` Revision 05 / AC-15 |
 | Requirement / Context / ADR | `PRD-20260827-041` / `CHG-20260827-041` / `doc/context/context-load-telemetry/main.md` Revision 05 / `ADR-20260827-023` / `ADR-20260827-024` |
-| State / closure | `OPEN / APPROVED_FOR_DISPATCH`; `CLOSURE-CONTEXT-TELEMETRY-08-CLASSIFIED-FILE-LOCK`, revision 01 |
+| State / closure | `CLOSED / DONE / APPROVED / INTEGRATED / AUTHORITY_PUSH_CONFIRMED`; `CLOSURE-CONTEXT-TELEMETRY-08-CLASSIFIED-FILE-LOCK`, revision 01 |
+| Document revision | `02` — completion evidence only; the frozen closure remains revision 01. |
 | Approval authority | Project owner, 2026-08-27 (Asia/Taipei): authorized the isolated classified nonblocking reusable-lock closure recorded by Specification Revision 05 and ADR-20260827-024. |
 | Baseline / dependency | `033bb204b002e7bb7298159f6d522894cb42e07b`; Ticket 07 (`0ded2ed`) and the blocking-only catalog admission (`6b5a7c1`) are integrated. Ticket 06 remains blocked. |
 | Control owner / reviewer | `ticket-review` semantic profile — Terra/xhigh. |
@@ -166,11 +167,39 @@ evidence; `BLOCKED -> HALT` with the failed cell; or `CHANGE_DETECTED -> REQUIRE
 No return authorizes telemetry storage, provider usage, cost comparison, target mutation,
 integration, push, publication, release, or deployment.
 
+## Completion record
+
+The Luna/xhigh implementation owner returned `ImplementationReturn.COMPLETED` with the exact
+four-path boundary, 33 focused tests and 17 subtests, strict mypy, compile validation, and
+restored LM1–LM4 evidence. Terra/xhigh independently re-ran those focused gates and proved its
+own counter-mutation: changing the Windows `errno.EACCES` classifier to `errno.EAGAIN` made the
+real independent-holder FL2 path raise `PermissionError`, while both Windows classifier source
+guards also failed. The source blob was restored byte-for-byte (SHA-256
+`e948238bdebc905aabe37f578c46a34f7bcce3ac9bc1d0706565f66ff1a90aaa`) before all focused gates
+returned green.
+
+Candidate `60d2ab005e0355d5e302d0f7bfe562e9fc2b06d2` descends from baseline
+`cf7ec5bc005a4b3fd533db1ce74cce00410b6e7d`; it changes exactly the four declared paths and has
+no telemetry-storage/workflow-router runtime import. `admit_document_mutation` returned
+`INTEGRATED` with that exact `integrated_commit`. A non-force push to `origin/main` was then
+directly read back as the same SHA.
+
+The full suite recorded `1807 passed`, `31 skipped`, `3771 subtests passed`, and three failures.
+All three reproduce unchanged on the clean baseline: the live plugin pin is stale,
+`test_refusal_guidance`'s roster is already stale, and the active interpreter has pytest `9.0.3`
+while `requirements-dev.txt` declares `9.1.1`. They are recorded in the formal review as
+baseline/environment failures, not Ticket 08 regressions. No telemetry adapter, storage/ledger,
+provider/host, target-project, publication, release, or deployment effect occurred.
+
+The formal review record is
+`doc/reviews/context-load-telemetry/08-classified-nonblocking-file-lock-code-review.md`. Ticket
+06 remains blocked pending a separately authorized, lock-bound telemetry-adapter ticket.
+
 ```johnny-status
 id = 08
 title = Classified nonblocking reusable file lock
-state = OPEN
+state = DONE
 stage = C | frozen reusable-lock contract and TDD matrix | DONE
-stage = M | Luna/xhigh implementation | PENDING
-stage = R | Terra/xhigh review and guarded integration | PENDING
+stage = M | Luna/xhigh implementation | DONE
+stage = R | Terra/xhigh review and guarded integration | DONE
 ```
