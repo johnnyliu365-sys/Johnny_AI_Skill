@@ -5,8 +5,8 @@
 | Artifact ID / kind | `TICKET-CONTEXT-TELEMETRY-11-PER-STREAM-OWNERSHIP-LEDGER-READINESS` / `IMPLEMENTATION_TICKET` |
 | SPEC / acceptance source | `SPEC-AI-WORKFLOW-CONTEXT-LOAD-TELEMETRY-20260803-01KZ5E7F9G1H3J5K7M9N1P3Q5R` Revision 08 / AC-16 through AC-18 |
 | Requirement / Context / ADR | `PRD-20260827-041` / `CHG-20260827-041` / `doc/context/context-load-telemetry/main.md` Revision 08 / `ADR-20260827-025` and `ADR-20260827-026` |
-| State / closure | `OPEN / HIGH_ASSURANCE_REQUIRED`; `CLOSURE-CONTEXT-TELEMETRY-11-PER-STREAM-OWNERSHIP-LEDGER-READINESS`, revision 01 |
-| Document revision | `01` |
+| State / closure | `CLOSED / DONE / APPROVED / INTEGRATED`; `CLOSURE-CONTEXT-TELEMETRY-11-PER-STREAM-OWNERSHIP-LEDGER-READINESS`, revision 01 |
+| Document revision | `02` — completion evidence only; the frozen acceptance closure remains revision 01. |
 | Approval authority | Project owner, 2026-08-27 (Asia/Taipei): Revision 07 authorizes architecture-conformant private ledger/CAS and transaction decomposition. Revision 08 / `ADR-20260827-026` closes this representation correction; no public behavior or new external effect is introduced. |
 | Source baseline / dependency | `88ddf04bfc8751b6ad27b6727c61af6f4ab37d49`; candidate must descend from the committed ticket authority. Ticket 09 (`096d471`) supplies the exact lock port; Ticket 10 (`a06c0fd`) supplies the private ledger seam. Ticket 06 remains `SUPERSEDED` and non-integrable. |
 | Control owner / reviewer | `ticket-review` semantic profile — Terra/xhigh. |
@@ -169,3 +169,26 @@ a contradiction in the exact committed authority. The implementation owner does 
 push, run `admit_document_mutation`, edit this ticket or open another worktree. The reviewer
 alone reviews, commits the candidate, admits document mutation, pushes and directly reads back
 the authority ref.
+
+## Completion record
+
+Luna/xhigh returned `ImplementationReturn.COMPLETED -> ACTION_COMPLETED` without a commit,
+push, document-gate call or scope expansion. Terra/xhigh independently reviewed the exact two
+candidate paths, reran focused, storage-contract, strict-type and compilation gates, and applied a
+different reviewer reverse mutation: removing the real stored-entry identity guard made LRA5
+return `FOUND` where `BOUNDARY_REJECTED` is required; restoring the guard returned the focused
+suite to green.
+
+The reviewer committed candidate `e05f03adf8751f635df8fba6eb204a3922727ec4` on
+`implement/context-load-telemetry-11-per-stream-ownership-ledger-readiness`. It descends from
+the committed Ticket 11 authority `b8a5dfdc7f482812451e336f6293510eedaa75ad` and changes only
+`ownership_ledger.py` and `test_telemetry_ownership_ledger.py`. `admit_document_mutation` read
+this ticket boundary from `main`, read the candidate diff from Git, and returned `INTEGRATED`
+with that same exact candidate SHA. The source integration was non-force pushed to `origin/main`
+and a fresh direct remote readback returned `e05f03adf8751f635df8fba6eb204a3922727ec4`.
+
+The formal review record is
+`doc/reviews/context-load-telemetry/11-per-stream-ownership-ledger-readiness-code-review.md`.
+It records LRA/LRM, strict type, independent reviewer counter-mutation and full-suite
+baseline-equivalence evidence. The next separate closure is the lock-bound transaction adapter;
+it may use this private seam but may not widen its public surface or re-open Ticket 06.
