@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-CONTEXT-LOAD-TELEMETRY-20260803-01KZ5E7F9G1H3J5K7M9N1P3Q5R` |
-| State | `APPROVED_BASELINE / REVISION_02_PROJECT_ISOLATION_APPROVED / REVISION_03_PROVIDER_USAGE_ARCHITECTURE_ACCEPTED / REVISION_04_LOCKED_STORAGE_APPROVED / REVISION_05_CLASSIFIED_FILE_LOCK_CAPABILITY_APPROVED / REVISION_06_LOCK_PORT_ADAPTER_AUTHORIZED / REVISION_07_DURABLE_STORAGE_TRANSACTION_APPROVED / REVISION_08_PER_STREAM_LEDGER_REFINEMENT_ACCEPTED / REVISION_09_LOCK_BOUND_TRANSACTION_PROTOCOL_ACCEPTED / REVISION_10_COMPOSITION_BINDING_AUTHORIZED / REVISION_11_DRAFT_PROVISIONING_TOPOLOGY / SPEC_APPROVAL_REQUIRED` |
+| State | `APPROVED_BASELINE / REVISION_02_PROJECT_ISOLATION_APPROVED / REVISION_03_PROVIDER_USAGE_ARCHITECTURE_ACCEPTED / REVISION_04_LOCKED_STORAGE_APPROVED / REVISION_05_CLASSIFIED_FILE_LOCK_CAPABILITY_APPROVED / REVISION_06_LOCK_PORT_ADAPTER_AUTHORIZED / REVISION_07_DURABLE_STORAGE_TRANSACTION_APPROVED / REVISION_08_PER_STREAM_LEDGER_REFINEMENT_ACCEPTED / REVISION_09_LOCK_BOUND_TRANSACTION_PROTOCOL_ACCEPTED / REVISION_10_COMPOSITION_BINDING_AUTHORIZED / REVISION_11_PROVISIONING_TOPOLOGY_APPROVED / ROUTER_DELEGATION_CONTRACT_AUTHORIZED / REVIEWER_DECOMPOSITION_AUTHORIZED` |
 | Owner | `root/main` |
 | Context | `doc/context/context-load-telemetry/main.md` |
 | PRD reference | `PRD-20260803-006` |
@@ -568,13 +568,14 @@ tests under `ADR-20260827-028`; it does not authorize a public contract/export, 
 operation invocation, provider/host access, credentials, pricing/cost claim, target-project
 mutation, publication, release or deployment.
 
-The project owner selected Revision 11's responsibility topology on 2026-08-27
+The project owner selected and approved Revision 11's responsibility topology on 2026-08-27
 (Asia/Taipei): Host Bootstrap provisions only the Johnny root, the Router owns runtime
 delegation, and the telemetry composition factory consumes an already provisioned identity. This
-records the required architecture and a draft source-only Router contract boundary. It does not
+authorizes exactly one source-only Router contract and fake closure: it must bind only the
+existing approved dispatch-artifact identity to an opaque grant or finite denial. It does not
 approve a durable ledger-entry write, host bootstrap change, provider/host invocation,
-target-project mutation, publication, release or deployment. The revised SPEC and each later
-effect ticket require their own approval.
+target-project mutation, publication, release or deployment. Each later effect ticket requires
+its own approval.
 
 ## Revision signatures
 
@@ -590,3 +591,4 @@ effect ticket require their own approval.
 | 2026-08-27 | Architecture owner / `main` / `7d0c927f83467f54d5a68b18024941643f6341a4` | Recorded Revision 08's architecture-conformant per-stream ledger refinement: exact stream locks must serialize the only ledger entry they can advance, and restart recovery needs immutable-identity lookup before ordinary revision admission. |
 | 2026-08-27 | Architecture owner / `main` / `da3e1d6f4b4f5a42e2d544dea6aebcd1f8e1a1d2` | Recorded Revision 09's closed private lock-bound transaction protocol: journal phases/recovery, deterministic revisions, five-operation response behavior and validation-report fingerprinting. |
 | 2026-08-27 | Project owner / `main` / `5d228ea55f06a9fae223c8c8c22d82d80671c462` | Authorized Revision 10: one source-only private composition factory that binds the delivered ledger, lock and transaction adapter without a storage effect or public-surface change. |
+| 2026-08-27 | Project owner / `main` / `12269b2ae186c0263ca459acac8aca9eef349d55` | Approved Revision 11: Host Bootstrap root readiness, Router-owned runtime delegation and composition-only consumption; authorized one source-only Router grant/denial contract closure only. |

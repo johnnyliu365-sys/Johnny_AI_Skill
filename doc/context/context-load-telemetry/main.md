@@ -5,7 +5,7 @@
 | Feature | `context-load-telemetry` |
 | Revision | `11` |
 | Worktree | `root/main` |
-| State | `BASELINE_DONE / REVISION_02_APPROVED / REVISION_03_PROVIDER_USAGE_ARCHITECTURE_ACCEPTED / REVISION_04_LOCKED_STORAGE_APPROVED / REVISION_05_CLASSIFIED_FILE_LOCK_CAPABILITY_APPROVED / REVISION_06_LOCK_PORT_ADAPTER_AUTHORIZED / REVISION_07_DURABLE_STORAGE_TRANSACTION_AUTHORIZED / REVISION_08_PER_STREAM_LEDGER_REFINEMENT_ACCEPTED / REVISION_09_LOCK_BOUND_TRANSACTION_PROTOCOL_ACCEPTED / REVISION_10_COMPOSITION_BINDING_AUTHORIZED / REVISION_11_PROVISIONING_TOPOLOGY_DECIDED / SPEC_REVISION_PENDING_APPROVAL` |
+| State | `BASELINE_DONE / REVISION_02_APPROVED / REVISION_03_PROVIDER_USAGE_ARCHITECTURE_ACCEPTED / REVISION_04_LOCKED_STORAGE_APPROVED / REVISION_05_CLASSIFIED_FILE_LOCK_CAPABILITY_APPROVED / REVISION_06_LOCK_PORT_ADAPTER_AUTHORIZED / REVISION_07_DURABLE_STORAGE_TRANSACTION_AUTHORIZED / REVISION_08_PER_STREAM_LEDGER_REFINEMENT_ACCEPTED / REVISION_09_LOCK_BOUND_TRANSACTION_PROTOCOL_ACCEPTED / REVISION_10_COMPOSITION_BINDING_AUTHORIZED / REVISION_11_PROVISIONING_TOPOLOGY_DECIDED / ROUTER_DELEGATION_CONTRACT_AUTHORIZED / REVIEWER_DECOMPOSITION_AUTHORIZED` |
 | In scope | Router context measurement, metadata-only JSONL evidence, baseline/router comparison, local validation, and Johnny-owned opaque telemetry storage. |
 | Out of scope | Raw prompt capture, source text or path persistence, provider credentials, a production Agent supervisor, target-local Johnny storage, or changes to target company repositories. |
 
@@ -88,8 +88,8 @@
   the exact identity lock and never treats app-caller identity or a path as authority. The
   existing composition factory remains a consumer only: it binds its private dependencies and
   rejects an absent entry through `STORAGE_OWNERSHIP_MISMATCH`; it cannot bootstrap or provision.
-  The decision is architecture-only until the revised SPEC and a ticket authorize a concrete
-  owned-state effect.
+  The owner has approved the first source-only Router delegation contract and its fakes. A
+  durable owned-state effect still requires a later exact ticket authority.
 
 ## Related sources
 
@@ -156,6 +156,6 @@ mutation, publication, release or deployment.
 Revision 11 records the owner-selected provisioning topology under `ADR-20260827-029`: Host
 Bootstrap owns only root layout readiness; the Router is the only future runtime delegator for a
 private owned-entry provision; and the composition factory consumes an already provisioned entry
-only. No source or host effect is admitted by this architecture decision alone. The next legal
-action is SPEC revision approval followed by a separately admitted source-only Router contract
-ticket; any durable provisioning closure remains an explicitly authorized later effect.
+only. The owner additionally approves one source-only Router contract gate and test-fake closure;
+it has no host, root, ledger, lock, stream, journal, report, provider or target effect. Any
+durable provisioning closure remains an explicitly authorized later effect.
