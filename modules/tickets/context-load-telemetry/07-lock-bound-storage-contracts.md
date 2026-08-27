@@ -5,7 +5,7 @@
 | Artifact ID / kind | TICKET-CONTEXT-TELEMETRY-07-LOCK-BOUND-STORAGE-CONTRACTS / IMPLEMENTATION_TICKET |
 | SPEC / acceptance source | SPEC-AI-WORKFLOW-CONTEXT-LOAD-TELEMETRY-20260803-01KZ5E7F9G1H3J5K7M9N1P3Q5R Revision 04 / AC-06 through AC-08 and AC-13 through AC-14 |
 | Requirement / Context / ADR | PRD-20260827-041 / CHG-20260827-041 / doc/context/context-load-telemetry/main.md Revision 04 / ADR-20260827-022 |
-| State / closure | OPEN / READY_LOW_MODEL; CLOSURE-CONTEXT-TELEMETRY-07-LOCK-CONTRACTS, revision 01 |
+| State / closure | OPEN / READY_LOW_MODEL; CLOSURE-CONTEXT-TELEMETRY-07-LOCK-CONTRACTS, revision 02 |
 | Approval authority | Project owner, 2026-08-27 (Asia/Taipei): selected the Revision 04 lock-bound Accounting path. ADR-20260827-022 authorizes this pure strict-contract closure only. |
 | Baseline / dependency | 95811446cb56a777a31c0f37e04b283fa819e42c; Ticket 05 (e509174) is integrated; Ticket 06 is blocked and non-integrable. |
 | Control owner / reviewer | ticket-review semantic profile — Terra/xhigh. |
@@ -16,7 +16,7 @@
 
 ## Boundary declaration
 
-~~~johnny-boundary
+```johnny-boundary
 modify = library/local_orchestration/telemetry_storage/contracts.py
 modify = library/local_orchestration/telemetry_storage/__init__.py
 modify = tests/test_telemetry_storage_contracts.py
@@ -29,7 +29,16 @@ forbid = modules/spec/
 forbid = modules/tickets/
 forbid = doc/
 forbid = skills/
-~~~
+```
+
+## Admission correction — revision 02
+
+Revision 01 used a tilde fence for the boundary declaration. The integration gate accepts only
+the canonical `johnny-boundary` fence, so it refused the reviewed source candidate before any
+Git mutation. This correction changes no product behavior, public DTO, effect boundary, model
+selection, acceptance cell, source path or candidate-source byte. It restores the canonical fence
+and requires the reviewed candidate to rebase onto this committed ticket baseline before one new
+gate attempt.
 
 ## Observable closure
 
