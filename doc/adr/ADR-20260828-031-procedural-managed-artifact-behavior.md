@@ -1,7 +1,7 @@
 # ADR-20260828-031｜Procedural managed-artifact behavior
 
 - 日期：`2026-08-28（Asia/Taipei）`
-- 狀態：`PROPOSED / OWNER_DECISION_REQUIRED`
+- 狀態：`ACCEPTED`
 - 決策者：Project owner
 - 關聯規格：`SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2`（owner 接受後修訂）
 - 關聯需求變更：`PRD-20260828-043`／`CHG-20260828-043`
@@ -194,18 +194,23 @@ NOT_APPLICABLE = the current host path does not use that adapter
 
 ## Owner 決策與後續路由
 
-Owner 接受本 ADR 後，Router 才可：
+Owner 已接受本 ADR。Router 現可：
 
 1. 建立並封存一份新的 Adaptive Project Orchestration Context revision；
 2. 修訂既有 Adaptive Project Orchestration SPEC（不建立平行 SPEC）；
-3. 由 reviewer 拆出 provider-neutral core、transaction adapter、Codex behavior adapter、
-   repository gate 與 installed qualification 的串行 tickets；
+3. 在 exact SPEC Revision 09 另經 owner 核准後，由 reviewer 拆出 provider-neutral
+   core、transaction adapter、Codex behavior adapter、repository gate 與 installed
+   qualification 的串行 tickets；
 4. 各 ticket 分別核准後才 dispatch；plugin publication/release 仍需另一張具名 effect
    ticket與直接 readback。
 
-在 owner 決策前，`REQUIREMENT_CHANGED` 保持有效，沒有 implementation 或 release
+前兩步已成為本候選的 architecture change-control 工作。現在的具名停止點是 exact
+SPEC Revision 09 owner approval；在該核准前仍沒有 ticket、implementation 或 release
 authority。
 
 ## 修訂／淘汰紀錄
 
 - `2026-08-28`：建立 proposal；等待 project owner 接受、拒絕或要求修改。
+- `2026-08-28`：Project owner 核准候選 commit
+  `4a43b182b2913b1ea9a00b8dbec212eb84c89a33` 中的 ADR-031；授權建立新的 sealed
+  Adaptive Project Orchestration Context revision 與既有 SPEC 的 owner-review draft。

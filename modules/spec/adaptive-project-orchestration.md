@@ -3,11 +3,11 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2` |
-| Status | `REVISION_05_ROUTER_PHASE_APPROVED / REVISION_06_PROJECT_ISOLATION_APPROVED / REVISION_07_HOST_GATEWAY_APPROVED / REVIEWER_DECOMPOSITION_AUTHORIZED / OTHER_PHASES_OWNER_REVIEW_REQUIRED` |
-| Author / baseline | Codex architecture owner / `bce019090819390d4368ec68e09392508aacbd2c` |
-| Context | `doc/context/adaptive-project-orchestration/main.md` (sealed) and `doc/context/host-gateway-workspace-binding/codex-desktop-readback.md` (`SEALED`) |
-| PRD | `PRD-20260813-016`, `PRD-20260813-017`, `PRD-20260814-019`, `PRD-20260815-020`, `PRD-20260815-022`, `PRD-20260815-024`, `PRD-20260822-031` |
-| Requirement change / ADR | `CHG-20260813-016`, `CHG-20260813-017`, `CHG-20260814-019`, `CHG-20260815-020`, `CHG-20260815-022`, `CHG-20260815-024`, `CHG-20260822-031` / `ADR-20260813-008`, `ADR-20260813-009`, `ADR-20260814-011`, `ADR-20260815-013` |
+| Status | `REVISION_05_ROUTER_PHASE_APPROVED / REVISION_06_PROJECT_ISOLATION_APPROVED / REVISION_07_HOST_GATEWAY_APPROVED / REVISION_09_PROCEDURAL_MANAGED_ARTIFACT_BEHAVIOR_OWNER_REVIEW_REQUIRED / OTHER_APPROVED_SCOPES_UNCHANGED` |
+| Author / baseline | Codex architecture owner / `4a43b182b2913b1ea9a00b8dbec212eb84c89a33` |
+| Context | `doc/context/adaptive-project-orchestration/main.md` (prior sealed facts), `doc/context/adaptive-project-orchestration/adaptive-project-orchestration-r09-procedural-managed-artifact-behavior.md` (`SEALED / REVISION_09`) and `doc/context/host-gateway-workspace-binding/codex-desktop-readback.md` (`SEALED`) |
+| PRD | `PRD-20260813-016`, `PRD-20260813-017`, `PRD-20260814-019`, `PRD-20260815-020`, `PRD-20260815-022`, `PRD-20260815-024`, `PRD-20260822-031`, `PRD-20260828-043` |
+| Requirement change / ADR | `CHG-20260813-016`, `CHG-20260813-017`, `CHG-20260814-019`, `CHG-20260815-020`, `CHG-20260815-022`, `CHG-20260815-024`, `CHG-20260822-031`, `CHG-20260828-043` / `ADR-20260813-008`, `ADR-20260813-009`, `ADR-20260814-011`, `ADR-20260815-013`, `ADR-20260828-031` |
 | Implementation language | Python 3.11 strict typed contracts/adapters; host-specific integration only after capability proof |
 
 ## Problem and goal
@@ -341,6 +341,52 @@ one module-card leaf and adds nested meaning/ownership partitions before unrelat
 would force broad loading. The Router resolves one explicit path only and never scans,
 flattens, recursively loads or persists a whole tree.
 
+### AC-17R9 — Procedural managed-artifact mutation and behavior feedback
+
+Revision 09 makes correct index maintenance part of the managed-artifact operation instead of a
+second instruction an Agent must remember. This amendment is `OWNER_REVIEW_REQUIRED`; it creates
+no ticket or implementation authority until the project owner approves this exact SPEC revision.
+
+`CREATE`, `REVISE`, `REPLACE` and `ARCHIVE` are distinct tagged requests with no nullable
+action-dependent fields. `CREATE` and `REVISE` carry one exact selected path. `REPLACE` carries
+the exact current and replacement paths; `ARCHIVE` carries the exact active and archive-library
+paths. The caller supplies every path explicitly. The planner never discovers a destination by
+scanning, file naming, chat text, absolute path or sibling traversal.
+
+The pure planner reads metadata only and returns either one finite rejection or a plan containing
+the exact baseline, action, selected path set, leaf mutations, every directly affected parent-index
+mutation and the expected post-state resolutions. The transaction boundary compares the exact
+baseline, writes the complete finite plan all-or-nothing, restores every original byte after any
+failure and resolves every affected candidate path before returning `APPLIED`. An orphan leaf,
+dangling edge, duplicate parent/ID, cycle, stale revision/digest edge, mixed lifecycle or partial
+write is never success.
+
+The first host adapter is Codex-specific and is packaged by the plugin rather than copied into a
+target `.codex/` directory. It exposes one named managed operation, refuses only direct writes it
+can classify reliably, and returns `RAW_MANAGED_WRITE_DENIED` before supported effects. At Stop it
+validates the exact affected path set and may emit one correction continuation. A re-entered Stop
+or an already-used continuation returns `BEHAVIOR_REPAIR_EXHAUSTED`; it cannot loop or claim an
+unobserved repair. Hook input is untrusted ephemeral data and may not be executed or persisted.
+Durable output excludes raw command, transcript, document body, Secret, URI and absolute path.
+
+Host behavior capability is exactly `ACTIVE`, `UNAVAILABLE` or `NOT_APPLICABLE`. `ACTIVE` requires
+installed trusted/enabled configuration plus real behavior qualification. `UNAVAILABLE` names a
+missing or disabled adapter and cannot be represented as enforcement. `NOT_APPLICABLE` means the
+current host path does not use that adapter. Neither absence nor presence of a host adapter changes
+repository authority.
+
+Before merge, the document-mutation gate derives affected managed paths from the candidate diff and
+validates only their selected direct-parent chains against candidate post-state. It rejects missing
+co-mutation, invalid lifecycle and every AC-17 topology failure before Git integration. A candidate
+without managed-document changes incurs no unrelated full-tree scan. Gate success, non-force push
+and direct authority-ref readback remain the only `AUTHORITY_INTEGRATED` result; host feedback or an
+Agent's claim never substitutes for that proof.
+
+Delivery profile still controls which documents exist. Revision 09 adds no required document type
+or count; once an artifact is required or intentionally created, the same mutation invariant applies
+under `COMPACT`, `STANDARD` and `HIGH_ASSURANCE`. Plugin detach removes the adapter/control plane
+only and leaves target-owned documents, indexes and Git history unchanged.
+
 ## Typed contracts
 
 ```text
@@ -520,6 +566,70 @@ ArtifactPathResolution = {
   decision, resolved_leaf_ref?, invalid_reason?
 }
 
+ManagedArtifactAction = CREATE | REVISE | REPLACE | ARCHIVE
+ManagedArtifactCapabilityState = ACTIVE | UNAVAILABLE | NOT_APPLICABLE
+ManagedArtifactPlanDecision = PLANNED | ARTIFACT_PATH_NOT_FOUND
+                            | PARENT_INDEX_NOT_FOUND | EDGE_STATE_MISMATCH
+                            | DUPLICATE_PARENT | LIFECYCLE_CONFLICT
+                            | BASELINE_MISMATCH | ARTIFACT_TREE_INVALID
+ManagedArtifactMutationStatus = APPLIED | BASELINE_MISMATCH
+                              | TRANSACTION_FAILED | ARTIFACT_TREE_INVALID
+ManagedArtifactHostDecision = MANAGED_OPERATION_ALLOWED
+                            | RAW_MANAGED_WRITE_DENIED
+                            | REPAIR_REQUIRED
+                            | BEHAVIOR_REPAIR_EXHAUSTED
+                            | CAPABILITY_UNAVAILABLE
+
+ManagedArtifactPath = {
+  family, root_ref, partition_refs, leaf_ref
+}
+
+ManagedArtifactDesiredLeaf = {
+  artifact_ref, next_revision, next_digest, next_lifecycle,
+  replacement_bytes_ref
+}
+
+CreateManagedArtifactRequest = {
+  project_id, baseline_commit, action = CREATE,
+  selected_path, desired_leaf
+}
+
+ReviseManagedArtifactRequest = {
+  project_id, baseline_commit, action = REVISE,
+  selected_path, expected_leaf, desired_leaf
+}
+
+ReplaceManagedArtifactRequest = {
+  project_id, baseline_commit, action = REPLACE,
+  current_path, replacement_path, expected_current_leaf, desired_replacement_leaf
+}
+
+ArchiveManagedArtifactRequest = {
+  project_id, baseline_commit, action = ARCHIVE,
+  active_path, archive_path, expected_active_leaf, desired_archive_leaf
+}
+
+ManagedArtifactRequest = CreateManagedArtifactRequest
+                       | ReviseManagedArtifactRequest
+                       | ReplaceManagedArtifactRequest
+                       | ArchiveManagedArtifactRequest
+
+ManagedArtifactNodeBaseline = AbsentNodeBaseline { state = ABSENT }
+                            | PresentNodeBaseline {
+                                state = PRESENT, revision, digest, lifecycle
+                              }
+
+ManagedArtifactNodeMutation = {
+  artifact_ref, expected_baseline,
+  next_revision, next_digest, next_lifecycle, replacement_bytes_ref
+}
+
+ManagedArtifactPlan = {
+  project_id, baseline_commit, action, selected_paths,
+  leaf_mutations, direct_parent_index_mutations,
+  expected_post_state_resolutions
+}
+
 RequirementLineageRef = {
   prd_ref, change_ref, lifecycle, active_leaf_ref?, archive_bundle_ref?,
   replacement_prd_ref?, replacement_change_ref?, revision, content_digest
@@ -622,6 +732,14 @@ checks succeed.
     a claim that the gap proves host binding, receipt delivery, runner activation or automatic
     wake. A `HIGH_ASSURANCE` ticket with the same missing/asserted/stale/mismatched/lower-rank
     readback must reject before any source or Agent-control effect.
+22. Revision 09 tests construct every tagged managed-artifact request and public result through
+    ordinary validators; prove exact-path planning without sibling discovery; force failure after
+    each leaf/index write and verify byte-exact rollback; and reject stale baseline, orphan,
+    dangling, duplicate-parent/ID, cycle, stale metadata and mixed lifecycle post-state. Official
+    Codex hook fixtures prove supported raw-write refusal, exactly one Stop repair and exhaustion;
+    missing/disabled hooks return `UNAVAILABLE`. Repository-gate counter-mutations remove one
+    required parent co-mutation and one archive/replacement edge and must turn red before merge.
+    Detach qualification proves target documents and indexes are unchanged.
 
 ## Candidate vertical ticket sequence
 
@@ -652,6 +770,25 @@ no-effect strict-contract/readback closure; that candidate still requires its ow
 approved ticket and receipt before any implementation lane. Host-task reservation
 and identifier-only delivery remain subsequent serial closures and require their
 own approved tickets and receipts.
+
+Revision 09 remains a proposed amendment. After exact project-owner approval, the reviewer may
+decompose only this serial closure set; each item still requires its own approved ticket before
+dispatch:
+
+1. R09A — pure tagged-request planner returns a complete leaf/direct-parent mutation plan or one
+   finite no-effect rejection.
+2. R09B — transactional writer applies one admitted plan atomically and proves every affected
+   candidate path through the existing resolver before success.
+3. R09C — repository admission derives affected managed paths from candidate diff and rejects an
+   invalid candidate tree before integration without scanning unrelated source-only candidates.
+4. R09D — Codex plugin adapter routes the managed operation, reliably classifiable direct-write
+   refusal and one bounded Stop repair without becoming repository authority.
+5. R09E — installed qualification proves `ACTIVE`, `UNAVAILABLE` and `NOT_APPLICABLE` honestly,
+   including detach behavior, against a disposable target repository.
+
+Plugin payload regeneration, pinning, publication and installation are a later, separately
+authorized effect ticket after R09A-R09E source closure. A provider adapter for Claude or another
+host is not part of Revision 09.
 
 ## Approval
 
@@ -695,6 +832,12 @@ Revision 08 was approved by the project owner on `2026-08-23` under
 and authorizes reviewer decomposition of the replacement P8R ticket only. It does not authorize
 host, task, workspace, receipt, runner, provider, source or external effects.
 
+Revision 09 was drafted after the project owner accepted `ADR-20260828-031` at candidate commit
+`4a43b182b2913b1ea9a00b8dbec212eb84c89a33`. The accepted ADR authorizes this Context/SPEC
+change-control step, but it does not itself approve the exact SPEC text. Revision 09 remains
+`OWNER_REVIEW_REQUIRED`; no R09 ticket, dispatch, hook, publication or installation is authorized
+until the owner approves this exact draft.
+
 ## Revision signatures
 
 | Date | AI / worktree / baseline | Summary |
@@ -704,3 +847,4 @@ host, task, workspace, receipt, runner, provider, source or external effects.
 | 2026-08-22 | Codex architecture owner / `control/executor-routing-p8-owner-override` / `bce019090819390d4368ec68e09392508aacbd2c` | Drafted Revision 07 host-gateway workspace/profile binding amendment under `CHG-20260822-031`; owner approval pending. |
 | 2026-08-22 | Project owner | Approved the exact Revision 07 draft content at `1897339679312d92944403747aa7a2b1595d9c3e`; sealed its Context and authorized reviewer decomposition of the first no-effect ticket only. |
 | 2026-08-23 | Project owner / `CHG-20260822-032` | Approved Revision 08: POC manual evidence records the workspace-binding gap; R07 readback stays mandatory only for high-assurance host effects; replacement P8R decomposition is authorized. |
+| 2026-08-28 | Codex architecture owner / `codex/managed-artifact-behavior-architecture` / `4a43b182b2913b1ea9a00b8dbec212eb84c89a33` | Drafted Revision 09 from accepted ADR-031 and sealed Context `CTX-ADAPTIVE-PROJECT-ORCHESTRATION-20260828-09`; exact SPEC owner approval pending. |

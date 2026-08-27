@@ -13,5 +13,5 @@
 
 | 功能集群 | 規格 | 狀態 |
 | --- | --- | --- |
-| Adaptive project orchestration | [`adaptive-project-orchestration.md`](adaptive-project-orchestration.md) Revision 06 | `APPROVED / REVIEWER_DECOMPOSITION_AUTHORIZED`；只取代 target-local Johnny ignore/worktree 路徑，不重開 Revision 05 Router phase；尚未授權 dispatch。 |
+| Adaptive project orchestration | [`adaptive-project-orchestration.md`](adaptive-project-orchestration.md) Revision 09 draft | Revision 05–08 已核准範圍不變；Revision 09 procedural managed-artifact behavior 為 `OWNER_REVIEW_REQUIRED`，尚未授權開 R09 票或 dispatch。 |
 | Context-load telemetry | [`context-load-telemetry.md`](context-load-telemetry.md) Revision 11 | `APPROVED / REVIEWER_DECOMPOSITION_AUTHORIZED`；既有 opaque storage、per-stream ledger/CAS、lock-bound transaction adapter 與 no-effect private composition binding 已交付；新增 Host Bootstrap root、Router runtime delegation、composition consumption 的責任拓撲，且僅授權第一張 source-only Router grant/denial contract 票。 |
