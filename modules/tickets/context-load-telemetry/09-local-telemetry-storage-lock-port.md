@@ -5,8 +5,8 @@
 | Artifact ID / kind | `TICKET-CONTEXT-TELEMETRY-09-LOCAL-LOCK-PORT` / `IMPLEMENTATION_TICKET` |
 | SPEC / acceptance source | `SPEC-AI-WORKFLOW-CONTEXT-LOAD-TELEMETRY-20260803-01KZ5E7F9G1H3J5K7M9N1P3Q5R` Revision 06 / AC-06, AC-13 through AC-15 |
 | Requirement / Context / ADR | `PRD-20260827-041` / `CHG-20260827-041` / `doc/context/context-load-telemetry/main.md` Revision 06 / `ADR-20260827-022` through `ADR-20260827-024` |
-| State / closure | `OPEN / APPROVED / READY_LOW_MODEL`; `CLOSURE-CONTEXT-TELEMETRY-09-LOCAL-LOCK-PORT`, revision 02 |
-| Document revision | `02` — admission correction: preserve the pre-existing pure contract package surface. |
+| State / closure | `OPEN / APPROVED / READY_LOW_MODEL`; `CLOSURE-CONTEXT-TELEMETRY-09-LOCAL-LOCK-PORT`, revision 03 |
+| Document revision | `03` — admission corrections preserve the pure contract package surface and keep worktree-state proof out of a persisted regression test. |
 | Approval authority | Project owner, 2026-08-27 (Asia/Taipei): authorized the one independently scoped local `TelemetryStorageLockPort` closure recorded by Specification Revision 06. |
 | Source baseline / dependency | `dda74a25a5c83cf09500b886701c5e99d4b04c20`; the candidate must also descend from the committed current-main ticket authority. Ticket 07 (`0ded2ed`) freezes lock DTOs, Ticket 08 (`60d2ab0`) delivers the classified lock, and Revision 06 catalogs `path-containment`. Ticket 06 remains blocked and non-integrable. |
 | Control owner / reviewer | `ticket-review` semantic profile — Terra/xhigh. |
@@ -48,6 +48,16 @@ behavior or public lock DTO: the adapter is imported only from its exact module 
 package init remains untouched. Rebase the same candidate branch onto this committed correction,
 restore its out-of-bound init modification, and retain every permitted source/test change
 additively.
+
+## Admission correction — revision 03
+
+Revision 02's initial LPA8 test tried to prove the declared candidate boundary by reading
+`git status`. That condition is true only before the reviewer commits: after an admissible commit
+the identical clean checkout has an empty status and the persisted test falsely fails. Candidate
+diff and clean-worktree proof are review evidence, not a production regression property. Retain
+the element-index/content checks in LPA8; remove every `git status`/candidate-path assertion from
+the persisted test. The reviewer must instead inspect the exact Git diff before staging and again
+the committed diff before integration.
 
 ## One observable closure
 
@@ -158,7 +168,7 @@ boundary: neither selected capability supplies ownership-ledger admission, lifec
 | LPA5 | A redirected Johnny root or existing lock-root ancestor is rejected before any lock-file effect and raises only `TelemetryStorageLockAdapterError` without a raw path/exception. Normal disposable-root creation remains contained under its telemetry root. |
 | LPA6 | Injected non-contention acquire/open/mkdir `OSError` becomes the sanitized adapter error, never contention. An injected release `OSError` returns only `TelemetryStorageLockReleaseFailed`, clears retained state, and leaves no completed/released claim. |
 | LPA7 | Bounded source/AST gates prove exact selected imports, SHA-256/four-coordinate key construction, two containment checks before effect, original-token identity (`is`), no raw-path constructor/output, no legacy codec/ledger/storage operation/provider/host import, and no retry/sleep/polling/queue/runner/dynamic lookup/`Any`/cast/fallback. They also prove `telemetry_storage/__init__.py` has no candidate diff and retains its existing pure `.contracts` imports. |
-| LPA8 | Focused tests, strict type check, compilation, declared-boundary diff, clean worktree and no cache/runtime residue pass. The element index names exact evidence and limitations honestly. |
+| LPA8 | Focused tests, strict type check, compilation and no cache/runtime residue pass. The persisted test proves the element index names exact evidence and limitations honestly; the reviewer independently proves the declared-boundary diff and clean worktree before commit/integration, rather than encoding transient `git status` in a committed test. |
 | LM1 | Add `storage_revision` to the lock-key payload; LPA3 turns red, then byte-exact restoration returns green. |
 | LM2 | Change the contention path to `LOCK_ACQUIRED` or permit an acquired token for it; LPA2 turns red, then restoration returns green. |
 | LM3 | Replace original-token object identity with value equality; LPA4 turns red, then restoration returns green. |
