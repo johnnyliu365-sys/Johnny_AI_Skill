@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import tempfile
@@ -17,7 +18,7 @@ from library.local_orchestration.telemetry_storage.contracts import (
     TelemetryStorageLifecycle,
     TelemetryStorageRef,
 )
-from library.workflow_router.contracts import OpaqueMetadataId, ProjectId, RevisionDigest
+from library.workflow_router.contracts import ProjectId, RevisionDigest
 
 
 class LedgerResolutionDecision(str, Enum):
@@ -67,18 +68,11 @@ class TelemetryOwnershipLedgerEntry(_LedgerModelMixin):
         return self
 
 
-class _LedgerDocument(_LedgerModelMixin):
-    """Canonical schema-versioned file shape; never part of the public port."""
+class _LedgerEntryDocument(_LedgerModelMixin):
+    """Canonical schema-versioned document for exactly one owned stream entry."""
 
     schema_version: Literal[1]
-    entries: tuple[TelemetryOwnershipLedgerEntry, ...]
-
-    @model_validator(mode="after")
-    def entries_are_unique(self) -> Self:
-        identities = tuple(entry.storage_ref.storage_ref for entry in self.entries)
-        if len(set(identities)) != len(identities):
-            raise ValueError("ledger identities must be unique")
-        return self
+    entry: TelemetryOwnershipLedgerEntry
 
 
 class TelemetryOwnershipLedgerFound(_LedgerModelMixin):
@@ -178,6 +172,13 @@ class TelemetryOwnershipLedgerPort(Protocol):
 
         ...
 
+    def resolve_current(
+        self, storage_ref: TelemetryStorageRef
+    ) -> TelemetryOwnershipLedgerResult:
+        """Resolve current state by immutable identity for recovery only."""
+
+        ...
+
     def compare_and_swap(
         self,
         storage_ref: TelemetryStorageRef,
@@ -203,37 +204,98 @@ class LocalTelemetryOwnershipLedger(TelemetryOwnershipLedgerPort):
             raise TypeError("layout must be JohnnyRootLayout")
         self._layout = layout
 
-    def _paths(self) -> tuple[Path, Path]:
-        telemetry_root = self._layout.telemetry_root
-        ledger_path = telemetry_root / "ownership-ledger" / "ledger.json"
-        return telemetry_root, ledger_path
+    @staticmethod
+    def _entry_digest(storage_ref: TelemetryStorageRef) -> str:
+        identity = "\0".join(
+            (
+                "johnny-telemetry-ownership-ledger-v1",
+                storage_ref.storage_ref,
+                storage_ref.project_id,
+                storage_ref.stream_id,
+                storage_ref.ownership_ledger_ref,
+            )
+        )
+        return hashlib.sha256(identity.encode("utf-8")).hexdigest()
 
-    def _paths_are_owned(self) -> bool:
-        telemetry_root, ledger_path = self._paths()
+    def _paths(
+        self, storage_ref: TelemetryStorageRef
+    ) -> tuple[Path, Path, Path, Path, Path, Path]:
+        telemetry_root = self._layout.telemetry_root
+        ownership_root = telemetry_root / "ownership-ledger"
+        entries_root = ownership_root / "entries"
+        entry_path = entries_root / f"{self._entry_digest(storage_ref)}.json"
+        temporary_path = entry_path.with_name(f".{entry_path.stem}.tmp")
+        legacy_path = ownership_root / "ledger.json"
+        return (
+            telemetry_root,
+            ownership_root,
+            entries_root,
+            entry_path,
+            temporary_path,
+            legacy_path,
+        )
+
+    @staticmethod
+    def _paths_are_owned(paths: tuple[Path, ...], telemetry_root: Path) -> bool:
         try:
-            root_is_owned = resolves_within_root(telemetry_root, telemetry_root)
-            ledger_is_owned = resolves_within_root(ledger_path, telemetry_root)
+            checks = tuple(
+                resolves_within_root(path, telemetry_root) for path in paths
+            )
         except (OSError, RuntimeError):
             return False
-        return root_is_owned and ledger_is_owned
+        return all(checks)
 
-    def _read_document(self) -> _LedgerDocument | None:
-        if not self._paths_are_owned():
-            raise _LedgerBoundaryViolation
-        _, ledger_path = self._paths()
+    @staticmethod
+    def _legacy_present(legacy_path: Path) -> bool:
         try:
-            text = ledger_path.read_text(encoding="utf-8")
+            legacy_path.lstat()
+        except FileNotFoundError:
+            return False
+        except OSError:
+            raise _LedgerBoundaryViolation from None
+        return True
+
+    def _read_document(
+        self, storage_ref: TelemetryStorageRef
+    ) -> _LedgerEntryDocument | None:
+        (
+            telemetry_root,
+            ownership_root,
+            entries_root,
+            entry_path,
+            temporary_path,
+            legacy_path,
+        ) = self._paths(storage_ref)
+        paths = (
+            telemetry_root,
+            ownership_root,
+            entries_root,
+            entry_path,
+            temporary_path,
+            legacy_path,
+        )
+        if not self._paths_are_owned(paths, telemetry_root):
+            raise _LedgerBoundaryViolation
+        try:
+            if self._legacy_present(legacy_path):
+                raise _LedgerBoundaryViolation
+            text = entry_path.read_text(encoding="utf-8")
         except FileNotFoundError:
             return None
+        except _LedgerBoundaryViolation:
+            raise
         except OSError:
             raise _LedgerBoundaryViolation from None
         try:
-            return _LedgerDocument.model_validate_json(text)
+            document = _LedgerEntryDocument.model_validate_json(text)
         except (TypeError, ValueError):
             raise _LedgerBoundaryViolation from None
+        if not self._identity_matches(document.entry.storage_ref, storage_ref):
+            raise _LedgerBoundaryViolation
+        return document
 
     @staticmethod
-    def _serialize(document: _LedgerDocument) -> str:
+    def _serialize(document: _LedgerEntryDocument) -> str:
         return (
             json.dumps(
                 document.model_dump(mode="json"),
@@ -244,26 +306,57 @@ class LocalTelemetryOwnershipLedger(TelemetryOwnershipLedgerPort):
             + "\n"
         )
 
-    def _write_document(self, document: _LedgerDocument) -> None:
-        if not self._paths_are_owned():
+    def _write_document(
+        self, storage_ref: TelemetryStorageRef, document: _LedgerEntryDocument
+    ) -> None:
+        (
+            telemetry_root,
+            ownership_root,
+            entries_root,
+            entry_path,
+            temporary_path_hint,
+            legacy_path,
+        ) = self._paths(storage_ref)
+        paths = (
+            telemetry_root,
+            ownership_root,
+            entries_root,
+            entry_path,
+            temporary_path_hint,
+            legacy_path,
+        )
+        if not self._paths_are_owned(paths, telemetry_root):
             raise _LedgerBoundaryViolation
-        _, ledger_path = self._paths()
+        try:
+            if self._legacy_present(legacy_path):
+                raise _LedgerBoundaryViolation
+        except _LedgerBoundaryViolation:
+            raise
+        except OSError:
+            raise _LedgerBoundaryViolation from None
         temporary_path: Path | None = None
         descriptor = -1
         try:
             descriptor, temporary_name = tempfile.mkstemp(
-                prefix=".ledger-", suffix=".tmp", dir=str(ledger_path.parent)
+                prefix=f".{entry_path.stem}-", suffix=".tmp", dir=str(entries_root)
             )
             temporary_path = Path(temporary_name)
+            try:
+                if not resolves_within_root(temporary_path, telemetry_root):
+                    raise _LedgerBoundaryViolation
+            except (OSError, RuntimeError):
+                raise _LedgerBoundaryViolation from None
             os.close(descriptor)
             descriptor = -1
             temporary_path.write_text(self._serialize(document), encoding="utf-8")
             with temporary_path.open("r+b") as handle:
                 handle.flush()
                 os.fsync(handle.fileno())
-            os.replace(temporary_path, ledger_path)
+            os.replace(temporary_path, entry_path)
         except (OSError, TypeError, ValueError):
             raise _LedgerBoundaryViolation from None
+        except _LedgerBoundaryViolation:
+            raise
         finally:
             if descriptor >= 0:
                 try:
@@ -275,15 +368,6 @@ class LocalTelemetryOwnershipLedger(TelemetryOwnershipLedgerPort):
                     temporary_path.unlink()
                 except (FileNotFoundError, OSError):
                     pass
-
-    @staticmethod
-    def _entry_for(
-        document: _LedgerDocument, storage_ref: TelemetryStorageRef
-    ) -> TelemetryOwnershipLedgerEntry | None:
-        for entry in document.entries:
-            if entry.storage_ref.storage_ref == storage_ref.storage_ref:
-                return entry
-        return None
 
     @staticmethod
     def _owned_entry_matches(
@@ -300,6 +384,17 @@ class LocalTelemetryOwnershipLedger(TelemetryOwnershipLedgerPort):
         )
 
     @staticmethod
+    def _identity_matches(
+        current: TelemetryStorageRef, requested: TelemetryStorageRef
+    ) -> bool:
+        return (
+            current.storage_ref == requested.storage_ref
+            and current.project_id == requested.project_id
+            and current.stream_id == requested.stream_id
+            and current.ownership_ledger_ref == requested.ownership_ledger_ref
+        )
+
+    @staticmethod
     def _closed(entry: TelemetryOwnershipLedgerEntry) -> bool:
         return entry.storage_ref.lifecycle in (
             TelemetryStorageLifecycle.DETACHED,
@@ -308,14 +403,10 @@ class LocalTelemetryOwnershipLedger(TelemetryOwnershipLedgerPort):
 
     @staticmethod
     def _replace_entry(
-        document: _LedgerDocument,
-        old_entry: TelemetryOwnershipLedgerEntry,
+        document: _LedgerEntryDocument,
         next_entry: TelemetryOwnershipLedgerEntry,
-    ) -> _LedgerDocument:
-        entries = tuple(
-            next_entry if entry is old_entry else entry for entry in document.entries
-        )
-        return _LedgerDocument(schema_version=1, entries=entries)
+    ) -> _LedgerEntryDocument:
+        return _LedgerEntryDocument(schema_version=1, entry=next_entry)
 
     def resolve(
         self,
@@ -326,12 +417,10 @@ class LocalTelemetryOwnershipLedger(TelemetryOwnershipLedgerPort):
         """Resolve without provisioning, repairing, or changing the ledger."""
 
         try:
-            document = self._read_document()
+            document = self._read_document(storage_ref)
             if document is None:
                 return TelemetryOwnershipLedgerNotFound()
-            entry = self._entry_for(document, storage_ref)
-            if entry is None:
-                return TelemetryOwnershipLedgerNotFound()
+            entry = document.entry
             if not self._owned_entry_matches(entry, storage_ref, expected_project_id):
                 return TelemetryOwnershipLedgerOwnershipMismatch()
             if entry.storage_ref.storage_revision != expected_storage_revision:
@@ -339,6 +428,19 @@ class LocalTelemetryOwnershipLedger(TelemetryOwnershipLedgerPort):
             if self._closed(entry):
                 return TelemetryOwnershipLedgerClosed()
             return TelemetryOwnershipLedgerFound(entry=entry)
+        except _LedgerBoundaryViolation:
+            return TelemetryOwnershipLedgerBoundaryRejected()
+
+    def resolve_current(
+        self, storage_ref: TelemetryStorageRef
+    ) -> TelemetryOwnershipLedgerResult:
+        """Recover current state by immutable identity without admission or mutation."""
+
+        try:
+            document = self._read_document(storage_ref)
+            if document is None:
+                return TelemetryOwnershipLedgerNotFound()
+            return TelemetryOwnershipLedgerFound(entry=document.entry)
         except _LedgerBoundaryViolation:
             return TelemetryOwnershipLedgerBoundaryRejected()
 
@@ -353,12 +455,10 @@ class LocalTelemetryOwnershipLedger(TelemetryOwnershipLedgerPort):
         """Replace one matching entry's lifecycle and revision atomically."""
 
         try:
-            document = self._read_document()
+            document = self._read_document(storage_ref)
             if document is None:
                 return TelemetryOwnershipLedgerNotFound()
-            entry = self._entry_for(document, storage_ref)
-            if entry is None:
-                return TelemetryOwnershipLedgerNotFound()
+            entry = document.entry
             if not self._owned_entry_matches(entry, storage_ref, expected_project_id):
                 return TelemetryOwnershipLedgerOwnershipMismatch()
             if entry.storage_ref.storage_revision != expected_storage_revision:
@@ -378,8 +478,8 @@ class LocalTelemetryOwnershipLedger(TelemetryOwnershipLedgerPort):
                 storage_ref=next_reference,
                 stream_locator=entry.stream_locator,
             )
-            updated = self._replace_entry(document, entry, next_entry)
-            self._write_document(updated)
+            updated = self._replace_entry(document, next_entry)
+            self._write_document(storage_ref, updated)
             return TelemetryOwnershipLedgerFound(entry=next_entry)
         except _LedgerBoundaryViolation:
             return TelemetryOwnershipLedgerBoundaryRejected()
