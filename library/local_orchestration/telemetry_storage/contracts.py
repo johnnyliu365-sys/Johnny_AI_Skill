@@ -44,6 +44,15 @@ class TelemetryStorageOperation(str, Enum):
     UNINSTALL = "UNINSTALL"
 
 
+class TelemetryStorageLockDecision(str, Enum):
+    """The finite outcomes of one lock acquire or release operation."""
+
+    LOCK_ACQUIRED = "LOCK_ACQUIRED"
+    LOCK_CONTENDED = "LOCK_CONTENDED"
+    RELEASED = "RELEASED"
+    RELEASE_FAILED = "RELEASE_FAILED"
+
+
 class TelemetryStorageDecision(str, Enum):
     """The finite completed and failed storage decisions."""
 
@@ -53,6 +62,7 @@ class TelemetryStorageDecision(str, Enum):
     STORAGE_CLOSED = "STORAGE_CLOSED"
     STORAGE_BOUNDARY_VIOLATION = "STORAGE_BOUNDARY_VIOLATION"
     RECORD_INVALID = "RECORD_INVALID"
+    LOCK_CONTENDED = "LOCK_CONTENDED"
 
 
 _NO_RECORD_OPERATIONS: tuple[TelemetryStorageOperation, ...] = (
@@ -67,6 +77,7 @@ _FAILURE_DECISIONS: tuple[TelemetryStorageDecision, ...] = (
     TelemetryStorageDecision.STORAGE_CLOSED,
     TelemetryStorageDecision.STORAGE_BOUNDARY_VIOLATION,
     TelemetryStorageDecision.RECORD_INVALID,
+    TelemetryStorageDecision.LOCK_CONTENDED,
 )
 
 
@@ -79,6 +90,111 @@ class TelemetryStorageRef(_StorageModel):
     ownership_ledger_ref: OpaqueMetadataId
     storage_revision: RevisionDigest
     lifecycle: TelemetryStorageLifecycle
+
+
+class TelemetryStorageLockRequest(_StorageModel):
+    """A strict lock admission request bound to one opaque storage reference."""
+
+    storage_ref: TelemetryStorageRef
+    expected_project_id: ProjectId
+    expected_storage_revision: RevisionDigest
+
+
+class TelemetryStorageLockToken(_StorageModel):
+    """The complete opaque identity returned only after lock acquisition."""
+
+    lock_ref: OpaqueMetadataId
+    storage_ref: OpaqueMetadataId
+    project_id: ProjectId
+    stream_id: OpaqueMetadataId
+    ownership_ledger_ref: OpaqueMetadataId
+    storage_revision: RevisionDigest
+
+
+class TelemetryStorageLockAcquired(_StorageModel):
+    """A successful acquire result carrying exactly one bound lock token."""
+
+    decision: TelemetryStorageLockDecision = TelemetryStorageLockDecision.LOCK_ACQUIRED
+    lock_token: TelemetryStorageLockToken
+
+    @model_validator(mode="after")
+    def decision_is_acquired(self) -> Self:
+        if self.decision is not TelemetryStorageLockDecision.LOCK_ACQUIRED:
+            raise ValueError("acquired results require LOCK_ACQUIRED")
+        return self
+
+
+class TelemetryStorageLockContended(_StorageModel):
+    """A finite acquire contention result without any lock token."""
+
+    decision: TelemetryStorageLockDecision = TelemetryStorageLockDecision.LOCK_CONTENDED
+    storage_ref: OpaqueMetadataId
+    storage_revision: RevisionDigest
+    failure_ref: OpaqueMetadataId
+
+    @model_validator(mode="after")
+    def decision_is_contended(self) -> Self:
+        if self.decision is not TelemetryStorageLockDecision.LOCK_CONTENDED:
+            raise ValueError("contention results require LOCK_CONTENDED")
+        return self
+
+
+TelemetryStorageLockAcquire: TypeAlias = (
+    TelemetryStorageLockAcquired | TelemetryStorageLockContended
+)
+
+
+class TelemetryStorageLockReleased(_StorageModel):
+    """A successful release result with no token or failure payload."""
+
+    decision: TelemetryStorageLockDecision = TelemetryStorageLockDecision.RELEASED
+    lock_ref: OpaqueMetadataId
+    storage_ref: OpaqueMetadataId
+    storage_revision: RevisionDigest
+
+    @model_validator(mode="after")
+    def decision_is_released(self) -> Self:
+        if self.decision is not TelemetryStorageLockDecision.RELEASED:
+            raise ValueError("released results require RELEASED")
+        return self
+
+
+class TelemetryStorageLockReleaseFailed(_StorageModel):
+    """A finite release failure carrying only one opaque failure reference."""
+
+    decision: TelemetryStorageLockDecision = TelemetryStorageLockDecision.RELEASE_FAILED
+    lock_ref: OpaqueMetadataId
+    storage_ref: OpaqueMetadataId
+    storage_revision: RevisionDigest
+    failure_ref: OpaqueMetadataId
+
+    @model_validator(mode="after")
+    def decision_is_release_failed(self) -> Self:
+        if self.decision is not TelemetryStorageLockDecision.RELEASE_FAILED:
+            raise ValueError("release failures require RELEASE_FAILED")
+        return self
+
+
+TelemetryStorageLockRelease: TypeAlias = (
+    TelemetryStorageLockReleased | TelemetryStorageLockReleaseFailed
+)
+
+
+@runtime_checkable
+class TelemetryStorageLockPort(Protocol):
+    """The future lock dependency seam; it performs no locking here."""
+
+    def try_acquire(
+        self, request: TelemetryStorageLockRequest
+    ) -> TelemetryStorageLockAcquire:
+        """Attempt one lock acquisition and return a finite result."""
+
+        ...
+
+    def release(self, token: TelemetryStorageLockToken) -> TelemetryStorageLockRelease:
+        """Release one previously acquired token and return a finite result."""
+
+        ...
 
 
 class AppendTelemetryStorageRequest(_StorageModel):
@@ -306,6 +422,16 @@ __all__ = (
     "TelemetryStorageDecision",
     "TelemetryStorageFailure",
     "TelemetryStorageLifecycle",
+    "TelemetryStorageLockAcquire",
+    "TelemetryStorageLockAcquired",
+    "TelemetryStorageLockContended",
+    "TelemetryStorageLockDecision",
+    "TelemetryStorageLockPort",
+    "TelemetryStorageLockRelease",
+    "TelemetryStorageLockReleaseFailed",
+    "TelemetryStorageLockReleased",
+    "TelemetryStorageLockRequest",
+    "TelemetryStorageLockToken",
     "TelemetryStorageOperation",
     "TelemetryStoragePort",
     "TelemetryStorageReadPayload",

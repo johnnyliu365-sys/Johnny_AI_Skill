@@ -19,6 +19,16 @@ from library.local_orchestration.telemetry_storage.contracts import (
     TelemetryStorageDecision,
     TelemetryStorageFailure,
     TelemetryStorageLifecycle,
+    TelemetryStorageLockAcquire,
+    TelemetryStorageLockAcquired,
+    TelemetryStorageLockContended,
+    TelemetryStorageLockDecision,
+    TelemetryStorageLockPort,
+    TelemetryStorageLockRelease,
+    TelemetryStorageLockReleaseFailed,
+    TelemetryStorageLockReleased,
+    TelemetryStorageLockRequest,
+    TelemetryStorageLockToken,
     TelemetryStorageOperation,
     TelemetryStoragePort,
     TelemetryStorageReadPayload,
@@ -79,6 +89,16 @@ _EXPECTED_IMPORT_FROM = {
         (1, "contracts", "TelemetryStorageDecision", None),
         (1, "contracts", "TelemetryStorageFailure", None),
         (1, "contracts", "TelemetryStorageLifecycle", None),
+        (1, "contracts", "TelemetryStorageLockAcquire", None),
+        (1, "contracts", "TelemetryStorageLockAcquired", None),
+        (1, "contracts", "TelemetryStorageLockContended", None),
+        (1, "contracts", "TelemetryStorageLockDecision", None),
+        (1, "contracts", "TelemetryStorageLockPort", None),
+        (1, "contracts", "TelemetryStorageLockRelease", None),
+        (1, "contracts", "TelemetryStorageLockReleaseFailed", None),
+        (1, "contracts", "TelemetryStorageLockReleased", None),
+        (1, "contracts", "TelemetryStorageLockRequest", None),
+        (1, "contracts", "TelemetryStorageLockToken", None),
         (1, "contracts", "TelemetryStorageOperation", None),
         (1, "contracts", "TelemetryStoragePort", None),
         (1, "contracts", "TelemetryStorageReadPayload", None),
@@ -188,6 +208,25 @@ def _no_record(operation: TelemetryStorageOperation) -> NoRecordTelemetryStorage
     )
 
 
+def _lock_request() -> TelemetryStorageLockRequest:
+    return TelemetryStorageLockRequest(
+        storage_ref=_ref(),
+        expected_project_id="prj_0123456789abcdef",
+        expected_storage_revision="rev-0123456789abcdef",
+    )
+
+
+def _lock_token() -> TelemetryStorageLockToken:
+    return TelemetryStorageLockToken(
+        lock_ref="lock-alpha",
+        storage_ref="storage-alpha",
+        project_id="prj_0123456789abcdef",
+        stream_id="stream-alpha",
+        ownership_ledger_ref="ledger-alpha",
+        storage_revision="rev-0123456789abcdef",
+    )
+
+
 class TestValidContracts:
     def test_sc1_valid_reference_requests_and_all_response_variants(self) -> None:
         assert _ref().lifecycle is TelemetryStorageLifecycle.ACTIVE
@@ -232,6 +271,65 @@ class TestValidContracts:
         assert validate.operation is TelemetryStorageOperation.VALIDATE
         assert detach.lifecycle is TelemetryStorageLifecycle.DETACHED
         assert uninstall.lifecycle is TelemetryStorageLifecycle.REMOVED
+
+    def test_lc1_valid_lock_shapes_and_typed_fake_round_trip(self) -> None:
+        token = _lock_token()
+        acquired = TelemetryStorageLockAcquired(lock_token=token)
+        contended = TelemetryStorageLockContended(
+            storage_ref="storage-alpha",
+            storage_revision="rev-0123456789abcdef",
+            failure_ref="lock-busy",
+        )
+        released = TelemetryStorageLockReleased(
+            lock_ref=token.lock_ref,
+            storage_ref=token.storage_ref,
+            storage_revision=token.storage_revision,
+        )
+        release_failed = TelemetryStorageLockReleaseFailed(
+            lock_ref=token.lock_ref,
+            storage_ref=token.storage_ref,
+            storage_revision=token.storage_revision,
+            failure_ref="release-failed",
+        )
+        failure = TelemetryStorageFailure(
+            storage_ref=token.storage_ref,
+            storage_revision=token.storage_revision,
+            operation=TelemetryStorageOperation.READ,
+            decision=TelemetryStorageDecision.LOCK_CONTENDED,
+            failure_ref=contended.failure_ref,
+        )
+        assert acquired.decision is TelemetryStorageLockDecision.LOCK_ACQUIRED
+        assert acquired.lock_token == token
+        assert contended.decision is TelemetryStorageLockDecision.LOCK_CONTENDED
+        assert released.decision is TelemetryStorageLockDecision.RELEASED
+        assert release_failed.decision is TelemetryStorageLockDecision.RELEASE_FAILED
+        assert failure.decision is TelemetryStorageDecision.LOCK_CONTENDED
+
+        class FakeLockPort:
+            def __init__(self, acquire_result: TelemetryStorageLockAcquire) -> None:
+                self._acquire_result = acquire_result
+
+            def try_acquire(
+                self, request: TelemetryStorageLockRequest
+            ) -> TelemetryStorageLockAcquire:
+                assert request == _lock_request()
+                return self._acquire_result
+
+            def release(
+                self, received: TelemetryStorageLockToken
+            ) -> TelemetryStorageLockRelease:
+                assert received == token
+                return released
+
+        contended_port: TelemetryStorageLockPort = FakeLockPort(contended)
+        round_trip_contention = contended_port.try_acquire(_lock_request())
+        assert isinstance(round_trip_contention, TelemetryStorageLockContended)
+
+        port: TelemetryStorageLockPort = FakeLockPort(acquired)
+        round_trip_acquire = port.try_acquire(_lock_request())
+        assert isinstance(round_trip_acquire, TelemetryStorageLockAcquired)
+        round_trip_release = port.release(round_trip_acquire.lock_token)
+        assert isinstance(round_trip_release, TelemetryStorageLockReleased)
 
     def test_sc5_typed_fake_port_round_trips_a_validated_response(self) -> None:
         class FakePort:
@@ -413,6 +511,140 @@ class TestInvalidContracts:
                 }
             )
 
+    def test_lc2_lock_identity_grammar_and_bypass_values_are_rejected(self) -> None:
+        with pytest.raises(ValidationError):
+            TelemetryStorageLockRequest(
+                storage_ref=None,  # type: ignore[arg-type]
+                expected_project_id="prj_0123456789abcdef",
+                expected_storage_revision="rev-0123456789abcdef",
+            )
+        with pytest.raises(ValidationError):
+            TelemetryStorageLockRequest(
+                storage_ref=_ref(),
+                expected_project_id="project-alpha",
+                expected_storage_revision="rev-0123456789abcdef",
+            )
+        with pytest.raises(ValidationError):
+            TelemetryStorageLockRequest(
+                storage_ref=_ref(),
+                expected_project_id="prj_0123456789abcdef",
+                expected_storage_revision="revision-alpha",
+            )
+        with pytest.raises(ValidationError):
+            TelemetryStorageLockToken(
+                lock_ref=42,  # type: ignore[arg-type]
+                storage_ref="storage-alpha",
+                project_id="prj_0123456789abcdef",
+                stream_id="stream-alpha",
+                ownership_ledger_ref="ledger-alpha",
+                storage_revision="rev-0123456789abcdef",
+            )
+        with pytest.raises(ValidationError):
+            TelemetryStorageLockToken(
+                lock_ref="lock-alpha",
+                storage_ref="storage-alpha",
+                project_id="prj_0123456789abcdef",
+                stream_id="stream-alpha",
+                ownership_ledger_ref="ledger-alpha",
+                storage_revision="rev-0123456789abcdef",
+                extra="forbidden",  # type: ignore[call-arg]
+            )
+        bypassed = TelemetryStorageLockToken.model_construct(lock_ref="lock-alpha")
+        with pytest.raises(ValidationError):
+            TelemetryStorageLockAcquired(lock_token=bypassed)
+
+    def test_lc3_lock_decisions_and_payloads_are_exclusive(self) -> None:
+        token = _lock_token()
+        with pytest.raises(ValidationError):
+            TelemetryStorageLockAcquired(
+                decision=TelemetryStorageLockDecision.LOCK_CONTENDED,
+                lock_token=token,
+            )
+        with pytest.raises(ValidationError):
+            TelemetryStorageLockAcquired(
+                lock_token=token,
+                failure_ref="unexpected",  # type: ignore[call-arg]
+            )
+        with pytest.raises(ValidationError):
+            TelemetryStorageLockContended(
+                decision=TelemetryStorageLockDecision.LOCK_ACQUIRED,
+                storage_ref="storage-alpha",
+                storage_revision="rev-0123456789abcdef",
+                failure_ref="lock-busy",
+            )
+        with pytest.raises(ValidationError):
+            TelemetryStorageLockContended(
+                storage_ref="storage-alpha",
+                storage_revision="rev-0123456789abcdef",
+                failure_ref="lock-busy",
+                lock_token=token,  # type: ignore[call-arg]
+            )
+        with pytest.raises(ValidationError):
+            TelemetryStorageLockReleased(
+                lock_ref=token.lock_ref,
+                storage_ref=token.storage_ref,
+                storage_revision=token.storage_revision,
+                failure_ref="unexpected",  # type: ignore[call-arg]
+            )
+        with pytest.raises(ValidationError):
+            TelemetryStorageLockReleaseFailed(
+                lock_ref=token.lock_ref,
+                storage_ref=token.storage_ref,
+                storage_revision=token.storage_revision,
+            )  # type: ignore[call-arg]
+        with pytest.raises(ValidationError):
+            TelemetryStorageLockReleaseFailed(
+                decision=TelemetryStorageLockDecision.RELEASED,
+                lock_ref=token.lock_ref,
+                storage_ref=token.storage_ref,
+                storage_revision=token.storage_revision,
+                failure_ref="release-failed",
+            )
+
+    def test_lc4_only_lock_contention_is_a_storage_failure(self) -> None:
+        contention = TelemetryStorageFailure(
+            storage_ref="storage-alpha",
+            storage_revision="rev-0123456789abcdef",
+            operation=TelemetryStorageOperation.READ,
+            decision=TelemetryStorageDecision.LOCK_CONTENDED,
+            failure_ref="lock-busy",
+        )
+        assert contention.decision is TelemetryStorageDecision.LOCK_CONTENDED
+        with pytest.raises(ValidationError):
+            TelemetryStorageFailure(
+                storage_ref="storage-alpha",
+                storage_revision="rev-0123456789abcdef",
+                operation=TelemetryStorageOperation.READ,
+                decision=TelemetryStorageDecision.COMPLETED,
+                failure_ref="not-completed",
+            )
+        with pytest.raises(ValidationError):
+            TelemetryStorageFailure(
+                storage_ref="storage-alpha",
+                storage_revision="rev-0123456789abcdef",
+                operation=TelemetryStorageOperation.READ,
+                decision=TelemetryStorageDecision.LOCK_CONTENDED,
+                failure_ref="lock-busy",
+                lock_token=_lock_token(),  # type: ignore[call-arg]
+            )
+        with pytest.raises(ValidationError):
+            CompletedReadResponse(
+                storage_ref="storage-alpha",
+                storage_revision="rev-0123456789abcdef",
+                decision=TelemetryStorageDecision.LOCK_CONTENDED,
+                record_count=0,
+                read_payload=TelemetryStorageReadPayload(records=()),
+            )
+
+    def test_lc2_unknown_lock_decision_is_rejected(self) -> None:
+        with pytest.raises(ValidationError):
+            TelemetryStorageLockAcquired.model_validate(
+                {
+                    "decision": "UNKNOWN",
+                    "lock_token": _lock_token().model_dump(),
+                }
+            )
+
 
 class TestSourceBoundary:
     def test_sc6_owned_modules_are_strict_and_effect_free(self) -> None:
@@ -539,6 +771,20 @@ class TestSourceBoundary:
             assert decorator_dumps == _EXPECTED_DECORATORS[source_path]
             if source_path == _CONTRACTS:
                 assert "Protocol" in names
+
+    def test_lc5_lock_port_surface_is_only_acquire_and_release(self) -> None:
+        tree = ast.parse(_CONTRACTS.read_text(encoding="utf-8"))
+        lock_port = next(
+            node
+            for node in tree.body
+            if isinstance(node, ast.ClassDef) and node.name == "TelemetryStorageLockPort"
+        )
+        method_names = {
+            node.name
+            for node in lock_port.body
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+        }
+        assert method_names == {"try_acquire", "release"}
 
     def test_sc6_models_are_frozen_and_extra_forbidden(self) -> None:
         assert _ref().model_config["frozen"] is True
