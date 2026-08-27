@@ -63,7 +63,7 @@ unchanged against clean main `3b1a6557035c776a30f2e229f33bf492e538533e`:
 3. The active interpreter has pytest `9.0.3`, while `requirements-dev.txt` declares `9.1.1`.
 
 They remain visible baseline/environment defects outside Ticket 09's three-path closure. They do
-not establish a Ticket 09 regression and prevent no claim that the repository's full suite is
+not establish a Ticket 09 regression and prevent any claim that the repository's full suite is
 globally green.
 
 ## Finding and follow-up
