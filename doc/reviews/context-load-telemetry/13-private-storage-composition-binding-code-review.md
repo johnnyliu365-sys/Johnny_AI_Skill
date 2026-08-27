@@ -6,7 +6,7 @@
 | Ticket / closure | `13-private-storage-composition-binding` / `CLOSURE-CONTEXT-TELEMETRY-13-PRIVATE-STORAGE-COMPOSITION-BINDING` revision 02 |
 | Source baseline / final candidate | `bb3217a417bbce5e129139a98dbb63b2366a29f9` / `108ea43e8b8a8f8bccbe3e6ced1eac59f26dda35` |
 | Reviewer | `ticket-review` semantic profile — Terra/xhigh, root session |
-| Conclusion | `APPROVED / INTEGRATED` |
+| Conclusion | `APPROVED / INTEGRATED / AUTHORITY_PUSH_CONFIRMED` |
 
 ## Admission and scope
 
@@ -57,3 +57,9 @@ No blocking source, evidence, scope, type, security or requirement finding remai
 composition factory is integrated at `108ea43e8b8a8f8bccbe3e6ced1eac59f26dda35`. It proves only
 the private object graph; a future caller-integration, owned-identity provisioning or real storage
 operation remains separately authorized work.
+
+The closure/review documentation commit
+`a08eacc5dce25d9e58ec04ef0706f6547cd84dfd` was non-force pushed to `origin/main`; fresh direct
+remote SHA readback matched it exactly. This proves the review and closure evidence are
+authority-integrated. The reviewed source candidate remains the distinct ancestor
+`108ea43e8b8a8f8bccbe3e6ced1eac59f26dda35` recorded above.

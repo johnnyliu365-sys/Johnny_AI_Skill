@@ -5,8 +5,8 @@
 | Artifact ID / kind | `TICKET-CONTEXT-TELEMETRY-13-PRIVATE-STORAGE-COMPOSITION-BINDING` / `IMPLEMENTATION_TICKET` |
 | SPEC / acceptance source | `SPEC-AI-WORKFLOW-CONTEXT-LOAD-TELEMETRY-20260803-01KZ5E7F9G1H3J5K7M9N1P3Q5R` Revision 10 / AC-21 |
 | Requirement / Context / ADR | `PRD-20260827-041` / `CHG-20260827-041` / `doc/context/context-load-telemetry/main.md` Revision 10 / `ADR-20260827-025`–`028` |
-| State / closure | `CLOSED / DONE / APPROVED / INTEGRATED`; `CLOSURE-CONTEXT-TELEMETRY-13-PRIVATE-STORAGE-COMPOSITION-BINDING`, revision 02 |
-| Document revision | `02` |
+| State / closure | `CLOSED / DONE / APPROVED / INTEGRATED / AUTHORITY_PUSH_CONFIRMED`; `CLOSURE-CONTEXT-TELEMETRY-13-PRIVATE-STORAGE-COMPOSITION-BINDING`, revision 03 |
+| Document revision | `03` |
 | Approval authority | Project owner, 2026-08-27 (Asia/Taipei): explicitly authorized Revision 10's one source-only private composition binding after Ticket 12 integration. |
 | Source baseline / dependency | `3b11f71ae10e338841aede1adddbbd93d6aec704`; candidate must descend from this committed ticket authority. Ticket 09 (`096d471`) supplies the local lock port, Ticket 11 (`e05f03a`) the per-stream ledger, and Ticket 12 (`c359d92`) the private transaction adapter. Ticket 06 remains superseded and non-integrable. |
 | Control owner / reviewer | `ticket-review` semantic profile — Terra/xhigh. |
@@ -184,3 +184,9 @@ The exact source review is
 full-suite result records only the three failures reproduced against clean main; no global-green
 claim is made. Composition is now bound, but no caller integration, provisioning or storage
 operation was performed by this closure.
+
+The closure/review documentation commit
+`a08eacc5dce25d9e58ec04ef0706f6547cd84dfd` was non-force pushed to `origin/main`; a fresh
+direct remote readback returned that exact SHA. This confirms the closure evidence itself is
+authority-integrated. The distinct reviewed source candidate remains ancestor evidence at
+`108ea43e8b8a8f8bccbe3e6ced1eac59f26dda35`.
