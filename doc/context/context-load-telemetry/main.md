@@ -4,7 +4,7 @@
 | --- | --- |
 | Feature | `context-load-telemetry` |
 | Worktree | `root/main` |
-| State | `BASELINE_DONE / REVISION_02_APPROVED / REVISION_03_PROVIDER_USAGE_ARCHITECTURE_ACCEPTED / REVISION_04_LOCKED_STORAGE_APPROVED / REVISION_05_CLASSIFIED_FILE_LOCK_CAPABILITY_APPROVED / REVISION_06_LOCK_PORT_ADAPTER_AUTHORIZED / REVIEWER_DECOMPOSITION_AUTHORIZED` |
+| State | `BASELINE_DONE / REVISION_02_APPROVED / REVISION_03_PROVIDER_USAGE_ARCHITECTURE_ACCEPTED / REVISION_04_LOCKED_STORAGE_APPROVED / REVISION_05_CLASSIFIED_FILE_LOCK_CAPABILITY_APPROVED / REVISION_06_LOCK_PORT_ADAPTER_AUTHORIZED / REVISION_07_DURABLE_STORAGE_TRANSACTION_AUTHORIZED / REVIEWER_DECOMPOSITION_AUTHORIZED` |
 | In scope | Router context measurement, metadata-only JSONL evidence, baseline/router comparison, local validation, and Johnny-owned opaque telemetry storage. |
 | Out of scope | Raw prompt capture, source text or path persistence, provider credentials, a production Agent supervisor, target-local Johnny storage, or changes to target company repositories. |
 
@@ -55,6 +55,13 @@
   ledger/stream, invoke `JsonlContextUsageStore`, re-admit a storage operation, or touch a target
   project. The future storage adapter retains all preliminary and under-lock ledger/lifecycle/
   containment admission.
+- Revision 07 authorizes the next controlled durable-storage boundary under
+  `ADR-20260827-025`: a storage request may use only an already provisioned private ownership
+  ledger entry, never create or repair one. `APPEND`, `DETACH` and `UNINSTALL` are durable,
+  recoverable all-or-nothing stream-and-ledger transactions. `READ` and `VALIDATE` recover and
+  re-admit under the same exact lock. A subsequent operation observes the exact pre-transaction
+  state or post-transaction state, never a mixed state. The controlled adapter may not call
+  `JsonlContextUsageStore.append` directly.
 
 ## Related sources
 
@@ -92,3 +99,11 @@ Revision 06 now authorizes that independently scoped local lock-port adapter fro
 authority line. It selects `exclusive-file-lock@60d2ab0` and the existing containment predicate
 newly cataloged as `path-containment@42b2be1`; it does not reactivate or reuse Ticket 06's
 preserved candidate.
+
+Revision 07 is authorized by the same active `PRD-20260827-041` / `CHG-20260827-041` leaf and
+`ADR-20260827-025`. The selected current cards are `exclusive-file-lock@60d2ab0` and
+`path-containment@cf9e126`; their public contracts remain bounded to lock acquisition and path
+containment. No ownership-ledger reusable card exists, so the ledger port, local ledger adapter,
+durable transaction journal and recovery behavior are new target-owned private infrastructure.
+The first successor ticket must establish that private ledger/CAS substrate; Ticket 06 remains
+superseded and its candidate must not be read, rebased or integrated.

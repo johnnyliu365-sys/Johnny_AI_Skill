@@ -3,11 +3,11 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-CONTEXT-LOAD-TELEMETRY-20260803-01KZ5E7F9G1H3J5K7M9N1P3Q5R` |
-| State | `APPROVED_BASELINE / REVISION_02_PROJECT_ISOLATION_APPROVED / REVISION_03_PROVIDER_USAGE_ARCHITECTURE_ACCEPTED / REVISION_04_LOCKED_STORAGE_APPROVED / REVISION_05_CLASSIFIED_FILE_LOCK_CAPABILITY_APPROVED / REVISION_06_LOCK_PORT_ADAPTER_AUTHORIZED / REVIEWER_DECOMPOSITION_AUTHORIZED` |
+| State | `APPROVED_BASELINE / REVISION_02_PROJECT_ISOLATION_APPROVED / REVISION_03_PROVIDER_USAGE_ARCHITECTURE_ACCEPTED / REVISION_04_LOCKED_STORAGE_APPROVED / REVISION_05_CLASSIFIED_FILE_LOCK_CAPABILITY_APPROVED / REVISION_06_LOCK_PORT_ADAPTER_AUTHORIZED / REVISION_07_DURABLE_STORAGE_TRANSACTION_APPROVED / REVIEWER_DECOMPOSITION_AUTHORIZED` |
 | Owner | `root/main` |
 | Context | `doc/context/context-load-telemetry/main.md` |
 | PRD reference | `PRD-20260803-006` |
-| Change | `CHG-20260803-006`; project-isolation revision `CHG-20260815-024` / `ADR-20260815-013`; provider-usage architecture `ADR-20260824-019`; lock-bound storage `CHG-20260827-041` / `ADR-20260827-022`; classified lock capability `ADR-20260827-024` |
+| Change | `CHG-20260803-006`; project-isolation revision `CHG-20260815-024` / `ADR-20260815-013`; provider-usage architecture `ADR-20260824-019`; lock-bound storage `CHG-20260827-041` / `ADR-20260827-022`; classified lock capability `ADR-20260827-024`; durable storage transaction `ADR-20260827-025` |
 
 ## Goal
 
@@ -231,6 +231,44 @@ next lock-bound storage-adapter closure. The adapter itself is one independently
 `READY_LOW_MODEL` outcome: real same-location cross-process acquisition is classified as exactly
 `LOCK_ACQUIRED` or `LOCK_CONTENDED`, then an acquired original token can be released.
 
+### Revision 07 durable pre-provisioned storage transaction
+
+The existing public `TelemetryStoragePort`, its five operation kinds and its finite response
+types remain unchanged. The implementation adds a private `TelemetryOwnershipLedgerPort` behind
+the Johnny-owned adapter. That port resolves only a pre-provisioned entry matching the full
+opaque storage identity, returns its current lifecycle and revision, derives a relative internal
+stream locator, and advances lifecycle/revision only through compare-and-swap. It has no public
+create, registration, path or root operation. A storage request cannot cause provisioning,
+auto-repair or identity discovery.
+
+For every operation, the adapter validates the strict request, performs preliminary ledger
+admission, acquires the exact storage lock, then re-reads and re-admits the owned ledger entry,
+lifecycle, expected revision and internally derived containment under that lock. `READ` and
+`VALIDATE` recover any pending transaction before decoding and preserve their existing immutable
+response contracts. `APPEND`, `DETACH` and `UNINSTALL` execute a durable transaction journal
+before changing stream bytes or ledger lifecycle/revision. Recovery under the same exact lock
+must leave the next admitted operation observing either the complete pre-operation state or the
+complete post-operation state; it must never expose mixed stream and ledger state.
+
+The adapter may use the selected `exclusive-file-lock@60d2ab0` only through the local lock-port
+adapter and `path-containment@cf9e126` only on internally derived locations before an owned
+filesystem effect. It may not call `JsonlContextUsageStore.append` directly. Strict decoding of
+existing JSONL records is internal to the adapter and must not expose a path, source text, prompt,
+credential, URI, provider event or transaction-journal detail.
+
+The exact failure mapping is preserved and extended by behavior: malformed identity is
+`STORAGE_REF_INVALID`; missing or mismatched ledger ownership is
+`STORAGE_OWNERSHIP_MISMATCH`; inactive lifecycle is `STORAGE_CLOSED`; owned ledger, journal,
+containment, codec, filesystem or release failure is `STORAGE_BOUNDARY_VIOLATION`; malformed
+record is `RECORD_INVALID`; and lock competition is `LOCK_CONTENDED` with no stream, ledger,
+report, provider, target or retry effect. A release failure overrides an otherwise completed
+operation result.
+
+This is a `HIGH_ASSURANCE` durable-state boundary. Its acceptance evidence must include real
+independent-process contention, forced failures at every transaction phase, restart recovery,
+compare-and-swap conflict, ledger/stream mismatch, redirected-path rejection, and proof that
+both the controlled root and target repository remain unchanged outside the declared operation.
+
 Every identifier is a validated named type with a finite pattern. `record` is
 present only for `APPEND`; other operation/payload combinations fail before I/O.
 No production request or result has a filesystem-path field. Boundary adapters
@@ -333,6 +371,13 @@ unreachable from any controlled-target composition root.
 15. Before an adapter is opened, the reusable file-lock primitive proves a finite immediate
     `ACQUIRED`/`CONTENDED` result against a real independent holder, preserves every existing
     blocking consumer, and propagates non-contention I/O errors rather than relabeling them.
+16. No `TelemetryStoragePort` operation provisions, registers, repairs or discovers storage
+    from a caller-supplied path, root or identity. Each operation rejects an absent or mismatched
+    pre-existing owned-ledger entry before stream or journal effect.
+17. For `APPEND`, `DETACH` and `UNINSTALL`, forced failure or process interruption at every
+    durable transaction phase recovers under the exact lock to either the complete pre-operation
+    state or complete post-operation state; no subsequent `READ` or `VALIDATE` observes mixed
+    stream bytes, lifecycle or revision.
 
 ## Approval
 
@@ -369,6 +414,13 @@ does not authorize telemetry stream/ledger work, the legacy codec, a storage ope
 provider/host invocation, cost claim, target-project mutation, publication, release, or
 deployment.
 
+The project owner additionally authorized Revision 07's pre-provisioned, recoverable durable
+storage transaction boundary on `2026-08-27` under `PRD-20260827-041` / `CHG-20260827-041` and
+`ADR-20260827-025`. It authorizes architecture-conformant decomposition of the private ledger,
+compare-and-swap and transaction/recovery closures. It does not authorize provider/host
+invocation, credential access, pricing or cost claims, target-project mutation, publication,
+release or deployment.
+
 ## Revision signatures
 
 | Date | AI / worktree / baseline | Summary |
@@ -379,3 +431,4 @@ deployment.
 | 2026-08-27 | Project owner / `main` / `39f5d883622572f10323527ce32c9eecaaafd5d0` | Selected Revision 04: telemetry storage must be lock-bound; contention is a named no-effect result and the un-catalogued lock module is not implicitly reusable. |
 | 2026-08-27 | Project owner / `main` / `6b5a7c163aa6c2eb2834956f9486072d0047d988` | Authorized Revision 05: preserve the blocking reusable lock API while adding a separately classified nonblocking primitive; all unrelated I/O errors remain errors. |
 | 2026-08-27 | Project owner / `main` / `42b2be1b0659c3e1cb9f8e039d1b827f7b74be85` | Authorized Revision 06: implement one separately scoped local `TelemetryStorageLockPort` with selected lock/containment capabilities and no storage-operation effect. |
+| 2026-08-27 | Project owner / `main` / `d2e899e341edcc3a31529e80e2f4e3526a9fd100` | Authorized Revision 07: accept only pre-provisioned owned storage and recoverable all-or-nothing durable transactions for the future controlled storage adapter. |
