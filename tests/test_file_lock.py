@@ -28,6 +28,7 @@ import sys
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from unittest.mock import patch
 
 from library.local_orchestration import (
     file_lock,
@@ -41,9 +42,27 @@ from library.local_orchestration import (
 from library.local_orchestration.file_lock import (
     ExclusiveFileLock,
     ExclusiveWindowsFileLock,
+    FileLockAcquireDecision,
 )
 
 _REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
+_MODULE_CARD = (
+    _REPOSITORY_ROOT
+    / "library"
+    / "功能集群"
+    / "python"
+    / "exclusive_file_lock"
+    / "README.md"
+)
+_ELEMENT_README = (
+    _REPOSITORY_ROOT
+    / "modules"
+    / "element"
+    / "python"
+    / "context-load-telemetry"
+    / "08-classified-nonblocking-file-lock"
+    / "README.md"
+)
 
 # Long enough that a genuinely blocked waiter cannot be mistaken for a slow
 # one; short enough that the Windows primitive is still retrying rather than
@@ -176,6 +195,146 @@ def _reap(*processes: subprocess.Popen[str]) -> None:
         if process.poll() is None:
             process.kill()
         process.wait()
+
+
+class NonblockingAcquisitionTests(unittest.TestCase):
+    """The explicit API acquires, releases, and can be reused."""
+
+    def test_available_lock_returns_acquired_and_explicit_release_is_reusable(self) -> None:
+        with TemporaryDirectory() as temporary:
+            lock = ExclusiveFileLock(Path(temporary).resolve() / "the.lock")
+
+            self.assertIs(
+                lock.try_acquire(), FileLockAcquireDecision.ACQUIRED
+            )
+            self.assertIsNotNone(lock._handle)
+            lock.release()
+            self.assertIsNone(lock._handle)
+
+            self.assertIs(
+                lock.try_acquire(), FileLockAcquireDecision.ACQUIRED
+            )
+            lock.release()
+            self.assertIsNone(lock._handle)
+
+
+class NonblockingContentionTests(unittest.TestCase):
+    """Contention is proven by a real independent holder process."""
+
+    def test_independent_holder_returns_contended_without_retaining_handle(self) -> None:
+        with TemporaryDirectory() as temporary:
+            base = Path(temporary).resolve()
+            holder_script = base / "holder_child.py"
+            holder_script.write_text(_HOLDER_CHILD, encoding="utf-8")
+            lock_path = base / "the.lock"
+            witness_path = base / "witness.txt"
+            holder = _start_child(holder_script, str(lock_path))
+            contender = ExclusiveFileLock(lock_path)
+            try:
+                _await_line(holder, "held")
+                decision = contender.try_acquire()
+                self.assertIs(decision, FileLockAcquireDecision.CONTENDED)
+                self.assertIsNone(contender._handle)
+                if decision is FileLockAcquireDecision.ACQUIRED:
+                    witness_path.write_text("entered", encoding="utf-8")
+                self.assertFalse(witness_path.exists())
+
+                _release_child(holder)
+                _await_line(holder, "released")
+                self.assertEqual(holder.wait(timeout=_VERDICT_TIMEOUT_SECONDS), 0)
+
+                self.assertIs(
+                    contender.try_acquire(), FileLockAcquireDecision.ACQUIRED
+                )
+                self.assertIsNotNone(contender._handle)
+                contender.release()
+                self.assertIsNone(contender._handle)
+            finally:
+                _reap(holder)
+
+
+class NonblockingFailureTests(unittest.TestCase):
+    """Invalid paths and non-contention errors remain distinguishable."""
+
+    def test_missing_parent_does_not_create_directory_or_retain_handle(self) -> None:
+        with TemporaryDirectory() as temporary:
+            absent = Path(temporary).resolve() / "absent"
+            lock = ExclusiveFileLock(absent / "the.lock")
+            with self.assertRaises(FileNotFoundError):
+                lock.try_acquire()
+            self.assertFalse(absent.exists())
+            self.assertIsNone(lock._handle)
+
+    def test_empty_path_propagates_and_does_not_retain_handle(self) -> None:
+        lock = ExclusiveFileLock(Path(""))
+        with self.assertRaises(OSError):
+            lock.try_acquire()
+        self.assertIsNone(lock._handle)
+
+    def test_non_contention_oserror_propagates_and_does_not_retain_handle(self) -> None:
+        with TemporaryDirectory() as temporary:
+            lock = ExclusiveFileLock(Path(temporary).resolve() / "the.lock")
+            if sys.platform == "win32":
+                with patch(
+                    "library.local_orchestration.file_lock.msvcrt.locking",
+                    side_effect=OSError(errno.EIO, "injected non-contention"),
+                ):
+                    with self.assertRaises(OSError) as caught:
+                        lock.try_acquire()
+            else:
+                with patch(
+                    "library.local_orchestration.file_lock.fcntl.flock",
+                    side_effect=OSError(errno.EIO, "injected non-contention"),
+                ):
+                    with self.assertRaises(OSError) as caught:
+                        lock.try_acquire()
+            self.assertEqual(caught.exception.errno, errno.EIO)
+            self.assertIsNone(lock._handle)
+
+
+class ExplicitLifecycleTests(unittest.TestCase):
+    """Misuse is explicit, and release failure still clears ownership."""
+
+    def test_double_try_and_idle_release_raise_runtime_error(self) -> None:
+        with TemporaryDirectory() as temporary:
+            lock = ExclusiveFileLock(Path(temporary).resolve() / "the.lock")
+            with self.assertRaises(RuntimeError):
+                lock.release()
+            self.assertIs(
+                lock.try_acquire(), FileLockAcquireDecision.ACQUIRED
+            )
+            with self.assertRaises(RuntimeError):
+                lock.try_acquire()
+            lock.release()
+            with self.assertRaises(RuntimeError):
+                lock.release()
+
+    def test_release_error_is_rethrown_after_handle_cleanup(self) -> None:
+        with TemporaryDirectory() as temporary:
+            lock = ExclusiveFileLock(Path(temporary).resolve() / "the.lock")
+            self.assertIs(
+                lock.try_acquire(), FileLockAcquireDecision.ACQUIRED
+            )
+            with patch.object(
+                file_lock,
+                "_release",
+                side_effect=OSError(errno.EIO, "injected release failure"),
+            ):
+                with self.assertRaises(OSError) as caught:
+                    lock.release()
+            self.assertEqual(caught.exception.errno, errno.EIO)
+            self.assertIsNone(lock._handle)
+            with self.assertRaises(RuntimeError):
+                lock.release()
+
+            self.assertIs(
+                lock.try_acquire(), FileLockAcquireDecision.ACQUIRED
+            )
+            lock.release()
+
+    def test_unknown_decision_is_not_a_valid_enum_value(self) -> None:
+        with self.assertRaises(ValueError):
+            FileLockAcquireDecision("unknown")
 
 
 class CrossProcessExclusionTests(unittest.TestCase):
@@ -485,8 +644,29 @@ class NamingTests(unittest.TestCase):
     def test_both_names_are_exported(self) -> None:
         self.assertEqual(
             sorted(file_lock.__all__),
-            ["ExclusiveFileLock", "ExclusiveWindowsFileLock"],
+            [
+                "ExclusiveFileLock",
+                "ExclusiveWindowsFileLock",
+                "FileLockAcquireDecision",
+            ],
         )
+
+
+class DocumentationTests(unittest.TestCase):
+    """The reusable card and element index describe only proven behavior."""
+
+    def test_card_and_element_index_name_the_classified_surface_and_limits(self) -> None:
+        card = _MODULE_CARD.read_text(encoding="utf-8")
+        element = _ELEMENT_README.read_text(encoding="utf-8")
+        for text in (card, element):
+            self.assertIn("FileLockAcquireDecision", text)
+            self.assertIn("try_acquire", text)
+            self.assertIn("release", text)
+            self.assertIn("CONTENDED", text)
+        self.assertIn("Windows", card)
+        self.assertIn("POSIX", card)
+        self.assertIn("source", card.casefold())
+        self.assertIn("TelemetryStorageLockPort", card)
 
 
 class PlatformBindingTests(unittest.TestCase):
@@ -525,6 +705,38 @@ class PlatformBindingTests(unittest.TestCase):
                 )
                 for token in ("msvcrt", "fcntl", "platform"):
                     self.assertNotIn(token, names)
+
+    def test_nonblocking_platform_branches_are_bound_and_classified_narrowly(self) -> None:
+        self.assertEqual(self.source.count('if sys.platform == "win32":'), 1)
+        self.assertIn("msvcrt.LK_LOCK", self.source)
+        self.assertIn("msvcrt.LK_NBLCK", self.source)
+        self.assertIn("fcntl.LOCK_EX | fcntl.LOCK_NB", self.source)
+        self.assertIn("error.errno == errno.EACCES", self.source)
+        self.assertIn("error.errno in (errno.EACCES, errno.EAGAIN)", self.source)
+
+    def test_nonblocking_source_has_no_retry_or_blocking_fallback(self) -> None:
+        tree = ast.parse(self.source)
+        try_functions = [
+            node
+            for node in ast.walk(tree)
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+            and node.name == "_try_acquire"
+        ]
+        self.assertEqual(len(try_functions), 2)
+        self.assertTrue(
+            all(
+                not any(isinstance(item, ast.While) for item in ast.walk(node))
+                for node in try_functions
+            )
+        )
+        self.assertTrue(
+            all(
+                not any(isinstance(item, ast.For) for item in ast.walk(node))
+                for node in try_functions
+            )
+        )
+        self.assertNotIn("time.sleep", self.source)
+        self.assertNotIn("timeout", self.source.casefold())
 
 
 class PosixBranchSourceGuardTests(unittest.TestCase):
@@ -591,12 +803,6 @@ class PosixBranchSourceGuardTests(unittest.TestCase):
     def _assert_flock_operation(self, call: ast.Call, expected: str) -> None:
         self.assertEqual(len(call.args), 2, "flock takes a descriptor and one flag")
         self.assertEqual(ast.unparse(call.args[0]), "handle.fileno()")
-        self.assertIsInstance(
-            call.args[1],
-            ast.Attribute,
-            "the flag must be one named constant: an expression here is how "
-            "LOCK_NB gets combined in and the lock stops blocking",
-        )
         self.assertEqual(
             ast.unparse(call.args[1]),
             expected,
@@ -613,6 +819,22 @@ class PosixBranchSourceGuardTests(unittest.TestCase):
             self._posix_flock_call("_release"), "fcntl.LOCK_UN"
         )
 
+    def test_the_posix_nonblocking_acquisition_is_exclusive_and_nonblocking(self) -> None:
+        self._assert_flock_operation(
+            self._posix_flock_call("_try_acquire"),
+            "fcntl.LOCK_EX | fcntl.LOCK_NB",
+        )
+
+    def test_the_posix_nonblocking_errno_allowlist_is_exact(self) -> None:
+        try_acquire = next(
+            node
+            for node in self.branch.orelse
+            if isinstance(node, ast.FunctionDef) and node.name == "_try_acquire"
+        )
+        source = ast.unparse(try_acquire)
+        self.assertIn("error.errno in (errno.EACCES, errno.EAGAIN)", source)
+        self.assertNotIn("errno.EIO", source)
+
     def test_the_posix_branch_holds_the_two_primitives_and_nothing_else(self) -> None:
         imported = [
             alias.name
@@ -627,13 +849,65 @@ class PosixBranchSourceGuardTests(unittest.TestCase):
                 for node in self.branch.orelse
                 if isinstance(node, ast.FunctionDef)
             ],
-            ["_acquire", "_release"],
+            ["_acquire", "_release", "_try_acquire"],
         )
         self.assertEqual(
             [type(node).__name__ for node in self.branch.orelse],
-            ["Import", "FunctionDef", "FunctionDef"],
+            ["Import", "FunctionDef", "FunctionDef", "FunctionDef"],
             "nothing may hide in the branch nobody on this machine executes",
         )
+
+
+class WindowsBranchSourceGuardTests(unittest.TestCase):
+    """A source-level guard for the Windows primitive on this Windows host."""
+
+    def setUp(self) -> None:
+        source = Path(file_lock.__file__).read_text(encoding="utf-8")
+        tree = ast.parse(source)
+        self.branch = next(
+            node
+            for node in tree.body
+            if isinstance(node, ast.If)
+            and ast.unparse(node.test).replace('"', "'") == "sys.platform == 'win32'"
+        )
+
+    def _locking_call(self, function_name: str) -> ast.Call:
+        function = next(
+            node
+            for node in self.branch.body
+            if isinstance(node, ast.FunctionDef) and node.name == function_name
+        )
+        calls = [
+            node
+            for node in ast.walk(function)
+            if isinstance(node, ast.Call) and ast.unparse(node.func) == "msvcrt.locking"
+        ]
+        self.assertEqual(len(calls), 1)
+        return calls[0]
+
+    def test_windows_blocking_release_and_nonblocking_constants_are_exact(self) -> None:
+        self.assertEqual(
+            ast.unparse(self._locking_call("_acquire").args[1]),
+            "msvcrt.LK_LOCK",
+        )
+        self.assertEqual(
+            ast.unparse(self._locking_call("_release").args[1]),
+            "msvcrt.LK_UNLCK",
+        )
+        self.assertEqual(
+            ast.unparse(self._locking_call("_try_acquire").args[1]),
+            "msvcrt.LK_NBLCK",
+        )
+
+    def test_windows_nonblocking_errno_allowlist_is_exact(self) -> None:
+        try_acquire = next(
+            node
+            for node in self.branch.body
+            if isinstance(node, ast.FunctionDef) and node.name == "_try_acquire"
+        )
+        source = ast.unparse(try_acquire)
+        self.assertIn("error.errno == errno.EACCES", source)
+        self.assertNotIn("errno.EIO", source)
 
 
 if __name__ == "__main__":

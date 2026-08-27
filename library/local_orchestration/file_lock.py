@@ -34,11 +34,21 @@ true one; retiring the alias is a later ticket's work.
 
 from __future__ import annotations
 
+import errno
 import os
 import sys
+from enum import Enum
 from pathlib import Path
 from types import TracebackType
 from typing import BinaryIO, Self
+
+
+class FileLockAcquireDecision(str, Enum):
+    """The finite outcomes of one nonblocking lock attempt."""
+
+    ACQUIRED = "acquired"
+    CONTENDED = "contended"
+
 
 if sys.platform == "win32":
     import msvcrt
@@ -55,6 +65,18 @@ if sys.platform == "win32":
         handle.seek(0)
         msvcrt.locking(handle.fileno(), msvcrt.LK_UNLCK, 1)
 
+    def _try_acquire(handle: BinaryIO) -> FileLockAcquireDecision:
+        """Attempt the Windows one-byte region lock without waiting."""
+
+        handle.seek(0)
+        try:
+            msvcrt.locking(handle.fileno(), msvcrt.LK_NBLCK, 1)
+        except OSError as error:
+            if error.errno == errno.EACCES:
+                return FileLockAcquireDecision.CONTENDED
+            raise
+        return FileLockAcquireDecision.ACQUIRED
+
 else:
     import fcntl
 
@@ -68,6 +90,18 @@ else:
 
         fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
 
+    def _try_acquire(handle: BinaryIO) -> FileLockAcquireDecision:
+        """Attempt the POSIX one-byte file lock without waiting."""
+
+        handle.seek(0)
+        try:
+            fcntl.flock(handle.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except OSError as error:
+            if error.errno in (errno.EACCES, errno.EAGAIN):
+                return FileLockAcquireDecision.CONTENDED
+            raise
+        return FileLockAcquireDecision.ACQUIRED
+
 
 class ExclusiveFileLock:
     """One-byte OS-visible exclusive lock shared by independent processes."""
@@ -76,7 +110,7 @@ class ExclusiveFileLock:
         self._path = path
         self._handle: BinaryIO | None = None
 
-    def __enter__(self) -> Self:
+    def _open_handle(self) -> BinaryIO:
         handle = self._path.open("a+b")
         try:
             handle.seek(0, os.SEEK_END)
@@ -84,12 +118,49 @@ class ExclusiveFileLock:
                 handle.write(b"\x00")
                 handle.flush()
                 os.fsync(handle.fileno())
+        except OSError:
+            handle.close()
+            raise
+        return handle
+
+    def __enter__(self) -> Self:
+        handle = self._open_handle()
+        try:
             _acquire(handle)
         except OSError:
             handle.close()
             raise
         self._handle = handle
         return self
+
+    def try_acquire(self) -> FileLockAcquireDecision:
+        """Attempt one nonblocking acquisition on this lock instance."""
+
+        if self._handle is not None:
+            raise RuntimeError("try_acquire requires an idle lock")
+        handle = self._open_handle()
+        try:
+            decision = _try_acquire(handle)
+        except OSError:
+            handle.close()
+            raise
+        if decision is FileLockAcquireDecision.CONTENDED:
+            handle.close()
+            return decision
+        self._handle = handle
+        return decision
+
+    def release(self) -> None:
+        """Release an explicitly acquired lock and close its retained handle."""
+
+        handle = self._handle
+        if handle is None:
+            raise RuntimeError("release requires an acquired lock")
+        self._handle = None
+        try:
+            _release(handle)
+        finally:
+            handle.close()
 
     def __exit__(
         self,
@@ -113,4 +184,8 @@ class ExclusiveFileLock:
 ExclusiveWindowsFileLock = ExclusiveFileLock
 
 
-__all__ = ["ExclusiveFileLock", "ExclusiveWindowsFileLock"]
+__all__ = [
+    "ExclusiveFileLock",
+    "ExclusiveWindowsFileLock",
+    "FileLockAcquireDecision",
+]
