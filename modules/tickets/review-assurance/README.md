@@ -2,7 +2,7 @@
 
 | Ticket | Capability | Lifecycle / state |
 | --- | --- | --- |
-| [01-adversarial-review-and-deployment-readiness-policy](01-adversarial-review-and-deployment-readiness-policy.md) | Ticket-level independent adversarial audit contract, corrected same-lifetime multi-Agent review policy, and deployment readiness matrix | `APPROVED / DISPATCHABLE` |
+| [01-adversarial-review-and-deployment-readiness-policy](01-adversarial-review-and-deployment-readiness-policy.md) | Ticket-level independent adversarial audit contract, corrected same-lifetime multi-Agent review policy, and deployment readiness matrix | `APPROVED / DISPATCHABLE / CLOSURE_REVISION_02` |
 
 ## Shared baseline
 
@@ -14,4 +14,3 @@
 
 This cluster is policy-source-only. Its ticket cannot publish a plugin, invoke an LLM provider,
 create a runner/queue, access secrets or production data, run a migration, release or deploy.
-

@@ -2,13 +2,14 @@
 
 | Field | Value |
 | --- | --- |
-| State | `APPROVED / DISPATCHABLE` |
+| State | `APPROVED / DISPATCHABLE / CLOSURE_REVISION_02` |
 | Feature / ticket | `review-assurance / 01-adversarial-review-and-deployment-readiness-policy` |
 | Requirement / specification | `PRD-20260827-042` / `CHG-20260827-042`; `SPEC-AI-WORKFLOW-REVIEW-ASSURANCE-20260827-01KZ9A1B2C3D4E5F6G7H8J9K0L` |
 | Context / ADR | `doc/context/review-assurance/main.md`; `ADR-20260827-030-adversarial-review-and-deployment-readiness.md` |
 | Baseline | `ac68374546d3f324ca60c175014e7eb6bf2751f9` |
 | Delivery / language | `POC / HIGH_ASSURANCE`; Python 3.11 strict tests plus policy Markdown. The bounded implementation owner is `Luna / xhigh`; the named reviewer is `Terra / xhigh` and retains all conclusions/integration. |
 | XSS / effects | `XSS_NOT_APPLICABLE`. This ticket changes only policy source and deterministic tests. It creates no Agent task, runner, queue, receipt, descriptor, host capability, provider call, secret/configuration access, production-data/account use, migration, release, deployment, publication, target-project or durable-storage effect. |
+| Closure revision | `02` — reissued after initial review plus one correction exposed the inherited `COMPACT` helper-table contradiction. The sealed specification already authorizes optional `COMPACT` adversarial audit; this revision makes the table/role proof an explicit closure item. |
 
 ## Boundary declaration (machine-readable; the integration gate reads this before mutation)
 
@@ -71,7 +72,7 @@ compatibility, configuration, recovery or observability risks.
 | --- | --- |
 | TARA1 | A new policy-contract test fails until `CodeReview.md` indexes the adversarial reference and preserves reviewer-only conclusion/integration. |
 | TARA2 | It fails until the reference binds a same-lifetime direct audit lane, finite auditor returns, and explicitly excludes runner/queue/receipt/live descriptor prerequisites. |
-| TARA3 | It fails until optional versus `HIGH_ASSURANCE`/deployment-required behavior and named `UNAVAILABLE`/`BLOCKED` handling are present. |
+| TARA3 | It fails until the `COMPACT` profile cell admits one optional adversarial plan but no ordinary helper; `STANDARD` stays optional; `HIGH_ASSURANCE`/proposed deployment are required; and named `UNAVAILABLE`/`BLOCKED` handling is present. |
 | TARA4 | It fails until all required ticket-level and deployment matrix attack vectors are present with evidenced `NOT_APPLICABLE` and `NOT_AUTHORIZED` semantics. |
 | TARA5 | It fails until the auditor/effect boundary rejects approval, integration, commit, push, secret, production-data/account, migration, release and deployment authority. |
 | TARA6 | Existing Router profile tests fail if the changed `review-checks.md` is not exactly repinned in both required locations. |
@@ -81,9 +82,10 @@ compatibility, configuration, recovery or observability risks.
 
 1. Remove the same-lifetime exception or reintroduce the old universal descriptor/receipt claim;
    `TARA2` must turn red.
-2. Remove the deployment-matrix `NOT_APPLICABLE` evidence rule or the external-effect authority
+2. Revert the `COMPACT` helper-table cell to `Not admitted`; `TARA3` must turn red.
+3. Remove the deployment-matrix `NOT_APPLICABLE` evidence rule or the external-effect authority
    rule; `TARA4` or `TARA5` must turn red.
-3. Restore the exact reviewed candidate before control-plane admission. Zero red is an
+4. Restore the exact reviewed candidate before control-plane admission. Zero red is an
    `EVIDENCE_DEFECT`.
 
 ## Completion and evidence
@@ -101,4 +103,3 @@ readback. Review approval does not publish or deploy the plugin.
 physical host isolation requirement, new public Agent authority, or actual effect. A normal
 policy/test defect receives one additive correction on the same candidate. Rollback after
 integration is a new reviewed additive revert; never reset, amend, force or delete evidence.
-

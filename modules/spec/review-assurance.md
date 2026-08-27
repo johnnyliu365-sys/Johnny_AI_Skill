@@ -67,7 +67,7 @@ The mandatory vector roster is:
 | --- | --- |
 | ARA-01 | `CodeReview.md` exposes the adversarial-review reference and states that the reviewer alone owns review conclusion and integration. |
 | ARA-02 | The policy admits one bounded same-lifetime reviewer-owned `RESEARCH_HELPER` audit with a finite return and no runner, queue, receipt, live descriptor or host-readback prerequisite. |
-| ARA-03 | The policy says an audit is optional below `HIGH_ASSURANCE`, mandatory at `HIGH_ASSURANCE` and before a proposed release/deployment, and handles unavailable required evidence as `BLOCKED`. |
+| ARA-03 | The policy says an audit is optional at `COMPACT` and `STANDARD`, mandatory at `HIGH_ASSURANCE` and before a proposed release/deployment, and handles unavailable required evidence as `BLOCKED`. The delivery-profile research-helper row must admit the optional `COMPACT` adversarial plan while continuing to exclude an ordinary helper there. |
 | ARA-04 | The attack roster covers all ten ticket-level categories named in the requirement without treating a test name or helper claim as proof. |
 | ARA-05 | The deployment matrix has all declared operational/data compatibility vectors and an evidenced `NOT_APPLICABLE` path. |
 | ARA-06 | Real production data/accounts, secret/configuration reads, migrations, release and deployment remain separate owner-scoped effects; the policy records missing authority rather than performing them. |
@@ -107,4 +107,3 @@ authority and readback.
 - Decision: `ADR-20260827-030-adversarial-review-and-deployment-readiness.md`.
 - No unresolved product decision remains; policy wording and test implementation are Ticket 01's
   closed scope.
-
