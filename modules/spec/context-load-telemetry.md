@@ -3,11 +3,11 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-CONTEXT-LOAD-TELEMETRY-20260803-01KZ5E7F9G1H3J5K7M9N1P3Q5R` |
-| State | `APPROVED_BASELINE / REVISION_02_PROJECT_ISOLATION_APPROVED / REVISION_03_PROVIDER_USAGE_ARCHITECTURE_ACCEPTED / REVIEWER_DECOMPOSITION_AUTHORIZED` |
+| State | `APPROVED_BASELINE / REVISION_02_PROJECT_ISOLATION_APPROVED / REVISION_03_PROVIDER_USAGE_ARCHITECTURE_ACCEPTED / REVISION_04_LOCKED_STORAGE_APPROVED / REVIEWER_DECOMPOSITION_AUTHORIZED` |
 | Owner | `root/main` |
 | Context | `doc/context/context-load-telemetry/main.md` |
 | PRD reference | `PRD-20260803-006` |
-| Change | `CHG-20260803-006`; project-isolation revision `CHG-20260815-024` / `ADR-20260815-013`; provider-usage architecture `ADR-20260824-019` |
+| Change | `CHG-20260803-006`; project-isolation revision `CHG-20260815-024` / `ADR-20260815-013`; provider-usage architecture `ADR-20260824-019`; lock-bound storage `CHG-20260827-041` / `ADR-20260827-022` |
 
 ## Goal
 
@@ -63,7 +63,8 @@ TelemetryStorageLifecycle = ACTIVE | DETACHED | REMOVED
 TelemetryStorageOperation = APPEND | READ | VALIDATE | DETACH | UNINSTALL
 TelemetryStorageDecision = COMPLETED | STORAGE_REF_INVALID
                          | STORAGE_OWNERSHIP_MISMATCH | STORAGE_CLOSED
-                         | STORAGE_BOUNDARY_VIOLATION | RECORD_INVALID
+                         | STORAGE_BOUNDARY_VIOLATION | LOCK_CONTENDED
+                         | RECORD_INVALID
 
 TelemetryStorageRef = {
   storage_ref, project_id, stream_id,
@@ -120,6 +121,46 @@ TelemetryStorageResponse = CompletedAppendResponse | CompletedReadResponse
 
 TelemetryStoragePort.execute(request: TelemetryStorageRequest) -> TelemetryStorageResponse
 ```
+
+### Revision 04 lock-bound storage admission
+
+Every storage operation is serialized by an injected lock port over the exact opaque
+`(storage_ref, project_id, stream_id, ownership_ledger_ref)` identity. The storage adapter has
+one mandatory sequence: strict request admission, preliminary ownership/lifecycle candidate
+lookup, exclusive lock attempt, then a complete second ownership/revision/lifecycle/containment
+admission while holding the lock. Only then may it invoke the legacy JSONL codec or mutate a
+ledger lifecycle. A failed second admission releases the lock and performs no stream effect.
+
+The future contract has only metadata-only shapes:
+
+```text
+TelemetryStorageLockRequest = {
+  storage_ref, expected_project_id, expected_storage_revision
+}
+TelemetryStorageLockToken = {
+  lock_ref, storage_ref, project_id, stream_id,
+  ownership_ledger_ref, storage_revision
+}
+TelemetryStorageLockAcquire = LOCK_ACQUIRED(token) | LOCK_CONTENDED
+TelemetryStorageLockRelease = RELEASED | RELEASE_FAILED
+TelemetryStorageLockPort = {
+  try_acquire(request) -> TelemetryStorageLockAcquire,
+  release(token) -> TelemetryStorageLockRelease
+}
+```
+
+`LOCK_CONTENDED` becomes the same-named `TelemetryStorageFailure` decision with an opaque
+failure reference. It is returned before any codec read/write/delete, validation report, ledger
+advance, target effect, provider effect, retry or fabricated success. Lock tokens and outcomes
+have no raw path or diagnostics. A release failure prevents a completed claim and returns the
+existing `STORAGE_BOUNDARY_VIOLATION` finite failure; a later real lock-adapter ticket must prove
+both acquisition and release by independent counter-mutation.
+
+The existing `library/local_orchestration/file_lock.py` has no delivered MODULE_CATALOG card, so
+Revision 04 does not import, copy or name it as a dependency. Before a production lock adapter is
+implemented, its capability must be catalogued and selected by the reusable-module process, or a
+new catalogued capability must be approved. Ticket 06's pre-Revision-04 candidate is preserved
+as uncommitted review evidence and is non-integrable.
 
 Every identifier is a validated named type with a finite pattern. `record` is
 present only for `APPEND`; other operation/payload combinations fail before I/O.
@@ -214,6 +255,12 @@ unreachable from any controlled-target composition root.
     missing/changed host schema returns a named unavailable/malformed result and creates no claim.
 12. Pair experiments use fresh isolated sessions and preserve target-project bytes/Git state;
     they never reuse a conversation or read the paired run's content.
+13. A contended lock returns `LOCK_CONTENDED` before every stream/ledger/report effect. A
+    holder release is required on every terminal path, and a release failure cannot serialize a
+    completed lifecycle result.
+14. A competing-process fixture proves that only the lock holder can advance a lifecycle or
+    change owned stream bytes; malformed/revoked/stale input is re-admitted under lock before
+    any codec operation.
 
 ## Approval
 
@@ -231,6 +278,12 @@ The project owner additionally authorized Revision 03's provider-usage architect
 provider invocation, credential access, host configuration, telemetry write, cleanup or external
 effect authority.
 
+The project owner selected the Revision 04 lock-bound storage requirement on `2026-08-27` under
+`PRD-20260827-041` / `CHG-20260827-041`. It authorizes architecture revision and pure
+strict-contract decomposition only. It does not authorize a real lock implementation, real
+telemetry storage, host/provider invocation, cost claim, target-project mutation or external
+effect.
+
 ## Revision signatures
 
 | Date | AI / worktree / baseline | Summary |
@@ -238,3 +291,4 @@ effect authority.
 | 2026-08-15 | Architecture owner / `main` / `72438a30a4ad698be33292de8d63a7f2dc289daf` | Drafted Revision 02 to replace caller-selected target-local telemetry paths with a Johnny-owned opaque storage reference; owner approval pending. |
 | 2026-08-15 | Project owner | Approved the exact Telemetry Storage Revision 02 and assigned ticket decomposition/opening to the reviewer. |
 | 2026-08-24 | Project owner / `main` / `1849515f911d1376d800fe1b19e0e07b5227028b` | Accepted Revision 03 provider-usage evidence architecture: typed storage matrix, provider-neutral terminal evidence, observed-versus-matched reporting, and isolated authorized probes. |
+| 2026-08-27 | Project owner / `main` / `39f5d883622572f10323527ce32c9eecaaafd5d0` | Selected Revision 04: telemetry storage must be lock-bound; contention is a named no-effect result and the un-catalogued lock module is not implicitly reusable. |

@@ -5,7 +5,7 @@
 | Artifact ID / kind | `TICKET-CONTEXT-TELEMETRY-06-JOHNNY-OWNED-STORAGE-ADAPTER` / `IMPLEMENTATION_TICKET` |
 | SPEC / acceptance source | `SPEC-AI-WORKFLOW-CONTEXT-LOAD-TELEMETRY-20260803-01KZ5E7F9G1H3J5K7M9N1P3Q5R` Revision 03 / AC-06 through AC-08 |
 | Requirement / Context / ADR | `PRD-20260803-006` / `CHG-20260803-006` / `doc/context/context-load-telemetry/main.md` Revision 03 / `ADR-20260824-019` / `TAD-TELEMETRY-R03-ARCHITECTURE-01` |
-| State / closure | `OPEN / READY_LOW_MODEL`; `CLOSURE-CONTEXT-TELEMETRY-06-STORAGE-ADAPTER`, revision 01 |
+| State / closure | `BLOCKED / SUPERSEDED_BY_REVISION_04_LOCK_CONTRACT`; no source candidate is admissible under this closure revision. |
 | Approval authority | Project owner, 2026-08-27 (Asia/Taipei): begin the existing Context Governor Accounting path. `ADR-20260824-019` already authorizes pure no-effect decomposition. |
 | Baseline / dependency | `38e4e97b86057f4682f114f9f13ab6d2ee00b02a`; Ticket 05 (`e509174`) is integrated and freezes the storage public contracts. |
 | Control owner / reviewer | `ticket-review` semantic profile — Terra/xhigh. |
@@ -13,6 +13,16 @@
 | Worktree / branch / task | Allocated by reviewer at synchronous dispatch beneath `.worktrees/context-load-telemetry-06`; no receipt, descriptor, runner, queue or host workspace readback is required. |
 | Delivery / language | `POC / STANDARD` floor; Python 3.11, frozen strict Pydantic contracts and `mypy --strict`; one implementer lane, no helpers. |
 | XSS / effects | `XSS_NOT_APPLICABLE`. Tests may create and remove only disposable files below a test-created Johnny root. No target-project, provider, credential, host CLI, process, network, Git, runner, queue, receipt or remote effect is authorized. |
+
+## Revision 04 supersession
+
+`ADR-20260827-022` and `CHG-20260827-041` establish that durable telemetry storage is a
+cross-process boundary with a named `LOCK_CONTENDED` result and mandatory lock-bound
+re-admission. This ticket was opened before that public contract existed. Its uncommitted
+implementation candidate is preserved as review evidence only; it must not be committed,
+integrated, rebased as a correction, or used as a substitute for the new contract. A later ticket
+will first close the strict lock contract and capability-selection prerequisite, then reopen a
+lock-bound adapter closure from a fresh main baseline.
 
 ## Boundary declaration
 
@@ -118,8 +128,8 @@ telemetry ownership ledger and must not be widened by this ticket.
 ```johnny-status
 id = 06
 title = Johnny-owned telemetry storage adapter
-state = OPEN
-stage = A | adapter and composition admission | OPEN
-stage = L | fixture lifecycle and containment | PENDING
-stage = R | reviewer counter-mutation | PENDING
+state = BLOCKED
+stage = A | public lock contract absent at opening | BLOCKED
+stage = L | fixture lifecycle and containment | SUPERSEDED
+stage = R | reviewer counter-mutation | EVIDENCE_PRESERVED
 ```

@@ -4,7 +4,7 @@
 | --- | --- |
 | Feature | `context-load-telemetry` |
 | Worktree | `root/main` |
-| State | `BASELINE_DONE / REVISION_02_APPROVED / REVISION_03_PROVIDER_USAGE_ARCHITECTURE_ACCEPTED / REVIEWER_DECOMPOSITION_AUTHORIZED` |
+| State | `BASELINE_DONE / REVISION_02_APPROVED / REVISION_03_PROVIDER_USAGE_ARCHITECTURE_ACCEPTED / REVISION_04_LOCKED_STORAGE_APPROVED / REVIEWER_DECOMPOSITION_AUTHORIZED` |
 | In scope | Router context measurement, metadata-only JSONL evidence, baseline/router comparison, local validation, and Johnny-owned opaque telemetry storage. |
 | Out of scope | Raw prompt capture, source text or path persistence, provider credentials, a production Agent supervisor, target-local Johnny storage, or changes to target company repositories. |
 
@@ -36,6 +36,11 @@
   telemetry request.
 - Cost and billing claims remain out of scope. Provider token reduction cannot be converted to
   money without a separately approved pricing requirement.
+- Johnny-owned durable telemetry storage is a cross-process boundary. Every operation must
+  acquire an exact opaque-stream lock before its final ownership/lifecycle/containment admission;
+  unavailable ownership is distinct from `LOCK_CONTENDED`, and lock contention performs no
+  stream or ledger effect. The existing un-catalogued `file_lock.py` is not selected or imported
+  by this feature until a delivered catalog card admits it.
 
 ## Related sources
 
@@ -60,3 +65,7 @@ Baseline feature implementation committed as `319ae97` (`feat: add router
 context load telemetry`). Revision 03 now authorizes decomposition of pure storage and
 provider-event-admission tickets. No host usage schema has yet been proven, no real provider usage
 has been collected, and the legacy raw-path API remains non-admitted for controlled targets.
+
+Revision 04 is authorized by `PRD-20260827-041` / `CHG-20260827-041` and
+`ADR-20260827-022`. It blocks Ticket 06's pre-lock candidate from integration and requires a
+strict lock-contract closure before any durable adapter or actual Accounting data path.
