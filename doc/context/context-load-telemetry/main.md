@@ -3,9 +3,9 @@
 | Field | Value |
 | --- | --- |
 | Feature | `context-load-telemetry` |
-| Revision | `09` |
+| Revision | `10` |
 | Worktree | `root/main` |
-| State | `BASELINE_DONE / REVISION_02_APPROVED / REVISION_03_PROVIDER_USAGE_ARCHITECTURE_ACCEPTED / REVISION_04_LOCKED_STORAGE_APPROVED / REVISION_05_CLASSIFIED_FILE_LOCK_CAPABILITY_APPROVED / REVISION_06_LOCK_PORT_ADAPTER_AUTHORIZED / REVISION_07_DURABLE_STORAGE_TRANSACTION_AUTHORIZED / REVISION_08_PER_STREAM_LEDGER_REFINEMENT_ACCEPTED / REVISION_09_LOCK_BOUND_TRANSACTION_PROTOCOL_ACCEPTED / REVIEWER_DECOMPOSITION_AUTHORIZED` |
+| State | `BASELINE_DONE / REVISION_02_APPROVED / REVISION_03_PROVIDER_USAGE_ARCHITECTURE_ACCEPTED / REVISION_04_LOCKED_STORAGE_APPROVED / REVISION_05_CLASSIFIED_FILE_LOCK_CAPABILITY_APPROVED / REVISION_06_LOCK_PORT_ADAPTER_AUTHORIZED / REVISION_07_DURABLE_STORAGE_TRANSACTION_AUTHORIZED / REVISION_08_PER_STREAM_LEDGER_REFINEMENT_ACCEPTED / REVISION_09_LOCK_BOUND_TRANSACTION_PROTOCOL_ACCEPTED / REVISION_10_COMPOSITION_BINDING_AUTHORIZED / REVIEWER_DECOMPOSITION_AUTHORIZED` |
 | In scope | Router context measurement, metadata-only JSONL evidence, baseline/router comparison, local validation, and Johnny-owned opaque telemetry storage. |
 | Out of scope | Raw prompt capture, source text or path persistence, provider credentials, a production Agent supervisor, target-local Johnny storage, or changes to target company repositories. |
 
@@ -74,6 +74,13 @@
   the exact stream lock accepts only a complete pre-state or post-state. Post revisions and
   validation report refs are deterministic metadata digests. The adapter is the sole controlled
   legacy-codec reader and writes canonical records itself; it never calls legacy `append`.
+- Revision 10 authorizes one private, no-effect composition root. It accepts an existing
+  `JohnnyRootLayout`, constructs a fresh `LocalTelemetryOwnershipLedger`,
+  `LocalTelemetryStorageLockAdapter`, and `JohnnyOwnedTelemetryStorageAdapter` over that exact
+  layout, and returns only the existing `TelemetryStoragePort`. Construction does not create a
+  root, ledger, lock, stream, journal, report, cache, singleton or registration. Callers remain
+  dependent on the port and may substitute a test fake; neither the private adapter nor its
+  dependencies become a package export or a new public contract.
 
 ## Related sources
 
@@ -130,3 +137,9 @@ Revision 09 makes no owner product choice and changes no public contract. It rec
 authorized durable transaction protocol as a complete private adapter contract, so the reviewer
 can open one high-assurance adapter ticket rather than ask an implementation owner to infer
 journal phases, revision derivation, validation evidence or failure recovery.
+
+Revision 10 is explicitly authorized by the project owner on 2026-08-27 (Asia/Taipei) to finish
+the already-defined private composition boundary. It is limited to one source-only production
+binding and its direct tests under `ADR-20260827-028`; it does not authorize provisioning, an
+operation invocation, provider/host access, credentials, pricing/cost claims, target-project
+mutation, publication, release or deployment.

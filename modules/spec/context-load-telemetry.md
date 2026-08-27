@@ -3,11 +3,11 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-CONTEXT-LOAD-TELEMETRY-20260803-01KZ5E7F9G1H3J5K7M9N1P3Q5R` |
-| State | `APPROVED_BASELINE / REVISION_02_PROJECT_ISOLATION_APPROVED / REVISION_03_PROVIDER_USAGE_ARCHITECTURE_ACCEPTED / REVISION_04_LOCKED_STORAGE_APPROVED / REVISION_05_CLASSIFIED_FILE_LOCK_CAPABILITY_APPROVED / REVISION_06_LOCK_PORT_ADAPTER_AUTHORIZED / REVISION_07_DURABLE_STORAGE_TRANSACTION_APPROVED / REVISION_08_PER_STREAM_LEDGER_REFINEMENT_ACCEPTED / REVISION_09_LOCK_BOUND_TRANSACTION_PROTOCOL_ACCEPTED / REVIEWER_DECOMPOSITION_AUTHORIZED` |
+| State | `APPROVED_BASELINE / REVISION_02_PROJECT_ISOLATION_APPROVED / REVISION_03_PROVIDER_USAGE_ARCHITECTURE_ACCEPTED / REVISION_04_LOCKED_STORAGE_APPROVED / REVISION_05_CLASSIFIED_FILE_LOCK_CAPABILITY_APPROVED / REVISION_06_LOCK_PORT_ADAPTER_AUTHORIZED / REVISION_07_DURABLE_STORAGE_TRANSACTION_APPROVED / REVISION_08_PER_STREAM_LEDGER_REFINEMENT_ACCEPTED / REVISION_09_LOCK_BOUND_TRANSACTION_PROTOCOL_ACCEPTED / REVISION_10_COMPOSITION_BINDING_AUTHORIZED / REVIEWER_DECOMPOSITION_AUTHORIZED` |
 | Owner | `root/main` |
 | Context | `doc/context/context-load-telemetry/main.md` |
 | PRD reference | `PRD-20260803-006` |
-| Change | `CHG-20260803-006`; project-isolation revision `CHG-20260815-024` / `ADR-20260815-013`; provider-usage architecture `ADR-20260824-019`; lock-bound storage `CHG-20260827-041` / `ADR-20260827-022`; classified lock capability `ADR-20260827-024`; durable storage transaction `ADR-20260827-025`; per-stream ledger refinement `ADR-20260827-026`; transaction protocol `ADR-20260827-027` |
+| Change | `CHG-20260803-006`; project-isolation revision `CHG-20260815-024` / `ADR-20260815-013`; provider-usage architecture `ADR-20260824-019`; lock-bound storage `CHG-20260827-041` / `ADR-20260827-022`; classified lock capability `ADR-20260827-024`; durable storage transaction `ADR-20260827-025`; per-stream ledger refinement `ADR-20260827-026`; transaction protocol `ADR-20260827-027`; composition binding `ADR-20260827-028` |
 
 ## Goal
 
@@ -300,6 +300,18 @@ out of this closure. It is the sole controlled caller of `JsonlContextUsageStore
 calls its path-taking `append`. It strictly decodes existing records then writes canonical
 metadata-only JSONL itself.
 
+### Revision 10 composition binding
+
+One private composition module may expose
+`compose_johnny_owned_telemetry_storage(layout: JohnnyRootLayout) -> TelemetryStoragePort`.
+It receives an already-valid injected layout and, per factory call, constructs one fresh
+`LocalTelemetryOwnershipLedger`, one fresh `LocalTelemetryStorageLockAdapter`, and one fresh
+`JohnnyOwnedTelemetryStorageAdapter` with that exact layout. The factory is the sole production
+binding point for those three private classes. It creates no filesystem state, performs no
+storage operation, caches no instance, registers no identity, reads no environment and changes
+no public DTO, package export or caller contract. Production callers depend only on
+`TelemetryStoragePort`; test callers may inject a fake port without invoking composition.
+
 For one exact immutable stream identity, private state is:
 
 ```text
@@ -459,6 +471,11 @@ unreachable from any controlled-target composition root.
 20. `APPEND`, `READ`, `VALIDATE`, `DETACH` and `UNINSTALL` preserve the existing finite public
     response matrix. Post revisions and `VALIDATE` report refs are deterministic opaque metadata;
     no stream path, journal detail, raw text or persisted validation report reaches a response.
+21. The sole production composition factory returns a fresh `TelemetryStoragePort` whose private
+    adapter, ledger and lock dependencies share the one injected `JohnnyRootLayout`. Factory
+    construction itself creates no Johnny-root, ledger, lock, stream, journal or report effect;
+    it does not execute an operation, provision an identity, cache a port or widen the existing
+    public storage contract.
 
 ## Approval
 
@@ -513,6 +530,12 @@ authorizes one lock-bound transaction adapter decomposition with disposable-root
 not composition, provisioning, provider/host invocation, credential access, pricing/cost claim,
 target-project mutation, publication, release or deployment.
 
+The project owner additionally authorized Revision 10's private composition binding on
+2026-08-27 (Asia/Taipei). It authorizes exactly one no-effect production factory and its direct
+tests under `ADR-20260827-028`; it does not authorize a public contract/export, provisioning,
+operation invocation, provider/host access, credentials, pricing/cost claim, target-project
+mutation, publication, release or deployment.
+
 ## Revision signatures
 
 | Date | AI / worktree / baseline | Summary |
@@ -526,3 +549,4 @@ target-project mutation, publication, release or deployment.
 | 2026-08-27 | Project owner / `main` / `d2e899e341edcc3a31529e80e2f4e3526a9fd100` | Authorized Revision 07: accept only pre-provisioned owned storage and recoverable all-or-nothing durable transactions for the future controlled storage adapter. |
 | 2026-08-27 | Architecture owner / `main` / `7d0c927f83467f54d5a68b18024941643f6341a4` | Recorded Revision 08's architecture-conformant per-stream ledger refinement: exact stream locks must serialize the only ledger entry they can advance, and restart recovery needs immutable-identity lookup before ordinary revision admission. |
 | 2026-08-27 | Architecture owner / `main` / `da3e1d6f4b4f5a42e2d544dea6aebcd1f8e1a1d2` | Recorded Revision 09's closed private lock-bound transaction protocol: journal phases/recovery, deterministic revisions, five-operation response behavior and validation-report fingerprinting. |
+| 2026-08-27 | Project owner / `main` / `5d228ea55f06a9fae223c8c8c22d82d80671c462` | Authorized Revision 10: one source-only private composition factory that binds the delivered ledger, lock and transaction adapter without a storage effect or public-surface change. |
