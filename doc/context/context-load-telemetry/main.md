@@ -3,9 +3,9 @@
 | Field | Value |
 | --- | --- |
 | Feature | `context-load-telemetry` |
-| Revision | `10` |
+| Revision | `11` |
 | Worktree | `root/main` |
-| State | `BASELINE_DONE / REVISION_02_APPROVED / REVISION_03_PROVIDER_USAGE_ARCHITECTURE_ACCEPTED / REVISION_04_LOCKED_STORAGE_APPROVED / REVISION_05_CLASSIFIED_FILE_LOCK_CAPABILITY_APPROVED / REVISION_06_LOCK_PORT_ADAPTER_AUTHORIZED / REVISION_07_DURABLE_STORAGE_TRANSACTION_AUTHORIZED / REVISION_08_PER_STREAM_LEDGER_REFINEMENT_ACCEPTED / REVISION_09_LOCK_BOUND_TRANSACTION_PROTOCOL_ACCEPTED / REVISION_10_COMPOSITION_BINDING_AUTHORIZED / REVIEWER_DECOMPOSITION_AUTHORIZED` |
+| State | `BASELINE_DONE / REVISION_02_APPROVED / REVISION_03_PROVIDER_USAGE_ARCHITECTURE_ACCEPTED / REVISION_04_LOCKED_STORAGE_APPROVED / REVISION_05_CLASSIFIED_FILE_LOCK_CAPABILITY_APPROVED / REVISION_06_LOCK_PORT_ADAPTER_AUTHORIZED / REVISION_07_DURABLE_STORAGE_TRANSACTION_AUTHORIZED / REVISION_08_PER_STREAM_LEDGER_REFINEMENT_ACCEPTED / REVISION_09_LOCK_BOUND_TRANSACTION_PROTOCOL_ACCEPTED / REVISION_10_COMPOSITION_BINDING_AUTHORIZED / REVISION_11_PROVISIONING_TOPOLOGY_DECIDED / SPEC_REVISION_PENDING_APPROVAL` |
 | In scope | Router context measurement, metadata-only JSONL evidence, baseline/router comparison, local validation, and Johnny-owned opaque telemetry storage. |
 | Out of scope | Raw prompt capture, source text or path persistence, provider credentials, a production Agent supervisor, target-local Johnny storage, or changes to target company repositories. |
 
@@ -81,6 +81,15 @@
   root, ledger, lock, stream, journal, report, cache, singleton or registration. Callers remain
   dependent on the port and may substitute a test fake; neither the private adapter nor its
   dependencies become a package export or a new public contract.
+- Revision 11 separates the only three relevant responsibilities. Host Bootstrap may establish
+  the per-user Johnny root but never a telemetry identity. A Router-owned private runtime
+  capability is the sole future source of an owned ledger entry after it has an authorized
+  project/ticket binding; it derives the stream locator and initial revision internally, holds
+  the exact identity lock and never treats app-caller identity or a path as authority. The
+  existing composition factory remains a consumer only: it binds its private dependencies and
+  rejects an absent entry through `STORAGE_OWNERSHIP_MISMATCH`; it cannot bootstrap or provision.
+  The decision is architecture-only until the revised SPEC and a ticket authorize a concrete
+  owned-state effect.
 
 ## Related sources
 
@@ -143,3 +152,10 @@ the already-defined private composition boundary. It is limited to one source-on
 binding and its direct tests under `ADR-20260827-028`; it does not authorize provisioning, an
 operation invocation, provider/host access, credentials, pricing/cost claims, target-project
 mutation, publication, release or deployment.
+
+Revision 11 records the owner-selected provisioning topology under `ADR-20260827-029`: Host
+Bootstrap owns only root layout readiness; the Router is the only future runtime delegator for a
+private owned-entry provision; and the composition factory consumes an already provisioned entry
+only. No source or host effect is admitted by this architecture decision alone. The next legal
+action is SPEC revision approval followed by a separately admitted source-only Router contract
+ticket; any durable provisioning closure remains an explicitly authorized later effect.

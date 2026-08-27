@@ -28,3 +28,4 @@
 | [ADR-20260827-026-per-stream-ownership-ledger-readiness.md](ADR-20260827-026-per-stream-ownership-ledger-readiness.md) | `ACCEPTED` | 將私有 ledger 分割為 exact-stream entry，令 per-stream lock 真正序列化 CAS；另提供 recovery-only immutable-identity lookup。 |
 | [ADR-20260827-027-lock-bound-telemetry-transaction-protocol.md](ADR-20260827-027-lock-bound-telemetry-transaction-protocol.md) | `ACCEPTED` | 封閉私有 journal/recovery、deterministic revision 與五項 storage operation adapter 協定，不改公開 contracts。 |
 | [ADR-20260827-028-private-telemetry-storage-composition.md](ADR-20260827-028-private-telemetry-storage-composition.md) | `ACCEPTED` | 將已交付的 private ledger、lock 與 transaction adapter 綁入唯一 no-effect composition factory，不擴張公開 surface。 |
+| [ADR-20260827-029-host-bootstrap-router-provisioning-and-composition.md](ADR-20260827-029-host-bootstrap-router-provisioning-and-composition.md) | `ACCEPTED` | 將 root readiness、runtime owned-entry delegation 與 storage composition 收斂為三個不可互換的私有責任。 |

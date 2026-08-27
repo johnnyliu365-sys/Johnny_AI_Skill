@@ -3,11 +3,11 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-CONTEXT-LOAD-TELEMETRY-20260803-01KZ5E7F9G1H3J5K7M9N1P3Q5R` |
-| State | `APPROVED_BASELINE / REVISION_02_PROJECT_ISOLATION_APPROVED / REVISION_03_PROVIDER_USAGE_ARCHITECTURE_ACCEPTED / REVISION_04_LOCKED_STORAGE_APPROVED / REVISION_05_CLASSIFIED_FILE_LOCK_CAPABILITY_APPROVED / REVISION_06_LOCK_PORT_ADAPTER_AUTHORIZED / REVISION_07_DURABLE_STORAGE_TRANSACTION_APPROVED / REVISION_08_PER_STREAM_LEDGER_REFINEMENT_ACCEPTED / REVISION_09_LOCK_BOUND_TRANSACTION_PROTOCOL_ACCEPTED / REVISION_10_COMPOSITION_BINDING_AUTHORIZED / REVIEWER_DECOMPOSITION_AUTHORIZED` |
+| State | `APPROVED_BASELINE / REVISION_02_PROJECT_ISOLATION_APPROVED / REVISION_03_PROVIDER_USAGE_ARCHITECTURE_ACCEPTED / REVISION_04_LOCKED_STORAGE_APPROVED / REVISION_05_CLASSIFIED_FILE_LOCK_CAPABILITY_APPROVED / REVISION_06_LOCK_PORT_ADAPTER_AUTHORIZED / REVISION_07_DURABLE_STORAGE_TRANSACTION_APPROVED / REVISION_08_PER_STREAM_LEDGER_REFINEMENT_ACCEPTED / REVISION_09_LOCK_BOUND_TRANSACTION_PROTOCOL_ACCEPTED / REVISION_10_COMPOSITION_BINDING_AUTHORIZED / REVISION_11_DRAFT_PROVISIONING_TOPOLOGY / SPEC_APPROVAL_REQUIRED` |
 | Owner | `root/main` |
 | Context | `doc/context/context-load-telemetry/main.md` |
 | PRD reference | `PRD-20260803-006` |
-| Change | `CHG-20260803-006`; project-isolation revision `CHG-20260815-024` / `ADR-20260815-013`; provider-usage architecture `ADR-20260824-019`; lock-bound storage `CHG-20260827-041` / `ADR-20260827-022`; classified lock capability `ADR-20260827-024`; durable storage transaction `ADR-20260827-025`; per-stream ledger refinement `ADR-20260827-026`; transaction protocol `ADR-20260827-027`; composition binding `ADR-20260827-028` |
+| Change | `CHG-20260803-006`; project-isolation revision `CHG-20260815-024` / `ADR-20260815-013`; provider-usage architecture `ADR-20260824-019`; lock-bound storage `CHG-20260827-041` / `ADR-20260827-022`; classified lock capability `ADR-20260827-024`; durable storage transaction `ADR-20260827-025`; per-stream ledger refinement `ADR-20260827-026`; transaction protocol `ADR-20260827-027`; composition binding `ADR-20260827-028`; provisioning topology `ADR-20260827-029` |
 
 ## Goal
 
@@ -312,6 +312,34 @@ storage operation, caches no instance, registers no identity, reads no environme
 no public DTO, package export or caller contract. Production callers depend only on
 `TelemetryStoragePort`; test callers may inject a fake port without invoking composition.
 
+### Revision 11 provisioning topology (draft)
+
+The system has three deliberately separate authority seams:
+
+```text
+Host Bootstrap --root readiness only--> JohnnyRootLayout
+Router --authorized private delegation--> owned ledger-entry provisioner
+composition factory --consume only--> TelemetryStoragePort
+```
+
+Host Bootstrap may establish or verify the owned per-user root as part of a host lifecycle. It
+does not choose a project, stream, storage reference, ledger reference, stream locator or initial
+revision, and it does not create a telemetry ownership entry.
+
+The only future provision request is a Router-private, strongly typed command bound to an
+already authorized project/ticket identity. The Router, rather than an application caller,
+derives every opaque storage coordinate, the initial revision and the internal relative stream
+locator. The future adapter must acquire the exact identity lock and atomically admit either a
+new matching entry or a finite existing-entry outcome. It must reject raw paths, an arbitrary
+caller-selected identity, malformed/replayed/mismatched authority and all writes outside the
+Johnny root. No public storage DTO or `TelemetryStoragePort` operation gains a create/register/
+repair/discover branch.
+
+`compose_johnny_owned_telemetry_storage` remains unchanged: its construction has no effect and
+cannot invoke bootstrap, Router delegation or provision. Its port continues to reject a missing
+ledger entry with `STORAGE_OWNERSHIP_MISMATCH` before a stream or journal effect. Test callers
+remain able to inject a fake port.
+
 For one exact immutable stream identity, private state is:
 
 ```text
@@ -476,6 +504,10 @@ unreachable from any controlled-target composition root.
     construction itself creates no Johnny-root, ledger, lock, stream, journal or report effect;
     it does not execute an operation, provision an identity, cache a port or widen the existing
     public storage contract.
+22. Host Bootstrap root readiness never creates a telemetry ledger entry. Only a future
+    Router-owned private provisioning capability may create one, from an authorized opaque
+    project/ticket binding, without accepting a raw path or caller-chosen ledger location; the
+    composition factory and every `TelemetryStoragePort` operation remain non-provisioning.
 
 ## Approval
 
@@ -535,6 +567,14 @@ The project owner additionally authorized Revision 10's private composition bind
 tests under `ADR-20260827-028`; it does not authorize a public contract/export, provisioning,
 operation invocation, provider/host access, credentials, pricing/cost claim, target-project
 mutation, publication, release or deployment.
+
+The project owner selected Revision 11's responsibility topology on 2026-08-27
+(Asia/Taipei): Host Bootstrap provisions only the Johnny root, the Router owns runtime
+delegation, and the telemetry composition factory consumes an already provisioned identity. This
+records the required architecture and a draft source-only Router contract boundary. It does not
+approve a durable ledger-entry write, host bootstrap change, provider/host invocation,
+target-project mutation, publication, release or deployment. The revised SPEC and each later
+effect ticket require their own approval.
 
 ## Revision signatures
 
