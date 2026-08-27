@@ -6,7 +6,7 @@
 | Ticket / closure | `10-private-ownership-ledger-cas` / `CLOSURE-CONTEXT-TELEMETRY-10-OWNERSHIP-LEDGER-CAS` revision 01 |
 | Source baseline / final candidate | `23f4ae1ff68df48a7e02368690cc86236b3abe1d` / `a06c0fd5d2dc78e8b77eb671d9a304b74a0202a6` |
 | Reviewer | `ticket-review` semantic profile — Terra/xhigh, root session |
-| Conclusion | `APPROVED / INTEGRATED`; authority push readback pending this docs-only closure commit |
+| Conclusion | `APPROVED / INTEGRATED / AUTHORITY_PUSH_CONFIRMED` |
 
 ## Admission and scope
 
@@ -61,3 +61,8 @@ closure must compose this private ledger with the delivered lock port, durable t
 and strict legacy-codec boundary for all five storage operations. It must add independent-process,
 TOCTOU and restart-recovery evidence; it may not reopen Ticket 06 or weaken Ticket 10's
 pre-provisioning/CAS invariants.
+
+The docs-only closure record `9c2dddacad2e0f9d29d3006845f36492557a8057` was non-force pushed
+to `origin/main`; direct remote SHA readback matched it exactly. This proves the closure docs are
+authority-integrated. The implementation candidate remains the distinct ancestor
+`a06c0fd5d2dc78e8b77eb671d9a304b74a0202a6` recorded above.

@@ -5,8 +5,8 @@
 | Artifact ID / kind | `TICKET-CONTEXT-TELEMETRY-10-OWNERSHIP-LEDGER-CAS` / `IMPLEMENTATION_TICKET` |
 | SPEC / acceptance source | `SPEC-AI-WORKFLOW-CONTEXT-LOAD-TELEMETRY-20260803-01KZ5E7F9G1H3J5K7M9N1P3Q5R` Revision 07 / AC-06 through AC-08 and AC-16 |
 | Requirement / Context / ADR | `PRD-20260827-041` / `CHG-20260827-041` / `doc/context/context-load-telemetry/main.md` Revision 07 / `ADR-20260827-022` through `ADR-20260827-025` |
-| State / closure | `CLOSED / DONE / APPROVED / INTEGRATED`; `CLOSURE-CONTEXT-TELEMETRY-10-OWNERSHIP-LEDGER-CAS`, revision 01 |
-| Document revision | `02` — completion evidence only; the frozen acceptance closure remains revision 01. |
+| State / closure | `CLOSED / DONE / APPROVED / INTEGRATED / AUTHORITY_PUSH_CONFIRMED`; `CLOSURE-CONTEXT-TELEMETRY-10-OWNERSHIP-LEDGER-CAS`, revision 01 |
+| Document revision | `03` — completion and authority-readback evidence only; the frozen acceptance closure remains revision 01. |
 | Approval authority | Project owner, 2026-08-27 (Asia/Taipei): authorized Revision 07's private pre-provisioned ownership-ledger and compare-and-swap substrate. |
 | Source baseline / dependency | `8a41419d84001105d38814329e23f214adf43c36`; candidate must descend from the committed ticket authority. Ticket 09 (`096d471`) supplies the local exact lock port. Ticket 06 remains `SUPERSEDED` and non-integrable. |
 | Control owner / reviewer | `ticket-review` semantic profile — Terra/xhigh. |
@@ -201,3 +201,8 @@ The review record is
 the OLA/OLM, strict-type, independent reviewer counter-mutation and full-suite baseline evidence.
 The succeeding lock-bound stream transaction/recovery and composition closures remain separate
 work; this ticket neither implements nor authorizes them.
+
+The closure record commit `9c2dddacad2e0f9d29d3006845f36492557a8057` was non-force pushed to
+`origin/main`; a fresh direct remote readback returned that exact SHA. The reviewed candidate
+remains ancestor evidence at `a06c0fd5d2dc78e8b77eb671d9a304b74a0202a6`; no claim is made that
+the two non-equivalent commits are the same object.
