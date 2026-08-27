@@ -5,8 +5,8 @@
 | Artifact ID / kind | `TICKET-CONTEXT-TELEMETRY-09-LOCAL-LOCK-PORT` / `IMPLEMENTATION_TICKET` |
 | SPEC / acceptance source | `SPEC-AI-WORKFLOW-CONTEXT-LOAD-TELEMETRY-20260803-01KZ5E7F9G1H3J5K7M9N1P3Q5R` Revision 06 / AC-06, AC-13 through AC-15 |
 | Requirement / Context / ADR | `PRD-20260827-041` / `CHG-20260827-041` / `doc/context/context-load-telemetry/main.md` Revision 06 / `ADR-20260827-022` through `ADR-20260827-024` |
-| State / closure | `OPEN / APPROVED / READY_LOW_MODEL`; `CLOSURE-CONTEXT-TELEMETRY-09-LOCAL-LOCK-PORT`, revision 04 |
-| Document revision | `04` — admission corrections preserve the pure contract package surface, keep worktree-state proof out of a persisted regression test, and declare the gate-required modification allow-list. |
+| State / closure | `CLOSED / DONE / APPROVED / INTEGRATED / AUTHORITY_PUSH_CONFIRMED`; `CLOSURE-CONTEXT-TELEMETRY-09-LOCAL-LOCK-PORT`, revision 04 |
+| Document revision | `05` — completion evidence only; the frozen acceptance closure remains revision 04. |
 | Approval authority | Project owner, 2026-08-27 (Asia/Taipei): authorized the one independently scoped local `TelemetryStorageLockPort` closure recorded by Specification Revision 06. |
 | Source baseline / dependency | `dda74a25a5c83cf09500b886701c5e99d4b04c20`; the candidate must also descend from the committed current-main ticket authority. Ticket 07 (`0ded2ed`) freezes lock DTOs, Ticket 08 (`60d2ab0`) delivers the classified lock, and Revision 06 catalogs `path-containment`. Ticket 06 remains blocked and non-integrable. |
 | Control owner / reviewer | `ticket-review` semantic profile — Terra/xhigh. |
@@ -227,11 +227,32 @@ evidence; `BLOCKED -> HALT` with the failed cell; or `CHANGE_DETECTED -> REQUIRE
 No return authorizes a ledger/stream codec effect, storage-operation implementation, provider or
 host use, cost claim, target mutation, integration, push, publication, release, or deployment.
 
+## Completion record
+
+Luna/xhigh returned `ImplementationReturn.COMPLETED -> ACTION_COMPLETED` from the one
+same-lifetime lane. Terra/xhigh reviewed the exact three-path candidate, repeated the focused,
+strict-type and compile gates, and performed an independent retained-map-key reverse mutation;
+LPA1, LPA2, LPA3, LPA4, and LPA6 turned red before byte-exact restoration returned the focused
+suite green.
+
+Revision 03 corrected a transient-worktree LPA8 assertion before candidate commit. Revision 04
+then corrected the gate schema by declaring the same authorized paths as both `modify` and
+`create`; the initial gate refusal was `BOUNDARY_UNPARSABLE` and changed no integration ref. The
+reviewer merged that ticket-only correction into the committed candidate without rewriting its
+implementation commit. `admit_document_mutation` returned `INTEGRATED` with
+`integrated_commit=096d471eb545ef5d8c642da6247601679c996b9f`, exactly the final candidate SHA.
+A non-force push to `origin/main` was directly read back as the same SHA.
+
+The whole suite completed with `1815 passed`, `31 skipped`, and `3778 subtests passed`; the three
+remaining failures reproduce on clean main and are recorded in the formal review as
+plugin-publication, refusal-roster, and pytest-version baseline/environment defects. The formal
+review record is `doc/reviews/context-load-telemetry/09-local-telemetry-storage-lock-port-code-review.md`.
+
 ```johnny-status
 id = 09
 title = Local telemetry-storage lock port
-state = OPEN
-stage = C | Revision 06 lock-port contract and TDD matrix | READY_LOW_MODEL
-stage = M | Luna/xhigh same-lifetime implementation | PENDING
-stage = R | Terra/xhigh review and guarded integration | PENDING
+state = DONE
+stage = C | Revision 06 lock-port contract and TDD matrix | DONE
+stage = M | Luna/xhigh same-lifetime implementation | DONE
+stage = R | Terra/xhigh review and guarded integration | DONE
 ```
