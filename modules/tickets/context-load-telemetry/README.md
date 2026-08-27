@@ -8,3 +8,4 @@
 | [04-revision-03-telemetry-architecture-admission](04-revision-03-telemetry-architecture-admission.md) | `TICKET_ADMISSION_DECISION` | `01` | `c249a5b8885b73a8cb08b4940c4e9a378b89084f683f7e939a95026f421e664a` | `CLOSED` | `DECOMPOSITION_AUTHORIZED / NO_EFFECT` |
 | [05-opaque-storage-port-contracts](05-opaque-storage-port-contracts.md) | `IMPLEMENTATION_TICKET` | `04` | `3dcbcfb53bb7d04ca6136ba547445cbb4f97112e060ce07fd857a954f4c3c9cb` | `CLOSED` | `DONE / APPROVED / INTEGRATED` — `e509174` |
 | [06-johnny-owned-storage-adapter](06-johnny-owned-storage-adapter.md) | `IMPLEMENTATION_TICKET` | `02` | `628577dc52467f0c8ff76226fba7dd8f06a014d240d31468a9269a1d8bbc7556` | `BLOCKED` | `SUPERSEDED_BY_REVISION_04_LOCK_CONTRACT / EVIDENCE_PRESERVED` |
+| [07-lock-bound-storage-contracts](07-lock-bound-storage-contracts.md) | `IMPLEMENTATION_TICKET` | `01` | `c3633b14d538265b809d0b0031c9589e4108a251b6d1ab8676d3526c1ef09bc4` | `ACTIVE` | `OPEN / READY_LOW_MODEL / NO_EFFECT` |
