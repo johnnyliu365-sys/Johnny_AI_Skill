@@ -20,7 +20,7 @@
 | `05-ui-design-source-routing` | Optional design-source capability decision kernel. | `CANDIDATE / NON_DISPATCHABLE` | R04 approved/integrated |
 | `06-router-policy-acceptance` | Integrated Profile/Router acceptance and metadata-only serialization closure. | `CANDIDATE / NON_DISPATCHABLE` | R01-R05 approved/integrated |
 | [project-isolation](project-isolation/README.md) | Revision 06 project-isolation partition, amended by the approved Revision 07 host-gateway contract. | `R07A_BLOCKED_REQUIREMENT_CHANGED` | revision `02`; SHA-256 `9ce090d772813047f47689be76b9f80bd7bceba53659008366e9209f99f4c416`; `TAD-ADAPTIVE-R07-HOST-CAPABILITY-01` is blocked by `CHG-20260822-032` and is not an authorized implementation child |
-| [09a-managed-artifact-planning-contract](09a-managed-artifact-planning-contract.md) | One pure tagged planner validates complete present/absent path transitions, document bindings and every induced selected-ancestor mutation through root. | `DRAFT / OWNER_APPROVAL_REQUIRED / NON_DISPATCHABLE` | SPEC Revision 10 approved; authority baseline `50476a658e33074d9b9c90db17188725dde544fe`; exact ticket approval pending |
+| [09a-managed-artifact-planning-contract](09a-managed-artifact-planning-contract.md) | One pure tagged planner validates complete present/absent path transitions, document bindings and every induced selected-ancestor mutation through root. | `OPEN / APPROVED / DISPATCH_READY` | Revision 02 records owner approval of exact ticket authority `cf332cb854968383803fac890690d6e29dcc0c51`; Luna/xhigh same-lifetime lane |
 
 R02C1, R02C2, R02C2A, R02C3 and R03 are complete. R04 is the next serial candidate, but it
 remains `CANDIDATE / NON_DISPATCHABLE` until its own approved ticket freeze, handoff and receipt
