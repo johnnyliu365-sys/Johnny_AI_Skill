@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2` |
-| Status | `REVISION_05_ROUTER_PHASE_APPROVED / REVISION_06_PROJECT_ISOLATION_APPROVED / REVISION_07_HOST_GATEWAY_APPROVED / REVISION_09_PROCEDURAL_MANAGED_ARTIFACT_BEHAVIOR_APPROVED / REVISION_10_MUTATION_STATE_ALGEBRA_APPROVED / REVISION_11_RECOVERABLE_RUNTIME_APPROVED / R09A_TICKET_OPENING_AUTHORIZED / R09B_SUCCESSOR_TICKET_OPENING_AUTHORIZED / OTHER_APPROVED_SCOPES_UNCHANGED` |
+| Status | `REVISION_05_ROUTER_PHASE_APPROVED / REVISION_06_PROJECT_ISOLATION_APPROVED / REVISION_07_HOST_GATEWAY_APPROVED / REVISION_09_PROCEDURAL_MANAGED_ARTIFACT_BEHAVIOR_APPROVED / REVISION_10_MUTATION_STATE_ALGEBRA_APPROVED / REVISION_11_RECOVERABLE_RUNTIME_APPROVED / R09A_TICKET_OPENING_AUTHORIZED / R09B1_COMPLETE / R09B2_RECOVERABLE_WRITER_TICKET_OPENING_AUTHORIZED / OTHER_APPROVED_SCOPES_UNCHANGED` |
 | Author / baseline | Codex architecture owner / `5e351ce9d57af321dfb14c6b102e9749da7efc25` |
 | Context | `doc/context/adaptive-project-orchestration/main.md` (prior sealed facts), `doc/context/adaptive-project-orchestration/adaptive-project-orchestration-r09-procedural-managed-artifact-behavior.md` (`SEALED / REVISION_09`), `doc/context/adaptive-project-orchestration/adaptive-project-orchestration-r11-recoverable-managed-artifact-runtime.md` (`SEALED / REVISION_11`) and `doc/context/host-gateway-workspace-binding/codex-desktop-readback.md` (`SEALED`) |
 | PRD | `PRD-20260813-016`, `PRD-20260813-017`, `PRD-20260814-019`, `PRD-20260815-020`, `PRD-20260815-022`, `PRD-20260815-024`, `PRD-20260822-031`, `PRD-20260828-043`, `PRD-20260828-044` |
@@ -896,9 +896,11 @@ requires its own approved ticket before dispatch:
 1. R09A — the pure tagged-request planner returns one complete
    present/absent path-transition plan, including every induced selected ancestor mutation through
    root, or one finite no-effect rejection.
-2. R09B — transactional writer applies one admitted plan atomically and proves every affected
-   candidate path through the existing resolver before success. R09B is blocked and superseded for
-   dispatch by the Revision 11 successor until that exact SPEC revision is owner-approved.
+2. R09B — the Revision 11 successor closure is serial: R09B1 supplies its strict public outcome
+   contracts, then R09B2 owns the recoverable transactional writer. R09B2 applies one admitted
+   plan atomically, persists private recovery evidence before its first effect, and proves every
+   affected candidate path through the existing resolver before success. Legacy R09B remains
+   blocked and is never dispatch authority.
 3. R09C — repository admission derives affected managed paths from candidate diff and rejects an
    invalid candidate tree before integration without scanning unrelated source-only candidates.
 4. R09D — Codex plugin adapter routes the managed operation, reliably classifiable direct-write
@@ -968,9 +970,11 @@ Only reviewer opening of R09A is now authorized; ticket approval and dispatch re
 Revision 11 records the project owner's recovery, runtime trust-boundary and canonical-resolution
 decisions under `CHG-20260828-044` / `ADR-20260828-032`. It supersedes no completed R09A behavior
 and preserves the blocked R09B candidates as evidence. The project owner approved the exact Revision
-11 draft at `e451cf13a1defe40f5a036a09805dcfc20c751f2`; this authorizes reviewer opening of one
-successor ticket only. It does not open an implementation lane or authorize Git mutation, host
-adapter, publication or installation effects.
+11 draft at `e451cf13a1defe40f5a036a09805dcfc20c751f2`; that first successor authority was consumed
+by the completed R09B1 public-contract slice. On 2026-08-28, after accepting R09B1's recorded
+evidence-ordering deviation, the owner separately authorized opening one R09B2 recoverable-writer
+ticket. This does not open an implementation lane or authorize Git mutation, host adapter,
+publication or installation effects.
 
 ## Revision signatures
 
@@ -987,3 +991,4 @@ adapter, publication or installation effects.
 | 2026-08-28 | Project owner / exact candidate `b0a973a8a66d0dbbd88e94990eaa8dc6716b7954` | Approved Revision 10 mutation-state and ancestor-cascade correction; authorized reviewer opening of R09A only. |
 | 2026-08-28 | Codex architecture owner / `control/adaptive-r09b-recovery-architecture` / `5e351ce9d57af321dfb14c6b102e9749da7efc25` | Drafted Revision 11 recoverable runtime correction from the owner's three architecture decisions; exact SPEC owner approval pending. |
 | 2026-08-28 | Project owner / exact candidate `e451cf13a1defe40f5a036a09805dcfc20c751f2` | Approved Revision 11 recoverable runtime correction; authorized reviewer opening of one R09B successor ticket only. |
+| 2026-08-28 | Project owner / current owner authority | After R09B1 completed and its evidence-ordering deviation was explicitly accepted, authorized reviewer opening of one R09B2 recoverable-writer ticket only; approval, dispatch and effects remain separate. |
