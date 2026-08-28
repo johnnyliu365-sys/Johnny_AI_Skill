@@ -5,13 +5,14 @@
 | Artifact ID / kind | `TICKET-ADAPTIVE-R09A-MANAGED-ARTIFACT-PLANNING` / `IMPLEMENTATION_TICKET` |
 | SPEC / acceptance source | `SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2` Revision 10 / AC-17R9, AC-17R10 and TDD items 22–23 |
 | Requirement / Context / ADR | `PRD-20260828-043` / `CHG-20260828-043` / `CTX-ADAPTIVE-PROJECT-ORCHESTRATION-20260828-09` (`bf077fdbce324527b7f95ea8382967a12ef42ad9ef6fb74c98ce020186cf8bfc`) / `ADR-20260828-031` |
-| State / closure | `OPEN / APPROVED / DISPATCH_READY`; `CLOSURE-ADAPTIVE-R09A-MANAGED-ARTIFACT-PLANNING-01`, ticket revision `r09a-02` |
-| Document revision | `02` |
+| State / closure | `CLOSED / DONE / APPROVED / INTEGRATED / AUTHORITY_PUSH_CONFIRMED`; `CLOSURE-ADAPTIVE-R09A-MANAGED-ARTIFACT-PLANNING-01`, ticket revision `r09a-03` |
+| Document revision | `03` |
 | Approval authority | Project owner, 2026-08-28 (Asia/Taipei): approved the exact Revision 01 ticket at `cf332cb854968383803fac890690d6e29dcc0c51` and authorized its one same-lifetime Luna/xhigh implementation lane. |
 | Source baseline / dependency | `cf332cb854968383803fac890690d6e29dcc0c51`; the candidate must descend from the approval-bearing committed `main`, which in turn descends from this exact ticket authority. Read-only dependencies are `library/workflow_router/artifact_tree.py`, its strict contracts in `library/workflow_router/contracts.py`, and the current target-document contracts. |
 | Control owner / reviewer | `ticket-review` semantic profile — Terra/xhigh; sole Agent orchestrator and independent reviewer. |
 | Implementation owner | `implementation-standard` semantic profile — Luna/xhigh; `READY_LOW_MODEL` only after exact ticket approval, one synchronous owner lane and no helper. |
-| Agent Context / worktree / branch | `SIDE-CONTEXT-ADAPTIVE-R09A-20260828-01`; reviewer allocates `.worktrees/adaptive-r09a-managed-artifact-planning` on `implement/adaptive-r09a-managed-artifact-planning` from the approval-bearing committed `main`. This same-lifetime lane requires no runner, queue, receipt, descriptor, gateway or host workspace readback. |
+| Agent Context / worktree / branch | `SIDE-CONTEXT-ADAPTIVE-R09A-20260828-01` is closed after candidate `91da8135e301992635d716c6cefa068ad950d807`; `.worktrees/adaptive-r09a-managed-artifact-planning` / `implement/adaptive-r09a-managed-artifact-planning`. This same-lifetime lane used no runner, queue, receipt, descriptor, gateway or host workspace readback. |
+| Review / integration | `doc/reviews/adaptive-project-orchestration/09a-managed-artifact-planning-code-review.md`; Terra/xhigh `APPROVED`; `admit_document_mutation` integrated exact candidate `91da8135e301992635d716c6cefa068ad950d807`, then non-force push and direct `origin/main` readback confirmed the same SHA. |
 | Delivery / language | `POC / STANDARD`; Python 3.11, frozen strict Pydantic contracts, complete annotations, `mypy --strict`, deterministic pure proof and independent review. |
 | XSS / effects | `XSS_NOT_APPLICABLE`. Pure in-process planning over caller-supplied metadata and ephemeral candidate bytes; no filesystem, Git, host, provider, process, network, environment, queue, receipt, runner, hook, publication, installation or target mutation. |
 
@@ -248,6 +249,13 @@ installation or deployment.
 ## Completion record
 
 The owner approved exact ticket Revision 01 at
-`cf332cb854968383803fac890690d6e29dcc0c51`. Revision 02 records that authority and makes the one
-declared synchronous implementation lane dispatch-ready. No first-red, source mutation, review,
-candidate commit, document-mutation admission, push or effect currently exists.
+`cf332cb854968383803fac890690d6e29dcc0c51`; Revision 02 recorded the dispatch authority. The
+Luna/xhigh implementation owner returned `ImplementationReturn.COMPLETED -> ACTION_COMPLETED`
+without committing. The Terra/xhigh reviewer closed seven exact MAP1/MAP2/MAP4/MAP6/MAP7 defects,
+performed an independent root-cascade counter-mutation, and committed candidate
+`91da8135e301992635d716c6cefa068ad950d807`. Focused tests were `16 passed`; incoming regressions
+were `15 passed, 35 subtests passed`; strict mypy and compilation passed. The document-mutation
+gate integrated that exact SHA, and non-force push plus direct remote readback confirmed
+`origin/main = 91da8135e301992635d716c6cefa068ad950d807`. R09A remains pure planning only and grants no R09B,
+writer, repository admission, host adapter, installation, publication, release or deployment
+authority.
