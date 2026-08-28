@@ -10,6 +10,7 @@ from dataclasses import dataclass
 from enum import Enum
 import ctypes
 import hashlib
+import inspect
 import json
 import os
 from pathlib import Path
@@ -151,38 +152,70 @@ class AtomicConditionalReplaceQualification:
             for constraint in self.runtime_constraints
         ):
             raise TypeError("runtime constraints must be a typed tuple")
+        if self.native_primitive is NativePrimitive.NONE:
+            if self.subject is not QualificationSubject.PYTHON_FILESYSTEM_ABSTRACTION:
+                raise ValueError("NONE primitive belongs only to the Python abstraction")
+        elif self.native_primitive is NativePrimitive.WINDOWS_MOVE_FILE_EXW:
+            if self.subject is not QualificationSubject.WINDOWS:
+                raise ValueError("MoveFileExW belongs only to the Windows subject")
+        elif self.native_primitive is NativePrimitive.LINUX_RENAMEAT2_NOREPLACE:
+            if self.subject is not QualificationSubject.LINUX:
+                raise ValueError("renameat2 belongs only to the Linux subject")
+        else:
+            raise TypeError("native primitive is unsupported")
+
         if self.status is QualificationStatus.YES:
             if self.native_primitive is NativePrimitive.NONE:
                 raise ValueError("YES requires a real native primitive")
+            if self.runtime_constraints:
+                raise ValueError("YES cannot advertise conditional constraints")
             if (
                 self.final_window_observation
                 is not FinalWindowObservation.EXTERNAL_BYTES_PRESERVED
+                or self.failure_semantics
+                is not FailureSemantics.PRECONDITION_MISMATCH_NO_EFFECT
             ):
-                raise ValueError("YES requires final-window recreation")
-        if self.status is QualificationStatus.CONDITIONAL:
-            if self.native_primitive is NativePrimitive.NONE:
-                raise ValueError("CONDITIONAL requires a real native primitive")
-            if not self.runtime_constraints:
-                raise ValueError("CONDITIONAL requires runtime-detectable constraints")
+                raise ValueError("YES requires preserved final-window mismatch semantics")
+        elif self.status is QualificationStatus.CONDITIONAL:
+            expected_constraints = (
+                RuntimeConstraint.EXACT_LINUX_KERNEL_AND_FILESYSTEM,
+                RuntimeConstraint.TARGET_ABSENT_AT_FINAL_MUTATION,
+            )
+            if self.subject is not QualificationSubject.LINUX:
+                raise ValueError("CONDITIONAL belongs only to the Linux subject")
+            if self.native_primitive is not NativePrimitive.LINUX_RENAMEAT2_NOREPLACE:
+                raise ValueError("CONDITIONAL requires the Linux renameat2 primitive")
+            if self.runtime_constraints != expected_constraints:
+                raise ValueError("CONDITIONAL requires the exact Linux constraint tuple")
             if (
                 self.final_window_observation
                 is not FinalWindowObservation.EXTERNAL_BYTES_PRESERVED
+                or self.failure_semantics
+                is not FailureSemantics.PRECONDITION_MISMATCH_NO_EFFECT
             ):
-                raise ValueError("CONDITIONAL requires final-window recreation")
-        if self.status is QualificationStatus.NO and self.runtime_constraints:
-            raise ValueError("NO cannot advertise a runtime capability")
-
-
-@dataclass(frozen=True, slots=True)
-class _ConditionalEnvironment:
-    platform_backend: PlatformBackendTuple
-    target_is_absent: bool
-
-    def __post_init__(self) -> None:
-        if type(self.platform_backend) is not PlatformBackendTuple:
-            raise TypeError("platform/backend tuple is required")
-        if type(self.target_is_absent) is not bool:
-            raise TypeError("target absence must be explicit")
+                raise ValueError(
+                    "CONDITIONAL requires preserved final-window mismatch semantics"
+                )
+        elif self.status is QualificationStatus.NO:
+            if self.runtime_constraints:
+                raise ValueError("NO cannot advertise a runtime capability")
+            if (
+                self.final_window_observation
+                is FinalWindowObservation.EXTERNAL_BYTES_OVERWRITTEN
+                and self.failure_semantics
+                is FailureSemantics.FINAL_WINDOW_NOT_CONDITIONAL
+            ):
+                return
+            if (
+                self.final_window_observation
+                is FinalWindowObservation.PRIMITIVE_NOT_EXECUTED
+                and self.failure_semantics
+                is FailureSemantics.PRIMITIVE_UNAVAILABLE_NO_EFFECT
+            ):
+                return
+            raise ValueError("NO has contradictory final-window failure semantics")
+        else:
+            raise TypeError("qualification status is unsupported")
 
 
 @dataclass(frozen=True, slots=True)
@@ -934,37 +967,38 @@ def _qualify_current_python_abstraction(repository: Path) -> AtomicConditionalRe
     )
 
 
-def _environment_matches(
-    runtime_constraints: tuple[RuntimeConstraint, ...],
-    environment: _ConditionalEnvironment,
-) -> bool:
-    if not runtime_constraints or any(
-        type(constraint) is not RuntimeConstraint for constraint in runtime_constraints
-    ):
-        raise TypeError("conditional operation requires typed constraints")
-    for constraint in runtime_constraints:
-        if (
-            constraint is RuntimeConstraint.EXACT_LINUX_KERNEL_AND_FILESYSTEM
-            and environment.platform_backend.subject is not QualificationSubject.LINUX
-        ):
-            return False
-        if (
-            constraint is RuntimeConstraint.TARGET_ABSENT_AT_FINAL_MUTATION
-            and not environment.target_is_absent
-        ):
-            return False
-    return True
+def _destination_identity_at_final_decision(destination: Path) -> _FileIdentity | None:
+    try:
+        state = destination.lstat()
+    except FileNotFoundError:
+        return None
+    return _FileIdentity(
+        device=state.st_dev,
+        inode=state.st_ino,
+        size=state.st_size,
+        modified_ns=state.st_mtime_ns,
+    )
 
 
-def _test_only_apply_conditional_operation(
+def _test_only_final_conditional_probe(
     runtime_constraints: tuple[RuntimeConstraint, ...],
-    environment: _ConditionalEnvironment,
-    source: Path,
+    qualified_platform_backend: PlatformBackendTuple,
+    observed_platform_backend: PlatformBackendTuple,
     destination: Path,
 ) -> bool:
-    if not _environment_matches(runtime_constraints, environment):
+    expected_constraints = (
+        RuntimeConstraint.EXACT_LINUX_KERNEL_AND_FILESYSTEM,
+        RuntimeConstraint.TARGET_ABSENT_AT_FINAL_MUTATION,
+    )
+    destination_identity = _destination_identity_at_final_decision(destination)
+    if runtime_constraints != expected_constraints:
         return False
-    os.replace(source, destination)
+    if qualified_platform_backend.subject is not QualificationSubject.LINUX:
+        return False
+    if observed_platform_backend != qualified_platform_backend:
+        return False
+    if destination_identity is not None:
+        return False
     return True
 
 
@@ -1022,12 +1056,17 @@ def test_acr4_acm2_typed_construction_rejects_incomplete_positive_claims() -> No
         platform_identity="windows:test-version",
         filesystem_backend="windows-fs:testfs",
     )
+    python_platform_backend = PlatformBackendTuple(
+        subject=QualificationSubject.PYTHON_FILESYSTEM_ABSTRACTION,
+        platform_identity="cpython:test-version",
+        filesystem_backend="windows-fs:testfs",
+    )
     evidence = _opaque_evidence_ref("validation", "typed", "fields")
     with pytest.raises(ValueError, match="real native primitive"):
         AtomicConditionalReplaceQualification(
-            subject=QualificationSubject.WINDOWS,
+            subject=QualificationSubject.PYTHON_FILESYSTEM_ABSTRACTION,
             status=QualificationStatus.YES,
-            platform_backend=platform_backend,
+            platform_backend=python_platform_backend,
             native_primitive=NativePrimitive.NONE,
             race_model=(
                 RaceModel.EXTERNAL_REPLACEMENT_AFTER_LAST_IDENTITY_BEFORE_FINAL_MUTATION
@@ -1036,7 +1075,7 @@ def test_acr4_acm2_typed_construction_rejects_incomplete_positive_claims() -> No
             failure_semantics=FailureSemantics.PRECONDITION_MISMATCH_NO_EFFECT,
             evidence_ref=evidence,
         )
-    with pytest.raises(ValueError, match="runtime-detectable constraints"):
+    with pytest.raises(ValueError, match="CONDITIONAL belongs only to the Linux subject"):
         AtomicConditionalReplaceQualification(
             subject=QualificationSubject.WINDOWS,
             status=QualificationStatus.CONDITIONAL,
@@ -1085,34 +1124,195 @@ def test_acr4_acm2_typed_construction_rejects_incomplete_positive_claims() -> No
         )
 
 
-def test_acr5_acm3_conditional_constraint_mismatch_has_no_target_effect(
+def test_acr5_acm3_conditional_tuple_and_destination_mismatches_have_no_effect(
     tmp_path: Path,
 ) -> None:
     runtime_constraints = (
         RuntimeConstraint.EXACT_LINUX_KERNEL_AND_FILESYSTEM,
         RuntimeConstraint.TARGET_ABSENT_AT_FINAL_MUTATION,
     )
-    source = tmp_path / "candidate.txt"
     destination = tmp_path / "target.txt"
-    source.write_bytes(b"candidate")
-    destination.write_bytes(b"external")
-    mismatching_environment = _ConditionalEnvironment(
-        platform_backend=PlatformBackendTuple(
-            subject=QualificationSubject.WINDOWS,
-            platform_identity="windows:test-version",
-            filesystem_backend="windows-fs:testfs",
-        ),
-        target_is_absent=False,
+    qualified_platform_backend = PlatformBackendTuple(
+        subject=QualificationSubject.LINUX,
+        platform_identity="linux:kernel-a",
+        filesystem_backend="linux-fs:backend-a",
     )
-    applied = _test_only_apply_conditional_operation(
+    different_kernel = PlatformBackendTuple(
+        subject=QualificationSubject.LINUX,
+        platform_identity="linux:kernel-b",
+        filesystem_backend="linux-fs:backend-a",
+    )
+    different_filesystem = PlatformBackendTuple(
+        subject=QualificationSubject.LINUX,
+        platform_identity="linux:kernel-a",
+        filesystem_backend="linux-fs:backend-b",
+    )
+    destination.write_bytes(b"external")
+    assert not _test_only_final_conditional_probe(
         runtime_constraints,
-        mismatching_environment,
-        source,
+        qualified_platform_backend,
+        qualified_platform_backend,
         destination,
     )
-    assert not applied
-    assert source.read_bytes() == b"candidate"
     assert destination.read_bytes() == b"external"
+    destination.unlink()
+    assert not _test_only_final_conditional_probe(
+        runtime_constraints,
+        qualified_platform_backend,
+        different_kernel,
+        destination,
+    )
+    assert not destination.exists()
+    assert not _test_only_final_conditional_probe(
+        runtime_constraints,
+        qualified_platform_backend,
+        different_filesystem,
+        destination,
+    )
+    assert not destination.exists()
+    assert _test_only_final_conditional_probe(
+        runtime_constraints,
+        qualified_platform_backend,
+        qualified_platform_backend,
+        destination,
+    )
+    assert not destination.exists()
+    parameters = inspect.signature(_test_only_final_conditional_probe).parameters
+    assert "target_is_absent" not in parameters
+    assert "source" not in parameters
+
+
+def test_correction_qualification_rejects_cross_platform_and_contradictory_fields() -> None:
+    evidence = _opaque_evidence_ref("correction", "invariant", "fields")
+    windows = PlatformBackendTuple(
+        subject=QualificationSubject.WINDOWS,
+        platform_identity="windows:test-version",
+        filesystem_backend="windows-fs:testfs",
+    )
+    linux = PlatformBackendTuple(
+        subject=QualificationSubject.LINUX,
+        platform_identity="linux:test-kernel",
+        filesystem_backend="linux-fs:testfs",
+    )
+    python_abstraction = PlatformBackendTuple(
+        subject=QualificationSubject.PYTHON_FILESYSTEM_ABSTRACTION,
+        platform_identity="cpython:test-version",
+        filesystem_backend="windows-fs:testfs",
+    )
+    exact_linux_constraints = (
+        RuntimeConstraint.EXACT_LINUX_KERNEL_AND_FILESYSTEM,
+        RuntimeConstraint.TARGET_ABSENT_AT_FINAL_MUTATION,
+    )
+    with pytest.raises(ValueError, match="renameat2 belongs only to the Linux subject"):
+        AtomicConditionalReplaceQualification(
+            subject=QualificationSubject.WINDOWS,
+            status=QualificationStatus.NO,
+            platform_backend=windows,
+            native_primitive=NativePrimitive.LINUX_RENAMEAT2_NOREPLACE,
+            race_model=(
+                RaceModel.EXTERNAL_REPLACEMENT_AFTER_LAST_IDENTITY_BEFORE_FINAL_MUTATION
+            ),
+            final_window_observation=FinalWindowObservation.EXTERNAL_BYTES_OVERWRITTEN,
+            failure_semantics=FailureSemantics.FINAL_WINDOW_NOT_CONDITIONAL,
+            evidence_ref=evidence,
+        )
+    with pytest.raises(ValueError, match="MoveFileExW belongs only to the Windows subject"):
+        AtomicConditionalReplaceQualification(
+            subject=QualificationSubject.LINUX,
+            status=QualificationStatus.NO,
+            platform_backend=linux,
+            native_primitive=NativePrimitive.WINDOWS_MOVE_FILE_EXW,
+            race_model=(
+                RaceModel.EXTERNAL_REPLACEMENT_AFTER_LAST_IDENTITY_BEFORE_FINAL_MUTATION
+            ),
+            final_window_observation=FinalWindowObservation.EXTERNAL_BYTES_OVERWRITTEN,
+            failure_semantics=FailureSemantics.FINAL_WINDOW_NOT_CONDITIONAL,
+            evidence_ref=evidence,
+        )
+    with pytest.raises(ValueError, match="NONE primitive belongs only to the Python abstraction"):
+        AtomicConditionalReplaceQualification(
+            subject=QualificationSubject.WINDOWS,
+            status=QualificationStatus.NO,
+            platform_backend=windows,
+            native_primitive=NativePrimitive.NONE,
+            race_model=(
+                RaceModel.EXTERNAL_REPLACEMENT_AFTER_LAST_IDENTITY_BEFORE_FINAL_MUTATION
+            ),
+            final_window_observation=FinalWindowObservation.EXTERNAL_BYTES_OVERWRITTEN,
+            failure_semantics=FailureSemantics.FINAL_WINDOW_NOT_CONDITIONAL,
+            evidence_ref=evidence,
+        )
+    with pytest.raises(ValueError, match="YES requires preserved final-window mismatch semantics"):
+        AtomicConditionalReplaceQualification(
+            subject=QualificationSubject.WINDOWS,
+            status=QualificationStatus.YES,
+            platform_backend=windows,
+            native_primitive=NativePrimitive.WINDOWS_MOVE_FILE_EXW,
+            race_model=(
+                RaceModel.EXTERNAL_REPLACEMENT_AFTER_LAST_IDENTITY_BEFORE_FINAL_MUTATION
+            ),
+            final_window_observation=FinalWindowObservation.EXTERNAL_BYTES_PRESERVED,
+            failure_semantics=FailureSemantics.FINAL_WINDOW_NOT_CONDITIONAL,
+            evidence_ref=evidence,
+        )
+    with pytest.raises(ValueError, match="YES cannot advertise conditional constraints"):
+        AtomicConditionalReplaceQualification(
+            subject=QualificationSubject.WINDOWS,
+            status=QualificationStatus.YES,
+            platform_backend=windows,
+            native_primitive=NativePrimitive.WINDOWS_MOVE_FILE_EXW,
+            race_model=(
+                RaceModel.EXTERNAL_REPLACEMENT_AFTER_LAST_IDENTITY_BEFORE_FINAL_MUTATION
+            ),
+            final_window_observation=FinalWindowObservation.EXTERNAL_BYTES_PRESERVED,
+            failure_semantics=FailureSemantics.PRECONDITION_MISMATCH_NO_EFFECT,
+            evidence_ref=evidence,
+            runtime_constraints=exact_linux_constraints,
+        )
+    with pytest.raises(
+        ValueError,
+        match="CONDITIONAL requires preserved final-window mismatch semantics",
+    ):
+        AtomicConditionalReplaceQualification(
+            subject=QualificationSubject.LINUX,
+            status=QualificationStatus.CONDITIONAL,
+            platform_backend=linux,
+            native_primitive=NativePrimitive.LINUX_RENAMEAT2_NOREPLACE,
+            race_model=(
+                RaceModel.EXTERNAL_REPLACEMENT_AFTER_LAST_IDENTITY_BEFORE_FINAL_MUTATION
+            ),
+            final_window_observation=FinalWindowObservation.EXTERNAL_BYTES_PRESERVED,
+            failure_semantics=FailureSemantics.FINAL_WINDOW_NOT_CONDITIONAL,
+            evidence_ref=evidence,
+            runtime_constraints=exact_linux_constraints,
+        )
+    with pytest.raises(ValueError, match="NO has contradictory final-window failure semantics"):
+        AtomicConditionalReplaceQualification(
+            subject=QualificationSubject.PYTHON_FILESYSTEM_ABSTRACTION,
+            status=QualificationStatus.NO,
+            platform_backend=python_abstraction,
+            native_primitive=NativePrimitive.NONE,
+            race_model=(
+                RaceModel.EXTERNAL_REPLACEMENT_AFTER_LAST_IDENTITY_BEFORE_FINAL_MUTATION
+            ),
+            final_window_observation=FinalWindowObservation.EXTERNAL_BYTES_PRESERVED,
+            failure_semantics=FailureSemantics.PRECONDITION_MISMATCH_NO_EFFECT,
+            evidence_ref=evidence,
+        )
+    with pytest.raises(ValueError, match="NO cannot advertise a runtime capability"):
+        AtomicConditionalReplaceQualification(
+            subject=QualificationSubject.LINUX,
+            status=QualificationStatus.NO,
+            platform_backend=linux,
+            native_primitive=NativePrimitive.LINUX_RENAMEAT2_NOREPLACE,
+            race_model=(
+                RaceModel.EXTERNAL_REPLACEMENT_AFTER_LAST_IDENTITY_BEFORE_FINAL_MUTATION
+            ),
+            final_window_observation=FinalWindowObservation.EXTERNAL_BYTES_OVERWRITTEN,
+            failure_semantics=FailureSemantics.FINAL_WINDOW_NOT_CONDITIONAL,
+            evidence_ref=evidence,
+            runtime_constraints=exact_linux_constraints,
+        )
 
 
 def test_acr6_exact_test_only_boundary() -> None:
