@@ -85,6 +85,34 @@ class DocumentWriteFailure(str, Enum):
     STORAGE_UNAVAILABLE = "STORAGE_UNAVAILABLE"
 
 
+class ManagedArtifactWriteStatus(str, Enum):
+    """The finite outcomes of one managed-artifact write attempt."""
+
+    APPLIED = "APPLIED"
+    REJECTED = "REJECTED"
+    STORAGE_UNAVAILABLE = "STORAGE_UNAVAILABLE"
+    RECOVERY_REQUIRED = "RECOVERY_REQUIRED"
+
+
+class ManagedArtifactWriteFailure(str, Enum):
+    """The finite sanitized failures of one managed-artifact write attempt."""
+
+    BASELINE_MISMATCH = "BASELINE_MISMATCH"
+    PATH_STATE_MISMATCH = "PATH_STATE_MISMATCH"
+    PATH_ESCAPE = "PATH_ESCAPE"
+    STORAGE_UNAVAILABLE = "STORAGE_UNAVAILABLE"
+    POST_STATE_INVALID = "POST_STATE_INVALID"
+    RUNTIME_INVARIANT_FAILED = "RUNTIME_INVARIANT_FAILED"
+    RECOVERY_REQUIRED = "RECOVERY_REQUIRED"
+
+
+class ManagedArtifactRecoveryStatus(str, Enum):
+    """The finite outcomes of a later managed-artifact recovery attempt."""
+
+    RECOVERED = "RECOVERED"
+    RECOVERY_REQUIRED = "RECOVERY_REQUIRED"
+
+
 def derive_document_digest(content: str) -> ContentDigest:
     if type(content) is not str:
         raise TypeError("document content must be exact text")
@@ -163,6 +191,69 @@ class DocumentWriteResult(_StrictModel):
         elif self.written_paths or self.written_digests or self.failure is None:
             raise ValueError("rejected transaction returns only one failure")
         return self
+
+
+class ManagedArtifactWriteResult(_StrictModel):
+    """Sanitized tagged outcome for one managed-artifact write attempt."""
+
+    status: ManagedArtifactWriteStatus
+    written_artifact_refs: tuple[OpaqueMetadataId, ...]
+    written_digests: tuple[ContentDigest, ...]
+    failure: ManagedArtifactWriteFailure | None
+    recovery_ref: OpaqueMetadataId | None = None
+
+    @model_validator(mode="after")
+    def exact_managed_result_shape(self) -> Self:
+        if self.status is ManagedArtifactWriteStatus.APPLIED:
+            if (
+                not self.written_artifact_refs
+                or len(self.written_artifact_refs) != len(self.written_digests)
+                or self.failure is not None
+                or self.recovery_ref is not None
+                or "recovery_ref" not in self.model_fields_set
+            ):
+                raise ValueError("applied results require only matching write identities")
+            return self
+        if self.status is ManagedArtifactWriteStatus.REJECTED:
+            if (
+                self.written_artifact_refs
+                or self.written_digests
+                or self.failure is None
+                or self.failure
+                in (
+                    ManagedArtifactWriteFailure.STORAGE_UNAVAILABLE,
+                    ManagedArtifactWriteFailure.RECOVERY_REQUIRED,
+                )
+                or self.recovery_ref is not None
+                or "recovery_ref" not in self.model_fields_set
+            ):
+                raise ValueError("rejected results require one non-storage failure")
+            return self
+        if self.status is ManagedArtifactWriteStatus.STORAGE_UNAVAILABLE:
+            if (
+                self.written_artifact_refs
+                or self.written_digests
+                or self.failure is not ManagedArtifactWriteFailure.STORAGE_UNAVAILABLE
+                or self.recovery_ref is not None
+                or "recovery_ref" not in self.model_fields_set
+            ):
+                raise ValueError("storage failures require only STORAGE_UNAVAILABLE")
+            return self
+        if (
+            self.written_artifact_refs
+            or self.written_digests
+            or self.failure is not ManagedArtifactWriteFailure.RECOVERY_REQUIRED
+            or self.recovery_ref is None
+        ):
+            raise ValueError("recovery-required results require one recovery reference")
+        return self
+
+
+class ManagedArtifactRecoveryResult(_StrictModel):
+    """Sanitized outcome for one later recovery attempt."""
+
+    status: ManagedArtifactRecoveryStatus
+    recovery_ref: OpaqueMetadataId
 
 
 class HandoffTreeBootstrapRequest(_StrictModel):
@@ -523,6 +614,11 @@ __all__ = [
     "DocumentWriteFailure",
     "DocumentWriteResult",
     "DocumentWriteStatus",
+    "ManagedArtifactRecoveryResult",
+    "ManagedArtifactRecoveryStatus",
+    "ManagedArtifactWriteFailure",
+    "ManagedArtifactWriteResult",
+    "ManagedArtifactWriteStatus",
     "HandoffTreeBootstrapRequest",
     "TargetDocumentMutation",
     "TargetDocumentPlan",
