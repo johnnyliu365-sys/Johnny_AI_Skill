@@ -7,7 +7,8 @@
 | Source / test | `library/workflow_router/target_document_contracts.py` / `tests/test_managed_artifact_recovery_contracts.py` |
 | Ownership | This element indexes additive strict result contracts only. It is not a recovery journal, lock, filesystem writer, resolver, target authority, plugin adapter or package export. |
 
-The source accepts only finite typed outcome metadata. It never persists snapshot bytes or performs
-an effect; private recovery persistence and all runtime validation remain a later ticket. Recovery
-identity is opaque and result serialization contains no raw exception, path, snapshot, body or
-workspace.
+The source accepts only finite typed outcome metadata. Applied artifact refs are unique and sorted
+lexically so their digest pairing is deterministic. The exported `RecoveryEvidenceRef` uses the narrow
+`recovery-` plus exactly 32 lowercase hexadecimal characters format; they never encode a body,
+exception, path or workspace. The source never persists snapshot bytes or performs an effect;
+private recovery persistence and all runtime validation remain a later ticket.

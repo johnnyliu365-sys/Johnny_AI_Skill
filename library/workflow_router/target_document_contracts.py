@@ -47,6 +47,10 @@ TargetRelativePath: TypeAlias = Annotated[
     ),
 ]
 ContentDigest: TypeAlias = EvidenceDigest
+RecoveryEvidenceRef: TypeAlias = Annotated[
+    str,
+    Field(pattern=r"^recovery-[0-9a-f]{32}$"),
+]
 FeatureSlug: TypeAlias = Annotated[str, Field(pattern=r"^[a-z0-9][a-z0-9-]{1,63}$")]
 TicketSlug: TypeAlias = Annotated[str, Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9-]{2,95}$")]
 Year: TypeAlias = Annotated[int, Field(ge=2000, le=9999)]
@@ -200,13 +204,17 @@ class ManagedArtifactWriteResult(_StrictModel):
     written_artifact_refs: tuple[OpaqueMetadataId, ...]
     written_digests: tuple[ContentDigest, ...]
     failure: ManagedArtifactWriteFailure | None
-    recovery_ref: OpaqueMetadataId | None = None
+    recovery_ref: RecoveryEvidenceRef | None = None
 
     @model_validator(mode="after")
     def exact_managed_result_shape(self) -> Self:
         if self.status is ManagedArtifactWriteStatus.APPLIED:
             if (
                 not self.written_artifact_refs
+                or len(self.written_artifact_refs)
+                != len(set(self.written_artifact_refs))
+                or self.written_artifact_refs
+                != tuple(sorted(self.written_artifact_refs))
                 or len(self.written_artifact_refs) != len(self.written_digests)
                 or self.failure is not None
                 or self.recovery_ref is not None
@@ -253,7 +261,7 @@ class ManagedArtifactRecoveryResult(_StrictModel):
     """Sanitized outcome for one later recovery attempt."""
 
     status: ManagedArtifactRecoveryStatus
-    recovery_ref: OpaqueMetadataId
+    recovery_ref: RecoveryEvidenceRef
 
 
 class HandoffTreeBootstrapRequest(_StrictModel):
@@ -619,6 +627,7 @@ __all__ = [
     "ManagedArtifactWriteFailure",
     "ManagedArtifactWriteResult",
     "ManagedArtifactWriteStatus",
+    "RecoveryEvidenceRef",
     "HandoffTreeBootstrapRequest",
     "TargetDocumentMutation",
     "TargetDocumentPlan",

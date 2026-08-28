@@ -22,10 +22,14 @@ from library.workflow_router.target_document_contracts import (
     ManagedArtifactWriteFailure,
     ManagedArtifactWriteResult,
     ManagedArtifactWriteStatus,
+    RecoveryEvidenceRef,
     TargetDocumentMutation,
     TargetDocumentPlan,
     derive_document_digest,
 )
+
+
+_RECOVERY_REF: RecoveryEvidenceRef = "recovery-0123456789abcdef0123456789abcdef"
 
 
 def _digest(content: str) -> str:
@@ -35,8 +39,8 @@ def _digest(content: str) -> str:
 def _applied() -> ManagedArtifactWriteResult:
     return ManagedArtifactWriteResult(
         status=ManagedArtifactWriteStatus.APPLIED,
-        written_artifact_refs=("leaf-recovery",),
-        written_digests=(_digest("candidate\n"),),
+        written_artifact_refs=("leaf-alpha", "leaf-zeta"),
+        written_digests=(_digest("candidate-alpha\n"), _digest("candidate-zeta\n")),
         failure=None,
         recovery_ref=None,
     )
@@ -70,7 +74,7 @@ def _recovery_required() -> ManagedArtifactWriteResult:
         written_artifact_refs=(),
         written_digests=(),
         failure=ManagedArtifactWriteFailure.RECOVERY_REQUIRED,
-        recovery_ref="recovery-r09b1",
+        recovery_ref=_RECOVERY_REF,
     )
 
 
@@ -138,7 +142,7 @@ class ManagedArtifactRecoveryContractTests(unittest.TestCase):
         ):
             recovery_result = ManagedArtifactRecoveryResult(
                 status=status,
-                recovery_ref="recovery-r09b1",
+                recovery_ref=_RECOVERY_REF,
             )
             self.assertEqual(
                 recovery_result,
@@ -155,7 +159,10 @@ class ManagedArtifactRecoveryContractTests(unittest.TestCase):
             )
         with self.assertRaises(ValidationError):
             ManagedArtifactWriteResult.model_validate_json(
-                valid_json.replace('"written_artifact_refs":["leaf-recovery"]', '"written_artifact_refs":null')
+                valid_json.replace(
+                    '"written_artifact_refs":["leaf-alpha","leaf-zeta"]',
+                    '"written_artifact_refs":null',
+                )
             )
         with self.assertRaises(ValidationError):
             ManagedArtifactWriteResult.model_validate_json(
@@ -167,7 +174,10 @@ class ManagedArtifactRecoveryContractTests(unittest.TestCase):
             )
         with self.assertRaises(ValidationError):
             ManagedArtifactWriteResult.model_validate_json(
-                valid_json.replace('"written_artifact_refs":["leaf-recovery"]', '"written_artifact_refs":7')
+                valid_json.replace(
+                    '"written_artifact_refs":["leaf-alpha","leaf-zeta"]',
+                    '"written_artifact_refs":7',
+                )
             )
         with self.assertRaises(ValidationError):
             ManagedArtifactWriteResult(
@@ -196,10 +206,26 @@ class ManagedArtifactRecoveryContractTests(unittest.TestCase):
         with self.assertRaises(ValidationError):
             ManagedArtifactWriteResult(
                 status=ManagedArtifactWriteStatus.APPLIED,
+                written_artifact_refs=("leaf-alpha", "leaf-alpha"),
+                written_digests=(_digest("alpha\n"), _digest("alpha-copy\n")),
+                failure=None,
+                recovery_ref=None,
+            )
+        with self.assertRaises(ValidationError):
+            ManagedArtifactWriteResult(
+                status=ManagedArtifactWriteStatus.APPLIED,
+                written_artifact_refs=("leaf-zeta", "leaf-alpha"),
+                written_digests=(_digest("zeta\n"), _digest("alpha\n")),
+                failure=None,
+                recovery_ref=None,
+            )
+        with self.assertRaises(ValidationError):
+            ManagedArtifactWriteResult(
+                status=ManagedArtifactWriteStatus.APPLIED,
                 written_artifact_refs=("leaf-recovery",),
                 written_digests=(_digest("candidate\n"),),
                 failure=None,
-                recovery_ref="recovery-r09b1",
+                recovery_ref=_RECOVERY_REF,
             )
         with self.assertRaises(ValidationError):
             ManagedArtifactWriteResult(
@@ -207,11 +233,11 @@ class ManagedArtifactRecoveryContractTests(unittest.TestCase):
                 written_artifact_refs=(),
                 written_digests=(),
                 failure=ManagedArtifactWriteFailure.PATH_STATE_MISMATCH,
-                recovery_ref="recovery-r09b1",
+                recovery_ref=_RECOVERY_REF,
             )
         with self.assertRaises(ValidationError):
             ManagedArtifactWriteResult.model_validate_json(
-                valid_json.replace('"recovery_ref":null', '"recovery_ref":"recovery-r09b1"')
+                valid_json.replace('"recovery_ref":null', f'"recovery_ref":"{_RECOVERY_REF}"')
             )
         with self.assertRaises(ValidationError):
             ManagedArtifactWriteResult.model_validate_json(
@@ -232,6 +258,36 @@ class ManagedArtifactRecoveryContractTests(unittest.TestCase):
                 failure=ManagedArtifactWriteFailure.RECOVERY_REQUIRED,
                 recovery_ref=None,
             )
+        for invalid_recovery_ref in (
+            "snapshot-body",
+            "exception-detail",
+            "workspace-record",
+        ):
+            with self.subTest(invalid_recovery_ref=invalid_recovery_ref):
+                with self.assertRaises(ValidationError):
+                    ManagedArtifactWriteResult(
+                        status=ManagedArtifactWriteStatus.RECOVERY_REQUIRED,
+                        written_artifact_refs=(),
+                        written_digests=(),
+                        failure=ManagedArtifactWriteFailure.RECOVERY_REQUIRED,
+                        recovery_ref=invalid_recovery_ref,
+                    )
+                with self.assertRaises(ValidationError):
+                    ManagedArtifactRecoveryResult(
+                        status=ManagedArtifactRecoveryStatus.RECOVERED,
+                        recovery_ref=invalid_recovery_ref,
+                    )
+        recovery_json = ManagedArtifactRecoveryResult(
+            status=ManagedArtifactRecoveryStatus.RECOVERED,
+            recovery_ref=_RECOVERY_REF,
+        ).model_dump_json()
+        for invalid_recovery_json in (
+            recovery_json.replace(f'"recovery_ref":"{_RECOVERY_REF}"', '"recovery_ref":null'),
+            recovery_json[:-1] + ',"unexpected":"field"}',
+            recovery_json.replace(f'"recovery_ref":"{_RECOVERY_REF}"', '"recovery_ref":7'),
+        ):
+            with self.assertRaises(ValidationError):
+                ManagedArtifactRecoveryResult.model_validate_json(invalid_recovery_json)
         mismatches = (
             (ManagedArtifactWriteStatus.REJECTED, ManagedArtifactWriteFailure.STORAGE_UNAVAILABLE),
             (ManagedArtifactWriteStatus.REJECTED, ManagedArtifactWriteFailure.RECOVERY_REQUIRED),
@@ -249,7 +305,7 @@ class ManagedArtifactRecoveryContractTests(unittest.TestCase):
                         written_digests=(),
                         failure=failure,
                         recovery_ref=(
-                            "recovery-r09b1"
+                            _RECOVERY_REF
                             if status is ManagedArtifactWriteStatus.RECOVERY_REQUIRED
                             else None
                         ),
@@ -324,12 +380,22 @@ class ManagedArtifactRecoveryContractTests(unittest.TestCase):
                 "ManagedArtifactRecoveryResult",
             }.issubset(names)
         )
+        self.assertIn(
+            "RecoveryEvidenceRef",
+            {
+                node.target.id
+                for node in tree.body
+                if isinstance(node, ast.AnnAssign)
+                and isinstance(node.target, ast.Name)
+            },
+        )
         for public_name in (
             "ManagedArtifactWriteStatus",
             "ManagedArtifactWriteFailure",
             "ManagedArtifactWriteResult",
             "ManagedArtifactRecoveryStatus",
             "ManagedArtifactRecoveryResult",
+            "RecoveryEvidenceRef",
         ):
             self.assertIn(f'"{public_name}"', source)
         self.assertNotIn("library.local_orchestration", source)
