@@ -2,10 +2,10 @@
 
 | Field | Value |
 | --- | --- |
-| Revision | `2026-08-22 / REVISION_02` |
-| Requirement lineage | `PRD-20260822-030` / `CHG-20260822-030` / `doc/requirements/active/2026/adaptive-orchestration/REQ-20260822-030.md` |
+| Revision | `2026-08-29 / REVISION_03` |
+| Requirement lineage | `PRD-20260822-030` / `CHG-20260822-030` / `doc/requirements/active/2026/adaptive-orchestration/REQ-20260822-030.md`; synchronous-dispatch alignment `REQ-20260824-038` / `ADR-20260824-020` decision 8 |
 | Policy source | `modules/spec/executor-routing.md` revision 01 and `modules/tickets/workstation-dispatch/p8-provider-neutral-executor-routing.md` revision 02 |
-| Authority | Project owner directive, 2026-08-22 (Asia/Taipei) |
+| Authority | Project owner directives, 2026-08-22 and 2026-08-29 (Asia/Taipei) |
 | Scope | Current semantic role-to-profile intent. This file does not grant a role, issue a receipt, prove a credential, or start a host process. |
 
 This document records current **profile data**, not permanent workflow policy. Role authority,
@@ -51,9 +51,15 @@ values above; the values belong in injected profile data.
 
 - The reviewer is the only Agent-to-Agent orchestrator. A profile name, prompt, CLI login, or
   model setting is never dispatch authority.
-- Dispatch requires the live descriptor, exact ticket/handoff artifacts, receipt, verified task
-  workspace/worktree/branch/baseline binding, and the host gateway. A stopped runner does not
-  prevent manual receipt admission, but it means no automatic wake may be claimed.
+- **Same-lifetime synchronous dispatch** is `reviewer -> wait_agent -> review -> gate`. Its
+  admission evidence is the exact ticket, any ticket-declared handoff, a reviewer-established
+  clean baseline, and the repository-contained worktree/branch binding. A live descriptor,
+  receipt, runner, queue, host gateway, task/workspace/profile readback and automatic wake are
+  `NOT_REQUIRED`; their absence must not block this path or be reported as a delivery failure.
+- **Cross-lifetime receipt-bound dispatch** is distinct. It requires the live descriptor, exact
+  ticket/handoff artifacts, matching unconsumed receipt, verified task/workspace/worktree/branch/
+  baseline binding and the host gateway. A stopped or unarmed runner means no automatic wake may
+  be claimed; an owner may relay the artifact, but that does not change delivery status to sent.
 - The implementation owner receives identifier-only dispatch, modifies only its declared
   boundary, and returns a typed result. The owner directive for P8R says the reviewer writes
   the candidate commit after review and is the only role that submits it to integration.
@@ -62,15 +68,20 @@ values above; the values belong in injected profile data.
 
 ## 最小派工訊息
 
-派工訊息只傳一次性的 `ACTION_REQUIRED`、`dispatch_ref`、registry commit、ticket、receipt
-與 owner task；需要時可加一行有界 resume state。不要重抄 ticket 已定義的 scope、驗收、
-TDD、邊界、安全或 return contract。實作者從精確 ticket 讀取那些規則，並依 ticket 的
-owner override 決定是否 commit；P8R 的 override 明定實作者不 commit。
+同生命週期訊息只傳一次性的 `ACTION_REQUIRED`、精確 ticket、reviewer-established baseline
+與 worktree/branch binding；需要時可加一行有界 resume state。`dispatch_ref`、registry
+commit、receipt 與 owner task 是跨生命週期 receipt-bound 路徑的欄位，不得反向成為同步派工
+前置條件。不要重抄 ticket 已定義的 scope、驗收、TDD、邊界、安全或 return contract。
+實作者從精確 ticket 讀取那些規則，並依 ticket 的 owner override 決定是否 commit；P8R 的
+override 明定實作者不 commit。
 
 ## Revision record
 
-`REVISION_02` supersedes the previous provider-specific Sonnet/Opus/Fable mapping. It applies
-the owner-approved provider-neutral policy in `REQ-20260822-030`: Luna/xhigh is the standard
-implementation profile; Terra/xhigh is normal review and the sole single-ticket implementation
-elevation; Sol/high is limited to decision support and the corresponding elevated review. The
-previous mapping remains available through Git history, not as active dispatch policy.
+`REVISION_03` corrects a false universal admission prerequisite. It aligns this profile with
+`ADR-20260824-020` decision 8: descriptor/receipt/gateway evidence belongs only to the
+cross-lifetime receipt-bound path; the reviewer-owned synchronous path remains bridge-free.
+`REVISION_02` superseded the previous provider-specific Sonnet/Opus/Fable mapping. Its
+provider-neutral model policy remains unchanged: Luna/xhigh is the standard implementation
+profile; Terra/xhigh is normal review and the sole single-ticket implementation elevation;
+Sol/high is limited to decision support and the corresponding elevated review. The previous
+mapping remains available through Git history, not as active dispatch policy.
