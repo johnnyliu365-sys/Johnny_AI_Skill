@@ -5,11 +5,19 @@ from __future__ import annotations
 from enum import Enum
 from hashlib import sha256
 from pathlib import PurePosixPath
-from typing import Annotated, Self, TypeAlias
+from typing import Annotated, Literal, Self, TypeAlias, Union
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-from .contracts import EvidenceDigest, ProjectId, ReviewedCommitReference
+from .contracts import (
+    ArtifactTreeFamily,
+    ArtifactTreeLifecycle,
+    ArtifactTreeNode,
+    EvidenceDigest,
+    OpaqueMetadataId,
+    ProjectId,
+    ReviewedCommitReference,
+)
 from .role_supervision_contracts import (
     CompatibilityRevision,
     HandoffLeaf,
@@ -197,6 +205,317 @@ class HandoffTreeBootstrapRequest(_StrictModel):
         return self
 
 
+class ManagedArtifactAction(str, Enum):
+    """The four finite managed-artifact planning actions."""
+
+    CREATE = "CREATE"
+    REVISE = "REVISE"
+    REPLACE = "REPLACE"
+    ARCHIVE = "ARCHIVE"
+
+
+class ManagedArtifactTerminalState(str, Enum):
+    """The terminal presence state selected by one artifact path snapshot."""
+
+    PRESENT = "PRESENT"
+    ABSENT = "ABSENT"
+
+
+class ManagedArtifactNodeStateKind(str, Enum):
+    """The discriminant for one managed-artifact node state."""
+
+    ABSENT = "ABSENT"
+    PRESENT = "PRESENT"
+
+
+class ManagedArtifactAbsentNodeState(_StrictModel):
+    """The only state allowed for an absent terminal node."""
+
+    state: Literal["ABSENT"] = "ABSENT"
+
+
+class ManagedArtifactPresentNodeState(_StrictModel):
+    """The complete metadata state of one present artifact node."""
+
+    state: Literal["PRESENT"] = "PRESENT"
+    revision: Annotated[str, Field(pattern=r"^rev-[0-9a-f]{16,64}$")]
+    content_digest: ContentDigest
+    lifecycle: ArtifactTreeLifecycle
+
+    @model_validator(mode="after")
+    def state_metadata_is_not_reserved(self) -> Self:
+        if self.revision[4:] and all(character == "0" for character in self.revision[4:]):
+            raise ValueError("managed artifact revisions must identify real content")
+        if self.content_digest[7:] and all(
+            character == "0" for character in self.content_digest[7:]
+        ):
+            raise ValueError("managed artifact digests must identify real content")
+        return self
+
+
+ManagedArtifactNodeState: TypeAlias = Annotated[
+    Union[ManagedArtifactAbsentNodeState, ManagedArtifactPresentNodeState],
+    Field(discriminator="state"),
+]
+
+
+class ManagedArtifactPathSnapshot(_StrictModel):
+    """One caller-selected path and its current or candidate terminal state."""
+
+    family: ArtifactTreeFamily
+    root_ref: OpaqueMetadataId
+    explicit_path_refs: tuple[OpaqueMetadataId, ...] = Field(min_length=3)
+    expected_leaf_ref: OpaqueMetadataId
+    terminal_state: ManagedArtifactTerminalState
+    path_nodes: tuple[ArtifactTreeNode, ...] = Field(min_length=2)
+
+
+class ManagedArtifactPathTransition(_StrictModel):
+    """The exact current-to-candidate path transition for one action slot."""
+
+    current: ManagedArtifactPathSnapshot
+    candidate: ManagedArtifactPathSnapshot
+
+
+ManagedArtifactTransition = ManagedArtifactPathTransition
+
+
+class ManagedArtifactNodeMutation(_StrictModel):
+    """One compare-and-swap metadata transition for an artifact-tree node."""
+
+    artifact_ref: OpaqueMetadataId
+    expected_state: ManagedArtifactNodeState
+    next_state: ManagedArtifactNodeState
+
+    @model_validator(mode="after")
+    def state_must_change(self) -> Self:
+        if self.expected_state == self.next_state:
+            raise ValueError("managed artifact node mutations must change state")
+        return self
+
+
+def _managed_artifact_path_is_safe(path: str) -> bool:
+    """Apply the target-relative and control-plane path boundary to new mutations."""
+
+    normalized = PurePosixPath(path)
+    if str(normalized) != path:
+        return False
+    if normalized.is_absolute() or ".." in normalized.parts or "." in normalized.parts:
+        return False
+    lowered_parts = tuple(part.casefold() for part in normalized.parts)
+    return not any(
+        part in (".git", ".codex", ".codex-plugin", ".claude-plugin")
+        for part in lowered_parts
+    )
+
+
+class ManagedArtifactDocumentCreate(_StrictModel):
+    """A document create bound to one newly present artifact node."""
+
+    mode: Literal["CREATE"] = "CREATE"
+    artifact_ref: OpaqueMetadataId
+    path: TargetRelativePath
+    kind: ArtifactDocumentKind
+    content: str = Field(min_length=1)
+    content_digest: ContentDigest
+    sealed: bool
+
+    @model_validator(mode="after")
+    def create_document_is_canonical(self) -> Self:
+        if not _managed_artifact_path_is_safe(self.path):
+            raise ValueError("managed artifact document path must be normalized and relative")
+        if "\r" in self.content or self.content_digest != derive_document_digest(self.content):
+            raise ValueError("managed artifact create content must be canonical and exact")
+        if self.kind is ArtifactDocumentKind.HANDOFF_LEAF and not self.sealed:
+            raise ValueError("handoff leaves must be sealed")
+        return self
+
+
+class ManagedArtifactDocumentUpdate(_StrictModel):
+    """A document update bound to one present artifact node."""
+
+    mode: Literal["UPDATE"] = "UPDATE"
+    artifact_ref: OpaqueMetadataId
+    path: TargetRelativePath
+    kind: ArtifactDocumentKind
+    expected_current_digest: ContentDigest
+    content: str = Field(min_length=1)
+    content_digest: ContentDigest
+    sealed: Literal[False] = False
+
+    @model_validator(mode="after")
+    def update_document_is_canonical(self) -> Self:
+        if not _managed_artifact_path_is_safe(self.path):
+            raise ValueError("managed artifact document path must be normalized and relative")
+        if "\r" in self.content or self.content_digest != derive_document_digest(self.content):
+            raise ValueError("managed artifact update content must be canonical and exact")
+        return self
+
+
+class ManagedArtifactDeleteDocument(_StrictModel):
+    """A document delete bound to one terminal node becoming absent."""
+
+    mode: Literal["DELETE"] = "DELETE"
+    artifact_ref: OpaqueMetadataId
+    path: TargetRelativePath
+    kind: ArtifactDocumentKind
+    expected_current_digest: ContentDigest
+
+    @model_validator(mode="after")
+    def delete_document_is_safe(self) -> Self:
+        if not _managed_artifact_path_is_safe(self.path):
+            raise ValueError("managed artifact document path must be normalized and relative")
+        return self
+
+
+ManagedArtifactDocumentMutation: TypeAlias = Annotated[
+    Union[
+        ManagedArtifactDocumentCreate,
+        ManagedArtifactDocumentUpdate,
+        ManagedArtifactDeleteDocument,
+    ],
+    Field(discriminator="mode"),
+]
+
+
+class ManagedArtifactCreateRequest(_StrictModel):
+    """A typed absent-to-present managed-artifact create request."""
+
+    action: Literal["CREATE"] = "CREATE"
+    request_ref: OpaqueMetadataId
+    baseline_commit: ReviewedCommitReference
+    destination_transition: ManagedArtifactPathTransition
+    proposed_document_mutations: tuple[ManagedArtifactDocumentMutation, ...] = Field(min_length=1)
+
+
+class ManagedArtifactReviseRequest(_StrictModel):
+    """A typed present-to-present managed-artifact revision request."""
+
+    action: Literal["REVISE"] = "REVISE"
+    request_ref: OpaqueMetadataId
+    baseline_commit: ReviewedCommitReference
+    selected_transition: ManagedArtifactPathTransition
+    proposed_document_mutations: tuple[ManagedArtifactDocumentMutation, ...] = Field(min_length=1)
+
+
+class ManagedArtifactReplaceRequest(_StrictModel):
+    """A typed replacement of one present path with a distinct absent path."""
+
+    action: Literal["REPLACE"] = "REPLACE"
+    request_ref: OpaqueMetadataId
+    baseline_commit: ReviewedCommitReference
+    current_transition: ManagedArtifactPathTransition
+    replacement_transition: ManagedArtifactPathTransition
+    proposed_document_mutations: tuple[ManagedArtifactDocumentMutation, ...] = Field(min_length=1)
+
+
+class ManagedArtifactArchiveRequest(_StrictModel):
+    """A typed active-to-archive-library lifecycle movement request."""
+
+    action: Literal["ARCHIVE"] = "ARCHIVE"
+    request_ref: OpaqueMetadataId
+    baseline_commit: ReviewedCommitReference
+    active_transition: ManagedArtifactPathTransition
+    archive_transition: ManagedArtifactPathTransition
+    proposed_document_mutations: tuple[ManagedArtifactDocumentMutation, ...] = Field(min_length=1)
+
+
+ManagedArtifactRequest: TypeAlias = Annotated[
+    Union[
+        ManagedArtifactCreateRequest,
+        ManagedArtifactReviseRequest,
+        ManagedArtifactReplaceRequest,
+        ManagedArtifactArchiveRequest,
+    ],
+    Field(discriminator="action"),
+]
+
+
+class _ManagedArtifactPlanBase(_StrictModel):
+    """Shared deterministic output fields for action-specific plans."""
+
+    baseline_commit: ReviewedCommitReference
+    node_mutations: tuple[ManagedArtifactNodeMutation, ...] = Field(min_length=1)
+    document_mutations: tuple[ManagedArtifactDocumentMutation, ...] = Field(min_length=1)
+    post_state_snapshots: tuple[ManagedArtifactPathSnapshot, ...] = Field(min_length=1)
+
+
+class ManagedArtifactCreatePlan(_ManagedArtifactPlanBase):
+    """Canonical plan for CREATE's destination slot."""
+
+    action: Literal["CREATE"] = "CREATE"
+    destination_transition: ManagedArtifactPathTransition
+
+
+class ManagedArtifactRevisePlan(_ManagedArtifactPlanBase):
+    """Canonical plan for REVISE's selected slot."""
+
+    action: Literal["REVISE"] = "REVISE"
+    selected_transition: ManagedArtifactPathTransition
+
+
+class ManagedArtifactReplacePlan(_ManagedArtifactPlanBase):
+    """Canonical plan for REPLACE's current and replacement slots."""
+
+    action: Literal["REPLACE"] = "REPLACE"
+    current_transition: ManagedArtifactPathTransition
+    replacement_transition: ManagedArtifactPathTransition
+
+
+class ManagedArtifactArchivePlan(_ManagedArtifactPlanBase):
+    """Canonical plan for ARCHIVE's active and archive slots."""
+
+    action: Literal["ARCHIVE"] = "ARCHIVE"
+    active_transition: ManagedArtifactPathTransition
+    archive_transition: ManagedArtifactPathTransition
+
+
+ManagedArtifactPlan: TypeAlias = Annotated[
+    Union[
+        ManagedArtifactCreatePlan,
+        ManagedArtifactRevisePlan,
+        ManagedArtifactReplacePlan,
+        ManagedArtifactArchivePlan,
+    ],
+    Field(discriminator="action"),
+]
+
+
+class ManagedArtifactPlanningDecision(str, Enum):
+    """The finite no-plan decisions exposed by R09A."""
+
+    PATH_INVALID = "PATH_INVALID"
+    ARTIFACT_TREE_INVALID = "ARTIFACT_TREE_INVALID"
+    EDGE_INVALID = "EDGE_INVALID"
+    LIFECYCLE_INVALID = "LIFECYCLE_INVALID"
+    TERMINAL_STATE_MISMATCH = "TERMINAL_STATE_MISMATCH"
+    ANCESTOR_CASCADE_INCOMPLETE = "ANCESTOR_CASCADE_INCOMPLETE"
+    DOCUMENT_MUTATION_MISMATCH = "DOCUMENT_MUTATION_MISMATCH"
+    UNRELATED_MUTATION = "UNRELATED_MUTATION"
+
+
+class ManagedArtifactPlannedResult(_StrictModel):
+    """The exact success variant of the planning result."""
+
+    status: Literal["PLANNED"] = "PLANNED"
+    request_ref: OpaqueMetadataId
+    plan: ManagedArtifactPlan
+
+
+class ManagedArtifactRejectedResult(_StrictModel):
+    """The exact rejection variant with no leaked plan or input content."""
+
+    status: Literal["REJECTED"] = "REJECTED"
+    request_ref: OpaqueMetadataId
+    decision: ManagedArtifactPlanningDecision
+
+
+ManagedArtifactPlanningResult: TypeAlias = Annotated[
+    Union[ManagedArtifactPlannedResult, ManagedArtifactRejectedResult],
+    Field(discriminator="status"),
+]
+
+
 __all__ = [
     "ArtifactDocumentKind",
     "ContentDigest",
@@ -209,4 +528,32 @@ __all__ = [
     "TargetDocumentPlan",
     "TargetRelativePath",
     "derive_document_digest",
+    "ManagedArtifactAction",
+    "ManagedArtifactArchivePlan",
+    "ManagedArtifactArchiveRequest",
+    "ManagedArtifactAbsentNodeState",
+    "ManagedArtifactCreatePlan",
+    "ManagedArtifactCreateRequest",
+    "ManagedArtifactDeleteDocument",
+    "ManagedArtifactDocumentCreate",
+    "ManagedArtifactDocumentMutation",
+    "ManagedArtifactDocumentUpdate",
+    "ManagedArtifactNodeMutation",
+    "ManagedArtifactNodeState",
+    "ManagedArtifactNodeStateKind",
+    "ManagedArtifactPathSnapshot",
+    "ManagedArtifactPathTransition",
+    "ManagedArtifactPlan",
+    "ManagedArtifactPlannedResult",
+    "ManagedArtifactPlanningDecision",
+    "ManagedArtifactPlanningResult",
+    "ManagedArtifactPresentNodeState",
+    "ManagedArtifactRejectedResult",
+    "ManagedArtifactReplacePlan",
+    "ManagedArtifactReplaceRequest",
+    "ManagedArtifactRequest",
+    "ManagedArtifactRevisePlan",
+    "ManagedArtifactReviseRequest",
+    "ManagedArtifactTerminalState",
+    "ManagedArtifactTransition",
 ]
