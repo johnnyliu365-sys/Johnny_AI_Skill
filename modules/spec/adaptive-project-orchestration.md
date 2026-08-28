@@ -3,11 +3,11 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2` |
-| Status | `REVISION_05_ROUTER_PHASE_APPROVED / REVISION_06_PROJECT_ISOLATION_APPROVED / REVISION_07_HOST_GATEWAY_APPROVED / REVISION_09_PROCEDURAL_MANAGED_ARTIFACT_BEHAVIOR_APPROVED / REVISION_10_MUTATION_STATE_ALGEBRA_APPROVED / REVISION_11_RECOVERABLE_RUNTIME_APPROVED / R09A_TICKET_OPENING_AUTHORIZED / R09B1_COMPLETE / R09B2_RECOVERABLE_WRITER_TICKET_OPENING_AUTHORIZED / OTHER_APPROVED_SCOPES_UNCHANGED` |
+| Status | `REVISION_05_ROUTER_PHASE_APPROVED / REVISION_06_PROJECT_ISOLATION_APPROVED / REVISION_07_HOST_GATEWAY_APPROVED / REVISION_09_PROCEDURAL_MANAGED_ARTIFACT_BEHAVIOR_APPROVED / REVISION_10_MUTATION_STATE_ALGEBRA_APPROVED / REVISION_11_RECOVERABLE_RUNTIME_APPROVED / REVISION_12_ATOMIC_CONDITIONAL_REPLACE_CAPABILITY_GATE_APPROVED / R09A_TICKET_OPENING_AUTHORIZED / R09B1_COMPLETE / R09B2_BLOCKED_CAPABILITY_PROOF_REQUIRED / CAP_RWW6_01_TICKET_OPENING_AUTHORIZED / OTHER_APPROVED_SCOPES_UNCHANGED` |
 | Author / baseline | Codex architecture owner / `5e351ce9d57af321dfb14c6b102e9749da7efc25` |
-| Context | `doc/context/adaptive-project-orchestration/main.md` (prior sealed facts), `doc/context/adaptive-project-orchestration/adaptive-project-orchestration-r09-procedural-managed-artifact-behavior.md` (`SEALED / REVISION_09`), `doc/context/adaptive-project-orchestration/adaptive-project-orchestration-r11-recoverable-managed-artifact-runtime.md` (`SEALED / REVISION_11`) and `doc/context/host-gateway-workspace-binding/codex-desktop-readback.md` (`SEALED`) |
-| PRD | `PRD-20260813-016`, `PRD-20260813-017`, `PRD-20260814-019`, `PRD-20260815-020`, `PRD-20260815-022`, `PRD-20260815-024`, `PRD-20260822-031`, `PRD-20260828-043`, `PRD-20260828-044` |
-| Requirement change / ADR | `CHG-20260813-016`, `CHG-20260813-017`, `CHG-20260814-019`, `CHG-20260815-020`, `CHG-20260815-022`, `CHG-20260815-024`, `CHG-20260822-031`, `CHG-20260828-043`, `CHG-20260828-044` / `ADR-20260813-008`, `ADR-20260813-009`, `ADR-20260814-011`, `ADR-20260815-013`, `ADR-20260828-031`, `ADR-20260828-032` |
+| Context | `doc/context/adaptive-project-orchestration/main.md` (prior sealed facts), `doc/context/adaptive-project-orchestration/adaptive-project-orchestration-r09-procedural-managed-artifact-behavior.md` (`SEALED / REVISION_09`), `doc/context/adaptive-project-orchestration/adaptive-project-orchestration-r11-recoverable-managed-artifact-runtime.md` (`SEALED / REVISION_11`), `doc/context/adaptive-project-orchestration/adaptive-project-orchestration-r12-atomic-conditional-replace-capability.md` (`SEALED / REVISION_12`) and `doc/context/host-gateway-workspace-binding/codex-desktop-readback.md` (`SEALED`) |
+| PRD | `PRD-20260813-016`, `PRD-20260813-017`, `PRD-20260814-019`, `PRD-20260815-020`, `PRD-20260815-022`, `PRD-20260815-024`, `PRD-20260822-031`, `PRD-20260828-043`, `PRD-20260828-044`, `PRD-20260828-045` |
+| Requirement change / ADR | `CHG-20260813-016`, `CHG-20260813-017`, `CHG-20260814-019`, `CHG-20260815-020`, `CHG-20260815-022`, `CHG-20260815-024`, `CHG-20260822-031`, `CHG-20260828-043`, `CHG-20260828-044`, `CHG-20260828-045` / `ADR-20260813-008`, `ADR-20260813-009`, `ADR-20260814-011`, `ADR-20260815-013`, `ADR-20260828-031`, `ADR-20260828-032`, `ADR-20260828-033` |
 | Implementation language | Python 3.11 strict typed contracts/adapters; host-specific integration only after capability proof |
 
 ## Problem and goal
@@ -471,6 +471,28 @@ root ref, ordered explicit path refs and nodes. R09B must not add a string resol
 fuzzy lookup or first-match behavior. If a later boundary adds an explicitly declared shorthand,
 only one canonical candidate may resolve; zero and multiple candidates are finite non-successes.
 
+### AC-17R12 — Atomic Conditional Replace capability gate
+
+RWW6 remains unchanged. `AtomicConditionalReplace` is a runtime capability rather than an
+assumption about `os.replace`, `rename`, `unlink` or the advisory `exclusive-file-lock`. R09B2 may
+execute a target-document write only when the exact operating-system, filesystem backend and
+filesystem abstraction have a qualification of `YES`, or `CONDITIONAL` with runtime proof that the
+declared condition holds. An unqualified tuple returns a finite fail-closed refusal before any R09B2
+target effect.
+
+`YES` means an actual native primitive makes the final replacement or unlink atomically conditional
+on the target still having the previously observed identity. A digest read followed by an ordinary
+replacement, rename or unlink does not qualify: a lock-ignoring writer can act in that interval.
+`CONDITIONAL` names every prerequisite and proves the runtime detects it; an unmatched condition is
+`NO`. Evidence is specific to each Windows/Linux/backend/abstraction tuple and includes the native
+primitive, race model, failure semantics and an adversarial reproduction that acts after the final
+identity observation. API documentation, mocks and a different filesystem are not a substitute.
+
+`CAP-RWW6-01` is the one evidence-only investigation authorized by this revision. It cannot repair
+or reuse `f99d836`, introduce an available runtime mutation path, or weaken RWW6. If no supported
+filesystem proves the capability, R09B2 remains blocked and the Router returns to architecture/SPEC
+for a second explicit decision.
+
 ## Typed contracts
 
 ```text
@@ -859,6 +881,12 @@ checks succeed.
     preserve external bytes rather than restoring stale data. Tests construct resolver input only
     from canonical path tuples, reject an ambiguous shorthand seam without first-match selection,
     and distinguish finite resolver decisions from the narrow runtime-invariant failure result.
+25. Revision 12 capability tests qualify Windows, Linux and the current filesystem abstraction as
+    `YES`, `NO` or `CONDITIONAL` with exact native primitive, race model and failure semantics. A
+    claimed `YES` must reproduce a lock-ignoring mutation strictly after the last identity
+    observation and prove the final mutation does not overwrite it. A reverse mutation that treats
+    digest-check-plus-ordinary-replace/unlink as `YES` turns red. Missing platform/backend proof is
+    `NO`, not a skipped or assumed success, and causes no R09B2 target effect.
 
 ## Candidate vertical ticket sequence
 
@@ -897,10 +925,11 @@ requires its own approved ticket before dispatch:
    present/absent path-transition plan, including every induced selected ancestor mutation through
    root, or one finite no-effect rejection.
 2. R09B — the Revision 11 successor closure is serial: R09B1 supplies its strict public outcome
-   contracts, then R09B2 owns the recoverable transactional writer. R09B2 applies one admitted
-   plan atomically, persists private recovery evidence before its first effect, and proves every
-   affected candidate path through the existing resolver before success. Legacy R09B remains
-   blocked and is never dispatch authority.
+   contracts, then `CAP-RWW6-01` qualifies Atomic Conditional Replace before R09B2 may own the
+   recoverable transactional writer. R09B2 applies one admitted plan only on a qualified tuple,
+   persists private recovery evidence before its first effect, and proves every affected candidate
+   path through the existing resolver before success. Legacy R09B and the non-integrated R09B2
+   candidates remain blocked and are never dispatch authority.
 3. R09C — repository admission derives affected managed paths from candidate diff and rejects an
    invalid candidate tree before integration without scanning unrelated source-only candidates.
 4. R09D — Codex plugin adapter routes the managed operation, reliably classifiable direct-write
@@ -976,6 +1005,12 @@ evidence-ordering deviation, the owner separately authorized opening one R09B2 r
 ticket. This does not open an implementation lane or authorize Git mutation, host adapter,
 publication or installation effects.
 
+Revision 12 records the project owner's decision to retain RWW6 and to make Atomic Conditional
+Replace an explicit platform/backend capability gate under `CHG-20260828-045` / `ADR-20260828-033`.
+The R09B2 candidates are blocked evidence and may not receive another implementer correction.
+Only the evidence-only `CAP-RWW6-01` ticket is authorized; it does not make a runtime mutation path
+available until its exact qualification is independently accepted.
+
 ## Revision signatures
 
 | Date | AI / worktree / baseline | Summary |
@@ -992,3 +1027,4 @@ publication or installation effects.
 | 2026-08-28 | Codex architecture owner / `control/adaptive-r09b-recovery-architecture` / `5e351ce9d57af321dfb14c6b102e9749da7efc25` | Drafted Revision 11 recoverable runtime correction from the owner's three architecture decisions; exact SPEC owner approval pending. |
 | 2026-08-28 | Project owner / exact candidate `e451cf13a1defe40f5a036a09805dcfc20c751f2` | Approved Revision 11 recoverable runtime correction; authorized reviewer opening of one R09B successor ticket only. |
 | 2026-08-28 | Project owner / current owner authority | After R09B1 completed and its evidence-ordering deviation was explicitly accepted, authorized reviewer opening of one R09B2 recoverable-writer ticket only; approval, dispatch and effects remain separate. |
+| 2026-08-28 | Project owner / `PRD-20260828-045` | Retained RWW6 unchanged; approved the Atomic Conditional Replace capability gate and authorized opening only `CAP-RWW6-01` before any further R09B2 implementation. |

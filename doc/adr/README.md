@@ -32,3 +32,4 @@
 | [ADR-20260827-030-adversarial-review-and-deployment-readiness.md](ADR-20260827-030-adversarial-review-and-deployment-readiness.md) | `ACCEPTED` | 將 ticket-level adversarial audit 與 deployment-readiness matrix 收斂為 reviewer-owned、risk-scaled、effect-neutral 的證據控制。 |
 | [ADR-20260828-031-procedural-managed-artifact-behavior.md](ADR-20260828-031-procedural-managed-artifact-behavior.md) | `ACCEPTED` | 將文件與直接父索引收斂為單一受管操作，以 host behavior adapter 建立回饋迴圈，並保留 repository gate 為最終 authority。 |
 | [ADR-20260828-032-recoverable-managed-artifact-runtime.md](ADR-20260828-032-recoverable-managed-artifact-runtime.md) | `ACCEPTED` | 將 R09B 的失敗收斂為 runtime 自驗、可恢復的 fail-closed state 與 canonical-only resolution；不把 plugin/CLI 當成 authority。 |
+| [ADR-20260828-033-atomic-conditional-replace-capability.md](ADR-20260828-033-atomic-conditional-replace-capability.md) | `ACCEPTED` | RWW6 維持不變；只有被實測證明的 final atomic conditional mutation capability 才能執行 R09B2，否則 fail closed。 |
