@@ -31,3 +31,4 @@
 | [ADR-20260827-029-host-bootstrap-router-provisioning-and-composition.md](ADR-20260827-029-host-bootstrap-router-provisioning-and-composition.md) | `ACCEPTED` | 將 root readiness、runtime owned-entry delegation 與 storage composition 收斂為三個不可互換的私有責任。 |
 | [ADR-20260827-030-adversarial-review-and-deployment-readiness.md](ADR-20260827-030-adversarial-review-and-deployment-readiness.md) | `ACCEPTED` | 將 ticket-level adversarial audit 與 deployment-readiness matrix 收斂為 reviewer-owned、risk-scaled、effect-neutral 的證據控制。 |
 | [ADR-20260828-031-procedural-managed-artifact-behavior.md](ADR-20260828-031-procedural-managed-artifact-behavior.md) | `ACCEPTED` | 將文件與直接父索引收斂為單一受管操作，以 host behavior adapter 建立回饋迴圈，並保留 repository gate 為最終 authority。 |
+| [ADR-20260828-032-recoverable-managed-artifact-runtime.md](ADR-20260828-032-recoverable-managed-artifact-runtime.md) | `ACCEPTED` | 將 R09B 的失敗收斂為 runtime 自驗、可恢復的 fail-closed state 與 canonical-only resolution；不把 plugin/CLI 當成 authority。 |

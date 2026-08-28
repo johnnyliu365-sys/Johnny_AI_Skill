@@ -3,11 +3,11 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2` |
-| Status | `REVISION_05_ROUTER_PHASE_APPROVED / REVISION_06_PROJECT_ISOLATION_APPROVED / REVISION_07_HOST_GATEWAY_APPROVED / REVISION_09_PROCEDURAL_MANAGED_ARTIFACT_BEHAVIOR_APPROVED / REVISION_10_MUTATION_STATE_ALGEBRA_APPROVED / R09A_TICKET_OPENING_AUTHORIZED / OTHER_APPROVED_SCOPES_UNCHANGED` |
-| Author / baseline | Codex architecture owner / `4a43b182b2913b1ea9a00b8dbec212eb84c89a33` |
-| Context | `doc/context/adaptive-project-orchestration/main.md` (prior sealed facts), `doc/context/adaptive-project-orchestration/adaptive-project-orchestration-r09-procedural-managed-artifact-behavior.md` (`SEALED / REVISION_09`) and `doc/context/host-gateway-workspace-binding/codex-desktop-readback.md` (`SEALED`) |
-| PRD | `PRD-20260813-016`, `PRD-20260813-017`, `PRD-20260814-019`, `PRD-20260815-020`, `PRD-20260815-022`, `PRD-20260815-024`, `PRD-20260822-031`, `PRD-20260828-043` |
-| Requirement change / ADR | `CHG-20260813-016`, `CHG-20260813-017`, `CHG-20260814-019`, `CHG-20260815-020`, `CHG-20260815-022`, `CHG-20260815-024`, `CHG-20260822-031`, `CHG-20260828-043` / `ADR-20260813-008`, `ADR-20260813-009`, `ADR-20260814-011`, `ADR-20260815-013`, `ADR-20260828-031` |
+| Status | `REVISION_05_ROUTER_PHASE_APPROVED / REVISION_06_PROJECT_ISOLATION_APPROVED / REVISION_07_HOST_GATEWAY_APPROVED / REVISION_09_PROCEDURAL_MANAGED_ARTIFACT_BEHAVIOR_APPROVED / REVISION_10_MUTATION_STATE_ALGEBRA_APPROVED / REVISION_11_RECOVERABLE_RUNTIME_DRAFT / R09A_TICKET_OPENING_AUTHORIZED / OTHER_APPROVED_SCOPES_UNCHANGED` |
+| Author / baseline | Codex architecture owner / `5e351ce9d57af321dfb14c6b102e9749da7efc25` |
+| Context | `doc/context/adaptive-project-orchestration/main.md` (prior sealed facts), `doc/context/adaptive-project-orchestration/adaptive-project-orchestration-r09-procedural-managed-artifact-behavior.md` (`SEALED / REVISION_09`), `doc/context/adaptive-project-orchestration/adaptive-project-orchestration-r11-recoverable-managed-artifact-runtime.md` (`SEALED / REVISION_11`) and `doc/context/host-gateway-workspace-binding/codex-desktop-readback.md` (`SEALED`) |
+| PRD | `PRD-20260813-016`, `PRD-20260813-017`, `PRD-20260814-019`, `PRD-20260815-020`, `PRD-20260815-022`, `PRD-20260815-024`, `PRD-20260822-031`, `PRD-20260828-043`, `PRD-20260828-044` |
+| Requirement change / ADR | `CHG-20260813-016`, `CHG-20260813-017`, `CHG-20260814-019`, `CHG-20260815-020`, `CHG-20260815-022`, `CHG-20260815-024`, `CHG-20260822-031`, `CHG-20260828-043`, `CHG-20260828-044` / `ADR-20260813-008`, `ADR-20260813-009`, `ADR-20260814-011`, `ADR-20260815-013`, `ADR-20260828-031`, `ADR-20260828-032` |
 | Implementation language | Python 3.11 strict typed contracts/adapters; host-specific integration only after capability proof |
 
 ## Problem and goal
@@ -437,6 +437,40 @@ sibling edge metadata is copied byte-for-byte and no sibling node/body is loaded
 induced ancestor mutation returns `ANCESTOR_CASCADE_INCOMPLETE`; a mutation outside the selected
 path set returns `UNRELATED_MUTATION`.
 
+### AC-17R11 — Recoverable runtime transaction and canonical resolution
+
+R09B bounded-convergence review proved that Revision 10 did not state how a durable rollback
+failure, cleanup failure or uncooperative writer must be retained, nor how the runtime distinguishes
+an expected resolver non-success from a runtime invariant failure. Revision 11 is a correction under
+`PRD-20260828-044` / `CHG-20260828-044` and accepted `ADR-20260828-032`; it does not add host,
+provider, repository-admission, release or installation authority.
+
+The runtime owns transaction truth. Plugin/CLI input is a typed intent only. Before any filesystem
+effect, the runtime independently validates the exact plan shape, `HEAD`, canonical relative path
+and reparse-point containment, every expected current digest, the complete selected path transition,
+and the complete candidate document/ancestor bindings. It persists a private recovery record and
+snapshots under the worktree's Git metadata path, then takes the catalogued `exclusive-file-lock` for
+cooperating runtime instances. The advisory lock never substitutes for revalidation against a writer
+that ignores the lock.
+
+Immediately before each replace/unlink, the runtime requires the target to still equal the recorded
+baseline state. Immediately after an effect it requires the target to equal its own candidate state.
+Rollback/recovery restores a target only while it still equals that runtime candidate identity; a
+different current identity is preserved as an external conflict. Restore and temporary cleanup are
+attempted exactly twice. Failure to prove every baseline byte/absence, zero temporary residue and
+no external conflict persists the record and returns `RECOVERY_REQUIRED`; every later `apply` must
+return the same state without target effects until explicit recovery proves completion.
+
+The strict result contract adds finite `RECOVERY_REQUIRED` and `RUNTIME_INVARIANT_FAILED` outcomes
+with opaque recovery identity only. Raw paths, snapshot bytes, exception text and filesystem details
+never enter the result. `RUNTIME_INVARIANT_FAILED` is classified narrowly at the post-state resolver
+boundary after the same recovery protocol; broad exception normalization remains forbidden.
+
+Post-state resolution is canonical-only: existing `ArtifactTreeResolver` receives its exact family,
+root ref, ordered explicit path refs and nodes. R09B must not add a string resolver, sibling scan,
+fuzzy lookup or first-match behavior. If a later boundary adds an explicitly declared shorthand,
+only one canonical candidate may resolve; zero and multiple candidates are finite non-successes.
+
 ## Typed contracts
 
 ```text
@@ -817,6 +851,14 @@ checks succeed.
     every selected ancestor index mutation through the root while leaving sibling metadata exact.
     Reverse mutations omit one grandparent update, accept an earlier missing segment as terminal
     absence and add content to a delete; each turns its governing test red and restores green.
+24. Revision 11 tests create a real recovery record before the first effect; force durable restore
+    and cleanup failure; prove the two-attempt bound, preserved private recovery evidence,
+    `RECOVERY_REQUIRED` and zero later apply effects; and prove an explicit recovery clears the
+    active record only after exact restoration. Independent-process cooperating lock contention,
+    an uncooperative interleaved writer, pre-effect CAS, post-effect CAS and rollback conflict each
+    preserve external bytes rather than restoring stale data. Tests construct resolver input only
+    from canonical path tuples, reject an ambiguous shorthand seam without first-match selection,
+    and distinguish finite resolver decisions from the narrow runtime-invariant failure result.
 
 ## Candidate vertical ticket sequence
 
@@ -855,7 +897,8 @@ requires its own approved ticket before dispatch:
    present/absent path-transition plan, including every induced selected ancestor mutation through
    root, or one finite no-effect rejection.
 2. R09B — transactional writer applies one admitted plan atomically and proves every affected
-   candidate path through the existing resolver before success.
+   candidate path through the existing resolver before success. R09B is blocked and superseded for
+   dispatch by the Revision 11 successor until that exact SPEC revision is owner-approved.
 3. R09C — repository admission derives affected managed paths from candidate diff and rejects an
    invalid candidate tree before integration without scanning unrelated source-only candidates.
 4. R09D — Codex plugin adapter routes the managed operation, reliably classifiable direct-write
@@ -922,6 +965,12 @@ project owner approved the exact correction at
 `PRD-20260828-043` / `CHG-20260828-043`; it does not change the owner-approved feature direction.
 Only reviewer opening of R09A is now authorized; ticket approval and dispatch remain separate.
 
+Revision 11 records the project owner's recovery, runtime trust-boundary and canonical-resolution
+decisions under `CHG-20260828-044` / `ADR-20260828-032`. It supersedes no completed R09A behavior
+and preserves the blocked R09B candidates as evidence. The exact Revision 11 draft is awaiting the
+owner's SPEC approval; no successor ticket, implementation lane, Git mutation, host adapter,
+publication or installation effect is authorized by this draft.
+
 ## Revision signatures
 
 | Date | AI / worktree / baseline | Summary |
@@ -935,3 +984,4 @@ Only reviewer opening of R09A is now authorized; ticket approval and dispatch re
 | 2026-08-28 | Project owner / exact candidate `ef1cd4a0c74023c58e04fd44d06c58c41b8daadf` | Approved Revision 09 procedural managed-artifact behavior and authorized reviewer opening of R09A only; ticket approval, dispatch and effects remain separate. |
 | 2026-08-28 | Codex architecture owner / `control/adaptive-r09a-upstream-correction` / `c33b87cb27ca49a94cce0ae315923652a930667f` | R09A decomposition returned `UPSTREAM_DECISION_REQUIRED`; drafted Revision 10 additive mutation-state and ancestor-cascade correction, owner approval pending. |
 | 2026-08-28 | Project owner / exact candidate `b0a973a8a66d0dbbd88e94990eaa8dc6716b7954` | Approved Revision 10 mutation-state and ancestor-cascade correction; authorized reviewer opening of R09A only. |
+| 2026-08-28 | Codex architecture owner / `control/adaptive-r09b-recovery-architecture` / `5e351ce9d57af321dfb14c6b102e9749da7efc25` | Drafted Revision 11 recoverable runtime correction from the owner's three architecture decisions; exact SPEC owner approval pending. |
