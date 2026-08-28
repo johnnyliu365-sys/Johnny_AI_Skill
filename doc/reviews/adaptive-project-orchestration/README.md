@@ -11,4 +11,4 @@
 | R03 | [Model-role readiness wake](03-model-role-readiness-wake-code-review.md) | `APPROVED` |
 | R09A | [Managed-artifact planning contract](09a-managed-artifact-planning-code-review.md) | `APPROVED / AUTHORITY_PUSH_CONFIRMED` |
 | R09B | [Managed-artifact transaction](09b-managed-artifact-transaction-code-review.md) | `BLOCKED / CONVERGENCE_REVIEW_REQUIRED / MODEL_CAPABILITY_INSUFFICIENT / NOT_INTEGRATED` |
-| R09B1 | [Recoverable managed-artifact contracts](09b1-recoverable-managed-artifact-contracts-code-review.md) | `BLOCKED / EVIDENCE_ORDERING_DEVIATION / INTEGRATED_ALREADY / OWNER_DECISION_REQUIRED` |
+| R09B1 | [Recoverable managed-artifact contracts](09b1-recoverable-managed-artifact-contracts-code-review.md) | `APPROVED / INTEGRATED / AUTHORITY_PUSH_CONFIRMED / EVIDENCE_ORDERING_DEVIATION_ACCEPTED` |

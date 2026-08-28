@@ -7,7 +7,7 @@
 | SPEC / Context / ADR | Adaptive Project Orchestration Revision 11 / `CTX-ADAPTIVE-PROJECT-ORCHESTRATION-20260828-11` / `ADR-20260828-032` |
 | Reviewed candidates | initial `1bca660fa75caf82f84920d2ad1044b740f185d9`; one additive correction `0b48120ed145a3c9a43989e2b353d2611a6f3052`; branch `implement/adaptive-r09b1-recovery-contracts`; baseline `da537bc10afda6ea32917e31a9613dd648e5a7d2` |
 | Roles | Luna/xhigh implementation owner; Terra/xhigh reviewer and sole integrator; two isolated Terra/xhigh read-only evidence lanes |
-| Conclusion | `BLOCKED / EVIDENCE_ORDERING_DEVIATION / INTEGRATED_ALREADY / OWNER_DECISION_REQUIRED` |
+| Conclusion | `APPROVED / INTEGRATED / AUTHORITY_PUSH_CONFIRMED / EVIDENCE_ORDERING_DEVIATION_ACCEPTED` |
 
 ## Admission and scope
 
@@ -57,11 +57,12 @@ path/workspace recovery strings, wrong hex case and wrong token lengths, malform
 status/failure pairs. The additional research lane independently confirmed the constrained recovery
 type, ref-to-digest positional pairing, unchanged legacy exports and absence of effect imports.
 
-## Integration and required disposition
+## Integration and owner disposition
 
 `admit_document_mutation` returned `INTEGRATED` with
 `integrated_commit = 0b48120ed145a3c9a43989e2b353d2611a6f3052`; a non-force push and direct
 `origin/main` readback both returned the same SHA. That source integration is factual but preceded
-the reviewer’s required own counter-mutation. No successor ticket, publication, release,
-installation or deployment is authorized. The owner must choose whether to accept this recorded
-process deviation or require a separately approved recovery action.
+the reviewer’s required own counter-mutation. On 2026-08-28, the project owner accepted this
+documented evidence-ordering deviation after the exact restoration and green readback. The record
+is retained without backdating or reclassifying the evidence. No successor ticket, publication,
+release, installation or deployment is granted by that acceptance.
