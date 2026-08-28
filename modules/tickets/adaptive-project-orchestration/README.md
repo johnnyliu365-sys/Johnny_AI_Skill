@@ -24,6 +24,7 @@
 | [09b-managed-artifact-transaction](09b-managed-artifact-transaction.md) | One managed-plan transaction writes every bound document atomically, restores exact prior bytes on any failure, and proves the candidate post-state before success. | `BLOCKED / CONVERGENCE_REVIEW_REQUIRED / MODEL_CAPABILITY_INSUFFICIENT / NOT_INTEGRATED / REVISION_11_SUCCESSOR_PENDING` | R09A integrated at `91da8135e301992635d716c6cefa068ad950d807`; review `09b-managed-artifact-transaction-code-review.md`; `PRD-20260828-044` / `ADR-20260828-032` |
 | [09b1-recoverable-managed-artifact-contracts](09b1-recoverable-managed-artifact-contracts.md) | One strict, additive managed-artifact result contract represents normal outcome, runtime invariant failure and recovery-required stop without raw recovery data. | `COMPLETE / APPROVED / INTEGRATED / AUTHORITY_PUSH_CONFIRMED / EVIDENCE_ORDERING_DEVIATION_ACCEPTED` | source `0b48120ed145a3c9a43989e2b353d2611a6f3052` is on `origin/main`; all technical review evidence is green and the owner accepted the recorded post-integration counter-mutation timing deviation |
 | [09b2-recoverable-managed-artifact-writer](09b2-recoverable-managed-artifact-writer.md) | One local runtime writer persists private recovery evidence before effects, revalidates under an advisory lock, and fails closed until explicit recovery proves settlement. | `BLOCKED / CAPABILITY_PROOF_REQUIRED / NOT_INTEGRATED` | non-integrated candidates `269a911` and `f99d836` proved no final atomic conditional mutation; `CAP-RWW6-01` is the only authorized successor before any repair |
+| [cap-rww6-01-atomic-conditional-replace-capability](cap-rww6-01-atomic-conditional-replace-capability.md) | One evidence-only qualification determines whether the exact Windows, Linux and current filesystem-abstraction tuples can atomically condition final mutation on an observed identity. | `OPEN / APPROVED / DISPATCH_REQUIRED` | owner decision recorded at `db37da8ccfc23a63f90e12444c74ba6fec24633b`; R09B2 remains blocked unless an exact tuple is independently proved |
 
 R02C1, R02C2, R02C2A, R02C3 and R03 are complete. R04 is the next serial candidate, but it
 remains `CANDIDATE / NON_DISPATCHABLE` until its own approved ticket freeze, handoff and receipt
@@ -35,7 +36,8 @@ Luna correction review and is not integrated. Revision 11 is approved and author
 opening of one successor ticket only. R09B1 is that successor's contract-first vertical slice;
 its source and closure are integrated after the owner accepted the recorded evidence-ordering
 deviation. R09B2 is blocked pending Atomic Conditional Replace proof. `CAP-RWW6-01` is the one
-authorized capability-investigation successor. R09C–R09E and publication remain unopened.
+authorized capability-investigation successor. Its result cannot resume R09B2 by itself: a later
+review must bind an exact qualified tuple. R09C–R09E and publication remain unopened.
 
 ## Revision 06 / Revision 07 partition
 
