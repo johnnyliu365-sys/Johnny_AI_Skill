@@ -29,8 +29,8 @@ registry exist. Candidate labels are not implementation authority.
 
 R09A begins the separate Revision 10 managed-artifact sequence and does not reopen, replace or
 authorize the legacy Router R04 candidate. R09A is closed. R09B is blocked after its one bounded
-Luna correction review and is not integrated. Revision 11 has a SPEC draft but no successor ticket
-authority; R09C–R09E and publication remain unopened.
+Luna correction review and is not integrated. Revision 11 is approved and authorizes reviewer
+opening of one successor ticket only; R09C–R09E and publication remain unopened.
 
 ## Revision 06 / Revision 07 partition
 
