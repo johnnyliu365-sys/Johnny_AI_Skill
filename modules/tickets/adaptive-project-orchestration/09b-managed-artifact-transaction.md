@@ -5,7 +5,7 @@
 | Artifact ID / kind | `TICKET-ADAPTIVE-R09B-MANAGED-ARTIFACT-TRANSACTION` / `IMPLEMENTATION_TICKET` |
 | SPEC / acceptance source | `SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2` Revision 10 / AC-17R9, AC-17R10 and the Revision 09 serial closure item 2 |
 | Requirement / Context / ADR | `PRD-20260828-043` / `CHG-20260828-043` / `CTX-ADAPTIVE-PROJECT-ORCHESTRATION-20260828-09` (`bf077fdbce324527b7f95ea8382967a12ef42ad9ef6fb74c98ce020186cf8bfc`) / `ADR-20260828-031` |
-| State / closure | `OPEN / APPROVED / DISPATCH_READY`; `CLOSURE-ADAPTIVE-R09B-MANAGED-ARTIFACT-TRANSACTION-01`, ticket revision `r09b-01` |
+| State / closure | `BLOCKED / CONVERGENCE_REVIEW_REQUIRED / MODEL_CAPABILITY_INSUFFICIENT / NOT_INTEGRATED`; `CLOSURE-ADAPTIVE-R09B-MANAGED-ARTIFACT-TRANSACTION-01`, ticket revision `r09b-02` |
 | Approval authority | Project owner, 2026-08-28 (Asia/Taipei): approved this exact R09B serial successor and required implementation completion to be followed by independent adversarial evidence lanes before final review. |
 | Source baseline / dependency | `17284f8c1c13d7ac793924a6bf396a39ea25403e`; candidate must descend from this approval-bearing `main`. R09A planner candidate is integrated at `91da8135e301992635d716c6cefa068ad950d807`. Read-only dependencies are `library/workflow_router/managed_artifact_planning.py`, `library/workflow_router/artifact_tree.py`, `library/workflow_router/target_document_contracts.py`, and the current `TransactionalTargetDocumentWriter`. |
 | Control owner / reviewer | `ticket-review` semantic profile — Terra/xhigh; sole Agent-to-Agent orchestrator, final reviewer and sole integrator. |
@@ -170,3 +170,22 @@ or host workspace readback is required or created.
 Before integration, rollback is withholding the candidate. After integration, rollback is a
 separately reviewed additive revert. This ticket grants no R09C/R09D/R09E, gate, host adapter,
 target authority, publication, installation, release or deployment authority.
+
+## Review outcome — convergence required
+
+Initial candidate `3817194c5861e7f8ea12a5a33f88667e4c89ad4e` and its one additive correction
+candidate `0f031bb363fcddcb56c276ec99a28205fc5c9968` were both reviewed against this exact Closure.
+Both required Terra/xhigh reviewer-owned adversarial evidence lanes completed against each bound
+candidate. The correction closes result-shape, junction, digest-binding and lifecycle cells, but
+the correction review still proves that a rejected CAS operation overwrites a competing external
+write, and that persistent recovery/cleanup I/O failure can leave partial candidate bytes or
+temporary residue. A resolver fault also lacks a settled finite-error policy: raw escape conflicts
+with the ticket's finite post-proof result rule, while broad normalization conflicts with MAT8.
+
+This is not a third-correction authorization. Per the bounded-convergence rule, the reviewer
+returns `BLOCKED / CONVERGENCE_REVIEW_REQUIRED / MODEL_CAPABILITY_INSUFFICIENT` and preserves both
+candidate commits as evidence. Architecture/owner must first close the durable recovery record,
+cross-writer exclusion/CAS ownership, and dependency-fault-to-finite-result policy; only then may
+a new ticket revision or a separately authorized Terra implementation profile be considered.
+The document-mutation gate, source integration, push, publication and every R09C–R09E effect remain
+unauthorized.
