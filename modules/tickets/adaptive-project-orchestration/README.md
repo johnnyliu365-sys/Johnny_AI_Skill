@@ -23,7 +23,7 @@
 | [09a-managed-artifact-planning-contract](09a-managed-artifact-planning-contract.md) | One pure tagged planner validates complete present/absent path transitions, document bindings and every induced selected-ancestor mutation through root. | `CLOSED / DONE / APPROVED / INTEGRATED / AUTHORITY_PUSH_CONFIRMED` | candidate, gate result and remote readback `91da8135e301992635d716c6cefa068ad950d807`; review revision 01 |
 | [09b-managed-artifact-transaction](09b-managed-artifact-transaction.md) | One managed-plan transaction writes every bound document atomically, restores exact prior bytes on any failure, and proves the candidate post-state before success. | `BLOCKED / CONVERGENCE_REVIEW_REQUIRED / MODEL_CAPABILITY_INSUFFICIENT / NOT_INTEGRATED / REVISION_11_SUCCESSOR_PENDING` | R09A integrated at `91da8135e301992635d716c6cefa068ad950d807`; review `09b-managed-artifact-transaction-code-review.md`; `PRD-20260828-044` / `ADR-20260828-032` |
 | [09b1-recoverable-managed-artifact-contracts](09b1-recoverable-managed-artifact-contracts.md) | One strict, additive managed-artifact result contract represents normal outcome, runtime invariant failure and recovery-required stop without raw recovery data. | `COMPLETE / APPROVED / INTEGRATED / AUTHORITY_PUSH_CONFIRMED / EVIDENCE_ORDERING_DEVIATION_ACCEPTED` | source `0b48120ed145a3c9a43989e2b353d2611a6f3052` is on `origin/main`; all technical review evidence is green and the owner accepted the recorded post-integration counter-mutation timing deviation |
-| [09b2-recoverable-managed-artifact-writer](09b2-recoverable-managed-artifact-writer.md) | Superseded local runtime writer proposal; its recoverable-file design remains defect evidence only. | `SUPERSEDED_ON_REVISION_13_APPROVAL / LOCAL_FILESYSTEM_MUTATION_ROUTE_RETIRED / NOT_INTEGRATED` | Revision 13 draft selects Remote Authority Commit after all executed local tuples qualified `NO`; do not correct `f99d836` |
+| [09b2-recoverable-managed-artifact-writer](09b2-recoverable-managed-artifact-writer.md) | Superseded local runtime writer proposal; its recoverable-file design remains defect evidence only. | `SUPERSEDED / LOCAL_FILESYSTEM_MUTATION_ROUTE_RETIRED / NOT_INTEGRATED` | Approved Revision 13 selects Remote Authority Commit after all executed local tuples qualified `NO`; do not correct `f99d836` |
 | [cap-rww6-01-atomic-conditional-replace-capability](cap-rww6-01-atomic-conditional-replace-capability.md) | One evidence-only qualification determines whether the exact Windows, Linux and current filesystem-abstraction tuples can atomically condition final mutation on an observed identity. | `COMPLETE / APPROVED / INTEGRATED / AUTHORITY_PUSH_CONFIRMED / ALL_EXECUTED_TUPLES_NO / ARCHITECTURE_DECISION_REQUIRED` | gate/push/readback candidate `5763caf5dc26e382dd8092545fde053063792a37`; no result grants R09B2 repair authority |
 
 R02C1, R02C2, R02C2A, R02C3 and R03 are complete. R04 is the next serial candidate, but it
@@ -35,11 +35,10 @@ authorize the legacy Router R04 candidate. R09A is closed. R09B is blocked after
 Luna correction review and is not integrated. Revision 11 is approved and authorizes reviewer
 opening of one successor ticket only. R09B1 is that successor's contract-first vertical slice;
 its source and closure are integrated after the owner accepted the recorded evidence-ordering
-deviation. `CAP-RWW6-01` is complete: every executed tuple qualified `NO`. The owner selected the
-Remote Authority Commit architecture draft; upon exact Revision 13 approval R09B2 is superseded
-rather than corrected, and the first successor is remote-authority capability proof. Neither the
-investigation nor `f99d836` may be treated as repair authority. R09C–R09E and publication remain
-unopened.
+deviation. `CAP-RWW6-01` is complete: every executed tuple qualified `NO`. Approved Revision 13
+supersedes R09B2 rather than correcting it, and authorizes opening remote-authority capability
+proof only. Neither the investigation nor `f99d836` may be treated as repair authority. R09C–R09E
+and publication remain unopened.
 
 ## Revision 06 / Revision 07 partition
 

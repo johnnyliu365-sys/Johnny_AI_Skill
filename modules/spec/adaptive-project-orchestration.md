@@ -3,9 +3,9 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2` |
-| Status | `REVISION_05_ROUTER_PHASE_APPROVED / REVISION_06_PROJECT_ISOLATION_APPROVED / REVISION_07_HOST_GATEWAY_APPROVED / REVISION_09_PROCEDURAL_MANAGED_ARTIFACT_BEHAVIOR_APPROVED / REVISION_10_MUTATION_STATE_ALGEBRA_APPROVED / REVISION_11_RECOVERABLE_RUNTIME_APPROVED / REVISION_12_ATOMIC_CONDITIONAL_REPLACE_CAPABILITY_GATE_APPROVED / REVISION_13_REMOTE_AUTHORITY_COMMIT_DRAFT / R09A_TICKET_OPENING_AUTHORIZED / R09B1_COMPLETE / R09B2_SUPERSESSION_ON_APPROVAL / CAP_RWW6_01_COMPLETE_ALL_EXECUTED_TUPLES_NO / OTHER_APPROVED_SCOPES_UNCHANGED` |
+| Status | `REVISION_05_ROUTER_PHASE_APPROVED / REVISION_06_PROJECT_ISOLATION_APPROVED / REVISION_07_HOST_GATEWAY_APPROVED / REVISION_09_PROCEDURAL_MANAGED_ARTIFACT_BEHAVIOR_APPROVED / REVISION_10_MUTATION_STATE_ALGEBRA_APPROVED / REVISION_11_RECOVERABLE_RUNTIME_APPROVED / REVISION_12_ATOMIC_CONDITIONAL_REPLACE_CAPABILITY_GATE_APPROVED / REVISION_13_REMOTE_AUTHORITY_COMMIT_APPROVED / R09A_TICKET_OPENING_AUTHORIZED / R09B1_COMPLETE / R09B2_SUPERSEDED / CAP_RWW6_01_COMPLETE_ALL_EXECUTED_TUPLES_NO / CAP_REMOTE_AUTHORITY_01_TICKET_OPENING_AUTHORIZED / OTHER_APPROVED_SCOPES_UNCHANGED` |
 | Author / baseline | Codex architecture owner / `5e351ce9d57af321dfb14c6b102e9749da7efc25` |
-| Context | `doc/context/adaptive-project-orchestration/main.md` (prior sealed facts), `doc/context/adaptive-project-orchestration/adaptive-project-orchestration-r09-procedural-managed-artifact-behavior.md` (`SEALED / REVISION_09`), `doc/context/adaptive-project-orchestration/adaptive-project-orchestration-r11-recoverable-managed-artifact-runtime.md` (`SEALED / REVISION_11`), `doc/context/adaptive-project-orchestration/adaptive-project-orchestration-r12-atomic-conditional-replace-capability.md` (`SEALED / REVISION_12`), `doc/context/adaptive-project-orchestration/adaptive-project-orchestration-r13-remote-authority-commit.md` (`ARCHITECTURE_DRAFT / OWNER_EXACT_APPROVAL_PENDING`) and `doc/context/host-gateway-workspace-binding/codex-desktop-readback.md` (`SEALED`) |
+| Context | `doc/context/adaptive-project-orchestration/main.md` (prior sealed facts), `doc/context/adaptive-project-orchestration/adaptive-project-orchestration-r09-procedural-managed-artifact-behavior.md` (`SEALED / REVISION_09`), `doc/context/adaptive-project-orchestration/adaptive-project-orchestration-r11-recoverable-managed-artifact-runtime.md` (`SEALED / REVISION_11`), `doc/context/adaptive-project-orchestration/adaptive-project-orchestration-r12-atomic-conditional-replace-capability.md` (`SEALED / REVISION_12`), `doc/context/adaptive-project-orchestration/adaptive-project-orchestration-r13-remote-authority-commit.md` (`SEALED / REVISION_13`) and `doc/context/host-gateway-workspace-binding/codex-desktop-readback.md` (`SEALED`) |
 | PRD | `PRD-20260813-016`, `PRD-20260813-017`, `PRD-20260814-019`, `PRD-20260815-020`, `PRD-20260815-022`, `PRD-20260815-024`, `PRD-20260822-031`, `PRD-20260828-043`, `PRD-20260828-044`, `PRD-20260828-045`, `PRD-20260829-046` |
 | Requirement change / ADR | `CHG-20260813-016`, `CHG-20260813-017`, `CHG-20260814-019`, `CHG-20260815-020`, `CHG-20260815-022`, `CHG-20260815-024`, `CHG-20260822-031`, `CHG-20260828-043`, `CHG-20260828-044`, `CHG-20260828-045`, `CHG-20260829-046` / `ADR-20260813-008`, `ADR-20260813-009`, `ADR-20260814-011`, `ADR-20260815-013`, `ADR-20260828-031`, `ADR-20260828-032`, `ADR-20260828-033`, `ADR-20260829-034` |
 | Implementation language | Python 3.11 strict typed contracts/adapters; host-specific integration only after capability proof |
@@ -493,7 +493,7 @@ or reuse `f99d836`, introduce an available runtime mutation path, or weaken RWW6
 filesystem proves the capability, R09B2 remains blocked and the Router returns to architecture/SPEC
 for a second explicit decision.
 
-### AC-17R13 — Remote Authority Commit route (draft)
+### AC-17R13 — Remote Authority Commit route
 
 Revision 13 retains RWW6 and replaces only the unavailable local-filesystem route. A managed
 artifact runtime may not alter the target worktree, index, local HEAD, local refs or remote-tracking
@@ -982,7 +982,7 @@ requires its own approved ticket before dispatch:
 5. R09E — installed qualification proves `ACTIVE`, `UNAVAILABLE` and `NOT_APPLICABLE` honestly,
    including detach behavior, against a disposable target repository.
 
-Revision 13 draft replaces only the unfinished local R09B2 portion after owner approval:
+Revision 13 replaces only the unfinished local R09B2 portion:
 
 1. `CAP-REMOTE-AUTHORITY-01` proves the actual declared remote's non-force conditional authority
    transition through an owner-authorized isolated effect target. It changes no production target
@@ -1067,11 +1067,12 @@ The R09B2 candidates are blocked evidence and may not receive another implemente
 Only the evidence-only `CAP-RWW6-01` ticket is authorized; it does not make a runtime mutation path
 available until its exact qualification is independently accepted.
 
-Revision 13 is drafted after the owner selected Remote Authority Commit as the second architecture
+Revision 13 is approved after the owner selected Remote Authority Commit as the second architecture
 decision under `CHG-20260829-046` / `ADR-20260829-034`. It replaces the local-filesystem mutation
-route only, preserves RWW6 and requires proof of the actual remote authority contract before any
-remote writer ticket. Exact owner approval is pending; this draft authorizes no ticket, source,
-remote-test, credential, provider, push, publication, installation, release or deployment effect.
+route only, preserves RWW6 and authorizes reviewer opening of `CAP-REMOTE-AUTHORITY-01` only. It
+requires proof of the actual remote authority contract before any remote writer ticket and grants
+no source, remote-test, credential, provider, push, publication, installation, release or
+deployment effect.
 
 ## Revision signatures
 
@@ -1091,3 +1092,4 @@ remote-test, credential, provider, push, publication, installation, release or d
 | 2026-08-28 | Project owner / current owner authority | After R09B1 completed and its evidence-ordering deviation was explicitly accepted, authorized reviewer opening of one R09B2 recoverable-writer ticket only; approval, dispatch and effects remain separate. |
 | 2026-08-28 | Project owner / `PRD-20260828-045` | Retained RWW6 unchanged; approved the Atomic Conditional Replace capability gate and authorized opening only `CAP-RWW6-01` before any further R09B2 implementation. |
 | 2026-08-29 | Codex architecture owner / `control/adaptive-r13-remote-authority-architecture` / `eb1a818e9550589dd649a2af328f7272c185a428` | Drafted Revision 13 Remote Authority Commit after the owner selected option A; exact SPEC approval pending. |
+| 2026-08-29 | Project owner / exact candidate `3453f3e5709502bff64647eb2b4d6ad0b829212a` | Approved Revision 13 Remote Authority Commit and authorized reviewer opening of `CAP-REMOTE-AUTHORITY-01` only; no remote or implementation effect authority. |

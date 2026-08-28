@@ -1,10 +1,10 @@
 # ADR-20260829-034 — Remote Authority Commit mutation
 
 - Date: `2026-08-29 (Asia/Taipei)`
-- Status: `PROPOSED / OWNER_DIRECTION_A_SELECTED / EXACT_REVISION_APPROVAL_PENDING`
+- Status: `ACCEPTED`
 - Decision maker: Project owner
 - Related change: `PRD-20260829-046` / `CHG-20260829-046`
-- Supersedes on approval: the local-filesystem execution route of `ADR-20260828-033`; it does not
+- Supersedes: the local-filesystem execution route of `ADR-20260828-033`; it does not
   weaken RWW6 or invalidate the completed capability evidence.
 
 ## Context
@@ -18,7 +18,7 @@ The project already has an accepted authority-line architecture: only a non-forc
 plus direct remote SHA readback is integration truth. A managed document tree can be represented
 by an immutable candidate Git commit instead of by an in-place local filesystem mutation.
 
-## Proposed decision
+## Decision
 
 1. Replace the R09B2 local filesystem writer with a Remote Authority Commit route. The runtime
    never directly mutates the target worktree.

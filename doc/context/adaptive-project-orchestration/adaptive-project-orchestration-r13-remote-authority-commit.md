@@ -3,9 +3,9 @@
 | Field | Value |
 | --- | --- |
 | Artifact ID / revision | `CTX-ADAPTIVE-PROJECT-ORCHESTRATION-20260829-13` / `REVISION_13` |
-| State | `ARCHITECTURE_DRAFT / GRILL_CONVERGED / OWNER_EXACT_APPROVAL_PENDING` |
+| State | `SEALED / SPEC_REVISION_13_REMOTE_AUTHORITY_COMMIT_APPROVED / CAP_REMOTE_AUTHORITY_01_TICKET_OPENING_AUTHORIZED` |
 | Requirement / ADR | `PRD-20260829-046` / `CHG-20260829-046` / `ADR-20260829-034` |
-| Authority | Project owner selected Remote Authority Commit on 2026-08-29 (Asia/Taipei); this Context becomes sealed only with owner approval of the exact Revision 13 draft. |
+| Authority | Project owner approved exact candidate `3453f3e5709502bff64647eb2b4d6ad0b829212a` on 2026-08-29 (Asia/Taipei), selecting Remote Authority Commit and sealing this Context. |
 | Supersession | Replaces Revision 12's local-filesystem implementation route only. It preserves RWW6, R09A planning, R09B1 result contracts, canonical resolution and the completed CAP evidence. |
 
 ## Confirmed facts
@@ -71,6 +71,6 @@ is forbidden.
 
 ## Boundary
 
-This architecture draft opens no implementation lane and grants no source, credential, provider,
-remote-test, push, publication, installation, release or deployment effect. The first successor,
-if this Context and Revision 13 are approved, is evidence-only remote capability qualification.
+This sealed Context authorizes only reviewer opening of the evidence-only
+`CAP-REMOTE-AUTHORITY-01` ticket. It opens no implementation lane and grants no source,
+credential, provider, remote-test, push, publication, installation, release or deployment effect.
