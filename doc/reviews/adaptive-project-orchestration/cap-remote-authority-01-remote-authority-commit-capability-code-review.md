@@ -79,5 +79,5 @@ design must also make cleanup conditional on the last writer-owned remote identi
 cleanup when durable pre-cleanup evidence cannot be retained.
 
 Until that decision, candidate `6783385`, the unintegrated harness, the old live attempt and its
-expired scope are evidence only. They authorize no remote writer, retry, cleanup, release or
+consumed one-shot scope are evidence only. They authorize no remote writer, retry, cleanup, release or
 deployment.
