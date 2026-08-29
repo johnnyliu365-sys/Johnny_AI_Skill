@@ -25,7 +25,7 @@
 | [09b1-recoverable-managed-artifact-contracts](09b1-recoverable-managed-artifact-contracts.md) | One strict, additive managed-artifact result contract represents normal outcome, runtime invariant failure and recovery-required stop without raw recovery data. | `COMPLETE / APPROVED / INTEGRATED / AUTHORITY_PUSH_CONFIRMED / EVIDENCE_ORDERING_DEVIATION_ACCEPTED` | source `0b48120ed145a3c9a43989e2b353d2611a6f3052` is on `origin/main`; all technical review evidence is green and the owner accepted the recorded post-integration counter-mutation timing deviation |
 | [09b2-recoverable-managed-artifact-writer](09b2-recoverable-managed-artifact-writer.md) | Superseded local runtime writer proposal; its recoverable-file design remains defect evidence only. | `SUPERSEDED / LOCAL_FILESYSTEM_MUTATION_ROUTE_RETIRED / NOT_INTEGRATED` | Approved Revision 13 selects Remote Authority Commit after all executed local tuples qualified `NO`; do not correct `f99d836` |
 | [cap-rww6-01-atomic-conditional-replace-capability](cap-rww6-01-atomic-conditional-replace-capability.md) | One evidence-only qualification determines whether the exact Windows, Linux and current filesystem-abstraction tuples can atomically condition final mutation on an observed identity. | `COMPLETE / APPROVED / INTEGRATED / AUTHORITY_PUSH_CONFIRMED / ALL_EXECUTED_TUPLES_NO / ARCHITECTURE_DECISION_REQUIRED` | gate/push/readback candidate `5763caf5dc26e382dd8092545fde053063792a37`; no result grants R09B2 repair authority |
-| [cap-remote-authority-01-remote-authority-commit-capability](cap-remote-authority-01-remote-authority-commit-capability.md) | Evidence-only proof or fail-closed refusal of the Revision 13 Remote Authority Commit route on the declared authority remote and the owner-authorized isolated remote target. | `APPROVED / EXTERNAL_EFFECT_AUTHORITY_BOUND / DISPATCHABLE_FOR_CAPABILITY_PROOF_ONLY` | Owner scope `cap-remote-authority-01-20260829`: test-only `refs/heads/johnny-capability/cap-remote-authority-01`, bounded policy/race/readback/cleanup effects, expiry `2026-08-30T00:00:00+08:00`; no result itself grants a remote writer. |
+| [cap-remote-authority-01-remote-authority-commit-capability](cap-remote-authority-01-remote-authority-commit-capability.md) | Evidence-only proof or fail-closed refusal of the Revision 13 Remote Authority Commit route on the declared authority remote and the owner-authorized isolated remote target. | `BLOCKED / REQUIREMENT_CHANGED / CANDIDATE_NOT_INTEGRATED` | Review `CR-CAPREMOTE-01` found a host-protected one-shot external-effect-grant requirement outside this ticket boundary; candidate `6783385` and the expired/unretained first attempt are evidence only. |
 
 R02C1, R02C2, R02C2A, R02C3 and R03 are complete. R04 is the next serial candidate, but it
 remains `CANDIDATE / NON_DISPATCHABLE` until its own approved ticket freeze, handoff and receipt
@@ -37,10 +37,11 @@ Luna correction review and is not integrated. Revision 11 is approved and author
 opening of one successor ticket only. R09B1 is that successor's contract-first vertical slice;
 its source and closure are integrated after the owner accepted the recorded evidence-ordering
 deviation. `CAP-RWW6-01` is complete: every executed tuple qualified `NO`. Approved Revision 13
-supersedes R09B2 rather than correcting it. `CAP-REMOTE-AUTHORITY-01` is now the only opened
-successor. The owner bound its fresh isolated remote target, policy/configuration scope, qualified
-actor, correlation, expiry and cleanup for this evidence-only capability proof; that scope does not
-authorize a remote writer. Neither the investigation nor `f99d836` may be treated as repair
+supersedes R09B2 rather than correcting it. `CAP-REMOTE-AUTHORITY-01` was the only opened
+successor, but its review returned `REQUIREMENT_CHANGED`: the test-only boundary cannot supply the
+required host-protected one-shot external-effect grant, and its cleanup contract lacked remote
+ownership/CAS and pre-cleanup-evidence fail-closed behavior. Its candidate and first unretained
+probe are not repair authority. Neither the investigation nor `f99d836` may be treated as repair
 authority. R09C–R09E and publication remain unopened.
 
 ## Revision 06 / Revision 07 partition
