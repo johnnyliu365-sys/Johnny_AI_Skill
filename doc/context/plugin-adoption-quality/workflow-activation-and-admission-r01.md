@@ -13,6 +13,9 @@
   available to a session before that skill is selected.
 - The current package's Codex manifest exposes skills and default prompts; it does not expose a
   repository admission or built-in file-write interception surface.
+- Claude Code exposes project-scoped `.claude/settings.json` `PreToolUse`/`Stop` hooks. That surface
+  can improve behavior when independently qualified, but it remains host configuration rather than
+  repository integration authority.
 - Adaptive Revision 09 already specifies procedural document/index co-mutation. R09A planning is
   complete; the repository-admission, host adapter and installed-qualification closures are not.
 - Git candidate shape can prove document/source facts but cannot prove who invoked a native
@@ -26,7 +29,12 @@
 
 - Project activation is opt-in, project-scoped and target-owned. It names the installed skill but
   copies no governance body into the target.
-- Activation, repository admission and host dispatch evidence are independent finite states.
+- Activation, project host-behavior gate, repository admission and host dispatch evidence are four
+  independent finite states. Host asymmetry is expected: Claude Code may prove a target-owned hook,
+  while Codex remains `INSTRUCTION_ONLY` until an equivalent installed surface is proven.
+- A Claude project hook/config is target-owned, separately owner-approved and self-contained. It
+  must not import plugin-cache/runtime code; disabled, stale or bypassed hooks cannot report
+  `HOST_GATE_ENFORCED`.
 - Managed-document admission derives the affected exact paths from the candidate and requires
   every selected direct-ancestor edge through the declared root.
 - Code responsibility is expressed by a ticket-owned responsibility/dependency contract and
@@ -35,6 +43,11 @@
   reviewer's observation remains explicitly lower-rank.
 - Shared contracts and gate semantics are host-neutral; activation, dispatch behavior and installed
   evidence are host-specific and cannot be borrowed across Codex and Claude Code.
+- Behavioral qualification is fixed at five fresh sessions per host/scenario: four must route as
+  intended and all five must avoid forbidden effects. Evidence binds versioned fixture and
+  host/plugin/model semantic-profile identities; retry-until-green is not allowed.
+- Cluster closure produces readiness only. Shared `PAQ-REL-01` is the sole owner of any composed
+  version bump, payload regeneration/repin, publication and fresh dual-host readback.
 
 ## Data and effect flow
 
@@ -42,6 +55,7 @@
 owner-approved adoption request
   -> pure activation plan
   -> host-specific target instruction mutation + digest readback
+  -> optional Claude target-owned host hook/config + digest readback
   -> later session auto-loads target instruction
   -> takeover skill routes exact stage
   -> candidate document/source diff
@@ -49,9 +63,10 @@ owner-approved adoption request
   -> existing authority-line integration gate
 ```
 
-The activation block is the only target mutation in adoption. Admission reads ticket/candidate
-state and either refuses without integration effect or passes a bounded result to the existing
-gate. It stores no prompt, source body, secret or host transcript.
+The activation block and, when separately approved for Claude, the self-contained target hook/config
+are the only target mutations in adoption. Admission reads ticket/candidate state and either refuses
+without integration effect or passes a bounded result to the existing gate. It stores no prompt,
+source body, secret or host transcript.
 
 ## Boundary
 

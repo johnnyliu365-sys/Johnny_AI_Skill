@@ -21,9 +21,9 @@ artifact contract and a bounded co-design loop:
 ```text
 product/brand brief
   -> visual and interaction constraints
-  -> at least two materially different rendered directions
+  -> at least two materially different directions with classified evidence
   -> owner selects one
-  -> target-owned UI regime is sealed
+  -> regime candidate enters canonical CONTEXT sealing
   -> per-feature UIImplementationContract
   -> implementation by a separate owner
   -> responsive/state/accessibility screenshots
@@ -32,10 +32,13 @@ product/brand brief
 ```
 
 The skill may use an authorized Figma, image-generation or design-craft capability, but each is an
-optional port. With no external capability it produces target-owned design briefs, tokens,
-reference markup and locally rendered screenshots. Generated output is a proposal until the owner
-selects it. Selection seals typography, colour, spacing, component language, breakpoint, motion and
-interaction conventions so later tickets cannot silently reinvent them.
+optional port. With no external design-craft capability it produces target-owned design briefs,
+tokens and reference markup. A separately classified renderer produces screenshots when available;
+artifact-only mode asks the owner to open and acknowledge comparable target-owned references, while
+total renderer absence waits with `UI_REFERENCE_RENDERER_REQUIRED`. Generated output remains a
+proposal until the owner selects it. The co-design loop runs in `ARCHITECTURE`/`GRILL`; selection
+creates a regime candidate, and only the canonical CONTEXT stage under `context-routing.md` seals
+the exact owner-approved revision following `ui-design-handoff.md`.
 
 ## Responsibility and composition map
 
@@ -44,9 +47,10 @@ interaction conventions so later tickets cannot silently reinvent them.
   one strict target-owned brief.
 - `DesignCraftPort` optionally proposes or audits visual directions; its state/tier/target are
   classified before use.
-- `ReferenceRendererPort` emits bounded target-platform candidates and screenshots. It cannot
-  approve them or write production UI.
-- `UIRegimeSealer` writes the owner-selected cross-feature regime and exact source references.
+- `ReferenceRendererPort` classifies `RENDERED_AVAILABLE`, `ARTIFACT_ONLY` or `UNAVAILABLE` and
+  emits only the evidence supported by that state. It cannot approve or write production UI.
+- `UIRegimeCandidateCompiler` emits selected identity/digest as bounded input to canonical CONTEXT;
+  it cannot seal or write the authoritative revision.
 - `UIContractCompiler` creates one feature's component/state/responsive/accessibility contract.
 - `VisualVerificationPort` reads actual implemented output at declared breakpoints and produces
   findings only; the reviewer owns the conclusion.
@@ -54,13 +58,18 @@ interaction conventions so later tickets cannot silently reinvent them.
 ## Consequences
 
 - A product owner can reach an implementation-ready visual source without Figma or a designer, but
-  still makes the subjective direction decision.
+  still makes the subjective direction decision. Missing all usable reference evidence waits
+  honestly instead of inventing screenshots.
 - Design iteration happens before implementation authority. Implementation tickets consume the
   sealed regime rather than experimenting with new styles.
 - The skill needs realistic behavioral forward-tests: zero-tool brief, optional image craft,
   authorized Figma, existing-design-system and implementation-review cases.
 - Codex and Claude Code require independent skill-discovery and behavioral qualification. Neither
   host's output or invocation trace qualifies the other.
+- Behavioral qualification is a fixed five-session evidence set per host/scenario: at least four
+  route correctly and all five avoid unauthorized effects/self-approval. Extra retry-until-green is
+  forbidden.
+- UIX closure emits readiness only; shared `PAQ-REL-01` owns the single composed release effect.
 - XSS remains based on runtime data/sinks, not the design tool used.
 
 ## Alternatives rejected

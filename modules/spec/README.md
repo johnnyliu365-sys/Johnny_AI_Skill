@@ -22,3 +22,7 @@
 | --- | --- | --- |
 | Workflow adoption activation and admission | [`workflow-adoption-activation.md`](workflow-adoption-activation.md) | `DRAFT / OWNER_EXACT_APPROVAL_PENDING`；未授權 target bootstrap、source、dispatch 或發布。 |
 | Designerless UI co-design | [`designerless-ui-codesign.md`](designerless-ui-codesign.md) | `DRAFT / OWNER_EXACT_APPROVAL_PENDING`；未授權 design provider、UI source、implementation 或發布。 |
+
+兩個集群各自只產生 readiness evidence；共同 `PAQ-REL-01` 才能持有一次版本 bump、payload
+重生／重釘、publication 與 Codex／Claude installed readback。若兩集群在同一 baseline
+ready，必須合成一次 release，不得由 `WA-06`／`UIX-06` 分別發布。
