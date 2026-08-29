@@ -42,9 +42,10 @@ successor, but its review returned `REQUIREMENT_CHANGED`: the test-only boundary
 required host-protected one-shot external-effect grant, and its cleanup contract lacked remote
 ownership/CAS and pre-cleanup-evidence fail-closed behavior. Its candidate and first unretained
 probe are not repair authority. Neither the investigation nor `f99d836` may be treated as repair
-authority. Revision 14 is a host-external-effect-gateway architecture draft only: it opens no
-successor and cannot restart CAP-REMOTE until its exact owner approval and a separately approved
-host-capability investigation. R09C–R09E and publication remain unopened.
+authority. Approved Revision 14 authorizes reviewer opening of the evidence-only
+`CAP-HOST-EFFECT-GRANT-01` capability investigation only. It cannot restart CAP-REMOTE until
+that investigation returns accepted `AVAILABLE` evidence and architecture re-scopes it. R09C–R09E
+and publication remain unopened.
 
 ## Revision 06 / Revision 07 partition
 

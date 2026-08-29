@@ -3,9 +3,9 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2` |
-| Status | `REVISION_05_ROUTER_PHASE_APPROVED / REVISION_06_PROJECT_ISOLATION_APPROVED / REVISION_07_HOST_GATEWAY_APPROVED / REVISION_09_PROCEDURAL_MANAGED_ARTIFACT_BEHAVIOR_APPROVED / REVISION_10_MUTATION_STATE_ALGEBRA_APPROVED / REVISION_11_RECOVERABLE_RUNTIME_APPROVED / REVISION_12_ATOMIC_CONDITIONAL_REPLACE_CAPABILITY_GATE_APPROVED / REVISION_13_REMOTE_AUTHORITY_COMMIT_APPROVED / REVISION_14_HOST_EXTERNAL_EFFECT_GATEWAY_DRAFT / R09A_TICKET_OPENING_AUTHORIZED / R09B1_COMPLETE / R09B2_SUPERSEDED / CAP_RWW6_01_COMPLETE_ALL_EXECUTED_TUPLES_NO / CAP_REMOTE_AUTHORITY_01_BLOCKED_REQUIREMENT_CHANGED / OTHER_APPROVED_SCOPES_UNCHANGED` |
+| Status | `REVISION_05_ROUTER_PHASE_APPROVED / REVISION_06_PROJECT_ISOLATION_APPROVED / REVISION_07_HOST_GATEWAY_APPROVED / REVISION_09_PROCEDURAL_MANAGED_ARTIFACT_BEHAVIOR_APPROVED / REVISION_10_MUTATION_STATE_ALGEBRA_APPROVED / REVISION_11_RECOVERABLE_RUNTIME_APPROVED / REVISION_12_ATOMIC_CONDITIONAL_REPLACE_CAPABILITY_GATE_APPROVED / REVISION_13_REMOTE_AUTHORITY_COMMIT_APPROVED / REVISION_14_HOST_EXTERNAL_EFFECT_GATEWAY_APPROVED / R09A_TICKET_OPENING_AUTHORIZED / R09B1_COMPLETE / R09B2_SUPERSEDED / CAP_RWW6_01_COMPLETE_ALL_EXECUTED_TUPLES_NO / CAP_REMOTE_AUTHORITY_01_BLOCKED_REQUIREMENT_CHANGED / CAP_HOST_EFFECT_GRANT_01_TICKET_OPENING_AUTHORIZED / OTHER_APPROVED_SCOPES_UNCHANGED` |
 | Author / baseline | Codex architecture owner / `5e351ce9d57af321dfb14c6b102e9749da7efc25` |
-| Context | `doc/context/adaptive-project-orchestration/main.md` (prior sealed facts), `doc/context/adaptive-project-orchestration/adaptive-project-orchestration-r09-procedural-managed-artifact-behavior.md` (`SEALED / REVISION_09`), `doc/context/adaptive-project-orchestration/adaptive-project-orchestration-r11-recoverable-managed-artifact-runtime.md` (`SEALED / REVISION_11`), `doc/context/adaptive-project-orchestration/adaptive-project-orchestration-r12-atomic-conditional-replace-capability.md` (`SEALED / REVISION_12`), `doc/context/adaptive-project-orchestration/adaptive-project-orchestration-r13-remote-authority-commit.md` (`SEALED / REVISION_13`), `doc/context/adaptive-project-orchestration/adaptive-project-orchestration-r14-host-external-effect-gateway.md` (`ARCHITECTURE_DRAFT / REVISION_14`) and `doc/context/host-gateway-workspace-binding/codex-desktop-readback.md` (`SEALED`) |
+| Context | `doc/context/adaptive-project-orchestration/main.md` (prior sealed facts), `doc/context/adaptive-project-orchestration/adaptive-project-orchestration-r09-procedural-managed-artifact-behavior.md` (`SEALED / REVISION_09`), `doc/context/adaptive-project-orchestration/adaptive-project-orchestration-r11-recoverable-managed-artifact-runtime.md` (`SEALED / REVISION_11`), `doc/context/adaptive-project-orchestration/adaptive-project-orchestration-r12-atomic-conditional-replace-capability.md` (`SEALED / REVISION_12`), `doc/context/adaptive-project-orchestration/adaptive-project-orchestration-r13-remote-authority-commit.md` (`SEALED / REVISION_13`), `doc/context/adaptive-project-orchestration/adaptive-project-orchestration-r14-host-external-effect-gateway.md` (`SEALED / REVISION_14`) and `doc/context/host-gateway-workspace-binding/codex-desktop-readback.md` (`SEALED`) |
 | PRD | `PRD-20260813-016`, `PRD-20260813-017`, `PRD-20260814-019`, `PRD-20260815-020`, `PRD-20260815-022`, `PRD-20260815-024`, `PRD-20260822-031`, `PRD-20260828-043`, `PRD-20260828-044`, `PRD-20260828-045`, `PRD-20260829-046`, `PRD-20260829-047` |
 | Requirement change / ADR | `CHG-20260813-016`, `CHG-20260813-017`, `CHG-20260814-019`, `CHG-20260815-020`, `CHG-20260815-022`, `CHG-20260815-024`, `CHG-20260822-031`, `CHG-20260828-043`, `CHG-20260828-044`, `CHG-20260828-045`, `CHG-20260829-046`, `CHG-20260829-047` / `ADR-20260813-008`, `ADR-20260813-009`, `ADR-20260814-011`, `ADR-20260815-013`, `ADR-20260828-031`, `ADR-20260828-032`, `ADR-20260828-033`, `ADR-20260829-034`, `ADR-20260829-035` |
 | Implementation language | Python 3.11 strict typed contracts/adapters; host-specific integration only after capability proof |
@@ -1075,12 +1075,11 @@ Revision 13 replaces only the unfinished local R09B2 portion:
 3. R09B2 is superseded on approval and its candidates remain non-integrated evidence. R09C–R09E
    remain unopened and receive no authority from this draft.
 
-Revision 14 is an architecture draft after the CAP-REMOTE review returned
-`REQUIREMENT_CHANGED`. It authorizes no new ticket until exact owner approval. If approved, its
-first and only successor is `CAP-HOST-EFFECT-GRANT-01`, an evidence-only qualification of the
-actual host/platform protection boundary. Only an accepted `AVAILABLE` result may return
-CAP-REMOTE to architecture for a newly scoped investigation; `UNAVAILABLE` leaves the remote
-writer closed without affecting same-lifetime dispatch.
+Revision 14 is approved after the CAP-REMOTE review returned `REQUIREMENT_CHANGED`. It authorizes
+reviewer opening of `CAP-HOST-EFFECT-GRANT-01` only: an evidence-only qualification of the actual
+host/platform protection boundary. Only an accepted `AVAILABLE` result may return CAP-REMOTE to
+architecture for a newly scoped investigation; `UNAVAILABLE` leaves the remote writer closed
+without affecting same-lifetime dispatch.
 
 Plugin payload regeneration, pinning, publication and installation are a later, separately
 authorized effect ticket after R09A-R09E source closure. A provider adapter for Claude or another
@@ -1163,10 +1162,10 @@ requires proof of the actual remote authority contract before any remote writer 
 no source, remote-test, credential, provider, push, publication, installation, release or
 deployment effect.
 
-Revision 14 is a directionally authorized draft after CAP-REMOTE established that ordinary runtime
-inputs cannot prove an external-effect grant. It changes no accepted authority route, opens no
-ticket and grants no implementation, host, credential, remote, provider, push, publication,
-installation, release or deployment effect until the owner approves its exact candidate.
+Revision 14 is approved after CAP-REMOTE established that ordinary runtime inputs cannot prove an
+external-effect grant. It changes no accepted authority route and authorizes reviewer opening of
+`CAP-HOST-EFFECT-GRANT-01` only. It grants no gateway implementation, credential, remote scope,
+provider, push, publication, installation, release or deployment effect.
 
 ## Revision signatures
 
@@ -1188,3 +1187,4 @@ installation, release or deployment effect until the owner approves its exact ca
 | 2026-08-29 | Codex architecture owner / `control/adaptive-r13-remote-authority-architecture` / `eb1a818e9550589dd649a2af328f7272c185a428` | Drafted Revision 13 Remote Authority Commit after the owner selected option A; exact SPEC approval pending. |
 | 2026-08-29 | Project owner / exact candidate `3453f3e5709502bff64647eb2b4d6ad0b829212a` | Approved Revision 13 Remote Authority Commit and authorized reviewer opening of `CAP-REMOTE-AUTHORITY-01` only; no remote or implementation effect authority. |
 | 2026-08-29 | Codex architecture owner / `control/host-external-effect-gateway-architecture` / `083c41588e92e227ea27b1fde3fea33e15d6f3dc` | Drafted Revision 14 Host External-Effect Gateway after `CR-CAPREMOTE-01` established that a caller-forgeable activation cannot authorize a remote effect; exact owner approval pending. |
+| 2026-08-29 | Project owner / exact candidate `c3da092eb5cbd78938fb6f43480c525a9ee2258e` | Approved Revision 14 Host External-Effect Gateway and authorized reviewer opening of `CAP-HOST-EFFECT-GRANT-01` only; no gateway implementation or external-effect authority. |

@@ -3,9 +3,9 @@
 | Field | Value |
 | --- | --- |
 | Artifact ID / revision | `CTX-ADAPTIVE-PROJECT-ORCHESTRATION-20260829-14` / `REVISION_14` |
-| State | `ARCHITECTURE_DRAFT / OWNER_DIRECTION_ACCEPTED / SPEC_EXACT_APPROVAL_PENDING` |
+| State | `SEALED / SPEC_REVISION_14_HOST_EXTERNAL_EFFECT_GATEWAY_APPROVED / CAP_HOST_EFFECT_GRANT_01_TICKET_OPENING_AUTHORIZED` |
 | Requirement / ADR | `PRD-20260829-047` / `CHG-20260829-047` / `ADR-20260829-035` |
-| Authority | Project owner accepted the host-external-effect-gateway direction on 2026-08-29 (Asia/Taipei). This draft is not sealed and grants no new ticket, implementation or external effect. |
+| Authority | Project owner approved exact candidate `c3da092eb5cbd78938fb6f43480c525a9ee2258e` on 2026-08-29 (Asia/Taipei), sealing this Context and authorizing reviewer opening of `CAP-HOST-EFFECT-GRANT-01` only. |
 | Supersession | Refines only the unproved authorization premise of Revision 13's evidence ticket. RWW6, R09A, R09B1, the R09B2 supersession and the Remote Authority Commit data-tree model remain unchanged. |
 
 ## Confirmed facts
@@ -68,6 +68,8 @@ Any later correction is a newly approved plan/grant, never a reused grant.
 
 ## Boundary
 
-This draft has no implementation authority. It may become a sealed Context only after exact owner
-approval of Revision 14. A later evidence-only host-capability ticket must establish the supported
-host/platform protection primitive and adversarial proof before CAP-REMOTE can be re-scoped.
+This sealed Context authorizes only reviewer opening of the evidence-only
+`CAP-HOST-EFFECT-GRANT-01` ticket. It grants no gateway implementation, credential, remote scope,
+provider/Git effect, CAP-REMOTE retry, publication, installation, release or deployment authority.
+That ticket must establish the supported host/platform protection primitive and adversarial proof
+before CAP-REMOTE can be re-scoped.

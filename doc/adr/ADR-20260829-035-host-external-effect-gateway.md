@@ -1,7 +1,7 @@
 # ADR-20260829-035 — Host External-Effect Gateway capability
 
 - Date: `2026-08-29 (Asia/Taipei)`
-- Status: `DRAFT / OWNER_EXACT_APPROVAL_PENDING`
+- Status: `ACCEPTED`
 - Decision maker: Project owner
 - Related change: `PRD-20260829-047` / `CHG-20260829-047`
 - Amends: `ADR-20260829-034` without making its remote-authority route available.
@@ -24,7 +24,7 @@ has reached a privileged boundary.
 That separation is retained. A privileged external-effect operation must not be smuggled into any
 of those existing responsibilities merely because they are host-adjacent.
 
-## Proposed decision
+## Decision
 
 1. Introduce a separately qualified `HostExternalEffectGateway` capability. It is the only
    component allowed to consume an external-effect grant and invoke a privileged remote/provider
@@ -82,7 +82,6 @@ of those existing responsibilities merely because they are host-adjacent.
 
 ## Approval boundary
 
-This ADR is a directionally authorized draft, not an external-effect authorization. Exact owner
-approval is required before revising the sealed shared Context, opening the host-capability ticket,
-implementing a gateway, requesting credentials or remote scope, or performing any provider/Git
-effect.
+This accepted ADR authorizes reviewer opening of `CAP-HOST-EFFECT-GRANT-01` only. It does not
+authorize gateway implementation, credentials, remote scope, provider/Git effects, a CAP-REMOTE
+retry, publication, installation, release or deployment.
