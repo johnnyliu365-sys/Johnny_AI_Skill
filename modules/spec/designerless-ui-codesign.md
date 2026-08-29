@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-JOHNNY-DESIGNERLESS-UI-CODESIGN-20260829-01` |
-| Status | `DRAFT / OWNER_EXACT_APPROVAL_PENDING` |
+| Status | `APPROVED / UIX_01_TICKET_OPENING_AUTHORIZED` |
 | Author / baseline | Codex architecture owner / `control/plugin-adoption-quality-architecture` / `79505f65e932541d06eac797a2ea165f74cd194e` |
 | Context | `CTX-PLUGIN-ADOPTION-QUALITY-20260829-02` (`ARCHITECTURE_DRAFT`) |
 | PRD / change / ADR | `PRD-20260829-049` / `CHG-20260829-049` / `ADR-20260829-037` |
@@ -172,5 +172,6 @@ may also ship alone, but the cluster tickets never race separate pins or version
 | --- | --- | --- |
 | 2026-08-29 | Codex architecture owner / `control/plugin-adoption-quality-architecture` / `79505f65e932541d06eac797a2ea165f74cd194e` | Drafted a designerless owner/AI visual direction, regime sealing, implementation handoff and adversarial visual-review loop. |
 | 2026-08-29 | Codex architecture owner / same worktree / `4d2cad0106b02d350090fe89363710eec6d116b0` | Corrected independent review findings: conditional renderer evidence, canonical CONTEXT sealing, fixed behavioral evidence and one shared release effect. |
+| 2026-08-29 | Project owner / exact candidate `d684f1479573475c82cad7d4a4abecc60e9665e3` | Approved the designerless UI architecture and authorized reviewer opening of `UIX-01` only; ticket approval, dispatch and effects remain separate. |
 
-Decision maker: Project owner. Exact approval pending.
+Decision maker: Project owner. Exact approval accepted for candidate `d684f1479573475c82cad7d4a4abecc60e9665e3`.

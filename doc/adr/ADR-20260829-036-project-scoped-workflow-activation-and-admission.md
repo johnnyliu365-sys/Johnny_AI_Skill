@@ -1,7 +1,7 @@
 # ADR-20260829-036 — Project-scoped workflow activation and admission
 
 - Date: `2026-08-29 (Asia/Taipei)`
-- Status: `PROPOSED / OWNER_EXACT_APPROVAL_PENDING`
+- Status: `ACCEPTED`
 - Decision maker: Project owner
 - Related change: `PRD-20260829-048` / `CHG-20260829-048`
 - Refines: `ADR-20260828-031`; it does not weaken the repository gate or reopen R09B2.
@@ -24,7 +24,7 @@ Claude's official [hooks guide](https://code.claude.com/docs/en/hooks-guide) and
 pre-tool blocking; this is the capability basis for the optional Claude adapter, not evidence that
 any particular target has enabled or passed it.
 
-## Proposed decision
+## Decision
 
 Adopt four independent layers:
 
@@ -115,5 +115,6 @@ bypass; local gate success alone never implies it.
 
 ## Approval boundary
 
-This ADR authorizes no target instruction mutation, source implementation, dispatch, integration,
-publication, installation or release. Exact owner approval is required before its first ticket.
+This accepted ADR authorizes reviewer opening of `WA-01` only. Ticket approval and dispatch remain
+separate. It grants no target instruction/hook mutation, source implementation, dispatch,
+publication, installation or release.

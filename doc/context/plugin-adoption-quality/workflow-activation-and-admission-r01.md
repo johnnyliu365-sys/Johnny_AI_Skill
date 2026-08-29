@@ -3,9 +3,9 @@
 | Field | Value |
 | --- | --- |
 | Artifact ID / revision | `CTX-PLUGIN-ADOPTION-QUALITY-20260829-01` / `REVISION_01` |
-| State | `ARCHITECTURE_DRAFT / OWNER_EXACT_APPROVAL_PENDING` |
+| State | `SEALED / WORKFLOW_ADOPTION_SPEC_APPROVED / WA_01_TICKET_OPENING_AUTHORIZED` |
 | Requirement / ADR | `PRD-20260829-048` / `CHG-20260829-048` / `ADR-20260829-036` |
-| Authority | Project owner reported installed-project default-behavior failures on 2026-08-29 (Asia/Taipei). This draft grants no implementation or target effect. |
+| Authority | Project owner approved exact architecture candidate `d684f1479573475c82cad7d4a4abecc60e9665e3` on 2026-08-29 (Asia/Taipei), sealing this Context and authorizing reviewer opening of `WA-01` only. |
 
 ## Confirmed facts
 
@@ -70,5 +70,6 @@ source body, secret or host transcript.
 
 ## Boundary
 
-This draft is not sealed. It authorizes no target bootstrap, implementation, subagent dispatch,
+This sealed Context authorizes reviewer opening of `WA-01` only. Ticket approval and dispatch
+remain separate. It grants no target bootstrap/hook mutation, implementation, subagent dispatch,
 publication, installation or release.

@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-JOHNNY-WORKFLOW-ADOPTION-20260829-01` |
-| Status | `DRAFT / OWNER_EXACT_APPROVAL_PENDING` |
+| Status | `APPROVED / WA_01_TICKET_OPENING_AUTHORIZED` |
 | Author / baseline | Codex architecture owner / `control/plugin-adoption-quality-architecture` / `79505f65e932541d06eac797a2ea165f74cd194e` |
 | Context | `CTX-PLUGIN-ADOPTION-QUALITY-20260829-01` (`ARCHITECTURE_DRAFT`) |
 | PRD / change / ADR | `PRD-20260829-048` / `CHG-20260829-048` / `ADR-20260829-036` |
@@ -192,5 +192,6 @@ readiness may ship alone, but two tickets never race separate pins or version bu
 | --- | --- | --- |
 | 2026-08-29 | Codex architecture owner / `control/plugin-adoption-quality-architecture` / `79505f65e932541d06eac797a2ea165f74cd194e` | Drafted project-scoped activation, executable admission and honest dispatch-evidence architecture from observed installed-project failures. |
 | 2026-08-29 | Codex architecture owner / same worktree / `4d2cad0106b02d350090fe89363710eec6d116b0` | Corrected independent review findings: host-gate states, Claude project hook boundary, fixed behavioral evidence, bounded dispatch failure reasons and one shared release effect. |
+| 2026-08-29 | Project owner / exact candidate `d684f1479573475c82cad7d4a4abecc60e9665e3` | Approved the workflow-adoption architecture and authorized reviewer opening of `WA-01` only; ticket approval, dispatch and effects remain separate. |
 
-Decision maker: Project owner. Exact approval pending.
+Decision maker: Project owner. Exact approval accepted for candidate `d684f1479573475c82cad7d4a4abecc60e9665e3`.

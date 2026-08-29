@@ -1,7 +1,7 @@
 # ADR-20260829-037 — Designerless UI co-design
 
 - Date: `2026-08-29 (Asia/Taipei)`
-- Status: `PROPOSED / OWNER_EXACT_APPROVAL_PENDING`
+- Status: `ACCEPTED`
 - Decision maker: Project owner
 - Related change: `PRD-20260829-049` / `CHG-20260829-049`
 - Extends: the optional design-source handoff without making a design provider mandatory.
@@ -13,7 +13,7 @@ but it does not help an owner create an attractive, coherent visual source when 
 Stopping at `UI_DESIGN_SOURCE_REQUIRED` is correct when implementation is about to begin, yet a
 separate design-craft stage can create candidates before that gate.
 
-## Proposed decision
+## Decision
 
 Ship an automatically discoverable `co-design-ui` skill to Codex and Claude Code with one shared
 artifact contract and a bounded co-design loop:
@@ -83,5 +83,6 @@ the exact owner-approved revision following `ui-design-handoff.md`.
 
 ## Approval boundary
 
-This ADR authorizes no design provider access, generated media, Figma write, UI implementation,
-publication, installation or release. Exact owner approval is required before its first ticket.
+This accepted ADR authorizes reviewer opening of `UIX-01` only. Ticket approval and dispatch remain
+separate. It grants no design provider access, generated media, Figma write, UI implementation,
+publication, installation or release.

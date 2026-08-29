@@ -3,9 +3,9 @@
 | Field | Value |
 | --- | --- |
 | Artifact ID / revision | `CTX-PLUGIN-ADOPTION-QUALITY-20260829-02` / `REVISION_01` |
-| State | `ARCHITECTURE_DRAFT / OWNER_EXACT_APPROVAL_PENDING` |
+| State | `SEALED / DESIGNERLESS_UI_SPEC_APPROVED / UIX_01_TICKET_OPENING_AUTHORIZED` |
 | Requirement / ADR | `PRD-20260829-049` / `CHG-20260829-049` / `ADR-20260829-037` |
-| Authority | Project owner requires a no-designer UI co-design workflow on 2026-08-29 (Asia/Taipei). This draft grants no design-provider or implementation effect. |
+| Authority | Project owner approved exact architecture candidate `d684f1479573475c82cad7d4a4abecc60e9665e3` on 2026-08-29 (Asia/Taipei), sealing this Context and authorizing reviewer opening of `UIX-01` only. |
 
 ## Confirmed facts
 
@@ -62,5 +62,6 @@ and unrestricted tool output do not enter Router state, Context or review eviden
 
 ## Boundary
 
-This draft is not sealed. It authorizes no provider access, image generation, Figma write, UI
-implementation, publication, installation or release.
+This sealed Context authorizes reviewer opening of `UIX-01` only. Ticket approval and dispatch
+remain separate. It grants no provider access, image generation, Figma write, UI implementation,
+publication, installation or release.
