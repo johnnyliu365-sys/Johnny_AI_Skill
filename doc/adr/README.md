@@ -34,3 +34,4 @@
 | [ADR-20260828-032-recoverable-managed-artifact-runtime.md](ADR-20260828-032-recoverable-managed-artifact-runtime.md) | `ACCEPTED` | 將 R09B 的失敗收斂為 runtime 自驗、可恢復的 fail-closed state 與 canonical-only resolution；不把 plugin/CLI 當成 authority。 |
 | [ADR-20260828-033-atomic-conditional-replace-capability.md](ADR-20260828-033-atomic-conditional-replace-capability.md) | `ACCEPTED` | RWW6 維持不變；只有被實測證明的 final atomic conditional mutation capability 才能執行 R09B2，否則 fail closed。 |
 | [ADR-20260829-034-remote-authority-commit-mutation.md](ADR-20260829-034-remote-authority-commit-mutation.md) | `ACCEPTED` | 將無法證明的本機檔案最終 mutation 路徑，改為待證明的遠端 authority-ref 條件式 commit 路徑；RWW6 不變。 |
+| [ADR-20260829-035-host-external-effect-gateway.md](ADR-20260829-035-host-external-effect-gateway.md) | `DRAFT / OWNER_EXACT_APPROVAL_PENDING` | 將外部 Git/provider effect 的一次性授權收斂為必須實測的 host 信任邊界；未能證明時誠實 fail closed，且不影響同步派工。 |

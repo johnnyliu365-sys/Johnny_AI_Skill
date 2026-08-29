@@ -3,11 +3,11 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2` |
-| Status | `REVISION_05_ROUTER_PHASE_APPROVED / REVISION_06_PROJECT_ISOLATION_APPROVED / REVISION_07_HOST_GATEWAY_APPROVED / REVISION_09_PROCEDURAL_MANAGED_ARTIFACT_BEHAVIOR_APPROVED / REVISION_10_MUTATION_STATE_ALGEBRA_APPROVED / REVISION_11_RECOVERABLE_RUNTIME_APPROVED / REVISION_12_ATOMIC_CONDITIONAL_REPLACE_CAPABILITY_GATE_APPROVED / REVISION_13_REMOTE_AUTHORITY_COMMIT_APPROVED / R09A_TICKET_OPENING_AUTHORIZED / R09B1_COMPLETE / R09B2_SUPERSEDED / CAP_RWW6_01_COMPLETE_ALL_EXECUTED_TUPLES_NO / CAP_REMOTE_AUTHORITY_01_TICKET_OPENING_AUTHORIZED / OTHER_APPROVED_SCOPES_UNCHANGED` |
+| Status | `REVISION_05_ROUTER_PHASE_APPROVED / REVISION_06_PROJECT_ISOLATION_APPROVED / REVISION_07_HOST_GATEWAY_APPROVED / REVISION_09_PROCEDURAL_MANAGED_ARTIFACT_BEHAVIOR_APPROVED / REVISION_10_MUTATION_STATE_ALGEBRA_APPROVED / REVISION_11_RECOVERABLE_RUNTIME_APPROVED / REVISION_12_ATOMIC_CONDITIONAL_REPLACE_CAPABILITY_GATE_APPROVED / REVISION_13_REMOTE_AUTHORITY_COMMIT_APPROVED / REVISION_14_HOST_EXTERNAL_EFFECT_GATEWAY_DRAFT / R09A_TICKET_OPENING_AUTHORIZED / R09B1_COMPLETE / R09B2_SUPERSEDED / CAP_RWW6_01_COMPLETE_ALL_EXECUTED_TUPLES_NO / CAP_REMOTE_AUTHORITY_01_BLOCKED_REQUIREMENT_CHANGED / OTHER_APPROVED_SCOPES_UNCHANGED` |
 | Author / baseline | Codex architecture owner / `5e351ce9d57af321dfb14c6b102e9749da7efc25` |
-| Context | `doc/context/adaptive-project-orchestration/main.md` (prior sealed facts), `doc/context/adaptive-project-orchestration/adaptive-project-orchestration-r09-procedural-managed-artifact-behavior.md` (`SEALED / REVISION_09`), `doc/context/adaptive-project-orchestration/adaptive-project-orchestration-r11-recoverable-managed-artifact-runtime.md` (`SEALED / REVISION_11`), `doc/context/adaptive-project-orchestration/adaptive-project-orchestration-r12-atomic-conditional-replace-capability.md` (`SEALED / REVISION_12`), `doc/context/adaptive-project-orchestration/adaptive-project-orchestration-r13-remote-authority-commit.md` (`SEALED / REVISION_13`) and `doc/context/host-gateway-workspace-binding/codex-desktop-readback.md` (`SEALED`) |
-| PRD | `PRD-20260813-016`, `PRD-20260813-017`, `PRD-20260814-019`, `PRD-20260815-020`, `PRD-20260815-022`, `PRD-20260815-024`, `PRD-20260822-031`, `PRD-20260828-043`, `PRD-20260828-044`, `PRD-20260828-045`, `PRD-20260829-046` |
-| Requirement change / ADR | `CHG-20260813-016`, `CHG-20260813-017`, `CHG-20260814-019`, `CHG-20260815-020`, `CHG-20260815-022`, `CHG-20260815-024`, `CHG-20260822-031`, `CHG-20260828-043`, `CHG-20260828-044`, `CHG-20260828-045`, `CHG-20260829-046` / `ADR-20260813-008`, `ADR-20260813-009`, `ADR-20260814-011`, `ADR-20260815-013`, `ADR-20260828-031`, `ADR-20260828-032`, `ADR-20260828-033`, `ADR-20260829-034` |
+| Context | `doc/context/adaptive-project-orchestration/main.md` (prior sealed facts), `doc/context/adaptive-project-orchestration/adaptive-project-orchestration-r09-procedural-managed-artifact-behavior.md` (`SEALED / REVISION_09`), `doc/context/adaptive-project-orchestration/adaptive-project-orchestration-r11-recoverable-managed-artifact-runtime.md` (`SEALED / REVISION_11`), `doc/context/adaptive-project-orchestration/adaptive-project-orchestration-r12-atomic-conditional-replace-capability.md` (`SEALED / REVISION_12`), `doc/context/adaptive-project-orchestration/adaptive-project-orchestration-r13-remote-authority-commit.md` (`SEALED / REVISION_13`), `doc/context/adaptive-project-orchestration/adaptive-project-orchestration-r14-host-external-effect-gateway.md` (`ARCHITECTURE_DRAFT / REVISION_14`) and `doc/context/host-gateway-workspace-binding/codex-desktop-readback.md` (`SEALED`) |
+| PRD | `PRD-20260813-016`, `PRD-20260813-017`, `PRD-20260814-019`, `PRD-20260815-020`, `PRD-20260815-022`, `PRD-20260815-024`, `PRD-20260822-031`, `PRD-20260828-043`, `PRD-20260828-044`, `PRD-20260828-045`, `PRD-20260829-046`, `PRD-20260829-047` |
+| Requirement change / ADR | `CHG-20260813-016`, `CHG-20260813-017`, `CHG-20260814-019`, `CHG-20260815-020`, `CHG-20260815-022`, `CHG-20260815-024`, `CHG-20260822-031`, `CHG-20260828-043`, `CHG-20260828-044`, `CHG-20260828-045`, `CHG-20260829-046`, `CHG-20260829-047` / `ADR-20260813-008`, `ADR-20260813-009`, `ADR-20260814-011`, `ADR-20260815-013`, `ADR-20260828-031`, `ADR-20260828-032`, `ADR-20260828-033`, `ADR-20260829-034`, `ADR-20260829-035` |
 | Implementation language | Python 3.11 strict typed contracts/adapters; host-specific integration only after capability proof |
 
 ## Problem and goal
@@ -529,6 +529,42 @@ is resolved by direct remote readback. Only a proved remote contract may later a
 remote-commit writer. R09B2 and `f99d836` are superseded local-path evidence and are not repair
 authority.
 
+### AC-17R14 — Host External-Effect Gateway capability
+
+Revision 14 does not change the Remote Authority Commit's managed-tree or authority-ref rule. It
+closes the authorization gap discovered while qualifying it: an external Git/provider operation is
+admissible only through a `HostExternalEffectGateway` that is independently protected from the
+plugin, CLI and implementation runtime. Same-lifetime implementation dispatch remains a direct
+reviewer allocation and native completion wait; it requires no gateway, receipt, descriptor,
+runner or host-workspace readback.
+
+The gateway is a host capability, not a policy label. `AVAILABLE` requires evidence that the
+runtime cannot mint, read, alter, erase, substitute or replay grant material, or cause a
+grant-bound effect without an owner-issued grant; that the
+gateway atomically reserves and consumes one grant before it executes the immutable finite plan;
+and that it owns the privileged transport/readback operation. Environment values, ordinary local files,
+plugin/cache state, Router metadata, receipts and same-process ACLs are not proof. A host which
+cannot prove this boundary returns `HOST_EXTERNAL_EFFECT_GRANT_UNAVAILABLE` before remote effect;
+the outcome is fail-closed and must not block ordinary dispatch.
+
+Before every effect, the gateway must independently verify an immutable owner-approved plan digest
+binding credential-free repository identity, canonical declared read-only production ref, exact
+isolated target, qualified actor/role and transport, expected observations/candidate identities,
+finite allowed operation, correlation and expiry. The runtime supplies opaque references only; it
+cannot choose a grant path, remote, ref, actor, effect list or evidence destination. Credentials,
+grant material, raw provider responses and unrestricted command output are forbidden from Context,
+Router state, telemetry, logs, prompts and review artifacts.
+
+Cleanup is an external effect with its own failure boundary. The gateway persists bounded
+pre-cleanup evidence, directly reads the isolated target, and proves it still equals the
+gateway-owned expected SHA before it removes protection or conditionally deletes that target. The
+final deletion must itself be atomically conditional on the expected SHA; a read followed by an
+ordinary deletion does not qualify. Any missing/changed/ambiguous target, unavailable conditional
+primitive or failed evidence persistence is `RECOVERY_REQUIRED`; it leaves the target and
+protection untouched, permits no retry and cannot redirect to production. Revision
+14 authorizes no gateway implementation or remote effect: it permits only a later owner-approved,
+evidence-only capability investigation.
+
 ## Typed contracts
 
 ```text
@@ -721,10 +757,39 @@ ManagedArtifactPlanDecision = PLANNED | ARTIFACT_PATH_NOT_FOUND
 ManagedArtifactMutationStatus = APPLIED | BASELINE_MISMATCH
                               | TRANSACTION_FAILED | ARTIFACT_TREE_INVALID
 ManagedArtifactHostDecision = MANAGED_OPERATION_ALLOWED
-                            | RAW_MANAGED_WRITE_DENIED
-                            | REPAIR_REQUIRED
-                            | BEHAVIOR_REPAIR_EXHAUSTED
-                            | CAPABILITY_UNAVAILABLE
+                             | RAW_MANAGED_WRITE_DENIED
+                             | REPAIR_REQUIRED
+                             | BEHAVIOR_REPAIR_EXHAUSTED
+                             | CAPABILITY_UNAVAILABLE
+
+HostExternalEffectGatewayCapability = AVAILABLE | UNAVAILABLE
+ExternalEffectGrantLifecycle = ISSUED | RESERVED | CONSUMED | RECOVERY_REQUIRED
+ExternalEffectGatewayDecision = EFFECT_COMPLETED
+                              | HOST_EXTERNAL_EFFECT_GRANT_UNAVAILABLE
+                              | GRANT_INVALID | GRANT_EXPIRED | GRANT_REPLAY_DETECTED
+                              | PLAN_BINDING_MISMATCH | CALLER_IDENTITY_MISMATCH
+                              | REMOTE_IDENTITY_MISMATCH | DIRECT_READBACK_UNAVAILABLE
+                              | RECOVERY_REQUIRED
+
+ExternalEffectPlan = {
+  plan_ref, plan_digest, credential_free_remote_identity_ref,
+  declared_production_ref, isolated_target_ref, qualified_actor_ref,
+  transport_capability_ref, expected_observation_refs,
+  expected_candidate_refs, allowed_effect_refs, correlation_ref, expiry_ref
+}
+
+ExternalEffectGrantRef = {
+  opaque_grant_ref, plan_digest, gateway_capability_ref, correlation_ref
+}
+
+HostExternalEffectGatewayRequest = {
+  external_effect_plan_ref, opaque_grant_ref, caller_identity_ref,
+  expected_gateway_capability_ref
+}
+
+HostExternalEffectGatewayResult = {
+  decision, terminal_evidence_ref?, recovery_evidence_ref?
+}
 
 ManagedArtifactTerminalState = PRESENT | ABSENT
 
@@ -801,6 +866,13 @@ RequirementLineageRef = {
 
 All persisted forms are metadata-only and contain opaque references rather
 than raw project paths, source, prompts, Secrets or PII.
+
+`ExternalEffectGrantRef` is an opaque Router-facing handle, not grant material. Grant lifecycle
+state, privilege separation, one-shot reservation and effect credentials exist only within the
+qualified host gateway. A consumed grant starts only one immutable finite plan; the Router cannot
+append/reorder/replay a plan operation. `ExternalEffectPlan` is credential-free and immutable;
+every reference in it must resolve to a finite canonical binding before the gateway exposes
+`EFFECT_COMPLETED`.
 
 For each `*Result`, success requires its one named success value and every
 success payload; every non-success value requires exactly one matching failure
@@ -932,6 +1004,16 @@ checks succeed.
     or different remote. They also reject a claimed capability without direct policy evidence that
     force, ref delete and ordinary bypass updates are unavailable for qualified identities. An
     ambiguous delivery remains `PUSH_UNCONFIRMED` until readback.
+27. Revision 14 capability tests prove that the actual host tuple's external-effect gateway has an
+    independently protected grant issuer/consumer and atomically one-shot reserves a plan-bound
+    grant before effect. Adversarial probes attempt caller-side grant minting, environment/file/path
+    substitution, grant deletion, replay, mismatched caller/plan/ref/actor/expiry and independent
+    gateway invocation; each must fail before provider effect. They prove Host Bootstrap, Router
+    and telemetry composition cannot issue/consume/replay a grant; that absence is the named
+    `HOST_EXTERNAL_EFFECT_GRANT_UNAVAILABLE` result without blocking same-lifetime dispatch; and
+    that cleanup refuses to remove protection or delete an isolated ref after pre-cleanup evidence
+    persistence failure or a changed/missing/non-owned SHA, and rejects an ordinary read-then-delete
+    path lacking an expected-SHA conditional primitive, producing `RECOVERY_REQUIRED`.
 
 ## Candidate vertical ticket sequence
 
@@ -992,6 +1074,13 @@ Revision 13 replaces only the unfinished local R09B2 portion:
    local target-worktree write capability.
 3. R09B2 is superseded on approval and its candidates remain non-integrated evidence. R09C–R09E
    remain unopened and receive no authority from this draft.
+
+Revision 14 is an architecture draft after the CAP-REMOTE review returned
+`REQUIREMENT_CHANGED`. It authorizes no new ticket until exact owner approval. If approved, its
+first and only successor is `CAP-HOST-EFFECT-GRANT-01`, an evidence-only qualification of the
+actual host/platform protection boundary. Only an accepted `AVAILABLE` result may return
+CAP-REMOTE to architecture for a newly scoped investigation; `UNAVAILABLE` leaves the remote
+writer closed without affecting same-lifetime dispatch.
 
 Plugin payload regeneration, pinning, publication and installation are a later, separately
 authorized effect ticket after R09A-R09E source closure. A provider adapter for Claude or another
@@ -1074,6 +1163,11 @@ requires proof of the actual remote authority contract before any remote writer 
 no source, remote-test, credential, provider, push, publication, installation, release or
 deployment effect.
 
+Revision 14 is a directionally authorized draft after CAP-REMOTE established that ordinary runtime
+inputs cannot prove an external-effect grant. It changes no accepted authority route, opens no
+ticket and grants no implementation, host, credential, remote, provider, push, publication,
+installation, release or deployment effect until the owner approves its exact candidate.
+
 ## Revision signatures
 
 | Date | AI / worktree / baseline | Summary |
@@ -1093,3 +1187,4 @@ deployment effect.
 | 2026-08-28 | Project owner / `PRD-20260828-045` | Retained RWW6 unchanged; approved the Atomic Conditional Replace capability gate and authorized opening only `CAP-RWW6-01` before any further R09B2 implementation. |
 | 2026-08-29 | Codex architecture owner / `control/adaptive-r13-remote-authority-architecture` / `eb1a818e9550589dd649a2af328f7272c185a428` | Drafted Revision 13 Remote Authority Commit after the owner selected option A; exact SPEC approval pending. |
 | 2026-08-29 | Project owner / exact candidate `3453f3e5709502bff64647eb2b4d6ad0b829212a` | Approved Revision 13 Remote Authority Commit and authorized reviewer opening of `CAP-REMOTE-AUTHORITY-01` only; no remote or implementation effect authority. |
+| 2026-08-29 | Codex architecture owner / `control/host-external-effect-gateway-architecture` / `083c41588e92e227ea27b1fde3fea33e15d6f3dc` | Drafted Revision 14 Host External-Effect Gateway after `CR-CAPREMOTE-01` established that a caller-forgeable activation cannot authorize a remote effect; exact owner approval pending. |
