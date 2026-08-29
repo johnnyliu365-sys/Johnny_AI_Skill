@@ -1,0 +1,92 @@
+# ADR-20260829-036 — Project-scoped workflow activation and admission
+
+- Date: `2026-08-29 (Asia/Taipei)`
+- Status: `PROPOSED / OWNER_EXACT_APPROVAL_PENDING`
+- Decision maker: Project owner
+- Related change: `PRD-20260829-048` / `CHG-20260829-048`
+- Refines: `ADR-20260828-031`; it does not weaken the repository gate or reopen R09B2.
+
+## Context
+
+Installed use has shown that rules available only after the takeover skill is selected do not
+reliably become the first action of a new host session. The current package exposes skills, while
+the unfinished Revision 09 still lacks its repository-admission, host-behavior and installed-
+qualification closures. Consequently the model can create a formal leaf without its index, write
+multiple responsibilities into one module, or implement work itself before it loads the rule that
+required a lower-tier owner.
+
+These failures do not share one enforcement mechanism. Source and document shape can be validated
+from the ticket and candidate tree. A native subagent call cannot be reconstructed from Git. One
+layer must not claim to prove what belongs to another.
+
+## Proposed decision
+
+Adopt three independent layers:
+
+1. **Project activation.** An explicit adoption operation plans one bounded block in the target's
+   auto-loaded host instruction file. The target owner approves that mutation. The block names the
+   installed takeover skill and requires it as the entry route for software changes; it does not
+   copy Workflow or references. It is conditional on skill availability and remains harmless after
+   plugin removal.
+2. **Repository admission.** Integration derives the managed-document and source path sets from the
+   actual candidate. Document admission validates every selected ancestor edge through the declared
+   root. Responsibility admission validates a ticket-owned responsibility/dependency contract with
+   the chosen language's strict plus AST/source/schema checks. Either refusal leaves the authority
+   ref unchanged.
+3. **Host orchestration observation.** A live reviewer owns native same-lifetime delegation and one
+   completion wait. Evidence is `HOST_PROVEN` only when the host supplies a callback/readback that
+   the caller cannot forge. Otherwise it is honestly `REVIEWER_OBSERVED`; absence is
+   `UNAVAILABLE`. Git author, branch, prompt or receipt text is never upgraded into proof.
+
+The per-project capability state is reported separately:
+
+```text
+ActivationState = ACTIVE | ABSENT | STALE | HOST_SURFACE_UNAVAILABLE
+AdmissionState  = LOCAL_GATE_ENFORCED | REMOTE_GATE_ENFORCED | UNAVAILABLE
+DispatchEvidence = NOT_REQUIRED | REVIEWER_OBSERVED | HOST_PROVEN | UNAVAILABLE
+```
+
+`REMOTE_GATE_ENFORCED` additionally requires the declared authority ref's remote rules to prevent
+bypass; local gate success alone never implies it.
+
+## Responsibility and composition map
+
+- `ProjectAdoptionPlanner` is pure. It receives canonical repository identity, host kind and the
+  exact current instruction-file digest, then returns a create/update/no-op plan.
+- One host-specific `ProjectInstructionAdapter` applies an owner-approved plan and reads back the
+  resulting digest. It has no Git integration or subagent authority.
+- `ArtifactTopologyAdmissionPort` owns document-tree validation only.
+- `ResponsibilityBoundaryAdmissionPort` owns ticket-declared responsibility/dependency validation
+  only and delegates language syntax to bounded adapters.
+- `NativeDispatchCoordinator` exists only inside the live reviewer session. It does not write
+  durable receipts or claim host provenance unavailable to it.
+- `WorkflowIntegrationAdmission` is the Composition Root that evaluates independent results and
+  invokes the existing authority-line gate only after all applicable results are accepted.
+
+## Consequences
+
+- The first implementation sequence is activation contracts/readback, document-topology
+  repository admission, responsibility-boundary admission, native-dispatch behavioral
+  qualification, then installed cross-host qualification and publication.
+- Revision 09's R09C purpose is retained and may be satisfied by the document-admission slice; its
+  unavailable local transactional writer is not a prerequisite for read-only candidate refusal.
+- No generic line-count or file-count threshold becomes architecture policy.
+- Hosts without native dispatch provenance still improve default routing, but the UI/report must
+  label the result `REVIEWER_OBSERVED`, not enforced.
+
+## Alternatives rejected
+
+- **Add more takeover prose.** It is unavailable before skill activation and cannot reject a bad
+  candidate.
+- **Use Git shape as dispatch proof.** The reviewer can create the same branch, author and commit;
+  the evidence is caller-forgeable.
+- **Install machine-global instructions.** They affect unrelated projects and violate scoped
+  capability adoption.
+- **Reject large files.** Size correlates weakly with responsibility and produces false confidence.
+- **Require a runner/receipt.** Same-lifetime delegation already has a live reviewer and native
+  wait; a cross-lifetime bridge solves a different problem.
+
+## Approval boundary
+
+This ADR authorizes no target instruction mutation, source implementation, dispatch, integration,
+publication, installation or release. Exact owner approval is required before its first ticket.

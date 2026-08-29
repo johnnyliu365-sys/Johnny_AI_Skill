@@ -10,3 +10,4 @@ Legacy sibling migration is a separate, explicitly out-of-scope operation.
 | Partition ID | Kind | Revision | SHA-256 | Lifecycle | Direct-child index |
 | --- | --- | --- | --- | --- | --- |
 | `CTX-PARTITION-ADAPTIVE-PROJECT-ORCHESTRATION` | `PARTITION_INDEX` | `REVISION_09` | `f8a615ba696db1196dd01c9932dea932ac8a2a0a3921addb6a98090a707133a1` | `ACTIVE` | [`adaptive-project-orchestration/README.md`](adaptive-project-orchestration/README.md) |
+| `CTX-PARTITION-PLUGIN-ADOPTION-QUALITY` | `PARTITION_INDEX` | `REVISION_01` | `20463a426ecd0a2625893e60e593bae26e5863cf0ecb3a2a46a9d7e0ac4ee6ad` | `ARCHITECTURE_DRAFT / OWNER_EXACT_APPROVAL_PENDING` | [`plugin-adoption-quality/README.md`](plugin-adoption-quality/README.md) |

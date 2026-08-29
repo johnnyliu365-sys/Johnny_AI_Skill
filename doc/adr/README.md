@@ -35,3 +35,5 @@
 | [ADR-20260828-033-atomic-conditional-replace-capability.md](ADR-20260828-033-atomic-conditional-replace-capability.md) | `ACCEPTED` | RWW6 維持不變；只有被實測證明的 final atomic conditional mutation capability 才能執行 R09B2，否則 fail closed。 |
 | [ADR-20260829-034-remote-authority-commit-mutation.md](ADR-20260829-034-remote-authority-commit-mutation.md) | `ACCEPTED` | 將無法證明的本機檔案最終 mutation 路徑，改為待證明的遠端 authority-ref 條件式 commit 路徑；RWW6 不變。 |
 | [ADR-20260829-035-host-external-effect-gateway.md](ADR-20260829-035-host-external-effect-gateway.md) | `ACCEPTED` | 將外部 Git/provider effect 的一次性授權收斂為必須實測的 host 信任邊界；未能證明時誠實 fail closed，且不影響同步派工。 |
+| [ADR-20260829-036-project-scoped-workflow-activation-and-admission.md](ADR-20260829-036-project-scoped-workflow-activation-and-admission.md) | `PROPOSED / OWNER_EXACT_APPROVAL_PENDING` | 將模型預設路由、repository 可執行閘門與 host 派遣證據分層，讓文件索引與程式責任可被拒絕，且不虛稱 Git 能證明 subagent 呼叫。 |
+| [ADR-20260829-037-designerless-ui-codesign.md](ADR-20260829-037-designerless-ui-codesign.md) | `PROPOSED / OWNER_EXACT_APPROVAL_PENDING` | 以 owner 選擇與 sealed UI regime 建立無設計師共創流程；Figma、image generation 與 craft 工具保持選配輸入。 |
