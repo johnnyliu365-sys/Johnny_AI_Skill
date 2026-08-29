@@ -26,6 +26,7 @@ from this plugin and external provider effects.
 
 ```text
 HostInstructionKind = CODEX_AGENTS | CLAUDE_PROJECT_INSTRUCTION
+SupportedHost = CODEX | CLAUDE_CODE
 ActivationState = ACTIVE | ABSENT | STALE | HOST_SURFACE_UNAVAILABLE
 ActivationAction = CREATE_BLOCK | UPDATE_BLOCK | NO_CHANGE
 AdmissionState = LOCAL_GATE_ENFORCED | REMOTE_GATE_ENFORCED | UNAVAILABLE
@@ -125,6 +126,9 @@ separate direct ruleset/capability readback; it is not inferred from a local pas
    remote enforcement states are tested independently.
 8. Detach tests prove plugin removal does not delete target files and the conditional target block
    remains harmless when the skill is absent.
+9. Codex and Claude Code independently pass activation, native-dispatch behavior and installed
+   qualification. The release result remains `INCOMPLETE_HOST_QUALIFICATION` when either host is
+   absent, stale, untested or failed; no single-host evidence is promoted to cross-host success.
 
 ## Risks, compatibility, rollback and deployment prerequisites
 
@@ -140,7 +144,8 @@ requires Codex and Claude disposable installed qualification and payload regener
 3. `WA-03` managed-document repository admission (R09C closure).
 4. `WA-04` ticket-bound responsibility contract and one Python admission adapter.
 5. `WA-05` native-dispatch behavioral qualification and evidence-strength reporting.
-6. `WA-06` installed cross-host qualification, shipped skill updates and publication.
+6. `WA-06` independent Codex/Claude Code installed qualification, shipped skill updates and
+   publication.
 
 Each ticket is separately approved and dispatched. No ticket combines these responsibilities.
 

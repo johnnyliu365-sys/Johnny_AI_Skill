@@ -15,7 +15,8 @@ separate design-craft stage can create candidates before that gate.
 
 ## Proposed decision
 
-Ship an automatically discoverable `co-design-ui` skill with a bounded co-design loop:
+Ship an automatically discoverable `co-design-ui` skill to Codex and Claude Code with one shared
+artifact contract and a bounded co-design loop:
 
 ```text
 product/brand brief
@@ -58,6 +59,8 @@ interaction conventions so later tickets cannot silently reinvent them.
   sealed regime rather than experimenting with new styles.
 - The skill needs realistic behavioral forward-tests: zero-tool brief, optional image craft,
   authorized Figma, existing-design-system and implementation-review cases.
+- Codex and Claude Code require independent skill-discovery and behavioral qualification. Neither
+  host's output or invocation trace qualifies the other.
 - XSS remains based on runtime data/sinks, not the design tool used.
 
 ## Alternatives rejected

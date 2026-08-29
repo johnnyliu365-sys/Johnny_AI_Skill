@@ -20,7 +20,8 @@
 
 ## Stable architecture facts
 
-- `co-design-ui` is a separate automatically discoverable skill in the existing Johnny plugin.
+- `co-design-ui` is a separate automatically discoverable skill in the existing Johnny plugin for
+  both Codex and Claude Code.
 - The no-external-tool path is first class: design brief, tokens, reference markup and rendered
   screenshots remain target-owned.
 - Visual directions differ structurally, not only by palette. The owner selects one before regime
@@ -28,6 +29,8 @@
 - Feature contracts preserve component, finite-state, responsive, accessibility, asset and
   interaction boundaries from the sealed regime.
 - A separate reviewer evaluates actual rendered output. Figma/image/craft tools are optional ports.
+- Codex and Claude Code consume the same target-owned design contracts but prove discovery,
+  capability routing and review handoff independently.
 
 ## Data and effect flow
 

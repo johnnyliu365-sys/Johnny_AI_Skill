@@ -19,6 +19,8 @@
   subagent. A caller can forge branch, author and narrative evidence.
 - Same-lifetime delegation remains reviewer-owned native dispatch plus one completion wait. It has
   no runner/receipt/descriptor requirement.
+- Codex and Claude Code are both required deployment hosts. Their project-instruction and native
+  delegation surfaces differ and must be qualified independently.
 
 ## Stable architecture facts
 
@@ -31,6 +33,8 @@
   language-specific strict/AST/source checks, not by size heuristics.
 - Native dispatch is `HOST_PROVEN` only with non-forgeable host readback; otherwise the live
   reviewer's observation remains explicitly lower-rank.
+- Shared contracts and gate semantics are host-neutral; activation, dispatch behavior and installed
+  evidence are host-specific and cannot be borrowed across Codex and Claude Code.
 
 ## Data and effect flow
 

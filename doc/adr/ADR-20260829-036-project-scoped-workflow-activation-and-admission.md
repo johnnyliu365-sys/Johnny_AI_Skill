@@ -23,11 +23,12 @@ layer must not claim to prove what belongs to another.
 
 Adopt three independent layers:
 
-1. **Project activation.** An explicit adoption operation plans one bounded block in the target's
-   auto-loaded host instruction file. The target owner approves that mutation. The block names the
-   installed takeover skill and requires it as the entry route for software changes; it does not
-   copy Workflow or references. It is conditional on skill availability and remains harmless after
-   plugin removal.
+1. **Project activation.** An explicit adoption operation plans one bounded block in each selected
+   host's auto-loaded project instruction file. Codex and Claude Code have separate adapters and
+   readback; neither adapter is evidence for the other. The target owner approves that mutation.
+   The block names the installed takeover skill and requires it as the entry route for software
+   changes; it does not copy Workflow or references. It is conditional on skill availability and
+   remains harmless after plugin removal.
 2. **Repository admission.** Integration derives the managed-document and source path sets from the
    actual candidate. Document admission validates every selected ancestor edge through the declared
    root. Responsibility admission validates a ticket-owned responsibility/dependency contract with
@@ -68,6 +69,8 @@ bypass; local gate success alone never implies it.
 - The first implementation sequence is activation contracts/readback, document-topology
   repository admission, responsibility-boundary admission, native-dispatch behavioral
   qualification, then installed cross-host qualification and publication.
+- Cross-host means mandatory Codex and Claude Code qualification with the same public contracts and
+  independent host evidence. A single-host pass is an incomplete cluster, not a reduced success.
 - Revision 09's R09C purpose is retained and may be satisfied by the document-admission slice; its
   unavailable local transactional writer is not a prerequisite for read-only candidate refusal.
 - No generic line-count or file-count threshold becomes architecture policy.

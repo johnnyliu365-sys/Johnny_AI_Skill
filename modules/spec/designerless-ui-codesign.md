@@ -30,6 +30,7 @@ DesignSourceKind = FIGMA | SCREENSHOT | DESIGN_BRIEF | EXISTING_DESIGN_SYSTEM | 
 DesignCapabilityState = AVAILABLE_AUTHORIZED | AVAILABLE_NOT_AUTHORIZED
                       | UNAVAILABLE | DECLINED
 VisualFindingSeverity = BLOCKING | MATERIAL | POLISH
+SupportedHost = CODEX | CLAUDE_CODE
 ```
 
 `UIDesignBrief` contains product/audience/job, brand personality and anti-goals, target platform,
@@ -112,6 +113,9 @@ WCAG/functional/state failures remain blocking.
    the review conclusion or owner acceptance.
 8. Detach leaves all target-owned design and implementation artifacts intact and removes no target
    runtime dependency.
+9. Codex and Claude Code independently prove implicit skill discovery, zero-tool direction
+   generation, exact owner-selection wait, feature-contract creation and review handoff. Either
+   host failing leaves the plugin release unqualified for both-host support.
 
 ## Risks, compatibility, rollback and deployment prerequisites
 
@@ -129,7 +133,8 @@ Codex/Claude installed qualification.
 3. `UIX-03` optional design-craft/Figma/image capability routing adapters.
 4. `UIX-04` target-matched reference rendering and visual-evidence contract.
 5. `UIX-05` adversarial visual/accessibility review and realistic skill forward-tests.
-6. `UIX-06` installed cross-host qualification, payload publication and upgrade instructions.
+6. `UIX-06` independent Codex/Claude Code installed qualification, payload publication and upgrade
+   instructions.
 
 Each ticket is separately approved and dispatched. UI implementation remains target-project work.
 
