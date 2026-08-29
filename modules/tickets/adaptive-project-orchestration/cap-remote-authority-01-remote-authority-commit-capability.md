@@ -5,7 +5,7 @@
 | Artifact ID / kind | `TICKET-ADAPTIVE-CAP-REMOTE-AUTHORITY-01-REMOTE-AUTHORITY-COMMIT-CAPABILITY` / `CAPABILITY_INVESTIGATION_TICKET` |
 | SPEC / acceptance source | `SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2` Revision 13 / AC-17R13 and TDD item 26 |
 | Requirement / Context / ADR | `PRD-20260829-046` / `CHG-20260829-046` / `CTX-ADAPTIVE-PROJECT-ORCHESTRATION-20260829-13` (`30890692e40212634a11db5b9d41477b1435aa4f087637f9c1a96795f395243d`) / `ADR-20260829-034` |
-| State / closure | `OPEN / EXTERNAL_EFFECT_AUTHORITY_REQUIRED / NON_DISPATCHABLE`; one future closure is `PROVEN`, `UNPROVEN`, `UNSUPPORTED`, or `BLOCKED`, never an implicit writer admission. |
+| State / closure | `APPROVED / EXTERNAL_EFFECT_AUTHORITY_BOUND / DISPATCHABLE_FOR_CAPABILITY_PROOF_ONLY`; one future closure is `PROVEN`, `UNPROVEN`, `UNSUPPORTED`, or `BLOCKED`, never an implicit writer admission. |
 | Opening authority | Project owner, 2026-08-29 (Asia/Taipei): approved Revision 13 at `3453f3e5709502bff64647eb2b4d6ad0b829212a` and authorized opening this one capability investigation. That approval grants no source change, remote test, credential, provider, push, publication, installation, release, or deployment effect. |
 | Existing declaration evidence | [PAI-06 evidence](../../../doc/reviews/project-authority-integration/06-live-provider-qualification-evidence.md) declares this development repository's credential-free identity as `https://github.com/johnnyliu365-sys/Johnny_AI_Skill.git`, authority ref as `refs/heads/main`, and provider/method as `github.com` via Git HTTPS plus qualified GitHub readback. It is historical declaration/qualification evidence only; it is not reusable authority for this new remote mutation. |
 | Control owner / reviewer | `ticket-review` semantic profile — Sol/high; sole orchestrator, final reviewer, sole control-plane integrator and direct remote readback verifier. |
@@ -56,9 +56,25 @@ without secret material:
    reconfigure the declared production authority ref.
 
 The evidence in PAI-06 did not prove administrative bypass or stale-approval invalidation, and its
-old disposable branch was deleted. It does not satisfy items 2–4. Until the new authorization is
-recorded, the Router result is `WAIT_FOR_HUMAN / EXTERNAL_EFFECT_AUTHORITY_REQUIRED`; no worktree
-dispatch, provider call, remote read, push or credential use occurs.
+old disposable branch was deleted. It does not satisfy items 2–4. The following activation is the
+only authority that satisfies those items for this ticket.
+
+## External-effect activation — exact owner scope
+
+| Binding | Value |
+| --- | --- |
+| Owner authority | Project owner, 2026-08-29 (Asia/Taipei): authorized the capability proof, then confirmed the recommended isolated-branch scope. |
+| Declared production authority | `https://github.com/johnnyliu365-sys/Johnny_AI_Skill.git` / `refs/heads/main`; direct observation only. Its observed SHA at scope binding is `a5b18599eb280e304f98fdebe93281ac2e6c02c4`; the investigation must obtain a fresh direct read before any test-target creation. |
+| Isolated remote target | `refs/heads/johnny-capability/cap-remote-authority-01` in the same repository. It is not an authority line and may contain only disposable capability-proof commits. |
+| Provider / actor / environment | `github.com`, public development repository, Git HTTPS plus GitHub CLI/API readback. The direct host capability readback names the owner-authorized public account `johnnyliu365-sys`; credential material stays in the host keyring and outside all artifacts. |
+| Correlation / expiry | `cap-remote-authority-01-20260829` / `2026-08-30T00:00:00+08:00`; expiry, actor mismatch, repository/ref mismatch or a changed scope is `BLOCKED -> HALT`. |
+| Allowed effects | Create the isolated target from one fresh direct `main` observation; configure and read back test-only protection on that target; create two disposable candidates; make exactly the bounded non-force race plus ordinary-bypass, force-update and deletion refusal probes; directly read back every result; remove only the test-target protection and delete only the isolated target during cleanup. |
+| Forbidden effects | Any write, policy change, candidate commit, ref update, force update, deletion, reset, merge, rebase, retry, cleanup or provider configuration on `refs/heads/main`; any repository-wide setting; release, publication, installation or deployment. |
+| Cleanup rule | Cleanup begins only after the reviewer has preserved bounded evidence and direct readback. It first removes the test-only protection, then deletes exactly the isolated target, and directly reads back its absence. A cleanup failure is `RECOVERY_REQUIRED`; it never permits a production-ref workaround. |
+
+This activation authorizes a same-lifetime Terra/xhigh capability-proving dispatch and the named
+test-only remote effects only. It does not authorize a production remote-commit writer or any
+future ticket.
 
 ## One observable closure
 
