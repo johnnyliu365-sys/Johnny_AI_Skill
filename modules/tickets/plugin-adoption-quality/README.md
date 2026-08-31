@@ -5,8 +5,8 @@ they do not load both clusters or copy ticket bodies into dispatch prompts.
 
 | Child ID / leaf | Kind | Revision | SHA-256 | Lifecycle | State |
 | --- | --- | --- | --- | --- | --- |
-| [wa-01-activation-host-gate-contracts](wa-01-activation-host-gate-contracts.md) | `IMPLEMENTATION_TICKET` | `04` | `a85fda7bd159b5e41bf4c751fe5d151f624e8d9144fa28f07fe68ed1d8da92e6` | `ACTIVE` | `OPEN / APPROVED / DISPATCHABLE` |
-| [uix-01-codesign-contracts-lifecycle](uix-01-codesign-contracts-lifecycle.md) | `IMPLEMENTATION_TICKET` | `02` | `439b0ddc481c166081956aed0c576045e450520ad7639e7ecc01ba13d52c722a` | `ACTIVE` | `OPEN / APPROVED / DISPATCHABLE_AFTER_WA_01_ALLOCATION_RELEASE` |
+| [wa-01-activation-host-gate-contracts](wa-01-activation-host-gate-contracts.md) | `IMPLEMENTATION_TICKET` | `05` | `32ac8d730b49d390386dfd2f5e2171016e9808aa2f2e74b056d4bcb9a9f416f5` | `CLOSED` | `APPROVED / AUTHORITY_INTEGRATED` |
+| [uix-01-codesign-contracts-lifecycle](uix-01-codesign-contracts-lifecycle.md) | `IMPLEMENTATION_TICKET` | `02` | `439b0ddc481c166081956aed0c576045e450520ad7639e7ecc01ba13d52c722a` | `ACTIVE` | `OPEN / APPROVED / DISPATCHABLE` |
 
 The architecture approval at `d684f1479573475c82cad7d4a4abecc60e9665e3` authorized opening
 these first tickets. The project owner approved their exact revision-01 candidate at
@@ -20,3 +20,6 @@ counter-mutation left WA7 green. It added one discriminating WAM4 evidence cell 
 the production contract or source boundary. The project owner approved exact candidate
 `2dca143f297c64058fdbc720038d75d59032e0b5`; revision 04 records that authority and permits one
 fresh correction dispatch to the existing implementation owner.
+
+WA-01 source and indexed review evidence are now authority-integrated. Its implementation-owner
+allocation is released, so the already approved UIX-01 conditional dispatch is now active.

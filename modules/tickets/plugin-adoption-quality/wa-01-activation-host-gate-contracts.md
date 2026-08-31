@@ -5,8 +5,8 @@
 | Artifact ID / kind | `TICKET-PLUGIN-ADOPTION-QUALITY-WA-01` / `IMPLEMENTATION_TICKET` |
 | SPEC / acceptance source | `SPEC-JOHNNY-WORKFLOW-ADOPTION-20260829-01` / AC-1, AC-2 and the strict-contract portion of AC-9 |
 | Requirement / Context / ADR | `PRD-20260829-048` / `CHG-20260829-048` / `CTX-PLUGIN-ADOPTION-QUALITY-20260829-01` Revision 01, SHA-256 `23cb8df55a9cf69730e7bff6303af1705dc7b479c1bd1a72e033ac6fed2bdd9e` / `ADR-20260829-036` |
-| State / closure | `OPEN / APPROVED / DISPATCHABLE`; `CLOSURE-PLUGIN-ADOPTION-QUALITY-WA-01`, revision 02 |
-| Document revision | `04` |
+| State / closure | `CLOSED / APPROVED / AUTHORITY_INTEGRATED`; `CLOSURE-PLUGIN-ADOPTION-QUALITY-WA-01`, revision 02 |
+| Document revision | `05` |
 | Approval authority | Project owner, 2026-08-31 (Asia/Taipei): approved exact convergence candidate `2dca143f297c64058fdbc720038d75d59032e0b5`. This authorizes one fresh same-lifetime WAM4 correction dispatch to the existing WA-01 Luna/xhigh implementation owner. Initial review found five defects and the prior correction closed those five; the reviewer's independent alias-bypass mutation proved WA7 still false-green and is the only added closure. Review, integration, push and every host/target/publication effect remain separate. |
 | Source baseline / dependency | `5ca212f2d7ce763a8942e68e96f2fb90cfe3b6e4`; no source ticket dependency. Candidate must descend from the committed ticket authority. |
 | Control owner / reviewer | `ticket-review` semantic profile — Terra/xhigh. |
@@ -184,3 +184,15 @@ third correction. Revision 03 adds only WAM4 and the closed import allowlist nee
 existing WA7 property discriminating; it does not widen the production contract or source boundary.
 The project owner approved that exact revision-03 proposal at
 `2dca143f297c64058fdbc720038d75d59032e0b5` on 2026-08-31 (Asia/Taipei).
+
+## Completion evidence
+
+- Reviewed candidate and `admit_document_mutation.integrated_commit`:
+  `685ad93471b719a9abaf19da46b0c797a5af536a`.
+- Source integration push/readback: `origin/main` directly resolved to
+  `685ad93471b719a9abaf19da46b0c797a5af536a`.
+- Indexed review evidence commit and control-plane integrated commit:
+  `5d1dc6e38ef26870f2f87d7bfdc5c7b217a8f21c`.
+- Review evidence push/readback: `origin/main` directly resolved to
+  `5d1dc6e38ef26870f2f87d7bfdc5c7b217a8f21c`.
+- No publication, installation, target mutation, release or deployment effect was performed.

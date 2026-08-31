@@ -2,13 +2,13 @@
 
 | Field | Value |
 | --- | --- |
-| Review ID / revision | `REVIEW-PLUGIN-ADOPTION-QUALITY-WA-01` / `01` |
+| Review ID / revision | `REVIEW-PLUGIN-ADOPTION-QUALITY-WA-01` / `02` |
 | Ticket / closure | `TICKET-PLUGIN-ADOPTION-QUALITY-WA-01` document revision `04` / `CLOSURE-PLUGIN-ADOPTION-QUALITY-WA-01` revision `02` |
 | Authority commit | `2e1590e89637f92e61c09254ca52de8c94bc2657` |
 | Candidate / baseline | `685ad93471b719a9abaf19da46b0c797a5af536a` / `2e1590e89637f92e61c09254ca52de8c94bc2657` |
 | Branch / owner | `implement/plugin-adoption-quality-wa-01` / `implementation-standard` |
 | Reviewer | `ticket-review` |
-| Result | `APPROVED / INTEGRATION_PENDING` |
+| Result | `APPROVED / AUTHORITY_INTEGRATED` |
 
 ## Admission and boundary
 
@@ -72,3 +72,12 @@ Every WA1–WA7 and WAM1–WAM4 closure item is represented by executable behavi
 results. The five initial findings and the WAM4 ordering finding are closed. The candidate is
 `APPROVED` for `admit_document_mutation`; approval grants no publication, installation, target
 mutation, release or deployment effect.
+
+## Integration evidence
+
+`admit_document_mutation` returned integrated commit
+`685ad93471b719a9abaf19da46b0c797a5af536a`; non-force push and direct remote readback then
+resolved `origin/main` to that exact SHA. The indexed review tree was integrated separately by the
+control-plane gate at `5d1dc6e38ef26870f2f87d7bfdc5c7b217a8f21c`, followed by the same non-force
+push and exact remote readback. The final result is `AUTHORITY_INTEGRATED`, not merely local gate
+success.
