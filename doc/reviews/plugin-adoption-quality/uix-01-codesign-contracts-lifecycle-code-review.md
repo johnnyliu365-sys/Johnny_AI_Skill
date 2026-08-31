@@ -2,13 +2,13 @@
 
 | Field | Value |
 | --- | --- |
-| Review ID / revision | `REVIEW-PLUGIN-ADOPTION-QUALITY-UIX-01` / `01` |
-| Ticket / closure | `TICKET-PLUGIN-ADOPTION-QUALITY-UIX-01` document revision `02` / `CLOSURE-PLUGIN-ADOPTION-QUALITY-UIX-01` revision `01` |
+| Review ID / revision | `REVIEW-PLUGIN-ADOPTION-QUALITY-UIX-01` / `02` |
+| Ticket / closure | `TICKET-PLUGIN-ADOPTION-QUALITY-UIX-01` document revision `03` / `CLOSURE-PLUGIN-ADOPTION-QUALITY-UIX-01` revision `01` |
 | Authority commit | `a34145c369e7a70e2ced4ed96161019f845cf680` |
 | Candidate / baseline | `2c7b5adafa0a84f7a4219e4287daea38d8d855a5` / `a34145c369e7a70e2ced4ed96161019f845cf680` |
 | Branch / owner | `implement/plugin-adoption-quality-uix-01` / `implementation-standard` |
 | Reviewer | `ticket-review` |
-| Result | `APPROVED / SOURCE_AUTHORITY_INTEGRATED` |
+| Result | `APPROVED / AUTHORITY_INTEGRATED` |
 
 ## Admission and boundary
 
@@ -79,5 +79,7 @@ review cannot self-accept, and the module remains private and effect-free.
 `admit_document_mutation` returned integrated commit
 `2c7b5adafa0a84f7a4219e4287daea38d8d855a5`, exactly equal to the reviewed candidate. A non-force
 push and direct remote readback then resolved `origin/main` to that same SHA. This review record and
-its direct indexes are submitted separately through the control-plane gate; no target, renderer,
-provider, publication, installation, release or deployment effect is authorized.
+its direct indexes were then admitted by the control-plane gate at
+`f114dd6abf7cec5f1fad329c59aa52473243b5e5`; non-force push and direct remote readback resolved
+`origin/main` to that exact SHA. No target, renderer, provider, publication, installation, release
+or deployment effect was performed.

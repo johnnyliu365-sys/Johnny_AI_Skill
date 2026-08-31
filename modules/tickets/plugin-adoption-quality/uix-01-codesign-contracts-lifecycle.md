@@ -5,8 +5,8 @@
 | Artifact ID / kind | `TICKET-PLUGIN-ADOPTION-QUALITY-UIX-01` / `IMPLEMENTATION_TICKET` |
 | SPEC / acceptance source | `SPEC-JOHNNY-DESIGNERLESS-UI-CODESIGN-20260829-01` / AC-3 through AC-5 and the strict lifecycle portions of AC-1, AC-4 and AC-7 |
 | Requirement / Context / ADR | `PRD-20260829-049` / `CHG-20260829-049` / `CTX-PLUGIN-ADOPTION-QUALITY-20260829-02` Revision 01, SHA-256 `dd776e27777b7a4679ce8573c05639e7d7ab24481e654cf431da45c81fb99a26` / `ADR-20260829-037` |
-| State / closure | `OPEN / APPROVED / DISPATCHABLE`; `CLOSURE-PLUGIN-ADOPTION-QUALITY-UIX-01`, revision 01 |
-| Document revision | `02` |
+| State / closure | `CLOSED / APPROVED / AUTHORITY_INTEGRATED`; `CLOSURE-PLUGIN-ADOPTION-QUALITY-UIX-01`, revision 01 |
+| Document revision | `03` |
 | Approval authority | Project owner, 2026-08-31 (Asia/Taipei): approved exact ticket candidate `5b8adfee3201d8a945a775d5a238e8c6acfca8ee`. This authorizes one later UIX-01 Luna/xhigh implementation lane after WA-01 allocation is released; review, integration, push and every renderer/provider/target/publication effect remain separate. |
 | Source baseline / dependency | `5ca212f2d7ce763a8942e68e96f2fb90cfe3b6e4`; no source ticket dependency. Candidate must descend from the committed ticket authority. |
 | Control owner / reviewer | `ticket-review` semantic profile — Terra/xhigh. |
@@ -180,3 +180,16 @@ Return exactly `ImplementationReturn.COMPLETED -> ACTION_COMPLETED` with UI/UIM/
 evidence; `BLOCKED -> HALT` with the failed cell; or
 `CHANGE_DETECTED -> REQUIREMENT_CHANGED`. No return authorizes rendering, Provider/Figma/image use,
 target mutation, integration, push, publication, installation, release or deployment.
+
+## Completion evidence
+
+- Reviewed candidate and `admit_document_mutation.integrated_commit`:
+  `2c7b5adafa0a84f7a4219e4287daea38d8d855a5`.
+- Source integration push/readback: `origin/main` directly resolved to
+  `2c7b5adafa0a84f7a4219e4287daea38d8d855a5`.
+- Indexed review evidence commit and control-plane integrated commit:
+  `f114dd6abf7cec5f1fad329c59aa52473243b5e5`.
+- Review evidence push/readback: `origin/main` directly resolved to
+  `f114dd6abf7cec5f1fad329c59aa52473243b5e5`.
+- No renderer, provider, target mutation, publication, installation, release or deployment effect
+  was performed.
