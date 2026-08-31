@@ -2,13 +2,13 @@
 
 | Field | Value |
 | --- | --- |
-| Review ID / revision | `REVIEW-PLUGIN-ADOPTION-QUALITY-UIX-02` / `01` |
-| Ticket / closure | `TICKET-PLUGIN-ADOPTION-QUALITY-UIX-02` document revision `02` / `CLOSURE-PLUGIN-ADOPTION-QUALITY-UIX-02` revision `01` |
-| Authority commit | `faa744dbeb0e3d9a62e762afe0e61f51303d634d` |
-| Candidate / baseline | `faf3d05e07f83a8c7804313b4d3435d01da338b0` / `faa744dbeb0e3d9a62e762afe0e61f51303d634d` |
+| Review ID / revision | `REVIEW-PLUGIN-ADOPTION-QUALITY-UIX-02` / `02` |
+| Ticket / closure | `TICKET-PLUGIN-ADOPTION-QUALITY-UIX-02` document revision `05` / `CLOSURE-PLUGIN-ADOPTION-QUALITY-UIX-02` revision `02` |
+| Authority commit | `542f356a6affaa6e4b1b2e73e5594325fbfbe37b` |
+| Candidate / baseline | `611959f69df9bb639509d7e9068e86fb8b3e4564` / `faf3d05e07f83a8c7804313b4d3435d01da338b0` |
 | Branch / owner | `implement/plugin-adoption-quality-uix-02` / `implementation-standard` |
 | Reviewer / helper | `ticket-review` / one read-only `RESEARCH_HELPER` |
-| Result | `BLOCKED / TICKET_DEFECT / CANDIDATE_NOT_INTEGRATED` |
+| Result | `CHANGES_REQUESTED / IMPLEMENTATION_DEFECT / EVIDENCE_DEFECT / CANDIDATE_NOT_INTEGRATED` |
 
 ## Admission and boundary
 
@@ -73,7 +73,7 @@ The green suite does not discharge the missing discriminating cells. Because rev
 blocked by a ticket defect, no reviewer counter-mutation or document-mutation integration was
 performed.
 
-## Conclusion and route
+## Revision 01 conclusion and route
 
 Final conclusion: `BLOCKED / TICKET_DEFECT`. Candidate
 `faf3d05e07f83a8c7804313b4d3435d01da338b0` remains only preserved evidence on its implementation
@@ -83,3 +83,42 @@ The control plane must propose one revised closure that adds an evidence-to-requ
 binding, closes the authorized-artifact truth-table cell, admits bounded Unicode without
 normalization and rejects undeclared aliases. Exact owner approval is required before the same
 implementation owner receives one additive correction.
+
+## Closure revision 02 initial review
+
+The owner approved closure revision 02, and the same Luna/xhigh owner returned additive candidate
+`611959f69df9bb639509d7e9068e86fb8b3e4564`. That candidate adds the required binding, closes the
+capability/state/evidence truth table, accepts bounded Unicode and removes the two undeclared
+aliases. Its current focused, regression, strict-type and compile gates are green.
+
+A second read-only helper audit and the reviewer independently reproduced two remaining findings:
+
+1. **UIR1 implementation defect.** The unsafe-value validator rejects `://` and a short marker
+   list, but ordinary identifiers `mailto:owner@example.test`, `javascript:alert(1)`,
+   `authorization:bearer-token`, `prompt injection` and `C:drive-relative` are all accepted.
+   The existing credential test supplies an unknown field name, so `extra="forbid"` turns it red
+   without exercising the value validator.
+2. **Correction-baseline evidence defect.** The final test module imports
+   `ReferenceEvidenceBinding`, while baseline `faf3d05e07f83a8c7804313b4d3435d01da338b0`
+   contains no such symbol. Running that final test against the named baseline stops at collection,
+   so it does not reproduce the ticket-required named UIR1/UIR2/UIR4/UIR6 red cells. Green current
+   tests and later reverse mutations cannot be presented as that historical baseline evidence.
+
+Reviewer reproduction used ordinary public construction and direct Git object readback:
+
+```text
+mailto:owner@example.test      -> accepted
+javascript:alert(1)            -> accepted
+authorization:bearer-token     -> accepted
+prompt injection               -> accepted
+C:drive-relative               -> accepted
+baseline has binding symbol    -> false
+corrected test imports symbol  -> true
+```
+
+These are one `IMPLEMENTATION_DEFECT` and one `EVIDENCE_DEFECT` under the approved closure, not a
+new requirement. Closure revision 02 therefore permits its single additive correction on the
+same ticket, owner, worktree and branch. The correction must strengthen the value gate with direct
+malicious-value cells and add reproducible candidate-baseline evidence that reaches the named UIR
+behaviors rather than failing collection. No reset, amend, force, fresh branch or source integration
+is permitted.
