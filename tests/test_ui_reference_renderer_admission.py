@@ -14,6 +14,7 @@ from library.workflow_router.ui_reference_renderer_admission import (
     AdmittedArtifactDecision,
     AdmittedRenderedDecision,
     ArtifactReferenceEvidence,
+    ReferenceEvidenceBinding,
     ReferenceRendererAdmissionDecision,
     ReferenceRendererAdmissionRequest,
     ReferenceRendererEvidence,
@@ -35,8 +36,17 @@ MOBILE_DIGEST = "c" * 64
 ARTIFACT_SET_DIGEST = "d" * 64
 
 
+def _binding() -> ReferenceEvidenceBinding:
+    return ReferenceEvidenceBinding(
+        request_ref="request-ui-reference",
+        brief_id="brief-ui-dashboard",
+        approved_content_digest=DIGEST,
+    )
+
+
 def _rendered() -> RenderedReferenceEvidence:
     return RenderedReferenceEvidence(
+        binding=_binding(),
         desktop_screenshot_ref="screenshot-desktop",
         mobile_screenshot_ref="screenshot-mobile",
         desktop_digest=DESKTOP_DIGEST,
@@ -47,6 +57,7 @@ def _rendered() -> RenderedReferenceEvidence:
 
 def _artifact() -> ArtifactReferenceEvidence:
     return ArtifactReferenceEvidence(
+        binding=_binding(),
         desktop_artifact_ref="artifact-desktop",
         mobile_artifact_ref="artifact-mobile",
         artifact_set_digest=ARTIFACT_SET_DIGEST,
@@ -88,7 +99,7 @@ class UIReferenceRendererAdmissionTests(unittest.TestCase):
             _request(
                 capability=RendererCapabilityState.UNAVAILABLE,
                 requested_state=ReferenceRendererState.UNAVAILABLE,
-                evidence=UnavailableReferenceEvidence(),
+                evidence=UnavailableReferenceEvidence(binding=_binding()),
             ),
         )
         for request in requests:
@@ -114,7 +125,7 @@ class UIReferenceRendererAdmissionTests(unittest.TestCase):
                 _request(
                     capability=RendererCapabilityState.UNAVAILABLE,
                     requested_state=ReferenceRendererState.ARTIFACT_ONLY,
-                    evidence=UnavailableReferenceEvidence(),
+                    evidence=UnavailableReferenceEvidence(binding=_binding()),
                 )
             ),
             admit_reference_renderer(
@@ -125,6 +136,24 @@ class UIReferenceRendererAdmissionTests(unittest.TestCase):
                     evidence=_rendered(),
                 )
             ),
+            RendererRefusedDecision(
+                request_ref="request-ui-reference",
+                brief_id="brief-ui-dashboard",
+                approved_content_digest=DIGEST,
+                reason=RendererRefusalReason.STATE_EVIDENCE_MISMATCH,
+            ),
+            RendererRefusedDecision(
+                request_ref="request-ui-reference",
+                brief_id="brief-ui-dashboard",
+                approved_content_digest=DIGEST,
+                reason=RendererRefusalReason.CONTENT_BINDING_MISMATCH,
+            ),
+            RendererRefusedDecision(
+                request_ref="request-ui-reference",
+                brief_id="brief-ui-dashboard",
+                approved_content_digest=DIGEST,
+                reason=RendererRefusalReason.DUPLICATE_EVIDENCE,
+            ),
         )
         adapter = _decision_adapter()
         for decision in decisions:
@@ -134,6 +163,12 @@ class UIReferenceRendererAdmissionTests(unittest.TestCase):
             self.assertEqual(capability, RendererCapabilityState(capability.value))
         for target in RendererTarget:
             self.assertEqual(target, RendererTarget(target.value))
+        for renderer_state in ReferenceRendererState:
+            self.assertEqual(renderer_state, ReferenceRendererState(renderer_state.value))
+        for wait_reason in RendererWaitReason:
+            self.assertEqual(wait_reason, RendererWaitReason(wait_reason.value))
+        for refusal_reason in RendererRefusalReason:
+            self.assertEqual(refusal_reason, RendererRefusalReason(refusal_reason.value))
 
         with self.assertRaises(ValidationError):
             ReferenceRendererAdmissionRequest.model_validate(
@@ -153,15 +188,89 @@ class UIReferenceRendererAdmissionTests(unittest.TestCase):
         with self.assertRaises(ValidationError):
             _request(actual_target=RendererTarget.ANY)
 
+        unicode_identifier = "request-e\u0301"
+        unicode_request = ReferenceRendererAdmissionRequest(
+            request_ref=unicode_identifier,
+            brief_id="brief-ui-dashboard",
+            approved_content_digest=DIGEST,
+            capability_state=RendererCapabilityState.AVAILABLE_AUTHORIZED,
+            renderer_target=RendererTarget.DOM,
+            actual_target=RendererTarget.DOM,
+            requested_renderer_state=ReferenceRendererState.RENDERED_AVAILABLE,
+            evidence=RenderedReferenceEvidence(
+                binding=ReferenceEvidenceBinding(
+                    request_ref=unicode_identifier,
+                    brief_id="brief-ui-dashboard",
+                    approved_content_digest=DIGEST,
+                ),
+                desktop_screenshot_ref="screenshot-desktop",
+                mobile_screenshot_ref="screenshot-mobile",
+                desktop_digest=DESKTOP_DIGEST,
+                mobile_digest=MOBILE_DIGEST,
+                renderer_observation_ref="renderer-observation",
+            ),
+        )
+        self.assertEqual(
+            unicode_request,
+            ReferenceRendererAdmissionRequest.model_validate_json(unicode_request.model_dump_json()),
+        )
+        self.assertEqual(unicode_identifier, unicode_request.request_ref)
+        with self.assertRaises(ValidationError):
+            ReferenceRendererAdmissionRequest.model_validate(
+                {**_request().model_dump(), "request_ref": "request-ui-reference "}
+            )
+        with self.assertRaises(ValidationError):
+            ReferenceRendererAdmissionRequest.model_validate(
+                {**_request().model_dump(), "request_ref": "request-\nref"}
+            )
+        with self.assertRaises(ValidationError):
+            ReferenceRendererAdmissionRequest.model_validate(
+                {**_request().model_dump(), "request_ref": "request-" + ("x" * 123)}
+            )
+        alias_payload = _request().model_dump()
+        del alias_payload["renderer_target"]
+        alias_payload["declared_renderer_target"] = RendererTarget.DOM
+        with self.assertRaises(ValidationError):
+            ReferenceRendererAdmissionRequest.model_validate(alias_payload)
+        acknowledgement_alias = _artifact().model_dump()
+        del acknowledgement_alias["owner_manual_open_acknowledgement"]
+        acknowledgement_alias["owner_manual_open_acknowledged"] = True
+        with self.assertRaises(ValidationError):
+            ArtifactReferenceEvidence.model_validate(acknowledgement_alias)
+
+        self.assertEqual(_binding(), ReferenceEvidenceBinding.model_validate_json(_binding().model_dump_json()))
+        for evidence in (_rendered(), _artifact(), UnavailableReferenceEvidence(binding=_binding())):
+            self.assertEqual(evidence, type(evidence).model_validate_json(evidence.model_dump_json()))
+
     def test_uir2_authorized_matching_rendered_evidence_is_admitted(self) -> None:
         decision = admit_reference_renderer(_request(evidence=_rendered()))
         self.assertIsInstance(decision, AdmittedRenderedDecision)
         self.assertNotIsInstance(decision, AdmittedArtifactDecision)
 
+        authorized_artifact = admit_reference_renderer(
+            _request(
+                requested_state=ReferenceRendererState.ARTIFACT_ONLY,
+                evidence=_artifact(),
+            )
+        )
+        self.assertIsInstance(authorized_artifact, RendererRefusedDecision)
+        if isinstance(authorized_artifact, RendererRefusedDecision):
+            self.assertEqual(RendererRefusalReason.STATE_EVIDENCE_MISMATCH, authorized_artifact.reason)
+
         with self.assertRaises(ValidationError):
             RenderedReferenceEvidence.model_validate(
                 {**_rendered().model_dump(), "desktop_digest": "not-a-digest"}
             )
+
+        authorized_unavailable = admit_reference_renderer(
+            _request(
+                requested_state=ReferenceRendererState.UNAVAILABLE,
+                evidence=UnavailableReferenceEvidence(binding=_binding()),
+            )
+        )
+        self.assertIsInstance(authorized_unavailable, RendererRefusedDecision)
+        if isinstance(authorized_unavailable, RendererRefusedDecision):
+            self.assertEqual(RendererRefusalReason.STATE_EVIDENCE_MISMATCH, authorized_unavailable.reason)
 
     def test_uir3_unauthorized_capability_waits_without_admission(self) -> None:
         decision = admit_reference_renderer(
@@ -173,6 +282,16 @@ class UIReferenceRendererAdmissionTests(unittest.TestCase):
         self.assertNotIsInstance(decision, (AdmittedRenderedDecision, AdmittedArtifactDecision))
 
     def test_uir4_absence_or_decline_uses_artifact_fallback(self) -> None:
+        authorized_artifact = admit_reference_renderer(
+            _request(
+                requested_state=ReferenceRendererState.ARTIFACT_ONLY,
+                evidence=_artifact(),
+            )
+        )
+        self.assertIsInstance(authorized_artifact, RendererRefusedDecision)
+        if isinstance(authorized_artifact, RendererRefusedDecision):
+            self.assertEqual(RendererRefusalReason.STATE_EVIDENCE_MISMATCH, authorized_artifact.reason)
+
         for capability in (
             RendererCapabilityState.UNAVAILABLE,
             RendererCapabilityState.DECLINED,
@@ -190,7 +309,7 @@ class UIReferenceRendererAdmissionTests(unittest.TestCase):
                 _request(
                     capability=capability,
                     requested_state=ReferenceRendererState.ARTIFACT_ONLY,
-                    evidence=UnavailableReferenceEvidence(),
+                    evidence=UnavailableReferenceEvidence(binding=_binding()),
                 )
             )
             self.assertIsInstance(wait, RendererWaitDecision)
@@ -226,6 +345,27 @@ class UIReferenceRendererAdmissionTests(unittest.TestCase):
         )
         self.assertIsInstance(any_target, AdmittedRenderedDecision)
 
+        unavailable_target = admit_reference_renderer(
+            _request(
+                capability=RendererCapabilityState.UNAVAILABLE,
+                target=RendererTarget.DOM,
+                actual_target=RendererTarget.NATIVE_ENGINE,
+                requested_state=ReferenceRendererState.UNAVAILABLE,
+                evidence=UnavailableReferenceEvidence(binding=_binding()),
+            )
+        )
+        self.assertIsInstance(unavailable_target, RendererWaitDecision)
+
+        authorized_artifact_wait = admit_reference_renderer(
+            _request(
+                requested_state=ReferenceRendererState.ARTIFACT_ONLY,
+                evidence=UnavailableReferenceEvidence(binding=_binding()),
+            )
+        )
+        self.assertIsInstance(authorized_artifact_wait, RendererRefusedDecision)
+        if isinstance(authorized_artifact_wait, RendererRefusedDecision):
+            self.assertEqual(RendererRefusalReason.STATE_EVIDENCE_MISMATCH, authorized_artifact_wait.reason)
+
     def test_uir6_state_duplicate_and_identity_mismatch_refuse(self) -> None:
         state_mismatch = admit_reference_renderer(
             _request(requested_state=ReferenceRendererState.RENDERED_AVAILABLE, evidence=_artifact())
@@ -235,6 +375,7 @@ class UIReferenceRendererAdmissionTests(unittest.TestCase):
             self.assertEqual(RendererRefusalReason.STATE_EVIDENCE_MISMATCH, state_mismatch.reason)
 
         duplicate = RenderedReferenceEvidence(
+            binding=_binding(),
             desktop_screenshot_ref="same-screenshot",
             mobile_screenshot_ref="same-screenshot",
             desktop_digest=DESKTOP_DIGEST,
@@ -250,6 +391,40 @@ class UIReferenceRendererAdmissionTests(unittest.TestCase):
             ReferenceRendererAdmissionRequest.model_validate(
                 {**_request(evidence=_rendered()).model_dump(), "approved_content_digest": "bad"}
             )
+
+        mismatched_binding = RenderedReferenceEvidence(
+            binding=ReferenceEvidenceBinding(
+                request_ref="request-other",
+                brief_id="brief-ui-dashboard",
+                approved_content_digest=DIGEST,
+            ),
+            desktop_screenshot_ref="screenshot-desktop",
+            mobile_screenshot_ref="screenshot-mobile",
+            desktop_digest=DESKTOP_DIGEST,
+            mobile_digest=MOBILE_DIGEST,
+            renderer_observation_ref="renderer-observation",
+        )
+        binding_result = admit_reference_renderer(_request(evidence=mismatched_binding))
+        self.assertIsInstance(binding_result, RendererRefusedDecision)
+        if isinstance(binding_result, RendererRefusedDecision):
+            self.assertEqual(RendererRefusalReason.CONTENT_BINDING_MISMATCH, binding_result.reason)
+
+        changed_digest = RenderedReferenceEvidence(
+            binding=ReferenceEvidenceBinding(
+                request_ref="request-ui-reference",
+                brief_id="brief-ui-dashboard",
+                approved_content_digest="e" * 64,
+            ),
+            desktop_screenshot_ref="screenshot-desktop",
+            mobile_screenshot_ref="screenshot-mobile",
+            desktop_digest=DESKTOP_DIGEST,
+            mobile_digest=MOBILE_DIGEST,
+            renderer_observation_ref="renderer-observation",
+        )
+        changed_digest_result = admit_reference_renderer(_request(evidence=changed_digest))
+        self.assertIsInstance(changed_digest_result, RendererRefusedDecision)
+        if isinstance(changed_digest_result, RendererRefusedDecision):
+            self.assertEqual(RendererRefusalReason.CONTENT_BINDING_MISMATCH, changed_digest_result.reason)
 
     def test_uir7_ast_proves_private_no_effect_boundary(self) -> None:
         import library.workflow_router as package

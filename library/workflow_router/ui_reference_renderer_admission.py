@@ -5,18 +5,17 @@ from __future__ import annotations
 from enum import Enum
 from typing import Annotated, Literal, Self, TypeAlias, Union
 
-from pydantic import AliasChoices, ConfigDict, Field, TypeAdapter, field_validator, model_validator
+from pydantic import ConfigDict, Field, TypeAdapter, field_validator, model_validator
 
 from .contracts import RouterModel
 from .ui_codesign_contracts import ContentDigest, ReferenceRendererState
 
 
-_ID_PATTERN = r"^[a-z][a-z0-9-]{2,127}$"
 _SHA256_PATTERN = r"^[0-9a-f]{64}$"
 _UNSAFE_METADATA_MARKERS = ("://", "\\", "/", "api_key", "password=", "secret=", "<script", "prompt:")
 
 
-RendererIdentifier: TypeAlias = Annotated[str, Field(pattern=_ID_PATTERN)]
+RendererIdentifier: TypeAlias = Annotated[str, Field(min_length=3, max_length=128)]
 Sha256Digest: TypeAlias = Annotated[str, Field(pattern=_SHA256_PATTERN)]
 
 
@@ -29,7 +28,6 @@ class _RendererAdmissionModel(RouterModel):
         strict=True,
         str_strip_whitespace=False,
         revalidate_instances="always",
-        populate_by_name=True,
     )
 
     @field_validator("*")
@@ -38,6 +36,10 @@ class _RendererAdmissionModel(RouterModel):
         if isinstance(value, str):
             if not value.strip():
                 raise ValueError("renderer admission metadata must not be blank")
+            if value != value.strip():
+                raise ValueError("renderer admission metadata must not have edge whitespace")
+            if any(ord(character) < 0x20 or 0x7F <= ord(character) <= 0x9F for character in value):
+                raise ValueError("renderer admission metadata must not contain control characters")
             lowered = value.casefold()
             if any(marker in lowered for marker in _UNSAFE_METADATA_MARKERS):
                 raise ValueError("renderer admission metadata must remain opaque and bounded")
@@ -59,8 +61,15 @@ class RendererTarget(str, Enum):
     ANY = "ANY"
 
 
+class ReferenceEvidenceBinding(_RendererAdmissionModel):
+    request_ref: RendererIdentifier
+    brief_id: RendererIdentifier
+    approved_content_digest: ContentDigest
+
+
 class RenderedReferenceEvidence(_RendererAdmissionModel):
     kind: Literal["RENDERED_AVAILABLE"] = "RENDERED_AVAILABLE"
+    binding: ReferenceEvidenceBinding
     desktop_screenshot_ref: RendererIdentifier
     mobile_screenshot_ref: RendererIdentifier
     desktop_digest: Sha256Digest
@@ -70,19 +79,16 @@ class RenderedReferenceEvidence(_RendererAdmissionModel):
 
 class ArtifactReferenceEvidence(_RendererAdmissionModel):
     kind: Literal["ARTIFACT_ONLY"] = "ARTIFACT_ONLY"
+    binding: ReferenceEvidenceBinding
     desktop_artifact_ref: RendererIdentifier
     mobile_artifact_ref: RendererIdentifier
     artifact_set_digest: Sha256Digest
-    owner_manual_open_acknowledgement: Literal[True] = Field(
-        validation_alias=AliasChoices(
-            "owner_manual_open_acknowledgement",
-            "owner_manual_open_acknowledged",
-        )
-    )
+    owner_manual_open_acknowledgement: Literal[True]
 
 
 class UnavailableReferenceEvidence(_RendererAdmissionModel):
     kind: Literal["UNAVAILABLE"] = "UNAVAILABLE"
+    binding: ReferenceEvidenceBinding
 
 
 ReferenceRendererEvidence: TypeAlias = Annotated[
@@ -100,9 +106,7 @@ class ReferenceRendererAdmissionRequest(_RendererAdmissionModel):
     brief_id: RendererIdentifier
     approved_content_digest: ContentDigest
     capability_state: RendererCapabilityState
-    renderer_target: RendererTarget = Field(
-        validation_alias=AliasChoices("renderer_target", "declared_renderer_target")
-    )
+    renderer_target: RendererTarget
     actual_target: RendererTarget
     requested_renderer_state: ReferenceRendererState
     evidence: ReferenceRendererEvidence
@@ -124,7 +128,6 @@ class RendererRefusalReason(str, Enum):
     STATE_EVIDENCE_MISMATCH = "STATE_EVIDENCE_MISMATCH"
     CONTENT_BINDING_MISMATCH = "CONTENT_BINDING_MISMATCH"
     DUPLICATE_EVIDENCE = "DUPLICATE_EVIDENCE"
-    INPUT_INVALID = "INPUT_INVALID"
 
 
 class AdmittedRenderedDecision(_RendererAdmissionModel):
@@ -223,6 +226,15 @@ def _target_matches(request: ReferenceRendererAdmissionRequest) -> bool:
     return request.renderer_target is RendererTarget.ANY or request.renderer_target is request.actual_target
 
 
+def _evidence_binding_matches_request(request: ReferenceRendererAdmissionRequest) -> bool:
+    binding = request.evidence.binding
+    return (
+        binding.request_ref == request.request_ref
+        and binding.brief_id == request.brief_id
+        and binding.approved_content_digest == request.approved_content_digest
+    )
+
+
 def _evidence_matches_requested_state(request: ReferenceRendererAdmissionRequest) -> bool:
     if request.requested_renderer_state is ReferenceRendererState.RENDERED_AVAILABLE:
         return isinstance(request.evidence, RenderedReferenceEvidence)
@@ -239,20 +251,30 @@ def admit_reference_renderer(
     trusted_request = _REQUEST_ADAPTER.validate_python(request)
     if trusted_request.capability_state is RendererCapabilityState.AVAILABLE_NOT_AUTHORIZED:
         return _wait(trusted_request, RendererWaitReason.DESIGN_CAPABILITY_AUTHORITY_REQUIRED)
-    if not _target_matches(trusted_request):
-        return _refuse(trusted_request, RendererRefusalReason.TARGET_MISMATCH)
+    if not _evidence_binding_matches_request(trusted_request):
+        return _refuse(trusted_request, RendererRefusalReason.CONTENT_BINDING_MISMATCH)
     if _evidence_is_duplicate(trusted_request.evidence):
         return _refuse(trusted_request, RendererRefusalReason.DUPLICATE_EVIDENCE)
+    if isinstance(trusted_request.evidence, (RenderedReferenceEvidence, ArtifactReferenceEvidence)):
+        if not _target_matches(trusted_request):
+            return _refuse(trusted_request, RendererRefusalReason.TARGET_MISMATCH)
 
     if trusted_request.requested_renderer_state is ReferenceRendererState.UNAVAILABLE:
         if isinstance(trusted_request.evidence, UnavailableReferenceEvidence):
-            return _wait(trusted_request, RendererWaitReason.UI_REFERENCE_RENDERER_REQUIRED)
+            if trusted_request.capability_state in (
+                RendererCapabilityState.UNAVAILABLE,
+                RendererCapabilityState.DECLINED,
+            ):
+                return _wait(trusted_request, RendererWaitReason.UI_REFERENCE_RENDERER_REQUIRED)
+            return _refuse(trusted_request, RendererRefusalReason.STATE_EVIDENCE_MISMATCH)
         return _refuse(trusted_request, RendererRefusalReason.STATE_EVIDENCE_MISMATCH)
 
     if not _evidence_matches_requested_state(trusted_request):
         if (
             trusted_request.requested_renderer_state is ReferenceRendererState.ARTIFACT_ONLY
             and isinstance(trusted_request.evidence, UnavailableReferenceEvidence)
+            and trusted_request.capability_state
+            in (RendererCapabilityState.UNAVAILABLE, RendererCapabilityState.DECLINED)
         ):
             return _wait(trusted_request, RendererWaitReason.UI_REFERENCE_RENDERER_REQUIRED)
         return _refuse(trusted_request, RendererRefusalReason.STATE_EVIDENCE_MISMATCH)
@@ -268,6 +290,8 @@ def admit_reference_renderer(
         )
 
     if isinstance(trusted_request.evidence, ArtifactReferenceEvidence):
+        if trusted_request.capability_state is RendererCapabilityState.AVAILABLE_AUTHORIZED:
+            return _refuse(trusted_request, RendererRefusalReason.STATE_EVIDENCE_MISMATCH)
         return AdmittedArtifactDecision(
             request_ref=trusted_request.request_ref,
             brief_id=trusted_request.brief_id,
@@ -282,6 +306,7 @@ __all__ = [
     "AdmittedArtifactDecision",
     "AdmittedRenderedDecision",
     "ArtifactReferenceEvidence",
+    "ReferenceEvidenceBinding",
     "ReferenceRendererAdmissionDecision",
     "ReferenceRendererAdmissionRequest",
     "ReferenceRendererEvidence",
