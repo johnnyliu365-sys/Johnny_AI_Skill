@@ -12,7 +12,17 @@ from .ui_codesign_contracts import ContentDigest, ReferenceRendererState
 
 
 _SHA256_PATTERN = r"^[0-9a-f]{64}$"
-_UNSAFE_METADATA_MARKERS = ("://", "\\", "/", "api_key", "password=", "secret=", "<script", "prompt:")
+_UNSAFE_METADATA_MARKERS = (
+    "://",
+    "\\",
+    "/",
+    ":",
+    "api_key",
+    "password=",
+    "secret=",
+    "<script",
+    "prompt",
+)
 
 
 RendererIdentifier: TypeAlias = Annotated[str, Field(min_length=3, max_length=128)]

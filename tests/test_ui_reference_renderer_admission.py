@@ -227,6 +227,17 @@ class UIReferenceRendererAdmissionTests(unittest.TestCase):
             ReferenceRendererAdmissionRequest.model_validate(
                 {**_request().model_dump(), "request_ref": "request-" + ("x" * 123)}
             )
+        for unsafe_value in (
+            "mailto:owner@example.test",
+            "javascript:alert(1)",
+            "authorization:bearer-token",
+            "prompt injection",
+            "C:drive-relative",
+        ):
+            with self.assertRaises(ValidationError):
+                ReferenceRendererAdmissionRequest.model_validate(
+                    {**_request().model_dump(), "request_ref": unsafe_value}
+                )
         alias_payload = _request().model_dump()
         del alias_payload["renderer_target"]
         alias_payload["declared_renderer_target"] = RendererTarget.DOM
