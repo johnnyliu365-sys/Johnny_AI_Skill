@@ -5,10 +5,12 @@ they do not load both clusters or copy ticket bodies into dispatch prompts.
 
 | Child ID / leaf | Kind | Revision | SHA-256 | Lifecycle | State |
 | --- | --- | --- | --- | --- | --- |
-| [wa-01-activation-host-gate-contracts](wa-01-activation-host-gate-contracts.md) | `IMPLEMENTATION_TICKET` | `01` | `bffbcec38db0b55dbab93da4be741432a37494996dc9459212008690af8539f7` | `PLANNED` | `OWNER_TICKET_APPROVAL_PENDING / NON_DISPATCHABLE` |
-| [uix-01-codesign-contracts-lifecycle](uix-01-codesign-contracts-lifecycle.md) | `IMPLEMENTATION_TICKET` | `01` | `6792c32ac438b1000fc4439c9e6a11c7cd6ca93c8cdbda7511289a28882ffe16` | `PLANNED` | `OWNER_TICKET_APPROVAL_PENDING / NON_DISPATCHABLE` |
+| [wa-01-activation-host-gate-contracts](wa-01-activation-host-gate-contracts.md) | `IMPLEMENTATION_TICKET` | `02` | `31f7d0842f61004b0b80cbe5f1cdce740481b231101a4a469cbf09458bc3b55a` | `ACTIVE` | `OPEN / APPROVED / DISPATCHABLE` |
+| [uix-01-codesign-contracts-lifecycle](uix-01-codesign-contracts-lifecycle.md) | `IMPLEMENTATION_TICKET` | `02` | `439b0ddc481c166081956aed0c576045e450520ad7639e7ecc01ba13d52c722a` | `ACTIVE` | `OPEN / APPROVED / DISPATCHABLE_AFTER_WA_01_ALLOCATION_RELEASE` |
 
 The architecture approval at `d684f1479573475c82cad7d4a4abecc60e9665e3` authorized opening
-these first tickets only. Each exact ticket requires separate owner approval before dispatch.
-`WA-01` and `UIX-01` have disjoint source/test/element boundaries; neither authorizes the other's
-lane, any target/host/provider effect or shared `PAQ-REL-01` publication.
+these first tickets. The project owner approved their exact revision-01 candidate at
+`5b8adfee3201d8a945a775d5a238e8c6acfca8ee` on 2026-08-31. `WA-01` dispatches first;
+`UIX-01` reuses the implementation owner only after that allocation is released. Their
+source/test/element boundaries are disjoint, and neither authorizes any target/host/provider effect
+or shared `PAQ-REL-01` publication.

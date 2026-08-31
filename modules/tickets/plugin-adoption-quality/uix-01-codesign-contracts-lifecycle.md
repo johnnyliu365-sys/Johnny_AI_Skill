@@ -5,12 +5,12 @@
 | Artifact ID / kind | `TICKET-PLUGIN-ADOPTION-QUALITY-UIX-01` / `IMPLEMENTATION_TICKET` |
 | SPEC / acceptance source | `SPEC-JOHNNY-DESIGNERLESS-UI-CODESIGN-20260829-01` / AC-3 through AC-5 and the strict lifecycle portions of AC-1, AC-4 and AC-7 |
 | Requirement / Context / ADR | `PRD-20260829-049` / `CHG-20260829-049` / `CTX-PLUGIN-ADOPTION-QUALITY-20260829-02` Revision 01, SHA-256 `dd776e27777b7a4679ce8573c05639e7d7ab24481e654cf431da45c81fb99a26` / `ADR-20260829-037` |
-| State / closure | `PLANNED / OWNER_TICKET_APPROVAL_PENDING / NON_DISPATCHABLE`; `CLOSURE-PLUGIN-ADOPTION-QUALITY-UIX-01`, revision 01 |
-| Document revision | `01` |
-| Opening authority | Project owner approved architecture candidate `d684f1479573475c82cad7d4a4abecc60e9665e3`, authorizing reviewer opening of `UIX-01` only. This ticket still requires exact owner approval before dispatch. |
+| State / closure | `OPEN / APPROVED / DISPATCHABLE`; `CLOSURE-PLUGIN-ADOPTION-QUALITY-UIX-01`, revision 01 |
+| Document revision | `02` |
+| Approval authority | Project owner, 2026-08-31 (Asia/Taipei): approved exact ticket candidate `5b8adfee3201d8a945a775d5a238e8c6acfca8ee`. This authorizes one later UIX-01 Luna/xhigh implementation lane after WA-01 allocation is released; review, integration, push and every renderer/provider/target/publication effect remain separate. |
 | Source baseline / dependency | `5ca212f2d7ce763a8942e68e96f2fb90cfe3b6e4`; no source ticket dependency. Candidate must descend from the committed ticket authority. |
 | Control owner / reviewer | `ticket-review` semantic profile — Terra/xhigh. |
-| Implementation owner | `implementation-standard` semantic profile — Luna/xhigh; proposed `READY_LOW_MODEL`, one synchronous owner lane and no helper. |
+| Implementation owner | `implementation-standard` semantic profile — Luna/xhigh; `READY_LOW_MODEL`, one synchronous owner lane and no helper. |
 | Worktree / branch / task | After exact ticket approval, reviewer allocates `.worktrees/plugin-adoption-quality-uix-01` on `implement/plugin-adoption-quality-uix-01` from the then-current committed `main`, then binds this exact ticket revision and baseline. Same-lifetime dispatch uses one native call and one wait; no runner, queue, receipt, descriptor, gateway or host workspace readback. |
 | Delivery / language | `POC / STANDARD`; Python 3.11, Pydantic strict models, complete annotations, `mypy --strict`, deterministic pure tests and independent review. |
 | XSS / effects | `XSS_NOT_APPLICABLE` for this pure schema/reducer closure. It renders no HTML/DOM, reads no screenshot and performs no filesystem, browser, Figma, image/provider, host, network, target-project, Git, publication, installation, release or deployment effect. |
