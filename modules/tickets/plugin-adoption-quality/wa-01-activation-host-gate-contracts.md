@@ -5,9 +5,9 @@
 | Artifact ID / kind | `TICKET-PLUGIN-ADOPTION-QUALITY-WA-01` / `IMPLEMENTATION_TICKET` |
 | SPEC / acceptance source | `SPEC-JOHNNY-WORKFLOW-ADOPTION-20260829-01` / AC-1, AC-2 and the strict-contract portion of AC-9 |
 | Requirement / Context / ADR | `PRD-20260829-048` / `CHG-20260829-048` / `CTX-PLUGIN-ADOPTION-QUALITY-20260829-01` Revision 01, SHA-256 `23cb8df55a9cf69730e7bff6303af1705dc7b479c1bd1a72e033ac6fed2bdd9e` / `ADR-20260829-036` |
-| State / closure | `OPEN / APPROVED / DISPATCHABLE`; `CLOSURE-PLUGIN-ADOPTION-QUALITY-WA-01`, revision 01 |
-| Document revision | `02` |
-| Approval authority | Project owner, 2026-08-31 (Asia/Taipei): approved exact ticket candidate `5b8adfee3201d8a945a775d5a238e8c6acfca8ee` and directed immediate synchronous dispatch without an additional plugin-update wait. This authorizes one WA-01 Luna/xhigh implementation lane only; review, integration, push and every host/target/publication effect remain separate. |
+| State / closure | `OPEN / CONVERGENCE_APPROVAL_REQUIRED / NON_DISPATCHABLE`; `CLOSURE-PLUGIN-ADOPTION-QUALITY-WA-01`, revision 02 |
+| Document revision | `03` |
+| Approval authority | Project owner, 2026-08-31 (Asia/Taipei): approved exact revision-02 ticket candidate `5b8adfee3201d8a945a775d5a238e8c6acfca8ee` and directed immediate synchronous dispatch. Initial review found five defects and the single correction closed those five. The reviewer's independent alias-bypass mutation then proved WA7 still false-green, so CodeReview convergence policy invalidated dispatchability. Revision 03 is a control-plane proposal only; it requires new exact owner approval before one fresh correction dispatch. Review, integration, push and every host/target/publication effect remain separate. |
 | Source baseline / dependency | `5ca212f2d7ce763a8942e68e96f2fb90cfe3b6e4`; no source ticket dependency. Candidate must descend from the committed ticket authority. |
 | Control owner / reviewer | `ticket-review` semantic profile — Terra/xhigh. |
 | Implementation owner | `implementation-standard` semantic profile — Luna/xhigh; `READY_LOW_MODEL`, one synchronous owner lane and no helper. |
@@ -132,6 +132,7 @@ boundary: no adapter, filesystem, host hook, dispatch, repository gate or packag
 | WAM1 | Reverse-mutate the digest check to trust the caller; WA5's stale-prestate case turns red, then exact restoration returns green. |
 | WAM2 | Reverse-mutate update composition to normalize or drop outside text; WA3 turns red, then exact restoration returns green. |
 | WAM3 | Reverse-mutate marker resolution to first-match-wins; the duplicate-marker WA5 case turns red, then exact restoration returns green. |
+| WAM4 | Alias-bypass mutation: import `builtins.open` under a non-obvious alias and invoke it on the real planner path. WA7 must turn red before the planner executes the filesystem read; exact restoration returns green. The source gate uses a closed import-module allowlist plus bounded call/AST checks, not only forbidden-name matching. |
 
 Strong-type preflight constructs every success/refusal variant through ordinary public validators
 and round-trips. Negative cases may use malformed raw input only to prove rejection; they are not
@@ -158,8 +159,9 @@ clean `main`; no baseline failure is reported as candidate success.
 
 ## Ownership and return
 
-After exact ticket approval, the Terra/xhigh reviewer dispatches once, waits once, reviews, commits
-the candidate and submits it to `admit_document_mutation`. The Luna/xhigh implementation owner
+After exact revision-03 ticket approval, the Terra/xhigh reviewer reuses the existing Luna/xhigh
+implementation owner for one fresh correction dispatch, waits once, reviews, commits the candidate
+and submits it to `admit_document_mutation`. The Luna/xhigh implementation owner
 modifies only the declared source/test/element paths, does not commit or push, and cannot change the
 SPEC, Context, ticket, host adapter, profile or other Agent.
 
@@ -167,3 +169,16 @@ Return exactly `ImplementationReturn.COMPLETED -> ACTION_COMPLETED` with WA/WAM/
 evidence; `BLOCKED -> HALT` with the failed cell; or
 `CHANGE_DETECTED -> REQUIREMENT_CHANGED`. No return authorizes adapter/hook implementation, target
 mutation, dispatch proof, integration, push, publication, installation, release or deployment.
+
+## Convergence review record
+
+The initial review correction closed the unpaired-surrogate, unknown marker-version, mixed-newline,
+finite round-trip and broad no-effect evidence findings. The reviewer then entered through a
+different door recorded in `PITFALL-REGISTER.md` C5: `builtins.open` was imported as
+`_effectful_open` and called on the production planner path. The complete focused suite remained
+green (`13 passed, 14 subtests passed`), including WA7. The source was restored byte-exact to Git
+blob `d94ae2c0cb6ef0277fa32e8f8c283d57cbc7c8cc`, and the same suite returned green again.
+
+This is an `EVIDENCE_DEFECT`, not a requirement change. Revision 02 may not receive an automatic
+third correction. Revision 03 adds only WAM4 and the closed import allowlist needed to make the
+existing WA7 property discriminating; it does not widen the production contract or source boundary.
