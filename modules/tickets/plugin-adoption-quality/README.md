@@ -8,7 +8,7 @@ they do not load both clusters or copy ticket bodies into dispatch prompts.
 | [wa-01-activation-host-gate-contracts](wa-01-activation-host-gate-contracts.md) | `IMPLEMENTATION_TICKET` | `05` | `32ac8d730b49d390386dfd2f5e2171016e9808aa2f2e74b056d4bcb9a9f416f5` | `CLOSED` | `APPROVED / AUTHORITY_INTEGRATED` |
 | [uix-01-codesign-contracts-lifecycle](uix-01-codesign-contracts-lifecycle.md) | `IMPLEMENTATION_TICKET` | `03` | `d2ba0ef2d19102191b0b2f164c6f1c4a681553acadccb794e04712e50a3365da` | `CLOSED` | `APPROVED / AUTHORITY_INTEGRATED` |
 | [wa-02-project-activation-host-effect-adapter](wa-02-project-activation-host-effect-adapter.md) | `IMPLEMENTATION_TICKET` | `01` | `95fce94a98fb510432d19c3d6d7daaebdc9c4ee14dfbc04ba3e9de2bf2b624e0` | `ACTIVE` | `CAPABILITY_BLOCKED / NON_DISPATCHABLE` |
-| [uix-02-reference-renderer-evidence-admission](uix-02-reference-renderer-evidence-admission.md) | `IMPLEMENTATION_TICKET` | `01` | `22c3d12fd150ffc32273722510a4c725f670d45eb2c9135cca44c9a223cbfd45` | `ACTIVE` | `APPROVAL_REQUIRED / NON_DISPATCHABLE` |
+| [uix-02-reference-renderer-evidence-admission](uix-02-reference-renderer-evidence-admission.md) | `IMPLEMENTATION_TICKET` | `02` | `8de151e0600d669e8031ca49a2195abaeaf46c36f66369b1783252c2a9bd46d9` | `ACTIVE` | `APPROVED / DISPATCHABLE` |
 
 The architecture approval at `d684f1479573475c82cad7d4a4abecc60e9665e3` authorized opening
 these first tickets. The project owner approved their exact revision-01 candidate at
@@ -30,5 +30,6 @@ target adoption, publication, installation, release or deployment.
 On 2026-08-31 the project owner authorized opening WA-02 and UIX-02. WA-02 records the real
 upstream blocker: no committed independently protected host external-effect gateway is qualified,
 so it cannot dispatch or fall back to the legacy check-then-replace writer. UIX-02 is a pure
-renderer-evidence admission ticket awaiting exact candidate approval; opening it grants no
-renderer, provider, target-write or publication effect.
+renderer-evidence admission ticket whose exact revision-01 candidate was approved by the owner on
+2026-08-31; revision 02 records that authority and permits one same-lifetime implementation lane.
+It grants no renderer, provider, target-write or publication effect.

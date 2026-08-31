@@ -5,9 +5,10 @@
 | Artifact ID / kind | `TICKET-ADAPTIVE-CAP-HOST-EFFECT-GRANT-01` / `CAPABILITY_INVESTIGATION_TICKET` |
 | SPEC / acceptance source | `SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2` Revision 14 / AC-17R14 |
 | Requirement / Context / ADR | `PRD-20260829-047` / `CHG-20260829-047` / `CTX-ADAPTIVE-PROJECT-ORCHESTRATION-20260829-14` (`bc93c2aa1b25cf0510721785ed4f3f43b43e4daab448aaf0f8b569772b337ef0`) / `ADR-20260829-035` |
-| State / closure | `OPEN / APPROVAL_REQUIRED / NON_DISPATCHABLE`; `CLOSURE-ADAPTIVE-CAP-HOST-EFFECT-GRANT-01`, revision 01 |
-| Document revision | `01` |
+| State / closure | `OPEN / APPROVED / DISPATCHABLE`; `CLOSURE-ADAPTIVE-CAP-HOST-EFFECT-GRANT-01`, revision 01 |
+| Document revision | `02` |
 | Opening authority | Project owner approved Revision 14 candidate `c3da092eb5cbd78938fb6f43480c525a9ee2258e` on 2026-08-29 and authorized reviewer opening of this evidence-only capability investigation. Exact ticket approval and dispatch remain separate; no gateway implementation, elevation, credential, service/task creation, remote/provider/Git effect, CAP-REMOTE retry, publication, installation, release or deployment is authorized. |
+| Approval authority | Project owner, 2026-08-31 (Asia/Taipei): approved exact ticket candidate/authority commit `bc59172b90c8211c03596418a1be3f6712b70de6`, leaf SHA-256 `aa79425fb8566c7741dc132ac2fe0a063a681522280c1171b4f0facebf396abf`. This authorizes one Terra/xhigh evidence-only same-lifetime investigation lane only while a Sol/high reviewer is active; it grants no external effect, gateway implementation or successor resumption. |
 | Source baseline / subject | `4f501ccc4f4ecf943fd3f0f6be89871b7341a4ac`; read-only qualification of the current Windows host tuple and installed Codex/Claude runtime surfaces. CAP-REMOTE candidate `678338599529b80b1f7aafeccb111a228702f1e3` remains non-integrated evidence and is not a repair source. |
 | Observed tuple at opening | Microsoft Windows 10 Pro `10.0.19045` build `19045`, NTFS system volume, interactive principal `desktop-28erpq1\gameboy`, Codex CLI `0.151.0-alpha.7.2`, Claude Code `2.1.231`. These observations identify the investigation subject only; they do not prove a gateway. |
 | Control owner / reviewer | `ticket-review-hard` semantic profile — Sol/high; sole final reviewer and integrator. |

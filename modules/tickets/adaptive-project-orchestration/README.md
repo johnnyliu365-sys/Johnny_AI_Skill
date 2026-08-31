@@ -26,7 +26,7 @@
 | [09b2-recoverable-managed-artifact-writer](09b2-recoverable-managed-artifact-writer.md) | Superseded local runtime writer proposal; its recoverable-file design remains defect evidence only. | `SUPERSEDED / LOCAL_FILESYSTEM_MUTATION_ROUTE_RETIRED / NOT_INTEGRATED` | Approved Revision 13 selects Remote Authority Commit after all executed local tuples qualified `NO`; do not correct `f99d836` |
 | [cap-rww6-01-atomic-conditional-replace-capability](cap-rww6-01-atomic-conditional-replace-capability.md) | One evidence-only qualification determines whether the exact Windows, Linux and current filesystem-abstraction tuples can atomically condition final mutation on an observed identity. | `COMPLETE / APPROVED / INTEGRATED / AUTHORITY_PUSH_CONFIRMED / ALL_EXECUTED_TUPLES_NO / ARCHITECTURE_DECISION_REQUIRED` | gate/push/readback candidate `5763caf5dc26e382dd8092545fde053063792a37`; no result grants R09B2 repair authority |
 | [cap-remote-authority-01-remote-authority-commit-capability](cap-remote-authority-01-remote-authority-commit-capability.md) | Evidence-only proof or fail-closed refusal of the Revision 13 Remote Authority Commit route on the declared authority remote and the owner-authorized isolated remote target. | `BLOCKED / REQUIREMENT_CHANGED / CANDIDATE_NOT_INTEGRATED` | Review `CR-CAPREMOTE-01` found a host-protected one-shot external-effect-grant requirement outside this ticket boundary; candidate `6783385` and the consumed/unretained first attempt are evidence only. |
-| [cap-host-effect-grant-01-host-external-effect-gateway-capability](cap-host-effect-grant-01-host-external-effect-gateway-capability.md) | Evidence-only qualification of independently protected principal/grant, atomic one-shot consume, gateway-owned transport and conditional-cleanup capabilities on the exact installed Codex/Claude Windows host surfaces. | `OPEN / APPROVAL_REQUIRED / NON_DISPATCHABLE` | revision `01`; SHA-256 `aa79425fb8566c7741dc132ac2fe0a063a681522280c1171b4f0facebf396abf`; Revision 14 opening authority only, no gateway or external effect |
+| [cap-host-effect-grant-01-host-external-effect-gateway-capability](cap-host-effect-grant-01-host-external-effect-gateway-capability.md) | Evidence-only qualification of independently protected principal/grant, atomic one-shot consume, gateway-owned transport and conditional-cleanup capabilities on the exact installed Codex/Claude Windows host surfaces. | `OPEN / APPROVED / DISPATCHABLE` | revision `02`; SHA-256 `3a81adea72ac5cd2bab5eca5c2cb4ca0706a244cabddcb74c0fcd6a11e327334`; exact owner approval recorded, but dispatch still requires the ticket-bound Sol/high reviewer and grants no gateway or external effect |
 
 R02C1, R02C2, R02C2A, R02C3 and R03 are complete. R04 is the next serial candidate, but it
 remains `CANDIDATE / NON_DISPATCHABLE` until its own approved ticket freeze, handoff and receipt
@@ -48,8 +48,9 @@ authority. Approved Revision 14 authorizes reviewer opening of the evidence-only
 that investigation returns accepted `AVAILABLE` evidence and architecture re-scopes it. R09C–R09E
 and publication remain unopened.
 
-`CAP-HOST-EFFECT-GRANT-01` is now opened as an evidence-only exact-host qualification and awaits
-owner approval of its precise revision-01 contract. Opening it performs no host registration,
+`CAP-HOST-EFFECT-GRANT-01` is now approved as an evidence-only exact-host qualification. Revision
+02 records the owner's exact revision-01 candidate approval, but dispatch remains conditional on
+the ticket-bound Sol/high reviewer being active. Approval performs no host registration,
 elevation, credential access, provider/Git effect or remote cleanup.
 
 ## Revision 06 / Revision 07 partition

@@ -5,9 +5,10 @@
 | Artifact ID / kind | `TICKET-PLUGIN-ADOPTION-QUALITY-UIX-02` / `IMPLEMENTATION_TICKET` |
 | SPEC / acceptance source | `SPEC-JOHNNY-DESIGNERLESS-UI-CODESIGN-20260829-01` / AC-1, AC-2 and the renderer/evidence portion of AC-8 |
 | Requirement / Context / ADR | `PRD-20260829-049` / `CHG-20260829-049` / `CTX-PLUGIN-ADOPTION-QUALITY-20260829-02` Revision 01, SHA-256 `dd776e27777b7a4679ce8573c05639e7d7ab24481e654cf431da45c81fb99a26` / `ADR-20260829-037` |
-| State / closure | `OPEN / APPROVAL_REQUIRED / NON_DISPATCHABLE`; `CLOSURE-PLUGIN-ADOPTION-QUALITY-UIX-02`, revision 01 |
-| Document revision | `01` |
+| State / closure | `OPEN / APPROVED / DISPATCHABLE`; `CLOSURE-PLUGIN-ADOPTION-QUALITY-UIX-02`, revision 01 |
+| Document revision | `02` |
 | Opening authority | Project owner, 2026-08-31 (Asia/Taipei): authorized opening UIX-02 after UIX-01 closure. Exact ticket approval and implementation dispatch remain separate; no renderer, browser, provider, target write, publication, installation, release or deployment effect is granted. |
+| Approval authority | Project owner, 2026-08-31 (Asia/Taipei): approved exact ticket candidate/authority commit `4f501ccc4f4ecf943fd3f0f6be89871b7341a4ac`, leaf SHA-256 `22c3d12fd150ffc32273722510a4c725f670d45eb2c9135cca44c9a223cbfd45`. This authorizes one UIX-02 Luna/xhigh same-lifetime implementation lane after this approval writeback; review, integration, push and every external effect remain separate. |
 | Source baseline / dependency | `1d2be10e8de224909b2c46a4eb6f8ef63eb7265c`; UIX-01 contracts integrated at `2c7b5adafa0a84f7a4219e4287daea38d8d855a5`. |
 | Control owner / reviewer | `ticket-review` semantic profile — Terra/xhigh. |
 | Implementation owner | `implementation-standard` semantic profile — Luna/xhigh after exact approval; `READY_LOW_MODEL`, one synchronous owner lane and no helper. Reviewer strength remains higher than the implementation owner. |
