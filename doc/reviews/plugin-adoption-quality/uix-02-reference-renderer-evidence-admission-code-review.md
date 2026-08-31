@@ -2,13 +2,13 @@
 
 | Field | Value |
 | --- | --- |
-| Review ID / revision | `REVIEW-PLUGIN-ADOPTION-QUALITY-UIX-02` / `02` |
-| Ticket / closure | `TICKET-PLUGIN-ADOPTION-QUALITY-UIX-02` document revision `05` / `CLOSURE-PLUGIN-ADOPTION-QUALITY-UIX-02` revision `02` |
-| Authority commit | `542f356a6affaa6e4b1b2e73e5594325fbfbe37b` |
-| Candidate / baseline | `611959f69df9bb639509d7e9068e86fb8b3e4564` / `faf3d05e07f83a8c7804313b4d3435d01da338b0` |
+| Review ID / revision | `REVIEW-PLUGIN-ADOPTION-QUALITY-UIX-02` / `03` |
+| Ticket / closure | `TICKET-PLUGIN-ADOPTION-QUALITY-UIX-02` document revision `06` / `CLOSURE-PLUGIN-ADOPTION-QUALITY-UIX-02` revision `02` |
+| Authority commit | `8f5e59ca3ac13a00bcaf6c5b5f54e49ad4872267` |
+| Candidate / baseline | `07edaff11bfe981987288a9c1b6becb67c4e69ad` / `faf3d05e07f83a8c7804313b4d3435d01da338b0` |
 | Branch / owner | `implement/plugin-adoption-quality-uix-02` / `implementation-standard` |
 | Reviewer / helper | `ticket-review` / one read-only `RESEARCH_HELPER` |
-| Result | `CHANGES_REQUESTED / IMPLEMENTATION_DEFECT / EVIDENCE_DEFECT / CANDIDATE_NOT_INTEGRATED` |
+| Result | `BLOCKED / CONVERGENCE_REVIEW_REQUIRED / IMPLEMENTATION_DEFECT / EVIDENCE_DEFECT / CANDIDATE_NOT_INTEGRATED` |
 
 ## Admission and boundary
 
@@ -122,3 +122,32 @@ same ticket, owner, worktree and branch. The correction must strengthen the valu
 malicious-value cells and add reproducible candidate-baseline evidence that reaches the named UIR
 behaviors rather than failing collection. No reset, amend, force, fresh branch or source integration
 is permitted.
+
+## Closure revision 02 correction review
+
+The single permitted correction produced candidate
+`07edaff11bfe981987288a9c1b6becb67c4e69ad`. It closes the five examples named by review revision
+02, but the implementation remains a substring denylist and still accepts ordinary raw credential
+or prompt payloads:
+
+```text
+access_token=abc                 -> accepted
+Authorization Bearer abc         -> accepted
+api-key=abc                       -> accepted
+ignore previous instructions      -> accepted
+```
+
+This remains a UIR1 `IMPLEMENTATION_DEFECT`; enumerating the reviewer's latest examples is not a
+closed boundary. The correction also changed no element/evidence artifact and the final test still
+imports `ReferenceEvidenceBinding`, which is absent from baseline `faf3d05e...`. Baseline's own
+tests contain neither the binding-mismatch cell nor the authorized-artifact refusal cell. The
+required named UIR1/UIR2/UIR4/UIR6 baseline-red evidence therefore remains an `EVIDENCE_DEFECT`.
+
+The helper's findings were reproduced by the reviewer with ordinary public construction and direct
+Git object readback. Current focused/regression/type gates remain green, but green current behavior
+does not replace the missing historical evidence and does not close the unsafe-value boundary.
+
+This was closure revision 02's correction review. A second failure at the same closure revision
+requires `CONVERGENCE_REVIEW_REQUIRED`; no third automatic correction, source integration or push
+is allowed. Candidate `07edaff11bfe981987288a9c1b6becb67c4e69ad` remains preserved evidence on
+the implementation branch only.

@@ -8,7 +8,7 @@ they do not load both clusters or copy ticket bodies into dispatch prompts.
 | [wa-01-activation-host-gate-contracts](wa-01-activation-host-gate-contracts.md) | `IMPLEMENTATION_TICKET` | `05` | `32ac8d730b49d390386dfd2f5e2171016e9808aa2f2e74b056d4bcb9a9f416f5` | `CLOSED` | `APPROVED / AUTHORITY_INTEGRATED` |
 | [uix-01-codesign-contracts-lifecycle](uix-01-codesign-contracts-lifecycle.md) | `IMPLEMENTATION_TICKET` | `03` | `d2ba0ef2d19102191b0b2f164c6f1c4a681553acadccb794e04712e50a3365da` | `CLOSED` | `APPROVED / AUTHORITY_INTEGRATED` |
 | [wa-02-project-activation-host-effect-adapter](wa-02-project-activation-host-effect-adapter.md) | `IMPLEMENTATION_TICKET` | `01` | `95fce94a98fb510432d19c3d6d7daaebdc9c4ee14dfbc04ba3e9de2bf2b624e0` | `ACTIVE` | `CAPABILITY_BLOCKED / NON_DISPATCHABLE` |
-| [uix-02-reference-renderer-evidence-admission](uix-02-reference-renderer-evidence-admission.md) | `IMPLEMENTATION_TICKET` | `06` | `9a3db0a39c573d62b8545d0d5ab3db5af52b95b3c00375134caef455fdbfe660` | `ACTIVE` | `APPROVED / CORRECTION_DISPATCHABLE` |
+| [uix-02-reference-renderer-evidence-admission](uix-02-reference-renderer-evidence-admission.md) | `IMPLEMENTATION_TICKET` | `07` | `403a61c362808b14137adc103ea9926e24ebcb854db5d826ae488e8fa1b3afff` | `ACTIVE` | `BLOCKED / CONVERGENCE_REVIEW_REQUIRED / NON_DISPATCHABLE` |
 
 The architecture approval at `d684f1479573475c82cad7d4a4abecc60e9665e3` authorized opening
 these first tickets. The project owner approved their exact revision-01 candidate at
@@ -38,4 +38,6 @@ revision 02 with an explicit evidence binding, complete truth table, bounded Uni
 field names. Revision 05 records exact owner approval and permits one additive same-ticket
 correction. Revision 06 records that closure revision 02's initial candidate still accepts unsafe
 opaque values and lacks reproducible named baseline-red evidence; its one additive correction is
-now dispatchable. It grants no renderer, provider, target-write or publication effect.
+now exhausted. Revision 07 records that the correction still has both defect classes and routes to
+control-plane convergence; no third correction is dispatchable. It grants no renderer, provider,
+target-write or publication effect.
