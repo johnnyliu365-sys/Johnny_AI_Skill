@@ -5,7 +5,7 @@ they do not load both clusters or copy ticket bodies into dispatch prompts.
 
 | Child ID / leaf | Kind | Revision | SHA-256 | Lifecycle | State |
 | --- | --- | --- | --- | --- | --- |
-| [wa-01-activation-host-gate-contracts](wa-01-activation-host-gate-contracts.md) | `IMPLEMENTATION_TICKET` | `03` | `723598f5a99cd5cc86c20a5463901fdac00e020b6c4bb9ad9d37687d82ecd61c` | `ACTIVE` | `OPEN / CONVERGENCE_APPROVAL_REQUIRED / NON_DISPATCHABLE` |
+| [wa-01-activation-host-gate-contracts](wa-01-activation-host-gate-contracts.md) | `IMPLEMENTATION_TICKET` | `04` | `a85fda7bd159b5e41bf4c751fe5d151f624e8d9144fa28f07fe68ed1d8da92e6` | `ACTIVE` | `OPEN / APPROVED / DISPATCHABLE` |
 | [uix-01-codesign-contracts-lifecycle](uix-01-codesign-contracts-lifecycle.md) | `IMPLEMENTATION_TICKET` | `02` | `439b0ddc481c166081956aed0c576045e450520ad7639e7ecc01ba13d52c722a` | `ACTIVE` | `OPEN / APPROVED / DISPATCHABLE_AFTER_WA_01_ALLOCATION_RELEASE` |
 
 The architecture approval at `d684f1479573475c82cad7d4a4abecc60e9665e3` authorized opening
@@ -15,7 +15,8 @@ these first tickets. The project owner approved their exact revision-01 candidat
 source/test/element boundaries are disjoint, and neither authorizes any target/host/provider effect
 or shared `PAQ-REL-01` publication.
 
-WA-01 revision 03 is a convergence proposal after the reviewer's independent alias-bypass
-counter-mutation left WA7 green. It adds one discriminating WAM4 evidence cell without changing the
-production contract or source boundary. It is not dispatchable until the owner approves its exact
-candidate.
+WA-01 revision 03 was the convergence proposal after the reviewer's independent alias-bypass
+counter-mutation left WA7 green. It added one discriminating WAM4 evidence cell without changing
+the production contract or source boundary. The project owner approved exact candidate
+`2dca143f297c64058fdbc720038d75d59032e0b5`; revision 04 records that authority and permits one
+fresh correction dispatch to the existing implementation owner.

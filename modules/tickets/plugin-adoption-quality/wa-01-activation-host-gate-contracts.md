@@ -5,9 +5,9 @@
 | Artifact ID / kind | `TICKET-PLUGIN-ADOPTION-QUALITY-WA-01` / `IMPLEMENTATION_TICKET` |
 | SPEC / acceptance source | `SPEC-JOHNNY-WORKFLOW-ADOPTION-20260829-01` / AC-1, AC-2 and the strict-contract portion of AC-9 |
 | Requirement / Context / ADR | `PRD-20260829-048` / `CHG-20260829-048` / `CTX-PLUGIN-ADOPTION-QUALITY-20260829-01` Revision 01, SHA-256 `23cb8df55a9cf69730e7bff6303af1705dc7b479c1bd1a72e033ac6fed2bdd9e` / `ADR-20260829-036` |
-| State / closure | `OPEN / CONVERGENCE_APPROVAL_REQUIRED / NON_DISPATCHABLE`; `CLOSURE-PLUGIN-ADOPTION-QUALITY-WA-01`, revision 02 |
-| Document revision | `03` |
-| Approval authority | Project owner, 2026-08-31 (Asia/Taipei): approved exact revision-02 ticket candidate `5b8adfee3201d8a945a775d5a238e8c6acfca8ee` and directed immediate synchronous dispatch. Initial review found five defects and the single correction closed those five. The reviewer's independent alias-bypass mutation then proved WA7 still false-green, so CodeReview convergence policy invalidated dispatchability. Revision 03 is a control-plane proposal only; it requires new exact owner approval before one fresh correction dispatch. Review, integration, push and every host/target/publication effect remain separate. |
+| State / closure | `OPEN / APPROVED / DISPATCHABLE`; `CLOSURE-PLUGIN-ADOPTION-QUALITY-WA-01`, revision 02 |
+| Document revision | `04` |
+| Approval authority | Project owner, 2026-08-31 (Asia/Taipei): approved exact convergence candidate `2dca143f297c64058fdbc720038d75d59032e0b5`. This authorizes one fresh same-lifetime WAM4 correction dispatch to the existing WA-01 Luna/xhigh implementation owner. Initial review found five defects and the prior correction closed those five; the reviewer's independent alias-bypass mutation proved WA7 still false-green and is the only added closure. Review, integration, push and every host/target/publication effect remain separate. |
 | Source baseline / dependency | `5ca212f2d7ce763a8942e68e96f2fb90cfe3b6e4`; no source ticket dependency. Candidate must descend from the committed ticket authority. |
 | Control owner / reviewer | `ticket-review` semantic profile — Terra/xhigh. |
 | Implementation owner | `implementation-standard` semantic profile — Luna/xhigh; `READY_LOW_MODEL`, one synchronous owner lane and no helper. |
@@ -182,3 +182,5 @@ blob `d94ae2c0cb6ef0277fa32e8f8c283d57cbc7c8cc`, and the same suite returned gre
 This is an `EVIDENCE_DEFECT`, not a requirement change. Revision 02 may not receive an automatic
 third correction. Revision 03 adds only WAM4 and the closed import allowlist needed to make the
 existing WA7 property discriminating; it does not widen the production contract or source boundary.
+The project owner approved that exact revision-03 proposal at
+`2dca143f297c64058fdbc720038d75d59032e0b5` on 2026-08-31 (Asia/Taipei).
