@@ -8,7 +8,7 @@ they do not load both clusters or copy ticket bodies into dispatch prompts.
 | [wa-01-activation-host-gate-contracts](wa-01-activation-host-gate-contracts.md) | `IMPLEMENTATION_TICKET` | `05` | `32ac8d730b49d390386dfd2f5e2171016e9808aa2f2e74b056d4bcb9a9f416f5` | `CLOSED` | `APPROVED / AUTHORITY_INTEGRATED` |
 | [uix-01-codesign-contracts-lifecycle](uix-01-codesign-contracts-lifecycle.md) | `IMPLEMENTATION_TICKET` | `03` | `ea6999d898a857f744a925f1f400a18b9a6f1177f236653ddce27e96efe075a5` | `CLOSED` | `APPROVED / AUTHORITY_INTEGRATED` |
 | [wa-02-project-activation-host-effect-adapter](wa-02-project-activation-host-effect-adapter.md) | `IMPLEMENTATION_TICKET` | `01` | `95fce94a98fb510432d19c3d6d7daaebdc9c4ee14dfbc04ba3e9de2bf2b624e0` | `ACTIVE` | `CAPABILITY_BLOCKED / NON_DISPATCHABLE` |
-| [uix-02-reference-renderer-evidence-admission](uix-02-reference-renderer-evidence-admission.md) | `IMPLEMENTATION_TICKET` | `11` | `348a5c2f12a773b77898616b71ce70947625f1f9fb6db021b0c4ca171fa437fb` | `ACTIVE` | `BLOCKED / TICKET_DEFECT / CLOSURE_REVISION_04_CORRECTED_PROPOSAL / OWNER_EXACT_APPROVAL_PENDING / NON_DISPATCHABLE` |
+| [uix-02-reference-renderer-evidence-admission](uix-02-reference-renderer-evidence-admission.md) | `IMPLEMENTATION_TICKET` | `12` | `edc0841a860612574ec3171b92dacef4c6e2ec30b44ecf663f30c1682522c55b` | `ACTIVE` | `CLOSURE_REVISION_04_APPROVED / NON_DISPATCHABLE` |
 
 The architecture approval at `d684f1479573475c82cad7d4a4abecc60e9665e3` authorized opening
 these first tickets. The project owner approved their exact revision-01 candidate at
@@ -47,4 +47,6 @@ publication and every external effect unauthorized. An adversarial audit then pr
 `L* / M* / N*` allowlist contradicts its zero-width rejection claim. Revision 10 records the
 resulting `TICKET_DEFECT` and proposes closure revision 04 with an `L* / N*`-only grammar. The
 initial proposal audit found a stale operative UIR1 rule and length-masked fixtures; revision 11
-corrects both while leaving exact leaf approval pending.
+corrected both. The project owner approved that exact leaf and digest on 2026-09-01; revision 12
+records closure revision 04 as effective while leaving implementation, a third correction,
+integration, push, publication and every external effect unauthorized.

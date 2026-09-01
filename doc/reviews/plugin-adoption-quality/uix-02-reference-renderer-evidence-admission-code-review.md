@@ -2,15 +2,16 @@
 
 | Field | Value |
 | --- | --- |
-| Review ID / revision | `REVIEW-PLUGIN-ADOPTION-QUALITY-UIX-02` / `08` |
-| Ticket / closure | `TICKET-PLUGIN-ADOPTION-QUALITY-UIX-02` document revision `11` / effective but blocked `CLOSURE-PLUGIN-ADOPTION-QUALITY-UIX-02` revision `03`; corrected proposal revision 04 is `OWNER_EXACT_APPROVAL_PENDING` |
+| Review ID / revision | `REVIEW-PLUGIN-ADOPTION-QUALITY-UIX-02` / `09` |
+| Ticket / closure | `TICKET-PLUGIN-ADOPTION-QUALITY-UIX-02` document revision `12` / effective `CLOSURE-PLUGIN-ADOPTION-QUALITY-UIX-02` revision `04`; implementation remains unauthorized |
 | Authority commit | `8f5e59ca3ac13a00bcaf6c5b5f54e49ad4872267` |
 | Local control-plane proposal commit | `377b45cc7a4ac038d00b8f52a5a14b282dbde337`; intentionally unpushed under the 2026-09-01 owner authority |
 | Owner approval source | Project owner, 2026-09-01 (Asia/Taipei): candidate authority commit `a616e561423fd40508dfbebcb33b798e071b5462`, ticket revision-08 LF-normalized SHA-256 `7b35f9f80d5616e6e5d9ff8a83817e937d1c5094e3bb4cfa042a75af08aef953` |
+| Closure revision 04 approval source | Project owner, 2026-09-01 (Asia/Taipei): candidate authority commit `515e2fd81f8b54030c5fd27abbd43cd63d5df3bc`, ticket revision-11 LF-normalized SHA-256 `348a5c2f12a773b77898616b71ce70947625f1f9fb6db021b0c4ca171fa437fb` |
 | Candidate / baseline | `07edaff11bfe981987288a9c1b6becb67c4e69ad` / `faf3d05e07f83a8c7804313b4d3435d01da338b0` |
 | Branch / owner | `implement/plugin-adoption-quality-uix-02` / `implementation-standard` |
 | Reviewer / helper | `ticket-review` / one read-only `RESEARCH_HELPER` |
-| Result | `BLOCKED / TICKET_DEFECT_CYCLE_03 / CLOSURE_REVISION_04_VALIDATED_PROPOSAL / OWNER_EXACT_APPROVAL_PENDING / IMPLEMENTATION_NOT_AUTHORIZED / CANDIDATE_NOT_INTEGRATED` |
+| Result | `BLOCKED / TICKET_DEFECT_CYCLE_03 / CLOSURE_REVISION_04_APPROVED / IMPLEMENTATION_NOT_AUTHORIZED / CANDIDATE_NOT_INTEGRATED` |
 
 ## Admission and boundary
 
@@ -208,8 +209,8 @@ revision-03 predicate(U+FE0F x 3) -> admitted
 This is a `TICKET_DEFECT`: an implementer can follow the executable allowlist exactly and violate
 the closure's stated zero-width boundary. Ticket revision 10 therefore proposes closure revision
 04 with a complete `L* / N*` allowlist, explicit `M*` rejection, named mark fixtures and UIRM6.
-The owner approved this repair direction, but exact revision-10 leaf approval remains pending.
-No implementation dispatch or third correction is admissible before that exact approval.
+The owner approved this repair direction; at this review point exact artifact approval was still
+pending. No implementation dispatch or third correction was admissible from direction authority.
 
 ## Closure revision 04 proposal audit and additive correction
 
@@ -228,10 +229,10 @@ length one, the ordinary `e + U+0301` sequence as length two, and both `U+034F Ã
 `e + U+0301 + e` as length three. Under `L* / M* / N*` those two length-valid mark values admit;
 under `L* / N*` they reject. Precomposed `Ã©ab` remains a length-three `L*` positive control.
 
-Ticket document revision 11 applies one additive proposal correction: exact approval would replace
-all three operative grammar locations, the fixtures are now length-valid, and UIRM6 names the
-exact mutation and red assertions. This correction is still a proposal; it is neither owner exact
-approval nor implementation authority.
+Ticket document revision 11 applied one additive proposal correction: at that review point exact
+approval would replace all three operative grammar locations, the fixtures were length-valid, and
+UIRM6 named the exact mutation and red assertions. This correction was still a proposal; it was
+neither exact owner approval nor implementation authority.
 
 ## Closure revision 04 proposal correction review
 
@@ -254,5 +255,19 @@ e + U+0301 + e           3 / Ll,Mn,Ll            reject  admit
 The proposal explicitly names every operative revision-03 grammar location that exact approval
 must replace, and no third-correction, implementation, integration, push, publication or external
 effect authority appears in the ticket, review, registry or pitfall leaves. Ticket revision 11's
-LF-normalized digest and every direct index edge match. The corrected proposal is therefore ready
-for exact owner approval; until that approval it remains `NON_DISPATCHABLE`.
+LF-normalized digest and every direct index edge match. The corrected proposal was therefore ready
+for exact owner approval and remained `NON_DISPATCHABLE` at this review point.
+
+## Closure revision 04 exact approval writeback
+
+The project owner approved exact ticket document revision 11 at candidate authority commit
+`515e2fd81f8b54030c5fd27abbd43cd63d5df3bc`, LF-normalized leaf SHA-256
+`348a5c2f12a773b77898616b71ce70947625f1f9fb6db021b0c4ca171fa437fb`, on 2026-09-01
+(Asia/Taipei). Ticket revision 12 records revision 04 as the effective closure and marks revision
+03's `L* / M* / N*` grammar historical and `SUPERSEDED`.
+
+The operative frozen-rule bullet and UIR1 row now use only `L* / N*`, the named mark fixtures are
+length-valid, and UIRM6 names the `L* / N* -> L* / M* / N*` mutation and its direct red assertions.
+This approval changes only the acceptance closure. It does not allocate an implementation owner,
+authorize a third correction, integrate either preserved candidate, push, publish, mutate a target
+or invoke a provider. UIX-02 remains `NON_DISPATCHABLE` until separate implementation authority.

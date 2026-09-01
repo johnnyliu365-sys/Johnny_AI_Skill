@@ -301,8 +301,8 @@
 - **防回歸**：任何 Unicode property 宣稱都要用至少一個具名 code point 驗證 category
   與預期結果；「zero-width」「control」「format」「mark」不可當成同一集合。正向
   grammar 與自然語言摘要必須指向同一個可執行集合。
-- **狀態**：owner 已核准 `L* / N*` 修復方向；closure revision 04 的 exact leaf/digest
-  仍待核准，未 dispatch、未整合、未 push。
+- **狀態**：owner 已精確核准 closure revision 04；revision 12 完成 authority writeback，
+  但未授權第三次 correction 或 dispatch，未整合、未 push。
 
 ### C16. 負向 fixture 被更早的 validator 擋住，反向突變仍可假綠
 
@@ -319,8 +319,7 @@
   要斷言具名失敗原因。只看到「仍拒絕」不能證明被測 gate，屬 overlap-masking。
 - **狀態**：document revision 11 已修正提案；exact candidate
   `04b4bf750972976c04ac18ce54c286b147092de0` 的唯讀 correction review 為
-  `NO_FINDINGS`。closure revision 04 exact leaf/digest 仍待核准，未 dispatch、未整合、
-  未 push。
+  `NO_FINDINGS`。owner 已精確核准 closure revision 04；未 dispatch、未整合、未 push。
 
 ## D. 發行工程類
 
