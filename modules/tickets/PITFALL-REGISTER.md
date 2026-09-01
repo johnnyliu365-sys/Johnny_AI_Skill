@@ -304,6 +304,22 @@
 - **狀態**：owner 已核准 `L* / N*` 修復方向；closure revision 04 的 exact leaf/digest
   仍待核准，未 dispatch、未整合、未 push。
 
+### C16. 負向 fixture 被更早的 validator 擋住，反向突變仍可假綠
+
+- **雷**：closure revision 04 初稿用單一 `U+034F`、`U+FE0F`、`U+0301` 與兩碼位
+  decomposed sequence 當 `M*` 拒絕 fixture，但同一 grammar 先要求至少三個 code point。
+  即使反向突變放行 `M*`，這些值仍會因長度失敗，UIRM6 無法證明 category gate。
+- **證據**：[UIX-02 review](../../doc/reviews/plugin-adoption-quality/uix-02-reference-renderer-evidence-admission-code-review.md)
+  revision 07；docs proposal candidate `f910b8db8c3fa28e4ce07b46317d87e383f771d0`
+  的 Terra/xhigh helper finding 由 reviewer 以 Python 3.11 獨立重現。
+- **修法**：fixture 改為長度有效的 `U+034F × 3`、`U+FE0F × 3`、
+  `e + U+0301 + e`，並加 `éab` 正向控制；UIRM6 明確把 predicate 由 `L* / N*`
+  放寬為 `L* / M* / N*`，前兩個具名 rejection assertion 必須轉紅。
+- **防回歸**：負向 fixture 必須先滿足所有不在本次突變範圍內的前置 gate；每個紅燈
+  要斷言具名失敗原因。只看到「仍拒絕」不能證明被測 gate，屬 overlap-masking。
+- **狀態**：document revision 11 已修正提案；closure revision 04 exact leaf/digest
+  仍待核准，未 dispatch、未整合、未 push。
+
 ## D. 發行工程類
 
 ### D1. Wrapper 的 digest pin 手寫、無人校驗

@@ -2,15 +2,15 @@
 
 | Field | Value |
 | --- | --- |
-| Review ID / revision | `REVIEW-PLUGIN-ADOPTION-QUALITY-UIX-02` / `06` |
-| Ticket / closure | `TICKET-PLUGIN-ADOPTION-QUALITY-UIX-02` document revision `10` / effective but blocked `CLOSURE-PLUGIN-ADOPTION-QUALITY-UIX-02` revision `03`; revision 04 is `OWNER_EXACT_APPROVAL_PENDING` |
+| Review ID / revision | `REVIEW-PLUGIN-ADOPTION-QUALITY-UIX-02` / `07` |
+| Ticket / closure | `TICKET-PLUGIN-ADOPTION-QUALITY-UIX-02` document revision `11` / effective but blocked `CLOSURE-PLUGIN-ADOPTION-QUALITY-UIX-02` revision `03`; corrected proposal revision 04 is `OWNER_EXACT_APPROVAL_PENDING` |
 | Authority commit | `8f5e59ca3ac13a00bcaf6c5b5f54e49ad4872267` |
 | Local control-plane proposal commit | `377b45cc7a4ac038d00b8f52a5a14b282dbde337`; intentionally unpushed under the 2026-09-01 owner authority |
 | Owner approval source | Project owner, 2026-09-01 (Asia/Taipei): candidate authority commit `a616e561423fd40508dfbebcb33b798e071b5462`, ticket revision-08 LF-normalized SHA-256 `7b35f9f80d5616e6e5d9ff8a83817e937d1c5094e3bb4cfa042a75af08aef953` |
 | Candidate / baseline | `07edaff11bfe981987288a9c1b6becb67c4e69ad` / `faf3d05e07f83a8c7804313b4d3435d01da338b0` |
 | Branch / owner | `implement/plugin-adoption-quality-uix-02` / `implementation-standard` |
 | Reviewer / helper | `ticket-review` / one read-only `RESEARCH_HELPER` |
-| Result | `BLOCKED / TICKET_DEFECT_CYCLE_03 / CLOSURE_REVISION_04_PROPOSED / OWNER_EXACT_APPROVAL_PENDING / IMPLEMENTATION_NOT_AUTHORIZED / CANDIDATE_NOT_INTEGRATED` |
+| Result | `BLOCKED / TICKET_DEFECT_CYCLE_03 / CLOSURE_REVISION_04_CORRECTED_PROPOSAL / OWNER_EXACT_APPROVAL_PENDING / IMPLEMENTATION_NOT_AUTHORIZED / CANDIDATE_NOT_INTEGRATED` |
 
 ## Admission and boundary
 
@@ -210,3 +210,25 @@ the closure's stated zero-width boundary. Ticket revision 10 therefore proposes 
 04 with a complete `L* / N*` allowlist, explicit `M*` rejection, named mark fixtures and UIRM6.
 The owner approved this repair direction, but exact revision-10 leaf approval remains pending.
 No implementation dispatch or third correction is admissible before that exact approval.
+
+## Closure revision 04 proposal audit and additive correction
+
+The same Terra/xhigh read-only helper attacked exact proposal candidate
+`f910b8db8c3fa28e4ce07b46317d87e383f771d0` and returned two material findings in one batch:
+
+1. The proposal described `L* / N*`, but did not explicitly replace the operative UIR1 matrix row
+   that still requires `L* / M* / N*`. Approval would therefore leave contradictory normative
+   requirements.
+2. The named bare mark fixtures were one or two code points long. They would remain rejected by
+   the minimum-length gate after a mutation admitted `M*`, so UIRM6 could stay green for the wrong
+   reason.
+
+The reviewer independently reproduced both findings. Python 3.11 reports the bare values as
+length one, the ordinary `e + U+0301` sequence as length two, and both `U+034F × 3` and
+`e + U+0301 + e` as length three. Under `L* / M* / N*` those two length-valid mark values admit;
+under `L* / N*` they reject. Precomposed `éab` remains a length-three `L*` positive control.
+
+Ticket document revision 11 applies one additive proposal correction: exact approval would replace
+all three operative grammar locations, the fixtures are now length-valid, and UIRM6 names the
+exact mutation and red assertions. This correction is still a proposal; it is neither owner exact
+approval nor implementation authority.
