@@ -3,7 +3,7 @@
 > 本專案實際踩過、查證過、修掉的雷，供後續 debugger 與稽核人員查閱。
 > 每一條都有三件事：**雷是什麼、證據在哪、修法與防回歸在哪**。
 > 深入細節一律以工單為準（每條附工單連結）；本文件是索引，不是替代品。
-> 最後更新：2026-08-20（0.4.3 發行前統整）。
+> 最後更新：2026-09-01（UIX-02 convergence 與 registry digest 斷邊）。
 
 ---
 
@@ -268,6 +268,25 @@
   所以整合前的驗證至少要有一次跑在 `git clone` 出來的形狀上——
   worktree 不算，它與 clone 的差異不只是 `.git`。
 
+### C14. Closure 凍結了不可判定條款，baseline-red 在具名 baseline 無法 collect
+
+- **雷**：UIX-02 closure revision 02 同時凍結兩個結構性不可收斂條款：UIR1 要求拒絕
+  「raw credential／prompt」卻只提供語意 denylist，沒有可執行的完整謂詞；修正只能
+  追著新字串跑。另一條要求新 UIR1／2／4／6 cell 在 `faf3d05e...` 具名轉紅，但那些
+  cell 依賴該 baseline 不存在的 `ReferenceEvidenceBinding`，所以只會停在 collection。
+- **證據**：[UIX-02 review](../../doc/reviews/plugin-adoption-quality/uix-02-reference-renderer-evidence-admission-code-review.md)
+  revision 04；兩輪候選與獨立 reviewer 重現均保留。這是 UIX-02 第二次
+  `TICKET_DEFECT` 循環，implementer 不是瓶頸。
+- **修法**：closure revision 03 僅提案以 Unicode General Category 正向 grammar 取代
+  denylist，並把不可達的 baseline-red 條款標為 `SUPERSEDED`；替代證據是逐一綁 exact
+  candidate SHA 的 reviewer reverse mutation、具名命令與 unreduced red/green 輸出。
+- **防回歸**：closure 凍結前必須指出判定每條 universal rule 的可執行謂詞；任何
+  baseline-red 要求都必須先證明具名測試能在具名 baseline 完成 collection。zero red
+  是 finding，不是 pass。
+- **狀態**：revision 03 為 `OWNER_EXACT_APPROVAL_PENDING`，未核准、未 dispatch。建議自
+  UIX-03 起把上述 closure preflight 納入 control-plane；此建議仍待 owner 決定，未修改
+  治理 reference。
+
 ## D. 發行工程類
 
 ### D1. Wrapper 的 digest pin 手寫、無人校驗
@@ -353,6 +372,23 @@
 - **發現方式**：審閱者反向突變。實作者的 5 組突變全部打在宣告上，
   沒有一組打在「宣告與釘子之間那條不存在的線」——這正是 governance 17
   要求審閱者從實作者沒走的門進去的理由。
+
+### D8. Registry digest 在 leaf 最後一個 byte 寫定前先算
+
+- **雷**：UIX-01 與 UIX-02 的 registry digest 都在 leaf 尚未完成最後修改時先算，
+  同一 commit 後續再改 leaf，於是索引保留舊 digest；UIX-01 自 `1d2be10` 起斷邊，
+  UIX-02 自 `be463ae` 起斷邊。
+- **證據**：LF-normalized SHA-256 實算分別為
+  `ea6999d898a857f744a925f1f400a18b9a6f1177f236653ddce27e96efe075a5` 與
+  revision-07 的 `00770859f7bdd00a43395ab7085784ffb3aa2c747e59456e8019fd6115e71d6b`，
+  均與當時 registry 值不符；WA-01／WA-02 兩條已知邊確認同一 LF-normalized 慣例。
+- **修法**：registry digest 必須在 leaf 最後一個 byte 寫定後才計算；同一 commit 內
+  更新索引後，commit 前再次以整檔 LF-normalized bytes 重算並與登記值核對。
+- **防回歸**：任何 leaf＋registry 同 commit 的流程，把「最後寫 leaf → 重算 digest →
+  更新 registry → 再重算核對」固定為不可插入其他 leaf mutation 的尾端序列。
+- **狀態**：兩條既有斷邊由 commit `69a618691515d64f818d16b3f4a27a900ec1b14c`
+  修復；UIX-02 revision 08 在同一 commit 使用上述尾端序列，最終 digest 另由 registry
+  精確綁定。
 
 ---
 

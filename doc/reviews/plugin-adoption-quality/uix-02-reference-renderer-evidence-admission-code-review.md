@@ -2,13 +2,14 @@
 
 | Field | Value |
 | --- | --- |
-| Review ID / revision | `REVIEW-PLUGIN-ADOPTION-QUALITY-UIX-02` / `03` |
-| Ticket / closure | `TICKET-PLUGIN-ADOPTION-QUALITY-UIX-02` document revision `06` / `CLOSURE-PLUGIN-ADOPTION-QUALITY-UIX-02` revision `02` |
+| Review ID / revision | `REVIEW-PLUGIN-ADOPTION-QUALITY-UIX-02` / `04` |
+| Ticket / closure | `TICKET-PLUGIN-ADOPTION-QUALITY-UIX-02` document revision `08` / effective `CLOSURE-PLUGIN-ADOPTION-QUALITY-UIX-02` revision `02`; proposed revision 03 is `OWNER_EXACT_APPROVAL_PENDING` |
 | Authority commit | `8f5e59ca3ac13a00bcaf6c5b5f54e49ad4872267` |
+| Local control-plane proposal commit | `377b45cc7a4ac038d00b8f52a5a14b282dbde337`; intentionally unpushed under the 2026-09-01 owner authority |
 | Candidate / baseline | `07edaff11bfe981987288a9c1b6becb67c4e69ad` / `faf3d05e07f83a8c7804313b4d3435d01da338b0` |
 | Branch / owner | `implement/plugin-adoption-quality-uix-02` / `implementation-standard` |
 | Reviewer / helper | `ticket-review` / one read-only `RESEARCH_HELPER` |
-| Result | `BLOCKED / CONVERGENCE_REVIEW_REQUIRED / IMPLEMENTATION_DEFECT / EVIDENCE_DEFECT / CANDIDATE_NOT_INTEGRATED` |
+| Result | `BLOCKED / CONVERGENCE_REVIEW_REQUIRED / TICKET_DEFECT_CYCLE_02 / OWNER_EXACT_APPROVAL_PENDING / CANDIDATE_NOT_INTEGRATED` |
 
 ## Admission and boundary
 
@@ -151,3 +152,30 @@ This was closure revision 02's correction review. A second failure at the same c
 requires `CONVERGENCE_REVIEW_REQUIRED`; no third automatic correction, source integration or push
 is allowed. Candidate `07edaff11bfe981987288a9c1b6becb67c4e69ad` remains preserved evidence on
 the implementation branch only.
+
+## Control-plane convergence conclusion
+
+The convergence root cause is in the closure text, not implementer capability:
+
+1. UIR1 froze a semantic denylist requirement without an executable predicate capable of deciding
+   all admitted and rejected identifiers. Each correction could only enumerate newly observed
+   examples, so the frozen clause itself made closure non-convergent.
+2. The revision-02 baseline-red clause required named cells to execute on
+   `faf3d05e07f83a8c7804313b4d3435d01da338b0`, but those cells depend on a type absent from that
+   baseline and therefore stop at collection. The required evidence was structurally unreachable.
+
+This is UIX-02's second `TICKET_DEFECT` cycle. The Luna/xhigh implementation owner followed the
+then-effective ticket, returned bounded changes and green current-candidate gates, and is not the
+bottleneck. No third correction or implementation dispatch is admissible.
+
+Ticket document revision 08 now contains a closure revision 03 proposal only. It replaces the
+semantic denylist with a closed Unicode General Category predicate and marks the unreachable
+baseline-red clause `SUPERSEDED` in favor of candidate-bound reviewer reverse mutations with
+unreduced output. The effective closure remains revision 02 until the owner separately approves
+the exact revision-08 leaf digest.
+
+One governance recommendation is recorded as owner-pending and is not applied here: add a closure
+preflight to the control-plane flow for UIX-03 and every later ticket. Before a closure freezes, the
+preflight should require an executable predicate for every universal boundary rule and should prove
+that every named baseline-red cell can collect on its named baseline. No governance reference is
+changed by this review.
