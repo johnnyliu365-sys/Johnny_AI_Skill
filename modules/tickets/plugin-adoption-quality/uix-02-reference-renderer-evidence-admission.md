@@ -5,8 +5,8 @@
 | Artifact ID / kind | `TICKET-PLUGIN-ADOPTION-QUALITY-UIX-02` / `IMPLEMENTATION_TICKET` |
 | SPEC / acceptance source | `SPEC-JOHNNY-DESIGNERLESS-UI-CODESIGN-20260829-01` / AC-1, AC-2 and the renderer/evidence portion of AC-8 |
 | Requirement / Context / ADR | `PRD-20260829-049` / `CHG-20260829-049` / `CTX-PLUGIN-ADOPTION-QUALITY-20260829-02` Revision 01, SHA-256 `dd776e27777b7a4679ce8573c05639e7d7ab24481e654cf431da45c81fb99a26` / `ADR-20260829-037` |
-| State / closure | `CLOSURE_REVISION_03_APPROVED / NON_DISPATCHABLE`; `CLOSURE-PLUGIN-ADOPTION-QUALITY-UIX-02`, revision 03 |
-| Document revision | `09` |
+| State / closure | `BLOCKED / TICKET_DEFECT / CLOSURE_REVISION_04_PROPOSED / OWNER_EXACT_APPROVAL_PENDING / NON_DISPATCHABLE`; effective `CLOSURE-PLUGIN-ADOPTION-QUALITY-UIX-02`, revision 03 |
+| Document revision | `10` |
 | Opening authority | Project owner, 2026-08-31 (Asia/Taipei): authorized opening UIX-02 after UIX-01 closure. Exact ticket approval and implementation dispatch remain separate; no renderer, browser, provider, target write, publication, installation, release or deployment effect is granted. |
 | Approval authority | Project owner, 2026-08-31 (Asia/Taipei): approved exact ticket candidate/authority commit `4f501ccc4f4ecf943fd3f0f6be89871b7341a4ac`, leaf SHA-256 `22c3d12fd150ffc32273722510a4c725f670d45eb2c9135cca44c9a223cbfd45`. This authorizes one UIX-02 Luna/xhigh same-lifetime implementation lane after this approval writeback; review, integration, push and every external effect remain separate. |
 | Review outcome | Candidate `faf3d05e07f83a8c7804313b4d3435d01da338b0` is not integrated. Independent audit and reviewer reproduction proved that revision-01 evidence variants cannot express the request/content binding required by UIR6; changing that public ticket contract requires an owner-approved closure revision. Additional frozen-contract findings are recorded in `REVIEW-PLUGIN-ADOPTION-QUALITY-UIX-02` revision 01. |
@@ -16,6 +16,8 @@
 | Closure revision 02 correction review | Candidate `07edaff11bfe981987288a9c1b6becb67c4e69ad` is not integrated. The reviewer independently reproduced remaining credential/prompt bypasses and the absence of reproducible named baseline-red evidence. The one permitted correction is exhausted; no third correction may dispatch without control-plane convergence and a new owner-approved closure. |
 | Closure revision 03 proposal history | At proposal time this awaited exact owner approval. Project owner authorized control-plane drafting on 2026-09-01 (Asia/Taipei), not approval. The later approval is recorded separately below. |
 | Closure revision 03 approval | Project owner, 2026-09-01 (Asia/Taipei): approved exact document revision 08 at candidate authority commit `a616e561423fd40508dfbebcb33b798e071b5462`, LF-normalized leaf SHA-256 `7b35f9f80d5616e6e5d9ff8a83817e937d1c5094e3bb4cfa042a75af08aef953`. This activates closure revision 03 only. Implementation dispatch, a third correction, candidate integration, push, publication, target effect and provider effect remain separate and unauthorized. |
+| Closure revision 03 adversarial review | Docs candidate `7abe2a997e2e68c7e3adb97442d2324c380d4094` is blocked. A Terra/xhigh read-only helper found, and the reviewer independently reproduced, that the `L* / M* / N*` allowlist admits zero-width `Mn` code points while the same closure claims zero-width characters reject. This is `TICKET_DEFECT`, not implementation authority. |
+| Closure revision 04 direction authority | Project owner, 2026-09-01 (Asia/Taipei): approved drafting the minimal `L* / N*`-only repair direction after the adversarial finding. Exact document revision 10 and its LF-normalized digest still require separate exact approval. This direction grants no implementation dispatch, third correction, integration, push, publication, target effect or provider effect. |
 | Source baseline / dependency | `1d2be10e8de224909b2c46a4eb6f8ef63eb7265c`; UIX-01 contracts integrated at `2c7b5adafa0a84f7a4219e4287daea38d8d855a5`. |
 | Control owner / reviewer | `ticket-review` semantic profile — Terra/xhigh. |
 | Implementation owner | If separately authorized later, `implementation-standard` semantic profile — Luna/xhigh; `READY_LOW_MODEL`, one synchronous owner lane and no helper. No implementation owner is allocated by this approval. Reviewer strength remains higher than the implementation owner. |
@@ -285,6 +287,36 @@ The replacement evidence standard is:
 Revision 03 is the effective acceptance closure. The ticket remains `NON_DISPATCHABLE` until a
 separate implementation authority is committed, and candidate
 `07edaff11bfe981987288a9c1b6becb67c4e69ad` remains non-integrated evidence only.
+
+## Closure revision 04 proposal — OWNER_EXACT_APPROVAL_PENDING
+
+Adversarial review of docs candidate `7abe2a997e2e68c7e3adb97442d2324c380d4094`
+proved that revision 03 is internally inconsistent: `U+034F COMBINING GRAPHEME JOINER` and
+`U+FE0F VARIATION SELECTOR-16` are both Unicode General Category `Mn`, so three copies satisfy the
+declared 3–128 / `L* | M* | N*` predicate even though the same closure says zero-width characters
+reject. The reviewer independently reproduced both admissions with Python 3.11 `unicodedata`.
+
+On exact owner approval of this document revision and its LF-normalized digest, revision 04 would
+replace only revision 03's identifier grammar and add one discriminating mutation cell:
+
+1. An opaque identifier contains 3 through 128 Unicode code points inclusive.
+2. Every code point has a Unicode General Category beginning with `L` or `N`. This is the complete
+   allowlist. Every `M*`, `C*`, separator, punctuation, symbol and unassigned/private-use/surrogate
+   category rejects.
+3. Validation rejects rather than transforms. It performs no Unicode normalization, case-folding,
+   trimming, escaping or replacement; admitted identifiers preserve exact code points.
+4. Precomposed letters remain admissible when the whole identifier otherwise satisfies the
+   grammar. Decomposed forms containing a combining mark reject because every `M*` rejects. This
+   is an intentional closure tradeoff, not an implicit normalization step.
+5. UIR1 adds direct rejection fixtures for `U+034F`, `U+FE0F`, `U+0301 COMBINING ACUTE ACCENT`
+   and a decomposed letter-plus-mark sequence, while retaining the existing nine bypass strings.
+6. Add `UIRM6`: reverse-mutate the category predicate to admit `M*`; the direct UIR1 mark fixture
+   must turn red with complete unreduced output, and byte-exact restoration must return it green.
+
+The revision-03 `L* / M* / N*` rule would become `SUPERSEDED` only after exact approval. Until
+then, revision 03 remains the effective but blocked closure, revision 04 is a proposal only, and
+no implementation owner, third correction, integration, push, publication or external effect is
+authorized.
 
 ## Ownership and return
 

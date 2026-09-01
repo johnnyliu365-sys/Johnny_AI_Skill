@@ -283,9 +283,26 @@
 - **防回歸**：closure 凍結前必須指出判定每條 universal rule 的可執行謂詞；任何
   baseline-red 要求都必須先證明具名測試能在具名 baseline 完成 collection。zero red
   是 finding，不是 pass。
-- **狀態**：revision 03 已由 owner 於 2026-09-01 核准，但未授權第三次 correction 或
-  dispatch。建議自 UIX-03 起把上述 closure preflight 納入 control-plane；此建議仍待
-  owner 決定，未修改治理 reference。
+- **狀態**：revision 03 曾由 owner 於 2026-09-01 核准，後續對抗性審查另發現 C15
+  類缺陷而 blocked；revision 04 exact leaf/digest 仍待核准，未授權第三次 correction
+  或 dispatch。建議自 UIX-03 起把上述 closure preflight 納入 control-plane；此建議
+  仍待 owner 決定，未修改治理 reference。
+
+### C15. Unicode category allowlist 與文字安全宣稱互相矛盾
+
+- **雷**：UIX-02 closure revision 03 把 `L* / M* / N*` 宣告為完整正向 allowlist，卻又
+  宣稱 zero-width 字元一律拒絕。`U+034F COMBINING GRAPHEME JOINER` 與 `U+FE0F
+  VARIATION SELECTOR-16` 都是 `Mn`；依可執行 predicate 會被接受，依敘述條款卻應拒絕。
+- **證據**：[UIX-02 review](../../doc/reviews/plugin-adoption-quality/uix-02-reference-renderer-evidence-admission-code-review.md)
+  revision 06；Terra/xhigh 唯讀 helper 發現後，reviewer 以 Python 3.11 `unicodedata`
+  獨立重現，docs candidate `7abe2a997e2e68c7e3adb97442d2324c380d4094` 因此 blocked。
+- **修法**：closure revision 04 提案把完整 allowlist 收斂為 `L* / N*`，明確拒絕全部
+  `M*`，並加入 `U+034F`、`U+FE0F`、`U+0301`、decomposed sequence fixtures 與 UIRM6。
+- **防回歸**：任何 Unicode property 宣稱都要用至少一個具名 code point 驗證 category
+  與預期結果；「zero-width」「control」「format」「mark」不可當成同一集合。正向
+  grammar 與自然語言摘要必須指向同一個可執行集合。
+- **狀態**：owner 已核准 `L* / N*` 修復方向；closure revision 04 的 exact leaf/digest
+  仍待核准，未 dispatch、未整合、未 push。
 
 ## D. 發行工程類
 

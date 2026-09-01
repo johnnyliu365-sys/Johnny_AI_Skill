@@ -2,15 +2,15 @@
 
 | Field | Value |
 | --- | --- |
-| Review ID / revision | `REVIEW-PLUGIN-ADOPTION-QUALITY-UIX-02` / `05` |
-| Ticket / closure | `TICKET-PLUGIN-ADOPTION-QUALITY-UIX-02` document revision `09` / effective `CLOSURE-PLUGIN-ADOPTION-QUALITY-UIX-02` revision `03`; exact revision-08 leaf approval is recorded in the ticket |
+| Review ID / revision | `REVIEW-PLUGIN-ADOPTION-QUALITY-UIX-02` / `06` |
+| Ticket / closure | `TICKET-PLUGIN-ADOPTION-QUALITY-UIX-02` document revision `10` / effective but blocked `CLOSURE-PLUGIN-ADOPTION-QUALITY-UIX-02` revision `03`; revision 04 is `OWNER_EXACT_APPROVAL_PENDING` |
 | Authority commit | `8f5e59ca3ac13a00bcaf6c5b5f54e49ad4872267` |
 | Local control-plane proposal commit | `377b45cc7a4ac038d00b8f52a5a14b282dbde337`; intentionally unpushed under the 2026-09-01 owner authority |
 | Owner approval source | Project owner, 2026-09-01 (Asia/Taipei): candidate authority commit `a616e561423fd40508dfbebcb33b798e071b5462`, ticket revision-08 LF-normalized SHA-256 `7b35f9f80d5616e6e5d9ff8a83817e937d1c5094e3bb4cfa042a75af08aef953` |
 | Candidate / baseline | `07edaff11bfe981987288a9c1b6becb67c4e69ad` / `faf3d05e07f83a8c7804313b4d3435d01da338b0` |
 | Branch / owner | `implement/plugin-adoption-quality-uix-02` / `implementation-standard` |
 | Reviewer / helper | `ticket-review` / one read-only `RESEARCH_HELPER` |
-| Result | `BLOCKED / TICKET_DEFECT_CYCLE_02 / CLOSURE_REVISION_03_APPROVED / IMPLEMENTATION_NOT_AUTHORIZED / CANDIDATE_NOT_INTEGRATED` |
+| Result | `BLOCKED / TICKET_DEFECT_CYCLE_03 / CLOSURE_REVISION_04_PROPOSED / OWNER_EXACT_APPROVAL_PENDING / IMPLEMENTATION_NOT_AUTHORIZED / CANDIDATE_NOT_INTEGRATED` |
 
 ## Admission and boundary
 
@@ -186,3 +186,27 @@ preflight to the control-plane flow for UIX-03 and every later ticket. Before a 
 preflight should require an executable predicate for every universal boundary rule and should prove
 that every named baseline-red cell can collect on its named baseline. No governance reference is
 changed by this review.
+
+## Closure revision 03 adversarial review
+
+The reviewer bound a Terra/xhigh read-only `RESEARCH_HELPER` audit to docs candidate
+`7abe2a997e2e68c7e3adb97442d2324c380d4094`, closure revision 03 and the direct ticket/review/
+pitfall leaves. The helper returned `FINDINGS`; it modified nothing and did not approve, integrate,
+commit, push or perform an external effect.
+
+The material finding maps directly to UIR1. Revision 03 calls `L* / M* / N*` the complete positive
+allowlist while also claiming zero-width characters reject. Python 3.11 independently reports:
+
+```text
+U+034F COMBINING GRAPHEME JOINER  -> category Mn
+U+FE0F VARIATION SELECTOR-16      -> category Mn
+U+0301 COMBINING ACUTE ACCENT     -> category Mn
+revision-03 predicate(U+034F x 3) -> admitted
+revision-03 predicate(U+FE0F x 3) -> admitted
+```
+
+This is a `TICKET_DEFECT`: an implementer can follow the executable allowlist exactly and violate
+the closure's stated zero-width boundary. Ticket revision 10 therefore proposes closure revision
+04 with a complete `L* / N*` allowlist, explicit `M*` rejection, named mark fixtures and UIRM6.
+The owner approved this repair direction, but exact revision-10 leaf approval remains pending.
+No implementation dispatch or third correction is admissible before that exact approval.
