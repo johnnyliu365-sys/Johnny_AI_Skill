@@ -275,17 +275,17 @@
   追著新字串跑。另一條要求新 UIR1／2／4／6 cell 在 `faf3d05e...` 具名轉紅，但那些
   cell 依賴該 baseline 不存在的 `ReferenceEvidenceBinding`，所以只會停在 collection。
 - **證據**：[UIX-02 review](../../doc/reviews/plugin-adoption-quality/uix-02-reference-renderer-evidence-admission-code-review.md)
-  revision 04；兩輪候選與獨立 reviewer 重現均保留。這是 UIX-02 第二次
+  revision 05；兩輪候選與獨立 reviewer 重現均保留。這是 UIX-02 第二次
   `TICKET_DEFECT` 循環，implementer 不是瓶頸。
-- **修法**：closure revision 03 僅提案以 Unicode General Category 正向 grammar 取代
+- **修法**：owner 已核准 closure revision 03，以 Unicode General Category 正向 grammar 取代
   denylist，並把不可達的 baseline-red 條款標為 `SUPERSEDED`；替代證據是逐一綁 exact
   candidate SHA 的 reviewer reverse mutation、具名命令與 unreduced red/green 輸出。
 - **防回歸**：closure 凍結前必須指出判定每條 universal rule 的可執行謂詞；任何
   baseline-red 要求都必須先證明具名測試能在具名 baseline 完成 collection。zero red
   是 finding，不是 pass。
-- **狀態**：revision 03 為 `OWNER_EXACT_APPROVAL_PENDING`，未核准、未 dispatch。建議自
-  UIX-03 起把上述 closure preflight 納入 control-plane；此建議仍待 owner 決定，未修改
-  治理 reference。
+- **狀態**：revision 03 已由 owner 於 2026-09-01 核准，但未授權第三次 correction 或
+  dispatch。建議自 UIX-03 起把上述 closure preflight 納入 control-plane；此建議仍待
+  owner 決定，未修改治理 reference。
 
 ## D. 發行工程類
 

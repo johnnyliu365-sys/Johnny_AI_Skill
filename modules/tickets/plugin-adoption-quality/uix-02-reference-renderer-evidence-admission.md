@@ -5,8 +5,8 @@
 | Artifact ID / kind | `TICKET-PLUGIN-ADOPTION-QUALITY-UIX-02` / `IMPLEMENTATION_TICKET` |
 | SPEC / acceptance source | `SPEC-JOHNNY-DESIGNERLESS-UI-CODESIGN-20260829-01` / AC-1, AC-2 and the renderer/evidence portion of AC-8 |
 | Requirement / Context / ADR | `PRD-20260829-049` / `CHG-20260829-049` / `CTX-PLUGIN-ADOPTION-QUALITY-20260829-02` Revision 01, SHA-256 `dd776e27777b7a4679ce8573c05639e7d7ab24481e654cf431da45c81fb99a26` / `ADR-20260829-037` |
-| State / closure | `BLOCKED / CONVERGENCE_REVIEW_REQUIRED / NON_DISPATCHABLE`; `CLOSURE-PLUGIN-ADOPTION-QUALITY-UIX-02`, revision 02 |
-| Document revision | `08` |
+| State / closure | `CLOSURE_REVISION_03_APPROVED / NON_DISPATCHABLE`; `CLOSURE-PLUGIN-ADOPTION-QUALITY-UIX-02`, revision 03 |
+| Document revision | `09` |
 | Opening authority | Project owner, 2026-08-31 (Asia/Taipei): authorized opening UIX-02 after UIX-01 closure. Exact ticket approval and implementation dispatch remain separate; no renderer, browser, provider, target write, publication, installation, release or deployment effect is granted. |
 | Approval authority | Project owner, 2026-08-31 (Asia/Taipei): approved exact ticket candidate/authority commit `4f501ccc4f4ecf943fd3f0f6be89871b7341a4ac`, leaf SHA-256 `22c3d12fd150ffc32273722510a4c725f670d45eb2c9135cca44c9a223cbfd45`. This authorizes one UIX-02 Luna/xhigh same-lifetime implementation lane after this approval writeback; review, integration, push and every external effect remain separate. |
 | Review outcome | Candidate `faf3d05e07f83a8c7804313b4d3435d01da338b0` is not integrated. Independent audit and reviewer reproduction proved that revision-01 evidence variants cannot express the request/content binding required by UIR6; changing that public ticket contract requires an owner-approved closure revision. Additional frozen-contract findings are recorded in `REVIEW-PLUGIN-ADOPTION-QUALITY-UIX-02` revision 01. |
@@ -14,11 +14,12 @@
 | Closure revision 02 approval | Project owner, 2026-08-31 (Asia/Taipei): approved exact candidate `79414732c9123e9ba4bac7c5bdc625d1f16217d3`, ticket SHA-256 `f43b516b4c5589c36e5ffa093759726e9e0e8c8538367e695d9d4ff524a31d9b`. This authorizes one additive correction in the existing Luna/xhigh owner lane after this approval writeback; review, integration, push and every external effect remain separate. |
 | Closure revision 02 initial review | Candidate `611959f69df9bb639509d7e9068e86fb8b3e4564` is not integrated. `REVIEW-PLUGIN-ADOPTION-QUALITY-UIX-02` revision 02 records one UIR1 unsafe-value implementation defect and one candidate-baseline evidence defect. The same owner may receive the closure's single additive correction; a second failure requires `CONVERGENCE_REVIEW_REQUIRED`. |
 | Closure revision 02 correction review | Candidate `07edaff11bfe981987288a9c1b6becb67c4e69ad` is not integrated. The reviewer independently reproduced remaining credential/prompt bypasses and the absence of reproducible named baseline-red evidence. The one permitted correction is exhausted; no third correction may dispatch without control-plane convergence and a new owner-approved closure. |
-| Closure revision 03 proposal | `OWNER_EXACT_APPROVAL_PENDING`. Project owner authorized control-plane drafting on 2026-09-01 (Asia/Taipei), not approval. This proposal grants no implementation dispatch, third correction, candidate integration, push, publication, target effect or provider effect. |
+| Closure revision 03 proposal history | At proposal time this awaited exact owner approval. Project owner authorized control-plane drafting on 2026-09-01 (Asia/Taipei), not approval. The later approval is recorded separately below. |
+| Closure revision 03 approval | Project owner, 2026-09-01 (Asia/Taipei): approved exact document revision 08 at candidate authority commit `a616e561423fd40508dfbebcb33b798e071b5462`, LF-normalized leaf SHA-256 `7b35f9f80d5616e6e5d9ff8a83817e937d1c5094e3bb4cfa042a75af08aef953`. This activates closure revision 03 only. Implementation dispatch, a third correction, candidate integration, push, publication, target effect and provider effect remain separate and unauthorized. |
 | Source baseline / dependency | `1d2be10e8de224909b2c46a4eb6f8ef63eb7265c`; UIX-01 contracts integrated at `2c7b5adafa0a84f7a4219e4287daea38d8d855a5`. |
 | Control owner / reviewer | `ticket-review` semantic profile — Terra/xhigh. |
-| Implementation owner | `implementation-standard` semantic profile — Luna/xhigh after exact approval; `READY_LOW_MODEL`, one synchronous owner lane and no helper. Reviewer strength remains higher than the implementation owner. |
-| Worktree / branch / task | After exact closure-revision-02 approval, reviewer reuses `.worktrees/plugin-adoption-quality-uix-02`, branch `implement/plugin-adoption-quality-uix-02` and preserved candidate `faf3d05e07f83a8c7804313b4d3435d01da338b0` for one additive correction by the existing Luna/xhigh implementation owner. Same-lifetime dispatch uses one native call and one wait; no fresh branch, runner, queue, receipt, descriptor, gateway or host workspace readback. |
+| Implementation owner | If separately authorized later, `implementation-standard` semantic profile — Luna/xhigh; `READY_LOW_MODEL`, one synchronous owner lane and no helper. No implementation owner is allocated by this approval. Reviewer strength remains higher than the implementation owner. |
+| Worktree / branch / task | No owner/worktree/task allocation is active. `.worktrees/plugin-adoption-quality-uix-02`, branch `implement/plugin-adoption-quality-uix-02` and candidate `07edaff11bfe981987288a9c1b6becb67c4e69ad` remain preserved evidence and must not move under this approval. Any later same-lifetime dispatch requires separate exact authority. |
 | Delivery / language | `POC / STANDARD`; Python 3.11, strict Pydantic models, complete annotations, `mypy --strict`, deterministic pure tests and independent review. |
 | XSS / effects | `XSS_NOT_APPLICABLE`. This closure admits opaque evidence metadata only. It performs no Browser/WebView/DOM/JavaScript sink, renderer/provider call, filesystem write or target mutation. A later concrete renderer/target adapter must receive separate authority and XSS classification from its actual source/sink graph. |
 
@@ -137,9 +138,13 @@ the UI lifecycle. UIX-03 consumes this result when producing the zero-external-d
   `CONTENT_BINDING_MISMATCH`. Evidence refs and digests must be unique. This binding closes
   consistency and replay across different requests; it does not by itself prove renderer
   availability. Caller labels, manifest text and requested state cannot prove availability.
-- Opaque identifiers accept bounded Unicode and preserve exact code points without normalization;
-  leading/trailing whitespace, control characters, unsafe path/URL/prompt/credential markers and
-  overlength values reject. Only the canonical field names declared in this ticket are accepted;
+- Opaque identifiers contain 3 through 128 Unicode code points and accept only code points whose
+  Unicode General Category begins with `L`, `M` or `N`. Every whitespace, separator, punctuation,
+  symbol, `Cc` or `Cf` code point rejects, including zero-width and bidirectional controls. The
+  gate rejects rather than transforms: no normalization, case-folding, trimming, escaping or
+  replacement occurs, and admitted code points are preserved exactly. This grammar does not claim
+  to distinguish encoded secret material from a legitimate opaque reference; callers remain
+  responsible for keeping secrets out of refs. Only canonical field names are accepted and
   validation aliases are forbidden.
 - No output means a screenshot was visually approved. Visual review and owner acceptance remain
   UIX-05/UIX-01 lifecycle responsibilities.
@@ -164,7 +169,7 @@ owner, one private module, a finite result algebra and no unresolved design or e
 
 | Cell | Required executable behavior / named result |
 | --- | --- |
-| UIR1 | Every enum/binding/request/evidence/decision variant ordinary-constructs, strict-validates and JSON-round-trips. Empty/whitespace/control-character/overlength IDs, wrong primitives, extra or aliased fields, `None`, malformed digests, raw paths/URLs/credentials/prompts and contradictory variants reject. Bounded Unicode metadata round-trips without normalization. |
+| UIR1 | Every enum/binding/request/evidence/decision variant ordinary-constructs, strict-validates and JSON-round-trips. Identifiers accept exactly 3–128 code points from Unicode General Categories `L*`, `M*` and `N*`; every other category rejects without transformation. Empty/whitespace/control/format/overlength IDs, wrong primitives, extra or aliased fields, `None`, malformed digests and contradictory variants reject. The nine retained fixtures — `mailto:owner@example.test`, `javascript:alert(1)`, `authorization:bearer-token`, `prompt injection`, `C:drive-relative`, `access_token=abc`, `Authorization Bearer abc`, `api-key=abc`, `ignore previous instructions` — all reject. Admitted bounded Unicode metadata preserves exact code points without normalization. |
 | UIR2 | `AVAILABLE_AUTHORIZED` plus matching target and complete bound desktop/mobile rendered evidence returns only `ADMITTED_RENDERED`; missing one ref/digest, duplicate refs, artifact/unavailable evidence or mismatched requested state returns the named refusal. |
 | UIR3 | `AVAILABLE_NOT_AUTHORIZED` returns only `DESIGN_CAPABILITY_AUTHORITY_REQUIRED` and does not admit caller-supplied evidence. |
 | UIR4 | `UNAVAILABLE` and `DECLINED` plus complete bound target-owned artifact evidence and literal manual-open acknowledgement return only `ADMITTED_ARTIFACT`; without it they return `UI_REFERENCE_RENDERER_REQUIRED`. `AVAILABLE_AUTHORIZED` plus artifact evidence returns `STATE_EVIDENCE_MISMATCH`. |
@@ -175,13 +180,17 @@ owner, one private module, a finite result algebra and no unresolved design or e
 | UIRM2 | Reverse-mutate target matching to accept every target; UIR5 turns red, then exact restoration returns green. |
 | UIRM3 | Reverse-mutate artifact fallback to omit manual acknowledgement; UIR4 turns red, then exact restoration returns green. |
 | UIRM4 | Reverse-mutate the evidence-binding comparison to accept a valid-but-different request/content binding; UIR6 turns red, then exact restoration returns green. |
+| UIRM5 | Reverse-mutate the positive identifier grammar to accept one separator or punctuation character; the direct UIR1 grammar cell turns red with unreduced output, then byte-exact restoration returns green. |
 
 Strong-type preflight constructs every success/wait/refusal variant through ordinary public
-validators and round-trips. Negative bypass values are rejection evidence only. For this
-correction, candidate `faf3d05e07f83a8c7804313b4d3435d01da338b0` is the defective baseline:
-new UIR1, UIR2, UIR4 and UIR6 cells must turn red there for the named reasons before the additive
-source correction, then return green. The original missing-module first-red remains historical
-evidence only and cannot substitute for the correction baseline-red.
+validators and round-trips. Negative bypass values are rejection evidence only. Each named UIR
+cell requires one reviewer-executed reverse mutation bound to the exact candidate SHA under
+review, with the mutation, direct rerun command, named red assertion and complete unreduced output;
+byte-exact restoration and the corresponding green rerun are mandatory. At least one reviewer
+mutation must enter through a door different from every implementer-reported mutation. Zero red is
+a finding, never a pass. The revision-02 baseline-defect table remains historical evidence and
+must not be backfilled. A UIR4 baseline-red that the old schema can express may be attached
+voluntarily but is not required and cannot substitute for the reviewer mutations.
 
 ## Verification and review
 
@@ -201,13 +210,15 @@ capability/target/evidence truth table, absence of effects and UIX-01 compatibil
 focused/regression/type/compile gates and performs one independent counter-mutation not selected by
 the implementation owner.
 
-## Closure revision 03 proposal — OWNER_EXACT_APPROVAL_PENDING
+## Closure revision 03 authority — APPROVED
 
-This section is a convergence proposal only. Revision 02 remains the effective closure until the
-project owner separately approves this exact document revision and its LF-normalized leaf digest.
-Approval, if later granted, would replace only the UIR1 identifier rule and the correction-baseline
-evidence rule as specified below. It would not authorize implementation, integration, push,
-publication, target mutation or provider use.
+The project owner approved exact document revision 08 at candidate authority commit
+`a616e561423fd40508dfbebcb33b798e071b5462`, LF-normalized leaf SHA-256
+`7b35f9f80d5616e6e5d9ff8a83817e937d1c5094e3bb4cfa042a75af08aef953`, on 2026-09-01
+(Asia/Taipei). Revision 03 is now the effective closure and replaces only the UIR1 identifier rule
+and the correction-baseline evidence rule as specified below. This approval does not authorize
+implementation, a third correction, integration, push, publication, target mutation or provider
+use.
 
 ### A. Closed positive identifier grammar
 
@@ -251,12 +262,12 @@ return it green.
 ### B. Superseded correction-baseline rule and replacement evidence
 
 The revision-02 sentence requiring the new UIR1, UIR2, UIR4 and UIR6 cells to turn red by name on
-`faf3d05e07f83a8c7804313b4d3435d01da338b0` is proposed `SUPERSEDED`. It must not be recreated or
+`faf3d05e07f83a8c7804313b4d3435d01da338b0` is `SUPERSEDED`. It must not be recreated or
 backfilled as historical evidence. Those cells depend on `ReferenceEvidenceBinding`, which that
 baseline does not define, so the combined revised test stops during collection and the named red
 behavior is structurally unreachable.
 
-On exact owner approval, replace that sentence with this evidence standard:
+The replacement evidence standard is:
 
 1. Each named UIR cell is proved by one reviewer-executed reverse mutation against the exact
    candidate SHA under review.
@@ -271,17 +282,17 @@ On exact owner approval, replace that sentence with this evidence standard:
    a baseline-red run on `faf3d05e07f83a8c7804313b4d3435d01da338b0` may be attached voluntarily,
    but is not required and cannot substitute for the reviewer mutations above.
 
-Until separate exact approval, revision 03 is not an acceptance closure, the ticket remains
-`BLOCKED / CONVERGENCE_REVIEW_REQUIRED / NON_DISPATCHABLE`, and candidate
+Revision 03 is the effective acceptance closure. The ticket remains `NON_DISPATCHABLE` until a
+separate implementation authority is committed, and candidate
 `07edaff11bfe981987288a9c1b6becb67c4e69ad` remains non-integrated evidence only.
 
 ## Ownership and return
 
-Exact approval of closure revision 02 permits the reviewer to reuse the existing
-repository-contained worktree, branch and Luna/xhigh implementation owner through one additive
-same-ticket correction dispatch and one completion wait. The owner modifies only declared
-source/test/element paths, does not commit or push, and cannot invoke a renderer/provider or change
-UIX-01, SPEC, Context, ticket or skills.
+Exact approval of closure revision 03 changes the ticket contract only; it does not allocate an
+implementation owner or permit a third correction. A separate committed implementation authority
+is required before the reviewer may bind any same-lifetime owner lane. If later authorized, the
+owner modifies only declared source/test/element paths, does not commit or push, and cannot invoke
+a renderer/provider or change UIX-01, SPEC, Context, ticket or skills.
 
 Return exactly `ImplementationReturn.COMPLETED -> ACTION_COMPLETED` with UIR/UIRM/type/compile
 evidence; `BLOCKED -> HALT` with the failed cell; or

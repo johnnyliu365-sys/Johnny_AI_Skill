@@ -2,14 +2,15 @@
 
 | Field | Value |
 | --- | --- |
-| Review ID / revision | `REVIEW-PLUGIN-ADOPTION-QUALITY-UIX-02` / `04` |
-| Ticket / closure | `TICKET-PLUGIN-ADOPTION-QUALITY-UIX-02` document revision `08` / effective `CLOSURE-PLUGIN-ADOPTION-QUALITY-UIX-02` revision `02`; proposed revision 03 is `OWNER_EXACT_APPROVAL_PENDING` |
+| Review ID / revision | `REVIEW-PLUGIN-ADOPTION-QUALITY-UIX-02` / `05` |
+| Ticket / closure | `TICKET-PLUGIN-ADOPTION-QUALITY-UIX-02` document revision `09` / effective `CLOSURE-PLUGIN-ADOPTION-QUALITY-UIX-02` revision `03`; exact revision-08 leaf approval is recorded in the ticket |
 | Authority commit | `8f5e59ca3ac13a00bcaf6c5b5f54e49ad4872267` |
 | Local control-plane proposal commit | `377b45cc7a4ac038d00b8f52a5a14b282dbde337`; intentionally unpushed under the 2026-09-01 owner authority |
+| Owner approval source | Project owner, 2026-09-01 (Asia/Taipei): candidate authority commit `a616e561423fd40508dfbebcb33b798e071b5462`, ticket revision-08 LF-normalized SHA-256 `7b35f9f80d5616e6e5d9ff8a83817e937d1c5094e3bb4cfa042a75af08aef953` |
 | Candidate / baseline | `07edaff11bfe981987288a9c1b6becb67c4e69ad` / `faf3d05e07f83a8c7804313b4d3435d01da338b0` |
 | Branch / owner | `implement/plugin-adoption-quality-uix-02` / `implementation-standard` |
 | Reviewer / helper | `ticket-review` / one read-only `RESEARCH_HELPER` |
-| Result | `BLOCKED / CONVERGENCE_REVIEW_REQUIRED / TICKET_DEFECT_CYCLE_02 / OWNER_EXACT_APPROVAL_PENDING / CANDIDATE_NOT_INTEGRATED` |
+| Result | `BLOCKED / TICKET_DEFECT_CYCLE_02 / CLOSURE_REVISION_03_APPROVED / IMPLEMENTATION_NOT_AUTHORIZED / CANDIDATE_NOT_INTEGRATED` |
 
 ## Admission and boundary
 
@@ -168,11 +169,17 @@ This is UIX-02's second `TICKET_DEFECT` cycle. The Luna/xhigh implementation own
 then-effective ticket, returned bounded changes and green current-candidate gates, and is not the
 bottleneck. No third correction or implementation dispatch is admissible.
 
-Ticket document revision 08 now contains a closure revision 03 proposal only. It replaces the
-semantic denylist with a closed Unicode General Category predicate and marks the unreachable
-baseline-red clause `SUPERSEDED` in favor of candidate-bound reviewer reverse mutations with
-unreduced output. The effective closure remains revision 02 until the owner separately approves
-the exact revision-08 leaf digest.
+Ticket document revision 08 proposed closure revision 03. The project owner approved its exact
+LF-normalized digest on 2026-09-01, and ticket revision 09 now records revision 03 as effective. It
+replaces the semantic denylist with a closed Unicode General Category predicate and marks the
+unreachable baseline-red clause `SUPERSEDED` in favor of candidate-bound reviewer reverse
+mutations with unreduced output.
+
+The approval resolves the closure-text convergence decision only. It does not authorize a third
+correction, allocate an implementation owner, integrate either preserved candidate, push,
+publish, mutate a target or invoke a provider. The review therefore remains blocked at
+`IMPLEMENTATION_NOT_AUTHORIZED`; candidate
+`07edaff11bfe981987288a9c1b6becb67c4e69ad` remains non-integrated evidence.
 
 One governance recommendation is recorded as owner-pending and is not applied here: add a closure
 preflight to the control-plane flow for UIX-03 and every later ticket. Before a closure freezes, the
