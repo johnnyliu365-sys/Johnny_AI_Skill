@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| Review ID / revision | `REVIEW-PLUGIN-ADOPTION-QUALITY-UIX-02` / `07` |
+| Review ID / revision | `REVIEW-PLUGIN-ADOPTION-QUALITY-UIX-02` / `08` |
 | Ticket / closure | `TICKET-PLUGIN-ADOPTION-QUALITY-UIX-02` document revision `11` / effective but blocked `CLOSURE-PLUGIN-ADOPTION-QUALITY-UIX-02` revision `03`; corrected proposal revision 04 is `OWNER_EXACT_APPROVAL_PENDING` |
 | Authority commit | `8f5e59ca3ac13a00bcaf6c5b5f54e49ad4872267` |
 | Local control-plane proposal commit | `377b45cc7a4ac038d00b8f52a5a14b282dbde337`; intentionally unpushed under the 2026-09-01 owner authority |
@@ -10,7 +10,7 @@
 | Candidate / baseline | `07edaff11bfe981987288a9c1b6becb67c4e69ad` / `faf3d05e07f83a8c7804313b4d3435d01da338b0` |
 | Branch / owner | `implement/plugin-adoption-quality-uix-02` / `implementation-standard` |
 | Reviewer / helper | `ticket-review` / one read-only `RESEARCH_HELPER` |
-| Result | `BLOCKED / TICKET_DEFECT_CYCLE_03 / CLOSURE_REVISION_04_CORRECTED_PROPOSAL / OWNER_EXACT_APPROVAL_PENDING / IMPLEMENTATION_NOT_AUTHORIZED / CANDIDATE_NOT_INTEGRATED` |
+| Result | `BLOCKED / TICKET_DEFECT_CYCLE_03 / CLOSURE_REVISION_04_VALIDATED_PROPOSAL / OWNER_EXACT_APPROVAL_PENDING / IMPLEMENTATION_NOT_AUTHORIZED / CANDIDATE_NOT_INTEGRATED` |
 
 ## Admission and boundary
 
@@ -232,3 +232,27 @@ Ticket document revision 11 applies one additive proposal correction: exact appr
 all three operative grammar locations, the fixtures are now length-valid, and UIRM6 names the
 exact mutation and red assertions. This correction is still a proposal; it is neither owner exact
 approval nor implementation authority.
+
+## Closure revision 04 proposal correction review
+
+The same Terra/xhigh read-only helper attacked exact corrected-proposal candidate
+`04b4bf750972976c04ac18ce54c286b147092de0` against parent
+`f910b8db8c3fa28e4ce07b46317d87e383f771d0` and returned `NO_FINDINGS`. The helper modified
+nothing and held no approval, integration, dispatch or external-effect authority.
+
+The reviewer independently reproduced the candidate-bound evidence:
+
+```text
+value                    length/categories       L*/N*   L*/M*/N*
+U+034F × 3               3 / Mn,Mn,Mn            reject  admit
+U+FE0F × 3               3 / Mn,Mn,Mn            reject  admit
+e + U+0301 + e           3 / Ll,Mn,Ll            reject  admit
+éab                      3 / Ll,Ll,Ll            admit   admit
+éab == NFD(éab)                                    false
+```
+
+The proposal explicitly names every operative revision-03 grammar location that exact approval
+must replace, and no third-correction, implementation, integration, push, publication or external
+effect authority appears in the ticket, review, registry or pitfall leaves. Ticket revision 11's
+LF-normalized digest and every direct index edge match. The corrected proposal is therefore ready
+for exact owner approval; until that approval it remains `NON_DISPATCHABLE`.

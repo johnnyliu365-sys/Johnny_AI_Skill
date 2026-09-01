@@ -317,8 +317,10 @@
   放寬為 `L* / M* / N*`，前兩個具名 rejection assertion 必須轉紅。
 - **防回歸**：負向 fixture 必須先滿足所有不在本次突變範圍內的前置 gate；每個紅燈
   要斷言具名失敗原因。只看到「仍拒絕」不能證明被測 gate，屬 overlap-masking。
-- **狀態**：document revision 11 已修正提案；closure revision 04 exact leaf/digest
-  仍待核准，未 dispatch、未整合、未 push。
+- **狀態**：document revision 11 已修正提案；exact candidate
+  `04b4bf750972976c04ac18ce54c286b147092de0` 的唯讀 correction review 為
+  `NO_FINDINGS`。closure revision 04 exact leaf/digest 仍待核准，未 dispatch、未整合、
+  未 push。
 
 ## D. 發行工程類
 
