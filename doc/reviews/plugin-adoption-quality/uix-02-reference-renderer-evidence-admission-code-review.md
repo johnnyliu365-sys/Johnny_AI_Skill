@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| Review ID / revision | `REVIEW-PLUGIN-ADOPTION-QUALITY-UIX-02` / `09` |
+| Review ID / revision | `REVIEW-PLUGIN-ADOPTION-QUALITY-UIX-02` / `10` |
 | Ticket / closure | `TICKET-PLUGIN-ADOPTION-QUALITY-UIX-02` document revision `12` / effective `CLOSURE-PLUGIN-ADOPTION-QUALITY-UIX-02` revision `04`; implementation remains unauthorized |
 | Authority commit | `8f5e59ca3ac13a00bcaf6c5b5f54e49ad4872267` |
 | Local control-plane proposal commit | `377b45cc7a4ac038d00b8f52a5a14b282dbde337`; intentionally unpushed under the 2026-09-01 owner authority |
@@ -11,7 +11,7 @@
 | Candidate / baseline | `07edaff11bfe981987288a9c1b6becb67c4e69ad` / `faf3d05e07f83a8c7804313b4d3435d01da338b0` |
 | Branch / owner | `implement/plugin-adoption-quality-uix-02` / `implementation-standard` |
 | Reviewer / helper | `ticket-review` / one read-only `RESEARCH_HELPER` |
-| Result | `BLOCKED / TICKET_DEFECT_CYCLE_03 / CLOSURE_REVISION_04_APPROVED / IMPLEMENTATION_NOT_AUTHORIZED / CANDIDATE_NOT_INTEGRATED` |
+| Result | `BLOCKED / TICKET_DEFECT_CYCLE_03 / CLOSURE_REVISION_04_APPROVED / APPROVAL_WRITEBACK_CORRECTED / IMPLEMENTATION_NOT_AUTHORIZED / CANDIDATE_NOT_INTEGRATED` |
 
 ## Admission and boundary
 
@@ -271,3 +271,16 @@ length-valid, and UIRM6 names the `L* / N* -> L* / M* / N*` mutation and its dir
 This approval changes only the acceptance closure. It does not allocate an implementation owner,
 authorize a third correction, integrate either preserved candidate, push, publish, mutate a target
 or invoke a provider. UIX-02 remains `NON_DISPATCHABLE` until separate implementation authority.
+
+## Closure revision 04 approval-writeback adversarial review
+
+The same Terra/xhigh read-only helper attacked exact approval-writeback candidate
+`803f853fac75d7761fb6f62f40249eae469cb6cc` and returned one material consistency finding. The
+ticket, review and both direct indexes recorded closure revision 04 as approved, while Pitfall C14
+still said its exact leaf/digest was pending approval. The stale sentence granted no unsafe
+authority, but made lifecycle readback contradictory.
+
+The reviewer independently reproduced the mismatch with direct committed-object reads. This
+revision applies one additive docs-only correction to C14: revision 04 is exact-approved and
+written back, while third correction, implementation dispatch, integration, push, publication and
+external effects remain unauthorized. Ticket revision 12 and its digest are unchanged.

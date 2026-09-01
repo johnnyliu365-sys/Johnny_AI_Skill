@@ -284,9 +284,9 @@
   baseline-red 要求都必須先證明具名測試能在具名 baseline 完成 collection。zero red
   是 finding，不是 pass。
 - **狀態**：revision 03 曾由 owner 於 2026-09-01 核准，後續對抗性審查另發現 C15
-  類缺陷而 blocked；revision 04 exact leaf/digest 仍待核准，未授權第三次 correction
-  或 dispatch。建議自 UIX-03 起把上述 closure preflight 納入 control-plane；此建議
-  仍待 owner 決定，未修改治理 reference。
+  類缺陷而 blocked；owner 已精確核准 revision 04，revision 12 完成 authority
+  writeback，但未授權第三次 correction 或 dispatch。建議自 UIX-03 起把上述 closure
+  preflight 納入 control-plane；此建議仍待 owner 決定，未修改治理 reference。
 
 ### C15. Unicode category allowlist 與文字安全宣稱互相矛盾
 
