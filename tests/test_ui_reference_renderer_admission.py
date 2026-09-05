@@ -91,6 +91,94 @@ def _decision_adapter() -> TypeAdapter[ReferenceRendererAdmissionDecision]:
     return TypeAdapter(ReferenceRendererAdmissionDecision)
 
 
+_ALLOWED_IMPORTS: dict[tuple[int, str], tuple[str, ...]] = {
+    (0, "__future__"): ("annotations",),
+    (0, "enum"): ("Enum",),
+    (0, "typing"): ("Annotated", "Literal", "Self", "TypeAlias", "Union"),
+    (0, "pydantic"): (
+        "AfterValidator",
+        "ConfigDict",
+        "Field",
+        "TypeAdapter",
+        "field_validator",
+        "model_validator",
+    ),
+    (1, "contracts"): ("RouterModel",),
+    (1, "ui_codesign_contracts"): ("ContentDigest", "ReferenceRendererState"),
+}
+_ALLOWED_CALL_TARGETS = frozenset(
+    {
+        "AdmittedArtifactDecision",
+        "AdmittedRenderedDecision",
+        "AfterValidator",
+        "ConfigDict",
+        "Field",
+        "RendererRefusedDecision",
+        "RendererWaitDecision",
+        "TypeAdapter",
+        "ValueError",
+        "_evidence_binding_matches_request",
+        "_evidence_is_duplicate",
+        "_evidence_matches_requested_state",
+        "_refuse",
+        "_target_matches",
+        "_wait",
+        "all",
+        "any",
+        "field_validator",
+        "isinstance",
+        "len",
+        "model_validator",
+        "ord",
+        "type",
+        "_REQUEST_ADAPTER.validate_python",
+        "unicodedata.category",
+        "value.strip",
+    }
+)
+
+
+def _production_source_policy_violations(tree: ast.Module) -> tuple[str, ...]:
+    """Validate the closed import/name/call grammar for the production module source."""
+
+    violations: list[str] = []
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            if len(node.names) != 1:
+                violations.append("import statement must contain exactly one member")
+                continue
+            imported = node.names[0]
+            if imported.name != "unicodedata" or imported.asname is not None:
+                violations.append(f"unlisted or aliased import: {ast.unparse(node)}")
+        elif isinstance(node, ast.ImportFrom):
+            expected = _ALLOWED_IMPORTS.get((node.level, node.module or ""))
+            actual = tuple(alias.name for alias in node.names)
+            if expected is None:
+                violations.append(f"unlisted import form: {ast.unparse(node)}")
+            elif actual != expected or any(alias.asname is not None for alias in node.names):
+                violations.append(f"wrong import members or alias: {ast.unparse(node)}")
+
+        if isinstance(node, ast.Name) and node.id.startswith("__"):
+            if not (node.id == "__all__" and isinstance(node.ctx, ast.Store)):
+                violations.append(f"double-underscore name loaded: {node.id}")
+        elif isinstance(node, ast.Attribute) and node.attr.startswith("__"):
+            violations.append(f"double-underscore attribute loaded: {node.attr}")
+
+        if isinstance(node, ast.Call):
+            if any(isinstance(argument, ast.Starred) for argument in node.args):
+                violations.append("starred call argument")
+            if any(keyword.arg is None for keyword in node.keywords):
+                violations.append("unpacked call keyword")
+            target: str | None = None
+            if isinstance(node.func, ast.Name):
+                target = node.func.id
+            elif isinstance(node.func, ast.Attribute) and isinstance(node.func.value, ast.Name):
+                target = f"{node.func.value.id}.{node.func.attr}"
+            if target not in _ALLOWED_CALL_TARGETS:
+                violations.append(f"unlisted call target: {ast.unparse(node.func)}")
+    return tuple(violations)
+
+
 class UIReferenceRendererAdmissionTests(unittest.TestCase):
     def test_uir1_public_variants_strictly_round_trip(self) -> None:
         requests = (
@@ -473,6 +561,36 @@ class UIReferenceRendererAdmissionTests(unittest.TestCase):
         if isinstance(authorized_artifact, RendererRefusedDecision):
             self.assertEqual(RendererRefusalReason.STATE_EVIDENCE_MISMATCH, authorized_artifact.reason)
 
+        missing_acknowledgement = _artifact().model_dump()
+        del missing_acknowledgement["owner_manual_open_acknowledgement"]
+        with self.subTest(acknowledgement="missing-direct"):
+            with self.assertRaises(ValidationError):
+                ArtifactReferenceEvidence.model_validate(missing_acknowledgement)
+        nested_missing_acknowledgement = _request(
+            requested_state=ReferenceRendererState.ARTIFACT_ONLY,
+            evidence=_artifact(),
+        ).model_dump()
+        del nested_missing_acknowledgement["evidence"]["owner_manual_open_acknowledgement"]
+        with self.subTest(acknowledgement="missing-nested"):
+            with self.assertRaises(ValidationError):
+                ReferenceRendererAdmissionRequest.model_validate(nested_missing_acknowledgement)
+        for invalid_acknowledgement in (False, None, 1, 1.0, "true"):
+            with self.subTest(acknowledgement=repr(invalid_acknowledgement)):
+                invalid_payload = _artifact().model_dump()
+                invalid_payload["owner_manual_open_acknowledgement"] = invalid_acknowledgement
+                with self.assertRaises(ValidationError):
+                    ArtifactReferenceEvidence.model_validate(invalid_payload)
+
+                nested_invalid_payload = _request(
+                    requested_state=ReferenceRendererState.ARTIFACT_ONLY,
+                    evidence=_artifact(),
+                ).model_dump()
+                nested_invalid_payload["evidence"]["owner_manual_open_acknowledgement"] = (
+                    invalid_acknowledgement
+                )
+                with self.assertRaises(ValidationError):
+                    ReferenceRendererAdmissionRequest.model_validate(nested_invalid_payload)
+
         for capability in (
             RendererCapabilityState.UNAVAILABLE,
             RendererCapabilityState.DECLINED,
@@ -485,6 +603,8 @@ class UIReferenceRendererAdmissionTests(unittest.TestCase):
                 )
             )
             self.assertIsInstance(decision, AdmittedArtifactDecision)
+            if isinstance(decision, AdmittedArtifactDecision):
+                self.assertIs(decision.evidence.owner_manual_open_acknowledgement, True)
 
             wait = admit_reference_renderer(
                 _request(
@@ -634,6 +754,28 @@ class UIReferenceRendererAdmissionTests(unittest.TestCase):
                 ),
             ),
             (
+                "rendered-desktop-observation-reference",
+                RenderedReferenceEvidence(
+                    binding=_binding(),
+                    desktop_screenshot_ref="rendererobservation",
+                    mobile_screenshot_ref="screenshotmobile",
+                    desktop_digest=DESKTOP_DIGEST,
+                    mobile_digest=MOBILE_DIGEST,
+                    renderer_observation_ref="rendererobservation",
+                ),
+            ),
+            (
+                "rendered-mobile-observation-reference",
+                RenderedReferenceEvidence(
+                    binding=_binding(),
+                    desktop_screenshot_ref="screenshotdesktop",
+                    mobile_screenshot_ref="rendererobservation",
+                    desktop_digest=DESKTOP_DIGEST,
+                    mobile_digest=MOBILE_DIGEST,
+                    renderer_observation_ref="rendererobservation",
+                ),
+            ),
+            (
                 "artifact-reference",
                 ArtifactReferenceEvidence(
                     binding=_binding(),
@@ -747,46 +889,7 @@ class UIReferenceRendererAdmissionTests(unittest.TestCase):
             if isinstance(node, ast.ImportFrom)
             if node.module is not None
         )
-        imported_bindings = {
-            (
-                alias.name.split(".", maxsplit=1)[0],
-                alias.name,
-                alias.asname or alias.name.split(".", maxsplit=1)[0],
-            )
-            for node in ast.walk(tree)
-            if isinstance(node, ast.Import)
-            for alias in node.names
-        }
-        imported_bindings.update(
-            {
-                (
-                    node.module or "",
-                    alias.name,
-                    alias.asname or alias.name,
-                )
-                for node in ast.walk(tree)
-                if isinstance(node, ast.ImportFrom)
-                for alias in node.names
-            }
-        )
-        self.assertFalse(
-            any(
-                original == "Any" or bound in {"Any", "Unchecked"}
-                for _, original, bound in imported_bindings
-            )
-        )
-        self.assertEqual(
-            {
-                "__future__",
-                "enum",
-                "typing",
-                "unicodedata",
-                "pydantic",
-                "contracts",
-                "ui_codesign_contracts",
-            },
-            imported,
-        )
+        self.assertEqual((), _production_source_policy_violations(tree))
         forbidden_modules = {
             "os", "pathlib", "shutil", "tempfile", "glob", "io", "subprocess", "multiprocessing",
             "socket", "requests", "httpx", "urllib", "http", "ssl", "websocket", "platform", "dotenv",
@@ -819,6 +922,78 @@ class UIReferenceRendererAdmissionTests(unittest.TestCase):
             elif isinstance(function, ast.Attribute) and isinstance(function.value, ast.Call):
                 dynamic_calls.append(ast.unparse(function))
         self.assertEqual([], dynamic_calls)
+
+        hostile_snippets = (
+            (
+                "typing-module-alias",
+                "import typing as typing_alias\ntyping_alias.Any(\"opaque\")",
+            ),
+            (
+                "aliased-typing-cast",
+                "from typing import cast as unchecked_cast\nunchecked_cast(\"opaque\")",
+            ),
+            (
+                "ordinary-any-alias",
+                "from typing import Any as UnsafeAny\nvalue: UnsafeAny",
+            ),
+            (
+                "ordinary-any-second-alias",
+                "from typing import Any as A\nfrom typing import Any as AnotherAny\nvalue: A",
+            ),
+            (
+                "ordinary-any",
+                "from typing import Any\nvalue: Any",
+            ),
+            (
+                "direct-builtins-import",
+                '__builtins__["__import__"]("os")',
+            ),
+            (
+                "indirect-builtins-import",
+                'import builtins as runtime\nruntime.__import__("os")',
+            ),
+            (
+                "attribute-on-call-result",
+                'factory().run("opaque")',
+            ),
+            (
+                "star-import",
+                "from typing import *",
+            ),
+            (
+                "unlisted-module",
+                "import pathlib",
+            ),
+            (
+                "unlisted-symbol",
+                "from typing import cast",
+            ),
+            (
+                "wrong-relative-level",
+                "from ..contracts import RouterModel",
+            ),
+            (
+                "aliased-unicodedata",
+                "import unicodedata as unicode_data",
+            ),
+            (
+                "starred-call-argument",
+                "len(*values)",
+            ),
+            (
+                "unpacked-call-keyword",
+                "ValueError(**details)",
+            ),
+            (
+                "unknown-callee",
+                'mystery("opaque")',
+            ),
+        )
+        for label, snippet in hostile_snippets:
+            with self.subTest(hostile_source=label):
+                violations = _production_source_policy_violations(ast.parse(snippet))
+                self.assertNotEqual((), violations)
+        self.assertEqual((), _production_source_policy_violations(ast.parse("__all__ = ['private']")))
 
 
 if __name__ == "__main__":
