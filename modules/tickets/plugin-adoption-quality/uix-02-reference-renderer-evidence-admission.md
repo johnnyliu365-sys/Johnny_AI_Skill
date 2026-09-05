@@ -5,8 +5,8 @@
 | Artifact ID / kind | `TICKET-PLUGIN-ADOPTION-QUALITY-UIX-02` / `IMPLEMENTATION_TICKET` |
 | SPEC / acceptance source | `SPEC-JOHNNY-DESIGNERLESS-UI-CODESIGN-20260829-01` / AC-1, AC-2 and the renderer/evidence portion of AC-8 |
 | Requirement / Context / ADR | `PRD-20260829-049` / `CHG-20260829-049` / `CTX-PLUGIN-ADOPTION-QUALITY-20260829-02` Revision 01, SHA-256 `dd776e27777b7a4679ce8573c05639e7d7ab24481e654cf431da45c81fb99a26` / `ADR-20260829-037` |
-| State / closure | `CLOSURE_REVISION_04_APPROVED / IMPLEMENTATION_AUTHORIZED`; effective `CLOSURE-PLUGIN-ADOPTION-QUALITY-UIX-02`, revision 04 |
-| Document revision | `13` |
+| State / closure | `BLOCKED / CONVERGENCE_REVIEW_REQUIRED / NON_DISPATCHABLE`; effective `CLOSURE-PLUGIN-ADOPTION-QUALITY-UIX-02`, revision 04 |
+| Document revision | `14` |
 | Opening authority | Project owner, 2026-08-31 (Asia/Taipei): authorized opening UIX-02 after UIX-01 closure. Exact ticket approval and implementation dispatch remain separate; no renderer, browser, provider, target write, publication, installation, release or deployment effect is granted. |
 | Approval authority history | Project owner, 2026-08-31 (Asia/Taipei): approved exact ticket candidate/authority commit `4f501ccc4f4ecf943fd3f0f6be89871b7341a4ac`, leaf SHA-256 `22c3d12fd150ffc32273722510a4c725f670d45eb2c9135cca44c9a223cbfd45`. This authorized the initial UIX-02 Luna/xhigh same-lifetime implementation lane; that lane was consumed and grants no current authority. Review, integration, push and every external effect remained separate. |
 | Review outcome | Candidate `faf3d05e07f83a8c7804313b4d3435d01da338b0` is not integrated. Independent audit and reviewer reproduction proved that revision-01 evidence variants cannot express the request/content binding required by UIR6; changing that public ticket contract requires an owner-approved closure revision. Additional frozen-contract findings are recorded in `REVIEW-PLUGIN-ADOPTION-QUALITY-UIX-02` revision 01. |
@@ -22,8 +22,8 @@
 | Closure revision 04 approval | Project owner, 2026-09-01 (Asia/Taipei): approved exact document revision 11 at candidate authority commit `515e2fd81f8b54030c5fd27abbd43cd63d5df3bc`, LF-normalized leaf SHA-256 `348a5c2f12a773b77898616b71ce70947625f1f9fb6db021b0c4ca171fa437fb`. This activates closure revision 04 only. Implementation dispatch, a third correction, candidate integration, push, publication, target effect and provider effect remain separate and unauthorized. |
 | Source baseline / dependency | `1d2be10e8de224909b2c46a4eb6f8ef63eb7265c`; UIX-01 contracts integrated at `2c7b5adafa0a84f7a4219e4287daea38d8d855a5`. |
 | Control owner / reviewer | `ticket-review` semantic profile — Terra/xhigh. |
-| Implementation owner | `implementation-standard` semantic profile — Luna/xhigh; `READY_LOW_MODEL`, one synchronous owner lane and no helper, under the 2026-09-05 execution authority below. The current-session reviewer retains final review responsibility and must be at least as capable as the implementation owner. |
-| Worktree / branch / task | Existing `.worktrees/plugin-adoption-quality-uix-02`, branch `implement/plugin-adoption-quality-uix-02`, baseline `07edaff11bfe981987288a9c1b6becb67c4e69ad`; reuse `/root/plugin_adoption_implementer`. Read this revision and its registry at the authority-writeback commit, not the historical ticket in that worktree. Historical commits remain immutable; changes are additive on the same branch. |
+| Implementation owner | `implementation-standard` — Luna/xhigh; its closure-04 implementation and single additive correction have returned. No active or further dispatch is authorized pending control-plane convergence. The current-session reviewer retains final review responsibility. |
+| Worktree / branch / task | Preserve `.worktrees/plugin-adoption-quality-uix-02`, branch `implement/plugin-adoption-quality-uix-02`, task `/root/plugin_adoption_implementer`; current candidate `b419954bc57777661d7522247ffc26977f668ca7` over initial candidate `18ed02c736812e2e7fab738dc2b8a7036d1da987` and prior baseline `07edaff11bfe981987288a9c1b6becb67c4e69ad`. Historical commits remain immutable and unintegrated. |
 | Delivery / language | `POC / STANDARD`; Python 3.11, strict Pydantic models, complete annotations, `mypy --strict`, deterministic pure tests and independent review. |
 | XSS / effects | `XSS_NOT_APPLICABLE`. This closure admits opaque evidence metadata only. It performs no Browser/WebView/DOM/JavaScript sink, renderer/provider call, filesystem write or target mutation. A later concrete renderer/target adapter must receive separate authority and XSS classification from its actual source/sink graph. |
 
@@ -354,7 +354,22 @@ mutations. No runner, receipt, queue or cross-lifetime wake is required or claim
 
 ## Ownership and return
 
-The 2026-09-05 execution authority now binds the same-lifetime owner lane. The owner modifies only
+### Execution outcome — 2026-09-05
+
+The current-session reviewer and reused read-only adversarial helper completed closure-04 initial
+review and its one additive correction review. Source candidate
+`b419954bc57777661d7522247ffc26977f668ca7` passes 75 tests and 275 subtests, strict mypy and
+compile, but remains `BLOCKED`: UIR7 still misses qualified/aliased forbidden typing and indirect
+dynamic import, UIR6 does not independently pin observation-ref uniqueness, and UIRM3's missing
+acknowledgement mutation leaves the specified UIR4 green (UIR1 catches it instead).
+
+`REVIEW-PLUGIN-ADOPTION-QUALITY-UIX-02` revision 13 records the exact candidate, unreduced
+reproductions and restoration evidence. These are remaining `EVIDENCE_DEFECT` findings, not proof
+of a production effect or authority bypass. Under `CodeReview.md` section 5, further correction
+requires control-plane convergence; no third correction is dispatched. ContextView
+`UIX02R13-20260905` is closed. No integration, push or publication was performed.
+
+The 2026-09-05 execution authority bound the now-completed same-lifetime owner lane. The owner modifies only
 declared source/test/element paths, does not commit or push, and cannot invoke a renderer/provider
 or change UIX-01, SPEC, Context, ticket or skills. The reviewer, not the implementation owner,
 creates local candidate commits and owns the final review verdict.

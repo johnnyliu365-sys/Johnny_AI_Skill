@@ -2,16 +2,16 @@
 
 | Field | Value |
 | --- | --- |
-| Review ID / revision | `REVIEW-PLUGIN-ADOPTION-QUALITY-UIX-02` / `12` |
-| Ticket / closure | `TICKET-PLUGIN-ADOPTION-QUALITY-UIX-02` document revision `13` / effective `CLOSURE-PLUGIN-ADOPTION-QUALITY-UIX-02` revision `04`; execution authorized 2026-09-05 |
+| Review ID / revision | `REVIEW-PLUGIN-ADOPTION-QUALITY-UIX-02` / `13` |
+| Ticket / closure | `TICKET-PLUGIN-ADOPTION-QUALITY-UIX-02` authority document revision `13`, outcome revision `14` / effective `CLOSURE-PLUGIN-ADOPTION-QUALITY-UIX-02` revision `04`; correction review completed 2026-09-05 |
 | Authority commit | `87681ccb24576006ee9dcdaf8e49815faf3a3a42`; ticket LF SHA-256 `0c97862043b8202617cbbe0a6a2b1e61787f64334e89abd46d5c97e51de6789d` |
 | Local control-plane proposal commit | `377b45cc7a4ac038d00b8f52a5a14b282dbde337`; intentionally unpushed under the 2026-09-01 owner authority |
 | Owner approval source | Project owner, 2026-09-01 (Asia/Taipei): candidate authority commit `a616e561423fd40508dfbebcb33b798e071b5462`, ticket revision-08 LF-normalized SHA-256 `7b35f9f80d5616e6e5d9ff8a83817e937d1c5094e3bb4cfa042a75af08aef953` |
 | Closure revision 04 approval source | Project owner, 2026-09-01 (Asia/Taipei): candidate authority commit `515e2fd81f8b54030c5fd27abbd43cd63d5df3bc`, ticket revision-11 LF-normalized SHA-256 `348a5c2f12a773b77898616b71ce70947625f1f9fb6db021b0c4ca171fa437fb` |
-| Candidate / baseline | `18ed02c736812e2e7fab738dc2b8a7036d1da987` / `07edaff11bfe981987288a9c1b6becb67c4e69ad` |
+| Candidate / baseline | `b419954bc57777661d7522247ffc26977f668ca7` / `18ed02c736812e2e7fab738dc2b8a7036d1da987` |
 | Branch / owner | `implement/plugin-adoption-quality-uix-02` / `implementation-standard` |
 | Reviewer / helper | `ticket-review` / one read-only `RESEARCH_HELPER` |
-| Result | `CHANGES_REQUESTED / CLOSURE_REVISION_04_INITIAL_REVIEW / CANDIDATE_NOT_INTEGRATED` |
+| Result | `BLOCKED / EVIDENCE_DEFECT / CONVERGENCE_REVIEW_REQUIRED / CANDIDATE_NOT_INTEGRATED` |
 
 Sections preceding the 2026-09-05 review below retain point-in-time historical evidence and
 authority restrictions. Current execution authority and findings are bound by the metadata above
@@ -449,3 +449,578 @@ py -3.11 -B -m pytest -q -p no:cacheprovider tests/test_ui_reference_renderer_ad
 ```
 
 Exit code 0; zero red is a finding, not a pass.
+
+## Closure revision 04 correction review — 2026-09-05
+
+The same Luna/xhigh owner returned one additive correction. The current-session reviewer committed
+candidate `b419954bc57777661d7522247ffc26977f668ca7` on the existing implementation branch.
+Its parent is `18ed02c736812e2e7fab738dc2b8a7036d1da987`; neither candidate is integrated.
+The same read-only Terra/xhigh helper audited committed objects and returned FINDINGS. The
+current-session reviewer reproduced those findings and selected an additional independent door:
+an aliased `typing.cast` call, rather than the implementer's reported aliased-Any/dynamic-import
+mutations. The helper never approved, edited, dispatched or performed an external effect.
+
+### Verified improvement and remaining findings
+
+The strict acknowledgement correction is real: numeric inputs reject both at direct artifact
+construction and within nested requests. Temporarily bypassing the new before-validator makes all
+four named numeric assertions fail. The reviewer also observed red assertions for the repaired
+minimum length, marks, brief binding, digest uniqueness, finite ANY targets, authority variants and
+the originally reported Any/dynamic-import probes. Byte-exact restoration returns the suite green.
+
+| Finding | Closure / classification | Candidate-bound result |
+| --- | --- | --- |
+| R04-C1 | UIR7 / EVIDENCE_DEFECT; R04-F3 remains open | Aliased `cast`, qualified `typing.Any`, and indirect `__builtins__["__import__"]` all leave UIR7 green. Checking the original Any symbol fixed that probe, but does not close the frozen no-cast/no-Any/no-dynamic-lookup source boundary. |
+| R04-C2 | UIR6 / EVIDENCE_DEFECT; R04-F5 remains open | Removing observation-ref membership **and changing the expected set cardinality from 3 to 2** leaves UIR6 green. This is the exact reproduced mutation; removing only the member would reject legitimate evidence and is not the claimed proof. Desktop/observation and mobile/observation collisions are not independently pinned. |
+| R04-C3 | UIRM3 -> UIR4 / EVIDENCE_DEFECT; R04-F2 remains open | Giving the mandatory acknowledgement a default true leaves the specified UIR4 green. UIR1 correctly turns red instead, so this is an unsatisfied named evidence mapping, not a claim that the unmutated implementation accepts missing acknowledgement. |
+
+These three families are within the unchanged frozen closure. No new architecture, requirement,
+provider operation or production exploit is alleged. The other batched fixes are retained.
+The final conclusion is **BLOCKED / EVIDENCE_DEFECT / CONVERGENCE_REVIEW_REQUIRED**, not approval.
+Per `CodeReview.md` section 5, this closure has consumed its initial and single correction review.
+The reviewer has not issued a third correction. Further work requires control-plane convergence
+and the necessary owner authority; no gate integration, push or publication was attempted.
+
+### Verification and applicability
+
+- Direct focused/regression command: `py -3.11 -B -m pytest -q -p no:cacheprovider tests/test_ui_reference_renderer_admission.py tests/test_ui_codesign_contracts.py tests/test_workflow_router.py` — 75 passed, 275 subtests passed (7 focused tests / 59 focused subtests).
+- `py -3.11 -B -m mypy --strict --no-incremental library/workflow_router/ui_reference_renderer_admission.py tests/test_ui_reference_renderer_admission.py` — Success: no issues found in 2 source files.
+- `py -3.11 -B -m compileall -q library/workflow_router/ui_reference_renderer_admission.py tests/test_ui_reference_renderer_admission.py` — exit 0.
+- Primary-path smoke is the ordinary reducer admission exercised directly by UIR2/UIR4.
+- Worktree and branch are unchanged; source/test diff remains within the declared boundary.
+- XSS, renderer/browser/provider, filesystem/network/process effects, tenant persistence,
+  migrations and deployment are not exercised by this pure metadata module. No external-effect
+  readiness or actual rendered-output claim follows from these tests.
+- This is a BLOCKED review, so green suite/type results do not claim completion of all UIR/UIRM gates.
+
+### Exact correction-candidate mutation transcripts
+
+All following runs use candidate `b419954bc57777661d7522247ffc26977f668ca7` in the existing
+UIX-02 worktree. The production module, not a copied test predicate, was temporarily patched.
+Commands use standard-library unittest directly, with complete unreduced output and no wrapper.
+The raw source blob before and after restoration is `f1c1adb2a9433ae2c246ccb182639cdfce3b182d`.
+Dynamic-import probes sit in literal `if False` branches and were never executed.
+
+
+#### r2_cast_alias
+
+Exact temporary replacement:
+
+```diff
+-from typing import Annotated, Literal, Self, TypeAlias, Union
++from typing import Annotated, Literal, Self, TypeAlias, Union
++from typing import cast as reinterpret
++
++
++def _reviewer_alias_cast(value: object) -> str:
++    return reinterpret(str, value)
+```
+
+```text
+py -3.11 -B -m unittest tests.test_ui_reference_renderer_admission.UIReferenceRendererAdmissionTests.test_uir7_ast_proves_private_no_effect_boundary
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.029s
+
+OK
+```
+
+Exit code 0.
+
+#### r2_missing_ack
+
+Exact temporary replacement:
+
+```diff
+-    owner_manual_open_acknowledgement: Literal[True]
++    owner_manual_open_acknowledgement: Literal[True] = True
+```
+
+```text
+py -3.11 -B -m unittest tests.test_ui_reference_renderer_admission.UIReferenceRendererAdmissionTests.test_uir4_absence_or_decline_uses_artifact_fallback
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.002s
+
+OK
+```
+
+Exit code 0.
+
+#### r2_qualified_any
+
+Exact temporary replacement:
+
+```diff
+-from typing import Annotated, Literal, Self, TypeAlias, Union
++from typing import Annotated, Literal, Self, TypeAlias, Union
++import typing as t
++
++probe: t.Any = "opaque"
+```
+
+```text
+py -3.11 -B -m unittest tests.test_ui_reference_renderer_admission.UIReferenceRendererAdmissionTests.test_uir7_ast_proves_private_no_effect_boundary
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.026s
+
+OK
+```
+
+Exit code 0.
+
+#### r2_indirect_import
+
+Exact temporary replacement:
+
+```diff
+-_SHA256_PATTERN = r"^[0-9a-f]{64}$"
++_SHA256_PATTERN = r"^[0-9a-f]{64}$"
++
++if False:
++    dynamic_importer = __builtins__["__import__"]
++    dynamic_importer("os")
+```
+
+```text
+py -3.11 -B -m unittest tests.test_ui_reference_renderer_admission.UIReferenceRendererAdmissionTests.test_uir7_ast_proves_private_no_effect_boundary
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.027s
+
+OK
+```
+
+Exit code 0.
+
+#### r2_observation_ref
+
+Exact temporary replacement:
+
+```diff
+-                    evidence.renderer_observation_ref,
+-                }
+-            )
+-            != 3
++                }
++            )
++            != 2
+```
+
+```text
+py -3.11 -B -m unittest tests.test_ui_reference_renderer_admission.UIReferenceRendererAdmissionTests.test_uir6_state_duplicate_and_identity_mismatch_refuse
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.005s
+
+OK
+```
+
+Exit code 0.
+
+#### r2_dynamic_import
+
+Exact temporary replacement:
+
+```diff
+-_SHA256_PATTERN = r"^[0-9a-f]{64}$"
++_SHA256_PATTERN = r"^[0-9a-f]{64}$"
++
++if False:
++    __import__("os").system("never-executed")
+```
+
+```text
+py -3.11 -B -m unittest tests.test_ui_reference_renderer_admission.UIReferenceRendererAdmissionTests.test_uir7_ast_proves_private_no_effect_boundary
+F
+======================================================================
+FAIL: test_uir7_ast_proves_private_no_effect_boundary (tests.test_ui_reference_renderer_admission.UIReferenceRendererAdmissionTests.test_uir7_ast_proves_private_no_effect_boundary)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\GameBoy\Desktop\Johnny_AI_Skill_latest\.worktrees\plugin-adoption-quality-uix-02\tests\test_ui_reference_renderer_admission.py", line 803, in test_uir7_ast_proves_private_no_effect_boundary
+    self.assertTrue(names.isdisjoint(forbidden_names))
+AssertionError: False is not true
+
+----------------------------------------------------------------------
+Ran 1 test in 0.032s
+
+FAILED (failures=1)
+```
+
+Exit code 1.
+
+#### r2_authority_variants
+
+Exact temporary replacement:
+
+```diff
+-    if trusted_request.capability_state is RendererCapabilityState.AVAILABLE_NOT_AUTHORIZED:
++    if trusted_request.capability_state is RendererCapabilityState.AVAILABLE_NOT_AUTHORIZED and isinstance(trusted_request.evidence, RenderedReferenceEvidence):
+```
+
+```text
+py -3.11 -B -m unittest tests.test_ui_reference_renderer_admission.UIReferenceRendererAdmissionTests.test_uir3_unauthorized_capability_waits_without_admission
+FFF
+======================================================================
+FAIL: test_uir3_unauthorized_capability_waits_without_admission (tests.test_ui_reference_renderer_admission.UIReferenceRendererAdmissionTests.test_uir3_unauthorized_capability_waits_without_admission) (evidence='artifact')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\GameBoy\Desktop\Johnny_AI_Skill_latest\.worktrees\plugin-adoption-quality-uix-02\tests\test_ui_reference_renderer_admission.py", line 402, in test_uir3_unauthorized_capability_waits_without_admission
+    self.assertIsInstance(decision, RendererWaitDecision)
+AssertionError: AdmittedArtifactDecision(kind='ADMITTED_ARTIFACT', request_ref='requestuiref', brief_id='briefuidashboard', approved_content_digest='aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', renderer_state=<ReferenceRendererState.ARTIFACT_ONLY: 'ARTIFACT_ONLY'>, evidence=ArtifactReferenceEvidence(kind='ARTIFACT_ONLY', binding=ReferenceEvidenceBinding(request_ref='requestuiref', brief_id='briefuidashboard', approved_content_digest='aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'), desktop_artifact_ref='artifactdesktop', mobile_artifact_ref='artifactmobile', artifact_set_digest='dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd', owner_manual_open_acknowledgement=True)) is not an instance of <class 'library.workflow_router.ui_reference_renderer_admission.RendererWaitDecision'>
+
+======================================================================
+FAIL: test_uir3_unauthorized_capability_waits_without_admission (tests.test_ui_reference_renderer_admission.UIReferenceRendererAdmissionTests.test_uir3_unauthorized_capability_waits_without_admission) (evidence='unavailable')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\GameBoy\Desktop\Johnny_AI_Skill_latest\.worktrees\plugin-adoption-quality-uix-02\tests\test_ui_reference_renderer_admission.py", line 402, in test_uir3_unauthorized_capability_waits_without_admission
+    self.assertIsInstance(decision, RendererWaitDecision)
+AssertionError: RendererRefusedDecision(kind='REFUSED', request_ref='requestuiref', brief_id='briefuidashboard', approved_content_digest='aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', reason=<RendererRefusalReason.STATE_EVIDENCE_MISMATCH: 'STATE_EVIDENCE_MISMATCH'>) is not an instance of <class 'library.workflow_router.ui_reference_renderer_admission.RendererWaitDecision'>
+
+======================================================================
+FAIL: test_uir3_unauthorized_capability_waits_without_admission (tests.test_ui_reference_renderer_admission.UIReferenceRendererAdmissionTests.test_uir3_unauthorized_capability_waits_without_admission) (ordering='state-before-authority')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\GameBoy\Desktop\Johnny_AI_Skill_latest\.worktrees\plugin-adoption-quality-uix-02\tests\test_ui_reference_renderer_admission.py", line 461, in test_uir3_unauthorized_capability_waits_without_admission
+    self.assertIsInstance(decision, RendererWaitDecision)
+AssertionError: RendererRefusedDecision(kind='REFUSED', request_ref='requestuiref', brief_id='briefuidashboard', approved_content_digest='aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', reason=<RendererRefusalReason.STATE_EVIDENCE_MISMATCH: 'STATE_EVIDENCE_MISMATCH'>) is not an instance of <class 'library.workflow_router.ui_reference_renderer_admission.RendererWaitDecision'>
+
+----------------------------------------------------------------------
+Ran 1 test in 0.006s
+
+FAILED (failures=3)
+```
+
+Exit code 1.
+
+#### r2_duplicate_masking
+
+Exact temporary replacement:
+
+```diff
+-            or len({evidence.desktop_digest, evidence.mobile_digest}) != 2
++            or False
+```
+
+```text
+py -3.11 -B -m unittest tests.test_ui_reference_renderer_admission.UIReferenceRendererAdmissionTests.test_uir6_state_duplicate_and_identity_mismatch_refuse
+F
+======================================================================
+FAIL: test_uir6_state_duplicate_and_identity_mismatch_refuse (tests.test_ui_reference_renderer_admission.UIReferenceRendererAdmissionTests.test_uir6_state_duplicate_and_identity_mismatch_refuse) (duplicate_dimension='rendered-digest')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\GameBoy\Desktop\Johnny_AI_Skill_latest\.worktrees\plugin-adoption-quality-uix-02\tests\test_ui_reference_renderer_admission.py", line 664, in test_uir6_state_duplicate_and_identity_mismatch_refuse
+    self.assertIsInstance(duplicate_result, RendererRefusedDecision)
+AssertionError: AdmittedRenderedDecision(kind='ADMITTED_RENDERED', request_ref='requestuiref', brief_id='briefuidashboard', approved_content_digest='aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', renderer_state=<ReferenceRendererState.RENDERED_AVAILABLE: 'RENDERED_AVAILABLE'>, evidence=RenderedReferenceEvidence(kind='RENDERED_AVAILABLE', binding=ReferenceEvidenceBinding(request_ref='requestuiref', brief_id='briefuidashboard', approved_content_digest='aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'), desktop_screenshot_ref='screenshotdesktop', mobile_screenshot_ref='screenshotmobile', desktop_digest='bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', mobile_digest='bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', renderer_observation_ref='rendererobservation')) is not an instance of <class 'library.workflow_router.ui_reference_renderer_admission.RendererRefusedDecision'>
+
+----------------------------------------------------------------------
+Ran 1 test in 0.006s
+
+FAILED (failures=1)
+```
+
+Exit code 1.
+
+#### r2_any_finite_targets
+
+Exact temporary replacement:
+
+```diff
+-    return request.renderer_target is RendererTarget.ANY or request.renderer_target is request.actual_target
++    return (request.renderer_target is RendererTarget.ANY and request.actual_target is RendererTarget.TERMINAL) or request.renderer_target is request.actual_target
+```
+
+```text
+py -3.11 -B -m unittest tests.test_ui_reference_renderer_admission.UIReferenceRendererAdmissionTests.test_uir5_target_mismatch_and_any_target
+FFFFFF
+======================================================================
+FAIL: test_uir5_target_mismatch_and_any_target (tests.test_ui_reference_renderer_admission.UIReferenceRendererAdmissionTests.test_uir5_target_mismatch_and_any_target) (rendered_any_target=<RendererTarget.DOM: 'DOM'>)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\GameBoy\Desktop\Johnny_AI_Skill_latest\.worktrees\plugin-adoption-quality-uix-02\tests\test_ui_reference_renderer_admission.py", line 535, in test_uir5_target_mismatch_and_any_target
+    self.assertIsInstance(any_target, AdmittedRenderedDecision)
+AssertionError: RendererRefusedDecision(kind='REFUSED', request_ref='requestuiref', brief_id='briefuidashboard', approved_content_digest='aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', reason=<RendererRefusalReason.TARGET_MISMATCH: 'TARGET_MISMATCH'>) is not an instance of <class 'library.workflow_router.ui_reference_renderer_admission.AdmittedRenderedDecision'>
+
+======================================================================
+FAIL: test_uir5_target_mismatch_and_any_target (tests.test_ui_reference_renderer_admission.UIReferenceRendererAdmissionTests.test_uir5_target_mismatch_and_any_target) (rendered_any_target=<RendererTarget.NATIVE_ENGINE: 'NATIVE_ENGINE'>)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\GameBoy\Desktop\Johnny_AI_Skill_latest\.worktrees\plugin-adoption-quality-uix-02\tests\test_ui_reference_renderer_admission.py", line 535, in test_uir5_target_mismatch_and_any_target
+    self.assertIsInstance(any_target, AdmittedRenderedDecision)
+AssertionError: RendererRefusedDecision(kind='REFUSED', request_ref='requestuiref', brief_id='briefuidashboard', approved_content_digest='aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', reason=<RendererRefusalReason.TARGET_MISMATCH: 'TARGET_MISMATCH'>) is not an instance of <class 'library.workflow_router.ui_reference_renderer_admission.AdmittedRenderedDecision'>
+
+======================================================================
+FAIL: test_uir5_target_mismatch_and_any_target (tests.test_ui_reference_renderer_admission.UIReferenceRendererAdmissionTests.test_uir5_target_mismatch_and_any_target) (rendered_any_target=<RendererTarget.NATIVE_MOBILE: 'NATIVE_MOBILE'>)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\GameBoy\Desktop\Johnny_AI_Skill_latest\.worktrees\plugin-adoption-quality-uix-02\tests\test_ui_reference_renderer_admission.py", line 535, in test_uir5_target_mismatch_and_any_target
+    self.assertIsInstance(any_target, AdmittedRenderedDecision)
+AssertionError: RendererRefusedDecision(kind='REFUSED', request_ref='requestuiref', brief_id='briefuidashboard', approved_content_digest='aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', reason=<RendererRefusalReason.TARGET_MISMATCH: 'TARGET_MISMATCH'>) is not an instance of <class 'library.workflow_router.ui_reference_renderer_admission.AdmittedRenderedDecision'>
+
+======================================================================
+FAIL: test_uir5_target_mismatch_and_any_target (tests.test_ui_reference_renderer_admission.UIReferenceRendererAdmissionTests.test_uir5_target_mismatch_and_any_target) (artifact_any_target=<RendererTarget.DOM: 'DOM'>)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\GameBoy\Desktop\Johnny_AI_Skill_latest\.worktrees\plugin-adoption-quality-uix-02\tests\test_ui_reference_renderer_admission.py", line 548, in test_uir5_target_mismatch_and_any_target
+    self.assertIsInstance(any_artifact, AdmittedArtifactDecision)
+AssertionError: RendererRefusedDecision(kind='REFUSED', request_ref='requestuiref', brief_id='briefuidashboard', approved_content_digest='aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', reason=<RendererRefusalReason.TARGET_MISMATCH: 'TARGET_MISMATCH'>) is not an instance of <class 'library.workflow_router.ui_reference_renderer_admission.AdmittedArtifactDecision'>
+
+======================================================================
+FAIL: test_uir5_target_mismatch_and_any_target (tests.test_ui_reference_renderer_admission.UIReferenceRendererAdmissionTests.test_uir5_target_mismatch_and_any_target) (artifact_any_target=<RendererTarget.NATIVE_ENGINE: 'NATIVE_ENGINE'>)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\GameBoy\Desktop\Johnny_AI_Skill_latest\.worktrees\plugin-adoption-quality-uix-02\tests\test_ui_reference_renderer_admission.py", line 548, in test_uir5_target_mismatch_and_any_target
+    self.assertIsInstance(any_artifact, AdmittedArtifactDecision)
+AssertionError: RendererRefusedDecision(kind='REFUSED', request_ref='requestuiref', brief_id='briefuidashboard', approved_content_digest='aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', reason=<RendererRefusalReason.TARGET_MISMATCH: 'TARGET_MISMATCH'>) is not an instance of <class 'library.workflow_router.ui_reference_renderer_admission.AdmittedArtifactDecision'>
+
+======================================================================
+FAIL: test_uir5_target_mismatch_and_any_target (tests.test_ui_reference_renderer_admission.UIReferenceRendererAdmissionTests.test_uir5_target_mismatch_and_any_target) (artifact_any_target=<RendererTarget.NATIVE_MOBILE: 'NATIVE_MOBILE'>)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\GameBoy\Desktop\Johnny_AI_Skill_latest\.worktrees\plugin-adoption-quality-uix-02\tests\test_ui_reference_renderer_admission.py", line 548, in test_uir5_target_mismatch_and_any_target
+    self.assertIsInstance(any_artifact, AdmittedArtifactDecision)
+AssertionError: RendererRefusedDecision(kind='REFUSED', request_ref='requestuiref', brief_id='briefuidashboard', approved_content_digest='aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', reason=<RendererRefusalReason.TARGET_MISMATCH: 'TARGET_MISMATCH'>) is not an instance of <class 'library.workflow_router.ui_reference_renderer_admission.AdmittedArtifactDecision'>
+
+----------------------------------------------------------------------
+Ran 1 test in 0.007s
+
+FAILED (failures=6)
+```
+
+Exit code 1.
+
+#### r2_alias_any
+
+Exact temporary replacement:
+
+```diff
+-from typing import Annotated, Literal, Self, TypeAlias, Union
++from typing import Annotated, Literal, Self, TypeAlias, Union
++from typing import Any as Unchecked
++
++reviewer_alias_probe: Unchecked = "opaque"
+```
+
+```text
+py -3.11 -B -m unittest tests.test_ui_reference_renderer_admission.UIReferenceRendererAdmissionTests.test_uir7_ast_proves_private_no_effect_boundary
+F
+======================================================================
+FAIL: test_uir7_ast_proves_private_no_effect_boundary (tests.test_ui_reference_renderer_admission.UIReferenceRendererAdmissionTests.test_uir7_ast_proves_private_no_effect_boundary)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\GameBoy\Desktop\Johnny_AI_Skill_latest\.worktrees\plugin-adoption-quality-uix-02\tests\test_ui_reference_renderer_admission.py", line 772, in test_uir7_ast_proves_private_no_effect_boundary
+    self.assertFalse(
+AssertionError: True is not false
+
+----------------------------------------------------------------------
+Ran 1 test in 0.023s
+
+FAILED (failures=1)
+```
+
+Exit code 1.
+
+#### r2_brief_binding
+
+Exact temporary replacement:
+
+```diff
+-        and binding.brief_id == request.brief_id
++        and True
+```
+
+```text
+py -3.11 -B -m unittest tests.test_ui_reference_renderer_admission.UIReferenceRendererAdmissionTests.test_uir6_state_duplicate_and_identity_mismatch_refuse
+F
+======================================================================
+FAIL: test_uir6_state_duplicate_and_identity_mismatch_refuse (tests.test_ui_reference_renderer_admission.UIReferenceRendererAdmissionTests.test_uir6_state_duplicate_and_identity_mismatch_refuse)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\GameBoy\Desktop\Johnny_AI_Skill_latest\.worktrees\plugin-adoption-quality-uix-02\tests\test_ui_reference_renderer_admission.py", line 720, in test_uir6_state_duplicate_and_identity_mismatch_refuse
+    self.assertIsInstance(changed_brief_result, RendererRefusedDecision)
+AssertionError: AdmittedRenderedDecision(kind='ADMITTED_RENDERED', request_ref='requestuiref', brief_id='briefuidashboard', approved_content_digest='aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', renderer_state=<ReferenceRendererState.RENDERED_AVAILABLE: 'RENDERED_AVAILABLE'>, evidence=RenderedReferenceEvidence(kind='RENDERED_AVAILABLE', binding=ReferenceEvidenceBinding(request_ref='requestuiref', brief_id='briefother', approved_content_digest='aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'), desktop_screenshot_ref='screenshotdesktop', mobile_screenshot_ref='screenshotmobile', desktop_digest='bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', mobile_digest='cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc', renderer_observation_ref='rendererobservation')) is not an instance of <class 'library.workflow_router.ui_reference_renderer_admission.RendererRefusedDecision'>
+
+----------------------------------------------------------------------
+Ran 1 test in 0.005s
+
+FAILED (failures=1)
+```
+
+Exit code 1.
+
+#### r2_marks
+
+Exact temporary replacement:
+
+```diff
+-    if not all(unicodedata.category(character)[0] in ("L", "N") for character in value):
++    if not all(unicodedata.category(character)[0] in ("L", "M", "N") for character in value):
+```
+
+```text
+py -3.11 -B -m unittest tests.test_ui_reference_renderer_admission.UIReferenceRendererAdmissionTests.test_uir1_public_variants_strictly_round_trip
+FFF
+======================================================================
+FAIL: test_uir1_public_variants_strictly_round_trip (tests.test_ui_reference_renderer_admission.UIReferenceRendererAdmissionTests.test_uir1_public_variants_strictly_round_trip) (identifier='\\u034f\\u034f\\u034f')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\GameBoy\Desktop\Johnny_AI_Skill_latest\.worktrees\plugin-adoption-quality-uix-02\tests\test_ui_reference_renderer_admission.py", line 260, in test_uir1_public_variants_strictly_round_trip
+    with self.assertRaises(ValidationError):
+AssertionError: ValidationError not raised
+
+======================================================================
+FAIL: test_uir1_public_variants_strictly_round_trip (tests.test_ui_reference_renderer_admission.UIReferenceRendererAdmissionTests.test_uir1_public_variants_strictly_round_trip) (identifier='\\ufe0f\\ufe0f\\ufe0f')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\GameBoy\Desktop\Johnny_AI_Skill_latest\.worktrees\plugin-adoption-quality-uix-02\tests\test_ui_reference_renderer_admission.py", line 260, in test_uir1_public_variants_strictly_round_trip
+    with self.assertRaises(ValidationError):
+AssertionError: ValidationError not raised
+
+======================================================================
+FAIL: test_uir1_public_variants_strictly_round_trip (tests.test_ui_reference_renderer_admission.UIReferenceRendererAdmissionTests.test_uir1_public_variants_strictly_round_trip) (identifier='e\\u0301e')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\GameBoy\Desktop\Johnny_AI_Skill_latest\.worktrees\plugin-adoption-quality-uix-02\tests\test_ui_reference_renderer_admission.py", line 260, in test_uir1_public_variants_strictly_round_trip
+    with self.assertRaises(ValidationError):
+AssertionError: ValidationError not raised
+
+----------------------------------------------------------------------
+Ran 1 test in 0.022s
+
+FAILED (failures=3)
+```
+
+Exit code 1.
+
+#### r2_minimum_length
+
+Exact temporary replacement:
+
+```diff
+-    Field(min_length=3, max_length=128),
++    Field(min_length=1, max_length=128),
+```
+
+```text
+py -3.11 -B -m unittest tests.test_ui_reference_renderer_admission.UIReferenceRendererAdmissionTests.test_uir1_public_variants_strictly_round_trip
+FF
+======================================================================
+FAIL: test_uir1_public_variants_strictly_round_trip (tests.test_ui_reference_renderer_admission.UIReferenceRendererAdmissionTests.test_uir1_public_variants_strictly_round_trip) (identifier='a')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\GameBoy\Desktop\Johnny_AI_Skill_latest\.worktrees\plugin-adoption-quality-uix-02\tests\test_ui_reference_renderer_admission.py", line 266, in test_uir1_public_variants_strictly_round_trip
+    with self.assertRaises(ValidationError):
+AssertionError: ValidationError not raised
+
+======================================================================
+FAIL: test_uir1_public_variants_strictly_round_trip (tests.test_ui_reference_renderer_admission.UIReferenceRendererAdmissionTests.test_uir1_public_variants_strictly_round_trip) (identifier='ab')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\GameBoy\Desktop\Johnny_AI_Skill_latest\.worktrees\plugin-adoption-quality-uix-02\tests\test_ui_reference_renderer_admission.py", line 266, in test_uir1_public_variants_strictly_round_trip
+    with self.assertRaises(ValidationError):
+AssertionError: ValidationError not raised
+
+----------------------------------------------------------------------
+Ran 1 test in 0.020s
+
+FAILED (failures=2)
+```
+
+Exit code 1.
+
+#### r2_numeric_ack
+
+Exact temporary replacement:
+
+```diff
+-        if type(value) is not bool or value is not True:
++        if False:
+```
+
+```text
+py -3.11 -B -m unittest tests.test_ui_reference_renderer_admission.UIReferenceRendererAdmissionTests.test_uir1_public_variants_strictly_round_trip
+FFFF
+======================================================================
+FAIL: test_uir1_public_variants_strictly_round_trip (tests.test_ui_reference_renderer_admission.UIReferenceRendererAdmissionTests.test_uir1_public_variants_strictly_round_trip) (acknowledgement='1')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\GameBoy\Desktop\Johnny_AI_Skill_latest\.worktrees\plugin-adoption-quality-uix-02\tests\test_ui_reference_renderer_admission.py", line 190, in test_uir1_public_variants_strictly_round_trip
+    with self.assertRaises(ValidationError):
+AssertionError: ValidationError not raised
+
+======================================================================
+FAIL: test_uir1_public_variants_strictly_round_trip (tests.test_ui_reference_renderer_admission.UIReferenceRendererAdmissionTests.test_uir1_public_variants_strictly_round_trip) (acknowledgement='1.0')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\GameBoy\Desktop\Johnny_AI_Skill_latest\.worktrees\plugin-adoption-quality-uix-02\tests\test_ui_reference_renderer_admission.py", line 190, in test_uir1_public_variants_strictly_round_trip
+    with self.assertRaises(ValidationError):
+AssertionError: ValidationError not raised
+
+======================================================================
+FAIL: test_uir1_public_variants_strictly_round_trip (tests.test_ui_reference_renderer_admission.UIReferenceRendererAdmissionTests.test_uir1_public_variants_strictly_round_trip) (nested_acknowledgement='1')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\GameBoy\Desktop\Johnny_AI_Skill_latest\.worktrees\plugin-adoption-quality-uix-02\tests\test_ui_reference_renderer_admission.py", line 217, in test_uir1_public_variants_strictly_round_trip
+    with self.assertRaises(ValidationError):
+AssertionError: ValidationError not raised
+
+======================================================================
+FAIL: test_uir1_public_variants_strictly_round_trip (tests.test_ui_reference_renderer_admission.UIReferenceRendererAdmissionTests.test_uir1_public_variants_strictly_round_trip) (nested_acknowledgement='1.0')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\GameBoy\Desktop\Johnny_AI_Skill_latest\.worktrees\plugin-adoption-quality-uix-02\tests\test_ui_reference_renderer_admission.py", line 217, in test_uir1_public_variants_strictly_round_trip
+    with self.assertRaises(ValidationError):
+AssertionError: ValidationError not raised
+
+----------------------------------------------------------------------
+Ran 1 test in 0.032s
+
+FAILED (failures=4)
+```
+
+Exit code 1.
+
+#### r2_ack_uir1
+
+Exact temporary replacement:
+
+```diff
+-    owner_manual_open_acknowledgement: Literal[True]
++    owner_manual_open_acknowledgement: Literal[True] = True
+```
+
+```text
+py -3.11 -B -m unittest tests.test_ui_reference_renderer_admission.UIReferenceRendererAdmissionTests.test_uir1_public_variants_strictly_round_trip
+F
+======================================================================
+FAIL: test_uir1_public_variants_strictly_round_trip (tests.test_ui_reference_renderer_admission.UIReferenceRendererAdmissionTests.test_uir1_public_variants_strictly_round_trip)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\GameBoy\Desktop\Johnny_AI_Skill_latest\.worktrees\plugin-adoption-quality-uix-02\tests\test_ui_reference_renderer_admission.py", line 199, in test_uir1_public_variants_strictly_round_trip
+    with self.assertRaises(ValidationError):
+AssertionError: ValidationError not raised
+
+----------------------------------------------------------------------
+Ran 1 test in 0.007s
+
+FAILED (failures=1)
+```
+
+Exit code 1.
+
+#### Restoration readback
+
+```text
+f1c1adb2a9433ae2c246ccb182639cdfce3b182d
+.......
+----------------------------------------------------------------------
+Ran 7 tests in 0.077s
+
+OK
+```
+
+The final missing-acknowledgement comparison was also restored by the exact inverse patch.
+Final full-suite readback returned 75 passed and 275 subtests passed in 4.66s; the raw source hash
+remained `f1c1adb2a9433ae2c246ccb182639cdfce3b182d`, `git diff --check` passed and
+`git status --short` returned no changes.
