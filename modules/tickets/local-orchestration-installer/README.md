@@ -24,7 +24,7 @@ tickets follow the owner-converged lifecycle SPEC; no Inno build may be dispatch
 
 | Artifact ID / leaf | Kind | Revision | LF SHA-256 | Lifecycle |
 | --- | --- | --- | --- | --- |
-| `CAP-MSIX-01` / [cap-msix-01-package-lifecycle-primitives.md](cap-msix-01-package-lifecycle-primitives.md) | `CAPABILITY_INVESTIGATION` | `01` | `038dbc62aeb51c829c5213eeb02385ecace85ecdc525dcad9e05f09abac5be24` | `RESEARCH_AUTHORIZED / NO_IMPLEMENTATION_OR_EXTERNAL_EFFECT` |
+| `CAP-MSIX-01` / [cap-msix-01-package-lifecycle-primitives.md](cap-msix-01-package-lifecycle-primitives.md) | `CAPABILITY_INVESTIGATION` | `02` | `2c2de792c65dd0565bd187f768c2432b068fab7d9e771af89eaf9f09b4232541` | `RESEARCH_COMPLETE / FINDINGS_REVIEWED / LIFECYCLE_UNPROVED` |
 
 ## Reuse selection
 

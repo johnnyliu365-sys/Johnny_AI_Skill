@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| Artifact ID / kind / revision | `CAP-MSIX-01` / `CAPABILITY_INVESTIGATION` / `01` |
-| State / closure | `RESEARCH_AUTHORIZED` / `CLOSURE-CAP-MSIX-01`, revision 01 |
+| Artifact ID / kind / revision | `CAP-MSIX-01` / `CAPABILITY_INVESTIGATION` / `02` |
+| State / closure | `RESEARCH_COMPLETE / FINDINGS_REVIEWED / LIFECYCLE_UNPROVED` / `CLOSURE-CAP-MSIX-01`, revision 01 (unchanged questions) |
 | Authority | Owner's 2026-09-05 project-convergence/MSIX directive plus acceptance of Johnny one-click complete removal. Investigation only; not implementation approval or an external-effect grant. |
 | Requirement / ADR | `PRD/CHG-20260905-050` revision 02 / `ADR-20260905-038` revision 02 |
 | Context / SPEC | `doc/context/local-orchestration-installer/msix.md` revision 02; installer SPEC effective MSIX override (package-effect acceptance still being frozen) |
@@ -57,3 +57,19 @@ directly indexed report and alone selects implementation boundaries.
 No runtime receipt/runner/gateway is needed for this same-lifetime research query.
 Dispatch once, then `wait_agent`; no activity/status polling. Source/bootstrap/build
 implementation waits for the resulting exact capability plan and its admission.
+
+## Research completion — 2026-09-05
+
+Revision 01 was dispatched at `6b0b18be117689ae67718f869801e11df3d82533`, LF SHA-256
+`038dbc62aeb51c829c5213eeb02385ecace85ecdc525dcad9e05f09abac5be24`. The existing helper
+returned `FINDINGS`; the parent reviewed primary sources and separately inspected
+legacy composition and the local compiler/isolation prerequisites. Exact results,
+corrections and MC1–MC5 recipes are in
+[REVIEW-CAP-MSIX-01-20260905](../../../doc/reviews/local-orchestration-installer/cap-msix-01-capability-review.md).
+No package/tool acquisition, deployment or certificate/host effect occurred.
+
+The bounded inquiry is complete, not the MSIX lifecycle. Next: freeze the smallest
+real package-probe acceptance from these findings; isolated signed lifecycle work
+needs the named environment and its scoped test-trust authority. No implementation
+owner is active and no new runner/gateway is required. Revision 02 records closure
+without changing the dispatched query or inventing a successful runtime proof.
