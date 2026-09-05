@@ -2,16 +2,20 @@
 
 | Field | Value |
 | --- | --- |
-| Review ID / revision | `REVIEW-PLUGIN-ADOPTION-QUALITY-UIX-02` / `11` |
-| Ticket / closure | `TICKET-PLUGIN-ADOPTION-QUALITY-UIX-02` document revision `12` / effective `CLOSURE-PLUGIN-ADOPTION-QUALITY-UIX-02` revision `04`; implementation remains unauthorized |
-| Authority commit | `8f5e59ca3ac13a00bcaf6c5b5f54e49ad4872267` |
+| Review ID / revision | `REVIEW-PLUGIN-ADOPTION-QUALITY-UIX-02` / `12` |
+| Ticket / closure | `TICKET-PLUGIN-ADOPTION-QUALITY-UIX-02` document revision `13` / effective `CLOSURE-PLUGIN-ADOPTION-QUALITY-UIX-02` revision `04`; execution authorized 2026-09-05 |
+| Authority commit | `87681ccb24576006ee9dcdaf8e49815faf3a3a42`; ticket LF SHA-256 `0c97862043b8202617cbbe0a6a2b1e61787f64334e89abd46d5c97e51de6789d` |
 | Local control-plane proposal commit | `377b45cc7a4ac038d00b8f52a5a14b282dbde337`; intentionally unpushed under the 2026-09-01 owner authority |
 | Owner approval source | Project owner, 2026-09-01 (Asia/Taipei): candidate authority commit `a616e561423fd40508dfbebcb33b798e071b5462`, ticket revision-08 LF-normalized SHA-256 `7b35f9f80d5616e6e5d9ff8a83817e937d1c5094e3bb4cfa042a75af08aef953` |
 | Closure revision 04 approval source | Project owner, 2026-09-01 (Asia/Taipei): candidate authority commit `515e2fd81f8b54030c5fd27abbd43cd63d5df3bc`, ticket revision-11 LF-normalized SHA-256 `348a5c2f12a773b77898616b71ce70947625f1f9fb6db021b0c4ca171fa437fb` |
-| Candidate / baseline | `07edaff11bfe981987288a9c1b6becb67c4e69ad` / `faf3d05e07f83a8c7804313b4d3435d01da338b0` |
+| Candidate / baseline | `18ed02c736812e2e7fab738dc2b8a7036d1da987` / `07edaff11bfe981987288a9c1b6becb67c4e69ad` |
 | Branch / owner | `implement/plugin-adoption-quality-uix-02` / `implementation-standard` |
 | Reviewer / helper | `ticket-review` / one read-only `RESEARCH_HELPER` |
-| Result | `BLOCKED / TICKET_DEFECT_CYCLE_03 / CLOSURE_REVISION_04_APPROVED / APPROVAL_WRITEBACK_VALIDATED / IMPLEMENTATION_NOT_AUTHORIZED / CANDIDATE_NOT_INTEGRATED` |
+| Result | `CHANGES_REQUESTED / CLOSURE_REVISION_04_INITIAL_REVIEW / CANDIDATE_NOT_INTEGRATED` |
+
+Sections preceding the 2026-09-05 review below retain point-in-time historical evidence and
+authority restrictions. Current execution authority and findings are bound by the metadata above
+and that dated section; earlier exhausted closures are not reopened.
 
 ## Admission and boundary
 
@@ -298,3 +302,150 @@ exact-approved and effective; ticket revision 12 remains `NON_DISPATCHABLE`; the
 revision-02 lanes are consumed/exhausted; no third correction, implementation dispatch,
 integration, push, publication, provider or external effect is authorized. This closes the
 approval-writeback document review only and does not approve implementation.
+
+## Closure revision 04 implementation review — 2026-09-05
+
+The owner authorized execution and the current-session reviewer reused the original Luna/xhigh
+owner. Candidate `18ed02c736812e2e7fab738dc2b8a7036d1da987` is a reviewer-created additive
+commit over `07edaff11bfe981987288a9c1b6becb67c4e69ad`, not approval or integration. Only the
+declared private module and test changed. Focused plus UIX-01/Router regression returned 75 passed
+and 216 subtests passed. The unchanged baseline's focused and strict-type gates also passed.
+
+Adversarial plan: closure 04, REQUIRED by owner, one reused Terra/xhigh RESEARCH_HELPER,
+READ_ONLY_INTENT_ONLY, NO_EXTERNAL_EFFECT; SPEC_GAP, BOUNDARY_DATA, STATE_TRANSITION,
+AUTHORIZATION, CONSISTENCY, REGRESSION and OBSERVABILITY. It inspected committed blobs and returned
+FINDINGS without changes or approval. The current-session reviewer independently reproduced every
+helper finding, plus the additional findings below, against this exact candidate.
+
+### One batched correction — frozen closure unchanged
+
+| ID | Classification / cell | Finding and required correction |
+| --- | --- | --- |
+| R04-F1 | IMPLEMENTATION_DEFECT / UIR1, UIR4 | Strict artifact construction accepts integer `1` and float `1.0` as manual acknowledgement and transforms them into `True`. Require the literal boolean without numeric coercion, including nested request validation; pin positive true and missing/false/null/numeric/string negatives. |
+| R04-F2 | EVIDENCE_DEFECT / UIR1, UIR2, UIR4 | Defaulting the required acknowledgement to true leaves UIR4 green; lowering the ID minimum from 3 to 1 leaves UIR1 green. Pin both length boundaries and each required ref/digest/acknowledgement independently, keeping all other fields valid so another missing field cannot mask the mutation. Use named/subtest negative values so UIRM6 reports both length-valid CGJ and decomposed-mark rejection assertions, not only the loop's first failure. |
+| R04-F3 | EVIDENCE_DEFECT / UIR7 | Both aliased `Any` and dynamic builtin import with an attribute call leave the source gate green. The AST/source guard must inspect actual imported symbols/aliases and dynamic builtins/attribute calls at the production source boundary, with discriminating negative fixtures, not the test's own source. |
+| R04-F4 | EVIDENCE_DEFECT / UIR3 | Restricting the early unauthorized wait to rendered evidence leaves UIR3 green. Pin every evidence variant and authority-before-binding/duplicate/target/state ordering with otherwise constructible requests. |
+| R04-F5 | EVIDENCE_DEFECT / UIR6 | Removing only brief-ID binding comparison leaves UIR6 green. Removing only digest uniqueness also leaves UIR6 green because the fixture simultaneously duplicates refs. Pin request/brief/content mismatches and each rendered/artifact uniqueness violation independently; include the remaining finite state/evidence cross-pairs. |
+| R04-F6 | EVIDENCE_DEFECT / UIR5 | Restricting ANY to TERMINAL leaves UIR5 green. Pin ANY against every finite actual target for rendered and artifact evidence and the declared mismatches. |
+
+The existing authorized same-ticket lane receives this one additive correction on the same branch;
+the owner does not commit or push. No new closure or architecture is proposed. Completion must
+include evidence references for the exact changes and UIR/UIRM/type/regression/compile results.
+The reviewer will create the next candidate, rerun independent mutations, and retain final
+conclusion responsibility. Integration, push, release and external effects remain unauthorized.
+
+### Independent unreduced reproduction
+
+All commands ran directly in `.worktrees/plugin-adoption-quality-uix-02`, with no output-reduction
+wrapper. Each mutation changed only the production module temporarily. The raw source Git blob hash
+was `276af7788be3b307a3cb8be22211588c13f1d6d4` before and after restoration; the restored
+focused suite returned `7 passed`. No forbidden dynamic call was executed: that mutation was in
+a literal `if False` branch and solely tested AST detection.
+
+Numeric acknowledgement probe used the ordinary `ArtifactReferenceEvidence.model_validate`
+constructor with valid binding/refs/digest and each displayed input:
+
+```text
+True bool ADMITTED True
+1 int ADMITTED True
+1.0 float ADMITTED True
+False bool REJECTED
+None NoneType REJECTED
+'true' str REJECTED
+```
+
+#### Aliased type (reviewer-selected independent door)
+
+Add `from typing import Any as Unchecked` and `reviewer_alias_probe: Unchecked = "opaque"`.
+
+```text
+py -3.11 -B -m pytest -q -p no:cacheprovider tests/test_ui_reference_renderer_admission.py -k uir7
+.                                                                        [100%]
+1 passed, 6 deselected in 0.61s
+```
+
+Exit code 0; zero red is a finding, not a pass.
+
+#### Missing acknowledgement
+
+Change `owner_manual_open_acknowledgement: Literal[True]` to the same declaration with `= True`.
+
+```text
+py -3.11 -B -m pytest -q -p no:cacheprovider tests/test_ui_reference_renderer_admission.py -k uir4
+.                                                                        [100%]
+1 passed, 6 deselected in 0.64s
+```
+
+Exit code 0; zero red is a finding, not a pass.
+
+#### Brief binding
+
+Replace only `and binding.brief_id == request.brief_id` with `and True`.
+
+```text
+py -3.11 -B -m pytest -q -p no:cacheprovider tests/test_ui_reference_renderer_admission.py -k uir6
+.                                                                        [100%]
+1 passed, 6 deselected in 0.60s
+```
+
+Exit code 0; zero red is a finding, not a pass.
+
+#### Dynamic import / attribute call
+
+Add `if False: __import__("os").system("never-executed")` on separate indented lines; never execute it.
+
+```text
+py -3.11 -B -m pytest -q -p no:cacheprovider tests/test_ui_reference_renderer_admission.py -k uir7
+.                                                                        [100%]
+1 passed, 6 deselected in 0.58s
+```
+
+Exit code 0; zero red is a finding, not a pass.
+
+#### Authority variants
+
+Add `and isinstance(trusted_request.evidence, RenderedReferenceEvidence)` to the unauthorized early-wait condition.
+
+```text
+py -3.11 -B -m pytest -q -p no:cacheprovider tests/test_ui_reference_renderer_admission.py -k uir3
+.                                                                        [100%]
+1 passed, 6 deselected in 0.60s
+```
+
+Exit code 0; zero red is a finding, not a pass.
+
+#### Overlapping duplicate checks
+
+Replace only `or len({evidence.desktop_digest, evidence.mobile_digest}) != 2` with `or False`.
+
+```text
+py -3.11 -B -m pytest -q -p no:cacheprovider tests/test_ui_reference_renderer_admission.py -k uir6
+.                                                                        [100%]
+1 passed, 6 deselected in 0.58s
+```
+
+Exit code 0; zero red is a finding, not a pass.
+
+#### Finite ANY coverage
+
+Require `actual_target is TERMINAL` in the ANY matching arm; preserve exact-target matching.
+
+```text
+py -3.11 -B -m pytest -q -p no:cacheprovider tests/test_ui_reference_renderer_admission.py -k uir5
+.                                                                        [100%]
+1 passed, 6 deselected in 0.58s
+```
+
+Exit code 0; zero red is a finding, not a pass.
+
+#### Minimum length
+
+Change only `Field(min_length=3, max_length=128)` to `Field(min_length=1, max_length=128)`.
+
+```text
+py -3.11 -B -m pytest -q -p no:cacheprovider tests/test_ui_reference_renderer_admission.py -k uir1
+.                                                                        [100%]
+1 passed, 6 deselected in 0.61s
+```
+
+Exit code 0; zero red is a finding, not a pass.
