@@ -8,3 +8,4 @@ reports are not renamed, approved again or treated as MSIX evidence here.
 | --- | --- | --- | --- | --- |
 | `REVIEW-CAP-MSIX-01-20260905` / [cap-msix-01-capability-review.md](cap-msix-01-capability-review.md) | `CAPABILITY_REVIEW` | `01` | `ea4a613816af530f6833e6a61e6200fd01e8ef8f5a1baa424347ccc52f62d6c5` | `RESEARCH_COMPLETE / LIFECYCLE_UNPROVED` |
 | `REVIEW-ENV-MSIX-01-20260905` / [env-msix-01-provisioning-review.md](env-msix-01-provisioning-review.md) | `OPERATIONAL_READINESS_REVIEW` | `03` | `57d642ea4a255e0d68c3bca8e8a311079aac5e99443f659c336915ebc10dcc1a` | `APPROVED / VM_BOOTED_SETUP_PENDING` |
+| `REVIEW-ENV-MSIX-02-20260906` / [env-msix-02-network-review.md](env-msix-02-network-review.md) | `OPERATIONAL_READINESS_REVIEW` | `01` | `5df3f0b4ca062843d4644a32b0059a7023e66ef4a29cc7989a7685dee9633e5a` | `APPROVED / FIXED_TERMINALS_ONLY / NATIVE_EFFECT_PENDING` |
