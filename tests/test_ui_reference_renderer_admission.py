@@ -38,8 +38,8 @@ ARTIFACT_SET_DIGEST = "d" * 64
 
 def _binding() -> ReferenceEvidenceBinding:
     return ReferenceEvidenceBinding(
-        request_ref="request-ui-reference",
-        brief_id="brief-ui-dashboard",
+        request_ref="requestuiref",
+        brief_id="briefuidashboard",
         approved_content_digest=DIGEST,
     )
 
@@ -47,19 +47,19 @@ def _binding() -> ReferenceEvidenceBinding:
 def _rendered() -> RenderedReferenceEvidence:
     return RenderedReferenceEvidence(
         binding=_binding(),
-        desktop_screenshot_ref="screenshot-desktop",
-        mobile_screenshot_ref="screenshot-mobile",
+        desktop_screenshot_ref="screenshotdesktop",
+        mobile_screenshot_ref="screenshotmobile",
         desktop_digest=DESKTOP_DIGEST,
         mobile_digest=MOBILE_DIGEST,
-        renderer_observation_ref="renderer-observation",
+        renderer_observation_ref="rendererobservation",
     )
 
 
 def _artifact() -> ArtifactReferenceEvidence:
     return ArtifactReferenceEvidence(
         binding=_binding(),
-        desktop_artifact_ref="artifact-desktop",
-        mobile_artifact_ref="artifact-mobile",
+        desktop_artifact_ref="artifactdesktop",
+        mobile_artifact_ref="artifactmobile",
         artifact_set_digest=ARTIFACT_SET_DIGEST,
         owner_manual_open_acknowledgement=True,
     )
@@ -76,8 +76,8 @@ def _request(
     if evidence is None:
         evidence = _rendered()
     return ReferenceRendererAdmissionRequest(
-        request_ref="request-ui-reference",
-        brief_id="brief-ui-dashboard",
+        request_ref="requestuiref",
+        brief_id="briefuidashboard",
         approved_content_digest=DIGEST,
         capability_state=capability,
         renderer_target=target,
@@ -137,20 +137,20 @@ class UIReferenceRendererAdmissionTests(unittest.TestCase):
                 )
             ),
             RendererRefusedDecision(
-                request_ref="request-ui-reference",
-                brief_id="brief-ui-dashboard",
+                request_ref="requestuiref",
+                brief_id="briefuidashboard",
                 approved_content_digest=DIGEST,
                 reason=RendererRefusalReason.STATE_EVIDENCE_MISMATCH,
             ),
             RendererRefusedDecision(
-                request_ref="request-ui-reference",
-                brief_id="brief-ui-dashboard",
+                request_ref="requestuiref",
+                brief_id="briefuidashboard",
                 approved_content_digest=DIGEST,
                 reason=RendererRefusalReason.CONTENT_BINDING_MISMATCH,
             ),
             RendererRefusedDecision(
-                request_ref="request-ui-reference",
-                brief_id="brief-ui-dashboard",
+                request_ref="requestuiref",
+                brief_id="briefuidashboard",
                 approved_content_digest=DIGEST,
                 reason=RendererRefusalReason.DUPLICATE_EVIDENCE,
             ),
@@ -188,10 +188,10 @@ class UIReferenceRendererAdmissionTests(unittest.TestCase):
         with self.assertRaises(ValidationError):
             _request(actual_target=RendererTarget.ANY)
 
-        unicode_identifier = "request-e\u0301"
+        unicode_identifier = "éab"
         unicode_request = ReferenceRendererAdmissionRequest(
             request_ref=unicode_identifier,
-            brief_id="brief-ui-dashboard",
+            brief_id="briefuidashboard",
             approved_content_digest=DIGEST,
             capability_state=RendererCapabilityState.AVAILABLE_AUTHORIZED,
             renderer_target=RendererTarget.DOM,
@@ -200,14 +200,14 @@ class UIReferenceRendererAdmissionTests(unittest.TestCase):
             evidence=RenderedReferenceEvidence(
                 binding=ReferenceEvidenceBinding(
                     request_ref=unicode_identifier,
-                    brief_id="brief-ui-dashboard",
+                    brief_id="briefuidashboard",
                     approved_content_digest=DIGEST,
                 ),
-                desktop_screenshot_ref="screenshot-desktop",
-                mobile_screenshot_ref="screenshot-mobile",
+                desktop_screenshot_ref="screenshotdesktop",
+                mobile_screenshot_ref="screenshotmobile",
                 desktop_digest=DESKTOP_DIGEST,
                 mobile_digest=MOBILE_DIGEST,
-                renderer_observation_ref="renderer-observation",
+                renderer_observation_ref="rendererobservation",
             ),
         )
         self.assertEqual(
@@ -215,9 +215,31 @@ class UIReferenceRendererAdmissionTests(unittest.TestCase):
             ReferenceRendererAdmissionRequest.model_validate_json(unicode_request.model_dump_json()),
         )
         self.assertEqual(unicode_identifier, unicode_request.request_ref)
+        self.assertEqual((0xE9, 0x61, 0x62), tuple(map(ord, unicode_request.request_ref)))
+        for invalid_category_identifier in (
+            "\u034f" * 3,
+            "\ufe0f" * 3,
+            "e\u0301e",
+            "abc-def",
+            "abc_def",
+            "abc.def",
+            "abc@example",
+        ):
+            with self.assertRaises(ValidationError):
+                ReferenceRendererAdmissionRequest.model_validate(
+                    {**_request().model_dump(), "request_ref": invalid_category_identifier}
+                )
         with self.assertRaises(ValidationError):
             ReferenceRendererAdmissionRequest.model_validate(
-                {**_request().model_dump(), "request_ref": "request-ui-reference "}
+                {**_request().model_dump(), "request_ref": "requestuiref "}
+            )
+        with self.assertRaises(ValidationError):
+            ReferenceRendererAdmissionRequest.model_validate(
+                {**_request().model_dump(), "request_ref": None}
+            )
+        with self.assertRaises(ValidationError):
+            ReferenceRendererAdmissionRequest.model_validate(
+                {**_request().model_dump(), "request_ref": 17}
             )
         with self.assertRaises(ValidationError):
             ReferenceRendererAdmissionRequest.model_validate(
@@ -225,7 +247,7 @@ class UIReferenceRendererAdmissionTests(unittest.TestCase):
             )
         with self.assertRaises(ValidationError):
             ReferenceRendererAdmissionRequest.model_validate(
-                {**_request().model_dump(), "request_ref": "request-" + ("x" * 123)}
+                {**_request().model_dump(), "request_ref": "x" * 129}
             )
         for unsafe_value in (
             "mailto:owner@example.test",
@@ -233,6 +255,10 @@ class UIReferenceRendererAdmissionTests(unittest.TestCase):
             "authorization:bearer-token",
             "prompt injection",
             "C:drive-relative",
+            "access_token=abc",
+            "Authorization Bearer abc",
+            "api-key=abc",
+            "ignore previous instructions",
         ):
             with self.assertRaises(ValidationError):
                 ReferenceRendererAdmissionRequest.model_validate(
@@ -387,11 +413,11 @@ class UIReferenceRendererAdmissionTests(unittest.TestCase):
 
         duplicate = RenderedReferenceEvidence(
             binding=_binding(),
-            desktop_screenshot_ref="same-screenshot",
-            mobile_screenshot_ref="same-screenshot",
+            desktop_screenshot_ref="samescreenshot",
+            mobile_screenshot_ref="samescreenshot",
             desktop_digest=DESKTOP_DIGEST,
             mobile_digest=DESKTOP_DIGEST,
-            renderer_observation_ref="renderer-observation",
+            renderer_observation_ref="rendererobservation",
         )
         duplicate_result = admit_reference_renderer(_request(evidence=duplicate))
         self.assertIsInstance(duplicate_result, RendererRefusedDecision)
@@ -405,15 +431,15 @@ class UIReferenceRendererAdmissionTests(unittest.TestCase):
 
         mismatched_binding = RenderedReferenceEvidence(
             binding=ReferenceEvidenceBinding(
-                request_ref="request-other",
-                brief_id="brief-ui-dashboard",
+                request_ref="requestother",
+                brief_id="briefuidashboard",
                 approved_content_digest=DIGEST,
             ),
-            desktop_screenshot_ref="screenshot-desktop",
-            mobile_screenshot_ref="screenshot-mobile",
+            desktop_screenshot_ref="screenshotdesktop",
+            mobile_screenshot_ref="screenshotmobile",
             desktop_digest=DESKTOP_DIGEST,
             mobile_digest=MOBILE_DIGEST,
-            renderer_observation_ref="renderer-observation",
+            renderer_observation_ref="rendererobservation",
         )
         binding_result = admit_reference_renderer(_request(evidence=mismatched_binding))
         self.assertIsInstance(binding_result, RendererRefusedDecision)
@@ -422,15 +448,15 @@ class UIReferenceRendererAdmissionTests(unittest.TestCase):
 
         changed_digest = RenderedReferenceEvidence(
             binding=ReferenceEvidenceBinding(
-                request_ref="request-ui-reference",
-                brief_id="brief-ui-dashboard",
+                request_ref="requestuiref",
+                brief_id="briefuidashboard",
                 approved_content_digest="e" * 64,
             ),
-            desktop_screenshot_ref="screenshot-desktop",
-            mobile_screenshot_ref="screenshot-mobile",
+            desktop_screenshot_ref="screenshotdesktop",
+            mobile_screenshot_ref="screenshotmobile",
             desktop_digest=DESKTOP_DIGEST,
             mobile_digest=MOBILE_DIGEST,
-            renderer_observation_ref="renderer-observation",
+            renderer_observation_ref="rendererobservation",
         )
         changed_digest_result = admit_reference_renderer(_request(evidence=changed_digest))
         self.assertIsInstance(changed_digest_result, RendererRefusedDecision)
@@ -464,7 +490,15 @@ class UIReferenceRendererAdmissionTests(unittest.TestCase):
             if node.module is not None
         )
         self.assertEqual(
-            {"__future__", "enum", "typing", "pydantic", "contracts", "ui_codesign_contracts"},
+            {
+                "__future__",
+                "enum",
+                "typing",
+                "unicodedata",
+                "pydantic",
+                "contracts",
+                "ui_codesign_contracts",
+            },
             imported,
         )
         forbidden_modules = {

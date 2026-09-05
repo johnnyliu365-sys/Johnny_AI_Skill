@@ -3,29 +3,29 @@
 from __future__ import annotations
 
 from enum import Enum
+import unicodedata
 from typing import Annotated, Literal, Self, TypeAlias, Union
 
-from pydantic import ConfigDict, Field, TypeAdapter, field_validator, model_validator
+from pydantic import AfterValidator, ConfigDict, Field, TypeAdapter, field_validator, model_validator
 
 from .contracts import RouterModel
 from .ui_codesign_contracts import ContentDigest, ReferenceRendererState
 
 
 _SHA256_PATTERN = r"^[0-9a-f]{64}$"
-_UNSAFE_METADATA_MARKERS = (
-    "://",
-    "\\",
-    "/",
-    ":",
-    "api_key",
-    "password=",
-    "secret=",
-    "<script",
-    "prompt",
-)
 
 
-RendererIdentifier: TypeAlias = Annotated[str, Field(min_length=3, max_length=128)]
+def _identifier_uses_allowed_categories(value: str) -> str:
+    if not all(unicodedata.category(character)[0] in ("L", "N") for character in value):
+        raise ValueError("renderer identifiers require only Unicode letters and numbers")
+    return value
+
+
+RendererIdentifier: TypeAlias = Annotated[
+    str,
+    Field(min_length=3, max_length=128),
+    AfterValidator(_identifier_uses_allowed_categories),
+]
 Sha256Digest: TypeAlias = Annotated[str, Field(pattern=_SHA256_PATTERN)]
 
 
@@ -50,9 +50,6 @@ class _RendererAdmissionModel(RouterModel):
                 raise ValueError("renderer admission metadata must not have edge whitespace")
             if any(ord(character) < 0x20 or 0x7F <= ord(character) <= 0x9F for character in value):
                 raise ValueError("renderer admission metadata must not contain control characters")
-            lowered = value.casefold()
-            if any(marker in lowered for marker in _UNSAFE_METADATA_MARKERS):
-                raise ValueError("renderer admission metadata must remain opaque and bounded")
         return value
 
 
