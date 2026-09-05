@@ -5,8 +5,8 @@
 | Artifact ID / kind | `TICKET-PLUGIN-ADOPTION-QUALITY-UIX-02` / `IMPLEMENTATION_TICKET` |
 | SPEC / acceptance source | `SPEC-JOHNNY-DESIGNERLESS-UI-CODESIGN-20260829-01` / AC-1, AC-2 and the renderer/evidence portion of AC-8 |
 | Requirement / Context / ADR | `PRD-20260829-049` / `CHG-20260829-049` / `CTX-PLUGIN-ADOPTION-QUALITY-20260829-02` Revision 01, SHA-256 `dd776e27777b7a4679ce8573c05639e7d7ab24481e654cf431da45c81fb99a26` / `ADR-20260829-037` |
-| State / closure | `CONVERGENCE_IMPLEMENTATION_AUTHORIZED`; effective `CLOSURE-PLUGIN-ADOPTION-QUALITY-UIX-02`, revision 05; production contract inherited unchanged from revision 04 |
-| Document revision | `15` |
+| State / closure | `APPROVED / LOCAL_INTEGRATION_PENDING`; effective `CLOSURE-PLUGIN-ADOPTION-QUALITY-UIX-02`, revision 05; production contract inherited unchanged from revision 04 |
+| Document revision | `16` |
 | Opening authority | Project owner, 2026-08-31 (Asia/Taipei): authorized opening UIX-02 after UIX-01 closure. Exact ticket approval and implementation dispatch remain separate; no renderer, browser, provider, target write, publication, installation, release or deployment effect is granted. |
 | Approval authority history | Project owner, 2026-08-31 (Asia/Taipei): approved exact ticket candidate/authority commit `4f501ccc4f4ecf943fd3f0f6be89871b7341a4ac`, leaf SHA-256 `22c3d12fd150ffc32273722510a4c725f670d45eb2c9135cca44c9a223cbfd45`. This authorized the initial UIX-02 Luna/xhigh same-lifetime implementation lane; that lane was consumed and grants no current authority. Review, integration, push and every external effect remained separate. |
 | Review outcome | Candidate `faf3d05e07f83a8c7804313b4d3435d01da338b0` is not integrated. Independent audit and reviewer reproduction proved that revision-01 evidence variants cannot express the request/content binding required by UIR6; changing that public ticket contract requires an owner-approved closure revision. Additional frozen-contract findings are recorded in `REVIEW-PLUGIN-ADOPTION-QUALITY-UIX-02` revision 01. |
@@ -353,6 +353,25 @@ adversarial findings, then perform the current-session review and candidate-boun
 mutations. No runner, receipt, queue or cross-lifetime wake is required or claimed.
 
 ## Ownership and return
+
+### Convergence review outcome — 2026-09-05
+
+Closure revision 05 source/test candidate `448ea232761a7fbd0152efe7279bcea0a7c442e3`
+received one evidence-only correction `5405ed8d7c03762cbb22744110ae4524edfcd4ff`.
+The current-session reviewer independently reproduced nine red/restore/green mutations
+covering UIR1–UIR7 and UIRM1–UIRM6, plus the complete 75-test / 300-subtest regression,
+strict typing and compile gates. The reused read-only adversarial helper found no new
+source/test defect. `REVIEW-PLUGIN-ADOPTION-QUALITY-UIX-02` revision 14 records the
+parent's APPROVED verdict and complete unreduced evidence. Product source remains
+byte-exact to `b419954...`; the evidence correction changes no source or test.
+
+Implementation ContextView `UIX02R15-20260905` is closed; no further implementation
+dispatch is outstanding. The reviewer may carry current control-plane ancestry into
+the existing candidate without rewriting historical commits, verify the unchanged
+ticket-only delta, and pass `admit_document_mutation`. The return is `ACTION_COMPLETED`
+with continuation `AUTO_CONTINUE / GUARDED_LOCAL_INTEGRATION`. Only actual gate
+readback can establish LOCAL_INTEGRATED. No push/authority-integration, release,
+installation or provider/target effect is claimed or granted.
 
 ### Owner-authorized convergence revision 05 — 2026-09-05
 
