@@ -92,6 +92,13 @@ class ArtifactReferenceEvidence(_RendererAdmissionModel):
     artifact_set_digest: Sha256Digest
     owner_manual_open_acknowledgement: Literal[True]
 
+    @field_validator("owner_manual_open_acknowledgement", mode="before")
+    @classmethod
+    def acknowledgement_is_strict_true(cls, value: object) -> object:
+        if type(value) is not bool or value is not True:
+            raise ValueError("owner manual open acknowledgement must be the literal true")
+        return value
+
 
 class UnavailableReferenceEvidence(_RendererAdmissionModel):
     kind: Literal["UNAVAILABLE"] = "UNAVAILABLE"

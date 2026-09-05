@@ -185,6 +185,37 @@ class UIReferenceRendererAdmissionTests(unittest.TestCase):
             ArtifactReferenceEvidence.model_validate(
                 {**_artifact().model_dump(), "owner_manual_open_acknowledgement": False}
             )
+        for invalid_acknowledgement in (None, 1, 1.0, "true"):
+            with self.subTest(acknowledgement=repr(invalid_acknowledgement)):
+                with self.assertRaises(ValidationError):
+                    ArtifactReferenceEvidence.model_validate(
+                        {
+                            **_artifact().model_dump(),
+                            "owner_manual_open_acknowledgement": invalid_acknowledgement,
+                        }
+                    )
+        missing_acknowledgement = _artifact().model_dump()
+        del missing_acknowledgement["owner_manual_open_acknowledgement"]
+        with self.assertRaises(ValidationError):
+            ArtifactReferenceEvidence.model_validate(missing_acknowledgement)
+        nested_missing_acknowledgement = _request(
+            requested_state=ReferenceRendererState.ARTIFACT_ONLY,
+            evidence=_artifact(),
+        ).model_dump()
+        del nested_missing_acknowledgement["evidence"]["owner_manual_open_acknowledgement"]
+        with self.assertRaises(ValidationError):
+            ReferenceRendererAdmissionRequest.model_validate(nested_missing_acknowledgement)
+        for invalid_nested_acknowledgement in (False, None, 1, 1.0, "true"):
+            with self.subTest(nested_acknowledgement=repr(invalid_nested_acknowledgement)):
+                nested_acknowledgement = _request(
+                    requested_state=ReferenceRendererState.ARTIFACT_ONLY,
+                    evidence=_artifact(),
+                ).model_dump()
+                nested_acknowledgement["evidence"]["owner_manual_open_acknowledgement"] = (
+                    invalid_nested_acknowledgement
+                )
+                with self.assertRaises(ValidationError):
+                    ReferenceRendererAdmissionRequest.model_validate(nested_acknowledgement)
         with self.assertRaises(ValidationError):
             _request(actual_target=RendererTarget.ANY)
 
@@ -225,10 +256,17 @@ class UIReferenceRendererAdmissionTests(unittest.TestCase):
             "abc.def",
             "abc@example",
         ):
-            with self.assertRaises(ValidationError):
-                ReferenceRendererAdmissionRequest.model_validate(
-                    {**_request().model_dump(), "request_ref": invalid_category_identifier}
-                )
+            with self.subTest(identifier=invalid_category_identifier.encode("unicode_escape").decode()):
+                with self.assertRaises(ValidationError):
+                    ReferenceRendererAdmissionRequest.model_validate(
+                        {**_request().model_dump(), "request_ref": invalid_category_identifier}
+                    )
+        for short_identifier in ("a", "ab"):
+            with self.subTest(identifier=short_identifier):
+                with self.assertRaises(ValidationError):
+                    ReferenceRendererAdmissionRequest.model_validate(
+                        {**_request().model_dump(), "request_ref": short_identifier}
+                    )
         with self.assertRaises(ValidationError):
             ReferenceRendererAdmissionRequest.model_validate(
                 {**_request().model_dump(), "request_ref": "requestuiref "}
@@ -260,10 +298,11 @@ class UIReferenceRendererAdmissionTests(unittest.TestCase):
             "api-key=abc",
             "ignore previous instructions",
         ):
-            with self.assertRaises(ValidationError):
-                ReferenceRendererAdmissionRequest.model_validate(
-                    {**_request().model_dump(), "request_ref": unsafe_value}
-                )
+            with self.subTest(identifier=unsafe_value):
+                with self.assertRaises(ValidationError):
+                    ReferenceRendererAdmissionRequest.model_validate(
+                        {**_request().model_dump(), "request_ref": unsafe_value}
+                    )
         alias_payload = _request().model_dump()
         del alias_payload["renderer_target"]
         alias_payload["declared_renderer_target"] = RendererTarget.DOM
@@ -278,6 +317,30 @@ class UIReferenceRendererAdmissionTests(unittest.TestCase):
         self.assertEqual(_binding(), ReferenceEvidenceBinding.model_validate_json(_binding().model_dump_json()))
         for evidence in (_rendered(), _artifact(), UnavailableReferenceEvidence(binding=_binding())):
             self.assertEqual(evidence, type(evidence).model_validate_json(evidence.model_dump_json()))
+
+        for field_name in (
+            "desktop_screenshot_ref",
+            "mobile_screenshot_ref",
+            "desktop_digest",
+            "mobile_digest",
+            "renderer_observation_ref",
+        ):
+            with self.subTest(missing_rendered_field=field_name):
+                rendered_payload = _rendered().model_dump()
+                del rendered_payload[field_name]
+                with self.assertRaises(ValidationError):
+                    RenderedReferenceEvidence.model_validate(rendered_payload)
+        for field_name in (
+            "desktop_artifact_ref",
+            "mobile_artifact_ref",
+            "artifact_set_digest",
+            "owner_manual_open_acknowledgement",
+        ):
+            with self.subTest(missing_artifact_field=field_name):
+                artifact_payload = _artifact().model_dump()
+                del artifact_payload[field_name]
+                with self.assertRaises(ValidationError):
+                    ArtifactReferenceEvidence.model_validate(artifact_payload)
 
     def test_uir2_authorized_matching_rendered_evidence_is_admitted(self) -> None:
         decision = admit_reference_renderer(_request(evidence=_rendered()))
@@ -310,13 +373,94 @@ class UIReferenceRendererAdmissionTests(unittest.TestCase):
             self.assertEqual(RendererRefusalReason.STATE_EVIDENCE_MISMATCH, authorized_unavailable.reason)
 
     def test_uir3_unauthorized_capability_waits_without_admission(self) -> None:
-        decision = admit_reference_renderer(
-            _request(capability=RendererCapabilityState.AVAILABLE_NOT_AUTHORIZED)
+        evidence_cases = (
+            (
+                "rendered",
+                ReferenceRendererState.RENDERED_AVAILABLE,
+                _rendered(),
+            ),
+            (
+                "artifact",
+                ReferenceRendererState.ARTIFACT_ONLY,
+                _artifact(),
+            ),
+            (
+                "unavailable",
+                ReferenceRendererState.UNAVAILABLE,
+                UnavailableReferenceEvidence(binding=_binding()),
+            ),
         )
-        self.assertIsInstance(decision, RendererWaitDecision)
-        if isinstance(decision, RendererWaitDecision):
-            self.assertEqual(RendererWaitReason.DESIGN_CAPABILITY_AUTHORITY_REQUIRED, decision.reason)
-        self.assertNotIsInstance(decision, (AdmittedRenderedDecision, AdmittedArtifactDecision))
+        for label, requested_state, evidence in evidence_cases:
+            with self.subTest(evidence=label):
+                decision = admit_reference_renderer(
+                    _request(
+                        capability=RendererCapabilityState.AVAILABLE_NOT_AUTHORIZED,
+                        requested_state=requested_state,
+                        evidence=evidence,
+                    )
+                )
+                self.assertIsInstance(decision, RendererWaitDecision)
+                if isinstance(decision, RendererWaitDecision):
+                    self.assertEqual(RendererWaitReason.DESIGN_CAPABILITY_AUTHORITY_REQUIRED, decision.reason)
+                self.assertNotIsInstance(decision, (AdmittedRenderedDecision, AdmittedArtifactDecision))
+
+        authority_order_cases = (
+            (
+                "binding-before-authority",
+                _request(
+                    capability=RendererCapabilityState.AVAILABLE_NOT_AUTHORIZED,
+                    evidence=RenderedReferenceEvidence(
+                        binding=ReferenceEvidenceBinding(
+                            request_ref="requestother",
+                            brief_id="briefuidashboard",
+                            approved_content_digest=DIGEST,
+                        ),
+                        desktop_screenshot_ref="screenshotdesktop",
+                        mobile_screenshot_ref="screenshotmobile",
+                        desktop_digest=DESKTOP_DIGEST,
+                        mobile_digest=MOBILE_DIGEST,
+                        renderer_observation_ref="rendererobservation",
+                    ),
+                ),
+            ),
+            (
+                "duplicate-before-authority",
+                _request(
+                    capability=RendererCapabilityState.AVAILABLE_NOT_AUTHORIZED,
+                    evidence=RenderedReferenceEvidence(
+                        binding=_binding(),
+                        desktop_screenshot_ref="samescreenshot",
+                        mobile_screenshot_ref="samescreenshot",
+                        desktop_digest=DESKTOP_DIGEST,
+                        mobile_digest=MOBILE_DIGEST,
+                        renderer_observation_ref="rendererobservation",
+                    ),
+                ),
+            ),
+            (
+                "target-before-authority",
+                _request(
+                    capability=RendererCapabilityState.AVAILABLE_NOT_AUTHORIZED,
+                    target=RendererTarget.DOM,
+                    actual_target=RendererTarget.NATIVE_ENGINE,
+                    evidence=_rendered(),
+                ),
+            ),
+            (
+                "state-before-authority",
+                _request(
+                    capability=RendererCapabilityState.AVAILABLE_NOT_AUTHORIZED,
+                    requested_state=ReferenceRendererState.RENDERED_AVAILABLE,
+                    evidence=_artifact(),
+                ),
+            ),
+        )
+        for label, request in authority_order_cases:
+            with self.subTest(ordering=label):
+                decision = admit_reference_renderer(request)
+                self.assertIsInstance(decision, RendererWaitDecision)
+                if isinstance(decision, RendererWaitDecision):
+                    self.assertEqual(RendererWaitReason.DESIGN_CAPABILITY_AUTHORITY_REQUIRED, decision.reason)
 
     def test_uir4_absence_or_decline_uses_artifact_fallback(self) -> None:
         authorized_artifact = admit_reference_renderer(
@@ -377,10 +521,31 @@ class UIReferenceRendererAdmissionTests(unittest.TestCase):
         if isinstance(artifact_mismatch, RendererRefusedDecision):
             self.assertEqual(RendererRefusalReason.TARGET_MISMATCH, artifact_mismatch.reason)
 
-        any_target = admit_reference_renderer(
-            _request(target=RendererTarget.ANY, actual_target=RendererTarget.TERMINAL, evidence=_rendered())
+        finite_targets = (
+            RendererTarget.DOM,
+            RendererTarget.NATIVE_ENGINE,
+            RendererTarget.NATIVE_MOBILE,
+            RendererTarget.TERMINAL,
         )
-        self.assertIsInstance(any_target, AdmittedRenderedDecision)
+        for actual_target in finite_targets:
+            with self.subTest(rendered_any_target=actual_target):
+                any_target = admit_reference_renderer(
+                    _request(target=RendererTarget.ANY, actual_target=actual_target, evidence=_rendered())
+                )
+                self.assertIsInstance(any_target, AdmittedRenderedDecision)
+
+        for actual_target in finite_targets:
+            with self.subTest(artifact_any_target=actual_target):
+                any_artifact = admit_reference_renderer(
+                    _request(
+                        capability=RendererCapabilityState.UNAVAILABLE,
+                        target=RendererTarget.ANY,
+                        actual_target=actual_target,
+                        requested_state=ReferenceRendererState.ARTIFACT_ONLY,
+                        evidence=_artifact(),
+                    )
+                )
+                self.assertIsInstance(any_artifact, AdmittedArtifactDecision)
 
         unavailable_target = admit_reference_renderer(
             _request(
@@ -404,25 +569,101 @@ class UIReferenceRendererAdmissionTests(unittest.TestCase):
             self.assertEqual(RendererRefusalReason.STATE_EVIDENCE_MISMATCH, authorized_artifact_wait.reason)
 
     def test_uir6_state_duplicate_and_identity_mismatch_refuse(self) -> None:
-        state_mismatch = admit_reference_renderer(
-            _request(requested_state=ReferenceRendererState.RENDERED_AVAILABLE, evidence=_artifact())
+        state_mismatch_cases = (
+            (
+                "rendered-request-artifact-evidence",
+                _request(requested_state=ReferenceRendererState.RENDERED_AVAILABLE, evidence=_artifact()),
+            ),
+            (
+                "rendered-request-unavailable-evidence",
+                _request(
+                    requested_state=ReferenceRendererState.RENDERED_AVAILABLE,
+                    evidence=UnavailableReferenceEvidence(binding=_binding()),
+                ),
+            ),
+            (
+                "artifact-request-rendered-evidence",
+                _request(requested_state=ReferenceRendererState.ARTIFACT_ONLY, evidence=_rendered()),
+            ),
+            (
+                "unavailable-request-rendered-evidence",
+                _request(requested_state=ReferenceRendererState.UNAVAILABLE, evidence=_rendered()),
+            ),
+            (
+                "unavailable-request-artifact-evidence",
+                _request(requested_state=ReferenceRendererState.UNAVAILABLE, evidence=_artifact()),
+            ),
         )
-        self.assertIsInstance(state_mismatch, RendererRefusedDecision)
-        if isinstance(state_mismatch, RendererRefusedDecision):
-            self.assertEqual(RendererRefusalReason.STATE_EVIDENCE_MISMATCH, state_mismatch.reason)
+        for label, request in state_mismatch_cases:
+            with self.subTest(state_pair=label):
+                state_mismatch = admit_reference_renderer(request)
+                self.assertIsInstance(state_mismatch, RendererRefusedDecision)
+                if isinstance(state_mismatch, RendererRefusedDecision):
+                    self.assertEqual(RendererRefusalReason.STATE_EVIDENCE_MISMATCH, state_mismatch.reason)
 
-        duplicate = RenderedReferenceEvidence(
-            binding=_binding(),
-            desktop_screenshot_ref="samescreenshot",
-            mobile_screenshot_ref="samescreenshot",
-            desktop_digest=DESKTOP_DIGEST,
-            mobile_digest=DESKTOP_DIGEST,
-            renderer_observation_ref="rendererobservation",
+        artifact_unavailable_wait = admit_reference_renderer(
+            _request(
+                capability=RendererCapabilityState.UNAVAILABLE,
+                requested_state=ReferenceRendererState.ARTIFACT_ONLY,
+                evidence=UnavailableReferenceEvidence(binding=_binding()),
+            )
         )
-        duplicate_result = admit_reference_renderer(_request(evidence=duplicate))
-        self.assertIsInstance(duplicate_result, RendererRefusedDecision)
-        if isinstance(duplicate_result, RendererRefusedDecision):
-            self.assertEqual(RendererRefusalReason.DUPLICATE_EVIDENCE, duplicate_result.reason)
+        self.assertIsInstance(artifact_unavailable_wait, RendererWaitDecision)
+
+        duplicate_cases = (
+            (
+                "rendered-screenshot-reference",
+                RenderedReferenceEvidence(
+                    binding=_binding(),
+                    desktop_screenshot_ref="samescreenshot",
+                    mobile_screenshot_ref="samescreenshot",
+                    desktop_digest=DESKTOP_DIGEST,
+                    mobile_digest=MOBILE_DIGEST,
+                    renderer_observation_ref="rendererobservation",
+                ),
+            ),
+            (
+                "rendered-digest",
+                RenderedReferenceEvidence(
+                    binding=_binding(),
+                    desktop_screenshot_ref="screenshotdesktop",
+                    mobile_screenshot_ref="screenshotmobile",
+                    desktop_digest=DESKTOP_DIGEST,
+                    mobile_digest=DESKTOP_DIGEST,
+                    renderer_observation_ref="rendererobservation",
+                ),
+            ),
+            (
+                "artifact-reference",
+                ArtifactReferenceEvidence(
+                    binding=_binding(),
+                    desktop_artifact_ref="samescreenshot",
+                    mobile_artifact_ref="samescreenshot",
+                    artifact_set_digest=ARTIFACT_SET_DIGEST,
+                    owner_manual_open_acknowledgement=True,
+                ),
+            ),
+        )
+        for label, duplicate in duplicate_cases:
+            with self.subTest(duplicate_dimension=label):
+                duplicate_result = admit_reference_renderer(
+                    _request(
+                        requested_state=(
+                            ReferenceRendererState.ARTIFACT_ONLY
+                            if isinstance(duplicate, ArtifactReferenceEvidence)
+                            else ReferenceRendererState.RENDERED_AVAILABLE
+                        ),
+                        capability=(
+                            RendererCapabilityState.UNAVAILABLE
+                            if isinstance(duplicate, ArtifactReferenceEvidence)
+                            else RendererCapabilityState.AVAILABLE_AUTHORIZED
+                        ),
+                        evidence=duplicate,
+                    )
+                )
+                self.assertIsInstance(duplicate_result, RendererRefusedDecision)
+                if isinstance(duplicate_result, RendererRefusedDecision):
+                    self.assertEqual(RendererRefusalReason.DUPLICATE_EVIDENCE, duplicate_result.reason)
 
         with self.assertRaises(ValidationError):
             ReferenceRendererAdmissionRequest.model_validate(
@@ -463,6 +704,23 @@ class UIReferenceRendererAdmissionTests(unittest.TestCase):
         if isinstance(changed_digest_result, RendererRefusedDecision):
             self.assertEqual(RendererRefusalReason.CONTENT_BINDING_MISMATCH, changed_digest_result.reason)
 
+        changed_brief = RenderedReferenceEvidence(
+            binding=ReferenceEvidenceBinding(
+                request_ref="requestuiref",
+                brief_id="briefother",
+                approved_content_digest=DIGEST,
+            ),
+            desktop_screenshot_ref="screenshotdesktop",
+            mobile_screenshot_ref="screenshotmobile",
+            desktop_digest=DESKTOP_DIGEST,
+            mobile_digest=MOBILE_DIGEST,
+            renderer_observation_ref="rendererobservation",
+        )
+        changed_brief_result = admit_reference_renderer(_request(evidence=changed_brief))
+        self.assertIsInstance(changed_brief_result, RendererRefusedDecision)
+        if isinstance(changed_brief_result, RendererRefusedDecision):
+            self.assertEqual(RendererRefusalReason.CONTENT_BINDING_MISMATCH, changed_brief_result.reason)
+
     def test_uir7_ast_proves_private_no_effect_boundary(self) -> None:
         import library.workflow_router as package
         import library.workflow_router.ui_reference_renderer_admission as module
@@ -489,6 +747,34 @@ class UIReferenceRendererAdmissionTests(unittest.TestCase):
             if isinstance(node, ast.ImportFrom)
             if node.module is not None
         )
+        imported_bindings = {
+            (
+                alias.name.split(".", maxsplit=1)[0],
+                alias.name,
+                alias.asname or alias.name.split(".", maxsplit=1)[0],
+            )
+            for node in ast.walk(tree)
+            if isinstance(node, ast.Import)
+            for alias in node.names
+        }
+        imported_bindings.update(
+            {
+                (
+                    node.module or "",
+                    alias.name,
+                    alias.asname or alias.name,
+                )
+                for node in ast.walk(tree)
+                if isinstance(node, ast.ImportFrom)
+                for alias in node.names
+            }
+        )
+        self.assertFalse(
+            any(
+                original == "Any" or bound in {"Any", "Unchecked"}
+                for _, original, bound in imported_bindings
+            )
+        )
         self.assertEqual(
             {
                 "__future__",
@@ -510,7 +796,7 @@ class UIReferenceRendererAdmissionTests(unittest.TestCase):
         self.assertTrue(imported.isdisjoint(forbidden_modules))
         forbidden_names = {
             "Any", "cast", "dict", "Mapping", "MutableMapping", "defaultdict", "open", "eval", "exec",
-            "getattr", "setattr", "delattr", "globals", "locals", "vars", "spawn_agent", "send_message",
+            "__import__", "getattr", "setattr", "delattr", "globals", "locals", "vars", "spawn_agent", "send_message",
             "wait_agent", "interrupt_agent", "provider", "host_cli", "dynamic_lookup", "raw_mapping",
         }
         names = {node.id for node in ast.walk(tree) if isinstance(node, ast.Name)}
@@ -521,6 +807,18 @@ class UIReferenceRendererAdmissionTests(unittest.TestCase):
             if isinstance(node, ast.Call) and isinstance(node.func, ast.Name)
         }
         self.assertTrue(calls.isdisjoint(forbidden_names))
+        dynamic_calls = []
+        for node in ast.walk(tree):
+            if not isinstance(node, ast.Call):
+                continue
+            function = node.func
+            if isinstance(function, ast.Name) and function.id in forbidden_names:
+                dynamic_calls.append(ast.unparse(function))
+            elif isinstance(function, ast.Attribute) and function.attr in forbidden_names:
+                dynamic_calls.append(ast.unparse(function))
+            elif isinstance(function, ast.Attribute) and isinstance(function.value, ast.Call):
+                dynamic_calls.append(ast.unparse(function))
+        self.assertEqual([], dynamic_calls)
 
 
 if __name__ == "__main__":
