@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | SPEC / AC | Local installer SPEC / AC-01 through AC-12 |
-| State | `PLANNED / DEPENDENCY_WAIT / NOT_DISPATCHED` |
+| State | `SUPERSEDED / INNO_TARGET_RETIRED / NON_DISPATCHABLE` — owner-authorized `CHG-20260905-050`, 2026-09-05 |
 | Closure | `CLOSURE-LOCAL-INSTALL-T04B-01` / build-source TDD closure below |
 | Dependency | 04A independently approved and guarded-integrated |
 | Implementation language | Inno Setup 6.7.3 plus Python 3.11 with strict Pydantic models and `mypy --strict` at the build boundary |
@@ -13,6 +13,10 @@
 | XSS | `XSS_NOT_APPLICABLE`; Browser/WebView/HTML/DOM/JavaScript UI is requirement change |
 
 ## Sole outcome
+
+Historical scope only. The owner replaced the installer target with MSIX; this
+unstarted Inno ticket cannot dispatch. Replacement package source and acceptance
+must be defined by the MSIX lifecycle SPEC, not by renaming these paths.
 
 Implement bounded user-scope Inno/build source consuming the integrated 04A
 manifest. Verification may compile to disposable output that is deleted after
