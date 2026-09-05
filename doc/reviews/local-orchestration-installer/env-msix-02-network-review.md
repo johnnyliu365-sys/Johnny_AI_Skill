@@ -2,11 +2,11 @@
 
 | Field | Value |
 | --- | --- |
-| Artifact / kind / revision | `REVIEW-ENV-MSIX-02-20260906` / `OPERATIONAL_READINESS_REVIEW` / `02` |
+| Artifact / kind / revision | `REVIEW-ENV-MSIX-02-20260906` / `OPERATIONAL_READINESS_REVIEW` / `03` |
 | Candidate / baseline | `1b4e80c0ac3c1cd06948c5f6d569218a9cb45de1` / `b140e5bf3d47d0e1a3736dd87340c1e693ff70de` |
 | Ticket / digest | [ENV-MSIX-02](../../../modules/tickets/local-orchestration-installer/env-msix-02-temporary-evaluation-activation.md), revision 02; `80da6236da12b2524b84d602824d5be79e3c84bb35a545269d1fed730feff28a` |
 | Closure / authority | `CLOSURE-ENV-MSIX-02/01`; owner's 2026-09-06 temporary VM activation-network grant |
-| Reviewer conclusion | `APPROVED / NETWORK_CONNECTED / OWNER_GUEST_ACTIVATION_REQUIRED` |
+| Reviewer conclusion | `APPROVED / NETWORK_DISCONNECTED / ACTIVATION_OWNER_REPORTED` |
 | Runtime/bootstrap source | ENV-MSIX-01 marked bootstrap at `f3e77eed6da2fa85b2e115508776f1b3dc311c74`; no provisioning body |
 | Scope | Current-session operator only; no product implementation, host trust, release or push |
 
@@ -329,8 +329,60 @@ The parent independently read Action, Correlation, VMId, Status, Connected, Fail
 and the raw file hash. This proves the adapter-to-switch connection at that readback,
 not guest Internet reachability, successful activation or MSIX readiness.
 
-Current continuation: `WAIT_FOR_HUMAN / OWNER_GUEST_ACTIVATION_REQUIRED`. The owner
+Continuation at the CONNECT handoff: `WAIT_FOR_HUMAN / OWNER_GUEST_ACTIVATION_REQUIRED`. The owner
 has the guest-only `/ato` and `/xpr` commands. No guest password is requested or
 captured. On either success or failure, execute the bound uppercase DISCONNECT with
 a fresh observation GUID and read its exact result; do not rerun CONNECT. Networking
-is currently enabled for this temporary window; no final-disconnection claim is made.
+was enabled for that temporary window; the final disconnection is recorded below.
+
+## Owner activation result and actual DISCONNECT
+
+On 2026-09-06 the owner supplied a guest screenshot showing `/ato` succeeded for
+Windows EnterpriseEval and `/xpr` reporting expiry `2026-12-05 04:01:08` in the guest's
+displayed local time. Screenshot SHA-256:
+`be6a4b4d3dfd84cf3d7120dab506296f7ac09984c822e7c93c74a2f81ab94d2a`.
+This is owner-provided operational observation, not independent guest interrogation,
+implementation/release evidence, a transferable license proof or MSIX qualification.
+No guest password or product key was requested or captured.
+
+After checking clean baseline `48c5273bae0e325184bd15406b0d457414894397`, current ticket
+and index digest, and unchanged pinned native block, the operator bound a fresh
+observation GUID and submitted exactly:
+
+```text
+Invoke-LabNetworkAction -Action DISCONNECT -DisconnectAttempt '52de691e-118b-4bff-bff0-2997a1fa2148'
+```
+
+The same reviewed trusted bootstrap and native block preceded that literal terminal;
+normal UAC, absolute System32 PowerShell, hidden window, no external script load.
+
+```text
+DISCONNECT_ATTEMPT=52de691e-118b-4bff-bff0-2997a1fa2148
+NETWORK_DISCONNECT_SOURCE_SHA256=d9c2d98ed9d9e15f213a0aaa68c0999a88bf1dd1a63b8b51c2755acf7e459dea
+NETWORK_DISCONNECT_EXIT=0
+RESULT_PATH=C:\ProgramData\JohnnyActivationNetwork-20260906-disconnect-52de691e-118b-4bff-bff0-2997a1fa2148.json
+{
+    "Action":  "DISCONNECT",
+    "Correlation":  "EVAL-ACTIVATE-20260906-01",
+    "DisconnectAttempt":  "52de691e-118b-4bff-bff0-2997a1fa2148",
+    "VMId":  "7701b26b-5b5a-42c0-b1e1-36d34dfdaa46",
+    "Status":  "DISCONNECTED_ACTIVATION_SEPARATE",
+    "Connected":  false,
+    "Failure":  null,
+    "TimestampUtc":  "2026-09-05T20:07:55.6980750Z"
+}
+RESULT_RAW_SHA256=f110f68666a1549b4a08d0d024f16c5f986b4ff6aa7720a6be22ba21672a87bd
+```
+
+The native command independently re-read the exact adapter after disconnect and
+asserted Connected=false and absent SwitchId before exit 0. The parent then read
+and matched the exact result Action, Correlation, DisconnectAttempt, VMId, Status,
+Connected, Failure and raw SHA-256. The first disconnect succeeded; no retry was
+needed. No switch creation, integrations, host licensing, host certificate trust,
+VM recreation, package operation, push or release was performed.
+
+Return: `ACTION_COMPLETED / NETWORK_DISCONNECTED / ACTIVATION_OWNER_REPORTED`.
+The temporary network grant has been consumed and the guest-input wait is satisfied;
+do not rerun CONNECT. This operational task is complete. The separate replacement
+MSIX lifecycle SPEC/toolchain/probe work remains pending; boot and activation do not
+make the old blocked installer tickets dispatchable.

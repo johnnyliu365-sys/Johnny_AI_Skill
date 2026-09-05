@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| Kind / revision / state | `OPERATIONAL_ENVIRONMENT_ACTION` / `03` / `NETWORK_CONNECTED / OWNER_GUEST_ACTIVATION_REQUIRED` |
+| Kind / revision / state | `OPERATIONAL_ENVIRONMENT_ACTION` / `04` / `COMPLETED / NETWORK_DISCONNECTED / ACTIVATION_OWNER_REPORTED` |
 | Owner / baseline | Current-session operator/reviewer; `b140e5bf3d47d0e1a3736dd87340c1e693ff70de`, clean local main; no push. |
 | Authority | Owner's 2026-09-06 explicit authorization to temporarily connect this VM, attempt official evaluation activation, read status/expiry, then disconnect. |
 | Environment / correlation | `ENV-MSIX-01-20260905` / `EVAL-ACTIVATE-20260906-01` |
@@ -12,14 +12,17 @@
 | Observed existing switch | `c08cb7b8-9b3c-408e-8e30-5e16a3aeb444` / `Default Switch`; never select WSL or an external switch. |
 | Prior provisioning | [ENV-MSIX-01](env-msix-01-disposable-hyper-v.md), revision 06; creation and its correction budget remain closed. This is a distinct owner-authorized operational action, not another provisioning correction. |
 | Reviewed native bytes / admission | Revision-02 block at `1b4e80c0ac3c1cd06948c5f6d569218a9cb45de1`; review admission `d9d4bb2a9456dedf2f5f807f93f3d2e4da8a9511`; this lifecycle revision does not change the native block. |
-| Actual connection | CONNECT exit 0; readback Connected=true; result raw SHA-256 `32e6f14ac7d37a2f3ae989f904e4b84c0dda33f925c6f6b29861a8902dfdfb92`; [native evidence](../../../doc/reviews/local-orchestration-installer/env-msix-02-network-review.md). Guest activation and final DISCONNECT pending. Do not rerun CONNECT. |
+| Actual connection | Historical CONNECT exit 0; readback Connected=true; result raw SHA-256 `32e6f14ac7d37a2f3ae989f904e4b84c0dda33f925c6f6b29861a8902dfdfb92`; [native evidence](../../../doc/reviews/local-orchestration-installer/env-msix-02-network-review.md). The temporary window is now closed. Do not rerun CONNECT. |
+| Completion | Owner's guest screenshot reports activation success and expiry `2026-12-05 04:01:08` in the displayed guest local time. DISCONNECT attempt `52de691e-118b-4bff-bff0-2997a1fa2148` exited 0 with Connected=false and no attached switch; result raw SHA-256 `f110f68666a1549b4a08d0d024f16c5f986b4ff6aa7720a6be22ba21672a87bd`. No package qualification is claimed. |
 
 ## Observations and scope
 
-The owner supplied guest screenshots of Windows 11 EnterpriseEval 25H2 build
+Before activation, the owner supplied guest screenshots of Windows 11 EnterpriseEval 25H2 build
 26200.6584 and `slmgr.vbs /xpr` reporting notification mode. These are owner-provided
 diagnostics, not implementation/release evidence, proof of activation or of the
-evaluation period being exhausted. Guest activation and MSIX lifecycle are unproved.
+evaluation period being exhausted. The subsequent owner-reported activation and
+independently observed host-side disconnect are recorded in the linked review;
+MSIX lifecycle and independent guest-side qualification remain unproved.
 
 Native preflight `ACTIVATION-NETWORK-PREFLIGHT-20260906-02` exited 0 and observed the
 exact VM Running, one disconnected adapter, Default Switch and WSL, and zero enabled
