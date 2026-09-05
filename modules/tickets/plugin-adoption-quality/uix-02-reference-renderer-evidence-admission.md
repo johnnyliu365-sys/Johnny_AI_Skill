@@ -5,11 +5,11 @@
 | Artifact ID / kind | `TICKET-PLUGIN-ADOPTION-QUALITY-UIX-02` / `IMPLEMENTATION_TICKET` |
 | SPEC / acceptance source | `SPEC-JOHNNY-DESIGNERLESS-UI-CODESIGN-20260829-01` / AC-1, AC-2 and the renderer/evidence portion of AC-8 |
 | Requirement / Context / ADR | `PRD-20260829-049` / `CHG-20260829-049` / `CTX-PLUGIN-ADOPTION-QUALITY-20260829-02` Revision 01, SHA-256 `dd776e27777b7a4679ce8573c05639e7d7ab24481e654cf431da45c81fb99a26` / `ADR-20260829-037` |
-| State / closure | `APPROVED / LOCAL_INTEGRATION_PENDING`; effective `CLOSURE-PLUGIN-ADOPTION-QUALITY-UIX-02`, revision 05; production contract inherited unchanged from revision 04 |
-| Document revision | `16` |
+| State / closure | `APPROVED / LOCAL_INTEGRATED / REMOTE_SYNC_PENDING`; effective `CLOSURE-PLUGIN-ADOPTION-QUALITY-UIX-02`, revision 05; production contract inherited unchanged from revision 04 |
+| Document revision | `17` |
 | Opening authority | Project owner, 2026-08-31 (Asia/Taipei): authorized opening UIX-02 after UIX-01 closure. Exact ticket approval and implementation dispatch remain separate; no renderer, browser, provider, target write, publication, installation, release or deployment effect is granted. |
 | Approval authority history | Project owner, 2026-08-31 (Asia/Taipei): approved exact ticket candidate/authority commit `4f501ccc4f4ecf943fd3f0f6be89871b7341a4ac`, leaf SHA-256 `22c3d12fd150ffc32273722510a4c725f670d45eb2c9135cca44c9a223cbfd45`. This authorized the initial UIX-02 Luna/xhigh same-lifetime implementation lane; that lane was consumed and grants no current authority. Review, integration, push and every external effect remained separate. |
-| Review outcome | Candidate `faf3d05e07f83a8c7804313b4d3435d01da338b0` is not integrated. Independent audit and reviewer reproduction proved that revision-01 evidence variants cannot express the request/content binding required by UIR6; changing that public ticket contract requires an owner-approved closure revision. Additional frozen-contract findings are recorded in `REVIEW-PLUGIN-ADOPTION-QUALITY-UIX-02` revision 01. |
+| Historical revision-01 review outcome | Candidate `faf3d05e07f83a8c7804313b4d3435d01da338b0` failed independent review: its evidence variants could not express the request/content binding required by UIR6. This historical defect is superseded by the approved closure revisions and does not describe the current candidate. Additional historical findings remain in `REVIEW-PLUGIN-ADOPTION-QUALITY-UIX-02` revision 01. |
 | Closure revision 02 proposal | Reviewer, 2026-08-31 (Asia/Taipei): proposes the exact evidence binding, truth-table, Unicode and canonical-field corrections below. This proposal is not approval and authorizes no correction dispatch or effect. |
 | Closure revision 02 approval history | Project owner, 2026-08-31 (Asia/Taipei): approved exact candidate `79414732c9123e9ba4bac7c5bdc625d1f16217d3`, ticket SHA-256 `f43b516b4c5589c36e5ffa093759726e9e0e8c8538367e695d9d4ff524a31d9b`. This authorized the revision-02 additive-correction cycle; that authority is exhausted as recorded below and grants no current lane. Review, integration, push and every external effect remained separate. |
 | Closure revision 02 initial review | Candidate `611959f69df9bb639509d7e9068e86fb8b3e4564` is not integrated. `REVIEW-PLUGIN-ADOPTION-QUALITY-UIX-02` revision 02 records one UIR1 unsafe-value implementation defect and one candidate-baseline evidence defect. At that review point the same owner could receive the closure's single additive correction; the later correction exhausted it. |
@@ -22,8 +22,8 @@
 | Closure revision 04 approval | Project owner, 2026-09-01 (Asia/Taipei): approved exact document revision 11 at candidate authority commit `515e2fd81f8b54030c5fd27abbd43cd63d5df3bc`, LF-normalized leaf SHA-256 `348a5c2f12a773b77898616b71ce70947625f1f9fb6db021b0c4ca171fa437fb`. This activates closure revision 04 only. Implementation dispatch, a third correction, candidate integration, push, publication, target effect and provider effect remain separate and unauthorized. |
 | Source baseline / dependency | `1d2be10e8de224909b2c46a4eb6f8ef63eb7265c`; UIX-01 contracts integrated at `2c7b5adafa0a84f7a4219e4287daea38d8d855a5`. |
 | Control owner / reviewer | `ticket-review` semantic profile — Terra/xhigh. |
-| Implementation owner | Reuse `/root/plugin_adoption_implementer`, `implementation-standard` — Luna/xhigh, one same-lifetime lane, no helper. Owner's subsequent 2026-09-05 convergence/completion authority permits the bounded evidence-only revision-05 work below; earlier cycles remain exhausted. The current-session reviewer retains final review responsibility. |
-| Worktree / branch / task | Preserve `.worktrees/plugin-adoption-quality-uix-02`, branch `implement/plugin-adoption-quality-uix-02`, task `/root/plugin_adoption_implementer`; current candidate `b419954bc57777661d7522247ffc26977f668ca7` over initial candidate `18ed02c736812e2e7fab738dc2b8a7036d1da987` and prior baseline `07edaff11bfe981987288a9c1b6becb67c4e69ad`. Historical commits remain immutable and unintegrated. |
+| Implementation owner | `/root/plugin_adoption_implementer`, `implementation-standard` — Luna/xhigh: returned and allocation released; ContextView `UIX02R15-20260905` closed. No active dispatch. Current-session reviewer owns the completed review and local integration. |
+| Worktree / branch / task | Preserve `.worktrees/plugin-adoption-quality-uix-02`, branch `implement/plugin-adoption-quality-uix-02`, task `/root/plugin_adoption_implementer`; reviewed candidate `5405ed8d7c03762cbb22744110ae4524edfcd4ff`, ancestry-only integration candidate `27085b93867ac6b69e492261684f5c92faee6746`. Historical commits remain immutable; gate has now integrated this reviewed lineage locally. |
 | Delivery / language | `POC / STANDARD`; Python 3.11, strict Pydantic models, complete annotations, `mypy --strict`, deterministic pure tests and independent review. |
 | XSS / effects | `XSS_NOT_APPLICABLE`. This closure admits opaque evidence metadata only. It performs no Browser/WebView/DOM/JavaScript sink, renderer/provider call, filesystem write or target mutation. A later concrete renderer/target adapter must receive separate authority and XSS classification from its actual source/sink graph. |
 
@@ -353,6 +353,22 @@ adversarial findings, then perform the current-session review and candidate-boun
 mutations. No runner, receipt, queue or cross-lifetime wake is required or claimed.
 
 ## Ownership and return
+
+### Guarded local integration outcome — 2026-09-05
+
+The reviewer carried main control commit `9718e8874c86e6952cf3fdf353500c54d69fbf78`
+into the existing candidate without rewriting history. Candidate
+`27085b93867ac6b69e492261684f5c92faee6746` has byte-identical source/test/element
+content to reviewed `5405ed8...`; its delta from main is exactly the four declared
+UIX-02 paths. `admit_document_mutation` read this ticket from main and returned
+`INTEGRATED`, with `integrated_commit` exactly `27085b93867ac6b69e492261684f5c92faee6746`.
+Post-integration focused/UIX-01/Router/gate regression returned 140 passed and
+303 subtests passed; strict mypy passed. Review revision 15 records the readback.
+
+This establishes `LOCAL_INTEGRATED`, not `AUTHORITY_INTEGRATED`. No push, publication,
+installation, renderer/provider or target effect was performed. Source work and its
+evidence are complete locally; remote synchronization remains outside this execution
+authority. No further same-ticket correction is pending.
 
 ### Convergence review outcome — 2026-09-05
 

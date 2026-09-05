@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| Review ID / revision | `REVIEW-PLUGIN-ADOPTION-QUALITY-UIX-02` / `14` |
+| Review ID / revision | `REVIEW-PLUGIN-ADOPTION-QUALITY-UIX-02` / `15` |
 | Ticket / closure | `TICKET-PLUGIN-ADOPTION-QUALITY-UIX-02` authority document revision `15` / effective `CLOSURE-PLUGIN-ADOPTION-QUALITY-UIX-02` revision `05`; convergence review completed 2026-09-05 |
 | Authority commit | `117346cf44fbbc75a08aca5677f223c38df0fb00`; ticket LF SHA-256 `8db778f911585c4ae17c1ac2b46d0941983a112018273c576bb3d9a6875bc464` |
 | Local control-plane proposal commit | `377b45cc7a4ac038d00b8f52a5a14b282dbde337`; intentionally unpushed under the 2026-09-01 owner authority |
@@ -11,7 +11,7 @@
 | Candidate / baseline | `5405ed8d7c03762cbb22744110ae4524edfcd4ff` / `b419954bc57777661d7522247ffc26977f668ca7` |
 | Branch / owner | `implement/plugin-adoption-quality-uix-02` / `implementation-standard` |
 | Reviewer / helper | `ticket-review` / one read-only `RESEARCH_HELPER` |
-| Result | `APPROVED / LOCAL_INTEGRATION_PENDING`; no push, publication or target/provider effect |
+| Result | `APPROVED / LOCAL_INTEGRATED / REMOTE_SYNC_PENDING`; gate candidate `27085b93867ac6b69e492261684f5c92faee6746`; no push, publication or target/provider effect |
 
 Sections preceding the 2026-09-05 review below retain point-in-time historical evidence and
 authority restrictions. Current execution authority and findings are bound by the metadata above
@@ -1545,3 +1545,50 @@ Ran 1 test in 0.006s
 
 OK
 ```
+
+
+## Guarded integration readback — 2026-09-05
+
+The preceding APPROVED verdict remains unchanged. To make the reviewed candidate a fast-forward,
+reviewer merged control-only main ancestry `9718e8874c86e6952cf3fdf353500c54d69fbf78`
+into the existing implementation branch, producing `27085b93867ac6b69e492261684f5c92faee6746`.
+No history was rewritten. Direct Git comparison proves the private source, test and element
+subtree are identical to reviewed `5405ed8d7c03762cbb22744110ae4524edfcd4ff`.
+The new candidate diff from main contains exactly these four CREATE paths:
+
+```text
+library/workflow_router/ui_reference_renderer_admission.py
+modules/element/python/plugin-adoption-quality/uix-02-reference-renderer-evidence-admission/README.md
+modules/element/python/plugin-adoption-quality/uix-02-reference-renderer-evidence-admission/closure-05-evidence.md
+tests/test_ui_reference_renderer_admission.py
+```
+
+Main was clean and its HEAD was `9718e8874c86e6952cf3fdf353500c54d69fbf78` before the call.
+The reviewer called the real `admit_document_mutation(JohnnyRootLayout.resolve(), request)`
+with repository root equal to the current Johnny checkout, `integration_branch=main`,
+`ticket_path=modules/tickets/plugin-adoption-quality/uix-02-reference-renderer-evidence-admission.md`
+and `candidate_ref=27085b93867ac6b69e492261684f5c92faee6746`.
+Complete typed result and direct main HEAD readback:
+
+```json
+{"status":"INTEGRATED","failure":null,"offending_path":null,"detail":null,"integrated_commit":"27085b93867ac6b69e492261684f5c92faee6746"}
+```
+
+```text
+git rev-parse HEAD
+27085b93867ac6b69e492261684f5c92faee6746
+git status --short
+[exit 0; no output]
+py -3.11 -B -m pytest -q -p no:cacheprovider tests/test_ui_reference_renderer_admission.py tests/test_ui_codesign_contracts.py tests/test_workflow_router.py tests/test_document_mutation_gate.py
+.............................. [ 21%]
+................................................................................................... [ 92%]
+...........                                                              [100%]
+140 passed, 303 subtests passed in 26.80s
+py -3.11 -B -m mypy --strict --no-incremental library/workflow_router/ui_reference_renderer_admission.py tests/test_ui_reference_renderer_admission.py
+Success: no issues found in 2 source files
+```
+
+The integrated commit equals the candidate rather than the old main HEAD. This is
+`LOCAL_INTEGRATED`; no push/direct-remote equality, package readiness, installation, UI-rendering
+or provider effect is claimed. The reused implementation allocation is released. MSIX requirement
+change `CHG-20260905-050` is a separate architecture scope and did not enter this source boundary.
