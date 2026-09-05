@@ -2,8 +2,9 @@
 
 | Field | Value |
 | --- | --- |
-| Kind / revision / state | `OPERATIONAL_ENVIRONMENT_ACTION` / `03` / `BLOCKED / CONVERGENCE_REVIEW_REQUIRED / NON_EXECUTABLE` |
+| Kind / revision / state | `OPERATIONAL_ENVIRONMENT_ACTION` / `04` / `OWNER_OVERRIDE_AUTHORIZED / EXTRA_REVIEW_REQUIRED` |
 | Authority | Owner's 2026-09-05 authorization to create a disposable Windows test VM; test-certificate trust only inside that VM, never on the working host. |
+| Single-use override | Owner's subsequent exact approval of one additional ENV-F2 correction and review; after approval of that corrected recipe, continue under the original VM authorization. No further automatic correction. |
 | Requirement / findings | CHG-20260905-050 revision 02; [CAP-MSIX-01 review](../../../doc/reviews/local-orchestration-installer/cap-msix-01-capability-review.md) at `5d7906e5f8cb5dd64ccf94a2d0c05fa11477133e` |
 | Scope / owner | Environment provisioning only, current-session operator/reviewer. No product implementation, host plugin registration, push or release. |
 | Profile | POC / HIGH_ASSURANCE: privileged Hyper-V and downloaded OS supply chain; one mandatory read-only adversarial helper, no implementation lane. |
@@ -61,7 +62,7 @@ with a digest derived solely from the download.
 `candidate_commit`: the exact commit containing this revision and its digest index.
 `closure_revision`: `CLOSURE-ENV-MSIX-01/01`; `profile_requirement`: `REQUIRED`.
 Helper: reuse `/root/wa01_adversarial_review` (Terra/xhigh), read-only/no-code;
-ContextView `ENVMSIX01-AUDIT-20260905`. Prior UIX/CAP views remain closed.
+ContextView `ENVMSIX01-AUDIT-20260905-F2-OVERRIDE`. Prior UIX/CAP and earlier ENV views remain closed.
 `isolation_disposition`: `READ_ONLY_INTENT_ONLY` (tool surface is not a sandbox);
 `effect_scope`: `NO_EXTERNAL_EFFECT`. No helper file writes, native effects or fan-out.
 Attack `BOUNDARY_DATA`, `AUTHORIZATION`, `ERROR_PARTIAL_FAILURE`, `STATE_TRANSITION`,
@@ -72,23 +73,76 @@ ID/result evidence is an effect binding, not a fabricated runtime dispatch recei
 
 ## Exact elevated native-command recipe
 
-**Historical rejected recipe; DO NOT EXECUTE.** The correction review at
-`7e249dcfc5d722c79f6c1a4f3a1109229ccc4484` found an unresolved module-resolution
-privilege boundary. [Convergence review](../../../doc/reviews/local-orchestration-installer/env-msix-01-provisioning-review.md)
-records the finding and the next owner decision. Revision 03 changes only lifecycle
-metadata and this warning; the reviewed PowerShell block remains byte-for-byte
-unchanged. Existing VM authorization does not override the bounded review limit.
+Revision 04 is the explicitly authorized single-use ENV-F2 correction. Historical
+rejected bytes remain at `7e249dcfc5d722c79f6c1a4f3a1109229ccc4484` and the unchanged
+revision-03 record at `a193b0e282c28004be9b7c278be874bf3b4fbf5b`.
+The [review](../../../doc/reviews/local-orchestration-installer/env-msix-01-provisioning-review.md)
+must bind the new candidate before this recipe becomes executable.
 
 This is an owner-authorized operational command record, not a new installer script,
 production API or permission to create a privileged helper/service. The operator
 submits these exact committed bytes to Windows PowerShell through normal UAC. Native
 Hyper-V cmdlets perform creation. A read-only result file is the observation carrier,
 not authority. No script is loaded from a writable external location by elevation.
+Invoke only `C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe`, with
+`-NoLogo -NoProfile -NonInteractive -EncodedCommand`, working directory
+`C:\Windows\System32`, through normal UAC. Do not use an inherited executable search
+path, an external script file or a profile. The bootstrap below controls module and
+native search paths in that child process only. The trust anchor is the installed,
+protected Windows OS and its GAC/native loader, not a user-supplied module. An already
+compromised administrator/SYSTEM/OS is outside this isolated-VM action's threat model.
 
 ```powershell
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
-Import-Module Hyper-V
+# ENV_F2_BOOTSTRAP_BEGIN
+$PSModuleAutoLoadingPreference = 'None'
+try {
+    if (-not [Environment]::Is64BitProcess -or $PSVersionTable.PSVersion.Major -ne 5 -or $PSHOME -ine 'C:\Windows\System32\WindowsPowerShell\v1.0') { throw 'UNEXPECTED_POWERSHELL' }
+    [string]$osModules = 'C:\Windows\System32\WindowsPowerShell\v1.0\Modules'
+    $env:PSModulePath = $osModules
+    $env:Path = 'C:\Windows\System32;C:\Windows'
+    [Environment]::CurrentDirectory = 'C:\Windows\System32'
+    function Assert-ProtectedOsPath([string]$path) {
+        if (-not $path.StartsWith('C:\Windows\',[StringComparison]::OrdinalIgnoreCase)) { throw 'MODULE_PATH_UNTRUSTED' }
+        [string[]]$trustedWriters = @('S-1-5-18','S-1-5-32-544','S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464')
+        [string]$cursor = $path
+        while ($cursor) {
+            $attributes = [IO.File]::GetAttributes($cursor)
+            if (($attributes -band [IO.FileAttributes]::ReparsePoint) -ne 0) { throw 'MODULE_REPARSE_PATH' }
+            [bool]$directory = ($attributes -band [IO.FileAttributes]::Directory) -ne 0
+            if ($directory) { $security = [IO.Directory]::GetAccessControl($cursor) } else { $security = [IO.File]::GetAccessControl($cursor) }
+            if ($security.GetOwner([Security.Principal.SecurityIdentifier]).Value -notin $trustedWriters) { throw 'MODULE_OWNER_UNTRUSTED' }
+            [long]$writeMask = 0x500D0156
+            if ($cursor -eq 'C:\') { $writeMask = 0x500D0040 }
+            foreach ($rule in $security.GetAccessRules($true,$true,[Security.Principal.SecurityIdentifier])) {
+                if (($rule.PropagationFlags -band [Security.AccessControl.PropagationFlags]::InheritOnly) -ne 0) { continue }
+                if ($rule.AccessControlType -eq [Security.AccessControl.AccessControlType]::Allow -and ([long]$rule.FileSystemRights -band $writeMask) -ne 0 -and $rule.IdentityReference.Value -notin $trustedWriters) { throw 'MODULE_WRITER_UNTRUSTED' }
+            }
+            $cursor = [IO.Path]::GetDirectoryName($cursor)
+        }
+    }
+    $moduleSpecs = @(
+        @('Microsoft.PowerShell.Utility\Microsoft.PowerShell.Utility.psd1','Microsoft.PowerShell.Utility','3.1.0.0','1da87e53-152b-403e-98dc-74d7b4d63d59'),
+        @('Microsoft.PowerShell.Management\Microsoft.PowerShell.Management.psd1','Microsoft.PowerShell.Management','3.1.0.0','eefcb906-b326-4e99-9f54-8b4bb6ef3c6d'),
+        @('Microsoft.PowerShell.Security\Microsoft.PowerShell.Security.psd1','Microsoft.PowerShell.Security','3.0.0.0','a94c8c7e-9810-47c0-b8af-65089c13a35a'),
+        @('CimCmdlets\CimCmdlets.psd1','CimCmdlets','1.0.0.0','fb6cc51d-c096-4b38-b78d-0fed6277096a'),
+        @('Hyper-V\2.0.0.0\Hyper-V.psd1','Hyper-V','2.0.0.0','af4bddd0-8583-4ff2-84b2-a33f5c8de8a7')
+    )
+    foreach ($spec in $moduleSpecs) {
+        [string]$manifest = [IO.Path]::Combine($osModules,$spec[0])
+        Assert-ProtectedOsPath $manifest
+        $loaded = @(Import-Module -Name $manifest -RequiredVersion $spec[2] -PassThru -ErrorAction Stop)
+        [string]$expectedBase = [IO.Path]::GetDirectoryName($manifest)
+        if ($spec[1] -in @('Microsoft.PowerShell.Utility','Microsoft.PowerShell.Management','Microsoft.PowerShell.Security')) { $expectedBase = 'C:\Windows\System32\WindowsPowerShell\v1.0' }
+        if ($loaded.Count -ne 1 -or $loaded[0].Name -cne $spec[1] -or $loaded[0].Version -ne [version]$spec[2] -or $loaded[0].Guid -ne [guid]$spec[3] -or $loaded[0].ModuleBase -ine $expectedBase) { throw 'MODULE_IDENTITY_MISMATCH' }
+    }
+    if ((Get-Command Get-VM -CommandType Cmdlet).Module.ModuleBase -ine ($osModules+'\Hyper-V\2.0.0.0')) { throw 'COMMAND_ORIGIN_MISMATCH' }
+} catch {
+    if ($_.Exception.Message -cmatch '^[A-Z_]{1,64}$') { [Console]::Error.WriteLine($_.Exception.Message) } else { [Console]::Error.WriteLine('MODULE_BOOTSTRAP_FAILED') }
+    exit 45
+}
+# ENV_F2_BOOTSTRAP_END
 [string]$phase = 'PREFLIGHT'
 [string]$root = 'C:\ProgramData\JohnnyMsixLab-ENV-MSIX-01-20260905'
 [string]$name = 'Johnny-MSIX-Lab-20260905'
@@ -208,6 +262,21 @@ The operator independently captures the elevated process exit code. `43` means
 `42` means preflight rejection or a non-success result file; absence of that file
 never becomes success. Only `0` plus the expected result-file readback permits the
 setup-pending claim. No recovery branch writes to a root whose ownership is unproved.
+`45` means `BLOCKED / MODULE_BOOTSTRAP_FAILED` before any provisioning command or
+owned-root write; capture its sanitized stderr where available. It never triggers a
+fallback import or a retry. The other result/partial-recovery branches are unchanged.
+
+## ENV-F2 override verification boundary
+
+The operator may execute only the exact marked bootstrap in a fresh **non-elevated**
+Windows PowerShell process before review. It loads installed native modules but does
+not call a Hyper-V operation. Verify source/name/version/GUID, disabled autoload,
+process-local search paths and rejection of a user path before import. Negative
+in-memory command variants must stop at this bootstrap boundary, never include the
+VM creation body, and never run elevated. At least one reviewer counter-mutation must
+make the asserted rejection/origin property fail, with unreduced output preserved.
+Parse-check the complete unchanged-effect recipe separately. Missing commands or
+bootstrap failures are defects, not permission to relax the trusted-source rule.
 
 Revision 02 is the single bounded correction to revision 01 / candidate `15ca43c`:
 it closes the helper's root-ACL failure observation gap without authorizing any
