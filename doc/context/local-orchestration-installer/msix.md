@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | Artifact ID / kind | `CTX-LOCAL-INSTALLER-MSIX-20260905-01` / `SHARED_CONTEXT` |
-| Revision / state | `01` / `DRAFT / OWNER_LIFECYCLE_DECISION_PENDING` |
+| Revision / state | `02` / `OWNER_SEMANTICS_CONFIRMED / CAPABILITY_RESEARCH_CONTEXT` |
 | Requirement / architecture | `PRD-20260905-050` / `CHG-20260905-050` / `ADR-20260905-038` |
 | Intake scope | `DELTA`: Windows installer format, package/state ownership, host activation, upgrade and removal; existing control-plane product goals retained. |
 | Baseline reference | `117346cf44fbbc75a08aca5677f223c38df0fb00`; [legacy Context](main.md) is historical discovery/implementation evidence, not current Inno dispatch authority. |
@@ -16,8 +16,10 @@ dependencies. Package state is not host readiness, and neither is provider login
 or asynchronous event delivery. Shared governance and runtime boundaries are not
 reimplemented in an installer.
 
-The owner selected MSIX. The exact user-facing complete-removal contract is pending;
-this draft does not seal a relaxed replacement for the old one-click cleanup promise.
+The owner selected MSIX and accepted Johnny's one-click complete-removal entry point.
+Direct Windows removal promises only its measured package scope, not external host
+cleanup. The distinction is visible before activation and in removal guidance.
+Technical capability proof and package-effect ticket admission remain separate.
 
 ## Interaction slices and data pipeline
 
@@ -27,8 +29,8 @@ this draft does not seal a relaxed replacement for the old one-click cleanup pro
 | Activate selected host | Canonical selected host + package/installation identity + supported lifecycle proof → host adapter effect + verified ownership ledger → exact active/blocked/partial result. | Codex/Claude owns registration mechanism; Johnny owns only proved entries, not global config. |
 | Runtime status | Typed metadata request → bootstrap-admitted state + bounded Router delegation → finite capability/status projection. | Metadata-only Johnny state; no raw prompts, credentials or target contents. Missing bridge does not block synchronous work. |
 | Upgrade | Exact old/new package identity + state schema/ownership check → Windows package update and separately controlled state migration → package/state/host readback. | No in-place writes to package; interrupted migration retains recovery and blocks use. |
-| Complete removal | Owner-selected entry point + owned process/state/host proofs → ordered cleanup and package removal → independent absence result. | Final semantics and self-removal readback are pending. Never infer foreign-state ownership by name. |
-| Direct Windows removal | Windows package removal → fresh package and external-state observations → narrow truthful status. | Does not presume arbitrary host cleanup scripts ran. Complete-cleanup guarantee needs owner decision/capability proof. |
+| Complete removal | Johnny one-click entry + owned process/state/host proofs → stop owned work, host cleanup/readback, state settlement, package removal → independent absence result. | Owner accepted semantics; self-removal/readback primitive remains to be proved. Never infer foreign-state ownership by name. |
+| Direct Windows removal | Windows package removal → fresh package observation and explicit external-cleanup limitation → narrow truthful status. | Owner accepted the narrower guarantee; no promise that arbitrary host cleanup scripts ran. |
 
 ## Composition map
 
@@ -38,9 +40,10 @@ this draft does not seal a relaxed replacement for the old one-click cleanup pro
 | Johnny desktop activation/removal, one operation | Package readback, host lifecycle, owned-state ledger, bounded process/clock, result projection. | Fake package/host/process ports for finite fault tests; real disposable Windows user for lifecycle claims. |
 | Bootstrap/runtime, one provisioning/event scope | Existing bootstrap root, Router grant and telemetry factory boundaries. | Existing admitted stores and fake ports; no new scheduler or queue requirement. |
 
-Exact public DTO/port definitions belong to the replacement SPEC/tickets, not an
-unreviewed Context invention. A lifecycle decision that changes these slices
-requires owner convergence before this draft is sealed.
+Exact public DTO/port definitions belong to the replacement SPEC/tickets after the
+capability investigation. No production effect contract is invented to make this
+Context look executable. A change to the accepted user behavior returns to owner;
+technical proof gaps do not themselves authorize a different behavior.
 
 ## Reuse selection and gaps
 
@@ -57,10 +60,11 @@ claim that every host lifecycle is implemented or absent.
 
 ## Unresolved authority and verification
 
-Owner: complete-removal entry point/guarantee. Release: publisher/signing identity,
+Release: publisher/signing identity,
 trusted distribution and company policy. Engineering: pinned SDK/runtime, package
 location/data behavior, host compatibility and self-removal evidence. No target,
-host mutation, signing, trust-store change or installation is authorized by this draft.
+host mutation, signing, trust-store change or installation is authorized by this
+research Context. The accepted removal choice is not an outstanding owner question.
 
 XSS: proposed native package/dialog/CLI surfaces are `XSS_NOT_APPLICABLE`; introducing
 a WebView/HTML/JS surface requires its own source-to-sink review, not inherited exemption.

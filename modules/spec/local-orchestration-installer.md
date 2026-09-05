@@ -3,9 +3,9 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` |
-| Status | `MSIX_TARGET_AUTHORIZED / PACKAGING_REFREEZE_REQUIRED`; format-neutral approved runtime invariants retained |
+| Status | `MSIX_REMOVAL_SEMANTICS_ACCEPTED / CAPABILITY_INVESTIGATION`; format-neutral approved runtime invariants retained |
 | Author | Codex / current `main` worktree / baseline `e04c2be` |
-| Context | `doc/context/local-orchestration-installer/msix.md` (`DRAFT / OWNER_LIFECYCLE_DECISION_PENDING`); `main.md` in that directory remains historical non-MSIX evidence |
+| Context | `doc/context/local-orchestration-installer/msix.md` revision 02 (`OWNER_SEMANTICS_CONFIRMED / CAPABILITY_RESEARCH_CONTEXT`); `main.md` in that directory remains historical non-MSIX evidence |
 | PRD | `PRD-20260905-050` (effective MSIX target); retained format-neutral requirements `PRD-20260808-011`, `PRD-20260812-014`, `PRD-20260813-015`, `PRD-20260814-018` |
 | Requirement change | `CHG-20260905-050` (MSIX refreeze); retained `CHG-20260808-011`; version-one delivery revision `CHG-20260812-014`; project-owned disposable test runtime revision `CHG-20260813-015`; reviewer-owned gateway revision `CHG-20260814-018`; retired mechanism evidence `ARCH-REQ-20260815-003` |
 | Common Context backlink | `CONTEXT.md › 衍生 SPEC 索引` |
@@ -17,9 +17,13 @@ Owner-authorized [PRD/CHG-20260905-050](../../doc/requirements/active/2026/local
 replaces the future `Setup.exe`/Inno installer goal with MSIX. The package-specific
 flows, fixed writable-root assumption, composition, AC-01/02/03/06/07/12 and Inno
 toolchain claims below are preserved historical acceptance, **not dispatch authority**.
-Their replacement lifecycle acceptance is pending the owner removal decision in
+The owner accepted Johnny one-click complete removal and the narrower direct Windows
+removal guarantee. The decision is recorded in
 [ADR-20260905-038](../../doc/adr/ADR-20260905-038-msix-delivery-boundary.md) and the
-[MSIX Context draft](../../doc/context/local-orchestration-installer/msix.md).
+[MSIX Context](../../doc/context/local-orchestration-installer/msix.md). The next action is
+[CAP-MSIX-01](../tickets/local-orchestration-installer/cap-msix-01-package-lifecycle-primitives.md),
+a read-only capability investigation before package-effect implementation, not a
+second request to approve the same removal choice.
 
 Unstarted packaging tickets 04A–04I require refreeze; 04B's Inno scope is superseded.
 Existing installed ZIP/CLI behavior and valid ownership/isolation/recovery invariants

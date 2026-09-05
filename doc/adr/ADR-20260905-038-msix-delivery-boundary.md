@@ -2,9 +2,9 @@
 
 | Field | Value |
 | --- | --- |
-| Date / revision | `2026-09-05 (Asia/Taipei)` / `01` |
-| Status | `MSIX_TARGET_ACCEPTED / LIFECYCLE_PROPOSAL_PENDING_OWNER` |
-| Decision maker | Project owner accepts MSIX; unresolved user-visible removal semantics stay with owner. |
+| Date / revision | `2026-09-05 (Asia/Taipei)` / `02` |
+| Status | `ACCEPTED / JOHNNY_COMPLETE_REMOVAL / CAPABILITY_FIRST` |
+| Decision maker | Project owner; accepted Johnny-managed complete removal and narrower direct Windows removal on 2026-09-05. |
 | Requirement | [PRD/CHG-20260905-050](../requirements/active/2026/local-installer/REQ-20260905-050.md) |
 | Context / SPEC | [MSIX draft](../context/local-orchestration-installer/msix.md) / [installer SPEC](../../modules/spec/local-orchestration-installer.md) |
 | Superseded slice | Inno/paired-EXE packaging in ADR-20260808-003 and ADR-20260812-006; ownership, isolation and immutable release lineage survive. |
@@ -43,7 +43,7 @@ storage consumption remains its composition factory (ADR-20260827-029). Same-lif
 delegation remains runner/queue/receipt-free (ADR-20260823-014). MSIX does not supply a
 missing host external-effect trust boundary (ADR-20260829-035).
 
-## Removal fork — owner decision, not an implementation detail
+## Removal decision — owner accepted Johnny entry point
 
 Ordinary package removal does not establish cleanup of external host registrations.
 The manifest `desktop6:UninstallActions` facility is currently restricted to desktop
@@ -54,17 +54,19 @@ PSF start/end scripts surround application execution, not arbitrary package unin
 they cannot be used as evidence of an uninstall callback.
 [Microsoft: PSF scripts](https://learn.microsoft.com/en-us/windows/msix/psf/run-scripts-with-package-support-framework)
 
-Proposed minimal path: one Johnny entry point first stops owned work, removes and
+Accepted path: one Johnny entry point first stops owned work, removes and
 reads back exact owned host registrations, settles owned state, and only then requests
 package removal. A cleanup failure retains recovery evidence and forbids a false
 complete-removal claim. The final self-removal/result-readback mechanism must itself
 be proved; launching a removal command is not completion. Direct Windows uninstall
-would guarantee only its measured package scope, not complete external cleanup.
+guarantees only its measured package scope, not complete external cleanup. Show this
+difference before host activation and in the removal UI/guidance. The owner expressly
+accepted this tradeoff; do not ask for the same decision again.
 
-Alternative: preserve the old complete-cleanup requirement on Windows uninstall itself.
-Then investigate a supported primitive before implementation. If none exists, return
-to owner with evidence; do not invent a background cleanup service or weaken the
-requirement. Owner has not selected between these alternatives.
+Not selected: requiring Windows uninstall itself to clean every external registration.
+This alternative is historical, not a parallel acceptance path. The accepted Johnny
+path still requires proof of its final self-removal/readback mechanism; no background
+cleanup service or fabricated success is implied by the decision.
 
 ## Signing, runtime and migration
 
@@ -88,7 +90,9 @@ requirement. Owner has not selected between these alternatives.
 
 ## Converged delivery sequence
 
-1. Close owner removal semantics, then freeze the MSIX lifecycle SPEC and bounded tickets.
+1. Owner removal semantics are closed. Perform the bounded CAP-MSIX-01 investigation
+   before freezing any package-effect implementation ticket; do not replace capability
+   evidence with a stack of fake-only installer abstractions.
 2. Prove the smallest real MSIX vertical slice: identity, clean launch, mutable-state
    location, update and both removal routes in a disposable Windows user. Unit fakes
    and XML validation cannot replace Windows evidence.
@@ -99,5 +103,6 @@ requirement. Owner has not selected between these alternatives.
 5. Freeze exact source and artifact identity, qualify signing/distribution, then request
    the separately scoped release/install effect. A cluster completion awaits cross-Agent review.
 
-This ADR changes the target and bounds the design. It is not `GRILL_PASSED`, a sealed
-Context, an approved implementation ticket, a built package or a release assertion.
+The owner product decision is accepted and the removal Grill fork is closed. This
+is not a built package, a proved self-removal primitive, signing authority or a release.
+CAP-MSIX-01 may return a capability gap without reopening the accepted user behavior.

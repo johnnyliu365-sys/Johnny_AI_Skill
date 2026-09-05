@@ -6,9 +6,11 @@
 
 Deliver a Windows per-user **MSIX** local control plane that preserves company projects
 and metadata-only runtime ownership. Package installation and Codex/Claude activation
-are distinct. The complete-removal contract is being re-converged under
-[CHG-20260905-050](../../../doc/requirements/active/2026/local-installer/REQ-20260905-050.md);
-it must not be silently weakened from the existing owned-cleanup requirement.
+are distinct. The owner accepted Johnny one-click complete removal under
+[CHG-20260905-050](../../../doc/requirements/active/2026/local-installer/REQ-20260905-050.md),
+revision 02. Direct Windows removal promises only its measured package scope, not
+external host cleanup. This user-facing choice is closed; actual lifecycle capability
+and package-effect acceptance remain to be proved and frozen.
 
 ### Effective packaging override — 2026-09-05
 
@@ -17,6 +19,12 @@ it must not be silently weakened from the existing owned-cleanup requirement.
 not transfer to a new MSIX candidate. Completed runtime/host evidence remains
 historical evidence and is not reopened merely to rename a package. Replacement
 tickets follow the owner-converged lifecycle SPEC; no Inno build may be dispatched.
+
+## MSIX capability investigation — direct-child index
+
+| Artifact ID / leaf | Kind | Revision | LF SHA-256 | Lifecycle |
+| --- | --- | --- | --- | --- |
+| `CAP-MSIX-01` / [cap-msix-01-package-lifecycle-primitives.md](cap-msix-01-package-lifecycle-primitives.md) | `CAPABILITY_INVESTIGATION` | `01` | `038dbc62aeb51c829c5213eeb02385ecace85ecdc525dcad9e05f09abac5be24` | `RESEARCH_AUTHORIZED / NO_IMPLEMENTATION_OR_EXTERNAL_EFFECT` |
 
 ## Reuse selection
 
@@ -111,7 +119,7 @@ tickets follow the owner-converged lifecycle SPEC; no Inno build may be dispatch
 | [04E disposable Windows environment qualification](04e-disposable-windows-environment-qualification.md) | Qualify a real standard-user Windows lifecycle environment. | `BLOCKED / MSIX_REFREEZE_REQUIRED / NOT_DISPATCHED` | Replacement MSIX qualification contract |
 | [04F Windows release build](04f-windows-release-build.md) | Build exact MSIX identity from a clean reviewed source. | `BLOCKED / MSIX_REFREEZE_REQUIRED / NOT_DISPATCHED` | Pinned SDK/runtime and signing boundary |
 | [04G disposable Windows install verification](04g-disposable-windows-install-verification.md) | Independently prove package installation and selected host activation. | `BLOCKED / MSIX_REFREEZE_REQUIRED / NOT_DISPATCHED` | Replacement lifecycle SPEC and exact artifact |
-| [04H disposable Windows uninstall verification](04h-disposable-windows-uninstall-verification.md) | Prove owner-selected complete removal and direct Windows removal semantics. | `BLOCKED / MSIX_REFREEZE_REQUIRED / NOT_DISPATCHED` | Owner removal decision and lifecycle SPEC |
+| [04H disposable Windows uninstall verification](04h-disposable-windows-uninstall-verification.md) | Prove owner-selected complete removal and direct Windows removal semantics. | `BLOCKED / MSIX_REFREEZE_REQUIRED / NOT_DISPATCHED` | Removal choice accepted; capability proof and replacement lifecycle SPEC pending |
 | [04I version-one artifact freeze](04i-version-one-artifact-freeze.md) | Bind source, MSIX identity, toolchain, signature and lifecycle evidence. | `BLOCKED / MSIX_REFREEZE_REQUIRED / NOT_DISPATCHED` | New install/upgrade/removal evidence |
 
 ## Roles and allocation

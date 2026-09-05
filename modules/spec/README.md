@@ -8,7 +8,7 @@
 | --- | --- | --- |
 | Receipt-bound role supervision | [`receipt-bound-role-supervision.md`](receipt-bound-role-supervision.md) | `APPROVED / REVIEWER_DECOMPOSITION_AUTHORIZED`；reviewer 可拆票／開票，仍不得自行 dispatch 或啟用 heartbeat。 |
 | Environment capability bootstrap | [`environment-capability-bootstrap.md`](environment-capability-bootstrap.md) | `APPROVED / REVIEWER_DECOMPOSITION_AUTHORIZED`；reviewer 可拆票／開票，仍不得自行 dispatch、安裝工具或執行外部 effect。 |
-| Local orchestration installer | [`local-orchestration-installer.md`](local-orchestration-installer.md) | `MSIX_TARGET_AUTHORIZED / PACKAGING_REFREEZE_REQUIRED`；Inno 目標已被取代，MSIX 完整移除語意待 owner 決定。 |
+| Local orchestration installer | [`local-orchestration-installer.md`](local-orchestration-installer.md) | `MSIX_REMOVAL_SEMANTICS_ACCEPTED / CAPABILITY_INVESTIGATION`；Inno 目標已被取代，owner 已接受 Johnny 完整移除；CAP-MSIX-01 先證明能力，再凍結 package-effect 合約。 |
 
 ## 已核准隔離衝突修訂
 
