@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| Kind / revision / state | `OPERATIONAL_ENVIRONMENT_ACTION` / `02` / `OWNER_AUTHORIZED / CORRECTION_REVIEW_REQUIRED` |
+| Kind / revision / state | `OPERATIONAL_ENVIRONMENT_ACTION` / `03` / `BLOCKED / CONVERGENCE_REVIEW_REQUIRED / NON_EXECUTABLE` |
 | Authority | Owner's 2026-09-05 authorization to create a disposable Windows test VM; test-certificate trust only inside that VM, never on the working host. |
 | Requirement / findings | CHG-20260905-050 revision 02; [CAP-MSIX-01 review](../../../doc/reviews/local-orchestration-installer/cap-msix-01-capability-review.md) at `5d7906e5f8cb5dd64ccf94a2d0c05fa11477133e` |
 | Scope / owner | Environment provisioning only, current-session operator/reviewer. No product implementation, host plugin registration, push or release. |
@@ -71,6 +71,13 @@ after review; same-lifetime wait requires no runner/receipt/descriptor. The envi
 ID/result evidence is an effect binding, not a fabricated runtime dispatch receipt.
 
 ## Exact elevated native-command recipe
+
+**Historical rejected recipe; DO NOT EXECUTE.** The correction review at
+`7e249dcfc5d722c79f6c1a4f3a1109229ccc4484` found an unresolved module-resolution
+privilege boundary. [Convergence review](../../../doc/reviews/local-orchestration-installer/env-msix-01-provisioning-review.md)
+records the finding and the next owner decision. Revision 03 changes only lifecycle
+metadata and this warning; the reviewed PowerShell block remains byte-for-byte
+unchanged. Existing VM authorization does not override the bounded review limit.
 
 This is an owner-authorized operational command record, not a new installer script,
 production API or permission to create a privileged helper/service. The operator
