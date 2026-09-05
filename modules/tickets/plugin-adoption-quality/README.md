@@ -6,9 +6,9 @@ they do not load both clusters or copy ticket bodies into dispatch prompts.
 | Child ID / leaf | Kind | Revision | SHA-256 | Lifecycle | State |
 | --- | --- | --- | --- | --- | --- |
 | [wa-01-activation-host-gate-contracts](wa-01-activation-host-gate-contracts.md) | `IMPLEMENTATION_TICKET` | `05` | `32ac8d730b49d390386dfd2f5e2171016e9808aa2f2e74b056d4bcb9a9f416f5` | `CLOSED` | `APPROVED / AUTHORITY_INTEGRATED` |
-| [uix-01-codesign-contracts-lifecycle](uix-01-codesign-contracts-lifecycle.md) | `IMPLEMENTATION_TICKET` | `03` | `d2ba0ef2d19102191b0b2f164c6f1c4a681553acadccb794e04712e50a3365da` | `CLOSED` | `APPROVED / AUTHORITY_INTEGRATED` |
+| [uix-01-codesign-contracts-lifecycle](uix-01-codesign-contracts-lifecycle.md) | `IMPLEMENTATION_TICKET` | `03` | `ea6999d898a857f744a925f1f400a18b9a6f1177f236653ddce27e96efe075a5` | `CLOSED` | `APPROVED / AUTHORITY_INTEGRATED` |
 | [wa-02-project-activation-host-effect-adapter](wa-02-project-activation-host-effect-adapter.md) | `IMPLEMENTATION_TICKET` | `01` | `95fce94a98fb510432d19c3d6d7daaebdc9c4ee14dfbc04ba3e9de2bf2b624e0` | `ACTIVE` | `CAPABILITY_BLOCKED / NON_DISPATCHABLE` |
-| [uix-02-reference-renderer-evidence-admission](uix-02-reference-renderer-evidence-admission.md) | `IMPLEMENTATION_TICKET` | `02` | `8de151e0600d669e8031ca49a2195abaeaf46c36f66369b1783252c2a9bd46d9` | `ACTIVE` | `APPROVED / DISPATCHABLE` |
+| [uix-02-reference-renderer-evidence-admission](uix-02-reference-renderer-evidence-admission.md) | `IMPLEMENTATION_TICKET` | `16` | `78e50dfea737783af1bbd96584ae9fce979ce2db40b2a886d58e86cf47ec7d8e` | `ACTIVE` | `APPROVED / LOCAL_INTEGRATION_PENDING` |
 
 The architecture approval at `d684f1479573475c82cad7d4a4abecc60e9665e3` authorized opening
 these first tickets. The project owner approved their exact revision-01 candidate at
@@ -32,4 +32,29 @@ upstream blocker: no committed independently protected host external-effect gate
 so it cannot dispatch or fall back to the legacy check-then-replace writer. UIX-02 is a pure
 renderer-evidence admission ticket whose exact revision-01 candidate was approved by the owner on
 2026-08-31; revision 02 records that authority and permits one same-lifetime implementation lane.
-It grants no renderer, provider, target-write or publication effect.
+Its first candidate is not integrated: review proved the frozen evidence DTOs cannot express UIR6
+request/content binding, so revision 03 recorded `TICKET_DEFECT`. Revision 04 proposed closure
+revision 02 with an explicit evidence binding, complete truth table, bounded Unicode and canonical
+field names. Revision 05 records exact owner approval and permits one additive same-ticket
+correction. Revision 06 records that closure revision 02's initial candidate still accepts unsafe
+opaque values and lacks reproducible named baseline-red evidence; its one additive correction is
+now exhausted. Revision 07 records that the correction still has both defect classes and routes to
+control-plane convergence; no third correction is dispatchable. It grants no renderer, provider,
+target-write or publication effect. Revision 08 proposed closure revision 03; the project owner
+approved that exact leaf and digest on 2026-09-01. Revision 09 records revision 03 as the effective
+closure, while keeping implementation dispatch, a third correction, candidate integration, push,
+publication and every external effect unauthorized. An adversarial audit then proved revision 03's
+`L* / M* / N*` allowlist contradicts its zero-width rejection claim. Revision 10 records the
+resulting `TICKET_DEFECT` and proposes closure revision 04 with an `L* / N*`-only grammar. The
+initial proposal audit found a stale operative UIR1 rule and length-masked fixtures; revision 11
+corrected both. The project owner approved that exact leaf and digest on 2026-09-01; revision 12
+records closure revision 04 as effective while leaving implementation, a third correction,
+integration, push, publication and every external effect unauthorized.
+
+Revision 13 records the owner's 2026-09-05 execution authority: reuse the existing Luna/xhigh
+owner and worktree for closure revision 04, then independent adversarial findings and current-session
+review. Candidate integration, push, publication and external effects remain unauthorized.
+
+Revision 14 records the completed closure-04 initial/correction review: candidate `b419954b`
+remains unintegrated with three remaining evidence-defect families. The existing allocation is
+preserved but further correction is non-dispatchable pending control-plane convergence.

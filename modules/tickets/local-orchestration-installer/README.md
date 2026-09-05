@@ -4,7 +4,19 @@
 
 ## Delivery objective
 
-Deliver a Windows per-user local control plane that owns every installed component, preserves company projects, retains only metadata-only runtime state, and removes its owned payload plus receipt-proven Agent UI registrations with one normal uninstaller invocation.
+Deliver a Windows per-user **MSIX** local control plane that preserves company projects
+and metadata-only runtime ownership. Package installation and Codex/Claude activation
+are distinct. The complete-removal contract is being re-converged under
+[CHG-20260905-050](../../../doc/requirements/active/2026/local-installer/REQ-20260905-050.md);
+it must not be silently weakened from the existing owned-cleanup requirement.
+
+### Effective packaging override — 2026-09-05
+
+04B is `SUPERSEDED / INNO_TARGET_RETIRED / NON_DISPATCHABLE`. Unstarted 04A and
+04C–04I are `BLOCKED / MSIX_REFREEZE_REQUIRED / NOT_DISPATCHED`. Old exact-source/toolchain/staging authority does
+not transfer to a new MSIX candidate. Completed runtime/host evidence remains
+historical evidence and is not reopened merely to rename a package. Replacement
+tickets follow the owner-converged lifecycle SPEC; no Inno build may be dispatched.
 
 ## Reuse selection
 
@@ -92,15 +104,15 @@ Deliver a Windows per-user local control plane that owns every installed compone
 | [06G3 reviewer-gateway composition](06g3-reviewer-gateway-composition.md) | Compose pure admission with one injected reviewer effect port and no implementer port. | `PLANNED / DEPENDENCY_WAIT / NOT_DISPATCHED` | 06G1/06G2 integrated |
 | [06G4 role-isolation acceptance](06g4-role-isolation-acceptance.md) | Disposable effective-session, reviewer-positive, implementer-negative, removal and isolation acceptance. | `PLANNED / DEPENDENCY_WAIT / NOT_DISPATCHED` | 06G0-06G3 integrated |
 | [04 Windows package parent](04-windows-setup-and-uninstaller-package.md) | Historical combined package outcome; implementation is split by acceptance responsibility. | `DECOMPOSED / NON_DISPATCHABLE` — `CHG-20260812-014` | Replaced by serial 04A–04I |
-| [04A payload manifest contract](04a-payload-manifest-contract.md) | Pure typed owned-payload paths and digest identity. | `PLANNED / DEPENDENCY_WAIT / NOT_DISPATCHED` | Tickets 05A–05C and 06G0P–06G4 resolved, approved and integrated |
-| [04B Inno installer build source](04b-inno-installer-build-source.md) | Implement bounded `.iss`/build source using 04A; disposable compile only. | `PLANNED / DEPENDENCY_WAIT / NOT_DISPATCHED` | 04A approved and integrated |
-| [04C version-one candidate freeze](04c-version-one-candidate-freeze.md) | Freeze one exact clean complete-source candidate containing 04A/04B. | `PLANNED / DEPENDENCY_WAIT / NOT_DISPATCHED` | 04A/04B approved and integrated |
-| [04D staging warm backup](04d-staging-warm-backup.md) | Create/fast-forward remote `staging` to exact candidate and prove SHA readback. | `PLANNED / DEPENDENCY_WAIT / NOT_DISPATCHED` | 04C approved; owner authority bounded to this future exact push |
-| [04E disposable Windows environment qualification](04e-disposable-windows-environment-qualification.md) | Prove standard-user Windows isolation before product effects. | `PLANNED / DEPENDENCY_WAIT / NOT_DISPATCHED` | 04D staging readback approved; no product install |
-| [04F Windows release build](04f-windows-release-build.md) | Build exact setup/uninstaller from clean staging export without installing. | `PLANNED / DEPENDENCY_WAIT / NOT_DISPATCHED` | 04D and 04E approved |
-| [04G disposable Windows install verification](04g-disposable-windows-install-verification.md) | Prove exact per-user install in a fresh qualified Windows boundary. | `PLANNED / DEPENDENCY_WAIT / NOT_DISPATCHED` | 04E provider and 04F artifacts approved |
-| [04H disposable Windows uninstall verification](04h-disposable-windows-uninstall-verification.md) | Prove one-click owned removal, replay absence and foreign/target preservation. | `PLANNED / DEPENDENCY_WAIT / NOT_DISPATCHED` | 04G approved; same 04E/04F inputs |
-| [04I version-one artifact freeze](04i-version-one-artifact-freeze.md) | Record immutable source/toolchain/manifest/artifact and review identity. | `PLANNED / DEPENDENCY_WAIT / NOT_DISPATCHED` | 04G and 04H approved |
+| [04A payload manifest contract](04a-payload-manifest-contract.md) | Reassess existing manifest reuse against MSIX ownership. | `BLOCKED / MSIX_REFREEZE_REQUIRED / NOT_DISPATCHED` | Replacement MSIX SPEC; old dependency list does not authorize dispatch |
+| [04B Inno installer build source](04b-inno-installer-build-source.md) | Historical unstarted Inno build scope. | `SUPERSEDED / INNO_TARGET_RETIRED / NON_DISPATCHABLE` | `CHG-20260905-050` |
+| [04C version-one candidate freeze](04c-version-one-candidate-freeze.md) | Freeze exact complete MSIX source after replacement source acceptance. | `BLOCKED / MSIX_REFREEZE_REQUIRED / NOT_DISPATCHED` | Replacement MSIX source tickets |
+| [04D staging warm backup](04d-staging-warm-backup.md) | Exact candidate staging and direct SHA readback. | `BLOCKED / MSIX_REFREEZE_REQUIRED / NOT_DISPATCHED` | New exact candidate and scoped push authority |
+| [04E disposable Windows environment qualification](04e-disposable-windows-environment-qualification.md) | Qualify a real standard-user Windows lifecycle environment. | `BLOCKED / MSIX_REFREEZE_REQUIRED / NOT_DISPATCHED` | Replacement MSIX qualification contract |
+| [04F Windows release build](04f-windows-release-build.md) | Build exact MSIX identity from a clean reviewed source. | `BLOCKED / MSIX_REFREEZE_REQUIRED / NOT_DISPATCHED` | Pinned SDK/runtime and signing boundary |
+| [04G disposable Windows install verification](04g-disposable-windows-install-verification.md) | Independently prove package installation and selected host activation. | `BLOCKED / MSIX_REFREEZE_REQUIRED / NOT_DISPATCHED` | Replacement lifecycle SPEC and exact artifact |
+| [04H disposable Windows uninstall verification](04h-disposable-windows-uninstall-verification.md) | Prove owner-selected complete removal and direct Windows removal semantics. | `BLOCKED / MSIX_REFREEZE_REQUIRED / NOT_DISPATCHED` | Owner removal decision and lifecycle SPEC |
+| [04I version-one artifact freeze](04i-version-one-artifact-freeze.md) | Bind source, MSIX identity, toolchain, signature and lifecycle evidence. | `BLOCKED / MSIX_REFREEZE_REQUIRED / NOT_DISPATCHED` | New install/upgrade/removal evidence |
 
 ## Roles and allocation
 

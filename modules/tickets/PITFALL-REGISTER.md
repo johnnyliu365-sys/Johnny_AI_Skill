@@ -3,7 +3,7 @@
 > 本專案實際踩過、查證過、修掉的雷，供後續 debugger 與稽核人員查閱。
 > 每一條都有三件事：**雷是什麼、證據在哪、修法與防回歸在哪**。
 > 深入細節一律以工單為準（每條附工單連結）；本文件是索引，不是替代品。
-> 最後更新：2026-08-20（0.4.3 發行前統整）。
+> 最後更新：2026-09-01（UIX-02 convergence 與 registry digest 斷邊）。
 
 ---
 
@@ -268,6 +268,59 @@
   所以整合前的驗證至少要有一次跑在 `git clone` 出來的形狀上——
   worktree 不算，它與 clone 的差異不只是 `.git`。
 
+### C14. Closure 凍結了不可判定條款，baseline-red 在具名 baseline 無法 collect
+
+- **雷**：UIX-02 closure revision 02 同時凍結兩個結構性不可收斂條款：UIR1 要求拒絕
+  「raw credential／prompt」卻只提供語意 denylist，沒有可執行的完整謂詞；修正只能
+  追著新字串跑。另一條要求新 UIR1／2／4／6 cell 在 `faf3d05e...` 具名轉紅，但那些
+  cell 依賴該 baseline 不存在的 `ReferenceEvidenceBinding`，所以只會停在 collection。
+- **證據**：[UIX-02 review](../../doc/reviews/plugin-adoption-quality/uix-02-reference-renderer-evidence-admission-code-review.md)
+  revision 05；兩輪候選與獨立 reviewer 重現均保留。這是 UIX-02 第二次
+  `TICKET_DEFECT` 循環，implementer 不是瓶頸。
+- **修法**：owner 已核准 closure revision 03，以 Unicode General Category 正向 grammar 取代
+  denylist，並把不可達的 baseline-red 條款標為 `SUPERSEDED`；替代證據是逐一綁 exact
+  candidate SHA 的 reviewer reverse mutation、具名命令與 unreduced red/green 輸出。
+- **防回歸**：closure 凍結前必須指出判定每條 universal rule 的可執行謂詞；任何
+  baseline-red 要求都必須先證明具名測試能在具名 baseline 完成 collection。zero red
+  是 finding，不是 pass。
+- **狀態**：revision 03 曾由 owner 於 2026-09-01 核准，後續對抗性審查另發現 C15
+  類缺陷而 blocked；owner 已精確核准 revision 04，revision 12 完成 authority
+  writeback，但未授權第三次 correction 或 dispatch。建議自 UIX-03 起把上述 closure
+  preflight 納入 control-plane；此建議仍待 owner 決定，未修改治理 reference。
+
+### C15. Unicode category allowlist 與文字安全宣稱互相矛盾
+
+- **雷**：UIX-02 closure revision 03 把 `L* / M* / N*` 宣告為完整正向 allowlist，卻又
+  宣稱 zero-width 字元一律拒絕。`U+034F COMBINING GRAPHEME JOINER` 與 `U+FE0F
+  VARIATION SELECTOR-16` 都是 `Mn`；依可執行 predicate 會被接受，依敘述條款卻應拒絕。
+- **證據**：[UIX-02 review](../../doc/reviews/plugin-adoption-quality/uix-02-reference-renderer-evidence-admission-code-review.md)
+  revision 06；Terra/xhigh 唯讀 helper 發現後，reviewer 以 Python 3.11 `unicodedata`
+  獨立重現，docs candidate `7abe2a997e2e68c7e3adb97442d2324c380d4094` 因此 blocked。
+- **修法**：closure revision 04 提案把完整 allowlist 收斂為 `L* / N*`，明確拒絕全部
+  `M*`，並加入 `U+034F`、`U+FE0F`、`U+0301`、decomposed sequence fixtures 與 UIRM6。
+- **防回歸**：任何 Unicode property 宣稱都要用至少一個具名 code point 驗證 category
+  與預期結果；「zero-width」「control」「format」「mark」不可當成同一集合。正向
+  grammar 與自然語言摘要必須指向同一個可執行集合。
+- **狀態**：owner 已精確核准 closure revision 04；revision 12 完成 authority writeback，
+  但未授權第三次 correction 或 dispatch，未整合、未 push。
+
+### C16. 負向 fixture 被更早的 validator 擋住，反向突變仍可假綠
+
+- **雷**：closure revision 04 初稿用單一 `U+034F`、`U+FE0F`、`U+0301` 與兩碼位
+  decomposed sequence 當 `M*` 拒絕 fixture，但同一 grammar 先要求至少三個 code point。
+  即使反向突變放行 `M*`，這些值仍會因長度失敗，UIRM6 無法證明 category gate。
+- **證據**：[UIX-02 review](../../doc/reviews/plugin-adoption-quality/uix-02-reference-renderer-evidence-admission-code-review.md)
+  revision 07；docs proposal candidate `f910b8db8c3fa28e4ce07b46317d87e383f771d0`
+  的 Terra/xhigh helper finding 由 reviewer 以 Python 3.11 獨立重現。
+- **修法**：fixture 改為長度有效的 `U+034F × 3`、`U+FE0F × 3`、
+  `e + U+0301 + e`，並加 `éab` 正向控制；UIRM6 明確把 predicate 由 `L* / N*`
+  放寬為 `L* / M* / N*`，前兩個具名 rejection assertion 必須轉紅。
+- **防回歸**：負向 fixture 必須先滿足所有不在本次突變範圍內的前置 gate；每個紅燈
+  要斷言具名失敗原因。只看到「仍拒絕」不能證明被測 gate，屬 overlap-masking。
+- **狀態**：document revision 11 已修正提案；exact candidate
+  `04b4bf750972976c04ac18ce54c286b147092de0` 的唯讀 correction review 為
+  `NO_FINDINGS`。owner 已精確核准 closure revision 04；未 dispatch、未整合、未 push。
+
 ## D. 發行工程類
 
 ### D1. Wrapper 的 digest pin 手寫、無人校驗
@@ -353,6 +406,23 @@
 - **發現方式**：審閱者反向突變。實作者的 5 組突變全部打在宣告上，
   沒有一組打在「宣告與釘子之間那條不存在的線」——這正是 governance 17
   要求審閱者從實作者沒走的門進去的理由。
+
+### D8. Registry digest 在 leaf 最後一個 byte 寫定前先算
+
+- **雷**：UIX-01 與 UIX-02 的 registry digest 都在 leaf 尚未完成最後修改時先算，
+  同一 commit 後續再改 leaf，於是索引保留舊 digest；UIX-01 自 `1d2be10` 起斷邊，
+  UIX-02 自 `be463ae` 起斷邊。
+- **證據**：LF-normalized SHA-256 實算分別為
+  `ea6999d898a857f744a925f1f400a18b9a6f1177f236653ddce27e96efe075a5` 與
+  revision-07 的 `00770859f7bdd00a43395ab7085784ffb3aa2c747e59456e8019fd6115e71d6b`，
+  均與當時 registry 值不符；WA-01／WA-02 兩條已知邊確認同一 LF-normalized 慣例。
+- **修法**：registry digest 必須在 leaf 最後一個 byte 寫定後才計算；同一 commit 內
+  更新索引後，commit 前再次以整檔 LF-normalized bytes 重算並與登記值核對。
+- **防回歸**：任何 leaf＋registry 同 commit 的流程，把「最後寫 leaf → 重算 digest →
+  更新 registry → 再重算核對」固定為不可插入其他 leaf mutation 的尾端序列。
+- **狀態**：兩條既有斷邊由 commit `69a618691515d64f818d16b3f4a27a900ec1b14c`
+  修復；UIX-02 revision 08 在同一 commit 使用上述尾端序列，最終 digest 另由 registry
+  精確綁定。
 
 ---
 

@@ -37,3 +37,4 @@
 | [ADR-20260829-035-host-external-effect-gateway.md](ADR-20260829-035-host-external-effect-gateway.md) | `ACCEPTED` | 將外部 Git/provider effect 的一次性授權收斂為必須實測的 host 信任邊界；未能證明時誠實 fail closed，且不影響同步派工。 |
 | [ADR-20260829-036-project-scoped-workflow-activation-and-admission.md](ADR-20260829-036-project-scoped-workflow-activation-and-admission.md) | `ACCEPTED` | 將模型預設路由、project host gate、repository 可執行閘門與 host 派遣證據分層，讓文件索引與程式責任可被拒絕，且不虛稱 instruction、hook 或 Git 具有更高權威。 |
 | [ADR-20260829-037-designerless-ui-codesign.md](ADR-20260829-037-designerless-ui-codesign.md) | `ACCEPTED` | 以 owner 選擇與 canonical CONTEXT sealed UI regime 建立無設計師共創流程；Figma、image generation、craft 與 renderer 能力均誠實分類。 |
+| [ADR-20260905-038-msix-delivery-boundary.md](ADR-20260905-038-msix-delivery-boundary.md) | `MSIX_TARGET_ACCEPTED / LIFECYCLE_PROPOSAL_PENDING_OWNER` | 以 MSIX 取代未實作的 Inno 打包目標；分離 package、mutable state 與 host activation 所有權，完整移除語意待 owner 決定。 |

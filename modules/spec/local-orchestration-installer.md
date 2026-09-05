@@ -3,13 +3,30 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` |
-| Status | `APPROVED` |
+| Status | `MSIX_TARGET_AUTHORIZED / PACKAGING_REFREEZE_REQUIRED`; format-neutral approved runtime invariants retained |
 | Author | Codex / current `main` worktree / baseline `e04c2be` |
-| Context | `doc/context/local-orchestration-installer/main.md` |
-| PRD | `PRD-20260808-011`, `PRD-20260812-014`, `PRD-20260813-015`, `PRD-20260814-018` |
-| Requirement change | `CHG-20260808-011`; version-one delivery revision `CHG-20260812-014`; project-owned disposable test runtime revision `CHG-20260813-015`; reviewer-owned gateway revision `CHG-20260814-018`; retired mechanism evidence `ARCH-REQ-20260815-003` |
+| Context | `doc/context/local-orchestration-installer/msix.md` (`DRAFT / OWNER_LIFECYCLE_DECISION_PENDING`); `main.md` in that directory remains historical non-MSIX evidence |
+| PRD | `PRD-20260905-050` (effective MSIX target); retained format-neutral requirements `PRD-20260808-011`, `PRD-20260812-014`, `PRD-20260813-015`, `PRD-20260814-018` |
+| Requirement change | `CHG-20260905-050` (MSIX refreeze); retained `CHG-20260808-011`; version-one delivery revision `CHG-20260812-014`; project-owned disposable test runtime revision `CHG-20260813-015`; reviewer-owned gateway revision `CHG-20260814-018`; retired mechanism evidence `ARCH-REQ-20260815-003` |
 | Common Context backlink | `CONTEXT.md › 衍生 SPEC 索引` |
-| Implementation language | Python 3.11 for typed adapter/runtime contracts; Inno Setup script for the Windows installer package after its toolchain is pinned and verified. |
+| Implementation language | Python 3.11 for typed adapter/runtime contracts; MSIX package manifest/build adapter is the new target. Exact Windows SDK/runtime/signing inputs require qualification. Inno is no longer an implementation target. |
+
+## Effective packaging change — 2026-09-05
+
+Owner-authorized [PRD/CHG-20260905-050](../../doc/requirements/active/2026/local-installer/REQ-20260905-050.md)
+replaces the future `Setup.exe`/Inno installer goal with MSIX. The package-specific
+flows, fixed writable-root assumption, composition, AC-01/02/03/06/07/12 and Inno
+toolchain claims below are preserved historical acceptance, **not dispatch authority**.
+Their replacement lifecycle acceptance is pending the owner removal decision in
+[ADR-20260905-038](../../doc/adr/ADR-20260905-038-msix-delivery-boundary.md) and the
+[MSIX Context draft](../../doc/context/local-orchestration-installer/msix.md).
+
+Unstarted packaging tickets 04A–04I require refreeze; 04B's Inno scope is superseded.
+Existing installed ZIP/CLI behavior and valid ownership/isolation/recovery invariants
+are not deleted or relaxed. Signing, trust changes, build/install and publication
+are not authorized merely by selecting MSIX. No MSIX package has been qualified.
+Historical receipt/gateway requirements below apply only to the cross-lifetime
+mechanism as narrowed by ADR-20260823-014; they do not block synchronous delegation.
 
 ## Problem, goal and non-goals
 
