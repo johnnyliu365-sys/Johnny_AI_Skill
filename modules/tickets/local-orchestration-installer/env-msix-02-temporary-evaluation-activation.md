@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| Kind / revision / state | `OPERATIONAL_ENVIRONMENT_ACTION` / `02` / `AUTHORIZED / CORRECTION_REVIEW_PENDING` |
+| Kind / revision / state | `OPERATIONAL_ENVIRONMENT_ACTION` / `03` / `NETWORK_CONNECTED / OWNER_GUEST_ACTIVATION_REQUIRED` |
 | Owner / baseline | Current-session operator/reviewer; `b140e5bf3d47d0e1a3736dd87340c1e693ff70de`, clean local main; no push. |
 | Authority | Owner's 2026-09-06 explicit authorization to temporarily connect this VM, attempt official evaluation activation, read status/expiry, then disconnect. |
 | Environment / correlation | `ENV-MSIX-01-20260905` / `EVAL-ACTIVATE-20260906-01` |
@@ -11,6 +11,8 @@
 | Exact adapter | `Microsoft:7701B26B-5B5A-42C0-B1E1-36D34DFDAA46\6BF8439D-9DE5-48C6-83E2-A368C38F8648` |
 | Observed existing switch | `c08cb7b8-9b3c-408e-8e30-5e16a3aeb444` / `Default Switch`; never select WSL or an external switch. |
 | Prior provisioning | [ENV-MSIX-01](env-msix-01-disposable-hyper-v.md), revision 06; creation and its correction budget remain closed. This is a distinct owner-authorized operational action, not another provisioning correction. |
+| Reviewed native bytes / admission | Revision-02 block at `1b4e80c0ac3c1cd06948c5f6d569218a9cb45de1`; review admission `d9d4bb2a9456dedf2f5f807f93f3d2e4da8a9511`; this lifecycle revision does not change the native block. |
+| Actual connection | CONNECT exit 0; readback Connected=true; result raw SHA-256 `32e6f14ac7d37a2f3ae989f904e4b84c0dda33f925c6f6b29861a8902dfdfb92`; [native evidence](../../../doc/reviews/local-orchestration-installer/env-msix-02-network-review.md). Guest activation and final DISCONNECT pending. Do not rerun CONNECT. |
 
 ## Observations and scope
 

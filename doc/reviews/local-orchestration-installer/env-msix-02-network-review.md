@@ -2,11 +2,11 @@
 
 | Field | Value |
 | --- | --- |
-| Artifact / kind / revision | `REVIEW-ENV-MSIX-02-20260906` / `OPERATIONAL_READINESS_REVIEW` / `01` |
+| Artifact / kind / revision | `REVIEW-ENV-MSIX-02-20260906` / `OPERATIONAL_READINESS_REVIEW` / `02` |
 | Candidate / baseline | `1b4e80c0ac3c1cd06948c5f6d569218a9cb45de1` / `b140e5bf3d47d0e1a3736dd87340c1e693ff70de` |
 | Ticket / digest | [ENV-MSIX-02](../../../modules/tickets/local-orchestration-installer/env-msix-02-temporary-evaluation-activation.md), revision 02; `80da6236da12b2524b84d602824d5be79e3c84bb35a545269d1fed730feff28a` |
 | Closure / authority | `CLOSURE-ENV-MSIX-02/01`; owner's 2026-09-06 temporary VM activation-network grant |
-| Reviewer conclusion | `APPROVED / FIXED_TERMINALS_ONLY / NATIVE_EFFECT_PENDING` |
+| Reviewer conclusion | `APPROVED / NETWORK_CONNECTED / OWNER_GUEST_ACTIVATION_REQUIRED` |
 | Runtime/bootstrap source | ENV-MSIX-01 marked bootstrap at `f3e77eed6da2fa85b2e115508776f1b3dc311c74`; no provisioning body |
 | Scope | Current-session operator only; no product implementation, host trust, release or push |
 
@@ -301,3 +301,36 @@ uppercase CONNECT composition under the existing owner grant, followed by
 routes to the exact uppercase DISCONNECT with a fresh observation GUID. No live
 network/activation effect has occurred at this admission record.
 
+## Actual CONNECT result after admission
+
+Admission commit `d9d4bb2a9456dedf2f5f807f93f3d2e4da8a9511` was clean before effect.
+The operator submitted the exact reviewed bootstrap and revision-02 action block,
+plus literal `Invoke-LabNetworkAction CONNECT`, through the specified hidden UAC
+Windows PowerShell process. No action string was taken from user/provider input.
+
+```text
+NETWORK_CONNECT_SOURCE_SHA256=7ca2adbbc3cd2d0f48b8dac809152a4e1a76c6b2299681c8b16fef431a11eee5
+NETWORK_CONNECT_EXIT=0
+{
+    "Action":  "CONNECT",
+    "Correlation":  "EVAL-ACTIVATE-20260906-01",
+    "DisconnectAttempt":  "00000000-0000-0000-0000-000000000000",
+    "VMId":  "7701b26b-5b5a-42c0-b1e1-36d34dfdaa46",
+    "Status":  "CONNECTED_OWNER_ACTIVATION_REQUIRED",
+    "Connected":  true,
+    "Failure":  null,
+    "TimestampUtc":  "2026-09-05T20:00:41.5040131Z"
+}
+RESULT_RAW_SHA256=32e6f14ac7d37a2f3ae989f904e4b84c0dda33f925c6f6b29861a8902dfdfb92
+```
+
+Result: `C:\ProgramData\JohnnyActivationNetwork-20260906-connect-01.json`.
+The parent independently read Action, Correlation, VMId, Status, Connected, Failure
+and the raw file hash. This proves the adapter-to-switch connection at that readback,
+not guest Internet reachability, successful activation or MSIX readiness.
+
+Current continuation: `WAIT_FOR_HUMAN / OWNER_GUEST_ACTIVATION_REQUIRED`. The owner
+has the guest-only `/ato` and `/xpr` commands. No guest password is requested or
+captured. On either success or failure, execute the bound uppercase DISCONNECT with
+a fresh observation GUID and read its exact result; do not rerun CONNECT. Networking
+is currently enabled for this temporary window; no final-disconnection claim is made.
