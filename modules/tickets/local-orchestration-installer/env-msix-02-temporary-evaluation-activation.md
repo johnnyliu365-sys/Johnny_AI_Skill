@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| Kind / revision / state | `OPERATIONAL_ENVIRONMENT_ACTION` / `01` / `AUTHORIZED / REVIEW_PENDING` |
+| Kind / revision / state | `OPERATIONAL_ENVIRONMENT_ACTION` / `02` / `AUTHORIZED / CORRECTION_REVIEW_PENDING` |
 | Owner / baseline | Current-session operator/reviewer; `b140e5bf3d47d0e1a3736dd87340c1e693ff70de`, clean local main; no push. |
 | Authority | Owner's 2026-09-06 explicit authorization to temporarily connect this VM, attempt official evaluation activation, read status/expiry, then disconnect. |
 | Environment / correlation | `ENV-MSIX-01-20260905` / `EVAL-ACTIVATE-20260906-01` |
@@ -45,7 +45,10 @@ that only Microsoft activation traffic was technically permitted.
    `f3e77eed6da2fa85b2e115508776f1b3dc311c74`, ENV-MSIX-01 PowerShell block through
    `# ENV_F2_BOOTSTRAP_END`. Never execute its provisioning body. Append the one block
    below and exactly one terminal call `Invoke-LabNetworkAction CONNECT` or
-   `Invoke-LabNetworkAction DISCONNECT`.
+   `Invoke-LabNetworkAction -Action DISCONNECT -DisconnectAttempt <fresh-guid>`.
+   The operator binds the fresh nonempty report GUID before each DISCONNECT and
+   reads only its exact derived result path. This GUID identifies an observation,
+   not a new grant or permission to reconnect.
 3. Use the absolute System32 Windows PowerShell 5.1 executable, normal UAC,
    `-NoLogo -NoProfile -NonInteractive -EncodedCommand`, System32 working directory,
    hidden window. No privileged process loads a writable external script.
@@ -66,6 +69,8 @@ that only Microsoft activation traffic was technically permitted.
    completed action or infer activation from network connectivity.
 7. DISCONNECT is exact-adapter and idempotent, including an already disconnected or
    stopped VM; it does not depend on switch existence or guest authentication.
+   Each invocation has a fresh report GUID, so earlier records remain immutable
+   without blocking a new observation. Reusing a report GUID refuses before effect.
    Read back Connected=false and absent SwitchId. Failure/unknown state is
    RECOVERY_REQUIRED. Package readiness remains unproved after successful activation.
 
@@ -74,7 +79,7 @@ that only Microsoft activation traffic was technically permitted.
 Exact candidate: commit containing this revision and matching direct index digest.
 Closure `CLOSURE-ENV-MSIX-02/01`; requirement `REQUIRED`; helper
 `/root/wa01_adversarial_review`, existing Terra/xhigh, fresh view
-`ENVMSIX02-AUDIT-20260906-01`; all previous helper views closed.
+`ENVMSIX02-AUDIT-20260906-02`; all previous helper views closed.
 `READ_ONLY_INTENT_ONLY`, `NO_EXTERNAL_EFFECT`; no writes, native host commands,
 secret/config access or fan-out. Attack AUTHORIZATION, STATE_TRANSITION,
 ERROR_PARTIAL_FAILURE, CONSISTENCY, IDEMPOTENCY and OBSERVABILITY. Return finite
@@ -84,22 +89,30 @@ in-memory fake cmdlets (never elevated); no VM mutation is used as a negative te
 
 ## Exact native action block
 
-The bootstrap named in closure 2 precedes this block. Only the terminal action varies.
+The bootstrap named in closure 2 precedes this block. Only the terminal action and
+the DISCONNECT observation GUID vary. Revision 02 is the one bounded correction of
+revision 01 / `15eedd726e3fa1d23f80170b6381498ecf4fa2c0`: fresh disconnect carriers
+repair its replay/recovery defect without broadening any network authority.
 The threat anchor is the protected OS and administrator; concurrent malicious
 administrator/system changes are outside this one-shot operational threat model.
 
 ```powershell
 function Invoke-LabNetworkAction {
-    param([Parameter(Mandatory=$true)][ValidateSet('CONNECT','DISCONNECT')][string]$Action)
+    param([Parameter(Mandatory=$true)][ValidateSet('CONNECT','DISCONNECT')][string]$Action,
+          [guid]$DisconnectAttempt = [guid]::Empty)
     $ErrorActionPreference = 'Stop'
     [string]$vmId = '7701b26b-5b5a-42c0-b1e1-36d34dfdaa46'
     [string]$adapterId = 'Microsoft:7701B26B-5B5A-42C0-B1E1-36D34DFDAA46\6BF8439D-9DE5-48C6-83E2-A368C38F8648'
     [guid]$switchId = 'c08cb7b8-9b3c-408e-8e30-5e16a3aeb444'
     [string]$reportPath = 'C:\ProgramData\JohnnyActivationNetwork-20260906-' + $Action.ToLowerInvariant() + '-01.json'
+    if ($Action -ceq 'DISCONNECT') {
+        if ($DisconnectAttempt -eq [guid]::Empty) { throw 'DISCONNECT_ATTEMPT_REQUIRED' }
+        $reportPath = 'C:\ProgramData\JohnnyActivationNetwork-20260906-disconnect-' + $DisconnectAttempt.ToString('D') + '.json'
+    }
     $stream = $null
     [bool]$effectRequested = $false
     [int]$code = 42
-    $result = [ordered]@{Action=$Action;Correlation='EVAL-ACTIVATE-20260906-01';VMId=$vmId;Status='BLOCKED';Connected=$null;Failure=$null;TimestampUtc=[DateTime]::UtcNow.ToString('o')}
+    $result = [ordered]@{Action=$Action;Correlation='EVAL-ACTIVATE-20260906-01';DisconnectAttempt=$DisconnectAttempt.ToString('D');VMId=$vmId;Status='BLOCKED';Connected=$null;Failure=$null;TimestampUtc=[DateTime]::UtcNow.ToString('o')}
     function Get-BoundAdapter {
         $boundVm = Get-VM -Id $vmId
         if ($boundVm.Name -cne 'Johnny-MSIX-Lab-20260905') { throw 'VM_IDENTITY_MISMATCH' }
@@ -172,10 +185,12 @@ function Invoke-LabNetworkAction {
 }
 ```
 
-Exit 44 is a failed output carrier, not proof of network restoration; the operator
-must use the separate DISCONNECT action immediately before returning to owner wait.
-An unavailable disconnect carrier or failure also requires exact native inspection;
-do not replace/overwrite reports, retry CONNECT, or claim completed isolation.
+Exit 44 is a failed output carrier, not proof of network restoration. After CONNECT
+exit 44, use DISCONNECT immediately; after DISCONNECT exit 44, one bounded retry uses
+a fresh DisconnectAttempt GUID. Both retain earlier records and require exact result
+readback. If that single recovery attempt fails, stop other work as RECOVERY_REQUIRED
+and have the owner disconnect the exact adapter through Hyper-V Manager, then inspect
+native state. No automatic loop, report overwrite or CONNECT retry is authorized.
 
 Official references: [evaluation activation](https://www.microsoft.com/en-us/evalcenter/evaluate-windows-11-enterprise),
 [slmgr options](https://learn.microsoft.com/en-us/windows-server/get-started/activation-slmgr-vbs-options),
