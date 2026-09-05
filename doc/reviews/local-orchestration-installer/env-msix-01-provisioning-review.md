@@ -2,13 +2,13 @@
 
 | Field | Value |
 | --- | --- |
-| Artifact ID / kind / revision | `REVIEW-ENV-MSIX-01-20260905` / `OPERATIONAL_READINESS_REVIEW` / `02` |
-| Date / current conclusion | `2026-09-05 (Asia/Taipei)` / `APPROVED / PROVISIONING_ADMITTED`; original convergence history below retained |
+| Artifact ID / kind / revision | `REVIEW-ENV-MSIX-01-20260905` / `OPERATIONAL_READINESS_REVIEW` / `03` |
+| Date / current conclusion | `2026-09-06 (Asia/Taipei)` / `APPROVED / VM_BOOTED_SETUP_PENDING`; original convergence history below retained |
 | Action / closure | [ENV-MSIX-01](../../../modules/tickets/local-orchestration-installer/env-msix-01-disposable-hyper-v.md) / `CLOSURE-ENV-MSIX-01/01` |
 | Initial candidate | `15ca43c29307850b8037ff9c11fcc983b3826fb0` |
 | Correction candidate / leaf digest | `7e249dcfc5d722c79f6c1a4f3a1109229ccc4484` / `4f9936c518cd7a05015f724096e4fd2f3d539530d3524182067ff13709b3340c` |
 | Final reviewer / helper | Current-session operator / reused Terra-xhigh read-only adversarial helper; no implementation lane or delegated verdict |
-| Effect result | VM creation recipe NOT EXECUTED; no test certificate creation/import, host trust change, package operation, host registration, push or release |
+| Effect result | Exact reviewed VM recipe executed once, exit 0 and bound result readback; no test certificate creation/import, host trust change, package operation, host registration, push or release |
 
 ## Original bounded reviews — historical findings and disposition
 
@@ -58,7 +58,7 @@ or certificate store was modified. The exact correction recipe passed a parse-on
 Windows PowerShell 5.1 check (`WINDOWS_POWERSHELL_51_PARSE_PASS`, exit 0); parsing is
 neither execution nor security qualification.
 
-## Media disposition
+## Media disposition before provisioning
 
 The official Windows evaluation ISO download completed independently of VM admission.
 The downloader exited 0 after checking the full file against the size and the
@@ -207,3 +207,59 @@ authority or proof of execution. The original ISO/copy, owned-root, offline isol
 partial-failure and no-host-trust constraints remain mandatory. SQL/tenant/schema/
 production-account and release vectors are outside this VM-only action; guest test
 trust remains authorized but deferred, and MSIX package lifecycle remains UNPROVED.
+
+## Actual owner-authorized provisioning result
+
+After approval commit `6ec58eb04f70f88af2dc1d97236bd8681bffe3da`, the operator
+verified clean HEAD and submitted only the unchanged PowerShell block from
+`f3e77eed6da2fa85b2e115508776f1b3dc311c74` to the literal System32 executable via
+normal UAC, `-NoLogo -NoProfile -NonInteractive -EncodedCommand`, hidden process
+window and System32 working directory. The parent waited for the process; it did
+not create a background automation, retry, feature toggle or second VM.
+
+Independent process return and complete result-file readback:
+
+```text
+ENV_MSIX01_PROVISION_PROCESS_EXIT=0
+{
+    "Environment":  "ENV-MSIX-01-20260905",
+    "Status":  "VM_BOOTED_SETUP_PENDING",
+    "Phase":  "BOOT_READBACK_COMPLETE",
+    "VMId":  "7701b26b-5b5a-42c0-b1e1-36d34dfdaa46",
+    "Failure":  null,
+    "Name":  "Johnny-MSIX-Lab-20260905",
+    "Generation":  2,
+    "MemoryBytes":  4294967296,
+    "Processors":  4,
+    "VhdCapacityBytes":  85899345920,
+    "NetworkConnected":  false,
+    "IntegrationServicesEnabled":  0,
+    "SecureBoot":  "On",
+    "TpmEnabled":  true,
+    "IsoSha256":  "89626da8fdfdd8d03c31bc911bc525145c9e07e3a5f1c299e0645f0ab7e38096"
+}
+```
+
+The actual result is
+`C:\ProgramData\JohnnyMsixLab-ENV-MSIX-01-20260905\provision-result.json`, raw
+SHA-256 `90df7bf5d1d6264411f1f09bd007d4845d4e838fb092548760f6a7826c482726`.
+Its native creation timestamp is `2026-09-05T23:56:12.7970718+08:00`; this report
+was finalized after midnight without renaming the already bound environment/VM.
+The non-elevated parent read it by exact path and checked environment, state, VM ID,
+name, disconnected network, Secure Boot and vTPM against the admitted identity.
+The recipe had freshly queried native resources and Running state before emitting
+that result. This is observed creation/boot evidence, not a guest setup assertion.
+
+The operator launched `C:\Windows\System32\vmconnect.exe` through normal UAC for
+the basic console of `localhost / Johnny-MSIX-Lab-20260905`; process ID 45052 and
+window title `在 localhost 上的 Johnny-MSIX-Lab-20260905 - 虛擬機器連線` were read
+back. Opening a console is not evidence that Windows is installed, an account
+is configured, networking is connected or a package is installable. No credentials
+were requested, captured or persisted by the operator.
+
+Return: `ENVIRONMENT_BOOTSTRAP_RETURN.VM_BOOTED_SETUP_PENDING -> ACTION_COMPLETED`.
+Continuation: `WAIT_FOR_HUMAN / OWNER_GUEST_SETUP_REQUIRED` for Windows installation
+and initial setup in that exact VM. Do not rerun create, change the working host's
+trust, silently connect networking/shared drives or claim MSIX qualification. Guest
+test trust remains deferred until the guest is usable. No cleanup/deletion occurred;
+the media, protected VM root and VHDX are retained for this authorized test environment.

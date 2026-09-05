@@ -2,8 +2,9 @@
 
 | Field | Value |
 | --- | --- |
-| Kind / revision / state | `OPERATIONAL_ENVIRONMENT_ACTION` / `05` / `APPROVED / PROVISIONING_ADMITTED` |
+| Kind / revision / state | `OPERATIONAL_ENVIRONMENT_ACTION` / `06` / `VM_BOOTED_SETUP_PENDING / OWNER_GUEST_SETUP_REQUIRED` |
 | Exact reviewed recipe | `f3e77eed6da2fa85b2e115508776f1b3dc311c74`, revision-04 PowerShell block; later lifecycle revisions do not change those command bytes. |
+| Actual execution | Admission `6ec58eb04f70f88af2dc1d97236bd8681bffe3da`; process exit 0; VM ID `7701b26b-5b5a-42c0-b1e1-36d34dfdaa46`; result raw SHA-256 `90df7bf5d1d6264411f1f09bd007d4845d4e838fb092548760f6a7826c482726`. No create retry. |
 | Authority | Owner's 2026-09-05 authorization to create a disposable Windows test VM; test-certificate trust only inside that VM, never on the working host. |
 | Single-use override | Owner's subsequent exact approval of one additional ENV-F2 correction and review; after approval of that corrected recipe, continue under the original VM authorization. No further automatic correction. |
 | Requirement / findings | CHG-20260905-050 revision 02; [CAP-MSIX-01 review](../../../doc/reviews/local-orchestration-installer/cap-msix-01-capability-review.md) at `5d7906e5f8cb5dd64ccf94a2d0c05fa11477133e` |
@@ -73,6 +74,11 @@ after review; same-lifetime wait requires no runner/receipt/descriptor. The envi
 ID/result evidence is an effect binding, not a fabricated runtime dispatch receipt.
 
 ## Exact elevated native-command recipe
+
+**Already executed once; do not run create again.** The bound VM is Running at the
+recorded boot readback. The next action is owner interaction in its basic VM console
+for Windows installation/setup, not another provisioning attempt. Guest login,
+package tools, test trust and MSIX lifecycle qualification have not run.
 
 Revision 04 is the explicitly authorized single-use ENV-F2 correction. Historical
 rejected bytes remain at `7e249dcfc5d722c79f6c1a4f3a1109229ccc4484` and the unchanged
