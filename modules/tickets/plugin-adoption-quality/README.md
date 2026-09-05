@@ -8,7 +8,7 @@ they do not load both clusters or copy ticket bodies into dispatch prompts.
 | [wa-01-activation-host-gate-contracts](wa-01-activation-host-gate-contracts.md) | `IMPLEMENTATION_TICKET` | `05` | `32ac8d730b49d390386dfd2f5e2171016e9808aa2f2e74b056d4bcb9a9f416f5` | `CLOSED` | `APPROVED / AUTHORITY_INTEGRATED` |
 | [uix-01-codesign-contracts-lifecycle](uix-01-codesign-contracts-lifecycle.md) | `IMPLEMENTATION_TICKET` | `03` | `ea6999d898a857f744a925f1f400a18b9a6f1177f236653ddce27e96efe075a5` | `CLOSED` | `APPROVED / AUTHORITY_INTEGRATED` |
 | [wa-02-project-activation-host-effect-adapter](wa-02-project-activation-host-effect-adapter.md) | `IMPLEMENTATION_TICKET` | `01` | `95fce94a98fb510432d19c3d6d7daaebdc9c4ee14dfbc04ba3e9de2bf2b624e0` | `ACTIVE` | `CAPABILITY_BLOCKED / NON_DISPATCHABLE` |
-| [uix-02-reference-renderer-evidence-admission](uix-02-reference-renderer-evidence-admission.md) | `IMPLEMENTATION_TICKET` | `14` | `b4cfb36a6ce3e850eb8234c6cb15f7511c49eaf92c78ed5dbbc21df8e9a5689b` | `ACTIVE` | `BLOCKED / CONVERGENCE_REVIEW_REQUIRED / NON_DISPATCHABLE` |
+| [uix-02-reference-renderer-evidence-admission](uix-02-reference-renderer-evidence-admission.md) | `IMPLEMENTATION_TICKET` | `15` | `8db778f911585c4ae17c1ac2b46d0941983a112018273c576bb3d9a6875bc464` | `ACTIVE` | `CONVERGENCE_IMPLEMENTATION_AUTHORIZED` |
 
 The architecture approval at `d684f1479573475c82cad7d4a4abecc60e9665e3` authorized opening
 these first tickets. The project owner approved their exact revision-01 candidate at

@@ -5,8 +5,8 @@
 | Artifact ID / kind | `TICKET-PLUGIN-ADOPTION-QUALITY-UIX-02` / `IMPLEMENTATION_TICKET` |
 | SPEC / acceptance source | `SPEC-JOHNNY-DESIGNERLESS-UI-CODESIGN-20260829-01` / AC-1, AC-2 and the renderer/evidence portion of AC-8 |
 | Requirement / Context / ADR | `PRD-20260829-049` / `CHG-20260829-049` / `CTX-PLUGIN-ADOPTION-QUALITY-20260829-02` Revision 01, SHA-256 `dd776e27777b7a4679ce8573c05639e7d7ab24481e654cf431da45c81fb99a26` / `ADR-20260829-037` |
-| State / closure | `BLOCKED / CONVERGENCE_REVIEW_REQUIRED / NON_DISPATCHABLE`; effective `CLOSURE-PLUGIN-ADOPTION-QUALITY-UIX-02`, revision 04 |
-| Document revision | `14` |
+| State / closure | `CONVERGENCE_IMPLEMENTATION_AUTHORIZED`; effective `CLOSURE-PLUGIN-ADOPTION-QUALITY-UIX-02`, revision 05; production contract inherited unchanged from revision 04 |
+| Document revision | `15` |
 | Opening authority | Project owner, 2026-08-31 (Asia/Taipei): authorized opening UIX-02 after UIX-01 closure. Exact ticket approval and implementation dispatch remain separate; no renderer, browser, provider, target write, publication, installation, release or deployment effect is granted. |
 | Approval authority history | Project owner, 2026-08-31 (Asia/Taipei): approved exact ticket candidate/authority commit `4f501ccc4f4ecf943fd3f0f6be89871b7341a4ac`, leaf SHA-256 `22c3d12fd150ffc32273722510a4c725f670d45eb2c9135cca44c9a223cbfd45`. This authorized the initial UIX-02 Luna/xhigh same-lifetime implementation lane; that lane was consumed and grants no current authority. Review, integration, push and every external effect remained separate. |
 | Review outcome | Candidate `faf3d05e07f83a8c7804313b4d3435d01da338b0` is not integrated. Independent audit and reviewer reproduction proved that revision-01 evidence variants cannot express the request/content binding required by UIR6; changing that public ticket contract requires an owner-approved closure revision. Additional frozen-contract findings are recorded in `REVIEW-PLUGIN-ADOPTION-QUALITY-UIX-02` revision 01. |
@@ -22,7 +22,7 @@
 | Closure revision 04 approval | Project owner, 2026-09-01 (Asia/Taipei): approved exact document revision 11 at candidate authority commit `515e2fd81f8b54030c5fd27abbd43cd63d5df3bc`, LF-normalized leaf SHA-256 `348a5c2f12a773b77898616b71ce70947625f1f9fb6db021b0c4ca171fa437fb`. This activates closure revision 04 only. Implementation dispatch, a third correction, candidate integration, push, publication, target effect and provider effect remain separate and unauthorized. |
 | Source baseline / dependency | `1d2be10e8de224909b2c46a4eb6f8ef63eb7265c`; UIX-01 contracts integrated at `2c7b5adafa0a84f7a4219e4287daea38d8d855a5`. |
 | Control owner / reviewer | `ticket-review` semantic profile — Terra/xhigh. |
-| Implementation owner | `implementation-standard` — Luna/xhigh; its closure-04 implementation and single additive correction have returned. No active or further dispatch is authorized pending control-plane convergence. The current-session reviewer retains final review responsibility. |
+| Implementation owner | Reuse `/root/plugin_adoption_implementer`, `implementation-standard` — Luna/xhigh, one same-lifetime lane, no helper. Owner's subsequent 2026-09-05 convergence/completion authority permits the bounded evidence-only revision-05 work below; earlier cycles remain exhausted. The current-session reviewer retains final review responsibility. |
 | Worktree / branch / task | Preserve `.worktrees/plugin-adoption-quality-uix-02`, branch `implement/plugin-adoption-quality-uix-02`, task `/root/plugin_adoption_implementer`; current candidate `b419954bc57777661d7522247ffc26977f668ca7` over initial candidate `18ed02c736812e2e7fab738dc2b8a7036d1da987` and prior baseline `07edaff11bfe981987288a9c1b6becb67c4e69ad`. Historical commits remain immutable and unintegrated. |
 | Delivery / language | `POC / STANDARD`; Python 3.11, strict Pydantic models, complete annotations, `mypy --strict`, deterministic pure tests and independent review. |
 | XSS / effects | `XSS_NOT_APPLICABLE`. This closure admits opaque evidence metadata only. It performs no Browser/WebView/DOM/JavaScript sink, renderer/provider call, filesystem write or target mutation. A later concrete renderer/target adapter must receive separate authority and XSS classification from its actual source/sink graph. |
@@ -354,7 +354,91 @@ mutations. No runner, receipt, queue or cross-lifetime wake is required or claim
 
 ## Ownership and return
 
-### Execution outcome — 2026-09-05
+### Owner-authorized convergence revision 05 — 2026-09-05
+
+After the revision-04 blocked review, the owner answered the request for control-plane convergence:
+"授權，依照我的專案目標，用資深工程/架構師的方式思考、收斂，完成專案". This records
+scope-based execution authority for the three named evidence defects, not a claim that the owner
+pre-approved an unseen commit SHA. The separate MSIX installer requirement does not change this
+ticket's pure renderer-evidence contract or authorize a renderer/provider effect.
+
+Convergence diagnosis: the production reducer/grammar already implements the approved contract.
+The remaining failures are an open-ended name blacklist, an overlapping uniqueness fixture, and
+a validation assertion located in the wrong named cell. Preserve production source byte-for-byte
+from `b419954bc57777661d7522247ffc26977f668ca7`; the revision-05 implementation delta is tests
+and indexed element evidence only. The overall ticket boundary above is retained for subsequent
+review of the complete, still-unintegrated source lineage. No new public API, generic AST scanner,
+runtime security sandbox or production hardening is part of this convergence.
+
+`READY_LOW_MODEL`: one finite acceptance-proof closure at the existing test seam. Splitting its
+three checks into new production features would not produce separate user outcomes; the clarified
+finite policy removes the open-ended inference task. No model elevation is needed. Use baseline
+`b419954bc57777661d7522247ffc26977f668ca7`, the existing branch/worktree, exact revision-15
+ticket/registry commit and fresh `ContextView UIX02R15-20260905`. Prior views remain closed.
+The direct continuation is `TICKET_DISPATCH_REQUIRED -> AUTO_CONTINUE / IMPLEMENT`, bridge
+`NOT_REQUIRED`, followed by `wait_agent`, independent adversarial findings and current-session
+review. This is a new owner-authorized convergence closure, not a third revision-04 correction.
+
+#### Finite revision-05 acceptance additions
+
+1. **UIR7 / closed source grammar.** Factor a test-owned validator over `ast.Module` and invoke it
+   on the actual production module source. Its allowed imports are literal policy data, not a
+   set inferred from the same source being checked. Reject star imports, every import alias,
+   unlisted module/symbol or wrong relative level. The exact import grammar is:
+
+   | Form | Level / module | Exact allowed members |
+   | --- | --- | --- |
+   | import | `unicodedata` | no alias |
+   | from | `0 / __future__` | `annotations` |
+   | from | `0 / enum` | `Enum` |
+   | from | `0 / typing` | `Annotated`, `Literal`, `Self`, `TypeAlias`, `Union` |
+   | from | `0 / pydantic` | `AfterValidator`, `ConfigDict`, `Field`, `TypeAdapter`, `field_validator`, `model_validator` |
+   | from | `1 / contracts` | `RouterModel` |
+   | from | `1 / ui_codesign_contracts` | `ContentDigest`, `ReferenceRendererState` |
+
+   Every loaded double-underscore name and every double-underscore attribute rejects, including
+   `__builtins__`; `__all__` assignment remains allowed. Call targets must be literal members of
+   the following production-specific policy (not an inferred inventory or string-substring test):
+   `AdmittedArtifactDecision`, `AdmittedRenderedDecision`, `AfterValidator`, `ConfigDict`, `Field`,
+   `RendererRefusedDecision`, `RendererWaitDecision`, `TypeAdapter`, `ValueError`,
+   `_evidence_binding_matches_request`, `_evidence_is_duplicate`,
+   `_evidence_matches_requested_state`, `_refuse`, `_target_matches`, `_wait`, `all`, `any`,
+   `field_validator`, `isinstance`, `len`, `model_validator`, `ord`, `type`,
+   `_REQUEST_ADAPTER.validate_python`, `unicodedata.category`, `value.strip`.
+   Reject other call-expression shapes, unlisted targets, starred positional arguments and
+   unpacked keyword arguments. Retain the existing no-Any/no-cast/no-raw-mapping, finite reducer,
+   tagged-no-null and private-export checks. This is a review guard for this source module, not a
+   claim of safety for arbitrary Python or permission to execute untrusted code.
+
+   Required independent rejection fixtures include `typing.Any` through a module alias, aliased
+   `typing.cast`, ordinary imported `Any` under multiple alias spellings, direct and indirect
+   `__builtins__` dynamic imports, an attribute call on a call result, star imports and an unknown
+   callee. Parse hostile snippets only; never execute them. In addition to fixture checks, the
+   reviewer must mutate the production source and run the real UIR7 cell. Exact-original source
+   remains the positive control; AST/hash snapshots alone are not behavioral evidence.
+
+2. **UIR6 / independent observation uniqueness.** Add separate desktop/observation and
+   mobile/observation collisions with otherwise unique screenshot refs and digests, and assert
+   `DUPLICATE_EVIDENCE`. Reverse mutation removes observation membership AND changes expected set
+   size 3 to 2; both named collision assertions must turn red. Keep existing independent
+   screenshot/digest/artifact and all three request-binding cases.
+
+3. **UIR4 / strict acknowledgement at the named seam.** UIR4 itself tests missing acknowledgement
+   and false/null/int/float/string values with all other artifact fields valid, via ordinary
+   direct and nested validators, plus literal-true admitted fallback for UNAVAILABLE and DECLINED.
+   UIR1 retains its strict-construction cases. Giving acknowledgement a default true must turn
+   the named UIR4 missing-field assertion red, satisfying UIRM3 without changing its meaning.
+
+All existing UIR1–UIR7 and UIRM1–UIRM6 obligations remain. For evidence corrections, use the old
+test/source candidate above as the defective baseline; do not invent a faf3d05 baseline-red.
+Record exact mutations, direct named commands and unreduced red/restore/green outputs in a leaf
+under the declared element directory, with its README direct-child revision/digest edge updated
+after the last leaf edit. The reviewer independently repeats the three convergence probes and
+at least one different source mutation, validates every named UIR cell, creates a local candidate
+commit, and may perform guarded local integration only after APPROVED. No remote push, package
+signing, installation, publication or target/provider effect is authorized by this evidence lane.
+
+### Historical revision-04 execution outcome — 2026-09-05
 
 The current-session reviewer and reused read-only adversarial helper completed closure-04 initial
 review and its one additive correction review. Source candidate
