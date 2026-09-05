@@ -2,7 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| Kind / revision / state | `OPERATIONAL_ENVIRONMENT_ACTION` / `04` / `OWNER_OVERRIDE_AUTHORIZED / EXTRA_REVIEW_REQUIRED` |
+| Kind / revision / state | `OPERATIONAL_ENVIRONMENT_ACTION` / `05` / `APPROVED / PROVISIONING_ADMITTED` |
+| Exact reviewed recipe | `f3e77eed6da2fa85b2e115508776f1b3dc311c74`, revision-04 PowerShell block; later lifecycle revisions do not change those command bytes. |
 | Authority | Owner's 2026-09-05 authorization to create a disposable Windows test VM; test-certificate trust only inside that VM, never on the working host. |
 | Single-use override | Owner's subsequent exact approval of one additional ENV-F2 correction and review; after approval of that corrected recipe, continue under the original VM authorization. No further automatic correction. |
 | Requirement / findings | CHG-20260905-050 revision 02; [CAP-MSIX-01 review](../../../doc/reviews/local-orchestration-installer/cap-msix-01-capability-review.md) at `5d7906e5f8cb5dd64ccf94a2d0c05fa11477133e` |
