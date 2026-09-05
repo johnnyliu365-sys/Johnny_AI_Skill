@@ -30,7 +30,7 @@ tickets follow the owner-converged lifecycle SPEC; no Inno build may be dispatch
 
 | Artifact ID / leaf | Kind | Revision | LF SHA-256 | Lifecycle |
 | --- | --- | --- | --- | --- |
-| `ENV-MSIX-01` / [env-msix-01-disposable-hyper-v.md](env-msix-01-disposable-hyper-v.md) | `OPERATIONAL_ENVIRONMENT_ACTION` | `01` | `8775a03d8a88ee3dcbc5dfb9ffd366c236456af285c34665a8a14561f30668ba` | `OWNER_AUTHORIZED / PREFLIGHT_REVIEW_REQUIRED` |
+| `ENV-MSIX-01` / [env-msix-01-disposable-hyper-v.md](env-msix-01-disposable-hyper-v.md) | `OPERATIONAL_ENVIRONMENT_ACTION` | `02` | `4f9936c518cd7a05015f724096e4fd2f3d539530d3524182067ff13709b3340c` | `OWNER_AUTHORIZED / CORRECTION_REVIEW_REQUIRED` |
 
 ## Reuse selection
 

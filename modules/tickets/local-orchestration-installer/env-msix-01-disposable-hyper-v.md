@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| Kind / revision / state | `OPERATIONAL_ENVIRONMENT_ACTION` / `01` / `OWNER_AUTHORIZED / PREFLIGHT_REVIEW_REQUIRED` |
+| Kind / revision / state | `OPERATIONAL_ENVIRONMENT_ACTION` / `02` / `OWNER_AUTHORIZED / CORRECTION_REVIEW_REQUIRED` |
 | Authority | Owner's 2026-09-05 authorization to create a disposable Windows test VM; test-certificate trust only inside that VM, never on the working host. |
 | Requirement / findings | CHG-20260905-050 revision 02; [CAP-MSIX-01 review](../../../doc/reviews/local-orchestration-installer/cap-msix-01-capability-review.md) at `5d7906e5f8cb5dd64ccf94a2d0c05fa11477133e` |
 | Scope / owner | Environment provisioning only, current-session operator/reviewer. No product implementation, host plugin registration, push or release. |
@@ -48,6 +48,10 @@ with a digest derived solely from the download.
 5. A failed partial operation preserves its exact created artifacts and VM ID with
    `RECOVERY_REQUIRED`. No automatic recursive cleanup, fallback, overwrite or retry.
    Retry requires the operator to inspect exact owned state, not run create again.
+   When root ownership cannot be proved, do not write a result into that root: the
+   elevated process returns code `43`, an independent parent-observed recovery
+   carrier binding this exact action/root and the pre-VM root-admission failure.
+   The parent persists that result and performs read-only inspection before retry.
 6. Open the basic VM console only for the owner's installation/account interaction.
    No password, key, plaintext secret or host account is captured in artifacts.
    Test signing/guest trust waits for a qualified guest; this action creates neither.
@@ -85,6 +89,7 @@ Import-Module Hyper-V
 [string]$expectedHash = '89626da8fdfdd8d03c31bc911bc525145c9e07e3a5f1c299e0645f0ab7e38096'
 $vm = $null
 [bool]$ownsRoot = $false
+[bool]$resultWritten = $false
 $result = [ordered]@{Environment='ENV-MSIX-01-20260905';Status='BLOCKED';Phase=$phase;VMId=$null;Failure=$null}
 try {
     Get-VMHost -ErrorAction Stop | Out-Null
@@ -100,6 +105,7 @@ try {
         $acl.AddAccessRule([Security.AccessControl.FileSystemAccessRule]::new([Security.Principal.SecurityIdentifier]::new($sid),'FullControl','ContainerInherit,ObjectInherit','None','Allow'))
     }
     $acl.SetOwner([Security.Principal.SecurityIdentifier]::new('S-1-5-32-544'))
+    $phase = 'ROOT_CREATION_REQUESTED'
     [IO.Directory]::CreateDirectory($root,$acl) | Out-Null
     $phase = 'ROOT_CREATED'
     $actualAcl = Get-Acl -LiteralPath $root
@@ -164,22 +170,41 @@ try {
 } finally {
     $result.Phase = $phase
     if ($ownsRoot) {
-        [string]$report = Join-Path $root 'provision-result.json'
-        if (-not (Test-Path -LiteralPath $report)) {
-            $result | ConvertTo-Json | Set-Content -LiteralPath $report -Encoding UTF8
+        try {
+            [string]$report = Join-Path $root 'provision-result.json'
+            $reportStream = [IO.File]::Open($report,[IO.FileMode]::CreateNew,[IO.FileAccess]::Write,[IO.FileShare]::None)
+            try {
+                [byte[]]$reportBytes = [Text.Encoding]::UTF8.GetBytes(($result | ConvertTo-Json))
+                $reportStream.Write($reportBytes,0,$reportBytes.Length)
+                $reportStream.Flush($true)
+            } finally { $reportStream.Dispose() }
             $reportAcl = Get-Acl -LiteralPath $report
             $reportAcl.AddAccessRule([Security.AccessControl.FileSystemAccessRule]::new([Security.Principal.SecurityIdentifier]::new('S-1-5-32-545'),'Read','Allow'))
             Set-Acl -LiteralPath $report -AclObject $reportAcl
-        }
+            $resultWritten = $true
+        } catch { $resultWritten = $false }
     }
 }
-if ($result.Status -eq 'VM_BOOTED_SETUP_PENDING') { exit 0 } else { exit 42 }
+if (-not $ownsRoot -and $phase -ne 'PREFLIGHT') { exit 43 }
+if ($ownsRoot -and -not $resultWritten) { exit 44 }
+if ($result.Status -eq 'VM_BOOTED_SETUP_PENDING' -and $resultWritten) { exit 0 } else { exit 42 }
 ```
 
 `RECOVERY_REQUIRED` is not authorization to reset/remove another VM or recursively
 delete the host directory. Future cleanup requires the exact VM ID and this action's
 owned-root readback. A normal user may read the sanitized result file through its
 explicit read ACL; VM disks/private guest state remain administrator/SYSTEM-only.
+
+The operator independently captures the elevated process exit code. `43` means
+`RECOVERY_REQUIRED / ROOT_ADMISSION_UNCONFIRMED` before any VM command; `44` means
+`RECOVERY_REQUIRED / RESULT_CARRIER_FAILED` and requires exact root/VM inspection.
+`42` means preflight rejection or a non-success result file; absence of that file
+never becomes success. Only `0` plus the expected result-file readback permits the
+setup-pending claim. No recovery branch writes to a root whose ownership is unproved.
+
+Revision 02 is the single bounded correction to revision 01 / candidate `15ca43c`:
+it closes the helper's root-ACL failure observation gap without authorizing any
+additional VM, certificate, deletion, feature change or automatic cleanup.
 
 [download]: https://www.microsoft.com/en-us/evalcenter/download-windows-11-enterprise
 [hashes]: https://cdn-dynmedia-1.microsoft.com/is/content/microsoftcorp/microsoft/bade/documents/products-and-services/en-us/owned-and-operated/Verify-Download-Win11-Enterprise.pdf
