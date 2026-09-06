@@ -1,308 +1,234 @@
-# Local Orchestration Adapter and Detachable Installer POC Specification
+# Local orchestration installer — MSIX acceptance refreeze
 
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` |
-| Status | `MSIX_REMOVAL_SEMANTICS_ACCEPTED / CAPABILITY_RESEARCH_COMPLETE / PACKAGE_SPEC_REQUIRED`; format-neutral approved runtime invariants retained |
-| Author | Codex / current `main` worktree / baseline `e04c2be` |
-| Context | `doc/context/local-orchestration-installer/msix.md` revision 02 (`OWNER_SEMANTICS_CONFIRMED / CAPABILITY_RESEARCH_CONTEXT`); `main.md` in that directory remains historical non-MSIX evidence |
-| PRD | `PRD-20260905-050` (effective MSIX target); retained format-neutral requirements `PRD-20260808-011`, `PRD-20260812-014`, `PRD-20260813-015`, `PRD-20260814-018` |
-| Requirement change | `CHG-20260905-050` (MSIX refreeze); retained `CHG-20260808-011`; version-one delivery revision `CHG-20260812-014`; project-owned disposable test runtime revision `CHG-20260813-015`; reviewer-owned gateway revision `CHG-20260814-018`; retired mechanism evidence `ARCH-REQ-20260815-003` |
-| Common Context backlink | `CONTEXT.md › 衍生 SPEC 索引` |
-| Implementation language | Python 3.11 for typed adapter/runtime contracts; MSIX package manifest/build adapter is the new target. Exact Windows SDK/runtime/signing inputs require qualification. Inno is no longer an implementation target. |
+| Document revision / state | `04` / `DRAFT / OWNER_EXACT_APPROVAL_PENDING / NON_DISPATCHABLE` |
+| Author / baseline | Codex, current `main`, `d584b7dfc6eaeef943a0a25ff9684879e4021ee5` |
+| Effective requirement | [PRD/CHG-20260905-050](../../doc/requirements/active/2026/local-installer/REQ-20260905-050.md) |
+| Retained requirement lineage | Format-neutral `PRD/CHG-20260808-011`, `20260812-014`, `20260813-015`, `20260814-018`; retired mechanism `ARCH-REQ-20260815-003` is evidence only. |
+| Architecture / Context | [ADR-20260905-038](../../doc/adr/ADR-20260905-038-msix-delivery-boundary.md); [MSIX Context](../../doc/context/local-orchestration-installer/msix.md) revision 03, draft pending owner approval/seal |
+| Discovery evidence | [CAP-MSIX-01 review](../../doc/reviews/local-orchestration-installer/cap-msix-01-capability-review.md), `RESEARCH_COMPLETE / LIFECYCLE_UNPROVED` |
+| Language / stage | Python 3.11, strict typed contracts; Windows x64 POC. XML is package metadata; PowerShell is a bounded Windows effect adapter, not a second domain implementation. |
 
-## Effective packaging change — 2026-09-05
+## 1. Authority and retained history
 
-Owner-authorized [PRD/CHG-20260905-050](../../doc/requirements/active/2026/local-installer/REQ-20260905-050.md)
-replaces the future `Setup.exe`/Inno installer goal with MSIX. The package-specific
-flows, fixed writable-root assumption, composition, AC-01/02/03/06/07/12 and Inno
-toolchain claims below are preserved historical acceptance, **not dispatch authority**.
-The owner accepted Johnny one-click complete removal and the narrower direct Windows
-removal guarantee. The decision is recorded in
-[ADR-20260905-038](../../doc/adr/ADR-20260905-038-msix-delivery-boundary.md) and the
-[MSIX Context](../../doc/context/local-orchestration-installer/msix.md). The next action is
-[CAP-MSIX-01](../tickets/local-orchestration-installer/cap-msix-01-package-lifecycle-primitives.md),
-a read-only capability investigation before package-effect implementation, not a
-second request to approve the same removal choice. Its reviewed findings are now in
-[REVIEW-CAP-MSIX-01-20260905](../../doc/reviews/local-orchestration-installer/cap-msix-01-capability-review.md).
-The inquiry is complete; no package lifecycle is yet qualified. Its concrete next
-probe and named environment/trust requirements inform the replacement acceptance.
+The owner already chose MSIX and Johnny-managed one-click complete removal. Direct
+Windows uninstall has the accepted narrower package-only guarantee. This revision
+does not reopen either decision. It translates the approved delta into proposed
+package acceptance; **the owner has not yet approved revision 04**.
 
-Unstarted packaging tickets 04A–04I require refreeze; 04B's Inno scope is superseded.
-Existing installed ZIP/CLI behavior and valid ownership/isolation/recovery invariants
-are not deleted or relaxed. Signing, trust changes, build/install and publication
-are not authorized merely by selecting MSIX. No MSIX package has been qualified.
-Historical receipt/gateway requirements below apply only to the cross-lifetime
-mechanism as narrowed by ADR-20260823-014; they do not block synchronous delegation.
+This is a revision of the same installer capability, not a new parallel SPEC.
+Inno/`Setup.exe`, its paired uninstaller, and a single writable payload root are
+`SUPERSEDED` packaging assumptions. Their complete text and approval provenance
+remain in this file at baseline `d584b7dfc6eaeef943a0a25ff9684879e4021ee5`.
+Format-neutral AC-04/05/08/11/13 survive. AC-09/10 belong exclusively to the optional
+cross-lifetime receipt-bound route, as narrowed by ADR-20260823-014 and
+ADR-20260824-020; they never gate same-lifetime reviewer-owned delegation.
 
-## Problem, goal and non-goals
+Unstarted tickets 04A–04I remain non-dispatchable until individually refrozen;
+04B's Inno scope is superseded. No old ticket acquires MSIX authority through this
+draft. Finished ZIP/CLI evidence stays valid in its original scope; the existing
+installation remains untouched until a separately qualified migration.
 
-The workflow must be installable as a local, detachable control plane and removable in one normal user action. The normal uninstaller must remove all content installed by this POC and nothing else. A target/company project must neither contain plugin files nor depend on them after installation, during use or after removal.
+Environment observations are prerequisites, not package acceptance:
 
-This POC includes a Windows per-user `Setup.exe` / uninstaller, installer-owned payload and state, metadata-only local orchestration adapter, host lifecycle adapters and a constrained local Git port. It excludes system-wide/admin install, target-project writes, target-project runtime/CI/deployment dependency, forced Agent turns/models, raw content storage, secrets, remote service, MCP server, Temporal server, database, SaaS, auto-push and auto-deploy.
+- ENV-MSIX-01 created the disposable VM; ENV-MSIX-02 closed its temporary activation
+  connection with native disconnected readback. Their exact tickets/reviews own that
+  evidence. Owner screenshots report guest activation, not MSIX execution.
+- No MakeAppx-built candidate, package identity launch, upgrade, complete removal or
+  live MSIX host activation has passed yet.
+- This document permits no working-host installation/certificate trust, guest
+  reconnection, release, push, company account use or production signing. Source
+  approval and an exact external-effect grant are different admissions.
 
-## User flows and acceptance criteria
+## 2. Product, success and exclusions
 
-### Install control plane
+Johnny is a removable local control plane for **both Codex and Claude**, external to
+target repositories. Normal use installs a signed per-user MSIX, chooses supported
+hosts, reads honest readiness, updates, and removes through Johnny's complete-removal
+entry. No target acquires plugin source, runtime, build, CI or deployment dependencies.
 
-1. The user launches `Setup.exe` and chooses one or more supported Agent hosts from those detected by the installer.
-2. The installer validates a typed request, stages payload below its per-user root, validates each selected host lifecycle and writes the owned-install ledger only as one atomic successful installation.
-3. It reports `INSTALLED` with an installation ID and supported-host results only when every selected host has a reversible, installer-owned registration receipt.
+Success is independently observed package, owned state, process and host lifecycle
+closure for one declared installation/current user. It is not a green build, an
+existing CLI install, a stopped runner or a screenshot of a package dialog.
 
-**AC-01 — Per-user ownership.** Installation requires no administrator elevation and creates no file, setting, Git change, symlink, package dependency or configuration inside a target project.
+Excluded: new service/database/queue/gateway framework, forced provider login or
+model selection, automatic asynchronous-wake claims, ARM/multi-architecture bundle,
+Store submission, public App Installer feed, production signing/trust policy, and
+the future all-old-payload-cache elimination major version. MSIX alone proves none
+of those. Packaged full-trust execution is **not an AppContainer sandbox**.
 
-**AC-02 — Host lifecycle gate.** At least one host must be selected. For each selected host, `detect → register → verify → receipt` must succeed. A receipt must bind the installation ID and include the verifiable registration/payload cleanup proof required for `unregister → verify absent`. A missing executable, user auth/policy problem, incompatible lifecycle, foreign registration or missing removal method is `INSTALL_BLOCKED`; the installer cleans only its staging artifacts and issues no success receipt.
+## 3. Observable slices and pipeline
 
-**AC-03 — Ownership model.** The ledger contains only a typed installation ID, package version, relative owned-path manifest/digests, host receipts and metadata-only runtime state references. It rejects absolute, traversal, URI, empty, foreign-root or unverified paths.
+| Slice | Boundary → use case → owned effect → independent projection |
+| --- | --- |
+| Package install | Exact signed artifact/environment → `DeployPackage` → Windows current-user deployment → fresh identity/version/path. `PACKAGE_INSTALLED` does not mean hosts are active. |
+| Host activation | Nonempty canonical host selection + package identity + published capability → `ActivateHosts` → per-host register/readback and ledger → each host active, blocked, recovery-required or explicitly skipped. |
+| Status/runtime | Strict metadata request → `ReadInstallationStatus` → package, ledger, host and process observations → separate dimensions, never one inferred ready flag. Runtime consumes existing Bootstrap/Router/telemetry composition. |
+| Upgrade | Exact old/new identity + schema compatibility + operation lease → `UpgradeInstallation` → Windows update, separately admitted state transition → package/state/host readback or recovery-required. |
+| Johnny removal | Exact installation ownership → `RemoveInstallation` → stop owned work, remove/read back owned hosts, settle owned state, remove exact package → independent final absence. |
+| Direct Windows removal | Windows package lifecycle → package absence only, with external-cleanup limit disclosed before host activation and in removal guidance. |
 
-### Local runtime status and safe continuation
+Inputs validate into closed types before effect. Malformed values are rejected,
+not silently normalized into a different identity. Native text/dialog status must
+expose progress, no-host, skipped, failure, recovery and success without relying on
+color. A formal/branded UI redesign needs a separately approved design handoff.
+No Browser/WebView/HTML/JavaScript/Native Bridge: `XSS_NOT_APPLICABLE`.
 
-1. The installed user invokes the local status/resume entry point, or a verified host adapter supplies a typed metadata event.
-2. The runtime validates the event, claims it at most once, reconstructs a metadata-only Router state and emits a finite status/result.
-3. When a human approval or host capability is needed, it persists `NEEDS_USER_ACTION` / `HALTED`; it does not create a conversation, choose a model, read raw project content or manufacture a decision.
+## 4. Ownership and composition
 
-**AC-04 — Data minimisation and recovery.** Queue/checkpoint/ledger persistence must contain no ContextPacket text, source text, prompt, target project path/URI, Secret, PII or company code. Malformed, replayed, cross-installation, cross-project or unavailable-source events halt before routing. An interrupted valid operation can resume from its owned checkpoint without duplicating an effect.
-
-**AC-05 — Guarded Git isolation.** Only a runtime use case, never the installer, may request Git work. Its injected port must require validated opaque project identity, explicit local project registration, per-project lock, clean expected base and fast-forward-only integration. A target outside the registry, a dirty/stale tree, a non-fast-forward or missing authority halts before any command.
-
-### Remove control plane
-
-1. The user launches the matching uninstaller once.
-2. It verifies ledger identity and each manifest entry, stops only the owned runner, removes only receipt-matched host registrations, then deletes the verified owned root.
-3. It reports `REMOVED`; a second invocation reports `NOT_INSTALLED` without mutation.
-
-**AC-06 — One-click normal removal.** On an intact installation, one uninstaller invocation removes payload, launcher, runner, queue, checkpoint, ledger, logs and every host registration the installer created. The uninstaller must not leave a plugin/runtime component behind.
-
-**AC-07 — Fail-closed removal.** Missing/tampered ledger, foreign receipt, non-descendant manifest path, runner-stop failure or host-unregister failure produces `UNINSTALL_BLOCKED`. It must retain only necessary owned recovery state, not report success and not delete an unknown path or any target-project content.
-
-**AC-08 — Target-project non-interference.** Install, status, failed uninstall and successful uninstall must leave both an existing and an empty representative target repository byte-for-byte and Git-status unchanged.
-
-### Install the reviewer-owned gateway and restricted implementation profile
-
-1. A disposable Codex home first proves a supported transport can bind the
-   exact implementation custom-agent configuration to a session in the exact
-   assigned worktree and read back its effective multi-agent tool absence,
-   without mutating the user's live Codex home.
-2. Installation owns the exact restricted implementation profile and local
-   Johnny gateway registration only after digest and effective host readback.
-   It does not install a second Agent-control route.
-3. The Router grants only the ticket's named reviewer a consumable gateway
-   capability bound to one live pending descriptor. The implementation owner
-   receives no gateway port, credential or alias.
-4. Removal deletes only receipt-matched owned profile/gateway artifacts and
-   verifies their absence while preserving foreign/global host state and target
-   repositories byte-for-byte.
-
-**AC-09 — Sole reviewer gateway and defense in depth.** Johnny's local
-reviewer-owned orchestration gateway is the only permitted create/spawn/fork,
-dispatch/follow-up, steer, wait, interrupt and close effect entrypoint. Every
-effect binds the exact reviewer role/capability, project, ticket, reviewed
-handoff, unconsumed receipt, target implementation owner, worktree, branch,
-expected baseline, action, correlation and live `PendingDispatchDescriptor`.
-The implementation owner receives no gateway port/credential and its effective
-host session separately proves built-in multi-agent/thread-control tools absent.
-Direct tools, MCP aliases, indirect adapters, copied/forged/replayed grants,
-role substitution or any mismatch return `HALT / ROLE_FORBIDDEN` or the exact
-typed binding error before effect. Config text and prompt assertions are not
-proof. If a supported exact-profile launch/binding and effective-session
-readback cannot be proven, support remains `INSTALL_BLOCKED /
-ROLE_ISOLATION_UNPROVEN`.
-
-**AC-10 — Restricted-profile/gateway ownership and removal.** Implementation
-profile files/config entries and local gateway registration/state are
-installer-owned only after exact digest and host readback. Normal uninstall
-removes every receipt-matched owned artifact in one invocation and proves
-absence; foreign/manual profiles, global settings, unrelated gateways and
-target projects remain byte-for-byte/Git-status unchanged. Missing, tampered,
-foreign or replayed receipts block without broad deletion. No network or MCP
-service is introduced by this POC.
-
-### Freeze and preserve the first packaged version
-
-1. After all runtime and host prerequisites are independently approved and integrated, one bounded implementation ticket adds the pure typed payload-manifest contract and a second adds the Inno installer/build source. Each receives its own TDD, implementation, review and guarded integration. Verification may produce only disposable test output; no release artifact is accepted before staging.
-2. After both source tickets are independently approved and integrated, the reviewer freezes one exact clean `main` commit as the complete version-one source candidate.
-3. Before any release build or disposable Windows system integration is dispatched, the reviewer publishes exactly that commit to remote `staging` using branch creation or a verified fast-forward-only update, then independently reads back the same remote SHA.
-4. Disposable-Windows environment qualification, release build, install verification, uninstall/absence verification and final artifact freeze consume that exact source/artifact lineage in separate serial tickets. The release build uses a clean export of the exact remote staging SHA.
-5. After version one is frozen, later feature or architecture work starts from the current `staging` baseline through normal change control; it never rewrites the version-one release record or artifact identity.
-
-**AC-11 — Staging warm-backup gate.** The remote `staging` ref must equal the reviewed complete version-one source candidate—including installer build source—before release build/system-integration begins. Dirty or incomplete source, absent authority, unexpected remote history, non-fast-forward update, failed fetch/readback or SHA mismatch returns a typed halt before build or install. The gate never force-pushes, deletes a remote ref, pushes `main`, creates a release or stores build artifacts/secrets in Git.
-
-**AC-12 — Immutable version-one identity.** The version-one release record binds the exact source commit, remote staging SHA at build start, clean-export identity, Inno Setup version, owned payload manifest digest, setup and matching uninstaller digests, disposable install/uninstall evidence and independent review references. It is append-only: a changed source, manifest, toolchain or binary digest is a new candidate/version and cannot overwrite the first record or reuse its success claim.
-
-### Keep disposable repository tests inside their owning plugin checkout
-
-**AC-13 — Project-owned disposable test runtime.** Every 05S1-based repository
-test environment must be an exact marker-bound child of the current plugin
-checkout's `tests/.johnny-runtime/` directory. Each worktree therefore owns a
-separate namespace. No such test may create, scan or clean an
-`%TEMP%/johnny-stage-env-*` root, and no target project may supply or contain
-the runtime root. Successful teardown leaves the exact project runtime
-directory absent; pre-existing/unclaimed residue, unexpected siblings,
-reparse/marker mismatch or incomplete cleanup fails closed without deleting
-the residue. Tracked and ignored Git readback must expose any final residue.
-
-## Domain model, data flow and responsibility boundaries
-
-| Layer | Named types / responsibility | Prohibited responsibility |
+| Owner/root | Owns | Prohibited responsibility |
 | --- | --- | --- |
-| Domain | `InstallationId`, fixed `InstallRoot` (`%LOCALAPPDATA%\\JohnnyAIWorkflow`), `OwnedRelativePath`, `ArtifactDigest`, `HostId`, `HostRegistrationReceipt`, `HostRemovalProof`, `ProjectId`, `InstallerState`, `RuntimeState`, `UninstallResult`, `ReviewerGatewayGrant`, `RestrictedSessionBinding`, `OrchestrationAction`, `GatewayDenial` validate finite states and ownership invariants. | Strings/dynamic dictionaries used as paths, secrets, host state, orchestration authority or project identity. |
-| Application | `InstallControlPlane`, `ResumeOrchestration`, `ReadRuntimeStatus`, `AuthorizeReviewerGateway`, `ExecuteOrchestrationAction`, `UninstallControlPlane`, `GuardedIntegration` coordinate ports and map typed failures. | Direct filesystem, subprocess, host config, Agent task or Git access. |
-| Infrastructure | `OwnedFilesystemPort`, `InstallLedgerPort`, `RuntimeLifecyclePort`, `EventStorePort`, `HostLifecyclePort`, `RestrictedSessionTransportPort`, `ReviewerOrchestrationPort`, `ProjectRegistryPort`, `GuardedGitPort`, `ClockPort`, `ProcessPort` provide isolated effects. | Persisting raw Context, exposing Agent-control to implementers or operating on unverified/foreign ownership. |
-| Installer / equivalent UI | Setup/uninstaller displays typed progress/status and submits a validated command. | Business rules, filesystem deletion, direct host config or implicit singleton creation. |
+| Windows package manager | Immutable deployment, package identity and Windows-managed storage | Johnny cannot recursively delete WindowsApps, guess install location or patch installed files. |
+| Host Bootstrap | Installation identity, mutable root and admitted state capabilities | No adopting legacy ZIP, foreign roots or other users' state by product-name matching. |
+| Codex/Claude | Its documented registration interface | No hidden-format edits, copied credentials or blanket cache deletion. |
+| Operation composition | One invocation's injected ports, lease, bounded process/clock and result | No ambient singleton, target/Git effects or second orchestration system. |
+| Independent removal observer | One exact attempt's observation/recovery outside the removed package | No self-asserted completion from a terminating package, permanent service or arbitrary command endpoint. |
 
-The installer owns its root. The runtime owns only metadata inside that root. The host owns its own registration mechanism. A target project owns all of its files, Git state, code and data. No layer may infer another layer's ownership from a product name.
+Dependency direction: native UI/CLI → application use case → domain contracts;
+infrastructure implements injected ports. Build composition is separate from desktop
+operations. Bootstrap/runtime remains root provision → Router delegation → telemetry
+factory consumption; installer work does not rewrite runtime grant logic.
 
-## API, event, storage, host, authority and operations
+Production roots inject `PackageDeploymentPort`, `PackageObservationPort`,
+`OwnedStatePort`, `HostLifecyclePort`, `OwnedProcessPort`, `OperationLeasePort`,
+`RemovalObserverPort`, `ClockPort` and `EvidencePort`. Build injects source export,
+dependency resolver, manifest renderer and bounded SDK commands. Lifetime is one
+build or installation operation. Every port has a fake test substitution; fakes do
+not qualify real Windows or host capability.
 
-- External-facing local commands/events use Pydantic strict models and finite enums: `INSTALL_REQUESTED`, `INSTALL_SUCCEEDED`, `INSTALL_BLOCKED`, `RUNTIME_EVENT_RECEIVED`, `RUNTIME_HALTED`, `UNINSTALL_REQUESTED`, `REMOVED`, `NOT_INSTALLED`, `UNINSTALL_BLOCKED`.
-- Each event includes typed correlation and installation IDs. It cannot contain raw source, prompt, ContextPacket, target project path/URI, Secret or PII.
-- The sole durable stores are the owned-install ledger and bounded metadata queue/checkpoint below `InstallRoot`. There is no database, cache service, external provider, token or credential store.
-- `HostLifecyclePort` is a capability boundary. A Codex/Claude adapter is production-supported only after a live lifecycle test proves user-scope registration and `HostRemovalProof` for every receipt-owned registration/payload it creates. Installer code must not edit hidden/unpublished host configuration formats.
-- Installer and runtime logs use typed error codes plus redacted correlation/installation IDs. They may not include subprocess command arguments when those could reveal target/project data.
-- Runtime process start/stop uses a recorded child process identity. Stop has a bounded timeout and requires exact ownership before termination.
-- Codex role/gateway records use finite `AgentRole`, `AgentProfileId`,
-  `AgentToolPolicy`, `ReviewerGatewayGrant`, `RestrictedSessionBinding`,
-  `OrchestrationAction`, `GatewayDenial` and `AgentProfileRemovalProof` types.
-  `agents.enabled=false`, `features.multi_agent=false` or any equivalent
-  implementation-profile setting is accepted only after a supported disposable
-  transport binds that exact profile/worktree and effective-session readback
-  proves the forbidden tools absent; config shape alone is insufficient.
+Existing seams are inputs to qualify, not interchangeable implementations:
+`windows_package_manifest.PayloadManifest` describes the legacy ZIP allowlist;
+`plugin_bundle_builder.PluginBundleBuilder` builds that archive;
+`johnny_live_install.run_live_install` provisions a writable venv/ZIP layout;
+`live_uninstall_composition._ScriptedShutdownPort` returns success without live
+process-stop proof. Reuse applicable pure contracts after source review, not those
+compositions wholesale. Do not broaden the legacy payload allowlist for arbitrary
+native binaries; define a separate closed MSIX build manifest.
 
-## Frontend composition and dependency injection
+## 5. Contract surface to freeze in each vertical ticket
 
-This POC has no company-project frontend. Its formal interaction boundaries are the Windows setup/uninstall dialogs and local command status result.
+These are proposed contracts, **not a claim they exist**. Each admitted ticket gives
+exact fields, constructors, limits, source locations, strict checker and finite
+success/negative cells for the subset it implements.
 
-### XSS Review classification
+| Contract | Meaning/invariants |
+| --- | --- |
+| `PackageIdentity` | Bounded name, publisher, four-part numeric version, architecture, observed full name/family; cross-check manifest and native observation, never echo the request. |
+| `MsixBuildInputs` | Exact source/export, payload entries, Python/build-tool/runtime/dependency identities, SDK version/hash and manifest hash. No floating dependency, ambient PATH or working-machine venv copy. |
+| `PackageArtifact` | Source/build-input lineage, unsigned hash and optional separately produced signed hash/verification. Unsigned cannot enter deployment. |
+| `InstallationBinding` | Opaque installation ID, package family, typed current-user binding and Bootstrap root capability. Native paths/principals are transient adapter inputs, not durable target/PII telemetry. |
+| `OperationRequest` | Finite operation, correlation, expected installation revision and exact artifact/binding; one installation lease. A duplicate observes/resumes its own attempt, not a competing effect. |
+| `PackageObservation` | Discriminated `PRESENT(identity)`, `ABSENT`, `UNKNOWN(reason)`. Access denied, query failure and ambiguity never mean absent. |
+| `HostObservation` | One canonical host and owned registration identity; `ACTIVE`, `ABSENT`, `SKIPPED`, `BLOCKED`, `UNKNOWN`; preserve partial outcomes. |
+| `OperationResult` | Discriminated success, blocked-before-effect or recovery-required-after/unknown-effect, with exact failed phase/evidence. No success-shaped result hiding a failure. |
+| `RecoveryRecord` | Attempt/install/artifact binding, last proved phase, remaining owned resources, sanitized reason. No prompts, target paths, credentials or raw host output. |
 
-Current POC scope is `XSS_NOT_APPLICABLE`: no untrusted data enters a Browser,
-WebView, HTML/DOM renderer or JavaScript execution context. The Windows
-setup/uninstall dialogs and local status projection consume only finite typed
-models and expose no Native Bridge, IPC or Extension API to JavaScript.
+Null/missing, bool-as-number, extra fields, illegal enums, whitespace/case/prefix
+aliases, overflow, traversal, reparse, foreign identity and stale/replayed bindings
+fail at the boundary. `Any`, bypass constructors and unchecked dynamic values cannot
+enter the domain. Windows interop requires explicit signatures and typed wrappers.
+Plugin/CLI requests are not final trust: runtime revalidates safety invariants.
 
-This classification is not inherited by a future thin plugin UI. Any ticket
-that introduces Browser/WebView/HTML/DOM/JavaScript rendering must re-enter the
-[Workflow XSS gate](../../Workflow.md#xss-review). If that JavaScript context
-can reach host or extension capabilities, it is `PRIVILEGED_XSS_REVIEW` and
-must freeze the complete source-to-sink and JavaScript-to-host capability
-matrices before implementation.
+## 6. Acceptance and failure evidence
 
-- **Composition roots:** `Setup.exe` and uninstaller each assemble a fresh application graph per invocation. The runtime assembles a distinct graph per event-processing run.
-- **Injected dependencies:** filesystem, ledger, host lifecycle, process lifecycle, event store, project registry, guarded Git, clock and notification ports are constructor/factory injected behind named interfaces.
-- **Production bindings:** production may bind a Windows owned-root filesystem and a verified host adapter only after capability checks. A host command/result is not a global singleton or an implicit environment read.
-- **Test substitutions:** fake filesystem confined to the current plugin
-  checkout's exact `tests/.johnny-runtime/` lease, fake host lifecycle, fake
-  process, deterministic clock, in-memory queue, registry and Git port. The
-  root is never caller-selected or located in a target project. Tests must
-  assert no effect was requested against a target repository or OS-global
-  `johnny-stage-env-*` namespace.
-- **States / accessibility:** setup and uninstall must expose success, progress, empty/no-host, error/blocked and retry state in text, without relying on colour alone. No permission beyond the invoking user is requested.
+| AC | Required executable observation |
+| --- | --- |
+| AC-01 — Package/user scope | Install for the exact current user in the admitted VM and freshly query identity. VM-only test trust provisioning is separate; do not call it elevation-free. No target mutation. |
+| AC-02 — Host readiness | Codex and Claude separately prove published detect/register/list/remove/absence, installed version and ownership. No selection is `PACKAGE_INSTALLED / HOSTS_NOT_SELECTED`, not activation. One host's failure preserves per-host partial state and compensates only owned effects; no aggregate success. |
+| AC-03 — Ownership split | Native package location; mutable state outside immutable payload; reject foreign/ambiguous/reparse ownership and preserve sentinels. Package and state-schema versions are distinct. |
+| AC-04 — Metadata/recovery | Retain metadata-only Router storage, reject replay/cross-installation input before routing, resume proved checkpoints without duplicate effects. |
+| AC-05 — Git isolation | Retain registered project, lock, clean exact base and guarded fast-forward requirements; installer requests zero target/Git effects. Authority integration follows its declared-ref gate. |
+| AC-06 — Complete removal | One intact Johnny action stops owned work → verifies host absence → settles state → removes exact current-user package → independently proves scoped absence. Second invocation is no-effect only after fresh absence of all owned dimensions. Shared Windows storage belonging to another user is reported separately, never deleted/claimed physically absent. |
+| AC-07 — Fail closed | Inject each stop/host/state/package/observer failure. Unknown/timeout cannot become success or blind retry. Preserve evidence; finite bounded recovery only. `RECOVERY_REQUIRED` blocks normal use; failed rollback cannot authorize continued mutation/deletion. |
+| AC-08 — Non-interference | Existing/empty representative target repos and foreign-host/state sentinels preserve byte/Git-status snapshots across success, failure, retry, upgrade and removal. No company repo for first proof. |
+| AC-09/10 — Optional cross-lifetime | If installed, restricted-profile/gateway capability/removal remain separately proved and receipt-bound. Same-lifetime reviewer → wait → review → gate uses `NOT_REQUIRED`; absent bridge cannot block source dispatch or host activation. |
+| AC-11 — Delivery staging | Before release build/system integration, independently read authorized remote staging equal to exact reviewed complete source. No force/reset or source change after freeze. Capability probes are not release candidates and cannot satisfy this gate. |
+| AC-12 — Artifact lineage | Bind clean source/export, dependency lock/licenses, tools/SDK, manifest, unsigned/signed hashes, signature, environment, lifecycle and review. New bytes/toolchain/source mean a new candidate, not overwritten evidence or a self-referential digest. |
+| AC-13 — Test ownership | Existing 05S1 tests retain checkout-owned `tests/.johnny-runtime/` leases. Package effects use only the separately admitted VM. No broad TEMP cleanup or sibling workspaces. |
+| MSX-14 — Real build | Real MakeAppx pack with semantic validation, unpack to fresh owned output, compare admitted manifest/payload. `/nv`, renamed ZIP, mocked compiler or help/version alone cannot pass. Generated packaging metadata is distinguished from application entries. |
+| MSX-15 — Identity/launch | Registered application launch; executable queries native full identity/location and matches fresh outside readback. Unpackaged launch differs from API failure. Echoed request is not observation. |
+| MSX-16 — Update | Two same-family increasing versions; update, same-version repeat, lower-version rejection, wrong publisher, missing dependency and interruption tested separately. Read actual active package. Preserve native errors without inventing a unique cause for a broad HRESULT. |
+| MSX-17 — State recovery | Old-app/new-schema, new-app/old-schema and interruption before/after package switch or during migration yield compatible use or blocked recovery. OS update is not state rollback. Lease contention/reordered/duplicate requests cannot cause competing effects. |
+| MSX-18 — Direct removal | Exercise Windows removal separately; external-host/state sentinels demonstrate narrower scope. Disclosure precedes activation. No callback, host cleanup or absence is inferred. |
+| MSX-19 — Independent observer | Prove exact-attempt observer survives package-process termination, independently queries absence and handles failure. Operator observation proves probe mechanics, not automated one-click removal. Final helper/evidence retirement leaves no installed Johnny component; only incomplete removal may retain recovery evidence. |
 
-Compensation adapters cross a closed capability boundary. An untrusted adapter
-candidate is admitted by built-in `type(candidate)` plus raw trusted getset
-descriptors captured from immutable built-in `type.__dict__`; caller-owned
-class descriptors and equality are never executed. Only raw plain instance
-methods may enter a frozen typed capability before any no-compensation or
-effect path. `object/type.__getattribute__` over caller-owned class metadata,
-`inspect.signature()` over caller-controlled data and arbitrary callable
-objects are forbidden. Compensation planning/reduction is a separate pure
-domain capability. Its exact order is removal(s), plugin-list absence,
-marketplace absence, then installed-location absence; its result preserves the
-exact request/attempt-bound residual state. The later composition root alone
-executes admitted operations and validates exact manifest-bound observations.
+Tickets map finite closure cells to these ACs and executable predicates. Require
+baseline red only when named tests can collect at that baseline; never fabricate
+historical failures for newly introduced types. Reviewer performs an independent
+reverse mutation, reads intended named red unreduced, restores exactly and reruns
+green. Zero red is a finding. Adversarial helpers return findings; the parent owns
+the final verdict. Code-review evidence is not source dispatch or effect authority.
 
-## Implementation handoff and return contract
+## 7. Smallest serial proof plan — not opened tickets
 
-- `ImplementationHandoff` must cite this approved SPEC, `CHG-20260808-011`, the Context, an approved vertical ticket, named implementation owner/reviewer, TDD cases, installer composition-root reference and exact host capability assumptions.
-- `ImplementationReturn`: `COMPLETED → ACTION_COMPLETED`; `BLOCKED → HALT`; `CHANGE_DETECTED → REQUIREMENT_CHANGED → Grill`. Discovery that a host API cannot meet reversible lifecycle requirements is `BLOCKED` or `CHANGE_DETECTED`; it cannot be replaced with an undocumented config edit.
-- No handoff, work progress, receipt or return may include raw ContextPacket, source text, prompt, target path/URI, Secret, PII or company code.
+These are future acceptance slices, not a grant to implement everything at once.
 
-## Test seams and TDD design
+1. **Pinned build inputs and unsigned identity probe.** Qualify isolated SDK/Python
+   executable packaging inputs; produce a minimal identity-reporting desktop MSIX.
+   Validate pack/unpack and rejection paths. No host, daemon, signing or installation.
+2. **VM package lifecycle.** Admit exact artifacts, transfer method, VM and VM-only
+   test certificate; sign/verify, install, launch, update and direct-remove with
+   independent operator readback. Never silently reconnect, enable sharing, transport
+   credentials or trust a certificate on the working host to make transfer easier.
+3. **One-click removal capability.** Prove an admitted independent observer and
+   interruption semantics. If this requires changed trust/user behavior, return to
+   owner/architecture; do not invent a hidden permanent service.
+4. **Real runtime and hosts.** Package the exact Python runtime/dependency closure;
+   qualify Codex and Claude independently, including cleanup and state-update faults.
+   The smaller probe is not evidence for this larger payload; split host closures.
+5. **Integrated delivery.** Exact staging/source/artifact chain, full normal and
+   adversarial matrix, recovery/removal/status. Stop at cluster completion for
+   owner-arranged cross-Agent review. Production distribution and old ZIP migration
+   remain separately admitted.
 
-The ticket set must begin each listed behavior with a red test and retain its first-failure evidence.
+After approval the first ticket is slice 1: exact source boundary, tool acquisition
+plan, constructor preflight and finite tests. Do not pre-open all downstream tickets
+with unproved prerequisites. Normal implementer uses `implementation-standard`,
+parent review `ticket-review`; reuse the existing agent and wait for its return,
+without activity polling.
 
-1. **Normal install/remove:** valid staged payload plus reversible fake host creates a ledger/receipt; normal uninstall removes exactly every ledger-owned file and fake registration; re-running uninstall returns `NOT_INSTALLED`.
-2. **Ownership / invalid input:** null, empty, whitespace, container, absolute, extra-prefix, trailing slash, casing, encoded, traversal and URI path values are rejected before filesystem or host effects.
-3. **External failure / fail-closed:** host detect/register/unregister failure, missing process identity, timeout, ledger tamper, manifest digest mismatch, unavailable build artifact and foreign registration block with no false receipt/deletion.
-4. **Runtime / Git regression:** malformed/replayed/cross-installation event, raw-content sentinel, unregistered project, dirty/stale/non-fast-forward Git request and duplicate queue claim halt before side effects.
-5. **Target non-interference:** snapshot and Git-status tests across representative target repositories cover install, failed install, status, failed uninstall and successful uninstall.
-6. **Packaging smoke:** a clean Windows user sandbox installs from the released `Setup.exe`, starts/stops only the owned runner, removes it once and confirms no registered owned host integration remains.
-7. **Restricted-session transport proof:** isolated Codex config uses a supported
-   transport to bind the exact implementation profile and exact assigned
-   worktree. Effective readback proves built-in multi-agent/thread-control tools
-   absent. Missing transport/profile binding, access denied, ambiguous output or
-   config-only evidence is a typed block, not a green prompt assertion.
-8. **Reviewer gateway authority:** one exact reviewer grant and live pending
-   descriptor reaches each named fake orchestration effect once. Implementation
-   direct tools, gateway calls, MCP aliases, indirect adapters, forged/copied/
-   replayed grants and every project/ticket/handoff/receipt/owner/worktree/
-   branch/baseline/action/correlation mismatch reach zero effects.
-9. **Restricted-profile/gateway lifecycle:** exact owned install/readback/remove/
-   absence, tampered receipt, same-name foreign profile, unrelated gateway,
-   replay and foreign/global config preservation. Representative target
-   repositories remain unchanged.
+## 8. Toolchain proposal and proof limits
 
-### Verification staging architecture
+Proposed executable packaging: **Python one-folder bundle inside MSIX**, with
+PyInstaller as a build dependency to qualify. Retain the Python backend rather than
+writing a parallel C#/C++ application merely to probe identity. Exclude one-file
+self-extraction and copied working-machine venvs. Build from clean pinned Python and
+dependencies; import discovery is not a distribution allowlist. Exact packaging-tool
+and runtime versions/provenance must be established before slice 1 admission.
 
-Verification has two non-interchangeable isolation gates:
+SDK candidate: `Microsoft.Windows.SDK.BuildTools` `10.0.28000.2705` from official
+NuGet metadata, **not yet downloaded or qualified**. Verify package signature under
+trusted policy, inspect entries before extraction, bind actual native DLL/tool
+closure and test on build OS. Empty NuGet dependencies/PATH lookup do not prove native
+compatibility. No global tool replacement, disabled signature verification or trust
+bootstrapped solely from the candidate's own asserted certificate.
 
-1. **Codex lifecycle contract staging.** Before refreezing transactional
-   registration or receipt removal, a disposable test-owned child process and
-   filesystem environment must persist independent marketplace/plugin truth.
-   Its list and absence results come from freshly validated state and actual
-   sandbox files, never from the caller request or a queued fake response. It
-   must expose an injectable bounded command port with the documented add,
-   list and remove JSON shapes so the downstream adapter consumes the same
-   strict DTO surface. Raw absolute sandbox paths may exist only as ephemeral
-   child-protocol proof inputs; recorded evidence remains relative/metadata-only.
-   The staging port must not invoke or modify the user's live Codex installation.
-2. **Disposable Windows user staging.** Before Ticket 04 can complete, the built
-   `Setup.exe` and matching uninstaller must run in a disposable Windows user
-   profile or equivalent VM/sandbox that can prove per-user filesystem,
-   configuration, process and host-registration cleanup. A temporary directory,
-   Linux container or contract emulator is not sufficient for this packaging
-   gate.
+Primary guidance checked 2026-09-06, not local execution evidence:
 
-Both gates must preserve unrelated state and byte-plus-porcelain snapshots of
-representative target repositories. The environment is destroyed only after
-fresh absence proof is captured. Contract-staging evidence does not project a
-host as production `SUPPORTED`, and the Windows staging gate cannot replace the
-finite unit/fault matrix.
+- [Microsoft desktop packaging](https://learn.microsoft.com/en-us/windows/msix/desktop/desktop-to-uwp-manual-conversion): manifest and desktop entry.
+- [Microsoft MakeAppx](https://learn.microsoft.com/en-us/windows/msix/package/create-app-package-with-makeappx-tool): real pack/unpack and validation.
+- [Microsoft identity](https://learn.microsoft.com/en-us/windows/msix/detect-package-identity): packaged versus unpackaged observation.
+- [SDK candidate](https://www.nuget.org/packages/Microsoft.Windows.SDK.BuildTools/10.0.28000.2705): exact metadata, not locally verified tools.
+- [PyInstaller operation](https://pyinstaller.org/en/stable/operating-mode.html): one-folder includes the selected interpreter/dependencies; one-file extraction differs. This motivates the proposal, not MSIX support proof.
 
-Remote Git `staging` is a third, delivery-only boundary and must not be confused
-with either test environment above. It is a warm backup and future development
-baseline for one reviewed source commit; it does not by itself prove install,
-uninstall, host support or binary correctness.
+Deployment review covers relevant boundary, state, concurrency, partial failure,
+permission/config drift, worker/cache, migration, rollback, backup and smoke cases.
+SQL/DB and production-account checks are not automatically applicable; exclusions
+need candidate evidence. Missing capability is `BLOCKED`; unapproved production or
+company access is `NOT_AUTHORIZED`, never a passed test.
 
-## Risks, compatibility, rollback and release prerequisites
+## 9. Revision and approval
 
-- The initial platform is Windows per-user only. Other operating systems are explicitly unsupported rather than silently using unsafe path semantics.
-- Inno Setup is selected for the self-contained setup/uninstaller package because it provides a paired Windows uninstaller. Version 6.7.3 has been acquired and signature/version/compile verified; the package-assembly ticket must re-read and bind that exact compiler identity before accepting an artifact.
-- Codex and Claude compatibility is adapter-specific. A verified adapter may be released; an unverified host remains unavailable without blocking the detachable core.
-- Rollback is a forward release that invokes the matching uninstaller or removes the POC from an owned test user profile. It never deletes a target project. Recovery after `UNINSTALL_BLOCKED` must display the exact owned root and failed owned receipt, then require retry/independent verification.
-- No public artifact, code signing, auto-update, remote distribution, support SLA or deployment is approved by this POC.
+| Revision | Authority/provenance |
+| --- | --- |
+| Initial through 03 | Owner approvals dated 2026-08-08 through 2026-08-14 remain in this file at the baseline above. They do not approve MSIX packaging or revision 04. |
+| 04 draft, 2026-09-06 | Codex, authorized MSIX convergence after capability research/environment preparation. Refreezes packaging acceptance, retains format-neutral invariants and the accepted removal decision. |
 
-## Convergence and backlink
-
-- Common Context backlink: add this SPEC ID, location, scope, `PRD-20260808-011` and `CHG-20260808-011` under `CONTEXT.md › 衍生 SPEC 索引`.
-- Requirement-change convergence: `CHG-20260808-011` has this SPEC ID but remains `DRAFT` until explicit owner approval.
-- Docs baseline: pending the docs-only commit that contains this specification.
-
-## Revision signature
-
-| Date | Author / worktree / baseline | Summary |
-| --- | --- | --- |
-| 2026-08-08 | Codex / current `main` / `e04c2be` | Initial Wayfinder, Architecture and Grill convergence to draft specification. |
-| 2026-08-08 | Project owner / current `main` | Approved the complete POC scope, including owned one-click uninstall and fail-closed host lifecycle boundary. |
-| 2026-08-10 | Project owner and Codex / current `main` | Approved the two-gate verification architecture: stateful Codex contract staging before 05B/05C refreeze, then disposable Windows user staging before package acceptance. Product scope and AC-01 through AC-08 are unchanged. |
-| 2026-08-11 | Project owner / `CHG-20260811-012` | Approved AC-09/AC-10 reviewer-only Codex role profiles, fail-closed host capability proof, receipt-bound removal and new Tickets 06A-06C. Existing AC-01 through AC-08 remain unchanged. |
-| 2026-08-11 | Project owner / ADR-20260811-004 | Refined the unchanged AC-01/02/07/08 compensation seam into closed port admission, pure reduction and thin composition after terminal 05B3 convergence. |
-| 2026-08-12 | Project owner / `CHG-20260812-013` | Added the mandatory XSS classification. Current POC remains `XSS_NOT_APPLICABLE`; future renderer or privileged JavaScript work must re-enter the tiered XSS gate. |
-| 2026-08-12 | Project owner / `CHG-20260812-014` / ADR-20260812-006 | Required exact complete-source publication to remote `staging` before release build/system integration, decomposed manifest/source/environment/build/install/uninstall acceptance into serial tickets and made the first packaged version an immutable source/toolchain/manifest/artifact evidence record. |
-| 2026-08-13 | Project owner / `CHG-20260813-015` / ADR-20260813-007 | Replaced the shared OS-TEMP 05S1 test root with one exact project-owned runtime namespace per plugin checkout/worktree. Added AC-13 and returned dependent in-flight acceptance tickets to change control. |
-| 2026-08-14 | Project owner / `CHG-20260814-018` / ADR-20260814-010 | Approved revision 03: Johnny becomes the sole reviewer-owned orchestration gateway; implementers receive no gateway capability and must also prove effective host multi-agent tools absent. 06A remains evidence, 06B/06C are superseded by 06G0P-06G4; schema preflight places 06G0P before transport proof. |
-
-## Approval record
-
-- Decision maker: Project owner
-- Date: `2026-08-08 (Asia/Taipei)`
-- Approval scope: Full `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X`, including owner-approved revision 03 of AC-09/AC-10 and AC-11 through AC-13; tickets may now be planned, but each implementation still requires its own delivery-confirmation receipt and only the named reviewer through Johnny's gateway may orchestrate the implementation task. The owner separately authorized only the future exact 04D staging publication after 04A/04B integration and 04C approval.
+Return: `ACTION_COMPLETED / SPEC_DRAFTED -> WAIT_FOR_HUMAN`.
+Next owner decision is exact revision 04 approval and MSIX Context revision 03
+approval/seal. It is technical acceptance, not a repeated vote on MSIX/removal.
+Then reattach the shared metadata index and open the first bounded source/build
+ticket; ticket/effect authority stays explicit. No source dispatch, package effect,
+push or release was performed by this drafting action.

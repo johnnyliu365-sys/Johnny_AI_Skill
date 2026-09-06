@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | Artifact ID / kind | `CTX-LOCAL-INSTALLER-MSIX-20260905-01` / `SHARED_CONTEXT` |
-| Revision / state | `02` / `OWNER_SEMANTICS_CONFIRMED / CAPABILITY_RESEARCH_CONTEXT` |
+| Revision / state | `03` / `DRAFT / OWNER_EXACT_APPROVAL_PENDING` |
 | Requirement / architecture | `PRD-20260905-050` / `CHG-20260905-050` / `ADR-20260905-038` |
 | Intake scope | `DELTA`: Windows installer format, package/state ownership, host activation, upgrade and removal; existing control-plane product goals retained. |
 | Baseline reference | `117346cf44fbbc75a08aca5677f223c38df0fb00`; [legacy Context](main.md) is historical discovery/implementation evidence, not current Inno dispatch authority. |
@@ -40,10 +40,18 @@ Technical capability proof and package-effect ticket admission remain separate.
 | Johnny desktop activation/removal, one operation | Package readback, host lifecycle, owned-state ledger, bounded process/clock, result projection. | Fake package/host/process ports for finite fault tests; real disposable Windows user for lifecycle claims. |
 | Bootstrap/runtime, one provisioning/event scope | Existing bootstrap root, Router grant and telemetry factory boundaries. | Existing admitted stores and fake ports; no new scheduler or queue requirement. |
 
-Exact public DTO/port definitions belong to the replacement SPEC/tickets after the
-capability investigation. No production effect contract is invented to make this
-Context look executable. A change to the accepted user behavior returns to owner;
-technical proof gaps do not themselves authorize a different behavior.
+The proposed language/runtime boundary remains Python 3.11. A clean, pinned
+one-folder executable bundle inside MSIX is the build-time packaging proposal;
+PyInstaller and Windows SDK inputs require qualification before use. No second
+product backend is introduced for the native identity probe. The package remains
+immutable, while mutable state belongs to Bootstrap. A minimal probe is not the
+full runtime or either host's lifecycle proof.
+
+Exact DTO/port fields and constructors belong to the SPEC and vertical tickets.
+A change to accepted user behavior returns to owner; technical proof gaps do not
+authorize a different behavior or a permanent observer service. Native removal
+observation must be independent of the terminating package; its concrete mechanism
+remains unproved, not inferred from the existence of an interface.
 
 ## Reuse selection and gaps
 
@@ -57,6 +65,14 @@ inputs to inspect at their specific seam. ZIP manifest/build or installed runtim
 evidence does not qualify MSIX. Existing host-specific CLI paths must be distinguished
 from legacy emulators and individually requalified; this draft makes no blanket
 claim that every host lifecycle is implemented or absent.
+
+## Revision boundary
+
+Revision 03 is the architecture-owned proposal accompanying installer SPEC revision
+04. The accepted MSIX/removal behavior is unchanged; executable packaging and
+serial proof boundaries are proposed, not owner-sealed. This Context cannot admit
+implementation until exact approval/seal and reference reattachment. Revision 02
+remains provenance in Git, not a competing sealed source.
 
 ## Unresolved authority and verification
 

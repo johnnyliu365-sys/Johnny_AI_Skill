@@ -8,7 +8,7 @@
 | --- | --- | --- |
 | Receipt-bound role supervision | [`receipt-bound-role-supervision.md`](receipt-bound-role-supervision.md) | `APPROVED / REVIEWER_DECOMPOSITION_AUTHORIZED`；reviewer 可拆票／開票，仍不得自行 dispatch 或啟用 heartbeat。 |
 | Environment capability bootstrap | [`environment-capability-bootstrap.md`](environment-capability-bootstrap.md) | `APPROVED / REVIEWER_DECOMPOSITION_AUTHORIZED`；reviewer 可拆票／開票，仍不得自行 dispatch、安裝工具或執行外部 effect。 |
-| Local orchestration installer | [`local-orchestration-installer.md`](local-orchestration-installer.md) | `MSIX_REMOVAL_SEMANTICS_ACCEPTED / CAPABILITY_RESEARCH_COMPLETE / PACKAGE_SPEC_REQUIRED`；CAP-MSIX-01 調查完成，實際 lifecycle 尚未驗證；下一步為最小實物 probe 的精確合約與隔離環境。 |
+| Local orchestration installer | [`local-orchestration-installer.md`](local-orchestration-installer.md), revision `04`, SHA-256 `b24ab772daa03c869faa30570158466acd202abe64824415f75f0394aeb933db` | `DRAFT / OWNER_EXACT_APPROVAL_PENDING / NON_DISPATCHABLE` |
 
 ## 已核准隔離衝突修訂
 
