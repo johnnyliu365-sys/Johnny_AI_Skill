@@ -25,7 +25,7 @@ tickets follow the owner-converged lifecycle SPEC; no Inno build may be dispatch
 | Artifact ID / leaf | Kind | Revision | LF SHA-256 | Lifecycle |
 | --- | --- | --- | --- | --- |
 | `CAP-MSIX-01` / [cap-msix-01-package-lifecycle-primitives.md](cap-msix-01-package-lifecycle-primitives.md) | `CAPABILITY_INVESTIGATION` | `02` | `2c2de792c65dd0565bd187f768c2432b068fab7d9e771af89eaf9f09b4232541` | `RESEARCH_COMPLETE / FINDINGS_REVIEWED / LIFECYCLE_UNPROVED` |
-| `CAP-MSIX-02` / [cap-msix-02-build-input-qualification.md](cap-msix-02-build-input-qualification.md) | `CAPABILITY_INVESTIGATION` | `01` | `6da3a3029b73910652ad43fb258ba38700edaf2d0556e58255cc55cfa690e430` | `OPEN / RESEARCH_DISPATCH_ADMITTED` |
+| `CAP-MSIX-02` / [cap-msix-02-build-input-qualification.md](cap-msix-02-build-input-qualification.md) | `CAPABILITY_INVESTIGATION` | `02` | `0436de8dacb6f203b8f500da92beadfb2b778ae2089383c7bc0a58df88d6671d` | `RESEARCH_COMPLETE / METADATA_PINNED / BUILD_UNPROVED` |
 
 ## MSIX isolated environment — direct-child index
 
@@ -33,6 +33,7 @@ tickets follow the owner-converged lifecycle SPEC; no Inno build may be dispatch
 | --- | --- | --- | --- | --- |
 | `ENV-MSIX-01` / [env-msix-01-disposable-hyper-v.md](env-msix-01-disposable-hyper-v.md) | `OPERATIONAL_ENVIRONMENT_ACTION` | `06` | `19380f00c10caedaddd740d5f43dc41d1a5f9f06816c3bb3fc04ed5062b0f12b` | `VM_BOOTED_SETUP_PENDING / OWNER_GUEST_SETUP_REQUIRED` |
 | `ENV-MSIX-02` / [env-msix-02-temporary-evaluation-activation.md](env-msix-02-temporary-evaluation-activation.md) | `OPERATIONAL_ENVIRONMENT_ACTION` | `04` | `336e7024d026cc20295f8f3e52f7aa7679c1d9aa5f217368fa351dc4dbcc3d08` | `COMPLETED / NETWORK_DISCONNECTED / ACTIVATION_OWNER_REPORTED` |
+| `ENV-MSIX-03` / [env-msix-03-sdk-archive-verification.md](env-msix-03-sdk-archive-verification.md) | `OPERATIONAL_ENVIRONMENT_ACTION` | `01` | `5498d9bfb2c5a2ac3dbacb774ae8289918777484cb7ac705c8e4ec1f72cbf3f6` | `OPEN / BOUNDED_ACTION_ADMITTED` |
 
 ## Reuse selection
 

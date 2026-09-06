@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| Artifact ID / kind / revision | `CAP-MSIX-02` / `CAPABILITY_INVESTIGATION` / `01` |
-| State / closure | `OPEN / RESEARCH_DISPATCH_ADMITTED` / `CLOSURE-CAP-MSIX-02`, revision 01 |
+| Artifact ID / kind / revision | `CAP-MSIX-02` / `CAPABILITY_INVESTIGATION` / `02` |
+| State / closure | `RESEARCH_COMPLETE / METADATA_PINNED / BUILD_UNPROVED` / `CLOSURE-CAP-MSIX-02`, revision 01 (unchanged) |
 | Authority | Owner approval of SPEC revision 04 and Context revision 03 at `6282ca19e3e6f518d0c5b56eb4f7414f5013ff79`, with the standing instruction to continue bounded in-scope work. Research only; no build/deployment success or effect grant. |
 | SPEC / Context / requirement | Installer SPEC revision 04 sections 7.1 and 8, AC-12/MSX-14/15; `CTX-LOCAL-INSTALLER-MSIX-20260905-01` revision 03 sealed; `PRD/CHG-20260905-050` revision 02; ADR-20260905-038 revision 02 |
 | Source baseline | `6282ca19e3e6f518d0c5b56eb4f7414f5013ff79`; exact subsequent ticket/approval commit supplied as dispatch authority |
@@ -60,3 +60,13 @@ checks the source evidence, persists an indexed report and closes this query. Th
 the parent may prepare the exact acquisition/unsigned-probe ticket; no construction
 or deployment is authorized by a research return. Use one direct completion wait,
 not status/activity polling. A genuinely missing owner decision is returned by name.
+
+## Research completion
+
+The query at `a5e2847312c4b3f9a78b424af02f1fa2ac38a8f5` returned `FINDINGS`.
+Parent independently rechecked wheel metadata, native tool signatures and NuGet
+signer metadata, corrected the summary hash transcription, and distinguished PyPI
+legacy signature metadata from PEP 740 provenance. See the indexed
+[CAP-MSIX-02 review](../../../doc/reviews/local-orchestration-installer/cap-msix-02-build-input-review.md).
+SDK bytes/native closure and complete Python runtime provenance remain unproved.
+This query is closed, not a live implementation allocation or package success.
