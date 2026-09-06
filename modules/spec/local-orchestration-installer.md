@@ -3,11 +3,11 @@
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` |
-| Document revision / state | `04` / `DRAFT / OWNER_EXACT_APPROVAL_PENDING / NON_DISPATCHABLE` |
+| Document revision / state | `04` / `APPROVED / BOUNDED_TICKETING_AUTHORIZED` |
 | Author / baseline | Codex, current `main`, `d584b7dfc6eaeef943a0a25ff9684879e4021ee5` |
 | Effective requirement | [PRD/CHG-20260905-050](../../doc/requirements/active/2026/local-installer/REQ-20260905-050.md) |
 | Retained requirement lineage | Format-neutral `PRD/CHG-20260808-011`, `20260812-014`, `20260813-015`, `20260814-018`; retired mechanism `ARCH-REQ-20260815-003` is evidence only. |
-| Architecture / Context | [ADR-20260905-038](../../doc/adr/ADR-20260905-038-msix-delivery-boundary.md); [MSIX Context](../../doc/context/local-orchestration-installer/msix.md) revision 03, draft pending owner approval/seal |
+| Architecture / Context | [ADR-20260905-038](../../doc/adr/ADR-20260905-038-msix-delivery-boundary.md); [MSIX Context](../../doc/context/local-orchestration-installer/msix.md) revision 03, owner-approved/sealed |
 | Discovery evidence | [CAP-MSIX-01 review](../../doc/reviews/local-orchestration-installer/cap-msix-01-capability-review.md), `RESEARCH_COMPLETE / LIFECYCLE_UNPROVED` |
 | Language / stage | Python 3.11, strict typed contracts; Windows x64 POC. XML is package metadata; PowerShell is a bounded Windows effect adapter, not a second domain implementation. |
 
@@ -16,7 +16,9 @@
 The owner already chose MSIX and Johnny-managed one-click complete removal. Direct
 Windows uninstall has the accepted narrower package-only guarantee. This revision
 does not reopen either decision. It translates the approved delta into proposed
-package acceptance; **the owner has not yet approved revision 04**.
+package acceptance. The owner approved exact revision 04 at `6282ca19` on
+2026-09-06; the approval binding is recorded below. This state-only writeback
+does not qualify a toolchain or imply downstream package-effect authority.
 
 This is a revision of the same installer capability, not a new parallel SPEC.
 Inno/`Setup.exe`, its paired uninstaller, and a single writable payload root are
@@ -225,10 +227,12 @@ company access is `NOT_AUTHORIZED`, never a passed test.
 | --- | --- |
 | Initial through 03 | Owner approvals dated 2026-08-08 through 2026-08-14 remain in this file at the baseline above. They do not approve MSIX packaging or revision 04. |
 | 04 draft, 2026-09-06 | Codex, authorized MSIX convergence after capability research/environment preparation. Refreezes packaging acceptance, retains format-neutral invariants and the accepted removal decision. |
+| 04 approval, 2026-09-06 | Project owner replied “核准” to SPEC revision 04 and Context revision 03 at `6282ca19e3e6f518d0c5b56eb4f7414f5013ff79`. Approved SPEC LF SHA-256: `b24ab772daa03c869faa30570158466acd202abe64824415f75f0394aeb933db`; approved Context LF SHA-256: `4de567817b3f1dfe11625104c61ea38f64c5293d4ce067afd6db83b949fca555`. |
 
-Return: `ACTION_COMPLETED / SPEC_DRAFTED -> WAIT_FOR_HUMAN`.
-Next owner decision is exact revision 04 approval and MSIX Context revision 03
-approval/seal. It is technical acceptance, not a repeated vote on MSIX/removal.
-Then reattach the shared metadata index and open the first bounded source/build
-ticket; ticket/effect authority stays explicit. No source dispatch, package effect,
-push or release was performed by this drafting action.
+Return: `APPROVAL_GRANTED -> ACTION_COMPLETED / APPROVAL_RECORDED`.
+Continuation: `AUTO_CONTINUE -> TICKETS`, starting with the toolchain-input
+qualification prerequisite to section 7 slice 1. Scope and tool versions must be
+closed before source/build admission; approved unknowns are not fabricated facts.
+The owner-authorized same-lifetime work may proceed without another ceremonial
+confirmation; each exact ticket still binds its permitted action. No signing,
+installation, VM reconnection, host change, push or release is granted here.

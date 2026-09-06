@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | Artifact ID / kind | `CTX-LOCAL-INSTALLER-MSIX-20260905-01` / `SHARED_CONTEXT` |
-| Revision / state | `03` / `DRAFT / OWNER_EXACT_APPROVAL_PENDING` |
+| Revision / state | `03` / `SEALED / OWNER_APPROVED` |
 | Requirement / architecture | `PRD-20260905-050` / `CHG-20260905-050` / `ADR-20260905-038` |
 | Intake scope | `DELTA`: Windows installer format, package/state ownership, host activation, upgrade and removal; existing control-plane product goals retained. |
 | Baseline reference | `117346cf44fbbc75a08aca5677f223c38df0fb00`; [legacy Context](main.md) is historical discovery/implementation evidence, not current Inno dispatch authority. |
@@ -68,11 +68,12 @@ claim that every host lifecycle is implemented or absent.
 
 ## Revision boundary
 
-Revision 03 is the architecture-owned proposal accompanying installer SPEC revision
-04. The accepted MSIX/removal behavior is unchanged; executable packaging and
-serial proof boundaries are proposed, not owner-sealed. This Context cannot admit
-implementation until exact approval/seal and reference reattachment. Revision 02
-remains provenance in Git, not a competing sealed source.
+The owner approved revision 03 together with installer SPEC revision 04 on
+2026-09-06, at `6282ca19e3e6f518d0c5b56eb4f7414f5013ff79`, Context LF SHA-256
+`4de567817b3f1dfe11625104c61ea38f64c5293d4ce067afd6db83b949fca555`.
+This approval/seal records the accepted packaging/proof boundaries; it does not
+convert unproved capabilities into facts. Later ticket/implementation lanes read
+this sealed revision only. Revision 02 remains provenance, not a competing source.
 
 ## Unresolved authority and verification
 

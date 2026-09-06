@@ -1,8 +1,9 @@
 # Johnny AI Skill project shared Context
 
-> State: `SEALED / REVISION_02` by `CHG-20260824-038`. This architecture-owned revision
-> replaces the prior seal linked to `CHG-20260815-024`; provenance remains in Git. Later stages
-> bind this revision and exact source spans; they do not append to it.
+> State: `SEALED / REVISION_03`. Owner-approved `CHG-20260905-050` Context reattachment
+> replaces revision 02's installer metadata edge only; all stable facts from
+> `CHG-20260824-038` remain unchanged. Revision 02 is preserved at `6282ca19`.
+> Later stages bind this revision and exact spans; they do not append to it.
 
 ## Stable project facts and boundaries
 
@@ -61,7 +62,7 @@ or review. This index records identity and location only.
 | Private Router POC | `SPEC-AI-WORKFLOW-PRIVATE-ROUTER-SAAS-20260804-01KZ49YM6HA658QF7ME2A5BR26` / `modules/spec/private-router-saas.md` | `doc/context/private-router-saas/main.md` |
 | Workflow governance | `SPEC-AI-WORKFLOW-WORKFLOW-GOVERNANCE-20260805-01KZ6T8V2R4Y6B8D0F2H4J6M8P` / `modules/spec/workflow-governance.md` | `doc/context/workflow-governance/main.md` |
 | Collaboration audit | `SPEC-AI-WORKFLOW-AUTONOMOUS-COLLABORATION-AUDIT-20260805-01KZ7A2C4E6G8J0L2N4P6R8T` / `modules/spec/autonomous-collaboration-audit.md` | `doc/context/autonomous-collaboration-audit/main.md` |
-| Local orchestration installer | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / `modules/spec/local-orchestration-installer.md` | `doc/context/local-orchestration-installer/main.md` |
+| Local orchestration installer | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / `modules/spec/local-orchestration-installer.md` | `doc/context/local-orchestration-installer/msix.md` |
 | Adaptive project orchestration | `SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2` / `modules/spec/adaptive-project-orchestration.md` | `doc/context/adaptive-project-orchestration/main.md` |
 | Receipt-bound role supervision | `SPEC-AI-WORKFLOW-RECEIPT-BOUND-ROLE-SUPERVISION-20260815-01M0R2S4T6V8X0Z2B4D6F8H0J2` / `modules/spec/receipt-bound-role-supervision.md` | `doc/context/receipt-bound-role-supervision/main.md` |
 | Environment capability bootstrap | `SPEC-AI-WORKFLOW-ENVIRONMENT-CAPABILITY-BOOTSTRAP-20260815-01M0E2C4B6S8T0R2A4P6D8F0H2` / `modules/spec/environment-capability-bootstrap.md` | `doc/context/environment-capability-bootstrap/main.md` |

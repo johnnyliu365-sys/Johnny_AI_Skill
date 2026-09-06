@@ -11,4 +11,4 @@ Legacy sibling migration is a separate, explicitly out-of-scope operation.
 | --- | --- | --- | --- | --- | --- |
 | `CTX-PARTITION-ADAPTIVE-PROJECT-ORCHESTRATION` | `PARTITION_INDEX` | `REVISION_09` | `f8a615ba696db1196dd01c9932dea932ac8a2a0a3921addb6a98090a707133a1` | `ACTIVE` | [`adaptive-project-orchestration/README.md`](adaptive-project-orchestration/README.md) |
 | `CTX-PARTITION-PLUGIN-ADOPTION-QUALITY` | `PARTITION_INDEX` | `REVISION_01` | `bc9564c192e229e0c637aa094f62761d1e8c62223cb23d38fd238361a3fe478e` | `SEALED / WA_01_UIX_01_TICKET_OPENING_AUTHORIZED` | [`plugin-adoption-quality/README.md`](plugin-adoption-quality/README.md) |
-| `CTX-PARTITION-LOCAL-INSTALLER` | `PARTITION_INDEX` | `REVISION_03` | `4dc43e115a3ea7187a7c217b68952ba836d75fe83b43c2163f849484e2129d66` | `DRAFT / OWNER_EXACT_APPROVAL_PENDING` | [`local-orchestration-installer/README.md`](local-orchestration-installer/README.md) |
+| `CTX-PARTITION-LOCAL-INSTALLER` | `PARTITION_INDEX` | `REVISION_03` | `9cf9d5762f21a767eef48b99009cff525be29759cb4aac3180cbc940850b2f1e` | `SEALED / OWNER_APPROVED` | [`local-orchestration-installer/README.md`](local-orchestration-installer/README.md) |

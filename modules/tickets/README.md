@@ -11,8 +11,9 @@ debug 或稽核任何一條線之前先讀它——多數「新」問題都是�
 
 [`local-orchestration-installer/README.md`](local-orchestration-installer/README.md)
 indexes owner-authorized capability research and isolated-environment operational
-actions. Neither is approval of the pending MSIX package-effect SPEC; the
-same index preserves the historical installer tickets and their blocked/retired status.
+actions and the approved MSIX SPEC revision 04's bounded successor work. Research
+and environment evidence do not qualify package effects. The same index preserves
+historical installer tickets and their blocked/retired status.
 
 ## Owner visibility
 

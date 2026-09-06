@@ -8,7 +8,7 @@
 | --- | --- | --- |
 | Receipt-bound role supervision | [`receipt-bound-role-supervision.md`](receipt-bound-role-supervision.md) | `APPROVED / REVIEWER_DECOMPOSITION_AUTHORIZED`；reviewer 可拆票／開票，仍不得自行 dispatch 或啟用 heartbeat。 |
 | Environment capability bootstrap | [`environment-capability-bootstrap.md`](environment-capability-bootstrap.md) | `APPROVED / REVIEWER_DECOMPOSITION_AUTHORIZED`；reviewer 可拆票／開票，仍不得自行 dispatch、安裝工具或執行外部 effect。 |
-| Local orchestration installer | [`local-orchestration-installer.md`](local-orchestration-installer.md), revision `04`, SHA-256 `b24ab772daa03c869faa30570158466acd202abe64824415f75f0394aeb933db` | `DRAFT / OWNER_EXACT_APPROVAL_PENDING / NON_DISPATCHABLE` |
+| Local orchestration installer | [`local-orchestration-installer.md`](local-orchestration-installer.md), revision `04`, SHA-256 `c2af8d8b3a10418a1450ef44eaf3ee89c6494311ceb68f543a4ef7e0e75de0af` | `APPROVED / BOUNDED_TICKETING_AUTHORIZED` |
 
 ## 已核准隔離衝突修訂
 
