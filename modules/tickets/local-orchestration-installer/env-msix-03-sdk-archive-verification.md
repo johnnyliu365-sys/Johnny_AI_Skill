@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| Artifact ID / revision | `ENV-MSIX-03` / `04` |
-| State / closure | `OWNER_SINGLE_USE_REPLAY_ADMITTED / EVIDENCE_REPAIR_ONLY` / `CLOSURE-ENV-MSIX-03`, revision 02 (unchanged) |
+| Artifact ID / revision | `ENV-MSIX-03` / `05` |
+| State / closure | `COMPLETED / ARCHIVE_SIGNATURE_VERIFIED / OVERRIDE_CONSUMED` / `CLOSURE-ENV-MSIX-03`, revision 02 (unchanged) |
 | Kind / authority | Reviewer-owned environment preparation, decomposed from the owner's environment/project-convergence authorization and approved SPEC revision 04 sections 7.1/8. No app installation, SDK code execution, signing, VM or host registration authority. |
 | Inputs | SPEC revision 04; sealed MSIX Context revision 03; CAP-MSIX-02 indexed research review; immutable action/registry commit supplied at execution |
 | Action owner/reviewer | Current-session parent; zero implementation owners, no product source. One existing read-only adversarial helper may audit this exact action. |
@@ -183,3 +183,32 @@ third correction and not new product-source authority.
 Return on admission commit: `ACTION_COMPLETED / OWNER_OVERRIDE_RECORDED`.
 Continuation: `AUTO_CONTINUE` to the single evidence replay above, then its finite
 review and outcome writeback. Closure revision 02's security predicates are unchanged.
+
+## Single-use replay closure — 2026-09-07
+
+Execution authority: `4e8746817bd25f9a7813acd7de60aa7af640da48`. Evidence
+candidate reviewed: `c3427f0a095ae275e5f417df061a08ff2e283488`. The complete
+new EV1–EV4 command/result record is indexed in the review family; the previous
+run is retained as historical evidence, never reconstructed.
+
+The existing helper confirmed the substantive EV1/EV2 gap was closed, with
+positive / wrong-signer / tampered / original native exits `0 / 1 / 1 / 0` for
+the expected reasons. It also found two stale review/ticket metadata fields.
+The parent accepts those findings and resolves them in this authorized outcome
+writeback: review execution identity distinguishes replay from historical
+correction, and this ticket plus direct registry now mark the override consumed.
+These are record-finalization changes, not another operational correction or replay.
+
+Parent conclusion: `APPROVED` for archive verification only; F-ENV3-01 is closed
+by the new observations, EV5 is completed, and the one-shot override is consumed.
+The original quarantine's four named files retain their prior hashes. The fresh
+quarantine retains its four named files and operational-home/cache/temp children.
+No SDK extraction/execution, installation, certificate trust, VM/host effect, push,
+release or cleanup occurred. Full commands, outputs, limitations and helper finding
+dispositions remain in the linked review/evidence.
+
+Return: `ACTION_COMPLETED / ARCHIVE_SIGNATURE_VERIFIED` with the indexed review.
+No second use of the override is permitted. Next engineering prerequisite is native
+SDK/tool closure and clean pinned Python/runtime qualification under their own
+bounded action; this completed archive ticket does not authorize those effects or
+claim MSIX build/install/upgrade/removal completion.

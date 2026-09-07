@@ -2,9 +2,10 @@
 
 | Field | Value |
 | --- | --- |
-| Artifact ID / revision | `REVIEW-ENV-MSIX-03-20260907` / `03` |
-| State | `REPLAY_REVIEW_PENDING / PRIOR_FINDING_OPEN` |
-| Execution candidate / closure | `4f100786199bf0ccda5698fa3f025477db097bb6` / `CLOSURE-ENV-MSIX-03` revision 02 |
+| Artifact ID / revision | `REVIEW-ENV-MSIX-03-20260907` / `04` |
+| State | `APPROVED / ARCHIVE_SIGNATURE_VERIFIED / OVERRIDE_CONSUMED` |
+| Replay execution candidate / closure | `4e8746817bd25f9a7813acd7de60aa7af640da48` / `CLOSURE-ENV-MSIX-03` revision 02 |
+| Historical correction execution candidate | `4f100786199bf0ccda5698fa3f025477db097bb6`; earlier failed review retained below, not the replay identity |
 | Parent / scope | Current-session reviewer; archive verification only, no acquired SDK code executed. |
 
 ## Finding and correction
@@ -337,3 +338,52 @@ effect NO_EXTERNAL_EFFECT. It reads only the exact ticket, this review and repla
 evidence plus their direct index rows, and returns findings, not approval. Parent
 alone adjudicates F-ENV3-01 and EV1–EV5. Until that outcome is written, no closure
 approval or build/installation continuation is inferred.
+
+## Replay final review and finite finding disposition — 2026-09-07
+
+The existing helper returned `FINDINGS` against immutable evidence candidate
+`c3427f0a095ae275e5f417df061a08ff2e283488`. It confirmed the substantive
+F-ENV3-01 EV1/EV2 evidence gap was closed by complete commands, lossless outputs and
+exits; the three supplied LF digests/direct index rows matched, and execution
+authority `4e8746817bd25f9a7813acd7de60aa7af640da48` is an ancestor of that
+candidate. It did not execute any evidence command or SDK. Parent independently
+read the actual native outputs and the committed capture, and owns this conclusion.
+
+| Helper finding | Parent adjudication / resolution |
+| --- | --- |
+| Replay review's singular execution header still named historical `4f100...` while the body named `4e874...` | Accepted, metadata consistency defect. This revision explicitly separates replay execution authority from historical correction identity. Neither SHA nor historical output is rewritten. |
+| Ticket/direct index still showed admitted while the review declared the attempt consumed | Accepted, lifecycle metadata defect. Authorized final outcome writeback sets both ticket and direct index to completed/override-consumed. The helper confirmed the existing one-attempt guard did not authorize another effect. |
+
+Both findings are resolved by this finite review/outcome writeback; no operational
+correction, extra download, native rerun or helper fan-out was performed. The parent
+checks exact updated header/state, leaf revisions/digests and direct index rows
+before the final commit. Existing source/config/trust requirements are unchanged.
+
+Parent capture check: all three persisted command bodies and all three decoded
+complete outputs exactly matched the actual tool inputs/results after CRLF-to-LF
+normalization, including trailing spaces and final newlines. The check also read
+the docs-only diff, `git diff --check` exit 0 and clean worktree at `c3427f0...`.
+No reduced-output wrapper was used to judge the native positive or negative runs.
+
+Final closure disposition:
+
+- EV1: fresh contained non-reparse root and independently pinned absolute verifier
+  hash/valid Microsoft .NET signature/SDK 10.0.302 directly observed.
+- EV2: one exact HTTP 200 transfer, no redirect/default credentials/proxy/cookies,
+  180-second timeout and 512-MiB buffer bound; observed 22,297,017 bytes and admitted
+  SHA-256 before and after CreateNew disk write. Historical transfer remains historical.
+- EV3: intact archive exit 0; wrong repository-signer policy exit 1/NU3034; actual
+  nuspec ID/version agree. Policy remains require plus independently fixed signer.
+- EV4: one-byte sibling corruption exit 1/NU3008, original digest unchanged and
+  original reverify exit 0. Original quarantine's four named files remain unchanged.
+- EV5: required same helper and parent review completed; final metadata findings
+  addressed by parent. No source, VM, registration or trust-store effect in the
+  admitted command sequence. Trusted-host assumptions remain explicit; no claim
+  of arbitrary same-user/admin interference resistance or zero OS-managed cache I/O.
+
+Verdict: `APPROVED / ARCHIVE_SIGNATURE_VERIFIED / OVERRIDE_CONSUMED`.
+F-ENV3-01 is closed by this newly observed run, not retroactive proof. This is an
+archive-scoped prerequisite only. No SDK contents were executed; MSIX build,
+install, upgrade, removal, host activation and release remain unproved. The consumed
+override cannot start a second replay. SDK native closure and clean pinned Python
+packaging are the next separately bounded engineering actions.

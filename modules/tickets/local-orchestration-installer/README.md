@@ -33,7 +33,7 @@ tickets follow the owner-converged lifecycle SPEC; no Inno build may be dispatch
 | --- | --- | --- | --- | --- |
 | `ENV-MSIX-01` / [env-msix-01-disposable-hyper-v.md](env-msix-01-disposable-hyper-v.md) | `OPERATIONAL_ENVIRONMENT_ACTION` | `06` | `19380f00c10caedaddd740d5f43dc41d1a5f9f06816c3bb3fc04ed5062b0f12b` | `VM_BOOTED_SETUP_PENDING / OWNER_GUEST_SETUP_REQUIRED` |
 | `ENV-MSIX-02` / [env-msix-02-temporary-evaluation-activation.md](env-msix-02-temporary-evaluation-activation.md) | `OPERATIONAL_ENVIRONMENT_ACTION` | `04` | `336e7024d026cc20295f8f3e52f7aa7679c1d9aa5f217368fa351dc4dbcc3d08` | `COMPLETED / NETWORK_DISCONNECTED / ACTIVATION_OWNER_REPORTED` |
-| `ENV-MSIX-03` / [env-msix-03-sdk-archive-verification.md](env-msix-03-sdk-archive-verification.md) | `OPERATIONAL_ENVIRONMENT_ACTION` | `04` | `8269af2563586f7f753f6a2f2b056377c5f3a697c84bd80e0e0cee5a6922988b` | `OWNER_SINGLE_USE_REPLAY_ADMITTED / EVIDENCE_REPAIR_ONLY` |
+| `ENV-MSIX-03` / [env-msix-03-sdk-archive-verification.md](env-msix-03-sdk-archive-verification.md) | `OPERATIONAL_ENVIRONMENT_ACTION` | `05` | `4013b9b6c024d13b8bd154eee905de432e53bfba825933835bb05c990426ab60` | `COMPLETED / ARCHIVE_SIGNATURE_VERIFIED / OVERRIDE_CONSUMED` |
 
 ## Reuse selection
 

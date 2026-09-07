@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| Artifact ID / revision | `EVIDENCE-ENV-MSIX-03-REPLAY-20260907-01` / `01` |
-| State | `CAPTURED / REVIEW_PENDING` |
+| Artifact ID / revision | `EVIDENCE-ENV-MSIX-03-REPLAY-20260907-01` / `02` |
+| State | `CAPTURED / REVIEWED` |
 | Execution candidate | `4e8746817bd25f9a7813acd7de60aa7af640da48` |
 | Authority | ENV-MSIX-03 document revision 04, closure revision 02; owner single-use evidence-only replay |
 | Parent review | [Archive correction review](env-msix-03-sdk-archive-review.md) |
@@ -35,7 +35,7 @@ call executed while preparing phase 3. That pre-execution failure neither downlo
 again nor ran verification. Phase 3 below is the single actual shell invocation;
 there was exactly one SDK HTTP acquisition in this replay.
 
-| Cell | Observed result, pending independent review |
+| Cell | Observed result at capture time; final disposition is in the linked parent review |
 | --- | --- |
 | EV1 | Fresh absent root, non-reparse ancestry; absolute verifier hash and valid Microsoft .NET signature; SDK 10.0.302 |
 | EV2 | HTTP 200, exact unchanged URI, 22,297,017 buffered and written bytes, admitted hash; one request with bounded no-redirect handler |
@@ -676,5 +676,4 @@ Complete output (JSON lines, lossless):
   ""
 ]
 ```
-
 
