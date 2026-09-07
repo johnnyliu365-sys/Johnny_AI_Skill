@@ -34,7 +34,7 @@ tickets follow the owner-converged lifecycle SPEC; no Inno build may be dispatch
 | `ENV-MSIX-01` / [env-msix-01-disposable-hyper-v.md](env-msix-01-disposable-hyper-v.md) | `OPERATIONAL_ENVIRONMENT_ACTION` | `06` | `19380f00c10caedaddd740d5f43dc41d1a5f9f06816c3bb3fc04ed5062b0f12b` | `VM_BOOTED_SETUP_PENDING / OWNER_GUEST_SETUP_REQUIRED` |
 | `ENV-MSIX-02` / [env-msix-02-temporary-evaluation-activation.md](env-msix-02-temporary-evaluation-activation.md) | `OPERATIONAL_ENVIRONMENT_ACTION` | `04` | `336e7024d026cc20295f8f3e52f7aa7679c1d9aa5f217368fa351dc4dbcc3d08` | `COMPLETED / NETWORK_DISCONNECTED / ACTIVATION_OWNER_REPORTED` |
 | `ENV-MSIX-03` / [env-msix-03-sdk-archive-verification.md](env-msix-03-sdk-archive-verification.md) | `OPERATIONAL_ENVIRONMENT_ACTION` | `05` | `4013b9b6c024d13b8bd154eee905de432e53bfba825933835bb05c990426ab60` | `COMPLETED / ARCHIVE_SIGNATURE_VERIFIED / OVERRIDE_CONSUMED` |
-| `ENV-MSIX-04` / [env-msix-04-sdk-native-qualification.md](env-msix-04-sdk-native-qualification.md) | `OPERATIONAL_ENVIRONMENT_ACTION` | `02` | `ad8132c0044a93dc6f43da8348dbd44ca54beee9b818686cd39f39f0396c2ea5` | `EXECUTED / REVIEW_PENDING / ACTION_CONSUMED` |
+| `ENV-MSIX-04` / [env-msix-04-sdk-native-qualification.md](env-msix-04-sdk-native-qualification.md) | `OPERATIONAL_ENVIRONMENT_ACTION` | `03` | `5db8b7f31ec62cb595790dc11efca2a0544872b9516190bbcdcc0760fd882e31` | `COMPLETED / SDK_NATIVE_OPERATIONS_QUALIFIED / ACTION_CONSUMED` |
 
 ## Reuse selection
 

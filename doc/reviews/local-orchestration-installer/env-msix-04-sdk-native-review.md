@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| Artifact ID / revision | `REVIEW-ENV-MSIX-04-20260907` / `01` |
-| State | `EXECUTED / REVIEW_PENDING` |
+| Artifact ID / revision | `REVIEW-ENV-MSIX-04-20260907` / `02` |
+| State | `APPROVED / SDK_NATIVE_OPERATIONS_QUALIFIED` |
 | Execution authority | `c6b9ad1a10acae3d542584a49e7b2e3061c6b810`, ENV-MSIX-04 document revision 01 / closure revision 01 |
 | Ticket | [ENV-MSIX-04](../../../modules/tickets/local-orchestration-installer/env-msix-04-sdk-native-qualification.md) |
 | Result boundary | SDK operations on this build host only; no Johnny application, installation, registration, signing, host activation or release claim |
@@ -52,6 +52,23 @@ negative cause, path/supply-chain boundaries, fixture identity and lifecycle sta
 Do not execute captured commands, SDK tools, mutate files/refs, acquire anything,
 or touch VM/trust/host state. Return finite findings, not approval. The parent alone
 decides closure under the existing one-correction bound.
+
+## Final parent adjudication — 2026-09-07
+
+The same existing helper returned `NO_FINDINGS` for exact evidence candidate
+`a8b5a85b55c3159ba3c10a1ce9854fe03c390576` and closure revision 01. It checked
+the two LF digests/direct indices, direct-parent execution SHA, all six cells and
+the lifecycle/effect non-claims. No native command was rerun during its review.
+The parent independently inspected every actual positive/negative result and
+losslessly compared all four committed inputs/results to the original captures.
+Parent final disposition: NT1–NT6 satisfied; `APPROVED /
+SDK_NATIVE_OPERATIONS_QUALIFIED`. The earlier pending sections describe the
+submission state; this section is the final adjudication. No correction or replay.
+
+No broader supply-chain attestation, application identity, dependency closure,
+install/upgrade/removal, host activation or release was tested. Next is separately
+admitted clean Python packaging qualification, not publication or application
+execution. This outcome does not reinstate consumed ENV-MSIX-03 replay authority.
 
 ## Complete execution capture
 
