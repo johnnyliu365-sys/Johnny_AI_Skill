@@ -7,6 +7,12 @@
 本專案踩過的雷、證據與修法的統整索引：[PITFALL-REGISTER.md](PITFALL-REGISTER.md)。
 debug 或稽核任何一條線之前先讀它——多數「新」問題都是登記簿裡某一族的再現。
 
+## Plugin adoption quality
+
+| Child ID | Kind | Revision | LF SHA-256 | Lifecycle | Reference |
+| --- | --- | --- | --- | --- | --- |
+| `TICKET-PARTITION-PLUGIN-ADOPTION-QUALITY` | `PARTITION_INDEX` | `20260907-01` | `c4cded3eabe88801cfe4ea717bee70870838f471da13f2e5cb9a31fd1a4f1d1c` | `ACTIVE` | [plugin-adoption-quality/README.md](plugin-adoption-quality/README.md) |
+
 ## MSIX capability and environment actions
 
 [`local-orchestration-installer/README.md`](local-orchestration-installer/README.md)
