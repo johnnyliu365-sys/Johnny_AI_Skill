@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| Artifact ID / revision | `REVIEW-ENV-MSIX-05-20260907` / `01` |
-| State | `HALT / TOOL_POLICY_BLOCKED / NOT_EXECUTED` |
+| Artifact ID / revision | `REVIEW-ENV-MSIX-05-20260907` / `02` |
+| State | `OWNER_RESUMED / CAPABILITY_RECHECK / NOT_EXECUTED` |
 | Admitted baseline | `275858692716b2ed06d7f76e1adb6cc114728466`, ENV-MSIX-05 document revision 01 |
 | Ticket | [ENV-MSIX-05](../../../modules/tickets/local-orchestration-installer/env-msix-05-clean-python-packaging.md) |
 | Result | No native execution, download, root creation, extraction, pip or packaging result; no qualification verdict |
@@ -62,7 +62,29 @@ Test-Path -LiteralPath 'C:\Users\GameBoy\Desktop\Johnny_AI_Skill_latest\tests\.j
 }
 ```
 
-## Exact submitted command — NOT EXECUTED
+## Owner-requested diagnosis and bounded resumption — 2026-09-07
+
+The owner requested immediate continuation. Parent performed read-only diagnostics:
+PowerShell ParseInput returned 0 errors for the 7,782-character command; official
+`codex execpolicy check` against the existing user rule file returned
+`{"matchedRules":[]}` / exit 0. That rule file has 46 allow decisions and no
+forbidden/prompt decisions. Local config reports danger-full-access and never.
+These observations exclude those specific explanations, not all host policies.
+No safety configuration was edited. The actual hidden rejection cause is unknown.
+
+The same readback found the wrapper's absolute-path Join-Path bug, independently
+of policy: joining repo cwd to the absolute CAP review path yielded a doubled
+drive path and Test-Path=False. The corrected submission passes its canonical
+relative path into Get-LfDigest, preserving the hash predicate. The action root
+remains absent. Ticket revision 03 records a single owner-requested submission
+through the same tool/security boundary; no alternative-channel execution.
+Historical command/result below remain unchanged. No qualification is inferred
+until a new actual execution capture and review exist.
+
+Official [rules documentation](https://learn.chatgpt.com/docs/agent-configuration/rules)
+defines the read-only checker; its local-file result is not complete host admission.
+
+## Exact historical submitted command — NOT EXECUTED
 
 Retained solely as evidence of the rejected request, not a replay instruction.
 
