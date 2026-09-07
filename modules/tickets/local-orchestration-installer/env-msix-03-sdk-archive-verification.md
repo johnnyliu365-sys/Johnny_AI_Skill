@@ -2,14 +2,14 @@
 
 | Field | Value |
 | --- | --- |
-| Artifact ID / revision | `ENV-MSIX-03` / `03` |
-| State / closure | `BLOCKED / EVIDENCE_DEFECT / CONVERGENCE_REVIEW_REQUIRED` / `CLOSURE-ENV-MSIX-03`, revision 02 (unchanged) |
+| Artifact ID / revision | `ENV-MSIX-03` / `04` |
+| State / closure | `OWNER_SINGLE_USE_REPLAY_ADMITTED / EVIDENCE_REPAIR_ONLY` / `CLOSURE-ENV-MSIX-03`, revision 02 (unchanged) |
 | Kind / authority | Reviewer-owned environment preparation, decomposed from the owner's environment/project-convergence authorization and approved SPEC revision 04 sections 7.1/8. No app installation, SDK code execution, signing, VM or host registration authority. |
 | Inputs | SPEC revision 04; sealed MSIX Context revision 03; CAP-MSIX-02 indexed research review; immutable action/registry commit supplied at execution |
 | Action owner/reviewer | Current-session parent; zero implementation owners, no product source. One existing read-only adversarial helper may audit this exact action. |
 | Profile / exemption | POC / HIGH_ASSURANCE supply-chain verification; `DOCS_ONLY` control record, native operational checks instead of invented unit tests |
 | Workspace / lane | Parent's current repository; no new branch/worktree; same lifetime, bridge `NOT_REQUIRED` |
-| Output root | Exact child `tests/.johnny-runtime/env-msix-03-sdk-20260906`, created by revision 01. Revision 02 reuses only that original quarantine after archive/config digest and non-reparse readback; no new download. Artifacts remain quarantined, not installed or used as executable inputs. |
+| Output root | Original `tests/.johnny-runtime/env-msix-03-sdk-20260906` retained untouched. The revision-04 single-use override below admits only fresh sibling `tests/.johnny-runtime/env-msix-03-sdk-replay-20260907-01`; artifacts remain quarantined, never executable inputs. |
 | Language / XSS | No product language change; bounded PowerShell/.NET native tool operation; `XSS_NOT_APPLICABLE` |
 
 ## One closure
@@ -146,3 +146,40 @@ reacquisition. Quarantine remains untouched. Return `VALIDATION_FAILED`, with
 `ARCHIVE_SIGNATURE_VERIFIED`, SDK execution, build, installation or release follows.
 Further correction needs the documented owner-scoped single-use override or
 reviewed replan required by the ticket-set convergence rule.
+
+## Owner single-use evidence replay — 2026-09-07
+
+At baseline `478c566fa8c3b575b30d7cc08570b4ffbec95c25`, the parent requested
+one replay limited to SDK acquisition/verification evidence, without weakening
+security conditions or executing installation. The owner replied `授權`. This is
+the ticket-set's documented single-use convergence override, not an automatic
+third correction and not new product-source authority.
+
+- Bind this ticket/registry's next immutable commit before operations. Parent owns
+  the one action; same-lifetime bridge `NOT_REQUIRED`, no implementation dispatch.
+- Fresh root is exactly `tests/.johnny-runtime/env-msix-03-sdk-replay-20260907-01`.
+  Prove it absent and its existing ancestors non-reparse before creation. Existing
+  original quarantine is read only for exact archive/config preservation checks.
+  Existing destination is a failure, not a resume or overwrite opportunity.
+- Reuse the fixed public SDK URL/version, verifier identity, independently pinned
+  repository signer, timeout/size limits, CreateNew writes and no-redirect/no-retry
+  policy above. No credentials or alternate source. One fresh HTTP acquisition;
+  native verification may read that archive for the four declared EV3/EV4 runs.
+- Record full executable command bodies and all returned output/exit values for
+  preflight, bounded HTTP result, config creation/readback, native verification,
+  ZIP identity and original-quarantine preservation. Exact commands plus observed
+  results, not printed policy slogans or historical reconstruction, carry evidence.
+  Operational snippets are evidence of this action, not shipped runtime source.
+- A new directly indexed review-family evidence leaf,
+  `doc/reviews/local-orchestration-installer/env-msix-03-sdk-replay-evidence.md`,
+  preserves this new run. Existing review retains its earlier failures and links
+  the new evidence. Same read-only adversarial helper reviews the committed replay;
+  parent decides EV1–EV5. No additional helper or implementation lane.
+- The override is consumed by this single attempt whether it succeeds or fails.
+  No extraction, SDK code execution, installation, certificate changes, VM effects,
+  host changes, push, release or cleanup. Failures retain the fresh quarantine and
+  return to convergence; success closes only archive-signature qualification.
+
+Return on admission commit: `ACTION_COMPLETED / OWNER_OVERRIDE_RECORDED`.
+Continuation: `AUTO_CONTINUE` to the single evidence replay above, then its finite
+review and outcome writeback. Closure revision 02's security predicates are unchanged.
