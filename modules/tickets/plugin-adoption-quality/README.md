@@ -5,6 +5,7 @@ they do not load both clusters or copy ticket bodies into dispatch prompts.
 
 | Child ID / leaf | Kind | Revision | SHA-256 | Lifecycle | State |
 | --- | --- | --- | --- | --- | --- |
+| [wa-02b-target-activation-behavioral-hook](wa-02b-target-activation-behavioral-hook.md) | `IMPLEMENTATION_TICKET_PROPOSAL` | `01` | `c8b1ae8c919ee5d26c37b8ac5a3240205e9af59e0af0c55a1b1d2ed71143789a` | `PLANNED` | `OWNER_EXACT_APPROVAL_PENDING / CAPABILITY_BLOCKED / NON_DISPATCHABLE` |
 | [hda-01-host-dispatch-admission-hook](hda-01-host-dispatch-admission-hook.md) | `IMPLEMENTATION_TICKET_PROPOSAL` | `01` | `c2b0a3d1beb04281c7f2650fcd20d56e6ec0a14b5711d76877c1e78cd3254ec5` | `PLANNED` | `OWNER_EXACT_APPROVAL_PENDING / NON_DISPATCHABLE` |
 | [wa-01-activation-host-gate-contracts](wa-01-activation-host-gate-contracts.md) | `IMPLEMENTATION_TICKET` | `05` | `32ac8d730b49d390386dfd2f5e2171016e9808aa2f2e74b056d4bcb9a9f416f5` | `CLOSED` | `APPROVED / AUTHORITY_INTEGRATED` |
 | [uix-01-codesign-contracts-lifecycle](uix-01-codesign-contracts-lifecycle.md) | `IMPLEMENTATION_TICKET` | `03` | `ea6999d898a857f744a925f1f400a18b9a6f1177f236653ddce27e96efe075a5` | `CLOSED` | `APPROVED / AUTHORITY_INTEGRATED` |

@@ -11,7 +11,7 @@ debug 或稽核任何一條線之前先讀它——多數「新」問題都是�
 
 | Child ID | Kind | Revision | LF SHA-256 | Lifecycle | Reference |
 | --- | --- | --- | --- | --- | --- |
-| `TICKET-PARTITION-PLUGIN-ADOPTION-QUALITY` | `PARTITION_INDEX` | `20260907-01` | `c4cded3eabe88801cfe4ea717bee70870838f471da13f2e5cb9a31fd1a4f1d1c` | `ACTIVE` | [plugin-adoption-quality/README.md](plugin-adoption-quality/README.md) |
+| `TICKET-PARTITION-PLUGIN-ADOPTION-QUALITY` | `PARTITION_INDEX` | `20260907-02` | `f192b189f448d88c418021d78e7a880d15fa7c4df6d78a38f4bb1a416eeb63ad` | `ACTIVE` | [plugin-adoption-quality/README.md](plugin-adoption-quality/README.md) |
 
 ## MSIX capability and environment actions
 
