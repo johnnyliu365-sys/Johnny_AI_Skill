@@ -6,6 +6,7 @@ reports are not renamed, approved again or treated as MSIX evidence here.
 
 | Artifact ID / leaf | Kind | Revision | LF SHA-256 | Lifecycle |
 | --- | --- | --- | --- | --- |
+| `REVIEW-ENV-MSIX-05-20260907` / [env-msix-05-python-packaging-review.md](env-msix-05-python-packaging-review.md) | `OPERATIONAL_BLOCKER_RECORD` | `01` | `5b2afd4a0f5dcd7fefe1d251b889ea0a3d9527d67bfe200408ce5f1b44925a5e` | `HALT / TOOL_POLICY_BLOCKED / NOT_EXECUTED` |
 | `REVIEW-ENV-MSIX-04-20260907` / [env-msix-04-sdk-native-review.md](env-msix-04-sdk-native-review.md) | `OPERATIONAL_READINESS_REVIEW` | `02` | `35683bcd1cedc1b206092fc231810204f25c41d6e7d17ad27f1186d7d6e6adca` | `APPROVED / SDK_NATIVE_OPERATIONS_QUALIFIED` |
 | `REVIEW-ENV-MSIX-03-20260907` / [env-msix-03-sdk-archive-review.md](env-msix-03-sdk-archive-review.md) | `OPERATIONAL_READINESS_REVIEW` | `04` | `96bbda5f1dd3642eec5336705f6d7fee0ab95d37566c2f5d55a9fdfd7133b4d6` | `APPROVED / ARCHIVE_SIGNATURE_VERIFIED / OVERRIDE_CONSUMED` |
 | `EVIDENCE-ENV-MSIX-03-REPLAY-20260907-01` / [env-msix-03-sdk-replay-evidence.md](env-msix-03-sdk-replay-evidence.md) | `OPERATIONAL_EXECUTION_EVIDENCE` | `02` | `80cbd569dfb3e1e2bf254aaea0743b95c81cef48b06617b90b36c0c95ec6e8c8` | `CAPTURED / REVIEWED` |

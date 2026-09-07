@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| Artifact ID / revision | `ENV-MSIX-05` / `01` |
-| State / closure | `ADMITTED / NOT_EXECUTED` / `CLOSURE-ENV-MSIX-05` revision 01 |
+| Artifact ID / revision | `ENV-MSIX-05` / `02` |
+| State / closure | `HALT / TOOL_POLICY_BLOCKED / NOT_EXECUTED` / `CLOSURE-ENV-MSIX-05` revision 01 |
 | Authority | Owner's 2026-09-07 authorization for SDK native tools and clean Python packaging; SDK half closed at `0de3fae7473dff907c7c5f3ae0707cb90b62e286`. |
 | Sources | Approved installer SPEC revision 04 sections 7/8; sealed MSIX Context revision 03; CAP-MSIX-02 exact build-input review revision 01 LF SHA256 `bf2c0419372b5962d30753237c60bc5eba9beb7699bfadbe96eb5deb44461222`. |
 | Owner / lane | Parent environment action, no product implementation; same lifetime NOT_REQUIRED; same existing read-only adversarial helper, parent owns verdict. |
@@ -129,3 +129,14 @@ Next declared stage is minimal real application-identity unsigned-build ticketin
 under approved SPEC, after both environment qualifications; installation/signing
 remain separate exact effect admission. No production certificate decision is
 inferred from this environment ticket.
+
+## Operational halt — 2026-09-07
+
+At admitted baseline `275858692716b2ed06d7f76e1adb6cc114728466`, the execution
+tool rejected process creation for the proposed qualification command with
+`blocked by policy`. No native command ran; post-denial readback confirms the
+exact action root absent and tracked worktree clean. All PY cells remain unproved.
+The directly indexed [blocker record](../../../doc/reviews/local-orchestration-installer/env-msix-05-python-packaging-review.md)
+preserves the exact unexecuted command and actual readback. No alternate-channel
+retry or policy bypass. Resolve the tool-capability restriction through authorized
+controls before Router continuation; prior owner authority is not missing.
