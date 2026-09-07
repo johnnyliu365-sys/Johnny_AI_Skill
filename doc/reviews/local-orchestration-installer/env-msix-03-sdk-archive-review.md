@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| Artifact ID / revision | `REVIEW-ENV-MSIX-03-20260907` / `02` |
-| State | `BLOCKED / EVIDENCE_DEFECT / CONVERGENCE_REVIEW_REQUIRED` |
+| Artifact ID / revision | `REVIEW-ENV-MSIX-03-20260907` / `03` |
+| State | `REPLAY_REVIEW_PENDING / PRIOR_FINDING_OPEN` |
 | Execution candidate / closure | `4f100786199bf0ccda5698fa3f025477db097bb6` / `CLOSURE-ENV-MSIX-03` revision 02 |
 | Parent / scope | Current-session reviewer; archive verification only, no acquired SDK code executed. |
 
@@ -309,3 +309,31 @@ source/version, certificate policy and rejection controls; do not relabel the ne
 observations as the missing historical run. A documented single-use override or
 reviewed replan must precede execution. MSIX build, install, upgrade, removal and
 publication remain unproved; an archive review is not their substitute.
+
+## Owner-authorized replay submitted for review — 2026-09-07
+
+The owner granted the requested evidence-only single-use replay. Its admission is
+committed at `4e8746817bd25f9a7813acd7de60aa7af640da48`, ENV-MSIX-03 document
+revision 04, closure revision 02. No security predicate or signer changed. The
+single attempt is now consumed; it does not grant another acquisition.
+
+The new [replay evidence](env-msix-03-sdk-replay-evidence.md) records every actual
+PowerShell command, complete returned output and exit code for EV1–EV4. This run
+is not a reconstruction of the missing historical output. The original quarantine
+and the historical F-ENV3-01 finding remain preserved.
+
+The parent read the full results: 0 positive, 1/NU3034 wrong signer, 1/NU3008
+corrupted copy, 0 unchanged-original reverify; HTTP transfer and absolute verifier
+preflight are now captured. Config files were generated from the committed ticket
+template into CreateNew fixtures, not copied from ambient user configuration.
+Operational commands create only the admitted quarantine artifacts; no product
+source, SDK execution, installation, VM, trust-store, host, push or release effect
+is admitted or requested. Successful native archive checks are not package readiness.
+
+Review plan: reuse the same existing read-only helper for the finite review of this
+committed replay; REQUIRED; categories SPEC_GAP, AUTHORIZATION,
+ERROR_PARTIAL_FAILURE, CONSISTENCY, OBSERVABILITY; isolation READ_ONLY_INTENT_ONLY;
+effect NO_EXTERNAL_EFFECT. It reads only the exact ticket, this review and replay
+evidence plus their direct index rows, and returns findings, not approval. Parent
+alone adjudicates F-ENV3-01 and EV1–EV5. Until that outcome is written, no closure
+approval or build/installation continuation is inferred.
