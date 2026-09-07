@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| Artifact ID / revision | `REVIEW-ENV-MSIX-03-20260907` / `01` |
-| State | `EVIDENCE_COMPLETE / ADVERSARIAL_REVIEW_PENDING` |
+| Artifact ID / revision | `REVIEW-ENV-MSIX-03-20260907` / `02` |
+| State | `BLOCKED / EVIDENCE_DEFECT / CONVERGENCE_REVIEW_REQUIRED` |
 | Execution candidate / closure | `4f100786199bf0ccda5698fa3f025477db097bb6` / `CLOSURE-ENV-MSIX-03` revision 02 |
 | Parent / scope | Current-session reviewer; archive verification only, no acquired SDK code executed. |
 
@@ -262,3 +262,50 @@ Reuse the existing read-only adversarial helper for the one correction review, b
 
 Native DLL/tool closure and clean pinned Python/runtime packaging remain unqualified. Next admissible work after archive closure is bounded toolchain qualification, not a production MSIX release. No helper result can bypass that boundary.
 
+## Correction-review result and parent conclusion — 2026-09-07
+
+The planned helper review returned `FINDINGS` for exact evidence candidate
+`1d11998eab5785859cf00d1464c5f39af54443fa` and execution candidate
+`4f100786199bf0ccda5698fa3f025477db097bb6`. Both indexed leaf digests matched.
+The parent reread the finite closure and committed report, independently accepts
+the finding below, and owns the final `BLOCKED` conclusion. The helper did not
+approve, execute the SDK, change files or acquire any additional effect authority.
+
+### F-ENV3-01 — EV1/EV2 evidence completeness
+
+- Classification: `EVIDENCE_DEFECT`, blocking; existing closure cells EV1 and EV2.
+- Evidence: this report at `1d11998e` lines 14–18 narrates original acquisition and
+  verifier/root preflight but does not preserve their complete command/result
+  observations. The displayed native commands use bare `dotnet` rather than
+  recording the absolute executable invocation and its preflight together.
+- Missing binding: contained/non-reparse root observation; absolute verifier
+  hash, valid Authenticode and selected SDK observation; original one-shot bounded
+  HTTP transaction, including no redirect/alternate/retry. The archive size/hash
+  and signature output do not establish those historical process properties.
+- Scope: this does not invalidate the recorded native EV3/EV4 results. It prevents
+  claiming the whole EV1–EV5 closure is discharged. Current filesystem readback
+  would be a new observation, not retroactive evidence of the original transfer.
+- Responsibility: the parent failed to persist the complete operational evidence.
+  No implementer was involved; this is not attributed to implementer performance.
+
+| Closure observation | Correction-review disposition |
+| --- | --- |
+| EV1 root / verifier preflight | Incomplete committed command/result binding; blocking |
+| EV2 acquisition | Historical bounded transfer not fully recorded; blocking |
+| EV3 positive / wrong signer | Native exit 0 / exit 1 NU3034 preserved above |
+| EV4 tampered / original | Native exit 1 NU3008 / unchanged digest / exit 0 preserved above |
+| EV5 review | Parent and existing helper completed the correction review; findings remain open |
+
+The original `EVIDENCE_COMPLETE` header was premature and is superseded by this
+revision's blocked conclusion; the original native outputs remain unaltered.
+Per the ticket's one-correction limit and CodeReview section 5, there is no automatic
+third correction, weaker trust policy, SDK extraction/execution or build/release.
+No replay or reacquisition has been performed to fill the gap.
+
+Suggested owner-scoped recovery, not admitted by this report: one evidence-only
+replay with a fresh isolated acquisition and complete preflight/command/output
+capture, retaining the original quarantine and all prior failures. Keep the exact
+source/version, certificate policy and rejection controls; do not relabel the new
+observations as the missing historical run. A documented single-use override or
+reviewed replan must precede execution. MSIX build, install, upgrade, removal and
+publication remain unproved; an archive review is not their substitute.

@@ -6,7 +6,7 @@ reports are not renamed, approved again or treated as MSIX evidence here.
 
 | Artifact ID / leaf | Kind | Revision | LF SHA-256 | Lifecycle |
 | --- | --- | --- | --- | --- |
-| `REVIEW-ENV-MSIX-03-20260907` / [env-msix-03-sdk-archive-review.md](env-msix-03-sdk-archive-review.md) | `OPERATIONAL_READINESS_REVIEW` | `01` | `94a63fb23fc6ff58145251de824554e3940b8a08619f3c1be48bf28ee44db85d` | `EVIDENCE_COMPLETE / ADVERSARIAL_REVIEW_PENDING` |
+| `REVIEW-ENV-MSIX-03-20260907` / [env-msix-03-sdk-archive-review.md](env-msix-03-sdk-archive-review.md) | `OPERATIONAL_READINESS_REVIEW` | `02` | `0f5d0d54e0347e77628efcc8915862277ebdeec8bc08c605b327aace84a3681f` | `BLOCKED / EVIDENCE_DEFECT / CONVERGENCE_REVIEW_REQUIRED` |
 | `REVIEW-CAP-MSIX-01-20260905` / [cap-msix-01-capability-review.md](cap-msix-01-capability-review.md) | `CAPABILITY_REVIEW` | `01` | `ea4a613816af530f6833e6a61e6200fd01e8ef8f5a1baa424347ccc52f62d6c5` | `RESEARCH_COMPLETE / LIFECYCLE_UNPROVED` |
 | `REVIEW-CAP-MSIX-02-20260906` / [cap-msix-02-build-input-review.md](cap-msix-02-build-input-review.md) | `CAPABILITY_REVIEW` | `01` | `bf2c0419372b5962d30753237c60bc5eba9beb7699bfadbe96eb5deb44461222` | `RESEARCH_COMPLETE / METADATA_PINNED / BUILD_UNPROVED` |
 | `REVIEW-ENV-MSIX-01-20260905` / [env-msix-01-provisioning-review.md](env-msix-01-provisioning-review.md) | `OPERATIONAL_READINESS_REVIEW` | `03` | `57d642ea4a255e0d68c3bca8e8a311079aac5e99443f659c336915ebc10dcc1a` | `APPROVED / VM_BOOTED_SETUP_PENDING` |

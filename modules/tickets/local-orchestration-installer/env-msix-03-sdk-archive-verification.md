@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| Artifact ID / revision | `ENV-MSIX-03` / `02` |
-| State / closure | `CORRECTION_ACTION_ADMITTED / ORIGINAL_EV3_FAILED` / `CLOSURE-ENV-MSIX-03`, revision 02 |
+| Artifact ID / revision | `ENV-MSIX-03` / `03` |
+| State / closure | `BLOCKED / EVIDENCE_DEFECT / CONVERGENCE_REVIEW_REQUIRED` / `CLOSURE-ENV-MSIX-03`, revision 02 (unchanged) |
 | Kind / authority | Reviewer-owned environment preparation, decomposed from the owner's environment/project-convergence authorization and approved SPEC revision 04 sections 7.1/8. No app installation, SDK code execution, signing, VM or host registration authority. |
 | Inputs | SPEC revision 04; sealed MSIX Context revision 03; CAP-MSIX-02 indexed research review; immutable action/registry commit supplied at execution |
 | Action owner/reviewer | Current-session parent; zero implementation owners, no product source. One existing read-only adversarial helper may audit this exact action. |
@@ -121,3 +121,28 @@ must still prove behavior on the pinned installed verifier. Revision 02 removes 
 the incompatible CLI filter and adds the wrong-config control. The original failure
 remains historical evidence. One correction review uses the same helper; no automatic
 third correction or quiet policy weakening is permitted if it remains defective.
+
+## Correction-review disposition — 2026-09-07
+
+Evidence candidate `1d11998eab5785859cf00d1464c5f39af54443fa`, executed against
+`4f100786199bf0ccda5698fa3f025477db097bb6`, passed the recorded EV3/EV4
+positive, wrong-signer, corrupted-copy and unchanged-original verification runs.
+The existing read-only helper nevertheless returned `FINDINGS`: EV1/EV2 are not
+fully supported by committed command/result records. The parent independently
+checked the exact ticket and evidence leaf and accepts that evidence defect.
+
+The original bounded HTTP transaction and the verifier/root preflight are described
+in prose, not preserved as the required reproducible command/result observations.
+Archive authenticity does not itself prove download timeout, redirect/retry policy
+or the historical root/verifier checks. This is a record-completeness failure, not
+a finding that the SDK signature is invalid. See the indexed
+[correction review](../../../doc/reviews/local-orchestration-installer/env-msix-03-sdk-archive-review.md)
+for the finite finding and retained successful observations.
+
+Document revision 03 records the outcome only; it does not change closure revision
+02, grant another correction, reconstruct missing historical output or authorize
+reacquisition. Quarantine remains untouched. Return `VALIDATION_FAILED`, with
+`BLOCKED / EVIDENCE_DEFECT / CONVERGENCE_REVIEW_REQUIRED`; no
+`ARCHIVE_SIGNATURE_VERIFIED`, SDK execution, build, installation or release follows.
+Further correction needs the documented owner-scoped single-use override or
+reviewed replan required by the ticket-set convergence rule.
