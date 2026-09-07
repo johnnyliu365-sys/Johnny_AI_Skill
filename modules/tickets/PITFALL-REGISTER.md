@@ -426,6 +426,46 @@
 
 ---
 
+### D9. 治理副本放進 host 使用者層級檔案後漂移
+
+- **雷**：為了讓規則 always-on，把 Johnny 治理正文放進 host 使用者層級 instruction
+  檔，形成會影響無關專案、無法隨插件正典同步的第二份規則。方向是自動觸發通道，
+  錯誤載體卻是 machine-global prose；ADR-036 lines 107–108 已明確否決此方案。
+- **證據**：owner 於 2026-09-07 提供獨立審計的三項結果；本次重新讀正典，並在
+  `afb071b4ced5e92aabf74130ad1678ee4ce725d2` 重跑 repo 對照。未讀取或改寫使用者
+  層級原檔，故不把 owner 提供的外部審計宣稱為本次 host 檔案重現：
+  1. 副本發明 `doc/progress/current.md`、`doc/intake/authority.md`。
+     `git grep -n -F -e 'doc/progress/current.md' -e 'doc/intake/authority.md' HEAD --`
+     在上述 baseline 回傳 exit 1、零筆；一般 repo `rg` 同樣零筆。
+     [AGENTS.md](../../AGENTS.md) lines 8–18 要求沿 target authority/Router 讀實際來源，
+     其「Target project 正式來源」及 [template/README.md](../../template/README.md)
+     均未定義這兩條路徑。零筆是新增本條前的時間點證據，不是要求未來 repo 永遠零筆。
+  2. 副本沿用已被取代的 Sonnet/Opus/Fable provider 對應。
+     [dispatch-model-profile.md](../../doc/runbooks/dispatch-model-profile.md) lines 83–87
+     明示 REVISION_02 已取代該對應；lines 27–30 要求實際 model 值從注入 profile 取得。
+     歷史模型名或這次 hook 提案中的資料範例，不得被回讀成現行派工常數。
+  3. 副本要求「每攻擊面一位 reviewer 並行 + 執行型 reviewer」。
+     [CodeReview.md](../../CodeReview.md) lines 49–51 只給單一 reviewer 最終結論與整合權；
+     [model-role-routing.md](../../skills/johnny-project-takeover/references/model-role-routing.md)
+     lines 27–32 限定一位 evidence-only adversarial helper，且其角色集合未含
+     「執行型 reviewer」。攻擊面清單不是增加 reviewer 權限或人數的依據。
+- **修法**：Johnny 治理正文只存在插件版本庫／bundle／安裝快取；target 只保留
+  [WA-01](plugin-adoption-quality/wa-01-activation-host-gate-contracts.md) v1 activation block
+  的 skill 指標，不攜帶規則正文。host 使用者層級 instruction 檔不得承載 Johnny
+  規則。獨立、版本化的 plugin host hook 與經核准的 target 自足 hook/config 是行為
+  控制載體，不是 prose 副本，亦不取代 repository admission。
+- **防回歸**：[HDA-01](plugin-adoption-quality/hda-01-host-dispatch-admission-hook.md) 提案
+  把 model／dispatch-decision admission 放到 plugin host hook；
+  [WA-02](plugin-adoption-quality/wa-02-project-activation-host-effect-adapter.md) 與
+  [WA-02b](plugin-adoption-quality/wa-02b-target-activation-behavioral-hook.md) 提案承接
+  target activation。之後須以各 host 實際拒絕及逐條反向突變證明，不能用 instruction
+  存在、metadata 或 manifest 充當已強制。D8 尾端序列仍適用全部索引修訂。
+- **狀態**：`RECORDED / PROPOSALS_PENDING`；本次只修控制面、開提案與登記。
+  未清除或改寫使用者檔、未實作 hook、未改 skills/reference 正文、未 target 寫入、
+  未發布。WA-02 的 gateway capability blocker 未解除。
+
+---
+
 ## E. 環境／平台類（本機事實，違反即浪費一輪 debug）
 
 | 雷 | 症狀 | 修法 |

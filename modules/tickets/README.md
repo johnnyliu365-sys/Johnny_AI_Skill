@@ -7,6 +7,10 @@
 本專案踩過的雷、證據與修法的統整索引：[PITFALL-REGISTER.md](PITFALL-REGISTER.md)。
 debug 或稽核任何一條線之前先讀它——多數「新」問題都是登記簿裡某一族的再現。
 
+| Child ID | Kind | Revision | LF SHA-256 | Lifecycle | Reference |
+| --- | --- | --- | --- | --- | --- |
+| `PITFALL-REGISTER` | `AUDIT_REGISTER` | `20260907-D9` | `4217b0c2ce39ed2214d427d2bffd07950befb515a7c543115b2081c28e5132c7` | `ACTIVE` | [PITFALL-REGISTER.md](PITFALL-REGISTER.md) |
+
 ## Plugin adoption quality
 
 | Child ID | Kind | Revision | LF SHA-256 | Lifecycle | Reference |
