@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| Artifact ID / revision | `ENV-MSIX-04` / `01` |
-| State / closure | `ADMITTED / NOT_EXECUTED` / `CLOSURE-ENV-MSIX-04` revision 01 |
+| Artifact ID / revision | `ENV-MSIX-04` / `02` |
+| State / closure | `EXECUTED / REVIEW_PENDING / ACTION_CONSUMED` / `CLOSURE-ENV-MSIX-04` revision 01 |
 | Authority | Owner's 2026-09-07 authorization following ENV-MSIX-03 closure at `35d3a4147ccf3bb28b8f924db90fad2c7c3e3f6d`: qualify SDK native tools and clean Python packaging; this leaf scopes only the SDK half. |
 | Sources | Approved installer SPEC revision 04 sections 7.1/8; sealed MSIX Context revision 03; ENV-MSIX-03 approved review/evidence at baseline above. No architecture/user-behavior change. |
 | Owner / lane | Current-session parent environment action; no product implementer/source, same lifetime `NOT_REQUIRED`; same existing read-only adversarial helper. |
@@ -101,3 +101,13 @@ Primary guidance checked 2026-09-07:
 [framework manifest](https://learn.microsoft.com/en-us/uwp/schemas/appxpackage/uapmanifestschema/element-f-framework).
 MakeAppx validation is not a guarantee of installability.
 
+## Execution outcome awaiting review — 2026-09-07
+
+The single native action under execution authority
+`c6b9ad1a10acae3d542584a49e7b2e3061c6b810` has run and is consumed.
+NT1–NT5 observations are captured in the directly indexed
+[SDK native review](../../../doc/reviews/local-orchestration-installer/env-msix-04-sdk-native-review.md).
+NT6 remains pending the existing helper's finite review and parent adjudication.
+No second extraction/native replay, installation, signing or release follows from
+this state. Preserve the root and original archive; the next serial qualification
+starts only after this review outcome, under its own exact admission.
