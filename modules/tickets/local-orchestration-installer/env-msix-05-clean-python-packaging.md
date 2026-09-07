@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| Artifact ID / revision | `ENV-MSIX-05` / `03` |
-| State / closure | `ADMITTED / OWNER_RESUMED / NOT_EXECUTED` / `CLOSURE-ENV-MSIX-05` revision 01 |
+| Artifact ID / revision | `ENV-MSIX-05` / `04` |
+| State / closure | `HALT / TOOL_POLICY_BLOCKED / NOT_EXECUTED` / `CLOSURE-ENV-MSIX-05` revision 01 |
 | Authority | Owner's 2026-09-07 authorization for SDK native tools and clean Python packaging; SDK half closed at `0de3fae7473dff907c7c5f3ae0707cb90b62e286`. |
 | Sources | Approved installer SPEC revision 04 sections 7/8; sealed MSIX Context revision 03; CAP-MSIX-02 exact build-input review revision 01 LF SHA256 `bf2c0419372b5962d30753237c60bc5eba9beb7699bfadbe96eb5deb44461222`. |
 | Owner / lane | Parent environment action, no product implementation; same lifetime NOT_REQUIRED; same existing read-only adversarial helper, parent owns verdict. |
@@ -157,3 +157,10 @@ joined repository cwd to an already absolute path, producing a nonexistent path.
 Pass the canonical repository-relative CAP review path to that function; do not
 remove its digest check. Rebind only the execution baseline to this revision's
 admission commit. This wrapper correction is not asserted to explain the tool denial.
+
+The bounded same-tool submission at `29fdb5d76fd4d4ed0897408e83785f8e37abfe88`
+was again rejected before process creation with blocked by policy. The action root
+remains absent; no native/HTTP/install attempt occurred. Review revision 03 captures
+the exact request/error and read-only checks. The one requested resubmission is
+consumed; no alternate channel or security-policy change. Host-side rejection
+diagnosis/resolution is required, not another ceremonial owner approval.
