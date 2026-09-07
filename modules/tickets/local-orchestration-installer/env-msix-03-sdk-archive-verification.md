@@ -2,14 +2,14 @@
 
 | Field | Value |
 | --- | --- |
-| Artifact ID / revision | `ENV-MSIX-03` / `01` |
-| State / closure | `OPEN / BOUNDED_ACTION_ADMITTED` / `CLOSURE-ENV-MSIX-03`, revision 01 |
+| Artifact ID / revision | `ENV-MSIX-03` / `02` |
+| State / closure | `CORRECTION_ACTION_ADMITTED / ORIGINAL_EV3_FAILED` / `CLOSURE-ENV-MSIX-03`, revision 02 |
 | Kind / authority | Reviewer-owned environment preparation, decomposed from the owner's environment/project-convergence authorization and approved SPEC revision 04 sections 7.1/8. No app installation, SDK code execution, signing, VM or host registration authority. |
 | Inputs | SPEC revision 04; sealed MSIX Context revision 03; CAP-MSIX-02 indexed research review; immutable action/registry commit supplied at execution |
 | Action owner/reviewer | Current-session parent; zero implementation owners, no product source. One existing read-only adversarial helper may audit this exact action. |
 | Profile / exemption | POC / HIGH_ASSURANCE supply-chain verification; `DOCS_ONLY` control record, native operational checks instead of invented unit tests |
 | Workspace / lane | Parent's current repository; no new branch/worktree; same lifetime, bridge `NOT_REQUIRED` |
-| Output root | Exact new child `tests/.johnny-runtime/env-msix-03-sdk-20260906` in this checkout; refuse pre-existing child or any reparse ancestor. Artifacts remain quarantined, not installed or used as executable inputs. |
+| Output root | Exact child `tests/.johnny-runtime/env-msix-03-sdk-20260906`, created by revision 01. Revision 02 reuses only that original quarantine after archive/config digest and non-reparse readback; no new download. Artifacts remain quarantined, not installed or used as executable inputs. |
 | Language / XSS | No product language change; bounded PowerShell/.NET native tool operation; `XSS_NOT_APPLICABLE` |
 
 ## One closure
@@ -35,13 +35,15 @@ DLL closure, PyInstaller, Python runtime, MSIX build or deployment.
   `1f4b311d9acc115c8dc8018b5a49e00fce6da8e2855f9f014ca6f34570bc482d`,
   separately observed from NuGet's RepositorySignatures/5.0.0 resource. Never derive
   the allowlist from `sdk.nupkg` itself, and never allow an untrusted certificate root.
-- Parent creates only `nuget.config`, `sdk.nupkg`, one `sdk-tampered.nupkg`, and
+- Parent creates only `nuget.config`, `sdk.nupkg`, one `sdk-tampered.nupkg`, one
+  `nuget-wrong-signer.config` negative fixture, and
   .NET/NuGet operational-home/temp/cache children in the exact output root. Native
   stdout is evidence; no raw user config is read or copied. OS-managed certificate
   revocation/cache activity is not a trust-policy edit and is not claimed absent.
 - Config contains only `signatureValidationMode=require`, a cleared package source
   list and the fixed NuGet trusted repository signer below; no ambient user/private
-  feed configuration. CLI also supplies the exact certificate fingerprint.
+  feed configuration. Repository trust is checked through this config, not through
+  a CLI fingerprint filter restricted to the primary signature.
 - No extraction, execution of archive contents, pip/SDK installation, elevation,
   certificate create/import/export, VM changes, project-source changes, git push or
   delete/overwrite/cleanup. Failure retains quarantine for named recovery; no broad
@@ -68,7 +70,7 @@ and the exact output root as cwd. Before using the acquired archive as anything
 other than untrusted verifier input:
 
 ```text
-dotnet nuget verify sdk.nupkg --all --certificate-fingerprint 1f4b311d9acc115c8dc8018b5a49e00fce6da8e2855f9f014ca6f34570bc482d --configfile nuget.config --verbosity normal
+dotnet nuget verify sdk.nupkg --all --configfile nuget.config --verbosity normal
 ```
 
 Positive acceptance needs exit zero, signature output bound to the exact SDK
@@ -79,11 +81,17 @@ only, verify that copy with identical policy and require a nonzero result. Read 
 unfiltered outputs. Then prove the original digest is unchanged and verify the
 original again; no claim from a reduced summary or a request echo.
 
+Also verify the intact archive with a CreateNew `nuget-wrong-signer.config`, identical
+to the fixed config except that the repository certificate fingerprint is 64 zeroes.
+Require a nonzero result explicitly rejecting the configured trust. An exit zero is
+a finding that the configuration is not carrying the claimed control, never a pass.
+Do not add any certificate observed only from the candidate to either trust policy.
+
 | Cell | Required observation |
 | --- | --- |
 | EV1 | Fresh contained non-reparse root; exact existing verifier hash/signature/version; no acquired-code execution |
 | EV2 | Exact successful bounded HTTP transfer; archive size/hash; no alternate origin/version/retry |
-| EV3 | Exact archive verifies under independent signer policy; native ID/version readback; no disabled verification |
+| EV3 | Exact archive verifies under independent repository-signer policy; native ID/version readback; wrong-signer config rejects the intact archive; no disabled verification |
 | EV4 | Corrupted-copy native rejection, original digest unchanged, original reverify green |
 | EV5 | Parent/reviewer and one read-only adversarial helper inspect the exact candidate record; absence of source/VM/trust/registration mutations; retained artifacts identified, not called installed |
 
@@ -91,3 +99,25 @@ Return `ACTION_COMPLETED / ARCHIVE_SIGNATURE_VERIFIED` only after EV1–EV5. Fai
 is `BLOCKED` with exact phase/native result and retained relative evidence names.
 Source/build dispatch still waits for native SDK closure and complete pinned runtime
 qualification; it must not be unlocked by this archive-only result.
+
+## Revision-01 failure and bounded correction
+
+Owner's 2026-09-07 instruction resumes MSIX build/lifecycle qualification, with
+release conditional on completion. This correction is the archive-only prerequisite;
+it does not authorize SDK execution or deployment through this leaf.
+
+At candidate `afb071b4ced5e92aabf74130ad1678ee4ce725d2`, EV2 downloaded exactly
+22,297,017 bytes; archive SHA-256 is
+`8bfdfb6ca2633f531cf80b5fa22512ba61a394d7988f0970db83baadc67929ed`.
+The original command added the repository fingerprint as `--certificate-fingerprint`;
+native exit 1 / NU3034 refused because its primary author signer differs from the
+repository countersigner. The existing read-only adversarial helper returned this
+as a blocking command-contract defect, not proof that the archive is malicious.
+
+Parent read the [NuGet verification implementation](https://github.com/NuGet/NuGet.Client/blob/dev/src/NuGet.Core/NuGet.Commands/VerifyCommand/VerifyCommandRunner.cs)
+on 2026-09-07: config trust and CLI primary-signature filters are separate providers.
+That upstream source explains the correction; local positive and two negative runs
+must still prove behavior on the pinned installed verifier. Revision 02 removes only
+the incompatible CLI filter and adds the wrong-config control. The original failure
+remains historical evidence. One correction review uses the same helper; no automatic
+third correction or quiet policy weakening is permitted if it remains defective.
