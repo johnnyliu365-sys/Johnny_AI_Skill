@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| Artifact ID / kind / revision | `PLAN-CONTROLLED-VERIFICATION-LAB-20260908-01` / `CAPABILITY_QUALIFICATION_PLAN` / `01` |
-| Lifecycle | `DRAFT / GUEST_READBACK_REQUIRED / NOT_DISPATCHABLE` |
+| Artifact ID / kind / revision | `PLAN-CONTROLLED-VERIFICATION-LAB-20260908-01` / `CAPABILITY_QUALIFICATION_PLAN` / `02` |
+| Lifecycle | `DRAFT / GUEST_ADMIN_REPORTED / NOT_DISPATCHABLE` |
 | Requirement | [REQ-051 revision 04](../../requirements/active/2026/environment-control/REQ-20260908-051.md) |
 | Accepted boundary | [Convergence revision 04](enforcement-boundary-r01.md); owner decision D3 recorded in `b299e5f2899041f1317b7a9426998028a323c6b8` |
 | Purpose | Freeze a small qualification sequence for the accepted boundary before any production enforcement implementation or workload. |
@@ -59,11 +59,61 @@ Its generated `result.json` is local readback material, not trusted policy. No r
 provider credential was acquired. The VM is running and disconnected; **guest readiness,
 recoverability and enforcement remain unproven**.
 
+### Follow-up readiness evidence, 2026-09-08
+
+The owner supplied two results from the guest terminal. The first reported `admin=false`;
+after opening an elevated guest PowerShell, the second reported:
+
+```json
+{
+  "os": "Microsoft Windows NT 10.0.26200.0",
+  "powershell": "5.1.26100.6584",
+  "admin": true,
+  "tools": [
+    {
+      "Name": "python.exe",
+      "Source": "C:\\Users\\j\\AppData\\Local\\Microsoft\\WindowsApps\\python.exe"
+    }
+  ]
+}
+```
+
+This satisfies the requested owner-operated elevated-terminal discovery. Do not ask the
+owner to repeat that probe or treat administrative elevation as another architecture choice.
+It does not establish a remote guest execution channel or independently bind the process to
+the VM UUID. Codex and Claude were not returned by that command search; absence everywhere
+is not established. The WindowsApps Python entry has not been executed or qualified as an
+interpreter. No package installation follows merely from these observations.
+
+One additional host-side diagnostic returned at `2026-09-08T11:46:05.9267209Z`, correlation
+`CV-LAB-RECOVERY-c8b3fdd656604a30a9d5903606a1cbc0`. It again matched the exact VM ID/name,
+Running state, one disconnected network adapter and zero checkpoints. `Get-VMHardDiskDrive`
+and `Get-VHD` reported one dynamic disk: virtual capacity `85899345920` bytes, allocated
+`21177040896` bytes. The disk path's drive reported `231617679360` bytes available
+(approximately 216 GiB). Startup memory was `4294967296` bytes. The configured checkpoint
+storage path was
+`C:\ProgramData\JohnnyMsixLab-ENV-MSIX-01-20260905\Johnny-MSIX-Lab-20260905`.
+Free space on the VHD's drive alone does not independently qualify checkpoint storage,
+restore behavior or later guest containment.
+
+The same diagnostic's in-memory body was extended with those read-only queries; the original
+script digest above is not the digest of that extended body. Its generated local result is
+`.worktrees/lab-readback-20260908-01/recovery-baseline-c8b3fdd656604a30a9d5903606a1cbc0.json`.
+The owned job retained the 15-second wait, zero retries and cleanup; the parent observed exit 0
+within its single 25-second wait. These are diagnostic observations, not qualified bootstrap
+provenance: the helper imports Hyper-V by name. The existing
+[ENV-F2 finding and correction](../../reviews/local-orchestration-installer/env-msix-01-provisioning-review.md)
+require protected module resolution before a future elevated mutation; do not reuse this
+read-only helper as an approved mutating executor. No checkpoint, VM restart, networking,
+account, ACL, CLI installation or guest fixture change was performed.
+
 ## Remaining prerequisites before a mutating fixture
 
-1. Read inside this exact guest: Windows build, PowerShell version, admin-token availability,
-   exact installed CLI executables/versions, and availability of a user-controlled execution
-   entry. Do not assume the physical host's installations also exist in the guest.
+1. Bind the actual execution entry to this exact guest and independently collect the fixture's
+   prerequisites. Windows build, PowerShell version and elevated owner entry have already been
+   reported above. Exact CLI identities/versions remain required only for dependent host tests;
+   missing CLIs do not block pure contract work or qualification planning. Do not assume the
+   physical host's installations also exist in the guest.
 2. Capture an owned restore point and verify its exact VM/checkpoint identity before new account,
    ACL or fixture changes. The readback above found no checkpoint. Do not call that recoverable
    or restore/delete an unrelated snapshot. Snapshot storage headroom must be checked first.
@@ -75,9 +125,10 @@ recoverability and enforcement remain unproven**.
    allowed writes, expected cells, deadlines, evidence locations and cleanup. A candidate cannot
    alter its approval plan; extra tests/retries/load require an explicit amended plan.
 
-Guest access is presently unconfirmed. No credential has been requested from an Agent-visible
-channel. Lack of guest access blocks guest effects only, not pure specification work or normal
-same-lifetime delegation after ticket admission.
+An owner-operated elevated guest terminal is reported available; an independently bound
+Agent-operated guest channel remains unconfirmed. No credential has been requested from an
+Agent-visible channel. Lack of such a channel blocks its guest effects only, not pure
+specification work or normal same-lifetime delegation after ticket admission.
 
 ### Minimal owner-run guest readback
 
@@ -143,7 +194,10 @@ Windows lab network isolation must remain effective throughout the no-external-c
 
 ## Continuation
 
-Host-side metadata readback is complete. Next obtain the guest's minimal readback through a
-user-controlled guest entry, then finish the exact qualification specification and ticket.
-No new architecture choice is being asked. D1/D2/D3 remain accepted; no fixture implementation,
-host configuration, VM mutation, production enforcement, integration or release is complete.
+Host-side metadata readback and the requested owner-relayed guest elevation discovery are
+complete. Next finish the exact qualification specification and ticket before invoking the
+mutating sequence, including an owned checkpoint with protected bootstrap and exact readback.
+The current plan is not that admitted ticket. Do not repeat the answered elevation check or
+require CLI installation to continue specification work. No new architecture choice is being
+asked. D1/D2/D3 remain accepted; no fixture implementation, host configuration, VM mutation,
+production enforcement, integration or release is complete.
