@@ -2,11 +2,11 @@
 
 | Field | Value |
 | --- | --- |
-| Artifact ID / kind / revision | `CONVERGENCE-CONTROLLED-VERIFICATION-20260908-01` / `ARCHITECTURE_PROPOSAL` / `01` |
-| State | `OWNER_BOUNDARY_DECISION_PENDING / NOT_SEALED / NON_DISPATCHABLE` |
-| Requirement / intake | [REQ-051 revision 02](../../requirements/active/2026/environment-control/REQ-20260908-051.md) / [intake revision 02](intake-r01.md) |
+| Artifact ID / kind / revision | `CONVERGENCE-CONTROLLED-VERIFICATION-20260908-01` / `ARCHITECTURE_PROPOSAL` / `02` |
+| State | `OWNER_SCOPE_APPROVED / CAPABILITY_INVESTIGATION / NOT_SEALED` |
+| Requirement / intake | [REQ-051 revision 03](../../requirements/active/2026/environment-control/REQ-20260908-051.md) / [intake revision 03](intake-r01.md) |
 | Inspection baseline | `b697738d009db37318ebc8762107ef8329e014db`; proposal predecessor `c17cc249fbb91339bc83314c0467eee3489339fc` |
-| Authority | Owner requests mandatory executable constraints; this records technical findings and the remaining protection-scope decision. It does not claim owner Grill, host qualification, permission changes or installed enforcement. |
+| Authority | Owner accepted D2 after commit `6a093821592b1f007a570cd13eb9feeadf5b30aa` and directed work to begin. This records scope approval, not a qualified mechanism, completed Grill, permission changes or installed enforcement. |
 
 ## Readback that changes the solution
 
@@ -94,7 +94,7 @@ accepted ADR/SPEC/ticket bodies remain unchanged pending the scoped change decis
 
 ## Owner decision D2: restricted execution lane
 
-Recommended scope: only explicitly enrolled Johnny sessions/worktrees use a protected execution
+Owner-approved scope: only explicitly enrolled Johnny sessions/worktrees use a protected execution
 lane. Agents may propose plans and candidate edits but cannot modify the active approval/policy
 store or bypass controlled verification using arbitrary shell, interactive stdin or alternative
 effect tools. Necessary read-only inspection and owner recovery remain available. Ordinary
@@ -102,14 +102,16 @@ unrelated projects and owner-operated terminals are not silently reconfigured.
 
 This is a loss of unrestricted Agent execution in the enrolled lane. Without it, user-editable
 hooks can improve behavior but cannot honestly satisfy the requested non-bypassable guarantee.
-Owner approval is required before choosing/applying the corresponding host permission or OS
-isolation changes. Selecting a specific service/account/container mechanism is still subject to
-bounded capability investigation; no administrative installation is pre-authorized here.
+The owner has accepted this scoped loss of unrestricted execution. Selecting a concrete protected
+service/account/container mechanism remains subject to bounded capability investigation; its
+unmentioned administrative installation is not pre-authorized here. Do not re-ask the approved
+scope question or treat that approval as proof of a host's capability.
 
-Once that scope is accepted, qualify the two host bypass surfaces and the selected Windows
+Next qualify the two host bypass surfaces and the selected Windows
 process/protection primitives before dependent execution implementation. Pure plan and WA-04
 source contracts can proceed independently after their own specification/ticket admission.
 Release requires actual installed tests for both hosts, not just a script JSON test.
 
-Return: docs-only `ACTION_COMPLETED`; `WAIT_FOR_HUMAN` for D2. No enforcement code is delivered
-by this proposal, and none of the listed adversarial tests is reported as passed.
+Return: docs-only `ACTION_COMPLETED`; D2 acceptance emits `OWNER_INPUT_PROVIDED` for the bounded
+DELTA capability investigation. No enforcement code is delivered by this proposal, and none of
+the listed adversarial tests is reported as passed.
