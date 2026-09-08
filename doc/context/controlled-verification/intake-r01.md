@@ -3,8 +3,9 @@
 | Field | Value |
 | --- | --- |
 | Artifact ID / kind | `INTAKE-CONTROLLED-VERIFICATION-20260908-01` / `CHANGE_INTAKE` |
-| Revision / state | `01` / `OWNER_DECISION_REQUIRED / NOT_SEALED` |
+| Revision / state | `02` / `ENFORCEMENT_BOUNDARY_DECISION_REQUIRED / NOT_SEALED` |
 | Requirement | [PRD/CHG-20260908-051](../../requirements/active/2026/environment-control/REQ-20260908-051.md) |
+| Scoped technical finding | [Enforcement boundary and refusal matrix](enforcement-boundary-r01.md) |
 | Baseline | `b697738d009db37318ebc8762107ef8329e014db` |
 | Owner | Human project owner; current reviewer records facts and proposals only. |
 
@@ -15,17 +16,19 @@
   "schema_version": "1",
   "intake_mode": "delta",
   "product_kind": "control_plane",
-  "goal_statement": "Execute only an approved bounded verification plan and reject ticket-declared source responsibility violations before integration, without replacing the existing Router.",
+  "goal_statement": "Enforce exact approved verification execution, owned process lifetime and restart reconciliation, and reject ticket-declared source responsibility violations through automatically active qualified controls rather than model memory, without replacing the existing Router.",
   "known_constraints": [
     "Both Codex and Claude Code require independent qualification.",
     "Same-lifetime delegation remains bridge-free and completion-wait driven.",
     "Resource controls must be proven before affected process execution.",
     "Governance and shared engine stay outside target runtime dependencies.",
-    "Human owner retains unresolved architecture and policy decisions."
+    "Human owner retains unresolved architecture and policy decisions.",
+    "Responsibility and dependency checks are mandatory; generic line-count ceilings are excluded.",
+    "Hook presence or model reminders alone cannot establish bypass-resistant enforcement."
   ],
-  "evidence_refs": ["owner-verification-request-20260908", "owner-responsibility-request-20260908"],
+  "evidence_refs": ["owner-verification-request-20260908", "owner-responsibility-request-20260908", "owner-mandatory-enforcement-20260908"],
   "baseline_reference": "johnny-ai-skill@b697738d009db37318ebc8762107ef8329e014db",
-  "delta_scope": ["approved-verification-execution", "wa-04-responsibility-admission"],
+  "delta_scope": ["approved-verification-execution", "wa-04-responsibility-admission", "owned-execution-recovery", "automatic-host-enforcement"],
   "workload": null
 }
 ```
@@ -63,6 +66,8 @@ COMPACT; effect/admission tickets require an evidence-backed assessment before d
 | Plan admission | Resolve approved source and compare exact candidate/policy/plan bindings | Spawn processes or accept caller-minted approval |
 | Verification coordinator | Ordered finite run/retry policy and one terminal result | OS primitives, review verdict, Git integration or model polling |
 | Resource/process adapter | Proven caps before work, bounded wait and exact process-tree cleanup | Change acceptance rules, approve its own capability or kill foreign work |
+| Recovery/reconciliation | Attempt identity, terminal evidence and proven process ownership | Trust stale host UI as live execution, duplicate completed work or invent a success |
+| Host adapter | Automatic entry registration and qualified pre-effect interception | Rewrite rejected commands, supply policy authority or claim unobserved tool paths are protected |
 | Evidence adapter | Actual attempt outcomes, expected-check matching, bounded evidence identity | Convert unknown/unrun checks into PASS or discard failed attempts |
 | Existing Router/integration composition | Admit the next existing transition after required evidence and review | Reimplement the test runner or treat verification success as review approval |
 | Existing WA-04 language adapter | Source facts under the approved responsibility/dependency contract | Infer a new contract from the candidate or claim universal semantic understanding |
@@ -88,29 +93,28 @@ follow observable responsibilities. Splitting a file without changing coupling i
 No item above is an implementation ticket or a dispatch. The reviewer must not invent frozen
 contracts while assigning it. A missing execution capability blocks its dependent work only.
 
-## Owner decision D1: what does the size requirement forbid?
+## Owner decision D1: answered, do not ask again
 
-Source: the owner requests enforced responsibility separation and no oversized 1000-plus-line
-coupled files. Accepted ADR-036 consequences and SPEC AC-4 explicitly prohibit a generic size
-gate and require that a large cohesive module not fail merely for length.
+On 2026-09-08 the owner clarified that the requirement rejects coupling and mixed responsibilities,
+not file length. Preserve the accepted responsibility-only rule. Do not introduce a numerical
+ceiling or accept a mechanically split coupled candidate. The owner also explicitly requires
+script-enforced plan integrity, process lifetime, reconciliation and automatic activation.
+These answers are now recorded in the normalized intake and REQ-051 revision 02.
 
-- **A — responsibility gate (recommended):** preserve that accepted rule. Reject mixed declared
-  responsibilities, forbidden dependency direction, out-of-root concrete construction and missing
-  test seams regardless of line count. Do not accept a mechanically split coupled candidate.
-  Size is a review signal, not standalone authority to reject a cohesive module.
-- **B — responsibility gate plus an absolute size ceiling:** add a new owner-approved policy
-  overriding the relevant ADR/SPEC clauses. Before freezing, define what is counted, generated
-  source treatment, existing oversized-file treatment and who can approve exceptions. An
-  implementer cannot self-exempt or satisfy this by arbitrary slicing.
+## New protection-boundary decision D2
 
-Decision is not inferred. No ADR/SPEC/skill body has been changed, and no new numerical threshold
-has been frozen. This is the first owner interpretation question, not a request to approve a
-finished implementation. The verification requirement does not become a source dispatch before
-its own contracts and capability dependencies are frozen.
+The [scoped finding](enforcement-boundary-r01.md) identifies documented bypasses and distinguishes
+actual CLI feature availability from installed enforcement. A hook-only solution cannot satisfy
+the requested hard guarantee while unrestricted alternate execution and policy mutation remain.
+Proposed scope is an explicitly enrolled Johnny session/worktree, not unrelated projects.
+The owner must decide whether those sessions may lose direct unrestricted execution and access
+to modifying their enforcement policy, using a qualified protected execution path instead.
+This is a permission/workflow change, not another request to choose a file-size threshold.
+No admin settings, host configuration or target files are modified by recording this finding.
 
 ## Completion and continuation
 
 `ACTION_COMPLETED` covers only indexed intake/discovery documentation.
-Next: `WAIT_FOR_HUMAN / OWNER_POLICY_DECISION_REQUIRED` for D1, then resume scoped convergence.
+Next: `WAIT_FOR_HUMAN / ENFORCEMENT_BOUNDARY_DECISION_REQUIRED` for D2, then resume scoped convergence.
 The named reason is this intake's explanatory label, not a newly implemented Router enum.
 No source, tests, skills, package, target, provider or release effect is claimed.
