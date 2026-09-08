@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| Artifact ID / kind / revision | `CONVERGENCE-CONTROLLED-VERIFICATION-20260908-01` / `ARCHITECTURE_PROPOSAL` / `02` |
+| Artifact ID / kind / revision | `CONVERGENCE-CONTROLLED-VERIFICATION-20260908-01` / `ARCHITECTURE_PROPOSAL` / `03` |
 | State | `OWNER_SCOPE_APPROVED / CAPABILITY_INVESTIGATION / NOT_SEALED` |
 | Requirement / intake | [REQ-051 revision 03](../../requirements/active/2026/environment-control/REQ-20260908-051.md) / [intake revision 03](intake-r01.md) |
 | Inspection baseline | `b697738d009db37318ebc8762107ef8329e014db`; proposal predecessor `c17cc249fbb91339bc83314c0467eee3489339fc` |
@@ -107,11 +107,127 @@ service/account/container mechanism remains subject to bounded capability invest
 unmentioned administrative installation is not pre-authorized here. Do not re-ask the approved
 scope question or treat that approval as proof of a host's capability.
 
-Next qualify the two host bypass surfaces and the selected Windows
-process/protection primitives before dependent execution implementation. Pure plan and WA-04
-source contracts can proceed independently after their own specification/ticket admission.
-Release requires actual installed tests for both hosts, not just a script JSON test.
+## Bounded capability investigation: actual results, 2026-09-08
+
+Reviewer inspected local executables and reused one `decision-support` helper for documentation
+questions. The helper did not implement or supply the review verdict. Completion used
+`wait_agent`, not transcript/status polling. No second ticket reviewer was appointed.
+
+| Observation | Result | Limit of the evidence |
+| --- | --- | --- |
+| Codex executable named above | `0.153.4` | CLI version, not Desktop qualification |
+| Installed Claude executable, WinGet `Anthropic.ClaudeCode_Microsoft.Winget.Source_8wekyb3d8bbwe/claude.exe` | `2.1.231`; help exposes `--tools`, `--disallowedTools`, `--strict-mcp-config`, `--settings`, `--setting-sources` | No authenticated model turn or tool-denial attack performed |
+| `C:\ProgramData\OpenAI\Codex\requirements.toml` existence | `False` | Does not exclude every other policy source; isolated RPC below returned null |
+| Docker client/server version | `29.5.3 / 29.5.3` | Engine responds; no workload started or image downloaded |
+| Available WSL distributions | `Ubuntu`, `docker-desktop` | No distribution entered or configured |
+| Named Hyper-V lab readback | `Get-VM -Name 'Johnny-MSIX-Lab-20260905'` refused for insufficient permission | No assertion about VM power state or guest readiness |
+
+The [Claude CLI reference](https://code.claude.com/docs/en/cli-reference) distinguishes tool
+selection from configuration loading; `--bare` also skips hooks/plugins, so it cannot silently
+stand in for installed-plugin qualification. The [Claude sandbox documentation](https://code.claude.com/docs/en/sandboxing)
+does not support its built-in Bash sandbox on native Windows. WSL2/Linux support is not evidence
+for native Windows or complete effect containment. The [Codex Windows sandbox](https://learn.chatgpt.com/docs/windows/windows-sandbox)
+protects filesystem/network boundaries; its presence alone does not bind execution to an approved
+verification plan. Both hosts remain conditional, not proven impossible and not qualified.
+
+### Isolated Codex metadata preflight
+
+One child process only; no model, thread, turn, provider, command-execution or MCP-tool request.
+The executable used a fresh child-only `CODEX_HOME` and empty working directory under this owned
+worktree's ignored `.worktrees/host-config-probe-d95b2fd9d5fd4687b93b9bed59bd0048` directory.
+No credentials were copied. Credential-like environment variable names were removed from the
+child environment. Existing user settings and other sessions were not changed. This separation
+is test hygiene, not a protected identity or a claim to prohibit every possible network request.
+
+Launch was `app-server --stdio --strict-config`, with overrides `sandbox_mode="read-only"`,
+`approval_policy="never"`, `web_search="disabled"`, `analytics.enabled=false` and `--disable` for:
+`shell_tool`, `unified_exec`, `code_mode`, `code_mode_host`, `apps`, `plugins`, `remote_plugin`,
+`browser_use`, `browser_use_external`, `browser_use_full_cdp_access`, `computer_use`, `hooks`.
+An outer 30-second total read deadline and bounded exit cleanup applied; no retry was used.
+
+Requests, in order: `initialize` with experimental API enabled; `initialized` notification;
+`configRequirements/read`; `config/read` with `includeLayers=false`;
+`experimentalFeature/list` with limit 1000; `mcpServerStatus/list` with limit 100.
+These are the documented [App Server](https://learn.chatgpt.com/docs/app-server) protocol names,
+not a claimed production gateway. Selected actual response fields:
+
+```json
+{
+  "requirements": null,
+  "config": {
+    "sandbox_mode": "read-only",
+    "approval_policy": "never",
+    "web_search": "disabled",
+    "features": {"shell_tool": false, "unified_exec": false}
+  },
+  "experimentalFeatureList": [
+    {"name": "shell_tool", "enabled": false, "stage": "stable"},
+    {"name": "unified_exec", "enabled": true, "stage": "stable"}
+  ],
+  "featureNextCursor": null,
+  "mcp": {"data": [], "nextCursor": null},
+  "exitCode": 0,
+  "processExited": true,
+  "durationMs": 2008
+}
+```
+
+The two `unified_exec` views disagree. Neither configuration acceptance nor this feature listing
+proves the actual offered tool roster or a successful bypass. No exact-version source explanation
+was obtained in the bounded follow-up. Do not invent a Windows forced-on rule or speculatively
+patch around it. Classification: **configuration accepted; execution mediation UNKNOWN**.
+Process exit is evidence for this child only, not a crash/descendant-containment qualification.
+
+### Existing regression baseline, not new enforcement acceptance
+
+Using `C:\Users\GameBoy\AppData\Local\JohnnyRouter\venv\Scripts\python.exe` in this worktree:
+
+```text
+-B -m unittest tests.test_workflow_intensity -v
+Ran 6 tests in 0.003s
+OK
+
+-B -m unittest tests.test_subscription_builder.DeadlineProbeTests.test_the_probe_proves_a_real_one_shot -v
+Ran 1 test in 0.063s
+OK
+```
+
+The intake `NormalizedGoal` validated and derived `high_assurance`. The timer test proves only
+an existing one-shot timer fires; it does not terminate workloads. Its production deadline port
+is receipt-bound, so it must not be reused here by fabricating a receipt. No reverse-mutation,
+process-orphan, resource-cap, source-coupling or installed-host acceptance test passed this turn.
+
+## Concrete protection proposal: owner decision before privileged qualification
+
+Recommended boundary for the next architecture decision: an explicitly enrolled session starts
+through a dedicated launcher under a restricted Windows identity, separate from the protected
+plan/policy/evidence owner. A narrow broker validates the approved plan and owns execution and
+cleanup. The model receives only admitted operations; arbitrary effect tools and the broker's
+control channel are not exposed to it. This is an OS/host protection boundary, not governance
+text injected into model memory. A Job Object remains a process-limit component, not the whole
+boundary. The installer may provision these components only after qualification and later release
+authority; no service/account name or implementation technology is frozen here.
+
+This choice adds a dedicated launch path and protected identity/configuration lifecycle, including
+owner recovery. It does not retrofit non-bypassability into the currently unrestricted session.
+Enrollment must be observable; unsupported or tampered enrollment refuses controlled execution,
+while unrelated projects and owner terminals stay unchanged. Claude and Codex each require their
+own test result; passing a Linux container fixture cannot qualify native Windows hosts.
+
+Before any privileged fixture, obtain owner approval for this concrete boundary and the use of
+the named disposable Windows lab for isolated account/configuration tests. The lab is not currently
+accessible with this process's privileges. The qualification ticket must pin VM/snapshot identity,
+the owned disposable resources, bounded commands/time/resource budgets, cleanup/sentinel checks
+and zero provider calls unless separately specified. Do not silently elevate, modify the main
+machine's managed policy, reuse real project workloads or create an always-running service now.
+
+Pure verification-plan contracts and the existing WA-04 structural gate do not depend on that
+lab's availability; they can proceed after their own specification/ticket admission. The current
+documents are not those approved tickets. Installed release acceptance still requires the full
+bypass/refusal matrix above for both hosts.
 
 Return: docs-only `ACTION_COMPLETED`; D2 acceptance emits `OWNER_INPUT_PROVIDED` for the bounded
 DELTA capability investigation. No enforcement code is delivered by this proposal, and none of
-the listed adversarial tests is reported as passed.
+the listed adversarial tests is reported as passed. This revision records bounded investigation
+completion and a concrete protected-launch proposal for owner review; it does not mark Grill,
+capability qualification, implementation or publication complete.
