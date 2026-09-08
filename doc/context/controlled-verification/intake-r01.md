@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | Artifact ID / kind | `INTAKE-CONTROLLED-VERIFICATION-20260908-01` / `CHANGE_INTAKE` |
-| Revision / state | `03` / `OWNER_SCOPE_APPROVED / CAPABILITY_INVESTIGATION / NOT_SEALED` |
+| Revision / state | `04` / `OWNER_BOUNDARY_APPROVED / LAB_QUALIFICATION_PENDING / NOT_SEALED` |
 | Requirement | [PRD/CHG-20260908-051](../../requirements/active/2026/environment-control/REQ-20260908-051.md) |
 | Scoped technical finding | [Enforcement boundary and refusal matrix](enforcement-boundary-r01.md) |
 | Baseline | `b697738d009db37318ebc8762107ef8329e014db` |
@@ -25,9 +25,10 @@
     "Human owner retains unresolved architecture and policy decisions.",
     "Responsibility and dependency checks are mandatory; generic line-count ceilings are excluded.",
     "Hook presence or model reminders alone cannot establish bypass-resistant enforcement.",
-    "Owner-approved restrictions apply only to explicitly enrolled Johnny sessions and worktrees; unrelated projects and human terminals remain unchanged."
+    "Owner-approved restrictions apply only to explicitly enrolled Johnny sessions and worktrees; unrelated projects and human terminals remain unchanged.",
+    "Owner accepted a dedicated launcher, restricted Windows identity and protected execution broker; qualify first in the existing Windows test VM without physical-host configuration changes or external model calls."
   ],
-  "evidence_refs": ["owner-verification-request-20260908", "owner-responsibility-request-20260908", "owner-mandatory-enforcement-20260908", "owner-restricted-lane-approval-20260908"],
+  "evidence_refs": ["owner-verification-request-20260908", "owner-responsibility-request-20260908", "owner-mandatory-enforcement-20260908", "owner-restricted-lane-approval-20260908", "owner-protected-launch-lab-approval-20260908"],
   "baseline_reference": "johnny-ai-skill@b697738d009db37318ebc8762107ef8329e014db",
   "delta_scope": ["approved-verification-execution", "wa-04-responsibility-admission", "owned-execution-recovery", "automatic-host-enforcement"],
   "workload": {
@@ -36,7 +37,7 @@
     "recovery": "recoverable",
     "security_surface": "privileged",
     "external_effects": "local_host",
-    "evidence_refs": ["enforcement-boundary-convergence-20260908", "owner-restricted-lane-approval-20260908"]
+    "evidence_refs": ["enforcement-boundary-convergence-20260908", "owner-restricted-lane-approval-20260908", "owner-protected-launch-lab-approval-20260908"]
   }
 }
 ```
@@ -123,9 +124,17 @@ revision 03. Continue qualification without another D2 prompt. Acceptance does n
 mechanism, authorize an unspecified service/account installation or affect unrelated projects.
 No admin settings, host configuration or target files are modified by recording this decision.
 
+## Owner decision D3: answered, do not ask again
+
+The owner accepted the dedicated launcher, restricted Windows identity and protected execution
+broker proposed at `f880f557dfaf50f7380270f7b9c7bdb6b3d526c1`. REQ-051 revision 04 pins the
+approved proposal digest and scope. Qualification is confined to the existing Windows test VM;
+physical-host settings and external model calls remain outside this authority. Reuse the prior
+VM identity as an expected value, not proof of its current state. Do not expose guest credentials.
+
 ## Completion and continuation
 
 `ACTION_COMPLETED` covers only indexed intake/discovery documentation.
-`OWNER_INPUT_PROVIDED` records D2 and resumes the bounded DELTA feasibility/capability action.
-No wait remains for D1 or D2. A capability finding is not implementation dispatch authority.
+`OWNER_INPUT_PROVIDED` records D3 and resumes bounded qualification planning and VM readback.
+No wait remains for D1, D2 or D3. A capability finding is not implementation dispatch authority.
 No source, tests, skills, package, target, provider or release effect is claimed.

@@ -2,11 +2,11 @@
 
 | Field | Value |
 | --- | --- |
-| Artifact ID / kind / revision | `CONVERGENCE-CONTROLLED-VERIFICATION-20260908-01` / `ARCHITECTURE_PROPOSAL` / `03` |
-| State | `OWNER_SCOPE_APPROVED / CAPABILITY_INVESTIGATION / NOT_SEALED` |
-| Requirement / intake | [REQ-051 revision 03](../../requirements/active/2026/environment-control/REQ-20260908-051.md) / [intake revision 03](intake-r01.md) |
+| Artifact ID / kind / revision | `CONVERGENCE-CONTROLLED-VERIFICATION-20260908-01` / `ARCHITECTURE_PROPOSAL` / `04` |
+| State | `OWNER_BOUNDARY_APPROVED / LAB_QUALIFICATION_PENDING / NOT_SEALED` |
+| Requirement / intake | [REQ-051 revision 04](../../requirements/active/2026/environment-control/REQ-20260908-051.md) / [intake revision 04](intake-r01.md) |
 | Inspection baseline | `b697738d009db37318ebc8762107ef8329e014db`; proposal predecessor `c17cc249fbb91339bc83314c0467eee3489339fc` |
-| Authority | Owner accepted D2 after commit `6a093821592b1f007a570cd13eb9feeadf5b30aa` and directed work to begin. This records scope approval, not a qualified mechanism, completed Grill, permission changes or installed enforcement. |
+| Authority | Owner accepted D2 scope and D3 protected-launch boundary; D3 binds proposal commit `f880f557dfaf50f7380270f7b9c7bdb6b3d526c1` and revision 03 LF digest `3aacc765314d87fa94759edecbf0f4e8525b106e4cad8a31e46d08f458eaee64`. This does not claim a qualified mechanism, completed Grill or installed enforcement. |
 
 ## Readback that changes the solution
 
@@ -197,9 +197,9 @@ an existing one-shot timer fires; it does not terminate workloads. Its productio
 is receipt-bound, so it must not be reused here by fabricating a receipt. No reverse-mutation,
 process-orphan, resource-cap, source-coupling or installed-host acceptance test passed this turn.
 
-## Concrete protection proposal: owner decision before privileged qualification
+## Owner-accepted protection boundary: D3
 
-Recommended boundary for the next architecture decision: an explicitly enrolled session starts
+Owner-accepted boundary: an explicitly enrolled session starts
 through a dedicated launcher under a restricted Windows identity, separate from the protected
 plan/policy/evidence owner. A narrow broker validates the approved plan and owns execution and
 cleanup. The model receives only admitted operations; arbitrary effect tools and the broker's
@@ -214,11 +214,14 @@ Enrollment must be observable; unsupported or tampered enrollment refuses contro
 while unrelated projects and owner terminals stay unchanged. Claude and Codex each require their
 own test result; passing a Linux container fixture cannot qualify native Windows hosts.
 
-Before any privileged fixture, obtain owner approval for this concrete boundary and the use of
-the named disposable Windows lab for isolated account/configuration tests. The lab is not currently
-accessible with this process's privileges. The qualification ticket must pin VM/snapshot identity,
+The owner has accepted this boundary and qualification in the existing Windows test VM, with no
+physical-host configuration changes or external model calls. Do not ask for this decision again.
+On acceptance, a fresh read confirmed `administratorToken=false`; `Get-VM` still refused for
+insufficient permission. Approval and operating-system capability are different facts. A normal
+UAC-mediated, exact-target readback may establish lab metadata without changing host policy.
+The qualification ticket must pin VM/snapshot identity,
 the owned disposable resources, bounded commands/time/resource budgets, cleanup/sentinel checks
-and zero provider calls unless separately specified. Do not silently elevate, modify the main
+and zero external model calls. Do not silently elevate, modify the main
 machine's managed policy, reuse real project workloads or create an always-running service now.
 
 Pure verification-plan contracts and the existing WA-04 structural gate do not depend on that
@@ -226,8 +229,8 @@ lab's availability; they can proceed after their own specification/ticket admiss
 documents are not those approved tickets. Installed release acceptance still requires the full
 bypass/refusal matrix above for both hosts.
 
-Return: docs-only `ACTION_COMPLETED`; D2 acceptance emits `OWNER_INPUT_PROVIDED` for the bounded
+Return: docs-only `ACTION_COMPLETED`; D3 acceptance emits `OWNER_INPUT_PROVIDED` for the bounded
 DELTA capability investigation. No enforcement code is delivered by this proposal, and none of
 the listed adversarial tests is reported as passed. This revision records bounded investigation
-completion and a concrete protected-launch proposal for owner review; it does not mark Grill,
+completion and the owner's protected-launch decision; it does not mark Grill,
 capability qualification, implementation or publication complete.
