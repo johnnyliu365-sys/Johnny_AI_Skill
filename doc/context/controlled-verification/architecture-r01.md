@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| Artifact ID / kind / revision | `ARCH-CONTROLLED-VERIFICATION-20260909-01` / `ARCHITECTURE_PROPOSAL` / `01` |
-| Lifecycle | `DRAFT / OWNER_GRILL_REQUIRED / NOT_SEALED` |
+| Artifact ID / kind / revision | `ARCH-CONTROLLED-VERIFICATION-20260909-01` / `ARCHITECTURE_PROPOSAL` / `02` |
+| Lifecycle | `OWNER_APPROVED / QUALIFICATION_FIRST` |
 | Input | [DELTA Wayfinder](wayfinder-r01.md), [accepted D1/D2/D3](enforcement-boundary-r01.md), [REQ-051](../../requirements/active/2026/environment-control/REQ-20260908-051.md) |
 | Author / baseline | Current-session drafting assistant for the human architecture owner; owned `codex/controlled-verification-intake` worktree at `d3c78b5b154b04a7fdaad544a3d00f1e91271dcb` |
 | Maturity / intensity | POC / derived HIGH_ASSURANCE; no production support claim |
@@ -116,8 +116,8 @@ added to same-lifetime delegation. Existing target behavior and sealed Context a
 The qualification must include a permitted positive effect, each named denial and reviewer
 counter-mutation; a gate that disables everything is not proven. It must also preserve an
 unrelated sentinel and prove bounded completion without model polling. See the
-[qualification SPEC candidate](../../../modules/spec/controlled-verification-qualification.md)
-for the proposed finite contract; it is not yet effective.
+[qualification SPEC](../../../modules/spec/controlled-verification-qualification.md)
+for the owner-approved finite investigation contract; approval is not native capability evidence.
 
 Before VM changes, bind its exact identity and an owned checkpoint; a checkpoint's existence
 does not prove restoration. No restore, old-data deletion, new physical-host policy, production
@@ -128,6 +128,12 @@ XSS classification for the proposed CLI/OS qualification slice is `XSS_NOT_APPLI
 Browser/WebView/HTML/JavaScript sink. Desktop interaction remains a separate unqualified surface;
 adding a renderer/privileged bridge re-enters XSS/architecture review.
 
-Return: architecture proposal available for owner Grill, not an approved SPEC or sealed shared
-Context. D1/D2/D3 are preserved. The [Grill packet](grill-r01.md) identifies precisely what is
-confirmed and what still requires an owner response; no assistant or helper can answer for them.
+## Owner approval signature — 2026-09-09
+
+The human owner replied `核准` to the exact packet at
+`161c4e095697fff6e4693b8d9bfce866878277dd`: architecture revision 01 LF SHA-256
+`ac345d47550020af5bcffc3fc2000f4f1c33b526f9240d2cf33f8dad9f24db62`.
+Revision 02 records that approval without changing the architecture. D1/D2/D3 remain unchanged.
+The [Grill record](grill-r01.md) binds Context sealing and SPEC approval. The permitted next
+action is CVQ-01 ticket preparation only; VM/effect/implementation/push/release authority is not
+inferred. Return: `ACTION_COMPLETED` with approved architecture evidence, not capability PASS.

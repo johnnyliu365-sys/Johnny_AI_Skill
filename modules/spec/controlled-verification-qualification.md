@@ -1,13 +1,13 @@
-# Protected execution qualification specification — candidate
+# Protected execution qualification specification
 
 | Field | Value |
 | --- | --- |
-| Specification ID / revision | `SPEC-CONTROLLED-VERIFICATION-QUALIFICATION-20260909-01` / `03` |
-| Status | `DRAFT / OWNER_GRILL_AND_APPROVAL_REQUIRED / NOT_EFFECTIVE` |
+| Specification ID / revision | `SPEC-CONTROLLED-VERIFICATION-QUALIFICATION-20260909-01` / `04` |
+| Status | `OWNER_APPROVED / EFFECTIVE_INVESTIGATION_CONTRACT / CVQ01_PREPARATION_ONLY` |
 | Author / worktree / baseline | Current-session drafting assistant; `codex/controlled-verification-intake`; `d3c78b5b154b04a7fdaad544a3d00f1e91271dcb` |
 | PRD / CHG | `PRD-20260908-051` / `CHG-20260908-051` |
 | Context sources | [Wayfinder](../../doc/context/controlled-verification/wayfinder-r01.md), [architecture proposal](../../doc/context/controlled-verification/architecture-r01.md), [owner Grill packet](../../doc/context/controlled-verification/grill-r01.md), [managed index](../../doc/context/controlled-verification/README.md) |
-| Shared Context | Not sealed; this candidate cannot authorize ticket creation or implementation until owner convergence, Context sealing and exact SPEC approval |
+| Shared Context | `CTX-CONTROLLED-VERIFICATION-20260909-01` revision 02, `OWNER_APPROVED / SEALED`; [exact leaf](../../doc/context/controlled-verification/main.md) through its managed index |
 | Language / checker | Python 3.11, frozen validated contracts, `mypy --strict`; exact PowerShell native operational recipes are edge transport only |
 | Maturity / intensity | POC / HIGH_ASSURANCE, derived from REQ-051's privileged cross-boundary workload; docs-only drafting has zero implementers |
 
@@ -369,7 +369,7 @@ Checkpoint creation/restore, guest account/ACL work, fixture/tool transfer and n
 each need an exact operational ticket/authority. Inspection capability is not effect authority.
 No guessed account/service name, approval receipt or gateway is created to avoid this boundary.
 
-## 9. Proposed ticketing sequence — not opened or dispatched
+## 9. Ticketing sequence — CVQ-01 preparation approved; execution not granted
 
 1. **CVQ-01: qualification contracts and pure prerequisite/report admission.** One independently
    observable source-only slice: reject malformed/forged/incomplete qualification and permit exact
@@ -390,15 +390,24 @@ No guessed account/service name, approval receipt or gateway is created to avoid
    offline evidence; unavailable surfaces stay unavailable. Q8 consumes WA-04 evidence only after
    its separately approved delivery. No release or replacement source validator.
 
-CVQ-01's exact closure/model/profile and normal constructor/type preflight belong in its future
-ticket after approval, not an implementation prompt. Standard implementation uses the registered
+CVQ-01's exact closure/model/profile and normal constructor/type preflight belong in its
+ticket, not an implementation prompt. Standard implementation uses the registered
 `implementation-standard`, review `ticket-review`; elevation follows the existing assessment rule,
 not this document's profile name. Same-lifetime dispatch uses the existing owner lane and event wait.
 
 ## 10. Approval and continuation
 
-No approval signature exists. Owner D1/D2/D3 approve the direction, not this newly authored exact
-SPEC. [Grill](../../doc/context/controlled-verification/grill-r01.md) must be completed with the
-owner, then shared Context sealed and the exact SPEC approved before ticket creation. The first
-proposed approval is limited to CVQ-01 ticket preparation; VM operations, other tickets, native
-effects and installation/release remain outside it. Never report an unopened ticket as dispatched.
+### Owner signature — 2026-09-09
+
+The human owner replied `核准` to SPEC revision 03 at
+`161c4e095697fff6e4693b8d9bfce866878277dd`, LF SHA-256
+`e5ed081dcbb3f1aadfbe43d874273fabafea521e49c6301496ea24b9054c46a5`, together with its exact
+architecture, shared Context and [Grill](../../doc/context/controlled-verification/grill-r01.md).
+CONTEXT records the first seal before this signature takes effect. Revision 04 adds lifecycle,
+Context reattachment and this signature only; sections 1–8's approved behavior is unchanged.
+
+`ACTION_COMPLETED -> AUTO_CONTINUE -> TICKETS` permits **CVQ-01 preparation only**. Its normal
+ticket schema/type preflight, exact closure approval and dispatch confirmation remain required.
+VM operations, other ticket preparation, source implementation, native effects, installation,
+integration, push and release are not granted by this signature. No investigation result or
+enforcement capability is claimed. Never report a prepared ticket as dispatched.

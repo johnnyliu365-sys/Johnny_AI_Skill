@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| Artifact ID / kind / revision | `GRILL-CONTROLLED-VERIFICATION-20260909-01` / `OWNER_GRILL` / `03` |
-| Lifecycle | `OWNER_RESPONSE_PENDING / NOT_COMPLETED` |
+| Artifact ID / kind / revision | `GRILL-CONTROLLED-VERIFICATION-20260909-01` / `OWNER_GRILL` / `04` |
+| Lifecycle | `OWNER_APPROVED / COMPLETED / CVQ01_PREPARATION_ONLY` |
 | Owner | Human project owner; the assistant and research helper do not answer or approve for them |
 | Sources | [REQ-051](../../requirements/active/2026/environment-control/REQ-20260908-051.md), [Wayfinder](wayfinder-r01.md), [architecture](architecture-r01.md), [shared Context candidate](main.md), [qualification SPEC candidate](../../../modules/spec/controlled-verification-qualification.md) |
 
@@ -76,10 +76,10 @@ comparison over present identities only; and pre-execution HostRosterDiscoveryCo
 from post-execution HostRosterEnforcementCoverage. These are direct closures of existing rules,
 not an expansion of D1/D2/D3. No third helper review or implementation correction loop is started.
 The last helper return was FINDINGS, not NO_FINDINGS or approval. Revision 03 is parent-corrected
-and owner-unapproved; constructor/native execution evidence does not yet exist. This record must
+and was owner-unapproved when submitted; constructor/native execution evidence does not yet exist. This record must
 not be presented as an adversarial code-review PASS or a qualified host.
 
-## Exact response now needed
+## Exact response requested at revision 03 — historical
 
 Owner review is requested for this packet's proposed engineering closure and the exact indexed
 revisions of the architecture, shared Context candidate and qualification SPEC. On approval:
@@ -94,8 +94,29 @@ revisions of the architecture, shared Context candidate and qualification SPEC. 
 
 Unproved native primitives are deliberately the future investigation's output; the implementer
 must not fill that gap by choosing weaker behavior. There is no new D1/D2/D3 decision and no
-request to repeat the guest elevation command. This packet is not an approval record.
+request to repeat the guest elevation command. The revision-03 packet was not an approval record.
 
-Return: `ACTION_COMPLETED` for drafting, then `WAIT_FOR_HUMAN / OWNER_APPROVAL_REQUIRED` for the
-exact packet. No execution ticket has been opened or dispatched, and no enforced feature or
-VM qualification has been delivered by these documents.
+## Actual owner response and stage continuation — 2026-09-09
+
+The human owner's next response was `核准`, answering the exact question to approve architecture,
+Context and SPEC revision 03 and prepare CVQ-01 only, without VM operations. This is the actual
+owner response, not an assistant/helper inference or a retroactive code-review approval.
+
+Approved packet commit: `161c4e095697fff6e4693b8d9bfce866878277dd`.
+
+| Approved source | Revision | LF SHA-256 |
+| --- | --- | --- |
+| Architecture | `01` | `ac345d47550020af5bcffc3fc2000f4f1c33b526f9240d2cf33f8dad9f24db62` |
+| Shared Context draft | `01` | `9a909d610acf53e023e2b1d53161d5ba3d319e116b5264538d9914ca7c4cad41` |
+| Grill packet | `03` | `185ec0ae2aa533d82fca7a91d02b64ab1dc699584d55319d0d3a018452788584` |
+| Qualification SPEC | `03` | `e5ed081dcbb3f1aadfbe43d874273fabafea521e49c6301496ea24b9054c46a5` |
+
+Ordered control-plane returns: `APPROVAL_GRANTED` resolves this Grill; `ACTION_COMPLETED`
+permits CONTEXT's first seal; CONTEXT completion permits recording the exact SPEC signature;
+SPEC completion permits `AUTO_CONTINUE -> TICKETS` for CVQ-01 preparation. Each action uses
+only its declared scoped authority. Subsequent ticket preflight and dispatch confirmation are
+not pre-approved by this response. Native capability evidence remains absent.
+
+Revision 04 records approval only. No third helper review, source implementation, VM operation,
+provider request, integration, push or release occurred. The original helper findings remain
+historical evidence above, not a fabricated PASS. Ticket creation is recorded by its own tree.
