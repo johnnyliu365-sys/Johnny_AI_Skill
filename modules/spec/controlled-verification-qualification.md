@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| Specification ID / revision | `SPEC-CONTROLLED-VERIFICATION-QUALIFICATION-20260909-01` / `02` |
+| Specification ID / revision | `SPEC-CONTROLLED-VERIFICATION-QUALIFICATION-20260909-01` / `03` |
 | Status | `DRAFT / OWNER_GRILL_AND_APPROVAL_REQUIRED / NOT_EFFECTIVE` |
 | Author / worktree / baseline | Current-session drafting assistant; `codex/controlled-verification-intake`; `d3c78b5b154b04a7fdaad544a3d00f1e91271dcb` |
 | PRD / CHG | `PRD-20260908-051` / `CHG-20260908-051` |
@@ -41,6 +41,7 @@ nullable fields. Candidate source and operational paths never enter durable Rout
 | `AttemptBinding` | Tagged `PureContractBinding` or `NativePreLaunchBinding`; a distinct `LaunchObservation` can be appended only after actual launch. Pre-launch objects cannot contain invented future process identities |
 | `CapabilityObservation` | Independent observer identity and evidence binding, exact key, finite result, native primitive/race/failure semantics where applicable, named case observations; a reported PASS without its required positive/refusal evidence is malformed |
 | `QualificationReport` | Exact manifest/baseline and one tagged `CaseResult` per expected cell, reduced by the closed rules below; no model-authored test counts or review approval |
+| `QualificationEvaluation` | Sole public tagged evaluation return: MANIFEST_REFUSED, REPORT_REJECTED or REPORT_ACCEPTED, with the exact payloads below; no nullable report/exception fallback |
 
 Finite proposal vocabulary:
 
@@ -92,7 +93,7 @@ case is independently admitted under its own tag, so a missing VM does not inval
 
 `PrerequisiteKind = APPROVED_SOURCE | LAB_IDENTITY | CHECKPOINT | PROTECTED_BOOTSTRAP
 | PROTECTED_IDENTITIES | IMMUTABLE_SNAPSHOT | RESOURCE_CONTROLS | ATTEMPT_CLAIM
-| HOST_ROSTER | WA04_ADAPTER`.
+| HOST_ROSTER_DISCOVERY | WA04_ADAPTER`.
 
 `PrerequisiteKey` is the exact tuple `(kind, scope_id, capability_key, adapter_revision)`.
 `PrerequisiteRequirement` contains that key plus `expected_observation_revision` and
@@ -117,8 +118,10 @@ native RESOURCE_CONTAINMENT.
 Pure cases require APPROVED_SOURCE only, plus WA04_ADAPTER only for an actual WA-04 source
 property claim. Lab mutation requires LAB_IDENTITY, CHECKPOINT and PROTECTED_BOOTSTRAP;
 adversarial workload/real-host cells additionally require PROTECTED_IDENTITIES, IMMUTABLE_SNAPSHOT,
-RESOURCE_CONTROLS and ATTEMPT_CLAIM. HOST_ROSTER is needed for a **full host-mediation claim**, not
-to authorize trusted read-only discovery of that roster. The exact required key set is frozen by
+RESOURCE_CONTROLS and ATTEMPT_CLAIM. REAL_HOST_PROPERTY additionally requires
+HOST_ROSTER_DISCOVERY: approved configuration and actually discovered dispatch identities must
+match before exercising the host. It contains **no enforcement verdict**. Trusted read-only roster
+discovery does not require its own completed discovery result as a prerequisite. The exact required key set is frozen by
 case kind before invocation. A trusted, fixed, bounded primitive-discovery recipe may collect
 candidate resource evidence without already asserting RESOURCE_CONTROLS=PROVEN; it must not run
 untrusted/project work or an escape attack. That separation prevents circular qualification.
@@ -138,7 +141,7 @@ Each result also carries cleanup disposition `NO_LAUNCH | CLEANUP_CONFIRMED | RE
 only confirmed cleanup carries its positive evidence ref. A pure result must use NO_LAUNCH.
 Uncertain launch or missing native cleanup cannot use NO_LAUNCH; it is RECOVERY_REQUIRED.
 Refused/unavailable/unrun cases still occupy their expected-cell slot. A malformed manifest
-returns a top-level `ManifestRefusal`; it cannot produce a report based on an untrusted expected
+returns a top-level MANIFEST_REFUSED evaluation; it cannot produce a report based on an untrusted expected
 cell set. A well-formed report must contain exactly the approved case IDs once each and valid
 binding/evidence/check coverage; structural failure returns `EVIDENCE_INVALID`, not a report PASS.
 After structural validation, reduce in this exact precedence:
@@ -158,12 +161,26 @@ aggregation requires executed native-property evidence; successful pure schema/r
 not candidates for that aggregation. A pure PASSED cell plus one prerequisite-refused native
 cell reduces to CAPABILITY_UNAVAILABLE, retains both entries and does not suppress the pure pass.
 
+The sole public return is this closed tagged union. `request_ref` is an opaque invocation
+correlation assigned by the entry boundary before parsing; it carries no approval authority.
+
+| `QualificationEvaluation` tag | Exact payload |
+| --- | --- |
+| `MANIFEST_REFUSED` | `request_ref`, reason `INVALID_MANIFEST | SOURCE_MISMATCH | APPROVAL_UNRESOLVED`, and `rejection_evidence_ref`; no trusted manifest digest, report or case-set claim is invented |
+| `REPORT_REJECTED` | `request_ref`, independently resolved `manifest_digest`, reason `EVIDENCE_INVALID`, detail `INVALID_SHAPE | MISSING_CELL | DUPLICATE_CELL | BINDING_MISMATCH | CHECK_COVERAGE_MISMATCH | UNAUTHENTICATED_EVIDENCE | HOST_COVERAGE_MISMATCH`, and `rejection_evidence_ref`; no report payload |
+| `REPORT_ACCEPTED` | `request_ref` and the structurally valid `QualificationReport`; that report's outcome may still be QUALIFICATION_FAILED, INCOMPLETE or CAPABILITY_UNAVAILABLE under the exact reduction above |
+
+Only REPORT_ACCEPTED carries a report, and that tag means structurally accepted, not qualified
+hardware, review approval or permission to execute. Exceptions are not
+an alternate ordinary return contract. Invalid external dynamic inputs normalize to the tagged
+refusal boundary without manufacturing a successful DTO via bypass construction.
+
 ## 3. Admission and immutable execution binding
 
 1. Resolve the approved manifest independently of the requesting Agent; validate its scope and
    source identity. No arbitrary profile, command, retry count or load parameter is accepted by
    the public invocation. A manifest proposal has no execution authority.
-2. Resolve every expected prerequisite and exact effect roster; compute the dependent case set
+2. Resolve every expected prerequisite and exact **discovery** roster; compute the dependent case set
    from committed data. Unknown/unobservable effect paths refuse affected host qualification.
 3. Bind code plus transitive executable inputs to a protected immutable snapshot through launch.
    Hashing a writable file and executing it later is insufficient. Substitution after admission
@@ -270,17 +287,30 @@ The typed coverage contract is mandatory, not a free-form string map:
 
 - `HostEffectRosterKey`: host surface, exact version, binary digest, configuration digest,
   enrollment digest and adapter revision.
-- `HostEffectEntry`: unique dispatch-entry ID, finite category from the seven groups above,
-  sorted unique alias IDs, reachability `MODEL_REACHABLE | CLIENT_REACHABLE | BOTH | ABSENT_PROVEN`,
-  disposition `DENIED | BROKER_ONLY | READ_ONLY`, exact discovery-evidence ref and enforcement
-  oracle/case refs. A client-reachable channel is not excluded merely because it is not a model tool.
+- `EffectCategory = SHELL_EXECUTION | INTERACTIVE_CONTINUATION | DIRECT_WRITE | NESTED_EXECUTION
+  | EXTENSION_TOOL | BROWSER_COMPUTER | CLIENT_CONTROL`. `EffectDisposition = DENIED | BROKER_ONLY
+  | READ_ONLY`; `EffectReachability = MODEL_REACHABLE | CLIENT_REACHABLE | BOTH`.
+- `HostEffectEntry`: unique dispatch-entry ID, one EffectCategory, sorted unique alias IDs,
+  EffectReachability, EffectDisposition, discovery-evidence ref and planned enforcement
+  oracle/case refs. It represents a present entry only, not a completed enforcement observation.
+- `HostCategoryCoverage`: exactly one tagged closure for each required category: `PRESENT` holds
+  that category and a nonempty unique tuple of HostEffectEntry; `ABSENT` holds the category,
+  discovery-surface ref and absence-evidence ref only. ABSENT has no invented dispatch ID,
+  aliases, disposition or enforcement oracle. One category can have multiple present entries;
+  it cannot be both PRESENT and ABSENT. Client-reachable channels stay within coverage.
 - `DiscoveredEffectSet`: the exact roster key, unique actual offered/reachable dispatch-entry and
   alias identities, observer/evidence refs, and explicit nonnegative `unknown_entry_count` and
   `unobservable_surface_count`. Those counts come from the trusted discovery adapter, not a caller.
-- `HostRosterCoverage`: approved roster ref/digest, discovered-set ref/digest and the comparison
-  result. Canonical entry/alias sets must match exactly, with no duplicate, missing, extra or
-  newly discovered entry; both unknown counts must be zero. Actual denial/read-only/broker-only
-  observations must bind every reachable entry, while ABSENT_PROVEN requires absence evidence.
+- `HostRosterDiscoveryCoverage`: approved roster ref/digest, discovered-set ref/digest and the
+  comparison result. Canonical **PRESENT** entry/alias sets must match exactly, with no duplicate,
+  missing, extra or newly discovered entry; both unknown counts must be zero. Every required
+  category has one valid PRESENT/ABSENT closure. This proves discovery completeness only and may
+  satisfy HOST_ROSTER_DISCOVERY before executing enforcement cases.
+- `HostRosterEnforcementCoverage`: the accepted discovery-coverage ref/digest plus actual
+  post-case denial/read-only/broker-only observation refs for every PRESENT entry. Missing,
+  failed or wrong-key observations cannot qualify. ABSENT entries rely on discovery absence
+  evidence and require no fictitious tool execution. This post-execution coverage is required
+  for full-host mediation PROVEN; it is never a prerequisite for its own enforcement cases.
 
 Discovery and enforcement evidence must match the same key. An unobservable dynamic MCP/plugin
 surface is not an empty set. Any set/count/key/oracle disagreement returns

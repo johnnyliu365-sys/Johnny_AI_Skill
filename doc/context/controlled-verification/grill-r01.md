@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| Artifact ID / kind / revision | `GRILL-CONTROLLED-VERIFICATION-20260909-01` / `OWNER_GRILL` / `02` |
+| Artifact ID / kind / revision | `GRILL-CONTROLLED-VERIFICATION-20260909-01` / `OWNER_GRILL` / `03` |
 | Lifecycle | `OWNER_RESPONSE_PENDING / NOT_COMPLETED` |
 | Owner | Human project owner; the assistant and research helper do not answer or approve for them |
 | Sources | [REQ-051](../../requirements/active/2026/environment-control/REQ-20260908-051.md), [Wayfinder](wayfinder-r01.md), [architecture](architecture-r01.md), [shared Context candidate](main.md), [qualification SPEC candidate](../../../modules/spec/controlled-verification-qualification.md) |
@@ -61,6 +61,23 @@ This is specification decision support, not ticket code review, a fabricated app
 or a native capability test. Proposed pure/native result constructors and the finite reduction
 rules must still be exercised by CVQ-01's admitted implementation/type preflight. No production
 PASS is inferred from correcting prose.
+
+### Bounded correction check and parent convergence
+
+The same helper checked correction candidate `2e726fbc48ff76fb4908f29a3cf4d79408820860`,
+SPEC revision 02 LF digest `d9a8e86c15d715949ac3820b7d8d07d70075fc4a33b7087f2fee131139ec1494`.
+It closed the pure/native binding, constituent prerequisite and append-only recovery findings.
+It still found three exact draft gaps: undefined top-level evaluation return; absent tools forced
+into present-entry IDs; and discovery/enforcement roster evidence with circular timing.
+
+The parent accepted those counterexamples and made one control-plane convergence revision (SPEC
+03): a closed QualificationEvaluation union; PRESENT/ABSENT category coverage with exact-set
+comparison over present identities only; and pre-execution HostRosterDiscoveryCoverage separate
+from post-execution HostRosterEnforcementCoverage. These are direct closures of existing rules,
+not an expansion of D1/D2/D3. No third helper review or implementation correction loop is started.
+The last helper return was FINDINGS, not NO_FINDINGS or approval. Revision 03 is parent-corrected
+and owner-unapproved; constructor/native execution evidence does not yet exist. This record must
+not be presented as an adversarial code-review PASS or a qualified host.
 
 ## Exact response now needed
 
