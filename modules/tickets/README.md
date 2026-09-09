@@ -21,7 +21,7 @@ debug 或稽核任何一條線之前先讀它——多數「新」問題都是�
 
 | Child ID | Kind | Revision | LF SHA-256 | Lifecycle | Reference |
 | --- | --- | --- | --- | --- | --- |
-| `TICKET-PARTITION-CONTROLLED-VERIFICATION` | `PARTITION_INDEX` | `01` | `97bb2104d54e5b63b05c161ae6848ff92b4b9688b2162b7e3def6c6f8efca205` | `PLANNED / OWNER_EXACT_APPROVAL_PENDING` | [controlled-verification/README.md](controlled-verification/README.md) |
+| `TICKET-PARTITION-CONTROLLED-VERIFICATION` | `PARTITION_INDEX` | `02` | `3671869435e148f4a01e24380622286f9bd8c63b52ea4c5c63f835c3d054f611` | `OWNER_APPROVED / PREFLIGHT_BLOCKED` | [controlled-verification/README.md](controlled-verification/README.md) |
 
 ## MSIX capability and environment actions
 

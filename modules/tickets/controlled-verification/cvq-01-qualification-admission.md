@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| Artifact ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01` / `IMPLEMENTATION_TICKET_PROPOSAL` / `01` |
-| State / Acceptance Closure Set | `PLANNED / OWNER_EXACT_APPROVAL_PENDING / PREFLIGHT_PENDING / NON_DISPATCHABLE`; proposed `CLOSURE-CVQ-01` revision `01` |
+| Artifact ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01` / `IMPLEMENTATION_TICKET` / `02` |
+| State / Acceptance Closure Set | `OWNER_APPROVED / TICKET_DEFECT / PREFLIGHT_BLOCKED / NON_DISPATCHABLE`; owner-approved `CLOSURE-CVQ-01` revision `01` is blocked; proposed revision `02` below is not approved |
 | Change class / observable result | New behavior, not defect correction: one pure evaluator rejects untrusted qualification input and returns the exact tagged evaluation/report without executing work |
 | Preparation authority | Owner's 2026-09-09 exact packet approval at `161c4e095697fff6e4693b8d9bfce866878277dd`, recorded at `cad0d2bca480f45c57d0598f4342636d35b1ecf2`; CVQ-01 preparation only |
 | Approved SPEC | `SPEC-CONTROLLED-VERIFICATION-QUALIFICATION-20260909-01` revision `04`, LF SHA-256 `4cad6a88b9d151a05bf409f8b61bc97580e80303f58a2377cb0301815b999a1d`; behavior approved as revision 03, lifecycle-only revision 04 |
@@ -277,7 +277,7 @@ integration evidence are all `NOT_RUN / NOT_CREATED`. Source rollback is an addi
 revert before product adoption, not reset/deletion; no persistent data or external recovery effect.
 Publishing any changed shipped library remains a separately authorized release action.
 
-## Admission record and continuation
+## Revision-01 admission request — historical
 
 Opening this leaf is `ACTION_COMPLETED` for docs-only ticket preparation. Architecture/Context/
 SPEC approval is resolved; **this new exact ticket Closure revision 01 is not yet owner-approved**.
@@ -288,4 +288,115 @@ preflight and—only when that preflight succeeds—one same-lifetime implementa
 It must bind the committed ticket revision/digest, clean contained worktree/baseline and the
 registered available profiles. A missing checker or failed constructor is a named prerequisite,
 not grounds to invent a receipt/runner or to claim the ticket ready. Native operational authority
-remains excluded. Current return: `WAIT_FOR_HUMAN / OWNER_EXACT_APPROVAL_PENDING`.
+remains excluded. Revision-01 return was `WAIT_FOR_HUMAN / OWNER_EXACT_APPROVAL_PENDING`.
+
+## Actual owner approval and preflight — 2026-09-09
+
+The human owner's next `核准` approved the exact revision-01 ticket at
+`2d3b58156002cf52239dcc24c694d085edf7ce63`, LF SHA-256
+`99dfd59f9baa44f026b3b25f0f95bb8c1ad8cc34c6d3b405cc10f08d7643a3d8`.
+It authorized bounded environment/type preflight, followed **only on success** by one
+implementation-standard same-lifetime dispatch and parent review. That confirmation is consumed
+as approval, not reopened as an unanswered ticket question. It grants no VM/integration/push/
+publication effect. The original approved source boundary and CQ01–CQ12 remain unchanged above.
+
+All checks below ran on that clean candidate. Main remained
+`b697738d009db37318ebc8762107ef8329e014db`; no implementation worktree or Agent was allocated.
+
+| Check | Actual evidence / disposition |
+| --- | --- |
+| Ticket tree | Unique leaf/partition edges and LF hashes matched; ticket references matched the three exact SPEC/Context/REQ digests; all ticket local links resolved; exactly CQ01–CQ12 found |
+| Development interpreter | `Get-Command python,py,mypy` and `py -0p` resolved `C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe`; Python 3.11.9, mypy 2.3.0, Pydantic 2.13.4 |
+| Isolation diagnostic | A read-only `-I -B` interpreter probe returned `isolated=1`; this proves Python isolated-mode flags only, not a qualified protected VM/OS lane or an isolated project dependency environment |
+| Other installed runner | pytest 9.0.3 differs from requirements-dev.txt's 9.1.1. It was not used by these unittest checks; no full dev-environment conformance or repository-wide suite PASS is claimed |
+| Tool changes | None. No install, dependency bump, runtime/host setting change, or download; the Router runtime Python was not modified |
+| Existing regression | Exact development Python `-B -m unittest -v tests.test_workflow_intensity`: six tests passed; output read unreduced; existing profile behavior only, not CVQ proof |
+| New contracts/tests | `Test-Path -LiteralPath` returned false for `library/controlled_verification` and all five declared CQ test/fixture files. No new constructor/schema/AST/mutation test exists on this baseline |
+| Dispatch/type preflight | `HALT / TICKET_SCHEMA_INVALID`; not passed, not dispatched. The two control-plane findings below must be resolved first |
+
+Existing regression's unreduced named result (no CVQ cell is included):
+
+```text
+test_assessment_requires_committed_evidence ... ok
+test_every_signal_floor_is_exact ... ok
+test_forged_assessment_cannot_derive_an_intensity ... ok
+test_fully_clean_assessment_is_the_only_compact_shape ... ok
+test_highest_floor_wins_over_any_clean_mix ... ok
+test_normalized_goal_carries_an_optional_assessment ... ok
+Ran 6 tests in 0.004s
+OK
+```
+
+The names above are in `tests.test_workflow_intensity.WorkflowIntensityDerivationTests`.
+This compact transcription indexes the directly read tool output; it is not a substitute for
+future unreduced CQ red/green evidence.
+
+### Batched preflight findings — parent owns the ticket defect
+
+1. **CVQ-PF01 / CQ02 zero-value conflict.** Revision 01 line 175 puts integer zero in an
+   unconditional rejection list. Approved SPEC revision 04 section 6 (lines 302–306) instead
+   requires nonnegative unknown/unobservable counts and exactly zero for complete discovery;
+   section 4 explicitly uses zero retries/containers/build workers. The predicate must distinguish
+   positive capacity/revision fields from nonnegative counters and literal-zero controls. The
+   ticket compiler overgeneralized the boundary row; this is not an implementation defect.
+2. **CVQ-PF02 / new-contract pre-dispatch ordering.** The canonical
+   [specification-ticketing reference](../../../skills/johnny-project-takeover/references/specification-ticketing.md),
+   lines 63–77, requires every public constructor and gate mutation **before dispatch**. These
+   new public contracts/gates are the implementation output and do not exist yet. The
+   [role boundary](../../../skills/johnny-project-takeover/references/implementation-authority.md),
+   lines 8–11, also forbids reviewer production-source/test implementation without a ticket-scoped
+   owner override. A JSON/prose/schema copy would not prove the actual public constructor.
+   Neither an import error nor an old unrelated DTO is a legal success substitute. Current
+   same-lifetime runner/receipt/host-readback exemptions do not resolve this ordering defect.
+
+PITFALL C14 was read: demanding named evidence where the named contract cannot exist/collect is
+the same structural family. No missing runner, guest admin, host gateway or slow implementer is
+the cause. No implementation correction cycle has been consumed and no helper review PASS exists.
+
+## Proposed Closure revision 02 and ticket-scoped ordering exception — pending owner
+
+This is a bounded proposal, not active permission and not a change to plugin reference prose.
+It preserves all SPEC behaviors, the exact final CQ01–CQ12 closure and every final review gate.
+
+A. Replace only CQ02's integer sentence with: strict integer fields reject booleans, floats and
+strings; positive revision/capacity/duration fields reject zero and negative values; nonnegative
+discovery counters admit zero as a valid constructor value and reject negatives; unknown counts
+greater than zero cannot qualify discovery; explicitly zero-only retry/container/build-worker
+controls admit exactly zero and reject nonzero values. Each class has its positive and negative
+constructor fixtures. The remaining CQ02 dimensions are unchanged.
+
+B. For **new CVQ-01 contracts only**, explicitly authorize this two-phase ordering instead of
+claiming the universal pre-dispatch constructor rule has already passed:
+
+1. Parent validates the frozen ticket/source references and resolves a separate exact development
+   environment. Then allocate the one repository-contained CVQ-01 owner/worktree using the
+   already selected implementation-standard profile. This is a restricted contract-construction
+   phase, not admission to implement the evaluator or native effects.
+2. The same implementation owner defines ordinary immutable contracts/protocols and their
+   constructor/round-trip/strict-boundary/dependency tests within the existing declared files.
+   No `*_admission.py` behavior, native executor, install or provider work. Return a committed
+   schema candidate; parent waits through `wait_agent`, not status polling.
+3. Parent runs the actual candidate's CQ01/CQ02 and applicable contract DAG checks, strict typing
+   and bounded counter-mutations. This is a named schema preflight, not final code-review approval.
+   Failure remains blocked and cannot unlock phase 2. No fabricated future-gate mutation is
+   required; not-yet-implemented admission predicates stay explicitly pending.
+4. Only after that real preflight passes, parent resumes **the same owner** for the evaluator,
+   remaining behavior tests and element evidence. No second owner or new architectural decision.
+   All original CQ01–CQ12, each behavior's reverse mutation, required adversarial helper and
+   parent final review remain mandatory before any approval/integration. The normal one initial
+   plus one correction review limit is unchanged.
+
+Phase-1 writable production subset: `qualification_values.py`, `binding_contracts.py`,
+`prerequisite_contracts.py`, `roster_contracts.py`, `manifest_contracts.py`, `report_contracts.py`,
+`qualification_contracts.py`, `qualification_ports.py`, `__init__.py`, under the already declared
+package. Its test subset is the declared contracts/boundaries/fixtures files. Other ticket paths
+remain untouched until successful schema preflight. The package dependency graph stays the same.
+
+No general waiver of strong types, provenance, boundary checks or review is proposed. No new
+ticket/parallel contract owner, production behavior choice, line-count threshold, second workflow
+engine or user-global instruction is introduced. No implementation or source mutation is
+authorized until the human owner approves this exact closure/ordering exception.
+
+Current typed return: `ACTION_COMPLETED` for approval/preflight documentation, then
+`HALT / TICKET_SCHEMA_INVALID / TICKET_DEFECT`; owner decision is required only for the named
+closure-02 two-phase exception, not a repeat of the approval already recorded above.

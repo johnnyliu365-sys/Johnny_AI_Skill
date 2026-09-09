@@ -2,4 +2,4 @@
 
 | Child ID | Kind | Revision | LF SHA-256 | Lifecycle | Reference |
 | --- | --- | --- | --- | --- | --- |
-| `TICKET-CONTROLLED-VERIFICATION-CVQ-01` | `IMPLEMENTATION_TICKET_PROPOSAL` | `01` | `99dfd59f9baa44f026b3b25f0f95bb8c1ad8cc34c6d3b405cc10f08d7643a3d8` | `PLANNED / OWNER_EXACT_APPROVAL_PENDING / PREFLIGHT_PENDING / NON_DISPATCHABLE` | [cvq-01-qualification-admission.md](cvq-01-qualification-admission.md) |
+| `TICKET-CONTROLLED-VERIFICATION-CVQ-01` | `IMPLEMENTATION_TICKET` | `02` | `65716d9d45bfc99c8519d5ed1f06edc199cb3acc83eee6636b15ca3cf4c42431` | `OWNER_APPROVED / TICKET_DEFECT / PREFLIGHT_BLOCKED / NON_DISPATCHABLE` | [cvq-01-qualification-admission.md](cvq-01-qualification-admission.md) |
