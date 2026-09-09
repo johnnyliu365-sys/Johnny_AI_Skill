@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| Artifact ID / kind / revision | `GRILL-CONTROLLED-VERIFICATION-20260909-01` / `OWNER_GRILL` / `01` |
+| Artifact ID / kind / revision | `GRILL-CONTROLLED-VERIFICATION-20260909-01` / `OWNER_GRILL` / `02` |
 | Lifecycle | `OWNER_RESPONSE_PENDING / NOT_COMPLETED` |
 | Owner | Human project owner; the assistant and research helper do not answer or approve for them |
 | Sources | [REQ-051](../../requirements/active/2026/environment-control/REQ-20260908-051.md), [Wayfinder](wayfinder-r01.md), [architecture](architecture-r01.md), [shared Context candidate](main.md), [qualification SPEC candidate](../../../modules/spec/controlled-verification-qualification.md) |
@@ -42,6 +42,25 @@ parent drafted. It returned five concrete gaps: disk accounting scope, closed ho
 identity continuity through spawn, crash/claim reconciliation and typed prerequisite admission.
 The SPEC candidate addresses them in sections 2–6. No helper wrote source, ran a workload,
 approved the architecture or supplied the final review verdict. No activity polling was used.
+
+The same helper then challenged the immutable candidate
+`190c094b70ef07917f0ef7a9e52806085c062b8f` (SPEC revision 01, LF digest
+`f281c9bc4ad668db44bea5c165fad0a1f9bd408bd45cb656d4cfb8190b9f027a`). Parent waited through
+`wait_agent` and independently checked the cited contract/state clauses. Five genuine draft
+defects were accepted and addressed in SPEC revision 02, before any implementation dispatch:
+
+| Finding | Revision-02 disposition |
+| --- | --- |
+| Pre-launch object requires post-launch OS identity and invents VM fields for pure work | PureContractBinding and NativePreLaunchBinding are disjoint tags; later LaunchObservation holds actual native identities |
+| Prerequisite matching lacks a closed constituent contract | Exact prerequisite key, observation revision/digest, independent resolver variants and finite refusal detail are defined |
+| Partial admission has no deterministic report reduction | Four tagged case results preserve every expected slot; complete/incomplete observation and cleanup states have exact outcome precedence |
+| Recovery-required attempt has no lawful settlement | Original failure is retained; a separate owner-bound RecoveryRecord may resolve cleanup dependency, never relaunch the old attempt |
+| Roster coverage is an unchecked completeness assertion | Exact host key, entries/aliases, actual discovered set, reachability, dispositions and zero-unknown set comparison are required |
+
+This is specification decision support, not ticket code review, a fabricated approved Closure Set,
+or a native capability test. Proposed pure/native result constructors and the finite reduction
+rules must still be exercised by CVQ-01's admitted implementation/type preflight. No production
+PASS is inferred from correcting prose.
 
 ## Exact response now needed
 

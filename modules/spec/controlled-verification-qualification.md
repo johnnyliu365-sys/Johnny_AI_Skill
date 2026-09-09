@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| Specification ID / revision | `SPEC-CONTROLLED-VERIFICATION-QUALIFICATION-20260909-01` / `01` |
+| Specification ID / revision | `SPEC-CONTROLLED-VERIFICATION-QUALIFICATION-20260909-01` / `02` |
 | Status | `DRAFT / OWNER_GRILL_AND_APPROVAL_REQUIRED / NOT_EFFECTIVE` |
 | Author / worktree / baseline | Current-session drafting assistant; `codex/controlled-verification-intake`; `d3c78b5b154b04a7fdaad544a3d00f1e91271dcb` |
 | PRD / CHG | `PRD-20260908-051` / `CHG-20260908-051` |
@@ -33,14 +33,14 @@ nullable fields. Candidate source and operational paths never enter durable Rout
 
 | Contract | Required meaning |
 | --- | --- |
-| `QualificationScope` | Exact project/baseline, capability IDs, approved manifest revision/digest and `PURE_CONTRACT` or `WINDOWS_LAB`; native scope additionally binds exact VM, guest/bootstrap and checkpoint evidence references |
+| `QualificationScope` | Exact project/baseline, capability IDs and approved manifest revision/digest; each case has a tagged `PURE_CONTRACT` or `WINDOWS_LAB` binding. Pure cases contain no VM/process fields; native cases bind the lab prerequisites independently |
 | `CapabilityKey` | Capability family, adapter revision, platform and exact host surface when applicable; `CODEX_CLI`, `CODEX_DESKTOP`, `CLAUDE_CODE_CLI` are distinct, never interchangeable |
-| `QualificationPrerequisiteSet` | Unique required prerequisite keys and independent evidence references; missing, stale, conflicting or unavailable prerequisite refuses only dependent cells |
+| `QualificationPrerequisiteSet` | Ordered unique `PrerequisiteRequirement` keys resolved into exact `PrerequisiteEvidenceBinding` results by the independent port; matching/rejection algebra below is mandatory |
 | `QualificationCase` | Unique cell ID, capability key, control/attack/reviewer-mutation role, immutable fixture/executable/dependency identities, exact argv/cwd/environment plan, expected oracle, prerequisite keys and resource/cleanup/evidence bounds |
 | `QualificationManifest` | Nonempty ordered cases, exact source and owner-approved revision, single lane, explicit total budget, no implicit discovery expansion; duplicate cases/IDs or incomplete roster coverage reject |
-| `AttemptBinding` | Manifest/case identities plus protected policy digest/owner, restricted subject, broker binary/configuration, enrollment/launcher, immutable candidate snapshot, resource plan, VM/checkpoint, OS execution identity and evidence owner; no caller boolean grants authority |
+| `AttemptBinding` | Tagged `PureContractBinding` or `NativePreLaunchBinding`; a distinct `LaunchObservation` can be appended only after actual launch. Pre-launch objects cannot contain invented future process identities |
 | `CapabilityObservation` | Independent observer identity and evidence binding, exact key, finite result, native primitive/race/failure semantics where applicable, named case observations; a reported PASS without its required positive/refusal evidence is malformed |
-| `QualificationReport` | Exact manifest/baseline and complete expected-cell coverage, finite per-capability results, evidence references/digests and next-boundary classification; no model-authored test counts or review approval |
+| `QualificationReport` | Exact manifest/baseline and one tagged `CaseResult` per expected cell, reduced by the closed rules below; no model-authored test counts or review approval |
 
 Finite proposal vocabulary:
 
@@ -62,6 +62,101 @@ Router enums. A `PROVEN` prerequisite is returned by its protected evidence reso
 scope, never trusted because the caller supplied that word. Production integration still requires
 its own review and authority gate after qualification. A report may honestly close an
 investigation with `CAPABILITY_UNAVAILABLE`; it cannot then close REQ-051 as implemented.
+
+### Binding tags and time order
+
+Common binding fields are `project_id`, `baseline_digest`, `manifest_revision`, `manifest_digest`,
+`case_id`, `attempt_key`, `fixture_digest`, `approved_record_ref` and `evidence_scope_ref`. Revisions
+are positive strict integers; references use opaque IDs; digests use the exact digest value type.
+
+- `PureContractBinding(kind=PURE_CONTRACT)` contains those common fields only. It cannot contain a
+  VM, subject SID, checkpoint, Job Object, process identity, native launch grant or host channel.
+- `NativePreLaunchBinding(kind=WINDOWS_LAB)` adds protected-policy revision/digest/owner ref,
+  restricted-subject ref, broker binary/configuration digests, launcher/enrollment refs,
+  immutable snapshot ref, exact executable/dependency/argv/cwd/environment-plan digest,
+  resource-plan ref, VM/guest/checkpoint refs and protected evidence-owner ref. These refs resolve
+  to actual operational identities outside Router metadata. It contains **no future PID/Job ID**.
+- `LaunchObservation` is a later immutable record: `attempt_key`, `prelaunch_binding_digest`,
+  `observation_revision`, `observer_ref`, `os_execution_identity_ref`, `isolation_identity_ref`
+  and `evidence_digest`. The protected observer must bind already-created native resources before
+  untrusted work is permitted to run. An already-created suspended process may be observed before
+  resume; that is not permission to execute first and attach protection afterward.
+
+Required launch identity is never satisfied with dummy/null/PID placeholders. A refusal before
+launch binds the requested case/manifest and refusal evidence, not a nonexistent LaunchObservation.
+Pure rule checks may test native-contract rejection through fakes but cannot issue native or host
+capability proof. A manifest may contain pure and lab cases for the same project/baseline; each
+case is independently admitted under its own tag, so a missing VM does not invalidate pure cases.
+
+### Prerequisite constituent contracts and comparison
+
+`PrerequisiteKind = APPROVED_SOURCE | LAB_IDENTITY | CHECKPOINT | PROTECTED_BOOTSTRAP
+| PROTECTED_IDENTITIES | IMMUTABLE_SNAPSHOT | RESOURCE_CONTROLS | ATTEMPT_CLAIM
+| HOST_ROSTER | WA04_ADAPTER`.
+
+`PrerequisiteKey` is the exact tuple `(kind, scope_id, capability_key, adapter_revision)`.
+`PrerequisiteRequirement` contains that key plus `expected_observation_revision` and
+`expected_evidence_digest`; these are pinned in the independently approved manifest, not chosen
+by the invocation. `PrerequisiteEvidenceBinding` contains the same key, `observation_revision`,
+`evidence_digest`, `observer_ref`, `source_ref` and disposition `PROVEN | FAILED | UNAVAILABLE`.
+Its authenticity is checked by the independent evidence port; shape validation is not provenance.
+
+The resolver returns exactly one of `FOUND(binding)`, `MISSING`, or `CONFLICTING`; malformed or
+unauthenticated evidence is a conflict, not a success. There is no first-match/latest-wins rule.
+Key, adapter revision, observation revision and digest must all match exactly. Missing, conflict,
+stale/mismatched binding, FAILED and UNAVAILABLE all map to case refusal
+`PREREQUISITE_UNPROVEN`, preserving distinct detail codes `MISSING`, `CONFLICTING`, `STALE`,
+`FAILED`, `UNAVAILABLE`. Extra unrelated evidence is not used to satisfy another key.
+
+`CaseKind = PURE_RULE | SOURCE_PROPERTY | TRUSTED_NATIVE_DISCOVERY | ADVERSARIAL_WORKLOAD
+| REAL_HOST_PROPERTY`. PURE_CONTRACT permits PURE_RULE/SOURCE_PROPERTY only; WINDOWS_LAB
+permits the remaining kinds only. Family identifies the rule being examined, while case kind
+identifies what evidence it can establish; a PURE_RULE about RESOURCE_CONTAINMENT cannot prove
+native RESOURCE_CONTAINMENT.
+
+Pure cases require APPROVED_SOURCE only, plus WA04_ADAPTER only for an actual WA-04 source
+property claim. Lab mutation requires LAB_IDENTITY, CHECKPOINT and PROTECTED_BOOTSTRAP;
+adversarial workload/real-host cells additionally require PROTECTED_IDENTITIES, IMMUTABLE_SNAPSHOT,
+RESOURCE_CONTROLS and ATTEMPT_CLAIM. HOST_ROSTER is needed for a **full host-mediation claim**, not
+to authorize trusted read-only discovery of that roster. The exact required key set is frozen by
+case kind before invocation. A trusted, fixed, bounded primitive-discovery recipe may collect
+candidate resource evidence without already asserting RESOURCE_CONTROLS=PROVEN; it must not run
+untrusted/project work or an escape attack. That separation prevents circular qualification.
+
+### Case result algebra and report reduction
+
+Every result binds `case_id`, manifest digest and requested binding digest. Closed variants:
+
+| Variant | Additional fields / meaning |
+| --- | --- |
+| `EXECUTED` | Observer/evidence refs and tagged observation: `COMPLETE` carries the nonempty exact expected-check tuple, each `PASSED` or `FAILED`; `INCOMPLETE` carries reason `OUTPUT_OVERFLOW | TIMEOUT | INTERRUPTED` and evidence refs, never fabricated complete checks. Launch observations are required only for actual native launches. A successful test of an expected denial is EXECUTED/COMPLETE/PASSED even though the forbidden child effect starts zero times. |
+| `REFUSED` | Case refusal `SOURCE_MISMATCH | APPROVAL_UNRESOLVED | PREREQUISITE_UNPROVEN | RESOURCE_ENFORCEMENT_UNAVAILABLE | HOST_ROSTER_UNQUALIFIED | RECOVERY_REQUIRED` and independent admission-evidence ref; only the PREREQUISITE_UNPROVEN variant additionally carries the finite prerequisite detail. The case itself did not run; no invented process identity or test output. |
+| `UNAVAILABLE` | Capability key, unavailable reason `PRIMITIVE_UNSUPPORTED | HOST_ABSENT | OFFLINE_PATH_UNSUPPORTED | ADAPTER_ABSENT`, and exact probe-evidence ref; the case itself did not run. |
+| `NOT_RUN` | Reason `NOT_STARTED | DEPENDENCY_STOP | TOTAL_BUDGET_EXHAUSTED | OWNER_CANCELLED` and plan/event-evidence ref; no test-result or capability-proof payload. |
+
+Each result also carries cleanup disposition `NO_LAUNCH | CLEANUP_CONFIRMED | RECOVERY_REQUIRED`;
+only confirmed cleanup carries its positive evidence ref. A pure result must use NO_LAUNCH.
+Uncertain launch or missing native cleanup cannot use NO_LAUNCH; it is RECOVERY_REQUIRED.
+Refused/unavailable/unrun cases still occupy their expected-cell slot. A malformed manifest
+returns a top-level `ManifestRefusal`; it cannot produce a report based on an untrusted expected
+cell set. A well-formed report must contain exactly the approved case IDs once each and valid
+binding/evidence/check coverage; structural failure returns `EVIDENCE_INVALID`, not a report PASS.
+After structural validation, reduce in this exact precedence:
+
+1. Any failed complete executed check, refusal SOURCE_MISMATCH/APPROVAL_UNRESOLVED, or any
+   RECOVERY_REQUIRED cleanup/refusal:
+   `QUALIFICATION_FAILED`.
+2. Otherwise any NOT_RUN or EXECUTED/INCOMPLETE observation: `INCOMPLETE`.
+3. Otherwise any UNAVAILABLE or refusal `PREREQUISITE_UNPROVEN`,
+   `RESOURCE_ENFORCEMENT_UNAVAILABLE`, `HOST_ROSTER_UNQUALIFIED`: `CAPABILITY_UNAVAILABLE`.
+4. Otherwise all expected checks are EXECUTED/COMPLETE/PASSED with complete scope-bound evidence:
+   `QUALIFIED_FOR_DECLARED_SCOPE`. A pure-contract scope qualifies pure rules only.
+
+`EVIDENCE_INVALID` and `INVALID_MANIFEST` cannot be embedded as a successful executed check's
+authority; expected-negative test inputs stay inside that check's fixture/oracle. Native-capability
+aggregation requires executed native-property evidence; successful pure schema/report tests are
+not candidates for that aggregation. A pure PASSED cell plus one prerequisite-refused native
+cell reduces to CAPABILITY_UNAVAILABLE, retains both entries and does not suppress the pure pass.
 
 ## 3. Admission and immutable execution binding
 
@@ -142,6 +237,16 @@ while a host UI still says Running returns the existing evidence and starts zero
 test may reach CLEANED; cleanup success does not turn its test result into PASS. Failed cleanup
 blocks dependent execution and retains evidence until an owner-scoped recovery operation.
 
+Recovery settlement is append-only and does not rewrite the original attempt. A separate
+`RecoveryRecord` binds `recovery_id`, original attempt key and exact observation revision/digest,
+owner recovery-grant ref, independent observer/evidence refs, and disposition
+`CLEANUP_CONFIRMED | UNRESOLVED`. CLEANUP_CONFIRMED additionally requires exact cleanup and
+sentinel evidence refs. The original attempt remains RECOVERY_REQUIRED with its original failure;
+it is never relaunched or converted to a successful run. An independent dependency resolver may
+clear the cleanup blocker only after validating that exact CLEANUP_CONFIRMED record and unchanged
+original evidence. A later attempt requires a new approved attempt key; owner recovery does not
+grant an automatic retry or extra budget. Unresolved/conflicting recovery leaves the blocker set.
+
 ## 6. Closed per-host effect roster
 
 Each host surface/version/binary digest/enrolled configuration has its own committed roster.
@@ -160,6 +265,27 @@ offline execution yields UNAVAILABLE; external model requests and credential tra
 forbidden. CLI qualification never qualifies Desktop. No new Desktop bridge is built under this
 investigation. Every claimed surface needs both a permitted positive effect and denied bypasses,
 including disabled/crashed/timed-out advisory hooks.
+
+The typed coverage contract is mandatory, not a free-form string map:
+
+- `HostEffectRosterKey`: host surface, exact version, binary digest, configuration digest,
+  enrollment digest and adapter revision.
+- `HostEffectEntry`: unique dispatch-entry ID, finite category from the seven groups above,
+  sorted unique alias IDs, reachability `MODEL_REACHABLE | CLIENT_REACHABLE | BOTH | ABSENT_PROVEN`,
+  disposition `DENIED | BROKER_ONLY | READ_ONLY`, exact discovery-evidence ref and enforcement
+  oracle/case refs. A client-reachable channel is not excluded merely because it is not a model tool.
+- `DiscoveredEffectSet`: the exact roster key, unique actual offered/reachable dispatch-entry and
+  alias identities, observer/evidence refs, and explicit nonnegative `unknown_entry_count` and
+  `unobservable_surface_count`. Those counts come from the trusted discovery adapter, not a caller.
+- `HostRosterCoverage`: approved roster ref/digest, discovered-set ref/digest and the comparison
+  result. Canonical entry/alias sets must match exactly, with no duplicate, missing, extra or
+  newly discovered entry; both unknown counts must be zero. Actual denial/read-only/broker-only
+  observations must bind every reachable entry, while ABSENT_PROVEN requires absence evidence.
+
+Discovery and enforcement evidence must match the same key. An unobservable dynamic MCP/plugin
+surface is not an empty set. Any set/count/key/oracle disagreement returns
+`HOST_ROSTER_UNQUALIFIED` and cannot produce a full-host capability PROVEN. For a partial observed
+set, preserve the individual observations but do not manufacture a complete roster.
 
 ## 7. Acceptance cells and adversarial evidence
 
