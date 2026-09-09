@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| Artifact ID / kind / revision | `PLAN-CONTROLLED-VERIFICATION-LAB-20260908-01` / `CAPABILITY_QUALIFICATION_PLAN` / `02` |
+| Artifact ID / kind / revision | `PLAN-CONTROLLED-VERIFICATION-LAB-20260908-01` / `CAPABILITY_QUALIFICATION_PLAN` / `03` |
 | Lifecycle | `DRAFT / GUEST_ADMIN_REPORTED / NOT_DISPATCHABLE` |
 | Requirement | [REQ-051 revision 04](../../requirements/active/2026/environment-control/REQ-20260908-051.md) |
 | Accepted boundary | [Convergence revision 04](enforcement-boundary-r01.md); owner decision D3 recorded in `b299e5f2899041f1317b7a9426998028a323c6b8` |
@@ -195,9 +195,11 @@ Windows lab network isolation must remain effective throughout the no-external-c
 ## Continuation
 
 Host-side metadata readback and the requested owner-relayed guest elevation discovery are
-complete. Next finish the exact qualification specification and ticket before invoking the
-mutating sequence, including an owned checkpoint with protected bootstrap and exact readback.
-The current plan is not that admitted ticket. Do not repeat the answered elevation check or
-require CLI installation to continue specification work. No new architecture choice is being
-asked. D1/D2/D3 remain accepted; no fixture implementation, host configuration, VM mutation,
-production enforcement, integration or release is complete.
+complete. The [qualification SPEC candidate](../../../modules/spec/controlled-verification-qualification.md)
+now proposes exact prerequisite/report contracts and finite resource/evidence semantics;
+[owner Grill](grill-r01.md) remains pending. The first proposed ticket is source-only CVQ-01,
+not a VM-effect ticket. Neither this plan nor the unapproved SPEC permits the mutating sequence.
+An owned checkpoint with protected bootstrap and exact readback remains necessary before guest
+fixture changes. Do not repeat the answered elevation check or require CLI installation to
+continue pure work. D1/D2/D3 remain accepted; no fixture implementation, host configuration,
+VM mutation, production enforcement, integration or release is complete.

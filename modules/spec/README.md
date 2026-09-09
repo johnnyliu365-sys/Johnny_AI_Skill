@@ -2,6 +2,12 @@
 
 每個功能集群只有一份有效規格。`reusable-module-library.md` 已核准；其工單仍待使用者第二次核准，核准前不得建立實作或測試。
 
+## Managed specification candidates
+
+| Specification ID | Kind | Revision | LF SHA-256 | Lifecycle | Direct-child leaf |
+| --- | --- | --- | --- | --- | --- |
+| `SPEC-CONTROLLED-VERIFICATION-QUALIFICATION-20260909-01` | `SPECIFICATION` | `01` | `f281c9bc4ad668db44bea5c165fad0a1f9bd408bd45cb656d4cfb8190b9f027a` | `DRAFT / OWNER_GRILL_AND_APPROVAL_REQUIRED / NOT_EFFECTIVE` | [`controlled-verification-qualification.md`](controlled-verification-qualification.md) |
+
 ## 獨立規格
 
 | 功能集群 | 規格 | 狀態 |
