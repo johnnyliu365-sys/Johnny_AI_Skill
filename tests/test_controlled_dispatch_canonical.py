@@ -117,6 +117,80 @@ class CanonicalTests(unittest.TestCase):
             canonical_json_bytes(output_heavy)
         self.assertIs(output_error.exception.code, WireErrorCode.LIMIT_EXCEEDED)
 
+    def test_f1_hard_coded_endpoint_pairs_are_discriminating(self) -> None:
+        node_4096 = CanonicalObject(
+            (
+                CanonicalMember(
+                    "items",
+                    CanonicalArray(
+                        (
+                            CanonicalArray(tuple(CanonicalNull() for _ in range(28))),
+                            *(CanonicalArray(tuple(CanonicalNull() for _ in range(15))) for _ in range(254)),
+                        )
+                    ),
+                ),
+            )
+        )
+        node_4097 = CanonicalObject(
+            (
+                CanonicalMember(
+                    "items",
+                    CanonicalArray(
+                        (
+                            CanonicalArray(tuple(CanonicalNull() for _ in range(29))),
+                            *(CanonicalArray(tuple(CanonicalNull() for _ in range(15))) for _ in range(254)),
+                        )
+                    ),
+                ),
+            )
+        )
+        self.assertIsInstance(canonical_json_bytes(node_4096), bytes)
+        with self.assertRaises(WireValidationError) as node_error:
+            canonical_json_bytes(node_4097)
+        self.assertIs(node_error.exception.code, WireErrorCode.LIMIT_EXCEEDED)
+
+        output_65536 = CanonicalObject(
+            tuple(
+                CanonicalMember(
+                    f"a{index}", CanonicalString("x" * (4096 if index < 15 else 3961))
+                )
+                for index in range(16)
+            )
+        )
+        output_65537 = CanonicalObject(
+            tuple(
+                CanonicalMember(
+                    f"a{index}", CanonicalString("x" * (4096 if index < 15 else 3962))
+                )
+                for index in range(16)
+            )
+        )
+        self.assertEqual(len(canonical_json_bytes(output_65536)), 65_536)
+        with self.assertRaises(WireValidationError) as output_error:
+            canonical_json_bytes(output_65537)
+        self.assertIs(output_error.exception.code, WireErrorCode.LIMIT_EXCEEDED)
+
+        array_256 = CanonicalArray(tuple(CanonicalNull() for _ in range(256)))
+        self.assertEqual(len(array_256.items), 256)
+        with self.assertRaises(WireValidationError) as array_error:
+            CanonicalArray(tuple(CanonicalNull() for _ in range(257)))
+        self.assertIs(array_error.exception.code, WireErrorCode.LIMIT_EXCEEDED)
+
+        object_256 = CanonicalObject(
+            tuple(CanonicalMember(f"k{index}", CanonicalNull()) for index in range(256))
+        )
+        self.assertEqual(len(object_256.members), 256)
+        with self.assertRaises(WireValidationError) as object_error:
+            CanonicalObject(
+                tuple(CanonicalMember(f"k{index}", CanonicalNull()) for index in range(257))
+            )
+        self.assertIs(object_error.exception.code, WireErrorCode.LIMIT_EXCEEDED)
+
+        self.assertEqual(len(CanonicalString("é" * 2048).value.encode("utf-8")), 4_096)
+        with self.assertRaises(WireValidationError) as string_error:
+            CanonicalString("é" * 2048 + "x")
+        self.assertIs(string_error.exception.code, WireErrorCode.LIMIT_EXCEEDED)
+
     def test_domain_separated_digest_vectors_and_detached_raw_evidence(self) -> None:
         body = CanonicalObject(
             (
@@ -139,6 +213,80 @@ class CanonicalTests(unittest.TestCase):
         with self.assertRaises(WireValidationError) as forbidden_error:
             dispatch_digest(forbidden)
         self.assertIs(forbidden_error.exception.code, WireErrorCode.INVALID_KEY)
+
+    def test_f2_each_self_field_is_omitted_only_at_its_top_level(self) -> None:
+        nested = CanonicalObject(
+            (
+                CanonicalMember("dispatch_digest", CanonicalString("nested-dispatch")),
+                CanonicalMember("report_digest", CanonicalString("nested-report")),
+            )
+        )
+        packet = CanonicalObject(
+            (
+                CanonicalMember("report_digest", CanonicalString("top-report")),
+                CanonicalMember("nested", nested),
+                CanonicalMember("dispatch_digest", CanonicalString("top-dispatch")),
+            )
+        )
+        dispatch_body = b'{"nested":{"dispatch_digest":"nested-dispatch","report_digest":"nested-report"},"report_digest":"top-report"}'
+        report_body = b'{"dispatch_digest":"top-dispatch","nested":{"dispatch_digest":"nested-dispatch","report_digest":"nested-report"}}'
+        expected_dispatch = hashlib.sha256(b"johnny.cve.dispatch.v1\x00" + dispatch_body).hexdigest()
+        expected_report = hashlib.sha256(b"johnny.cve.report.v1\x00" + report_body).hexdigest()
+        self.assertEqual(dispatch_digest(packet).value, expected_dispatch)
+        self.assertEqual(report_digest(packet).value, expected_report)
+
+        reversed_packet = CanonicalObject(tuple(reversed(packet.members)))
+        self.assertEqual(dispatch_digest(packet), dispatch_digest(reversed_packet))
+        self.assertEqual(report_digest(packet), report_digest(reversed_packet))
+
+        changed = CanonicalObject(
+            (
+                CanonicalMember("report_digest", CanonicalString("top-report")),
+                CanonicalMember(
+                    "nested",
+                    CanonicalObject(
+                        (
+                            CanonicalMember("dispatch_digest", CanonicalString("nested-dispatch")),
+                            CanonicalMember("report_digest", CanonicalString("changed")),
+                        )
+                    ),
+                ),
+                CanonicalMember("dispatch_digest", CanonicalString("top-dispatch")),
+            )
+        )
+        self.assertNotEqual(dispatch_digest(packet), dispatch_digest(changed))
+        self.assertNotEqual(report_digest(packet), report_digest(changed))
+
+        for key in ("raw_sha256", "source_blob_digest"):
+            top_level_forbidden = CanonicalObject((CanonicalMember(key, CanonicalString("raw")),))
+            for digest_function in (dispatch_digest, report_digest):
+                with self.subTest(key=key, digest_function=digest_function.__name__):
+                    with self.assertRaises(WireValidationError) as forbidden_error:
+                        digest_function(top_level_forbidden)
+                    self.assertIs(forbidden_error.exception.code, WireErrorCode.INVALID_KEY)
+
+        nested_raw = CanonicalObject(
+            (
+                CanonicalMember(
+                    "nested",
+                    CanonicalObject(
+                        (
+                            CanonicalMember("raw_sha256", CanonicalString("nested-raw")),
+                            CanonicalMember("source_blob_digest", CanonicalString("nested-source")),
+                        )
+                    ),
+                ),
+            )
+        )
+        nested_raw_body = b'{"nested":{"raw_sha256":"nested-raw","source_blob_digest":"nested-source"}}'
+        self.assertEqual(
+            dispatch_digest(nested_raw).value,
+            hashlib.sha256(b"johnny.cve.dispatch.v1\x00" + nested_raw_body).hexdigest(),
+        )
+        self.assertEqual(
+            report_digest(nested_raw).value,
+            hashlib.sha256(b"johnny.cve.report.v1\x00" + nested_raw_body).hexdigest(),
+        )
 
     def test_raw_input_limit_and_frozen_values(self) -> None:
         self.assert_code(raw_blob_digest, b"x" * 65_537, WireErrorCode.LIMIT_EXCEEDED)
