@@ -7,6 +7,7 @@
 | Specification ID | Kind | Revision | LF SHA-256 | Lifecycle | Direct-child leaf |
 | --- | --- | --- | --- | --- | --- |
 | `SPEC-CONTROLLED-VERIFICATION-QUALIFICATION-20260909-01` | `SPECIFICATION` | `04` | `4cad6a88b9d151a05bf409f8b61bc97580e80303f58a2377cb0301815b999a1d` | `OWNER_APPROVED / EFFECTIVE_INVESTIGATION_CONTRACT / CVQ01_PREPARATION_ONLY` | [`controlled-verification-qualification.md`](controlled-verification-qualification.md) |
+| `SPEC-CONTROLLED-VERIFICATION-DISPATCH-20260918-01` | `SPECIFICATION` | `01` | `c0986a3be61a09475e9507bb837fe73364e4a2ca79adde61abfb27bb2dc8a60f` | `DRAFT / CONTRACT_CONVERGENCE / NON_DISPATCHABLE` | [controlled-verification-dispatch.md](controlled-verification-dispatch.md) |
 
 ## 獨立規格
 
