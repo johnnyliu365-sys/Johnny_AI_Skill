@@ -2,9 +2,9 @@
 
 | Field | Value |
 | --- | --- |
-| Specification ID / revision | `SPEC-CONTROLLED-VERIFICATION-DISPATCH-20260918-01` / `01` |
+| Specification ID / revision | `SPEC-CONTROLLED-VERIFICATION-DISPATCH-20260918-01` / `02` |
 | Lifecycle | `DRAFT / CONTRACT_CONVERGENCE / NON_DISPATCHABLE` |
-| Author / branch / baseline | Current-session reviewer; `codex/controlled-verification-intake`; `64882e6a2aaf96bb4c1f16309257be38600b1d3f` |
+| Author / branch / baseline | Current-session reviewer; `codex/controlled-verification-intake`; `36688a83def524e1bf1af03d2d5f4a13413cbf23` |
 | Lineage | [REQ-051](../../doc/requirements/active/2026/environment-control/REQ-20260908-051.md) revision 08 D4/D7; `PRD-20260908-051 / CHG-20260908-051` |
 | Control / ticket | [CVE-00](../tickets/controlled-verification/cve-00-contract-convergence.md), [CVE-01](../tickets/controlled-verification/cve-01-compact-dispatch-admission.md) |
 | Existing Context / qualification | [Context revision 02](../../doc/context/controlled-verification/main.md) is reference-only and sealed; [qualification SPEC](controlled-verification-qualification.md) is unchanged and does not approve this protocol |
@@ -28,14 +28,63 @@ YAML is external data only. The proposal permits one UTF-8 mapping document usin
 sequences and explicitly typed scalar values; no arbitrary object construction, custom tags,
 anchors, aliases, merge keys, duplicate keys, extra keys, implicit type coercion or multiple documents.
 Quoted text that resembles a number remains text and fails an integer field; bool is not integer.
-Reject unknown schema versions and malformed IDs. Parser byte/depth/node/string limits and
-package/version qualification are mandatory unresolved entries in section 8, not hidden defaults.
+Reject unknown schema versions and malformed IDs. The concrete revision-02 engineering proposal
+below freezes parsing policy and bounds; package/adapter qualification remains required, not assumed.
 
 Parse into immutable named DTOs before any effect. Preserve exact identifier/path code points;
 reject rather than silently trim, lowercase or normalize authority identity. A separate explicit
 identity resolver maps external IDs to existing internal opaque IDs. Structured content and
 human-readable findings are data, never additional executable instructions. The controller may
 render human explanations separately; Agent-to-Agent control messages remain schema-defined.
+
+### 2.1 Proposed parser contract and finite limits
+
+Use the pure-Python event parser of `PyYAML==6.0.3`, explicitly selecting `BaseLoader`,
+with a bounded event consumer; do not use its object constructors or implicit scalar resolver.
+This is a dependency proposal, not permission to install it or alter the runtime lock. The
+package publishes this version and Python compatibility in its [release metadata](https://pypi.org/project/PyYAML/6.0.3/).
+Its [event API](https://raw.githubusercontent.com/yaml/pyyaml/6.0.3/lib/yaml/events.py)
+exposes scalar style, anchors, tags and document boundaries for rejection before DTO conversion.
+
+`safe_load` alone is insufficient: the upstream [mapping constructor](https://raw.githubusercontent.com/yaml/pyyaml/6.0.3/lib/yaml/constructor.py)
+assigns by key, and its safe constructor also supports merges and implicit scalar conversions.
+The proposed boundary therefore detects duplicates before mapping insertion and never dispatches
+from the resulting unvalidated dynamic object.
+
+| Limit / lexical rule | Revision-02 proposal |
+| --- | --- |
+| Raw input | At most 65,536 bytes; strict UTF-8; no BOM, NUL or unpaired surrogate |
+| Structure | One mapping document; maximum container depth 16 (root = 1); 4,096 value nodes including keys; 256 members per collection |
+| Scalars | At most 4,096 UTF-8 bytes after decoding; stricter field-specific bounds below also apply |
+| Keys | ASCII schema field names only; exact duplicates, unknown keys and `<<` refuse; keys cannot be collections |
+| YAML features | Reject anchors, aliases, any explicit tag, directives, extra documents and block scalar styles; ordinary block/flow mappings and sequences remain allowed |
+| Scalars to DTOs | Quoted scalars are strings. Plain `true`, `false`, `null` and JSON decimal integer grammar are typed tokens; other plain scalars are strings. Field validation never converts a string into a number or Boolean |
+| Numbers | No float fields; integer values within 0..2,147,483,647 before tighter field limits; Boolean is never integer |
+
+Limits reject rather than truncate. Input bytes are bounded before parser construction; depth,
+node and collection limits are enforced while consuming events, not after recursive object
+construction. These logical limits do not prove a hard CPU/memory deadline for a parser call;
+that stronger claim belongs to separately qualified execution containment. Runtime packaging
+must pin actual distribution artifacts and type stubs through the owning dependency workflow.
+
+### 2.2 Canonical digest without self-reference
+
+The wire packet carries its logical `dispatch_digest` or `report_digest`, not the digest of its
+own raw bytes. Independently observed `raw_sha256` belongs to the transport/evidence record
+outside that packet. Never serialize a raw-body digest into the very body it describes.
+
+Proposed `CVE-CJSON-1` uses the validated schema's primitive projection and Python 3.11
+`json.dumps(sort_keys=True, separators=(",", ":"), ensure_ascii=True, allow_nan=False)`.
+Object keys are ASCII, arrays retain order, enums project their exact wire value, and only
+schema-declared integers/Booleans/null/strings are present. No floats, sets, Unicode normalization,
+trimming or alias fields. Encode the result as ASCII bytes without BOM/newline. Omit only the
+top-level self-digest field; all other required fields remain. Hash the bytes prefixed by
+`johnny.cve.dispatch.v1` followed by one NUL byte, or `johnny.cve.report.v1` followed by one NUL
+byte, with SHA-256 and lowercase hex output. This is a specified narrow serialization, not a
+claim to implement RFC 8785. Cross-host consumers must use the same qualified codec/test vectors.
+
+LF-normalized artifact digests retain their existing meaning and are never substituted for
+the raw-byte observation or this logical packet digest. None of these digests proves authority.
 
 ## 3. Dispatch contract proposal
 
@@ -64,6 +113,33 @@ Path comparison uses the actual bound repository/filesystem semantics, not strin
 Traversal, absolute/drive/UNC paths, ambiguous separator/case aliases and reparse/symlink escape
 must not widen grants. Freeze the supported path-pattern grammar and operation types before
 approval; arbitrary regex/glob language is not accepted by implication. Rename checks both paths.
+
+### 3.1 Constituent types proposed for the first pure cut
+
+All DTOs are immutable, reject extra fields, and disable string trimming/coercion. Do not inherit
+the existing `RouterModel` unchanged: its `str_strip_whitespace=True` would silently change wire
+identity. Dynamic parser values terminate at the codec; named types cross the application ports.
+
+| Type | Closed proposal |
+| --- | --- |
+| `ExternalId` / `ItemId` | Exact string matching `[A-Za-z][A-Za-z0-9_.-]{0,127}`; `CV1` is legal and is not lowercased into an internal ID |
+| `InternalId` | Existing registered opaque ID grammar `[a-z][a-z0-9-]{2,127}`; explicit registry mapping from external IDs |
+| `Digest` / `GitObjectId` | 64 lowercase hex SHA-256; Git ID is `{algorithm: SHA1 or SHA256, hex: exact 40 or 64 lowercase hex}` and must match the repository format |
+| `ArtifactBinding` | `{id: ExternalId, revision: positive integer, lf_sha256: Digest}`; revision display padding is not wire identity |
+| `ItemReference` | `{artifact: ArtifactBinding, item: ItemId}`; resolution is independent of free text or a guessed anchor |
+| `RelativePath` | Exact 1..1,024 UTF-8 bytes; forward-slash separated nonempty segments; no absolute/drive/UNC form, backslash, NUL, `.` or `..` segment |
+| `PathSelector` | Tagged `EXACT{path: RelativePath}` or `TREE{prefix: RelativePath}`; TREE matches whole segments below its prefix, never a string-prefix sibling; no arbitrary wildcard/regex interpreter |
+| `PathGrant` | `{selector: PathSelector, operations: unique ordered tuple of CREATE, MODIFY, DELETE, RENAME}`; both rename endpoints require grants. Mode/type/submodule changes refuse in this first revision |
+| `WorkItem` / `PredicateRef` | `{id: ItemId, ref: ItemReference}`; unique IDs within each collection; exact approved slice coverage, not an Agent-written interpretation |
+| `CheckSlot` | `{check_id: ItemId, slot_id: ItemId, plan: ArtifactBinding}`; pair unique; executable/argv and repetition parameters resolved from the plan |
+| `OwnerBinding` | `{implementation: InternalId, reviewer: InternalId, lane: InternalId, worktree: Digest, branch: Digest, profile: ArtifactBinding}`; distinct roles; fingerprints are actual independently computed bindings |
+| `ScopeBinding` | Allowlist 1..256 grants; forbidden selectors/invariant IDs 0..256 each; explicit prohibition wins; unknown invariant rejects |
+
+Wire strings such as `sql/**` may be human renderings of a registered TREE selector but are not
+executed as a second glob language. Platform-specific reserved names, case collisions, filesystem
+identity and link/reparse escape require the Git/filesystem adapter's separate qualification;
+the lexical type cannot declare those checks passed. Exact approved schema IDs fix the remaining
+root shape from section 3; a wire sender cannot supply its own required-field list.
 
 ## 4. Program-before-delivery boundary
 
@@ -127,6 +203,29 @@ return, never APPROVED/merged/released. BLOCKED maps to BLOCKED; CHANGE_DETECTED
 CHANGE_DETECTED with REQUIREMENT_CHANGED. Malformed reports return a named admission rejection,
 not a fabricated successful implementation return. Current reviewer and integration gates remain.
 
+### 5.1 Report constituent and event proposal
+
+`CandidateBinding` is `NO_CANDIDATE{kind}` or `COMMIT{kind, commit: GitObjectId}`.
+`GitChange` has operation and nullable old/new `RelativePath`: CREATE requires only new; DELETE
+only old; MODIFY requires both equal; RENAME requires both distinct. The actual Git adapter
+must use the same frozen rename-detection policy for reported/observed comparison. Until that
+policy is qualified, an ambiguous rename cannot be silently relabelled to obtain admission.
+
+`WorkObservation` binds `id: ItemId`, `state: DONE|PARTIAL|NOT_STARTED` and nullable evidence ID.
+`CheckObservation` binds check/slot IDs, `state: PASSED|FAILED|UNRUN|UNKNOWN|CANCELLED` and nullable
+execution-evidence ID. DONE/PASSED requires independently accepted evidence; UNRUN is explicit,
+not an omitted slot. Findings, blockers and deviations are records with a registered code,
+an `ItemReference`, 1..64 evidence IDs and a 0..4,096-byte explanation. These records are data,
+never commands. Collections have the section-2 limit and exact dispatched ID coverage, including
+unstarted work. BLOCKED requires at least one blocker; CHANGE_DETECTED requires at least one
+changed `ArtifactBinding`. Candidate absence never forces a fictional commit or clean-tree claim.
+
+Proposed event mapping is IMPLEMENTED -> COMPLETED/ACTION_COMPLETED,
+BLOCKED -> BLOCKED/IMPLEMENTATION_RETURNED, and
+CHANGE_DETECTED -> CHANGE_DETECTED/REQUIREMENT_CHANGED. Do not force REQUIREMENT_CHANGED through
+`ImplementationReturnEvent`: that existing wrapper only admits ordinary return-event kinds.
+Use the Router's existing change-event route. No new event vocabulary or retry authority is added.
+
 ## 6. Responsibility, reuse and data lifetime
 
 Selected inventory: `workflow-router-poc` at the baseline above, from its delivered catalog card
@@ -148,6 +247,17 @@ Git-diff and execution-evidence resolver ports; existing lifecycle/claim adapter
 adapter; metadata-only Router projection. Short-lived controller composition injects these.
 No pure validator imports Git/subprocess/host effect code or appends everything to central Router
 contracts.py. Tests keep codecs, domain predicates, port fakes and integration fixtures separate.
+
+The source-cut proposal groups the new work under `library/workflow_router/controlled_dispatch/`:
+`scalars.py` owns identity/lexical values; `dispatch_contracts.py` owns dispatch DTOs;
+`report_contracts.py` owns report variants; `codec.py` owns bounded YAML decoding;
+`canonical.py` owns deterministic bytes/digests; `ports.py` owns typed observations/protocols;
+`dispatch_admission.py` and `report_admission.py` own their separate pure predicates;
+`scope.py` owns selector/operation comparison; `projection.py` owns metadata-only return mapping.
+These are proposed paths, not created files or an implementation allowlist. No validator imports
+subprocess, Git or host APIs. Claim/delivery composition and production adapters are later cuts,
+not silently bundled into this pure ticket. Tests mirror these responsibilities rather than
+building a single giant adversarial harness.
 
 Target-owned ticket/dispatch/report artifacts remain versioned with digest indexes. Raw YAML,
 relative paths, code/work descriptions and detailed evidence stay outside durable Router state;
@@ -172,10 +282,12 @@ strengths separately. No real fixture, run, check or host result is claimed in t
 
 ## 8. Readiness and bounded next work
 
-Before SPEC approval, close exact parser package/grammar/resource bounds, constituent DTO types,
-canonical serialization/digest algorithm, path-operation grammar, authoritative resolver/claim
-and evidence contracts, correction/research message variants, source/test boundaries and check
-commands. Complete required architecture/Context reattachment and type-preflight planning without
+Revision 02 supplies concrete proposals for the parser, limits, primitives/report variants,
+canonical digest, path selectors, source responsibility cuts and event mapping. It does not
+freeze an unseen implementation ticket. Before SPEC approval, close the remaining complete root
+DTO/port success and rejection constructors, authoritative resolver/claim and evidence observations,
+Git rename/platform policy, correction/research message schemas, exact per-ticket source/test
+boundaries, dependency qualification and check commands. Complete required architecture/Context reattachment and type-preflight planning without
 rewriting a sealed Context or delegating design choices to an implementer. This draft cannot mark
 those missing decisions READY or use CVQ-01's pending exception as precedent.
 
@@ -185,3 +297,20 @@ qualified adapters; external effects and release remain separately authorized. P
 direction does not enable reduced review until its canonical policy and verifier qualification are
 delivered. No source, host settings, YAML executable configuration, test harness, installation,
 integration, push or release is changed by this document.
+
+## 9. Bounded helper return and reviewer disposition, 2026-09-18
+
+At baseline `36688a83def524e1bf1af03d2d5f4a13413cbf23`, the reviewer reused the existing
+`enforcement_capability` decision-support helper with one structured read-only C00-1/C00-4 task.
+The parent checked packet keys/role/scope and actual clean branch, baseline, artifact digests and
+profile before the native follow-up. These session-local checks are not the unimplemented product
+dispatch gate, exhaustive schema qualification or enforced filesystem isolation. `wait_agent`
+returned `PROPOSAL_READY`, `NO_CANDIDATE`, no reported changed files and no reported deviations.
+
+The parent retained proposals for typed variants, separated modules and independent negative
+oracles, but did not approve the helper result unchanged. It removed the raw-body digest cycle,
+avoided importing unspecified RFC 8785 machinery, preserved external uppercase item IDs, specified
+TREE selectors instead of silently dropping the owner's subtree prohibitions, and kept unsupported
+Git operation types closed. Numeric bounds and one existing return-event selection are engineering
+proposals for the exact SPEC review, not three separate owner questionnaires. Root retains the sole
+review conclusion. No implementer, production code, test execution or host enforcement was delivered.

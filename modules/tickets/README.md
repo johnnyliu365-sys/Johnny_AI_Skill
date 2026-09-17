@@ -23,7 +23,7 @@ debug 或稽核任何一條線之前先讀它——多數「新」問題都是�
 
 | Child ID | Kind | Revision | LF SHA-256 | Lifecycle | Reference |
 | --- | --- | --- | --- | --- | --- |
-| `TICKET-PARTITION-CONTROLLED-VERIFICATION` | `PARTITION_INDEX` | `05` | `50385d35c8ae6f5c4100cde1391aa29705cbc15a45af3ac12ccbdd8fb3e84d98` | `ACTIVE / CVQ01_PREFLIGHT_BLOCKED / CVE_CONTRACT_DRAFTING` | [controlled-verification/README.md](controlled-verification/README.md) |
+| `TICKET-PARTITION-CONTROLLED-VERIFICATION` | `PARTITION_INDEX` | `06` | `890a0295b395f0da4822bd48571aec0ce091090f4ae4b0a08c098bf5581b4742` | `ACTIVE / CVQ01_PREFLIGHT_BLOCKED / CVE_CONTRACT_DRAFTING` | [controlled-verification/README.md](controlled-verification/README.md) |
 
 ## MSIX capability and environment actions
 
