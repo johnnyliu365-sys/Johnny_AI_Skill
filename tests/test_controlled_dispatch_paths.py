@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from dataclasses import FrozenInstanceError
 from typing import Callable
 import unittest
 
@@ -13,6 +14,10 @@ from library.workflow_router.controlled_dispatch import (
     WireValidationError,
     matches_path,
 )
+
+
+class _StringSubclass(str):
+    pass
 
 
 def _construct(constructor: Callable[..., object], value: object) -> object:
@@ -69,6 +74,24 @@ class PathConstructorTests(unittest.TestCase):
         self.assertFalse(matches_path(tree, sql))
         self.assertFalse(matches_path(tree, sibling))
         self.assertIsNot(type(exact), type(tree))
+
+    def test_path_and_selector_constructor_boundaries_and_immutability(self) -> None:
+        self.assert_code(RelativePath, 7, WireErrorCode.TYPE_MISMATCH)
+        self.assert_code(RelativePath, _StringSubclass("sql/a"), WireErrorCode.TYPE_MISMATCH)
+        path = RelativePath("sql/a")
+        exact = ExactPathSelector(path)
+        tree = TreePathSelector(RelativePath("sql"))
+        self.assertIs(exact.path, path)
+        self.assertEqual(tree.prefix.value, "sql")
+        frozen_values: tuple[tuple[object, str, object], ...] = (
+            (path, "value", "sql/b"),
+            (exact, "path", RelativePath("sql/b")),
+            (tree, "prefix", RelativePath("other")),
+        )
+        for value, field, replacement in frozen_values:
+            with self.subTest(field=field):
+                with self.assertRaises(FrozenInstanceError):
+                    setattr(value, field, replacement)
 
     def test_selector_and_matching_type_boundaries_refuse_wrong_values(self) -> None:
         self.assert_code(ExactPathSelector, "sql/a", WireErrorCode.TYPE_MISMATCH)

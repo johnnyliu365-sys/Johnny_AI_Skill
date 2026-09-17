@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from dataclasses import FrozenInstanceError, fields
 from typing import Callable
 import hashlib
 import unittest
@@ -35,6 +36,14 @@ def _invoke(function: Callable[..., object], value: object) -> object:
     return function(value)
 
 
+class _IntegerSubclass(int):
+    pass
+
+
+class _StringSubclass(str):
+    pass
+
+
 class CanonicalTests(unittest.TestCase):
     def assert_code(self, constructor: Callable[..., object], value: object, code: WireErrorCode) -> None:
         with self.assertRaises(WireValidationError) as raised:
@@ -56,8 +65,11 @@ class CanonicalTests(unittest.TestCase):
     def test_scalar_and_collection_rejection_cells(self) -> None:
         self.assert_code(CanonicalBool, 1, WireErrorCode.TYPE_MISMATCH)
         self.assert_code(CanonicalInteger, True, WireErrorCode.TYPE_MISMATCH)
+        self.assert_code(CanonicalInteger, _IntegerSubclass(1), WireErrorCode.TYPE_MISMATCH)
         self.assert_code(CanonicalInteger, -1, WireErrorCode.OUT_OF_RANGE)
         self.assert_code(CanonicalInteger, 2_147_483_648, WireErrorCode.OUT_OF_RANGE)
+        self.assert_code(CanonicalString, 7, WireErrorCode.TYPE_MISMATCH)
+        self.assert_code(CanonicalString, _StringSubclass("text"), WireErrorCode.TYPE_MISMATCH)
         self.assert_code(CanonicalString, "\x00", WireErrorCode.INVALID_TEXT)
         self.assert_code(CanonicalString, "é" * 2049, WireErrorCode.LIMIT_EXCEEDED)
         self.assert_code(CanonicalArray, [CanonicalNull()], WireErrorCode.TYPE_MISMATCH)
@@ -68,7 +80,28 @@ class CanonicalTests(unittest.TestCase):
         with self.assertRaises(WireValidationError) as member_key:
             _construct_pair(CanonicalMember, "Bad", CanonicalNull())
         self.assertIs(member_key.exception.code, WireErrorCode.INVALID_KEY)
+        with self.assertRaises(WireValidationError) as member_value:
+            _construct_pair(CanonicalMember, "ok", "raw")
+        self.assertIs(member_value.exception.code, WireErrorCode.TYPE_MISMATCH)
         self.assert_code(CanonicalObject, [CanonicalMember("a", CanonicalNull())], WireErrorCode.TYPE_MISMATCH)
+        self.assert_code(CanonicalObject, (CanonicalNull(),), WireErrorCode.TYPE_MISMATCH)
+
+    def test_canonical_wrappers_and_tuple_collections_are_frozen(self) -> None:
+        null = CanonicalNull()
+        self.assertEqual(fields(null), ())
+        frozen_values: tuple[tuple[object, str, object], ...] = (
+            (CanonicalBool(True), "value", False),
+            (CanonicalInteger(1), "value", 2),
+            (CanonicalString("text"), "value", "other"),
+            (CanonicalArray((null,)), "items", ()),
+            (CanonicalMember("value", null), "key", "other"),
+            (CanonicalMember("value", null), "value", CanonicalNull()),
+            (CanonicalObject((CanonicalMember("value", null),)), "members", ()),
+        )
+        for value, field, replacement in frozen_values:
+            with self.subTest(field=field):
+                with self.assertRaises(FrozenInstanceError):
+                    setattr(value, field, replacement)
 
     def test_object_members_are_unique_and_bounded(self) -> None:
         duplicate = (CanonicalMember("a", CanonicalNull()), CanonicalMember("a", CanonicalNull()))
@@ -80,6 +113,19 @@ class CanonicalTests(unittest.TestCase):
     def test_fixed_json_vectors_and_array_order(self) -> None:
         empty = CanonicalObject(())
         self.assertEqual(canonical_json_bytes(empty), b"{}")
+        literals = CanonicalObject(
+            (
+                CanonicalMember("empty_array", CanonicalArray(())),
+                CanonicalMember("false", CanonicalBool(False)),
+                CanonicalMember("max_int", CanonicalInteger(2_147_483_647)),
+                CanonicalMember("null", CanonicalNull()),
+                CanonicalMember("true", CanonicalBool(True)),
+            )
+        )
+        self.assertEqual(
+            canonical_json_bytes(literals),
+            b'{"empty_array":[],"false":false,"max_int":2147483647,"null":null,"true":true}',
+        )
         value = CanonicalObject(
             (
                 CanonicalMember("z", CanonicalArray((CanonicalNull(), CanonicalBool(False), CanonicalInteger(0)))),
