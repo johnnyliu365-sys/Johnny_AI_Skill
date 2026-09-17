@@ -1,6 +1,8 @@
 # 模組工單
 
-此目錄只存放已獲 SPEC 核准後建立的垂直工單。`reusable-module-library` 的工單現為 `PLANNED`，待使用者第二次核准。
+正式垂直實作票只在 SPEC 核准與 Context 重新綁定後建立。本目錄也登記 owner 要求的
+`PLANNED / NON_DISPATCHABLE` 提案；提案不是實作合約，不能取代 SPEC 核准或派工前置。
+`reusable-module-library` 的工單現為 `PLANNED`，待使用者第二次核准。
 
 ## 稽核入口
 
@@ -21,7 +23,7 @@ debug 或稽核任何一條線之前先讀它——多數「新」問題都是�
 
 | Child ID | Kind | Revision | LF SHA-256 | Lifecycle | Reference |
 | --- | --- | --- | --- | --- | --- |
-| `TICKET-PARTITION-CONTROLLED-VERIFICATION` | `PARTITION_INDEX` | `02` | `3671869435e148f4a01e24380622286f9bd8c63b52ea4c5c63f835c3d054f611` | `OWNER_APPROVED / PREFLIGHT_BLOCKED` | [controlled-verification/README.md](controlled-verification/README.md) |
+| `TICKET-PARTITION-CONTROLLED-VERIFICATION` | `PARTITION_INDEX` | `03` | `52a77f6616d49df9ab36889fcde815b6d1bf3c849ef6427e097831d0af4cb950` | `ACTIVE / CVQ01_PREFLIGHT_BLOCKED / CVE_PROPOSALS_PENDING` | [controlled-verification/README.md](controlled-verification/README.md) |
 
 ## MSIX capability and environment actions
 
