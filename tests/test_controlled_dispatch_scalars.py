@@ -46,7 +46,9 @@ class ScalarConstructorTests(unittest.TestCase):
         self.assertEqual(external.value, "TICKET_01.A")
         self.assertEqual(internal.value, "ticket-01")
         self.assertEqual(digest.value, "a" * 64)
+        self.assertIs(sha1.algorithm, GitAlgorithm.SHA1)
         self.assertEqual(sha1.hex, "b" * 40)
+        self.assertIs(sha256.algorithm, GitAlgorithm.SHA256)
         self.assertEqual(sha256.hex, "c" * 64)
 
     def test_identifier_endpoints_and_invalid_forms(self) -> None:
