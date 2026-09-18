@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01A` / `IMPLEMENTATION_TICKET` / `03` |
-| State / closure | `OWNER_APPROVED / CHANGES_REQUESTED / CORRECTION_AUTHORIZED`; `CLOSURE-CVQ-01A` revision `01`; one additive correction, actual parent preflight remains required |
+| ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01A` / `IMPLEMENTATION_TICKET` / `04` |
+| State / closure | `BLOCKED / CONVERGENCE_REVIEW_REQUIRED / NON_DISPATCHABLE`; `CLOSURE-CVQ-01A` revision `01` exhausted after initial plus one correction; prior exact approval preserved |
 | Preparation authority | Owner adopted convergence proposal revision 05, commit `dc45f31f6c56983613665f276bf15207419274e3`, LF `6ad63ea17bf1750549d1f5087138e9bb447b477bcd8d683cac7405bed1262847`; adoption authorizes this proposal, not source execution |
 | Outcome / change class | One independently provable verification closure: ordinary qualification DTOs accept the frozen wire algebra and reject constructor-local invalidity; `PRODUCTION_BEHAVIOR`, defect correction against the preserved experimental candidate, not test-exempt |
 | SPEC | [Qualification SPEC](../../spec/controlled-verification-qualification.md) revision 07, LF `545f5058d8347ab069d6a23fdb07daaf06ab836998efb67b2c30b80fee3b1716`, sections 2, 6, 7, 11; [wire appendix](../../spec/controlled-verification-qualification-wire.md) revision 03, LF `6eb9d0a088e105e7c2dd4c3c3b4001f970ac34195c7a0cd78459a2f6016e9222`, sections 1–6 |
@@ -195,3 +195,20 @@ third attempt on CVQ-01. Return the exact ImplementationReturn with honest evide
 Parent then performs the correction review plus required bounded helper. If any blocking
 implementation/evidence defect remains, route to convergence; do not auto-retry. B stays
 dependency-blocked until actual A approval. No integration/push/release/install authority.
+
+## 8. Correction review closure — 2026-09-18
+
+Owner returned `070039b6227205f7bb4592f203a4fd7455311f31` after the authorized correction at
+control `96223979e527edfddc73b1b67046c1438019cab4`. Parent review revision 02 and required
+read-only adversarial evidence find remaining CA03/06/07/08/09 test gaps, including three
+independent all-green guard removals. Passing 23 methods/strict 14 files is not closure approval.
+
+The parent also confirmed a TICKET_DEFECT: section 4 requires CA03 case_output_bytes to fail
+on 5d7789d, but that baseline already enforces le=262144. Preserve the erroneous requirement
+as review history; no fabricated red or unapproved waiver. Convergence proposal revision 08
+requests an evidence-rule correction and finer verification boundaries from the owner.
+
+Close `ctx-cvq-01a-closure01` to further source writes. Preserve both candidates, worktree and
+branch; no reset, third correction or model elevation. B document 02 remains dependency pending,
+not dispatchable. Route ACTION_COMPLETED / CONVERGENCE_REVIEW_REQUIRED -> WAIT_FOR_HUMAN /
+OWNER_REPLAN_DECISION_PENDING. This writeback changes status only, not closure semantics.

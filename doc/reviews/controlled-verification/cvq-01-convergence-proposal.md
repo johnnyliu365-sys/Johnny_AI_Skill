@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-CONVERGENCE` / `CODE_REVIEW` / `07` |
-| Lifecycle / conclusion | `SPLIT_ADOPTED / EXACT_TICKETS_APPROVED / A_RECONSTRUCTION_AUTHORIZED / B_DEPENDENCY_PENDING` |
+| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-CONVERGENCE` / `CODE_REVIEW` / `08` |
+| Lifecycle / conclusion | `A_CONVERGENCE_REQUIRED / OWNER_REPLAN_DECISION_PENDING / B_DEPENDENCY_PENDING`; previous split and ticket approvals preserved |
 | Control baseline | `dc45f31f6c56983613665f276bf15207419274e3` |
 | Examined source | Closure-03 correction `5d7789db6b950d317e7b500b757aa77a54d609ed`; all prior candidates preserved |
 | Ticket | [CVQ-01](../../../modules/tickets/controlled-verification/cvq-01-qualification-admission.md), document 10, current digest in its registry; closure 03 exhausted, unchanged. Historical document 09 at dc45f31f LF `babcceb227bf8f91356dfbbb90f5e14ad1adab19f43a99686bdae46e8acff16d` |
@@ -12,7 +12,7 @@
 | Responsibility | Parent owns the replan recommendation and review verdict. Reused Terra/xhigh supplied read-only adversarial evidence; parent ran the candidate checks/probes/mutations. No source implementation, model elevation or owner decision is granted by this proposal |
 
 Sections 1–10 preserve earlier convergence/design/adoption history. D-CQ11/D-CLAIM, exact
-closure-03 approval and the responsibility split have been answered. Section 12 is the current
+closure-03 approval and the responsibility split have been answered. Section 13 is the current
 disposition; historical pending routes do not reopen those answered decisions.
 
 ## 1. Diagnosis and retained boundary
@@ -463,3 +463,64 @@ AUTO_CONTINUE action. B remains blocked on A's actual review-approved SHA, not o
 decision. Old closure-03 source and failure records are unchanged. No integration/push/release.
 
 ACTION_COMPLETED / EXACT_APPROVAL_RECORDED -> AUTO_CONTINUE / IMPLEMENT(CVQ-01A).
+
+## 13. A correction exhausted: bounded evidence replan proposal — 2026-09-18
+
+The approved A/B sequence was actually exercised. Initial A fd8c1a3 and its one correction
+070039b6 were implemented by the retained Luna/xhigh owner, waited on, then reviewed by root
+with required bounded read-only adversarial help. [A review revision 02](cvq-01a-contract-admission-code-review.md)
+records three independent zero-red mutations on the correction, one genuine red/restore proving
+the new property-plan membership guard, and missing remaining matrix cells. No agent is still
+implementing, and no runner/receipt/callback capability caused this stop.
+
+Two distinct causes need separate treatment:
+
+1. **Evidence coverage is incomplete.** One large CA03–CA09 matrix still contains negative cases
+   invalid for multiple reasons. Assertions and mutation records cover examples, not every frozen
+   predicate family. Green totals do not distinguish that omission. This is not evidence that
+   more wall-clock time, parallel owners, longer logs or larger verification loads are needed.
+2. **A baseline clause was wrong.** Parent required CA03 case_output_bytes baseline-red at 5d7789d
+   without checking that its le=262144 bound was already correct. Direct baseline construction
+   now proves limit accepted/limit+1 rejected. That requirement must change through approval;
+   it cannot be repaired by instructing the implementer to manufacture a historical red.
+
+Recommendation: `SPLIT_REQUIRED`, plus a narrowly stated evidence-rule amendment, not another
+unchanged A correction or model elevation. Prepare three sequential independently provable
+contract-admission closures from the preserved correction, with existing wire/SPEC semantics:
+
+| Proposed verification responsibility | Completion evidence and retained obligations |
+| --- | --- |
+| Scalar and wire admission | Existing CA01–03: ordinary public constructors, literal field/default/alias/error algebra, scalar domains and all bounds. Each intended error/mutation is a separate named row with an otherwise valid baseline. |
+| Case and manifest admission | Existing CA04–05/08: local binding/applicability/prerequisite/requirement joins and exact roster-plan membership. Accept/reject constructor behavior and its own independent counter-mutations form one closure. |
+| Roster, proof and local evidence admission | Existing CA06–07/09: roster uniqueness/negative observations, proof-result compatibility, report duplication and authenticated local joins. Cross-category entry/alias negatives are isolated, not three simultaneous violations. |
+
+CA10 applies to every slice: one fixture-composition owner, independent expected catalog,
+responsibility-specific assertion modules and retained old assertions. All three include any
+needed local-validator fix plus its verification; none is a code-now/tests-later layer. Use one
+retained owner sequentially, pin the actually reviewed predecessor SHA, and rerun preceding
+accepted contract tests at each candidate. No public type/port addition or evaluator behavior.
+The final combined candidate must still pass all original A obligations before B can start.
+
+The proposed evidence amendment removes **only** the impossible case_output_bytes historical
+red requirement: require observed green on exact 5d7789d, then a mapped weakening which makes
+its named test red and exact restoration green. Retain genuine defect-baseline red requirements;
+distinguish saved initial-red from later baseline reproduction and never replace unknown history
+with assertion. Before freezing new tickets, parent must actually check each required baseline
+predicate/test can collect and fail for its intended reason. Exact approval remains required.
+
+Each future ticket should enumerate predicate -> positive -> single-invalid negative -> expected
+location/type -> mutation symbol -> command/result, not just repeat the family name. This is a
+finite ticket-owned evidence map, not permission to build a generic mutation engine, add scripts,
+weaken the source grammar or expand fixture duties. Exact path/symbol boundaries and command
+budgets must be committed in the proposed tickets before dispatch; this recommendation grants
+none. Model profile remains implementation-standard / ticket-review, since further valid
+decomposition exists; no HardTicketAssessment or automatic escalation is claimed.
+
+Owner decision requested: adopt the three verification closures and this narrow historical
+evidence amendment so their exact tickets can be prepared. Alternatively defer the capability.
+Previous D1/D2/D3, D-CQ11/D-CLAIM, two-phase exception and B's source-admission semantics are not
+reopened. A closure 01 remains exhausted regardless of that future decision. Candidate 070039b6,
+all predecessors and rollback refs remain untouched; no main merge, push, release or install.
+
+ACTION_COMPLETED / CONVERGENCE_REPLAN_PROPOSED -> WAIT_FOR_HUMAN /
+OWNER_REPLAN_DECISION_PENDING. No third correction and no B dispatch.

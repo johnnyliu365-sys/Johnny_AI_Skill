@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01A` / `CODE_REVIEW` / `01` |
-| Conclusion / round | `CHANGES_REQUESTED`; closure 01 initial review; one batched correction remains |
+| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01A` / `CODE_REVIEW` / `02` |
+| Conclusion / round | `CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED`; closure 01 initial plus correction review exhausted |
 | Authority | [CVQ-01A](../../../modules/tickets/controlled-verification/cvq-01a-contract-admission.md) document 02 at `106c8e970e348c9f9157decc2dc5336a4f4ae237`, LF `956e63af1c37c3f2f85285d6e6f55b9d4723f8ff89582d598a609f45ba9c2d24`; approved SPEC 07 / wire 03 / Context 02 pins unchanged |
 | Source / candidate | `5d7789db6b950d317e7b500b757aa77a54d609ed` -> `fd8c1a33599b5217136ec67c8b64ade07ef6d56e` (includes `61919a3d3cf817b85c1f0c80a5232e4f00a69f36`) |
 | Reviewer / owner | `root`, ticket-review; retained `cve_wire_implementer`, implementation-standard / Luna xhigh |
@@ -96,3 +96,96 @@ branch and closure. Bind this review and ticket document 03 at their committed c
 B remains DEPENDENCY_PENDING / NON_DISPATCHABLE. Correction review is the last review under
 closure 01; if defects remain, return CONVERGENCE_REVIEW_REQUIRED rather than a third attempt.
 Nothing here authorizes integration, push, release, installation or evaluator behavior.
+
+## 5. Correction review — 2026-09-18
+
+Sections 1–4 preserve the initial review at control `96223979e527edfddc73b1b67046c1438019cab4`.
+That exact authority dispatched document 03's ONE correction to the retained Luna/xhigh owner;
+parent waited with wait_agent, not activity polling. Owner returned
+`070039b6227205f7bb4592f203a4fd7455311f31`, an additive child of fd8c1a3, and the correctly typed
+ImplementationReturn.COMPLETED. No source changes were requested after that return.
+
+Parent verified clean owner/source identity, ancestry and exactly four correction paths:
+qualification_ports.py, roster_contracts.py, contract tests and domain tests. The original eight
+paths remain the complete baseline-to-candidate set. CQ11 body remains exactly baseline-equivalent.
+Review snapshot `.worktrees/cvq-01a-review-correction` is detached at the correction SHA.
+
+The section-1 full commands ran unfiltered and exit 0: 23 tests (0.190s initially, 0.182s after
+final restoration); strict mypy, 14 files. No remaining `type: ignore` in the domain test. This
+closes F03; F01 now catches ValidationError and asserts authored location/error families.
+Digest fixture contamination and PositiveInteger/Lane negatives are improved. Report result/
+claim negatives and the missing HOST_PROPERTY membership guard are now present. These gains are
+preserved, not reset or dismissed because other cells still fail review.
+
+### Independent correction counter-mutations
+
+Every row is a separate temporary mutation on the exact correction snapshot, with the preceding
+mutation restored first. Commands use the same 60-second foreground wrapper and interpreter;
+no output reducer. Parent read the complete unittest output, not the implementer's summary.
+
+| ID / existing finding | Mutation and full observed result | Exact restoration result |
+| --- | --- | --- |
+| CM1 / F02, CA03 | `qualification_values.NonNegativeInteger`: `Field(ge=0)` -> `Field(ge=0, strict=False)`; full two-module command: exit 0, 23 OK, 0.195s. **Zero red**: required NonNeg bool/float/string rejection is not pinned | CA03 method: exit 0, 1 OK, 0.006s |
+| CM2 / F06, CA07 | Disable only `ApprovedHostRosterPlan.complete_planned_categories` global alias duplicate branch with `False and`; full two-module command: exit 0, 23 OK, 0.190s. **Zero red**: entry ID and case-ref duplicates mask the alias predicate | CA07 method: exit 0, 1 OK, 0.010s |
+| CM3 / F05, CA06 | `CapabilityObservation.proof_matches_result`: remove only `or not terminal_result` from the PURE_RULE branch, leaving scope comparison intact; full two-module command: exit 0, 23 OK, 0.182s. **Zero red**: scope negative alone does not pin result compatibility | CA06 method: exit 0, 1 OK, 0.002s |
+| CM4 / F07, CA08 | Disable only `ApprovedManifestFound.roster_plan_coverage` case-ID membership branch; named CA08 method: exit 1, one failure at domains.py:593, `AssertionError: ValidationError not raised`, 0.009s | Same method exit 0, 1 OK, 0.009s. This particular correction is independently proved |
+
+Named commands above are `python -B -m unittest -v` plus
+`tests.test_verification_qualification_domains.QualificationDomainTests.` followed by
+`test_scalar_domains_and_all_bounds`, `test_roster_local_invariants`,
+`test_refusal_proof_result_matrix` or `test_approved_manifest_plan_coverage`, respectively.
+The full command is the unchanged section-1 two-module invocation. CM1–CM3 each independently
+ran all 23 method names to exclude a missing assertion being hidden in a different matrix method.
+
+After source restoration, parent mechanically restored original CRLF bytes only after confirming
+LF source equality to `git cat-file --filters HEAD:<path>`. All four mutated files then matched
+their exact checkout bytes. Clean status/no HEAD diff, diff-check, full 23-test and strict-type
+reruns were observed. No source mutation was committed or applied to the owner's worktree.
+
+### Remaining batch and helper disposition
+
+Required retained Terra/xhigh helper inspected correction 070039b6 under the same four categories,
+READ_ONLY_INTENT_ONLY / NO_EXTERNAL_EFFECT. It returned four findings, no writes/tests or approval.
+Parent checked all against the actual complete test source:
+
+| Existing finding | Correction disposition |
+| --- | --- |
+| F02 | PARTIAL: Digest and positive integers improved; CM1 proves NonNeg strictness still unpinned. The frozen scalar family cannot be marked complete |
+| F04 | PARTIAL evidence only: more applicability/prerequisite cells exist; no complete per-predicate mutation result was supplied, so no full matrix qualification is claimed |
+| F05 | PARTIAL: each proof family now has an enclosing example, but CM3 proves PURE_RULE result compatibility still unpinned |
+| F06 | PARTIAL: sorting/negative-shape examples improved; CM2 independently reproduces helper's overlapping entry/alias/case-ref negative. domains.py:468-470 changes only comparison to MISMATCH; required nonzero discovery counters have no positive cell |
+| F07 | Primary implementation defect CLOSED by CM4; CA08 evidence still incomplete: domains.py:523-594 never constructs extra-plan rejection for a native-primitive-only NO_ROSTER manifest |
+| F08 | PARTIAL: report/check/requirement examples improved, but no negative for QualificationCase.expected_check_ids or CapabilityObservation.case_ids duplicates; domains.py:596-717 still omits several shared authenticated subject/payload identities |
+| F09 | NOT CLOSED: owner confirmed only the listed mutation subset was performed, remaining individual CA05–CA09 families NOT_RUN/MISSING. Baseline chronology also includes the ticket defect below |
+
+The helper's evidence supports the recorded missing cells; root's CM1–CM4 support the actual
+mutation conclusions. No helper verdict substitutes for root review. XSS, provider effects,
+native isolation, UI, migrations, release readiness and runtime behavior remain out of A's scope.
+
+### Baseline requirement defect — not an implementer failure
+
+Parent requested an evidence-only clarification, explicitly prohibiting new tests/source work.
+Owner reported saved baseline-red summaries for CA04 argv/cwd/environment, CA05 pure host, CA06
+refusal result, CA07 planned sorting and CA08 extra-pure-plan. Those are owner-supplied summaries,
+not newly parent-reproduced historical transcripts. For CA03 case_output_bytes it correctly
+reported MISSING: exact 5d7789d already passed the bound; only a later candidate mutation was red.
+
+Parent independently inspected clean detached 5d7789d and ran ordinary EvidenceBounds constructors:
+
+```text
+manifest_contracts.py:63: case_output_bytes: PositiveInteger = Field(le=262_144)
+EvidenceBounds(total_bytes=1, case_output_bytes=262144)
+BASELINE_LIMIT total_bytes=1 case_output_bytes=262144
+EvidenceBounds(total_bytes=1, case_output_bytes=262145)
+BASELINE_LIMIT_PLUS_ONE_REJECTED [(('case_output_bytes',), 'less_than_equal')]
+```
+
+This is `TICKET_DEFECT`: section 4 requires defect baseline-red on a predicate already correct
+at that baseline. The parent owns that preflight mistake. Do not fabricate red, mislabel a
+candidate mutation as original baseline evidence, or reject valid code just to satisfy that
+history. Changing the evidence requirement needs exact control-plane approval; it is not silently
+waived here. Genuine counter-mutation gaps above remain independently blocking.
+
+Route ACTION_COMPLETED / CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED. A closure 01 is exhausted,
+source owner/view closed to further implementation; no third correction. B remains dependency
+blocked. See convergence proposal revision 08 for an owner-pending replan, not dispatch authority.
