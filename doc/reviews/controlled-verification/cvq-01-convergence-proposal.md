@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-CONVERGENCE` / `CODE_REVIEW` / `09` |
-| Lifecycle / conclusion | `REPLAN_ADOPTED / EXACT_TICKET_PACKET_PROPOSED / OWNER_EXACT_APPROVAL_PENDING / B_DEPENDENCY_PENDING`; earlier approvals and failed closures preserved |
+| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-CONVERGENCE` / `CODE_REVIEW` / `10` |
+| Lifecycle / conclusion | `EXACT_TICKET_PACKET_APPROVED / A1_IMPLEMENTATION_ADMITTED / A2_A3_B_DEPENDENCY_PENDING`; earlier approvals and failed closures preserved |
 | Control baseline | `dc45f31f6c56983613665f276bf15207419274e3` |
 | Examined source | Closure-03 correction `5d7789db6b950d317e7b500b757aa77a54d609ed`; all prior candidates preserved |
 | Ticket | [CVQ-01](../../../modules/tickets/controlled-verification/cvq-01-qualification-admission.md), document 10, current digest in its registry; closure 03 exhausted, unchanged. Historical document 09 at dc45f31f LF `babcceb227bf8f91356dfbbb90f5e14ad1adab19f43a99686bdae46e8acff16d` |
@@ -12,7 +12,7 @@
 | Responsibility | Parent owns the replan recommendation and review verdict. Reused Terra/xhigh supplied read-only adversarial evidence; parent ran the candidate checks/probes/mutations. No source implementation, model elevation or owner decision is granted by this proposal |
 
 Sections 1–10 preserve earlier convergence/design/adoption history. D-CQ11/D-CLAIM, exact
-closure-03 approval and the responsibility split have been answered. Section 14 is the current
+closure-03 approval and the responsibility split have been answered. Section 15 is the current
 disposition; historical pending routes do not reopen those answered decisions.
 
 ## 1. Diagnosis and retained boundary
@@ -815,3 +815,16 @@ QualificationManifest       9        1        8
 
 Root's disposition is TICKET_PACKET_PROPOSED, not implementation approval or claim that all
 future mutation experiments already ran. Prior failed closures and candidates remain untouched.
+
+## 15. Exact packet approval and A1 admission — 2026-09-19
+
+Owner **「核准」** approves packet `b12dd7262606f7b951271cd51e336747f0638c38`: A1/A2/A3 document01
+and B document03 dependency amendment, with exact signatures retained in their new revisions.
+No semantic closure changes. A1 document02 records clean source070039b6/environment/containment
+and the 11-test constructor preflight, direct-lane owner/profile/fresh view and single host seat
+allocation (the previous implementation seat is absent). A2/A3 and B are approved but dependency
+pending. Actual predecessor SHA binding after review needs no repeated owner approval.
+
+ACTION_COMPLETED / EXACT_APPROVAL_RECORDED -> AUTO_CONTINUE / IMPLEMENT(CVQ-01A1).
+Then wait_agent, parent review and required evidence-only helper. Old exhausted closures remain
+closed. This admits no source-layer B first, evaluator, main integration, push, release or install.

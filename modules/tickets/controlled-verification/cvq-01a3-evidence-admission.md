@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / document / closure | `TICKET-CONTROLLED-VERIFICATION-CVQ-01A3` / `IMPLEMENTATION_TICKET_PROPOSAL` / `01` / `CLOSURE-CVQ-01A3` revision `01` |
-| State / outcome | `OWNER_EXACT_APPROVAL_PENDING / DEPENDENCY_PENDING / NON_DISPATCHABLE`; one observable closure: ordinary roster/proof/result/evidence DTOs discriminate constructor-local invalidity (original CA06–07/09, CA10) |
+| ID / kind / document / closure | `TICKET-CONTROLLED-VERIFICATION-CVQ-01A3` / `IMPLEMENTATION_TICKET` / `02` / `CLOSURE-CVQ-01A3` revision `01` |
+| State / outcome | `OWNER_APPROVED / DEPENDENCY_PENDING / NON_DISPATCHABLE`; one observable closure: ordinary roster/proof/result/evidence DTOs discriminate constructor-local invalidity (original CA06–07/09, CA10) |
 | Dependency / baseline / view | [A2](cvq-01a2-case-manifest-admission.md) APPROVED candidate SHA NOT_YET_AVAILABLE, with A1 accepted regression, additive descendant of `070039b6227205f7bb4592f203a4fd7455311f31`; parent commits exact SHA/review/index binding, never latest HEAD. New `ctx-cvq-01a3-closure01` |
 | Preparation authority | Owner adopted convergence revision 08 at `058b8256bb1b2601fabc30c21a42ecc48c831875`, LF `24021ef0467d56c1bc3924e98b15d2f993e0dc720228dec44177da2132c50392`; preparation only, exact ticket approval pending |
 | SPEC / wire | [Qualification SPEC](../../spec/controlled-verification-qualification.md) revision 07 LF `545f5058d8347ab069d6a23fdb07daaf06ab836998efb67b2c30b80fee3b1716`, sections 2/6/7/11; [wire](../../spec/controlled-verification-qualification-wire.md) revision 03 LF `6eb9d0a088e105e7c2dd4c3c3b4001f970ac34195c7a0cd78459a2f6016e9222`, sections 1–6 |
@@ -183,3 +183,19 @@ WAIT_FOR_HUMAN / OWNER_EXACT_APPROVAL_PENDING.
 After actual review root records combined A1/A2/A3 approval at ONE SHA, confirms all original
 CA01–10 obligations and preceding tests, then pins it for [B](cvq-01b-source-admission.md).
 B's dependency amendment also needs exact owner approval; this proposal does not grant it.
+
+## Exact approval and current continuation — 2026-09-19
+
+Owner **「核准」** approves this document01 / closure01 in packet `b12dd7262606f7b951271cd51e336747f0638c38`,
+LF `a4898cbce45a2c0e81ed5aefe9d0373eb10045c6f17bacf50d562bcc9981e00a`. Document02 records signature/state only; all
+boundaries, predicates, temporary mutation exceptions, resource limits and return obligations
+above remain unchanged. Earlier proposal/pending wording is historical, not a repeated gate.
+
+This slice remains dependency-blocked, not awaiting another owner decision. Parent will commit
+the actual accepted predecessor SHA/review/index and fresh view binding before dispatch to the
+same sequential owner. Metadata binding is AUTO_CONTINUE under this exact approval. It cannot
+substitute a latest HEAD or bypass the predecessor's tests, reverse mutations or parent verdict.
+ACTION_COMPLETED / EXACT_APPROVAL_RECORDED -> DEPENDENCY_PENDING; no premature source write.
+
+All old exhausted views remain CLOSED. No integration, push, release, installation or evaluator
+behavior grant is added. The packet also approves B document03's dependency amendment.

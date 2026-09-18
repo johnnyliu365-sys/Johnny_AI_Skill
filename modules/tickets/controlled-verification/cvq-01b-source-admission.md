@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01B` / `IMPLEMENTATION_TICKET` / `03` |
-| State / closure | `OWNER_APPROVED_BASE / DEPENDENCY_AMENDMENT_APPROVAL_PENDING / NON_DISPATCHABLE`; `CLOSURE-CVQ-01B` revision `01` unchanged; section 7 proposes dependency/read-only test-path amendment only |
+| ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01B` / `IMPLEMENTATION_TICKET` / `04` |
+| State / closure | `OWNER_APPROVED / DEPENDENCY_PENDING / NON_DISPATCHABLE`; `CLOSURE-CVQ-01B` revision `01` unchanged; section 7 amendment approved by section 8 |
 | Preparation authority | Owner's adoption of convergence proposal revision 05 at `dc45f31f6c56983613665f276bf15207419274e3`, LF `6ad63ea17bf1750549d1f5087138e9bb447b477bcd8d683cac7405bed1262847`; exact source resumption is not yet approved |
 | Observable result / change class | An in-process package-scoped AST gate accepts the approved source grammar and rejects the finite forbidden syntax/dependency corpus; `PRODUCTION_BEHAVIOR`, defect correction and not test-exempt or runtime confinement |
 | SPEC | [Qualification SPEC](../../spec/controlled-verification-qualification.md) revision 07 LF `545f5058d8347ab069d6a23fdb07daaf06ab836998efb67b2c30b80fee3b1716`, section 11.3; [wire appendix](../../spec/controlled-verification-qualification-wire.md) revision 03 LF `6eb9d0a088e105e7c2dd4c3c3b4001f970ac34195c7a0cd78459a2f6016e9222` supplies exact declaration inventory |
@@ -243,3 +243,12 @@ After it is approved, root records their actual combined APPROVED SHA/review/ind
 clean identity before B dispatch. That later SHA binding is metadata, not another design approval.
 No merge/push/release/evaluator grant. ACTION_COMPLETED / DEPENDENCY_AMENDMENT_PROPOSED ->
 WAIT_FOR_HUMAN / OWNER_EXACT_APPROVAL_PENDING; B remains NON_DISPATCHABLE.
+
+## 8. Exact dependency amendment approval — 2026-09-19
+
+Owner **「核准」** approves document03 at `b12dd7262606f7b951271cd51e336747f0638c38`,
+LF `b37cf26e6e1fa35f623026128fac551433ed22e87d4627032db33efd57dc6489`.
+Document04 is signature/status only. The approved base source closure and section7 dependency/
+read-only-path amendment are unchanged. B awaits actual combined A1/A2/A3 review approval and
+its committed exact candidate/view binding, not another owner approval. No source dispatch now.
+ACTION_COMPLETED / EXACT_APPROVAL_RECORDED -> DEPENDENCY_PENDING. No integration/push/release.

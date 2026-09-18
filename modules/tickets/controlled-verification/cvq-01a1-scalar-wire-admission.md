@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / document / closure | `TICKET-CONTROLLED-VERIFICATION-CVQ-01A1` / `IMPLEMENTATION_TICKET_PROPOSAL` / `01` / `CLOSURE-CVQ-01A1` revision `01` |
-| State / outcome | `OWNER_EXACT_APPROVAL_PENDING / NON_DISPATCHABLE`; one observable closure: ordinary public wire algebra and all scalar bounds discriminate valid from invalid values (original CA01–03, CA10) |
+| ID / kind / document / closure | `TICKET-CONTROLLED-VERIFICATION-CVQ-01A1` / `IMPLEMENTATION_TICKET` / `02` / `CLOSURE-CVQ-01A1` revision `01` |
+| State / outcome | `OWNER_APPROVED / IMPLEMENTATION_ADMITTED`; one observable closure: ordinary public wire algebra and all scalar bounds discriminate valid from invalid values (original CA01–03, CA10) |
 | Baseline / view | `070039b6227205f7bb4592f203a4fd7455311f31`; new `ctx-cvq-01a1-closure01` only after exact approval. Do not reset/rebase or reopen A closure01 |
 | Preparation authority | Owner adopted convergence revision 08 at `058b8256bb1b2601fabc30c21a42ecc48c831875`, LF `24021ef0467d56c1bc3924e98b15d2f993e0dc720228dec44177da2132c50392`; preparation only, exact ticket approval pending |
 | SPEC / wire | [Qualification SPEC](../../spec/controlled-verification-qualification.md) revision 07 LF `545f5058d8347ab069d6a23fdb07daaf06ab836998efb67b2c30b80fee3b1716`, sections 2/6/7/11; [wire](../../spec/controlled-verification-qualification-wire.md) revision 03 LF `6eb9d0a088e105e7c2dd4c3c3b4001f970ac34195c7a0cd78459a2f6016e9222`, sections 1–6 |
@@ -158,3 +158,32 @@ WAIT_FOR_HUMAN / OWNER_EXACT_APPROVAL_PENDING.
 
 On actual approval root pins the A1 candidate for [A2](cvq-01a2-case-manifest-admission.md).
 A1 completion alone does not complete A or qualify B.
+
+## Exact approval and current continuation — 2026-09-19
+
+Owner **「核准」** approves this document01 / closure01 in packet `b12dd7262606f7b951271cd51e336747f0638c38`,
+LF `92bf356376024f51726411992f91caa5bb2eb892bec419571b8a5ad68287b57f`. Document02 records signature/state only; all
+boundaries, predicates, temporary mutation exceptions, resource limits and return obligations
+above remain unchanged. Earlier proposal/pending wording is historical, not a repeated gate.
+
+Parent verified clean source `070039b6227205f7bb4592f203a4fd7455311f31` on
+`codex/cvq-01`, repository-contained `.worktrees/cvq-01`, matching registered Git metadata,
+and no ancestor reparse point. Python 3.11.9 / Pydantic 2.13.4 / mypy 2.3.0 read back.
+Bounded `python -B -m unittest -v tests.test_verification_qualification_contracts`:
+exit0, 11 tests OK (0.190s), complete unreduced output read. This is starting constructor
+availability, not SW01–08 completion; the approved two-phase exception keeps unqualified CQ11
+reserved for B. Main/direct origin/main remain b697738d009db37318ebc8762107ef8329e014db.
+
+Bind fresh `ctx-cvq-01a1-closure01`, owner `cve_wire_implementer`, implementation-standard
+(Luna/xhigh), reviewer root/ticket-review. The old host implementation seat is absent from the
+current native agent inventory; allocate exactly one new native seat with that SAME owner
+identity and preserve the existing source/worktree/branch. Subsequent approved tickets reuse
+that seat with fresh ticket views. No other owner, source reset or model elevation is authorized.
+Resolve exact committed ticket/upstream refs through this control commit with git show; do not
+merge control documents into the implementation branch or load old ticket/review history.
+
+ACTION_COMPLETED / EXACT_APPROVAL_RECORDED -> AUTO_CONTINUE / IMPLEMENT(CVQ-01A1), then
+wait_agent -> parent review + required bounded helper. No runner/receipt/descriptor required.
+
+All old exhausted views remain CLOSED. No integration, push, release, installation or evaluator
+behavior grant is added. The packet also approves B document03's dependency amendment.
