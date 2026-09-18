@@ -2,18 +2,19 @@
 
 | Field | Value |
 | --- | --- |
-| Artifact ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01` / `IMPLEMENTATION_TICKET` / `04` |
-| State / Acceptance Closure Set | `OWNER_APPROVED / TWO_PHASE_EXCEPTION_APPROVED / PREFLIGHT_BLOCKED / CONVERGENCE_REVIEW_REQUIRED / NON_DISPATCHABLE`; `CLOSURE-CVQ-01` revision `02`; behavior phase remains `NOT_ADMITTED` |
+| Artifact ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01` / `IMPLEMENTATION_TICKET` / `05` |
+| State / Acceptance Closure Set | `OWNER_DESIGN_ADOPTED / OWNER_EXACT_APPROVAL_PENDING / CONVERGENCE_REVIEW_REQUIRED / NON_DISPATCHABLE`; proposed `CLOSURE-CVQ-01` revision `03`; behavior phase remains `NOT_ADMITTED` |
 | Change class / observable result | New behavior, not defect correction: one pure evaluator rejects untrusted qualification input and returns the exact tagged evaluation/report without executing work |
 | Preparation authority | Owner's 2026-09-09 exact packet approval at `161c4e095697fff6e4693b8d9bfce866878277dd`, recorded at `cad0d2bca480f45c57d0598f4342636d35b1ecf2`; CVQ-01 preparation only |
-| Approved SPEC | `SPEC-CONTROLLED-VERIFICATION-QUALIFICATION-20260909-01` revision `04`, LF SHA-256 `4cad6a88b9d151a05bf409f8b61bc97580e80303f58a2377cb0301815b999a1d`; behavior approved as revision 03, lifecycle-only revision 04 |
+| Prior approved SPEC | `SPEC-CONTROLLED-VERIFICATION-QUALIFICATION-20260909-01` revision `04`, LF SHA-256 `4cad6a88b9d151a05bf409f8b61bc97580e80303f58a2377cb0301815b999a1d`; preserved in Git, not a grant for a third closure-02 correction |
+| Proposed replacement contract | Qualification SPEC revision `05` section 11 and `SPEC-APPENDIX-CVQ-WIRE-20260918-01` revision `01`; exact final LF digests in the same-commit [SPEC registry](../../spec/README.md); owner exact approval pending |
 | SPEC cells | CVQ-AC01; pure comparisons/refusals of CVQ-AC02/03; report integrity/reduction of CVQ-AC09; typed roster coverage and WA-04 unavailable handling only, not native CVQ-AC04–08/10 proofs |
-| PRD / CHG | `PRD-20260908-051` / `CHG-20260908-051`; current REQ-051 revision 08 LF SHA-256 `36d3f45ddd5b2453bf2c2d368567a0575c0048ec0954c42ee6e1d7c4e0b43fef`; reattachment does not add its pending CVE deltas to this qualification ticket |
+| PRD / CHG | `PRD-20260908-051` / `CHG-20260908-051`; current REQ-051 revision 09 LF SHA-256 `bb61568fa36b1a6caae86a86ef932111ca1a3407af7051a980eb5e0558efa9b9`; reattachment does not add its pending CVE deltas to this qualification ticket |
 | Sealed Context | `CTX-CONTROLLED-VERIFICATION-20260909-01` revision `02`, LF SHA-256 `6f5465295cb3fd303bc555da655b3169d33292ad1f2ed4374748f82ddd6f2285`; read/reference only |
-| Source baseline | Original preparation `cad0d2bca480f45c57d0598f4342636d35b1ecf2`; current readmission parent `2b4903c1995b0b1a1b2cbafc90aca0daf0cea5de`. Dispatch pins this document's final control commit as the clean worktree baseline; no integration claimed |
+| Source baseline | Preserve correction `9796790d33b6d1374469fad1b37e1f4991262a43` and initial `cd228a790b2f37bc2cad109978f8822ad5bb2da6`; future additive schema source descends from correction, independently binding the approved final control packet commit; no current dispatch or integration |
 | Control owner / reviewer | Current-session `SUPERVISOR_REVIEWER`, semantic profile `ticket-review`; human owner retains ticket approval and effects |
 | Implementation allocation | Reused `cve_wire_implementer`, semantic profile `implementation-standard` (Luna/xhigh), reviewer `root`; new bounded view `cvq-01-schema-v01`; previous CVE-01A allocation released without changing its candidate |
-| Worktree / branch binding | Repository-contained `.worktrees/cvq-01` / `codex/cvq-01`; reviewer creates from this revision's exact committed control SHA, then reads back containment, branch, HEAD and clean state before dispatch |
+| Worktree / branch binding | Preserve repository-contained `.worktrees/cvq-01` / `codex/cvq-01`; fresh containment, branch, exact source/control identities and clean readback before any approved resumption; no rebase/reset/ref movement in this control action |
 | Language / strict checker | Python 3.11, strict immutable Pydantic boundary; `mypy==2.3.0 --strict` from the committed development dependency plan |
 | Delivery / resources | POC / HIGH_ASSURANCE inherited from approved workload; one implementer, one subsequent required reviewer-owned adversarial helper; no parallel implementation |
 | Lifetime / return | Same-lifetime native dispatch plus `wait_agent`; bridge, runner, queue, receipt, descriptor and host workspace readback `NOT_REQUIRED`. Return `ImplementationReturn.COMPLETED`, `BLOCKED` or `CHANGE_DETECTED` |
@@ -162,7 +163,7 @@ It points to source/contracts/tests; it contains no production copy. The impleme
 write those exact element paths as its documentation boundary, but not shared Context, SPEC,
 ticket, ticket registry, skills, publication manifests or global rules.
 
-## Finite Acceptance Closure Set revision 02
+## Finite Acceptance Closure Set revision 02 — historical, replacement proposed below
 
 Each row is an exact named test group. Enumerated subcases are separate subtests with their
 variant/field in unreduced output; implementation cannot omit a listed case or add workload runs.
@@ -477,3 +478,145 @@ are evidence of those transitions, not competing current dispatch permission.
 Current route: ACTION_COMPLETED / VALIDATION_FAILED -> HALT / TICKET_SCHEMA_INVALID /
 CONVERGENCE_REVIEW_REQUIRED. Owner exception approval remains valid; implementation resumes
 only after the named convergence and actual preflight requirements are resolved.
+
+## Proposed closure revision 03 — 2026-09-18
+
+Owner adopted D-CQ11/D-CLAIM at proposal revision 02, commit
+`fa6b06a0beb9f9e25bb582a95b565c12e5d3595a`, LF
+`3fbe8c18b15992d86b99487b769ae411caac410102bd6480c3a94e4c7b78e93d`.
+This is the resulting exact-approval proposal, not that approval. Current instructions are this
+section plus SPEC revision 05 section 11, the wire appendix and the unchanged responsibility/
+effect/resource rules above. Earlier approval, phase and route passages are historical only.
+Closure 02's exhausted counter is preserved; no relabelled third correction has been dispatched.
+
+### Replacement coverage and public field catalog
+
+The [wire appendix](../../spec/controlled-verification-qualification-wire.md) freezes all target
+DTO names, owning groups, fields, scalar domains, defaults, tagged branches, enum values and
+positive scenario recipes. Values/bindings/prerequisites/roster/manifest/report/ports sections
+map to the existing correspondingly named constituent files. No DTO is moved into a facade.
+
+| Catalog | Exact count / meaning |
+| --- | --- |
+| Public concrete DTOs | 82 direct constructor + JSON round-trip rows; names, not merely total, must match |
+| Required-field occurrences | 335 after expanding CommonBinding/CaseIdentity/EvidenceIdentity per concrete DTO |
+| Explicit default occurrences | 78; each has omission→exact default, null rejection and wrong constant rejection |
+| Required/extra negatives | 752 = 2 × 335 required omission/null + 82 extra-field cells |
+| Tagged aliases / branches | 16 / 63 TypeAdapter positive branches, plus each branch's actual selector omission/unknown/null cells |
+| Enum classes / members | 32 / 131 independent enum round trips; narrower DTO subsets tested separately |
+| Other public declarations | Seven constrained scalar aliases, three read-only Protocols, three exact private schema bases; no implicit DTO rows |
+
+These are in-process table rows, **not** hundreds of commands, model calls, scripts or files.
+Literal expected catalogs/fixtures are authored from the appendix; observed inventory cannot
+generate its own expected oracle. `Field` without default stays required. The implementation's
+constructor fixtures remain phase-1 output under the proposed two-phase exception, not claimed
+already tested by this document. Defaults/alias selectors have distinct constructor semantics.
+
+CQ01/CQ02 now use this catalog. The old current-source count 53/30/119 is superseded as an
+expected target, not erased as evidence. JSON mutation is structural, valid JSON; assert the
+intended error location/type and reject `json_invalid` as evidence of field validation. Required
+field negatives run on the direct concrete DTO so an absent discriminator cannot mask them.
+
+CQ02 also retains distinct tests for strict integers (true/false/1.0/string 1), positive (0/-1),
+nonnegative (0/-1), zero-only (0/1/-1), Lane (1/0/2), every declared upper bound (limit/limit+1),
+opaque IDs (empty/space/uppercase/Unicode/separator/2 chars/129 chars), digest (63/65 chars,
+uppercase/nonhex), text (empty/129 chars), illegal enum/subset, each duplicate collection named
+in appendix section 5, and each forbidden binding/subject/proof/cleanup combination. Tests retain
+zero-domain and duplicate-report cases; no removal because a weaker suite happens to pass.
+
+### Closed CQ11 test corpus
+
+Replace the open-ended forbidden-effect interpretation with SPEC 11.3's positive grammar.
+The checker tests AST data without executing/importing bad source; it also checks the real package.
+The fixed negative corpus is these 20 separately named entries:
+
+1. relative reverse import;
+2. absolute reverse import;
+3. package-form reverse import;
+4. renamed import alias reaching forbidden constituent;
+5. nested unused helper forbidden import;
+6. facade re-export reaching forbidden constituent;
+7. wildcard import;
+8. internal dependency cycle;
+9. dynamic import call;
+10. aliased eval/exec call;
+11. reflective getattr/setattr call;
+12. Any/cast bypass;
+13. model_construct or copy-update bypass;
+14. facade helper or initialization call;
+15. mutable ambient service state;
+16. unguarded or rebound Mapping.get receiver;
+17. callee shadowing/callable assignment alias;
+18. unresolved same-name model/port receiver;
+19. recursive/while/async/generator/context-manager effect surface;
+20. unapproved decorator/base/metaclass/magic method/descriptor or attribute/subscript write.
+
+Rows containing listed alternatives exercise each alternative as a named finite subcase, not
+one convenient representative. Six positive controls: explicit facade exports; permitted aliased
+import; approved DAG edge; guarded unchanged Mapping.get; typed acyclic local helper; approved
+schema validator/discriminator. Behavior receiver/port positive controls are pending phase 2,
+not legal schema placeholders. At schema review, parent adds a forbidden dependency via an unused
+renamed helper, then weakens the matching checker rule separately: bad source rejection and
+weakened-checker named red must both be observed, with exact restoration. Zero red is a finding.
+
+### Connected graph cells and behavior preservation
+
+CQ03–CQ12 keep their existing observable predicates and resource bounds, with these exact
+scope/graph replacements compiled from SPEC 11 / appendix:
+
+- CQ04 authenticates prerequisite binding through the typed evidence subject, not shape alone.
+- CQ05 covers the five applicability rows, both key alternatives, no-host native probe and no
+  first-discovery circular prerequisite; pure host-subject rule cannot issue host proof.
+- CQ06 covers exact capability requirement/claim ID sets, all returned subject/ref/digest/observer
+  mismatches, each of five FOUND payload alternatives, and missing/conflicting resolution.
+- CQ07 checks claim subset reduction and each proof alternative, including real pre-launch
+  refusal evidence and interrupted event evidence; no failed/unavailable/unrun → PROVEN.
+- CQ08 requires execution observer for both pure and native, separate from native launch observer.
+- CQ09 resolves approved plan, actual discovery payload/set and all absence records; all-ABSENT
+  succeeds only for matching empty plan and zero unknown counts. Planned absence is not evidence.
+- CQ10 resolves capability roster links through actual discovery/enforcement bodies; zero-present
+  cannot issue full-host PROVEN or satisfy permitted-positive/bypass evidence. Wrong host surface,
+  key, oracle, disposition or referenced digest rejects.
+- CQ12 exercises all three read ports through the actual public evaluator; no fourth resolver,
+  caller authenticity bit, untyped deferred evidence or new runtime. Identical input is deterministic.
+
+Each new connected-graph predicate has a candidate-symbol → named-cell counter-mutation mapping
+at schema/behavior preflight, before that review sequence. Constructor-local predicates are
+schema phase; independent resolver comparison/reduction predicates stay behavior phase. Do not
+claim resolver authenticity from ordinary constructors. Existing exact-output, at-least-one
+independent reviewer door and zero-red rules remain. No baseline import/collection failure is
+misreported as a named regression red.
+
+### Decomposition, boundary and next admission
+
+One shared contract owner remains appropriate: every listed value feeds the same pure
+qualification boundary; concurrent type owners would introduce a new unsolved shared-schema seam.
+The nine schema production paths remain unchanged. To keep literal catalog data apart from
+constructor assertions, reusable fakes and AST policy, add **one** phase-1 test support path:
+`tests/verification_qualification_catalog.py` (literal expected names/fields/defaults/wire values
+only). `verification_qualification_fixtures.py` owns composition/fakes; contracts test owns
+assertions; boundaries test owns AST policy; no mixed giant runner or new test-generation service.
+This exact test-boundary addition is part of the pending approval, not permitted by old closure 02.
+
+Stage-1 strict command adds `tests/verification_qualification_catalog.py` to its explicit file
+arguments; the same two unittest modules import that data. Phase-2 strict command adds it too.
+All other commands, one process, 60 seconds/command, 1,200 seconds/pass, no retry/stress/polling
+are unchanged. If finite evidence does not fit, preserve outputs and return for a displayed plan
+change; do not extend timeouts silently. Docs-only catalog recount is not test execution evidence.
+
+Low-model assessment: finite source-only schema/fixture translation, one owner/effect-free seam,
+zero unresolved design once this exact packet is approved; retain implementation-standard
+Luna/xhigh and parent ticket-review. Fresh constructor/type/mutation evidence is still required
+before READY_LOW_MODEL for behavior. No upgrade or additional implementation lane is requested.
+The parent retains the full history; the next work packet contains only approved current wire/
+grammar/scope/commands/return and exact authority pins. Reusing the Agent does not erase memory.
+
+Owner exact approval of SPEC 05 + appendix 01 + ticket 05/closure 03 would permit one new bounded
+schema phase on the preserved owner branch, followed by actual parent preflight; only success
+admits the same owner to behavior. That authority is **pending**. It grants no VM, provider,
+host enrollment, integration, push, installation or release. An initial plus one correction is
+the limit for the newly approved closure; the old failed rounds stay visible, never reset.
+
+Return for this draft: `ACTION_COMPLETED / CONTRACT_TRANSCRIPTION -> WAIT_FOR_HUMAN /
+OWNER_EXACT_APPROVAL_PENDING`. Design choices D-CQ11 and D-CLAIM are already adopted and are not
+asked again; the next approval object is the precise changed contract and bounded resumption.

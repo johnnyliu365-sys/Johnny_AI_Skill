@@ -6,7 +6,8 @@
 
 | Specification ID | Kind | Revision | LF SHA-256 | Lifecycle | Direct-child leaf |
 | --- | --- | --- | --- | --- | --- |
-| `SPEC-CONTROLLED-VERIFICATION-QUALIFICATION-20260909-01` | `SPECIFICATION` | `04` | `4cad6a88b9d151a05bf409f8b61bc97580e80303f58a2377cb0301815b999a1d` | `OWNER_APPROVED / EFFECTIVE_INVESTIGATION_CONTRACT / CVQ01_PREPARATION_ONLY` | [`controlled-verification-qualification.md`](controlled-verification-qualification.md) |
+| `SPEC-CONTROLLED-VERIFICATION-QUALIFICATION-20260909-01` | `SPECIFICATION` | `05` | `c5951d8dcffe199014b06595aa88887c69c916d3fa1fedda93aa5ae11d4dd5d5` | `AMENDMENT_PROPOSED / OWNER_EXACT_APPROVAL_PENDING / NON_DISPATCHABLE` | [`controlled-verification-qualification.md`](controlled-verification-qualification.md) |
+| `SPEC-APPENDIX-CVQ-WIRE-20260918-01` | `SPEC_CONTRACT_APPENDIX` | `01` | `694f55ba8738840de6641c5d4e74e67fcf2b66c10929635988c51e6383c3b619` | `DRAFT / OWNER_EXACT_APPROVAL_PENDING / NON_DISPATCHABLE` | [controlled-verification-qualification-wire.md](controlled-verification-qualification-wire.md) |
 | `SPEC-CONTROLLED-VERIFICATION-DISPATCH-20260918-01` | `SPECIFICATION` | `03` | `2afbc3c2f2b9fef63c61584f1000e35bc55fa24081d50d85f9f2862dcf715609` | `DRAFT / CONTRACT_CONVERGENCE / NON_DISPATCHABLE` | [controlled-verification-dispatch.md](controlled-verification-dispatch.md) |
 
 ## 獨立規格

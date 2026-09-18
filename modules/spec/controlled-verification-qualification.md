@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| Specification ID / revision | `SPEC-CONTROLLED-VERIFICATION-QUALIFICATION-20260909-01` / `04` |
-| Status | `OWNER_APPROVED / EFFECTIVE_INVESTIGATION_CONTRACT / CVQ01_PREPARATION_ONLY` |
+| Specification ID / revision | `SPEC-CONTROLLED-VERIFICATION-QUALIFICATION-20260909-01` / `05` |
+| Status | `AMENDMENT_PROPOSED / OWNER_EXACT_APPROVAL_PENDING / NON_DISPATCHABLE`; approved revision 04 remains historical authority |
 | Author / worktree / baseline | Current-session drafting assistant; `codex/controlled-verification-intake`; `d3c78b5b154b04a7fdaad544a3d00f1e91271dcb` |
 | PRD / CHG | `PRD-20260908-051` / `CHG-20260908-051` |
 | Context sources | [Wayfinder](../../doc/context/controlled-verification/wayfinder-r01.md), [architecture proposal](../../doc/context/controlled-verification/architecture-r01.md), [owner Grill packet](../../doc/context/controlled-verification/grill-r01.md), [managed index](../../doc/context/controlled-verification/README.md) |
@@ -411,3 +411,125 @@ ticket schema/type preflight, exact closure approval and dispatch confirmation r
 VM operations, other ticket preparation, source implementation, native effects, installation,
 integration, push and release are not granted by this signature. No investigation result or
 enforcement capability is claimed. Never report a prepared ticket as dispatched.
+
+## 11. Proposed amendment — explicit claims and source grammar
+
+This section plus the [wire appendix](controlled-verification-qualification-wire.md) is one
+pending amendment to this SPEC, not a second specification. Sections 1–10 preserve approved
+revision 04 (LF `4cad6a88b9d151a05bf409f8b61bc97580e80303f58a2377cb0301815b999a1d`).
+Only the replacements enumerated here supersede those sections **after exact owner approval**.
+Until then neither this draft nor revision 04 admits another correction to failed closure 02.
+
+Authority: owner adopted convergence proposal 02 at `fa6b06a0beb9f9e25bb582a95b565c12e5d3595a`,
+LF `3fbe8c18b15992d86b99487b769ae411caac410102bd6480c3a94e4c7b78e93d`, by replying 「採用」.
+That settles design direction, not the exact field catalog below. D1/D2/D3, sealed Context,
+lab bounds, attempt/recovery semantics and native/host proof requirements do not change.
+
+### 11.1 Explicit claim applicability and connected observations
+
+Replace section 2's nullable/"when applicable" interpretation by tagged `CapabilityKey`,
+`CaseSubject`, `CapabilityProof` and the exact wire appendix. Case kind fixes claim scope:
+
+| Case kind / subject | ClaimScope | Binding / roster |
+| --- | --- | --- |
+| PURE_RULE, SOURCE_PROPERTY | PURE_RULE | PURE_CONTRACT; NO_ROSTER even for a host-scoped rule |
+| TRUSTED_NATIVE_DISCOVERY; non-HOST_MEDIATION family | NATIVE_PROBE | WINDOWS_LAB; NO_ROSTER; no prerequisite on its own probe |
+| TRUSTED_NATIVE_DISCOVERY; HOST_MEDIATION family | HOST_DISCOVERY | WINDOWS_LAB; HOST_DISCOVERY subject and independent expected roster plan |
+| ADVERSARIAL_WORKLOAD | NATIVE_PROPERTY | WINDOWS_LAB; NO_ROSTER; not full-host mediation proof |
+| REAL_HOST_PROPERTY | HOST_PROPERTY | WINDOWS_LAB; HOST_PROPERTY subject, independently accepted discovery prerequisite |
+
+HOST_MEDIATION requires HostCapabilityKey. Other families may use either key alternative as
+explicitly approved; pure claims never qualify a native/host claim with the same key. Native
+bindings require platform WINDOWS. Capability requirements name one declared capability ID,
+one exact key, one scope and a nonempty exact case set; every case in that set must match all
+three. Requirement IDs are unique, not merged by capability family.
+
+The report supplies only observation-ID/evidence-ref pairs for those requirements. The three
+existing ports carry the complete graph: approved manifest plus expected roster plans; exact
+prerequisite bindings; authenticated typed observed payloads (including capability observations).
+There is no fourth resolver, ambient evidence map or caller-provided authenticity boolean.
+
+The evidence adapter is independently composed against its protected, immutable observation
+index. It checks record ref/digest/observer and supplies typed FOUND or real rejection evidence.
+Admission compares each returned subject to a request derived from the approved case/requirement,
+not a subject chosen in report JSON. Returned outer ref/observer must equal corresponding
+payload fields; referenced digests must equal the separately resolved records. Future evidence
+digests are **not** invented in the pre-launch plan. For a first observation its authenticity
+comes from the bound resolver, not from comparing its self-reported hash to itself. Subsequent
+discovery/prerequisite pins compare exact independently approved/resolved digests.
+
+Ordinary schema validation is not authenticity. Missing/conflicting capability records or
+subject/ref/digest/observer disagreement return REPORT_REJECTED / UNAUTHENTICATED_EVIDENCE.
+Wrong case/binding/claim scope returns BINDING_MISMATCH; malformed shape INVALID_SHAPE; missing,
+duplicate or extra observation IDs follow the corresponding exact-set rejection. Claim result
+must match reduction of its already validated case subset: qualified→PROVEN, failed→FAILED,
+incomplete→NOT_RUN, unavailable→UNAVAILABLE. NOT_RUN here means no completed capability verdict;
+an interrupted case retains its actual execution record, not a fabricated unstarted case.
+
+Proof alternatives are exhaustive: pure-rule proof; measured native proof (all three primitive,
+race and failure refs); unavailable-probe proof; incomplete/not-run event proof; refused-claim
+proof using actual admission evidence. The latter preserves section 2's pre-launch refusal
+outcomes without inventing a measured primitive. It is a field-level transcription detail in
+this pending packet, not an already-approved third correction. PROVEN requires complete passed
+cases and PURE_RULE or MEASURED_NATIVE proof as appropriate. FAILED measured records retain all
+primitive refs. Refused, unavailable and not-run evidence can never support PROVEN.
+
+### 11.2 Expected plan versus observed host evidence
+
+An approved roster plan contains planned presence/categories/entries/aliases/dispositions/oracles
+only. It contains no discovery/absence evidence or future completion prerequisite. Section 6's
+HostCategoryCoverage remains the later observed form. FOUND transports the actual DiscoveredEffectSet,
+HostRosterDiscoveryCoverage and HostRosterEnforcementCoverage; neither a comparison enum nor an
+opaque reference substitutes for those bodies. Validate exact key, seven categories, entry/alias
+sets, observer and per-entry oracle/disposition bindings. All present planned case refs must
+resolve to same-key HOST_PROPERTY cases; absence has no invented entry, oracle or launch.
+
+All-ABSENT discovery is valid only with seven independently authenticated absence closures,
+matching approved empty plan, empty actual sets and zero unknown/unobservable counts. Its
+enforcement shape is ZERO_PRESENT_ENTRIES with only the accepted discovery pin. It proves no
+positive effect and cannot produce full-host PROVEN; dependent host-property admission returns
+HOST_ROSTER_UNQUALIFIED. Nonempty expected versus empty actual is a mismatch, not this alternative.
+Nonzero unknown/unobservable counts and MISMATCH may be retained as negative observations; they
+cannot satisfy the discovery prerequisite. Section 6's permitted-positive and denied-bypass
+requirements still apply through the approved expected check/oracle set; a pure fake cannot
+authenticate actual host dispatch. No mocks, assumed tool absence or CLI/Desktop substitution.
+
+### 11.3 Closed CQ11 source grammar
+
+Apply the ticket's constituent DAG to every import scope, normalizing relative/absolute/package
+forms and aliases. Resolve facade re-exports to their actual constituent; reject wildcard,
+cycle, reverse edge or indirect forbidden dependency. Do not import/execute production to inspect it.
+
+| Grammar part | Only permitted surface |
+| --- | --- |
+| Schema external imports | __future__.annotations; enum.Enum; typing.Annotated, Literal, Mapping, Protocol, TypeAlias, Union; pydantic.BaseModel, ConfigDict, Field, StringConstraints, Discriminator, Tag, model_validator |
+| Behavior-only additional imports | pydantic.TypeAdapter, ValidationError; no effect library or json dependency |
+| Builtin calls | len, set, frozenset, tuple, sorted, any, all, isinstance, enumerate, zip; ValueError and TypeError construction |
+| Schema calls | Listed Pydantic schema constructors/decorators; exact checked DTO/enum constructors in the appendix |
+| Mapping.get | Only within a local isinstance(receiver, Mapping) true branch, receiver unchanged; no arbitrary same-name method |
+| Local helpers | Direct statically resolved module-local calls, typed parameters/return, whole-body inspection, acyclic call graph |
+| Behavior model calls | model_validate/model_validate_json/model_dump/model_dump_json on the exact checked model; TypeAdapter construction and validate_python/validate_json/dump_python/dump_json on its resolved instance |
+| Behavior port calls | resolve on one of the three explicit typed injected parameters only |
+| Classes | Checked DTOs/enums/three Protocols; exact schema bases QualificationModel, _CommonBinding, _CaseResultIdentity. BaseModel/QualificationModel inheritance; enum (str, Enum) and Protocol are the only exceptions |
+| Facades | Docstrings, future imports, explicit re-exports and literal immutable __all__ only |
+
+Helpers/validators/discriminators allow scalar/tuple/set expressions, comparisons, comprehensions,
+local assignment, conditionals, finite collection iteration, return and the listed exceptions.
+Reject unlisted calls/imports/decorators, unresolved/dynamic receivers, shadowing/rebinding approved
+callees, callable assignment aliases/parameters/returns, recursion, while, async/generator functions,
+context managers, global/nonlocal or attribute/subscript writes, custom metaclasses/magic methods/
+descriptors, Any/casts, bypass construction/copy-update and reflective/dynamic execution.
+Module state allows immutable literals/tuples, checked aliases/schema declarations; only the common
+base's literal ConfigDict is exempted for schema configuration. No ambient mutable service.
+
+This bounded source grammar is neither an arbitrary Python purity proof nor a runtime sandbox.
+Strict typing remains independent. Unsupported AST/resolution fails closed. A legitimate new
+dependency requires an explicit policy amendment, not a broader checker fallback.
+
+### 11.4 Approval object and migration
+
+Exact approval must bind revision 05, wire appendix revision 01 and ticket document 05 / closure 03
+by their final LF digests and common control commit. The old schema candidate stays historical;
+additive source migration may begin only after that approval and fresh allocation/type preflight.
+No constructor compatibility is promised for the never-integrated experimental candidate. External
+authority, three-port composition, same-lifetime event waits and all native effects remain unchanged.

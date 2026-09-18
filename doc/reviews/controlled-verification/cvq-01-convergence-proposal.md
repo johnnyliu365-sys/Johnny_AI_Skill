@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-CONVERGENCE` / `CODE_REVIEW` / `02` |
-| Lifecycle / conclusion | `OWNER_DECISION_REQUIRED / PROPOSAL_ONLY / NON_DISPATCHABLE` |
+| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-CONVERGENCE` / `CODE_REVIEW` / `03` |
+| Lifecycle / conclusion | `OWNER_DESIGN_ADOPTED / EXACT_CONTRACT_APPROVAL_PENDING / NON_DISPATCHABLE` |
 | Control baseline | `89d91e68f00ef509537a57b85a32b450e6cca81b` |
 | Examined source | `9796790d33b6d1374469fad1b37e1f4991262a43`; initial `cd228a790b2f37bc2cad109978f8822ad5bb2da6` preserved |
 | Ticket | [CVQ-01](../../../modules/tickets/controlled-verification/cvq-01-qualification-admission.md), document 04, LF `1ab65b3a70b7bedd43eb017943adbe7bf89509dd18aeb8c3c2d6bcb7876de872`; closure 02 unchanged |
@@ -31,7 +31,7 @@ are proposed. No native capability, full dispatch, installation or release is cl
 The goal remains complete dispatch first, then one-click installation/removal; existing Git
 rollback refs and unintegrated source candidates remain intact.
 
-## 2. Two owner decisions — recommendations, not enacted rules
+## 2. Two owner decisions — revision-02 proposal, adopted below
 
 ### D-CQ11: closed permitted surface for this pure package
 
@@ -275,3 +275,29 @@ boundary but an incomplete control inventory. Recommended sequence:
 This control action edits documentation only. No source candidate, main branch, sealed Context,
 approved SPEC, host/provider/VM, publication or remote ref is changed. Return `ACTION_COMPLETED`
 for the convergence proposal, then `WAIT_FOR_HUMAN` for the two named design decisions.
+
+## 7. Owner adoption — 2026-09-18
+
+The owner's **「採用」** adopts D-CQ11 and D-CLAIM in proposal revision 02 at
+`fa6b06a0beb9f9e25bb582a95b565c12e5d3595a`, LF SHA-256
+`3fbe8c18b15992d86b99487b769ae411caac410102bd6480c3a94e4c7b78e93d`.
+These two choices are resolved; do not ask them again. Sections 2–6 retain the proposal wording
+as the decision's historical object, not as a still-unanswered choice.
+
+The next control action transcribes the choice into qualification SPEC revision 05, its wire
+appendix revision 01 and CVQ-01 document 05 / proposed closure 03. The approval object is that
+whole exact packet, not the source inventory and not the previous failed candidate. The sealed
+Context, D1/D2/D3, three external read ports, source-only scope and source-verification limits
+are unchanged. Native/host capability, third source correction, integration and release remain
+unapproved. The prior schema review remains failed historical evidence, not a superseded PASS.
+
+The reused Luna/xhigh owner returned a read-only AST inventory of `9796790`: 53 concrete DTOs,
+30 enum classes / 119 members and nine tagged aliases / 30 branches. No production module was
+imported, no test or effect ran and no source was changed. Parent uses this only to locate the
+current surface. In particular `Field(min_length=...)` or `Field(le=...)` **without an explicit
+default is required**, despite the helper's syntactic `D:Field(...)` classification. Expected
+fields must come from the amended contract, not copy this observation as a test oracle.
+
+Current route: `ACTION_COMPLETED -> AUTO_CONTINUE / CONTRACT_TRANSCRIPTION`; subsequent exact
+closure approval remains `OWNER_EXACT_APPROVAL_PENDING`. This records the owner's decision,
+not a new implementer allocation or a reset of the exhausted closure-02 correction counter.
