@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / document / closure | `TICKET-CONTROLLED-VERIFICATION-CVQ-01A1` / `IMPLEMENTATION_TICKET` / `03` / `CLOSURE-CVQ-01A1` revision `01` |
-| State / outcome | `OWNER_APPROVED / CHANGES_REQUESTED / CORRECTION_ADMITTED`; one observable closure: ordinary public wire algebra and all scalar bounds discriminate valid from invalid values (original CA01–03, CA10) |
+| ID / kind / document / closure | `TICKET-CONTROLLED-VERIFICATION-CVQ-01A1` / `IMPLEMENTATION_TICKET` / `04` / `CLOSURE-CVQ-01A1` revision `01` |
+| State / outcome | `BLOCKED / CONVERGENCE_REVIEW_REQUIRED / NON_DISPATCHABLE`; one observable closure: ordinary public wire algebra and all scalar bounds discriminate valid from invalid values (original CA01–03, CA10) |
 | Baseline / view | `070039b6227205f7bb4592f203a4fd7455311f31`; new `ctx-cvq-01a1-closure01` only after exact approval. Do not reset/rebase or reopen A closure01 |
 | Preparation authority | Owner adopted convergence revision 08 at `058b8256bb1b2601fabc30c21a42ecc48c831875`, LF `24021ef0467d56c1bc3924e98b15d2f993e0dc720228dec44177da2132c50392`; preparation only, exact ticket approval pending |
 | SPEC / wire | [Qualification SPEC](../../spec/controlled-verification-qualification.md) revision 07 LF `545f5058d8347ab069d6a23fdb07daaf06ab836998efb67b2c30b80fee3b1716`, sections 2/6/7/11; [wire](../../spec/controlled-verification-qualification-wire.md) revision 03 LF `6eb9d0a088e105e7c2dd4c3c3b4001f970ac34195c7a0cd78459a2f6016e9222`, sections 1–6 |
@@ -209,3 +209,19 @@ source branch. Complete the entire frozen evidence matrix together; missing evid
 ACTION_COMPLETED / CHANGES_REQUESTED -> AUTO_CONTINUE / IMPLEMENT(A1 correction01) -> wait_agent
 -> parent final correction review. If blocking defects remain, return CONVERGENCE_REVIEW_REQUIRED
 without a third correction. A2/A3/B remain dependent; no integration/push/release is granted.
+
+## Final correction disposition — 2026-09-19
+
+Current disposition supersedes the AUTO_CONTINUE entries above. Additive candidate
+`1270664213d71eb2da524ecf7bf1885f28ffc82f` returned through wait_agent. Review revision02,
+section 6, records strict checking/26 tests green and repaired F03/F04 counterexamples, but
+F02's in-process negative-cell identities and F05's complete authenticated mutation record
+remain unresolved. Required helper evidence was read and independently assessed by root.
+
+Closure01 initial and correction reviews are exhausted. `ctx-cvq-01a1-closure01` is CLOSED;
+retain owner, worktree, source commits and upstream signatures as history, not dispatch authority.
+Document04 changes state/evidence only; it does not relax or revise the closure. Do not start
+A2/A3/B, invent a renamed third correction, or elevate the model.
+
+ACTION_COMPLETED / CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED -> WAIT_FOR_HUMAN /
+OWNER_CONVERGENCE_DECISION_REQUIRED. No new implementation, integration, push or release grant.

@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-CONVERGENCE` / `CODE_REVIEW` / `11` |
-| Lifecycle / conclusion | `EXACT_TICKET_PACKET_APPROVED / A1_CORRECTION_ADMITTED / A2_A3_B_DEPENDENCY_PENDING`; earlier approvals and failed closures preserved |
+| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-CONVERGENCE` / `CODE_REVIEW` / `12` |
+| Lifecycle / conclusion | `A1_CONVERGENCE_REVIEW_REQUIRED / OWNER_DECISION_REQUIRED / A2_A3_B_DEPENDENCY_PENDING`; earlier approvals and failed closures preserved |
 | Control baseline | `dc45f31f6c56983613665f276bf15207419274e3` |
 | Examined source | Closure-03 correction `5d7789db6b950d317e7b500b757aa77a54d609ed`; all prior candidates preserved |
 | Ticket | [CVQ-01](../../../modules/tickets/controlled-verification/cvq-01-qualification-admission.md), document 10, current digest in its registry; closure 03 exhausted, unchanged. Historical document 09 at dc45f31f LF `babcceb227bf8f91356dfbbb90f5e14ad1adab19f43a99686bdae46e8acff16d` |
@@ -12,7 +12,7 @@
 | Responsibility | Parent owns the replan recommendation and review verdict. Reused Terra/xhigh supplied read-only adversarial evidence; parent ran the candidate checks/probes/mutations. No source implementation, model elevation or owner decision is granted by this proposal |
 
 Sections 1–10 preserve earlier convergence/design/adoption history. D-CQ11/D-CLAIM, exact
-closure-03 approval and the responsibility split have been answered. Section 16 is the current
+closure-03 approval and the responsibility split have been answered. Section 17 is the current
 disposition; historical pending routes do not reopen those answered decisions.
 
 ## 1. Diagnosis and retained boundary
@@ -847,3 +847,29 @@ correction on the same owner branch/profile, from b1aa3faf. A2/A3/B remain appro
 ACTION_COMPLETED / CHANGES_REQUESTED -> AUTO_CONTINUE / A1_CORRECTION -> wait_agent -> root
 correction review. No new authority is needed for this unchanged-closure correction; exhaustion
 returns convergence. No integration, push, release, install or evaluator behavior is granted.
+
+## 17. A1 correction exhausted; retain work and return decision — 2026-09-19
+
+Candidate `1270664213d71eb2da524ecf7bf1885f28ffc82f` is additive and preserved. Root's
+[A1 review](cvq-01a1-scalar-wire-admission-code-review.md) revision02, section 6, records
+the exact correction authority, 26-test/strict-check readback, required helper evidence and four
+parent experiments with restoration. The original missing separator/configuration guards in
+the tests are now discriminating. The public schema and production source were not changed.
+
+Remaining frozen evidence obligations are concrete: required/null/extra and selector
+alternatives still lack their in-process cell IDs, and the complete per-predicate mutation
+patch/command/output record is not authenticated. An import-time PydanticUserError is not a
+behavioral mutation red; parent independently proved a valid discriminator-removal door.
+Green aggregate counts cannot replace these obligations, but they also must not be mislabeled
+as a newly discovered product defect or reason to redo all schema work.
+
+A1 document04 is BLOCKED / CONVERGENCE_REVIEW_REQUIRED / NON_DISPATCHABLE; its view is CLOSED.
+A2/A3/B retain their exact approvals but cannot advance past this dependency. The remaining
+decision is how to make cell-identification and evidence production reliably executable under
+a newly explicit convergence authority; no remedy, new closure, exception or model elevation
+is silently selected here. Preserve existing candidates and do not rename a third correction.
+
+ACTION_COMPLETED / CHANGES_REQUESTED -> WAIT_FOR_HUMAN / OWNER_CONVERGENCE_DECISION_REQUIRED.
+This is not a host-wakeup blocker: both owner returns arrived natively. No integration, push,
+release, installation, provider or VM effect occurred. The access_programs.cyber request-origin
+diagnosis remains limited to the observed host rejection, not a claimed platform fix.
