@@ -2,18 +2,18 @@
 
 | Field | Value |
 | --- | --- |
-| Artifact ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01` / `IMPLEMENTATION_TICKET` / `02` |
-| State / Acceptance Closure Set | `OWNER_APPROVED / TICKET_DEFECT / PREFLIGHT_BLOCKED / NON_DISPATCHABLE`; owner-approved `CLOSURE-CVQ-01` revision `01` is blocked; proposed revision `02` below is not approved |
+| Artifact ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01` / `IMPLEMENTATION_TICKET` / `03` |
+| State / Acceptance Closure Set | `OWNER_APPROVED / TWO_PHASE_EXCEPTION_APPROVED / SCHEMA_PHASE_ADMITTED`; `CLOSURE-CVQ-01` revision `02`; behavior phase remains `PREFLIGHT_PENDING` |
 | Change class / observable result | New behavior, not defect correction: one pure evaluator rejects untrusted qualification input and returns the exact tagged evaluation/report without executing work |
 | Preparation authority | Owner's 2026-09-09 exact packet approval at `161c4e095697fff6e4693b8d9bfce866878277dd`, recorded at `cad0d2bca480f45c57d0598f4342636d35b1ecf2`; CVQ-01 preparation only |
 | Approved SPEC | `SPEC-CONTROLLED-VERIFICATION-QUALIFICATION-20260909-01` revision `04`, LF SHA-256 `4cad6a88b9d151a05bf409f8b61bc97580e80303f58a2377cb0301815b999a1d`; behavior approved as revision 03, lifecycle-only revision 04 |
 | SPEC cells | CVQ-AC01; pure comparisons/refusals of CVQ-AC02/03; report integrity/reduction of CVQ-AC09; typed roster coverage and WA-04 unavailable handling only, not native CVQ-AC04–08/10 proofs |
-| PRD / CHG | `PRD-20260908-051` / `CHG-20260908-051`; REQ-051 revision 04 LF SHA-256 `7abca31a10e1429278e6ef7312605a15980378dfb9819c04e7b4cac5167956e7` |
+| PRD / CHG | `PRD-20260908-051` / `CHG-20260908-051`; current REQ-051 revision 08 LF SHA-256 `36d3f45ddd5b2453bf2c2d368567a0575c0048ec0954c42ee6e1d7c4e0b43fef`; reattachment does not add its pending CVE deltas to this qualification ticket |
 | Sealed Context | `CTX-CONTROLLED-VERIFICATION-20260909-01` revision `02`, LF SHA-256 `6f5465295cb3fd303bc555da655b3169d33292ad1f2ed4374748f82ddd6f2285`; read/reference only |
-| Source baseline | `cad0d2bca480f45c57d0598f4342636d35b1ecf2`, owned control branch `codex/controlled-verification-intake`; no integration or remote publication claimed |
+| Source baseline | Original preparation `cad0d2bca480f45c57d0598f4342636d35b1ecf2`; current readmission parent `2b4903c1995b0b1a1b2cbafc90aca0daf0cea5de`. Dispatch pins this document's final control commit as the clean worktree baseline; no integration claimed |
 | Control owner / reviewer | Current-session `SUPERVISOR_REVIEWER`, semantic profile `ticket-review`; human owner retains ticket approval and effects |
-| Proposed implementation allocation | One `IMPLEMENTATION_OWNER`, semantic profile `implementation-standard`; actual Agent/task/ContextView unallocated, no active lane |
-| Proposed worktree / branch | Repository-contained `.worktrees/cvq-01` / `codex/cvq-01`; neither created by this proposal. Before dispatch bind the exact approved ticket commit and reviewer-verified clean baseline; never use an unspecified latest HEAD |
+| Implementation allocation | Reused `cve_wire_implementer`, semantic profile `implementation-standard` (Luna/xhigh), reviewer `root`; new bounded view `cvq-01-schema-v01`; previous CVE-01A allocation released without changing its candidate |
+| Worktree / branch binding | Repository-contained `.worktrees/cvq-01` / `codex/cvq-01`; reviewer creates from this revision's exact committed control SHA, then reads back containment, branch, HEAD and clean state before dispatch |
 | Language / strict checker | Python 3.11, strict immutable Pydantic boundary; `mypy==2.3.0 --strict` from the committed development dependency plan |
 | Delivery / resources | POC / HIGH_ASSURANCE inherited from approved workload; one implementer, one subsequent required reviewer-owned adversarial helper; no parallel implementation |
 | Lifetime / return | Same-lifetime native dispatch plus `wait_agent`; bridge, runner, queue, receipt, descriptor and host workspace readback `NOT_REQUIRED`. Return `ImplementationReturn.COMPLETED`, `BLOCKED` or `CHANGE_DETECTED` |
@@ -162,7 +162,7 @@ It points to source/contracts/tests; it contains no production copy. The impleme
 write those exact element paths as its documentation boundary, but not shared Context, SPEC,
 ticket, ticket registry, skills, publication manifests or global rules.
 
-## Finite Acceptance Closure Set revision 01
+## Finite Acceptance Closure Set revision 02
 
 Each row is an exact named test group. Enumerated subcases are separate subtests with their
 variant/field in unreduced output; implementation cannot omit a listed case or add workload runs.
@@ -172,7 +172,7 @@ error. Discriminating reviewer reverse mutations below remain mandatory.
 | Cell / test name suffix | Exact observable predicate and bounded cases |
 | --- | --- |
 | CQ01 `test_public_constructor_roundtrips` | Ordinary constructors and JSON round trips for every public DTO and every enum/tag listed above; include mixed pure/native manifest, all four CaseResult tags, both EXECUTED observation tags, three cleanup tags, three evaluation tags and all four report outcomes. Pure/native/postlaunch fields remain disjoint. |
-| CQ02 `test_strict_boundary_rejection` | Required-field omission/null; extra fields; integer inputs true, false, 1.0, string 1, zero, negative; empty/space/invalid-case/Unicode/separator opaque ID; illegal enum; duplicate case/key/check/entry/alias/category IDs; incompatible binding/kind, cleanup/pure and tag/payload combinations reject. For every public positive fixture, try each required-field omission and one undeclared field. No transform-to-valid input. |
+| CQ02 `test_strict_boundary_rejection` | Required-field omission/null and extra fields reject. Strict integers reject true, false, 1.0 and string 1; positive revision/capacity/duration fields reject zero/negative; nonnegative discovery counters admit zero and reject negative (unknown counts above zero cannot qualify discovery); explicit zero-only retry/container/build-worker controls admit exactly zero and reject nonzero. Empty/space/invalid-case/Unicode/separator opaque ID; illegal enum; duplicate case/key/check/entry/alias/category IDs; incompatible binding/kind, cleanup/pure and tag/payload combinations reject. Every public positive fixture tests each required-field omission and one undeclared field, with no transform-to-valid input. |
 | CQ03 `test_approval_and_plan_drift` | Missing/conflicting approval; separately alter project, baseline, manifest revision/digest, fixture/executable/dependency identity, argv, cwd, environment, order/count/load, policy owner/revision, resource plan/scope, evidence owner/destination. Wrong binding is refused before any evidence-derived qualification; unchanged approved manifest is the control. Same run count with one-loaded → all-loaded also refuses. |
 | CQ04 `test_prerequisite_exact_resolution` | Exact PROVEN result admits comparison; MISSING, CONFLICTING, wrong key kind/scope/capability/adapter, wrong observation revision/digest, FAILED and UNAVAILABLE produce the exact prerequisite refusal/detail. Conflicting later record cannot be masked by an earlier match. |
 | CQ05 `test_case_kind_prerequisite_closure` | PURE_RULE works without lab; WA-04 SOURCE_PROPERTY requires WA04_ADAPTER; each native case kind has the exact SPEC prerequisite set. For each required kind independently omit it. REAL_HOST_PROPERTY needs discovery, not enforcement evidence; trusted discovery does not require its own result. Pure resource tests never become native proof. |
@@ -251,7 +251,7 @@ These are limits on test invocation, not a claim of qualified OS-enforced CPU/di
 ## Adversarial helper, evidence and return
 
 After implementation's immutable candidate exists, reviewer binds an `AdversarialReviewPlan` to
-that SHA and CLOSURE-CVQ-01 revision 01, REQUIRED, NO_EXTERNAL_EFFECT. Select SPEC_GAP,
+that SHA and CLOSURE-CVQ-01 revision 02, REQUIRED, NO_EXTERNAL_EFFECT. Select SPEC_GAP,
 BOUNDARY_DATA, STATE_TRANSITION, ERROR_PARTIAL_FAILURE, AUTHORIZATION, CONSISTENCY, IDEMPOTENCY,
 REGRESSION and OBSERVABILITY. Concurrency is in-process deterministic input comparison only;
 native concurrent launch/recovery and deployment are outside this ticket. Isolation disposition
@@ -353,7 +353,7 @@ PITFALL C14 was read: demanding named evidence where the named contract cannot e
 the same structural family. No missing runner, guest admin, host gateway or slow implementer is
 the cause. No implementation correction cycle has been consumed and no helper review PASS exists.
 
-## Proposed Closure revision 02 and ticket-scoped ordering exception — pending owner
+## Historical revision-02 proposal — approved below, not a second active rule
 
 This is a bounded proposal, not active permission and not a change to plugin reference prose.
 It preserves all SPEC behaviors, the exact final CQ01–CQ12 closure and every final review gate.
@@ -397,6 +397,57 @@ ticket/parallel contract owner, production behavior choice, line-count threshold
 engine or user-global instruction is introduced. No implementation or source mutation is
 authorized until the human owner approves this exact closure/ordering exception.
 
-Current typed return: `ACTION_COMPLETED` for approval/preflight documentation, then
+Historical revision-02 return: `ACTION_COMPLETED` for approval/preflight documentation, then
 `HALT / TICKET_SCHEMA_INVALID / TICKET_DEFECT`; owner decision is required only for the named
 closure-02 two-phase exception, not a repeat of the approval already recorded above.
+
+## Owner exception approval and current schema phase — 2026-09-18
+
+The owner explicitly replied **「核准兩階段例外」** after the reviewer described contract/test
+construction by Luna, actual parent preflight, then behavior by the same owner. The decision
+resolves CVQ-PF02 for this ticket only. It was requested against control commit
+`2b4903c1995b0b1a1b2cbafc90aca0daf0cea5de`, ticket document 02 LF SHA-256
+`65716d9d45bfc99c8519d5ed1f06edc199cb3acc83eee6636b15ca3cf4c42431`.
+The already-described CQ02 zero-domain repair is compiled from the approved SPEC's explicit
+nonnegative/zero-only fields; it adds no product behavior or global exception. All final CQ01–CQ12
+and review obligations remain. The pending CVE protocol SPEC is not approved by this decision.
+
+Current action is SCHEMA_CONSTRUCTION only. Its production allowlist is exactly the nine files
+listed in the phase-1 subset above; tests are exactly contracts, boundaries and fixtures.
+No admission/use-case module or element index is created during this phase. Constructor value
+invariants and protocol shape belong here; actual approved-source/prerequisite/evidence resolution,
+report reduction and native effects remain outside phase 1. Facades export only existing
+phase-1 contracts/protocols, not a fake evaluator or placeholder success implementation.
+
+Read the current ticket contract sections, approved SPEC, bounded source grammar and applicable
+implementation rules; historical preflight/review/conversation bodies are not work input. Close
+the completed CVE-01A input view before using `cvq-01-schema-v01`. The prior source candidate
+`d0c93111ee1ae6a7f98779cc64b8e8ba52a62d03` stays unchanged on its original branch. Reuse of the
+Agent does not imply erasure of its memory or OS isolation; only this ticket's exact input is sent.
+
+Fresh development readback: Python 3.11.9 at
+`C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe`, mypy 2.3.0, Pydantic 2.13.4.
+This is the separate existing development interpreter, not JohnnyRouter's runtime interpreter.
+No dependency installation is performed; no full dependency-environment or OS confinement claim.
+Stage-1 commands, from the bound worktree, use that executable as `$cvqPython`:
+
+```powershell
+& $cvqPython -B -m mypy --strict --follow-imports=silent library/controlled_verification tests/test_verification_qualification_contracts.py tests/test_verification_qualification_boundaries.py tests/verification_qualification_fixtures.py
+& $cvqPython -B -m unittest -v tests.test_verification_qualification_contracts tests.test_verification_qualification_boundaries
+git diff --check
+```
+
+Run only the existing phase-1 package/constructor/dependency checks; later admission files do not
+have to exist or be imported for this phase. Preserve the ticket's one-process, 60-second command
+and 1,200-second pass bounds, without unchanged-input retries, extra suites, stress or model
+polling. Source fixes may be verified against their changed candidate; report the runs honestly.
+Return committed candidate, exact changed paths, named CQ01/CQ02/contract-CQ11 checks and results,
+findings/deviations and an explicit `SCHEMA_PHASE_ONLY` marker. COMPLETED here means this phase,
+not ticket completion or permission to enter behavior.
+
+Parent preflight uses ordinary constructors/JSON round trips, strict typing and bounded independent
+mutations of the actually implemented contract predicates with exact restoration. Behavior
+predicates remain NOT_IMPLEMENTED, not a false PASS. Only a recorded successful preflight admits
+the same owner to phase 2; a failed one cannot. Final independent adversarial review remains later.
+Typed route: APPROVAL_GRANTED -> AUTO_CONTINUE / SCHEMA_CONSTRUCTION under this exact exception;
+no native/provider/installation/integration/release effect is added.
