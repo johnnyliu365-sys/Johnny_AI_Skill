@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| Artifact ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01` / `IMPLEMENTATION_TICKET` / `08` |
-| State / Acceptance Closure Set | `OWNER_EXACT_APPROVED / TWO_PHASE_EXCEPTION_APPROVED / SCHEMA_CORRECTION_REQUIRED`; `CLOSURE-CVQ-01` revision `03`; behavior phase remains `NOT_ADMITTED` |
+| Artifact ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01` / `IMPLEMENTATION_TICKET` / `09` |
+| State / Acceptance Closure Set | `BLOCKED / CONVERGENCE_REVIEW_REQUIRED / NON_DISPATCHABLE`; `CLOSURE-CVQ-01` revision `03`; behavior phase remains `NOT_ADMITTED`; owner approval history preserved |
 | Change class / observable result | New behavior, not defect correction: one pure evaluator rejects untrusted qualification input and returns the exact tagged evaluation/report without executing work |
 | Preparation authority | Owner's 2026-09-09 exact packet approval at `161c4e095697fff6e4693b8d9bfce866878277dd`, recorded at `cad0d2bca480f45c57d0598f4342636d35b1ecf2`; CVQ-01 preparation only |
 | Prior approved SPEC | `SPEC-CONTROLLED-VERIFICATION-QUALIFICATION-20260909-01` revision `04`, LF SHA-256 `4cad6a88b9d151a05bf409f8b61bc97580e80303f58a2377cb0301815b999a1d`; preserved in Git, not a grant for a third closure-02 correction |
@@ -11,9 +11,9 @@
 | SPEC cells | CVQ-AC01; pure comparisons/refusals of CVQ-AC02/03; report integrity/reduction of CVQ-AC09; typed roster coverage and WA-04 unavailable handling only, not native CVQ-AC04–08/10 proofs |
 | PRD / CHG | `PRD-20260908-051` / `CHG-20260908-051`; current REQ-051 revision 11 LF SHA-256 `f52552cdafc857d605f1eda03bcdf3df4c3d0c49ad9adfb9f39335f4b341e272`; reattachment does not add its pending CVE deltas to this qualification ticket |
 | Sealed Context | `CTX-CONTROLLED-VERIFICATION-20260909-01` revision `02`, LF SHA-256 `6f5465295cb3fd303bc555da655b3169d33292ad1f2ed4374748f82ddd6f2285`; read/reference only |
-| Source baseline | Current closure-03 candidate `cf89ec33c64be55f1cfb95f95cfbb0c0df6d57d0`; correction must be additive from it. Preserve closure-02 `9796790d33b6d1374469fad1b37e1f4991262a43` and `cd228a790b2f37bc2cad109978f8822ad5bb2da6`; no integration |
+| Source baseline | Preserve closure-03 correction `5d7789db6b950d317e7b500b757aa77a54d609ed` and initial `cf89ec33c64be55f1cfb95f95cfbb0c0df6d57d0`, plus closure-02 `9796790d33b6d1374469fad1b37e1f4991262a43` and `cd228a790b2f37bc2cad109978f8822ad5bb2da6`; no further source dispatch or integration |
 | Control owner / reviewer | Current-session `SUPERVISOR_REVIEWER`, semantic profile `ticket-review`; human owner retains ticket approval and effects |
-| Implementation allocation | Reused `cve_wire_implementer`, semantic profile `implementation-standard` (Luna/xhigh), reviewer `root`; new bounded view `cvq-01-schema-closure03-v01`; prior schema/research view closed without deleting history or claiming memory erasure |
+| Implementation allocation | Retained `cve_wire_implementer`, semantic profile `implementation-standard` (Luna/xhigh), reviewer `root`; closure-03 implementation/correction views CLOSED; no active work grant or claim of memory erasure |
 | Worktree / branch binding | Preserve repository-contained `.worktrees/cvq-01` / `codex/cvq-01`; fresh containment, branch, exact source/control identities and clean readback before any approved resumption; no rebase/reset/ref movement in this control action |
 | Language / strict checker | Python 3.11, strict immutable Pydantic boundary; `mypy==2.3.0 --strict` from the committed development dependency plan |
 | Delivery / resources | POC / HIGH_ASSURANCE inherited from approved workload; one implementer, one subsequent required reviewer-owned adversarial helper; no parallel implementation |
@@ -697,3 +697,22 @@ Route ACTION_COMPLETED / PREFLIGHT_RECORDED -> AUTO_CONTINUE / SCHEMA_CORRECTION
 the same-lifetime native call. Parent waits for completion and owns correction review; no owner
 approval is missing. Initial-plus-one limit applies to closure 03; a failed correction returns
 CONVERGENCE_REVIEW_REQUIRED. Behavior, integration, push and release remain NOT_ADMITTED.
+
+## Closure-03 correction disposition — 2026-09-18
+
+Document 09 is status/evidence only. Correction `5d7789db6b950d317e7b500b757aa77a54d609ed`
+received CHANGES_REQUESTED in [schema preflight revision 04](../../../doc/reviews/controlled-verification/cvq-01-schema-preflight.md).
+Parent independently reran 13-file strict typing and 21 green test methods, then found zero-red
+mutations for mutual helper recursion and the case-output limit. Actual constructor probes also
+reproduced remaining native binding mismatches, wrong pure-host/refusal behavior, unsorted planned
+aliases and extra roster plans. The required helper supplied evidence, not the verdict.
+
+Initial plus one correction is exhausted for closure 03. Preserve all candidates and approvals;
+close correction01 as input view. No third correction, behavior implementation or ceremonial
+repeat of the answered approval. Return HALT / TICKET_SCHEMA_INVALID /
+CONVERGENCE_REVIEW_REQUIRED. The [convergence proposal](../../../doc/reviews/controlled-verification/cvq-01-convergence-proposal.md)
+may be revised docs-only to assess independently verifiable responsibility boundaries. Any new
+closure/source resumption remains NON_DISPATCHABLE until exact owner approval and actual preflight.
+No source, SPEC semantics, shared Context, model profile, native capability or external authority
+is changed by that proposal. Owner decision WAKE_REQUIRED is a state; this session reports it
+directly, without claiming a background runner delivered an event.

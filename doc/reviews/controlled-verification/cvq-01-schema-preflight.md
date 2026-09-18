@@ -2,14 +2,14 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-SCHEMA` / `CODE_REVIEW` / `03` |
-| Phase / conclusion | `SCHEMA_CONSTRUCTION / CHANGES_REQUESTED / SCHEMA_CORRECTION_REQUIRED / BEHAVIOR_NOT_ADMITTED` |
+| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-SCHEMA` / `CODE_REVIEW` / `04` |
+| Phase / conclusion | `SCHEMA_CONSTRUCTION / CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED / BEHAVIOR_NOT_ADMITTED` |
 | Ticket / closure | [CVQ-01](../../../modules/tickets/controlled-verification/cvq-01-qualification-admission.md), reviewed document 07 at `b10c08f1ae15080e4878bda09b0ab43ee5a134a6`, LF `4852a627b46f00929919e4a249a7449a3647a1efc5ed122138199a496df8a2cb`, `CLOSURE-CVQ-01` revision 03 |
 | Approved source | [Qualification SPEC](../../../modules/spec/controlled-verification-qualification.md) revision 07 LF `545f5058d8347ab069d6a23fdb07daaf06ab836998efb67b2c30b80fee3b1716`; [wire appendix](../../../modules/spec/controlled-verification-qualification-wire.md) revision 03 LF `6eb9d0a088e105e7c2dd4c3c3b4001f970ac34195c7a0cd78459a2f6016e9222` |
-| Baseline / candidate | `9796790d33b6d1374469fad1b37e1f4991262a43` / `cf89ec33c64be55f1cfb95f95cfbb0c0df6d57d0` |
+| Baseline / candidate | `cf89ec33c64be55f1cfb95f95cfbb0c0df6d57d0` / `5d7789db6b950d317e7b500b757aa77a54d609ed` |
 | Reviewer / implementation owner | `root` / reused `cve_wire_implementer`, implementation-standard, Luna/xhigh |
 | Worktree / branch | Repository-contained `.worktrees/cvq-01` / `codex/cvq-01`; same owner and branch retained |
-| Authority | Exact closure-03 packet approval at `965e16b0`, recorded in `b10c08f1`; initial closure-03 schema preflight only, not final ticket approval |
+| Authority | Exact closure-03 packet approval at `965e16b0`, recorded in `b10c08f1`; single correction admitted by ticket document 08 at `acd6b140f7fbc520a8ded7ec0a6cf0b6819b9265`, LF `788d6a7a2656e7cd51e51c87a12e1ccf52875db136ed08ebcdef7f2d64b6e7ea`; not final ticket approval |
 | Helper plan | REQUIRED, candidate above, closure 03, ticket-review Terra/xhigh; SPEC_GAP, BOUNDARY_DATA, STATE_TRANSITION, AUTHORIZATION, CONSISTENCY, OBSERVABILITY; READ_ONLY_INTENT_ONLY, NO_EXTERNAL_EFFECT |
 
 The following closure-02 sections preserve their historical candidates, checks, findings and
@@ -324,3 +324,117 @@ not a third correction. Earlier closure-02 exhaustion remains historical and una
 
 ACTION_COMPLETED / SCHEMA_PREFLIGHT_RECORDED -> AUTO_CONTINUE / SCHEMA_CORRECTION;
 behavior remains NOT_ADMITTED. Owner's existing exact approval does not need to be requested again.
+
+## Closure-03 single correction review — 2026-09-18
+
+Reused Luna/xhigh returned `5d7789db6b950d317e7b500b757aa77a54d609ed`, an additive descendant
+of `cf89ec33`. Parent checked the actual eight changed paths, clean owner worktree, ancestry and
+diff check. All paths are in the approved phase-1 boundary. This is the one correction allowed
+for closure 03, not a new initial round. No further implementation is authorized by this review.
+
+Parent used detached `.worktrees/cvq-01-schema-review-closure03-correction` at the exact SHA.
+It was initially allocated relative to the owner checkout in error; before any candidate review
+mutation it was moved to this root-level .worktrees path using git worktree move after exact
+source/destination containment, no-reparse and clean-state checks. No owner source was changed.
+The same declared commands and 60-second subprocess bounds passed: mypy 13 files, unittest
+21 methods in 0.311s. No test output was filtered. The repeated green count is not the verdict.
+
+The same Terra/xhigh helper performed one bounded read-only correction audit, returned six
+findings and ran no code. Root independently read the changed validators/checker/tests and
+executed the probes/mutations below. No helper owns approval or integration.
+
+### Batched correction disposition
+
+| Existing batch | Parent disposition at 5d7789d |
+| --- | --- |
+| C3-01 | SUBSTANTIALLY IMPROVED, not final approval. Actual tests now enumerate 81 concrete rows, 670 required omission/null + 81 extra cells, 78 defaults, 63 alias branches and 131 enum members. ApprovedManifestFound.roster_plans is correctly required by wire section 2, not an optional default; the corrected catalog now agrees with the approved 335/78 counts. However, all_direct_rows includes a pure-only manifest with an extra host roster plan and treats it as a valid positive, contrary to wire lines 170–172. Positive fixture validity remains part of the local graph defect below. The required-field helper also asserts a generic ValueError and location, not the frozen precise error type. |
+| C3-02 | PARTIAL. Positive/zero domains and many bounds were added, but test_every_declared_upper_bound_and_lane_domain never changes case_output_bytes past 262144. Parent loosening that exact bound to 262145 leaves all 21 methods green. Full upper-bound coverage is not established by the method name. |
+| C3-03 | PARTIAL. Scope/capability membership, requirement existence/key/scope joins, fixture identity and many subject rows now reject. Native argv_digest/cwd_digest/environment_plan_digest may still disagree with the corresponding prelaunch binding. Conversely a legal PURE_RULE with HOST_MEDIATION HostCapabilityKey and NO_ROSTER is rejected by the new unconditional host-family subject guard (manifest_contracts.py:140–146), contradicting SPEC 11.1's pure row. These are local constructor defects, not missing VM capability. |
+| C3-04 | PARTIAL. Report case/claim and cross-category roster duplicates now have validators/tests. RefusedClaimProof is incorrectly forced to FAILED for every reason (report_contracts.py:144–146), contrary to wire lines 131–134: PREREQUISITE_UNPROVEN/RESOURCE_ENFORCEMENT_UNAVAILABLE/HOST_ROSTER_UNQUALIFIED require UNAVAILABLE. PlannedHostEffectEntry still accepts unsorted aliases, while the new rejection test targets only observed HostEffectEntry. ApprovedManifestFound lacks exact manifest-host-plan coverage validation; even its positive corpus contains the extra-plan counterexample. Independent resolved authenticity remains phase 2, but these wholly local tuples/pins are available in the DTO. |
+| C3-05 | PARTIAL. The renamed forbidden import is now rejected and its guard mutation is discriminating. The checker still accepts mutual helper recursion, does not enforce unchanged Mapping.get receiver or true-branch control flow, does not require typed helper signatures, and accepts computed facade __all__. Its helper check detects only direct self-recursion. Its 22 negative snippets do not cover all alternatives of the 20 required families. Normalized whole-package graph/facade resolution and fail-closed handling are not proved by the separate synthetic one/two graph example. Closed grammar remains unqualified. |
+
+C3-03 native digest references are independently confirmed against the declared binding/case
+fields and SPEC section 3's immutable execution identity; no new hashing algorithm is requested.
+The parent rejected a proposed PlatformCapabilityKey/HOST_MEDIATION counterexample as a finding:
+its narrower literal family already rejects it. That failed probe stopped the combined diagnostic
+command before the last planned-alias check; that remaining check was then run separately.
+No failed setup/parse operation is counted as evidence against an unrelated predicate.
+
+### Independent correction mutations
+
+Each temporary patch was confined to the reviewer snapshot, followed by exact restoration.
+The first two enter different doors from the implementer's reported positive-int/import probes.
+
+| ID / exact mutation | Actual command and complete outcome summary |
+| --- | --- |
+| C3R-M1: add typed unused _review_cycle_first -> _review_cycle_second -> _review_cycle_first functions in qualification_values; never call them | Named CQ11 unittest command: test_architecture_dependency_gate ... ok; Ran 1 test in 0.109s; OK. Zero red proves the acyclic-helper rule is not pinned. |
+| C3R-M2: EvidenceBounds.case_output_bytes Field(le=262_144) -> Field(le=262_145) | Full declared two-module unittest command: every one of the same 21 qualified method names printed ok; Ran 21 tests in 0.289s; OK. No failures were filtered. Zero red is the missing boundary cell. |
+| C3R-M3: unused typed helper containing `from os import fspath as renamed_path` in qualification_values | Named CQ11 command: one failure, source='qualification_values.py'; traceback test line 720 -> check_source line 610 -> import_target line 536; AssertionError: unapproved absolute import; Ran 1 test in 0.107s; FAILED (failures=1). The helper/import was never executed. |
+| C3R-M4: after restoring source, add `if node.module == "os": return None` to import_target | Named CQ11 command: one failure, negative='nested_unused_forbidden_import'; traceback test line 749 `with self.subTest(negative=name), self.assertRaises(AssertionError):`; AssertionError: AssertionError not raised; Ran 1 test in 0.106s; FAILED (failures=1). Restored afterward. |
+
+The exact named CQ11 command is:
+
+```text
+python -B -m unittest -v tests.test_verification_qualification_boundaries.QualificationBoundaryTests.test_architecture_dependency_gate
+```
+
+The full strict/two-module commands remain those printed above with the catalog argument.
+Complete unfiltered command output/tracebacks and qualified 21-method listing remain in this
+task's tool transcript. No reduced-output wrapper or test-count-only mutation verdict was used.
+After restoring content by patch and mechanically restoring checkout CRLF, raw bytes equalled
+`git cat-file --filters HEAD:<path>` for all three touched files:
+
+| File | Restored raw SHA-256 |
+| --- | --- |
+| qualification_values.py | `f2586c8934fefde012b40c9e4e1fc33ec407ce9d791d0df2ebb720d0451f6e97` |
+| manifest_contracts.py | `006882829041be07750bd5591c3c2938b104c68fcea5f593580fa08f45a8228f` |
+| test_verification_qualification_boundaries.py | `045abd1def630f1842a33e1552daf0623f19e3c2afa2593c946faa714f2e4f3f` |
+
+Final diff/status were clean. The full two-module suite returned 21 green in 0.270s after
+restoration, proving no residual reviewer mutation—not proving acceptance of the candidate.
+
+### Actual constructor counterexamples
+
+Root changed structurally valid fixture JSON or used ordinary constructors. No model_construct,
+model_copy, fake native execution or provider was used. Observed outputs:
+
+```text
+pure-host-mediation-rule REJECTED EXPECTED_ACCEPT
+  value_error: host mediation requires a host subject
+unavailable-refusal-unavailable-result REJECTED EXPECTED_ACCEPT
+  value_error: refused proof requires failed result
+unavailable-refusal-failed-result ACCEPTED EXPECTED_REJECT
+planned-unsorted-aliases ACCEPTED EXPECTED_REJECT ('alias-z', 'alias-a')
+native-argv_digest-mismatch ACCEPTED EXPECTED_REJECT
+native-cwd_digest-mismatch ACCEPTED EXPECTED_REJECT
+native-environment_plan_digest-mismatch ACCEPTED EXPECTED_REJECT
+extra-roster-plan-for-pure-manifest ACCEPTED EXPECTED_REJECT
+```
+
+Reproduction: start qualification_case(), replace its key and both prerequisite-key copies with
+host_capability_key(), retain PURE_RULE/PURE_CONTRACT/NO_ROSTER. For the refusal use
+CapabilityObservation(PURE_RULE, RefusedClaimProof(RESOURCE_ENFORCEMENT_UNAVAILABLE,
+admission-cvq), NoObservedRoster()) with otherwise valid IDs and alternate UNAVAILABLE/FAILED.
+For the three digest probes start native_case(case-probe, TRUSTED_NATIVE_DISCOVERY,
+PlatformCapabilityKey(PLAN_BINDING, WINDOWS), NoRosterSubject()); replace only the indicated
+top-level digest with 64 nines. For the final probe directly construct
+ApprovedManifestFound(manifest=qualification_manifest(), roster_plans=(approved_roster_plan(),)).
+These exact local predicates were already in closure 03; external evidence resolution is not tested.
+
+### Convergence return
+
+CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED. Closure 03's initial-plus-one allowance is now
+exhausted. No third correction, behavior admission, merge, push or release follows. All four
+reviewed schema commits remain intact. Main/remote publication were not mutated by this phase.
+The two-phase approval was exercised, not ignored, and no runner/receipt/host API is missing.
+
+Root's low-model readiness assessment must change: complete DTO wire translation and building
+an AST policy recognizer are independently provable verification responsibilities. Treating both
+as one low-model correction batch did not produce the approved closure. This is a reason to
+reassess decomposition, not silently weaken CQ11, infer native confinement, upgrade every model,
+or relabel a third attempt. A docs-only replan may propose separate observable closures while
+preserving the shared contracts and one sequential owner; source resumption needs exact approval.
+
+ACTION_COMPLETED / CORRECTION_REVIEW_RECORDED -> HALT / TICKET_SCHEMA_INVALID /
+CONVERGENCE_REVIEW_REQUIRED; owner decision state WAKE_REQUIRED, not an automatically delivered
+event. This task directly reports the decision requirement to the human owner.

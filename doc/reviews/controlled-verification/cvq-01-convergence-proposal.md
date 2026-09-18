@@ -2,14 +2,18 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-CONVERGENCE` / `CODE_REVIEW` / `04` |
-| Lifecycle / conclusion | `OWNER_DESIGN_ADOPTED / EXACT_CONTRACT_APPROVAL_PENDING / NON_DISPATCHABLE` |
-| Control baseline | `89d91e68f00ef509537a57b85a32b450e6cca81b` |
-| Examined source | `9796790d33b6d1374469fad1b37e1f4991262a43`; initial `cd228a790b2f37bc2cad109978f8822ad5bb2da6` preserved |
-| Ticket | [CVQ-01](../../../modules/tickets/controlled-verification/cvq-01-qualification-admission.md), document 04, LF `1ab65b3a70b7bedd43eb017943adbe7bf89509dd18aeb8c3c2d6bcb7876de872`; closure 02 unchanged |
-| Contract | [Qualification SPEC](../../../modules/spec/controlled-verification-qualification.md), revision 04, LF `4cad6a88b9d151a05bf409f8b61bc97580e80303f58a2377cb0301815b999a1d` |
-| Evidence | [Schema preflight](cvq-01-schema-preflight.md), revision 02, LF `28d8dbd7f3836ac3088829385cf45a0e816e5e27014d28aa8fdbdde27b30eb06` |
-| Responsibility | Parent owns this conclusion. Reused Terra/xhigh helper supplied read-only symbol/fixture/AST inventory; no implementation, test execution or approval was delegated in this convergence action |
+| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-CONVERGENCE` / `CODE_REVIEW` / `05` |
+| Lifecycle / conclusion | `SPLIT_REQUIRED / OWNER_REPLAN_DECISION_PENDING / NON_DISPATCHABLE` |
+| Control baseline | `acd6b140f7fbc520a8ded7ec0a6cf0b6819b9265` |
+| Examined source | Closure-03 correction `5d7789db6b950d317e7b500b757aa77a54d609ed`; all prior candidates preserved |
+| Ticket | [CVQ-01](../../../modules/tickets/controlled-verification/cvq-01-qualification-admission.md), document 09, LF `babcceb227bf8f91356dfbbb90f5e14ad1adab19f43a99686bdae46e8acff16d`; closure 03 exhausted, unchanged |
+| Contract | [Qualification SPEC](../../../modules/spec/controlled-verification-qualification.md) revision 07 LF `545f5058d8347ab069d6a23fdb07daaf06ab836998efb67b2c30b80fee3b1716`; wire appendix revision 03 remains approved |
+| Evidence | [Schema preflight](cvq-01-schema-preflight.md), revision 04, LF `66f2e6636869665665bd15f210f259a405686125d33eb9dc0ccbaa9180ac3f8a` |
+| Responsibility | Parent owns the replan recommendation and review verdict. Reused Terra/xhigh supplied read-only adversarial evidence; parent ran the candidate checks/probes/mutations. No source implementation, model elevation or owner decision is granted by this proposal |
+
+Sections 1–8 preserve the earlier convergence/design/adoption history. Its D-CQ11/D-CLAIM and
+exact packet decisions have been answered. Sections 9–10 below are the current disposition;
+historical pending routes do not reopen those answered decisions.
 
 ## 1. Diagnosis and retained boundary
 
@@ -330,3 +334,61 @@ approval request is the revised packet, not the earlier audited commit's unfixed
 Current return: `ACTION_COMPLETED / CONTRACT_TRANSCRIPTION -> WAIT_FOR_HUMAN /
 OWNER_EXACT_APPROVAL_PENDING`. Only the exact proposed replacement closure/resumption remains
 pending; owner adoption of D-CQ11/D-CLAIM is complete and is not reopened.
+
+## 9. Exact approval was exercised; closure 03 still failed
+
+Owner approved the exact packet at `965e16b00d6049be6552465ac1ce1cbac968a8cb`, recorded in
+`b10c08f1ae15080e4878bda09b0ab43ee5a134a6`. Root dispatched the same Luna/xhigh owner, waited
+for `cf89ec33`, reviewed it and committed one batched correction at `acd6b140`. The same owner
+returned `5d7789d`; parent and the required read-only helper reviewed that correction. This is
+actual same-lifetime dispatch/wait/review, not a claim that an absent runner blocked the work.
+
+Real progress: the 81-row DTO catalog, 751 required/extra negatives, 78 defaults, 63 alias
+branches, 131 enum members, observer fields and much local consistency are now represented.
+The exact remaining defects and independent zero-red mutations are in schema review revision 04.
+The source is not approved, integrated or released; all reviewed commits and rollback refs remain.
+
+The previous readiness assessment was too broad. CQ11 is not just listing nine allowed filenames:
+it is a source recognizer with name/alias resolution, branch-sensitive receiver checks, helper
+call-graph constraints and an independent negative syntax corpus. That verification responsibility
+can be proved separately from DTO input algebra. Repeatedly packing both into one correction
+has not closed either. This is a decomposition finding, not proof that every ticket needs a
+stronger model, more test processes, larger timeouts or additional native infrastructure.
+
+## 10. Proposed responsibility split — owner decision required
+
+Recommend `SPLIT_REQUIRED` under ticket-decomposition.md, preserving the approved SPEC/wire,
+D1/D2/D3, source-only two-phase exception and all original CQ obligations:
+
+| Proposed observable closure | Sole responsibility and completion evidence |
+| --- | --- |
+| Contract-admission closure | Ordinary DTO construction accepts every approved shape and rejects local identity, applicability, refusal, roster-plan and duplicate inconsistencies. Exact literal wire/default/enum corpus and every stated scalar bound; one fixture owner, assertion runner separate from data. Named mutations prove each validation family. No source-analysis policy implementation or evaluator behavior. |
+| Source-admission closure | The package-scoped CQ11 checker accepts the exact allowed syntax/typed symbol graph and rejects every frozen forbidden grammar family, including indirect recursion, receiver rebinding/branch escape, aliases and computed facade exports. Separate syntax resolution, closed policy and literal adversarial corpus responsibilities; no arbitrary Python purity claim, runtime sandbox or DTO semantics change. Check the actual completed contract package as well as the independent corpus. |
+
+These are independently observable verification closures, not a frontend/backend/tests-later
+split. The contracts remain the already-approved upstream input. Use one retained implementation
+owner in sequence, never concurrent type owners. Finish/freeze contract predicates first; then
+qualify the source gate against that exact candidate. The second boundary may allow only
+semantics-preserving contract-source conformance adjustments if the new exact ticket declares
+them; it may not silently relax the grammar. The combined CVQ schema admission still requires
+both closures green together before any evaluator/behavior phase. Neither intermediate ticket
+completion is authority to merge a partially qualified package or to claim full dispatch works.
+
+The next control action, if this split is adopted, is to freeze two exact finite tickets and
+their dependency/order/writable-symbol/mutation matrices. Existing failures become mandatory
+counterexamples, not advisory history. No reset of closure-03's exhausted allowance and no
+unchanged third-correction label. Specific new helper paths, public/internal checker seam and
+strict-command additions must be explicit in those approval objects before any source write;
+this recommendation itself grants none. Reusing coherent existing code is allowed only through
+the eventual ticket's source boundary, not by copying a second policy or expected oracle.
+
+Retain implementation-standard and ticket-review unless that concrete split reveals an
+indivisible hard ticket. Only a named HardTicketAssessment can propose a single-ticket
+implementation-elevated / elevated-review pair. No such elevation is granted or inferred here.
+Parent retains the whole review context and verdict; adversarial helpers remain evidence-only.
+
+Decision requested: adopt this two-closure decomposition so the parent can prepare exact new
+ticket boundaries; do not lower the approved grammar/data invariants. Owner may instead choose
+to defer this capability. Previously approved D-CQ11/D-CLAIM are not being asked again.
+Current source action remains NONE. Route ACTION_COMPLETED / CONVERGENCE_REPLAN_PROPOSED ->
+WAIT_FOR_HUMAN / OWNER_REPLAN_DECISION_PENDING. No push, release, install or native effect.
