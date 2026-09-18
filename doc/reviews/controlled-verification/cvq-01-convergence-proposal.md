@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-CONVERGENCE` / `CODE_REVIEW` / `10` |
-| Lifecycle / conclusion | `EXACT_TICKET_PACKET_APPROVED / A1_IMPLEMENTATION_ADMITTED / A2_A3_B_DEPENDENCY_PENDING`; earlier approvals and failed closures preserved |
+| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-CONVERGENCE` / `CODE_REVIEW` / `11` |
+| Lifecycle / conclusion | `EXACT_TICKET_PACKET_APPROVED / A1_CORRECTION_ADMITTED / A2_A3_B_DEPENDENCY_PENDING`; earlier approvals and failed closures preserved |
 | Control baseline | `dc45f31f6c56983613665f276bf15207419274e3` |
 | Examined source | Closure-03 correction `5d7789db6b950d317e7b500b757aa77a54d609ed`; all prior candidates preserved |
 | Ticket | [CVQ-01](../../../modules/tickets/controlled-verification/cvq-01-qualification-admission.md), document 10, current digest in its registry; closure 03 exhausted, unchanged. Historical document 09 at dc45f31f LF `babcceb227bf8f91356dfbbb90f5e14ad1adab19f43a99686bdae46e8acff16d` |
@@ -12,7 +12,7 @@
 | Responsibility | Parent owns the replan recommendation and review verdict. Reused Terra/xhigh supplied read-only adversarial evidence; parent ran the candidate checks/probes/mutations. No source implementation, model elevation or owner decision is granted by this proposal |
 
 Sections 1–10 preserve earlier convergence/design/adoption history. D-CQ11/D-CLAIM, exact
-closure-03 approval and the responsibility split have been answered. Section 15 is the current
+closure-03 approval and the responsibility split have been answered. Section 16 is the current
 disposition; historical pending routes do not reopen those answered decisions.
 
 ## 1. Diagnosis and retained boundary
@@ -828,3 +828,22 @@ pending. Actual predecessor SHA binding after review needs no repeated owner app
 ACTION_COMPLETED / EXACT_APPROVAL_RECORDED -> AUTO_CONTINUE / IMPLEMENT(CVQ-01A1).
 Then wait_agent, parent review and required evidence-only helper. Old exhausted closures remain
 closed. This admits no source-layer B first, evaluator, main integration, push, release or install.
+
+## 16. A1 initial review and additive correction — 2026-09-19
+
+The exact approved split packet remains unchanged. Native duplicate-name spawn was rejected;
+followup_task reused cve_wire_implementer, and wait_agent delivered candidate
+`b1aa3fafaf03a7c47a869210b3934399124df933` without owner relay. No new host seat was allocated.
+The screenshot's separate parent HTTP400/access_programs.cyber error is not ticket test evidence
+or permission to change account/plugin settings.
+
+[A1 review](cvq-01a1-scalar-wire-admission-code-review.md) revision01 records the complete
+initial batch F01-F05: incomplete closed catalog/error/configuration assertions, dropped scalar
+vectors and incomplete mutation evidence. Parent observed strict checking/26 tests green and two
+independent ZERO_RED regressions; required helper findings were independently examined. No
+source candidate is approved by those green counts. A1 document03 admits its one additive
+correction on the same owner branch/profile, from b1aa3faf. A2/A3/B remain approved but pending.
+
+ACTION_COMPLETED / CHANGES_REQUESTED -> AUTO_CONTINUE / A1_CORRECTION -> wait_agent -> root
+correction review. No new authority is needed for this unchanged-closure correction; exhaustion
+returns convergence. No integration, push, release, install or evaluator behavior is granted.

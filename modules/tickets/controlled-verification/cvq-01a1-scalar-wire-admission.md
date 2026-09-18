@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / document / closure | `TICKET-CONTROLLED-VERIFICATION-CVQ-01A1` / `IMPLEMENTATION_TICKET` / `02` / `CLOSURE-CVQ-01A1` revision `01` |
-| State / outcome | `OWNER_APPROVED / IMPLEMENTATION_ADMITTED`; one observable closure: ordinary public wire algebra and all scalar bounds discriminate valid from invalid values (original CA01–03, CA10) |
+| ID / kind / document / closure | `TICKET-CONTROLLED-VERIFICATION-CVQ-01A1` / `IMPLEMENTATION_TICKET` / `03` / `CLOSURE-CVQ-01A1` revision `01` |
+| State / outcome | `OWNER_APPROVED / CHANGES_REQUESTED / CORRECTION_ADMITTED`; one observable closure: ordinary public wire algebra and all scalar bounds discriminate valid from invalid values (original CA01–03, CA10) |
 | Baseline / view | `070039b6227205f7bb4592f203a4fd7455311f31`; new `ctx-cvq-01a1-closure01` only after exact approval. Do not reset/rebase or reopen A closure01 |
 | Preparation authority | Owner adopted convergence revision 08 at `058b8256bb1b2601fabc30c21a42ecc48c831875`, LF `24021ef0467d56c1bc3924e98b15d2f993e0dc720228dec44177da2132c50392`; preparation only, exact ticket approval pending |
 | SPEC / wire | [Qualification SPEC](../../spec/controlled-verification-qualification.md) revision 07 LF `545f5058d8347ab069d6a23fdb07daaf06ab836998efb67b2c30b80fee3b1716`, sections 2/6/7/11; [wire](../../spec/controlled-verification-qualification-wire.md) revision 03 LF `6eb9d0a088e105e7c2dd4c3c3b4001f970ac34195c7a0cd78459a2f6016e9222`, sections 1–6 |
@@ -187,3 +187,25 @@ wait_agent -> parent review + required bounded helper. No runner/receipt/descrip
 
 All old exhausted views remain CLOSED. No integration, push, release, installation or evaluator
 behavior grant is added. The packet also approves B document03's dependency amendment.
+
+## Initial review and sole correction binding — 2026-09-19
+
+Current disposition supersedes the admission-only metadata above. Candidate
+`b1aa3fafaf03a7c47a869210b3934399124df933` returned from the retained native owner through
+wait_agent; the attempted new seat was rejected as already existing, so no new seat was created.
+The source worktree/branch/profile and `ctx-cvq-01a1-closure01` remain bound to that owner.
+
+[A1 review](../../../doc/reviews/controlled-verification/cvq-01a1-scalar-wire-admission-code-review.md)
+revision01 records CHANGES_REQUESTED, F01-F05 under unchanged SW01-08. Root reproduced clean
+ancestry, 26 green methods and strict checking, but independent revalidation/separator mutations
+were ZERO_RED. Required helper supplied static evidence, not a verdict. These are evidence
+defects under existing authority, not a new closure or architecture decision.
+
+Document03 binds the sole additive correction from b1aa3faf and the exact review revision01 in
+this control commit. Preserve the original baseline/candidate, source ownership, path/symbol
+boundaries, resource ceiling and all upstream digests. Do not merge these control files into the
+source branch. Complete the entire frozen evidence matrix together; missing evidence is not pass.
+
+ACTION_COMPLETED / CHANGES_REQUESTED -> AUTO_CONTINUE / IMPLEMENT(A1 correction01) -> wait_agent
+-> parent final correction review. If blocking defects remain, return CONVERGENCE_REVIEW_REQUIRED
+without a third correction. A2/A3/B remain dependent; no integration/push/release is granted.
