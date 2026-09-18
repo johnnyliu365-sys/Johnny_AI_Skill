@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| Artifact ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01` / `IMPLEMENTATION_TICKET` / `07` |
-| State / Acceptance Closure Set | `OWNER_EXACT_APPROVED / TWO_PHASE_EXCEPTION_APPROVED / SCHEMA_DISPATCH_ADMITTED`; `CLOSURE-CVQ-01` revision `03`; behavior phase remains `NOT_ADMITTED` |
+| Artifact ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01` / `IMPLEMENTATION_TICKET` / `08` |
+| State / Acceptance Closure Set | `OWNER_EXACT_APPROVED / TWO_PHASE_EXCEPTION_APPROVED / SCHEMA_CORRECTION_REQUIRED`; `CLOSURE-CVQ-01` revision `03`; behavior phase remains `NOT_ADMITTED` |
 | Change class / observable result | New behavior, not defect correction: one pure evaluator rejects untrusted qualification input and returns the exact tagged evaluation/report without executing work |
 | Preparation authority | Owner's 2026-09-09 exact packet approval at `161c4e095697fff6e4693b8d9bfce866878277dd`, recorded at `cad0d2bca480f45c57d0598f4342636d35b1ecf2`; CVQ-01 preparation only |
 | Prior approved SPEC | `SPEC-CONTROLLED-VERIFICATION-QUALIFICATION-20260909-01` revision `04`, LF SHA-256 `4cad6a88b9d151a05bf409f8b61bc97580e80303f58a2377cb0301815b999a1d`; preserved in Git, not a grant for a third closure-02 correction |
@@ -11,7 +11,7 @@
 | SPEC cells | CVQ-AC01; pure comparisons/refusals of CVQ-AC02/03; report integrity/reduction of CVQ-AC09; typed roster coverage and WA-04 unavailable handling only, not native CVQ-AC04–08/10 proofs |
 | PRD / CHG | `PRD-20260908-051` / `CHG-20260908-051`; current REQ-051 revision 11 LF SHA-256 `f52552cdafc857d605f1eda03bcdf3df4c3d0c49ad9adfb9f39335f4b341e272`; reattachment does not add its pending CVE deltas to this qualification ticket |
 | Sealed Context | `CTX-CONTROLLED-VERIFICATION-20260909-01` revision `02`, LF SHA-256 `6f5465295cb3fd303bc555da655b3169d33292ad1f2ed4374748f82ddd6f2285`; read/reference only |
-| Source baseline | Preserve correction `9796790d33b6d1374469fad1b37e1f4991262a43` and initial `cd228a790b2f37bc2cad109978f8822ad5bb2da6`; future additive schema source descends from correction, independently binding the approved final control packet commit; no current dispatch or integration |
+| Source baseline | Current closure-03 candidate `cf89ec33c64be55f1cfb95f95cfbb0c0df6d57d0`; correction must be additive from it. Preserve closure-02 `9796790d33b6d1374469fad1b37e1f4991262a43` and `cd228a790b2f37bc2cad109978f8822ad5bb2da6`; no integration |
 | Control owner / reviewer | Current-session `SUPERVISOR_REVIEWER`, semantic profile `ticket-review`; human owner retains ticket approval and effects |
 | Implementation allocation | Reused `cve_wire_implementer`, semantic profile `implementation-standard` (Luna/xhigh), reviewer `root`; new bounded view `cvq-01-schema-closure03-v01`; prior schema/research view closed without deleting history or claiming memory erasure |
 | Worktree / branch binding | Preserve repository-contained `.worktrees/cvq-01` / `codex/cvq-01`; fresh containment, branch, exact source/control identities and clean readback before any approved resumption; no rebase/reset/ref movement in this control action |
@@ -673,3 +673,27 @@ Route: approval writeback `ACTION_COMPLETED`, then reviewer-confirmed direct sam
 the native continuation call is still the observable dispatch event. No ceremonial second
 dispatch approval is requested. Full-ticket READY_LOW_MODEL and behavior remain contingent on
 the actual schema preflight, not on this signature.
+
+## Closure-03 initial preflight and one correction — 2026-09-18
+
+Document 08 records lifecycle/evidence only; the approved closure-03 contract is unchanged.
+Schema candidate `cf89ec33c64be55f1cfb95f95cfbb0c0df6d57d0` failed actual parent preflight:
+[review revision 03](../../../doc/reviews/controlled-verification/cvq-01-schema-preflight.md),
+batch C3-01–05. Strict typing (13 files) and eight test methods passed, but required constructor
+matrix/source grammar and local consistency invariants were missing. Parent mutations and twelve
+accepted-invalid JSON probes confirm the defects; helper evidence does not own the conclusion.
+
+One additive correction under this closure remains authorized. Retain the same Luna/xhigh owner,
+branch, worktree and thirteen-path schema boundary, no phase-2 modules or new support files.
+Active view `cvq-01-schema-closure03-correction01` replaces v01 as work input: this status,
+current approved wire/grammar, finite closure and the committed C3 batch only; do not reload
+historical correction/convergence prose. No authority, baseline or candidate is inferred from chat.
+Re-run the declared strict command, two unittest modules and bounded named reverse mutations;
+60 seconds/command, 1,200 seconds/pass, one process, no retry/stress. Return candidate, changed
+paths, named results, C3 dispositions, deviations and SCHEMA_PHASE_ONLY. No invented PASS or
+source-derived expected oracle. Unsupported grammar/contract needs CHANGE_DETECTED, not relaxation.
+
+Route ACTION_COMPLETED / PREFLIGHT_RECORDED -> AUTO_CONTINUE / SCHEMA_CORRECTION through
+the same-lifetime native call. Parent waits for completion and owns correction review; no owner
+approval is missing. Initial-plus-one limit applies to closure 03; a failed correction returns
+CONVERGENCE_REVIEW_REQUIRED. Behavior, integration, push and release remain NOT_ADMITTED.

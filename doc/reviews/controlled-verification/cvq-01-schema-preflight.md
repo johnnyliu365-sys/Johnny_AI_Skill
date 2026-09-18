@@ -2,15 +2,18 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-SCHEMA` / `CODE_REVIEW` / `02` |
-| Phase / conclusion | `SCHEMA_CONSTRUCTION / CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED / BEHAVIOR_NOT_ADMITTED` |
-| Ticket / closure | [CVQ-01](../../../modules/tickets/controlled-verification/cvq-01-qualification-admission.md), document 03, LF `008439aa4c50dae8a21fc12143af4890a958e9be234318bb7c4269edaba7866b`, `CLOSURE-CVQ-01` revision 02 |
-| Approved source | [Qualification SPEC](../../../modules/spec/controlled-verification-qualification.md), revision 04, LF `4cad6a88b9d151a05bf409f8b61bc97580e80303f58a2377cb0301815b999a1d` |
-| Baseline / candidate | `892c34b7f2ee0e1bad6c4b503f813188c6a26494` / `cd228a790b2f37bc2cad109978f8822ad5bb2da6` |
+| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-SCHEMA` / `CODE_REVIEW` / `03` |
+| Phase / conclusion | `SCHEMA_CONSTRUCTION / CHANGES_REQUESTED / SCHEMA_CORRECTION_REQUIRED / BEHAVIOR_NOT_ADMITTED` |
+| Ticket / closure | [CVQ-01](../../../modules/tickets/controlled-verification/cvq-01-qualification-admission.md), reviewed document 07 at `b10c08f1ae15080e4878bda09b0ab43ee5a134a6`, LF `4852a627b46f00929919e4a249a7449a3647a1efc5ed122138199a496df8a2cb`, `CLOSURE-CVQ-01` revision 03 |
+| Approved source | [Qualification SPEC](../../../modules/spec/controlled-verification-qualification.md) revision 07 LF `545f5058d8347ab069d6a23fdb07daaf06ab836998efb67b2c30b80fee3b1716`; [wire appendix](../../../modules/spec/controlled-verification-qualification-wire.md) revision 03 LF `6eb9d0a088e105e7c2dd4c3c3b4001f970ac34195c7a0cd78459a2f6016e9222` |
+| Baseline / candidate | `9796790d33b6d1374469fad1b37e1f4991262a43` / `cf89ec33c64be55f1cfb95f95cfbb0c0df6d57d0` |
 | Reviewer / implementation owner | `root` / reused `cve_wire_implementer`, implementation-standard, Luna/xhigh |
 | Worktree / branch | Repository-contained `.worktrees/cvq-01` / `codex/cvq-01`; same owner and branch retained |
-| Authority | Owner's exact two-phase exception, recorded in ticket document 03; this is its first schema preflight, not final ticket approval |
-| Helper plan | REQUIRED, candidate above, closure 02, ticket-review; SPEC_GAP, BOUNDARY_DATA, CONSISTENCY, REGRESSION; READ_ONLY_INTENT_ONLY, NO_EXTERNAL_EFFECT |
+| Authority | Exact closure-03 packet approval at `965e16b0`, recorded in `b10c08f1`; initial closure-03 schema preflight only, not final ticket approval |
+| Helper plan | REQUIRED, candidate above, closure 03, ticket-review Terra/xhigh; SPEC_GAP, BOUNDARY_DATA, STATE_TRANSITION, AUTHORIZATION, CONSISTENCY, OBSERVABILITY; READ_ONLY_INTENT_ONLY, NO_EXTERNAL_EFFECT |
+
+The following closure-02 sections preserve their historical candidates, checks, findings and
+exhausted correction count. The closure-03 initial review and current continuation are at the end.
 
 ## Readback and actual checks
 
@@ -204,3 +207,120 @@ a new label or claim that schema green is qualification of an installed host.
 
 Typed return: ACTION_COMPLETED (schema correction review recorded), VALIDATION_FAILED;
 HALT / TICKET_SCHEMA_INVALID / CONVERGENCE_REVIEW_REQUIRED for further implementation.
+
+## Closure-03 initial schema preflight — 2026-09-18
+
+The owner explicitly approved a replacement contract, not another closure-02 correction.
+Reused Luna/xhigh returned schema-only candidate `cf89ec33c64be55f1cfb95f95cfbb0c0df6d57d0`.
+Parent verified its ancestry from `9796790`, clean registered owner worktree and 12 changed paths
+within the nine-production/four-test phase-1 allowlist (bindings unchanged). The declared strict
+command including `tests/verification_qualification_catalog.py` passed: 13 source files. The
+declared two-module unittest command returned 8 green methods. Method count is not cell coverage.
+The return also lists compileall; this additional check supplies no missing closure evidence.
+No admission module, native execution, target/provider effect, integration or publication occurred.
+
+Root used a separate detached reviewer snapshot `.worktrees/cvq-01-schema-review-closure03` at
+the exact candidate. Commands used the declared Python 3.11.9 with `-B`, one test process,
+`subprocess.run(..., timeout=60)`, inherited unreduced stdout/stderr, no retries or stress.
+Parent executed tests, probes and mutations; the reused Terra/xhigh helper performed only a
+bounded static pass and returned five findings. Parent owns the following consolidated verdict.
+
+### One batched correction set (no new contract)
+
+| ID / type / frozen closure | Finding and correction boundary |
+| --- | --- |
+| C3-01 / EVIDENCE_DEFECT / CQ01–02, wire sections 5–6 | The literal catalog is compared with AST names/fields/default text, but does not drive the required ordinary constructor/JSON coverage. Eighteen concrete DTOs have no direct positive construction in the declared tests/fixtures. There is no 335-field omission/null matrix plus 81 extras, no full 78-default matrix, no 63-branch selector matrix or 131-member independent enum round trip. Mere source substring membership for aliases is not branch coverage. Implement the frozen literal fixture rows and named table-driven assertions, with valid structural JSON changes and exact error location/type (never json_invalid). Keep catalog data, reusable composition, assertions and AST policy in their existing separate owners. |
+| C3-02 / EVIDENCE_DEFECT / CQ02 scalar and combination matrix | Positive/zero/nonnegative/Lane/upper-bound, digest/text/ID lengths, duplicate and invalid-combination coverage is still largely absent. Parent changed PositiveInteger gt=0 to ge=0 and all 8 methods stayed green. Restore the complete frozen in-process matrix; no extra processes, stress repetitions or new verification framework. TypeAdapter scalar tests must actually enforce the declared strict domain. |
+| C3-03 / IMPLEMENTATION_DEFECT + EVIDENCE_DEFECT / CQ02 constructor-local predicates; CQ05/09 data applicability | Manifest/case validators check a few duplicates and binding.case_id but omit wholly local scope/case/binding identity joins, capability membership, requirement case existence and capability/key/derived-scope agreement. PURE_RULE accepts HOST_DISCOVERY subject; a HOST_DISCOVERY requirement accepts two case IDs. Enforce the approved five kind/scope/binding/subject rows, native platform, matching host surface/revision and local identity predicates. No resolver, authenticity, reduction or phase-2 admission implementation is authorized by this finding. |
+| C3-04 / IMPLEMENTATION_DEFECT + EVIDENCE_DEFECT / CQ02 duplicate and forbidden-proof matrix; wire section 5 | QualificationReport accepts repeated result case IDs and repeated claim IDs. Plan/observed roster validators do not reject repeated entry/alias identities across categories (planned category also lacks within-category entry uniqueness); other named case-reference tuples need the frozen uniqueness checks. CapabilityObservation accepts PROVEN with UNAVAILABLE_PROBE proof. Enforce constructor-local uniqueness, sorted aliases and proof/result/scope/roster shape compatibility. Independent resolved payload comparisons and outcome reduction remain phase 2. |
+| C3-05 / EVIDENCE_DEFECT / CQ11, SPEC 11.3 | The gate remains a small denylist with only two negative snippets. It accepts an unused renamed os import, module-null relative reverse imports and unlisted imports; it does not implement the approved closed imports/calls/classes/facade/receiver grammar or the 20 separately named negative entries and six positives. Implement the exact closed grammar, alias/import normalization, helper/DAG checks and all enumerated subcases without importing bad source. Unsupported syntax must reject, not fall through. Do not weaken the frozen grammar to accept the current implementation. |
+
+The missing direct positives identified statically are HostCapabilityKey, PrerequisiteEvidenceBinding,
+FoundPrerequisite, MissingPrerequisite, ConflictingPrerequisite, HostDiscoverySubject,
+HostPropertySubject, PresentHostCategoryCoverage, HostEffectObservation,
+PresentHostEnforcementCoverage, DiscoveryEvidenceLink, EnforcementEvidenceLink,
+ExecutedNativeConfirmedCaseResult, ExecutedNativeRecoveryCaseResult, ApprovedManifestFound,
+ApprovedManifestMissing, ApprovedManifestConflicting and RosterAbsenceSubject. This list is
+evidence, not a smaller replacement for the approved 81-row catalog.
+
+### Parent evidence and candidate-symbol mapping
+
+Baseline and restored command:
+
+```text
+python -B -m mypy --strict --follow-imports=silent library/controlled_verification tests/test_verification_qualification_contracts.py tests/test_verification_qualification_boundaries.py tests/verification_qualification_fixtures.py tests/verification_qualification_catalog.py
+Success: no issues found in 13 source files
+python -B -m unittest -v tests.test_verification_qualification_contracts tests.test_verification_qualification_boundaries
+test_all_result_proof_and_evidence_branches_roundtrip ... ok
+test_immutable_contract_configuration ... ok
+test_literal_wire_catalog_matches_source_ast ... ok
+test_public_constructor_roundtrips ... ok
+test_roster_and_three_port_evidence_roundtrips ... ok
+test_architecture_dependency_gate ... ok
+test_strict_boundary_rejection ... ok
+test_union_and_constructor_boundaries ... ok
+Ran 8 tests in 0.052s
+OK
+```
+
+The task's tool transcript retains complete qualified test names and unfiltered output; the
+display above shortens names only, not failure output. There was no filtered-output runner.
+
+| Isolated parent mutation / actual symbol | Command / unreduced outcome |
+| --- | --- |
+| C3-M1: qualification_values.PositiveInteger Field(gt=0) -> Field(ge=0) | Full declared two-module command: the same eight named methods all ok; Ran 8 tests in 0.057s; OK. Zero red is C3-02, not pass. |
+| C3-M2: insert unused typed _review_unused_renamed_helper into qualification_values, with local `from os import fspath as renamed_path`; never invoke it | `python -B -m unittest -v tests.test_verification_qualification_boundaries.QualificationBoundaryTests.test_architecture_dependency_gate`: test_architecture_dependency_gate ... ok; Ran 1 test in 0.021s; OK. The checker misses the forbidden dependency. No os import/effect was executed. |
+| C3-M3: separately disable actual check_source's ast.Call/ast.Name predicate using `False and ...` | Same named architecture command: FAIL; traceback at test_verification_qualification_boundaries.py line 169, `with self.assertRaises(AssertionError):`; `AssertionError: AssertionError not raised`; Ran 1 test in 0.020s; FAILED (failures=1), exit 1. This proves its existing reflective-call control, not the missing import rule. |
+
+Each mutation was reverted before the next. Exact checkout-byte restoration, including CRLF,
+was verified against `git cat-file --filters HEAD:<path>` after content restoration by patch;
+only EOL formatting required mechanical normalization. Final raw SHA-256:
+
+- qualification_values.py: `f2586c8934fefde012b40c9e4e1fc33ec407ce9d791d0df2ebb720d0451f6e97`;
+- test_verification_qualification_boundaries.py: `c4090493d14a6170c54f5a304bf423bdd7d059012de389b6fb3abe5f8cd0531b`.
+
+Both raw comparisons passed, git diff/status were clean, and the full two-module suite returned
+8 green in 0.053s. No source owner file or candidate ref was changed.
+
+Parent also ran one bounded ordinary-JSON probe with the candidate's valid manifest/case/report
+fixtures, changed one indicated field/set at a time using dictionaries plus json.dumps, and
+called the actual DTO model_validate_json. No bypass constructor or malformed JSON was used.
+Output below is complete (exit 1 intentionally records the accepted-invalid counterexamples):
+
+```text
+case-capability-not-in-scope ACCEPTED_INVALID
+unknown-requirement-case ACCEPTED_INVALID
+requirement-scope-mismatch ACCEPTED_INVALID
+binding-project-mismatch ACCEPTED_INVALID
+binding-fixture-mismatch ACCEPTED_INVALID
+pure-case-with-host-discovery-subject ACCEPTED_INVALID
+duplicate-report-case ACCEPTED_INVALID
+duplicate-report-claim ACCEPTED_INVALID
+duplicate-cross-category-plan-entry-alias ACCEPTED_INVALID
+duplicate-cross-category-observed-entry-alias ACCEPTED_INVALID
+proven-with-unavailable-proof ACCEPTED_INVALID
+two-case-host-discovery-requirement ACCEPTED_INVALID
+invalid_accepted 12 of 12
+```
+
+Reproduction values are scope unchanged but case capability_id=capability-other; requirement
+case_ids=[case-missing] or claim_scope=NATIVE_PROBE on a pure case; binding project_id=project-other
+or fixture_digest=64 nines; pure case with HOST_DISCOVERY subject and the existing valid roster
+key; duplicated results/claims tuples; two distinct PRESENT categories sharing entry-shared and
+alias-shared with all seven categories present; PURE_RULE/PROVEN observation with
+UNAVAILABLE_PROBE/ADAPTER_ABSENT proof; HOST_DISCOVERY requirement with case-first/case-second.
+The exact executable probe is retained in this task's tool transcript. These are schema probes,
+not live capability, approved evidence or tests of the unfinished evaluator.
+
+### Current continuation
+
+CHANGES_REQUESTED. This is closure-03's initial review; its single additive correction remains
+available. Same implementation owner/worktree/branch, same thirteen-path phase-1 boundary and
+resource limits. Rebind this committed batch and approved wire/grammar; fix C3-01 through C3-05
+together, add the named tests and bounded red/green evidence, return exact candidate and finding
+dispositions. No phase-2 work, new files, model upgrade, VM, provider, integration, push or release.
+Parent waits with wait_agent and reviews the return. A second failed review requires convergence,
+not a third correction. Earlier closure-02 exhaustion remains historical and unaltered.
+
+ACTION_COMPLETED / SCHEMA_PREFLIGHT_RECORDED -> AUTO_CONTINUE / SCHEMA_CORRECTION;
+behavior remains NOT_ADMITTED. Owner's existing exact approval does not need to be requested again.
