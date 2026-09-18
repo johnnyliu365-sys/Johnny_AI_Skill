@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| Specification ID / revision | `SPEC-CONTROLLED-VERIFICATION-QUALIFICATION-20260909-01` / `06` |
-| Status | `AMENDMENT_PROPOSED / OWNER_EXACT_APPROVAL_PENDING / NON_DISPATCHABLE`; approved revision 04 remains historical authority |
+| Specification ID / revision | `SPEC-CONTROLLED-VERIFICATION-QUALIFICATION-20260909-01` / `07` |
+| Status | `OWNER_APPROVED / CVQ01_SCHEMA_RESUMPTION_AUTHORIZED / NATIVE_EFFECTS_NOT_AUTHORIZED`; revision 07 records approval of revision 06 without changing behavior |
 | Author / worktree / baseline | Current-session drafting assistant; `codex/controlled-verification-intake`; `d3c78b5b154b04a7fdaad544a3d00f1e91271dcb` |
 | PRD / CHG | `PRD-20260908-051` / `CHG-20260908-051` |
 | Context sources | [Wayfinder](../../doc/context/controlled-verification/wayfinder-r01.md), [architecture proposal](../../doc/context/controlled-verification/architecture-r01.md), [owner Grill packet](../../doc/context/controlled-verification/grill-r01.md), [managed index](../../doc/context/controlled-verification/README.md) |
@@ -556,3 +556,17 @@ by their final LF digests and common control commit. The old schema candidate st
 additive source migration may begin only after that approval and fresh allocation/type preflight.
 No constructor compatibility is promised for the never-integrated experimental candidate. External
 authority, three-port composition, same-lifetime event waits and all native effects remain unchanged.
+
+## 12. Exact owner approval — 2026-09-18
+
+The owner replied **「核准」** to the final packet at
+`965e16b00d6049be6552465ac1ce1cbac968a8cb`: this SPEC revision 06 LF
+`80daa0bd591c3f1419c9b683bfdff53ea721ebfa1239ac1e68306552a9e95054`, wire appendix revision 02 LF
+`580104e585ba46a81aff17f3ff18100164618973b67d5c3db0040e29f88958a8`, and CVQ-01 document 06 /
+closure 03 LF `574b60b9a13ae4253d27ac17c932df67a110c436f265873fa8b031e3ed682c8e`.
+Section 11 and the wire contract are now approved; their proposal/approval-pending prose above
+is retained as the historical approval object, not a new unresolved decision. Revision 07 is
+lifecycle/signature only. The new bounded schema phase and its two-phase ordering are authorized;
+actual parent schema preflight remains necessary before behavior. No integration, push, release,
+VM, provider, host enrollment or installation effect is granted. D1/D2/D3 and sealed Context stay
+unchanged. Ticket document 07 records the exact owner/worktree/baseline and next route.

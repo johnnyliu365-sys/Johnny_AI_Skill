@@ -2,9 +2,9 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `SPEC-APPENDIX-CVQ-WIRE-20260918-01` / `SPEC_CONTRACT_APPENDIX` / `02` |
-| State | `DRAFT / OWNER_EXACT_APPROVAL_PENDING / NON_DISPATCHABLE` |
-| Sole owning SPEC | [Qualification SPEC](controlled-verification-qualification.md), revision 06, section 11; this appendix is not an independent specification |
+| ID / kind / revision | `SPEC-APPENDIX-CVQ-WIRE-20260918-01` / `SPEC_CONTRACT_APPENDIX` / `03` |
+| State | `OWNER_APPROVED / CVQ01_SCHEMA_RESUMPTION_AUTHORIZED`; revision 03 records approval only |
+| Sole owning SPEC | [Qualification SPEC](controlled-verification-qualification.md), revision 07, sections 11–12; this appendix is not an independent specification |
 | Scope | Exact public schema and finite constructor/alias/field catalog for proposed CVQ-01 closure 03; no source implementation or runtime claim |
 
 ## 1. Notation and field rules
@@ -331,3 +331,11 @@ negatives = `2 * required-field occurrences + concrete DTO count`; each explicit
 gets omission→exact default, null→reject, wrong constant→reject cells. Aliases additionally test
 each selector's omission, unknown value and null once per branch. These counts do not replace
 CQ02's scalar bounds/duplicates/cross-record matrix or behavior-phase CQ03–CQ12.
+
+## 7. Approval signature
+
+Owner **「核准」** approves revision 02 at `965e16b00d6049be6552465ac1ce1cbac968a8cb`, LF
+`580104e585ba46a81aff17f3ff18100164618973b67d5c3db0040e29f88958a8`, together with SPEC 06 and
+ticket document 06 / closure 03. Revision 03 changes lifecycle/signature only: all catalog fields,
+names, counts, fixtures and predicates remain byte-for-byte unchanged. Earlier proposal wording
+is historical, not a repeated approval gate. Native/runtime proof is still not claimed or granted.

@@ -2,18 +2,18 @@
 
 | Field | Value |
 | --- | --- |
-| Artifact ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01` / `IMPLEMENTATION_TICKET` / `06` |
-| State / Acceptance Closure Set | `OWNER_DESIGN_ADOPTED / OWNER_EXACT_APPROVAL_PENDING / CONVERGENCE_REVIEW_REQUIRED / NON_DISPATCHABLE`; proposed `CLOSURE-CVQ-01` revision `03`; behavior phase remains `NOT_ADMITTED` |
+| Artifact ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01` / `IMPLEMENTATION_TICKET` / `07` |
+| State / Acceptance Closure Set | `OWNER_EXACT_APPROVED / TWO_PHASE_EXCEPTION_APPROVED / SCHEMA_DISPATCH_ADMITTED`; `CLOSURE-CVQ-01` revision `03`; behavior phase remains `NOT_ADMITTED` |
 | Change class / observable result | New behavior, not defect correction: one pure evaluator rejects untrusted qualification input and returns the exact tagged evaluation/report without executing work |
 | Preparation authority | Owner's 2026-09-09 exact packet approval at `161c4e095697fff6e4693b8d9bfce866878277dd`, recorded at `cad0d2bca480f45c57d0598f4342636d35b1ecf2`; CVQ-01 preparation only |
 | Prior approved SPEC | `SPEC-CONTROLLED-VERIFICATION-QUALIFICATION-20260909-01` revision `04`, LF SHA-256 `4cad6a88b9d151a05bf409f8b61bc97580e80303f58a2377cb0301815b999a1d`; preserved in Git, not a grant for a third closure-02 correction |
-| Proposed replacement contract | Qualification SPEC revision `06` section 11 and `SPEC-APPENDIX-CVQ-WIRE-20260918-01` revision `02`; exact final LF digests in the same-commit [SPEC registry](../../spec/README.md); owner exact approval pending |
+| Approved replacement contract | Qualification SPEC revision `07` (approved behavior r06), LF `545f5058d8347ab069d6a23fdb07daaf06ab836998efb67b2c30b80fee3b1716`; wire appendix revision `03` (approved behavior r02), LF `6eb9d0a088e105e7c2dd4c3c3b4001f970ac34195c7a0cd78459a2f6016e9222`; [SPEC registry](../../spec/README.md) |
 | SPEC cells | CVQ-AC01; pure comparisons/refusals of CVQ-AC02/03; report integrity/reduction of CVQ-AC09; typed roster coverage and WA-04 unavailable handling only, not native CVQ-AC04–08/10 proofs |
-| PRD / CHG | `PRD-20260908-051` / `CHG-20260908-051`; current REQ-051 revision 10 LF SHA-256 `17b1bfcca6fe79a7fdb4d975f75ace4bdcd28d634e3bf9d25ed1106d010b1ecb`; reattachment does not add its pending CVE deltas to this qualification ticket |
+| PRD / CHG | `PRD-20260908-051` / `CHG-20260908-051`; current REQ-051 revision 11 LF SHA-256 `f52552cdafc857d605f1eda03bcdf3df4c3d0c49ad9adfb9f39335f4b341e272`; reattachment does not add its pending CVE deltas to this qualification ticket |
 | Sealed Context | `CTX-CONTROLLED-VERIFICATION-20260909-01` revision `02`, LF SHA-256 `6f5465295cb3fd303bc555da655b3169d33292ad1f2ed4374748f82ddd6f2285`; read/reference only |
 | Source baseline | Preserve correction `9796790d33b6d1374469fad1b37e1f4991262a43` and initial `cd228a790b2f37bc2cad109978f8822ad5bb2da6`; future additive schema source descends from correction, independently binding the approved final control packet commit; no current dispatch or integration |
 | Control owner / reviewer | Current-session `SUPERVISOR_REVIEWER`, semantic profile `ticket-review`; human owner retains ticket approval and effects |
-| Implementation allocation | Reused `cve_wire_implementer`, semantic profile `implementation-standard` (Luna/xhigh), reviewer `root`; new bounded view `cvq-01-schema-v01`; previous CVE-01A allocation released without changing its candidate |
+| Implementation allocation | Reused `cve_wire_implementer`, semantic profile `implementation-standard` (Luna/xhigh), reviewer `root`; new bounded view `cvq-01-schema-closure03-v01`; prior schema/research view closed without deleting history or claiming memory erasure |
 | Worktree / branch binding | Preserve repository-contained `.worktrees/cvq-01` / `codex/cvq-01`; fresh containment, branch, exact source/control identities and clean readback before any approved resumption; no rebase/reset/ref movement in this control action |
 | Language / strict checker | Python 3.11, strict immutable Pydantic boundary; `mypy==2.3.0 --strict` from the committed development dependency plan |
 | Delivery / resources | POC / HIGH_ASSURANCE inherited from approved workload; one implementer, one subsequent required reviewer-owned adversarial helper; no parallel implementation |
@@ -627,3 +627,49 @@ the limit for the newly approved closure; the old failed rounds stay visible, ne
 Return for this draft: `ACTION_COMPLETED / CONTRACT_TRANSCRIPTION -> WAIT_FOR_HUMAN /
 OWNER_EXACT_APPROVAL_PENDING`. Design choices D-CQ11 and D-CLAIM are already adopted and are not
 asked again; the next approval object is the precise changed contract and bounded resumption.
+
+## Exact approval and schema resumption — 2026-09-18
+
+Owner **「核准」** approves the packet at `965e16b00d6049be6552465ac1ce1cbac968a8cb`:
+SPEC 06 LF `80daa0bd591c3f1419c9b683bfdff53ea721ebfa1239ac1e68306552a9e95054`, wire 02 LF
+`580104e585ba46a81aff17f3ff18100164618973b67d5c3db0040e29f88958a8`, and this ticket document 06
+/ closure 03 LF `574b60b9a13ae4253d27ac17c932df67a110c436f265873fa8b031e3ed682c8e`.
+Document 07 is approval/allocation metadata only; closure 03 and its exact catalog/predicates are
+unchanged. Earlier pending/proposal/blocked routes are historical. Closure 02 remains failed;
+this is the expressly approved convergence replacement, not an automatic third correction.
+
+Fresh parent readback: all three approved LF digests and sealed Context matched; origin/main is
+`b697738d009db37318ebc8762107ef8329e014db` by direct readback. Owner worktree is contained,
+all path ancestors lack reparse points, registered Git pointer resolves to `.git/worktrees/cvq-01`,
+branch is `codex/cvq-01`, clean HEAD is `9796790d33b6d1374469fad1b37e1f4991262a43`.
+Python 3.11.9 / mypy 2.3.0 / Pydantic 2.13.4 were read back from the declared development Python.
+No package install, fetch, merge, ref move, shared Context edit or native capability test occurred.
+
+Current action: restricted schema construction under the approved two-phase exception. One
+implementation owner, same retained Luna/xhigh seat, direct same-lifetime lane; research inventory
+assignment ends. New view `cvq-01-schema-closure03-v01` binds this final committed control record
+and the source baseline above independently. Source writes stay in the owner's existing worktree.
+Read current contract spans only: this header/signature, One closure, Public seam, Source
+responsibility map, phase-1 subset, proposed closure-03 section (now approved), SPEC 11–12 and
+the complete wire appendix. Do not load full ticket/review/correction history as work input.
+
+Phase-1 boundary is the same nine named production schema/facade/port files and four test files
+(contracts, boundaries, fixtures, catalog). No `*_admission.py`, element docs, source change outside
+the allowlist, control documents, VM, provider, target write, integration or publication.
+Verification: declared stage-1 strict command with catalog file added, the two declared unittest
+modules, diff check and bounded declared schema mutations; one process, 60 seconds/command,
+1,200 seconds/pass, zero implicit retry, no stress. Missing commands/syntax capabilities return
+BLOCKED/CHANGE_DETECTED, not a silent grammar or timeout expansion. Parent preflight and final
+independent review remain subsequent, not inferred from successful tool dispatch.
+
+Return the candidate source commit, changed paths, exact commands/unreduced results, findings,
+scope deviations and `SCHEMA_PHASE_ONLY`. The owner may commit its additive schema candidate;
+it may not declare review/integration or enter behavior. Reviewer receives via wait_agent, does
+not poll, and independently verifies/mutates. A green schema preflight alone permits the same
+owner's conditional behavior phase; no other permission has been added.
+
+Route: approval writeback `ACTION_COMPLETED`, then reviewer-confirmed direct same-lifetime
+`AUTO_CONTINUE / IMPLEMENT / SCHEMA_CONSTRUCTION`. No receipt/runner/descriptor is manufactured;
+the native continuation call is still the observable dispatch event. No ceremonial second
+dispatch approval is requested. Full-ticket READY_LOW_MODEL and behavior remain contingent on
+the actual schema preflight, not on this signature.
