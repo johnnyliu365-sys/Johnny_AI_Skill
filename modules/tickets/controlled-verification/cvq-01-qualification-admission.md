@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| Artifact ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01` / `IMPLEMENTATION_TICKET` / `09` |
+| Artifact ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01` / `IMPLEMENTATION_TICKET` / `10` |
 | State / Acceptance Closure Set | `BLOCKED / CONVERGENCE_REVIEW_REQUIRED / NON_DISPATCHABLE`; `CLOSURE-CVQ-01` revision `03`; behavior phase remains `NOT_ADMITTED`; owner approval history preserved |
 | Change class / observable result | New behavior, not defect correction: one pure evaluator rejects untrusted qualification input and returns the exact tagged evaluation/report without executing work |
 | Preparation authority | Owner's 2026-09-09 exact packet approval at `161c4e095697fff6e4693b8d9bfce866878277dd`, recorded at `cad0d2bca480f45c57d0598f4342636d35b1ecf2`; CVQ-01 preparation only |
@@ -716,3 +716,17 @@ closure/source resumption remains NON_DISPATCHABLE until exact owner approval an
 No source, SPEC semantics, shared Context, model profile, native capability or external authority
 is changed by that proposal. Owner decision WAKE_REQUIRED is a state; this session reports it
 directly, without claiming a background runner delivered an event.
+
+## Adopted split; original closure remains exhausted — 2026-09-18
+
+Owner adopted the two independent verification closures in convergence proposal revision 05
+at `dc45f31f6c56983613665f276bf15207419274e3`, LF
+`6ad63ea17bf1750549d1f5087138e9bb447b477bcd8d683cac7405bed1262847`.
+Document 10 records that decision only. See the current proposal's section 11 for the adoption
+record, and the ticket registry for [CVQ-01A](cvq-01a-contract-admission.md) contract admission
+and [CVQ-01B](cvq-01b-source-admission.md) source admission, both exact-approval proposals.
+Closure 03 and its initial/correction history are unchanged, BLOCKED / CONVERGENCE_REVIEW_REQUIRED
+/ NON_DISPATCHABLE. No third correction, reset, source dispatch or behavior admission follows
+from adopting the decomposition. The two new boundaries need their own exact approval.
+Both schema closures must pass together before a later CVQ-01 behavior closure can be admitted;
+neither permits a partial merge or full-dispatch/release claim. All old candidates remain intact.

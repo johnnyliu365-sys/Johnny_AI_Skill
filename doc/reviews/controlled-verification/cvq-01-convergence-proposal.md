@@ -2,18 +2,18 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-CONVERGENCE` / `CODE_REVIEW` / `05` |
-| Lifecycle / conclusion | `SPLIT_REQUIRED / OWNER_REPLAN_DECISION_PENDING / NON_DISPATCHABLE` |
-| Control baseline | `acd6b140f7fbc520a8ded7ec0a6cf0b6819b9265` |
+| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-CONVERGENCE` / `CODE_REVIEW` / `06` |
+| Lifecycle / conclusion | `SPLIT_ADOPTED / EXACT_TICKETS_PROPOSED / OWNER_EXACT_APPROVAL_PENDING / NON_DISPATCHABLE` |
+| Control baseline | `dc45f31f6c56983613665f276bf15207419274e3` |
 | Examined source | Closure-03 correction `5d7789db6b950d317e7b500b757aa77a54d609ed`; all prior candidates preserved |
-| Ticket | [CVQ-01](../../../modules/tickets/controlled-verification/cvq-01-qualification-admission.md), document 09, LF `babcceb227bf8f91356dfbbb90f5e14ad1adab19f43a99686bdae46e8acff16d`; closure 03 exhausted, unchanged |
+| Ticket | [CVQ-01](../../../modules/tickets/controlled-verification/cvq-01-qualification-admission.md), document 10, current digest in its registry; closure 03 exhausted, unchanged. Historical document 09 at dc45f31f LF `babcceb227bf8f91356dfbbb90f5e14ad1adab19f43a99686bdae46e8acff16d` |
 | Contract | [Qualification SPEC](../../../modules/spec/controlled-verification-qualification.md) revision 07 LF `545f5058d8347ab069d6a23fdb07daaf06ab836998efb67b2c30b80fee3b1716`; wire appendix revision 03 remains approved |
 | Evidence | [Schema preflight](cvq-01-schema-preflight.md), revision 04, LF `66f2e6636869665665bd15f210f259a405686125d33eb9dc0ccbaa9180ac3f8a` |
 | Responsibility | Parent owns the replan recommendation and review verdict. Reused Terra/xhigh supplied read-only adversarial evidence; parent ran the candidate checks/probes/mutations. No source implementation, model elevation or owner decision is granted by this proposal |
 
-Sections 1–8 preserve the earlier convergence/design/adoption history. Its D-CQ11/D-CLAIM and
-exact packet decisions have been answered. Sections 9–10 below are the current disposition;
-historical pending routes do not reopen those answered decisions.
+Sections 1–10 preserve earlier convergence/design/adoption history. D-CQ11/D-CLAIM, exact
+closure-03 approval and the responsibility split have been answered. Section 11 is the current
+disposition; historical pending routes do not reopen those answered decisions.
 
 ## 1. Diagnosis and retained boundary
 
@@ -392,3 +392,60 @@ ticket boundaries; do not lower the approved grammar/data invariants. Owner may 
 to defer this capability. Previously approved D-CQ11/D-CLAIM are not being asked again.
 Current source action remains NONE. Route ACTION_COMPLETED / CONVERGENCE_REPLAN_PROPOSED ->
 WAIT_FOR_HUMAN / OWNER_REPLAN_DECISION_PENDING. No push, release, install or native effect.
+
+## 11. Split adoption and exact ticket proposals — 2026-09-18
+
+Owner replied **「採用」** to revision 05 section 10 at
+`dc45f31f6c56983613665f276bf15207419274e3`, LF
+`6ad63ea17bf1750549d1f5087138e9bb447b477bcd8d683cac7405bed1262847`.
+This is the adoption record, not a claim that the earlier proposal was already approved.
+The decision authorizes preparation of two precise verification closures; it does not reset
+CVQ-01 closure 03 or grant a third correction. D-CQ11/D-CLAIM remain unchanged and answered.
+
+| New exact proposal | Sole observable closure / order |
+| --- | --- |
+| [CVQ-01A](../../../modules/tickets/controlled-verification/cvq-01a-contract-admission.md), document 01 / closure 01 | Contract construction/wire and local identity/applicability/roster/proof validation, including the actual failed probes. One fixture owner; separate literal-wire assertions from local-domain assertions. Starts only after exact approval, at preserved 5d7789d |
+| [CVQ-01B](../../../modules/tickets/controlled-verification/cvq-01b-source-admission.md), document 01 / closure 01 | AST source admission with separate policy, symbol/graph resolution, grammar predicates and literal adversarial corpus; starts only after A review approval at an exact committed SHA. Rechecks the unchanged A contract suite at its final candidate |
+
+The implementer sees one new ticket, not CVQ-01's full review history. Exact SPEC/wire/Context
+references are supplied by each ticket. One retained implementation-standard owner executes
+sequentially with fresh ticket-bound views; ticket-review retains the verdict and whole review
+context. No model elevation is granted. The branch/candidates are preserved additively.
+
+The limited two-phase exception remains explicit: A is permitted to reconstruct contract
+predicates before the parent can qualify them; source grammar remains NOT_QUALIFIED until B.
+No intermediate ticket permits integration or behavior. Combined schema preflight requires both
+closures at one SHA. The later evaluator, actual protected dispatch, native capability and
+one-click install/removal are still unfinished; no source-only pass can substitute for them.
+
+### Bounded dependency audit and parent disposition
+
+Reused Terra/xhigh inspected exact control dc45f31f and source 5d7789d, one read-only pass,
+SPEC_GAP / CONSISTENCY, READ_ONLY_INTENT_ONLY / NO_EXTERNAL_EFFECT, at most three findings.
+No tests, source execution, writes, commits or effects. It returned one authority-artifact
+gap: section 10 still said owner decision pending. Accepted; this section records the actual
+owner reply while both exact tickets remain approval-pending. No implementation grant is
+inferred from the helper's task message.
+
+It also located the existing acyclic source table (boundary test lines 505–514) and found no
+direct ports/facade cycle. Parent independently inspected both modules and that table: ports
+import constituent contracts; the terminal facade re-exports ports, and __init__ re-exports the
+facade. CVQ-01B explicitly proposes that finite edge table to disambiguate the older phrase
+"contracts only". The implementation's existing table is an observation, not an authority source;
+owner approval of B binds the displayed table. No new port, moved public DTO or relaxed grammar
+is proposed. This helper return is not review of the newly authored ticket text or source PASS.
+
+### Control validation and return
+
+This action is DOCS_ONLY. It does not rerun the failed implementation or claim new source
+evidence. Parent checks exact upstream LF pins, finite matrix/ownership/command closure,
+local links, D8 leaf → partition → root hashes, diff scope and git diff --check. Source tests,
+mutation qualification, installation and release remain NOT_RUN in this action. The unchanged
+schema review revision 04 preserves all actual failures.
+
+Current return: ACTION_COMPLETED / SPLIT_ADOPTION_AND_TICKETS_RECORDED -> WAIT_FOR_HUMAN /
+OWNER_EXACT_APPROVAL_PENDING for the two displayed tickets and source boundaries. A completion
+SHA for B is DEPENDENCY_PENDING, not a request to approve an unknown candidate now. Once exact
+tickets are approved, parent may record the actually reviewed A SHA for sequential B admission
+without changing B's closure; a different contract or boundary requires renewed authority.
+No source, main, remote, sealed Context, SPEC, profile, host/VM/provider or release changes.
