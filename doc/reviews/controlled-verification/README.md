@@ -2,7 +2,7 @@
 
 This index records direct review leaves; evidence and conclusions remain in the selected leaf.
 
-Index identity: `INDEX-CONTROLLED-VERIFICATION-REVIEWS` / `REVIEW_INDEX` / revision `10`.
+Index identity: `INDEX-CONTROLLED-VERIFICATION-REVIEWS` / `REVIEW_INDEX` / revision `11`.
 
 | Review ID / leaf | Kind | Revision | SHA-256 | Lifecycle | Result |
 | --- | --- | --- | --- | --- | --- |
@@ -10,3 +10,4 @@ Index identity: `INDEX-CONTROLLED-VERIFICATION-REVIEWS` / `REVIEW_INDEX` / revis
 | `REVIEW-CONTROLLED-VERIFICATION-CVE-01A-CONVERGENCE` / [CVE-01A evidence convergence](cve-01a-wire-foundation-convergence-review.md) | `CODE_REVIEW` | `03` | `1eda3ae2e0f16436c6e2d4e13dec0e951658097e73b6698b15bc37c2508fe16c` | `CLOSED` | `APPROVED / EVIDENCE_REPAIR_COMPLETED / NOT_INTEGRATED` |
 | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-SCHEMA` / [CVQ-01 schema preflight](cvq-01-schema-preflight.md) | `CODE_REVIEW` | `04` | `66f2e6636869665665bd15f210f259a405686125d33eb9dc0ccbaa9180ac3f8a` | `CONVERGENCE_REVIEW_REQUIRED` | `CHANGES_REQUESTED / BEHAVIOR_NOT_ADMITTED` |
 | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-CONVERGENCE` / [CVQ-01 convergence proposal](cvq-01-convergence-proposal.md) | `CODE_REVIEW` | `07` | `7bf09e52785ab32c99ac3e228679430b46f57330e1ed985b3e46e168c05feedb` | `SPLIT_ADOPTED / EXACT_TICKETS_APPROVED` | `A_RECONSTRUCTION_AUTHORIZED / B_DEPENDENCY_PENDING / BEHAVIOR_NOT_ADMITTED` |
+| `REVIEW-CONTROLLED-VERIFICATION-CVQ-01A` / [CVQ-01A contract admission](cvq-01a-contract-admission-code-review.md) | `CODE_REVIEW` | `01` | `42c849716348475b6404506f113c786ea77917cd08e7b31dc7cfd579e6cbae71` | `CORRECTION_PENDING` | `CHANGES_REQUESTED / NOT_INTEGRATED` |

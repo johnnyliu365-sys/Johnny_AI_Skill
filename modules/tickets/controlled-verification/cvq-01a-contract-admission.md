@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01A` / `IMPLEMENTATION_TICKET` / `02` |
-| State / closure | `OWNER_APPROVED / CONTRACT_RECONSTRUCTION_AUTHORIZED`; `CLOSURE-CVQ-01A` revision `01`; actual parent preflight remains required |
+| ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01A` / `IMPLEMENTATION_TICKET` / `03` |
+| State / closure | `OWNER_APPROVED / CHANGES_REQUESTED / CORRECTION_AUTHORIZED`; `CLOSURE-CVQ-01A` revision `01`; one additive correction, actual parent preflight remains required |
 | Preparation authority | Owner adopted convergence proposal revision 05, commit `dc45f31f6c56983613665f276bf15207419274e3`, LF `6ad63ea17bf1750549d1f5087138e9bb447b477bcd8d683cac7405bed1262847`; adoption authorizes this proposal, not source execution |
 | Outcome / change class | One independently provable verification closure: ordinary qualification DTOs accept the frozen wire algebra and reject constructor-local invalidity; `PRODUCTION_BEHAVIOR`, defect correction against the preserved experimental candidate, not test-exempt |
 | SPEC | [Qualification SPEC](../../spec/controlled-verification-qualification.md) revision 07, LF `545f5058d8347ab069d6a23fdb07daaf06ab836998efb67b2c30b80fee3b1716`, sections 2, 6, 7, 11; [wire appendix](../../spec/controlled-verification-qualification-wire.md) revision 03, LF `6eb9d0a088e105e7c2dd4c3c3b4001f970ac34195c7a0cd78459a2f6016e9222`, sections 1–6 |
@@ -174,3 +174,24 @@ Route ACTION_COMPLETED / EXACT_APPROVAL_RECORDED -> AUTO_CONTINUE / IMPLEMENT(CV
 by wait_agent -> parent review and required adversarial evidence. Passing A permits only the
 exact reviewed-candidate binding for B; neither ticket permits integration, evaluator behavior,
 push, release or installation. No claim that an exhausted prior closure was reopened.
+
+## 7. Initial review and one batched correction — 2026-09-18
+
+The [A-specific review](../../../doc/reviews/controlled-verification/cvq-01a-contract-admission-code-review.md)
+revision 01 concludes CHANGES_REQUESTED on `fd8c1a33599b5217136ec67c8b64ade07ef6d56e`,
+descendant of the exact section-4 source baseline. Its F01–F09 are one complete initial-review
+batch against the unchanged closure 01. The reported 18 green tests and 14-file strict check do
+not discharge the demonstrated zero-red mutations, missing predicates and suppressed typing.
+
+Retain `cve_wire_implementer`, `codex/cvq-01`, `.worktrees/cvq-01` and
+`ctx-cvq-01a-closure01`. On fresh clean identity readback, continue additively from fd8c1a3.
+Resolve this document and review through the same committed control/index identity. Fix the
+existing frozen predicates and evidence in that single batch; all section-2 boundaries and
+section-4 command/resource/return constraints survive. No new source role, port, schema or
+generic test framework. CQ11 stays byte-preserved and excluded from A's acceptance oracle.
+
+This is the one correction authorized by the existing exact approval, not a new closure or a
+third attempt on CVQ-01. Return the exact ImplementationReturn with honest evidence chronology.
+Parent then performs the correction review plus required bounded helper. If any blocking
+implementation/evidence defect remains, route to convergence; do not auto-retry. B stays
+dependency-blocked until actual A approval. No integration/push/release/install authority.
