@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| Artifact ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01` / `IMPLEMENTATION_TICKET` / `03` |
-| State / Acceptance Closure Set | `OWNER_APPROVED / TWO_PHASE_EXCEPTION_APPROVED / SCHEMA_PHASE_ADMITTED`; `CLOSURE-CVQ-01` revision `02`; behavior phase remains `PREFLIGHT_PENDING` |
+| Artifact ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01` / `IMPLEMENTATION_TICKET` / `04` |
+| State / Acceptance Closure Set | `OWNER_APPROVED / TWO_PHASE_EXCEPTION_APPROVED / PREFLIGHT_BLOCKED / CONVERGENCE_REVIEW_REQUIRED / NON_DISPATCHABLE`; `CLOSURE-CVQ-01` revision `02`; behavior phase remains `NOT_ADMITTED` |
 | Change class / observable result | New behavior, not defect correction: one pure evaluator rejects untrusted qualification input and returns the exact tagged evaluation/report without executing work |
 | Preparation authority | Owner's 2026-09-09 exact packet approval at `161c4e095697fff6e4693b8d9bfce866878277dd`, recorded at `cad0d2bca480f45c57d0598f4342636d35b1ecf2`; CVQ-01 preparation only |
 | Approved SPEC | `SPEC-CONTROLLED-VERIFICATION-QUALIFICATION-20260909-01` revision `04`, LF SHA-256 `4cad6a88b9d151a05bf409f8b61bc97580e80303f58a2377cb0301815b999a1d`; behavior approved as revision 03, lifecycle-only revision 04 |
@@ -451,3 +451,29 @@ predicates remain NOT_IMPLEMENTED, not a false PASS. Only a recorded successful 
 the same owner to phase 2; a failed one cannot. Final independent adversarial review remains later.
 Typed route: APPROVAL_GRANTED -> AUTO_CONTINUE / SCHEMA_CONSTRUCTION under this exact exception;
 no native/provider/installation/integration/release effect is added.
+
+## Schema correction review and convergence — 2026-09-18
+
+The two-phase exception above was used, not revoked or treated as unanswered. Initial schema
+candidate `cd228a790b2f37bc2cad109978f8822ad5bb2da6` and one additive correction
+`9796790d33b6d1374469fad1b37e1f4991262a43` remain on the same owner branch. The parent independently
+ran strict typing, declared tests and reversible mutations, and reused the readonly adversarial
+helper. Exact evidence and finding dispositions are in
+[schema preflight review](../../../doc/reviews/controlled-verification/cvq-01-schema-preflight.md)
+revision 02, rooted by the review registry.
+
+Preflight remains failed: missing exhaustive DTO/field/enum evidence, masked negative fixture,
+non-discriminating architecture controls and disconnected roster evidence prevent phase 2.
+Existing improvements are preserved. No native/host/runtime proof or final ticket completion
+is claimed. No integration, push or publication occurred.
+
+The closure-02 initial-plus-one-correction limit is exhausted for schema review. No third
+correction or behavior dispatch is admitted. Next action is control-plane convergence:
+compile the exact connected contract and executable-case inventory, reassess decomposition,
+and present any changed closure for exact owner approval. This is not approval to weaken the
+SPEC, expand effects or raise model capability. Historical admission and approval passages above
+are evidence of those transitions, not competing current dispatch permission.
+
+Current route: ACTION_COMPLETED / VALIDATION_FAILED -> HALT / TICKET_SCHEMA_INVALID /
+CONVERGENCE_REVIEW_REQUIRED. Owner exception approval remains valid; implementation resumes
+only after the named convergence and actual preflight requirements are resolved.

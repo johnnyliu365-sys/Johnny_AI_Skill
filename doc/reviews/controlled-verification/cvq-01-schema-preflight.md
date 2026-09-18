@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-SCHEMA` / `CODE_REVIEW` / `01` |
-| Phase / conclusion | `SCHEMA_CONSTRUCTION / CHANGES_REQUESTED / BEHAVIOR_NOT_ADMITTED` |
+| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-SCHEMA` / `CODE_REVIEW` / `02` |
+| Phase / conclusion | `SCHEMA_CONSTRUCTION / CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED / BEHAVIOR_NOT_ADMITTED` |
 | Ticket / closure | [CVQ-01](../../../modules/tickets/controlled-verification/cvq-01-qualification-admission.md), document 03, LF `008439aa4c50dae8a21fc12143af4890a958e9be234318bb7c4269edaba7866b`, `CLOSURE-CVQ-01` revision 02 |
 | Approved source | [Qualification SPEC](../../../modules/spec/controlled-verification-qualification.md), revision 04, LF `4cad6a88b9d151a05bf409f8b61bc97580e80303f58a2377cb0301815b999a1d` |
 | Baseline / candidate | `892c34b7f2ee0e1bad6c4b503f813188c6a26494` / `cd228a790b2f37bc2cad109978f8822ad5bb2da6` |
@@ -119,3 +119,88 @@ file is authorized. Keep the same exact 12-file allowlist, CQ01/CQ02/contract-CQ
 checker and bounded commands. Return candidate, named checks, finding dispositions, deviations
 and SCHEMA_PHASE_ONLY. Parent owns the correction preflight and final verdict. No automatic
 third correction is authorized. Final ticket review/integration/release are still pending.
+
+## Single correction preflight — 2026-09-18
+
+The same Luna/xhigh owner returned `9796790d33b6d1374469fad1b37e1f4991262a43`, an additive
+descendant of `cd228a7`. It changes 11 of the same 12 allowed files; `binding_contracts.py` is
+unchanged. Root verified ancestry, clean state, diff and all changed bodies. The same strict
+command passed for 12 files; the same two-module unittest command passed 8 methods. No method
+count is treated as closure coverage. All runs retained the original 60-second command bound
+and unfiltered output. The return's S1–S9 `CORRECTED` assertions were checked, not accepted as proof.
+
+| Finding | Correction disposition owned by root |
+| --- | --- |
+| S1 | PARTIAL. The named result/evaluation/category variants are now closed alternatives, including REPORT_REJECTED's exact reason. EXECUTED still carries no observer reference: neither execution variant nor the three executed-result variants has that field. Native launch observation is not a substitute for a pure execution observer. |
+| S2 | Product fixes present: strict lane count, mandatory prerequisite detail and finite host observation. The lane-count counter-mutation below independently discriminates the new guard. Required-detail negative evidence remains defective under S4. |
+| S3 | Corrected: recovery alternatives no longer require positive cleanup evidence. No native execution or actual recovery capability is claimed. |
+| S4 | UNRESOLVED. Public approval-resolution/prerequisite-resolution alternatives, prerequisite evidence and DiscoveredEffectSet are absent from constructor round trips; finite enum coverage is selective. There is still no each-positive-fixture omission/null/extra matrix. The former positive/zero-only rejection test was removed; M5 now produces zero red. QualificationReport's prior duplicate-case validator was also removed; an ordinary duplicate report is accepted. These do not establish the frozen CQ01/CQ02. |
+| S5 | Original overlap corrected: the forbidden cross-payload case now contains a valid nested execution. A new overlap remains in S4's prerequisite omission test: text replacement leaves `,,`, so it rejects JSON syntax before reaching the required-field rule. M3 proves the resulting zero-red gap. |
+| S6 | PARTIAL. A finite AST gate exists, but only relative `ImportFrom` with non-null module is checked. Absolute internal imports and `from . import ...` can evade the graph, and the gate omits Any/cast/dynamic import/facade-only/mutable-service rules. M4 independently bypasses it with a nonexecuted renamed facade helper. |
+| S7 | PARTIAL. Case prerequisite pins and expected check IDs are now attached. The host subject has only roster key plus an opaque discovery coverage ref: no approved/discovered roster body is reachable through manifest, report or the three typed port results. The evaluator would still need an undeclared lookup. |
+| S8 | PARTIAL. Authenticated case/check/cleanup/entry subjects, observer and missing-evidence rejection refs are present. The only roster subject requires entry ID and oracle, so it cannot represent category-absence or discovered-set evidence without inventing forbidden entry/oracle fields. |
+| S9 | Corrected: CapabilityKey is now a foundational value and the report imports it downward. This does not close the separate incomplete AST-gate evidence. |
+
+The reused Terra/xhigh helper returned FINDINGS on this exact SHA, independently confirming the
+remaining observer, coverage, AST and roster graph/protocol defects. Its readonly source findings
+are not the verdict; root read and reproduced the applicable boundaries. It ran no duplicate
+tests and did not modify source. Isolation remains READ_ONLY_INTENT_ONLY.
+
+### Correction probes and independent mutation evidence
+
+A new detached reviewer snapshot at `.worktrees/cvq-01-schema-review-correction` was created
+from the correction SHA with LF checkout bytes; repo containment and no reparse links were read
+back first. Initial raw SHA-256 values were recorded before mutation. No candidate-owner file
+was mutated. Each mutation below was isolated and reversed before the next.
+
+The committed prerequisite omission fixture produces this actual parser error, rather than a
+missing-field error:
+
+```text
+..."refusal_reason":"PREREQUISITE_UNPROVEN",,"admission_evidence_ref":"admission"}
+Invalid JSON: key must be a string at line 1 column 275 [type=json_invalid]
+```
+
+Root also ordinarily constructed `QualificationReport` with `results=report.results +
+report.results`; both identical case IDs were accepted. No bypass constructor or fake native
+success was used. This is schema evidence only; no unfinished evaluator was run.
+
+| Mutation | Actual unfiltered result |
+| --- | --- |
+| M3: add default `PrerequisiteDetail.MISSING` to the actual required detail field | Both declared test modules: 8 green, zero red. The bad-JSON omission fixture never reaches the loosened boundary. |
+| M4: put `def renamed_effect_helper(): return __import__("os")` in the actual contract facade; never call it | Named `test_architecture_dependency_gate`: 1 green, zero red. Both the forbidden dynamic-import syntax and non-facade function escaped detection; no operating-system action occurred. |
+| M5: actual `PositiveInteger` `gt=0` → `ge=0` | Both declared test modules: 8 green, zero red. The initial candidate's corresponding mutation produced five failures; correction removed that discriminating coverage. |
+| M6: actual `ActiveLaneCount` field `strict=True` → `strict=False` | Named `test_strict_boundary_rejection`: exactly three failures at `active_lanes=true`, `1.0`, and string `1`, each `ValidationError not raised`; exit 1. This confirms one fixed guard, not the whole preflight. |
+
+After exact restoration, both declared test modules returned 8 green. Raw before/after SHA-256
+matches were checked for every modified file, followed by `git diff --exit-code` and clean status:
+
+| Restored file | Exact raw SHA-256 |
+| --- | --- |
+| `report_contracts.py` | `e90d8d670d208fe65cf9c121c54d681fef7085a2121198fb49991001f1ea1359` |
+| `qualification_contracts.py` | `7fa49a43dc02171a4dfcc11f7e66160bb5f2f1bfd38301b0d9413f243711e8b0` |
+| `qualification_values.py` | `2a317914acebbbd8327db4b51174fe82747db542811504d5f2663d05ff2b3c83` |
+
+### Convergence disposition
+
+One initial schema review plus one correction review has now run for closure 02. Required
+constructor/coverage/dependency evidence still fails, so phase 2 cannot be admitted. The result is
+CHANGES_REQUESTED with CONVERGENCE_REVIEW_REQUIRED, not APPROVED and not a third correction order.
+Both source candidates and the two-phase owner approval are preserved. No reset, integration,
+push or publication follows this result.
+
+The control-plane defect is insufficient compilation of the existing finite closure into a
+concrete public-contract/fixture inventory and connected evidence graph. The initial prose
+already demanded those properties; repeating it to the same owner is not a convergence plan.
+This evidence does not establish that a stronger implementer is necessary or that a host/VM is
+missing. No model elevation or native experiment is authorized by this report.
+
+Next control-only work is to compile the missing typed roster/absence/discovery connections and
+enumerate the actual DTO/variant/field/enum and architecture-gate cells, then reassess independently
+observable ticket boundaries under `ticket-decomposition.md`. Preserve the approved SPEC's
+behavior, existing CQ obligations and the owner-approved two-phase ordering. Any revised closure
+or decomposition is a proposal until exact owner approval; do not disguise a third correction as
+a new label or claim that schema green is qualification of an installed host.
+
+Typed return: ACTION_COMPLETED (schema correction review recorded), VALIDATION_FAILED;
+HALT / TICKET_SCHEMA_INVALID / CONVERGENCE_REVIEW_REQUIRED for further implementation.
