@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-CONVERGENCE` / `CODE_REVIEW` / `06` |
-| Lifecycle / conclusion | `SPLIT_ADOPTED / EXACT_TICKETS_PROPOSED / OWNER_EXACT_APPROVAL_PENDING / NON_DISPATCHABLE` |
+| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-CONVERGENCE` / `CODE_REVIEW` / `07` |
+| Lifecycle / conclusion | `SPLIT_ADOPTED / EXACT_TICKETS_APPROVED / A_RECONSTRUCTION_AUTHORIZED / B_DEPENDENCY_PENDING` |
 | Control baseline | `dc45f31f6c56983613665f276bf15207419274e3` |
 | Examined source | Closure-03 correction `5d7789db6b950d317e7b500b757aa77a54d609ed`; all prior candidates preserved |
 | Ticket | [CVQ-01](../../../modules/tickets/controlled-verification/cvq-01-qualification-admission.md), document 10, current digest in its registry; closure 03 exhausted, unchanged. Historical document 09 at dc45f31f LF `babcceb227bf8f91356dfbbb90f5e14ad1adab19f43a99686bdae46e8acff16d` |
@@ -12,7 +12,7 @@
 | Responsibility | Parent owns the replan recommendation and review verdict. Reused Terra/xhigh supplied read-only adversarial evidence; parent ran the candidate checks/probes/mutations. No source implementation, model elevation or owner decision is granted by this proposal |
 
 Sections 1–10 preserve earlier convergence/design/adoption history. D-CQ11/D-CLAIM, exact
-closure-03 approval and the responsibility split have been answered. Section 11 is the current
+closure-03 approval and the responsibility split have been answered. Section 12 is the current
 disposition; historical pending routes do not reopen those answered decisions.
 
 ## 1. Diagnosis and retained boundary
@@ -449,3 +449,17 @@ SHA for B is DEPENDENCY_PENDING, not a request to approve an unknown candidate n
 tickets are approved, parent may record the actually reviewed A SHA for sequential B admission
 without changing B's closure; a different contract or boundary requires renewed authority.
 No source, main, remote, sealed Context, SPEC, profile, host/VM/provider or release changes.
+
+## 12. Owner approval of the split tickets — 2026-09-18
+
+Owner **「核准」** binds the whole exact two-ticket packet at
+`6b49847fcab325442520b04f37d950ed31992149`: CVQ-01A document 01 LF
+`ef7509f139c2cd4d94a6ebac38fbb974ab452a625765f8a94c5aa1d3726b9eb6` and CVQ-01B document 01 LF
+`94a54d8cb1b39f90976684dd195b064c3044564704c89b693e002b03c7368c05`.
+Their document 02 signatures do not change their closure 01 scope. The exact source boundary,
+sequential dependency, finite tests and two-phase ordering are now approved, not source PASS.
+A's signature records fresh clean source/control/environment readback and the exact current
+AUTO_CONTINUE action. B remains blocked on A's actual review-approved SHA, not on another owner
+decision. Old closure-03 source and failure records are unchanged. No integration/push/release.
+
+ACTION_COMPLETED / EXACT_APPROVAL_RECORDED -> AUTO_CONTINUE / IMPLEMENT(CVQ-01A).

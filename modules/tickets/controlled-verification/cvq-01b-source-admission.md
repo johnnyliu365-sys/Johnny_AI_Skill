@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01B` / `IMPLEMENTATION_TICKET_PROPOSAL` / `01` |
-| State / closure | `OWNER_EXACT_APPROVAL_PENDING / DEPENDENCY_PENDING / NON_DISPATCHABLE`; `CLOSURE-CVQ-01B` revision `01` |
+| ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01B` / `IMPLEMENTATION_TICKET` / `02` |
+| State / closure | `OWNER_APPROVED / DEPENDENCY_PENDING / NON_DISPATCHABLE`; `CLOSURE-CVQ-01B` revision `01` |
 | Preparation authority | Owner's adoption of convergence proposal revision 05 at `dc45f31f6c56983613665f276bf15207419274e3`, LF `6ad63ea17bf1750549d1f5087138e9bb447b477bcd8d683cac7405bed1262847`; exact source resumption is not yet approved |
 | Observable result / change class | An in-process package-scoped AST gate accepts the approved source grammar and rejects the finite forbidden syntax/dependency corpus; `PRODUCTION_BEHAVIOR`, defect correction and not test-exempt or runtime confinement |
 | SPEC | [Qualification SPEC](../../spec/controlled-verification-qualification.md) revision 07 LF `545f5058d8347ab069d6a23fdb07daaf06ab836998efb67b2c30b80fee3b1716`, section 11.3; [wire appendix](../../spec/controlled-verification-qualification-wire.md) revision 03 LF `6eb9d0a088e105e7c2dd4c3c3b4001f970ac34195c7a0cd78459a2f6016e9222` supplies exact declaration inventory |
@@ -204,3 +204,18 @@ may then record combined schema preflight for CVQ-01; later evaluator behavior s
 own admitted finite closure. No partial package merge, full-dispatch claim, publication or install.
 Keep original and A candidates immutable; rollback is additive. Current action is docs-only
 proposal, with A completion/SHA and exact ticket approval still pending.
+
+## 6. Exact approval; dependency still pending — 2026-09-18
+
+Owner **「核准」** approves B document 01 at
+`6b49847fcab325442520b04f37d950ed31992149`, LF
+`94a54d8cb1b39f90976684dd195b064c3044564704c89b693e002b03c7368c05`, together with A document 01
+LF `ef7509f139c2cd4d94a6ebac38fbb974ab452a625765f8a94c5aa1d3726b9eb6`.
+Document 02 records that signature only; sections 1–5's boundary/closure/finite edge table are
+unchanged, and earlier approval-pending wording is historical. Approval is not A completion.
+
+Only CVQ-01A is currently admitted. B stays NON_DISPATCHABLE until parent records A's actual
+APPROVED candidate SHA and exact review/registry identity, verifies unchanged closure/upstream
+pins and clean worktree, closes A's view and binds `ctx-cvq-01b-closure01` to the retained owner.
+That metadata binding is within this approved sequential plan and needs no repeated ceremonial
+approval; a changed predicate/schema/boundary is not. No source grant before the dependency.

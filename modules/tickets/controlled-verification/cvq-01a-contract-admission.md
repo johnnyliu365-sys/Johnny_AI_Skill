@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01A` / `IMPLEMENTATION_TICKET_PROPOSAL` / `01` |
-| State / closure | `OWNER_EXACT_APPROVAL_PENDING / NON_DISPATCHABLE`; `CLOSURE-CVQ-01A` revision `01` |
+| ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01A` / `IMPLEMENTATION_TICKET` / `02` |
+| State / closure | `OWNER_APPROVED / CONTRACT_RECONSTRUCTION_AUTHORIZED`; `CLOSURE-CVQ-01A` revision `01`; actual parent preflight remains required |
 | Preparation authority | Owner adopted convergence proposal revision 05, commit `dc45f31f6c56983613665f276bf15207419274e3`, LF `6ad63ea17bf1750549d1f5087138e9bb447b477bcd8d683cac7405bed1262847`; adoption authorizes this proposal, not source execution |
 | Outcome / change class | One independently provable verification closure: ordinary qualification DTOs accept the frozen wire algebra and reject constructor-local invalidity; `PRODUCTION_BEHAVIOR`, defect correction against the preserved experimental candidate, not test-exempt |
 | SPEC | [Qualification SPEC](../../spec/controlled-verification-qualification.md) revision 07, LF `545f5058d8347ab069d6a23fdb07daaf06ab836998efb67b2c30b80fee3b1716`, sections 2, 6, 7, 11; [wire appendix](../../spec/controlled-verification-qualification-wire.md) revision 03, LF `6eb9d0a088e105e7c2dd4c3c3b4001f970ac34195c7a0cd78459a2f6016e9222`, sections 1–6 |
@@ -145,3 +145,32 @@ its old test happens to print green. No integration/release or evaluator behavio
 B must preserve A's wire/constructor verdict, and both must pass together before combined schema
 admission. Existing Git rollback refs/candidates remain; recovery is additive, never reset/force.
 Current return: ACTION_COMPLETED / TICKET_PROPOSED -> WAIT_FOR_HUMAN / OWNER_EXACT_APPROVAL_PENDING.
+
+## 6. Exact approval and admitted continuation — 2026-09-18
+
+Owner replied **「核准」** to the two-ticket packet at
+`6b49847fcab325442520b04f37d950ed31992149`: A document 01 LF
+`ef7509f139c2cd4d94a6ebac38fbb974ab452a625765f8a94c5aa1d3726b9eb6`, B document 01 LF
+`94a54d8cb1b39f90976684dd195b064c3044564704c89b693e002b03c7368c05`.
+Document 02 is signature/status only. Sections 1–5 retain the exact approved scope and closure;
+their proposal/pending wording is historical, not a request for another approval.
+
+Parent read back clean control 6b49847f, clean source
+`5d7789db6b950d317e7b500b757aa77a54d609ed` on `codex/cvq-01`, repository-contained
+`.worktrees/cvq-01` with matching Git pointer/common directory and no ancestor reparse point.
+Main and direct origin/main remained `b697738d009db37318ebc8762107ef8329e014db`.
+Interpreter readback: Python 3.11.9, Pydantic 2.13.4, mypy 2.3.0; no install or config effect.
+This proves source/environment identity, not working constructor predicates or native isolation.
+
+Admit one contract-reconstruction action under the approved two-phase exception: retained
+`cve_wire_implementer` (implementation-standard / Luna xhigh), reviewer `root` (ticket-review),
+fresh single-ticket view `ctx-cvq-01a-closure01`. Prior CVQ-01 views stay closed. Bind this exact
+committed revision/registry and the source SHA above; do not merge control docs into owner source.
+Resolve authority using git show at the committed control identity, not working-tree prose.
+Native followup_task reuses the existing owner under the owner's explicit reuse instruction;
+no additional agent, receipt or bridge is created. Return the section-4 ImplementationReturn.
+
+Route ACTION_COMPLETED / EXACT_APPROVAL_RECORDED -> AUTO_CONTINUE / IMPLEMENT(CVQ-01A), followed
+by wait_agent -> parent review and required adversarial evidence. Passing A permits only the
+exact reviewed-candidate binding for B; neither ticket permits integration, evaluator behavior,
+push, release or installation. No claim that an exhausted prior closure was reopened.
