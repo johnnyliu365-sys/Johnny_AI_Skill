@@ -2,13 +2,13 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01B` / `IMPLEMENTATION_TICKET` / `02` |
-| State / closure | `OWNER_APPROVED / DEPENDENCY_PENDING / NON_DISPATCHABLE`; `CLOSURE-CVQ-01B` revision `01` |
+| ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01B` / `IMPLEMENTATION_TICKET` / `03` |
+| State / closure | `OWNER_APPROVED_BASE / DEPENDENCY_AMENDMENT_APPROVAL_PENDING / NON_DISPATCHABLE`; `CLOSURE-CVQ-01B` revision `01` unchanged; section 7 proposes dependency/read-only test-path amendment only |
 | Preparation authority | Owner's adoption of convergence proposal revision 05 at `dc45f31f6c56983613665f276bf15207419274e3`, LF `6ad63ea17bf1750549d1f5087138e9bb447b477bcd8d683cac7405bed1262847`; exact source resumption is not yet approved |
 | Observable result / change class | An in-process package-scoped AST gate accepts the approved source grammar and rejects the finite forbidden syntax/dependency corpus; `PRODUCTION_BEHAVIOR`, defect correction and not test-exempt or runtime confinement |
 | SPEC | [Qualification SPEC](../../spec/controlled-verification-qualification.md) revision 07 LF `545f5058d8347ab069d6a23fdb07daaf06ab836998efb67b2c30b80fee3b1716`, section 11.3; [wire appendix](../../spec/controlled-verification-qualification-wire.md) revision 03 LF `6eb9d0a088e105e7c2dd4c3c3b4001f970ac34195c7a0cd78459a2f6016e9222` supplies exact declaration inventory |
 | Requirement / Context | `PRD-20260908-051` / `CHG-20260908-051`; [REQ-051](../../../doc/requirements/active/2026/environment-control/REQ-20260908-051.md) revision 11 LF `f52552cdafc857d605f1eda03bcdf3df4c3d0c49ad9adfb9f39335f4b341e272`; [sealed Context](../../../doc/context/controlled-verification/main.md) revision 02 LF `6f5465295cb3fd303bc555da655b3169d33292ad1f2ed4374748f82ddd6f2285`, READ_REFERENCE |
-| Upstream dependency / baseline | [CVQ-01A](cvq-01a-contract-admission.md) closure 01 APPROVED candidate, exact SHA NOT_YET_AVAILABLE; must be an additive descendant of `5d7789db6b950d317e7b500b757aa77a54d609ed`, pinned in a committed parent admission record before B dispatch, never resolved by latest branch HEAD |
+| Upstream dependency / baseline | Proposed replacement: combined APPROVED [A1](cvq-01a1-scalar-wire-admission.md), [A2](cvq-01a2-case-manifest-admission.md), [A3](cvq-01a3-evidence-admission.md) at one exact candidate SHA NOT_YET_AVAILABLE; additive descendant of `070039b6227205f7bb4592f203a4fd7455311f31`, pinned in a committed parent admission record before B dispatch, never latest HEAD. Original A closure01 is exhausted |
 | Owner / reviewer | Same retained `cve_wire_implementer` / implementation-standard; `root` / ticket-review; [profile](../../../doc/runbooks/dispatch-model-profile.md) REVISION_03, no elevation or parallel implementation |
 | Workspace / allocation | Same `.worktrees/cvq-01` / `codex/cvq-01`; close A's view, new `ctx-cvq-01b-closure01`; fresh clean, containment and Git readback at the exact approved A SHA |
 | Delivery / resources | POC / HIGH_ASSURANCE; one implementation owner then one mandatory evidence-only adversarial helper; finite commands below |
@@ -40,8 +40,10 @@ New support modules belong under `tests/`, not production or a second reusable l
 | `tests/verification_qualification_source_corpus.py` | Literal good/bad source packets and exact expected cell/rule/location data; policy records only, never import gate/symbol resolver or derive expectations from their results |
 | `tests/test_verification_qualification_boundaries.py` | Reads the nine exact production files, invokes gate and asserts source/corpus/mutation results; imports the four support owners, never duplicates their policy or builds expected results by running them |
 
-`verification_qualification_catalog.py`, fixtures, contracts tests and domains tests are READ_ONLY
-for B. The policy imports only literal names from catalog; corpus has no production import. The
+`verification_qualification_catalog.py`, fixtures, contracts tests, domains compatibility aggregate,
+and `test_verification_qualification_scalars.py`, `test_verification_qualification_manifests.py`,
+`test_verification_qualification_evidence.py` are READ_ONLY for B. The policy imports only literal
+names from catalog; corpus has no production import. The
 test driver is the sole bounded filesystem reader, never an executor for its source packets.
 All support modules are strict-checked; stdlib ast/enum/dataclasses/typing are test support,
 not additions to the inspected package's approved external import allowlist.
@@ -179,7 +181,7 @@ Each mutation runs its corresponding fully qualified unittest method directly, t
 restoration. Stop on budget exhaustion with BLOCKED rather than changing counts/timeouts.
 
 ```powershell
-& $cvqPython -B -m mypy --strict --follow-imports=silent library/controlled_verification tests/test_verification_qualification_contracts.py tests/test_verification_qualification_domains.py tests/test_verification_qualification_boundaries.py tests/verification_qualification_fixtures.py tests/verification_qualification_catalog.py tests/verification_qualification_source_policy.py tests/verification_qualification_source_symbols.py tests/verification_qualification_source_gate.py tests/verification_qualification_source_corpus.py
+& $cvqPython -B -m mypy --strict --follow-imports=silent library/controlled_verification tests/test_verification_qualification_contracts.py tests/test_verification_qualification_domains.py tests/test_verification_qualification_scalars.py tests/test_verification_qualification_manifests.py tests/test_verification_qualification_evidence.py tests/test_verification_qualification_boundaries.py tests/verification_qualification_fixtures.py tests/verification_qualification_catalog.py tests/verification_qualification_source_policy.py tests/verification_qualification_source_symbols.py tests/verification_qualification_source_gate.py tests/verification_qualification_source_corpus.py
 & $cvqPython -B -m unittest -v tests.test_verification_qualification_contracts tests.test_verification_qualification_domains tests.test_verification_qualification_boundaries
 git diff --check
 ```
@@ -219,3 +221,25 @@ APPROVED candidate SHA and exact review/registry identity, verifies unchanged cl
 pins and clean worktree, closes A's view and binds `ctx-cvq-01b-closure01` to the retained owner.
 That metadata binding is within this approved sequential plan and needs no repeated ceremonial
 approval; a changed predicate/schema/boundary is not. No source grant before the dependency.
+
+## 7. Dependency replacement proposal — 2026-09-19
+
+Owner adopted convergence revision 08 at `058b8256bb1b2601fabc30c21a42ecc48c831875`,
+LF `24021ef0467d56c1bc3924e98b15d2f993e0dc720228dec44177da2132c50392`.
+It authorizes drafting three finer contract closures, not another correction of exhausted A.
+Document 03 proposes replacing B's impossible dependency on A closure01 approval with combined
+A1/A2/A3 approval at one source SHA, and naming their read-only tests in the strict command.
+References to the "A candidate/suite/view" in sections 1–5 mean that combined accepted contract
+candidate/suite and the last A3 view if this amendment is approved. Section 6's original admission
+route is historical; it cannot authorize further A closure01 source writes.
+
+No change to B closure01's SG01–SG20, six controls, source grammar, API, writable scope or
+resource budget. The full unittest command remains contracts + domains + boundaries: domains
+explicitly collects all three split TestCases once, not by copying assertions. B must preserve
+their exact accepted predicate coverage; newly readable test paths are not new write permission.
+
+Exact owner approval of this document03 dependency amendment is pending with the three tickets.
+After it is approved, root records their actual combined APPROVED SHA/review/index commit and
+clean identity before B dispatch. That later SHA binding is metadata, not another design approval.
+No merge/push/release/evaluator grant. ACTION_COMPLETED / DEPENDENCY_AMENDMENT_PROPOSED ->
+WAIT_FOR_HUMAN / OWNER_EXACT_APPROVAL_PENDING; B remains NON_DISPATCHABLE.

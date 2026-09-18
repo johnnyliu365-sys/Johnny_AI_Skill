@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-CONVERGENCE` / `CODE_REVIEW` / `08` |
-| Lifecycle / conclusion | `A_CONVERGENCE_REQUIRED / OWNER_REPLAN_DECISION_PENDING / B_DEPENDENCY_PENDING`; previous split and ticket approvals preserved |
+| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-CONVERGENCE` / `CODE_REVIEW` / `09` |
+| Lifecycle / conclusion | `REPLAN_ADOPTED / EXACT_TICKET_PACKET_PROPOSED / OWNER_EXACT_APPROVAL_PENDING / B_DEPENDENCY_PENDING`; earlier approvals and failed closures preserved |
 | Control baseline | `dc45f31f6c56983613665f276bf15207419274e3` |
 | Examined source | Closure-03 correction `5d7789db6b950d317e7b500b757aa77a54d609ed`; all prior candidates preserved |
 | Ticket | [CVQ-01](../../../modules/tickets/controlled-verification/cvq-01-qualification-admission.md), document 10, current digest in its registry; closure 03 exhausted, unchanged. Historical document 09 at dc45f31f LF `babcceb227bf8f91356dfbbb90f5e14ad1adab19f43a99686bdae46e8acff16d` |
@@ -12,7 +12,7 @@
 | Responsibility | Parent owns the replan recommendation and review verdict. Reused Terra/xhigh supplied read-only adversarial evidence; parent ran the candidate checks/probes/mutations. No source implementation, model elevation or owner decision is granted by this proposal |
 
 Sections 1–10 preserve earlier convergence/design/adoption history. D-CQ11/D-CLAIM, exact
-closure-03 approval and the responsibility split have been answered. Section 13 is the current
+closure-03 approval and the responsibility split have been answered. Section 14 is the current
 disposition; historical pending routes do not reopen those answered decisions.
 
 ## 1. Diagnosis and retained boundary
@@ -524,3 +524,294 @@ all predecessors and rollback refs remain untouched; no main merge, push, releas
 
 ACTION_COMPLETED / CONVERGENCE_REPLAN_PROPOSED -> WAIT_FOR_HUMAN /
 OWNER_REPLAN_DECISION_PENDING. No third correction and no B dispatch.
+
+## 14. Owner adoption and exact ticket packet — 2026-09-19
+
+Owner **「核准」** adopts section 13 at `058b8256bb1b2601fabc30c21a42ecc48c831875`,
+revision08 LF `24021ef0467d56c1bc3924e98b15d2f993e0dc720228dec44177da2132c50392`.
+This approves preparing the three verification closures and the narrowly stated historical
+evidence amendment. It does not approve unwritten exact tickets or reopen A closure01.
+Main and direct origin/main were read back at `b697738d009db37318ebc8762107ef8329e014db`;
+control was clean at 058b8256, source clean at `070039b6227205f7bb4592f203a4fd7455311f31`.
+No source/host effect, main integration, push, release or installation occurred.
+
+The prepared exact approval packet is:
+
+| Ticket | Proposed document / closure | One verification responsibility and sequence |
+| --- | --- | --- |
+| [CVQ-01A1](../../../modules/tickets/controlled-verification/cvq-01a1-scalar-wire-admission.md) | 01 / 01 | CA01–03 scalar/wire; starts preserved 070039b6 |
+| [CVQ-01A2](../../../modules/tickets/controlled-verification/cvq-01a2-case-manifest-admission.md) | 01 / 01 | CA04–05/08 + their local duplicate families; starts actual review-approved A1 SHA |
+| [CVQ-01A3](../../../modules/tickets/controlled-verification/cvq-01a3-evidence-admission.md) | 01 / 01 | CA06–07/09 remaining roster/proof/result/local-evidence predicates; starts actual review-approved A2 SHA |
+| [CVQ-01B amendment](../../../modules/tickets/controlled-verification/cvq-01b-source-admission.md#7-dependency-replacement-proposal--2026-09-19) | 03 / existing 01 | Dependency becomes combined A1/A2/A3 at one accepted SHA; name read-only split tests in strict check, no SG/source grammar change |
+
+Each exact leaf's LF digest is in the ticket partition index in this same commit. All are
+NON_DISPATCHABLE pending exact packet approval. After that approval, actual predecessor SHA,
+review/index and fresh single-ticket view bindings are admitted metadata; they do not create
+another approval loop. Keep the same sequential owner and current-session reviewer. Old failed
+A ticket04 and review02 remain unchanged historical evidence, not resumed authority.
+
+CA10 is enforced in each proposed boundary: one fixture owner, literal independent catalog,
+three responsibility-specific assertion modules and a compatibility collection aggregate.
+Predicates that share redundant guards are explicitly grouped for discriminatory mutation;
+no demand for an impossible isolated guard-red, no unrelated failure accepted as evidence.
+A2 owns manifest/prerequisite duplicates; A3 reruns them instead of recreating that responsibility.
+This is not a generic mutation runner or coupling detector. The frozen wire and Context are
+unchanged; speculative validator/resolver behavior stays outside all three tickets.
+
+### Parent baseline preflight before freezing proposals
+
+Purpose: demonstrate that the retained *historical* required-red predicates actually collect
+and fail on their named baseline, while the one waived false-red is already green. This is
+2026-09-19 reproduction, not reconstructed initial TDD chronology, not full A acceptance.
+
+Six inline unittest methods below ran in the existing clean read-only detached snapshots:
+`.worktrees/cvq-01-schema-review-closure03-correction` at
+`5d7789db6b950d317e7b500b757aa77a54d609ed`, and
+`.worktrees/cvq-01a-review-correction` at
+`070039b6227205f7bb4592f203a4fd7455311f31`. No source file was modified.
+The four ERROR subcases below are constructor rejection of valid input inside collected tests,
+not import/collection errors. Five FAIL subcases are acceptance of invalid input. The bound
+BG01 is green on both and explicitly asserts its location/type. Candidate six green proves
+these probes only; previous zero-red findings still require the new closure evidence.
+
+Command, independently in each named snapshot (same interpreter, one foreground command, 60s,
+zero retries/load; the inline source is documentation, not a new executable script):
+
+```powershell
+$cvqProbe = @'
+import json,unittest
+from pydantic import ValidationError
+from library.controlled_verification import ApprovedManifestFound,CapabilityFamily,CapabilityObservation,CaseKind,CaseRefusalReason,ClaimScope,EvidenceBounds,NoObservedRoster,NoRosterSubject,Observation,PlannedHostEffectEntry,Platform,PlatformCapabilityKey,QualificationCase,RefusedClaimProof
+from tests.verification_qualification_fixtures import approved_roster_plan,capability_key,host_capability_key,native_case,planned_host_entry,qualification_case,qualification_manifest
+class BaselinePredicateProbe(unittest.TestCase):
+ def test_BR01_native_plan_joins(self):
+  key=PlatformCapabilityKey(family=CapabilityFamily.PLAN_BINDING,adapter_revision=1,platform=Platform.WINDOWS)
+  base=native_case("case-native",CaseKind.TRUSTED_NATIVE_DISCOVERY,key,NoRosterSubject())
+  for field in ("argv_digest","cwd_digest","environment_plan_digest"):
+   payload=json.loads(base.model_dump_json()); payload["binding"][field]="f"*64
+   with self.subTest(field=field),self.assertRaises(ValidationError):
+    QualificationCase.model_validate_json(json.dumps(payload))
+ def test_BR02_pure_host_positive(self):
+  payload=json.loads(qualification_case().model_dump_json()); key=host_capability_key().model_dump(mode="json")
+  payload["capability_key"]=key; payload["prerequisite_keys"][0]["capability_key"]=key; payload["prerequisite_requirements"][0]["key"]["capability_key"]=key
+  self.assertEqual(QualificationCase.model_validate_json(json.dumps(payload)).subject,NoRosterSubject())
+ def test_BR03_refused_unavailable_positive(self):
+  for reason in (CaseRefusalReason.PREREQUISITE_UNPROVEN,CaseRefusalReason.RESOURCE_ENFORCEMENT_UNAVAILABLE,CaseRefusalReason.HOST_ROSTER_UNQUALIFIED):
+   with self.subTest(reason=reason.value):
+    value=CapabilityObservation(observation_id="observation-cvq",capability_id="capability-cvq",capability_key=capability_key(),claim_scope=ClaimScope.PURE_RULE,case_ids=("case-pure",),observer_ref="observer-cvq",evidence_ref="evidence-cvq",result=Observation.UNAVAILABLE,proof=RefusedClaimProof(reason=reason,admission_evidence_ref="admission-cvq"),roster_evidence=NoObservedRoster())
+    self.assertEqual(value.result,Observation.UNAVAILABLE)
+ def test_BR04_planned_sorting(self):
+  payload=json.loads(planned_host_entry().model_dump_json()); payload["alias_ids"]=["alias-z","alias-a"]
+  with self.assertRaises(ValidationError): PlannedHostEffectEntry.model_validate_json(json.dumps(payload))
+ def test_BR05_extra_pure_plan(self):
+  with self.assertRaises(ValidationError): ApprovedManifestFound(manifest=qualification_manifest(),roster_plans=(approved_roster_plan(),))
+ def test_BG01_case_output_bound(self):
+  EvidenceBounds(total_bytes=1,case_output_bytes=262144)
+  with self.assertRaises(ValidationError) as caught: EvidenceBounds(total_bytes=1,case_output_bytes=262145)
+  self.assertEqual([(e["loc"],e["type"]) for e in caught.exception.errors()],[(("case_output_bytes",),"less_than_equal")])
+unittest.main(verbosity=2)
+
+'@
+& 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -c 'import subprocess,sys; sys.exit(subprocess.run(sys.argv[1:], timeout=60).returncode)' 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -c $cvqProbe
+```
+
+Baseline 5d7789d exit 1, unreduced output (line endings normalized and trailing spaces removed
+for Markdown hygiene; no lines or diagnostics filtered):
+
+```text
+test_BG01_case_output_bound (__main__.BaselinePredicateProbe.test_BG01_case_output_bound) ... ok
+test_BR01_native_plan_joins (__main__.BaselinePredicateProbe.test_BR01_native_plan_joins) ...
+  test_BR01_native_plan_joins (__main__.BaselinePredicateProbe.test_BR01_native_plan_joins) (field='argv_digest') ... FAIL
+  test_BR01_native_plan_joins (__main__.BaselinePredicateProbe.test_BR01_native_plan_joins) (field='cwd_digest') ... FAIL
+  test_BR01_native_plan_joins (__main__.BaselinePredicateProbe.test_BR01_native_plan_joins) (field='environment_plan_digest') ... FAIL
+test_BR02_pure_host_positive (__main__.BaselinePredicateProbe.test_BR02_pure_host_positive) ... ERROR
+test_BR03_refused_unavailable_positive (__main__.BaselinePredicateProbe.test_BR03_refused_unavailable_positive) ...
+  test_BR03_refused_unavailable_positive (__main__.BaselinePredicateProbe.test_BR03_refused_unavailable_positive) (reason='PREREQUISITE_UNPROVEN') ... ERROR
+  test_BR03_refused_unavailable_positive (__main__.BaselinePredicateProbe.test_BR03_refused_unavailable_positive) (reason='RESOURCE_ENFORCEMENT_UNAVAILABLE') ... ERROR
+  test_BR03_refused_unavailable_positive (__main__.BaselinePredicateProbe.test_BR03_refused_unavailable_positive) (reason='HOST_ROSTER_UNQUALIFIED') ... ERROR
+test_BR04_planned_sorting (__main__.BaselinePredicateProbe.test_BR04_planned_sorting) ... FAIL
+test_BR05_extra_pure_plan (__main__.BaselinePredicateProbe.test_BR05_extra_pure_plan) ... FAIL
+
+======================================================================
+ERROR: test_BR02_pure_host_positive (__main__.BaselinePredicateProbe.test_BR02_pure_host_positive)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<string>", line 16, in test_BR02_pure_host_positive
+  File "C:\Users\GameBoy\AppData\Local\Programs\Python\Python311\Lib\site-packages\pydantic\main.py", line 782, in model_validate_json
+    return cls.__pydantic_validator__.validate_json(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pydantic_core._pydantic_core.ValidationError: 1 validation error for QualificationCase
+  Value error, host mediation requires a host subject [type=value_error, input_value={'case_id': 'case-pure', ...'case_output_bytes': 1}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.13/v/value_error
+
+======================================================================
+ERROR: test_BR03_refused_unavailable_positive (__main__.BaselinePredicateProbe.test_BR03_refused_unavailable_positive) (reason='PREREQUISITE_UNPROVEN')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<string>", line 20, in test_BR03_refused_unavailable_positive
+  File "C:\Users\GameBoy\AppData\Local\Programs\Python\Python311\Lib\site-packages\pydantic\main.py", line 263, in __init__
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pydantic_core._pydantic_core.ValidationError: 1 validation error for CapabilityObservation
+  Value error, refused proof requires failed result [type=value_error, input_value={'observation_id': 'obser...g='NO_OBSERVED_ROSTER')}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.13/v/value_error
+
+======================================================================
+ERROR: test_BR03_refused_unavailable_positive (__main__.BaselinePredicateProbe.test_BR03_refused_unavailable_positive) (reason='RESOURCE_ENFORCEMENT_UNAVAILABLE')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<string>", line 20, in test_BR03_refused_unavailable_positive
+  File "C:\Users\GameBoy\AppData\Local\Programs\Python\Python311\Lib\site-packages\pydantic\main.py", line 263, in __init__
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pydantic_core._pydantic_core.ValidationError: 1 validation error for CapabilityObservation
+  Value error, refused proof requires failed result [type=value_error, input_value={'observation_id': 'obser...g='NO_OBSERVED_ROSTER')}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.13/v/value_error
+
+======================================================================
+ERROR: test_BR03_refused_unavailable_positive (__main__.BaselinePredicateProbe.test_BR03_refused_unavailable_positive) (reason='HOST_ROSTER_UNQUALIFIED')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<string>", line 20, in test_BR03_refused_unavailable_positive
+  File "C:\Users\GameBoy\AppData\Local\Programs\Python\Python311\Lib\site-packages\pydantic\main.py", line 263, in __init__
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pydantic_core._pydantic_core.ValidationError: 1 validation error for CapabilityObservation
+  Value error, refused proof requires failed result [type=value_error, input_value={'observation_id': 'obser...g='NO_OBSERVED_ROSTER')}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.13/v/value_error
+
+======================================================================
+FAIL: test_BR01_native_plan_joins (__main__.BaselinePredicateProbe.test_BR01_native_plan_joins) (field='argv_digest')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<string>", line 11, in test_BR01_native_plan_joins
+AssertionError: ValidationError not raised
+
+======================================================================
+FAIL: test_BR01_native_plan_joins (__main__.BaselinePredicateProbe.test_BR01_native_plan_joins) (field='cwd_digest')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<string>", line 11, in test_BR01_native_plan_joins
+AssertionError: ValidationError not raised
+
+======================================================================
+FAIL: test_BR01_native_plan_joins (__main__.BaselinePredicateProbe.test_BR01_native_plan_joins) (field='environment_plan_digest')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<string>", line 11, in test_BR01_native_plan_joins
+AssertionError: ValidationError not raised
+
+======================================================================
+FAIL: test_BR04_planned_sorting (__main__.BaselinePredicateProbe.test_BR04_planned_sorting)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<string>", line 24, in test_BR04_planned_sorting
+AssertionError: ValidationError not raised
+
+======================================================================
+FAIL: test_BR05_extra_pure_plan (__main__.BaselinePredicateProbe.test_BR05_extra_pure_plan)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<string>", line 26, in test_BR05_extra_pure_plan
+AssertionError: ValidationError not raised
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.010s
+
+FAILED (failures=5, errors=4)
+```
+
+Candidate 070039b6 exit 0, unreduced output:
+
+```text
+test_BG01_case_output_bound (__main__.BaselinePredicateProbe.test_BG01_case_output_bound) ... ok
+test_BR01_native_plan_joins (__main__.BaselinePredicateProbe.test_BR01_native_plan_joins) ... ok
+test_BR02_pure_host_positive (__main__.BaselinePredicateProbe.test_BR02_pure_host_positive) ... ok
+test_BR03_refused_unavailable_positive (__main__.BaselinePredicateProbe.test_BR03_refused_unavailable_positive) ... ok
+test_BR04_planned_sorting (__main__.BaselinePredicateProbe.test_BR04_planned_sorting) ... ok
+test_BR05_extra_pure_plan (__main__.BaselinePredicateProbe.test_BR05_extra_pure_plan) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.008s
+
+OK
+```
+
+Original A's case_output_bytes historical-red demand is SUPERSEDED by the approved evidence
+amendment: retain BG01 baseline green, require SW07 weakening-red/restoration-green. Genuine
+argv/cwd/environment, pure-host, refused-unavailable, planned-sort and extra-pure-plan baseline
+defects remain in their new tickets. No other waived cell or new capability claim.
+
+ACTION_COMPLETED / EXACT_TICKET_PACKET_PROPOSED -> WAIT_FOR_HUMAN /
+OWNER_EXACT_APPROVAL_PENDING. Next authorized action after exact packet approval is A1
+admission/dispatch, not a third A correction, B first, merge or release.
+
+### Proposal feasibility review and independent accounting
+
+Retained evidence-only Terra/xhigh helper reviewed the three draft tickets without source/test
+execution or edits. Root accepted three findings and corrected them before this commit:
+SW03 demanded a read-only-symbol mutation without an exception; ER09 referred to rejection
+validators that do not exist for allowed shapes; ER16's witness could disappear with the
+very import it had to detect. Exact temporary review-snapshot-only exceptions now distinguish
+counterfactual test evidence from committable public-schema changes; ER09 names six such
+restrictions; ER16 is defined locally in the aggregate, not inside a removable imported class.
+No helper verdict substitutes for root review.
+
+Root also found requirement-in-scope is implied by case existence/in-scope and matching
+capability ID. A2 now distinguishes a redundant diagnostic check from an independently
+discriminated ID-equality predicate; it no longer demands impossible single-guard admission.
+All field-level predicates and accepted wire semantics remain unchanged.
+
+The helper additionally alleged 333 required fields / 747 negatives. Root did not adopt that
+claim: independent recount from the exact approved wire, not production/catalog introspection,
+gives 413 expanded field occurrences minus 78 defaults = 335 required, and 2*335+81 = 751.
+Constraint `<=` is not a default `=`. No wire/DTO change is authorized to chase a different total.
+
+Read-only recount command (control worktree):
+
+```powershell
+$cvqWire = Get-Content -LiteralPath modules/spec/controlled-verification-qualification-wire.md
+$cvqGroups = @{}
+foreach ($line in $cvqWire) {
+ if ($line -match '^(CommonBinding|CaseIdentity|EvidenceIdentity) = (.+)$') {
+  $cvqGroups[$Matches[1]] = @($Matches[2].Split(';') | ForEach-Object { $_.Trim() })
+ }
+}
+$cvqInDtos = $false
+$cvqRows = @()
+foreach ($line in $cvqWire) {
+ if ($line -match '^## 2\.') { $cvqInDtos = $true; continue }
+ if ($line -match '^## 3\.') { $cvqInDtos = $false }
+ if ($cvqInDtos -and $line -match '^([A-Za-z]\w*) = (.+)$') {
+  $cvqDtoName = $Matches[1]
+  $cvqFields = @()
+  foreach ($field in $Matches[2].Split(';')) {
+   $cvqField = $field.Trim()
+   if ($cvqField.StartsWith('@')) { $cvqFields += $cvqGroups[$cvqField.Substring(1)] }
+   else { $cvqFields += $cvqField }
+  }
+  $cvqDefaults = @($cvqFields | Where-Object { $_ -match '(?<![<>])=' }).Count
+  $cvqRows += [pscustomobject]@{ dto=$cvqDtoName; fields=$cvqFields.Count; defaults=$cvqDefaults; required=$cvqFields.Count-$cvqDefaults }
+ }
+}
+$cvqTotals = [pscustomobject]@{ dtos=$cvqRows.Count; fields=($cvqRows | Measure-Object fields -Sum).Sum; defaults=($cvqRows | Measure-Object defaults -Sum).Sum; required=($cvqRows | Measure-Object required -Sum).Sum; cells=2*($cvqRows | Measure-Object required -Sum).Sum+$cvqRows.Count }
+$cvqTotals | ConvertTo-Json -Compress
+$cvqRows | Where-Object { $_.dto -in @('PureContractBinding','NativePreLaunchBinding','ResourceBounds','EvidenceBounds','QualificationManifest') } | Format-Table -AutoSize
+```
+
+Exit 0, output (line endings/trailing spaces normalized, no rows omitted):
+
+```text
+{"dtos":81,"fields":413.0,"defaults":78.0,"required":335.0,"cells":751.0}
+
+dto                    fields defaults required
+---                    ------ -------- --------
+PureContractBinding        10        1        9
+NativePreLaunchBinding     29        1       28
+ResourceBounds              8        3        5
+EvidenceBounds              2        0        2
+QualificationManifest       9        1        8
+```
+
+Root's disposition is TICKET_PACKET_PROPOSED, not implementation approval or claim that all
+future mutation experiments already ran. Prior failed closures and candidates remain untouched.
