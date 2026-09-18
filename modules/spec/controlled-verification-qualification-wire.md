@@ -2,9 +2,9 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `SPEC-APPENDIX-CVQ-WIRE-20260918-01` / `SPEC_CONTRACT_APPENDIX` / `01` |
+| ID / kind / revision | `SPEC-APPENDIX-CVQ-WIRE-20260918-01` / `SPEC_CONTRACT_APPENDIX` / `02` |
 | State | `DRAFT / OWNER_EXACT_APPROVAL_PENDING / NON_DISPATCHABLE` |
-| Sole owning SPEC | [Qualification SPEC](controlled-verification-qualification.md), revision 05, section 11; this appendix is not an independent specification |
+| Sole owning SPEC | [Qualification SPEC](controlled-verification-qualification.md), revision 06, section 11; this appendix is not an independent specification |
 | Scope | Exact public schema and finite constructor/alias/field catalog for proposed CVQ-01 closure 03; no source implementation or runtime claim |
 
 ## 1. Notation and field rules
@@ -96,7 +96,7 @@ QualificationScope = project_id:Id; baseline_digest:Digest; capability_ids:Id+; 
 ResourceBounds = workload_duration_seconds:Pos<=30; cpu_millicpu:Pos<=1000; memory_bytes:Pos<=536870912; process_count:Pos<=4; disk_bytes:Pos<=67108864; automatic_retry_count:Zero=0; container_count:Zero=0; build_worker_count:Zero=0
 CleanupBounds = cleanup_seconds:Pos<=10
 EvidenceBounds = total_bytes:Pos<=33554432; case_output_bytes:Pos<=262144
-QualificationCase = case_id:Id; capability_key:CapabilityKey; kind:CaseKind; role:CaseRole; binding:AttemptBinding; fixture_digest:Digest; executable_digest:Digest; dependency_digests:Digest+; argv_digest:Digest; cwd_digest:Digest; environment_plan_digest:Digest; expected_oracle_ref:Id; prerequisite_keys:PrerequisiteKey+; prerequisite_requirements:PrerequisiteRequirement+; expected_check_ids:Id+; subject:CaseSubject; resource_bounds:ResourceBounds; cleanup_bounds:CleanupBounds; evidence_bounds:EvidenceBounds
+QualificationCase = case_id:Id; capability_id:Id; capability_key:CapabilityKey; kind:CaseKind; role:CaseRole; binding:AttemptBinding; binding_digest:Digest; fixture_digest:Digest; executable_digest:Digest; dependency_digests:Digest+; argv_digest:Digest; cwd_digest:Digest; environment_plan_digest:Digest; expected_oracle_ref:Id; prerequisite_keys:PrerequisiteKey+; prerequisite_requirements:PrerequisiteRequirement+; expected_check_ids:Id+; subject:CaseSubject; resource_bounds:ResourceBounds; cleanup_bounds:CleanupBounds; evidence_bounds:EvidenceBounds
 CapabilityRequirement = observation_id:Id; capability_id:Id; capability_key:CapabilityKey; claim_scope:ClaimScope; case_ids:Id+
 QualificationManifest = scope:QualificationScope; source_ref:Id; owner_approved_revision:Pos; owner_approved_digest:Digest; cases:QualificationCase+; capability_requirements:CapabilityRequirement+; active_lanes:Lane=1; total_budget_seconds:Pos<=1200; evidence_destination_ref:Id
 ```
@@ -173,7 +173,10 @@ host evidence. Case prerequisite keys equal requirement keys exactly once each.
 
 CapabilityObservation's roster_evidence is the reachable root for observed host bodies:
 DISCOVERY resolves discovery coverage, then its discovered set and per-category absence/entry
-records; ENFORCEMENT also resolves enforcement coverage and each present-entry observation.
+records for fresh discovery; ENFORCEMENT also resolves enforcement coverage and each present-entry
+observation. A later property evaluation consumes its independently accepted discovery prerequisite
+by exact ref/digest/key and checks the observed body against the plan; it does not request a fresh
+CaseEvidenceSubject from an earlier manifest absent from current authority (SPEC 11.2).
 Expected subjects come from the approved requirement/roster plan, and link digests must match the
 independently resolved records. PROVEN HOST_DISCOVERY requires DISCOVERY; PROVEN HOST_PROPERTY
 requires ENFORCEMENT. Pure/native non-host scopes require NO_OBSERVED_ROSTER. Non-PROVEN host
@@ -261,6 +264,15 @@ subject's HostSurface and adapter revision. Exact all-category coverage applies 
 observed coverage, not a min_length=1 substitute. MISMATCH/failed observations are representable
 negative evidence, not a reason to erase the record or an admitted complete discovery.
 
+Each case has exactly one declared capability_id; requirements compare that ID, exact key and
+case-kind-derived ClaimScope. Case binding_digest comes from the independent approved record,
+not the report. HOST_DISCOVERY requirements contain exactly one case ID, so present-entry
+discovery evidence requests use that approved case and binding digest; a second case ID rejects.
+This does not cap the number of independently approved host-discovery requirements. An actual
+WA-04 source claim is SOURCE_PROPERTY with family RESPONSIBILITY_ADMISSION; this investigation's
+Q8 owns no other responsibility validator. That pair requires WA04_ADAPTER; other pure pairs do
+not acquire a native prerequisite merely because their key is host-scoped.
+
 Catalog tests hand-author independent expected field/default/name lists and expected wire values.
 They may use a small fixture builder to compose **that literal data**, never production schema,
 model_fields, reflection or validator-derived expectations. Observed AST/model inventories may
@@ -284,13 +296,16 @@ The finite scenario set supplies every concrete/alias positive:
    bootstrap requirements; measured complete result plus confirmed cleanup, no self prerequisite.
 3. Host discovery with WINDOWS/CODEX_CLI HOST_MEDIATION key; one present shell entry `entry-001`,
    alias `alias-001`, MODEL_REACHABLE/BROKER_ONLY; six explicitly absent categories. Planned entry
-   points to the same-key host-property case `case-002`/oracle `expected-oracle-ref-001`. Both
-   cases occur in the manifest; discovery depends on bootstrap, property depends on discovery.
-4. Host property for that plan/discovery; actual per-entry observation and completed enforcement
-   payload, each distinct case has its own ordinary binding/check/observation identity. The
+   names the future same-key host-property case `case-002`/oracle `expected-oracle-ref-001` as
+   planned intent only. The discovery-only manifest has no property case, completed-discovery
+   prerequisite or future evidence digest; it depends only on its bootstrap prerequisites.
+4. A separate later approved manifest for host property against that plan and now-completed
+   discovery: actual per-entry observation and completed enforcement payload, with its own
+   ordinary binding/check/observation identity and exact resolved discovery digest. The
    declared check set includes actual positive-effect and denied-bypass cells for full-host proof.
 5. All-ABSENT host discovery, seven absence records, empty actual sets, ZERO_PRESENT_ENTRIES;
-   dependent property refused HOST_ROSTER_UNQUALIFIED. No invented entry/oracle/native launch.
+   a later dependent property request is refused HOST_ROSTER_UNQUALIFIED. No invented entry,
+   oracle or enforcement launch (the actual discovery case still has its real native observation).
 6. For each remaining result/proof/port/evaluation branch, replace only its indicated branch
    data in its compatible pure/native scenario: failed measured check, native recovery, each
    refused reason/detail, unavailable probe, each incomplete/not-run reason, MISSING/CONFLICTING,

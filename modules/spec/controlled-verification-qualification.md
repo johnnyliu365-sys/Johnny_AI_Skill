@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| Specification ID / revision | `SPEC-CONTROLLED-VERIFICATION-QUALIFICATION-20260909-01` / `05` |
+| Specification ID / revision | `SPEC-CONTROLLED-VERIFICATION-QUALIFICATION-20260909-01` / `06` |
 | Status | `AMENDMENT_PROPOSED / OWNER_EXACT_APPROVAL_PENDING / NON_DISPATCHABLE`; approved revision 04 remains historical authority |
 | Author / worktree / baseline | Current-session drafting assistant; `codex/controlled-verification-intake`; `d3c78b5b154b04a7fdaad544a3d00f1e91271dcb` |
 | PRD / CHG | `PRD-20260908-051` / `CHG-20260908-051` |
@@ -442,7 +442,13 @@ HOST_MEDIATION requires HostCapabilityKey. Other families may use either key alt
 explicitly approved; pure claims never qualify a native/host claim with the same key. Native
 bindings require platform WINDOWS. Capability requirements name one declared capability ID,
 one exact key, one scope and a nonempty exact case set; every case in that set must match all
-three. Requirement IDs are unique, not merged by capability family.
+three. `QualificationCase.capability_id` is required and must belong to scope.capability_ids;
+its required `binding_digest` is the independent approval record's pin for that exact binding
+body. Resolve the expected digest from the approved case before looking at report evidence;
+every CaseResult and case/check/cleanup subject must match it. The approval composition binds
+body and digest together; the pure evaluator compares both to the approved record, not a
+caller-selected digest or a newly invented canonical hash of a self-referential manifest.
+Requirement IDs are unique, not merged by capability family.
 
 The report supplies only observation-ID/evidence-ref pairs for those requirements. The three
 existing ports carry the complete graph: approved manifest plus expected roster plans; exact
@@ -481,8 +487,25 @@ only. It contains no discovery/absence evidence or future completion prerequisit
 HostCategoryCoverage remains the later observed form. FOUND transports the actual DiscoveredEffectSet,
 HostRosterDiscoveryCoverage and HostRosterEnforcementCoverage; neither a comparison enum nor an
 opaque reference substitutes for those bodies. Validate exact key, seven categories, entry/alias
-sets, observer and per-entry oracle/disposition bindings. All present planned case refs must
-resolve to same-key HOST_PROPERTY cases; absence has no invented entry, oracle or launch.
+sets, observer and per-entry oracle/disposition bindings. Planned enforcement case IDs are future
+intent: a discovery-only manifest need not contain those cases or their future evidence pins.
+A later independently approved HOST_PROPERTY manifest binds completed discovery and requires its
+requested case IDs to occur in the same-key plan. Do not require a future enforcement manifest
+or discovery-result digest merely to approve the first probe. Absence has no invented entry,
+oracle or launch. In this contract HOST_DISCOVERY requirements have exactly one case ID; this
+single bounded trusted discovery case covers the entire roster. All present-entry discovery
+evidence therefore derives its CaseEvidenceSubject from that one approved case and binding pin,
+never by inspecting a returned payload and choosing a convenient case. Multiple independent
+discovery requirements/host surfaces remain possible; multi-case aggregation within one discovery
+requirement would need a separately approved mapping contract.
+
+A later HOST_PROPERTY case resolves the independently accepted discovery prerequisite and its
+exact coverage ref/digest/key; it does not re-run the discovery or require the earlier discovery
+case to be in its own manifest. The protected accepted-discovery record attests the earlier
+case/entry authenticity; the current evaluator still compares the returned coverage/set/category
+bodies to the approved plan and exact accepted pins. For fresh HOST_DISCOVERY, all entry and
+absence evidence is resolved/authenticated as above before any accepted-discovery claim. This
+distinguishes consuming a qualified prerequisite from trying to recreate its earlier authority.
 
 All-ABSENT discovery is valid only with seven independently authenticated absence closures,
 matching approved empty plan, empty actual sets and zero unknown/unobservable counts. Its
@@ -528,7 +551,7 @@ dependency requires an explicit policy amendment, not a broader checker fallback
 
 ### 11.4 Approval object and migration
 
-Exact approval must bind revision 05, wire appendix revision 01 and ticket document 05 / closure 03
+Exact approval must bind revision 06, wire appendix revision 02 and ticket document 06 / closure 03
 by their final LF digests and common control commit. The old schema candidate stays historical;
 additive source migration may begin only after that approval and fresh allocation/type preflight.
 No constructor compatibility is promised for the never-integrated experimental candidate. External

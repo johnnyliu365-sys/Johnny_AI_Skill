@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-CONVERGENCE` / `CODE_REVIEW` / `03` |
+| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-CONVERGENCE` / `CODE_REVIEW` / `04` |
 | Lifecycle / conclusion | `OWNER_DESIGN_ADOPTED / EXACT_CONTRACT_APPROVAL_PENDING / NON_DISPATCHABLE` |
 | Control baseline | `89d91e68f00ef509537a57b85a32b450e6cca81b` |
 | Examined source | `9796790d33b6d1374469fad1b37e1f4991262a43`; initial `cd228a790b2f37bc2cad109978f8822ad5bb2da6` preserved |
@@ -284,8 +284,9 @@ The owner's **「採用」** adopts D-CQ11 and D-CLAIM in proposal revision 02 a
 These two choices are resolved; do not ask them again. Sections 2–6 retain the proposal wording
 as the decision's historical object, not as a still-unanswered choice.
 
-The next control action transcribes the choice into qualification SPEC revision 05, its wire
-appendix revision 01 and CVQ-01 document 05 / proposed closure 03. The approval object is that
+The control action transcribes the choice into qualification SPEC revision 06, its wire
+appendix revision 02 and CVQ-01 document 06 / proposed closure 03 after the bounded audit below.
+The approval object is that
 whole exact packet, not the source inventory and not the previous failed candidate. The sealed
 Context, D1/D2/D3, three external read ports, source-only scope and source-verification limits
 are unchanged. Native/host capability, third source correction, integration and release remain
@@ -301,3 +302,31 @@ fields must come from the amended contract, not copy this observation as a test 
 Current route: `ACTION_COMPLETED -> AUTO_CONTINUE / CONTRACT_TRANSCRIPTION`; subsequent exact
 closure approval remains `OWNER_EXACT_APPROVAL_PENDING`. This records the owner's decision,
 not a new implementer allocation or a reset of the exhausted closure-02 correction counter.
+
+## 8. Transcription audit and parent disposition — 2026-09-18
+
+Initial transcription was committed docs-only at `42e196d2772557e6aee08a8bf5a6238ae67a2df4`
+(SPEC 05 / appendix 01 / ticket 05). One reused Terra/xhigh helper inspected that immutable
+proposal under SPEC_GAP, STATE_TRANSITION and CONSISTENCY, one pass, maximum five findings,
+READ_ONLY_INTENT_ONLY / NO_EXTERNAL_EFFECT. It returned three findings without writes, tests,
+production imports or approval. Parent performed independent catalog/link/hash inspection and
+owns these batched corrections; no source candidate or runtime was inspected as passing.
+
+| Finding | Parent disposition in SPEC 06 / appendix 02 / ticket 06 |
+| --- | --- |
+| Helper F1: case-to-capability-ID match has no represented field | Accepted. QualificationCase now requires capability_id, belonging to declared scope; requirement ID/key/scope comparison is executable. CQ05 changes the ID alone as a negative |
+| Helper F2: report binding digest has no independently expected value | Accepted. QualificationCase requires the approval record's binding_digest, paired with its binding body. Case/check/cleanup requests derive it before report evidence; changing caller/result and returned digest together still fails CQ06 |
+| Helper F3: two discovery cases leave entry evidence subject ambiguous | Accepted. This proposed version permits exactly one case per HOST_DISCOVERY requirement, covering the whole roster. All entry discovery subjects derive from that approved case. Independent requirements/surfaces remain separate; later property consumes accepted discovery rather than recreating its old case authority |
+| Parent P5: case-insensitive recount included prose as a declaration | Fixed. Case-sensitive literal row parsing and type/alias resolution are used; final catalog has 81 DTOs, 335 required occurrences including the two newly added case fields, 78 defaults, 16 aliases/63 branches, 32 enums/131 members; required/null/extra cells = 751 |
+| Parent P6: future property cells in first-discovery manifest reintroduce circularity | Fixed. Planned enforcement IDs are future intent. First discovery needs no future evidence pins/property cells; the later separately approved property manifest binds completed discovery. Scenario 3/4 and CQ09 distinguish these lifetimes |
+
+Validation is document-level: independently recount names/fields/branches and resolve referenced
+types, verify local Markdown links, verify leaf→registry→root LF digests after final bytes,
+and run git diff --check. It is not public-constructor/strict-type/native proof. No additional
+helper pass or source test run is claimed; no third correction was dispatched. The three-port
+ownership, sealed Context and both failed source candidates remain unchanged. The final exact
+approval request is the revised packet, not the earlier audited commit's unfixed text.
+
+Current return: `ACTION_COMPLETED / CONTRACT_TRANSCRIPTION -> WAIT_FOR_HUMAN /
+OWNER_EXACT_APPROVAL_PENDING`. Only the exact proposed replacement closure/resumption remains
+pending; owner adoption of D-CQ11/D-CLAIM is complete and is not reopened.

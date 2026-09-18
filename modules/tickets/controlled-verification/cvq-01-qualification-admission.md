@@ -2,14 +2,14 @@
 
 | Field | Value |
 | --- | --- |
-| Artifact ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01` / `IMPLEMENTATION_TICKET` / `05` |
+| Artifact ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01` / `IMPLEMENTATION_TICKET` / `06` |
 | State / Acceptance Closure Set | `OWNER_DESIGN_ADOPTED / OWNER_EXACT_APPROVAL_PENDING / CONVERGENCE_REVIEW_REQUIRED / NON_DISPATCHABLE`; proposed `CLOSURE-CVQ-01` revision `03`; behavior phase remains `NOT_ADMITTED` |
 | Change class / observable result | New behavior, not defect correction: one pure evaluator rejects untrusted qualification input and returns the exact tagged evaluation/report without executing work |
 | Preparation authority | Owner's 2026-09-09 exact packet approval at `161c4e095697fff6e4693b8d9bfce866878277dd`, recorded at `cad0d2bca480f45c57d0598f4342636d35b1ecf2`; CVQ-01 preparation only |
 | Prior approved SPEC | `SPEC-CONTROLLED-VERIFICATION-QUALIFICATION-20260909-01` revision `04`, LF SHA-256 `4cad6a88b9d151a05bf409f8b61bc97580e80303f58a2377cb0301815b999a1d`; preserved in Git, not a grant for a third closure-02 correction |
-| Proposed replacement contract | Qualification SPEC revision `05` section 11 and `SPEC-APPENDIX-CVQ-WIRE-20260918-01` revision `01`; exact final LF digests in the same-commit [SPEC registry](../../spec/README.md); owner exact approval pending |
+| Proposed replacement contract | Qualification SPEC revision `06` section 11 and `SPEC-APPENDIX-CVQ-WIRE-20260918-01` revision `02`; exact final LF digests in the same-commit [SPEC registry](../../spec/README.md); owner exact approval pending |
 | SPEC cells | CVQ-AC01; pure comparisons/refusals of CVQ-AC02/03; report integrity/reduction of CVQ-AC09; typed roster coverage and WA-04 unavailable handling only, not native CVQ-AC04–08/10 proofs |
-| PRD / CHG | `PRD-20260908-051` / `CHG-20260908-051`; current REQ-051 revision 09 LF SHA-256 `bb61568fa36b1a6caae86a86ef932111ca1a3407af7051a980eb5e0558efa9b9`; reattachment does not add its pending CVE deltas to this qualification ticket |
+| PRD / CHG | `PRD-20260908-051` / `CHG-20260908-051`; current REQ-051 revision 10 LF SHA-256 `17b1bfcca6fe79a7fdb4d975f75ace4bdcd28d634e3bf9d25ed1106d010b1ecb`; reattachment does not add its pending CVE deltas to this qualification ticket |
 | Sealed Context | `CTX-CONTROLLED-VERIFICATION-20260909-01` revision `02`, LF SHA-256 `6f5465295cb3fd303bc555da655b3169d33292ad1f2ed4374748f82ddd6f2285`; read/reference only |
 | Source baseline | Preserve correction `9796790d33b6d1374469fad1b37e1f4991262a43` and initial `cd228a790b2f37bc2cad109978f8822ad5bb2da6`; future additive schema source descends from correction, independently binding the approved final control packet commit; no current dispatch or integration |
 | Control owner / reviewer | Current-session `SUPERVISOR_REVIEWER`, semantic profile `ticket-review`; human owner retains ticket approval and effects |
@@ -485,7 +485,7 @@ Owner adopted D-CQ11/D-CLAIM at proposal revision 02, commit
 `fa6b06a0beb9f9e25bb582a95b565c12e5d3595a`, LF
 `3fbe8c18b15992d86b99487b769ae411caac410102bd6480c3a94e4c7b78e93d`.
 This is the resulting exact-approval proposal, not that approval. Current instructions are this
-section plus SPEC revision 05 section 11, the wire appendix and the unchanged responsibility/
+section plus SPEC revision 06 section 11, the wire appendix and the unchanged responsibility/
 effect/resource rules above. Earlier approval, phase and route passages are historical only.
 Closure 02's exhausted counter is preserved; no relabelled third correction has been dispatched.
 
@@ -498,10 +498,10 @@ map to the existing correspondingly named constituent files. No DTO is moved int
 
 | Catalog | Exact count / meaning |
 | --- | --- |
-| Public concrete DTOs | 82 direct constructor + JSON round-trip rows; names, not merely total, must match |
+| Public concrete DTOs | 81 direct constructor + JSON round-trip rows; names, not merely total, must match |
 | Required-field occurrences | 335 after expanding CommonBinding/CaseIdentity/EvidenceIdentity per concrete DTO |
 | Explicit default occurrences | 78; each has omission→exact default, null rejection and wrong constant rejection |
-| Required/extra negatives | 752 = 2 × 335 required omission/null + 82 extra-field cells |
+| Required/extra negatives | 751 = 2 × 335 required omission/null + 81 extra-field cells |
 | Tagged aliases / branches | 16 / 63 TypeAdapter positive branches, plus each branch's actual selector omission/unknown/null cells |
 | Enum classes / members | 32 / 131 independent enum round trips; narrower DTO subsets tested separately |
 | Other public declarations | Seven constrained scalar aliases, three read-only Protocols, three exact private schema bases; no implicit DTO rows |
@@ -566,14 +566,21 @@ scope/graph replacements compiled from SPEC 11 / appendix:
 
 - CQ04 authenticates prerequisite binding through the typed evidence subject, not shape alone.
 - CQ05 covers the five applicability rows, both key alternatives, no-host native probe and no
-  first-discovery circular prerequisite; pure host-subject rule cannot issue host proof.
+  first-discovery circular prerequisite; pure host-subject rule cannot issue host proof. Alter
+  case capability_id alone while key/kind stay fixed: requirement mismatch rejects. SOURCE_PROPERTY
+  plus RESPONSIBILITY_ADMISSION is the WA-04 claim and cannot omit WA04_ADAPTER.
 - CQ06 covers exact capability requirement/claim ID sets, all returned subject/ref/digest/observer
   mismatches, each of five FOUND payload alternatives, and missing/conflicting resolution.
+  Change report and evidence-subject binding_digest together: still reject against the independent
+  approved QualificationCase.binding_digest, before treating those matching caller values as proof.
 - CQ07 checks claim subset reduction and each proof alternative, including real pre-launch
   refusal evidence and interrupted event evidence; no failed/unavailable/unrun → PROVEN.
 - CQ08 requires execution observer for both pure and native, separate from native launch observer.
 - CQ09 resolves approved plan, actual discovery payload/set and all absence records; all-ABSENT
   succeeds only for matching empty plan and zero unknown counts. Planned absence is not evidence.
+  First-discovery manifest omits future property cells; that remains valid. HOST_DISCOVERY
+  requirement with two case IDs rejects instead of guessing an entry's evidence subject. Later
+  property consumes accepted discovery by exact pin, without requiring its old case in this manifest.
 - CQ10 resolves capability roster links through actual discovery/enforcement bodies; zero-present
   cannot issue full-host PROVEN or satisfy permitted-positive/bypass evidence. Wrong host surface,
   key, oracle, disposition or referenced digest rejects.
@@ -611,7 +618,7 @@ before READY_LOW_MODEL for behavior. No upgrade or additional implementation lan
 The parent retains the full history; the next work packet contains only approved current wire/
 grammar/scope/commands/return and exact authority pins. Reusing the Agent does not erase memory.
 
-Owner exact approval of SPEC 05 + appendix 01 + ticket 05/closure 03 would permit one new bounded
+Owner exact approval of SPEC 06 + appendix 02 + ticket 06/closure 03 would permit one new bounded
 schema phase on the preserved owner branch, followed by actual parent preflight; only success
 admits the same owner to behavior. That authority is **pending**. It grants no VM, provider,
 host enrollment, integration, push, installation or release. An initial plus one correction is
