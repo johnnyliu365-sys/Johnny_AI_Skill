@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-CONVERGENCE` / `CODE_REVIEW` / `01` |
+| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-CONVERGENCE` / `CODE_REVIEW` / `02` |
 | Lifecycle / conclusion | `OWNER_DECISION_REQUIRED / PROPOSAL_ONLY / NON_DISPATCHABLE` |
 | Control baseline | `89d91e68f00ef509537a57b85a32b450e6cca81b` |
 | Examined source | `9796790d33b6d1374469fad1b37e1f4991262a43`; initial `cd228a790b2f37bc2cad109978f8822ad5bb2da6` preserved |
@@ -45,16 +45,48 @@ This is the finite CQ11 predicate, not a new general-purpose analyzer or runtime
 - Internal imports resolve to the ticket's constituent DAG, regardless of relative/absolute
   spelling, package-form import, aliases or function/class nesting. Wildcards reject. Reject
   cycles and imports through a facade that reach forbidden constituents.
-- The call inventory is a separate finite symbol table: explicitly admitted pure builtins,
-  approved constructors/decorators, locally declared pure helpers and approved value operations.
-  Alias resolution must preserve the original symbol; unresolved dynamic calls or alias rebinding
-  reject. The exact call table must be frozen in the next control revision before implementation;
-  the implementer may not extend it merely to make the current code pass.
+- The call inventory below is the proposed closed symbol table, not permission for an implementer
+  to decide what is "pure." Alias resolution preserves the original symbol; unresolved receivers,
+  dynamic call targets, rebinding or parameter/variable shadowing of approved callees reject.
 - Existing exclusions remain: `Any`, casts, Pydantic bypass construction/copy-update, dynamic
   import, `eval`/`exec`, reflective `getattr`/`setattr`, ambient mutable services and effect APIs.
   Match qualified and aliased forms throughout the AST, including unused renamed helpers.
 - Facades permit only docstrings, future imports, explicit re-exports and a literal immutable
   `__all__`; not functions, classes, validators or initialization calls.
+
+| Permitted calls | Exact boundary |
+| --- | --- |
+| Builtins | `len`, `set`, `frozenset`, `tuple`, `sorted`, `any`, `all`, `isinstance`, `enumerate`, `zip`; `ValueError` and `TypeError` construction. No other builtin calls |
+| Schema construction | The listed Pydantic `ConfigDict`, `Field`, `StringConstraints`, `Discriminator`, `Tag`, `model_validator`; exact checked public DTO/enum constructors from the frozen inventory |
+| Mapping lookup | `Mapping.get` only on a receiver proven by a local `isinstance(receiver, Mapping)` guard, with no rebinding and within that guard's body; not arbitrary `.get` calls |
+| Named local functions | Direct calls to module-local functions whose full bodies pass this same policy; statically resolved acyclic call graph, all paths inspected, explicit typed parameters/return. Function name or a "pure" comment is not evidence |
+| Later behavior slice only | Ordinary checked-model `model_validate`, `model_validate_json`, `model_dump`, `model_dump_json`; `pydantic.TypeAdapter` construction and its `validate_python`, `validate_json`, `dump_python`, `dump_json`. The receiver must resolve to the exact checked model/adapter, not an arbitrary same-named method |
+| Later behavior port reads only | `resolve` on one of the three explicitly injected, typed port parameters. No lookup by name, callback registry or arbitrary object's `.resolve` |
+
+For the later behavior slice the only additional external imports proposed are
+`pydantic.TypeAdapter` and `pydantic.ValidationError`; no `json`, filesystem or effect library is
+needed for the declared public JSON-validation seam. If a future requirement genuinely needs
+another call/import, return to this policy's approval boundary rather than weakening the checker.
+These later rows do not admit behavior before schema preflight.
+
+Local-function checking admits ordinary scalar/tuple/set expressions, comparisons, comprehensions,
+local assignments, conditionals, finite collection iteration, returns and the listed exception
+construction. It rejects global/nonlocal writes, attribute/subscript writes, function-valued
+parameters/returns or assignment aliases, recursion, `while`, async/generator functions and
+context-manager/decorator hooks other than the listed schema decorators. Pydantic validators and
+discriminator callbacks receive the same whole-body inspection; passing an arbitrary callback
+is not allowed. Production classes are checked DTOs, enums, the three Protocols and the exact
+schema bases `QualificationModel`, `_CommonBinding`, `_CaseResultIdentity` with their declared
+BaseModel/QualificationModel inheritance only; enum `(str, Enum)` and Protocol inheritance are
+the named exceptions, not permission for arbitrary extra bases. No custom metaclass, magic method
+or descriptor. Module state permits immutable literals/
+tuples, checked type aliases and schema declarations; the common base's literal `ConfigDict`
+configuration is the explicit schema exception, not a mutable service store.
+
+This is a bounded first-party source grammar. It does not decide arbitrary Python purity or
+analyze installed dependency internals. The AST gate must reject unsupported syntax/receiver
+resolution, not import or execute target code to find out. The existing strict checker remains
+required; neither test is evidence of protected host execution or dependency supply-chain safety.
 
 Tradeoff: adding a legitimate dependency needs a small explicit policy amendment. This is
 preferable to claiming that seven forbidden module names cover all filesystem/network/process
@@ -95,7 +127,7 @@ wire inventory must be frozen after the owner decisions, before a new schema dis
 
 | Owner / seam | Typed data made reachable | Time and authority rule |
 | --- | --- | --- |
-| Independently composed ApprovedManifestPort FOUND | Exact approved manifest and referenced approved roster snapshot bodies: key, roster ref/digest, finite PRESENT/ABSENT category closures | Read independently of caller JSON. Manifest identifies expected subjects/checks/prerequisite pins, not future execution identities |
+| Independently composed ApprovedManifestPort FOUND | Exact approved manifest and referenced approved roster **plan** bodies: key, plan ref/digest, expected category presence and expected entry/alias/disposition/oracle identities | Read independently of caller JSON. Planned presence/absence is intent, not observed HostCategoryCoverage; no future discovery or absence evidence is a prerequisite for the first probe |
 | QualificationCase subject | Tagged no-roster, host-discovery subject or host-property subject; host subjects bind the exact roster key and approved roster ref/digest | Native primitive discovery is not automatically a host discovery case. Host discovery must not require its own future discovery-coverage ref |
 | PrerequisiteEvidencePort FOUND | Existing exact prerequisite binding, including approved observation revision/evidence digest | HOST_ROSTER_DISCOVERY names a completed discovery result for a later host-property case; never an enforcement result |
 | EvidenceObservationPort FOUND | Authenticated typed evidence subjects and their necessary observed payloads: discovery set/coverage or enforcement coverage as appropriate | Protected adapter resolves actual data; caller-supplied ref/digest/comparison is not self-authentication. MISSING/CONFLICTING retain real rejection evidence |
@@ -108,8 +140,40 @@ enforcement. An ABSENT subject binds roster key/category/discovery surface; it m
 dispatch-entry ID or enforcement oracle. An enforcement subject binds its actual entry and oracle.
 Each returned subject, ref, digest and observer is compared to the requested approved binding.
 No fourth port, ambient dictionary/service locator, deferred untyped JSON or additional authority
-store is introduced. Capability observations must also be reachable at their owning report/evidence
-seam; an exported but disconnected DTO is not a completed contract.
+store is introduced.
+
+Capability observations have one chosen carrier: an authenticated capability-payload alternative
+of **EvidenceObservationPort FOUND**, not ApprovedManifestPort and not a self-authenticated report
+DTO. Proposed manifest requirements bind `observation_id`, one declared `capability_id`, exact
+CapabilityKey, claim scope and nonempty exact case IDs. Multiple distinct observations may concern
+the same capability, but their IDs are unique and pure/native scopes are never combined into a
+stronger claim. Report capability claims contain only `observation_id` and `evidence_ref`; their
+IDs must exactly cover those independent manifest requirements. The resolver request derives its
+key/scope/case set from the approved requirement, not from a caller's replacement tuple.
+
+The FOUND payload carries the ordinary typed CapabilityObservation plus its evidence digest and
+observer identity. Admission compares the requirement ID/key/scope/case set, evidence ref/digest
+and observer binding, and verifies its finite result against those already-validated CaseResults.
+A PROVEN payload conflicting with failed/incomplete/unavailable underlying results rejects; an
+opaque ref alone never satisfies the requirement. Missing/conflicting capability records use the
+existing unauthenticated-evidence rejection, not a fourth resolver or a nullable success payload.
+The exact new constituent DTO names and required-wire catalog are transcription work for the
+pending closure, not a further choice of transport or authority owner.
+
+Observed HostCategoryCoverage stays in discovered evidence: PRESENT carries its real discovery
+evidence; ABSENT carries its actual discovery-surface/absence evidence. Do not put those observed
+records into the pre-probe plan. This separation prevents the proposed approved-roster snapshot
+from accidentally reintroducing the SPEC section-2 circular qualification prohibition.
+
+An all-ABSENT roster can have valid discovery coverage: seven authenticated absence closures,
+empty discovered entry/alias sets, zero unknown/unobservable counts and matching exact key.
+Its enforcement structural alternative is `ZERO_PRESENT_ENTRIES`, bound to that discovery
+ref/digest and containing **no** fictitious entry/oracle/launch observations. This alternative is
+not a full-host PROVEN result. SPEC section 6 still requires a permitted positive effect and denied
+bypasses for a full mediation claim. Without those, a dependent full-host claim cannot qualify;
+the proposed case refusal is existing `HOST_ROSTER_UNQUALIFIED`, not a false HOST_ABSENT claim.
+A structurally invalid manifest still follows INVALID_MANIFEST. A nonempty expected roster versus
+an actually empty discovery is a set mismatch, not the all-ABSENT success alternative.
 
 The current nullable `host_roster_subject` additionally imposes a roster on *all*
 TRUSTED_NATIVE_DISCOVERY cases (`manifest_contracts.py`, candidate lines 90–100). That is not
@@ -168,7 +232,26 @@ and test duplicate report IDs. These are finite table-driven checks, not one bes
 fixture. Keep fixtures/data, contract assertions and AST policy in their existing separate owners;
 no giant mixed test runner or new background process.
 
-## 5. Decomposition and continuation
+## 5. Bounded proposal audit — 2026-09-18
+
+One reused Terra/xhigh helper audited committed revision 01 at
+`5400b5bb062d7c4ecd81e602b3d1f8fa4c792da2`, with SPEC_GAP, STATE_TRANSITION and CONSISTENCY only;
+isolation was READ_ONLY_INTENT_ONLY, effect scope NO_EXTERNAL_EFFECT, one pass, at most five
+findings, no test execution. It returned three findings. Parent reread the cited SPEC/ticket
+sections and owns these dispositions:
+
+| Finding | Parent disposition in this proposal revision |
+| --- | --- |
+| P1: "pure helpers" and positive call table deferred another policy choice | Accepted. Section 2 now declares exact permitted call classes, receiver checks, finite helper-body/call-graph rules and unsupported-syntax refusal; no arbitrary Python purity claim |
+| P2: CapabilityObservation has no chosen typed carrier | Accepted. Section 3 chooses EvidenceObservationPort FOUND with independently approved observation requirements, report refs and exact subject/result comparison |
+| P3: all-ABSENT has no explicit structural enforcement alternative | Accepted with a constraint the parent independently checked at SPEC lines 280–284: complete absence is valid discovery, but cannot replace the required permitted-positive/denied-bypass proof. Zero-present carries no invented execution and cannot issue full-host PROVEN |
+| Parent P4: pre-probe approved roster uses observed category closures | Corrected in proposal only. Expected roster plan and later observed discovery/absence records are separate, preserving first-probe admissibility under SPEC lines 121–127 |
+
+Evidence in this section is document/source reasoning, not an executed AST checker, constructor
+test or native experiment. Revision 02 has not received a second helper pass, implementation
+approval or capability qualification. The original findings and revision-01 bytes remain in Git.
+
+## 6. Decomposition and continuation
 
 Do not split this shared contract into concurrent type-owner lanes, and do not disguise a third
 correction as a new implementation ticket. The current phase has one coherent public-contract
