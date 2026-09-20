@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-CONVERGENCE` / `CODE_REVIEW` / `13` |
-| Lifecycle / conclusion | `A1_EVIDENCE_OWNERSHIP_PROPOSED / OWNER_DECISION_REQUIRED / A2_A3_B_DEPENDENCY_PENDING`; earlier approvals and failed closures preserved |
+| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-CONVERGENCE` / `CODE_REVIEW` / `14` |
+| Lifecycle / conclusion | `A1_EVIDENCE_OWNERSHIP_ADOPTED / CLOSURE02_EXACT_APPROVAL_PENDING / A2_A3_B_DEPENDENCY_PENDING`; earlier approvals and failed closures preserved |
 | Control baseline | `dc45f31f6c56983613665f276bf15207419274e3` |
 | Examined source | Closure-03 correction `5d7789db6b950d317e7b500b757aa77a54d609ed`; all prior candidates preserved |
 | Ticket | [CVQ-01](../../../modules/tickets/controlled-verification/cvq-01-qualification-admission.md), document 10, current digest in its registry; closure 03 exhausted, unchanged. Historical document 09 at dc45f31f LF `babcceb227bf8f91356dfbbb90f5e14ad1adab19f43a99686bdae46e8acff16d` |
@@ -12,7 +12,7 @@
 | Responsibility | Parent owns the replan recommendation and review verdict. Reused Terra/xhigh supplied read-only adversarial evidence; parent ran the candidate checks/probes/mutations. No source implementation, model elevation or owner decision is granted by this proposal |
 
 Sections 1–10 preserve earlier convergence/design/adoption history. D-CQ11/D-CLAIM, exact
-closure-03 approval and the responsibility split have been answered. Section 18 is the current
+closure-03 approval and the responsibility split have been answered. Section 19 is the current
 disposition; historical pending routes do not reopen those answered decisions.
 
 ## 1. Diagnosis and retained boundary
@@ -933,3 +933,23 @@ The separate installed-profile defect and source-content/responsibility requirem
 in [REQ-052](../../requirements/active/2026/plugin-adoption-quality/REQ-20260920-052.md).
 They do not retroactively add acceptance requirements to A1 or reopen completed findings.
 ACTION_COMPLETED / CONVERGENCE_PROPOSED -> WAIT_FOR_HUMAN / EVIDENCE_OWNERSHIP_DECISION.
+
+## 19. Evidence ownership adopted; exact finite closure prepared — 2026-09-20
+
+Owner's "核准，先處理上述修正，再重新跑安裝打包驗證" adopts section18 at
+`b70b6978b1ad81de175ff6fee4f1ebc9b925e7ff`. Do not ask that ownership question again.
+[A1 document05](../../../modules/tickets/controlled-verification/cvq-01a1-scalar-wire-admission.md)
+now freezes proposed closure02: three test methods' cell attribution only, 35 root-owned
+mutation predicates, exact command map and three indexed evidence destinations. Existing SW01–08,
+oracles, counts, ownership, resource bounds and no-partial-integration rule remain intact.
+
+Section18 required that ledger/destinations exist before their exact approval. They did not
+exist in b70b697, so the general adoption is not represented as a signature on unwritten bytes.
+A1 stays NON_DISPATCHABLE pending document05's exact LF digest approval; closure01 stays closed.
+No implementation seat was started for the blocked closure. Once approved, metadata binding and
+native dispatch/wait are AUTO_CONTINUE, not another ownership or runner ceremony.
+
+REQ-052's source-policy packaging checks are independent. They cannot qualify the pending
+executable responsibility/content gates or turn the CVQ candidates into shipping payload.
+ACTION_COMPLETED / CONVERGENCE_ADOPTED / CLOSURE02_PROPOSED -> WAIT_FOR_HUMAN /
+OWNER_EXACT_APPROVAL_PENDING for A1 only.

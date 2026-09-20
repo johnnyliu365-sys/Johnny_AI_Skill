@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / document / closure | `TICKET-CONTROLLED-VERIFICATION-CVQ-01A1` / `IMPLEMENTATION_TICKET` / `04` / `CLOSURE-CVQ-01A1` revision `01` |
-| State / outcome | `BLOCKED / CONVERGENCE_REVIEW_REQUIRED / NON_DISPATCHABLE`; one observable closure: ordinary public wire algebra and all scalar bounds discriminate valid from invalid values (original CA01–03, CA10) |
+| ID / kind / document / closure | `TICKET-CONTROLLED-VERIFICATION-CVQ-01A1` / `IMPLEMENTATION_TICKET` / `05` / proposed `CLOSURE-CVQ-01A1` revision `02`; revision 01 remains exhausted |
+| State / outcome | `OWNER_EXACT_APPROVAL_PENDING / NON_DISPATCHABLE`; evidence-ownership convergence adopted; final section is current. Original SW01–08 behavior remains unchanged |
 | Baseline / view | `070039b6227205f7bb4592f203a4fd7455311f31`; new `ctx-cvq-01a1-closure01` only after exact approval. Do not reset/rebase or reopen A closure01 |
 | Preparation authority | Owner adopted convergence revision 08 at `058b8256bb1b2601fabc30c21a42ecc48c831875`, LF `24021ef0467d56c1bc3924e98b15d2f993e0dc720228dec44177da2132c50392`; preparation only, exact ticket approval pending |
 | SPEC / wire | [Qualification SPEC](../../spec/controlled-verification-qualification.md) revision 07 LF `545f5058d8347ab069d6a23fdb07daaf06ab836998efb67b2c30b80fee3b1716`, sections 2/6/7/11; [wire](../../spec/controlled-verification-qualification-wire.md) revision 03 LF `6eb9d0a088e105e7c2dd4c3c3b4001f970ac34195c7a0cd78459a2f6016e9222`, sections 1–6 |
@@ -225,3 +225,147 @@ A2/A3/B, invent a renamed third correction, or elevate the model.
 
 ACTION_COMPLETED / CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED -> WAIT_FOR_HUMAN /
 OWNER_CONVERGENCE_DECISION_REQUIRED. No new implementation, integration, push or release grant.
+
+## Closure02 exact proposal — 2026-09-20
+
+Owner approved the changed evidence ownership in convergence proposal revision13, section18,
+at `b70b6978b1ad81de175ff6fee4f1ebc9b925e7ff`, LF
+`8587879661626f0cfb81cf29eb32746301c8a94cd7947c33112d4132b2c6c182`.
+This section freezes the promised finite ledger and evidence destinations for exact approval.
+It does not turn adoption of the plan into approval of a then-unwritten ledger. Closure01 and
+its view stay CLOSED; no third correction under that closure is authorized.
+
+### Current implementation boundary and admission
+
+- Start from preserved `1270664213d71eb2da524ecf7bf1885f28ffc82f` in `.worktrees/cvq-01`,
+  branch `codex/cvq-01`; retain `cve_wire_implementer`. If its native seat is absent, allocate
+  one seat for that same owner after inventory, not a replacement branch or parallel owner.
+- Profile: bundled `JOHNNY-DISPATCH-DEFAULTS/01` at `de624ec43ea047955a395dee4ec4e697d8f6d767`;
+  implementation-standard (Luna/xhigh), root ticket-review. No elevation. Existing approved
+  SPEC07/wire03/Context02 and their exact digests above remain bound.
+- Proposed fresh view `ctx-cvq-01a1-closure02`. Same-lifetime native dispatch and wait;
+  no runner, receipt, queue, descriptor or host readback prerequisite.
+- **Only writable source:** `tests/test_verification_qualification_contracts.py`, in
+  `test_required_null_and_extra_json_matrix`,
+  `test_all_78_default_omission_null_and_wrong_constant_cells`, and
+  `test_alias_branch_counts_and_selector_negatives`.
+- Change only subTest attribution/nesting: each negative has model/field/path/case, or
+  alias/branch/selector/path/case. Existing missing, null, extra, wrong-default and selector
+  alternatives retain their exact assertions, values, error tuples and counts. Move each
+  assertion into its own subTest so one failed alternative cannot skip later alternatives.
+  Positive controls and the complete 26-method collection stay intact.
+- All production, catalog, fixtures, other test methods/files, policy and control documents
+  are read-only. No cleanup/refactor, new runner, test framework, dependency or public schema.
+  Source must contain technical explanations only, not this work order.
+
+Baseline evidence for this repair is the existing F02/R0 failure's missing cell attribution,
+not a false claim that the unchanged constructor suite is red. The returned candidate must
+produce a collected failure identifying `LaunchObservation / observation_revision / json /
+missing` for M03 below, and then the same method green after exact restoration. A green total
+without this identity is insufficient. Capture that single implementer example in full.
+Root owns the remaining complete ledger; the implementer does not produce another full campaign.
+
+### Finite reviewer mutation ledger
+
+All rows are temporary, one-at-a-time edits in a clean reviewer snapshot of the returned exact
+candidate. These are not candidate edits. Every row pins source SHA, exact patch, command,
+expected collected cell/reason, raw stdout/stderr and exits, restored source byte SHA-256 and
+the same command's green output. Root reads the full output before deciding. Missing output,
+collection error, wrong-reason red and zero red do not pass. Root M18 is a different door from
+the implementer's M03. No discretionary expansion or random campaign is authorized.
+
+Aliases below are file-qualified command suffixes, not new runners:
+
+| Key | Fully qualified unittest method |
+| --- | --- |
+| C1 | `tests.test_verification_qualification_contracts.QualificationContractTests.test_literal_wire_catalog_matches_source_ast` |
+| C2 | `tests.test_verification_qualification_contracts.QualificationContractTests.test_required_null_and_extra_json_matrix` |
+| C3 | `tests.test_verification_qualification_contracts.QualificationContractTests.test_all_78_default_omission_null_and_wrong_constant_cells` |
+| C4 | `tests.test_verification_qualification_contracts.QualificationContractTests.test_alias_branch_counts_and_selector_negatives` |
+| C5 | `tests.test_verification_qualification_contracts.QualificationContractTests.test_literal_enum_members_and_json_rows` |
+| C6 | `tests.test_verification_qualification_contracts.QualificationContractTests.test_immutable_contract_configuration` |
+| S1 | `tests.test_verification_qualification_scalars.QualificationScalarTests.test_identifier_digest_text_domains` |
+| S2 | `tests.test_verification_qualification_scalars.QualificationScalarTests.test_integer_domains_are_strict` |
+| S3 | `tests.test_verification_qualification_scalars.QualificationScalarTests.test_integer_domain_edges` |
+| S4 | `tests.test_verification_qualification_scalars.QualificationScalarTests.test_every_resource_bound` |
+
+Each command is the already-approved 60-second bounded subprocess invocation of
+`python -B -m unittest -v <fully-qualified-method>`; multiple keys mean separate commands.
+No output-reducing wrapper or new script. `values` means
+`library/controlled_verification/qualification_values.py`; `manifest` means
+`library/controlled_verification/manifest_contracts.py`; `binding` means
+`library/controlled_verification/binding_contracts.py`.
+
+| ID / SW | Exact temporary predicate change | Command / required observation |
+| --- | --- | --- |
+| M01 / SW01 | Delete only `DTO_FIELDS["qualification_values"]["PlatformCapabilityKey"]` row in `tests/verification_qualification_catalog.py` | C1: literal DTO inventory disagreement; test-oracle probe, not production proof |
+| M02 / SW01,03 | manifest `ResourceBounds.automatic_retry_count: ZeroOnly = 0` -> `= 1` | C1 and C3: declared default disagreement / ResourceBounds automatic_retry_count omission value differs from literal 0 |
+| M03 / SW02 | binding `LaunchObservation.observation_revision: PositiveInteger` -> `PositiveInteger = 1` | C2: named LaunchObservation observation_revision/json/missing rejection no longer raised |
+| M04 / SW02 | values `QualificationModel.model_config.extra="forbid"` -> `"ignore"` | C2: named DTO extra_matrix_field/json/extra cells no longer rejected |
+| M05 / SW03 | binding `AttemptBinding` only: `Field(discriminator="kind")` -> `Field()` | C4: collected AttemptBinding/PureContractBinding/kind/json/missing no longer rejected; import failure is not acceptable |
+| M06 / SW03 | values `Observation.PROVEN = "PROVEN"` -> `"PROVEN_MUTATED"` | C5: exact Observation wire member disagrees with literal expected vocabulary |
+| M07 / SW04 | values OpaqueMetadataId quantifier `{2,127}` -> `{0,127}` | S1: project_id `ab` rejection no longer raised |
+| M08 / SW04 | same alias `{2,127}` -> `{2,128}` | S1: project_id length129 rejection no longer raised |
+| M09 / SW04 | same alias pattern -> `^[A-Za-z][A-Za-z0-9._/-]{2,127}$` | S1: uppercase/separator cells no longer rejected; length restriction remains |
+| M10 / SW04 | values Digest `{64}` -> `{63,64}` | S1: baseline_digest length63 rejection no longer raised |
+| M11 / SW04 | same alias `{64}` -> `{64,65}` | S1: baseline_digest length65 rejection no longer raised |
+| M12 / SW04 | same alias `[0-9a-f]` -> `[0-9a-gA-F]`, exact length64 retained | S1: uppercase/nonhex digest cells no longer rejected |
+| M13 / SW04 | values BoundedText `min_length=1` -> `min_length=0` | S1: host_version length0 rejection no longer raised |
+| M14 / SW04 | same alias `max_length=128` -> `max_length=129` | S1: host_version length129 rejection no longer raised |
+| M15 / SW05 | values PositiveInteger `Field(gt=0)` -> `Field(strict=False, gt=0)` | S2: PositiveInteger constructor/JSON cells cease to produce exact int_type |
+| M16 / SW05 | values ZeroOnly add `strict=False`, preserving ge/le | S2: ZeroOnly constructor/JSON cells cease to produce exact int_type (other bounds remain live) |
+| M17 / SW05 | values ActiveLaneCount `strict=True` -> `False`, preserving ge/le | S2: active_lanes constructor/JSON cells cease to produce exact int_type |
+| M18 / SW05 | values NonNegativeInteger `Field(ge=0)` -> `Field(strict=False, ge=0)` | S2: DiscoveredEffectSet counters constructor/JSON cells cease to produce exact int_type; independent reviewer door |
+| M19 / SW06 | values PositiveInteger `gt=0` -> `ge=0` | S3: value0 no longer rejected as greater_than; negative value's exact error also disagrees |
+| M20 / SW06 | values NonNegativeInteger `ge=0` -> `ge=-1` | S3: counters value-1 no longer rejected |
+| M21 / SW06,07 | values ZeroOnly `ge=0` -> `ge=-1`, preserve le | S3 and S4: all three ResourceBounds zero-only fields accept -1 |
+| M22 / SW06,07 | values ZeroOnly `le=0` -> `le=1`, preserve ge | S3 and S4: all three ResourceBounds zero-only fields accept +1 |
+| M23 / SW06 | values ActiveLaneCount `ge=1` -> `ge=0`, preserve strict/le | S3: active_lanes0 no longer rejected |
+| M24 / SW06 | values ActiveLaneCount `le=1` -> `le=2`, preserve strict/ge | S3: active_lanes2 no longer rejected |
+| M25 / SW07 | manifest ResourceBounds.workload_duration_seconds `le=30` -> `le=31` | S4: named field max+1 no longer rejected |
+| M26 / SW07 | ResourceBounds.cpu_millicpu `le=1_000` -> `le=1_001` | S4: named field max+1 no longer rejected |
+| M27 / SW07 | ResourceBounds.memory_bytes `le=536_870_912` -> `le=536_870_913` | S4: named field max+1 no longer rejected |
+| M28 / SW07 | ResourceBounds.process_count `le=4` -> `le=5` | S4: named field max+1 no longer rejected |
+| M29 / SW07 | ResourceBounds.disk_bytes `le=67_108_864` -> `le=67_108_865` | S4: named field max+1 no longer rejected |
+| M30 / SW07 | CleanupBounds.cleanup_seconds `le=10` -> `le=11` | S4: named field max+1 no longer rejected |
+| M31 / SW07 | EvidenceBounds.total_bytes `le=33_554_432` -> `le=33_554_433` | S4: named field max+1 no longer rejected |
+| M32 / SW07 | EvidenceBounds.case_output_bytes `le=262_144` -> `le=262_145` | S4: named field max+1 no longer rejected; no invented historical baseline-red |
+| M33 / SW07 | QualificationManifest.total_budget_seconds `le=1_200` -> `le=1_201` | S4: named field max+1 no longer rejected |
+| M34 / SW08 | values QualificationModel `frozen=True` -> `False` | C6: exact frozen configuration assertion fails |
+| M35 / SW08 | values QualificationModel `revalidate_instances="always"` -> `"never"` | C6: exact revalidate configuration assertion fails |
+
+M25–33 all modify only the named field in `manifest`; no class validator changes. M02/M03/M05/M06
+reuse the four existing read-only-symbol exceptions. No other production surface is granted.
+For mutations whose same predicate is covered in two methods, retain both observations; do not
+count two methods as two independent predicates. SW08's positive assignment and tuple controls
+remain in the final suite even when an earlier exact-config assertion detects its mutation.
+
+### Evidence custody and return
+
+Root writes evidence into these exact new leaves under `doc/reviews/controlled-verification/`
+only after execution, indexing each in that partition and then its parent with LF digests:
+
+- `cvq-01a1-closure02-sw01-03-evidence.md`: M01–M06 plus the implementer's raw M03 return.
+- `cvq-01a1-closure02-sw04-06-evidence.md`: M07–M24.
+- `cvq-01a1-closure02-sw07-08-evidence.md`: M25–M35 and final strict/full-suite output.
+
+Every leaf has artifact ID/revision, exact candidate and scoped execution identity. Raw captured
+outputs belong in these evidence leaves, never source code. No output hash without bytes. Root
+alone updates the existing review and ticket/index states. One required evidence-only helper at
+the exact candidate returns finite SPEC_GAP/BOUNDARY_DATA/CONSISTENCY/REGRESSION findings; it
+cannot write scripts or approve. Root alone owns verdict and integration.
+
+The existing fixed strict command and contracts+domains suite apply unchanged. One foreground
+process, 60 seconds per command, 1200 seconds per verification pass, zero retries/load/containers/
+background polling. Insufficient bounds or an uncollectable/unreachable row stops with evidence.
+Closure02 admits one initial plus one batched correction review, not unlimited repairs.
+
+ImplementationReturn includes authority revision/SHA, starting/candidate SHA, exact changed
+symbols/files, strict and focused checks/exits, full M03 patch/red/restore output and byte hashes,
+findings/deviations. All other mutation rows are root's obligation, not omitted evidence.
+After exact owner approval of this document05 LF digest, record the signature and fresh view,
+then AUTO_CONTINUE -> IMPLEMENT -> wait_agent -> root review. A2/A3/B stay dependency-pending;
+no partial integration, push or release. Packaging of the separate REQ-052 policy correction
+does not admit CVQ source or qualify the responsibility gate.
+
+ACTION_COMPLETED / CLOSURE02_PROPOSED -> WAIT_FOR_HUMAN / OWNER_EXACT_APPROVAL_PENDING.
