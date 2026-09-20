@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-CONVERGENCE` / `CODE_REVIEW` / `18` |
-| Lifecycle / conclusion | `A1_REVIEW_APPROVED / A2_CORRECTION_ADMITTED / A3_B_DEPENDENCY_PENDING / NOT_INTEGRATED`; earlier approvals and failed closures preserved |
+| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-CONVERGENCE` / `CODE_REVIEW` / `19` |
+| Lifecycle / conclusion | `A1_REVIEW_APPROVED / A2_CONVERGENCE_REVIEW_REQUIRED / A3_B_DEPENDENCY_PENDING / NOT_INTEGRATED`; earlier approvals and failed closures preserved |
 | Control baseline | `dc45f31f6c56983613665f276bf15207419274e3` |
 | Examined source | Closure-03 correction `5d7789db6b950d317e7b500b757aa77a54d609ed`; all prior candidates preserved |
 | Ticket | [CVQ-01](../../../modules/tickets/controlled-verification/cvq-01-qualification-admission.md), document 10, current digest in its registry; closure 03 exhausted, unchanged. Historical document 09 at dc45f31f LF `babcceb227bf8f91356dfbbb90f5e14ad1adab19f43a99686bdae46e8acff16d` |
@@ -12,7 +12,7 @@
 | Responsibility | Parent owns the replan recommendation and review verdict. Reused Terra/xhigh supplied read-only adversarial evidence; parent ran the candidate checks/probes/mutations. No source implementation, model elevation or owner decision is granted by this proposal |
 
 Sections 1–10 preserve earlier convergence/design/adoption history. D-CQ11/D-CLAIM, exact
-closure-03 approval and the responsibility split have been answered. Section 22 is the current
+closure-03 approval and A1's responsibility split have been answered. Section 23 is the current
 disposition; historical pending routes do not reopen those answered decisions.
 
 ## 1. Diagnosis and retained boundary
@@ -1023,3 +1023,50 @@ changed. A1 remains APPROVED; A3/B await their declared predecessor. No partial 
 ACTION_COMPLETED / REVIEW_CHANGES_REQUESTED -> AUTO_CONTINUE / CORRECT(CVQ-01A2), retained
 Luna/xhigh, native wait_agent then root review. An unsuccessful correction returns convergence.
 REQ-052 remains separately LOCAL_ISOLATED_VERIFIED / NOT_RELEASED. Main/push/release unchanged.
+
+## 23. A2 correction exhausted; proposed evidence ownership split — 2026-09-20
+
+The sole correction returnedc2fa4cd, only manifests.py changed. Root verified strict16 files,
+27 tests, and real named reds/restoration for the prior SOURCE_PROPERTY and extra host-plan
+counterexamples. The distinct prerequisite-pair positive is present. These improvements are
+retained, not undone or described as no progress.
+
+[A2 review revision02](cvq-01a2-case-manifest-admission-code-review.md) still finds three
+classes incomplete: CM03 positive-control attribution; CM02 opposite-binding and legal key
+alternatives; the full pinned raw predicate ledger/current named historical extraction.
+R4 independently demonstrates rejecting legal non-HOST host keys without turning CM02 red.
+That is an observable test blind spot, not a request for stylistic expansion or a new product
+rule. Helper static findings support it; root alone determines CHANGES_REQUESTED.
+
+The assignment still combines test implementation, full preservation mapping, and ownership of
+a large mutation/transcript return. Four correction traces are not the whole frozen ledger.
+The natural-language completion labels again outrun retrievable evidence. There is no proof
+that model tier is the cause or that another identical dispatch will fix it. The source scope
+is already small and constructor-local; do not invent a product rearchitecture.
+
+### Recommended decision (OWNER_PENDING; not yet dispatchable)
+
+Apply the previously successful A1 division explicitly to A2, without weakening CM01–07:
+
+- Retained Luna/xhigh owns only the remaining CM02/CM03 test-row corrections in the existing
+  manifests responsibility module: literal legal key alternatives, independently controlled
+  opposite-binding cases, and named CM03 valid WA04 control. Preserve accepted tests, fixture
+  ownership, product contracts and all closed findings. No arbitrary file-length rule.
+- Root owns the exact complete predicate/evidence ledger, per-observation relocation audit,
+  schema-compatible historical reproduction, unreduced capture and independent reverse
+  mutations. Reuse authentic immutable evidence only where it actually proves the current
+  obligation; old preflight history is not a substitute for unrun current named tests.
+- Before another dispatch, prepare a new finite closure with the exact test rows, root
+  mutation map and indexed evidence destinations written down; bind their final digests for
+  owner approval. This is not a third repair under exhausted closure01, nor an implicit
+  evidence-ownership transfer. The prior A1 exception alone does not authorize A2 changes.
+- No model elevation, new framework/runner, policy weakening, budget expansion, implementation
+  orchestration by the owner or additional source responsibility. Retain the declared
+  one-foreground/60s-command/1200s-pass bounds and event-driven completion wait.
+
+If the owner declines that split, A2 remains blocked until an explicit alternative closure is
+approved; do not simply continue the old one. This packet records a proposal only. A1 stays
+approved, A3/B await the accepted predecessor, and no partial integration/main mutation/push/
+publication is granted. Separate REQ-052 packaging evidence remains NOT_RELEASED.
+
+ACTION_COMPLETED / CONVERGENCE_PROPOSED -> WAIT_FOR_HUMAN / EVIDENCE_OWNERSHIP_DECISION.

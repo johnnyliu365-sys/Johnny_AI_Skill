@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01A2` / `CODE_REVIEW` / `01` |
-| Conclusion / round | `CHANGES_REQUESTED / NOT_INTEGRATED`; closure01 initial review, one complete correction batch below |
+| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01A2` / `CODE_REVIEW` / `02` |
+| Conclusion / round | `CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED / NON_DISPATCHABLE`; section5 is current, closure01 initial plus sole correction exhausted |
 | Authority | [A2](../../../modules/tickets/controlled-verification/cvq-01a2-case-manifest-admission.md) document03 / closure01 at `04cc47a367d9aa073c3a905e61ee59ea8a34ce47`, LF `ba105f4d21d13e9c9659a019d688fbda28c66142861b7e23c32f1c7bfdfe1815`; approved SPEC07 and wire03 unchanged |
 | Source / candidate | `8d6b8291a03facec9d6d157794e7f4e8ba4d1cdc` -> `95434d64a4538270ebc4b4b785ae74337379f61e`; exact parent, clean owner worktree |
 | Responsibility | Retained Luna/xhigh implementation owner; root ticket-review and sole verdict owner; retained Terra/xhigh evidence-only helper |
@@ -342,3 +342,356 @@ No change to accepted A1 source or evidence; A3/B remain dependency-pending. No 
 integration, push, installation or publication is authorized. REQ-052's separate local
 packaging/install checks remain NOT_RELEASED and do not satisfy this review.
 
+## 5. Sole correction review — 2026-09-20
+
+Current candidate `c2fa4cdda1a785a4a8e2c7924a337c2fdd836160` descends through
+a4664f368fd332dbc38f27a04b2ad6176a288b86 from exact95434d6. One correction return comprises
+those two commits, not two review cycles. The only changed path is manifests.py; source owner
+and parent snapshot are clean. No product, schema, dependency, fixture owner or scope change.
+Parent reused its clean detached review worktree at c2fa4cd and independently repeated strict,
+focused suite, prior counterexamples and one different-door applicability mutation.
+
+**CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED / NON_DISPATCHABLE.**
+The closure01 initial + one batched correction allowance is exhausted. Do not send another
+implementation follow-up, silently elevate the model or call this source approved.
+
+| Finding | Correction disposition and evidence |
+| --- | --- |
+| A2-F01 | PARTIALLY_FIXED. Negative alternatives now have stable subTest IDs, and R1/R3 name their intended failing cells. CM03's separately required valid source-property/WA04 pair still constructs at manifests.py311–314 and asserts len(keys)==2 at345 outside a named cell; a positive-control defect is not attributed. |
+| A2-F02 | PARTIALLY_FIXED. SOURCE_PROPERTY narrow bypass now turns its named cell red; lost subject/platform observations were restored. But lines226–249 still change only top-level case.kind in all three binding-labeled rows, not a constructor-valid opposite binding while retaining the case kind. Non-HOST family HostCapabilityKey alternatives remain absent. R4 below proves a legal-key rejection regression is invisible to CM02. |
+| A2-F03 | CLOSED for the requested positive omission: lines476–481 now construct two distinct requirements under CM05.prerequisite_set.distinct_pair_positive. Root full suite passes; owner also returns a named duplicate-set mutation red. Complete matrix proof remains separate F05. |
+| A2-F04 | CLOSED. The constructor-valid distinct extra Desktop plan is appended to the retained correct host plan at537–542. Parent R3 independently now fails CM06.host_subject.nonempty_extra_plan, then restores green. |
+| A2-F05 | INCOMPLETE. Return supplies four correction-mutant red traces and expanded relocation mapping, but not the full M01–36 exact patch/command/control/raw-red/restored ledger. Commands in red traces are abbreviated with ellipses; family summaries and inaccessible earlier tool-cell descriptions are not authenticated raw evidence. It references genuine section14 historical probes, but does not establish the new named test extraction/collection on5d7789d. Existing historical evidence is retained, not disputed or retroactively relabeled as the missing current test proof. |
+
+Required retained helper independently found the remaining CM03 control attribution, unchanged
+case-kind-only direction and legal non-HOST host-key omission. It read immutable Git blobs only,
+did not run checks/mutations, and did not assess F05. Root confirmed the source and owns the
+conclusion; R4 was independently performed by root, not copied from a helper test result.
+The remainder of parent predicate-matrix verification is NOT_VERIFIED after this concrete
+failing review; no claim that all36 are green/red. Do not spend a full campaign to disguise
+known missing rows, or infer a product defect from a test-coverage failure.
+
+### Correction checks (raw)
+
+Check 1, exit 0:
+
+```powershell
+& 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -c 'import subprocess,sys; sys.exit(subprocess.run(sys.argv[1:], timeout=60).returncode)' 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -m mypy --strict --follow-imports=silent library/controlled_verification tests/test_verification_qualification_contracts.py tests/test_verification_qualification_domains.py tests/test_verification_qualification_scalars.py tests/test_verification_qualification_manifests.py tests/test_verification_qualification_boundaries.py tests/verification_qualification_fixtures.py tests/verification_qualification_catalog.py
+exit $LASTEXITCODE
+```
+
+```text
+Success: no issues found in 16 source files
+```
+
+Check 2, exit 0:
+
+```powershell
+& 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -c 'import subprocess,sys; sys.exit(subprocess.run(sys.argv[1:], timeout=60).returncode)' 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -m unittest -v tests.test_verification_qualification_contracts tests.test_verification_qualification_domains
+exit $LASTEXITCODE
+```
+
+```text
+test_alias_branch_counts_and_selector_negatives (tests.test_verification_qualification_contracts.QualificationContractTests.test_alias_branch_counts_and_selector_negatives) ... ok
+test_all_78_default_omission_null_and_wrong_constant_cells (tests.test_verification_qualification_contracts.QualificationContractTests.test_all_78_default_omission_null_and_wrong_constant_cells) ... ok
+test_all_81_direct_constructor_and_json_rows (tests.test_verification_qualification_contracts.QualificationContractTests.test_all_81_direct_constructor_and_json_rows) ... ok
+test_all_result_proof_and_evidence_branches_roundtrip (tests.test_verification_qualification_contracts.QualificationContractTests.test_all_result_proof_and_evidence_branches_roundtrip) ... ok
+test_every_missing_direct_constructor_row_roundtrips (tests.test_verification_qualification_contracts.QualificationContractTests.test_every_missing_direct_constructor_row_roundtrips) ... ok
+test_immutable_contract_configuration (tests.test_verification_qualification_contracts.QualificationContractTests.test_immutable_contract_configuration) ... ok
+test_literal_enum_members_and_json_rows (tests.test_verification_qualification_contracts.QualificationContractTests.test_literal_enum_members_and_json_rows) ... ok
+test_literal_wire_catalog_matches_source_ast (tests.test_verification_qualification_contracts.QualificationContractTests.test_literal_wire_catalog_matches_source_ast) ... ok
+test_public_constructor_roundtrips (tests.test_verification_qualification_contracts.QualificationContractTests.test_public_constructor_roundtrips) ... ok
+test_required_null_and_extra_json_matrix (tests.test_verification_qualification_contracts.QualificationContractTests.test_required_null_and_extra_json_matrix) ... ok
+test_roster_and_three_port_evidence_roundtrips (tests.test_verification_qualification_contracts.QualificationContractTests.test_roster_and_three_port_evidence_roundtrips) ... ok
+test_local_result_and_evidence_consistency (tests.test_verification_qualification_domains.QualificationDomainTests.test_local_result_and_evidence_consistency) ... ok
+test_refusal_proof_result_matrix (tests.test_verification_qualification_domains.QualificationDomainTests.test_refusal_proof_result_matrix) ... ok
+test_roster_local_invariants (tests.test_verification_qualification_domains.QualificationDomainTests.test_roster_local_invariants) ... ok
+test_strict_boundary_rejection (tests.test_verification_qualification_domains.QualificationDomainTests.test_strict_boundary_rejection) ... ok
+test_union_and_constructor_boundaries (tests.test_verification_qualification_domains.QualificationDomainTests.test_union_and_constructor_boundaries) ... ok
+test_approved_plan_pin_coverage (test_verification_qualification_manifests.QualificationManifestAdmissionTests.test_approved_plan_pin_coverage) ... ok
+test_capability_requirement_joins (test_verification_qualification_manifests.QualificationManifestAdmissionTests.test_capability_requirement_joins) ... ok
+test_case_and_scope_identity_joins (test_verification_qualification_manifests.QualificationManifestAdmissionTests.test_case_and_scope_identity_joins) ... ok
+test_case_applicability_rows (test_verification_qualification_manifests.QualificationManifestAdmissionTests.test_case_applicability_rows) ... ok
+test_discovery_intent_and_property_membership (test_verification_qualification_manifests.QualificationManifestAdmissionTests.test_discovery_intent_and_property_membership) ... ok
+test_manifest_and_prerequisite_duplicates (test_verification_qualification_manifests.QualificationManifestAdmissionTests.test_manifest_and_prerequisite_duplicates) ... ok
+test_prerequisite_applicability_and_order (test_verification_qualification_manifests.QualificationManifestAdmissionTests.test_prerequisite_applicability_and_order) ... ok
+test_every_resource_bound (test_verification_qualification_scalars.QualificationScalarTests.test_every_resource_bound) ... ok
+test_identifier_digest_text_domains (test_verification_qualification_scalars.QualificationScalarTests.test_identifier_digest_text_domains) ... ok
+test_integer_domain_edges (test_verification_qualification_scalars.QualificationScalarTests.test_integer_domain_edges) ... ok
+test_integer_domains_are_strict (test_verification_qualification_scalars.QualificationScalarTests.test_integer_domains_are_strict) ... ok
+
+----------------------------------------------------------------------
+Ran 27 tests in 0.328s
+
+OK
+```
+
+### R1 repeated at correction — intended named red
+
+Same exact SOURCE_PROPERTY-only guard hunk as section3 R1. Candidate c2fa4cd; no other predicate change.
+
+control, exit 0:
+
+```powershell
+& 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -c 'import subprocess,sys; sys.exit(subprocess.run(sys.argv[1:], timeout=60).returncode)' 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -m unittest -v tests.test_verification_qualification_manifests.QualificationManifestAdmissionTests.test_case_applicability_rows
+exit $LASTEXITCODE
+```
+
+```text
+test_case_applicability_rows (tests.test_verification_qualification_manifests.QualificationManifestAdmissionTests.test_case_applicability_rows) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.012s
+
+OK
+```
+
+mutated, exit 1:
+
+Raw output encoded as a JSON string (including original trailing spaces and CRLF):
+
+```json
+"test_case_applicability_rows (tests.test_verification_qualification_manifests.QualificationManifestAdmissionTests.test_case_applicability_rows) ... \r\n  test_case_applicability_rows (tests.test_verification_qualification_manifests.QualificationManifestAdmissionTests.test_case_applicability_rows) (cell='CM02.binding_kind.source_property_native_binding') ... FAIL\r\n\r\n======================================================================\r\nFAIL: test_case_applicability_rows (tests.test_verification_qualification_manifests.QualificationManifestAdmissionTests.test_case_applicability_rows) (cell='CM02.binding_kind.source_property_native_binding')\r\n----------------------------------------------------------------------\r\nTraceback (most recent call last):\r\n  File \"C:\\Users\\GameBoy\\Desktop\\Johnny_AI_Skill_latest\\.worktrees\\cvq-01a2-review\\tests\\test_verification_qualification_manifests.py\", line 249, in test_case_applicability_rows\r\n    self._expect_case_error(source_native, \"case kind and binding kind must agree\")\r\n  File \"C:\\Users\\GameBoy\\Desktop\\Johnny_AI_Skill_latest\\.worktrees\\cvq-01a2-review\\tests\\test_verification_qualification_manifests.py\", line 80, in _expect_case_error\r\n    with self.assertRaises(ValidationError) as raised:\r\nAssertionError: ValidationError not raised\r\n\r\n----------------------------------------------------------------------\r\nRan 1 test in 0.014s\r\n\r\nFAILED (failures=1)\r\n"
+```
+
+restored, exit 0:
+
+```text
+test_case_applicability_rows (tests.test_verification_qualification_manifests.QualificationManifestAdmissionTests.test_case_applicability_rows) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.011s
+
+OK
+```
+
+### R3 repeated at correction — intended named red
+
+Same exact host-plan superset hunk as section3 R3. Candidate c2fa4cd; no other predicate change.
+
+control, exit 0:
+
+```powershell
+& 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -c 'import subprocess,sys; sys.exit(subprocess.run(sys.argv[1:], timeout=60).returncode)' 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -m unittest -v tests.test_verification_qualification_manifests.QualificationManifestAdmissionTests.test_approved_plan_pin_coverage
+exit $LASTEXITCODE
+```
+
+```text
+test_approved_plan_pin_coverage (tests.test_verification_qualification_manifests.QualificationManifestAdmissionTests.test_approved_plan_pin_coverage) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.012s
+
+OK
+```
+
+mutated, exit 1:
+
+Raw output encoded as a JSON string (including original trailing spaces and CRLF):
+
+```json
+"test_approved_plan_pin_coverage (tests.test_verification_qualification_manifests.QualificationManifestAdmissionTests.test_approved_plan_pin_coverage) ... \r\n  test_approved_plan_pin_coverage (tests.test_verification_qualification_manifests.QualificationManifestAdmissionTests.test_approved_plan_pin_coverage) (cell='CM06.host_subject.nonempty_extra_plan') ... FAIL\r\n\r\n======================================================================\r\nFAIL: test_approved_plan_pin_coverage (tests.test_verification_qualification_manifests.QualificationManifestAdmissionTests.test_approved_plan_pin_coverage) (cell='CM06.host_subject.nonempty_extra_plan')\r\n----------------------------------------------------------------------\r\nTraceback (most recent call last):\r\n  File \"C:\\Users\\GameBoy\\Desktop\\Johnny_AI_Skill_latest\\.worktrees\\cvq-01a2-review\\tests\\test_verification_qualification_manifests.py\", line 542, in test_approved_plan_pin_coverage\r\n    self._expect_port_error(nonempty_extra, \"approved roster plans must exactly cover host case subjects\")\r\n  File \"C:\\Users\\GameBoy\\Desktop\\Johnny_AI_Skill_latest\\.worktrees\\cvq-01a2-review\\tests\\test_verification_qualification_manifests.py\", line 90, in _expect_port_error\r\n    with self.assertRaises(ValidationError) as raised:\r\nAssertionError: ValidationError not raised\r\n\r\n----------------------------------------------------------------------\r\nRan 1 test in 0.014s\r\n\r\nFAILED (failures=1)\r\n"
+```
+
+restored, exit 0:
+
+```text
+test_approved_plan_pin_coverage (tests.test_verification_qualification_manifests.QualificationManifestAdmissionTests.test_approved_plan_pin_coverage) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.012s
+
+OK
+```
+
+### R4 — legal non-HOST family host-key branch rejected, CM02 still green
+
+Frozen basis: approved SPEC11.1 lines435–443 and A2 CM02 require the legal key alternatives.
+Ordinary HostCapabilityKey(PLAN_BINDING, WINDOWS, CODEX_CLI) cases for PURE_RULE,
+SOURCE_PROPERTY, TRUSTED_NATIVE_DISCOVERY and ADVERSARIAL_WORKLOAD roundtrip on the
+candidate. The inline control uses existing shared fixture functions, no new fixture owner,
+file, generic mutation runner or policy.
+
+An initial command used an invalid PowerShell here-string terminator, a root command-entry
+mistake, exit1 with empty output both before/during the first mutant attempt. It executed no
+Python/control and is **not evidence**. The named test was green throughout that attempt.
+Corrected explicit command below is a separate diagnostic, not an automatic retry. Its valid
+control actually executed before repeating this one mutant. No other campaign was repeated.
+
+Invalid command (not counted), exit 1:
+
+```powershell
+$cm02Probe = @'
+from library.controlled_verification import CapabilityFamily, CaseKind, HostCapabilityKey, HostSurface, NoRosterSubject, Platform, QualificationCase
+from tests.verification_qualification_fixtures import qualification_case, native_case
+key=HostCapabilityKey(family=CapabilityFamily.PLAN_BINDING, adapter_revision=1, platform=Platform.WINDOWS, host_surface=HostSurface.CODEX_CLI)
+cases=(qualification_case("case-host-pure", key=key), qualification_case("case-host-source", kind=CaseKind.SOURCE_PROPERTY, key=key), native_case("case-host-probe", CaseKind.TRUSTED_NATIVE_DISCOVERY, key, NoRosterSubject()), native_case("case-host-attack", CaseKind.ADVERSARIAL_WORKLOAD, key, NoRosterSubject()))
+for case in cases:
+    assert QualificationCase.model_validate_json(case.model_dump_json()) == case
+    print(case.case_id, case.kind.value, type(case.capability_key).__name__, case.capability_key.family.value, type(case.subject).__name__)
+'
+& 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -c 'import subprocess,sys; sys.exit(subprocess.run(sys.argv[1:], timeout=60).returncode)' 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -c $cm02Probe
+exit $LASTEXITCODE
+```
+
+```text
+```
+
+Corrected ordinary valid controls, exit 0:
+
+```powershell
+$cm02Probe = @'
+from library.controlled_verification import CapabilityFamily, CaseKind, HostCapabilityKey, HostSurface, NoRosterSubject, Platform, QualificationCase
+from tests.verification_qualification_fixtures import qualification_case, native_case
+key=HostCapabilityKey(family=CapabilityFamily.PLAN_BINDING, adapter_revision=1, platform=Platform.WINDOWS, host_surface=HostSurface.CODEX_CLI)
+cases=(qualification_case("case-host-pure", key=key), qualification_case("case-host-source", kind=CaseKind.SOURCE_PROPERTY, key=key), native_case("case-host-probe", CaseKind.TRUSTED_NATIVE_DISCOVERY, key, NoRosterSubject()), native_case("case-host-attack", CaseKind.ADVERSARIAL_WORKLOAD, key, NoRosterSubject()))
+for case in cases:
+    assert QualificationCase.model_validate_json(case.model_dump_json()) == case
+    print(case.case_id, case.kind.value, type(case.capability_key).__name__, case.capability_key.family.value, type(case.subject).__name__)
+'@
+& 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -c 'import subprocess,sys; sys.exit(subprocess.run(sys.argv[1:], timeout=60).returncode)' 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -c $cm02Probe
+exit $LASTEXITCODE
+```
+
+```text
+case-host-pure PURE_RULE HostCapabilityKey PLAN_BINDING NoRosterSubject
+case-host-source SOURCE_PROPERTY HostCapabilityKey PLAN_BINDING NoRosterSubject
+case-host-probe TRUSTED_NATIVE_DISCOVERY HostCapabilityKey PLAN_BINDING NoRosterSubject
+case-host-attack ADVERSARIAL_WORKLOAD HostCapabilityKey PLAN_BINDING NoRosterSubject
+```
+
+Temporary patch, only QualificationCase.coherent_case in manifest_contracts.py:
+
+```diff
+     def coherent_case(self) -> QualificationCase:
++        if isinstance(self.capability_key, HostCapabilityKey) and self.capability_key.family is not CapabilityFamily.HOST_MEDIATION:
++            raise ValueError("host keys require host mediation")
+         pure = self.kind in {CaseKind.PURE_RULE, CaseKind.SOURCE_PROPERTY}
+```
+
+This intentionally narrows an approved constructor domain. The probe's first formerly valid
+case now rejects; the CM02 named method still passes. This is ZERO_RED for the required
+matrix, not a candidate product defect and not a successful gate.
+CM02 control, exit 0:
+
+```powershell
+& 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -c 'import subprocess,sys; sys.exit(subprocess.run(sys.argv[1:], timeout=60).returncode)' 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -m unittest -v tests.test_verification_qualification_manifests.QualificationManifestAdmissionTests.test_case_applicability_rows
+exit $LASTEXITCODE
+```
+
+```text
+test_case_applicability_rows (tests.test_verification_qualification_manifests.QualificationManifestAdmissionTests.test_case_applicability_rows) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.011s
+
+OK
+```
+
+Mutated valid-control probe, exit 1:
+
+```text
+Traceback (most recent call last):
+  File "<string>", line 4, in <module>
+  File "C:\Users\GameBoy\Desktop\Johnny_AI_Skill_latest\.worktrees\cvq-01a2-review\tests\verification_qualification_fixtures.py", line 555, in qualification_case
+    return QualificationCase(
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\GameBoy\AppData\Local\Programs\Python\Python311\Lib\site-packages\pydantic\main.py", line 263, in __init__
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pydantic_core._pydantic_core.ValidationError: 1 validation error for QualificationCase
+  Value error, host keys require host mediation [type=value_error, input_value={'case_id': 'case-host-pu...1, case_output_bytes=1)}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.13/v/value_error
+```
+
+CM02 with mutation (ZERO_RED), exit 0:
+
+```text
+test_case_applicability_rows (tests.test_verification_qualification_manifests.QualificationManifestAdmissionTests.test_case_applicability_rows) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.010s
+
+OK
+```
+
+CM02 exact restored, exit 0:
+
+```text
+test_case_applicability_rows (tests.test_verification_qualification_manifests.QualificationManifestAdmissionTests.test_case_applicability_rows) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.011s
+
+OK
+```
+
+### Final restoration and bounds
+
+Parent reviewed at exact c2fa4cd in its own detached snapshot; restored only its temporary
+source paths. The final hashes match the pristine source bytes recorded in section3.
+All executable review checks/mutations fell within the declared verification pass:
+2026-09-20 06:27:41–06:30:49 UTC (188 seconds); no command timeout, retry loop, load or
+background process. The malformed inline command is retained above, not counted as a test.
+Restoration readback, exit 0:
+
+```text
+c2fa4cdda1a785a4a8e2c7924a337c2fdd836160
+library/controlled_verification/manifest_contracts.py 00e8bef4960d9e6add50145eda223969879514c93c6d0f5032d87a9aa1037354
+library/controlled_verification/qualification_ports.py 0c5d84194c130210222afcce9f86d541690330dfa7c17f5488dc44ac04b4423d
+```
+
+Final full regression, exit 0:
+
+```powershell
+& 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -c 'import subprocess,sys; sys.exit(subprocess.run(sys.argv[1:], timeout=60).returncode)' 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -m unittest -v tests.test_verification_qualification_contracts tests.test_verification_qualification_domains
+exit $LASTEXITCODE
+```
+
+```text
+test_alias_branch_counts_and_selector_negatives (tests.test_verification_qualification_contracts.QualificationContractTests.test_alias_branch_counts_and_selector_negatives) ... ok
+test_all_78_default_omission_null_and_wrong_constant_cells (tests.test_verification_qualification_contracts.QualificationContractTests.test_all_78_default_omission_null_and_wrong_constant_cells) ... ok
+test_all_81_direct_constructor_and_json_rows (tests.test_verification_qualification_contracts.QualificationContractTests.test_all_81_direct_constructor_and_json_rows) ... ok
+test_all_result_proof_and_evidence_branches_roundtrip (tests.test_verification_qualification_contracts.QualificationContractTests.test_all_result_proof_and_evidence_branches_roundtrip) ... ok
+test_every_missing_direct_constructor_row_roundtrips (tests.test_verification_qualification_contracts.QualificationContractTests.test_every_missing_direct_constructor_row_roundtrips) ... ok
+test_immutable_contract_configuration (tests.test_verification_qualification_contracts.QualificationContractTests.test_immutable_contract_configuration) ... ok
+test_literal_enum_members_and_json_rows (tests.test_verification_qualification_contracts.QualificationContractTests.test_literal_enum_members_and_json_rows) ... ok
+test_literal_wire_catalog_matches_source_ast (tests.test_verification_qualification_contracts.QualificationContractTests.test_literal_wire_catalog_matches_source_ast) ... ok
+test_public_constructor_roundtrips (tests.test_verification_qualification_contracts.QualificationContractTests.test_public_constructor_roundtrips) ... ok
+test_required_null_and_extra_json_matrix (tests.test_verification_qualification_contracts.QualificationContractTests.test_required_null_and_extra_json_matrix) ... ok
+test_roster_and_three_port_evidence_roundtrips (tests.test_verification_qualification_contracts.QualificationContractTests.test_roster_and_three_port_evidence_roundtrips) ... ok
+test_local_result_and_evidence_consistency (tests.test_verification_qualification_domains.QualificationDomainTests.test_local_result_and_evidence_consistency) ... ok
+test_refusal_proof_result_matrix (tests.test_verification_qualification_domains.QualificationDomainTests.test_refusal_proof_result_matrix) ... ok
+test_roster_local_invariants (tests.test_verification_qualification_domains.QualificationDomainTests.test_roster_local_invariants) ... ok
+test_strict_boundary_rejection (tests.test_verification_qualification_domains.QualificationDomainTests.test_strict_boundary_rejection) ... ok
+test_union_and_constructor_boundaries (tests.test_verification_qualification_domains.QualificationDomainTests.test_union_and_constructor_boundaries) ... ok
+test_approved_plan_pin_coverage (test_verification_qualification_manifests.QualificationManifestAdmissionTests.test_approved_plan_pin_coverage) ... ok
+test_capability_requirement_joins (test_verification_qualification_manifests.QualificationManifestAdmissionTests.test_capability_requirement_joins) ... ok
+test_case_and_scope_identity_joins (test_verification_qualification_manifests.QualificationManifestAdmissionTests.test_case_and_scope_identity_joins) ... ok
+test_case_applicability_rows (test_verification_qualification_manifests.QualificationManifestAdmissionTests.test_case_applicability_rows) ... ok
+test_discovery_intent_and_property_membership (test_verification_qualification_manifests.QualificationManifestAdmissionTests.test_discovery_intent_and_property_membership) ... ok
+test_manifest_and_prerequisite_duplicates (test_verification_qualification_manifests.QualificationManifestAdmissionTests.test_manifest_and_prerequisite_duplicates) ... ok
+test_prerequisite_applicability_and_order (test_verification_qualification_manifests.QualificationManifestAdmissionTests.test_prerequisite_applicability_and_order) ... ok
+test_every_resource_bound (test_verification_qualification_scalars.QualificationScalarTests.test_every_resource_bound) ... ok
+test_identifier_digest_text_domains (test_verification_qualification_scalars.QualificationScalarTests.test_identifier_digest_text_domains) ... ok
+test_integer_domain_edges (test_verification_qualification_scalars.QualificationScalarTests.test_integer_domain_edges) ... ok
+test_integer_domains_are_strict (test_verification_qualification_scalars.QualificationScalarTests.test_integer_domains_are_strict) ... ok
+
+----------------------------------------------------------------------
+Ran 27 tests in 0.283s
+
+OK
+```
+
+## 6. Exhaustion and convergence route
+
+ACTION_COMPLETED / REVIEW_CHANGES_REQUESTED -> CONVERGENCE_REVIEW_REQUIRED.
+Close ctx-cvq-01a2-closure01-correction1. A1 remains approved; A3/B remain dependency-pending.
+Keep all candidate/control refs unchanged, no integration/main write/push/release.
+
+The remaining source work is small but the assignment still combines implementing a finite
+test matrix, retaining old observations, and producing/reviewing a large raw mutation record.
+Do not infer that raising model tier or asking the same request a third time fixes that
+delivery boundary. [Convergence section23](cvq-01-convergence-proposal.md#23-a2-correction-exhausted-proposed-evidence-ownership-split--2026-09-20)
+proposes applying A1's successful responsibility split to A2. It is a new owner decision,
+not permission already inherited from A1. No new closure or evidence exception is dispatched.

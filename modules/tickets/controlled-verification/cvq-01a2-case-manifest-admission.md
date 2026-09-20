@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / document / closure | `TICKET-CONTROLLED-VERIFICATION-CVQ-01A2` / `IMPLEMENTATION_TICKET` / `04` / `CLOSURE-CVQ-01A2` revision `01` |
-| State / outcome | `CHANGES_REQUESTED / CORRECTION_ADMITTED / NOT_INTEGRATED`; one observable closure: case/binding/applicability/requirement joins and approved manifest plan coverage (original CA04–05/08, relevant CA09 duplicates, CA10) |
+| ID / kind / document / closure | `TICKET-CONTROLLED-VERIFICATION-CVQ-01A2` / `IMPLEMENTATION_TICKET` / `05` / `CLOSURE-CVQ-01A2` revision `01` |
+| State / outcome | `BLOCKED / CONVERGENCE_REVIEW_REQUIRED / NON_DISPATCHABLE`; one observable closure: case/binding/applicability/requirement joins and approved manifest plan coverage (original CA04–05/08, relevant CA09 duplicates, CA10) |
 | Dependency / baseline / view | [A1](cvq-01a1-scalar-wire-admission.md) APPROVED candidate `8d6b8291a03facec9d6d157794e7f4e8ba4d1cdc`, additive descendant of `070039b6227205f7bb4592f203a4fd7455311f31`; exact predecessor/review/index binding below. New `ctx-cvq-01a2-closure01` |
 | Preparation authority | Owner adopted convergence revision 08 at `058b8256bb1b2601fabc30c21a42ecc48c831875`, LF `24021ef0467d56c1bc3924e98b15d2f993e0dc720228dec44177da2132c50392`; preparation only, exact ticket approval pending |
 | SPEC / wire | [Qualification SPEC](../../spec/controlled-verification-qualification.md) revision 07 LF `545f5058d8347ab069d6a23fdb07daaf06ab836998efb67b2c30b80fee3b1716`, sections 2/6/7/11; [wire](../../spec/controlled-verification-qualification-wire.md) revision 03 LF `6eb9d0a088e105e7c2dd4c3c3b4001f970ac34195c7a0cd78459a2f6016e9222`, sections 1–6 |
@@ -247,3 +247,27 @@ ACTION_COMPLETED / REVIEW_CHANGES_REQUESTED -> AUTO_CONTINUE / CORRECT(CVQ-01A2)
 native retained-seat follow-up -> wait_agent -> root correction review and required helper.
 This is the sole correction; failure returns convergence, never a third attempt/elevation.
 A3/B stay dependency-pending. No main write, integration, push, release or installation.
+
+## Correction exhausted and current disposition — 2026-09-20
+
+Document05 records state only, not a new closure or a third correction grant. Returned
+`c2fa4cdda1a785a4a8e2c7924a337c2fdd836160` descends througha4664f3 from95434d6,
+only manifests.py changed. Root's [review revision02](../../../doc/reviews/controlled-verification/cvq-01a2-case-manifest-admission-code-review.md)
+LF `595f1f57e06fec9661a04d7ce5539a6b380a97df2021b5f9e461f0cb01f072c6`
+records strict16-file /27-test greens and independently closed R1/R3 named mutation defects.
+The missing prerequisite distinct-pair positive is also supplied.
+
+Remaining F01/F02/F05 concern the unnamed CM03 positive control, unchanged case-kind-only
+mutation direction, missing legal non-HOST HostCapabilityKey controls and incomplete mapped
+raw/current-historical test evidence. Root R4 rejects a previously valid legal key while the
+named CM02 method stays green. The retained read-only helper independently confirms static
+coverage gaps. No product/schema change or unrelated failure is asserted.
+
+Close ctx-cvq-01a2-closure01-correction1; closure01 initial plus one correction is exhausted.
+Do not reuse its view, request another implementation attempt or elevate implicitly.
+[Convergence section23](../../../doc/reviews/controlled-verification/cvq-01-convergence-proposal.md#23-a2-correction-exhausted-proposed-evidence-ownership-split--2026-09-20)
+is an owner-pending responsibility-split proposal, not implementation authority. A1 remains
+APPROVED / NOT_INTEGRATED, A3/B remain dependency-pending; preserve all existing candidates.
+
+ACTION_COMPLETED / REVIEW_CHANGES_REQUESTED -> WAIT_FOR_HUMAN /
+EVIDENCE_OWNERSHIP_DECISION. No main write, integration, push, installation or publication.
