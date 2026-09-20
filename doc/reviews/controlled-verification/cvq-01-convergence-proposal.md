@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-CONVERGENCE` / `CODE_REVIEW` / `14` |
-| Lifecycle / conclusion | `A1_EVIDENCE_OWNERSHIP_ADOPTED / CLOSURE02_EXACT_APPROVAL_PENDING / A2_A3_B_DEPENDENCY_PENDING`; earlier approvals and failed closures preserved |
+| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-CONVERGENCE` / `CODE_REVIEW` / `15` |
+| Lifecycle / conclusion | `A1_CLOSURE02_OWNER_APPROVED / DISPATCH_ADMITTED / A2_A3_B_DEPENDENCY_PENDING`; earlier approvals and failed closures preserved |
 | Control baseline | `dc45f31f6c56983613665f276bf15207419274e3` |
 | Examined source | Closure-03 correction `5d7789db6b950d317e7b500b757aa77a54d609ed`; all prior candidates preserved |
 | Ticket | [CVQ-01](../../../modules/tickets/controlled-verification/cvq-01-qualification-admission.md), document 10, current digest in its registry; closure 03 exhausted, unchanged. Historical document 09 at dc45f31f LF `babcceb227bf8f91356dfbbb90f5e14ad1adab19f43a99686bdae46e8acff16d` |
@@ -953,3 +953,8 @@ REQ-052's source-policy packaging checks are independent. They cannot qualify th
 executable responsibility/content gates or turn the CVQ candidates into shipping payload.
 ACTION_COMPLETED / CONVERGENCE_ADOPTED / CLOSURE02_PROPOSED -> WAIT_FOR_HUMAN /
 OWNER_EXACT_APPROVAL_PENDING for A1 only.
+
+Subsequent exact reply **"核准確定版，直接派工"** binds document05 at `1e50d2ef`,
+LF `d25b6c3b3f873a95eccea88e0e8ab222848cb67b5a87ace23958b480a85d0bbf`.
+A1 document06 records the signature and unchanged closure02 admission. The pending route in
+this section is superseded: AUTO_CONTINUE -> IMPLEMENT -> wait_agent -> root review.

@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / document / closure | `TICKET-CONTROLLED-VERIFICATION-CVQ-01A1` / `IMPLEMENTATION_TICKET` / `05` / proposed `CLOSURE-CVQ-01A1` revision `02`; revision 01 remains exhausted |
-| State / outcome | `OWNER_EXACT_APPROVAL_PENDING / NON_DISPATCHABLE`; evidence-ownership convergence adopted; final section is current. Original SW01–08 behavior remains unchanged |
+| ID / kind / document / closure | `TICKET-CONTROLLED-VERIFICATION-CVQ-01A1` / `IMPLEMENTATION_TICKET` / `06` / approved `CLOSURE-CVQ-01A1` revision `02`; revision 01 remains exhausted |
+| State / outcome | `OWNER_APPROVED / DISPATCH_ADMITTED`; final section records the exact signature. Original SW01–08 behavior remains unchanged |
 | Baseline / view | `070039b6227205f7bb4592f203a4fd7455311f31`; new `ctx-cvq-01a1-closure01` only after exact approval. Do not reset/rebase or reopen A closure01 |
 | Preparation authority | Owner adopted convergence revision 08 at `058b8256bb1b2601fabc30c21a42ecc48c831875`, LF `24021ef0467d56c1bc3924e98b15d2f993e0dc720228dec44177da2132c50392`; preparation only, exact ticket approval pending |
 | SPEC / wire | [Qualification SPEC](../../spec/controlled-verification-qualification.md) revision 07 LF `545f5058d8347ab069d6a23fdb07daaf06ab836998efb67b2c30b80fee3b1716`, sections 2/6/7/11; [wire](../../spec/controlled-verification-qualification-wire.md) revision 03 LF `6eb9d0a088e105e7c2dd4c3c3b4001f970ac34195c7a0cd78459a2f6016e9222`, sections 1–6 |
@@ -369,3 +369,23 @@ no partial integration, push or release. Packaging of the separate REQ-052 polic
 does not admit CVQ source or qualify the responsibility gate.
 
 ACTION_COMPLETED / CLOSURE02_PROPOSED -> WAIT_FOR_HUMAN / OWNER_EXACT_APPROVAL_PENDING.
+
+### Closure02 exact approval and dispatch binding
+
+Owner answered **"核准確定版，直接派工"** to the question naming control commit
+`1e50d2ef457a7a5de392fb8b34eb9fc2a8f51011`, document05/closure02, LF
+`d25b6c3b3f873a95eccea88e0e8ab222848cb67b5a87ace23958b480a85d0bbf`.
+Document06 records approval/admission only; no predicate, destination, resource limit or source
+boundary changes. The proposed/pending text immediately above is now historical.
+
+Root read back clean `codex/cvq-01` at `1270664213d71eb2da524ecf7bf1885f28ffc82f`, the exact
+registered Git worktree under this repository, no ancestor reparse point and the admitted
+Python/Pydantic/mypy versions. Bind `ctx-cvq-01a1-closure02`; the previous native source-owner
+seat is absent, so allocate one Luna/xhigh seat for retained owner `cve_wire_implementer`.
+Root remains reviewer and sole orchestrator. Dispatch the bounded current section, not history.
+Implementation source is committed only by its owner. Parent may provide that same owner a
+fresh exact-candidate evidence snapshot for M03; this does not create another implementation
+owner or move another owner's checkout. Root alone controls the separate full review snapshot.
+
+ACTION_COMPLETED / EXACT_APPROVAL_RECORDED -> AUTO_CONTINUE / IMPLEMENT(CVQ-01A1 closure02)
+-> wait_agent -> candidate evidence and root review. No main integration, push or release grant.
