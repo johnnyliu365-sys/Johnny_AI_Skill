@@ -2,13 +2,13 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `EVIDENCE-CVQ-01A1-C02-SW04-06` / `REVIEW_EVIDENCE` / `01` |
-| State | `CAPTURED / NOT_CLOSURE_APPROVAL`; M02 is a blocking ticket/evidence-plan defect |
+| ID / kind / revision | `EVIDENCE-CVQ-01A1-C02-SW04-06` / `REVIEW_EVIDENCE` / `02` |
+| State | `REVIEWED / PREDICATE_EVIDENCE_ACCEPTED`; verdict remains solely in A1 review section8 |
 | Authority | A1 document06 at `0aa0184e9db460be2aaaa513c30d6636f18ae2d1`; exact owner signature binds document05 at `1e50d2ef457a7a5de392fb8b34eb9fc2a8f51011`, LF `d25b6c3b3f873a95eccea88e0e8ab222848cb67b5a87ace23958b480a85d0bbf` |
 | Candidate / executor | `8d6b8291a03facec9d6d157794e7f4e8ba4d1cdc` / root ticket-review |
 | Execution workspace | `C:/Users/GameBoy/Desktop/Johnny_AI_Skill_latest/.worktrees/cvq-01a1-review-c02`, detached candidate snapshot |
 | Limits / effects | One foreground command; timeout60s; pass1200s; zero retries/load/containers/provider/target effects |
-| Review | [A1 review](cvq-01a1-scalar-wire-admission-code-review.md), section 7; raw failure is not itself approval |
+| Review | [A1 review](cvq-01a1-scalar-wire-admission-code-review.md), section8; section7 preserves the initial blocked review |
 
 ## Capture and interpretation
 
@@ -21,11 +21,17 @@ combined capture; this is not a claim of independently timestamped streams. Unit
 abbreviated assertion diffs remain verbatim. Commands, exact patches, exit codes, restore hashes
 and green reruns are retained. No generic mutation runner was added to the repository.
 
+Historical revision01 capture state (superseded by the review completion below):
 The 35 planned rows ran once each. Root fully inspected the blocking M02 trace and M03 identity;
 other rows' captured failure identities/summaries were inspected, but the complete repetitive
 raw streams have NOT all received final reviewer read-through. They remain captured evidence,
 not 34 independently approved predicates. No closure approval, integration or continuation to
 A2/A3/B is inferred. M01 is explicitly an oracle probe, not production proof.
+
+Revision02: root read every stored raw command stream in full, including restoration outputs,
+and checked each against the frozen ledger. M01–M35 satisfy their specified observations with
+the separately approved M02 amendment, retaining its original wrong-reason red as history.
+All other34 captures were reused without rerunning. No integration or native capability is claimed.
 
 ## M07
 

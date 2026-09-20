@@ -2,9 +2,9 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / document / closure | `TICKET-CONTROLLED-VERIFICATION-CVQ-01A2` / `IMPLEMENTATION_TICKET` / `02` / `CLOSURE-CVQ-01A2` revision `01` |
-| State / outcome | `OWNER_APPROVED / DEPENDENCY_PENDING / NON_DISPATCHABLE`; one observable closure: case/binding/applicability/requirement joins and approved manifest plan coverage (original CA04–05/08, relevant CA09 duplicates, CA10) |
-| Dependency / baseline / view | [A1](cvq-01a1-scalar-wire-admission.md) APPROVED candidate SHA NOT_YET_AVAILABLE, additive descendant of `070039b6227205f7bb4592f203a4fd7455311f31`; parent commits exact SHA/review/index binding before dispatch, never latest HEAD. New `ctx-cvq-01a2-closure01` |
+| ID / kind / document / closure | `TICKET-CONTROLLED-VERIFICATION-CVQ-01A2` / `IMPLEMENTATION_TICKET` / `03` / `CLOSURE-CVQ-01A2` revision `01` |
+| State / outcome | `OWNER_APPROVED / READY_LOW_MODEL / DISPATCH_ADMITTED`; one observable closure: case/binding/applicability/requirement joins and approved manifest plan coverage (original CA04–05/08, relevant CA09 duplicates, CA10) |
+| Dependency / baseline / view | [A1](cvq-01a1-scalar-wire-admission.md) APPROVED candidate `8d6b8291a03facec9d6d157794e7f4e8ba4d1cdc`, additive descendant of `070039b6227205f7bb4592f203a4fd7455311f31`; exact predecessor/review/index binding below. New `ctx-cvq-01a2-closure01` |
 | Preparation authority | Owner adopted convergence revision 08 at `058b8256bb1b2601fabc30c21a42ecc48c831875`, LF `24021ef0467d56c1bc3924e98b15d2f993e0dc720228dec44177da2132c50392`; preparation only, exact ticket approval pending |
 | SPEC / wire | [Qualification SPEC](../../spec/controlled-verification-qualification.md) revision 07 LF `545f5058d8347ab069d6a23fdb07daaf06ab836998efb67b2c30b80fee3b1716`, sections 2/6/7/11; [wire](../../spec/controlled-verification-qualification-wire.md) revision 03 LF `6eb9d0a088e105e7c2dd4c3c3b4001f970ac34195c7a0cd78459a2f6016e9222`, sections 1–6 |
 | Requirement / Context | `PRD-20260908-051` / `CHG-20260908-051`; [REQ-051](../../../doc/requirements/active/2026/environment-control/REQ-20260908-051.md) revision 11 LF `f52552cdafc857d605f1eda03bcdf3df4c3d0c49ad9adfb9f39335f4b341e272`; [sealed Context](../../../doc/context/controlled-verification/main.md) revision 02 LF `6f5465295cb3fd303bc555da655b3169d33292ad1f2ed4374748f82ddd6f2285`, READ_REFERENCE only |
@@ -182,3 +182,39 @@ ACTION_COMPLETED / EXACT_APPROVAL_RECORDED -> DEPENDENCY_PENDING; no premature s
 
 All old exhausted views remain CLOSED. No integration, push, release, installation or evaluator
 behavior grant is added. The packet also approves B document03's dependency amendment.
+
+## Predecessor approval and dispatch binding — 2026-09-20
+
+The dependency is now satisfied, not a new owner approval question. A1 document08 LF
+`c54f67a18f90c6a0d86771e9ac0e83aa8a9b82082b25ccee642d0948e11dbec7`
+and [A1 review revision04](../../../doc/reviews/controlled-verification/cvq-01a1-scalar-wire-admission-code-review.md) LF
+`6417db889bfae0c22e3de1cae8ab3c09dae6a621e08632d8acab36ab9890d8d2`
+in this same committed control packet approve exact
+`8d6b8291a03facec9d6d157794e7f4e8ba4d1cdc`. No latest-HEAD substitution.
+Document03 records only the pre-authorized dependency/view binding; CM01–07, writable
+symbols, historical evidence, resource limits and return duties above remain unchanged.
+
+Root read back clean `codex/cvq-01` at that SHA; registered Git common directory is the
+repository's .git, worktree metadata .git/worktrees/cvq-01, and the actual source root is
+`C:/Users/GameBoy/Desktop/Johnny_AI_Skill_latest/.worktrees/cvq-01`, with no ancestor
+reparse point. The candidate descends from070039b6. Python3.11.9, Pydantic2.13.4 and mypy2.3.0
+match admission. Predecessor strict/full-suite/mutation proof is in its accepted review.
+
+Bind retained `cve_wire_implementer` / implementation-standard (Luna/xhigh) and root /
+ticket-review to fresh `ctx-cvq-01a2-closure01`; A1's view is CLOSED. Resolve this ticket's
+approved REVISION_03 profile at exact control commit
+`b12dd7262606f7b951271cd51e336747f0638c38:doc/runbooks/dispatch-model-profile.md`.
+It was read and still maps these roles to Luna/xhigh and Terra/xhigh. The current runbook's
+bundled-profile pointer does not make that explicit historical binding missing or authorize
+an implicit profile change. Native retained-seat capability is unchanged; no elevation.
+
+READY_LOW_MODEL: one case/manifest constructor-admission closure, one sequential owner,
+fixed schema/diagnostics and finite named CM matrix with deterministic strict/focused checks.
+The sealed Context is reference-only. Existing assertion/fixture ownership and constituent
+DAG remain fixed. Do not merge control documents into the source branch or load closed
+review history as implementation context. Read the exact current ticket and its declared refs.
+
+ACTION_COMPLETED / PREDECESSOR_BOUND -> AUTO_CONTINUE / IMPLEMENT(CVQ-01A2) using native
+follow-up to the retained owner -> wait_agent -> root review plus required finite helper.
+Same-lifetime dispatch requires no runner/queue/receipt/descriptor. A3/B stay dependency-pending;
+no partial integration, main write, push, publication, installation or native host effect.

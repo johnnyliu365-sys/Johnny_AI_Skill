@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-CONVERGENCE` / `CODE_REVIEW` / `16` |
-| Lifecycle / conclusion | `A1_CLOSURE02_TICKET_DEFECT / EVIDENCE_AMENDMENT_PENDING / A2_A3_B_DEPENDENCY_PENDING`; earlier approvals and failed closures preserved |
+| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-CONVERGENCE` / `CODE_REVIEW` / `17` |
+| Lifecycle / conclusion | `A1_REVIEW_APPROVED / A2_ADMITTED / A3_B_DEPENDENCY_PENDING / NOT_INTEGRATED`; earlier approvals and failed closures preserved |
 | Control baseline | `dc45f31f6c56983613665f276bf15207419274e3` |
 | Examined source | Closure-03 correction `5d7789db6b950d317e7b500b757aa77a54d609ed`; all prior candidates preserved |
 | Ticket | [CVQ-01](../../../modules/tickets/controlled-verification/cvq-01-qualification-admission.md), document 10, current digest in its registry; closure 03 exhausted, unchanged. Historical document 09 at dc45f31f LF `babcceb227bf8f91356dfbbb90f5e14ad1adab19f43a99686bdae46e8acff16d` |
@@ -12,7 +12,7 @@
 | Responsibility | Parent owns the replan recommendation and review verdict. Reused Terra/xhigh supplied read-only adversarial evidence; parent ran the candidate checks/probes/mutations. No source implementation, model elevation or owner decision is granted by this proposal |
 
 Sections 1–10 preserve earlier convergence/design/adoption history. D-CQ11/D-CLAIM, exact
-closure-03 approval and the responsibility split have been answered. Section 20 is the current
+closure-03 approval and the responsibility split have been answered. Section 21 is the current
 disposition; historical pending routes do not reopen those answered decisions.
 
 ## 1. Diagnosis and retained boundary
@@ -981,3 +981,27 @@ because this fixture surface was explicitly forbidden. No exception was executed
 ACTION_COMPLETED / TICKET_DEFECT -> WAIT_FOR_HUMAN / OWNER_EXACT_APPROVAL_PENDING.
 A2/A3/B stay dependency-pending; integration, push and publication remain ungranted.
 Independent REQ-052 local packaging/install evidence is not an A1 approval or hard-gate claim.
+
+## 21. A1 evidence complete; approved A2 continuation — 2026-09-20
+
+Owner approved document07's exact M02 temporary-fixture amendment at e328f70a, LF
+`dc81265a1c9e09ead157dd5049dd59b66dcb93a8805f3db649d39e38aba3dcd0`.
+Root performed only that exception, preserving the failed original capture and unchanged
+candidate `8d6b8291a03facec9d6d157794e7f4e8ba4d1cdc`. C1 declared-default and C3 named
+omission1!=0 assertions turned red, exact restoration returned green, strict15 files and
+complete26 tests passed. All35 raw mutation streams are now fully read and reviewed; no
+repeat of the other34 experiments. A1 review revision04 is APPROVED / NOT_INTEGRATED.
+
+C02-F01 was the root's fixture-reachability mistake, now closed without an implementation
+correction or weaker oracle. Prior exhausted closures remain closed. The retained helper's
+required narrow static evidence applies to the same source; root owns the final conclusion.
+
+The already-approved A2 document02 allows exact predecessor/view binding as AUTO_CONTINUE.
+Document03 binds8d6 and ctx-cvq-01a2-closure01 for the same retained Luna/xhigh owner.
+A3/B remain dependency-pending; no new semantics/model elevation or owner decision is needed.
+The reviewer must wait for native completion, then review and obtain the required bounded
+adversarial evidence. No partial integration, main mutation, push or publication is granted.
+
+REQ-052's separate local packaging/install verification remains complete but NOT_RELEASED;
+its publication-suite timeout/pin gaps and unfinished executable gates are not waived by A1.
+ACTION_COMPLETED / REVIEW_APPROVED -> AUTO_CONTINUE / IMPLEMENT(CVQ-01A2).

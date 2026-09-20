@@ -2,13 +2,13 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `EVIDENCE-CVQ-01A1-C02-SW07-08` / `REVIEW_EVIDENCE` / `01` |
-| State | `CAPTURED / NOT_CLOSURE_APPROVAL`; M02 is a blocking ticket/evidence-plan defect |
+| ID / kind / revision | `EVIDENCE-CVQ-01A1-C02-SW07-08` / `REVIEW_EVIDENCE` / `02` |
+| State | `REVIEWED / PREDICATE_EVIDENCE_ACCEPTED`; verdict remains solely in A1 review section8 |
 | Authority | A1 document06 at `0aa0184e9db460be2aaaa513c30d6636f18ae2d1`; exact owner signature binds document05 at `1e50d2ef457a7a5de392fb8b34eb9fc2a8f51011`, LF `d25b6c3b3f873a95eccea88e0e8ab222848cb67b5a87ace23958b480a85d0bbf` |
 | Candidate / executor | `8d6b8291a03facec9d6d157794e7f4e8ba4d1cdc` / root ticket-review |
 | Execution workspace | `C:/Users/GameBoy/Desktop/Johnny_AI_Skill_latest/.worktrees/cvq-01a1-review-c02`, detached candidate snapshot |
 | Limits / effects | One foreground command; timeout60s; pass1200s; zero retries/load/containers/provider/target effects |
-| Review | [A1 review](cvq-01a1-scalar-wire-admission-code-review.md), section 7; raw failure is not itself approval |
+| Review | [A1 review](cvq-01a1-scalar-wire-admission-code-review.md), section8; section7 preserves the initial blocked review |
 
 ## Capture and interpretation
 
@@ -21,11 +21,49 @@ combined capture; this is not a claim of independently timestamped streams. Unit
 abbreviated assertion diffs remain verbatim. Commands, exact patches, exit codes, restore hashes
 and green reruns are retained. No generic mutation runner was added to the repository.
 
+Historical revision01 capture state (superseded by the review completion below):
 The 35 planned rows ran once each. Root fully inspected the blocking M02 trace and M03 identity;
 other rows' captured failure identities/summaries were inspected, but the complete repetitive
 raw streams have NOT all received final reviewer read-through. They remain captured evidence,
 not 34 independently approved predicates. No closure approval, integration or continuation to
 A2/A3/B is inferred. M01 is explicitly an oracle probe, not production proof.
+
+Revision02: root read every stored raw command stream in full, including restoration outputs,
+and checked each against the frozen ledger. M01–M35 satisfy their specified observations with
+the separately approved M02 amendment, retaining its original wrong-reason red as history.
+All other34 captures were reused without rerunning. No integration or native capability is claimed.
+
+## Final restored checks after M02 amendment01 — 2026-09-20
+
+These are a new authorized final run after restoring both temporary M02 files, not a rerun of
+the other34 mutations. Root read all output. Strict15 files and complete26 tests passed; the
+candidate and product behavior are unchanged. The earlier final run remains below as history.
+
+Command:
+
+```powershell
+& 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -c 'import subprocess,sys; sys.exit(subprocess.run(sys.argv[1:], timeout=60).returncode)' 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -m mypy --strict --follow-imports=silent library/controlled_verification tests/test_verification_qualification_contracts.py tests/test_verification_qualification_domains.py tests/test_verification_qualification_scalars.py tests/test_verification_qualification_boundaries.py tests/verification_qualification_fixtures.py tests/verification_qualification_catalog.py
+exit $LASTEXITCODE
+```
+
+Exit: `0`. Complete returned output (lossless JSON string):
+
+```json
+"Success: no issues found in 15 source files\n"
+```
+
+Command:
+
+```powershell
+& 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -c 'import subprocess,sys; sys.exit(subprocess.run(sys.argv[1:], timeout=60).returncode)' 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -m unittest -v tests.test_verification_qualification_contracts tests.test_verification_qualification_domains
+exit $LASTEXITCODE
+```
+
+Exit: `0`. Complete returned output (lossless JSON string):
+
+```json
+"test_alias_branch_counts_and_selector_negatives (tests.test_verification_qualification_contracts.QualificationContractTests.test_alias_branch_counts_and_selector_negatives) ... ok\ntest_all_78_default_omission_null_and_wrong_constant_cells (tests.test_verification_qualification_contracts.QualificationContractTests.test_all_78_default_omission_null_and_wrong_constant_cells) ... ok\ntest_all_81_direct_constructor_and_json_rows (tests.test_verification_qualification_contracts.QualificationContractTests.test_all_81_direct_constructor_and_json_rows) ... ok\ntest_all_result_proof_and_evidence_branches_roundtrip (tests.test_verification_qualification_contracts.QualificationContractTests.test_all_result_proof_and_evidence_branches_roundtrip) ... ok\ntest_every_missing_direct_constructor_row_roundtrips (tests.test_verification_qualification_contracts.QualificationContractTests.test_every_missing_direct_constructor_row_roundtrips) ... ok\ntest_immutable_contract_configuration (tests.test_verification_qualification_contracts.QualificationContractTests.test_immutable_contract_configuration) ... ok\ntest_literal_enum_members_and_json_rows (tests.test_verification_qualification_contracts.QualificationContractTests.test_literal_enum_members_and_json_rows) ... ok\ntest_literal_wire_catalog_matches_source_ast (tests.test_verification_qualification_contracts.QualificationContractTests.test_literal_wire_catalog_matches_source_ast) ... ok\ntest_public_constructor_roundtrips (tests.test_verification_qualification_contracts.QualificationContractTests.test_public_constructor_roundtrips) ... ok\ntest_required_null_and_extra_json_matrix (tests.test_verification_qualification_contracts.QualificationContractTests.test_required_null_and_extra_json_matrix) ... ok\ntest_roster_and_three_port_evidence_roundtrips (tests.test_verification_qualification_contracts.QualificationContractTests.test_roster_and_three_port_evidence_roundtrips) ... ok\ntest_all_five_case_kind_binding_subject_rows_roundtrip (tests.test_verification_qualification_domains.QualificationDomainTests.test_all_five_case_kind_binding_subject_rows_roundtrip) ... ok\ntest_approved_manifest_plan_coverage (tests.test_verification_qualification_domains.QualificationDomainTests.test_approved_manifest_plan_coverage) ... ok\ntest_case_binding_identity_matrix (tests.test_verification_qualification_domains.QualificationDomainTests.test_case_binding_identity_matrix) ... ok\ntest_constructor_identity_and_applicability_joins (tests.test_verification_qualification_domains.QualificationDomainTests.test_constructor_identity_and_applicability_joins) ... ok\ntest_duplicate_collections_and_report_cells_reject (tests.test_verification_qualification_domains.QualificationDomainTests.test_duplicate_collections_and_report_cells_reject) ... ok\ntest_kind_key_subject_applicability_matrix (tests.test_verification_qualification_domains.QualificationDomainTests.test_kind_key_subject_applicability_matrix) ... ok\ntest_local_result_and_evidence_consistency (tests.test_verification_qualification_domains.QualificationDomainTests.test_local_result_and_evidence_consistency) ... ok\ntest_refusal_proof_result_matrix (tests.test_verification_qualification_domains.QualificationDomainTests.test_refusal_proof_result_matrix) ... ok\ntest_roster_local_invariants (tests.test_verification_qualification_domains.QualificationDomainTests.test_roster_local_invariants) ... ok\ntest_strict_boundary_rejection (tests.test_verification_qualification_domains.QualificationDomainTests.test_strict_boundary_rejection) ... ok\ntest_union_and_constructor_boundaries (tests.test_verification_qualification_domains.QualificationDomainTests.test_union_and_constructor_boundaries) ... ok\ntest_every_resource_bound (test_verification_qualification_scalars.QualificationScalarTests.test_every_resource_bound) ... ok\ntest_identifier_digest_text_domains (test_verification_qualification_scalars.QualificationScalarTests.test_identifier_digest_text_domains) ... ok\ntest_integer_domain_edges (test_verification_qualification_scalars.QualificationScalarTests.test_integer_domain_edges) ... ok\ntest_integer_domains_are_strict (test_verification_qualification_scalars.QualificationScalarTests.test_integer_domains_are_strict) ... ok\n\n----------------------------------------------------------------------\nRan 26 tests in 0.245s\n\nOK\n"
+```
 
 ## M25
 

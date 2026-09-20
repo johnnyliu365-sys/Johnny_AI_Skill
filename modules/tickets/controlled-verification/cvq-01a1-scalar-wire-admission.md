@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / document / closure | `TICKET-CONTROLLED-VERIFICATION-CVQ-01A1` / `IMPLEMENTATION_TICKET` / `07` / approved `CLOSURE-CVQ-01A1` revision `02`; proposed evidence amendment01 is NOT approved |
-| State / outcome | `BLOCKED / TICKET_DEFECT / OWNER_EXACT_APPROVAL_PENDING / NON_DISPATCHABLE`; M02 cannot reach its frozen cell with the permitted fixture. Original SW01–08 behavior remains unchanged |
+| ID / kind / document / closure | `TICKET-CONTROLLED-VERIFICATION-CVQ-01A1` / `IMPLEMENTATION_TICKET` / `08` / approved `CLOSURE-CVQ-01A1` revision `02`, approved evidence amendment01 |
+| State / outcome | `REVIEW_APPROVED / CLOSED / NOT_INTEGRATED`; SW01–08 complete at exact candidate8d6b8291, final disposition below |
 | Baseline / view | `070039b6227205f7bb4592f203a4fd7455311f31`; new `ctx-cvq-01a1-closure01` only after exact approval. Do not reset/rebase or reopen A closure01 |
 | Preparation authority | Owner adopted convergence revision 08 at `058b8256bb1b2601fabc30c21a42ecc48c831875`, LF `24021ef0467d56c1bc3924e98b15d2f993e0dc720228dec44177da2132c50392`; preparation only, exact ticket approval pending |
 | SPEC / wire | [Qualification SPEC](../../spec/controlled-verification-qualification.md) revision 07 LF `545f5058d8347ab069d6a23fdb07daaf06ab836998efb67b2c30b80fee3b1716`, sections 2/6/7/11; [wire](../../spec/controlled-verification-qualification-wire.md) revision 03 LF `6eb9d0a088e105e7c2dd4c3c3b4001f970ac34195c7a0cd78459a2f6016e9222`, sections 1–6 |
@@ -438,3 +438,25 @@ dependency-pending until then. All integration/push/release restrictions remain.
 
 ACTION_COMPLETED / TICKET_DEFECT / EVIDENCE_AMENDMENT_PROPOSED -> WAIT_FOR_HUMAN /
 OWNER_EXACT_APPROVAL_PENDING. Do not execute the proposed exception before approval.
+
+## Approved amendment and A1 completion — 2026-09-20
+
+Owner **「核准」** binds document07 at `e328f70aaadffa2d62632df14fe748fcb9d8a1d2`,
+LF `dc81265a1c9e09ead157dd5049dd59b66dcb93a8805f3db649d39e38aba3dcd0`.
+Document08 records that signature and the completed review; no further source correction,
+closure expansion or resource change. Earlier pending/blocking prose is historical.
+
+Root executed the exact M02 fixture exception: C1/C3 ordinary controls green, declared-default
+and named omission assertions red, production restoration green, then both files byte-restored.
+The existing strict15-file check and complete26-test suite passed. All35 stored mutation streams
+have now received full reviewer read-through; the other34 were not rerun. Complete records and
+the corrected root hash-check input are retained in the three approved evidence leaves.
+
+[Review revision04 section8](../../../doc/reviews/controlled-verification/cvq-01a1-scalar-wire-admission-code-review.md#8-closure02-final-review-after-approved-m02-exception--2026-09-20)
+approves exact `8d6b8291a03facec9d6d157794e7f4e8ba4d1cdc`; no candidate/product bytes changed
+for the evidence amendment. Required helper's bounded exact-source evidence is already present.
+Root owns the verdict; source remains on codex/cvq-01, not main.
+
+Close ctx-cvq-01a1-closure02. ACTION_COMPLETED / REVIEW_APPROVED -> AUTO_CONTINUE to the
+already-approved A2 after exact predecessor/view/index binding. A3/B remain dependency-pending;
+the existing no-partial-integration rule and all push/release restrictions remain unchanged.

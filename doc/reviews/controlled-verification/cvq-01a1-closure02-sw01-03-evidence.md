@@ -2,13 +2,13 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `EVIDENCE-CVQ-01A1-C02-SW01-03` / `REVIEW_EVIDENCE` / `01` |
-| State | `CAPTURED / NOT_CLOSURE_APPROVAL`; M02 is a blocking ticket/evidence-plan defect |
+| ID / kind / revision | `EVIDENCE-CVQ-01A1-C02-SW01-03` / `REVIEW_EVIDENCE` / `02` |
+| State | `REVIEWED / PREDICATE_EVIDENCE_ACCEPTED`; verdict remains solely in A1 review section8 |
 | Authority | A1 document06 at `0aa0184e9db460be2aaaa513c30d6636f18ae2d1`; exact owner signature binds document05 at `1e50d2ef457a7a5de392fb8b34eb9fc2a8f51011`, LF `d25b6c3b3f873a95eccea88e0e8ab222848cb67b5a87ace23958b480a85d0bbf` |
 | Candidate / executor | `8d6b8291a03facec9d6d157794e7f4e8ba4d1cdc` / root ticket-review |
 | Execution workspace | `C:/Users/GameBoy/Desktop/Johnny_AI_Skill_latest/.worktrees/cvq-01a1-review-c02`, detached candidate snapshot |
 | Limits / effects | One foreground command; timeout60s; pass1200s; zero retries/load/containers/provider/target effects |
-| Review | [A1 review](cvq-01a1-scalar-wire-admission-code-review.md), section 7; raw failure is not itself approval |
+| Review | [A1 review](cvq-01a1-scalar-wire-admission-code-review.md), section8; section7 preserves the initial blocked review |
 
 ## Capture and interpretation
 
@@ -21,11 +21,182 @@ combined capture; this is not a claim of independently timestamped streams. Unit
 abbreviated assertion diffs remain verbatim. Commands, exact patches, exit codes, restore hashes
 and green reruns are retained. No generic mutation runner was added to the repository.
 
+Historical revision01 capture state (superseded by the review completion below):
 The 35 planned rows ran once each. Root fully inspected the blocking M02 trace and M03 identity;
 other rows' captured failure identities/summaries were inspected, but the complete repetitive
 raw streams have NOT all received final reviewer read-through. They remain captured evidence,
 not 34 independently approved predicates. No closure approval, integration or continuation to
 A2/A3/B is inferred. M01 is explicitly an oracle probe, not production proof.
+
+Revision02: root read every stored raw command stream in full, including restoration outputs,
+and checked each against the frozen ledger. M01–M35 satisfy their specified observations with
+the separately approved M02 amendment, retaining its original wrong-reason red as history.
+All other34 captures were reused without rerunning. No integration or native capability is claimed.
+
+## M02 evidence amendment01 — approved and executed 2026-09-20
+
+Owner **「核准」** binds document07 at `e328f70aaadffa2d62632df14fe748fcb9d8a1d2`,
+LF `dc81265a1c9e09ead157dd5049dd59b66dcb93a8805f3db649d39e38aba3dcd0`.
+Candidate, executor and detached snapshot remain those in the header. The earlier failed M02
+is preserved below, not rewritten into a success. No other34 experiments were rerun.
+
+Only temporary fixture change, before the unchanged real-default mutation:
+
+```diff
+ def resource_bounds() -> ResourceBounds:
+     return ResourceBounds(
++        automatic_retry_count=0,
+```
+
+M02 production patch remains exactly:
+
+```diff
+-    automatic_retry_count: ZeroOnly = 0
++    automatic_retry_count: ZeroOnly = 1
+```
+
+Both ordinary controls passed before mutation. The C1 declared-default assertion failed;
+C3 reached the required ResourceBounds/automatic_retry_count/json/omission cell and failed
+`1 != 0`, not fixture construction. Both commands passed after production restoration.
+
+### M02 amendment command 1: explicit_fixture_control
+
+Command:
+
+```powershell
+& 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -c 'import subprocess,sys; sys.exit(subprocess.run(sys.argv[1:], timeout=60).returncode)' 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -m unittest -v tests.test_verification_qualification_contracts.QualificationContractTests.test_literal_wire_catalog_matches_source_ast
+exit $LASTEXITCODE
+```
+
+Exit: `0`. Complete returned output (lossless JSON string):
+
+```json
+"test_literal_wire_catalog_matches_source_ast (tests.test_verification_qualification_contracts.QualificationContractTests.test_literal_wire_catalog_matches_source_ast) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.022s\n\nOK\n"
+```
+
+### M02 amendment command 2: explicit_fixture_control
+
+Command:
+
+```powershell
+& 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -c 'import subprocess,sys; sys.exit(subprocess.run(sys.argv[1:], timeout=60).returncode)' 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -m unittest -v tests.test_verification_qualification_contracts.QualificationContractTests.test_all_78_default_omission_null_and_wrong_constant_cells
+exit $LASTEXITCODE
+```
+
+Exit: `0`. Complete returned output (lossless JSON string):
+
+```json
+"test_all_78_default_omission_null_and_wrong_constant_cells (tests.test_verification_qualification_contracts.QualificationContractTests.test_all_78_default_omission_null_and_wrong_constant_cells) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.032s\n\nOK\n"
+```
+
+### M02 amendment command 3: mutated_with_explicit_fixture
+
+Command:
+
+```powershell
+& 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -c 'import subprocess,sys; sys.exit(subprocess.run(sys.argv[1:], timeout=60).returncode)' 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -m unittest -v tests.test_verification_qualification_contracts.QualificationContractTests.test_literal_wire_catalog_matches_source_ast
+exit $LASTEXITCODE
+```
+
+Exit: `1`. Complete returned output (lossless JSON string):
+
+```json
+"test_literal_wire_catalog_matches_source_ast (tests.test_verification_qualification_contracts.QualificationContractTests.test_literal_wire_catalog_matches_source_ast) ... FAIL\n\n======================================================================\nFAIL: test_literal_wire_catalog_matches_source_ast (tests.test_verification_qualification_contracts.QualificationContractTests.test_literal_wire_catalog_matches_source_ast)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"C:\\Users\\GameBoy\\Desktop\\Johnny_AI_Skill_latest\\.worktrees\\cvq-01a1-review-c02\\tests\\test_verification_qualification_contracts.py\", line 380, in test_literal_wire_catalog_matches_source_ast\n    self.assertEqual(fixed_defaults, DEFAULTS)\nAssertionError: {'Pur[147 chars]t': '1', 'ResourceBounds.container_count': '0'[4151 chars]NT'\"} != {'Pur[147 chars]t': '0', 'ResourceBounds.container_count': '0'[4151 chars]NT'\"}\nDiff is 4730 characters long. Set self.maxDiff to None to see it.\n\n----------------------------------------------------------------------\nRan 1 test in 0.023s\n\nFAILED (failures=1)\n"
+```
+
+### M02 amendment command 4: mutated_with_explicit_fixture
+
+Command:
+
+```powershell
+& 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -c 'import subprocess,sys; sys.exit(subprocess.run(sys.argv[1:], timeout=60).returncode)' 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -m unittest -v tests.test_verification_qualification_contracts.QualificationContractTests.test_all_78_default_omission_null_and_wrong_constant_cells
+exit $LASTEXITCODE
+```
+
+Exit: `1`. Complete returned output (lossless JSON string):
+
+```json
+"test_all_78_default_omission_null_and_wrong_constant_cells (tests.test_verification_qualification_contracts.QualificationContractTests.test_all_78_default_omission_null_and_wrong_constant_cells) ... \n  test_all_78_default_omission_null_and_wrong_constant_cells (tests.test_verification_qualification_contracts.QualificationContractTests.test_all_78_default_omission_null_and_wrong_constant_cells) (cell='omission', model='ResourceBounds', field='automatic_retry_count', path='json', case='omission') ... FAIL\n\n======================================================================\nFAIL: test_all_78_default_omission_null_and_wrong_constant_cells (tests.test_verification_qualification_contracts.QualificationContractTests.test_all_78_default_omission_null_and_wrong_constant_cells) (cell='omission', model='ResourceBounds', field='automatic_retry_count', path='json', case='omission')\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"C:\\Users\\GameBoy\\Desktop\\Johnny_AI_Skill_latest\\.worktrees\\cvq-01a1-review-c02\\tests\\test_verification_qualification_contracts.py\", line 497, in test_all_78_default_omission_null_and_wrong_constant_cells\n    self.assertEqual(json.loads(parsed.model_dump_json())[field], expected)\nAssertionError: 1 != 0\n\n----------------------------------------------------------------------\nRan 1 test in 0.030s\n\nFAILED (failures=1)\n"
+```
+
+### M02 amendment command 5: restored_production_explicit_fixture
+
+Command:
+
+```powershell
+& 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -c 'import subprocess,sys; sys.exit(subprocess.run(sys.argv[1:], timeout=60).returncode)' 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -m unittest -v tests.test_verification_qualification_contracts.QualificationContractTests.test_literal_wire_catalog_matches_source_ast
+exit $LASTEXITCODE
+```
+
+Exit: `0`. Complete returned output (lossless JSON string):
+
+```json
+"test_literal_wire_catalog_matches_source_ast (tests.test_verification_qualification_contracts.QualificationContractTests.test_literal_wire_catalog_matches_source_ast) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.020s\n\nOK\n"
+```
+
+### M02 amendment command 6: restored_production_explicit_fixture
+
+Command:
+
+```powershell
+& 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -c 'import subprocess,sys; sys.exit(subprocess.run(sys.argv[1:], timeout=60).returncode)' 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -m unittest -v tests.test_verification_qualification_contracts.QualificationContractTests.test_all_78_default_omission_null_and_wrong_constant_cells
+exit $LASTEXITCODE
+```
+
+Exit: `0`. Complete returned output (lossless JSON string):
+
+```json
+"test_all_78_default_omission_null_and_wrong_constant_cells (tests.test_verification_qualification_contracts.QualificationContractTests.test_all_78_default_omission_null_and_wrong_constant_cells) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.029s\n\nOK\n"
+```
+
+### Exact restoration and audit correction
+
+Scoped restoration commands in this root-owned snapshot:
+
+```powershell
+git restore --source=8d6b8291a03facec9d6d157794e7f4e8ba4d1cdc --worktree -- library/controlled_verification/manifest_contracts.py
+# C1/C3 restored green commands above ran here, with explicit fixture retained.
+git restore --source=8d6b8291a03facec9d6d157794e7f4e8ba4d1cdc --worktree -- tests/verification_qualification_fixtures.py
+```
+
+Production restore exit0, empty output. Root's first subsequent read-only hash comparison had a
+mistyped expected manifest digest (`...2239699795...` instead of `...2239698795...`), and returned
+exit1. This was an erroneous verification input, not changed candidate bytes; no mutation or
+test was retried to conceal it. The failure and corrected readback are both retained:
+
+Command:
+
+```powershell
+read-only byte-hash / Git restoration readback
+```
+
+Exit: `1`. Complete returned output (lossless JSON string):
+
+```json
+"Exception: \nLine |\n   5 |  … ()};if($h -ne $expected[$p]){throw \"BYTE_RESTORE_MISMATCH $p\"}; \"$p $ …\n     |                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n     | BYTE_RESTORE_MISMATCH library/controlled_verification/manifest_contracts.py\n"
+```
+
+Command:
+
+```powershell
+read-only byte-hash / Git restoration readback
+```
+
+Exit: `0`. Complete returned output (lossless JSON string):
+
+```json
+"tests/verification_qualification_fixtures.py 64c430b0969283d2690e16e2984e0a9ae661e0e65e62a749984014356bbc73dd\nlibrary/controlled_verification/manifest_contracts.py 00e8bef4960d9e6add50145eda223969879514c93c6d0f5032d87a9aa1037354\nRESTORED_CANDIDATE_CLEAN\n"
+```
+
+Pristine and restored byte SHA-256 match:
+
+- fixture: `64c430b0969283d2690e16e2984e0a9ae661e0e65e62a749984014356bbc73dd`;
+- manifest: `00e8bef4960d9e6add50145eda223969879514c93c6d0f5032d87a9aa1037354`.
+
+Exact candidate diff and working-tree status were empty before the final strict/suite commands.
+The exception execution pass took 59.390s including orchestration, within1200s; every command stayed below60s.
+One foreground process, no load, containers, automatic retries, new runner or candidate commit.
+Final restored strict/full-suite output is appended in the SW07–08 evidence leaf.
 
 ## M01
 

@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01A1` / `CODE_REVIEW` / `03` |
-| Conclusion / round | `BLOCKED / TICKET_DEFECT / EVIDENCE_AMENDMENT_PENDING`; section 7 is current; closure01 remains exhausted |
+| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01A1` / `CODE_REVIEW` / `04` |
+| Conclusion / round | `APPROVED / NOT_INTEGRATED`; section8 is current; closure02 initial source review completed, closure01 remains exhausted |
 | Current authority | [A1](../../../modules/tickets/controlled-verification/cvq-01a1-scalar-wire-admission.md) document06 / closure02 at `0aa0184e9db460be2aaaa513c30d6636f18ae2d1`; exact signature and LF digests in section7; sections1–6 preserve closure01 history |
 | Source / candidate | Current `1270664213d71eb2da524ecf7bf1885f28ffc82f` -> `8d6b8291a03facec9d6d157794e7f4e8ba4d1cdc`; previous `070039b6227205f7bb4592f203a4fd7455311f31` -> `b1aa3fafaf03a7c47a869210b3934399124df933` -> `1270664213d71eb2da524ecf7bf1885f28ffc82f` preserved |
 | Owner / reviewer | Retained `cve_wire_implementer`, implementation-standard; root, ticket-review and sole verdict owner |
@@ -296,3 +296,58 @@ implementation is retained; the closure02 correction allowance is not spent on a
 ACTION_COMPLETED / TICKET_DEFECT -> WAIT_FOR_HUMAN / OWNER_EXACT_APPROVAL_PENDING for the
 bounded evidence exception. A1 is not approved; A2/A3/B remain dependency-pending. Do not
 repeat the full campaign, demand a third closure01 correction, integrate, push or release.
+
+## 8. Closure02 final review after approved M02 exception — 2026-09-20
+
+Owner **「核准」** approved A1 document07 at
+`e328f70aaadffa2d62632df14fe748fcb9d8a1d2`, LF
+`dc81265a1c9e09ead157dd5049dd59b66dcb93a8805f3db649d39e38aba3dcd0`.
+This admits only the specified temporary reviewer-fixture exception, not candidate changes.
+The exact reviewed source remains `8d6b8291a03facec9d6d157794e7f4e8ba4d1cdc`.
+
+Root followed the three control/mutation/restoration phases. With explicit ordinary
+`automatic_retry_count=0` only in resource_bounds(), C1/C3 controls passed. Mutating only
+the real declared default then produced the C1 source-default mismatch and C3's exact named
+`ResourceBounds / automatic_retry_count / json / omission` assertion `1 != 0`.
+Production restoration made both methods green; fixture restoration recovered its original
+bytes. No validation guard, expected value or candidate source was weakened. C02-F01 is CLOSED
+by the owner-approved evidence-plan repair; the original wrong-reason red remains recorded.
+
+Root has now read every unreduced stored stream for M01–M35, including green restoration
+outputs, not only exit codes or summaries. The other34 experiments were not rerun. The three
+indexed evidence leaves revision02 contain all exact patches, commands, raw output and custody.
+
+| Closure | Predicate observations accepted by root |
+| --- | --- |
+| SW01 | M01 detects missing PlatformCapabilityKey literal row (oracle-only); M02 C1 detects changed real default. Ordinary81 DTO controls remain in final suite |
+| SW02 | M03 names LaunchObservation/observation_revision/json/missing; M04 reports81 separately named extra-field failures |
+| SW03 | Amended M02 C3 reaches named omission/value comparison; M05 is collected missing-selector rejection failure, not import error; M06 detects changed Observation vocabulary.78 defaults/16 aliases/63 branches/131 enum members retained |
+| SW04 | M07–14 independently expose identifier length/alphabet, digest length/alphabet and text min/max; separator cells and both digest invalid alphabets are named |
+| SW05 | M15–18 fail the exact int_type contract on each of four aliases in constructor/JSON paths. M18 is the independent reviewer door, unlike owner's M03 example |
+| SW06 | M19–24 detect each lower/upper domain predicate, preserving the remaining guard. M19's zero acceptance and negative error-type change are distinguished |
+| SW07 | M21/22 cover all three zero-only resource fields; M25–33 each fail its named maximum+1 field. M32 preserves honest historical baseline green, no fabricated baseline-red |
+| SW08 | M34/35 fail exact frozen/revalidate configuration assertions; ordinary assignment and tuple controls remain in the full suite |
+
+All selected mutation methods returned exit1 for the intended assertion and returned exit0
+after exact restoration. Additional failures caused by the same weakened predicate are retained,
+not substituted for the named required cell. Unittest's built-in abbreviated large assertion
+diffs are unchanged; explicit named rejection/default failures supply the observed predicates.
+
+Final authorized strict run: exit0,15 files. Final complete contracts+domains run: exit0,
+26 tests,0.245s. Restored fixture SHA-256
+`64c430b0969283d2690e16e2984e0a9ae661e0e65e62a749984014356bbc73dd`;
+manifest SHA-256 `00e8bef4960d9e6add50145eda223969879514c93c6d0f5032d87a9aa1037354`.
+Root initially mistyped the expected manifest hash in a read-only comparison; that failed
+comparison and corrected readback are preserved in SW01–03 evidence. Git diff against the
+candidate and status were empty before final checks. No product retry or concealed failure.
+
+The already-returned required helper evidence in section7 applies to this unchanged source.
+It remains evidence-only; root alone concludes APPROVED for A1. No new static audit was
+commissioned for a restored, noncommittable fixture. No source prompt/work-order text was added.
+This proves A1's scalar/wire acceptance and cell attribution, not runtime/native enforcement,
+complete CVQ schema admission, the unfinished source-responsibility gate or shipping readiness.
+
+ACTION_COMPLETED / REVIEW_APPROVED -> AUTO_CONTINUE / bind and dispatch previously approved
+A2 to the retained implementation owner. Close ctx-cvq-01a1-closure02. A2 starts from exact8d6;
+A3/B remain dependency-pending. All failed historical closures stay closed. A1 alone MUST NOT
+integrate; no main/push/release/VM/provider/installed-user effect is authorized here.
