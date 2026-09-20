@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-CONVERGENCE` / `CODE_REVIEW` / `19` |
-| Lifecycle / conclusion | `A1_REVIEW_APPROVED / A2_CONVERGENCE_REVIEW_REQUIRED / A3_B_DEPENDENCY_PENDING / NOT_INTEGRATED`; earlier approvals and failed closures preserved |
+| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-CONVERGENCE` / `CODE_REVIEW` / `20` |
+| Lifecycle / conclusion | `A1_REVIEW_APPROVED / A2_CLOSURE02_PROPOSED / OWNER_EXACT_APPROVAL_PENDING / A3_B_DEPENDENCY_PENDING / NOT_INTEGRATED`; earlier approvals and failed closures preserved |
 | Control baseline | `dc45f31f6c56983613665f276bf15207419274e3` |
 | Examined source | Closure-03 correction `5d7789db6b950d317e7b500b757aa77a54d609ed`; all prior candidates preserved |
 | Ticket | [CVQ-01](../../../modules/tickets/controlled-verification/cvq-01-qualification-admission.md), document 10, current digest in its registry; closure 03 exhausted, unchanged. Historical document 09 at dc45f31f LF `babcceb227bf8f91356dfbbb90f5e14ad1adab19f43a99686bdae46e8acff16d` |
@@ -12,7 +12,7 @@
 | Responsibility | Parent owns the replan recommendation and review verdict. Reused Terra/xhigh supplied read-only adversarial evidence; parent ran the candidate checks/probes/mutations. No source implementation, model elevation or owner decision is granted by this proposal |
 
 Sections 1–10 preserve earlier convergence/design/adoption history. D-CQ11/D-CLAIM, exact
-closure-03 approval and A1's responsibility split have been answered. Section 23 is the current
+closure-03 approval and A1/A2's responsibility splits have been answered. Section 24 is the current
 disposition; historical pending routes do not reopen those answered decisions.
 
 ## 1. Diagnosis and retained boundary
@@ -933,6 +933,37 @@ The separate installed-profile defect and source-content/responsibility requirem
 in [REQ-052](../../requirements/active/2026/plugin-adoption-quality/REQ-20260920-052.md).
 They do not retroactively add acceptance requirements to A1 or reopen completed findings.
 ACTION_COMPLETED / CONVERGENCE_PROPOSED -> WAIT_FOR_HUMAN / EVIDENCE_OWNERSHIP_DECISION.
+
+## 24. A2 division adopted; finite closure02 prepared — 2026-09-20
+
+Owner 「啟用」 adopts section23 at a4ad0506, LF
+`a21ccd9c68335e6b9a0e3deae249613ef2c5d9156794d3fdbbc04391a2af35c3`.
+Do not ask that ownership decision again. [A2 document06](../../../modules/tickets/controlled-verification/cvq-01a2-case-manifest-admission.md)
+proposes closure02 with one test-file/two-method source boundary:17 explicit legal key
+controls,5 opposite-binding negatives and1 named WA04 positive, preserving existing rows.
+Retained Luna/xhigh owns that source delta; root owns the complete evidence and final verdict.
+
+The [reviewer evidence plan](cvq-01a2-closure02-evidence-plan.md) revision01 freezes41 exact
+temporary predicate experiments,5 current named historical cells, commands and three indexed
+destinations. Q24 specifies fail-open missing-case continuation instead of counting KeyError;
+Q27 explicitly groups the redundant pure/no-roster guard with derived-scope comparison.
+These temporary evidence isolation clauses are in the new approval object, not executed or
+silently inherited from closure01. All product contracts and other predicates stay unchanged.
+
+Root's read-only ordinary-constructor/JSON probe at c2fa4cd observed17 legal controls and
+five correct root rejections. Source stayed clean; no closure mutation/implementation occurred.
+The old contract/history remains immutable at a4ad0506, not copied into a new dispatch prompt.
+No private runtime, receipt, new seat, framework, product file or model elevation is introduced.
+
+Section23 explicitly required written exact closure/evidence-map approval before dispatch.
+The ownership adoption does not claim a signature on those then-unwritten bytes. Root has now
+prepared and indexed that object; old views remain closed and A2 is NON_DISPATCHABLE until
+its exact document06 digest and evidence-plan revision01 are approved. Approval then permits
+the declared native follow-up/wait/review route, without another ceremonial dispatch question.
+
+ACTION_COMPLETED / CONVERGENCE_ADOPTED / CLOSURE02_PROPOSED -> WAIT_FOR_HUMAN /
+OWNER_EXACT_APPROVAL_PENDING. A1 approval, A3/B dependency state and all no-integration/push/
+release/install boundaries remain unchanged. Separate REQ-052 remains NOT_RELEASED.
 
 ## 19. Evidence ownership adopted; exact finite closure prepared — 2026-09-20
 
