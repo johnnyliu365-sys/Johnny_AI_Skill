@@ -2,10 +2,10 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / document / closure | `TICKET-CONTROLLED-VERIFICATION-CVQ-01A3` / `IMPLEMENTATION_TICKET` / `05` / `CLOSURE-CVQ-01A3` revision `01` |
-| State / outcome | `BLOCKED / CONVERGENCE_REVIEW_REQUIRED / NON_DISPATCHABLE / NOT_INTEGRATED`; unchanged closure: ordinary roster/proof/result/evidence DTOs discriminate constructor-local invalidity (original CA06–07/09, CA10) |
-| Dependency / baseline / view | [A2](cvq-01a2-case-manifest-admission.md) APPROVED `ce49f735c6853c236a3504134d4a6959e7ca680f`, with A1 regression; review04/index at `41f492ebf7bfb6ae5a5af486e0d5ace5d0d62d44`. New `ctx-cvq-01a3-closure01`; all A2 views CLOSED |
-| Preparation authority | Owner adopted convergence revision 08 at `058b8256bb1b2601fabc30c21a42ecc48c831875`, LF `24021ef0467d56c1bc3924e98b15d2f993e0dc720228dec44177da2132c50392`; preparation only, exact ticket approval pending |
+| ID / kind / document / closure | `TICKET-CONTROLLED-VERIFICATION-CVQ-01A3` / `IMPLEMENTATION_TICKET` / `06` / `CLOSURE-CVQ-01A3` revision `02` |
+| State / outcome | `OWNER_APPROVED / READY_IMPLEMENT / NOT_INTEGRATED`; current split allocation is defined in the final closure02 section; ER01–16 semantics remain unchanged |
+| Dependency / baseline / view | A2 APPROVED `ce49f735c6853c236a3504134d4a6959e7ca680f`, A1/A2 regression retained; current additive baseline `af7fc42837c6bd068b3babdc4227ce46c4335ff3`; fresh `ctx-cvq-01a3-closure02`; old views CLOSED |
+| Current execution authority | Owner's explicit 2026-09-20 split-and-execute direction, recorded in the final closure02 section; historical pending language below is superseded for this stated allocation |
 | SPEC / wire | [Qualification SPEC](../../spec/controlled-verification-qualification.md) revision 07 LF `545f5058d8347ab069d6a23fdb07daaf06ab836998efb67b2c30b80fee3b1716`, sections 2/6/7/11; [wire](../../spec/controlled-verification-qualification-wire.md) revision 03 LF `6eb9d0a088e105e7c2dd4c3c3b4001f970ac34195c7a0cd78459a2f6016e9222`, sections 1–6 |
 | Requirement / Context | `PRD-20260908-051` / `CHG-20260908-051`; [REQ-051](../../../doc/requirements/active/2026/environment-control/REQ-20260908-051.md) revision 11 LF `f52552cdafc857d605f1eda03bcdf3df4c3d0c49ad9adfb9f39335f4b341e272`; [sealed Context](../../../doc/context/controlled-verification/main.md) revision 02 LF `6f5465295cb3fd303bc555da655b3169d33292ad1f2ed4374748f82ddd6f2285`, READ_REFERENCE only |
 | Owner / reviewer / profile | Retained `cve_wire_implementer`, implementation-standard; `root`, ticket-review; [dispatch profile](../../../doc/runbooks/dispatch-model-profile.md) REVISION_03; no elevation. POC / HIGH_ASSURANCE, one sequential source owner, then required evidence-only adversarial helper |
@@ -264,3 +264,94 @@ are CLOSED. No third correction, new implementation view, B dispatch or implicit
 transfer is authorized. [Convergence section28](../../../doc/reviews/controlled-verification/cvq-01-convergence-proposal.md#28-a3-correction-exhausted--owner-decision-pending-2026-09-20)
 is an owner-pending recommendation, not a new frozen closure or implementation authority.
 ACTION_COMPLETED / CORRECTION_REVIEW_FAILED -> WAIT_FOR_HUMAN / CONVERGENCE_REVIEW_REQUIRED.
+
+## Owner-approved split execution — closure02, 2026-09-20
+
+The owner explicitly directed "那就分開,開始執行" after the reviewer proposed separating
+Luna's remaining test repair from root's complete evidence production and treating installation
+closure independently. This is fresh execution authority for that stated split, not reuse of the
+persistent goal's earlier approval. Document06 records it without changing ER01–16 semantics.
+Closure01 and both old views remain exhausted/CLOSED; candidates and findings remain history.
+
+Current source baseline is af7fc42837c6bd068b3babdc4227ce46c4335ff3, on the same retained
+codex/cvq-01 owner worktree, fresh view ctx-cvq-01a3-closure02. Source ownership remains
+cve_wire_implementer / implementation-standard (Luna/xhigh), root / ticket-review, exact
+REVISION_03 at b12dd7262606f7b951271cd51e336747f0638c38. No model elevation or new seat.
+This explicit allocation supersedes the old owner-captured full-ledger duty, not its evidence
+quality or requirement to complete it before review approval.
+
+### Finite implementer delta
+
+Only tests/test_verification_qualification_evidence.py is writable in closure02, and only these
+four existing QualificationEvidenceAdmissionTests methods plus directly required imports:
+
+1. test_other_proof_scope_result_pairs: restore the MEASURED_NATIVE + PURE_RULE rejection
+   using an otherwise valid PROVEN/NONE control and the literal measured-proof diagnostic.
+   Preserve all eight nonpure positive pairs and both terminal negatives. Move each PURE_RULE
+   positive construction/assertion into its own ER02/result-named subTest.
+2. test_roster_link_scope_and_result: move the HOST_DISCOVERY and HOST_PROPERTY PROVEN
+   positive observation constructors and assertions into named ER04/scope/result subTests.
+   Preserve independent wrong-link negatives and every existing nonproven positive.
+3. test_planned_entry_and_category_rules: construct each valid planned entry/category control
+   inside the named ER05 positive subTest which observes it; do not leave prerequisite
+   validated scenario objects outside that cell or make later cells depend on an earlier
+   subTest succeeding. Preserve every local negative.
+4. test_observed_entry_and_category_rules: the identical named-control correction for ER07,
+   preserving every observed-entry/category negative.
+
+No product, fixture, manifest, domain-collection, public-contract or helper-file modification.
+No new validator, generic runner, test framework, source prompt or work-order comment.
+Preserve F01/F03/F04/F05 and A1/A2. Existing small fixture functions remain the sole scenario
+owners; call them in the cell rather than defining another builder. Resource limits and fixed
+strict/focused commands above remain unchanged. Tests are not test-exempt: owner runs the
+baseline and final focused/type checks and returns their actual complete output, changed
+methods and one additive candidate commit. Root owns the missing mutation/history campaign;
+the implementer must not repeat or claim it. Return COMPLETED means source delta completed,
+not review/closure approved.
+
+### Root-owned complete evidence map and destinations
+
+The preceding finite ER table remains the test-name/diagnostic/member authority. Root binds
+every following operator to the returned immutable candidate, exact patch, method, named cell,
+unreduced control/red/restored output and restored byte hash; zero red is a finding.
+
+| Rows | Exact operator family |
+| --- | --- |
+| ER01 | CapabilityObservation.proof_matches_result: refusal reason partition and each result comparison, separately |
+| ER02 | Same validator: pure scope, pure terminal, measured scope, measured terminal, unavailable and not-completed result clauses; positive FAILED attribution door retained |
+| ER03 | Each declared required proof-reference omission cell, mapped to accepted A1 SW02 shared wire guards; no new field edits |
+| ER04 | Same validator: non-host roster, proven discovery/property link clauses, with the already-declared paired NONE discovery guard mutation |
+| ER05/07 | PlannedHostEffectEntry/HostEffectEntry alias uniqueness, sort and case-ref uniqueness; PresentHostCategoryPlan/Coverage category, entry and alias checks, separately |
+| ER06/08 | ApprovedHostRosterPlan/HostRosterDiscoveryCoverage category completeness and duplication separately, global entry/alias/case identities separately; DiscoveredEffectSet two distinct-ID checks and PresentHostEnforcementCoverage observation-ID check |
+| ER09 | The six already-enumerated temporary schema restrictions; unchanged clean-snapshot-only exception |
+| ER10 | CompleteExecutionObservation unique checks, CapabilityObservation case IDs, QualificationReport case and observation IDs, separately |
+| ER11 | Named direct branches, literal/extra/selector cells and explicit shared A1 all-eight wire evidence mapping; no duplicate wire matrix |
+| ER12/13 | Each authenticated discovered/discovery equality; each of the six roster-key components remains a named independent mismatch |
+| ER14 | Each enforcement reference/digest equality, both PRESENT_ENTRIES and ZERO_PRESENT_ENTRIES |
+| ER15 | Each of the five subject comparisons and two outer-reference comparisons; capability-key components and variants independently, case-ID content/order independently |
+| ER16 | Remove scalar, manifest and evidence TestCase import separately; locally defined literal inventory witness survives and turns red |
+
+Root also replays the two genuine 5d7789d historical defects at the original baseline and
+current candidate, preserves old-method-to-current-observation mapping, and performs at least
+one operator through a door different from the owner's examples. Prior artifacts are historical
+evidence, not a claim that an unrun current-candidate campaign passed. Full checks remain17
+strict files /38 focused methods unless collection honestly changes. No full-repo/native run.
+Evidence destinations under doc/reviews/controlled-verification are
+cvq-01a3-closure02-proof-evidence.md (ER01–04/09–11),
+cvq-01a3-closure02-roster-evidence.md (ER05–08/16) and
+cvq-01a3-closure02-join-evidence.md (ER12–15/history/preservation).
+Root creates/indexes those evidence leaves after captures exist; no uncreated file is authority.
+Root alone updates the existing A3 review verdict. Reused profile_delivery_audit is the required
+read-only, evidence-only adversarial helper for SPEC_GAP/BOUNDARY_DATA/CONSISTENCY/REGRESSION.
+
+### Independent continuation
+
+ACTION_COMPLETED / OWNER_SPLIT_RECORDED -> AUTO_CONTINUE / IMPLEMENT in the retained native
+lane, then wait_agent, root evidence and review. No ceremonial repeat of the just-given split
+decision is required. This newly bound closure has its own initial/one-correction limit; it is
+not permission to weaken acceptance or repeat unbounded corrections.
+
+B remains dependent on all A source/evidence passing. No partial A integration is granted.
+REQ-052 packaging/installation/release admission is a separate workstream; its successful local
+install is not blocked on A3, and it cannot be used to claim A3 completion. Public release,
+main/ref mutation and live-user installation retain their own separately verified authority.

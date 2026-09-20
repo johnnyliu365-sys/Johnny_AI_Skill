@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-CONVERGENCE` / `CODE_REVIEW` / `24` |
-| Lifecycle / conclusion | `A1_A2_REVIEW_APPROVED / A3_CONVERGENCE_REVIEW_REQUIRED / OWNER_DECISION_PENDING / B_DEPENDENCY_PENDING / NOT_INTEGRATED`; earlier approvals and failed closures preserved |
+| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-CONVERGENCE` / `CODE_REVIEW` / `25` |
+| Lifecycle / conclusion | `A1_A2_REVIEW_APPROVED / A3_SPLIT_EXECUTION_APPROVED / B_DEPENDENCY_PENDING / NOT_INTEGRATED`; earlier approvals and failed closures preserved |
 | Control baseline | `dc45f31f6c56983613665f276bf15207419274e3` |
 | Examined source | Closure-03 correction `5d7789db6b950d317e7b500b757aa77a54d609ed`; all prior candidates preserved |
 | Ticket | [CVQ-01](../../../modules/tickets/controlled-verification/cvq-01-qualification-admission.md), document 10, current digest in its registry; closure 03 exhausted, unchanged. Historical document 09 at dc45f31f LF `babcceb227bf8f91356dfbbb90f5e14ad1adab19f43a99686bdae46e8acff16d` |
@@ -12,7 +12,7 @@
 | Responsibility | Parent owns the replan recommendation and review verdict. Reused Terra/xhigh supplied read-only adversarial evidence; parent ran the candidate checks/probes/mutations. No source implementation, model elevation or owner decision is granted by this proposal |
 
 Sections 1–10 preserve earlier convergence/design/adoption history. D-CQ11/D-CLAIM, exact
-closure-03 approval and A1/A2's responsibility splits have been answered. Section 28 is the current
+closure-03 approval and A1/A2's responsibility splits have been answered. Section 29 is the current
 disposition; historical pending routes do not reopen those answered decisions.
 
 ## 1. Diagnosis and retained boundary
@@ -933,6 +933,21 @@ The separate installed-profile defect and source-content/responsibility requirem
 in [REQ-052](../../requirements/active/2026/plugin-adoption-quality/REQ-20260920-052.md).
 They do not retroactively add acceptance requirements to A1 or reopen completed findings.
 ACTION_COMPLETED / CONVERGENCE_PROPOSED -> WAIT_FOR_HUMAN / EVIDENCE_OWNERSHIP_DECISION.
+
+## 29. Owner split accepted and execution bound — 2026-09-20
+
+After the explicit remaining-work and allocation explanation, the owner directed separation
+and execution. [A3 document06](../../../modules/tickets/controlled-verification/cvq-01a3-evidence-admission.md)
+records closure02: the retained Luna owner makes four existing-method test corrections;
+root produces the complete unchanged ER evidence campaign and owns the review verdict.
+The precise source delta, baseline af7fc428, operator map, evidence destinations and fresh
+ctx-cvq-01a3-closure02 are fixed there. This changes work allocation, not accepted semantics.
+Closure01 stays exhausted; no historical approval/evidence is overwritten.
+
+Installation closure is independent. REQ-052's existing local qualification and confirmed stale
+publication binding remain actual results, not A3 prerequisites or public-release authority.
+No new model/seat, production semantics, helper framework, main integration or public effect
+is granted by this decision. ACTION_COMPLETED / OWNER_SPLIT_RECORDED -> AUTO_CONTINUE / IMPLEMENT.
 
 ## 28. A3 correction exhausted — owner decision pending, 2026-09-20
 
