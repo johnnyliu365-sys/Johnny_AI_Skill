@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-CONVERGENCE` / `CODE_REVIEW` / `23` |
-| Lifecycle / conclusion | `A1_A2_REVIEW_APPROVED / A3_PREDECESSOR_BINDING_READY / B_DEPENDENCY_PENDING / NOT_INTEGRATED`; earlier approvals and failed closures preserved |
+| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-CONVERGENCE` / `CODE_REVIEW` / `24` |
+| Lifecycle / conclusion | `A1_A2_REVIEW_APPROVED / A3_CONVERGENCE_REVIEW_REQUIRED / OWNER_DECISION_PENDING / B_DEPENDENCY_PENDING / NOT_INTEGRATED`; earlier approvals and failed closures preserved |
 | Control baseline | `dc45f31f6c56983613665f276bf15207419274e3` |
 | Examined source | Closure-03 correction `5d7789db6b950d317e7b500b757aa77a54d609ed`; all prior candidates preserved |
 | Ticket | [CVQ-01](../../../modules/tickets/controlled-verification/cvq-01-qualification-admission.md), document 10, current digest in its registry; closure 03 exhausted, unchanged. Historical document 09 at dc45f31f LF `babcceb227bf8f91356dfbbb90f5e14ad1adab19f43a99686bdae46e8acff16d` |
@@ -12,7 +12,7 @@
 | Responsibility | Parent owns the replan recommendation and review verdict. Reused Terra/xhigh supplied read-only adversarial evidence; parent ran the candidate checks/probes/mutations. No source implementation, model elevation or owner decision is granted by this proposal |
 
 Sections 1–10 preserve earlier convergence/design/adoption history. D-CQ11/D-CLAIM, exact
-closure-03 approval and A1/A2's responsibility splits have been answered. Section 27 is the current
+closure-03 approval and A1/A2's responsibility splits have been answered. Section 28 is the current
 disposition; historical pending routes do not reopen those answered decisions.
 
 ## 1. Diagnosis and retained boundary
@@ -932,6 +932,47 @@ No third correction, production mutation, integration, push, release or installe
 The separate installed-profile defect and source-content/responsibility requirements are tracked
 in [REQ-052](../../requirements/active/2026/plugin-adoption-quality/REQ-20260920-052.md).
 They do not retroactively add acceptance requirements to A1 or reopen completed findings.
+ACTION_COMPLETED / CONVERGENCE_PROPOSED -> WAIT_FOR_HUMAN / EVIDENCE_OWNERSHIP_DECISION.
+
+## 28. A3 correction exhausted — owner decision pending, 2026-09-20
+
+A3's exactly approved closure01 was exercised after accepted A2 ce49f735. Initial ce2d750
+and sole correction af7fc428 are preserved. [A3 review02 section5](cvq-01a3-evidence-admission-code-review.md#5-correction-review--convergence-required-2026-09-20)
+records strict17/focused38 green, four now-discriminating named counterexamples, one outer
+constructor error, and a new zero-red scope-guard regression. Reused Terra/xhigh supplied
+bounded static evidence; root alone issued CHANGES_REQUESTED. No activity polling or extra
+implementation seats were used.
+
+The correction restores fixture ownership and several missing controls, but loses the measured
+proof/PURE_RULE negative and still constructs several positives outside their named cells.
+The owner separately clarified that most of the required mutation ledger was not captured or
+retrievable. The small source repair and complete evidence production remain bundled in A3's
+old assignment, unlike the explicitly adopted A1/A2 division. This is an observed responsibility
+allocation/return failure, not proof that the model tier or product architecture is inadequate.
+Do not respond by silently weakening closure01 or by dispatching a third correction.
+
+### Recommended owner decision — proposal only
+
+Preserve af7fc428 and all closed findings. Apply the A1/A2 division explicitly to a NEW finite
+A3 closure: retained Luna/xhigh receives only the enumerated remaining test-row/attribution
+repairs in the existing responsibilities; root owns the complete candidate-bound mutation
+ledger, raw capture, preservation/historical audit and final verdict, with the retained
+evidence-only helper. Restore the original measured-scope rejection; do not add product rules.
+
+The existing ER01–16 semantics, strong types, source boundary, one foreground/60s command/
+1200s pass, no load/retry/framework and same-lifetime wait remain intact. A new exact closure
+must name the remaining source rows and full reviewer evidence map/destinations before owner
+approval and dispatch. This section neither supplies that unwritten map nor claims advance
+approval. No model elevation, policy weakening or source work is authorized by this proposal.
+
+Owner decision is required because A3 still explicitly assigns its full per-predicate evidence
+to the implementation owner and its one correction is exhausted. Earlier A1/A2 exceptions do
+not grant a global transfer. If the owner chooses another allocation, record it before preparing
+the next exact approval object. Meanwhile A3 is NON_DISPATCHABLE, B dependency-blocked, A1/A2
+approved but not integrated. REQ-052 local isolated packaging/install evidence remains
+NOT_RELEASED; executable gates, combined integration and installation/publication closure are
+not complete.
+
 ACTION_COMPLETED / CONVERGENCE_PROPOSED -> WAIT_FOR_HUMAN / EVIDENCE_OWNERSHIP_DECISION.
 
 ## 26. A2 closure02 initial findings; same-owner correction — 2026-09-20

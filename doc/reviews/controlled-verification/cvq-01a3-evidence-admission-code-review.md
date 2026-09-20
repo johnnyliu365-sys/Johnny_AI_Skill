@@ -1,11 +1,11 @@
-# CVQ-01A3 | Evidence admission initial review
+# CVQ-01A3 | Evidence admission review
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01A3` / `CODE_REVIEW` / `01` |
-| Conclusion / round | `CHANGES_REQUESTED / INITIAL_REVIEW / NOT_INTEGRATED` |
-| Authority | [A3](../../../modules/tickets/controlled-verification/cvq-01a3-evidence-admission.md) document03 / closure01 at `0ffbf7c7957b9739f75b350892d8aba862293522`, LF `fe532e291daa291e7b626f5274b053c139475b6fd7708bef2b26086fd013e545`; approved ER01–16 unchanged |
-| Baseline / candidate | `ce49f735c6853c236a3504134d4a6959e7ca680f` -> `ce2d750af68642f1f2bd014f38e535df564c4f88` |
+| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01A3` / `CODE_REVIEW` / `02` |
+| Conclusion / round | `CHANGES_REQUESTED / CORRECTION_REVIEW / CONVERGENCE_REVIEW_REQUIRED / NOT_INTEGRATED`; section5 is current; sections1–4 preserve initial review |
+| Authority | [A3](../../../modules/tickets/controlled-verification/cvq-01a3-evidence-admission.md) document04 / closure01 at `da5d7ffba902ace013eb16a125194975996b6aae`, LF `b24a734a4565dd84a17292e5883538f82c98a856ea7acc5252d4dc483b5a95cd`; approved ER01–16 unchanged |
+| Baseline / candidate | `ce2d750af68642f1f2bd014f38e535df564c4f88` -> `af7fc42837c6bd068b3babdc4227ce46c4335ff3` |
 | Roles | Retained Luna/xhigh implementation owner; root sole ticket-review verdict; retained Terra/xhigh evidence-only helper |
 | Isolation | Clean exact candidate, two admitted test paths only; root detached review snapshot, no provider/native/target/integration/push/release effect |
 
@@ -669,3 +669,52 @@ Root will review the return with the retained evidence-only helper. A second unr
 implementation/evidence defect goes to CONVERGENCE_REVIEW_REQUIRED, not a third correction.
 No A3/B admission, combined A approval, integration, push or publication has occurred.
 ACTION_COMPLETED / REVIEW_CHANGES_REQUESTED -> AUTO_CONTINUE / SAME_OWNER_CORRECTION.
+
+## 5. Correction review — convergence required, 2026-09-20
+
+The retained owner returned af7fc428, changing only the evidence assertion module and admitted
+fixture owner. Root verified its exact parent, clean owner tree, declared path delta and diff
+whitespace. Production is unchanged. Independent strict17 and focused38 both pass. Actual
+commands, six temporary patches, unreduced outputs and exact byte restoration are retained in
+[correction evidence01](cvq-01a3-correction-evidence.md), not inferred from the owner's return.
+
+### Closed findings and preserved progress
+
+- F01: duplicated _capability/_planned/_observed functions are removed; compatible reusable
+  scenario builders now live in the existing fixture owner. Prior builder defaults and A1/A2
+  regressions remain green. No new production/helper file, dependency or API.
+- F03: the ZERO_PRESENT_ENTRIES alias path is actually exercised. Root R03 now produces the
+  intended named ER09 union-tag error and returns green after exact restoration.
+- F04: RefusedRecovery cleanup negative and separate unknown/null subTest identities are
+  present. Shared A1 wire evidence remains the declared regression basis; no duplicate full
+  all-eight matrix was required.
+- F05: valid two-ID content/order and matched HOST/HOST controls now isolate their predicates.
+  Root R01 and R02 produce the exact order and host_surface assertion failures, restored green.
+- ER04's missing HOST_PROPERTY nonproven positives are present; R05 produces three named
+  ER04/FAILED, UNAVAILABLE and NOT_RUN errors, then restored green.
+
+### Remaining blocking findings, same frozen closure
+
+| Existing item / classification | Correction evidence and disposition |
+| --- | --- |
+| F02 / ER02 / EVIDENCE_DEFECT | While adding measured nonpure PROVEN/FAILED controls, the correction removed the initial candidate's MEASURED_NATIVE + PURE_RULE negative. At lines161–198 the eight positive pairs and terminal negatives remain, but no measured scope rejection. Root R09 deletes only `self.claim_scope is ClaimScope.PURE_RULE or` from its guard; named ER02 stays green (exit0), as does its clean control/restoration. This is an actual regression against the existing scope clause, not a new requirement. |
+| F02 / attribution / EVIDENCE_DEFECT | PURE_RULE controls144–147, host positive observations338–376, and planned/observed positive constructors400–409/472–481 still execute before their subTest. Root R04 raises at `pure_failed = capability_observation(...)` outside a subTest and aborts the method. It proves an outer behavioral red, not the claimed ER02/FAILED named cell. This is the same explicit F02 attribution duty, not a new formatting preference. |
+| F06 / EVIDENCE_DEFECT | Owner clarification explicitly confirms no captured/retrievable complete ledger for ER01; ER02 beyond R04; ER04 beyond R05; ER05–08; ER10; ER12–14; ER15 beyond R01/R02. ER16 is root-only prior evidence, not owner execution. Historical observations are linked but no owner replay/raw output retained. Relocation remains broad method-family mapping. Original COMPLETED and summaries cannot replace these frozen obligations. Root's limited correction probes do not claim the unrun remainder. |
+
+The owner was asked only to identify already-captured evidence, with an explicit prohibition
+on edits, reruns, refs or a third correction. Its read-only clarification performed no extra
+work and corrected the R04 attribution. Root's independent trace confirms that correction.
+Its production identity strings are Git object IDs, not SHA-256 byte hashes; actual restored
+byte hashes are in the evidence leaf. No hash algorithm equivalence is inferred.
+
+Retained Terra/xhigh returned one read-only correction packet confirming measured-scope loss,
+eager constructor attribution and incomplete evidence, and static closure of F01/F03/F04/F05.
+It performed no execution and did not own the verdict. Root alone concludes CHANGES_REQUESTED.
+The whole focused suite was run; a complete remaining mutation campaign is NOT_VERIFIED and is
+not wastefully repeated as if it could fix the missing source row or substitute new authority.
+
+Closure01's initial + sole correction is exhausted. Preserve af7fc428 and prior refs; close
+both implementation views. No third implementation dispatch, automatic model elevation,
+implicit evidence transfer, combined A admission or B dispatch. Proposed control-plane
+disposition is in [convergence section28](cvq-01-convergence-proposal.md#28-a3-correction-exhausted--owner-decision-pending-2026-09-20).
+ACTION_COMPLETED / REVIEW_CHANGES_REQUESTED -> WAIT_FOR_HUMAN / CONVERGENCE_REVIEW_REQUIRED.

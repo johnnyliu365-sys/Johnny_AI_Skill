@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / document / closure | `TICKET-CONTROLLED-VERIFICATION-CVQ-01A3` / `IMPLEMENTATION_TICKET` / `04` / `CLOSURE-CVQ-01A3` revision `01` |
-| State / outcome | `CHANGES_REQUESTED / SAME_OWNER_CORRECTION_READY / NOT_INTEGRATED`; unchanged closure: ordinary roster/proof/result/evidence DTOs discriminate constructor-local invalidity (original CA06–07/09, CA10) |
+| ID / kind / document / closure | `TICKET-CONTROLLED-VERIFICATION-CVQ-01A3` / `IMPLEMENTATION_TICKET` / `05` / `CLOSURE-CVQ-01A3` revision `01` |
+| State / outcome | `BLOCKED / CONVERGENCE_REVIEW_REQUIRED / NON_DISPATCHABLE / NOT_INTEGRATED`; unchanged closure: ordinary roster/proof/result/evidence DTOs discriminate constructor-local invalidity (original CA06–07/09, CA10) |
 | Dependency / baseline / view | [A2](cvq-01a2-case-manifest-admission.md) APPROVED `ce49f735c6853c236a3504134d4a6959e7ca680f`, with A1 regression; review04/index at `41f492ebf7bfb6ae5a5af486e0d5ace5d0d62d44`. New `ctx-cvq-01a3-closure01`; all A2 views CLOSED |
 | Preparation authority | Owner adopted convergence revision 08 at `058b8256bb1b2601fabc30c21a42ecc48c831875`, LF `24021ef0467d56c1bc3924e98b15d2f993e0dc720228dec44177da2132c50392`; preparation only, exact ticket approval pending |
 | SPEC / wire | [Qualification SPEC](../../spec/controlled-verification-qualification.md) revision 07 LF `545f5058d8347ab069d6a23fdb07daaf06ab836998efb67b2c30b80fee3b1716`, sections 2/6/7/11; [wire](../../spec/controlled-verification-qualification-wire.md) revision 03 LF `6eb9d0a088e105e7c2dd4c3c3b4001f970ac34195c7a0cd78459a2f6016e9222`, sections 1–6 |
@@ -248,3 +248,19 @@ then wait_agent and root correction review with retained evidence-only helper. N
 approval or runner/receipt/queue/descriptor is required. This is the only correction under
 closure01; another unresolved defect returns CONVERGENCE_REVIEW_REQUIRED. B stays dependency
 blocked; combined admission, main, integration, push, release and installation stay forbidden.
+
+## Sole correction disposition — 2026-09-20
+
+Returned candidate af7fc42837c6bd068b3babdc4227ce46c4335ff3 is retained, not integrated.
+[Review02 section5](../../../doc/reviews/controlled-verification/cvq-01a3-evidence-admission-code-review.md#5-correction-review--convergence-required-2026-09-20)
+and its correction evidence close F01/F03/F04/F05 but retain F02/F06: measured-proof pure-scope
+negative was removed, positive constructors still evade named attribution, and the complete
+owner mutation/return ledger is explicitly unavailable. Root strict17/focused38 green is not
+closure approval. Required retained helper returned supporting static findings; root owns
+the CHANGES_REQUESTED verdict.
+
+Document05 records disposition only; closure01 remains unchanged and exhausted. Both A3 views
+are CLOSED. No third correction, new implementation view, B dispatch or implicit evidence-duty
+transfer is authorized. [Convergence section28](../../../doc/reviews/controlled-verification/cvq-01-convergence-proposal.md#28-a3-correction-exhausted--owner-decision-pending-2026-09-20)
+is an owner-pending recommendation, not a new frozen closure or implementation authority.
+ACTION_COMPLETED / CORRECTION_REVIEW_FAILED -> WAIT_FOR_HUMAN / CONVERGENCE_REVIEW_REQUIRED.
