@@ -2,9 +2,9 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / document / closure | `TICKET-CONTROLLED-VERIFICATION-CVQ-01A3` / `IMPLEMENTATION_TICKET` / `02` / `CLOSURE-CVQ-01A3` revision `01` |
-| State / outcome | `OWNER_APPROVED / DEPENDENCY_PENDING / NON_DISPATCHABLE`; one observable closure: ordinary roster/proof/result/evidence DTOs discriminate constructor-local invalidity (original CA06–07/09, CA10) |
-| Dependency / baseline / view | [A2](cvq-01a2-case-manifest-admission.md) APPROVED candidate SHA NOT_YET_AVAILABLE, with A1 accepted regression, additive descendant of `070039b6227205f7bb4592f203a4fd7455311f31`; parent commits exact SHA/review/index binding, never latest HEAD. New `ctx-cvq-01a3-closure01` |
+| ID / kind / document / closure | `TICKET-CONTROLLED-VERIFICATION-CVQ-01A3` / `IMPLEMENTATION_TICKET` / `03` / `CLOSURE-CVQ-01A3` revision `01` |
+| State / outcome | `OWNER_APPROVED / READY_FOR_SAME_LIFETIME_DISPATCH`; unchanged closure: ordinary roster/proof/result/evidence DTOs discriminate constructor-local invalidity (original CA06–07/09, CA10) |
+| Dependency / baseline / view | [A2](cvq-01a2-case-manifest-admission.md) APPROVED `ce49f735c6853c236a3504134d4a6959e7ca680f`, with A1 regression; review04/index at `41f492ebf7bfb6ae5a5af486e0d5ace5d0d62d44`. New `ctx-cvq-01a3-closure01`; all A2 views CLOSED |
 | Preparation authority | Owner adopted convergence revision 08 at `058b8256bb1b2601fabc30c21a42ecc48c831875`, LF `24021ef0467d56c1bc3924e98b15d2f993e0dc720228dec44177da2132c50392`; preparation only, exact ticket approval pending |
 | SPEC / wire | [Qualification SPEC](../../spec/controlled-verification-qualification.md) revision 07 LF `545f5058d8347ab069d6a23fdb07daaf06ab836998efb67b2c30b80fee3b1716`, sections 2/6/7/11; [wire](../../spec/controlled-verification-qualification-wire.md) revision 03 LF `6eb9d0a088e105e7c2dd4c3c3b4001f970ac34195c7a0cd78459a2f6016e9222`, sections 1–6 |
 | Requirement / Context | `PRD-20260908-051` / `CHG-20260908-051`; [REQ-051](../../../doc/requirements/active/2026/environment-control/REQ-20260908-051.md) revision 11 LF `f52552cdafc857d605f1eda03bcdf3df4c3d0c49ad9adfb9f39335f4b341e272`; [sealed Context](../../../doc/context/controlled-verification/main.md) revision 02 LF `6f5465295cb3fd303bc555da655b3169d33292ad1f2ed4374748f82ddd6f2285`, READ_REFERENCE only |
@@ -199,3 +199,27 @@ ACTION_COMPLETED / EXACT_APPROVAL_RECORDED -> DEPENDENCY_PENDING; no premature s
 
 All old exhausted views remain CLOSED. No integration, push, release, installation or evaluator
 behavior grant is added. The packet also approves B document03's dependency amendment.
+
+## Exact predecessor binding and native admission — 2026-09-20
+
+Metadata-only document03 binds accepted predecessor ce49f735, not an arbitrary latest HEAD.
+[A2 review04](../../../doc/reviews/controlled-verification/cvq-01a2-case-manifest-admission-code-review.md)
+at41f492ebf7bfb6ae5a5af486e0d5ace5d0d62d44 has LF
+`8b78841d2fbd0476a351e8837d85270fd4ef7e8720c04f721b394a5caa6fba80`;
+its direct review index is revision27 LF
+`fa08d3ddf87a3c71012a00cfc7a84c61d07a0b50f0ca9c684c1e95c2e5225cf5`.
+A1/A2 accepted source and tests are regression inputs; closed A2 prompts, raw evidence and
+ticket body are not A3 implementation context. No approved ER01–16 obligation is changed.
+
+Root independently read back clean codex/cvq-01 at the exact candidate, shared Git identity,
+repository-contained .worktrees/cvq-01 and no reparse component. Direct origin/main remains
+b697738d009db37318ebc8762107ef8329e014db; no integration occurred. The retained
+implementation-standard Luna/xhigh seat remains available; profile is exact REVISION_03
+at b12dd7262606f7b951271cd51e336747f0638c38:doc/runbooks/dispatch-model-profile.md.
+No model elevation, new implementation owner or parallel lane.
+
+ACTION_COMPLETED / PREDECESSOR_BOUND -> AUTO_CONTINUE / IMPLEMENT via retained native
+follow-up with fresh ctx-cvq-01a3-closure01, then wait_agent, required evidence-only helper
+and root review. Runner, receipt, queue, descriptor and host readback are NOT_REQUIRED.
+Existing exact approval grants this admission; no repeated owner decision is requested.
+Main, integration, push, publication, installation and native/provider effects stay forbidden.
