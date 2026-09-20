@@ -37,10 +37,10 @@ route; those controls remain required only for a cross-lifetime handoff. Missing
 helper evidence is `BLOCKED`, never a fabricated success.
 
 The versioned `ProjectWorkflowProfile` records opaque model references and capability evidence
-for these roles. The current default host mapping is a highest-capability architecture owner,
-Terra supervisor/reviewer and Luna implementation owner. Exact provider/model names belong to
-the Profile rather than global workflow prose so a host mapping can change without changing
-authority or policy.
+for these roles. Read [dispatch-model-profile](dispatch-model-profile.md) before selection;
+it owns the shipped defaults, precedence and host-mapping gaps. The architecture owner is
+human; a high-capability model provides decision support, not owner authority. Exact
+provider/model names belong to profile data rather than this lifecycle policy.
 
 ## SPEC readiness and sleep
 

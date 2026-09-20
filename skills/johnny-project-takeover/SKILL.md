@@ -32,8 +32,9 @@ committed ticket: the reviewer-created repository-contained worktree, branch,
 baseline, selected delivery/profile capability and the direct same-lifetime
 lane. The reviewer then invokes the host-native `collaboration.spawn_agent`
 operation exactly once for that ticket-bound owner. The selected model and
-effort are read from the ticket/profile; this skill does not choose or spell a
-provider/model literal.
+effort are resolved through the [bundled dispatch profile](references/dispatch-model-profile.md)
+and the ticket's approved binding. A target without its own model file uses the bundled
+default selection route; a broken explicit binding does not silently fall back.
 
 After delegation, wait with `wait_agent` for the owner's completion. Do not
 poll activity, status or an equivalent progress signal. On return, the
@@ -58,6 +59,7 @@ file completely only when its condition applies.
 | Any Router event, continuation, dispatch receipt or completion return | [Router control contract](references/router-control.md) |
 | Intake profile, resource plan, maturity change, POC freeze or staging | [Delivery profile and lifecycle](references/delivery-profile.md) |
 | Model-role assignment, SPEC readiness, architecture-owner sleep/wake or escalation | [Model role lifecycle](references/model-role-routing.md) |
+| Model/profile selection before dispatch on Codex or Claude Code | [Bundled dispatch profile](references/dispatch-model-profile.md) |
 | ContextView, source selection, capability selection or side-context mapping | [Minimal Context routing](references/context-routing.md) |
 | Artifact index creation/traversal, leaf replacement or lifecycle movement | [Artifact tree routing](references/artifact-tree-routing.md) |
 | Agent working Context, ticket switch, correction rebind or view closure | [Agent Context lifecycle](references/agent-context-lifecycle.md) |
@@ -72,6 +74,7 @@ file completely only when its condition applies.
 | Formal UI, Figma/screenshot/brief/design-system input or visual acceptance | [UI design handoff](references/ui-design-handoff.md) |
 | Owner/task/worktree admission, Agent control or correction allocation | [Implementation authority](references/implementation-authority.md) |
 | Admitted ticket implementation, TDD, type, smoke or completion | [Implementation TDD](references/implementation-tdd.md) |
+| Implementation or review of source comments, docstrings and literals | [Source content boundary](references/source-content-boundary.md) |
 | Admitted same-lifetime Codex native delegation and completion wait | [Codex native same-lifetime delegation](references/codex-native-same-lifetime-delegation.md) |
 | Ticket TDD design or independent code review | [Independent review checks](references/review-checks.md) and `../../CodeReview.md` |
 | Adversarial review or deployment readiness | [Adversarial review policy](references/adversarial-review.md) |

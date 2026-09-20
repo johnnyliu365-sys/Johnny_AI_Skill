@@ -10,6 +10,10 @@ Review clarity/strong typing, project conventions, logic, boundary/error behavio
 performance, test truthfulness, dependency necessity and SPEC/ticket/Context conformity.
 Additionally apply the specialized categories below when relevant.
 
+For implementation source, also read [source-content-boundary](source-content-boundary.md).
+Reject work-order/prompt contamination without deleting necessary technical comments.
+Report a mechanical check's actual coverage separately from semantic review.
+
 ## Defect categories
 
 | Category | TDD minimum | Review action |

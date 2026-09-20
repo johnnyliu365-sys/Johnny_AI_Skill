@@ -43,6 +43,10 @@ either.
 
 ## Type and layering gate
 
+Read [source-content-boundary](source-content-boundary.md). Keep owner instructions,
+dispatch prompts and ticket narratives out of implementation source, including comments,
+docstrings and incidental literals. Necessary technical explanation remains permitted.
+
 Use named domain types, immutable models, explicit nullability and complete parameter/return
 types. Dynamic external input is validated and converted at the boundary. Do not propagate
 `Any`, implicit `any` or unvalidated dynamic objects inward.
