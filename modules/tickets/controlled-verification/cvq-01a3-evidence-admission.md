@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / document / closure | `TICKET-CONTROLLED-VERIFICATION-CVQ-01A3` / `IMPLEMENTATION_TICKET` / `03` / `CLOSURE-CVQ-01A3` revision `01` |
-| State / outcome | `OWNER_APPROVED / READY_FOR_SAME_LIFETIME_DISPATCH`; unchanged closure: ordinary roster/proof/result/evidence DTOs discriminate constructor-local invalidity (original CA06–07/09, CA10) |
+| ID / kind / document / closure | `TICKET-CONTROLLED-VERIFICATION-CVQ-01A3` / `IMPLEMENTATION_TICKET` / `04` / `CLOSURE-CVQ-01A3` revision `01` |
+| State / outcome | `CHANGES_REQUESTED / SAME_OWNER_CORRECTION_READY / NOT_INTEGRATED`; unchanged closure: ordinary roster/proof/result/evidence DTOs discriminate constructor-local invalidity (original CA06–07/09, CA10) |
 | Dependency / baseline / view | [A2](cvq-01a2-case-manifest-admission.md) APPROVED `ce49f735c6853c236a3504134d4a6959e7ca680f`, with A1 regression; review04/index at `41f492ebf7bfb6ae5a5af486e0d5ace5d0d62d44`. New `ctx-cvq-01a3-closure01`; all A2 views CLOSED |
 | Preparation authority | Owner adopted convergence revision 08 at `058b8256bb1b2601fabc30c21a42ecc48c831875`, LF `24021ef0467d56c1bc3924e98b15d2f993e0dc720228dec44177da2132c50392`; preparation only, exact ticket approval pending |
 | SPEC / wire | [Qualification SPEC](../../spec/controlled-verification-qualification.md) revision 07 LF `545f5058d8347ab069d6a23fdb07daaf06ab836998efb67b2c30b80fee3b1716`, sections 2/6/7/11; [wire](../../spec/controlled-verification-qualification-wire.md) revision 03 LF `6eb9d0a088e105e7c2dd4c3c3b4001f970ac34195c7a0cd78459a2f6016e9222`, sections 1–6 |
@@ -223,3 +223,28 @@ follow-up with fresh ctx-cvq-01a3-closure01, then wait_agent, required evidence-
 and root review. Runner, receipt, queue, descriptor and host readback are NOT_REQUIRED.
 Existing exact approval grants this admission; no repeated owner decision is requested.
 Main, integration, push, publication, installation and native/provider effects stay forbidden.
+
+## Initial review and one additive correction — 2026-09-20
+
+Document04 is review/correction metadata only; owner-approved closure01 and its resource,
+scope, historical and per-predicate evidence requirements remain unchanged. Exact returned
+candidate ce2d750af68642f1f2bd014f38e535df564c4f88 descends directly from ce49f735.
+Root's [review01](../../../doc/reviews/controlled-verification/cvq-01a3-evidence-admission-code-review.md)
+records the complete A3-F01–F06 batch, independent strict17/suite38 green, five zero-red
+counterexamples and three correctly red/restored collection witnesses. Retained evidence-only
+helper findings were independently reconciled; root alone concludes CHANGES_REQUESTED.
+
+Preserve the same owner, branch, allocation and profile. New view
+ctx-cvq-01a3-closure01-correction closes the initial A3 view; correction baseline is exactly
+ce2d750af68642f1f2bd014f38e535df564c4f88, not moving HEAD. Correct the frozen findings and
+complete the already-required evidence in one additive source commit, within existing paths.
+Do not carry prior A1/A2 raw histories into this view or copy this work order into source.
+CA10's fixture owner is writable; no new production semantics or test/helper file is needed.
+The unchanged A1 alias witnesses may supply explicitly mapped shared wire evidence; do not
+duplicate their entire matrix. A2's root-owned evidence exception does not apply to A3.
+
+ACTION_COMPLETED / REVIEW_CHANGES_REQUESTED -> AUTO_CONTINUE / SAME_OWNER_CORRECTION,
+then wait_agent and root correction review with retained evidence-only helper. No repeat owner
+approval or runner/receipt/queue/descriptor is required. This is the only correction under
+closure01; another unresolved defect returns CONVERGENCE_REVIEW_REQUIRED. B stays dependency
+blocked; combined admission, main, integration, push, release and installation stay forbidden.
