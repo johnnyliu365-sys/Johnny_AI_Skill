@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-CONVERGENCE` / `CODE_REVIEW` / `12` |
-| Lifecycle / conclusion | `A1_CONVERGENCE_REVIEW_REQUIRED / OWNER_DECISION_REQUIRED / A2_A3_B_DEPENDENCY_PENDING`; earlier approvals and failed closures preserved |
+| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-CONVERGENCE` / `CODE_REVIEW` / `13` |
+| Lifecycle / conclusion | `A1_EVIDENCE_OWNERSHIP_PROPOSED / OWNER_DECISION_REQUIRED / A2_A3_B_DEPENDENCY_PENDING`; earlier approvals and failed closures preserved |
 | Control baseline | `dc45f31f6c56983613665f276bf15207419274e3` |
 | Examined source | Closure-03 correction `5d7789db6b950d317e7b500b757aa77a54d609ed`; all prior candidates preserved |
 | Ticket | [CVQ-01](../../../modules/tickets/controlled-verification/cvq-01-qualification-admission.md), document 10, current digest in its registry; closure 03 exhausted, unchanged. Historical document 09 at dc45f31f LF `babcceb227bf8f91356dfbbb90f5e14ad1adab19f43a99686bdae46e8acff16d` |
@@ -12,7 +12,7 @@
 | Responsibility | Parent owns the replan recommendation and review verdict. Reused Terra/xhigh supplied read-only adversarial evidence; parent ran the candidate checks/probes/mutations. No source implementation, model elevation or owner decision is granted by this proposal |
 
 Sections 1–10 preserve earlier convergence/design/adoption history. D-CQ11/D-CLAIM, exact
-closure-03 approval and the responsibility split have been answered. Section 17 is the current
+closure-03 approval and the responsibility split have been answered. Section 18 is the current
 disposition; historical pending routes do not reopen those answered decisions.
 
 ## 1. Diagnosis and retained boundary
@@ -873,3 +873,63 @@ ACTION_COMPLETED / CHANGES_REQUESTED -> WAIT_FOR_HUMAN / OWNER_CONVERGENCE_DECIS
 This is not a host-wakeup blocker: both owner returns arrived natively. No integration, push,
 release, installation, provider or VM effect occurred. The access_programs.cyber request-origin
 diagnosis remains limited to the observed host rejection, not a claimed platform fix.
+
+## 18. Owner-requested re-convergence — 2026-09-20
+
+The owner requested re-convergence after control commit
+`844edb5ffd15fa4eb230269b66c7e0f6b350567b`. This authorizes diagnosis and a concrete proposal,
+not silent reopening of exhausted closure01. Root reread the complete A1 ticket and review,
+then the affected methods at preserved candidate `1270664213d71eb2da524ecf7bf1885f28ffc82f`.
+The missing per-alternative subTest wrappers remain observable at contracts lines 447–469
+and 554–619. No new runtime/schema defect is claimed and no candidate was modified.
+
+### Recommended convergence decision: separate assertion repair from evidence custody
+
+Retain the same A1 ticket and source branch; propose closure02 with all SW01–08 predicates,
+counts, literal oracles, independent review and execution limits preserved. Do not open an
+equivalent replacement ticket just to reset the review counter. Two explicit responsibilities:
+
+1. **Implementation owner:** a narrow additive test-only repair gives every existing negative
+   alternative an in-process identity: DTO, field, path and omission/null/extra case; alias,
+   branch, selector and missing/null/unknown case. Cover default alternatives consistently.
+   Assertions, fixtures, error expectations, production symbols and public contracts are not
+   rewritten. Only the existing contracts test's cell attribution is writable for this repair.
+   A passing total alone is insufficient. Return one exact candidate with strict/focused results
+   and one fully captured authorized mutation/restore example, not an unreferenced family summary.
+2. **Root reviewer:** own the complete retained SW01–08 mutation-evidence record. Resolve a
+   finite ledger from the existing table before dispatch, assigning each predicate an ID,
+   candidate-bound patch, exact command, intended cell/error and restoration check. After the
+   candidate returns, execute the mapped mutations in the reviewer snapshot and record full
+   stdout/stderr, exit codes, identity and byte restoration in reviewer-owned evidence leaves.
+   Missing raw output is MISSING, collection error is not behavioral red, and zero red is a
+   finding. At least one reviewer door differs from the implementer's captured example.
+
+This changes evidence-production ownership, not the required coverage or observation. The
+implementer is no longer asked to produce a large transcript package while root independently
+rebuilds the same package. Root still reads unreduced output under the current review policy;
+the pending machine-evidence compiler does not become a prerequisite for this repair.
+The required read-only helper supplies bounded findings once; root alone decides the verdict.
+
+All evidence must be retrievable from the same exact candidate; an old output hash without its
+bytes is not reused. Exact evidence destinations and the finite ledger belong to the proposed
+closure before its next approval, not to a later improvised dispatch. No new generic mutation
+framework, runner, helper-authored script, expanded campaign or model elevation is proposed.
+Keep one foreground process, 60 seconds per command, 1200 seconds per pass, zero automatic
+retry/load/background polling. Exhaustion stops rather than increasing those bounds.
+
+### Alternatives and continuation
+
+Repeating the unchanged implementer-wide evidence assignment has already failed twice and is
+not recommended. Building a general evidence runner first would add a new implementation and
+qualification dependency to a small attribution repair; leave that to the existing CVE work.
+Neither option justifies dropping SW predicates or declaring the aggregate green suite sufficient.
+
+The owner must adopt the changed evidence ownership before root freezes closure02 and its
+exact ledger/destinations for approval. A1 document04 remains BLOCKED/NON_DISPATCHABLE;
+its closed view stays closed. A2/A3/B retain their approvals but remain dependency-pending.
+No third correction, production mutation, integration, push, release or installed update occurred.
+
+The separate installed-profile defect and source-content/responsibility requirements are tracked
+in [REQ-052](../../requirements/active/2026/plugin-adoption-quality/REQ-20260920-052.md).
+They do not retroactively add acceptance requirements to A1 or reopen completed findings.
+ACTION_COMPLETED / CONVERGENCE_PROPOSED -> WAIT_FOR_HUMAN / EVIDENCE_OWNERSHIP_DECISION.
