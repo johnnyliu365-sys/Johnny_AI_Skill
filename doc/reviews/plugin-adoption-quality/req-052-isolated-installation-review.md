@@ -2,12 +2,121 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-PLUGIN-ADOPTION-QUALITY-REQ-052` / `CODE_REVIEW` / `02` |
+| ID / kind / revision | `REVIEW-PLUGIN-ADOPTION-QUALITY-REQ-052` / `CODE_REVIEW` / `03` |
 | Authority | Owner: repair shipped profile/source-content policy, then rerun packaging and installation verification |
 | Source | Policy commit `de624ec43ea047955a395dee4ec4e697d8f6d767`; materialised from control `1e50d2ef457a7a5de392fb8b34eb9fc2a8f51011` |
 | Conclusion | `LOCAL_PAYLOAD_AND_INSTALLATION_VERIFIED / PUBLICATION_INCOMPLETE / EXECUTABLE_GATES_PENDING` |
 | Reviewer | root; retained profile_delivery_audit supplies evidence only |
 | Requirement | [REQ-052](../../requirements/active/2026/plugin-adoption-quality/REQ-20260920-052.md) |
+
+## Independent bounded regression follow-up — 2026-09-20
+
+Owner split-and-execute direction allows this installation evidence line to proceed independently
+of A3. Retained Terra/xhigh helper ran the following four existing commands at exact control
+59f596221f44b9ca7f9b9930ba7a4963e543e4ad, after confirming their finite local-fixture boundaries.
+Root received/reviewed this evidence and owns the following limited conclusion. This is helper
+execution provenance, not a false claim root personally ran these four commands. Pre/post status
+were STATUS_CLEAN, each command timeout60 seconds, foreground sequential, no retry; total
+approximately18 seconds. Fifteen test methods passed. Closure fixtures create repositories only
+under TemporaryDirectory; promotion uses synthetic snapshots/example.invalid and checks that
+its planner cannot execute processes. No public or user-global effect occurred.
+
+Exact interpreter: C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe.
+Each child command below was invoked using Python subprocess.run(..., timeout=60). Outputs are
+the helper's complete returned streams, with line endings normalized; no diagnostic omitted.
+
+Command:
+
+```text
+python -B -m unittest -v tests.test_publication_repository_closure.PublicationRepositoryClosureTests.test_t12_retained_older_release_uses_its_own_path_declaration
+```
+
+Exit0:
+
+```text
+test_t12_retained_older_release_uses_its_own_path_declaration (tests.test_publication_repository_closure.PublicationRepositoryClosureTests.test_t12_retained_older_release_uses_its_own_path_declaration) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 4.574s
+
+OK
+```
+
+Command:
+
+```text
+python -B -m unittest -v tests.test_claude_plugin_cache_closure.InstalledPluginCacheClosureTests.test_t16_retained_older_release_uses_target_declaration
+```
+
+Exit0:
+
+```text
+test_t16_retained_older_release_uses_target_declaration (tests.test_claude_plugin_cache_closure.InstalledPluginCacheClosureTests.test_t16_retained_older_release_uses_target_declaration) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 2.166s
+
+OK
+```
+
+Command:
+
+```text
+python -B -m unittest -v tests.test_claude_plugin_cache_closure.InstalledPluginCacheClosureTests.test_t16_historical_tag_sentinels_fail_closed_and_restore
+```
+
+Exit0:
+
+```text
+test_t16_historical_tag_sentinels_fail_closed_and_restore (tests.test_claude_plugin_cache_closure.InstalledPluginCacheClosureTests.test_t16_historical_tag_sentinels_fail_closed_and_restore) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 6.321s
+
+OK
+```
+
+Command:
+
+```text
+python -B -m unittest -v tests.test_publication_promotion
+```
+
+Exit0:
+
+```text
+test_p1_first_release_plans_create_main_and_absent_tag (tests.test_publication_promotion.PublicationPromotionPlanTests.test_p1_first_release_plans_create_main_and_absent_tag) ... ok
+test_p2_mutating_planned_old_sha_turns_readback_red_then_restores (tests.test_publication_promotion.PublicationPromotionPlanTests.test_p2_mutating_planned_old_sha_turns_readback_red_then_restores) ... ok
+test_p2_update_binds_exact_old_main_and_force_with_lease (tests.test_publication_promotion.PublicationPromotionPlanTests.test_p2_update_binds_exact_old_main_and_force_with_lease) ... ok
+test_p3_pre_effect_failures_are_finite_and_planless (tests.test_publication_promotion.PublicationPromotionPlanTests.test_p3_pre_effect_failures_are_finite_and_planless) ... ok
+test_p4_exact_readback_is_verified_and_mutations_turn_red (tests.test_publication_promotion.PublicationPromotionPlanTests.test_p4_exact_readback_is_verified_and_mutations_turn_red) ... ok
+test_p4_retains_admitted_tags_but_rejects_extra_allowed_tag (tests.test_publication_promotion.PublicationPromotionPlanTests.test_p4_retains_admitted_tags_but_rejects_extra_allowed_tag) ... ok
+test_p5_bypass_built_inputs_cannot_create_a_plan (tests.test_publication_promotion.PublicationPromotionPlanTests.test_p5_bypass_built_inputs_cannot_create_a_plan) ... ok
+test_p5_malformed_ref_is_a_finite_planless_refusal (tests.test_publication_promotion.PublicationPromotionPlanTests.test_p5_malformed_ref_is_a_finite_planless_refusal) ... ok
+test_p5_malformed_version_is_a_finite_planless_refusal (tests.test_publication_promotion.PublicationPromotionPlanTests.test_p5_malformed_version_is_a_finite_planless_refusal) ... ok
+test_p5_missing_snapshot_field_is_a_finite_planless_refusal (tests.test_publication_promotion.PublicationPromotionPlanTests.test_p5_missing_snapshot_field_is_a_finite_planless_refusal) ... ok
+test_p5_null_snapshot_is_a_finite_planless_refusal (tests.test_publication_promotion.PublicationPromotionPlanTests.test_p5_null_snapshot_is_a_finite_planless_refusal) ... ok
+test_p6_planner_is_pure_and_never_calls_a_process_or_effect (tests.test_publication_promotion.PublicationPromotionPlanTests.test_p6_planner_is_pure_and_never_calls_a_process_or_effect) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.012s
+
+OK
+```
+
+Root's independent current remote readback: development main/local and origin/main both
+b697738d009db37318ebc8762107ef8329e014db, clean. Publication main and plugin-v0.4.14 both remain
+0b3afd3645946f97662c336f0e6ac0dcae502e69. The public full ref snapshot includes immutable0.4.10
+through0.4.14 tags; no0.4.15 was observed. No ref was moved.
+
+Disposition: existing local154-file packaging, isolated Codex/Claude install/readback/removal
+evidence remains valid; local retained-release/sentinel/promotion regressions now have these
+additional bounded results. The previously timed-out whole publication suite remains incomplete,
+not retroactively green. The known stale live pin still requires a fresh versioned release
+candidate with exact effect bindings. Ticket17's historical0.4.14 authority cannot authorize
+different bytes or reuse its tag. No new release, upgrade, MSIX lifecycle, active-session uptake,
+runtime/hard-gate enforcement or no-old-cache objective is claimed. Do not reinstall user's live
+plugin from this lab archive as though it were a public release.
 
 ## Scope and result
 
