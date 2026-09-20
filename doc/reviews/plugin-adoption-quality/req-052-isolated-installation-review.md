@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-PLUGIN-ADOPTION-QUALITY-REQ-052` / `CODE_REVIEW` / `01` |
+| ID / kind / revision | `REVIEW-PLUGIN-ADOPTION-QUALITY-REQ-052` / `CODE_REVIEW` / `02` |
 | Authority | Owner: repair shipped profile/source-content policy, then rerun packaging and installation verification |
 | Source | Policy commit `de624ec43ea047955a395dee4ec4e697d8f6d767`; materialised from control `1e50d2ef457a7a5de392fb8b34eb9fc2a8f51011` |
 | Conclusion | `LOCAL_PAYLOAD_AND_INSTALLATION_VERIFIED / PUBLICATION_INCOMPLETE / EXECUTABLE_GATES_PENDING` |
@@ -88,6 +88,118 @@ and bind the new publication artifact under its release authority, verify the ac
 remote publication path, and complete the bounded release suite. This report does not grant
 those effects or silently replace them with local CLI success. Responsibility/content hard
 checks remain in the undelivered WA-04/CVE-04 contract work.
+
+## Bounded publication diagnosis — 2026-09-20
+
+Revision02 adds diagnosis under the existing packaging-verification authority, not publication
+or another A3 correction. Source is exact control cc77a0cb61923207ba9f4148d69e635f18db4a41.
+A Git diff of all manifest-selected trees/files against materialisation source1e50d2ef returned
+no changed payload path. The existing isolated-installation evidence is not relabelled as a
+new installation or a new release.
+
+The previously unprinted L5 failure is now observed directly: the individual test exits1 at
+line807, asserting live_diff.is_empty. A separate read-only comparison finds10 missing files
+and9 differing files against pin0b3afd3645946f97662c336f0e6ac0dcae502e69. The missing paths
+include the bundled dispatch profile and source-content policy. The pin-carrier difference is
+reported separately as unbindable and is not counted among the9 content differences.
+Thus the release binding is stale; matching manifest version0.4.14 does not prove delivery.
+
+The exact anchor test that was active when the whole suite timed out completes alone in5.724s,
+exit0, within the unchanged60s command bound. It creates its own temporary local bare repository
+and clone; its success is NOT a fresh GitHub publication/reachability proof. It does not prove
+the complete suite passes or establish the cause of the earlier cumulative timeout. No timeout
+increase, retry loop, full-suite rerun, source fix or public ref mutation was used.
+
+Next release work remains: authority-line admission, reviewer-owned generation/repin under
+release authority, actual remote readback and the complete bounded release checks. This
+diagnostic does not grant those effects. CVQ A3 convergence and pending executable gates retain
+their separate authority/closure requirements. No owner-agent wake was needed for these
+reviewer-owned commands; no implementation or evidence duties were transferred.
+
+### Exact L5 diagnostic command and unreduced result
+
+```powershell
+& 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -c 'import subprocess,sys; sys.exit(subprocess.run(sys.argv[1:], timeout=60).returncode)' 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -X utf8 -B -m unittest -v tests.test_plugin_publication.CandidateMetadataTests.test_l5_stale_candidate_pin_is_named_before_generation
+```
+
+Exit1:
+
+```text
+test_l5_stale_candidate_pin_is_named_before_generation (tests.test_plugin_publication.CandidateMetadataTests.test_l5_stale_candidate_pin_is_named_before_generation) ... FAIL
+
+======================================================================
+FAIL: test_l5_stale_candidate_pin_is_named_before_generation (tests.test_plugin_publication.CandidateMetadataTests.test_l5_stale_candidate_pin_is_named_before_generation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\GameBoy\Desktop\Johnny_AI_Skill_latest\.worktrees\controlled-verification-intake\tests\test_plugin_publication.py", line 807, in test_l5_stale_candidate_pin_is_named_before_generation
+    self.assertTrue(live_diff.is_empty)
+AssertionError: False is not true
+
+----------------------------------------------------------------------
+Ran 1 test in 0.231s
+
+FAILED (failures=1)
+```
+
+### Exact current-source/pin comparison
+
+```powershell
+& 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -c 'import subprocess,sys; sys.exit(subprocess.run(sys.argv[1:], timeout=60).returncode)' 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -X utf8 -B -c 'import json; from pathlib import Path; from dataclasses import asdict; from library.local_orchestration.plugin_publication import load_payload_declaration,pinned_plugin_source,compare_commit_to_declaration; root=Path.cwd(); payload=load_payload_declaration(root / ".claude-plugin/plugin.json"); sha=pinned_plugin_source(root / ".claude-plugin/marketplace.json")["sha"]; print(json.dumps({"pin":sha,"difference":asdict(compare_commit_to_declaration(root,payload,sha,pin_carrier=".claude-plugin/marketplace.json"))},ensure_ascii=False,indent=2))'
+```
+
+Exit0; unreduced output:
+
+```json
+{
+  "pin": "0b3afd3645946f97662c336f0e6ac0dcae502e69",
+  "difference": {
+    "missing": [
+      "library/workflow_router/managed_artifact_planning.py",
+      "library/workflow_router/project_adoption_contracts.py",
+      "library/workflow_router/telemetry_provisioning_contracts.py",
+      "library/workflow_router/ui_codesign_contracts.py",
+      "library/workflow_router/ui_reference_renderer_admission.py",
+      "library/功能集群/python/exclusive_file_lock/README.md",
+      "library/功能集群/python/path_containment/README.md",
+      "skills/johnny-project-takeover/references/adversarial-review.md",
+      "skills/johnny-project-takeover/references/dispatch-model-profile.md",
+      "skills/johnny-project-takeover/references/source-content-boundary.md"
+    ],
+    "extra": [],
+    "differing": [
+      "CodeReview.md",
+      "library/catalog/capabilities/README.md",
+      "library/workflow_router/profile.py",
+      "library/workflow_router/target_document_contracts.py",
+      "skills/johnny-project-takeover/SKILL.md",
+      "skills/johnny-project-takeover/references/delivery-profile.md",
+      "skills/johnny-project-takeover/references/implementation-tdd.md",
+      "skills/johnny-project-takeover/references/model-role-routing.md",
+      "skills/johnny-project-takeover/references/review-checks.md"
+    ],
+    "unbindable": [
+      ".claude-plugin/marketplace.json"
+    ]
+  }
+}
+```
+
+### Exact isolated anchor command and unreduced result
+
+```powershell
+& 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -c 'import subprocess,sys; sys.exit(subprocess.run(sys.argv[1:], timeout=60).returncode)' 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -X utf8 -B -m unittest -v tests.test_plugin_publication.PublicationReachabilityTests.test_the_marketplace_pin_is_bound_to_the_actual_publication_anchor
+```
+
+Exit0:
+
+```text
+test_the_marketplace_pin_is_bound_to_the_actual_publication_anchor (tests.test_plugin_publication.PublicationReachabilityTests.test_the_marketplace_pin_is_bound_to_the_actual_publication_anchor) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 5.724s
+
+OK
+```
 
 ## Captured output
 
