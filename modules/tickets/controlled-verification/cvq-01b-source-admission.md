@@ -2,13 +2,13 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01B` / `IMPLEMENTATION_TICKET` / `04` |
-| State / closure | `OWNER_APPROVED / DEPENDENCY_PENDING / NON_DISPATCHABLE`; `CLOSURE-CVQ-01B` revision `01` unchanged; section 7 amendment approved by section 8 |
+| ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01B` / `IMPLEMENTATION_TICKET` / `05` |
+| State / closure | `OWNER_APPROVED / READY_IMPLEMENT / NOT_INTEGRATED`; `CLOSURE-CVQ-01B` revision `01` unchanged; section9 records satisfied dependency |
 | Preparation authority | Owner's adoption of convergence proposal revision 05 at `dc45f31f6c56983613665f276bf15207419274e3`, LF `6ad63ea17bf1750549d1f5087138e9bb447b477bcd8d683cac7405bed1262847`; exact source resumption is not yet approved |
 | Observable result / change class | An in-process package-scoped AST gate accepts the approved source grammar and rejects the finite forbidden syntax/dependency corpus; `PRODUCTION_BEHAVIOR`, defect correction and not test-exempt or runtime confinement |
 | SPEC | [Qualification SPEC](../../spec/controlled-verification-qualification.md) revision 07 LF `545f5058d8347ab069d6a23fdb07daaf06ab836998efb67b2c30b80fee3b1716`, section 11.3; [wire appendix](../../spec/controlled-verification-qualification-wire.md) revision 03 LF `6eb9d0a088e105e7c2dd4c3c3b4001f970ac34195c7a0cd78459a2f6016e9222` supplies exact declaration inventory |
 | Requirement / Context | `PRD-20260908-051` / `CHG-20260908-051`; [REQ-051](../../../doc/requirements/active/2026/environment-control/REQ-20260908-051.md) revision 11 LF `f52552cdafc857d605f1eda03bcdf3df4c3d0c49ad9adfb9f39335f4b341e272`; [sealed Context](../../../doc/context/controlled-verification/main.md) revision 02 LF `6f5465295cb3fd303bc555da655b3169d33292ad1f2ed4374748f82ddd6f2285`, READ_REFERENCE |
-| Upstream dependency / baseline | Proposed replacement: combined APPROVED [A1](cvq-01a1-scalar-wire-admission.md), [A2](cvq-01a2-case-manifest-admission.md), [A3](cvq-01a3-evidence-admission.md) at one exact candidate SHA NOT_YET_AVAILABLE; additive descendant of `070039b6227205f7bb4592f203a4fd7455311f31`, pinned in a committed parent admission record before B dispatch, never latest HEAD. Original A closure01 is exhausted |
+| Upstream dependency / baseline | Combined APPROVED A1/A2/A3 at `485d882f578f84dac1c975b32ced2a4ae6e7d43a`; review/index commit `fc0dd2e1402fbc7b4bc6f51bebcda8e62925ba21`; section9 pins exact evidence. Original A closure01 remains exhausted |
 | Owner / reviewer | Same retained `cve_wire_implementer` / implementation-standard; `root` / ticket-review; [profile](../../../doc/runbooks/dispatch-model-profile.md) REVISION_03, no elevation or parallel implementation |
 | Workspace / allocation | Same `.worktrees/cvq-01` / `codex/cvq-01`; close A's view, new `ctx-cvq-01b-closure01`; fresh clean, containment and Git readback at the exact approved A SHA |
 | Delivery / resources | POC / HIGH_ASSURANCE; one implementation owner then one mandatory evidence-only adversarial helper; finite commands below |
@@ -252,3 +252,30 @@ Document04 is signature/status only. The approved base source closure and sectio
 read-only-path amendment are unchanged. B awaits actual combined A1/A2/A3 review approval and
 its committed exact candidate/view binding, not another owner approval. No source dispatch now.
 ACTION_COMPLETED / EXACT_APPROVAL_RECORDED -> DEPENDENCY_PENDING. No integration/push/release.
+
+## 9. Exact combined-A binding and native admission — 2026-09-20
+
+Previously approved section8 dependency is now satisfied, not amended. Root approved combined
+A1/A2/A3 at485d882f578f84dac1c975b32ced2a4ae6e7d43a in commit
+fc0dd2e1402fbc7b4bc6f51bebcda8e62925ba21. Read its
+[A3 review04 section7](../../../doc/reviews/controlled-verification/cvq-01a3-evidence-admission-code-review.md#7-closure02-final-review-and-combined-a-admission--2026-09-20), LF
+6271409116dc700e01deab1946eb027f43a65cdaffc2671669173baa8bc9412d,
+and review partition revision32 LF
+a704d281d56f03ec65641f37aef53ab359a521b8a3013e20fe47a1c475e39254 at that commit.
+That review maps original CA01–10, accepted A1/A2 identities, actual A3 evidence, clean final
+strict17/focused38 and the bounded helper. No prior failed closure is reopened.
+
+Fresh owner readback: exact root C:/Users/GameBoy/Desktop/Johnny_AI_Skill_latest/.worktrees/cvq-01,
+branch codex/cvq-01, HEAD485d882f, clean status; Git linked-worktree registration and .git pointer
+agree; containment to repository root has no reparse point. Close ctx-cvq-01a3-closure02 and
+bind fresh ctx-cvq-01b-closure01 to the same retained implementation-standard Luna/xhigh owner.
+Exact REVISION_03 profile is b12dd7262606f7b951271cd51e336747f0638c38:
+doc/runbooks/dispatch-model-profile.md; do not reinterpret through the newer relocation pointer.
+Root is sole ticket-review owner; retained Terra/xhigh is read-only adversarial evidence helper.
+
+All SG01–20, six positives, writable symbols, source-form equivalence duty, A read-only tests,
+baseline-red-before-checker-repair and fixed commands/budgets remain unchanged. Initial plus
+one batched correction only. This signature/dependency binding grants no integration, push,
+publication, installation, runtime effect or model elevation. Same-lifetime native delegation
+requires no bridge/receipt/descriptor. Dispatch, wait_agent, receive, then root reviews.
+ACTION_COMPLETED / DEPENDENCY_BOUND -> AUTO_CONTINUE / IMPLEMENT.
