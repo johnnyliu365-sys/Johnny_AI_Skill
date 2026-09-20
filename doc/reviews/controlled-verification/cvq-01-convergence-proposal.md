@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-CONVERGENCE` / `CODE_REVIEW` / `15` |
-| Lifecycle / conclusion | `A1_CLOSURE02_OWNER_APPROVED / DISPATCH_ADMITTED / A2_A3_B_DEPENDENCY_PENDING`; earlier approvals and failed closures preserved |
+| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-CONVERGENCE` / `CODE_REVIEW` / `16` |
+| Lifecycle / conclusion | `A1_CLOSURE02_TICKET_DEFECT / EVIDENCE_AMENDMENT_PENDING / A2_A3_B_DEPENDENCY_PENDING`; earlier approvals and failed closures preserved |
 | Control baseline | `dc45f31f6c56983613665f276bf15207419274e3` |
 | Examined source | Closure-03 correction `5d7789db6b950d317e7b500b757aa77a54d609ed`; all prior candidates preserved |
 | Ticket | [CVQ-01](../../../modules/tickets/controlled-verification/cvq-01-qualification-admission.md), document 10, current digest in its registry; closure 03 exhausted, unchanged. Historical document 09 at dc45f31f LF `babcceb227bf8f91356dfbbb90f5e14ad1adab19f43a99686bdae46e8acff16d` |
@@ -12,7 +12,7 @@
 | Responsibility | Parent owns the replan recommendation and review verdict. Reused Terra/xhigh supplied read-only adversarial evidence; parent ran the candidate checks/probes/mutations. No source implementation, model elevation or owner decision is granted by this proposal |
 
 Sections 1–10 preserve earlier convergence/design/adoption history. D-CQ11/D-CLAIM, exact
-closure-03 approval and the responsibility split have been answered. Section 19 is the current
+closure-03 approval and the responsibility split have been answered. Section 20 is the current
 disposition; historical pending routes do not reopen those answered decisions.
 
 ## 1. Diagnosis and retained boundary
@@ -958,3 +958,26 @@ Subsequent exact reply **"核准確定版，直接派工"** binds document05 at 
 LF `d25b6c3b3f873a95eccea88e0e8ab222848cb67b5a87ace23958b480a85d0bbf`.
 A1 document06 records the signature and unchanged closure02 admission. The pending route in
 this section is superseded: AUTO_CONTINUE -> IMPLEMENT -> wait_agent -> root review.
+
+## 20. Closure02 implementation returned; M02 plan defect — 2026-09-20
+
+The retained Luna/xhigh owner completed the bounded three-method attribution repair as
+`8d6b8291a03facec9d6d157794e7f4e8ba4d1cdc`. Root reproduced strict/26-test greens and the
+required M03 named failure. The retained evidence-only helper found no static defect in that
+limited candidate. Neither source-owner performance nor native event delivery is the blocker.
+
+Root executed and captured all35 planned mutations. M02's real-default change makes shared
+fixture composition reject before its intended named omission cell. This is a root-authored
+closure/evidence-plan defect; do not count its exit1 as proof, or ask Luna to violate the
+fixture read-only boundary. [Review revision03](cvq-01a1-scalar-wire-admission-code-review.md)
+preserves the precise trace and separates captured outputs from full final review.
+
+[A1 document07](../../../modules/tickets/controlled-verification/cvq-01a1-scalar-wire-admission.md)
+proposes only a temporary explicit-valid-value keyword in the reviewer fixture for M02, no
+candidate change, no new closure/correction cycle, and no rerun of the other34 captured rows.
+All original controls and restoration requirements remain. Owner exact approval is required
+because this fixture surface was explicitly forbidden. No exception was executed.
+
+ACTION_COMPLETED / TICKET_DEFECT -> WAIT_FOR_HUMAN / OWNER_EXACT_APPROVAL_PENDING.
+A2/A3/B stay dependency-pending; integration, push and publication remain ungranted.
+Independent REQ-052 local packaging/install evidence is not an A1 approval or hard-gate claim.

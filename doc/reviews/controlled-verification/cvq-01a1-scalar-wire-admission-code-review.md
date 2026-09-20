@@ -2,12 +2,12 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01A1` / `CODE_REVIEW` / `02` |
-| Conclusion / round | `CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED`; closure01 initial plus correction exhausted; section 6 is current |
-| Authority | [A1](../../../modules/tickets/controlled-verification/cvq-01a1-scalar-wire-admission.md) document02 at `10cded441222587e05dcf6657637d48c34baf4ab`, LF `1381a8d86b2f8fff947350a9fe3da38e942d59dce2271907d00246b5942e15e6`; closure `CLOSURE-CVQ-01A1/01`; approved upstream pins unchanged |
-| Source / candidate | `070039b6227205f7bb4592f203a4fd7455311f31` -> `b1aa3fafaf03a7c47a869210b3934399124df933` (initial) -> `1270664213d71eb2da524ecf7bf1885f28ffc82f` (correction) |
+| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01A1` / `CODE_REVIEW` / `03` |
+| Conclusion / round | `BLOCKED / TICKET_DEFECT / EVIDENCE_AMENDMENT_PENDING`; section 7 is current; closure01 remains exhausted |
+| Current authority | [A1](../../../modules/tickets/controlled-verification/cvq-01a1-scalar-wire-admission.md) document06 / closure02 at `0aa0184e9db460be2aaaa513c30d6636f18ae2d1`; exact signature and LF digests in section7; sections1–6 preserve closure01 history |
+| Source / candidate | Current `1270664213d71eb2da524ecf7bf1885f28ffc82f` -> `8d6b8291a03facec9d6d157794e7f4e8ba4d1cdc`; previous `070039b6227205f7bb4592f203a4fd7455311f31` -> `b1aa3fafaf03a7c47a869210b3934399124df933` -> `1270664213d71eb2da524ecf7bf1885f28ffc82f` preserved |
 | Owner / reviewer | Retained `cve_wire_implementer`, implementation-standard; root, ticket-review and sole verdict owner |
-| Isolation / effects | Parent detached `.worktrees/cvq-01a1-review`; helper `READ_ONLY_INTENT_ONLY / NO_EXTERNAL_EFFECT`; constructor-local tests only, no host/provider/target/VM/runtime effect |
+| Isolation / effects | Current parent detached `.worktrees/cvq-01a1-review-c02`; earlier snapshots preserved; helper `READ_ONLY_INTENT_ONLY / NO_EXTERNAL_EFFECT`; constructor-local tests only, no host/provider/target/VM/runtime effect |
 
 ## 1. Identity and observed checks
 
@@ -232,3 +232,67 @@ Do not disguise a third correction as a renamed ticket, reopen old exhausted clo
 the model or waive evidence. A new convergence decision must explicitly address the remaining
 cell-identification/evidence-production gap before any new closure or exception is admitted.
 No main integration, push, release, installation, VM or provider effect occurred.
+
+## 7. Closure02 initial review — 2026-09-20
+
+Authority: document06 at `0aa0184e9db460be2aaaa513c30d6636f18ae2d1`, LF
+`dd3d3e7ec24c9045f5bdf20dd686557212eb05f6b75865efc7368eda5bb0d0cb`; owner explicitly approved
+document05 at `1e50d2ef457a7a5de392fb8b34eb9fc2a8f51011`, LF
+`d25b6c3b3f873a95eccea88e0e8ab222848cb67b5a87ace23958b480a85d0bbf`.
+Candidate `8d6b8291a03facec9d6d157794e7f4e8ba4d1cdc` descends directly from 12706642.
+Root read its complete one-file diff: only the three permitted methods change, 92 insertions /
+35 deletions of subTest attribution/nesting, no production or fixture change. All prior values,
+assertions, error tuples and counts remain. Owner worktree and root detached review snapshot
+were clean. No prompt/work-order material was added to source.
+
+### Scoped results and custody
+
+The retained implementation seat returned natively, then supplied its exact-candidate M03
+experiment from `.worktrees/cvq-01a1-owner-example-c02`. A reference-only raw-output addendum
+filled its initially abbreviated return without rerunning the test. Root independently ran
+M03, which now identifies LaunchObservation/observation_revision/json/missing. This resolves
+the old F02 attribution defect within the current source boundary.
+
+Root ran all 35 finite experiments in `.worktrees/cvq-01a1-review-c02`; every mutated command
+returned exit1 and every restoration returned exit0 with pristine source-byte hashes. This is
+execution, not blanket approval: M02 C3 is the wrong reason, and remaining repetitive raw
+streams are retained but not all fully read through for a final predicate-by-predicate verdict.
+No missing output is replaced by a hash or a family-summary claim.
+
+- [SW01–03 complete captures and owner M03](cvq-01a1-closure02-sw01-03-evidence.md).
+- [SW04–06 complete captures](cvq-01a1-closure02-sw04-06-evidence.md), including root M18's
+  independent NonNegativeInteger strictness door, distinct from owner M03.
+- [SW07–08 complete captures and final commands](cvq-01a1-closure02-sw07-08-evidence.md).
+
+Final exact strict command: exit0, 15 source files. Complete contracts+domains suite: exit0,
+26 tests in 0.227s. No duplicate scalar entry, extra suite, retry, load or new runner. Diff
+check and restored status are clean. These greens do not waive the M02 defect.
+
+Required adversarial helper, retained `profile_delivery_audit`, returned `NO_FINDINGS` for the
+exact candidate's narrow static patch only. It checked independent subTest nesting and preserved
+counts/selector behavior at contracts lines460–515,568–668,706–740. Its tests/mutations were
+NOT_RUN; root alone owns the verdict. Plan: REQUIRED / SPEC_GAP, BOUNDARY_DATA, CONSISTENCY,
+REGRESSION / READ_ONLY_INTENT_ONLY / NO_EXTERNAL_EFFECT. No deployment/VM/provider effect.
+
+### C02-F01 — TICKET_DEFECT (root-authored M02 plan)
+
+The frozen M02 changes ResourceBounds.automatic_retry_count's default from0 to1. C1 correctly
+detects the changed source default. But C3 begins with `all_direct_rows()` (contracts:479).
+The ordinary resource_bounds fixture omits automatic_retry_count (fixtures:477–484), so
+QualificationCase's nested revalidation rejects the mutated1 before the named omission cell.
+Full trace: `resource_bounds.automatic_retry_count / less_than_equal / input_value=1`.
+
+The required observation was a collected named omission assertion comparing1 with literal0.
+An early fixture ValidationError does not satisfy it. The approved source change allowed only
+subTest attribution/nesting and explicitly forbade fixture changes; this cannot be assigned as
+an in-boundary implementer correction. The same earlier-gate masking family is already recorded
+in PITFALL-REGISTER C16. Root should have checked fixture reachability before freezing this ledger.
+
+Document07 proposes one temporary reviewer-fixture keyword `automatic_retry_count=0`, retaining
+the real-default mutation and all validation guards. It is pending exact owner approval, not
+executed or represented as proven. No product/default fix is requested. The initial source
+implementation is retained; the closure02 correction allowance is not spent on a control defect.
+
+ACTION_COMPLETED / TICKET_DEFECT -> WAIT_FOR_HUMAN / OWNER_EXACT_APPROVAL_PENDING for the
+bounded evidence exception. A1 is not approved; A2/A3/B remain dependency-pending. Do not
+repeat the full campaign, demand a third closure01 correction, integrate, push or release.

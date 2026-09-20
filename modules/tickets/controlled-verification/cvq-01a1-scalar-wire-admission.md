@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / document / closure | `TICKET-CONTROLLED-VERIFICATION-CVQ-01A1` / `IMPLEMENTATION_TICKET` / `06` / approved `CLOSURE-CVQ-01A1` revision `02`; revision 01 remains exhausted |
-| State / outcome | `OWNER_APPROVED / DISPATCH_ADMITTED`; final section records the exact signature. Original SW01–08 behavior remains unchanged |
+| ID / kind / document / closure | `TICKET-CONTROLLED-VERIFICATION-CVQ-01A1` / `IMPLEMENTATION_TICKET` / `07` / approved `CLOSURE-CVQ-01A1` revision `02`; proposed evidence amendment01 is NOT approved |
+| State / outcome | `BLOCKED / TICKET_DEFECT / OWNER_EXACT_APPROVAL_PENDING / NON_DISPATCHABLE`; M02 cannot reach its frozen cell with the permitted fixture. Original SW01–08 behavior remains unchanged |
 | Baseline / view | `070039b6227205f7bb4592f203a4fd7455311f31`; new `ctx-cvq-01a1-closure01` only after exact approval. Do not reset/rebase or reopen A closure01 |
 | Preparation authority | Owner adopted convergence revision 08 at `058b8256bb1b2601fabc30c21a42ecc48c831875`, LF `24021ef0467d56c1bc3924e98b15d2f993e0dc720228dec44177da2132c50392`; preparation only, exact ticket approval pending |
 | SPEC / wire | [Qualification SPEC](../../spec/controlled-verification-qualification.md) revision 07 LF `545f5058d8347ab069d6a23fdb07daaf06ab836998efb67b2c30b80fee3b1716`, sections 2/6/7/11; [wire](../../spec/controlled-verification-qualification-wire.md) revision 03 LF `6eb9d0a088e105e7c2dd4c3c3b4001f970ac34195c7a0cd78459a2f6016e9222`, sections 1–6 |
@@ -389,3 +389,52 @@ owner or move another owner's checkout. Root alone controls the separate full re
 
 ACTION_COMPLETED / EXACT_APPROVAL_RECORDED -> AUTO_CONTINUE / IMPLEMENT(CVQ-01A1 closure02)
 -> wait_agent -> candidate evidence and root review. No main integration, push or release grant.
+
+## Closure02 initial return and proposed M02 evidence amendment01
+
+The retained Luna/xhigh owner returned additive candidate
+`8d6b8291a03facec9d6d157794e7f4e8ba4d1cdc`, parent `1270664213d71eb2da524ecf7bf1885f28ffc82f`.
+Only the three authorized contracts-test methods changed. Root reproduced strict checking and
+the complete 26-test suite, and the named M03 cell now fails with the required identity. The
+existing native seat was reused; the duplicate-name allocation was rejected, not a new owner.
+The required evidence-only helper returned no static finding in this exact limited patch.
+
+Root executed the 35 frozen mutations and exact restorations. M02 C1 detects the changed
+default, but C3 fails while constructing all_direct_rows: QualificationCase revalidates
+ResourceBounds.automatic_retry_count=1 before the omission subTest can execute. This is a
+wrong-reason red, not the required named cell. Changing the fixture is outside the approved
+closure02 boundary; asking the implementer to do so would violate the dispatch. The defect is
+in the root-authored evidence plan, not a product-behavior or implementer defect. Full captures
+and the exact disposition are in [review section 7](../../../doc/reviews/controlled-verification/cvq-01a1-scalar-wire-admission-code-review.md).
+
+### Proposed exact exception (owner approval required)
+
+Retain this candidate, closure02 and every SW predicate. Authorize root, only in a detached
+review snapshot pinned to 8d6b8291, to add the explicit keyword `automatic_retry_count=0` in
+`tests/verification_qualification_fixtures.py::resource_bounds()` for the M02 experiment only.
+This is an ordinary valid constructor argument, not a bypass, coercion or changed expected
+value. No other fixture, assertion, oracle, production predicate or source-owner edit is allowed.
+
+Order after exact approval of document07 and its LF digest:
+
+1. Record pristine fixture bytes/hash. Add that one keyword, then run C1 and C3 green with
+   production untouched. If the controls do not pass, stop; do not improvise another patch.
+2. Apply only the existing M02 production patch (`automatic_retry_count = 0` -> `= 1`).
+   Run C1 and C3 once each. Require C1 declared-default disagreement and the C3 named
+   `ResourceBounds / automatic_retry_count / json / omission` value comparison `1 != 0`.
+   An earlier error, zero red or another reason remains incomplete.
+3. Restore the production file and rerun both commands green while the explicit-value fixture
+   remains. Restore the fixture to the original candidate bytes, verify both hashes/clean tree,
+   then run the existing strict command and complete 26-test suite once.
+4. Preserve the failed original M02 evidence; append this separately identified run to the
+   existing SW01–03 evidence leaf. Read the remaining stored raw streams for final review;
+   do not rerun the other 34 mutations merely to reproduce their already-captured outputs.
+
+Same existing per-command60s/pass1200s limits, one foreground process, no retries/load/new runner.
+No committable source change or renewed implementer correction is proposed. This is a narrow
+review-fixture exception, not closure03, an evidence waiver, or reset of exhausted closures.
+Root alone may record approval after all evidence meets the unchanged closure; A2/A3/B remain
+dependency-pending until then. All integration/push/release restrictions remain.
+
+ACTION_COMPLETED / TICKET_DEFECT / EVIDENCE_AMENDMENT_PROPOSED -> WAIT_FOR_HUMAN /
+OWNER_EXACT_APPROVAL_PENDING. Do not execute the proposed exception before approval.
