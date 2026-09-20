@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / document / closure | `TICKET-CONTROLLED-VERIFICATION-CVQ-01A2` / `IMPLEMENTATION_TICKET` / `08` / approved `CLOSURE-CVQ-01A2` revision `02` |
-| State / outcome | `OWNER_APPROVED / CORRECTION_REQUIRED / READY_FOR_SAME_LIFETIME_DISPATCH`; unchanged closure02, one batched correction |
+| ID / kind / document / closure | `TICKET-CONTROLLED-VERIFICATION-CVQ-01A2` / `IMPLEMENTATION_TICKET` / `09` / approved `CLOSURE-CVQ-01A2` revision `02` |
+| State / outcome | `REVIEW_APPROVED / CLOSED / NOT_INTEGRATED`; accepted candidate ce49f735, unchanged closure02 |
 | Baseline / dependency | Correction `e6099dc5926087fe5afbbfaa387471f8e001835d`; initial baseline `c2fa4cdda1a785a4a8e2c7924a337c2fdd836160`, descendant of APPROVED A1 `8d6b8291a03facec9d6d157794e7f4e8ba4d1cdc`; closure01 remains exhausted history |
 | Preparation authority | Owner 「啟用」 adopts convergence section23 at `a4ad05066e7b52eedd83133dad89ce81d8f398f4`, LF `a21ccd9c68335e6b9a0e3deae249613ef2c5d9156794d3fdbbc04391a2af35c3`; permits this proposal, not signature on previously unwritten closure02 |
 | SPEC / wire | [Qualification SPEC](../../spec/controlled-verification-qualification.md) revision07 LF `545f5058d8347ab069d6a23fdb07daaf06ab836998efb67b2c30b80fee3b1716`, sections2/6/7/11; [wire](../../spec/controlled-verification-qualification-wire.md) revision03 LF `6eb9d0a088e105e7c2dd4c3c3b4001f970ac34195c7a0cd78459a2f6016e9222`, sections1–6 |
@@ -249,3 +249,16 @@ same owner/profile/worktree/branch, exact e6099dc baseline, fresh correction1 vi
 Additive commit only, no reset/amend/force. Dispatch once, wait_agent, then root review and
 required evidence-only helper. This is closure02's sole correction. If its review still has
 blocking implementation/evidence defects, route CONVERGENCE_REVIEW_REQUIRED, not a third try.
+
+## Accepted correction and successor route — 2026-09-20
+
+Root [review04 section8](../../../doc/reviews/controlled-verification/cvq-01a2-case-manifest-admission-code-review.md#8-closure02-correction-review--approved-2026-09-20)
+accepts `ce49f735c6853c236a3504134d4a6959e7ca680f`. C02-F01–04 are closed; all41
+root mutations, five historical cells, full predecessor audit/replay, strict16 and focused27
+checks complete with exact restoration. Required evidence-only helper returns NO_FINDINGS;
+root alone approves. No additional implementation is admitted under this closed allocation.
+
+ACTION_COMPLETED / REVIEW_APPROVED -> AUTO_CONTINUE / BIND_APPROVED_SUCCESSOR.
+Close ctx-cvq-01a2-closure02-correction1. A3's existing exact approval permits only metadata
+binding to this accepted SHA/review before reuse of the retained seat. No partial integration,
+main mutation, push, release, install or native/provider effect is implied.

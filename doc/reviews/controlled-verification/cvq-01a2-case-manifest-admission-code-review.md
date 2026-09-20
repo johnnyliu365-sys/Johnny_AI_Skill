@@ -2,10 +2,10 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01A2` / `CODE_REVIEW` / `03` |
-| Conclusion / round | `CHANGES_REQUESTED / CLOSURE02_INITIAL_REVIEW / CORRECTION_REQUIRED`; section7 is current; sections1–6 preserve exhausted closure01 |
-| Authority | [A2](../../../modules/tickets/controlled-verification/cvq-01a2-case-manifest-admission.md) document07 / closure02 at `f4ecfb1f584662e11ce1ce83a43a87e762c8c42c`, LF `3bf6d33ff23d9d73850f94e587fc896fa79d436be0212074a6e99285a038085c`; approved SPEC07 and wire03 unchanged |
-| Source / candidate | `c2fa4cdda1a785a4a8e2c7924a337c2fdd836160` -> `e6099dc5926087fe5afbbfaa387471f8e001835d`; clean candidate, only the two admitted methods and required imports changed |
+| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01A2` / `CODE_REVIEW` / `04` |
+| Conclusion / round | `APPROVED / CLOSURE02_CORRECTION_REVIEW / NOT_INTEGRATED`; section8 is current; earlier rounds remain historical |
+| Authority | [A2](../../../modules/tickets/controlled-verification/cvq-01a2-case-manifest-admission.md) document08 / closure02 at `6241b235aed9a4aebdb842ee395b1688cbfe6a65`, LF `a2053027ab11bfa0720dbecf393bd14022cc9d8b7938f97dae67ed79d2a51a65`; approved SPEC07 and wire03 unchanged |
+| Source / candidate | `e6099dc5926087fe5afbbfaa387471f8e001835d` -> `ce49f735c6853c236a3504134d4a6959e7ca680f`; additive clean candidate, only the two admitted methods changed |
 | Responsibility | Retained Luna/xhigh implementation owner; root ticket-review and sole verdict owner; retained Terra/xhigh evidence-only helper |
 | Isolation | Root detached `.worktrees/cvq-01a2-review` at exact candidate; helper READ_ONLY_INTENT_ONLY / NO_EXTERNAL_EFFECT; no provider, native runtime, target, integration, push or release |
 
@@ -730,3 +730,54 @@ e6099dc; fresh view ctx-cvq-01a2-closure02-correction1 closes the initial view. 
 closure02's one correction, not another closure01 attempt. Root still owns all41 mutations,
 five historical cells and preservation audit after the corrected candidate. No new owner
 approval, source override, integration, main write, push, publication or installation effect.
+
+## 8. Closure02 correction review — APPROVED, 2026-09-20
+
+Root received the retained owner's typed COMPLETED for document08/closure02 and verified the
+exact additive candidate ce49f735, clean owner/reviewer worktrees and two-method boundary.
+No production, fixture, helper, schema, public API or import-DAG change occurs in the correction.
+Source-content review found no prompt/work-order contamination. Constructor-local typed test
+data only; no XSS, provider, native effect, secrets, host configuration or target mutation.
+
+All four findings are closed:
+
+- C02-F01: all17 K constructors/roundtrips execute inside named cells. Root's Q18 now yields
+  the five HN cells and HR separately (six intended legal-domain rejections), then exact
+  restoration returns green. C02.P's ordinary constructor and literal ordered-pair assertions
+  are inside its cell; the pair assertion itself fixes cardinality2. Its payload is reused
+  afterward, with no earlier masking constructor; the old len(keys)==2 assertion also remains.
+- C02-F02: five B cells preserve the nine common binding fields and all case fields. Ordinary
+  JSON validation admits each binding branch before the intended root join rejects it.
+  Q12 exposes all five fixed-kind negatives; Q17 independently isolates SOURCE_PROPERTY.
+- C02-F03: both WINDOWS PR/HR controls assert literal APPROVED_SOURCE,WA04_ADAPTER order in
+  keys and requirements, plus ordinary construction and full DTO roundtrip equality.
+- C02-F04: GENERIC pure/source full roundtrips restored, full equality in all17 K rows and
+  old negatives retained. Root mapped each predecessor observation and replayed its six
+  immutable old method bodies on this candidate, all green; no method-name-only audit.
+
+Evidence is partitioned, captured unreduced and reviewed:
+
+| Evidence leaf | Result |
+| --- | --- |
+| [Case evidence revision03](cvq-01a2-closure02-case-evidence.md) | Q01–21 each control0/mutant1/restored0; H01–04 old behavioral red/current green; final strict16/full27 green |
+| [Manifest evidence revision02](cvq-01a2-closure02-manifest-evidence.md) | Q22–37 each named red/restored green; per-observation predecessor map and six-method replay |
+| [Plan evidence revision02](cvq-01a2-closure02-plan-evidence.md) | Q38–41 each named red/restored green; H05 old extra-plan acceptance/current rejection |
+
+Q22/Q23 are precisely diagnostic-change evidence, not admission success. Q31's additional
+full-pair diagnostic red is separate from its distinct-pin acceptance red; Q32 tests the frozen
+equivalent-guard pair. Q19/Q27 retain the exact approved isolation exceptions. Q18's six
+ValidationErrors reject legal controls and are intended behavioral reds, not collection errors.
+All41 mutation records restore exact original source-byte hashes and rerun the same command.
+No zero-red, unexpected exception, skipped predicate or unrun historical cell is treated as pass.
+These constructor checks prove no runtime/provider/native qualification or installation closure.
+
+Required retained Terra/xhigh helper, view audit-cvq01a2-c02-correction1, returned NO_FINDINGS
+on immutable ce49f735 versus e6099dc for SPEC_GAP/BOUNDARY_DATA/CONSISTENCY/REGRESSION.
+It performed no tests/mutations/effects and supplied no approval. Root independently performed
+the recorded checks and alone issues this verdict.
+
+ACTION_COMPLETED / REVIEW_APPROVED -> AUTO_CONTINUE / BIND_APPROVED_SUCCESSOR.
+Close A2 correction view; retain the sequential implementation seat. A3 already has exact
+owner approval; its predecessor metadata must now pin ce49f735 and this review before dispatch.
+A1/A2 are APPROVED / NOT_INTEGRATED. A3/B and installation/publication remain unfinished.
+No partial integration/main mutation/push/release is authorized by this verdict.
