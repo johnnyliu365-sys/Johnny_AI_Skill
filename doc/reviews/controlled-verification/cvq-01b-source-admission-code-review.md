@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B` / `CODE_REVIEW` / `01` |
-| Conclusion / round | `CHANGES_REQUESTED / INITIAL_REVIEW / NOT_INTEGRATED` |
+| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B` / `CODE_REVIEW` / `02` |
+| Conclusion / round | `CHANGES_REQUESTED / CORRECTION_REVIEW / CONVERGENCE_REVIEW_REQUIRED / NOT_INTEGRATED`; section5 is current |
 | Authority | [B](../../../modules/tickets/controlled-verification/cvq-01b-source-admission.md) document05 / closure01 at b96aaaa6e385dc518389fc680cabbcf7251b01b2; LF 01530c75d2525ea86cabc018ea8808afa836f52bdfb5ca4b121530055d6e5093; SPEC07 section11.3 and wire03 unchanged |
 | Baseline / candidate | 485d882f578f84dac1c975b32ced2a4ae6e7d43a -> 406e853 -> 704f066c881dc36e7176d8564edadd439a443a09 |
 | Owner / reviewer / helper | Retained cve_wire_implementer / Luna xhigh; root sole verdict; retained profile_delivery_audit / Terra xhigh, evidence only |
@@ -67,3 +67,48 @@ restoration evidence. A defect remaining after that correction routes to converg
 automatic third pass, stronger model or release. The separate local installation result stays
 LOCAL_VERIFIED / PUBLICATION_INCOMPLETE; it is not blocked on B for already-completed evidence
 and is not upgraded into publication authority.
+
+## 5. Sole correction review — 2026-09-20
+
+Current conclusion: CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED / NON_DISPATCHABLE.
+Correction candidate7171f41bdec15104fd653ecee6c8e06691055d16 descends additively from the initial
+704f066. Exactly the same five support/test paths changed; production and the entire accepted
+A1/A2/A3 surface remain unchanged. Root independently ran strict21 and focused43 (13.738s),
+diff checks, original15 counterexamples, corpus-removal mutations and real-package inspection.
+See [correction evidence](cvq-01b-correction-evidence.md), revision01.
+
+Closed portions: original15 now all reject; negative/positive corpus removal now produces the
+designated test failure (69!=0 and6!=0), then restoration is green; policy maps are immutable
+snapshots; actual catalog names/bases are consulted; helper graph ownership moved to symbols;
+multi-hop corpus data and location/ID metadata were added. Preserve these gains.
+
+Remaining blockers are from the same frozen closure, not new requirements:
+
+| Finding | Candidate location and independently verified result | Disposition |
+| --- | --- | --- |
+| B-F01 | symbols.py73–89 still truncates submodule suffixes. Appending `from .qualification_values.not_a_module import QualificationModel as ResolvedAlias` to the real binding source packet returns empty findings. The named module does not exist. | Exact path/origin resolution remains unproved. |
+| B-F02 | gate.py200–208 still permits resolve on a listed port name in schema phase. Root temporarily inserted a correctly typed helper into the actual qualification_ports file, called only its existing port.resolve; the real architecture dependency test stayed green, as did control and byte-restored runs. | ZERO_RED / schema-phase call boundary unpinned. Not a merely unresolved/fake receiver case. |
+| B-F03 | gate.py228 exempts every parameter named self, even a module helper;314–319 remains a small denylist. Root untyped module-self and attribute deletion packets returned empty findings; helper's module-scope for-loop counterexample was independently reproduced. | Exact typed helpers and closed, context-sensitive AST remain unproved; broad name/default success persists. |
+| B-F04 | corpus.py95 still has direct import_module,102–103 direct Any/cast;132 only unknown-object model_dump. The required aliased-import, Any alias, typing.cast/aliased-cast and known-receiver schema negative alternatives remain missing. SGP06 names a catalog DTO but its packet does not declare/import QualificationModel and uses a repeated union branch, so its surrounding schema is not the specified valid minimum. | ID/count checks alone cannot establish the frozen alternative semantics. |
+| B-F05 / P0 | symbols.py14–41 introduces SymbolOrigin.status, ImportBinding.status and NameBinding.kind/status as unrestricted str, then compares magic strings internally. Ticket2 requires closed resolution variants, not string conventions; strict typing green does not establish the finite domain. | Closed internal variants still required. No approval, regardless of line count. |
+
+The retained Terra/xhigh helper returned FINDINGS on the same candidate under the original four
+categories: B-F02 schema port call, B-F03 module for-loop and B-F04 missing alternatives.
+Root validated those observations; helper supplied no verdict or external effect.
+No work-order/prompt text was found in the source diff during semantic review; there is no
+mechanical enforcement claim.
+
+Owner reported baseline observations as summaries. Root's original and current unfiltered records
+provide observable defect evidence; no missing initial history is invented. The root strict/focused
+process briefly overlapped the original15 read-only probe before the pending session was read
+back. This reviewer resource deviation is documented in the evidence, not attributed to owner.
+Subsequent commands were serial. Temporary real-source mutation was byte-exact restored to
+ports SHA2560c5d84194c130210222afcce9f86d541690330dfa7c17f5488dc44ac04b4423d; final
+review worktree is clean.
+
+Full twenty-rule mutation admission remains NOT_VERIFIED: spending that campaign on this already
+failing candidate cannot yield approval. Root's real-package counter-mutation independently
+establishes zero red. Initial plus sole correction are consumed. No third correction is authorized,
+no stronger model is silently substituted, and no partial A/B integration occurs. Next action is
+control-plane decomposition with exact owner-approved replacement closure, not a source retry.
+See [B convergence proposal](cvq-01b-convergence-proposal.md), revision01.

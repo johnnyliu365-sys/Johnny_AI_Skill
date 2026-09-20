@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01B` / `IMPLEMENTATION_TICKET` / `05` |
-| State / closure | `OWNER_APPROVED / READY_IMPLEMENT / NOT_INTEGRATED`; `CLOSURE-CVQ-01B` revision `01` unchanged; section9 records satisfied dependency |
+| ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01B` / `IMPLEMENTATION_TICKET` / `06` |
+| State / closure | `BLOCKED / CONVERGENCE_REVIEW_REQUIRED / NON_DISPATCHABLE / NOT_INTEGRATED`; `CLOSURE-CVQ-01B` revision `01` exhausted; section10 is current |
 | Preparation authority | Owner's adoption of convergence proposal revision 05 at `dc45f31f6c56983613665f276bf15207419274e3`, LF `6ad63ea17bf1750549d1f5087138e9bb447b477bcd8d683cac7405bed1262847`; exact source resumption is not yet approved |
 | Observable result / change class | An in-process package-scoped AST gate accepts the approved source grammar and rejects the finite forbidden syntax/dependency corpus; `PRODUCTION_BEHAVIOR`, defect correction and not test-exempt or runtime confinement |
 | SPEC | [Qualification SPEC](../../spec/controlled-verification-qualification.md) revision 07 LF `545f5058d8347ab069d6a23fdb07daaf06ab836998efb67b2c30b80fee3b1716`, section 11.3; [wire appendix](../../spec/controlled-verification-qualification-wire.md) revision 03 LF `6eb9d0a088e105e7c2dd4c3c3b4001f970ac34195c7a0cd78459a2f6016e9222` supplies exact declaration inventory |
@@ -279,3 +279,19 @@ one batched correction only. This signature/dependency binding grants no integra
 publication, installation, runtime effect or model elevation. Same-lifetime native delegation
 requires no bridge/receipt/descriptor. Dispatch, wait_agent, receive, then root reviews.
 ACTION_COMPLETED / DEPENDENCY_BOUND -> AUTO_CONTINUE / IMPLEMENT.
+
+## 10. Initial plus sole correction exhausted — 2026-09-20
+
+Initial704f066c881dc36e7176d8564edadd439a443a09 received the single batched review
+9e0f4a1a3399fad2daadfb58866cbfc26a9109d4. Additive correction7171f41bdec15104fd653ecee6c8e06691055d16
+retains existing closure defects; [review02 section5](../../../doc/reviews/controlled-verification/cvq-01b-source-admission-code-review.md#5-sole-correction-review--2026-09-20)
+records root and mandatory helper evidence. Original15 examples now reject and strict21/focused43
+are green, but exact origin, schema-call, closed-syntax, corpus-alternative and finite internal
+variant obligations are not satisfied. No approval or partial integration.
+
+This document06 changes status/history only, not the grammar, scope or original closure.
+Section9's ready-to-implement state is historical. No third source correction or automatic
+model escalation. Same owner/candidates remain available but inactive; control-plane
+[responsibility decomposition](../../../doc/reviews/controlled-verification/cvq-01b-convergence-proposal.md)
+is a proposal pending owner decision, not a dispatch grant.
+ACTION_COMPLETED / CORRECTION_REVIEW_FAILED -> CONVERGENCE_REVIEW_REQUIRED / WAIT_FOR_HUMAN.

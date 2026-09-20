@@ -2,11 +2,13 @@
 
 This index records direct review leaves; evidence and conclusions remain in the selected leaf.
 
-Index identity: `INDEX-CONTROLLED-VERIFICATION-REVIEWS` / `REVIEW_INDEX` / revision `33`.
+Index identity: `INDEX-CONTROLLED-VERIFICATION-REVIEWS` / `REVIEW_INDEX` / revision `34`.
 
 | Review ID / leaf | Kind | Revision | SHA-256 | Lifecycle | Result |
 | --- | --- | --- | --- | --- | --- |
-| `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B` / [CVQ-01B source admission](cvq-01b-source-admission-code-review.md) | `CODE_REVIEW` | `01` | `be2a62a305857aa7e48ad999b1575a195354bd0d3b1ffc78ee49de76ba5b3c75` | `CORRECTION_REQUIRED` | `CHANGES_REQUESTED / ONE_CORRECTION_REMAINS / NOT_INTEGRATED` |
+| `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B-CONVERGENCE` / [B responsibility decomposition](cvq-01b-convergence-proposal.md) | `CODE_REVIEW` | `01` | `0308388788c4a6a6c79ce4dd256b72bb5a231a498357a0038f305680e46f0f94` | `OWNER_EXACT_APPROVAL_PENDING` | `PROPOSED / NON_DISPATCHABLE` |
+| `EVIDENCE-CVQ-01B-CORRECTION` / [B correction evidence](cvq-01b-correction-evidence.md) | `REVIEW_EVIDENCE` | `01` | `872a8285c6ee60ba593e85e1a0396b1b5e3121df9de6774850d84ab0d2564ce4` | `REVIEWED` | `ORIGINAL15_REJECT / REMAINING_BYPASSES / REAL_PACKAGE_ZERO_RED` |
+| `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B` / [CVQ-01B source admission](cvq-01b-source-admission-code-review.md) | `CODE_REVIEW` | `02` | `fb0db6186f376a0bc1ba6ad693a860dad2a757411d609ee5927b9b7c454b4ccb` | `CONVERGENCE_REVIEW_REQUIRED` | `CHANGES_REQUESTED / CORRECTION_EXHAUSTED / NOT_INTEGRATED` |
 | `EVIDENCE-CVQ-01B-INITIAL` / [B initial review evidence](cvq-01b-initial-evidence.md) | `REVIEW_EVIDENCE` | `01` | `7a246985db8dcbe2cf27b0458e5760eb7e6b4ded18da59d38e50061c5f358610` | `REVIEWED` | `BYPASSES_AND_VACUITY_REPRODUCED / HISTORICAL_BASELINE_RED` |
 | `EVIDENCE-CVQ-01A3-C02-PROOF` / [A3 closure02 proof and result](cvq-01a3-closure02-proof-evidence.md) | `REVIEW_EVIDENCE` | `01` | `9510a0773b1bd4460a9ce1baab92db4fe259f324a7dea12b1cc53489b38d3899` | `REVIEWED` | `PREDICATE_EVIDENCE_ACCEPTED` |
 | `EVIDENCE-CVQ-01A3-C02-ROSTER` / [A3 closure02 roster and collection](cvq-01a3-closure02-roster-evidence.md) | `REVIEW_EVIDENCE` | `01` | `a345fa369d720e79e6186612f4c28d457f56093949212025ad1dcc7485cfa6a4` | `REVIEWED` | `PREDICATE_EVIDENCE_ACCEPTED` |
