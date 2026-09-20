@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-CONVERGENCE` / `CODE_REVIEW` / `20` |
-| Lifecycle / conclusion | `A1_REVIEW_APPROVED / A2_CLOSURE02_PROPOSED / OWNER_EXACT_APPROVAL_PENDING / A3_B_DEPENDENCY_PENDING / NOT_INTEGRATED`; earlier approvals and failed closures preserved |
+| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-CONVERGENCE` / `CODE_REVIEW` / `21` |
+| Lifecycle / conclusion | `A1_REVIEW_APPROVED / A2_CLOSURE02_OWNER_APPROVED / A3_B_DEPENDENCY_PENDING / NOT_INTEGRATED`; earlier approvals and failed closures preserved |
 | Control baseline | `dc45f31f6c56983613665f276bf15207419274e3` |
 | Examined source | Closure-03 correction `5d7789db6b950d317e7b500b757aa77a54d609ed`; all prior candidates preserved |
 | Ticket | [CVQ-01](../../../modules/tickets/controlled-verification/cvq-01-qualification-admission.md), document 10, current digest in its registry; closure 03 exhausted, unchanged. Historical document 09 at dc45f31f LF `babcceb227bf8f91356dfbbb90f5e14ad1adab19f43a99686bdae46e8acff16d` |
@@ -12,7 +12,7 @@
 | Responsibility | Parent owns the replan recommendation and review verdict. Reused Terra/xhigh supplied read-only adversarial evidence; parent ran the candidate checks/probes/mutations. No source implementation, model elevation or owner decision is granted by this proposal |
 
 Sections 1–10 preserve earlier convergence/design/adoption history. D-CQ11/D-CLAIM, exact
-closure-03 approval and A1/A2's responsibility splits have been answered. Section 24 is the current
+closure-03 approval and A1/A2's responsibility splits have been answered. Section 25 is the current
 disposition; historical pending routes do not reopen those answered decisions.
 
 ## 1. Diagnosis and retained boundary
@@ -964,6 +964,26 @@ the declared native follow-up/wait/review route, without another ceremonial disp
 ACTION_COMPLETED / CONVERGENCE_ADOPTED / CLOSURE02_PROPOSED -> WAIT_FOR_HUMAN /
 OWNER_EXACT_APPROVAL_PENDING. A1 approval, A3/B dependency state and all no-integration/push/
 release/install boundaries remain unchanged. Separate REQ-052 remains NOT_RELEASED.
+
+## 25. Exact A2 closure02 approval and continuation — 2026-09-20
+
+Owner 「核准,繼續工作,保持agent wait不要一直停下來等我」 binds the packet at
+`42643068e7ab3cd570d8104c1690e1b089bc414e`: A2 document06 LF
+`620b37e7e1a262ad852424c144ac7b88a0b1ad7e7379ffe86a7355a70dc796f0` and evidence-plan
+revision01 LF `29427a6bff933c21ee5c74777f9453cc1960b3f991f0b75d92d4914c29c3b0de`.
+Document07 records only the signature/admission; the approved finite work is unchanged.
+The pending route in section24 and the frozen plan's proposal-era header are superseded.
+The three evidence destinations remain NOT_RUN, never claimed as completed by approval.
+
+Root verified owner baseline c2fa4cd, clean registered contained worktree, and unchanged
+remote/local main b697738d. Retained Luna/xhigh receives one exact identifier-bound follow-up,
+fresh ctx-cvq-01a2-closure02 and the unchanged one-file/two-method delta. Root owns the
+41-mutation/five-historical-cell evidence and required helper/verdict. No activity polling.
+
+ACTION_COMPLETED / APPROVAL_RECORDED -> AUTO_CONTINUE / IMPLEMENT -> wait_agent -> REVIEW.
+No repeated approval request, third closure01 correction, main integration, push or release.
+The persistent goal also includes installation closure; separate REQ-052 evidence is not a
+claim that controlled verification is complete or publicly installed.
 
 ## 19. Evidence ownership adopted; exact finite closure prepared — 2026-09-20
 

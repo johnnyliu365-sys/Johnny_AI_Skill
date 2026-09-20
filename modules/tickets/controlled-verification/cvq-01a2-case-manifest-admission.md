@@ -2,14 +2,14 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / document / closure | `TICKET-CONTROLLED-VERIFICATION-CVQ-01A2` / `IMPLEMENTATION_TICKET` / `06` / proposed `CLOSURE-CVQ-01A2` revision `02` |
-| State / outcome | `OWNER_EXACT_APPROVAL_PENDING / NON_DISPATCHABLE`; complete the existing case/manifest admission matrix, no new product behavior |
+| ID / kind / document / closure | `TICKET-CONTROLLED-VERIFICATION-CVQ-01A2` / `IMPLEMENTATION_TICKET` / `07` / approved `CLOSURE-CVQ-01A2` revision `02` |
+| State / outcome | `OWNER_APPROVED / READY_FOR_SAME_LIFETIME_DISPATCH`; complete the existing case/manifest admission matrix, no new product behavior |
 | Baseline / dependency | `c2fa4cdda1a785a4a8e2c7924a337c2fdd836160`, descendant of APPROVED A1 `8d6b8291a03facec9d6d157794e7f4e8ba4d1cdc`; A2 closure01 is exhausted and remains historical |
 | Preparation authority | Owner 「啟用」 adopts convergence section23 at `a4ad05066e7b52eedd83133dad89ce81d8f398f4`, LF `a21ccd9c68335e6b9a0e3deae249613ef2c5d9156794d3fdbbc04391a2af35c3`; permits this proposal, not signature on previously unwritten closure02 |
 | SPEC / wire | [Qualification SPEC](../../spec/controlled-verification-qualification.md) revision07 LF `545f5058d8347ab069d6a23fdb07daaf06ab836998efb67b2c30b80fee3b1716`, sections2/6/7/11; [wire](../../spec/controlled-verification-qualification-wire.md) revision03 LF `6eb9d0a088e105e7c2dd4c3c3b4001f970ac34195c7a0cd78459a2f6016e9222`, sections1–6 |
 | Requirement / Context | `PRD-20260908-051` / `CHG-20260908-051`; [REQ-051](../../../doc/requirements/active/2026/environment-control/REQ-20260908-051.md) revision11 LF `f52552cdafc857d605f1eda03bcdf3df4c3d0c49ad9adfb9f39335f4b341e272`; [sealed Context](../../../doc/context/controlled-verification/main.md) revision02 LF `6f5465295cb3fd303bc555da655b3169d33292ad1f2ed4374748f82ddd6f2285`, READ_REFERENCE |
 | Owner / reviewer / profile | Retained `cve_wire_implementer`, implementation-standard (Luna/xhigh); root, ticket-review (Terra/xhigh); approved REVISION_03 at `b12dd7262606f7b951271cd51e336747f0638c38:doc/runbooks/dispatch-model-profile.md`; no elevation |
-| Workspace / view | `C:/Users/GameBoy/Desktop/Johnny_AI_Skill_latest/.worktrees/cvq-01` / `codex/cvq-01`; proposed fresh `ctx-cvq-01a2-closure02`; clean Git/containment/readback required at dispatch. Old views CLOSED |
+| Workspace / view | `C:/Users/GameBoy/Desktop/Johnny_AI_Skill_latest/.worktrees/cvq-01` / `codex/cvq-01`; fresh `ctx-cvq-01a2-closure02`; clean Git/containment/readback verified at admission. Old views CLOSED |
 | Language / resource | Python3.11.9, Pydantic2.13.4, mypy2.3.0; POC / HIGH_ASSURANCE; one sequential owner, required retained evidence-only helper after candidate; one foreground /60s-command /1200s-pass, zero automatic retries/load/container/background polling |
 | Effect / XSS | Test-attribution/coverage change over constructor-local contracts; not verification-exempt. XSS_NOT_APPLICABLE: no UI, I/O adapter or untrusted render. No provider/VM/target/configuration/runtime capability, integration, push, release or installation effect |
 
@@ -210,3 +210,26 @@ Owner 「啟用」 settles the evidence ownership decision. This document06/clos
 afterward, so exact approval still must bind its final bytes and evidence-plan revision01.
 ACTION_COMPLETED / CONVERGENCE_ADOPTED / CLOSURE02_PROPOSED -> WAIT_FOR_HUMAN /
 OWNER_EXACT_APPROVAL_PENDING. No implementation seat has been started under this proposal.
+
+## Exact owner approval and native admission — 2026-09-20
+
+The subsequent owner reply 「核准,繼續工作,保持agent wait不要一直停下來等我」 approves
+document06 / closure02 at `42643068e7ab3cd570d8104c1690e1b089bc414e`, LF
+`620b37e7e1a262ad852424c144ac7b88a0b1ad7e7379ffe86a7355a70dc796f0`, and the exact
+reviewer evidence plan revision01 LF
+`29427a6bff933c21ee5c74777f9453cc1960b3f991f0b75d92d4914c29c3b0de`.
+This includes the explicitly proposed Q24/Q27 reviewer-only isolation clauses. That frozen
+plan retains its proposal-era text; this signature supersedes its pending approval state.
+No closure requirement, source boundary, model, resource limit or external effect is changed.
+
+Root read back clean owner branch codex/cvq-01 at c2fa4cd, registered shared Git identity and
+no reparse component in its repository-contained path. Direct origin/main readback and local
+main both equal b697738d009db37318ebc8762107ef8329e014db. Retain the available owner,
+implementation-standard Luna/xhigh; ticket-review remains root. The fresh view binds this
+document07 and unchanged closure02; old closure01 views stay CLOSED.
+
+ACTION_COMPLETED / APPROVAL_RECORDED -> AUTO_CONTINUE / IMPLEMENT via retained native
+follow-up, then wait_agent, required evidence-only helper and root review. Bridge,
+receipt, runner, queue, descriptor and host readback are NOT_REQUIRED on this direct lane.
+No additional dispatch approval is needed. Installation closure remains a separate goal
+track; neither partial source integration nor release is claimed by this approval record.
