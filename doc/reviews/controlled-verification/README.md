@@ -2,18 +2,21 @@
 
 This index records direct review leaves; evidence and conclusions remain in the selected leaf.
 
-Index identity: `INDEX-CONTROLLED-VERIFICATION-REVIEWS` / `REVIEW_INDEX` / revision `31`.
+Index identity: `INDEX-CONTROLLED-VERIFICATION-REVIEWS` / `REVIEW_INDEX` / revision `32`.
 
 | Review ID / leaf | Kind | Revision | SHA-256 | Lifecycle | Result |
 | --- | --- | --- | --- | --- | --- |
+| `EVIDENCE-CVQ-01A3-C02-PROOF` / [A3 closure02 proof and result](cvq-01a3-closure02-proof-evidence.md) | `REVIEW_EVIDENCE` | `01` | `9510a0773b1bd4460a9ce1baab92db4fe259f324a7dea12b1cc53489b38d3899` | `REVIEWED` | `PREDICATE_EVIDENCE_ACCEPTED` |
+| `EVIDENCE-CVQ-01A3-C02-ROSTER` / [A3 closure02 roster and collection](cvq-01a3-closure02-roster-evidence.md) | `REVIEW_EVIDENCE` | `01` | `a345fa369d720e79e6186612f4c28d457f56093949212025ad1dcc7485cfa6a4` | `REVIEWED` | `PREDICATE_EVIDENCE_ACCEPTED` |
+| `EVIDENCE-CVQ-01A3-C02-JOIN` / [A3 closure02 joins, history and preservation](cvq-01a3-closure02-join-evidence.md) | `REVIEW_EVIDENCE` | `01` | `dbfc42b08a2e728280e0481e6faad6581ef9fb07d247ac928f769980bfa3557f` | `REVIEWED` | `PREDICATE_EVIDENCE_ACCEPTED` |
 | `REVIEW-CONTROLLED-VERIFICATION-CVE-01A` / [CVE-01A wire foundation](cve-01a-wire-foundation-code-review.md) | `CODE_REVIEW` | `02` | `25e2dc4506341cf9cab2f32e9fb281451958f1a65884c75771d30087c66e0622` | `CLOSED / HISTORICAL` | `SOURCE_CANDIDATE_APPROVED / DISPOSITION_SUPERSEDED_BY_CONVERGENCE` |
 | `REVIEW-CONTROLLED-VERIFICATION-CVE-01A-CONVERGENCE` / [CVE-01A evidence convergence](cve-01a-wire-foundation-convergence-review.md) | `CODE_REVIEW` | `03` | `1eda3ae2e0f16436c6e2d4e13dec0e951658097e73b6698b15bc37c2508fe16c` | `CLOSED` | `APPROVED / EVIDENCE_REPAIR_COMPLETED / NOT_INTEGRATED` |
 | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-SCHEMA` / [CVQ-01 schema preflight](cvq-01-schema-preflight.md) | `CODE_REVIEW` | `04` | `66f2e6636869665665bd15f210f259a405686125d33eb9dc0ccbaa9180ac3f8a` | `CONVERGENCE_REVIEW_REQUIRED` | `CHANGES_REQUESTED / BEHAVIOR_NOT_ADMITTED` |
-| `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-CONVERGENCE` / [CVQ-01 convergence proposal](cvq-01-convergence-proposal.md) | `CODE_REVIEW` | `25` | `058462d79d9469c5d527a5261344212dc9afb0c81eb1178bbede5809a32b7faf` | `A1_A2_REVIEW_APPROVED` | `A3_SPLIT_EXECUTION_APPROVED / B_DEPENDENCY_PENDING / NOT_INTEGRATED`
+| `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-CONVERGENCE` / [CVQ-01 convergence proposal](cvq-01-convergence-proposal.md) | `CODE_REVIEW` | `26` | `1f8333a8fabbb6440af6a8e5b7bba24d1c9611716f2f8d89f686bcfdf0dd7c17` | `A1_A2_A3_REVIEW_APPROVED` | `B_BINDING_READY / NOT_INTEGRATED`
 | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01A` / [CVQ-01A contract admission](cvq-01a-contract-admission-code-review.md) | `CODE_REVIEW` | `02` | `941a38cf56c99d5e6a019e710f9574d73bb815dae4d737b224b866d5d6c013a1` | `CONVERGENCE_REVIEW_REQUIRED` | `CHANGES_REQUESTED / NOT_INTEGRATED` |
 | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01A1` / [CVQ-01A1 scalar/wire admission](cvq-01a1-scalar-wire-admission-code-review.md) | `CODE_REVIEW` | `04` | `6417db889bfae0c22e3de1cae8ab3c09dae6a621e08632d8acab36ab9890d8d2` | `CLOSED` | `APPROVED / NOT_INTEGRATED` |
 | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01A2` / [CVQ-01A2 case/manifest admission](cvq-01a2-case-manifest-admission-code-review.md) | `CODE_REVIEW` | `04` | `8b78841d2fbd0476a351e8837d85270fd4ef7e8720c04f721b394a5caa6fba80` | `CLOSED` | `APPROVED / NOT_INTEGRATED`
-| `REVIEW-CONTROLLED-VERIFICATION-CVQ-01A3` / [CVQ-01A3 evidence admission](cvq-01a3-evidence-admission-code-review.md) | `CODE_REVIEW` | `03` | `4a201bbe981b00892422312f313ce68f4d9eff7156fcbf10c2125fc526053728` | `CLOSURE02_CORRECTION` | `CHANGES_REQUESTED / NOT_INTEGRATED` |
+| `REVIEW-CONTROLLED-VERIFICATION-CVQ-01A3` / [CVQ-01A3 evidence admission](cvq-01a3-evidence-admission-code-review.md) | `CODE_REVIEW` | `04` | `6271409116dc700e01deab1946eb027f43a65cdaffc2671669173baa8bc9412d` | `CLOSED` | `APPROVED / NOT_INTEGRATED` |
 | `EVIDENCE-CVQ-01A3-CORRECTION` / [A3 correction evidence](cvq-01a3-correction-evidence.md) | `REVIEW_EVIDENCE` | `01` | `df7e669031dcd18e27dd22a49065eb8328ee3799780da02272a002aa627d8220` | `REVIEWED` | `R01_02_03_05_NAMED_RED / R04_OUTER_ERROR / R09_ZERO_RED` |
 | `REVIEW-PLAN-CVQ-01A2-C02` / [A2 closure02 evidence plan](cvq-01a2-closure02-evidence-plan.md) | `CODE_REVIEW` | `01` | `29427a6bff933c21ee5c74777f9453cc1960b3f991f0b75d92d4914c29c3b0de` | `OWNER_APPROVED` | `EXECUTED / RESULTS_IN_THREE_EVIDENCE_LEAVES`
 | `EVIDENCE-CVQ-01A2-C02-CASE` / [A2 case evidence](cvq-01a2-closure02-case-evidence.md) | `REVIEW_EVIDENCE` | `03` | `6b3ef8b95a1e7a6bc93aade0b6e7913b38f3e12d85ba61cf86e14aac2c51059f` | `REVIEWED` | `Q01_21_VERIFIED / H01_04_REPRODUCED`

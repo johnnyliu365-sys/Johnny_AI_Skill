@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-CONVERGENCE` / `CODE_REVIEW` / `25` |
-| Lifecycle / conclusion | `A1_A2_REVIEW_APPROVED / A3_SPLIT_EXECUTION_APPROVED / B_DEPENDENCY_PENDING / NOT_INTEGRATED`; earlier approvals and failed closures preserved |
+| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-CONVERGENCE` / `CODE_REVIEW` / `26` |
+| Lifecycle / conclusion | `A1_A2_A3_REVIEW_APPROVED / B_BINDING_READY / NOT_INTEGRATED`; earlier approvals and failed closures preserved |
 | Control baseline | `dc45f31f6c56983613665f276bf15207419274e3` |
 | Examined source | Closure-03 correction `5d7789db6b950d317e7b500b757aa77a54d609ed`; all prior candidates preserved |
 | Ticket | [CVQ-01](../../../modules/tickets/controlled-verification/cvq-01-qualification-admission.md), document 10, current digest in its registry; closure 03 exhausted, unchanged. Historical document 09 at dc45f31f LF `babcceb227bf8f91356dfbbb90f5e14ad1adab19f43a99686bdae46e8acff16d` |
@@ -12,7 +12,7 @@
 | Responsibility | Parent owns the replan recommendation and review verdict. Reused Terra/xhigh supplied read-only adversarial evidence; parent ran the candidate checks/probes/mutations. No source implementation, model elevation or owner decision is granted by this proposal |
 
 Sections 1–10 preserve earlier convergence/design/adoption history. D-CQ11/D-CLAIM, exact
-closure-03 approval and A1/A2's responsibility splits have been answered. Section 29 is the current
+closure-03 approval and A1/A2's responsibility splits have been answered. Section 30 is the current
 disposition; historical pending routes do not reopen those answered decisions.
 
 ## 1. Diagnosis and retained boundary
@@ -1207,3 +1207,24 @@ approved, A3/B await the accepted predecessor, and no partial integration/main m
 publication is granted. Separate REQ-052 packaging evidence remains NOT_RELEASED.
 
 ACTION_COMPLETED / CONVERGENCE_PROPOSED -> WAIT_FOR_HUMAN / EVIDENCE_OWNERSHIP_DECISION.
+
+## 30. Split execution completed for A3; B binding ready — 2026-09-20
+
+The fresh owner split is executed, not merely proposed. Luna's source delta844d1866 and its
+single correction485d882f are complete. Root's [A3 review04 section7](cvq-01a3-evidence-admission-code-review.md#7-closure02-final-review-and-combined-a-admission--2026-09-20)
+closes remaining attribution and evidence findings with72 mapped red/restored-green mutations,
+two independent no-ID category probes, original-baseline historical reproduction, per-observation
+relocation and all five verbatim old domain methods passing. Strict17/focused38 pass. The
+retained adversarial helper reports no remaining scoped source finding; root owns approval.
+
+Combined A1/A2/A3 contract admission is APPROVED at exactly
+485d882f578f84dac1c975b32ced2a4ae6e7d43a. Original CA01–10 mapping is in that review. Close A3's
+view; bind and dispatch the previously approved B source-grammar ticket to the same retained
+Luna owner, preserving its current branch/worktree and all A assertions. No repeated owner
+approval is required for this dependency metadata. No partial integration is granted.
+
+Installation remains separate: declaration-driven154-file archive and both isolated host
+install/removal checks are already verified, with public0.4.14 still at0b3afd. New local fixture
+regressions for retained versions, sentinels and promotion pass. Actual public pin/tag/readback
+and a newly bound release transaction remain unproved; A3 closure is not their authority.
+ACTION_COMPLETED / A_CONTRACT_ADMISSION_APPROVED -> AUTO_CONTINUE / B_BINDING_AND_DISPATCH.

@@ -2,10 +2,10 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01A3` / `CODE_REVIEW` / `03` |
-| Conclusion / round | `CHANGES_REQUESTED / CLOSURE02_INITIAL_REVIEW / NOT_INTEGRATED`; section6 is current; sections1–5 preserve closure01 history |
-| Authority | [A3](../../../modules/tickets/controlled-verification/cvq-01a3-evidence-admission.md) document04 / closure01 at `da5d7ffba902ace013eb16a125194975996b6aae`, LF `b24a734a4565dd84a17292e5883538f82c98a856ea7acc5252d4dc483b5a95cd`; approved ER01–16 unchanged |
-| Baseline / candidate | `ce2d750af68642f1f2bd014f38e535df564c4f88` -> `af7fc42837c6bd068b3babdc4227ce46c4335ff3` |
+| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01A3` / `CODE_REVIEW` / `04` |
+| Conclusion / round | `APPROVED / CLOSURE02_CORRECTION_REVIEW / NOT_INTEGRATED`; section7 is current; sections1–6 preserve prior findings |
+| Authority | [A3](../../../modules/tickets/controlled-verification/cvq-01a3-evidence-admission.md) document06 / closure02 at `dddd59df94804f45ad74cc2892e1fcdca70e8341`, LF `97b140dc424ef1efc7f3075eca62e17b405db8700a57295f5a261cf34a08df22`; approved ER01–16 unchanged |
+| Baseline / candidate | `af7fc42837c6bd068b3babdc4227ce46c4335ff3` -> `844d1866c7eb665df0937ded4baa57fb30e39fc3` -> `485d882f578f84dac1c975b32ced2a4ae6e7d43a` |
 | Roles | Retained Luna/xhigh implementation owner; root sole ticket-review verdict; retained Terra/xhigh evidence-only helper |
 | Isolation | Clean exact candidate, two admitted test paths only; root detached review snapshot, no provider/native/target/integration/push/release effect |
 
@@ -749,3 +749,54 @@ This review commit is the correction handoff; no new requirement or repeat owner
 Source return is not approval. Root reviews the corrected immutable candidate and completes
 its evidence allocation. Another unresolved defect follows the declared convergence route.
 ACTION_COMPLETED / REVIEW_CHANGES_REQUESTED -> AUTO_CONTINUE / SAME_OWNER_CORRECTION.
+
+## 7. Closure02 final review and combined A admission — 2026-09-20
+
+Root independently inspected the sole correction: two existing methods in one admitted test
+file, no product/fixture/helper change. Each ER05/ER07 negative now creates its own prerequisite
+rows inside its named cell. Prior ER02/ER04 corrections and all assertions remain. Retained
+Terra/xhigh returned NO_FINDINGS in that exact finite static scope; it ran no A3 tests and is
+not a second verdict owner. F02 is closed. Root fulfilled the explicitly reassigned F06 duty:
+
+- [Proof/result evidence01](cvq-01a3-closure02-proof-evidence.md): 27 exact temporary patches,
+  ER03/shared A1 wire mapping and full eight-branch preservation references.
+- [Roster/collection evidence01](cvq-01a3-closure02-roster-evidence.md): 28 patches and two
+  separate independent category probes, including exact commands, raw reds and green restores.
+- [Join/history evidence01](cvq-01a3-closure02-join-evidence.md): 17 patches, two historical
+  methods at original5d7789d and current candidate, and per-observation relocation map.
+
+All72 mapped named-method mutations exit1; controls and exact-byte restorations exit0. G01/H01
+and P04's host subcases are honestly identified as diagnostic-contract reds, not invalid-input
+acceptance. The independent all-ABSENT duplicate-category input removes unrelated ID collisions
+without disabling their guards and yields two genuine ValidationError-not-raised reds. R01/R02
+and the independent category door are reviewer-selected, not an implementer-return substitute.
+No collection/import error, zero-red or timeout is labelled success. Full outputs are retained;
+only line endings/trailing whitespace are normalized for Markdown.
+
+Both genuine historical defects reproduce on5d7789d (three valid UNAVAILABLE refusals rejected,
+unsorted planned aliases accepted) and pass on485d882f. All five exact predecessor domain test
+bodies from acceptedA2 ce49f735 also pass unedited in-memory against current production. The
+relocation table assigns every old observation to its new ER/A1/A2 owner. Current strict17 and
+focused38 pass after all restoration; Git diff/status is empty and four byte hashes match.
+F01/F03/F04/F05 remain closed. There are no remaining A3 findings.
+
+Combined contract candidate is exactly485d882f578f84dac1c975b32ced2a4ae6e7d43a. A1 accepted
+8d6b8291 and A2 acceptedce49f735 are ancestors; A1 wire owners and A2 production/manifest tests
+are unchanged in Git and rerun in the focused suite. Original CA coverage is retained:
+
+| Original obligation | Accepted owner at the combined SHA |
+| --- | --- |
+| CA01–03 | A1 SW01–08 literal wire/scalar catalog and current regressions |
+| CA04–05 | A2 case/manifest identity, applicability, prerequisites and capability joins |
+| CA06 | A3 ER01–03, refusal/proof compatibility and required wire fields |
+| CA07 | A3 ER05–09, local/global roster predicates and negative-state representation |
+| CA08 | A2 approved-plan coverage and first-discovery intent |
+| CA09 | A2 requirement/manifest duplicates; A3 ER04/10–15 result/evidence joins |
+| CA10 | Existing fixture-only composition owner, independent literal catalog, no new builders; ER16 collection and verbatim predecessor replay |
+
+Root verdict: A3 APPROVED; combined A1/A2/A3 CONTRACT_ADMISSION_APPROVED, NOT_INTEGRATED.
+Close ctx-cvq-01a3-closure02. Previously approved B document04 section8 now needs only the exact
+combined SHA/review/index binding and fresh workspace readback, not another design approval.
+B alone owns the remaining package source-grammar proof. No partial package merge, runtime
+qualification, host hook, installation, public release or full-dispatch claim follows from A.
+ACTION_COMPLETED / REVIEW_APPROVED -> AUTO_CONTINUE / B_DEPENDENCY_BINDING_AND_DISPATCH.

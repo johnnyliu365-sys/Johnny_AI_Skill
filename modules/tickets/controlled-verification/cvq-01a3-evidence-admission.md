@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / document / closure | `TICKET-CONTROLLED-VERIFICATION-CVQ-01A3` / `IMPLEMENTATION_TICKET` / `06` / `CLOSURE-CVQ-01A3` revision `02` |
-| State / outcome | `OWNER_APPROVED / READY_IMPLEMENT / NOT_INTEGRATED`; current split allocation is defined in the final closure02 section; ER01–16 semantics remain unchanged |
+| ID / kind / document / closure | `TICKET-CONTROLLED-VERIFICATION-CVQ-01A3` / `IMPLEMENTATION_TICKET` / `07` / `CLOSURE-CVQ-01A3` revision `02` |
+| State / outcome | `REVIEW_APPROVED / CLOSED / NOT_INTEGRATED`; review04 section7 records closure02 completion at485d882f; ER01–16 semantics remain unchanged |
 | Dependency / baseline / view | A2 APPROVED `ce49f735c6853c236a3504134d4a6959e7ca680f`, A1/A2 regression retained; current additive baseline `af7fc42837c6bd068b3babdc4227ce46c4335ff3`; fresh `ctx-cvq-01a3-closure02`; old views CLOSED |
 | Current execution authority | Owner's explicit 2026-09-20 split-and-execute direction, recorded in the final closure02 section; historical pending language below is superseded for this stated allocation |
 | SPEC / wire | [Qualification SPEC](../../spec/controlled-verification-qualification.md) revision 07 LF `545f5058d8347ab069d6a23fdb07daaf06ab836998efb67b2c30b80fee3b1716`, sections 2/6/7/11; [wire](../../spec/controlled-verification-qualification-wire.md) revision 03 LF `6eb9d0a088e105e7c2dd4c3c3b4001f970ac34195c7a0cd78459a2f6016e9222`, sections 1–6 |
@@ -352,6 +352,18 @@ decision is required. This newly bound closure has its own initial/one-correctio
 not permission to weaken acceptance or repeat unbounded corrections.
 
 B remains dependent on all A source/evidence passing. No partial A integration is granted.
+
+## Closure02 disposition — 2026-09-20
+
+Source candidate485d882f578f84dac1c975b32ced2a4ae6e7d43a is APPROVED by root in
+[review04 section7](../../../doc/reviews/controlled-verification/cvq-01a3-evidence-admission-code-review.md#7-closure02-final-review-and-combined-a-admission--2026-09-20).
+The root-owned72 named mutations, two independent category probes, historical replay and
+observation-preservation audit are in its three indexed evidence leaves. Final strict17/focused38
+green, exact restoration and required evidence-only helper are recorded. This status update
+does not change closure02 or historical failed closures. Close ctx-cvq-01a3-closure02.
+Combined A1/A2/A3 contract admission is bound to this same candidate. Continue only to B's
+already-approved dependency binding; no partial integration or public effect is authorized.
+ACTION_COMPLETED / REVIEW_APPROVED -> AUTO_CONTINUE / B_DEPENDENCY_BINDING.
 REQ-052 packaging/installation/release admission is a separate workstream; its successful local
 install is not blocked on A3, and it cannot be used to claim A3 completion. Public release,
 main/ref mutation and live-user installation retain their own separately verified authority.
