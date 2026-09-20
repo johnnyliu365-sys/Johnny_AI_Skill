@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01A3` / `CODE_REVIEW` / `02` |
-| Conclusion / round | `CHANGES_REQUESTED / CORRECTION_REVIEW / CONVERGENCE_REVIEW_REQUIRED / NOT_INTEGRATED`; section5 is current; sections1–4 preserve initial review |
+| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01A3` / `CODE_REVIEW` / `03` |
+| Conclusion / round | `CHANGES_REQUESTED / CLOSURE02_INITIAL_REVIEW / NOT_INTEGRATED`; section6 is current; sections1–5 preserve closure01 history |
 | Authority | [A3](../../../modules/tickets/controlled-verification/cvq-01a3-evidence-admission.md) document04 / closure01 at `da5d7ffba902ace013eb16a125194975996b6aae`, LF `b24a734a4565dd84a17292e5883538f82c98a856ea7acc5252d4dc483b5a95cd`; approved ER01–16 unchanged |
 | Baseline / candidate | `ce2d750af68642f1f2bd014f38e535df564c4f88` -> `af7fc42837c6bd068b3babdc4227ce46c4335ff3` |
 | Roles | Retained Luna/xhigh implementation owner; root sole ticket-review verdict; retained Terra/xhigh evidence-only helper |
@@ -718,3 +718,34 @@ both implementation views. No third implementation dispatch, automatic model ele
 implicit evidence transfer, combined A admission or B dispatch. Proposed control-plane
 disposition is in [convergence section28](cvq-01-convergence-proposal.md#28-a3-correction-exhausted--owner-decision-pending-2026-09-20).
 ACTION_COMPLETED / REVIEW_CHANGES_REQUESTED -> WAIT_FOR_HUMAN / CONVERGENCE_REVIEW_REQUIRED.
+
+## 6. Closure02 initial source review and sole correction — 2026-09-20
+
+Current authority is A3 document06 / closure02 at
+dddd59df94804f45ad74cc2892e1fcdca70e8341, LF
+97b140dc424ef1efc7f3075eca62e17b405db8700a57295f5a261cf34a08df22.
+The owner-approved split replaces the prior allocation of evidence duties. Root owns the
+complete evidence campaign; its absence from Luna's return is not a finding in this closure.
+Source candidate 844d1866c7eb665df0937ded4baa57fb30e39fc3 descends directly from af7fc428,
+changes only the admitted evidence test file, and is clean. Root independently obtained
+strict17/focused38 green, then named R04/ER02 PURE_RULE FAILED and R09/ER02 measured PURE_RULE
+reds with exact restoration and green reruns. These are bounded probes, not complete closure.
+
+Retained evidence-only helper found, and root read back, one remaining F02 attribution defect:
+ER05 lines444–446 and ER07 lines521–523 construct first/second_same_id/second_same_alias before
+the named category and duplicate cells. Constructor failure there aborts the method without
+the intended cell identity. Document06's finite delta explicitly forbids prerequisite validated
+scenario objects outside the cell. Positive controls and ER02/ER04 fixes are otherwise retained.
+
+CHANGES_REQUESTED: use closure02's one additive correction, same owner/worktree/branch/profile.
+Only test_planned_entry_and_category_rules and test_observed_entry_and_category_rules need
+correction: build each negative category/duplicate cell's prerequisites inside that cell, using
+existing fixture functions. Loop metadata outside cells may be literal IDs/messages, not
+constructed validated scenario rows. Preserve all positives, diagnostics and negative cases;
+no new helper, product or fixture changes. Run the already frozen focused/type commands and
+return one additive commit with complete outputs. Do not repeat root's mutation campaign.
+
+This review commit is the correction handoff; no new requirement or repeat owner approval.
+Source return is not approval. Root reviews the corrected immutable candidate and completes
+its evidence allocation. Another unresolved defect follows the declared convergence route.
+ACTION_COMPLETED / REVIEW_CHANGES_REQUESTED -> AUTO_CONTINUE / SAME_OWNER_CORRECTION.

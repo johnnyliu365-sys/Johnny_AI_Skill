@@ -2,7 +2,7 @@
 
 This index records direct review leaves; evidence and conclusions remain in the selected leaf.
 
-Index identity: `INDEX-CONTROLLED-VERIFICATION-REVIEWS` / `REVIEW_INDEX` / revision `30`.
+Index identity: `INDEX-CONTROLLED-VERIFICATION-REVIEWS` / `REVIEW_INDEX` / revision `31`.
 
 | Review ID / leaf | Kind | Revision | SHA-256 | Lifecycle | Result |
 | --- | --- | --- | --- | --- | --- |
@@ -13,7 +13,7 @@ Index identity: `INDEX-CONTROLLED-VERIFICATION-REVIEWS` / `REVIEW_INDEX` / revis
 | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01A` / [CVQ-01A contract admission](cvq-01a-contract-admission-code-review.md) | `CODE_REVIEW` | `02` | `941a38cf56c99d5e6a019e710f9574d73bb815dae4d737b224b866d5d6c013a1` | `CONVERGENCE_REVIEW_REQUIRED` | `CHANGES_REQUESTED / NOT_INTEGRATED` |
 | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01A1` / [CVQ-01A1 scalar/wire admission](cvq-01a1-scalar-wire-admission-code-review.md) | `CODE_REVIEW` | `04` | `6417db889bfae0c22e3de1cae8ab3c09dae6a621e08632d8acab36ab9890d8d2` | `CLOSED` | `APPROVED / NOT_INTEGRATED` |
 | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01A2` / [CVQ-01A2 case/manifest admission](cvq-01a2-case-manifest-admission-code-review.md) | `CODE_REVIEW` | `04` | `8b78841d2fbd0476a351e8837d85270fd4ef7e8720c04f721b394a5caa6fba80` | `CLOSED` | `APPROVED / NOT_INTEGRATED`
-| `REVIEW-CONTROLLED-VERIFICATION-CVQ-01A3` / [CVQ-01A3 evidence admission](cvq-01a3-evidence-admission-code-review.md) | `CODE_REVIEW` | `02` | `313cc3e3b46f4b135bf4bc662f07faa68a045f228d2bd28cda3f82248426a39c` | `CONVERGENCE_REVIEW_REQUIRED` | `CHANGES_REQUESTED / NOT_INTEGRATED` |
+| `REVIEW-CONTROLLED-VERIFICATION-CVQ-01A3` / [CVQ-01A3 evidence admission](cvq-01a3-evidence-admission-code-review.md) | `CODE_REVIEW` | `03` | `4a201bbe981b00892422312f313ce68f4d9eff7156fcbf10c2125fc526053728` | `CLOSURE02_CORRECTION` | `CHANGES_REQUESTED / NOT_INTEGRATED` |
 | `EVIDENCE-CVQ-01A3-CORRECTION` / [A3 correction evidence](cvq-01a3-correction-evidence.md) | `REVIEW_EVIDENCE` | `01` | `df7e669031dcd18e27dd22a49065eb8328ee3799780da02272a002aa627d8220` | `REVIEWED` | `R01_02_03_05_NAMED_RED / R04_OUTER_ERROR / R09_ZERO_RED` |
 | `REVIEW-PLAN-CVQ-01A2-C02` / [A2 closure02 evidence plan](cvq-01a2-closure02-evidence-plan.md) | `CODE_REVIEW` | `01` | `29427a6bff933c21ee5c74777f9453cc1960b3f991f0b75d92d4914c29c3b0de` | `OWNER_APPROVED` | `EXECUTED / RESULTS_IN_THREE_EVIDENCE_LEAVES`
 | `EVIDENCE-CVQ-01A2-C02-CASE` / [A2 case evidence](cvq-01a2-closure02-case-evidence.md) | `REVIEW_EVIDENCE` | `03` | `6b3ef8b95a1e7a6bc93aade0b6e7913b38f3e12d85ba61cf86e14aac2c51059f` | `REVIEWED` | `Q01_21_VERIFIED / H01_04_REPRODUCED`
