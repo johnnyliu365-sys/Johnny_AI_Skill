@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-CONVERGENCE` / `CODE_REVIEW` / `21` |
-| Lifecycle / conclusion | `A1_REVIEW_APPROVED / A2_CLOSURE02_OWNER_APPROVED / A3_B_DEPENDENCY_PENDING / NOT_INTEGRATED`; earlier approvals and failed closures preserved |
+| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-CONVERGENCE` / `CODE_REVIEW` / `22` |
+| Lifecycle / conclusion | `A1_REVIEW_APPROVED / A2_CLOSURE02_CORRECTION_REQUIRED / A3_B_DEPENDENCY_PENDING / NOT_INTEGRATED`; earlier approvals and failed closures preserved |
 | Control baseline | `dc45f31f6c56983613665f276bf15207419274e3` |
 | Examined source | Closure-03 correction `5d7789db6b950d317e7b500b757aa77a54d609ed`; all prior candidates preserved |
 | Ticket | [CVQ-01](../../../modules/tickets/controlled-verification/cvq-01-qualification-admission.md), document 10, current digest in its registry; closure 03 exhausted, unchanged. Historical document 09 at dc45f31f LF `babcceb227bf8f91356dfbbb90f5e14ad1adab19f43a99686bdae46e8acff16d` |
@@ -12,7 +12,7 @@
 | Responsibility | Parent owns the replan recommendation and review verdict. Reused Terra/xhigh supplied read-only adversarial evidence; parent ran the candidate checks/probes/mutations. No source implementation, model elevation or owner decision is granted by this proposal |
 
 Sections 1–10 preserve earlier convergence/design/adoption history. D-CQ11/D-CLAIM, exact
-closure-03 approval and A1/A2's responsibility splits have been answered. Section 25 is the current
+closure-03 approval and A1/A2's responsibility splits have been answered. Section 26 is the current
 disposition; historical pending routes do not reopen those answered decisions.
 
 ## 1. Diagnosis and retained boundary
@@ -933,6 +933,24 @@ The separate installed-profile defect and source-content/responsibility requirem
 in [REQ-052](../../requirements/active/2026/plugin-adoption-quality/REQ-20260920-052.md).
 They do not retroactively add acceptance requirements to A1 or reopen completed findings.
 ACTION_COMPLETED / CONVERGENCE_PROPOSED -> WAIT_FOR_HUMAN / EVIDENCE_OWNERSHIP_DECISION.
+
+## 26. A2 closure02 initial findings; same-owner correction — 2026-09-20
+
+Exact owner approval at42643068 was recorded at f4ecfb1 and exercised: retained Luna returned
+e6099dc on codex/cvq-01, changing only the admitted two methods/imports. Root's strict16 and
+focused27 checks pass, but independent Q18 red cannot identify its cell because construction
+precedes subTest. The required retained helper supplied static findings; root independently
+confirmed the full batch in [A2 review03 section7](cvq-01a2-case-manifest-admission-code-review.md#7-closure02-initial-review--2026-09-20).
+
+C02-F01–04 cover constructor attribution, binding common-identity isolation, missing PR/HR
+literal prerequisite assertions and displaced old positive/full-roundtrip observations.
+These violate existing closure02; no new requirement or owner decision is introduced.
+Root's remaining41/five-history/preservation proof is incomplete, not delegated or waived.
+
+ACTION_COMPLETED / REVIEW_CHANGES_REQUESTED -> AUTO_CONTINUE / IMPLEMENT_CORRECTION,
+same owner and baselinee6099dc, ticket document08, fresh correction1 view, wait_agent only.
+This uses closure02's one correction. A1 stays approved; A3/B await A2. Installation closure,
+combined source integration and publication remain incomplete; no external effect is granted.
 
 ## 24. A2 division adopted; finite closure02 prepared — 2026-09-20
 

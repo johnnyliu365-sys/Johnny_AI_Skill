@@ -2,10 +2,10 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01A2` / `CODE_REVIEW` / `02` |
-| Conclusion / round | `CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED / NON_DISPATCHABLE`; section5 is current, closure01 initial plus sole correction exhausted |
-| Authority | [A2](../../../modules/tickets/controlled-verification/cvq-01a2-case-manifest-admission.md) document03 / closure01 at `04cc47a367d9aa073c3a905e61ee59ea8a34ce47`, LF `ba105f4d21d13e9c9659a019d688fbda28c66142861b7e23c32f1c7bfdfe1815`; approved SPEC07 and wire03 unchanged |
-| Source / candidate | `8d6b8291a03facec9d6d157794e7f4e8ba4d1cdc` -> `95434d64a4538270ebc4b4b785ae74337379f61e`; exact parent, clean owner worktree |
+| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01A2` / `CODE_REVIEW` / `03` |
+| Conclusion / round | `CHANGES_REQUESTED / CLOSURE02_INITIAL_REVIEW / CORRECTION_REQUIRED`; section7 is current; sections1–6 preserve exhausted closure01 |
+| Authority | [A2](../../../modules/tickets/controlled-verification/cvq-01a2-case-manifest-admission.md) document07 / closure02 at `f4ecfb1f584662e11ce1ce83a43a87e762c8c42c`, LF `3bf6d33ff23d9d73850f94e587fc896fa79d436be0212074a6e99285a038085c`; approved SPEC07 and wire03 unchanged |
+| Source / candidate | `c2fa4cdda1a785a4a8e2c7924a337c2fdd836160` -> `e6099dc5926087fe5afbbfaa387471f8e001835d`; clean candidate, only the two admitted methods and required imports changed |
 | Responsibility | Retained Luna/xhigh implementation owner; root ticket-review and sole verdict owner; retained Terra/xhigh evidence-only helper |
 | Isolation | Root detached `.worktrees/cvq-01a2-review` at exact candidate; helper READ_ONLY_INTENT_ONLY / NO_EXTERNAL_EFFECT; no provider, native runtime, target, integration, push or release |
 
@@ -695,3 +695,38 @@ Do not infer that raising model tier or asking the same request a third time fix
 delivery boundary. [Convergence section23](cvq-01-convergence-proposal.md#23-a2-correction-exhausted-proposed-evidence-ownership-split--2026-09-20)
 proposes applying A1's successful responsibility split to A2. It is a new owner decision,
 not permission already inherited from A1. No new closure or evidence exception is dispatched.
+
+## 7. Closure02 initial review — 2026-09-20
+
+Root independently read the complete candidate delta, existing fixture identities and all
+C02.K/B/P obligations. Strict checking passes16 source files; the declared focused suite
+passes27 test methods. Those green checks are not acceptance. The exact commands and
+unreduced output, including the independent Q18 control/mutant/restoration, are in
+[case evidence revision02](cvq-01a2-closure02-case-evidence.md). Q18 fails at method level
+before any named C02.K cell, proving the attribution defect rather than discharging Q18.
+Remaining root-owned mutation/historical evidence is NOT_RUN, not assigned to the implementer.
+
+One required retained Terra/xhigh helper examined immutable e6099dc against c2fa4cd,
+bound to document07/closure02 and view audit-cvq01a2-c02-initial. It returned four static
+findings for SPEC_GAP/BOUNDARY_DATA/CONSISTENCY/REGRESSION, no commands/effects or verdict.
+Root independently confirms those and the earlier C02.P masking constructor below.
+This is one consolidated correction batch against existing obligations, not new acceptance.
+
+| ID / class | Frozen obligation and observed candidate location | Correction within the two existing methods |
+| --- | --- | --- |
+| C02-F01 EVIDENCE_DEFECT | C02.K ordinary constructors must execute inside separately named controls. Lines193–211 eagerly construct all17 rows before subTest at212. Q18 aborts at195 with no cell ID. C02.P repeats the same defect: source_property_case at349 runs before its named control at352; original two-key assertion stays outside at395. | Construct each legal case inside its named subTest, then roundtrip and assert there. Do not build constructor-valid cases eagerly as table data. Put the C02.P constructor and preserved two-key/literal pair assertions inside its cell without an earlier identical constructor masking it. Preserve independently named negative rows; no new factory/helper/runner. |
+| C02-F02 EVIDENCE_DEFECT | C02.B requires unchanged common identity. Lines276–285 replace the full binding from opposite case fixtures. Shared fixtures141–152 and181–211 set attempt-pure/scope-pure versus attempt-native/scope-native, so two common fields also change. | Keep all shared binding identity fields equal to the starting case, including attempt_key and evidence_scope_ref; construct and validate the opposite variant ordinarily, preserving case fields and native pins. Keep each fixed-kind diagnostic/root/type assertion. Do not edit shared fixtures or use bypass constructors. |
+| C02-F03 EVIDENCE_DEFECT | C02.K PR/HR require the literal ordered APPROVED_SOURCE, WA04_ADAPTER pair. Rows209–210 only receive key/binding/subject assertions at212–218. C02.P's GENERIC platform row is not either WINDOWS PR/HR row. | Assert the literal ordered prerequisite pair on each of the two named PR/HR controls, preserving ordinary constructor and JSON paths. |
+| C02-F04 EVIDENCE_DEFECT | The writable boundary preserves every prior assertion/value/path and GENERIC pure controls. The previous six positive roundtrip-equality assertions were replaced by four partial-field assertions; GENERIC qualification_case and source_property_case positives were removed from CM02. | Restore the GENERIC positives and full DTO roundtrip-equality observations. Reuse genuinely equivalent fixed rows for existing WINDOWS observations and identify their exact mapping; partial-field assertions are not equivalent to full equality. Preserve all other old negative and closed findings. |
+
+No source/prompt contamination, production/schema/API/import-DAG change, extra helper or
+new ownership boundary was observed. F03/F04 from closure01 remain unchanged regressions.
+The entire changed surface and the helper's batch were considered together; unrun root proof
+is explicitly incomplete and cannot later be represented as this candidate's approval.
+
+ACTION_COMPLETED / REVIEW_CHANGES_REQUESTED -> AUTO_CONTINUE / IMPLEMENT_CORRECTION.
+Retain Luna/xhigh, codex/cvq-01 and its existing worktree. Additive correction baseline is
+e6099dc; fresh view ctx-cvq-01a2-closure02-correction1 closes the initial view. This consumes
+closure02's one correction, not another closure01 attempt. Root still owns all41 mutations,
+five historical cells and preservation audit after the corrected candidate. No new owner
+approval, source override, integration, main write, push, publication or installation effect.

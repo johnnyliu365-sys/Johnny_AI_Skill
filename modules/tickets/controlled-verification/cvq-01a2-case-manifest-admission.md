@@ -2,14 +2,14 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / document / closure | `TICKET-CONTROLLED-VERIFICATION-CVQ-01A2` / `IMPLEMENTATION_TICKET` / `07` / approved `CLOSURE-CVQ-01A2` revision `02` |
-| State / outcome | `OWNER_APPROVED / READY_FOR_SAME_LIFETIME_DISPATCH`; complete the existing case/manifest admission matrix, no new product behavior |
-| Baseline / dependency | `c2fa4cdda1a785a4a8e2c7924a337c2fdd836160`, descendant of APPROVED A1 `8d6b8291a03facec9d6d157794e7f4e8ba4d1cdc`; A2 closure01 is exhausted and remains historical |
+| ID / kind / document / closure | `TICKET-CONTROLLED-VERIFICATION-CVQ-01A2` / `IMPLEMENTATION_TICKET` / `08` / approved `CLOSURE-CVQ-01A2` revision `02` |
+| State / outcome | `OWNER_APPROVED / CORRECTION_REQUIRED / READY_FOR_SAME_LIFETIME_DISPATCH`; unchanged closure02, one batched correction |
+| Baseline / dependency | Correction `e6099dc5926087fe5afbbfaa387471f8e001835d`; initial baseline `c2fa4cdda1a785a4a8e2c7924a337c2fdd836160`, descendant of APPROVED A1 `8d6b8291a03facec9d6d157794e7f4e8ba4d1cdc`; closure01 remains exhausted history |
 | Preparation authority | Owner 「啟用」 adopts convergence section23 at `a4ad05066e7b52eedd83133dad89ce81d8f398f4`, LF `a21ccd9c68335e6b9a0e3deae249613ef2c5d9156794d3fdbbc04391a2af35c3`; permits this proposal, not signature on previously unwritten closure02 |
 | SPEC / wire | [Qualification SPEC](../../spec/controlled-verification-qualification.md) revision07 LF `545f5058d8347ab069d6a23fdb07daaf06ab836998efb67b2c30b80fee3b1716`, sections2/6/7/11; [wire](../../spec/controlled-verification-qualification-wire.md) revision03 LF `6eb9d0a088e105e7c2dd4c3c3b4001f970ac34195c7a0cd78459a2f6016e9222`, sections1–6 |
 | Requirement / Context | `PRD-20260908-051` / `CHG-20260908-051`; [REQ-051](../../../doc/requirements/active/2026/environment-control/REQ-20260908-051.md) revision11 LF `f52552cdafc857d605f1eda03bcdf3df4c3d0c49ad9adfb9f39335f4b341e272`; [sealed Context](../../../doc/context/controlled-verification/main.md) revision02 LF `6f5465295cb3fd303bc555da655b3169d33292ad1f2ed4374748f82ddd6f2285`, READ_REFERENCE |
 | Owner / reviewer / profile | Retained `cve_wire_implementer`, implementation-standard (Luna/xhigh); root, ticket-review (Terra/xhigh); approved REVISION_03 at `b12dd7262606f7b951271cd51e336747f0638c38:doc/runbooks/dispatch-model-profile.md`; no elevation |
-| Workspace / view | `C:/Users/GameBoy/Desktop/Johnny_AI_Skill_latest/.worktrees/cvq-01` / `codex/cvq-01`; fresh `ctx-cvq-01a2-closure02`; clean Git/containment/readback verified at admission. Old views CLOSED |
+| Workspace / view | `C:/Users/GameBoy/Desktop/Johnny_AI_Skill_latest/.worktrees/cvq-01` / `codex/cvq-01`; fresh `ctx-cvq-01a2-closure02-correction1`; same registered contained worktree. Initial view and old closure01 views CLOSED |
 | Language / resource | Python3.11.9, Pydantic2.13.4, mypy2.3.0; POC / HIGH_ASSURANCE; one sequential owner, required retained evidence-only helper after candidate; one foreground /60s-command /1200s-pass, zero automatic retries/load/container/background polling |
 | Effect / XSS | Test-attribution/coverage change over constructor-local contracts; not verification-exempt. XSS_NOT_APPLICABLE: no UI, I/O adapter or untrusted render. No provider/VM/target/configuration/runtime capability, integration, push, release or installation effect |
 
@@ -233,3 +233,19 @@ follow-up, then wait_agent, required evidence-only helper and root review. Bridg
 receipt, runner, queue, descriptor and host readback are NOT_REQUIRED on this direct lane.
 No additional dispatch approval is needed. Installation closure remains a separate goal
 track; neither partial source integration nor release is claimed by this approval record.
+
+## Closure02 initial review and sole correction admission — 2026-09-20
+
+Candidate e6099dc is CHANGES_REQUESTED. [Review revision03 section7](../../../doc/reviews/controlled-verification/cvq-01a2-case-manifest-admission-code-review.md#7-closure02-initial-review--2026-09-20)
+records C02-F01–04 as one finite batch against the already approved C02.K/B/P and preservation
+clauses. This document revision changes admission metadata only, not closure02 or its authority.
+Read that section for exact locations; historical review sections and raw root evidence are
+not implementation context. Correct within the same two methods/import allowance, with no
+production/fixture/helper writes. Return the prior-observation mapping and the fixed checks.
+All41 mutations/five historical reproductions remain root-owned, not implementation work.
+
+ACTION_COMPLETED / REVIEW_CHANGES_REQUESTED -> AUTO_CONTINUE / IMPLEMENT_CORRECTION:
+same owner/profile/worktree/branch, exact e6099dc baseline, fresh correction1 view above.
+Additive commit only, no reset/amend/force. Dispatch once, wait_agent, then root review and
+required evidence-only helper. This is closure02's sole correction. If its review still has
+blocking implementation/evidence defects, route CONVERGENCE_REVIEW_REQUIRED, not a third try.
