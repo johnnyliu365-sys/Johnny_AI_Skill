@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-CONVERGENCE` / `CODE_REVIEW` / `17` |
-| Lifecycle / conclusion | `A1_REVIEW_APPROVED / A2_ADMITTED / A3_B_DEPENDENCY_PENDING / NOT_INTEGRATED`; earlier approvals and failed closures preserved |
+| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01-CONVERGENCE` / `CODE_REVIEW` / `18` |
+| Lifecycle / conclusion | `A1_REVIEW_APPROVED / A2_CORRECTION_ADMITTED / A3_B_DEPENDENCY_PENDING / NOT_INTEGRATED`; earlier approvals and failed closures preserved |
 | Control baseline | `dc45f31f6c56983613665f276bf15207419274e3` |
 | Examined source | Closure-03 correction `5d7789db6b950d317e7b500b757aa77a54d609ed`; all prior candidates preserved |
 | Ticket | [CVQ-01](../../../modules/tickets/controlled-verification/cvq-01-qualification-admission.md), document 10, current digest in its registry; closure 03 exhausted, unchanged. Historical document 09 at dc45f31f LF `babcceb227bf8f91356dfbbb90f5e14ad1adab19f43a99686bdae46e8acff16d` |
@@ -12,7 +12,7 @@
 | Responsibility | Parent owns the replan recommendation and review verdict. Reused Terra/xhigh supplied read-only adversarial evidence; parent ran the candidate checks/probes/mutations. No source implementation, model elevation or owner decision is granted by this proposal |
 
 Sections 1–10 preserve earlier convergence/design/adoption history. D-CQ11/D-CLAIM, exact
-closure-03 approval and the responsibility split have been answered. Section 21 is the current
+closure-03 approval and the responsibility split have been answered. Section 22 is the current
 disposition; historical pending routes do not reopen those answered decisions.
 
 ## 1. Diagnosis and retained boundary
@@ -1005,3 +1005,21 @@ adversarial evidence. No partial integration, main mutation, push or publication
 REQ-052's separate local packaging/install verification remains complete but NOT_RELEASED;
 its publication-suite timeout/pin gaps and unfinished executable gates are not waived by A1.
 ACTION_COMPLETED / REVIEW_APPROVED -> AUTO_CONTINUE / IMPLEMENT(CVQ-01A2).
+
+## 22. A2 initial review; same-closure correction — 2026-09-20
+
+Retained Luna/xhigh returned95434d6 after accepted A1 candidate8d6, only three declared test
+and fixture paths changed. Root's strict16-file and27-test checks passed, but independent
+mutations found SOURCE_PROPERTY binding and extra nonempty-host-plan gaps with zero red.
+The named-cell, complete applicability/preservation, prerequisite positive and raw evidence
+gaps are one batch in [A2 review revision01](cvq-01a2-case-manifest-admission-code-review.md).
+The retained Terra/xhigh helper supplied bounded static findings; root owns the verdict.
+
+A2 document04 binds that review, exact95434d6 baseline and correction1 view. This consumes
+the already-approved single batched correction allowance, not a new closure or owner decision.
+No acceptance semantics, source boundary, resource plan or evidence-ownership exception is
+changed. A1 remains APPROVED; A3/B await their declared predecessor. No partial integration.
+
+ACTION_COMPLETED / REVIEW_CHANGES_REQUESTED -> AUTO_CONTINUE / CORRECT(CVQ-01A2), retained
+Luna/xhigh, native wait_agent then root review. An unsuccessful correction returns convergence.
+REQ-052 remains separately LOCAL_ISOLATED_VERIFIED / NOT_RELEASED. Main/push/release unchanged.

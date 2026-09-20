@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / document / closure | `TICKET-CONTROLLED-VERIFICATION-CVQ-01A2` / `IMPLEMENTATION_TICKET` / `03` / `CLOSURE-CVQ-01A2` revision `01` |
-| State / outcome | `OWNER_APPROVED / READY_LOW_MODEL / DISPATCH_ADMITTED`; one observable closure: case/binding/applicability/requirement joins and approved manifest plan coverage (original CA04–05/08, relevant CA09 duplicates, CA10) |
+| ID / kind / document / closure | `TICKET-CONTROLLED-VERIFICATION-CVQ-01A2` / `IMPLEMENTATION_TICKET` / `04` / `CLOSURE-CVQ-01A2` revision `01` |
+| State / outcome | `CHANGES_REQUESTED / CORRECTION_ADMITTED / NOT_INTEGRATED`; one observable closure: case/binding/applicability/requirement joins and approved manifest plan coverage (original CA04–05/08, relevant CA09 duplicates, CA10) |
 | Dependency / baseline / view | [A1](cvq-01a1-scalar-wire-admission.md) APPROVED candidate `8d6b8291a03facec9d6d157794e7f4e8ba4d1cdc`, additive descendant of `070039b6227205f7bb4592f203a4fd7455311f31`; exact predecessor/review/index binding below. New `ctx-cvq-01a2-closure01` |
 | Preparation authority | Owner adopted convergence revision 08 at `058b8256bb1b2601fabc30c21a42ecc48c831875`, LF `24021ef0467d56c1bc3924e98b15d2f993e0dc720228dec44177da2132c50392`; preparation only, exact ticket approval pending |
 | SPEC / wire | [Qualification SPEC](../../spec/controlled-verification-qualification.md) revision 07 LF `545f5058d8347ab069d6a23fdb07daaf06ab836998efb67b2c30b80fee3b1716`, sections 2/6/7/11; [wire](../../spec/controlled-verification-qualification-wire.md) revision 03 LF `6eb9d0a088e105e7c2dd4c3c3b4001f970ac34195c7a0cd78459a2f6016e9222`, sections 1–6 |
@@ -218,3 +218,32 @@ ACTION_COMPLETED / PREDECESSOR_BOUND -> AUTO_CONTINUE / IMPLEMENT(CVQ-01A2) usin
 follow-up to the retained owner -> wait_agent -> root review plus required finite helper.
 Same-lifetime dispatch requires no runner/queue/receipt/descriptor. A3/B stay dependency-pending;
 no partial integration, main write, push, publication, installation or native host effect.
+
+## Initial review and sole correction binding — 2026-09-20
+
+Initial owner return is `95434d64a4538270ebc4b4b785ae74337379f61e`, direct child of
+accepted8d6. Root independently ran strict16-file /27-test greens and obtained the required
+retained evidence-only helper. [A2 review revision01](../../../doc/reviews/controlled-verification/cvq-01a2-case-manifest-admission-code-review.md)
+LF `5a4d182a45d0a76d0e486d82af3e722eb1b8755c2fe638e58cbe1c2f70493ecc` gives
+the complete initial CHANGES_REQUESTED batch A2-F01–05 and exact parent counterexamples.
+SOURCE_PROPERTY-only kind/binding bypass and extra nonempty-host plan admission remain green;
+the scope.project_id red lacks a named subcase. Green collection is not CM closure acceptance.
+
+Document04 binds review/state only; no new semantics, writable path, field, diagnostic, model,
+resource budget or evidence-ownership exception. The same closure01 grants one batched
+correction. Baseline is exact95434d6 on the retained owner's clean codex/cvq-01 worktree.
+Close ctx-cvq-01a2-closure01; bind `ctx-cvq-01a2-closure01-correction1` to this revision and
+review, same retained Luna/xhigh and approved REVISION_03 mapping. Read only the current
+ticket, review and declared references; no closed A1 history as implementation context.
+
+Preserve all accepted predecessor tests/results. Complete every finding together, including
+per-observation relocation and actual mapped/historical evidence; do not count unverified
+transcript descriptions, zero-red mutants or unrelated collection failure as proof. Reuse
+existing authentic captures when retrievable instead of needless repeat. No new runner/script,
+control-document write or source prompt/work-order prose. Product predicates need no change
+unless a real in-boundary defect is established under the existing TDD contract.
+
+ACTION_COMPLETED / REVIEW_CHANGES_REQUESTED -> AUTO_CONTINUE / CORRECT(CVQ-01A2) using
+native retained-seat follow-up -> wait_agent -> root correction review and required helper.
+This is the sole correction; failure returns convergence, never a third attempt/elevation.
+A3/B stay dependency-pending. No main write, integration, push, release or installation.
