@@ -2,10 +2,12 @@
 
 This index records direct review leaves; evidence and conclusions remain in the selected leaf.
 
-Index identity: `INDEX-CONTROLLED-VERIFICATION-REVIEWS` / `REVIEW_INDEX` / revision `32`.
+Index identity: `INDEX-CONTROLLED-VERIFICATION-REVIEWS` / `REVIEW_INDEX` / revision `33`.
 
 | Review ID / leaf | Kind | Revision | SHA-256 | Lifecycle | Result |
 | --- | --- | --- | --- | --- | --- |
+| `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B` / [CVQ-01B source admission](cvq-01b-source-admission-code-review.md) | `CODE_REVIEW` | `01` | `be2a62a305857aa7e48ad999b1575a195354bd0d3b1ffc78ee49de76ba5b3c75` | `CORRECTION_REQUIRED` | `CHANGES_REQUESTED / ONE_CORRECTION_REMAINS / NOT_INTEGRATED` |
+| `EVIDENCE-CVQ-01B-INITIAL` / [B initial review evidence](cvq-01b-initial-evidence.md) | `REVIEW_EVIDENCE` | `01` | `7a246985db8dcbe2cf27b0458e5760eb7e6b4ded18da59d38e50061c5f358610` | `REVIEWED` | `BYPASSES_AND_VACUITY_REPRODUCED / HISTORICAL_BASELINE_RED` |
 | `EVIDENCE-CVQ-01A3-C02-PROOF` / [A3 closure02 proof and result](cvq-01a3-closure02-proof-evidence.md) | `REVIEW_EVIDENCE` | `01` | `9510a0773b1bd4460a9ce1baab92db4fe259f324a7dea12b1cc53489b38d3899` | `REVIEWED` | `PREDICATE_EVIDENCE_ACCEPTED` |
 | `EVIDENCE-CVQ-01A3-C02-ROSTER` / [A3 closure02 roster and collection](cvq-01a3-closure02-roster-evidence.md) | `REVIEW_EVIDENCE` | `01` | `a345fa369d720e79e6186612f4c28d457f56093949212025ad1dcc7485cfa6a4` | `REVIEWED` | `PREDICATE_EVIDENCE_ACCEPTED` |
 | `EVIDENCE-CVQ-01A3-C02-JOIN` / [A3 closure02 joins, history and preservation](cvq-01a3-closure02-join-evidence.md) | `REVIEW_EVIDENCE` | `01` | `dbfc42b08a2e728280e0481e6faad6581ef9fb07d247ac928f769980bfa3557f` | `REVIEWED` | `PREDICATE_EVIDENCE_ACCEPTED` |
