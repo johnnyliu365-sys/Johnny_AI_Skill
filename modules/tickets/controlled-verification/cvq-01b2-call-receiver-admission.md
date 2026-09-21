@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01B2` / `IMPLEMENTATION_TICKET` / `05` |
-| State / closure | `OWNER_APPROVED / IMPLEMENTATION_ADMITTED / NOT_INTEGRATED`; `CLOSURE-CVQ-01B2/01`; section9 is current |
+| ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01B2` / `IMPLEMENTATION_TICKET` / `06` |
+| State / closure | `CHANGES_REQUESTED / SINGLE_CORRECTION_ADMITTED / NOT_INTEGRATED`; `CLOSURE-CVQ-01B2/01`; section10 is current |
 | Preparation authority | Owner's 2026-09-21 approval of [B convergence01](../../../doc/reviews/controlled-verification/cvq-01b-convergence-proposal.md) at797c15db, LF0308388788c4a6a6c79ce4dd256b72bb5a231a498357a0038f305680e46f0f94; drafting only |
 | Observable result / change class | Schema calls admit only exact permitted static binding and guarded receiver; `PRODUCTION_BEHAVIOR / DEFECT_CORRECTION` |
 | Dependency / baseline | [B1](cvq-01b1-namespace-import-admission.md) document02/closure01 in this proposal commit; actual APPROVED candidate SHA and review/index must be bound before dispatch; never substitute7171f41 as accepted B1 |
@@ -281,3 +281,31 @@ cve_wire_implementer Luna/xhigh and root sole reviewer. Read only this exact tic
 closure/direct sources; no inherited B1 raw context as authority. Existing B2 predicates and
 proof allocation are unchanged. Followup -> wait_agent -> root review; bridge NOT_REQUIRED.
 No partial integration/push/release/install. ACTION_COMPLETED / B2_ADMITTED -> AUTO_CONTINUE / IMPLEMENT_CVQ01B2.
+
+## 10. Initial review and single correction admission — 2026-09-21
+
+Candidate4f98243e2e50fe6dac359f2f78be0d10cf3238e8 is additive/clean with exactly four allowed
+existing files changed; source118add/8delete, no new files/dependencies/product/A/B1-owned row
+changes. Root independently ran strict21/focused45 green, then reproduced three scope/guard
+defects and a masked loop-target mutation. Existing closure01 remains unchanged.
+
+Root [review03 section6](../../../doc/reviews/controlled-verification/cvq-01b-source-admission-code-review.md#6-b2-initial-review-and-sole-batched-correction--2026-09-21),
+LFf24904c8d2f9dffbb2f8aa311023455ebea591c83ea15777241306b1b6db5736, and
+[evidence02](../../../doc/reviews/controlled-verification/cvq-01b-correction-evidence.md),
+LF57efdf75c23485fe6f3df39e3b7221b7f68c1bffaaa1287f6edf102f5c68c2bb, at this control commit bind B2-F01–04.
+Review index46 LF25c40b71ec55135a96051e4c62cc964abf5351dc7dbeb6d70cde4bba6e88c0b7.
+Same retained owner/worktree/model, new view ctx-cvq-01b2-closure01-correction01; no replacement
+seat or permission expansion. Correct scoped order/aliases, immediate receiver guard and precise
+existing fixture predicates; preserve accepted code and all original B2 alternatives.
+
+One180sec owner correction reservation comes from the SAME1200sec B2 grant. Initial650sec is
+a conservative reservation charge (known57.598sec, other command time UNKNOWN); root/helpers
+charged/reserved120sec through admission, including helper6sec. Remaining250sec is reserved
+for root final verification/docs; unused reserves are not measured use and never reset history.
+Earlier B1195 remains. One foreground command,60sec cap, no retries/load/polling, outside caches.
+Owner records full timed command outputs and genuine4f98243e pre-fix reds; missing earlier
+baseline chronology stays missing. No source cleanup outside the allowlist.
+
+ACTION_COMPLETED / B2_INITIAL_CHANGES_REQUESTED -> AUTO_CONTINUE / SAME_OWNER_SINGLE_CORRECTION.
+After return root reviews; pass binds B3 directly, a remaining defect routes to convergence.
+No partial integration/push/release/installation or new owner decision is requested.

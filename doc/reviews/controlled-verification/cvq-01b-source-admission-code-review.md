@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B` / `CODE_REVIEW` / `02` |
-| Conclusion / round | `CHANGES_REQUESTED / CORRECTION_REVIEW / CONVERGENCE_REVIEW_REQUIRED / NOT_INTEGRATED`; section5 is current |
+| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B` / `CODE_REVIEW` / `03` |
+| Conclusion / round | `B2_CHANGES_REQUESTED / B2_SINGLE_CORRECTION_ADMITTED / NOT_INTEGRATED`; section6 is current for B2; original B section5 remains exhausted history |
 | Authority | [B](../../../modules/tickets/controlled-verification/cvq-01b-source-admission.md) document05 / closure01 at b96aaaa6e385dc518389fc680cabbcf7251b01b2; LF 01530c75d2525ea86cabc018ea8808afa836f52bdfb5ca4b121530055d6e5093; SPEC07 section11.3 and wire03 unchanged |
 | Baseline / candidate | 485d882f578f84dac1c975b32ced2a4ae6e7d43a -> 406e853 -> 704f066c881dc36e7176d8564edadd439a443a09 |
 | Owner / reviewer / helper | Retained cve_wire_implementer / Luna xhigh; root sole verdict; retained profile_delivery_audit / Terra xhigh, evidence only |
@@ -112,3 +112,48 @@ establishes zero red. Initial plus sole correction are consumed. No third correc
 no stronger model is silently substituted, and no partial A/B integration occurs. Next action is
 control-plane decomposition with exact owner-approved replacement closure, not a source retry.
 See [B convergence proposal](cvq-01b-convergence-proposal.md), revision01.
+
+## 6. B2 initial review and sole batched correction — 2026-09-21
+
+Current B2 conclusion: CHANGES_REQUESTED / CORRECTION_ADMITTED / NOT_INTEGRATED.
+This is the first review of the separately approved B2 closure01, not another correction of the
+exhausted original B closure. B1 acceptance remains unchanged. Exact B2 authority: document05
+at80e7d93f0743b0de85a601e30e778f0780f2c654, LF
+9d28012a9f19bc93e9c0fe9e179ae665b87811b9e7ddb644e83fd1a59add5842.
+Accepted B1a8340e2711540fd4ed05e4ef91c6877977f9d5db -> candidate
+4f98243e2e50fe6dac359f2f78be0d10cf3238e8, additive, clean and exactly four existing paths.
+Root read the complete diff and relevant existing scope implementation. Delta118add/8delete,
+no product/A/policy/B1-owned row changes, new files, dependencies or source work-order prose.
+[Unreduced root evidence](cvq-01b-correction-evidence.md), revision02, is current for this section.
+
+Strict21 and focused45 pass independently. The correctly typed schema ports now reject, and
+three known-port assertions on the exact accepted B1 checker fail as expected. That reproduction
+occurred during review, not before implementation; the owner explicitly missed its required
+baseline run. Green existing tests do not outweigh the following frozen-contract failures.
+
+| ID / class | Exact observation at4f98243e and frozen obligation | One bounded correction |
+| --- | --- | --- |
+| B2-F01 IMPLEMENTATION_DEFECT / SCOPE_ORDER | symbols322–323 uses ast.walk ordinal as execution order;413–421 builds global name-only assignment aliases; gate191–210 chooses those before scoped binding. Ticket2 explicitly forbids both. Root's nested local helper followed by conditional deeper reassignment returns no SG17; an eval alias in an unrelated function assigns SG10 to another function's direct typed-helper call. Helper independently found parameter shadowing inherits global eval identity. | Resolve call aliases, bindings and prior assignments in actual lexical scope/source execution order. Add finite discriminators for deeper rebind, same-name alias in another scope and call-before-later assignment; do not add another resolver or change B1 origin/DAG contracts. |
+| B2-F02 IMPLEMENTATION_DEFECT / RECEIVER_GUARD | symbols439–481 climbs to outer If and nested_control excludes If. A valid Mapping import plus guarded-positive control passes, while a call under a separate inner if flag also passes instead of SG16. Ticket2 requires immediate local true-branch, not inherited ancestor guard. | Require the correct immediate guard and unchanged receiver/guard identities. Preserve direct guarded positive and existing else/after/rebind cases. This is not permission to weaken schema-phase calls. |
+| B2-F03 EVIDENCE_DEFECT / DISCRIMINATION_AND_IDENTITY | corpus172 loop row places call inside For. It remains green after only the loop-target reassignment predicate is removed because nested_control independently rejects it; root reproduced CONTROL0/MUTANT0/RESTORED0. C13 aliased-model-copy row uses model:object, not the required checked catalog-model bypass. | Make the loop-target cell discriminate its own guard rather than another SG16 door; preserve the inherited-loop negative separately where needed. Bind the aliased bypass to a real declared/imported catalog model. Retain all42 existing call IDs/alternatives except justified literal corrections, independently extend IDs/counts for the missing scope predicates; no calculated expected truth or new files. |
+| B2-F04 EVIDENCE/RESOURCE_DEVIATION | Owner skipped required B1 baseline and supplied mutation summaries, not raw traces; default mypy cache conflicts with section9. Initial inventory caches have UNKNOWN origin. | Preserve omissions historically; do not fabricate initial red or delete caches. Root's exact-B1 reproduction is reviewer-time evidence. Capture genuine pre-fix failing assertions on4f98243e, exact commands/full outputs/durations, use -B and outside cache. Root owns final independent port and discriminating proof; no duplicate all20 campaign. |
+
+The retained Terra/xhigh helper's two static findings were independently adjudicated; root owns
+this verdict. One initial root probe lacked Mapping and therefore did not isolate SG16; it is
+explicitly excluded from predicate proof and corrected with a real import and positive control.
+No hidden failure is replaced by a summarized pass.
+
+Correction preserves SPEC07/wire03, closure01, allowed four paths, A/B1 acceptance, existing
+scalars/DTOs and schema-only phase. Product policy changes, B3 grammar, model elevation, new
+frameworks or files are not authorized. The same Luna/xhigh owner receives exactly one additive
+correction, not an amended closure or a third original-B retry. No need for new owner approval.
+
+Resource lineage: prior B1195 remains; B2 initial owner650 is a conservative full-reservation
+charge with actual known57.598 and remainder UNKNOWN, not observed650. Root/helper current
+charges and closeout are retained; reserve180sec command-wall for this single correction and
+the remaining B2 grant for independent final proof/docs. Same1200 total, max60/command, one
+foreground process, no retries/load/polling. Do not count a model-thought duration as command time.
+Root uses wait_agent, then independently checks final SHA and unchanged scope. Pass admits B3
+binding under existing approval; remaining defect after this correction routes to convergence.
+No partial integration, push, release or installation. ACTION_COMPLETED /
+REVIEW_CHANGES_REQUESTED -> AUTO_CONTINUE / SAME_OWNER_B2_SINGLE_CORRECTION.

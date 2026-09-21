@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `EVIDENCE-CVQ-01B-CORRECTION` / `REVIEW_EVIDENCE` / `01` |
+| ID / kind / revision | `EVIDENCE-CVQ-01B-CORRECTION` / `REVIEW_EVIDENCE` / `02` |
 | Candidate / initial | 7171f41bdec15104fd653ecee6c8e06691055d16 / 704f066c881dc36e7176d8564edadd439a443a09 |
 | Authority | Same B document05 / closure01 at b96aaaa6e385dc518389fc680cabbcf7251b01b2; initial review9e0f4a1a3399fad2daadfb58866cbfc26a9109d4 |
 | Executor / scope | root in detached .worktrees/cvq-01a2-review; temporary source mutation restored byte-exact; no provider/native/target/integration/publication effect |
@@ -456,3 +456,394 @@ print(json.dumps({"case":"B-F03-module-loop","source":source,"findings":[(f.modu
 {"case": "B-F03-module-loop", "source": "for value in ():\n    pass\n", "findings": []}
 
 ```
+
+## B2 initial reviewer evidence — 2026-09-21
+
+Authority: B2 document05/closure01 at80e7d93f0743b0de85a601e30e778f0780f2c654,
+LF9d28012a9f19bc93e9c0fe9e179ae665b87811b9e7ddb644e83fd1a59add5842.
+Accepted B1a8340e2711540fd4ed05e4ef91c6877977f9d5db -> candidate
+4f98243e2e50fe6dac359f2f78be0d10cf3238e8, additive, clean, exactly four existing allowed paths.
+Git delta: symbols13/0, gate17/8, corpus72/0, driver16/0; product/A/B1 owned row semantics unchanged.
+Root read the complete diff and relevant existing resolver. No source mutation or new artifacts.
+This section is current B2 evidence; original B evidence above remains unchanged history.
+
+Owner omitted the required pre-implementation actual-B1 baseline run and returned reduced output,
+not the requested unreduced traces. The supplement confirms MISSING_NOT_RUN; no chronology is
+fabricated. Known owner measured commands total57.598sec; other commands UNKNOWN. Charge the
+entire650sec initial reservation conservatively, not as observed duration. Ignored caches existed
+in its first inventory, origin UNKNOWN; default mypy cache was used rather than the required
+outside-cache argument. No deletion is authorized as cleanup. Root's commands use -B and the
+existing out-of-tree cache. The returned filename typo was corrected against Git. Source mutation
+summaries alone are not accepted as completed reviewer proof.
+
+### Independent strict and full focused suite
+
+Command; each child has60sec timeout and runs sequentially, no retry/load:
+
+```powershell
+$cvqChecks = @'
+import json, subprocess, sys, time
+checks=[
+["-B","-m","mypy","--cache-dir",r"C:/Users/GameBoy/AppData/Local/Temp/johnny-b1-c02-review-67f63afc96764af1b9a37aa2b16e8958","--strict","--follow-imports=silent","library/controlled_verification","tests/test_verification_qualification_contracts.py","tests/test_verification_qualification_domains.py","tests/test_verification_qualification_scalars.py","tests/test_verification_qualification_manifests.py","tests/test_verification_qualification_evidence.py","tests/test_verification_qualification_boundaries.py","tests/verification_qualification_fixtures.py","tests/verification_qualification_catalog.py","tests/verification_qualification_source_policy.py","tests/verification_qualification_source_symbols.py","tests/verification_qualification_source_gate.py","tests/verification_qualification_source_corpus.py"],
+["-B","-m","unittest","-v","tests.test_verification_qualification_contracts","tests.test_verification_qualification_domains","tests.test_verification_qualification_boundaries"]]
+for args in checks:
+ print("COMMAND",json.dumps([sys.executable,*args]),flush=True)
+ start=time.monotonic()
+ result=subprocess.run([sys.executable,*args],timeout=60,check=False)
+ print("EXIT",result.returncode,"SECONDS",round(time.monotonic()-start,3),flush=True)
+ if result.returncode:sys.exit(result.returncode)
+
+'@
+& 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -c $cvqChecks
+git diff --check
+```
+
+Unreduced output, exit0; strict21, focused45, measured0.781+21.281sec:
+
+```text
+COMMAND ["C:\\Users\\GameBoy\\AppData\\Local\\Programs\\Python\\Python311\\python.exe", "-B", "-m", "mypy", "--cache-dir", "C:/Users/GameBoy/AppData/Local/Temp/johnny-b1-c02-review-67f63afc96764af1b9a37aa2b16e8958", "--strict", "--follow-imports=silent", "library/controlled_verification", "tests/test_verification_qualification_contracts.py", "tests/test_verification_qualification_domains.py", "tests/test_verification_qualification_scalars.py", "tests/test_verification_qualification_manifests.py", "tests/test_verification_qualification_evidence.py", "tests/test_verification_qualification_boundaries.py", "tests/verification_qualification_fixtures.py", "tests/verification_qualification_catalog.py", "tests/verification_qualification_source_policy.py", "tests/verification_qualification_source_symbols.py", "tests/verification_qualification_source_gate.py", "tests/verification_qualification_source_corpus.py"]
+Success: no issues found in 21 source files
+EXIT 0 SECONDS 0.781
+COMMAND ["C:\\Users\\GameBoy\\AppData\\Local\\Programs\\Python\\Python311\\python.exe", "-B", "-m", "unittest", "-v", "tests.test_verification_qualification_contracts", "tests.test_verification_qualification_domains", "tests.test_verification_qualification_boundaries"]
+test_alias_branch_counts_and_selector_negatives (tests.test_verification_qualification_contracts.QualificationContractTests.test_alias_branch_counts_and_selector_negatives) ... ok
+test_all_78_default_omission_null_and_wrong_constant_cells (tests.test_verification_qualification_contracts.QualificationContractTests.test_all_78_default_omission_null_and_wrong_constant_cells) ... ok
+test_all_81_direct_constructor_and_json_rows (tests.test_verification_qualification_contracts.QualificationContractTests.test_all_81_direct_constructor_and_json_rows) ... ok
+test_all_result_proof_and_evidence_branches_roundtrip (tests.test_verification_qualification_contracts.QualificationContractTests.test_all_result_proof_and_evidence_branches_roundtrip) ... ok
+test_every_missing_direct_constructor_row_roundtrips (tests.test_verification_qualification_contracts.QualificationContractTests.test_every_missing_direct_constructor_row_roundtrips) ... ok
+test_immutable_contract_configuration (tests.test_verification_qualification_contracts.QualificationContractTests.test_immutable_contract_configuration) ... ok
+test_literal_enum_members_and_json_rows (tests.test_verification_qualification_contracts.QualificationContractTests.test_literal_enum_members_and_json_rows) ... ok
+test_literal_wire_catalog_matches_source_ast (tests.test_verification_qualification_contracts.QualificationContractTests.test_literal_wire_catalog_matches_source_ast) ... ok
+test_public_constructor_roundtrips (tests.test_verification_qualification_contracts.QualificationContractTests.test_public_constructor_roundtrips) ... ok
+test_required_null_and_extra_json_matrix (tests.test_verification_qualification_contracts.QualificationContractTests.test_required_null_and_extra_json_matrix) ... ok
+test_roster_and_three_port_evidence_roundtrips (tests.test_verification_qualification_contracts.QualificationContractTests.test_roster_and_three_port_evidence_roundtrips) ... ok
+test_collection_retains_split_cases (tests.test_verification_qualification_domains.QualificationDomainCollectionTests.test_collection_retains_split_cases) ... ok
+test_authenticated_capability_identity_joins (test_verification_qualification_evidence.QualificationEvidenceAdmissionTests.test_authenticated_capability_identity_joins) ... ok
+test_authenticated_discovered_identity_joins (test_verification_qualification_evidence.QualificationEvidenceAdmissionTests.test_authenticated_discovered_identity_joins) ... ok
+test_authenticated_discovery_identity_joins (test_verification_qualification_evidence.QualificationEvidenceAdmissionTests.test_authenticated_discovery_identity_joins) ... ok
+test_authenticated_enforcement_identity_joins (test_verification_qualification_evidence.QualificationEvidenceAdmissionTests.test_authenticated_enforcement_identity_joins) ... ok
+test_every_refusal_reason_result_pair (test_verification_qualification_evidence.QualificationEvidenceAdmissionTests.test_every_refusal_reason_result_pair) ... ok
+test_local_report_duplicates (test_verification_qualification_evidence.QualificationEvidenceAdmissionTests.test_local_report_duplicates) ... ok
+test_negative_and_zero_roster_shapes_remain_representable (test_verification_qualification_evidence.QualificationEvidenceAdmissionTests.test_negative_and_zero_roster_shapes_remain_representable) ... ok
+test_observed_entry_and_category_rules (test_verification_qualification_evidence.QualificationEvidenceAdmissionTests.test_observed_entry_and_category_rules) ... ok
+test_observed_global_coverage_and_uniqueness (test_verification_qualification_evidence.QualificationEvidenceAdmissionTests.test_observed_global_coverage_and_uniqueness) ... ok
+test_other_proof_scope_result_pairs (test_verification_qualification_evidence.QualificationEvidenceAdmissionTests.test_other_proof_scope_result_pairs) ... ok
+test_plan_global_coverage_and_uniqueness (test_verification_qualification_evidence.QualificationEvidenceAdmissionTests.test_plan_global_coverage_and_uniqueness) ... ok
+test_planned_entry_and_category_rules (test_verification_qualification_evidence.QualificationEvidenceAdmissionTests.test_planned_entry_and_category_rules) ... ok
+test_required_proof_references (test_verification_qualification_evidence.QualificationEvidenceAdmissionTests.test_required_proof_references) ... ok
+test_result_shape_boundaries (test_verification_qualification_evidence.QualificationEvidenceAdmissionTests.test_result_shape_boundaries) ... ok
+test_roster_link_scope_and_result (test_verification_qualification_evidence.QualificationEvidenceAdmissionTests.test_roster_link_scope_and_result) ... ok
+test_approved_plan_pin_coverage (test_verification_qualification_manifests.QualificationManifestAdmissionTests.test_approved_plan_pin_coverage) ... ok
+test_capability_requirement_joins (test_verification_qualification_manifests.QualificationManifestAdmissionTests.test_capability_requirement_joins) ... ok
+test_case_and_scope_identity_joins (test_verification_qualification_manifests.QualificationManifestAdmissionTests.test_case_and_scope_identity_joins) ... ok
+test_case_applicability_rows (test_verification_qualification_manifests.QualificationManifestAdmissionTests.test_case_applicability_rows) ... ok
+test_discovery_intent_and_property_membership (test_verification_qualification_manifests.QualificationManifestAdmissionTests.test_discovery_intent_and_property_membership) ... ok
+test_manifest_and_prerequisite_duplicates (test_verification_qualification_manifests.QualificationManifestAdmissionTests.test_manifest_and_prerequisite_duplicates) ... ok
+test_prerequisite_applicability_and_order (test_verification_qualification_manifests.QualificationManifestAdmissionTests.test_prerequisite_applicability_and_order) ... ok
+test_every_resource_bound (test_verification_qualification_scalars.QualificationScalarTests.test_every_resource_bound) ... ok
+test_identifier_digest_text_domains (test_verification_qualification_scalars.QualificationScalarTests.test_identifier_digest_text_domains) ... ok
+test_integer_domain_edges (test_verification_qualification_scalars.QualificationScalarTests.test_integer_domain_edges) ... ok
+test_integer_domains_are_strict (test_verification_qualification_scalars.QualificationScalarTests.test_integer_domains_are_strict) ... ok
+test_architecture_dependency_gate (tests.test_verification_qualification_boundaries.QualificationBoundaryTests.test_architecture_dependency_gate) ... ok
+test_source_call_admission (tests.test_verification_qualification_boundaries.QualificationBoundaryTests.test_source_call_admission) ... ok
+test_source_namespace_admission (tests.test_verification_qualification_boundaries.QualificationBoundaryTests.test_source_namespace_admission) ... ok
+test_source_negative_corpus (tests.test_verification_qualification_boundaries.QualificationBoundaryTests.test_source_negative_corpus) ... ok
+test_source_positive_corpus (tests.test_verification_qualification_boundaries.QualificationBoundaryTests.test_source_positive_corpus) ... ok
+test_source_result_is_deterministic (tests.test_verification_qualification_boundaries.QualificationBoundaryTests.test_source_result_is_deterministic) ... ok
+test_source_set_and_parse_fail_closed (tests.test_verification_qualification_boundaries.QualificationBoundaryTests.test_source_set_and_parse_fail_closed) ... ok
+
+----------------------------------------------------------------------
+Ran 45 tests in 20.680s
+
+OK
+EXIT 0 SECONDS 21.281
+```
+
+### Scoped independent probes and positive control
+
+Root's first six-case probe omitted the Mapping import in the appended qualification_values
+packet. Its SG16 rejections therefore did not isolate the receiver predicates and are NOT used
+as proof of those predicates. This reviewer probe-construction error was corrected by adding the
+actual import plus a guarded positive control, not by changing the gate or narrowing assertions.
+The known-port probe from that first run separately rejected at the actual source call site.
+Initial command/output are retained to prevent false attribution of those greens:
+
+```powershell
+$cvqProbe = @'
+import sys, unittest
+sys.path.insert(0, "tests")
+from tests.test_verification_qualification_boundaries import _read_units
+from verification_qualification_source_gate import inspect_sources
+from verification_qualification_source_policy import SourceModule as M, SourceRule as R, SourceUnit as U
+units = _read_units()
+cases = (
+ ("receiver_else", M.QUALIFICATION_VALUES, "def reviewer_probe(value: object) -> object:\n    if isinstance(value, Mapping):\n        return None\n    else:\n        return value.get('x')\n", R.SG16, 5, 15),
+ ("receiver_same_line_rebind", M.QUALIFICATION_VALUES, "def reviewer_probe(value: object) -> object:\n    if isinstance(value, Mapping):\n        value = 0; return value.get('x')\n    return None\n", R.SG16, 3, 26),
+ ("receiver_shadowed_isinstance", M.QUALIFICATION_VALUES, "def reviewer_probe(value: object, isinstance: object) -> object:\n    if isinstance(value, Mapping):\n        return value.get('x')\n    return None\n", R.SG16, 3, 15),
+ ("allowed_builtin_shadowed", M.QUALIFICATION_VALUES, "def reviewer_probe(value: object, len: object) -> object:\n    return len(value)\n", R.SG17, 2, 11),
+ ("ancestor_guard_under_unrelated_if", M.QUALIFICATION_VALUES, "def reviewer_probe(value: object, flag: bool) -> object:\n    if isinstance(value, Mapping):\n        if flag:\n            return value.get(\'x\')\n    return None\n", R.SG16, 4, 19),
+ ("known_schema_port", M.QUALIFICATION_PORTS, "def reviewer_probe(port: EvidenceObservationPort, request: EvidenceObservationRequest) -> EvidenceResolution:\n    return port.resolve(request)\n", R.SG18, 2, 11),
+)
+class IndependentCallBoundaries(unittest.TestCase):
+ def test_call_boundaries(self):
+  for label,module,extra,rule,line,column in cases:
+   with self.subTest(case=label):
+    prefix=next(u.text for u in units if u.module is module).rstrip()+"\n\n"
+    packet=tuple(U(u.module,prefix+extra) if u.module is module else u for u in units)
+    findings=inspect_sources(packet)
+    print(label, findings, flush=True)
+    self.assertIn((module,len(prefix.splitlines())+line,column,rule),tuple((f.module,f.line,f.column,f.rule) for f in findings))
+unittest.main(verbosity=2)
+
+'@
+& 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -c 'import subprocess,sys; sys.exit(subprocess.run(sys.argv[1:], timeout=60).returncode)' 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -c $cvqProbe
+```
+
+```text
+test_call_boundaries (__main__.IndependentCallBoundaries.test_call_boundaries) ... receiver_else (SourceViolation(module=<SourceModule.QUALIFICATION_VALUES: 'qualification_values.py'>, line=346, column=15, rule=<SourceRule.SG16: 'SG16'>),)
+receiver_same_line_rebind (SourceViolation(module=<SourceModule.QUALIFICATION_VALUES: 'qualification_values.py'>, line=344, column=26, rule=<SourceRule.SG16: 'SG16'>),)
+receiver_shadowed_isinstance (SourceViolation(module=<SourceModule.QUALIFICATION_VALUES: 'qualification_values.py'>, line=343, column=7, rule=<SourceRule.SG17: 'SG17'>), SourceViolation(module=<SourceModule.QUALIFICATION_VALUES: 'qualification_values.py'>, line=344, column=15, rule=<SourceRule.SG16: 'SG16'>))
+allowed_builtin_shadowed (SourceViolation(module=<SourceModule.QUALIFICATION_VALUES: 'qualification_values.py'>, line=343, column=11, rule=<SourceRule.SG17: 'SG17'>),)
+ancestor_guard_under_unrelated_if (SourceViolation(module=<SourceModule.QUALIFICATION_VALUES: 'qualification_values.py'>, line=345, column=19, rule=<SourceRule.SG16: 'SG16'>),)
+known_schema_port (SourceViolation(module=<SourceModule.QUALIFICATION_PORTS: 'qualification_ports.py'>, line=409, column=11, rule=<SourceRule.SG18: 'SG18'>),)
+ok
+
+----------------------------------------------------------------------
+Ran 1 test in 19.769s
+
+OK
+```
+
+Corrected full-source packet probes; only analyzer code is imported, packet strings are AST data:
+
+```powershell
+$cvqProbe = @'
+import sys, unittest
+sys.path.insert(0, "tests")
+from tests.test_verification_qualification_boundaries import _read_units
+from verification_qualification_source_gate import inspect_sources
+from verification_qualification_source_policy import SourceModule as M, SourceRule as R, SourceUnit as U
+units = _read_units()
+cases = (
+ ("guarded_positive", "def probe(value: object) -> object:\n    if isinstance(value, Mapping):\n        return value.get('x')\n    return None\n", None, 3, 15),
+ ("ancestor_guard_under_unrelated_if", "def probe(value: object, flag: bool) -> object:\n    if isinstance(value, Mapping):\n        if flag:\n            return value.get('x')\n    return None\n", R.SG16, 4, 19),
+ ("nested_helper_callee_rebind", "def probe(flag: bool) -> object:\n    def local() -> int:\n        return 1\n    if flag:\n        if flag:\n            local = 0\n    return local()\n", R.SG17, 7, 11),
+ ("scope_local_alias_contamination", "def probe() -> int:\n    return 1\ndef unrelated() -> object:\n    probe = eval\n    return None\ndef consumer() -> int:\n    return probe()\n", None, 7, 11),
+)
+class ScopedCallProbe(unittest.TestCase):
+ def test_scoped_resolution(self):
+  for label,extra,rule,line,column in cases:
+   with self.subTest(case=label):
+    prefix=next(u.text for u in units if u.module is M.QUALIFICATION_VALUES).rstrip()+"\n\nfrom typing import Mapping\n\n"
+    packet=tuple(U(u.module,prefix+extra) if u.module is M.QUALIFICATION_VALUES else u for u in units)
+    findings=inspect_sources(packet)
+    print(label, findings, flush=True)
+    if rule is None: self.assertEqual((),findings)
+    else:self.assertIn((M.QUALIFICATION_VALUES,len(prefix.splitlines())+line,column,rule),tuple((f.module,f.line,f.column,f.rule) for f in findings))
+unittest.main(verbosity=2)
+
+'@
+& 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -c 'import subprocess,sys; sys.exit(subprocess.run(sys.argv[1:], timeout=60).returncode)' 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -c $cvqProbe
+```
+
+Unreduced output; expected frozen conditions fail at three distinct doors, positive passes.
+The third finding is specifically the wrongly attributed SG10 at the unrelated consumer's
+direct helper call; this does not grant a general callable-assignment exception.
+
+```text
+test_scoped_resolution (__main__.ScopedCallProbe.test_scoped_resolution) ... guarded_positive ()
+ancestor_guard_under_unrelated_if ()
+
+  test_scoped_resolution (__main__.ScopedCallProbe.test_scoped_resolution) (case='ancestor_guard_under_unrelated_if') ... FAIL
+nested_helper_callee_rebind ()
+  test_scoped_resolution (__main__.ScopedCallProbe.test_scoped_resolution) (case='nested_helper_callee_rebind') ... FAIL
+scope_local_alias_contamination (SourceViolation(module=<SourceModule.QUALIFICATION_VALUES: 'qualification_values.py'>, line=350, column=11, rule=<SourceRule.SG10: 'SG10'>),)
+  test_scoped_resolution (__main__.ScopedCallProbe.test_scoped_resolution) (case='scope_local_alias_contamination') ... FAIL
+
+======================================================================
+FAIL: test_scoped_resolution (__main__.ScopedCallProbe.test_scoped_resolution) (case='ancestor_guard_under_unrelated_if')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<string>", line 22, in test_scoped_resolution
+AssertionError: (<SourceModule.QUALIFICATION_VALUES: 'qualification_values.py'>, 347, 19, <SourceRule.SG16: 'SG16'>) not found in ()
+
+======================================================================
+FAIL: test_scoped_resolution (__main__.ScopedCallProbe.test_scoped_resolution) (case='nested_helper_callee_rebind')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<string>", line 22, in test_scoped_resolution
+AssertionError: (<SourceModule.QUALIFICATION_VALUES: 'qualification_values.py'>, 350, 11, <SourceRule.SG17: 'SG17'>) not found in ()
+
+======================================================================
+FAIL: test_scoped_resolution (__main__.ScopedCallProbe.test_scoped_resolution) (case='scope_local_alias_contamination')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<string>", line 21, in test_scoped_resolution
+AssertionError: Tuples differ: () != (SourceViolation(module=<SourceModule.QUAL[95 chars]'>),)
+
+Second tuple contains 1 additional elements.
+First extra element 0:
+SourceViolation(module=<SourceModule.QUALIFICATION_VALUES: 'qualification_values.py'>, line=350, column=11, rule=<SourceRule.SG10: 'SG10'>)
+
+- ()
++ (SourceViolation(module=<SourceModule.QUALIFICATION_VALUES: 'qualification_values.py'>,
++                  line=350,
++                  column=11,
++                  rule=<SourceRule.SG10: 'SG10'>),)
+
+----------------------------------------------------------------------
+Ran 1 test in 12.837s
+
+FAILED (failures=3)
+```
+
+### Actual accepted-B1 known-port evidence, reproduced during review
+
+Root loads the exact a8340e2 checker/support blobs into process memory with the unchanged policy;
+the current literal three-port packets are inputs, never executed. This is reviewer-time
+reproduction, NOT the missing implementer-time baseline or a claimed full baseline run.
+
+```powershell
+$cvqBaseline = @'
+import subprocess, sys, types, unittest
+sys.path.insert(0, "tests")
+baseline="a8340e2711540fd4ed05e4ef91c6877977f9d5db"
+for name in ("verification_qualification_source_symbols","verification_qualification_source_gate"):
+ source=subprocess.check_output(["git","show",baseline+":tests/"+name+".py"])
+ module=types.ModuleType(name)
+ module.__file__=baseline+":tests/"+name+".py"
+ sys.modules[name]=module
+ exec(compile(source,module.__file__,"exec"),module.__dict__)
+from verification_qualification_source_gate import inspect_sources
+from verification_qualification_source_corpus import CALL_ROWS
+class BoundBaselinePorts(unittest.TestCase):
+ def test_b1_known_ports(self):
+  for row in CALL_ROWS:
+   if row.row_id in ("B2-C18-approved-manifest-port","B2-C18-prerequisite-evidence-port","B2-C18-evidence-observation-port"):
+    with self.subTest(row=row.row_id):
+     findings=inspect_sources(row.units)
+     print(row.row_id,findings,flush=True)
+     self.assertIn((row.expected_module,row.expected_line,row.expected_column,row.expected_rule),tuple((f.module,f.line,f.column,f.rule) for f in findings))
+unittest.main(verbosity=2)
+
+'@
+& 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -c 'import subprocess,sys; sys.exit(subprocess.run(sys.argv[1:], timeout=60).returncode)' 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -c $cvqBaseline
+```
+
+Unreduced output, exit1 with three named missing-SG18 failures; no collection error:
+
+```text
+test_b1_known_ports (__main__.BoundBaselinePorts.test_b1_known_ports) ... B2-C18-approved-manifest-port ()
+
+  test_b1_known_ports (__main__.BoundBaselinePorts.test_b1_known_ports) (row='B2-C18-approved-manifest-port') ... FAIL
+B2-C18-prerequisite-evidence-port ()
+  test_b1_known_ports (__main__.BoundBaselinePorts.test_b1_known_ports) (row='B2-C18-prerequisite-evidence-port') ... FAIL
+B2-C18-evidence-observation-port ()
+  test_b1_known_ports (__main__.BoundBaselinePorts.test_b1_known_ports) (row='B2-C18-evidence-observation-port') ... FAIL
+
+======================================================================
+FAIL: test_b1_known_ports (__main__.BoundBaselinePorts.test_b1_known_ports) (row='B2-C18-approved-manifest-port')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<string>", line 19, in test_b1_known_ports
+AssertionError: (<SourceModule.QUALIFICATION_PORTS: 'qualification_ports.py'>, 6, 11, <SourceRule.SG18: 'SG18'>) not found in ()
+
+======================================================================
+FAIL: test_b1_known_ports (__main__.BoundBaselinePorts.test_b1_known_ports) (row='B2-C18-prerequisite-evidence-port')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<string>", line 19, in test_b1_known_ports
+AssertionError: (<SourceModule.QUALIFICATION_PORTS: 'qualification_ports.py'>, 6, 11, <SourceRule.SG18: 'SG18'>) not found in ()
+
+======================================================================
+FAIL: test_b1_known_ports (__main__.BoundBaselinePorts.test_b1_known_ports) (row='B2-C18-evidence-observation-port')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<string>", line 19, in test_b1_known_ports
+AssertionError: (<SourceModule.QUALIFICATION_PORTS: 'qualification_ports.py'>, 6, 11, <SourceRule.SG18: 'SG18'>) not found in ()
+
+----------------------------------------------------------------------
+Ran 1 test in 0.014s
+
+FAILED (failures=3)
+```
+
+Known-port reverse mutation, actual-file mutation/restore and final owned proof are deferred until
+the scoped correction: this already-failing candidate cannot be approved. No all20-rule campaign,
+native/VM/provider/target/integration/push/release/installation effect occurred. Root review tree
+remains byte-unmodified at4f98243e; main remains outside this action.
+
+### Retained helper and independent overlap check
+
+Retained profile_delivery_audit / Terra xhigh returned once, evidence only, on exact4f98243e
+under SPEC_GAP/BOUNDARY_DATA/CONSISTENCY/REGRESSION. Static reads only,5.19sec measured,
+6sec conservative charge. Findings: global aliases precede lexical shadow binding (independently
+reproduced above); loop-target fixture is also rejected by the nested-control predicate before
+the loop-target predicate. Root independently removed only that loop-target alternative from
+the latter predicate in process memory. CONTROL0 / MUTANT0 / RESTORED0 confirms ZERO_RED,
+not proof of the required loop-target behavior. No source file was modified.
+
+```powershell
+$cvqMask = @'
+import inspect, sys, unittest
+from unittest.mock import patch
+sys.path.insert(0,"tests")
+import verification_qualification_source_gate as gate
+import verification_qualification_source_symbols as symbols
+from verification_qualification_source_corpus import CALL_ROWS
+row=next(r for r in CALL_ROWS if r.row_id=="B2-C16-reassigned-loop")
+original=inspect.getsource(symbols.guarded_mapping_get)
+old="ast.AugAssign, ast.For, ast.AsyncFor, ast.NamedExpr"
+assert original.count(old)==1
+changed=original.replace(old,"ast.AugAssign, ast.NamedExpr")
+namespace=dict(vars(symbols))
+exec(compile(changed,"reviewer-loop-guard-mutation","exec"),namespace)
+class LoopTargetDiscriminator(unittest.TestCase):
+ def test_literal_loop_cell(self):
+  findings=gate.inspect_sources(row.units)
+  print(row.row_id,findings,flush=True)
+  self.assertIn((row.expected_module,row.expected_line,row.expected_column,row.expected_rule),tuple((f.module,f.line,f.column,f.rule) for f in findings))
+suite=lambda:unittest.defaultTestLoader.loadTestsFromTestCase(LoopTargetDiscriminator)
+print("CONTROL",flush=True)
+unittest.TextTestRunner(verbosity=2).run(suite())
+print("MUTANT remove only loop targets from intervening-reassignment predicate",flush=True)
+with patch.object(gate,"guarded_mapping_get",namespace["guarded_mapping_get"]):
+ result=unittest.TextTestRunner(verbosity=2).run(suite())
+ print("MUTANT_RED",not result.wasSuccessful(),flush=True)
+print("RESTORED",flush=True)
+unittest.TextTestRunner(verbosity=2).run(suite())
+
+'@
+& 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -c $cvqMask
+```
+
+```text
+CONTROL
+test_literal_loop_cell (__main__.LoopTargetDiscriminator.test_literal_loop_cell) ... B2-C16-reassigned-loop (SourceViolation(module=<SourceModule.QUALIFICATION_VALUES: 'qualification_values.py'>, line=5, column=19, rule=<SourceRule.SG16: 'SG16'>),)
+ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.005s
+MUTANT remove only loop targets from intervening-reassignment predicate
+
+OK
+test_literal_loop_cell (__main__.LoopTargetDiscriminator.test_literal_loop_cell) ... ok
+B2-C16-reassigned-loop (SourceViolation(module=<SourceModule.QUALIFICATION_VALUES: 'qualification_values.py'>, line=5, column=19, rule=<SourceRule.SG16: 'SG16'>),)
+MUTANT_RED False
+
+----------------------------------------------------------------------
+Ran 1 test in 0.004s
+
+OK
+RESTORED
+test_literal_loop_cell (__main__.LoopTargetDiscriminator.test_literal_loop_cell) ... B2-C16-reassigned-loop (SourceViolation(module=<SourceModule.QUALIFICATION_VALUES: 'qualification_values.py'>, line=5, column=19, rule=<SourceRule.SG16: 'SG16'>),)
+ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.005s
+
+OK
+```
+
+This is one combined B2 initial review, not a new closure or an extra correction. Root owns the
+sole verdict in source-admission-code-review revision03 section6. Preserve the existing complete
+checks; fix only frozen call/binding/fixture defects within the four admitted paths.
