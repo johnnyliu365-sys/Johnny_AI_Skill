@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01B1` / `IMPLEMENTATION_TICKET` / `03` |
-| State / closure | `OWNER_APPROVED / B1_DISPATCH_ADMITTED / NOT_INTEGRATED`; `CLOSURE-CVQ-01B1/01`; section7 is current |
+| ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01B1` / `IMPLEMENTATION_TICKET` / `04` |
+| State / closure | `CHANGES_REQUESTED / CORRECTION_ADMITTED / NOT_INTEGRATED`; `CLOSURE-CVQ-01B1/01`; section8 is current |
 | Preparation authority | Owner's 2026-09-21 approval of [B convergence01](../../../doc/reviews/controlled-verification/cvq-01b-convergence-proposal.md) at797c15db, LF0308388788c4a6a6c79ce4dd256b72bb5a231a498357a0038f305680e46f0f94; drafting only |
 | Observable result / change class | Complete, exact import origins and finite typed resolution; `PRODUCTION_BEHAVIOR / DEFECT_CORRECTION`, not test-exempt |
 | Baseline | `7171f41bdec15104fd653ecee6c8e06691055d16`, unapproved B correction; preserve immutable history, never call it accepted |
@@ -219,3 +219,17 @@ runner/host readback NOT_REQUIRED. Task ownership, source baseline and new ticke
 Only B1 is active. Await its finite return with wait_agent; root then runs the declared review and
 adversarial evidence. ACTION_COMPLETED / EXACT_APPROVAL_AND_B1_BINDING_RECORDED ->
 AUTO_CONTINUE / IMPLEMENT_CVQ01B1.
+
+## 8. Initial review and same-owner correction — 2026-09-21
+
+Root reviewed candidate1a1b6eb3af4c5a7e31de0d102eaf20b461c49f98; exact7171f41 ancestry,
+same admitted owner/worktree/branch clean and exactly five writable paths changed. Strict21 and
+focused44 green; independent probes/mutations expose B1-F01–F04. The complete batch is
+[review01](../../../doc/reviews/controlled-verification/cvq-01b1-namespace-import-code-review.md)
+and [evidence01](../../../doc/reviews/controlled-verification/cvq-01b1-initial-evidence.md),
+resolved together by this document's registry commit. Closure01 and original authority unchanged.
+Retain cve_wire_implementer, Luna/xhigh, ctx-cvq-01b1-closure01, codex/cvq-01 and its admitted
+worktree. Additive correction baseline is1a1b6eb, never reset/amend or a third original-B repair.
+Use the existing ticket scope/budget/commands; no B2/B3 work, new dependency or other effects.
+Root awaits completion and performs the sole correction review; second failure returns convergence.
+ACTION_COMPLETED / CVQ01B1_CHANGES_REQUESTED -> AUTO_CONTINUE / SAME_OWNER_ADDITIVE_CORRECTION.

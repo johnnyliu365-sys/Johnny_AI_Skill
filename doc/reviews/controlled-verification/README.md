@@ -2,10 +2,12 @@
 
 This index records direct review leaves; evidence and conclusions remain in the selected leaf.
 
-Index identity: `INDEX-CONTROLLED-VERIFICATION-REVIEWS` / `REVIEW_INDEX` / revision `37`.
+Index identity: `INDEX-CONTROLLED-VERIFICATION-REVIEWS` / `REVIEW_INDEX` / revision `38`.
 
 | Review ID / leaf | Kind | Revision | SHA-256 | Lifecycle | Result |
 | --- | --- | --- | --- | --- | --- |
+| `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B1` / [B1 namespace/import review](cvq-01b1-namespace-import-code-review.md) | `CODE_REVIEW` | `01` | `b7e0b5cb24839e691e9497542959b7bb485b45c517370652621744b57f88accc` | `INITIAL_REVIEW_COMPLETE` | `CHANGES_REQUESTED / CORRECTION_ADMITTED / NOT_INTEGRATED` |
+| `EVIDENCE-CVQ-01B1-INITIAL` / [B1 initial independent evidence](cvq-01b1-initial-evidence.md) | `REVIEW_EVIDENCE` | `01` | `af6db4e889b7099d175552c9f73568419d4e041f5125d313bc4447edac7b1cdd` | `REVIEWED` | `THREE_IMPLEMENTATION_FINDINGS / CORPUS_ZERO_RED` |
 | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B-CONVERGENCE` / [B responsibility decomposition](cvq-01b-convergence-proposal.md) | `CODE_REVIEW` | `04` | `962f99e7ce41a5936fb623005cc635824d03beb07709137b29beeb51bb841e1f` | `EXACT_REPLACEMENT_SET_OWNER_APPROVED` | `B1_DISPATCH_ADMITTED / NOT_INTEGRATED` |
 | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B-REPLACEMENT-PREFLIGHT` / [B replacement ticket preflight](cvq-01b-replacement-ticket-preflight.md) | `CODE_REVIEW` | `02` | `6306e8ca8bf1e81584abca2cfbf7082c06fb408aa53d55d67724369833a70ef5` | `PROPOSAL_PREFLIGHT_COMPLETE` | `OWNER_EXACT_APPROVAL_PENDING / NOT_DISPATCHABLE` |
 | `EVIDENCE-CVQ-01B-CORRECTION` / [B correction evidence](cvq-01b-correction-evidence.md) | `REVIEW_EVIDENCE` | `01` | `872a8285c6ee60ba593e85e1a0396b1b5e3121df9de6774850d84ab0d2564ce4` | `REVIEWED` | `ORIGINAL15_REJECT / REMAINING_BYPASSES / REAL_PACKAGE_ZERO_RED` |
