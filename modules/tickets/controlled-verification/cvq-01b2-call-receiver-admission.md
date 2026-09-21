@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01B2` / `IMPLEMENTATION_TICKET` / `04` |
-| State / closure | `OWNER_APPROVED / DEPENDENCY_BOUND / BUDGET_EXTENSION_PENDING / NON_DISPATCHABLE`; `CLOSURE-CVQ-01B2/01`; section8 is current |
+| ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01B2` / `IMPLEMENTATION_TICKET` / `05` |
+| State / closure | `OWNER_APPROVED / IMPLEMENTATION_ADMITTED / NOT_INTEGRATED`; `CLOSURE-CVQ-01B2/01`; section9 is current |
 | Preparation authority | Owner's 2026-09-21 approval of [B convergence01](../../../doc/reviews/controlled-verification/cvq-01b-convergence-proposal.md) at797c15db, LF0308388788c4a6a6c79ce4dd256b72bb5a231a498357a0038f305680e46f0f94; drafting only |
 | Observable result / change class | Schema calls admit only exact permitted static binding and guarded receiver; `PRODUCTION_BEHAVIOR / DEFECT_CORRECTION` |
 | Dependency / baseline | [B1](cvq-01b1-namespace-import-admission.md) document02/closure01 in this proposal commit; actual APPROVED candidate SHA and review/index must be bound before dispatch; never substitute7171f41 as accepted B1 |
@@ -236,3 +236,48 @@ root ownership remain unchanged; no extra file/framework/host effect is implied.
 has not been approved or consumed. After approval, perform D8 envelope/preflight and rebind the
 single-ticket ContextView before dispatch. Source approval already stands; do not re-ask for it.
 ACTION_COMPLETED / B2_DEPENDENCY_BOUND -> WAIT_FOR_HUMAN / CUMULATIVE_BUDGET_EXTENSION_REQUIRED.
+
+## 9. Corrected continuation and retained-owner admission — 2026-09-21
+
+Section8's additional-budget approval gate and2400sec proposal are SUPERSEDED, not granted:
+root incorrectly treated B1's exception allowance as cancellation of B2's existing section5/7
+approved resource grant. Owner requests immediate continuation under that existing authority.
+The original1200sec grant is verified in the approved ticket at6ff3e127. Apply it once across
+B2 implementation, root/helper review and any single correction, not anew on each pass.
+Keep the same CVQ-01/B lineage: prior1195 charged/reserved remains recorded, prior unknown model/
+command history remains UNKNOWN; B2 use appends to that ledger. No spending is erased or invented.
+Reserve650sec for the owner initially; root/helper/closeout and correction share the balance.
+Max60sec/command, one foreground process, no automatic retries/load/background polling.
+
+Fresh source baselinea8340e2711540fd4ed05e4ef91c6877977f9d5db is clean on codex/cvq-01 at
+.worktrees/cvq-01. .git/common-dir and repository containment match; no reparse attributes.
+Exact SPEC07/wire03/sealed Context02/profile01/current B1 review05 pins match. Python3.11.9,
+mypy2.3.0/Pydantic2.13.4 match. Ordinary SourceUnit/SourceViolation constructors cover all9 modules
+and23 rules; existing actual-package architecture and source-set/parse methods2/2 pass (10.338sec).
+B1's unchanged-seam committed reverse proofs remain bound through its accepted SHA; no new DTOs.
+REQ-051 D8 at1ea589b3ff416e637b2456464d49b73feae53c21, LF
+a8d04409a8397b73bb351ac2fe3bfd85de3c49589c0e1397cc66220e7481b709, governs the following envelope.
+
+Modify exactly these existing paths; create/delete/rename/dependency grants are empty:
+- tests/verification_qualification_source_symbols.py
+- tests/verification_qualification_source_gate.py
+- tests/verification_qualification_source_corpus.py
+- tests/test_verification_qualification_boundaries.py
+
+Reuse inspected scope_for/build_scope_bindings/resolve_name, guarded_mapping_get/helper_cycles,
+_check_calls/_check_functions, _row_with_replacements/MINIMUM_PACKET and QualificationBoundaryTests.
+Symbols observes scope/binding facts; gate makes finite verdicts; corpus holds independent literal
+fixtures; boundary methods assert behavior. No duplicate resolver/runner or browser/mock/PNG/pixel
+utilities (no visual/network surface). Product0, tests about0–300 net lines, owner documents0,
+screenshots0; estimates are review signals, not compression quotas. Preserve B1/A exactly.
+All temporary outputs, including mypy --cache-dir, are outside worktrees. Root retains necessary
+proof once in existing cvq-01b-correction-evidence.md and verdict in cvq-01b-source-admission-code-review.md,
+with existing indexes; no new report/script file. Root document estimate150 lines plus mandatory raw
+evidence; no automatic complete-report regeneration. Actual Git diff and untracked/ignored artifact
+inventory are checked against the declared boundary; observations do not imply write interception.
+
+Close ctx-cvq-01b1-closure02-exception01 and bind ctx-cvq-01b2-closure01-doc05 to retained
+cve_wire_implementer Luna/xhigh and root sole reviewer. Read only this exact ticket's current
+closure/direct sources; no inherited B1 raw context as authority. Existing B2 predicates and
+proof allocation are unchanged. Followup -> wait_agent -> root review; bridge NOT_REQUIRED.
+No partial integration/push/release/install. ACTION_COMPLETED / B2_ADMITTED -> AUTO_CONTINUE / IMPLEMENT_CVQ01B2.
