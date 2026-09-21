@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B-CONVERGENCE` / `CODE_REVIEW` / `06` |
-| State | `B1_REPLAN_APPROVED / EXACT_RESIDUAL_CLOSURE_PENDING / NON_DISPATCHABLE / NOT_INTEGRATED`; section7 is current |
+| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B-CONVERGENCE` / `CODE_REVIEW` / `07` |
+| State | `B1_RESIDUAL_CLOSURE_APPROVED / IMPLEMENTATION_ADMITTED / NOT_INTEGRATED`; section8 is current |
 | Evidence | [B correction review02](cvq-01b-source-admission-code-review.md); failed candidate7171f41bdec15104fd653ecee6c8e06691055d16 remains immutable |
 | Preserved authority | SPEC07 section11.3, wire03, accepted A1/A2/A3 at485d882f unchanged; no new provider/native/runtime behavior |
 | Decision owner | Project owner; no self-Grill or inferred exact approval |
@@ -150,3 +150,13 @@ D8 diff and returned NO_FINDINGS; root accepts the framing/contradiction check o
 tests and did not review or approve this new B1 closure. No additional seat or framework was used.
 No automatic third correction, new seat, integration/push/release/install/target effect.
 ACTION_COMPLETED / B1_REPLAN_TRANSCRIBED -> WAIT_FOR_HUMAN / OWNER_EXACT_APPROVAL_PENDING.
+
+## 8. Exact residual approval — 2026-09-21
+
+Owner approved B1 document06/closure02 at26fb2ad537341dd86410839ec7c829ca13a77554, LF
+8a3d84978ae3faffaf00ed290d8b13e499b6f6efd40d8c468a3058ec20a7ae7e. B1 document07 section11
+records unchanged predicates plus fresh source/seam/workspace/profile admission and the retained
+owner allocation within the shared1200-second remaining allowance. Earlier pending status is
+historical; exhausted closure01 is not reopened. Same owner -> wait_agent -> root review, with
+one finite evidence-only adversarial helper. No integration/push/release/install authority.
+ACTION_COMPLETED / EXACT_B1_RESIDUAL_APPROVAL_RECORDED -> AUTO_CONTINUE / IMPLEMENT_CVQ01B1.

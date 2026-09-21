@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01B1` / `IMPLEMENTATION_TICKET` / `06` |
-| State / closure | `OWNER_EXACT_APPROVAL_PENDING / NON_DISPATCHABLE / NOT_INTEGRATED`; proposed `CLOSURE-CVQ-01B1/02`; section10 is current; closure01 remains exhausted |
+| ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01B1` / `IMPLEMENTATION_TICKET` / `07` |
+| State / closure | `OWNER_APPROVED / IMPLEMENTATION_ADMITTED / NOT_INTEGRATED`; `CLOSURE-CVQ-01B1/02`; section11 is current; closure01 remains exhausted |
 | Preparation authority | Owner's 2026-09-21 approval of [B convergence01](../../../doc/reviews/controlled-verification/cvq-01b-convergence-proposal.md) at797c15db, LF0308388788c4a6a6c79ce4dd256b72bb5a231a498357a0038f305680e46f0f94; drafting only |
 | Observable result / change class | Complete, exact import origins and finite typed resolution; `PRODUCTION_BEHAVIOR / DEFECT_CORRECTION`, not test-exempt |
 | Baseline | `7171f41bdec15104fd653ecee6c8e06691055d16`, unapproved B correction; preserve immutable history, never call it accepted |
@@ -321,3 +321,29 @@ One initial plus one correction maximum, same envelope/remaining allowance; fail
 convergence, not automatic expansion. Combined B1 approval is required before B2's already-approved
 dependency binding. No partial integration/push/release/install or host effect.
 ACTION_COMPLETED / B1_RESIDUAL_CLOSURE_PROPOSED -> WAIT_FOR_HUMAN / OWNER_EXACT_APPROVAL_PENDING.
+
+## 11. Exact closure02 approval and retained-owner admission — 2026-09-21
+
+Owner **「核准」** accepts document06/closure02 at
+`26fb2ad537341dd86410839ec7c829ca13a77554`, LF
+`8a3d84978ae3faffaf00ed290d8b13e499b6f6efd40d8c468a3058ec20a7ae7e`.
+This document07 adds only approval/allocation metadata; section10's five cells, five-path scope,
+no-creation boundary, preservation and total1200-command-second allowance are unchanged.
+
+Fresh readback: retained cve_wire_implementer is completed/available; admitted owner worktree
+.worktrees/cvq-01, branch codex/cvq-01, clean HEAD8dc22904921cb6b0c56a88d7e224ca66828f8c14.
+Its .git pointer/common repository agree; repository/.worktrees/owner roots have no reparse
+attribute; accepted A485d882f is an ancestor. Exact ticket/SPEC/wire/Context/profile LF pins match.
+Public ordinary SourceUnit/SourceViolation constructors cover all9 modules/all23 rules with frozen
+records; actual-package architecture and source-set/parse tests2/2 green. Python3.11.9,
+mypy2.3.0/Pydantic2.13.4 match. This is unchanged-seam preflight, not approval of remaining defects.
+
+Close ctx-cvq-01b1-closure01 and bind ctx-cvq-01b1-closure02 to the same Luna/xhigh implementation
+owner and root reviewer, profile defaults01 at797c15db. Same-lifetime bridge/receipt/descriptor/
+host readback NOT_REQUIRED; reuse followup then wait_agent. No replacement owner or new worktree.
+Reserve at most600 command-wall seconds of the same1200 pool for this owner attempt; root keeps
+the balance for admission/review/any approved correction. Charge startup conservatively60sec,
+retain observed subsequent durations, and return actual or bounded-upper usage. Unobservable
+historical/model usage remains UNKNOWN. A correction receives only remaining capacity, no reset.
+No model/read-only/write-interception enforcement is inferred from this allocation.
+ACTION_COMPLETED / EXACT_CLOSURE02_APPROVAL_RECORDED -> AUTO_CONTINUE / IMPLEMENT_CVQ01B1.
