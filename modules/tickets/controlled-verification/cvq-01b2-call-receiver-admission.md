@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01B2` / `IMPLEMENTATION_TICKET` / `03` |
-| State / closure | `OWNER_APPROVED / DEPENDENCY_PENDING / NON_DISPATCHABLE`; `CLOSURE-CVQ-01B2/01`; section7 is current |
+| ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01B2` / `IMPLEMENTATION_TICKET` / `04` |
+| State / closure | `OWNER_APPROVED / DEPENDENCY_BOUND / BUDGET_EXTENSION_PENDING / NON_DISPATCHABLE`; `CLOSURE-CVQ-01B2/01`; section8 is current |
 | Preparation authority | Owner's 2026-09-21 approval of [B convergence01](../../../doc/reviews/controlled-verification/cvq-01b-convergence-proposal.md) at797c15db, LF0308388788c4a6a6c79ce4dd256b72bb5a231a498357a0038f305680e46f0f94; drafting only |
 | Observable result / change class | Schema calls admit only exact permitted static binding and guarded receiver; `PRODUCTION_BEHAVIOR / DEFECT_CORRECTION` |
 | Dependency / baseline | [B1](cvq-01b1-namespace-import-admission.md) document02/closure01 in this proposal commit; actual APPROVED candidate SHA and review/index must be bound before dispatch; never substitute7171f41 as accepted B1 |
@@ -209,3 +209,30 @@ closure passes, verify clean workspace/containment/ancestry, close the prior vie
 one. That ordinary metadata binding requires no second owner approval. Any changed predicate,
 scope or failed reference still halts; no fabricated accepted baseline. ACTION_COMPLETED /
 EXACT_SET_APPROVAL_RECORDED -> DEPENDENCY_PENDING, then the already-declared AUTO_CONTINUE route.
+
+## 8. Accepted dependency bound; cumulative resource decision — 2026-09-21
+
+B1 is APPROVED at sourcea8340e2711540fd4ed05e4ef91c6877977f9d5db. Exact root review05,
+LF1930708387c4ab3fdfef4a55a2601d571b4ef63526eb2b9946aad75cd0332f8c, and review index45,
+LF85e6aaee2f14268bc387bb29113cbb6b1d949046881c8fcdb09cfbf6086b680f, resolve at
+628b8d48bae81381ee3aa14c606ad017c5c5e66b. This is the real B2 baseline, not7171f41.
+The retained owner tree is clean on codex/cvq-01; no implementation of B2 is admitted yet.
+
+REQ-051 revision12 D8 requires split descendants to retain this round's consumption. Original
+section5's1200-seconds/pass cannot silently reset the depleted common allowance. B1's exception
+used less than its80-second remainder, including a conservative full15sec owner charge; total
+historical model usage remains UNKNOWN. The residual is insufficient for B2 implementation/review.
+Closeout ledger charges75 of the last80sec (including startup/readback, owner15, helper3.2,
+root mutation7.901, focused/strict21.435 and conservative document closeout reserve). Together
+with prior1120 charged/reserved seconds, total1195 leaves5. This is conservative resource
+accounting, not a claim that every command was observed or a runtime hard cap was enforced.
+Keep the unused balance, all prior charges and finite60sec command limit; do not start a knowingly
+underfunded lane or describe this as missing runner/model capability.
+
+Proposed owner resource decision: add2400 command-wall seconds to the same lineage, shared by
+B2/B3 implementation, one correction each, root review, helpers and document closeout. It is not
+2400 per ticket/pass or a token/wall-clock promise. Existing source predicates/closure and Luna/
+root ownership remain unchanged; no extra file/framework/host effect is implied. This proposal
+has not been approved or consumed. After approval, perform D8 envelope/preflight and rebind the
+single-ticket ContextView before dispatch. Source approval already stands; do not re-ask for it.
+ACTION_COMPLETED / B2_DEPENDENCY_BOUND -> WAIT_FOR_HUMAN / CUMULATIVE_BUDGET_EXTENSION_REQUIRED.
