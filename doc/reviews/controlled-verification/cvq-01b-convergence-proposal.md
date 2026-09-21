@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B-CONVERGENCE` / `CODE_REVIEW` / `02` |
+| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B-CONVERGENCE` / `CODE_REVIEW` / `03` |
 | State | `DECOMPOSITION_OWNER_APPROVED / REPLACEMENT_TICKETS_PROPOSED / NON_DISPATCHABLE` |
 | Evidence | [B correction review02](cvq-01b-source-admission-code-review.md); failed candidate7171f41bdec15104fd653ecee6c8e06691055d16 remains immutable |
 | Preserved authority | SPEC07 section11.3, wire03, accepted A1/A2/A3 at485d882f unchanged; no new provider/native/runtime behavior |
@@ -64,9 +64,9 @@ Owner **「核准」** approves this proposal revision01 at
 This signature authorizes section3's ticket drafting, not source dispatch or a third correction.
 Sections1–3 above remain the historical decision object. The three proposals are:
 
-- [B1 namespace/import](../../../modules/tickets/controlled-verification/cvq-01b1-namespace-import-admission.md), document01/closure01.
-- [B2 call/receiver](../../../modules/tickets/controlled-verification/cvq-01b2-call-receiver-admission.md), document01/closure01, dependent on accepted B1.
-- [B3 grammar/composition](../../../modules/tickets/controlled-verification/cvq-01b3-source-grammar-composition.md), document01/closure01, dependent on accepted B1+B2.
+- [B1 namespace/import](../../../modules/tickets/controlled-verification/cvq-01b1-namespace-import-admission.md), document02/closure01.
+- [B2 call/receiver](../../../modules/tickets/controlled-verification/cvq-01b2-call-receiver-admission.md), document02/closure01, dependent on accepted B1.
+- [B3 grammar/composition](../../../modules/tickets/controlled-verification/cvq-01b3-source-grammar-composition.md), document02/closure01, dependent on accepted B1+B2.
 
 Their [preflight](cvq-01b-replacement-ticket-preflight.md) records root's concrete baseline checks
 and bounded proposal review. Each replacement includes its own behavior/tests/verification;

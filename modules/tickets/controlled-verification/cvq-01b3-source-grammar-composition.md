@@ -2,11 +2,11 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01B3` / `IMPLEMENTATION_TICKET` / `01` |
+| ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01B3` / `IMPLEMENTATION_TICKET` / `02` |
 | State / closure | `PROPOSED / OWNER_EXACT_APPROVAL_PENDING / DEPENDENCY_PENDING / NON_DISPATCHABLE`; `CLOSURE-CVQ-01B3/01` |
 | Preparation authority | Owner's 2026-09-21 approval of [B convergence01](../../../doc/reviews/controlled-verification/cvq-01b-convergence-proposal.md) at797c15db, LF0308388788c4a6a6c79ce4dd256b72bb5a231a498357a0038f305680e46f0f94; drafting only |
 | Observable result / change class | Closed syntax by context plus one fully verified original B closure; `PRODUCTION_BEHAVIOR / DEFECT_CORRECTION` |
-| Dependency / baseline | [B2](cvq-01b2-call-receiver-admission.md) document01/closure01 in this proposal commit, including accepted B1; actual APPROVED combined SHA and review/index must be bound before dispatch |
+| Dependency / baseline | [B2](cvq-01b2-call-receiver-admission.md) document02/closure01 in this proposal commit, including accepted B1; actual APPROVED combined SHA and review/index must be bound before dispatch |
 | Owner / reviewer / workspace | Retained `cve_wire_implementer` / `root`; sequential same `.worktrees/cvq-01`, `codex/cvq-01`; new view `ctx-cvq-01b3-closure01` |
 | Profile / language | POC / HIGH_ASSURANCE; one implementer, one bounded evidence-only helper; Python3.11 / strict mypy |
 | XSS / effects | XSS_NOT_APPLICABLE: AST-only local test support; no browser/UI/SQL/secret/provider/host/native effect; no source execution, integration, push, release or installation |
@@ -83,12 +83,17 @@ its owning expression/statement, never treated as an independent permitted effec
 | Facade | Docstring, future import, explicit B1-validated re-export, assignment of literal tuple of strings to __all__; nothing computed, even frozenset(tuple) |
 | Checked class | Correct module-owned catalog identity and exact base tuple; schema field annotations/defaults, enum literal members, ordinary typed validator/method bodies, docstring/pass, common QualificationModel's literal ConfigDict only. No arbitrary extra class/base, metaclass, class decorator, magic method or descriptor |
 | Protocol method | Only one of the three catalog resolve signatures, typed non-receiver parameters/return, docstring and ellipsis/pass declaration body; declaration is not permission to invoke resolve in schema phase |
-| Helper / validator / discriminator | Typed parameters/return, docstring, local Assign/AnnAssign to Name or destructuring local names, If, finite-collection For, Return, Raise of the listed exceptions; body expressions from the next row only. Method receiver may omit annotation only in its actual admitted class/method position; module helper named self is not exempt |
-| Expressions | Scalar Constant, Name, Attribute/Subscript reads, tuple/set, scalar/comparison/boolean expressions, conditional expression, finite comprehensions, and calls independently admitted by B2. Type annotations/aliases may use their checked subscripts/union expressions. Containers/keywords needed by exact schema declarations are limited to that context, not ambient state |
+| Helper / validator / discriminator | Typed parameters/return, docstring, local Assign/AnnAssign to Name or destructuring local names, If, finite-collection For (Continue only within that loop), Return, Raise of the listed exceptions; body expressions from the next row only. Method receiver may omit annotation only in its actual admitted class/method position; module helper named self is not exempt |
+| Expressions | Constant, Name, Attribute/Subscript in Load context, Tuple/Set, UnaryOp/BinOp/BoolOp/Compare, IfExp, finite synchronous ListComp/SetComp/DictComp/GeneratorExp, and Call independently admitted by B2. Starred local collection expansion is only part of an admitted collection/assignment, not a separate effect. Type annotations/aliases may use their checked subscripts/union expressions. List/Dict containers and keywords needed by exact schema declarations are limited to that context, not ambient state |
 | Rejection | Every other AST form or unresolved construct yields UNSUPPORTED_SYNTAX, plus applicable named SG rule. In particular Delete, module For, Lambda, Match, NamedExpr, Try/TryStar and unlisted context forms cannot fall through |
 
 No arbitrary expression/type checker is promised. Existing approved source forms are checked
 against these SPEC predicates, not made legal merely because they appear in a green candidate.
+The scalar operators are closed: UnaryOp UAdd/USub/Not/Invert; BinOp
+Add/Sub/Mult/Div/FloorDiv/Mod/Pow/LShift/RShift/BitOr/BitXor/BitAnd; BoolOp And/Or;
+Compare Eq/NotEq/Lt/LtE/Gt/GtE/Is/IsNot/In/NotIn. MatMult and unlisted node/operator
+kinds do not qualify by a generic base-class match. Comprehensions require is_async=0 and
+local-name targets; recursively check iterable/filter/body with the same context predicates.
 B2 checks every nested call in an allowed expression. Store/Del targets are not attribute reads;
 writes to attribute/subscript reject SG20, unsupported Delete also rejects UNSUPPORTED_SYNTAX.
 Only local assignments are allowed in helpers; global/nonlocal state rejects SG15.
@@ -109,7 +114,7 @@ do not execute it. Overlapping rejection does not substitute for the designated 
 | B3-G19 / SG19 | Untyped parameter (including module helper named self); missing return; while; async def; await; yield; yield from; with; async with. B2 owns direct/mutual recursion and remains unchanged |
 | B3-G20 / SG20 | Unapproved decorator; extra base; metaclass; magic method; descriptor/property; attribute write; subscript write. Exact catalog identity/module/base binding, not recognized spelling only |
 | B3-CONTEXT / UNSUPPORTED_SYNTAX | Module For; helper Delete of attribute; Lambda; Match; NamedExpr; Try; TryStar. Each parseable AST is rejected at its own unsupported node; no blanket acceptance for unlisted kinds |
-| B3-POS | Valid SGP06 approved validator **and** discriminator: declare/import QualificationModel, two distinct real catalog branches and a real discriminator/Tag binding; never repeated identical union branch or unknown base. SGP01–05 remain accepted |
+| B3-POS | Valid SGP06 approved validator **and** discriminator: declare/import QualificationModel, two distinct real catalog branches and a real catalog alias with discriminator/Tag binding; never repeated identical union branch, invented alias or unknown base. SGP01–05 remain accepted; the real-package control preserves finite-loop Continue, collection expansion and synchronous comprehensions |
 | B3-COMPOSE | Every SG01–20 alternative from B1/B2/this ticket remains collected; all six exact SGP IDs; missing/duplicate/extra/syntax/unsupported/deterministic and actual nine-source checks; unchanged A full focused suite |
 | B3-NONVACUOUS | Removing all negative rows or all positive rows causes its designated aggregate test to fail; restore green. IDs, counts and expected rule/locations are independently authored, not derived from the gate or enumerated actual rows |
 

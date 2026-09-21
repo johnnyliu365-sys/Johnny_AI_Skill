@@ -2,10 +2,10 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B-REPLACEMENT-PREFLIGHT` / `CODE_REVIEW` / `01` |
-| State / scope | `PROPOSAL_SELF_REVIEW_COMPLETE / BOUNDED_HELPER_PENDING / NOT_DISPATCHABLE`; docs-only, not source approval |
+| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B-REPLACEMENT-PREFLIGHT` / `CODE_REVIEW` / `02` |
+| State / scope | `PROPOSAL_PREFLIGHT_COMPLETE / OWNER_EXACT_APPROVAL_PENDING / NOT_DISPATCHABLE`; docs-only, not source approval |
 | Authority | Owner approved convergence01 at797c15db0bcb39d1e015bb676f1722a9e138a6e7, LF0308388788c4a6a6c79ce4dd256b72bb5a231a498357a0038f305680e46f0f94 |
-| Proposal objects | B1/B2/B3 document01/closure01 in this commit; exact LF digests are their direct ticket registry edges |
+| Proposal objects | B1/B2/B3 document02/closure01 in this commit; exact LF digests are their direct ticket registry edges |
 | Root / effect scope | Root sole conclusion owner; local read-only diagnosis plus scoped docs writes, NO_EXTERNAL_EFFECT |
 
 ## 1. Responsibility and authority preflight
@@ -136,11 +136,39 @@ test_source_call_admission and test_source_statement_admission in the existing d
 Their baseline-facing packet assertions use this existing seam; tests of newly introduced enum
 types are added only with those types, not misreported as baseline-red collection evidence.
 
-## 3. Proposal audit disposition
+## 3. One bounded helper return and root adjudication
 
-A bounded read-only audit of the committed replacement proposals is pending; it will compare
-their frozen semantics, scope and proof obligations with the approved decomposition/SPEC and
-the observed existing seams. This is a control-plane proposal audit, not an implementation
-review on unapproved ticket closures. No source run, mutation or repeated progress polling is
-requested from the helper. Root will independently check its findings before requesting one
-exact owner approval of the set. Until then, no source admission or helper verdict is claimed.
+Retained profile_delivery_audit (Terra/xhigh, evidence only) inspected proposal commit
+4b1f15e98cd3ee0b71852b971cf61d1ca427a8e1 under SPEC_GAP/CONSISTENCY/REGRESSION,
+READ_ONLY_INTENT_ONLY / NO_EXTERNAL_EFFECT. Root used wait_agent, not progress polling;
+helper performed no source tests, mutations, writes or effects and returned FINDINGS once.
+This is proposal preflight under the approved decomposition, not source review or approval of
+unapproved implementation. Root independently read the cited obligations and adjudicated:
+
+| Observation | Root result / evidence / bounded disposition |
+| --- | --- |
+| Helper H1: schema exclusions contradict SPEC behavior-only imports/calls | NOT_A_DEFECT. SPEC07 section12 explicitly authorizes two-phase bounded schema resumption with parent schema preflight before behavior; approved original B05 sections2–3 excludes behavior calls and their positive controls. SPEC11.3 labels those rows behavior-only. The current gate has no behavior phase selector. B2 now states this phase distinction explicitly; no new SPEC/architecture decision or scope reversal |
+| Helper H2: typing.cast attribute case needs module origin while import is forbidden | CLARIFICATION_ACCEPTED, not permission to broaden external imports. Existing finite diagnostic contract accumulates named findings; SG09 does not stop SG12. B1 now pins unsupported Import namespace identity, B2 pins exact synthetic alias packet and call-site SG12 at4:11. Root ast.parse independently confirmed that location; no source execution. SG09 coexisting with SG12 does not mask removal of the specifically asserted SG12 |
+| Root R1: final origin versus direct consumer edge ambiguity | B1 now explicitly checks every edge of the allowed export path, preserving __init__ -> qualification_contracts -> qualification_values in SGP01; final origin need not be a direct edge of __init__. No forbidden edge becomes legal |
+| Root R2: B3 positive statement list omitted finite-loop Continue | Read-only AST inventory of7171f41 showed qualification_ports.py62's existing Continue and synchronous list/set/dict/generator comprehensions plus Starred tuple expansion. B3 now names these contexts and closed node/operator forms. This compiles SPEC's finite-iteration/comprehension surface without changing production or its accepted predicates |
+| Root R3: model/port exclusion represented by one example | B2 now separately enumerates four exact model behavior methods and all three typed ports. Same frozen schema exclusion, finite exhaustive alternatives, not an expanded behavior implementation |
+
+Root confirms each correction is within approved SPEC/decomposition. B1/B2/B3 document02 retain
+proposed closure01: no version was approved/frozen for implementation, and no correction budget
+is reset on original B. Mandatory implementation adversarial evidence is still future work;
+this proposal audit is not substituted for it. No second verdict owner or execution reviewer.
+
+## 4. Final docs-only disposition
+
+Nine document/index paths only; D8 leaf-final -> LF digest -> child/root index -> rehash applies
+before this commit. Relative artifact links resolve; whitespace check clean. Baseline raw
+evidence above is unchanged. Real source, A tests, SPEC, sealed Context and installed/public
+payload are unchanged. No source mutation, main integration, push, release or live installation.
+
+The proposals close ownership, predicate, named matrix, exact stable upstream pins, future
+dependency-binding procedure, command budget and typed return. Their readiness is conditional
+on owner exact approval plus the specified actual dependency/clean-worktree checks, never an
+unconditional READY_LOW_MODEL or source approval now. One set approval admits B1 then B2/B3
+sequential bindings; ordinary review/wait/proof work does not need repeated approval.
+ACTION_COMPLETED / REPLACEMENT_TICKET_PREFLIGHT_COMPLETE -> WAIT_FOR_HUMAN /
+OWNER_EXACT_APPROVAL_PENDING. Original B remains exhausted; partial A/B integration is forbidden.

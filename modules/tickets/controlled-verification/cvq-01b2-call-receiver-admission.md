@@ -2,11 +2,11 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01B2` / `IMPLEMENTATION_TICKET` / `01` |
+| ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01B2` / `IMPLEMENTATION_TICKET` / `02` |
 | State / closure | `PROPOSED / OWNER_EXACT_APPROVAL_PENDING / DEPENDENCY_PENDING / NON_DISPATCHABLE`; `CLOSURE-CVQ-01B2/01` |
 | Preparation authority | Owner's 2026-09-21 approval of [B convergence01](../../../doc/reviews/controlled-verification/cvq-01b-convergence-proposal.md) at797c15db, LF0308388788c4a6a6c79ce4dd256b72bb5a231a498357a0038f305680e46f0f94; drafting only |
 | Observable result / change class | Schema calls admit only exact permitted static binding and guarded receiver; `PRODUCTION_BEHAVIOR / DEFECT_CORRECTION` |
-| Dependency / baseline | [B1](cvq-01b1-namespace-import-admission.md) document01/closure01 in this proposal commit; actual APPROVED candidate SHA and review/index must be bound before dispatch; never substitute7171f41 as accepted B1 |
+| Dependency / baseline | [B1](cvq-01b1-namespace-import-admission.md) document02/closure01 in this proposal commit; actual APPROVED candidate SHA and review/index must be bound before dispatch; never substitute7171f41 as accepted B1 |
 | Owner / reviewer / workspace | Retained `cve_wire_implementer` / `root`; sequential same `.worktrees/cvq-01`, `codex/cvq-01`; new view `ctx-cvq-01b2-closure01` |
 | Profile / language | POC / HIGH_ASSURANCE; one implementer, one bounded evidence-only helper; Python3.11 / strict mypy |
 | XSS / effects | XSS_NOT_APPLICABLE: AST-only local test support; no browser/UI/SQL/secret/provider/host/native effect; no source execution, integration, push, release or installation |
@@ -56,6 +56,11 @@ has **no** model_validate/model_validate_json/model_dump/model_dump_json or port
 even with a real catalog class or one of the three correctly typed port parameters.
 Behavior-phase imports/calls and receiver-positive controls remain forbidden in this closure.
 
+This is the already-approved **schema phase**, not a denial of SPEC's later behavior surface:
+SPEC07 section12 requires schema preflight before behavior, and original B05 sections2–3
+explicitly excludes behavior-phase calls/positive controls. The analyzer has no caller-selected
+phase switch. A future behavior ticket must separately admit that surface; this ticket does not.
+
 Callee resolution uses lexical scope and statement order, not global name spelling or ast.walk
 ordinal as execution order. Resolve imported aliases back to B1 origins. Parameter/local
 shadowing and callable assignment/return cannot inherit allowed identity. Helper graph includes
@@ -92,6 +97,23 @@ The negative packet must reach that named predicate; another rejection does not 
 Retain existing direct cases as regressions when adding their missing alias alternatives.
 Complete nine-unit literal packets; minimal catalog definitions/imports are independently authored.
 
+Exact attribute-cast discriminator packet: place the following source in qualification_values
+of a complete minimum packet (other eight units unchanged). Expect SG12 at line4/column11;
+SG09 at the import may coexist. Keep the import namespace origin as specified by B1, without
+making the import allowed. Removing only the SG12 call predicate must lose that designated
+finding and turn this assertion red even while SG09 remains.
+
+```python
+import typing as type_ns
+
+def helper(value: object) -> object:
+    return type_ns.cast(object, value)
+```
+
+The distinct imported-member alternative is `from typing import cast as checked_cast` followed
+by `checked_cast(object, value)` in that same helper/location. It also needs the call-site SG12;
+an import-site rejection alone is not its proof. These are synthetic AST data, never executed.
+
 | Cell / rule | Required alternatives / observable assertion |
 | --- | --- |
 | B2-C09 / SG09 | __import__; importlib.import_module imported under a different local name, call at the alias site rejects SG09 (not just import rejection) |
@@ -101,7 +123,7 @@ Complete nine-unit literal packets; minimal catalog definitions/imports are inde
 | B2-C13 / SG13 | model_construct; model_copy(update=...); aliased checked-model bypass |
 | B2-C16 / SG16 | No guard; reassigned after guard (ordinary, same-line, unpacking separately); else; after branch; unrelated isinstance elsewhere in condition; same-name non-Mapping method; shadowed Mapping or isinstance |
 | B2-C17 / SG17 | Parameter shadows permitted callee; constant local rebind; function-valued assignment alias; callable parameter; callable return. Each is distinct, not renamed copies |
-| B2-C18 / SG18 | Unknown model_validate; unknown resolve; computed call target; exact checked model behavior call; correctly typed known port.resolve. Separate known-model and known-port IDs, not object.model_dump standing in for both |
+| B2-C18 / SG18 | Unknown model_validate; unknown resolve; computed call target; exact checked model model_validate, model_validate_json, model_dump and model_dump_json (four distinct cases); correctly typed ApprovedManifestPort.resolve, PrerequisiteEvidencePort.resolve and EvidenceObservationPort.resolve (three distinct cases). No object.model_dump standing in for known model/port identity |
 | B2-C19 / SG19 | Direct recursion; unused two-helper mutual recursion. B3 owns every other SG19 alternative |
 | B2-POS | SGP04 unchanged guarded Mapping.get; SGP05 typed acyclic helpers; allowed builtin/schema/catalog constructor and alias paths in actual package remain green |
 | B2-PRESERVE | B1 namespace/type/ID predicates, source-set/parser/determinism and unchanged accepted A full focused suite |

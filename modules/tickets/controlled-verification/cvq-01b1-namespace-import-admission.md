@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01B1` / `IMPLEMENTATION_TICKET` / `01` |
+| ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01B1` / `IMPLEMENTATION_TICKET` / `02` |
 | State / closure | `PROPOSED / OWNER_EXACT_APPROVAL_PENDING / NON_DISPATCHABLE`; `CLOSURE-CVQ-01B1/01` |
 | Preparation authority | Owner's 2026-09-21 approval of [B convergence01](../../../doc/reviews/controlled-verification/cvq-01b-convergence-proposal.md) at797c15db, LF0308388788c4a6a6c79ce4dd256b72bb5a231a498357a0038f305680e46f0f94; drafting only |
 | Observable result / change class | Complete, exact import origins and finite typed resolution; `PRODUCTION_BEHAVIOR / DEFECT_CORRECTION`, not test-exempt |
@@ -61,7 +61,11 @@ truncate a dotted suffix or invent a filesystem lookup. Match whole case-sensiti
 symbol identities. Resolve every entry, including later entries after an allowed one, nested
 unused function/class imports and explicit re-export chains. Nested local imports must not
 become module exports. Competing incompatible exports are ambiguous, not first/last-match.
-Check both declared edge and final origin; a facade cannot launder a forbidden constituent.
+Check the declared consumer edge and every edge of the resolved export path to its final origin;
+do not require the final constituent to appear as a direct edge in the consumer's row.
+Thus __init__ -> qualification_contracts -> qualification_values is a permitted explicit
+re-export path, while any forbidden edge anywhere in that path rejects. A facade cannot
+launder a forbidden constituent. Preserve this distinction in SGP01 through __init__ as well.
 Unknown module/symbol and cyclic/unsupported traversal reject; graph traversal is finite.
 
 | Module | Permitted direct internal targets |
@@ -77,6 +81,13 @@ Unknown module/symbol and cyclic/unsupported traversal reject; graph traversal i
 External symbol set is exactly SPEC11.3's schema row (not behavior TypeAdapter/ValidationError).
 Recognizing an external module does not admit all its symbols. Preserve forbidden origins for
 B2 diagnostics even though imports reject. Module and helper graphs are distinct.
+
+Diagnostic resolution is not import admission: for `import typing as type_ns`, retain the
+Import AST, local binding type_ns and exact external module identity typing with UNSUPPORTED
+admission status. This module-form import rejects SG09; it is not a new permitted external
+surface. B2 can still identify type_ns.cast at the call node and emit SG12. Do not erase the
+origin, stop analysis after SG09, or use a string sentinel as a substitute for the typed AST
+binding kind. Add `B1-rejected-namespace-origin` at the symbols seam to pin those facts.
 
 ### Fixed analysis seam
 
@@ -172,7 +183,7 @@ CHANGE_DETECTED, not a broader fallback.
 
 ## 6. Dependency and continuation
 
-Exact owner approval of this document01/closure01 is pending. Then root commits the signature,
+Exact owner approval of this document02/closure01 is pending. Then root commits the signature,
 fresh clean/containment/Git/ancestor readback, binds this ticket/profile/view and dispatches the
 same owner synchronously. Runner/receipt/descriptor/host readback are NOT_REQUIRED; wait_agent,
 receive and review. Drafting approval alone is not this source admission.
