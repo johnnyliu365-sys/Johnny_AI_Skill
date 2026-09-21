@@ -2,14 +2,14 @@
 
 This index records direct review leaves; evidence and conclusions remain in the selected leaf.
 
-Index identity: `INDEX-CONTROLLED-VERIFICATION-REVIEWS` / `REVIEW_INDEX` / revision `44`.
+Index identity: `INDEX-CONTROLLED-VERIFICATION-REVIEWS` / `REVIEW_INDEX` / revision `45`.
 
 | Review ID / leaf | Kind | Revision | SHA-256 | Lifecycle | Result |
 | --- | --- | --- | --- | --- | --- |
-| `EVIDENCE-CVQ-01B1-CORRECTION` / [B1 correction evidence](cvq-01b1-correction-evidence.md) | `REVIEW_EVIDENCE` | `04` | `733cba3fce30d430c35c3cc41934b42e0818c7634d7fc1a4001f3ef57c29656d` | `REVIEWED` | `CLOSURE02_F06_FIXED / F07_ZERO_RED / DIAGNOSTIC_SENSITIVE` |
-| `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B1` / [B1 namespace/import review](cvq-01b1-namespace-import-code-review.md) | `CODE_REVIEW` | `04` | `8bcc83700adb776ca394f147991d29da2105e33f27e7d90e7c50454b9fb98d09` | `CONVERGENCE_REVIEW_REQUIRED` | `CHANGES_REQUESTED / CLOSURE02_CORRECTION_EXHAUSTED / NOT_INTEGRATED` |
+| `EVIDENCE-CVQ-01B1-CORRECTION` / [B1 correction evidence](cvq-01b1-correction-evidence.md) | `REVIEW_EVIDENCE` | `05` | `ca5c95b0f4e8378c387752631ac1edaadd6848d958aad3fa2778135407cad5cc` | `REVIEWED` | `EXCEPTION_F07_NAMED_RED_RESTORED_GREEN / FOCUSED44_GREEN` |
+| `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B1` / [B1 namespace/import review](cvq-01b1-namespace-import-code-review.md) | `CODE_REVIEW` | `05` | `1930708387c4ab3fdfef4a55a2601d571b4ef63526eb2b9946aad75cd0332f8c` | `APPROVED` | `APPROVED / NOT_INTEGRATED` |
 | `EVIDENCE-CVQ-01B1-INITIAL` / [B1 initial independent evidence](cvq-01b1-initial-evidence.md) | `REVIEW_EVIDENCE` | `01` | `af6db4e889b7099d175552c9f73568419d4e041f5125d313bc4447edac7b1cdd` | `REVIEWED` | `THREE_IMPLEMENTATION_FINDINGS / CORPUS_ZERO_RED` |
-| `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B-CONVERGENCE` / [B responsibility decomposition](cvq-01b-convergence-proposal.md) | `CODE_REVIEW` | `09` | `8a97b6abd80dfad084bdb5a42a287ca3fd2b71b9484469d3b908e2ad3acec8e7` | `ONE_FIXTURE_EXCEPTION_ADMITTED` | `EXCEPTION_ADMITTED / NOT_INTEGRATED` |
+| `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B-CONVERGENCE` / [B responsibility decomposition](cvq-01b-convergence-proposal.md) | `CODE_REVIEW` | `10` | `9e9a7327b4ca16a4215341f3ca1305817597b6ecc2ff911115792389010d9616` | `B1_APPROVED` | `B2_DEPENDENCY_BINDING_READY / NOT_INTEGRATED` |
 | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B-REPLACEMENT-PREFLIGHT` / [B replacement ticket preflight](cvq-01b-replacement-ticket-preflight.md) | `CODE_REVIEW` | `02` | `6306e8ca8bf1e81584abca2cfbf7082c06fb408aa53d55d67724369833a70ef5` | `PROPOSAL_PREFLIGHT_COMPLETE` | `OWNER_EXACT_APPROVAL_PENDING / NOT_DISPATCHABLE` |
 | `EVIDENCE-CVQ-01B-CORRECTION` / [B correction evidence](cvq-01b-correction-evidence.md) | `REVIEW_EVIDENCE` | `01` | `872a8285c6ee60ba593e85e1a0396b1b5e3121df9de6774850d84ab0d2564ce4` | `REVIEWED` | `ORIGINAL15_REJECT / REMAINING_BYPASSES / REAL_PACKAGE_ZERO_RED` |
 | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B` / [CVQ-01B source admission](cvq-01b-source-admission-code-review.md) | `CODE_REVIEW` | `02` | `fb0db6186f376a0bc1ba6ad693a860dad2a757411d609ee5927b9b7c454b4ccb` | `CONVERGENCE_REVIEW_REQUIRED` | `CHANGES_REQUESTED / CORRECTION_EXHAUSTED / NOT_INTEGRATED` |

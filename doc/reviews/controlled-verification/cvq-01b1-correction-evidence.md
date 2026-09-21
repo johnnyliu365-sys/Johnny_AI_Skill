@@ -2,9 +2,9 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `EVIDENCE-CVQ-01B1-CORRECTION` / `REVIEW_EVIDENCE` / `04` |
-| Candidate / correction baseline | Current closure02 correction:0e080257f923870ef504905d3ef56358d43bc94b /93273927af52246abee4f0c1972b4cb3e16944cf; earlier sections retain historical candidates |
-| Authority | Current closure02 B1 document08 at623d5bda6ebc03b2b90a04b9e610c7c4dbaaab26; earlier sections retain original pins |
+| ID / kind / revision | `EVIDENCE-CVQ-01B1-CORRECTION` / `REVIEW_EVIDENCE` / `05` |
+| Candidate / correction baseline | Current exception01:a8340e2711540fd4ed05e4ef91c6877977f9d5db /0e080257f923870ef504905d3ef56358d43bc94b; earlier sections retain historical candidates |
+| Authority | Current exception01 B1 document10 at e34774a2b90acb3dcb2386c1828a3685d5309bb0; earlier sections retain original pins |
 | Root review tree | .worktrees/cvq-01a2-review; detached exact candidate, clean before/after |
 | Scope | Root-owned AST probes and temporary imported-function mutations; no source writes, native/provider/push/installation effects |
 
@@ -1141,3 +1141,149 @@ ELAPSED_SECONDS=8.3171932
 Retained helper's single immutable read batch2.8sec independently confirms the missing
 CapabilityFamily definition, and F06's complete positive. Root accepts F07 as unclosed; no
 new issue class/requirement. Review04 is the verdict. Source history remains untouched.
+
+
+## Owner exception01 final evidence — 2026-09-21
+
+Candidatea8340e2711540fd4ed05e4ef91c6877977f9d5db; authoritye34774a2, B1document10.
+Root commands below executed in its detached review tree. Owner reports two methods green and
+strict21 green; root independently reran strict and the whole focused suite, so no summary-only
+owner output substitutes for review evidence. Owner total read/git timing is incomplete; charge
+its full15sec allocation, not the5.786sec partial report. Helper actual3.2sec is charged, including
+its0.2sec sub-allocation overrun. Source files stayed unchanged by root commands.
+Raw output is unreduced except line endings/trailing whitespace for Markdown hygiene.
+
+### Root reverse mutation
+
+```powershell
+$b1exClock=[Diagnostics.Stopwatch]::StartNew()
+@'
+import sys, unittest
+from unittest.mock import patch
+sys.path.insert(0, "tests")
+import verification_qualification_source_symbols as symbols
+from tests.test_verification_qualification_boundaries import QualificationBoundaryTests
+original = symbols.import_target_for_alias
+def fold_module_case(node, name):
+    previous = node.module
+    node.module = previous.lower() if previous else previous
+    try:
+        return original(node, name)
+    finally:
+        node.module = previous
+def run(label):
+    print(label, flush=True)
+    return unittest.TextTestRunner(verbosity=2).run(unittest.TestSuite([QualificationBoundaryTests("test_source_namespace_admission")]))
+with patch.object(symbols, "import_target_for_alias", fold_module_case):
+    weakened = run("MUTATION only module-identity case is folded")
+assert symbols.import_target_for_alias is original
+restored = run("RESTORE exact candidate module identity")
+assert not weakened.wasSuccessful() and restored.wasSuccessful()
+print("Named weakening red and exact function-identity restore green; no source file mutated", flush=True)
+'@ | & 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -
+$b1exExit=$LASTEXITCODE
+$b1exClock.Stop()
+Write-Output ('ELAPSED_SECONDS=' + $b1exClock.Elapsed.TotalSeconds)
+exit $b1exExit
+```
+
+```text
+MUTATION only module-identity case is folded
+test_source_namespace_admission (tests.test_verification_qualification_boundaries.QualificationBoundaryTests.test_source_namespace_admission) ...
+  test_source_namespace_admission (tests.test_verification_qualification_boundaries.QualificationBoundaryTests.test_source_namespace_admission) (row='B1-R01-mixed-case-module') ... FAIL
+
+======================================================================
+FAIL: test_source_namespace_admission (tests.test_verification_qualification_boundaries.QualificationBoundaryTests.test_source_namespace_admission) (row='B1-R01-mixed-case-module')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\GameBoy\Desktop\Johnny_AI_Skill_latest\.worktrees\cvq-01a2-review\tests\test_verification_qualification_boundaries.py", line 91, in test_source_namespace_admission
+    self.assertTrue(matching, findings)
+AssertionError: [] is not true : ()
+
+----------------------------------------------------------------------
+Ran 1 test in 3.597s
+
+FAILED (failures=1)
+RESTORE exact candidate module identity
+test_source_namespace_admission (tests.test_verification_qualification_boundaries.QualificationBoundaryTests.test_source_namespace_admission) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 3.368s
+
+OK
+Named weakening red and exact function-identity restore green; no source file mutated
+ELAPSED_SECONDS=7.5557875
+```
+
+### Root focused suite and strict
+
+```powershell
+$b1exClock=[Diagnostics.Stopwatch]::StartNew()
+& 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -m unittest -v tests.test_verification_qualification_contracts tests.test_verification_qualification_domains tests.test_verification_qualification_boundaries
+$b1exExit=$LASTEXITCODE
+if($b1exExit -eq 0){
+& 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -m mypy --cache-dir 'C:/Users/GameBoy/AppData/Local/Temp/johnny-b1-c02-review-67f63afc96764af1b9a37aa2b16e8958' --strict --follow-imports=silent library/controlled_verification tests/test_verification_qualification_contracts.py tests/test_verification_qualification_domains.py tests/test_verification_qualification_scalars.py tests/test_verification_qualification_manifests.py tests/test_verification_qualification_evidence.py tests/test_verification_qualification_boundaries.py tests/verification_qualification_fixtures.py tests/verification_qualification_catalog.py tests/verification_qualification_source_policy.py tests/verification_qualification_source_symbols.py tests/verification_qualification_source_gate.py tests/verification_qualification_source_corpus.py
+$b1exExit=$LASTEXITCODE
+}
+$b1exClock.Stop()
+Write-Output ('ELAPSED_SECONDS='+$b1exClock.Elapsed.TotalSeconds)
+exit $b1exExit
+```
+
+```text
+test_alias_branch_counts_and_selector_negatives (tests.test_verification_qualification_contracts.QualificationContractTests.test_alias_branch_counts_and_selector_negatives) ... ok
+test_all_78_default_omission_null_and_wrong_constant_cells (tests.test_verification_qualification_contracts.QualificationContractTests.test_all_78_default_omission_null_and_wrong_constant_cells) ... ok
+test_all_81_direct_constructor_and_json_rows (tests.test_verification_qualification_contracts.QualificationContractTests.test_all_81_direct_constructor_and_json_rows) ... ok
+test_all_result_proof_and_evidence_branches_roundtrip (tests.test_verification_qualification_contracts.QualificationContractTests.test_all_result_proof_and_evidence_branches_roundtrip) ... ok
+test_every_missing_direct_constructor_row_roundtrips (tests.test_verification_qualification_contracts.QualificationContractTests.test_every_missing_direct_constructor_row_roundtrips) ... ok
+test_immutable_contract_configuration (tests.test_verification_qualification_contracts.QualificationContractTests.test_immutable_contract_configuration) ... ok
+test_literal_enum_members_and_json_rows (tests.test_verification_qualification_contracts.QualificationContractTests.test_literal_enum_members_and_json_rows) ... ok
+test_literal_wire_catalog_matches_source_ast (tests.test_verification_qualification_contracts.QualificationContractTests.test_literal_wire_catalog_matches_source_ast) ... ok
+test_public_constructor_roundtrips (tests.test_verification_qualification_contracts.QualificationContractTests.test_public_constructor_roundtrips) ... ok
+test_required_null_and_extra_json_matrix (tests.test_verification_qualification_contracts.QualificationContractTests.test_required_null_and_extra_json_matrix) ... ok
+test_roster_and_three_port_evidence_roundtrips (tests.test_verification_qualification_contracts.QualificationContractTests.test_roster_and_three_port_evidence_roundtrips) ... ok
+test_collection_retains_split_cases (tests.test_verification_qualification_domains.QualificationDomainCollectionTests.test_collection_retains_split_cases) ... ok
+test_authenticated_capability_identity_joins (test_verification_qualification_evidence.QualificationEvidenceAdmissionTests.test_authenticated_capability_identity_joins) ... ok
+test_authenticated_discovered_identity_joins (test_verification_qualification_evidence.QualificationEvidenceAdmissionTests.test_authenticated_discovered_identity_joins) ... ok
+test_authenticated_discovery_identity_joins (test_verification_qualification_evidence.QualificationEvidenceAdmissionTests.test_authenticated_discovery_identity_joins) ... ok
+test_authenticated_enforcement_identity_joins (test_verification_qualification_evidence.QualificationEvidenceAdmissionTests.test_authenticated_enforcement_identity_joins) ... ok
+test_every_refusal_reason_result_pair (test_verification_qualification_evidence.QualificationEvidenceAdmissionTests.test_every_refusal_reason_result_pair) ... ok
+test_local_report_duplicates (test_verification_qualification_evidence.QualificationEvidenceAdmissionTests.test_local_report_duplicates) ... ok
+test_negative_and_zero_roster_shapes_remain_representable (test_verification_qualification_evidence.QualificationEvidenceAdmissionTests.test_negative_and_zero_roster_shapes_remain_representable) ... ok
+test_observed_entry_and_category_rules (test_verification_qualification_evidence.QualificationEvidenceAdmissionTests.test_observed_entry_and_category_rules) ... ok
+test_observed_global_coverage_and_uniqueness (test_verification_qualification_evidence.QualificationEvidenceAdmissionTests.test_observed_global_coverage_and_uniqueness) ... ok
+test_other_proof_scope_result_pairs (test_verification_qualification_evidence.QualificationEvidenceAdmissionTests.test_other_proof_scope_result_pairs) ... ok
+test_plan_global_coverage_and_uniqueness (test_verification_qualification_evidence.QualificationEvidenceAdmissionTests.test_plan_global_coverage_and_uniqueness) ... ok
+test_planned_entry_and_category_rules (test_verification_qualification_evidence.QualificationEvidenceAdmissionTests.test_planned_entry_and_category_rules) ... ok
+test_required_proof_references (test_verification_qualification_evidence.QualificationEvidenceAdmissionTests.test_required_proof_references) ... ok
+test_result_shape_boundaries (test_verification_qualification_evidence.QualificationEvidenceAdmissionTests.test_result_shape_boundaries) ... ok
+test_roster_link_scope_and_result (test_verification_qualification_evidence.QualificationEvidenceAdmissionTests.test_roster_link_scope_and_result) ... ok
+test_approved_plan_pin_coverage (test_verification_qualification_manifests.QualificationManifestAdmissionTests.test_approved_plan_pin_coverage) ... ok
+test_capability_requirement_joins (test_verification_qualification_manifests.QualificationManifestAdmissionTests.test_capability_requirement_joins) ... ok
+test_case_and_scope_identity_joins (test_verification_qualification_manifests.QualificationManifestAdmissionTests.test_case_and_scope_identity_joins) ... ok
+test_case_applicability_rows (test_verification_qualification_manifests.QualificationManifestAdmissionTests.test_case_applicability_rows) ... ok
+test_discovery_intent_and_property_membership (test_verification_qualification_manifests.QualificationManifestAdmissionTests.test_discovery_intent_and_property_membership) ... ok
+test_manifest_and_prerequisite_duplicates (test_verification_qualification_manifests.QualificationManifestAdmissionTests.test_manifest_and_prerequisite_duplicates) ... ok
+test_prerequisite_applicability_and_order (test_verification_qualification_manifests.QualificationManifestAdmissionTests.test_prerequisite_applicability_and_order) ... ok
+test_every_resource_bound (test_verification_qualification_scalars.QualificationScalarTests.test_every_resource_bound) ... ok
+test_identifier_digest_text_domains (test_verification_qualification_scalars.QualificationScalarTests.test_identifier_digest_text_domains) ... ok
+test_integer_domain_edges (test_verification_qualification_scalars.QualificationScalarTests.test_integer_domain_edges) ... ok
+test_integer_domains_are_strict (test_verification_qualification_scalars.QualificationScalarTests.test_integer_domains_are_strict) ... ok
+test_architecture_dependency_gate (tests.test_verification_qualification_boundaries.QualificationBoundaryTests.test_architecture_dependency_gate) ... ok
+test_source_namespace_admission (tests.test_verification_qualification_boundaries.QualificationBoundaryTests.test_source_namespace_admission) ... ok
+test_source_negative_corpus (tests.test_verification_qualification_boundaries.QualificationBoundaryTests.test_source_negative_corpus) ... ok
+test_source_positive_corpus (tests.test_verification_qualification_boundaries.QualificationBoundaryTests.test_source_positive_corpus) ... ok
+test_source_result_is_deterministic (tests.test_verification_qualification_boundaries.QualificationBoundaryTests.test_source_result_is_deterministic) ... ok
+test_source_set_and_parse_fail_closed (tests.test_verification_qualification_boundaries.QualificationBoundaryTests.test_source_set_and_parse_fail_closed) ... ok
+
+----------------------------------------------------------------------
+Ran 44 tests in 19.722s
+
+OK
+Success: no issues found in 21 source files
+ELAPSED_SECONDS=21.4354034
+```
+
+Both commands exit0; named mutant failure is expected and its restoration is asserted.
+No new source/script/evidence file, background worker or external effect was created. Final
+review05 records the combined closure and remaining unreviewed B2/B3 scope.

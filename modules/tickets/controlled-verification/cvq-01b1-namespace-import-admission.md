@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01B1` / `IMPLEMENTATION_TICKET` / `10` |
-| State / closure | `OWNER_APPROVED / ONE_FIXTURE_EXCEPTION_ADMITTED / NOT_INTEGRATED`; `CLOSURE-CVQ-01B1/02`; section14 is current; prior exhaustion retained |
+| ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01B1` / `IMPLEMENTATION_TICKET` / `11` |
+| State / closure | `APPROVED / NOT_INTEGRATED`; `CLOSURE-CVQ-01B1/02`; section15 is current; owner exception01 completed |
 | Preparation authority | Owner's 2026-09-21 approval of [B convergence01](../../../doc/reviews/controlled-verification/cvq-01b-convergence-proposal.md) at797c15db, LF0308388788c4a6a6c79ce4dd256b72bb5a231a498357a0038f305680e46f0f94; drafting only |
 | Observable result / change class | Complete, exact import origins and finite typed resolution; `PRODUCTION_BEHAVIOR / DEFECT_CORRECTION`, not test-exempt |
 | Baseline | `7171f41bdec15104fd653ecee6c8e06691055d16`, unapproved B correction; preserve immutable history, never call it accepted |
@@ -392,3 +392,14 @@ owner allocation15, max60/command, no retries or reset. Owner runs existing two 
 root runs case-fold named red/restored-green and focused44 once. Temp outside worktree. No source
 prompt/work-order narrative, new files/framework, partial integration/push/release/install.
 ACTION_COMPLETED / EXACT_EXCEPTION_APPROVAL_RECORDED -> AUTO_CONTINUE / ONE_FIXTURE_CORRECTION.
+
+## 15. Exception completed; B1 accepted — 2026-09-21
+
+Root review05 approves a8340e2711540fd4ed05e4ef91c6877977f9d5db, additive from0e080257.
+Only the admitted fixture changed (8add/1delete). F07 now produces named case-fold red and
+exact restored-green; independent focused44 and strict21 pass. Retained helper NO_FINDINGS.
+R01–R05 and F01–F07 are closed with the retained candidate-bound evidence described by review05.
+No product/guard/policy/new-file/dependency change or partial integration. Close B1 view/allocation;
+B2 may resolve its already-approved dependency with this SHA and exact review/index identity.
+No prior consumption is erased and no new budget is inferred from closing or opening a ticket.
+ACTION_COMPLETED / CVQ01B1_APPROVED -> AUTO_CONTINUE / B2_DEPENDENCY_BINDING.

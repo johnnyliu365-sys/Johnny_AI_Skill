@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B-CONVERGENCE` / `CODE_REVIEW` / `09` |
-| State | `OWNER_APPROVED / ONE_FIXTURE_EXCEPTION_ADMITTED / NOT_INTEGRATED`; section10 is current |
+| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B-CONVERGENCE` / `CODE_REVIEW` / `10` |
+| State | `B1_APPROVED / B2_DEPENDENCY_BINDING_READY / NOT_INTEGRATED`; section11 is current |
 | Evidence | [B correction review02](cvq-01b-source-admission-code-review.md); failed candidate7171f41bdec15104fd653ecee6c8e06691055d16 remains immutable |
 | Preserved authority | SPEC07 section11.3, wire03, accepted A1/A2/A3 at485d882f unchanged; no new provider/native/runtime behavior |
 | Decision owner | Project owner; no self-Grill or inferred exact approval |
@@ -205,3 +205,13 @@ records the unchanged single-fixture envelope and remaining80-second allocation.
 remain history. Same owner, no new closure, source authority or spending reset; no third automatic
 attempt beyond this explicit exception. Root alone reviews; no integration/push/release/install.
 ACTION_COMPLETED / EXCEPTION_ADMITTED -> AUTO_CONTINUE / ONE_FIXTURE_CORRECTION.
+
+## 11. B1 converged — 2026-09-21
+
+Exact exception candidatea8340e2711540fd4ed05e4ef91c6877977f9d5db is APPROVED by root review05.
+The missing definition was the only source change; named case-fold red/restored-green, focused44,
+strict21 and retained helper evidence close F07. Earlier failed reviews remain historical.
+This closes B1, not B2/B3, the feature cluster, installer qualification or release. Router returns
+to the already-approved B2 dependency-binding step; no additional spending is inferred merely
+from ticket transition. Current source stays in codex/cvq-01, main unchanged.
+ACTION_COMPLETED / B1_CONVERGENCE_CLOSED -> AUTO_CONTINUE / B2_DEPENDENCY_BINDING.

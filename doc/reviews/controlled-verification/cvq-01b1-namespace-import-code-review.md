@@ -2,10 +2,10 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B1` / `CODE_REVIEW` / `04` |
-| Conclusion / iteration | `CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED` / closure02 initial plus correction exhausted; section7 is current |
-| Candidate / baseline | 0e080257f923870ef504905d3ef56358d43bc94b /93273927af52246abee4f0c1972b4cb3e16944cf |
-| Authority | Current review: B1 document08/closure02 at623d5bda6ebc03b2b90a04b9e610c7c4dbaaab26, LF182a31bab4549e6ee9be73c911a95b5575a053d0f4f89f4916db16be45de8db6; earlier sections retain historical pins |
+| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B1` / `CODE_REVIEW` / `05` |
+| Conclusion / iteration | `APPROVED / NOT_INTEGRATED` / closure02 explicit owner exception01 completed; section8 is current |
+| Candidate / baseline | a8340e2711540fd4ed05e4ef91c6877977f9d5db /0e080257f923870ef504905d3ef56358d43bc94b |
+| Authority | Current review: B1 document10/closure02 exception01 at e34774a2b90acb3dcb2386c1828a3685d5309bb0, LF821d05ea5d610cf86d0da3119a96a6fdb89fa4ea71ad003cd079bb3fa68886eb; earlier sections retain historical pins |
 | Reviewer / evidence | root; [current correction evidence](cvq-01b1-correction-evidence.md), [historical initial evidence](cvq-01b1-initial-evidence.md) |
 | Source owner | retained cve_wire_implementer, Luna/xhigh, .worktrees/cvq-01 / codex/cvq-01 |
 | Profile / effects | POC / HIGH_ASSURANCE; AST-only; no integration/push/release/install/native effects |
@@ -160,3 +160,34 @@ admission/review cost: the earlier dispatch did require complete prerequisites, 
 test-green before return let a known false-positive pattern recur.
 ACTION_COMPLETED / CVQ01B1_CLOSURE02_CORRECTION_REVIEW_COMPLETE ->
 WAIT_FOR_HUMAN / OWNER_SINGLE_FIXTURE_EXCEPTION_PENDING.
+
+## 8. Owner exception01 review; combined B1 approval — 2026-09-21
+
+Authority: B1 document10 at e34774a2b90acb3dcb2386c1828a3685d5309bb0,
+LF821d05ea5d610cf86d0da3119a96a6fdb89fa4ea71ad003cd079bb3fa68886eb. Root independently
+verified exact clean additive candidatea8340e2711540fd4ed05e4ef91c6877977f9d5db, one existing
+corpus file,8add/1delete, clean diff check. This is precisely the approved one-row prerequisite.
+No create/delete/rename/dependency, prompt/work-order source narrative or responsibility expansion.
+The original checker/finite types/policy/public seam and accepted A are unchanged.
+
+Root case-fold mutation now fails B1-R01-mixed-case-module for lost SG01; exact imported function
+identity restoration yields green. Focused44 pass (19.722sec) and strict21 pass using outside-tree
+cache; architecture inspection of the actual nine units is included as smoke. Full commands/raw
+output are in correction-evidence05. Retained helper profile_delivery_audit, REQUIRED,
+SPEC_GAP/BOUNDARY_DATA/REGRESSION, READ_ONLY_INTENT_ONLY/NO_EXTERNAL_EFFECT, returns NO_FINDINGS.
+Its read batch3.2sec exceeded its3sec sub-allocation by0.2; charge actual within the shared80 and
+record this allocation miss. No timeout enforcement or literal hard-cap compliance is claimed.
+Root alone owns APPROVED; no helper approval or new seat.
+
+Combined closure: F01/R01 normalization and F05/R02 relative-future fixed at9327392; F02 ambiguity
+and F03/R05 resolution progression retained; F04/R03/R04 exact later-entry, nested graph and
+resolved forbidden re-export discrimination retained. F06 absolute-child discriminator fixed at
+0e080257; F07 masking fixed here. The two subsequent diffs alter only their named literal rows,
+not any prior guard/row oracle; retained earlier mutation evidence is used with that exact diff
+binding, not silently claimed rerun. Current full suite/strict include all those tests.
+
+XSS, SQL, provider, credentials, deployment/native effects remain excluded by the AST-only seam;
+source packets are not executed. No partial A/B integration, push, release or install. Mechanical
+verification here proves diff scope and test outcomes, not universal interception of Agent writes
+or semantic modularity. B2/B3 are not reviewed by this approval.
+ACTION_COMPLETED / CVQ01B1_REVIEW_APPROVED -> AUTO_CONTINUE / B2_DEPENDENCY_BINDING.
