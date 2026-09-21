@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01B3` / `IMPLEMENTATION_TICKET` / `02` |
-| State / closure | `PROPOSED / OWNER_EXACT_APPROVAL_PENDING / DEPENDENCY_PENDING / NON_DISPATCHABLE`; `CLOSURE-CVQ-01B3/01` |
+| ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01B3` / `IMPLEMENTATION_TICKET` / `03` |
+| State / closure | `OWNER_APPROVED / DEPENDENCY_PENDING / NON_DISPATCHABLE`; `CLOSURE-CVQ-01B3/01`; section7 is current |
 | Preparation authority | Owner's 2026-09-21 approval of [B convergence01](../../../doc/reviews/controlled-verification/cvq-01b-convergence-proposal.md) at797c15db, LF0308388788c4a6a6c79ce4dd256b72bb5a231a498357a0038f305680e46f0f94; drafting only |
 | Observable result / change class | Closed syntax by context plus one fully verified original B closure; `PRODUCTION_BEHAVIOR / DEFECT_CORRECTION` |
 | Dependency / baseline | [B2](cvq-01b2-call-receiver-admission.md) document02/closure01 in this proposal commit, including accepted B1; actual APPROVED combined SHA and review/index must be bound before dispatch |
@@ -196,3 +196,19 @@ combined schema preflight at one exact SHA and returns to Router. No partial A/B
 behavior-phase implementation, native qualification, integration/push/release/installation grant.
 ACTION_COMPLETED / TICKET_PROPOSED -> WAIT_FOR_HUMAN / OWNER_EXACT_APPROVAL_PENDING; future
 combined approval is SCHEMA_PREFLIGHT_COMPLETE, not automatic publication.
+
+## 7. Exact set approval and current route — 2026-09-21
+
+Owner **「核准」** approves B1/B2/B3 document02/closure01 together at
+`6ff3e127ca7d9bfeb2d4f9932bb1ec60f1d2d7a3`. This ticket's approved LF digest is
+`3b04a414ad32346c87bc211b2d5b4fa7bfc72fa9b1d3efeab2cc5345a891be37`. Document03 changes signature/status/allocation only;
+sections1–6's predicates, writable symbols, tests and budgets are unchanged. Earlier pending
+approval prose is historical. Original B closure01 remains exhausted; this is a new admitted
+responsibility closure, not a third correction. No partial integration/push/release/install grant.
+
+This approves sequential dependency binding, not source mutation before B1+B2 acceptance.
+Root will append the actual accepted source SHA and exact review/index identity after the prior
+closure passes, verify clean workspace/containment/ancestry, close the prior view and bind this
+one. That ordinary metadata binding requires no second owner approval. Any changed predicate,
+scope or failed reference still halts; no fabricated accepted baseline. ACTION_COMPLETED /
+EXACT_SET_APPROVAL_RECORDED -> DEPENDENCY_PENDING, then the already-declared AUTO_CONTINUE route.

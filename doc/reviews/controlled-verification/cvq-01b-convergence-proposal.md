@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B-CONVERGENCE` / `CODE_REVIEW` / `03` |
-| State | `DECOMPOSITION_OWNER_APPROVED / REPLACEMENT_TICKETS_PROPOSED / NON_DISPATCHABLE` |
+| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B-CONVERGENCE` / `CODE_REVIEW` / `04` |
+| State | `EXACT_REPLACEMENT_SET_OWNER_APPROVED / B1_DISPATCH_ADMITTED / NOT_INTEGRATED` |
 | Evidence | [B correction review02](cvq-01b-source-admission-code-review.md); failed candidate7171f41bdec15104fd653ecee6c8e06691055d16 remains immutable |
 | Preserved authority | SPEC07 section11.3, wire03, accepted A1/A2/A3 at485d882f unchanged; no new provider/native/runtime behavior |
 | Decision owner | Project owner; no self-Grill or inferred exact approval |
@@ -79,3 +79,17 @@ One exact approval of the replacement set can authorize B1 dispatch and sequenti
 dependency-SHA bindings without repeated metadata ceremonies. A changed closure still requires
 owner decision. ACTION_COMPLETED / REPLACEMENT_TICKETS_PROPOSED -> WAIT_FOR_HUMAN /
 OWNER_EXACT_APPROVAL_PENDING. No integration/push/publication/installation/native effect.
+
+## 5. Exact replacement set approval — 2026-09-21
+
+Owner **「核准」** approves all three document02/closure01 objects at
+6ff3e127ca7d9bfeb2d4f9932bb1ec60f1d2d7a3. Their immutable approval-object LF digests:
+B1 804bed686e6d67f223c3d4ec5b4ee83b81cdca8f530706a30abff798b7ebf79e;
+B2 45c503dd50970265cc1cf3184514814e32c3f38909b8901d130503175cdff553;
+B3 3b04a414ad32346c87bc211b2d5b4fa7bfc72fa9b1d3efeab2cc5345a891be37.
+Each ticket document03 records signature/lifecycle without changing its closure.
+B1's exact7171f41 clean owner/source/profile/view binding is now recorded in its section7.
+B2/B3 stay dependency-pending; actual accepted SHA binding is already authorized, not another
+design decision. Retain the implementation owner; direct delegation -> wait_agent -> root review.
+No original B third correction or partial A/B integration; no push/publication/installation.
+ACTION_COMPLETED / EXACT_REPLACEMENT_SET_APPROVED -> AUTO_CONTINUE / IMPLEMENT_CVQ01B1.

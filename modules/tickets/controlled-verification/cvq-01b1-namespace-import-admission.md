@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01B1` / `IMPLEMENTATION_TICKET` / `02` |
-| State / closure | `PROPOSED / OWNER_EXACT_APPROVAL_PENDING / NON_DISPATCHABLE`; `CLOSURE-CVQ-01B1/01` |
+| ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01B1` / `IMPLEMENTATION_TICKET` / `03` |
+| State / closure | `OWNER_APPROVED / B1_DISPATCH_ADMITTED / NOT_INTEGRATED`; `CLOSURE-CVQ-01B1/01`; section7 is current |
 | Preparation authority | Owner's 2026-09-21 approval of [B convergence01](../../../doc/reviews/controlled-verification/cvq-01b-convergence-proposal.md) at797c15db, LF0308388788c4a6a6c79ce4dd256b72bb5a231a498357a0038f305680e46f0f94; drafting only |
 | Observable result / change class | Complete, exact import origins and finite typed resolution; `PRODUCTION_BEHAVIOR / DEFECT_CORRECTION`, not test-exempt |
 | Baseline | `7171f41bdec15104fd653ecee6c8e06691055d16`, unapproved B correction; preserve immutable history, never call it accepted |
@@ -192,3 +192,30 @@ B1 APPROVED only satisfies B2's dependency. No partial A/B integration. Root the
 actual accepted SHA and exact review/index to B2 before its admission; a changed closure returns
 to owner, an already-approved sequential dependency binding does not need another ceremony.
 ACTION_COMPLETED / TICKET_PROPOSED -> WAIT_FOR_HUMAN / OWNER_EXACT_APPROVAL_PENDING.
+
+## 7. Exact set approval and current route — 2026-09-21
+
+Owner **「核准」** approves B1/B2/B3 document02/closure01 together at
+`6ff3e127ca7d9bfeb2d4f9932bb1ec60f1d2d7a3`. This ticket's approved LF digest is
+`804bed686e6d67f223c3d4ec5b4ee83b81cdca8f530706a30abff798b7ebf79e`. Document03 changes signature/status/allocation only;
+sections1–6's predicates, writable symbols, tests and budgets are unchanged. Earlier pending
+approval prose is historical. Original B closure01 remains exhausted; this is a new admitted
+responsibility closure, not a third correction. No partial integration/push/release/install grant.
+
+Root fresh readback: exact retained owner root
+C:/Users/GameBoy/Desktop/Johnny_AI_Skill_latest/.worktrees/cvq-01, branch codex/cvq-01,
+HEAD7171f41bdec15104fd653ecee6c8e06691055d16, clean; .git pointer resolves to the registered
+cvq-01 linked worktree and common repository .git. Repository/root/.worktrees/owner roots have
+no reparse attribute; accepted A485d882f is an ancestor. Existing public SourceUnit/SourceViolation
+constructors, all9 SourceModule/all23 SourceRule variants and frozen records pass; actual9-file
+package control returns no findings. This is seam admission, not approval of the defective
+internal resolution strings being repaired. Python3.11.9/mypy2.3.0/Pydantic2.13.4 read back exactly.
+
+Close ctx-cvq-01b-closure01; bind ctx-cvq-01b1-closure01 to the same retained implementation-standard
+owner (gpt-5.6-luna/xhigh), root sole reviewer, profile defaults01 at797c15db with its exact LF pin.
+The native capability offers that model/effort and the existing owner is completed/available.
+Use the existing owner's followup continuation, not a new seat; same-lifetime receipt/descriptor/
+runner/host readback NOT_REQUIRED. Task ownership, source baseline and new ticket view are exact.
+Only B1 is active. Await its finite return with wait_agent; root then runs the declared review and
+adversarial evidence. ACTION_COMPLETED / EXACT_APPROVAL_AND_B1_BINDING_RECORDED ->
+AUTO_CONTINUE / IMPLEMENT_CVQ01B1.
