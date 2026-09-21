@@ -2,12 +2,12 @@
 
 This index records direct review leaves; evidence and conclusions remain in the selected leaf.
 
-Index identity: `INDEX-CONTROLLED-VERIFICATION-REVIEWS` / `REVIEW_INDEX` / revision `41`.
+Index identity: `INDEX-CONTROLLED-VERIFICATION-REVIEWS` / `REVIEW_INDEX` / revision `42`.
 
 | Review ID / leaf | Kind | Revision | SHA-256 | Lifecycle | Result |
 | --- | --- | --- | --- | --- | --- |
-| `EVIDENCE-CVQ-01B1-CORRECTION` / [B1 correction evidence](cvq-01b1-correction-evidence.md) | `REVIEW_EVIDENCE` | `02` | `76d9f9f579aae6d600f8c3d991facdd466558d3ac6b33176d79244296ed84c6f` | `REVIEWED` | `PRIOR8_GREEN / RESIDUAL_NORMALIZATION_AND_ZERO_RED / REPLAN_SG06_GAP` |
-| `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B1` / [B1 namespace/import review](cvq-01b1-namespace-import-code-review.md) | `CODE_REVIEW` | `02` | `7b5274d21bc70878631b91adfbf937c70f7ac0b3c67e11bc7e4b0e05da000d57` | `CONVERGENCE_REVIEW_REQUIRED` | `CHANGES_REQUESTED / CORRECTION_EXHAUSTED / NOT_INTEGRATED` |
+| `EVIDENCE-CVQ-01B1-CORRECTION` / [B1 correction evidence](cvq-01b1-correction-evidence.md) | `REVIEW_EVIDENCE` | `03` | `16e86bc9edbde7e6c1de2fb3be337ab17f0612e08572615f9386b59e65cc4c1d` | `REVIEWED` | `CLOSURE02_MUTATION_GREEN / R01_TWO_ZERO_RED_FINDINGS` |
+| `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B1` / [B1 namespace/import review](cvq-01b1-namespace-import-code-review.md) | `CODE_REVIEW` | `03` | `7b799f17b8744809722d4c2ee04f57f15a318d9d1e6b68eab113f6b741273182` | `SAME_OWNER_CORRECTION_ADMITTED` | `CHANGES_REQUESTED / CLOSURE02_INITIAL / NOT_INTEGRATED` |
 | `EVIDENCE-CVQ-01B1-INITIAL` / [B1 initial independent evidence](cvq-01b1-initial-evidence.md) | `REVIEW_EVIDENCE` | `01` | `af6db4e889b7099d175552c9f73568419d4e041f5125d313bc4447edac7b1cdd` | `REVIEWED` | `THREE_IMPLEMENTATION_FINDINGS / CORPUS_ZERO_RED` |
 | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B-CONVERGENCE` / [B responsibility decomposition](cvq-01b-convergence-proposal.md) | `CODE_REVIEW` | `07` | `d70a330202cf25cd1f09e59e819917ec8841724a95e7bba7ecc6736a886ea447` | `B1_RESIDUAL_CLOSURE_APPROVED` | `IMPLEMENTATION_ADMITTED / NOT_INTEGRATED` |
 | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B-REPLACEMENT-PREFLIGHT` / [B replacement ticket preflight](cvq-01b-replacement-ticket-preflight.md) | `CODE_REVIEW` | `02` | `6306e8ca8bf1e81584abca2cfbf7082c06fb408aa53d55d67724369833a70ef5` | `PROPOSAL_PREFLIGHT_COMPLETE` | `OWNER_EXACT_APPROVAL_PENDING / NOT_DISPATCHABLE` |

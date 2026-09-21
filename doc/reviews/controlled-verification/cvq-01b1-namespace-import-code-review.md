@@ -2,10 +2,10 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B1` / `CODE_REVIEW` / `02` |
-| Conclusion / iteration | `CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED` / closure01 initial plus correction exhausted; section5 is current |
-| Candidate / baseline | 8dc22904921cb6b0c56a88d7e224ca66828f8c14 / 1a1b6eb3af4c5a7e31de0d102eaf20b461c49f98 |
-| Authority | [B1](../../../modules/tickets/controlled-verification/cvq-01b1-namespace-import-admission.md) document03 / closure01 at6266cfcfb46956213b71042ec4035ae73a5442f6, LF b6fde644de900e054875d85488a610380efe9f01341c7037a78139023842280f |
+| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B1` / `CODE_REVIEW` / `03` |
+| Conclusion / iteration | `CHANGES_REQUESTED / SAME_OWNER_CORRECTION_ADMITTED` / closure02 initial; section6 is current; closure01 remains exhausted |
+| Candidate / baseline | 93273927af52246abee4f0c1972b4cb3e16944cf / 8dc22904921cb6b0c56a88d7e224ca66828f8c14 |
+| Authority | B1 document07/closure02 at80fe960975749abec3870fde53d300846ef624e4, LF7e3641a517cb5023212d705556cf283261b46272f67d8951539a5f0d3267e3c7; sections1–5 retain historical closure01 evidence |
 | Reviewer / evidence | root; [unreduced commands, probes and mutations](cvq-01b1-initial-evidence.md) |
 | Source owner | retained cve_wire_implementer, Luna/xhigh, .worktrees/cvq-01 / codex/cvq-01 |
 | Profile / effects | POC / HIGH_ASSURANCE; AST-only; no integration/push/release/install/native effects |
@@ -99,3 +99,38 @@ release or installation. Root routes the remaining normalization and evidence ob
 [convergence05 section6](cvq-01b-convergence-proposal.md#6-b1-correction-exhaustion-and-bounded-replan--2026-09-21).
 ACTION_COMPLETED / CVQ01B1_CORRECTION_REVIEW_COMPLETE ->
 WAIT_FOR_HUMAN / CONVERGENCE_REPLAN_DECISION_REQUIRED.
+
+## 6. Closure02 initial review — 2026-09-21
+
+Authority: B1 document07/closure02 at80fe960975749abec3870fde53d300846ef624e4,
+LF7e3641a517cb5023212d705556cf283261b46272f67d8951539a5f0d3267e3c7. Root verified clean
+candidate93273927af52246abee4f0c1972b4cb3e16944cf, additive ancestry from8dc2290, four existing
+allowed files only, diff-check clean; no product/policy/A/new-file/dependency change.
+Delta186 additions/11 deletions (net175) exceeds the0–150 estimate; bounded existing resolver/
+fixture work is justified, not a reason to compress/split files. Strict21/focused44 pass (24.766sec).
+Root independently obtained named red/restored-green for prefix, first-entry, nested-cycle,
+relative-future, package normalization and resolved-forbidden-re-export mutations.
+Historical8dc guards with candidate tests collect and yield four named failures for R01/R02/R04.
+This is reviewer reproduction, not invented implementer first-red history. R03/R05 regressions
+are retained. Exact commands and unreduced output: correction-evidence03.
+
+Retained profile_delivery_audit Terra/xhigh performed the bounded REQUIRED exact-candidate
+SPEC_GAP/BOUNDARY_DATA/CONSISTENCY/REGRESSION static audit, READ_ONLY_INTENT_ONLY/NO_EXTERNAL_EFFECT.
+Root adjudicated its two R01 corpus findings and independently reproduced both ZERO_RED mutants:
+
+| Finding | Frozen obligation / evidence / correction |
+| --- | --- |
+| B1-F06 EVIDENCE_DEFECT | R01 requires three equivalent symbol-import positives. Direct and normalized-parent exist; fully-qualified child-module symbol import is absent. Rejecting all absolute child-module imports leaves positive corpus green. Add a complete legal absolute CapabilityFamily import row and independent literal roster; guard behavior is already correct. |
+| B1-F07 EVIDENCE_DEFECT | R01 requires exact case negatives. No mixed-case module identity fixture exists. Case-folding target identity leaves namespace corpus green. Add a complete wrong-case module row, exact rejection/location and independent roster/count; show this weakening red/restored-green. |
+
+No new requirement/framework/campaign/owner. Same-owner additive correction from9327392,
+same closure02/five-path envelope; expected actual edits are corpus and existing assertions only.
+Preserve R02–R05/F02/F03 and accepted A. New files/dependencies/product/docs/screenshots are forbidden;
+no prompt/work-order narrative in source. Root owns verdict; helper is evidence-only.
+
+Same1200-command-second pool: initial owner charged600 conservatively (unmeasured ceiling-based
+report, not runtime enforcement), startup60; all root/helper/correction commands continue this ledger.
+Correction gets at most90 command-wall seconds, max60/command, one foreground job, no retries;
+return measured durations. Root retains the residual. If correction fails, convergence, no third
+closure02 attempt. No integration/push/release/installation.
+ACTION_COMPLETED / CVQ01B1_CLOSURE02_CHANGES_REQUESTED -> AUTO_CONTINUE / SAME_OWNER_ADDITIVE_CORRECTION.

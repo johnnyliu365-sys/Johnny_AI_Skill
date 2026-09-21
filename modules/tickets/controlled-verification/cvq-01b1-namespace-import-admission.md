@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01B1` / `IMPLEMENTATION_TICKET` / `07` |
-| State / closure | `OWNER_APPROVED / IMPLEMENTATION_ADMITTED / NOT_INTEGRATED`; `CLOSURE-CVQ-01B1/02`; section11 is current; closure01 remains exhausted |
+| ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01B1` / `IMPLEMENTATION_TICKET` / `08` |
+| State / closure | `OWNER_APPROVED / SAME_OWNER_CORRECTION_ADMITTED / NOT_INTEGRATED`; `CLOSURE-CVQ-01B1/02`; section12 is current; closure01 remains exhausted |
 | Preparation authority | Owner's 2026-09-21 approval of [B convergence01](../../../doc/reviews/controlled-verification/cvq-01b-convergence-proposal.md) at797c15db, LF0308388788c4a6a6c79ce4dd256b72bb5a231a498357a0038f305680e46f0f94; drafting only |
 | Observable result / change class | Complete, exact import origins and finite typed resolution; `PRODUCTION_BEHAVIOR / DEFECT_CORRECTION`, not test-exempt |
 | Baseline | `7171f41bdec15104fd653ecee6c8e06691055d16`, unapproved B correction; preserve immutable history, never call it accepted |
@@ -347,3 +347,19 @@ retain observed subsequent durations, and return actual or bounded-upper usage. 
 historical/model usage remains UNKNOWN. A correction receives only remaining capacity, no reset.
 No model/read-only/write-interception enforcement is inferred from this allocation.
 ACTION_COMPLETED / EXACT_CLOSURE02_APPROVAL_RECORDED -> AUTO_CONTINUE / IMPLEMENT_CVQ01B1.
+
+## 12. Closure02 single correction admission — 2026-09-21
+
+Initial candidate93273927af52246abee4f0c1972b4cb3e16944cf is not approved. Review03 section6
+contains the complete F06/F07 batch under unchanged R01: missing absolute-symbol positive and
+case-sensitive negative discriminators. Root reproduced both weakening mutants as ZERO_RED.
+Strict21/focused44 green and repaired R02–R05 evidence remain valid, not a substitute for R01.
+Retain cve_wire_implementer Luna/xhigh, same clean worktree/branch and additive baseline9327392.
+Modify only the existing five-file envelope; create/delete/rename/dependencies remain empty.
+Expected correction delta: product0, tests0–45 lines, documents0, screenshots0; signal not cap.
+Reuse existing corpus and assertion methods; no new infrastructure. Same1200 pool, correction
+reservation90 command-wall seconds, max60 each, measured duration return; no budget reset.
+This is closure02's only correction. Root reruns the two discriminators, affected strict/focused
+checks and retained helper review before verdict. Failure returns convergence, not more correction.
+No partial integration/push/release/install. B2/B3 stay dependency-pending until B1 approval.
+ACTION_COMPLETED / CORRECTION_BATCH_RECORDED -> AUTO_CONTINUE / SAME_OWNER_ADDITIVE_CORRECTION.
