@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B-CONVERGENCE` / `CODE_REVIEW` / `07` |
-| State | `B1_RESIDUAL_CLOSURE_APPROVED / IMPLEMENTATION_ADMITTED / NOT_INTEGRATED`; section8 is current |
+| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B-CONVERGENCE` / `CODE_REVIEW` / `08` |
+| State | `CONVERGENCE_REVIEW_REQUIRED / OWNER_SINGLE_FIXTURE_EXCEPTION_PENDING / NON_DISPATCHABLE`; section9 is current |
 | Evidence | [B correction review02](cvq-01b-source-admission-code-review.md); failed candidate7171f41bdec15104fd653ecee6c8e06691055d16 remains immutable |
 | Preserved authority | SPEC07 section11.3, wire03, accepted A1/A2/A3 at485d882f unchanged; no new provider/native/runtime behavior |
 | Decision owner | Project owner; no self-Grill or inferred exact approval |
@@ -160,3 +160,39 @@ owner allocation within the shared1200-second remaining allowance. Earlier pendi
 historical; exhausted closure01 is not reopened. Same owner -> wait_agent -> root review, with
 one finite evidence-only adversarial helper. No integration/push/release/install authority.
 ACTION_COMPLETED / EXACT_B1_RESIDUAL_APPROVAL_RECORDED -> AUTO_CONTINUE / IMPLEMENT_CVQ01B1.
+
+## 9. Closure02 exhaustion; one-fixture exception proposal — 2026-09-21
+
+Root review04 of0e080257f923870ef504905d3ef56358d43bc94b closes F06 but retains F07. The wrong-case
+fixture has no CapabilityFamily definition, so unknown-symbol rejection masks weakened identity.
+An in-memory diagnostic with that definition makes the same case-fold mutation red. This is
+EVIDENCE_DEFECT under unchanged R01, not TICKET_DEFECT or a new architecture decision.
+All R02–R05/F02/F03 implementation and previous proof remain retained, not rolled back.
+
+OWNER_EXACT_APPROVAL_PENDING — explicit exception, NOT automatic third correction or closure reset:
+- Baseline0e080257f923870ef504905d3ef56358d43bc94b, same retained Luna/xhigh owner/worktree; root verdict.
+- Modify only tests/verification_qualification_source_corpus.py. create/delete/rename/deps empty.
+- Replace only the B1-R01-mixed-case-module _row invocation with existing _row_with_replacements.
+  Keep import, row ID, SG01 and location unchanged. Supply the same qualification_values source
+  as B1-R01-absolute-child-symbol: future annotations, enum.Enum, CapabilityFamily(str, Enum)
+  with PLAN_BINDING = 'PLAN_BINDING'. No other corpus/policy/guard/source change; expected test
+  increment0–10 lines, product/docs/screenshots0 from implementer.
+- Owner runs the two existing namespace/positive methods and strict21. Root runs the existing
+  case-fold mutant (must fail that named row), exact restore-green and focused44 once. Existing
+  checks/fixtures only, no new script/report. One bounded retained helper may inspect the one-row diff.
+- One correction only under this explicit exception; failure returns owner, no automatic retries.
+  Same1200-second allowance: conservatively reserve the unused balance down to80sec for this
+  exception and review, max60/command, no historical/correction reset or added allowance.
+- Temporary files remain outside worktrees; retain only necessary raw proof in existing evidence
+  and verdict/index updates. No partial integration/push/release/install/host/provider effects.
+
+Accounting: startup60; initial owner600 charged because total not measured; correction owner90
+charged (verification25.654 observed, other commands incompletely returned); helper initial21,
+correction2.8; root commands charged by observed duration or conservative upper bounds. Historical
+model tokens remain UNKNOWN. Current closeout will reserve/charge the existing pool to a total
+1120sec, leaving80, not claim1120 measured usage or that runtime caps were mechanically enforced.
+
+This exact exception can be approved directly by pinned convergence08/B1 document09 digests;
+no separate preliminary replan approval is requested. Without it, all candidate refs stay
+immutable and B2/B3 remain non-dispatchable. No exception has been executed.
+ACTION_COMPLETED / ONE_FIXTURE_EXCEPTION_PROPOSED -> WAIT_FOR_HUMAN / OWNER_EXACT_APPROVAL_PENDING.

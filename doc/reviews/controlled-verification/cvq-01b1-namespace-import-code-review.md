@@ -2,11 +2,11 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B1` / `CODE_REVIEW` / `03` |
-| Conclusion / iteration | `CHANGES_REQUESTED / SAME_OWNER_CORRECTION_ADMITTED` / closure02 initial; section6 is current; closure01 remains exhausted |
-| Candidate / baseline | 93273927af52246abee4f0c1972b4cb3e16944cf / 8dc22904921cb6b0c56a88d7e224ca66828f8c14 |
-| Authority | B1 document07/closure02 at80fe960975749abec3870fde53d300846ef624e4, LF7e3641a517cb5023212d705556cf283261b46272f67d8951539a5f0d3267e3c7; sections1–5 retain historical closure01 evidence |
-| Reviewer / evidence | root; [unreduced commands, probes and mutations](cvq-01b1-initial-evidence.md) |
+| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B1` / `CODE_REVIEW` / `04` |
+| Conclusion / iteration | `CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED` / closure02 initial plus correction exhausted; section7 is current |
+| Candidate / baseline | 0e080257f923870ef504905d3ef56358d43bc94b /93273927af52246abee4f0c1972b4cb3e16944cf |
+| Authority | Current review: B1 document08/closure02 at623d5bda6ebc03b2b90a04b9e610c7c4dbaaab26, LF182a31bab4549e6ee9be73c911a95b5575a053d0f4f89f4916db16be45de8db6; earlier sections retain historical pins |
+| Reviewer / evidence | root; [current correction evidence](cvq-01b1-correction-evidence.md), [historical initial evidence](cvq-01b1-initial-evidence.md) |
 | Source owner | retained cve_wire_implementer, Luna/xhigh, .worktrees/cvq-01 / codex/cvq-01 |
 | Profile / effects | POC / HIGH_ASSURANCE; AST-only; no integration/push/release/install/native effects |
 
@@ -134,3 +134,29 @@ Correction gets at most90 command-wall seconds, max60/command, one foreground jo
 return measured durations. Root retains the residual. If correction fails, convergence, no third
 closure02 attempt. No integration/push/release/installation.
 ACTION_COMPLETED / CVQ01B1_CLOSURE02_CHANGES_REQUESTED -> AUTO_CONTINUE / SAME_OWNER_ADDITIVE_CORRECTION.
+
+## 7. Closure02 correction verdict — 2026-09-21
+
+Authority B1 document08/closure02 at623d5bda6ebc03b2b90a04b9e610c7c4dbaaab26,
+LF182a31bab4549e6ee9be73c911a95b5575a053d0f4f89f4916db16be45de8db6. Root verified clean additive
+0e080257f923870ef504905d3ef56358d43bc94b, only corpus modified (11add/1delete), diff check clean.
+F06 is fixed and its exact weakening now makes the named absolute-child positive fail.
+F07 remains EVIDENCE_DEFECT: the new mixed-case row uses _row over the empty minimum values unit.
+After case-folding, CapabilityFamily is still undefined; SG01 persists for the wrong reason.
+Root's case-fold mutation remains ZERO_RED. Supplying only the missing enum definition in memory
+makes this exact row turn red, then restoring exact candidate makes namespace/positive tests green.
+This is a diagnostic, not a delivered fix. See correction-evidence04 for exact commands/raw output.
+
+Retained helper, same REQUIRED read-only categories/effects, independently confirms F07 and F06
+dispositions; single read batch2.8sec, no tests/effects. Root alone concludes CHANGES_REQUESTED.
+Owner reports strict21/focused44 green (25.654sec); root did not repeat full green campaigns
+after the decisive failure. No new finding or expanded requirement is added on this correction.
+
+Closure02's authorized initial plus one correction is exhausted. Do not silently fix the fixture,
+relabel a third attempt as a new closure, dispatch B2/B3, integrate, push, release or install.
+Convergence08 section9 proposes an explicit one-fixture exception for owner decision.
+Remaining requirement is mechanically specific, not an architectural uncertainty. Root owns the
+admission/review cost: the earlier dispatch did require complete prerequisites, but only checking
+test-green before return let a known false-positive pattern recur.
+ACTION_COMPLETED / CVQ01B1_CLOSURE02_CORRECTION_REVIEW_COMPLETE ->
+WAIT_FOR_HUMAN / OWNER_SINGLE_FIXTURE_EXCEPTION_PENDING.

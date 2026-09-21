@@ -2,9 +2,9 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `EVIDENCE-CVQ-01B1-CORRECTION` / `REVIEW_EVIDENCE` / `03` |
-| Candidate / correction baseline | Current closure02:93273927af52246abee4f0c1972b4cb3e16944cf /8dc22904921cb6b0c56a88d7e224ca66828f8c14; earlier sections retain closure01 history |
-| Authority | Current closure02 B1 document07 at80fe960975749abec3870fde53d300846ef624e4; earlier sections use original closure01 pins |
+| ID / kind / revision | `EVIDENCE-CVQ-01B1-CORRECTION` / `REVIEW_EVIDENCE` / `04` |
+| Candidate / correction baseline | Current closure02 correction:0e080257f923870ef504905d3ef56358d43bc94b /93273927af52246abee4f0c1972b4cb3e16944cf; earlier sections retain historical candidates |
+| Authority | Current closure02 B1 document08 at623d5bda6ebc03b2b90a04b9e610c7c4dbaaab26; earlier sections retain original pins |
 | Root review tree | .worktrees/cvq-01a2-review; detached exact candidate, clean before/after |
 | Scope | Root-owned AST probes and temporary imported-function mutations; no source writes, native/provider/push/installation effects |
 
@@ -960,3 +960,184 @@ and absolute-package-alias. All imported function/module identities were restore
 was changed by these probes. Full raw evidence exceeds the document-line estimate; it stays in
 this one previously approved evidence leaf, with no new report or script. This does not reset
 any budget. Root review03 is the sole verdict and correction authority.
+
+
+## Closure02 correction review evidence — 2026-09-21
+
+Candidate0e080257f923870ef504905d3ef56358d43bc94b descends from93273927af52246abee4f0c1972b4cb3e16944cf.
+Root independently read clean owner/review trees, single corpus path changed,11add/1delete,
+clean diff check. No guard, production, policy, A or new file change. Owner reports strict21
+and focused44 green (verification commands25.654sec); its return supplies a test summary, not
+unreduced raw output/all-command timing. These are owner claims, not root rerun evidence.
+
+Root stopped the planned full-suite rerun after the following discriminating check failed.
+The first harness exits1 honestly: F06 produces named red, F07 remains ZERO_RED and violates
+its assertion. Both patch contexts exit before the assertion, and the subsequent separate
+process verifies exact-candidate restored-green. The second command is diagnostic only:
+it supplies the missing symbol definition in memory, proving sensitivity, without delivering
+or committing a source repair. Nothing below is a third correction.
+
+### Exact correction discrimination (exit1)
+
+```powershell
+$cvqRunClock=[Diagnostics.Stopwatch]::StartNew()
+@'
+import ast, subprocess, sys, types, unittest
+from unittest.mock import patch
+sys.path.insert(0, "tests")
+import verification_qualification_source_symbols as symbols
+import verification_qualification_source_gate as gate
+import tests.test_verification_qualification_boundaries as tests
+original = symbols.import_target_for_alias
+def reject_absolute_child(node, name):
+    if node.level == 0 and (node.module or "").startswith("library.controlled_verification."):
+        return None
+    return original(node, name)
+def fold_module_case(node, name):
+    previous = node.module
+    node.module = previous.lower() if previous else previous
+    try:
+        return original(node, name.lower())
+    finally:
+        node.module = previous
+def run(label, method):
+    print(label, flush=True)
+    return unittest.TextTestRunner(verbosity=2).run(unittest.TestSuite([tests.QualificationBoundaryTests(method)])).wasSuccessful()
+with patch.object(symbols, "import_target_for_alias", reject_absolute_child):
+    absolute = run("F06 MUTANT rejects legal absolute child import", "test_source_positive_corpus")
+with patch.object(symbols, "import_target_for_alias", fold_module_case):
+    folded = run("F07 MUTANT folds module identity case", "test_source_namespace_admission")
+print("F06/F07 ZERO_RED", absolute, folded, flush=True)
+assert not absolute and not folded
+
+assert symbols.import_target_for_alias is original
+assert run("RESTORE namespace", "test_source_namespace_admission")
+assert run("RESTORE positive", "test_source_positive_corpus")
+'@ | & 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -
+$cvqRunExit=$LASTEXITCODE
+$cvqRunClock.Stop()
+Write-Output ('ELAPSED_SECONDS=' + $cvqRunClock.Elapsed.TotalSeconds)
+exit $cvqRunExit
+```
+
+```text
+F06 MUTANT rejects legal absolute child import
+test_source_positive_corpus (tests.test_verification_qualification_boundaries.QualificationBoundaryTests.test_source_positive_corpus) ...
+  test_source_positive_corpus (tests.test_verification_qualification_boundaries.QualificationBoundaryTests.test_source_positive_corpus) (row='B1-R01-absolute-child-symbol') ... FAIL
+
+======================================================================
+FAIL: test_source_positive_corpus (tests.test_verification_qualification_boundaries.QualificationBoundaryTests.test_source_positive_corpus) (row='B1-R01-absolute-child-symbol')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\GameBoy\Desktop\Johnny_AI_Skill_latest\.worktrees\cvq-01a2-review\tests\test_verification_qualification_boundaries.py", line 163, in test_source_positive_corpus
+    self.assertEqual((), inspect_sources(row.units))
+AssertionError: Tuples differ: () != (SourceViolation(module=<SourceModule.BIND[86 chars]'>),)
+
+Second tuple contains 1 additional elements.
+First extra element 0:
+SourceViolation(module=<SourceModule.BINDING_CONTRACTS: 'binding_contracts.py'>, line=1, column=0, rule=<SourceRule.SG02: 'SG02'>)
+
+- ()
++ (SourceViolation(module=<SourceModule.BINDING_CONTRACTS: 'binding_contracts.py'>,
++                  line=1,
++                  column=0,
++                  rule=<SourceRule.SG02: 'SG02'>),)
+
+----------------------------------------------------------------------
+Ran 1 test in 0.050s
+
+FAILED (failures=1)
+F07 MUTANT folds module identity case
+test_source_namespace_admission (tests.test_verification_qualification_boundaries.QualificationBoundaryTests.test_source_namespace_admission) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 3.859s
+
+OK
+F06/F07 ZERO_RED False True
+Traceback (most recent call last):
+  File "<stdin>", line 27, in <module>
+AssertionError
+ELAPSED_SECONDS=4.4940339
+```
+
+### Missing prerequisite diagnostic and restored candidate (exit0)
+
+```powershell
+$cvqRunClock=[Diagnostics.Stopwatch]::StartNew()
+@'
+import dataclasses, sys, unittest
+from unittest.mock import patch
+sys.path.insert(0, "tests")
+import verification_qualification_source_symbols as symbols
+import tests.test_verification_qualification_boundaries as tests
+from verification_qualification_source_corpus import replace_unit
+from verification_qualification_source_policy import SourceModule, SourceUnit
+original = symbols.import_target_for_alias
+def fold_module_case(node, name):
+    previous = node.module
+    node.module = previous.lower() if previous else previous
+    try:
+        return original(node, name)
+    finally:
+        node.module = previous
+def run(label, method):
+    print(label, flush=True)
+    return unittest.TextTestRunner(verbosity=2).run(unittest.TestSuite([tests.QualificationBoundaryTests(method)])).wasSuccessful()
+row = next(row for row in tests.NAMESPACE_ROWS if row.row_id == "B1-R01-mixed-case-module")
+print("CANDIDATE values definition", repr(next(unit.text for unit in row.units if unit.module is SourceModule.QUALIFICATION_VALUES)), flush=True)
+fixed = dataclasses.replace(row, units=replace_unit(row.units, SourceUnit(SourceModule.QUALIFICATION_VALUES, "from enum import Enum\nclass CapabilityFamily(str, Enum):\n    PLAN_BINDING = 'PLAN_BINDING'\n")))
+experiment = tuple(fixed if item.row_id == row.row_id else item for item in tests.NAMESPACE_ROWS)
+with patch.object(tests, "NAMESPACE_ROWS", experiment), patch.object(symbols, "import_target_for_alias", fold_module_case):
+    sensitive = run("DIAGNOSTIC ONLY in-memory complete prerequisite with casefold mutant", "test_source_namespace_admission")
+assert not sensitive
+assert symbols.import_target_for_alias is original
+assert run("RESTORED exact candidate namespace", "test_source_namespace_admission")
+assert run("RESTORED exact candidate positive", "test_source_positive_corpus")
+print("NO CANDIDATE FILE MODIFIED; diagnostic fixture is not a delivered repair", flush=True)
+'@ | & 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -
+$cvqRunExit=$LASTEXITCODE
+$cvqRunClock.Stop()
+Write-Output ('ELAPSED_SECONDS=' + $cvqRunClock.Elapsed.TotalSeconds)
+exit $cvqRunExit
+```
+
+```text
+CANDIDATE values definition 'from __future__ import annotations\n'
+DIAGNOSTIC ONLY in-memory complete prerequisite with casefold mutant
+test_source_namespace_admission (tests.test_verification_qualification_boundaries.QualificationBoundaryTests.test_source_namespace_admission) ...
+  test_source_namespace_admission (tests.test_verification_qualification_boundaries.QualificationBoundaryTests.test_source_namespace_admission) (row='B1-R01-mixed-case-module') ... FAIL
+
+======================================================================
+FAIL: test_source_namespace_admission (tests.test_verification_qualification_boundaries.QualificationBoundaryTests.test_source_namespace_admission) (row='B1-R01-mixed-case-module')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\GameBoy\Desktop\Johnny_AI_Skill_latest\.worktrees\cvq-01a2-review\tests\test_verification_qualification_boundaries.py", line 91, in test_source_namespace_admission
+    self.assertTrue(matching, findings)
+AssertionError: [] is not true : ()
+
+----------------------------------------------------------------------
+Ran 1 test in 3.799s
+
+FAILED (failures=1)
+RESTORED exact candidate namespace
+test_source_namespace_admission (tests.test_verification_qualification_boundaries.QualificationBoundaryTests.test_source_namespace_admission) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 3.949s
+
+OK
+RESTORED exact candidate positive
+test_source_positive_corpus (tests.test_verification_qualification_boundaries.QualificationBoundaryTests.test_source_positive_corpus) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.047s
+
+OK
+NO CANDIDATE FILE MODIFIED; diagnostic fixture is not a delivered repair
+ELAPSED_SECONDS=8.3171932
+```
+
+Retained helper's single immutable read batch2.8sec independently confirms the missing
+CapabilityFamily definition, and F06's complete positive. Root accepts F07 as unclosed; no
+new issue class/requirement. Review04 is the verdict. Source history remains untouched.

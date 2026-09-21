@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01B1` / `IMPLEMENTATION_TICKET` / `08` |
-| State / closure | `OWNER_APPROVED / SAME_OWNER_CORRECTION_ADMITTED / NOT_INTEGRATED`; `CLOSURE-CVQ-01B1/02`; section12 is current; closure01 remains exhausted |
+| ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01B1` / `IMPLEMENTATION_TICKET` / `09` |
+| State / closure | `BLOCKED / CONVERGENCE_REVIEW_REQUIRED / NON_DISPATCHABLE`; `CLOSURE-CVQ-01B1/02`; section13 is current; closure01 and02 attempts exhausted |
 | Preparation authority | Owner's 2026-09-21 approval of [B convergence01](../../../doc/reviews/controlled-verification/cvq-01b-convergence-proposal.md) at797c15db, LF0308388788c4a6a6c79ce4dd256b72bb5a231a498357a0038f305680e46f0f94; drafting only |
 | Observable result / change class | Complete, exact import origins and finite typed resolution; `PRODUCTION_BEHAVIOR / DEFECT_CORRECTION`, not test-exempt |
 | Baseline | `7171f41bdec15104fd653ecee6c8e06691055d16`, unapproved B correction; preserve immutable history, never call it accepted |
@@ -363,3 +363,14 @@ This is closure02's only correction. Root reruns the two discriminators, affecte
 checks and retained helper review before verdict. Failure returns convergence, not more correction.
 No partial integration/push/release/install. B2/B3 stay dependency-pending until B1 approval.
 ACTION_COMPLETED / CORRECTION_BATCH_RECORDED -> AUTO_CONTINUE / SAME_OWNER_ADDITIVE_CORRECTION.
+
+## 13. Closure02 correction exhausted — 2026-09-21
+
+Candidate0e080257f923870ef504905d3ef56358d43bc94b remains unapproved. Review04 independently
+closes F06 but proves F07 still ZERO_RED because CapabilityFamily is absent from the new row's
+values unit. This is the same complete-prerequisite obligation, no new acceptance criterion.
+Root's in-memory diagnostic proves the exact one-fixture remedy, not a delivered source change.
+Closure02 initial plus correction are exhausted; B2/B3 stay dependency-pending.
+Convergence08 section9 proposes one explicit exception, pending owner approval. No source
+mutation, new seat/closure/budget reset, integration/push/release/installation is admitted.
+ACTION_COMPLETED / B1_CLOSURE02_REVIEW_COMPLETE -> WAIT_FOR_HUMAN / OWNER_SINGLE_FIXTURE_EXCEPTION_PENDING.
