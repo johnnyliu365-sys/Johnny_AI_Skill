@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B-CONVERGENCE` / `CODE_REVIEW` / `08` |
-| State | `CONVERGENCE_REVIEW_REQUIRED / OWNER_SINGLE_FIXTURE_EXCEPTION_PENDING / NON_DISPATCHABLE`; section9 is current |
+| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B-CONVERGENCE` / `CODE_REVIEW` / `09` |
+| State | `OWNER_APPROVED / ONE_FIXTURE_EXCEPTION_ADMITTED / NOT_INTEGRATED`; section10 is current |
 | Evidence | [B correction review02](cvq-01b-source-admission-code-review.md); failed candidate7171f41bdec15104fd653ecee6c8e06691055d16 remains immutable |
 | Preserved authority | SPEC07 section11.3, wire03, accepted A1/A2/A3 at485d882f unchanged; no new provider/native/runtime behavior |
 | Decision owner | Project owner; no self-Grill or inferred exact approval |
@@ -196,3 +196,12 @@ This exact exception can be approved directly by pinned convergence08/B1 documen
 no separate preliminary replan approval is requested. Without it, all candidate refs stay
 immutable and B2/B3 remain non-dispatchable. No exception has been executed.
 ACTION_COMPLETED / ONE_FIXTURE_EXCEPTION_PROPOSED -> WAIT_FOR_HUMAN / OWNER_EXACT_APPROVAL_PENDING.
+
+## 10. Exact exception approval — 2026-09-21
+
+Owner approved section9 at4c5ffac4b0a9bc236ecff43eda24d058147513fd, LF
+117ca1db5ff1ed4bf1cc6d55701688fcee732bc97b75e8c2dc2ab7b37f6b8269. B1 document10 section14
+records the unchanged single-fixture envelope and remaining80-second allocation. Prior failures
+remain history. Same owner, no new closure, source authority or spending reset; no third automatic
+attempt beyond this explicit exception. Root alone reviews; no integration/push/release/install.
+ACTION_COMPLETED / EXCEPTION_ADMITTED -> AUTO_CONTINUE / ONE_FIXTURE_CORRECTION.

@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01B1` / `IMPLEMENTATION_TICKET` / `09` |
-| State / closure | `BLOCKED / CONVERGENCE_REVIEW_REQUIRED / NON_DISPATCHABLE`; `CLOSURE-CVQ-01B1/02`; section13 is current; closure01 and02 attempts exhausted |
+| ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01B1` / `IMPLEMENTATION_TICKET` / `10` |
+| State / closure | `OWNER_APPROVED / ONE_FIXTURE_EXCEPTION_ADMITTED / NOT_INTEGRATED`; `CLOSURE-CVQ-01B1/02`; section14 is current; prior exhaustion retained |
 | Preparation authority | Owner's 2026-09-21 approval of [B convergence01](../../../doc/reviews/controlled-verification/cvq-01b-convergence-proposal.md) at797c15db, LF0308388788c4a6a6c79ce4dd256b72bb5a231a498357a0038f305680e46f0f94; drafting only |
 | Observable result / change class | Complete, exact import origins and finite typed resolution; `PRODUCTION_BEHAVIOR / DEFECT_CORRECTION`, not test-exempt |
 | Baseline | `7171f41bdec15104fd653ecee6c8e06691055d16`, unapproved B correction; preserve immutable history, never call it accepted |
@@ -374,3 +374,21 @@ Closure02 initial plus correction are exhausted; B2/B3 stay dependency-pending.
 Convergence08 section9 proposes one explicit exception, pending owner approval. No source
 mutation, new seat/closure/budget reset, integration/push/release/installation is admitted.
 ACTION_COMPLETED / B1_CLOSURE02_REVIEW_COMPLETE -> WAIT_FOR_HUMAN / OWNER_SINGLE_FIXTURE_EXCEPTION_PENDING.
+
+## 14. Exact one-fixture exception approved — 2026-09-21
+
+Owner approves convergence08 section9 and document09 at4c5ffac4b0a9bc236ecff43eda24d058147513fd,
+LF117ca1db5ff1ed4bf1cc6d55701688fcee732bc97b75e8c2dc2ab7b37f6b8269 and
+0a3ed73501003b93b244f72c45392bae6350c5e8fd60ed81616b3d9078ba0f7a respectively.
+This is one explicit additional correction, not a new closure or budget. Modify only existing
+tests/verification_qualification_source_corpus.py: supply the exact approved CapabilityFamily
+definition to the B1-R01-mixed-case-module packet via existing _row_with_replacements. All other
+source and create/delete/rename/dependency grants are empty. Preserve all row IDs/rules/locations.
+Retain cve_wire_implementer Luna/xhigh/root; clean baseline0e080257f923870ef504905d3ef56358d43bc94b,
+codex/cvq-01 in .worktrees/cvq-01; containment/.git/common-dir verified, no reparse attributes.
+Rebind same-ticket view ctx-cvq-01b1-closure02-exception01. Bridge NOT_REQUIRED; followup/wait_agent.
+Same remaining80 command-wall seconds includes startup, owner, root/helper review and closeout;
+owner allocation15, max60/command, no retries or reset. Owner runs existing two methods/strict21;
+root runs case-fold named red/restored-green and focused44 once. Temp outside worktree. No source
+prompt/work-order narrative, new files/framework, partial integration/push/release/install.
+ACTION_COMPLETED / EXACT_EXCEPTION_APPROVAL_RECORDED -> AUTO_CONTINUE / ONE_FIXTURE_CORRECTION.
