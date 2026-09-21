@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01B1` / `IMPLEMENTATION_TICKET` / `04` |
-| State / closure | `CHANGES_REQUESTED / CORRECTION_ADMITTED / NOT_INTEGRATED`; `CLOSURE-CVQ-01B1/01`; section8 is current |
+| ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01B1` / `IMPLEMENTATION_TICKET` / `05` |
+| State / closure | `BLOCKED / CONVERGENCE_REVIEW_REQUIRED / NON_DISPATCHABLE / NOT_INTEGRATED`; `CLOSURE-CVQ-01B1/01`; section9 is current |
 | Preparation authority | Owner's 2026-09-21 approval of [B convergence01](../../../doc/reviews/controlled-verification/cvq-01b-convergence-proposal.md) at797c15db, LF0308388788c4a6a6c79ce4dd256b72bb5a231a498357a0038f305680e46f0f94; drafting only |
 | Observable result / change class | Complete, exact import origins and finite typed resolution; `PRODUCTION_BEHAVIOR / DEFECT_CORRECTION`, not test-exempt |
 | Baseline | `7171f41bdec15104fd653ecee6c8e06691055d16`, unapproved B correction; preserve immutable history, never call it accepted |
@@ -233,3 +233,18 @@ worktree. Additive correction baseline is1a1b6eb, never reset/amend or a third o
 Use the existing ticket scope/budget/commands; no B2/B3 work, new dependency or other effects.
 Root awaits completion and performs the sole correction review; second failure returns convergence.
 ACTION_COMPLETED / CVQ01B1_CHANGES_REQUESTED -> AUTO_CONTINUE / SAME_OWNER_ADDITIVE_CORRECTION.
+
+## 9. Correction exhausted — 2026-09-21
+
+Same-owner additive8dc22904921cb6b0c56a88d7e224ca66828f8c14 was reviewed under closure01.
+[Review02 section5](../../../doc/reviews/controlled-verification/cvq-01b1-namespace-import-code-review.md#5-correction-review--2026-09-21)
+and [correction evidence01](../../../doc/reviews/controlled-verification/cvq-01b1-correction-evidence.md)
+resolve in this registry commit. Strict21/focused44 and eight prior probes pass, but the
+first-entry mutant still has zero red, import-form normalization remains incomplete, and relative
+__future__ is accepted. Closure01 initial+correction limit is exhausted, not reset by this revision.
+The previous section8 correction admission is consumed. No source mutation/third correction is
+admitted. Preserve exact candidate, accepted A and closed B1-F02/F03 implementation evidence.
+B2/B3 remain dependency-pending. See convergence05 section6 for a proposal only; owner decides
+the bounded replan before a new exact closure can be admitted.
+ACTION_COMPLETED / CVQ01B1_CORRECTION_REVIEW_COMPLETE ->
+WAIT_FOR_HUMAN / CONVERGENCE_REPLAN_DECISION_REQUIRED.

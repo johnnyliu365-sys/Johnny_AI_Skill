@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B-CONVERGENCE` / `CODE_REVIEW` / `04` |
-| State | `EXACT_REPLACEMENT_SET_OWNER_APPROVED / B1_DISPATCH_ADMITTED / NOT_INTEGRATED` |
+| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B-CONVERGENCE` / `CODE_REVIEW` / `05` |
+| State | `B1_CONVERGENCE_REVIEW_REQUIRED / OWNER_DECISION_PENDING / NON_DISPATCHABLE / NOT_INTEGRATED`; section6 is current |
 | Evidence | [B correction review02](cvq-01b-source-admission-code-review.md); failed candidate7171f41bdec15104fd653ecee6c8e06691055d16 remains immutable |
 | Preserved authority | SPEC07 section11.3, wire03, accepted A1/A2/A3 at485d882f unchanged; no new provider/native/runtime behavior |
 | Decision owner | Project owner; no self-Grill or inferred exact approval |
@@ -93,3 +93,40 @@ B2/B3 stay dependency-pending; actual accepted SHA binding is already authorized
 design decision. Retain the implementation owner; direct delegation -> wait_agent -> root review.
 No original B third correction or partial A/B integration; no push/publication/installation.
 ACTION_COMPLETED / EXACT_REPLACEMENT_SET_APPROVED -> AUTO_CONTINUE / IMPLEMENT_CVQ01B1.
+
+## 6. B1 correction exhaustion and bounded replan — 2026-09-21
+
+[Review02](cvq-01b1-namespace-import-code-review.md) and
+[correction evidence01](cvq-01b1-correction-evidence.md) pin8dc22904921cb6b0c56a88d7e224ca66828f8c14.
+B1 closure01 exhausted initial+correction with residual implementation/evidence defects.
+B2/B3 approval is preserved, but neither dependency is satisfied. No third B1 correction, new
+owner allocation, source writes or integration is authorized by this proposal.
+
+This is not a SPEC change: exact namespace admission and the finite positive/negative grammar
+remain correct. The residual source responsibility is import identity/form normalization; the
+evidence gap is a corpus testing different structures than it claims. Root also omitted two
+equivalent package-form spellings and the relative-future case in the first review batch.
+Do not throw away the fixed ambiguity/fixed-point behavior or repeat accepted A campaigns.
+
+Proposed next control-plane action, OWNER_DECISION_PENDING:
+
+- Freeze the remaining exact import-form table before dispatch: direct/parent/absolute package
+  forms with the same local alias normalize to the same internal identity; external __future__
+  must have absolute level0, and a relative unknown namesake rejects. Exact case/suffix, declared
+  edges, all entries and all scopes retain their existing contract.
+- Give the remaining closure concrete AST shapes rather than prose labels: one ImportFrom with
+  two aliases, complete unrelated symbol definitions, acyclic resolved forbidden re-export path,
+  the exact six-module allowed chain in both orders, and retained nested-cycle row.
+- Pin the existing root counter-mutation commands as required replay checks of the remainder;
+  their exact source is already in evidence01. Removal of later aliases and nested edges must
+  turn the named cells red; prefix weakening must retain its known red. No ad hoc added campaign.
+- Preserve candidate8dc2290 and closed implementation evidence; replan only the residual
+  normalization/evidence closure, then perform one combined B1 admission before B2.
+  No speculative source edit, automatic model elevation or new seat. Default retained owner
+  remains unless the owner decides a one-ticket resource change with corresponding reviewer.
+
+This is a genuine control-plane replan proposal, not source approval or silently renamed third
+correction. Owner must choose/approve the replan; the resulting exact committed replacement
+closure and source binding must exist before dispatch. Sealed Context/SPEC/public seam and
+installation line stay unchanged. ACTION_COMPLETED / B1_CONVERGENCE_RECORDED ->
+WAIT_FOR_HUMAN / CONVERGENCE_REPLAN_DECISION_REQUIRED.

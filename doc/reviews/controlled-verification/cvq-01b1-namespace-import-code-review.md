@@ -2,9 +2,9 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B1` / `CODE_REVIEW` / `01` |
-| Conclusion / iteration | `CHANGES_REQUESTED` / initial review of closure01; one additive correction remains |
-| Candidate / baseline | 1a1b6eb3af4c5a7e31de0d102eaf20b461c49f98 / 7171f41bdec15104fd653ecee6c8e06691055d16 |
+| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B1` / `CODE_REVIEW` / `02` |
+| Conclusion / iteration | `CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED` / closure01 initial plus correction exhausted; section5 is current |
+| Candidate / baseline | 8dc22904921cb6b0c56a88d7e224ca66828f8c14 / 1a1b6eb3af4c5a7e31de0d102eaf20b461c49f98 |
 | Authority | [B1](../../../modules/tickets/controlled-verification/cvq-01b1-namespace-import-admission.md) document03 / closure01 at6266cfcfb46956213b71042ec4035ae73a5442f6, LF b6fde644de900e054875d85488a610380efe9f01341c7037a78139023842280f |
 | Reviewer / evidence | root; [unreduced commands, probes and mutations](cvq-01b1-initial-evidence.md) |
 | Source owner | retained cve_wire_implementer, Luna/xhigh, .worktrees/cvq-01 / codex/cvq-01 |
@@ -64,3 +64,38 @@ accepted A campaigns or widen into B2/B3. Original B exhausted history remains u
 Root will re-run this finite batch, affected strict/focused checks and an exact-candidate helper.
 A second failing B1 review returns CONVERGENCE_REVIEW_REQUIRED, never a third correction.
 ACTION_COMPLETED / CVQ01B1_CHANGES_REQUESTED -> AUTO_CONTINUE / SAME_OWNER_ADDITIVE_CORRECTION.
+
+## 5. Correction review — 2026-09-21
+
+Exact correction8dc22904921cb6b0c56a88d7e224ca66828f8c14 descends from1a1b6eb.
+Root read back the same retained clean owner/worktree; four allowed paths changed, no production/A
+or policy change. Review tree detached at8dc2290 is clean. Strict21 and focused44 pass (16.982sec).
+[Correction evidence01](cvq-01b1-correction-evidence.md) retains exact commands and unreduced outputs.
+
+| Finding | Current disposition at8dc2290 |
+| --- | --- |
+| B1-F01 | PARTIALLY_FIXED. Original normalized symbol import/cycle pass. Equivalent parent-relative and absolute package-module alias forms still reject (SG01/SG09) while direct form accepts. Whole exact module-form normalization remains incomplete. |
+| B1-F02 | IMPLEMENTATION_FIXED. The complete two-origin ambiguity probe now rejects, typed AMBIGUOUS assertion exists. |
+| B1-F03 | IMPLEMENTATION_FIXED / EVIDENCE_PARTIAL. Root's exact six-module allowed chain passes in both orders. The committed positive matrix only retains a short facade chain, so it does not pin the prior longer-path failure. Do not call the actual current resolver failing merely because the committed fixture is absent. |
+| B1-F04 | PARTIALLY_FIXED. Nested export isolation and nested-cycle sensitivity repaired; root nested graph mutant now produces the named SG08 red/restored-green. First-entry-only mutation remains ZERO_RED, with two statements still substituting for two entries. Several prerequisite packets remain empty; indirect origin fixture is a cycle/unknown, not a resolved constituent path. |
+| B1-F05 IMPLEMENTATION_DEFECT | Section2 exact namespace/external allowlist and B1-I01: `from .__future__ import annotations` is accepted with no finding because the external future shortcut ignores relative level. The relative internal target does not exist. Root reproduces this bypass; accepting it is not a new external surface allowed by the ticket. |
+
+B1-F05 and the equivalent package forms were missed in root's first batch; root records that
+review coverage gap, not a scope expansion or implementer-only blame. They derive from the
+already-frozen whole-identity/normalization requirement. Source packets were AST-only, never executed.
+
+Mandatory exact-candidate helper reused profile_delivery_audit with the same REQUIRED categories,
+READ_ONLY_INTENT_ONLY / NO_EXTERNAL_EFFECT plan. It returned FINDINGS: the long positive path is
+not committed (corpus324/boundaries135), and per-statement later aliases remain absent (corpus167).
+Root adjudication: accept as EVIDENCE_DEFECT under B1-F03/F04. Root's independent eight prior probes
+pass, so the first helper finding is a missing regression guard, not evidence of a current
+long-chain implementation failure. The first-entry counter-mutation independently confirms the
+second. No helper verdict was accepted; no new seat or external/native effect.
+
+This exhausts closure01's initial plus one correction review. Conclusion CHANGES_REQUESTED /
+CONVERGENCE_REVIEW_REQUIRED; do not dispatch a third correction. Candidate/history stay immutable.
+B2/B3 remain approved but DEPENDENCY_PENDING, not dispatchable. No partial integration, push,
+release or installation. Root routes the remaining normalization and evidence obligations to
+[convergence05 section6](cvq-01b-convergence-proposal.md#6-b1-correction-exhaustion-and-bounded-replan--2026-09-21).
+ACTION_COMPLETED / CVQ01B1_CORRECTION_REVIEW_COMPLETE ->
+WAIT_FOR_HUMAN / CONVERGENCE_REPLAN_DECISION_REQUIRED.
