@@ -63,6 +63,16 @@ primary observable path and confirm expected result plus absence of obvious runt
 errors. If automation is impossible, record exact manual steps and result. Failure returns to
 the TDD loop.
 
+## Bounded implementation and outputs
+
+Apply the admitted work envelope from [specification-ticketing](specification-ticketing.md#bounded-work-envelope).
+Reuse its named modules/test tools; correction is a defect fix plus corresponding tests, not a
+new framework or acceptance expansion. Temporary test outputs belong in a temporary directory
+outside the worktree. Persist only the exact authorized evidence paths; preserve necessary
+evidence without regenerating whole screenshot/report batches. Reuse evidence only when its
+candidate, check and environment bindings still match. Keep correction/descendant consumption
+on the same budget lineage; a new ticket or process is not a reset.
+
 ## Ticket completion
 
 A ticket is complete only when:
@@ -73,7 +83,8 @@ A ticket is complete only when:
 - AC, error behavior, data contract, privacy/logging and applicable security matrices have
   reproducible evidence;
 - the owner worktree creates one implementation commit containing only this ticket;
-- the Work Progress Report records identifiers/results in a separate docs-only commit;
+- the typed return binds exact commits and ticket/review evidence; WorkProgressReport.md is
+  neither a write/return target nor a separate completion commit (Workflow's ownership rule);
 - no cache or unauthorized residue remains.
 
 Return `ImplementationReturn`: `COMPLETED`, `BLOCKED` or `CHANGE_DETECTED`. Do not claim review

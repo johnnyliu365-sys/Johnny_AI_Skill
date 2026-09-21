@@ -48,6 +48,36 @@ architecture owner before ticket admission.
 `modules/element/` is an index to target-owned source, types, contracts and tests. It never
 copies production source.
 
+## Bounded work envelope
+
+Before dispatch, bind the following to the approved ticket slice and baseline. Apply the same
+envelope to the implementer, corrections and reviewer-owned helpers; no separate workflow engine.
+
+1. Separate exact repository-relative `modify` and `create` paths; `create` defaults empty.
+   Each creation needs an independent responsibility and acceptance reference. A new ticket
+   does not justify new files. Deletion/rename need explicit operation grants; check both rename
+   endpoints. A directory/tree grant must not silently authorize additional new files.
+2. Record the inspected reusable modules and test tools with exact references and intended use.
+   Inspect existing browser startup, mock-server, PNG-decoding and pixel-comparison utilities
+   where relevant; absence needs recorded evidence, not an assumption or a copied framework.
+3. Bind one round/lineage budget and expected deltas separately for product code, tests, documents
+   and screenshots. Corrections and split/descendant tickets retain prior consumption. Missing
+   observations are unknown, not zero. LOC is a review signal, never a compression/splitting quota.
+4. Name exact retained-evidence outputs; all other test output defaults to temporary storage.
+   Required proof is retained once per bound execution slot, not repeated bulk reports/screenshots.
+5. Correction cannot add unrelated scope/frameworks. Review findings bind existing acceptance;
+   optional best practices cannot become new delivery gates. Source-content rules still apply.
+6. Require mechanical comparison of independently observed candidate/baseline changes against
+   the envelope: unapproved creation, out-of-bound edits, undeclared dependencies and unauthorized
+   artifacts refuse delivery. Do not trust the returned file list or let candidate code rewrite
+   its policy. Actual dependency/artifact checks need qualified adapters, including declared
+   untracked/ignored output inventory where applicable; Git diff alone cannot observe those.
+
+These are required contracts, not evidence that an installed checker implements them. State the
+actual supported predicates and gaps. Admission can reject delivery/integration; without proven
+write interception it cannot prevent file creation. Semantic duplication/responsibility remains
+the root reviewer's judgment. Same-lifetime dispatch gains no runner/receipt prerequisite.
+
 ## Frontend contract
 
 When a formal UI or design source is involved, also apply `ui-design-handoff.md` before ticket
@@ -83,7 +113,9 @@ Canonical ownership is fixed:
 - global rules: `AGENTS.md`, `Workflow.md`, `CodeReview.md` and this skill's references;
 - product behavior/architecture/acceptance: SPEC;
 - complete implementation contract: ticket;
-- transitions, IDs, commits, review results and exceptions: Work Progress Report;
+- transitions: typed Router events; IDs, commits, review results and exceptions: exact ticket/
+  review evidence. WorkProgressReport.md is only a project-level short index, never a per-action
+  ledger, implementation/review return target or separate completion commit;
 - instruction: identifiers only.
 
 The first dispatch envelope contains only `ACTION_REQUIRED`, `dispatch_ref`,

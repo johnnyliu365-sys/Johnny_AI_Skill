@@ -14,6 +14,14 @@ For implementation source, also read [source-content-boundary](source-content-bo
 Reject work-order/prompt contamination without deleting necessary technical comments.
 Report a mechanical check's actual coverage separately from semantic review.
 
+Apply the [bounded work envelope](specification-ticketing.md#bounded-work-envelope) to the exact
+candidate and baseline, not its self-reported changes. Check separate modify/create grants,
+dependency/artifact declarations, named reuse and cumulative budget deltas. Mechanical violations
+refuse delivery; missing checker coverage cannot be reported as enforced. Root alone judges
+duplicated abstractions and responsibility mixing. Corrections/helpers cannot add a framework,
+reset the round's budget or promote non-required best practices into acceptance. Keep the
+existing mandatory review/mutation evidence; this rule forbids scope growth, not required proof.
+
 ## Defect categories
 
 | Category | TDD minimum | Review action |
