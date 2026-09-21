@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B-CONVERGENCE` / `CODE_REVIEW` / `01` |
-| State | `PROPOSED / OWNER_EXACT_APPROVAL_PENDING / NON_DISPATCHABLE` |
+| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B-CONVERGENCE` / `CODE_REVIEW` / `02` |
+| State | `DECOMPOSITION_OWNER_APPROVED / REPLACEMENT_TICKETS_PROPOSED / NON_DISPATCHABLE` |
 | Evidence | [B correction review02](cvq-01b-source-admission-code-review.md); failed candidate7171f41bdec15104fd653ecee6c8e06691055d16 remains immutable |
 | Preserved authority | SPEC07 section11.3, wire03, accepted A1/A2/A3 at485d882f unchanged; no new provider/native/runtime behavior |
 | Decision owner | Project owner; no self-Grill or inferred exact approval |
@@ -55,3 +55,27 @@ No third correction, integration, push, publication, release, installation or ta
 authorized by this proposal. ACTION_COMPLETED / CONVERGENCE_PROPOSED -> WAIT_FOR_HUMAN /
 OWNER_DECOMPOSITION_DECISION. This is the actual decision fork, not another request to approve
 ordinary reviewer evidence work.
+
+## 4. Owner decision and exact replacement proposals — 2026-09-21
+
+Owner **「核准」** approves this proposal revision01 at
+797c15db0bcb39d1e015bb676f1722a9e138a6e7, LF
+0308388788c4a6a6c79ce4dd256b72bb5a231a498357a0038f305680e46f0f94.
+This signature authorizes section3's ticket drafting, not source dispatch or a third correction.
+Sections1–3 above remain the historical decision object. The three proposals are:
+
+- [B1 namespace/import](../../../modules/tickets/controlled-verification/cvq-01b1-namespace-import-admission.md), document01/closure01.
+- [B2 call/receiver](../../../modules/tickets/controlled-verification/cvq-01b2-call-receiver-admission.md), document01/closure01, dependent on accepted B1.
+- [B3 grammar/composition](../../../modules/tickets/controlled-verification/cvq-01b3-source-grammar-composition.md), document01/closure01, dependent on accepted B1+B2.
+
+Their [preflight](cvq-01b-replacement-ticket-preflight.md) records root's concrete baseline checks
+and bounded proposal review. Each replacement includes its own behavior/tests/verification;
+SG19 recursion belongs B2, annotations/control forms belong B3. No full20-rule campaign at each
+slice: root performs the combined final-SHA campaign at B3. Accepted A and isolated installation
+evidence remain unchanged; no source, source ref, main, remote or installed payload was modified.
+
+New ticket closures remain OWNER_EXACT_APPROVAL_PENDING; B closure01 stays exhausted.
+One exact approval of the replacement set can authorize B1 dispatch and sequential B2/B3
+dependency-SHA bindings without repeated metadata ceremonies. A changed closure still requires
+owner decision. ACTION_COMPLETED / REPLACEMENT_TICKETS_PROPOSED -> WAIT_FOR_HUMAN /
+OWNER_EXACT_APPROVAL_PENDING. No integration/push/publication/installation/native effect.
