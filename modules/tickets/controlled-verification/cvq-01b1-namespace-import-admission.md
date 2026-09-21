@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01B1` / `IMPLEMENTATION_TICKET` / `05` |
-| State / closure | `BLOCKED / CONVERGENCE_REVIEW_REQUIRED / NON_DISPATCHABLE / NOT_INTEGRATED`; `CLOSURE-CVQ-01B1/01`; section9 is current |
+| ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01B1` / `IMPLEMENTATION_TICKET` / `06` |
+| State / closure | `OWNER_EXACT_APPROVAL_PENDING / NON_DISPATCHABLE / NOT_INTEGRATED`; proposed `CLOSURE-CVQ-01B1/02`; section10 is current; closure01 remains exhausted |
 | Preparation authority | Owner's 2026-09-21 approval of [B convergence01](../../../doc/reviews/controlled-verification/cvq-01b-convergence-proposal.md) at797c15db, LF0308388788c4a6a6c79ce4dd256b72bb5a231a498357a0038f305680e46f0f94; drafting only |
 | Observable result / change class | Complete, exact import origins and finite typed resolution; `PRODUCTION_BEHAVIOR / DEFECT_CORRECTION`, not test-exempt |
 | Baseline | `7171f41bdec15104fd653ecee6c8e06691055d16`, unapproved B correction; preserve immutable history, never call it accepted |
@@ -248,3 +248,76 @@ B2/B3 remain dependency-pending. See convergence05 section6 for a proposal only;
 the bounded replan before a new exact closure can be admitted.
 ACTION_COMPLETED / CVQ01B1_CORRECTION_REVIEW_COMPLETE ->
 WAIT_FOR_HUMAN / CONVERGENCE_REPLAN_DECISION_REQUIRED.
+
+## 10. Approved replan; exact residual closure02 proposal — 2026-09-21
+
+Owner approved convergence05 section6 at `cafb4f571b80d969c28844e8a5a949b1225e3328`, LF
+`9b7cd0c290b7243ec8170aece8050db2f02d172ef4677a993c59121e5bb5e553`, and added REQ-051 D8.
+This transcribes that drafting grant, not a third closure01 correction. Section1's immutable
+SPEC/wire/Context/profile/public seam pins remain valid; REQ-051 revision12 D8 resolves at
+`1ea589b3ff416e637b2456464d49b73feae53c21`, LF
+`a8d04409a8397b73bb351ac2fe3bfd85de3c49589c0e1397cc66220e7481b709`.
+Source baseline is `8dc22904921cb6b0c56a88d7e224ca66828f8c14`, unapproved and preserved.
+
+### Exact residual work and acceptance
+
+| Cell | AST shape and independent expected observation |
+| --- | --- |
+| B1-R01 | In binding_contracts, `from . import qualification_values as values`, `from ..controlled_verification import qualification_values as values` and `from library.controlled_verification import qualification_values as values` all identify the same allowed internal module. Each complete nine-unit packet returns no findings, not merely identical rejection. Retain the three equivalent symbol-import forms and exact suffix/case/edge negatives. |
+| B1-R02 | Only level0 `from __future__ import annotations` is external/allowed. `from .__future__ import annotations` and its normalized parent-relative spelling target a nonexistent internal module and require SG01 at the import node. Absolute unknown internal names remain SG02. Other external imports still use the closed SPEC allowlist. |
+| B1-R03 | One ImportFrom contains `CapabilityFamily, Missing` from the exact allowed values module. Define CapabilityFamily; deliberately leave Missing absent. Require SG01 at that single node. The existing first-entry-only mutant must make this named assertion fail; two separate import statements cannot substitute. |
+| B1-R04 | Repair the already-required direct/absolute/aliased forbidden-edge rows with reachable valid symbol definitions. Re-export fixture is acyclic and fully resolved: init -> contracts -> report -> manifest -> values, final CapabilityFamily defined in values; report -> manifest is the forbidden edge. Require SG06 on the re-export consumer and assert resolved origin, not UNKNOWN/cycle red. Keep separate original cell IDs/locations. |
+| B1-R05 | Persist the exact previously observed legal six-module chain init -> contracts -> ports -> manifest -> binding -> values, final CapabilityFamily defined in values. All edges allowed; complete packet and reversed packet both return no findings. Retain ambiguity, nested-export isolation and nested-cycle regression rows unchanged. |
+
+Reuse the existing literal corpus/MINIMUM_PACKET/replace_unit, immutable SourceUnit/SourceViolation,
+symbols resolver, gate and QualificationBoundaryTests. Add rows/assertions in the existing
+namespace/positive methods, not a second resolver, runner or new utility file. Independent
+literal expected IDs/rules/locations remain required; gate output cannot author its own oracle.
+B1-F02 and actual F03 implementation remain preserved; B2/B3 and accepted A remain untouched.
+
+### Exact envelope and cumulative budget
+
+`modify` is exactly the five existing paths under tests/ in section2's table; `create`, `delete`,
+`rename`, new dependencies and screenshots are empty. Every other path is forbidden to the
+implementer, including product source, documents, accepted A and unrelated B2/B3 behavior.
+Keep technical comments/test data, never owner prompts or work-order narrative in source.
+Expected residual deltas: product0; tests about0–150 net lines across those owners; implementer
+documents0; screenshots0. Root appends about140 document lines to this existing ticket/convergence,
+correction evidence and their existing indexes, not a new report set. Estimates trigger review,
+not compression.
+
+Budget lineage is the existing CVQ-01/B work, not a new ticket budget. Prior committed five-path
+delta from accepted A485d882f to8dc2290 is 1667 additions /272 deletions, all test support; retain
+that baseline accounting and previous failed attempts. Prior aggregate model/command consumption
+was not completely measured and remains UNKNOWN, never zero. The D8 control edit already added
+158/deleted19 document lines and ran30 existing path tests; it is not erased by this replan.
+Proposed remaining execution allowance is1200 command-wall seconds shared by implementer/root,
+initial/correction/review/mutations together, max60 per command, one foreground process, zero
+automatic retry/load/polling. This is an explicit additional allowance for the same lineage,
+not a claim that the historical total fits1200 or a fresh allowance on correction. Exhaustion
+stops; unavailable host/token controls cannot be described as enforced hard caps.
+
+All temporary outputs use a temporary directory outside the worktree, including mypy's cache
+via its existing `--cache-dir` option. Existing section5 strict/focused/smoke commands otherwise
+remain fixed. Root retains exact commands and unreduced results only in the existing B1 review
+and correction-evidence leaves, with their existing indexes; no new evidence/screenshot files.
+
+### Proof and continuation
+
+Existing correction-evidence's three collected exact-form failures at8dc2290 are the real
+baseline for R01/R02. Run the repaired namespace assertions against that baseline before the
+guard fix; an import/collection error is not red. R04's replan preflight in correction-evidence02
+observes a resolved acyclic path with only SG01, no SG06; repair the predicate as well as the data.
+That printed probe is not yet a named-test red. Already-green R03/R05 properties use reviewer
+mutations/retained same-SHA evidence, not fabricated baseline failures. Replay the existing
+first-entry, prefix and nested-edge counter-mutations from initial/correction evidence; require
+named red plus exact restore-green. Root additionally restores the relative-future bypass and
+breaks package-form normalization, checking R02/R01 discrimination. No full SG01–20/A campaign.
+
+Exact approval must bind this document06/closure02 before source dispatch. Then fresh source/
+containment/profile readback, retain cve_wire_implementer Luna/xhigh and root reviewer; one
+bounded retained evidence-only helper, no new seat. Direct dispatch -> wait_agent -> root review.
+One initial plus one correction maximum, same envelope/remaining allowance; failure returns
+convergence, not automatic expansion. Combined B1 approval is required before B2's already-approved
+dependency binding. No partial integration/push/release/install or host effect.
+ACTION_COMPLETED / B1_RESIDUAL_CLOSURE_PROPOSED -> WAIT_FOR_HUMAN / OWNER_EXACT_APPROVAL_PENDING.

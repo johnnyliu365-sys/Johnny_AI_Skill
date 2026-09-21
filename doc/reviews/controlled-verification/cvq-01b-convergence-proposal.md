@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B-CONVERGENCE` / `CODE_REVIEW` / `05` |
-| State | `B1_CONVERGENCE_REVIEW_REQUIRED / OWNER_DECISION_PENDING / NON_DISPATCHABLE / NOT_INTEGRATED`; section6 is current |
+| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B-CONVERGENCE` / `CODE_REVIEW` / `06` |
+| State | `B1_REPLAN_APPROVED / EXACT_RESIDUAL_CLOSURE_PENDING / NON_DISPATCHABLE / NOT_INTEGRATED`; section7 is current |
 | Evidence | [B correction review02](cvq-01b-source-admission-code-review.md); failed candidate7171f41bdec15104fd653ecee6c8e06691055d16 remains immutable |
 | Preserved authority | SPEC07 section11.3, wire03, accepted A1/A2/A3 at485d882f unchanged; no new provider/native/runtime behavior |
 | Decision owner | Project owner; no self-Grill or inferred exact approval |
@@ -130,3 +130,23 @@ correction. Owner must choose/approve the replan; the resulting exact committed 
 closure and source binding must exist before dispatch. Sealed Context/SPEC/public seam and
 installation line stay unchanged. ACTION_COMPLETED / B1_CONVERGENCE_RECORDED ->
 WAIT_FOR_HUMAN / CONVERGENCE_REPLAN_DECISION_REQUIRED.
+
+## 7. Owner decision and bounded residual draft — 2026-09-21
+
+Owner's latest approval accepts section6 atcafb4f571b80d969c28844e8a5a949b1225e3328, LF
+9b7cd0c290b7243ec8170aece8050db2f02d172ef4677a993c59121e5bb5e553, and adds six D8 controls.
+[B1 document06 section10](../../../modules/tickets/controlled-verification/cvq-01b1-namespace-import-admission.md#10-approved-replan-exact-residual-closure02-proposal--2026-09-21)
+now proposes closure02 for the five residual normalization/evidence cells, with the same five
+existing files, no creations/dependencies, declared reuse and one cumulative lineage. It retains
+all failed/accepted history and proposes an explicit1200-second remaining execution allowance,
+not an unobserved historical balance or a per-correction reset. Exact approval remains pending.
+Prior correction's collected failures are retained. One read-only replan AST probe in
+correction-evidence02 confirms R04 is also an existing SG06 implementation gap: the origin is
+resolved and acyclic, but only SG01 is returned. No source change or new named-test red is claimed.
+The independent D8 canonical repair is committed at1ea589b3ff416e637b2456464d49b73feae53c21;
+30 existing path tests passed, not proof that all new controls are executable or installed.
+Retained profile_delivery_audit performed one read-only adversarial pass on that exact ten-file
+D8 diff and returned NO_FINDINGS; root accepts the framing/contradiction check only. It ran no
+tests and did not review or approve this new B1 closure. No additional seat or framework was used.
+No automatic third correction, new seat, integration/push/release/install/target effect.
+ACTION_COMPLETED / B1_REPLAN_TRANSCRIBED -> WAIT_FOR_HUMAN / OWNER_EXACT_APPROVAL_PENDING.

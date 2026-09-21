@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `EVIDENCE-CVQ-01B1-CORRECTION` / `REVIEW_EVIDENCE` / `01` |
+| ID / kind / revision | `EVIDENCE-CVQ-01B1-CORRECTION` / `REVIEW_EVIDENCE` / `02` |
 | Candidate / correction baseline | 8dc22904921cb6b0c56a88d7e224ca66828f8c14 / 1a1b6eb3af4c5a7e31de0d102eaf20b461c49f98 |
 | Authority | B1 document04/closure01 at596dc08ed1d3fcac898b1536360854355cf2e623, LF ec19bfe0eaf9d161e6fb99079b95fa6bc9e41d2f6b1c169f2c461eefa51cb6bd |
 | Root review tree | .worktrees/cvq-01a2-review; detached exact candidate, clean before/after |
@@ -311,3 +311,51 @@ is not a definition reachable by that import path. These are residual B1-F04 iss
 
 Final conclusion/helper adjudication is in review02. No full20-rule B3 campaign or accepted-A
 mutation repetition was triggered on this failing intermediate candidate.
+
+## Replan preflight: acyclic resolved forbidden re-export — 2026-09-21
+
+After owner approved convergence05's replan, root ran this one read-only AST probe at the same
+8dc22904921cb6b0c56a88d7e224ca66828f8c14 in its detached review tree. It reuses the existing
+packet/gate/symbols helpers; no new script file, source mutation, retry or full suite. This is
+an observed missing SG06 result, not a claimed named-test red (the probe prints observations).
+
+```powershell
+@'
+import ast
+import sys
+sys.path.insert(0, 'tests')
+from verification_qualification_source_corpus import MINIMUM_PACKET, replace_unit
+from verification_qualification_source_gate import inspect_sources
+from verification_qualification_source_policy import SourceModule as M, SourceUnit
+from verification_qualification_source_symbols import export_origins
+
+def packet(parts):
+    units = MINIMUM_PACKET
+    for module, source in parts:
+        units = replace_unit(units, SourceUnit(module, source))
+    return units
+
+definition = "from enum import Enum\nclass CapabilityFamily(str, Enum):\n    PLAN_BINDING = 'PLAN_BINDING'\n"
+units = packet(((M.QUALIFICATION_VALUES, definition),
+ (M.MANIFEST_CONTRACTS, 'from .qualification_values import CapabilityFamily\n'),
+ (M.REPORT_CONTRACTS, 'from .manifest_contracts import CapabilityFamily\n'),
+ (M.QUALIFICATION_CONTRACTS, 'from .report_contracts import CapabilityFamily\n'),
+ (M.INIT, 'from .qualification_contracts import CapabilityFamily\n')))
+print('R04 findings:', inspect_sources(units))
+trees = {unit.module.value.removesuffix('.py'): ast.parse(unit.text) for unit in units}
+print('R04 init export:', export_origins(trees)['__init__']['CapabilityFamily'])
+'@ | & 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -
+```
+
+Unreduced output, exit0, command wall0.689sec:
+
+```text
+R04 findings: (SourceViolation(module=<SourceModule.REPORT_CONTRACTS: 'report_contracts.py'>, line=1, column=0, rule=<SourceRule.SG01: 'SG01'>),)
+R04 init export: SymbolOrigin(module='qualification_values', name='CapabilityFamily', status=<ResolutionStatus.RESOLVED: 'RESOLVED'>)
+```
+
+The packet is neither UNKNOWN nor cyclic. Direct forbidden-edge rejection exists, but the
+already-required SG06 re-export-consumer predicate is absent. Closure02 R04 must repair its
+existing implementation and literal regression fixture, not merely relabel the old cyclic row.
+This does not invalidate preserved F02/F03 fixes or approve any candidate. Historical closure01
+review remains exhausted; the new exact proposal still needs owner approval before source work.
