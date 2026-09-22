@@ -2,11 +2,13 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `EVIDENCE-CVQ-01B-CORRECTION` / `REVIEW_EVIDENCE` / `02` |
-| Candidate / initial | 7171f41bdec15104fd653ecee6c8e06691055d16 / 704f066c881dc36e7176d8564edadd439a443a09 |
-| Authority | Same B document05 / closure01 at b96aaaa6e385dc518389fc680cabbcf7251b01b2; initial review9e0f4a1a3399fad2daadfb58866cbfc26a9109d4 |
+| ID / kind / revision | `EVIDENCE-CVQ-01B-CORRECTION` / `REVIEW_EVIDENCE` / `03` |
+| Current B2 / authority | f2b3fb8dab7cae2554eb0ab24b9ee7dfc6d77092; B2 document06/closure01 at f30e1a39c716bec007ef419bea6e6cec0550d2c3; final B2 section below is current |
+| Historical original-B candidate / initial | 7171f41bdec15104fd653ecee6c8e06691055d16 / 704f066c881dc36e7176d8564edadd439a443a09 |
+| Historical original-B authority | B document05 / closure01 at b96aaaa6e385dc518389fc680cabbcf7251b01b2; initial review9e0f4a1a3399fad2daadfb58866cbfc26a9109d4 |
 | Executor / scope | root in detached .worktrees/cvq-01a2-review; temporary source mutation restored byte-exact; no provider/native/target/integration/publication effect |
-| Status | Original15 now reject; strict21/focused43 green; three existing-rule assertions fail; actual package accepts forbidden schema port invocation; final all-rule campaign NOT_VERIFIED |
+| Current B2 status | Strict21/focused45 green; three independent counterexamples fail; frozen guard/product contradiction reproduced; BLOCKED / CONVERGENCE_REVIEW_REQUIRED |
+| Historical original-B status | Original15 reject; strict21/focused43 green; three existing-rule assertions fail; actual package accepts forbidden schema port invocation; final all-rule campaign NOT_VERIFIED |
 
 The initial root strict/focused session had not completed when root started the fifteen-packet
 AST probe, briefly overlapping two read-only processes. This is a reviewer resource-plan
@@ -847,3 +849,277 @@ OK
 This is one combined B2 initial review, not a new closure or an extra correction. Root owns the
 sole verdict in source-admission-code-review revision03 section6. Preserve the existing complete
 checks; fix only frozen call/binding/fixture defects within the four admitted paths.
+
+## B2 sole correction review and convergence evidence — 2026-09-22
+
+Current authority: B2 document06/closure01 at control
+f30e1a39c716bec007ef419bea6e6cec0550d2c3, LF
+e5a52eb1e3108ff25a488773e9c7451ed891e0ae1a99ee867c2c42c82aea896d.
+Initial4f98243e2e50fe6dac359f2f78be0d10cf3238e8 -> correction
+f2b3fb8dab7cae2554eb0ab24b9ee7dfc6d77092. Root used the clean detached
+.worktrees/cvq-01a2-review at that exact correction; owner .worktrees/cvq-01
+was independently read back clean at the same SHA. Ancestry and diff whitespace checks exit0.
+Exactly three existing files changed: source_symbols.py, source_gate.py and source_corpus.py
+under tests/verification_qualification_;118 additions/63 deletions. The fourth allowed driver
+was unchanged. Git comparison against accepted B1a8340e2 shows no product changes.
+No new tracked files, dependencies, product/policy/A changes or source work-order prose were
+found in this correction diff. This is bounded diff/semantic inspection, not write interception
+or a new qualification of ignored-artifact enforcement.
+
+The retained owner returned COMPLETED, not approval; the retained Terra/xhigh helper returned
+two static findings, not a verdict. Root independently reproduced future-local binding and
+nested membership-guard failures, then found the converse forward module-helper regression.
+No helper was relaunched or polled. Historical omitted first-red/command-time observations stay
+missing; the following is reviewer-time evidence on the correction SHA, not reconstructed TDD
+chronology. Owner's reported45 green was reduced output; root ran the full commands below.
+
+### Counterexamples at the real nine-unit analysis seam
+
+Each packet replaces only qualification_values in the existing minimum packet. Packet text is
+AST data and is never executed. Direct guarded access is the positive control. Expected findings
+are literal, not derived from the analyzer. The command intentionally exits1: three assertions
+fail. This is defect evidence, not a failed invocation or an approval.
+
+```powershell
+$cvqProbe = @'
+import sys,unittest
+sys.path.insert(0,"tests")
+from verification_qualification_source_corpus import MINIMUM_PACKET
+from verification_qualification_source_gate import inspect_sources
+from verification_qualification_source_policy import SourceModule,SourceRule,SourceUnit
+def findings(text):
+    units=tuple(SourceUnit(unit.module,text) if unit.module is SourceModule.QUALIFICATION_VALUES else unit for unit in MINIMUM_PACKET)
+    result=inspect_sources(units)
+    print(repr(result),flush=True)
+    return tuple((item.line,item.column,item.rule) for item in result)
+class BindingChecks(unittest.TestCase):
+    def test_direct_guard_control(self):
+        self.assertEqual((),findings("from typing import Mapping\ndef helper(value: Mapping[str,str]) -> str:\n    if isinstance(value, Mapping):\n        return value.get('x')\n    return ''\n"))
+    def test_unrelated_membership_ancestor(self):
+        self.assertIn((5,19,SourceRule.SG16),findings("from typing import Mapping\ndef helper(value: Mapping[str,str], flag: str, labels: set[str]) -> str:\n    if isinstance(value, Mapping):\n        if flag in labels:\n            return value.get('x')\n    return ''\n"))
+    def test_future_local_shadows_builtin(self):
+        self.assertIn((2,13,SourceRule.SG17),findings("def probe() -> object:\n    result = len(())\n    len = 0\n    return result\n"))
+    def test_forward_module_helper(self):
+        self.assertEqual((),findings("def probe() -> int:\n    return later()\ndef later() -> int:\n    return 1\n"))
+unittest.main(verbosity=2)
+'@
+& 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -c $cvqProbe
+```
+
+```text
+test_direct_guard_control (__main__.BindingChecks.test_direct_guard_control) ... ()
+ok
+test_forward_module_helper (__main__.BindingChecks.test_forward_module_helper) ... (SourceViolation(module=<SourceModule.QUALIFICATION_VALUES: 'qualification_values.py'>, line=2, column=11, rule=<SourceRule.SG18: 'SG18'>),)
+FAIL
+test_future_local_shadows_builtin (__main__.BindingChecks.test_future_local_shadows_builtin) ... ()
+FAIL
+test_unrelated_membership_ancestor (__main__.BindingChecks.test_unrelated_membership_ancestor) ... ()
+FAIL
+
+======================================================================
+FAIL: test_forward_module_helper (__main__.BindingChecks.test_forward_module_helper)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<string>", line 19, in test_forward_module_helper
+AssertionError: Tuples differ: () != ((2, 11, <SourceRule.SG18: 'SG18'>),)
+
+Second tuple contains 1 additional elements.
+First extra element 0:
+(2, 11, <SourceRule.SG18: 'SG18'>)
+
+- ()
++ ((2, 11, <SourceRule.SG18: 'SG18'>),)
+
+======================================================================
+FAIL: test_future_local_shadows_builtin (__main__.BindingChecks.test_future_local_shadows_builtin)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<string>", line 17, in test_future_local_shadows_builtin
+AssertionError: (2, 13, <SourceRule.SG17: 'SG17'>) not found in ()
+
+======================================================================
+FAIL: test_unrelated_membership_ancestor (__main__.BindingChecks.test_unrelated_membership_ancestor)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<string>", line 15, in test_unrelated_membership_ancestor
+AssertionError: (5, 19, <SourceRule.SG16: 'SG16'>) not found in ()
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.021s
+
+FAILED (failures=3)
+```
+
+### Contradictory frozen requirement against unchanged real product
+
+An in-memory replacement removes only the generic membership-operator guard exemption. It
+executes the test-support function, never any fixture or production source packet. The real
+test_architecture_dependency_gate reads the nine unchanged product files. Enforcing the ticket's
+immediate-guard rule produces SG16 at report_contracts.py279:21; original/restored code passes.
+The patch context restores the original function object; no source bytes were written.
+This tightening probe proves the ticket/product conflict, NOT an acceptance reverse mutation
+for a newly approved guard. All other mandatory B2 port/mutation proof remains NOT_VERIFIED at
+this failed final candidate; the full20-rule campaign belongs to B3 and was not run.
+
+```powershell
+$cvqConflict = @'
+import inspect,sys,unittest
+from unittest.mock import patch
+sys.path.insert(0,"tests")
+import verification_qualification_source_gate as gate
+import verification_qualification_source_symbols as symbols
+from test_verification_qualification_boundaries import QualificationBoundaryTests
+original=inspect.getsource(symbols.guarded_mapping_get)
+exception="                if isinstance(test, ast.Compare) and any(isinstance(operator, ast.In) for operator in test.ops):\n                    current = parents.get(current)\n                    continue\n"
+assert original.count(exception)==1
+namespace=dict(vars(symbols))
+exec(compile(original.replace(exception,""),"immediate_guard_probe","exec"),namespace)
+def run(label):
+    print(label,flush=True)
+    suite=unittest.TestSuite([QualificationBoundaryTests("test_architecture_dependency_gate")])
+    return unittest.TextTestRunner(verbosity=2).run(suite).wasSuccessful()
+control=run("CONTROL")
+with patch.object(gate,"guarded_mapping_get",namespace["guarded_mapping_get"]):
+    mutated=run("ENFORCE_TICKET_IMMEDIATE_GUARD")
+restored=run("RESTORED")
+print(f"CONTROL_GREEN={control} MUTANT_RED={not mutated} RESTORED_GREEN={restored}",flush=True)
+sys.exit(0 if control and not mutated and restored else 1)
+'@
+& 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -c $cvqConflict
+```
+
+```text
+CONTROL
+test_architecture_dependency_gate (test_verification_qualification_boundaries.QualificationBoundaryTests.test_architecture_dependency_gate) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 4.060s
+
+OK
+ENFORCE_TICKET_IMMEDIATE_GUARD
+test_architecture_dependency_gate (test_verification_qualification_boundaries.QualificationBoundaryTests.test_architecture_dependency_gate) ... FAIL
+
+======================================================================
+FAIL: test_architecture_dependency_gate (test_verification_qualification_boundaries.QualificationBoundaryTests.test_architecture_dependency_gate)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\GameBoy\Desktop\Johnny_AI_Skill_latest\.worktrees\cvq-01a2-review\tests\test_verification_qualification_boundaries.py", line 71, in test_architecture_dependency_gate
+    self.assertEqual((), findings)
+AssertionError: Tuples differ: () != (SourceViolation(module=<SourceModule.REPO[87 chars]'>),)
+
+Second tuple contains 1 additional elements.
+First extra element 0:
+SourceViolation(module=<SourceModule.REPORT_CONTRACTS: 'report_contracts.py'>, line=279, column=21, rule=<SourceRule.SG16: 'SG16'>)
+
+- ()
++ (SourceViolation(module=<SourceModule.REPORT_CONTRACTS: 'report_contracts.py'>,
++                  line=279,
++                  column=21,
++                  rule=<SourceRule.SG16: 'SG16'>),)
+
+----------------------------------------------------------------------
+Ran 1 test in 4.286s
+
+FAILED (failures=1)
+RESTORED
+test_architecture_dependency_gate (test_verification_qualification_boundaries.QualificationBoundaryTests.test_architecture_dependency_gate) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 4.806s
+
+OK
+CONTROL_GREEN=True MUTANT_RED=True RESTORED_GREEN=True
+```
+
+### Independent strict/focused result on the exact correction
+
+Serial foreground execution,60sec timeout per child, no retry/load/background polling, -B and
+outside-worktree mypy cache. Complete command output is retained; no output-reducing wrapper.
+The test runner's own standard failure formatting above is unchanged.
+
+```powershell
+$cvqChecks = @'
+import json,subprocess,sys,time
+checks=json.loads("[[\"-B\",\"-m\",\"mypy\",\"--strict\",\"--follow-imports=silent\",\"--cache-dir\",\"C:/Users/GameBoy/AppData/Local/Temp/cvq-01b2-mypy-cache-final\",\"library/controlled_verification\",\"tests/test_verification_qualification_contracts.py\",\"tests/test_verification_qualification_domains.py\",\"tests/test_verification_qualification_scalars.py\",\"tests/test_verification_qualification_manifests.py\",\"tests/test_verification_qualification_evidence.py\",\"tests/test_verification_qualification_boundaries.py\",\"tests/verification_qualification_fixtures.py\",\"tests/verification_qualification_catalog.py\",\"tests/verification_qualification_source_policy.py\",\"tests/verification_qualification_source_symbols.py\",\"tests/verification_qualification_source_gate.py\",\"tests/verification_qualification_source_corpus.py\"],[\"-B\",\"-m\",\"unittest\",\"-v\",\"tests.test_verification_qualification_contracts\",\"tests.test_verification_qualification_domains\",\"tests.test_verification_qualification_boundaries\"]]")
+for args in checks:
+    print("COMMAND "+json.dumps([sys.executable,*args]),flush=True)
+    start=time.perf_counter()
+    result=subprocess.run([sys.executable,*args],timeout=60,check=False)
+    print("EXIT "+str(result.returncode)+" ELAPSED "+format(time.perf_counter()-start,".3f"),flush=True)
+    if result.returncode:sys.exit(result.returncode)
+'@
+& 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -c $cvqChecks
+git diff --check
+git status --short
+```
+
+```text
+COMMAND ["C:\\Users\\GameBoy\\AppData\\Local\\Programs\\Python\\Python311\\python.exe", "-B", "-m", "mypy", "--strict", "--follow-imports=silent", "--cache-dir", "C:/Users/GameBoy/AppData/Local/Temp/cvq-01b2-mypy-cache-final", "library/controlled_verification", "tests/test_verification_qualification_contracts.py", "tests/test_verification_qualification_domains.py", "tests/test_verification_qualification_scalars.py", "tests/test_verification_qualification_manifests.py", "tests/test_verification_qualification_evidence.py", "tests/test_verification_qualification_boundaries.py", "tests/verification_qualification_fixtures.py", "tests/verification_qualification_catalog.py", "tests/verification_qualification_source_policy.py", "tests/verification_qualification_source_symbols.py", "tests/verification_qualification_source_gate.py", "tests/verification_qualification_source_corpus.py"]
+Success: no issues found in 21 source files
+EXIT 0 ELAPSED 1.438
+COMMAND ["C:\\Users\\GameBoy\\AppData\\Local\\Programs\\Python\\Python311\\python.exe", "-B", "-m", "unittest", "-v", "tests.test_verification_qualification_contracts", "tests.test_verification_qualification_domains", "tests.test_verification_qualification_boundaries"]
+test_alias_branch_counts_and_selector_negatives (tests.test_verification_qualification_contracts.QualificationContractTests.test_alias_branch_counts_and_selector_negatives) ... ok
+test_all_78_default_omission_null_and_wrong_constant_cells (tests.test_verification_qualification_contracts.QualificationContractTests.test_all_78_default_omission_null_and_wrong_constant_cells) ... ok
+test_all_81_direct_constructor_and_json_rows (tests.test_verification_qualification_contracts.QualificationContractTests.test_all_81_direct_constructor_and_json_rows) ... ok
+test_all_result_proof_and_evidence_branches_roundtrip (tests.test_verification_qualification_contracts.QualificationContractTests.test_all_result_proof_and_evidence_branches_roundtrip) ... ok
+test_every_missing_direct_constructor_row_roundtrips (tests.test_verification_qualification_contracts.QualificationContractTests.test_every_missing_direct_constructor_row_roundtrips) ... ok
+test_immutable_contract_configuration (tests.test_verification_qualification_contracts.QualificationContractTests.test_immutable_contract_configuration) ... ok
+test_literal_enum_members_and_json_rows (tests.test_verification_qualification_contracts.QualificationContractTests.test_literal_enum_members_and_json_rows) ... ok
+test_literal_wire_catalog_matches_source_ast (tests.test_verification_qualification_contracts.QualificationContractTests.test_literal_wire_catalog_matches_source_ast) ... ok
+test_public_constructor_roundtrips (tests.test_verification_qualification_contracts.QualificationContractTests.test_public_constructor_roundtrips) ... ok
+test_required_null_and_extra_json_matrix (tests.test_verification_qualification_contracts.QualificationContractTests.test_required_null_and_extra_json_matrix) ... ok
+test_roster_and_three_port_evidence_roundtrips (tests.test_verification_qualification_contracts.QualificationContractTests.test_roster_and_three_port_evidence_roundtrips) ... ok
+test_collection_retains_split_cases (tests.test_verification_qualification_domains.QualificationDomainCollectionTests.test_collection_retains_split_cases) ... ok
+test_authenticated_capability_identity_joins (test_verification_qualification_evidence.QualificationEvidenceAdmissionTests.test_authenticated_capability_identity_joins) ... ok
+test_authenticated_discovered_identity_joins (test_verification_qualification_evidence.QualificationEvidenceAdmissionTests.test_authenticated_discovered_identity_joins) ... ok
+test_authenticated_discovery_identity_joins (test_verification_qualification_evidence.QualificationEvidenceAdmissionTests.test_authenticated_discovery_identity_joins) ... ok
+test_authenticated_enforcement_identity_joins (test_verification_qualification_evidence.QualificationEvidenceAdmissionTests.test_authenticated_enforcement_identity_joins) ... ok
+test_every_refusal_reason_result_pair (test_verification_qualification_evidence.QualificationEvidenceAdmissionTests.test_every_refusal_reason_result_pair) ... ok
+test_local_report_duplicates (test_verification_qualification_evidence.QualificationEvidenceAdmissionTests.test_local_report_duplicates) ... ok
+test_negative_and_zero_roster_shapes_remain_representable (test_verification_qualification_evidence.QualificationEvidenceAdmissionTests.test_negative_and_zero_roster_shapes_remain_representable) ... ok
+test_observed_entry_and_category_rules (test_verification_qualification_evidence.QualificationEvidenceAdmissionTests.test_observed_entry_and_category_rules) ... ok
+test_observed_global_coverage_and_uniqueness (test_verification_qualification_evidence.QualificationEvidenceAdmissionTests.test_observed_global_coverage_and_uniqueness) ... ok
+test_other_proof_scope_result_pairs (test_verification_qualification_evidence.QualificationEvidenceAdmissionTests.test_other_proof_scope_result_pairs) ... ok
+test_plan_global_coverage_and_uniqueness (test_verification_qualification_evidence.QualificationEvidenceAdmissionTests.test_plan_global_coverage_and_uniqueness) ... ok
+test_planned_entry_and_category_rules (test_verification_qualification_evidence.QualificationEvidenceAdmissionTests.test_planned_entry_and_category_rules) ... ok
+test_required_proof_references (test_verification_qualification_evidence.QualificationEvidenceAdmissionTests.test_required_proof_references) ... ok
+test_result_shape_boundaries (test_verification_qualification_evidence.QualificationEvidenceAdmissionTests.test_result_shape_boundaries) ... ok
+test_roster_link_scope_and_result (test_verification_qualification_evidence.QualificationEvidenceAdmissionTests.test_roster_link_scope_and_result) ... ok
+test_approved_plan_pin_coverage (test_verification_qualification_manifests.QualificationManifestAdmissionTests.test_approved_plan_pin_coverage) ... ok
+test_capability_requirement_joins (test_verification_qualification_manifests.QualificationManifestAdmissionTests.test_capability_requirement_joins) ... ok
+test_case_and_scope_identity_joins (test_verification_qualification_manifests.QualificationManifestAdmissionTests.test_case_and_scope_identity_joins) ... ok
+test_case_applicability_rows (test_verification_qualification_manifests.QualificationManifestAdmissionTests.test_case_applicability_rows) ... ok
+test_discovery_intent_and_property_membership (test_verification_qualification_manifests.QualificationManifestAdmissionTests.test_discovery_intent_and_property_membership) ... ok
+test_manifest_and_prerequisite_duplicates (test_verification_qualification_manifests.QualificationManifestAdmissionTests.test_manifest_and_prerequisite_duplicates) ... ok
+test_prerequisite_applicability_and_order (test_verification_qualification_manifests.QualificationManifestAdmissionTests.test_prerequisite_applicability_and_order) ... ok
+test_every_resource_bound (test_verification_qualification_scalars.QualificationScalarTests.test_every_resource_bound) ... ok
+test_identifier_digest_text_domains (test_verification_qualification_scalars.QualificationScalarTests.test_identifier_digest_text_domains) ... ok
+test_integer_domain_edges (test_verification_qualification_scalars.QualificationScalarTests.test_integer_domain_edges) ... ok
+test_integer_domains_are_strict (test_verification_qualification_scalars.QualificationScalarTests.test_integer_domains_are_strict) ... ok
+test_architecture_dependency_gate (tests.test_verification_qualification_boundaries.QualificationBoundaryTests.test_architecture_dependency_gate) ... ok
+test_source_call_admission (tests.test_verification_qualification_boundaries.QualificationBoundaryTests.test_source_call_admission) ... ok
+test_source_namespace_admission (tests.test_verification_qualification_boundaries.QualificationBoundaryTests.test_source_namespace_admission) ... ok
+test_source_negative_corpus (tests.test_verification_qualification_boundaries.QualificationBoundaryTests.test_source_negative_corpus) ... ok
+test_source_positive_corpus (tests.test_verification_qualification_boundaries.QualificationBoundaryTests.test_source_positive_corpus) ... ok
+test_source_result_is_deterministic (tests.test_verification_qualification_boundaries.QualificationBoundaryTests.test_source_result_is_deterministic) ... ok
+test_source_set_and_parse_fail_closed (tests.test_verification_qualification_boundaries.QualificationBoundaryTests.test_source_set_and_parse_fail_closed) ... ok
+
+----------------------------------------------------------------------
+Ran 45 tests in 25.203s
+
+OK
+EXIT 0 ELAPSED 25.825
+```
+
+Root's fresh measured child durations: strict1.438sec and focused25.825sec; the contradiction
+test runs report4.060/4.286/4.806sec, four counterexample tests0.021sec. These are different
+measurement scopes and are not an exact total of all shell/model time. Earlier owner known
+34.121sec and its unobserved remainder remain separate from its180sec reservation; earlier
+B1195 and B2 initial650/root120 reservation ledger are preserved. This closeout uses the same
+root250sec reservation, not a reset or a claim that unknown history consumed zero.
+No new budget or implementation pass is granted.
+
+Final disposition: BLOCKED / CONVERGENCE_REVIEW_REQUIRED / NON_DISPATCHABLE / NOT_INTEGRATED.
+Strict21/focused45 green cannot override the three counterexamples and contradictory contract.
+See source-admission-code-review revision04 sections7–8. A/B1 remain accepted; B3 remains
+dependency-pending. No third correction, integration, push, release, install or native effect.

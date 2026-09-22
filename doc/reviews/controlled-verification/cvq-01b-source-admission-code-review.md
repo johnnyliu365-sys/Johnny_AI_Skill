@@ -2,13 +2,14 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B` / `CODE_REVIEW` / `03` |
-| Conclusion / round | `B2_CHANGES_REQUESTED / B2_SINGLE_CORRECTION_ADMITTED / NOT_INTEGRATED`; section6 is current for B2; original B section5 remains exhausted history |
-| Authority | [B](../../../modules/tickets/controlled-verification/cvq-01b-source-admission.md) document05 / closure01 at b96aaaa6e385dc518389fc680cabbcf7251b01b2; LF 01530c75d2525ea86cabc018ea8808afa836f52bdfb5ca4b121530055d6e5093; SPEC07 section11.3 and wire03 unchanged |
-| Baseline / candidate | 485d882f578f84dac1c975b32ced2a4ae6e7d43a -> 406e853 -> 704f066c881dc36e7176d8564edadd439a443a09 |
+| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B` / `CODE_REVIEW` / `04` |
+| Conclusion / round | `BLOCKED / CONVERGENCE_REVIEW_REQUIRED / NON_DISPATCHABLE / NOT_INTEGRATED`; sections7–8 are current for B2; sections1–6 remain history |
+| Current B2 authority / candidate | Document06/closure01 at f30e1a39c716bec007ef419bea6e6cec0550d2c3; candidate f2b3fb8dab7cae2554eb0ab24b9ee7dfc6d77092; exact pins in section7 |
+| Historical original-B authority | [B](../../../modules/tickets/controlled-verification/cvq-01b-source-admission.md) document05 / closure01 at b96aaaa6e385dc518389fc680cabbcf7251b01b2; LF 01530c75d2525ea86cabc018ea8808afa836f52bdfb5ca4b121530055d6e5093; SPEC07 section11.3 and wire03 unchanged |
+| Historical original-B baseline / candidate | 485d882f578f84dac1c975b32ced2a4ae6e7d43a -> 406e853 -> 704f066c881dc36e7176d8564edadd439a443a09 |
 | Owner / reviewer / helper | Retained cve_wire_implementer / Luna xhigh; root sole verdict; retained profile_delivery_audit / Terra xhigh, evidence only |
 | Isolation and effects | Clean candidate and root detached review snapshot; READ_ONLY_INTENT_ONLY helper; NO_EXTERNAL_EFFECT; no package import/exec by source gate, native/VM/provider/target/integration/push/release/installation effect |
-| Evidence | [Root commands and unreduced output](cvq-01b-initial-evidence.md), EVIDENCE-CVQ-01B-INITIAL revision01 |
+| Evidence | [Correction evidence](cvq-01b-correction-evidence.md) revision03 is current; [initial evidence](cvq-01b-initial-evidence.md) revision01 remains history |
 
 ## 1. Admission and observed checks
 
@@ -157,3 +158,93 @@ Root uses wait_agent, then independently checks final SHA and unchanged scope. P
 binding under existing approval; remaining defect after this correction routes to convergence.
 No partial integration, push, release or installation. ACTION_COMPLETED /
 REVIEW_CHANGES_REQUESTED -> AUTO_CONTINUE / SAME_OWNER_B2_SINGLE_CORRECTION.
+
+## 7. B2 sole correction final review — 2026-09-22
+
+Conclusion: **BLOCKED / CONVERGENCE_REVIEW_REQUIRED / NON_DISPATCHABLE / NOT_INTEGRATED**.
+Exact authority is B2 document06/closure01 atf30e1a39c716bec007ef419bea6e6cec0550d2c3,
+LFe5a52eb1e3108ff25a488773e9c7451ed891e0ae1a99ee867c2c42c82aea896d. The sole additive
+correction is f2b3fb8dab7cae2554eb0ab24b9ee7dfc6d77092 from4f98243e. Root verified clean owner
+and detached review trees, ancestry, exact three-path scope and118add/63delete. No new file,
+product/policy/A change, dependency or source work-order prose appears in the diff. A/B1
+acceptance is preserved; this is not an authorization to integrate the combined branch.
+
+[Correction evidence revision03](cvq-01b-correction-evidence.md#b2-sole-correction-review-and-convergence-evidence--2026-09-22)
+retains root's exact commands and unreduced output. Strict21/focused45 and real-package control
+are green, but independent four-cell review yields one pass and three failures:
+
+| Finding / disposition | Exact correction observation | Frozen obligation / root assessment |
+| --- | --- | --- |
+| B2-R01 IMPLEMENTATION_DEFECT / LEXICAL_BINDING | symbols403–406 skips a function's later local binding and inherits outer/builtin identity. The packet calling len before local len=0 returns no findings instead of SG17. corpus528–531 additionally encodes an unreachable later helper=0 as a positive. | Ticket2 lexical scope and local shadowing / B2-C17: a function-local assignment binds the name for that whole function; textual ordering cannot turn it into an outer/builtin call. Section6's call-before-later discriminator did not specify this adequately, and root owns that review ambiguity; the positive fixture cannot overrule the contract. |
+| B2-R02 IMPLEMENTATION_DEFECT / MODULE_HELPER | The same skip rejects a typed acyclic module-local helper when its definition is later in the module: probe returns later(); later returns1. The gate returns SG18 at2:11. | Ticket2 direct statically bound typed local helpers and B2-POS: a deferred function body is not a top-level invocation at module evaluation time. Preserve forward helper identity without making future function-local assignments valid callees. No source packet was executed. |
+| B2-R03 TICKET_DEFECT / GUARD_CONTRADICTION | symbols459–462 skips any inner comparison containing ast.In. Unrelated flag-in-labels under an ancestor Mapping guard returns no SG16, contradicting ticket2. Removing only that exception makes the real dependency-gate test reject unchanged report_contracts.py279:21. Control and restored runs pass. | Ticket2 simultaneously forbids inherited ancestor guards, requires the real package green and makes that product READ_ONLY. SPEC07 section11.3 only says local true branch/unchanged receiver; it does not impose immediate adjacency. The stricter ticket and section6 correction were not preflighted against accepted product. Root owns this convergence defect; another implementer retry cannot settle it. |
+
+The retained Terra/xhigh evidence-only helper found the future-local fallback and membership
+exception statically; root reproduced their predicates independently and added the converse
+forward-helper test. Root alone owns this verdict. The old loop target now participates in the
+same binding scan and the bypass fixture now names QualificationModel, but their final
+discriminating mutation proof is NOT_VERIFIED; source improvement is not proof completion.
+Known-port independent proof and original B2 alternative coverage likewise remain necessary
+before approval. The owner-reported omitted earlier baseline is not retroactively repaired by
+asserting chronology; prior root baseline evidence remains historical.
+
+No new claim of browser/XSS, production SQL, provider, host, UI, deployment, installed-plugin
+enforcement, privileged capability or general Python purity arises: only AST test support changed.
+No actual native effect/concurrency surface is introduced. HIGH_ASSURANCE helper participation
+is satisfied, not review approval. Current failures are collected together, not dripped into
+new corrections. Initial plus sole correction under closure01 are exhausted. CodeReview section5
+and ticket-decomposition route to UPSTREAM_DECISION_REQUIRED; no automatic third pass,
+model elevation, B3 dispatch or partial integration.
+
+## 8. Proposed B2 guard convergence — owner decision pending
+
+Status: **OWNER_EXACT_APPROVAL_PENDING**. This is a proposal for the next closure, not an
+approved change to closure01, SPEC, policy or source. Do not silently reinterpret the failing
+SG16 assertion above as a pass.
+
+Recommended decision: align the ticket with SPEC07's same-function guarded region and preserve
+the accepted product. Replace ticket2's immediate-ancestor ban with this finite rule:
+
+1. A Mapping.get receiver must resolve to the same exact binding as an actual unshadowed builtin
+   isinstance(receiver, typing.Mapping) guard. Spelling alone, a same-name method or a compound
+   condition merely containing such a call is insufficient.
+2. The guard and call must be in the same function. The call must remain structurally inside
+   that guard's true body. Nested ordinary If branches (true or else) and finite For branches
+   already admitted by the schema grammar do not discard that evidence. A nested condition may
+   be flag or membership: operator spelling grants no exemption. Crossing a function/class
+   boundary, entering the Mapping guard's own else, leaving its true body, or encountering an
+   unsupported control form cannot prove this rule. Other grammar checks stay independent.
+3. The receiver and guard-name bindings must remain unchanged on the admitted path. Existing
+   ordinary/same-line/unpacking/loop-target reassignment negatives remain; no source execution,
+   general control-flow framework or relaxation of schema-only calls is authorized.
+4. Under this proposed rule same-function flag/membership, nested-If-else and finite-loop
+   unchanged-receiver examples are positive controls, including the real report_contracts
+   discriminator. Cross-function inherited guard stays negative. Wrong receiver, shadowed
+   guard, Mapping-guard else/after branch and rebind remain distinct SG16 negatives. Only owner
+   approval may supersede the old same-function-ancestor negative; keep this review's actual
+   failures as history. Each rebind fixture must discriminate its actual binding predicate,
+   not remain red merely because another control-form rejection masks it.
+5. Existing lexical-binding obligations remain unchanged: function-local assignment anywhere
+   must not inherit an outer callable; directly bound acyclic module helpers may be forward
+   references in deferred function bodies. The false-positive corpus row must become a named
+   rejection; neither case is permission for callable aliases or unknown calls.
+
+Alternative: retain immediate adjacency and explicitly widen the product change boundary to
+rewrite accepted product source. That affects already accepted code for the checker's sake;
+it is not recommended and is not authorized.
+
+After owner decides, the control plane must compile the approved choice into an exact new
+closure, preserve the historical candidate, preflight the real product plus these discriminators
+together, bind the same cumulative resource ledger and only then admit the retained owner.
+Use the existing four support/test files and existing evidence/review leaves; no new files,
+framework, duplicate parser, product change, source prompt or twenty-rule owner campaign.
+The focused expected reversals are guard evidence removal -> positive/control red, guard or
+binding bypass -> designated negative red, and exact restore -> green. Root's different-door
+real-package/known-port proof still applies. Unknown history is not zero and a new closure does
+not reset the budget. No pre-approved or self-declared extra allowance is implied.
+
+ACTION_COMPLETED / B2_CORRECTION_REVIEW_BLOCKED -> WAIT_FOR_HUMAN /
+OWNER_GUARD_CONTRACT_DECISION_REQUIRED. WAKE_REQUIRED is a state, not a claim of delivery;
+the decision is presented directly to the owner in this session. A/B1 remain accepted,
+B3 remains dependency-pending, and no source/target/provider/integration/push/release/install
+effect occurs in this control-plane closeout.

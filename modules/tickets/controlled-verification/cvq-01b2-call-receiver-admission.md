@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01B2` / `IMPLEMENTATION_TICKET` / `06` |
-| State / closure | `CHANGES_REQUESTED / SINGLE_CORRECTION_ADMITTED / NOT_INTEGRATED`; `CLOSURE-CVQ-01B2/01`; section10 is current |
+| ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01B2` / `IMPLEMENTATION_TICKET` / `07` |
+| State / closure | `BLOCKED / CONVERGENCE_REVIEW_REQUIRED / NON_DISPATCHABLE / NOT_INTEGRATED`; `CLOSURE-CVQ-01B2/01` exhausted; section11 is current |
 | Preparation authority | Owner's 2026-09-21 approval of [B convergence01](../../../doc/reviews/controlled-verification/cvq-01b-convergence-proposal.md) at797c15db, LF0308388788c4a6a6c79ce4dd256b72bb5a231a498357a0038f305680e46f0f94; drafting only |
 | Observable result / change class | Schema calls admit only exact permitted static binding and guarded receiver; `PRODUCTION_BEHAVIOR / DEFECT_CORRECTION` |
 | Dependency / baseline | [B1](cvq-01b1-namespace-import-admission.md) document02/closure01 in this proposal commit; actual APPROVED candidate SHA and review/index must be bound before dispatch; never substitute7171f41 as accepted B1 |
@@ -309,3 +309,38 @@ baseline chronology stays missing. No source cleanup outside the allowlist.
 ACTION_COMPLETED / B2_INITIAL_CHANGES_REQUESTED -> AUTO_CONTINUE / SAME_OWNER_SINGLE_CORRECTION.
 After return root reviews; pass binds B3 directly, a remaining defect routes to convergence.
 No partial integration/push/release/installation or new owner decision is requested.
+
+## 11. Sole correction reviewed; convergence required — 2026-09-22
+
+Current state: BLOCKED / CONVERGENCE_REVIEW_REQUIRED / NON_DISPATCHABLE / NOT_INTEGRATED.
+Closure01 initial review and its one correction are consumed. Document07 records the result,
+not a new implementation approval. Retained owner candidate
+f2b3fb8dab7cae2554eb0ab24b9ee7dfc6d77092 additively descends from4f98243e2e50fe6dac359f2f78be0d10cf3238e8;
+exactly three of the four allowed existing files changed, no product/policy/A changes.
+Owner and root detached review worktrees read back clean.
+
+Root [review04 sections7–8](../../../doc/reviews/controlled-verification/cvq-01b-source-admission-code-review.md#7-b2-sole-correction-final-review--2026-09-22),
+LF ff950a550f75f847d3c69d607ceeb5af4267ef493f1f6cc0e2c87801b828e844, and
+[evidence03](../../../doc/reviews/controlled-verification/cvq-01b-correction-evidence.md#b2-sole-correction-review-and-convergence-evidence--2026-09-22),
+LF cf4ebf0ab11c5037782b4e339aa09a2d1d8742b34db239caadc6c494b66f95f2, bind this result in the same control commit/index tree.
+Strict21/focused45 pass. Root's four independent cases produce one pass/three failures:
+later function-local binding wrongly inherits a builtin; forward module-helper call wrongly
+rejects; generic membership condition bypasses the immediate-guard rule. Enforcing the actual
+frozen immediate rule makes unchanged report_contracts.py279:21 fail SG16, then restoration
+returns green. Section2's immediate rule and real-package preservation are contradictory.
+This is a ticket/preflight defect as well as remaining implementation/evidence work, not a
+reason to broaden owner scope or ask the owner to retry the same frozen instruction.
+
+The review's section8 recommendation is OWNER_EXACT_APPROVAL_PENDING: same-function structurally
+guarded true region, exact unchanged receiver/guard binding, nested admitted conditionals/finite
+iteration do not erase evidence, and no generic in-operator exception. It changes the old
+same-function ancestor rejection and must be decided by the project owner before a new exact
+closure is compiled/preflighted. SPEC07, sealed Context02, accepted A/B1 and all current source
+remain unchanged. Do not silently mark a proposal approved or reinterpret historical reds.
+
+Retain the cumulative section10 ledger and unknown observations; no extra grant or reset.
+Final B2 port/mutation proof remains NOT_VERIFIED; B3's full20-rule campaign was not started.
+Root alone owns the conclusion; retained helper findings were independently reproduced.
+No third correction, source write, new agent, B3 dispatch, partial integration, push, release,
+installation or native effect is admitted. ACTION_COMPLETED / B2_CORRECTION_REVIEW_BLOCKED ->
+WAIT_FOR_HUMAN / OWNER_GUARD_CONTRACT_DECISION_REQUIRED.
