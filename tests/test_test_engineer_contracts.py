@@ -30,7 +30,7 @@ _OTHER_DIGEST = "sha256_" + "b" * 64
 
 
 class TestEngineerContractTests(unittest.TestCase):
-    """Exercise every phase-1 public DTO through normal validation paths."""
+    """Exercise every public DTO through normal validation paths."""
 
     def _binding(self) -> TestBinding:
         return TestBinding(

@@ -5,7 +5,7 @@ from __future__ import annotations
 from enum import Enum
 from typing import Annotated, Literal, Protocol, Self, TypeAlias
 
-from pydantic import AfterValidator, ConfigDict, Field, TypeAdapter, model_validator
+from pydantic import AfterValidator, ConfigDict, Field, model_validator
 
 from .contracts import EvidenceDigest, OpaqueMetadataId, RouterModel
 
@@ -60,9 +60,6 @@ class TestEvidenceUnavailableReason(str, Enum):
     NOT_FOUND = "NOT_FOUND"
     UNAUTHORIZED = "UNAUTHORIZED"
     UNQUALIFIED = "UNQUALIFIED"
-
-
-UnavailableTestEvidenceReason: TypeAlias = TestEvidenceUnavailableReason
 
 
 class ReviewAdmissionReason(str, Enum):
@@ -143,7 +140,7 @@ class TestReviewAuthority(_TestEngineerModel):
 
 
 class IndependentTestReport(_TestEngineerModel):
-    """Immutable report data whose coverage is checked by the phase-2 gate."""
+    """Immutable report data whose coverage is checked by the admission gate."""
 
     report_ref: OpaqueMetadataId
     binding: TestBinding
@@ -182,7 +179,7 @@ class ReviewAdmissionRequest(_TestEngineerModel):
 
 
 class ReviewAdmissionDecision(_TestEngineerModel):
-    """Finite, self-consistent result of the phase-2 admission gate."""
+    """Finite, self-consistent result of the admission gate."""
 
     status: ReviewAdmissionStatus
     verdict: TestVerdict
@@ -205,11 +202,6 @@ class TestEvidenceResolver(Protocol):
         """Resolve the active authority and report for a review request."""
 
 
-_TEST_EVIDENCE_RESOLUTION_ADAPTER: TypeAdapter[TestEvidenceResolution] = TypeAdapter(
-    TestEvidenceResolution
-)
-
-
 __all__ = (
     "CandidateSha",
     "IndependentTestReport",
@@ -227,5 +219,4 @@ __all__ = (
     "TestReviewAuthority",
     "TestVerdict",
     "UnavailableTestEvidence",
-    "UnavailableTestEvidenceReason",
 )

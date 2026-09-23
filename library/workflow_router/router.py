@@ -6,7 +6,7 @@ from collections.abc import Sequence
 from typing import Protocol
 from uuid import NAMESPACE_URL, uuid5
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 from .contracts import (
     AgentContextDecisionKind,
@@ -58,6 +58,12 @@ from .contracts import (
     TicketProposal,
     TicketProposalState,
 )
+from .review_admission import ReviewAdmissionGate
+from .test_engineer_contracts import (
+    ReviewAdmissionStatus,
+    ReviewAdmissionRequest,
+    TestEvidenceResolver,
+)
 from .profile import ProjectWorkflowProfile
 from .policy_response import (
     ApprovedDispatchArtifactRegistry,
@@ -95,10 +101,12 @@ class RouterEngine:
         self,
         *,
         approved_dispatch_artifact_registry: ApprovedDispatchArtifactRegistry | None = None,
+        test_evidence_resolver: TestEvidenceResolver | None = None,
     ) -> None:
         self._approved_dispatch_artifact_registry = (
             approved_dispatch_artifact_registry or StaticApprovedDispatchArtifactRegistry(records=())
         )
+        self._review_admission_gate = ReviewAdmissionGate(resolver=test_evidence_resolver)
 
     def decide(
         self,
@@ -402,6 +410,25 @@ class RouterEngine:
                     collaboration_plan=state.collaboration_plan,
                 ),
             )
+        if rule.next_stage is ProcessStage.REVIEW or (
+            state.stage is ProcessStage.REVIEW and rule.next_stage is ProcessStage.HANDOFF
+        ):
+            review_request = self._review_admission_request(state=state, event=event)
+            if review_request is None:
+                return self._suspend(
+                    profile=profile,
+                    code=BlockerCode.TEST_REVIEW_NOT_ADMITTED,
+                    detail="review transitions require bound test scope and report references",
+                )
+            review_decision = self._review_admission_gate.evaluate(review_request)
+            if review_decision.status is not ReviewAdmissionStatus.ADMITTED:
+                reason = review_decision.reason
+                reason_text = reason.value if reason is not None else "unknown"
+                return self._suspend(
+                    profile=profile,
+                    code=BlockerCode.TEST_REVIEW_NOT_ADMITTED,
+                    detail=f"independent test evidence is not admitted: {reason_text}",
+                )
         return RouterDecision(
             skill_reference=rule.skill_reference,
             expected_return=rule.expected_return,
@@ -415,6 +442,25 @@ class RouterEngine:
             required_sources=required_sources,
             eligible_capabilities=rule.eligible_capabilities,
         )
+
+    @staticmethod
+    def _review_admission_request(
+        *,
+        state: RouterState,
+        event: RouterEvent,
+    ) -> ReviewAdmissionRequest | None:
+        """Build the bound review request without widening invalid state metadata."""
+
+        if state.review_scope_ref is None or event.test_report_ref is None:
+            return None
+        try:
+            return ReviewAdmissionRequest(
+                project_ref=state.project_id,
+                scope_ref=state.review_scope_ref,
+                report_ref=event.test_report_ref,
+            )
+        except ValidationError:
+            return None
 
     def decide_shared_context_access(
         self,

@@ -90,12 +90,13 @@ class DeliveryStage(str, Enum):
 
 
 class ModelRole(str, Enum):
-    """The four finite model roles that may participate in the router."""
+    """The finite model roles that may participate in the router."""
 
     ARCHITECTURE_OWNER = "architecture_owner"
     SUPERVISOR_REVIEWER = "supervisor_reviewer"
     IMPLEMENTATION_OWNER = "implementation_owner"
     RESEARCH_HELPER = "research_helper"
+    TEST_ENGINEER = "research_helper"
 
 
 class RoleActivityState(str, Enum):
@@ -1170,6 +1171,7 @@ class BlockerCode(str, Enum):
     INVALID_TICKET_PROPOSAL = "invalid_ticket_proposal"
     PENDING_DISPATCH_REQUIRED = "pending_dispatch_required"
     INVALID_PENDING_DISPATCH = "invalid_pending_dispatch"
+    TEST_REVIEW_NOT_ADMITTED = "test_review_not_admitted"
 
 
 class ReferenceStatus(str, Enum):
@@ -1597,6 +1599,7 @@ class RouterEvent(RouterModel):
     lane_kind: LaneKind | None = None
     lane_id: OpaqueMetadataId | None = None
     ticket_proposal: TicketProposal | None = None
+    test_report_ref: OpaqueMetadataId | None = None
 
     @model_validator(mode="after")
     def completion_metadata_matches_event(self) -> RouterEvent:
@@ -1647,6 +1650,7 @@ class RouterState(RouterModel):
     topology: CollaborationTopology | None = None
     collaboration_plan: CollaborationTopologyPlan | None = None
     pending_dispatch: PendingDispatchDescriptor | None = None
+    review_scope_ref: OpaqueMetadataId | None = None
 
 
 class PlanningLaneState(RouterModel):
