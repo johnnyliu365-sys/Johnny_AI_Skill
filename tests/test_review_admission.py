@@ -45,11 +45,17 @@ class StaticEvidenceResolver:
         return self.result
 
 
-def _binding(*, suffix: str = "") -> TestBinding:
+def _binding(
+    *,
+    suffix: str = "",
+    scope_ref: str | None = None,
+    project_ref: str | None = None,
+    ticket_ref: str | None = None,
+) -> TestBinding:
     return TestBinding(
-        scope_ref=f"scope-review{suffix}",
-        project_ref=f"project-review{suffix}",
-        ticket_ref=f"ticket-review{suffix}",
+        scope_ref=scope_ref or f"scope-review{suffix}",
+        project_ref=project_ref or f"project-review{suffix}",
+        ticket_ref=ticket_ref or f"ticket-review{suffix}",
         candidate_sha=_CANDIDATE,
         test_suite_digest=_DIGEST,
         plan_digest=_OTHER_DIGEST,
@@ -149,14 +155,17 @@ class ReviewAdmissionTests(unittest.TestCase):
         return decision, resolver
 
     def test_unavailable_and_throwing_resolvers_fail_closed_without_exception_text(self) -> None:
-        unavailable = UnavailableTestEvidence(
-            reason=TestEvidenceUnavailableReason.UNQUALIFIED
-        )
-        unavailable_decision, unavailable_resolver = self._evaluate(unavailable)
-        self.assertEqual(ReviewAdmissionStatus.DENIED, unavailable_decision.status)
-        self.assertEqual(TestVerdict.BLOCKED, unavailable_decision.verdict)
-        self.assertEqual(ReviewAdmissionReason.EVIDENCE_UNAVAILABLE, unavailable_decision.reason)
-        self.assertEqual(1, unavailable_resolver.calls)
+        for reason in TestEvidenceUnavailableReason:
+            with self.subTest(reason=reason):
+                unavailable = UnavailableTestEvidence(reason=reason)
+                unavailable_decision, unavailable_resolver = self._evaluate(unavailable)
+                self.assertEqual(ReviewAdmissionStatus.DENIED, unavailable_decision.status)
+                self.assertEqual(TestVerdict.BLOCKED, unavailable_decision.verdict)
+                self.assertEqual(
+                    ReviewAdmissionReason.EVIDENCE_UNAVAILABLE,
+                    unavailable_decision.reason,
+                )
+                self.assertEqual(1, unavailable_resolver.calls)
 
         throwing_decision, throwing_resolver = self._evaluate(_found(), raises=True)
         self.assertEqual(ReviewAdmissionStatus.DENIED, throwing_decision.status)
@@ -218,12 +227,13 @@ class ReviewAdmissionTests(unittest.TestCase):
 
         mixed_report = _report(
             binding,
-            declared_verdict=TestVerdict.FAIL,
+            declared_verdict=TestVerdict.PASS,
             cells=(
                 _cell("cell-pass", TestVerdict.BLOCKED, "reason-blocked"),
                 _cell("cell-fail", TestVerdict.FAIL, "reason-fail"),
                 _cell("cell-inconclusive", TestVerdict.INCONCLUSIVE, "reason-inconclusive"),
             ),
+            cleanup=TestCleanup.UNCONFIRMED,
         )
         mixed_authority = _authority(
             binding,
@@ -234,29 +244,93 @@ class ReviewAdmissionTests(unittest.TestCase):
         )
         self.assertEqual(TestVerdict.FAIL, mixed_decision.verdict)
         self.assertEqual(ReviewAdmissionReason.TESTS_FAILED, mixed_decision.reason)
+        self.assertEqual(TestVerdict.PASS, mixed_report.declared_verdict)
+        self.assertEqual(TestCleanup.UNCONFIRMED, mixed_report.cleanup)
 
     def test_binding_and_report_identity_mismatches_are_distinct(self) -> None:
         binding = _binding()
         authority = _authority(binding)
-        report_with_foreign_binding = _report(_binding(suffix="-foreign"), cells=(_cell("cell-pass"),))
-        binding_decision, _ = self._evaluate(
-            ResolvedTestEvidence(authority=authority, report=report_with_foreign_binding)
+        binding_changes = (
+            ("scope_ref", "scope-foreign"),
+            ("project_ref", "project-foreign"),
+            ("ticket_ref", "ticket-foreign"),
+            ("candidate_sha", "abcdefabcdefabcdefabcdefabcdefabcdefabcd"),
+            ("test_suite_digest", "sha256_" + "c" * 64),
+            ("plan_digest", "sha256_" + "d" * 64),
+            ("environment_digest", "sha256_" + "e" * 64),
+            ("implementer_id", "implementer-foreign"),
+            ("engineer_id", "engineer-foreign"),
+            ("reviewer_id", "reviewer-foreign"),
         )
-        self.assertEqual(ReviewAdmissionReason.BINDING_MISMATCH, binding_decision.reason)
+        for field, value in binding_changes:
+            with self.subTest(binding_field=field):
+                changed_payload = binding.model_dump()
+                changed_payload[field] = value
+                changed_binding = TestBinding.model_validate(changed_payload)
+                report_with_foreign_binding = _report(
+                    changed_binding,
+                    cells=(_cell("cell-pass"),),
+                )
+                binding_decision, _ = self._evaluate(
+                    ResolvedTestEvidence(
+                        authority=authority,
+                        report=report_with_foreign_binding,
+                    )
+                )
+                self.assertEqual(
+                    ReviewAdmissionReason.BINDING_MISMATCH,
+                    binding_decision.reason,
+                )
 
         report = _report(binding, cells=(_cell("cell-pass"),))
-        stale_authority = _authority(binding, expected_report_ref="report-current")
-        stale_request = _request(report_ref="report-old")
-        report_decision, _ = self._evaluate(
-            ResolvedTestEvidence(authority=stale_authority, report=report), stale_request
+        request_changes = (
+            ("project_ref", _request(project_ref="project-foreign")),
+            ("scope_ref", _request(scope_ref="scope-foreign")),
         )
-        self.assertEqual(ReviewAdmissionReason.REPORT_MISMATCH, report_decision.reason)
+        for field, changed_request in request_changes:
+            with self.subTest(request_field=field):
+                request_decision, _ = self._evaluate(
+                    ResolvedTestEvidence(authority=authority, report=report),
+                    changed_request,
+                )
+                self.assertEqual(
+                    ReviewAdmissionReason.BINDING_MISMATCH,
+                    request_decision.reason,
+                )
 
-        scope_decision, _ = self._evaluate(
-            ResolvedTestEvidence(authority=authority, report=report),
-            _request(scope_ref="scope-foreign"),
+        report_ref_changes = (
+            (
+                "request_report_ref",
+                _request(report_ref="report-foreign"),
+                authority,
+                report,
+            ),
+            (
+                "authority_expected_report_ref",
+                _request(),
+                _authority(binding, expected_report_ref="report-foreign"),
+                report,
+            ),
+            (
+                "report_report_ref",
+                _request(),
+                authority,
+                _report(binding, report_ref="report-foreign", cells=(_cell("cell-pass"),)),
+            ),
         )
-        self.assertEqual(ReviewAdmissionReason.BINDING_MISMATCH, scope_decision.reason)
+        for field, changed_request, changed_authority, changed_report in report_ref_changes:
+            with self.subTest(report_reference=field):
+                report_decision, _ = self._evaluate(
+                    ResolvedTestEvidence(
+                        authority=changed_authority,
+                        report=changed_report,
+                    ),
+                    changed_request,
+                )
+                self.assertEqual(
+                    ReviewAdmissionReason.REPORT_MISMATCH,
+                    report_decision.reason,
+                )
 
     def test_exact_cell_coverage_rejects_empty_missing_extra_and_duplicate(self) -> None:
         binding = _binding()
@@ -320,6 +394,23 @@ class ReviewAdmissionTests(unittest.TestCase):
             )
         )
         self.assertEqual(ReviewAdmissionStatus.ADMITTED, optional_decision.status)
+
+        optional_unconfirmed = _report(
+            binding,
+            cells=(_cell("cell-pass"),),
+            cleanup=TestCleanup.UNCONFIRMED,
+        )
+        optional_unconfirmed_decision, _ = self._evaluate(
+            ResolvedTestEvidence(
+                authority=optional_cleanup_authority,
+                report=optional_unconfirmed,
+            )
+        )
+        self.assertEqual(TestVerdict.BLOCKED, optional_unconfirmed_decision.verdict)
+        self.assertEqual(
+            ReviewAdmissionReason.CLEANUP_INCOMPLETE,
+            optional_unconfirmed_decision.reason,
+        )
 
 
 if __name__ == "__main__":

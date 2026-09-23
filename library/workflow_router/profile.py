@@ -121,8 +121,19 @@ class ProjectWorkflowProfile(RouterModel):
         if self.shared_context_ref == self.architecture_owner_capability_ref:
             raise ValueError("shared Context and architecture capability IDs must be distinct")
         roles = tuple(assignment.role for assignment in self.model_role_assignments)
-        if len(roles) != len(ModelRole) or set(roles) != set(ModelRole):
-            raise ValueError("profiles require exactly one assignment for every model role")
+        required_roles = (
+            ModelRole.ARCHITECTURE_OWNER,
+            ModelRole.SUPERVISOR_REVIEWER,
+            ModelRole.IMPLEMENTATION_OWNER,
+            ModelRole.RESEARCH_HELPER,
+        )
+        role_counts = {role: roles.count(role) for role in ModelRole}
+        if any(role_counts[role] != 1 for role in required_roles):
+            raise ValueError("profiles require exactly one assignment for every core model role")
+        if role_counts[ModelRole.TEST_ENGINEER] > 1:
+            raise ValueError("profiles may declare at most one test-engineer assignment")
+        if any(role not in (*required_roles, ModelRole.TEST_ENGINEER) for role in roles):
+            raise ValueError("profiles may declare only known model roles")
         if any(
             assignment.project_profile_ref != self.profile_id
             for assignment in self.model_role_assignments

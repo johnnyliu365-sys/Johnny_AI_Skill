@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import sys
 import unittest
+from pathlib import Path
 
 from library.workflow_router import (
     ArtifactKind,
@@ -21,45 +23,29 @@ from library.workflow_router import (
     RouterState,
     build_router_poc_profile,
 )
+from library.workflow_router.contracts import ModelRole, ModelRoleAssignment, RoleActivityState
+from library.workflow_router.profile import ProjectWorkflowProfile
 from library.workflow_router.test_engineer_contracts import (
-    IndependentTestReport,
-    ReviewAdmissionRequest,
     ResolvedTestEvidence,
-    TestBinding,
     TestCleanup,
-    TestReviewAuthority,
-    TestVerdict,
+    TestEvidenceUnavailableReason,
+    UnavailableTestEvidence,
 )
-from library.workflow_router.test_engineer_contracts import TestCellObservation, TestEvidenceResolution
+
+_TESTS_DIRECTORY = str(Path(__file__).resolve().parent)
+if _TESTS_DIRECTORY not in sys.path:
+    sys.path.insert(0, _TESTS_DIRECTORY)
+
+from test_review_admission import (
+    StaticEvidenceResolver,
+    _authority,
+    _binding,
+    _cell,
+    _report,
+)
 
 
 _DIGEST = "sha256_" + "a" * 64
-_OTHER_DIGEST = "sha256_" + "b" * 64
-_CANDIDATE = "1234567890abcdef1234567890abcdef12345678"
-
-
-class RouterEvidenceResolver:
-    """Small typed resolver fixture for Router entry-point tests."""
-
-    def __init__(self, result: TestEvidenceResolution) -> None:
-        self.result = result
-        self.calls = 0
-        self.last_request: ReviewAdmissionRequest | None = None
-
-    def resolve(self, *, request: ReviewAdmissionRequest) -> TestEvidenceResolution:
-        self.calls += 1
-        self.last_request = request
-        return self.result
-
-
-def _router_cell(cell_id: str) -> TestCellObservation:
-    return TestCellObservation(
-        cell_id=cell_id,
-        verdict=TestVerdict.PASS,
-        evidence_ref=f"evidence-{cell_id}",
-        evidence_digest=_DIGEST,
-        reason_ref=None,
-    )
 
 
 class RouterReviewAdmissionTests(unittest.TestCase):
@@ -75,34 +61,24 @@ class RouterReviewAdmissionTests(unittest.TestCase):
         )
         self.scope_ref = "review-scope"
         self.report_ref = "review-report"
-        binding = TestBinding(
+        binding = _binding(
             scope_ref=self.scope_ref,
             project_ref="router-framework-poc",
             ticket_ref="router-review-ticket",
-            candidate_sha=_CANDIDATE,
-            test_suite_digest=_DIGEST,
-            plan_digest=_OTHER_DIGEST,
-            environment_digest=_DIGEST,
-            implementer_id="router-implementer",
-            engineer_id="router-engineer",
-            reviewer_id="router-reviewer",
         )
-        authority = TestReviewAuthority(
-            binding=binding,
+        authority = _authority(
+            binding,
             expected_report_ref=self.report_ref,
             expected_cell_ids=("cell-pass",),
             cleanup_required=True,
         )
-        report = IndependentTestReport(
+        report = _report(
+            binding,
             report_ref=self.report_ref,
-            binding=binding,
-            declared_verdict=TestVerdict.PASS,
-            cells=(_router_cell("cell-pass"),),
+            cells=(_cell("cell-pass"),),
             cleanup=TestCleanup.CONFIRMED,
         )
-        self.resolver = RouterEvidenceResolver(
-            ResolvedTestEvidence(authority=authority, report=report)
-        )
+        self.resolver = StaticEvidenceResolver(ResolvedTestEvidence(authority=authority, report=report))
 
     def _state(self, stage: ProcessStage) -> RouterState:
         return RouterState(
@@ -210,21 +186,46 @@ class RouterReviewAdmissionTests(unittest.TestCase):
         )
         if audit_rule is None:
             self.fail("the profile must declare the audit review entry")
-        custom_profile = self.profile.model_copy(
-            update={
-                "transition_rules": self.profile.transition_rules
-                + (
-                    audit_rule.model_copy(
-                        update={"current_stage": ProcessStage.ARCHITECTURE},
-                    ),
-                )
-            }
+        custom_rule_payload = audit_rule.model_dump()
+        custom_rule_payload["current_stage"] = ProcessStage.ARCHITECTURE
+        custom_rule = type(audit_rule).model_validate(custom_rule_payload)
+        custom_profile_payload = self.profile.model_dump()
+        custom_profile_payload["transition_rules"] = self.profile.transition_rules + (custom_rule,)
+        custom_profile = ProjectWorkflowProfile.model_validate(
+            custom_profile_payload
         )
         custom_state = self._state(ProcessStage.ARCHITECTURE)
         custom_event = self._event(
             RouterEventKind.AUDIT_COMPLETED,
             report_ref=self.report_ref,
         )
+        for label, engine in (
+            ("missing", RouterEngine()),
+            (
+                "unavailable",
+                RouterEngine(
+                    test_evidence_resolver=StaticEvidenceResolver(
+                        UnavailableTestEvidence(
+                            reason=TestEvidenceUnavailableReason.NOT_FOUND,
+                        )
+                    )
+                ),
+            ),
+        ):
+            for entry, state, profile in (
+                ("audit", self._state(ProcessStage.GRILL), self.profile),
+                ("custom-audit", custom_state, custom_profile),
+            ):
+                with self.subTest(entry=entry, admission=label):
+                    refused = engine.decide(
+                        state=state,
+                        event=custom_event,
+                        profile=profile,
+                    )
+                    self.assertEqual(RouterOutcome.SUSPEND, refused.outcome)
+                    self.assertEqual((), refused.eligible_capabilities)
+                    self.assertEqual("test_review_not_admitted", refused.blockers[0].code.value)
+
         custom_decision = RouterEngine(test_evidence_resolver=self.resolver).decide(
             state=custom_state,
             event=custom_event,
@@ -253,6 +254,50 @@ class RouterReviewAdmissionTests(unittest.TestCase):
         )
         self.assertEqual(RouterOutcome.ADVANCE, unrelated.outcome)
         self.assertEqual(ProcessStage.WAYFINDER, unrelated.next_stage)
+
+    def test_test_engineer_role_is_distinct_and_optional(self) -> None:
+        default_roles = {assignment.role for assignment in self.profile.model_role_assignments}
+        self.assertNotIn(ModelRole.TEST_ENGINEER, default_roles)
+        test_engineer = ModelRoleAssignment(
+            project_profile_ref=self.profile.profile_id,
+            role=ModelRole.TEST_ENGINEER,
+            model_ref="model-test-engineer",
+            capability_refs=("cap-test-engineer",),
+            activity_state=RoleActivityState.SLEEPING,
+            evidence_refs=("evidence-test-engineer",),
+        )
+        explicit_payload = self.profile.model_dump()
+        explicit_payload["model_role_assignments"] = self.profile.model_role_assignments + (
+            test_engineer,
+        )
+        explicit_profile = ProjectWorkflowProfile.model_validate(explicit_payload)
+        self.assertIn(
+            ModelRole.TEST_ENGINEER,
+            {assignment.role for assignment in explicit_profile.model_role_assignments},
+        )
+
+        missing_core_payload = self.profile.model_dump()
+        missing_core_payload["model_role_assignments"] = tuple(
+            assignment
+            for assignment in self.profile.model_role_assignments
+            if assignment.role is not ModelRole.RESEARCH_HELPER
+        )
+        with self.assertRaises(ValueError):
+            ProjectWorkflowProfile.model_validate(missing_core_payload)
+
+        duplicate_engineer_payload = explicit_profile.model_dump()
+        duplicate_engineer_payload["model_role_assignments"] = explicit_profile.model_role_assignments + (
+            ModelRoleAssignment(
+                project_profile_ref=self.profile.profile_id,
+                role=ModelRole.TEST_ENGINEER,
+                model_ref="model-test-engineer-2",
+                capability_refs=("cap-test-engineer-2",),
+                activity_state=RoleActivityState.SLEEPING,
+                evidence_refs=("evidence-test-engineer-2",),
+            ),
+        )
+        with self.assertRaises(ValueError):
+            ProjectWorkflowProfile.model_validate(duplicate_engineer_payload)
 
 
 if __name__ == "__main__":

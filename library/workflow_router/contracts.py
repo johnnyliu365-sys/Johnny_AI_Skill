@@ -96,7 +96,7 @@ class ModelRole(str, Enum):
     SUPERVISOR_REVIEWER = "supervisor_reviewer"
     IMPLEMENTATION_OWNER = "implementation_owner"
     RESEARCH_HELPER = "research_helper"
-    TEST_ENGINEER = "research_helper"
+    TEST_ENGINEER = "test_engineer"
 
 
 class RoleActivityState(str, Enum):
