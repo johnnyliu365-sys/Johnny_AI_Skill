@@ -2,10 +2,11 @@
 
 This index records direct review leaves; evidence and conclusions remain in the selected leaf.
 
-Index identity: `INDEX-CONTROLLED-VERIFICATION-REVIEWS` / `REVIEW_INDEX` / revision `49`.
+Index identity: `INDEX-CONTROLLED-VERIFICATION-REVIEWS` / `REVIEW_INDEX` / revision `50`.
 
 | Review ID / leaf | Kind | Revision | SHA-256 | Lifecycle | Result |
 | --- | --- | --- | --- | --- | --- |
+| `REVIEW-CVE-D9-REVIEW-ADMISSION` / [D9 independent test admission](cve-d9-review-admission-code-review.md) | `CODE_REVIEW` | `01` | `f5d55e429df2e149fce9e63ceb820c9dedb01a8a8ea2a070cf8ca3e421935abb` | `BLOCKED` | `D9_FOCUSED_ACCEPTANCE_PASS / BASELINE_REGRESSION_UNRESOLVED / NOT_INTEGRATED` |
 | `EVIDENCE-CVQ-01B1-CORRECTION` / [B1 correction evidence](cvq-01b1-correction-evidence.md) | `REVIEW_EVIDENCE` | `05` | `ca5c95b0f4e8378c387752631ac1edaadd6848d958aad3fa2778135407cad5cc` | `REVIEWED` | `EXCEPTION_F07_NAMED_RED_RESTORED_GREEN / FOCUSED44_GREEN` |
 | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B1` / [B1 namespace/import review](cvq-01b1-namespace-import-code-review.md) | `CODE_REVIEW` | `05` | `1930708387c4ab3fdfef4a55a2601d571b4ef63526eb2b9946aad75cd0332f8c` | `APPROVED` | `APPROVED / NOT_INTEGRATED` |
 | `EVIDENCE-CVQ-01B1-INITIAL` / [B1 initial independent evidence](cvq-01b1-initial-evidence.md) | `REVIEW_EVIDENCE` | `01` | `af6db4e889b7099d175552c9f73568419d4e041f5125d313bc4447edac7b1cdd` | `REVIEWED` | `THREE_IMPLEMENTATION_FINDINGS / CORPUS_ZERO_RED` |
