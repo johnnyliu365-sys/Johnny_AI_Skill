@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01B2` / `IMPLEMENTATION_TICKET` / `07` |
-| State / closure | `BLOCKED / CONVERGENCE_REVIEW_REQUIRED / NON_DISPATCHABLE / NOT_INTEGRATED`; `CLOSURE-CVQ-01B2/01` exhausted; section11 is current |
+| ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01B2` / `IMPLEMENTATION_TICKET` / `08` |
+| State / closure | `OWNER_APPROVED / IMPLEMENTATION_ADMITTED / NOT_INTEGRATED`; `CLOSURE-CVQ-01B2/02`; section12 is current; closure01 exhausted |
 | Preparation authority | Owner's 2026-09-21 approval of [B convergence01](../../../doc/reviews/controlled-verification/cvq-01b-convergence-proposal.md) at797c15db, LF0308388788c4a6a6c79ce4dd256b72bb5a231a498357a0038f305680e46f0f94; drafting only |
 | Observable result / change class | Schema calls admit only exact permitted static binding and guarded receiver; `PRODUCTION_BEHAVIOR / DEFECT_CORRECTION` |
 | Dependency / baseline | [B1](cvq-01b1-namespace-import-admission.md) document02/closure01 in this proposal commit; actual APPROVED candidate SHA and review/index must be bound before dispatch; never substitute7171f41 as accepted B1 |
@@ -344,3 +344,130 @@ Root alone owns the conclusion; retained helper findings were independently repr
 No third correction, source write, new agent, B3 dispatch, partial integration, push, release,
 installation or native effect is admitted. ACTION_COMPLETED / B2_CORRECTION_REVIEW_BLOCKED ->
 WAIT_FOR_HUMAN / OWNER_GUARD_CONTRACT_DECISION_REQUIRED.
+
+## 12. Owner approval and closure02 admission — 2026-09-23
+
+Owner **「核准」** approves review04 section8 at
+6fd76324133ef93fbc70122c7881b48777d0b495, LF
+ff950a550f75f847d3c69d607ceeb5af4267ef493f1f6cc0e2c87801b828e844.
+This is the exact selected same-function guard convergence, not approval of the alternative
+product rewrite. Document08 compiles that decision into CLOSURE-CVQ-01B2/02; closure01 remains
+exhausted history. Sections2–5 remain effective except the explicit replacements below.
+SPEC07/wire03/Context02/profile01 are unchanged and retain section1/9 pins.
+
+### Effective bounded contract and closure
+
+Replace section2's immediate-ancestor restriction with review04 section8 rules1–5 verbatim in
+meaning: the exact unshadowed builtin isinstance guard must establish the same receiver as
+typing.Mapping; the call stays structurally in that guard's true body and in the same function.
+Nested ordinary If true/else and already-admitted finite For branches preserve that evidence;
+operator spelling does not grant an exception. The Mapping guard's own else, after-branch,
+cross-function/class boundary, unsupported control, wrong receiver, shadowed guard and changed
+receiver/guard-name binding do not prove access. No general control-flow engine or source execution.
+This supersedes the same-function ancestor negative only, not the cross-function negative.
+
+| Closure02 cell | Exact required observation through inspect_sources |
+| --- | --- |
+| B2-R2-GUARD-POS | Direct guarded access; nested flag; nested membership; inner-If else; finite For with unchanged receiver; unchanged real report_contracts discriminator all accept. These are separate literal packets/controls; the real package still passes test_architecture_dependency_gate. |
+| B2-R2-GUARD-NEG | Existing wrong receiver, no guard, Mapping-guard else/after, ordinary/same-line/unpacking/loop-target rebind, shadowed Mapping/isinstance and cross-function inherited guard remain designated SG16 negatives. Include guard-name reassignment after the true guard and before access; identity cannot be inferred from spelling. |
+| B2-R2-LOCAL | A function-local assignment anywhere, including later/unreachable assignment, cannot inherit an outer helper/builtin identity: designated SG17 at that call. Parameter, callable alias/return and cross-scope isolation regressions remain. The former B2-POS-call-before-later-binding is a rejection now. |
+| B2-R2-FORWARD | Typed acyclic module-local helper defined after the calling function accepts in its deferred body. A module-level call before its helper definition is not that case and remains SG18. Direct/mutual recursion and unknown calls still reject. |
+| B2-R2-PRESERVE | Original B2 alternatives, B1 origin/type/ID behavior, source-set/parser/determinism and accepted A focused suite remain; no schema model/port behavior call. |
+
+Use existing corpus/expected IDs/counts and driver methods. Move only the superseded same-function
+ancestor row to positive; keep historical evidence untouched. Do not change expected IDs merely
+to hide a missing alternative. Ordinary constructors and finite enums remain unchanged; no new
+public DTO, enum, policy switch or injectable resolver. Source symbols owns scope/guard facts,
+gate owns finite decisions, corpus owns literal packets, driver owns assertions.
+
+### Retained admission and resource allocation
+
+Baseline f2b3fb8dab7cae2554eb0ab24b9ee7dfc6d77092 is clean in .worktrees/cvq-01 on codex/cvq-01,
+with repository common-dir and no reparse attributes. Root review snapshot pins the same SHA.
+Fresh remote main and local main both equal b697738d009db37318ebc8762107ef8329e014db.
+Policy/source were read from the candidate snapshot, not the control tree (which has no such
+unintegrated support file). The control-tree missing-file probe did not provide authority.
+
+Same Luna/xhigh owner cve_wire_implementer, root sole reviewer, existing Terra/xhigh evidence-only
+helper. Close ctx-cvq-01b2-closure01-correction01; bind ctx-cvq-01b2-closure02-doc08.
+Modify exactly section9's four existing test/support paths; create/delete/rename/dependencies,
+product/policy/documents/screenshots grants remain empty. Reuse the existing scope/guard/corpus
+seams; no framework or new source file. Expected test-support delta0–120 lines is a signal, not
+a compression quota. Root docs/evidence remain in the same existing indexed leaves.
+
+No new1200sec grant or reset: original B1195 and B2 initial650/root120/owner180 reservations remain.
+Allocate the existing root-final250 reserve as150 conservative closeout charge/reserve,50 for
+this retained-owner migration,40 root/helper verification and10 document closeout. These are
+resource reservations, not a claim that every historical command was measured; unknown history
+stays UNKNOWN. Count all new commands with elapsed time; stop on allocation exhaustion. One
+foreground process, max60sec/command, zero automatic retry/load/polling. Reallocation within the
+existing finite grant does not manufacture additional budget. The parent retains the timer;
+no runtime hard-enforcement claim is made.
+
+Owner captures baseline-red for changed named cells on f2b3fb8, then strict/focused commands from
+section5 with -B and outside --cache-dir. Return actual unreduced output, commands and durations,
+not "all45 passed" prose. One bounded migration plus at most one batched correction review under
+the same remaining allocation; budget exhaustion halts instead of a new implicit allowance.
+Root owns the independent reverse campaign; owner need not duplicate it. Root tests each new
+guard/local/forward decision with a discriminating predicate removal, restores green, and retains
+section4's known-port/different-door actual-package proof. Existing other B2 alternatives still
+need designated rule coverage; B3 alone owns full20-rule completion. Preserve A/B1 proofs.
+
+### Readiness evidence and continuation
+
+The unchanged public test seam was revalidated at the exact baseline with ordinary SourceUnit,
+SourceViolation, NameBinding, SymbolOrigin and ImportBinding construction over all finite enum
+states; the minimum packet is accepted and missing source rejects SOURCE_SET. Root's baseline
+observations of nested flag/future-local/forward-helper reach inspect_sources and retain genuine
+defects rather than collection errors. Command and unreduced output:
+
+```powershell
+$b2Preflight = @'
+import ast,sys,time
+sys.path.insert(0,"tests")
+from verification_qualification_source_policy import SourceModule,SourceRule,SourceUnit,SourceViolation,BindingKind,ResolutionStatus
+from verification_qualification_source_symbols import NameBinding,SymbolOrigin,ImportBinding
+from verification_qualification_source_corpus import MINIMUM_PACKET
+from verification_qualification_source_gate import inspect_sources
+start=time.perf_counter()
+units=tuple(SourceUnit(m,"") for m in SourceModule)
+violations=tuple(SourceViolation(m,1,0,r) for m in SourceModule for r in SourceRule)
+node=ast.parse("from typing import Mapping")
+for kind in BindingKind:
+    for status in ResolutionStatus:
+        NameBinding("value",kind,node,status=status)
+for status in ResolutionStatus:
+    SymbolOrigin("typing","Mapping",status)
+    ImportBinding("Mapping","typing","Mapping",1,0,False,node.body[0],node,0,status,None)
+assert len(units)==9 and len(violations)==207
+assert inspect_sources(MINIMUM_PACKET)==()
+assert any(v.rule is SourceRule.SOURCE_SET for v in inspect_sources(MINIMUM_PACKET[:-1]))
+print("ORDINARY_CONSTRUCTORS: modules9/rules23/kinds6/statuses5 PASS")
+packets=(
+("nested_flag","from typing import Mapping\ndef helper(value:Mapping[str,str],flag:bool)->str:\n    if isinstance(value,Mapping):\n        if flag:\n            return value.get('x')\n    return ''\n"),
+("future_local","def probe()->object:\n    result=len(())\n    len=0\n    return result\n"),
+("forward_helper","def probe()->int:\n    return later()\ndef later()->int:\n    return 1\n"))
+for name,text in packets:
+    packet=tuple(SourceUnit(u.module,text) if u.module is SourceModule.QUALIFICATION_VALUES else u for u in MINIMUM_PACKET)
+    print(name,inspect_sources(packet))
+print("ELAPSED",round(time.perf_counter()-start,3))
+'@
+& 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -c $b2Preflight
+```
+
+```text
+ORDINARY_CONSTRUCTORS: modules9/rules23/kinds6/statuses5 PASS
+nested_flag (SourceViolation(module=<SourceModule.QUALIFICATION_VALUES: 'qualification_values.py'>, line=5, column=19, rule=<SourceRule.SG16: 'SG16'>),)
+future_local ()
+forward_helper (SourceViolation(module=<SourceModule.QUALIFICATION_VALUES: 'qualification_values.py'>, line=2, column=11, rule=<SourceRule.SG18: 'SG18'>),)
+ELAPSED 0.016
+```
+
+Existing identical public-contract preflight/reverse evidence remains bound via accepted B1.
+New behavior negatives above are baseline observations, not a claim that migration is already green.
+After committing this leaf and verifying both index edges, ACTION_COMPLETED /
+B2_CLOSURE02_OWNER_APPROVAL_RECORDED -> AUTO_CONTINUE / RETAINED_OWNER_IMPLEMENT.
+Bridge/runner/receipt/descriptor/host readback are NOT_REQUIRED. Followup then wait_agent,
+no progress polling; root receives and reviews without asking the owner to relay the result.
+No product/source outside the four paths, partial integration, push, release, install or native
+effect is authorized. Approval of the semantic choice is not re-asked as a metadata ceremony.

@@ -2,7 +2,7 @@
 
 This index records direct review leaves; evidence and conclusions remain in the selected leaf.
 
-Index identity: `INDEX-CONTROLLED-VERIFICATION-REVIEWS` / `REVIEW_INDEX` / revision `47`.
+Index identity: `INDEX-CONTROLLED-VERIFICATION-REVIEWS` / `REVIEW_INDEX` / revision `48`.
 
 | Review ID / leaf | Kind | Revision | SHA-256 | Lifecycle | Result |
 | --- | --- | --- | --- | --- | --- |
@@ -12,7 +12,7 @@ Index identity: `INDEX-CONTROLLED-VERIFICATION-REVIEWS` / `REVIEW_INDEX` / revis
 | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B-CONVERGENCE` / [B responsibility decomposition](cvq-01b-convergence-proposal.md) | `CODE_REVIEW` | `10` | `9e9a7327b4ca16a4215341f3ca1305817597b6ecc2ff911115792389010d9616` | `B1_APPROVED` | `B2_DEPENDENCY_BINDING_READY / NOT_INTEGRATED` |
 | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B-REPLACEMENT-PREFLIGHT` / [B replacement ticket preflight](cvq-01b-replacement-ticket-preflight.md) | `CODE_REVIEW` | `02` | `6306e8ca8bf1e81584abca2cfbf7082c06fb408aa53d55d67724369833a70ef5` | `PROPOSAL_PREFLIGHT_COMPLETE` | `OWNER_EXACT_APPROVAL_PENDING / NOT_DISPATCHABLE` |
 | `EVIDENCE-CVQ-01B-CORRECTION` / [B correction evidence](cvq-01b-correction-evidence.md) | `REVIEW_EVIDENCE` | `03` | `cf4ebf0ab11c5037782b4e339aa09a2d1d8742b34db239caadc6c494b66f95f2` | `REVIEWED` | `B2_THREE_COUNTEREXAMPLES / GUARD_CONFLICT_REPRODUCED / FOCUSED45_GREEN` |
-| `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B` / [CVQ-01B source admission](cvq-01b-source-admission-code-review.md) | `CODE_REVIEW` | `04` | `ff950a550f75f847d3c69d607ceeb5af4267ef493f1f6cc0e2c87801b828e844` | `B2_CONVERGENCE_REVIEW_REQUIRED` | `BLOCKED / OWNER_GUARD_CONTRACT_DECISION_REQUIRED / NOT_INTEGRATED` |
+| `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B` / [CVQ-01B source admission](cvq-01b-source-admission-code-review.md) | `CODE_REVIEW` | `05` | `3afd4a89cc8b98c0b58edbf2ae6dc5404b9ae75c896ca67385383bca7fbc8355` | `B2_CLOSURE02_ADMITTED` | `PRIOR_CANDIDATE_BLOCKED / GUARD_DECISION_APPROVED / NOT_INTEGRATED` |
 | `EVIDENCE-CVQ-01B-INITIAL` / [B initial review evidence](cvq-01b-initial-evidence.md) | `REVIEW_EVIDENCE` | `01` | `7a246985db8dcbe2cf27b0458e5760eb7e6b4ded18da59d38e50061c5f358610` | `REVIEWED` | `BYPASSES_AND_VACUITY_REPRODUCED / HISTORICAL_BASELINE_RED` |
 | `EVIDENCE-CVQ-01A3-C02-PROOF` / [A3 closure02 proof and result](cvq-01a3-closure02-proof-evidence.md) | `REVIEW_EVIDENCE` | `01` | `9510a0773b1bd4460a9ce1baab92db4fe259f324a7dea12b1cc53489b38d3899` | `REVIEWED` | `PREDICATE_EVIDENCE_ACCEPTED` |
 | `EVIDENCE-CVQ-01A3-C02-ROSTER` / [A3 closure02 roster and collection](cvq-01a3-closure02-roster-evidence.md) | `REVIEW_EVIDENCE` | `01` | `a345fa369d720e79e6186612f4c28d457f56093949212025ad1dcc7485cfa6a4` | `REVIEWED` | `PREDICATE_EVIDENCE_ACCEPTED` |

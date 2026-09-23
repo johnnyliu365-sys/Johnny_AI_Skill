@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B` / `CODE_REVIEW` / `04` |
+| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B` / `CODE_REVIEW` / `05` |
 | Conclusion / round | `BLOCKED / CONVERGENCE_REVIEW_REQUIRED / NON_DISPATCHABLE / NOT_INTEGRATED`; sections7–8 are current for B2; sections1–6 remain history |
 | Current B2 authority / candidate | Document06/closure01 at f30e1a39c716bec007ef419bea6e6cec0550d2c3; candidate f2b3fb8dab7cae2554eb0ab24b9ee7dfc6d77092; exact pins in section7 |
 | Historical original-B authority | [B](../../../modules/tickets/controlled-verification/cvq-01b-source-admission.md) document05 / closure01 at b96aaaa6e385dc518389fc680cabbcf7251b01b2; LF 01530c75d2525ea86cabc018ea8808afa836f52bdfb5ca4b121530055d6e5093; SPEC07 section11.3 and wire03 unchanged |
@@ -248,3 +248,14 @@ OWNER_GUARD_CONTRACT_DECISION_REQUIRED. WAKE_REQUIRED is a state, not a claim of
 the decision is presented directly to the owner in this session. A/B1 remain accepted,
 B3 remains dependency-pending, and no source/target/provider/integration/push/release/install
 effect occurs in this control-plane closeout.
+
+## 9. Owner decision recorded — 2026-09-23
+
+Owner **「核准」** approves section8's recommended guard convergence at
+6fd76324133ef93fbc70122c7881b48777d0b495, review04 LF
+ff950a550f75f847d3c69d607ceeb5af4267ef493f1f6cc0e2c87801b828e844.
+The historical candidate/closure01 verdict stays BLOCKED; this is not review approval.
+B2 document08 section12 compiles CLOSURE-CVQ-01B2/02 and binds the unchanged source baseline,
+profile, scope and remaining cumulative allocation. Section8's decision wait is now satisfied.
+AUTO_CONTINUE / RETAINED_OWNER_IMPLEMENT follows committed ticket/index admission; no third
+retry of closure01, source change by root, partial integration, push, release or installation.
