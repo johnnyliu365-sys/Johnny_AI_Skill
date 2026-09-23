@@ -2,14 +2,14 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B` / `CODE_REVIEW` / `05` |
-| Conclusion / round | `BLOCKED / CONVERGENCE_REVIEW_REQUIRED / NON_DISPATCHABLE / NOT_INTEGRATED`; sections7–8 are current for B2; sections1–6 remain history |
-| Current B2 authority / candidate | Document06/closure01 at f30e1a39c716bec007ef419bea6e6cec0550d2c3; candidate f2b3fb8dab7cae2554eb0ab24b9ee7dfc6d77092; exact pins in section7 |
+| ID / kind / revision | `REVIEW-CONTROLLED-VERIFICATION-CVQ-01B` / `CODE_REVIEW` / `06` |
+| Conclusion / round | `CHANGES_REQUESTED / CORRECTION_PENDING_RESOURCE / NOT_INTEGRATED`; section10 is current for B2 closure02; sections1–9 remain history |
+| Current B2 authority / candidate | Document08/closure02 at 24ebb24be4d9f8219b1de7aee07d0c7ec6d3f5c2; candidate 5b3a432715163657c8d829d683fb0482fac8ba94 |
 | Historical original-B authority | [B](../../../modules/tickets/controlled-verification/cvq-01b-source-admission.md) document05 / closure01 at b96aaaa6e385dc518389fc680cabbcf7251b01b2; LF 01530c75d2525ea86cabc018ea8808afa836f52bdfb5ca4b121530055d6e5093; SPEC07 section11.3 and wire03 unchanged |
 | Historical original-B baseline / candidate | 485d882f578f84dac1c975b32ced2a4ae6e7d43a -> 406e853 -> 704f066c881dc36e7176d8564edadd439a443a09 |
 | Owner / reviewer / helper | Retained cve_wire_implementer / Luna xhigh; root sole verdict; retained profile_delivery_audit / Terra xhigh, evidence only |
 | Isolation and effects | Clean candidate and root detached review snapshot; READ_ONLY_INTENT_ONLY helper; NO_EXTERNAL_EFFECT; no package import/exec by source gate, native/VM/provider/target/integration/push/release/installation effect |
-| Evidence | [Correction evidence](cvq-01b-correction-evidence.md) revision03 is current; [initial evidence](cvq-01b-initial-evidence.md) revision01 remains history |
+| Evidence | [Correction evidence](cvq-01b-correction-evidence.md) revision04 is current; [initial evidence](cvq-01b-initial-evidence.md) revision01 remains history |
 
 ## 1. Admission and observed checks
 
@@ -259,3 +259,43 @@ B2 document08 section12 compiles CLOSURE-CVQ-01B2/02 and binds the unchanged sou
 profile, scope and remaining cumulative allocation. Section8's decision wait is now satisfied.
 AUTO_CONTINUE / RETAINED_OWNER_IMPLEMENT follows committed ticket/index admission; no third
 retry of closure01, source change by root, partial integration, push, release or installation.
+
+## 10. Closure02 initial review; one batched correction — 2026-09-23
+
+Conclusion: CHANGES_REQUESTED / CORRECTION_PENDING_RESOURCE / NOT_INTEGRATED.
+B2 document08/closure02 at24ebb24be4d9f8219b1de7aee07d0c7ec6d3f5c2 governs candidate
+5b3a432715163657c8d829d683fb0482fac8ba94 fromf2b3fb8. Root read the entire73add/26delete diff:
+three existing allowed support files only, clean owner/review trees, no product/policy/A changes.
+Root's call/positive drivers pass; owner reports strict21/focused45. Recovered owner text has
+test-identity inconsistencies and is not accepted as an authentic unfiltered trace. Direct
+root counterexamples/mutation output is retained in [evidence04](cvq-01b-correction-evidence.md#b2-closure02-initial-independent-review--2026-09-23).
+
+| ID / class | Existing closure02 obligation and observed failure | Single correction |
+| --- | --- | --- |
+| B2-R2-F01 IMPLEMENTATION_DEFECT | GUARD-POS requires inner-If else to preserve a valid outer guard. symbols482 tests every isinstance-shaped inner If's else before establishing that this is the receiver's Mapping guard. An inner isinstance(other,int) or isinstance(other,Mapping) else returns SG16 at7:19 although the call remains in outer value's Mapping-true region. | Classify the exact receiver/Mapping guard before applying its own-else refusal; do not treat unrelated isinstance as that guard. Preserve the own-else negative and nested true/else positives. |
+| B2-R2-F02 IMPLEMENTATION_DEFECT | FORWARD permits module-local helpers in deferred bodies, not an unbound nested-function name. gate204 passes allow_future for every non-module scope and symbols402–421 admits a future FUNCTION in that same local scope. Root and helper's future nested definition packet returns no finding. | Limit forward admission to the actual module binding reached from a deferred body; future local definitions/imports may not borrow module/builtin identity. Preserve legal forward module helper, ordinary prior local/helper binding, later local assignment negative and top-level forward-call negative. Use existing SG17/SG18 classifications, no new policy enum or resolver. |
+| B2-R2-F03 IMPLEMENTATION_DEFECT | Effective guard contract excludes unsupported control ancestry. symbols505's ancestry test is an incomplete negative list; Try is accepted as guarded. Root sees only UNSUPPORTED_SYNTAX, not required guard refusal at the get. This is masked guard proof, not a claimed whole-gate acceptance. | Admit only the closed ordinary control/structural ancestry from section12; unsupported statement ancestry cannot attest a guard. Add a designated SG16 assertion so another rule cannot mask its removal. No expansion into B3 grammar ownership. |
+| B2-R2-F04 EVIDENCE_DEFECT | FORWARD positive is absent in the committed corpus. Replacing only _check_calls allow_future with False leaves both call/positive tests green, restored also green. Owner's reconstructed-looking trace also disagrees with unchanged test identities. | Add the actual module-forward positive plus paired local/module negatives; retain fixed independent IDs/counts. Removing that admission must fail its positive assertion. Return actual commands/output; if raw output unavailable say MISSING, never compose a plausible trace. |
+
+The finite retained helper found F02/F03 statically (1.86sec); root independently reproduced
+them and F01/F04. Root owns all dispositions. Re-guarding a newly assigned receiver is not
+reported as a defect: it has a new valid guard. Unsupported Try's global rejection is preserved
+and accurately distinguished from the missing named guard evidence. No optional hardening,
+new public contract, file, framework or requirement is added.
+
+This is the initial review of closure02. One batched correction remains, same owner/worktree/
+profile, subject to available resource admission; it is not another closure01 retry. No need
+for another semantic approval. Preserve actual gains and existing rule proofs. Root does not
+run the final complete proof on this already failing candidate and does not treat zero red
+as success. B3 remains blocked on B2; no partial integration/push/release/install.
+
+Resource decision requested, not granted: append120 command-wall seconds to the same B2 ledger
+solely for this correction and final independent proof. Preserve prior reservations/unknowns;
+charge the migration's50sec reservation conservatively (known40.128, remainder UNKNOWN), charge/
+reserve10 of root40 for initial review/helper/readback, and retain document10. Existing30 plus
+proposed120 would allocate60 owner,70 root/helper,20 closeout; no extra correction cycle,
+higher model, new file or stress test. Do not start a correction whose full required commands
+are knowingly underfunded. No claim of exact historical total or runtime budget enforcement.
+ACTION_COMPLETED / CLOSURE02_INITIAL_CHANGES_REQUESTED -> WAIT_FOR_HUMAN /
+CUMULATIVE_VERIFICATION_BUDGET_REQUIRED; approval resumes same-owner correction directly after
+the exact committed resource binding, not another scope vote.

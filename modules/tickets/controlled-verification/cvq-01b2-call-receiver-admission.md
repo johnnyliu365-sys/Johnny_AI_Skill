@@ -2,8 +2,8 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01B2` / `IMPLEMENTATION_TICKET` / `08` |
-| State / closure | `OWNER_APPROVED / IMPLEMENTATION_ADMITTED / NOT_INTEGRATED`; `CLOSURE-CVQ-01B2/02`; section12 is current; closure01 exhausted |
+| ID / kind / document revision | `TICKET-CONTROLLED-VERIFICATION-CVQ-01B2` / `IMPLEMENTATION_TICKET` / `09` |
+| State / closure | `CHANGES_REQUESTED / CORRECTION_PENDING_RESOURCE / NOT_INTEGRATED`; `CLOSURE-CVQ-01B2/02`; section13 is current; closure01 exhausted |
 | Preparation authority | Owner's 2026-09-21 approval of [B convergence01](../../../doc/reviews/controlled-verification/cvq-01b-convergence-proposal.md) at797c15db, LF0308388788c4a6a6c79ce4dd256b72bb5a231a498357a0038f305680e46f0f94; drafting only |
 | Observable result / change class | Schema calls admit only exact permitted static binding and guarded receiver; `PRODUCTION_BEHAVIOR / DEFECT_CORRECTION` |
 | Dependency / baseline | [B1](cvq-01b1-namespace-import-admission.md) document02/closure01 in this proposal commit; actual APPROVED candidate SHA and review/index must be bound before dispatch; never substitute7171f41 as accepted B1 |
@@ -471,3 +471,27 @@ Bridge/runner/receipt/descriptor/host readback are NOT_REQUIRED. Followup then w
 no progress polling; root receives and reviews without asking the owner to relay the result.
 No product/source outside the four paths, partial integration, push, release, install or native
 effect is authorized. Approval of the semantic choice is not re-asked as a metadata ceremony.
+
+## 13. Closure02 initial return and correction resource gate — 2026-09-23
+
+Current: CHANGES_REQUESTED / CORRECTION_PENDING_RESOURCE / NOT_INTEGRATED.
+Source5b3a432715163657c8d829d683fb0482fac8ba94 is an additive clean three-path candidate from
+f2b3fb8. Semantic approval in section12 stands; this section does not reopen that owner choice.
+[Review06 section10](../../../doc/reviews/controlled-verification/cvq-01b-source-admission-code-review.md#10-closure02-initial-review-one-batched-correction--2026-09-23),
+LF 309341694c0b74c05f7fe53ae97d45f3b581df8cc892078c67723ee663eb3125, and
+[evidence04](../../../doc/reviews/controlled-verification/cvq-01b-correction-evidence.md#b2-closure02-initial-independent-review--2026-09-23),
+LF f5c9298b44dd4d85c9ce5242096e13ca7eb1c1f1371826a81968b05ade855913, bind four finite existing-closure defects:
+unrelated inner-isinstance else handling; future local-function identity; unsupported-control
+guard attestation; missing forward-positive discrimination and unreliable supplied trace.
+Root reproduced the helper findings; one initial review is consumed and one correction remains.
+
+Same four-path modify-only boundary, owner, profile, no new files/product/policy effects and
+closure02 remain. Proposed additional120 command-wall seconds is resource authority PENDING,
+not an automatic reset. Original B2 grant/reservations and unknowns remain; section12 migration50
+is conservatively charged, root/helper10 and document10 charged/reserved, leaving30. With owner
+approval only,30+120 allocates correction60, root/helper70, closeout20. No larger model, new
+closure or extra correction cycle. Until funded, do not dispatch an underfunded correction.
+On approval record that exact resource decision and directly follow up the retained owner using
+this committed correction reference; no second scope/semantic approval. Otherwise remain blocked.
+ACTION_COMPLETED / CLOSURE02_INITIAL_CHANGES_REQUESTED -> WAIT_FOR_HUMAN /
+CUMULATIVE_VERIFICATION_BUDGET_REQUIRED. No integration, push, release, installation or native effect.

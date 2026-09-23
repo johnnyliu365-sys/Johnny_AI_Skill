@@ -2,12 +2,12 @@
 
 | Field | Value |
 | --- | --- |
-| ID / kind / revision | `EVIDENCE-CVQ-01B-CORRECTION` / `REVIEW_EVIDENCE` / `03` |
-| Current B2 / authority | f2b3fb8dab7cae2554eb0ab24b9ee7dfc6d77092; B2 document06/closure01 at f30e1a39c716bec007ef419bea6e6cec0550d2c3; final B2 section below is current |
+| ID / kind / revision | `EVIDENCE-CVQ-01B-CORRECTION` / `REVIEW_EVIDENCE` / `04` |
+| Current B2 / authority | 5b3a432715163657c8d829d683fb0482fac8ba94; B2 document08/closure02 at 24ebb24be4d9f8219b1de7aee07d0c7ec6d3f5c2; closure02 initial section below is current |
 | Historical original-B candidate / initial | 7171f41bdec15104fd653ecee6c8e06691055d16 / 704f066c881dc36e7176d8564edadd439a443a09 |
 | Historical original-B authority | B document05 / closure01 at b96aaaa6e385dc518389fc680cabbcf7251b01b2; initial review9e0f4a1a3399fad2daadfb58866cbfc26a9109d4 |
 | Executor / scope | root in detached .worktrees/cvq-01a2-review; temporary source mutation restored byte-exact; no provider/native/target/integration/publication effect |
-| Current B2 status | Strict21/focused45 green; three independent counterexamples fail; frozen guard/product contradiction reproduced; BLOCKED / CONVERGENCE_REVIEW_REQUIRED |
+| Current B2 status | Owner-reported strict21/focused45; root call/positive corpus green but forward-resolution mutation zero red; guard/binding defects reproduced; CHANGES_REQUESTED |
 | Historical original-B status | Original15 reject; strict21/focused43 green; three existing-rule assertions fail; actual package accepts forbidden schema port invocation; final all-rule campaign NOT_VERIFIED |
 
 The initial root strict/focused session had not completed when root started the fifteen-packet
@@ -1123,3 +1123,186 @@ Final disposition: BLOCKED / CONVERGENCE_REVIEW_REQUIRED / NON_DISPATCHABLE / NO
 Strict21/focused45 green cannot override the three counterexamples and contradictory contract.
 See source-admission-code-review revision04 sections7–8. A/B1 remain accepted; B3 remains
 dependency-pending. No third correction, integration, push, release, install or native effect.
+
+## B2 closure02 initial independent review — 2026-09-23
+
+Authority: B2 document08/closure02 at24ebb24be4d9f8219b1de7aee07d0c7ec6d3f5c2,
+LFef0ec4b00ab37f02b0a712a59ed294405a66d425fd7f6215bc1d897874218e69.
+Baselinef2b3fb8dab7cae2554eb0ab24b9ee7dfc6d77092 -> candidate
+5b3a432715163657c8d829d683fb0482fac8ba94. Clean owner/review snapshots; exact three declared
+existing support paths,73 additions/26 deletions; no product change against accepted B1.
+Root reviewed the whole diff; no policy, new dependency/file or work-order prose was added.
+
+Owner reports strict21/focused45 green (known timed commands40.128sec; additional unwrapped
+commands UNKNOWN). An evidence-only followup retrieved text without executing commands.
+That claimed verbatim text names QualificationManifestTests.test_case_and_scope_identity_joins,
+but source class is QualificationManifestAdmissionTests. It also places
+test_plan_global_coverage_and_uniqueness under the manifests module; source defines it in
+QualificationEvidenceAdmissionTests. This supplied transcription is not independently verified
+raw evidence. Do not persist it as an authentic command trace or infer missing parts. Required
+final output must be captured directly, not reconstructed by another language-model return.
+
+Root independently ran the current complete call/positive corpus through the actual driver.
+Both methods pass in control and restored execution. Removing forward-call admission still
+passes both: zero red, because the required forward-helper positive is absent from committed
+corpus. A nested-isinstance-else assertion fails under a genuine outer Mapping guard.
+Diagnostic process exit0 does not mean the embedded unittest passed. Output is direct/unreduced;
+source packets are AST data only.
+
+### Independent branch and forward-resolution mutation
+
+```powershell
+$b2Audit = @'
+import inspect,sys,unittest
+from unittest.mock import patch
+sys.path.insert(0,"tests")
+import verification_qualification_source_gate as gate
+from verification_qualification_source_corpus import MINIMUM_PACKET
+from verification_qualification_source_policy import SourceModule,SourceUnit
+from test_verification_qualification_boundaries import QualificationBoundaryTests
+class GuardBranchChecks(unittest.TestCase):
+    def test_unrelated_isinstance_else_inside_valid_guard(self):
+        text="from typing import Mapping\ndef helper(value:Mapping[str,str],other:object)->str:\n    if isinstance(value,Mapping):\n        if isinstance(other,int):\n            return ''\n        else:\n            return value.get('x')\n    return ''\n"
+        packet=tuple(SourceUnit(u.module,text) if u.module is SourceModule.QUALIFICATION_VALUES else u for u in MINIMUM_PACKET)
+        result=gate.inspect_sources(packet)
+        print("NESTED_ELSE",result,flush=True)
+        self.assertEqual((),result)
+print("INDEPENDENT_BRANCH",flush=True)
+unittest.TextTestRunner(verbosity=2).run(unittest.defaultTestLoader.loadTestsFromTestCase(GuardBranchChecks))
+source=inspect.getsource(gate._check_calls)
+needle="allow_future=scope_for(node.func, parents, tree) is not tree,"
+assert source.count(needle)==1
+namespace=dict(vars(gate))
+exec(compile(source.replace(needle,"allow_future=False,"),"forward_resolution_mutation","exec"),namespace)
+def check(label):
+    print(label,flush=True)
+    suite=unittest.TestSuite(QualificationBoundaryTests(name) for name in ("test_source_call_admission","test_source_positive_corpus"))
+    result=unittest.TextTestRunner(verbosity=2).run(suite)
+    print("GREEN",result.wasSuccessful(),flush=True)
+    return result.wasSuccessful()
+check("CONTROL")
+with patch.object(gate,"_check_calls",namespace["_check_calls"]):
+    mutant=check("REMOVE_FORWARD_RESOLUTION")
+print("MUTANT_RED",not mutant,flush=True)
+check("RESTORED")
+'@
+& 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -c $b2Audit
+```
+
+```text
+INDEPENDENT_BRANCH
+test_unrelated_isinstance_else_inside_valid_guard (__main__.GuardBranchChecks.test_unrelated_isinstance_else_inside_valid_guard) ... NESTED_ELSE (SourceViolation(module=<SourceModule.QUALIFICATION_VALUES: 'qualification_values.py'>, line=7, column=19, rule=<SourceRule.SG16: 'SG16'>),)
+FAIL
+
+======================================================================
+FAIL: test_unrelated_isinstance_else_inside_valid_guard (__main__.GuardBranchChecks.test_unrelated_isinstance_else_inside_valid_guard)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<string>", line 14, in test_unrelated_isinstance_else_inside_valid_guard
+AssertionError: Tuples differ: () != (SourceViolation(module=<SourceModule.QUAL[93 chars]'>),)
+
+Second tuple contains 1 additional elements.
+First extra element 0:
+SourceViolation(module=<SourceModule.QUALIFICATION_VALUES: 'qualification_values.py'>, line=7, column=19, rule=<SourceRule.SG16: 'SG16'>)
+
+- ()
++ (SourceViolation(module=<SourceModule.QUALIFICATION_VALUES: 'qualification_values.py'>,
++                  line=7,
++                  column=19,
++                  rule=<SourceRule.SG16: 'SG16'>),)
+
+----------------------------------------------------------------------
+Ran 1 test in 0.007s
+
+FAILED (failures=1)
+CONTROL
+test_source_call_admission (test_verification_qualification_boundaries.QualificationBoundaryTests.test_source_call_admission) ... ok
+test_source_positive_corpus (test_verification_qualification_boundaries.QualificationBoundaryTests.test_source_positive_corpus) ... ok
+
+----------------------------------------------------------------------
+GREEN True
+Ran 2 tests in 0.278s
+
+OK
+REMOVE_FORWARD_RESOLUTION
+test_source_call_admission (test_verification_qualification_boundaries.QualificationBoundaryTests.test_source_call_admission) ... ok
+test_source_positive_corpus (test_verification_qualification_boundaries.QualificationBoundaryTests.test_source_positive_corpus) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.272s
+
+OK
+GREEN True
+MUTANT_RED False
+RESTORED
+test_source_call_admission (test_verification_qualification_boundaries.QualificationBoundaryTests.test_source_call_admission) ... ok
+test_source_positive_corpus (test_verification_qualification_boundaries.QualificationBoundaryTests.test_source_positive_corpus) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.304s
+
+OK
+GREEN True
+```
+
+### Additional finite binding observations
+
+```powershell
+$b2BindingProbe = @'
+import sys
+sys.path.insert(0,"tests")
+from verification_qualification_source_corpus import MINIMUM_PACKET
+from verification_qualification_source_policy import SourceModule,SourceUnit
+from verification_qualification_source_gate import inspect_sources
+cases=(
+("future_function_local_definition","def outer()->int:\n    answer=helper()\n    def helper()->int:\n        return 1\n    return answer\n"),
+("guard_receiver_changed_then_rechecked","from typing import Mapping\ndef helper(value:Mapping[str,str])->str:\n    if isinstance(value,Mapping):\n        value={}\n        if isinstance(value,Mapping):\n            return value.get('x')\n    return ''\n"),
+("nested_other_mapping_else","from typing import Mapping\ndef helper(value:Mapping[str,str],other:object)->str:\n    if isinstance(value,Mapping):\n        if isinstance(other,Mapping):\n            return ''\n        else:\n            return value.get('x')\n    return ''\n"),
+("local_import_after_call","from typing import Mapping\ndef helper(value:object)->object:\n    answer=len(())\n    from typing import Literal as len\n    return answer\n"))
+for name,text in cases:
+    units=tuple(SourceUnit(u.module,text) if u.module is SourceModule.QUALIFICATION_VALUES else u for u in MINIMUM_PACKET)
+    print(name,inspect_sources(units),flush=True)
+'@
+& 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -c $b2BindingProbe
+```
+
+```text
+future_function_local_definition ()
+guard_receiver_changed_then_rechecked ()
+nested_other_mapping_else (SourceViolation(module=<SourceModule.QUALIFICATION_VALUES: 'qualification_values.py'>, line=7, column=19, rule=<SourceRule.SG16: 'SG16'>),)
+local_import_after_call (SourceViolation(module=<SourceModule.QUALIFICATION_VALUES: 'qualification_values.py'>, line=4, column=4, rule=<SourceRule.SG05: 'SG05'>),)
+```
+
+### Unsupported-control guard observation
+
+```powershell
+$b2Try = @'
+import sys
+sys.path.insert(0,'tests')
+from verification_qualification_source_policy import SourceModule,SourceUnit
+from verification_qualification_source_corpus import MINIMUM_PACKET
+from verification_qualification_source_gate import inspect_sources
+text="from typing import Mapping\ndef helper(value:Mapping[str,str])->str:\n    if isinstance(value,Mapping):\n        try:\n            return value.get('x')\n        except Exception:\n            return ''\n    return ''\n"
+packet=tuple(SourceUnit(u.module,text) if u.module is SourceModule.QUALIFICATION_VALUES else u for u in MINIMUM_PACKET)
+print(inspect_sources(packet))
+'@
+& 'C:/Users/GameBoy/AppData/Local/Programs/Python/Python311/python.exe' -B -c $b2Try
+```
+
+```text
+(SourceViolation(module=<SourceModule.QUALIFICATION_VALUES: 'qualification_values.py'>, line=4, column=8, rule=<SourceRule.UNSUPPORTED_SYNTAX: 'UNSUPPORTED_SYNTAX'>),)
+```
+
+Not every observation is a defect: rechecking a changed receiver establishes a new guard and
+may accept. The empty findings for a future nested definition and SG16 for unrelated inner
+Mapping-else are defects under closure02. The Try packet is globally rejected by
+UNSUPPORTED_SYNTAX but lacks SG16 at its get call. This is not a complete source-gate bypass:
+guarded_mapping_get incorrectly attests unsupported ancestry; another predicate's rejection
+cannot replace its named obligation.
+
+Retained Terra/xhigh helper performed one static review on this exact candidate,1.86 measured
+command seconds. It found unsupported-control guard inheritance and future nested-function
+admission; root independently reproduced both. Same closure, no new requirement/Context.
+Root alone owns the four batched findings in review06 section10. Final port/owned-predicate
+proof remains NOT_VERIFIED on this failing initial candidate. Source bytes were not changed
+by these in-memory probes; clean snapshot verified afterward.
