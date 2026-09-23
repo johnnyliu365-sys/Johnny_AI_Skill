@@ -2,7 +2,7 @@
 
 | Field | Value |
 | --- | --- |
-| ID / revision | `SPEC-CV-D9-TEST-ADMISSION-20260924-01` / `01` |
+| ID / revision | `SPEC-CV-D9-TEST-ADMISSION-20260924-01` / `02` |
 | State | `OWNER_DELEGATED_CONTRACT / TWO_PHASE_IMPLEMENTATION_AUTHORIZED` |
 | Author / baseline | root; `codex/controlled-verification-intake`; `8b4d22f69d22a78e3623fa1a042e5f2718d537e3` |
 | Authority | Owner's explicit approval of D9 two-phase direct dispatch: root completes contracts/ticket, Luna constructs types/tests, root preflights, same Luna wires admission. No repeated document approval; new requirements, privilege or external effects return to owner. This is not a claim that the owner individually reviewed these new bytes. |
@@ -81,7 +81,13 @@ history. Accepted correction rebinds a new candidate/plan rather than changing a
 
 ## Existing Router choke point
 
-Add ModelRole.TEST_ENGINEER, RouterState.review_scope_ref and RouterEvent.test_report_ref
+Add distinct ModelRole.TEST_ENGINEER serialized as `test_engineer`, never a RESEARCH_HELPER
+alias. The profile validator retains exactly one assignment for each original four roles and
+may accept at most one explicitly declared TEST_ENGINEER assignment, with all existing profile,
+capability and evidence collision checks unchanged. Absence means unconfigured, not inherited
+helper permissions or an auto-created host assignment; default profiles need no invented model
+or capability evidence. This staged metadata compatibility does not qualify role dispatch.
+Add RouterState.review_scope_ref and RouterEvent.test_report_ref
 (optional opaque IDs default None for unrelated stages), and BlockerCode.TEST_REVIEW_NOT_ADMITTED.
 RouterEngine receives optional constructor-injected test_evidence_resolver (default None).
 Before any otherwise valid transition whose next_stage is REVIEW, and before REVIEW -> HANDOFF,

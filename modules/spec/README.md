@@ -6,7 +6,7 @@
 
 | Specification ID | Kind | Revision | LF SHA-256 | Lifecycle | Direct-child leaf |
 | --- | --- | --- | --- | --- | --- |
-| `SPEC-CV-D9-TEST-ADMISSION-20260924-01` | `SPECIFICATION` | `01` | `b762ba62118a8f08715bcd647aeb72803305094c7e05643ab80a87b188a23221` | `OWNER_DELEGATED_CONTRACT / TWO_PHASE_IMPLEMENTATION_AUTHORIZED` | [controlled-verification-test-admission.md](controlled-verification-test-admission.md) |
+| `SPEC-CV-D9-TEST-ADMISSION-20260924-01` | `SPECIFICATION` | `02` | `73571e9e066ee3e8df525f125533699855d4df9176557f6e7f5641ee6caea68f` | `OWNER_DELEGATED_CONTRACT / TWO_PHASE_IMPLEMENTATION_AUTHORIZED` | [controlled-verification-test-admission.md](controlled-verification-test-admission.md) |
 | `SPEC-CONTROLLED-VERIFICATION-QUALIFICATION-20260909-01` | `SPECIFICATION` | `07` | `545f5058d8347ab069d6a23fdb07daaf06ab836998efb67b2c30b80fee3b1716` | `OWNER_APPROVED / CVQ01_SCHEMA_RESUMPTION_AUTHORIZED / NATIVE_EFFECTS_NOT_AUTHORIZED` | [`controlled-verification-qualification.md`](controlled-verification-qualification.md) |
 | `SPEC-APPENDIX-CVQ-WIRE-20260918-01` | `SPEC_CONTRACT_APPENDIX` | `03` | `6eb9d0a088e105e7c2dd4c3c3b4001f970ac34195c7a0cd78459a2f6016e9222` | `OWNER_APPROVED / CVQ01_SCHEMA_RESUMPTION_AUTHORIZED` | [controlled-verification-qualification-wire.md](controlled-verification-qualification-wire.md) |
 | `SPEC-CONTROLLED-VERIFICATION-DISPATCH-20260918-01` | `SPECIFICATION` | `03` | `2afbc3c2f2b9fef63c61584f1000e35bc55fa24081d50d85f9f2862dcf715609` | `DRAFT / CONTRACT_CONVERGENCE / NON_DISPATCHABLE` | [controlled-verification-dispatch.md](controlled-verification-dispatch.md) |

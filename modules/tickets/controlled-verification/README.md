@@ -2,7 +2,7 @@
 
 | Child ID | Kind | Revision | LF SHA-256 | Lifecycle | Reference |
 | --- | --- | --- | --- | --- | --- |
-| `TICKET-CVE-D9-REVIEW-ADMISSION` | `IMPLEMENTATION_TICKET` | `02` | `c751dfdf9168a41b215fe297b1b97e80d54cf35c2dd9c226082d456bb01f285a` | `PHASE1_PREFLIGHT_PASSED / PHASE2_ADMITTED / NOT_INTEGRATED` | [cve-d9-review-admission.md](cve-d9-review-admission.md) |
+| `TICKET-CVE-D9-REVIEW-ADMISSION` | `IMPLEMENTATION_TICKET` | `03` | `3d263ee6eec6a12c82575991e168357a88008a9f81eae805083b8ae16c7c366f` | `CHANGES_REQUESTED / PHASE2_CORRECTION_ADMITTED / NOT_INTEGRATED` | [cve-d9-review-admission.md](cve-d9-review-admission.md) |
 | `TICKET-CONTROLLED-VERIFICATION-CVQ-01` | `IMPLEMENTATION_TICKET` | `10` | `af42b7d9a3c05a27d34dc4dc439d05d271e5d2e0287f2dd42a20c1da474d5275` | `BLOCKED / CONVERGENCE_REVIEW_REQUIRED / NON_DISPATCHABLE` | [cvq-01-qualification-admission.md](cvq-01-qualification-admission.md) |
 | `TICKET-CONTROLLED-VERIFICATION-CVQ-01A` | `IMPLEMENTATION_TICKET` | `04` | `4092a36aba2346fb3bdc254cf9360a8d236c38a86808953da80aa10a3d6eef46` | `BLOCKED / CONVERGENCE_REVIEW_REQUIRED / NON_DISPATCHABLE` | [cvq-01a-contract-admission.md](cvq-01a-contract-admission.md) |
 | `TICKET-CONTROLLED-VERIFICATION-CVQ-01A1` | `IMPLEMENTATION_TICKET` | `08` | `c54f67a18f90c6a0d86771e9ac0e83aa8a9b82082b25ccee642d0948e11dbec7` | `REVIEW_APPROVED / CLOSED / NOT_INTEGRATED` | [cvq-01a1-scalar-wire-admission.md](cvq-01a1-scalar-wire-admission.md) |
