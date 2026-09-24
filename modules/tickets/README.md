@@ -17,6 +17,12 @@ debug 或稽核任何一條線之前先讀它——多數「新」問題都是�
 | --- | --- | --- | --- | --- | --- |
 | `TICKET-PARTITION-PLUGIN-ADOPTION-QUALITY` | `PARTITION_INDEX` | `20260907-02` | `f192b189f448d88c418021d78e7a880d15fa7c4df6d78a38f4bb1a416eeb63ad` | `ACTIVE` | [plugin-adoption-quality/README.md](plugin-adoption-quality/README.md) |
 
+## Controlled verification
+
+| Child ID | Kind | Revision | LF SHA-256 | Lifecycle | Reference |
+| --- | --- | --- | --- | --- | --- |
+| `TICKET-PARTITION-CONTROLLED-VERIFICATION` | `PARTITION_INDEX` | `70` | `cf8cb46ae4a6cff0fb716f12f8952e0611acc5501ee4f7f2e59f55c86488dbbd` | `CVE_D9_INTEGRATION_PREPARATION` | [controlled-verification/README.md](controlled-verification/README.md) |
+
 ## MSIX capability and environment actions
 
 [`local-orchestration-installer/README.md`](local-orchestration-installer/README.md)
