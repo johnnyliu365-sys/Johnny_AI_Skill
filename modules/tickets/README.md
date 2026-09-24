@@ -21,7 +21,7 @@ debug 或稽核任何一條線之前先讀它——多數「新」問題都是�
 
 | Child ID | Kind | Revision | LF SHA-256 | Lifecycle | Reference |
 | --- | --- | --- | --- | --- | --- |
-| `TICKET-PARTITION-CONTROLLED-VERIFICATION` | `PARTITION_INDEX` | `70` | `cf8cb46ae4a6cff0fb716f12f8952e0611acc5501ee4f7f2e59f55c86488dbbd` | `CVE_D9_INTEGRATION_PREPARATION` | [controlled-verification/README.md](controlled-verification/README.md) |
+| `TICKET-PARTITION-CONTROLLED-VERIFICATION` | `PARTITION_INDEX` | `71` | `0c152b813ad0f63dc067c02259ff1937d5ab748afba6d4d6115dab43f93c4806` | `CVE_D9_AUTHORITY_INTEGRATED` | [controlled-verification/README.md](controlled-verification/README.md) |
 
 ## MSIX capability and environment actions
 
