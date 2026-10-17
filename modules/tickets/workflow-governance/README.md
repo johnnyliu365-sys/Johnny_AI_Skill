@@ -22,6 +22,7 @@ Deliver one control-plane policy vertical slice: completion evidence must re-ent
 | [29-mainline-ticket-projection](29-mainline-ticket-projection.md) | Separate the work mainline from a single ticket; recommend next recheck without granting dispatch | `SLICE_LOCAL_INTEGRATED` | Independent review approved; `2fa4ca6f`; trusted source and formal closure remain open |
 | [30-trusted-independent-ticket-continuation](30-trusted-independent-ticket-continuation.md) | Trusted independent B continuation and mainline remaining open after A waits | `PREFLIGHT_REQUIRED / NON_DISPATCHABLE` | Existing Ticket 24 B finding retained; exact source/authority binding needed before dispatch |
 | [31-semantic-model-profile-boundary](31-semantic-model-profile-boundary.md) | Keep universal Skill model-neutral while the current verified Profile selects capability | `OPEN` | Checklist 10 model-cost slice; paid test isolation/reporting remain separate |
+| [32-test-consumer-inventory](32-test-consumer-inventory.md) | Find direct and indirect test consumers before test retirement | `OPEN` | Pure inventory only; no retirement authority or Host/CI wiring |
 
 ## Shared baseline
 
