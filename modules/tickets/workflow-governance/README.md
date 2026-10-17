@@ -25,6 +25,7 @@ Deliver one control-plane policy vertical slice: completion evidence must re-ent
 | [32-test-consumer-inventory](32-test-consumer-inventory.md) | Find direct and indirect test consumers before test retirement | `SLICE_LOCAL_INTEGRATED` | Independent review and control gate passed at `2a19406d`; Host/CI retirement admission open |
 | [33-shared-context-service-seam](33-shared-context-service-seam.md) | TEST→A transfers actual Shared Context behavior from Router to one service | `A_LOCAL_INTEGRATED` | Independent review approved; `ac369235`; B test seam/retirement still open |
 | [34-shared-context-test-seam-transfer](34-shared-context-test-seam-transfer.md) | Move five contract-only cells while keeping public Router behavior cells mutation-sensitive | `OPEN / DISPATCHABLE` | Depends on independently reviewed and integrated Ticket 33 A |
+| [35-parent-finding-status-closure](35-parent-finding-status-closure.md) | Show required child and Finding closure without a false APPROVED parent | `OPEN / DISPATCHABLE` | Builds on Ticket 27; projection only, never formal Review authority |
 
 ## Shared baseline
 
