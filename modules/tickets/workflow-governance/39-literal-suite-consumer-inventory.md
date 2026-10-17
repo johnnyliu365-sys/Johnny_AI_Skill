@@ -2,7 +2,7 @@
 
 | 欄位 | 內容 |
 | --- | --- |
-| State | `OPEN / INVENTORY_SLICE_ONLY`；不得由此授權測試退役 |
+| State | `INVENTORY_SLICE_LOCAL_INTEGRATED` at `e9177f80`；不得由此授權測試退役 |
 | Authority | 既有 `PRD-20260805-009`、已核准 workflow-governance SPEC、Owner 改進清單 08 與 2026-10-18 第 6 項；不建立新 PRD |
 | Baseline | 本票 docs-only commit，派工時釘完整 SHA |
 | Owner／reviewer | 低成本實作席位；獨立審閱另席；Root 控制面 |
@@ -45,3 +45,13 @@ Run：`python -m pytest tests/test_test_dependency_inventory.py tests/test_test_
 `mypy --strict library/local_orchestration/test_dependency_inventory.py`、`git diff --check`。
 Return：`IMPLEMENTED | BLOCKED | CHANGE_DETECTED`、候選 SHA、兩個實際檔案、
 測試／反向突變證據與未完成的真 CI 命令及退役 gate 缺口。實作者不整合、不推送。
+
+## 實作與獨審
+
+初版 `e160152d` 經控制面重放為 `6bc9faf5`；獨審發現兩項 AC2 缺陷：未知
+literal 字串與 `SUITES[...]` 動態修改均誤回 `COMPLETE`。原實作者同票 additive
+correction `5709437a`，控制面重放後精確候選 `e9177f80`。原 reviewer 驗證兩項
+已拒絕、巢狀索引的反向突變紅→綠，32 tests／7 subtests 與 strict mypy 綠；
+受控 document-mutation gate 回 `INTEGRATED`。詳見
+`doc/reviews/workflow-governance/39-literal-suite-consumer-inventory-code-review.md`。
+真 CI 命令與退役效應仍未驗證，清單 08 不得勾選。
