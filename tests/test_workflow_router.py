@@ -220,6 +220,14 @@ _EXPECTED_ROUTES: tuple[_ExpectedRoute, ...] = (
         (),
     ),
     _ExpectedRoute(
+        ProcessStage.IMPLEMENT,
+        RouterEventKind.EXTERNAL_DECISION_REQUIRED,
+        "implementation-tdd",
+        ReturnContractKind.NO_RETURN,
+        (),
+        (),
+    ),
+    _ExpectedRoute(
         ProcessStage.GRILL,
         RouterEventKind.INTEGRATION_COMPLETED,
         "discovery-change",
@@ -293,8 +301,8 @@ _EXPECTED_ROUTES: tuple[_ExpectedRoute, ...] = (
 _EXPECTED_POLICIES: tuple[_ExpectedPolicy, ...] = (
     _ExpectedPolicy(
         "router-control",
-        "rev-8ac507168f938503",
-        "sha256_8ac507168f938503ad92fc3b2ec42128438efdff2e7daadc586254c5435a38b4",
+        "rev-a70648a09ae3a94f",
+        "sha256_a70648a09ae3a94f50470f62b43e2167530a0f9aa897b40de5be05b2dd566a22",
         PurePosixPath("skills/johnny-project-takeover/references/router-control.md"),
     ),
     _ExpectedPolicy(
@@ -753,12 +761,12 @@ class WorkflowRouterTests(unittest.TestCase):
             delivery_stage=DeliveryStage.POC,
             router_control_reference=SkillReference(
                 reference_id="router-control",
-                source_revision="rev-8ac507168f938503",
-                content_digest="sha256_8ac507168f938503ad92fc3b2ec42128438efdff2e7daadc586254c5435a38b4",
+                source_revision="rev-a70648a09ae3a94f",
+                content_digest="sha256_a70648a09ae3a94f50470f62b43e2167530a0f9aa897b40de5be05b2dd566a22",
             ),
             halt_return_contract=ExpectedReturnContract(
                 contract_id="router-control-no-return",
-                contract_revision="rev-8ac507168f938503",
+                contract_revision="rev-a70648a09ae3a94f",
                 return_kind=ReturnContractKind.NO_RETURN,
                 router_events=(),
                 implementation_statuses=(),
@@ -2434,7 +2442,7 @@ class RouteInstructionContractTests(unittest.TestCase):
         profile = build_router_poc_profile()
         self.assertEqual("router-control", profile.router_control_reference.reference_id)
         self.assertEqual(
-            "rev-8ac507168f938503",
+            "rev-a70648a09ae3a94f",
             profile.router_control_reference.source_revision,
         )
         self.assertEqual(
@@ -2472,6 +2480,17 @@ class RouteInstructionContractTests(unittest.TestCase):
                     rule.skill_reference.source_revision,
                     rule.expected_return.contract_revision,
                 )
+                if expected.input_event is RouterEventKind.EXTERNAL_DECISION_REQUIRED:
+                    self.assertEqual(RouterOutcome.SUSPEND, rule.outcome)
+                    self.assertEqual(ProcessStage.IMPLEMENT, rule.current_stage)
+                    self.assertEqual(AuthorityState.PENDING, rule.required_authority)
+                    self.assertEqual((ArtifactKind.TICKET,), rule.required_source_kinds)
+                    self.assertEqual((), rule.eligible_capabilities)
+                    self.assertTrue(rule.requires_human_approval)
+                    self.assertEqual(
+                        HumanWaitReason.OWNER_EFFECT_DECISION_REQUIRED,
+                        rule.wait_reason,
+                    )
 
         references = (profile.router_control_reference,) + tuple(
             rule.skill_reference for rule in profile.transition_rules
@@ -2495,6 +2514,41 @@ class RouteInstructionContractTests(unittest.TestCase):
                 for reference in matching:
                     self.assertEqual(expected_policy.source_revision, reference.source_revision)
                     self.assertEqual(expected_policy.content_digest, reference.content_digest)
+
+    def test_external_decision_route_cannot_grant_capability(self) -> None:
+        profile = build_router_poc_profile()
+        rule = profile.rule_for(
+            current_stage=ProcessStage.IMPLEMENT,
+            event_kind=RouterEventKind.EXTERNAL_DECISION_REQUIRED,
+        )
+        if rule is None:
+            self.fail("POC profile must declare the Owner effect wait route")
+
+        with self.assertRaises(ValidationError):
+            TransitionRule.model_validate(
+                {
+                    **rule.model_dump(),
+                    "eligible_capabilities": (
+                        {
+                            "capability_id": "cap-effect-runner",
+                            "version": "1",
+                            "agent_profile": "effect-runner",
+                        },
+                    ),
+                }
+            )
+
+        with self.assertRaises(ValidationError):
+            TransitionRule.model_validate(
+                {
+                    **rule.model_dump(),
+                    "expected_return": {
+                        **rule.expected_return.model_dump(),
+                        "return_kind": ReturnContractKind.ROUTER_EVENT,
+                        "router_events": (RouterEventKind.ACTION_COMPLETED,),
+                    },
+                }
+            )
 
     def test_profile_rejects_conflicting_reference_metadata_and_revision_mismatch(self) -> None:
         profile = build_router_poc_profile()

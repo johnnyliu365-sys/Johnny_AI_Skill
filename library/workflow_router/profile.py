@@ -86,6 +86,22 @@ class TransitionRule(RouterModel):
             raise ValueError(
                 "dispatch receipts are valid only for confirmed ticket dispatch advancing to grill"
             )
+        if self.event_kind is RouterEventKind.EXTERNAL_DECISION_REQUIRED and (
+            self.current_stage is not ProcessStage.IMPLEMENT
+            or self.outcome is not RouterOutcome.SUSPEND
+            or self.next_stage is not None
+            or self.required_authority is not AuthorityState.PENDING
+            or self.required_source_kinds != (ArtifactKind.TICKET,)
+            or self.eligible_capabilities
+            or not self.requires_human_approval
+            or self.wait_reason is not HumanWaitReason.OWNER_EFFECT_DECISION_REQUIRED
+            or self.expected_return.return_kind is not ReturnContractKind.NO_RETURN
+            or self.requires_implementation_handoff
+            or self.requires_dispatch_receipt
+        ):
+            raise ValueError(
+                "external decision routes must wait for a pending Owner decision on one exact ticket"
+            )
         return self
 
 
@@ -206,8 +222,8 @@ class _PolicyRoute:
 _POLICY_REFERENCES: tuple[SkillReference, ...] = (
     SkillReference(
         reference_id="router-control",
-        source_revision="rev-8ac507168f938503",
-        content_digest="sha256_8ac507168f938503ad92fc3b2ec42128438efdff2e7daadc586254c5435a38b4",
+        source_revision="rev-a70648a09ae3a94f",
+        content_digest="sha256_a70648a09ae3a94f50470f62b43e2167530a0f9aa897b40de5be05b2dd566a22",
     ),
     SkillReference(
         reference_id="discovery-change",
@@ -353,6 +369,14 @@ _POLICY_ROUTES: tuple[_PolicyRoute, ...] = (
         "implementation-tdd",
         ReturnContractKind.ROUTER_EVENT,
         (RouterEventKind.VALIDATION_PASSED, RouterEventKind.VALIDATION_FAILED),
+        (),
+    ),
+    _PolicyRoute(
+        ProcessStage.IMPLEMENT,
+        RouterEventKind.EXTERNAL_DECISION_REQUIRED,
+        "implementation-tdd",
+        ReturnContractKind.NO_RETURN,
+        (),
         (),
     ),
     _PolicyRoute(
@@ -799,6 +823,24 @@ def build_router_poc_profile() -> ProjectWorkflowProfile:
                 required_source_kinds=(ArtifactKind.TICKET,),
                 eligible_capabilities=(smoke_test,),
                 accepted_completion_actions=(CompletionActionKind.IMPLEMENTATION,),
+            ),
+            TransitionRule(
+                skill_reference=_skill_reference_for(
+                    current_stage=ProcessStage.IMPLEMENT,
+                    event_kind=RouterEventKind.EXTERNAL_DECISION_REQUIRED,
+                ),
+                expected_return=_expected_return_for(
+                    current_stage=ProcessStage.IMPLEMENT,
+                    event_kind=RouterEventKind.EXTERNAL_DECISION_REQUIRED,
+                ),
+                current_stage=ProcessStage.IMPLEMENT,
+                event_kind=RouterEventKind.EXTERNAL_DECISION_REQUIRED,
+                outcome=RouterOutcome.SUSPEND,
+                next_stage=None,
+                required_authority=AuthorityState.PENDING,
+                required_source_kinds=(ArtifactKind.TICKET,),
+                requires_human_approval=True,
+                wait_reason=HumanWaitReason.OWNER_EFFECT_DECISION_REQUIRED,
             ),
             TransitionRule(
                 skill_reference=_skill_reference_for(

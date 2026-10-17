@@ -42,6 +42,7 @@ from library.workflow_router import (
     TicketScope,
     build_router_poc_profile,
 )
+from library.workflow_router.contracts import OwnerEffectWaitReference
 from library.workflow_router.private_router import (
     ContinuationMode,
     EntitlementGrant,
@@ -194,6 +195,156 @@ class AutonomousCollaborationTests(unittest.TestCase):
                 decision.pending_dispatch,
             )
             self.assertIsNone(decision.dispatch_plan)
+
+    def test_external_decision_required_waits_for_a_named_owner_effect(self) -> None:
+        decision = self.engine.decide(
+            state=RouterState(
+                project_id="prj_aaaaaaaaaaaaaaaa",
+                stage=ProcessStage.IMPLEMENT,
+                authority_state=AuthorityState.PENDING,
+                delivery_stage=DeliveryStage.POC,
+                artifact_refs=(self.ticket,),
+            ),
+            event=RouterEvent(
+                event_id="owner-effect-wait-0001",
+                kind=RouterEventKind.EXTERNAL_DECISION_REQUIRED,
+                owner_effect_wait=OwnerEffectWaitReference(
+                    ticket_reference=self.ticket.identifier,
+                    effect_reference="sql-effect-write-0001",
+                ),
+            ),
+            profile=self.profile,
+        )
+
+        self.assertEqual(RouterOutcome.SUSPEND, decision.outcome)
+        self.assertEqual(ContinuationDirective.WAIT_FOR_HUMAN, decision.continuation)
+        self.assertIsNone(decision.next_stage)
+        self.assertEqual(
+            HumanWaitReason.OWNER_EFFECT_DECISION_REQUIRED,
+            decision.wait_reason,
+        )
+        self.assertEqual(
+            OwnerEffectWaitReference(
+                ticket_reference=self.ticket.identifier,
+                effect_reference="sql-effect-write-0001",
+            ),
+            decision.owner_effect_wait,
+        )
+        self.assertEqual((), decision.required_sources)
+        self.assertEqual((), decision.eligible_capabilities)
+        self.assertEqual((), decision.ticket_lane_capabilities)
+        self.assertIsNone(decision.context_view)
+        self.assertIsNone(decision.dispatch_plan)
+        self.assertIsNone(decision.ticket_proposal)
+        self.assertIsNone(decision.pending_dispatch)
+        self.assertEqual((), decision.blockers)
+
+    def test_owner_effect_wait_fails_closed_for_missing_or_mismatched_metadata(self) -> None:
+        state = RouterState(
+            project_id="prj_aaaaaaaaaaaaaaaa",
+            stage=ProcessStage.IMPLEMENT,
+            authority_state=AuthorityState.PENDING,
+            delivery_stage=DeliveryStage.POC,
+            artifact_refs=(self.ticket,),
+        )
+        missing = self.engine.decide(
+            state=state,
+            event=RouterEvent(
+                event_id="owner-effect-wait-missing-0001",
+                kind=RouterEventKind.EXTERNAL_DECISION_REQUIRED,
+            ),
+            profile=self.profile,
+        )
+        self.assertEqual(ContinuationDirective.HALT, missing.continuation)
+        self.assertEqual("owner_effect_metadata_required", missing.blockers[0].code.value)
+
+        mismatched = self.engine.decide(
+            state=state,
+            event=RouterEvent(
+                event_id="owner-effect-wait-mismatch-0001",
+                kind=RouterEventKind.EXTERNAL_DECISION_REQUIRED,
+                owner_effect_wait=OwnerEffectWaitReference(
+                    ticket_reference="ticket-other-0001",
+                    effect_reference="sql-effect-write-0001",
+                ),
+            ),
+            profile=self.profile,
+        )
+        self.assertEqual(ContinuationDirective.HALT, mismatched.continuation)
+        self.assertEqual("owner_effect_ticket_mismatch", mismatched.blockers[0].code.value)
+
+    def test_owner_effect_wait_requires_one_ticket_source_and_pending_authority(self) -> None:
+        event = RouterEvent(
+            event_id="owner-effect-wait-boundary-0001",
+            kind=RouterEventKind.EXTERNAL_DECISION_REQUIRED,
+            owner_effect_wait=OwnerEffectWaitReference(
+                ticket_reference=self.ticket.identifier,
+                effect_reference="sql-effect-write-0001",
+            ),
+        )
+        state = RouterState(
+            project_id="prj_aaaaaaaaaaaaaaaa",
+            stage=ProcessStage.IMPLEMENT,
+            authority_state=AuthorityState.PENDING,
+            delivery_stage=DeliveryStage.POC,
+            artifact_refs=(),
+        )
+        missing_source = self.engine.decide(state=state, event=event, profile=self.profile)
+        self.assertEqual(ContinuationDirective.HALT, missing_source.continuation)
+        self.assertEqual("missing_required_source", missing_source.blockers[0].code.value)
+
+        ambiguous_source = self.engine.decide(
+            state=state.model_copy(update={"artifact_refs": (self.ticket, self.ticket)}),
+            event=event,
+            profile=self.profile,
+        )
+        self.assertEqual(ContinuationDirective.HALT, ambiguous_source.continuation)
+        self.assertEqual("ambiguous_required_source", ambiguous_source.blockers[0].code.value)
+
+        authority_mismatch = self.engine.decide(
+            state=state.model_copy(
+                update={
+                    "authority_state": AuthorityState.APPROVED,
+                    "artifact_refs": (self.ticket,),
+                }
+            ),
+            event=event,
+            profile=self.profile,
+        )
+        self.assertEqual(ContinuationDirective.HALT, authority_mismatch.continuation)
+        self.assertEqual("authority_required", authority_mismatch.blockers[0].code.value)
+
+    def test_owner_effect_wait_requires_an_effect_id_and_cannot_reuse_dispatch_receipt(self) -> None:
+        with self.assertRaises(ValidationError):
+            OwnerEffectWaitReference.model_validate(
+                {"ticket_reference": self.ticket.identifier}
+            )
+        with self.assertRaises(ValidationError):
+            OwnerEffectWaitReference(
+                ticket_reference=self.ticket.identifier,
+                effect_reference="https://provider.invalid/sql-effect",
+            )
+
+        with self.assertRaises(ValidationError):
+            RouterEvent(
+                event_id="owner-effect-wait-wrong-kind-0001",
+                kind=RouterEventKind.ACTION_COMPLETED,
+                owner_effect_wait=OwnerEffectWaitReference(
+                    ticket_reference=self.ticket.identifier,
+                    effect_reference="sql-effect-write-0001",
+                ),
+            )
+
+        with self.assertRaises(ValidationError):
+            RouterEvent(
+                event_id="owner-effect-wait-receipt-0001",
+                kind=RouterEventKind.EXTERNAL_DECISION_REQUIRED,
+                owner_effect_wait=OwnerEffectWaitReference(
+                    ticket_reference=self.ticket.identifier,
+                    effect_reference="sql-effect-write-0001",
+                ),
+                dispatch_receipt=self._receipt(),
+            )
 
     def test_positive_receipt_requires_pending_proposal_question_and_reviewed_handoff(self) -> None:
         receipt = self._receipt()

@@ -232,6 +232,34 @@ class RouterEngine:
                 code=BlockerCode.AMBIGUOUS_REQUIRED_SOURCE,
                 detail=f"multiple declared sources match required kinds: {ambiguous_names}",
             )
+        if event.kind is RouterEventKind.EXTERNAL_DECISION_REQUIRED:
+            owner_effect_wait = event.owner_effect_wait
+            if owner_effect_wait is None:
+                return self._suspend(
+                    profile=profile,
+                    code=BlockerCode.OWNER_EFFECT_METADATA_REQUIRED,
+                    detail="an Owner effect wait requires exact ticket and effect metadata",
+                )
+            if (
+                len(required_sources) != 1
+                or owner_effect_wait.ticket_reference != required_sources[0].identifier
+            ):
+                return self._suspend(
+                    profile=profile,
+                    code=BlockerCode.OWNER_EFFECT_TICKET_MISMATCH,
+                    detail="Owner effect metadata must match the unique ticket source",
+                )
+            return RouterDecision(
+                skill_reference=rule.skill_reference,
+                expected_return=rule.expected_return,
+                outcome=RouterOutcome.SUSPEND,
+                continuation=ContinuationDirective.WAIT_FOR_HUMAN,
+                next_stage=None,
+                required_sources=(),
+                eligible_capabilities=(),
+                wait_reason=rule.wait_reason,
+                owner_effect_wait=owner_effect_wait,
+            )
         if event.kind is RouterEventKind.TICKET_DISPATCH_REQUIRED:
             proposal = event.ticket_proposal
             handoff = event.implementation_handoff

@@ -247,6 +247,7 @@ class HumanWaitReason(str, Enum):
     TICKET_DISPATCH_CONFIRMATION_REQUIRED = "ticket_dispatch_confirmation_required"
     INTEGRATION_AUDIT_REQUIRED = "integration_audit_required"
     WAYFINDER_INPUT_GAP = "wayfinder_input_gap"
+    OWNER_EFFECT_DECISION_REQUIRED = "owner_effect_decision_required"
 
 
 class CompletionActionKind(str, Enum):
@@ -1172,6 +1173,8 @@ class BlockerCode(str, Enum):
     PENDING_DISPATCH_REQUIRED = "pending_dispatch_required"
     INVALID_PENDING_DISPATCH = "invalid_pending_dispatch"
     TEST_REVIEW_NOT_ADMITTED = "test_review_not_admitted"
+    OWNER_EFFECT_METADATA_REQUIRED = "owner_effect_metadata_required"
+    OWNER_EFFECT_TICKET_MISMATCH = "owner_effect_ticket_mismatch"
 
 
 class ReferenceStatus(str, Enum):
@@ -1195,6 +1198,17 @@ class ArtifactRef(RouterModel):
         """Return the identity that remains stable across revisions."""
 
         return (self.kind, self.identifier, self.uri)
+
+
+class OwnerEffectWaitReference(RouterModel):
+    """Metadata identifying one ticket and effect that needs an Owner decision.
+
+    This descriptor is routing context only. It carries no effect capability,
+    approval or evidence that a Host effect gate has admitted the operation.
+    """
+
+    ticket_reference: OpaqueMetadataId
+    effect_reference: OpaqueMetadataId
 
 
 class TicketDispatchReceipt(RouterModel):
@@ -1600,11 +1614,27 @@ class RouterEvent(RouterModel):
     lane_id: OpaqueMetadataId | None = None
     ticket_proposal: TicketProposal | None = None
     test_report_ref: OpaqueMetadataId | None = None
+    owner_effect_wait: OwnerEffectWaitReference | None = None
 
     @model_validator(mode="after")
     def completion_metadata_matches_event(self) -> RouterEvent:
         """Allow legacy action events while rejecting completion evidence on unrelated events."""
 
+        if (
+            self.owner_effect_wait is not None
+            and self.kind is not RouterEventKind.EXTERNAL_DECISION_REQUIRED
+        ):
+            raise ValueError("owner effect wait metadata requires an external decision event")
+        if self.kind is RouterEventKind.EXTERNAL_DECISION_REQUIRED and any(
+            value is not None
+            for value in (
+                self.dispatch_confirmation,
+                self.dispatch_receipt,
+                self.implementation_handoff,
+                self.ticket_proposal,
+            )
+        ):
+            raise ValueError("owner effect waits cannot reuse ticket dispatch metadata")
         if self.completion_evidence is not None and self.kind is not RouterEventKind.ACTION_COMPLETED:
             raise ValueError("completion_evidence is valid only for action_completed")
         if self.completion_evidence is not None and self.implementation_return is not None:
@@ -1788,6 +1818,7 @@ class RouterDecision(RouterModel):
     ticket_lane_capabilities: tuple[CapabilityRef, ...] = ()
     ticket_proposal: TicketProposal | None = None
     pending_dispatch: PendingDispatchDescriptor | None = None
+    owner_effect_wait: OwnerEffectWaitReference | None = None
 
     @model_validator(mode="after")
     def decision_shape_is_consistent(self) -> RouterDecision:
@@ -1825,6 +1856,13 @@ class RouterDecision(RouterModel):
                 raise ValueError("human waits cannot grant dispatch plans")
             if self.ticket_lane_capabilities:
                 raise ValueError("human waits cannot grant ticket-lane capabilities")
+            if self.wait_reason is HumanWaitReason.OWNER_EFFECT_DECISION_REQUIRED:
+                if self.owner_effect_wait is None:
+                    raise ValueError("owner effect waits require exact ticket and effect metadata")
+                if self.ticket_proposal is not None or self.pending_dispatch is not None:
+                    raise ValueError("owner effect waits cannot carry ticket dispatch state")
+            elif self.owner_effect_wait is not None:
+                raise ValueError("owner effect metadata is valid only for an owner effect wait")
             if self.pending_dispatch is not None and self.ticket_proposal is None:
                 raise ValueError("pending dispatch state requires its opened ticket proposal")
             if (
@@ -1839,8 +1877,12 @@ class RouterDecision(RouterModel):
                 )
             ):
                 raise ValueError("pending dispatch state must match its opened ticket proposal")
-        elif self.ticket_proposal is not None or self.pending_dispatch is not None:
-            raise ValueError("automatic or halted decisions cannot carry pending dispatch state")
+        elif (
+            self.ticket_proposal is not None
+            or self.pending_dispatch is not None
+            or self.owner_effect_wait is not None
+        ):
+            raise ValueError("automatic or halted decisions cannot carry wait/dispatch metadata")
         elif self.wait_reason is not None:
             raise ValueError("only human waits may declare a wait reason")
         if self.continuation is ContinuationDirective.HALT and self.dispatch_plan is not None:
