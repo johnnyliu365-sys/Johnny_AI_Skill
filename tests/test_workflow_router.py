@@ -331,8 +331,8 @@ _EXPECTED_POLICIES: tuple[_ExpectedPolicy, ...] = (
     ),
     _ExpectedPolicy(
         "implementation-tdd",
-        "rev-f82b8a1d310c54e3",
-        "sha256_f82b8a1d310c54e3cf31393cc85bac3126b93432e15223e7e9e048fb37154139",
+        "rev-38ca5ac14c9b3044",
+        "sha256_38ca5ac14c9b304416d2a277dc1d137964675c671aa19ddda1e8af4d256639ec",
         PurePosixPath("skills/johnny-project-takeover/references/implementation-tdd.md"),
     ),
     _ExpectedPolicy(
@@ -1029,8 +1029,14 @@ class WorkflowRouterTests(unittest.TestCase):
         completion_section = implementation_tdd.split("## Ticket completion", maxsplit=1)[1]
         workflow = (root / "Workflow.md").read_text(encoding="utf-8")
 
+        self.assertNotIn("review evidence", completion_section.casefold())
         self.assertIn(
-            "exact ticket/review evidence and the typed return identify", completion_section
+            "the typed return identifies the exact ticket, implementation commit and",
+            completion_section,
+        )
+        self.assertIn(
+            "reproducible validation evidence;",
+            completion_section,
         )
         self.assertNotRegex(
             completion_section.casefold(),

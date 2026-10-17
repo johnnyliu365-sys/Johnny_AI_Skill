@@ -96,8 +96,8 @@ A ticket is complete only when:
 - AC, error behavior, data contract, privacy/logging and applicable security matrices have
   reproducible evidence;
 - the owner worktree creates one implementation commit containing only this ticket;
-- exact ticket/review evidence and the typed return identify the implementation commit and
-  reproducible validation results;
+- the typed return identifies the exact ticket, implementation commit and
+  reproducible validation evidence;
 - no cache or unauthorized residue remains.
 
 Return `ImplementationReturn`: `COMPLETED`, `BLOCKED` or `CHANGE_DETECTED`. Do not claim review
