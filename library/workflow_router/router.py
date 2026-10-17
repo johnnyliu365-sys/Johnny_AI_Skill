@@ -45,10 +45,6 @@ from .contracts import (
     RouterState,
     SharedContextAccessDecision,
     SharedContextAccessRequest,
-    SharedContextActorRole,
-    SharedContextLifecycle,
-    SharedContextMutationDecision,
-    SharedContextOperation,
     SharedContextState,
     SourceSnippet,
     TicketDispatchConfirmation,
@@ -59,6 +55,7 @@ from .contracts import (
     TicketProposalState,
 )
 from .review_admission import ReviewAdmissionGate
+from .shared_context_service import SharedContextAccessService
 from .test_engineer_contracts import (
     ReviewAdmissionStatus,
     ReviewAdmissionRequest,
@@ -107,6 +104,7 @@ class RouterEngine:
             approved_dispatch_artifact_registry or StaticApprovedDispatchArtifactRegistry(records=())
         )
         self._review_admission_gate = ReviewAdmissionGate(resolver=test_evidence_resolver)
+        self._shared_context_service = SharedContextAccessService()
 
     def decide(
         self,
@@ -498,160 +496,10 @@ class RouterEngine:
         profile: ProjectWorkflowProfile,
     ) -> SharedContextAccessDecision:
         """Admit one pure, profile-bound shared-Context lifecycle transition."""
-
-        if not (
-            request.context_ref == profile.shared_context_ref
-            and state.context_ref == profile.shared_context_ref
-            and request.context_ref == state.context_ref
-        ):
-            return self._shared_context_decision(
-                request=request,
-                decision=SharedContextMutationDecision.STALE_REVISION,
-                resulting_state=state,
-            )
-
-        expected_revision = request.expected_current_revision
-        if expected_revision is not None and expected_revision != state.revision:
-            return self._shared_context_decision(
-                request=request,
-                decision=SharedContextMutationDecision.STALE_REVISION,
-                resulting_state=state,
-            )
-
-        if request.operation is not SharedContextOperation.READ_REFERENCE and (
-            request.actor_role is not SharedContextActorRole.ARCHITECTURE_OWNER
-            or request.actor_capability_ref != profile.architecture_owner_capability_ref
-        ):
-            return self._shared_context_decision(
-                request=request,
-                decision=SharedContextMutationDecision.FORBID_ROLE_OR_STAGE,
-                resulting_state=state,
-            )
-
-        if request.operation is SharedContextOperation.READ_REFERENCE:
-            readable_stages = (
-                ProcessStage.SPEC,
-                ProcessStage.TICKETS,
-                ProcessStage.IMPLEMENT,
-                ProcessStage.SMOKE_TEST,
-                ProcessStage.REVIEW,
-                ProcessStage.HANDOFF,
-            )
-            if (
-                state.lifecycle is SharedContextLifecycle.SEALED
-                and request.process_stage in readable_stages
-            ):
-                return self._shared_context_decision(
-                    request=request,
-                    decision=SharedContextMutationDecision.ALLOW,
-                    resulting_state=state,
-                )
-            return self._shared_context_decision(
-                request=request,
-                decision=SharedContextMutationDecision.FORBID_ROLE_OR_STAGE,
-                resulting_state=state,
-            )
-
-        if request.operation is SharedContextOperation.CREATE_DRAFT:
-            candidate = request.candidate_manifest
-            if (
-                state.lifecycle is not SharedContextLifecycle.ABSENT
-                or request.process_stage not in (ProcessStage.ARCHITECTURE, ProcessStage.GRILL)
-                or candidate is None
-            ):
-                return self._shared_context_decision(
-                    request=request,
-                    decision=SharedContextMutationDecision.FORBID_ROLE_OR_STAGE,
-                    resulting_state=state,
-                )
-            resulting_state = SharedContextState(
-                context_ref=request.context_ref,
-                lifecycle=SharedContextLifecycle.ARCHITECTURE_DRAFT,
-                revision=candidate.revision,
-                content_digest=candidate.content_digest,
-            )
-            return self._shared_context_decision(
-                request=request,
-                decision=SharedContextMutationDecision.ALLOW,
-                resulting_state=resulting_state,
-            )
-
-        if request.operation is SharedContextOperation.REVISE_DRAFT:
-            candidate = request.candidate_manifest
-            if (
-                request.process_stage not in (ProcessStage.ARCHITECTURE, ProcessStage.GRILL)
-                or candidate is None
-            ):
-                return self._shared_context_decision(
-                    request=request,
-                    decision=SharedContextMutationDecision.FORBID_ROLE_OR_STAGE,
-                    resulting_state=state,
-                )
-            if state.revision is None or candidate.revision == state.revision:
-                return self._shared_context_decision(
-                    request=request,
-                    decision=SharedContextMutationDecision.STALE_REVISION,
-                    resulting_state=state,
-                )
-            if state.lifecycle is SharedContextLifecycle.ARCHITECTURE_DRAFT:
-                decision = SharedContextMutationDecision.ALLOW
-            elif state.lifecycle is SharedContextLifecycle.SEALED:
-                if (
-                    request.change_authority_state is not AuthorityState.APPROVED
-                    or request.approved_change_ref is None
-                ):
-                    return self._shared_context_decision(
-                        request=request,
-                        decision=SharedContextMutationDecision.REQUIRE_CHANGE_CONTROL,
-                        resulting_state=state,
-                    )
-                decision = SharedContextMutationDecision.ALLOW
-            else:
-                return self._shared_context_decision(
-                    request=request,
-                    decision=SharedContextMutationDecision.FORBID_ROLE_OR_STAGE,
-                    resulting_state=state,
-                )
-            resulting_state = SharedContextState(
-                context_ref=request.context_ref,
-                lifecycle=SharedContextLifecycle.ARCHITECTURE_DRAFT,
-                revision=candidate.revision,
-                content_digest=candidate.content_digest,
-            )
-            return self._shared_context_decision(
-                request=request,
-                decision=decision,
-                resulting_state=resulting_state,
-            )
-
-        if request.operation is SharedContextOperation.SEAL:
-            if (
-                state.lifecycle is not SharedContextLifecycle.ARCHITECTURE_DRAFT
-                or request.process_stage is not ProcessStage.CONTEXT
-                or state.revision is None
-                or state.content_digest is None
-            ):
-                return self._shared_context_decision(
-                    request=request,
-                    decision=SharedContextMutationDecision.FORBID_ROLE_OR_STAGE,
-                    resulting_state=state,
-                )
-            resulting_state = SharedContextState(
-                context_ref=request.context_ref,
-                lifecycle=SharedContextLifecycle.SEALED,
-                revision=state.revision,
-                content_digest=state.content_digest,
-            )
-            return self._shared_context_decision(
-                request=request,
-                decision=SharedContextMutationDecision.ALLOW,
-                resulting_state=resulting_state,
-            )
-
-        return self._shared_context_decision(
+        return self._shared_context_service.decide_access(
             request=request,
-            decision=SharedContextMutationDecision.FORBID_ROLE_OR_STAGE,
-            resulting_state=state,
+            state=state,
+            profile=profile,
         )
 
     def decide_agent_context_transition(
@@ -944,23 +792,6 @@ class RouterEngine:
             and candidate.control_baseline_ref != prior.control_baseline_ref
             and candidate.expected_return_ref != prior.expected_return_ref
             and candidate.artifact_path_refs != prior.artifact_path_refs
-        )
-
-    @staticmethod
-    def _shared_context_decision(
-        *,
-        request: SharedContextAccessRequest,
-        decision: SharedContextMutationDecision,
-        resulting_state: SharedContextState,
-    ) -> SharedContextAccessDecision:
-        """Build one deterministic metadata-only shared-Context decision."""
-
-        return SharedContextAccessDecision(
-            request_ref=request.request_ref,
-            context_ref=request.context_ref,
-            operation=request.operation,
-            decision=decision,
-            resulting_state=resulting_state,
         )
 
     @staticmethod
