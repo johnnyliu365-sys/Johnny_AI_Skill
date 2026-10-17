@@ -2,7 +2,7 @@
 
 | 欄位 | 內容 |
 | --- | --- |
-| State | `OPEN`；Owner 2026-10-18 改進清單項目 06 的最小獨立切片 |
+| State | `SLICE_LOCAL_INTEGRATED` at `9cedb55f`；獨審通過，清單項目 06 尚未完成 |
 | Authority | `modules/spec/receipt-bound-role-supervision.md` AC-17；Owner 本次要求防止共用工作樹互相覆蓋 |
 | Source baseline | 本票所在 docs-only commit；獨立實作 worktree |
 | Implementation language | Python 3.11；沿用現有 worker-assignment ledger／鎖 |

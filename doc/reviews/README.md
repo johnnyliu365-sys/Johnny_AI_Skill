@@ -6,6 +6,9 @@
 | --- | --- | --- |
 | Controlled verification, checklist 05 contract | [CVE-D10 independent review](controlled-verification/cve-d10-candidate-source-observation-code-review.md) | `APPROVED_CONTRACT_ONLY / HOST_OBSERVATION_OPEN` |
 | Workflow governance, checklist 02 | [Ticket 24 independent review](workflow-governance/24-independent-admitted-ticket-continuation-code-review.md) | `CHANGES_REQUESTED / NOT_INTEGRATED` |
+| Workflow governance, checklist 04 | [Ticket 25 independent review](workflow-governance/25-refactor-test-seam-transfer-code-review.md) | `APPROVED_SLICE / LOCAL_INTEGRATED / A_B_OPEN` |
+| Workflow governance, checklist 06 | [Ticket 26 independent review](workflow-governance/26-active-writer-worktree-branch-uniqueness-code-review.md) | `APPROVED_SLICE / LOCAL_INTEGRATED / PREWRITE_OPEN` |
+| Workflow governance, checklist 07 | [Ticket 27 independent review](workflow-governance/27-evidence-linked-ticket-status-projection-code-review.md) | `APPROVED_SLICE / LOCAL_INTEGRATED / CLOSURE_OPEN` |
 | Local orchestration installer | [Capability and review index](local-orchestration-installer/README.md) | `CAP_MSIX_01_RESEARCH_COMPLETE / MSIX_LIFECYCLE_UNPROVED / ENV_MSIX_01_VM_BOOTED_SETUP_PENDING` |
 | Adaptive project orchestration | [Cluster review index](adaptive-project-orchestration/README.md) | `R09A_APPROVED / AUTHORITY_PUSH_CONFIRMED; R09B_BLOCKED / CONVERGENCE_REVIEW_REQUIRED; R09B1_APPROVED / AUTHORITY_PUSH_CONFIRMED / EVIDENCE_ORDERING_DEVIATION_ACCEPTED` |
 | Project authority integration (PAI-01–05) | [PAI-08 local core closure](project-authority-integration/08-local-core-cluster-closure-code-review.md) | `CORE_CLUSTER_CLOSED_WITH_DEFERRED_OPERATIONAL_VALIDATION` |

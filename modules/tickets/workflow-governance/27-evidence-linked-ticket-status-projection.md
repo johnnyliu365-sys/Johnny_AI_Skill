@@ -2,7 +2,7 @@
 
 | 欄位 | 內容 |
 | --- | --- |
-| State | `OPEN`；Owner 2026-10-18 改進清單項目 07 的第一個獨立切片 |
+| State | `SLICE_LOCAL_INTEGRATED` at `3196712d`；獨審通過，清單項目 07 尚未完成 |
 | Authority | Owner 要求完成、獨審、本機、實機及發布分開；必要子項 `NOT_VERIFIED` 不得被總驗收藏起 |
 | Source baseline | 本票所在 docs-only commit；獨立 worktree |
 | Implementation language | Python 3.11；沿用既有 `ticket_status_pipeline.py` 與顯示模板 |

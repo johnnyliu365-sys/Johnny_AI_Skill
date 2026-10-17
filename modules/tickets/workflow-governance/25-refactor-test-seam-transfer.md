@@ -2,7 +2,7 @@
 
 | 欄位 | 內容 |
 | --- | --- |
-| State | `IN_PROGRESS`；Owner 2026-10-18 改進清單項目 04 |
+| State | `SLICE_LOCAL_INTEGRATED` at `970b99cc`；獨審通過，清單項目 04 尚未完成 |
 | Authority | 既有 `PRD-20260805-009`／`CHG-20260805-009` 與 `modules/spec/workflow-governance.md` 的逐行為驗證；本次 Owner 指示補足重構接線，不新增 PRD |
 | Source baseline | `7a391b9d96d539db0f5afdfab3334d98638fcd61`；獨立 worktree |
 | Implementation language | Markdown 政策／模板；Python 3.11 pin 與回放測試 |
