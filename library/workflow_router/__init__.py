@@ -100,6 +100,13 @@ from .contracts import (
     SpecificationReadinessRequest,
     SpecificationWakeReason,
 )
+from .mainline_projection import (
+    MainlineProjection,
+    MainlineProjectionRequest,
+    MainlineTicket,
+    MainlineTicketStatus,
+    project_mainline_tickets,
+)
 from .guarded_integration import (
     AuditDecision,
     AuditDeliveryState,
@@ -393,6 +400,10 @@ __all__ = (
     "LocalContextGate",
     "LocalMetadataNormalizer",
     "MainSnapshot",
+    "MainlineProjection",
+    "MainlineProjectionRequest",
+    "MainlineTicket",
+    "MainlineTicketStatus",
     "PendingAudit",
     "ProcessStage",
     "ProjectId",
@@ -499,6 +510,7 @@ __all__ = (
     "derive_dispatch_payload_digest",
     "derive_ticket_receipt_digest",
     "read_policy_document",
+    "project_mainline_tickets",
     "render_dispatch_response",
     "resolve_approved_dispatch_artifact",
 )

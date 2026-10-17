@@ -36,3 +36,6 @@ not retain an Agent transcript, full ticket, full SPEC, source body or prior tic
 
 Closing a view removes its ephemeral packet and marks its metadata reference closed. It never
 deletes target-owned source, commits, reviews or archive evidence.
+
+Closing a ticket-level view does not complete the work mainline; the reviewer returns to the
+existing Router and uses the mainline projection to select the next ticket that needs re-admission.
