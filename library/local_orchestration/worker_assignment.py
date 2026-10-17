@@ -116,6 +116,7 @@ class WorkerClaimFailure(str, Enum):
     REQUEST_INVALID = "REQUEST_INVALID"
     WORKTREE_OUTSIDE_REPOSITORY_ROOT = "WORKTREE_OUTSIDE_REPOSITORY_ROOT"
     RECEIPT_ALREADY_CLAIMED = "RECEIPT_ALREADY_CLAIMED"
+    WORKTREE_OR_BRANCH_ALREADY_CLAIMED = "WORKTREE_OR_BRANCH_ALREADY_CLAIMED"
     ASSIGNMENT_INVARIANT_VIOLATED = "ASSIGNMENT_INVARIANT_VIOLATED"
     STORAGE_UNAVAILABLE = "STORAGE_UNAVAILABLE"
 
@@ -371,6 +372,17 @@ def claim_worker_assignment(
             ):
                 return WorkerClaimResult.refused(
                     WorkerClaimFailure.RECEIPT_ALREADY_CLAIMED
+                )
+            if any(
+                item.lifecycle is AssignmentLifecycle.CLAIMED
+                and (
+                    item.worktree_ref == trusted.worktree_ref
+                    or item.branch_ref == trusted.branch_ref
+                )
+                for item in ledger.assignments
+            ):
+                return WorkerClaimResult.refused(
+                    WorkerClaimFailure.WORKTREE_OR_BRANCH_ALREADY_CLAIMED
                 )
             try:
                 next_ledger = _AssignmentLedger(

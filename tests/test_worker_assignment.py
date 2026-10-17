@@ -163,12 +163,14 @@ def _claim_request(
     tag: str = "aaa",
     worker_ref: str = "worker-one",
     host_worktree_path: str | None = None,
+    worktree_ref: str | None = None,
+    branch_ref: str | None = None,
 ) -> WorkerClaimRequest:
     return WorkerClaimRequest(
         receipt_ref=f"receipt-{tag}",
         worker_ref=worker_ref,
-        worktree_ref=f"worktree-{tag}-01",
-        branch_ref=f"branch-{tag}-01",
+        worktree_ref=f"worktree-{tag}-01" if worktree_ref is None else worktree_ref,
+        branch_ref=f"branch-{tag}-01" if branch_ref is None else branch_ref,
         repository_root=str(repository),
         host_worktree_path=(
             str(repository / ".worktrees" / "w1")
@@ -329,6 +331,98 @@ class DuplicateClaimTests(unittest.TestCase):
             self.assertNotEqual(first.assignment.claim_id, second.assignment.claim_id)
 
 
+class ActiveResourceUniquenessTests(unittest.TestCase):
+    """Different active receipts cannot own the same worktree or branch."""
+
+    def test_an_active_worktree_conflict_preserves_the_first_ledger_bytes(self) -> None:
+        with TemporaryDirectory() as temporary:
+            layout, repository = _seed(temporary)
+            first = claim_worker_assignment(layout, _claim_request(repository, "aaa"))
+            before = ledger_path(layout).read_bytes()
+
+            refused = claim_worker_assignment(
+                layout,
+                _claim_request(
+                    repository,
+                    "bbb",
+                    worktree_ref="worktree-aaa-01",
+                    branch_ref="branch-bbb-01",
+                ),
+            )
+
+            self.assertIs(first.status, WorkerClaimStatus.CLAIMED)
+            self.assertIs(refused.status, WorkerClaimStatus.REFUSED)
+            self.assertIs(
+                refused.failure,
+                WorkerClaimFailure.WORKTREE_OR_BRANCH_ALREADY_CLAIMED,
+            )
+            self.assertEqual(ledger_path(layout).read_bytes(), before)
+            read = read_worker_assignments(layout)
+            assert read.assignments is not None
+            self.assertEqual(read.assignments, (first.assignment,))
+
+    def test_an_active_branch_conflict_is_checked_independently(self) -> None:
+        with TemporaryDirectory() as temporary:
+            layout, repository = _seed(temporary)
+            first = claim_worker_assignment(layout, _claim_request(repository, "aaa"))
+            refused = claim_worker_assignment(
+                layout,
+                _claim_request(
+                    repository,
+                    "bbb",
+                    worktree_ref="worktree-bbb-01",
+                    branch_ref="branch-aaa-01",
+                ),
+            )
+
+            self.assertIs(first.status, WorkerClaimStatus.CLAIMED)
+            self.assertIs(refused.status, WorkerClaimStatus.REFUSED)
+            self.assertIs(
+                refused.failure,
+                WorkerClaimFailure.WORKTREE_OR_BRANCH_ALREADY_CLAIMED,
+            )
+
+    def test_different_active_worktrees_and_branches_can_be_claimed(self) -> None:
+        with TemporaryDirectory() as temporary:
+            layout, repository = _seed(temporary)
+            first = claim_worker_assignment(layout, _claim_request(repository, "aaa"))
+            second = claim_worker_assignment(layout, _claim_request(repository, "bbb"))
+
+            self.assertIs(first.status, WorkerClaimStatus.CLAIMED, f"{first.failure}")
+            self.assertIs(second.status, WorkerClaimStatus.CLAIMED, f"{second.failure}")
+
+    def test_settled_resources_can_be_reused_by_a_new_receipt(self) -> None:
+        with TemporaryDirectory() as temporary:
+            layout, repository = _seed(temporary)
+            first = claim_worker_assignment(layout, _claim_request(repository, "aaa"))
+            assert first.assignment is not None
+            settled = settle_worker_assignment(
+                layout,
+                WorkerSettlementRequest(
+                    claim_id=first.assignment.claim_id,
+                    receipt_ref=first.assignment.receipt_ref,
+                ),
+            )
+            self.assertIs(settled.status, WorkerSettlementStatus.SETTLED)
+
+            reused = claim_worker_assignment(
+                layout,
+                _claim_request(
+                    repository,
+                    "bbb",
+                    worktree_ref=first.assignment.worktree_ref,
+                    branch_ref=first.assignment.branch_ref,
+                ),
+            )
+
+            self.assertIs(reused.status, WorkerClaimStatus.CLAIMED, f"{reused.failure}")
+            read = read_worker_assignments(layout)
+            assert read.assignments is not None
+            self.assertEqual(len(read.assignments), 2)
+            self.assertIs(read.assignments[0].lifecycle, AssignmentLifecycle.SETTLED)
+            self.assertIs(read.assignments[1].lifecycle, AssignmentLifecycle.CLAIMED)
+
+
 class CrossProcessClaimTests(unittest.TestCase):
     """P2-R3: exactly once, proven between real processes.
 
@@ -381,6 +475,53 @@ class CrossProcessClaimTests(unittest.TestCase):
                 1,
                 "the ledger must hold exactly the one binding that won",
             )
+            self.assertEqual(read.assignments[0].claim_id, claimed[0]["claim_id"])
+
+    def test_different_receipts_racing_for_one_worktree_have_one_winner(self) -> None:
+        with TemporaryDirectory() as temporary:
+            layout, repository = _seed(temporary)
+            base = Path(temporary).resolve()
+            script = base / "child.py"
+            script.write_text(_CHILD, encoding="utf-8")
+            shared_worktree = "worktree-shared-01"
+            requests = (
+                _claim_request(
+                    repository,
+                    "aaa",
+                    worktree_ref=shared_worktree,
+                    branch_ref="branch-aaa-01",
+                ),
+                _claim_request(
+                    repository,
+                    "bbb",
+                    worktree_ref=shared_worktree,
+                    branch_ref="branch-bbb-01",
+                ),
+            )
+            paths = (base / "race-a.json", base / "race-b.json")
+            for path, request in zip(paths, requests, strict=True):
+                path.write_text(request.model_dump_json(), encoding="utf-8")
+
+            results = _race_children(script, layout, paths)
+
+            self.assertEqual(len(results), 2, f"{results}")
+            claimed = [
+                item for item in results
+                if item["status"] == WorkerClaimStatus.CLAIMED.value
+            ]
+            refused = [
+                item for item in results
+                if item["status"] == WorkerClaimStatus.REFUSED.value
+            ]
+            self.assertEqual(len(claimed), 1, f"{results}")
+            self.assertEqual(len(refused), 1, f"{results}")
+            self.assertEqual(
+                refused[0]["failure"],
+                WorkerClaimFailure.WORKTREE_OR_BRANCH_ALREADY_CLAIMED.value,
+            )
+            read = read_worker_assignments(layout)
+            assert read.assignments is not None
+            self.assertEqual(len(read.assignments), 1)
             self.assertEqual(read.assignments[0].claim_id, claimed[0]["claim_id"])
 
 
