@@ -18,6 +18,7 @@ Deliver one control-plane policy vertical slice: completion evidence must re-ent
 | [25-refactor-test-seam-transfer](25-refactor-test-seam-transfer.md) | A responsibility split moves behavior tests and mutation targets with the production seam before the next split | `SLICE_LOCAL_INTEGRATED` | Independent review approved; `970b99cc`; overall checklist 04 still open |
 | [26-active-writer-worktree-branch-uniqueness](26-active-writer-worktree-branch-uniqueness.md) | The existing worker-claim ledger rejects two active writers on one worktree or branch | `SLICE_LOCAL_INTEGRATED` | Independent review approved; `9cedb55f`; generic prewrite protection still open |
 | [27-evidence-linked-ticket-status-projection](27-evidence-linked-ticket-status-projection.md) | Opt-in evidence-bearing stage projection rejects false APPROVED with required work unverified | `SLICE_LOCAL_INTEGRATED` | Independent review approved; `3196712d`; parent/finding closure still open |
+| [28-minimal-complete-dispatch-ticket](28-minimal-complete-dispatch-ticket.md) | One ticket template carries sourced Expected, I/O, failure/boundary acceptance and stop/review conditions | `OPEN` | Owner 2026-10-18 checklist item 03; reuse existing ticket schema, no parallel parser |
 
 ## Shared baseline
 
