@@ -23,6 +23,16 @@ CandidateSha: TypeAlias = Annotated[
     Field(pattern=r"^[0-9a-f]{40}$"),
     AfterValidator(_candidate_sha_is_not_reserved),
 ]
+ProductBaselineSha: TypeAlias = Annotated[
+    str,
+    Field(pattern=r"^[0-9a-f]{40}$"),
+    AfterValidator(_candidate_sha_is_not_reserved),
+]
+ObservedLoadedSourceSha: TypeAlias = Annotated[
+    str,
+    Field(pattern=r"^[0-9a-f]{40}$"),
+    AfterValidator(_candidate_sha_is_not_reserved),
+]
 
 
 class _TestEngineerModel(RouterModel):
@@ -75,6 +85,8 @@ class ReviewAdmissionReason(str, Enum):
     TESTS_FAILED = "TESTS_FAILED"
     TESTS_BLOCKED = "TESTS_BLOCKED"
     TESTS_INCONCLUSIVE = "TESTS_INCONCLUSIVE"
+    PRODUCT_SOURCE_MISMATCH = "PRODUCT_SOURCE_MISMATCH"
+    EXPECTED_MISMATCH = "EXPECTED_MISMATCH"
 
 
 class ReviewAdmissionStatus(str, Enum):
@@ -90,6 +102,7 @@ class TestBinding(_TestEngineerModel):
     scope_ref: OpaqueMetadataId
     project_ref: OpaqueMetadataId
     ticket_ref: OpaqueMetadataId
+    baseline_sha: ProductBaselineSha
     candidate_sha: CandidateSha
     test_suite_digest: EvidenceDigest
     plan_digest: EvidenceDigest
@@ -124,10 +137,18 @@ class TestCellObservation(_TestEngineerModel):
         return self
 
 
+class ApprovedTestExpected(_TestEngineerModel):
+    """Ticket-approved Expected identity, never inferred from candidate output."""
+
+    reference: OpaqueMetadataId
+    digest: EvidenceDigest
+
+
 class TestReviewAuthority(_TestEngineerModel):
     """Active authority and exact expected cell set for one report attempt."""
 
     binding: TestBinding
+    approved_expected: ApprovedTestExpected
     expected_report_ref: OpaqueMetadataId
     expected_cell_ids: tuple[OpaqueMetadataId, ...] = Field(min_length=1, max_length=512)
     cleanup_required: bool
@@ -144,6 +165,7 @@ class IndependentTestReport(_TestEngineerModel):
 
     report_ref: OpaqueMetadataId
     binding: TestBinding
+    approved_expected: ApprovedTestExpected
     declared_verdict: TestVerdict
     cells: tuple[TestCellObservation, ...] = Field(max_length=512)
     cleanup: TestCleanup
@@ -155,6 +177,7 @@ class ResolvedTestEvidence(_TestEngineerModel):
     status: Literal["FOUND"] = "FOUND"
     authority: TestReviewAuthority
     report: IndependentTestReport
+    observed_loaded_source_sha: ObservedLoadedSourceSha
 
 
 class UnavailableTestEvidence(_TestEngineerModel):
@@ -203,8 +226,11 @@ class TestEvidenceResolver(Protocol):
 
 
 __all__ = (
+    "ApprovedTestExpected",
     "CandidateSha",
     "IndependentTestReport",
+    "ObservedLoadedSourceSha",
+    "ProductBaselineSha",
     "ReviewAdmissionDecision",
     "ReviewAdmissionReason",
     "ReviewAdmissionRequest",

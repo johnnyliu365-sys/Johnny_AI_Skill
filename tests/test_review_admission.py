@@ -6,6 +6,7 @@ import unittest
 
 from library.workflow_router.review_admission import ReviewAdmissionGate
 from library.workflow_router.test_engineer_contracts import (
+    ApprovedTestExpected,
     IndependentTestReport,
     ReviewAdmissionDecision,
     ReviewAdmissionReason,
@@ -24,6 +25,7 @@ from library.workflow_router.test_engineer_contracts import (
 
 
 _CANDIDATE = "1234567890abcdef1234567890abcdef12345678"
+_BASELINE = "abcdefabcdefabcdefabcdefabcdefabcdefabcd"
 _DIGEST = "sha256_" + "a" * 64
 _OTHER_DIGEST = "sha256_" + "b" * 64
 
@@ -56,6 +58,7 @@ def _binding(
         scope_ref=scope_ref or f"scope-review{suffix}",
         project_ref=project_ref or f"project-review{suffix}",
         ticket_ref=ticket_ref or f"ticket-review{suffix}",
+        baseline_sha=_BASELINE,
         candidate_sha=_CANDIDATE,
         test_suite_digest=_DIGEST,
         plan_digest=_OTHER_DIGEST,
@@ -89,6 +92,9 @@ def _authority(
 ) -> TestReviewAuthority:
     return TestReviewAuthority(
         binding=binding,
+        approved_expected=ApprovedTestExpected(
+            reference="approved-expected-review", digest=_DIGEST
+        ),
         expected_report_ref=expected_report_ref,
         expected_cell_ids=expected_cell_ids,
         cleanup_required=cleanup_required,
@@ -106,6 +112,9 @@ def _report(
     return IndependentTestReport(
         report_ref=report_ref,
         binding=binding,
+        approved_expected=ApprovedTestExpected(
+            reference="approved-expected-review", digest=_DIGEST
+        ),
         declared_verdict=declared_verdict,
         cells=cells,
         cleanup=cleanup,
@@ -137,7 +146,24 @@ def _found(
         selected_binding,
         cells=(_cell("cell-pass"),),
     )
-    return ResolvedTestEvidence(authority=selected_authority, report=selected_report)
+    return ResolvedTestEvidence(
+        authority=selected_authority,
+        report=selected_report,
+        observed_loaded_source_sha=_CANDIDATE,
+    )
+
+
+def _resolved(
+    authority: TestReviewAuthority,
+    report: IndependentTestReport,
+    *,
+    observed_loaded_source_sha: str = _CANDIDATE,
+) -> ResolvedTestEvidence:
+    return ResolvedTestEvidence(
+        authority=authority,
+        report=report,
+        observed_loaded_source_sha=observed_loaded_source_sha,
+    )
 
 
 class ReviewAdmissionTests(unittest.TestCase):
@@ -219,7 +245,7 @@ class ReviewAdmissionTests(unittest.TestCase):
                     cleanup=cleanup,
                 )
                 decision, _ = self._evaluate(
-                    ResolvedTestEvidence(authority=authority, report=report)
+                    _resolved(authority, report)
                 )
                 self.assertEqual(status, decision.status)
                 self.assertEqual(reason, decision.reason)
@@ -240,7 +266,7 @@ class ReviewAdmissionTests(unittest.TestCase):
             expected_cell_ids=("cell-pass", "cell-fail", "cell-inconclusive"),
         )
         mixed_decision, _ = self._evaluate(
-            ResolvedTestEvidence(authority=mixed_authority, report=mixed_report)
+            _resolved(mixed_authority, mixed_report)
         )
         self.assertEqual(TestVerdict.FAIL, mixed_decision.verdict)
         self.assertEqual(ReviewAdmissionReason.TESTS_FAILED, mixed_decision.reason)
@@ -272,10 +298,7 @@ class ReviewAdmissionTests(unittest.TestCase):
                     cells=(_cell("cell-pass"),),
                 )
                 binding_decision, _ = self._evaluate(
-                    ResolvedTestEvidence(
-                        authority=authority,
-                        report=report_with_foreign_binding,
-                    )
+                    _resolved(authority, report_with_foreign_binding)
                 )
                 self.assertEqual(
                     ReviewAdmissionReason.BINDING_MISMATCH,
@@ -290,7 +313,7 @@ class ReviewAdmissionTests(unittest.TestCase):
         for field, changed_request in request_changes:
             with self.subTest(request_field=field):
                 request_decision, _ = self._evaluate(
-                    ResolvedTestEvidence(authority=authority, report=report),
+                    _resolved(authority, report),
                     changed_request,
                 )
                 self.assertEqual(
@@ -321,16 +344,62 @@ class ReviewAdmissionTests(unittest.TestCase):
         for field, changed_request, changed_authority, changed_report in report_ref_changes:
             with self.subTest(report_reference=field):
                 report_decision, _ = self._evaluate(
-                    ResolvedTestEvidence(
-                        authority=changed_authority,
-                        report=changed_report,
-                    ),
+                    _resolved(changed_authority, changed_report),
                     changed_request,
                 )
                 self.assertEqual(
                     ReviewAdmissionReason.REPORT_MISMATCH,
                     report_decision.reason,
                 )
+
+    def test_loaded_product_source_must_be_candidate_and_not_baseline(self) -> None:
+        binding = _binding()
+        authority = _authority(binding)
+        report = _report(binding, cells=(_cell("cell-pass"),))
+        for observed_source in (_BASELINE, "0" * 39 + "1"):
+            with self.subTest(observed_source=observed_source):
+                decision, _ = self._evaluate(
+                    _resolved(
+                        authority,
+                        report,
+                        observed_loaded_source_sha=observed_source,
+                    )
+                )
+                self.assertEqual(ReviewAdmissionStatus.DENIED, decision.status)
+                self.assertEqual(
+                    ReviewAdmissionReason.PRODUCT_SOURCE_MISMATCH,
+                    decision.reason,
+                )
+
+    def test_expected_must_match_resolver_approved_reference_and_digest(self) -> None:
+        binding = _binding()
+        authority = _authority(binding)
+        approved_expected = authority.approved_expected
+        for field, value in (
+            ("reference", "unapproved-expected"),
+            ("digest", "sha256_" + "c" * 64),
+        ):
+            with self.subTest(expected_field=field):
+                drifted_expected = approved_expected.model_copy(update={field: value})
+                drifted_report = _report(binding, cells=(_cell("cell-pass"),)).model_copy(
+                    update={"approved_expected": drifted_expected}
+                )
+                decision, _ = self._evaluate(_resolved(authority, drifted_report))
+                self.assertEqual(ReviewAdmissionStatus.DENIED, decision.status)
+                self.assertEqual(ReviewAdmissionReason.EXPECTED_MISMATCH, decision.reason)
+
+    def test_legacy_or_malformed_resolver_payload_is_never_upgraded(self) -> None:
+        binding = _binding()
+        authority = _authority(binding)
+        report = _report(binding, cells=(_cell("cell-pass"),))
+        legacy_payload = {
+            "status": "FOUND",
+            "authority": authority.model_dump(),
+            "report": report.model_dump(),
+        }
+        decision, _ = self._evaluate(legacy_payload)  # type: ignore[arg-type]
+        self.assertEqual(ReviewAdmissionStatus.DENIED, decision.status)
+        self.assertEqual(ReviewAdmissionReason.RESOLVER_FAILURE, decision.reason)
 
     def test_exact_cell_coverage_rejects_empty_missing_extra_and_duplicate(self) -> None:
         binding = _binding()
@@ -344,7 +413,7 @@ class ReviewAdmissionTests(unittest.TestCase):
         for report in reports:
             with self.subTest(cells=tuple(cell.cell_id for cell in report.cells)):
                 decision, _ = self._evaluate(
-                    ResolvedTestEvidence(authority=authority, report=report)
+                    _resolved(authority, report)
                 )
                 self.assertEqual(
                     ReviewAdmissionReason.CELL_COVERAGE_MISMATCH,
@@ -360,7 +429,7 @@ class ReviewAdmissionTests(unittest.TestCase):
             cells=(_cell("cell-pass"),),
         )
         wrong_decision, _ = self._evaluate(
-            ResolvedTestEvidence(authority=authority, report=wrong_verdict)
+            _resolved(authority, wrong_verdict)
         )
         self.assertEqual(TestVerdict.INCONCLUSIVE, wrong_decision.verdict)
         self.assertEqual(ReviewAdmissionReason.VERDICT_MISMATCH, wrong_decision.reason)
@@ -373,7 +442,7 @@ class ReviewAdmissionTests(unittest.TestCase):
                     cleanup=cleanup,
                 )
                 incomplete_decision, _ = self._evaluate(
-                    ResolvedTestEvidence(authority=authority, report=incomplete)
+                    _resolved(authority, incomplete)
                 )
                 self.assertEqual(TestVerdict.BLOCKED, incomplete_decision.verdict)
                 self.assertEqual(
@@ -388,10 +457,7 @@ class ReviewAdmissionTests(unittest.TestCase):
             cleanup=TestCleanup.NOT_REQUIRED,
         )
         optional_decision, _ = self._evaluate(
-            ResolvedTestEvidence(
-                authority=optional_cleanup_authority,
-                report=optional_report,
-            )
+            _resolved(optional_cleanup_authority, optional_report)
         )
         self.assertEqual(ReviewAdmissionStatus.ADMITTED, optional_decision.status)
 
@@ -401,10 +467,7 @@ class ReviewAdmissionTests(unittest.TestCase):
             cleanup=TestCleanup.UNCONFIRMED,
         )
         optional_unconfirmed_decision, _ = self._evaluate(
-            ResolvedTestEvidence(
-                authority=optional_cleanup_authority,
-                report=optional_unconfirmed,
-            )
+            _resolved(optional_cleanup_authority, optional_unconfirmed)
         )
         self.assertEqual(TestVerdict.BLOCKED, optional_unconfirmed_decision.verdict)
         self.assertEqual(

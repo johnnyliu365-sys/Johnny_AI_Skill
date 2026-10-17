@@ -78,7 +78,13 @@ class RouterReviewAdmissionTests(unittest.TestCase):
             cells=(_cell("cell-pass"),),
             cleanup=TestCleanup.CONFIRMED,
         )
-        self.resolver = StaticEvidenceResolver(ResolvedTestEvidence(authority=authority, report=report))
+        self.resolver = StaticEvidenceResolver(
+            ResolvedTestEvidence(
+                authority=authority,
+                report=report,
+                observed_loaded_source_sha=binding.candidate_sha,
+            )
+        )
 
     def _state(self, stage: ProcessStage) -> RouterState:
         return RouterState(
@@ -153,6 +159,27 @@ class RouterReviewAdmissionTests(unittest.TestCase):
         if request is None:
             self.fail("the resolver must receive a bound request")
         self.assertEqual(self.report_ref, request.report_ref)
+
+    def test_router_refuses_review_transition_when_resolver_observed_baseline(self) -> None:
+        resolution = self.resolver.result
+        if not isinstance(resolution, ResolvedTestEvidence):
+            self.fail("the fixture must contain resolved evidence")
+        stale_source_resolver = StaticEvidenceResolver(
+            resolution.model_copy(
+                update={"observed_loaded_source_sha": "abcdefabcdefabcdefabcdefabcdefabcdefabcd"}
+            )
+        )
+        decision = RouterEngine(test_evidence_resolver=stale_source_resolver).decide(
+            state=self._state(ProcessStage.SMOKE_TEST),
+            event=self._event(
+                RouterEventKind.VALIDATION_PASSED,
+                report_ref=self.report_ref,
+            ),
+            profile=self.profile,
+        )
+        self.assertEqual(RouterOutcome.SUSPEND, decision.outcome)
+        self.assertEqual((), decision.eligible_capabilities)
+        self.assertEqual("test_review_not_admitted", decision.blockers[0].code.value)
 
     def test_review_handoff_also_requires_bound_report(self) -> None:
         bare = RouterEngine().decide(

@@ -7,6 +7,7 @@ import unittest
 from pydantic import TypeAdapter, ValidationError
 
 from library.workflow_router.test_engineer_contracts import (
+    ApprovedTestExpected,
     IndependentTestReport,
     ReviewAdmissionDecision,
     ReviewAdmissionReason,
@@ -25,6 +26,7 @@ from library.workflow_router.test_engineer_contracts import (
 
 
 _CANDIDATE = "1234567890abcdef1234567890abcdef12345678"
+_BASELINE = "abcdefabcdefabcdefabcdefabcdefabcdefabcd"
 _DIGEST = "sha256_" + "a" * 64
 _OTHER_DIGEST = "sha256_" + "b" * 64
 
@@ -37,6 +39,7 @@ class TestEngineerContractTests(unittest.TestCase):
             scope_ref="scope-review",
             project_ref="project-review",
             ticket_ref="ticket-review",
+            baseline_sha=_BASELINE,
             candidate_sha=_CANDIDATE,
             test_suite_digest=_DIGEST,
             plan_digest=_OTHER_DIGEST,
@@ -63,6 +66,9 @@ class TestEngineerContractTests(unittest.TestCase):
     def _authority(self) -> TestReviewAuthority:
         return TestReviewAuthority(
             binding=self._binding(),
+            approved_expected=ApprovedTestExpected(
+                reference="approved-expected-review", digest=_DIGEST
+            ),
             expected_report_ref="report-review",
             expected_cell_ids=("cell-pass",),
             cleanup_required=True,
@@ -79,6 +85,9 @@ class TestEngineerContractTests(unittest.TestCase):
         return IndependentTestReport(
             report_ref=report_ref,
             binding=self._binding(),
+            approved_expected=ApprovedTestExpected(
+                reference="approved-expected-review", digest=_DIGEST
+            ),
             declared_verdict=declared_verdict,
             cells=cells,
             cleanup=cleanup,
@@ -113,6 +122,8 @@ class TestEngineerContractTests(unittest.TestCase):
                 "TESTS_FAILED",
                 "TESTS_BLOCKED",
                 "TESTS_INCONCLUSIVE",
+                "PRODUCT_SOURCE_MISMATCH",
+                "EXPECTED_MISMATCH",
             ),
             tuple(value.value for value in ReviewAdmissionReason),
         )
@@ -133,7 +144,11 @@ class TestEngineerContractTests(unittest.TestCase):
             cells=(passing, failing),
             cleanup=TestCleanup.UNCONFIRMED,
         )
-        found = ResolvedTestEvidence(authority=authority, report=report)
+        found = ResolvedTestEvidence(
+            authority=authority,
+            report=report,
+            observed_loaded_source_sha=_CANDIDATE,
+        )
         unavailable = UnavailableTestEvidence(
             reason=TestEvidenceUnavailableReason.UNQUALIFIED
         )

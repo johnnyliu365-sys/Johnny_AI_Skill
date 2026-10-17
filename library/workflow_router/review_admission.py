@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 
+from pydantic import TypeAdapter
+
 from .test_engineer_contracts import (
     IndependentTestReport,
     ReviewAdmissionDecision,
@@ -16,6 +18,11 @@ from .test_engineer_contracts import (
     TestCellObservation,
     TestVerdict,
     UnavailableTestEvidence,
+    TestEvidenceResolution,
+)
+
+_TEST_EVIDENCE_RESOLUTION_ADAPTER: TypeAdapter[TestEvidenceResolution] = TypeAdapter(
+    TestEvidenceResolution
 )
 
 
@@ -32,7 +39,9 @@ class ReviewAdmissionGate:
         if resolver is None:
             return self._denied(TestVerdict.BLOCKED, ReviewAdmissionReason.EVIDENCE_UNAVAILABLE)
         try:
-            resolution = resolver.resolve(request=request)
+            resolution = _TEST_EVIDENCE_RESOLUTION_ADAPTER.validate_python(
+                resolver.resolve(request=request), strict=True
+            )
         except Exception:
             return self._denied(TestVerdict.INCONCLUSIVE, ReviewAdmissionReason.RESOLVER_FAILURE)
         if isinstance(resolution, UnavailableTestEvidence):
@@ -53,6 +62,16 @@ class ReviewAdmissionGate:
             or report.binding != authority.binding
         ):
             return self._denied(TestVerdict.INCONCLUSIVE, ReviewAdmissionReason.BINDING_MISMATCH)
+        if (
+            authority.binding.baseline_sha == authority.binding.candidate_sha
+            or resolution.observed_loaded_source_sha != authority.binding.candidate_sha
+        ):
+            return self._denied(
+                TestVerdict.INCONCLUSIVE,
+                ReviewAdmissionReason.PRODUCT_SOURCE_MISMATCH,
+            )
+        if report.approved_expected != authority.approved_expected:
+            return self._denied(TestVerdict.INCONCLUSIVE, ReviewAdmissionReason.EXPECTED_MISMATCH)
         if not (
             request.report_ref == authority.expected_report_ref
             and report.report_ref == authority.expected_report_ref

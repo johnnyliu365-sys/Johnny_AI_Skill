@@ -162,8 +162,11 @@ from .policy_response import (
 from .router import CitationLedger, ContextResolver, InMemorySourceGateway, RouterEngine
 from .review_admission import ReviewAdmissionGate
 from .test_engineer_contracts import (
+    ApprovedTestExpected,
     CandidateSha,
     IndependentTestReport,
+    ObservedLoadedSourceSha,
+    ProductBaselineSha,
     ReviewAdmissionDecision,
     ReviewAdmissionReason,
     ReviewAdmissionRequest,
@@ -262,6 +265,7 @@ def __getattr__(name: str) -> object:
 
 
 __all__ = (
+    "ApprovedTestExpected",
     "ContinuationAcceptedEvidence",
     "ContinuationResult",
     "ContinuationStatus",
@@ -383,6 +387,8 @@ __all__ = (
     "IntegrationResult",
     "IntegrationStatus",
     "IndependentTestReport",
+    "ObservedLoadedSourceSha",
+    "ProductBaselineSha",
     "JsonlContextUsageStore",
     "LocalContextGate",
     "LocalMetadataNormalizer",
