@@ -138,6 +138,94 @@ def _request(
 
 
 class ExecutorRoutingSelectionTests(TestCase):
+    def test_provider_model_replacement_keeps_role_and_review_binding(self) -> None:
+        table = _table(
+            _entry(
+                RoutingPurpose.IMPLEMENTATION,
+                "profile-implementation",
+                ModelRole.IMPLEMENTATION_OWNER,
+            ),
+            _entry(RoutingPurpose.INDEPENDENT_TICKET_REVIEW, "profile-reviewer"),
+        )
+        initial = _resolver(
+            table,
+            _profile(
+                "profile-implementation",
+                rank=VerifiedCapabilityRank.TIER_1,
+                provider="provider-before",
+                model="model-before",
+            ),
+            _profile(
+                "profile-reviewer",
+                rank=VerifiedCapabilityRank.TIER_1,
+                provider="review-provider-before",
+                model="review-model-before",
+            ),
+        ).resolve(
+            _request(
+                RoutingPurpose.IMPLEMENTATION,
+                role=ModelRole.IMPLEMENTATION_OWNER,
+            )
+        )
+        replacement = _resolver(
+            table,
+            _profile(
+                "profile-implementation",
+                rank=VerifiedCapabilityRank.TIER_1,
+                provider="provider-after",
+                model="model-after",
+            ),
+            _profile(
+                "profile-reviewer",
+                rank=VerifiedCapabilityRank.TIER_1,
+                provider="review-provider-after",
+                model="review-model-after",
+            ),
+        ).resolve(
+            _request(
+                RoutingPurpose.IMPLEMENTATION,
+                role=ModelRole.IMPLEMENTATION_OWNER,
+            )
+        )
+
+        for result in (initial, replacement):
+            self.assertIs(result.status, ResolutionStatus.SELECTED)
+            self.assertEqual(result.selected_profile, _ref("profile-implementation"))
+            self.assertIsNotNone(result.review_binding)
+            assert result.review_binding is not None
+            self.assertEqual(
+                result.review_binding.reviewer_profile,
+                _ref("profile-reviewer"),
+            )
+        self.assertEqual(initial.review_binding, replacement.review_binding)
+
+    def test_lowest_verified_implementation_route_is_not_promoted_implicitly(self) -> None:
+        resolver = _resolver(
+            _table(
+                _entry(
+                    RoutingPurpose.IMPLEMENTATION,
+                    "profile-implementation",
+                    ModelRole.IMPLEMENTATION_OWNER,
+                ),
+                _entry(RoutingPurpose.INDEPENDENT_TICKET_REVIEW, "profile-reviewer"),
+            ),
+            _profile("profile-implementation", rank=VerifiedCapabilityRank.TIER_1),
+            _profile("profile-reviewer", rank=VerifiedCapabilityRank.TIER_1),
+        )
+
+        result = resolver.resolve(
+            _request(
+                RoutingPurpose.IMPLEMENTATION,
+                role=ModelRole.IMPLEMENTATION_OWNER,
+            )
+        )
+
+        self.assertIs(result.status, ResolutionStatus.SELECTED)
+        self.assertEqual(result.selected_profile, _ref("profile-implementation"))
+        self.assertIsNotNone(result.review_binding)
+        assert result.review_binding is not None
+        self.assertEqual(result.review_binding.reviewer_profile, _ref("profile-reviewer"))
+
     def test_same_semantic_table_selects_two_fictitious_providers(self) -> None:
         table = _table(
             _entry(RoutingPurpose.PROJECT_INITIAL_REVIEW, "profile-alpha"),

@@ -30,6 +30,30 @@ def _assert_terms(test: unittest.TestCase, document: str, terms: tuple[str, ...]
 class AdversarialReviewPolicyTests(unittest.TestCase):
     """TARA1-TARA7 pin the policy and its control-plane boundary."""
 
+    def test_model_role_policy_uses_semantic_roles_and_live_verified_profile(self) -> None:
+        model_roles = " ".join(_read(_MODEL_ROLES).split())
+        delivery = " ".join(_read(_DELIVERY_PROFILE).split())
+
+        self.assertIn("The active, versioned `ProjectWorkflowProfile`", model_roles)
+        self.assertIn("verified host-capability evidence", model_roles)
+        self.assertIn(
+            "Changing provider/model references does not change role authority.",
+            model_roles,
+        )
+        self.assertIn(
+            "The active, versioned Project Workflow Profile supplies opaque provider/model references",
+            delivery,
+        )
+        self.assertIn("the reviewer must be at least as capable as the implementer", delivery)
+        for frozen_mapping in (
+            "Terra supervisor/reviewer",
+            "Luna implementation owner",
+            "default Terra supervisor/Luna implementer mapping",
+        ):
+            with self.subTest(frozen_mapping=frozen_mapping):
+                self.assertNotIn(frozen_mapping, model_roles)
+                self.assertNotIn(frozen_mapping, delivery)
+
     def test_tara1_code_review_indexes_reference_and_retains_reviewer_verdict(self) -> None:
         document = _read(_CODE_REVIEW)
         _assert_terms(

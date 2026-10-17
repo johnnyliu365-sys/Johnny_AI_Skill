@@ -55,7 +55,7 @@ authority never change, only what each stage must produce:
 | Review depth | Focused matrix and strict typing | Focused matrix plus full suite | Full suite plus reverse mutation and adversarial probes |
 | Red evidence | Baseline-red for defect corrections only; new behavior needs green tests | Baseline-red for defect corrections; green tests at the approved seam | Baseline-red for corrections plus reverse mutation proving test quality |
 | Handoff and closure | Commit-as-handoff: one implementation commit whose message carries AC, results and digests; no separate handoff leaf or evidence table | Ticket and handoff leaves per the artifact tree | Ticket and handoff leaves plus the adversarial review record |
-| Default model tier | Implementation and drafting stay on the low tier; the supervisor tier reviews once | Low-tier implementer, supervisor-tier reviewer | Supervisor-tier-or-higher implementer or reviewer; architecture-owner wake conditions widen |
+| Capability allocation | Choose the least-cost verified capability that can complete the admitted work; the reviewer must be at least as capable as the implementer | Choose the least-cost verified capability that can complete the admitted work; the reviewer must be at least as capable as the implementer | Raise implementation capability only when the admitted work requires it and cannot be decomposed further; bind an independently verified ticket assessment, and keep reviewer capability at least equal to the implementer |
 | Research helper | Not admitted for ordinary research; exactly one optional reviewer-owned `AdversarialReviewPlan` audit | One optional ordinary read-only helper; a required `AdversarialReviewPlan` consumes one | One optional ordinary read-only helper; the mandatory `AdversarialReviewPlan` audit consumes one |
 
 A change declared with a test-exempt `ChangeClass` (`DOCS_ONLY`, `COMMENT_ONLY`,
@@ -90,10 +90,13 @@ order is explicit. A high-search, low-authority, zero-write-conflict task may re
 reviewer-owned read-only/no-code research helper. The implementation owner never controls a
 helper or another Agent. Model tier is a cost/capability choice, not authority.
 
-Role assignment, the default Terra supervisor/Luna implementer mapping, SPEC-readiness sleep
-and typed wake conditions are defined only in `model-role-routing.md`. This Profile stores the
-versioned opaque model references and capability evidence; it does not turn a model name into
-authority.
+Semantic role assignment, current Profile readback, SPEC-readiness sleep and typed wake
+conditions are defined only in `model-role-routing.md`. The active, versioned Project Workflow
+Profile supplies opaque provider/model references and verified capability evidence for the
+current project and ticket. Generic workflow policy does not freeze provider/model names or
+map model identities to authority. Missing or stale evidence cannot be inferred from names;
+the route fails closed when role availability or reviewer-to-implementer capability cannot be
+established.
 
 Reassess when requirements, risk, security/XSS classification, coupling or verification
 results change. Upgrade automatically when evidence requires it; downgrade only with recorded

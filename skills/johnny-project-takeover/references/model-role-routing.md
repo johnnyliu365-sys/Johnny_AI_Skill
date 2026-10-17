@@ -36,11 +36,20 @@ return. A runner, queue, receipt, live descriptor or host readback is `NOT_REQUI
 route; those controls remain required only for a cross-lifetime handoff. Missing mandatory
 helper evidence is `BLOCKED`, never a fabricated success.
 
-The versioned `ProjectWorkflowProfile` records opaque model references and capability evidence
-for these roles. The current default host mapping is a highest-capability architecture owner,
-Terra supervisor/reviewer and Luna implementation owner. Exact provider/model names belong to
-the Profile rather than global workflow prose so a host mapping can change without changing
-authority or policy.
+The active, versioned `ProjectWorkflowProfile` and its verified host-capability evidence bind
+the available provider/model references to these semantic roles for the current project and
+ticket. This reusable policy does not assign provider/model names or a permanent rank to any
+role. Missing, stale, or incomparable capability evidence cannot be inferred from a model
+name; routing must fail closed when the current Profile cannot establish the required role or
+reviewer capability. Changing provider/model references does not change role authority.
+
+Use the least-cost currently verified capability that can perform the admitted work. When a
+ticket requires an implementation capability above the current standard route and further
+decomposition is not possible, record a current, independently verified `HardTicketAssessment`
+bound to that ticket and Closure revision. Select the reviewer from the active Profile with a
+verified capability rank at least equal to the selected implementer. This escalation applies
+to that ticket only. A model identity, effort label, or cost tier never supplies authority or
+capability evidence by itself.
 
 ## SPEC readiness and sleep
 
