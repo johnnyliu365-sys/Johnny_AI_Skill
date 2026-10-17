@@ -39,6 +39,16 @@ stage = R2 | 產生器 | OPEN
 released_in = -
 """
 
+_EVIDENCE_BLOCK = """id = E27
+title = 證據連結狀態
+state = IN_PROGRESS
+stage = IMPLEMENT | 實作 | DONE | REQUIRED | test:implementation
+stage = REVIEW | 獨審 | NOT_VERIFIED | REQUIRED | -
+stage = LOCAL | 本機驗證 | OPEN | REQUIRED | -
+stage = DEVICE | 實機驗收 | NOT_VERIFIED | OPTIONAL | -
+stage = RELEASE | 發布 | OPEN | OPTIONAL | -
+"""
+
 
 def _ticket(body: str, *, block: str | None = _GOOD_BLOCK) -> str:
     text = f"# 測試工單\n\n{body}\n"
@@ -89,6 +99,126 @@ class BlockParsingTests(unittest.TestCase):
             ],
         )
         self.assertIsNone(declared["released_in"])
+
+    def test_five_column_stages_keep_requirement_and_evidence_metadata(self) -> None:
+        declared = parse_status_block(_EVIDENCE_BLOCK)
+        stages = declared["stages"]
+        self.assertEqual(
+            stages[0],
+            {
+                "ref": "IMPLEMENT",
+                "label": "實作",
+                "state": "DONE",
+                "requirement": "REQUIRED",
+                "evidence_ref": "test:implementation",
+            },
+        )
+        self.assertEqual(stages[1]["state"], "NOT_VERIFIED")
+        self.assertIsNone(stages[1]["evidence_ref"])
+        self.assertEqual(stages[3]["requirement"], "OPTIONAL")
+
+    def test_a_mixed_legacy_and_evidence_stage_block_is_refused(self) -> None:
+        with self.assertRaisesRegex(ValueError, "不可混用"):
+            parse_status_block(
+                "id = V9\ntitle = t\nstate = DONE\n"
+                "stage = R1 | x | DONE\n"
+                "stage = R2 | y | DONE | REQUIRED | test:ok\n"
+            )
+
+    def test_done_evidence_reference_is_bounded_and_required(self) -> None:
+        for evidence_ref in ("-", "", "bad value", "x" * 129):
+            with self.subTest(evidence_ref=evidence_ref):
+                with self.assertRaises(ValueError):
+                    parse_status_block(
+                        "id = V9\ntitle = t\nstate = DONE\n"
+                        f"stage = R1 | x | DONE | REQUIRED | {evidence_ref}\n"
+                    )
+
+    def test_unfinished_evidence_stage_requires_dash(self) -> None:
+        with self.assertRaisesRegex(ValueError, "必須是 '-'"):
+            parse_status_block(
+                "id = V9\ntitle = t\nstate = DONE\n"
+                "stage = R1 | x | OPEN | REQUIRED | test:pending\n"
+            )
+
+    def test_five_column_refs_are_unique_and_requirements_are_finite(self) -> None:
+        duplicate = (
+            "id = V9\ntitle = t\nstate = DONE\n"
+            "stage = R1 | x | DONE | REQUIRED | test:one\n"
+            "stage = R1 | y | OPEN | OPTIONAL | -\n"
+        )
+        with self.assertRaisesRegex(ValueError, "不可重複"):
+            parse_status_block(duplicate)
+        with self.assertRaises(ValueError):
+            parse_status_block(
+                "id = V9\ntitle = t\nstate = DONE\n"
+                "stage = R1 | x | OPEN | SOMETIMES | -\n"
+            )
+
+    def test_approved_rejects_required_open_or_unverified_stages(self) -> None:
+        for stage_state in ("OPEN", "NOT_VERIFIED"):
+            with self.subTest(stage_state=stage_state):
+                with self.assertRaisesRegex(ValueError, "未完成的 REQUIRED"):
+                    parse_status_block(
+                        "id = V9\ntitle = t\nstate = APPROVED\n"
+                        f"stage = R1 | x | {stage_state} | REQUIRED | -\n"
+                    )
+
+    def test_approved_allows_optional_open_and_unverified_stages(self) -> None:
+        declared = parse_status_block(
+            "id = V9\ntitle = t\nstate = APPROVED\n"
+            "stage = REVIEW | 獨審 | DONE | REQUIRED | review:approved\n"
+            "stage = DEVICE | 實機驗收 | NOT_VERIFIED | OPTIONAL | -\n"
+            "stage = RELEASE | 發布 | OPEN | OPTIONAL | -\n"
+        )
+        self.assertEqual(declared["state"], "APPROVED")
+        self.assertEqual(declared["stages"][1]["state"], "NOT_VERIFIED")
+        self.assertEqual(declared["stages"][2]["state"], "OPEN")
+
+    def test_done_work_remains_done_without_an_explicit_review_verdict(self) -> None:
+        declared = parse_status_block(
+            "id = V9\ntitle = t\nstate = DONE\n"
+            "stage = IMPLEMENT | 實作 | DONE | REQUIRED | test:implementation\n"
+            "stage = REVIEW | 獨審 | OPEN | REQUIRED | -\n"
+        )
+        self.assertEqual(declared["state"], "DONE")
+
+    def test_invalid_approved_block_remains_visible_as_unreadable(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = _repository(Path(temporary))
+            _write_ticket(
+                root,
+                "demo",
+                "evidence.md",
+                _ticket(
+                    "內容",
+                    block=(
+                        "id = E27\ntitle = 假綠\nstate = APPROVED\n"
+                        "stage = LOCAL | 本機驗證 | NOT_VERIFIED | REQUIRED | -\n"
+                    ),
+                ),
+            )
+            _commit(root, "ticket with invalid projected approval")
+
+            document = build_document(root)
+
+            self.assertEqual(document["tickets"], [])
+            self.assertEqual(len(document["unreadable"]), 1)
+            self.assertEqual(
+                document["unreadable"][0]["path"],
+                "modules/tickets/demo/evidence.md",
+            )
+
+    def test_fixed_delivery_stages_do_not_invent_unapplied_completion(self) -> None:
+        declared = parse_status_block(_EVIDENCE_BLOCK)
+        self.assertEqual(
+            [stage["ref"] for stage in declared["stages"]],
+            ["IMPLEMENT", "REVIEW", "LOCAL", "DEVICE", "RELEASE"],
+        )
+        self.assertEqual(
+            [stage["state"] for stage in declared["stages"]],
+            ["DONE", "NOT_VERIFIED", "OPEN", "NOT_VERIFIED", "OPEN"],
+        )
 
     def test_a_mistyped_field_is_an_error_not_a_silent_drop(self) -> None:
         """`stat` instead of `state` would otherwise mean "nothing declared"."""

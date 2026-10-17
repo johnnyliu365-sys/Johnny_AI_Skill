@@ -88,7 +88,11 @@ _REASON_STATES = ("NEEDS_OWNER", "REJECTED")
 _WHY_LABEL = {"NEEDS_OWNER": "為什麼等你：", "REJECTED": "為什麼沒通過："}
 _NO_REASON = "這一列沒有附原因。照契約這不該發生，請直接開工單檔確認。"
 
-_STAGE_SLUG = {"DONE": "done", "OPEN": "open"}
+_STAGE_SLUG = {
+    "DONE": "done",
+    "OPEN": "open",
+    "NOT_VERIFIED": "not-verified",
+}
 
 # Drawn, not typed. `⚠` and its emoji cousins render as a different glyph on
 # every platform and several fonts colour them themselves, which would put a
@@ -123,13 +127,13 @@ def _esc(value: object) -> str:
     return html.escape("" if value is None else str(value), quote=True)
 
 
-def _mapping(value: object) -> dict:
+def _mapping(value: object) -> dict[str, object]:
     """A nullable object field is a missing field, not a crash."""
 
     return value if isinstance(value, dict) else {}
 
 
-def _sequence(value: object) -> list:
+def _sequence(value: object) -> list[object]:
     return list(value) if isinstance(value, (list, tuple)) else []
 
 
@@ -153,7 +157,7 @@ def _stamp(raw: object) -> tuple[str, str]:
     return text, moment.strftime("%Y-%m-%d %H:%M")
 
 
-def _bar(document: dict) -> str:
+def _bar(document: dict[str, object]) -> str:
     """The one strip that answers "which tree am I looking at"."""
 
     head = _mapping(document.get("head"))
@@ -187,7 +191,7 @@ def _bar(document: dict) -> str:
     return "".join(parts)
 
 
-def _unreadable(sources: list) -> str:
+def _unreadable(sources: list[object]) -> str:
     """The block that outranks the layout. Empty list, no block; never silent."""
 
     if not sources:
@@ -212,7 +216,7 @@ def _unreadable(sources: list) -> str:
     )
 
 
-def _stages(stages: list) -> str:
+def _stages(stages: list[object]) -> str:
     chips = []
     for stage in stages:
         stage = _mapping(stage)
@@ -220,13 +224,28 @@ def _stages(stages: list) -> str:
         label = _text(stage.get("label")).strip()
         caption = f"{ref} {label}".strip() if label else ref
         slug = _STAGE_SLUG.get(_text(stage.get("state")), "unknown")
-        chips.append(f'<span class="st" data-s="{_esc(slug)}">{_esc(caption)}</span>')
+        requirement = _text(stage.get("requirement"))
+        if requirement in ("REQUIRED", "OPTIONAL"):
+            evidence_ref = _text(stage.get("evidence_ref")) or "-"
+            metadata = (
+                f'<small class="stage-meta">{_esc(stage.get("state"))} · '
+                f'{_esc(requirement)} · 證據 {_esc(evidence_ref)}</small>'
+            )
+            chips.append(
+                f'<span class="st" data-s="{_esc(slug)}" '
+                f'data-necessity="{_esc(requirement.lower())}">'
+                f'{_esc(caption)}{metadata}</span>'
+            )
+        else:
+            chips.append(
+                f'<span class="st" data-s="{_esc(slug)}">{_esc(caption)}</span>'
+            )
     if not chips:
         chips.append(f'<span class="none">{_esc(_NO_STAGES)}</span>')
     return f'<div class="stages"><span class="lab">階段</span>{"".join(chips)}</div>'
 
 
-def _where(ticket: dict) -> str:
+def _where(ticket: dict[str, object]) -> str:
     """Where the ticket stands. The commit cell is always drawn, even empty."""
 
     commit = _mapping(ticket.get("commit"))
@@ -463,6 +482,9 @@ body{margin:0;background:var(--bg);color:var(--ink);
    is the channel the amber outline was really using: the colour only made the
    box visible, and being the *sole* box does the same work without a hue. */
 .st[data-s="done"]{border-color:transparent;color:var(--stage-done)}
+.st[data-s="not-verified"]{border-style:dashed;font-weight:700}
+.st .stage-meta{display:block;font-family:inherit;font-size:10px;
+  font-weight:400;line-height:1.35}
 /* Padding pays back the extra border so the chips keep one baseline. */
 .st[data-s="open"]{border-width:2px;padding:1px 6px;
   border-color:var(--stage-open);color:var(--stage-open);
@@ -503,7 +525,7 @@ body{margin:0;background:var(--bg);color:var(--ink);
 """
 
 
-def render(document: dict) -> str:
+def render(document: dict[str, object]) -> str:
     """Render the whole page. Pure: same document in, same bytes out.
 
     The order of `tickets` is the pipeline's promise (NEEDS_OWNER first) and is

@@ -46,7 +46,10 @@ _TICKET_STATES = (
     "IN_PROGRESS",
     "APPROVED",
 )
-_STAGE_STATES = ("DONE", "OPEN")
+_LEGACY_STAGE_STATES = ("DONE", "OPEN")
+_EVIDENCE_STAGE_STATES = ("DONE", "OPEN", "NOT_VERIFIED")
+_STAGE_REQUIREMENTS = ("REQUIRED", "OPTIONAL")
+_EVIDENCE_REF = re.compile(r"[A-Za-z0-9][A-Za-z0-9._:/#-]{0,127}\Z")
 _SCALAR_KEYS = frozenset(
     {"id", "title", "state", "reason", "released_in", "commit"}
 )
@@ -84,7 +87,9 @@ def parse_status_block(body: str) -> dict[str, object]:
     """Read one declared block. Anything unexpected raises rather than guesses."""
 
     scalars: dict[str, str] = {}
-    stages: list[dict[str, str]] = []
+    stages: list[dict[str, str | None]] = []
+    stage_format: int | None = None
+    evidence_stage_refs: set[str] = set()
     for raw in body.splitlines():
         line = raw.strip()
         if not line or line.startswith("#"):
@@ -94,14 +99,57 @@ def parse_status_block(body: str) -> dict[str, object]:
         key, value = (part.strip() for part in line.split("=", 1))
         if key == "stage":
             fields = [field.strip() for field in value.split("|")]
-            if len(fields) != 3:
-                raise ValueError(f"stage 要寫成 ref | label | state：{value!r}")
-            ref, label, state = fields
+            if len(fields) not in (3, 5):
+                raise ValueError(
+                    "stage 要寫成 ref | label | state 或 "
+                    "ref | label | state | requirement | evidence-ref："
+                    f"{value!r}"
+                )
+            current_format = len(fields)
+            if stage_format is not None and stage_format != current_format:
+                raise ValueError("舊三欄 stage 與新五欄 stage 不可混用")
+            stage_format = current_format
+            if current_format == 3:
+                ref, label, state = fields
+                requirement = None
+                evidence_ref = None
+            else:
+                ref, label, state, requirement, evidence_ref = fields
             if not ref:
                 raise ValueError("stage 的 ref 不能是空的")
-            if state not in _STAGE_STATES:
-                raise ValueError(f"stage 狀態只能是 {_STAGE_STATES}：{state!r}")
-            stages.append({"ref": ref, "label": label, "state": state})
+            allowed_states = (
+                _LEGACY_STAGE_STATES
+                if current_format == 3
+                else _EVIDENCE_STAGE_STATES
+            )
+            if state not in allowed_states:
+                raise ValueError(f"stage 狀態只能是 {allowed_states}：{state!r}")
+            if current_format == 3:
+                stages.append({"ref": ref, "label": label, "state": state})
+            else:
+                if requirement not in _STAGE_REQUIREMENTS:
+                    raise ValueError(
+                        f"stage 必要性只能是 {_STAGE_REQUIREMENTS}：{requirement!r}"
+                    )
+                if ref in evidence_stage_refs:
+                    raise ValueError(f"五欄 stage ref 不可重複：{ref!r}")
+                evidence_stage_refs.add(ref)
+                if state == "DONE":
+                    if evidence_ref is None or not _EVIDENCE_REF.fullmatch(evidence_ref):
+                        raise ValueError(
+                            "DONE stage 必須提供受限格式 evidence-ref"
+                        )
+                elif evidence_ref != _NULL:
+                    raise ValueError("未完成 stage 的 evidence-ref 必須是 '-'")
+                stages.append(
+                    {
+                        "ref": ref,
+                        "label": label,
+                        "state": state,
+                        "requirement": requirement,
+                        "evidence_ref": None if evidence_ref == _NULL else evidence_ref,
+                    }
+                )
             continue
         if key not in _SCALAR_KEYS:
             # A typo here would silently drop a field, so it is an error and
@@ -126,6 +174,15 @@ def parse_status_block(body: str) -> dict[str, object]:
         raise ValueError(f"state 是 {state} 就必須寫 reason")
     if state not in _REASON_REQUIRED and reason is not None:
         raise ValueError(f"state 是 {state} 不該寫 reason")
+    if state == "APPROVED" and stage_format == 5:
+        blocked: list[str] = []
+        for stage in stages:
+            if stage["requirement"] == "REQUIRED" and stage["state"] != "DONE":
+                blocked.append(str(stage["ref"]))
+        if blocked:
+            raise ValueError(
+                "APPROVED 不可有未完成的 REQUIRED stage：" + ", ".join(blocked)
+            )
 
     released = scalars.get("released_in", _NULL)
     named = scalars.get("commit", _NULL)
@@ -235,6 +292,8 @@ def build_document(repository_root: Path) -> dict[str, object]:
         if named is None:
             commit = _last_commit(repository_root, path)
         else:
+            if not isinstance(named, str):
+                raise ValueError("declared_commit 必須是字串")
             commit = _named_commit(repository_root, named)
             if commit is None:
                 unreadable.append(

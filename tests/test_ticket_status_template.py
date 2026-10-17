@@ -491,6 +491,61 @@ class NullableFieldTests(unittest.TestCase):
         self.assertTrue(page.rstrip().endswith("</html>"))
 
 
+class EvidenceStageRenderingTests(unittest.TestCase):
+    def test_not_verified_stage_is_visible_and_never_uses_done_style(self) -> None:
+        page = render(
+            _document(
+                _one_ticket(
+                    stages=[
+                        {
+                            "ref": "LOCAL",
+                            "label": "本機驗證",
+                            "state": "NOT_VERIFIED",
+                            "requirement": "REQUIRED",
+                            "evidence_ref": None,
+                        },
+                        {
+                            "ref": "DEVICE",
+                            "label": "實機驗收",
+                            "state": "NOT_VERIFIED",
+                            "requirement": "OPTIONAL",
+                            "evidence_ref": None,
+                        },
+                    ]
+                )
+            )
+        )
+
+        self.assertEqual(
+            page.count('<span class="st" data-s="not-verified"'), 2
+        )
+        self.assertIn('data-necessity="required"', page)
+        self.assertIn('data-necessity="optional"', page)
+        self.assertIn("NOT_VERIFIED · REQUIRED · 證據 -", page)
+        self.assertIn("NOT_VERIFIED · OPTIONAL · 證據 -", page)
+        self.assertIn('.st[data-s="not-verified"]{border-style:dashed', page)
+
+    def test_evidence_reference_is_escaped_in_the_visible_stage_metadata(self) -> None:
+        page = render(
+            _document(
+                _one_ticket(
+                    stages=[
+                        {
+                            "ref": "REVIEW",
+                            "label": "獨審",
+                            "state": "DONE",
+                            "requirement": "REQUIRED",
+                            "evidence_ref": "review:<approved>",
+                        }
+                    ]
+                )
+            )
+        )
+
+        self.assertIn("證據 review:&lt;approved&gt;", page)
+        self.assertNotIn("證據 review:<approved>", page)
+
+
 class ReasonTests(unittest.TestCase):
     """A row may never say work failed without saying what to fix."""
 
