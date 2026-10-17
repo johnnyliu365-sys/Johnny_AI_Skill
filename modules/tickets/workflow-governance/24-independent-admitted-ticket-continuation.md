@@ -2,7 +2,7 @@
 
 | 欄位 | 內容 |
 | --- | --- |
-| State | `REVIEW_CHANGES_REQUESTED / CAPABILITY_GAP`；Owner 2026-10-18 改進清單項目 02 |
+| State | `CORRECTION_ADMITTED / REVISION_02`；Owner 2026-10-18 改進清單項目 02；初稿獨審拒收，不改其歷史結論 |
 | Authority | `PRD-20260805-009`、`CHG-20260805-009`、`modules/spec/workflow-governance.md` AC 1–4；本票只驗證現行授權內的接續，不改批准含義 |
 | Baseline | `7c1660e53f0789a416f5858d933519af76ef5b9b`；同一 repo 的獨立 worktree |
 | Implementation language | Python 3.11；政策文件 Markdown |
@@ -18,6 +18,8 @@ modify = tests/test_autonomous_collaboration.py
 modify = skills/johnny-project-takeover/references/router-control.md
 modify = library/workflow_router/router.py
 modify = library/workflow_router/contracts.py
+modify = library/workflow_router/profile.py
+modify = tests/test_workflow_router.py
 forbid = modules/spec/
 forbid = doc/requirements/
 forbid = .worktrees/
@@ -56,3 +58,39 @@ Return：`IMPLEMENTED | BLOCKED | CHANGE_DETECTED`、候選完整 SHA、實際�
 目前候選僅證明派工確認等待，不證明 SQL/不可逆 effect 等待或主線相依；
 `EXTERNAL_DECISION_REQUIRED` 在事件列舉中存在，但現行 POC Profile 未宣告對應轉移。
 不得把此候選算作項目 02 完成，也不得藉修正自行新增權限。
+
+## Closure revision 02：真正 Owner effect wait 與獨立票接續
+
+這是同一票的受限修正，沿用原始需求、finding、審閱證據及工作預算；不新增 PRD、
+SPEC、平行狀態機或真實 SQL 執行。既有 SPEC AC 2–4 已宣告具名不可逆 effect wait，
+但 POC Profile 漏 `EXTERNAL_DECISION_REQUIRED` 路由。由 Architecture Owner 確認
+`IMPLEMENT` 階段的該事件只表示「等待精確 Owner effect 決定」，絕不執行 effect。
+
+1. 在現有 Profile 宣告 `IMPLEMENT + EXTERNAL_DECISION_REQUIRED` 的 `SUSPEND /
+   WAIT_FOR_HUMAN` 轉移，使用具名 effect wait reason；來源至少需要唯一的精確 Ticket。
+   不得將 `TICKET_DISPATCH_REQUIRED` 或 dispatch receipt 重用為 SQL／外部 effect。
+2. 事件攜帶精確 ticket/effect 識別；Router 在 WAIT 前核對事件 ticket 與可信
+   `RouterState.artifact_refs` 的唯一 Ticket 一致，缺失／不符／歧義均 `HALT`。
+   effect 識別若缺失則拒絕；其業務合法性仍由既有 Host effect gate 驗證，
+   不能由此純 Router 的事件自報推定已獲准。
+   WAIT 決策只回傳 metadata 識別與原因，不給 capability、Context、effect 權限。
+   不增加新的授權來源；此純路由不能被稱為 SQL 執行准入或真實 Host effect gate。
+3. 用真實 `RouterEngine.decide` 建立同主線的 A、B 固定回放：A 的具名 SQL effect
+   等待，無相依且來源／授權完整的 B 按其**原本已宣告**的安全路由 AUTO_CONTINUE；
+   B 缺授權、缺必要來源時維持原阻斷，不借 A 的等待或核准；版本漂移仍由既有
+   來源解析閘門處理，不以此純 Router 回放冒充。依既有 planning／依賴
+   契約證明 A 仍待決，B 完成不使整條主線完成；若既有契約無法表達，回報精確缺口，
+   不偽造主線 PASS。
+4. 更新既有 `router-control.md` Continuation 段，僅說明精確 ticket/effect wait
+   不凍結無相依且已准入的其他票。同步更新既有 Profile/reference digest pin 和
+   pin 測試。不要寫死 SQL、專案路徑、票號或模型名於通用 skill。
+5. 新增正反向測試：A wait 的原因與識別、B 合法接續、B 缺證據阻斷、event
+   ticket 失配或 effect 識別缺失阻斷、A 相依票不可借 B 通行；Reviewer 對「全域凍結 B」及
+   「偷放行 A／無效 B」各做一個可觀察反向突變。候選保留原初稿拒收歷史。
+
+允許在上述四個 library/test 檔與既有 `router-control.md` 內做最小變更。實作者
+先獨立提交政策文字，再提交 library/test 與 pin（控制面 gate 不接受單次混合政策
+與 runtime 改動）；不新增檔案，不改其他 Profile、SPEC、Grant 或 effect backend。
+若需要新的 Host effect 權限、預算、正式環境服務或超出本票路徑，回 `BLOCKED`。
+Run：`python -m pytest tests/test_autonomous_collaboration.py tests/test_workflow_router.py -q`、
+`mypy --strict`（實際修改的 Python 模組）、`git diff --check`。
