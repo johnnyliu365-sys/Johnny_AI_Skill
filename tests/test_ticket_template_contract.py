@@ -51,7 +51,7 @@ class _SlotMutation:
     cell: str
     section: str
     label: str
-    action: Literal["delete", "comment", "fence", "move"]
+    action: Literal["delete", "comment", "fence", "indent", "move"]
 
 
 _NEGATIVE_CELLS = (
@@ -59,6 +59,7 @@ _NEGATIVE_CELLS = (
     _SlotMutation("expected_removed", _OUTCOME_SECTION, "核准 Expected（使用者可觀察結果）", "delete"),
     _SlotMutation("expected_commented_out", _OUTCOME_SECTION, "核准 Expected（使用者可觀察結果）", "comment"),
     _SlotMutation("expected_fenced_example", _OUTCOME_SECTION, "核准 Expected（使用者可觀察結果）", "fence"),
+    _SlotMutation("expected_indented_code", _OUTCOME_SECTION, "核准 Expected（使用者可觀察結果）", "indent"),
     _SlotMutation("expected_moved_out_of_section", _OUTCOME_SECTION, "核准 Expected（使用者可觀察結果）", "move"),
     _SlotMutation("acceptance_removed", _OUTCOME_SECTION, "正常／失敗／邊界驗收", "delete"),
     _SlotMutation("stop_condition_removed", _OUTCOME_SECTION, "停止條件", "delete"),
@@ -126,10 +127,9 @@ def _section(markdown: str, heading: str) -> str:
 
 def _active_bullet(section: str, label: str) -> str:
     matching = [
-        line.strip()
+        line
         for line in section.splitlines()
-        if line.lstrip().startswith("- ")
-        and line.lstrip()[2:].startswith(label)
+        if line.startswith("- ") and line[2:].startswith(label)
     ]
     assert len(matching) == 1, f"expected one active bullet for {label!r}, got {matching}"
     return matching[0]
@@ -206,6 +206,8 @@ def _apply_bullet_mutation(markdown: str, mutation: _SlotMutation) -> str:
         replacement = f"<!-- {target} -->"
     elif mutation.action == "fence":
         replacement = f"```markdown\n{target}\n```"
+    elif mutation.action == "indent":
+        replacement = f"    {target}"
     else:
         return markdown.replace(target, "", 1) + f"\n{target}\n"
     return markdown.replace(target, replacement, 1)
