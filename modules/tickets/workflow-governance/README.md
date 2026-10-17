@@ -16,6 +16,7 @@ Deliver one control-plane policy vertical slice: completion evidence must re-ent
 | [04-skill-implies-a-runtime-that-may-not-exist](04-skill-implies-a-runtime-that-may-not-exist.md) | The skill no longer narrates wakes nothing performs; agents must verify automation readiness before claiming any automatic effect | `CLOSED` | Found by the owner watching a false wake narrative on a real project; ships as 0.4.4 |
 | [24-independent-admitted-ticket-continuation](24-independent-admitted-ticket-continuation.md) | A waiting ticket cannot freeze an unrelated admitted ticket or transfer its authority | `REVIEW_CHANGES_REQUESTED` | Candidate `953c2cea` proves only dispatch continuation; Owner-effect route and dependency evidence remain unverified |
 | [25-refactor-test-seam-transfer](25-refactor-test-seam-transfer.md) | A responsibility split moves behavior tests and mutation targets with the production seam before the next split | `IN_PROGRESS` | Owner 2026-10-18 checklist item 04; bounded source policy and existing service replay |
+| [26-active-writer-worktree-branch-uniqueness](26-active-writer-worktree-branch-uniqueness.md) | The existing worker-claim ledger rejects two active writers on one worktree or branch | `OPEN` | AC-17 plus Owner 2026-10-18 checklist item 06; only this existing controlled claim path, not generic Git write CAS |
 
 ## Shared baseline
 
