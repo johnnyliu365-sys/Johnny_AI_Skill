@@ -3,7 +3,7 @@
 | 欄位 | 值 |
 | --- | --- |
 | 文件身分 | `AI-SKILL-IMPROVEMENT-CHECKLIST`；本專案工作追蹤，非新 PRD／SPEC／Gate |
-| Revision／來源 | `05`；Owner 2026-10-18 本次 12 項指示 |
+| Revision／來源 | `06`；Owner 2026-10-18 本次 12 項指示 |
 | 工作基準 | `a1cb6c13adbeb52a4117991727dcc3d4af6d2a33`；分支 `codex/skill-improvement-checklist` |
 | 主線 | 先對照、優先 02→04→05→06→07，再處理餘項與整合回放 |
 | 負責 | Root 理解需求、衝突與派工；票級實作者依有效能力 Profile；獨立審閱另席 |
@@ -37,6 +37,7 @@ Router、Reviewer、文件索引與結案規則仍各有唯一正文。`[x]` 只
 - 現行 worktree 與 correction：`implementation-authority.md`；現行測試品質：
   `implementation-tdd.md`、`review-checks.md`。它們是可重用基礎，尚未證明本表情境。
 - 04 的 TEST→A→B 本機閉包已完成；05／06／07 仍有 Host／正式結案外層缺口，不得誤勾。
+- 本地整合分支對 01～10 已改動的 13 個相關測試檔作一次合併回歸：`330 passed, 568 subtests passed`；8 項 pytest collection warnings 是匯入的 `Test*` 型別非測試類別，沒有失敗。這不替代各票獨審或未合格 Host effect。
   02 的初稿拒收，仍須修正真正 Owner effect／相依接續，不得重命名 dispatch wait 冒充。
   下一步依既有需求與 ticket 補足 02／05／06／07 的外層效應與驗收，再接續其他項目。
 
