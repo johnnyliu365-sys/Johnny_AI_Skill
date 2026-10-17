@@ -2,7 +2,7 @@
 
 | 欄位 | 內容 |
 | --- | --- |
-| State | `CORRECTION_ADMITTED / REVISION_02`；Owner 2026-10-18 改進清單項目 02；初稿獨審拒收，不改其歷史結論 |
+| State | `PARTIAL_REVIEWED / FULL_CLOSURE_BLOCKED / REVISION_02`；Owner-effect wait 切片獨審通過，獨立票接續未證明；初稿拒收歷史不變 |
 | Authority | `PRD-20260805-009`、`CHG-20260805-009`、`modules/spec/workflow-governance.md` AC 1–4；本票只驗證現行授權內的接續，不改批准含義 |
 | Baseline | `7c1660e53f0789a416f5858d933519af76ef5b9b`；同一 repo 的獨立 worktree |
 | Implementation language | Python 3.11；政策文件 Markdown |

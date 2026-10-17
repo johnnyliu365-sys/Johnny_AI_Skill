@@ -2,7 +2,7 @@
 
 | 欄位 | 內容 |
 | --- | --- |
-| State | `OPEN`；Owner 2026-10-18 改進清單項目 03 的獨立切片 |
+| State | `CONVERGENCE_REVIEW_REQUIRED`；同一 Closure revision 的第二次獨審仍拒收，不自動第三修 |
 | Authority | 既有 `PRD-20260805-009`／`CHG-20260805-009`、`modules/spec/workflow-governance.md` AC 2–5；本次 Owner 要求派工來源完整、最小，不新增需求身分 |
 | Source baseline | 本票所在控制面 commit；獨立實作 worktree |
 | Implementation language | Markdown 模板與 Python 3.11 驗證 |

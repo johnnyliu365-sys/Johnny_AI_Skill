@@ -19,3 +19,22 @@
 - `git diff --check b899d8ce...953c2cea`: pass.
 - Reviewer reverse mutation in an isolated review worktree made confirmed dispatch suspend in the real Router path: the new test turned red at its `ADVANCE` assertion; restoration turned it green. Review worktree was clean afterward. This proves the B assertion discriminates dispatch continuation, not the SQL scenario.
 - Preserve candidate and history. Architecture Owner must first confine the actual Owner-effect wait and mainline/dependency evidence to the approved authority; if that needs new SPEC/permission, route only that item through Change Control. Other admitted checklist work continues.
+
+## Closure revision 02 independent review
+
+The additive replacement candidate `e0bbe9e5d9efe5dad1556d186e6dd425b54beec0`
+(policy commit `8fd38454d831ef020ad3fd218b288c201c6a827b`) was reviewed by a
+separate `gpt-6-sol/high` seat. The six changed paths were within the revised
+boundary, the worktree and diff were clean, 81 targeted tests and 237 subtests
+passed, and strict mypy passed for the three modified modules. The policy LF digest
+matched its profile/test pins. The reviewer independently removed the ticket-ID
+comparison in an isolated copy: the mismatched-metadata cell turned red, then green
+after restoration.
+
+Conclusion: `APPROVED_SLICE` for a narrowly ticket-scoped Owner-effect wait only.
+The actual `IMPLEMENT + PENDING` route requires one Ticket source and matching
+ticket/effect metadata; malformed or missing metadata halts, and waiting carries no
+new capability, receipt or Host effect. The full ticket remains `BLOCKED`: the
+Router's single-ticket state has no trusted shared mainline, dependency graph,
+admitted B lane or live revision proof. Do not infer independent B continuation or
+integrate the full Closure revision from this partial approval.

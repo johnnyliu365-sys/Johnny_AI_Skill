@@ -19,3 +19,17 @@ Narrow correction remains on the original ticket and branch: assert the field's
 fillable section/bullet semantics and exercise a filled-ticket scenario. No Host
 dispatch admission was implemented or proved; even a corrected template candidate
 cannot by itself close checklist item 03.
+
+## Correction review and convergence
+
+The additive correction `5b3df22133099f935f72107ba494cc532e6ac9fe` changed
+only the targeted test file. Eighteen tests passed; the original HTML-comment
+mutation now turned the named cell red, and the filled-ticket scenario exercised
+real template labels. A distinct reviewer mutation removed the active Expected
+bullet and placed a copy inside an inert Markdown fenced example. All 18 tests
+still passed: the static checker treated example text as a fillable slot.
+
+Conclusion: `CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED`. This was the
+second review under the same closure revision; no automatic third correction is
+authorized. The control plane must repair the acceptance/evidence method before
+another implementation attempt. No candidate was integrated or pushed.

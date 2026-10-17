@@ -2,7 +2,7 @@
 
 | 欄位 | 內容 |
 | --- | --- |
-| State | `OPEN`；Owner 2026-10-18 改進清單項目 01 的最小獨立切片 |
+| State | `SLICE_LOCAL_INTEGRATED` at `2fa4ca6f`；改進清單項目 01 整項仍未完成 |
 | Authority | 既有 `PRD-20260805-009`／`CHG-20260805-009`、`modules/spec/workflow-governance.md` AC 1–4 及本次 Owner 明示的主線／單票區分；不新增 PRD |
 | Source baseline | 本票所在控制面 commit；實作時精確 pin |
 | Implementation language | Python 3.11、既有 skill reference Markdown |
