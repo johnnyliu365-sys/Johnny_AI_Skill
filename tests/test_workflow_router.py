@@ -331,8 +331,8 @@ _EXPECTED_POLICIES: tuple[_ExpectedPolicy, ...] = (
     ),
     _ExpectedPolicy(
         "implementation-tdd",
-        "rev-971624df35e19c5b",
-        "sha256_971624df35e19c5b025f6abffb47a9b0a30bdc2c01c1f7e4114ff0c18041595c",
+        "rev-f82b8a1d310c54e3",
+        "sha256_f82b8a1d310c54e3cf31393cc85bac3126b93432e15223e7e9e048fb37154139",
         PurePosixPath("skills/johnny-project-takeover/references/implementation-tdd.md"),
     ),
     _ExpectedPolicy(
@@ -1020,6 +1020,27 @@ class WorkflowRouterTests(unittest.TestCase):
                 for term in terms:
                     with self.subTest(term=term):
                         self.assertIn(term, document)
+
+    def test_completion_evidence_does_not_require_a_separate_wpr_commit(self) -> None:
+        root = Path(__file__).resolve().parents[1]
+        implementation_tdd = (
+            root / "skills/johnny-project-takeover/references/implementation-tdd.md"
+        ).read_text(encoding="utf-8")
+        completion_section = implementation_tdd.split("## Ticket completion", maxsplit=1)[1]
+        workflow = (root / "Workflow.md").read_text(encoding="utf-8")
+
+        self.assertIn(
+            "exact ticket/review evidence and the typed return identify", completion_section
+        )
+        self.assertNotRegex(
+            completion_section.casefold(),
+            r"\b(?:wpr|work progress report|workprogressreport)\b",
+        )
+        self.assertIn(
+            "`WorkProgressReport.md` 不得作為 implementation 或 review 的寫入／return target",
+            workflow,
+        )
+        self.assertIn("不得再建立獨立 WPR commit", workflow)
 
     def _read_automation_readiness_section(self) -> str:
         root = Path(__file__).resolve().parents[1]
