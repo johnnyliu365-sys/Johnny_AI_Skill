@@ -2,7 +2,7 @@
 
 | 欄位 | 內容 |
 | --- | --- |
-| State | `OPEN`；Owner 2026-10-18 改進清單項目 10 的最小獨立切片 |
+| State | `SLICE_LOCAL_INTEGRATED` at `68a10057`；Owner 2026-10-18 改進清單項目 10 的最小獨立切片 |
 | Authority | 現有 `PRD-20260822-030`／`CHG-20260822-030`、`doc/runbooks/dispatch-model-profile.md` 作當前資料來源，以及 Owner 本次「通用 skill 不寫死模型名、按難度分派並記錄升級理由」 |
 | Baseline | 本票所在控制面 commit；派工時 pin |
 | Owner / reviewer | 低成本實作席位與另一獨立審閱席位 |
@@ -51,3 +51,11 @@ Run：`python -m pytest tests/test_adversarial_review_policy.py tests/test_execu
 Return：`IMPLEMENTED | BLOCKED | CHANGE_DETECTED`、完整 candidate SHA、變更檔、
 測試、突變證據、仍缺的本機付費服務隔離／固定回報欄位。這只完成清單 10
 的模型選擇切片，不宣稱整項完成；不得 push／release／部署。
+
+## 審閱／整合結果
+
+`ffd9d7c8400d948cbc11b821699c06f09537fb08` 經原 reviewer 兩次具名
+限縮拒收後通過：普通 `TICKET_OPENING` 的低／高 profile 對照與同步路徑
+`NOT_REQUIRED` readback 均已校正。36 tests／74 subtests 綠，反向突變紅→綠。
+四個落地 Git blob 與候選完全相同；控制面閘門本地整合為 `68a10057`。
+完整紀錄見 `doc/reviews/workflow-governance/31-semantic-model-profile-boundary-code-review.md`。
