@@ -2,7 +2,7 @@
 
 | 欄位 | 內容 |
 | --- | --- |
-| 對應規格 ID | 完整 `SPEC-<PROJECT>-<FEATURE>-<YYYYMMDD>-<ULID>`（`§x、AC-y`） |
+| 對應規格 ID | 完整 `SPEC-<PROJECT>-<FEATURE>-<YYYYMMDD>-<ULID>` @ `<approved revision>`（`§x、AC-y`） |
 | 規格撰寫 AI | `<AI>` |
 | 第一步排查起點 | `doc/context/<feature>/<worktree-id>.md` |
 | PRD 索引 | `PRD-YYYYMMDD-NNN`／不適用 |
@@ -54,16 +54,21 @@ forbid = <明確禁止的路徑；比上面三欄優先，且比對時不分大�
 
 ## 使用者拍板與可觀察結果
 
+- 核准 Expected（使用者可觀察結果）：`<observable result for the named input, bound to the approved source above>`
+- 正常／失敗／邊界驗收：`<observable acceptance for each case>`
+- 停止條件：`<if implementation requires a new or unapproved business decision, stop and return CHANGE_DETECTED → REQUIREMENT_CHANGED; do not invent Expected>`
+- 需求身分重用：缺陷修正、補測試與同功能返工沿用原需求身分／revision，不自行建立第二份 PRD；實際產品需求改變回既有 Requirement Change，票內不得核准自身變更。
+
 ## 實作範圍、依賴與 ticket elements
 
 ### 角色指派（必填）
 
 - 流程／Grill／ticket owner：`<AI／worktree>`；負責需求收斂、SPEC／ticket、實作前 handoff 與 review，不得實作此 ticket。
 - implementation owner：`<另一位 AI／worktree>`；負責 TDD、正式原始碼、測試、驗證與 commit。
-- reviewer：`<AI／worktree>`；不得與 implementation owner 共用 worktree。
+- reviewer：`<independent AI／worktree>`；不得與 implementation owner 共用 worktree。
 - **Owner override record**：`N/A`／`<專案負責人、日期、單張 ticket、例外範圍與原因>`；未有明確記錄不得由同一 Agent 承擔控制面與 implementation owner。
 - `ImplementationHandoff`：`<approved SPEC/ticket/Context/TDD 引用、角色 ID、前端組合引用（如適用）>`；只存 metadata reference，不可保存原文、prompt、path、URI、Secret 或 PII。
-- `ImplementationReturn`：`COMPLETED → ACTION_COMPLETED`／`BLOCKED → HALT`／`CHANGE_DETECTED → REQUIREMENT_CHANGED → Grill`；實作者不得靜默修改需求、公開契約、架構或 UI/DI 邊界。
+- `ImplementationReturn`（typed）：`COMPLETED → ACTION_COMPLETED`／`BLOCKED → HALT`／`CHANGE_DETECTED → REQUIREMENT_CHANGED → Grill`；實作者不得靜默修改需求、公開契約、架構或 UI/DI 邊界。
 
 ### 前端組合與依賴注入（僅正式前端 ticket 必填）
 
@@ -77,7 +82,8 @@ forbid = <明確禁止的路徑；比上面三欄優先，且比對時不分大�
 
 - element 路徑：`modules/element/<language>/<feature>/<ticket-id>/`
 - 實際原始碼路徑：`<paths>`
-- 公開契約／資料模型：`<types and ports>`
+- 公開契約／資料模型：`<具名輸入 → 輸出／有限狀態與錯誤／nullability / types and ports>`
+- 直接依賴與狀態：`<dependency reference / readiness status / required evidence>`；不適用填理由
 
 ## TDD 設計
 
