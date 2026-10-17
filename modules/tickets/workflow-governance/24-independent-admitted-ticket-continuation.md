@@ -2,7 +2,7 @@
 
 | 欄位 | 內容 |
 | --- | --- |
-| State | `PARTIAL_REVIEWED / FULL_CLOSURE_BLOCKED / REVISION_02`；Owner-effect wait 切片獨審通過，獨立票接續未證明；初稿拒收歷史不變 |
+| State | `CLOSURE_REVISION_03 / OWNER_WAIT_SLICE_REVIEWED / ADMISSION_PENDING`；獨立票接續移至同需求 Ticket 30，未宣稱清單 02 完成 |
 | Authority | `PRD-20260805-009`、`CHG-20260805-009`、`modules/spec/workflow-governance.md` AC 1–4；本票只驗證現行授權內的接續，不改批准含義 |
 | Baseline | `7c1660e53f0789a416f5858d933519af76ef5b9b`；同一 repo 的獨立 worktree |
 | Implementation language | Python 3.11；政策文件 Markdown |
@@ -94,3 +94,18 @@ SPEC、平行狀態機或真實 SQL 執行。既有 SPEC AC 2–4 已宣告具�
 若需要新的 Host effect 權限、預算、正式環境服務或超出本票路徑，回 `BLOCKED`。
 Run：`python -m pytest tests/test_autonomous_collaboration.py tests/test_workflow_router.py -q`、
 `mypy --strict`（實際修改的 Python 模組）、`git diff --check`。
+
+## Convergence decision／Closure revision 03：保留要求，拆開准入
+
+Revision 02 的獨審只證明具名 Owner-effect wait；同時確認可信主線、票間相依、B 的
+live admission 與來源讀回不在本票可安全證明的現有契約中。原始 A／B 完整驗收及
+Finding 不刪除、不重置預算或歷史。為使已獨審的最小可用能力不被假裝成整票完成，
+本票現在只准入「A 的精確 effect wait」切片；「B 獨立已准入接續及主線保持開放」
+由同一 PRD／SPEC 的 [Ticket 30](30-trusted-independent-ticket-continuation.md) 承接。
+
+本票局部准入所需證據固定為 `e0bbe9e5` 的六個精確檔案、原政策 pin、81 tests／
+237 subtests、strict mypy、ticket 身分反向突變紅→綠，以及另一席對落地 blob
+等同性的確認。准入只整合純 Router WAIT 路由，**不**發行 Owner effect grant、
+不執行 SQL、不得放行 B、不得把本票或清單 02 標成完整完成。任何新增權限或
+安全不變量變更仍依既有 Change Control。本 revision 是既有需求的 ticket
+拆分，不新增 PRD、SPEC、人工審批關卡或第三次 correction。
