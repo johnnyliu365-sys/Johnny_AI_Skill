@@ -27,7 +27,7 @@ Deliver one control-plane policy vertical slice: completion evidence must re-ent
 | [34-shared-context-test-seam-transfer](34-shared-context-test-seam-transfer.md) | Move five contract-only cells while keeping public Router behavior cells mutation-sensitive | `B_LOCAL_INTEGRATED` | Independent review approved; `b4a7dbe6`; checklist 04 complete locally |
 | [35-parent-finding-status-closure](35-parent-finding-status-closure.md) | Show required child and Finding closure without a false APPROVED parent | `SLICE_LOCAL_INTEGRATED` | Independent review approved correction; `215a599f`; projection only, formal Review authority still open |
 | [36-git-pinned-test-source-inventory](36-git-pinned-test-source-inventory.md) | Read test consumers from an exact Git commit instead of caller-supplied working-copy text | `SLICE_LOCAL_INTEGRATED` | Independent review approved correction; `e1ca2d4b`; CI commands and retirement authority still open |
-| [37-retired-wpr-commit-conflict](37-retired-wpr-commit-conflict.md) | Remove the obsolete standalone WPR commit completion obligation and keep its policy pins aligned | `ADMITTED` | Owner checklist 11; independent review required before integration |
+| [37-retired-wpr-commit-conflict](37-retired-wpr-commit-conflict.md) | Remove the obsolete standalone WPR commit completion obligation and keep its policy pins aligned | `SLICE_LOCAL_INTEGRATED` | Initial review found a timing defect; same-ticket correction approved and locally gated at `2f1c29cb` |
 
 ## Shared baseline
 

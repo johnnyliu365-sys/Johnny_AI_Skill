@@ -3,7 +3,7 @@
 | 欄位 | 值 |
 | --- | --- |
 | 文件身分 | `AI-SKILL-IMPROVEMENT-CHECKLIST`；本專案工作追蹤，非新 PRD／SPEC／Gate |
-| Revision／來源 | `08`；Owner 2026-10-18 本次 12 項指示及通用虛構情境限定 |
+| Revision／來源 | `09`；Owner 2026-10-18 本次 12 項指示、通用虛構情境及既有功能沿原 PRD 修訂限定 |
 | 工作基準 | `a1cb6c13adbeb52a4117991727dcc3d4af6d2a33`；分支 `codex/skill-improvement-checklist` |
 | 主線 | 先對照、優先 02→04→05→06→07，再處理餘項與整合回放 |
 | 負責 | Root 理解需求、衝突與派工；票級實作者依有效能力 Profile；獨立審閱另席 |
@@ -27,7 +27,7 @@ Router、Reviewer、文件索引與結案規則仍各有唯一正文。`[x]` 只
 | [ ] 08 測試依賴／退役 | `GIT_SOURCE_LOCAL_INTEGRATED / CI_RETIREMENT_GAP` | Luna：Ticket 32 純 AST inventory `2a19406d`、Ticket 36 釘選 Git 唯讀 adapter `e1ca2d4b`；獨審見 `doc/reviews/workflow-governance/32-test-consumer-inventory-code-review.md` 與 `36-git-pinned-test-source-inventory-code-review.md` | Ticket 36 最終 26 tests／2 subtests、strict mypy 綠；Reviewer 以 commit/blob replace、非 `.py` symlink/gitlink 找到首版兩缺陷，同票修正後公開入口與兩項反向突變紅→綠；本地受控整合 blob 精確相同 | `APPROVED_SOURCE_SLICE` | 真 CI 命令仍由 caller 供給；入口切換、前置紅燈後的實際消費者與退役 effect gate `NOT_VERIFIED`，空 inventory 不授權刪除 |
 | [ ] 09 窄修窄審 | `CORRECTION_REPLAY_PARTIAL / GAP` | Root；既有 `CodeReview.md` §4–5、`implementation-authority.md`；Ticket 35 實作者原票修正、原 Sol reviewer 複驗，見 `doc/reviews/workflow-governance/35-parent-finding-status-closure-code-review.md` | Ticket 35 首審重複父票 ID finding → 原票 additive correction → 原 reviewer 新路徑反向突變紅→綠；Root 找到 `ticket_status_publish.publish` 真消費者，整合分支 pipeline／renderer／publisher 共 126 tests／205 subtests 綠；無關檔案未重審，舊必需子票／Finding PASS 證據有條件沿用 | `APPROVED_CASE_ONLY` | 尚需固定可重跑的影響／消費者判定與 finding↔Closure 錯標負例；一個真實回合不足以證明通用行為可強制 |
 | [ ] 10 成本／外部呼叫／回報 | `MODEL_PROFILE_LOCAL_INTEGRATED / PAID_TEST_REPORTING_GAP` | Luna 改 `model-role-routing.md`、`delivery-profile.md` 與既有 policy/executor tests；`68a10057`，審閱見 `doc/reviews/workflow-governance/31-semantic-model-profile-boundary-code-review.md` | 36 tests／74 subtests 綠；普通開票低／高 profile 反向突變紅→綠，同步 readback 語義修正；本機付費服務攔截及固定回報欄位 `NOT_VERIFIED` | `APPROVED_SLICE` | 通用模型選擇不凍結名稱，但真實 Host qualification、付費 API 測試隔離與功能／腳本拆分回報仍缺 |
-| [ ] 11 去重與衝突 | `NOT_STARTED` | Root；現有 Router、派工模板、Runner、Reviewer、結案入口 | 待 01–10 差異落定後做單一來源／重複責任檢查 | `NOT_REVIEWED` | 不建第二套流程或審批關卡 |
+| [ ] 11 去重與衝突 | `WPR_CONFLICT_LOCAL_INTEGRATED / CONSISTENCY_OPEN` | Luna 改既有 `implementation-tdd.md` 與 policy pin/test；Ticket 37 `2f1c29cb`，獨審見 `doc/reviews/workflow-governance/37-retired-wpr-commit-conflict-code-review.md` | Workflow 禁獨立 WPR commit 與 TDD 完成條件已一致；54 tests／202 subtests 綠；Reviewer 對舊義務及回件前 review evidence 各做反向突變紅→綠，三檔 landed blob 與受審候選相同 | `APPROVED_SLICE` | 仍需核對需求身分規則、模板／Runner／Reviewer／結案入口的其他衝突；不建第二套流程或審批關卡 |
 | [ ] 12 回放與獨審 | `NOT_STARTED` | Root；沿既有 tests／review 位置 | 01–10 正反案例待建立；自動／固定情境分別記錄限制 | `NOT_REVIEWED` | 錯誤拒絕與合法通過都必須證明 |
 
 ## 本輪窄查來源與下一步
@@ -37,6 +37,7 @@ Router、Reviewer、文件索引與結案規則仍各有唯一正文。`[x]` 只
 - 現行 worktree 與 correction：`implementation-authority.md`；現行測試品質：
   `implementation-tdd.md`、`review-checks.md`。它們是可重用基礎，尚未證明本表情境。
 - 04 的 TEST→A→B 本機閉包已完成；05／06／07 仍有 Host／正式結案外層缺口，不得誤勾。
+- 原有功能的修正、返工、補測與延伸不得新建重複 PRD；沿原需求身分修訂並保留核准與版本關聯。此 Owner 限定與現行 `requirement-lineage.md` 的一對一 PRD／CHG 規則衝突，須依既有 Change Control 收斂，不得把本條當成已生效機制。
 - 本地整合分支對 01～10 已改動的 13 個相關測試檔作一次合併回歸：`330 passed, 568 subtests passed`；8 項 pytest collection warnings 是匯入的 `Test*` 型別非測試類別，沒有失敗。這不替代各票獨審或未合格 Host effect。
   02 的初稿拒收，仍須修正真正 Owner effect／相依接續，不得重命名 dispatch wait 冒充。
   下一步依既有需求與 ticket 補足 02／05／06／07 的外層效應與驗收，再接續其他項目。
