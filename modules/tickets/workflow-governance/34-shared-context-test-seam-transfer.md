@@ -2,7 +2,7 @@
 
 | 欄位 | 內容 |
 | --- | --- |
-| State | `OPEN / DISPATCHABLE`；必須保留 Ticket 33 已審 A 的產品候選與反向突變證據 |
+| State | `B_LOCAL_INTEGRATED` at `b4a7dbe6`；獨審通過、五格契約測試已搬遷 |
 | Authority | 同一 `PRD-20260805-009`／`CHG-20260805-009`、`modules/spec/workflow-governance.md`；Ticket 25 的 TEST→A→B 規則；Ticket 33 A `ac369235` 已獨審且整合 |
 | Baseline | 派工時精確釘選本控制分支 HEAD；獨立 repo-contained worktree |
 | Profile／roles | `STANDARD`；低成本實作者與另一席獨立審閱；Reviewer 強度不低於實作 |
