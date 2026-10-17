@@ -7,6 +7,7 @@ not validate existing ticket instances or prove host dispatch enforcement.
 from __future__ import annotations
 
 import re
+import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal
@@ -50,23 +51,23 @@ _FRONTEND_SLOT_VALUES = (
     ),
     (
         "<可新增的路徑；不寫就是一個都不准新增>",
-        "src/search/SearchIndex.py",
+        "src/search/",
     ),
     (
         "<已查找並重用的生產模組、測試 harness／fixture（精確路徑或 ID、revision 與依賴方向）；若無可重用項，填查找範圍與具體理由>",
         "Reused src/search/SearchService.py@r1 and tests/support/http_fake.py@r2; SearchRoute → SearchService → SearchPort",
     ),
     (
-        "<逐一列出 johnny-boundary create 路徑的單一責任、直接消費者、對應驗收 ID、依賴方向；沒有新增時填 N/A reason>",
-        "src/search/SearchIndex.py: single responsibility, query index; consumer, SearchService; acceptance, AC-SEARCH-002; dependency, SearchService → SearchIndex",
+        "<對 johnny-boundary create 所授權的每個程式／腳本檔，逐一列出精確路徑、單一責任、直接消費者、對應驗收 ID、依賴方向；即使 create 使用目錄或 pattern，也不得只列目錄／pattern；沒有新增時填 N/A reason>",
+        "src/search/SearchIndex.py: single responsibility, query index; consumer, SearchService; acceptance, AC-SEARCH-002; dependency, SearchService → SearchIndex; src/search/SearchIndexValidation.py: single responsibility, query validation; consumer, SearchIndex; acceptance, AC-SEARCH-003; dependency, SearchIndex → SearchIndexValidation",
     ),
     (
         "<分列既有／新增產品碼、測試／腳本、文件、證據產物的預期數量與估計行數；修正沿用同一票預算；行數或數量只觸發結構審查，不自動拆檔、壓縮、拒收或放行>",
         "Existing/new: product 1/1 files +8/+24 lines; tests/scripts 1/0 +12/0; docs 1/0 +3/0; evidence 1/0 +4/0; correction uses this ticket's remaining budget",
     ),
     (
-        "<預設暫存目錄；正式樹中唯一必要且具名的證據產物；源碼／腳本僅保留必要技術註解，不含 owner prompt 或工單敘事>",
-        "Temporary output: .tmp/ticket-7/; persist only doc/evidence/search-7.md; code and scripts contain technical comments only, no owner prompt or ticket narrative",
+        "<預設使用 Git worktree 外的作業系統暫存目錄，且不得污染 Git worktree；正式樹中唯一必要且具名的證據產物；源碼／腳本僅保留必要技術註解，不含 owner prompt 或工單敘事>",
+        f"Temporary output: {Path(tempfile.gettempdir()).resolve() / 'johnny-ticket-7'} (outside the repository worktree); persist only doc/evidence/search-7.md; code and scripts contain technical comments only, no owner prompt or ticket narrative",
     ),
     (
         "<本票不應改動的既有功能、介面與來源基準；如契約內確需變更，列明授權來源、精確路徑與回歸驗收>",
@@ -225,10 +226,11 @@ def _assert_template_contract(markdown: str) -> None:
     assert "independent AI／worktree" in reviewer
     assert "不得與 implementation owner 共用 worktree" in reviewer
     assert "測試 harness／fixture" in reuse and "依賴方向" in reuse
-    assert all(term in new_file for term in ("單一責任", "直接消費者", "驗收 ID"))
+    assert all(term in new_file for term in ("每個程式／腳本檔", "精確路徑", "單一責任", "直接消費者", "驗收 ID"))
+    assert "即使 create 使用目錄或 pattern" in new_file
     assert all(term in budget for term in ("既有／新增產品碼", "測試／腳本", "文件", "證據產物"))
     assert "修正沿用同一票預算" in budget and "不自動拆檔" in budget
-    assert all(term in artifact for term in ("暫存目錄", "正式樹", "owner prompt", "工單敘事"))
+    assert all(term in artifact for term in ("作業系統暫存目錄", "Git worktree 外", "不得污染 Git worktree", "正式樹", "owner prompt", "工單敘事"))
     assert all(term in preserve for term in ("既有功能、介面", "授權來源", "回歸驗收"))
     assert all(
         item in returned
@@ -330,10 +332,24 @@ def test_template_slots_bind_to_a_filled_frontend_ticket() -> None:
     assert "do not invent Expected" in stop
     assert "independent from implementation owner" in reviewer
     assert all(item in reuse for item in ("SearchService.py@r1", "http_fake.py@r2", "SearchRoute → SearchService"))
-    assert all(item in new_file for item in ("src/search/SearchIndex.py", "SearchService", "AC-SEARCH-002"))
-    assert "create = src/search/SearchIndex.py" in _boundary_body(filled_ticket)
+    assert all(item in new_file for item in (
+        "src/search/SearchIndex.py",
+        "src/search/SearchIndexValidation.py",
+        "SearchService",
+        "AC-SEARCH-002",
+        "AC-SEARCH-003",
+    ))
+    assert "create = src/search/" in _boundary_body(filled_ticket)
     assert all(item in budget for item in ("product 1/1", "tests/scripts 1/0", "this ticket's remaining budget"))
-    assert ".tmp/ticket-7/" in artifact and "doc/evidence/search-7.md" in artifact
+    temp_path_text = (
+        artifact.partition("; persist only")[0]
+        .strip("`")
+        .removeprefix("Temporary output: ")
+        .split(" (outside", 1)[0]
+    )
+    temp_path = Path(temp_path_text).resolve()
+    assert not temp_path.is_relative_to(_ROOT.resolve())
+    assert "doc/evidence/search-7.md" in artifact
     assert "no owner prompt or ticket narrative" in artifact
     assert "Preserve SearchHistory" in preserve and "public SearchQuery v1" in preserve
 

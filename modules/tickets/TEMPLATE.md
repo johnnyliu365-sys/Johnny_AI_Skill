@@ -85,9 +85,9 @@ forbid = <明確禁止的路徑；比上面三欄優先，且比對時不分大�
 - 公開契約／資料模型：`<具名輸入 → 輸出／有限狀態與錯誤／nullability / types and ports>`
 - 直接依賴與狀態：`<dependency reference / readiness status / required evidence>`；不適用填理由
 - 共用件查重與依賴方向：`<已查找並重用的生產模組、測試 harness／fixture（精確路徑或 ID、revision 與依賴方向）；若無可重用項，填查找範圍與具體理由>`；不得因新票重做已有的 browser、mock、fixture、decoder、pixel comparator 等共用件
-- 新增檔案責任：`<逐一列出 johnny-boundary create 路徑的單一責任、直接消費者、對應驗收 ID、依賴方向；沒有新增時填 N/A reason>`；不得以換票為由複製現有模組或測試工具
+- 新增檔案責任：`<對 johnny-boundary create 所授權的每個程式／腳本檔，逐一列出精確路徑、單一責任、直接消費者、對應驗收 ID、依賴方向；即使 create 使用目錄或 pattern，也不得只列目錄／pattern；沒有新增時填 N/A reason>`；不得以換票為由複製現有模組或測試工具
 - 預期增量與原票預算：`<分列既有／新增產品碼、測試／腳本、文件、證據產物的預期數量與估計行數；修正沿用同一票預算；行數或數量只觸發結構審查，不自動拆檔、壓縮、拒收或放行>`
-- 驗證產物與源碼內容：`<預設暫存目錄；正式樹中唯一必要且具名的證據產物；源碼／腳本僅保留必要技術註解，不含 owner prompt 或工單敘事>`
+- 驗證產物與源碼內容：`<預設使用 Git worktree 外的作業系統暫存目錄，且不得污染 Git worktree；正式樹中唯一必要且具名的證據產物；源碼／腳本僅保留必要技術註解，不含 owner prompt 或工單敘事>`
 - 保留已核准行為：`<本票不應改動的既有功能、介面與來源基準；如契約內確需變更，列明授權來源、精確路徑與回歸驗收>`
 
 ## TDD 設計
