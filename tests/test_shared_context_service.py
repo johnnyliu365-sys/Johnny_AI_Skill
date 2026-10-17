@@ -4,12 +4,15 @@ from __future__ import annotations
 
 import unittest
 
+from pydantic import ValidationError
+
 from library.workflow_router.contracts import (
     AuthorityState,
     EvidenceDigest,
     OpaqueMetadataId,
     ProcessStage,
     RevisionDigest,
+    SharedContextAccessDecision,
     SharedContextAccessRequest,
     SharedContextActorRole,
     SharedContextContentManifest,
@@ -18,11 +21,14 @@ from library.workflow_router.contracts import (
     SharedContextOperation,
     SharedContextState,
 )
-from library.workflow_router.profile import build_router_poc_profile
+from library.workflow_router.profile import ProjectWorkflowProfile, build_router_poc_profile
 from library.workflow_router.shared_context_service import SharedContextAccessService
 
 
 class SharedContextAccessServiceTests(unittest.TestCase):
+    _revision = "rev-973a99e6b2ce604f"
+    _digest = "sha256_973a99e6b2ce604f31560f8e193440b3f18baa8845e97b8363d144e95feb85ef"
+
     def setUp(self) -> None:
         self.profile = build_router_poc_profile()
         self.service = SharedContextAccessService()
@@ -33,6 +39,23 @@ class SharedContextAccessServiceTests(unittest.TestCase):
                 "0123456789abcdef0123456789abcdef"
             ),
             stable_fact_refs=("fact-current",),
+        )
+
+    def _manifest(
+        self,
+        *,
+        revision: RevisionDigest = "rev-0123456789abcdef",
+        content_digest: EvidenceDigest = (
+            "sha256_0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+        ),
+        suffix: str = "one",
+    ) -> SharedContextContentManifest:
+        return SharedContextContentManifest(
+            revision=revision,
+            content_digest=content_digest,
+            stable_fact_refs=(f"fact-{suffix}",),
+            invariant_boundary_refs=(f"boundary-{suffix}",),
+            artifact_index_refs=(f"artifact-{suffix}",),
         )
 
     def _state(
@@ -73,6 +96,230 @@ class SharedContextAccessServiceTests(unittest.TestCase):
             change_authority_state=change_authority_state,
             approved_change_ref=approved_change_ref,
         )
+
+    def test_shared_context_contracts_round_trip_and_reject_operation_matrix(self) -> None:
+        manifest = self._manifest()
+        absent = self._state(SharedContextLifecycle.ABSENT)
+        create = self._request(
+            operation=SharedContextOperation.CREATE_DRAFT,
+            process_stage=ProcessStage.ARCHITECTURE,
+            candidate_manifest=manifest,
+        )
+        decision = SharedContextAccessDecision(
+            request_ref=create.request_ref,
+            context_ref=create.context_ref,
+            operation=create.operation,
+            decision=SharedContextMutationDecision.ALLOW,
+            resulting_state=absent,
+        )
+        self.assertEqual(
+            manifest,
+            SharedContextContentManifest.model_validate_json(manifest.model_dump_json()),
+        )
+        self.assertEqual(
+            absent,
+            SharedContextState.model_validate_json(absent.model_dump_json()),
+        )
+        self.assertEqual(
+            create,
+            SharedContextAccessRequest.model_validate_json(create.model_dump_json()),
+        )
+        self.assertEqual(
+            decision,
+            SharedContextAccessDecision.model_validate_json(decision.model_dump_json()),
+        )
+
+        operation_payloads = {
+            SharedContextOperation.CREATE_DRAFT: create.model_dump(),
+            SharedContextOperation.REVISE_DRAFT: self._request(
+                operation=SharedContextOperation.REVISE_DRAFT,
+                process_stage=ProcessStage.GRILL,
+                expected_current_revision=manifest.revision,
+                candidate_manifest=self._manifest(
+                    revision="rev-1123456789abcdef",
+                    content_digest=(
+                        "sha256_1123456789abcdef1123456789abcdef1123456789abcdef1123456789abcdef"
+                    ),
+                    suffix="two",
+                ),
+            ).model_dump(),
+            SharedContextOperation.SEAL: self._request(
+                operation=SharedContextOperation.SEAL,
+                process_stage=ProcessStage.CONTEXT,
+                expected_current_revision=manifest.revision,
+            ).model_dump(),
+            SharedContextOperation.READ_REFERENCE: self._request(
+                operation=SharedContextOperation.READ_REFERENCE,
+                process_stage=ProcessStage.REVIEW,
+                expected_current_revision=manifest.revision,
+                actor_role=SharedContextActorRole.SUPERVISOR_REVIEWER,
+                actor_capability_ref="cap-reviewer",
+            ).model_dump(),
+        }
+        for operation, payload in operation_payloads.items():
+            with self.subTest(operation=operation, invalid="missing"):
+                missing = dict(payload)
+                missing.pop("candidate_manifest", None)
+                missing.pop("expected_current_revision", None)
+                with self.assertRaises(ValidationError):
+                    SharedContextAccessRequest.model_validate(missing)
+            with self.subTest(operation=operation, invalid="extra"):
+                extra = dict(payload)
+                extra["progress_refs"] = ("progress-ref",)
+                with self.assertRaises(ValidationError):
+                    SharedContextAccessRequest.model_validate(extra)
+            with self.subTest(operation=operation, invalid="wrong_operation"):
+                wrong_operation = dict(payload)
+                wrong_operation["operation"] = "unsupported"
+                with self.assertRaises(ValidationError):
+                    SharedContextAccessRequest.model_validate(wrong_operation)
+
+        create_wrong = create.model_dump()
+        create_wrong["expected_current_revision"] = manifest.revision
+        with self.assertRaises(ValidationError):
+            SharedContextAccessRequest.model_validate(create_wrong)
+        create_wrong = create.model_dump()
+        create_wrong["change_authority_state"] = AuthorityState.APPROVED
+        with self.assertRaises(ValidationError):
+            SharedContextAccessRequest.model_validate(create_wrong)
+        revise_payload = operation_payloads[SharedContextOperation.REVISE_DRAFT]
+        revise_wrong = dict(revise_payload)
+        revise_wrong["candidate_manifest"] = None
+        with self.assertRaises(ValidationError):
+            SharedContextAccessRequest.model_validate(revise_wrong)
+        seal_payload = operation_payloads[SharedContextOperation.SEAL]
+        seal_wrong = dict(seal_payload)
+        seal_wrong["candidate_manifest"] = manifest
+        with self.assertRaises(ValidationError):
+            SharedContextAccessRequest.model_validate(seal_wrong)
+        read_wrong = dict(operation_payloads[SharedContextOperation.READ_REFERENCE])
+        read_wrong["approved_change_ref"] = "change-approved"
+        with self.assertRaises(ValidationError):
+            SharedContextAccessRequest.model_validate(read_wrong)
+
+    def test_shared_context_manifest_and_state_are_metadata_only(self) -> None:
+        manifest = self._manifest()
+        invalid_manifests = (
+            {"revision": self._revision, "content_digest": self._digest},
+            {
+                **manifest.model_dump(),
+                "revision": "rev-0000000000000000",
+            },
+            {
+                **manifest.model_dump(),
+                "content_digest": "sha256_0000000000000000000000000000000000000000000000000000000000000000",
+            },
+            {
+                **manifest.model_dump(),
+                "artifact_index_refs": manifest.stable_fact_refs,
+            },
+            {
+                **manifest.model_dump(),
+                "progress_refs": ("progress-ref",),
+            },
+            {
+                **manifest.model_dump(),
+                "raw_text": "not metadata",
+            },
+            {
+                **manifest.model_dump(),
+                "uri": "file://outside",
+            },
+            {
+                **manifest.model_dump(),
+                "stable_fact_refs": ("prompt-ref",),
+            },
+            {
+                **manifest.model_dump(),
+                "stable_fact_refs": ("secret-ref",),
+            },
+        )
+        for payload in invalid_manifests:
+            with self.assertRaises(ValidationError):
+                SharedContextContentManifest.model_validate(payload)
+
+        with self.assertRaises(ValidationError):
+            self._state(
+                lifecycle=SharedContextLifecycle.ABSENT,
+                revision=manifest.revision,
+            )
+        with self.assertRaises(ValidationError):
+            self._state(
+                lifecycle=SharedContextLifecycle.ARCHITECTURE_DRAFT,
+                content_digest=manifest.content_digest,
+            )
+        with self.assertRaises(ValidationError):
+            SharedContextState.model_validate(
+                {
+                    "context_ref": "ctx-shared-project",
+                    "lifecycle": SharedContextLifecycle.SEALED,
+                    "revision": "rev-0000000000000000",
+                    "content_digest": manifest.content_digest,
+                }
+            )
+
+    def test_shared_context_profile_accepts_distinct_project_metadata(self) -> None:
+        profile = build_router_poc_profile()
+        alternate = ProjectWorkflowProfile.model_validate(
+            {
+                **profile.model_dump(),
+                "shared_context_ref": "ctx-profile-project",
+                "architecture_owner_capability_ref": "cap-profile-architecture-owner",
+            }
+        )
+        self.assertEqual("ctx-profile-project", alternate.shared_context_ref)
+        self.assertEqual(
+            "cap-profile-architecture-owner",
+            alternate.architecture_owner_capability_ref,
+        )
+
+    def test_shared_context_manifest_accepts_semantic_tree_reference_ids(self) -> None:
+        manifest = SharedContextContentManifest(
+            revision="rev-0123456789abcdef",
+            content_digest=(
+                "sha256_0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+            ),
+            stable_fact_refs=("fact-requirement-current",),
+            invariant_boundary_refs=("boundary-invariant-current",),
+            artifact_index_refs=("idx-ticket-current",),
+        )
+        self.assertEqual(("idx-ticket-current",), manifest.artifact_index_refs)
+
+    def test_shared_context_rejects_reserved_expected_revision(self) -> None:
+        manifest = self._manifest()
+        revised_manifest = self._manifest(
+            revision="rev-1123456789abcdef",
+            content_digest=(
+                "sha256_1123456789abcdef1123456789abcdef1123456789abcdef1123456789abcdef"
+            ),
+            suffix="two",
+        )
+        valid_requests = (
+            self._request(
+                operation=SharedContextOperation.REVISE_DRAFT,
+                process_stage=ProcessStage.GRILL,
+                expected_current_revision=manifest.revision,
+                candidate_manifest=revised_manifest,
+            ),
+            self._request(
+                operation=SharedContextOperation.SEAL,
+                process_stage=ProcessStage.CONTEXT,
+                expected_current_revision=manifest.revision,
+            ),
+            self._request(
+                operation=SharedContextOperation.READ_REFERENCE,
+                process_stage=ProcessStage.REVIEW,
+                expected_current_revision=manifest.revision,
+                actor_role=SharedContextActorRole.SUPERVISOR_REVIEWER,
+                actor_capability_ref="cap-reviewer",
+            ),
+        )
+        for request in valid_requests:
+            with self.subTest(operation=request.operation):
+                payload = request.model_dump()
+                payload["expected_current_revision"] = "rev-0000000000000000"
+                with self.assertRaises(ValidationError):
+                    SharedContextAccessRequest.model_validate(payload)
 
     def test_create_binds_candidate_state_and_rejects_wrong_writer(self) -> None:
         absent = self._state(SharedContextLifecycle.ABSENT)
