@@ -546,6 +546,88 @@ class EvidenceStageRenderingTests(unittest.TestCase):
         self.assertNotIn("證據 review:<approved>", page)
 
 
+class ParentFindingRenderingTests(unittest.TestCase):
+    def test_child_status_and_finding_owner_and_destination_are_visible(self) -> None:
+        page = render(
+            _document(
+                _one_ticket(
+                    state="APPROVED",
+                    children=[
+                        {
+                            "id": "A1",
+                            "requirement": "REQUIRED",
+                            "state": "IN_PROGRESS",
+                            "title": "尚未完成的子票",
+                            "ticket_path": "modules/tickets/demo/a1.md",
+                        },
+                        {
+                            "id": "B1",
+                            "requirement": "OPTIONAL",
+                            "state": "UNKNOWN",
+                            "title": None,
+                            "ticket_path": None,
+                        },
+                    ],
+                    findings=[
+                        {
+                            "id": "F1",
+                            "owner": "owner-a",
+                            "state": "OPEN",
+                            "disposition_ref": None,
+                        },
+                        {
+                            "id": "F2",
+                            "owner": "owner-b",
+                            "state": "CLOSED",
+                            "disposition_ref": "review:F2-resolved",
+                        },
+                    ],
+                )
+            )
+        )
+        self.assertIn("子票狀態（投影）", page)
+        self.assertIn("A1", page)
+        self.assertIn("REQUIRED · IN_PROGRESS", page)
+        self.assertIn("尚未完成的子票", page)
+        self.assertIn("B1", page)
+        self.assertIn("OPTIONAL · UNKNOWN", page)
+        self.assertIn("F1", page)
+        self.assertIn("OPEN · 責任人 owner-a", page)
+        self.assertIn("去向 尚未結案", page)
+        self.assertIn("review:F2-resolved", page)
+        self.assertIn("不驗證證據內容，也不授予正式結案權限", page)
+
+    def test_all_child_and_finding_text_is_html_escaped(self) -> None:
+        page = render(
+            _document(
+                _one_ticket(
+                    children=[
+                        {
+                            "id": '<img src=x onerror="x">',
+                            "requirement": "OPTIONAL",
+                            "state": "UNKNOWN",
+                            "title": "<script>child</script>",
+                            "ticket_path": '" onmouseover="x',
+                        }
+                    ],
+                    findings=[
+                        {
+                            "id": '<svg onload="x">',
+                            "owner": '<img src=x onerror="x">',
+                            "state": "OPEN",
+                            "disposition_ref": None,
+                        }
+                    ],
+                )
+            )
+        )
+        self.assertNotIn("<script>child</script>", page)
+        self.assertNotIn('<img src=x onerror="x">', page)
+        self.assertNotIn('<svg onload="x">', page)
+        self.assertIn("&lt;script&gt;child&lt;/script&gt;", page)
+        self.assertIn("&lt;svg onload=&quot;x&quot;&gt;", page)
+
+
 class ReasonTests(unittest.TestCase):
     """A row may never say work failed without saying what to fix."""
 

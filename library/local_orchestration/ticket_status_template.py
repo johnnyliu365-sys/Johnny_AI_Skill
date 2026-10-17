@@ -118,7 +118,10 @@ _NO_STAGES = "尚未列出階段"
 _NO_RELEASE = "尚未發行"
 _NO_ROLLBACK = "尚無回滾點"
 
-_FOOT = "每一列都來自 git 與工單檔本身。讀不到的來源會就地標示，不會靜靜地變成空白。"
+_FOOT = (
+    "每一列都來自 git 與工單檔本身。讀不到的來源會就地標示，不會靜靜地變成空白。"
+    "父子與 Finding 僅為狀態投影；引用不驗證證據內容，也不授予正式結案權限。"
+)
 
 
 def _esc(value: object) -> str:
@@ -245,6 +248,53 @@ def _stages(stages: list[object]) -> str:
     return f'<div class="stages"><span class="lab">階段</span>{"".join(chips)}</div>'
 
 
+def _children(children: list[object]) -> str:
+    if not children:
+        return ""
+    rows = []
+    for child in children:
+        child = _mapping(child)
+        title = child.get("title")
+        path = child.get("ticket_path")
+        details = ""
+        if title:
+            details += f'<span class="relation-title">{_esc(title)}</span>'
+        if path:
+            details += f'<code>{_esc(path)}</code>'
+        rows.append(
+            "<li>"
+            f'<code>{_esc(child.get("id"))}</code>'
+            f'<span>{_esc(child.get("requirement"))} · '
+            f'{_esc(child.get("state"))}</span>{details}</li>'
+        )
+    return (
+        '<div class="relations"><span class="lab">子票狀態（投影）</span>'
+        f'<ul>{"".join(rows)}</ul></div>'
+    )
+
+
+def _findings(findings: list[object]) -> str:
+    if not findings:
+        return ""
+    rows = []
+    for finding in findings:
+        finding = _mapping(finding)
+        state = _text(finding.get("state"))
+        destination = finding.get("disposition_ref")
+        destination_text = _esc(destination) if destination else "尚未結案"
+        rows.append(
+            "<li>"
+            f'<code>{_esc(finding.get("id"))}</code>'
+            f'<span>{_esc(state)} · 責任人 {_esc(finding.get("owner"))}</span>'
+            f'<span class="finding-destination">去向 {destination_text}</span>'
+            "</li>"
+        )
+    return (
+        '<div class="relations"><span class="lab">Finding（投影）</span>'
+        f'<ul>{"".join(rows)}</ul></div>'
+    )
+
+
 def _where(ticket: dict[str, object]) -> str:
     """Where the ticket stands. The commit cell is always drawn, even empty."""
 
@@ -321,6 +371,8 @@ def _ticket(ticket: object) -> str:
     )
     parts.append(f'<span class="badge" data-state="{_esc(slug)}">{_esc(caption)}</span>')
     parts.append(_stages(_sequence(ticket.get("stages"))))
+    parts.append(_children(_sequence(ticket.get("children"))))
+    parts.append(_findings(_sequence(ticket.get("findings"))))
     parts.append(_why(state, ticket.get("reason")))
     parts.append(_where(ticket))
 
@@ -460,6 +512,14 @@ body{margin:0;background:var(--bg);color:var(--ink);
 .stages .lab{font-size:11px;color:var(--faint);margin-right:3px;
   letter-spacing:.05em}
 .stages .none{font-size:11px;color:var(--faint)}
+.relations{grid-column:1 / -1;border-top:1px dashed var(--line);padding-top:8px}
+.relations .lab{display:block;font-size:11px;color:var(--faint);letter-spacing:.05em}
+.relations ul{margin:4px 0 0;padding:0;list-style:none;display:grid;gap:4px}
+.relations li{display:flex;flex-wrap:wrap;gap:2px 10px;align-items:baseline;
+  font-size:12px;color:var(--dim)}
+.relations code{font-family:var(--mono);font-size:11px;color:var(--ink)}
+.relation-title{color:var(--ink)}
+.finding-destination{color:var(--dim)}
 /* The base treatment is deliberately the *unclassified* one: a faint edge and
    dim ink. A stage state the page does not recognise is a defect, and the one
    direction it must never fail in is looking finished, so it keeps an edge

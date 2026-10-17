@@ -91,6 +91,8 @@ class BlockParsingTests(unittest.TestCase):
         self.assertEqual(declared["id"], "V9")
         self.assertEqual(declared["state"], "NEEDS_OWNER")
         self.assertEqual(declared["reason"], "等你決定方向")
+        self.assertEqual(declared["children"], [])
+        self.assertEqual(declared["findings"], [])
         self.assertEqual(
             declared["stages"],
             [
@@ -116,6 +118,65 @@ class BlockParsingTests(unittest.TestCase):
         self.assertEqual(stages[1]["state"], "NOT_VERIFIED")
         self.assertIsNone(stages[1]["evidence_ref"])
         self.assertEqual(stages[3]["requirement"], "OPTIONAL")
+
+    def test_child_and_finding_metadata_are_optional_and_typed(self) -> None:
+        declared = parse_status_block(
+            "id = P1\ntitle = parent\nstate = IN_PROGRESS\n"
+            "child = A1 | REQUIRED\n"
+            "child = B1 | OPTIONAL\n"
+            "finding = F1 | owner-a | OPEN | -\n"
+            "finding = F2 | owner-b | CLOSED | review:F2-resolved\n"
+        )
+        self.assertEqual(
+            declared["children"],
+            [
+                {"id": "A1", "requirement": "REQUIRED"},
+                {"id": "B1", "requirement": "OPTIONAL"},
+            ],
+        )
+        self.assertEqual(
+            declared["findings"],
+            [
+                {
+                    "id": "F1",
+                    "owner": "owner-a",
+                    "state": "OPEN",
+                    "disposition_ref": None,
+                },
+                {
+                    "id": "F2",
+                    "owner": "owner-b",
+                    "state": "CLOSED",
+                    "disposition_ref": "review:F2-resolved",
+                },
+            ],
+        )
+
+    def test_child_ids_are_exact_and_must_not_repeat(self) -> None:
+        with self.assertRaisesRegex(ValueError, "不可重複"):
+            parse_status_block(
+                "id = P1\ntitle = parent\nstate = DONE\n"
+                "child = A1 | REQUIRED\nchild = A1 | OPTIONAL\n"
+            )
+        with self.assertRaises(ValueError):
+            parse_status_block(
+                "id = P1\ntitle = parent\nstate = DONE\nchild = A/1 | REQUIRED\n"
+            )
+
+    def test_findings_require_owner_and_closed_findings_require_bounded_ref(self) -> None:
+        invalid_blocks = (
+            "finding = F1 | - | OPEN | -",
+            "finding = F1 | owner | OPEN | review:closed",
+            "finding = F1 | owner | CLOSED | bad reference",
+            "finding = F1 | owner | CLOSED | -",
+            "finding = F1 | owner | OPEN | -\nfinding = F1 | owner | CLOSED | review:F1",
+        )
+        for finding in invalid_blocks:
+            with self.subTest(finding=finding):
+                with self.assertRaises(ValueError):
+                    parse_status_block(
+                        "id = P1\ntitle = parent\nstate = DONE\n" + finding + "\n"
+                    )
 
     def test_a_mixed_legacy_and_evidence_stage_block_is_refused(self) -> None:
         with self.assertRaisesRegex(ValueError, "不可混用"):
@@ -424,6 +485,253 @@ class DocumentTests(unittest.TestCase):
             document = build_document(root)
             self.assertIsNone(document["release"])
             self.assertIsNone(document["rollback"])
+
+
+class ParentFindingProjectionTests(unittest.TestCase):
+    @staticmethod
+    def _status(ticket_id: str, state: str, *metadata: str) -> str:
+        lines = [f"id = {ticket_id}", f"title = ticket {ticket_id}", f"state = {state}"]
+        lines.extend(metadata)
+        return "\n".join(lines) + "\n"
+
+    def test_required_unverified_child_cannot_leave_parent_approved(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = _repository(Path(temporary))
+            _write_ticket(
+                root,
+                "demo",
+                "a.md",
+                _ticket(
+                    "A",
+                    block=self._status(
+                        "A",
+                        "IN_PROGRESS",
+                        "stage = TEST | 測試 | NOT_VERIFIED | REQUIRED | -",
+                    ),
+                ),
+            )
+            _write_ticket(
+                root, "demo", "b.md", _ticket("B", block=self._status("B", "APPROVED"))
+            )
+            _write_ticket(
+                root,
+                "demo",
+                "parent.md",
+                _ticket(
+                    "Parent",
+                    block=self._status(
+                        "P",
+                        "APPROVED",
+                        "child = A | REQUIRED",
+                        "child = B | REQUIRED",
+                    ),
+                ),
+            )
+            _write_ticket(
+                root, "demo", "unrelated.md", _ticket("C", block=self._status("C", "DONE"))
+            )
+            _commit(root, "tickets: required child projection")
+
+            document = build_document(root)
+            visible_ids = {ticket["id"] for ticket in document["tickets"]}
+            self.assertEqual(visible_ids, {"A", "B", "C"})
+            parent_error = next(
+                source
+                for source in document["unreadable"]
+                if source["path"] == "modules/tickets/demo/parent.md"
+            )
+            self.assertIn("必要子票 A", parent_error["reason"])
+            self.assertNotIn("P", visible_ids)
+
+    def test_optional_unfinished_child_is_visible_without_blocking_parent_or_peer(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = _repository(Path(temporary))
+            _write_ticket(
+                root, "demo", "b.md", _ticket("B", block=self._status("B", "DONE"))
+            )
+            _write_ticket(
+                root,
+                "demo",
+                "parent.md",
+                _ticket(
+                    "Parent",
+                    block=self._status(
+                        "P",
+                        "APPROVED",
+                        "child = B | OPTIONAL",
+                        "finding = F9 | owner-z | CLOSED | review:F9-resolved",
+                    ),
+                ),
+            )
+            _write_ticket(
+                root, "demo", "unrelated.md", _ticket("C", block=self._status("C", "IN_PROGRESS"))
+            )
+            _commit(root, "tickets: optional child projection")
+
+            document = build_document(root)
+            projected = {ticket["id"]: ticket for ticket in document["tickets"]}
+            self.assertEqual(set(projected), {"B", "P", "C"})
+            self.assertEqual(projected["P"]["state"], "APPROVED")
+            self.assertEqual(projected["P"]["findings"][0]["state"], "CLOSED")
+            self.assertEqual(
+                projected["P"]["findings"][0]["disposition_ref"],
+                "review:F9-resolved",
+            )
+            self.assertEqual(
+                projected["P"]["children"],
+                [
+                    {
+                        "id": "B",
+                        "requirement": "OPTIONAL",
+                        "state": "DONE",
+                        "title": "ticket B",
+                        "ticket_path": "modules/tickets/demo/b.md",
+                    }
+                ],
+            )
+            self.assertEqual(document["unreadable"], [])
+
+    def test_unknown_required_child_only_marks_its_parent_unreadable(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = _repository(Path(temporary))
+            _write_ticket(
+                root,
+                "demo",
+                "parent.md",
+                _ticket(
+                    "Parent",
+                    block=self._status("P", "APPROVED", "child = MISSING | REQUIRED"),
+                ),
+            )
+            _write_ticket(
+                root, "demo", "unrelated.md", _ticket("C", block=self._status("C", "DONE"))
+            )
+            _commit(root, "tickets: unknown required child")
+
+            document = build_document(root)
+            self.assertEqual([ticket["id"] for ticket in document["tickets"]], ["C"])
+            self.assertEqual(len(document["unreadable"]), 1)
+            self.assertIn("MISSING", document["unreadable"][0]["reason"])
+
+    def test_optional_unknown_child_remains_explicit_and_does_not_invent_approval(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = _repository(Path(temporary))
+            _write_ticket(
+                root,
+                "demo",
+                "parent.md",
+                _ticket(
+                    "Parent",
+                    block=self._status("P", "APPROVED", "child = MISSING | OPTIONAL"),
+                ),
+            )
+            _commit(root, "tickets: unknown optional child")
+
+            parent = build_document(root)["tickets"][0]
+            self.assertEqual(parent["state"], "APPROVED")
+            self.assertEqual(parent["children"][0]["state"], "UNKNOWN")
+
+    def test_self_reference_and_cycles_are_unreadable_without_hiding_unrelated_ticket(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = _repository(Path(temporary))
+            _write_ticket(
+                root,
+                "demo",
+                "a.md",
+                _ticket("A", block=self._status("A", "APPROVED", "child = B | OPTIONAL")),
+            )
+            _write_ticket(
+                root,
+                "demo",
+                "b.md",
+                _ticket("B", block=self._status("B", "APPROVED", "child = A | OPTIONAL")),
+            )
+            _write_ticket(
+                root,
+                "demo",
+                "self.md",
+                _ticket("S", block=self._status("S", "DONE", "child = S | OPTIONAL")),
+            )
+            _write_ticket(
+                root, "demo", "unrelated.md", _ticket("C", block=self._status("C", "DONE"))
+            )
+            _commit(root, "tickets: cyclic child projection")
+
+            document = build_document(root)
+            self.assertEqual([ticket["id"] for ticket in document["tickets"]], ["C"])
+            reasons = {source["path"]: source["reason"] for source in document["unreadable"]}
+            self.assertIn("循環", reasons["modules/tickets/demo/a.md"])
+            self.assertIn("循環", reasons["modules/tickets/demo/b.md"])
+            self.assertIn("自己", reasons["modules/tickets/demo/self.md"])
+
+    def test_ambiguous_required_child_id_is_not_first_match_wins(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = _repository(Path(temporary))
+            _write_ticket(
+                root, "one", "a.md", _ticket("A1", block=self._status("A", "APPROVED"))
+            )
+            _write_ticket(
+                root, "two", "a.md", _ticket("A2", block=self._status("A", "APPROVED"))
+            )
+            _write_ticket(
+                root,
+                "demo",
+                "parent.md",
+                _ticket(
+                    "Parent",
+                    block=self._status("P", "APPROVED", "child = A | REQUIRED"),
+                ),
+            )
+            _commit(root, "tickets: ambiguous child id")
+
+            document = build_document(root)
+            self.assertNotIn("P", {ticket["id"] for ticket in document["tickets"]})
+            self.assertTrue(
+                any("多筆工單" in source["reason"] for source in document["unreadable"])
+            )
+
+    def test_open_finding_invalidates_approved_parent_but_keeps_owner_when_open(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = _repository(Path(temporary))
+            _write_ticket(
+                root,
+                "demo",
+                "parent.md",
+                _ticket(
+                    "Parent",
+                    block=self._status(
+                        "P", "APPROVED", "finding = F1 | owner-x | OPEN | -"
+                    ),
+                ),
+            )
+            _write_ticket(
+                root,
+                "demo",
+                "working.md",
+                _ticket(
+                    "Working",
+                    block=self._status(
+                        "W", "IN_PROGRESS", "finding = F2 | owner-y | OPEN | -"
+                    ),
+                ),
+            )
+            _commit(root, "tickets: finding closure projection")
+
+            document = build_document(root)
+            visible = {ticket["id"]: ticket for ticket in document["tickets"]}
+            self.assertNotIn("P", visible)
+            self.assertIn("OPEN Finding", document["unreadable"][0]["reason"])
+            self.assertEqual(
+                visible["W"]["findings"],
+                [
+                    {
+                        "id": "F2",
+                        "owner": "owner-y",
+                        "state": "OPEN",
+                        "disposition_ref": None,
+                    }
+                ],
+            )
 
 
 class DeclaredCommitTests(unittest.TestCase):

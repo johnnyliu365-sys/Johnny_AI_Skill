@@ -12,6 +12,8 @@ Two rules decide the whole design.
 does not parse the English in a State row, because a sentence like "R2/R3
 landed; R4 open" is a summary written for a human and reading it as data is how
 a page ends up confidently wrong about work the owner is depending on.
+Child and Finding metadata may reject an inconsistent declared APPROVED row as
+unreadable; it never promotes or infers another ticket state.
 
 **Absent and broken are different answers.** A ticket file with no block has
 not opted in to this surface and is simply not listed. A file whose block is
@@ -49,6 +51,9 @@ _TICKET_STATES = (
 _LEGACY_STAGE_STATES = ("DONE", "OPEN")
 _EVIDENCE_STAGE_STATES = ("DONE", "OPEN", "NOT_VERIFIED")
 _STAGE_REQUIREMENTS = ("REQUIRED", "OPTIONAL")
+_TICKET_ID = re.compile(r"[A-Za-z0-9][A-Za-z0-9._:-]{0,63}\Z")
+_CHILD_REQUIREMENTS = ("REQUIRED", "OPTIONAL")
+_FINDING_STATES = ("OPEN", "CLOSED")
 _EVIDENCE_REF = re.compile(r"[A-Za-z0-9][A-Za-z0-9._:/#-]{0,127}\Z")
 _SCALAR_KEYS = frozenset(
     {"id", "title", "state", "reason", "released_in", "commit"}
@@ -88,8 +93,12 @@ def parse_status_block(body: str) -> dict[str, object]:
 
     scalars: dict[str, str] = {}
     stages: list[dict[str, str | None]] = []
+    children: list[dict[str, str]] = []
+    findings: list[dict[str, str | None]] = []
     stage_format: int | None = None
     evidence_stage_refs: set[str] = set()
+    child_ids: set[str] = set()
+    finding_ids: set[str] = set()
     for raw in body.splitlines():
         line = raw.strip()
         if not line or line.startswith("#"):
@@ -151,6 +160,61 @@ def parse_status_block(body: str) -> dict[str, object]:
                     }
                 )
             continue
+        if key == "child":
+            fields = [field.strip() for field in value.split("|")]
+            if len(fields) != 2:
+                raise ValueError("child 要寫成 ticket-id | REQUIRED|OPTIONAL")
+            child_id, requirement = fields
+            if not _TICKET_ID.fullmatch(child_id):
+                raise ValueError(f"child ticket-id 格式無效：{child_id!r}")
+            if requirement not in _CHILD_REQUIREMENTS:
+                raise ValueError(
+                    f"child 必要性只能是 {_CHILD_REQUIREMENTS}：{requirement!r}"
+                )
+            if child_id in child_ids:
+                raise ValueError(f"child ticket-id 不可重複：{child_id!r}")
+            child_ids.add(child_id)
+            children.append({"id": child_id, "requirement": requirement})
+            continue
+        if key == "finding":
+            fields = [field.strip() for field in value.split("|")]
+            if len(fields) != 4:
+                raise ValueError(
+                    "finding 要寫成 id | owner | OPEN|CLOSED | disposition/evidence-ref"
+                )
+            finding_id, owner, finding_state, disposition_ref = fields
+            if not _TICKET_ID.fullmatch(finding_id):
+                raise ValueError(f"finding id 格式無效：{finding_id!r}")
+            if finding_id in finding_ids:
+                raise ValueError(f"finding id 不可重複：{finding_id!r}")
+            finding_ids.add(finding_id)
+            if not owner or owner == "-" or len(owner) > 80 or not all(
+                character.isprintable() for character in owner
+            ):
+                raise ValueError("finding 必須保留有效責任人")
+            if finding_state not in _FINDING_STATES:
+                raise ValueError(
+                    f"finding 狀態只能是 {_FINDING_STATES}：{finding_state!r}"
+                )
+            if finding_state == "OPEN":
+                if disposition_ref != _NULL:
+                    raise ValueError("OPEN finding 的去向必須是 '-'")
+                finding_ref = None
+            else:
+                if not _EVIDENCE_REF.fullmatch(disposition_ref):
+                    raise ValueError(
+                        "CLOSED finding 必須提供受限格式 disposition/evidence-ref"
+                    )
+                finding_ref = disposition_ref
+            findings.append(
+                {
+                    "id": finding_id,
+                    "owner": owner,
+                    "state": finding_state,
+                    "disposition_ref": finding_ref,
+                }
+            )
+            continue
         if key not in _SCALAR_KEYS:
             # A typo here would silently drop a field, so it is an error and
             # not something to skip past.
@@ -193,6 +257,8 @@ def parse_status_block(body: str) -> dict[str, object]:
         "state": state,
         "reason": reason,
         "stages": stages,
+        "children": children,
+        "findings": findings,
         "released_in": None if released in ("", _NULL) else released,
     }
 
@@ -256,6 +322,177 @@ def _tag_commit(repository_root: Path, tag: str) -> str | None:
     return _git(repository_root, "rev-parse", "--short", f"{tag}^{{commit}}")
 
 
+def _project_children_and_findings(
+    tickets: list[dict[str, object]], unreadable: list[dict[str, str]]
+) -> list[dict[str, object]]:
+    """Resolve opt-in relationships for display without granting closure authority."""
+
+    by_id: dict[str, list[dict[str, object]]] = {}
+    by_path: dict[str, dict[str, object]] = {}
+    for ticket in tickets:
+        ticket_id = str(ticket["id"])
+        path = str(ticket["ticket_path"])
+        by_id.setdefault(ticket_id, []).append(ticket)
+        by_path[path] = ticket
+
+    edges: dict[str, list[str]] = {path: [] for path in by_path}
+    direct_errors: dict[str, list[str]] = {}
+    for path, ticket in by_path.items():
+        children = ticket.get("children", [])
+        if not isinstance(children, list):
+            continue
+        for child in children:
+            if not isinstance(child, dict):
+                continue
+            child_id = str(child.get("id", ""))
+            matches = by_id.get(child_id, [])
+            if len(matches) == 1:
+                child_path = str(matches[0]["ticket_path"])
+                if child_path == path:
+                    direct_errors.setdefault(path, []).append(
+                        f"子票 {child_id} 不可指向自己"
+                    )
+                else:
+                    edges[path].append(child_path)
+
+    # A cycle invalidates only its participating opted-in tickets. Unrelated
+    # tickets remain available on the page.
+    visiting: list[str] = []
+    visited: set[str] = set()
+    cycle_paths: set[str] = set()
+
+    def visit(path: str) -> None:
+        if path in visited:
+            return
+        if path in visiting:
+            cycle_paths.update(visiting[visiting.index(path) :])
+            return
+        visiting.append(path)
+        for child_path in edges[path]:
+            visit(child_path)
+        visiting.pop()
+        visited.add(path)
+
+    for path in edges:
+        visit(path)
+    for path in cycle_paths:
+        direct_errors.setdefault(path, []).append("子票關聯形成循環")
+
+    child_views: dict[str, list[dict[str, object]]] = {}
+    for path, ticket in by_path.items():
+        view: list[dict[str, object]] = []
+        children = ticket.get("children", [])
+        if isinstance(children, list):
+            for child in children:
+                if not isinstance(child, dict):
+                    continue
+                child_id = str(child.get("id", ""))
+                requirement = str(child.get("requirement", ""))
+                matches = by_id.get(child_id, [])
+                projected_path: str | None
+                child_title: object
+                if not matches:
+                    child_state = "UNKNOWN"
+                    child_title = None
+                    projected_path = None
+                    if requirement == "REQUIRED":
+                        direct_errors.setdefault(path, []).append(
+                            f"必要子票 {child_id} 不在本次讀取集合中"
+                        )
+                elif len(matches) > 1:
+                    child_state = "AMBIGUOUS"
+                    child_title = None
+                    projected_path = None
+                    if requirement == "REQUIRED":
+                        direct_errors.setdefault(path, []).append(
+                            f"必要子票 {child_id} 對應多筆工單"
+                        )
+                else:
+                    resolved = matches[0]
+                    child_state = str(resolved["state"])
+                    child_title = resolved["title"]
+                    resolved_path = resolved["ticket_path"]
+                    if isinstance(resolved_path, str):
+                        projected_path = resolved_path
+                    else:
+                        projected_path = None
+                        direct_errors.setdefault(path, []).append(
+                            f"子票 {child_id} 缺少可讀路徑"
+                        )
+                    if projected_path in cycle_paths:
+                        child_state = "UNREADABLE"
+                view.append(
+                    {
+                        "id": child_id,
+                        "requirement": requirement,
+                        "state": child_state,
+                        "title": child_title,
+                        "ticket_path": projected_path,
+                    }
+                )
+        child_views[path] = view
+
+    invalid_paths = set(direct_errors)
+    # Approval must not survive a required child that is incomplete or whose
+    # own projection is invalid. Iteration propagates that condition upward.
+    changed = True
+    while changed:
+        changed = False
+        for path, ticket in by_path.items():
+            if str(ticket["state"]) != "APPROVED" or path in invalid_paths:
+                continue
+            for child in child_views[path]:
+                if child["requirement"] != "REQUIRED":
+                    continue
+                required_child_path = child["ticket_path"]
+                if child["state"] != "APPROVED" or (
+                    isinstance(required_child_path, str)
+                    and required_child_path in invalid_paths
+                ):
+                    direct_errors.setdefault(path, []).append(
+                        f"必要子票 {child['id']} 尚未投影為有效 APPROVED"
+                    )
+                    invalid_paths.add(path)
+                    changed = True
+                    break
+            if path in invalid_paths:
+                continue
+            findings = ticket.get("findings", [])
+            if isinstance(findings, list) and any(
+                isinstance(finding, dict) and finding.get("state") == "OPEN"
+                for finding in findings
+            ):
+                direct_errors.setdefault(path, []).append(
+                    "APPROVED 工單仍有 OPEN Finding"
+                )
+                invalid_paths.add(path)
+                changed = True
+
+    visible: list[dict[str, object]] = []
+    for path, ticket in by_path.items():
+        if path in invalid_paths:
+            reasons = list(dict.fromkeys(direct_errors.get(path, [])))
+            unreadable.append(
+                {
+                    "label": str(ticket["id"]),
+                    "path": path,
+                    "reason": "；".join(reasons) or "父項／Finding 投影無效",
+                }
+            )
+            continue
+        projected = dict(ticket)
+        projected["children"] = child_views[path]
+        for child in child_views[path]:
+            projected_child_path = child.get("ticket_path")
+            if (
+                isinstance(projected_child_path, str)
+                and projected_child_path in invalid_paths
+            ):
+                child["state"] = "UNREADABLE"
+        visible.append(projected)
+    return visible
+
+
 def build_document(repository_root: Path) -> dict[str, object]:
     """Produce the whole document the template renders. Facts only."""
 
@@ -315,6 +552,7 @@ def build_document(repository_root: Path) -> dict[str, object]:
         )
         tickets.append(declared)
 
+    tickets = _project_children_and_findings(tickets, unreadable)
     tickets.sort(key=lambda item: (_STATE_ORDER[str(item["state"])], str(item["id"])))
 
     release_tag = _newest_tag(repository_root, "v*", "-v:refname")
