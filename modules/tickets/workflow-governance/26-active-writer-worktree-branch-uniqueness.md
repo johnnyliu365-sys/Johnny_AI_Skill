@@ -14,8 +14,6 @@
 ```johnny-boundary
 modify = library/local_orchestration/worker_assignment.py
 modify = tests/test_worker_assignment.py
-create =
-delete =
 forbid = modules/spec/
 forbid = skills/
 forbid = doc/requirements/
