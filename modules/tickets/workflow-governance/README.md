@@ -19,6 +19,7 @@ Deliver one control-plane policy vertical slice: completion evidence must re-ent
 | [26-active-writer-worktree-branch-uniqueness](26-active-writer-worktree-branch-uniqueness.md) | The existing worker-claim ledger rejects two active writers on one worktree or branch | `SLICE_LOCAL_INTEGRATED` | Independent review approved; `9cedb55f`; generic prewrite protection still open |
 | [27-evidence-linked-ticket-status-projection](27-evidence-linked-ticket-status-projection.md) | Opt-in evidence-bearing stage projection rejects false APPROVED with required work unverified | `SLICE_LOCAL_INTEGRATED` | Independent review approved; `3196712d`; parent/finding closure still open |
 | [28-minimal-complete-dispatch-ticket](28-minimal-complete-dispatch-ticket.md) | One ticket template carries sourced Expected, I/O, failure/boundary acceptance and stop/review conditions | `OPEN` | Owner 2026-10-18 checklist item 03; reuse existing ticket schema, no parallel parser |
+| [29-mainline-ticket-projection](29-mainline-ticket-projection.md) | Separate the work mainline from a single ticket; recommend next recheck without granting dispatch | `OPEN` | Owner 2026-10-18 checklist item 01; pure projection, formal closure remains separate |
 
 ## Shared baseline
 
