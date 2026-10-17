@@ -2,7 +2,7 @@
 
 | 欄位 | 內容 |
 | --- | --- |
-| State | `OPEN / DISPATCHABLE`；A 通過獨審前，後續 B 不得派工 |
+| State | `A_LOCAL_INTEGRATED` at `ac369235`；獨審通過，後續 B 可另票派工 |
 | Authority | 沿用 `PRD-20260805-009`／`CHG-20260805-009`、`modules/spec/workflow-governance.md`、Ticket 25 已整合的 TEST→A→B 規則；不建立新需求 |
 | Baseline | 派工時精確釘選控制分支 HEAD；實作者以自己的 repo-contained worktree 工作 |
 | Profile／roles | `STANDARD`；實作者為當前已驗證可勝任的低成本模型，另一席獨立審閱；審閱強度不得低於實作 |

@@ -23,7 +23,7 @@ Deliver one control-plane policy vertical slice: completion evidence must re-ent
 | [30-trusted-independent-ticket-continuation](30-trusted-independent-ticket-continuation.md) | Trusted independent B continuation and mainline remaining open after A waits | `PREFLIGHT_REQUIRED / NON_DISPATCHABLE` | Existing Ticket 24 B finding retained; exact source/authority binding needed before dispatch |
 | [31-semantic-model-profile-boundary](31-semantic-model-profile-boundary.md) | Keep universal Skill model-neutral while the current verified Profile selects capability | `SLICE_LOCAL_INTEGRATED` | Independent review and control gate passed at `68a10057`; paid test isolation/reporting remain separate |
 | [32-test-consumer-inventory](32-test-consumer-inventory.md) | Find direct and indirect test consumers before test retirement | `SLICE_LOCAL_INTEGRATED` | Independent review and control gate passed at `2a19406d`; Host/CI retirement admission open |
-| [33-shared-context-service-seam](33-shared-context-service-seam.md) | TEST→A transfers actual Shared Context behavior from Router to one service | `OPEN / DISPATCHABLE` | Existing Ticket 25 seam policy; B waits for reviewed A candidate |
+| [33-shared-context-service-seam](33-shared-context-service-seam.md) | TEST→A transfers actual Shared Context behavior from Router to one service | `A_LOCAL_INTEGRATED` | Independent review approved; `ac369235`; B test seam/retirement still open |
 
 ## Shared baseline
 
