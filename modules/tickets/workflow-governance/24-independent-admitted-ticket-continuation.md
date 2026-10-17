@@ -2,7 +2,7 @@
 
 | 欄位 | 內容 |
 | --- | --- |
-| State | `IN_PROGRESS`；Owner 2026-10-18 改進清單項目 02 |
+| State | `REVIEW_CHANGES_REQUESTED / CAPABILITY_GAP`；Owner 2026-10-18 改進清單項目 02 |
 | Authority | `PRD-20260805-009`、`CHG-20260805-009`、`modules/spec/workflow-governance.md` AC 1–4；本票只驗證現行授權內的接續，不改批准含義 |
 | Baseline | `7c1660e53f0789a416f5858d933519af76ef5b9b`；同一 repo 的獨立 worktree |
 | Implementation language | Python 3.11；政策文件 Markdown |
@@ -50,3 +50,11 @@ forbid = .worktrees/
 Run：`python -m pytest tests/test_autonomous_collaboration.py -q`、`git diff --check`。獨審另作一次反向突變，證明至少一個新斷言在相反結果時轉紅，再還原回綠。
 
 Return：`IMPLEMENTED | BLOCKED | CHANGE_DETECTED`、候選完整 SHA、實際變更檔、命令／退出碼、測試結果、發現、scope deviations、未驗證項。實作者不整合、不推送；Review 不得由同席完成。
+
+## Review 01 / pending correction
+
+獨審結論 `CHANGES_REQUESTED`，精確證據見
+`doc/reviews/workflow-governance/24-independent-admitted-ticket-continuation-code-review.md`。
+目前候選僅證明派工確認等待，不證明 SQL/不可逆 effect 等待或主線相依；
+`EXTERNAL_DECISION_REQUIRED` 在事件列舉中存在，但現行 POC Profile 未宣告對應轉移。
+不得把此候選算作項目 02 完成，也不得藉修正自行新增權限。

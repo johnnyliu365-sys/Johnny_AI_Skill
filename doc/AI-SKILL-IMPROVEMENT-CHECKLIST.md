@@ -18,7 +18,7 @@ Router、Reviewer、文件索引與結案規則仍各有唯一正文。`[x]` 只
 | 項目 | 狀態 | 作者／修改位置 | 驗證方式與目前結果 | 獨審結論 | 剩餘問題 |
 | --- | --- | --- | --- | --- | --- |
 | [ ] 01 主線與單票 | `GAP_IDENTIFIED` | Root；既有 `Workflow.md` Router、`agent-context-lifecycle.md`、ticket template（未修改） | 現有單票 Context；「首張血壓測試完成、主線仍未完成」未回放 | `NOT_REVIEWED` | 主線剩餘票／交接與父項完成判定未明確驗證 |
-| [ ] 02 已核准工作接續 | `IMPLEMENTATION_IN_REVIEW` | Root 開 `workflow-governance/24`；Luna 改 `tests/test_autonomous_collaboration.py` | 候選 `953c2cea`：20 tests／20 subtests 綠；尚需獨審確認回放不是把 dispatch confirmation 假裝 SQL effect | `PENDING` | `router-control.md` 受兩處 digest pin 保護，現票未准改 pin；有界 correction 待獨審 |
+| [ ] 02 已核准工作接續 | `REVIEW_CHANGES_REQUESTED` | Root 開 `workflow-governance/24`；Luna 改 `tests/test_autonomous_collaboration.py`；獨審見 `doc/reviews/workflow-governance/24-independent-admitted-ticket-continuation-code-review.md` | 候選 `953c2cea`：20 tests／20 subtests 綠；審閱反向突變轉紅再回綠，但只證明 dispatch confirmation 路徑 | `CHANGES_REQUESTED` | SQL／不可逆 effect Owner wait 在 Profile 無路由；主線相依、來源漂移、政策 digest pin 未處理；不整合、不勾選 |
 | [ ] 03 派工完整最小 | `PARTIAL_EXISTING` | Root；`specification-ticketing.md` Ticket／Dispatch，`ticket-decomposition.md` | 局部 Closure／型別 preflight 已有；固定 Expected／失敗、邊界、停止及獨審情境 `NOT_VERIFIED` | `NOT_REVIEWED` | 需求重用與精簡投影需檢查實際 reader |
 | [ ] 04 TEST → A → B | `PARTIAL_EXISTING` | Root；`implementation-tdd.md` 與 `review-checks.md` | 既有行為測試和反向突變規則；router→service 的真正 service 突變情境 `NOT_VERIFIED` | `NOT_REVIEWED` | 拆分前依賴／接線與突變目標遷移 |
 | [ ] 05 候選來源與 Expected | `CONTRACT_IMPLEMENTING` | Root 開 `controlled-verification/cve-d10`；Luna 處理既有 `TestBinding`／`ReviewAdmissionGate` | 舊基準載入、新候選、Expected 漂移的 typed admission 尚待候選結果；真實 Host 觀察 adapter 尚無，不能宣稱整項完成 | `NOT_REVIEWED` | 契約通過後仍需合格執行端的實際載入來源證據 |
