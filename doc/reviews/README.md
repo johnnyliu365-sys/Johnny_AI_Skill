@@ -4,6 +4,7 @@
 
 | Feature cluster | Report | Result |
 | --- | --- | --- |
+| Controlled verification, checklist 05 contract | [CVE-D10 independent review](controlled-verification/cve-d10-candidate-source-observation-code-review.md) | `APPROVED_CONTRACT_ONLY / HOST_OBSERVATION_OPEN` |
 | Workflow governance, checklist 02 | [Ticket 24 independent review](workflow-governance/24-independent-admitted-ticket-continuation-code-review.md) | `CHANGES_REQUESTED / NOT_INTEGRATED` |
 | Local orchestration installer | [Capability and review index](local-orchestration-installer/README.md) | `CAP_MSIX_01_RESEARCH_COMPLETE / MSIX_LIFECYCLE_UNPROVED / ENV_MSIX_01_VM_BOOTED_SETUP_PENDING` |
 | Adaptive project orchestration | [Cluster review index](adaptive-project-orchestration/README.md) | `R09A_APPROVED / AUTHORITY_PUSH_CONFIRMED; R09B_BLOCKED / CONVERGENCE_REVIEW_REQUIRED; R09B1_APPROVED / AUTHORITY_PUSH_CONFIRMED / EVIDENCE_ORDERING_DEVIATION_ACCEPTED` |
