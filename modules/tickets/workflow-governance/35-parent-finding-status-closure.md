@@ -2,7 +2,7 @@
 
 | 欄位 | 內容 |
 | --- | --- |
-| State | `OPEN / DISPATCHABLE`；承接 Ticket 27 已整合的五欄必要證據投影 |
+| State | `SLICE_LOCAL_INTEGRATED` at `215a599f`；獨審通過，清單 07 的正式證據來源／結案准入仍開放 |
 | Authority | Owner 清單 07；沿用既有 `PRD-20260805-009`／`CHG-20260805-009` 與 Ticket 27，不建新 PRD |
 | Baseline | 派工時精確釘選本控制分支 HEAD；實作／審閱不同隔離 worktree |
 | Profile／roles | `STANDARD`；實作者低成本適配模型，另一席不低於實作者的獨立審閱 |
@@ -32,3 +32,7 @@ forbid = doc/requirements/
 5. 固定情境：A 的必要 stage 為 `NOT_VERIFIED`、B approved、parent 宣告二者為 required 時 parent 不可顯示通過；B optional 未完則 parent 可通過；無關 C 仍可正常顯示。Finding OPEN 保留 owner 且不得假裝已有去向、CLOSED 缺去向、未知 child、循環及惡意 HTML 值均有回歸格。Reviewer 對 required-child 放寬與 Finding-open 放寬各做反向突變紅→還原綠。
 
 Run：`python -m pytest tests/test_ticket_status_pipeline.py tests/test_ticket_status_template.py -q`、`git diff --check`。Return：`IMPLEMENTED | BLOCKED | CHANGE_DETECTED`、候選 SHA、路徑、測試/突變結果、非權威範圍、findings/deviations。若需改正式 Review/Router grant、既有 AC 或新增來源，回 `CHANGE_DETECTED`，不得自行擴張。
+
+## 實作與獨審結果
+
+候選 `f65120b9` 的初次獨審發現重複父票 ID 仍可顯示 `APPROVED`；原票原分支以 additive correction `5c6b33a4` 修正。原 reviewer 在公開 `build_document` 入口重跑，兩筆重複父票均標為不可讀，無關票仍顯示；將重複判斷反向突變後對應測試轉紅，還原後轉綠。初次審閱對必要子票及 OPEN Finding 的兩項反向突變也均紅→綠。最終候選 121 tests／205 subtests 與 strict mypy 通過，四個宣告路徑的 Git blob 與受審候選相同；受控本地整合於 `215a599f`。詳見 `doc/reviews/workflow-governance/35-parent-finding-status-closure-code-review.md`。這一投影不驗證 evidence-ref 真偽，也不授予正式 Router／Review closure。

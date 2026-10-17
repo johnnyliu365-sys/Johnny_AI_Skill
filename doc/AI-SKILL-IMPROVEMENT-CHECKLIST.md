@@ -3,7 +3,7 @@
 | 欄位 | 值 |
 | --- | --- |
 | 文件身分 | `AI-SKILL-IMPROVEMENT-CHECKLIST`；本專案工作追蹤，非新 PRD／SPEC／Gate |
-| Revision／來源 | `03`；Owner 2026-10-18 本次 12 項指示 |
+| Revision／來源 | `04`；Owner 2026-10-18 本次 12 項指示 |
 | 工作基準 | `a1cb6c13adbeb52a4117991727dcc3d4af6d2a33`；分支 `codex/skill-improvement-checklist` |
 | 主線 | 先對照、優先 02→04→05→06→07，再處理餘項與整合回放 |
 | 負責 | Root 理解需求、衝突與派工；票級實作者依有效能力 Profile；獨立審閱另席 |
@@ -23,7 +23,7 @@ Router、Reviewer、文件索引與結案規則仍各有唯一正文。`[x]` 只
 | [x] 04 TEST → A → B | `COMPLETE_LOCAL / NO_PUSH` | Luna：Ticket 25 規則 `970b99cc`、Ticket 33 產品 A `ac369235`、Ticket 34 測試 B `b4a7dbe6`；獨審見 `doc/reviews/workflow-governance/33-shared-context-service-seam-code-review.md` 與 `34-shared-context-test-seam-transfer-code-review.md` | A 先在候選公開入口通過；Reviewer 改壞新 service 的 sealed read／writer role，公開 Router 格轉紅→綠。B 五格 contract-only 測試搬到聚焦檔、六格公開入口保留；Reviewer 改壞 service 與 contract guard，各自轉紅→綠；整合分支 61 tests／217 subtests、strict mypy 綠，五檔 Git blob 與各受審候選相同 | `APPROVED_A + APPROVED_B` | 此為本機 Johnny Router 能力回放；未推送／發布，不代表 Vita360 產品已拆分 |
 | [ ] 05 候選來源與 Expected | `CONTRACT_LOCAL_INTEGRATED / HOST_GAP` | Luna 改既有 `TestBinding`／`ReviewAdmissionGate`；`beff0050`，審閱見 `doc/reviews/controlled-verification/cve-d10-candidate-source-observation-code-review.md` | 19 tests／50 subtests 綠、`mypy --strict` 綠、Expected 反向突變紅→綠；型別契約拒絕舊基準載入與 Expected 漂移 | `APPROVED_CONTRACT_ONLY` | 尚無合格 Host adapter 觀察實際載入來源及核准 Expected 的來源；不得把 port 自報當實測 |
 | [ ] 06 共用樹覆蓋 | `WORKER_CLAIM_LOCAL_INTEGRATED / PREWRITE_GAP` | Luna 改既有 worker ledger／測試；`9cedb55f`，審閱見 `doc/reviews/workflow-governance/26-active-writer-worktree-branch-uniqueness-code-review.md` | 48 tests／77 subtests 綠；active worktree／branch 衝突轉紅再回綠；任意同步寫入的 HEAD／index／工作副本驗證仍 `NOT_VERIFIED` | `APPROVED_SLICE` | 缺受控 prewrite/commit 效應入口；不可把派工互斥說成整個工作樹防回退已完成 |
-| [ ] 07 完成與證據 | `STATUS_PROJECTION_LOCAL_INTEGRATED / CLOSURE_GAP` | Luna 改 `ticket_status_pipeline.py`／`ticket_status_template.py` 與測試；`3196712d`，審閱見 `doc/reviews/workflow-governance/27-evidence-linked-ticket-status-projection-code-review.md` | 108 tests／200 subtests、strict mypy 綠；必要 OPEN／NOT_VERIFIED 在錯誤 APPROVED 反向突變下轉紅，復原綠；可選未完成仍合法 | `APPROVED_SLICE` | 證據來源真偽、父項完成與 finding 責任／去向尚未形成結案准入 |
+| [ ] 07 完成與證據 | `PARENT_FINDING_PROJECTION_LOCAL_INTEGRATED / FORMAL_CLOSURE_GAP` | Luna 改 `ticket_status_pipeline.py`／`ticket_status_template.py` 與測試；Ticket 27 `3196712d`、Ticket 35 `215a599f`；獨審見 `doc/reviews/workflow-governance/27-evidence-linked-ticket-status-projection-code-review.md` 與 `35-parent-finding-status-closure-code-review.md` | 最終 121 tests／205 subtests、strict mypy 綠；必要子票、OPEN Finding 與重複父票 ID 三項獨審反向突變紅→綠；可選未完成與無關票仍可顯示 | `APPROVED_PROJECTION_ONLY` | 證據來源真偽及正式 Router／Review 結案准入仍未實作；投影不得自行授權結票 |
 | [ ] 08 測試依賴／退役 | `PURE_INVENTORY_LOCAL_INTEGRATED / HOST_CI_GAP` | Luna 改單責 AST inventory 與測試；`2a19406d`，獨審見 `doc/reviews/workflow-governance/32-test-consumer-inventory-code-review.md`；既有 `implementation-tdd.md` 保留退役條款 | 11 tests、strict mypy 綠；Reviewer 對漏掉 child-module 消費者拒收首版，修正後反向突變紅→綠；真實 CI/Host source 讀入、入口切換及退役准入 `NOT_VERIFIED` | `APPROVED_SLICE` | 解析器只處理呼叫端供給的來源；沒有可信 caller 與退役 effect gate，不得以空 inventory 判安全刪除 |
 | [ ] 09 窄修窄審 | `INDEPENDENT_AUDIT_PARTIAL / GAP` | Root；既有 `CodeReview.md` §4–5、`implementation-authority.md`；Sol 獨立唯讀審計（2026-10-18） | Ticket 24/28 顯示同票追加修正及獨審拒收；15 tests／103 subtests 綠，但未證明共用支援檔真消費者、PASS 沿用與原 reviewer 身分複驗 | `PARTIAL / NOT_CLOSABLE` | 需要受影響消費者與 finding↔Closure 的可執行證據；不能靠政策文字打勾 |
 | [ ] 10 成本／外部呼叫／回報 | `MODEL_PROFILE_LOCAL_INTEGRATED / PAID_TEST_REPORTING_GAP` | Luna 改 `model-role-routing.md`、`delivery-profile.md` 與既有 policy/executor tests；`68a10057`，審閱見 `doc/reviews/workflow-governance/31-semantic-model-profile-boundary-code-review.md` | 36 tests／74 subtests 綠；普通開票低／高 profile 反向突變紅→綠，同步 readback 語義修正；本機付費服務攔截及固定回報欄位 `NOT_VERIFIED` | `APPROVED_SLICE` | 通用模型選擇不凍結名稱，但真實 Host qualification、付費 API 測試隔離與功能／腳本拆分回報仍缺 |
@@ -36,7 +36,7 @@ Router、Reviewer、文件索引與結案規則仍各有唯一正文。`[x]` 只
   完成證據：`specification-ticketing.md`、`CodeReview.md`、`review_admission.py`。
 - 現行 worktree 與 correction：`implementation-authority.md`；現行測試品質：
   `implementation-tdd.md`、`review-checks.md`。它們是可重用基礎，尚未證明本表情境。
-- 已完成 04／05／06／07 的局部候選、獨審與本地受控整合，但四項外層驗收仍開放。
+- 04 的 TEST→A→B 本機閉包已完成；05／06／07 仍有 Host／正式結案外層缺口，不得誤勾。
   02 的初稿拒收，仍須修正真正 Owner effect／相依接續，不得重命名 dispatch wait 冒充。
   下一步依既有需求與 ticket 補足 02／05／06／07 的外層效應與驗收，再接續其他項目。
 
