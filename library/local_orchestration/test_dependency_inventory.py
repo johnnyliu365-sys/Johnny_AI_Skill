@@ -16,6 +16,7 @@ class InventoryStatus(StrEnum):
 class DependencyKind(StrEnum):
     IMPORT = "IMPORT"
     IMPORTLIB = "IMPORTLIB"
+    SUITES = "SUITES"
     SUBPROCESS = "SUBPROCESS"
     DECLARED_COMMAND = "DECLARED_COMMAND"
 
@@ -24,6 +25,9 @@ UnresolvedReason = Literal[
     "DYNAMIC_IMPORT",
     "RELATIVE_TEST_IMPORT",
     "DYNAMIC_COMMAND",
+    "DYNAMIC_SUITE",
+    "REASSIGNED_SUITE",
+    "UNKNOWN_SUITE_REFERENCE",
     "UNSUPPORTED_ENTRY_COMMAND",
     "UNPARSEABLE_SOURCE",
 ]
@@ -184,6 +188,8 @@ def _scan_source(
         unresolved.add(UnresolvedDependency(source.source_ref, "UNPARSEABLE_SOURCE"))
         return
 
+    _scan_suites(source, tree, source_modules, edges, unresolved)
+
     modules: dict[str, set[str]] = {"importlib": set(), "subprocess": set()}
     functions: dict[str, set[str]] = {"import_module": set(), "subprocess": set()}
     for node in ast.walk(tree):
@@ -265,6 +271,135 @@ def _scan_source(
                     DependencyEdge(source.source_ref, target, DependencyKind.SUBPROCESS)
                     for target in targets
                 )
+
+
+def _scan_suites(
+    source: PythonSource,
+    tree: ast.Module,
+    source_modules: set[str],
+    edges: set[DependencyEdge],
+    unresolved: set[UnresolvedDependency],
+) -> None:
+    module_nodes = _module_scope_nodes(tree)
+    assignments = tuple(
+        node
+        for node in module_nodes
+        if isinstance(node, (ast.Assign, ast.AnnAssign, ast.AugAssign, ast.Delete))
+        and _suite_assignment_target(node)
+    )
+    unsupported_binding = any(
+        (
+            isinstance(node, ast.alias)
+            and (node.asname or node.name.split(".")[0]) == "SUITES"
+        )
+        or (
+            isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef))
+            and node.name == "SUITES"
+        )
+        for node in module_nodes
+    )
+    if not assignments and not unsupported_binding:
+        return
+    if len(assignments) > 1:
+        unresolved.add(UnresolvedDependency(source.source_ref, "REASSIGNED_SUITE"))
+        return
+
+    if unsupported_binding or len(assignments) != 1:
+        unresolved.add(UnresolvedDependency(source.source_ref, "DYNAMIC_SUITE"))
+        return
+    assignment = assignments[0]
+    if assignment not in tree.body or not isinstance(assignment, (ast.Assign, ast.AnnAssign)):
+        unresolved.add(UnresolvedDependency(source.source_ref, "DYNAMIC_SUITE"))
+        return
+    value = assignment.value
+    target = assignment.targets[0] if isinstance(assignment, ast.Assign) else assignment.target
+    if not isinstance(target, ast.Name) or target.id != "SUITES" or value is None:
+        unresolved.add(UnresolvedDependency(source.source_ref, "DYNAMIC_SUITE"))
+        return
+    if any(
+        isinstance(node, ast.Call)
+        and (_dotted_name(node.func) or "").startswith("SUITES.")
+        for node in module_nodes
+    ):
+        unresolved.add(UnresolvedDependency(source.source_ref, "DYNAMIC_SUITE"))
+        return
+
+    parsed = _literal_suite_values(value)
+    if parsed is None:
+        unresolved.add(UnresolvedDependency(source.source_ref, "DYNAMIC_SUITE"))
+        return
+    targets: set[str] = set()
+    unknown: set[str] = set()
+    for reference in parsed:
+        normalized = normalize_test_ref(reference)
+        if normalized in source_modules and _is_test_module(normalized):
+            targets.add(normalized)
+        elif _looks_like_test_reference(reference):
+            unknown.add(normalized)
+    edges.update(
+        DependencyEdge(source.source_ref, target, DependencyKind.SUITES)
+        for target in targets
+    )
+    if unknown:
+        unresolved.add(
+            UnresolvedDependency(source.source_ref, "UNKNOWN_SUITE_REFERENCE")
+        )
+
+
+def _module_scope_nodes(tree: ast.Module) -> tuple[ast.AST, ...]:
+    nodes: list[ast.AST] = []
+    pending: list[ast.AST] = list(reversed(tree.body))
+    while pending:
+        node = pending.pop()
+        nodes.append(node)
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef, ast.Lambda)):
+            continue
+        pending.extend(reversed(tuple(ast.iter_child_nodes(node))))
+    return tuple(nodes)
+
+
+def _suite_assignment_target(node: ast.Assign | ast.AnnAssign | ast.AugAssign | ast.Delete) -> bool:
+    targets = node.targets if isinstance(node, (ast.Assign, ast.Delete)) else (node.target,)
+    return any(
+        isinstance(target_node, ast.Name) and target_node.id == "SUITES"
+        for target in targets
+        for target_node in ast.walk(target)
+    )
+
+
+def _literal_suite_values(node: ast.expr) -> set[str] | None:
+    if isinstance(node, ast.Constant):
+        return {node.value} if isinstance(node.value, str) else set()
+    if isinstance(node, (ast.List, ast.Tuple, ast.Set)):
+        elements = [_literal_suite_values(element) for element in node.elts]
+        return (
+            None
+            if any(element is None for element in elements)
+            else set().union(*(element for element in elements if element is not None))
+        )
+    if isinstance(node, ast.Dict):
+        if any(not isinstance(key, ast.Constant) for key in node.keys):
+            return None
+        values = [_literal_suite_values(value) for value in node.values]
+        return (
+            None
+            if any(value is None for value in values)
+            else set().union(*(value for value in values if value is not None))
+        )
+    return None
+
+
+def _looks_like_test_reference(reference: str) -> bool:
+    normalized = reference.replace("\\", "/").strip()
+    module = normalize_test_ref(normalized)
+    leaf = normalized.rsplit("/", 1)[-1]
+    return (
+        normalized.startswith("tests/")
+        or module == "tests"
+        or module.startswith("tests.")
+        or leaf.startswith("test_")
+        or leaf.endswith("_test.py")
+    )
 
 
 def _dotted_name(node: ast.expr) -> str | None:

@@ -79,6 +79,90 @@ load("tests.test_helper")
             {edge.kind for edge in result.transitive_edges},
         )
 
+    def test_suite_registry_and_declared_ci_consumers_are_traced_transitively(self) -> None:
+        sources = (
+            PythonSource(
+                "tests/test_consumer.py",
+                "from tests import test_suite_registry\n",
+            ),
+            PythonSource(
+                "tests/test_suite_registry.py",
+                "SUITES = {'smoke': ['tests/test_helper.py']}\n",
+            ),
+            PythonSource("tests/test_helper.py", "def test_helper(): pass\n"),
+        )
+        result = PythonTestConsumerInventory(
+            sources,
+            declared_commands=(
+                DeclaredTestCommand(
+                    "ci:consumer",
+                    ("python", "-m", "pytest", "tests/test_consumer.py"),
+                ),
+            ),
+        ).retirement_inventory("tests/test_helper.py")
+
+        self.assertEqual(InventoryStatus.COMPLETE, result.status)
+        self.assertEqual(("tests/test_suite_registry.py",), result.direct_consumers)
+        self.assertEqual(
+            ("ci:consumer", "tests/test_consumer.py"), result.transitive_consumers
+        )
+        self.assertEqual(DependencyKind.SUITES, result.direct_edges[0].kind)
+        self.assertFalse(result.retirement_authorized)
+
+    def test_dynamic_reassigned_and_unknown_suite_references_are_unresolved(self) -> None:
+        cases = (
+            ("SUITES = [configured_test]\n", "DYNAMIC_SUITE"),
+            (
+                "SUITES = ['tests/test_helper.py']\nSUITES = []\n",
+                "REASSIGNED_SUITE",
+            ),
+            ("SUITES = {'smoke': ['tests/test_missing.py']}\n", "UNKNOWN_SUITE_REFERENCE"),
+        )
+        for source_text, expected_reason in cases:
+            with self.subTest(expected_reason=expected_reason):
+                result = PythonTestConsumerInventory(
+                    sources=(
+                        PythonSource("tests/test_registry.py", source_text),
+                        PythonSource("tests/test_helper.py", ""),
+                    )
+                ).retirement_inventory("tests/test_helper.py")
+
+                self.assertEqual(InventoryStatus.UNRESOLVED, result.status)
+                self.assertIn(expected_reason, {item.reason for item in result.unresolved})
+                self.assertFalse(result.retirement_authorized)
+
+    def test_literal_suite_without_test_references_can_be_complete_and_empty(self) -> None:
+        result = PythonTestConsumerInventory(
+            sources=(PythonSource("tests/test_registry.py", "SUITES = {'smoke': []}\n"),)
+        ).retirement_inventory("tests.test_independent")
+
+        self.assertEqual(InventoryStatus.COMPLETE, result.status)
+        self.assertEqual((), result.direct_edges)
+        self.assertEqual((), result.transitive_edges)
+        self.assertFalse(result.retirement_authorized)
+
+    def test_suite_tuple_and_set_values_are_direct_consumers(self) -> None:
+        result = PythonTestConsumerInventory(
+            sources=(
+                PythonSource(
+                    "tests/test_registry.py",
+                    "SUITES = {'tuple': ('tests/test_tuple.py',), "
+                    "'set': {'tests/test_set.py'}}\n",
+                ),
+                PythonSource("tests/test_tuple.py", ""),
+                PythonSource("tests/test_set.py", ""),
+            )
+        )
+
+        self.assertEqual(
+            ("tests/test_registry.py",),
+            result.retirement_inventory("tests/test_tuple.py").direct_consumers,
+        )
+        self.assertEqual(
+            ("tests/test_registry.py",),
+            result.retirement_inventory("tests/test_set.py").direct_consumers,
+        )
+
     def test_literal_subprocess_target_is_a_direct_consumer(self) -> None:
         result = PythonTestConsumerInventory(
             sources=(
