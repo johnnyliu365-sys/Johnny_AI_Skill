@@ -86,6 +86,14 @@ forbid = <明確禁止的路徑；比上面三欄優先，且比對時不分大�
 3. 外部失敗／fail-closed：`<red test>`
 4. 回歸保護：`<test>`
 
+### 責任拆分／測試接線轉移（非拆分票填 N/A reason）
+
+- TEST seam（真實產品入口、當下實作 seam、具名輸入 → 輸出）：`<entry / seam / behavior>`
+- A source → target（候選版測試 seam）：`<source responsibility / target service or seam>`
+- B dependency（A 候選版綠證據）：`<B dependency / required A evidence>`
+- 測試接線轉移：`<行為斷言承接測試；舊測試退役條件>`
+- 反向突變：`<新 seam 的行為突變目標；預期轉紅 cell；還原轉綠結果>`
+
 ### 適用的缺陷類別（依 `CodeReview.md` §2.1，逐一列出必要案例，不適用者寫明理由）
 
 | # | 類別 | 是否適用 | 本工單的必要案例 |

@@ -41,6 +41,33 @@ for.**每個具名行為都要交出反向突變證據：把該行為拿掉，�
 是後寫。Both directions must be reported; a mutation that was never restored is not evidence
 either.
 
+## Responsibility refactors: TEST → A → B
+
+For a ticket that splits or transfers an existing responsibility, freeze the behavior and its
+test-transfer plan before changing the first product responsibility boundary. Do not add a
+workflow stage or gate; use the ticket's existing TDD and candidate verification.
+
+- **TEST:** Name the real product entry point, the current implementation seam, the behavior's
+  typed inputs and outputs, and the test cell that observes the behavior through that entry
+  point. Identify the negative mutation at the behavior-owning seam, the tests that will inherit
+  the assertion, and the old tests that may be retired only after those tests pass against the
+  candidate implementation.
+- **A:** Name the source responsibility and its target seam/service. Keep the real entry point in
+  the test path. In the candidate version, run the transferred behavior tests and reverse-mutate
+  the new seam's behavior (not merely the entry point's delegation); name the cell that turns red
+  and record the restored green result. A passing delegation-only test does not prove the service
+  behavior.
+- **B:** Name the dependency on A's candidate seam and its green evidence. Begin B only after the
+  candidate A tests and service-behavior reverse mutation have both been restored to green. Repeat
+  the seam-specific evidence for B and retire superseded tests only when the transferred coverage
+  remains observable through the real entry point.
+
+Each segment must specify its product entry point, currently tested implementation seam, typed
+behavior input/output, negative mutation target, test-transfer destination and old-test retirement
+condition. Do not claim coverage transfer from test order, a baseline-only run, or a test that
+asserts delegation without discriminating the service's behavior. If the ticket is not a
+responsibility split, it records `N/A` with a reason and follows the ordinary one-behavior loop.
+
 ## Type and layering gate
 
 Use named domain types, immutable models, explicit nullability and complete parameter/return
