@@ -38,12 +38,16 @@ helper evidence is `BLOCKED`, never a fabricated success.
 
 The active, versioned `ProjectWorkflowProfile` supplies opaque provider/model and evidence
 references for these semantic roles. Those references do not themselves qualify a Host or
-prove model capability. Admission must resolve them against current, independently verified
-Host capability readback before routing. This reusable policy does not assign provider/model
-names or a permanent rank to any role. Missing, stale, or incomparable qualification cannot
-be inferred from a model name; routing must fail closed when the current Profile and Host
-qualification cannot establish the required role or reviewer capability. Changing
-provider/model references does not change role authority.
+prove model capability. Admission requires current, independently verified model availability
+and comparable capability evidence from the applicable qualified source. An independently
+verified Host capability readback may provide that evidence where it is the applicable
+mechanism; it is not a universal task/workspace/profile readback requirement. On a
+same-lifetime synchronous route, task/workspace/profile readback, gateway, receipt and runner
+are `NOT_REQUIRED`; this does not change the distinct cross-lifetime admission requirements.
+This reusable policy does not assign provider/model names or a permanent rank to any role.
+Missing, stale, or incomparable qualification cannot be inferred from a model name; routing
+must fail closed when current evidence cannot establish the required role or reviewer
+capability. Changing provider/model references does not change role authority.
 
 Use the least-cost currently verified capability that can perform the admitted work. When a
 ticket requires an implementation capability above the current standard route and further

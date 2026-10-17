@@ -90,14 +90,18 @@ order is explicit. A high-search, low-authority, zero-write-conflict task may re
 reviewer-owned read-only/no-code research helper. The implementation owner never controls a
 helper or another Agent. Model tier is a cost/capability choice, not authority.
 
-Semantic role assignment, current Profile readback, SPEC-readiness sleep and typed wake
+Semantic role assignment, active Profile resolution, SPEC-readiness sleep and typed wake
 conditions are defined only in `model-role-routing.md`. The active, versioned Project Workflow
 Profile supplies opaque provider/model and evidence references for the current project and
-ticket; those references alone do not qualify a Host or prove capability. Admission resolves
-them against current, independently verified Host capability readback. Generic workflow
-policy does not freeze provider/model names or map model identities to authority. Missing or
-stale qualification cannot be inferred from names; the route fails closed when role
-availability or reviewer-to-implementer capability cannot be established.
+ticket; those references alone do not qualify a Host or prove capability. Admission requires
+current, independently verified availability and capability evidence from the applicable
+qualified source; an independently verified Host capability readback is used only where that
+is the applicable mechanism. Same-lifetime synchronous routing never requires
+task/workspace/profile readback, gateway, receipt or runner. Cross-lifetime admission retains
+its distinct readback and control requirements. Generic workflow policy does not freeze
+provider/model names or map model identities to authority. Missing or stale qualification
+cannot be inferred from names; the route fails closed when role availability or
+reviewer-to-implementer capability cannot be established.
 
 Reassess when requirements, risk, security/XSS classification, coupling or verification
 results change. Upgrade automatically when evidence requires it; downgrade only with recorded
