@@ -2,7 +2,7 @@
 
 | 欄位 | 內容 |
 | --- | --- |
-| State | `CONVERGENCE_DECIDED / CLOSURE_REVISION_02 / REIMPLEMENT_ADMITTED`；原 revision 的兩次拒收保留，預算與 Finding 不重置 |
+| State | `TEMPLATE_SLICE_LOCAL_INTEGRATED` at `cfa46704`；原 revision 的兩次拒收保留，清單 03 Host admission 仍開放 |
 | Authority | 既有 `PRD-20260805-009`／`CHG-20260805-009`、`modules/spec/workflow-governance.md` AC 2–5；本次 Owner 要求派工來源完整、最小，不新增需求身分 |
 | Source baseline | 本票所在控制面 commit；獨立實作 worktree |
 | Implementation language | Markdown 模板與 Python 3.11 驗證 |

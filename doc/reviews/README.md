@@ -6,7 +6,7 @@
 | --- | --- | --- |
 | Controlled verification, checklist 05 contract | [CVE-D10 independent review](controlled-verification/cve-d10-candidate-source-observation-code-review.md) | `APPROVED_CONTRACT_ONLY / HOST_OBSERVATION_OPEN` |
 | Workflow governance, checklist 02 | [Ticket 24 independent review](workflow-governance/24-independent-admitted-ticket-continuation-code-review.md) | `OWNER_WAIT_SLICE_LOCAL_INTEGRATED / B_CONTINUATION_OPEN` |
-| Workflow governance, checklist 03 | [Ticket 28 independent review](workflow-governance/28-minimal-complete-dispatch-ticket-code-review.md) | `CONVERGENCE_REVIEW_REQUIRED / NOT_INTEGRATED` |
+| Workflow governance, checklist 03 | [Ticket 28 independent review](workflow-governance/28-minimal-complete-dispatch-ticket-code-review.md) | `TEMPLATE_SLICE_LOCAL_INTEGRATED / DISPATCH_ADMISSION_OPEN` |
 | Workflow governance, checklist 01 | [Ticket 29 independent review](workflow-governance/29-mainline-ticket-projection-code-review.md) | `APPROVED_SLICE / LOCAL_INTEGRATED / SOURCE_CLOSURE_OPEN` |
 | Workflow governance, checklist 04 | [Ticket 25 independent review](workflow-governance/25-refactor-test-seam-transfer-code-review.md) | `APPROVED_SLICE / LOCAL_INTEGRATED / A_B_OPEN` |
 | Workflow governance, checklist 06 | [Ticket 26 independent review](workflow-governance/26-active-writer-worktree-branch-uniqueness-code-review.md) | `APPROVED_SLICE / LOCAL_INTEGRATED / PREWRITE_OPEN` |

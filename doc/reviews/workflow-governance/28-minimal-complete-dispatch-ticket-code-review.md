@@ -33,3 +33,22 @@ Conclusion: `CHANGES_REQUESTED / CONVERGENCE_REVIEW_REQUIRED`. This was the
 second review under the same closure revision; no automatic third correction is
 authorized. The control plane must repair the acceptance/evidence method before
 another implementation attempt. No candidate was integrated or pushed.
+
+## Closure revision 02 independent review and local admission
+
+Control commit `7ae5c8ba` defined an active slot as a top-level fillable bullet
+in its own section, excluding HTML comments and Markdown fenced or indented
+code examples. The final additive candidate `e9bdc9788ccd8752b3dde97d20198de66972b89f`
+preserved the three earlier commits and changed only the ticket template plus
+one targeted test file. The separate reviewer ran 20 targeted tests. Independent
+mutations moved Expected into an HTML comment, tilde fence and four-space
+indented code, and moved stop condition to another section; each turned the
+named contract cell red, and restoration returned the suite to green. The
+filled-ticket scenario substituted actual template placeholders and checked
+Expected, typed I/O, failure/boundary, stop and reviewer fields.
+
+Conclusion: `APPROVED_SLICE`. Root transplanted the reviewed two Git blobs
+unchanged to landing commit `cfa4670464ae06042cba5e4b951dc7290d254949`, reran
+20 targeted tests and used the document mutation gate for local integration.
+This is template evidence only; no production Host dispatch preflight was
+implemented, so checklist 03 remains open.
