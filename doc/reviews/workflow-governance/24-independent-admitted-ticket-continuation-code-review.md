@@ -38,3 +38,15 @@ new capability, receipt or Host effect. The full ticket remains `BLOCKED`: the
 Router's single-ticket state has no trusted shared mainline, dependency graph,
 admitted B lane or live revision proof. Do not infer independent B continuation or
 integrate the full Closure revision from this partial approval.
+
+## Convergence split and local landing parity
+
+Control commit `0eeef0e6` made Ticket 24 Closure revision03 A-only and preserved the
+unmet B continuation in non-dispatchable Ticket 30. The original reviewer accepted
+this split without weakening the A evidence or erasing B. The existing control-plane
+gate integrated policy and runtime commits separately at `65b0d9b7` and
+`af24945f897079f287305d171df618d1dc4d3fc5` after checking the final pin.
+An independent second seat compared all six landed Git blobs with reviewed candidate
+`e0bbe9e5`; all matched. At the landing SHA, 81 tests and 237 subtests and strict
+mypy passed; the worktree and diff were clean. This admits only the Owner-effect
+WAIT slice locally. It does not execute an effect or close checklist 02.

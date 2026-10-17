@@ -2,7 +2,7 @@
 
 | 欄位 | 內容 |
 | --- | --- |
-| State | `CLOSURE_REVISION_03 / OWNER_WAIT_SLICE_REVIEWED / ADMISSION_PENDING`；獨立票接續移至同需求 Ticket 30，未宣稱清單 02 完成 |
+| State | `CLOSURE_REVISION_03 / OWNER_WAIT_SLICE_LOCAL_INTEGRATED` at `af24945f`；獨立票接續移至同需求 Ticket 30，清單 02 未完成 |
 | Authority | `PRD-20260805-009`、`CHG-20260805-009`、`modules/spec/workflow-governance.md` AC 1–4；本票只驗證現行授權內的接續，不改批准含義 |
 | Baseline | `7c1660e53f0789a416f5858d933519af76ef5b9b`；同一 repo 的獨立 worktree |
 | Implementation language | Python 3.11；政策文件 Markdown |
