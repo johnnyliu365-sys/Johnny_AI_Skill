@@ -131,6 +131,41 @@ load("tests.test_helper")
                 self.assertIn(expected_reason, {item.reason for item in result.unresolved})
                 self.assertFalse(result.retirement_authorized)
 
+    def test_unidentified_suite_string_is_unresolved(self) -> None:
+        result = PythonTestConsumerInventory(
+            sources=(
+                PythonSource("tests/test_registry.py", "SUITES = ['missing']\n"),
+                PythonSource("tests/test_helper.py", ""),
+            )
+        ).retirement_inventory("tests/test_helper.py")
+
+        self.assertEqual(InventoryStatus.UNRESOLVED, result.status)
+        self.assertIn("UNKNOWN_SUITE_REFERENCE", {item.reason for item in result.unresolved})
+
+    def test_suite_subscript_mutations_are_unresolved(self) -> None:
+        cases = (
+            (
+                "SUITES = {'smoke': []}\nSUITES['smoke'].append('tests/test_helper.py')\n",
+                "DYNAMIC_SUITE",
+            ),
+            (
+                "SUITES = {'smoke': []}\nSUITES['smoke'] = ['tests/test_helper.py']\n",
+                "REASSIGNED_SUITE",
+            ),
+        )
+        for source_text, expected_reason in cases:
+            with self.subTest(expected_reason=expected_reason):
+                result = PythonTestConsumerInventory(
+                    sources=(
+                        PythonSource("tests/test_registry.py", source_text),
+                        PythonSource("tests/test_helper.py", ""),
+                    )
+                ).retirement_inventory("tests/test_helper.py")
+
+                self.assertEqual(InventoryStatus.UNRESOLVED, result.status)
+                self.assertIn(expected_reason, {item.reason for item in result.unresolved})
+                self.assertFalse(result.retirement_authorized)
+
     def test_literal_suite_without_test_references_can_be_complete_and_empty(self) -> None:
         result = PythonTestConsumerInventory(
             sources=(PythonSource("tests/test_registry.py", "SUITES = {'smoke': []}\n"),)

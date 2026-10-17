@@ -318,7 +318,7 @@ def _scan_suites(
         return
     if any(
         isinstance(node, ast.Call)
-        and (_dotted_name(node.func) or "").startswith("SUITES.")
+        and _is_suites_expression(node.func)
         for node in module_nodes
     ):
         unresolved.add(UnresolvedDependency(source.source_ref, "DYNAMIC_SUITE"))
@@ -334,7 +334,7 @@ def _scan_suites(
         normalized = normalize_test_ref(reference)
         if normalized in source_modules and _is_test_module(normalized):
             targets.add(normalized)
-        elif _looks_like_test_reference(reference):
+        else:
             unknown.add(normalized)
     edges.update(
         DependencyEdge(source.source_ref, target, DependencyKind.SUITES)
@@ -389,17 +389,12 @@ def _literal_suite_values(node: ast.expr) -> set[str] | None:
     return None
 
 
-def _looks_like_test_reference(reference: str) -> bool:
-    normalized = reference.replace("\\", "/").strip()
-    module = normalize_test_ref(normalized)
-    leaf = normalized.rsplit("/", 1)[-1]
-    return (
-        normalized.startswith("tests/")
-        or module == "tests"
-        or module.startswith("tests.")
-        or leaf.startswith("test_")
-        or leaf.endswith("_test.py")
-    )
+def _is_suites_expression(node: ast.expr) -> bool:
+    if isinstance(node, ast.Name):
+        return node.id == "SUITES"
+    if isinstance(node, (ast.Attribute, ast.Subscript)):
+        return _is_suites_expression(node.value)
+    return False
 
 
 def _dotted_name(node: ast.expr) -> str | None:
