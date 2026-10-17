@@ -3,7 +3,7 @@
 | 欄位 | 值 |
 | --- | --- |
 | 文件身分 | `AI-SKILL-IMPROVEMENT-CHECKLIST`；本專案工作追蹤，非新 PRD／SPEC／Gate |
-| Revision／來源 | `04`；Owner 2026-10-18 本次 12 項指示 |
+| Revision／來源 | `05`；Owner 2026-10-18 本次 12 項指示 |
 | 工作基準 | `a1cb6c13adbeb52a4117991727dcc3d4af6d2a33`；分支 `codex/skill-improvement-checklist` |
 | 主線 | 先對照、優先 02→04→05→06→07，再處理餘項與整合回放 |
 | 負責 | Root 理解需求、衝突與派工；票級實作者依有效能力 Profile；獨立審閱另席 |
@@ -25,7 +25,7 @@ Router、Reviewer、文件索引與結案規則仍各有唯一正文。`[x]` 只
 | [ ] 06 共用樹覆蓋 | `WORKER_CLAIM_LOCAL_INTEGRATED / PREWRITE_GAP` | Luna 改既有 worker ledger／測試；`9cedb55f`，審閱見 `doc/reviews/workflow-governance/26-active-writer-worktree-branch-uniqueness-code-review.md` | 48 tests／77 subtests 綠；active worktree／branch 衝突轉紅再回綠；任意同步寫入的 HEAD／index／工作副本驗證仍 `NOT_VERIFIED` | `APPROVED_SLICE` | 缺受控 prewrite/commit 效應入口；不可把派工互斥說成整個工作樹防回退已完成 |
 | [ ] 07 完成與證據 | `PARENT_FINDING_PROJECTION_LOCAL_INTEGRATED / FORMAL_CLOSURE_GAP` | Luna 改 `ticket_status_pipeline.py`／`ticket_status_template.py` 與測試；Ticket 27 `3196712d`、Ticket 35 `215a599f`；獨審見 `doc/reviews/workflow-governance/27-evidence-linked-ticket-status-projection-code-review.md` 與 `35-parent-finding-status-closure-code-review.md` | 最終 121 tests／205 subtests、strict mypy 綠；必要子票、OPEN Finding 與重複父票 ID 三項獨審反向突變紅→綠；可選未完成與無關票仍可顯示 | `APPROVED_PROJECTION_ONLY` | 證據來源真偽及正式 Router／Review 結案准入仍未實作；投影不得自行授權結票 |
 | [ ] 08 測試依賴／退役 | `PURE_INVENTORY_LOCAL_INTEGRATED / HOST_CI_GAP` | Luna 改單責 AST inventory 與測試；`2a19406d`，獨審見 `doc/reviews/workflow-governance/32-test-consumer-inventory-code-review.md`；既有 `implementation-tdd.md` 保留退役條款 | 11 tests、strict mypy 綠；Reviewer 對漏掉 child-module 消費者拒收首版，修正後反向突變紅→綠；真實 CI/Host source 讀入、入口切換及退役准入 `NOT_VERIFIED` | `APPROVED_SLICE` | 解析器只處理呼叫端供給的來源；沒有可信 caller 與退役 effect gate，不得以空 inventory 判安全刪除 |
-| [ ] 09 窄修窄審 | `INDEPENDENT_AUDIT_PARTIAL / GAP` | Root；既有 `CodeReview.md` §4–5、`implementation-authority.md`；Sol 獨立唯讀審計（2026-10-18） | Ticket 24/28 顯示同票追加修正及獨審拒收；15 tests／103 subtests 綠，但未證明共用支援檔真消費者、PASS 沿用與原 reviewer 身分複驗 | `PARTIAL / NOT_CLOSABLE` | 需要受影響消費者與 finding↔Closure 的可執行證據；不能靠政策文字打勾 |
+| [ ] 09 窄修窄審 | `CORRECTION_REPLAY_PARTIAL / GAP` | Root；既有 `CodeReview.md` §4–5、`implementation-authority.md`；Ticket 35 實作者原票修正、原 Sol reviewer 複驗，見 `doc/reviews/workflow-governance/35-parent-finding-status-closure-code-review.md` | Ticket 35 首審重複父票 ID finding → 原票 additive correction → 原 reviewer 新路徑反向突變紅→綠；Root 找到 `ticket_status_publish.publish` 真消費者，整合分支 pipeline／renderer／publisher 共 126 tests／205 subtests 綠；無關檔案未重審，舊必需子票／Finding PASS 證據有條件沿用 | `APPROVED_CASE_ONLY` | 尚需固定可重跑的影響／消費者判定與 finding↔Closure 錯標負例；一個真實回合不足以證明通用行為可強制 |
 | [ ] 10 成本／外部呼叫／回報 | `MODEL_PROFILE_LOCAL_INTEGRATED / PAID_TEST_REPORTING_GAP` | Luna 改 `model-role-routing.md`、`delivery-profile.md` 與既有 policy/executor tests；`68a10057`，審閱見 `doc/reviews/workflow-governance/31-semantic-model-profile-boundary-code-review.md` | 36 tests／74 subtests 綠；普通開票低／高 profile 反向突變紅→綠，同步 readback 語義修正；本機付費服務攔截及固定回報欄位 `NOT_VERIFIED` | `APPROVED_SLICE` | 通用模型選擇不凍結名稱，但真實 Host qualification、付費 API 測試隔離與功能／腳本拆分回報仍缺 |
 | [ ] 11 去重與衝突 | `NOT_STARTED` | Root；現有 Router、派工模板、Runner、Reviewer、結案入口 | 待 01–10 差異落定後做單一來源／重複責任檢查 | `NOT_REVIEWED` | 不建第二套流程或審批關卡 |
 | [ ] 12 回放與獨審 | `NOT_STARTED` | Root；沿既有 tests／review 位置 | 01–10 正反案例待建立；自動／固定情境分別記錄限制 | `NOT_REVIEWED` | 錯誤拒絕與合法通過都必須證明 |
