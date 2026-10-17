@@ -92,11 +92,12 @@ helper or another Agent. Model tier is a cost/capability choice, not authority.
 
 Semantic role assignment, current Profile readback, SPEC-readiness sleep and typed wake
 conditions are defined only in `model-role-routing.md`. The active, versioned Project Workflow
-Profile supplies opaque provider/model references and verified capability evidence for the
-current project and ticket. Generic workflow policy does not freeze provider/model names or
-map model identities to authority. Missing or stale evidence cannot be inferred from names;
-the route fails closed when role availability or reviewer-to-implementer capability cannot be
-established.
+Profile supplies opaque provider/model and evidence references for the current project and
+ticket; those references alone do not qualify a Host or prove capability. Admission resolves
+them against current, independently verified Host capability readback. Generic workflow
+policy does not freeze provider/model names or map model identities to authority. Missing or
+stale qualification cannot be inferred from names; the route fails closed when role
+availability or reviewer-to-implementer capability cannot be established.
 
 Reassess when requirements, risk, security/XSS classification, coupling or verification
 results change. Upgrade automatically when evidence requires it; downgrade only with recorded

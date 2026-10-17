@@ -36,12 +36,14 @@ return. A runner, queue, receipt, live descriptor or host readback is `NOT_REQUI
 route; those controls remain required only for a cross-lifetime handoff. Missing mandatory
 helper evidence is `BLOCKED`, never a fabricated success.
 
-The active, versioned `ProjectWorkflowProfile` and its verified host-capability evidence bind
-the available provider/model references to these semantic roles for the current project and
-ticket. This reusable policy does not assign provider/model names or a permanent rank to any
-role. Missing, stale, or incomparable capability evidence cannot be inferred from a model
-name; routing must fail closed when the current Profile cannot establish the required role or
-reviewer capability. Changing provider/model references does not change role authority.
+The active, versioned `ProjectWorkflowProfile` supplies opaque provider/model and evidence
+references for these semantic roles. Those references do not themselves qualify a Host or
+prove model capability. Admission must resolve them against current, independently verified
+Host capability readback before routing. This reusable policy does not assign provider/model
+names or a permanent rank to any role. Missing, stale, or incomparable qualification cannot
+be inferred from a model name; routing must fail closed when the current Profile and Host
+qualification cannot establish the required role or reviewer capability. Changing
+provider/model references does not change role authority.
 
 Use the least-cost currently verified capability that can perform the admitted work. When a
 ticket requires an implementation capability above the current standard route and further

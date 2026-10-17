@@ -226,6 +226,18 @@ class ExecutorRoutingSelectionTests(TestCase):
         assert result.review_binding is not None
         self.assertEqual(result.review_binding.reviewer_profile, _ref("profile-reviewer"))
 
+    def test_ticket_opening_uses_routed_low_profile_with_higher_profile_available(self) -> None:
+        resolver = _resolver(
+            _table(_entry(RoutingPurpose.TICKET_OPENING, "profile-low")),
+            _profile("profile-low", rank=VerifiedCapabilityRank.TIER_1),
+            _profile("profile-high", rank=VerifiedCapabilityRank.TIER_3),
+        )
+
+        result = resolver.resolve(_request(RoutingPurpose.TICKET_OPENING))
+
+        self.assertIs(result.status, ResolutionStatus.SELECTED)
+        self.assertEqual(result.selected_profile, _ref("profile-low"))
+
     def test_same_semantic_table_selects_two_fictitious_providers(self) -> None:
         table = _table(
             _entry(RoutingPurpose.PROJECT_INITIAL_REVIEW, "profile-alpha"),

@@ -35,13 +35,14 @@ class AdversarialReviewPolicyTests(unittest.TestCase):
         delivery = " ".join(_read(_DELIVERY_PROFILE).split())
 
         self.assertIn("The active, versioned `ProjectWorkflowProfile`", model_roles)
-        self.assertIn("verified host-capability evidence", model_roles)
+        self.assertIn("Those references do not themselves qualify a Host", model_roles)
+        self.assertIn("independently verified Host capability readback", model_roles)
         self.assertIn(
             "Changing provider/model references does not change role authority.",
             model_roles,
         )
         self.assertIn(
-            "The active, versioned Project Workflow Profile supplies opaque provider/model references",
+            "those references alone do not qualify a Host or prove capability",
             delivery,
         )
         self.assertIn("the reviewer must be at least as capable as the implementer", delivery)
