@@ -18,11 +18,11 @@ Router、Reviewer、文件索引與結案規則仍各有唯一正文。`[x]` 只
 | 項目 | 狀態 | 作者／修改位置 | 驗證方式與目前結果 | 獨審結論 | 剩餘問題 |
 | --- | --- | --- | --- | --- | --- |
 | [ ] 01 主線與單票 | `GAP_IDENTIFIED` | Root；既有 `Workflow.md` Router、`agent-context-lifecycle.md`、ticket template（未修改） | 現有單票 Context；「首張血壓測試完成、主線仍未完成」未回放 | `NOT_REVIEWED` | 主線剩餘票／交接與父項完成判定未明確驗證 |
-| [ ] 02 已核准工作接續 | `PARTIAL_EXISTING` | Root；`Workflow.md` §0.1、`router-control.md` Continuation | AUTO_CONTINUE 規則存在；SQL 等待與無相依測試票並行、越權停止情境 `NOT_VERIFIED` | `NOT_REVIEWED` | 待人工作業不可凍結無相依已准入票；前置現場只窄查 |
+| [ ] 02 已核准工作接續 | `IMPLEMENTATION_IN_REVIEW` | Root 開 `workflow-governance/24`；Luna 改 `tests/test_autonomous_collaboration.py` | 候選 `953c2cea`：20 tests／20 subtests 綠；尚需獨審確認回放不是把 dispatch confirmation 假裝 SQL effect | `PENDING` | `router-control.md` 受兩處 digest pin 保護，現票未准改 pin；有界 correction 待獨審 |
 | [ ] 03 派工完整最小 | `PARTIAL_EXISTING` | Root；`specification-ticketing.md` Ticket／Dispatch，`ticket-decomposition.md` | 局部 Closure／型別 preflight 已有；固定 Expected／失敗、邊界、停止及獨審情境 `NOT_VERIFIED` | `NOT_REVIEWED` | 需求重用與精簡投影需檢查實際 reader |
 | [ ] 04 TEST → A → B | `PARTIAL_EXISTING` | Root；`implementation-tdd.md` 與 `review-checks.md` | 既有行為測試和反向突變規則；router→service 的真正 service 突變情境 `NOT_VERIFIED` | `NOT_REVIEWED` | 拆分前依賴／接線與突變目標遷移 |
-| [ ] 05 候選來源與 Expected | `GAP_IDENTIFIED` | Root；`CodeReview.md` admission、`review-checks.md`（未修改） | 候選 Git diff 讀回已有；「偷偷載入舊基準卻報候選 PASS」`NOT_VERIFIED` | `NOT_REVIEWED` | 固定 Expected 與實際模組載入來源需獨立綁定 |
-| [ ] 06 共用樹覆蓋 | `PARTIAL_EXISTING` | Root；`implementation-authority.md`、`guarded_integration.py` | worktree 隔離／main revision check 已有；同樹舊副本回退與未追蹤檔保護 `NOT_VERIFIED` | `NOT_REVIEWED` | HEAD／index／工作副本及檔案所有權比對 |
+| [ ] 05 候選來源與 Expected | `CONTRACT_IMPLEMENTING` | Root 開 `controlled-verification/cve-d10`；Luna 處理既有 `TestBinding`／`ReviewAdmissionGate` | 舊基準載入、新候選、Expected 漂移的 typed admission 尚待候選結果；真實 Host 觀察 adapter 尚無，不能宣稱整項完成 | `NOT_REVIEWED` | 契約通過後仍需合格執行端的實際載入來源證據 |
+| [ ] 06 共用樹覆蓋 | `PARTIAL_EXISTING / CAPABILITY_GAP` | Root；`implementation-authority.md`、`guarded_integration.py`、`document_mutation_gate.py`、`target_document_management.py`（未修改） | 現有 worktree 隔離、main revision check、document CAS；同樹舊副本回退、index／工作副本與未追蹤檔保護 `NOT_VERIFIED` | `NOT_REVIEWED` | 無通用受控 prewrite/commit 效應入口；不能把 integration 的乾淨樹檢查宣稱成每次寫入的原子 CAS |
 | [ ] 07 完成與證據 | `PARTIAL_EXISTING` | Root；`review_admission.py`、`CodeReview.md`、`implementation-tdd.md` | BLOCKED／INCONCLUSIVE 拒入 review 已有；必要子項 NOT VERIFIED 與可選待辦回放 `NOT_VERIFIED` | `NOT_REVIEWED` | 父項完成、階段狀態與 finding 去向的實際來源 |
 | [ ] 08 測試依賴／退役 | `GAP_IDENTIFIED` | Root；現有 CI／wrapper／runner 尚待窄查 | 間接 SUITES／subprocess 回放 `NOT_VERIFIED` | `NOT_REVIEWED` | 退役前須證明契約承接與入口切換 |
 | [ ] 09 窄修窄審 | `PARTIAL_EXISTING` | Root；`CodeReview.md` §4–5、`implementation-authority.md` | 原票原 worktree 及影響面重驗已有；shared/support 真使用者回放 `NOT_VERIFIED` | `NOT_REVIEWED` | 有關 finding 不得標成範圍外 |
