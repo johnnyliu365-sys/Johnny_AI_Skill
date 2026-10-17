@@ -12,6 +12,7 @@
 | Workflow governance, checklist 06 | [Ticket 26 independent review](workflow-governance/26-active-writer-worktree-branch-uniqueness-code-review.md) | `APPROVED_SLICE / LOCAL_INTEGRATED / PREWRITE_OPEN` |
 | Workflow governance, checklist 07 | [Ticket 27 independent review](workflow-governance/27-evidence-linked-ticket-status-projection-code-review.md) | `APPROVED_SLICE / LOCAL_INTEGRATED / CLOSURE_OPEN` |
 | Workflow governance, checklist 10 | [Ticket 31 independent review](workflow-governance/31-semantic-model-profile-boundary-code-review.md) | `APPROVED_SLICE / LOCAL_INTEGRATED / PAID_TEST_REPORTING_OPEN` |
+| Workflow governance, checklist 08 | [Ticket 32 independent review](workflow-governance/32-test-consumer-inventory-code-review.md) | `APPROVED_SLICE / LOCAL_INTEGRATED / HOST_CI_RETIREMENT_OPEN` |
 | Local orchestration installer | [Capability and review index](local-orchestration-installer/README.md) | `CAP_MSIX_01_RESEARCH_COMPLETE / MSIX_LIFECYCLE_UNPROVED / ENV_MSIX_01_VM_BOOTED_SETUP_PENDING` |
 | Adaptive project orchestration | [Cluster review index](adaptive-project-orchestration/README.md) | `R09A_APPROVED / AUTHORITY_PUSH_CONFIRMED; R09B_BLOCKED / CONVERGENCE_REVIEW_REQUIRED; R09B1_APPROVED / AUTHORITY_PUSH_CONFIRMED / EVIDENCE_ORDERING_DEVIATION_ACCEPTED` |
 | Project authority integration (PAI-01–05) | [PAI-08 local core closure](project-authority-integration/08-local-core-cluster-closure-code-review.md) | `CORE_CLUSTER_CLOSED_WITH_DEFERRED_OPERATIONAL_VALIDATION` |

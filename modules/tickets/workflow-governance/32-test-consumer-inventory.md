@@ -2,7 +2,7 @@
 
 | 欄位 | 內容 |
 | --- | --- |
-| State | `OPEN`；Owner 2026-10-18 改進清單項目 08 的有界切片 |
+| State | `SLICE_LOCAL_INTEGRATED` at `2a19406d`；Owner 2026-10-18 改進清單項目 08 的有界切片 |
 | Authority | 既有 `implementation-tdd.md` 的 TEST→A→B 承接／退役條款與 Owner 本次清單 08；不新增需求身分 |
 | Baseline | 本票所在控制面 commit；派工時 pin |
 | Owner / reviewer | 低成本實作席位、另一席獨立審閱；Root 控制面 |
@@ -51,3 +51,11 @@ Run：`python -m pytest tests/test_test_dependency_inventory.py -q`、
 literal subprocess，使相應 cell 轉紅，復原綠。Return：
 `IMPLEMENTED | BLOCKED | CHANGE_DETECTED`、完整 SHA、檔案、測試、
 解析限制、未完成的 Host/CI admission；不得宣稱清單 08 全部完成。
+
+## 審閱／整合結果
+
+首候選 `7b522506` 因 `from tests.pkg import child` 漏掉可用子模組而被
+獨審拒收；同票修正 `d514aed73fff2ebc82314d0e56942cced244209a`
+補齊 child 與多 alias 邊。11 tests、strict mypy、Reviewer 反向突變紅→綠；
+落地兩 Git blob 與候選相同，控制面閘門本地整合 `2a19406d`。完整證據見
+`doc/reviews/workflow-governance/32-test-consumer-inventory-code-review.md`。
