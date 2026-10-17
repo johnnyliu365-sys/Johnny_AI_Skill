@@ -2,7 +2,7 @@
 
 | 欄位 | 內容 |
 | --- | --- |
-| State | `CONVERGENCE_REVIEW_REQUIRED`；同一 Closure revision 的第二次獨審仍拒收，不自動第三修 |
+| State | `CONVERGENCE_DECIDED / CLOSURE_REVISION_02 / REIMPLEMENT_ADMITTED`；原 revision 的兩次拒收保留，預算與 Finding 不重置 |
 | Authority | 既有 `PRD-20260805-009`／`CHG-20260805-009`、`modules/spec/workflow-governance.md` AC 2–5；本次 Owner 要求派工來源完整、最小，不新增需求身分 |
 | Source baseline | 本票所在控制面 commit；獨立實作 worktree |
 | Implementation language | Markdown 模板與 Python 3.11 驗證 |
@@ -48,3 +48,21 @@ Acceptance：既有模板欄位不被刪減；新增文字不含特定專案、�
 Run：`python -m pytest tests/test_ticket_template_contract.py -q`、`git diff --check`。
 Return：`IMPLEMENTED | BLOCKED | CHANGE_DETECTED`、完整 candidate SHA、變更檔、
 測試與反向突變目標、仍缺的真正派工准入能力。實作者不整合、不推送。
+
+## Convergence decision／Closure revision 02
+
+前兩次獨審不是要求多添一批 marker，而是指出測試把不可填寫的文字當成有效
+欄位：先是 HTML 註解，後是 fenced Markdown 範例。根因在本票未定義「槽存在」
+的可執行判定。本 revision 只收斂測試證據方法，不變更產品需求、模板新增欄位、
+allowlist、模型配置或 Host dispatch 權限；原候選、Finding、耗用與審閱歷史存續。
+
+有效槽必須是對應正式 section 內、HTML 註解與 fenced code block **之外**的
+可填 bullet；純範例、引文或其他 section 的同字串均不算。測試可使用小型、
+局部的 Markdown 結構掃描，不得為此建立通用 Parser／框架。固定前端情境須
+真的填入模板的有效槽，並以產出的填票結果斷言 Expected、具名 I/O、失敗／
+邊界驗收、停止條件與 reviewer，而非只比較測試檔內的常數。
+
+Reviewer 至少從兩個不同門獨立反向突變：將 Expected 移入 HTML 註解、移入
+fenced code block，兩者均應讓具名 cell 轉紅；移除 stop condition 也要轉紅。
+恢復原文後全綠。已有通過的測試與模板內容不重做；只修仍 false-green 的證據。
+本 revision 不聲稱 Host 派工准入，整個清單 03 仍按外層能力判定。
