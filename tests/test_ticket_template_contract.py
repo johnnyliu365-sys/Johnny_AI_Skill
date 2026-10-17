@@ -63,7 +63,7 @@ _FRONTEND_SLOT_VALUES = (
     ),
     (
         "<分列既有／新增產品碼、測試／腳本、文件、證據產物的預期數量與估計行數；修正沿用同一票預算；行數或數量只觸發結構審查，不自動拆檔、壓縮、拒收或放行>",
-        "Existing/new: product 1/1 files +8/+24 lines; tests/scripts 1/0 +12/0; docs 1/0 +3/0; evidence 1/0 +4/0; correction uses this ticket's remaining budget",
+        "Existing/new: product 1/2 files +8/+24 lines; tests/scripts 1/0 +12/0; docs 1/0 +3/0; evidence 1/0 +4/0; correction uses this ticket's remaining budget",
     ),
     (
         "<預設使用 Git worktree 外的作業系統暫存目錄，且不得污染 Git worktree；正式樹中唯一必要且具名的證據產物；源碼／腳本僅保留必要技術註解，不含 owner prompt 或工單敘事>",
@@ -340,7 +340,8 @@ def test_template_slots_bind_to_a_filled_frontend_ticket() -> None:
         "AC-SEARCH-003",
     ))
     assert "create = src/search/" in _boundary_body(filled_ticket)
-    assert all(item in budget for item in ("product 1/1", "tests/scripts 1/0", "this ticket's remaining budget"))
+    assert all(item in budget for item in ("product 1/2", "tests/scripts 1/0", "this ticket's remaining budget"))
+    assert new_file.count("src/search/") == 2
     temp_path_text = (
         artifact.partition("; persist only")[0]
         .strip("`")
