@@ -3,7 +3,7 @@
 | 欄位 | 值 |
 | --- | --- |
 | 文件身分 | `AI-SKILL-IMPROVEMENT-CHECKLIST`；本專案工作追蹤，非新 PRD／SPEC／Gate |
-| Revision／來源 | `09`；Owner 2026-10-18 本次 12 項指示、通用虛構情境及既有功能沿原 PRD 修訂限定 |
+| Revision／來源 | `10`；Owner 2026-10-18 本次 12 項指示、十種失敗情境、通用虛構情境及既有功能沿原 PRD 修訂限定 |
 | 工作基準 | `a1cb6c13adbeb52a4117991727dcc3d4af6d2a33`；分支 `codex/skill-improvement-checklist` |
 | 主線 | 先對照、優先 02→04→05→06→07，再處理餘項與整合回放 |
 | 負責 | Root 理解需求、衝突與派工；票級實作者依有效能力 Profile；獨立審閱另席 |
@@ -37,7 +37,8 @@ Router、Reviewer、文件索引與結案規則仍各有唯一正文。`[x]` 只
 - 現行 worktree 與 correction：`implementation-authority.md`；現行測試品質：
   `implementation-tdd.md`、`review-checks.md`。它們是可重用基礎，尚未證明本表情境。
 - 04 的 TEST→A→B 本機閉包已完成；05／06／07 仍有 Host／正式結案外層缺口，不得誤勾。
-- 原有功能的修正、返工、補測與延伸不得新建重複 PRD；沿原需求身分修訂並保留核准與版本關聯。此 Owner 限定與現行 `requirement-lineage.md` 的一對一 PRD／CHG 規則衝突，須依既有 Change Control 收斂，不得把本條當成已生效機制。
+- 原有功能的修正、返工、補測與延伸不得新建重複 PRD；沿原需求身分修訂並保留核准與版本關聯。已在原有 `PRD-20260815-022` 和 `PRD-20260805-009` leaf 記錄**待生效提案**，沒有另建 PRD；現行 approved `adaptive-project-orchestration.md` revision05 AC-17、`requirement-lineage.md` 與 validator 仍要求一對一。須以原需求及 SPEC 的精確修訂、相容性遷移和測試收斂，不能把提案冒充執行中的閘門。
+- 程式與測試腳本禁止按票堆疊成混合責任巨石。現有 `johnny-boundary` 的 `create` 預設拒絕、Git diff 比對與 `TEST → A → B` 已提供部分硬性保護；它們**不會**判斷檔案內部耦合。剩餘缺口是對真實候選的重用／新增責任／成長與相依結構證據的正式拒收入口；不得只靠文字、行數上限或新增平行 Gate 宣稱完成。
 - 本地整合分支對 01～10 已改動的 13 個相關測試檔作一次合併回歸：`330 passed, 568 subtests passed`；8 項 pytest collection warnings 是匯入的 `Test*` 型別非測試類別，沒有失敗。這不替代各票獨審或未合格 Host effect。
   02 的初稿拒收，仍須修正真正 Owner effect／相依接續，不得重命名 dispatch wait 冒充。
   下一步依既有需求與 ticket 補足 02／05／06／07 的外層效應與驗收，再接續其他項目。
