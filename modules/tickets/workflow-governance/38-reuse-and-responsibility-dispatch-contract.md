@@ -2,7 +2,7 @@
 
 | 欄位 | 內容 |
 | --- | --- |
-| State | `OPEN / TEMPLATE_SLICE_ONLY`；不得宣稱已具 Host dispatch admission 或語意耦合自動判斷 |
+| State | `TEMPLATE_SLICE_LOCAL_INTEGRATED` at `3557bc20`；不得宣稱已具 Host dispatch admission 或語意耦合自動判斷 |
 | Authority | 既有 `PRD-20260805-009`、Owner 2026-10-18 清單 03／11 及「程式與腳本不得堆疊」指示；不新增 PRD／SPEC |
 | Baseline | 本票 docs-only commit，派工時釘完整 SHA |
 | Roles | 低成本實作席位、不同獨審席位、Root 控制面 |
@@ -46,3 +46,13 @@ Run：`python -m pytest tests/test_ticket_template_contract.py -q`、
 `git diff --check`。Return：`IMPLEMENTED | BLOCKED | CHANGE_DETECTED`、完整候選 SHA、
 實際兩檔、驗證與突變證據、未解 Host admission／結構語意缺口。
 不新增檔案、PRD、SPEC、Gate、Framework，不整合、不推送。
+
+## 實作與獨審
+
+初版 `f95face6` 被獨審指出目錄型 `create` 未逐檔綁定責任、暫存樣本會污染
+Git worktree。原實作者在同票 correction commits `d28f55ca`、`3557bc20` 修正兩項
+與樣本預算數量不一致；原 reviewer 用兩個不同的填票入口反向突變驗證轉紅→綠，
+最終 35 項測試、`git diff --check` 綠。既有 document-mutation gate 直接以精確
+reviewed candidate 回傳 `INTEGRATED` at `3557bc20`。詳見
+`doc/reviews/workflow-governance/38-reuse-and-responsibility-dispatch-contract-code-review.md`。
+本票只完成模板切片，不使清單 03／11 的 Host／語意結構缺口消失。
