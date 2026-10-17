@@ -95,6 +95,44 @@ class GitTestDependencySourceAdapterTests(unittest.TestCase):
         self.assertFalse(new_inventory.inventory.retirement_authorized)
         self.assertEqual(("tests/test_wrapper.py",), old_after_head_change.inventory.direct_consumers)
 
+    def test_git_replace_ref_cannot_change_pinned_commit_content(self) -> None:
+        self._write("tests/test_helper.py", "def helper() -> None: pass\n")
+        self._write("tests/test_consumer.py", "from tests.test_helper import helper\n")
+        pinned_commit = self._commit("with-consumer")
+
+        self._write("tests/test_consumer.py", "def test_independent() -> None: pass\n")
+        replacement_commit = self._commit("without-consumer")
+        self._git("replace", pinned_commit, replacement_commit)
+
+        result = GitTestDependencySourceAdapter().read_inventory(
+            self.repository_root, pinned_commit, "tests/test_helper.py"
+        )
+
+        self.assertEqual(pinned_commit, result.commit_sha)
+        self.assertEqual(("tests/test_consumer.py",), result.inventory.direct_consumers)
+
+    def test_git_replace_blob_cannot_change_pinned_source_content(self) -> None:
+        self._write("tests/test_helper.py", "def helper() -> None: pass\n")
+        self._write("tests/test_consumer.py", "from tests.test_helper import helper\n")
+        pinned_commit = self._commit("with-consumer")
+        original_blob = self._git_text(
+            "rev-parse", f"{pinned_commit}:tests/test_consumer.py"
+        )
+
+        self._write("tests/test_consumer.py", "def test_independent() -> None: pass\n")
+        replacement_commit = self._commit("without-consumer")
+        replacement_blob = self._git_text(
+            "rev-parse", f"{replacement_commit}:tests/test_consumer.py"
+        )
+        self._git("replace", original_blob, replacement_blob)
+
+        result = GitTestDependencySourceAdapter().read_inventory(
+            self.repository_root, pinned_commit, "tests/test_helper.py"
+        )
+
+        self.assertEqual(pinned_commit, result.commit_sha)
+        self.assertEqual(("tests/test_consumer.py",), result.inventory.direct_consumers)
+
     def test_valid_empty_inventory_keeps_retirement_unauthorized(self) -> None:
         self._write("tests/test_independent.py", "def test_independent() -> None: pass\n")
         pinned_commit = self._commit("independent")
@@ -218,6 +256,49 @@ class GitTestDependencySourceAdapterTests(unittest.TestCase):
             f"160000,{linked_commit},vendor/test_dependency.py",
         )
         pinned_commit = self._commit("gitlink")
+
+        with self.assertRaises(SourceError) as raised:
+            GitTestDependencySourceAdapter().read_inventory(
+                self.repository_root, pinned_commit, "tests/test_regular.py"
+            )
+        self.assertEqual(
+            SourceFailure.UNSUPPORTED_TREE_ENTRY,
+            raised.exception.reason,
+        )
+
+    def test_rejects_non_python_symlink_entry(self) -> None:
+        self._write("tests/test_regular.py", "")
+        self._commit("regular")
+        link_blob = self._git(
+            "hash-object", "-w", "--stdin", input_bytes=b"target"
+        ).decode("ascii").strip()
+        self._git(
+            "update-index",
+            "--add",
+            "--cacheinfo",
+            f"120000,{link_blob},vendor-link",
+        )
+        pinned_commit = self._commit("non-python-symlink")
+
+        with self.assertRaises(SourceError) as raised:
+            GitTestDependencySourceAdapter().read_inventory(
+                self.repository_root, pinned_commit, "tests/test_regular.py"
+            )
+        self.assertEqual(
+            SourceFailure.UNSUPPORTED_TREE_ENTRY,
+            raised.exception.reason,
+        )
+
+    def test_rejects_non_python_gitlink_entry(self) -> None:
+        self._write("tests/test_regular.py", "")
+        linked_commit = self._commit("regular")
+        self._git(
+            "update-index",
+            "--add",
+            "--cacheinfo",
+            f"160000,{linked_commit},vendor",
+        )
+        pinned_commit = self._commit("non-python-gitlink")
 
         with self.assertRaises(SourceError) as raised:
             GitTestDependencySourceAdapter().read_inventory(

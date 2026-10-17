@@ -205,14 +205,24 @@ class GitTestDependencySourceAdapter:
                 raise TestDependencySourceError(
                     TestDependencySourceFailure.GIT_COMMAND_FAILED
                 )
+            try:
+                mode = fields[0].decode("ascii")
+                object_type = fields[1].decode("ascii")
+                object_id = fields[2].decode("ascii").lower()
+            except UnicodeDecodeError as error:
+                raise TestDependencySourceError(
+                    TestDependencySourceFailure.GIT_COMMAND_FAILED
+                ) from error
+
+            if mode not in {"100644", "100755"} or object_type != "blob":
+                raise TestDependencySourceError(
+                    TestDependencySourceFailure.UNSUPPORTED_TREE_ENTRY
+                )
             if not raw_path.endswith(b".py"):
                 continue
             if len(entries) >= self._max_python_files:
                 raise TestDependencySourceError(TestDependencySourceFailure.LIMIT_EXCEEDED)
             try:
-                mode = fields[0].decode("ascii")
-                object_type = fields[1].decode("ascii")
-                object_id = fields[2].decode("ascii").lower()
                 path = raw_path.decode("utf-8", errors="strict")
             except UnicodeDecodeError as error:
                 raise TestDependencySourceError(
@@ -227,10 +237,6 @@ class GitTestDependencySourceAdapter:
             if not re.fullmatch(r"[0-9a-f]{40}|[0-9a-f]{64}", object_id):
                 raise TestDependencySourceError(
                     TestDependencySourceFailure.GIT_COMMAND_FAILED
-                )
-            if mode not in {"100644", "100755"} or object_type != "blob":
-                raise TestDependencySourceError(
-                    TestDependencySourceFailure.UNSUPPORTED_TREE_ENTRY
                 )
             entries.append(
                 _GitTreeEntry(
@@ -356,7 +362,7 @@ class GitTestDependencySourceAdapter:
             raise TestDependencySourceError(TestDependencySourceFailure.GIT_COMMAND_TIMEOUT)
         try:
             process: subprocess.Popen[bytes] = subprocess.Popen(
-                ("git", "-C", str(root), *arguments),
+                ("git", "--no-replace-objects", "-C", str(root), *arguments),
                 stdin=subprocess.PIPE if input_bytes is not None else subprocess.DEVNULL,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.DEVNULL,
