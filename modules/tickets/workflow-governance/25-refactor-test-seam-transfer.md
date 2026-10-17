@@ -37,6 +37,6 @@ forbid = library/workflow_router/private_router.py
 
 - 正常：TEST 規劃可精確指定 A/B 各自的產品與測試 seam；候選 A 行為驗證與 service 突變紅／還原綠可重跑，B 必須依賴 A 綠的證據。
 - 失敗／邊界：只驗委派而 service 被改錯，不得報能力承接完成；候選版沒跑、只跑舊 baseline，不得進 B。
-- 本票不移動任何生產 Router 邏輯，不新增檔案，不修改 Vita360。若需要修改正式 SPEC/AC 才能解釋 A/B，回 `CHANGE_DETECTED`。
+- 本票不移動任何生產 Router 邏輯，不新增檔案，不修改 target 產品。若需要修改正式 SPEC/AC 才能解釋 A/B，回 `CHANGE_DETECTED`。
 
 Run：`python -m pytest tests/test_workflow_router.py tests/test_private_router_metadata_gate.py -q`、`git diff --check`。Return：`IMPLEMENTED | BLOCKED | CHANGE_DETECTED`、候選完整 SHA、實際路徑、命令結果、突變 target/cell/紅綠輸出、scope deviations、未驗證項。獨審由另一席作獨立反向突變。

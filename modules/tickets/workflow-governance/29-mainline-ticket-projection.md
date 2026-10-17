@@ -42,13 +42,13 @@ Root 可保存完整主線目標、已准入的票與待辦；implementer Contex
    `closure_candidate`。`ready_for_recheck` 不是已准入授權；每次 effect 前仍走
    原 Router／來源／Grant。`closure_candidate` 也不是正式 `DONE`，仍須由既有
    Review／證據准入確認。
-3. 固定回放：前端工作主線有血壓測試 A、無相依測試 B、依賴 A 的 C。
+3. 固定回放：虛構元件工作主線有行為測試 A、無相依測試 B、依賴 A 的 C。
    A 單票驗證完但 B/C 未完時 `closure_candidate=false`；A 等 Owner 時 B 可以是
    `ready_for_recheck`，C 不可以；B 完成後 A 仍待決，主線仍開放；optional 非必要
    待辦不會無限阻擋候選結案。
 4. Skill 的 Agent Context reference 只補一條邊界：票級 view 關閉不等於主線完成；
    reviewer 回到既有 Router 依主線投影選下一個需重新准入的票。通用文字不放
-   Vita360 路徑、票號、SHA、模型名。
+   特定 target 路徑、票號、SHA、模型名。
 
 Acceptance：正向與反向測試皆跑；對「首票完成→主線完成」及「相依票借行」
 做 reviewer 自行反向突變，紅後還原綠。舊 ticket/dispatch/ref 讀取不變。

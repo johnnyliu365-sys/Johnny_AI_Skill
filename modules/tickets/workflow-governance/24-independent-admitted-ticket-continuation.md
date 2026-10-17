@@ -9,7 +9,7 @@
 | Implementation owner | 低成本實作席位，單票 worktree；不得自審 |
 | Reviewer | 與實作者不同的獨立席位；主 session 保持控制面 |
 | Profile | `STANDARD`：跨兩個票級狀態的接續契約；無外部模型／正式環境 effect |
-| Environment | 隔離本地測試，不碰 Vita360、正式 DB、付費 API、Push、Release |
+| Environment | 隔離本地虛構情境；不碰 target 產品、正式 DB、付費 API、Push、Release |
 
 ## 邊界宣告
 
