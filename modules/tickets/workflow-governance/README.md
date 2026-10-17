@@ -26,6 +26,7 @@ Deliver one control-plane policy vertical slice: completion evidence must re-ent
 | [33-shared-context-service-seam](33-shared-context-service-seam.md) | TEST→A transfers actual Shared Context behavior from Router to one service | `A_LOCAL_INTEGRATED` | Independent review approved; `ac369235`; B test seam/retirement still open |
 | [34-shared-context-test-seam-transfer](34-shared-context-test-seam-transfer.md) | Move five contract-only cells while keeping public Router behavior cells mutation-sensitive | `B_LOCAL_INTEGRATED` | Independent review approved; `b4a7dbe6`; checklist 04 complete locally |
 | [35-parent-finding-status-closure](35-parent-finding-status-closure.md) | Show required child and Finding closure without a false APPROVED parent | `SLICE_LOCAL_INTEGRATED` | Independent review approved correction; `215a599f`; projection only, formal Review authority still open |
+| [36-git-pinned-test-source-inventory](36-git-pinned-test-source-inventory.md) | Read test consumers from an exact Git commit instead of caller-supplied working-copy text | `OPEN / DISPATCHABLE` | Builds on Ticket 32; read-only source adapter, not test retirement authority |
 
 ## Shared baseline
 
