@@ -107,6 +107,38 @@ load("tests.test_helper")
         self.assertEqual(("doc/runbooks/smoke.py",), result.direct_consumers)
         self.assertEqual(("tests/test_consumer.py",), result.transitive_consumers)
 
+    def test_from_import_resolves_available_child_module_and_keeps_parent_edge(self) -> None:
+        sources = (
+            PythonSource("tests/test_consumer.py", "from tests.test_pkg import test_helper\n"),
+            PythonSource("tests/test_pkg.py", ""),
+            PythonSource("tests/test_pkg/test_helper.py", ""),
+        )
+        child = PythonTestConsumerInventory(sources).retirement_inventory(
+            "tests.test_pkg.test_helper"
+        )
+        parent = PythonTestConsumerInventory(sources).retirement_inventory("tests.test_pkg")
+
+        self.assertEqual(("tests/test_consumer.py",), child.direct_consumers)
+        self.assertEqual(("tests/test_consumer.py",), parent.direct_consumers)
+
+    def test_from_import_keeps_every_available_alias_child_module(self) -> None:
+        result = PythonTestConsumerInventory(
+            sources=(
+                PythonSource(
+                    "tests/test_consumer.py",
+                    "from doc.runbooks import smoke, audit\n",
+                ),
+                PythonSource("doc/runbooks/smoke.py", "from tests.test_helper import run\n"),
+                PythonSource("doc/runbooks/audit.py", "from tests.test_helper import check\n"),
+            )
+        ).retirement_inventory("tests.test_helper")
+
+        self.assertEqual(
+            ("doc/runbooks/audit.py", "doc/runbooks/smoke.py"),
+            result.direct_consumers,
+        )
+        self.assertEqual(("tests/test_consumer.py",), result.transitive_consumers)
+
     def test_dynamic_import_and_dynamic_command_are_unresolved(self) -> None:
         result = PythonTestConsumerInventory(
             sources=(

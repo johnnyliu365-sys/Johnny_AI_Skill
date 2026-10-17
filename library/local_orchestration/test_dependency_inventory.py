@@ -224,22 +224,17 @@ def _scan_source(
                             )
                         )
             elif node.level == 0 and node.module:
-                imported_source: str | None
+                imported_sources: set[str] = set()
                 if node.module.startswith("tests."):
-                    imported_source = node.module
-                else:
-                    imported_source = next(
-                        (
-                            target
-                            for target in (
-                                node.module,
-                                *(f"{node.module}.{alias.name}" for alias in node.names),
-                            )
-                            if target in source_modules
-                        ),
-                        None,
-                    )
-                if imported_source is not None:
+                    imported_sources.add(node.module)
+                elif node.module in source_modules:
+                    imported_sources.add(node.module)
+                imported_sources.update(
+                    f"{node.module}.{alias.name}"
+                    for alias in node.names
+                    if alias.name != "*" and f"{node.module}.{alias.name}" in source_modules
+                )
+                for imported_source in imported_sources:
                     edges.add(
                         DependencyEdge(source.source_ref, imported_source, DependencyKind.IMPORT)
                     )
