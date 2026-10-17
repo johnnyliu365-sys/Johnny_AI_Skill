@@ -29,6 +29,7 @@ Deliver one control-plane policy vertical slice: completion evidence must re-ent
 | [36-git-pinned-test-source-inventory](36-git-pinned-test-source-inventory.md) | Read test consumers from an exact Git commit instead of caller-supplied working-copy text | `SLICE_LOCAL_INTEGRATED` | Independent review approved correction; `e1ca2d4b`; CI commands and retirement authority still open |
 | [37-retired-wpr-commit-conflict](37-retired-wpr-commit-conflict.md) | Remove the obsolete standalone WPR commit completion obligation and keep its policy pins aligned | `SLICE_LOCAL_INTEGRATED` | Initial review found a timing defect; same-ticket correction approved and locally gated at `2f1c29cb` |
 | [38-reuse-and-responsibility-dispatch-contract](38-reuse-and-responsibility-dispatch-contract.md) | A dispatch ticket names reused modules, separate code/test/script responsibilities and bounded growth evidence before implementation | `TEMPLATE_SLICE_LOCAL_INTEGRATED` | Independent review and document gate approved at `3557bc20`; Host admission and semantic structural review remain separate gaps |
+| [39-literal-suite-consumer-inventory](39-literal-suite-consumer-inventory.md) | Trace literal SUITES registry references through Python wrappers before test retirement | `OPEN / INVENTORY_SLICE_ONLY` | Existing PRD/spec and checklist 08; real CI command source and retirement authority stay open |
 
 ## Shared baseline
 
