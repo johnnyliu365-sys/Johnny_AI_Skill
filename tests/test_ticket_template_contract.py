@@ -20,6 +20,11 @@ _OUTCOME_SECTION = "## 使用者拍板與可觀察結果"
 _IMPLEMENTATION_SECTION = "## 實作範圍、依賴與 ticket elements"
 _BOUNDARY_BLOCK = "johnny-boundary"
 _SOURCE_ROW = "<source-row>"
+_REUSE_LABEL = "共用件查重與依賴方向"
+_NEW_FILE_LABEL = "新增檔案責任"
+_BUDGET_LABEL = "預期增量與原票預算"
+_ARTIFACT_LABEL = "驗證產物與源碼內容"
+_PRESERVE_LABEL = "保留已核准行為"
 
 _FRONTEND_SLOT_VALUES = (
     ("@ `<approved revision>`", "@ `revision r1`"),
@@ -42,6 +47,30 @@ _FRONTEND_SLOT_VALUES = (
     (
         "<具名輸入 → 輸出／有限狀態與錯誤／nullability / types and ports>",
         "SearchInput(query: NonEmptyText) → SearchResult(items: ReadonlyArray<SearchItem>); states Loading / Empty / Failure; error SearchUnavailable",
+    ),
+    (
+        "<可新增的路徑；不寫就是一個都不准新增>",
+        "src/search/SearchIndex.py",
+    ),
+    (
+        "<已查找並重用的生產模組、測試 harness／fixture（精確路徑或 ID、revision 與依賴方向）；若無可重用項，填查找範圍與具體理由>",
+        "Reused src/search/SearchService.py@r1 and tests/support/http_fake.py@r2; SearchRoute → SearchService → SearchPort",
+    ),
+    (
+        "<逐一列出 johnny-boundary create 路徑的單一責任、直接消費者、對應驗收 ID、依賴方向；沒有新增時填 N/A reason>",
+        "src/search/SearchIndex.py: single responsibility, query index; consumer, SearchService; acceptance, AC-SEARCH-002; dependency, SearchService → SearchIndex",
+    ),
+    (
+        "<分列既有／新增產品碼、測試／腳本、文件、證據產物的預期數量與估計行數；修正沿用同一票預算；行數或數量只觸發結構審查，不自動拆檔、壓縮、拒收或放行>",
+        "Existing/new: product 1/1 files +8/+24 lines; tests/scripts 1/0 +12/0; docs 1/0 +3/0; evidence 1/0 +4/0; correction uses this ticket's remaining budget",
+    ),
+    (
+        "<預設暫存目錄；正式樹中唯一必要且具名的證據產物；源碼／腳本僅保留必要技術註解，不含 owner prompt 或工單敘事>",
+        "Temporary output: .tmp/ticket-7/; persist only doc/evidence/search-7.md; code and scripts contain technical comments only, no owner prompt or ticket narrative",
+    ),
+    (
+        "<本票不應改動的既有功能、介面與來源基準；如契約內確需變更，列明授權來源、精確路徑與回歸驗收>",
+        "Preserve SearchHistory and public SearchQuery v1 at baseline abc123; any authorized change must cite its source, exact path, and regression case",
     ),
 )
 
@@ -73,6 +102,21 @@ _NEGATIVE_CELLS = (
     _SlotMutation("create_boundary_removed", _BOUNDARY_BLOCK, "create", "delete"),
     _SlotMutation("delete_boundary_removed", _BOUNDARY_BLOCK, "delete", "delete"),
     _SlotMutation("forbid_boundary_removed", _BOUNDARY_BLOCK, "forbid", "delete"),
+    _SlotMutation("reuse_contract_removed", _IMPLEMENTATION_SECTION, _REUSE_LABEL, "delete"),
+    _SlotMutation("reuse_contract_commented", _IMPLEMENTATION_SECTION, _REUSE_LABEL, "comment"),
+    _SlotMutation("reuse_contract_moved", _IMPLEMENTATION_SECTION, _REUSE_LABEL, "move"),
+    _SlotMutation("new_file_responsibility_removed", _IMPLEMENTATION_SECTION, _NEW_FILE_LABEL, "delete"),
+    _SlotMutation("new_file_responsibility_commented", _IMPLEMENTATION_SECTION, _NEW_FILE_LABEL, "comment"),
+    _SlotMutation("new_file_responsibility_moved", _IMPLEMENTATION_SECTION, _NEW_FILE_LABEL, "move"),
+    _SlotMutation("change_budget_removed", _IMPLEMENTATION_SECTION, _BUDGET_LABEL, "delete"),
+    _SlotMutation("change_budget_commented", _IMPLEMENTATION_SECTION, _BUDGET_LABEL, "comment"),
+    _SlotMutation("change_budget_moved", _IMPLEMENTATION_SECTION, _BUDGET_LABEL, "move"),
+    _SlotMutation("artifact_policy_removed", _IMPLEMENTATION_SECTION, _ARTIFACT_LABEL, "delete"),
+    _SlotMutation("artifact_policy_commented", _IMPLEMENTATION_SECTION, _ARTIFACT_LABEL, "comment"),
+    _SlotMutation("artifact_policy_moved", _IMPLEMENTATION_SECTION, _ARTIFACT_LABEL, "move"),
+    _SlotMutation("preserve_contract_removed", _IMPLEMENTATION_SECTION, _PRESERVE_LABEL, "delete"),
+    _SlotMutation("preserve_contract_commented", _IMPLEMENTATION_SECTION, _PRESERVE_LABEL, "comment"),
+    _SlotMutation("preserve_contract_moved", _IMPLEMENTATION_SECTION, _PRESERVE_LABEL, "move"),
 )
 
 
@@ -171,10 +215,21 @@ def _assert_template_contract(markdown: str) -> None:
     dependency = _active_bullet(implementation, "直接依賴與狀態")
     reviewer = _active_bullet(implementation, "reviewer")
     returned = _active_bullet(implementation, "`ImplementationReturn`")
+    reuse = _active_bullet(implementation, _REUSE_LABEL)
+    new_file = _active_bullet(implementation, _NEW_FILE_LABEL)
+    budget = _active_bullet(implementation, _BUDGET_LABEL)
+    artifact = _active_bullet(implementation, _ARTIFACT_LABEL)
+    preserve = _active_bullet(implementation, _PRESERVE_LABEL)
     assert "具名輸入 → 輸出／有限狀態與錯誤" in contract
     assert "readiness status" in dependency and "required evidence" in dependency
     assert "independent AI／worktree" in reviewer
     assert "不得與 implementation owner 共用 worktree" in reviewer
+    assert "測試 harness／fixture" in reuse and "依賴方向" in reuse
+    assert all(term in new_file for term in ("單一責任", "直接消費者", "驗收 ID"))
+    assert all(term in budget for term in ("既有／新增產品碼", "測試／腳本", "文件", "證據產物"))
+    assert "修正沿用同一票預算" in budget and "不自動拆檔" in budget
+    assert all(term in artifact for term in ("暫存目錄", "正式樹", "owner prompt", "工單敘事"))
+    assert all(term in preserve for term in ("既有功能、介面", "授權來源", "回歸驗收"))
     assert all(
         item in returned
         for item in ("COMPLETED → ACTION_COMPLETED", "BLOCKED → HALT", "CHANGE_DETECTED → REQUIREMENT_CHANGED")
@@ -245,6 +300,11 @@ def test_template_slots_bind_to_a_filled_frontend_ticket() -> None:
     acceptance_label = "正常／失敗／邊界驗收"
     stop_label = "停止條件"
     reviewer_label = "reviewer"
+    reuse_label = _REUSE_LABEL
+    new_file_label = _NEW_FILE_LABEL
+    budget_label = _BUDGET_LABEL
+    artifact_label = _ARTIFACT_LABEL
+    preserve_label = _PRESERVE_LABEL
     revision_rows = [
         line for line in filled_ticket.splitlines() if line.startswith(expected_revision)
     ]
@@ -255,6 +315,11 @@ def test_template_slots_bind_to_a_filled_frontend_ticket() -> None:
     acceptance = _filled_value(ticket_outcome, acceptance_label)
     stop = _filled_value(ticket_outcome, stop_label)
     reviewer = _filled_value(ticket_implementation, reviewer_label)
+    reuse = _filled_value(ticket_implementation, reuse_label)
+    new_file = _filled_value(ticket_implementation, new_file_label)
+    budget = _filled_value(ticket_implementation, budget_label)
+    artifact = _filled_value(ticket_implementation, artifact_label)
+    preserve = _filled_value(ticket_implementation, preserve_label)
     assert "SearchResult" in expected
     assert all(
         item in contract
@@ -264,6 +329,13 @@ def test_template_slots_bind_to_a_filled_frontend_ticket() -> None:
     assert "CHANGE_DETECTED → REQUIREMENT_CHANGED" in stop
     assert "do not invent Expected" in stop
     assert "independent from implementation owner" in reviewer
+    assert all(item in reuse for item in ("SearchService.py@r1", "http_fake.py@r2", "SearchRoute → SearchService"))
+    assert all(item in new_file for item in ("src/search/SearchIndex.py", "SearchService", "AC-SEARCH-002"))
+    assert "create = src/search/SearchIndex.py" in _boundary_body(filled_ticket)
+    assert all(item in budget for item in ("product 1/1", "tests/scripts 1/0", "this ticket's remaining budget"))
+    assert ".tmp/ticket-7/" in artifact and "doc/evidence/search-7.md" in artifact
+    assert "no owner prompt or ticket narrative" in artifact
+    assert "Preserve SearchHistory" in preserve and "public SearchQuery v1" in preserve
 
 
 @pytest.mark.parametrize(
@@ -271,14 +343,20 @@ def test_template_slots_bind_to_a_filled_frontend_ticket() -> None:
     _NEGATIVE_CELLS,
     ids=tuple(mutation.cell for mutation in _NEGATIVE_CELLS),
 )
-def test_removing_or_commenting_a_named_slot_breaks_the_template(
+def test_mutating_a_named_template_policy_breaks_its_contract_cell(
     mutation: _SlotMutation,
 ) -> None:
     markdown = _TEMPLATE_PATH.read_text(encoding="utf-8")
+    _assert_template_contract(markdown)
     mutated = _apply_bullet_mutation(markdown, mutation)
 
     with pytest.raises(AssertionError):
         _assert_template_contract(mutated)
+
+    # The mutation is in-memory only; the exact source is still present and green.
+    restored = _TEMPLATE_PATH.read_text(encoding="utf-8")
+    assert restored == markdown
+    _assert_template_contract(restored)
 
 
 def test_unapproved_business_decision_uses_the_active_stop_bullet() -> None:
