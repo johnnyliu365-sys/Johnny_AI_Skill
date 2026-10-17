@@ -337,6 +337,16 @@ def _project_children_and_findings(
 
     edges: dict[str, list[str]] = {path: [] for path in by_path}
     direct_errors: dict[str, list[str]] = {}
+    # A duplicated declared ID makes each matching row ambiguous, even when
+    # no parent currently references it. Keep unrelated tickets readable.
+    for ticket_id, matches in by_id.items():
+        if len(matches) > 1:
+            for duplicate in matches:
+                duplicate_path = str(duplicate["ticket_path"])
+                direct_errors.setdefault(duplicate_path, []).append(
+                    f"工單 ID {ticket_id} 在本次讀取集合中重複"
+                )
+
     for path, ticket in by_path.items():
         children = ticket.get("children", [])
         if not isinstance(children, list):

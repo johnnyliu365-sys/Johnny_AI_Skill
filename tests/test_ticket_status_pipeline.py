@@ -690,6 +690,60 @@ class ParentFindingProjectionTests(unittest.TestCase):
                 any("多筆工單" in source["reason"] for source in document["unreadable"])
             )
 
+    def test_duplicate_declared_ticket_ids_are_unreadable_but_unrelated_ticket_remains(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = _repository(Path(temporary))
+            _write_ticket(
+                root,
+                "one",
+                "parent.md",
+                _ticket(
+                    "First parent",
+                    block=self._status("P", "APPROVED", "child = B | REQUIRED"),
+                ),
+            )
+            _write_ticket(
+                root,
+                "two",
+                "parent.md",
+                _ticket(
+                    "Second parent",
+                    block=self._status("P", "APPROVED", "child = B | REQUIRED"),
+                ),
+            )
+            _write_ticket(
+                root,
+                "demo",
+                "child.md",
+                _ticket("Child", block=self._status("B", "APPROVED")),
+            )
+            _write_ticket(
+                root,
+                "demo",
+                "unrelated.md",
+                _ticket("Unrelated", block=self._status("C", "DONE")),
+            )
+            _commit(root, "tickets: duplicate declared ids")
+
+            document = build_document(root)
+            self.assertEqual(
+                {ticket["id"] for ticket in document["tickets"]},
+                {"B", "C"},
+            )
+            unreadable_by_path = {
+                source["path"]: source["reason"] for source in document["unreadable"]
+            }
+            self.assertEqual(
+                set(unreadable_by_path),
+                {
+                    "modules/tickets/one/parent.md",
+                    "modules/tickets/two/parent.md",
+                },
+            )
+            self.assertTrue(
+                all("重複" in reason for reason in unreadable_by_path.values())
+            )
+
     def test_open_finding_invalidates_approved_parent_but_keeps_owner_when_open(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = _repository(Path(temporary))
