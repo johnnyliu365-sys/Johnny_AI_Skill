@@ -15,6 +15,7 @@ Deliver one control-plane policy vertical slice: completion evidence must re-ent
 | [03-suite-order-fragility](03-suite-order-fragility.md) | A poisoned shared runtime root is reported once, with its cause and remedy, instead of eighty misleading failures | `CLOSED` | Real cause found: per-process claim map versus a shared on-disk root, orphaned by concurrent pytest processes. The opening diagnosis was wrong and is corrected in place |
 | [04-skill-implies-a-runtime-that-may-not-exist](04-skill-implies-a-runtime-that-may-not-exist.md) | The skill no longer narrates wakes nothing performs; agents must verify automation readiness before claiming any automatic effect | `CLOSED` | Found by the owner watching a false wake narrative on a real project; ships as 0.4.4 |
 | [24-independent-admitted-ticket-continuation](24-independent-admitted-ticket-continuation.md) | A waiting ticket cannot freeze an unrelated admitted ticket or transfer its authority | `REVIEW_CHANGES_REQUESTED` | Candidate `953c2cea` proves only dispatch continuation; Owner-effect route and dependency evidence remain unverified |
+| [25-refactor-test-seam-transfer](25-refactor-test-seam-transfer.md) | A responsibility split moves behavior tests and mutation targets with the production seam before the next split | `IN_PROGRESS` | Owner 2026-10-18 checklist item 04; bounded source policy and existing service replay |
 
 ## Shared baseline
 
