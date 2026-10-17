@@ -74,6 +74,12 @@ Every decision declares exactly one continuation:
    at two rounds, and resumes only through `OWNER_INPUT_PROVIDED` after the answers are
    committed into the intake goal record. Round exhaustion forces a terminal
    `WAYFINDER_GO` with explicit assumptions or `WAYFINDER_NO_GO / INSUFFICIENT_INPUT`.
+   An `EXTERNAL_DECISION_REQUIRED` wait is bound to the exact ticket/effect metadata in
+   that event. It grants no effect capability or authority; the Host effect gate must
+   independently validate any effect, and the live source and scope for that ticket must
+   be rechecked at the effect boundary. A wait on one ticket does not freeze other tickets:
+   each independent admitted ticket follows its own Profile route only after its own
+   authority, source and dependency gates pass.
 3. `HALT` applies to missing or invalid sources, denied or absent authority, unavailable
    capability, failed validation, replay or mismatch, unsafe external boundary, exceeded
    budget, undeclared transition or `NO-GO`. Do not guess, use a local fallback, or wait
