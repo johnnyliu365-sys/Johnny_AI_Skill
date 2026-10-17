@@ -2,7 +2,7 @@
 
 | 欄位 | 內容 |
 | --- | --- |
-| State | `OPEN / DISPATCHABLE`；承接 Ticket 32，不重置其審閱或預算 |
+| State | `SLICE_LOCAL_INTEGRATED` at `e1ca2d4b`；承接 Ticket 32，清單 08 仍未完成 |
 | Authority | 既有 `PRD-20260805-009`／`CHG-20260805-009`、Owner 清單 08；不新增需求身分 |
 | Baseline | 本票 docs-only commit；派工時精確 pin |
 | Roles | 低成本實作席位與不同獨審席位；Root 控制面 |
@@ -30,3 +30,7 @@ forbid = library/local_orchestration/test_dependency_inventory.py
 4. Reviewer 從不同門突變 commit pin 或間接邊，使具名格轉紅，再還原綠；確認合法無消費者來源可被讀取，但 `retirement_authorized` 仍為 false。
 
 Run：`python -m pytest tests/test_test_dependency_source_adapter.py tests/test_test_dependency_inventory.py -q`、`mypy --strict library/local_orchestration/test_dependency_source_adapter.py`、`git diff --check`。Return：`IMPLEMENTED | BLOCKED | CHANGE_DETECTED`、候選完整 SHA、檔案、測試、反向突變目標、未驗證 CI／退役缺口。實作者不整合、不推送。若無法在本票兩檔內保證釘選來源或需要新授權來源，回 `CHANGE_DETECTED`。
+
+## 實作與獨審結果
+
+初版 `1d96fafe` 的獨審拒收兩項 Closure 1 缺陷：Git replace ref 可令同一舊 SHA 的內容漂移，非 `.py` gitlink 被略過卻回 COMPLETE。原票 additive correction `4c6cfbeb` 關閉兩項；原 reviewer 從公開入口重跑 commit/blob replace 與非 `.py` symlink/gitlink 負例，並複驗兩項反向突變紅→綠。最終 26 tests／2 subtests、strict mypy、diff check 通過；受控整合 `e1ca2d4b` 的兩個 Git blob 與受審候選相同，本地再跑 26 tests／2 subtests 和 strict mypy 通過。詳見 `doc/reviews/workflow-governance/36-git-pinned-test-source-inventory-code-review.md`。真 CI 命令仍由 caller 提供，退役授權始終為 false，不得把此切片勾成清單 08 完成。
