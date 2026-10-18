@@ -100,3 +100,24 @@ registered identities. No push, external model call or Host activation.
 Final independent verdict `/root/completion_report_review`: APPROVED exact
 e83a4a72 against1aa5ed22, all four original findings closed after the R4 evidence
 readback above. Root may now perform only that reviewed local integration.
+
+### 31B local integration seal
+
+At control baseline `0af05936fe9fa3810c5b411ef75d330649d19f28`, Root reused its
+registered44-land workspace and replayed only the two reviewed31B commits.
+Candidate `64157fbed9754d89fb66c473252cecbca0d525ff` has all three exact blobs
+listed above. Existing `admit_document_mutation` read the committed31B boundary
+from the integration branch and returned INTEGRATED at that SHA; HEAD readback
+and worktree clean confirmed. Integrated template suite65passed in0.92s;
+replay/integration/test commands11.44s, conservative cumulative147/180s.
+
+Journal `%TEMP%/Johnny-checklist31b-20261018/queue/document-mutation-journal.jsonl`
+has one event: at_utc2026-10-18T13:36:05.444196+00:00, candidate/detail64157fbe,
+branchcodex/skill-improvement-checklist, principalGameBoy, exactTicket31 path,
+outcomeINTEGRATED, offending_pathnull. SHA256
+`42ee735c8a9c31a3d434c13d6d0ab7d8ebc9bee1201c890fea518760f02d784e`.
+Preserve raw journal, author/reviewer worktrees and the shared Root landing
+workspace. Known Host teardown prohibition is not retried by an equivalent
+command; `LOCAL_INTEGRATED / CLEANUP_BLOCKED`, not normal closure. Source/test
+commits and permanent tests remain protected. Fixed report format is now locally
+verified; paid-API isolation and full checklist10 remain unverified.

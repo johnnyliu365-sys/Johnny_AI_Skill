@@ -62,7 +62,7 @@ Return：`IMPLEMENTED | BLOCKED | CHANGE_DETECTED`、完整 candidate SHA、變�
 
 ## 31B — 固定交付回報，沿原清單10補缺
 
-前段31模型映射切片已完成，不重做。此段DOCUMENT_REVIEW_PENDING，Root Grant
+前段31模型映射切片已完成，不重做。此段LOCAL_INTEGRATED / CLEANUP_BLOCKED，Root Grant
 `grant-wg31b-report-local-20261018`追溯Owner `batch-checklist-local-20261018`；
 同一需求／票／既有證據不重置。基準`cfd64358`，派工時讀回最終文件commit／leaf；
 31B新增命令上限180s、單次60s，歷史31耗用另保留，不挪用或重置。initial+一次correction。
@@ -105,3 +105,9 @@ author只commit三路徑、return candidate/checks/findings/deviations/累計時
 票面／review並經既有mutation gate本地整合。assets owner具名席位，TTL至review+
 evidence seal及整合後受限移除；未整合/Recovery保留。network/paidcall/helper=0。
 本地模板結果不等於runtime Host admission，清單10不得因此整項勾選。
+
+31B final candidate `e83a4a72b848102a5eb6b82abaa3189e5245f88b` 經原獨審者
+APPROVED，四項原契約finding同票修正閉合；65tests及作者／reviewer不同入口
+反向突變紅→精確還原綠。Root gate整合`64157fbed9754d89fb66c473252cecbca0d525ff`，
+三個blob完全等於受審版本，整合後65tests通過。精確seal、時間與清理限制見原review。
+本機受限清理受Host政策阻擋，資產保留，不冒充CLEANUP_CONFIRMED或整項10完成。
