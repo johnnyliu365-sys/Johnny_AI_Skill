@@ -3,7 +3,7 @@
 | 欄位 | 值 |
 | --- | --- |
 | 文件身分 | `AI-SKILL-IMPROVEMENT-CHECKLIST`；本專案工作追蹤，非新 PRD／SPEC／Gate |
-| Revision／來源 | `26`；沿用既有12項與acf0ffa1／ded322b3批准；追加Owner的30M有證據文件遷移及30B票面準備授權。非30B實作／push授權 |
+| Revision／來源 | `27`；沿用既有12項與acf0ffa1／ded322b3批准；Owner 2026-10-18 明確追加本批本地工作授權，追溯如下。非 push／正式啟用授權 |
 | 工作基準 | `a1cb6c13adbeb52a4117991727dcc3d4af6d2a33`；分支 `codex/skill-improvement-checklist` |
 | 主線 | 先對照、優先 02→04→05→06→07，再處理餘項與整合回放 |
 | 負責 | Root 理解需求、衝突與派工；票級實作者依有效能力 Profile；獨立審閱另席 |
@@ -29,6 +29,28 @@ Router、Reviewer、文件索引與結案規則仍各有唯一正文。`[x]` 只
 | [ ] 10 成本／外部呼叫／回報 | `MODEL_PROFILE_LOCAL_INTEGRATED / PAID_TEST_REPORTING_GAP` | Luna 改 `model-role-routing.md`、`delivery-profile.md` 與既有 policy/executor tests；`68a10057`，審閱見 `doc/reviews/workflow-governance/31-semantic-model-profile-boundary-code-review.md` | 36 tests／74 subtests 綠；普通開票低／高 profile 反向突變紅→綠，同步 readback 語義修正；本機付費服務攔截及固定回報欄位 `NOT_VERIFIED` | `APPROVED_SLICE` | 通用模型選擇不凍結名稱，但真實 Host qualification、付費 API 測試隔離與功能／腳本拆分回報仍缺 |
 | [ ] 11 去重與衝突 | `WPR_AND_TEMPLATE_SLICES_LOCAL_INTEGRATED / CONSISTENCY_OPEN` | Tickets 37／38／40 原有切片；Ticket 42 `0d4dbb14` 修正兩份模板退役 WPR 欄與既有測試，獨審見 `doc/reviews/workflow-governance/42-retired-workprogress-template-consistency-code-review.md`；未造平行流程 | Ticket 42：46 tests 綠，獨審對兩份模板注入不同位置的活躍 WPR bullet 各轉紅→還原綠；受控 gate `INTEGRATED`，三檔 blob 精確綁候選。唯一隔離 journal 先封存 SHA-256 再受限清理；兩個乾淨 worktree 與已整合專用 branch 讀回不存在 | `APPROVED_TEMPLATE_SLICE / CLEANUP_CONFIRMED` | 已核准 AC17 的新需求身分仍只屬設計基準；一對一 validator、主線／Host 准入與其他入口一致性仍需遷移及驗證，整項 11 不打勾 |
 | [ ] 12 回放與獨審 | `NOT_STARTED` | Root；沿既有 tests／review 位置 | 01–10 正反案例待建立；自動／固定情境分別記錄限制 | `NOT_REVIEWED` | 錯誤拒絕與合法通過都必須證明 |
+
+## 本批授權 — 2026-10-18
+
+`batch-checklist-local-20261018` 的來源是本 session Owner 的明確決策：授權單位為
+完成現有12項清單所需的 Johnny_AI_Skill 本地工作，包含30B及後續同範圍工作。
+記錄基準為 `2e52772770e81669a7e1f92391a432572d4ead4b`。這是既有需求的執行授權，
+不是新 PRD、第二套簽發器或把 Agent 自述轉成 Owner 批准。
+
+Root 可拆票、選擇最小檔案範圍、簽發追溯本批的精確子票 Grant、安排具名作者與
+不同席獨審、修正 findings、執行本地測試、提交及受控本地整合。每張子票仍須
+綁定原需求／SPEC、exact baseline／leaf、角色／worktree、modify/create/delete、
+AC／負例、資源上限與結果證據。作者不能批准自己；Grant 不得擴張本批目標。
+既有已消耗額度及 findings 保留；新票不能重置累計耗用。一般同範圍工程選擇不再
+要求逐票 Owner 批准；來源不符或超界仍只停止受影響工作。
+
+不授權 push、release、deployment、正式啟用新派工／Host 閘門、其他專案、正式
+敏感資料或新費用。外部驗收缺證據保持未完成；其他已准入本地工作接續。
+30B 採既有候選600s命令累計／120s單命令上限，歷史30A耗用不重置；本輪測試
+network=0，未執行候選中的真實外部GET。其 Grant 在原票內記錄及獨審後生效。
+本段只解釋誰可限縮簽發已授權工作；不改兩份已核准 SPEC 的 AC 或安全不變量，
+也不宣稱新硬性 Host 攔截已部署。精確票仍需批准，但批准者在本批內已由 Owner
+委任 Root；SPEC「separately approved ticket」因此不要求再次人工確認。
 
 ## 本輪窄查來源與下一步
 

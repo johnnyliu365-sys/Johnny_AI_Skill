@@ -87,7 +87,7 @@ revision 03 寫定 fixture bootstrap 例外。兩者及本票經獨審後，條�
 bridge／receipt／descriptor 均 `NOT_REQUIRED`。這是 Owner Grant 的執行綁定，
 不是 Agent 自行產生另一份授權來源。
 
-```johnny-boundary
+```text
 modify = AGENTS.md
 create = library/local_orchestration/mainline_source.py
 create = tests/test_mainline_source.py
@@ -166,6 +166,56 @@ baseline 沒有 source/test 變更，以及實際 integration diff 正好兩個�
 修改仍拒絕；這只是本次 Owner 明確核准的文件 baseline 續綁，不是新權限。
 
 ## 30B 精確候選 — 真實來源讀回，不產生派工效應
+
+### 本批委任下的精確子票綁定
+
+本節取代下方歷史候選的「待Owner逐票核發」與固定30M baseline描述，其餘30B-R1～R4
+及四路徑契約不變。授權來源 `batch-checklist-local-20261018`，見既有
+`doc/AI-SKILL-IMPROVEMENT-CHECKLIST.md` revision27「本批授權」。Root 依 Owner
+明確委任核發 `grant-ticket30b-readback-20261018`，狀態
+`ISSUED_CONDITIONAL_ON_DOCUMENT_REVIEW / LOCAL_BUILD_ONLY`；文件獨審通過後自動
+接續，不再要求 Owner 重複批准。30A Grant 已消耗，不重用。
+
+- Source baseline：`8c9be91650d3cfb59d53c24b55b9a65fb72118b3`；本次 control baseline
+  `2e52772770e81669a7e1f92391a432572d4ead4b`，中間僅既有 review ledger。
+  實作起點為本節及必要 registry digest 寫定、獨審後的完整文件 commit；Root 在
+  review leaf 記精確 SHA／ticket blob、核對與 source baseline 的程式 blobs 相同。
+- Owner `/root/ticket30b_readback_impl`，能力由本次可用工具目錄與前次同類30A已驗
+  能力比對：`gpt-6-luna`／`xhigh`；獨審 `/root/ticket30b_readback_review`，
+  `gpt-6-sol`／`high`；Root 唯一 orchestrator／整合者。模型值僅本次分配資料。
+- 原定 worktree／branch、四路徑、HIGH_ASSURANCE、600s累計／120s單命令及
+  existing-type preflight、新型別先建構再獨審的順序沿用。命令紀錄保留實際耗時，
+  修正不重置。原 initial＋一次correction耗盡時，由Root在本批內收斂但不加額度。
+- Network=0；本地假 transport 測試及實作標準庫受限transport均可，禁止實際外部
+  GET、paid API、credential、正式派工／Host啟用。正式來源正向證據保持未完成。
+- Asset owner=本票具名作者／獨審；TTL=本批本票審閱與證據封存後；只清精確登記
+  的乾淨且已整合worktree/ref，失敗或Recovery hold保留，不改其他資產。
+
+本批唯一活躍機械邊界（上方30A fence已退役為歷史text）：
+
+```johnny-boundary
+modify = library/local_orchestration/mainline_source.py
+modify = tests/test_mainline_source.py
+create = library/local_orchestration/mainline_readback.py
+create = tests/test_mainline_readback.py
+forbid = AGENTS.md
+forbid = CONTEXT.md
+forbid = Workflow.md
+forbid = CodeReview.md
+forbid = doc/
+forbid = modules/
+forbid = skills/
+forbid = template/
+forbid = library/workflow_router/
+forbid = library/local_orchestration/dispatch_authority.py
+```
+
+Root 文件 modify allowlist：本leaf、同feature README、既有本票review及既有
+checklist。獨審驗此差異、授權來源、唯一boundary與rawdigest鏡像；此步不改SPEC
+或Context已封存版本，不創造新Host能力。`ACTION_COMPLETED → AUTO_CONTINUE`
+進入同生命週期type-only實作，實際constructor獨審後才續行為，最後按原gate整合。
+
+### 歷史候選（本批限定覆蓋以上段為準）
 
 狀態 `PREPARED / GRANT_NOT_ISSUED / NO_RUNTIME_ACTIVATION`。原需求與 SPEC
 AC9、同 Ticket30 lineage 不變；30A 已完成，不重做。30M 文件經獨審、本地
