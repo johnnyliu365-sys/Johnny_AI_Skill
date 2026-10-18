@@ -3,7 +3,7 @@
 | 欄位 | 值 |
 | --- | --- |
 | 文件身分 | `AI-SKILL-IMPROVEMENT-CHECKLIST`；本專案工作追蹤，非新 PRD／SPEC／Gate |
-| Revision／來源 | `16`；Owner 2026-10-18 本次 12 項指示、十種失敗情境、通用虛構情境及既有功能沿原 PRD 修訂限定 |
+| Revision／來源 | `17`；Owner 2026-10-18 本次 12 項指示、十種失敗情境、通用虛構情境、既有功能沿原 PRD 修訂及兩份 SPEC 限縮修正授權 |
 | 工作基準 | `a1cb6c13adbeb52a4117991727dcc3d4af6d2a33`；分支 `codex/skill-improvement-checklist` |
 | 主線 | 先對照、優先 02→04→05→06→07，再處理餘項與整合回放 |
 | 負責 | Root 理解需求、衝突與派工；票級實作者依有效能力 Profile；獨立審閱另席 |
@@ -37,8 +37,8 @@ Router、Reviewer、文件索引與結案規則仍各有唯一正文。`[x]` 只
 - 現行 worktree 與 correction：`implementation-authority.md`；現行測試品質：
   `implementation-tdd.md`、`review-checks.md`。它們是可重用基礎，尚未證明本表情境。
 - 04 的 TEST→A→B 本機閉包已完成；05／06／07 仍有 Host／正式結案外層缺口，不得誤勾。
-- 原有功能的修正、返工、補測與延伸不得新建重複 PRD；沿原需求身分修訂並保留核准與版本關聯。已在原有 `PRD-20260815-022` 和 `PRD-20260805-009` leaf 記錄**待生效提案**，並在前者補上精確 AC-17 身分替代文字；沒有另建 PRD。現行 approved `adaptive-project-orchestration.md` revision05 AC-17、`requirement-lineage.md` 與 validator 仍要求一對一。須以原需求及 SPEC 的精確修訂、相容性遷移和測試收斂，不能把提案冒充執行中的閘門。
-- 本輪將兩份修訂提案寫入**原 SPEC**：`adaptive-project-orchestration.md` AC-17 身分替代提案及 `workflow-governance.md` AC-9～11 主線／Host／結案提案。兩者已獨審，但都明標 `NOT_EFFECTIVE / OWNER_EXACT_APPROVAL_PENDING`；未取得精確核准前，Ticket 30 不可派、Host 硬性准入不可宣稱已具備、正式需求身分仍按現行 AC-17 驗證。出貨 scaffold 的窄修已完成，不代替這兩個外層缺口。
+- 原有功能的修正、返工、補測與延伸不得新建重複 PRD；沿原需求身分修訂並保留核准與版本關聯。原有 `PRD-20260815-022` 和 `PRD-20260805-009` leaf 現記錄**已獨審的設計基準、runtime 待生效**，前者含 AC-17 身分替代摘要；沒有另建 PRD。現行 runtime 的 `adaptive-project-orchestration.md` revision05 AC-17、`requirement-lineage.md` 與 validator 仍要求一對一。須完成相容性遷移、Host 能力及測試收斂，不能把設計基準冒充執行中的閘門。
+- 本輪沿**原 PRD／原 SPEC**完成兩份限定修正：AC-17 受審 `4531d00f`／blob `9c88d20e`，治理 AC9–11 受審 `8eae1af4`／blob `6fd8c309`；Ticket 41 精確 blob replay 經 document mutation gate 本地整合於 `76d1f942`，獨審與 83 tests／242 subtests 見 `doc/reviews/workflow-governance/41-bounded-spec-correction-integration-code-review.md`。Owner 本輪授權與獨審使其成為**設計基準**，不用重問同一 SPEC；現行一對一 validator、Ticket 30 的缺口、實作 Grant、Host 硬性准入與正式結案 effect 仍未完成。出貨 scaffold 的窄修不能代替外層入口。
 - 程式與測試腳本禁止按票堆疊成混合責任巨石。現有 `johnny-boundary` 的 `create` 預設拒絕、Git diff 比對與 `TEST → A → B` 已提供部分硬性保護；它們**不會**判斷檔案內部耦合。剩餘缺口是對真實候選的重用／新增責任／成長與相依結構證據的正式拒收入口；不得只靠文字、行數上限或新增平行 Gate 宣稱完成。
 - 窄查 `library/`、`tests/` 的 Python 檔案：`tests/test_workflow_router.py` 約 3561 行且含 Router、Context telemetry、route instruction、Agent Context lease 四組測試類；`library/workflow_router/contracts.py` 約 1734 行含多個領域契約。這是結構審查觸發訊號，**不是**自動拆檔、刪測試或判定全部違規的證據；後續只能隨受影響能力做 TEST→A→B 承接。
 - 本地整合分支對 01～10 已改動的 13 個相關測試檔作一次合併回歸：`330 passed, 568 subtests passed`；8 項 pytest collection warnings 是匯入的 `Test*` 型別非測試類別，沒有失敗。這不替代各票獨審或未合格 Host effect。
