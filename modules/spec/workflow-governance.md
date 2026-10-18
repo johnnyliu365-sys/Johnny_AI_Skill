@@ -158,10 +158,11 @@ The future implementation ticket must begin red and include the following explic
 
 | Field | Proposed value |
 | --- | --- |
-| State | `NOT_EFFECTIVE / OWNER_EXACT_APPROVAL_PENDING` |
+| State | `NOT_EFFECTIVE / OWNER_LIMITED_REVISION_AUTHORIZED / INDEPENDENT_REVIEW_PENDING` |
 | Requirement lineage | Existing `PRD-20260805-009` / `CHG-20260805-009`; the proposed amendment in `doc/requirements/active/2026/workflow-governance/REQ-20260805-009.md` |
 | Evidence baseline | Owner's 2026-10-18 `doc/AI-SKILL-IMPROVEMENT-CHECKLIST.md` revision 14, items 01–03, 07, 09 and 11; Ticket 24 closure revision 03, Tickets 28–30 and 38 and their independent reviews |
-| Approval required | Project owner must approve this exact SPEC revision and its bounded AC below before any new implementation ticket or Host effect relies on it |
+| Owner's limited revision authority | On 2026-10-18 the owner accepted final-content commit `1669e8e20f0a30894606e16f9ea1a10e4f0c5ba3` (SPEC blob `be9b79eed12dd76ec8f37fe83f3be90b86a4895d`, identical to this branch's `b6ac5f8a` blob) as the correction baseline, limited to the trusted authority anchor, formal closure and staged activation below; this is not implementation or activation approval |
+| Exact revision evidence slots | Corrected proposal commit/blob: `PENDING_THIS_COMMIT` / `PENDING_THIS_BLOB`; independent review report/verdict: `PENDING`; owner exact SPEC approval: `PENDING`; approved build ticket and candidate SHA: `PENDING`; qualification/replay evidence: `PENDING`; scoped activation decision and effective authority ref/SHA: `PENDING` |
 
 This append-only proposal does not revise AC 1–8, the 2026-08-05 approval,
 existing ticket grants or completed work. Its intended scope is the current
@@ -175,16 +176,25 @@ dependency, push, publication or another external effect.
 existing target-owned `modules/tickets/<feature>/README.md` index is the
 mainline source after a versioned migration records one mainline ID, objective,
 owner, handoff reference, required/optional ticket set and exact dependency
-edges, bound to approved Context/PRD/CHG/SPEC revisions. The reader derives
-the graph from that committed index and exact ticket leaves at the declared
-authority ref. A fresh direct
-source readback supplies the observed commit/revision; caller-built
+edges, bound to approved Context/PRD/CHG/SPEC revisions. Its trust anchor is
+the owner's versioned, already admitted `ProjectAuthorityContract` and its
+approved declaration artifact: the declared remote repository identity,
+validated full `project_authority_ref` and declaration
+revision, not a ref supplied by the caller, index or ticket. Before an affected
+dispatch, continuation or closure effect, use the existing direct remote
+observation contract to read that declared ref afresh and read the official
+index and exact ticket leaves from the observed commit. Check remote identity,
+full ref, observation freshness, commit and source revisions; a caller's SHA
+is only an assertion to compare. The reader derives
+the graph from those committed leaves; caller-built
 `MainlineProjectionRequest`, local tracking refs, prompts and ticket self-report
 are not authority. The Router may consume `mainline_projection.py` only as a
 candidate view after the source boundary verifies project, mainline, ticket
 identity, revision and graph completeness. Keep raw text ephemeral and durable
 Router state metadata-only. A missing, stale, ambiguous, contradictory or
-unreadable source blocks the affected continuation before dispatch or effect.
+unreadable direct remote or formal source readback blocks only the affected
+ticket/closure before its effect; it does not freeze an independently admissible
+ticket.
 
 For each candidate ticket, the existing Router/Host dispatch admission must
 independently read back that ticket's approved leaf, live grant, owner/worktree
@@ -227,15 +237,20 @@ change control.
 **AC-11 — evidence-linked formal closure and structural review.** Formal
 `APPROVED`/`DONE` and mainline closure require the existing Review/Router
 admission path to resolve the exact candidate SHA, approved Expected,
-Closure revision, required child tickets, dependencies and every blocking
-Finding disposition to independently observed review evidence and the
+Closure revision, required child tickets, dependencies, every blocking
+Finding disposition, an independent reviewer identity/verdict and readable
+AC-by-AC evidence bound to that candidate through the formal source readback.
+The same path must resolve independently observed review evidence and the
 test/type/build/smoke checks required by that approved ticket and Profile.
 An inapplicable check, such as build or smoke for a docs-only ticket, may be
 recorded `N/A` only with its reason; required evidence cannot be marked `N/A`.
 A projection's `closure_candidate`, a green summary, a ticket
 label or an unverified report cannot close work. An optional unfinished item
 does not block required-work closure; an open required child, unresolved
-blocking Finding, stale candidate/source or unverified consumer does. Same-ticket
+blocking Finding, stale candidate/source, unreadable AC evidence or unverified
+consumer does. No required work may be marked `DONE` from a projection or
+incomplete evidence. A failed readback blocks only the affected ticket or
+mainline closure, not another independent admitted ticket. Same-ticket
 correction retains the original requirement, ticket, finite Closure revision,
 budget and still-valid evidence, and rechecks affected consumers; an unrelated
 hardening idea follows the existing `OUT_OF_SCOPE_HARDENING` route.
@@ -258,8 +273,9 @@ implied.
    replay one committed fictional A/B/C mainline: A has a precise effect wait;
    B is independent and live-admitted; C depends on A. B continues, C does
    not, and B completion leaves A and the required mainline open. Mutations
-   that globally freeze B or admit B/C from caller-built/stale metadata must
-   turn the named cells red and restore to green.
+   that globally freeze B or admit B/C from caller-built metadata, an arbitrary
+   caller ref, stale direct observation or unreadable official leaf must turn
+   the named cells red and restore to green.
 2. At the reviewer-controlled same-lifetime native delegation path, prove the
    reviewer checks the committed ticket before spawn, and report that result
    as instruction-level evidence only. At the separately qualified hard Host
@@ -274,8 +290,9 @@ implied.
 3. At `library/workflow_router/review_admission.py`, the existing guarded
    integration/Review route and the ticket-status projection consumer, prove
    exact-candidate positive closure, a reasoned docs-only `N/A`, and negative
-   cases for an open required child, open blocking Finding, stale evidence,
-   `N/A` on a required check and a product/test-script responsibility mismatch.
+   cases for an open required child, open blocking Finding, missing independent
+   reviewer, stale or unreadable AC evidence, `N/A` on a required check and a
+   product/test-script responsibility mismatch.
    A projection may display these states, but only
    the existing formal Review/Router route can authorize closure. Reviewer
    records the actual diff, reused modules, modified paths, impact/consumer
@@ -298,16 +315,38 @@ delegation has no qualified hard Host intercept. Neither behavior is
 defensibly authorized as a completed Host/mainline capability by AC 1–8.
 Do not synthesize that authority from metadata or expand Ticket 30 locally.
 
-### Activation and migration boundary
+### Staged approval, build, verification and activation
 
-Upon exact owner approval, append the revision signature and route affected
-ticket revisions through existing approval and preflight before new dispatch.
+1. **SPEC approval.** Finish this bounded correction, record its exact final
+   commit/blob and independent review evidence, then obtain the project owner's
+   exact approval of that reviewed revision. The 2026-10-18 limited drafting
+   authority above does not make AC-9–11 effective or authorize a Host effect.
+2. **Build.** Use the owner-approved revised SPEC as the bounded build
+   acceptance source, and route implementation through the currently effective
+   ticket schema, owner approval, role/worktree preflight and existing Router
+   gates. Only a separately approved ticket can authorize source/test changes;
+   this proposal does not dispatch Ticket 30 or issue a new grant by itself.
+3. **Verification.** At exact built candidate SHA, independently review the
+   AC-9–11 positive/negative replays and qualify the actual direct-remote,
+   formal-source and Host effect intercepts for each lane claimed. Record
+   readable evidence refs and failures. `LOCAL_INTEGRATED` is not remote
+   `AUTHORITY_INTEGRATED`; any required push and direct remote SHA readback
+   remain separate effects under the existing authority-line contract.
+4. **Formal activation.** Only an explicit scoped owner decision, bound to the
+   approved SPEC, reviewed built commit, qualified entrypoints, passing replay
+   evidence and effective authority ref/SHA, enables AC-9–11 for that scope.
+   Without a qualified Host intercept, no hard-gate claim or activation for
+   that lane. Missing or later-invalid evidence suspends only its affected
+   admission or closure; it does not revoke existing effective grants or
+   freeze unrelated tickets with independently valid authority.
+
 Existing approved SPEC AC 1–8, issued grants/receipts, active lanes and
 completed-ticket evidence retain their original scope; this proposal neither
-revokes nor silently upgrades them. Any new or repeated dispatch after
-activation must pass AC-9/10 against its exact current approved ticket, and
-formal closure must pass AC-11. A legacy ticket lacking required fields is
-amended under the original requirement and ticket identity, with its approval
-and Closure revision preserved or explicitly revised as required by existing
-change control. No second PRD, parallel mainline authority, new ticket solely
-for this SPEC proposal, new framework or automatic migration is authorized.
+revokes nor silently upgrades them. After scoped activation, any new or
+repeated dispatch in that scope must pass AC-9/10 against its exact current
+approved ticket, and formal closure must pass AC-11. A legacy ticket lacking
+required fields is amended under the original requirement and ticket identity,
+with its approval and Closure revision preserved or explicitly revised as
+required by existing change control. No second PRD, parallel mainline
+authority, new ticket solely for this SPEC proposal, new framework or
+automatic migration is authorized.
