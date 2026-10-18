@@ -341,6 +341,67 @@ one module-card leaf and adds nested meaning/ownership partitions before unrelat
 would force broad loading. The Router resolves one explicit path only and never scans,
 flattens, recursively loads or persists a whole tree.
 
+#### Proposed AC-17 requirement-identity revision — `NOT_EFFECTIVE / OWNER_EXACT_APPROVAL_PENDING`
+
+This is a proposed amendment to the existing `PRD-20260815-022`, not a new PRD or an
+effective SPEC revision. On the project owner's exact approval of this candidate commit,
+replace only the two AC-17 sentences from "Each active product requirement" through
+"archive ID/reference" with the following requirement/change identity and retirement
+contract. AC-17's bounded tree, archive-library, reusable-module and exact-path rules,
+and all other approved ACs, remain as approved.
+
+> A PRD ID permanently identifies one product requirement. A bug fix, test addition,
+> refactor or correction that preserves its approved product behavior and acceptance
+> baseline retains that PRD ID and effective revision; opening an engineering ticket
+> alone creates neither a PRD nor a CHG. A genuine owner-approved change to the same
+> product capability retains the PRD ID, advances its revision, and links one
+> independently identified CHG to the exact prior and new PRD revisions, the approval
+> reference and affected acceptance conditions. Historical CHGs remain independently
+> addressable; one PRD may have multiple CHGs, and one CHG may name every PRD revision
+> it actually changes. Matching PRD/CHG suffixes are historical data, not authority.
+>
+> PRD creation is denied by default. Only a `NEW_INDEPENDENT` or `SUPERSEDE` operation
+> carrying an exact valid `RequirementCreationGrant` may create a new PRD. The grant
+> binds the project, operation, proposed PRD ID, owner-approved decision/source,
+> expected authority baseline and a single consumption identity. A `NEW_INDEPENDENT`
+> grant identifies a capability independent of existing PRDs and names no replaced
+> PRD. A `SUPERSEDE` grant additionally binds the complete replaced PRD ID/revision
+> set, approved replacement relation and retirement transition. Its one admitted
+> transition removes every replaced PRD from active indexes and makes the replacement
+> active; replaced and replacement PRDs cannot both remain active afterward. Missing,
+> stale, mismatched or replayed grants authorize no creation or retirement.
+>
+> Retirement archives the PRD identity, final effective revision, all linked CHG
+> history, relevant UI/SPEC/ticket references and replacement relation in a bounded
+> archive leaf. A CHG that also affects another PRD remains independently resolvable
+> for that PRD. Active and archive indexes carry direct-child metadata and resolve
+> exact PRD/revision/CHG links; they reject duplicate IDs, dangling or ambiguous
+> revisions, unapproved change links, active/archive overlap and ungranted creation.
+
+The existing Router and managed-artifact admission path validates these exact
+references and transitions; this proposal adds no separate policy engine or gate.
+An approved revision is not effective at runtime until the bounded lineage contract,
+validator and index migration pass independent verification. Until then, existing
+matching pairs and the current one-to-one validator/tests remain effective and
+fail closed. Migration preserves those pairs as readable historical sources, maps
+each to its exact PRD and CHG revision relation, then updates only the affected
+lineage/index contracts and archive references. It must not silently reinterpret a
+legacy pair as a new grant or invent missing approval/revision evidence; an
+unresolvable record stops with `REQUIREMENT_LINEAGE_INVALID` for owner resolution.
+
+The migration's finite acceptance matrix must prove: (1) a behavior-preserving
+correction keeps the same PRD ID/revision and opens neither PRD nor CHG; (2) an
+approved same-PRD change advances its revision, resolves the independent CHG and
+preserves prior CHG history; (3) `NEW_INDEPENDENT` creates only its exact granted PRD;
+(4) `SUPERSEDE` archives every exact replaced revision and leaves no active overlap;
+and (5) legacy matching pairs remain readable through the bounded selected path.
+Negative cells reject a correction that silently changes acceptance, an unapproved
+or wrong-revision CHG, missing/wrong-project/wrong-mode/wrong-ID/stale/replayed
+creation grants, incomplete supersede sets, duplicate/dangling links, active/archive
+overlap and a legacy pair treated as creation authority. Each rejection occurs
+before a document or Git effect. These tests replace the obsolete suffix-equality
+expectation only after the owner-approved contract and migration qualify together.
+
 ### AC-17R9 — Procedural managed-artifact mutation and behavior feedback
 
 Revision 09 makes correct index maintenance part of the managed-artifact operation instead of a
@@ -1188,3 +1249,4 @@ provider, push, publication, installation, release or deployment effect.
 | 2026-08-29 | Project owner / exact candidate `3453f3e5709502bff64647eb2b4d6ad0b829212a` | Approved Revision 13 Remote Authority Commit and authorized reviewer opening of `CAP-REMOTE-AUTHORITY-01` only; no remote or implementation effect authority. |
 | 2026-08-29 | Codex architecture owner / `control/host-external-effect-gateway-architecture` / `083c41588e92e227ea27b1fde3fea33e15d6f3dc` | Drafted Revision 14 Host External-Effect Gateway after `CR-CAPREMOTE-01` established that a caller-forgeable activation cannot authorize a remote effect; exact owner approval pending. |
 | 2026-08-29 | Project owner / exact candidate `c3da092eb5cbd78938fb6f43480c525a9ee2258e` | Approved Revision 14 Host External-Effect Gateway and authorized reviewer opening of `CAP-HOST-EFFECT-GRANT-01` only; no gateway implementation or external-effect authority. |
+| 2026-10-18 | Codex architecture owner / `skill-improvement-ac17` / `cc948e81cf06d426bb0890c80baf9df89c59c37a` | Proposed same-`PRD-20260815-022` AC-17 requirement-identity amendment; `NOT_EFFECTIVE / OWNER_EXACT_APPROVAL_PENDING`. Existing approved AC-17 and one-to-one validation remain operative. |
