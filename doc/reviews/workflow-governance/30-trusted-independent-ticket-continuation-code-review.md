@@ -355,3 +355,35 @@ progress row and checklist progress text. No leaf/schema/source/version/digest
 change is permitted without recomputation and original-reviewer affected recheck.
 Root will use the existing control-plane gate and independent exact-blob readback;
 review approval itself grants no push or new30B source/test authority.
+
+### 30M guarded local integration
+
+Independent reviewer re-bound `c07fe7d62418f50d9268f98ceb03fa45e9550bdf`:
+only this report, checklist progress and a human index row changed from the
+approved87b090ed. Machine JSON was byte-identical, both leaves and source code
+unchanged; original APPROVED applied. Root ran the existing control-plane gate
+regression: `python -m pytest tests/test_control_plane_mutation.py -q` exited0,
+**54 passed,11 subtests passed in38.60s**. No unrelated04/Host tests were rerun.
+
+Root asserted clean control HEAD=d000 and exact control candidate ref=c07 before
+calling `admit_control_plane_mutation(JohnnyRootLayout(owned_temp),
+ControlPlaneMutationRequest(repository_root=control_worktree,
+integration_branch='codex/skill-improvement-checklist',
+candidate_ref='control/skill-improvement-30m-docs',principal=host_user))`.
+Result=`INTEGRATED`, failure=null, integrated_commit=c07fe7d6; actual HEAD matched.
+The diff was exactly five allowed Markdown files, with no create/delete or
+source/test change. This is LOCAL_INTEGRATED, never AUTHORITY_INTEGRATED.
+
+Journal owner=Root/Ticket30M, exact root
+`C:\Users\GameBoy\AppData\Local\Temp\johnny-ticket30m-integration-9mehmg_0`,
+TTL=this session through evidence seal+independent readback, teardown=exact
+registered journal and empty parent directories only. Actual journal is
+`queue/document-mutation-journal.jsonl`; an initial read mistakenly looked for
+`control-plane-mutation-journal.jsonl`, found nothing and made no mutation.
+No missing evidence was invented. The final journal seal below precedes teardown.
+
+Current metadata carrier updates only the registry/checklist/report with that
+observed result. Ticket29/30 finalbytes/digests and the machineJSON remain exact;
+the entire README blob changes legitimately with its human status row and must
+be pinned anew. The original reviewer rechecks that narrow carrier before its
+local gate. No independent network/readback or Host claim is introduced.
