@@ -292,7 +292,42 @@ is retained. No Host qualification or model call was performed by the audit.
 
 ### 30M validation / independent review
 
-Pending exact candidate validation, independent review and guarded integration.
-This paragraph is not a PASS or a formal source-qualification record. The final
-decision seal below will pin the completed document versions and30B Grant
-candidate without pretending the candidate is issued.
+Root validated exact candidate `bf7e1b9abee6423300e99a1388cc32068881d582`
+from committed Git bytes, not working-copy text. Existing `_parse_index` /
+`_parse_leaf` are used only as pure document-schema validators; no real-document
+`GitObservation` is constructed or sent to the fixture-only public entry.
+Each mirrored field and raw-byte SHA-256 matched. Four binding revision blobs
+equal the same artifacts at the candidate commit. Normal constructors built the
+existing MainlineTicket/ProjectionRequest and the actual projection returned:
+ready=[], waiting=[wg-ticket-30], incomplete_required=[wg-ticket-30],
+closure_candidate=false. Ticket29 completion did not close the mainline.
+
+Leaf29 blob `71a7c78e7d2a5b999b4663360516647c60848826`, raw digest
+`sha256_d6d3b25dd516ea4f2fb9daf90f1b39917e0f5bc9ecc3e647492656f411efe94f`;
+leaf30 blob `08146ff8e8afc9c886293bdcb57e4d5d2e94257b`, raw digest
+`sha256_f8d700a279a81dacfce6af7e5ea6d1359765061552f44035188856b64d970785`.
+Index blob `a32c08cfbfb1148ddcb7126c2e123404bce9329c`. Root staged the final
+leaf bytes, computed digests from `git show :<leaf>` after the last leaf edit,
+updated the index, committed and recomputed from exact candidate blobs. CRLF
+working-copy conversion was not used to calculate a Git source digest.
+
+The same direct stdin verification (no generated script/clone/temp repository)
+checked three negative inputs: append-byte digest drift, index/leaf status mismatch,
+and unknown dependency. Each was rejected at its actual schema/projection check.
+The comparison is document validation, not a qualified true-source/effect gate.
+Unreduced command output was read; focused regression remained:
+
+```text
+python -m pytest tests/test_mainline_source.py tests/test_mainline_projection.py -q
+91 passed in 23.51s
+python -m mypy --strict library/local_orchestration/mainline_source.py
+Success: no issues found in 1 source file
+python -m compileall -q library/local_orchestration/mainline_source.py
+git diff --check
+```
+
+All exited0; source/test untouched and worktree clean. The initial shell execution
+yielded its session and was resumed for completion, not relaunched. No lost
+attempt/time was reset. Independent targeted review and guarded integration remain
+pending; this record does not claim their PASS. The final decision seal will pin
+completed versions and the30B Grant candidate without treating it as issued.
