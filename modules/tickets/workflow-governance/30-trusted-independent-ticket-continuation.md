@@ -167,7 +167,9 @@ fixture 建置；formal target/effect 不在其中，modify 始終為空。
 object 嚴格包含：`schema_id = mainline-index/revision-01`、`project_id`、`feature`、
 `mainline_ref`、`objective_ref`、`owner_ref`、`handoff_ref`、`bindings[]`、`tickets[]`。
 每個 binding 嚴格包含 `kind`（context/prd/change/spec）、`identity`、`artifact_ref`、
-`revision_sha`（40 位小寫 hex）；每個 ticket 嚴格包含 `ticket_ref`、
+`revision_sha`（40 位小寫 hex）。AC9 所需四類來源各恰一筆，故 bindings 長度恰為
+4 且 kind 不重複；空陣列、缺類別或重複類別為 `INDEX_SCHEMA_INVALID`。這只
+驗證 fixture source-binding 完整性，不新增 authority resolver。每個 ticket 嚴格包含 `ticket_ref`、
 `ticket_revision`（既有 `RevisionDigest`）、`leaf_ref`、`leaf_digest`
 （`sha256_` 加 64 位小寫 hex）、`required`（boolean）、`status`（既有有限 enum）、
 `depends_on[]`、`admission_ref`（nullable）、`evidence_refs[]`。所有 metadata ID 仍須
@@ -282,7 +284,7 @@ Git 讀取、真 Host effect 前准入及正式結案均是後續獨立邊界。
   `DeclaredTestCommand` 仍未有可信來源，**空命令清單絕不授權舊測試退役**；
   checklist 08、Ticket 32/36/39 的 retirement gap 維持開放。
 
-## 30A 隔離建置：Closure revision 01，條件式核准
+## 30A 隔離建置：Closure revision 02，同票修正
 
 Owner 2026-10-18 指定 `library/local_orchestration/dispatch_authority.py::admit_dispatch`
 為**之後**第一個跨生命週期派工驗證入口。這只是優先順序，不使該入口、原生 spawn、
@@ -350,6 +352,16 @@ orchestrator，另一名不同席位獨審；branch/worktree、`create` 兩路�
    strict mypy、聚焦投影回歸、compile/import、`git diff --check` 全綠；實作者對
    digest 與 leaf binding 做紅→綠突變，獨審從不同入口改壞 committed leaf 或
    source SHA，具名格轉紅且精確還原。
+
+Revision 02 只補清 F1 的既有四類 binding 完整性，沿用 F1–F4、原 Grant、
+原型別 PASS、原作者／獨審席、原始 cumulative baseline 與既有耗用。
+首審 `43c9ebf1081f189e9adeb87f3717b6b50a2ec1b9` 的未解項全部保留：
+F2 重複 heading 的尾端空白與深層 JSON 必須 finite rejection；F3 fixture 在
+任何 Git command 前隔離 ambient Git environment，不能寫出本次 test-owned root；
+F1 空／缺／重複 binding kind 拒絕。前兩類是原規則的負例補驗，F1 是控制面
+修復 ticket 漏寫的 cardinality，不由 implementer 自選需求，不改 SPEC 或新增 PRD。
+這次 ticket-only 變更是 Owner 已允許的文件 baseline 續綁；實作者只合併該
+精確 docs commit，不修改 ticket，仍只修本票新建的兩個檔案。
 
 預定命令：`python -m pytest tests/test_mainline_source.py tests/test_mainline_projection.py -q`、
 `python -m mypy --strict library/local_orchestration/mainline_source.py`、

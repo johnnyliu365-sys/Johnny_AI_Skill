@@ -99,3 +99,44 @@ No effect API ran. The reviewer accepted this exact expression as no permission
 expansion, subject to committed-ticket readback; the ticket documents its
 non-authorizing meaning. Only the final cumulative two-file candidate may be
 integrated; Phase A is not independently merged and used to reset the boundary.
+
+## 30A Phase A and initial Phase B review
+
+Dispatch baseline `d2f2aa1030e2d817f9e3a016e5dfacf11ce0c22d`, ticket blob
+`4ac13403b75f265522633e6989a6c8e03b734b22`; implementation worktree
+`.worktrees/skill-improvement-30a-fixture`, branch
+`codex/skill-improvement-30a-fixture`, actor `/root/ticket30a_fixture_impl`
+(`gpt-6-luna/xhigh`). Different reviewer `/root/ticket30a_fixture_review`
+(`gpt-6-sol/high`) owns `.worktrees/skill-improvement-30a-review`.
+
+Phase A `79c98d77b1f2a5b8d92bd36b42c42aac2ae910ec` was independently
+`APPROVED`: 45 focused tests, strict mypy, compile and diff checks passed;
+all eight failure enums and three blob statuses were constructed/round-tripped.
+Reviewer disabled the request's WORKTREE_HEAD guard: five negatives failed
+with DID NOT RAISE, then all five passed after exact restoration (source blob
+`51aa7fbb0c385823366f309e9c73b4ea0536f5cc`). Root separately ran 32
+constructor tests and strict mypy. Actual types, not prototypes, admitted Phase B.
+
+Phase B `43c9ebf1081f189e9adeb87f3717b6b50a2ec1b9` had 83 focused tests,
+strict mypy, compile and diff checks green; cumulative diff remained two CREATE
+paths. Implementer digest and leaf-revision bypass mutations each made its
+named cell fail, then restored 4/4 green. Independent reviewer mutation removed
+the same-feature guard: the cross-feature case returned LEAF_NOT_FOUND instead
+of INDEX_SCHEMA_INVALID; after restoration all three path cases passed and
+source blob returned to `278e042a39f871c9e760713d461f54aefc2d2b43`.
+
+Review was `CHANGES_REQUESTED`, not a false closure: F2 accepted a second
+heading with trailing whitespace; a public 1,200-deep JSON probe raised
+RecursionError; F3 safely reproduced inherited GIT_DIR redirecting fixture
+initialization outside its own root. F1 allowed empty/duplicate bindings;
+reviewer classified missing cardinality as TICKET_DEFECT, so Root clarified
+the existing four-source completeness in same-ticket Closure revision 02.
+No new field, resolver, SPEC, PRD, scope or budget was added. Original author
+and reviewer continue all four findings and retain valid Phase A evidence.
+
+Structural review inspected the 427-line product module as one source-assembly
+responsibility and the 1,019-line test as constructor checks, private fixture
+lifecycle/serialization and the same capability's case matrix. The threshold
+triggered review, not automatic splitting/deletion; existing Git test helpers
+were private unittest methods rather than an available shared harness. The
+correction must remain parameterized and cannot grow a parallel framework.
