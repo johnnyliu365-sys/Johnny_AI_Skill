@@ -5,6 +5,8 @@
 > 2026-10-18 Ticket 30 decision and the bounded amendment of `CHG-20260805-009`.
 > Revision 03 is preserved at `acf0ffa1780af3d229b7f80c6e063f6d642e6864`, blob
 > `9096c68199994b1414862828ffb0ce060f8482d7`; its stable facts remain unchanged.
+> That sealed revision carried `CHG-20260905-050` and retained the stable
+> facts of `CHG-20260824-038`; these provenance identities remain in force.
 > This revision adds only the project authority declaration below. Later stages
 > bind the independently sealed revision and exact spans; they do not append to it.
 

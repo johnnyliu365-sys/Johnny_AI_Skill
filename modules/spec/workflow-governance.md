@@ -375,6 +375,17 @@ existing same-lifetime lane. The reviewed final docs-only baseline and ticket
 must be read back before delegation; no repeated owner approval is needed
 for this authorized document-only reattachment.
 
+The Architecture Owner records a bounded construction order inside that same
+two-file Grant: Phase A creates only the actual new typed declarations and
+constructor/negative tests, with no parser, source-port call, Git or Host
+behavior. This is the exact new-type construction bootstrap required to make
+ordinary public constructors exist; existing dependency preflight remains a
+pre-dispatch requirement. Independent review and actual constructor/round-trip,
+negative and strict-checker evidence at the Phase A commit precede Phase B's
+behavior dispatch. The same owner, reviewer, Grant, worktree, findings and
+remaining budget continue. No prototype evidence substitutes for the real
+types, and no safety invariant or real-effect qualification is removed.
+
 The implementation boundary is `create` only for
 `library/local_orchestration/mainline_source.py` and
 `tests/test_mainline_source.py`; `modify` is empty. The program assembles a

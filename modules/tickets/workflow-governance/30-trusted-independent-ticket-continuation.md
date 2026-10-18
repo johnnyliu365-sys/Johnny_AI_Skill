@@ -30,7 +30,7 @@ revision 03 寫定 fixture bootstrap 例外。兩者及本票經獨審後，條�
 | Profile／角色 | `implementation-standard`：當下主機可用 `gpt-6-luna/xhigh`；不同席 `gpt-6-sol/high` 獨審，能力不低於實作者。這是本票 profile 資料，不寫入通用程式或 skill。以原 Profile 的語義角色及 Owner 已允許的現行模型對應；不變更全域 DAP/角色權限 |
 | Baseline | 起點 `acf0ffa1780af3d229b7f80c6e063f6d642e6864`；最終文件受審後，控制面在本票既有 review 記錄完整 dispatch baseline SHA／ticket blob／worktree Git readback，確保至起點只改核准文件，再從該 baseline 建實作 worktree |
 | Scope | 只 create 下文兩路徑，modify=none；不得修改套件 exports、既有 projection／contracts／tests |
-| TDD／型別 | 新功能不要求不存在程式的 ceremonial first-red。派工前用普通 constructor 驗證既有 observation/projection 依賴；新 raw-byte 結果、request/result 的 constructor/negative/round-trip 是實作者第一個純契約步驟，通過才寫 parser，重複在完成與獨審檢驗；不得以 prototype 當候選通過 |
+| TDD／型別 | 新功能不要求不存在程式的 ceremonial first-red。既有 observation/projection constructors 在派工前實跑。新公開型別不存在時，採下述同票受限 type-bootstrap Phase A；實際 constructor／negative／round-trip 與獨審通過前，不派 Phase B parser/source-read 行為。prototype 不作候選成功證據 |
 | Resource／lifecycle | 一位實作者、零 helper、一位獨審；沿同票既有耗用與 finding，不重置預算。Git fixture 每命令 timeout 20s、本機驗證每命令有限 timeout；不平行加壓、不輪詢、不呼叫付費 API。fixture 由 pytest temp fixture 記 owner/test ID、session TTL、teardown；專用 worktree/ref 保留至 Review／證據封存／本地整合後才依精確身分受限移除 |
 | XSS／UI／refactor | 無 render sink／正式 UI，XSS N/A；新增來源 assembly，未搬既有責任，TEST→A→B N/A；沿用投影，不能把腳本增加回報成產品拆分 |
 
@@ -45,6 +45,19 @@ control 或非正規分隔；leaf 另外限同 feature 直接 `.md`。request �
 admission。內部 wire DTO 由實作者在本責任模組選最少集合，extra/duplicate/missing
 皆拒絕，JSON 動態輸入只在 boundary 驗證，不能帶 Any／未驗證 dict 向內。
 結果固定 `FIXTURE_ONLY`，不承載 raw source；未新增 authority engine。
+
+### 同一 Grant 的有限型別建構順序
+
+Architecture Owner 在同兩個 create 路徑內，將新能力的建置按必要先後分成兩個 cut，
+不新增 Stage、Agent、Ticket、成本權限或驗收。Phase A 是只限本票新型別的精確
+pre-dispatch construction bootstrap：允許具名實作者先建立真實 DTO／enum／Protocol／
+path validator 與純 constructor 測試，除此不得實作或呼叫 parser、source port、
+Git、Router、Host 或 native spawn。既有依賴 constructors 仍須 Phase A 派工前通過。
+Phase A 以真實 module 的普通 constructor、錯 primitive／null／enum／payload 組合、
+round-trip、strict checker 及獨審作為關卡；結果 pin 實際 SHA，禁止文件／in-memory
+probe 替代。通過後以該受審 commit 為 Phase B source baseline，同一 owner／Grant／
+worktree／剩餘額度接續 parser。獨審席位沿用到最終 30A-F1–F4，不重置 finding。
+這個建構排序僅使已授權的新型別得以存在，沒有放寬型別驗證或任何真效應前提。
 
 ## 保留的最小 30A 候選
 
@@ -326,9 +339,9 @@ Host qualification；凡超出既有 SPEC 的產品、安全或權限邊界仍�
 ## P0 preflight 與未來 acceptance 下限
 
 30A fixture 的 SPEC bootstrap 例外及 Grant 均生效、精確票面凍結後，
-Architecture Owner 才能把該建置 slice
-修成 dispatchable ticket；正式 target/effect slice 另待上游來源決策。派工前與
-implementer 第一個 red 前，依各 slice 適用範圍都必須：
+Architecture Owner 才能把該建置 slice 修成 type-only dispatchable cut；新型別
+實際 constructor preflight 及獨審通過後才准同 owner 寫 parser/source-read 行為。
+正式 target/effect slice 另待上游來源決策。依上節有限建構順序與各 slice 適用範圍：
 
 - 用 ordinary public constructors 建立所有 success/failure DTO、enum、port request/result，
   覆蓋 exact primitive、nullability、finite disposition；禁止 `Any`、`cast`、coercion、
