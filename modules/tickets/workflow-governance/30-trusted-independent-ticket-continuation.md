@@ -2,13 +2,14 @@
 
 | 欄位 | 內容 |
 | --- | --- |
-| State | `OWNER_APPROVED_30A_BOOTSTRAP / DOCUMENT_REVIEW_PENDING / NON_DISPATCHABLE`；完整 Ticket 30 與清單 02 仍未完成 |
+| State | `30A_TYPE_CONSTRUCTION_ADMITTED / FULL_TICKET_NON_DISPATCHABLE`；只准 type-only Phase A，實際 constructor／獨審通過後才續 Phase B；完整 Ticket 30 與清單 02 仍未完成 |
 | Requirement lineage | 沿用 `PRD-20260805-009`／`CHG-20260805-009` 與原 Ticket 30；不建立新 PRD、平行 Ticket 或第二套 authority |
 | Effective authority | `SPEC-AI-WORKFLOW-WORKFLOW-GOVERNANCE-20260805-01KZ6T8V2R4Y6B8D0F2H4J6M8P` 的既有有效 AC 1–8 |
 | Design evidence only | Owner-authorized、獨審通過的 SPEC design baseline `76d1f942e24975da28889c8b6ecee904c8ef3da0`，SPEC blob `6fd8c3098f48be40c2cf05a03f8284c186163c08`；它允許受控拆票規劃，不是 Ticket 30A implementation Grant 或 runtime activation |
 | Prior candidate | `76f6f32771e80add10c499db2c7479377b079c0c` 的初審為 `BLOCKED`：錯把一般 owner 指示寫成 ticket-scoped Grant，並自創未獲核准的 API、source grammar 與硬預算 |
-| Roles / worktree | Root＝Architecture Owner（本次文件修訂）及唯一 reviewer orchestrator；實作者 `/root/ticket30a_fixture_impl`，獨審 `/root/ticket30a_fixture_review`；repo-contained `.worktrees/skill-improvement-30a-fixture`／`codex/skill-improvement-30a-fixture`，文件獨審前不建立 lane |
+| Roles / worktree | Root＝Architecture Owner（本次文件修訂）及唯一 reviewer orchestrator；實作者 `/root/ticket30a_fixture_impl`，獨審 `/root/ticket30a_fixture_review`；repo-contained `.worktrees/skill-improvement-30a-fixture`／`codex/skill-improvement-30a-fixture`；文件獨審 `/root/ticket30_docs_review` 已在 `35b25d60` PASS，分配時再讀回 Git identity |
 | Profile | `STANDARD` proposal；30A 僅准在精確 Grant 後用隔離、已提交的本地 fixture Git 與本機測試命令；不得讀真實 target／remote、呼叫 provider／credential，或產生 Host／dispatch／closure effect |
+| Implementation language | Python 3.11；`python -m mypy --strict library/local_orchestration/mainline_source.py`；僅 type-only cut 通過後續 parser cut |
 
 ## Owner 批准與當前 continuation
 
@@ -21,9 +22,30 @@ revision 03 寫定 fixture bootstrap 例外。兩者及本票經獨審後，條�
 
 下列「候選／尚缺 Grant」段落保存當時的 source decision provenance；本節及
 本票凍結的 30A-F1–F4 是當前限縮建置依據。正式 target source／Host effect 的
-缺口仍有效。當前 action 是 `CONTEXT/SPEC/TICKET docs review`，成功後
-`ACTION_COMPLETED → AUTO_CONTINUE → same-lifetime 30A IMPLEMENT`。
-文件獨審失敗只修同票文件，不能先派 source/test。
+缺口仍有效。文件獨審完成後的當前 action 是
+`ACTION_COMPLETED → AUTO_CONTINUE → same-lifetime 30A IMPLEMENT / type-only Phase A`。
+type-only candidate 未通過實際 constructor／獨審前不能續 parser。
+
+獨審 `35b25d60` 已關閉精確新型別 preflight 順序及 cumulative create 邊界兩項
+文件 finding，確認五檔修訂在本次限定授權內。控制面依 Owner 條件式授權綁定
+`grant-ticket30a-fixture-20261018`，只准上述具名 actor 及下列機械邊界；same-lifetime
+bridge／receipt／descriptor 均 `NOT_REQUIRED`。這是 Owner Grant 的執行綁定，
+不是 Agent 自行產生另一份授權來源。
+
+```johnny-boundary
+create = library/local_orchestration/mainline_source.py
+create = tests/test_mainline_source.py
+forbid = CONTEXT.md
+forbid = AGENTS.md
+forbid = Workflow.md
+forbid = CodeReview.md
+forbid = doc/
+forbid = modules/
+forbid = skills/
+forbid = template/
+forbid = library/workflow_router/
+forbid = library/local_orchestration/dispatch_authority.py
+```
 
 | 派工綁定 | 核准範圍／待獨審後讀回 |
 | --- | --- |
@@ -123,8 +145,8 @@ boundary: no authoritative source declaration/readback composition, Host admissi
 
 先前硬編 feature path、自報 Grant、未遷移的 parser 契約與行數 ceiling 均撤回。
 下述 Architecture Owner 的通用技術決策只足以準備隔離 fixture 建置，不補足
-target 事實或 effect Grant。文件獨審前本票仍無 active `johnny-boundary`；
-通過後才依已核准條件啟用兩個 create 路徑，modify 始終為空。
+target 事實或 effect Grant。上節 active `johnny-boundary` 只落實已核准的
+fixture 建置；formal target/effect 不在其中，modify 始終為空。
 
 ## Architecture Owner 的限縮技術決策（非 implementation Grant）
 

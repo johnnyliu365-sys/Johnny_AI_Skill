@@ -1,6 +1,6 @@
 # Johnny AI Skill project shared Context
 
-> State: `REVISE_DRAFT / REVISION_04 / INDEPENDENT_REVIEW_PENDING`.
+> State: `SEALED / REVISION_04`.
 > Architecture Owner is revising the exact sealed revision 03 under the owner's
 > 2026-10-18 Ticket 30 decision and the bounded amendment of `CHG-20260805-009`.
 > Revision 03 is preserved at `acf0ffa1780af3d229b7f80c6e063f6d642e6864`, blob
@@ -9,6 +9,8 @@
 > facts of `CHG-20260824-038`; these provenance identities remain in force.
 > This revision adds only the project authority declaration below. Later stages
 > bind the independently sealed revision and exact spans; they do not append to it.
+> Independent `/root/ticket30_docs_review` approved the bounded revision and
+> corrected construction order at `35b25d60`; the prior revision is retained.
 
 ## Stable project facts and boundaries
 

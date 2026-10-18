@@ -54,3 +54,34 @@ the SPEC bootstrap decision before Grant. Root ran
 docs with `git show --check`. No source adapter, true declaration readback,
 `admit_dispatch`, native spawn, Host qualification, push or release was tested
 or performed. Checklist 02/08 therefore remain unchecked.
+
+## Owner-approved authority revision and 30A construction admission
+
+Owner's subsequent decision pins `acf0ffa1780af3d229b7f80c6e063f6d642e6864`
+and Ticket 30 blob `ded322b3c7e82399c31ff4cf67d3dbf3237af3fb`, approving
+the two recommendations with exact constraints. Root acted as Architecture
+Owner only for lawful Context `REVISE` and original CHG/SPEC/Ticket updates;
+the separate implementer role remains mandatory for the two source/test files.
+
+Independent `/root/ticket30_docs_review` read candidate `e551c556`, correction
+`7779c815` and final bounded scope clarification `35b25d60`. The actual new
+constructors cannot be preflighted while nonexistent: the reviewed same-ticket
+type-only Phase A creates declarations/tests only, and requires actual
+constructor/negative/round-trip/strict evidence and independent review before
+Phase B behavior. Cumulative `CREATE` is measured against the original
+dispatch baseline; Phase A does not reset scope or allow preexisting-file
+modifications. Both findings are `CLOSED`; limited docs/ticket review `PASS`.
+The reviewer confirmed old sealed03 commit/blob and CHG provenance, unchanged
+stable facts, exact repository/ref/topology and unchanged final AC9–11/effect
+requirements. The seal/active-boundary writeback only materializes this reviewed
+conditional admission; it grants no formal source or Host qualification.
+
+Root checks on the unchanged existing dependency/code baseline:
+`python -m pytest tests/test_shared_context_service.py tests/test_ticket_template_contract.py -q`
+returned `54 passed, 15 subtests passed`; ordinary observation/projection
+dependencies via `python -m pytest tests/test_mainline_projection.py tests/test_project_authority_contracts.py -q`
+returned `20 passed`; `git diff --check` passed. These are design/preflight
+regressions, not the nonexistent 30A module's success evidence. The final
+dispatch commit, leaf blob and worktree identity are independently read back
+before the admitted type-only native delegation; exact values will be sealed
+with implementation review evidence.

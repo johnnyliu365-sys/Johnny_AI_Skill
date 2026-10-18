@@ -8,7 +8,7 @@
 | Investigation Context | `doc/context/workflow-governance/main.md` |
 | PRD reference | `PRD-20260805-009` |
 | Requirement change | `CHG-20260805-009` |
-| Shared Context backlink | `CONTEXT.md` revision 04, Project authority declaration and metadata-only feature index; lawful revision 03→04 under the bounded `CHG-20260805-009` amendment, independent sealing pending |
+| Shared Context backlink | `CONTEXT.md` sealed revision 04, Project authority declaration and metadata-only feature index; lawful revision 03→04 under the bounded `CHG-20260805-009` amendment, independently reviewed at `35b25d60` |
 | Delivery stage | `POC` |
 | Implementation language | Python 3.11 for `library/workflow_router`; Markdown for workflow/skill/template policy artifacts |
 
@@ -361,7 +361,7 @@ automatic migration is authorized.
 
 | Field | Bound value |
 | --- | --- |
-| State | `OWNER_AUTHORIZED / INDEPENDENT_REVIEW_PENDING / RUNTIME_NOT_EFFECTIVE` |
+| State | `OWNER_AUTHORIZED / INDEPENDENTLY_REVIEWED_35b25d60 / FIXTURE_CONSTRUCTION_ONLY / RUNTIME_NOT_EFFECTIVE` |
 | Change lineage | Existing `PRD-20260805-009` / `CHG-20260805-009`; bounded authority-declaration and fixture-bootstrap amendment in its active requirement leaf |
 | Exact owner decision | 2026-10-18 approval of control baseline `acf0ffa1780af3d229b7f80c6e063f6d642e6864`, Ticket 30 blob `ded322b3c7e82399c31ff4cf67d3dbf3237af3fb` |
 | Context reattachment | Revision 03 blob `9096c68199994b1414862828ffb0ce060f8482d7` is preserved in Git; revision 04 adds only the owner-declared repository/ref/topology. It must be independently sealed before 30A admission. No product behavior from AC1–11 changes. |
