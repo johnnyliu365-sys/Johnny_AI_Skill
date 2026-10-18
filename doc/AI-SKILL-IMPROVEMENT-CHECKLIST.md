@@ -56,6 +56,15 @@ Owner按正式Change Control另核安全政策差異；本紀錄不自動要求�
 沒有push、release、deployment、Host activation、真target／付費API測試。04保持完成；
 其他項保持未勾選，完整證據優先於表面完成率。
 
+本輪最終文件證據獨審：`/root/batch_authority_review` 對209af56b確認上述狀態、
+唯一04勾選、29／30 raw-LF digest與鏡像一致；僅兩處CVE-D9引用誤植，Root在
+`5aeeb9b4b56898e878fd18c528fd3e431ab47426` 精確修正，同席複驗
+`APPROVED_DOC_EVIDENCE_ONLY`。受審checklist blob
+`8e4dcff2d5b02cc22a85f4b004beaf655f3704e9`、票30review blob
+`3145dbb072b1ba39c67a2f15a9047524f4e9dc8b`；本段是其結果台帳，不擴大其審查範圍。
+本地文件動作回傳ACTION_COMPLETED；未完成票保持各自REVIEW_BLOCKED／
+CLEANUP_BLOCKED／NOT_VERIFIED，不能用本文件批准解除來源或Host限制。
+
 ## 既有案例回放對照（不是另一套測試系統）
 
 下列為可重用的已存在入口與各票既存執行證據，不表示本輪重新執行全部命令。
