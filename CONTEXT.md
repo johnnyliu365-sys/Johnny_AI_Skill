@@ -1,9 +1,12 @@
 # Johnny AI Skill project shared Context
 
-> State: `SEALED / REVISION_03`. Owner-approved `CHG-20260905-050` Context reattachment
-> replaces revision 02's installer metadata edge only; all stable facts from
-> `CHG-20260824-038` remain unchanged. Revision 02 is preserved at `6282ca19`.
-> Later stages bind this revision and exact spans; they do not append to it.
+> State: `REVISE_DRAFT / REVISION_04 / INDEPENDENT_REVIEW_PENDING`.
+> Architecture Owner is revising the exact sealed revision 03 under the owner's
+> 2026-10-18 Ticket 30 decision and the bounded amendment of `CHG-20260805-009`.
+> Revision 03 is preserved at `acf0ffa1780af3d229b7f80c6e063f6d642e6864`, blob
+> `9096c68199994b1414862828ffb0ce060f8482d7`; its stable facts remain unchanged.
+> This revision adds only the project authority declaration below. Later stages
+> bind the independently sealed revision and exact spans; they do not append to it.
 
 ## Stable project facts and boundaries
 
@@ -42,6 +45,18 @@
 - Shared Context lifecycle and content admission are defined only by
   `skills/johnny-project-takeover/references/context-routing.md`. Ticket, dispatch,
   implementation, monitoring and review lanes are read/reference-only.
+
+## Project authority declaration
+
+| Declared field | Owner-approved value |
+| --- | --- |
+| Project identity | `Johnny_AI_Skill` |
+| Repository provider / host / key / alias | `GITHUB` / `github.com` / `johnnyliu365-sys/Johnny_AI_Skill` / `origin` |
+| Topology / authority-line role | `SINGLE_BRANCH` / `SINGLE` |
+| Full authority ref | `refs/heads/main` |
+| Declaration artifact | `CONTEXT.md`, this section, revision 04; its exact committed revision must be read back independently, never supplied by a caller or inferred from a moving `HEAD` |
+| Approval provenance | `CHG-20260805-009` bounded authority-declaration amendment; owner decision pins `acf0ffa1780af3d229b7f80c6e063f6d642e6864` and Ticket 30 blob `ded322b3c7e82399c31ff4cf67d3dbf3237af3fb` |
+| Effect boundary | This declaration supplies the approved repository/ref choice. A runtime consumer still requires a qualified declaration loader, exact revision admission, fresh direct observation and the applicable effect Grant. A remote HEAD observation does not issue authority. |
 
 ## Metadata-only feature index
 

@@ -2,13 +2,49 @@
 
 | 欄位 | 內容 |
 | --- | --- |
-| State | `SOURCE_SCHEMA_DECIDED / FIXTURE_BUILD_PREPARED / MIGRATION_FACTS_REQUIRED / SPEC_BOOTSTRAP_DECISION_REQUIRED / TICKET_GRANT_REQUIRED / NON_DISPATCHABLE`；完整 Ticket 30 與清單 02 仍未完成 |
+| State | `OWNER_APPROVED_30A_BOOTSTRAP / DOCUMENT_REVIEW_PENDING / NON_DISPATCHABLE`；完整 Ticket 30 與清單 02 仍未完成 |
 | Requirement lineage | 沿用 `PRD-20260805-009`／`CHG-20260805-009` 與原 Ticket 30；不建立新 PRD、平行 Ticket 或第二套 authority |
 | Effective authority | `SPEC-AI-WORKFLOW-WORKFLOW-GOVERNANCE-20260805-01KZ6T8V2R4Y6B8D0F2H4J6M8P` 的既有有效 AC 1–8 |
 | Design evidence only | Owner-authorized、獨審通過的 SPEC design baseline `76d1f942e24975da28889c8b6ecee904c8ef3da0`，SPEC blob `6fd8c3098f48be40c2cf05a03f8284c186163c08`；它允許受控拆票規劃，不是 Ticket 30A implementation Grant 或 runtime activation |
 | Prior candidate | `76f6f32771e80add10c499db2c7479377b079c0c` 的初審為 `BLOCKED`：錯把一般 owner 指示寫成 ticket-scoped Grant，並自創未獲核准的 API、source grammar 與硬預算 |
-| Roles / worktree | Root 保持 control owner／reviewer orchestrator；下文僅準備隔離建置角色／worktree 候選，尚無有效 implementation lane、receipt 或 Grant |
+| Roles / worktree | Root＝Architecture Owner（本次文件修訂）及唯一 reviewer orchestrator；實作者 `/root/ticket30a_fixture_impl`，獨審 `/root/ticket30a_fixture_review`；repo-contained `.worktrees/skill-improvement-30a-fixture`／`codex/skill-improvement-30a-fixture`，文件獨審前不建立 lane |
 | Profile | `STANDARD` proposal；30A 僅准在精確 Grant 後用隔離、已提交的本地 fixture Git 與本機測試命令；不得讀真實 target／remote、呼叫 provider／credential，或產生 Host／dispatch／closure effect |
+
+## Owner 批准與當前 continuation
+
+Owner 2026-10-18 精確核准 `acf0ffa1780af3d229b7f80c6e063f6d642e6864` 與本票
+舊 leaf blob `ded322b3c7e82399c31ff4cf67d3dbf3237af3fb`：Architecture Owner
+沿原 `CHG-20260805-009` 依法 REVISE sealed Context revision 03，增列本專案
+`johnnyliu365-sys/Johnny_AI_Skill`／`refs/heads/main`／`SINGLE_BRANCH`；原 SPEC
+revision 03 寫定 fixture bootstrap 例外。兩者及本票經獨審後，條件式 30A Grant
+可由控制面精確綁定執行；只有這些核准文件變更時不重問 Owner。
+
+下列「候選／尚缺 Grant」段落保存當時的 source decision provenance；本節及
+本票凍結的 30A-F1–F4 是當前限縮建置依據。正式 target source／Host effect 的
+缺口仍有效。當前 action 是 `CONTEXT/SPEC/TICKET docs review`，成功後
+`ACTION_COMPLETED → AUTO_CONTINUE → same-lifetime 30A IMPLEMENT`。
+文件獨審失敗只修同票文件，不能先派 source/test。
+
+| 派工綁定 | 核准範圍／待獨審後讀回 |
+| --- | --- |
+| Profile／角色 | `implementation-standard`：當下主機可用 `gpt-6-luna/xhigh`；不同席 `gpt-6-sol/high` 獨審，能力不低於實作者。這是本票 profile 資料，不寫入通用程式或 skill。以原 Profile 的語義角色及 Owner 已允許的現行模型對應；不變更全域 DAP/角色權限 |
+| Baseline | 起點 `acf0ffa1780af3d229b7f80c6e063f6d642e6864`；最終文件受審後，控制面在本票既有 review 記錄完整 dispatch baseline SHA／ticket blob／worktree Git readback，確保至起點只改核准文件，再從該 baseline 建實作 worktree |
+| Scope | 只 create 下文兩路徑，modify=none；不得修改套件 exports、既有 projection／contracts／tests |
+| TDD／型別 | 新功能不要求不存在程式的 ceremonial first-red。派工前用普通 constructor 驗證既有 observation/projection 依賴；新 raw-byte 結果、request/result 的 constructor/negative/round-trip 是實作者第一個純契約步驟，通過才寫 parser，重複在完成與獨審檢驗；不得以 prototype 當候選通過 |
+| Resource／lifecycle | 一位實作者、零 helper、一位獨審；沿同票既有耗用與 finding，不重置預算。Git fixture 每命令 timeout 20s、本機驗證每命令有限 timeout；不平行加壓、不輪詢、不呼叫付費 API。fixture 由 pytest temp fixture 記 owner/test ID、session TTL、teardown；專用 worktree/ref 保留至 Review／證據封存／本地整合後才依精確身分受限移除 |
+| XSS／UI／refactor | 無 render sink／正式 UI，XSS N/A；新增來源 assembly，未搬既有責任，TEST→A→B N/A；沿用投影，不能把腳本增加回報成產品拆分 |
+
+公開 seam 凍結為 `RawGitBlobReadResult`（FOUND+bytes 或非 FOUND+None）、
+`MainlineSourcePort.read_blob(observation: GitObservation, artifact_ref: TargetRelativePath)`、
+`MainlineSourceRequest`（project_id、feature、synthetic observation）、
+`MainlineSourceResult`（fixture-only scope、projection 或 finite failure 二擇一）、
+`project_committed_mainline(request, port)`。`TargetRelativePath` 是本模組的具名
+canonical relative-path value：不得 absolute、反斜線、空／`.`／`..` segment、
+control 或非正規分隔；leaf 另外限同 feature 直接 `.md`。request 限 synthetic
+`WORKTREE_HEAD` observation，拒絕 tracking／direct-remote 種類；它不是 authority
+admission。內部 wire DTO 由實作者在本責任模組選最少集合，extra/duplicate/missing
+皆拒絕，JSON 動態輸入只在 boundary 驗證，不能帶 Any／未驗證 dict 向內。
+結果固定 `FIXTURE_ONLY`，不承載 raw source；未新增 authority engine。
 
 ## 保留的最小 30A 候選
 
@@ -65,14 +101,14 @@ boundary: no authoritative source declaration/readback composition, Host admissi
    owner／handoff、ticket leaf reference 與各自 revision/digest 尚未依下文 schema versioned
    into its feature index；現有 status table 不構成這些 authority facts。下文已準備
    本專案候選，不能由此跳過正式遷移與獨審。
-3. 一份只允許 30A 隔離建置 source/test 變更的 ticket-scoped implementation Grant、精確 owner／
-   reviewer／worktree／branch／baseline 與 writable boundary。一般「繼續有界工作」指示
-   不是這份 Grant，也不能推導出兩檔 create allowlist。
+3. 30A 隔離建置的條件式 Grant 已由上節 Owner 精確核准；剩下是文件獨審及
+   reviewer-established baseline／owner／worktree／leaf 的實際讀回綁定。
+   一般「繼續有界工作」指示仍不是其他 effect 的 Grant。
 
 先前硬編 feature path、自報 Grant、未遷移的 parser 契約與行數 ceiling 均撤回。
 下述 Architecture Owner 的通用技術決策只足以準備隔離 fixture 建置，不補足
-target 事實或 effect Grant。本票目前沒有
-`johnny-boundary`；任何 source/test create 或 modify 都未獲授權。
+target 事實或 effect Grant。文件獨審前本票仍無 active `johnny-boundary`；
+通過後才依已核准條件啟用兩個 create 路徑，modify 始終為空。
 
 ## Architecture Owner 的限縮技術決策（非 implementation Grant）
 
@@ -198,7 +234,7 @@ Git 讀取、真 Host effect 前准入及正式結案均是後續獨立邊界。
   `DeclaredTestCommand` 仍未有可信來源，**空命令清單絕不授權舊測試退役**；
   checklist 08、Ticket 32/36/39 的 retirement gap 維持開放。
 
-## 30A 隔離建置：精確票面候選，尚未准入
+## 30A 隔離建置：Closure revision 01，條件式核准
 
 Owner 2026-10-18 指定 `library/local_orchestration/dispatch_authority.py::admit_dispatch`
 為**之後**第一個跨生命週期派工驗證入口。這只是優先順序，不使該入口、原生 spawn、
@@ -214,7 +250,8 @@ Owner 2026-10-18 指定 `library/local_orchestration/dispatch_authority.py::admi
 Ticket lineage 中依 Change Control 記錄、獨審後生效。例外只免除 fixture 建置前
 須先完成它自己要建的真 source／Host qualification 這個循環；**不**改 AC9–11
 驗收、安全不變量、真 effect 准入或 Ticket 30 整體 NON_DISPATCHABLE 狀態。
-本輪只準備文字，未修改已核准 SPEC 或執行該例外。
+以上記錄首次候選的衝突；Owner 已在本輪核准此精確限縮例外，原 SPEC revision 03
+及本票正依上節 Change Control 獨審，通過前仍不派工。
 
 本階段的單一結果是：從**隔離且已提交的虛構 Git fixture** 讀取同一 commit 的
 index／ticket leaf 原始 bytes，驗證上節封閉 schema、digest、綁定與依賴圖後，
@@ -327,19 +364,15 @@ target index migration、implementation authority 或 Host capability 任一未�
 
 ## Stop／Return
 
-對**source/test 實作派遣**，目前唯一合法返回是：
+對**source/test 實作派遣**，文件獨審及精確 baseline 綁定前返回：
 
 ```text
-UPSTREAM_DECISION_REQUIRED / TICKET_DEFECT / NON_DISPATCHABLE
+DOCUMENT_REVIEW_PENDING / NON_DISPATCHABLE
 ```
 
-附本票完整 SHA、尚缺的 target facts／declaration readback／ticket Grant。不得
-dispatch、建立 implementation worktree、修改 source/test、執行真實 readback、整合或
-push。本次 Owner 已授權 docs-only 票面／決策包準備；該動作可先以
-`ACTION_COMPLETED` 返回 Router，**不**發給自己 source/test Grant。30A fixture 的
-SPEC bootstrap 例外經原 Change Control 獨審生效、Grant 經 Owner 精確核發後，
-才在同一 Ticket 30 lineage 凍結有限 Closure revision、
-啟用 `johnny-boundary`、重跑 independent ticket review，再由 Router 決定派工。
+文件獨審／精確綁定通過後，按 Owner 已核准的條件式 Grant 記錄完整 baseline、
+ticket blob、具名 owner／reviewer／worktree／branch，啟用唯一 `johnny-boundary`
+並回 `AUTO_CONTINUE → IMPLEMENT`；不再索取相同範圍的 Owner 核准。
 正式 source migration 和 Host effect 各維持後續獨立准入，不得以 30A 的綠燈
 代替；不得把普通工程選擇升級成人工決策。
 

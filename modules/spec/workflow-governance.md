@@ -8,7 +8,7 @@
 | Investigation Context | `doc/context/workflow-governance/main.md` |
 | PRD reference | `PRD-20260805-009` |
 | Requirement change | `CHG-20260805-009` |
-| Shared Context backlink | `CONTEXT.md §衍生 SPEC 索引` |
+| Shared Context backlink | `CONTEXT.md` revision 04, Project authority declaration and metadata-only feature index; lawful revision 03→04 under the bounded `CHG-20260805-009` amendment, independent sealing pending |
 | Delivery stage | `POC` |
 | Implementation language | Python 3.11 for `library/workflow_router`; Markdown for workflow/skill/template policy artifacts |
 
@@ -301,8 +301,10 @@ implied.
 These are acceptance entrypoints, not preauthorized source-file changes.
 Ticket 29's caller-built projection, Ticket 24's A-only wait, and Tickets
 28/38's template checks remain valid local slices; none alone proves this
-revision. Ticket 30 remains non-dispatchable until architecture preflight
-binds the exact trusted source and per-ticket Host admission path. If existing
+revision. Ticket 30's real-source/effect scope remains non-dispatchable until
+architecture preflight binds the exact trusted source and per-ticket Host
+admission path. The limited fixture-construction exception is defined in
+revision 03 below and grants no real-source/effect qualification. If existing
 target-owned sources do not contain a complete mainline objective, owner,
 handoff and dependency index, or the Host cannot read them at the effect
 boundary, return a typed source/architecture gap through the existing Router.
@@ -354,3 +356,37 @@ with its approval and Closure revision preserved or explicitly revised as
 required by existing change control. No second PRD, parallel mainline
 authority, new ticket solely for this SPEC proposal, new framework or
 automatic migration is authorized.
+
+## Revision 03 — owner-approved 30A fixture construction exception
+
+| Field | Bound value |
+| --- | --- |
+| State | `OWNER_AUTHORIZED / INDEPENDENT_REVIEW_PENDING / RUNTIME_NOT_EFFECTIVE` |
+| Change lineage | Existing `PRD-20260805-009` / `CHG-20260805-009`; bounded authority-declaration and fixture-bootstrap amendment in its active requirement leaf |
+| Exact owner decision | 2026-10-18 approval of control baseline `acf0ffa1780af3d229b7f80c6e063f6d642e6864`, Ticket 30 blob `ded322b3c7e82399c31ff4cf67d3dbf3237af3fb` |
+| Context reattachment | Revision 03 blob `9096c68199994b1414862828ffb0ce060f8482d7` is preserved in Git; revision 04 adds only the owner-declared repository/ref/topology. It must be independently sealed before 30A admission. No product behavior from AC1–11 changes. |
+
+Only the fixture-construction slice of the existing Ticket 30 is exempt from
+the circular requirement to qualify its own real-source/Host capability
+before that capability can be built. After independent review of this exact
+exception and ticket, the owner's conditional Grant permits one named
+implementation owner and a different independent reviewer through the
+existing same-lifetime lane. The reviewed final docs-only baseline and ticket
+must be read back before delegation; no repeated owner approval is needed
+for this authorized document-only reattachment.
+
+The implementation boundary is `create` only for
+`library/local_orchestration/mainline_source.py` and
+`tests/test_mainline_source.py`; `modify` is empty. The program assembles a
+metadata candidate through a constrained raw-byte port. Tests use committed,
+isolated synthetic Git fixtures. Neither the program nor implementer calls
+native delegation; legitimate control-plane delegation is outside the tested
+effect and remains governed by the existing admission rules. No real target,
+remote, `admit_dispatch`, receipt or formal dispatch effect is exercised.
+
+30A-F1–F4, focused pytest, strict mypy, compile/import, independent reverse
+mutation and guarded local integration remain mandatory. A fixture pass does
+not qualify the declaration loader, real-source observation, Host interception,
+AC9–11 final acceptance or dependent checklist completion. The rest of Ticket
+30 remains non-dispatchable at those effect boundaries. Push, release,
+deployment and runtime activation remain outside this Grant.
