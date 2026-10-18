@@ -34,8 +34,10 @@ Router、Reviewer、文件索引與結案規則仍各有唯一正文。`[x]` 只
 
 - 30M 在原 feature README、Ticket29／30 加入唯一機器契約，範圍限有證據的
   29投影→30可信接續，不冒充完整12項programme。Root逐項記批准來源、身分編碼、
-  required／依賴、版本與owner/handoff；其他票未知關係未補造。文件尚待精確
-  schema／digest、獨審與本地gate，不能勾選01／02或全票30。
+  required／依賴、版本與owner/handoff；其他票未知關係未補造。bf7e1b9a/87b090ed
+  的committedrawdigest／schema／投影通過，獨審APPROVED；獨審duplicatebinding
+  反向輸入拒絕、原bytes恢復綠。91項聚焦回歸、strict／compile綠。本地gate/readback
+  尚待完成；01／02和全票30維持未勾選，不能把文件通過等同真來源/Host qualification。
 - 30B真來源、無派工效應的四路徑票面／Grant候選已在原Ticket30準備，預設測試
   不上網；正式source GET另綁精確有界授權，不改fixture-only宣稱。直接遠端讀回
   main=`a1cb6c13`、Context03，尚無本地Context04；GitHub Actions卻有active

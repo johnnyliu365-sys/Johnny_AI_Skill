@@ -331,3 +331,27 @@ yielded its session and was resumed for completion, not relaunched. No lost
 attempt/time was reset. Independent targeted review and guarded integration remain
 pending; this record does not claim their PASS. The final decision seal will pin
 completed versions and the30B Grant candidate without treating it as issued.
+
+Independent `/root/ticket30m_docs_review` (`gpt-6-sol/high`, separate clean
+detached `.worktrees/skill-improvement-30m-review`) returned **APPROVED**, no
+blocking30M-D1–D4 findings, for bf7e1b9a plus the review-only87b090ed carrier.
+It independently recomputed technicalProjectId, both migration-revision formulas,
+all committedrawdigests/mirrors, exactbindingblobs, and29admission/review refs.
+The normalized bounded graph returned the same open30/falseclosure. This approves
+only the evidenced two-node continuation slice, not full-programme membership.
+
+Its different-door in-memory counter-mutation replaced the PRD binding with a
+duplicateContext binding in the **actual committed index**. The existing parser
+rejected it with `ValidationError: source bindings must contain each required
+kind exactly once`; original bytes parsed equal after restoration. A separate
+index-only status change exposed the actualleafmirror mismatch. No artifact or
+source file was mutated, no fixture-public request was called, and unreduced
+output was read. The reviewer ran diffcheck and independently verified clean
+worktree/exactcandidate/five-doc scope; it explicitly did not claim independent
+networkreadback or repeat Root's91-test run. Earlier30A review remains valid.
+
+The only subsequent pre-integration changes are this report, a human registry
+progress row and checklist progress text. No leaf/schema/source/version/digest
+change is permitted without recomputation and original-reviewer affected recheck.
+Root will use the existing control-plane gate and independent exact-blob readback;
+review approval itself grants no push or new30B source/test authority.
