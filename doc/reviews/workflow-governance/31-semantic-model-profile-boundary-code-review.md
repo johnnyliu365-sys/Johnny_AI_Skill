@@ -44,3 +44,59 @@ Author `/root/completion_report_impl`, distinct reviewer
 `/root/completion_report_review`; COMPACT, commands180s/single60s, no network,
 helpers or newfiles. Normal template work needs no new DTO bootstrap. Preserve
 earlier31 evidence/budget; this finite slice cannot claim paid-API isolation.
+
+## 31B implementation and same-reviewer correction
+
+Author first candidate `942244ea30b17ef1d1e02d433a57f5123c5f2838` passed60tests,
+but independent `/root/completion_report_review` rejected four within-contract
+gaps: prefix matching accepted 功能延伸 as 功能; a filled example mixed product
+changes with script-only claims; hidden/fenced/moved completion cells were absent;
+and the author validator reverse-mutation evidence was missing. No new AC or PRD.
+
+Same author additive correction `e83a4a72b848102a5eb6b82abaa3189e5245f88b` preserves
+the first candidate and all findings. Before the fix, the new label-extension cell
+failed with DID NOT RAISE against942244ea. Exact label boundaries now reject it.
+The filled product example and separate script-only fixture are consistent;
+the latter has product0/0, N/A product split and NOT_VERIFIED Host admission.
+Representative comment/fence/move cells reuse the existing mutation helper.
+
+Same independent reviewer ran65tests, focused4completion cells, then renamed the
+scaffold's active 功能 label to 功能延伸. The named scaffold test failed missing
+功能; exact restoration followed by65passed and clean Git status. Final blobs:
+ticket template `b88a909c935ce655c423838ee55f882ec0937fee`;
+scaffold `4f4d18872ebb1a57a199f9282e12c09880a909bd`;
+test `8806650439b744e6d3c8a19b053f9e51c5f12e32`.
+
+Structural review: test+117/-1 exceeds60-line signal, but reuses `_fill_ticket`,
+`_SlotMutation` and active-section parsing; one script-only fixture, no new test
+file/framework. Reviewer found no blocking duplication. Templates each+7;
+product0. Reviewer command sum approximately58s (initial25s estimate,
+correction33s measured sum); author initial16s estimate plus correction45s.
+Combined conservative135/180s reserved before integration; no budget reset.
+
+R4 recovered from the author's existing execution output, without rerun:
+`python -m pytest tests/test_ticket_template_contract.py -k "completion and removed" -q`.
+Removing the whole `_COMPLETION_FIELDS` lookup/assertion loop gave exit1,
+14failed/51deselected in1.07s; named
+`test_mutating_a_named_template_policy_breaks_its_contract_cell[completion_功能_removed]`
+failed with DID NOT RAISE. Restoring the exact loop and repeating the same command
+gave exit0,14passed/51deselected in0.35s. Author command-wall sum estimate62.4s
+(initial16.7 + correction45.7), excluding patch/model time; combined with review
+58s estimate remains below the conservative135s account above. No old evidence
+is replaced by a fresh run.
+
+Root will reuse its clean, non-reparse `.worktrees/skill-improvement-44-land`
+integration workspace after the immutable44seal, rather than create another
+worktree. This is a new31B lease on a Root-owned resource, not permission to
+erase44 evidence or claim its cleanup succeeded. Branch remains
+`codex/skill-improvement-44-land`; ff-only advance to current control baseline,
+then replay only942244ea/e83a4a72 and verify exact reviewed blob parity before
+the existing document mutation gate. Journal owner Root, exact temporary root
+`%TEMP%/Johnny-checklist31b-20261018`, only if absent. TTL through integration,
+immutable evidence seal and independent readback; policy-blocked teardown
+remains blocked, never bypassed. Author/reviewer worktrees retain their own
+registered identities. No push, external model call or Host activation.
+
+Final independent verdict `/root/completion_report_review`: APPROVED exact
+e83a4a72 against1aa5ed22, all four original findings closed after the R4 evidence
+readback above. Root may now perform only that reviewed local integration.

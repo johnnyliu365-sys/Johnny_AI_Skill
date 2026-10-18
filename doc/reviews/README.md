@@ -4,8 +4,8 @@
 
 | Feature cluster | Report | Result |
 | --- | --- | --- |
-| Workflow governance, checklist07/09 | [Ticket43 closure evidence](workflow-governance/43-review-closure-evidence-code-review.md) | `CONTRACT_IMPLEMENTATION / QUALIFICATION_OPEN` |
-| Workflow governance, checklist03/11 | [Ticket44 revision history](workflow-governance/44-requirement-revision-compatibility-code-review.md) | `CONTRACT_IMPLEMENTATION / LEGACY_UNCHANGED` |
+| Workflow governance, checklist07/09 | [Ticket43 closure evidence](workflow-governance/43-review-closure-evidence-code-review.md) | `ENGINEERING_PASS / REVIEW_BLOCKED / NOT_INTEGRATED` |
+| Workflow governance, checklist03/11 | [Ticket44 revision history](workflow-governance/44-requirement-revision-compatibility-code-review.md) | `LOCAL_INTEGRATED / CLEANUP_BLOCKED / LEGACY_UNCHANGED` |
 | Controlled verification, checklist 05 contract | [CVE-D10 independent review](controlled-verification/cve-d10-candidate-source-observation-code-review.md) | `APPROVED_CONTRACT_ONLY / HOST_OBSERVATION_OPEN` |
 | Workflow governance, checklist 02 | [Ticket 24 independent review](workflow-governance/24-independent-admitted-ticket-continuation-code-review.md) | `OWNER_WAIT_SLICE_LOCAL_INTEGRATED / B_CONTINUATION_OPEN` |
 | Workflow governance, checklist 03 | [Ticket 28 independent review](workflow-governance/28-minimal-complete-dispatch-ticket-code-review.md) | `TEMPLATE_SLICE_LOCAL_INTEGRATED / DISPATCH_ADMISSION_OPEN` |

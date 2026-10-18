@@ -36,12 +36,17 @@ Deliver one control-plane policy vertical slice: completion evidence must re-ent
 
 Local batch child (not an invented member of the bounded29→30 mainline):
 [43-review-closure-evidence](43-review-closure-evidence.md) — checklist07/09/12,
-SPEC AC11 existing Review route; `CONTRACT_IMPLEMENTATION`, document revision02 independently approved at101e16ad; exact local Grant
-traces `batch-checklist-local-20261018`. No runtime/Host/source qualification claim.
+SPEC AC11 existing Review route; `ENGINEERING_PASS / REVIEW_BLOCKED`, candidate
+`d477020e0fb010ea12d610e3588630284472ecf8`; independent19tests/58subtests and
+different-door reverse mutation passed. Required qualified Host adversarial audit
+is UNAVAILABLE; no integration. Exact local Grant traces `batch-checklist-local-20261018`.
 
 [44-requirement-revision-compatibility](44-requirement-revision-compatibility.md) —
-checklist03/11/12, existing AC17 reviewed design; `CONTRACT_IMPLEMENTATION`, document revision02 independently approved at4414c6a5; pure
-history compatibility only; legacy validation/activation unchanged.
+checklist03/11/12, existing AC17 reviewed design; `LOCAL_INTEGRATED / CLEANUP_BLOCKED`
+at `1aa5ed22bc270b8d8604be89c9f23b0942c8dee5`, independent14tests/30subtests,
+reviewed blob parity and immutable seal confirmed. Host policy rejected teardown
+before execution; registered resources remain. Pure history compatibility only;
+legacy validation/activation unchanged. No normal closure or whole-checklist PASS.
 
 ## Shared baseline
 
