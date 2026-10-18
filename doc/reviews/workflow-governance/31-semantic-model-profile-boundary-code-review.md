@@ -28,3 +28,19 @@ the approved candidate. The control-plane mutation gate returned `INTEGRATED`
 at `68a100579bdf943e6ed0c98f5242f84f15839deb`. No push, release, paid
 provider call or real Host qualification was performed. Paid-test isolation
 and fixed human report fields remain outside this slice.
+
+## 31B admission under the local batch
+
+Original31 remains complete. Root-scoped `grant-wg31b-report-local-20261018`
+traces `batch-checklist-local-20261018`, not a new PRD. Independent
+`/root/batch_authority_review` APPROVED docs at
+`ce9c2c08d7d10186daeffafb5f39f06dac22561e`, ticket blob
+`e1db75ef2e156fd869bf035b96b71fc25278147d`. Only three existing template/test
+paths; no product/runtime or Host-isolation claim. Root verified source parity
+fromcfd64358, then allocated clean non-reparse contained
+`.worktrees/skill-improvement-31b-report`, branchcodex/skill-improvement-31b-report,
+baseline`1aa5ed22bc270b8d8604be89c9f23b0942c8dee5`, exact same ticket.
+Author `/root/completion_report_impl`, distinct reviewer
+`/root/completion_report_review`; COMPACT, commands180s/single60s, no network,
+helpers or newfiles. Normal template work needs no new DTO bootstrap. Preserve
+earlier31 evidence/budget; this finite slice cannot claim paid-API isolation.
