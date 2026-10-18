@@ -201,3 +201,7 @@ Architecture Owner 的 docs-only 決策提交 `0bfb4a2869f9fbb73e67a3c1a436a8e34
 `doc/reviews/workflow-governance/30-trusted-independent-ticket-continuation-code-review.md`。
 這只封閉通用 source schema 的技術選擇，不使 30A 可派工；target facts migration、
 declaration readback、ticket-scoped Grant 與 qualified Host effect 均仍缺。
+Root 在獨審之後對控制分支執行
+`python -m pytest tests/test_mainline_projection.py tests/test_ticket_template_contract.py -q`：
+`59 passed`、exit 0；`git diff --check` exit 0。這是既有純投影與模板回歸，
+不是 30A source adapter 的 runtime 測試，也不代替上述獨審。
