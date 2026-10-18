@@ -2,7 +2,7 @@
 
 | 欄位 | 內容 |
 | --- | --- |
-| State | `TEMPLATE_SLICE_LOCAL_INTEGRATED / CLEANUP_BLOCKED`；不宣稱 Host admission 完成 |
+| State | `COMPLETE_LOCAL / CLEANUP_CONFIRMED`；只關閉模板一致性切片，不宣稱 Host admission 完成 |
 | Authority | 既有 `PRD-20260805-009`、`CHG-20260805-009`、已核准 workflow-governance SPEC；Owner 2026-10-18 checklist 11 衝突修正與持續執行授權；不建新 PRD |
 | Baseline | Source preflight `da03afa0dd6becc5529321fb9b7adb7247c9d80a`; implementation starts after this ticket is versioned at `d30ad5ed75aee179c8439dedae690b53245b9b82` |
 | Roles | Implementation Owner：低成本模型；獨立 Reviewer：另一席；Root 僅控制與整合 |
@@ -48,5 +48,10 @@ approved the exact candidate. The existing document-mutation gate returned
 independent in-memory active-bullet mutations of both templates turned red and
 restored green. See `doc/reviews/workflow-governance/42-retired-workprogress-template-consistency-code-review.md`.
 This is template consistency only, not Host enforcement. The isolated gate
-journal needs verified teardown before formal Ticket closure; no unrelated
-runtime or Recovery state may be removed.
+journal's one record was sealed by timestamp, exact candidate and file SHA-256
+in the review file before cleanup. The exact journal file, its two now-empty
+parent directories, both clean Ticket42 worktrees, and the merged dedicated
+implementation branch were removed after resolved-path, digest, clean-tree and
+candidate-ancestor checks. `Test-Path` readback for the temp root and both
+worktrees returned false. The candidate remains in the control branch; no
+unrelated runtime, user modification or Recovery state was touched.

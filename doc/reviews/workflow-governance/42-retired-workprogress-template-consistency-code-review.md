@@ -33,4 +33,11 @@ record at `2026-10-18T06:49:06.992209+00:00`, with candidate and detail both
 no offending path. The journal file SHA-256 was
 `7ae9b89de07da24d7b9296d94b2fdb41e008cd17efbe39c69a908337725d5afe`.
 The exact candidate and content blobs remain reachable from the control branch;
-the temporary journal is not the only copy of the integration decision.
+the temporary journal is not the only copy of the integration decision. After
+sealing, Root verified the exact resolved temp paths, sole journal file, and
+matching SHA-256, then removed only that file and its empty queue/root parents;
+`Test-Path` returned false. Both dedicated clean Ticket42 worktrees were
+removed after candidate ancestry readback, and the dedicated implementation
+branch was deleted only after `--merged` confirmed it was already reachable
+from the control branch. Worktree/temp readback returned absent. No formal
+source, user modification, recovery asset, or external publication was removed.
