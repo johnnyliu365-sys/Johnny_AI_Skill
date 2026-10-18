@@ -43,5 +43,15 @@ forbid = template/
 通過 document mutation gate 整合，獨審與測試見
 [Ticket 41 review](../../../doc/reviews/workflow-governance/41-bounded-spec-correction-integration-code-review.md)。
 這只完成文件設計基準；任何 runtime／Host／外部效果仍未驗收。
+
+## 同票狀態綁定修正
+
+首次整合的 SPEC 正文仍顯示「獨審待完成」，與已保存的 PASS 證據矛盾。
+在原兩檔 boundary 內追加狀態綁定，獨立複驗後再由相同文件閘門
+整合於 `cca2db71ba09fea1330fcdc0b93095024dfe4ce3`。目前 AC-17 SPEC
+blob 為 `ffb5304ed0a53df5dbd0b7697e7e18cdfeb39c7c`，治理 SPEC
+blob 為 `4323863f09ef89382e27eb1e4fc99ba652171da4`；兩者不改設計
+驗收或 runtime 權限。詳細審閱與 journal 見原 [Ticket 41 review](../../../doc/reviews/workflow-governance/41-bounded-spec-correction-integration-code-review.md)。
+暫存 journal 的清理仍是 `CLEANUP_BLOCKED`，本票未正式結案。
 暫存 gate journal 的精確刪除遭 Host policy 拒絕，故本票不標正式關閉；
 保留具名 `CLEANUP_BLOCKED` 追蹤，不影響其他已准入工作。
