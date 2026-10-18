@@ -153,3 +153,142 @@ The future implementation ticket must begin red and include the following explic
 - Decision maker: project owner.
 - Date: `2026-08-05 (Asia/Taipei)`.
 - Approval scope: Continuous Workflow Governance POC specification. Ticket planning is authorised. No source, test, migration, deployment, or implementation commit is authorised until a second explicit ticket approval and a separate named implementation owner are recorded.
+
+## Proposed revision 02 — trusted continuation and admission (not effective)
+
+| Field | Proposed value |
+| --- | --- |
+| State | `NOT_EFFECTIVE / OWNER_EXACT_APPROVAL_PENDING` |
+| Requirement lineage | Existing `PRD-20260805-009` / `CHG-20260805-009`; the proposed amendment in `doc/requirements/active/2026/workflow-governance/REQ-20260805-009.md` |
+| Evidence baseline | Owner's 2026-10-18 `doc/AI-SKILL-IMPROVEMENT-CHECKLIST.md` revision 14, items 01–03, 07, 09 and 11; Ticket 24 closure revision 03, Tickets 28–30 and 38 and their independent reviews |
+| Approval required | Project owner must approve this exact SPEC revision and its bounded AC below before any new implementation ticket or Host effect relies on it |
+
+This append-only proposal does not revise AC 1–8, the 2026-08-05 approval,
+existing ticket grants or completed work. Its intended scope is the current
+workflow-governance POC and the existing Router/Host/Review entrypoints. It
+does not authorize production SQL, a paid call, a new runner, a target-project
+dependency, push, publication or another external effect.
+
+### Additional architecture and acceptance, conditional on owner approval
+
+**AC-9 — trusted cross-ticket mainline and independent continuation.** The
+existing target-owned `modules/tickets/<feature>/README.md` index is the
+mainline source after a versioned migration records one mainline ID, objective,
+owner, handoff reference, required/optional ticket set and exact dependency
+edges, bound to approved Context/PRD/CHG/SPEC revisions. The reader derives
+the graph from that committed index and exact ticket leaves at the declared
+authority ref. A fresh direct
+source readback supplies the observed commit/revision; caller-built
+`MainlineProjectionRequest`, local tracking refs, prompts and ticket self-report
+are not authority. The Router may consume `mainline_projection.py` only as a
+candidate view after the source boundary verifies project, mainline, ticket
+identity, revision and graph completeness. Keep raw text ephemeral and durable
+Router state metadata-only. A missing, stale, ambiguous, contradictory or
+unreadable source blocks the affected continuation before dispatch or effect.
+
+For each candidate ticket, the existing Router/Host dispatch admission must
+independently read back that ticket's approved leaf, live grant, owner/worktree
+binding, dependency completion and applicable source/evidence revisions at its
+own effect boundary. A waits on its precise Owner-owned effect without granting
+or executing it; an unrelated B with no dependency on A and its own valid
+admission follows its already declared safe route. A dependent C, or B with a
+missing/stale grant, source or dependency proof, is refused. B's completion
+does not close A or the mainline. No ticket borrows A's receipt, authority,
+approval or evidence. `ready_for_recheck` never means admitted.
+
+**AC-10 — Host pre-effect ticket completeness.** Before either a same-lifetime
+native owner spawn or a cross-lifetime receipt/dispatch effect, the Host's
+existing admission path reads the exact approved ticket leaf and its approved
+SPEC/AC and sealed Context bindings. It verifies the ticket has a sourced,
+observable Expected; named input/output, finite state and error behavior;
+normal/failure/boundary AC; stop condition; control owner, distinct implementer
+and independent reviewer; exact dependency readiness; verification and typed
+return; and the machine-readable modify/create/delete/forbid boundary. For
+each allowed new code or test/script file, it checks a distinct responsibility,
+consumer, acceptance cell, reuse decision and dependency direction, plus the
+ticket's bounded growth and evidence-output declarations. Placeholder text,
+example/fenced/commented fields, missing references, conflicting revisions or
+an Expected invented by the implementer are incomplete. The Host refuses
+before allocating the owner, issuing a receipt, or calling a dispatch port;
+the template validator and later Git-diff boundary remain supporting checks,
+not substitutes for this admission. A changed business Expected returns to
+existing requirement change control. This check supplies no new grant.
+
+**AC-11 — evidence-linked formal closure and structural review.** Formal
+`APPROVED`/`DONE` and mainline closure require the existing Review/Router
+admission path to resolve the exact candidate SHA, approved Expected,
+Closure revision, required child tickets, dependencies and every blocking
+Finding disposition to independently observed test/type/build/smoke and
+review evidence. A projection's `closure_candidate`, a green summary, a ticket
+label or an unverified report cannot close work. An optional unfinished item
+does not block required-work closure; an open required child, unresolved
+blocking Finding, stale candidate/source or unverified consumer does. Same-ticket
+correction retains the original requirement, ticket, finite Closure revision,
+budget and still-valid evidence, and rechecks affected consumers; an unrelated
+hardening idea follows the existing `OUT_OF_SCOPE_HARDENING` route.
+
+The independent reviewer compares the actual candidate diff with the ticket's
+reuse decision and declared modified/created/deleted paths, separately for
+product code and test/scripts. Growth or mixed responsibilities triggers a
+documented structural review of the actual dependencies, consumers and test
+seams. Mere line count neither approves nor requires a split. An undeclared
+path fails the existing integration boundary; unjustified duplication or an
+unresolved responsibility conflict is a ticket/review finding under the
+existing Closure rules. A test-script move is not evidence that a product
+responsibility was split. No second Gate or automatic semantic classifier is
+implied.
+
+### Required replay and entrypoints
+
+1. At the current `library/workflow_router/mainline_projection.py` consumer
+   and `library/workflow_router/router.py` / `private_router.py` decision path,
+   replay one committed fictional A/B/C mainline: A has a precise effect wait;
+   B is independent and live-admitted; C depends on A. B continues, C does
+   not, and B completion leaves A and the required mainline open. Mutations
+   that globally freeze B or admit B/C from caller-built/stale metadata must
+   turn the named cells red and restore to green.
+2. At same-lifetime native delegation and cross-lifetime
+   `library/local_orchestration/dispatch_authority.py::admit_dispatch`, prove
+   a complete approved ticket reaches only its existing dispatch route. Remove
+   Expected, stop condition, distinct reviewer, dependency proof, or one new
+   file's responsibility from the committed ticket and prove refusal occurs
+   before spawn, receipt issuance or dispatch. Replayed caller assertions or
+   template-only green results cannot satisfy this cell.
+3. At `library/workflow_router/review_admission.py`, the existing guarded
+   integration/Review route and the ticket-status projection consumer, prove
+   exact-candidate positive closure and negative cases for an open required
+   child, open blocking Finding, stale evidence and a product/test-script
+   responsibility mismatch. A projection may display these states, but only
+   the existing formal Review/Router route can authorize closure. Reviewer
+   records the actual diff, reused modules, modified paths, impact/consumer
+   scope and independent reverse-mutation results.
+
+These are acceptance entrypoints, not preauthorized source-file changes.
+Ticket 29's caller-built projection, Ticket 24's A-only wait, and Tickets
+28/38's template checks remain valid local slices; none alone proves this
+revision. Ticket 30 remains non-dispatchable until architecture preflight
+binds the exact trusted source and per-ticket Host admission path. If existing
+target-owned sources do not contain a complete mainline objective, owner,
+handoff and dependency index, or the Host cannot read them at the effect
+boundary, return a typed source/architecture gap through the existing Router.
+The current workflow-governance `README.md` has a delivery objective and
+ticket table, but no complete required/optional dependency graph or current
+per-ticket handoff binding; it is not yet an admissible AC-9 source. The
+current `admit_dispatch` accepts a caller-provided artifact and does not
+perform AC-10's committed-ticket completeness readback. Neither behavior is
+defensibly authorized as a completed Host/mainline capability by AC 1–8.
+Do not synthesize that authority from metadata or expand Ticket 30 locally.
+
+### Activation and migration boundary
+
+Upon exact owner approval, append the revision signature and route affected
+ticket revisions through existing approval and preflight before new dispatch.
+Existing approved SPEC AC 1–8, issued grants/receipts, active lanes and
+completed-ticket evidence retain their original scope; this proposal neither
+revokes nor silently upgrades them. Any new or repeated dispatch after
+activation must pass AC-9/10 against its exact current approved ticket, and
+formal closure must pass AC-11. A legacy ticket lacking required fields is
+amended under the original requirement and ticket identity, with its approval
+and Closure revision preserved or explicitly revised as required by existing
+change control. No second PRD, parallel mainline authority, new ticket solely
+for this SPEC proposal, new framework or automatic migration is authorized.
