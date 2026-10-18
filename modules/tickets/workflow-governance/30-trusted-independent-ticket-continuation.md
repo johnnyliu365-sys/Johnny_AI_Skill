@@ -2,7 +2,7 @@
 
 | 欄位 | 內容 |
 | --- | --- |
-| State | `SOURCE_SCHEMA_DECIDED / FIXTURE_BUILD_PREPARED / MIGRATION_FACTS_REQUIRED / TICKET_GRANT_REQUIRED / NON_DISPATCHABLE`；完整 Ticket 30 與清單 02 仍未完成 |
+| State | `SOURCE_SCHEMA_DECIDED / FIXTURE_BUILD_PREPARED / MIGRATION_FACTS_REQUIRED / SPEC_BOOTSTRAP_DECISION_REQUIRED / TICKET_GRANT_REQUIRED / NON_DISPATCHABLE`；完整 Ticket 30 與清單 02 仍未完成 |
 | Requirement lineage | 沿用 `PRD-20260805-009`／`CHG-20260805-009` 與原 Ticket 30；不建立新 PRD、平行 Ticket 或第二套 authority |
 | Effective authority | `SPEC-AI-WORKFLOW-WORKFLOW-GOVERNANCE-20260805-01KZ6T8V2R4Y6B8D0F2H4J6M8P` 的既有有效 AC 1–8 |
 | Design evidence only | Owner-authorized、獨審通過的 SPEC design baseline `76d1f942e24975da28889c8b6ecee904c8ef3da0`，SPEC blob `6fd8c3098f48be40c2cf05a03f8284c186163c08`；它允許受控拆票規劃，不是 Ticket 30A implementation Grant 或 runtime activation |
@@ -136,7 +136,7 @@ Git 讀取、真 Host effect 前准入及正式結案均是後續獨立邊界。
 | 必要／選配 | Owner 要求 12 項必要實作與驗收；現有 status registry 含已整合切片與仍開的 Ticket 30；沒有逐票 `required` 的正式 source fence | 結果層 01–12 為 required，額外優化為 optional；先在 workflow-governance feature source 遷移 Ticket 29 已完成投影與 Ticket 30 開放 continuation，其他 ticket 的 required/optional 只依精確契約逐一驗證後登記，不由 status table 猜 |
 | 依賴／接續 | 清單優先 02→04→05→06→07；Ticket 30 讀既有 Ticket 29 純投影，30A fixture 是真來源／`admit_dispatch` 驗證的前置技術能力；04 已完成 | 記錄可證明的能力邊 `29 → 30A fixture → 真來源／effect qualification`；01／02 的正式 closure 依賴該實證；其餘無精確相依證據者維持 `UNKNOWN`，准入的無相依工作可繼續 |
 | 所有權／交接 | 清單指定 Root 管需求、衝突、派工，票級實作者依 Profile，另一席獨審；Ticket 30 尚未綁 active task/worktree | 宣告 role refs：Root control/reviewer orchestrator、Profile 選出的 implementation owner、獨立 reviewer；每次實際派工再釘 task/worktree/branch，實作者只回 candidate/evidence，不自行整合 |
-| authority line | `origin` URL 是 `https://github.com/johnnyliu365-sys/Johnny_AI_Skill.git`；`git ls-remote --symref origin HEAD` 讀得 `refs/heads/main` → `a1cb6c13adbeb52a4117991727dcc3d4af6d2a33`。`CONTEXT.md` revision 03、project-authority Context revision 03 與 SPEC revision 11 只有通用邊界，沒有本專案可讀回的完整宣告 | 建議沿既有 target-owned `CONTEXT.md` 增加單一正式 declaration，明列 project/repository/ref/topology/版本與核准來源；不要造平行 authority。`main`／single-line 是此時**建議**，遠端 HEAD 讀回不自行授權；變更後須由 control plane 從已核准 commit 重新讀回 |
+| authority line | `origin` URL 是 `https://github.com/johnnyliu365-sys/Johnny_AI_Skill.git`；`git ls-remote --symref origin HEAD` 讀得 `refs/heads/main` → `a1cb6c13adbeb52a4117991727dcc3d4af6d2a33`。`CONTEXT.md` revision 03 **已封存**，project-authority Context revision 03 與 SPEC revision 11 也只有通用邊界，沒有本專案可讀回的完整宣告 | 推薦既有 target-owned `CONTEXT.md` 作唯一 declaration anchor，`main`／single-line 作候選，但**不能直接寫入**。須先取得適用的 approved change ref，由 Architecture Owner 在 `ARCHITECTURE/GRILL/CONTEXT` 執行 `REVISE`、pin 預期 sealed revision 03，再依既有流程封存與處理受影響 SPEC 基準。遠端 HEAD 不是核准；未完成前只可讀引 |
 
 精確版本索引（均為本輪準備的**輸入**，不是自動升格的 authority）：
 
@@ -151,8 +151,11 @@ Git 讀取、真 Host effect 前准入及正式結案均是後續獨立邊界。
 | `modules/spec/workflow-governance.md` rev02 | `51fa1e20f73d87b720f80b9d4dcc47b0de962898`／`4323863f09ef89382e27eb1e4fc99ba652171da4` | AC1–8 有效、AC9–11 已獨審設計基準；非實作 Grant |
 
 此候選的歧義是**正式宣告載體／實際 required ticket graph**，不是 Owner 要自行填表。
-建議先選既有 `CONTEXT.md` 為 declaration anchor、`main` 為權威 ref；其餘逐票 graph
-由 Root 以既有核准 leaf 做 docs-only migration，未能證明的 edge 不自造。
+推薦 `CONTEXT.md` 的合法 `REVISE` 路線，但本輪 docs-only 授權**不含**該寫入；
+`router-control.md` Shared-Context authority 要求 approved change ref、Architecture Owner、
+限定 stage、expected sealed revision 03。若選此路線，先形成該精確授權，再處理
+受影響 SPEC 的合法 rebaseline；在這些條件前，不可把本候選讀作 live declaration。
+逐票 graph 由 Root 以既有核准 leaf 做 docs-only migration，未能證明的 edge 不自造。
 
 ### 本輪 CI 來源窄查（不是退役證據）
 
@@ -173,8 +176,23 @@ Git 讀取、真 Host effect 前准入及正式結案均是後續獨立邊界。
   `verify/claude-publication-17-v0414-codex-readmission-r02 d6b2320f`、
   `verify/claude-publication-17-v0414-codex-readmission-r03 01b810f0`）；
   `origin/main` 的精確 readback 為上述 `a1cb6c13`、
-  tree `truncated=false`，此範圍未見 CI 配置。範例命令：
-  `Invoke-RestMethod -Uri 'https://api.github.com/repos/johnnyliu365-sys/Johnny_AI_Skill/git/trees/a1cb6c13adbeb52a4117991727dcc3d4af6d2a33?recursive=1'`；
+  tree `truncated=false`，此範圍未見 CI 配置。實際批次命令（僅查 source path，
+  不執行 CI；每筆 `CandidateCount=0` 且 `Truncated=False`）：
+
+  ```powershell
+  $remoteTips = git ls-remote --heads origin | ForEach-Object {
+      $cols = $_ -split "`t"
+      [pscustomobject]@{ Sha = $cols[0]; Ref = $cols[1] }
+  }
+  $remoteTips | ForEach-Object {
+      $tree = Invoke-RestMethod -Uri ('https://api.github.com/repos/johnnyliu365-sys/Johnny_AI_Skill/git/trees/' + $_.Sha + '?recursive=1') -Headers @{ Accept = 'application/vnd.github+json' }
+      $matches = @($tree.tree | Where-Object {
+          $_.path -match '(^|/)(\.github/workflows/|\.gitlab-ci\.yml$|\.circleci/|azure-pipelines\.yml$|Jenkinsfile$|\.buildkite/|\.travis\.yml$|appveyor\.yml$|bitbucket-pipelines\.yml$|\.drone\.yml$|\.woodpecker\.yml$|Makefile$|Taskfile\.yml$|justfile$|package\.json$|pyproject\.toml$|tox\.ini$|noxfile\.py$)'
+      } | Select-Object -ExpandProperty path)
+      [pscustomobject]@{ Ref = $_.Ref; Sha = $_.Sha; Truncated = $tree.truncated; CandidateCount = $matches.Count }
+  }
+  ```
+
   未 fetch、未執行遠端 CI。
 - 結論只限上述目前可讀分支／路徑：**此範圍未見**，不是「全專案無 CI」。
   `DeclaredTestCommand` 仍未有可信來源，**空命令清單絕不授權舊測試退役**；
@@ -187,6 +205,16 @@ Owner 2026-10-18 指定 `library/local_orchestration/dispatch_authority.py::admi
 真實來源或正式結案合格。現行 AC 1–8 繼續有效；已獨審的 AC 9–11 只作建置設計
 基準。新閘門不以「先合格」阻塞自己的隔離建置，真實 effect 仍須在自己的邊界
 重新讀回來源與權限。
+
+**現行 SPEC 衝突不得省略：**workflow-governance SPEC revision 02 的 AC9–11
+收尾文字明定 Ticket 30 在 trusted source 與 per-ticket Host admission path 綁定前
+`non-dispatchable`。本段 30A fixture 正是要建置該來源能力的一部分，故目前
+連 fixture implementation dispatch 也**不能只靠 Ticket Grant 啟動**。
+需要 Owner 同次精確核准一個**僅供隔離建置的受限 bootstrap 例外**，並在原 SPEC／
+Ticket lineage 中依 Change Control 記錄、獨審後生效。例外只免除 fixture 建置前
+須先完成它自己要建的真 source／Host qualification 這個循環；**不**改 AC9–11
+驗收、安全不變量、真 effect 准入或 Ticket 30 整體 NON_DISPATCHABLE 狀態。
+本輪只準備文字，未修改已核准 SPEC 或執行該例外。
 
 本階段的單一結果是：從**隔離且已提交的虛構 Git fixture** 讀取同一 commit 的
 index／ticket leaf 原始 bytes，驗證上節封閉 schema、digest、綁定與依賴圖後，
@@ -207,7 +235,7 @@ port；Git fixture 的建立／提交／讀取限測試專用暫存目錄，不�
 | 預期增量／產物 | 產品碼一個單責新模組、聚焦測試一檔；既有產品檔零、正式治理文件零、持久測試產物零。行數只作結構審查訊號，修正不重置原票預算；fixture 必須有 owner、TTL、teardown |
 | Return | `IMPLEMENTED | BLOCKED | CHANGE_DETECTED`、candidate SHA、實際檔案、具名測試／型別／反向突變、真實來源與 Host 未驗證項；實作者不整合、不推送 |
 
-供 Owner **一次精確核發**的 Grant 候選：project 為本 `Johnny_AI_Skill`、
+供 Owner **與上述 SPEC bootstrap 例外一起**精確核發的 Grant 候選：project 為本 `Johnny_AI_Skill`、
 operation 僅 `Ticket 30 / 30A fixture source-and-test build`、原
 `PRD-20260805-009`／`CHG-20260805-009`、上述 SPEC revision 02 AC9；
 baseline 為本次 docs-only 最終獨審 commit（完整 SHA 於回件提供，核發時 pin，
@@ -241,7 +269,8 @@ orchestrator，另一名不同席位獨審；branch/worktree、`create` 兩路�
 預定命令：`python -m pytest tests/test_mainline_source.py tests/test_mainline_projection.py -q`、
 `python -m mypy --strict library/local_orchestration/mainline_source.py`、
 `python -m compileall -q library/local_orchestration/mainline_source.py`、`git diff --check`。
-此節是**票面候選**，不是已跑結果或有效 `johnny-boundary`。Owner 核發精確 Grant
+此節是**票面候選**，不是已跑結果或有效 `johnny-boundary`。受限 bootstrap
+例外依原 SPEC Change Control 精確核准／獨審生效，且 Owner 核發精確 Grant
 後，才將兩個 `create` 路徑轉成票內唯一活躍機器邊界、凍結 Closure revision、
 獨審票面並派工；不能讓候選文字先取得 mutation authority。
 
@@ -251,14 +280,16 @@ Control plane 須從已核准 target artifacts 決定實際 mainline 的成員�
 依賴、owner/handoff 與 revisions，先以 docs-only migration version 到該 feature
 index；不得拿本票的 schema 示例、敘事 status table 或 Agent 自報填入 authority
 facts。同時須讀回 admitted `ProjectAuthorityContract` 的精確 declaration
-artifact/revision。上節 **fixture-only 30A** 可先經精確 ticket Grant 建置與驗證，
+artifact/revision。上節 **fixture-only 30A** 僅可經已生效的 SPEC bootstrap 例外
+及精確 ticket Grant 建置與驗證，
 但不能取代正式 migration。實際 target source 啟用與後續 `admit_dispatch` effect
 驗證仍須遷移完成、獨審、正式 declaration readback 與另外的精確 effect Grant／
 Host qualification；凡超出既有 SPEC 的產品、安全或權限邊界仍須 Change Control。
 
 ## P0 preflight 與未來 acceptance 下限
 
-30A fixture Grant 生效、精確票面凍結後，Architecture Owner 才能把該建置 slice
+30A fixture 的 SPEC bootstrap 例外及 Grant 均生效、精確票面凍結後，
+Architecture Owner 才能把該建置 slice
 修成 dispatchable ticket；正式 target/effect slice 另待上游來源決策。派工前與
 implementer 第一個 red 前，依各 slice 適用範圍都必須：
 
@@ -305,8 +336,9 @@ UPSTREAM_DECISION_REQUIRED / TICKET_DEFECT / NON_DISPATCHABLE
 附本票完整 SHA、尚缺的 target facts／declaration readback／ticket Grant。不得
 dispatch、建立 implementation worktree、修改 source/test、執行真實 readback、整合或
 push。本次 Owner 已授權 docs-only 票面／決策包準備；該動作可先以
-`ACTION_COMPLETED` 返回 Router，**不**發給自己 source/test Grant。30A fixture
-Grant 經 Owner 精確核發後，才在同一 Ticket 30 lineage 凍結有限 Closure revision、
+`ACTION_COMPLETED` 返回 Router，**不**發給自己 source/test Grant。30A fixture 的
+SPEC bootstrap 例外經原 Change Control 獨審生效、Grant 經 Owner 精確核發後，
+才在同一 Ticket 30 lineage 凍結有限 Closure revision、
 啟用 `johnny-boundary`、重跑 independent ticket review，再由 Router 決定派工。
 正式 source migration 和 Host effect 各維持後續獨立准入，不得以 30A 的綠燈
 代替；不得把普通工程選擇升級成人工決策。
