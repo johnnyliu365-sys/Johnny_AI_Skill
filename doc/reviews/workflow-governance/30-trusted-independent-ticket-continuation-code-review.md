@@ -85,3 +85,17 @@ regressions, not the nonexistent 30A module's success evidence. The final
 dispatch commit, leaf blob and worktree identity are independently read back
 before the admitted type-only native delegation; exact values will be sealed
 with implementation review evidence.
+
+Final carrier review found the legacy integration parser requires a nonempty
+`modify` list even for a create-only ticket. No gate change or extra source
+permission was authorized. Root and the independent reviewer verified the
+existing forbid-first evaluator can encode an empty effective modification set:
+the schema-only `modify = AGENTS.md` sentinel is also unconditionally forbidden.
+Public parser/evaluator probes allowed exactly the two CREATE paths, rejected
+all 1,116 currently tracked MODIFY/DELETE paths, case variants of the sentinel,
+modifications of the new paths, and an ungranted CREATE. Root's first cp950
+text-decoding probe failed before evaluation; the explicit UTF-8 probe passed.
+No effect API ran. The reviewer accepted this exact expression as no permission
+expansion, subject to committed-ticket readback; the ticket documents its
+non-authorizing meaning. Only the final cumulative two-file candidate may be
+integrated; Phase A is not independently merged and used to reset the boundary.

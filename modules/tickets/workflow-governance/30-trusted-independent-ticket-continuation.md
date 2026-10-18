@@ -33,6 +33,7 @@ bridge／receipt／descriptor 均 `NOT_REQUIRED`。這是 Owner Grant 的執行�
 不是 Agent 自行產生另一份授權來源。
 
 ```johnny-boundary
+modify = AGENTS.md
 create = library/local_orchestration/mainline_source.py
 create = tests/test_mainline_source.py
 forbid = CONTEXT.md
@@ -46,6 +47,15 @@ forbid = template/
 forbid = library/workflow_router/
 forbid = library/local_orchestration/dispatch_authority.py
 ```
+
+**機械編碼說明：有效 modify 集合仍為空。**既有 gate parser 強制要求非空
+`modify`，故上面的 `AGENTS.md` 是同時被 `forbid = AGENTS.md` 無條件拒絕的
+denied sentinel，絕不構成 AGENTS 修改權限。既有 evaluator 對所有 ChangeKind
+先判大小寫不敏感的 forbid；任何 MODIFY 不是被 sentinel 的 forbid 拒絕，就是
+未命中唯一 modify 而拒絕。Root 與獨審已用公開 parser/evaluator 證明兩個指定
+CREATE 通過、全部 1,116 個既有 tracked path 的 MODIFY／DELETE 拒絕、未授權
+CREATE 拒絕；這只使用既有規則，沒有修改 gate 或擴張允許檔案。Phase A 不先
+整合；最終 Phase B 仍以原始 baseline 的 cumulative CREATE diff 整合。
 
 | 派工綁定 | 核准範圍／待獨審後讀回 |
 | --- | --- |
