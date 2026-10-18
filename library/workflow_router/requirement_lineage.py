@@ -98,6 +98,51 @@ class RequirementLineageGate:
     """Validate one caller-selected requirement or retirement lineage branch."""
 
     @staticmethod
+    def validate_revision_history(
+        history: RequirementRevisionHistory,
+    ) -> RequirementRevisionHistoryResult:
+        """Validate only the selected PRD's ordered revision and change links."""
+
+        seen_change_ids: set[RequirementChangeId] = set()
+        seen_revisions: set[RevisionDigest] = {history.initial_revision}
+        current_revision = history.initial_revision
+        for link in history.links:
+            if link.change_id in seen_change_ids:
+                return RequirementLineageGate._revision_history_result(
+                    RequirementRevisionHistoryInvalidReason.DUPLICATE_CHANGE
+                )
+            seen_change_ids.add(link.change_id)
+            if (
+                link.from_revision != current_revision
+                or link.to_revision in seen_revisions
+            ):
+                return RequirementLineageGate._revision_history_result(
+                    RequirementRevisionHistoryInvalidReason.BROKEN_REVISION_CHAIN
+                )
+            current_revision = link.to_revision
+            seen_revisions.add(current_revision)
+            if any(
+                acceptance_id not in history.acceptance_ids
+                for acceptance_id in link.affected_ac_ids
+            ):
+                return RequirementLineageGate._revision_history_result(
+                    RequirementRevisionHistoryInvalidReason.ACCEPTANCE_MISMATCH
+                )
+        if current_revision != history.effective_revision:
+            return RequirementLineageGate._revision_history_result(
+                RequirementRevisionHistoryInvalidReason.EFFECTIVE_REVISION_MISMATCH
+            )
+        return RequirementLineageGate._revision_history_result(None)
+
+    @staticmethod
+    def _revision_history_result(
+        reason: RequirementRevisionHistoryInvalidReason | None,
+    ) -> RequirementRevisionHistoryResult:
+        """Build the exact candidate result for one finite validation reason."""
+
+        return RequirementRevisionHistoryResult(valid=reason is None, reason=reason)
+
+    @staticmethod
     def validate(
         request: RequirementLineageValidationRequest,
     ) -> RequirementLineageValidationDecision:

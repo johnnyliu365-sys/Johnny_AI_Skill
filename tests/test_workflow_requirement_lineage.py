@@ -9,6 +9,7 @@ import unittest
 
 from pydantic import ValidationError
 
+from library.workflow_router.contracts import OpaqueMetadataId, RevisionDigest
 from library.workflow_router import (
     ArtifactTreeChildRef,
     ArtifactTreeDecisionKind,
@@ -41,6 +42,42 @@ class RequirementLineageTests(unittest.TestCase):
     @staticmethod
     def _digest(character: str) -> str:
         return "sha256_" + character * 64
+
+    @classmethod
+    def _revision_link(
+        cls,
+        *,
+        change_id: RequirementChangeId,
+        from_revision: RevisionDigest,
+        to_revision: RevisionDigest,
+        affected_ac_ids: tuple[OpaqueMetadataId, ...] = ("ac-17",),
+    ) -> RequirementRevisionLink:
+        return RequirementRevisionLink(
+            change_id=change_id,
+            from_revision=from_revision,
+            to_revision=to_revision,
+            approval_ref=f"approval-{change_id[-3:]}",
+            approval_digest=cls._digest("a"),
+            affected_ac_ids=affected_ac_ids,
+        )
+
+    @classmethod
+    def _revision_history(
+        cls,
+        *,
+        prd_id: RequirementId = "PRD-20260815-022",
+        initial_revision: RevisionDigest = "rev-1111111111111111",
+        effective_revision: RevisionDigest = "rev-1111111111111111",
+        acceptance_ids: tuple[OpaqueMetadataId, ...] = ("ac-17", "ac-18"),
+        links: tuple[RequirementRevisionLink, ...] = (),
+    ) -> RequirementRevisionHistory:
+        return RequirementRevisionHistory(
+            prd_id=prd_id,
+            initial_revision=initial_revision,
+            effective_revision=effective_revision,
+            acceptance_ids=acceptance_ids,
+            links=links,
+        )
 
     @staticmethod
     def _path(
@@ -440,6 +477,131 @@ class RequirementLineageTests(unittest.TestCase):
             with self.subTest(payload=payload):
                 with self.assertRaises(ValidationError):
                     RequirementRevisionHistoryResult(**payload)
+
+    def test_revision_history_validation_accepts_selected_chains(self) -> None:
+        first_link = self._revision_link(
+            change_id="CHG-20260815-023",
+            from_revision="rev-1111111111111111",
+            to_revision="rev-2222222222222222",
+            affected_ac_ids=("ac-17",),
+        )
+        second_link = self._revision_link(
+            change_id="CHG-20260815-024",
+            from_revision="rev-2222222222222222",
+            to_revision="rev-3333333333333333",
+            affected_ac_ids=("ac-18",),
+        )
+        history = self._revision_history(
+            effective_revision="rev-3333333333333333",
+            links=(first_link, second_link),
+        )
+        result = RequirementLineageGate.validate_revision_history(history)
+        self.assertTrue(result.valid)
+        self.assertEqual(result.scope, "CANDIDATE_ONLY")
+        self.assertIsNone(result.reason)
+        self.assertEqual(history.links, (first_link, second_link))
+
+        empty_history = self._revision_history(
+            initial_revision="rev-3333333333333333",
+            effective_revision="rev-3333333333333333",
+        )
+        self.assertTrue(RequirementLineageGate.validate_revision_history(empty_history).valid)
+
+        shared_change = self._revision_link(
+            change_id="CHG-20260815-025",
+            from_revision="rev-1111111111111111",
+            to_revision="rev-2222222222222222",
+        )
+        first_prd = self._revision_history(
+            effective_revision="rev-2222222222222222",
+            links=(shared_change,),
+        )
+        second_prd = self._revision_history(
+            prd_id="PRD-20260815-023",
+            effective_revision="rev-2222222222222222",
+            links=(shared_change,),
+        )
+        self.assertTrue(RequirementLineageGate.validate_revision_history(first_prd).valid)
+        self.assertTrue(RequirementLineageGate.validate_revision_history(second_prd).valid)
+
+    def test_revision_history_validation_rejects_invalid_links_in_precedence_order(self) -> None:
+        first_link = self._revision_link(
+            change_id="CHG-20260815-023",
+            from_revision="rev-1111111111111111",
+            to_revision="rev-2222222222222222",
+        )
+        cases = (
+            (
+                "wrong from and affected AC",
+                self._revision_history(
+                    effective_revision="rev-3333333333333333",
+                    links=(
+                        self._revision_link(
+                            change_id="CHG-20260815-024",
+                            from_revision="rev-2222222222222222",
+                            to_revision="rev-3333333333333333",
+                            affected_ac_ids=("ac-99",),
+                        ),
+                    ),
+                ),
+                RequirementRevisionHistoryInvalidReason.BROKEN_REVISION_CHAIN,
+            ),
+            (
+                "cycle",
+                self._revision_history(
+                    links=(
+                        first_link,
+                        self._revision_link(
+                            change_id="CHG-20260815-024",
+                            from_revision="rev-2222222222222222",
+                            to_revision="rev-1111111111111111",
+                        ),
+                    ),
+                ),
+                RequirementRevisionHistoryInvalidReason.BROKEN_REVISION_CHAIN,
+            ),
+            (
+                "duplicate before chain",
+                self._revision_history(
+                    effective_revision="rev-3333333333333333",
+                    links=(
+                        first_link,
+                        self._revision_link(
+                            change_id="CHG-20260815-023",
+                            from_revision="rev-9999999999999999",
+                            to_revision="rev-3333333333333333",
+                        ),
+                    ),
+                ),
+                RequirementRevisionHistoryInvalidReason.DUPLICATE_CHANGE,
+            ),
+            (
+                "affected AC outside history",
+                self._revision_history(
+                    effective_revision="rev-2222222222222222",
+                    links=(
+                        self._revision_link(
+                            change_id="CHG-20260815-024",
+                            from_revision="rev-1111111111111111",
+                            to_revision="rev-2222222222222222",
+                            affected_ac_ids=("ac-99",),
+                        ),
+                    ),
+                ),
+                RequirementRevisionHistoryInvalidReason.ACCEPTANCE_MISMATCH,
+            ),
+            (
+                "effective revision mismatch",
+                self._revision_history(effective_revision="rev-2222222222222222"),
+                RequirementRevisionHistoryInvalidReason.EFFECTIVE_REVISION_MISMATCH,
+            ),
+        )
+        for case_name, history, expected_reason in cases:
+            with self.subTest(case=case_name):
+                result = RequirementLineageGate.validate_revision_history(history)
+                self.assertFalse(result.valid)
+                self.assertEqual(result.scope, "CANDIDATE_ONLY")
+                self.assertEqual(result.reason, expected_reason)
 
     def test_active_pair_resolves_one_exact_active_leaf(self) -> None:
         decision = RequirementLineageGate.validate(self._active_request())
