@@ -90,9 +90,16 @@ round-trip、strict checker 及獨審作為關卡；結果 pin 實際 SHA，禁�
 probe 替代。通過後以該受審 commit 為 Phase B source baseline，同一 owner／Grant／
 worktree／剩餘額度接續 parser。獨審席位沿用到最終 30A-F1–F4，不重置 finding。
 這個建構排序僅使已授權的新型別得以存在，沒有放寬型別驗證或任何真效應前提。
-機械 `johnny-boundary` 仍以原始派工 baseline 到最終候選的整票 Git diff 判定：
-兩個新增檔在 Phase B 持續建置後仍須是 `CREATE`，不能把 Phase A 後的 incremental
-diff 當新權限來源，或為任何原有檔案加入 `modify`。
+原始派工 source baseline `d2f2aa10` 始終證明：實作者對 source/test 的累積差異只
+能是兩個 `CREATE`，不能用 Phase A 重置權限。Owner 另行核准的 Root 文件操作
+有獨立作者／commit，並非實作者 modify 權限；例如 Closure02 的 `bacab24d` 只
+改本票與既有 review leaf，control plane 獨審後才成為新的可信文件 carrier。
+既有機械 gate 從**目前可信 control integration branch** 讀 boundary，以該分支與
+candidate 的 Git merge-base 比對實際 diff；實作者正常合併精確 Root docs carrier
+後，該整合 diff 仍只能有兩個 `CREATE`。准入須同時證明 carrier 相對原 source
+baseline 沒有 source/test 變更，以及實際 integration diff 正好兩個新增檔；不能
+用 caller 路徑過濾或未審 docs 來排除變更。Phase A 不先整合，任何既有 source/test
+修改仍拒絕；這只是本次 Owner 明確核准的文件 baseline 續綁，不是新權限。
 
 ## 保留的最小 30A 候選
 
