@@ -39,6 +39,10 @@ Local batch child (not an invented member of the bounded29→30 mainline):
 SPEC AC11 existing Review route; `DOCUMENT_REVIEW_PENDING`, exact local Grant
 traces `batch-checklist-local-20261018`. No runtime/Host/source qualification claim.
 
+[44-requirement-revision-compatibility](44-requirement-revision-compatibility.md) —
+checklist03/11/12, existing AC17 reviewed design; `DOCUMENT_REVIEW_PENDING`, pure
+history compatibility only; legacy validation/activation unchanged.
+
 ## Shared baseline
 
 - Specification: `SPEC-AI-WORKFLOW-WORKFLOW-GOVERNANCE-20260805-01KZ6T8V2R4Y6B8D0F2H4J6M8P` (`APPROVED` on `2026-08-05`)
