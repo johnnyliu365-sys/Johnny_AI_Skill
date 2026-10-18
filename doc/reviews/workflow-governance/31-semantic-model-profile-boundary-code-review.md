@@ -121,3 +121,9 @@ workspace. Known Host teardown prohibition is not retried by an equivalent
 command; `LOCAL_INTEGRATED / CLEANUP_BLOCKED`, not normal closure. Source/test
 commits and permanent tests remain protected. Fixed report format is now locally
 verified; paid-API isolation and full checklist10 remain unverified.
+
+Original independent reviewer read seal65d8459c, its exact parent64157fbe, all
+three reviewed blob identities, the one-event raw journal and SHA256:
+SEAL_CONFIRMED. Control/landing worktrees were clean at that observation.
+This readback ran no tests, mutations or deletion; later control-plane ledger
+updates do not change the sealed source/test candidate or its protected evidence.
