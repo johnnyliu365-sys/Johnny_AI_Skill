@@ -30,3 +30,11 @@ post-seal teardown condition. Its only journal line, before teardown, was:
 ```json
 {"at_utc": "2026-10-18T06:11:44.417637+00:00", "candidate_ref": "76d1f942e24975da28889c8b6ecee904c8ef3da0", "detail": "76d1f942e24975da28889c8b6ecee904c8ef3da0", "integration_branch": "codex/skill-improvement-checklist", "offending_path": null, "outcome": "INTEGRATED", "principal": "GameBoy", "ticket_path": "modules/tickets/workflow-governance/41-bounded-spec-correction-integration.md"}
 ```
+
+Teardown is `CLEANUP_BLOCKED`: the exact root and its sole journal file were
+read back, but the host rejected both recursive root removal and exact-file
+removal before PowerShell ran. The isolated root remains at
+`C:/Users/GameBoy/AppData/Local/Temp/johnny-ticket-41-gate-20261018`;
+no broader cleanup or alternate deletion route was attempted. This does not
+alter the reviewed SPEC blobs or integration result, but Ticket 41 is not
+formally closed until the owned temporary root's removal is confirmed.
