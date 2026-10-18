@@ -58,3 +58,26 @@ Run：`python -m pytest tests/test_mainline_projection.py -q`、
 `mypy --strict library/workflow_router/mainline_projection.py`、`git diff --check`。
 Return：`IMPLEMENTED | BLOCKED | CHANGE_DETECTED`、完整候選 SHA、變更檔、
 測試、未解來源與權限缺口。實作者不整合、不推送。
+
+## Mainline ticket contract
+
+```json
+{
+  "schema_id": "mainline-ticket/revision-01",
+  "ticket_ref": "wg-ticket-29",
+  "ticket_revision": "rev-fbf3d7b26587673550ebfc2395b6d8b7375f13fe6480aefab05db44f168293ad",
+  "status": "completed",
+  "depends_on": [],
+  "admission_ref": "admission-wg29-local",
+  "evidence_refs": ["review-wg29-slice"]
+}
+```
+
+30M append-only metadata migration: this node denotes only this ticket's completed
+pure-projection deliverable, independently reviewed and locally integrated at
+`2fa4ca6f075e3692fbb085670fa4b303b0ba09ef`. It does not close checklist01 or
+grant source/Host/dispatch/closure authority. The frozen acceptance and historical
+review remain unchanged. Root owns control/handback; an independent seat reviewed
+the implementation. No implementation allocation is active. Identifier/version
+encoding and exact evidence resolution are declared in the parent index's
+30M provenance section; this is not a renewed implementation grant.

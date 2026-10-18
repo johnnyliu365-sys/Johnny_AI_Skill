@@ -224,3 +224,75 @@ Reviewed/integrated commits and permanent regression tests remain in Git.
 30A fixture slice is `CLEANUP_CONFIRMED / COMPLETE_LOCAL`; full Ticket30, true
 source/Host qualification, push, publication and dependent checklist closure
 remain outside this result. The two-file construction allocation is released.
+
+## 30M document migration — authority and read-only source inventory
+
+Owner's next-stage authority is recorded before migration at `a7bc0101`, based on
+clean `d00018aa0117032ecba132e545a3085b29ec870a`. Root owns the control-plane
+document worktree `control/skill-improvement-30m-docs`; only README, leaves29/30,
+this review and the existing checklist may change. No source/test/Context/SPEC
+mutation, new PRD, push, release or deployment is authorized. The same ticket
+retains all earlier findings, consumed allocation, tests and Recovery boundaries.
+
+Read-only helper `/root/mainline_membership_inventory` checked approved Context04,
+REQ-20260805-009, SPEC03 and exact leaves. It found evidence for a bounded29→30
+continuation graph, not full-programme membership. Root explicitly selected this
+limited scope under the current document-migration authority. The index records
+source versions, technical ID encoding, exact admission/review refs, per-node
+meaning, owners and handback. The historical completed contracts were not reopened.
+Ticket02's historical human row/leaf conflict and unspecified full-programme edges
+are disclosed but not silently repaired or used as authority. Current documents
+are not passed to the fixture-only public request under a synthetic observation.
+
+Fresh read-only source audit, 2026-10-18 local time18:44 (all exit0):
+
+```powershell
+git remote -v
+git ls-remote --symref origin HEAD
+git ls-remote --heads origin
+gh api repos/johnnyliu365-sys/Johnny_AI_Skill
+gh api repos/johnnyliu365-sys/Johnny_AI_Skill/git/trees/a1cb6c13adbeb52a4117991727dcc3d4af6d2a33 --method GET -f recursive=1
+gh api repos/johnnyliu365-sys/Johnny_AI_Skill/actions/workflows
+gh api repos/johnnyliu365-sys/Johnny_AI_Skill/actions/runs --method GET -f branch=main -f per_page=5
+gh api repos/johnnyliu365-sys/Johnny_AI_Skill/hooks
+git rev-list --left-right --count a1cb6c13adbeb52a4117991727dcc3d4af6d2a33...d00018aa0117032ecba132e545a3085b29ec870a
+git diff --name-only a1cb6c13adbeb52a4117991727dcc3d4af6d2a33..d00018aa0117032ecba132e545a3085b29ec870a
+```
+
+The credential-free origin is the approved GitHub repository; direct remote HEAD
+and exact main are `a1cb6c13adbeb52a4117991727dcc3d4af6d2a33`. Provider tree SHA
+matches and `truncated=false`. Context there is still rev03/blob
+`9096c68199994b1414862828ffb0ce060f8482d7`; remote feature README blob is
+`373d3e756bd965c8b5fb1f6b4862cf8f78a39395`, not this migration. Local Context04
+blob is `06baa4dea5db1c3370086552c35a1d8f721ad47e`. No local branch/tracking
+entry substitutes for that direct observation. Other eight branch tips matched
+the previous recorded scoped inventory, but were not re-materialized as sources.
+
+On that exact remote main tree, searched `.github/`, `.gitlab-ci*`, `.circleci/`,
+azure-pipelines, Jenkinsfile, `.buildkite/`, `.travis*`, appveyor,
+bitbucket-pipelines, `.drone*`, `.woodpecker*`, Makefile, Taskfile, justfile,
+package.json, pyproject.toml, tox.ini, noxfile.py, Cargo.toml and go.mod:
+**此範圍未見** checked-in CI entrypoints. Earlier branch-tip audit stays historical
+evidence only. Actions API nevertheless returned **one active** workflow:
+ID339484080, `Dependency Graph`, path `dynamic/dependabot/update-graph`.
+Five returned main-filtered runs are successful `event=dynamic`; latest returned
+run32693024347, head `bd2d9adaa586412de76ed8c3961ae1c697410554` is not current
+main and is not its CI proof. Repo webhooks API returned `[]`; organization/
+GitHub-App/other provider automations are not excluded. Thus a future push may
+trigger provider automation; no claim of no CI/no effects, no fabricated test
+command list and no test-retirement permission follow.
+
+At d000 the branch is0 behind/124 ahead, with87 net changed paths versus the
+direct remote SHA. The full range includes reviewed local product/test slices,
+other design baselines and templates. It must not be mislabeled as this five-doc
+change. The upcoming30B decision package therefore recommends local construction
+first and no push; any broader publication needs explicit exact-range approval.
+Raw API bodies/tokens are not persisted; only this bounded identity/result record
+is retained. No Host qualification or model call was performed by the audit.
+
+### 30M validation / independent review
+
+Pending exact candidate validation, independent review and guarded integration.
+This paragraph is not a PASS or a formal source-qualification record. The final
+decision seal below will pin the completed document versions and30B Grant
+candidate without pretending the candidate is issued.

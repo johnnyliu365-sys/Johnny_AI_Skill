@@ -3,7 +3,7 @@
 | 欄位 | 值 |
 | --- | --- |
 | 文件身分 | `AI-SKILL-IMPROVEMENT-CHECKLIST`；本專案工作追蹤，非新 PRD／SPEC／Gate |
-| Revision／來源 | `25`；Owner 2026-10-18 本次 12 項指示、原 PRD／SPEC 限縮修正，以及精確核准 acf0ffa1／leaf ded322b3 的 Context authority REVISE、30A fixture bootstrap 與兩檔 Grant |
+| Revision／來源 | `26`；沿用既有12項與acf0ffa1／ded322b3批准；追加Owner的30M有證據文件遷移及30B票面準備授權。非30B實作／push授權 |
 | 工作基準 | `a1cb6c13adbeb52a4117991727dcc3d4af6d2a33`；分支 `codex/skill-improvement-checklist` |
 | 主線 | 先對照、優先 02→04→05→06→07，再處理餘項與整合回放 |
 | 負責 | Root 理解需求、衝突與派工；票級實作者依有效能力 Profile；獨立審閱另席 |
@@ -31,6 +31,16 @@ Router、Reviewer、文件索引與結案規則仍各有唯一正文。`[x]` 只
 | [ ] 12 回放與獨審 | `NOT_STARTED` | Root；沿既有 tests／review 位置 | 01–10 正反案例待建立；自動／固定情境分別記錄限制 | `NOT_REVIEWED` | 錯誤拒絕與合法通過都必須證明 |
 
 ## 本輪窄查來源與下一步
+
+- 30M 在原 feature README、Ticket29／30 加入唯一機器契約，範圍限有證據的
+  29投影→30可信接續，不冒充完整12項programme。Root逐項記批准來源、身分編碼、
+  required／依賴、版本與owner/handoff；其他票未知關係未補造。文件尚待精確
+  schema／digest、獨審與本地gate，不能勾選01／02或全票30。
+- 30B真來源、無派工效應的四路徑票面／Grant候選已在原Ticket30準備，預設測試
+  不上網；正式source GET另綁精確有界授權，不改fixture-only宣稱。直接遠端讀回
+  main=`a1cb6c13`、Context03，尚無本地Context04；GitHub Actions卻有active
+  Dependency Graph dynamic workflow，不能說無CI／無自動化，不能退役舊測試。
+  精確命令、版本、限制和後續一次決策見既有Ticket30 review，不新造平行文件。
 
 - 現行主線 continuation：`Workflow.md` §0.1、`router-control.md` Continuation；單票與
   完成證據：`specification-ticketing.md`、`CodeReview.md`、`review_admission.py`。

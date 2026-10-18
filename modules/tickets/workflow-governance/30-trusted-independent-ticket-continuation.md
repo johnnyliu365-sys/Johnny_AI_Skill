@@ -11,6 +11,24 @@
 | Profile | `STANDARD` proposal；30A 僅准在精確 Grant 後用隔離、已提交的本地 fixture Git 與本機測試命令；不得讀真實 target／remote、呼叫 provider／credential，或產生 Host／dispatch／closure effect |
 | Implementation language | Python 3.11；`python -m mypy --strict library/local_orchestration/mainline_source.py`；僅 type-only cut 通過後續 parser cut |
 
+## Mainline ticket contract
+
+```json
+{
+  "schema_id": "mainline-ticket/revision-01",
+  "ticket_ref": "wg-ticket-30",
+  "ticket_revision": "rev-535a99b32754942aacc4870710766125881110e5f61646594a6d049846a8704d",
+  "status": "waiting",
+  "depends_on": ["wg-ticket-29"],
+  "admission_ref": null,
+  "evidence_refs": ["review-wg30a-fixture"]
+}
+```
+
+此節點是完整 Ticket30 的開放狀態；30A 的已消耗 fixture Grant 不可成為真來源
+或新實作 admission。29→30 是本票實際重用純投影的能力依賴，不是清單順序。
+本輪文件工作有下節獨立授權；不因此將完整票30改成 admitted/completed。
+
 ## 30M 文件遷移授權紀錄 — 2026-10-18
 
 Owner 本輪直接授權正式主線文件遷移、獨審、同票修正及受控本地整合，並準備
@@ -44,6 +62,9 @@ leaf digest、index/leaf 鏡像與既有純投影相容；非法 digest／版本
 受審本地版本，跨出本輪文件範圍的效果仍須各自授權。
 
 ## Owner 批准與當前 continuation
+
+**本段30A為歷史已完成建置；現在的合法 continuation 是30M 文件遷移與30B票面
+準備。下節候選不是已發出的實作或網路效果 Grant。**
 
 Owner 2026-10-18 精確核准 `acf0ffa1780af3d229b7f80c6e063f6d642e6864` 與本票
 舊 leaf blob `ded322b3c7e82399c31ff4cf67d3dbf3237af3fb`：Architecture Owner
@@ -143,6 +164,134 @@ candidate 的 Git merge-base 比對實際 diff；實作者正常合併精確 Roo
 baseline 沒有 source/test 變更，以及實際 integration diff 正好兩個新增檔；不能
 用 caller 路徑過濾或未審 docs 來排除變更。Phase A 不先整合，任何既有 source/test
 修改仍拒絕；這只是本次 Owner 明確核准的文件 baseline 續綁，不是新權限。
+
+## 30B 精確候選 — 真實來源讀回，不產生派工效應
+
+狀態 `PREPARED / GRANT_NOT_ISSUED / NO_RUNTIME_ACTIVATION`。原需求與 SPEC
+AC9、同 Ticket30 lineage 不變；30A 已完成，不重做。30M 文件經獨審、本地
+gate整合後，由該精確已讀回版本作 source baseline。原 source/test Grant 只准
+兩個 CREATE，已消耗；本段四路徑修改／新增及新網路讀取不能借用它。
+
+### 目的、角色、邊界與重用
+
+把已審的 raw-byte parser 接到**受限唯讀**的正式來源讀回，輸出只可為 metadata
+candidate 或具名拒絕；不接 `admit_dispatch`、receipt、Runner、spawn 或正式
+結案。程式不凍結 Johnny 專屬 repo／SHA／票號／模型；專案的精確值只來自
+受審的 control-plane 授權綁定。Authority 不是 caller 的 repository/authority_ref
+參數、自報 `approved=true`、工作目錄、origin cache 或遠端 HEAD。
+
+| 項目 | 精確票面候選 |
+| --- | --- |
+| Source baseline／leaf | 30M 最終 gate/readback SHA、Ticket30 blob、README blob、兩個 leaf raw digest 在既有 review 的 final decision seal 一次填定；候選不得用未提交或移動 HEAD 啟動 |
+| Control／implementation／independent review | Root reviewer-orchestrator；預定 `/root/ticket30b_readback_impl`；不同席 `/root/ticket30b_readback_review`。派發前按當下有效 Profile 綁可用能力，沿用 least-cost implementation／reviewer不低於作者，不以模型名稱取得 authority |
+| Worktree／branch | 預定 `.worktrees/skill-improvement-30b-readback`／`codex/skill-improvement-30b-readback`；獨審 `.worktrees/skill-improvement-30b-readback-review`。Grant 前不建立 allocation、不派工。創建時直接核對 containment、非 reparse、Git root/branch/HEAD/clean |
+| MODIFY | `library/local_orchestration/mainline_source.py`；`tests/test_mainline_source.py` |
+| CREATE | `library/local_orchestration/mainline_readback.py`；`tests/test_mainline_readback.py` |
+| DELETE | 無；不得刪既有測試、降低 assertion 或更新 Expected 掩蓋失敗 |
+| FORBIDDEN | `dispatch_authority.py`、Router、Receipt／Grant store、Runner、其他library/tests、skills、templates、SPEC／Context／PRD正文、正式branches/runtime/config/credentials；控制面另行維護本票與既有review/registry，不授予實作者文件擴權 |
+| Responsibility／reuse | 原 `mainline_source.py` 提供唯一 wire parse/digest/graph assembly；新 `mainline_readback.py` 僅 trusted-anchor查核＋受限provider GET讀回協調。重用既有 GitObservation、DirectRemoteObservationRequest／observe_declared_remote、RawGitBlobReadResult、MainlineProjection及finite failures，不複製 schema／DFS／policy engine |
+| 測試重用與增量 | 原 constructor/fixture cases不重寫；在原檔補 shared seam equivalence與fixture scope保護。新檔限參數化 transport/readback cases，fake已存在的port，不另造mock server、clone、wrapper或Runner。預期產品有效行增量≤350、測試≤350、實作者文件/截圖=0；超量是結構審查訊號，不可壓縮/碎拆取巧，亦不自動新增檔案 |
+| Profile／預算候選 | 外部來源邊界按既有評估至少HIGH_ASSURANCE；獨審/對抗性要求不降級。新增命令累計上限600s、單命令120s，保留30A與歷次耗用；initial＋一次有界correction，超出先停。這是待Owner核准的新phase額度，**尚未追加**。無付費API/模型provider測試、無壓力負載；controller兩個具名工作席位，作者零helper |
+
+### 輸入／輸出與不可繞過的來源限制
+
+1. 輸入由可信 control-plane 綁定：Owner核准紀錄、原Ticket／SPEC版本、Grant ID、
+   implementation baseline、Context04 exact commit/blob、四項binding revision/blob、
+   repository provider/host/key、`refs/heads/main`、feature、metadata ID mapping及讀取
+   時窗。Root在既有授權流程直接讀回受審、已提交的 exact anchors後才建立 reader；
+   public request 只可選本ticket已綁的feature，不接受 caller 覆寫 anchor/repo/ref。
+   不建立另一套簽發器；普通DTO建構不是authority。任何跨生命週期消費仍須走既有
+   source/Grant資格驗證，不將此切片宣稱為可抵禦任意同process惡意caller的隔離。
+2. 先驗權，後建構transport/讀取。無有效phase授權或批准來源無法讀回，連GET也
+   不執行。只許已綁GitHub repository的公開、無credential HTTPS API GET；拒絕
+   redirects、不同host/repo/ref、任意URL/path、非GET方法、超時/超量body，raw內容
+   不進log。使用標準library transport，不執行clone/fetch、Git branch/ref寫入、
+   checkout、工作副本讀取、原生spawn或任意shell。公開讀取不增加帳號/secret權限。
+3. 讀 exact remote ref取得新鮮SHA R，再在**同一R**讀Context、canonical PRD/CHG、
+   SPEC、index與兩個leaves。獨立核對provider回傳的repository/full ref與預先批准
+   anchor；驗證Git blob identity/原始bytes及四個binding的commit/blob/revision、
+   repo identity/ProjectId mapping，不能只比index自報值。不得拿本地origin/main或
+   cached observation作freshremote。既有pure observation reducer只分類port回件，
+   不可宣稱它本身已觀察網路。
+4. 讀完再次讀 exact remote ref，必須仍為R且整輪在批准時窗內；移動/過期即拒絕，
+   不混用第二個SHA的部分leaves。此兩次bounded observation是新30B交易一致性
+   檢查；不沿用30A synthetic單次observation冒充正式來源。只從R的rawbytes驗證
+   index/leaf鏡像/digest，沿用唯一parser及既有projection。不得把DIRECT_REMOTE_REF
+   改標WORKTREE_HEAD以繞過fixture scope；最小抽取純blob assembly，原fixture
+   wrapper仍只接受synthetic observation並回FIXTURE_ONLY，兩條路徑共同case須等價。
+5. 輸出 scope=`READBACK_CANDIDATE_ONLY`，帶精確R、來源evidence digest與原有
+   MainlineProjection；或者一個finite拒絕，不含原文/URL/path/secret。既有source
+   failure和DirectRemoteObservationDecision能表達的原因直接沿用。只補必要的
+   GRANT/ANCHOR_MISSING、DECLARATION_REVISION_MISMATCH、BINDING_REVISION_MISMATCH、
+   TRANSPORT_LIMIT_EXCEEDED等具名差異；不建立第二套Router狀態機。普通missing
+   blob、非法JSON、鏡像或digest錯配仍沿用30A失敗碼。
+
+### 有限驗收與建構順序
+
+| Cell | 必要正向／反向驗證 |
+| --- | --- |
+| 30B-R1 權限及來源 | 真control綁定在effect前讀回；無Grant、偽造caller anchor、自改repo/ref/ProjectId、缺批准版本，transport呼叫數=0。普通constructor成功不等於授權成功 |
+| 30B-R2 同snapshot讀回 | 同R的index+leaves、四binding及Context exactblob通過；不同R、missingsource、舊Context03、錯revision/identity/rawdigest、重複/非法fence各自具名拒絕；讀完ref移動/過期不得輸出PASS |
+| 30B-R3 共用assembly | 新seam與30A有效fixture投影相同；30A外部scope限制維持、91項既有聚焦回歸不退化。突變落在新實際readback入口使用的parser/transport，不只測舊copy |
+| 30B-R4 無效應 | 成功或拒絕都沒有admit_dispatch、receipt、Runner、spawn、nativeGit/fs修改；GET allowlist、redirect、非GET、body/timeout限制及無secret輸出有negativecases。腳本不載入未核准source、Expected不從Actual生成 |
+
+新public型別尚不存在時，在同一Grant/owner/四檔邊界內先做純constructor/validator/
+normal round-trip、finite negatives、strict type，禁止transport/sourceeffect；獨審
+通過pin commit才接有界readback協調。既有constructor派工前照跑。這只沿用30A
+已審的建構排序，不要求新閘門先合格才能建置自己，也不降低最終真來源條件。
+預定 commands：`python -m pytest tests/test_mainline_source.py tests/test_mainline_projection.py tests/test_mainline_readback.py tests/test_project_authority_observation.py -q`；
+`python -m mypy --strict library/local_orchestration/mainline_source.py library/local_orchestration/mainline_readback.py`；
+`python -m compileall -q library/local_orchestration/mainline_source.py library/local_orchestration/mainline_readback.py`；`git diff --check`。
+實作者至少sourcebinding/digest兩個mutation，reviewer從不同門移動ref/假calleranchor
+擇一反向突變，必須具名紅→byte-exact還原綠，讀取未縮減輸出。Scope diff從固定
+baseline比對四路徑。兩個產品責任不得混入CLI/framework；不新增PRD、驗收或Gate。
+Return=`IMPLEMENTED|BLOCKED|CHANGE_DETECTED`，candidate、baseline、files、checks、
+findings、scope_deviations、unverified、累計attempt/time；原作者同票修正，Reviewer
+獨審，既有機械gate本地整合。新真實Host/正式effect仍不在本票切片的PASS宣稱。
+
+### 待簽發的精確Grant候選與遠端決策
+
+`grant-ticket30b-readback-20261018` **CANDIDATE / NOT_ISSUED**：project/repo/ref、
+原PRD/CHG/SPEC、final30M baseline及本leaf/README blobs按final seal綁定；actor/
+reviewer/worktree/四路徑與上述30B-R1～R4、600s新增命令額度、same-lifetime/direct
+lane、nohelper全部精確沿用。Owner核准前不派工。Root只能在批准來源獨立讀回、
+原範圍無漂移時綁定執行，不能用本候選自行簽發；修改產品契約/其他路徑另停。
+工作worktree/temp asset都要owner+TTL+teardown，Review/evidence seal先於清理；
+使用者/正式commit/他票/Recovery不清除。
+
+建議決策：**先核准30B本地實作，測試network預設0**；真實GET驗證僅在source已
+正式publication、獨審通過與精確外部唯讀授權成立後執行一次。最多10次GET（repo
+identity、兩次exactref、去重後最多7個blob），單次≤20s、全輪≤200s、每blob≤2MiB，
+不重試、不呼叫外部模型、不寫remote/正式runtime。這項有界外部讀取可在同次
+Owner決策給條件式授權；條件不成立只回UNAVAILABLE，不假裝合格。
+
+推送不在現有授權內。直接觀察的遠端main仍為`a1cb6c13adbeb52a4117991727dcc3d4af6d2a33`。
+控制基準d000相對該SHA已領先124個commit、淨變更87個path；**不得把整條支線
+推送偽裝成僅本輪五文件遷移**。final seal提供完整精確candidate range、commit清單
+digest及淨diff digest，以供一次決策，不用origin cache。推薦目前**不核准這個較廣
+range的push**：它還包含其他已整合切片、未生效設計與模板，須另依既有promotion
+規則核對範圍/獨審/來源後才非force推至`refs/heads/main`。不自行抽取新remote
+commit、不變更批准binding以避開這個差異。這不阻擋30B本地建置；真來源成功格
+在正式來源到位前保持NOT_VERIFIED，既有遠端舊版應明確拒絕。
+
+若Owner選擇授權該精確完整range，push前須再次直接讀ref等於seal中的expected
+oldSHA、確認ancestor與scope，使用非force exact`<approvedSHA>:refs/heads/main`，
+不用provider Merge按鈕或lease/force；如remote移動則停，不自動rebase或追加range。
+push後`git ls-remote <approvedremote> refs/heads/main`須等於approvedSHA，再從
+provider在同SHA讀Context04/index/leaves及rawdigests；只有push+exactreadback才可
+稱AUTHORITY_INTEGRATED。GitHub已有active Dependency Graph dynamic automation，
+不能保證push零自動化；已查repo hooks=[]不是全GitHub App/organization自動化
+不存在的證明。讀回失敗保持PUSH_UNCONFIRMED。這不是Release/Deployment授權。
+
+可直接回覆的限縮核准文字（精確SHA／blob採既有review final decision seal）：
+「核准Ticket30B在該seal的baseline與leaf綁定下按四路徑、30B-R1～R4、本地測試
+network=0與600s新增命令額度實作、獨審、同票一次修正及受控本地整合；保留歷史
+耗用。條件式核准source正式到位、獨審及effect前授權讀回後的一次10 GET／200s
+公開唯讀驗證，不授予其他外部效果。**不核准push**，真來源缺失保持拒絕與
+NOT_VERIFIED；不啟用admit_dispatch/Host/正式結案，不發布、不部署。」
+若要push，必須另明文核准seal的完整oldSHA→exactcandidateSHA range及已知自動化
+風險，不能從上述實作/GET授權推定。以上一次包列全，不要求Owner找Host、CI或
+自行拼Grant；一般DTO/seam/fixture設計由Architecture Owner/實作者處理。
 
 ## 保留的最小 30A 候選
 
