@@ -200,3 +200,27 @@ file SHA-256 `74351bf0dccb2714df25cf2f126b815f1e44fe031944095fc0df9719d0bc50ce`.
 This record and exact source commits remain versioned before journal removal.
 Dedicated clean implementation/review worktrees and the integrated branch are
 also teardown-pending; no unregistered/user asset is a cleanup target.
+
+### Exact cleanup readback
+
+Independent reviewer read the committed seal `d88eecde48f8f4620e9d0b2395d6f334405a45ab`
+and the live 394-byte/one-record journal; metadata, SHA-256 and both integrated
+source/test blobs matched. The known decoy path was independently absent again.
+Root then checked both exact registered worktree paths remain inside the named
+repository `.worktrees` directory, have no reparse point, are clean, and point
+to commits already reachable from the control branch. Normal `git worktree remove`
+removed only `.worktrees/skill-improvement-30a-fixture` and
+`.worktrees/skill-improvement-30a-review`; `git branch -d` removed only their
+integrated implementation branch. No force/reset/clean or history rewrite ran.
+
+Root checked the exact owned journal hierarchy has no reparse points, only its
+queue child and the sealed single journal file, and rechecked SHA-256. Native
+`Remove-Item -LiteralPath` removed that file and its now-empty queue/root
+directories without recursion. Final `Test-Path` for both worktrees and journal
+root returned false. The initial read-only inventory command had a PowerShell
+pipeline syntax error before execution; the corrected inventory passed before
+any teardown. No user, formal-source, other-ticket or Recovery asset was removed.
+Reviewed/integrated commits and permanent regression tests remain in Git.
+30A fixture slice is `CLEANUP_CONFIRMED / COMPLETE_LOCAL`; full Ticket30, true
+source/Host qualification, push, publication and dependent checklist closure
+remain outside this result. The two-file construction allocation is released.

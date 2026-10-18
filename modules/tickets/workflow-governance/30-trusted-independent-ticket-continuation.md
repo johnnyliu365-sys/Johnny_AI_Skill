@@ -2,7 +2,7 @@
 
 | 欄位 | 內容 |
 | --- | --- |
-| State | `30A_FIXTURE_LOCAL_INTEGRATED / CLEANUP_PENDING / FULL_TICKET_NON_DISPATCHABLE`；30A-F1–F4 完成獨審與本地整合；完整 Ticket 30 與清單 02 仍未完成 |
+| State | `30A_FIXTURE_COMPLETE_LOCAL / CLEANUP_CONFIRMED / FULL_TICKET_NON_DISPATCHABLE`；30A-F1–F4 完成獨審、本地整合及精確 teardown；完整 Ticket 30 與清單 02 仍未完成 |
 | Requirement lineage | 沿用 `PRD-20260805-009`／`CHG-20260805-009` 與原 Ticket 30；不建立新 PRD、平行 Ticket 或第二套 authority |
 | Effective authority | `SPEC-AI-WORKFLOW-WORKFLOW-GOVERNANCE-20260805-01KZ6T8V2R4Y6B8D0F2H4J6M8P` 的既有有效 AC 1–8 |
 | Design evidence only | Owner-authorized、獨審通過的 SPEC design baseline `76d1f942e24975da28889c8b6ecee904c8ef3da0`，SPEC blob `6fd8c3098f48be40c2cf05a03f8284c186163c08`；它允許受控拆票規劃，不是 Ticket 30A implementation Grant 或 runtime activation |
@@ -22,9 +22,11 @@ revision 03 寫定 fixture bootstrap 例外。兩者及本票經獨審後，條�
 
 下列「候選／尚缺 Grant」段落保存當時的 source decision provenance；本節及
 本票凍結的 30A-F1–F4 是當前限縮建置依據。正式 target source／Host effect 的
-缺口仍有效。文件獨審完成後的當前 action 是
-`ACTION_COMPLETED → AUTO_CONTINUE → same-lifetime 30A IMPLEMENT / type-only Phase A`。
-type-only candidate 未通過實際 constructor／獨審前不能續 parser。
+缺口仍有效。文件獨審後曾沿 `ACTION_COMPLETED → AUTO_CONTINUE → same-lifetime
+30A IMPLEMENT / type-only Phase A` 推進；實際 constructor／獨審通過才續 parser。
+目前 30A fixture 已完整驗收、整合及清理，返回 `ACTION_COMPLETED`；下一個
+真 source／`admit_dispatch` effect 的程式變更與 qualification 不在這個兩檔 Grant，
+不能以 fixture 完成自動啟用。實作 allocation 已釋放，不再使用本票已消耗的建置授權。
 
 獨審 `35b25d60` 已關閉精確新型別 preflight 順序及 cumulative create 邊界兩項
 文件 finding，確認五檔修訂在本次限定授權內。控制面依 Owner 條件式授權綁定
