@@ -189,3 +189,15 @@ ticket review，再由 Router 決定下一步；不得把普通工程選擇升�
 `tests/test_ticket_template_contract.py` 44 passed。完整 Ticket 30／清單 02
 仍維持 `NON_DISPATCHABLE`。其後 Architecture Owner 在既有 SPEC 授權內收斂了上列
 通用技術 source contract；這不是 target facts migration 或 implementation Grant。
+
+## Source contract decision review — 2026-10-18
+
+Architecture Owner 的 docs-only 決策提交 `0bfb4a2869f9fbb73e67a3c1a436a8e341fd66c2`
+初審有兩項 source-binding finding：不能只讀 index 而不從 committed leaves 建圖，
+以及既有字串型 blob result 不能證明 raw-byte digest。同票修正
+`f13f35711594af241c83b803f91f0f472baa6241`（本 leaf blob
+`823ef2d0e86bbc74a8508263be1a8bde678f6324`）由不同獨審席位唯讀複驗
+`PASS`，兩項閉合；詳見
+`doc/reviews/workflow-governance/30-trusted-independent-ticket-continuation-code-review.md`。
+這只封閉通用 source schema 的技術選擇，不使 30A 可派工；target facts migration、
+declaration readback、ticket-scoped Grant 與 qualified Host effect 均仍缺。
