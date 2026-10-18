@@ -20,7 +20,10 @@ _TEMPLATE_PATH = _ROOT / "modules" / "tickets" / "TEMPLATE.md"
 _SCAFFOLD_TEMPLATE_PATH = _ROOT / "template" / "modules" / "tickets" / "TEMPLATE.md"
 _OUTCOME_SECTION = "## 使用者拍板與可觀察結果"
 _IMPLEMENTATION_SECTION = "## 實作範圍、依賴與 ticket elements"
+_COMPLETION_SECTION = "## 完成回寫"
 _BOUNDARY_BLOCK = "johnny-boundary"
+_WORKFLOW_PATH = _ROOT / "Workflow.md"
+_RETIRED_WORKPROGRESS_BULLET = "- WorkProgress：`PRG-YYYYMMDD-NNN`"
 _SOURCE_ROW = "<source-row>"
 _REUSE_LABEL = "共用件查重與依賴方向"
 _NEW_FILE_LABEL = "新增檔案責任"
@@ -265,6 +268,22 @@ def _assert_template_contract(markdown: str) -> None:
         for item in ("COMPLETED → ACTION_COMPLETED", "BLOCKED → HALT", "CHANGE_DETECTED → REQUIREMENT_CHANGED")
     )
 
+    completion = _section(active, _COMPLETION_SECTION)
+    actual_files = _active_bullet(completion, "實際檔案")
+    commit = _active_bullet(completion, "commit")
+    assert "<paths>" in actual_files
+    assert "<SHA>" in commit
+    assert not re.search(r"WorkProgress|PRG-YYYYMMDD-NNN", completion), (
+        "retired WorkProgress output must not be active in the completion section"
+    )
+
+    workflow_policy = " ".join(_WORKFLOW_PATH.read_text(encoding="utf-8").split())
+    assert "`WorkProgressReport.md`" in workflow_policy
+    assert "return target" in workflow_policy
+    assert "typed event" in workflow_policy
+    assert "exact commit" in workflow_policy
+    assert "artifact identifiers" in workflow_policy
+
     boundary = _boundary_body(markdown)
     for action in ("modify", "create", "delete", "forbid"):
         assert re.search(rf"(?m)^{action}\s*=", boundary), (
@@ -451,6 +470,32 @@ def test_scaffold_reverse_mutations_break_and_restore_the_contract_cell(
         _assert_template_contract(mutated)
 
     restored = _SCAFFOLD_TEMPLATE_PATH.read_text(encoding="utf-8")
+    assert restored == markdown
+    _assert_template_contract(restored)
+
+
+@pytest.mark.parametrize(
+    "template_path",
+    (_TEMPLATE_PATH, _SCAFFOLD_TEMPLATE_PATH),
+    ids=("ticket_template", "scaffold_template"),
+)
+def test_returned_retired_workprogress_bullet_breaks_and_restores_contract(
+    template_path: Path,
+) -> None:
+    markdown = template_path.read_text(encoding="utf-8")
+    _assert_template_contract(markdown)
+
+    completion = _section(markdown, _COMPLETION_SECTION)
+    commit = _active_bullet(completion, "commit")
+    mutated = markdown.replace(
+        commit,
+        f"{commit}\n{_RETIRED_WORKPROGRESS_BULLET}",
+        1,
+    )
+    with pytest.raises(AssertionError, match="retired WorkProgress output"):
+        _assert_template_contract(mutated)
+
+    restored = template_path.read_text(encoding="utf-8")
     assert restored == markdown
     _assert_template_contract(restored)
 

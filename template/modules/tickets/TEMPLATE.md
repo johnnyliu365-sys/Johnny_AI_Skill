@@ -130,4 +130,3 @@ forbid = <明確禁止的路徑；優先於上面三欄，且比對時不分大�
 
 - 實際檔案：`<paths>`
 - commit：`<SHA>`
-- WorkProgress：`PRG-YYYYMMDD-NNN`
