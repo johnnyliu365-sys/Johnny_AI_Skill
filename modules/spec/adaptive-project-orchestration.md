@@ -341,15 +341,17 @@ one module-card leaf and adds nested meaning/ownership partitions before unrelat
 would force broad loading. The Router resolves one explicit path only and never scans,
 flattens, recursively loads or persists a whole tree.
 
-#### Proposed AC-17 requirement-identity revision — `NOT_EFFECTIVE / OWNER_EXACT_APPROVAL_PENDING`
+#### Proposed AC-17 requirement-identity revision — `OWNER_AUTHORIZED / INDEPENDENT_REVIEW_PENDING / NOT_EFFECTIVE`
 
 This is a proposed amendment to the existing `PRD-20260815-022`, not a new PRD or an
-effective SPEC revision. The project owner's 2026-10-18 authority permits a bounded
-correction of candidate `fa418b6d6ce3667abe3fa7b693b1034ec27cdaa9` and independent
-review before staged activation; it is not an approval of runtime behavior, a creation
-grant or an implementation/effect authorization. After independent review and the
-owner's exact approval of the corrected candidate revision, replace only the two
-AC-17 sentences from "Each active product requirement" through
+effective SPEC revision. The project owner's 2026-10-18 authority approves this
+bounded SPEC identity correction based on candidate
+`fa418b6d6ce3667abe3fa7b693b1034ec27cdaa9`, conditional on independent review
+passing against the corrected exact commit and blob. Once that verdict and version
+evidence are recorded, the replacement below becomes the effective SPEC design
+baseline without another owner approval. This authority is not a creation grant or
+implementation/Host-effect authorization. At that design-baseline transition,
+replace only the two AC-17 sentences from "Each active product requirement" through
 "archive ID/reference" with the following requirement/change identity and retirement
 contract. AC-17's bounded tree, archive-library, reusable-module and exact-path rules,
 and all other approved ACs, remain as approved.
@@ -453,10 +455,10 @@ issuer check, pre-effect readback or one-shot constraint turns these cells red.
 
 | Proposed revision evidence slot | Required state |
 | --- | --- |
-| Correction authority | Owner's 2026-10-18 instruction, limited to correction of `fa418b6d6ce3667abe3fa7b693b1034ec27cdaa9` and independent review. |
-| Corrected candidate revision | The commit containing this proposal; bind its exact SHA in the independent review and owner decision. |
-| Independent SPEC review | `PENDING`; exact candidate SHA, scope/diff and verdict required. |
-| Owner exact SPEC decision | `PENDING`; approval must name the independently reviewed candidate SHA. |
+| Correction authority | Owner's 2026-10-18 bounded SPEC approval based on `fa418b6d6ce3667abe3fa7b693b1034ec27cdaa9`, conditioned on independent review of the corrected revision; no repeat owner decision. |
+| Corrected candidate revision | The commit containing this proposal; bind its exact commit SHA and SPEC blob SHA in independent review. |
+| Independent SPEC review | `PENDING`; exact candidate commit/blob, scope/diff, reviewer identity and passing verdict required. |
+| SPEC design-baseline effect | `PENDING` independent review; becomes effective upon a recorded passing verdict for that exact commit/blob, without another owner approval. |
 | Lineage validator/index migration review | `PENDING`; exact commits, acceptance/reverse-mutation evidence and legacy readback required. |
 | Actual Host grant capability and runtime activation | `PENDING`; qualified issuer/consumer/readback evidence and an explicit activation decision required. |
 
@@ -1307,5 +1309,5 @@ provider, push, publication, installation, release or deployment effect.
 | 2026-08-29 | Project owner / exact candidate `3453f3e5709502bff64647eb2b4d6ad0b829212a` | Approved Revision 13 Remote Authority Commit and authorized reviewer opening of `CAP-REMOTE-AUTHORITY-01` only; no remote or implementation effect authority. |
 | 2026-08-29 | Codex architecture owner / `control/host-external-effect-gateway-architecture` / `083c41588e92e227ea27b1fde3fea33e15d6f3dc` | Drafted Revision 14 Host External-Effect Gateway after `CR-CAPREMOTE-01` established that a caller-forgeable activation cannot authorize a remote effect; exact owner approval pending. |
 | 2026-08-29 | Project owner / exact candidate `c3da092eb5cbd78938fb6f43480c525a9ee2258e` | Approved Revision 14 Host External-Effect Gateway and authorized reviewer opening of `CAP-HOST-EFFECT-GRANT-01` only; no gateway implementation or external-effect authority. |
-| 2026-10-18 | Codex architecture owner / `skill-improvement-ac17` / `cc948e81cf06d426bb0890c80baf9df89c59c37a` | Proposed same-`PRD-20260815-022` AC-17 requirement-identity amendment; `NOT_EFFECTIVE / OWNER_EXACT_APPROVAL_PENDING`. Existing approved AC-17 and one-to-one validation remain operative. |
-| 2026-10-18 | Project owner / candidate `fa418b6d6ce3667abe3fa7b693b1034ec27cdaa9` | Authorized bounded correction and independent review of the AC-17 identity proposal before staged activation; no runtime, PRD creation, implementation, Host effect or push authority. |
+| 2026-10-18 | Codex architecture owner / `skill-improvement-ac17` / `cc948e81cf06d426bb0890c80baf9df89c59c37a` | Proposed same-`PRD-20260815-022` AC-17 requirement-identity amendment; original candidate remained non-effective. Existing approved AC-17 and one-to-one validation remained operative. |
+| 2026-10-18 | Project owner / candidate `fa418b6d6ce3667abe3fa7b693b1034ec27cdaa9` | Authorized the bounded corrected AC-17 SPEC revision to become the design baseline after passing independent review records the exact corrected commit/blob; no repeat owner approval or runtime, PRD creation, implementation, Host effect or push authority. |
