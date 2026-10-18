@@ -2,7 +2,7 @@
 
 | 欄位 | 內容 |
 | --- | --- |
-| State | `READY_FOR_IMPLEMENTATION / LOCAL_ONLY`；不宣稱 Host admission 完成 |
+| State | `TEMPLATE_SLICE_LOCAL_INTEGRATED / CLEANUP_BLOCKED`；不宣稱 Host admission 完成 |
 | Authority | 既有 `PRD-20260805-009`、`CHG-20260805-009`、已核准 workflow-governance SPEC；Owner 2026-10-18 checklist 11 衝突修正與持續執行授權；不建新 PRD |
 | Baseline | Source preflight `da03afa0dd6becc5529321fb9b7adb7247c9d80a`; implementation starts after this ticket is versioned at `d30ad5ed75aee179c8439dedae690b53245b9b82` |
 | Roles | Implementation Owner：低成本模型；獨立 Reviewer：另一席；Root 僅控制與整合 |
@@ -16,8 +16,6 @@
 modify = modules/tickets/TEMPLATE.md
 modify = template/modules/tickets/TEMPLATE.md
 modify = tests/test_ticket_template_contract.py
-create = none
-delete = none
 forbid = Workflow.md
 forbid = library/
 forbid = skills/
@@ -36,3 +34,19 @@ Run：`python -m pytest tests/test_ticket_template_contract.py -q`；`git diff -
 ## 非宣稱
 
 模板一致性測試不能證明填票時的 Host 攔截、工作樹防回退或正式結案准入；這些仍由各自既有票與 checklist 未完成項追蹤。
+
+## Closure evidence
+
+Implementation candidate `0d4dbb14d15005daad98d12af0896c49a9e21df1` descends
+from ticket baseline `932acdf362f0ec7bb9b7b3f12c0e0c823554c299` and changes exactly
+the three `modify` paths above. Independent reviewer `/root/ticket42_review`
+approved the exact candidate. The existing document-mutation gate returned
+`INTEGRATED` at that same SHA; the three final blobs are `8701a9b035162c239faaa3fda93ca3d0abdda677`,
+`a08cfd1b9036ad7a937beb608ed1de6fafae7547`, and
+`96c32fd884f7c756eb0d0d5ca809c4116b06ee9e` in ticket allowlist order.
+`python -m pytest tests/test_ticket_template_contract.py -q` passed 46 tests;
+independent in-memory active-bullet mutations of both templates turned red and
+restored green. See `doc/reviews/workflow-governance/42-retired-workprogress-template-consistency-code-review.md`.
+This is template consistency only, not Host enforcement. The isolated gate
+journal needs verified teardown before formal Ticket closure; no unrelated
+runtime or Recovery state may be removed.

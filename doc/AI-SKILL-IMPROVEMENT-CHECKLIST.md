@@ -3,7 +3,7 @@
 | 欄位 | 值 |
 | --- | --- |
 | 文件身分 | `AI-SKILL-IMPROVEMENT-CHECKLIST`；本專案工作追蹤，非新 PRD／SPEC／Gate |
-| Revision／來源 | `19`；Owner 2026-10-18 本次 12 項指示、十種失敗情境、通用虛構情境、既有功能沿原 PRD 修訂及兩份 SPEC 限縮修正授權 |
+| Revision／來源 | `20`；Owner 2026-10-18 本次 12 項指示、十種失敗情境、通用虛構情境、既有功能沿原 PRD 修訂及兩份 SPEC 限縮修正授權 |
 | 工作基準 | `a1cb6c13adbeb52a4117991727dcc3d4af6d2a33`；分支 `codex/skill-improvement-checklist` |
 | 主線 | 先對照、優先 02→04→05→06→07，再處理餘項與整合回放 |
 | 負責 | Root 理解需求、衝突與派工；票級實作者依有效能力 Profile；獨立審閱另席 |
@@ -27,7 +27,7 @@ Router、Reviewer、文件索引與結案規則仍各有唯一正文。`[x]` 只
 | [ ] 08 測試依賴／退役 | `GIT_SOURCE_AND_SUITE_SLICES_LOCAL_INTEGRATED / CI_RETIREMENT_GAP` | Luna：Ticket 32 純 AST inventory `2a19406d`、Ticket 36 釘選 Git 唯讀 adapter `e1ca2d4b`、Ticket 39 literal SUITES 消費者 `e9177f80`；獨審見 `doc/reviews/workflow-governance/32-test-consumer-inventory-code-review.md`、`36-git-pinned-test-source-inventory-code-review.md` 與 `39-literal-suite-consumer-inventory-code-review.md` | Ticket 39 初審找出未知字串與 subscript mutation 兩項假空圖；同票修正後 32 tests／7 subtests、strict mypy 綠，巢狀索引反向突變紅→綠；真 CI 命令仍未載入 | `APPROVED_INVENTORY_SLICES` | 真 CI 命令仍由 caller 供給；入口切換、前置紅燈後的實際消費者與退役 effect gate `NOT_VERIFIED`，空 inventory 不授權刪除 |
 | [ ] 09 窄修窄審 | `CORRECTION_REPLAY_PARTIAL / GAP` | Root；既有 `CodeReview.md` §4–5、`implementation-authority.md`；Ticket 35 實作者原票修正、原 Sol reviewer 複驗，見 `doc/reviews/workflow-governance/35-parent-finding-status-closure-code-review.md` | Ticket 35 首審重複父票 ID finding → 原票 additive correction → 原 reviewer 新路徑反向突變紅→綠；Root 找到 `ticket_status_publish.publish` 真消費者，整合分支 pipeline／renderer／publisher 共 126 tests／205 subtests 綠；無關檔案未重審，舊必需子票／Finding PASS 證據有條件沿用 | `APPROVED_CASE_ONLY` | 尚需固定可重跑的影響／消費者判定與 finding↔Closure 錯標負例；一個真實回合不足以證明通用行為可強制 |
 | [ ] 10 成本／外部呼叫／回報 | `MODEL_PROFILE_LOCAL_INTEGRATED / PAID_TEST_REPORTING_GAP` | Luna 改 `model-role-routing.md`、`delivery-profile.md` 與既有 policy/executor tests；`68a10057`，審閱見 `doc/reviews/workflow-governance/31-semantic-model-profile-boundary-code-review.md` | 36 tests／74 subtests 綠；普通開票低／高 profile 反向突變紅→綠，同步 readback 語義修正；本機付費服務攔截及固定回報欄位 `NOT_VERIFIED` | `APPROVED_SLICE` | 通用模型選擇不凍結名稱，但真實 Host qualification、付費 API 測試隔離與功能／腳本拆分回報仍缺 |
-| [ ] 11 去重與衝突 | `WPR_AND_TEMPLATE_SLICES_LOCAL_INTEGRATED / CONSISTENCY_OPEN` | Luna 改既有 `implementation-tdd.md` 與 policy pin/test；Ticket 37 `2f1c29cb`。Ticket 38 `3557bc20` 補既有模板；Ticket 40 `91ee17c3` 補出貨 scaffold，未造平行框架；獨審見對應 `doc/reviews/workflow-governance/37-retired-wpr-commit-conflict-code-review.md`、`38-reuse-and-responsibility-dispatch-contract-code-review.md`、`40-scaffold-ticket-template-parity-code-review.md` | WPR 衝突 54 tests／202 subtests、兩項反向突變紅→綠；Ticket 40 scaffold 44 tests、八項內建及兩項 reviewer 反向突變紅→綠 | `APPROVED_SLICES` | 已核准 AC17 仍要求 PRD／CHG 一對一；新身分模型與主線／Host 准入仍只是未生效 SPEC 提案；需精確核准與遷移，並核對其餘入口衝突 |
+| [ ] 11 去重與衝突 | `WPR_AND_TEMPLATE_SLICES_LOCAL_INTEGRATED / CONSISTENCY_OPEN` | Tickets 37／38／40 原有切片；Ticket 42 `0d4dbb14` 修正兩份模板退役 WPR 欄與既有測試，獨審見 `doc/reviews/workflow-governance/42-retired-workprogress-template-consistency-code-review.md`；未造平行流程 | Ticket 42：46 tests 綠，獨審對兩份模板注入不同位置的活躍 WPR bullet 各轉紅→還原綠；受控 gate `INTEGRATED`，三檔 blob 精確綁候選 | `APPROVED_TEMPLATE_SLICE` | 已核准 AC17 的新需求身分仍只屬設計基準；一對一 validator、主線／Host 准入與其他入口一致性仍需遷移及驗證。Ticket 42 隔離 journal 清理未確認，不能正式結票 |
 | [ ] 12 回放與獨審 | `NOT_STARTED` | Root；沿既有 tests／review 位置 | 01–10 正反案例待建立；自動／固定情境分別記錄限制 | `NOT_REVIEWED` | 錯誤拒絕與合法通過都必須證明 |
 
 ## 本輪窄查來源與下一步
