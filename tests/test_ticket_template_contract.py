@@ -30,9 +30,25 @@ _NEW_FILE_LABEL = "新增檔案責任"
 _BUDGET_LABEL = "預期增量與原票預算"
 _ARTIFACT_LABEL = "驗證產物與源碼內容"
 _PRESERVE_LABEL = "保留已核准行為"
+_COMPLETION_FIELDS = (
+    ("功能", ("精確行為", "核准 AC", "可觀察結果")),
+    ("新測試", ("精確測試位置", "反向突變紅→還原綠", "N/A")),
+    ("產品拆分", ("產品責任 source → target seam", "候選行為測試位置", "N/A")),
+    ("埋點", ("事件／指標", "精確位置", "N/A")),
+    ("證據", ("精確產物路徑／引用", "commit 或 digest", "N/A")),
+    ("未驗證項", ("NOT_VERIFIED", "原因", "不得填 PASS")),
+    ("下一步", ("未解缺口", "具名下一動作", "N/A")),
+)
 
 _FRONTEND_SLOT_VALUES = (
     ("@ `<approved revision>`", "@ `revision r1`"),
+    ("<completion-feature>", "AC-SEARCH-001: SearchInput(\"maple\") renders the approved SearchResult at SearchRoute"),
+    ("<completion-tests>", "tests/test_search_route.py::test_search_history green; mutation red, restored green"),
+    ("<completion-split>", "SearchRoute → SearchService; candidate behavior test tests/test_search_route.py::test_search_history"),
+    ("<completion-instrumentation>", "search.unavailable at src/search/SearchService.py; asserted by tests/test_search_route.py"),
+    ("<completion-evidence>", "doc/evidence/search-7.md@sha256:abc; candidate commit abc123"),
+    ("<completion-unverified>", "NOT_VERIFIED: paid API isolation unavailable in local host"),
+    ("<completion-next>", "Validate paid API isolation; Root owner records host admission evidence"),
     (
         "<observable result for the named input, bound to the approved source above>",
         'For `SearchInput("maple")`, the view renders the approved `SearchResult`.',
@@ -81,6 +97,13 @@ _FRONTEND_SLOT_VALUES = (
 
 
 _GENERIC_SLOT_OVERRIDES: dict[str, str] = {
+    "<completion-feature>": "AC-TEMPLATE-001: the contract checker reports missing required completion fields",
+    "<completion-tests>": "tests/test_ticket_template_contract.py::test_mutating_a_named_template_policy_breaks_its_contract_cell green",
+    "<completion-split>": "N/A: this fictional change touches only a script and test helper; no product responsibility moves",
+    "<completion-instrumentation>": "N/A: the script-only example adds no product event or metric",
+    "<completion-evidence>": "tests/test_ticket_template_contract.py@candidate commit abc123",
+    "<completion-unverified>": "NOT_VERIFIED: host admission behavior was not exercised by this format-only example",
+    "<completion-next>": "Gap: host admission evidence; next action: run the host admission check",
     "<observable result for the named input, bound to the approved source above>": 'For `LookupQuery("birch")`, the result returns matching `LookupEntry` values.',
     "<observable acceptance for each case>": "A valid query returns entries; an unavailable provider returns an error result; an empty query returns the empty result.",
     "<具名輸入 → 輸出／有限狀態與錯誤／nullability / types and ports>": "LookupQuery(term: NonEmptyText) → LookupResult(entries: ImmutableList<LookupEntry>); states Ready / Empty / Unavailable; error LookupUnavailable",
@@ -138,6 +161,10 @@ _NEGATIVE_CELLS = (
     _SlotMutation("preserve_contract_removed", _IMPLEMENTATION_SECTION, _PRESERVE_LABEL, "delete"),
     _SlotMutation("preserve_contract_commented", _IMPLEMENTATION_SECTION, _PRESERVE_LABEL, "comment"),
     _SlotMutation("preserve_contract_moved", _IMPLEMENTATION_SECTION, _PRESERVE_LABEL, "move"),
+    *(
+        _SlotMutation(f"completion_{label}_removed", _COMPLETION_SECTION, label, "delete")
+        for label, _ in _COMPLETION_FIELDS
+    ),
 )
 
 _SCAFFOLD_NEGATIVE_CELLS = (
@@ -149,6 +176,10 @@ _SCAFFOLD_NEGATIVE_CELLS = (
     _SlotMutation("scaffold_reuse_moved", _IMPLEMENTATION_SECTION, _REUSE_LABEL, "move"),
     _SlotMutation("scaffold_new_file_responsibility_removed", _IMPLEMENTATION_SECTION, _NEW_FILE_LABEL, "delete"),
     _SlotMutation("scaffold_new_file_responsibility_moved", _IMPLEMENTATION_SECTION, _NEW_FILE_LABEL, "move"),
+    *(
+        _SlotMutation(f"scaffold_completion_{label}_removed", _COMPLETION_SECTION, label, "delete")
+        for label, _ in _COMPLETION_FIELDS
+    ),
 )
 
 
@@ -273,6 +304,11 @@ def _assert_template_contract(markdown: str) -> None:
     commit = _active_bullet(completion, "commit")
     assert "<paths>" in actual_files
     assert "<SHA>" in commit
+    for label, requirements in _COMPLETION_FIELDS:
+        field = _active_bullet(completion, label)
+        assert all(requirement in field for requirement in requirements), (
+            f"completion field {label!r} is missing its required reporting contract"
+        )
     assert not re.search(r"WorkProgress|PRG-YYYYMMDD-NNN", completion), (
         "retired WorkProgress output must not be active in the completion section"
     )
@@ -350,6 +386,7 @@ def test_template_slots_bind_to_a_filled_frontend_ticket() -> None:
 
     ticket_outcome = _section(filled_ticket, _OUTCOME_SECTION)
     ticket_implementation = _section(filled_ticket, _IMPLEMENTATION_SECTION)
+    ticket_completion = _section(filled_ticket, _COMPLETION_SECTION)
 
     expected_revision = "| 對應規格 ID |"
     expected_label = "核准 Expected（使用者可觀察結果）"
@@ -377,6 +414,7 @@ def test_template_slots_bind_to_a_filled_frontend_ticket() -> None:
     budget = _filled_value(ticket_implementation, budget_label)
     artifact = _filled_value(ticket_implementation, artifact_label)
     preserve = _filled_value(ticket_implementation, preserve_label)
+    split = _active_bullet(ticket_completion, "產品拆分")
     assert "SearchResult" in expected
     assert all(
         item in contract
@@ -408,6 +446,9 @@ def test_template_slots_bind_to_a_filled_frontend_ticket() -> None:
     assert "doc/evidence/search-7.md" in artifact
     assert "no owner prompt or ticket narrative" in artifact
     assert "Preserve SearchHistory" in preserve and "public SearchQuery v1" in preserve
+    assert "SearchRoute → SearchService" in split
+    assert "candidate behavior test tests/test_search_route.py::test_search_history" in split
+    assert "tests/test_search_route.py::test_search_history green" in _active_bullet(ticket_completion, "新測試")
 
 
 def test_scaffold_template_slots_bind_to_a_filled_example_ticket() -> None:
@@ -426,6 +467,11 @@ def test_scaffold_template_slots_bind_to_a_filled_example_ticket() -> None:
     assert "TermNormalizer.py@r1" in _filled_value(implementation, _REUSE_LABEL)
     assert "src/lookup/LookupIndex.py" in _filled_value(implementation, _NEW_FILE_LABEL)
     assert "create = src/lookup/" in _boundary_body(filled_ticket)
+
+    completion = _section(filled_ticket, _COMPLETION_SECTION)
+    assert "N/A: this fictional change touches only a script and test helper" in _active_bullet(completion, "產品拆分")
+    assert "NOT_VERIFIED: host admission behavior was not exercised" in _active_bullet(completion, "未驗證項")
+    assert "Gap: host admission evidence; next action: run the host admission check" in _active_bullet(completion, "下一步")
 
     assert "library/" not in template
     assert "模板本身不執行或攔截寫入" in template

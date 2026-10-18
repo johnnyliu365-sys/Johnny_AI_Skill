@@ -130,3 +130,10 @@ forbid = <明確禁止的路徑；優先於上面三欄，且比對時不分大�
 
 - 實際檔案：`<paths>`
 - commit：`<SHA>`
+- 功能：精確行為、核准 AC、可觀察結果；填寫 `<completion-feature>`
+- 新測試：精確測試位置、結果、反向突變紅→還原綠；不適用填 N/A 與理由。填寫 `<completion-tests>`
+- 產品拆分：產品責任 source → target seam、候選行為測試位置；不適用填 N/A 與理由。填寫 `<completion-split>`
+- 埋點：事件／指標、精確位置、證據；不適用填 N/A 與理由。填寫 `<completion-instrumentation>`
+- 證據：精確產物路徑／引用及 commit 或 digest；不適用填 N/A 與理由。填寫 `<completion-evidence>`
+- 未驗證項：NOT_VERIFIED 項目與原因，或 N/A 與理由；不得填 PASS。填寫 `<completion-unverified>`
+- 下一步：未解缺口與具名下一動作；不適用填 N/A 與理由。填寫 `<completion-next>`
