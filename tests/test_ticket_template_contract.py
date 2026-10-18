@@ -97,11 +97,11 @@ _FRONTEND_SLOT_VALUES = (
 
 
 _GENERIC_SLOT_OVERRIDES: dict[str, str] = {
-    "<completion-feature>": "AC-TEMPLATE-001: the contract checker reports missing required completion fields",
-    "<completion-tests>": "tests/test_ticket_template_contract.py::test_mutating_a_named_template_policy_breaks_its_contract_cell green",
-    "<completion-split>": "N/A: this fictional change touches only a script and test helper; no product responsibility moves",
-    "<completion-instrumentation>": "N/A: the script-only example adds no product event or metric",
-    "<completion-evidence>": "tests/test_ticket_template_contract.py@candidate commit abc123",
+    "<completion-feature>": "AC-LOOKUP-001: LookupQuery(\"birch\") returns matching LookupEntry values",
+    "<completion-tests>": "tests/test_lookup_endpoint.py::test_lookup_entries green; mutation red, restored green",
+    "<completion-split>": "LookupEndpoint → LookupService; candidate behavior test tests/test_lookup_endpoint.py::test_lookup_entries",
+    "<completion-instrumentation>": "lookup.completed at src/lookup/LookupService.py; asserted by tests/test_lookup_endpoint.py",
+    "<completion-evidence>": "doc/evidence/lookup-7.md@sha256:abc; candidate commit abc123",
     "<completion-unverified>": "NOT_VERIFIED: host admission behavior was not exercised by this format-only example",
     "<completion-next>": "Gap: host admission evidence; next action: run the host admission check",
     "<observable result for the named input, bound to the approved source above>": 'For `LookupQuery("birch")`, the result returns matching `LookupEntry` values.',
@@ -115,6 +115,28 @@ _GENERIC_SLOT_OVERRIDES: dict[str, str] = {
 }
 _GENERIC_SLOT_VALUES = tuple(
     (placeholder, _GENERIC_SLOT_OVERRIDES.get(placeholder, value))
+    for placeholder, value in _FRONTEND_SLOT_VALUES
+)
+_SCRIPT_ONLY_SLOT_OVERRIDES: dict[str, str] = {
+    "<completion-feature>": "AC-TEMPLATE-001: the test helper rejects a missing active completion field",
+    "<completion-tests>": "tests/test_ticket_completion.py::test_missing_field_fails green; deletion red, restoration green",
+    "<completion-split>": "N/A: script and test-helper changes move no product responsibility",
+    "<completion-instrumentation>": "N/A: no product event or metric is added",
+    "<completion-evidence>": "tests/test_ticket_completion.py@candidate commit abc123",
+    "<completion-unverified>": "NOT_VERIFIED: Host admission was not run by this local format check",
+    "<completion-next>": "Gap: Host admission evidence; next action: run the host admission check",
+    "<observable result for the named input, bound to the approved source above>": "For a template missing the active function field, the contract test reports a failure; after restoration, it passes.",
+    "<observable acceptance for each case>": "An absent field fails; a field hidden in a comment or code fence fails; restoring the active field passes.",
+    "<具名輸入 → 輸出／有限狀態與錯誤／nullability / types and ports>": "TicketTemplateText(readonly str) → TemplateContractResult(missing_fields: ImmutableList<FieldName>); states Valid / Invalid; error MissingActiveField",
+    "<可新增的路徑；不寫就是一個都不准新增>": "tests/",
+    "<已查找並重用的生產模組、測試 harness／fixture（精確路徑或 ID、revision 與依賴方向）；若無可重用項，填查找範圍與具體理由>": "Reused tests/test_ticket_template_contract.py@r1 and pytest; test → existing active-section helper; no product module dependency",
+    "<對 johnny-boundary create 所授權的每個程式／腳本檔，逐一列出精確路徑、單一責任、直接消費者、對應驗收 ID、依賴方向；即使 create 使用目錄或 pattern，也不得只列目錄／pattern；沒有新增時填 N/A reason>": "tests/test_ticket_completion.py: one responsibility, active completion field contract; consumer pytest; acceptance AC-TEMPLATE-001; dependency test → template contract helper",
+    "<分列既有／新增產品碼、測試／腳本、文件、證據產物的預期數量與估計行數；修正沿用同一票預算；行數或數量只觸發結構審查，不自動拆檔、壓縮、拒收或放行>": "Existing/new: product 0/0 files +0/+0 lines; tests/scripts 1/1 +4/+10; docs 0/0; evidence 1/0; correction uses this ticket's remaining budget",
+    "<預設使用 Git worktree 外的作業系統暫存目錄，且不得污染 Git worktree；正式樹中唯一必要且具名的證據產物；源碼／腳本僅保留必要技術註解，不含 owner prompt 或工單敘事>": "Temporary output outside the repository worktree; persist only tests/test_ticket_completion.py; test comments contain technical assertions only, no owner prompt or ticket narrative",
+    "<本票不應改動的既有功能、介面與來源基準；如契約內確需變更，列明授權來源、精確路徑與回歸驗收>": "Preserve all user-facing lookup behavior and product interfaces at baseline abc123; this ticket changes only test tooling",
+}
+_SCRIPT_ONLY_SLOT_VALUES = tuple(
+    (placeholder, _SCRIPT_ONLY_SLOT_OVERRIDES.get(placeholder, value))
     for placeholder, value in _FRONTEND_SLOT_VALUES
 )
 
@@ -165,6 +187,9 @@ _NEGATIVE_CELLS = (
         _SlotMutation(f"completion_{label}_removed", _COMPLETION_SECTION, label, "delete")
         for label, _ in _COMPLETION_FIELDS
     ),
+    _SlotMutation("completion_function_commented", _COMPLETION_SECTION, "功能", "comment"),
+    _SlotMutation("completion_function_fenced", _COMPLETION_SECTION, "功能", "fence"),
+    _SlotMutation("completion_function_moved", _COMPLETION_SECTION, "功能", "move"),
 )
 
 _SCAFFOLD_NEGATIVE_CELLS = (
@@ -233,10 +258,13 @@ def _section(markdown: str, heading: str) -> str:
 
 
 def _active_bullet(section: str, label: str) -> str:
+    prefix = f"- {label}"
     matching = [
         line
         for line in section.splitlines()
-        if line.startswith("- ") and line[2:].startswith(label)
+        if line.startswith(prefix)
+        and len(line) > len(prefix)
+        and line[len(prefix)] in "：（"
     ]
     assert len(matching) == 1, f"expected one active bullet for {label!r}, got {matching}"
     return matching[0]
@@ -349,6 +377,13 @@ def _apply_bullet_mutation(markdown: str, mutation: _SlotMutation) -> str:
     elif mutation.action == "indent":
         replacement = f"    {target}"
     else:
+        if mutation.section == _COMPLETION_SECTION:
+            without_target = markdown.replace(target, "", 1)
+            return without_target.replace(
+                _COMPLETION_SECTION,
+                f"{target}\n\n{_COMPLETION_SECTION}",
+                1,
+            )
         return markdown.replace(target, "", 1) + f"\n{target}\n"
     return markdown.replace(target, replacement, 1)
 
@@ -369,6 +404,10 @@ def _fill_frontend_ticket(template: str) -> str:
 
 def _fill_generic_ticket(template: str) -> str:
     return _fill_ticket(template, _GENERIC_SLOT_VALUES)
+
+
+def _fill_script_only_ticket(template: str) -> str:
+    return _fill_ticket(template, _SCRIPT_ONLY_SLOT_VALUES)
 
 
 def _filled_value(section: str, label: str) -> str:
@@ -469,7 +508,8 @@ def test_scaffold_template_slots_bind_to_a_filled_example_ticket() -> None:
     assert "create = src/lookup/" in _boundary_body(filled_ticket)
 
     completion = _section(filled_ticket, _COMPLETION_SECTION)
-    assert "N/A: this fictional change touches only a script and test helper" in _active_bullet(completion, "產品拆分")
+    assert "LookupEndpoint → LookupService" in _active_bullet(completion, "產品拆分")
+    assert "candidate behavior test tests/test_lookup_endpoint.py::test_lookup_entries" in _active_bullet(completion, "產品拆分")
     assert "NOT_VERIFIED: host admission behavior was not exercised" in _active_bullet(completion, "未驗證項")
     assert "Gap: host admission evidence; next action: run the host admission check" in _active_bullet(completion, "下一步")
 
@@ -477,6 +517,21 @@ def test_scaffold_template_slots_bind_to_a_filled_example_ticket() -> None:
     assert "模板本身不執行或攔截寫入" in template
     assert "由 host/reviewer admission" in template
     assert "不要求安裝協作插件或其 runtime" in template
+
+
+def test_script_only_example_has_no_product_scope_or_product_split() -> None:
+    template = _SCAFFOLD_TEMPLATE_PATH.read_text(encoding="utf-8")
+    filled_ticket = _fill_script_only_ticket(template)
+    _assert_template_contract(template)
+
+    assert "Lookup" not in filled_ticket
+    assert "src/lookup/" not in filled_ticket
+    implementation = _section(filled_ticket, _IMPLEMENTATION_SECTION)
+    assert "product 0/0 files" in _filled_value(implementation, _BUDGET_LABEL)
+    completion = _section(filled_ticket, _COMPLETION_SECTION)
+    assert "N/A: script and test-helper changes move no product responsibility" in _active_bullet(completion, "產品拆分")
+    assert "NOT_VERIFIED: Host admission was not run" in _active_bullet(completion, "未驗證項")
+    assert "Gap: Host admission evidence; next action" in _active_bullet(completion, "下一步")
 
 
 @pytest.mark.parametrize(
@@ -542,6 +597,20 @@ def test_returned_retired_workprogress_bullet_breaks_and_restores_contract(
         _assert_template_contract(mutated)
 
     restored = template_path.read_text(encoding="utf-8")
+    assert restored == markdown
+    _assert_template_contract(restored)
+
+
+def test_completion_field_label_extension_breaks_and_restores_contract() -> None:
+    markdown = _TEMPLATE_PATH.read_text(encoding="utf-8")
+    completion = _section(markdown, _COMPLETION_SECTION)
+    function_field = _active_bullet(completion, "功能")
+    mutated = markdown.replace(function_field, function_field.replace("- 功能：", "- 功能延伸：", 1), 1)
+
+    with pytest.raises(AssertionError):
+        _assert_template_contract(mutated)
+
+    restored = _TEMPLATE_PATH.read_text(encoding="utf-8")
     assert restored == markdown
     _assert_template_contract(restored)
 
