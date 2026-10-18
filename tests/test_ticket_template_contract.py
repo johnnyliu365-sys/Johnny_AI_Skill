@@ -17,6 +17,7 @@ import pytest
 
 _ROOT = Path(__file__).resolve().parents[1]
 _TEMPLATE_PATH = _ROOT / "modules" / "tickets" / "TEMPLATE.md"
+_SCAFFOLD_TEMPLATE_PATH = _ROOT / "template" / "modules" / "tickets" / "TEMPLATE.md"
 _OUTCOME_SECTION = "## 使用者拍板與可觀察結果"
 _IMPLEMENTATION_SECTION = "## 實作範圍、依賴與 ticket elements"
 _BOUNDARY_BLOCK = "johnny-boundary"
@@ -76,6 +77,22 @@ _FRONTEND_SLOT_VALUES = (
 )
 
 
+_GENERIC_SLOT_OVERRIDES: dict[str, str] = {
+    "<observable result for the named input, bound to the approved source above>": 'For `LookupQuery("birch")`, the result returns matching `LookupEntry` values.',
+    "<observable acceptance for each case>": "A valid query returns entries; an unavailable provider returns an error result; an empty query returns the empty result.",
+    "<具名輸入 → 輸出／有限狀態與錯誤／nullability / types and ports>": "LookupQuery(term: NonEmptyText) → LookupResult(entries: ImmutableList<LookupEntry>); states Ready / Empty / Unavailable; error LookupUnavailable",
+    "<可新增的路徑；不寫就是一個都不准新增>": "src/lookup/",
+    "<已查找並重用的生產模組、測試 harness／fixture（精確路徑或 ID、revision 與依賴方向）；若無可重用項，填查找範圍與具體理由>": "Reused src/common/TermNormalizer.py@r1 and tests/support/lookup_fake.py@r2; LookupEndpoint → LookupService → LookupPort",
+    "<對 johnny-boundary create 所授權的每個程式／腳本檔，逐一列出精確路徑、單一責任、直接消費者、對應驗收 ID、依賴方向；即使 create 使用目錄或 pattern，也不得只列目錄／pattern；沒有新增時填 N/A reason>": "src/lookup/LookupIndex.py: one responsibility, index entries; consumer LookupService; acceptance AC-LOOKUP-002; dependency LookupService → LookupIndex",
+    "<預設使用 Git worktree 外的作業系統暫存目錄，且不得污染 Git worktree；正式樹中唯一必要且具名的證據產物；源碼／腳本僅保留必要技術註解，不含 owner prompt 或工單敘事>": f"Temporary output: {Path(tempfile.gettempdir()).resolve() / 'ticket-example'} (outside the repository worktree); persist only doc/evidence/ticket-example.md; code and scripts contain technical comments only, no owner prompt or ticket narrative",
+    "<本票不應改動的既有功能、介面與來源基準；如契約內確需變更，列明授權來源、精確路徑與回歸驗收>": "Preserve the existing public lookup behavior at approved baseline revision 1; authorized changes must cite their source, exact path, and regression case",
+}
+_GENERIC_SLOT_VALUES = tuple(
+    (placeholder, _GENERIC_SLOT_OVERRIDES.get(placeholder, value))
+    for placeholder, value in _FRONTEND_SLOT_VALUES
+)
+
+
 @dataclass(frozen=True)
 class _SlotMutation:
     cell: str
@@ -118,6 +135,17 @@ _NEGATIVE_CELLS = (
     _SlotMutation("preserve_contract_removed", _IMPLEMENTATION_SECTION, _PRESERVE_LABEL, "delete"),
     _SlotMutation("preserve_contract_commented", _IMPLEMENTATION_SECTION, _PRESERVE_LABEL, "comment"),
     _SlotMutation("preserve_contract_moved", _IMPLEMENTATION_SECTION, _PRESERVE_LABEL, "move"),
+)
+
+_SCAFFOLD_NEGATIVE_CELLS = (
+    _SlotMutation("scaffold_expected_removed", _OUTCOME_SECTION, "核准 Expected（使用者可觀察結果）", "delete"),
+    _SlotMutation("scaffold_expected_moved", _OUTCOME_SECTION, "核准 Expected（使用者可觀察結果）", "move"),
+    _SlotMutation("scaffold_stop_condition_removed", _OUTCOME_SECTION, "停止條件", "delete"),
+    _SlotMutation("scaffold_stop_condition_moved", _OUTCOME_SECTION, "停止條件", "move"),
+    _SlotMutation("scaffold_reuse_removed", _IMPLEMENTATION_SECTION, _REUSE_LABEL, "delete"),
+    _SlotMutation("scaffold_reuse_moved", _IMPLEMENTATION_SECTION, _REUSE_LABEL, "move"),
+    _SlotMutation("scaffold_new_file_responsibility_removed", _IMPLEMENTATION_SECTION, _NEW_FILE_LABEL, "delete"),
+    _SlotMutation("scaffold_new_file_responsibility_moved", _IMPLEMENTATION_SECTION, _NEW_FILE_LABEL, "move"),
 )
 
 
@@ -270,14 +298,22 @@ def _apply_bullet_mutation(markdown: str, mutation: _SlotMutation) -> str:
     return markdown.replace(target, replacement, 1)
 
 
-def _fill_frontend_ticket(template: str) -> str:
+def _fill_ticket(template: str, slot_values: tuple[tuple[str, str], ...]) -> str:
     filled = template
-    for placeholder, value in _FRONTEND_SLOT_VALUES:
+    for placeholder, value in slot_values:
         assert filled.count(placeholder) == 1, (
             f"expected one fillable template slot for {placeholder!r}"
         )
         filled = filled.replace(placeholder, value, 1)
     return filled
+
+
+def _fill_frontend_ticket(template: str) -> str:
+    return _fill_ticket(template, _FRONTEND_SLOT_VALUES)
+
+
+def _fill_generic_ticket(template: str) -> str:
+    return _fill_ticket(template, _GENERIC_SLOT_VALUES)
 
 
 def _filled_value(section: str, label: str) -> str:
@@ -355,6 +391,29 @@ def test_template_slots_bind_to_a_filled_frontend_ticket() -> None:
     assert "Preserve SearchHistory" in preserve and "public SearchQuery v1" in preserve
 
 
+def test_scaffold_template_slots_bind_to_a_filled_example_ticket() -> None:
+    template = _SCAFFOLD_TEMPLATE_PATH.read_text(encoding="utf-8")
+    _assert_template_contract(template)
+    filled_ticket = _fill_generic_ticket(template)
+
+    outcome = _section(filled_ticket, _OUTCOME_SECTION)
+    implementation = _section(filled_ticket, _IMPLEMENTATION_SECTION)
+    assert "LookupEntry" in _filled_value(outcome, "核准 Expected（使用者可觀察結果）")
+    assert all(
+        case in _filled_value(outcome, "正常／失敗／邊界驗收")
+        for case in ("valid query", "unavailable provider", "empty query")
+    )
+    assert "CHANGE_DETECTED → REQUIREMENT_CHANGED" in _filled_value(outcome, "停止條件")
+    assert "TermNormalizer.py@r1" in _filled_value(implementation, _REUSE_LABEL)
+    assert "src/lookup/LookupIndex.py" in _filled_value(implementation, _NEW_FILE_LABEL)
+    assert "create = src/lookup/" in _boundary_body(filled_ticket)
+
+    assert "library/" not in template
+    assert "模板本身不執行或攔截寫入" in template
+    assert "由 host/reviewer admission" in template
+    assert "不要求安裝協作插件或其 runtime" in template
+
+
 @pytest.mark.parametrize(
     "mutation",
     _NEGATIVE_CELLS,
@@ -372,6 +431,26 @@ def test_mutating_a_named_template_policy_breaks_its_contract_cell(
 
     # The mutation is in-memory only; the exact source is still present and green.
     restored = _TEMPLATE_PATH.read_text(encoding="utf-8")
+    assert restored == markdown
+    _assert_template_contract(restored)
+
+
+@pytest.mark.parametrize(
+    "mutation",
+    _SCAFFOLD_NEGATIVE_CELLS,
+    ids=tuple(mutation.cell for mutation in _SCAFFOLD_NEGATIVE_CELLS),
+)
+def test_scaffold_reverse_mutations_break_and_restore_the_contract_cell(
+    mutation: _SlotMutation,
+) -> None:
+    markdown = _SCAFFOLD_TEMPLATE_PATH.read_text(encoding="utf-8")
+    _assert_template_contract(markdown)
+    mutated = _apply_bullet_mutation(markdown, mutation)
+
+    with pytest.raises(AssertionError):
+        _assert_template_contract(mutated)
+
+    restored = _SCAFFOLD_TEMPLATE_PATH.read_text(encoding="utf-8")
     assert restored == markdown
     _assert_template_contract(restored)
 
