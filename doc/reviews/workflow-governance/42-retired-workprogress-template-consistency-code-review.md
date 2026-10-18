@@ -25,3 +25,12 @@ supports template consistency only; it does not qualify Host pre-effect
 admission, formal closure, push, or release. The gate's isolated temporary
 journal remains a cleanup obligation; it must not be treated as a Ticket-close
 receipt until teardown is verified.
+
+Gate journal seal before cleanup: the exact isolated queue journal contained one
+record at `2026-10-18T06:49:06.992209+00:00`, with candidate and detail both
+`0d4dbb14d15005daad98d12af0896c49a9e21df1`, integration branch
+`codex/skill-improvement-checklist`, Ticket42 path, outcome `INTEGRATED`, and
+no offending path. The journal file SHA-256 was
+`7ae9b89de07da24d7b9296d94b2fdb41e008cd17efbe39c69a908337725d5afe`.
+The exact candidate and content blobs remain reachable from the control branch;
+the temporary journal is not the only copy of the integration decision.
