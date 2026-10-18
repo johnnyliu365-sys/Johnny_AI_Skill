@@ -196,10 +196,10 @@ missing/stale grant, source or dependency proof, is refused. B's completion
 does not close A or the mainline. No ticket borrows A's receipt, authority,
 approval or evidence. `ready_for_recheck` never means admitted.
 
-**AC-10 — Host pre-effect ticket completeness.** Before either a same-lifetime
-native owner spawn or a cross-lifetime receipt/dispatch effect, the Host's
-existing admission path reads the exact approved ticket leaf and its approved
-SPEC/AC and sealed Context bindings. It verifies the ticket has a sourced,
+**AC-10 — pre-effect ticket completeness.** Before either a same-lifetime
+native owner spawn or a cross-lifetime receipt/dispatch effect, the admission
+actor must read the exact approved ticket leaf and its approved SPEC/AC and
+sealed Context bindings. It verifies the ticket has a sourced,
 observable Expected; named input/output, finite state and error behavior;
 normal/failure/boundary AC; stop condition; control owner, distinct implementer
 and independent reviewer; exact dependency readiness; verification and typed
@@ -208,18 +208,31 @@ each allowed new code or test/script file, it checks a distinct responsibility,
 consumer, acceptance cell, reuse decision and dependency direction, plus the
 ticket's bounded growth and evidence-output declarations. Placeholder text,
 example/fenced/commented fields, missing references, conflicting revisions or
-an Expected invented by the implementer are incomplete. The Host refuses
-before allocating the owner, issuing a receipt, or calling a dispatch port;
-the template validator and later Git-diff boundary remain supporting checks,
-not substitutes for this admission. A changed business Expected returns to
-existing requirement change control. This check supplies no new grant.
+an Expected invented by the implementer are incomplete. On the existing
+same-lifetime lane, `codex-native-same-lifetime-delegation.md` binds a reviewer
+check before `collaboration.spawn_agent`; it is an instruction-level path, not
+a qualified hard Host intercept. On the cross-lifetime lane,
+`library/local_orchestration/dispatch_authority.py::admit_dispatch` is the
+existing receipt-effect entrypoint, but does not yet perform this committed
+ticket completeness readback. A hard pre-effect refusal claim for either lane
+requires a separately qualified intercept at that lane's actual Host effect
+boundary. Until it exists, reviewer checks and template validation cannot
+close AC-10 or checklist 03; any new dispatch requiring this revision's hard
+guarantee is blocked rather than reported as Host-enforced. The qualified
+intercept must refuse before spawn, receipt issuance or dispatch, without an
+external dispatcher or a new grant. The later Git-diff boundary remains a
+separate check. A changed business Expected returns to existing requirement
+change control.
 
 **AC-11 — evidence-linked formal closure and structural review.** Formal
 `APPROVED`/`DONE` and mainline closure require the existing Review/Router
 admission path to resolve the exact candidate SHA, approved Expected,
 Closure revision, required child tickets, dependencies and every blocking
-Finding disposition to independently observed test/type/build/smoke and
-review evidence. A projection's `closure_candidate`, a green summary, a ticket
+Finding disposition to independently observed review evidence and the
+test/type/build/smoke checks required by that approved ticket and Profile.
+An inapplicable check, such as build or smoke for a docs-only ticket, may be
+recorded `N/A` only with its reason; required evidence cannot be marked `N/A`.
+A projection's `closure_candidate`, a green summary, a ticket
 label or an unverified report cannot close work. An optional unfinished item
 does not block required-work closure; an open required child, unresolved
 blocking Finding, stale candidate/source or unverified consumer does. Same-ticket
@@ -247,18 +260,23 @@ implied.
    not, and B completion leaves A and the required mainline open. Mutations
    that globally freeze B or admit B/C from caller-built/stale metadata must
    turn the named cells red and restore to green.
-2. At same-lifetime native delegation and cross-lifetime
+2. At the reviewer-controlled same-lifetime native delegation path, prove the
+   reviewer checks the committed ticket before spawn, and report that result
+   as instruction-level evidence only. At the separately qualified hard Host
+   intercept for that lane, and at cross-lifetime
    `library/local_orchestration/dispatch_authority.py::admit_dispatch`, prove
    a complete approved ticket reaches only its existing dispatch route. Remove
    Expected, stop condition, distinct reviewer, dependency proof, or one new
    file's responsibility from the committed ticket and prove refusal occurs
-   before spawn, receipt issuance or dispatch. Replayed caller assertions or
-   template-only green results cannot satisfy this cell.
+   before spawn, receipt issuance or dispatch. Without a qualified intercept,
+   record a capability gap; reviewer assertion or template-only green results
+   cannot satisfy hard Host admission.
 3. At `library/workflow_router/review_admission.py`, the existing guarded
    integration/Review route and the ticket-status projection consumer, prove
-   exact-candidate positive closure and negative cases for an open required
-   child, open blocking Finding, stale evidence and a product/test-script
-   responsibility mismatch. A projection may display these states, but only
+   exact-candidate positive closure, a reasoned docs-only `N/A`, and negative
+   cases for an open required child, open blocking Finding, stale evidence,
+   `N/A` on a required check and a product/test-script responsibility mismatch.
+   A projection may display these states, but only
    the existing formal Review/Router route can authorize closure. Reviewer
    records the actual diff, reused modules, modified paths, impact/consumer
    scope and independent reverse-mutation results.
@@ -275,7 +293,8 @@ The current workflow-governance `README.md` has a delivery objective and
 ticket table, but no complete required/optional dependency graph or current
 per-ticket handoff binding; it is not yet an admissible AC-9 source. The
 current `admit_dispatch` accepts a caller-provided artifact and does not
-perform AC-10's committed-ticket completeness readback. Neither behavior is
+perform AC-10's committed-ticket completeness readback; native same-lifetime
+delegation has no qualified hard Host intercept. Neither behavior is
 defensibly authorized as a completed Host/mainline capability by AC 1–8.
 Do not synthesize that authority from metadata or expand Ticket 30 locally.
 
