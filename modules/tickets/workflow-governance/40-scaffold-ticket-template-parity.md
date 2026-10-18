@@ -2,7 +2,7 @@
 
 | 欄位 | 內容 |
 | --- | --- |
-| State | `OPEN / DISPATCHABLE`；只收斂 scaffold 模板斷邊，不宣稱 Host admission 已完成 |
+| State | `TEMPLATE_SLICE_LOCAL_INTEGRATED`；只收斂 scaffold 模板斷邊，不宣稱 Host admission 已完成 |
 | Authority | 已核准 `PRD-20260805-009`／`CHG-20260805-009`、`modules/spec/workflow-governance.md` AC 5–8、Owner 2026-10-18 checklist 03／11 與本輪繼續完成指示；不新增 PRD |
 | Baseline | 本票 docs-only commit 的完整 SHA；派工前固定 |
 | Roles | 低成本 implementation owner、不同獨立 reviewer、Root 控制面 |
@@ -46,3 +46,13 @@ Run：`python -m pytest tests/test_ticket_template_contract.py -q`、`git diff -
 Return：`IMPLEMENTED | BLOCKED | CHANGE_DETECTED`、完整候選 SHA、實際兩檔、
 具名測試與反向突變結果、scope deviations、未完成的 Host 派工准入缺口。
 Implementation owner 不整合、不推送；reviewer 獨立讀回、突變與判定。
+
+## Closure evidence
+
+Implementation candidate `91ee17c3fb982c4944a1d1b862e534e22e686e79` was
+independently approved. The gate integrated exact-blob replay
+`5776139a66690988650e8d44d0c98a1721056a83`. The test command passed
+44 tests; see
+`doc/reviews/workflow-governance/40-scaffold-ticket-template-parity-code-review.md`.
+This closes only template parity. Host pre-effect filled-ticket admission is
+not verified and remains a separate checklist 03 blocker.

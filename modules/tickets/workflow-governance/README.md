@@ -30,7 +30,7 @@ Deliver one control-plane policy vertical slice: completion evidence must re-ent
 | [37-retired-wpr-commit-conflict](37-retired-wpr-commit-conflict.md) | Remove the obsolete standalone WPR commit completion obligation and keep its policy pins aligned | `SLICE_LOCAL_INTEGRATED` | Initial review found a timing defect; same-ticket correction approved and locally gated at `2f1c29cb` |
 | [38-reuse-and-responsibility-dispatch-contract](38-reuse-and-responsibility-dispatch-contract.md) | A dispatch ticket names reused modules, separate code/test/script responsibilities and bounded growth evidence before implementation | `TEMPLATE_SLICE_LOCAL_INTEGRATED` | Independent review and document gate approved at `3557bc20`; Host admission and semantic structural review remain separate gaps |
 | [39-literal-suite-consumer-inventory](39-literal-suite-consumer-inventory.md) | Trace literal SUITES registry references through Python wrappers before test retirement | `INVENTORY_SLICE_LOCAL_INTEGRATED` | Independent review approved correction and local gate integrated `e9177f80`; real CI command source and retirement authority stay open |
-| [40-scaffold-ticket-template-parity](40-scaffold-ticket-template-parity.md) | Keep the shipped new-project ticket scaffold aligned with current single-ticket fields | `OPEN / DISPATCHABLE` | Owner checklist 03/11; scaffold only, Host admission remains open |
+| [40-scaffold-ticket-template-parity](40-scaffold-ticket-template-parity.md) | Keep the shipped new-project ticket scaffold aligned with current single-ticket fields | `TEMPLATE_SLICE_LOCAL_INTEGRATED` | Independent review approved candidate `91ee17c3`; exact-blob replay passed document gate at `5776139a`; Host admission remains open |
 
 ## Shared baseline
 
