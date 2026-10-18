@@ -24,3 +24,33 @@ decision, not an implemented or qualified adapter. No target facts were
 inferred from the human status table. Mainline migration, admitted declaration
 readback, ticket-scoped Grant, Router/Host admission, and formal closure stay
 unverified. No push or release occurred.
+
+## 30A fixture ticket / decision package docs review — 2026-10-18
+
+| Field | Evidence |
+| --- | --- |
+| Control baseline | `3ca02bd5e90611c101d97cc79f06b4751c70cd1c` |
+| Initial docs candidate | `ed314dae` — Ticket 30, its registry row, checklist revision 24 |
+| Same-ticket correction | `406817c485ddb5af78794d797e2f281c397abaaa`; Ticket 30 blob `ded322b3c7e82399c31ff4cf67d3dbf3237af3fb` |
+| Independent reviewer | `/root/ticket30_docs_review`, read-only and separate from Root author |
+| Conclusion | `PASS` for **docs-only preparation**; `SPEC_BOOTSTRAP_DECISION_REQUIRED / TICKET_GRANT_REQUIRED / NON_DISPATCHABLE` remain |
+
+The independent reviewer found three defects in the first docs candidate:
+the recommended `CONTEXT.md` anchor is sealed and needs an authorized
+Architecture Owner `REVISE`; the existing workflow-governance SPEC still
+forbids Ticket 30 dispatch until source and Host binding, so fixture bootstrap
+requires an explicit bounded exception in the original Change Control; and
+the nine-ref remote CI inventory needed its actual batch command and path
+predicate, not only a main-branch example. Correction `406817c4` records
+each constraint without writing Context/SPEC, activating a Grant, or treating
+an empty CI command list as test-retirement authority. The reviewer reread
+the exact correction and marked all three findings `CLOSED`.
+
+The reviewer briefly reported an index mismatch, then checked the full
+`406817c4` registry and checklist and withdrew it: both explicitly require
+the SPEC bootstrap decision before Grant. Root ran
+`python -m pytest tests/test_mainline_projection.py tests/test_ticket_template_contract.py -q`
+(`59 passed`) and `git diff --check`; the reviewer checked the committed
+docs with `git show --check`. No source adapter, true declaration readback,
+`admit_dispatch`, native spawn, Host qualification, push or release was tested
+or performed. Checklist 02/08 therefore remain unchecked.
