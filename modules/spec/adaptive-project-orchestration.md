@@ -341,17 +341,22 @@ one module-card leaf and adds nested meaning/ownership partitions before unrelat
 would force broad loading. The Router resolves one explicit path only and never scans,
 flattens, recursively loads or persists a whole tree.
 
-#### Proposed AC-17 requirement-identity revision — `OWNER_AUTHORIZED / INDEPENDENT_REVIEW_PENDING / NOT_EFFECTIVE`
+#### AC-17 requirement-identity revision — `DESIGN_BASELINE_REVIEWED / RUNTIME_NOT_EFFECTIVE`
 
-This is a proposed amendment to the existing `PRD-20260815-022`, not a new PRD or an
-effective SPEC revision. The project owner's 2026-10-18 authority approves this
+This amends the design baseline of the existing `PRD-20260815-022`, not a new PRD or an
+effective runtime revision. The project owner's 2026-10-18 authority approves this
 bounded SPEC identity correction based on candidate
 `fa418b6d6ce3667abe3fa7b693b1034ec27cdaa9`, conditional on independent review
-passing against the corrected exact commit and blob. Once that verdict and version
-evidence are recorded, the replacement below becomes the effective SPEC design
-baseline without another owner approval. This authority is not a creation grant or
-implementation/Host-effect authorization. At that design-baseline transition,
-replace only the two AC-17 sentences from "Each active product requirement" through
+passing against the corrected exact commit and blob. That condition was met for
+`4531d00f7d979fb7cda567b4d584fde6f41698bb` / SPEC blob
+`9c88d20eb8f6eba941d1b8a0fdc457d6be1cee48`, locally integrated at
+`76d1f942e24975da28889c8b6ecee904c8ef3da0`. The independent verdict and
+exact version binding are recorded in
+`doc/reviews/workflow-governance/41-bounded-spec-correction-integration-code-review.md`.
+The replacement below is now the SPEC design baseline without another owner approval.
+This authority is not a creation grant or
+implementation/Host-effect authorization. This design-baseline revision replaces
+only the two AC-17 sentences from "Each active product requirement" through
 "archive ID/reference" with the following requirement/change identity and retirement
 contract. AC-17's bounded tree, archive-library, reusable-module and exact-path rules,
 and all other approved ACs, remain as approved.
@@ -453,12 +458,12 @@ failed or unavailable issuer/readback/atomic-consume capability yields no PRD
 creation. The review must include reverse-mutation evidence that removing the
 issuer check, pre-effect readback or one-shot constraint turns these cells red.
 
-| Proposed revision evidence slot | Required state |
+| Revision evidence slot | Current state |
 | --- | --- |
 | Correction authority | Owner's 2026-10-18 bounded SPEC approval based on `fa418b6d6ce3667abe3fa7b693b1034ec27cdaa9`, conditioned on independent review of the corrected revision; no repeat owner decision. |
 | Corrected candidate revision | The commit containing this proposal; bind its exact commit SHA and SPEC blob SHA in independent review. |
-| Independent SPEC review | `PENDING`; exact candidate commit/blob, scope/diff, reviewer identity and passing verdict required. |
-| SPEC design-baseline effect | `PENDING` independent review; becomes effective upon a recorded passing verdict for that exact commit/blob, without another owner approval. |
+| Independent SPEC review | `PASS` on candidate `4531d00f7d979fb7cda567b4d584fde6f41698bb` / blob `9c88d20eb8f6eba941d1b8a0fdc457d6be1cee48`; reviewer and scope are bound in the Ticket 41 review. |
+| SPEC design-baseline effect | `DESIGN_BASELINE_REVIEWED`; the exact reviewed blob was locally integrated at `76d1f942e24975da28889c8b6ecee904c8ef3da0`. This is not runtime activation. |
 | Lineage validator/index migration review | `PENDING`; exact commits, acceptance/reverse-mutation evidence and legacy readback required. |
 | Actual Host grant capability and runtime activation | `PENDING`; qualified issuer/consumer/readback evidence and an explicit activation decision required. |
 

@@ -154,23 +154,23 @@ The future implementation ticket must begin red and include the following explic
 - Date: `2026-08-05 (Asia/Taipei)`.
 - Approval scope: Continuous Workflow Governance POC specification. Ticket planning is authorised. No source, test, migration, deployment, or implementation commit is authorised until a second explicit ticket approval and a separate named implementation owner are recorded.
 
-## Proposed revision 02 — trusted continuation and admission (not effective)
+## Revision 02 — trusted continuation and admission (reviewed design; runtime not effective)
 
-| Field | Proposed value |
+| Field | Current value |
 | --- | --- |
-| State | `OWNER_AUTHORIZED_REVISION / INDEPENDENT_REVIEW_PENDING / RUNTIME_NOT_EFFECTIVE` |
-| Requirement lineage | Existing `PRD-20260805-009` / `CHG-20260805-009`; the proposed amendment in `doc/requirements/active/2026/workflow-governance/REQ-20260805-009.md` |
+| State | `DESIGN_BASELINE_REVIEWED / RUNTIME_NOT_EFFECTIVE` |
+| Requirement lineage | Existing `PRD-20260805-009` / `CHG-20260805-009`; the design-baseline amendment in `doc/requirements/active/2026/workflow-governance/REQ-20260805-009.md` |
 | Evidence baseline | Owner's 2026-10-18 `doc/AI-SKILL-IMPROVEMENT-CHECKLIST.md` revision 14, items 01–03, 07, 09 and 11; Ticket 24 closure revision 03, Tickets 28–30 and 38 and their independent reviews |
 | Owner's limited revision authority | On 2026-10-18 the owner accepted final-content commit `1669e8e20f0a30894606e16f9ea1a10e4f0c5ba3` (SPEC blob `be9b79eed12dd76ec8f37fe83f3be90b86a4895d`, identical to this branch's `b6ac5f8a` blob) as the correction baseline, limited to the trusted authority anchor, formal closure and staged activation below; this is not implementation or activation approval |
-| Exact revision evidence slots | Corrected proposal commit/blob: `PENDING_THIS_COMMIT` / `PENDING_THIS_BLOB`; independent review report/verdict and design-baseline binding: `PENDING`; approved implementation ticket/Grant and candidate SHA: `PENDING`; Host qualification/replay evidence: `PENDING`; scoped runtime activation authority and effective authority ref/SHA: `PENDING` |
+| Exact revision evidence | Reviewed candidate `8eae1af4d6fbcab9b5c3f0f7f5b286a91cec7f78` / SPEC blob `6fd8c3098f48be40c2cf05a03f8284c186163c08`; independent `PASS` and local integration at `76d1f942e24975da28889c8b6ecee904c8ef3da0` are bound in `doc/reviews/workflow-governance/41-bounded-spec-correction-integration-code-review.md`. Implementation ticket/Grant, Host qualification and scoped runtime activation remain `PENDING`. |
 
-This append-only proposal does not revise AC 1–8, the 2026-08-05 approval,
+This reviewed design amendment does not revise AC 1–8, the 2026-08-05 approval,
 existing ticket grants or completed work. Its intended scope is the current
 workflow-governance POC and the existing Router/Host/Review entrypoints. It
 does not authorize production SQL, a paid call, a new runner, a target-project
 dependency, push, publication or another external effect.
 
-### Additional architecture and acceptance, conditional on independent review
+### Additional architecture and acceptance, independently reviewed as design
 
 **AC-9 — trusted cross-ticket mainline and independent continuation.** The
 existing target-owned `modules/tickets/<feature>/README.md` index is the
