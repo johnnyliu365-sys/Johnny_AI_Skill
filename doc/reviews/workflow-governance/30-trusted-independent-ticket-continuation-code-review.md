@@ -387,3 +387,108 @@ observed result. Ticket29/30 finalbytes/digests and the machineJSON remain exact
 the entire README blob changes legitimately with its human status row and must
 be pinned anew. The original reviewer rechecks that narrow carrier before its
 local gate. No independent network/readback or Host claim is introduced.
+
+## Final30M decision seal / 30B exact candidate — 2026-10-18
+
+Independent reviewer APPROVED the narrow8c9be916 carrier: only progress/report
+text changed, machineJSON/leaves/source unchanged. Root then used the same
+control-plane gate, exact checked-clean c07 base and same registered journal
+root. Result INTEGRATED, no failure, actual control HEAD independently readable
+as **`8c9be91650d3cfb59d53c24b55b9a65fb72118b3`**. This is the reviewed,
+locally integrated **30B implementation baseline** and maximum proposed
+publication target, not a moving HEAD. Subsequent review/cleanup ledger commits
+do not automatically extend that implementation or remote range.
+
+| Exact approved document input | Blob at8c9be916 |
+| --- | --- |
+| Context04 | `06baa4dea5db1c3370086552c35a1d8f721ad47e` |
+| SPEC03 | `a700cad60de40096770582b04915bf490fd66a19` |
+| Canonical PRD/CHG leaf | `1bc5e679944aeb6d7b830ccbf2b3fd768b599548` |
+| Mainline index README | `4c0f6d55099eada140d84459210f65fed2fd36cd` |
+| Ticket29 | `71a7c78e7d2a5b999b4663360516647c60848826` |
+| Ticket30 /30B exact contract | `08146ff8e8afc9c886293bdcb57e4d5d2e94257b` |
+| Reused30A product/test | `22a23be723bc34d9144575a81238d79ff5579485` / `ff6f66e8c6cd07fb956de3be72507038e2254ad0` |
+
+Ticket29/30 raw digests remain exactly d6d3…e94f and f8d7…0785 (full values
+above and in the index). Final index raw SHA256 is
+`34612470130450329c62216ba95d2f9239443320f62c69774b0b6f348edc3139`.
+The observed8c9be916 tree is `27e49ebc12b72be53719fa31f51560bda4c9d5a8`.
+No source/test was edited. Root's guarded result and independent carrier
+rebind satisfy30M-D4 locally;30A's consumed Grant remains consumed.
+
+### Only Owner decisions remaining in this package
+
+**1 — recommend APPROVE the prepared30B construction Grant, not new policy.**
+`grant-ticket30b-readback-20261018`, NOT_ISSUED, binds exactly the baseline,
+Ticket30 and index blobs in this seal; originalPRD/CHG/SPEC; proposed actors,
+worktrees and MODIFY2/CREATE2 paths in Ticket30 §30B. Local tests network=0;
+new command allocation600s/max120s each, prior expenditure preserved; existing
+independent review, initial+onecorrection, exactdiff and guarded local integration.
+New constructor seam is reviewed before behavior as already written in the
+same candidate, no new authority issuer. After source publication and independent
+review, conditionally permit one public GET-only readback, ≤10GET/200s,
+≤20s/request/2MiB/blob, no retries/models/credentials/writes. Absent those
+conditions, true-source positive verification stays UNAVAILABLE/NOT_VERIFIED;
+local construction can proceed under its own valid Grant. No Host qualification,
+receipt/spawn/interception, formal closure or release/deployment is authorized.
+
+Exact reply:
+> 核准Ticket30B：baseline `8c9be91650d3cfb59d53c24b55b9a65fb72118b3`，
+> ticket blob `08146ff8e8afc9c886293bdcb57e4d5d2e94257b`，index blob
+> `4c0f6d55099eada140d84459210f65fed2fd36cd`；依該票四路徑、30B-R1～R4、
+> 原角色／worktree與600s新增命令額度，保留歷史耗用，完成本地實作、獨審、
+> 同票一次修正及受控整合。測試預設network=0；條件式核准source正式到位、
+> 獨審及effect前授權讀回後的一次10GET/200s公開唯讀驗證。不授權其他效果，
+> 不啟用Host/dispatch/正式結案；不push、不release、不deployment。
+
+**2 — recommend NO PUSH of the broader range at this point.** The directly
+read old remoteSHA is `a1cb6c13adbeb52a4117991727dcc3d4af6d2a33` (rechecked
+unchanged after the first local integration). If the owner instead authorizes
+publication, the exact maximum range is:
+`a1cb6c13adbeb52a4117991727dcc3d4af6d2a33..8c9be91650d3cfb59d53c24b55b9a65fb72118b3`,
+129 commits,87 netpaths. This includes the earlier local checklist slices,
+not just the five30M docs; no implicit approval of its other candidates or
+activation follows. Complete range can be enumerated without asking the owner
+to reconstruct it:
+
+```text
+git rev-list --reverse a1cb6c13adbeb52a4117991727dcc3d4af6d2a33..8c9be91650d3cfb59d53c24b55b9a65fb72118b3
+git diff --raw --no-abbrev --no-renames a1cb6c13adbeb52a4117991727dcc3d4af6d2a33 8c9be91650d3cfb59d53c24b55b9a65fb72118b3 --
+```
+
+SHA256 of the exact first command's raw stdout bytes:
+`e03faec67e1b8ba6a89a60964e1ea22f10eaca194e9ba42a2140117e3f333b75`;
+second stdout bytes:
+`be2e7c255968002b6c1da21539eebac5a6aba83dd590c3a6ac175349b80e9853`.
+Target repository=`johnnyliu365-sys/Johnny_AI_Skill`, ref=`refs/heads/main`.
+Any approved push must be nonforce, oldref reread exactly equal before push,
+ancestry/scope/required review checked under existingpromotion; no rebase/force,
+newcommit inclusion or providerMerge. Known dynamic DependencyGraph may run;
+unobserved App/org automation remains UNKNOWN. Push completion requires direct
+ls-remote exactnewSHA plus provider blob reads at thatSHA for Context04,
+index andleaves/digests. Otherwise PUSH_UNCONFIRMED. A newremoteSHA halts only
+this publication, not independent lawful local work. No push was executed.
+
+### Journal seal before restricted teardown
+
+Exact previously registered file:
+`C:\Users\GameBoy\AppData\Local\Temp\johnny-ticket30m-integration-9mehmg_0\queue\document-mutation-journal.jsonl`.
+Length2590 bytes, **four** JSONLrecords, SHA256
+`8d845fcb7688c4a5ecbfc0d73e4874d479331a9460bed2a69690f90963c7319a`.
+Records1/2 bind c07 with the five docs and outcomes ADMITTED/INTEGRATED;
+records3/4 bind8c9be916 with only report/checklist/humanREADME progress and
+outcomes ADMITTED/INTEGRATED. All have CONTROL_PLANE, host/principalGameBoy,
+samecontrolintegrationbranch, no failure/offendingpath. An initial informal
+"one record" expectation was corrected by independent actualJSONL readback;
+no history was rewritten to fit it. This durable metadata+exactdigest is sealed
+before removal. Necessary reviewed scripts/tests/commits remain in Git.
+
+Only pending teardown targets are the two registered30M worktrees, their fully
+integrated control branch, and this exactjournal/emptyparents, after independent
+seal readback. Owner+TTL were recorded beforecreation. No force/reset/clean,
+recursivebroaddelete, formalbranchrewrite or immediateGC is allowed. Other
+programme tickets, R0/DAP/TAL and all Recovery holds are unchanged. FullTicket30
+and checklist01/02 stay open; current Router return is ACTION_COMPLETED for
+30M, then only30B implementation waits for this new preciseGrant. No other
+source/test work with an existing independent validGrant was identified in this
+boundedfeature inspection; none is revoked by the proposed new gates.
