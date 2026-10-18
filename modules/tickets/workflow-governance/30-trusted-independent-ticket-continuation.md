@@ -188,6 +188,12 @@ baseline 沒有 source/test 變更，以及實際 integration diff 正好兩個�
   修正不重置。原 initial＋一次correction耗盡時，由Root在本批內收斂但不加額度。
 - Network=0；本地假 transport 測試及實作標準庫受限transport均可，禁止實際外部
   GET、paid API、credential、正式派工／Host啟用。正式來源正向證據保持未完成。
+- `nohelper` 僅指實作者不得派helper。HIGH_ASSURANCE 仍須 reviewer-owned
+  `AdversarialReviewPlan`：pin最終candidate／30B-R1～R4，檢查AUTHORIZATION、
+  BOUNDARY_DATA、CONSISTENCY、ERROR_PARTIAL_FAILURE及REGRESSION，effect_scope
+  為NO_EXTERNAL_EFFECT。不同席獨審不自動代替此audit；隔離必須有資格證據。
+  若僅有READ_ONLY_INTENT_ONLY或UNAVAILABLE，記REVIEW_BLOCKED，不能整合或
+  勾選；其餘已准入本地建置可繼續。沿既有CVQ來源確認，不新建隔離框架。
 - Asset owner=本票具名作者／獨審；TTL=本批本票審閱與證據封存後；只清精確登記
   的乾淨且已整合worktree/ref，失敗或Recovery hold保留，不改其他資產。
 
