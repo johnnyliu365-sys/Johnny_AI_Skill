@@ -29,6 +29,12 @@ from library.workflow_router import (
     RequirementLineageValidationRequest,
     RequirementLifecycle,
 )
+from library.workflow_router.requirement_lineage import (
+    RequirementRevisionHistory,
+    RequirementRevisionHistoryInvalidReason,
+    RequirementRevisionHistoryResult,
+    RequirementRevisionLink,
+)
 
 
 class RequirementLineageTests(unittest.TestCase):
@@ -356,6 +362,84 @@ class RequirementLineageTests(unittest.TestCase):
                 invalid_reason=RequirementLineageInvalidReason.IDENTIFIER_PAIR_MISMATCH,
                 resolved_lineage_leaf_ref="leaf-invalid-decision",
             )
+
+    def test_revision_history_dtos_round_trip_and_reject_invalid_shapes(self) -> None:
+        link_payload = {
+            "change_id": "CHG-20260815-023",
+            "from_revision": "rev-1111111111111111",
+            "to_revision": "rev-2222222222222222",
+            "approval_ref": "approval-023",
+            "approval_digest": self._digest("a"),
+            "affected_ac_ids": ("ac-17", "ac-18"),
+        }
+        link = RequirementRevisionLink(**link_payload)
+        too_many_acceptance_ids = tuple(f"ac-{index}" for index in range(513))
+        history = RequirementRevisionHistory(
+            prd_id="PRD-20260815-022",
+            initial_revision="rev-1111111111111111",
+            effective_revision="rev-2222222222222222",
+            acceptance_ids=("ac-17", "ac-18"),
+            links=(link,),
+        )
+        result = RequirementRevisionHistoryResult(
+            scope="CANDIDATE_ONLY",
+            valid=True,
+            reason=None,
+        )
+        for model in (link, history, result):
+            with self.subTest(model=type(model).__name__):
+                self.assertEqual(type(model).model_validate_json(model.model_dump_json()), model)
+        with self.assertRaises(ValidationError):
+            link.change_id = "CHG-20260815-024"
+
+        invalid_link_payloads = (
+            {**link_payload, "change_id": 23},
+            {**link_payload, "affected_ac_ids": ()},
+            {**link_payload, "affected_ac_ids": too_many_acceptance_ids},
+            {**link_payload, "affected_ac_ids": ("ac-17", "ac-17")},
+            {**link_payload, "from_revision": "rev-2222222222222222"},
+            {**link_payload, "approval_ref": ""},
+            {**link_payload, "approval_digest": self._digest("0")},
+            {**link_payload, "approved": True},
+        )
+        for payload in invalid_link_payloads:
+            with self.subTest(payload=payload):
+                with self.assertRaises(ValidationError):
+                    RequirementRevisionLink(**payload)
+
+        history_payload = {
+            "prd_id": "PRD-20260815-022",
+            "initial_revision": "rev-1111111111111111",
+            "effective_revision": "rev-2222222222222222",
+            "acceptance_ids": ("ac-17", "ac-18"),
+            "links": (link,),
+        }
+        invalid_history_payloads = (
+            {**history_payload, "acceptance_ids": ()},
+            {**history_payload, "acceptance_ids": too_many_acceptance_ids},
+            {**history_payload, "acceptance_ids": ("ac-17", "ac-17")},
+            {**history_payload, "links": [link]},
+            {**history_payload, "activation_authorized": True},
+        )
+        for payload in invalid_history_payloads:
+            with self.subTest(payload=payload):
+                with self.assertRaises(ValidationError):
+                    RequirementRevisionHistory(**payload)
+
+        invalid_result_payloads = (
+            {"scope": "ACTIVE", "valid": True, "reason": None},
+            {"scope": "CANDIDATE_ONLY", "valid": 1, "reason": None},
+            {
+                "scope": "CANDIDATE_ONLY",
+                "valid": True,
+                "reason": RequirementRevisionHistoryInvalidReason.DUPLICATE_CHANGE,
+            },
+            {"scope": "CANDIDATE_ONLY", "valid": True, "reason": None, "activate": True},
+        )
+        for payload in invalid_result_payloads:
+            with self.subTest(payload=payload):
+                with self.assertRaises(ValidationError):
+                    RequirementRevisionHistoryResult(**payload)
 
     def test_active_pair_resolves_one_exact_active_leaf(self) -> None:
         decision = RequirementLineageGate.validate(self._active_request())

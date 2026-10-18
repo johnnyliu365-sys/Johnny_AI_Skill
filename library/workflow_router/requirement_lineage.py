@@ -2,22 +2,96 @@
 
 from __future__ import annotations
 
+from enum import Enum
+from typing import Literal
+
+from pydantic import Field, model_validator
+
 from .artifact_tree import ArtifactTreeResolver
 from .contracts import (
     ArtifactTreeDecisionKind,
     ArtifactTreeFamily,
     ArtifactTreeLifecycle,
     ArtifactTreeNodeKind,
+    EvidenceDigest,
     OpaqueMetadataId,
     RequirementArchiveBundle,
+    RequirementChangeId,
+    RequirementId,
     RequirementLineageDecisionKind,
     RequirementLineageInvalidReason,
     RequirementLineageValidationDecision,
     RequirementLineageValidationRequest,
     RequirementLifecycle,
-    RequirementChangeId,
-    RequirementId,
+    RevisionDigest,
+    RouterModel,
 )
+
+
+class RequirementRevisionHistoryInvalidReason(str, Enum):
+    """Finite failures for one selected requirement revision history."""
+
+    DUPLICATE_CHANGE = "duplicate_change"
+    BROKEN_REVISION_CHAIN = "broken_revision_chain"
+    ACCEPTANCE_MISMATCH = "acceptance_mismatch"
+    EFFECTIVE_REVISION_MISMATCH = "effective_revision_mismatch"
+
+
+class RequirementRevisionLink(RouterModel):
+    """One change's metadata link; approval metadata does not authenticate its issuer."""
+
+    change_id: RequirementChangeId
+    from_revision: RevisionDigest
+    to_revision: RevisionDigest
+    approval_ref: OpaqueMetadataId
+    approval_digest: EvidenceDigest
+    affected_ac_ids: tuple[OpaqueMetadataId, ...] = Field(min_length=1, max_length=512)
+
+    @model_validator(mode="after")
+    def link_shape_is_exact(self) -> RequirementRevisionLink:
+        """Require a real revision transition and bounded unique AC references."""
+
+        if self.from_revision == self.to_revision:
+            raise ValueError("revision links must change the revision")
+        if self.approval_digest == "sha256_" + "0" * 64:
+            raise ValueError("approval evidence digest must identify real evidence")
+        if len(self.affected_ac_ids) != len(set(self.affected_ac_ids)):
+            raise ValueError("affected acceptance references must be unique")
+        return self
+
+
+class RequirementRevisionHistory(RouterModel):
+    """Metadata for one selected PRD's ordered revision and change links."""
+
+    prd_id: RequirementId
+    initial_revision: RevisionDigest
+    effective_revision: RevisionDigest
+    acceptance_ids: tuple[OpaqueMetadataId, ...] = Field(min_length=1, max_length=512)
+    links: tuple[RequirementRevisionLink, ...]
+
+    @model_validator(mode="after")
+    def history_shape_is_exact(self) -> RequirementRevisionHistory:
+        """Require a bounded, unique declared acceptance-condition set."""
+
+        if len(self.acceptance_ids) != len(set(self.acceptance_ids)):
+            raise ValueError("history acceptance references must be unique")
+        return self
+
+
+class RequirementRevisionHistoryResult(RouterModel):
+    """Candidate-only metadata result with no activation or authorization effect."""
+
+    scope: Literal["CANDIDATE_ONLY"] = "CANDIDATE_ONLY"
+    valid: bool
+    reason: RequirementRevisionHistoryInvalidReason | None
+
+    @model_validator(mode="after")
+    def result_shape_is_exact(self) -> RequirementRevisionHistoryResult:
+        """Require validity and its finite reason to be exact opposites."""
+
+        if self.valid != (self.reason is None):
+            raise ValueError("candidate validity must match the presence of a reason")
+        return self
 
 
 class RequirementLineageGate:
