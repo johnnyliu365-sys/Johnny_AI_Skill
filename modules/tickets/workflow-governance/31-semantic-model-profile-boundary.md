@@ -10,7 +10,7 @@
 
 ## 邊界宣告
 
-```johnny-boundary
+```text
 modify = skills/johnny-project-takeover/references/model-role-routing.md
 modify = skills/johnny-project-takeover/references/delivery-profile.md
 modify = tests/test_adversarial_review_policy.py
@@ -59,3 +59,49 @@ Return：`IMPLEMENTED | BLOCKED | CHANGE_DETECTED`、完整 candidate SHA、變�
 `NOT_REQUIRED` readback 均已校正。36 tests／74 subtests 綠，反向突變紅→綠。
 四個落地 Git blob 與候選完全相同；控制面閘門本地整合為 `68a10057`。
 完整紀錄見 `doc/reviews/workflow-governance/31-semantic-model-profile-boundary-code-review.md`。
+
+## 31B — 固定交付回報，沿原清單10補缺
+
+前段31模型映射切片已完成，不重做。此段DOCUMENT_REVIEW_PENDING，Root Grant
+`grant-wg31b-report-local-20261018`追溯Owner `batch-checklist-local-20261018`；
+同一需求／票／既有證據不重置。基準`cfd64358`，派工時讀回最終文件commit／leaf；
+31B新增命令上限180s、單次60s，歷史31耗用另保留，不挪用或重置。initial+一次correction。
+COMPACT，無production行為；只補既有模板及其契約驗證，不宣稱Host enforcement。
+作者`/root/completion_report_impl`（當下gpt-6-luna/high），另一席
+`/root/completion_report_review`（gpt-6-sol/high）；same-lifetime direct lane。
+worktree `.worktrees/skill-improvement-31b-report`、branch同名`codex/skill-improvement-31b-report`；
+review `.worktrees/skill-improvement-31b-review`。Root先核對containment/非reparse/clean。
+
+```johnny-boundary
+modify = modules/tickets/TEMPLATE.md
+modify = template/modules/tickets/TEMPLATE.md
+modify = tests/test_ticket_template_contract.py
+forbid = library/
+forbid = skills/
+forbid = doc/
+forbid = modules/spec/
+```
+
+create/delete/dependency=none。沿用既有 `_assert_template_contract`、`_SlotMutation`、
+active-section/comment/fence排除及通用虛構filled例子。不得另建parser、report engine、
+新測試檔或重新跑已完成31選模測試。只有兩模板及其直接test consumer受影響。
+
+在既有「完成回寫」保留檔案及commit，新增七個唯一active bullet：功能、新測試、
+產品拆分、埋點、證據、未驗證項、下一步。每項要求精確位置／證據；未做者明填
+N/A與理由，未驗證者NOT_VERIFIED與原因，禁止填PASS。產品拆分須引用真正產品責任
+source→target及候選行為驗證；僅拆腳本／測試工具不能報產品拆分。這是交付格式，
+不是另建WPR或將模型文字當證明。paid API／credential隔離仍為獨立未驗證缺口。
+
+驗收31B-R1：兩模板同一完整欄位契約通過，原有46tests不降低。
+31B-R2：七欄每欄刪除、藏comment/fence、移出completion節至少一種負例，必須紅；
+沿既有參數化mutation資料，不複製七套測試函式。缺欄不能被其他節同名詞補足。
+31B-R3：虛構純腳本修改案例產品拆分=N/A，未實測功能=NOT_VERIFIED，下一步指出
+缺口；真正產品拆分例子綁真seam與測試位置。此固定情境只證明格式/可表達性，
+不宣稱以字串檢查能判斷語意真偽。
+31B-R4：作者移除一欄驗證→具名負例紅→還原；獨審改另一模板活躍欄→紅→還原。
+Run `python -m pytest tests/test_ticket_template_contract.py -q`、`git diff --check`。
+產品碼0、模板各≤14行、測試≤60行為結構review訊號，不壓縮或再造框架。
+author只commit三路徑、return candidate/checks/findings/deviations/累計時間；Root維護
+票面／review並經既有mutation gate本地整合。assets owner具名席位，TTL至review+
+evidence seal及整合後受限移除；未整合/Recovery保留。network/paidcall/helper=0。
+本地模板結果不等於runtime Host admission，清單10不得因此整項勾選。
