@@ -522,3 +522,32 @@ Grant and optional futurepublication require new authority; no source/test
 implementation has begun. FullTicket30/checklist01/02 are not closed. The
 30B baseline remains8c and the exactcandidate leaf/indexpins above do not move
 with this cleanup-ledger-only commit.
+
+## Batch delegation and 30B admission — 2026-10-18
+
+Owner's `batch-checklist-local-20261018` authorizes Root-scoped local child Grants.
+Independent `/root/batch_authority_review` APPROVED docs candidate
+`930fad32e15a76cd54423e34ea941a630af039da` against `2e52772770e81669a7e1f92391a432572d4ead4b`.
+Its sole finding (implementation no-helper versus mandatory reviewer audit) was
+closed in that additive correction; qualified audit absence remains blocking.
+Ticket blob `fb189f91d163c71f300b8bd40d24064dbc37c66e`, index blob
+`40299be8a0ba9e21ac5f7cf88deba0cbc175a6f5`, checklist blob
+`3b9f5e38f0aaa3195d39b43af07538c40204f8d3`; committed ticket SHA256
+`32c6a4470d3181b24701fa484973ccf42797dbc50420e00d969fe48a20366b44`
+matches index. Root and independent reviewer read the unique existing boundary
+parser and committed mirrors; source/test blobs equal the previous8c baseline.
+The earlier requirement to return to Owner per child is superseded only inside
+this delegated batch. No new SPEC approval, runtime activation or external effect.
+
+30B Grant is now effective for local construction. Bind source/allocation baseline
+`930fad32e15a76cd54423e34ea941a630af039da`, exact ticket blob above, author
+`/root/ticket30b_readback_impl`, reviewer `/root/ticket30b_readback_review`,
+repository `.worktrees/skill-improvement-30b-readback`, branch
+`codex/skill-improvement-30b-readback`. Root retains review/integration authority.
+Before dispatch existing DTO preflight command
+`python -m pytest tests/test_mainline_source.py -q -k 'path or result or request or observation or round_trip'`
+passed38, deselected40 in4.10s; cumulative30B commands4.10/600s. Root's first
+boundary check incorrectly passed the whole Markdown to the body-only parser;
+the corrected unique-fence extraction passed, no product change or hidden retry.
+New actual type-only constructors must pass independent review before behavior.
+Network0, no formal effect. `ACTION_COMPLETED → AUTO_CONTINUE → IMPLEMENT`.
