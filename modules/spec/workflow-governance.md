@@ -158,11 +158,11 @@ The future implementation ticket must begin red and include the following explic
 
 | Field | Proposed value |
 | --- | --- |
-| State | `NOT_EFFECTIVE / OWNER_LIMITED_REVISION_AUTHORIZED / INDEPENDENT_REVIEW_PENDING` |
+| State | `OWNER_AUTHORIZED_REVISION / INDEPENDENT_REVIEW_PENDING / RUNTIME_NOT_EFFECTIVE` |
 | Requirement lineage | Existing `PRD-20260805-009` / `CHG-20260805-009`; the proposed amendment in `doc/requirements/active/2026/workflow-governance/REQ-20260805-009.md` |
 | Evidence baseline | Owner's 2026-10-18 `doc/AI-SKILL-IMPROVEMENT-CHECKLIST.md` revision 14, items 01–03, 07, 09 and 11; Ticket 24 closure revision 03, Tickets 28–30 and 38 and their independent reviews |
 | Owner's limited revision authority | On 2026-10-18 the owner accepted final-content commit `1669e8e20f0a30894606e16f9ea1a10e4f0c5ba3` (SPEC blob `be9b79eed12dd76ec8f37fe83f3be90b86a4895d`, identical to this branch's `b6ac5f8a` blob) as the correction baseline, limited to the trusted authority anchor, formal closure and staged activation below; this is not implementation or activation approval |
-| Exact revision evidence slots | Corrected proposal commit/blob: `PENDING_THIS_COMMIT` / `PENDING_THIS_BLOB`; independent review report/verdict: `PENDING`; owner exact SPEC approval: `PENDING`; approved build ticket and candidate SHA: `PENDING`; qualification/replay evidence: `PENDING`; scoped activation decision and effective authority ref/SHA: `PENDING` |
+| Exact revision evidence slots | Corrected proposal commit/blob: `PENDING_THIS_COMMIT` / `PENDING_THIS_BLOB`; independent review report/verdict and design-baseline binding: `PENDING`; approved implementation ticket/Grant and candidate SHA: `PENDING`; Host qualification/replay evidence: `PENDING`; scoped runtime activation authority and effective authority ref/SHA: `PENDING` |
 
 This append-only proposal does not revise AC 1–8, the 2026-08-05 approval,
 existing ticket grants or completed work. Its intended scope is the current
@@ -170,7 +170,7 @@ workflow-governance POC and the existing Router/Host/Review entrypoints. It
 does not authorize production SQL, a paid call, a new runner, a target-project
 dependency, push, publication or another external effect.
 
-### Additional architecture and acceptance, conditional on owner approval
+### Additional architecture and acceptance, conditional on independent review
 
 **AC-9 — trusted cross-ticket mainline and independent continuation.** The
 existing target-owned `modules/tickets/<feature>/README.md` index is the
@@ -317,14 +317,16 @@ Do not synthesize that authority from metadata or expand Ticket 30 locally.
 
 ### Staged approval, build, verification and activation
 
-1. **SPEC approval.** Finish this bounded correction, record its exact final
-   commit/blob and independent review evidence, then obtain the project owner's
-   exact approval of that reviewed revision. The 2026-10-18 limited drafting
-   authority above does not make AC-9–11 effective or authorize a Host effect.
-2. **Build.** Use the owner-approved revised SPEC as the bounded build
-   acceptance source, and route implementation through the currently effective
-   ticket schema, owner approval, role/worktree preflight and existing Router
-   gates. Only a separately approved ticket can authorize source/test changes;
+1. **SPEC design baseline.** The owner's 2026-10-18 authorization covers this
+   bounded correction. Record the final commit/blob and an independent review
+   verdict against that exact version. Once the review passes, AC-9–11 become
+   the design baseline for ticket planning without asking the owner to approve
+   this same revision again. This does not authorize implementation or a Host
+   effect.
+2. **Build.** Use the reviewed design baseline as bounded build acceptance,
+   and route implementation through the currently effective ticket schema,
+   ticket-scoped owner Grant, role/worktree preflight and existing Router gates.
+   Only a separately approved ticket can authorize source/test changes;
    this proposal does not dispatch Ticket 30 or issue a new grant by itself.
 3. **Verification.** At exact built candidate SHA, independently review the
    AC-9–11 positive/negative replays and qualify the actual direct-remote,
@@ -332,9 +334,11 @@ Do not synthesize that authority from metadata or expand Ticket 30 locally.
    readable evidence refs and failures. `LOCAL_INTEGRATED` is not remote
    `AUTHORITY_INTEGRATED`; any required push and direct remote SHA readback
    remain separate effects under the existing authority-line contract.
-4. **Formal activation.** Only an explicit scoped owner decision, bound to the
-   approved SPEC, reviewed built commit, qualified entrypoints, passing replay
-   evidence and effective authority ref/SHA, enables AC-9–11 for that scope.
+4. **Formal activation.** Only the existing scoped runtime/effect authority
+   gate, bound to the reviewed SPEC design baseline, reviewed built commit,
+   qualified entrypoints, passing replay evidence and effective authority
+   ref/SHA, enables AC-9–11 for that scope; design-baseline acceptance alone
+   grants no runtime or external effect.
    Without a qualified Host intercept, no hard-gate claim or activation for
    that lane. Missing or later-invalid evidence suspends only its affected
    admission or closure; it does not revoke existing effective grants or
