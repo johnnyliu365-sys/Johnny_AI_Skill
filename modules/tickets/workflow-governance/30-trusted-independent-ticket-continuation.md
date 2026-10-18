@@ -2,7 +2,7 @@
 
 | 欄位 | 內容 |
 | --- | --- |
-| State | `30A_FIXTURE_COMPLETE_LOCAL / CLEANUP_CONFIRMED / FULL_TICKET_NON_DISPATCHABLE`；30A-F1–F4 完成獨審、本地整合及精確 teardown；完整 Ticket 30 與清單 02 仍未完成 |
+| State | `30B_ENGINEERING_PARTIAL / R2_CLOSED / R1_UNVERIFIED / REVIEW_BLOCKED`；候選fd98f395未整合。30A／30M既有本地完成及清理證據保留；完整Ticket30與01／02未完成 |
 | Requirement lineage | 沿用 `PRD-20260805-009`／`CHG-20260805-009` 與原 Ticket 30；不建立新 PRD、平行 Ticket 或第二套 authority |
 | Effective authority | `SPEC-AI-WORKFLOW-WORKFLOW-GOVERNANCE-20260805-01KZ6T8V2R4Y6B8D0F2H4J6M8P` 的既有有效 AC 1–8 |
 | Design evidence only | Owner-authorized、獨審通過的 SPEC design baseline `76d1f942e24975da28889c8b6ecee904c8ef3da0`，SPEC blob `6fd8c3098f48be40c2cf05a03f8284c186163c08`；它允許受控拆票規劃，不是 Ticket 30A implementation Grant 或 runtime activation |
@@ -168,6 +168,13 @@ baseline 沒有 source/test 變更，以及實際 integration diff 正好兩個�
 ## 30B 精確候選 — 真實來源讀回，不產生派工效應
 
 ### 本批委任下的精確子票綁定
+
+本階段結果：原Grant已完成兩階段建置及一次有界修正；最終候選
+`fd98f3958fa2d9ceca6d8a925efa27302c061df2`，原獨審者確認R2完整SHA缺陷閉合、
+140聚焦tests通過。R1真實control／Grant來源讀回仍UNVERIFIED，必要合格隔離
+audit為UNAVAILABLE，故REVIEW_BLOCKED、禁止整合。515/600s為保守累計command
+估算，不重置、不把本次票面狀態更新作為新派工Grant。精確批准baseline930fad32／
+leaf fb189f91及全部驗證在原review保留；下列為已消耗建置授權，不是新的執行次數。
 
 本節取代下方歷史候選的「待Owner逐票核發」與固定30M baseline描述，其餘30B-R1～R4
 及四路徑契約不變。授權來源 `batch-checklist-local-20261018`，見既有

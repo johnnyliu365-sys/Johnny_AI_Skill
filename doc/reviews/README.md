@@ -5,6 +5,7 @@
 | Feature cluster | Report | Result |
 | --- | --- | --- |
 | Workflow governance, checklist07/09 | [Ticket43 closure evidence](workflow-governance/43-review-closure-evidence-code-review.md) | `ENGINEERING_PASS / REVIEW_BLOCKED / NOT_INTEGRATED` |
+| Workflow governance, checklist01/02 | [Ticket30 source/readback review](workflow-governance/30-trusted-independent-ticket-continuation-code-review.md) | `30B_R2_CLOSED / R1_UNVERIFIED / REVIEW_BLOCKED / NOT_INTEGRATED` |
 | Workflow governance, checklist03/11 | [Ticket44 revision history](workflow-governance/44-requirement-revision-compatibility-code-review.md) | `LOCAL_INTEGRATED / CLEANUP_BLOCKED / LEGACY_UNCHANGED` |
 | Controlled verification, checklist 05 contract | [CVE-D10 independent review](controlled-verification/cve-d10-candidate-source-observation-code-review.md) | `APPROVED_CONTRACT_ONLY / HOST_OBSERVATION_OPEN` |
 | Workflow governance, checklist 02 | [Ticket 24 independent review](workflow-governance/24-independent-admitted-ticket-continuation-code-review.md) | `OWNER_WAIT_SLICE_LOCAL_INTEGRATED / B_CONTINUATION_OPEN` |

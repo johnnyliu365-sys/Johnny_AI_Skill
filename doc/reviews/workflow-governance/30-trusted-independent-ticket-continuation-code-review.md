@@ -566,3 +566,65 @@ APPROVED_TYPE_PHASE_ONLY, no blocking finding; no audit/Host/integration claim.
 Conservative cumulative budget charge87/600s includes independent commands.
 Same author now continues behavior under the existing four-path Grant, without
 network or actual dispatch. New phase does not reset budget or findings.
+
+### 30B behavior, correction and final review boundary
+
+Author `d798135002dc749dd367e53ecb253234a267ea9f` implements only the four
+authorized paths. Focused command
+`python -m pytest tests/test_mainline_source.py tests/test_mainline_projection.py tests/test_mainline_readback.py tests/test_project_authority_observation.py -q`
+passed137; strict mypy on mainline_source/mainline_readback, compileall and diff
+checks passed. Author bypassed identity and raw-anchor digest checks separately:
+named tests failed with a leaked candidate, then passed after exact restoration.
+No actual network, target reads, receipt, dispatch or native spawn.
+
+Independent `/root/ticket30b_readback_review` found a real R2 defect: non-Context
+revision validation accepted a prefix instead of the full approved SHA. Changing
+only a PRD index revision's suffix while retaining approved raw bytes produced
+a candidate; reviewer-owned negative cell failed, then was removed byte-exact.
+Separately, removing final-ref `expected_sha` binding caused the existing moved-ref
+cell to fail; restoring the exact source returned it to green. The initial
+116-case source/readback suite was accidentally run twice by the reviewer;
+both command durations were charged, not erased or called necessary work.
+
+Same author additive correction `fd98f3958fa2d9ceca6d8a925efa27302c061df2`
+reuses `_DocumentBinding.commit_sha` for all four anchors (no new DTO family).
+Ordinary constructors and strict type checks passed before the comparison fix.
+PRD/CHG/SPEC suffix-only substitutions first failed3cases, then passed after exact
+full-SHA equality was required. Author full four-module suite140passed in42.14s,
+strict mypy/compile/diff green. Same independent reviewer closed R2: focused3cases
+passed, complete140passed in37.95s, exact candidate/ticket blob and clean tree
+read back. The prior final-ref mutation remains valid for its unchanged path.
+
+R1 remains UNVERIFIED, not PASS: a normally constructed binding with only its
+grant_id changed to `grant-forged` still produced a candidate after10 fake
+transport calls. This DTO explicitly is not authority; there is no production
+admitted-control/Grant source readback in these four files. It cannot be used as
+an authenticated effect entry. The ticket excludes arbitrary malicious
+same-process callers, but that exclusion is not proof of a real trusted caller.
+Root narrowly checked existing `dispatch_authority.py` (control b28b3ae2): its
+`read_dispatch_grant` reads an owner-intent marker; the module explicitly states
+it is not a cryptographic/process privilege boundary. Reusing that reader or
+adding another fake approval bool would not qualify R1. No second authority
+engine, Host privilege change or activation was added to conceal this gap.
+
+Final verdict: ENGINEERING_PARTIAL / R2_CLOSED / R1_UNVERIFIED /
+REVIEW_BLOCKED. Required HIGH_ASSURANCE qualified read-only adversarial audit
+is also UNAVAILABLE. Existing CVQ-D9 source integration and D10 contract tests
+are not a qualified actual Host/binary/config/source-isolation/no-code/
+no-delegation observation. No integration; no whole-ticket or01/02 checkbox.
+
+Structural review explicitly inspected the approximately875-line readback module
+and770-line tests before correction: above350-line signals, but bounded DTO,
+fixed GET transport and coordinator with shared parser/assembly; no new files
+beyond the approved two, no duplicate graph/parser or parallel framework.
+This is not permission for unbounded growth; final correction is +50/-9 over
+two existing candidate files. Independent reviewer found no additional blocking
+structural defect in this correction. Estimates are command-wall time only:
+prior390/600s conservative, correction80s, finalreview45s =515/600s. Initial and
+correction attempts remain in history; no budget reset or additional attempt.
+
+Preserve author/reviewer worktrees, exact candidate ref and review evidence.
+They are not cleanup-eligible while required review/source evidence is unresolved.
+No R0, DAP-00 or Recovery hold changed. Other local batch work completed31B/44
+without waiting for this candidate. Subsequent dependent dispatch/source effect
+work cannot borrow this unapproved candidate as implementation authority.

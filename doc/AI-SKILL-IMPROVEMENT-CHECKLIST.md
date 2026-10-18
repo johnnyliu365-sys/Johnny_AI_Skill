@@ -17,8 +17,8 @@ Router、Reviewer、文件索引與結案規則仍各有唯一正文。`[x]` 只
 
 | 項目 | 狀態 | 作者／修改位置 | 驗證方式與目前結果 | 獨審結論 | 剩餘問題 |
 | --- | --- | --- | --- | --- | --- |
-| [ ] 01 主線與單票 | `PROJECTION_AND_FIXTURE_SOURCE_LOCAL_INTEGRATED / FORMAL_SOURCE_CLOSURE_OPEN` | 既有 Ticket29 `2fa4ca6f`；新增 Ticket30A raw-byte source assembly 經原票獨審後 gate 本地整合 `b7e9e2f3`，review 在同功能既有 leaf | 原投影反向突變有效；30A 整合後 source/projection 91 tests、strict mypy/compile，實際載入根與兩個受審 blob 讀回相符 | `APPROVED_FIXTURE_SLICE` | Context04 已宣告 repo/ref/topology；正式 declaration loader、fresh remote／完整 target mainline migration 及正式結案准入尚未證明 |
-| [ ] 02 已核准工作接續 | `OWNER_WAIT_AND_30A_FIXTURE_LOCAL_INTEGRATED / B_CONTINUATION_OPEN` | 原 A 切片保留；Root 完成原 CHG/Context04/SPEC03 限縮修訂，Luna 同票兩檔建置 `mainline_source.py`／`test_mainline_source.py`，另一 Sol 席獨審，gate `b7e9e2f3` | Actual PhaseA constructors 通過才續 parser；首審四 finding 原票修正，91 focused tests／strict／compile 綠。實作者 digest/revision 與獨審不同門 cross-feature 突變各自紅→精確還原綠；整合後實際 import／Git blob 讀回一致，專用 worktrees/ref/journal 已在證據封存後精確清理並讀回不存在，詳見 Ticket30 review | `APPROVED_30A_FIXTURE_ONLY / CLEANUP_CONFIRMED` | 真 target mainline、qualified declaration readback、`admit_dispatch`／Host effect、相依與正式結案仍未驗證；fixture 成功不授予真 effect，也不勾選整項 02 |
+| [ ] 01 主線與單票 | `PROJECTION_FIXTURE_DOCS_INTEGRATED / 30B_REVIEW_BLOCKED` | 原29／30A／30M不重做；30B作者Luna、不同Sol獨審，候選fd98f395尚未整合；[證據](reviews/workflow-governance/30-trusted-independent-ticket-continuation-code-review.md) | 原91tests沿用；30B140tests、strict／compile及不同入口反向突變；R2前綴誤判同票修正複驗閉合 | `FIXTURE_APPROVED / 30B_ENGINEERING_PARTIAL` | R1真control／Grant來源未驗證；必要合格隔離audit UNAVAILABLE；正式fresh來源／完整主線及結案未證明 |
+| [ ] 02 已核准工作接續 | `OWNER_WAIT_FIXTURE_INTEGRATED / LOCAL_BATCH_EXECUTED / EFFECT_OPEN` | 原24／30A與Context04／SPEC03保留；本批Root限縮Grant、分開派30B／31B／43／44及獨審，未逐票詢問Owner | 30A91tests／精確cleanup證據保留；等待30B／43審查時31B與44繼續並本地整合；30B140tests只支持readback候選，不代表可派工 | `30A_APPROVED / 30B_REVIEW_BLOCKED` | 真來源、`admit_dispatch`發憑證前接線、原生spawn硬攔截及正式結案仍未驗證；批次自主工作的真實紀錄不是新Host gate資格 |
 | [ ] 03 派工完整最小 | `TEMPLATE_AND_SCAFFOLD_LOCAL_INTEGRATED / HOST_ADMISSION_OPEN` | Luna 候選 `e9bdc978`、`3557bc20` 與 Ticket 40 `91ee17c3` 改本庫 ticket template、出貨 scaffold 與同一驗證檔；獨審見 `doc/reviews/workflow-governance/28-minimal-complete-dispatch-ticket-code-review.md`、`38-reuse-and-responsibility-dispatch-contract-code-review.md`、`40-scaffold-ticket-template-parity-code-review.md` | Ticket 40：44 tests 綠；八個 scaffold 反向突變與 reviewer 另兩個遮蔽突變紅→綠；受控 gate `INTEGRATED` `5776139a`，兩檔 Git blob 等於受審候選 | `APPROVED_TEMPLATE_SLICES` | Host dispatch preflight 尚未驗證填票完整性；文字模板不能阻止實作者猜 Expected，也不能自動識別檔內耦合 |
 | [x] 04 TEST → A → B | `COMPLETE_LOCAL / NO_PUSH` | Luna：Ticket 25 規則 `970b99cc`、Ticket 33 產品 A `ac369235`、Ticket 34 測試 B `b4a7dbe6`；獨審見 `doc/reviews/workflow-governance/33-shared-context-service-seam-code-review.md` 與 `34-shared-context-test-seam-transfer-code-review.md` | A 先在候選公開入口通過；Reviewer 改壞新 service 的 sealed read／writer role，公開 Router 格轉紅→綠。B 五格 contract-only 測試搬到聚焦檔、六格公開入口保留；Reviewer 改壞 service 與 contract guard，各自轉紅→綠；整合分支 61 tests／217 subtests、strict mypy 綠，五檔 Git blob 與各受審候選相同 | `APPROVED_A + APPROVED_B` | 此為本機 Johnny Router 能力回放；未推送／發布，不代表任何 target 產品已拆分 |
 | [ ] 05 候選來源與 Expected | `CONTRACT_LOCAL_INTEGRATED / HOST_GAP` | Luna 改既有 `TestBinding`／`ReviewAdmissionGate`；`beff0050`，審閱見 `doc/reviews/controlled-verification/cve-d10-candidate-source-observation-code-review.md` | 19 tests／50 subtests 綠、`mypy --strict` 綠、Expected 反向突變紅→綠；型別契約拒絕舊基準載入與 Expected 漂移 | `APPROVED_CONTRACT_ONLY` | 尚無合格 Host adapter 觀察實際載入來源及核准 Expected 的來源；不得把 port 自報當實測 |
@@ -29,6 +29,32 @@ Router、Reviewer、文件索引與結案規則仍各有唯一正文。`[x]` 只
 | [ ] 10 成本／外部呼叫／回報 | `MODEL_AND_REPORT_LOCAL_INTEGRATED / PAID_TEST_ISOLATION_GAP` | 原模型切片68a10057；Luna31B改兩模板／既有test，原獨審者APPROVED e83a4a72，Root gate64157fbe；[證據](reviews/workflow-governance/31-semantic-model-profile-boundary-code-review.md) | 原36tests／74subtests保留；回報65tests，七欄刪除14紅→綠；獨審改活躍label紅→綠；三blob精確等於受審候選、整合後65綠。產品／純腳本案例明確分開 | `APPROVED_31B / LOCAL_INTEGRATED / CLEANUP_BLOCKED` | 付費API／正式credential之真Host網路隔離未qualified；模板不證明語意真偽。清理遭Host政策阻擋，資產保留；整項不勾選 |
 | [ ] 11 去重與衝突 | `WPR_TEMPLATE_AND_HISTORY_LOCAL_INTEGRATED / ACTIVATION_OPEN` | 原37／38／40／42保留；Luna44在既有RequirementLineageGate增加純revision-history驗證、重用原test；[獨審](reviews/workflow-governance/44-requirement-revision-compatibility-code-review.md) | 原42之46tests／不同位置WPR突變證據保留；44獨審14tests／30subtests、鏈結與terminal不同門突變紅→綠、Root gate1aa5ed22與兩blob一致；獨立seal確認 | `APPROVED_44 / LOCAL_INTEGRATED / CLEANUP_BLOCKED` | 舊一對一validate維持生效；可信creation issuer／效應前grant讀回／原子consume及真Host尚缺，不用純history方法冒充正式身分遷移；清理政策阻擋 |
 | [ ] 12 回放與獨審 | `EXISTING_CASES_MAPPED / END_TO_END_NOT_VERIFIED` | Root沿下列既有測試／原review映射，不新增回放框架；30B／43仍為未整合候選 | 已有局部正常／拒絕／反向突變證據可重用；04不重跑；此輪65模板及14lineage為實際整合後回歸，不將候選測試冒充整合版測試 | `PARTIAL_ONLY` | 完整01–10正式入口回放仍依賴可信來源及合格Host／受限效應；不得勾選總驗收 |
+
+## 本批剩餘限制與接續邊界
+
+本批已准入建置30B／31B／43／44均回件並完成可執行的獨審／修正；31B與44
+完成本地受控整合，30B與43不得整合。這不是12項全部完成，也不是「等逐票批准」。
+Root與獨立既有盤點席以現有票／review窄查，沒有把下列缺口另開成重複框架。
+
+- **必要審查能力**：30B／43強制的qualified唯讀／no-code／no-delegation隔離audit
+  不可用。CVQ-D9是來源整合、D10是contract-only，不能借PASS。未核准候選不能當
+  下游實作authority；不自行降低HIGH_ASSURANCE或建立VM/Broker來繞過。
+- **真實來源／授權**：30B的R1尚未有approved-control來源；改binding Grant ID仍能
+  通過fake讀回。現有dispatch-authority僅owner-intent marker，不能當protected issuer。
+  Context04仍只有本地證據；前次直接remote main觀察a1cb6c13/Context03，不宣稱本輪
+  fresh。發佈來源、實際GET／Host qualification與正式effect均不由本批假造。
+- **正式強制與CI**：05實際載入來源、06任意工具prewrite、10付費網路隔離、11可信
+  creation/atomic-consume及01–03/07的effect，需要真來源／受控Host資格。08缺的是
+  可信CI具體命令與入口切換證據，不是「無CI」；曾見active dynamic Dependency Graph，
+  空命令集合不能退休舊測試。12保留上述實際限制，不重複建同樣fixture掩蓋缺口。
+- **清理**：44精確teardown在CreateProcess前被Host政策拒絕，未執行、未用等價指令
+  重試。31B沿用同Root landing workspace避免再造資產；兩票journal與作者/reviewer
+  worktrees留存，CLEANUP_BLOCKED。30B／43則因未結Review本就必須保留，Recovery不動。
+
+恢復上述受影響工作的條件是取得適用Host/source的資格與必要外部effect授權，或
+Owner按正式Change Control另核安全政策差異；本紀錄不自動要求／執行任一路線。
+沒有push、release、deployment、Host activation、真target／付費API測試。04保持完成；
+其他項保持未勾選，完整證據優先於表面完成率。
 
 ## 既有案例回放對照（不是另一套測試系統）
 
