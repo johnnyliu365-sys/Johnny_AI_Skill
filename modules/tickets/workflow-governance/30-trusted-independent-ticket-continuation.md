@@ -2,7 +2,7 @@
 
 | 欄位 | 內容 |
 | --- | --- |
-| State | `30A_PROPOSED / UPSTREAM_DECISION_REQUIRED / NON_DISPATCHABLE`；完整 Ticket 30 與清單 02 仍未完成 |
+| State | `SOURCE_SCHEMA_DECIDED / MIGRATION_FACTS_REQUIRED / TICKET_GRANT_REQUIRED / NON_DISPATCHABLE`；完整 Ticket 30 與清單 02 仍未完成 |
 | Requirement lineage | 沿用 `PRD-20260805-009`／`CHG-20260805-009` 與原 Ticket 30；不建立新 PRD、平行 Ticket 或第二套 authority |
 | Effective authority | `SPEC-AI-WORKFLOW-WORKFLOW-GOVERNANCE-20260805-01KZ6T8V2R4Y6B8D0F2H4J6M8P` 的既有有效 AC 1–8 |
 | Design evidence only | Owner-authorized、獨審通過的 SPEC design baseline `76d1f942e24975da28889c8b6ecee904c8ef3da0`，SPEC blob `6fd8c3098f48be40c2cf05a03f8284c186163c08`；它允許受控拆票規劃，不是 Ticket 30A implementation Grant 或 runtime activation |
@@ -20,10 +20,10 @@
 2. 經既有 `DirectRemoteObservationPort`／`observe_declared_remote` 對該 declared ref 做一次
    fresh direct observation。caller SHA 只能作 mismatch assertion；authority SHA 是 direct
    observation 的結果。
-3. 透過經核准的 committed-source readback boundary，從 observed SHA 讀 target-owned
-   generic `modules/tickets/<feature>/README.md` index 與它正式指向的 ticket leaves。source
-   格式、index-to-leaf binding、revision/digest 規則必須來自已核准的 target artifact，
-   不能由 30A ticket author 或 implementer 發明。
+3. 透過經准入的 committed-source readback boundary，從 observed SHA 讀 target-owned
+   generic `modules/tickets/<feature>/README.md` index 與它正式指向的 ticket leaves。
+   技術格式依下文 Architecture Owner 決策；實際 mainline 成員、依賴、owner／handoff
+   與 revision 仍必須由 control plane 從已核准 target artifact 遷移，不得從敘事表推定。
 4. 只有在 project、mainline、ticket、dependency 與 source revision 全部驗證後，才建立
    既有 `MainlineProjectionRequest` 並呼叫 `project_mainline_tickets`。輸出只可為
    `ready_for_recheck` 等 candidate metadata；它不是 Grant、admission、dispatch、Review、
@@ -55,45 +55,66 @@ boundary: no authoritative source declaration/readback composition, Host admissi
 
 ## 為何目前不能形成 exact implementation ticket
 
-目前 approved/effective source 沒有同時回答下列 public-contract 決策；依 P0，這些不能由
-低階 implementer 猜測：
+以下是仍未完成的 authority facts／effect Grant；不得由 implementer 猜測：
 
 1. 哪個 target-versioned `ProjectAuthorityContract` declaration artifact/revision 是 30A 的
    trust anchor，以及 control plane 如何獨立 read back 並證明該 declaration 已准入。
-2. generic `<feature>` index 如何宣告 mainline ID、required/optional set、dependency edges、
-   ticket leaf reference 與各自 revision/digest；現行 workflow-governance index 不得被宣稱
-   已完成此 migration。
-3. source parser 使用哪個**既有或 owner-approved**格式，如何處理 duplicate、missing、
-   ambiguous、stale、mismatch 與 observation/readback race；目前沒有獲核准的 HTML-comment
-   JSON 或其他 machine-readable grammar。
-4. observed remote SHA 到 committed blob readback 的正式 public port 是重用既有
-   `GitReadbackPort`、收窄 adapter，或另一個已核准介面；其 request/result/nullability、
-   credential-free evidence 與 race semantics 尚未由 authority 固定。
-5. 一份只允許 30A source/test 變更的 ticket-scoped implementation Grant、精確 owner／
+2. workflow-governance 等 target 的實際 mainline ID、required/optional set、dependency edges、
+   owner／handoff、ticket leaf reference 與各自 revision/digest 尚未依下文 schema versioned
+   into its feature index；現有 status table 不構成這些 authority facts。
+3. 一份只允許 30A source/test 變更的 ticket-scoped implementation Grant、精確 owner／
    reviewer／worktree／branch／baseline 與 writable boundary。一般「繼續有界工作」指示
    不是這份 Grant，也不能推導出兩檔 create allowlist。
 
-因此先前未獲核准的 hard-coded feature path、source grammar、public API 與行數 ceiling
-全部撤回。本票目前沒有 `johnny-boundary`；任何 source/test create 或 modify 都未獲授權。
+先前硬編 feature path、自報 Grant、未遷移的 parser 契約與行數 ceiling 均撤回。
+下述 Architecture Owner 的通用技術決策不補足 target 事實或 effect Grant。本票目前沒有
+`johnny-boundary`；任何 source/test create 或 modify 都未獲授權。
 
-## 上游必須產生的最小決策
+## Architecture Owner 的限縮技術決策（非 implementation Grant）
 
-Architecture Owner 必須在原 PRD／Ticket lineage 與既有 SPEC 授權內，先完成一份
-可獨審的 source contract revision，至少固定：
+在既有 AC9 設計基準內，source encoding、parser 邊界與有限失敗碼是工程決策，
+不要求 Human Owner 再選一次。target-owned 的 `modules/tickets/<feature>/README.md`
+保留人讀 status table，另有**唯一** `## Mainline source contract` heading，其後緊接
+唯一 `json` fence；該 fence 是機器讀取的唯一 index，敘事表不是 authority。JSON
+object 嚴格包含：`schema_id = mainline-index/revision-01`、`project_id`、`feature`、
+`mainline_ref`、`objective_ref`、`owner_ref`、`handoff_ref`、`bindings[]`、`tickets[]`。
+每個 binding 嚴格包含 `kind`（context/prd/change/spec）、`identity`、`artifact_ref`、
+`revision_sha`（40 位小寫 hex）；每個 ticket 嚴格包含 `ticket_ref`、
+`ticket_revision`（既有 `RevisionDigest`）、`leaf_ref`、`leaf_digest`
+（`sha256_` 加 64 位小寫 hex）、`required`（boolean）、`status`（既有有限 enum）、
+`depends_on[]`、`admission_ref`（nullable）、`evidence_refs[]`。所有 metadata ID 仍須
+通過既有強型別 constructor，不另建平行 ID 規則。
 
-- generic `<feature>` index 與 ticket leaf 的既有/新增正式 schema、identity、revision 與
-  digest binding；若需要 migration，指定 target-owned migration artifact 與順序；
-- admitted `ProjectAuthorityContract` declaration 的精確 artifact/revision/readback；
-- direct observation 後 committed-source port 的 public request/result、有限 disposition、
-  staleness/race precedence，以及 raw source 的 ephemeral/privacy 邊界；
-- 30A candidate result 與既有 `MainlineProjectionRequest` 的唯一 dependency direction；
-- ticket-scoped Grant、精確 roles/worktree/baseline、最小 writable scope、驗證命令與
-  recovery/rollback。
+Parser 必須拒絕重複 JSON key、未知／缺失欄位、空 tickets、重複 ticket／leaf ref、
+跨 feature 的 leaf、未知依賴、非法狀態及 schema 漂移。`feature` 決定通用 index 路徑；
+每個 leaf 只能是同 feature 目錄的直接 `.md` 子檔。index 與 leaf 必須在同一 direct
+observed SHA 讀取；逐 leaf 的**原始 bytes** SHA-256 必須等於 `leaf_digest`，不解析
+leaf body。成功後才用已驗證 index 建立既有 `MainlineProjectionRequest`；
+`source_revision = rev-<observed SHA>`，不可接受 caller／index 自報值。原始 Markdown／
+JSON 只在讀取流程內暫存，不進結果、Router state 或 log。
 
-若 Architecture Owner 選擇既有 source/readback contract，ticket 必須引用其精確
-public symbol 與版本；若新 contract 超出既有 SPEC 的產品、安全或權限邊界，才依
-原 Change Control 取得 Human Owner 核准，不能在 30A 內偷做。純技術型別／schema
-選擇不另送 Human Owner；實作仍須另有精確 ticket-scoped Grant。
+最小 source read port 為 `read_blob(observation: GitObservation,
+artifact_ref: TargetRelativePath) -> GitBlobReadResult`，要求 repository/ref 身分
+隨 observation 綁定；現有只收 commit/path 的 `GitReadbackPort` 不合格。
+候選組合只做一次 `observe_declared_remote`、逐 exact blob 一次 read、一次既有純投影；
+結果只有候選 metadata 或有限拒絕。source failure 僅限 `INDEX_NOT_FOUND`、
+`INDEX_READ_UNAVAILABLE`、`INDEX_SCHEMA_INVALID`、`INDEX_BINDING_MISMATCH`、
+`LEAF_NOT_FOUND`、`LEAF_READ_UNAVAILABLE`、`LEAF_DIGEST_MISMATCH`、
+`PROJECTION_INVALID`；direct observation 失敗沿用既有 enum，不複製。
+
+這項決策不把 30A 延伸到 Router／Host：目前 `project_mainline_tickets` 只有套件匯出
+與測試消費者，沒有正式 Router caller。production repository binding、replace-ref-safe
+Git 讀取、真 Host effect 前准入及正式結案均是後續獨立邊界。
+
+## 剩餘來源啟用與 Grant
+
+Control plane 須從已核准 target artifacts 決定實際 mainline 的成員、required flags、
+依賴、owner/handoff 與 revisions，先以 docs-only migration version 到該 feature
+index；不得拿本票的 schema 示例、敘事 status table 或 Agent 自報填入 authority
+facts。同時須讀回 admitted `ProjectAuthorityContract` 的精確 declaration
+artifact/revision。只有該遷移經獨審且有精確 Ticket 30A Grant，才能新增 30A
+source/test allowlist、roles/worktree/baseline、驗證命令與 recovery/rollback；
+凡超出既有 SPEC 的產品、安全或權限邊界，仍須正式 Change Control。
 
 ## P0 preflight 與未來 acceptance 下限
 
@@ -137,11 +158,11 @@ target index migration、implementation authority 或 Host capability 任一未�
 UPSTREAM_DECISION_REQUIRED / TICKET_DEFECT / NON_DISPATCHABLE
 ```
 
-附本票完整 SHA、上述五項 gap 與初審 finding。不得 dispatch、建立 implementation
-worktree、修改 source/test、執行真實 readback、整合或 push。Architecture Owner 完成
-既有授權內的 source contract、且 Human Owner 提供必要的精確 ticket-scoped Grant 後，
-在同一 Ticket 30 lineage 追加有限 Closure revision，重跑 independent ticket review，
-再由 Router 決定下一步；不得把普通工程選擇升級成人工決策。
+附本票完整 SHA、尚缺的 target facts／declaration readback／ticket Grant。不得
+dispatch、建立 implementation worktree、修改 source/test、執行真實 readback、整合或
+push。Control plane 完成 docs-only source migration，且精確 ticket-scoped Grant
+有效後，才在同一 Ticket 30 lineage 追加有限 Closure revision，重跑 independent
+ticket review，再由 Router 決定下一步；不得把普通工程選擇升級成人工決策。
 
 ## 票面收斂與獨審紀錄
 
@@ -153,5 +174,5 @@ worktree、修改 source/test、執行真實 readback、整合或 push。Archite
 `PASS`，只代表 docs-only preflight 可用，不代表 implementation admission。
 最終差異僅本 leaf 與同功能 registry；`git diff --check` 乾淨、
 `tests/test_ticket_template_contract.py` 44 passed。完整 Ticket 30／清單 02
-仍維持 `NON_DISPATCHABLE`；下一步是 Architecture Owner 在既有 SPEC 授權內
-收斂 source contract，再取得精確 ticket-scoped Grant。
+仍維持 `NON_DISPATCHABLE`。其後 Architecture Owner 在既有 SPEC 授權內收斂了上列
+通用技術 source contract；這不是 target facts migration 或 implementation Grant。
