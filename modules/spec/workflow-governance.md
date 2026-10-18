@@ -385,6 +385,10 @@ negative and strict-checker evidence at the Phase A commit precede Phase B's
 behavior dispatch. The same owner, reviewer, Grant, worktree, findings and
 remaining budget continue. No prototype evidence substitutes for the real
 types, and no safety invariant or real-effect qualification is removed.
+The two-file `create` boundary is cumulative against the original dispatch
+baseline. Phase B may continue editing those same ticket-created files only;
+the Phase A source SHA does not reset scope. Every file already present at
+the original baseline remains excluded by `modify = none`.
 
 The implementation boundary is `create` only for
 `library/local_orchestration/mainline_source.py` and

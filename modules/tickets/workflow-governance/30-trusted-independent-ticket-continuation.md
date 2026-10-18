@@ -29,7 +29,7 @@ revision 03 寫定 fixture bootstrap 例外。兩者及本票經獨審後，條�
 | --- | --- |
 | Profile／角色 | `implementation-standard`：當下主機可用 `gpt-6-luna/xhigh`；不同席 `gpt-6-sol/high` 獨審，能力不低於實作者。這是本票 profile 資料，不寫入通用程式或 skill。以原 Profile 的語義角色及 Owner 已允許的現行模型對應；不變更全域 DAP/角色權限 |
 | Baseline | 起點 `acf0ffa1780af3d229b7f80c6e063f6d642e6864`；最終文件受審後，控制面在本票既有 review 記錄完整 dispatch baseline SHA／ticket blob／worktree Git readback，確保至起點只改核准文件，再從該 baseline 建實作 worktree |
-| Scope | 只 create 下文兩路徑，modify=none；不得修改套件 exports、既有 projection／contracts／tests |
+| Scope | 整張票相對原始派工 baseline 只 create 下文兩路徑，modify=none；Phase A→B 只可 additive 編輯本票剛建立的同兩檔，不能修改派工 baseline 已存在的任何檔案。Phase A SHA 是型別／行為建置依據，不重置 cumulative diff／權限 baseline；不得修改套件 exports、既有 projection／contracts／tests |
 | TDD／型別 | 新功能不要求不存在程式的 ceremonial first-red。既有 observation/projection constructors 在派工前實跑。新公開型別不存在時，採下述同票受限 type-bootstrap Phase A；實際 constructor／negative／round-trip 與獨審通過前，不派 Phase B parser/source-read 行為。prototype 不作候選成功證據 |
 | Resource／lifecycle | 一位實作者、零 helper、一位獨審；沿同票既有耗用與 finding，不重置預算。Git fixture 每命令 timeout 20s、本機驗證每命令有限 timeout；不平行加壓、不輪詢、不呼叫付費 API。fixture 由 pytest temp fixture 記 owner/test ID、session TTL、teardown；專用 worktree/ref 保留至 Review／證據封存／本地整合後才依精確身分受限移除 |
 | XSS／UI／refactor | 無 render sink／正式 UI，XSS N/A；新增來源 assembly，未搬既有責任，TEST→A→B N/A；沿用投影，不能把腳本增加回報成產品拆分 |
@@ -58,6 +58,9 @@ round-trip、strict checker 及獨審作為關卡；結果 pin 實際 SHA，禁�
 probe 替代。通過後以該受審 commit 為 Phase B source baseline，同一 owner／Grant／
 worktree／剩餘額度接續 parser。獨審席位沿用到最終 30A-F1–F4，不重置 finding。
 這個建構排序僅使已授權的新型別得以存在，沒有放寬型別驗證或任何真效應前提。
+機械 `johnny-boundary` 仍以原始派工 baseline 到最終候選的整票 Git diff 判定：
+兩個新增檔在 Phase B 持續建置後仍須是 `CREATE`，不能把 Phase A 後的 incremental
+diff 當新權限來源，或為任何原有檔案加入 `modify`。
 
 ## 保留的最小 30A 候選
 
