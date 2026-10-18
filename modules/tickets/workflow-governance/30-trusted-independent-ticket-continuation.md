@@ -11,6 +11,38 @@
 | Profile | `STANDARD` proposal；30A 僅准在精確 Grant 後用隔離、已提交的本地 fixture Git 與本機測試命令；不得讀真實 target／remote、呼叫 provider／credential，或產生 Host／dispatch／closure effect |
 | Implementation language | Python 3.11；`python -m mypy --strict library/local_orchestration/mainline_source.py`；僅 type-only cut 通過後續 parser cut |
 
+## 30M 文件遷移授權紀錄 — 2026-10-18
+
+Owner 本輪直接授權正式主線文件遷移、獨審、同票修正及受控本地整合，並準備
+下一個無派工效應的真實來源讀回方案；不授權該 source/test 實作、push、release、
+deployment、Host qualification 或正式結案。這是原 PRD／CHG／SPEC、原 Ticket30
+的文件階段，不重用已消耗的 30A Grant，不另建 PRD／工作流程。
+
+| 精確綁定 | 本輪文件階段 |
+| --- | --- |
+| Baseline | `d00018aa0117032ecba132e545a3085b29ec870a`；控制分支 `codex/skill-improvement-checklist` 讀回乾淨 |
+| 作者／整合 owner | Root，Architecture Owner/control-plane；文件操作不是 production implementation owner override |
+| Worktree／branch | repository-contained `.worktrees/skill-improvement-30m-docs`／`control/skill-improvement-30m-docs`；建立時 Git root／HEAD／非 reparse containment 已讀回 |
+| 獨審 | 不同席位 `/root/ticket30m_docs_review`，只審本輪文件差異與既有 parser 相容性；Root 保留整合責任 |
+| 精確 modify allowlist | `modules/tickets/workflow-governance/README.md`；`modules/tickets/workflow-governance/29-mainline-ticket-projection.md`；本 leaf；`doc/reviews/workflow-governance/30-trusted-independent-ticket-continuation-code-review.md`；`doc/AI-SKILL-IMPROVEMENT-CHECKLIST.md` |
+| create／delete | 均無；其他 leaf 尚未證明必要成員／依賴者不寫入，不以 false/空陣列冒充已核准的 optional/無相依 |
+| Forbidden | 所有程式／測試／模板／skill、sealed Context、PRD／CHG／SPEC 正文、其他票與 Recovery；無 target／正式派工／receipt／spawn 被測效應 |
+| Profile／資源 | DOCS_ONLY；零 implementation lane，一個既有規則允許的唯讀盤點 helper、一位獨審。沿同票耗用，不加壓、不輪詢、不重跑 04；驗證命令各具 timeout，無付費服務 |
+| Lifecycle | 此專用 worktree/ref owner=Root/Ticket30M，TTL=本輪文件審閱、整合、證據封存及獨立讀回後；僅精確身分且乾淨、已整合後 normal teardown，失敗保留 evidence／hold |
+| Integration | 既有 `admit_control_plane_mutation`，control namespace、host principal、精確 baseline/diff、獨審與 journal；不直接 merge/push。它不是 Host 隔離的證明 |
+
+有限驗收 30M-D1：批准來源→主線身分／目標／角色／成員／依賴逐一可追溯；不
+修改歷史完成契約。30M-D2：唯一 machine fences、四類 binding、raw committed-byte
+leaf digest、index/leaf 鏡像與既有純投影相容；非法 digest／版本／相依仍拒絕。
+30M-D3：新鮮遠端唯讀查證與完整下一階段票面／Grant／推送決策包，不冒稱已
+取得授權或 qualification。30M-D4：獨審、精確差異、本地 gate／readback／seal。
+文件 schema 驗證沿用 30A 的純解析邏輯，不把真文件假裝 synthetic observation
+送入 fixture-only public entry；不以文件通過勾選全票30或清單01／02。
+
+`ACTION_COMPLETED → AUTO_CONTINUE → 30M_DOCS_MIGRATION` 只依本段既有授權
+推進；下一 source/test Grant 候選維持未簽發。下一階段 baseline 綁本輪最終
+受審本地版本，跨出本輪文件範圍的效果仍須各自授權。
+
 ## Owner 批准與當前 continuation
 
 Owner 2026-10-18 精確核准 `acf0ffa1780af3d229b7f80c6e063f6d642e6864` 與本票
