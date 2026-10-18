@@ -2,7 +2,7 @@
 
 | 欄位 | 內容 |
 | --- | --- |
-| State | `DESIGN_LOCAL_INTEGRATED / CLEANUP_BLOCKED / RUNTIME_NOT_EFFECTIVE`；設計基準已整合，暫存 journal 清理未確認，不啟用 runtime |
+| State | `DESIGN_LOCAL_COMPLETE / CLEANUP_CONFIRMED / RUNTIME_NOT_EFFECTIVE`；僅設計基準與本票暫存 journal 閉合，不啟用 runtime |
 | Authority | Owner 2026-10-18 限定修正授權；原 `PRD-20260815-022`／`PRD-20260805-009`、原兩份 SPEC；不新增 PRD、政策或效果權限 |
 | Baseline | 本票落地後的精確控制分支 SHA，執行前固定；AC-17 原提案 `fa418b6d6ce3667abe3fa7b693b1034ec27cdaa9`，治理提案原內容 `1669e8e20f0a30894606e16f9ea1a10e4f0c5ba3` |
 | Candidate | AC-17 `4531d00f7d979fb7cda567b4d584fde6f41698bb`；治理 `8eae1af4d6fbcab9b5c3f0f7f5b286a91cec7f78`；本地 replay 後須核對兩份 Git blob 相同 |
@@ -52,6 +52,8 @@ forbid = template/
 blob 為 `ffb5304ed0a53df5dbd0b7697e7e18cdfeb39c7c`，治理 SPEC
 blob 為 `4323863f09ef89382e27eb1e4fc99ba652171da4`；兩者不改設計
 驗收或 runtime 權限。詳細審閱與 journal 見原 [Ticket 41 review](../../../doc/reviews/workflow-governance/41-bounded-spec-correction-integration-code-review.md)。
-暫存 journal 的清理仍是 `CLEANUP_BLOCKED`，本票未正式結案。
-暫存 gate journal 的精確刪除遭 Host policy 拒絕，故本票不標正式關閉；
-保留具名 `CLEANUP_BLOCKED` 追蹤，不影響其他已准入工作。
+本票唯一隔離 journal 的兩筆原始紀錄與 SHA-256 已先封存在 review，
+再對精確檔案及兩個空父目錄做受限清理；路徑、無 reparse、唯一資產、
+筆數與 digest 均於刪除前讀回，`Test-Path` 清理後為 false。先前遭 Host
+policy 拒絕的嘗試仍保留為歷史，不再是現行 `CLEANUP_BLOCKED`。
+本票只完成兩份 SPEC 的本地設計基準，runtime／Host／Grant 仍未生效。

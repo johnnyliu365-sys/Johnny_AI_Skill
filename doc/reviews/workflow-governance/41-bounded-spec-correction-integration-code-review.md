@@ -77,3 +77,11 @@ its SHA-256 is `0ec63a16083f53f028445602f9af9e03822ffe52fd34f330705604c3ce524771
 This digest and both exact records are versioned before any further cleanup
 attempt. The two integrated commits and reviewed SPEC blobs remain reachable
 from the control branch; temporary journal removal cannot alter that history.
+
+Root then verified the exact resolved temp root, no reparse point, its one
+`queue` child and that child's sole journal file, two records, and the sealed
+SHA-256. Only the exact journal and its two empty parents were removed,
+without recursion or broader temp deletion. `Test-Path` readback returned
+false. The earlier Host-policy refusal remains historical evidence; cleanup
+is now `CLEANUP_CONFIRMED`. This changes neither independent SPEC verdicts nor
+the `RUNTIME_NOT_EFFECTIVE` boundary.
