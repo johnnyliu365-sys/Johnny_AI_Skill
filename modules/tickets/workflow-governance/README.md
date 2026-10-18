@@ -34,6 +34,11 @@ Deliver one control-plane policy vertical slice: completion evidence must re-ent
 | [41-bounded-spec-correction-integration](41-bounded-spec-correction-integration.md) | Integrate the two owner-authorized bounded corrections into the original SPEC design baselines | `DESIGN_LOCAL_COMPLETE / CLEANUP_CONFIRMED / RUNTIME_NOT_EFFECTIVE` | Original design replay `76d1f942`; independently reviewed state-binding correction `cca2db71`; sealed two-record journal and exact isolated teardown verified; runtime/Host activation separate |
 | [42-retired-workprogress-template-consistency](42-retired-workprogress-template-consistency.md) | Remove the retired WorkProgress return obligation from both ticket templates | `COMPLETE_LOCAL / CLEANUP_CONFIRMED` | Independently reviewed candidate `0d4dbb14`, gate `INTEGRATED`; 46 tests; sealed journal and dedicated worktree/ref teardown verified, Host effect unclaimed |
 
+Local batch child (not an invented member of the bounded29→30 mainline):
+[43-review-closure-evidence](43-review-closure-evidence.md) — checklist07/09/12,
+SPEC AC11 existing Review route; `DOCUMENT_REVIEW_PENDING`, exact local Grant
+traces `batch-checklist-local-20261018`. No runtime/Host/source qualification claim.
+
 ## Shared baseline
 
 - Specification: `SPEC-AI-WORKFLOW-WORKFLOW-GOVERNANCE-20260805-01KZ6T8V2R4Y6B8D0F2H4J6M8P` (`APPROVED` on `2026-08-05`)
