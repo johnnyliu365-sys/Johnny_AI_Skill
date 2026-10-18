@@ -2,7 +2,7 @@
 
 | 欄位 | 值 |
 | --- | --- |
-| State / Closure | `DOCUMENT_REVIEW_PENDING` / 44-L1–L4 revision01 |
+| State / Closure | `DOCUMENT_REVIEW_PENDING` / 44-L1–L4 revision02；同票補齊既有AC17要求的affected acceptance conditions |
 | Authority | `batch-checklist-local-20261018`，清單03/11/12；原 PRD-20260815-022／CHG-20260815-022、adaptive-project-orchestration AC17 requirement-identity reviewed design baseline；原PRD不新增 |
 | Grant | Root delegated `grant-wg44-lineage-local-20261018`；文件獨審通過後限本地pure相容建置 |
 | Baseline | source101e16ad25799d2a9b3158a8afb9782bc836a5a3；實作從本票已受審文件commit，Root讀回source parity及exactleaf |
@@ -37,12 +37,16 @@ RequirementLifecycle／strict RouterModel；不改巨大contracts.py，不造Res
 同模組最少型別：
 
 - `RequirementRevisionLink`：change_id、from_revision、to_revision、approval_ref
-  （OpaqueMetadataId）、approval_digest（EvidenceDigest）。from/to必須不同，
+  （OpaqueMetadataId）、approval_digest（EvidenceDigest）、affected_ac_ids
+  （tuple[OpaqueMetadataId,...]，1..512筆、唯一；沿用具名ID的封閉grammar）。from/to必須不同，
   approval非空／非零digest；它只引用外部核准，不證明核准者身份。
 - `RequirementRevisionHistory`：prd_id、initial_revision、effective_revision、
+  acceptance_ids（tuple[OpaqueMetadataId,...]，1..512筆、唯一）、
   links（tuple[RequirementRevisionLink,...]）。欄位strict、frozen、extra forbid。
+  acceptance_ids為此選定PRD history的宣告AC集合；每筆affected_ac_ids必須是其子集。
+  二者均為待驗關聯資料，不是可信核准來源；正式來源adapter仍須另驗來源／版本。
 - `RequirementRevisionHistoryResult`：scope固定CANDIDATE_ONLY，valid bool、
-  reason為None或有限 `DUPLICATE_CHANGE / BROKEN_REVISION_CHAIN / EFFECTIVE_REVISION_MISMATCH`。
+  reason為None或有限 `DUPLICATE_CHANGE / BROKEN_REVISION_CHAIN / ACCEPTANCE_MISMATCH / EFFECTIVE_REVISION_MISMATCH`。
   valid iff reason None；不存在effect/creation授權欄位。
 
 順序規則：空links只准initial==effective；每一筆from等於當前revision、to不可為
@@ -60,12 +64,14 @@ Any、繞過constructor或把legacy pair當Grant。此票預算不新增任何�
   建立效應；同PRD的兩個不同CHG revisionchain有效，舊一對一validator完整回歸。
 - 44-L2：wrongfrom、cycle、重複CHG、錯終點具名拒絕；raw malformed DTO在constructor
   拒絕。不接受自報approved bool；approvalref/digest缺失拒絕，但明說不是trusted issuance。
+  每筆affected AC缺失／空集合／重複ID由constructor拒絕；含不在本history acceptance_ids
+  的AC回ACCEPTANCE_MISMATCH。正常多CHG與跨PRD案例均保留各自精確affected AC。
 - 44-L3：兩個history共享同CHG各自有效；只處理選定PRD，不拒絕合法跨PRD變更。
   空links且改effective拒絕。沒有新PRD、archive或文件效果；無配置啟用此candidate方法。
 - 44-L4：真實方法移除鏈條檢查讓具名測試轉紅→精確還原；reviewer另改終點/重複
   判定轉紅→還原。strict、既有lineage suite全綠，不能刪舊suffix測試換取綠燈。
 
-原因優先：逐筆先duplicate change，再chain/cycle；遍歷後effective mismatch。
+原因優先：逐筆先duplicate change，再chain/cycle，再affected AC子集；遍歷後effective mismatch。
 既有source gate只保護其原named manifest，不為新方法降低其檢查或更改舊manifest。
 若其module-wide限制實際阻擋合法純新增，由Root依同票影響修明精確測試，不任意放寬。
 
