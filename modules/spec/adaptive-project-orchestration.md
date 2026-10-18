@@ -344,8 +344,12 @@ flattens, recursively loads or persists a whole tree.
 #### Proposed AC-17 requirement-identity revision — `NOT_EFFECTIVE / OWNER_EXACT_APPROVAL_PENDING`
 
 This is a proposed amendment to the existing `PRD-20260815-022`, not a new PRD or an
-effective SPEC revision. On the project owner's exact approval of this candidate commit,
-replace only the two AC-17 sentences from "Each active product requirement" through
+effective SPEC revision. The project owner's 2026-10-18 authority permits a bounded
+correction of candidate `fa418b6d6ce3667abe3fa7b693b1034ec27cdaa9` and independent
+review before staged activation; it is not an approval of runtime behavior, a creation
+grant or an implementation/effect authorization. After independent review and the
+owner's exact approval of the corrected candidate revision, replace only the two
+AC-17 sentences from "Each active product requirement" through
 "archive ID/reference" with the following requirement/change identity and retirement
 contract. AC-17's bounded tree, archive-library, reusable-module and exact-path rules,
 and all other approved ACs, remain as approved.
@@ -362,9 +366,14 @@ and all other approved ACs, remain as approved.
 >
 > PRD creation is denied by default. Only a `NEW_INDEPENDENT` or `SUPERSEDE` operation
 > carrying an exact valid `RequirementCreationGrant` may create a new PRD. The grant
-> binds the project, operation, proposed PRD ID, owner-approved decision/source,
-> expected authority baseline and a single consumption identity. A `NEW_INDEPENDENT`
-> grant identifies a capability independent of existing PRDs and names no replaced
+> is issued only by an independently protected Host authority source after that
+> source verifies the owner's exact approved decision through an authenticated
+> owner channel outside the ordinary runtime; the calling Agent, Router, plugin
+> and ordinary repository files cannot mint or amend it. It binds the project, operation,
+> proposed PRD ID, approved decision/source revision, declared authority full ref,
+> expected direct-readback baseline SHA and index revision, grant-contract version,
+> qualified actor/role, correlation, expiry and one unique consumption identity.
+> A `NEW_INDEPENDENT` grant identifies a capability independent of existing PRDs and names no replaced
 > PRD. A `SUPERSEDE` grant additionally binds the complete replaced PRD ID/revision
 > set, approved replacement relation and retirement transition. Its one admitted
 > transition removes every replaced PRD from active indexes and makes the replacement
@@ -378,16 +387,44 @@ and all other approved ACs, remain as approved.
 > exact PRD/revision/CHG links; they reject duplicate IDs, dangling or ambiguous
 > revisions, unapproved change links, active/archive overlap and ungranted creation.
 
-The existing Router and managed-artifact admission path validates these exact
-references and transitions; this proposal adds no separate policy engine or gate.
-An approved revision is not effective at runtime until the bounded lineage contract,
-validator and index migration pass independent verification. Until then, existing
-matching pairs and the current one-to-one validator/tests remain effective and
-fail closed. Migration preserves those pairs as readable historical sources, maps
-each to its exact PRD and CHG revision relation, then updates only the affected
-lineage/index contracts and archive references. It must not silently reinterpret a
-legacy pair as a new grant or invent missing approval/revision evidence; an
-unresolvable record stops with `REQUIREMENT_LINEAGE_INVALID` for owner resolution.
+The existing Router/managed-artifact admission path must require direct readback of
+the grant from that trusted issuer, its unconsumed state, the exact approved decision
+and the declared authority baseline immediately before any PRD document, index or
+Git effect. The issuer/consumer must atomically reserve and consume the one grant
+against the same immutable candidate operation; concurrent callers cannot reuse it.
+Caller-supplied grant fields, a claimed success, an approval document by itself or
+a legacy matching PRD/CHG pair are assertions, never issuance/readback evidence.
+If the independently protected issuer, direct readback or atomic one-shot consume
+cannot be proved for the actual Host, PRD creation remains unavailable. This uses
+the existing Host external-effect boundary and managed-artifact route when
+qualified; it introduces no parallel policy engine or gate and does not claim the
+Host capability already exists. The present pure `RequirementLineageGate` and
+managed-artifact planner, local `TransactionalTargetDocumentWriter` digest check
+plus `os.replace`, and an ordinary Git commit prove neither trusted issuance nor
+atomic grant consumption; none may serve as a fallback authorization path.
+
+After a timeout or ambiguous result, the boundary directly reads the exact grant
+consumption record and declared authority ref plus selected PRD/index paths. If
+the intended complete candidate is already effective and matches that grant's
+candidate identity, return that same terminal result without a second effect. If
+no effect is proved and the grant was consumed,
+or the outcome cannot be proved, do not replay it: return a finite failure or
+`RECOVERY_REQUIRED` and require a fresh Host-issued grant/attempt under the still
+valid owner decision after reconciliation. A confirmed pre-consumption refusal
+performs no effect. Retry cannot bypass a changed authority baseline, failed
+readback or a competing caller's reservation.
+
+SPEC approval alone does not activate this identity model. The bounded lineage
+contract, validator, index migration and Host grant capability each need their
+own independent review evidence before the corresponding runtime path is enabled.
+Until that qualification and an explicit activation decision, existing matching
+pairs and the current one-to-one validator/tests remain effective and fail closed;
+unrelated already-admitted work continues under its current approved contracts.
+Migration preserves those pairs as readable historical sources, maps each to its
+exact PRD and CHG revision relation, then updates only the affected lineage/index
+contracts and archive references. It must not silently reinterpret a legacy pair
+as a new grant or invent missing approval/revision evidence; an unresolvable
+record stops with `REQUIREMENT_LINEAGE_INVALID` for owner resolution.
 
 The migration's finite acceptance matrix must prove: (1) a behavior-preserving
 correction keeps the same PRD ID/revision and opens neither PRD nor CHG; (2) an
@@ -401,6 +438,27 @@ creation grants, incomplete supersede sets, duplicate/dangling links, active/arc
 overlap and a legacy pair treated as creation authority. Each rejection occurs
 before a document or Git effect. These tests replace the obsolete suffix-equality
 expectation only after the owner-approved contract and migration qualify together.
+
+Grant-bound acceptance additionally proves a Host-issued exact grant is read back
+before effect, one concurrent claimant consumes it, and a timeout followed by
+readback of the already-effective complete candidate returns the same result with
+no second write. Negative cells forge a caller grant, alter project/mode/PRD ID/
+decision revision/authority ref or baseline/index revision/contract version,
+actor/role/correlation/expiry, substitute a legacy pair, replay a consumed
+grant, race two consumers, and retry after a proved failed or ambiguous effect;
+each must deny a second mutation. A
+failed or unavailable issuer/readback/atomic-consume capability yields no PRD
+creation. The review must include reverse-mutation evidence that removing the
+issuer check, pre-effect readback or one-shot constraint turns these cells red.
+
+| Proposed revision evidence slot | Required state |
+| --- | --- |
+| Correction authority | Owner's 2026-10-18 instruction, limited to correction of `fa418b6d6ce3667abe3fa7b693b1034ec27cdaa9` and independent review. |
+| Corrected candidate revision | The commit containing this proposal; bind its exact SHA in the independent review and owner decision. |
+| Independent SPEC review | `PENDING`; exact candidate SHA, scope/diff and verdict required. |
+| Owner exact SPEC decision | `PENDING`; approval must name the independently reviewed candidate SHA. |
+| Lineage validator/index migration review | `PENDING`; exact commits, acceptance/reverse-mutation evidence and legacy readback required. |
+| Actual Host grant capability and runtime activation | `PENDING`; qualified issuer/consumer/readback evidence and an explicit activation decision required. |
 
 ### AC-17R9 — Procedural managed-artifact mutation and behavior feedback
 
@@ -1250,3 +1308,4 @@ provider, push, publication, installation, release or deployment effect.
 | 2026-08-29 | Codex architecture owner / `control/host-external-effect-gateway-architecture` / `083c41588e92e227ea27b1fde3fea33e15d6f3dc` | Drafted Revision 14 Host External-Effect Gateway after `CR-CAPREMOTE-01` established that a caller-forgeable activation cannot authorize a remote effect; exact owner approval pending. |
 | 2026-08-29 | Project owner / exact candidate `c3da092eb5cbd78938fb6f43480c525a9ee2258e` | Approved Revision 14 Host External-Effect Gateway and authorized reviewer opening of `CAP-HOST-EFFECT-GRANT-01` only; no gateway implementation or external-effect authority. |
 | 2026-10-18 | Codex architecture owner / `skill-improvement-ac17` / `cc948e81cf06d426bb0890c80baf9df89c59c37a` | Proposed same-`PRD-20260815-022` AC-17 requirement-identity amendment; `NOT_EFFECTIVE / OWNER_EXACT_APPROVAL_PENDING`. Existing approved AC-17 and one-to-one validation remain operative. |
+| 2026-10-18 | Project owner / candidate `fa418b6d6ce3667abe3fa7b693b1034ec27cdaa9` | Authorized bounded correction and independent review of the AC-17 identity proposal before staged activation; no runtime, PRD creation, implementation, Host effect or push authority. |
