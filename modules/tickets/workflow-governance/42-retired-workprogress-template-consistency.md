@@ -4,7 +4,7 @@
 | --- | --- |
 | State | `READY_FOR_IMPLEMENTATION / LOCAL_ONLY`；不宣稱 Host admission 完成 |
 | Authority | 既有 `PRD-20260805-009`、`CHG-20260805-009`、已核准 workflow-governance SPEC；Owner 2026-10-18 checklist 11 衝突修正與持續執行授權；不建新 PRD |
-| Baseline | `da03afa0dd6becc5529321fb9b7adb7247c9d80a` |
+| Baseline | Source preflight `da03afa0dd6becc5529321fb9b7adb7247c9d80a`; implementation starts after this ticket is versioned at `d30ad5ed75aee179c8439dedae690b53245b9b82` |
 | Roles | Implementation Owner：低成本模型；獨立 Reviewer：另一席；Root 僅控制與整合 |
 | Profile | `COMPACT`，僅本庫模板與既有測試，無 target、外部服務或發布效果 |
 
