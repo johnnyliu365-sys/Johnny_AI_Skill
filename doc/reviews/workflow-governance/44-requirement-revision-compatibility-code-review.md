@@ -81,3 +81,11 @@ GameBoy, branchcodex/skill-improvement-checklist, candidate1aa5ed22, exactTicket
 SHA256 `b5dd3d7c3be5251e2d7a2ec19f440e35edf733a3ef368b6d28ee7d71a0b92bd4`.
 This immutable summary preserves all fields necessary for the gate outcome;
 raw journal remains until independent seal readback. Cleanup pending that check.
+
+Independent original reviewer confirmed seal b8b89147, actual journal byte count,
+hash/fields, both source blobs in author/review/land/control, and clean non-reparse
+registered assets. Root's subsequent scoped teardown command was rejected by
+Host policy at CreateProcess; it did not run. No alternate deletion attempted.
+The three worktrees, reviewed author ref and journal remain retained.
+`CLEANUP_BLOCKED`, not normal ticket closure. This is an execution-permission
+block, not a failed product test or justification to repeat implementation.

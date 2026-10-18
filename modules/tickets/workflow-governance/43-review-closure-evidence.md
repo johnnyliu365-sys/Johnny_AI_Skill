@@ -2,7 +2,7 @@
 
 | 欄位 | 綁定 |
 | --- | --- |
-| State / Closure | `BUILD_ADMITTED_AFTER_DOCUMENT_REVIEW` / `43-C1–C4 revision02`；同票修正三項ticket defects，不聲稱真Host／來源已合格 |
+| State / Closure | `ENGINEERING_PASS / REVIEW_BLOCKED` / `43-C1–C4 revision02`；缺mandatory qualified Host audit，候選未整合、不重派修已通過code |
 | Authority | Owner `batch-checklist-local-20261018`，既有 checklist07／09／12；原 PRD-20260805-009／CHG-20260805-009／SPEC workflow-governance revision03 AC11 Required replay #3 |
 | Grant | Root delegated `grant-wg43-closure-local-20261018`；下列範圍內本地建置／測試／獨審，無新外部權限 |
 | Baseline | Source `930fad32e15a76cd54423e34ea941a630af039da`；實作起點取本票／registry已提交且獨審通過之文件commit，Root先讀回並確認source blobs未變 |
@@ -109,3 +109,11 @@ Return：IMPLEMENTED/BLOCKED/CHANGE_DETECTED、candidate、baseline、paths、ce
 不能整合/自核准；Root既有document mutation gate本地整合。Asset owner=具名席，
 TTL=review與evidence seal後，僅精確已整合乾淨worktree/ref可teardown，Recovery保留。
 不push、不部署、不正式啟用Host；本票不宣稱完成整項07／09或清單12。
+
+## 結果
+
+候選`d477020e0fb010ea12d610e3588630284472ecf8`，獨審ENGINEERING_PASS：
+19tests/58subtests、strict3modules通過，作者child-binding與reviewer identity
+兩門突變紅→精確還原。必要HIGH_ASSURANCE隔離audit仍UNAVAILABLE，最終BLOCKED。
+不整合、不刪作者／review工作樹、不重跑已證明的code；其他合法本地工作繼續。
+完整證據在 `doc/reviews/workflow-governance/43-review-closure-evidence-code-review.md`。

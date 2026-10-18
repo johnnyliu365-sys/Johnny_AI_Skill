@@ -2,7 +2,7 @@
 
 | 欄位 | 值 |
 | --- | --- |
-| State / Closure | `DOCUMENT_REVIEW_PENDING` / 44-L1–L4 revision02；同票補齊既有AC17要求的affected acceptance conditions |
+| State / Closure | `LOCAL_INTEGRATED / CLEANUP_BLOCKED` / 44-L1–L4 revision02；完整本地驗證／獨審通過，正式授權與舊規則未切換 |
 | Authority | `batch-checklist-local-20261018`，清單03/11/12；原 PRD-20260815-022／CHG-20260815-022、adaptive-project-orchestration AC17 requirement-identity reviewed design baseline；原PRD不新增 |
 | Grant | Root delegated `grant-wg44-lineage-local-20261018`；文件獨審通過後限本地pure相容建置 |
 | Baseline | source101e16ad25799d2a9b3158a8afb9782bc836a5a3；實作從本票已受審文件commit，Root讀回source parity及exactleaf |
@@ -84,3 +84,13 @@ deviations/cumulative time/limits。獨審通過才既有document mutation gate�
 owner/TTL/teardown：具名席位資產在review+evidence seal且已整合乾淨後normal移除，
 Recovery或未整合候選保留。正式Host issuer/atomic consumption/index migration仍
 未完成，本票不勾整項11，不push/release/deploy、不改其他專案。
+
+## 結果
+
+候選dfced43f由不同席APPROVED；14tests/30subtests、strict、compile綠；作者chain
+與獨審terminal比較兩門突變紅→精確還原。Root精確blob replay後既有gate整合
+`1aa5ed22bc270b8d8604be89c9f23b0942c8dee5`，整合後14tests/30subtests再綠。
+既有review leaf已封存候選、兩blob與journal digest，另一席SEAL_CONFIRMED。
+受限teardown命令在建立程序前被Host policy拒絕，未執行刪除，不改指令繞過。
+三個具名worktrees與journal仍保留，CLEANUP_BLOCKED，不宣稱正常結票。
+詳見 `doc/reviews/workflow-governance/44-requirement-revision-compatibility-code-review.md`。
