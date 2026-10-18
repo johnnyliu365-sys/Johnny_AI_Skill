@@ -210,8 +210,15 @@ class _MainlineIndexWire(_StrictModel):
     objective_ref: MainlineMetadataRef
     owner_ref: MainlineMetadataRef
     handoff_ref: MainlineMetadataRef
-    bindings: list[_BindingWire]
+    bindings: list[_BindingWire] = Field(min_length=4, max_length=4)
     tickets: list[_IndexTicketWire] = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def has_exact_source_binding_kinds(self) -> Self:
+        binding_kinds = {binding.kind for binding in self.bindings}
+        if binding_kinds != {"context", "prd", "change", "spec"}:
+            raise ValueError("source bindings must contain each required kind exactly once")
+        return self
 
 
 class _TicketLeafWire(_StrictModel):
@@ -241,7 +248,9 @@ def _next_nonempty_line(lines: list[str], start: int) -> int | None:
 
 def _extract_contract_json(markdown: str, heading: str) -> str:
     lines = markdown.splitlines()
-    heading_indices = [index for index, line in enumerate(lines) if line == heading]
+    heading_indices = [
+        index for index, line in enumerate(lines) if line.rstrip(" \t") == heading
+    ]
     json_open_indices = [index for index, line in enumerate(lines) if line == "```json"]
     if len(heading_indices) != 1 or len(json_open_indices) != 1:
         raise _InvalidFence
@@ -274,11 +283,14 @@ def _reject_json_constant(value: str) -> NoReturn:
 
 
 def _load_json_object(text: str) -> dict[str, object]:
-    decoded: object = json.loads(
-        text,
-        object_pairs_hook=_unique_json_object,
-        parse_constant=_reject_json_constant,
-    )
+    try:
+        decoded: object = json.loads(
+            text,
+            object_pairs_hook=_unique_json_object,
+            parse_constant=_reject_json_constant,
+        )
+    except RecursionError:
+        raise ValueError("contract JSON exceeds the parser nesting limit") from None
     if type(decoded) is not dict:
         raise ValueError("contract JSON must be an object")
 

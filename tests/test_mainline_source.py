@@ -321,10 +321,15 @@ def fixture_git_repository(
     request: pytest.FixtureRequest,
 ) -> Iterator[_FixtureGitRepository]:
     root = tmp_path / "ticket30a-fixture-repository"
+    global_config = tmp_path / "ticket30a-fixture-global.gitconfig"
     root.mkdir()
-    fixture_environment = os.environ.copy()
+    global_config.write_bytes(b"")
+    fixture_environment = {
+        key: value for key, value in os.environ.items() if not key.upper().startswith("GIT_")
+    }
     fixture_environment["GIT_TERMINAL_PROMPT"] = "0"
     fixture_environment["GIT_CONFIG_NOSYSTEM"] = "1"
+    fixture_environment["GIT_CONFIG_GLOBAL"] = str(global_config)
     repository = _FixtureGitRepository(
         root=root,
         owner="ticket30a-fixture-implementer",
@@ -348,6 +353,10 @@ def fixture_git_repository(
             if root.is_symlink() or resolved_root.parent != resolved_temp:
                 raise RuntimeError("refusing to remove a fixture repository outside its test temp directory")
             shutil.rmtree(resolved_root, onerror=_remove_readonly)
+        if global_config.exists():
+            if global_config.resolve(strict=True).parent != tmp_path.resolve(strict=True):
+                raise RuntimeError("refusing to remove fixture Git config outside its test temp directory")
+            global_config.unlink()
 
 
 def _leaf_path(ticket_ref: str) -> str:
@@ -410,35 +419,39 @@ def _index_json(tickets: tuple[_FixtureTicket, ...], leaf_bytes: dict[str, bytes
         "objective_ref": "objective-workflow-governance",
         "owner_ref": "owner-root",
         "handoff_ref": "handoff-ticket-30a",
-        "bindings": [
-            {
-                "kind": "context",
-                "identity": "context-workflow-governance",
-                "artifact_ref": "CONTEXT.md",
-                "revision_sha": "a" * 40,
-            },
-            {
-                "kind": "prd",
-                "identity": "PRD-20260805-009",
-                "artifact_ref": "PRD.md",
-                "revision_sha": "b" * 40,
-            },
-            {
-                "kind": "change",
-                "identity": "CHG-20260805-009",
-                "artifact_ref": "doc/requirements/REQ-20260805-009.md",
-                "revision_sha": "c" * 40,
-            },
-            {
-                "kind": "spec",
-                "identity": "spec-workflow-governance",
-                "artifact_ref": "modules/spec/workflow-governance.md",
-                "revision_sha": "d" * 40,
-            },
-        ],
+        "bindings": list(_fixture_bindings()),
         "tickets": index_tickets,
     }
     return json.dumps(index, separators=(",", ":"))
+
+
+def _fixture_bindings() -> tuple[dict[str, str], ...]:
+    return (
+        {
+            "kind": "context",
+            "identity": "context-workflow-governance",
+            "artifact_ref": "CONTEXT.md",
+            "revision_sha": "a" * 40,
+        },
+        {
+            "kind": "prd",
+            "identity": "PRD-20260805-009",
+            "artifact_ref": "PRD.md",
+            "revision_sha": "b" * 40,
+        },
+        {
+            "kind": "change",
+            "identity": "CHG-20260805-009",
+            "artifact_ref": "doc/requirements/REQ-20260805-009.md",
+            "revision_sha": "c" * 40,
+        },
+        {
+            "kind": "spec",
+            "identity": "spec-workflow-governance",
+            "artifact_ref": "modules/spec/workflow-governance.md",
+            "revision_sha": "d" * 40,
+        },
+    )
 
 
 def _fixture_source_files(
@@ -519,6 +532,16 @@ def _rewrite_json_fence(markdown: bytes, transform: Callable[[str], str]) -> byt
     end = text.index("\n```", start)
     json_text = text[start:end]
     return (text[:start] + transform(json_text) + text[end:]).encode("utf-8")
+
+
+def _replace_bindings(json_text: str, replacement: str) -> str:
+    value_start = json_text.index('"bindings":') + len('"bindings":')
+    value_end = json_text.index('],"tickets":[', value_start) + 1
+    return json_text[:value_start] + replacement + json_text[value_end:]
+
+
+def _append_deep_unknown_value(json_text: str) -> str:
+    return json_text[:-1] + ',"deep":' + "[" * 1200 + "0" + "]" * 1200 + "}"
 
 
 def _duplicate_json_key(json_text: str) -> str:
@@ -629,9 +652,56 @@ def test_unavailable_index_read_returns_one_finite_failure(
     assert port.read_calls == [(observation.sha, _INDEX_PATH)]
 
 
+def test_fixture_git_environment_ignores_inherited_git_dir(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    request: pytest.FixtureRequest,
+) -> None:
+    redirected_git_dir = tmp_path / "redirected-git-dir"
+    redirected_git_dir.mkdir()
+    monkeypatch.setenv("GIT_DIR", str(redirected_git_dir))
+    try:
+        fixture_value: object = request.getfixturevalue("fixture_git_repository")
+        assert isinstance(fixture_value, _FixtureGitRepository)
+        repository = fixture_value
+
+        assert repository.root == tmp_path / "ticket30a-fixture-repository"
+        assert repository.root.joinpath(".git").is_dir()
+        git_root = Path(
+            repository.require_success("rev-parse", "--show-toplevel").decode("utf-8").strip()
+        )
+        assert git_root.resolve(strict=True) == repository.root.resolve(strict=True)
+        assert {key.upper() for key in repository.environment if key.upper().startswith("GIT_")} == {
+            "GIT_CONFIG_GLOBAL",
+            "GIT_CONFIG_NOSYSTEM",
+            "GIT_TERMINAL_PROMPT",
+        }
+        assert not list(redirected_git_dir.iterdir())
+    finally:
+        if redirected_git_dir.exists():
+            resolved_temp = tmp_path.resolve(strict=True)
+            resolved_redirected = redirected_git_dir.resolve(strict=True)
+            if redirected_git_dir.is_symlink() or resolved_redirected.parent != resolved_temp:
+                raise RuntimeError("refusing to remove inherited Git repro outside its test temp directory")
+            shutil.rmtree(resolved_redirected, onerror=_remove_readonly)
+
+
 @pytest.mark.parametrize(
     "case",
-    ("duplicate-key", "duplicate-fence", "duplicate-heading", "unknown-field", "missing-field", "bad-status", "invalid-utf8"),
+    (
+        "duplicate-key",
+        "duplicate-fence",
+        "duplicate-heading",
+        "duplicate-heading-trailing-whitespace",
+        "empty-bindings",
+        "missing-binding",
+        "duplicate-binding",
+        "unknown-field",
+        "missing-field",
+        "bad-status",
+        "deep-json",
+        "invalid-utf8",
+    ),
 )
 def test_malformed_index_fails_closed_before_reading_leaves(
     fixture_git_repository: _FixtureGitRepository,
@@ -644,6 +714,28 @@ def test_malformed_index_fails_closed_before_reading_leaves(
         files[_INDEX_PATH] += b"\n## Extra\n\n```json\n{}\n```\n"
     elif case == "duplicate-heading":
         files[_INDEX_PATH] += b"\n## Mainline source contract\n"
+    elif case == "duplicate-heading-trailing-whitespace":
+        files[_INDEX_PATH] += b"\n## Mainline source contract   \t\n"
+    elif case == "empty-bindings":
+        files[_INDEX_PATH] = _rewrite_json_fence(
+            files[_INDEX_PATH],
+            lambda value: _replace_bindings(value, "[]"),
+        )
+    elif case == "missing-binding":
+        replacement = json.dumps(list(_fixture_bindings()[:-1]), separators=(",", ":"))
+        files[_INDEX_PATH] = _rewrite_json_fence(
+            files[_INDEX_PATH],
+            lambda value: _replace_bindings(value, replacement),
+        )
+    elif case == "duplicate-binding":
+        duplicate_context = dict(_fixture_bindings()[0])
+        duplicate_context["identity"] = "context-workflow-governance-copy"
+        duplicate_bindings = (*_fixture_bindings()[:3], duplicate_context)
+        replacement = json.dumps(list(duplicate_bindings), separators=(",", ":"))
+        files[_INDEX_PATH] = _rewrite_json_fence(
+            files[_INDEX_PATH],
+            lambda value: _replace_bindings(value, replacement),
+        )
     elif case == "unknown-field":
         files[_INDEX_PATH] = _rewrite_json_fence(
             files[_INDEX_PATH],
@@ -659,6 +751,11 @@ def test_malformed_index_fails_closed_before_reading_leaves(
             files[_INDEX_PATH],
             lambda value: value.replace('"status":"planned"', '"status":"unknown"', 1),
         )
+    elif case == "deep-json":
+        files[_INDEX_PATH] = _rewrite_json_fence(
+            files[_INDEX_PATH],
+            _append_deep_unknown_value,
+        )
     else:
         files[_INDEX_PATH] = b"\xff\xfeinvalid UTF-8"
 
@@ -673,7 +770,15 @@ def test_malformed_index_fails_closed_before_reading_leaves(
 
 @pytest.mark.parametrize(
     "case",
-    ("duplicate-key", "duplicate-fence", "unknown-field", "missing-field", "invalid-utf8"),
+    (
+        "duplicate-key",
+        "duplicate-fence",
+        "duplicate-heading-trailing-whitespace",
+        "unknown-field",
+        "missing-field",
+        "deep-json",
+        "invalid-utf8",
+    ),
 )
 def test_malformed_committed_leaf_fails_closed_without_projection(
     fixture_git_repository: _FixtureGitRepository,
@@ -692,6 +797,10 @@ def test_malformed_committed_leaf_fails_closed_without_projection(
     def invalid_utf8(path: str, payload: bytes) -> bytes:
         _ = path
         return b"\xff" + payload
+
+    def append_duplicate_heading(path: str, payload: bytes) -> bytes:
+        _ = path
+        return payload + b"\n## Mainline ticket contract   \t\n"
 
     if case == "duplicate-key":
         files = _fixture_source_files(
@@ -712,6 +821,16 @@ def test_malformed_committed_leaf_fails_closed_without_projection(
         files = _fixture_source_files(
             (_FixtureTicket("ticket-alpha"),),
             leaf_payload_transform=append_duplicate_fence,
+        )
+    elif case == "duplicate-heading-trailing-whitespace":
+        files = _fixture_source_files(
+            (_FixtureTicket("ticket-alpha"),),
+            leaf_payload_transform=append_duplicate_heading,
+        )
+    elif case == "deep-json":
+        files = _fixture_source_files(
+            (_FixtureTicket("ticket-alpha"),),
+            leaf_json_transform=_append_deep_unknown_value,
         )
     else:
         files = _fixture_source_files(
