@@ -142,3 +142,16 @@ worktree、修改 source/test、執行真實 readback、整合或 push。Archite
 既有授權內的 source contract、且 Human Owner 提供必要的精確 ticket-scoped Grant 後，
 在同一 Ticket 30 lineage 追加有限 Closure revision，重跑 independent ticket review，
 再由 Router 決定下一步；不得把普通工程選擇升級成人工決策。
+
+## 票面收斂與獨審紀錄
+
+初稿 `76f6f32771e80add10c499db2c7479377b079c0c` 因推定 Grant、固定本專案
+索引路徑、自創未遷移 grammar／公開 API 及硬行數上限，被獨立
+`/root/wg_spec_review` 判為 `BLOCKED`。同票修正 `c5d6e2ff295883a03b49ffd3e8d72fbe51db0bb6`
+撤回這些聲明；控制分支最終票面提交
+`7e2dae948c5a949ad3f14aa0351f3b4edd0303f7` 由同一獨審者唯讀複驗
+`PASS`，只代表 docs-only preflight 可用，不代表 implementation admission。
+最終差異僅本 leaf 與同功能 registry；`git diff --check` 乾淨、
+`tests/test_ticket_template_contract.py` 44 passed。完整 Ticket 30／清單 02
+仍維持 `NON_DISPATCHABLE`；下一步是 Architecture Owner 在既有 SPEC 授權內
+收斂 source contract，再取得精確 ticket-scoped Grant。
