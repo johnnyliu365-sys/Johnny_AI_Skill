@@ -551,3 +551,18 @@ boundary check incorrectly passed the whole Markdown to the body-only parser;
 the corrected unique-fence extraction passed, no product change or hidden retry.
 New actual type-only constructors must pass independent review before behavior.
 Network0, no formal effect. `ACTION_COMPLETED → AUTO_CONTINUE → IMPLEMENT`.
+
+### 30B constructor phase
+
+Author candidate `f13108b531b4b18c366b6803250899e038431a40` adds only the two
+authorized new files (156 product/249 test lines). Author26tests, strict mypy,
+compile and diff checks passed; first collection failed on an import and was
+corrected, not omitted from timing. Total author/preflight commands74.25s.
+Root allocated exact detached candidate in non-reparse contained
+`.worktrees/skill-improvement-30b-readback-review`. Independent
+`/root/ticket30b_readback_review` inspected the constructors/effect absence,
+ran26tests (1.90s pytest), and rejected a raw enum-string probe as expected.
+APPROVED_TYPE_PHASE_ONLY, no blocking finding; no audit/Host/integration claim.
+Conservative cumulative budget charge87/600s includes independent commands.
+Same author now continues behavior under the existing four-path Grant, without
+network or actual dispatch. New phase does not reset budget or findings.

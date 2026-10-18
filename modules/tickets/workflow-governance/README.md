@@ -36,11 +36,11 @@ Deliver one control-plane policy vertical slice: completion evidence must re-ent
 
 Local batch child (not an invented member of the bounded29→30 mainline):
 [43-review-closure-evidence](43-review-closure-evidence.md) — checklist07/09/12,
-SPEC AC11 existing Review route; `DOCUMENT_REVIEW_PENDING`, exact local Grant
+SPEC AC11 existing Review route; `CONTRACT_IMPLEMENTATION`, document revision02 independently approved at101e16ad; exact local Grant
 traces `batch-checklist-local-20261018`. No runtime/Host/source qualification claim.
 
 [44-requirement-revision-compatibility](44-requirement-revision-compatibility.md) —
-checklist03/11/12, existing AC17 reviewed design; `DOCUMENT_REVIEW_PENDING`, pure
+checklist03/11/12, existing AC17 reviewed design; `CONTRACT_IMPLEMENTATION`, document revision02 independently approved at4414c6a5; pure
 history compatibility only; legacy validation/activation unchanged.
 
 ## Shared baseline
