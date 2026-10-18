@@ -2,7 +2,7 @@
 
 | 欄位 | 內容 |
 | --- | --- |
-| State | `30A_TYPE_CONSTRUCTION_ADMITTED / FULL_TICKET_NON_DISPATCHABLE`；只准 type-only Phase A，實際 constructor／獨審通過後才續 Phase B；完整 Ticket 30 與清單 02 仍未完成 |
+| State | `30A_FIXTURE_LOCAL_INTEGRATED / CLEANUP_PENDING / FULL_TICKET_NON_DISPATCHABLE`；30A-F1–F4 完成獨審與本地整合；完整 Ticket 30 與清單 02 仍未完成 |
 | Requirement lineage | 沿用 `PRD-20260805-009`／`CHG-20260805-009` 與原 Ticket 30；不建立新 PRD、平行 Ticket 或第二套 authority |
 | Effective authority | `SPEC-AI-WORKFLOW-WORKFLOW-GOVERNANCE-20260805-01KZ6T8V2R4Y6B8D0F2H4J6M8P` 的既有有效 AC 1–8 |
 | Design evidence only | Owner-authorized、獨審通過的 SPEC design baseline `76d1f942e24975da28889c8b6ecee904c8ef3da0`，SPEC blob `6fd8c3098f48be40c2cf05a03f8284c186163c08`；它允許受控拆票規劃，不是 Ticket 30A implementation Grant 或 runtime activation |
@@ -77,6 +77,15 @@ control 或非正規分隔；leaf 另外限同 feature 直接 `.md`。request �
 admission。內部 wire DTO 由實作者在本責任模組選最少集合，extra/duplicate/missing
 皆拒絕，JSON 動態輸入只在 boundary 驗證，不能帶 Any／未驗證 dict 向內。
 結果固定 `FIXTURE_ONLY`，不承載 raw source；未新增 authority engine。
+
+30A 完成證據：原獨審席已核准修正 `629030f4678b5d600c9ad53baf60967c25ecefbc`，
+四項 finding 全關閉。最終僅合併已審 Root docs carrier 的候選
+`b7e9e2f35bd997c65df80541ec0196a000ab3e46` 經既有 mutation gate 回
+`INTEGRATED`。整合後同一 Python process 先確認實際 import 位於控制 worktree，
+source/test Git blob 精確相等，再跑完整 focused suite：91 passed；strict mypy、
+compile 通過。這項實際載入讀回只覆蓋本次 fixture run，不是通用 Host qualification。
+完整命令／版本／獨審突變／journal seal 與 cleanup 見既有 Ticket 30 review leaf。
+不把 fixture 成功提升成真 authority／Host／dispatch／formal closure 證據。
 
 ### 同一 Grant 的有限型別建構順序
 

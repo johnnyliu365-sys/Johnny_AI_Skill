@@ -140,3 +140,63 @@ lifecycle/serialization and the same capability's case matrix. The threshold
 triggered review, not automatic splitting/deletion; existing Git test helpers
 were private unittest methods rather than an available shared harness. The
 correction must remain parameterized and cannot grow a parallel framework.
+
+## Closure02 correction, exact integration and evidence seal
+
+The same independent reviewer accepted the bounded Closure02 clarification at
+`bacab24ddd20d1aab5911315b53ff30926a4daa9` (ticket blob
+`aa207e6f6b7edcfc16eefadd83520bbfce4af4eb`). Original owner correction
+`629030f4678b5d600c9ad53baf60967c25ecefbc` normally merged that Root docs
+carrier; Root's later ticket-only anchor clarification `5d0f8d4b` was also
+independently accepted (ticket blob `8f950a67ab08b9c4d7a57922953c51eee0b2d0d6`).
+The latter preserves original source scope and separately authorized Root
+document revisions; it does not let an implementer filter its own changed paths.
+
+All four findings are `CLOSED`. New defect tests first reproduced eight red
+cells on the defective code. Correction requires exactly four unique binding
+kinds, counts trailing-space headings, maps RecursionError to finite failure,
+and strips ambient GIT_* values before any fixture command while using a
+test-owned empty global config. The original reviewer ran all 20 affected cells
+with unreduced output and the full 91 focused tests, strict mypy, compile and
+diff checks. Independent cross-feature mutation made its named cell red
+(LEAF_NOT_FOUND instead of INDEX_SCHEMA_INVALID), restored 3/3 green, and restored
+source blob `22a23be723bc34d9144575a81238d79ff5579485`; review worktree clean.
+Verdict `APPROVED`. Earlier constructor/valid-case evidence remains in force.
+
+Final candidate `b7e9e2f35bd997c65df80541ec0196a000ab3e46` only normally
+merged the reviewed docs carrier into the reviewed correction; source and test
+blobs remained `22a23be723bc34d9144575a81238d79ff5579485` and
+`ff6f66e8c6cd07fb956de3be72507038e2254ad0`. The trusted control branch
+`codex/skill-improvement-checklist` was clean at
+`5d0f8d4bab982b6b1944d24a512a6f24bb8e799a`; its diff to the candidate was
+exactly the two CREATE paths, with no preexisting source/test changes from the
+original `d2f2aa10` source baseline. `admit_document_mutation` read the boundary
+from that trusted branch, returned `INTEGRATED`, and read back the exact final
+candidate SHA. This is local integration only; `main`/origin were not pushed.
+
+Post-integration Root used one Python process to assert the imported module
+file belongs to the integrated control worktree and verify both exact reviewed
+Git blob hashes, then invoked
+`pytest.main(['tests/test_mainline_source.py', 'tests/test_mainline_projection.py', '-q'])`:
+91 passed. `python -m mypy --strict library/local_orchestration/mainline_source.py`
+and `python -m compileall -q library/local_orchestration/mainline_source.py`
+passed. This actual-load observation applies to this local fixture run, not a
+generic Host/Expected qualification or checklist05 closure. The unchanged
+existing integration gate regression also passed 65 tests and three subtests.
+
+The synthetic decoy left by the first intentionally red GIT_DIR test had a
+policy-blocked recursive cleanup attempt. Later repros gained finally cleanup.
+Root and reviewer independently read the exact owned decoy path under
+`pytest-308/test_fixture_git_environment_i0/redirected-git-dir` as absent;
+neither claimed to have deleted it. No unrelated Recovery Hold was touched.
+
+Integration journal seal, **before teardown**: owned temp root
+`C:\Users\GameBoy\AppData\Local\Temp\johnny-ticket30a-integration-h7rtk9vz`,
+owner `ticket30a-root`, TTL this integration session until sealed evidence and
+exact teardown, contains one `queue/document-mutation-journal.jsonl` record.
+It binds Ticket30, integration branch, outcome INTEGRATED, candidate/detail
+both `b7e9e2f35bd997c65df80541ec0196a000ab3e46`, no offending path, and full
+file SHA-256 `74351bf0dccb2714df25cf2f126b815f1e44fe031944095fc0df9719d0bc50ce`.
+This record and exact source commits remain versioned before journal removal.
+Dedicated clean implementation/review worktrees and the integrated branch are
+also teardown-pending; no unregistered/user asset is a cleanup target.
