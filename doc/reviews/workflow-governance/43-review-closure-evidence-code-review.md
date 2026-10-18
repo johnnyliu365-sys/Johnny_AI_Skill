@@ -41,3 +41,27 @@ modules, diff checks. Six imported-Test-type collection warnings are not failure
 No product correction finding. Root returned AUTO_CONTINUE for C2–C4 to the
 same author, conservatively accounting80/300s pending exact review timing.
 This does not replace mandatory adversarial qualification.
+
+## C1–C4 engineering result; formal review blocked
+
+Candidate `d477020e0fb010ea12d610e3588630284472ecf8` changes exactly the five
+allowed paths. Independent `/root/review_closure_review` confirmed ENGINEERING_PASS:
+19tests/58subtests, three-module strict mypy, diff checks. Existing source,
+Expected, AC and cleanup checks precede the new finite closure checks; only
+REVIEW→HANDOFF requires closure. Author bypassed child-binding check and3cases
+turned red. Reviewer inverted reviewer identity comparison through a different
+door: a valid closure was denied and the named test failed. Exact restoration
+and complete focused suite green; review worktree diff exit0.
+
+Growth179product/428test lines is above150/180 signal. Reviewer inspected separate
+DTO/reducer/consumer responsibilities and found no blocking duplication. No new
+file/framework. Command accounting: author conservative122s included80s earlier
+estimate; actual C1 reviewer36.1s replaces33s estimate, final reviewer22.6s gives
+conservative147.7/300s. No cap/reset/third correction.
+
+Final review verdict BLOCKED / REVIEW_BLOCKED: mandatory qualified read-only
+Host audit is UNAVAILABLE, not an implementation finding. Existing CVE-D9
+source integration and D10 typed observation are not that qualification.
+Do not integrate this candidate or retry its passing implementation. Both
+registered author/review worktrees and candidate ref are retained; no teardown
+while required review evidence is unresolved. Other local tickets continue.

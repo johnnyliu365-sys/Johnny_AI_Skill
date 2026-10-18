@@ -62,3 +62,22 @@ guarded integration, immutable evidence seal and independent readback. Then
 remove only these registered clean/integrated resources and the exact journal.
 Author/review worktrees are retained until that same seal confirms teardown.
 No force/reset/clean, shared-history rewrite or unrelated asset removal.
+
+### Local integration seal
+
+Root replayed the two reviewed commits onto control baseline
+`684b93cfee4c72f1c1428e3dca8228d0b4f58030`, yielding
+`1aa5ed22bc270b8d8604be89c9f23b0942c8dee5`. Existing
+`admit_document_mutation` read the boundary from the integration branch and
+returned INTEGRATED at that exact SHA. Root read HEAD and both blobs back:
+`requirement_lineage.py`=`22510970e0e6b2fe5b3a6c5143304b8084d7264f`;
+`test_workflow_requirement_lineage.py`=`bf511e442d88ba580aba3d9ee6196f2ba915a7df`.
+Both equal the independently reviewed candidate. On integrated source, full
+lineage suite14passed/30subtests in1.11s. Integration command wall8.23s.
+
+Journal exact path `C:/Users/GameBoy/AppData/Local/Temp/Johnny-checklist44-20261018/queue/document-mutation-journal.jsonl`:
+389 bytes, one INTEGRATED event at `2026-10-18T13:19:58.425641+00:00`, principal
+GameBoy, branchcodex/skill-improvement-checklist, candidate1aa5ed22, exactTicket44.
+SHA256 `b5dd3d7c3be5251e2d7a2ec19f440e35edf733a3ef368b6d28ee7d71a0b92bd4`.
+This immutable summary preserves all fields necessary for the gate outcome;
+raw journal remains until independent seal readback. Cleanup pending that check.
