@@ -21,3 +21,14 @@ helpers, new files or external effects. Type phase is reviewed before behavior.
 
 Status: IMPLEMENTING_CONTRACTS. Full checklist11 remains open. Asset owner is
 the named seat; teardown only after review, sealed evidence and local integration.
+
+## Constructor review
+
+Author candidate `c351f4bdb1767a5faaa497604dec1424ae53ff16` changed exactly the
+two allowed files (+78 product/+84 test lines); legacy validate body unchanged.
+Author55s command time. Independent `/root/lineage_compat_review` read exact
+candidate in its registered clean non-reparse detached worktree, verified
+strict ordinary DTO construction and ran12tests/25subtests, strict mypy,
+import and diff checks: APPROVED_TYPE_PHASE_ONLY. No finding. Root continued
+the same author to the pure method, conservatively75/300s cumulative pending
+exact review command timing. Full behavior/mutation/integration not yet approved.

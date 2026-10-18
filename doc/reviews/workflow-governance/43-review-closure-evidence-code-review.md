@@ -29,3 +29,15 @@ constructor tests may stand in for those claims. Do not close checklist07/09.
 
 Worktree owner is the named seat; retain candidates until review/evidence seal
 and integration permit restricted teardown. Recovery holds remain untouched.
+
+## C1 constructor review
+
+Author `14811b79ef0c67223a07ee7551dfe9da4e213c23` changed only the existing
+contracts/test files; no gate/Router behavior. Author47s commands includes a
+corrected negative test that had incorrectly used different child identities.
+Independent `/root/review_closure_review` at exact detached candidate APPROVED
+TYPE_PHASE_ONLY: 11tests/41subtests, strict mypy for the three declared product
+modules, diff checks. Six imported-Test-type collection warnings are not failures.
+No product correction finding. Root returned AUTO_CONTINUE for C2–C4 to the
+same author, conservatively accounting80/300s pending exact review timing.
+This does not replace mandatory adversarial qualification.
