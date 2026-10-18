@@ -609,7 +609,7 @@ engine, Host privilege change or activation was added to conceal this gap.
 
 Final verdict: ENGINEERING_PARTIAL / R2_CLOSED / R1_UNVERIFIED /
 REVIEW_BLOCKED. Required HIGH_ASSURANCE qualified read-only adversarial audit
-is also UNAVAILABLE. Existing CVQ-D9 source integration and D10 contract tests
+is also UNAVAILABLE. Existing CVE-D9 source integration and D10 contract tests
 are not a qualified actual Host/binary/config/source-isolation/no-code/
 no-delegation observation. No integration; no whole-ticket or01/02 checkbox.
 

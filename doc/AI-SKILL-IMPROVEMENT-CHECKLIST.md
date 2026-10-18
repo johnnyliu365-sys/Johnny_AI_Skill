@@ -37,7 +37,7 @@ Router、Reviewer、文件索引與結案規則仍各有唯一正文。`[x]` 只
 Root與獨立既有盤點席以現有票／review窄查，沒有把下列缺口另開成重複框架。
 
 - **必要審查能力**：30B／43強制的qualified唯讀／no-code／no-delegation隔離audit
-  不可用。CVQ-D9是來源整合、D10是contract-only，不能借PASS。未核准候選不能當
+  不可用。CVE-D9是來源整合、D10是contract-only，不能借PASS。未核准候選不能當
   下游實作authority；不自行降低HIGH_ASSURANCE或建立VM/Broker來繞過。
 - **真實來源／授權**：30B的R1尚未有approved-control來源；改binding Grant ID仍能
   通過fake讀回。現有dispatch-authority僅owner-intent marker，不能當protected issuer。
