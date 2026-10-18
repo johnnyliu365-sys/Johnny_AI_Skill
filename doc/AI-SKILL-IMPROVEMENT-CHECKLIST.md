@@ -3,7 +3,7 @@
 | 欄位 | 值 |
 | --- | --- |
 | 文件身分 | `AI-SKILL-IMPROVEMENT-CHECKLIST`；本專案工作追蹤，非新 PRD／SPEC／Gate |
-| Revision／來源 | `15`；Owner 2026-10-18 本次 12 項指示、十種失敗情境、通用虛構情境及既有功能沿原 PRD 修訂限定 |
+| Revision／來源 | `16`；Owner 2026-10-18 本次 12 項指示、十種失敗情境、通用虛構情境及既有功能沿原 PRD 修訂限定 |
 | 工作基準 | `a1cb6c13adbeb52a4117991727dcc3d4af6d2a33`；分支 `codex/skill-improvement-checklist` |
 | 主線 | 先對照、優先 02→04→05→06→07，再處理餘項與整合回放 |
 | 負責 | Root 理解需求、衝突與派工；票級實作者依有效能力 Profile；獨立審閱另席 |
@@ -42,6 +42,7 @@ Router、Reviewer、文件索引與結案規則仍各有唯一正文。`[x]` 只
 - 程式與測試腳本禁止按票堆疊成混合責任巨石。現有 `johnny-boundary` 的 `create` 預設拒絕、Git diff 比對與 `TEST → A → B` 已提供部分硬性保護；它們**不會**判斷檔案內部耦合。剩餘缺口是對真實候選的重用／新增責任／成長與相依結構證據的正式拒收入口；不得只靠文字、行數上限或新增平行 Gate 宣稱完成。
 - 窄查 `library/`、`tests/` 的 Python 檔案：`tests/test_workflow_router.py` 約 3561 行且含 Router、Context telemetry、route instruction、Agent Context lease 四組測試類；`library/workflow_router/contracts.py` 約 1734 行含多個領域契約。這是結構審查觸發訊號，**不是**自動拆檔、刪測試或判定全部違規的證據；後續只能隨受影響能力做 TEST→A→B 承接。
 - 本地整合分支對 01～10 已改動的 13 個相關測試檔作一次合併回歸：`330 passed, 568 subtests passed`；8 項 pytest collection warnings 是匯入的 `Test*` 型別非測試類別，沒有失敗。這不替代各票獨審或未合格 Host effect。
+- 本輪 Ticket 40 與兩份尚未生效的 SPEC 提案後再驗證：`python -m pytest tests/test_plugin_payload_boundary.py tests/test_ticket_template_contract.py tests/test_workflow_requirement_lineage.py -q` 為 `96 passed, 223 subtests passed`；主線、Review、依賴與工作樹八檔聚焦回歸為 `177 passed, 226 subtests passed`。後者 6 個 pytest collection warnings 是匯入的 `Test*` 型別，不是失敗；這些綠燈不能代替 Host 派工、可信載入來源或正式結案 effect 證據。
   02 的初稿拒收，仍須修正真正 Owner effect／相依接續，不得重命名 dispatch wait 冒充。
   下一步依既有需求與 ticket 補足 02／05／06／07 的外層效應與驗收，再接續其他項目。
 
