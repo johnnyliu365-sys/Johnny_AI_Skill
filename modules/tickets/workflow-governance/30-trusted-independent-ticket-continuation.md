@@ -85,17 +85,30 @@ object 嚴格包含：`schema_id = mainline-index/revision-01`、`project_id`、
 `depends_on[]`、`admission_ref`（nullable）、`evidence_refs[]`。所有 metadata ID 仍須
 通過既有強型別 constructor，不另建平行 ID 規則。
 
+每個精確 ticket leaf 在既有內容中另有唯一 `## Mainline ticket contract` heading，
+緊接唯一 `json` fence，嚴格包含 `schema_id = mainline-ticket/revision-01`、
+`ticket_ref`、`ticket_revision`、`status`、`depends_on[]`、`admission_ref`、
+`evidence_refs[]`。leaf 是 graph/status 的正式來源；index 的相同欄位是綁定宣告，
+兩者任一值不同即 `INDEX_BINDING_MISMATCH`，絕不採 first-match 或單邊覆蓋。
+`required` 與 `leaf_ref` 由 index 宣告，與 leaf 原始 bytes digest 一起驗證；
+只有從 committed leaf 解析出來且與 index 一致的節點能進既有投影。
+
 Parser 必須拒絕重複 JSON key、未知／缺失欄位、空 tickets、重複 ticket／leaf ref、
 跨 feature 的 leaf、未知依賴、非法狀態及 schema 漂移。`feature` 決定通用 index 路徑；
 每個 leaf 只能是同 feature 目錄的直接 `.md` 子檔。index 與 leaf 必須在同一 direct
-observed SHA 讀取；逐 leaf 的**原始 bytes** SHA-256 必須等於 `leaf_digest`，不解析
-leaf body。成功後才用已驗證 index 建立既有 `MainlineProjectionRequest`；
+observed SHA 讀取；逐 leaf 的**原始 bytes** SHA-256 必須等於 `leaf_digest`，
+再解析該 leaf 的唯一 contract fence。成功後才從驗證過的 committed leaves 建立
+既有 `MainlineProjectionRequest`；
 `source_revision = rev-<observed SHA>`，不可接受 caller／index 自報值。原始 Markdown／
 JSON 只在讀取流程內暫存，不進結果、Router state 或 log。
 
 最小 source read port 為 `read_blob(observation: GitObservation,
-artifact_ref: TargetRelativePath) -> GitBlobReadResult`，要求 repository/ref 身分
-隨 observation 綁定；現有只收 commit/path 的 `GitReadbackPort` 不合格。
+artifact_ref: TargetRelativePath) -> RawGitBlobReadResult`，要求 repository/ref 身分
+隨 observation 綁定。`RawGitBlobReadResult` 只重用既有 `GitBlobReadStatus`，但
+`FOUND` payload 必須是原始 `bytes`，非 FOUND 不得攜帶 payload；hash 以該 bytes
+計算，UTF-8 解碼與 fenced JSON parse 必須嚴格拒絕非法序列、重複 key 與多重 block。
+現有 `GitBlobReadResult.payload: str | None` 和只收 commit/path 的
+`GitReadbackPort` 均不足以證明原始 bytes／authority identity，不得假借重用。
 候選組合只做一次 `observe_declared_remote`、逐 exact blob 一次 read、一次既有純投影；
 結果只有候選 metadata 或有限拒絕。source failure 僅限 `INDEX_NOT_FOUND`、
 `INDEX_READ_UNAVAILABLE`、`INDEX_SCHEMA_INVALID`、`INDEX_BINDING_MISMATCH`、
