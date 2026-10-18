@@ -2,7 +2,7 @@
 
 | 欄位 | 內容 |
 | --- | --- |
-| State | `OPEN / DOCS_ONLY`；設計基準整合，不啟用 runtime |
+| State | `DESIGN_LOCAL_INTEGRATED / CLEANUP_BLOCKED / RUNTIME_NOT_EFFECTIVE`；設計基準已整合，暫存 journal 清理未確認，不啟用 runtime |
 | Authority | Owner 2026-10-18 限定修正授權；原 `PRD-20260815-022`／`PRD-20260805-009`、原兩份 SPEC；不新增 PRD、政策或效果權限 |
 | Baseline | 本票落地後的精確控制分支 SHA，執行前固定；AC-17 原提案 `fa418b6d6ce3667abe3fa7b693b1034ec27cdaa9`，治理提案原內容 `1669e8e20f0a30894606e16f9ea1a10e4f0c5ba3` |
 | Candidate | AC-17 `4531d00f7d979fb7cda567b4d584fde6f41698bb`；治理 `8eae1af4d6fbcab9b5c3f0f7f5b286a91cec7f78`；本地 replay 後須核對兩份 Git blob 相同 |
@@ -36,3 +36,12 @@ forbid = template/
 4. 回件列出兩個候選、兩個獨審結論、精確落地 blob、本地整合 SHA、未啟用能力。
 
 新檔授權僅為本張 target-owned Ticket；無產品碼、測試碼、截圖或其他新檔。
+
+## Closure evidence
+
+兩份精確 blob 已於本地 `76d1f942e24975da28889c8b6ecee904c8ef3da0`
+通過 document mutation gate 整合，獨審與測試見
+[Ticket 41 review](../../../doc/reviews/workflow-governance/41-bounded-spec-correction-integration-code-review.md)。
+這只完成文件設計基準；任何 runtime／Host／外部效果仍未驗收。
+暫存 gate journal 的精確刪除遭 Host policy 拒絕，故本票不標正式關閉；
+保留具名 `CLEANUP_BLOCKED` 追蹤，不影響其他已准入工作。
