@@ -492,3 +492,33 @@ and checklist01/02 stay open; current Router return is ACTION_COMPLETED for
 30M, then only30B implementation waits for this new preciseGrant. No other
 source/test work with an existing independent validGrant was identified in this
 boundedfeature inspection; none is revoked by the proposed new gates.
+
+### Final independent readback and cleanup confirmed
+
+The original independent reviewer read committed seal
+`07b1e4123500fd3006db063e7704969bc1ba4dff` and the actual2590-byte/four-record
+journal before teardown. SHA256, both gate outcomes, exact five-/three-doc
+diffs, baseline8c, every pinnedblob/rawleafdigest, index mirrors, tree and
+129-commit/87-path range/stdoutdigests all matched. The reviewer confirmed
+GrantNOT_ISSUED/no push/no Host claim and both exact registered worktrees clean;
+normal restricted teardown was permitted. No new full review or91-test rerun.
+
+Root rechecked absolute paths are inside this repository's `.worktrees`, all
+containment/target entries are non-reparse, exact Git roots/registration match,
+both tracked/untracked statuses are clean, and both HEADs are ancestors of the
+preserved control branch. Normal `git worktree remove` removed only
+`.worktrees/skill-improvement-30m-docs` and `.worktrees/skill-improvement-30m-review`;
+normal `git branch -d` removed only their fully integrated
+`control/skill-improvement-30m-docs` ref. Root rechecked the journal's four lines,
+digest, non-reparse identity and sole-child hierarchy, then native
+`Remove-Item -LiteralPath` removed only its exact file and emptyqueue/root,
+without recursion/force. Final Test-Path returnedfalse for allthree targets.
+
+All source, tests, reviewed commits and seal evidence remain reachable from
+`codex/skill-improvement-checklist`; no user/Recovery/other-ticket asset was
+removed. Control worktree is clean. `30M = COMPLETE_LOCAL / CLEANUP_CONFIRMED`;
+`ACTION_COMPLETED` returns to the existing Router. Only the new30B source/test
+Grant and optional futurepublication require new authority; no source/test
+implementation has begun. FullTicket30/checklist01/02 are not closed. The
+30B baseline remains8c and the exactcandidate leaf/indexpins above do not move
+with this cleanup-ledger-only commit.
