@@ -461,7 +461,7 @@ issuer check, pre-effect readback or one-shot constraint turns these cells red.
 | Revision evidence slot | Current state |
 | --- | --- |
 | Correction authority | Owner's 2026-10-18 bounded SPEC approval based on `fa418b6d6ce3667abe3fa7b693b1034ec27cdaa9`, conditioned on independent review of the corrected revision; no repeat owner decision. |
-| Corrected candidate revision | The commit containing this proposal; bind its exact commit SHA and SPEC blob SHA in independent review. |
+| Corrected candidate revision | Reviewed candidate `4531d00f7d979fb7cda567b4d584fde6f41698bb` / SPEC blob `9c88d20eb8f6eba941d1b8a0fdc457d6be1cee48`; the Ticket 41 review binds its independent verdict. |
 | Independent SPEC review | `PASS` on candidate `4531d00f7d979fb7cda567b4d584fde6f41698bb` / blob `9c88d20eb8f6eba941d1b8a0fdc457d6be1cee48`; reviewer and scope are bound in the Ticket 41 review. |
 | SPEC design-baseline effect | `DESIGN_BASELINE_REVIEWED`; the exact reviewed blob was locally integrated at `76d1f942e24975da28889c8b6ecee904c8ef3da0`. This is not runtime activation. |
 | Lineage validator/index migration review | `PENDING`; exact commits, acceptance/reverse-mutation evidence and legacy readback required. |
