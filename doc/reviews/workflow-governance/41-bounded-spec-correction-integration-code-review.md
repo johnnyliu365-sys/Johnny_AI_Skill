@@ -68,3 +68,12 @@ control-branch readback confirmed both blobs. The second exact journal line is:
 The isolated journal root still exists and cleanup remains `CLEANUP_BLOCKED`.
 No runtime/Host/Grant activation or ticket closure is inferred from this
 status correction.
+
+## Isolated journal seal for bounded teardown
+
+Root reread the exact Ticket 41 isolated root before cleanup. It contains only
+`queue/document-mutation-journal.jsonl` with the two `INTEGRATED` records above;
+its SHA-256 is `0ec63a16083f53f028445602f9af9e03822ffe52fd34f330705604c3ce524771`.
+This digest and both exact records are versioned before any further cleanup
+attempt. The two integrated commits and reviewed SPEC blobs remain reachable
+from the control branch; temporary journal removal cannot alter that history.
