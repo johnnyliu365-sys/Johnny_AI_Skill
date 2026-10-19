@@ -1,4 +1,18 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## C5 E01 exact correction activation — 2026-10-19
+
+Distinct /root/batch_authority_review ordinary DOC_PASS at
+8227ea5a7f38c481c6522fed5e96b81cd89ed103, Ticket30 LF
+5e28ca25a5e01e8912cf1b496108157b3d758c37be4a875def7e1cac4e778fc0 matches D8.
+No new source behavior/B2 comparison/DTO/Host scope: only existing focused
+composition selftest changes under same closure11. Root freshly reads exact
+clean38417fe9edfb6b39527fe58e614e8d5087bab517/owner branch, actual toplevel,
+linked Git and non-reparse ancestors before correction; unchanged typed constructor
+and root reviewed source proof remain valid. Same named author/WT/context and
+Root sole reviewer/distinct source peer; grant-ticket30n3-enrollment-composition-
+20261019 revision03 ACTIVE under original uncapped batch. Historical ZERO_RED,
+prior commands/holds/resources unchanged. ACTION_COMPLETED -> AUTO_CONTINUE
+IMPLEMENT E01, no Owner renewal/formal integration or qualification.
 ## C5 initial Root review / E01 CHANGES_REQUESTED — 2026-10-19
 
 Immutable38417fe9edfb6b39527fe58e614e8d5087bab517 exactCREATE2/MODIFY2. Source
