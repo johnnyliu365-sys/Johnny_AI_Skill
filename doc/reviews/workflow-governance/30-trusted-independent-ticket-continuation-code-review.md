@@ -1,5 +1,19 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## F1 shared fixture exact admission — 2026-10-19
+
+Different-seat /root/batch_authority_review DOC_PASS on immutable68f67b236153d8c91ef8b0f5495b35167aa4a8c4,
+leafblob9f608ef80fd5788053861ca86e2e2532f956a4bc / LF
+e3ea4c957d850eab6392bde8b5bc12c82544ac144cff8b140ab7eebbc64d3bb7 matching registry.
+Closure05 is test-only MODIFY1, preserves actual assertions and source pinning;
+default no symlink probe, optional selector never grants permission and not run.
+No qualified review or Host admission. Root reads exact clean bf5a4a3c / named
+codex/skill-improvement-30n3-enrollment worktree and contained Git metadata, nonreparse
+repo/worktrees/seat path, then activates this exact development child binding
+grant-ticket30n3-fixture-separation-20261019 under reviewed uncapped parent.
+Prior B2 allocation released, ref/source/output and all review/recovery holds retained.
+AUTO_CONTINUE IMPLEMENT same-lifetime named author, no receipt/runner/Host effect.
+
 ## C1 matched replay and independent engineering seal — 2026-10-19
 
 Conclusion: SOURCE_REFACTOR_ENGINEERING_STAGED_PASS / HISTORICAL_COMMAND_UNVERIFIED /
