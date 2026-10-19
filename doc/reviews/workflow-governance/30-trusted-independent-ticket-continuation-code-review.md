@@ -1,5 +1,144 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N2 B5 independently verified / current source-only validation admission — 2026-10-19
+
+Candidate88b707c8585501173bb6898f332ad52a5765ed66 adds only the existing Python
+fixture/helper/mock contract test against0534e3b1; C# bytes unchanged. Root read
+actual diff and peer independently confirmed one MODIFY/clean/diffcheck. One typed
+_create_native_fixture is the sole builder; mock test captures its actual command
+arguments, cwd/env and registered EXE/DLL output without faking the real-candidate
+cells. Real fixture builds with --no-restore --no-incremental. No parallel runner.
+
+Root fresh current-snapshot fixture-binding mock plus actual pure CLI pytest:
+2passed in8.32s, whole11.172s, real offline restore1.772403/build5.729381;
+mock timings0.000013/0.000005 are mock only, never SDK/effect evidence.
+Current Root-built EXE7296ff05216e248e129bab9295bc235423410ffed1a1d21df46734569eb58714 /
+DLLc22a1363a90e4288241d9bd303686b6b498e4009d70185b47db46f5e3a323ac2.
+These actual built hashes, not earlier author hashes, bind Root's next observation.
+Different source snapshots/build metadata may differ; none is backfilled as the
+unrecorded earlier native green. B5 CLOSED for this fixture binding; no claim of
+immutable installed Host loading is made.
+
+Root completed three fully fenced actual C# weakening→strict offline nonincremental
+rebuild→named pure red→inverse source patch→nonincremental rebuild→green sequences.
+Compiler commands were awaited to terminal before restore; each build35s/pure CLI15s
+finite, no server/network/test stress/native jobs. Restored LF Git blobs exactly
+match0534: Guard d8fa3a7aec6e7522bd9bf76ea88ccacbf0364303 and WindowsJobPort
+4d079bf66633482c219078d711b7e3c631abab8b. The earlier unfenced B1/incremental failures
+remain separate failed verification history, not counted in these three pairs.
+
+### N2-B1-cause
+
+```diff
+-        return attempt.IsKnownQuotaDenial ? NativeJobWin32Error.NotEnoughQuota : ChildRecoveryFailureExitCode;
++        return NativeJobWin32Error.NotEnoughQuota;
+```
+
+```text
+COMMAND ['dotnet', 'build', 'JohnnyAuthority.Tools.csproj', '--no-restore', '--no-incremental', '--disable-build-servers', '--verbosity', 'minimal', '-m:1', '-nodeReuse:false', '-p:UseSharedCompilation=false', '-p:RestoreConfigFile=NuGet.Config', '-p:BaseIntermediateOutputPath=C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n2-review-20261019\\obj\\', '-p:BaseOutputPath=C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n2-review-20261019\\bin\\']
+  JohnnyAuthority.Tools -> C:\Users\GameBoy\AppData\Local\Temp\johnny30n2-review-20261019\bin\Debug\net10.0-windows\JohnnyAuthority.Tools.dll
+
+建置成功。
+    0 個警告
+    0 個錯誤
+
+經過時間 00:00:05.34
+BUILD_ELAPSED 5.7810000000172295 EXIT 0
+job_contract_self_test_failed:only the exact native quota error maps to the closed fixture denial code
+PURE_ELAPSED 0.48499999998603016 EXIT 1
+COMMAND ['dotnet', 'build', 'JohnnyAuthority.Tools.csproj', '--no-restore', '--no-incremental', '--disable-build-servers', '--verbosity', 'minimal', '-m:1', '-nodeReuse:false', '-p:UseSharedCompilation=false', '-p:RestoreConfigFile=NuGet.Config', '-p:BaseIntermediateOutputPath=C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n2-review-20261019\\obj\\', '-p:BaseOutputPath=C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n2-review-20261019\\bin\\']
+  JohnnyAuthority.Tools -> C:\Users\GameBoy\AppData\Local\Temp\johnny30n2-review-20261019\bin\Debug\net10.0-windows\JohnnyAuthority.Tools.dll
+
+建置成功。
+    0 個警告
+    0 個錯誤
+
+經過時間 00:00:05.25
+BUILD_ELAPSED 5.73499999998603 EXIT 0
+{"status":"passed","contract":"bounded_native_job"}
+PURE_ELAPSED 0.48399999999674037 EXIT 0
+```
+
+### N2-B2-deadline
+
+```diff
+-        TimeSpan elapsed = Stopwatch.GetElapsedTime(_deadlineStartedAt, now);
++        TimeSpan elapsed = TimeSpan.Zero;
+```
+
+```text
+COMMAND ['dotnet', 'build', 'JohnnyAuthority.Tools.csproj', '--no-restore', '--no-incremental', '--disable-build-servers', '--verbosity', 'minimal', '-m:1', '-nodeReuse:false', '-p:UseSharedCompilation=false', '-p:RestoreConfigFile=NuGet.Config', '-p:BaseIntermediateOutputPath=C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n2-review-20261019\\obj\\', '-p:BaseOutputPath=C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n2-review-20261019\\bin\\']
+  JohnnyAuthority.Tools -> C:\Users\GameBoy\AppData\Local\Temp\johnny30n2-review-20261019\bin\Debug\net10.0-windows\JohnnyAuthority.Tools.dll
+
+建置成功。
+    0 個警告
+    0 個錯誤
+
+經過時間 00:00:05.43
+BUILD_ELAPSED 5.907000000006519 EXIT 0
+job_contract_self_test_failed:deadline exhaustion preserves job evidence after exact signaled process handles are released
+PURE_ELAPSED 0.5150000000139698 EXIT 1
+COMMAND ['dotnet', 'build', 'JohnnyAuthority.Tools.csproj', '--no-restore', '--no-incremental', '--disable-build-servers', '--verbosity', 'minimal', '-m:1', '-nodeReuse:false', '-p:UseSharedCompilation=false', '-p:RestoreConfigFile=NuGet.Config', '-p:BaseIntermediateOutputPath=C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n2-review-20261019\\obj\\', '-p:BaseOutputPath=C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n2-review-20261019\\bin\\']
+  JohnnyAuthority.Tools -> C:\Users\GameBoy\AppData\Local\Temp\johnny30n2-review-20261019\bin\Debug\net10.0-windows\JohnnyAuthority.Tools.dll
+
+建置成功。
+    0 個警告
+    0 個錯誤
+
+經過時間 00:00:05.25
+BUILD_ELAPSED 5.719000000040978 EXIT 0
+{"status":"passed","contract":"bounded_native_job"}
+PURE_ELAPSED 0.5160000000032596 EXIT 0
+```
+
+### N2-B4-partial
+
+```diff
+-        return HoldRecovery(image, fixture, readback, creation.Status,
+-            identity, null, NativeJobFailurePoint.CreateProcess, job, process, thread,
++        if (exited && identity is not null && evidence is { NoActiveProcesses: true } && Remaining() > TimeSpan.Zero)
++            return Failure(image, fixture, readback, NativeJobProcessCreationStatus.NotCreated,
++                creation.Reason, creation.NativeCallSucceeded, creation.NativeErrorCode,
++                NativeJobFailurePoint.CreateProcess, evidence);
++        return HoldRecovery(image, fixture, readback, creation.Status,
++            identity, null, NativeJobFailurePoint.CreateProcess, job, process, thread,
+```
+
+```text
+COMMAND ['dotnet', 'build', 'JohnnyAuthority.Tools.csproj', '--no-restore', '--no-incremental', '--disable-build-servers', '--verbosity', 'minimal', '-m:1', '-nodeReuse:false', '-p:UseSharedCompilation=false', '-p:RestoreConfigFile=NuGet.Config', '-p:BaseIntermediateOutputPath=C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n2-review-20261019\\obj\\', '-p:BaseOutputPath=C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n2-review-20261019\\bin\\']
+  JohnnyAuthority.Tools -> C:\Users\GameBoy\AppData\Local\Temp\johnny30n2-review-20261019\bin\Debug\net10.0-windows\JohnnyAuthority.Tools.dll
+
+建置成功。
+    0 個警告
+    0 個錯誤
+
+經過時間 00:00:05.43
+BUILD_ELAPSED 5.9060000000172295 EXIT 0
+job_contract_self_test_failed:successful teardown does not erase successful partial process creation
+PURE_ELAPSED 0.5 EXIT 1
+COMMAND ['dotnet', 'build', 'JohnnyAuthority.Tools.csproj', '--no-restore', '--no-incremental', '--disable-build-servers', '--verbosity', 'minimal', '-m:1', '-nodeReuse:false', '-p:UseSharedCompilation=false', '-p:RestoreConfigFile=NuGet.Config', '-p:BaseIntermediateOutputPath=C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n2-review-20261019\\obj\\', '-p:BaseOutputPath=C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n2-review-20261019\\bin\\']
+  JohnnyAuthority.Tools -> C:\Users\GameBoy\AppData\Local\Temp\johnny30n2-review-20261019\bin\Debug\net10.0-windows\JohnnyAuthority.Tools.dll
+
+建置成功。
+    0 個警告
+    0 個錯誤
+
+經過時間 00:00:05.32
+BUILD_ELAPSED 5.827999999979511 EXIT 0
+{"status":"passed","contract":"bounded_native_job"}
+PURE_ELAPSED 0.5320000000065193 EXIT 0
+```
+
+Root SOURCE_CONSTRUCTOR_PREFLIGHT_PASS on current88b707c8 author/test return;
+B1/B2/B4 constructor/evidence fixes verified, historical J3 cause stillUNKNOWN.
+The one fixed native source-fixture schedule at3900c561 may now execute against
+these Root-built hashes, outside protected Host qualification. Reuse existing
+actual-candidate native test assertions and print the real CLI's entire stdout/
+stderr, one invocation only, timeout20s. No rebuild necessary before that invocation;
+first independently hash-read both files, verify sourceclean/head and fail ifmoved.
+No account/SID/ACL/service/install/permission change.30B/43/finalCVQ remain blocked.
+
+
 ## N2 B5 candidate rebuild evidence — 2026-10-19
 
 Root reviewer snapshot0534e3b1 first pure pytest passed11.547s whole
