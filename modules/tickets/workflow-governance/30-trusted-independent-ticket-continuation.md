@@ -29,6 +29,53 @@
 或新實作 admission。29→30 是本票實際重用純投影的能力依賴，不是清單順序。
 本輪文件工作有下節獨立授權；不因此將完整票30改成 admitted/completed。
 
+## 30B-R1 fail-closed correction allocation — 2026-10-19
+
+This bounded correction follows the Owner's latest explicit forged-Grant repair
+instruction and `batch-checklist-local-20261018`; it is not a new PRD, authority
+issuer, budget or final R1 acceptance. Prior attempts and R2 PASS remain intact.
+The known `grant-forged` binding produced a candidate after ten fake transport
+calls at `fd98f3958fa2d9ceca6d8a925efa27302c061df2`; retain that input as a
+public-entry regression requiring rejection before transport construction.
+
+Root's bounded source inventory found `dispatch_authority.read_dispatch_grant`
+and its creator reading/writing `dispatch-authority.json`. The module explicitly
+defines that file as an owner-intent marker, not a principal-separated issuer.
+The existing project-authority observation reducer validates supplied readings,
+not their authorization. Neither may be promoted to a trusted phase-Grant reader.
+No qualified production issuer/readback composition was established in this
+inventory. Consequently the public entry must return a named unavailable/missing
+Grant failure with no candidate, factory, clock callback or network activity.
+Nonempty IDs, a legitimate-looking old ID, ordinary JSON round-trips, caller
+anchors and the owner-intent marker cannot enable it.
+
+Reuse the existing readback coordinator as a private, explicitly unadmitted
+algorithm-test seam, requiring injected transport/clock with no automatic live
+transport fallback. Existing successful algorithm fixtures prove only parser,
+snapshot and transport behavior, never Grant admission. Preserve their checks;
+do not relabel them as successful public authority tests. Private Python symbols
+are not a sandbox against malicious same-process code; no such claim is allowed.
+Future public success requires independently qualified issuer/readback wiring
+under the existing authority architecture and its original acceptance criteria.
+
+| Allocation | Exact limitation |
+| --- | --- |
+| Derived Grant | `grant-ticket30b-r1-containment-20261019`, conditional on independent review of this committed allocation; parent is the existing batch authority |
+| Control baseline | `71f418086f90ec6e4a71fc45297c231e19c9829d`; final allocation commit and leaf blob read back before dispatch |
+| Source baseline | `fd98f3958fa2d9ceca6d8a925efa27302c061df2`; original cumulative baseline `930fad32e15a76cd54423e34ea941a630af039da` remains unchanged |
+| Author / reviewer | Same semantic implementer role, replacement seat `/root/ticket30b_r1_impl` using the existing allocation's low-cost capability profile; original independent `/root/ticket30b_readback_review`. Root alone orchestrates; no author helper |
+| Author workspace | Existing `.worktrees/skill-improvement-30b-readback`, branch `codex/skill-improvement-30b-readback`; preserve original candidate history |
+| Allowed correction | Modify only the candidate's `library/local_orchestration/mainline_readback.py` and `tests/test_mainline_readback.py`; create/delete none. Original cumulative four-path boundary below remains unchanged |
+| Root documents | This leaf, feature README, existing Ticket30 review and checklist only; no source edits by Root |
+| Budget | Prior conservative 515/600 command seconds retained; remaining 85 seconds maximum, author 40 / independent review 35 / Root validation 10. No reset or automatic extension; no full unrelated suite reruns |
+| Verification | First preserve the forged public call as red; then missing, forged and plausible-ID public calls reject with zero factory/clock effects. Keep algorithm fixture positives and SHA/digest negatives. Focused pytest, strict mypy, compile/import and diff checks; reviewer independently weakens the public rejection and observes the named regression fail, restores exact bytes and reruns |
+| No effects | No real GET, target read, credential, external model API, receipt, dispatch, spawn by tested code, Host change, integration, push or release. Normal authorized development delegation remains allowed |
+| Holds | Original source/Host positive qualification remains NOT VERIFIED; 30B and 43 remain unintegrated. Worktrees/candidate/evidence remain held; no cleanup retry or alternate deletion |
+
+Document review is ordinary control-plane review, not the unavailable qualified
+adversarial Host audit. Passing this correction closes the demonstrated public
+candidate leak only; it cannot close full R1, Ticket30 or checklist01/02.
+
 ## 30M 文件遷移授權紀錄 — 2026-10-18
 
 Owner 本輪直接授權正式主線文件遷移、獨審、同票修正及受控本地整合，並準備
