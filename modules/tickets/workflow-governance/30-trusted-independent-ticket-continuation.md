@@ -158,7 +158,19 @@ readback precede activation; this is local construction, not Host qualification
 before its first build. No extra Owner renewal or perpetual allocation.
 
 .NET10.0.302 existing offline source-cleared NuGet.Config/no new deps; exact installed
-Python311 existing shared builder only. No install/account/ACL/service/pipe/network/
+Python311 for bounded verification orchestration only. Verification binding erratum
+revision02: Root Git77ce25 proves held F1 shared builder7fa12f0c is NOT an ancestor
+of8a24. Do not invoke old _create_native_fixture/native_fixture: it couples build
+to physical files and an os.symlink attempt outside this pure composition test.
+Reuse the existing direct dotnet restore/build interface, not a new persisted build
+script or copied fixture framework: project cwd native_windows, registered Temp
+obj/bin through BaseIntermediateOutputPath/BaseOutputPath, RestoreConfigFile=NuGet.Config,
+--disable-build-servers/-m:1/-nodeReuse:false/-p:UseSharedCompilation=false;
+build --no-restore --no-incremental. Run only default self-test and enrollment-contract-
+self-test (plus named C5 reflection check where needed); no broad pytest/native/job
+campaign or selector inherited from another fixture. Same exact4paths/8a baseline/
+author/Grant/closure, no public contract or authority change, no Python edits.
+No install/account/ACL/service/pipe/network/
 Host/model/authority/dispatch effect, verification MATCH claim, protected-source
 qualification, formal source integration, push/release/deployment or checklist
 completion. Original history/resources/Recovery and 30B/43 holds unchanged.
