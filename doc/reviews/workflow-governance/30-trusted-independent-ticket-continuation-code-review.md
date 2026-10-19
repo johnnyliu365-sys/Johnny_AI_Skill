@@ -1,5 +1,34 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N2 B6 minimal J3 evidence correction / Architecture decision — 2026-10-19
+
+Root reread exact original N2 J3: actual fixed child attempts same tool, OS denies
+and reports finite result. It does not require exclusive attribution against every
+ancestor job or an increment of TotalTerminatedProcesses. Root and separate peer
+both confirm Microsoft's explicit TotalProcesses failed-association semantics.
+Current packet2/0/0 plus exact1816/parent membership/active-limit readback meets
+the *same-job association-attempt corroboration* dimension; requiring the extra
+termination-counter delta is an unapproved stronger oracle, not a safety invariant.
+It explains this current packet's predicate failure only, not historical J3 RCA.
+
+Architecture choice within original J3 (no new permission/SPEC/Owner decision):
+retain TotalTerminatedProcesses as reported diagnostic; derive association-attempt
+corroboration from the fresh same-job lifetime count relative to its zero baseline,
+and retain exact native-quota-only classification, parent membership, configured/
+observed limit equality, Created result, Completed/zero-active residual and exact
+closed fixture identity. A generic native failure, precheck/IO refusal, missing/
+unchanged counter, nonmember, limit mismatch or unconfirmed residue cannot pass.
+Do not call this exclusive local-cause proof, termination proof or Host qualification.
+No IOCP subsystem or broader native experiment is needed to meet original J3.
+
+Same original owner/8paths: add pure positive2/0/0 (and retained2/0/1 diagnostic),
+negative unchanged total/unknown/failure/membership/readback/residue controls; first
+red at the actual current predicate then correct it. Tighten result property where
+needed rather than merely deleting assertions; preserve all raw diagnostic fields.
+Run finite pure compile/constructor checks; Root/peer verify before another exact
+source-only native fixture. This evidence-backed changed repair is not an unchanged
+retry. No formal CVQ/30B/43/Recovery state change or installed Host proof follows.
+
 ## Corrected N2 first fixed native validation — actual refusal, not PASS / 2026-10-19
 
 Against exact current88b707c8 clean Root review snapshot, Root independently
