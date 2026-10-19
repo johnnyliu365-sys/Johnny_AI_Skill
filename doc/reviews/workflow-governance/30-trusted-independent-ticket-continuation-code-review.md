@@ -1,4 +1,43 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H4-B E01 retained-token ownership correction — 2026-10-20
+
+Immutable e8d193db1331cf8e65bddf18cd56ed8c1bc4441c exact2MOD vs a5521acc,
+product9425bc18841733890f4bdcbd29a7d396e0c07680 / testf11676cb695c317b6f9a4716787a3a64a809daeb.
+Distinct source peer CHANGES_REQUESTED under frozen closure17 cleanup/retention:
+_require_token_owner rejects Close-capable missing/zero handle before assigning
+the cleanup owner. Both pre-existing-token and own-impersonation paths can drop
+that possible owning token without Close/hold. Root actual observe-path counter
+patches every reached native boundary and reproduces all4cases: ambient/after-own-
+attempt x Close-only/zero-handle => close0, retainedFalse, INVALID_NATIVE_VALUE;
+after-own-attempt reverts once, ambient never reverts. Named Root assertion
+H4_CLOSE_CAPABLE_NATIVE_OWNER_DROPPED_WITHOUT_CLOSE_OR_HOLD is RED, not a real token
+probe. Existing plain-object unknown-owner cells fail to pin this ownership case.
+
+Other complete source review: endpoint/query enum mapping, signed LUID bits,
+same-thread finally-revert, deferred-success and fatal poison align. Physical
+549/1080, effective446/896; constructor matrix, shared native fake, parameterized
+boundaries and cleanup assertions stay cohesive; repetitive short setup is not
+grounds for a new framework/forced split. No prompt/ticket narrative in source.
+Author original34recordJSONL314408 SHA25663eb5acb4d92dcf06c31d5d7b04e6d8616d7005cc8abdd5c2c65acd782b1dc34
+retained; full behavior-evidence seal waits for this actual defect, not another
+unchanged broad campaign. No candidate integration or Host qualification.
+
+Root derives grant-ticket30n4-message-identity-20261020 revision03 ACTIVE_CORRECTION,
+parent original uncapped batch, exact baselinee8d193db1331cf8e65bddf18cd56ed8c1bc4441c;
+same owner/rootreviewer/sourcepeer/WT/branch/context/ownedTemp. MODIFY same2H4paths,
+CREATE0/DELETE0. Separate owning Close capability retention from query-shape validation
+using existing A retention contract, no new public type/Host port. Ambient malformed
+owner closes once without Revert; after own attempt malformed owner closes only
+after successful finally-Revert; successful cleanup still refuses invalid identity.
+Revert/Close failure retains the recognized owner in fatal poisoned hold, next use
+zero effects. Unknown nonowner remains refused/poisoned, never fabricated cleanup.
+Add named baseline-red cases for both phases and missing/zero handle plus cleanup
+failure; retain lawful positives, affected strict/regression/guarded import, actual
+new-owner-retention mutation and independent different-door review. No source
+callback/fallback/provenance widening or actual native call. Child55/outer60/default
+full traceback/no-cache/autoplugin disable; preserved history/uncapped policy.
+ACTION_COMPLETED -> AUTO_CONTINUE same-author additive correction, not Owner renewal.
+
 ## H3 final source-engineering seal — 2026-10-20
 
 Exact8b0402e4dbb03f61b44146c41c7e1166c504879c; E01 unsigned sentinel and E02 native

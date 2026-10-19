@@ -1,5 +1,16 @@
 # Ticket 37 independent review — 2026-10-18
 
+## Clarified closure02 resumption — 2026-10-20
+
+Distinct /root/batch_authority_review DOC_PASS at0fcd72f6cfaac68ac86626b3f09b41708a1c5471:
+one active3path boundary, prior completion repair historical, exact new normalization
+selector, same relevant source blobs at0d14087d and planning6b86185e, D8LF6054290c9cf5d1a5a8c9a2c26abe3b0ee5ccdf37e645ebbe836403b178279895.
+Root derives grant-wg37-normalization-20261020 revision02 ACTIVE, same parent/roles/
+WT/branch/sourcebaseline0d14087d/context/ownedTemp and exact3MOD/0CREATE/0DELETE;
+ticket read from0fcd72f6, not stale working-copy/history. Source remains clean and
+old completion-cell exit0 preserved, not first-red. ACTION_COMPLETED -> AUTO_CONTINUE
+same owner new normalization assertion/baseline-red/repair; no Owner renewal.
+
 ## Current-scope clarification before source mutation — 2026-10-20
 
 Author preserved a green old completion-cell run, but selected historical closure01
