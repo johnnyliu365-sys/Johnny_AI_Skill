@@ -408,9 +408,12 @@ this contained, non-reparse linked worktree clean at0a2e0661 and verified common
 identity. Ownership is disjoint from retained B3's gate/driver; separate implementation
 seats may work in parallel, one ticket/view each, no delegation by implementers.
 
-Phase A constructs internal named immutable bounds/result/status and a narrow typed
-native port in the three new files; explicit interop declarations may exist but
-invoke no native operation. Reuse the existing build fixture, expose only a pure
+Historical Phase A constructed internal named immutable bounds/result/status and
+a narrow typed native port in its original three new files and passed at eeb2eaaa.
+Grant revision02 moves those same values/port into NativeJobContracts.cs without
+semantic change; only Phase B adds the concrete WindowsJobPort.cs implementation.
+Explicit interop declarations in Phase A invoked no native operation. Reuse the
+existing build fixture and retain the pure
 job-contract-self-test mode, validate all ordinary constructors/finite failures,
 zero create/resume calls for invalid bounds and strict compile. No process creation,
 job setup, filesystem observation or other native behavior before different-seat
