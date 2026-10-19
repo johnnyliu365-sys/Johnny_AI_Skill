@@ -1,5 +1,31 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## C4 source construction admission / closure09 — 2026-10-19
+
+Distinct /root/batch_authority_review DOC_PASS d3ca37c307836f8ba5ea71cc5cafeddcca4934cb
+and narrow selector supplementd6010408f6fdd5013493b2cda7a0e99cc88acb00;
+exact Ticket30 LFa9207be3fde4cac009600b355079452a0104ab774bd5f0c8dd33c7c10ac3079a
+matches D8. Native C3 final7b ordinary seal below remains NOT_QUALIFIED/NOT_INTEGRATED.
+Existing B1 DTO/C2/C3 public read methods are actual compiled constructors/boundaries,
+not an imaginary future qualification precondition. New C4 composes them only.
+
+Root6543ba fresh clean author7b/branch/Git and all non-reparse ancestors match;
+same owner /root/ticket30n2_native_impl, Root reviewer/orchestrator, distinct source
+peer /root/ticket30_native_tools_review. Close C3 engineering allocation, bind new
+ctx-ticket30n3-code-inventory on same WT/branch and exact baseline7b2184dff3826eda312515978bdc066e20b366d5.
+After prerequisite DOC pass Root created only pre-registered ordinary fixture roots
+under each existing named owner/review output. apply_patch creates3literal files,
+directory creation exact root/empty only;7objects,44bytes, all non-reparse. Tool480a55
+read full file hashes/lengths: alpha18bytes3d4bb502b1da7249e1d4fc8bf735218303a8508afed542e9675ae1764d8e29dd;
+two sub-files13bytes each e16e28c0673d9d243c730697fe90a892b359b728fb66ccfc4829c4eb13186d22.
+Initial table output truncated columns and is not full hash evidence; JSON readback
+is exact. TTL through review+seal with Review/Recovery holds retained, no cleanup.
+
+grant-ticket30n3-code-inventory-20261019 ACTIVE, original batch uncapped history
+unchanged, exactCREATE2/MODIFY2 only, same-lifetime native delegation lane.
+ACTION_COMPLETED -> AUTO_CONTINUE IMPLEMENT C4. No qualification/authority/Host
+activation, account/service/ACL/security/install/model/network effect or main integration.
+
 ## C3 correction source-engineering seal / E01–E02 CLOSED — 2026-10-19
 
 Root SOURCE_ENGINEERING_STAGED_PASS at7b2184dff3826eda312515978bdc066e20b366d5,
