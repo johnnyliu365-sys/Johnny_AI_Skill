@@ -1,4 +1,23 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## C7 native source reuse / bounded preparation — 2026-10-20
+
+Read-only immutable graph339880/7981e9/14cc49/365c61 proves finalN2 source changes
+only4paths from88b707 and F1 only1testpath frombf5a4a3c. C6 does not automatically
+contain those sidebranch corrections. N2 WindowsJobPort already queries retained
+process raw creationFILETIME and exact job membership; do not create a duplicate
+PID/time implementation or silently round Python datetime to100ns identity.
+Original engineering seals retained, qualification not implied. Root freezes
+one conflict-free source composition at same originalTicket30 closure15 with
+new owned output (old binaries not overwritten), exactly4MODIFY/no hand edits.
+DOC pending; no source merge/qualification/Host effects done in this preparation.
+
+H1 initial Root two-counter raw retained in registered review Temp,
+h1-initial-root-counters.json SHA25654644d9619183283394ed941c4751dd8028506ecb353eea026e3cc01c734ca9e,
+tool8a9bf3. H1 author mistakenly looked up activation last-character a instead
+of b; no writes occurred and Root12350b re-read correct committed activation.
+Short locator must resolve uniquely through trusted local Git, full SHA recorded;
+PowerShell ^{commit} must be quoted. No fallback or new authority was introduced.
+
 ## H1 revision02 correction activation — 2026-10-20
 
 Distinct /root/batch_authority_review DOC_PASS exact0f6dbbfa0f29d39b1119172998cad68ad92033b1,

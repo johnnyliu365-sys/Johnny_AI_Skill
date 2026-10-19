@@ -57,6 +57,66 @@ to that reviewed revision. Current N1 immutable source/evidence hold is unchange
 或新實作 admission。29→30 是本票實際重用純投影的能力依賴，不是清單順序。
 本輪文件工作有下節獨立授權；不因此將完整票30改成 admitted/completed。
 
+## 30N3-C7 — reviewed native composition / closure15 preparation
+
+Necessary reuse, not new product behavior: current C6 staging1fe5c834 still has
+older N2 accounting contract and old coupled Python physical fixture. Final
+reviewed N2 source1e6847c94dbef84dc17dacaafcc008c6d8ce5379 (original30review
+377f24ed) and F1 builder separation7fa12f0c1af3a9b61772636b686b953cb8be4406
+(originalsealeb5507d0/d58ebc70) exist on held sidebranches, not automatically
+included. Do not reimplement raw FILETIME/process/job queries already provided
+by N2 WindowsJobPort or another candidate test builder. Preserve all old failures/
+UNKNOWN/recovery; no fresh actual native Job/Host campaign is admitted.
+
+Root source-engineering composition only, under original batch local integration
+authority/first-entry staging scope. Exact base1fe5c8342ff7127ac7d19721a423fa42a6832711.
+CREATE/DELETE0, allowed composite changes exactly4existingpaths:
+library/local_orchestration/native_windows/NativeJobContracts.cs,
+library/local_orchestration/native_windows/NativeJobSelfTests.cs,
+library/local_orchestration/native_windows/Program.cs,
+tests/test_native_authority_tools.py.
+Only reviewed N2 and F1 changes, no hand edits, new glue, generic runner or API.
+Common N2 mergebase88b707c8585501173bb6898f332ad52a5765ed66 already contains
+the native job implementation; finalN2 changes exactlythese4. F1 commonB2
+bf5a4a3c82131c308ffa85b2d899d4afd1cf32d9 changes only test_native_authority_tools.
+The final Program must retain C6 selector/input bounds/constructor/readback and
+adopt N2 exact accounting key; fixture must retain reviewed N2 assertions while
+adopting F1 candidate-only build and default-zero symlink behavior.
+
+Preregister Root-owned engineering stagingWT
+.worktrees/skill-improvement-30n3-native-composition /
+codex/skill-improvement-30n3-native-composition, sourcebaseline1fe5c834;
+owned Temp/johnny30n3-native-composition-review-20261020. TTL through independent
+review+qualification seal, explicit teardown, holds win; no cleanup or resetting
+old C6/N2/F1 WTs/refs/output binaries. Separate outputs protect old exact built
+artifacts. Root reviewer performs only ordinary conflict-free git merge --no-ff
+of exact N2 then F1, not main integration. If conflict, stop that composition and
+prepare same-ticket bounded author resolution, do not infer no-conflict safety,
+reset/clean/rebase or ask Owner about routine code decisions.
+
+Before merge, independent DOC scope consistency, Root baseline/clean/Git/
+nonreparse admission; existing exact public constructors/evidence reused.
+After merge prove exactly4paths, unchanged C6 parser/command/reader/verifier
+blobs, finalN2 native contract/selftest blobs, retained F1 builder and N2 assertion
+hunks. Run strict offline forced build, default/enrollment/job-CONTRACT-self-test
+only (last uses fake port), focused F1 builder/default-no-symlink tests (all file/
+subprocess APIs patched, no physical fixture). Do NOT run job-self-test,
+job-fixture-* modes, full native Python file or actual Host/native jobs.
+No actual symlink/ACL/protected path/pipe/service/model operation. Memory compile/
+import/strict Python single affected test, diff checks, peer source review of
+exact composite+caller/Expected continuity. Change expected result labels ONLY
+as already reviewedN2, no new Expected fromActual. No mandatory full rerun of
+unchanged C6/N2/F1 matrices or fake baseline-red claim; source behavior already
+reviewed. This slice assembles accepted source, does not close full30/01/02.
+
+Conditional grant-ticket30n3-native-composition-20261020, Root-owned integration
+context ctx-ticket30n3-native-composition-20261020, distinct source peer
+/root/ticket30_native_tools_review. SOURCE_STAGING_ONLY, no implementer authoring
+permission and no operational Grant/Host資格. ACTIVE only after exact DOC_PASS/
+resource/Git readback recorded. ACTION_COMPLETED -> AUTO_CONTINUE current
+H1/H2 and this bounded engineering composition; formal30G/30B43 remain held.
+
+
 ## 30N4-H2 — protected peer binding values / closure14 proposal
 
 Same original30/PRD009/CHG009/runbook02, uncapped local batch; necessary next
