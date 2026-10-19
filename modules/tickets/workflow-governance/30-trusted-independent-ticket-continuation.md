@@ -57,7 +57,118 @@ to that reviewed revision. Current N1 immutable source/evidence hold is unchange
 或新實作 admission。29→30 是本票實際重用純投影的能力依賴，不是清單順序。
 本輪文件工作有下節獨立授權；不因此將完整票30改成 admitted/completed。
 
-## 30N3 — Protected payload/enrollment readback construction / closure01
+## 30N3 — B1 readback construction binding / closure02
+
+This supersedes only the conditional B path/type plan of closure01 below. Same
+Ticket/PRD/CHG/Owner batch/first-entry staging scope; A remains accepted ordinary
+constructor preflight, no qualified source or operational authority. Root read
+WindowsReadback/ProtectionPlan/NativeEnrollment in full at cb877f73; independent
+/root/batch_authority_review confirmed the minimal reuse/fixture constraints.
+Root chooses the engineering design, not a new Human Owner decision or SPEC.
+
+Two actual gaps require the bounded source amendment: N1 Read closes its handle
+before returning and exposes no content hash/size/inventory; root inheritance
+ACEs cannot be compared literally to child-file DACLs. Never Read-then-reopen a
+file to pretend same-handle identity. Temp fixtures cannot be valid protected
+NativeSetupManifest paths; native Temp tests verify only low-level observation.
+No constructor relaxation or ProgramFiles/ProgramData/ACL write is authorized.
+
+B1 is constructor-only, no OS port/effect or pure comparator behavior yet:
+
+| CREATE path under library/local_orchestration/native_windows/ | Single responsibility |
+| --- | --- |
+| NativeEnrollmentVerifier.cs | Immutable observation/verification input/result contracts; later same file owns pure comparison, no Win32 |
+| NativeEnrollmentVerificationSelfTests.cs | Readback-contract and later comparison tests, reuse enrollment instance from existing self-test, no second fixture/builder/runner |
+
+MODIFY exactly JohnnyAuthority.Tools.csproj (two compile entries) and
+NativeEnrollmentSelfTests.cs (call new RunContracts(enrollment) only). No Program,
+Python wrapper, parser, existing NativeManifest/ProtectionPlan/WindowsReadback,
+N2 or other source edits in B1; CREATE2/MODIFY2/DELETE0. Shared fixture is passed
+as a typed value rather than opening private fixture state or cloning setup code.
+
+Frozen constructor domain, finite enums, ordinary validating immutable classes:
+- NativeObservedObjectKind: FILE | DIRECTORY.
+- NativeEnrollmentObjectObservation(path:AbsoluteWindowsPath, kind,
+  metadata:NativeObjectObservation, contentSha256:Sha256Value?, sizeBytes:long?).
+  Reuse metadata's finite ReadbackStatus. OBSERVED FILE requires hash and size
+  1..67108864; DIRECTORY has neither; any failed metadata has neither. Null or
+  undefined kind rejects; no path/hash normalization or mutable dictionaries.
+- NativeEnrollmentInventoryObservation(root:AbsoluteWindowsPath,
+  status:ReadbackStatus, objects:IEnumerable<NativeEnrollmentObjectObservation>).
+  OBSERVED copies 1..4096 objects, exactly one root DIRECTORY, every object OBSERVED
+  and at root/strict descendant, unique OrdinalIgnoreCase paths. Failed status
+  copies zero objects only. Wrong-root/missing-root/non-directory-root reject.
+- NativeEnrollmentReadback(codeInventory:NativeEnrollmentInventoryObservation,
+  dataObjects:IEnumerable<NativeEnrollmentObjectObservation>) copies 1..4096 unique
+  paths, including finite failed observations; do not turn a failed read into a
+  successful inventory. B2 compares exact DataRoot/config ancestor set; it never
+  closes over unrelated mutable DataRoot files.
+- NativeEnrollmentVerificationStatus: MATCH | REFUSED; reason enum NONE |
+  READBACK_FAILED | INVENTORY_MISMATCH | PAYLOAD_MISMATCH | PROTECTION_MISMATCH.
+  NativeEnrollmentVerification(status,reason) validates finite pair: MATCH/NONE
+  or REFUSED/non-NONE, immutable Scope=SOURCE_ONLY_UNQUALIFIED. No ACCEPTED/QUALIFIED
+  status, evidence authority, service/session/grant state or Router transition.
+
+B1 acceptance V1: ordinary complete file/directory/failure/inventory/readback/result
+values construct; each null/tag/cross-field/bound/path/duplicate variant rejects,
+collections defensively copied. Exact boundary positives4096 and64MiB survive.
+V2: existing enrollment-contract-self-test runs both suites via the sole builder;
+strict nullable/warnings-as-errors, unchanged Python wrapper strict/compile check,
+no filesystem/native source call. V3: author weakens a real constructor guard and
+Root a distinct one; named red -> exact inverse/forced --no-incremental green.
+Run each command<=60s (compiler/test child<=55s), retain all timings/history; no
+cumulative/count cap, no unchanged failure retry or new dependencies/framework.
+Signals product300/test350 and500+ require responsibility review, not compression.
+
+After actual B1 symbols/constructors and independent preflight pass, Root prepares
+exact B2 child binding; B2 is NOT_GRANTED here. Expected B2 minimal paths are
+CREATE WindowsPayloadReadback.cs (content/inventory orchestration only), MODIFY
+WindowsReadback.cs (shared checked-handle primitive and one existing PInvoke set),
+ProtectionPlan.cs (canonical derived file policy), these new verifier/self-tests,
+csproj/Program and existing Python wrapper. No broad scan or second policy engine.
+File policy derives existing SYSTEM/Admin full plus service code RX/config Modify,
+explicit protected DACL and AceFlags.None; child directory policy derives existing
+root descriptor. No extra principal/right; existing N1 plan JSON/API unchanged.
+Actual applying those descriptors requires separate exact OS authorization.
+Verification must protect declared intermediate directories under CodeRoot/DataRoot,
+not assume metadata authenticity or demand that mutable DataRoot have no other data.
+
+Exact child binding, conditional on different-seat DOC PASS and fresh role/Git
+readback; development authority only, never protected issuer/operational Grant:
+
+```yaml
+grant_id: grant-ticket30n3-readback-constructors-20261019
+parent_authority: batch-checklist-local-20261019-uncapped
+ticket: workflow-governance/30
+slice: 30N3-B1
+closure: 2
+stage: CONSTRUCTOR_ONLY
+baseline: cb877f73a7696e822b89fcfcd82a5b5168df68e8
+implementation_owner: /root/ticket30_native_tools_impl
+reviewer_orchestrator: /root
+independent_evidence_peer: /root/ticket30_native_tools_review
+worktree: .worktrees/skill-improvement-30n3-enrollment
+branch: codex/skill-improvement-30n3-enrollment
+context_view: ctx-ticket30n3-readback-contracts-20261019
+profile: HIGH_ASSURANCE_SOURCE_ENGINEERING_STAGING_ONLY
+implementation_profile: implementation-standard
+review_profile: ticket-review
+create: [library/local_orchestration/native_windows/NativeEnrollmentVerifier.cs, library/local_orchestration/native_windows/NativeEnrollmentVerificationSelfTests.cs]
+modify: [library/local_orchestration/native_windows/JohnnyAuthority.Tools.csproj, library/local_orchestration/native_windows/NativeEnrollmentSelfTests.cs]
+delete: []
+```
+
+Retain existing seat-owned WT/ref/output registration, TTL through exact review
+seal, Review/Recovery holds override expiry, no denied cleanup retry. A product
+blobs and all prior evidence remain; no unrelated recompilation/native campaign.
+No actual service/account/SID/ACL/AppContainer/firewall/install/persistent rights,
+pipe/listener/remote/provider/model/Host/spawn/receipt effect, push/release/deploy
+or formal gate activation. Qualified audit and30B/43/TAL holds remain unchanged.
+Return typed candidate/files/actual symbols/checks/mutations/time/deviations;
+Root routes to constructor preflight and then B2 preparation, not another ordinary
+technical-approval question. No prompt/Owner narrative/work order in source.
+
+## 30N3 — Protected payload/enrollment readback construction / closure01 history
 
 Current A preflight candidate cb877f73a7696e822b89fcfcd82a5b5168df68e8:
 CONSTRUCTOR_SOURCE_ENGINEERING_PREFLIGHT_PASS / PHASE_B_NOT_DISPATCHED /
