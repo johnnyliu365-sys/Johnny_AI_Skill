@@ -39,6 +39,102 @@ This amendment becomes effective after independent consistency review of its exa
 committed rules/ticket/index/runbook versions; subsequent exact child bindings refer
 to that reviewed revision. Current N1 immutable source/evidence hold is unchanged.
 
+## 30N5 — finite offline Responses stimulus codec / closure19 proposal
+
+Original30/runbook03 section3 and first-CVQ order exception only; parent uncapped
+batch. This independent local fixture does not depend on H5 adoption or a live
+issuer. H5 closure18 and all current source/Review/Recovery/cleanup holds remain
+unchanged. Exact sourcebaseline24c79d2278b36afcc816a9eab1e6c2c18caabbd7, whose CVQ
+pure evaluator is SOURCE_BEHAVIOR_STAGED_PASS only; no qualified-source upgrade.
+No new PRD/SPEC semantics or CVQ port. Root's initial guessed package/ticket-path
+reads failed; actual Git tree discovery then found the exact CVQ package/source,
+not evidence a capability was absent.
+
+CREATE ONLY tests/staging/readonly_host_protocol.py and
+tests/test_readonly_review_host.py; MODIFY0/DELETE0. This is the shared finite
+stimulus codec already planned by runbook3, not a generic mock server/Runner.
+No library/readonly_review_host.py placeholder, HTTP listener, subprocess,
+socket/file writes, Host/model request or credential/config access in this slice.
+Existing process_runner/environment_core stay read-only for later lifecycle reuse.
+Constructor first, then codec in same2files after immutable ordinary preflight.
+Keep tests one responsibility/parameterized, no per-case standalone scripts.
+Source forecast<=160effective/test<=200, screenshots/artifacts0 apart registered raw.
+
+One immutable typed FunctionCallStimulus binds response/item/call identifiers,
+model label, tool name and opaque arguments text. Each field required/non-null/
+strict exact string. Each of the five identifiers/model/tool labels matches
+[A-Za-z0-9_.:-]{1,128} exactly; arguments text is0..4096UTF8 bytes, rejects invalid
+Unicode, preserves whitespace/control through JSON escaping, no strip/normalize/
+coercion. Opaque
+arguments are bounded raw model-output text (may deliberately be malformed JSON),
+never parsed/executed or treated as trusted authority. No API key, real model
+literal, project path/SHA/ticket prompt in shared source. Constructor invalid
+input cannot call native, network or process functions; no new domain framework.
+
+Codec emits exact UTF8 SSE bytes for one function-call response only. Ordered six
+events: response.created, response.output_item.added,
+response.function_call_arguments.delta, response.function_call_arguments.done,
+response.output_item.done, response.completed; contiguous sequence numbers0..5,
+output_index0, consistent response/item/call/name/arguments links and exact JSON
+escaping. Start item has empty arguments, final item/completed output carry exact
+opaque original text. Response status in_progress->completed; deterministic fixed
+fixture timestamp/counters are synthetic protocol data, never billing/effect
+observations. Two-LF event separators and terminal delimiter, finite total output
+ceiling131072bytes, reject oversize before returning bytes. Ordinary valid bounded
+carriers must encode, including4096ASCII bytes and worst escaping; do not invent
+an unreachable over-ceiling caller case. Defensive output-bound mutation can use
+an explicitly injected test bound without claiming that changes operational policy.
+No arbitrary event/command/URL,
+sleep/retry/server/evaluation or self-issued PASS/CaseResult/evidence record.
+This narrow function-call wire variant does not claim custom-tool/native MCP
+compatibility or that the installed CLI consumes it; those exact variants follow
+only actual versioned discovery, not assumptions.
+
+Official format sources actually fetched2026-10-20:
+https://developers.openai.com/api/docs/guides/function-calling
+https://developers.openai.com/api/reference/resources/responses/streaming-events
+https://learn.chatgpt.com/docs/config-file/config-advanced
+First two specify function-call streamed item/arguments events; provider config
+documents responses/base_url/retry knobs, not proof this local binary supports
+a loopback/native dispatch campaign. This is a finite protocol fixture, not an
+API-backed client; no key/account/provider call is needed or permitted.
+
+N5F1 constructor: normal Unicode arguments and explicit empty arguments positive;
+missing/null/non-string/bool/blank identifiers/control/lone-surrogate and exact
+UTF8 inclusive/exclusive size edges reject as specified. Opaque malformed argument
+text remains literal, never executed or silently repaired.
+N5F2 real codec: independent literal event names/sequence/IDs/status/output/arguments
+assertions after ordinary JSON decoding; deterministic repeated bytes, escape/
+Unicode roundtrip and empty args, finite byte ceiling. Expected not copied from
+Actual/generator constants. A count-only/self-roundtrip test is insufficient.
+N5F3 wrong item/call/name/arguments link, reordered/duplicate/missing/incorrect
+sequence or escaping/terminal delimiter mutation at actual encoder each pins
+named RED/restoredGREEN. Root different door. Full stdout/default traceback.
+N5F4 no-effect/import/scope: inject forbidden socket/subprocess/provider/file-write
+seams, constructor/encoder/import must perform zero effects; strict affected2files,
+memorycompile/import and actual candidate source/hash. Do not run default pytest,
+CLI or real API. Missing wire/native compatibility stays UNVERIFIED, not PASS.
+New behavior has no ceremonial missing-code first-red; source mutation tests
+prove discriminating power. Formal CVQ prerequisites/evaluator/admission unchanged.
+
+Root reviewer/orchestrator, author /root/grant_transport_impl after37 source lane
+released into CLEANUP_BLOCKED hold, distinct source peer /root/ticket30_native_tools_review.
+Context ctx-ticket30n5-readonly-stimulus-20261020. Preregister contained author
+.worktrees/skill-improvement-30n5-readonly-stimulus / matching-review, codex/same
+branches; owned Temp/johnny30n5-stimulus-owner-20261020 and -review-20261020,
+owner+TTL through review/seal, holds override; teardown only after evidence seal/
+independent confirmation and exact safe scope, no denied cleanup retry.
+Conditional grant-ticket30n5-readonly-stimulus-20261020 rev01 A_ONLY NOT_ACTIVE until
+DOC_PASS, exact fresh source/Git/nonreparse and existing normal constructor checks;
+rev02 codec only after A. Same-lifetime direct lane receipt/Runner NOT_REQUIRED;
+current offered implementation-standard capability, no model hardcoded in source.
+Explicit ownedTemp mypy cache, process-local autoplugin disable/no-cache/-B,
+child55/outer60 and resource recording; evidence-progress not blind retries.
+No native/Host campaign, socket bind/connect, service/install/security/environment/
+global config/network policy, operational issuer,30B43 clearance, main integration,
+push/release/deploy or old hold removal. Return exact candidate/files/checks/raw/
+findings/deviations only; function-call fixture is not actual Host isolation proof.
+
 ## Mainline ticket contract
 
 ```json
