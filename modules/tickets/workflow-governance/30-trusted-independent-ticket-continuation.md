@@ -57,7 +57,106 @@ to that reviewed revision. Current N1 immutable source/evidence hold is unchange
 或新實作 admission。29→30 是本票實際重用純投影的能力依賴，不是清單順序。
 本輪文件工作有下節獨立授權；不因此將完整票30改成 admitted/completed。
 
-## 30N3 — B1 readback construction binding / closure02
+## 30N3 — B2 pure verification / closure03
+
+Same original lineage, uncapped batch and first-entry SOURCE_ENGINEERING staging.
+B1 actual constructor preflight must pass and final exact commit be pinned below.
+B2 is pure comparison/canonical protection-plan reuse ONLY, no native adapter yet.
+
+Root + independent ordinary architecture peers read actual B1 contracts and N1
+ProtectionPlan/WindowsReadback. Choose minimum MODIFY3/CREATE0/DELETE0:
+library/local_orchestration/native_windows/NativeEnrollmentVerifier.cs,
+library/local_orchestration/native_windows/NativeEnrollmentVerificationSelfTests.cs,
+library/local_orchestration/native_windows/ProtectionPlan.cs. No other source,
+Python/Program/project/parser/old SelfTests/N2 changes; future native reader not
+granted. No new runner/fixture/state/policy engine.
+
+Add only public static NativeEnrollmentVerifier.Verify(NativeEnrollment expected,
+NativeEnrollmentReadback observed)->NativeEnrollmentVerification. Reject null;
+normal mismatch returns finite existing REFUSED/reason, never an arbitrary exception
+or MATCH. Build exact expected typed-path sets from expected manifest/payload entries:
+CodeRoot DIRECTORY, executable/dependencies FILEs and every intervening DIRECTORY.
+DataRoot DIRECTORY, only config FILE and its intervening DIRECTORY set; unrelated
+mutable DataRoot files are not scanned or required absent. Conflicting file/dir
+namespace expectations refuse, not guessed. Compare OrdinalIgnoreCase whole paths
+and exact kinds/counts; no extras, missing paths or basename/prefix shortcut.
+
+An observed failed inventory/object refuses READBACK_FAILED; mismatched root/set/
+kind is INVENTORY_MISMATCH. Each declared file requires exact digest/size or
+PAYLOAD_MISMATCH. Metadata must carry the complete existing NativeObjectObservation;
+pure comparison DOES NOT invent expected OS file IDs absent from the enrollment.
+Before/after same-handle identity/size/descriptor drift belongs to the future native
+reader and must become failed observation, not claimed proven by these fake values.
+
+ProtectionPlan adds public static string PayloadFileSddl(NativeSetupManifest,
+NativePayloadRole), validating arguments and reusing its sole existing CreateSddl/
+AceEntry/rights source. SYSTEM owner, SYSTEM/Admin FullControl, service code RX
+for executable/dependency or existing data Modify for configuration; protected
+DACL, file ACE flags None. Reuse existing directory CodeRootSddl/DataRootSddl for
+all corresponding declared directories. No extra principal/right, root Plan JSON/
+Build output/API change, actual ACL write or installing these descriptors.
+
+Verifier compares parsed Owner and DACL-present/protected policy plus exact ACE
+binary multiset (SID/mask/qualifier/flags/opaque bytes), no extra ACE and no string
+format normalization. Do not claim queried metadata proves SACL/group policy.
+Equivalent descriptor formatting/order may pass without permitting extra rights;
+missing/null/unprotected/extra or changed ACE/owner refuses PROTECTION_MISMATCH.
+Do not duplicate descriptor-construction policy in verifier/tests. Tests assert
+independent SID/mask/flags expectations so changing the shared plan cannot make
+both Expected and Actual silently green.
+
+V4 positive complete synthetic protected-path observation matches exact payloads/
+configuration/directory plans with Scope SOURCE_ONLY_UNQUALIFIED. It remains FAKE
+comparison evidence, never an OS-protected enrollment/issuer/Host positive.
+V5 independent one-change negatives: failed/missing/unavailable/reparse code/data,
+wrong root, extra/missing/alias/wrong-kind path or intermediate directory, file/
+directory namespace conflict, changed config/dependency/exe hash and size, owner/
+unprotected/extra/changed mask/inheritance/unknown ACE. Preserve all B1 constructors
+and A parser cases; don't satisfy a negative through some unrelated invalid field.
+V6 actual author product guard weakening and Root different product door named red
+then exact inverse/nonincremental green; strict warnings-as-errors, existing focused
+pure pytest/compile/mypy and diff/scope/source readback. No broad native/old gate/
+04 regression rerun; tests use passed existing enrollment fixture, parameterized
+small variants and shared assertions, no independent bulky script/report tree.
+Growth threshold signals demand responsibility review, not compression/splitting.
+
+Retain existing roles, WT/ref/output ownership/TTL/Review+Recovery holds; <=60s
+outer/<=55s child default, record all terminal elapsed/failures. No cumulative or
+fixed correction count, no unchanged blind retry. No root setup/account/SID/service/
+ACL/AppContainer/firewall/pipe/listener/remote/model/provider/Host/native read/spawn/
+receipt or integration/activation, push/release/deployment/old cleanup retry.
+A/B1 source engineering does not clear30B/43/TAL qualification holds.
+Exact development Grant below activates only after different-seat DOC consistency
+and Root fresh clean role/source binding. Next route ordinary pure review then
+separate minimum native-reader preparation, not Human Owner technical approval.
+
+B1 source baseline3b2da4b00076bcfc500cce5560cb2a045550c802 (actual
+product9ee2908704da4f97e8f1e1a23c3a4707c0f93082) passed Root/peer constructor preflight,
+sealed d7f5e7cc. This B2 binding is conditional on exact independent DOC PASS:
+
+```yaml
+grant_id: grant-ticket30n3-pure-verification-20261019
+parent_authority: batch-checklist-local-20261019-uncapped
+ticket: workflow-governance/30
+slice: 30N3-B2
+closure: 3
+stage: PURE_COMPARISON_ONLY
+baseline: 3b2da4b00076bcfc500cce5560cb2a045550c802
+implementation_owner: /root/ticket30_native_tools_impl
+reviewer_orchestrator: /root
+independent_evidence_peer: /root/ticket30_native_tools_review
+worktree: .worktrees/skill-improvement-30n3-enrollment
+branch: codex/skill-improvement-30n3-enrollment
+context_view: ctx-ticket30n3-pure-comparison-20261019
+profile: HIGH_ASSURANCE_SOURCE_ENGINEERING_STAGING_ONLY
+implementation_profile: implementation-standard
+review_profile: ticket-review
+create: []
+modify: [library/local_orchestration/native_windows/NativeEnrollmentVerifier.cs, library/local_orchestration/native_windows/NativeEnrollmentVerificationSelfTests.cs, library/local_orchestration/native_windows/ProtectionPlan.cs]
+delete: []
+```
+
+## 30N3 — B1 readback construction binding / closure02 history
 
 This supersedes only the conditional B path/type plan of closure01 below. Same
 Ticket/PRD/CHG/Owner batch/first-entry staging scope; A remains accepted ordinary
