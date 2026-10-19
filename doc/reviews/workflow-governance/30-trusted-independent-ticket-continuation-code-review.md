@@ -1,4 +1,51 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H4-A source preflight / conditional H4-B activation — 2026-10-20
+
+Exact a5521accf42b99202660453a37717fd83fc32e4a in registered owner/review WTs,
+Root460065 complete2CREATE source read; distinct
+/root/ticket30_native_tools_review SOURCE_CONSTRUCTOR_PASS. Seven required strict
+fields reuse canonical base/SID/uint/token+level types; finite failure/ordinary
+vs BaseException fatal states and retained Close-capable owner, no native imports
+or observation behavior. Private minimal resource-retention Protocol is not a
+new Host port/framework or proof of native ownership.
+
+Root actual module SHA256194d9439f7ca44937f234fb1400c0178412a6b86a75d36015958e0490cfaa98b,
+normal JSON constructors and retained owner/no Close, guarded memorycompile/import
+and64tests afd2d2 PASS; strict2files907a15 PASS23.297s, no-cache/autoplugin disabled
+process-locally. Independent actual removal of mandatory retained owner on close
+failure a3cd9b namedDID_NOT_RAISE RED; exactrestorec4303e GREEN. Root2fa8a4/4e9ac3
+trusted Git tree gives product3d4aca2b5c4f5fc9e42218be8291b892e0873a1f and
+test444fe04adf69516d0216a6f6d84949461c942726, clean/exact source restored. Author
+return's57ff420/986b920 blob identifiers are NOT trusted tree locators (first not
+found in object database); Root explicitly requested metadata-only correction,
+not another code/test run. Review relies on actual immutable tree/module, not
+self-report; unknown origin stays UNKNOWN until evidence arrives.
+
+Author raw h4-a-validation-20261020.jsonl23052bytes SHA256
+780b1f77d8174c0814c40c299d0417d46f59b3e9561662f38bdc48a5e57b662d fully read
+as data: initial63, added owner-retention cell then64, finalstrict and inert import
+all PASS, no blank native stdout or retroactive first-red claim. Native/Host
+effects and provenance still unproved. A SOURCE_CONSTRUCTOR_PREFLIGHT_PASS only.
+
+Existing closure17 conditional B satisfied; Root derives
+grant-ticket30n4-message-identity-20261020 revision02 ACTIVE_H4_B_ONLY, parent
+batch-checklist-local-20261019-uncapped, baseline exacta5521accf42b99202660453a37717fd83fc32e4a.
+Same named author/rootreviewer/sourcepeer/identity WTs/branches/context/ownedTemp
+and lifecycle holds. MODIFY only the2already created H4 files, CREATE0/DELETE0.
+Implement exactly frozen clean-thread proof/borrowed pipe endpoint/native token
+snapshot/signed64-bit-preserving LUID/same-thread finally-revert/deferred success/
+fatal poison+owner retention and named fake-only tests/mutations. No H1/H2/H3 or
+native-tool/ledger/codec/Host/config/package edits; no actual token/pipe/session/
+privilege/service/install probe or process termination. No current writer or
+retained process identity fabricated from input values. Default command60/child55,
+process-local test autoplugin disable/no-cache and full command+stdout/stderr/
+elapsed/exit capture. Same lifetime receipt/Runner NOT_REQUIRED; preserve history,
+no new authority/Owner renewal/Host qualification/main integration. ACTION_COMPLETED
+-> AUTO_CONTINUE same-author H4-B; fatal service shutdown remains later boundary.
+
+Independent archive-only DOC_PASS a0fa8996 verifies H2B15JSONL hashes/pairs/cache
+hold and A-only conditional authority, without executing encoded commands.
+
 ## H3 E01/E02 native-value correction — 2026-10-20
 
 Candidate cdc842c9843b6a29604b6bf6bbe0437078a07e1c exact2CREATE vs c13d1017,
