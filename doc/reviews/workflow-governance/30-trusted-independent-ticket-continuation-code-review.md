@@ -1,5 +1,154 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## C2 Root complete initial review — CHANGES_REQUESTED — 2026-10-19
+
+Immutable767af00730a8cc292fade05fbeab78a776cad754 / baselinecee79331, exact6paths.
+Root actual forced build/self-test and real registered content assertions PASS,
+including196625-byte independent hash, finite refusals and exclusive reopen.
+Independent /root/ticket30_native_tools_review source-preflight PASS is retained,
+but is not Root's final review or qualified isolation. Root's DIFFERENT doors expose
+two FROZEN evidence gaps; this is not a new safety requirement or architecture:
+
+- C2-E01 EVIDENCE_DEFECT / C2-CONTENT: weaken ONLY production ReadPayloadAsync's
+  !SnapshotsMatch(before,after) guard to before.FileId!=after.FileId, leaving helper/
+  direct helper tests intact. Build + self-test + actual complete payload assertion
+  all PASS (ZERO RED). Tests cover comparator in isolation, not its full production
+  rejection path. Add deterministic before/after metadata drift at the actual
+  content-read execution seam; exact caller path must refuse with no digest/size.
+  Do not use helper-only assertion, timing-race guess or API delegation check.
+- C2-E02 EVIDENCE_DEFECT / C2-HANDLE: replace final share-read choice with ShareAll
+  only. Build + self-test + complete actual assertion all PASS (ZERO RED).
+  Add deterministic owned-file sharing evidence: a compatible existing WRITE handle
+  kept open across the real ReadFile call must make original share-read refuse;
+  the relaxed-sharing mutation must become named red. No actual byte mutation,
+  foreign path, ACL change or adversarial Host campaign is necessary.
+- C2-E03 source convention / C2 responsibility rules: literal payload bytes currently
+  contain real Ticket30/C2 narrative. Replace with generic technical bytes, not
+  owner/ticket prose in code. Preserve old registered fixtures/evidence unchanged.
+  Register a new exact generic payload fixture child before creation; do not
+  overwrite earlier sealed data or derive Expected from readback Actual.
+
+Root applies both inverse patches, verifies source85f6505534f985e7d25a703426ac19d9b24a0092
+matches HEAD, nonincremental rebuild/self-test and full actual assertion green.
+First intermediate two-hunk apply_patch had hunks in reverse source order and
+failed atomically before modification/execution; narrow source inspection reordered
+the hunks, not a repeated unchanged native command. No findings concealed by it.
+
+Same author/WT/grant/closure06/6paths, additive scoped correction. Internal coherent
+test seam may be added within those existing source/test files; no public DTO,
+authority, permission or framework expansion. Keep immutable original source and
+all zero-red/history. Full actual payload/negative comparisons and all-refuse checks
+stay; don't weaken inputs/assertions or make drift/sharing checks vacuous.
+No Host qualification, formal integration or new external effect.
+
+### Exact c2_root_build_cmd
+
+~~~powershell
+@'
+import subprocess,time,sys
+sys.stdout.reconfigure(encoding='utf-8',errors='backslashreplace');sys.stderr.reconfigure(encoding='utf-8',errors='backslashreplace')
+from pathlib import Path
+from tests.test_native_authority_tools import PROJECT,PROCESS_ENV
+root=Path(r'C:\Users\GameBoy\AppData\Local\Temp\johnny30n3-native-seam-review-20261019')
+env=dict(PROCESS_ENV);env.update(DOTNET_CLI_HOME=str(root/'cli'),NUGET_PACKAGES=str(root/'nuget'),DOTNET_CLI_TELEMETRY_OPTOUT='1',DOTNET_SKIP_FIRST_TIME_EXPERIENCE='1',DOTNET_CLI_WORKLOAD_UPDATE_NOTIFY_DISABLE='true',MSBUILDDISABLENODEREUSE='1',DOTNET_NOLOGO='1',TEMP=str(root),TMP=str(root))
+cmd=['dotnet','build','JohnnyAuthority.Tools.csproj','--no-restore','--no-incremental','--disable-build-servers','--verbosity','minimal','-m:1','-nodeReuse:false','-p:UseSharedCompilation=false','-p:RestoreConfigFile=NuGet.Config',f'-p:BaseIntermediateOutputPath={root / "obj"}'+chr(92),f'-p:BaseOutputPath={root / "bin"}'+chr(92)]
+print('COMMAND',cmd,flush=True);t=time.monotonic();p=subprocess.run(cmd,cwd=PROJECT,env=env,timeout=35);print('BUILD_ELAPSED',time.monotonic()-t,'EXIT',p.returncode,flush=True)
+if p.returncode:raise SystemExit(p.returncode)
+exe=root/'bin/Debug/net10.0-windows/JohnnyAuthority.Tools.exe';t=time.monotonic();p=subprocess.run([str(exe),'self-test'],env=PROCESS_ENV,timeout=15);print('PURE_ELAPSED',time.monotonic()-t,'EXIT',p.returncode);raise SystemExit(p.returncode)
+'@ | & 'C:\Users\GameBoy\AppData\Local\Programs\Python\Python311\python.exe' -B -
+~~~
+
+### Exact c2_root_actual_cmd
+
+~~~powershell
+@'
+import hashlib,os,subprocess,sys,time
+from pathlib import Path
+sys.stdout.reconfigure(encoding='utf-8',errors='backslashreplace');sys.stderr.reconfigure(encoding='utf-8',errors='backslashreplace')
+root=Path(r'C:\Users\GameBoy\AppData\Local\Temp\johnny30n3-native-seam-review-20261019')
+os.environ['JOHNNY_NATIVE_TEST_ROOT']=str(root)
+from tests import test_native_authority_tools as t
+exe=root/'bin/Debug/net10.0-windows/JohnnyAuthority.Tools.exe'
+print('SOURCE_HEAD',subprocess.run(['git','rev-parse','HEAD'],text=True,capture_output=True,timeout=5,check=True).stdout.strip(),flush=True)
+for p in [exe,exe.with_suffix('.dll'),Path('tests/test_native_authority_tools.py')]:print('SHA256',str(p),hashlib.sha256(p.read_bytes()).hexdigest(),flush=True)
+start=time.monotonic();t.test_actual_candidate_payload_readback_registered_fixture();print('EXISTING_PAYLOAD_ASSERTION_PASS_ELAPSED',time.monotonic()-start,flush=True)
+'@ | & 'C:\Users\GameBoy\AppData\Local\Programs\Python\Python311\python.exe' -B -
+~~~
+
+### c2_root_baseline_build
+
+Toold8e2b8; outer wall7.9579585999999995s; exit0.
+Complete original output, lossless JSON string:
+
+~~~json
+"COMMAND ['dotnet', 'build', 'JohnnyAuthority.Tools.csproj', '--no-restore', '--no-incremental', '--disable-build-servers', '--verbosity', 'minimal', '-m:1', '-nodeReuse:false', '-p:UseSharedCompilation=false', '-p:RestoreConfigFile=NuGet.Config', '-p:BaseIntermediateOutputPath=C:\\\\Users\\\\GameBoy\\\\AppData\\\\Local\\\\Temp\\\\johnny30n3-native-seam-review-20261019\\\\obj\\\\', '-p:BaseOutputPath=C:\\\\Users\\\\GameBoy\\\\AppData\\\\Local\\\\Temp\\\\johnny30n3-native-seam-review-20261019\\\\bin\\\\']\r\n  JohnnyAuthority.Tools -> C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n3-native-seam-review-20261019\\bin\\Debug\\net10.0-windows\\JohnnyAuthority.Tools.dll\r\n\r\n建置成功。\r\n    0 個警告\r\n    0 個錯誤\r\n\r\n經過時間 00:00:05.39\r\nBUILD_ELAPSED 5.89100000000326 EXIT 0\r\n{\"status\":\"passed\"}\nPURE_ELAPSED 0.5630000000237487 EXIT 0\r\n"
+~~~
+
+### c2_root_baseline_actual
+
+Tooledb5c3; outer wall2.812901s; exit0.
+Complete original output, lossless JSON string:
+
+~~~json
+"SOURCE_HEAD 767af00730a8cc292fade05fbeab78a776cad754\r\nSHA256 C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n3-native-seam-review-20261019\\bin\\Debug\\net10.0-windows\\JohnnyAuthority.Tools.exe 4aeb1093fa104729103d0915a93b7918b493ecd0963772add0fd274a806062a9\r\nSHA256 C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n3-native-seam-review-20261019\\bin\\Debug\\net10.0-windows\\JohnnyAuthority.Tools.dll 8a2766b5843d75d3823fe3525e207f751f71404f3550118ce27e5648424996f8\r\nSHA256 tests\\test_native_authority_tools.py 27b6eec85793c11d2b003b6c0c2177256720fd593e08c2aa7343d1eac906a157\r\nNATIVE_PAYLOAD_READBACK_ELAPSED_SECONDS=1.077568\r\nNATIVE_PAYLOAD_READBACK_RC=0\r\nNATIVE_PAYLOAD_READBACK_STDOUT:\r\n{\"payload\":{\"path\":\"C:\\\\Users\\\\GameBoy\\\\AppData\\\\Local\\\\Temp\\\\johnny30n3-native-seam-review-20261019\\\\c2-payload-fixture\\\\payload.bin\",\"kind\":\"FILE\",\"status\":\"OBSERVED\",\"sha256\":\"1d23266fe5548cb8cb915be4284b16de95db7989b75ab52539fc6125b60c8048\",\"sizeBytes\":36},\"stream\":{\"path\":\"C:\\\\Users\\\\GameBoy\\\\AppData\\\\Local\\\\Temp\\\\johnny30n3-native-seam-review-20261019\\\\c2-payload-fixture\\\\multi-buffer.bin\",\"kind\":\"FILE\",\"status\":\"OBSERVED\",\"sha256\":\"76fc0001ec56adf09096a9134afbb8edd8c1d596d83c4fa7b5dd952abc085660\",\"sizeBytes\":196625},\"before\":{\"status\":\"OBSERVED\",\"owner\":\"S-1-5-21-3542654388-73774624-397494543-1001\",\"descriptorSha256\":\"5a506110f5b978ca1779e21b215c812544d59afd9496f0d1e91051a384e5597e\",\"volume\":480203665,\"fileId\":9570149210438408},\"after\":{\"status\":\"OBSERVED\",\"owner\":\"S-1-5-21-3542654388-73774624-397494543-1001\",\"descriptorSha256\":\"5a506110f5b978ca1779e21b215c812544d59afd9496f0d1e91051a384e5597e\",\"volume\":480203665,\"fileId\":9570149210438408},\"directory\":{\"path\":\"C:\\\\Users\\\\GameBoy\\\\AppData\\\\Local\\\\Temp\\\\johnny30n3-native-seam-review-20261019\\\\c2-payload-fixture\",\"kind\":\"FILE\",\"status\":\"UNAVAILABLE\",\"sha256\":null,\"sizeBytes\":null},\"missing\":{\"path\":\"C:\\\\Users\\\\GameBoy\\\\AppData\\\\Local\\\\Temp\\\\johnny30n3-native-seam-review-20261019\\\\c2-payload-fixture\\\\missing.bin\",\"kind\":\"FILE\",\"status\":\"MISSING\",\"sha256\":null,\"sizeBytes\":null},\"empty\":{\"path\":\"C:\\\\Users\\\\GameBoy\\\\AppData\\\\Local\\\\Temp\\\\johnny30n3-native-seam-review-20261019\\\\c2-payload-fixture\\\\empty.bin\",\"kind\":\"FILE\",\"status\":\"UNAVAILABLE\",\"sha256\":null,\"sizeBytes\":null},\"oversized\":{\"path\":\"C:\\\\Users\\\\GameBoy\\\\AppData\\\\Local\\\\Temp\\\\johnny30n3-native-seam-review-20261019\\\\c2-payload-fixture\\\\oversized.bin\",\"kind\":\"FILE\",\"status\":\"UNAVAILABLE\",\"sha256\":null,\"sizeBytes\":null},\"exclusive\":\"OPENED\"}\r\n\r\nNATIVE_PAYLOAD_READBACK_STDERR:\r\nPAYLOAD_STAGE=before-positive\r\nPAYLOAD_STAGE=after-positive\r\nPAYLOAD_STAGE=before-streaming\r\nPAYLOAD_STAGE=after-streaming\r\n\r\nEXISTING_PAYLOAD_ASSERTION_PASS_ELAPSED 1.4369999999762513\r\n"
+~~~
+
+### c2_root_drift_mut_build
+
+Tool854cfb; outer wall8.4591986s; exit0.
+Complete original output, lossless JSON string:
+
+~~~json
+"COMMAND ['dotnet', 'build', 'JohnnyAuthority.Tools.csproj', '--no-restore', '--no-incremental', '--disable-build-servers', '--verbosity', 'minimal', '-m:1', '-nodeReuse:false', '-p:UseSharedCompilation=false', '-p:RestoreConfigFile=NuGet.Config', '-p:BaseIntermediateOutputPath=C:\\\\Users\\\\GameBoy\\\\AppData\\\\Local\\\\Temp\\\\johnny30n3-native-seam-review-20261019\\\\obj\\\\', '-p:BaseOutputPath=C:\\\\Users\\\\GameBoy\\\\AppData\\\\Local\\\\Temp\\\\johnny30n3-native-seam-review-20261019\\\\bin\\\\']\r\n  JohnnyAuthority.Tools -> C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n3-native-seam-review-20261019\\bin\\Debug\\net10.0-windows\\JohnnyAuthority.Tools.dll\r\n\r\n建置成功。\r\n    0 個警告\r\n    0 個錯誤\r\n\r\n經過時間 00:00:05.83\r\nBUILD_ELAPSED 6.4689999999827705 EXIT 0\r\n{\"status\":\"passed\"}\nPURE_ELAPSED 0.5310000000172295 EXIT 0\r\n"
+~~~
+
+### c2_root_drift_mut_actual
+
+Tool5d3704; outer wall2.7250586s; exit0.
+Complete original output, lossless JSON string:
+
+~~~json
+"SOURCE_HEAD 767af00730a8cc292fade05fbeab78a776cad754\r\nSHA256 C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n3-native-seam-review-20261019\\bin\\Debug\\net10.0-windows\\JohnnyAuthority.Tools.exe 4aeb1093fa104729103d0915a93b7918b493ecd0963772add0fd274a806062a9\r\nSHA256 C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n3-native-seam-review-20261019\\bin\\Debug\\net10.0-windows\\JohnnyAuthority.Tools.dll 5038afe227d56684e853f58f1b81b11974744b76a606730338c4a697bbed5e52\r\nSHA256 tests\\test_native_authority_tools.py 27b6eec85793c11d2b003b6c0c2177256720fd593e08c2aa7343d1eac906a157\r\nNATIVE_PAYLOAD_READBACK_ELAPSED_SECONDS=1.062207\r\nNATIVE_PAYLOAD_READBACK_RC=0\r\nNATIVE_PAYLOAD_READBACK_STDOUT:\r\n{\"payload\":{\"path\":\"C:\\\\Users\\\\GameBoy\\\\AppData\\\\Local\\\\Temp\\\\johnny30n3-native-seam-review-20261019\\\\c2-payload-fixture\\\\payload.bin\",\"kind\":\"FILE\",\"status\":\"OBSERVED\",\"sha256\":\"1d23266fe5548cb8cb915be4284b16de95db7989b75ab52539fc6125b60c8048\",\"sizeBytes\":36},\"stream\":{\"path\":\"C:\\\\Users\\\\GameBoy\\\\AppData\\\\Local\\\\Temp\\\\johnny30n3-native-seam-review-20261019\\\\c2-payload-fixture\\\\multi-buffer.bin\",\"kind\":\"FILE\",\"status\":\"OBSERVED\",\"sha256\":\"76fc0001ec56adf09096a9134afbb8edd8c1d596d83c4fa7b5dd952abc085660\",\"sizeBytes\":196625},\"before\":{\"status\":\"OBSERVED\",\"owner\":\"S-1-5-21-3542654388-73774624-397494543-1001\",\"descriptorSha256\":\"5a506110f5b978ca1779e21b215c812544d59afd9496f0d1e91051a384e5597e\",\"volume\":480203665,\"fileId\":9570149210438408},\"after\":{\"status\":\"OBSERVED\",\"owner\":\"S-1-5-21-3542654388-73774624-397494543-1001\",\"descriptorSha256\":\"5a506110f5b978ca1779e21b215c812544d59afd9496f0d1e91051a384e5597e\",\"volume\":480203665,\"fileId\":9570149210438408},\"directory\":{\"path\":\"C:\\\\Users\\\\GameBoy\\\\AppData\\\\Local\\\\Temp\\\\johnny30n3-native-seam-review-20261019\\\\c2-payload-fixture\",\"kind\":\"FILE\",\"status\":\"UNAVAILABLE\",\"sha256\":null,\"sizeBytes\":null},\"missing\":{\"path\":\"C:\\\\Users\\\\GameBoy\\\\AppData\\\\Local\\\\Temp\\\\johnny30n3-native-seam-review-20261019\\\\c2-payload-fixture\\\\missing.bin\",\"kind\":\"FILE\",\"status\":\"MISSING\",\"sha256\":null,\"sizeBytes\":null},\"empty\":{\"path\":\"C:\\\\Users\\\\GameBoy\\\\AppData\\\\Local\\\\Temp\\\\johnny30n3-native-seam-review-20261019\\\\c2-payload-fixture\\\\empty.bin\",\"kind\":\"FILE\",\"status\":\"UNAVAILABLE\",\"sha256\":null,\"sizeBytes\":null},\"oversized\":{\"path\":\"C:\\\\Users\\\\GameBoy\\\\AppData\\\\Local\\\\Temp\\\\johnny30n3-native-seam-review-20261019\\\\c2-payload-fixture\\\\oversized.bin\",\"kind\":\"FILE\",\"status\":\"UNAVAILABLE\",\"sha256\":null,\"sizeBytes\":null},\"exclusive\":\"OPENED\"}\r\n\r\nNATIVE_PAYLOAD_READBACK_STDERR:\r\nPAYLOAD_STAGE=before-positive\r\nPAYLOAD_STAGE=after-positive\r\nPAYLOAD_STAGE=before-streaming\r\nPAYLOAD_STAGE=after-streaming\r\n\r\nEXISTING_PAYLOAD_ASSERTION_PASS_ELAPSED 1.0939999999827705\r\n"
+~~~
+
+### c2_root_sharing_mut_build
+
+Toolab796a; outer wall7.9285332s; exit0.
+Complete original output, lossless JSON string:
+
+~~~json
+"COMMAND ['dotnet', 'build', 'JohnnyAuthority.Tools.csproj', '--no-restore', '--no-incremental', '--disable-build-servers', '--verbosity', 'minimal', '-m:1', '-nodeReuse:false', '-p:UseSharedCompilation=false', '-p:RestoreConfigFile=NuGet.Config', '-p:BaseIntermediateOutputPath=C:\\\\Users\\\\GameBoy\\\\AppData\\\\Local\\\\Temp\\\\johnny30n3-native-seam-review-20261019\\\\obj\\\\', '-p:BaseOutputPath=C:\\\\Users\\\\GameBoy\\\\AppData\\\\Local\\\\Temp\\\\johnny30n3-native-seam-review-20261019\\\\bin\\\\']\r\n  JohnnyAuthority.Tools -> C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n3-native-seam-review-20261019\\bin\\Debug\\net10.0-windows\\JohnnyAuthority.Tools.dll\r\n\r\n建置成功。\r\n    0 個警告\r\n    0 個錯誤\r\n\r\n經過時間 00:00:05.29\r\nBUILD_ELAPSED 5.875 EXIT 0\r\n{\"status\":\"passed\"}\nPURE_ELAPSED 0.5309999999590218 EXIT 0\r\n"
+~~~
+
+### c2_root_sharing_mut_actual
+
+Toolbac30e; outer wall2.40111s; exit0.
+Complete original output, lossless JSON string:
+
+~~~json
+"SOURCE_HEAD 767af00730a8cc292fade05fbeab78a776cad754\r\nSHA256 C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n3-native-seam-review-20261019\\bin\\Debug\\net10.0-windows\\JohnnyAuthority.Tools.exe 4aeb1093fa104729103d0915a93b7918b493ecd0963772add0fd274a806062a9\r\nSHA256 C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n3-native-seam-review-20261019\\bin\\Debug\\net10.0-windows\\JohnnyAuthority.Tools.dll 633602f1d6be3df8e902ba74a3f4e1f7604d1b2b404678b7a5c76a4039324a99\r\nSHA256 tests\\test_native_authority_tools.py 27b6eec85793c11d2b003b6c0c2177256720fd593e08c2aa7343d1eac906a157\r\nNATIVE_PAYLOAD_READBACK_ELAPSED_SECONDS=1.028657\r\nNATIVE_PAYLOAD_READBACK_RC=0\r\nNATIVE_PAYLOAD_READBACK_STDOUT:\r\n{\"payload\":{\"path\":\"C:\\\\Users\\\\GameBoy\\\\AppData\\\\Local\\\\Temp\\\\johnny30n3-native-seam-review-20261019\\\\c2-payload-fixture\\\\payload.bin\",\"kind\":\"FILE\",\"status\":\"OBSERVED\",\"sha256\":\"1d23266fe5548cb8cb915be4284b16de95db7989b75ab52539fc6125b60c8048\",\"sizeBytes\":36},\"stream\":{\"path\":\"C:\\\\Users\\\\GameBoy\\\\AppData\\\\Local\\\\Temp\\\\johnny30n3-native-seam-review-20261019\\\\c2-payload-fixture\\\\multi-buffer.bin\",\"kind\":\"FILE\",\"status\":\"OBSERVED\",\"sha256\":\"76fc0001ec56adf09096a9134afbb8edd8c1d596d83c4fa7b5dd952abc085660\",\"sizeBytes\":196625},\"before\":{\"status\":\"OBSERVED\",\"owner\":\"S-1-5-21-3542654388-73774624-397494543-1001\",\"descriptorSha256\":\"5a506110f5b978ca1779e21b215c812544d59afd9496f0d1e91051a384e5597e\",\"volume\":480203665,\"fileId\":9570149210438408},\"after\":{\"status\":\"OBSERVED\",\"owner\":\"S-1-5-21-3542654388-73774624-397494543-1001\",\"descriptorSha256\":\"5a506110f5b978ca1779e21b215c812544d59afd9496f0d1e91051a384e5597e\",\"volume\":480203665,\"fileId\":9570149210438408},\"directory\":{\"path\":\"C:\\\\Users\\\\GameBoy\\\\AppData\\\\Local\\\\Temp\\\\johnny30n3-native-seam-review-20261019\\\\c2-payload-fixture\",\"kind\":\"FILE\",\"status\":\"UNAVAILABLE\",\"sha256\":null,\"sizeBytes\":null},\"missing\":{\"path\":\"C:\\\\Users\\\\GameBoy\\\\AppData\\\\Local\\\\Temp\\\\johnny30n3-native-seam-review-20261019\\\\c2-payload-fixture\\\\missing.bin\",\"kind\":\"FILE\",\"status\":\"MISSING\",\"sha256\":null,\"sizeBytes\":null},\"empty\":{\"path\":\"C:\\\\Users\\\\GameBoy\\\\AppData\\\\Local\\\\Temp\\\\johnny30n3-native-seam-review-20261019\\\\c2-payload-fixture\\\\empty.bin\",\"kind\":\"FILE\",\"status\":\"UNAVAILABLE\",\"sha256\":null,\"sizeBytes\":null},\"oversized\":{\"path\":\"C:\\\\Users\\\\GameBoy\\\\AppData\\\\Local\\\\Temp\\\\johnny30n3-native-seam-review-20261019\\\\c2-payload-fixture\\\\oversized.bin\",\"kind\":\"FILE\",\"status\":\"UNAVAILABLE\",\"sha256\":null,\"sizeBytes\":null},\"exclusive\":\"OPENED\"}\r\n\r\nNATIVE_PAYLOAD_READBACK_STDERR:\r\nPAYLOAD_STAGE=before-positive\r\nPAYLOAD_STAGE=after-positive\r\nPAYLOAD_STAGE=before-streaming\r\nPAYLOAD_STAGE=after-streaming\r\n\r\nEXISTING_PAYLOAD_ASSERTION_PASS_ELAPSED 1.062000000034459\r\n"
+~~~
+
+### c2_root_restored_build
+
+Toolb91f0d; outer wall7.7167219s; exit0.
+Complete original output, lossless JSON string:
+
+~~~json
+"COMMAND ['dotnet', 'build', 'JohnnyAuthority.Tools.csproj', '--no-restore', '--no-incremental', '--disable-build-servers', '--verbosity', 'minimal', '-m:1', '-nodeReuse:false', '-p:UseSharedCompilation=false', '-p:RestoreConfigFile=NuGet.Config', '-p:BaseIntermediateOutputPath=C:\\\\Users\\\\GameBoy\\\\AppData\\\\Local\\\\Temp\\\\johnny30n3-native-seam-review-20261019\\\\obj\\\\', '-p:BaseOutputPath=C:\\\\Users\\\\GameBoy\\\\AppData\\\\Local\\\\Temp\\\\johnny30n3-native-seam-review-20261019\\\\bin\\\\']\r\n  JohnnyAuthority.Tools -> C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n3-native-seam-review-20261019\\bin\\Debug\\net10.0-windows\\JohnnyAuthority.Tools.dll\r\n\r\n建置成功。\r\n    0 個警告\r\n    0 個錯誤\r\n\r\n經過時間 00:00:05.34\r\nBUILD_ELAPSED 5.844000000040978 EXIT 0\r\n{\"status\":\"passed\"}\nPURE_ELAPSED 0.5309999999590218 EXIT 0\r\n"
+~~~
+
+### c2_root_restored_actual
+
+Tool35570a; outer wall2.6456111s; exit0.
+Complete original output, lossless JSON string:
+
+~~~json
+"SOURCE_HEAD 767af00730a8cc292fade05fbeab78a776cad754\r\nSHA256 C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n3-native-seam-review-20261019\\bin\\Debug\\net10.0-windows\\JohnnyAuthority.Tools.exe 4aeb1093fa104729103d0915a93b7918b493ecd0963772add0fd274a806062a9\r\nSHA256 C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n3-native-seam-review-20261019\\bin\\Debug\\net10.0-windows\\JohnnyAuthority.Tools.dll 8a2766b5843d75d3823fe3525e207f751f71404f3550118ce27e5648424996f8\r\nSHA256 tests\\test_native_authority_tools.py 27b6eec85793c11d2b003b6c0c2177256720fd593e08c2aa7343d1eac906a157\r\nNATIVE_PAYLOAD_READBACK_ELAPSED_SECONDS=1.057567\r\nNATIVE_PAYLOAD_READBACK_RC=0\r\nNATIVE_PAYLOAD_READBACK_STDOUT:\r\n{\"payload\":{\"path\":\"C:\\\\Users\\\\GameBoy\\\\AppData\\\\Local\\\\Temp\\\\johnny30n3-native-seam-review-20261019\\\\c2-payload-fixture\\\\payload.bin\",\"kind\":\"FILE\",\"status\":\"OBSERVED\",\"sha256\":\"1d23266fe5548cb8cb915be4284b16de95db7989b75ab52539fc6125b60c8048\",\"sizeBytes\":36},\"stream\":{\"path\":\"C:\\\\Users\\\\GameBoy\\\\AppData\\\\Local\\\\Temp\\\\johnny30n3-native-seam-review-20261019\\\\c2-payload-fixture\\\\multi-buffer.bin\",\"kind\":\"FILE\",\"status\":\"OBSERVED\",\"sha256\":\"76fc0001ec56adf09096a9134afbb8edd8c1d596d83c4fa7b5dd952abc085660\",\"sizeBytes\":196625},\"before\":{\"status\":\"OBSERVED\",\"owner\":\"S-1-5-21-3542654388-73774624-397494543-1001\",\"descriptorSha256\":\"5a506110f5b978ca1779e21b215c812544d59afd9496f0d1e91051a384e5597e\",\"volume\":480203665,\"fileId\":9570149210438408},\"after\":{\"status\":\"OBSERVED\",\"owner\":\"S-1-5-21-3542654388-73774624-397494543-1001\",\"descriptorSha256\":\"5a506110f5b978ca1779e21b215c812544d59afd9496f0d1e91051a384e5597e\",\"volume\":480203665,\"fileId\":9570149210438408},\"directory\":{\"path\":\"C:\\\\Users\\\\GameBoy\\\\AppData\\\\Local\\\\Temp\\\\johnny30n3-native-seam-review-20261019\\\\c2-payload-fixture\",\"kind\":\"FILE\",\"status\":\"UNAVAILABLE\",\"sha256\":null,\"sizeBytes\":null},\"missing\":{\"path\":\"C:\\\\Users\\\\GameBoy\\\\AppData\\\\Local\\\\Temp\\\\johnny30n3-native-seam-review-20261019\\\\c2-payload-fixture\\\\missing.bin\",\"kind\":\"FILE\",\"status\":\"MISSING\",\"sha256\":null,\"sizeBytes\":null},\"empty\":{\"path\":\"C:\\\\Users\\\\GameBoy\\\\AppData\\\\Local\\\\Temp\\\\johnny30n3-native-seam-review-20261019\\\\c2-payload-fixture\\\\empty.bin\",\"kind\":\"FILE\",\"status\":\"UNAVAILABLE\",\"sha256\":null,\"sizeBytes\":null},\"oversized\":{\"path\":\"C:\\\\Users\\\\GameBoy\\\\AppData\\\\Local\\\\Temp\\\\johnny30n3-native-seam-review-20261019\\\\c2-payload-fixture\\\\oversized.bin\",\"kind\":\"FILE\",\"status\":\"UNAVAILABLE\",\"sha256\":null,\"sizeBytes\":null},\"exclusive\":\"OPENED\"}\r\n\r\nNATIVE_PAYLOAD_READBACK_STDERR:\r\nPAYLOAD_STAGE=before-positive\r\nPAYLOAD_STAGE=after-positive\r\nPAYLOAD_STAGE=before-streaming\r\nPAYLOAD_STAGE=after-streaming\r\n\r\nEXISTING_PAYLOAD_ASSERTION_PASS_ELAPSED 1.0940000000409782\r\n"
+~~~
+
+
+
 ## F1 seal formatting correction — 2026-10-19
 
 Root eb5507d0 retained literal pytest whitespace in raw traceback: git diff --check
