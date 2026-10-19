@@ -83,3 +83,43 @@ dispatch occurred. Reviewer correctly required CONVERGENCE_REVIEW_REQUIRED under
 CodeReview§5. That proposal is superseded by Ticket45 revision02's explicit
 control-plane analysis, transition table, unchanged resource ceiling and
 independent document review before re-entry. No automatic third correction.
+
+## Revision02 approval and controlled integration allocation
+
+`/root/batch_authority_review` independently APPROVED_CONTROL_DOC_ONLY for
+29b0a9c993324adfb95d0f3bd78bba17fd06376f / ticketblob
+e81061941d8d481bc7a2845b1e4549beee922d73. Original author preserved heading
+level, producing candidate `cba806cfd217664fdd880781040b12184148f595`.
+Same-title H1 regression failed on9482ac08 (1failed,3.458s wall), then full
+152passed/1.29s (3.753s wall); strict succeeded1.753s. Incremental reported
+command total12.2s plus discovery/read conservative1.642s; original130.7 retained,
+author at most144.6/150s, not a fresh budget.
+
+Original reviewer APPROVED revision02 bounded delta: valid fixture issues=[];
+scaffold yields EXPECTED/PLACEHOLDER, empty backticks and H1 escape each
+EXPECTED/MISSING, same-title H1 yields EXPECTED/ACCEPTANCE/STOP MISSING.
+152tests, strict mypy, compile/import and diff checks passed; clean exactcandidate.
+Independent duplicate reverse-mutation evidence remains applicable to unchanged
+branch. Reviewer cumulative about60/100s, Root conservatively retains full50s
+allocation; cumulative ceiling254.6/300s, no automatic further attempt.
+
+Reviewed blobs:
+- library/local_orchestration/ticket_content.py: 64abd9e20bec1b0c2ead4a39c74fe6ae91792f40
+- tests/test_ticket_content.py: 03c7d23db544f036c94bf2ab711299586e5e5a0f
+
+Structural review: module276/test264 physical lines approximately, exceeding
+240signals but not1000-line multi-responsibility growth. The module handles one
+bounded diagnostic responsibility, reuses boundary grammar, and tests share one
+fictional fixture plus parameterized cells. No framework, authority source,
+Host/Router wiring or new dependency. Source approval is not qualified isolation.
+
+Root authorizes exact-blob replay of096e111e,9482ac08,cba806cf onto the current
+control commit, using the existing Root-owned clean landing workspace
+`.worktrees/skill-improvement-44-land` with new branch
+`codex/skill-improvement-45-land`. Its earlier branch/journals are preserved;
+reuse does not authorize deleting the held44/31B assets. No new worktree needed.
+Existing `admit_document_mutation` must check the rev02 ticket from integration
+branch and fast-forward only the reviewed two-path source diff. Journal root
+`%TEMP%/Johnny-checklist45-20261019`, owner Root/Ticket45, TTL through independent
+seal readback, then CLEANUP_BLOCKED hold under existing no-retry instruction.
+No cleanup attempt, push, formal admission activation or main-branch merge.
