@@ -1,5 +1,21 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+Latest cross-stream engineering evidence2026-10-19: original CVQ B3doc12/review16 at
+75d165b5e3b9e4e26b8b36af240d218b06447f4f independently document-reviewed PASS,
+/root/batch_authority_review0.725s. Root strict21 succeeds; its full async duration
+is UNVERIFIED, not the poll-wait sum. Root20 rule-owner wiring reversals/three extra
+doors and actual forbidden-import rejection/restored packet complete in12.9977218s;
+raw stdout remains session chunks17406c/266f6a, not a fully sealed final campaign.
+Ordinary evidence peer4.884s finds retained F01 schema identity bypass. Root real
+PositiveInteger source-packet reproduction4.4530727s confirms empty findings when
+Field is a module helper. No packet execution. B3 source staging CHANGES_REQUESTED,
+not qualified/accepted/integrated. Original exhausted attempt limit is preserved.
+N1/30G engineering PASS and qualified-audit holds remain,30B/43 unchanged. Existing
+runbook now has one consolidated NOT_GRANTED source resource/attempt decision,
+not a new PRD or security-setting approval. Reviewer cumulative183.407/220;
+Root330 conservatively reserved including UNRECONCILED history, not measured usage.
+Original599.2/1500 and all failures remain; no reset, release or cleanup retry.
+
 | Field | Evidence |
 | --- | --- |
 | Prior control baseline | `789302c4345aedb5439770ebb7aad1c9ac0f3cd8` |

@@ -3,7 +3,7 @@
 | 欄位 | 值 |
 | --- | --- |
 | 文件身分 | `AI-SKILL-IMPROVEMENT-CHECKLIST`；本專案工作追蹤，非新 PRD／SPEC／Gate |
-| Revision／來源 | `36`；沿用既有12項與acf0ffa1／ded322b3批准；Owner批次本地授權與首次CVQ順序例外；SAME900重新分配350/220/330，原帳與1500總上限保留。非 OS變更／Host測試／push／正式啟用授權 |
+| Revision／來源 | `37`；沿用既有12項與acf0ffa1／ded322b3批准；Owner批次本地授權與首次CVQ順序例外；SAME900重新分配350/220/330，原帳與1500總上限保留。非 OS變更／Host測試／push／正式啟用授權 |
 | 工作基準 | `a1cb6c13adbeb52a4117991727dcc3d4af6d2a33`；分支 `codex/skill-improvement-checklist` |
 | 主線 | 先對照、優先 02→04→05→06→07，再處理餘項與整合回放 |
 | 負責 | Root 理解需求、衝突與派工；票級實作者依有效能力 Profile；獨立審閱另席 |
@@ -30,7 +30,35 @@ Router、Reviewer、文件索引與結案規則仍各有唯一正文。`[x]` 只
 | [ ] 11 去重與衝突 | `WPR_TEMPLATE_AND_HISTORY_LOCAL_INTEGRATED / ACTIVATION_OPEN` | 原37／38／40／42保留；Luna44在既有RequirementLineageGate增加純revision-history驗證、重用原test；[獨審](reviews/workflow-governance/44-requirement-revision-compatibility-code-review.md) | 原42之46tests／不同位置WPR突變證據保留；44獨審14tests／30subtests、鏈結與terminal不同門突變紅→綠、Root gate1aa5ed22與兩blob一致；獨立seal確認 | `APPROVED_44 / LOCAL_INTEGRATED / CLEANUP_BLOCKED` | 舊一對一validate維持生效；可信creation issuer／效應前grant讀回／原子consume及真Host尚缺，不用純history方法冒充正式身分遷移；清理政策阻擋 |
 | [ ] 12 回放與獨審 | `EXISTING_CASES_MAPPED / END_TO_END_NOT_VERIFIED` | Root沿既有案例／review；46增加受版控本地命令來源，未新增回放框架；30B／43仍未整合 | 46合法command-plan與拒絕／版本釘選／不同門突變均有獨審；整合後36tests／22subtests。04不重做，既有局部PASS沿用，候選不冒充整合版 | `PARTIAL_ONLY` | 完整01–10正式來源/effect回放仍缺；Owner已採納首次入口順序例外，但未授權Host測試；不是資格或總驗收 |
 
-## 原生工具局部工程證據（revision36）
+## 本輪原生工具與CVQ實際驗證（revision37）
+
+N1九檔工程證據如下保留，未重做04，也未將任何其他主項假勾。
+CVQ舊指向已改讀可信control55b9a91c、既有修復候選2e889401；沒有重派已回件F01。
+Root在原CVQ票doc11／163bf203綁定本批首次入口工程暫存例外，獨立文件preflightPASS；
+當前結果封存在75d165b5e3b9e4e26b8b36af240d218b06447f4f：B3doc12／review16，
+LF分別6cdd1882d379b02386b211de490173d4b41760bd63b63e1d48b77c21b58e7930、
+09411689d3e622bae0e407163ab1a98ec4147005b69d228e77dbc590df57bb9b。
+不同席文件複驗PASS（0.725s）；只證明紀錄／digest一致，不是合格隔離或程式PASS。
+
+實際補齊strict21綠；20個具名rule-owner wiring反向突變紅→還原綠、三個額外必經門，
+真實nine-source packet的unused renamed forbidden import拒絕→原packet綠。
+campaign12.9977218秒，原始輸出未縮減，磁碟source未改。這不是20個內部謂詞各自完整證明。
+strict命令完整非同步耗時未instrument，記UNVERIFIED，不拿poll等待總和冒充原始時間。
+未變的A測試／fixture／catalog／product及間接imports獨立核對後沿用原證據，不重跑整批。
+
+普通獨立peer又找到F01 schema callable identity漏口；Root用REAL PositiveInteger alias
+加同名typed helper Field重現inspect_sources回空，4.4530727秒，packet沒有執行。
+**這是失敗反例，不是綠燈**。B3 CHANGES_REQUESTED／CONVERGENCE_REVIEW_REQUIRED；
+其餘final F01/nonvacuity/full-boundary campaign未跑，不在已知錯誤候選上燒預算。
+單次續修額度已消耗，不自動再派；F02/F03/F04及原A證據不重審。資格hold仍獨立存在。
+
+原有各項剩餘驗收仍如下表及既有逐項依賴矩陣，沒有新增Agent、Gate或第二套框架。
+N2作者可用26.23不足45；Reviewer累計183.407/220；Root330保守保留含UNRECONCILED舊帳，
+不假稱330全為量測耗時。新增500／B3一次限縮修正窗口只是合併提案，NOT_GRANTED；
+精確角色分配、四個source切片、後續資格路徑和可直接回覆文字見原[runbook](runbooks/grant-and-readonly-host-implementation.md#consolidated-remaining-source-decision--proposal-not_granted)。
+不要求現在核准尚未建好的安全設定；服務payload／protected observer未建妥就不能提出假執行包。
+
+## 原生工具局部工程證據（revision36歷史，N1結果沿用）
 
 原票30N1沿原需求與同一Grant完成九個CREATE，候選
 `0a2e0661eef741be1b9df103ae8874c284cf60f8`／tree

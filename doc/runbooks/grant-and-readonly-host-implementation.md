@@ -64,6 +64,92 @@ and bounded live semantic audit remain unallocated/unexecuted, not hidden in sou
 budget. If remaining local caps cannot fit the next closed slice, prepare the exact
 residual plus actual usage once; do not exhaust caps via large-log recovery scans.
 
+### Consolidated remaining source decision — proposal, NOT_GRANTED
+
+The following supersedes the stale statement later in section3 that F01 has not
+returned: candidate2e889401 already contains that repair. Current original CVQ
+control is55b9a91c; independent ordinary engineering review under the approved order
+exception is recorded at75d165b5e3b9e4e26b8b36af240d218b06447f4f, B3document12 /
+review16. No source integration or qualified audit is inferred. Root strict21 passes;
+20 named owner-wiring reversals and three extra doors go red/restored green, and
+actual-package renamed forbidden import rejects/restores. These are not a complete
+final campaign. Peer and Root find a retained F01 defect: a typed module function
+named Field is accepted as a schema constructor in the REAL PositiveInteger alias.
+The packet is never executed. The old one-attempt/no-correction limit is consumed;
+no automatic redispatch or another correction was performed.
+
+N1 final engineering source remains0a2e0661, nine CREATE, independent4tests and actual
+getter source mutation red/restored green; source20bd6e30 remains six CREATE/92tests.
+Both remain qualified-audit-blocked and unintegrated. N2's original exact scope and
+doc preflight4e47c042 are ready, but underfunded: author293.77 used plus old30G
+correction reserve30 leaves26.23 of350, below N2's planned45. Reviewer now183.407/220
+(old84 + N1 94.523 + B3 peer4.884), leaving36.593. Root330 is conservatively reserved
+in full for old UNRECONCILED history200 plus bounded N1/N2/inventory/B3 preparation
+and final record work, NOT represented as330 measured seconds. Original599.2/600,
+all failed calls, deviations, command outputs and total1500 ceiling are retained.
+This is real per-role resource admission, not platform quota exhaustion.
+
+Minimum remaining source pack, engineering estimates NOT measured results:
+
+| Existing responsibility / ordered slice | Source paths to freeze in derived child Grant | Author / independent reviewer / control command seconds |
+| --- | --- | --- |
+| Retained B3 F01 schema-origin correction | MODIFY only existing source_gate and boundary driver at2e889401; use existing binding resolver, no new schema engine | 25 / 20 / 10 |
+| N2 owned native job lifecycle | Existing Ticket30N2 three CREATE / three MODIFY, exact N1 baseline; constructor-first then owned fixture limits and observed teardown | 45 / 32 / 22 |
+| Protected issuer enrollment/transport and setup tooling | Existing section2 windows_service.py responsibility; native_windows service/pipe/enrollment shim and existing tooling wiring, shared ledger/client; exact files/typed contracts frozen before dispatch, not a new service framework | 100 / 60 / 35 |
+| Minimal readonly Host adapter/observer source | Existing section3 readonly_review_host.py, tests/staging/readonly_host_protocol.py, test_readonly_review_host.py; reuse current process lifecycle/CVQ contracts, no second Runner | 60 / 45 / 25 |
+| Total planned envelopes | Same Ticket30/CVQ lineages, first-entry exception boundaries intact | 230 / 157 / 92 |
+
+These envelopes include each slice's inspections, constructor preflight, affected
+tests, required author/reviewer distinct-door mutations, commits and bounded correction;
+control includes exact ticket/allowlist/Grant/record readback. One initial plus one
+correction only, <=60 seconds per command, <=55 child-test timeout, serial per seat,
+zero automatic retry/load. Do not use this forecast as authority to open undeclared
+paths or silently raise a failed slice's limit. No full repo or unchanged campaign rerun.
+
+Recommended ONE resource decision: add500 command seconds, allocated author245 /
+reviewer155 / control100. Parent ceiling1500 becomes2000; role ceilings350/220/330
+become595/375/430. Old usage and reservations stay charged; available source envelopes
+then author271.23 after correction reserve, reviewer191.593, control100, sufficient
+for planned230/157/92 plus bounded variance. This is source/test/document work only,
+no paid provider/real Host call, service install, account/ACL/firewall change, real
+IPC session or source qualification. It does not promise twelve-item completion
+without later real-source/Host/publication-dependent evidence.
+
+The only additional attempt decision is to reopen retained B3 F01 schema-callee
+identity once, within the SAME closure/paths/baseline/remaining lineage, initial plus
+one correction maximum, with all historical failures/use kept. No reopening F02/F03/F04,
+new PRD, weaker grammar, qualification standard or automatic third correction.
+Normal DTO/module/command details remain Root/Architecture Owner responsibility.
+
+Direct precise reply candidate:
+
+> 核准原runbook的限縮source-only續行包：原Ticket30／CVQ lineage追加500命令秒，
+> 分作者245、獨審155、控制100；總上限2000，角色595／375／430，保留全部舊帳與reserve。
+> 核准B3於2e889401就F01 schema callable identity追加一次有界修正窗口，僅原gate／driver，
+> 初次加一次修正，保留原Closure與所有Finding／歷史耗用。其餘依原批次自行凍結精確子票／
+> Grant與獨審。不得新增權限、費用、Host效應或降低安全要求；不授權安裝、帳戶／ACL／
+> 服務／網路變更、正式CVQ測試、push、release、deployment或啟用正式閘門。
+
+After that decision: B3 discriminating red/repair/green/peer review; N2 bounded native
+fixture lifecycle; protected enrollment/transport setup source; readonly adapter/
+observer source; independent ordinary engineering sealing at each exact candidate.
+Then present ONE actually executable installation/permission manifest using built
+payload hashes, exact SIDs/paths/rights/commands/rollback, and separately bounded
+qualification/model costs. No guessed payload digest or blank security consent now.
+Final OS protection/independent observation and original CVQ admission remain mandatory;
+only qualified results may subsequently discharge30G/30B/43 holds. Protected issuer
+positive acceptance remains distinct from public all-reject containment.
+
+No lower-cost unblocked source slice is silently abandoned: existing45/46/31B/44
+local content/report/history/command-source slices are complete with evidence;04
+is complete and not rerun. Remaining item-specific dependencies are the existing
+checklist matrix, not a new requirement:01/02/03 need trusted readback/effect wiring;
+05 real loaded-source observation;06 prewrite effect interception;07/09 qualified43
+review and real evidence source;08 actual CI consumer/retirement proof;10 egress/
+credential isolation;11 trusted one-shot creation/activation;12 their combined replay.
+Where the observed remote main lacks new local documents, no push is authorized and
+no local origin/main substitutes for it. These external-dependent checks stay open.
+
 | Subject | Actually present / verified | What remains to be built or proved |
 | --- | --- | --- |
 | Grant | dispatch_authority.py documents owner-intent marker; no protected issuer implementation in scoped local_orchestration/workflow_router | Protected Owner approval, authoritative plan store, authenticated direct readback, one-shot consume and owned read transport |

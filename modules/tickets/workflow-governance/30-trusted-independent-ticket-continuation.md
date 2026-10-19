@@ -245,6 +245,19 @@ to continue, release historical reservations silently, or pretend the overall
 1500 ceiling was hit. This is a role-envelope allocation constraint; Root continues
 other lawful evidence/source preparation. No additional Parent cost is authorized.
 
+Subsequent bounded CVQ preparation at75d165b5e3b9e4e26b8b36af240d218b06447f4f:
+strict21 passes, but ordinary independent review/root actual-package reproduction
+finds retained F01 schema-callee identity bypass. B3 remains CHANGES_REQUESTED and
+qualified-audit-blocked; no source/candidate integration. Peer staging costs4.884,
+so cumulative reviewer183.407/220; no refund of prior work. Root's remaining75 is
+conservatively held in full for preparation/review/evidence closeout, not asserted
+as measured actual use; earlier UNRECONCILED/reserve200 remains. All350/220/330 caps
+still apply. A renewed B3 author attempt is proposed, not automatically granted over
+its explicit consumed attempt limit. The consolidated source-only budget/attempt
+decision and four closed slices are in the existing runbook section1 below its
+redistribution history. No security-setting/Host consent is requested before the
+actual payload and protected observer are built and independently reviewed.
+
 Purpose: prove a job is configured and independently read back by the parent
 BEFORE an owned fixture process resumes, then enforce child-process/time/memory
 bounds and terminate/observe that exact job. Merely compiling an interop declaration
