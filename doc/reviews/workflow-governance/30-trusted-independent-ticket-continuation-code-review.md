@@ -1,4 +1,88 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H2-A final source preflight and H2-B activation — 2026-10-20
+
+Root reads exact clean c13d10171f3819c1b6770218303806dc20f14eb3 in both
+registered peer WTs. Against original5449c063: exactly2CREATE/1canonicalSIDMOD,
+no B/effects. Product blobf1e3cedddacdc3bc96cbe74a1741d0720d652270;
+contracts b22cbdfc50e1c424b1d64d7afa3e7848164d0b02;
+tests7e8df211bef76a76a01769c3dbcb6e4c7e14e23e. Distinct
+/root/ticket30_native_tools_review SOURCE_PREFLIGHT_PASS: E01 closed by canonical
+_StrictModel reuse, no semantic/JSON change. Root actual module/hash/ordinary
+constructors/memory compile,236 affected tests aa5959 and strict3files4f1659 PASS.
+
+Root independent actual mutations: same-client/serviceSID guard removed =>
+cbfca1 named1RED/23green; exactrestore ce73da24green. Exact schema-int guard
+removed =>8b8e90 named3RED/21green; restore7dfcad24green. Path-validation bypass
+=> original18RED dcd030 output TRUNCATED, not accepted as full raw; a fresh single
+relative-path cell9c8b2f has full unfiltered intended DID_NOT_RAISE failure,
+restorefbba8e GREEN. Final875a32 Git blob equality proves exact restoration.
+Author historical mutation raw unavailable remains UNKNOWN, not retroactively
+recovered by these new Root runs. Fresh commands/tool records archived at owned
+Temp/johnny30n4-peer-review-20261020/h2-a-final-root-records.json,
+SHA2568c4c03fec07acac34717d07f7579056a7829266b3d276dda4d0796ae41cde13b.
+SOURCE_CONSTRUCTOR_PREFLIGHT_PASS only; no OS provenance/qualification/integration.
+
+Existing closure14/aa9b5c26 conditional B now satisfied without new AC/permission.
+Root derives grant-ticket30n4-protected-peer-20261020 revision02, parent
+batch-checklist-local-20261019-uncapped, baseline exactc13d10171f3819c1b6770218303806dc20f14eb3.
+Same named author/root reviewer/distinct source peer, same registered WTs/branches/
+ctx-ticket30n4-protected-peer-20261020/owned Temp. Fresh62c90b owner clean/exact
+baseline; Root review875a32 clean/restored. MODIFY ONLY already created
+library/local_orchestration/grant_authority/windows_peer.py and
+tests/test_grant_authority_windows_peer.py. contracts.py READ_ONLY; CREATE0/DELETE0.
+Implement only frozen H2-B peer exact joins/record binding and named negatives/
+mutations from closure14. Private pure values, no runtime/export/native/spawn/
+ledger mutation/source/Host/effect claims. Canonical typed constructor preflight
+retained; all four lifecycle values are metadata, not permission. Actual read
+provenance/order remains later protected composition responsibility. Default
+command60/child55, finite resources, old history/holds retained; no cumulative or
+attempt reset. Direct same-lifetime lane, receipt/Runner NOT_REQUIRED.
+ACTION_COMPLETED -> AUTO_CONTINUE same-author H2-B; final qualified audit remains
+blocked and no formal main integration/Host qualification is implied.
+
+## H1 correction final engineering review — 2026-10-20
+
+Exact cc4744e24cb7ad28b212601d88e4ef3447e3280f, additive over dee1977a;
+same revision02 Grant,2modified allowed files only. Product
+b573ab2805a30258023974a92de47348f7e9bb3d/testbd893345077c77d26d32b6f5782e1490cf169878.
+Distinct /root/ticket30_native_tools_review SOURCE_PREFLIGHT_PASS E01/E02 closed:
+lawful native event owner retained/closed via owner; malformed completion holds
+all resources in RECOVERY_HELD. Root46tests6c879b/strict4files7c9985/memorycompile+
+guardedimport e7ed48 PASS. Structure review accepts cohesive bounded IO lifetime,
+not a generic service/authority framework or automatic line-count split.
+Root different-door partial-write count removal7a1c78 intended namedRED,
+restore28e8d6GREEN. Separate ownership weakref/finalizer fake a4d79c GREEN;
+actual retention-removal0b87e5 named H1_EVENT_OWNER_LIFETIME_MUST_OUTLIVE_CONSTRUCTOR
+RED; exactrestoreb1a528GREEN (not AttributeError-only evidence). Correct-version
+primary-completion counter9ee8bc confirms resources retained; earlier6eaa2f's
+stale stdout candidate label is NOT version-binding evidence. Finalcfab19 clean.
+Author original raw reviewed in registered Temp, no real pipe/event/Host probe.
+Rejected-owner Close failure remains UNPROVED, not falsely reported cleanup.
+Sibling evidence.zip out-of-registered-output deviation remains held; no delete,
+move, denied cleanup retry or lifecycle closure. Allocation SOURCE_REVIEW_HOLD,
+SOURCE_ENGINEERING_PASS only, not integrated/qualified/operational permission.
+
+## C7 final conflict-free engineering composition — 2026-10-20
+
+Exact7a24e165391bbc3beea2d13fb492555d3b8f485e combines reviewed C6final1fe5c834,
+N2final1e6847c9 and F1final7fa12f0c in Root registered stagingWT; grant
+grant-ticket30n3-native-composition-20261020. Four MODIFY/no hand edits/CREATE0/
+DELETE0. Distinct /root/ticket30_native_tools_review SOURCE_MAPPING_PASS.
+Root407f00 Git-tree proof:26 other native blobs identical C6; N2 contracts
+1fb1ff24ffb4ea17a4783a7155ea47dad55dbeea and selftests
+78f0b2c01398c07b3efde5cbb48639f0e9cf1aff exact; Program/test compose only reviewed
+accounting/fake fixture changes. Earlier guessed nonexistent filename command
+b2a1ec failed and is NOT complete mapping evidence; corrected tree-derived proof
+replaces that claim, not the historical failure.
+Root774f19 offline restore/strict native build0warnings0errors/default/enrollment/
+fake-port job-contract tests PASS; no actual job-self-test/Host workload. EXE
+fedb83f5a66c5000ba2961682faadea1a13ce0b64aa15ca00d9b85f3ab3523d1,
+DLL25709ca684a5342a8bc15361ac39b48598ed1686aba8c002f98787912aff1370.
+Three affected mocked builder nodes41d480 PASS, strict/memorycompile05caa7 PASS.
+No physical symlink/job/installation/security effect. SOURCE_STAGING_PASS,
+allocation SOURCE_REVIEW_HOLD; old WTs/outputs/Recovery unchanged. This evidence
+does not qualify Host or integrate30G/30B43/main.
+
 ## H2-A E01 canonical strict-base reuse correction — 2026-10-20
 
 Initial immutable a65bf2552c727f57236ee053f24922436a3787f7, Root own reviewWT
