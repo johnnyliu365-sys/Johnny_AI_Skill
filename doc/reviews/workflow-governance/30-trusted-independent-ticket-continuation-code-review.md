@@ -1038,3 +1038,18 @@ SHA, branch codex/skill-improvement-30g-review. Different-seat
 SAME reviewer300 (B220 retained), serial <=60s commands; no behavior/effect/delegation
 or source mutation. This ordinary engineering check cannot satisfy the final required
 qualified isolated audit. No A integration or Phase-B admission until its result.
+
+### 30G-A G1/G2 digest-separation finding / narrow architecture clarification
+
+Different-seat type reviewer found contracts.py:152 conflates terminal
+evidence_digest with grant_plan_digest(plan). Root independently identified the
+same concern; normal terminal evidence must be constructible, and G2 already
+requires separate stored plan-integrity verification plus terminal-evidence conflict
+checking. Architecture Owner clarifies the original closure in place: keep the
+same public fields/signatures and six paths; evidence_digest is terminal evidence,
+ledger derives/stores/verifies the plan digest internally. No new authority/type,
+policy or effect. Add a distinct valid terminal-evidence constructor case in A and
+stored plan-digest tamper case in B. Original28 passing tests did not prove that
+distinction; preserve the finding and candidate, not a false preflight READY.
+Same author A120/reviewer A80, no reset, no additional final correction allocation.
+Ticket leaf/registry use D8 final-byte digest sequence before revised binding readback.

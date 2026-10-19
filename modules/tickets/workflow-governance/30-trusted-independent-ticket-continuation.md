@@ -90,7 +90,9 @@ Architecture fixes these signatures/meaning; private helper names remain enginee
   model_dump_json UTF8 bytes with sha256_ prefix; schema version pins serialization.
 - GrantRecord: grant_ref, plan, lifecycle, correlation_ref optional, evidence_digest
   optional. UNCONSUMED: neither; CLAIMED: correlation only; COMPLETE/RECOVERY_REQUIRED:
-  both required. Digest is derived from plan, not trusted from caller-supplied hash.
+  both required. evidence_digest identifies terminal execution evidence, not the plan.
+  The ledger separately derives/stores/verifies the plan digest internally rather
+  than trusting a caller-supplied plan hash; no additional public DTO field.
 - LedgerResult: scope fixed SOURCE_ONLY_UNQUALIFIED; disposition ISSUED | CLAIMED_NEW |
   EXISTING | SETTLED | REFUSED; record only for first four, failure only REFUSED.
   Finite failures MISSING | BINDING_MISMATCH | NOT_YET_VALID | EXPIRED | REPLAY |
@@ -139,7 +141,8 @@ terminal record without another claim/effect, even after reopening/crash simulat
 different correlation or any mismatched binding refuses. An expired retry may read an
 existing same-correlation record, never CLAIMED_NEW. No auto-remint/unconsume/delete.
 Settlement exact claim only; repeated identical terminal result EXISTING, conflicting
-terminal/evidence/correlation refuses. Malformed/corrupt records or stored digest
+terminal/evidence/correlation refuses. Terminal evidence may differ from plan digest.
+Malformed/corrupt records or stored plan-digest
 inconsistency fail closed. A coordinated valid rewrite by a local same-user actor
 is NOT detectable authority forgery here; only later protected storage can prevent it.
 Source tests prove transaction/idempotency only, not filesystem protection, atomic
