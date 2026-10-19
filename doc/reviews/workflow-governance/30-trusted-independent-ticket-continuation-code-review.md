@@ -1,5 +1,55 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Current bounded construction continuation checkpoint — 2026-10-19
+
+N2 Grant revision02 was independently DOC-reviewed /root/batch_authority_review:
+e3d99ffe initial had a historical PhaseA/three-files wording inconsistency; corrected
+200900ddf6e0a1d0b6914ecd2748b7fc13878afd PASS, leaf LF
+32bc863b3807abfa1d787eb388f66e63e53e72d024048db2c4719c576dd3e4a6.
+Same author /root/ticket30n2_native_impl independently read back blob/LF and continued
+on its owned worktree. Only two necessary value/OS-adapter boundaries added to original
+Grant, fiveCREATE/threeMODIFY total; no extra native effect or qualification.
+
+B3 Field candidate b55b47e7fbcb17d690a9e23041c5be78d6433560 is independently
+SOURCE_ENGINEERING_STAGED_PASS; Root20 actual predicate reversals, corpus removal,
+actual-source forbidden import and restored hashes in CVQcontrol4873ebf8 / review18.
+Peer's original SG19 wiring-versus-predicate finding was corrected and narrow PASS;
+qualified independent source audit and integration remain blocked. No30B/43 release.
+
+Existing CVQ-01 successor PhaseA ticket11/closure04 at
+41386c9afe4f15665280107c359f5f5069197fdd, leaf blob
+79180cae86d3f6eb7d87c3d0b82266a52baa187d, LF
+846be3f6bb630f5f12462df4223262fd416cdc2d2ad0644d95f5771a16a28bd9,
+was ordinary DOC-reviewed by different /root/batch_authority_review PASS after
+one collection wording correction. Root existing boundary parser verified all15
+MODIFY paths, CREATE/DELETE0, plus refusals for admission-module creation, port/gate
+modification, AGENTS mutation and deletion. Command0.047s/tool1.724845s.
+This preflight is source-scope validation only, not real Host interception.
+
+Root allocated .worktrees/cvq-01-readonly-schema / codex/cvq-01-readonly-schema
+clean at b55b47e7, non-reparse repository/parent/owner directory, common Git equals
+primary .git; linked .git points to primary .git/worktrees/cvq-01-readonly-schema.
+Tool wall3.2245567s; exact parent/candidate/branch recorded before delegation.
+Owner /root/ticket30_native_tools_impl closes completed B3 view and uses only
+ctx-cvq01-readonly-schema-20261019, implementation-standard; Root sole reviewer/
+orchestrator; distinct /root/ticket30_native_tools_review evidence peer. Derived
+grant-cvq01-readonly-schema-20261019 has the current batch parent and exact15paths.
+Same-lifetime followup dispatched through native collaboration; wait_agent, no
+activity polling or synthetic receipt/descriptor. This is not a runtime issuer Grant.
+
+These registered worktree/cache assets have owner original CVQ-01/current named
+implementation owner, purpose readonly schema construction, TTL through independent
+qualified review/evidence seal; live review/Recovery refs prevent expiry deletion.
+No unregistered files or refused cleanup operation is included. Existing B3 cache
+is reusable build cache only, never approval/evidence authority. No teardown now.
+
+Continuation remains local source construction/preflight/review. Native fixture first
+failure is being diagnosed with exact stage/residual evidence, not blind retry; if
+Recovery cannot be excluded, only that native effect halts. No external Host tests,
+OS installation/ACL/settings, paid calls, integration, push/release/deploy or false
+checklist completion. Other admitted source work continues; this checkpoint is not
+a task-final response or request for a renewed time/count allowance.
+
 ## N2 actual constructor preflight and behavior continuation — 2026-10-19
 
 Exact Grant at1eb739d3e6d093d49b0abf5218a20c73a5d886e9, Ticket30 leaf blob
