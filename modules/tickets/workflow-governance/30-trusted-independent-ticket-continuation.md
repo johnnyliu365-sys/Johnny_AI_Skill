@@ -39,6 +39,112 @@ This amendment becomes effective after independent consistency review of its exa
 committed rules/ticket/index/runbook versions; subsequent exact child bindings refer
 to that reviewed revision. Current N1 immutable source/evidence hold is unchanged.
 
+## 30N4-H6 — retained process facts / closure20 proposal
+
+Same original30/runbook03/local batch. Architecture readback of C7 at7a24e165:
+C# N2 GetProcessId/GetProcessTimes/IsProcessInJob exists, but only internal to its
+short fixture executable. A one-shot subprocess output outlives those handles;
+a new persistent helper/protocol would add avoidable lifecycle/trust work.
+Root and distinct architecture peer select a smaller Python platform ABI adapter,
+not a second authority engine/helper service. Tiny cross-language native bindings
+are necessary because existing C# internals are not callable here; reuse N2 ABI
+semantics and H2 pure values/H4 token-query/Close primitives rather than duplicate
+domain comparison or closed-file inventory. No modification to their reviewed code.
+
+Sourcebaseline37410685e9232e6f50c8bd25066754e37c48b513 (H4 source staged only).
+CREATE ONLY library/local_orchestration/grant_authority/windows_retained_process.py
+and tests/test_grant_authority_windows_retained_process.py; MODIFY0/DELETE0.
+H1/H2/H3/H4/C7/ledger/service/Host/config/CLI all READ_ONLY. N5closure19 and
+H5closure18 unchanged and independent. Constructor A before reader B on immutable
+reviewed A. No new PRD, generic Reader/lease registry/Protocol/store/runner.
+
+H6-A one frozen strict _RetainedProcessObservation with required process_id
+positiveuint32, windows_session_id uint32, process_creation_time_100ns positiveuint64,
+job_membership existing _JobMembership restricted to MEMBER or NOT_MEMBER (not
+UNAVAILABLE as a fabricated fact), process_image_path existing canonical Windows
+path. Reuse H2 strict model and aliases. One finite observation-failure enum and
+typed error may retain a Close-capable token owner only for failed/uncertain token
+cleanup. Required token owner iff TOKEN_CLOSE_FAILED; other failures no owner.
+No default/approved/trusted/ref/evidence/expected/process/job handle in result.
+Ordinary direct/JSON/boundary construction, retained identity/lifetime negatives
+before native behavior; no missing-code first-red ceremony.
+
+H6-B private reader accepts exact native owning process+job PyHANDLE objects under
+one issuing service thread. Validate pure inputs and both nonzero/non-sentinel
+pointer-width numeric aliases (no coercing arbitrary caller objects) before native
+call. Same-thread check before every read, exact original owning wrapper retained,
+validate still-open original handle spelling before/after read; never OpenProcess
+by PID, ProcessIdToSessionId, duplicate/reopen/Detach/Close borrowed process/job,
+datetime/float FILETIME conversion or launch/kill/wait/enroll operations. Reader is
+only a synchronous borrow, NOT an exclusive-lease proof: a strong reference cannot
+prevent concurrent explicit Close/handle reuse. Future protected launcher must own
+and serialize these exact handles over complete H4->H6->H2 binding window with no
+outside callbacks; absent that qualified composition remains UNAVAILABLE. No bool,
+caller marker or fake lock is promoted to proof of that external precondition.
+
+Read GetProcessId and GetProcessTimes from SAME process handle, FILETIME high<<32|low
+as exact unsigned64; IsProcessInJob exact SAME process/job pair must distinguish
+native call failure from successful NOT_MEMBER. OpenProcessToken TOKEN_QUERY on
+that SAME process owner, query existing TokenSessionId primitive on retained token;
+close own temporary token exactly once before returning output. Recognize/retain
+Close-capable token before validating query-handle shape (H4 E01 rule). Query/
+validation/native failures still close; failed/uncertain Close retains exact owner,
+poisons reader and next read refuses before effects. Never impersonate/Revert or
+close caller-owned process/job. QueryFullProcessImageNameW flags0 on SAME process
+handle, one bounded32768-WCHAR buffer; require nonempty returned length<capacity,
+exact UTF16 units/content/termination and canonical H2 path, no truncation/normalizing
+guesses/grow loop. Path is not file digest or proof loaded dependencies/config.
+
+All ctypes argtypes/restype and raw returns confined to typed outer ABI wrappers;
+zero/failed API result/invalid output yields finite error, no partial success,
+bool-as-int acceptance, Any/type-ignore/caller expected substitution. Do not load
+DLLs during import/constructor; B tests install finite fake DLL/API BELOW actual
+bindings plus block real WinDLL/native calls. Reuse H4 native token/query owner
+helpers where semantically exact, no copied comparison/security-role engine.
+No claim these facts alone establish live writer (process handles remain valid
+after exit), last-message identity, image-content/config digest, trust or Grant.
+H4 actual message and later protected launcher/config/readback remain mandatory.
+
+H6T1 literal ordinary constructor matrix allfivefields/JSON/strict/nullable/domain.
+H6T2 actual native-wrapper fake path pins exact process/job/token handle args,
+query class/TOKEN_QUERY, FILETIME high+low, known negative membership, bounded
+Unicode path/session0 positives and token Close before result. Real API guard0.
+H6T3 null/closed/int/bool/sentinel/malformed owner, wrongthread, query/API/shape/
+image-too-long/length disagreement/noncanonical/zeroPID/time failures reject,
+borrowed owner0Close; every own token cleanup phase and poison/no-second-effect
+negative, malformed Close-capable token retained/closed as appropriate.
+H6T4 actual raw FILETIME word swap/drop, wrong borrowed handle/query selector,
+success-result vs membership confusion, token owner retention/Close or image
+length weakening => namedRED/exactrestoreGREEN; independent Root differentdoor.
+Shared native fake and parameterized cells, no per-case scripts. Preserve H4
+unchanged proof, run only affected/new tests plus strict2/memory compile/import
+and loaded-source hash. NativeC# old fixture campaigns never run here.
+Source forecast200/test250effective; >500 triggers responsibility review, not
+minify/split/newframework. No source prompt/ticket narrative or screenshots.
+
+Primary ABI references fetched2026-10-20:
+https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getprocesstimes
+https://learn.microsoft.com/en-us/windows/win32/api/jobapi/nf-jobapi-isprocessinjob
+https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-queryfullprocessimagenamew
+Existing installed PyHANDLE class metadata (dir/descriptor only, no handle/API
+operation) confirms Close/Detach/handle fields; no real token query used as proof.
+
+Root reviewer/orchestrator; implementation-standard author allocation chosen only
+after a current author returns/released (no simultaneous second lane); distinct
+/root/ticket30_native_tools_review source peer. Preregister contained author
+.worktrees/skill-improvement-30n4-retained-process and matching-review, codex/same;
+owned Temp/johnny30n4-retained-owner-20261020 and -review-20261020 with owner+TTL
+through review/seal, holds override. Context ctx-ticket30n4-retained-process-20261020.
+Conditional grant-ticket30n4-retained-process-20261020 rev01 A_ONLY NOT_ACTIVE
+until DOC_PASS/fresh baseline/Git/nonreparse/normal shared constructor preflight;
+pin named author before dispatch. B later rev02. No Owner technical renewal.
+Reuse one ownedTemp mypy cache, -B/no-cache/autopluginsdisabled, child55/outer60,
+mechanical full raw/time capture and evidence-progress root-cause rule.
+No real native probe/Host/service/install/ACL/network/model/operational grant/
+source qualification/30B43 clearance/main integration/push/release/deploy/cleanup.
+Return only source candidate/checks/evidence; actual exclusive lease/issuer remains
+a later protected composition dependency, not a fabricated completed capability.
+
 ## 30N5 — finite offline Responses stimulus codec / closure19 proposal
 
 Original30/runbook03 section3 and first-CVQ order exception only; parent uncapped
