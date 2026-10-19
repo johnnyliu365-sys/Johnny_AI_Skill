@@ -1,4 +1,49 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H5-B source seal / N5-A preflight and B admission — 2026-10-20
+
+H5 final18bf1e9f62ccbde7d4556187dfb7967471ce93a1, exact2MOD from474e67c1;
+product7bb8f40d39e1e4d8c416f4726bea34e6db700e92 /
+testc44e90e832f7794e2c9b26e9372b1e164dad6990. Distinct native-tools peer
+SOURCE_PREFLIGHT_PASS, including >500-line responsibility review: one bounded
+one-frame transport, one shared fake/matrix, no duplicate framework or unrelated
+responsibility. Root full source/test read; actual loaded candidate136H1+H3 PASS,
+UNPATCHED_NATIVE_CALLS[], finite14 constructors PASS, strict2PASS25.890s.
+Root different actual-source door disables cleanup poison: three named cleanup
+cells RED2.756s, exactrestoreGREEN2.218s. Author six real module mutants each
+intendedRED/restoredGREEN; complete raw stdout judged, not environment-expanded
+truncated display. Author raw mutations SHA2566e1a88ea6642280a1e233eb236bbcfa3fe29b531f14f5bc080e59849ea62d245,
+final validation7ef15afbba9ef72b9011e1592c1c5d4e27475c800137a3745da0c4cd7e5ac2d7
+held in registered ownership-owner Temp; Root captures in control execution
+records pending data-only seal. Readback display mistakes (wrong control-WT
+source hash path, cp950 JSON read) are not missing capability or product failures.
+Final review WT clean and exact product blob restored. SOURCE_APPROVED/STAGED
+only, not formal integration/cleanup/Host qualification or30B43 clearance.
+H5 author allocation released to immutable source/evidence hold; no deletion.
+
+N5-A cc7710def73547fb0a2160e5808a3613c385dbda, exact2CREATE from24c79d2278b36afcc816a9eab1e6c2c18caabbd7;
+carriere56b26230f527f41f937a1d2c91dcce67e35cb52 /
+testad543261c1cf45df24a563b658da715a1698fe99. Distinct batch-authority peer
+SOURCE_PREFLIGHT_PASS. Root reads complete two files and original author96-cell
+output, repeats candidate96PASS1.047s, strict2PASS7.750s, memorycompile and actual
+source LF readback. Author initial mypy duplicate-module error and metadata-field
+readback mistakes remain history, not product defects or fabricated first-red.
+Immutable strict constructor admits valid exact labels and bounded opaque UTF8
+including empty/control text, no encoder or operational effect. A preflight PASS.
+
+Root derives grant-ticket30n5-readonly-stimulus-20261020 rev02 N5_B_ACTIVE under
+same parent and frozen closure19 atca002b73b14202480b2cbc2c561f6b0a2077289f,
+LF25f7659622c8cc409c2828eba28b2dc4f5b3fa46855edea1d9e3cab065d3e542.
+New sourcebaseline exactcc7710de above. Same author /root/grant_transport_impl,
+Root reviewer/orchestrator, distinct /root/batch_authority_review source helper
+(explicit helper replacement; no authority change). Existing exact contained
+WT/branch/context/ownedTemp and history retained, fresh clean readback before
+continuation. MODIFY ONLY the two files created by A; CREATE0/DELETE0. Implement
+only frozen six-event finite codec, independent literal oracle, actual source
+mutants, no-effect tests, strict2/import and Root different door. No Host/CLI/API/
+network/config execution, CaseResult/PASS issuance or qualification. Same-lifetime
+direct bridge NOT_REQUIRED, child55/outer60, one existing ownedTemp mypy cache.
+ACTION_COMPLETED -> AUTO_CONTINUE N5-B; no Owner renewal.
+
 ## N5-A pure stimulus construction admission — 2026-10-20
 
 Distinct /root/batch_authority_review DOC_PASS ca002b73b14202480b2cbc2c561f6b0a2077289f,
