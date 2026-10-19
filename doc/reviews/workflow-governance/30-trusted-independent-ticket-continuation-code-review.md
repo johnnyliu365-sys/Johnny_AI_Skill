@@ -1,4 +1,37 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H7-A constructor seal / same-slice B admission — 2026-10-20
+
+Candidate82107c1c6eeb0df466a631347fa2bd8b5421f523 vs876223b3 exact2CREATE,
+productda9e2020e61f7d42a8c21576030e214dc6ceeb7b / test22bd90b30394d0a038147a7b5ade4dba81c98efb.
+Root full49/309lines read, ordinary candidate49guardedtestsPASS2.500s, strict2
+PASS25.656s, no unpatched effects. First guard bootstrap broke SSL class import
+before collection because socket.socket was replaced too early; preload standard
+SSL/Pydantic before target guard fixes collection, not a product/Host failure.
+Distinct native-tools peer SOURCE_PREFLIGHT_PASS, complete raw14JSONL records
+SHA3dc2904c4dc18c16b421d720b91be54146c29f23b9fbf7c9f24bc634451186f9,
+requiredsha default and boolsize weakener namedRED/restoreGREEN. Root different
+scope Literal->str actualsource door gives2 intendedRED (1required-field PASS)
+2.328s, exactrestore3GREEN2.125s; clean exact two Git blobs. A source preflight
+APPROVED only, not decoder/Host/provenance or formal integration. Root fresh
+author readback is clean exact82107c1c, same allocation/roles/baseline binding.
+
+Root derives grant-ticket30g-service-wire-20261020 revision02 B_ACTIVE, same
+batch/original30closure23 at51130841/Grant298e5897, baseline exact82107c1c.
+Named author /root/ticket30n4_peer_impl, Root sole reviewer/orchestrator, distinct
+native-tools source helper, same WT/branch/context/ownedTemp/history. MODIFY ONLY
+the two A-created files; CREATE0/DELETE0. Implement frozen private pure bounded
+_decode_observed_enrollment using existing client duplicate/nonfinite/depth helpers
+and reviewed two models; A contracts unchanged. No newDTO/Protocol/authority/
+resolver/native transport/service loop. H7T2-T4 full affected constructor/decoder
+tests, strict2/guardedmemorycompile/import, actualsource ceiling/duplicate/status/
+partial bypass mutations namedRED/exactrestoreGREEN, Root different door.
+No fake first-red ceremony, reset or Owner technical renewal. Child55/outer60,
+one existing ownedTempcache, full raw/timing/source hashes and evidence-progress.
+No real helpers/filesystem sources/Git/native/process/socket/Host/provider/model/
+install/security/cleanup/qualification/30B43 clearance/formal integration/push/
+release/deploy. Development/test-driver operations remain scoped lawful tooling.
+ACTION_COMPLETED -> AUTO_CONTINUE original author B, no new policy requirement.
+
 ## H7 service-wire constructor admission / source-stage seal — 2026-10-20
 
 Stage876223b3d04d5a0baedda9d5cdbcd9c1092431a2 parent3f1a9f08 exact2CREATE H6final
