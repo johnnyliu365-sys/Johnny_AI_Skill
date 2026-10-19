@@ -57,6 +57,112 @@ to that reviewed revision. Current N1 immutable source/evidence hold is unchange
 或新實作 admission。29→30 是本票實際重用純投影的能力依賴，不是清單順序。
 本輪文件工作有下節獨立授權；不因此將完整票30改成 admitted/completed。
 
+## 30N3 — C5 exact enrollment readback composition / closure11
+
+Root bounded architecture review identifies next native dependency: compose the
+already sealed C4 CodeRoot inventory with ONLY the declared DataRoot configuration
+chain. DataRoot includes service-mutable ledger/evidence/recovery assets, therefore
+C4 recursive enumeration MUST NOT receive DataRoot. Existing frozen B2 DataRoot
+semantics require root/config/intermediate directories only; no new requirement.
+
+Source engineering baseline8a24b9eb0a1899512319fe9b0f9a4b23b8816203 contains existing
+NativeEnrollment, NativeEnrollmentReadback, NativeEnrollmentInventoryObservation,
+NativeObjectObservation and C4/payload/directory readers. B2 verifier candidate
+bf5a4a3c82131c308ffa85b2d899d4afd1cf32d9 is a separate held lineage, not integrated.
+Root chooses NO prerequisite merge: this slice only returns the existing readback
+value, never calls Verify or claims MATCH. Literal normal readback/call-roster
+positives prove this composition; B2 source composition and executable verify mode
+remain later bounded steps. Avoid a dependency cycle/new DTO/placeholder service.
+
+Exact public sealed WindowsEnrollmentReadback: parameterless constructor binds
+existing WindowsCodeInventoryReadback.ReadCodeRoot, WindowsReadback's internal
+ReadDirectoryMetadata and WindowsPayloadReadback.ReadFile; public
+Read(NativeEnrollment expected)->NativeEnrollmentReadback. Internal constructor
+accepts exactly these three existing typed Func delegates for deterministic pure
+fault-injection/call-roster tests, no new ports/results/DTOs or public path list.
+Default constructor itself performs no I/O. Null arguments reject before callbacks.
+
+C5-ROSTER: derive CodeRoot, DataRoot, all configuration parent paths and exact single
+configuration file solely from the normally validated enrollment. Read CodeRoot
+exactly once through C4, never DataRoot through that delegate. Require OBSERVED and
+exact CodeRoot identity; otherwise refuse before DataRoot read. Directory sequence
+DataRoot to immediate config parent, config once through payload reader, directory
+sequence in reverse. Existing metadata reader checks directory kind and exact
+native path internally; its DTO has no path/kind field, so do not invent an
+extra claimed path identity check or fake field. Internal injected callbacks prove
+ordering/bindings only, not actual OS authenticity. File DTO path/kind is explicit:
+require exact configured path/FILE/OBSERVED and same DataRoot volume. All directories
+must be OBSERVED with same DataRoot volume and each before/after volume/FileID/
+owner/descriptor digest equal. No mutable DB/evidence child enumeration or ledger
+open. Return first stable directory observations plus one config in existing
+NativeEnrollmentReadback. Do not compare file digest to Expected here: B2 owns
+payload/protection verification; no duplicate authorization/comparison engine.
+
+C5-FAILURE: missing/denied/reparse/unavailable, null callback return/exception,
+wrong code root/config path/kind, cross-volume or directory drift produce an
+existing failed readback: CodeInventory non-OBSERVED/EMPTY at expected CodeRoot,
+DataObjects exactly one failed DIRECTORY at expected DataRoot, no partial success/
+invented observation. Normalize unknown/OBSERVED failure to UNAVAILABLE. Preserve
+finite native failure where applicable; mismatch uses REPARSE_OR_IDENTITY_MISMATCH.
+No new failure vocabulary, private catch-all success, unsafe DTO constructor.
+C5-BOUNDS: before any callback validate every derived path <=32766characters and
+data path count <=existing MaximumDataObjects4096 (config included). Cooperative
+ten-second composition deadline checked before/after each callback and loop,
+not an atomic filesystem snapshot or hard preemptive Host limit. Existing readers'
+finite I/O bounds remain. Small internal optional clock Func<long> default-null
+MAY be added only to existing internal test constructor to deterministically prove
+deadline with Stopwatch timestamps; no public policy/port/timeout extension.
+
+C5-TEST: source-only injected ordinary-constructor fixture (ProgramFiles/DataRoot
+path contracts remain strict, do not spoof environment/modify protected folders).
+Literal root/direct and nested config positive paths/metadata/hashes/size retain
+exact values; independent expected roster; unrelated mutable ledger path must
+never be requested. Null input/delegates and bound overflow =>zero callback;
+failed CodeRoot =>zero data callbacks; each directory/file status, config wrong
+path/kind/volume, directory pre/post identity/owner/SDDL/volume drift and callback
+exception/null =>failed EMPTY/no partial. Independent one-field valid negative
+fixtures, not overlapping invalids. Native default reader components' already
+sealed real-boundary proofs carry forward unchanged; no installed/protected actual
+positive claimed from fake composition. New behavior has no artificial stub-red.
+
+C5-MUTATION: actual route C4 to DataRoot =>roster cell RED; remove pre/post FileID/
+descriptor/volume checks separately =>corresponding named RED; remove config exact
+path or cross-volume guard =>named RED; shorten bound checks =>boundary cell RED.
+Exact restore/rebuild green each, Root chooses a different production door, zero
+red becomes finding not pass. Strict compiler/warnings-as-errors, default selftest
+plus actual enrollment-contract-self-test and memory/Python fixture compile only
+if touched (none planned). No source-copy oracle or compressed script framework.
+
+Exact CREATE2: library/local_orchestration/native_windows/WindowsEnrollmentReadback.cs,
+library/local_orchestration/native_windows/NativeEnrollmentReadbackCompositionSelfTests.cs.
+MODIFY2: library/local_orchestration/native_windows/JohnnyAuthority.Tools.csproj
+(explicit compile includes only) and NativeEnrollmentSelfTests.cs (one normal call
+inside RunContracts with existing valid enrollment). DELETE0. All other source/
+tests/Program/Win32/parser/verifier/ledger/Router/Python/reference paths read-only.
+Forecast product~160 and cohesive tests~240lines, docs this section/index/review,
+screenshots0. Reuse existing DTO/readers/selftest fixture, >500effective structural
+review only, no forced split/minification/extra files or ticket/prompt narrative.
+
+Conditional grant-ticket30n3-enrollment-composition-20261019 under original uncapped
+batch/PRD009/CHG009/approved runbook2, baseline exact8a24 above. Root sole reviewer/
+orchestrator; /root/ticket30n2_native_impl author only AFTER N4-A1 source review and
+engineering allocation release, distinct existing source peer
+/root/ticket30_native_tools_review. New context ctx-ticket30n3-enrollment-composition.
+New repo-contained .worktrees/skill-improvement-30n3-enrollment-composition /
+codex/skill-improvement-30n3-enrollment-composition and separate matching -review WT.
+Preregister owned Temp johnny30n3-enrollment-composition-owner-20261019 and -review-
+20261019 for raw/cache/build. Owner/TTL through exact review+seal and all holds,
+normal cleanup gate only, no cleanup-denial retry. Independent exact DOC consistency,
+normal existing constructors plus clean source/roles/non-reparse/Git metadata/index
+readback precede activation; this is local construction, not Host qualification
+before its first build. No extra Owner renewal or perpetual allocation.
+
+.NET10.0.302 existing offline source-cleared NuGet.Config/no new deps; exact installed
+Python311 existing shared builder only. No install/account/ACL/service/pipe/network/
+Host/model/authority/dispatch effect, verification MATCH claim, protected-source
+qualification, formal source integration, push/release/deployment or checklist
+completion. Original history/resources/Recovery and 30B/43 holds unchanged.
+
 ## 30N4-A1 — reuse Grant frame decoder / closure10
 
 This is the next existing runbook section2 server-transport dependency, not a new
