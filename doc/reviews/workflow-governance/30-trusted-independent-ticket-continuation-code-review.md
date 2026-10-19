@@ -1,4 +1,18 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## C6 E01 correction activation — 2026-10-20
+
+Distinct /root/batch_authority_review DOC_PASS exact1bea64ca19a05a8f87089d164fcb55667bd05a6e,
+Ticket30 LF8d52636528d24b1c4b52c049b29c958a748d7d0b9bc31080e43899307d31d546
+and D8 exact; no new product requirement, only necessary output exception evidence.
+Root622ba0 fresh clean1e5ce16cc9a6be2cd95ab0cd30a7312223a94405/owner branch/
+linkedGit/nonreparse contained ancestors. Existing actual typed preflight/built
+source proof25c4ea preserved, no ceremonial repeat. Same author/WT/context and
+Root reviewer/distinct source peer. grant-ticket30n3-enrollment-command-20261019
+revision02 ACTIVE: only existingcommand selftest MODIFY, CREATE/DELETE0.
+ACTION_COMPLETED -> AUTO_CONTINUE same-ticket E01 test correction. Product remains
+correct; original ZERO_RED/history/holds remain. No qualification/integration,
+Host/security/install/push/release, resource reset or Owner renewal.
+
 ## C6 initial Root review / output-failure E01 — 2026-10-20
 
 Exact1e5ce16cc9a6be2cd95ab0cd30a7312223a94405, ownRoot stagingWT, CREATE2/MODIFY4.
