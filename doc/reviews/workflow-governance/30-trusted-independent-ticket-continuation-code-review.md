@@ -1,5 +1,24 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## C1 exact independent seam allocation / ordinary staged source — 2026-10-19
+
+Different-seat /root/batch_authority_review DOC_PASS control
+20e7fa04f7f0745242b174772f920741f554af07 / leafblob66cb390e2aabeef0bb4aee2344d7d8a8073d0b2f /
+LFf4bfcb19098623efe2d5eb184895284073a4f0a55993c03020876d61020ec672 (registry matches).
+C1 exact class extraction CREATE1/MODIFY2 is disjoint from B2 MODIFY3; existing
+real getter assertion before/after and actual moved-class mutations required.
+Root allocated clean actual3b2da4b00076bcfc500cce5560cb2a045550c802 contained
+.worktrees/skill-improvement-30n3-native-seam / codex/skill-improvement-30n3-native-seam,
+shared repository Git metadata readback and nonreparse ancestors verified.
+New output C:/Users/GameBoy/AppData/Local/Temp/johnny30n3-native-seam-owner-20261019
+owner30N3-C1/named /root/ticket30n2_native_impl, TTL through review/seal with holds;
+source N2 allocation completed/released, original N2 WT/ref/evidence retained.
+Development child grant-ticket30n3-native-seam-20261019 activates after these exact
+DOC/role/worktree bindings. Root remains sole orchestrator/reviewer; different
+evidence peer /root/ticket30_native_tools_review after return, no author helper.
+ACTION_COMPLETED -> AUTO_CONTINUE IMPLEMENT, independent ordinary source review,
+no integration/qualification/Host/OS setup/30B43TAL unblock or cleanup permission.
+
 ## Subsequent native-reader research / no source or OS grant — 2026-10-19
 
 Root checked primary Win32 declarations for the later same-handle inventory need,
