@@ -1,4 +1,40 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H9 primary-subject identity construction admission — 2026-10-20
+
+Distinct native-tools helper DOC_PASS01c9c979983a3344db7b1d6d3a3e22621a74a3cc,
+original30closure25 ticket923ef19cd7e28a74e43162d68f4bd1b2316e294d /
+LFf2e4a80eee8cf5c6b0930acd983e44262cefb2e15ecb0a8a230f87b1c496e602 D8matched.
+Root fresh absence/contained nonreparse allocation/linkedGit/common-dir/branches/
+clean exact d7ca3e9c and reused SID/positive-session/uint/PRIMARY construction pass.
+New model is intentionally A bootstrap, not circular prequalification.
+
+Root derives grant-ticket30g-subject-token-20261020 revision01 A_ONLY ACTIVE
+under batch-checklist-local-20261019-uncapped/original30closure25. Baseline exact
+d7ca3e9cdbf8acf59359718fb1a36f1aef24f6a5. Named released H7 implementation owner
+/root/ticket30n4_peer_impl, Root sole reviewer/orchestrator and distinct
+/root/ticket30_native_tools_review source helper. Author WT
+.worktrees/skill-improvement-30g-subject-token, Root matching-review, codex/same,
+ctx-ticket30g-subject-token-20261020 replacing H7working view; H7 holds preserved.
+OwnedTemp/johnny30g-token-owner-20261020 and -review-20261020 owner+TTLthrough
+review/seal/holds, no cleanup authority. CREATE ONLY originalclosure25 exact two
+paths; MODIFY0/DELETE0. A exactly one strict frozen required four-field value
+model, normal direct/JSON/type/bounds/required/frozen/PRIMARY matrix, strict2/
+memorycompile/import and actual required/type/kind source mutants namedRED/
+exactrestoreGREEN with raw command/source/test SHA+Gitblob/patchhash/output/time.
+No new arbitrary type/port/owner/loader/native placeholder in A. B_NOT_ACTIVE.
+
+Primary technical references read without actual token calls:
+https://learn.microsoft.com/en-us/windows/win32/api/wtsapi32/nf-wtsapi32-wtsqueryusertoken
+requires LocalSystem+SeTcb and careful token ownership; this source does not
+authorize/activate either. Installation/effect packet must name that new risk.
+https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-createrestrictedtoken
+https://learn.microsoft.com/en-us/windows/win32/secbp/changing-privileges-in-a-token
+explicit deletion differs from disabling; flags1 ignores deletion list, flags2
+must never disable application-control protection. No current service/principal
+or source/Host qualification is inferred. No actual WTS/token/job/process/Host/
+SCM/account/security/privilege/install/network/cleanup/model/push/deploy/formal
+integration/30B43 release. Child55/outer60, one ownedTemp cache/evidence-progress.
+ACTION_COMPLETED -> AUTO_CONTINUE named A author while independent H8-B proceeds.
 ## H8-A constructor source seal / same-slice B admission — 2026-10-20
 
 Exactcandidate10863edb333972f23c3c9553b4728e81c52e8022 parent876223b3,
