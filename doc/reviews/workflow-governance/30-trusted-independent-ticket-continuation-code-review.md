@@ -1,5 +1,68 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N2 correction constructor preflight / partial-creation finding — 2026-10-19
+
+Candidate b49dd2f0f64675393ce416dd44c5abc6bffdf944, additive to5b6ef722,
+changes7 of the granted8 paths (project unchanged). Root and distinct
+/root/ticket30_native_tools_review independently read the immutable changes;
+no native fixture, source mutation or Host operation in this preflight.
+Author's final bounded pure pytest passed11.967s whole, offline restore1.721784s,
+build--no-restore5.811696s. Earlier CS7036/CS1503 compilation failures and five
+subsequent pure greens remain history, not discarded attempts. Prior binary
+hashes not captured before replacement remain UNKNOWN; original localized
+SDK output is codec-loss text, not reconstructed raw bytes.
+
+Root directly read back the registered existing output:
+EXE4ccdb2ffe6463b17c8c19e50c733eac4bec8390474a5651c38a92e4f94d6c1b6 /
+DLLb5a0d730b50222ad33b3346fc177a5ebed414ef5105661bfb0e9567baef186c7.
+Fixed exact apphost command `job-contract-self-test`, finite inherited nonsecret
+environment, subprocess timeout20s, returned unfiltered:
+
+```text
+{"status":"passed","contract":"bounded_native_job"}
+ELAPSED 0.2029999999795109 EXIT 0
+```
+
+B1 immediate native return/error discrimination and B2 shared monotonic deadline
+are implemented with pure discriminating controls; B3 finite same-owned-job
+accounting is implemented but historical intermittent J3 cause stays UNKNOWN.
+No native qualification is inferred from those pure controls.
+
+N2-B4 / IMPLEMENTATION_DEFECT + EVIDENCE_DEFECT: Guard.RecoverPartialCreation
+lines230–267 handles a valid NativeCallSucceededMissingHandles result with an
+owned process but missing thread. If exact terminate/exit/creation-identity and
+zero accounting succeed, lines256–262 rewrite creation status toNotCreated;
+Failure then drops the captured identity and Recovery evidence. The creation
+fact was partial/RecoveryRequired, not never-created. Result's constructor only
+rejects RecoveryRequired-status/non-Recovery-outcome and NotCreated/non-null
+identity, so rewriting both evades those existing invariants. Ordinary Created
+results keep their historical status after cleanup; this is not a valid alternate
+meaning of NotCreated. Peer independently confirmed exact source path against
+the committed N2 ticket's immutable creation/identity requirement. Current pure
+tests cover no-handle partial construction, not this actual Guard branch.
+
+Same original8-path Grant/owner must add a finite non-owning fake-port cell for
+process-only partial plus successful exact cleanup; assert original partial /
+RecoveryRequired and captured identity survive, then correct actual branch and
+result consistency as needed. Also retain native-failed-with-partial-handles and
+indeterminate outcomes, normal valid completion, source-only scope and deadline.
+No new status, policy, files or native effects required; no new owner permission.
+Native fixture remains ON_HOLD until this constructor preflight is independently
+green. Completed B1/B2 checks are reused only where the corrected source is unchanged.
+
+Structure review: Contracts now620/Guard444/SelfTests~800 are signals, not automatic
+split requirements. Contracts owns immutable job values and port, Guard owns the
+single job lifecycle, Windows port owns OS calls, SelfTests separates constructor,
+fake-port and actual fixture classes within the job test seam. No new runner,
+permission engine, product policy or duplicated general test utility was found.
+The added code must remain within these responsibilities; this does not approve
+unbounded future growth. Final source review still pending; no integration.
+
+Independent CVQ schema candidate ece58b37 strict21 passed;33 actual predicate
+probes found two test gaps, committed at CVQ control d32bcbfea87b2dd868be9b1764035cd6548637fe.
+Original author is correcting existing tests only; no PhaseB until narrow rerun.
+30B/43/Recovery/formal gate status unchanged. Old command accounting remains, no cap reset.
+
 ## N2 fixed-candidate RCA / native-effect hold — 2026-10-19
 
 Checkpoint5b6ef722ce040579988a0bc5aa53d9219bde5add is clean, exactly the8 granted
