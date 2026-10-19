@@ -69,3 +69,16 @@ green, focused suite/strict/diff. Only37.5s author command balance remains; stop
 if exhausted, do not silently borrow or extend. Same reviewer verifies delta
 using remaining allocation; previous duplicate mutation evidence remains valid
 unless impacted. Root orchestrates; no qualified Host audit claim.
+
+Correction9482ac08d50d5196ddb38a194bcf919b4c5bf003: author reproduced F1–F3
+baseline3failed/1.18s, corrected5passed/0.85s including valid controls; full151
+passed/1.29s and strict. Author130.7/150s cumulative,19.3s remaining.
+Original reviewer confirmed F1/F2 and the H1-escape case, but F3 is incomplete:
+changing the required `## 使用者拍板與可觀察結果` to the same-title H1 returns
+empty issues. `_HEADING` now matches H1/H2, while active-section selection only
+compares the title. Exact required H2 is absent but its fields are accepted.
+This is the original F3 section-boundary correction, not a new requirement or
+extra correction allocation. Within19.3s remaining, author must distinguish
+ending a section (H1/H2) from opening the required section (exact H2), add this
+baseline-red regression and restore green; no other source change. Stop if the
+existing balance cannot cover it. Review remains CHANGES_REQUESTED.
