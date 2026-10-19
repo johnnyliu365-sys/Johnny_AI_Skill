@@ -1,4 +1,38 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H8-B checkpoint review / same-slice correction — 2026-10-20
+
+Immutable checkpoint9b42277f1e43ccf24437d0d0a97bcfeb18055c60 parent10863edb,
+exact two MODIFY paths only, product03f0f894e733b7436a4ef571e698d9d93da60968 /
+test0ff4e22a51c84d3a1c4ae61a1189d9d6af17d834. Root full files read and guarded
+88PASS2.282s, memorycompile/sourcebinding; no unpatched native/process/socket
+calls. This is checkpoint evidence, not completion or Host qualification.
+Distinct batch-authority helper finds one cohesive job-ownership boundary and
+shared fake/matrix tests; >500 lines triggers this actual structure review, not
+forced fragmentation. Keep token ownership separately in already admitted H9.
+
+Root CHANGES_REQUESTED on frozen H8T3/2d23617e recovery semantics:
+- H8B-I1: native CreateJobObject wrapper exception loses outcome certainty without
+  poisoning. Root below-native fake MemoryError reproduction: first and second
+  NATIVE_CREATE_FAILED, poisonFalse, native attempts2; intended assertion RED.
+  Unknown creation must stop subsequent acquisition and preserve available
+  recovery evidence, without inventing an owner or closing an unidentified handle.
+- H8B-I2: helper static evidence identifies unsynchronized global poison check
+  before native creation; another issuing thread can publish Recovery after the
+  check and before CreateJobObject. Serialize lifecycle mutation/creation poison
+  admission or prove equivalent ordering. Include deterministic finite fake
+  interleaving regression, not real native jobs/load or a new policy engine.
+
+Same owner/WT/context/branch/Grant revision03 B_ACTIVE and two MODIFY paths,
+uncapped batch history unchanged. Author performs additive correction, preserves
+defective baseline-red for both findings, legitimate lifecycle positive, affected
+tests/strict/import, frozen source mutation proof. Reuse original owner-state
+validation where safe rather than maintain parallel copies. No new files/AC,
+Owner renewal, reset/amend, cleanup/native/Host/permission/service effects.
+Root original reproduction command/unfiltered output is retained in tool record
+dd0237 and functions store h8b_unknown_create_repro; source/test LF SHA
+3ec7963af92f0ae9fee118fad12d777d08f2bab0200bc4ed961b75eeedb88c53 /
+a47ef92bfa825d02b9dc987bcbf683c34981714bf1775cdae5aa220979638aef.
+ACTION_COMPLETED -> AUTO_CONTINUE same-slice correction and independent H9 review.
 ## H9 primary-subject identity construction admission — 2026-10-20
 
 Distinct native-tools helper DOC_PASS01c9c979983a3344db7b1d6d3a3e22621a74a3cc,
