@@ -1,5 +1,20 @@
 # Ticket 37 independent review — 2026-10-18
 
+## Same-lineage normalization source proposal — 2026-10-20
+
+Root read current Workflow ownership, specification-ticketing Dispatch normalization,
+existing37 leaf/review and Router pin/tests at6b86185ec97885fe101fae231b99b201a4a00632.
+Only obsolete WPR authoritative-record assignment remains adjacent to the closed
+completion repair. New closure02 freezes exact3MOD/0CREATE/0DELETE, original
+requirement/COMPACT profile, no Router behavior or Host/native operation. Parent
+batch-checklist-local-20261019-uncapped authorizes this local consistency correction.
+Conditional Grant remains NOT_ACTIVE pending distinct document review, fresh
+registered WT/Git/nonreparse/current ordinary SkillReference preflight. Original
+37 approval is not reused as approval of this new text. Reviewers must check the
+replacement leaves WPR's index intact and neither demands future independent review
+before implementation return nor invents a second authority source. D8 leafLF
+e9df7e617e8cbb23ac5bf72d98c6eee24022491602c9cf51bce23f7818be20d8 matches registry.
+
 | Field | Value |
 | --- | --- |
 | Ticket | `modules/tickets/workflow-governance/37-retired-wpr-commit-conflict.md` |

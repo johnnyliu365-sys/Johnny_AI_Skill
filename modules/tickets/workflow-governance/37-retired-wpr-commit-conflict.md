@@ -10,6 +10,50 @@
 
 ## 邊界與查重
 
+### Same-lineage normalization correction / closure02 — 2026-10-20
+
+Original37 completed slice remains valid; this is checklist11's remaining adjacent
+conflict, not a reopened implementation-tdd repair or new requirement. Current
+specification-ticketing.md Dispatch normalization still assigns transitions/IDs/
+commits/review results/exceptions to Work Progress Report, whereas Workflow's
+canonical ownership limits WPR to a short project-source index and forbids its
+implementation/review write/return duty. Remove that competing authority assignment
+only, retain WPR as an existing read-only index and exact ticket/review evidence.
+Do not remove progress documents, change routing behavior, add stage/state/gate,
+require future review evidence in an implementer return, or rework37's passed scope.
+
+Parent batch-checklist-local-20261019-uncapped; existing approved requirement/SPEC/
+Workflow references above remain authority. Baseline6b86185ec97885fe101fae231b99b201a4a00632.
+COMPACT, Python strict, no Browser/Host/provider/effect, no new DTO or constructor.
+Exact MODIFY ONLY skills/johnny-project-takeover/references/specification-ticketing.md,
+library/workflow_router/profile.py, tests/test_workflow_router.py; CREATE0/DELETE0.
+Reuse current LF-pinned SkillReference values and existing Router unittest cells.
+Update only this reference's digest/revision pins after final reference byte.
+
+AC37B1 replace obsolete WPR authoritative-record ownership with ticket/review exact
+source/typed-return ownership, preserving WPR's nonauthoritative index role. AC37B2
+existing test method expanded (or one method in same file) rejects old positive
+ownership duty while lawful normalization and existing completion timing pass.
+AC37B3 old text restored => named baseline RED; candidate lawful suite GREEN;
+actual old-duty mutation => named RED then exact restore GREEN. Reviewer uses a
+different WPR-duty variation; string/pin consistency is governance-document evidence,
+not proof of native interception or source authority. Existing Router behavior and
+all unrelated source/policy pins unchanged. No new test helper/framework/script.
+
+Source owner /root/grant_transport_impl, Root reviewer/orchestrator; distinct
+/root/ticket30_native_tools_review source/doc reviewer. New context
+ctx-wg37-normalization-20261020; preregister .worktrees/skill-improvement-37-normalization
+and matching -review, codex/same branches; Temp/johnny37-normalization-owner-20261020
+and -review-20261020. One source lane only after H3 evidence return/release to hold.
+TTL through review+seal, Recovery/evidence holds override; no cleanup or denied retry.
+Conditional grant-wg37-normalization-20261020 revision01 is NOT_ACTIVE until exact
+document independent review and fresh clean/nonreparse/Git/ordinary current
+SkillReference preflight. Root then derives exact same-scope activation, no Owner
+renewal. Run existing unittest Router suite, strict affected2Python files, reference
+LF/pin consistency, memory compile/import and full-output named mutations only;
+process-local pytest autoload disabled/no-cache if pytest used, outer60/child55.
+Return candidate/files/checks/findings/deviations; no merge/push/Host qualification.
+
 `Workflow.md` 治理文件歸屬明確禁止 `WorkProgressReport.md` 作為 implementation／review
 寫入或 return target，也禁止獨立 WPR commit；`implementation-tdd.md` Ticket completion
 卻仍要求 WPR 在分開的 docs-only commit 記錄結果。只消除後者的相反義務，沿用
