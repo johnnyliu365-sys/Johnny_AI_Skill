@@ -966,3 +966,27 @@ ledger/client behavior. The first constructor cut consumes the SAME450/300 budge
 and grants no standalone integration/extra correction round. Real service/IPC/
 filesystem isolation remain future exact manifest operations. The install helper's
 read-only results are facts/proposals only, never permission/protection proof.
+
+### 30G document preflight accepted / source Grant active
+
+Different-seat batch_authority_review APPROVED_CONTROL_DOC_ONLY for4d7b756c6869e592f0164a5b97996ba35e7b39b0,
+leafblob5dc288035a5e0e7f4f3d8fb85fb4b364e35c9a5c, LF18f0cebaf23c64a861055b5364c5218560ab9765620e1b9b6c544f0ad51e2aa5.
+Seven bounded read-only calls consumed9.7s (charged10 within Root150), no code/Host
+qualification. Root ordinary existing-type constructor/roundtrip and mechanical
+boundary preflight passed in1.825s: all six exact CREATE admitted, all2262 existing
+tracked MODIFY/DELETE combinations and one undeclared CREATE refused. Sentinel
+does not authorize AGENTS.md. New public DTOs remain to be constructed in Phase A.
+
+Root activates grant-ticket30g-source-20261019 under the approved Owner batch and
+900 delta ONLY for that reviewed closure/leaf and named owner/reviewer. Source
+baseline is this docs-only activation commit after exact readback; its ancestor
+4d7b756c differs only by this review metadata. Root allocates the ticket's contained,
+clean, nonreparse author worktree and records exact Git identities before its one
+native dispatch. Initial action=30G Phase A constructors/contracts only, paths
+grant_authority/__init__.py, grant_authority/contracts.py and constructor cases in
+tests/test_grant_authority_protocol.py; no ledger/client/source effect until
+different-seat engineering type preflight returns READY. The final six-CREATE
+boundary still compares to the original source baseline, never the A commit.
+Author450/typeA120 and reviewer300/preflight80 totals persist across phases;
+one final initial+correction maximum, not a new budget/lane per constructor.
+No mandatory audit/Host qualification is invented; no early source integration.
