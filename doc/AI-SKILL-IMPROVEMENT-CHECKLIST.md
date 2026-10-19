@@ -3,7 +3,7 @@
 | 欄位 | 值 |
 | --- | --- |
 | 文件身分 | `AI-SKILL-IMPROVEMENT-CHECKLIST`；本專案工作追蹤，非新 PRD／SPEC／Gate |
-| Revision／來源 | `47`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
+| Revision／來源 | `48`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
 | 工作基準 | `a1cb6c13adbeb52a4117991727dcc3d4af6d2a33`；分支 `codex/skill-improvement-checklist` |
 | 主線 | 先對照、優先 02→04→05→06→07，再處理餘項與整合回放 |
 | 負責 | Root 理解需求、衝突與派工；票級實作者依有效能力 Profile；獨立審閱另席 |
@@ -30,7 +30,26 @@ Router、Reviewer、文件索引與結案規則仍各有唯一正文。`[x]` 只
 | [ ] 11 去重與衝突 | `WPR_TEMPLATE_AND_HISTORY_LOCAL_INTEGRATED / ACTIVATION_OPEN` | 原37／38／40／42保留；Luna44在既有RequirementLineageGate增加純revision-history驗證、重用原test；[獨審](reviews/workflow-governance/44-requirement-revision-compatibility-code-review.md) | 原42之46tests／不同位置WPR突變證據保留；44獨審14tests／30subtests、鏈結與terminal不同門突變紅→綠、Root gate1aa5ed22與兩blob一致；獨立seal確認 | `APPROVED_44 / LOCAL_INTEGRATED / CLEANUP_BLOCKED` | 舊一對一validate維持生效；可信creation issuer／效應前grant讀回／原子consume及真Host尚缺，不用純history方法冒充正式身分遷移；清理政策阻擋 |
 | [ ] 12 回放與獨審 | `EXISTING_CASES_MAPPED / END_TO_END_NOT_VERIFIED` | Root沿既有案例／review；46增加受版控本地命令來源，未新增回放框架；30B／43仍未整合 | 46合法command-plan與拒絕／版本釘選／不同門突變均有獨審；整合後36tests／22subtests。04不重做，既有局部PASS沿用，候選不冒充整合版 | `PARTIAL_ONLY` | 完整01–10正式來源/effect回放仍缺；Owner已採納首次入口順序例外，但未授權Host測試；不是資格或總驗收 |
 
-## 當前工程接續與精確證據（revision47）
+## 當前工程接續與精確證據（revision48）
+
+N4-A1最終5449c063：Root98tests／strict3files／memory compile、候選實際import、
+獨立literal合法positive與bytearray拒絕通過。Root不同門改壞header endian，兩具名
+positive轉紅→精確還原綠；作者unknown欄位突變舊raw遭截斷仍缺失，Root另做全新
+6具名紅→還原6綠並封存完整輸出，不冒充恢復舊紀錄。原30review封存74fd796a，
+不同席source PASS；depth負例與unknown欄位重疊，沒有宣稱獨立證明depth謂詞。
+此為3MODIFY來源工程staging，不是可信Grant／服務或Host資格，仍未正式整合。
+
+同票C5 closure11／74fd796a已接續原作者：只CREATE2／MODIFY2，沿用既有readback
+型別、C4 CodeRoot與C2 configuration reader，不掃可變DataRoot ledger／evidence。
+原票605c18b9獨立DOC PASS；Root新鮮8a24／隔離WT／角色／正常constructor讀回通過。
+實際基準不含另一條hold分支的F1共用builder（77ce25），f2da6b09僅更正驗證綁定：
+不得用會嘗試os.symlink的舊physical fixture；直接offline dotnet介面，不新增腳本。
+CVQ behavior仍在實作／局部驗證；一次空node清單意外啟動default pytest已止住，
+原退出／完整測試範圍與可能副作用仍UNKNOWN，獨立後讀回只有該PID／PPID不存在。
+該事件見CVQ schema review16／3841cf92，不算PASS；後續具名受控實跑獨立記帳。
+04不重跑，其他原項與30B／43資格hold不變；無Host資格測試／安裝／權限／推送／發布。
+
+## 前次工程接續與精確證據（revision47歷史）
 
 C4最終8a24b9eb：初稿兩個volume ZERO_RED保留，原作者僅補18行既有測試。
 Root獨立非增量build、default／真實owned fixture、直接載入候選DLL與literal7物件／
