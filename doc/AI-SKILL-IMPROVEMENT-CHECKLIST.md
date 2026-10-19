@@ -3,7 +3,7 @@
 | 欄位 | 值 |
 | --- | --- |
 | 文件身分 | `AI-SKILL-IMPROVEMENT-CHECKLIST`；本專案工作追蹤，非新 PRD／SPEC／Gate |
-| Revision／來源 | `29`；沿用既有12項與acf0ffa1／ded322b3批准；Owner 2026-10-18 批次本地授權及10-19阻塞修復指示，逐票限縮、獨審及證據如下。非 push／正式啟用授權 |
+| Revision／來源 | `30`；沿用既有12項與acf0ffa1／ded322b3批准；Owner 2026-10-18 批次本地授權及10-19逐項依賴核對、可准入工作續行指示。非 push／正式啟用授權 |
 | 工作基準 | `a1cb6c13adbeb52a4117991727dcc3d4af6d2a33`；分支 `codex/skill-improvement-checklist` |
 | 主線 | 先對照、優先 02→04→05→06→07，再處理餘項與整合回放 |
 | 負責 | Root 理解需求、衝突與派工；票級實作者依有效能力 Profile；獨立審閱另席 |
@@ -77,6 +77,86 @@ Owner按正式Change Control另核安全政策差異；本紀錄不自動要求�
 `3145dbb072b1ba39c67a2f15a9047524f4e9dc8b`；本段是其結果台帳，不擴大其審查範圍。
 本地文件動作回傳ACTION_COMPLETED；未完成票保持各自REVIEW_BLOCKED／
 CLEANUP_BLOCKED／NOT_VERIFIED，不能用本文件批准解除來源或Host限制。
+
+## 2026-10-19 逐項依賴核對與可准入續行
+
+核對基準 `0cb5b6085d3dd0f1588569cbbcff5f820ff0d2a2`；Root與不同席
+`/root/batch_authority_review`對照實際AC、票面、程式消費者及既存證據。
+這是剩餘驗收對照，不以票號排序發明主線依賴，也不是另一套Gate。
+**不是所有剩餘工作都被Host阻塞**：03的實際票面內容診斷可先建置，已沿
+AC10派出[票45](../modules/tickets/workflow-governance/45-ticket-content-completeness.md)，
+文件獨審APPROVED、Grant生效；不改30B/43的HIGH_ASSURANCE要求。
+
+| 項目 | 尚缺的必要驗收 | 實際依賴與查證位置 | 本地處置／最小外部輸入 |
+| --- | --- | --- | --- |
+| 01 | 真實可信完整主線讀回、必要項未完不假結案 | 29投影/30A解析已整合；30B public候選0f6d467a只有拒絕；SPEC AC9、mainline_readback.py | 維持正向Grant驗收OPEN；需要受保護issuer的實際讀取入口及新鮮正式來源。清單本身不證明完整主線已核准 |
+| 02 | 合法獨立B在真來源及效應前准入後繼續；缺授權B/C拒絕 | 24 owner-wait、29/30 fixture與批次31B/44實際續行；dispatch_authority.py::admit_dispatch目前owner-intent marker | 不凍結45；最終需要qualified來源/攔截，正式啟用仍未授權 |
+| 03 | 已提交且核准的完整票，在真正spawn/receipt之前檢查 | 28/38/40只驗模板；tests/test_ticket_template_contract.py開頭明示非instance/Host；SPEC AC10及dispatch_session.py::admit_dispatch呼叫 | 45先實作純content診斷及正反例，不假冒committed/approved。真來源綁定及effect wiring後續HIGH_ASSURANCE，不以普通review替代 |
+| 04 | 無本批本地缺口 | 25/33/34，61tests/217subtests及service行為突變 | COMPLETE_LOCAL，沿用證據不重跑 |
+| 05 | 實際載入候選SHA及獨立核准Expected來源可觀測，不接受自報 | D10票明禁executor/adapter；TestBinding/TestEvidenceResolver、review_admission.py、router.py注入點已有19tests/50subtests | 需實際執行Host提供外於受測程式的版本觀察、核准Expected讀回及防竄改證據；新port/fake不能補足 |
+| 06 | 寫入/提交前核對HEAD/index/workcopy，避免舊副本回退 | 26 scope排除任意寫入；worker_assignment.py claim在dispatch_session.py消費，不攔截filesystem/commit | 需真實寫入工具的可攔截effect入口及原子/隔離保護。再造未消費pure checker不能證明阻止覆蓋 |
+| 07 | 正式父項結案受exact candidate/獨立review/可讀回AC證據約束 | 27/35純投影；43 candidate d477020e，19tests/58subtests工程PASS但未整合 | 缺43必要隔離audit及真resolver；候選/Review hold保留，不重派已綠實作 |
+| 08 | 實際CI命令/間接呼叫入口與覆蓋承接，才可退役 | 32/36/39 AST+Git+SUITES已整合；GitPinned adapter仍接受declared_commands；本節遠端Actions讀回 | 已完成可讀metadata核查；需正式測試CI配置/命令來源或其管理系統唯讀入口。Dependency Graph不是產品測試命令，空集合不授權退役 |
+| 09 | 窄修窄審之PASS在正式證據路徑有條件沿用，不能逃避真正finding | 31B原作者/原reviewer同票修正已證明；35 projection與43 closure consumer | 原局部PASS保留；正式43 evidence path仍受其隔離審查/來源阻塞，無新無關重審 |
+| 10 | 本機測試不能無聲呼叫付費API或正式credential | 31模型映射與31B七欄回報已整合；報告格式不等於網路隔離 | 需測試Host的credential遮蔽與egress阻擋可觀察能力；不得透過真付費呼叫測試。清理另列，不抹消功能PASS |
+| 11 | PRD revision新模式可信creation grant/單次consume/遷移驗證後才替換舊規則 | 37/38/40/42衝突已修；44 history方法不發權；AC17、現有owner-intent marker非protected issuer | 缺可信簽發及效應邊界；舊一對一validate保持有效。無消費者證明不得刪除舊能力 |
+| 12 | 01–10之必要正反情境在其實際來源/effect完成回放及獨審 | 下節既存案例表區分fixture、候選、整合、Host；45新增instance內容例而非新框架 | 繼續可測45；其餘只隨各自上列證據取得後補驗，不重跑04或把全fixture綠當全批完成 |
+
+### 30B正向驗收不是安全封堵
+
+原`grant-forged`在fd98f395產生candidate的反例與0f6d467a回歸保留。
+另列未完成的正向：**合法Grant必須從不可由caller改寫的可信來源讀回，精確綁定
+project/ticket/stage/actor/baseline/operation與有效期限，在同一新鮮正式觀察SHA
+讀index/leaves後成功回candidate**；偽造、錯配、失效及重放仍在effect前拒絕。
+private演算法fixture成功不能充當這項PASS，全部public拒絕也不能。
+
+已窄查`library/local_orchestration`及`library/workflow_router`的Grant/issuer/
+signature/approval入口：`dispatch_authority.create_dispatch_grant/read_dispatch_grant`
+明示owner-intent marker、同程序可建立；project_authority只歸約傳入觀察；沒有
+在此範圍找到qualified production issuer。缺的是可信來源及其保護/讀回契約，
+不是Root缺少本地程式修改授權。新增一個相信caller的Resolver會重演同一缺陷。
+在實際來源可指定後，本地adapter/負例可沿原30B修最小allowlist，不重問整批授權；
+若要新credential、OS權限或可信服務設定，則是尚未授權的外部能力。
+30B累計保留599.2/600命令秒，上限不因新子票重置；下一實作嘗試還需精確追加
+執行額度或可信更正帳目，不能把純調查當成預算重生。尚未安排重試。
+
+### 最小Host能力需求（不指定未驗證環境）
+
+沿用CVQ Manifest/QualificationCase/Observation/CapabilityKey/Report；不新建VM、
+Broker或第二Runner。下列是需要取得的能力與證據，不是已測試或已qualified。
+原始查證和失敗呼叫見票30既有review，未找回的qualification原始紀錄標MISSING。
+
+| 必須限制什麼 | Qualification必須怎麼證明 | 現場具體缺口 |
+| --- | --- | --- |
+| 精確Host surface/binary/config不可偷換 | pin產品surface、binary hash、有效設定、工具清單，執行前後獨立讀回，變動拒絕 | 已讀core CLI0.163.0-alpha.10.2，不是Desktop資格；現行spawn沒有逐席sandbox/工具policy參數 |
+| 僅讀核准candidate快照，不接其他worktree/secrets | allowlisted source快照identity/digest；越界/連結/替換來源嘗試被外部observer確認拒絕 | 目前子席同filesystem權限；prompt中的路徑限制非隔離 |
+| 禁止寫入 | 所有檔案/工具/API寫入路徑，包括alias與間接入口，在effect前拒絕；canary前後讀回不變 | danger-full-access繼承；未有candidate-bound寫入deny證據 |
+| 禁止程式執行 | 禁shell/interpreter/eval/任意腳本及間接執行；只允許資格指定的唯讀操作 | 工具schema未能移除exec或證明間接路徑封閉；禁止語句不算 |
+| 禁止再派工 | spawn/followup/跨thread控制/MCP alias與間接adapter都被工具dispatcher拒絕 | collaboration提供delegation能力，沒有已驗證的每席移除入口 |
+| 未知旁路default-deny | 新增/未知tool、未登錄alias或設定漂移拒絕而非默認放行 | 無實際dispatcher拒絕觀察；不重跑一般helper冒充qualification |
+| 可信觀察與Review獨立性 | observer不受被審負載控制；記工具請求、deny、effect前後、candidate/模型/成本/終態 | 精確隔離qualification call/receipt未找到，MISSING；ordinary獨審只證明工程檢查 |
+| 成本與外部網路/credential | 有界模型Session與總成本、無正式credential、未授權egress拒絕且可讀回 | 本批未授權新費用/帳號或Host設定；schema/prompt不提供可證明的成本上限 |
+
+最小外部決策不是「再批准本地工作」：需要能提供上述精確surface限制及可信
+observer的原生Host配置/權限與其資格執行授權；有具體surface才安排一次有限CVQ，
+不聲稱換CLI/Desktop/VM就會成功。若沒有可用能力，維持REVIEW_BLOCKED；政策改動
+須另走正式Change Control，不由本輪自行降級。正式遠端來源publication、真正
+Grant簽發設定、付費/真Host呼叫與新正式閘門啟用均仍不在本批內。
+
+### CI唯讀補查（2026-10-19）
+
+命令（只讀repo Actions metadata，未下載含敏感內容的job log）：
+`gh api repos/johnnyliu365-sys/Johnny_AI_Skill/actions/workflows`；
+`gh api 'repos/johnnyliu365-sys/Johnny_AI_Skill/actions/runs?per_page=5'`；
+`gh api repos/johnnyliu365-sys/Johnny_AI_Skill/actions/runs/32693024347/jobs`。
+回件workflow總數1：339484080，Dependency Graph，active，
+`dynamic/dependabot/update-graph`，updated_at2026-08-21T23:21:28+08:00。
+run總數9，本次取最近5筆；最新32693024347綁head
+`bd2d9adaa586412de76ed8c3961ae1c697410554`、event dynamic、success。
+job97329979967 `update-pip-graph`五步：Set up job、Create job directory、
+Run Dependabot、Post Run Dependabot、Complete job，均success。
+此metadata沒有正式測試命令，不推論其餘run或其他CI系統不存在。
+延用前輪本地/九個遠端branch tree之範圍內未見配置結果，不重做全repo盤點。
 
 ## 既有案例回放對照（不是另一套測試系統）
 
