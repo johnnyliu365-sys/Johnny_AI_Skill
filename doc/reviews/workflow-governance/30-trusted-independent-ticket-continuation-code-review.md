@@ -1,5 +1,45 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N2 B5 candidate rebuild evidence — 2026-10-19
+
+Root reviewer snapshot0534e3b1 first pure pytest passed11.547s whole
+(restore2.097696/build5.795868). B1 actual WindowsJobPort classifier mutation
+then produced the named false-quota red in11.141s whole
+(restore1.733874/build5.569028). Root's tool returned a running session at10s;
+Root restored source before reading that command's final completion. That ordering
+is a reviewer command-lifecycle deviation, not valid pinned-build evidence.
+The completed run did report the exact intended mutation assertion, but cannot
+be represented as a fully fenced mutation campaign. No native fixture ran.
+
+The immediately following intended restored-green failed with the same classifier
+assertion,6.953s whole (restore1.696990/build1.873916), despite exact restored source.
+Source and DLL LastWriteTimeUtc both read10:27:08, source clean againstHEAD, project
+has deterministic explicit compile inputs and one root-owned output. This is
+N2-B5 / VERIFICATION_DEFECT: incremental build can reuse a previous mutated binary;
+calling a build command is not proof that current candidate was compiled.
+Root stopped identical retries. One evidence-backed changed command added
+`--no-incremental` to the same offline build, no-restore/single-worker/no-server/
+owner-root properties unchanged. Strict build passed5.594s, zero warnings/errors,
+then exact same apphost pure mode passed0.500s. This isolates stale build output
+from current-source regression; historical failures remain retained.
+
+Same original author/8-path Grant must add nonincremental build to the existing
+test fixture (no second builder/framework), and a finite fixture test of actual
+compile invocation flags/source/output ownership. Root will fence each subsequent
+mutation command to terminal before restore, then nonincrementally rebuild for
+its restored-green. Do not use timestamp-only restoration or unchanged output
+hash as current-source proof. No new code paths/dependencies/policy/Owner grant.
+Existing native validation scheduling remains held until this source-binding
+correction and pure checks are independently verified. No denied cleanup or
+unrelated artifact deletion occurred; generated SDK/test artifacts retain the
+registered Root output owner/TTL/Review hold.
+
+Allocation readback deviation: Get-Item without-Force missed hidden AppData and
+was nonterminating before Root allocated the registered worktree/output. The
+complete literal ancestor chain was subsequently read with-Force/-ErrorActionStop;
+all are non-reparse, common Git is the intended root. No build occurred before
+that corrected complete check. Do not represent initial check as successful.
+
 ## N2 B4 pure correction accepted / bounded source-fixture continuation — 2026-10-19
 
 Additive candidate0534e3b1febc0a58236214fcbd7df20fe6ad9269 changes only
