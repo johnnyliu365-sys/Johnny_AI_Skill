@@ -1,5 +1,24 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N3B1 exact document admission / constructor-only — 2026-10-19
+
+Different-seat /root/batch_authority_review DOC_PASS at96dad7ebca4c6b51e59cc0ec5e028aa4753e4bcf,
+leafblob597f5dd9c14589522f0522524090dfbaed872e8b,
+LFb68485dd1e7359f0b18eff5a6364f8bc61b99b677e9deedc1923617cb38471ec and registry match.
+B1 CREATE2/MODIFY2/DELETE0, no Verify/OS behavior, same original30/parent batch;
+B2 remains NOT_GRANTED. Constructor/negative positives feasible; two test files
+separate enrollment parser vs readback contract responsibility, one shared typed
+fixture and builder. No fourth authority/qualification/Router status introduced.
+Root fresh actual author readback: cb877f73 clean, exact repo-contained
+.worktrees/skill-improvement-30n3-enrollment / codex/skill-improvement-30n3-enrollment,
+registered shared .git identity and no reparse ancestor, existing registered output
+retained. Same-lifetime named owner /root/ticket30_native_tools_impl, distinct peer
+/root/ticket30_native_tools_review; Root orchestrates only. Development child
+grant-ticket30n3-readback-constructors-20261019 activates for this exact closed
+constructor slice after this DOC/source binding, never operational issuer authority.
+ACTION_COMPLETED -> AUTO_CONTINUE IMPLEMENT then named constructor preflight;
+no receipt/bridge invention, no source/Host qualified claim or integration.
+
 ## N3A final constructor/test preflight and actual mutation seal — 2026-10-19
 
 Immutable candidate cb877f73a7696e822b89fcfcd82a5b5168df68e8; product
