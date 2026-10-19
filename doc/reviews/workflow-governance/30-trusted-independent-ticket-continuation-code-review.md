@@ -1,4 +1,36 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H3 bounded factory activation / closure16 — 2026-10-20
+
+Distinct /root/batch_authority_review DOC_PASS0998f15e51b2918f1c9fce2a7b50eb537d8a52e6,
+leaf LF64c1f7c8e1a84d3a460b1d27ca923f70cd514e74682b687ed282bc292e6e138b
+matches D8. Native buffer readback finding closed before source allocation:
+16388 requested/16388..1MiB initial observed profile permits rounding, not lifetime
+kernel quota. Info vs HandleState fields separated; no fabricated readback of
+first-instance/remote/overlapped flags. Primary Microsoft CreateNamedPipeA and
+GetNamedPipeInfo docs consulted; no real pipe/protection probe. Earlier d40/3508
+proposal findings retained in Git, not implemented then retroactively approved.
+
+Exact two CREATE paths frozen in closure16; no MODIFY/DELETE/public contract or
+permission expansion. Root87ec18 creates preregistered factory owner/review WTs
+and owner/review Temp only. Freshaa6ab1 validates every ancestor nonreparse, linked
+Git identity, exact branches, clean c13d10171f3819c1b6770218303806dc20f14eb3 and
+existing normal enrollment/observation constructor JSON roundtrip. H1 author lane
+released to SOURCE_REVIEW_HOLD; old WT/ZIP/Recovery retained, no cleanup.
+
+grant-ticket30n4-read-pipe-factory-20261020 revision01 ACTIVE_SOURCE_ONLY,
+parent batch-checklist-local-20261019-uncapped; author /root/grant_transport_impl,
+Root reviewer/orchestrator, distinct /root/ticket30_native_tools_review source
+peer. Exact baseline above; worktree/branch/context/output/TTL from closure16,
+no caller/native authority inferred. Direct same-lifetime receipt/Runner
+NOT_REQUIRED. Preserve old costs/failures, finite command60/child55 and evidence-
+progress correction only. Author must patch every native effect before smoke,
+never actual pipe/security/Host test. ACTION_COMPLETED -> AUTO_CONTINUE exact H3
+source implementation. Final CVQ/30G/30B43 holds remain; no main integration.
+
+Checklist51 df32557d5f7e3f21f560cb8e9a9a0c03d91f370c distinct
+/root/ticket30_native_tools_review DOC_PASS: actual source seals/UNKNOWN/holds
+consistent; only04 checked; no settled source/test re-review performed.
+
 ## H2-A final source preflight and H2-B activation — 2026-10-20
 
 Root reads exact clean c13d10171f3819c1b6770218303806dc20f14eb3 in both
