@@ -54,6 +54,10 @@ guarded local commit a29c0e53a3fb868248d53eb9442dd6719daf1e09, independent
 revision02 approval and152tests. No committed-source, grant, receipt or Host
 admission claim; exact two reviewed blobs read back, old holds unchanged.
 
+[46-versioned-local-test-commands](46-versioned-local-test-commands.md) — checklist08/12,
+PREPARED local command-source follow-up to36/39; one versioned local-only plan,
+same-commit Git readback and existing inventory, no test CI or retirement authority.
+
 ## Shared baseline
 
 - Specification: `SPEC-AI-WORKFLOW-WORKFLOW-GOVERNANCE-20260805-01KZ6T8V2R4Y6B8D0F2H4J6M8P` (`APPROVED` on `2026-08-05`)
