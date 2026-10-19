@@ -1,5 +1,20 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N3B2 exact pure-comparison document admission — 2026-10-19
+
+Different-seat /root/batch_authority_review ordinary DOC_PASS exact control
+4a2e2e2839135d9ef4085d77bee9d9ecd41b8da1, Ticket30 leafblob
+72536ac42b07f6e4de742e91e8672a5848e3bf76,
+LF76f320a560d04562dd5818c34ba4d170787dba7364761e8a5fe17efbda7b5c28 matches registry.
+Actual B1 constructor fields/finite results permit Verify without a new port;
+baseline3b2da4b00076bcfc500cce5560cb2a045550c802 verifier9ee2908704da4f97e8f1e1a23c3a4707c0f93082.
+Pure MODIFY3/CREATE0/DELETE0 only, existing file/dir policy reuse, no OS ID invented.
+Root fresh author clean exact3b2/branch/contained nonreparse WT readback before
+grant-ticket30n3-pure-verification-20261019 same-lifetime direct continuation.
+Original roles/output/TTL/holds unchanged, no operational runtime authority issued.
+ACTION_COMPLETED -> AUTO_CONTINUE IMPLEMENT -> independent pure review, not B3
+native reader/integration/Host qualification. Owner technical reapproval not needed.
+
 ## N3B1 final constructor preflight — 2026-10-19
 
 Root concludes CONSTRUCTOR_SOURCE_ENGINEERING_PREFLIGHT_PASS at
