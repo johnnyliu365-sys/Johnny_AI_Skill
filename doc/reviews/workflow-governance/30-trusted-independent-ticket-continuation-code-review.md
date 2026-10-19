@@ -1,4 +1,34 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H8-B implementation design bounds — preparation only, not active — 2026-10-20
+
+Architecture Owner fixes native ownership details within originalclosure24, not
+new policy/authority: use one private resource owner, no public port/DTO/Runner.
+Revalidate exact A limits and owner_ref before any native job action. Use H3
+exact PyHANDLE and native handle-info helpers, not structural Close lookalikes.
+Native job wrappers return object only at the infrastructure boundary and validate
+before typed use; no Any propagation or expected-as-observed fallback.
+Installed types-pywin32 stub incorrectly declares CreateJobObject ->None.
+Primary pywin32 b311 source declares PyHANDLE; use the existing checked callable
+wrapper style rather than changing dependency stubs or trusting that annotation.
+SetInformationJobObject requires the full extended information mapping including
+basic/IO/peak fields; build complete configuration input, then compare independent
+actual query readback at every frozen bound/flags. Do not reuse input as readback.
+Reference, read only:
+https://raw.githubusercontent.com/mhammond/pywin32/b311/win32/src/win32job.i
+
+Issue no process/token/command/ledger/Grant operation. The resource stores actual
+fresh owner, internal job_ref, owner_ref, issuing thread and monotonic expiry.
+Expired USE refuses; correct-owner explicit teardown remains permitted after TTL.
+Wrong-thread/alias drift must not close an unrelated handle. No double-close,
+raw CloseHandle fallback or finalizer-based recovery. On cleanup uncertainty,
+retain the exact owner strongly in one private process-lifetime recovery hold
+and reject further native job creation; a discarded exception must not make
+Python GC retry cleanup. Unknown native results are quarantined, not promoted to
+trusted handle/identity. This is a bounded implementation of the already frozen
+retention/poison rule, not a recovery service, second registry or policy engine.
+No automatic release of existing Recovery, no actual OS execution in this stage.
+B remains NOT_ACTIVE until exact A source/evidence approval and same-allocation
+Grant rebind. Frozen source scope is still the same two paths, MODIFY only for B.
 ## H7 composed-source readback seal — 2026-10-20
 
 Exact Root-owned source-stage d7ca3e9cdbf8acf59359718fb1a36f1aef24f6a5 parent876223b3:
