@@ -1,5 +1,275 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## C1 matched replay and independent engineering seal — 2026-10-19
+
+Conclusion: SOURCE_REFACTOR_ENGINEERING_STAGED_PASS / HISTORICAL_COMMAND_UNVERIFIED /
+QUALIFIED_AUDIT_BLOCKED / NOT_INTEGRATED. Candidate
+cee7933187a9bfb3190b4ff2ec72c7768db59405 versus
+3b2da4b00076bcfc500cce5560cb2a045550c802. Exact CREATE1/MODIFY2; class body
+8,078 UTF8 LF bytes, SHA256
+5fdd77fa9d4b8ec572ec8614f1c088646d4bb16090496bdcece75bec77c03073.
+Independent /root/ticket30_native_tools_review verified the immutable diff, class
+equality, unchanged interface/flags/PInvoke/path/metadata handling and source boundary.
+No finding; source-engineering staging only, not qualified isolation or integration.
+
+Root registered and executed a NEW matched replay: immutable baseline first, then
+candidate, same owned ordinary fixture and unchanged actual native assertion.
+Full baseline/candidate JSON deep comparison matched. Actual moved TryGetDescriptor
+success guard inverted: native assertion failed; inverse patch, nonincremental
+build and same assertion passed. Pure tests stayed green during this native mutation,
+so their PASS is not used to claim native coverage. Exact source restored (Git blob
+3e74a6328d2f5d0138432f69d63113952eb2b139) and worktree clean.
+Root uses a different predicate from author's final-success-return mutation.
+
+Historical author's missing original pre-move command/isolated duration remains
+UNVERIFIED; this new replay does not reconstruct it. Reparse/denied/native-fault
+cases remain explicitly INJECTED; no unsupported symlink probe, ACL write, service,
+network, protected enrollment or Host qualification was executed. SDK restore's
+workload advisory did not trigger installation/update. Existing holds remain.
+TTL/owner paths registered at d6f87665; no cleanup attempted.
+
+### Exact command c1_root_restore_cmd
+
+~~~powershell
+@'
+import subprocess,time
+from pathlib import Path
+from tests.test_native_authority_tools import PROJECT,PROCESS_ENV
+root=Path(r'C:\Users\GameBoy\AppData\Local\Temp\johnny30n3-native-seam-review-20261019')
+env=dict(PROCESS_ENV);env.update(DOTNET_CLI_HOME=str(root/'cli'),NUGET_PACKAGES=str(root/'nuget'),DOTNET_CLI_TELEMETRY_OPTOUT='1',DOTNET_SKIP_FIRST_TIME_EXPERIENCE='1',DOTNET_CLI_WORKLOAD_UPDATE_NOTIFY_DISABLE='true',MSBUILDDISABLENODEREUSE='1',DOTNET_NOLOGO='1',TEMP=str(root),TMP=str(root))
+cmd=['dotnet','restore','JohnnyAuthority.Tools.csproj','--disable-build-servers','--verbosity','minimal','-m:1','-nodeReuse:false','-p:UseSharedCompilation=false','-p:RestoreConfigFile=NuGet.Config',f'-p:BaseIntermediateOutputPath={root / "obj"}'+chr(92),f'-p:BaseOutputPath={root / "bin"}'+chr(92)]
+print('COMMAND',cmd,flush=True);t=time.monotonic();p=subprocess.run(cmd,cwd=PROJECT,env=env,timeout=25);print('RESTORE_ELAPSED',time.monotonic()-t,'EXIT',p.returncode);raise SystemExit(p.returncode)
+'@ | & 'C:\Users\GameBoy\AppData\Local\Programs\Python\Python311\python.exe' -B -
+~~~
+
+### Exact command c1_root_build_cmd
+
+~~~powershell
+@'
+import subprocess,time
+from pathlib import Path
+from tests.test_native_authority_tools import PROJECT,PROCESS_ENV
+root=Path(r'C:\Users\GameBoy\AppData\Local\Temp\johnny30n3-native-seam-review-20261019')
+env=dict(PROCESS_ENV);env.update(DOTNET_CLI_HOME=str(root/'cli'),NUGET_PACKAGES=str(root/'nuget'),DOTNET_CLI_TELEMETRY_OPTOUT='1',DOTNET_SKIP_FIRST_TIME_EXPERIENCE='1',DOTNET_CLI_WORKLOAD_UPDATE_NOTIFY_DISABLE='true',MSBUILDDISABLENODEREUSE='1',DOTNET_NOLOGO='1',TEMP=str(root),TMP=str(root))
+cmd=['dotnet','build','JohnnyAuthority.Tools.csproj','--no-restore','--no-incremental','--disable-build-servers','--verbosity','minimal','-m:1','-nodeReuse:false','-p:UseSharedCompilation=false','-p:RestoreConfigFile=NuGet.Config',f'-p:BaseIntermediateOutputPath={root / "obj"}'+chr(92),f'-p:BaseOutputPath={root / "bin"}'+chr(92)]
+print('COMMAND',cmd,flush=True);t=time.monotonic();p=subprocess.run(cmd,cwd=PROJECT,env=env,timeout=35);print('BUILD_ELAPSED',time.monotonic()-t,'EXIT',p.returncode,flush=True)
+if p.returncode:raise SystemExit(p.returncode)
+exe=root/'bin/Debug/net10.0-windows/JohnnyAuthority.Tools.exe';t=time.monotonic();p=subprocess.run([str(exe),'enrollment-contract-self-test'],env=PROCESS_ENV,timeout=15);print('PURE_ELAPSED',time.monotonic()-t,'EXIT',p.returncode);raise SystemExit(p.returncode)
+'@ | & 'C:\Users\GameBoy\AppData\Local\Programs\Python\Python311\python.exe' -B -
+~~~
+
+### Exact command c1_root_native_cmd
+
+~~~powershell
+@'
+import hashlib,json,subprocess,time
+from pathlib import Path
+from tests import test_native_authority_tools as t
+root=Path(r'C:\Users\GameBoy\AppData\Local\Temp\johnny30n3-native-seam-review-20261019'); exe=root/'bin/Debug/net10.0-windows/JohnnyAuthority.Tools.exe'
+env=dict(t.PROCESS_ENV);env.update(JOHNNY_NATIVE_DLL=str(exe.with_suffix('.dll')),JOHNNY_NATIVE_FIXTURE_DIR=str(root/'C1-readback'),JOHNNY_NATIVE_REPARSE_STATUS='INJECTED (symlink unavailable: probe intentionally not requested)')
+print('SOURCE_HEAD',subprocess.run(['git','rev-parse','HEAD'],text=True,capture_output=True,timeout=5,check=True).stdout.strip())
+print('EXE_SHA256',hashlib.sha256(exe.read_bytes()).hexdigest());print('DLL_SHA256',hashlib.sha256(exe.with_suffix('.dll').read_bytes()).hexdigest())
+print('TEST_SHA256',hashlib.sha256((t.REPOSITORY/'tests/test_native_authority_tools.py').read_bytes()).hexdigest())
+original=t.subprocess.run
+calls=0
+
+def observed(*a,**kw):
+ global calls
+ calls+=1
+ assert a[0]==['pwsh','-NoLogo','-NoProfile','-NonInteractive','-Command','-']
+ assert kw.get('timeout')==20
+ r=original(*a,**kw)
+ print('NATIVE_STDOUT_BEGIN\n'+r.stdout+'NATIVE_STDOUT_END',flush=True)
+ print('NATIVE_STDERR_BEGIN\n'+r.stderr+'NATIVE_STDERR_END',flush=True)
+ print('NATIVE_EXIT',r.returncode,flush=True)
+ return r
+
+t.subprocess.run=observed
+start=time.monotonic();t.test_reparse_denial_and_fault_cases_are_labeled((exe,root,root,root,env));assert calls==1;print('EXISTING_ASSERTION_PASS_ELAPSED',time.monotonic()-start,flush=True)
+'@ | & 'C:\Users\GameBoy\AppData\Local\Programs\Python\Python311\python.exe' -B -
+~~~
+
+### c1_root_baseline_restore
+
+Tool 1c0157; exit 0; outer wall 3.3799347s.
+
+~~~text
+COMMAND ['dotnet', 'restore', 'JohnnyAuthority.Tools.csproj', '--disable-build-servers', '--verbosity', 'minimal', '-m:1', '-nodeReuse:false', '-p:UseSharedCompilation=false', '-p:RestoreConfigFile=NuGet.Config', '-p:BaseIntermediateOutputPath=C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n3-native-seam-review-20261019\\obj\\', '-p:BaseOutputPath=C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n3-native-seam-review-20261019\\bin\\']
+驗證工作負載時發生問題。如需詳細資訊，請執行 "dotnet workload update"。
+  正在判斷要還原的專案...
+  已還原 C:\Users\GameBoy\Desktop\Johnny_AI_Skill_latest\.worktrees\skill-improvement-30n3-native-seam-review\library\local_orchestration\native_windows\JohnnyAuthority.Tools.csproj (146 毫秒 內)。
+RESTORE_ELAPSED 2.0939999999827705 EXIT 0
+
+~~~
+
+### c1_root_baseline_build
+
+Tool 4edec9; exit 0; outer wall 7.9538212s.
+
+~~~text
+COMMAND ['dotnet', 'build', 'JohnnyAuthority.Tools.csproj', '--no-restore', '--no-incremental', '--disable-build-servers', '--verbosity', 'minimal', '-m:1', '-nodeReuse:false', '-p:UseSharedCompilation=false', '-p:RestoreConfigFile=NuGet.Config', '-p:BaseIntermediateOutputPath=C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n3-native-seam-review-20261019\\obj\\', '-p:BaseOutputPath=C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n3-native-seam-review-20261019\\bin\\']
+  JohnnyAuthority.Tools -> C:\Users\GameBoy\AppData\Local\Temp\johnny30n3-native-seam-review-20261019\bin\Debug\net10.0-windows\JohnnyAuthority.Tools.dll
+
+建置成功。
+    0 個警告
+    0 個錯誤
+
+經過時間 00:00:05.30
+BUILD_ELAPSED 5.782000000006519 EXIT 0
+{"status":"passed","contract":"native_enrollment"}
+PURE_ELAPSED 0.6560000000172295 EXIT 0
+
+~~~
+
+### c1_root_baseline_native
+
+Tool 2b75cc; exit 0; outer wall 2.2387759s.
+
+~~~text
+SOURCE_HEAD 3b2da4b00076bcfc500cce5560cb2a045550c802
+EXE_SHA256 9b1544213943607b3459aa76fb38831be793ffa4efd7015bb18d68fdc6350c27
+DLL_SHA256 1be6a10e74f60de36f94f5c6eb50794d4eb8b3b7add754a4ac9e63bbe32c0402
+TEST_SHA256 d44159a980d4245b717395e931c2b8c6e2c32aca7c2bf5b8151197ebdf28b1b6
+NATIVE_STDOUT_BEGIN
+{"version":"7.6.5","reparse":"INJECTED","file":{"fileId":24488322976099782,"owner":"S-1-5-21-3542654388-73774624-397494543-1001","daclCount":6,"volume":480203665,"hash":"5a506110f5b978ca1779e21b215c812544d59afd9496f0d1e91051a384e5597e","parsedOwner":"S-1-5-21-3542654388-73774624-397494543-1001","status":"OBSERVED","sddl":"O:S-1-5-21-3542654388-73774624-397494543-1001D:AI(A;ID;0x1301bf;;;S-1-5-21-3542654388-73774624-397494543-1002)(A;ID;0x1301bf;;;S-1-5-21-1038638448-1876654339-317108736-3008313769)(A;ID;0x1301ff;;;S-1-5-21-3499701391-1603213523-4157899374-382677058)(A;ID;FA;;;SY)(A;ID;FA;;;BA)(A;ID;FA;;;S-1-5-21-3542654388-73774624-397494543-1001)","daclPresent":true},"missing":{"status":"MISSING"},"currentSid":"S-1-5-21-3542654388-73774624-397494543-1001","directory":{"fileId":9851624187148704,"owner":"S-1-5-21-3542654388-73774624-397494543-1001","daclCount":6,"volume":480203665,"hash":"cbb686764640ff42a1253022432f2e2dedd4b21ac9b335e7173e9c73835900b3","parsedOwner":"S-1-5-21-3542654388-73774624-397494543-1001","status":"OBSERVED","sddl":"O:S-1-5-21-3542654388-73774624-397494543-1001D:AI(A;OICIID;0x1301bf;;;S-1-5-21-3542654388-73774624-397494543-1002)(A;OICIID;0x1301bf;;;S-1-5-21-1038638448-1876654339-317108736-3008313769)(A;OICIID;0x1301ff;;;S-1-5-21-3499701391-1603213523-4157899374-382677058)(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;S-1-5-21-3542654388-73774624-397494543-1001)","daclPresent":true}}
+NATIVE_STDOUT_END
+NATIVE_STDERR_BEGIN
+NATIVE_STDERR_END
+NATIVE_EXIT 0
+REPARSE_CASE=INJECTED (symlink unavailable: probe intentionally not requested)
+READ_DENIED_CASE=INJECTED (port self-test only; no OS ACL change)
+NATIVE_FAULT_CASE=INJECTED (port self-test only; finite UNAVAILABLE response)
+EXISTING_ASSERTION_PASS_ELAPSED 0.9209999999729916
+
+~~~
+
+### c1_root_candidate_build
+
+Tool a0ccd4; exit 0; outer wall 7.8695886s.
+
+~~~text
+COMMAND ['dotnet', 'build', 'JohnnyAuthority.Tools.csproj', '--no-restore', '--no-incremental', '--disable-build-servers', '--verbosity', 'minimal', '-m:1', '-nodeReuse:false', '-p:UseSharedCompilation=false', '-p:RestoreConfigFile=NuGet.Config', '-p:BaseIntermediateOutputPath=C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n3-native-seam-review-20261019\\obj\\', '-p:BaseOutputPath=C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n3-native-seam-review-20261019\\bin\\']
+  JohnnyAuthority.Tools -> C:\Users\GameBoy\AppData\Local\Temp\johnny30n3-native-seam-review-20261019\bin\Debug\net10.0-windows\JohnnyAuthority.Tools.dll
+
+建置成功。
+    0 個警告
+    0 個錯誤
+
+經過時間 00:00:05.30
+BUILD_ELAPSED 5.829000000027008 EXIT 0
+{"status":"passed","contract":"native_enrollment"}
+PURE_ELAPSED 0.6560000000172295 EXIT 0
+
+~~~
+
+### c1_root_candidate_native
+
+Tool 78a85d; exit 0; outer wall 2.5089859s.
+
+~~~text
+SOURCE_HEAD cee7933187a9bfb3190b4ff2ec72c7768db59405
+EXE_SHA256 7936cc2beafc1701083c92f33b45153ed373230300895371e0a50820e7ff18a4
+DLL_SHA256 ee5f9c737cbb84a18781cac057d3db0227935cc3e0a06265480fc340739d508a
+TEST_SHA256 d44159a980d4245b717395e931c2b8c6e2c32aca7c2bf5b8151197ebdf28b1b6
+NATIVE_STDOUT_BEGIN
+{"version":"7.6.5","directory":{"fileId":9851624187148704,"owner":"S-1-5-21-3542654388-73774624-397494543-1001","volume":480203665,"status":"OBSERVED","daclCount":6,"daclPresent":true,"parsedOwner":"S-1-5-21-3542654388-73774624-397494543-1001","sddl":"O:S-1-5-21-3542654388-73774624-397494543-1001D:AI(A;OICIID;0x1301bf;;;S-1-5-21-3542654388-73774624-397494543-1002)(A;OICIID;0x1301bf;;;S-1-5-21-1038638448-1876654339-317108736-3008313769)(A;OICIID;0x1301ff;;;S-1-5-21-3499701391-1603213523-4157899374-382677058)(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;S-1-5-21-3542654388-73774624-397494543-1001)","hash":"cbb686764640ff42a1253022432f2e2dedd4b21ac9b335e7173e9c73835900b3"},"file":{"fileId":24488322976099782,"owner":"S-1-5-21-3542654388-73774624-397494543-1001","volume":480203665,"status":"OBSERVED","daclCount":6,"daclPresent":true,"parsedOwner":"S-1-5-21-3542654388-73774624-397494543-1001","sddl":"O:S-1-5-21-3542654388-73774624-397494543-1001D:AI(A;ID;0x1301bf;;;S-1-5-21-3542654388-73774624-397494543-1002)(A;ID;0x1301bf;;;S-1-5-21-1038638448-1876654339-317108736-3008313769)(A;ID;0x1301ff;;;S-1-5-21-3499701391-1603213523-4157899374-382677058)(A;ID;FA;;;SY)(A;ID;FA;;;BA)(A;ID;FA;;;S-1-5-21-3542654388-73774624-397494543-1001)","hash":"5a506110f5b978ca1779e21b215c812544d59afd9496f0d1e91051a384e5597e"},"missing":{"status":"MISSING"},"reparse":"INJECTED","currentSid":"S-1-5-21-3542654388-73774624-397494543-1001"}
+NATIVE_STDOUT_END
+NATIVE_STDERR_BEGIN
+NATIVE_STDERR_END
+NATIVE_EXIT 0
+REPARSE_CASE=INJECTED (symlink unavailable: probe intentionally not requested)
+READ_DENIED_CASE=INJECTED (port self-test only; no OS ACL change)
+NATIVE_FAULT_CASE=INJECTED (port self-test only; finite UNAVAILABLE response)
+EXISTING_ASSERTION_PASS_ELAPSED 0.9689999999827705
+
+~~~
+
+### c1_root_mut_build
+
+Tool 5e41ce; exit 0; outer wall 7.9483621s.
+
+~~~text
+COMMAND ['dotnet', 'build', 'JohnnyAuthority.Tools.csproj', '--no-restore', '--no-incremental', '--disable-build-servers', '--verbosity', 'minimal', '-m:1', '-nodeReuse:false', '-p:UseSharedCompilation=false', '-p:RestoreConfigFile=NuGet.Config', '-p:BaseIntermediateOutputPath=C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n3-native-seam-review-20261019\\obj\\', '-p:BaseOutputPath=C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n3-native-seam-review-20261019\\bin\\']
+  JohnnyAuthority.Tools -> C:\Users\GameBoy\AppData\Local\Temp\johnny30n3-native-seam-review-20261019\bin\Debug\net10.0-windows\JohnnyAuthority.Tools.dll
+
+建置成功。
+    0 個警告
+    0 個錯誤
+
+經過時間 00:00:05.32
+BUILD_ELAPSED 5.85899999999674 EXIT 0
+{"status":"passed","contract":"native_enrollment"}
+PURE_ELAPSED 0.6410000000032596 EXIT 0
+
+~~~
+
+### c1_root_mut_native
+
+Tool ba1bd9; exit 1; outer wall 2.2139593s.
+
+~~~text
+SOURCE_HEAD cee7933187a9bfb3190b4ff2ec72c7768db59405
+EXE_SHA256 7936cc2beafc1701083c92f33b45153ed373230300895371e0a50820e7ff18a4
+DLL_SHA256 b07b4f63d54c68438223792c58cf7091122ff04d60782ff43c1d975554185a41
+TEST_SHA256 d44159a980d4245b717395e931c2b8c6e2c32aca7c2bf5b8151197ebdf28b1b6
+NATIVE_STDOUT_BEGIN
+{"reparse":"INJECTED","missing":{"status":"MISSING"},"currentSid":"S-1-5-21-3542654388-73774624-397494543-1001","version":"7.6.5","directory":{"status":"UNAVAILABLE"},"file":{"status":"UNAVAILABLE"}}
+NATIVE_STDOUT_END
+NATIVE_STDERR_BEGIN
+NATIVE_STDERR_END
+NATIVE_EXIT 0
+Traceback (most recent call last):
+  File "<stdin>", line 24, in <module>
+  File "C:\Users\GameBoy\Desktop\Johnny_AI_Skill_latest\.worktrees\skill-improvement-30n3-native-seam-review\tests\test_native_authority_tools.py", line 338, in test_reparse_denial_and_fault_cases_are_labeled
+    assert observed["status"] == "OBSERVED" and observed["owner"] == result["currentSid"] == observed["parsedOwner"]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
+
+~~~
+
+### c1_root_restored_build
+
+Tool a9b29e; exit 0; outer wall 7.6673795s.
+
+~~~text
+COMMAND ['dotnet', 'build', 'JohnnyAuthority.Tools.csproj', '--no-restore', '--no-incremental', '--disable-build-servers', '--verbosity', 'minimal', '-m:1', '-nodeReuse:false', '-p:UseSharedCompilation=false', '-p:RestoreConfigFile=NuGet.Config', '-p:BaseIntermediateOutputPath=C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n3-native-seam-review-20261019\\obj\\', '-p:BaseOutputPath=C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n3-native-seam-review-20261019\\bin\\']
+  JohnnyAuthority.Tools -> C:\Users\GameBoy\AppData\Local\Temp\johnny30n3-native-seam-review-20261019\bin\Debug\net10.0-windows\JohnnyAuthority.Tools.dll
+
+建置成功。
+    0 個警告
+    0 個錯誤
+
+經過時間 00:00:05.22
+BUILD_ELAPSED 5.719000000040978 EXIT 0
+{"status":"passed","contract":"native_enrollment"}
+PURE_ELAPSED 0.6410000000032596 EXIT 0
+
+~~~
+
+### c1_root_restored_native
+
+Tool 9d6d88; exit 0; outer wall 2.2663463s.
+
+~~~text
+SOURCE_HEAD cee7933187a9bfb3190b4ff2ec72c7768db59405
+EXE_SHA256 7936cc2beafc1701083c92f33b45153ed373230300895371e0a50820e7ff18a4
+DLL_SHA256 ee5f9c737cbb84a18781cac057d3db0227935cc3e0a06265480fc340739d508a
+TEST_SHA256 d44159a980d4245b717395e931c2b8c6e2c32aca7c2bf5b8151197ebdf28b1b6
+NATIVE_STDOUT_BEGIN
+{"file":{"daclPresent":true,"parsedOwner":"S-1-5-21-3542654388-73774624-397494543-1001","hash":"5a506110f5b978ca1779e21b215c812544d59afd9496f0d1e91051a384e5597e","sddl":"O:S-1-5-21-3542654388-73774624-397494543-1001D:AI(A;ID;0x1301bf;;;S-1-5-21-3542654388-73774624-397494543-1002)(A;ID;0x1301bf;;;S-1-5-21-1038638448-1876654339-317108736-3008313769)(A;ID;0x1301ff;;;S-1-5-21-3499701391-1603213523-4157899374-382677058)(A;ID;FA;;;SY)(A;ID;FA;;;BA)(A;ID;FA;;;S-1-5-21-3542654388-73774624-397494543-1001)","volume":480203665,"fileId":24488322976099782,"status":"OBSERVED","daclCount":6,"owner":"S-1-5-21-3542654388-73774624-397494543-1001"},"version":"7.6.5","reparse":"INJECTED","directory":{"daclPresent":true,"parsedOwner":"S-1-5-21-3542654388-73774624-397494543-1001","hash":"cbb686764640ff42a1253022432f2e2dedd4b21ac9b335e7173e9c73835900b3","sddl":"O:S-1-5-21-3542654388-73774624-397494543-1001D:AI(A;OICIID;0x1301bf;;;S-1-5-21-3542654388-73774624-397494543-1002)(A;OICIID;0x1301bf;;;S-1-5-21-1038638448-1876654339-317108736-3008313769)(A;OICIID;0x1301ff;;;S-1-5-21-3499701391-1603213523-4157899374-382677058)(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)(A;OICIID;FA;;;S-1-5-21-3542654388-73774624-397494543-1001)","volume":480203665,"fileId":9851624187148704,"status":"OBSERVED","daclCount":6,"owner":"S-1-5-21-3542654388-73774624-397494543-1001"},"missing":{"status":"MISSING"},"currentSid":"S-1-5-21-3542654388-73774624-397494543-1001"}
+NATIVE_STDOUT_END
+NATIVE_STDERR_BEGIN
+NATIVE_STDERR_END
+NATIVE_EXIT 0
+REPARSE_CASE=INJECTED (symlink unavailable: probe intentionally not requested)
+READ_DENIED_CASE=INJECTED (port self-test only; no OS ACL change)
+NATIVE_FAULT_CASE=INJECTED (port self-test only; finite UNAVAILABLE response)
+EXISTING_ASSERTION_PASS_ELAPSED 0.9370000000344589
+
+~~~
+
+
+
 ## C1 original evidence gap / new independent comparison registration — 2026-10-19
 
 Author C1 candidatecee7933187a9bfb3190b4ff2ec72c7768db59405 exact3paths. Author
