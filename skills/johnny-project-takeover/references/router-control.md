@@ -85,6 +85,9 @@ Every decision declares exactly one continuation:
    applicable active budget, undeclared transition or `NO-GO`. Do not guess, use a local fallback, or wait
    indefinitely.
 
+Automatic continuation retains its declared bounded chain step/time ceiling; reaching
+it is HALT for that chain. This is distinct from per-ticket/per-role cumulative command
+seconds or correction counts; their amendment does not remove a separate chain bound.
 Each execution action retains a deadline and resource/lifecycle monitoring. Applicable
 batch cumulative/count policy comes from the versioned authority; an explicitly removed
 local ceiling is not a new human-wait reason. Amendments and stagnation handling follow
