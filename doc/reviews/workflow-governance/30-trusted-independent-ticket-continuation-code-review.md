@@ -1,4 +1,54 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## N5-B source seal / C8 bounded command admission — 2026-10-20
+
+N5 final969aa0ee05c83720cdd1e25b71ac0594f91c8e2a, product0de97a7e25de974624189e556e33410feb1f0df5 /
+testd7029d9562d118edb6a3c840c225217f63a862dc. Distinct batch-authority peer reads
+complete source and all15 original unfiltered RED traces; intended cells fail,
+no collection/import/metadata false-red. Every restore hash equals candidate
+c0ded06f2443fbba7c00c9a6c34277840573ac173f973e5dce7958a8167a4e0a;
+five named restored GREEN and full103/strict2/import at same source. Mutation01
+patch input was not saved: observed changed hash/failure/restore are verified,
+precise mutation input UNKNOWN, not reconstructed. Five unnecessary paired RED
+replays already begun before Root stop were preserved as deviation, not required
+proof; immediate pair adjacency is NOT an extra closure requirement.
+Root reads complete source/test, candidate103PASS1.015s/strict2PASS0.953s,
+different actual-source initial-response status completed mutation namedRED0.948s,
+exactrestoreGREEN0.906s; two Git blobs exact and working tree clean. Root conclusion
+SOURCE_APPROVED/STAGED only. Not installed CLI wire compatibility/Host qualification
+or30B43 clearance. N5 author allocation released into immutable evidence hold.
+
+C8 closure21 DOC_PASS by distinct batch-authority peer at336949464389797d0d17cb1b26f9e4393575142a,
+ticketblobb20944aaa7e8da7ace2434f187d97f13fb22e927,
+LF8c0fe8746ab10400e9608be6648ff9c8bb4765a4cada8abc8a66f880b6c6c809,
+registry D8 matched. C7 exact typed objects and callback/Program/command seams
+exist; reuse prior C7 constructor/build/default/enrollment/fakejob evidence at
+7a24e165391bbc3beea2d13fb492555d3b8f485e and seal eef85bc7, no new public DTO.
+Root fresh contained clean Git/nonreparse allocation binds sourcebaseline7a24e165,
+codex branches and linked pointers. MemoryStream(capacity) alone is expandable;
+frozen ceiling requires truly nonexpandable backing buffer before output.
+
+Root derives grant-ticket30n3-observed-enrollment-20261020 revision01 ACTIVE
+under batch-checklist-local-20261019-uncapped/first-CVQ source-order exception.
+Original30 closure21 above, exact sourcebaseline7a24e165. Named author
+/root/grant_transport_impl (N5 implementation released), Root sole reviewer/
+orchestrator, distinct /root/batch_authority_review source helper. Author WT
+.worktrees/skill-improvement-30n3-observed-enrollment, codex/same; Root matching
+-review WT/branch; context ctx-ticket30n3-observed-enrollment-20261020.
+Owned Temp/johnny30n3-observed-owner-20261020 and -review-20261020, owner+TTL
+through review/seal, holds override; no cleanup authority. MODIFY ONLY existing
+native_windows/EnrollmentCommand.cs, Program.cs, NativeEnrollmentCommandSelfTests.cs
+at full original library/local_orchestration paths. CREATE0/DELETE0.
+Only fixed observe-enrollment output bridge/C8F1-F4; old verify output immutable,
+actual observations not expected digests, refusal never authority. No readback/
+verifier/manifest/project/Python changes or extra framework. Offline .NET10.0.302,
+ownedTemp build/obj, cleared package sources/no updates/telemetry; run fake-only
+self-test/enrollment-contract-self-test/job-contract-self-test, NEVER real inspect/
+verify/observe or job native/fixture modes. Full source-mutant RED/restoreGREEN,
+Root different door, warning/nullable strict and exact build/source evidence.
+Child55/outer60, command timing/history retained. No realHost/API/network/SCM/
+accounts/permissions/install/qualification/formal integration/push/release/deploy.
+ACTION_COMPLETED -> AUTO_CONTINUE C8; not a new Owner policy decision.
+
 ## H6-A corrected preflight / H6-B admission — 2026-10-20
 
 Finalcff4ee574cfcea4735c9b3626997d67e32ff78c9, product37017bd7ea7c34b21e5200ffb85301353cc30968 /
