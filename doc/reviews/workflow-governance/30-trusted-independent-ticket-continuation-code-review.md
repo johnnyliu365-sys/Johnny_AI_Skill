@@ -2,6 +2,18 @@
 
 ## C3 precise source construction admission — 2026-10-19
 
+Root prepared the exact already-registered ordinary review fixture after admission:
+tool7680ac verified direct expected-parent containment and every existing ancestor
+without reparse before creating directory-readback-fixture/nested. apply_patch
+created only alpha.bin and page-000.bin..page-127.bin; tool38a0d6 directly read back
+129files/1directory, alpha18bytes SHA256
+3d4bb502b1da7249e1d4fc8bf735218303a8508afed542e9675ae1764d8e29dd,
+each page13bytes SHA256e16e28c0673d9d243c730697fe90a892b359b728fb66ccfc4829c4eb13186d22.
+Known literal UTF8 bytes, not derived from candidate result; review source still
+cleanb42. This creates no Git fixture/ref, protected object, link, ACL or Host effect.
+Root owns it, TTL through C3 review/seal and existing Review/Recovery hold; no cleanup.
+Author separately owns its registered owner-root child, not permission to edit Root's.
+
 ACTION_COMPLETED c5d98249 C2 ordinary engineering seal -> existing Router selects
 AUTO_CONTINUE / IMPLEMENT next C3 primitive, not integration or Host qualification.
 Original Ticket30 closure08 ea532f861d7b99e2e9569856376d15e20dd3a079,
