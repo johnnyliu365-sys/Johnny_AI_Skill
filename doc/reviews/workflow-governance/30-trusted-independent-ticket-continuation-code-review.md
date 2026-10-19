@@ -1,5 +1,28 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N4-A1 decoder Grant activation — 2026-10-19
+
+ACTION_COMPLETED C4 engineering seal468e9c6b releases prior author allocation;
+AUTO_CONTINUE IMPLEMENT grant-ticket30n4-request-decoder-20261019. Exact closure10
+source binding in1d601d50a0d8d6f7dfc56f038fd64513b927d0db independently
+DOC_PASS /root/batch_authority_review, LF
+f3b7557c9472afb4e02070df1a2be0fed50e7ac754d80bcb94976bb64bc07dfd
+matches README. Conditional Grant becomes ACTIVE under uncapped parent now;
+no other authority or qualified-baseline implication.
+
+Root preflight2388e2 reads both newly registered contained non-reparse owner/
+review WTs, clean exact20bd6e3036608d61feb687ea6e0ff6b7953d3e11, respective
+codex/skill-improvement-30g-request-codec[-review] branches, linked Git metadata/
+actual toplevel. Existing normal GrantReadRequest JSON roundtrip, encode and
+_ReadRequestWire strict boundary pass. Same installed Python3.11 ordinary source
+protocol regression61tests PASS1.26pytest/3.672child seconds. No new DTO bootstrap,
+ledger/source/Host/pipe effect or install. Temp owner/review roots preregistered in
+ticket before creation12d510. New context ctx-ticket30n4-request-decoder;
+named /root/ticket30n2_native_impl author and Root sole reviewer, separate source
+peer /root/ticket30_native_tools_review. Exact3MODIFY, noCREATE/DELETE. Versioned
+ticket and original lineage supplies all behavior/negative/mutation requirements;
+candidate returned immutable with raw test output. Historical holds unchanged.
+
 ## C4 E01 final source-engineering seal — 2026-10-19
 
 Root independent conclusion APPROVED_FOR_ENGINEERING_STAGING_ONLY for
