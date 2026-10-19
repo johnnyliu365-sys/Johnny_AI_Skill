@@ -118,7 +118,8 @@ APPROVED. Existing gate locally integrated exact four-file blobs ata0bfc286;
 36tests/22subtests, strict and compile/import passed after integration. Author
 digest/reviewer target-membership reverse mutations red/restored, no zero-red PASS.
 Budget recovered from original Host records, conservative146.77/150 author,
-78/100 reviewer, full50 Root reserve, total ceiling274.77/300; no reset.
+83/100 reviewer including independent seal, full50 Root charge, total279.77/300;
+no reset. Seal readback confirmed four blobs/journal/clean control and unchangedmain.
 See [review/seal](../../../doc/reviews/workflow-governance/46-versioned-local-test-commands-code-review.md).
 Registered assets remain under existing no-retry CLEANUP_BLOCKED retention, no
 normal closure or unused-asset claim. No CI completeness/retirement/Host activation.

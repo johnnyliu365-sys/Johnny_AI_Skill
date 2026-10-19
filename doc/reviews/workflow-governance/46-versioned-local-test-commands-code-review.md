@@ -142,3 +142,9 @@ Retain registered46 author/reviewer worktrees and shared Root landing/ref/journa
 under CLEANUP_BLOCKED; cache inventory UNKNOWN, not 'nothing remains'. No cleanup
 was attempted; old44/31B/45/30B/43 and Recovery holds preserved. Source capability
 complete only; final08/12, test retirement, CI and Host/source qualifications open.
+
+Independent seal: original reviewer SEAL_CONFIRMED at control5d0539bf, exactfour
+blobs and384-byte journal/hash, clean control/main and unchangeda1cb6c13 main.
+Seal used4.77s; conservatively charge reviewer83/100 cumulative (not78 after seal),
+author146.77/150 and Rootfull50 remain; updated total279.77/300. No further tests,
+mutation or cleanup. Seal confirms this slice only; no new global completion claim.

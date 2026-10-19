@@ -96,8 +96,8 @@ CLI旗標及CodexSandboxService不是成品issuer或qualification。Owner只需�
 Root沿既有gate整合a0bfc286e2102b9ccfc2575f58bbb2e08b8f44b0，四blob精確相同；
 整合後36tests／22subtests、strict、compile/import綠。命令由新的受版控JSON唯一維護，
 只證明兩組本地聚焦驗證，不冒稱完整CI或退役授權；08／12仍不勾選。
-原始工具紀錄恢復作者／reviewer記帳，保守146.77/150與78/100，Root保留完整50，
-總上界274.77/300。非平台額度、非預算重置；清理保留既有CLEANUP_BLOCKED，不重試。
+原始工具紀錄恢復作者／reviewer記帳，含獨立seal後保守146.77/150與83/100，Root全額計50，
+總上界279.77/300。非平台額度、非預算重置；清理保留既有CLEANUP_BLOCKED，不重試。
 精確命令／SHA與可信遠端補查在方案§4：已讀Actions只見Dependency Graph，固定main
 的workflow目錄404但同SHA其他檔可讀，不能混同「無權限」或斷言全域無CI。
 未執行任何服務安裝／權限變更／資格攻擊／外部模型請求／push／release／deploy。
