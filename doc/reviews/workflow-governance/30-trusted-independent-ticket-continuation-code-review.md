@@ -1,5 +1,190 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## F1 shared fixture final ordinary engineering seal — 2026-10-19
+
+Candidate7fa12f0c1af3a9b61772636b686b953cb8be4406, baselinebf5a4a3c,
+exact MODIFY1 tests/test_native_authority_tools.py, CREATE0. F1-E01 corrected
+additively after da91be3f, reviewer /root/ticket30_native_tools_review confirms the
+new pure actual-fixture environment binding oracle, other assertions unchanged.
+Root9-node current-candidate run PASSED, explicit injected no-opt-in reparse only,
+strict mypy1file PASS, memory compile/import PASS. Author DLL binding actual-source
+mutation namedred/restoredgreen; Root DIFFERENT actual builder --no-incremental
+removal namedred/restoredgreen. Restored source blob029e0e3a49147b7f314d64cbcf27fd2084cb1e75
+matches HEAD, clean worktree. No new framework or product behavior/permission.
+
+Root new current-candidate EXE SHA256
+5fe91ae25fbe3f18f5957f27316910fc7a02c549e8b1a06eb4273f619ed176ab,
+DLL41bc0f6fbd13340e1e03c880520d3b1bfa7702b16924e8b8b1ea7a4dbe083309,
+test48bbde4f04444ef55a7d727e66fac91a78691f2593dbae7f0b8f5d2cd32d7f4c.
+These identify THIS build; do not substitute another seat's build hash or claim
+cross-build determinism. Earlier author initial stdout-count assertion defect and
+Root cp950 output loss remain historical; only newly UTF8-captured evidence below
+is PASS. Pure job-contract selected, native job-self-test NOT selected/requalified.
+
+Conclusion: SOURCE_TEST_INFRA_ENGINEERING_STAGED_PASS / F1_E01_CLOSED /
+QUALIFIED_AUDIT_BLOCKED / NOT_INTEGRATED. Native source/Host/issuer/30B/43 holds
+unchanged; no symlink probe, service/ACL/account/network/Host installation or cleanup.
+AUTO_CONTINUE existing native file-content construction, not a Human renewal or
+formal activation. All checklist boxes unchanged.
+
+### f1_root_fixed_focused_cmd
+
+~~~powershell
+@'
+import hashlib,os,subprocess,sys,time
+from pathlib import Path
+sys.stdout.reconfigure(encoding='utf-8',errors='backslashreplace');sys.stderr.reconfigure(encoding='utf-8',errors='backslashreplace')
+root=Path(r'C:\Users\GameBoy\AppData\Local\Temp\johnny30n3-review-20261019')
+env=dict(os.environ);env.update(JOHNNY_NATIVE_TEST_ROOT=str(root),PYTHONDONTWRITEBYTECODE='1',PYTHONIOENCODING='utf-8');env.pop('JOHNNY_NATIVE_REPARSE_OPT_IN',None)
+names=['test_native_fixture_binds_candidate_dll_and_owned_payload_root','test_native_fixture_build_is_nonincremental_and_output_bound','test_default_reparse_setup_is_explicitly_injected_without_symlink','test_actual_candidate_self_test','test_actual_candidate_enrollment_contract_self_test','test_actual_candidate_job_contract_self_test','test_actual_candidate_modes_and_plan_pipe_masks','test_actual_inspect_reports_missing_without_object_data','test_reparse_denial_and_fault_cases_are_labeled']
+args=[sys.executable,'-B','-m','pytest','-q','-s','-p','no:cacheprovider',*['tests/test_native_authority_tools.py::'+n for n in names]]
+print('COMMAND',args,flush=True);start=time.monotonic();r=subprocess.run(args,env=env,timeout=50,capture_output=True,text=True,encoding='utf-8',errors='replace');print(r.stdout,flush=True);print(r.stderr,flush=True);print('EXIT',r.returncode,'ELAPSED',time.monotonic()-start,flush=True)
+for p in [root/'bin/Debug/net10.0-windows/JohnnyAuthority.Tools.exe',root/'bin/Debug/net10.0-windows/JohnnyAuthority.Tools.dll',Path('tests/test_native_authority_tools.py')]: print('SHA256',str(p),hashlib.sha256(p.read_bytes()).hexdigest(),flush=True)
+raise SystemExit(r.returncode)
+'@ | & 'C:\Users\GameBoy\AppData\Local\Programs\Python\Python311\python.exe' -B -
+~~~
+
+### f1_root_mutation_cmd
+
+~~~powershell
+@'
+import os,subprocess,sys,time
+sys.stdout.reconfigure(encoding='utf-8',errors='backslashreplace');sys.stderr.reconfigure(encoding='utf-8',errors='backslashreplace')
+env=dict(os.environ);env.update(JOHNNY_NATIVE_TEST_ROOT=r'C:\Users\GameBoy\AppData\Local\Temp\johnny30n3-review-20261019',PYTHONDONTWRITEBYTECODE='1',PYTHONIOENCODING='utf-8');env.pop('JOHNNY_NATIVE_REPARSE_OPT_IN',None)
+args=[sys.executable,'-B','-m','pytest','-q','-s','-p','no:cacheprovider','tests/test_native_authority_tools.py::test_native_fixture_build_is_nonincremental_and_output_bound']
+print('COMMAND',args,flush=True);s=time.monotonic();r=subprocess.run(args,env=env,timeout=15,capture_output=True,text=True,encoding='utf-8',errors='replace');print(r.stdout,flush=True);print(r.stderr,flush=True);print('EXIT',r.returncode,'ELAPSED',time.monotonic()-s,flush=True);raise SystemExit(r.returncode)
+'@ | & 'C:\Users\GameBoy\AppData\Local\Programs\Python\Python311\python.exe' -B -
+~~~
+
+### f1_root_fixed_focused
+
+Tool9e5cb0; outer wall10.0045224s; exitRUNNING_PENDING_TERMINAL_NEXT_ITEM.
+
+~~~text
+COMMAND ['C:\\Users\\GameBoy\\AppData\\Local\\Programs\\Python\\Python311\\python.exe', '-B', '-m', 'pytest', '-q', '-s', '-p', 'no:cacheprovider', 'tests/test_native_authority_tools.py::test_native_fixture_binds_candidate_dll_and_owned_payload_root', 'tests/test_native_authority_tools.py::test_native_fixture_build_is_nonincremental_and_output_bound', 'tests/test_native_authority_tools.py::test_default_reparse_setup_is_explicitly_injected_without_symlink', 'tests/test_native_authority_tools.py::test_actual_candidate_self_test', 'tests/test_native_authority_tools.py::test_actual_candidate_enrollment_contract_self_test', 'tests/test_native_authority_tools.py::test_actual_candidate_job_contract_self_test', 'tests/test_native_authority_tools.py::test_actual_candidate_modes_and_plan_pipe_masks', 'tests/test_native_authority_tools.py::test_actual_inspect_reports_missing_without_object_data', 'tests/test_native_authority_tools.py::test_reparse_denial_and_fault_cases_are_labeled']
+
+~~~
+
+### f1_root_fixed_focused_terminal
+
+Tool2f9e1e; outer wall0.0000158s; exit0.
+
+~~~text
+...NATIVE_RESTORE_ELAPSED_SECONDS=1.715852
+NATIVE_RESTORE_RC=0
+NATIVE_RESTORE_STDOUT:
+  正在判斷要還原的專案...
+  所有專案都在最新狀態，可進行還原。
+
+NATIVE_RESTORE_STDERR:
+
+NATIVE_BUILD_NO_RESTORE_ELAPSED_SECONDS=5.828004
+NATIVE_BUILD_NO_RESTORE_RC=0
+NATIVE_BUILD_STDOUT:
+  JohnnyAuthority.Tools -> C:\Users\GameBoy\AppData\Local\Temp\johnny30n3-review-20261019\bin\Debug\net10.0-windows\JohnnyAuthority.Tools.dll
+
+建置成功。
+    0 個警告
+    0 個錯誤
+
+經過時間 00:00:05.35
+
+NATIVE_BUILD_STDERR:
+
+.....REPARSE_CASE=INJECTED (not opted in)
+READ_DENIED_CASE=INJECTED (port self-test only; no OS ACL change)
+NATIVE_FAULT_CASE=INJECTED (port self-test only; finite UNAVAILABLE response)
+.
+9 passed in 10.67s
+
+
+EXIT 0 ELAPSED 13.5
+SHA256 C:\Users\GameBoy\AppData\Local\Temp\johnny30n3-review-20261019\bin\Debug\net10.0-windows\JohnnyAuthority.Tools.exe 5fe91ae25fbe3f18f5957f27316910fc7a02c549e8b1a06eb4273f619ed176ab
+SHA256 C:\Users\GameBoy\AppData\Local\Temp\johnny30n3-review-20261019\bin\Debug\net10.0-windows\JohnnyAuthority.Tools.dll 41bc0f6fbd13340e1e03c880520d3b1bfa7702b16924e8b8b1ea7a4dbe083309
+SHA256 tests\test_native_authority_tools.py 48bbde4f04444ef55a7d727e66fac91a78691f2593dbae7f0b8f5d2cd32d7f4c
+
+~~~
+
+### f1_root_mutation_red
+
+Tooleffb21; outer wall4.4414668s; exit1.
+
+~~~text
+COMMAND ['C:\\Users\\GameBoy\\AppData\\Local\\Programs\\Python\\Python311\\python.exe', '-B', '-m', 'pytest', '-q', '-s', '-p', 'no:cacheprovider', 'tests/test_native_authority_tools.py::test_native_fixture_build_is_nonincremental_and_output_bound']
+F
+================================== FAILURES ===================================
+________ test_native_fixture_build_is_nonincremental_and_output_bound _________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000023EB05A0310>
+capsys = <_pytest.capture.CaptureFixture object at 0x0000023EB05A0450>
+
+    def test_native_fixture_build_is_nonincremental_and_output_bound(
+        monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+    ) -> None:
+        build_root = Path(os.environ["JOHNNY_NATIVE_TEST_ROOT"])
+        expected_candidate = build_root / "bin" / "Debug" / "net10.0-windows" / "JohnnyAuthority.Tools.exe"
+        calls: list[tuple[tuple[str, ...], Path, dict[str, str], dict[str, object]]] = []
+    
+        def mocked_run(args: list[str], *, cwd: Path, env: dict[str, str], **kwargs: object) -> subprocess.CompletedProcess[str]:
+            calls.append((tuple(args), cwd, dict(env), dict(kwargs)))
+            return subprocess.CompletedProcess(args, 0, stdout="mocked offline command\n", stderr="")
+    
+        def no_directory_creation(self: Path, mode: int = 0o777, parents: bool = False,
+                                  exist_ok: bool = False) -> None:
+            raise AssertionError(f"candidate-only build created a directory: {self}")
+    
+        def no_payload_write(self: Path, data: bytes) -> int:
+            raise AssertionError(f"candidate-only build wrote a payload: {self}")
+    
+        def no_symlink(source: str | bytes | os.PathLike[str] | os.PathLike[bytes],
+                       target: str | bytes | os.PathLike[str] | os.PathLike[bytes],
+                       target_is_directory: bool = False) -> None:
+            raise AssertionError("candidate-only build attempted a symlink")
+    
+        monkeypatch.setattr(subprocess, "run", mocked_run)
+        monkeypatch.setattr(Path, "mkdir", no_directory_creation)
+        monkeypatch.setattr(Path, "write_bytes", no_payload_write)
+        monkeypatch.setattr(Path, "is_file", lambda path: path == expected_candidate)
+        monkeypatch.setattr(os, "symlink", no_symlink)
+    
+        candidate = _build_native_candidate()
+        captured = capsys.readouterr()
+    
+        assert candidate == expected_candidate
+        assert len(calls) == 2
+        restore_args, restore_cwd, restore_env, restore_options = calls[0]
+        build_args, build_cwd, build_env, build_options = calls[1]
+        assert restore_args[:3] == ("dotnet", "restore", "JohnnyAuthority.Tools.csproj")
+        assert build_args[:4] == ("dotnet", "build", "JohnnyAuthority.Tools.csproj", "--no-restore")
+>       assert "--no-incremental" in build_args
+E       AssertionError: assert '--no-incremental' in ('dotnet', 'build', 'JohnnyAuthority.Tools.csproj', '--no-restore', '--disable-build-servers', '--verbosity', ...)
+
+tests\test_native_authority_tools.py:172: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_native_authority_tools.py::test_native_fixture_build_is_nonincremental_and_output_bound
+1 failed in 0.63s
+
+
+EXIT 1 ELAPSED 3.547000000020489
+
+~~~
+
+### f1_root_mutation_green
+
+Tool9111df; outer wall3.9798638s; exit0.
+
+~~~text
+COMMAND ['C:\\Users\\GameBoy\\AppData\\Local\\Programs\\Python\\Python311\\python.exe', '-B', '-m', 'pytest', '-q', '-s', '-p', 'no:cacheprovider', 'tests/test_native_authority_tools.py::test_native_fixture_build_is_nonincremental_and_output_bound']
+.
+1 passed in 0.25s
+
+
+EXIT 0 ELAPSED 3.1410000000032596
+
+~~~
+
+
+
 ## F1 evidence correction / Root output-encoding deviation — 2026-10-19
 
 At da91be3fc87afd819f10e88d1cf378a62eb04368 different-seat ordinary source review
