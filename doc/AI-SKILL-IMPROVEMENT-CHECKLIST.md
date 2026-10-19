@@ -3,7 +3,7 @@
 | 欄位 | 值 |
 | --- | --- |
 | 文件身分 | `AI-SKILL-IMPROVEMENT-CHECKLIST`；本專案工作追蹤，非新 PRD／SPEC／Gate |
-| Revision／來源 | `52`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
+| Revision／來源 | `53`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
 | 工作基準 | `a1cb6c13adbeb52a4117991727dcc3d4af6d2a33`；分支 `codex/skill-improvement-checklist` |
 | 主線 | 先對照、優先 02→04→05→06→07，再處理餘項與整合回放 |
 | 負責 | Root 理解需求、衝突與派工；票級實作者依有效能力 Profile；獨立審閱另席 |
@@ -30,7 +30,7 @@ Router、Reviewer、文件索引與結案規則仍各有唯一正文。`[x]` 只
 | [ ] 11 去重與衝突 | `WPR_TEMPLATE_AND_HISTORY_LOCAL_INTEGRATED / ACTIVATION_OPEN` | 原37／38／40／42保留；Luna44在既有RequirementLineageGate增加純revision-history驗證、重用原test；[獨審](reviews/workflow-governance/44-requirement-revision-compatibility-code-review.md) | 原42之46tests／不同位置WPR突變證據保留；44獨審14tests／30subtests、鏈結與terminal不同門突變紅→綠、Root gate1aa5ed22與兩blob一致；獨立seal確認 | `APPROVED_44 / LOCAL_INTEGRATED / CLEANUP_BLOCKED` | 舊一對一validate維持生效；可信creation issuer／效應前grant讀回／原子consume及真Host尚缺，不用純history方法冒充正式身分遷移；清理政策阻擋 |
 | [ ] 12 回放與獨審 | `EXISTING_CASES_MAPPED / END_TO_END_NOT_VERIFIED` | Root沿既有案例／review；46增加受版控本地命令來源，未新增回放框架；30B／43仍未整合 | 46合法command-plan與拒絕／版本釘選／不同門突變均有獨審；整合後36tests／22subtests。04不重做，既有局部PASS沿用，候選不冒充整合版 | `PARTIAL_ONLY` | 完整01–10正式來源/effect回放仍缺；Owner已採納首次入口順序例外，但未授權Host測試；不是資格或總驗收 |
 
-## 當前工程接續與精確證據（revision52）
+## 當前工程接續與精確證據（revision53）
 
 C6／H1／H2-A／C7已封存工程證據沿用，不重跑。H2-B a4a3d23c完成純peer／
 record比對，Root274tests／strict3、不同門disposition突變紅→綠，來源獨審與
@@ -40,19 +40,23 @@ H3 factory修正兩個已重現缺陷（unsigned sentinel、原生state tuple）
 traceback紅→還原綠及原始記錄封存d38188d3，另一席只解碼資料驗證hash／內容。
 CRLF/LF與多31項ledger的計數差異已實算核對，不是測錯版本。無Host資格。
 
-H4 token觀察f7bf8e7a修正Close-capable異常owner丟失；來源獨審窄複驗通過，
-但Root把實際native selector改錯時，現有上層stub測試仍綠。此ZERO_RED依原規範
-列E02證據缺陷，已派原作者在既有測試檔下移fake邊界，產品唯讀，未假勾完成。
-H5原票closure18已文件獨審，縮為既有兩檔owning pipe交接，零新增檔；受控工程
-基準36593ad2精確合併H1／H3，97項patched測試綠、無真native呼叫。初次Root
-guard誤攔純OVERLAPPED／buffer建構造成的失敗保留；改用純結構fake後才通過。
-H5作者Grant尚未啟用，等待H4回件；C#保留process/job與Python服務尚未實際接線。
+H4最終37410685補下移native fake，Root152tests／strict2、不同OpenAsSelf門
+紅→精確還原綠，來源獨審與完整作者raw封存0653eb35；三份資料解碼hash另席
+驗證。舊selector ZERO_RED與owner-loss原始失敗仍在，不是Host資格。
+H5原closure18兩檔owning pipe交接：A最終474e67c1，Root112H1／H3 patched
+tests及strict2通過，不同錯owner交叉綁定具名紅→還原綠。原weakref NoneisNone
+假綠已修成獨立非空／identity／lifetime斷言；f29a8a37派同作者B，不等待重批。
+C#保留process/job與Python服務尚未實際接線；不把one-shot JSON或expected值
+當成retained native證據。原guard／型別失敗不洗掉。
 
 無相依工作37沿原票修Dispatch normalization的WPR權威衝突，另修兩個已核准
-規則的舊pin；不改規則／Router行為，不重做37舊completion修正。新斷言具名
-baseline紅，合法suite已回55tests／202subtests綠；候選仍待獨審與cache處置。
-首次mypy逾時寫入非預期工作樹cache，已停用該路徑並查明48檔／85,672,176bytes，
-未刪除或繞過政策；舊錯selector、失敗suite與逾時保留。詳見原37review。
+規則的舊pin；最終80cc4484獨審／Root55tests／202subtests／strict2通過，
+空行後偷加／重複職責也具名紅→還原綠。來源APPROVED、尚未整合或結案。
+本票48檔／85,672,176bytes快取，精確一次Remove-Item遭CreateProcess政策
+啟動前拒絕，已STOP、不重試／換方法。兩份抄錄因時間戳誤植保留區分，Root
+查核與修正證據1eff888f，舊錯selector／失敗suite／逾時均保留。
+其餘工作不被此清理阻塞拖住。原30N5 closure19兩檔離線協定fixture文件獨審
+通過，a13414be在全新隔離WT派原37作者建構A；不啟動socket／CLI／模型。
 
 CVQ最終24c79d22在原lineage完成E01–E04同票修正。Root實際34行為tests、
 202來源正反例、24檔strict、source graph及compile/import通過；公開outcome
@@ -63,7 +67,7 @@ join被刪除時具名紅→還原綠，合法pure與HostDiscovery注入案例�
 
 01–12勾選不變、04不重做；正式source／issuer／Host效應與30B／43尚未驗收。
 沒有push／release／deploy／安裝／主機安全設定或正式閘門啟用。
-本段原revision51由Git保留，不為相同進度重複堆疊另一份正文。
+本段原revision52由Git保留，不為相同進度重複堆疊另一份正文。
 
 ## 前次工程接續與精確證據（revision49歷史）
 
