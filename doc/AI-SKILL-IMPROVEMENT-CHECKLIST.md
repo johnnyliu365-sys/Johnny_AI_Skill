@@ -3,7 +3,7 @@
 | 欄位 | 值 |
 | --- | --- |
 | 文件身分 | `AI-SKILL-IMPROVEMENT-CHECKLIST`；本專案工作追蹤，非新 PRD／SPEC／Gate |
-| Revision／來源 | `59`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
+| Revision／來源 | `60`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
 | 工作基準 | `a1cb6c13adbeb52a4117991727dcc3d4af6d2a33`；分支 `codex/skill-improvement-checklist` |
 | 主線 | 先對照、優先 02→04→05→06→07，再處理餘項與整合回放 |
 | 負責 | Root 理解需求、衝突與派工；票級實作者依有效能力 Profile；獨立審閱另席 |
@@ -30,7 +30,7 @@ Router、Reviewer、文件索引與結案規則仍各有唯一正文。`[x]` 只
 | [ ] 11 去重與衝突 | `WPR_TEMPLATE_AND_HISTORY_LOCAL_INTEGRATED / ACTIVATION_OPEN` | 原37／38／40／42保留；Luna44在既有RequirementLineageGate增加純revision-history驗證、重用原test；[獨審](reviews/workflow-governance/44-requirement-revision-compatibility-code-review.md) | 原42之46tests／不同位置WPR突變證據保留；44獨審14tests／30subtests、鏈結與terminal不同門突變紅→綠、Root gate1aa5ed22與兩blob一致；獨立seal確認 | `APPROVED_44 / LOCAL_INTEGRATED / CLEANUP_BLOCKED` | 舊一對一validate維持生效；可信creation issuer／效應前grant讀回／原子consume及真Host尚缺，不用純history方法冒充正式身分遷移；清理政策阻擋 |
 | [ ] 12 回放與獨審 | `EXISTING_CASES_MAPPED / END_TO_END_NOT_VERIFIED` | Root沿既有案例／review；46增加受版控本地命令來源，未新增回放框架；30B／43仍未整合 | 46合法command-plan與拒絕／版本釘選／不同門突變均有獨審；整合後36tests／22subtests。04不重做，既有局部PASS沿用，候選不冒充整合版 | `PARTIAL_ONLY` | 完整01–10正式來源/effect回放仍缺；Owner已採納首次入口順序例外，但未授權Host測試；不是資格或總驗收 |
 
-## 當前工程接續與精確證據（revision59）
+## 當前工程接續與精確證據（revision60）
 
 C6／H1／H2-A／C7已封存工程證據沿用，不重跑。H2-B a4a3d23c完成純peer／
 record比對，Root274tests／strict3、不同門disposition突變紅→綠，來源獨審與
@@ -94,6 +94,17 @@ H8-A最終10863edb兩型別／測試檔（唯一model）Root49／strict2及不�
 舊突變raw缺source身份未冒充恢復；r03新實測補三門hash／patch／完整紅綠，另一席
 複驗缺口CLOSED。87b485a2封存16可用原始檔並經另一席byte/hash核對，接續同作者B，
 只建job owner／限制讀回／有限Close／Recovery保留，尚不啟動程序或Host。
+H8-B checkpoint9b42277f兩MOD，Root88guarded tests通過但不視為完成：原生建立
+結果不明時未poison，Root離線fake重現第二次仍到native邊界；另一席亦發現
+並行check／Recovery發布競態。88768e59同票批次列I1／I2，原作者修正中；不
+以全部拒絕代替合法生命週期。>500實際結構審查確認單一job責任／共用fixture，
+不因行數拆出框架。H9另管primary token，不混入job責任。A最終b99943a9兩CREATE，
+Root29guarded tests／strict2／不同frozen門紅→精確還原綠，另一席來源PASS。
+e80ee98e封存12作者原始records，另一席byte／hash讀回PASS，接續同作者B限同
+兩檔token取得／限制／讀回／持有的離線fake驗證。實際WTS所需LocalSystem／SeTcb
+尚未授權；現有runbook虛擬帳戶提案不能被源碼或Grant暗中換成新權限。此差異
+須列入後續完整操作包。Root首輪strict與暫時突變重疊不作來源證據，還原後
+strict另驗通過；歷史未洗掉。01–12勾選維持原狀，真實Host及正式效應仍未驗收。
 不新增Resolver／Gate／Runner；未啟動CLI／模型或實際Host，來源成果不冒充原生派送。
 
 CVQ最終24c79d22在原lineage完成E01–E04同票修正。Root實際34行為tests、
@@ -105,7 +116,7 @@ join被刪除時具名紅→還原綠，合法pure與HostDiscovery注入案例�
 
 01–12勾選不變、04不重做；正式source／issuer／Host效應與30B／43尚未驗收。
 沒有push／release／deploy／安裝／主機安全設定或正式閘門啟用。
-本段原revision58由Git保留，不為相同進度重複堆疊另一份正文。
+本段原revision59由Git保留，不為相同進度重複堆疊另一份正文。
 
 ## 前次工程接續與精確證據（revision49歷史）
 
