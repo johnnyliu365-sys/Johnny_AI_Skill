@@ -1213,3 +1213,41 @@ this is rounded upper accounting, not reconstructed exact old usage. No OS insta
 service/account/ACL/network changes, Host/model calls, runtime Grant issue, final
 qualified audit, integration, push or release authority. Constructor cut must pass
 different-seat type preflight before native getters; final source audit hold remains.
+
+### 30N1 final source review / bounded same-Grant correction amendment
+
+Constructor b352a2f1aba3ef1bb24af8a766d4de1bea39f236 had two descriptor defects:
+missing protected-DACL flag and SCM mask0x20009 rather than0x20005. First correction
+1a5ead023a94f404b567024b6983e590743c5311 added exact binary ACE assertions and fixed
+both; different-seat constructor preflight PASS, native behavior then admitted.
+Author38.13+11.72+68.35=118.20 command seconds (last slice approximate, not reset).
+Final candidate078eff7004d9ba30300bd595b25e41d856a54a52 has nine exact CREATE paths,
+unchanged authority leafblob475bc02f481f2818016519d476b7e2ba59f91f79, clean worktree.
+Author pytest4/mypy/in-memory compile PASS; distinct real symlink attempt WinError1314
+is INJECTED coverage, not real-reparse success. Exe hash
+3063b4def31337b1e163cc82454bd1ce45127465e3f5313458fc0f82ab782607.
+
+Independent reviewer actual pytest4 PASS but final review BLOCKED on two frozen
+contract defects: Python fixture implicit restore rather than explicit offline
+restore/build --no-restore; SelfTests native fixture fallback creates an unregistered
+Temp directory/file when no fixture env exists. Injection assertions really execute
+in C#, so printed labels alone are not another finding. Reviewer found an existing
+minimal seam: installed PowerShell7.6.5 Add-Type candidate DLL/public observer on
+owned fixtures. Keep self-test pure; no new CLI/public source path/framework.
+Peer command charge63.35/80, no qualified review claimed. A started getter mutation
+was restored before execution on Root's pause, exact WindowsReadback blob
+1d3798d559287e8cb74b6b987fd391aebf15602a; zero red/green credit.
+
+Under Owner's batch delegation Root reallocates existing role envelopes, NOT Owner
+budget: SAME grant-ticket30n1-native-tools-20261019 author cap135/reviewer90/control40.
+First correction11.72 and all failed runs remain; one additional consolidated fix
+ONLY these two findings, author remaining16.80/reviewer26.65. Parent350/220/330 and
+original599.2/1500 unchanged. Proposed N2 is NOT_GRANTED; later admission subtracts
+actual N1 use and old30G correction30 reservation, narrowing/holding it if needed.
+No new permissions/cost/source files, no source self-approval; independent doc
+amendment preflight precedes resumed author work and final peer mutation/recheck.
+
+Proposed N2 document preflight4e47c042e7297e87b5666c2eafe52c81958d168a returned
+APPROVED_CONTROL_DOC_ONLY by batch_authority_review, commands0.839+0.871=1.710s,
+charged conditional N2control22 within same330. Scope is owned fixed-binary job
+fixture only, not Host/source isolation/Grant qualification or permission to run it.

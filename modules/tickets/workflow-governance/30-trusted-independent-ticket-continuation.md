@@ -53,7 +53,7 @@ without applying policy or declaring isolation/authority qualification.
 | Named owner/reviewer | /root/ticket30_native_tools_impl current gpt-6-luna/xhigh; different /root/ticket30_native_tools_review gpt-6-sol/high, same currently available semantic capability mapping as30G; Root only control/docs |
 | Worktrees | .worktrees/skill-improvement-30n1-native / codex/skill-improvement-30n1-native and .worktrees/skill-improvement-30n1-review / codex/skill-improvement-30n1-review; clean contained nonreparse identities allocated/read by Root |
 | Profile | POC/HIGH_ASSURANCE source-only Windows protection tooling; ordinary independent engineering staging under approved first-entry exception, NOT qualified audit/final source integration |
-| Resource subset | Author<=120 including constructor-first construction and one correction<=20; reviewer<=80 including type preflight, behavioral review and its one correction; control<=40 including document helper<=8. These are subsets of new350/220/330 caps, not fresh budgets; remaining allocations stay reserved. Every command<=60s, compiler/test subprocess timeout<=55s, serial, no automatic retries/load |
+| Resource subset | Current same-Grant amendment: author<=135 and reviewer<=90; control<=40 including document helper<=8. Historical author118.20 and reviewer63.35 remain charged. First correction11.72 is retained; exactly one additional correction for the two final-review findings below, within author's remaining16.80, not a fresh attempt budget. These are subsets of new350/220/330 caps, not new Owner costs; N2 is still conditional/ungranted. Every command<=60s, compiler/test subprocess timeout<=55s, serial, no automatic retries/load |
 | Language | Python3.11 remains the backend/Grant/Router language. C# nullable+warnings-as-errors is a Windows-native provisioning/observation tool shim, not another backend or authorization engine. Installed SDK10.0.302/CLR10.0.10 enable offline build; Python freezer packages were measured NOT_INSTALLED. This platform-tool boundary avoids a new downloaded Python packager or copying backend Grant logic. No generic language-policy change |
 | No effects | No service/user/ACL/AppContainer/firewall change, native Host/Codex session, model/provider/remote call, actual pipe/listener or grant issue/consume. Native readonly getters only on test-owned fixtures in B; plan/self-test have no native effect. No existing candidate import or baseline-source MODIFY/DELETE |
 | Asset lifecycle | owner=30N1/named seat; registered fixture/build roots owned by one test fixture, TTL=verification/review seal, normal exact teardown only. Worktree/ref and existing Recovery/cleanup holds retained; never retry a policy-denied cleanup, never reset/clean/delete historical assets |
@@ -205,8 +205,15 @@ first Host entry remain subsequent bounded source work; stage immutable engineer
 candidates under the approved minimal-first-entry exception, not final qualification.
 Only actual externally approved OS setup/observation and final CVQ may unblock30G/
 30B/43. Return ImplementationReturn + candidate/files/checks/mutations/time/deviations;
-no prompt/Owner narrative/ticket body inside source. Initial plus one correction,
-no helper delegation, no push/release/deploy/old cleanup retry.
+no prompt/Owner narrative/ticket body inside source. Initial and first11.72s
+correction remain history. One additional bounded correction addresses only the
+reviewed implicit-restore sequence and self-test native/Temp side effect: explicit
+offline restore then build --no-restore; self-test remains pure and real getter
+assertions move to the existing Python fixture using installed PowerShell7.6.5
+Add-Type on the actual candidate DLL/public observer, as independently exercised.
+No new CLI mode or source path; no additional behavior/AC. Current author135/
+reviewer90 caps require independent document review before resumed work. No helper
+delegation, push/release/deploy/old cleanup retry or unrecorded extra attempt.
 
 ## 30N2 — Bounded native job primitive / proposed continuation, NOT_GRANTED
 
