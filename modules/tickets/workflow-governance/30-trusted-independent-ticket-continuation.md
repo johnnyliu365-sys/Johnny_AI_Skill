@@ -57,6 +57,84 @@ to that reviewed revision. Current N1 immutable source/evidence hold is unchange
 或新實作 admission。29→30 是本票實際重用純投影的能力依賴，不是清單順序。
 本輪文件工作有下節獨立授權；不因此將完整票30改成 admitted/completed。
 
+## 30N3 — C4 closed CodeRoot inventory / closure09
+
+C3 final7b2184dff3826eda312515978bdc066e20b366d5 is source-engineering staged
+PASS, original review seal5c19eee0; E01/E02 corrected by actual named reds and
+exact restores. Not qualified or integrated. Root selects the next existing
+enrollment-readback dependency: bounded whole CodeRoot inventory, reusing C3
+directory reader and B1 inventory values, not another scanner/PInvoke/DTO engine.
+This is still original30N3/PRD/CHG/local batch, no new PRD or authority source.
+Full NativeEnrollment/data-configuration chain/verifier/issuer/Host remains later.
+
+Public WindowsCodeInventoryReadback.ReadCodeRoot(AbsoluteWindowsPath root) returns
+existing NativeEnrollmentInventoryObservation. Default constructor binds existing
+WindowsDirectoryReadback.ReadDirectory; internal constructor accepts exactly one
+typed Func<AbsoluteWindowsPath,NativeEnrollmentInventoryObservation> for pure
+tests. No new public DTO/port/enum or filesystem API. Public null input rejects
+before adapter; default remains actual OS read through sole existing Win32 port.
+
+C4-TREE: iterative bounded queue, never stack recursion; traverse only immediate
+directory entries actually returned by C3. Each returned inventory root/path/kind
+and immediate-child membership must match requested directory, not an arbitrary
+deeper or external descendant. Every nonroot directory's metadata identity,
+volume/owner/descriptor/hash must equal its earlier parent observation before
+accepting its contents. Reject mismatches/case-alias duplicate paths/cycles,
+unknown/failed child or unexpected root; whole failure has EMPTY Objects. Keep
+root exactly once while merging each directory scan; root-only empty tree valid.
+All objects stay within original root/on its volume, preserving exact paths and
+existing immutable typed file hash/size/metadata. No fabricated missing children.
+
+C4-BOUNDS: at most4096 final unique objects including root, aggregate file bytes
+at most64MiB across the WHOLE tree (not reset per directory). Monotonic cooperative
+10s before/after each directory call and queue iteration, no unsupported atomic
+snapshot/uninterruptible-IO claim. Native child read retains C3 bound and external
+test-process deadline remains. Enumeration/change races are not qualification:
+this source slice cannot prove immutable OS-protected tree or turn current user
+permissions into authority. Failure status uses existing finite values, no success
+prefix. No DataRoot scan, remote/git, service, ACL, write/delete/install/network.
+
+C4-TEST: same B1 normal DTO constructors and shared reader, no bypass constructors
+or second build/fixture helper. Pure empty/nested positives, failed late child,
+wrong parent/root/foreign path, changed directory identity/security, duplicate path,
+separate aggregate/object exact-limit and over-limit, callback exception, null-before
+call. Independently authored literal Expected paths/hashes/sizes/counts; mutate
+actual recursive queue admission and global-budget/identity guard, each named red
+then exactrestoregreen. Reviewer uses a different actual door, not test-copy logic.
+Actual positive uses only PRE-REGISTERED owned root below existing seat Temp output,
+code-inventory-fixture: alpha.bin exact UTF8 directory payload plus newline(18bytes),
+sub/module.bin and sub/deep/last.bin exact page payload plus newline(13bytes each),
+and empty directory. Expected7objects (root,alpha,sub,module,deep,last,empty),
+44filebytes; literal payload digests reuse C3 proven values.
+This explicit7path set, not an inferred traversal count, is Expected. Root creates
+each seat's fixture after DOC admission with apply_patch/files and exact directory
+creation only; no user file/write, reparse/ACL fixture or arbitrary Temp repository.
+
+Exact CREATE2 under library/local_orchestration/native_windows:
+WindowsCodeInventoryReadback.cs (composition/closure/bounds only),
+NativeCodeInventoryReadbackSelfTests.cs (pure/explicit-owned native cases only).
+MODIFY2 JohnnyAuthority.Tools.csproj (compile list) and SelfTests.cs (one call only).
+No other path, original C3/PInvoke/WindowsReadback/NativeEnrollment*/Program/Python/
+N2/B2 branch remains untouched. Forecast product~160/test~240lines is cohesion
+signal, not compression/forced split; no new dependency/framework/second runner.
+Reuse exact current offline compiler/test commands and registered output roots.
+
+Conditional development Grant grant-ticket30n3-code-inventory-20261019, closure09,
+parent batch-checklist-local-20261019-uncapped. Baseline full7b SHA above; author
+/root/ticket30n2_native_impl, Root sole orchestrator/reviewer, source evidence peer
+/root/ticket30_native_tools_review; same .worktrees/skill-improvement-30n3-native-seam
+and codex/skill-improvement-30n3-native-seam, new context ctx-ticket30n3-code-inventory.
+C3 allocation closes only as engineering-staged; review/Recovery holds retained.
+One implementation-standard offered Luna/xhigh, HIGH_ASSURANCE engineering staging
+under already approved first-CVQ method-order exception, not qualified review.
+Same-lifetime direct lane receipt/runner NOT_REQUIRED. Independent DOC check and
+Root fresh clean7b/roles/nonreparse/Git/leaf/index binding before ACTIVE dispatch.
+Output/fixture owner named seat, TTL through review+seal; holds override expiry,
+cleanup only existing exact admission, no denied cleanup retry. History uncapped,
+single commands60s/compiler/test children55s initially, finite resource monitoring.
+Return additive candidate/files/checks/mutations/findings/deviations; no qualified
+Host/authority or formal integration claim. Scope/cost/rights unchanged.
+
 ## 30N3 — C3 E01/E02 correction / same closure08, Grant revision02
 
 Root actual counter-review of2f6b3fd5584014c5c80c631dbca2204737b27e4c:
