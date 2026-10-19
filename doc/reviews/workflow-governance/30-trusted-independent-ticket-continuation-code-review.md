@@ -1,5 +1,18 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## C2 generic fixture correction registration — 2026-10-19
+
+C2-E03 uses new exact ordinary child payload-readback-fixture beneath already
+registered author johnny30n3-native-seam-owner-20261019 and Root
+johnny30n3-native-seam-review-20261019 Temp roots. Same owner30N3-C2/named seat or
+Root, review/seal TTL and Recovery/Review hold override, precise lifecycle only.
+Prior c2-payload-fixture stays untouched/held as evidence, not reused with new
+Expected or deleted. New child must be absent and all ancestors nonreparse before
+creation; unexpected prior content is retained. Generic technical bytes only;
+bounded existing payload/stream/empty/oversize files plus scoped drift/sharing
+fixtures if needed, no external/protected-path/ACL/real reparse effects.
+No permission, file allowlist, operational Grant or resource ceiling expansion.
+
 ## C2 Root complete initial review — CHANGES_REQUESTED — 2026-10-19
 
 Immutable767af00730a8cc292fade05fbeab78a776cad754 / baselinecee79331, exact6paths.
