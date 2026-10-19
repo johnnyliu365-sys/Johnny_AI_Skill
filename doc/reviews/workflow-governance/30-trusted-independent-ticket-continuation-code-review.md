@@ -1,4 +1,75 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## Protected-source composition proposal — 2026-10-20
+
+Original30/runbook03 same batch source engineering only; H6 correction independent.
+Reuse reviewed H5 owning transport, H2-B pure matcher, H4 message identity and C8
+native tooling. Do not recopy/hand-edit their implementations or reopen passed
+reviews. This is a local exact-blob staging baseline, NOT formal integration or
+qualified source; first-CVQ source-order limits remain. No new PRD/engine/gate.
+Root reviewer-owned WT .worktrees/skill-improvement-30g-protected-source,
+branch codex/same, context ctx-ticket30g-protected-source-composition-20261020,
+ownedTemp/johnny30g-protected-source-review-20261020, ownerRoot/TTLthroughreview
+and immutable evidence hold; no cleanup authority. Both paths absent at proposal.
+Start exact18bf1e9f62ccbde7d4556187dfb7967471ce93a1; retain every other baselineblob.
+Exact2MOD from reviewed H2-B a4a3d23c216682ff9160e34d1826df3254276f80;
+2CREATE from reviewed H4 37410685e9232e6f50c8bd25066754e37c48b513;
+29CREATE native files from reviewed C8 57812f34014b111c31a020987081a60ab0e11031.
+No docs/test_native_authority_tools/physical fixture transfer, DELETE0, source
+rewrites0. H6 files are NOT included while findings remain open; later exact
+additive transfer only after source review. No unreviewed branch/whole-tree merge.
+Exact allowlist and expected blobs, not a wildcard/new implementation permission:
+
+```text
+100644 blob f4036a0b11ffbab3fe2793707e2428c6171de109	library/local_orchestration/native_windows/EnrollmentCommand.cs
+100644 blob 87b57ada0bd7caddaebb1196a5fba156e79beca3	library/local_orchestration/native_windows/JohnnyAuthority.Tools.csproj
+100644 blob 60bc85d7cb50d9845dde3146c86bd3b415cc9c68	library/local_orchestration/native_windows/NativeCodeInventoryReadbackSelfTests.cs
+100644 blob e99f4eae1a604ea87e3f639c92a5463d2ac2be18	library/local_orchestration/native_windows/NativeDirectoryReadbackSelfTests.cs
+100644 blob 6cac5030c2e7a8e0885cfed18f3d590b92f329a3	library/local_orchestration/native_windows/NativeEnrollment.cs
+100644 blob c9e619dbbedf98fe0fc364e52a35027e6e68e021	library/local_orchestration/native_windows/NativeEnrollmentCommandSelfTests.cs
+100644 blob 28cae8e8a6b66300f7d9704ad1ebe37fffd31268	library/local_orchestration/native_windows/NativeEnrollmentReadbackCompositionSelfTests.cs
+100644 blob 35a5fa229f5eaddfb472f850df5ac69a44d11b78	library/local_orchestration/native_windows/NativeEnrollmentSelfTests.cs
+100644 blob baf0ee20f869c0dd8147b57debe02e761d0a5abf	library/local_orchestration/native_windows/NativeEnrollmentVerificationSelfTests.cs
+100644 blob e04032d140a7a6c56a63dfc17c1e51782d0bed11	library/local_orchestration/native_windows/NativeEnrollmentVerifier.cs
+100644 blob 1fb1ff24ffb4ea17a4783a7155ea47dad55dbeea	library/local_orchestration/native_windows/NativeJobContracts.cs
+100644 blob d8fa3a7aec6e7522bd9bf76ea88ccacbf0364303	library/local_orchestration/native_windows/NativeJobGuard.cs
+100644 blob d1ab8aa3391b3ea93062b8a8e6367cd62420eadc	library/local_orchestration/native_windows/NativeJobInterop.cs
+100644 blob 78f0b2c01398c07b3efde5cbb48639f0e9cf1aff	library/local_orchestration/native_windows/NativeJobSelfTests.cs
+100644 blob 7c1f0ab488ee0026911761a5c22ea0d08b350090	library/local_orchestration/native_windows/NativeManifest.cs
+100644 blob 4e250ee8d775bf9a859b133a465fa155a504eff2	library/local_orchestration/native_windows/NativePayloadReadbackSelfTests.cs
+100644 blob a3f3aea61c8f0a0b796eb417dc4ed9a056934afb	library/local_orchestration/native_windows/NuGet.Config
+100644 blob a876d21a857e4c4b1c3a9fa19a367d32df732298	library/local_orchestration/native_windows/Program.cs
+100644 blob b8dc2d84086fd71ff97e9347775ebf04eef1611e	library/local_orchestration/native_windows/ProtectionPlan.cs
+100644 blob 01dc4afe2f167955869b825936155796b794145c	library/local_orchestration/native_windows/SelfTests.cs
+100644 blob e7d8ba9d3918d07cf1a2df9f0d3c277eb57b525a	library/local_orchestration/native_windows/Win32DirectoryReadback.cs
+100644 blob 40a91a1b820996713672ce63ba51f0dc482b62ee	library/local_orchestration/native_windows/Win32ReadbackPort.cs
+100644 blob aa0a3c5e29e27f716bcfd2a81fa484b8a42780db	library/local_orchestration/native_windows/WindowsCodeInventoryReadback.cs
+100644 blob 93992e9762c04a26bae9e460e65b66c88a81a42d	library/local_orchestration/native_windows/WindowsDirectoryReadback.cs
+100644 blob 28d3049db600e8f6c86db8b1c0de2481f6f30014	library/local_orchestration/native_windows/WindowsEnrollmentReadback.cs
+100644 blob 4d079bf66633482c219078d711b7e3c631abab8b	library/local_orchestration/native_windows/WindowsJobPort.cs
+100644 blob 8ed26c88006d8f62f1fd2299b844338889b6b321	library/local_orchestration/native_windows/WindowsPayloadReadback.cs
+100644 blob c6acc636ffcade26190002a83db597c187901340	library/local_orchestration/native_windows/WindowsReadback.cs
+100644 blob c66295ecc4bd0f7f3d35557743a2e2f5ccb82ffd	library/local_orchestration/native_windows/global.json
+100644 blob 1fbdc259217364075edb5416083cc5b0ec7fc6e2	library/local_orchestration/grant_authority/windows_peer.py
+100644 blob 763efdeeaa2d7c3595b229d4e18f13ca5bdf532d	tests/test_grant_authority_windows_peer.py
+100644 blob b85241967b0f9822c039c0f3ebc5d2fe6b91ca32	library/local_orchestration/grant_authority/windows_message_identity.py
+100644 blob 1ab6a8325d998a82d36c31f4137452497e8f596d	tests/test_grant_authority_windows_message_identity.py
+```
+
+Conditional grant-ticket30g-protected-source-composition-20261020 rev01
+NOT_ACTIVE until distinct mapping/DOC_PASS and Root contained nonreparse/clean
+Git baseline checks. Root may transfer these exact reviewed Git objects into its
+own fresh WT, verify all33paths and every unaffected blob, run changed-context
+H2/H4 focused fake-native tests/strict4/memorycompile/import, existing H5/C8 proof
+reused because unchanged. No ritual rerun/reverse-mutation of unchanged code;
+prior source-specific different-door proofs retained. Any conflict, extra path,
+blob mismatch or real native-call attempt stops staging, no manual source repair.
+Offline SDK/code configuration remains identical to reviewed C8. Native fake3
+selectors may run only if necessary for a diagnosed new build-context change.
+Child55/outer60, ownedTempcacheone, full raw/timing. Independent source mapping
+review validates exact transfer and cross-context evidence. Source-stage commit
+does not enable SCM/service/pipe/token/Host/config/permission/install/cleanup or
+30B43 qualification; no push/release/deploy/formal gate activation.
+
 ## C8 observed enrollment source seal — 2026-10-20
 
 Candidate57812f34014b111c31a020987081a60ab0e11031 vs7a24e165391bbc3beea2d13fb492555d3b8f485e,
