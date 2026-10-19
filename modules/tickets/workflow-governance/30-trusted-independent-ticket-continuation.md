@@ -109,6 +109,9 @@ and empty directory. Expected7objects (root,alpha,sub,module,deep,last,empty),
 This explicit7path set, not an inferred traversal count, is Expected. Root creates
 each seat's fixture after DOC admission with apply_patch/files and exact directory
 creation only; no user file/write, reparse/ACL fixture or arbitrary Temp repository.
+Native test selector JOHNNY_CODE_INVENTORY_TEST_ROOT supplies only this exact root;
+missing means skip actual IO, invalid/overlong input fails finitely. Reuse C3's
+bounded selector method pattern, not its different131object fixture or selector.
 
 Exact CREATE2 under library/local_orchestration/native_windows:
 WindowsCodeInventoryReadback.cs (composition/closure/bounds only),
