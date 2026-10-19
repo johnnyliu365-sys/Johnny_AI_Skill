@@ -1,4 +1,19 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## C7 engineering composition admission — 2026-10-20
+
+Distinct /root/batch_authority_review DOC_PASS4096fed8c20ea53c939716bcb12f76f12b93f32a,
+closure15 LF3ba5d1a8e028804fa289c9464a98c0f98dd10b298dc6dfdca528bdb471dd7423
+and D8 exact. New Root stagingWT/output preregistered then created; fresh clean
+exact1fe5c8342ff7127ac7d19721a423fa42a6832711/exact branch/linkedGit/nonreparse
+parent admission. Existing exact typed source constructor/evidence retained,
+no new public DTO or behavior. grant-ticket30n3-native-composition-20261020
+ACTIVE SOURCE_STAGING_ONLY, exactly4MODIFY/no hand edits/CREATE0/DELETE0.
+Root sole reviewer-owned conflict-free merge action, distinct source peer after
+candidate. Old source WTs/refs/binaries/Recovery stay held; only new registered
+output used. No main/formal integration, actual native jobs/Host/qualification/
+security/install effect. ACTION_COMPLETED -> AUTO_CONTINUE exact N2 then F1
+engineering composition; any conflict stops this cut without blind repair.
+
 ## C7 native source reuse / bounded preparation — 2026-10-20
 
 Read-only immutable graph339880/7981e9/14cc49/365c61 proves finalN2 source changes
