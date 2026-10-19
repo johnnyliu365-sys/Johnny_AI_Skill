@@ -226,6 +226,23 @@ retirement and claims no full CI coverage. This work needs no new external input
 Future CI/Runner can consume that single source after their own wiring/suite
 selection; do not require the Owner to invent or supply a finished manifest.
 
+Exact bounded local readback commands (executed, not a reconstructed CI job):
+```powershell
+git ls-tree -r --name-only 10b06f82c0825d6339d12712f0b2f752114c8790 -- .github .gitlab-ci.yml azure-pipelines.yml Jenkinsfile Makefile pyproject.toml tox.ini noxfile.py pytest.ini setup.cfg tools scripts
+git ls-tree 10b06f82c0825d6339d12712f0b2f752114c8790 doc/runbooks/handover-2026-08-22-plugin-distribution.md requirements-dev.txt
+```
+First returned no entries; second returned the two blob IDs above. Successful
+remote commands this round were `git ls-remote origin refs/heads/main`,
+`gh api repos/johnnyliu365-sys/Johnny_AI_Skill/actions/workflows`,
+`gh api 'repos/johnnyliu365-sys/Johnny_AI_Skill/actions/runs?per_page=5'`, and
+`gh api 'repos/johnnyliu365-sys/Johnny_AI_Skill/contents/.github/workflows?ref=a1cb6c13adbeb52a4117991727dcc3d4af6d2a33' --include`
+(the last call completed with HTTP404, not a successful content read). Feature
+README at that same SHA was readable and matched blob373d3e75. Earlier exact
+job-step readback remains in Ticket30 review/checklist; no job log or secret fetched.
+The scoped conclusion is **test CI definition not established in these checked
+sources**, not globally absent and not access-denied. An unknown external CI remains
+UNKNOWN; it does not block establishing the independent local command source.
+
 ## 5. Cost, order and one external decision
 
 Estimates below are engineering planning ranges, NOT measured duration/token cost:
