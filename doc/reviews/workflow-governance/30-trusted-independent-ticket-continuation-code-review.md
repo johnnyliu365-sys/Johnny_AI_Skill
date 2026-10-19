@@ -1,4 +1,44 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H7 service-wire constructor admission / source-stage seal — 2026-10-20
+
+Stage876223b3d04d5a0baedda9d5cdbcd9c1092431a2 parent3f1a9f08 exact2CREATE H6final
+bf92c1eb/e4574122, prior33rows/otherparentblobs unchanged. Root changed-context
+118guardedtestsPASS2.843s/strict2PASS2.282s/compile/sourcehash; native-tools peer
+SOURCE_MAPPING_PASS confirms clean exact final stage and immutable dependencies.
+This is SOURCE_ENGINEERING_STAGED only, not formal integration/qualification.
+
+Same distinct peer DOC_PASS original30closure23 at51130841d061c00f5cdce049f9449d674c3e0f79,
+ticketeb74a4cba26e5b203dcf54f475f9c510a1cb0019,
+LFe5916e0829f1cc975517051c177cee3b60246e516d2b112e32c94bdf128221b0.
+Actual C8 fields/bounds and existing Python type/JSON helpers read back at exact
+stage876223b3; no new source/bootstrap conflict. Root creates only preregistered
+contained nonreparse roots from fresh absence, validates clean baseline/branch/
+linked Git/common-dir. Metadata-only native APIs are not invoked for this admission.
+
+Root derives grant-ticket30g-service-wire-20261020 revision01 A_ONLY ACTIVE,
+parent batch-checklist-local-20261019-uncapped / first-entry source-order scope,
+baseline876223b3 exact, original30closure23. Named author /root/ticket30n4_peer_impl,
+H6 allocation released to immutable hold; Root sole reviewer/orchestrator and
+distinct /root/ticket30_native_tools_review source helper. Author WT
+.worktrees/skill-improvement-30g-service-wire, Root matching-review, codex/same;
+context ctx-ticket30g-service-wire-20261020 replaces prior H6working view.
+OwnedTemp/johnny30g-wire-owner-20261020 and -review-20261020 owner+TTLthrough
+review/seal/holds, no cleanup authority. CREATE ONLY
+library/local_orchestration/grant_authority/windows_service.py and
+tests/test_grant_authority_windows_service.py; MODIFY0/DELETE0. Pure two private
+strict immutable required-field wire models only; no decoder placeholder/service
+loop/SCM/native/helper/IO/provenance claim. Existing approved aliases are reused.
+H7T1 ordinary direct/JSON construction matrix, strict2, memorycompile/import,
+actual required/default/strict-field mutations namedRED/exactrestoreGREEN; Root
+different door and independent source review. No ceremonial missing-code first-red.
+B_NOT_ACTIVE until exact reviewed A constructors pass; no extra Owner decision.
+Child55/outer60/oneownedTempcache/fullrawtiming/history; no new artificial ceiling.
+No actual filesystem-source/Git/subprocess/native/socket/Host/model/API/installation/
+security/permission/cleanup/qualification/formalintegration/30B43release/push/deploy.
+Source/test editing and declared test-driver processes remain allowed normal local
+development; no source behavior may execute those effects. ACTION_COMPLETED ->
+AUTO_CONTINUE A author, future B follows existing preflight not a new policy gate.
+
 ## H6 exact source-stage addition admission — 2026-10-20
 
 Distinct native-tools peer MAPPING_DOC_PASS2d347c21: stage3f1a9f08 clean/H6paths
