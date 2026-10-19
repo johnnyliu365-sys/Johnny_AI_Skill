@@ -57,6 +57,37 @@ to that reviewed revision. Current N1 immutable source/evidence hold is unchange
 或新實作 admission。29→30 是本票實際重用純投影的能力依賴，不是清單順序。
 本輪文件工作有下節獨立授權；不因此將完整票30改成 admitted/completed。
 
+## 30N3 — C4 E01 evidence correction / same closure09, Grant revision02
+
+Immutable03573829d2824fdf6f48cf0cb9bd33846627f746 meets source shape and actual
+7path/44byte literal API positive, strict/default tests. Root different immediate-
+child predicate mutation named red/restored green. But independent removal of
+global child-volume guard and nested SameDirectoryMetadata volume equality both
+leave configured/pure tests green. C4-E01 is EVIDENCE_DEFECT for frozen closure09
+volume bindings, not product failure/new requirement. Preserve both ZERO_RED runs.
+Original review records full commands/results and exact restore aa0a3c5e...
+
+Same grant-ticket30n3-code-inventory-20261019 revision02, source baseline full0357
+SHA above, same named owner/WT/branch/context. CREATE0/DELETE0, corrective MODIFY
+only library/local_orchestration/native_windows/NativeCodeInventoryReadbackSelfTests.cs.
+Product guards and original4path scope unchanged. Add two independently valid B1
+constructor scenarios: initial root's immediate FILE on another volume, same path/
+FileID/hash/size/kind/owner/SDDL otherwise; nested callback DIRECTORY root on another
+volume than earlier parent observation, same FileID/owner/SDDL/hash/path/kind with
+normal-volume children. Each separately refuses identity mismatch/EMPTY, and normal
+7path/44byte control still passes. Remove only global volume guard -> first cell
+red/exactrestoregreen; remove only nested volume equality -> second cell red/
+exactrestoregreen. Do not combine FileID/descriptor drift to mask either predicate.
+No extra fixture/selector/newfile/helper framework or public contract. Existing
+cohesive413line test grows only these bounded cases; no forced split/minification.
+
+Root original review and distinct immutable-source peer apply; different-seat DOC
+check this exact binding then fresh clean0357/roles/Git/leaf/index activation before
+continuation. Parent uncapped accounting, single-command deadlines, history/holds
+and qualification limits unchanged. No Owner renewal/newPRD/Host/install/ACL/
+service/network effect or formal integration. Return additive candidate/rawnamed
+red and exactrestoredgreen; reviewer independently verifies corresponding cells.
+
 ## 30N3 — C4 closed CodeRoot inventory / closure09
 
 C3 final7b2184dff3826eda312515978bdc066e20b366d5 is source-engineering staged
