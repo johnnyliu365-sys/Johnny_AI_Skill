@@ -1,4 +1,29 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H2-A E01 canonical strict-base reuse correction — 2026-10-20
+
+Initial immutable a65bf2552c727f57236ee053f24922436a3787f7, Root own reviewWT
+FF232931, exact2CREATE/1SID-factorMOD. Root236constructor/protocoltests PASS2252af;
+distinct /root/ticket30_native_tools_review confirms fields/SID/path/finite
+domains/no B/no effects aligned, but new _PeerValueModel duplicates same-package
+contracts._StrictModel's identical config. Existing frozen reuse/minimal-owner
+rule requires canonical base, no new requirement. CHANGES_REQUESTED E01, not
+Host or typed semantic failure. Per-file161/390/contractnet13, none500effective;
+author initial sum-of-additions interpretation corrected, not a new total cap.
+
+Correction_ref h2-a-canonical-base-e01-20261020 under SAME original
+grant-ticket30n4-protected-peer-20261020 revision01/closure14, original aa9b5c26
+ticket/activation2e407382 and parent uncapped batch. No ticket/AC/path expansion:
+only MODIFY the already created windows_peer.py to inherit contracts._StrictModel,
+remove duplicate base/config/imports; existing tests/contracts READ_ONLY. Baseline
+a65bf255, same owner/WT/branch/context, fresh clean Git readback recorded here.
+No hand waiver, new source file/public API/native effect or need for Owner renewal.
+Tests unchanged => repeat affected constructor/protocol/strict/import, exact
+same validated JSON/fields must remain. Preserve original constructor/mutation
+history; archive actually available original full raw in registered owned Temp,
+mark missing raw UNKNOWN instead of rerunning to impersonate historical evidence.
+All source commits ADDITIVE. A remains pending final source preflight/normal new
+constructors; B is NOT_ACTIVE. ACTION_COMPLETED -> AUTO_CONTINUE same-author E01.
+
 ## C7 engineering composition admission — 2026-10-20
 
 Distinct /root/batch_authority_review DOC_PASS4096fed8c20ea53c939716bcb12f76f12b93f32a,
