@@ -39,6 +39,91 @@ This amendment becomes effective after independent consistency review of its exa
 committed rules/ticket/index/runbook versions; subsequent exact child bindings refer
 to that reviewed revision. Current N1 immutable source/evidence hold is unchanged.
 
+## 30N4-H9 — owned standard-subject primary token / closure25 proposal
+
+Original30/runbook03 protected issuer/readonly subject scope, same uncapped local
+batch. H8 job producer proceeds independently. The later suspended-launch owner
+needs an OS-issued PRIMARY token for the separately enrolled standard subject;
+H4 impersonation and H6 query-only tokens cannot substitute. Build this necessary
+producer in its own token ownership boundary, not job/module coupling or another
+Runner/Broker/policy engine. Actual acquisition/privileges/account setup remains
+separately unapproved; source/fake tests confer no new service rights.
+
+Sourcebaseline d7ca3e9cdbf8acf59359718fb1a36f1aef24f6a5, reviewed exact source stage.
+CREATE ONLY library/local_orchestration/grant_authority/windows_subject_token.py
+and tests/test_grant_authority_windows_subject_token.py; MODIFY0/DELETE0.
+All existing H4/H6/H8/peer/ledger/native modules READ_ONLY; reuse _StrictModel,
+_CanonicalSid/_PositiveUint32/_Uint64/_TokenType, H3 exact PyHANDLE checker,
+H4 checked native calls/SID/LUID/token-value helpers where their meanings agree.
+No production import from tests; tests import real product/shared fixture, not copies.
+
+A exactly one private frozen strict required _PrimarySubjectIdentity:
+subject_sid canonical SID; windows_session_id positive uint32; authentication_id_luid
+uint64 including0; token_type _TokenType validated exactly PRIMARY (no coercion,
+default/null/extra). This is observed-value consistency, not a role/Grant or proof
+of token acquisition/restriction. Ordinary constructors/bounds/required/frozen/
+type/PRIMARY-vs-IMPERSONATION direct+JSON matrix, strict2/compile/import and
+actual required/default/type/token-kind weakeners namedRED/exactrestoreGREEN.
+No native calls, token owner/loader, WTS probes or placeholder methods in A.
+
+B after exact reviewed A: one private factory accepting protected-source-selected
+expected subject SID/session plus owner_ref, returns private same-thread owning
+primary-token lease. Validate all input metadata before native acquisition.
+Use WTSQueryUserToken for that exact positive logged-on session, no enumeration/
+current-session fallback/password/credential/interactive prompt. This requires
+future LocalSystem+SeTcb operating authority; none is granted now and no service
+account selection/setup is activated by writing this source.
+
+Read actual TokenUser/TokenType/TokenSessionId/TokenStatistics/groups/elevation/
+privileges through checked native wrappers and validate exact SID/session/PRIMARY;
+reject built-in SYSTEM/LocalService/NetworkService, elevated or Administrators
+membership (including filtered-admin membership), malformed/unknown metadata.
+The expected SID/session must later be supplied by protected enrollment, not caller
+self-report; this internal factory and values are not an authority entry.
+CreateRestrictedToken flags0, deleting every observed privilege except
+SeChangeNotifyPrivilege via the actual privilege LUID list; no SANDBOX_INERT,
+WRITE_RESTRICTED, privilege enabling, LogonUser, shell, network or fallback.
+DISABLE_MAX_PRIVILEGE is not used to pretend deletion: it ignores the delete list.
+No new restricting SID/DACL policy is invented here; standard-account separation,
+protected paths and native tool mediation still require their independent proofs.
+
+Independently read new token back: exact source SID/session/authentication LUID/
+PRIMARY/nonadmin/nonelevated, and no privilege other than optional ChangeNotify.
+Observe values from new token, never copy Expected or base observations as result.
+Retain exact distinct native restricted-token owner on issuing thread; close base
+owner exactly once before exposing output. Neither numeric alias nor structural
+Close lookalike is ownership. Alias/owner/thread mismatch refuses; no handle
+duplication/PID reopen/other-session search/caller JSON token.
+Lease requires explicit owning teardown/owner_ref; no GC finalizer promise.
+Partial/unknown create/close outcome retains all identifiable owners strongly in
+private process-lifetime recovery hold, poisons future acquisition, no retry/
+alternate raw CloseHandle/exception-loss GC cleanup. No fake success/no token
+leak to logs/serialization/other agent, no automatic Recovery clearing.
+
+H9T1 A construction/strict/no-effect matrix above.
+H9T2 B fake beneath actual native wrappers pins exact WTS session, base/new token
+SID/session/LUID/type/admin/elevation/privilege checks and exact delete list/flags;
+independent native outputs, not configuration echoed as observation.
+H9T3 distinct native-owner identity, original alias/thread, base close-before-return,
+one Close/idempotence, failure/unknown output/cleanup retention/poison, legal success.
+H9T4 no unpatched native/token/process/network/filesystem/env/Host effects; actual
+SID/session/kind/privilege/cleanup weakeners namedRED/exactrestoreGREEN, Root
+different door. All raw proofs include source/test SHA/Gitblob, exact patch/hash,
+full unfiltered stdout/stderr/command/exit/time. One ownedTemp cache/child55/outer60,
+no unnecessary new first-red/baseline triplets or unchanged-suite campaigns.
+Forecast A source+40/test+150, B source+250/test+350; >500 structure review not minify.
+
+Root sole reviewer/orchestrator; released H7 author /root/ticket30n4_peer_impl,
+distinct /root/ticket30_native_tools_review source helper. Preregister contained
+.worktrees/skill-improvement-30g-subject-token and matching-review, codex/same,
+ctx-ticket30g-subject-token-20261020; ownedTemp/johnny30g-token-owner-20261020 and
+-review-20261020, owner+TTLthroughreview/seal/holds, no cleanup authority.
+Conditional grant-ticket30g-subject-token-20261020 revision01 A_ONLY NOT_ACTIVE
+until committed doc review/contained nonreparse/source/roles preflight.
+B_NOT_ACTIVE until exact reviewed A; no new Owner technical renewal.
+No actual WTS/token/job/process/Host/service/SCM/account/privilege/ACL/install/
+model/cost/network/cleanup/qualification/formal integration/30B43/push/release/deploy.
+
 ## 30N4-H8 — service-owned native job lease / closure24 proposal
 
 Original30/runbook03 section2, same uncapped batch/first-entry source-order scope.
