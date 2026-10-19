@@ -1,4 +1,33 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H5-A final preflight / H5-B source admission — 2026-10-20
+
+474e67c1e16d08a6c1533a99b1b7e125698f0c4f, productc6aa9ff5d108d24776236bd1e9fd973dd7d19300 /
+testa848aca21ca6447800e387174294e08034e033f4. Source peer SOURCE_PASS, E01 tests
+require non-null/original identity before owner comparison and no extra strong
+reference masking collection. Author two actual in-memory module assignment-drop
+mutants namedRED/restoredGREEN; source text transformation runs in real imported
+module, not a copied oracle. Root different wrong-owner crossbinding on actual
+file => namedRED2.734s, exactrestoreGREEN2.625s. Root actual candidate112H1+H3 tests
+PASS/UNPATCHED_NATIVE_CALLS[], existing14finite constructors PASS, strict2PASS24.344s.
+Full raw original traces read; run01 mypy diagnostics/RootZERO_RED retained.
+H5-A SOURCE_PREFLIGHT_PASS only, not cleanup/adoption or OS qualification.
+
+Root derives grant-ticket30n4-pipe-ownership-20261020 revision02 H5_B_ACTIVE under
+same parent/closure18 exact0867e883 LF6703301bce4a2b8dccc94832134775381a8adb52cad0ec53a1219a19f8a9d31f,
+new immutable sourcebaseline474e67c1 above. Same author/Root/peer/contained WT/
+branch/context/ownedTemp/history; fresh clean Git readback established during A
+review, actual constructors validated. MODIFY ONLY existing windows_transport.py
+and test_grant_authority_windows_transport.py at their original exact paths;
+CREATE0/DELETE0. B implements frozen owning PyHANDLE adoption, pure checks before
+adoption, single owning Close/idempotence, failed-init/failed-close retention and
+pending IO hold semantics; migrate only declared8test caller sites/reuse native
+fake. No new constructor/domain/permission/port/policy, no weakref/GC cleanup in
+production, no raw pipe CloseHandle/Detach or borrowed cancellation-event close.
+Full closure18 positive/negative/source-mutant evidence plus strict/compile/smoke;
+Root distinct door and independent source recheck required. Default55/60 bounds,
+no real Win32/Host/service/install/security/network/qualification/dispatch/Grant
+effect or formal integration. ACTION_COMPLETED -> AUTO_CONTINUE original H5-B.
+
 ## H5-A E01 vacuous weakref proof / same-scope correction — 2026-10-20
 
 Candidate5327df7ceaff8d110d30f4137a9f8b7ac5b3c1ab exact2MOD constructor-only,
