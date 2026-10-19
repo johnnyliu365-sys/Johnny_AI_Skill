@@ -1,4 +1,52 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H4 final source seal and H5-A bounded admission — 2026-10-20
+
+H4 final37410685e9232e6f50c8bd25066754e37c48b513, productb85241967b0f9822c039c0f3ebc5d2fe6b91ca32 /
+test1ab6a8325d998a82d36c31f4137452497e8f596d. E01 owner-loss fixed; E02 lower
+fake-module seam added without product change. Distinct native-tools peer returns
+SOURCE_EVIDENCE_SEAM_PASS. Root reads complete source/test and raw author mutation
+outputs, including original5pairs and E01 seven-cell defective-baseline failures;
+all intended RED/restoredGREEN. Initial missing-symbol/type failures are retained
+history, not ceremonial first-red for new behavior. Root final guarded actual
+candidate152PASS, UNPATCHED_NATIVE_CALLS[], strict2PASS25.657s; physical source
+d66cd924c95219f603f49044f3614a3cfc3a56066b6dcf3a02f0217e4b34052f.
+Root different native-wrapper door forces OpenAsSelf=False: named real-wrapper
+cell fails actual argument tuple (2.406s); exact restoreGREEN2.391s. E02 prior
+selector ZERO_RED remains evidence of repaired gap, not deleted history.
+Engineering-source APPROVED/STAGED only. No real token/pipe/Host calls, qualified
+adversarial review, formal main integration or30B43 clearance. H4 author allocation
+released to immutable source/evidence hold; assets retained through seal/hold.
+
+Root admits grant-ticket30n4-pipe-ownership-20261020 revision01 H5_A_ONLY under
+batch-checklist-local-20261019-uncapped and DOC_PASS closure18 at0867e883c45914b2338ffc4b2db36ee367f23e2d,
+LF6703301bce4a2b8dccc94832134775381a8adb52cad0ec53a1219a19f8a9d31f.
+Exact baseline36593ad21377c5f532d4d1fcdeeafe3922e4dd30; same-lineage original30.
+Author /root/ticket30n4_peer_impl, Root sole reviewer/orchestrator, independent
+source helper /root/ticket30_native_tools_review. Author WT/branch
+.worktrees/skill-improvement-30g-pipe-ownership / codex/skill-improvement-30g-pipe-ownership;
+Root own matching -review WT/branch. Exact Git pointers/clean HEADs and nonreparse
+allocation freshly read back. Context ctx-ticket30n4-pipe-ownership-20261020.
+Owned Temp/johnny30n4-ownership-owner-20261020 and -review-20261020; TTL review/seal,
+holds override, no deletion. Existing14finite constructors positive; Root baseline
+97patched-native regressions PASS/UNPATCHED_NATIVE_CALLS[]. Earlier guard rejected
+inert OVERLAPPED/read-buffer creation; diagnosed test setup and replaced those with
+pure fake objects, no actual native effect and not a source defect.
+
+MODIFY ONLY library/local_orchestration/grant_authority/windows_transport.py and
+tests/test_grant_authority_windows_transport.py; CREATE0/DELETE0. A only existing
+WindowsMessagePipeError typed nullable retained pipe/event owner constructors,
+finite-failure/nullability/identity/lifetime pure tests, strict and memory import.
+No IO adoption/cleanup behavior yet; B NOT_ACTIVE until immutable A independent
+preflight. Reuse native PyHANDLE boundary/test fake; no new DTO/Protocol/enum/
+framework or policy source. Existing8tracked constructor callers all in allowed
+test path; no outside consumer in exact combined tree. Original H1/H3 blobs remain
+read-only except these declared2paths. No actual native APIs, endpoint/service/
+SCM/config/security/install/network/grant/dispatch/receipt/qualification/formal
+integration. Process-local no-autoplugins/no-cache/-B, registered Temp mypy cache,
+child55/outer60, full raw command/result evidence, no old accounting reset.
+ACTION_COMPLETED -> AUTO_CONTINUE H5-A same-lifetime direct lane; receipt/Runner
+NOT_REQUIRED. No new Owner decision or operational trusted Grant is manufactured.
+
 ## H4-B E01 source closed / E02 native-wrapper evidence gap — 2026-10-20
 
 Exact correctionf7bf8e7a72dc88f99b65907d18ebad872cb99aaf, productb85241967b0f9822c039c0f3ebc5d2fe6b91ca32 /
