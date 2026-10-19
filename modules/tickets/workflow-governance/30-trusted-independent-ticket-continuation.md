@@ -57,6 +57,54 @@ to that reviewed revision. Current N1 immutable source/evidence hold is unchange
 或新實作 admission。29→30 是本票實際重用純投影的能力依賴，不是清單順序。
 本輪文件工作有下節獨立授權；不因此將完整票30改成 admitted/completed。
 
+## 30N3 — C2 evidence correction binding / closure07
+
+This is the existing closure06 C2 correction for Root review811d1220, not a new
+capability/PRD or change to public ReadFile/DTO/safety/Host authority. E01/E02/E03,
+exact six source/test paths and ordinary registered fixtures remain as frozen.
+Same development grant-ticket30n3-file-content-20261019 revision02, source baseline
+767af00730a8cc292fade05fbeab78a776cad754; original grant/attempt/failure history stays.
+Author /root/ticket30n2_native_impl, same native-seam WT/branch/context; Root reviewer,
+different /root/ticket30_native_tools_review evidence peer. No allocation reset.
+
+Chosen E01 seam: internal optional post-read PayloadFileSnapshot transform on
+Win32ReadbackPort, after REAL same-handle hash/EOF/second snapshot only. Default
+production constructor has no transform; public API unchanged, no fake success or
+authority. In existing NativePayloadReadbackSelfTests only, optional native negative
+test uses ONE selector JOHNNY_PAYLOAD_DRIFT_TEST_PATH, read once. Null means skip
+without IO; non-null must validate ordinary AbsoluteWindowsPath and bounded text
+before any IO. Invalid input becomes existing finite InvalidOperationException /
+self-test_failed exit1, no uncaught stack or raw-path diagnostic. Program unchanged.
+Only the explicit Python test supplies the pre-registered owned generic payload
+path; selector is test input, never authorization, provenance, enrollment or grant.
+
+Configured native negative creates the normal typed internal port with a transform
+that XORs one LastWriteTimeFileTime bit, then calls actual public ReadFile. Expect
+REPARSE_OR_IDENTITY_MISMATCH/no content hash/size; FileId-only production guard
+mutation must named-red and exact restoration green. This rejects a deliberate
+negative observation and may NOT manufacture positive/native qualification.
+Default self-test remains pure via PROCESS_ENV whitelist without selector. No
+negative path reads in default production WindowsPayloadReadback construction.
+
+E02 fixed existing writer hold uses registered ordinary file + ReadWrite access
+with FileShare.ReadWrite across REAL ReadFile call; no write or ACL effect. Original
+share-read refuses without content; loosened ShareAll must named-red, restore green.
+E03 generic technical bytes use newly registered payload-readback-fixture, old
+c2-payload-fixture sealed/untouched. Only affected native/pure/strict/import/source
+checks, no unrelated N2/native-job/Host campaign. Core byte positive and stream
+positive continue, never all-refuse or weaker Expected.
+
+An author first configured-negative run occurred before this exact selector
+binding was committed; retain its raw chronology and do NOT count it as execution
+under revision02 or retrofit approval. It stayed within batch's local owned-file
+readonly effects, not a Host/security/cost expansion; all further configured native
+runs pause until this exact binding independently DOC-reviewed and Root read back.
+Other original-scope source/pure/E02 correction work continues under prior binding.
+No new paths/dependencies/public types/Program/ProtectionPlan/SCM/account/ACL/network/
+remote/model/Host/receipt/spawn/formal activation, integration, push/release/deploy.
+Same owner/TTL/Review+Recovery holds for exact16c7dbbb generic fixtures; no cleanup.
+
+
 ## 30N3 — C2 bounded same-handle file content readback / closure06
 
 Architecture Owner selects the minimum next observable native capability after C1,

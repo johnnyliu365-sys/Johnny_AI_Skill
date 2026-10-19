@@ -142,7 +142,7 @@ blocks this bounded migration or independent admitted work.
   ],
   "tickets": [
     {"ticket_ref": "wg-ticket-29", "ticket_revision": "rev-fbf3d7b26587673550ebfc2395b6d8b7375f13fe6480aefab05db44f168293ad", "leaf_ref": "modules/tickets/workflow-governance/29-mainline-ticket-projection.md", "leaf_digest": "sha256_d6d3b25dd516ea4f2fb9daf90f1b39917e0f5bc9ecc3e647492656f411efe94f", "required": true, "status": "completed", "depends_on": [], "admission_ref": "admission-wg29-local", "evidence_refs": ["review-wg29-slice"]},
-    {"ticket_ref": "wg-ticket-30", "ticket_revision": "rev-535a99b32754942aacc4870710766125881110e5f61646594a6d049846a8704d", "leaf_ref": "modules/tickets/workflow-governance/30-trusted-independent-ticket-continuation.md", "leaf_digest": "sha256_2aeb4f51f723d191bb875d5d6991a478f06e2f9fea4435861091b9b09e08119e", "required": true, "status": "waiting", "depends_on": ["wg-ticket-29"], "admission_ref": null, "evidence_refs": ["review-wg30a-fixture"]}
+    {"ticket_ref": "wg-ticket-30", "ticket_revision": "rev-535a99b32754942aacc4870710766125881110e5f61646594a6d049846a8704d", "leaf_ref": "modules/tickets/workflow-governance/30-trusted-independent-ticket-continuation.md", "leaf_digest": "sha256_776e3d111503fa9695e8431d9bfed9ca1126b164972096fb54db0e98fff35829", "required": true, "status": "waiting", "depends_on": ["wg-ticket-29"], "admission_ref": null, "evidence_refs": ["review-wg30a-fixture"]}
   ]
 }
 ```
