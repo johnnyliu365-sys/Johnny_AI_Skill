@@ -1,5 +1,23 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Subsequent native-reader research / no source or OS grant — 2026-10-19
+
+Root checked primary Win32 declarations for the later same-handle inventory need,
+not a new Host feasibility loop. First guessed fileapi documentation URL returned
+404; followed the actual official structure-page link instead, no repeat:
+[GetFileInformationByHandleEx](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-getfileinformationbyhandleex),
+[FILE_ID_BOTH_DIR_INFO](https://learn.microsoft.com/en-us/windows/win32/api/winbase/ns-winbase-file_id_both_dir_info),
+[FILE_INFO_BY_HANDLE_CLASS](https://learn.microsoft.com/en-us/windows/win32/api/minwinbase/ne-minwinbase-file_info_by_handle_class).
+The directory-handle operation supports FileIdBothDirectoryInfo0xa and restart0xb;
+subsequent same-handle calls resume enumeration. Variable records carry offsets,
+name length and file IDs; records/next offsets require eight-byte alignment. The
+eventual parser must bounds-check record/name offsets and finite count/bytes,
+reject reparse/unknown/error rather than equate failure with an empty inventory.
+File IDs are not an eternal identity guarantee; driver/OS support is not assumed.
+An ordinary checked-handle snapshot is NOT atomic whole-tree or later-execution
+proof. No native call or prototype/Host probe was executed by this documentation
+read; no native adapter path is activated by these notes. B2 remains pure only.
+
 ## N3B2 exact pure-comparison document admission — 2026-10-19
 
 Different-seat /root/batch_authority_review ordinary DOC_PASS exact control
