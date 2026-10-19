@@ -57,6 +57,88 @@ to that reviewed revision. Current N1 immutable source/evidence hold is unchange
 或新實作 admission。29→30 是本票實際重用純投影的能力依賴，不是清單順序。
 本輪文件工作有下節獨立授權；不因此將完整票30改成 admitted/completed。
 
+## 30N4-H3 — explicit bounded read-pipe factory / closure16 proposal
+
+Same original30/PRD009/CHG009/runbook03 and uncapped batch. Necessary protected
+service transport construction, not a new authority engine, deployment or Host
+qualification. H1 reviewed cc4744e2 owns IO lifetime; H2-A reviewed
+c13d10171f3819c1b6770218303806dc20f14eb3 supplies canonical enrollment/SID values.
+This independent source cut starts at exact H2-A candidate; H2-B remains separate
+and READ_ONLY. No merge of unreviewed B required to construct this factory.
+
+Baseline c13d10171f3819c1b6770218303806dc20f14eb3. CREATE ONLY
+library/local_orchestration/grant_authority/windows_pipe_factory.py and
+tests/test_grant_authority_windows_pipe_factory.py; MODIFY0/DELETE0. Reuse
+_ProtectedPeerEnrollment normal revalidation, its existing canonical SID and
+existing protocol/peer test fixture builders. No new policy DTO, port framework,
+public package export, source reader, registry, ledger or duplicated IO runner.
+Responsibility: construct one fixed Read pipe with explicit protection, verify
+its native creation properties, return its owning PyHANDLE (not detached raw int).
+Later reviewed composition explicitly transfers ownership to H1; no transfer,
+server loop, connect/read/write, approval endpoint or service start in this cut.
+
+H3-F1 private factory accepts existing enrollment value; revalidate before any
+native boundary call. Fixed endpoint \\.\pipe\JohnnyGrantAuthority.Read.v1 only,
+no caller-selected name/SDDL/rights/fallback. Service/client SID come from that
+value, not ambient username; reject collision with SYSTEM/Admins full-right
+principals. Value acceptance does NOT prove protected enrollment, standard-user
+membership or authority. Those remain independent enrollment/Host requirements.
+Construct explicit protected DACL: SYSTEM, Administrators and exact service SID
+full0x001f01ff; exact client SID only0x00100003 (read/write data+synchronize), no
+generic-write/create-instance/write-DACL. Owner exact service SID. No null/default
+SD, inherited/extra/deny/object ACE, broad user group or caller-supplied approval.
+
+H3-F2 CreateNamedPipe exact duplex|overlapped|first-instance, message type+message
+readmode+blocking wait+remote-reject, maxinstances1, bounded buffers matching the
+existing4+16384 maximum framed message, finite default timeout. Explicit
+SECURITY_ATTRIBUTES bInheritHandle=False. Retain actual owning native wrapper;
+validate positive non-sentinel handle. Read back GetHandleInformation noninherit,
+GetNamedPipeInfo type/server/maxinstance/buffer bounds and GetSecurityInfo exact
+owner/protected DACL/complete ACE set+flags+masks+SIDs. Set equality must reject
+duplicates as well as extras. Never repair drift or retry with weaker settings.
+All native dynamic readings validate at boundary; strict mypy, no Any/cast/waiver.
+
+H3-F3 failures stop before exposing owner. If a confirmed acquired owner exists,
+Close exactly once via owner, no raw CloseHandle/detach/double close/fallback.
+Close failure must retain the owner in a named recovery exception/result, prohibit
+success and preserve recovery evidence; do not claim teardown. Malformed native
+return without provable ownership must explicitly remain unverified/recovery,
+not a fabricated cleanup success. Creation failure returns bounded payload-free
+error, no security setting change, default descriptor, alternate name or retry.
+An explicit owner return does not imply actual writer identity or Host qualification.
+
+H3-F4 offline fake native boundary only. Existing fixture enrollment and ordinary
+legal owning-handle shape pass exact arguments+readback+no-early-close. Negative
+cells cover invalid enrollment/pre-effect zero calls, SID privilege collision,
+missing/default/wrong owner/DACL/control/ACE type/flags/mask/extra/duplicate,
+inherited handle, wrong pipe mode/instances/buffer, invalid owner return,
+each boundary exception and cleanup failure retained. No real pipe/event/ACL/Host
+probe or actual installation, even for smoke. Patch native adapters, not core
+security predicates. Source-only tests prove emitted calls/reducers, not OS
+enforcement. Pin actual module file/hash. Each critical first-instance/remote/
+noninherit/exact-ACL/owner-retention check gets actual mutation namedRED then
+exactrestoreGREEN; reviewer different door uses duplicate ACE or cleanup failure.
+Focused pytest, strict product+test, memory compile/guarded import, diffcheck.
+Product forecast220/test320 effective; exceeding forecast/500 triggers cohesive
+responsibility review, never compression or a second helper framework.
+
+Conditional grant-ticket30n4-read-pipe-factory-20261020 revision01, parent
+batch-checklist-local-20261019-uncapped; NOT_ACTIVE until distinct docs review,
+fresh exact baseline/contained Git/nonreparse worktree admission and existing
+normal enrollment constructor preflight. Named author /root/grant_transport_impl,
+standard offered Luna/xhigh; Root reviewer/orchestrator; distinct source peer
+/root/ticket30_native_tools_review. Prior H1 allocation moves to SOURCE_REVIEW_HOLD
+before next active lane. New context ctx-ticket30n4-read-pipe-factory-20261020.
+Preregister own .worktrees/skill-improvement-30g-pipe-factory and matching -review,
+codex/same branches, Temp/johnny30n4-factory-owner-20261020 and -review-20261020.
+Owner+TTL through review/seal, teardown exact registered assets only after release;
+all Recovery/denied cleanup holds override expiry; no cleanup now. Same-lifetime
+direct lane receipt/Runner NOT_REQUIRED. Default command60/child55; log resources,
+diagnose repeats; old cumulative history retained without artificial cap reset.
+Source engineering under first-entry ordering exception only; final qualification
+and30B43 holds unchanged. ACTION_REQUIRED DOC_REVIEW then exact activation, not
+operational pipe/service/security permission.
+
 ## 30N3-C7 — reviewed native composition / closure15 preparation
 
 Necessary reuse, not new product behavior: current C6 staging1fe5c834 still has
