@@ -1,5 +1,14 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## F1 seal formatting correction — 2026-10-19
+
+Root eb5507d0 retained literal pytest whitespace in raw traceback: git diff --check
+reported seven whitespace-only lines, but Root shell did not stop before commit.
+That docs-gate deviation is retained, not a test failure or omitted evidence.
+Correction encodes the entire original red output as one lossless JSON string;
+no output lines/characters are filtered or trimmed. Subsequent commit checks abort
+on nonzero diff-check before staging. Product/test source and PASS claims unchanged.
+
 ## F1 shared fixture final ordinary engineering seal — 2026-10-19
 
 Candidate7fa12f0c1af3a9b61772636b686b953cb8be4406, baselinebf5a4a3c,
@@ -108,65 +117,10 @@ SHA256 tests\test_native_authority_tools.py 48bbde4f04444ef55a7d727e66fac91a7869
 ### f1_root_mutation_red
 
 Tooleffb21; outer wall4.4414668s; exit1.
+Raw complete output represented losslessly as a JSON string (including whitespace).
 
-~~~text
-COMMAND ['C:\\Users\\GameBoy\\AppData\\Local\\Programs\\Python\\Python311\\python.exe', '-B', '-m', 'pytest', '-q', '-s', '-p', 'no:cacheprovider', 'tests/test_native_authority_tools.py::test_native_fixture_build_is_nonincremental_and_output_bound']
-F
-================================== FAILURES ===================================
-________ test_native_fixture_build_is_nonincremental_and_output_bound _________
-
-monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000023EB05A0310>
-capsys = <_pytest.capture.CaptureFixture object at 0x0000023EB05A0450>
-
-    def test_native_fixture_build_is_nonincremental_and_output_bound(
-        monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
-    ) -> None:
-        build_root = Path(os.environ["JOHNNY_NATIVE_TEST_ROOT"])
-        expected_candidate = build_root / "bin" / "Debug" / "net10.0-windows" / "JohnnyAuthority.Tools.exe"
-        calls: list[tuple[tuple[str, ...], Path, dict[str, str], dict[str, object]]] = []
-    
-        def mocked_run(args: list[str], *, cwd: Path, env: dict[str, str], **kwargs: object) -> subprocess.CompletedProcess[str]:
-            calls.append((tuple(args), cwd, dict(env), dict(kwargs)))
-            return subprocess.CompletedProcess(args, 0, stdout="mocked offline command\n", stderr="")
-    
-        def no_directory_creation(self: Path, mode: int = 0o777, parents: bool = False,
-                                  exist_ok: bool = False) -> None:
-            raise AssertionError(f"candidate-only build created a directory: {self}")
-    
-        def no_payload_write(self: Path, data: bytes) -> int:
-            raise AssertionError(f"candidate-only build wrote a payload: {self}")
-    
-        def no_symlink(source: str | bytes | os.PathLike[str] | os.PathLike[bytes],
-                       target: str | bytes | os.PathLike[str] | os.PathLike[bytes],
-                       target_is_directory: bool = False) -> None:
-            raise AssertionError("candidate-only build attempted a symlink")
-    
-        monkeypatch.setattr(subprocess, "run", mocked_run)
-        monkeypatch.setattr(Path, "mkdir", no_directory_creation)
-        monkeypatch.setattr(Path, "write_bytes", no_payload_write)
-        monkeypatch.setattr(Path, "is_file", lambda path: path == expected_candidate)
-        monkeypatch.setattr(os, "symlink", no_symlink)
-    
-        candidate = _build_native_candidate()
-        captured = capsys.readouterr()
-    
-        assert candidate == expected_candidate
-        assert len(calls) == 2
-        restore_args, restore_cwd, restore_env, restore_options = calls[0]
-        build_args, build_cwd, build_env, build_options = calls[1]
-        assert restore_args[:3] == ("dotnet", "restore", "JohnnyAuthority.Tools.csproj")
-        assert build_args[:4] == ("dotnet", "build", "JohnnyAuthority.Tools.csproj", "--no-restore")
->       assert "--no-incremental" in build_args
-E       AssertionError: assert '--no-incremental' in ('dotnet', 'build', 'JohnnyAuthority.Tools.csproj', '--no-restore', '--disable-build-servers', '--verbosity', ...)
-
-tests\test_native_authority_tools.py:172: AssertionError
-=========================== short test summary info ===========================
-FAILED tests/test_native_authority_tools.py::test_native_fixture_build_is_nonincremental_and_output_bound
-1 failed in 0.63s
-
-
-EXIT 1 ELAPSED 3.547000000020489
-
+~~~json
+"COMMAND ['C:\\\\Users\\\\GameBoy\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\python.exe', '-B', '-m', 'pytest', '-q', '-s', '-p', 'no:cacheprovider', 'tests/test_native_authority_tools.py::test_native_fixture_build_is_nonincremental_and_output_bound']\r\nF\r\n================================== FAILURES ===================================\r\n________ test_native_fixture_build_is_nonincremental_and_output_bound _________\r\n\r\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000023EB05A0310>\r\ncapsys = <_pytest.capture.CaptureFixture object at 0x0000023EB05A0450>\r\n\r\n    def test_native_fixture_build_is_nonincremental_and_output_bound(\r\n        monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]\r\n    ) -> None:\r\n        build_root = Path(os.environ[\"JOHNNY_NATIVE_TEST_ROOT\"])\r\n        expected_candidate = build_root / \"bin\" / \"Debug\" / \"net10.0-windows\" / \"JohnnyAuthority.Tools.exe\"\r\n        calls: list[tuple[tuple[str, ...], Path, dict[str, str], dict[str, object]]] = []\r\n    \r\n        def mocked_run(args: list[str], *, cwd: Path, env: dict[str, str], **kwargs: object) -> subprocess.CompletedProcess[str]:\r\n            calls.append((tuple(args), cwd, dict(env), dict(kwargs)))\r\n            return subprocess.CompletedProcess(args, 0, stdout=\"mocked offline command\\n\", stderr=\"\")\r\n    \r\n        def no_directory_creation(self: Path, mode: int = 0o777, parents: bool = False,\r\n                                  exist_ok: bool = False) -> None:\r\n            raise AssertionError(f\"candidate-only build created a directory: {self}\")\r\n    \r\n        def no_payload_write(self: Path, data: bytes) -> int:\r\n            raise AssertionError(f\"candidate-only build wrote a payload: {self}\")\r\n    \r\n        def no_symlink(source: str | bytes | os.PathLike[str] | os.PathLike[bytes],\r\n                       target: str | bytes | os.PathLike[str] | os.PathLike[bytes],\r\n                       target_is_directory: bool = False) -> None:\r\n            raise AssertionError(\"candidate-only build attempted a symlink\")\r\n    \r\n        monkeypatch.setattr(subprocess, \"run\", mocked_run)\r\n        monkeypatch.setattr(Path, \"mkdir\", no_directory_creation)\r\n        monkeypatch.setattr(Path, \"write_bytes\", no_payload_write)\r\n        monkeypatch.setattr(Path, \"is_file\", lambda path: path == expected_candidate)\r\n        monkeypatch.setattr(os, \"symlink\", no_symlink)\r\n    \r\n        candidate = _build_native_candidate()\r\n        captured = capsys.readouterr()\r\n    \r\n        assert candidate == expected_candidate\r\n        assert len(calls) == 2\r\n        restore_args, restore_cwd, restore_env, restore_options = calls[0]\r\n        build_args, build_cwd, build_env, build_options = calls[1]\r\n        assert restore_args[:3] == (\"dotnet\", \"restore\", \"JohnnyAuthority.Tools.csproj\")\r\n        assert build_args[:4] == (\"dotnet\", \"build\", \"JohnnyAuthority.Tools.csproj\", \"--no-restore\")\r\n>       assert \"--no-incremental\" in build_args\r\nE       AssertionError: assert '--no-incremental' in ('dotnet', 'build', 'JohnnyAuthority.Tools.csproj', '--no-restore', '--disable-build-servers', '--verbosity', ...)\r\n\r\ntests\\test_native_authority_tools.py:172: AssertionError\r\n=========================== short test summary info ===========================\r\nFAILED tests/test_native_authority_tools.py::test_native_fixture_build_is_nonincremental_and_output_bound\r\n1 failed in 0.63s\r\n\r\n\r\nEXIT 1 ELAPSED 3.547000000020489\r\n"
 ~~~
 
 ### f1_root_mutation_green
