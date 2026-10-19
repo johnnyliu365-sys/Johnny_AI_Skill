@@ -3,7 +3,7 @@
 | 欄位 | 值 |
 | --- | --- |
 | 文件身分 | `AI-SKILL-IMPROVEMENT-CHECKLIST`；本專案工作追蹤，非新 PRD／SPEC／Gate |
-| Revision／來源 | `38`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
+| Revision／來源 | `39`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
 | 工作基準 | `a1cb6c13adbeb52a4117991727dcc3d4af6d2a33`；分支 `codex/skill-improvement-checklist` |
 | 主線 | 先對照、優先 02→04→05→06→07，再處理餘項與整合回放 |
 | 負責 | Root 理解需求、衝突與派工；票級實作者依有效能力 Profile；獨立審閱另席 |
@@ -29,6 +29,35 @@ Router、Reviewer、文件索引與結案規則仍各有唯一正文。`[x]` 只
 | [ ] 10 成本／外部呼叫／回報 | `MODEL_AND_REPORT_LOCAL_INTEGRATED / PAID_TEST_ISOLATION_GAP` | 原模型切片68a10057；Luna31B改兩模板／既有test，原獨審者APPROVED e83a4a72，Root gate64157fbe；[證據](reviews/workflow-governance/31-semantic-model-profile-boundary-code-review.md) | 原36tests／74subtests保留；回報65tests，七欄刪除14紅→綠；獨審改活躍label紅→綠；三blob精確等於受審候選、整合後65綠。產品／純腳本案例明確分開 | `APPROVED_31B / LOCAL_INTEGRATED / CLEANUP_BLOCKED` | 付費API／正式credential之真Host網路隔離未qualified；模板不證明語意真偽。清理遭Host政策阻擋，資產保留；整項不勾選 |
 | [ ] 11 去重與衝突 | `WPR_TEMPLATE_AND_HISTORY_LOCAL_INTEGRATED / ACTIVATION_OPEN` | 原37／38／40／42保留；Luna44在既有RequirementLineageGate增加純revision-history驗證、重用原test；[獨審](reviews/workflow-governance/44-requirement-revision-compatibility-code-review.md) | 原42之46tests／不同位置WPR突變證據保留；44獨審14tests／30subtests、鏈結與terminal不同門突變紅→綠、Root gate1aa5ed22與兩blob一致；獨立seal確認 | `APPROVED_44 / LOCAL_INTEGRATED / CLEANUP_BLOCKED` | 舊一對一validate維持生效；可信creation issuer／效應前grant讀回／原子consume及真Host尚缺，不用純history方法冒充正式身分遷移；清理政策阻擋 |
 | [ ] 12 回放與獨審 | `EXISTING_CASES_MAPPED / END_TO_END_NOT_VERIFIED` | Root沿既有案例／review；46增加受版控本地命令來源，未新增回放框架；30B／43仍未整合 | 46合法command-plan與拒絕／版本釘選／不同門突變均有獨審；整合後36tests／22subtests。04不重做，既有局部PASS沿用，候選不冒充整合版 | `PARTIAL_ONLY` | 完整01–10正式來源/effect回放仍缺；Owner已採納首次入口順序例外，但未授權Host測試；不是資格或總驗收 |
+
+## 當前工程接續與精確證據（revision39）
+
+B3同名Field缺陷已在b55b47e7修復，只有既有gate/driver兩檔修改；作者Luna、
+不同Sol evidence peer與Root分工。合法Pydantic別名仍綠，直接／巢狀shadow與
+rebound拒絕，失敗反例保留。Root跑38既有constructor/domain tests全綠；接受A
+的product/tests/catalog/fixtures與485d882f空diff，沒有重做04或歷史A突變。
+Root完成20實際predicate紅→精確還原綠（SG19真正graph-edge另補，原consumer
+wiring只算附加證據）、缺annotation、rebound/else/after-branch、computed facade，
+171negative／31positive corpus移除判別及實際unused renamed forbidden import。
+原review18／B3doc15與D8在CVQcontrol4873ebf8；獨立DOC窄複驗PASS。
+結論只SOURCE_ENGINEERING_STAGED_PASS，qualified review／integration仍blocked。
+
+同一批次內已把原CVQ-01編成doc11／closure04 constructor successor at0508be61：
+重用6既有product檔、8既有tests、1source policy，CREATE0；原3ports／roster／
+prerequisite contracts及symbols/gate/corpus不動。只建核准readonly wire delta，
+不把純constructor說成evaluator／真Host通過；精確Grant待不同席DOC與新鮮綁定。
+
+原生N2 PhaseA39f23b85被獨審F-N2-A1拒收：Assign失敗時Job不能終止尚未加入的
+suspended process。原作者同票eeb2eaaa補exact-process-handle termination與
+partial-create Recovery result；Root不同席建構複驗PASS，記dafb5391，未執行
+Job/Host。為避免405行values再混入OSadapter與lifecycle，原Grant revision02
+於200900dd精確增加NativeJobContracts.cs／WindowsJobPort.cs；獨立DOC PASS，
+共5CREATE/3MODIFY，仍原Ticket30與原baseline，無新framework或權限。作者正按
+原J1–J5建有界owned native fixture，非真Codex/Claude Host或隔離資格。
+
+30B／43、合法正式Grant正向、protected issuer/observer、實際Host qualification
+及正式來源／effect驗收仍OPEN。這是持續建置進度，不是剩餘項全部外部blocked
+的結論；沒有新增完成勾選，也沒有Host安全設定、push、release或deployment。
 
 ## 有效本地授權修訂（revision38）
 
