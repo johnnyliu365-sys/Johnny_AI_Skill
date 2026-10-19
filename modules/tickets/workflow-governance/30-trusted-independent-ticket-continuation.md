@@ -57,6 +57,41 @@ to that reviewed revision. Current N1 immutable source/evidence hold is unchange
 或新實作 admission。29→30 是本票實際重用純投影的能力依賴，不是清單順序。
 本輪文件工作有下節獨立授權；不因此將完整票30改成 admitted/completed。
 
+## 30N3 — C5 E01 actual-observation preservation / same closure11, Grant revision03
+
+Root review exact38417fe9edfb6b39527fe58e614e8d5087bab517: all current tests green,
+but actual final typed observation rewritten to expected.Configuration.Sha256/
+SizeBytes remains GREEN under forced compiled mutation9d0758. ZERO_RED is
+EVIDENCE_DEFECT C5-E01, not product failure/new B2 verification requirement.
+Current product already returns actual configuration unchanged. Existing fake
+positive derives Actual from Expected, so that frozen preservation property is
+not discriminating. Raw initial/mutation/exactrestore in original30review.
+Other named route/descriptor/configpath/configvolume/postvolume/deadline doors
+red/restoredgreen; final product exact28d3049db600e8f6c86db8b1c0de2481f6f30014,
+Root strict rebuild/default/enrollment green, own review WT clean.
+
+Same grant-ticket30n3-enrollment-composition-20261019 revision03, same source owner/
+WT/branch/context, new correction baseline full38417 SHA above. CREATE0/DELETE0,
+MODIFY ONLY existing NativeEnrollmentReadbackCompositionSelfTests.cs in native_windows.
+No product/DTO/parser/B2/Program/Python/fixture or behavior change. Add two ordinary
+valid file observations: exact path/FILE/metadata and same volume, but (1) observed
+digest different from expected with same size; (2) observed size different with
+same digest. Both must return OBSERVED, exact actual literal hash/size unchanged,
+no new comparison/rejection, no fake claim of B2 MATCH. Independently fixed literal
+Expected, not copied from returned result or private helper. Reuse existing local
+ReadWith/ObservedFile and cohesive test group; no new helper framework/newfile.
+
+Actual temporary production copy of only expected hash must turn named first
+cell RED, exactrestoregreen; copy of only expected size must turn second cell RED,
+exactrestoregreen. No false baseline-red claim against correct original product:
+this is test-evidence correction. Existing actual behavior/closure negatives and
+legitimate direct/nested positives remain. Same direct offline forced build +
+default/enrollment selectors from verification erratum revision02; no legacy coupled
+fixture, broad pytest, native job, Host effect or denied cleanup retry. Preserve
+initial21owner records/draft distinction/Root ZERO_RED. Independent DOC consistency
+then fresh exact clean38417/roles/Git/leaf/index binds correction before work.
+Uncapped parent/history/holds, Root sole reviewer and distinct source peer unchanged.
+
 ## 30N3 — C5 exact enrollment readback composition / closure11
 
 Root bounded architecture review identifies next native dependency: compose the
