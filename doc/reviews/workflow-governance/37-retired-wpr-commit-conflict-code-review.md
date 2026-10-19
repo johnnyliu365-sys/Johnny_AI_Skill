@@ -1,5 +1,22 @@
 # Ticket 37 independent review — 2026-10-18
 
+## Inherited approved-policy metadata drift / closure03 proposal — 2026-10-20
+
+Author normal repair makes both new normalization and old completion cells GREEN.
+Full untouched assertion reports2policy-digest subfailures plus55PASS/200subtests;
+Root read original wg37-router-suite-green.json in full, not a green result despite
+filename. Baseline0d14087d has same mismatches: router-control actual LFf52bdebb...
+vs pina70648a0..., implementation-authority actual LFc5478407... vs pin0c75d405....
+Root read actual rules/provenance: Owner resource amendment05528c124e4734d3b10ca85af5f6d034162fd3c1
+and independent chain-bound correction85028a764d386f1c3961f500e478c8c39f3e0d14 were
+approved/reviewed in original30 review, but profile/test metadata never followed.
+No new rules or runtime budget change needed. Existing3path scope already includes
+profile/test; closure03 explicitly adds only these2exact source-pin corrections,
+ordinary existing digest check/old-pin mutation, forbids all other pins/text/routes.
+No Owner renewal, new files, broad unchanged retry or claim reference integrity
+already passed. Source lane may finish rev02 proof but pin repair waits distinct
+delta review and revision03 Grant. D8LF5bad5c9906650ec1fb38961fbe81a982b52a354e3b54654f69b84413453ac68d.
+
 ## Clarified closure02 resumption — 2026-10-20
 
 Distinct /root/batch_authority_review DOC_PASS at0fcd72f6cfaac68ac86626b3f09b41708a1c5471:

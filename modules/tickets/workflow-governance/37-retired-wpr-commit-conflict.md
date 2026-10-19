@@ -2,7 +2,7 @@
 
 | 欄位 | 內容 |
 | --- | --- |
-| State | `ORIGINAL_SLICE_LOCAL_INTEGRATED` at `2f1c29cb`；current correction is closure02 NORMALIZATION only；清單11未結案 |
+| State | `ORIGINAL_SLICE_LOCAL_INTEGRATED` at `2f1c29cb`；current closure03 NORMALIZATION + approved-policy pin consistency；清單11未結案 |
 | Authority | Owner 2026-10-18 清單 11；既有 `Workflow.md` 治理文件歸屬及本票，不新增 PRD／SPEC／Gate |
 | Baseline | 本票 docs-only commit；派工時精確 pin |
 | Roles | 低成本實作席位；另一席獨立審閱；Root 整合 |
@@ -10,7 +10,7 @@
 
 ## 邊界與查重
 
-### Same-lineage normalization correction / closure02 — 2026-10-20
+### Same-lineage normalization correction / closure03 — 2026-10-20
 
 Original37 completed slice remains valid; this is checklist11's remaining adjacent
 conflict, not a reopened implementation-tdd repair or new requirement. Current
@@ -29,7 +29,13 @@ COMPACT, Python strict, no Browser/Host/provider/effect, no new DTO or construct
 Exact MODIFY ONLY skills/johnny-project-takeover/references/specification-ticketing.md,
 library/workflow_router/profile.py, tests/test_workflow_router.py; CREATE0/DELETE0.
 Reuse current LF-pinned SkillReference values and existing Router unittest cells.
-Update only this reference's digest/revision pins after final reference byte.
+Update this reference's digest/revision pins after final reference byte. Additionally
+repair only the two inherited stale pins for already-approved resource-amendment
+sources: router-control LFf52bdebbafa37827d1b0e13dc14949c525067a100c03145144017549d0af4562
+and implementation-authority LFc547840725bec0eb02a523a1bb2178c41a1a28fba666244ba9a47bf208d98736.
+Exact source approvals05528c124e4734d3b10ca85af5f6d034162fd3c1 corrected85028a764d386f1c3961f500e478c8c39f3e0d14
+under same Owner batch, independently reviewed in original30 review Current local
+execution-policy amendment. Both reference texts stay READ_ONLY; metadata only.
 
 AC37B1 replace obsolete WPR authoritative-record ownership with ticket/review exact
 source/typed-return ownership, preserving WPR's nonauthoritative index role. AC37B2
@@ -39,7 +45,13 @@ AC37B3 old text restored => named baseline RED; candidate lawful suite GREEN;
 actual old-duty mutation => named RED then exact restore GREEN. Reviewer uses a
 different WPR-duty variation; string/pin consistency is governance-document evidence,
 not proof of native interception or source authority. Existing Router behavior and
-all unrelated source/policy pins unchanged. No new test helper/framework/script.
+all other source/policy pins unchanged. No new test helper/framework/script.
+AC37B4 existing full policy-digest assertion verifies all three updated source pins
+against actual LF bytes and ordinary profile values; old router-control or authority
+pin restored => named RED, exact restoration GREEN. Do not disable/skip digest
+checks, change approved rules, runtime budget contracts or route behavior. The
+prior full suite's2metadata subfailures/55passed/200subtests stay original evidence,
+not mislabeled candidate regressions or fabricated green; no unchanged suite retry.
 The old test_completion_evidence_does_not_require_a_separate_wpr_commit remains
 GREEN by design; it covers closed closure01, NOT this Dispatch normalization
 defect. Add the named normalization assertion first and record its baseline RED
@@ -52,15 +64,16 @@ ctx-wg37-normalization-20261020; preregister .worktrees/skill-improvement-37-nor
 and matching -review, codex/same branches; Temp/johnny37-normalization-owner-20261020
 and -review-20261020. One source lane only after H3 evidence return/release to hold.
 TTL through review+seal, Recovery/evidence holds override; no cleanup or denied retry.
-Conditional grant-wg37-normalization-20261020 revision01 is NOT_ACTIVE until exact
-document independent review and fresh clean/nonreparse/Git/ordinary current
-SkillReference preflight. Root then derives exact same-scope activation, no Owner
-renewal. Run existing unittest Router suite, strict affected2Python files, reference
+Grant grant-wg37-normalization-20261020 activation is read from the latest exact
+original37 review heading. Revision02 covered normalization only; closure03 pin
+repair awaits revision03 after independent delta review, same owned modifications/
+WT/baseline and ordinary preflight preserved, no Owner renewal. Run existing
+unittest Router suite, strict affected2Python files, reference
 LF/pin consistency, memory compile/import and full-output named mutations only;
 process-local pytest autoload disabled/no-cache if pytest used, outer60/child55.
 Return candidate/files/checks/findings/deviations; no merge/push/Host qualification.
 
-### Active closure02 exact boundary
+### Active closure03 exact boundary
 
 ```johnny-boundary
 modify = skills/johnny-project-takeover/references/specification-ticketing.md
@@ -75,7 +88,7 @@ forbid = doc/requirements/
 ## Historical closure01 — completed, not current dispatch authority
 
 The following original completion repair is retained as provenance only. Its old
-reference path implementation-tdd.md is NOT authorized for closure02 mutation.
+reference path implementation-tdd.md is NOT authorized for closure03 mutation.
 
 `Workflow.md` 治理文件歸屬明確禁止 `WorkProgressReport.md` 作為 implementation／review
 寫入或 return target，也禁止獨立 WPR commit；原 implementation-tdd completion
