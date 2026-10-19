@@ -1,4 +1,24 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## B2 + C5 controlled engineering composition admission — 2026-10-19
+
+Next legal local source construction requires the already reviewed pure B2
+verification and C5 actual-readback APIs in one candidate. Root reviewer may
+compose only exact B2bf5a4a3c82131c308ffa85b2d899d4afd1cf32d9 (seal3c87ef77)
+into its own clean C5 staging181d0daebc9ba64c8968231561708522bb590673
+(sealfe51585a), same original30 lineage/uncapped batch and source-engineering
+first-entry order exception. This is NOT qualified integration or main adoption.
+B2 contributes only reviewed Verifier/VerificationSelfTests/ProtectionPlan,
+C5 chain contributes declared readers and their cohesive tests/project wiring.
+No new source change or conflict resolution is authorized by this composition:
+if Git reports a conflict, stop only this step and inspect exact affected blobs.
+No reset/rebase/cherry-pick rewriting, cleanup, native fixture/Host/ACL/service
+or external effects. Existing own C5 review WT/registered Temp owner/TTL/holds
+remain. Actual strict offline forced compile/default/enrollment selectors must
+pass on resulting merge; compare all three B2 source blobs to exact reviewed B2
+and C5 reader/test/project blobs to exact C5. Record resulting full SHA and
+actual executable identity before preparing a narrowed CLI composition ticket.
+Main and author WTs remain untouched; no formal authority/qualification claim.
+
 ## C5 E01 final source-engineering seal — 2026-10-19
 
 Root sole reviewer APPROVED_FOR_ENGINEERING_STAGING_ONLY exact correction
