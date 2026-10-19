@@ -1,4 +1,19 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H5 exact engineering-baseline preparation admission — 2026-10-20
+
+Distinct /root/batch_authority_review DOC_PASS for closure18 at0867e883c45914b2338ffc4b2db36ee367f23e2d,
+LF6703301bce4a2b8dccc94832134775381a8adb52cad0ec53a1219a19f8a9d31f.
+H5-A author Grant still NOT_ACTIVE pending H4 return and all fresh preflights.
+Root derives grant-ticket30n4-ownership-baseline-20261020 revision01 ACTIVE_PREP_ONLY,
+same uncapped parent, Root own preregistered contained ownership-baseline WT/branch.
+Exact initial8b0402e4dbb03f61b44146c41c7e1166c504879c; merge onlycc4744e24cb7ad28b212601d88e4ef3447e3280f
+with no hand source edits. Require exact2H1 additions and byte-identical4H1/H3 files,
+shared base5449c063, no conflict/no other candidate. This root source-baseline
+composition is not formal main/30B43 integration or qualified review; original
+holds and object history remain. Stop only affected preparation on unanticipated
+tree/conflict. Record clean resulting exact SHA before author admission. No cleanup,
+Host/native process/pipe/token/event action, service/security/install/package effect.
+
 ## H5 reduced ownership-handoff source proposal — 2026-10-20
 
 Root immutable tree readback and distinct /root/batch_authority_review architecture
