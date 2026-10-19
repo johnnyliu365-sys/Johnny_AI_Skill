@@ -57,6 +57,53 @@ to that reviewed revision. Current N1 immutable source/evidence hold is unchange
 或新實作 admission。29→30 是本票實際重用純投影的能力依賴，不是清單順序。
 本輪文件工作有下節獨立授權；不因此將完整票30改成 admitted/completed。
 
+## 30N3 — C3 E01/E02 correction / same closure08, Grant revision02
+
+Root actual counter-review of2f6b3fd5584014c5c80c631dbca2204737b27e4c:
+native later-enumeration-error partial-success and removal of child-volume/size
+comparisons produced ZERO RED. Preserve raw initial review in original30 review,
+not PASS or a new feature. Existing legitimate131object/byte positives, actual
+PAGE0-completeness red and moved-converter/N1 red/restored green remain evidence.
+E01/E02 are missing discriminating evidence for already frozen closure08, not
+permission to alter Expected or expand source effects. Same owner/WT/branch/context,
+parent uncapped history/cost/security/source/Host limits unchanged, no extra files.
+
+Chosen E01 negative seam: internal optional Func<int,NativeReadFailure?> page-failure
+test hook on sole Win32ReadbackPort, default null. For configured native test ONLY,
+page0 executes REAL GetFileInformationByHandleEx and parses its real records; page1
+returns NativeReadFailure.Denied. This becomes success=false/error5 and MUST flow
+through the SAME existing actual other-error MapError/empty/false branch, not a
+separate early failure shortcut. Other injected non-null enum values fail closed;
+no injected success, fabricated listing or authority. Root/child real metadata,
+PInvoke ownership and default native behavior unchanged. No fourth public port,
+new selector/public DTO/error/status, arbitrary environment dispatch or framework.
+Existing selector JOHNNY_DIRECTORY_READBACK_TEST_ROOT uses the same registered
+ordinary fixture. Explicit configured negative asserts READ_DENIED/Objects empty
+after actual first page and proves hook was reached. Label failure INJECTED after
+real page, not OS ACL-denial or Host qualification. Default self-test remains pure.
+Changing shared other-error branch to partial success must name red; restore green.
+
+E02 add pure independently constructed valid child data: wrong volume with SAME
+fileID/size/path/hash/kind, and observed size different from enumerated size with
+SAME volume/fileID/path/hash/kind. Actual public facade must independently reject
+each with identity-mismatch and empty Objects. Both normal positive cases continue.
+Remove only volume guard -> volume cell red/restore; only size guard -> size cell
+red/restore. Do not let another unrelated mismatch mask the target predicate.
+
+Same grant-ticket30n3-directory-readback-20261019 revision02, baseline2f6b3fd5 full
+SHA above; CREATE0/DELETE0 and corrective MODIFY only Win32ReadbackPort.cs,
+Win32DirectoryReadback.cs, NativeDirectoryReadbackSelfTests.cs under the existing
+native_windows directory. Public WindowsDirectoryReadback product guards stay
+unchanged; tests touch them only in temporary bounded author/reviewer mutations
+in each seat's OWN WT with exact restoration, never commit weakened guards.
+No new fixture, dependency or input; original seven-path total scope still closes.
+Root independently DOC-reviews this exact binding via different seat then reads
+clean2f/role/Git/leaf/index before continuation. No Owner renewal, new PRD, reset,
+additional qualification bypass or actual ACL/service/install/model/network effect.
+Focused negatives/actual/native/default/strict + Root counter-doors, raw results and
+exact restoration required. If new selftest growth crosses500effective lines, review
+cohesion/reuse, no compressed code/forced split/unrelated framework or newfile.
+
 ## 30N3 — C3 bounded directory readback / closure08
 
 Architecture Owner selects the existing next native dependency, not another
