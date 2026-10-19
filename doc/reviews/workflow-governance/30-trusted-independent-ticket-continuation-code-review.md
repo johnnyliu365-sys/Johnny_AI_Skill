@@ -1150,3 +1150,17 @@ NOT_EXECUTED; candidate NOT_INTEGRATED. No local source gate, real grant issuer,
 Installation section6 is independently reviewed preparation only; protected native
 payload/config/observer remain NOT_BUILT and require a completed exact operation
 manifest before ONE external-change decision. No unsafe bootstrap effect permitted.
+
+### Final control evidence readback
+
+Different-seat batch_authority_review returned APPROVED_DOC_EVIDENCE_ONLY for
+006e8490045412dd02ae16c4cbacfd9ad5257af0. One raw Git blob/read command0.797s
+(charge1 control), no OS/Host/code action. Git leaf LF SHA256
+cb6664393d44ead4b63a2cb32ad123c0a463cded8d5ad022e8fad641949492c1 matches
+registry; only04 checked; six CREATE source20bd6e30 is engineering-pass only,
+not integrated/qualified. Budget history, terminal/plan digest distinction and
+30B/43 holds agree. This paragraph records that bounded review, not self-approval.
+ACTION_COMPLETED for local source construction and documentation. Required final
+source-audit continuation is HALT / QUALIFIED_AUDIT_UNAVAILABLE; no alternate
+ordinary subagent qualifies it and no external Host test is authorized. This local
+hold does not revoke unrelated existing batch authority or authorize new effects.
