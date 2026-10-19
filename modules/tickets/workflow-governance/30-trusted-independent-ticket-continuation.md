@@ -39,6 +39,76 @@ This amendment becomes effective after independent consistency review of its exa
 committed rules/ticket/index/runbook versions; subsequent exact child bindings refer
 to that reviewed revision. Current N1 immutable source/evidence hold is unchanged.
 
+## 30N4-H7 — bounded observed-file wire consumer / closure23 proposal
+
+Original30/runbook03 section2, same uncapped local batch/source-order exception.
+Reviewed C8 command produces actual observed executable/configuration metadata;
+the existing Python authority application needs a bounded typed consumer before
+later service composition. Use the already planned windows_service.py application
+boundary, not another enrollment resolver/authority engine or native reader.
+H7 builds pure values/decoder ONLY, no service loop or effect capability yet.
+Sourcebaseline876223b3d04d5a0baedda9d5cdbcd9c1092431a2 is exact-blob local source
+staging, NOT formally integrated/qualified source. H1/H2B/H3/H4/H5/H6/C8 existing
+proofs reused; no unchanged native test campaign or new protocol design.
+
+CREATE ONLY library/local_orchestration/grant_authority/windows_service.py and
+tests/test_grant_authority_windows_service.py; MODIFY0/DELETE0. Independent module
+responsibility = protected Windows authority application edge; tests = its shared
+wire/ordering fixture. No new per-case files/DTO package/Runner/framework.
+A before B under existing type preflight; Root may derive bounded construction
+Grant, review normal constructors, then bind exact reviewed A for decoder B.
+No real Host/source qualification precondition is invented to build these values.
+
+H7-A exactly two private frozen strict models using existing _StrictModel,
+_CanonicalWindowsPath/_CanonicalSid/_Uint32/_Uint64 and Pydantic annotated aliases:
+_ObservedEnrollmentFile has REQUIRED path, sha256, size_bytes, owner,
+descriptor_sha256, volume_serial, file_id. Raw digest fields exactly64 lowercase
+ASCIIhex, matching C8 Sha256Value (not a new authority/hash engine). size_bytes
+strict integer1..67108864, volume uint32/fileIDuint64 including0; no bool/coercion.
+_ObservedEnrollmentMatch has REQUIRED scope literal SOURCE_ONLY_UNQUALIFIED,
+status literal MATCH, reason literal NONE, executable/configuration each exact
+_ObservedEnrollmentFile, neither nullable, all extras rejected/no defaults.
+Paths remain exact validated codepoints, never normalize/casefold/copy Expected.
+These are wire-value consistency only; constructors never attest their source,
+protection, real file contents, running image, exclusive lease or qualified Host.
+Do not add public approval/status/result types or a second failure state machine.
+
+H7-B one private _decode_observed_enrollment(payload: bytes) ->
+_ObservedEnrollmentMatch | None. Exact bytes1..262144, strictUTF8, ONE JSON value,
+duplicate keys/nonfinite/depth/malformed failures ->None, no partial observation.
+Reuse existing client._unique_object/_reject_json_constant/_check_json_depth,
+not another JSON parser; shared framing helper is not reused because C8 has no
+four-byte frame and has a different frozen ceiling. Only exact MATCH/NONE with
+both complete files returns the unqualified typed value; every REFUSED/null/
+unknown status/scope/reason or missing/extra/mistyped field returnsNone.
+No JSON/metadata is promoted to trusted authority or an effect capability.
+
+H7T1 A ordinary direct/JSON legal construction, allfield required/nullability,
+frozen/extras/bools/uint bounds/hash/SID/canonical Unicode path matrices and
+literal nested fields. No constructor/field first-red ceremony; strict2/import.
+H7T2 B actual decoder with independent literal C8-schema bytes produces exact
+observed metadata, not expected substitution; valid bounds/Unicode/uint0 pass.
+Refused/partial/duplicate/bounds/encoding/depth/shape/status mismatch refuse.
+H7T3 block filesystem/Git/subprocess/socket/native/clock/env/provider operations,
+exercise pure real decoder, no real observe command/helper/Host campaign.
+H7T4 actual required/default/strict field (A) and decoder ceiling/duplicate/status/
+partial bypass mutations (B) =>namedRED/exactrestoreGREEN; Root different door.
+No expanded shared-helper source changes or reimplementation; source+90/test+180
+effective forecast, >500 structural review not minify/split. Current claim is
+wire-source engineering only; actual protected helper invocation/client peer/
+ledger/read transaction/SCM/launcher/OS qualification remains later bounded work.
+
+Root reviewer/orchestrator; released H6 author /root/ticket30n4_peer_impl,
+distinct /root/ticket30_native_tools_review source helper. Preregister contained
+.worktrees/skill-improvement-30g-service-wire and matching-review, codex/same,
+ctx-ticket30g-service-wire-20261020; ownedTemp/johnny30g-wire-owner-20261020 and
+-review-20261020, owner+TTLthroughreview/seal/holds, no cleanup authority.
+Conditional grant-ticket30g-service-wire-20261020 rev01 A_ONLY NOT_ACTIVE until
+DOC_PASS/exact stage mapping/source/role/nonreparse Git preflight. Child55/outer60,
+one ownedTemp cache, full raw/time/source hashes; uncapped policy preserveshistory.
+No install/Host/native/helper/process/security/SCM/network/cleanup/model/cost/
+formal integration/qualification/30B43 release/push/release/deploy.
+
 ## 30N5-N6 — finite offline HTTP stimulus adapter / closure22 proposal
 
 Original30/runbook03 section3, same uncapped batch/first-CVQ source-order scope.
