@@ -208,6 +208,105 @@ Only actual externally approved OS setup/observation and final CVQ may unblock30
 no prompt/Owner narrative/ticket body inside source. Initial plus one correction,
 no helper delegation, no push/release/deploy/old cleanup retry.
 
+## 30N2 — Bounded native job primitive / proposed continuation, NOT_GRANTED
+
+Same original Ticket30/PRD/CHG/SPEC and first-entry source-staging exception.
+This is the Windows primitive portion of the existing controlled-executor/observer
+responsibility, not another Runner, authorization engine or Host qualification.
+It may proceed only after N1 engineering acceptance and an explicit Root-derived
+child Grant with the final exact source/contract versions. N1 immutable evidence
+and qualified-audit hold remain. This proposed section is NOT a Grant.
+
+Purpose: prove a job is configured and independently read back by the parent
+BEFORE an owned fixture process resumes, then enforce child-process/time/memory
+bounds and terminate/observe that exact job. Merely compiling an interop declaration
+or returning all refusals cannot satisfy this slice. It is NOT source isolation,
+AppContainer/network protection, a service, protected Grant enrollment or any
+native Codex/Claude session. No real Host executable may be selected or launched.
+
+Exact proposed CREATE:
+- library/local_orchestration/native_windows/NativeJobInterop.cs
+- library/local_orchestration/native_windows/NativeJobGuard.cs
+- library/local_orchestration/native_windows/NativeJobSelfTests.cs
+
+Exact proposed MODIFY (only after N1's reviewed source is staged and precisely bound):
+- library/local_orchestration/native_windows/JohnnyAuthority.Tools.csproj
+- library/local_orchestration/native_windows/Program.cs
+- tests/test_native_authority_tools.py
+
+No DELETE/other paths. Keep existing N1 manifest/plan/getter/self-test code unchanged.
+Reuse its compiler fixture, SDK/config, output/evidence handling and candidate hash
+checks; no new Python process runner, duplicate compiler fixture or new framework.
+Program adds only job-self-test plus closed fixture modes, not run/exec/service or
+arbitrary argv/path/commands. NativeJobInterop owns safe handles/Win32 marshalling;
+NativeJobGuard owns one bounded job's fixed lifecycle; NativeJobSelfTests owns
+parameterized constructor/fault/native-fixture assertions. No prompt/ticket prose
+in code. Production300/test350 effective-line signals trigger responsibility review,
+not compression or further file creation. Strict nullable/warnings-as-errors persists.
+
+Architecture: ordinary validating named bounds/result/status types first, then
+native behavior after different-seat construction preflight, within the SAME
+slice/budget. ActiveProcessLimit is exactly1, kill-on-job-close is required, explicit
+process/job memory and CPU-time limits are nonzero/bounded, and neither breakaway
+flag may be enabled. Source-fixture memory ceiling512MiB, CPU ceiling5s, parent wall
+deadline<=3s, no retries. Read QueryInformationJobObject and compare every required
+flag/value before the first CreateProcessW call; no admission from caller booleans.
+Create only the current built tool in a closed fixture mode, with CREATE_SUSPENDED,
+no inherited handles, explicit application name and a finite environment. Assign
+the exact process handle to the configured job, query membership and identity,
+then resume. Any earlier failure resumes zero threads. Hold exact handles through
+exit/timeout/cancel; no PID-only termination, shell, system kill or recursive cleanup.
+Failure to terminate/read back is RECOVERY_REQUIRED with retained handles/evidence,
+never success. Query readback failure is not a default-limit PASS.
+
+Return typed immutable SOURCE_ONLY_UNQUALIFIED observations: exact candidate image
+identity/hash, process creation identity, configured/read-back job limits, finite
+completion/timeout/cancel/native-failure result and confirmed residual state. An
+observed owned fixture process is NOT an independently protected review subject.
+Do not claim this primitive alone prevents in-process tools, agent RPC, network,
+snapshot writes or DLL/config substitution. Those remain separate existing CVQ
+requirements and require the later protected enrollment and actual Host campaign.
+
+Closure J1: every bounds/result/status constructor and rejected unknown/native
+state; record zero create/resume calls for invalid bounds/readback failure.
+J2: actual owned candidate fixture completes inside the job, parent independently
+queries limits/membership/image; no ambient executable or arbitrary process target.
+J3: actual child fixture attempts to launch the same fixed tool, is denied by the
+OS and reports the finite denied result. This is a fixture child, NOT a Host attack.
+J4: actual sleep fixture timeout/cancel is terminated through its exact job; query
+confirms zero active processes. Inject create/assign/readback/terminate failures
+through a typed native port where real failures are not safely reproducible; label
+injected vs actual. Preserve recovery evidence, never kill unrelated processes.
+J5: author changes active-process limit1->2 or disables kill-on-close, gets a named
+red, exact restore/green. Reviewer uses a different door (skip readback equality,
+allow resume before assignment or turn termination failure into success), gets a
+named red, exact restore/green. Preserve unreduced outputs and candidate hashes.
+Existing N1 executable cases remain green through its shared Python fixture;
+strict mypy/in-memory compile and cumulative Git scope also required.
+
+Proposed resources: author<=45, reviewer<=32, control<=22 command seconds, including
+constructor preflight, initial behavior and one correction; each command<=60s,
+subprocess<=55s, serial/no automatic retries. These are NOT fresh allowances:
+admission first subtracts actual N1/old30G/Root history from350/220/330 and1500,
+retains old30G correction30, and records the exact remaining envelope. If this
+closed slice cannot fit, no dispatch; report the actual shortfall once with the
+remaining build/operation package. Existing named author and different reviewer
+may continue in their allocated contained worktrees after precise candidate binding;
+no new Agent role. Root does not implement source or treat staging as integration.
+
+All fixture assets have Ticket30N2/seat owner, exact fixture identities, TTL through
+review/evidence seal and normal exact teardown; failed teardown creates a hold.
+No old worktree/ref/journal/denied-cleanup operation may be retried or substituted.
+No service/account/ACL/AppContainer profile/firewall change, native Codex/Claude/
+model/provider/network/pipe call, runtime Grant operation or production gate is
+authorized. N1's SDK/no-package/no-download/no-build-server restrictions persist.
+
+Native primitive sources (not claims of tested qualification):
+https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_basic_limit_information
+https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_extended_limit_information
+https://learn.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-setinformationjobobject
+https://learn.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-queryinformationjobobject
+
 ## 30G-SOURCE — Closure G1–G5 revision01 / historical construction, audit held
 
 Owner2026-10-19 approved runbook revision02 first-entry CVQ order exception and
