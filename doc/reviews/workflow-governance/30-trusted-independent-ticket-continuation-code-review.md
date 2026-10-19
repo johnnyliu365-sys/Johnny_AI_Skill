@@ -628,3 +628,113 @@ They are not cleanup-eligible while required review/source evidence is unresolve
 No R0, DAP-00 or Recovery hold changed. Other local batch work completed31B/44
 without waiting for this candidate. Subsequent dependent dispatch/source effect
 work cannot borrow this unapproved candidate as implementation authority.
+
+## Local blocker investigation — 2026-10-19
+
+Owner's latest instruction authorizes local containment and forensic readback,
+not relaxed isolation or cleanup retry. Ordinary independent allocation review
+by `/root/ticket30b_readback_review` approved `f8887d200111336d409538d7f739315a2224b87c`;
+Ticket30 blob `71d780b9d6e19bd521ef5c37adba3bae6f9ece3c`, LF SHA256
+`3488f73baa5b3e34143badf8b55f65e49d176809b9eee8bbd74b570a6eb02eeb`.
+The conditional local containment Grant is now effective; the replacement
+implementer works only on the original candidate's two readback files. This
+development authority is not the missing runtime source being tested.
+Allocation review used 4.2 command seconds; previous 515 remains charged.
+
+### Qualified isolation: actual requirements versus available surface
+
+`/root/batch_authority_review` performed bounded read-only forensics, not the
+mandatory isolated adversarial audit. Required properties remain source snapshot
+isolation, no writes, no code execution, no delegation, unknown bypass rejection,
+and exact Host/binary/config/candidate/bounds/observer evidence.
+
+Current native collaboration tool schema offers task/message/fork/model/reasoning,
+but no per-child sandbox, restricted cwd, tool allowlist or custom-agent selector.
+The active parent environment explicitly has danger-full-access and approval
+never; children share tools/filesystem. Instructions to be read-only do not
+remove those capabilities. No locally callable qualification adapter or
+candidate-bound observation was established by this investigation.
+
+Scoped original-session Oct18–19 custom-call inspection found no
+`PROVED_READ_ONLY_SNAPSHOT` qualification call/receipt. Mentions were documents,
+patches or reported text. Therefore the raw qualified Host call, its failure
+response and successful isolation receipt are **MISSING**, not a reconstructed
+test failure. Ordinary collaboration dispatches are not qualification attempts.
+Earlier Claude CLI conclusions remain independent of this Desktop surface.
+
+Read-only runtime inventory: `Get-Process -Name Codex` identified running core
+binary `C:/Users/GameBoy/AppData/Local/OpenAI/Codex/bin/896a0166b774037a/codex.exe`.
+Exact binary `--version` returned `codex-cli 0.163.0-alpha.10.2`, exit0;
+SHA256 `F6DBF48CB70F62649C645F26C87DC9BF84CC36986202DFAD8E12FB5B8CA70312`.
+This identifies the embedded core, NOT an independently qualified Desktop UI
+version. FileVersion/ProductVersion/ProductName readbacks were null.
+`Get-AppxPackage -Name '*Codex*'` failed in this PowerShell:
+`The 'Get-AppxPackage' command was found in the module 'Appx', but the module
+could not be loaded due to the following error: [Operation is not supported on
+this platform. (0x80131539)]`. No module install, policy change or retry followed.
+This inventory error is not the cause of missing isolation qualification.
+
+Official [subagent documentation](https://learn.chatgpt.com/docs/agent-configuration/subagents),
+read 2026-10-19, says child permissions inherit the parent; agent-file instructions
+cannot create a separate read-only sandbox. It documents disabling selected
+features, but those settings are not exposed by this turn's dispatch schema.
+This documentation is guidance, not proof that the current Desktop supports or
+enforces a qualifying profile.
+
+Minimum next external operation: supply a native review session surface with
+effective no-write/no-execute/no-delegation restrictions, source snapshot binding
+and observer readback, then qualify that exact binary/config under existing CVQ.
+A parent read-only mode alone is insufficient: shell execution and delegation
+must also be excluded and unknown tools denied. Changing session permissions,
+starting a separately configured execution environment or making real model
+qualification calls is not performed here. Alternative is an explicitly reviewed
+policy amendment, not silently treating a normal subagent as isolated. No new VM,
+broker, runner or framework is proposed. 30B and43 remain unintegrated.
+
+### Cleanup: recovered call, exact persisted error, retained assets
+
+Trusted local source:
+`C:/Users/GameBoy/.codex/sessions/2026/09/08/rollout-2026-09-08T00-16-38-01a02958-71c0-7913-96ee-5b589c5fc993_01a07ca8-493d-73f3-994d-0c5cf69bd957.jsonl`,
+lines41045/41047, call `call_559be669d1134a79b54b135b6772388e`.
+Request timestamp `2026-10-18T13:22:58.547Z`, response
+`2026-10-18T13:22:58.814Z`. Full requested tool input preserved below; it was
+NOT re-executed. The persisted error itself contains a literal truncation marker
+for2706 characters. Those error characters are **UNRECOVERED**; no inference
+about the internal policy rule is justified.
+
+```javascript
+text(await tools.exec_command({cmd:"$ticket44WorkspaceRoot = 'C:\\Users\\GameBoy\\Desktop\\Johnny_AI_Skill_latest\\.worktrees\\'\nforeach ($ticket44Target in @('C:\\Users\\GameBoy\\Desktop\\Johnny_AI_Skill_latest\\.worktrees\\skill-improvement-44-land','C:\\Users\\GameBoy\\Desktop\\Johnny_AI_Skill_latest\\.worktrees\\skill-improvement-44-lineage','C:\\Users\\GameBoy\\Desktop\\Johnny_AI_Skill_latest\\.worktrees\\skill-improvement-44-review')) {\n $ticket44Resolved = (Resolve-Path -LiteralPath $ticket44Target).Path\n if (-not $ticket44Resolved.StartsWith($ticket44WorkspaceRoot,[StringComparison]::OrdinalIgnoreCase)) { throw 'Outside registered root' }\n if ((Get-Item -LiteralPath $ticket44Resolved).Attributes -band [IO.FileAttributes]::ReparsePoint) { throw 'Reparse rejected' }\n $ticket44Dirty = git -C $ticket44Resolved status --porcelain\n if ($LASTEXITCODE -ne 0 -or $ticket44Dirty) { throw 'Dirty or unreadable worktree' }\n git worktree remove $ticket44Resolved\n if ($LASTEXITCODE -ne 0) { throw 'Worktree removal failed' }\n}\ngit branch -d codex/skill-improvement-44-land\n$ticket44JournalFile = 'C:\\Users\\GameBoy\\AppData\\Local\\Temp\\Johnny-checklist44-20261018\\queue\\document-mutation-journal.jsonl'\nif ((Get-FileHash -LiteralPath $ticket44JournalFile -Algorithm SHA256).Hash -ne 'B5DD3D7C3BE5251E2D7A2EC19F440E35EDF733A3EF368B6D28EE7D71A0B92BD4') { throw 'Journal seal mismatch' }\nforeach ($ticket44Item in @($ticket44JournalFile,'C:\\Users\\GameBoy\\AppData\\Local\\Temp\\Johnny-checklist44-20261018\\queue','C:\\Users\\GameBoy\\AppData\\Local\\Temp\\Johnny-checklist44-20261018')) {\n if ((Get-Item -LiteralPath $ticket44Item).Attributes -band [IO.FileAttributes]::ReparsePoint) { throw 'Reparse rejected' }\n if ((Get-Item -LiteralPath $ticket44Item).PSIsContainer -and @(Get-ChildItem -LiteralPath $ticket44Item -Force).Count -ne 0) { throw 'Nonempty directory retained' }\n Remove-Item -LiteralPath $ticket44Item\n}\n@('C:\\Users\\GameBoy\\Desktop\\Johnny_AI_Skill_latest\\.worktrees\\skill-improvement-44-land','C:\\Users\\GameBoy\\Desktop\\Johnny_AI_Skill_latest\\.worktrees\\skill-improvement-44-lineage','C:\\Users\\GameBoy\\Desktop\\Johnny_AI_Skill_latest\\.worktrees\\skill-improvement-44-review','C:\\Users\\GameBoy\\AppData\\Local\\Temp\\Johnny-checklist44-20261018') | ForEach-Object { [pscustomobject]@{Path=$_;Exists=(Test-Path -LiteralPath $_)} } | ConvertTo-Json\ngit worktree add --detach C:/Users/GameBoy/Desktop/Johnny_AI_Skill_latest/.worktrees/skill-improvement-31b-review 942244ea30b17ef1d1e02d433a57f5123c5f2838\nGet-Item C:/Users/GameBoy/Desktop/Johnny_AI_Skill_latest/.worktrees/skill-improvement-31b-review | Select-Object FullName,Attributes\ngit -C C:/Users/GameBoy/Desktop/Johnny_AI_Skill_latest/.worktrees/skill-improvement-31b-review status --short","workdir":"C:/Users/GameBoy/Desktop/Johnny_AI_Skill_latest/.worktrees/skill-improvement-checklist","max_output_tokens":1700}));
+```
+
+Persisted error, without further reduction:
+
+```text
+Script failed
+Wall time 0.0 seconds
+Output:
+
+Script error:
+exec_command failed: CreateProcess { message: "Rejected(\"`\\\"C:\\\\\\\\Users\\\\\\\\GameBoy\\\\\\\\.cache\\\\\\\\codex-runtimes\\\\\\\\codex-primary-runtime\\\\\\\\dependencies\\\\\\\\native\\\\\\\\powershell\\\\\\\\pwsh.exe\\\" -Command '$ticket44WorkspaceRoot = '\\\"'C:\\\\\\\\Users\\\\\\\\GameBoy\\\\\\\\Desktop\\\\\\\\Johnny_AI_Skill_latest\\\\\\\\.worktrees\\\\\\\\'\\nforeach (\\\"'$ticket44Target in @('\\\"'C:\\\\\\\\Users\\\\\\\\GameBoy\\…2706 chars truncated…ertTo-Json\\ngit worktree add --detach C:/Users/GameBoy/Desktop/Johnny_AI_Skill_latest/.worktrees/skill-improvement-31b-review 942244ea30b17ef1d1e02d433a57f5123c5f2838\\nGet-Item C:/Users/GameBoy/Desktop/Johnny_AI_Skill_latest/.worktrees/skill-improvement-31b-review | Select-Object FullName,Attributes\\ngit -C C:/Users/GameBoy/Desktop/Johnny_AI_Skill_latest/.worktrees/skill-improvement-31b-review status --short'` rejected: blocked by policy\")" }
+```
+
+The rejection preceded shell CreateProcess. None of this combined call's
+worktree removals, ref deletion, journal removals or final worktree-add executed.
+Known reason is only `blocked by policy`; exact rule/reason is unavailable.
+No retry, alternate deletion method or host-policy modification was attempted.
+
+Read-only current residue inventory (all under the repository's `.worktrees/`
+except the two explicit journals):
+
+| Asset | Current retained identity |
+| --- | --- |
+| skill-improvement-44-land | codex/skill-improvement-44-land,64157fbed9754d89fb66c473252cecbca0d525ff; subsequently reused for31B, not disposable44-only state |
+| skill-improvement-44-lineage | codex/skill-improvement-44-lineage,dfced43f8c3985722e06415773f75b7cb31a153f |
+| skill-improvement-44-review | detached dfced43f8c3985722e06415773f75b7cb31a153f |
+| skill-improvement-31b-report | codex/skill-improvement-31b-report,e83a4a72b848102a5eb6b82abaa3189e5245f88b |
+| skill-improvement-31b-review | detached e83a4a72b848102a5eb6b82abaa3189e5245f88b |
+| C:/Users/GameBoy/AppData/Local/Temp/Johnny-checklist44-20261018/queue/document-mutation-journal.jsonl | EXISTS,389bytes,SHA256 b5dd3d7c3be5251e2d7a2ec19f440e35edf733a3ef368b6d28ee7d71a0b92bd4 |
+| C:/Users/GameBoy/AppData/Local/Temp/Johnny-checklist31b-20261018/queue/document-mutation-journal.jsonl | EXISTS,386bytes,SHA256 42ee735c8a9c31a3d434c13d6d0ab7d8ebc9bee1201c890fea518760f02d784e |
+
+Cleanup blockage is distinct from31B/44 functional acceptance. 30B/43 unfinished
+review assets and all Recovery holds remain protected independently. No normal
+Ticket closure is claimed and no cleanup command is authorized by this record.
