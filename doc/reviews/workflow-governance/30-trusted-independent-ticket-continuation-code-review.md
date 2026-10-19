@@ -1,5 +1,74 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N2 fixed-candidate RCA / native-effect hold — 2026-10-19
+
+Checkpoint5b6ef722ce040579988a0bc5aa53d9219bde5add is clean, exactly the8 granted
+paths. BLOCKED / J3_INTERMITTENT_UNRESOLVED, not source acceptance. Full shared
+suite failed1/6 (fivepassed), wholecommand8.664s, restore1.744169s/build1.677990s;
+J3 stderr `job_self_test_failed:actual fixture child process launch is denied by
+the one-process job limit`. The assertion combined outcome/exit73/membership/
+residual without actual fields. One later diagnostic-only native run passed,
+whole14.745s/restore1.472754s/build4.906112s; that run's EXE/DLL hashes were not
+captured before replacement and remain UNKNOWN, not backfilled from a later build.
+Pure final contract build passed9.010s (restore1.486550/build4.542141), not a native
+qualification. Latest checkpoint-built EXE
+af4013868d52b27346876b307d6853e2d4d077ddbde2fd08e4e6bbae98dcfa60 /
+DLL4148fdf369c62a33e63afe8c938e452109ad996fb0d117f01451b54efd2bcbf8.
+Original SDK Chinese stdout was decoded with replacement characters; retain its
+original output as codec-loss evidence, do not reconstruct or call it raw bytes.
+
+After failure, exact registered apphost image query returned NO_MATCH. This is an
+image observation only, not the earlier job's active-count proof. No process-name
+kill, cleanup-policy bypass, security setting or further native retry is admitted.
+Unlabelled first failure and prior injected assertion-order failure remain history.
+The later single green is not an RCA or a substitute for the failed complete run.
+
+Root read immutable Guard/WindowsJobPort; different Sol evidence peer independently
+read the same candidate. Confirmed source defects within original J1–J5:
+
+- N2-B1: WindowsJobPort.RunClosedFixtureMode maps every NotCreated to expected73,
+  while CreateSuspendedProcess also returns it for image rejection, environment/
+  IO exceptions and arbitrary native failures. No immediate last-error is retained.
+  Therefore a non-policy failure can masquerade as Job denial. Add finite typed
+  cause/native return/error/handle observations and relevant same-job accounting;
+  no generic failure-to-PASS or claim that every outer-job influence is excluded.
+- N2-B2: Guard first waits3/4 of the deadline, then ConfirmExit receives the full
+  deadline again; Remaining merely clamps. This is not one monotonic remaining
+  wait/cleanup budget. Keep the same declared bound, consume one remaining budget
+  and make exhaustion explicit; kernel-call hard containment remains final CVQ,
+  not a claim from cooperative waits in this source fixture.
+- N2-B3: original intermittent cause UNKNOWN. Documented accounting visibility is
+  a falsifiable hypothesis: a failed limit association temporarily increments the
+  active count, reduced after exit and release of process references. A signaled
+  process plus immediate one-shot active query is not guaranteed settlement. Add
+  finite same-job observation/remaining-time handling and preserve uncertainty,
+  not an arbitrary larger timeout, infinite polling or treating unknown as zero.
+
+Primary sources checked by Root, not the superficially similar search-result Q&A:
+[Microsoft basic accounting](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_basic_accounting_information),
+[Microsoft basic limits](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_basic_limit_information).
+These support Windows semantics, not a reconstructed result for the historical run.
+
+Root returned same original owner/scope for typed cause/clock/accounting fixes and
+pure constructor/injected regression first. No native fixture until different-seat
+FIX_CONTRACT_READY preflight; then one evidence-backed native validation schedule.
+No new file/Runner, no Owner cap renewal, no erased old usage or attempts. The other
+CVQ readonly constructor implementation continues on its independently admitted view.
+
+Structure signal: Contracts425/Windows port313/Guard215 lines; SelfTests505. Reviewer
+found its constructor/native/fault/evidence helpers remain within one bounded job
+fixture.505 is a required structure-review signal, not an automatic split/compress
+defect. Final responsibility review remains with the final candidate, no exemption
+for duplicated helpers or product policy hidden in tests.
+
+Separate source-read incident: CVQ author initially read old baseline checkout
+ticket lines403–493 instead of pinned control blob, incorrectly reported missing
+successor04. Root directly checked immutable blob79180cae, then author independently
+read its full last190lines and verified LF846be3f6. No source write occurred before
+that hold; it was wrong-revision selection, not output truncation. Same Grant
+continued, not a chat override or new authority. Preserve both original read and
+correction; do not infer source validity from worktree proximity.
+
 ## Current bounded construction continuation checkpoint — 2026-10-19
 
 N2 Grant revision02 was independently DOC-reviewed /root/batch_authority_review:
