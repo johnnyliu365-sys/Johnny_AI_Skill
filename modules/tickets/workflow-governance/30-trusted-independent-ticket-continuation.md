@@ -97,7 +97,7 @@ Code/data roots strictly below actual Windows ProgramFiles/CommonApplicationData
 not those broad roots; executable strict descendant of codeRoot and .exe suffix.
 ParseBounded(string)->NativeSetupManifest and ToCanonicalJson(): flat snake_case keys
 schema_revision/service_name/service_sid/controller_sid/subject_sid/code_root/data_root/
-executable_path/executable_version/executable_sha256, exactly those11 fields.
+executable_path/executable_version/executable_sha256, exactly those10 fields.
 UTF8 body1..32768bytes; reject duplicates, unknown/missing/null/type/coerced/bool,
 malformed JSON/depth>8; no credentials, approval bool, arbitrary commands or env refs.
 
