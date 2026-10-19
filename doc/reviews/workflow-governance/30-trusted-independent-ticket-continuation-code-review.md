@@ -1,4 +1,36 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H2-B E01 raw-output capture correction — 2026-10-20
+
+Author returns exacta4a3d23c216682ff9160e34d1826df3254276f80,2allowedMOD only.
+Root413d6d reads complete diff in own FF reviewWT. Distinct source peer confirms
+all explicit joins/EXISTING/read metadata/typed revalidation and cohesive matrices;
+SOURCE_PASS, not qualified review. Typed matcher accepts complete observation;
+invalid/missing input raises ValidationError and cannot yield a match. Later
+composition must map absent native observation to refusal, not fabricate values.
+No optional success/default field or new contract required here. Physical test
+length703 differs from author610 report; exact measurement is correction evidence,
+not reason for forced split. Existing constructor+join+record fixtures cohesive.
+
+Root b30ec9 reads registered author h2-b-validation-20261020.txt; shell transcript
+contains commands/exit markers but blank native Python stdout/stderr, including
+mutation failures. It does NOT preserve named red/full test output as claimed;
+initial tool read itself also truncated and is not promoted to full raw. Existing
+file/hash retained, no evidence rewrite or historical recovery claim. E01
+EVIDENCE_DEFECT against frozen H2-TEST raw requirement, not product/Host defect.
+
+Same revision02 Grant/context/owner/WT/2MOD scope, no new AC/budget/permission.
+Author first preserves any actually available original tool outputs; missing
+stdout stays UNVERIFIED. Then use explicit subprocess capture+UTF8 full stdout/
+stderr (no Start-Transcript-only, --tb=short or output reduction) for fresh named
+mutation/restore proofs, archive inside existing registered owner Temp. These are
+new verification runs, not recovered old runs. Do not change product/tests beyond
+temporary exact mutations/restoration, do not amend a4a3d23c or add product scope.
+Root different-door disposition proof remains independent. H2 lane stays active
+for evidence repair; H4 author allocation NOT_ACTIVE until H2 released. This is
+a diagnosed capture failure with changed instrumentation, not blind same retry.
+ACTION_COMPLETED -> AUTO_CONTINUE scoped evidence correction; no qualification,
+main integration or Owner renewal implied.
+
 ## H3 bounded factory activation / closure16 — 2026-10-20
 
 Distinct /root/batch_authority_review DOC_PASS0998f15e51b2918f1c9fce2a7b50eb537d8a52e6,
