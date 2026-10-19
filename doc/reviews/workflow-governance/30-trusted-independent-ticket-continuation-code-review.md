@@ -1010,3 +1010,14 @@ and serial validation continue the SAME initial construction, not another final
 review/correction round. Remaining A85; no helpers or Phase B before a committed
 constructor cut receives different-seat type preflight. The erroneous elapsed-time
 BLOCKED claim is superseded only by the recovered command evidence above.
+
+### Installation packet control-document review
+
+Different-seat batch_authority_review returned APPROVED_CONTROL_DOC_ONLY for
+runbook section6 at864518e4682d7bf67320486c1001317c66edfac5 (read at control
+40f229c8060ca9c9f6989b2911ae128f394e2e3f). One read-only git-show command0.9s,
+charged1 to the SAME Root150. No OS/config/Host command or codeblock executed.
+No actionable contradiction: facts, proposed principals/rights, NOT_BUILT payload,
+whole-DACL and peer-observation requirements, network limits and evidence-preserving
+rollback are separated. This validates preparation only, not installation readiness,
+CVQ qualification, independent native isolation or approval/integration of30G/30B/43.
