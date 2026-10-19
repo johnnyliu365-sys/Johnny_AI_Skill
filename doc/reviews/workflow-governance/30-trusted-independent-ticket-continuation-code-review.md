@@ -1,4 +1,30 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H1 source slice architecture decision — 2026-10-20
+
+Reuse existing native transport responsibility, not a service/policy framework.
+Bounded readonly architecture peer chose real installed pywin32 source surfaces
+and preserved last-message impersonation/revert/protected-join ordering; connected
+PID is still NOT proven actual writer and no source fake upgrades it. Full service
+in one new file would mix native IO, protected enrollment, authority and SCM, so
+Root freezes only reusable raw message-pipe IO first: two CREATE paths, zero
+MODIFY, no public AuthorityChannel placeholder or new authority DTO/port.
+Later client/server factories, protected identity lookup, SCM lifecycle, owner
+approval/storage and qualification remain their own necessary existing duties,
+not falsely claimed implemented by this primitive.
+
+Installed Win32 stubs inventory89a005/e57c71 confirms finite overlapped connect/
+read/write/result/CancelIo/event surfaces; no native API invoked. Primary upstream
+source documents PyOVERLAPPEDReadBuffer as standard buffer and its Python3
+conversion, but installed runtime/OS semantics are NOT qualified from docs:
+https://github.com/mhammond/pywin32/blob/main/win32/src/win32file.i
+and https://mhammond.github.io/pywin32/win32file__AllocateReadBuffer_meth.html .
+Runtime narrow memoryview and retain actual allocation through terminal IO;
+Incomplete stubs are not grounds for Any/cast/stub edit. Tests patch every native
+call before construction and only prove source behavior. Registered resource/
+Recovery hold must prevent premature buffers/handles release on incomplete cancel.
+Independent DOC and exact source/constructor/WT admission precede H1 dispatch;
+no request for actual pipe/Host/installation/security effect is implied.
+
 ## C6 E01 correction activation — 2026-10-20
 
 Distinct /root/batch_authority_review DOC_PASS exact1bea64ca19a05a8f87089d164fcb55667bd05a6e,

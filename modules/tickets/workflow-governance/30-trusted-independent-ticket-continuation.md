@@ -57,6 +57,105 @@ to that reviewed revision. Current N1 immutable source/evidence hold is unchange
 或新實作 admission。29→30 是本票實際重用純投影的能力依賴，不是清單順序。
 本輪文件工作有下節獨立授權；不因此將完整票30改成 admitted/completed。
 
+## 30N4-H1 — bounded Windows pipe IO / closure13
+
+Original30/PRD009/CHG009/runbook02 shared protected Windows authority service,
+same uncapped local batch and first-entry engineering staging only. Select the
+next reusable native IO responsibility, NOT the entire service in one module.
+Installed0.4.14 workflow catalog has only workflow-router-poc, no delivered Windows
+authority card; do not invent/adopt a near-match. Reuse target-owned reviewed
+N4-A1 codec5449c0634866b3334e3963c87b8603eb973e39bd and existing wire limit/
+ledger/client without copying or changing them. Separate trust/enrollment/service
+composition remains later; no all-refuse fake WindowsAuthorityChannel placeholder.
+This cut implements real Windows IO calls in source, tests ONLY patched calls.
+
+Exact sourcebaseline5449c0634866b3334e3963c87b8603eb973e39bd. CREATE2:
+library/local_orchestration/grant_authority/windows_transport.py,
+tests/test_grant_authority_windows_transport.py. MODIFY0/DELETE0. No package-root
+export, contracts/codec/ledger/nativeC#/Router/profile/runtime/dependency changes.
+Private cohesive message-pipe IO helper only; not a new public authority port,
+DTO/catalog, WindowsAuthorityChannel, SCM host, enrollment resolver or framework.
+Existing bytes/int/bool/finite exception values and installed pywin32 types suffice.
+Private resource owner retains OVERLAPPED/event/buffer/pipe handles for exact
+lifetime; no Any/cast/ignore/dynamic member lookup or caller trusted flag.
+
+H1-IO: own one explicitly provided valid noninheritable pipe handle, issuing thread
+identity, cancellation event and absolute finite request deadline. Connect/read/
+write use existing installed overlapped pywin32 APIs, one operation at a time on
+that same issuing thread; no thread/process/worker spawning, blocking INFINITE,
+poll loop, second request, subprocess or generic file IO. Private caller must later
+obtain handle from protected pipe factory; numeric handle is resource identity,
+NOT role/authentication or operational permission. Helper must reject wrong-thread,
+closed/failed/recovery-held state before another operation. No real API call during
+tests or constructor preflight; source import must not create event/pipe/service.
+
+H1-FRAME: one complete message into quarantined bytes, before any decoder/ledger
+or authorization claim. Reuse existing16384 body+4header envelope size; bounded
+read allocation is maximum frame+1 (16389), reject zero/overflow/ERROR_MORE_DATA,
+malformed native result/count/error, partial-message completion/disconnect. Never
+stitch/read again or decode/normalize content here; existing codec is sole framing
+and JSON validator in later composition. Write exactly one already bounded bytes
+frame, check actual completion count equals length, never partial write/retry.
+Validate external native values at boundary then keep named/finite typed state.
+pywin32 stub read-buffer is incomplete: primary upstream source documents standard
+buffer/memoryview. Runtime narrow to actual supported memoryview before accessing
+bytes; do not use unchecked object conversion or relax checker to hide API mismatch.
+
+H1-CANCEL: default request duration <=10s, explicit stop event, finite native event
+wait using remaining deadline; no busy polling/sleep. CancelIo is issued only on
+the same thread that issued IO. On timeout/stop/failure with pending operation,
+cancel then independently observe terminal GetOverlappedResult before buffer/
+OVERLAPPED/event/pipe close. ERROR_OPERATION_ABORTED is terminal failure, never
+success. ERROR_IO_INCOMPLETE or unconfirmed cancellation after finite1s drain
+becomes recovery-held failure: retain all live native references and original
+pipe ownership, forbid further IO, never drop/free/close still-pending memory.
+One held operation maximum; no accumulating background registry or silent retries.
+Keep this an in-process resource hold, not fabricated durable RECOVERY evidence
+or automatic clearing of existing project RECOVERY_REQUIRED. Cleanup release
+only follows confirmed terminal state; no __del__ destructive fallback.
+
+H1-TEST: one cohesive typed fake call recorder at actual pywin32 module call seam,
+patched BEFORE helper construction. No real CreateNamedPipe/CreateFile/Connect/
+ReadFile/WriteFile/token/ACL/SCM/process calls, sleeps/stress or external models.
+Positive connect/read/write record actual order, one native read/write, exact bytes/
+count and finite waits; existing valid wire encode/decode confirms lawful data
+remains intact, not an all-refuse test. Negative null/bool/invalid handle/time/
+oversize/zero/MORE_DATA/native exception/wrong count/partial write/wrong thread/
+stop/deadline/pending cancel/incomplete drain prove no second read/write and no
+premature close; error messages finite, no raw frame or native exception payload.
+Registered test fake buffers use ordinary memoryview, not fake Host observations.
+Actual product weaken bound =>namedRED, same-thread check =>namedRED, terminal-
+before-close/retention guard =>namedRED, exactrestoreGREEN. Root independently
+mutates a different IO completion/count/error door. Source effects remain dormant.
+
+Reuse installed Python3.11.9/pywin32311/types-pywin32/Pydantic/mypy2.3.0/pytest9.0.3;
+no dependency/install/stub edits. Strict both new files+existing codec contracts,
+memory compile/import, exact explicit focused pytest nodes, diff/source checks.
+Forecast product~260/test~320lines,0docs/screenshots/deps; inspect structure if
+growth exceeds forecast or500effective lines, no compression/arbitrary splitting.
+No standalone test runner, mock server, duplicated codec or unmanaged outputs.
+
+Conditional grant-ticket30n4-bounded-pipe-io-20261020, parent original uncapped
+batch, closure13, CREATE2 exactly. Implementation owner /root/grant_transport_impl,
+standard offered gpt-6-luna/xhigh; Root sole reviewer/orchestrator, distinct
+/root/ticket30_native_tools_review source peer after C6 allocation closes.
+New ctx-ticket30n4-bounded-pipe-io-20261020; repo-contained WT
+.worktrees/skill-improvement-30g-windows-transport and matching -review,
+branches codex/skill-improvement-30g-windows-transport and matching -review.
+Pre-register both WTs and owned Temp/johnny30n4-pipe-owner-20261020 and -review-
+20261020 HERE before creation; owners author/Root, TTL through review+seal,
+Review/Recovery holds and precise teardown required, no automatic removal or
+denied cleanup retry. Same-lifetime direct lane/receipt/Runner NOT_REQUIRED.
+After independent DOC PASS, Root validates exactclean5449/Git/containment/roles
+and existing codec/typed boundary constructors, then activates this source cut.
+Private new helper construction is implementation output, no new public-contract
+preflight cycle or fake protected pipe. Percommand60/child55 initial, monitor/
+diagnose failures and preserve old accounting; no cumulative/fixed-count caps.
+No actual pipe/token/SCM/account/ACL/network/Host/installation/native attack/
+trusted issuer/protected enrollment/model/push/release/deploy/formal gate effect.
+Return immutable candidate/files/full raw checks/mutations/deviations; Root waits,
+reviews/corrects same ticket and stages only source engineering when proven.
+
 ## 30N3 — C6 E01 output-failure evidence correction / same closure12
 
 Root immutable candidate1e5ce16cc9a6be2cd95ab0cd30a7312223a94405 original six paths
