@@ -1,5 +1,25 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N3 Phase A return / independent review allocation — 2026-10-19
+
+Author returned c39f2b917a84da0835afed9ed2a39c6ddc245de3, clean baseline88b707c8,
+exact CREATE NativeEnrollment.cs/NativeEnrollmentSelfTests.cs and MODIFY project,
+Program.cs/existing Python test. Contracts/parser294lines and tests298lines keep
+value/parse versus test responsibility separate; no installer, OS getter or B code.
+Author reported focused1pass8.59s/outer12.188s; initial JSON-path escaping and
+CP950 wrapper failures are retained, not erased. Root has not adopted these as
+independent evidence; actual constructor symbols/diff readback is underway.
+
+Root allocates .worktrees/skill-improvement-30n3-review branch
+codex/skill-improvement-30n3-review from this exact candidate, and owned output
+C:/Users/GameBoy/AppData/Local/Temp/johnny30n3-review-20261019. Purpose pure strict
+compile/CLI constructor/reverse-predicate review, no native observer or Host.
+OwnerRoot/30N3, TTL through review+evidence seal; Review/Recovery holds override,
+teardown only by existing exact ownership admission, no automatic deletion now.
+Only temporary NativeEnrollment.cs predicate edits, exactly restored between
+checks; tests/expected are read-only. Same underlying no-effect scope and finite
+command defaults. Separate peer native_tools_review handles narrow review.
+
 ## N2 B6 actual fixed native observation / source-only pass — 2026-10-19
 
 Exact candidate/source/build hashes and preflight are below. One native CLI call
