@@ -1,4 +1,24 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H5 reduced ownership-handoff source proposal — 2026-10-20
+
+Root immutable tree readback and distinct /root/batch_authority_review architecture
+decision identify concrete H3-owning-wrapper/H1-raw-close integration gap. Next
+scope reduced to existing2MOD/0CREATE/0DELETE; no preliminary windows_service/session
+wrapper or duplicate lifecycle class. Freeze closure18: exact controlled H3+H1
+engineering baseline, existing error-owner constructor extension then sole-owner
+IO adoption/Close/cancel-retention migration and existing test-helper reuse. New
+service/retained-process observation/closed runtime packaging remain later genuine
+dependencies, not presumed implemented or Human technical choices. H2 cannot be
+filled from expected enrollment; native N2/C5 live in separate C# tool, not already
+callable trusted Python readers. No source counterfeit provenance/qualification.
+Existing one-frame IO stays same responsibility; no new framework/permission/source
+port or expansion of H4 correction. Conditional H5-A Grant remains NOT_ACTIVE.
+D8 leafLF6703301bce4a2b8dccc94832134775381a8adb52cad0ec53a1219a19f8a9d31f.
+
+H3 archive-only distinct DOC_PASS d38188d3 independently verifies both gzip/raw
+hashes,26author entries and20full traceback records, Root289/strict2/different-door
+mutation; engineering-only scope and all history/deviation/cleanup holds preserved.
+
 ## H4-B E01 retained-token ownership correction — 2026-10-20
 
 Immutable e8d193db1331cf8e65bddf18cd56ed8c1bc4441c exact2MOD vs a5521acc,

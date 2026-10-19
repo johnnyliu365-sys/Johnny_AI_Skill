@@ -57,6 +57,81 @@ to that reviewed revision. Current N1 immutable source/evidence hold is unchange
 或新實作 admission。29→30 是本票實際重用純投影的能力依賴，不是清單順序。
 本輪文件工作有下節獨立授權；不因此將完整票30改成 admitted/completed。
 
+## 30N4-H5 — owning pipe adoption / closure18 proposal
+
+Same original30/runbook03/PRD009/CHG009/uncapped batch. Necessary source ownership
+handoff, no new capability/PRD/Host gate. Root architecture readback and distinct
+/root/batch_authority_review agree H3 returns owning PyHANDLE while H1 closes raw
+int; directly passing int(owner) risks double-close. Reduce the next slice to
+MODIFY ONLY library/local_orchestration/grant_authority/windows_transport.py and
+tests/test_grant_authority_windows_transport.py; CREATE0/DELETE0. Do not yet create
+windows_service.py or a temporary session wrapper; H1 already owns one-frame IO.
+Existing H3 factory/peer/codec/ledger/native tools and all Host settings READ_ONLY.
+
+First prepare one controlled engineering-only baseline: exact reviewed H3
+8b0402e4dbb03f61b44146c41c7e1166c504879c plus reviewed H1
+cc4744e24cb7ad28b212601d88e4ef3447e3280f, common5449c0634866b3334e3963c87b8603eb973e39bd.
+Only2H1 files may be added to H3 tree, no hand edits/conflict resolution/other
+candidate. Pin resulting merge SHA and all4source/test blobs before Grant activation.
+This is isolated engineering composition, not formal main integration or qualified
+adversarial review. Existing source/Recovery/lifecycle holds stay effective.
+
+H5-A extend only existing WindowsMessagePipeError constructor with typed nullable
+retained native pipe/event owner references needed when initialization cleanup
+fails. Reuse existing failure enum/PyHANDLE/strict native boundary checks; no new
+DTO/Protocol/enum or duplicate lifecycle state machine. Pure ordinary constructor,
+no cleanup side effects, retained identity/lifetime and finite failure/nullable
+state tests plus strict/memorycompile. B inactive until immutable A preflight.
+
+H5-B migrate private _WindowsMessagePipeIO constructor from raw pipe integer to
+the actual factory owning PyHANDLE. Validate exact native owner identity and
+nonzero/non-sentinel pointer-width handle before event/IO; no int coercion of
+caller objects or Detach. Perform all ordinary thread/deadline/cancellation input
+checks before adoption; rejected input leaves pipe with caller, zero Close/IO.
+After validated adoption, IO retains SAME wrapper for its lifetime; numeric alias
+is only for Win32 calls. Normal close calls wrapper.Close exactly once, never
+raw CloseHandle(pipe), and remains idempotent. Borrowed cancellation event untouched.
+On completion-event creation/initialization failure after adoption, close confirmed
+owned resources once; failed/indeterminate Close retains each uncertain owner in
+the existing typed error, never reports cleanup success. Existing pending/drain
+RECOVERY_HELD keeps SAME pipe/event/overlapped/buffer alive, forbids Close/reuse;
+do not replace owners, add GC/finalizer cleanup, retry cleanup or hide exceptions.
+No change to single-message count/byte bounds/thread/deadline/cancel semantics.
+
+H5-TEST before migration enumerate every tracked constructor caller in combined
+baseline; migrate only the existing H1 test helper/cases. Any non-test consumer
+outside exact2paths is a concrete scope blocker, not permission to modify it.
+TEST->A->B evidence stays through real IO connect/read/write/close seam; existing
+native fake/weakref/finalizer helpers reused, no second browser/runner/fixture system.
+Cases: lawful same-owner byte-exact single frame and exactly-once close; integer/
+bool/zero/sentinel/nonowner reject before native effects; bad pure inputs leave
+caller owner; failed init closes once or held failed-close owner; failed event
+cleanup retained; normal close failure blocks reuse; pending drain holds SAME owner
+and all active resources without second read. Preserve H1 regressions and H3 fixed
+profile tests. Actual mutations owner retention/drop, raw-close substitution,
+duplicate-close/idempotence and premature release on pending/failed-init => named
+RED/restoredGREEN; Root different constructor-cleanup door. No old test retirement.
+Forecast product+70/test+120 effective, same cycle budget/history;500 triggers
+responsibility review not forced split/compression. No prompts/ticket narrative.
+
+Root reviewer/orchestrator; author /root/ticket30n4_peer_impl ONLY after H4 correction
+returned/released to source hold. Distinct /root/ticket30_native_tools_review.
+Context ctx-ticket30n4-pipe-ownership-20261020. Preregister contained engineering
+WT .worktrees/skill-improvement-30g-pipe-ownership-baseline and author
+.worktrees/skill-improvement-30g-pipe-ownership / matching -review, codex/same
+branches; owned Temp/johnny30n4-ownership-owner-20261020 and -review-20261020.
+TTL through review/seal, holds override; no cleanup or denied-operation retry.
+Conditional grant-ticket30n4-pipe-ownership-20261020 revision01 H5-A_ONLY remains
+NOT_ACTIVE until DOC_PASS, exact combined baseline and fresh nonreparse/Git/normal
+existing-constructor checks. B follows same2path revision02 after A, no Owner
+renewal. Direct lane receipt/Runner NOT_REQUIRED. Focused patched-native pytest,
+strict affected2files, memorycompile/guarded import, full raw stdout/stderr/argv/
+elapsed/exit in ownedTemp; autoplugin disabled/no-cache/-B/child55/outer60.
+No real pipe/token/event/Host probe, service/SCM/package/security/install action,
+grant/dispatch/receipt/response effect, operational positive, qualification,30B43
+clearance or main integration. Later retained process/job/rawFILETIME and closed
+runtime/config observations remain necessary; never fill H2 from expected values.
+
 ## 30N4-H4 — last-message token observation / closure17 proposal
 
 Same original30/PRD009/CHG009/runbook03 and parent uncapped batch; protected
