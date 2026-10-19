@@ -11,8 +11,8 @@ authenticity or qualified adversarial isolation was claimed. Grant is now active
 only for the ticket's two paths, named author, ordinary separate reviewer, exact
 worktree and 300-second cumulative limit. Prior budgets/holds remain unchanged.
 
-Document review command usage 0.84s; Root admission/readback reserve remains
-within its50s share. Implementation/review source evidence follows here, not in
+Document review was bounded to15s; reserve the full15s until a measured total is
+returned, within Root's50s share. Implementation/review source evidence follows here, not in
 a new handoff framework. Scaffold detection must not reject valid generic type
 syntax merely because it contains angle brackets; this is parser correctness,
 not a relaxation of missing/placeholder field rejection.
