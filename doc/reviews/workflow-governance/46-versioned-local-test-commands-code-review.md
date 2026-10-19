@@ -126,9 +126,12 @@ Existing gate returned INTEGRATED ata0bfc286e2102b9ccfc2575f58bbb2e08b8f44b0,
 replays999be61d+a0bfc286 on Rootcontrol192daef8. Only four authorized source/data
 paths differ; final blobs equal reviewed candidate, including plan fullblob
 a0e956376f00bf27cb9919e981f5de0724903bb9. Root integrated suite36passed/22subtests
-in17.02s pytest, strict two modules and COMPILE_IMPORT_PASS; gate+tests/type/import/
-Git readback command waits10.0088648+5.0033017+2.1437518=17.1559183s, not three
-test attempts. Root's complete50s reserve retained in total274.77/300 bound.
+in17.02s pytest, strict two modules and COMPILE_IMPORT_PASS. The three returned
+wait intervals10.0088648+5.0033017+2.1437518=17.1559183s describe ONE ongoing shell
+session, not three test attempts and not its complete elapsed command duration:
+the process also ran between polls. Do not substitute wait time for command time.
+Root's complete50s allocation is conservatively charged in the274.77/300 ledger;
+this allocation is not a claimed precise measurement of the combined shell job.
 
 Journal C:/Users/GameBoy/AppData/Local/Temp/Johnny-checklist46-20261019/queue/document-mutation-journal.jsonl,
 384bytes, SHA256d76009e4b3a855733926f961d139f9e8b39f72638ad9f8e7e31ef17f0e53093b;
