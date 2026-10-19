@@ -53,7 +53,7 @@ without applying policy or declaring isolation/authority qualification.
 | Named owner/reviewer | /root/ticket30_native_tools_impl current gpt-6-luna/xhigh; different /root/ticket30_native_tools_review gpt-6-sol/high, same currently available semantic capability mapping as30G; Root only control/docs |
 | Worktrees | .worktrees/skill-improvement-30n1-native / codex/skill-improvement-30n1-native and .worktrees/skill-improvement-30n1-review / codex/skill-improvement-30n1-review; clean contained nonreparse identities allocated/read by Root |
 | Profile | POC/HIGH_ASSURANCE source-only Windows protection tooling; ordinary independent engineering staging under approved first-entry exception, NOT qualified audit/final source integration |
-| Resource subset | Current same-Grant amendment: author<=135 and reviewer<=90; control<=40 including document helper<=8. Historical author118.20 and reviewer63.35 remain charged. First correction11.72 is retained; exactly one additional correction for the two final-review findings below, within author's remaining16.80, not a fresh attempt budget. These are subsets of new350/220/330 caps, not new Owner costs; N2 is still conditional/ungranted. Every command<=60s, compiler/test subprocess timeout<=55s, serial, no automatic retries/load |
+| Resource subset | Current same-Grant amendment: author<=135 and reviewer<=100; control<=40 including document helper<=8. Historical author132.77 and reviewer86.58 remain charged. All source corrections are consumed; review continuation ONLY finishes the already-red, byte-restored getter mutation's rebuild/green and exact final readback, within reviewer remaining13.42. These are subsets of new350/220/330 caps, not new Owner costs; N2 is still conditional/ungranted. Every command<=60s, compiler/test subprocess timeout<=55s, serial, no automatic retries/load |
 | Language | Python3.11 remains the backend/Grant/Router language. C# nullable+warnings-as-errors is a Windows-native provisioning/observation tool shim, not another backend or authorization engine. Installed SDK10.0.302/CLR10.0.10 enable offline build; Python freezer packages were measured NOT_INSTALLED. This platform-tool boundary avoids a new downloaded Python packager or copying backend Grant logic. No generic language-policy change |
 | No effects | No service/user/ACL/AppContainer/firewall change, native Host/Codex session, model/provider/remote call, actual pipe/listener or grant issue/consume. Native readonly getters only on test-owned fixtures in B; plan/self-test have no native effect. No existing candidate import or baseline-source MODIFY/DELETE |
 | Asset lifecycle | owner=30N1/named seat; registered fixture/build roots owned by one test fixture, TTL=verification/review seal, normal exact teardown only. Worktree/ref and existing Recovery/cleanup holds retained; never retry a policy-denied cleanup, never reset/clean/delete historical assets |
@@ -212,7 +212,11 @@ offline restore then build --no-restore; self-test remains pure and real getter
 assertions move to the existing Python fixture using installed PowerShell7.6.5
 Add-Type on the actual candidate DLL/public observer, as independently exercised.
 No new CLI mode or source path; no additional behavior/AC. Current author135/
-reviewer90 caps require independent document review before resumed work. No helper
+reviewer100 caps require independent document review before resumed work. Final
+source0a2e0661 passed the peer's actual4-test suite; its different getter-success
+mutation produced GETTER_STATUS=MISSING/exit1 and source was byte-restored. Only
+post-restore rebuild/green/final identity is newly allowed; mutated build output
+is not a candidate artifact. No source repair/new mutation/Host effect allowed. No helper
 delegation, push/release/deploy/old cleanup retry or unrecorded extra attempt.
 
 ## 30N2 — Bounded native job primitive / proposed continuation, NOT_GRANTED

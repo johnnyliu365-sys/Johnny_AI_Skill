@@ -1251,3 +1251,18 @@ Proposed N2 document preflight4e47c042e7297e87b5666c2eafe52c81958d168a returned
 APPROVED_CONTROL_DOC_ONLY by batch_authority_review, commands0.839+0.871=1.710s,
 charged conditional N2control22 within same330. Scope is owned fixed-binary job
 fixture only, not Host/source isolation/Grant qualification or permission to run it.
+
+### 30N1 restored-green evidence continuation (no source correction)
+
+Final source0a2e0661eef741be1b9df103ae8874c284cf60f8 fixes both findings; author
+14.57 additional, total132.77/135, clean. Independent peer actual suite4 PASS,
+outer12.900s. Peer changed actual Win32ReadbackPort success None->Missing, built
+and read owned payload: GETTER_STATUS=MISSING, exit1, unfiltered red6.480s. Exact
+apply_patch restoration gives clean WindowsReadback blob1d3798d559287e8cb74b6b987fd391aebf15602a.
+Current reviewer binary is MUTATED, not accepted output. Peer stopped at86.58/90
+before insufficient3.42 remaining; no restored-green evidence fabricated.
+
+Root allocates SAME-Grant reviewer cap100 from existing220, prior86.58 charged,
+sole purpose post-restore build/green and final identity readback<=13.42. Author135,
+control40 and aggregate350/220/330/1500 unchanged. No further source correction,
+new door/test scope or external operation. Independent doc preflight before resume.
