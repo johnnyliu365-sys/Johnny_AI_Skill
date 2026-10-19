@@ -1,5 +1,120 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N3B1 constructor preflight / two test-oracle corrections — 2026-10-19
+
+Source candidate5cfc9cd2828cb8495e6fd3f93cc0b7df6715055c exact CREATE2/MODIFY2,
+no B2 behavior. Root read both new files completely after clean review WT ff.
+Separate /root/ticket30_native_tools_review source constructor preflight found no
+additional production defect; valid complete values remain constructible. Two
+frozen V1/V3 negative-oracle weaknesses confirmed by actual source changes, not
+only advice: root-file test path was a CHILD, so absent-root guard masked deleted
+root-directory-kind guard; failed metadata test supplied both content fields, so
+OR->AND permitted partial fields while remaining green. Author requested one
+test-only additive correction under same exact grant/paths, no framework/new AC.
+
+Exact serial forced command is the existing N3A command above; same registered
+Root output and per-child35s/15s bounds. Every build reached terminal before inverse;
+source restored and green. These are ZERO_RED findings, not predicate evidence PASS.
+No repeated identical failure, no native/Host/source qualification/integration.
+
+### root kind guard masked
+
+red (red ZERO_RED): toolc41aa2, wall8.2283113s, exit0.
+
+```text
+COMMAND ['dotnet', 'build', 'JohnnyAuthority.Tools.csproj', '--no-restore', '--no-incremental', '--disable-build-servers', '--verbosity', 'minimal', '-m:1', '-nodeReuse:false', '-p:UseSharedCompilation=false', '-p:RestoreConfigFile=NuGet.Config', '-p:BaseIntermediateOutputPath=C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n3-review-20261019\\obj\\', '-p:BaseOutputPath=C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n3-review-20261019\\bin\\']
+  JohnnyAuthority.Tools -> C:\Users\GameBoy\AppData\Local\Temp\johnny30n3-review-20261019\bin\Debug\net10.0-windows\JohnnyAuthority.Tools.dll
+
+建置成功。
+    0 個警告
+    0 個錯誤
+
+經過時間 00:00:05.41
+BUILD_ELAPSED 5.9689999999827705 EXIT 0
+{"status":"passed","contract":"native_enrollment"}
+PURE_ELAPSED 0.7030000000377186 EXIT 0
+```
+
+green (red ZERO_RED): tool084099, wall7.8907594s, exit0.
+
+```text
+COMMAND ['dotnet', 'build', 'JohnnyAuthority.Tools.csproj', '--no-restore', '--no-incremental', '--disable-build-servers', '--verbosity', 'minimal', '-m:1', '-nodeReuse:false', '-p:UseSharedCompilation=false', '-p:RestoreConfigFile=NuGet.Config', '-p:BaseIntermediateOutputPath=C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n3-review-20261019\\obj\\', '-p:BaseOutputPath=C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n3-review-20261019\\bin\\']
+  JohnnyAuthority.Tools -> C:\Users\GameBoy\AppData\Local\Temp\johnny30n3-review-20261019\bin\Debug\net10.0-windows\JohnnyAuthority.Tools.dll
+
+建置成功。
+    0 個警告
+    0 個錯誤
+
+經過時間 00:00:05.41
+BUILD_ELAPSED 5.89000000001397 EXIT 0
+{"status":"passed","contract":"native_enrollment"}
+PURE_ELAPSED 0.6410000000032596 EXIT 0
+```
+
+### partial failed content guard masked
+
+red (red ZERO_RED): tool123519, wall8.0018285s, exit0.
+
+```text
+COMMAND ['dotnet', 'build', 'JohnnyAuthority.Tools.csproj', '--no-restore', '--no-incremental', '--disable-build-servers', '--verbosity', 'minimal', '-m:1', '-nodeReuse:false', '-p:UseSharedCompilation=false', '-p:RestoreConfigFile=NuGet.Config', '-p:BaseIntermediateOutputPath=C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n3-review-20261019\\obj\\', '-p:BaseOutputPath=C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n3-review-20261019\\bin\\']
+  JohnnyAuthority.Tools -> C:\Users\GameBoy\AppData\Local\Temp\johnny30n3-review-20261019\bin\Debug\net10.0-windows\JohnnyAuthority.Tools.dll
+
+建置成功。
+    0 個警告
+    0 個錯誤
+
+經過時間 00:00:05.58
+BUILD_ELAPSED 6.047000000020489 EXIT 0
+{"status":"passed","contract":"native_enrollment"}
+PURE_ELAPSED 0.6399999999557622 EXIT 0
+```
+
+green (red ZERO_RED): tool242c39, wall7.7862895s, exit0.
+
+```text
+COMMAND ['dotnet', 'build', 'JohnnyAuthority.Tools.csproj', '--no-restore', '--no-incremental', '--disable-build-servers', '--verbosity', 'minimal', '-m:1', '-nodeReuse:false', '-p:UseSharedCompilation=false', '-p:RestoreConfigFile=NuGet.Config', '-p:BaseIntermediateOutputPath=C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n3-review-20261019\\obj\\', '-p:BaseOutputPath=C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n3-review-20261019\\bin\\']
+  JohnnyAuthority.Tools -> C:\Users\GameBoy\AppData\Local\Temp\johnny30n3-review-20261019\bin\Debug\net10.0-windows\JohnnyAuthority.Tools.dll
+
+建置成功。
+    0 個警告
+    0 個錯誤
+
+經過時間 00:00:05.34
+BUILD_ELAPSED 5.827999999979511 EXIT 0
+{"status":"passed","contract":"native_enrollment"}
+PURE_ELAPSED 0.6410000000032596 EXIT 0
+```
+
+## Exact setup inventory refresh / read-only, no readiness upgrade — 2026-10-19
+
+Retained inventory seat /root/authority_install_inventory read runbook03 section6
+at6f9fc8a2d2ee5a67d53ad04de44d1caf52b05338. Current machine DESKTOP-28ERPQ1,
+account DESKTOP-28ERPQ1\\GameBoy, SID
+S-1-5-21-3542654388-73774624-397494543-1001. Admin role false but local Administrators
+member with deny-only admin SIDs/medium token: filtered administrator, NOT the
+independent standard subject. JohnnyGrantAuthority service absent; named
+JohnnyReadonlyReview user absent. All six proposed ProgramFiles/ProgramData Johnny
+roots absent, no existing ACL/reparse target state; no ancestor-wide read performed.
+
+Exact refresh primitives: Environment.MachineName, WindowsIdentity.GetCurrent(),
+WindowsPrincipal.IsInRole(Administrator), whoami /groups,
+Get-LocalGroupMember -Group 'Administrators';
+Get-CimInstance Win32_Service -Filter "Name='JohnnyGrantAuthority'";
+Get-LocalUser -Name 'JohnnyReadonlyReview'; Test-Path/Get-Item for only
+C:\\Program Files\\Johnny, its GrantAuthority child, C:\\ProgramData\\Johnny, its
+GrantAuthority and ReadonlyReview children and ReadonlyReview\\snapshots.
+Reported identity command tool/in-command1.620/1.140s; named targets2.400/1.844s;
+startup0.881/0.452 and runbook0.769/0.2825. Initial query parser error
+"An empty pipe element is not allowed" before execution, tool0.664s, no inner
+stopwatch; corrected bounded query succeeds. Original failed evidence retained.
+
+Prior sc showsid candidate is NOT installed/enrolled identity. No second service
+proposed; vendor sandbox accounts not approved for reuse. Actual installer-service,
+configuration, complete payload and protected observer remain NOT_BUILT, not
+properties of the current native utility. No service/account/ACL/network/Host effect,
+no updated executable package claimed. Runbook03 remains canonical proposed setup;
+this refresh does not authorize it or require Owner to supply an unbuilt product.
+
 ## N3B1 exact document admission / constructor-only — 2026-10-19
 
 Different-seat /root/batch_authority_review DOC_PASS at96dad7ebca4c6b51e59cc0ec5e028aa4753e4bcf,
