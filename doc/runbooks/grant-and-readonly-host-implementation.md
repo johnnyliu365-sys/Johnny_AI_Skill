@@ -340,6 +340,158 @@ This candidate reply is not an active Grant. If declined, independently admitted
 local work continues; the exact external effects wait. R0/DAP/TAL/Recovery and
 30B/43 holds remain. Existing CVQ approval is not asked again.
 
+## 6. Precise installation/settings preparation — NOT_AUTHORIZED / NOT_READY_TO_EXECUTE
+
+This is the requested concrete preparation, not an installer, native qualification,
+or instruction to run elevated commands. Root owns this packet under the same batch.
+Its boundary is the future approved local setup only; no vendor-service reuse,
+global Codex/Claude config edits, generic broker, external repository deployment or
+old cleanup attempt. Before any change freeze an exact operation manifest and get
+ONE Owner confirmation of that complete manifest, as the latest decision requires.
+
+### Observed identity and payload inventory (read-only 2026-10-19)
+
+Finite helper authority_install_inventory at5b3c50f0 observed:
+- Controller DESKTOP-28ERPQ1\GameBoy, SID S-1-5-21-3542654388-73774624-397494543-1001.
+  Medium/UAC-filtered token, Administrators deny-only but account in local Admins.
+  It is NOT an independent standard account and cannot be the review subject.
+- JohnnyGrantAuthority service absent. `sc.exe showsid JohnnyGrantAuthority` returns
+  S-1-5-80-3020799075-4261108201-91889776-39638685-3705689551 / Inactive. This
+  deterministic candidate SID is NOT an installed/enrolled/qualified identity.
+- `sc.exe showsid JohnnyReadonlyHost` also returned an inactive candidate service
+  SID; that does not create a user/session. We do NOT propose a second service merely
+  to obtain that SID. Existing CodexSandboxOffline/Online accounts are vendor-owned,
+  not approved reusable Johnny principals. No account/password was modified/read.
+- C:\Program Files\Johnny and C:\ProgramData\Johnny (including GrantAuthority) absent;
+  therefore no target ACL pre-state exists. A future unexpected existing path,
+  service/account, reparse ancestor or name/identity conflict must stop, not overwrite.
+- Installed CLI and Python are currently USER-writable locations, not protected
+  execution sources. CLI version/hash is section1; Python3.11.9 at
+  C:\Users\GameBoy\AppData\Local\Programs\Python\Python311\python.exe has SHA256
+  5f7b89a612c9b8af1d6456cdfcd1dbe5ca630849e79aebced9bee9a6694952ec.
+  Future protected payload must include its complete executable/dependency closure,
+  not import this per-user Python/site-packages or load arbitrary PATH/PYTHONPATH.
+  Service executable/config/observer hashes are NOT_BUILT, not guessed from source.
+
+Measured helper command records:14 calls, outer wall17.629s (charge18 within Root150),
+in-command stopwatch10.974s is not an alternative discount. Read-only commands were
+WindowsIdentity/Principal, whoami /user /groups, relevant Get-LocalUser/admin-group,
+Get-CimInstance Win32_Service, sc.exe showsid, Test-Path for the named directories,
+exact CLI/Python --version and Get-FileHash. No session/attack/ACL/settings effect.
+
+### Proposed principals, object rights and transport
+
+| Object | Exact proposed principal / rights | Stop/readback condition |
+| --- | --- | --- |
+| Issuer service | JohnnyGrantAuthority, own-process, demand-start, virtual account NT SERVICE\JohnnyGrantAuthority; above SID; no LocalSystem/Administrators membership | SCM actual StartName/SID, protected process image and loaded dependency closure must match |
+| Review subject | New dedicated local STANDARD account JohnnyReadonlyReview, not GameBoy or vendor sandbox accounts. SID NOT_CREATED: must come from New-LocalUser's OS result joined to same-name Get-LocalUser, never a caller value | Password entered as SecureString directly by Owner/admin UI, never Agent/log/config. No Administrators/remote/group privilege; same-account role claims not accepted. Standard account alone is NOT source/code isolation |
+| Protected code | C:\Program Files\Johnny\GrantAuthority\bin\JohnnyGrantAuthority.exe and pinned dependencies/config schema; ownerSYSTEM, SYSTEM/Admins full, service SID RX; no controller/subject/Users write or owner rights | Complete payload file manifest+hashes, DACL/owner/ancestor identity and no writable DLL/import path before service start |
+| Protected policy/store/evidence | C:\ProgramData\Johnny\GrantAuthority\policy.json, grants.sqlite3 and evidence\; ownerSYSTEM, SYSTEM/Admins full, service SID modify; no controller/subject access | Owner approval UI owns canonical plan enrollment. SQLite/ACL do not themselves authenticate an Agent role; protected enrollment binds observed SID/process creation/job/image/config/session to exact plan |
+| Readonly snapshot/config | C:\ProgramData\Johnny\ReadonlyReview\snapshots\<attempt-id> and protected per-run profile; service/control owns, exact enrolled subject SID read/traverse only | Attempt ID and exact files/digests pinned later; not a live worktree or arbitrary Temp clone. Subject cannot change config, snapshot or observer |
+| SCM service object | SYSTEM/Admins control; exact controller SID query/config/status/read-control only (CC/LC/RC); no user start/stop/change-config/delete/write-DACL | Readback SDDL against exact reviewed descriptor; no Authenticated Users broad control |
+| Read pipe | \\.\pipe\JohnnyGrantAuthority.Read.v1; SYSTEM/Admins/service full; exact enrolled controller/subject SID only FILE_READ_DATA, FILE_WRITE_DATA and SYNCHRONIZE (mask0x00100003), no create-instance/write-DACL | Server explicit DACL and PIPE_REJECT_REMOTE_CLIENTS; client checks actual server SID/creation/image/config, server checks actual client/enrollment. No name/PID-only trust |
+| Approval pipe | \\.\pipe\JohnnyGrantAuthority.Approval.v1; SYSTEM and elevated approved Admins only; no Agent/subject ordinary SID | Interactive protected Owner approval, not grantable through Read RPC or caller approved=true |
+
+These are exact intended ACE responsibilities, not observed ACLs. Individual named
+pipe rights are deliberate: generic-write includes create-instance rights and would
+permit another server instance. The service must construct/verify pipe descriptors
+in its later reviewed native implementation; `sc sdset` affects the SERVICE object,
+not its pipes. No filesystem ACL substitutes for peer/enrollment verification.
+
+### Network and runtime impact
+
+Initial authority service mode is local-only named pipes, no TCP listener, remote
+SMB clients refused, no provider/model/telemetry upload/update/download. Virtual
+service accounts are NOT inherently network-disabled. A final native manifest must
+pin effective outbound-deny enforcement and its negative readback; no actual mainline
+GET until a separate exact read effect/allowlist is approved. No machine-wide firewall
+policy change and no assumed Windows firewall default is part of this source grant.
+
+Readonly CLI is a separate per-attempt subject, never this full-access parent or
+its inherited ordinary children. Protected per-run CODEX_HOME contains no production
+auth; --ignore-user-config does NOT ignore authentication by itself. Installed CLI
+flags such as readonly/ephemeral are candidates, not no-code/no-delegation proof.
+No global TOML, plugin disable, login/logout or vendor sandbox-service modification.
+The offline Responses stimulus would need an exact loopback address/port and request/
+retry/body limits; these are NOT_ALLOCATED until the native adapter is built. Do not
+combine an indiscriminate outbound-block rule with a supposed loopback allow and
+claim it works. Freeze actual allowed endpoint/process tree and OS/network observation
+in the later finite operational Manifest; if enforceable limits are unavailable,
+launch zero requests / UNAVAILABLE. No native probe is authorized in this packet.
+
+### Operation sequence and concrete command templates (PROPOSAL ONLY)
+
+1. Pin full reviewed native source commit, service executable/complete payload hashes,
+   config digest/schema, exact subject SID acquisition recipe, all descriptors,
+   endpoint/attempt/bounds/observer, binary argv support and rollback manifest.
+   These NOT_BUILT values prevent the packet being executable today; Root must build
+   them through a separately narrowed source scope, not ask Owner to supply a product.
+2. In separately confirmed elevated setup, verify absent targets and contained nonreparse
+   parents; acquire dedicated standard account via OS, capture returned SID; stage only
+   hash-pinned payload. No pip/npm download, ambient import, user-code service launch
+   or writes to existing profiles. If current policy prohibits an operation, stop it,
+   retain evidence and do not substitute another command.
+3. Protect only the new exact service/data/snapshot trees with reviewed ACLs/owner;
+   set SCM object controls, enroll the actual SID/session policy, then read back.
+4. Only after setup readback and its separate authority may a demand-start be requested.
+   Starting a service is not Host qualification. Qualification is another exact grant.
+
+Representative exact targets/argv, NOT commands executed this round; `<pinned...>`
+below MUST resolve to reviewed manifest artifacts, not Agent-filled approval markers:
+```powershell
+# PROPOSAL ONLY. NOT a runnable installer or an approval/effect gate.
+# Pre-state: all three target identities absent; payload/settings fully pinned.
+$reviewCredential = Read-Host 'Owner supplies new review-user password securely' -AsSecureString
+$newReviewUser = New-LocalUser -Name 'JohnnyReadonlyReview' -Password $reviewCredential
+# Join $newReviewUser.SID with direct Get-LocalUser before using it for any ACE.
+sc.exe create JohnnyGrantAuthority type= own start= demand obj= 'NT SERVICE\JohnnyGrantAuthority' binPath= '"C:\Program Files\Johnny\GrantAuthority\bin\JohnnyGrantAuthority.exe" --config "C:\ProgramData\Johnny\GrantAuthority\policy.json"'
+# These directories must contain only the NEW manifest-owned payload, no reparse entries.
+icacls.exe 'C:\Program Files\Johnny\GrantAuthority' /inheritance:r
+icacls.exe 'C:\Program Files\Johnny\GrantAuthority' /grant:r '*S-1-5-18:(OI)(CI)F' '*S-1-5-32-544:(OI)(CI)F' '*S-1-5-80-3020799075-4261108201-91889776-39638685-3705689551:(OI)(CI)RX'
+icacls.exe 'C:\Program Files\Johnny\GrantAuthority' /setowner '*S-1-5-18' /T
+icacls.exe 'C:\ProgramData\Johnny\GrantAuthority' /inheritance:r
+icacls.exe 'C:\ProgramData\Johnny\GrantAuthority' /grant:r '*S-1-5-18:(OI)(CI)F' '*S-1-5-32-544:(OI)(CI)F' '*S-1-5-80-3020799075-4261108201-91889776-39638685-3705689551:(OI)(CI)M'
+icacls.exe 'C:\ProgramData\Johnny\GrantAuthority' /setowner '*S-1-5-18' /T
+sc.exe sdset JohnnyGrantAuthority 'D:P(A;;GA;;;SY)(A;;GA;;;BA)(A;;CCLCRC;;;S-1-5-21-3542654388-73774624-397494543-1001)'
+```
+These examples do NOT yet remove unexpected explicit ACEs or authenticate protected
+loaded code/pipe policy. Final setup must construct the exact whole DACL, protect
+every listed child/ancestor and verify no extra grants; `/grant:r` is not an ACL
+allowlist. File creation/copy order, service argv and all verification/rollback
+operations must be reviewed with the actual native payload before approval. No
+command above is an exception to policy-denied cleanup or a guarantee of isolation.
+
+### Verification and rollback to include in the final approval
+
+Readback: Get-LocalUser JohnnyReadonlyReview (actual SID/enabled state), exact local
+Administrators membership exclusion; Get-CimInstance Win32_Service filtered by
+JohnnyGrantAuthority (StartName/PathName/state/PID), sc.exe qc/sdshow/showsid;
+Get-Acl for every explicit manifest file/root (owner, DACL and inheritance, no
+reparse), Get-FileHash SHA256 for complete executable/dependency/config closure;
+independent actual token/peer/pipe-policy evidence. Source-only fake ports do not
+satisfy these checks. Later native negatives must prove subject cannot overwrite
+issuer/policy/evidence/snapshot, approve a plan, spoof a pipe or escape the tool
+scope; no attacks are executed now. Setup PASS alone cannot satisfy CVQ restrictions.
+
+Rollback is scoped and reversible: if this exact newly registered service exists,
+separately authorized `sc.exe stop JohnnyGrantAuthority` then
+`sc.exe config JohnnyGrantAuthority start= disabled`; disable only the exact newly
+created review SID with Disable-LocalUser. Stop after failed stop/identity mismatch;
+finite retry0, preserve RECOVERY_REQUIRED. Retain protected ledger/evidence/payload
+and ACL/owner readback for recovery. No account/service deletion, recursive deletion,
+global ACL restore/reset, Git reset/clean, immediate GC or old artifact cleanup.
+New setup assets carry Owner/attempt/TTL through setup/qualification plus evidence
+seal; if rollback/cleanup is unconfirmed keep a recovery hold, not a false closed
+ticket. Since pre-state targets were absent, this packet does not restore or modify
+any preexisting service/user/path. A future reuse/update needs its own exact pre-state.
+
+Pending before external confirmation: reviewed native executable/dependency/config
+hashes and argv; actual subject SID acquisition/rights; exact no-extra-ACE descriptor
+construction; OS-protected observation/enrollment; all reachable effect roster,
+enforceable bounds and loopback/network rules. These are OUR remaining build/manifest
+tasks, not a request for the Owner to design missing components. Submit the completed
+operation list once, no guessed hashes or blanket elevation permission.
+
 ## Sources for proposed primitives
 
 - OpenAI official subagents: https://learn.chatgpt.com/docs/agent-configuration/subagents
@@ -348,3 +500,9 @@ local work continues; the exact external effects wait. R0/DAP/TAL/Recovery and
 - Claude CLI/hooks: https://code.claude.com/docs/en/cli-reference and https://code.claude.com/docs/en/hooks
 - Windows authenticated pipe peer: https://learn.microsoft.com/en-us/windows/win32/ipc/impersonating-a-named-pipe-client
 - SQLite transactions/durability: https://www.sqlite.org/lang_transaction.html and https://www.sqlite.org/atomiccommit.html
+- Python3.11 SQLite transaction/timeout API: https://docs.python.org/3.11/library/sqlite3.html
+- Microsoft service accounts: https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/understand-service-accounts
+- Microsoft pipe access rights/create-instance caveat: https://learn.microsoft.com/en-us/windows/win32/ipc/named-pipe-security-and-access-rights
+- Microsoft ACL command semantics: https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/icacls
+- Microsoft service creation: https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/sc-create
+- SecureString local-user creation: https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.localaccounts/new-localuser?view=powershell-5.1
