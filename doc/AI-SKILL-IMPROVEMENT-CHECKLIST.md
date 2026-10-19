@@ -3,7 +3,7 @@
 | 欄位 | 值 |
 | --- | --- |
 | 文件身分 | `AI-SKILL-IMPROVEMENT-CHECKLIST`；本專案工作追蹤，非新 PRD／SPEC／Gate |
-| Revision／來源 | `55`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
+| Revision／來源 | `56`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
 | 工作基準 | `a1cb6c13adbeb52a4117991727dcc3d4af6d2a33`；分支 `codex/skill-improvement-checklist` |
 | 主線 | 先對照、優先 02→04→05→06→07，再處理餘項與整合回放 |
 | 負責 | Root 理解需求、衝突與派工；票級實作者依有效能力 Profile；獨立審閱另席 |
@@ -30,7 +30,7 @@ Router、Reviewer、文件索引與結案規則仍各有唯一正文。`[x]` 只
 | [ ] 11 去重與衝突 | `WPR_TEMPLATE_AND_HISTORY_LOCAL_INTEGRATED / ACTIVATION_OPEN` | 原37／38／40／42保留；Luna44在既有RequirementLineageGate增加純revision-history驗證、重用原test；[獨審](reviews/workflow-governance/44-requirement-revision-compatibility-code-review.md) | 原42之46tests／不同位置WPR突變證據保留；44獨審14tests／30subtests、鏈結與terminal不同門突變紅→綠、Root gate1aa5ed22與兩blob一致；獨立seal確認 | `APPROVED_44 / LOCAL_INTEGRATED / CLEANUP_BLOCKED` | 舊一對一validate維持生效；可信creation issuer／效應前grant讀回／原子consume及真Host尚缺，不用純history方法冒充正式身分遷移；清理政策阻擋 |
 | [ ] 12 回放與獨審 | `EXISTING_CASES_MAPPED / END_TO_END_NOT_VERIFIED` | Root沿既有案例／review；46增加受版控本地命令來源，未新增回放框架；30B／43仍未整合 | 46合法command-plan與拒絕／版本釘選／不同門突變均有獨審；整合後36tests／22subtests。04不重做，既有局部PASS沿用，候選不冒充整合版 | `PARTIAL_ONLY` | 完整01–10正式來源/effect回放仍缺；Owner已採納首次入口順序例外，但未授權Host測試；不是資格或總驗收 |
 
-## 當前工程接續與精確證據（revision55）
+## 當前工程接續與精確證據（revision56）
 
 C6／H1／H2-A／C7已封存工程證據沿用，不重跑。H2-B a4a3d23c完成純peer／
 record比對，Root274tests／strict3、不同門disposition突變紅→綠，來源獨審與
@@ -51,8 +51,11 @@ guarded tests／strict2通過，cleanup-poison不同門三紅→精確還原三�
 原guard／型別失敗不洗掉。H6closure20的A發現Close=17仍被Protocol當成合法，
 cff4ee57限縮修正後Root62tests／strict2通過，membership-unavailable不同門
 紅→還原綠，另一席複驗PASS；652e0e05接續同作者B。原報告聲稱四baseline紅，
-實際raw三紅一綠，明確保留修正。不把one-shot JSON／expected值／強參照當成
-OS身份、獨占lease或Host資格，服務接線仍未完成。
+實際raw三紅一綠，明確保留修正。B候選8c242768雖Root111tests／strict2綠，
+獨審仍查出仿造owner通過與OpenProcessToken DLL錯綁；Root不同有效alias門
+ZERO_RED暴露測試被invalid-zero條件遮蔽。原票d4385b68一次批次列三finding，
+原作者同兩檔修正與基準紅／反向驗證中，不因綠燈假結案。不把one-shot JSON／
+expected值／強參照當成OS身份、獨占lease或Host資格，服務接線仍未完成。
 
 無相依工作37沿原票修Dispatch normalization的WPR權威衝突，另修兩個已核准
 規則的舊pin；最終80cc4484獨審／Root55tests／202subtests／strict2通過，
@@ -63,8 +66,12 @@ OS身份、獨占lease或Host資格，服務接線仍未完成。
 其餘工作不被此清理阻塞拖住。原30N5 closure19最終969aa0ee，Root103tests／
 strict2及initial-response status不同門紅→還原綠，另一席讀完整15原始突變
 trace／來源PASS；84c3e18c封存21原JSON，另席讀回hash／byte相同。01patch輸入
-UNKNOWN與五次多餘重跑保留，不捏造恢復。214cc16b派已釋放作者接原票C8
-三MODIFY：既有原生工具輸出actual觀察值，舊verify介面不變；不另造Framework。
+UNKNOWN與五次多餘重跑保留，不捏造恢復。C8最終57812f34三MODIFY沿用原生
+工具輸出actual觀察值；Root離線.NET10.0.302零warnings/errors，三fake selectors
+通過，不同file_id門具名紅→精確還原／重建綠。另一席完整來源與四target突變
+trace複驗PASS；efa2badc封存12原始JSON，另席byte/hash讀回PASS。舊verify介面
+不變，非原子OS write／running image證據，不另造Framework。d1b9fc34只準備
+已審H5／H2B／H4／C8的33精確blob來源組合，H6有finding仍排除；不是正式整合。
 未啟動socket／CLI／模型或實際Host，有限fixture不代表已與原生派送接通。
 
 CVQ最終24c79d22在原lineage完成E01–E04同票修正。Root實際34行為tests、
@@ -76,7 +83,7 @@ join被刪除時具名紅→還原綠，合法pure與HostDiscovery注入案例�
 
 01–12勾選不變、04不重做；正式source／issuer／Host效應與30B／43尚未驗收。
 沒有push／release／deploy／安裝／主機安全設定或正式閘門啟用。
-本段原revision54由Git保留，不為相同進度重複堆疊另一份正文。
+本段原revision55由Git保留，不為相同進度重複堆疊另一份正文。
 
 ## 前次工程接續與精確證據（revision49歷史）
 
