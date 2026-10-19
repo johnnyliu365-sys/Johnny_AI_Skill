@@ -1,10 +1,15 @@
 # Core capability implementation decision — revision02
 
-Status: REVIEWABLE_DESIGN / BOOTSTRAP_EXCEPTION_AND_EXTERNAL_ENROLLMENT_NOT_AUTHORIZED.
+Status: INDEPENDENTLY_REVIEWED_PROPOSAL / BOOTSTRAP_EXCEPTION_AND_EXTERNAL_ENROLLMENT_NOT_AUTHORIZED.
 Parent: Owner's existing12-item local batch; original Ticket30 and workflow/adaptive
 SPEC lineages. This plan selects implementation responsibilities, not a new PRD,
 Router, policy engine, qualification verdict or production activation.
 Baseline10b06f82c0825d6339d12712f0b2f752114c8790; assessment2026-10-19.
+Independent ordinary architecture/docs review: /root/batch_authority_review,
+APPROVED_AS_PROPOSAL for b77fc961f99e51b6cb0dad74a8e2b5646a1e4559 / leafblob
+a9786cb7e8b1e8aa2eda1c74742c3e0596a8ac7e. Revision01's circular bootstrap finding
+was corrected in that revision02; no operational qualification, source-code audit
+substitution, implementation Grant or Owner approval is conferred by this review.
 
 ## 1. Determination from current evidence
 

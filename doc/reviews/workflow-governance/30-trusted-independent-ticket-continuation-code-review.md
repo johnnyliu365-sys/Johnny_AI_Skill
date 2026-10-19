@@ -896,3 +896,34 @@ Root decision: accept the public-entry containment evidence only. Real issuer/
 readback admission remains NOT VERIFIED, so30B and43 are unintegrated and full
 Ticket30/checklist01/02 remain open. Candidate history, worktrees, journals and
 Recovery holds stay intact. No push, release, deployment or formal activation.
+
+## Concrete implementation determination — 2026-10-19
+
+Root prepared the [existing-lineage implementation decision](../../runbooks/grant-and-readonly-host-implementation.md),
+revision02 atb77fc961f99e51b6cb0dad74a8e2b5646a1e4559, blob
+a9786cb7e8b1e8aa2eda1c74742c3e0596a8ac7e. Different ordinary architecture/docs
+reviewer /root/batch_authority_review returned APPROVED_AS_PROPOSAL, not a qualified
+source audit or operational approval. Revision01's bootstrap cycle is explicitly
+corrected as a narrow proposed CVQ method-order exception, not concealed as an
+already-available Host. Final five isolation invariants and six prerequisites stay.
+
+Project-owned build: protected issuer ledger/IPC/client, exact readonly CLI adapter
+and finite offline stimulus using existing CVQ contracts/Ports/Report. Existing
+CLI switches, vendor sandbox service and caller-owned grant files do not prove
+availability. Proposed external changes are separate protected identity/policy/
+observer enrollment and bounded first-entry qualification, with direct OS evidence.
+The Owner supplies OS consent/access, not a finished product or technical design.
+
+The next source slice is exact30G-SOURCE: six create paths in the plan, no modify/
+delete, no service installation, no mainline candidate wiring or effect. Root will
+derive a scoped batch child Grant only after the same Ticket30 boundary is revised,
+independently reviewed and its exact baseline/leaf/roles/worktree are frozen. Pure
+ledger/client tests cannot close actual trusted-Grant R1. Requested additional900s
+author450/reviewer300/Root150 is NOT active. Original599.2/600 command seconds stay
+charged; proposed combined ceiling1500 is not a platform quota or a reset. Native
+operational attempts require later exact manifest/bounds, not this source allowance.
+
+Independent local continuation is Ticket46's versioned local command-source adapter,
+under its own300s newly derived scope. It neither borrows30B time nor changes CI,
+Host/source qualification, publication or cleanup holds. Existing30B/43 remain
+REVIEW_BLOCKED and unintegrated. No rejected cleanup retry or other external effect.
