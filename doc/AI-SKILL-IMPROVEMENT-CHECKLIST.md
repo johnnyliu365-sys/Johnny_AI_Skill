@@ -3,7 +3,7 @@
 | 欄位 | 值 |
 | --- | --- |
 | 文件身分 | `AI-SKILL-IMPROVEMENT-CHECKLIST`；本專案工作追蹤，非新 PRD／SPEC／Gate |
-| Revision／來源 | `40`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
+| Revision／來源 | `41`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
 | 工作基準 | `a1cb6c13adbeb52a4117991727dcc3d4af6d2a33`；分支 `codex/skill-improvement-checklist` |
 | 主線 | 先對照、優先 02→04→05→06→07，再處理餘項與整合回放 |
 | 負責 | Root 理解需求、衝突與派工；票級實作者依有效能力 Profile；獨立審閱另席 |
@@ -30,7 +30,27 @@ Router、Reviewer、文件索引與結案規則仍各有唯一正文。`[x]` 只
 | [ ] 11 去重與衝突 | `WPR_TEMPLATE_AND_HISTORY_LOCAL_INTEGRATED / ACTIVATION_OPEN` | 原37／38／40／42保留；Luna44在既有RequirementLineageGate增加純revision-history驗證、重用原test；[獨審](reviews/workflow-governance/44-requirement-revision-compatibility-code-review.md) | 原42之46tests／不同位置WPR突變證據保留；44獨審14tests／30subtests、鏈結與terminal不同門突變紅→綠、Root gate1aa5ed22與兩blob一致；獨立seal確認 | `APPROVED_44 / LOCAL_INTEGRATED / CLEANUP_BLOCKED` | 舊一對一validate維持生效；可信creation issuer／效應前grant讀回／原子consume及真Host尚缺，不用純history方法冒充正式身分遷移；清理政策阻擋 |
 | [ ] 12 回放與獨審 | `EXISTING_CASES_MAPPED / END_TO_END_NOT_VERIFIED` | Root沿既有案例／review；46增加受版控本地命令來源，未新增回放框架；30B／43仍未整合 | 46合法command-plan與拒絕／版本釘選／不同門突變均有獨審；整合後36tests／22subtests。04不重做，既有局部PASS沿用，候選不冒充整合版 | `PARTIAL_ONLY` | 完整01–10正式來源/effect回放仍缺；Owner已採納首次入口順序例外，但未授權Host測試；不是資格或總驗收 |
 
-## 當前工程接續與精確證據（revision40）
+## 當前工程接續與精確證據（revision41）
+
+N2最終候選1e6847c9（不是沿用舊binary）完成J1–J5來源工程seal：作者kill-on-close
+及Root不同門readback-equality具名紅→精確還原綠，另一席窄複驗。Root最後固定
+fixture於實際EXE/DLL雙digest釘選後5.343秒通過，原始JSON／命令在377f24ed與
+原30review。保留全部失敗、J3 UNKNOWN及Recovery，沒有宣稱正式Host或來源合格。
+
+N3A最終cb877f73建構preflight完成；產品blob6cac5030、Root strict PASS。
+原five zero-red及自我roundtrip漏測都保留；原作者只修既有測試的獨立Expected，
+Root實際五個guard及不同counting-stream門均紅→還原綠，最後digest writer也
+具名紅→精確還原／非增量重建綠，另一席只讀複驗PASS。證據e7760267／原30review。
+這是constructor/parser來源工程，不是B verifier、protected issuer或Host資格。
+
+CVQ Phase A7da40704不重做；現有port確實缺少入口input與完整CaseResult的可信
+來源證據，最小SPEC10／wire06提案92e28d33已不同席DOC_PASS，seal54a6b35f。
+既有SPEC09／wire05仍有效，只有新增public port/fail-stop/full-result差異待精確
+正式核准；不當成已批准或全部拒絕的功能完成，也不阻塞N3等獨立本地工作。
+
+沒有新增完成勾選；以下revision40的狀態為歷史快照，不取代上表必要驗收。
+
+## 前次工程接續與精確證據（revision40歷史）
 
 CVQ唯讀schema候選7da40704已完成來源建構preflight；Root33個實際謂詞突變中
 兩個zero-red測試缺口已由原作者同票補回，Root／另一席窄複驗通過。review06

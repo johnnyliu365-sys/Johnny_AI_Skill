@@ -59,6 +59,15 @@ to that reviewed revision. Current N1 immutable source/evidence hold is unchange
 
 ## 30N3 — Protected payload/enrollment readback construction / closure01
 
+Current A preflight candidate cb877f73a7696e822b89fcfcd82a5b5168df68e8:
+CONSTRUCTOR_SOURCE_ENGINEERING_PREFLIGHT_PASS / PHASE_B_NOT_DISPATCHED /
+QUALIFIED_AUDIT_BLOCKED / NOT_INTEGRATED. Root independent actual predicate reds,
+exact restore/forced greens, strict and different-seat narrow preflight are sealed
+in original30 review e7760267. Five guard zero-red and roundtrip-oracle history
+remain; final product blob6cac5030c2e7a8e0885cfed18f3d590b92f329a3. No native
+effect, source qualification or completed Ticket30 follows. Original A Grant below
+is executed construction history; B requires its own exact binding/preflight.
+
 Current local building slice, not a new Ticket/PRD or operational enrollment.
 Parent=batch-checklist-local-20261019-uncapped; effective Owner policy at85028a76
 and a75d9992, first-CVQ source-order exception retains its exact limits. Baseline
@@ -394,7 +403,7 @@ delegation, push/release/deploy/old cleanup retry or unrecorded extra attempt.
 
 ## 30N2 — Bounded native job primitive / exact local source Grant
 
-Current engineering evidence at e84333ebaf20c89945f2927d9072b03788e52a8e:
+Current engineering evidence at 1e6847c94dbef84dc17dacaafcc008c6d8ce5379:
 SOURCE_ENGINEERING_OBSERVED_FIXTURE_PASS / QUALIFIED_AUDIT_BLOCKED / NOT_INTEGRATED.
 Root actual same-candidate build/predicate mutations/native closed fixture and
 different-seat evidence-sufficiency review are sealed in the existing Ticket30
