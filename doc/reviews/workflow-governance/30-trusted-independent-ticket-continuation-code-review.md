@@ -1,4 +1,27 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H5-A E01 vacuous weakref proof / same-scope correction — 2026-10-20
+
+Candidate5327df7ceaff8d110d30f4137a9f8b7ac5b3c1ab exact2MOD constructor-only,
+59author tests/strict2/import green. Product nullable PyHANDLE fields are correct.
+Root actual source drops only self.retained_pipe_owner assignment to None; named
+test_message_pipe_error_retains_native_owner_identity_and_lifetime stays GREEN
+2.594s, exactrestoreGREEN2.547s. Weakref and error field both become None after
+deleting caller strong ref, so identity comparison is vacuously true. ZERO_RED
+is EVIDENCE_DEFECT H5A-E01 under frozen identity/lifetime AC; not new behavior.
+
+Root derives grant-ticket30n4-pipe-ownership-20261020 revision01a
+ACTIVE_A_EVIDENCE_CORRECTION, exact5327df7c baseline, MODIFY ONLY existing
+tests/test_grant_authority_windows_transport.py. Product and all other files
+READ_ONLY; same author/Root/peer/WT/context/ownedTemp/history. Strengthen same
+method with explicit non-null weakref liveness and exact same original identity
+without keeping an extra test strong ref alive across gc. Both pipe and event
+owners must be independently discriminated. No new module/helper framework or
+production constructor change; ordinary nullable cases remain lawful positive.
+Each actual owner-assignment drop => namedRED/restoredGREEN, affected suite/strict.
+Root will use a different owner-field door. B still NOT_ACTIVE. Preserve original
+zeroRED and first strict diagnostic, no new Owner decision or blind identical retry.
+ACTION_COMPLETED -> AUTO_CONTINUE original author bounded test-only correction.
+
 ## H4-B raw evidence seal — 2026-10-20
 
 Data-only gzip/base64 of three original author JSONL byte strings, no executable
