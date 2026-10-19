@@ -1,5 +1,37 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N2 B6 independent preflight / next exact native observation — 2026-10-19
+
+Candidate e84333ebaf20c89945f2927d9072b03788e52a8e, four declared MODIFY paths,
+Root clean review worktree fast-forwarded from88b707c8. Separate peer
+/root/ticket30_native_tools_review read exact committed diff/constructors/cases,
+no finding (readonly commands1.095/0.869s), no native execution by peer.
+Root forced offline nonincremental build:0warnings/errors5.985s, pure CLI0.531s green.
+Actual predicate mutations, each terminal completion before inverse edit/rebuild:
+count delta>1 to>0: compile6.016s, named same-job completion accounting red0.469s;
+restore compile5.750s/pure0.531s green. Remove fresh-empty-baseline property:
+compile5.953s, named nonempty-job accounting baseline red0.469s; exact restore
+compile5.797s/pure0.516s green. These are pure injected-contract tests, not OS proof.
+Restored Contracts blob1fb1ff24ffb4ea17a4783a7155ea47dad55dbeea; worktree clean.
+Root actual final build EXEba2036f3a54ff5bd0ac1cc862200ec12674b3f24b79d24f0649c6b8f76750589,
+DLL26f9d4585ea18ca679521385121dc28c4ba51c64bfe6e59117da342493f127ac.
+These hashes pin ONE next changed-repair native job-self-test, timeout20s using
+existing registered Root output/closed fixture. No real Host/service/permission
+changes; original J3 historical causeUNKNOWN remains. Native verdict still pending.
+
+## N3 corrected DOC PASS / same-lifetime constructor dispatch — 2026-10-19
+
+Same independent DOC reviewer verified a64fb8da1ff881c37eaeeb27964b8efff22584f4,
+leaf blob b270de4275f74ae5527d8dabace92a312d5e39a8 / LF3344af2971fa16d6433bc1e1b4dd8eee14a1ca05ae0d48ad0369d5b43ad752fb:
+CodeRoot/DataRoot roles match runbook03 section6; exact A Grant/paths unchanged.
+Ordinary DOC PASS only, no Host qualification. Root verified root/.worktrees and
+all output ancestors non-reparse, allocated .worktrees/skill-improvement-30n3-enrollment
+at88b707c8585501173bb6898f332ad52a5765ed66, branchcodex/skill-improvement-30n3-enrollment,
+clean common Git root. Registered exact output Temp/johnny30n3-enrollment-owner-20261019
+and owner/TTL/hold per ticket. Reused named /root/ticket30_native_tools_impl for A
+only under grant-ticket30n3-enrollment-20261019; Root orchestrator and distinct
+native_tools_review peer. No B behavior, operational enrollment or security effect.
+
 ## N3 DOC correction / configuration responsibility — 2026-10-19
 
 Independent ordinary DOC reviewer /root/batch_authority_review read b441d055,
