@@ -1,4 +1,19 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H1 revision02 correction activation — 2026-10-20
+
+Distinct /root/batch_authority_review DOC_PASS exact0f6dbbfa0f29d39b1119172998cad68ad92033b1,
+ticket LFf37407af356ac79098da3f0a2d517b4da353c9cc07e48b0e682dab6a68eecfc6
+matches D8. Fresh Root own tool readback confirms source owner clean exact
+dee1977a17ec0e325d2f7ccc1b3325d47da23286/exact branch/linkedGit/nonreparse
+contained ancestors. Same typed seam and normal preflight retained, no blind
+rerun or prior failure discarded. grant-ticket30n4-bounded-pipe-io-20261020
+revision02 ACTIVE, only2MODIFY/CREATE0/DELETE0 for E01/E02, same author/context/
+WT/source baseline and uncapped parent. Root sole reviewer, distinct source
+peer retained. Raw pipe/stop private interface unchanged; only completion event
+owner and malformed completion retention, no actual native probe/Host/security/
+install/qualification/integration. SiblingZIP residue stays protected, not
+authorized deletion. ACTION_COMPLETED -> AUTO_CONTINUE same-author correction.
+
 ## H1 initial review / necessary E01/E02 — 2026-10-20
 
 Exactdee1977a17ec0e325d2f7ccc1b3325d47da23286 vs5449c063, RootownWTcdf96c
