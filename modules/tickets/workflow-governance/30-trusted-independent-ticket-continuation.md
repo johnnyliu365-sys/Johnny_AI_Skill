@@ -205,9 +205,9 @@ Growth signals each C# production file<=300 effective lines, SelfTests<=350, Pyt
 wrapper<=180; crossing prompts responsibility review, not compression/new files.
 TEST->A->B N/A new native tool, no prior behavior moved/retired. XSS/UI/DB/deploy N/A.
 
-### Active N1 boundary (historical30G fence below is plain text)
+### Historical N1 boundary (completed source held; active N2 boundary below)
 
-```johnny-boundary
+```text
 modify = AGENTS.md
 create = library/local_orchestration/native_windows/JohnnyAuthority.Tools.csproj
 create = library/local_orchestration/native_windows/global.json
@@ -257,14 +257,15 @@ post-restore rebuild/green/final identity is newly allowed; mutated build output
 is not a candidate artifact. No source repair/new mutation/Host effect allowed. No helper
 delegation, push/release/deploy/old cleanup retry or unrecorded extra attempt.
 
-## 30N2 — Bounded native job primitive / exact local scope, GRANT_PREPARATION
+## 30N2 — Bounded native job primitive / exact local source Grant
 
 Same original Ticket30/PRD/CHG/SPEC and first-entry source-staging exception.
 This is the Windows primitive portion of the existing controlled-executor/observer
 responsibility, not another Runner, authorization engine or Host qualification.
 It may proceed only after N1 engineering acceptance and an explicit Root-derived
 child Grant with the final exact source/contract versions. N1 immutable evidence
-and qualified-audit hold remain. This proposed section is NOT a Grant.
+and qualified-audit hold remain. The exact Grant below activates after independent
+document consistency PASS, not after any presumed Host qualification.
 
 Current resource admission HOLD: after actual N1, author350-161-132.77=56.23;
 retain old30G correction30, leaving26.23, below this slice's planned45 envelope.
@@ -359,15 +360,111 @@ named red, exact restore/green. Preserve unreduced outputs and candidate hashes.
 Existing N1 executable cases remain green through its shared Python fixture;
 strict mypy/in-memory compile and cumulative Git scope also required.
 
-Proposed resources: author<=45, reviewer<=32, control<=22 command seconds, including
-constructor preflight, initial behavior and one correction; each command<=60s,
-subprocess<=55s, serial/no automatic retries. These are NOT fresh allowances:
-admission first subtracts actual N1/old30G/Root history from350/220/330 and1500,
-retains old30G correction30, and records the exact remaining envelope. If this
-closed slice cannot fit, no dispatch; report the actual shortfall once with the
-remaining build/operation package. Existing named author and different reviewer
-may continue in their allocated contained worktrees after precise candidate binding;
-no new Agent role. Root does not implement source or treat staging as integration.
+Historical45/32/22 planning is not an active cumulative ceiling under the effective
+Owner amendment. Continue elapsed/resource accounting and preserve all old entries.
+Each command initially<=60s, child<=55s, one foreground process per seat; diagnose
+and record workload before any per-command adjustment. No identical failure retry
+without new evidence. Root does not implement source or treat staging as integration.
+
+### Exact N2 direct-lane Grant and construction ordering
+
+Parent `batch-checklist-local-20261019-uncapped`, source policy reviewed at85028a76,
+authority recorda75d9992 and independent consistency PASS by
+`/root/batch_authority_review`; original N1 engineering candidate and immutable
+source baseline `0a2e0661eef741be1b9df103ae8874c284cf60f8`, tree
+`9774ca07aad0048d9d9a092ab73f4206c88a421e`. No final qualification is inferred.
+
+```yaml
+grant_id: grant-ticket30n2-native-job-20261019
+parent_authority: batch-checklist-local-20261019-uncapped
+ticket: wg-ticket-30
+slice: 30N2
+stage: IMPLEMENT
+baseline: 0a2e0661eef741be1b9df103ae8874c284cf60f8
+implementation_owner: /root/ticket30n2_native_impl
+reviewer_orchestrator: /root
+independent_evidence_peer: /root/ticket30_native_tools_review
+worktree: .worktrees/skill-improvement-30n2-native
+branch: codex/skill-improvement-30n2-native
+context_view: ctx-ticket30n2-native-job-20261019
+profile: HIGH_ASSURANCE_SOURCE_ENGINEERING_ONLY
+implementation_profile: implementation-standard
+review_profile: ticket-review
+construct_before_behavior: true
+correction_policy: EVIDENCE_PROGRESS_REQUIRED
+cumulative_command_limit_policy: OWNER_REMOVED_FOR_LOCAL_BATCH
+```
+
+The six exact CREATE/MODIFY paths above are the full source allowance. The single
+machine boundary below replaces only the retired N1 construction boundary; it does
+not retroactively change N1's accepted bytes or grant effect authority. Root allocated
+this contained, non-reparse linked worktree clean at0a2e0661 and verified common Git
+identity. Ownership is disjoint from retained B3's gate/driver; separate implementation
+seats may work in parallel, one ticket/view each, no delegation by implementers.
+
+Phase A constructs internal named immutable bounds/result/status and a narrow typed
+native port in the three new files; explicit interop declarations may exist but
+invoke no native operation. Reuse the existing build fixture, expose only a pure
+job-contract-self-test mode, validate all ordinary constructors/finite failures,
+zero create/resume calls for invalid bounds and strict compile. No process creation,
+job setup, filesystem observation or other native behavior before different-seat
+constructor preflight pins Phase A's actual commit. No new public product API or
+constructor bypass; marshalling structs remain at the interop boundary.
+
+After that existing type preflight, Phase B uses the SAME files/Grant/view to add
+the J1–J5 behavior. Program's only new native commands are job-self-test and closed
+owned-fixture modes (complete, child-denial attempt, sleep); never arbitrary run/
+exec/argv/path or a real Host binary. Select the current candidate apphost explicitly;
+when invoked as dotnet or an unexpected image refuse rather than spawning an ambient
+executable. Record apphost AND loaded assembly digests; a generic apphost hash alone
+cannot bind behavior. Use hidden/no-window own fixture, no inherited handles,
+explicit finite environment. On pre-assignment failure terminate only the exact
+owned suspended process handle; never resume it or kill by PID/name. Failed teardown
+retains RECOVERY_REQUIRED evidence/ownership and blocks further fixture operations.
+Job-create/limit-readback/assignment/resume sequencing must be independently testable.
+
+Catalog reuse check: workflow-control only advertises workflow-router-poc, a transition/
+metadata module, not a Win32 executor. Existing executor_routing is pure model selection;
+host_lifecycle is recorded Host lifecycle/registration. Neither supplies a native job
+primitive. Reuse N1's SDK/manifest/safe-handle conventions and single Python build fixture;
+add only the missing Win32 shim, not a replacement Runner or Host framework. Existing
+N1 cases remain test consumers. No duplicate fixture/compiler/cache setup or dependency.
+
+Author and distinct reviewer use real owned fixture positives and policy-denial/
+timeout/cancel assertions plus separately labelled injected failures, then different
+source-door reverse red/restored green. Source engineering is staged only, never
+APPROVED_SOURCE, qualified isolation or permission to unblock30G/30B/43. Return exact
+candidate, full source diff, commands/raw results/mutations/start-to-terminal time,
+native-vs-injected coverage, deviations and recovery/asset holds. No silent all-reject
+pass, cleanup retry, source integration, push/release/deployment or persistent OS effect.
+
+```johnny-boundary
+modify = library/local_orchestration/native_windows/JohnnyAuthority.Tools.csproj
+modify = library/local_orchestration/native_windows/Program.cs
+modify = tests/test_native_authority_tools.py
+create = library/local_orchestration/native_windows/NativeJobInterop.cs
+create = library/local_orchestration/native_windows/NativeJobGuard.cs
+create = library/local_orchestration/native_windows/NativeJobSelfTests.cs
+forbid = AGENTS.md
+forbid = CONTEXT.md
+forbid = Workflow.md
+forbid = CodeReview.md
+forbid = skills/
+forbid = template/
+forbid = modules/
+forbid = doc/
+forbid = library/workflow_router/
+forbid = library/local_orchestration/grant_authority/
+forbid = library/local_orchestration/mainline_readback.py
+forbid = library/local_orchestration/native_windows/NativeManifest.cs
+forbid = library/local_orchestration/native_windows/ProtectionPlan.cs
+forbid = library/local_orchestration/native_windows/WindowsReadback.cs
+forbid = library/local_orchestration/native_windows/SelfTests.cs
+```
+
+ACTION_COMPLETED / N2_EXACT_LOCAL_GRANT_BOUND -> AUTO_CONTINUE / TYPE_CONSTRUCTION,
+then ordinary independent preflight -> same-owner native behavior -> independent
+engineering review. No new Stage/Gate or resource-renewal question is introduced.
 
 All fixture assets have Ticket30N2/seat owner, exact fixture identities, TTL through
 review/evidence seal and normal exact teardown; failed teardown creates a hold.

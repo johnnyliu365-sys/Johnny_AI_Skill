@@ -1,5 +1,28 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Current local execution-policy amendment — 2026-10-19
+
+Owner `batch-checklist-local-20261019-uncapped` supersedes cumulative per-ticket/
+per-role command caps and fixed correction counts for the original12 local items,
+expressly30B/30G/B3F01. It does not adopt the old500 proposal or reset historical
+usage/failures/UNKNOWN. Canonical rules05528c12 corrected85028a76 and project
+recorda75d9992; CVQ matching policy89eb6fc6/Grantdoc13 at3a05e2a6, leafblob
+e4827f031dc09e617f6a0560a2989fb13b495517, LF
+71d5556f5b47551b57dd2b087e47553d5a762bc1bdd9516abb32a26792dec66f.
+Independent ordinary DOC consistency reviewer /root/batch_authority_review PASS;
+independent automatic-chain bounds remain, and the separate historical B3 allocations
+1600 vs Ticket30 ceiling1500 are distinguished. B3 existing typed constructors /
+source-set refusal independently PASS0.8839854s; main ticket-template65 PASS4.9403512s.
+This activates only the exact local execution-policy/child-Grant route, no trusted
+issuer, final source audit, Host/model/security effect, integration or release.
+
+B3's exact source repair was dispatched to the retained low-cost owner in fresh
+contained cvq-01b3-identity at2e889401, separate from N1; original candidate/worktree
+retained. Current N2 scope is separately frozen in the original Ticket30; ordinary
+constructor-first preflight and source engineering review remain necessary. Only04
+is complete in the original checklist. All following old budget/attempt proposals
+and pending-renewal statements are historical where superseded by this decision.
+
 Latest cross-stream engineering evidence2026-10-19: original CVQ B3doc12/review16 at
 75d165b5e3b9e4e26b8b36af240d218b06447f4f independently document-reviewed PASS,
 /root/batch_authority_review0.725s. Root strict21 succeeds; its full async duration
