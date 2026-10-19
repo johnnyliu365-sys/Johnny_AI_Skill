@@ -3,7 +3,7 @@
 | 欄位 | 值 |
 | --- | --- |
 | 文件身分 | `AI-SKILL-IMPROVEMENT-CHECKLIST`；本專案工作追蹤，非新 PRD／SPEC／Gate |
-| Revision／來源 | `35`；沿用既有12項與acf0ffa1／ded322b3批准；Owner批次本地授權與首次CVQ順序例外；SAME900重新分配350/220/330，原帳與1500總上限保留。非 OS變更／Host測試／push／正式啟用授權 |
+| Revision／來源 | `36`；沿用既有12項與acf0ffa1／ded322b3批准；Owner批次本地授權與首次CVQ順序例外；SAME900重新分配350/220/330，原帳與1500總上限保留。非 OS變更／Host測試／push／正式啟用授權 |
 | 工作基準 | `a1cb6c13adbeb52a4117991727dcc3d4af6d2a33`；分支 `codex/skill-improvement-checklist` |
 | 主線 | 先對照、優先 02→04→05→06→07，再處理餘項與整合回放 |
 | 負責 | Root 理解需求、衝突與派工；票級實作者依有效能力 Profile；獨立審閱另席 |
@@ -28,9 +28,32 @@ Router、Reviewer、文件索引與結案規則仍各有唯一正文。`[x]` 只
 | [ ] 09 窄修窄審 | `CORRECTION_CASES_VERIFIED / CLOSURE_CANDIDATE_REVIEW_BLOCKED` | 原35 consumer回歸保留；31B原作者修四finding、原獨審複驗；43 candidate沿既有Closure／AC精確關聯，沒有新增分類引擎 | 原pipeline／renderer／publisher126tests／205subtests；31B65tests、不同門反向突變；43 exact finding/child/dependency sets負例在獨審19tests／58subtests內 | `CASE_PASS / 43_ENGINEERING_PASS` | 43正式審查未通過不得整合；影響與實際consumer範圍仍須reviewer證據，不把字串分類當語意判定，不以一回合代表全Host強制能力 |
 | [ ] 10 成本／外部呼叫／回報 | `MODEL_AND_REPORT_LOCAL_INTEGRATED / PAID_TEST_ISOLATION_GAP` | 原模型切片68a10057；Luna31B改兩模板／既有test，原獨審者APPROVED e83a4a72，Root gate64157fbe；[證據](reviews/workflow-governance/31-semantic-model-profile-boundary-code-review.md) | 原36tests／74subtests保留；回報65tests，七欄刪除14紅→綠；獨審改活躍label紅→綠；三blob精確等於受審候選、整合後65綠。產品／純腳本案例明確分開 | `APPROVED_31B / LOCAL_INTEGRATED / CLEANUP_BLOCKED` | 付費API／正式credential之真Host網路隔離未qualified；模板不證明語意真偽。清理遭Host政策阻擋，資產保留；整項不勾選 |
 | [ ] 11 去重與衝突 | `WPR_TEMPLATE_AND_HISTORY_LOCAL_INTEGRATED / ACTIVATION_OPEN` | 原37／38／40／42保留；Luna44在既有RequirementLineageGate增加純revision-history驗證、重用原test；[獨審](reviews/workflow-governance/44-requirement-revision-compatibility-code-review.md) | 原42之46tests／不同位置WPR突變證據保留；44獨審14tests／30subtests、鏈結與terminal不同門突變紅→綠、Root gate1aa5ed22與兩blob一致；獨立seal確認 | `APPROVED_44 / LOCAL_INTEGRATED / CLEANUP_BLOCKED` | 舊一對一validate維持生效；可信creation issuer／效應前grant讀回／原子consume及真Host尚缺，不用純history方法冒充正式身分遷移；清理政策阻擋 |
-| [ ] 12 回放與獨審 | `EXISTING_CASES_MAPPED / END_TO_END_NOT_VERIFIED` | Root沿既有案例／review；46增加受版控本地命令來源，未新增回放框架；30B／43仍未整合 | 46合法command-plan與拒絕／版本釘選／不同門突變均有獨審；整合後36tests／22subtests。04不重做，既有局部PASS沿用，候選不冒充整合版 | `PARTIAL_ONLY` | 完整01–10正式來源/effect回放仍缺；首次Host建構順序例外只是待Owner採納提案，不是資格或總驗收 |
+| [ ] 12 回放與獨審 | `EXISTING_CASES_MAPPED / END_TO_END_NOT_VERIFIED` | Root沿既有案例／review；46增加受版控本地命令來源，未新增回放框架；30B／43仍未整合 | 46合法command-plan與拒絕／版本釘選／不同門突變均有獨審；整合後36tests／22subtests。04不重做，既有局部PASS沿用，候選不冒充整合版 | `PARTIAL_ONLY` | 完整01–10正式來源/effect回放仍缺；Owner已採納首次入口順序例外，但未授權Host測試；不是資格或總驗收 |
 
-## 本批剩餘限制與接續邊界（revision31歷史；最新判定見下節）
+## 原生工具局部工程證據（revision36）
+
+原票30N1沿原需求與同一Grant完成九個CREATE，候選
+`0a2e0661eef741be1b9df103ae8874c284cf60f8`／tree
+`9774ca07aad0048d9d9a092ab73f4206c88a421e`。作者Luna、不同Sol席位獨審；
+Root只做控制文件。原生強型別manifest/整份DACL計畫、readonly owner/DACL/
+volume/file identity及真實候選CLI四個聚焦tests通過，strict mypy/in-memory compile通過。
+作者pipe-mask source mutation紅→精確還原綠；獨審實際getter-success source mutation
+`MISSING/exit1`→精確還原重建`OBSERVED/exit0`。兩輪既有finding均有修正/複驗；
+不是單憑編譯、自述或測試物件突變。完整命令、未縮減輸出及不同build hashes見
+[原票30 review](reviews/workflow-governance/30-trusted-independent-ticket-continuation-code-review.md)。
+
+這是SOURCE_ENGINEERING_PASS，不是qualified audit/正式整合/Host資格/可信issuer。
+真實reparse fixture遇1314，該負例及denied/native fault是明示INJECTED；不得假勾。
+九檔與fixtures保留QUALIFIED_REVIEW_HOLD，不改Recovery、不重試舊清理。只有04維持勾選。
+原帳599.2、角色舊帳161/84及Root舊時間UNRECONCILED/reserve200保留；N1累計作者132.77、
+reviewer94.523，不重置。N2票面已獨審但NOT_GRANTED：保留old30G correction30後，
+作者可用26.23小於規劃45；不是平台額度不足或總1500已耗盡。
+
+來源窄查另確認CVQ control55b9a91c已有B3修復候選2e889401，而不是runbook舊指向27bb。
+原B3document10/section14與review15/section19保留strict結果UNVERIFIED、最終campaign及
+qualified audit缺口；不重派作者修已回件的F01，不借用舊PASS或普通subagent冒充資格。
+
+## 本批剩餘限制與接續邊界（revision31歷史；最新判定見上節及後續記錄）
 
 本批已准入建置30B／31B／43／44均回件並完成可執行的獨審／修正；10-19另完成
 30B公開入口偽造Grant的限縮修正0f6d467a，原獨審確認PASS_CONTAINMENT_ONLY；31B與44

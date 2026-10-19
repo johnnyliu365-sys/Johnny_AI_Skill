@@ -31,7 +31,11 @@
 
 ## 30N1 — Native protection planning/readback tool / closure revision01
 
-State: DOCUMENT_PREFLIGHT_PENDING, not yet an implementation Grant. Owner approved
+State: SOURCE_ENGINEERING_PASS / QUALIFIED_AUDIT_BLOCKED / NOT_INTEGRATED. Development
+Grant executed; source0a2e0661eef741be1b9df103ae8874c284cf60f8 is staged, not authority
+or an install-ready service. Source baseline40aef85adadc02d6b73a8e99d0c16e2c7b022eb3;
+exact original authority leafblob475bc02f481f2818016519d476b7e2ba59f91f79 retained.
+Owner approved
 the existing batch's continued local construction and explicitly approved redistribution
 of the SAME900 command seconds: author350/reviewer220/control330, total ceiling1500.
 Original599.2 remains. Historical30G author161/reviewer84 remain charged. Root's
@@ -203,6 +207,12 @@ Effective MODIFY/DELETE none via reviewed denied sentinel, as30A/30G. Cumulative
 diff always compares to final docs baseline, not constructor cut. Native setup/observer/
 first Host entry remain subsequent bounded source work; stage immutable engineering
 candidates under the approved minimal-first-entry exception, not final qualification.
+N1 author132.77/135 and reviewer94.523/100 remain charged; final4-test peer suite and
+independent getter source-red/restored-green passed. Real symlink creation1314 was
+unavailable; reparse/denied/native-fault negatives are explicitly injected, not OS
+qualification. Worktrees and registered build roots carry QUALIFIED_REVIEW_HOLD
+through full qualified review/evidence seal; no TTL-triggered deletion. Original
+Recovery states are unchanged. Exact commands/raw output/hashes are in original review.
 Only actual externally approved OS setup/observation and final CVQ may unblock30G/
 30B/43. Return ImplementationReturn + candidate/files/checks/mutations/time/deviations;
 no prompt/Owner narrative/ticket body inside source. Initial and first11.72s
@@ -227,6 +237,13 @@ responsibility, not another Runner, authorization engine or Host qualification.
 It may proceed only after N1 engineering acceptance and an explicit Root-derived
 child Grant with the final exact source/contract versions. N1 immutable evidence
 and qualified-audit hold remain. This proposed section is NOT a Grant.
+
+Current resource admission HOLD: after actual N1, author350-161-132.77=56.23;
+retain old30G correction30, leaving26.23, below this slice's planned45 envelope.
+Reviewer220-84-94.523=41.477 fits32. Do not underfund/retry this native slice just
+to continue, release historical reservations silently, or pretend the overall
+1500 ceiling was hit. This is a role-envelope allocation constraint; Root continues
+other lawful evidence/source preparation. No additional Parent cost is authorized.
 
 Purpose: prove a job is configured and independently read back by the parent
 BEFORE an owned fixture process resumes, then enforce child-process/time/memory

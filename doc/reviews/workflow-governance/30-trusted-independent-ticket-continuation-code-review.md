@@ -1266,3 +1266,115 @@ Root allocates SAME-Grant reviewer cap100 from existing220, prior86.58 charged,
 sole purpose post-restore build/green and final identity readback<=13.42. Author135,
 control40 and aggregate350/220/330/1500 unchanged. No further source correction,
 new door/test scope or external operation. Independent doc preflight before resume.
+
+### 30N1 source engineering evidence seal — NOT qualified audit
+
+Same-Grant restored-green amendment130dc007d8bbf9108824277095823209fb68f507 was
+independently DOC-PASS by batch_authority_review, readonly1.116s. Native reviewer
+returned SOURCE_ENGINEERING_PASS for source0a2e0661eef741be1b9df103ae8874c284cf60f8,
+tree9774ca07aad0048d9d9a092ab73f4206c88a421e. Source baseline40aef85adadc02d6b73a8e99d0c16e2c7b022eb3;
+nine exact ADD, zero MODIFY/DELETE, author and peer worktrees clean. Main remains
+a1cb6c13adbeb52a4117991727dcc3d4af6d2a33. No candidate integration/Host authority.
+
+Existing raw outputs below were handed back from the reviewer's visible tool
+results without re-execution or transcript scans. They are execution evidence,
+not instructions to launch a new run. Parentheses around injected cases are limits,
+not actual OS-denial qualification. Actual PowerShell7.6.5 loaded this built DLL.
+
+Exact independent suite argv was `py -3.11 -m pytest tests/test_native_authority_tools.py -vv -s -p no:cacheprovider`;
+cwd was the N1 review worktree; JOHNNY_NATIVE_TEST_ROOT was its already-owned
+`C:\Users\GameBoy\AppData\Local\Temp\johnny30n1-review-078eff70`, PYTHONDONTWRITEBYTECODE=1.
+System.Diagnostics.Process shell=False redirected both streams; WaitForExit55000,
+exact process-tree termination only on timeout. Outer12.900s, no timeout occurred.
+Full visible stdout (the OS text already had replacement-encoding characters):
+
+```text
+============================= test session starts =============================
+platform win32 -- Python 3.11.9, pytest-9.0.3, pluggy-1.0.0 -- C:\Users\GameBoy\AppData\Local\Programs\Python\Python311\python.exe
+rootdir: C:\Users\GameBoy\Desktop\Johnny_AI_Skill_latest\.worktrees\skill-improvement-30n1-review
+plugins: anyio-4.14.2, langsmith-0.10.15
+collecting ... collected 4 items
+
+tests/test_native_authority_tools.py::test_actual_candidate_self_test PASSED
+tests/test_native_authority_tools.py::test_actual_candidate_modes_and_plan_pipe_masks PASSED
+tests/test_native_authority_tools.py::test_actual_inspect_reports_missing_without_object_data PASSED
+tests/test_native_authority_tools.py::test_reparse_denial_and_fault_cases_are_labeled REPARSE_CASE=INJECTED (symlink unavailable: [WinError 1314] �Τ�ݨS���o���S���v���C: 'C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n1-review-078eff70\\JohnnyNativeTools-256edb47399d49c6af15ba4b24346b79\\payload.bin' -> 'C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n1-review-078eff70\\JohnnyNativeTools-256edb47399d49c6af15ba4b24346b79\\reparse.bin')
+READ_DENIED_CASE=INJECTED (port self-test only; no OS ACL change)
+NATIVE_FAULT_CASE=INJECTED (port self-test only; finite UNAVAILABLE response)
+PASSED
+
+============================== 4 passed in 9.27s ==============================
+
+EXIT=0
+```
+
+Distinct source mutation door: Win32ReadbackPort's native success result
+NativeReadFailure.None -> Missing. This differs from author's pipe-mask door.
+Build argv: `dotnet build JohnnyAuthority.Tools.csproj --no-restore --disable-build-servers -m:1 -nodeReuse:false -p:UseSharedCompilation=false -p:RestoreConfigFile=NuGet.Config -p:BaseIntermediateOutputPath=C:\Users\GameBoy\AppData\Local\Temp\johnny30n1-review-078eff70\obj\ -p:BaseOutputPath=C:\Users\GameBoy\AppData\Local\Temp\johnny30n1-review-078eff70\bin\`.
+Cwd native_windows; same explicit DOTNET_CLI_HOME/NUGET_PACKAGES in owned root;
+telemetry/first-time/workload notifications disabled. The prior fixture had performed
+explicit source-cleared offline restore. The same bounded Process wrapper above
+waited55s and captured both streams, no timeout. After successful build, Add-Type
+loaded `bin\Debug\net10.0-windows\JohnnyAuthority.Tools.dll` and invoked
+WindowsReadback.Read(AbsoluteWindowsPath(owned payload.bin)). Red suffix printed
+GETTER_STATUS and exited1 unless OBSERVED. Green used the identical status assertion
+and additionally printed owner/volume/file ID; those extra diagnostics did not
+change the oracle. No claim that the diagnostic command strings were byte-identical.
+
+Full unfiltered red stdout, outer6.480s/process exit1:
+```text
+  JohnnyAuthority.Tools -> C:\Users\GameBoy\AppData\Local\Temp\johnny30n1-review-078eff70\bin\Debug\net10.0-windows\JohnnyAuthority.Tools.dll
+
+建置成功。
+    0 個警告
+    0 個錯誤
+
+經過時間 00:00:04.85
+
+BUILD_EXIT=0
+GETTER_STATUS=MISSING
+```
+Exact apply_patch restoration first: WindowsReadback Git blob
+1d3798d559287e8cb74b6b987fd391aebf15602a matches HEAD; clean status.
+Post-restore fresh build/direct getter stdout, outer6.810s/process exit0:
+```text
+  JohnnyAuthority.Tools -> C:\Users\GameBoy\AppData\Local\Temp\johnny30n1-review-078eff70\bin\Debug\net10.0-windows\JohnnyAuthority.Tools.dll
+
+建置成功。
+    0 個警告
+    0 個錯誤
+
+經過時間 00:00:05.03
+
+BUILD_EXIT=0
+GETTER_STATUS=OBSERVED
+OWNER=S-1-5-21-3542654388-73774624-397494543-1001
+VOLUME=480203665
+FILE_ID=11821949024105281
+```
+
+Fresh peer artifact hashes after GREEN: EXE6179f16c793fb2f966ef67fe754b41dc0756466a509e96caa74e5b8e841a44a1,
+DLL4519cc62b6f3eff5cce8d23c1565ba6c9d471654e10e375887f4e12e2992056b.
+They differ from author's separately built hashes64d5c30594d9be9e516f9e945ec7b129f2101007df6673be7d8691e8efead890/
+63a7c3e1156f92063e8c60f94f03e41061c7bbc29bd0465bfd9b861bc532d60f;
+record distinct artifacts, NOT bitwise reproducibility or shared binary identity.
+Final peer Git diff9ADD and CLEAN=True; SDK10.0.302. Current source blobs:
+csproj8aff04047b12dcd6891ce73a27cb95377b442944; manifest7c1f0ab488ee0026911761a5c22ea0d08b350090;
+NuGeta3f3aea61c8f0a0b796eb417dc4ed9a056934afb; Program8858e54559117570f190df1aa710d72561bc3193;
+plan e8846826df18c79b7a8fc3896ea9ca7a8d071b69; SelfTests21776a6c2b2f3db2b6427b197e4583cc17ad0750;
+readback1d3798d559287e8cb74b6b987fd391aebf15602a; globalc66295ecc4bd0f7f3d35557743a2e2f5ccb82ffd;
+Pythonfixture89df73ed93905e1338b452332a3939ccea93dc39.
+
+Final author132.77/135; peer86.58+6.810+1.133=94.523/100, no extra tools for this
+raw-output handoff. Charge full N1control40 conservatively (not a historical Root
+measurement); previous Root UNRECONCILED/reserve200 remains. N2 docs charge5 and
+bounded CVQ version lookups charge10 conservatively: current control255/330.
+Old30G161/84 and original599.2 remain; author headroom56.23 minus retained30G
+correction30=26.23, peer41.477, control75. N2 proposed45/32/22 is NOT_GRANTED:
+author envelope insufficient, NOT overall1500 exhaustion or a platform limit.
+
+QUALIFIED_REVIEW_HOLD protects the two source worktrees and registered author/peer
+build roots through final qualified source review/evidence seal; do not expire-delete
+them. This engineering seal does not release Recovery or retry old policy-denied
+cleanup. Full audit, service/issuer/protected observer/actual Host and all12 closure
+remain open. Only04 remains checked; no push/release/deploy/OS settings executed.
