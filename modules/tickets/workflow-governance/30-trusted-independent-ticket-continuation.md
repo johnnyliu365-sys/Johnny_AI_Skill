@@ -57,6 +57,84 @@ to that reviewed revision. Current N1 immutable source/evidence hold is unchange
 或新實作 admission。29→30 是本票實際重用純投影的能力依賴，不是清單順序。
 本輪文件工作有下節獨立授權；不因此將完整票30改成 admitted/completed。
 
+## 30N4-A1 — reuse Grant frame decoder / closure10
+
+This is the next existing runbook section2 server-transport dependency, not a new
+requirement/service/authority engine. Root read immutable30G client/contracts/
+protocol tests at20bd6e3036608d61feb687ea6e0ff6b7953d3e11. Existing client owns
+bounded response decoder, duplicate/depth/UTF8/JSON checks and request/response
+encoders, but has no corresponding public request decoder. Readonly Architecture
+inventory confirms no current native pipe/SCM entry or protected runtime manifest;
+same-user AuthorityPeer is never OS authentication. No chosen design reopened.
+
+Root chooses the smaller decoder dependency before the proposed five-path fake
+service/extra result/port types. Do not create WindowsGrantReadService or four new
+public DTO/enums/port merely to name a placeholder. Reuse GrantReadRequest and the
+existing frame/parser responsibilities in client.py. No native capability dependency
+is needed for pure request decoding; do not manufacture a combined/qualified base.
+20bd is immutable ENGINEERING_SOURCE_BASELINE_ONLY, not implementation authority:
+authority is this exact batch-derived child Grant and original approved SPEC/lineage.
+Original held30G/N3/C4 branches are not merged or promoted by this local construction.
+
+Public decode_read_request(request_frame:bytes)->GrantReadRequest|None, exported
+from existing grant_authority/__init__.py. It returns a normally validated existing
+two-ID request or None. No dynamic object/raw JSON crosses that boundary and no
+Grant/read/peer approval is produced. Reuse/refactor existing _decode_response frame
+body checks into one private common bounded decoder; do not copy a second JSON
+parser or wire schema. Existing _ReadRequestWire enforces integer revision1 and
+exact schema_revision/grant_ref/operation_ref. Existing response/client behavior
+and all original protocol tests stay intact; no ledger issue/claim/consume/query,
+transport/socket/pipe/SCM/process/environment/config/readback or formal dispatch.
+
+GD01: ordinary constructor + encode/decode positive and independent literal framed
+JSON with distinct IDs preserves exact values; reversed JSON key order/whitespace
+legal. GD02: exact bytes only, four-byte big-endian length,1..16384 body, exact
+total length; empty/short/zero/oversize/truncated/trailing/invalidUTF8 reject. Include
+otherwise-valid JSON padded with spaces to exact16384 accepted,16385 rejected so
+another schema error cannot mask bounds. GD03: duplicate/unknown/missing keys,
+invalidJSON/nonfinite constants/depth>32, bool/float/string revision, badID/control/
+noncanonical value reject; no transformations manufacture a valid ID. Unknown
+approval/role/peer/path/command fields reject. GD04: all existing response/client
+binding/refusal matrix still passes after common-body refactor, source-only scope
+unchanged. GD05: actual common total-length/duplicate and request revision/extra
+predicates each have named red/exactrestoregreen, Root different door; no test-copy
+oracle/unsafe bypass constructor or artificial baseline-red for absent new API.
+
+Exact MODIFY3 only: library/local_orchestration/grant_authority/client.py,
+library/local_orchestration/grant_authority/__init__.py,
+tests/test_grant_authority_protocol.py. CREATE0/DELETE0, no contracts/ledger/native/
+Router/test framework/dependency/other path. Forecast source~35lines net/tests~90,
+no screenshots, docs this section/index/review only; signal not compression quota.
+Existing protocol test375lines remains cohesive; >500effective lines only triggers
+structure/reuse review, not forced split or newfile permission. Temporary raw/cache
+under exact registered named seat output, no worktree artifacts.
+
+Conditional grant-ticket30n4-request-decoder-20261019 under original uncapped batch,
+baseline full20bd SHA above, same original Ticket30/PRD009/CHG009/runbook scope;
+author /root/ticket30n2_native_impl only AFTER C4 correction/review completes and
+its allocation released; Root sole reviewer/orchestrator, distinct existing source
+peer /root/ticket30_native_tools_review. New context ctx-ticket30n4-request-decoder,
+new contained .worktrees/skill-improvement-30g-request-codec /
+codex/skill-improvement-30g-request-codec, Root review uses separately registered
+.worktrees/skill-improvement-30g-request-codec-review / matching codex branch.
+These are isolated source-lineage workspaces, no move/reset/merge of held candidates.
+Owner/TTL through exact review+seal and Review/Recovery holds, normal cleanup gate
+only, no denied cleanup retry. Register before creation owned Temp roots
+johnny30g-request-codec-owner-20261019 and johnny30g-request-codec-review-20261019
+for cache/raw/pytest output; not a Temp repository or alternative clone.
+
+Use existing exact devPython3.11.9/Pydantic2.13.4/mypy2.3.0/pytest9.0.3, no install.
+Ordinary current contract/codec positive preflight, focused protocol suite and
+strict changed source/tests, memory compile/import/diff-check, each actual reverse
+predicate and immutable candidate required. Default single-command60s/child55s,
+serial per seat, source-only HIGH_ASSURANCE engineering staging under existing
+first-entry order exception; no protected-source or Host qualification claim.
+Independent exact DOC pass then Root clean20bd/nonreparse/roles/Git/index readback
+activates the child, not another Owner renewal. History/UNKNOWN/time retained.
+No new public type/bootstrap cycle, service install/IPC/OS rights/Host/model/
+network/credential/effect, formal integration, push/release/deployment. Later
+native service wiring still requires its exact build/operational admission.
+
 ## 30N3 — C4 E01 evidence correction / same closure09, Grant revision02
 
 Immutable03573829d2824fdf6f48cf0cb9bd33846627f746 meets source shape and actual
