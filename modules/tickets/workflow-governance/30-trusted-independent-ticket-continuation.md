@@ -89,13 +89,20 @@ generic-write/create-instance/write-DACL. Owner exact service SID. No null/defau
 SD, inherited/extra/deny/object ACE, broad user group or caller-supplied approval.
 
 H3-F2 CreateNamedPipe exact duplex|overlapped|first-instance, message type+message
-readmode+blocking wait+remote-reject, maxinstances1, bounded buffers matching the
-existing4+16384 maximum framed message, finite default timeout. Explicit
+readmode+blocking wait+remote-reject, maxinstances1, requested buffers exactly16388
+each (existing4+16384 maximum frame), finite default timeout. Native buffer sizes
+are advisory and may round/grow: initial observed sizes must be positive exact
+integers <=1048576 each, including normal rounded-up sizes. This is bounded
+initial readback, NOT a lifetime kernel-memory quota; H1 enforces message bounds.
+Explicit
 SECURITY_ATTRIBUTES bInheritHandle=False. Retain actual owning native wrapper;
 validate positive non-sentinel handle. Read back GetHandleInformation noninherit,
-GetNamedPipeInfo type/server/maxinstance/buffer bounds and GetSecurityInfo exact
+GetNamedPipeInfo type/server/maxinstance/initial-buffer bounds,
+GetNamedPipeHandleState message-read/blocking state, and GetSecurityInfo exact
 owner/protected DACL/complete ACE set+flags+masks+SIDs. Set equality must reject
 duplicates as well as extras. Never repair drift or retry with weaker settings.
+GetNamedPipeInfo cannot attest first-instance/remote/overlapped creation flags;
+offline tests pin their exact emitted arguments, not fabricated OS readback.
 All native dynamic readings validate at boundary; strict mypy, no Any/cast/waiver.
 
 H3-F3 failures stop before exposing owner. If a confirmed acquired owner exists,
