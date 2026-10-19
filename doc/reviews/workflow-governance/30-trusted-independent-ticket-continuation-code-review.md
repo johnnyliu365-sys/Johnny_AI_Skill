@@ -1,4 +1,28 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H6-A E01 noncallable cleanup member / same-scope correction — 2026-10-20
+
+5bfd9ebb65a2b93ec5d5f10b9b557f8a0f8b4b83, exact2CREATE, author58tests/strict2/
+guarded import and source peer PASS. Root repeats58PASS2.641s, actual loaded
+two source digests match candidate. Root ordinary constructor supplies one pure
+object with Close=17 (no native owner/API): TOKEN_CLOSE_FAILED accepts it, printed
+NONCALLABLE_CLOSE_ACCEPTED False, exit1/2.183s. Runtime structural Protocol member
+presence is not proof that the cleanup member is callable. This violates frozen
+closure20 H6-A/H6T1 Close-capable owner invariant, IMPLEMENTATION_DEFECT H6A-E01;
+not a new domain/safety requirement. B NOT_ACTIVE, no Host evidence inferred.
+
+Root derives same grant-ticket30n4-retained-process-20261020 revision01a
+ACTIVE_A_CORRECTION at exact5bfd9ebb baseline, MODIFY ONLY the two files created
+by A; CREATE0/DELETE0. Same author /root/ticket30n4_peer_impl, Root reviewer,
+source helper /root/ticket30_native_tools_review; WT/context/ownedTemp/history
+unchanged. Add minimal callable validation at existing retained-owner boundary
+and parameterized regression inside current tests. Ordinary Close-capable owners
+without unrelated query-handle data remain valid, finite failure/owner iff binding
+and weakref liveness unchanged. Baseline-red against exact5bfd9ebb, source repair,
+affected58+ tests/strict2/import and actual source counter-mutation, full raw
+outputs. No reader/native/DLL behavior, changes to H4/Protocol/domain or new helper
+framework. All old failures retained, no reset/counter renewal. ACTION_COMPLETED
+-> AUTO_CONTINUE original author, B only after independent corrected preflight.
+
 ## H5 original author evidence seal — 2026-10-20
 
 Five unchanged original UTF8 JSONL byte strings, including failed first validation,
