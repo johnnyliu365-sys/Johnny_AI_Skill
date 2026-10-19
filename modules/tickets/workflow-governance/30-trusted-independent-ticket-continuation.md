@@ -92,6 +92,34 @@ remaining budget is not authorization for another attempt. All raw evidence,
 failed setup attempts, Host/tool inventory and exact rejected cleanup call are
 in the existing Ticket30 review. No cleanup retry, push or Host change occurred.
 
+### R1 positive acceptance — separately OPEN, 2026-10-19
+
+Owner explicitly requires a legitimate Grant to succeed through trusted readback;
+public reject-all containment does not satisfy R1. Keep `grant-forged` and the
+0f6d467a regression unchanged. Success must bind a directly read protected issuer
+record to the exact project/ticket/stage/actor/operation/baseline and validity
+period, then read index and leaves at one fresh formal authority observation.
+The issuer identity cannot originate from caller fields, fixture ports, an
+ordinary repository file or the `dispatch-authority.json` owner-intent marker.
+Wrong/forged/expired/replayed grants must still refuse before transport/effect.
+
+Local adapter implementation is covered by the batch goal when that concrete
+trusted source and contract are available; Root may narrow the original allowlist
+and derive a same-lineage Grant without asking again for the batch authority.
+No such qualified source was found in the scoped local_orchestration/workflow_router
+inventory. Provisioning credentials, OS protection or an external issuer requires
+its own external-effect authority; adding a caller-trusting resolver is not a fix.
+Also retain599.2/600 command seconds: no implementation retry under a renamed
+child or reset ledger. A future bounded attempt needs an explicit resource delta
+or a verified accounting correction, not automatic fresh allocation.
+
+Minimal Host restrictions, individual verification expectations and current gaps
+are recorded once in `doc/AI-SKILL-IMPROVEMENT-CHECKLIST.md` revision30, section
+“最小Host能力需求”. Existing raw failure/absence evidence stays in this ticket's
+review. No new qualification attempt, cleanup retry, candidate edit or integration
+is authorized by this status record. E02-style mandatory audit remains blocked;
+independent content-only Ticket45 may proceed without borrowing this ticket's PASS.
+
 ## 30M 文件遷移授權紀錄 — 2026-10-18
 
 Owner 本輪直接授權正式主線文件遷移、獨審、同票修正及受控本地整合，並準備
