@@ -1066,3 +1066,23 @@ retained, not retried. Conservative reviewer A40/80 charged, B220 unchanged.
 Root continues the SAME author's A allocation (42 charged/78 remaining) for these
 two narrow findings, then same-seat type recheck within remaining40. No Phase B,
 new paths/API/Grant authority, integration or new final-correction round.
+
+### 30G-A READY / existing Router continues to G2–G5 construction
+
+Corrected author5ddc263a8306d9d68bf36286d7769451d055d414 retains the original
+three cumulative CREATE paths; two-file correction only. Author continuation
+8.3501024s including patch; round cumulative A to51/120 within SAME450. Reviewer
+same seat independently rechecked exact SHA:56 constructor/roundtrip tests, strict,
+compile/import and cumulative diff passed. Both findings CLOSED; no new demand.
+Reviewer continuation12.25s plus39.52s initial, charge52/A80 within SAME300;
+B220 unchanged. READY_TYPE_PREFLIGHT is not final approval or Host qualification.
+
+Root routes ACTION_COMPLETED to the unique declared Phase B: same author/owned
+worktree at5ddc263a, original source baseline6f6c938cd3d6eeff9e07cdffddfcbfdcbdc08cd0,
+same active grant-ticket30g-source-20261019, revised ticket leafblob
+4e9db7311a51c3bd357eaa2a2814e48ca2fb2fac / LF72ba3f74e6f9459641b7c24f0c130548b2ea7133b73c966316e61a8759475680.
+Only cumulative six CREATE paths; B300 command seconds, <=60 serial each,
+correction30 retained, no transfers/reset. Implement G2–G5 ledger/client/tests and
+focused mutations, export-only init additions; no existing-baseline source edit,
+new authority or native effects. Mandatory qualified audit remains after ordinary
+engineering review; no local source integration is authorized by this type result.
