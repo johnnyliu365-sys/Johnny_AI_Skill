@@ -1,4 +1,17 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## C5 verification binding erratum adopted — 2026-10-19
+
+Distinct read-only /root/authority_topology_architecture confirms ordinary
+DOC_CONSISTENCY_PASS for exactf2da6b09ffe7d3d78c73872f440129f688ebc9d0,
+Ticket LF97a6961cd63eb48a47af1817dec66a17d4136a90474d7f6426e65e0a71612c79
+matches D8. Actual8a source has both CLI selectors, but not heldF1 branch7fa;
+old physical fixture unconditionally attempts symlink. Adopt only existing direct
+offline dotnet restore/nonincrementalbuild plus default/enrollment-contract-self-test,
+registered output bounds, no new builder/script/Python/Host/job tests. Source
+baseline, public contract,4path scope, author/context/Grant/closure11 do not change;
+constructor/source preflightcee5d8 remains valid, no ceremonial rerun or new Owner.
+This erratum restricts verification footprint, not grant expansion or Host policy
+change. Existing source author continues its same approved pure composition.
 ## N4-A1 final source-engineering seal / C5 continuation activation — 2026-10-19
 
 Root sole final reviewer APPROVED_FOR_ENGINEERING_STAGING_ONLY exact
