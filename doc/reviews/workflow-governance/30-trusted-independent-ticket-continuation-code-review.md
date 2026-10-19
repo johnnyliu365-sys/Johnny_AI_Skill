@@ -1,4 +1,37 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H6-A retained-process constructor admission — 2026-10-20
+
+Distinct /root/batch_authority_review DOC_PASS closure20 at55c0358158bcbb406e61f514243bf1724a3a363c,
+ticket blob3a72e4da70bb75f0336eaba9864d9bbc580e99cd,
+LF7c648a638ddfb5753e0db7c3f52a1f4bdd0d45f8a8b21e3c93780e85e5620037;
+registry D8 matches. Pure A before native-reader B; exact same retained owners,
+finite facts/cleanup and explicit no-exclusive-lease/no-Host claim are coherent.
+Root freshly confirms both new WTs/branches/Temp absent, containment and every
+ancestor nonreparse, creates declared allocation only, then reads exact linked
+Git/common-dir/branch/clean baseline37410685e9232e6f50c8bd25066754e37c48b513.
+Existing H2 canonical path/uint32/uint64 adapters admit legal values and reject
+zero/bool/overflow/noncanonical cases in ordinary strict constructors; no native
+operation. No new runtime precondition blocks building its own pure contracts.
+
+Root derives grant-ticket30n4-retained-process-20261020 rev01 H6_A_ONLY ACTIVE
+under batch-checklist-local-20261019-uncapped and existing first-CVQ source-order
+exception. Original30/closure20 above; source baseline37410685 exact. Named author
+/root/ticket30n4_peer_impl, released from H5 into immutable source/evidence hold;
+Root sole reviewer/orchestrator, independent /root/ticket30_native_tools_review
+source helper. Author .worktrees/skill-improvement-30n4-retained-process / codex/same;
+Root matching -review, context ctx-ticket30n4-retained-process-20261020.
+Owned Temp/johnny30n4-retained-owner-20261020 and -review-20261020, owner+TTL through
+review/seal, holds override; not cleanup authority. CREATE ONLY
+library/local_orchestration/grant_authority/windows_retained_process.py and
+tests/test_grant_authority_windows_retained_process.py. MODIFY0/DELETE0.
+A only frozen five-field observation + finite failure/error with exact nullable
+retained-token invariant, constructor tests. No reader placeholder/DLL load or
+native/Host effects. B NOT_ACTIVE until immutable A normal construction/strict/
+import/source preflight. One ownedTemp mypy cache, child55/outer60, full mechanical
+raw evidence/timing and evidence-progress corrections. No operational Grant,
+qualification, integration, installation, permissions, cleanup, push or release.
+ACTION_COMPLETED -> AUTO_CONTINUE H6-A, no Owner technical renewal.
+
 ## H5-B source seal / N5-A preflight and B admission — 2026-10-20
 
 H5 final18bf1e9f62ccbde7d4556187dfb7967471ce93a1, exact2MOD from474e67c1;
