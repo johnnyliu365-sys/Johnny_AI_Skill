@@ -55,7 +55,7 @@ _FIELD_SPECS: tuple[tuple[TicketContentField, str, str], ...] = (
 )
 _FENCE_OPEN = re.compile(r"^ {0,3}(`{3,}|~{3,})(.*)$")
 _FENCE_CLOSE = re.compile(r"^ {0,3}(`{3,}|~{3,})[ \t]*$")
-_HEADING = re.compile(r"^##(?!#)[ \t]+(.*?)[ \t]*#*[ \t]*$")
+_HEADING = re.compile(r"^#{1,2}(?!#)[ \t]+(.*?)[ \t]*#*[ \t]*$")
 _BULLET = re.compile(r"^- (.+?)[：:](.*)$")
 _ANGLE = re.compile(r"<([^<>\n]+)>")
 _GENERIC_ARGUMENTS = re.compile(
@@ -159,9 +159,13 @@ def _field_values(lines: list[str], label: str) -> list[str]:
 
 def _has_scaffold(value: str) -> bool:
     for match in _ANGLE.finditer(value):
-        prefix = value[: match.start()].rstrip()
+        prefix = value[: match.start()]
         name = re.search(r"[A-Za-z_]\w*(?:\.[A-Za-z_]\w*)*$", prefix)
-        if name and _GENERIC_ARGUMENTS.fullmatch(match.group(1).strip()):
+        if (
+            prefix == prefix.rstrip()
+            and name
+            and _GENERIC_ARGUMENTS.fullmatch(match.group(1).strip())
+        ):
             continue
         return True
     return False
@@ -221,7 +225,7 @@ def inspect_ticket_content(payload: bytes) -> tuple[TicketContentIssue, ...]:
             _add_issue(issues, field, TicketContentReason.MISSING)
         elif len(found) > 1:
             _add_issue(issues, field, TicketContentReason.DUPLICATE)
-        elif not found[0]:
+        elif not _same_visible_value(found[0]):
             _add_issue(issues, field, TicketContentReason.MISSING)
         elif _has_scaffold(found[0]):
             _add_issue(issues, field, TicketContentReason.PLACEHOLDER)

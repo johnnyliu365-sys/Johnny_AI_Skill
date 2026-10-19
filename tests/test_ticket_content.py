@@ -223,3 +223,35 @@ def test_created_file_must_be_named() -> None:
         field=TicketContentField.NEW_FILES,
         reason=TicketContentReason.MISSING_FILE_DECLARATION,
     ) in inspect_ticket_content(changed.encode("utf-8"))
+
+
+def test_scaffold_after_plain_word_is_not_generic_type_syntax() -> None:
+    changed = _TICKET.replace(
+        _EXPECTED_LINE,
+        "- 核准 Expected（使用者可觀察結果）：Use <placeholder>.",
+    )
+    assert TicketContentIssue(
+        field=TicketContentField.EXPECTED, reason=TicketContentReason.PLACEHOLDER
+    ) in inspect_ticket_content(changed.encode("utf-8"))
+
+
+def test_only_backticks_are_an_empty_field() -> None:
+    changed = _TICKET.replace(
+        _EXPECTED_LINE,
+        f"- 核准 Expected（使用者可觀察結果）：{chr(96) * 2}",
+    )
+    assert TicketContentIssue(
+        field=TicketContentField.EXPECTED, reason=TicketContentReason.MISSING
+    ) in inspect_ticket_content(changed.encode("utf-8"))
+
+
+def test_h1_heading_ends_the_required_section() -> None:
+    changed = _TICKET.replace(_EXPECTED_LINE + "\n", "", 1)
+    changed = changed.replace(
+        _IMPLEMENTATION + "\n",
+        f"# Outside\n{_EXPECTED_LINE}\n\n{_IMPLEMENTATION}\n",
+        1,
+    )
+    assert TicketContentIssue(
+        field=TicketContentField.EXPECTED, reason=TicketContentReason.MISSING
+    ) in inspect_ticket_content(changed.encode("utf-8"))
