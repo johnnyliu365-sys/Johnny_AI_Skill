@@ -3,7 +3,7 @@
 | 欄位 | 值 |
 | --- | --- |
 | 文件身分 | `AI-SKILL-IMPROVEMENT-CHECKLIST`；本專案工作追蹤，非新 PRD／SPEC／Gate |
-| Revision／來源 | `41`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
+| Revision／來源 | `42`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
 | 工作基準 | `a1cb6c13adbeb52a4117991727dcc3d4af6d2a33`；分支 `codex/skill-improvement-checklist` |
 | 主線 | 先對照、優先 02→04→05→06→07，再處理餘項與整合回放 |
 | 負責 | Root 理解需求、衝突與派工；票級實作者依有效能力 Profile；獨立審閱另席 |
@@ -30,7 +30,23 @@ Router、Reviewer、文件索引與結案規則仍各有唯一正文。`[x]` 只
 | [ ] 11 去重與衝突 | `WPR_TEMPLATE_AND_HISTORY_LOCAL_INTEGRATED / ACTIVATION_OPEN` | 原37／38／40／42保留；Luna44在既有RequirementLineageGate增加純revision-history驗證、重用原test；[獨審](reviews/workflow-governance/44-requirement-revision-compatibility-code-review.md) | 原42之46tests／不同位置WPR突變證據保留；44獨審14tests／30subtests、鏈結與terminal不同門突變紅→綠、Root gate1aa5ed22與兩blob一致；獨立seal確認 | `APPROVED_44 / LOCAL_INTEGRATED / CLEANUP_BLOCKED` | 舊一對一validate維持生效；可信creation issuer／效應前grant讀回／原子consume及真Host尚缺，不用純history方法冒充正式身分遷移；清理政策阻擋 |
 | [ ] 12 回放與獨審 | `EXISTING_CASES_MAPPED / END_TO_END_NOT_VERIFIED` | Root沿既有案例／review；46增加受版控本地命令來源，未新增回放框架；30B／43仍未整合 | 46合法command-plan與拒絕／版本釘選／不同門突變均有獨審；整合後36tests／22subtests。04不重做，既有局部PASS沿用，候選不冒充整合版 | `PARTIAL_ONLY` | 完整01–10正式來源/effect回放仍缺；Owner已採納首次入口順序例外，但未授權Host測試；不是資格或總驗收 |
 
-## 當前工程接續與精確證據（revision41）
+## 當前工程接續與精確證據（revision42）
+
+N3B1最終3b2da4b0已完成建構preflight：來源181行／既有入口只加一行接線，
+讀回測試獨立責任檔，沿用同一typed fixture及builder，沒有新框架。Root具名
+root-kind／failed-metadata實際謂詞紅→精確還原綠，另走作者不同的data-count門
+紅→綠；兩個zero-red舊紀錄及作者修正保留，獨立席窄複驗無finding。seal d7f5e7cc。
+這只提供immutable observations/result constructors，沒有把MATCH DTO當實際比對通過。
+
+同票B2純比對MODIFY3／CREATE0獨立DOC PASS 4a2e2e28，Root已讀回精確3b2基準、
+Grant／角色／worktree後513b25ad派原作者；不等Owner重批一般工程。重用ProtectionPlan
+導出檔案DACL，保留原N1輸出，純合法正例及權限／hash／inventory負例獨審後才收。
+原生reader、服務安裝、Host campaign與正式來源資格均尚未完成或啟用。
+
+CVQ新增input/full-case provenance契約差異已一次提出精確SPEC核准包，並非重問已
+批准readonly設計／秒數；等待此項不阻塞B2本地工作。所有01–12必要驗收狀態不變。
+
+## 前次工程接續與精確證據（revision41歷史）
 
 N2最終候選1e6847c9（不是沿用舊binary）完成J1–J5來源工程seal：作者kill-on-close
 及Root不同門readback-equality具名紅→精確還原綠，另一席窄複驗。Root最後固定
