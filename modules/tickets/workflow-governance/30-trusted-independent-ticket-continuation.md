@@ -300,10 +300,12 @@ or returning all refusals cannot satisfy this slice. It is NOT source isolation,
 AppContainer/network protection, a service, protected Grant enrollment or any
 native Codex/Claude session. No real Host executable may be selected or launched.
 
-Exact proposed CREATE:
+Exact CREATE (Grant revision02 below adds only the two responsibility boundaries):
 - library/local_orchestration/native_windows/NativeJobInterop.cs
 - library/local_orchestration/native_windows/NativeJobGuard.cs
 - library/local_orchestration/native_windows/NativeJobSelfTests.cs
+- library/local_orchestration/native_windows/NativeJobContracts.cs
+- library/local_orchestration/native_windows/WindowsJobPort.cs
 
 Exact proposed MODIFY (only after N1's reviewed source is staged and precisely bound):
 - library/local_orchestration/native_windows/JohnnyAuthority.Tools.csproj
@@ -315,6 +317,8 @@ Reuse its compiler fixture, SDK/config, output/evidence handling and candidate h
 checks; no new Python process runner, duplicate compiler fixture or new framework.
 Program adds only job-self-test plus closed fixture modes, not run/exec/service or
 arbitrary argv/path/commands. NativeJobInterop owns safe handles/Win32 marshalling;
+NativeJobContracts owns immutable values/status/port declarations; WindowsJobPort
+owns only the existing port's concrete Win32 calls, not sequencing decisions;
 NativeJobGuard owns one bounded job's fixed lifecycle; NativeJobSelfTests owns
 parameterized constructor/fault/native-fixture assertions. No prompt/ticket prose
 in code. Production300/test350 effective-line signals trigger responsibility review,
@@ -376,11 +380,13 @@ source baseline `0a2e0661eef741be1b9df103ae8874c284cf60f8`, tree
 
 ```yaml
 grant_id: grant-ticket30n2-native-job-20261019
+grant_revision: 2
 parent_authority: batch-checklist-local-20261019-uncapped
 ticket: wg-ticket-30
 slice: 30N2
 stage: IMPLEMENT
 baseline: 0a2e0661eef741be1b9df103ae8874c284cf60f8
+reviewed_constructor_baseline: eeb2eaaa370fe9f42078cbf15228476b6d1f0ca8
 implementation_owner: /root/ticket30n2_native_impl
 reviewer_orchestrator: /root
 independent_evidence_peer: /root/ticket30_native_tools_review
@@ -395,7 +401,7 @@ correction_policy: EVIDENCE_PROGRESS_REQUIRED
 cumulative_command_limit_policy: OWNER_REMOVED_FOR_LOCAL_BATCH
 ```
 
-The six exact CREATE/MODIFY paths above are the full source allowance. The single
+The eight exact CREATE/MODIFY paths above are the full source allowance. The single
 machine boundary below replaces only the retired N1 construction boundary; it does
 not retroactively change N1's accepted bytes or grant effect authority. Root allocated
 this contained, non-reparse linked worktree clean at0a2e0661 and verified common Git
@@ -411,7 +417,8 @@ job setup, filesystem observation or other native behavior before different-seat
 constructor preflight pins Phase A's actual commit. No new public product API or
 constructor bypass; marshalling structs remain at the interop boundary.
 
-After that existing type preflight, Phase B uses the SAME files/Grant/view to add
+After that existing type preflight, Phase B uses the SAME Grant/view and its
+revision02 eight-path responsibility boundary to add
 the J1–J5 behavior. Program's only new native commands are job-self-test and closed
 owned-fixture modes (complete, child-denial attempt, sleep); never arbitrary run/
 exec/argv/path or a real Host binary. Select the current candidate apphost explicitly;
@@ -438,6 +445,28 @@ candidate, full source diff, commands/raw results/mutations/start-to-terminal ti
 native-vs-injected coverage, deviations and recovery/asset holds. No silent all-reject
 pass, cleanup retry, source integration, push/release/deployment or persistent OS effect.
 
+### Grant revision02 — necessary responsibility separation, not another capability
+
+Root reviewed actual PhaseA eeb2eaaa at control dafb5391. The original Guard file
+is405lines of values/port declarations plus a7line bounds holder, not an implemented
+lifecycle. Adding the OS adapter and recovery state machine there would combine
+three different responsibilities. Under the same batch authority, permit exactly
+NativeJobContracts.cs (move existing immutable values/INativeJobPort, value-only,
+estimated430–470lines) and WindowsJobPort.cs (existing port's Win32 implementation,
+estimated260–320). Guard becomes sequencing/recovery only, estimated280–350;
+Interop remains ABI/safehandles, SelfTests existing shared assertions/fixtures.
+No new interface system, Runner, package, arbitrary executable or permission.
+The line counts are review signals, not ceilings or pressure to compress; an actual
+500+ file must receive explicit responsibility review before acceptance.
+
+This is not a source rewrite by Root: same implementation owner performs the moves
+after a different-seat document consistency PASS on this exact amendment. Its
+reviewed constructors must keep their semantics and ordinary constructor checks;
+do not restart preflight, historical accounting or TDD simply because a type moves.
+Final source review independently checks the resulting dependency direction and
+the same J1–J5 behavior, with original N1 cases retained. No actual Host qualification
+or formal integration follows from adding these exact missing source boundaries.
+
 ```johnny-boundary
 modify = library/local_orchestration/native_windows/JohnnyAuthority.Tools.csproj
 modify = library/local_orchestration/native_windows/Program.cs
@@ -445,6 +474,8 @@ modify = tests/test_native_authority_tools.py
 create = library/local_orchestration/native_windows/NativeJobInterop.cs
 create = library/local_orchestration/native_windows/NativeJobGuard.cs
 create = library/local_orchestration/native_windows/NativeJobSelfTests.cs
+create = library/local_orchestration/native_windows/NativeJobContracts.cs
+create = library/local_orchestration/native_windows/WindowsJobPort.cs
 forbid = AGENTS.md
 forbid = CONTEXT.md
 forbid = Workflow.md
