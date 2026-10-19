@@ -1,5 +1,42 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Corrected N2 first fixed native validation — actual refusal, not PASS / 2026-10-19
+
+Against exact current88b707c8 clean Root review snapshot, Root independently
+hash-read EXE7296ff05216e248e129bab9295bc235423410ffed1a1d21df46734569eb58714 /
+DLLc22a1363a90e4288241d9bd303686b6b498e4009d70185b47db46f5e3a323ac2,
+then invoked existing actual-candidate native assertions with the one exact
+apphost `job-self-test`, subprocess timeout20s. The observed-run wrapper delegated
+the real subprocess unchanged and printed all its stdout/stderr before the existing
+assertions; it did not substitute outputs. Unused fixture tuple tail contained
+actual existing Root output paths only and supplied no authority. No SDK rebuild,
+mutation, Host/config/security operation or fake success in this command.
+
+```text
+ACTUAL_STDOUT_BEGIN
+ACTUAL_STDOUT_END
+ACTUAL_STDERR_BEGIN
+job_self_test_failed:actual fixture child process launch is denied by the one-process job limit (fixture=ChildLaunchDenial,configured=(count=1,processMemory=268435456,jobMemory=536870912,processCpuTicks=40000000,jobCpuTicks=50000000,wallMs=3000),readback=(status=Observed,count=1,processMemory=268435456,jobMemory=536870912,processCpuTicks=40000000,jobCpuTicks=50000000,wall=client-only),creation=Created,creationReason=NativeCallSucceeded,createCallSucceeded=True,createLastError=none,assignResumeWaitStage=None,accounting=(beforeTotal=0,beforeActive=0,beforeTerminated=0,afterTotal=2,afterActive=0,afterTerminated=0,limitAttempt=False),member=True,identity=True,waitResult=Completed,residual=NoActiveProcessesConfirmed,exitCode=1816,recovery=(none))
+ACTUAL_STDERR_END
+ELAPSED 0.5620000000344589 NATIVE_CLI_INVOCATIONS 1
+AssertionError: native job self-test rc=1
+```
+
+This records a new precise J3 evidence mismatch: typed child denial1816 and
+same-owned-job total count2/active0, but terminated counter0. Later timeout/cancel/
+fault cases were not reached; do not claim the full fixture or J4/J5 native pass.
+No same-command retry. N2 stays SOURCE_VALIDATION_BLOCKED, no integration or
+qualified use. Original intermittent J3 cause remainsUNKNOWN; this result must
+not be back-projected as proof of that older failure.
+
+Root reread the same Microsoft primary accounting/limit documents: failed
+association explicitly increments TotalProcesses and can transiently affect active
+count; an association exceeding the active limit is refused/terminated. Actual
+terminated-counter0 is retained, not transformed to1. Root/peer are assessing
+whether the current extra termination-counter requirement overclaims attribution
+or needs a separate exact native notification. No relaxed test/limit or broader
+native run has been authorized by this failed observation.
+
 ## N2 B5 independently verified / current source-only validation admission — 2026-10-19
 
 Candidate88b707c8585501173bb6898f332ad52a5765ed66 adds only the existing Python
