@@ -1,4 +1,27 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## C6 exact local source activation — 2026-10-19
+
+Distinct /root/batch_authority_review DOC_PASS exactd8b8f2770d2cbee050efefacf42735bc2a0f8ee7,
+Ticket30 closure12 LF103c1cc06994e78847167a7ecf7923b4d593e33567d8f2a62663a96cdf7737af
+matches D8; only new transport/test seam and4precise existing paths, no new DTO.
+Reviewer preregistered WTs/Temp/owner/TTL/teardown holds before actual creation
+aaecba. Fresh owner9f743f and reviewdc4a81 show clean exact51dc502f61b8dab31926e01b9c888e8b75d92ca3,
+correct branch/toplevel/linked Git and nonreparse repository-contained ancestors.
+Root existing public constructors/input-output shape through actual baseline
+selectors7b9657: offline restore, forced strict compile0warnings/errors, default
+and enrollment-contract-self-test PASS. Restore advisory did not trigger SDK update.
+New internal static transport is what author builds; no fake future-constructor
+preflight and no qualification prerequisite cycle.
+
+grant-ticket30n3-enrollment-command-20261019 ACTIVE exact closure12 six paths,
+parent original uncapped batch, author /root/ticket30n2_native_impl standard
+Luna/xhigh, Root sole reviewer/orchestrator and different source peer. C5 author
+allocation closed into preserved hold before new context ctx-ticket30n3-enrollment-command-20261019.
+Same-lifetime direct lane no Runner/receipt requirement. Current baseline B2/C5
+unchanged source observations do not prove protected enrollment/runtime trust.
+ACTION_COMPLETED -> AUTO_CONTINUE IMPLEMENT source-only C6, then exact review/
+mutations/correction; no Host/install/security/spawn/push/release/formal activation.
+
 ## B2 + C5 controlled engineering composition admission — 2026-10-19
 
 Next legal local source construction requires the already reviewed pure B2
