@@ -1,6 +1,6 @@
-# Core capability implementation decision — revision01
+# Core capability implementation decision — revision02
 
-Status: REVIEWABLE_DESIGN / EXTERNAL_ENROLLMENT_NOT_AUTHORIZED.
+Status: REVIEWABLE_DESIGN / BOOTSTRAP_EXCEPTION_AND_EXTERNAL_ENROLLMENT_NOT_AUTHORIZED.
 Parent: Owner's existing12-item local batch; original Ticket30 and workflow/adaptive
 SPEC lineages. This plan selects implementation responsibilities, not a new PRD,
 Router, policy engine, qualification verdict or production activation.
@@ -134,10 +134,53 @@ Proposed adapter scope after CVQ source prerequisites pass:
 
 Prerequisites follow SPEC13.2: APPROVED_SOURCE, IMMUTABLE_SNAPSHOT, ATTEMPT_CLAIM,
 HOST_SESSION_POLICY, HOST_SESSION_OBSERVER, HOST_SESSION_BOUNDS; property additionally
-uses qualified discovery. Source Review and protected observation precede operational
-qualification. This plan does not waive any source/audit bootstrap requirement;
-if native source-independent policy/observer cannot be enrolled without circular
-self-certification, report that exact dependency for a bounded method-order decision.
+uses qualified discovery. Their final meaning and final qualification order remain.
+CVQ13.5 also requires qualified independent source Review, while integrated control
+has no CVQ implementation and B3 F01 remains open. Requiring that final verdict before
+building its first review entry is a real bootstrap cycle, not missing Owner data.
+
+### One-time bootstrap method-order amendment — PROPOSED, not batch-authorized
+
+The new policy difference is limited to first-entry source/qualification ordering,
+scoped to the retained B3 F01 and CVQ-01 candidates plus the exact minimal readonly
+adapter/observer needed for that first entry. It does not apply to30B/43 review or
+other candidates. Exact source paths, commits and one-attempt operational bounds
+must be frozen in the existing CVQ Manifest before use; no blanket future exemption.
+
+1. Ordinary independent engineering source review, existing strict source gate,
+   strict types and named reverse mutations may stage exact immutable candidates.
+   This staging is NOT APPROVED_SOURCE, QUALIFIED, AVAILABLE, integrated source or
+   permission to review30B/43. Reviewers cannot approve their own implementation.
+2. Separately enroll the OS-protected policy, immutable snapshot, observer and finite
+   bounds. A trusted control principal obtains independent raw OS readback of peer
+   identity, access restrictions and evidence ownership before any subject request.
+   The candidate evaluator, subject output and service self-description prove none
+   of these prerequisites. If independent protection/observation cannot be proved,
+   launch zero requests and return UNAVAILABLE; no weaker tool/prompt fallback.
+3. With an exact operational Grant, perform ONE provisional offline native-dispatch
+   campaign against the staged candidate. Record the same fixed CVQ cases and raw
+   observations, but do not call ordinary admission with fabricated APPROVED_SOURCE,
+   emit an accepted qualification, or let the candidate report approve its evaluator.
+   All five readonly restrictions must hold before effects; this exception changes
+   source approval order, not protection, observation or attack safety.
+4. An independent reviewer adjudicates the protected raw observations and reviews
+   the exact source under the demonstrated restricted profile. If isolation or any
+   required attack is unproved, stop UNAVAILABLE; no source integration or dependent
+   review. A separately qualified external reviewer is a fallback only if actually
+   available, not an environment the Owner is required to invent.
+5. Only after that independent source audit passes may controlled source integration
+   occur. Run the final existing CVQ admission/report against that integrated source
+   and all six genuine prerequisites, exact final binary/config/snapshot and discovery.
+   Provisional reports cannot satisfy downstream CapabilityKey/evidence lookups.
+   Only a successful final qualification can admit the later30B/43 readonly audit.
+
+This method-order exception requires explicit Owner Change Control approval; neither
+the existing local batch, ordinary source review nor the new service grants it.
+It creates no new Stage/Agent/Gate/Report system. Reuse CVQ cases and evidence refs,
+keeping provisional evidence non-authoritative until the final ordinary evaluation.
+The same recipe can serve another Host only after its own exact binding/proof; CLI
+and Desktop never inherit each other's verdicts. Historical candidates/budgets and
+Recovery remain unchanged. No automatic third correction or qualification retry.
 
 Qualification cases: allowed snapshot read; denied out-of-source read/traversal/
 reparse; denied file edit/write; shell/interpreter/JS execution; Agent/MCP aliases/
@@ -188,12 +231,26 @@ result. Local source tests require no vendor fees. Maintenance: service/runtime
 and CLI upgrades invalidate their exact protection/tool qualification; rerun the
 affected finite cases, not every ticket. No per-ticket service installation.
 
-Next30B slice is exact source-only authority client + ledger validation, not a new
-remote attempt. Proposed additional900 command seconds: author450/reviewer300/
+Next30B slice is30G-SOURCE, a phase in the original Ticket30 lineage, not a new PRD
+or replenishment ticket. Before dispatch Root must revise that same ticket boundary,
+independently review it and derive a scoped batch child Grant, pinning the final
+baseline/leaf/roles/worktree. Exact proposed create paths are
+grant_authority/__init__.py, contracts.py, ledger.py and client.py under
+library/local_orchestration/, plus tests/test_grant_authority_ledger.py and
+tests/test_grant_authority_protocol.py. Modify/delete=none. The source client owns
+strict authenticated-readback/peer-verification interfaces and bounded IPC framing;
+pure protocol tests do not claim a real authenticated peer. windows_service.py,
+install-authority.ps1, OS enrollment and the held mainline_readback.py are excluded
+from this source slice, not smuggled in as incidental wiring. Real service/client
+wiring and R1 positive proof follow only reviewed native implementation and its
+operational authority; source-ledger PASS is not R1 or reject-all completion.
+
+Proposed additional900 command seconds: author450/reviewer300/
 Root150, each command<=60s, initial+one correction, no stress/hidden retry. Includes
 strict checks, issuer binding positives/negatives, durable one-winner/retry cases,
-real algorithm regression and independent mutations. Rationale: two new source
-responsibilities plus IPC comparison/readback and existing140-case surface,
+framing/peer-validation failures and independent mutations. Reuse the existing
+140-case algorithm evidence; no held candidate replay/integration in this slice.
+Rationale: durable ledger and client/source contracts plus IPC comparison/readback,
 conservative compile/import/mypy and finite failure reserve; actual usage recorded.
 Original599.2/600 stays charged; approved ceiling would become1500, no platform
 quota shortage is alleged. Operational Host attempts get their own later exact
@@ -201,8 +258,11 @@ manifest, not silently funded from these900s. Ticket46 has its own already-admit
 300s new local command-source allocation; it does not replenish30B.
 
 Engineering choice: select local protected authority + native readonly Host route.
-Owner's only new decision NOW is whether to permit that external trust-boundary
-enrollment and the attached30B source-budget delta. We build/package the service,
+Owner's one consolidated decision NOW is whether to adopt this first-entry
+method-order exception, permit the specified external trust-boundary enrollment,
+and approve the attached30B source-budget delta. These are three explicit authority
+differences in one package, not ordinary technical choices or a claimed existing
+permission. We build/package the service,
 configuration, fixture and verification recipe; Owner supplies OS consent/access,
 not a finished issuer or Host product. Installation waits for reviewed source and
 an exact executable/config/identity/rollback manifest; no blanket elevated command.
@@ -213,11 +273,15 @@ This requires machine/admin/network access and protected deployment; it does not
 assume an existing working service or ask Owner to implement one. Extra transport/
 operations cost makes it the second choice. Neither option weakens the invariants.
 
-Proposed precise reply: “核准本機受保護authority與原生readonly Host方案；准許在
-受審來源及精確安裝/資格manifest備妥後，進行本機服務身分、受限主體、保護目錄/
-IPC設定及零外部模型費用的有限Host qualification。30B保留599.2秒原帳，源碼
-建置追加900命令秒，總上限1500；不授權真模型新費用、push、發布、部署到其他
-專案、舊殘留刪除或未驗證正式閘門啟用。”
+Proposed precise reply: “核准本方案revision02的首次CVQ方法順序例外：限既有B3 F01、
+CVQ-01及首次唯讀入口的精確必要來源，先獨立工程審閱與不可變候選封存，再取得
+獨立OS保護/觀察證據，依精確manifest執行一次零外部模型費用的暫定原生驗證；
+暫定結果不構成資格、來源核准或30B/43准入。仍須受限獨審、受控整合與具全部
+真實前提的最終CVQ通過，才可供下游使用。准許精確安裝/資格manifest備妥後的
+本機服務身分、受限主體、保護目錄與IPC設定；不允許自證保護或降低五項隔離
+不變量。30B保留599.2秒原帳，僅30G-SOURCE六個create路徑追加900命令秒，
+總上限1500；後續native操作另釘精確資源限制，不得挪用此額度。不授權真模型
+新費用、push、發布、部署到其他專案、舊殘留刪除或未驗證正式閘門啟用。”
 
 This candidate reply is not an active Grant. If declined, independently admitted
 local work continues; the exact external effects wait. R0/DAP/TAL/Recovery and
