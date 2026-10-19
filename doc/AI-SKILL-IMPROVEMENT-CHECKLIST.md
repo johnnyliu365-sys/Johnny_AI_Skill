@@ -3,7 +3,7 @@
 | 欄位 | 值 |
 | --- | --- |
 | 文件身分 | `AI-SKILL-IMPROVEMENT-CHECKLIST`；本專案工作追蹤，非新 PRD／SPEC／Gate |
-| Revision／來源 | `28`；沿用既有12項與acf0ffa1／ded322b3批准；Owner 2026-10-18 批次本地授權，逐票限縮、獨審及證據如下。非 push／正式啟用授權 |
+| Revision／來源 | `29`；沿用既有12項與acf0ffa1／ded322b3批准；Owner 2026-10-18 批次本地授權及10-19阻塞修復指示，逐票限縮、獨審及證據如下。非 push／正式啟用授權 |
 | 工作基準 | `a1cb6c13adbeb52a4117991727dcc3d4af6d2a33`；分支 `codex/skill-improvement-checklist` |
 | 主線 | 先對照、優先 02→04→05→06→07，再處理餘項與整合回放 |
 | 負責 | Root 理解需求、衝突與派工；票級實作者依有效能力 Profile；獨立審閱另席 |
@@ -32,15 +32,19 @@ Router、Reviewer、文件索引與結案規則仍各有唯一正文。`[x]` 只
 
 ## 本批剩餘限制與接續邊界
 
-本批已准入建置30B／31B／43／44均回件並完成可執行的獨審／修正；31B與44
+本批已准入建置30B／31B／43／44均回件並完成可執行的獨審／修正；10-19另完成
+30B公開入口偽造Grant的限縮修正0f6d467a，原獨審確認PASS_CONTAINMENT_ONLY；31B與44
 完成本地受控整合，30B與43不得整合。這不是12項全部完成，也不是「等逐票批准」。
 Root與獨立既有盤點席以現有票／review窄查，沒有把下列缺口另開成重複框架。
 
 - **必要審查能力**：30B／43強制的qualified唯讀／no-code／no-delegation隔離audit
   不可用。CVE-D9是來源整合、D10是contract-only，不能借PASS。未核准候選不能當
   下游實作authority；不自行降低HIGH_ASSURANCE或建立VM/Broker來繞過。
-- **真實來源／授權**：30B的R1尚未有approved-control來源；改binding Grant ID仍能
-  通過fake讀回。現有dispatch-authority僅owner-intent marker，不能當protected issuer。
+- **真實來源／授權**：30B原fd98f395可被grant-forged騙出candidate；新候選0f6d467a
+  已封住公開入口，43聚焦tests及strict mypy通過、獨審繞過突變2紅→還原2綠。
+  可信來源仍未具備，公開入口一律在factory/clock前拒絕；不冒稱正式R1通過。
+  已通過的演算法fixture另走私有未准入seam，不是假authority；現有dispatch-authority
+  僅owner-intent marker，不能當protected issuer。
   Context04仍只有本地證據；前次直接remote main觀察a1cb6c13/Context03，不宣稱本輪
   fresh。發佈來源、實際GET／Host qualification與正式effect均不由本批假造。
 - **正式強制與CI**：05實際載入來源、06任意工具prewrite、10付費網路隔離、11可信
@@ -50,6 +54,15 @@ Root與獨立既有盤點席以現有票／review窄查，沒有把下列缺口�
 - **清理**：44精確teardown在CreateProcess前被Host政策拒絕，未執行、未用等價指令
   重試。31B沿用同Root landing workspace避免再造資產；兩票journal與作者/reviewer
   worktrees留存，CLEANUP_BLOCKED。30B／43則因未結Review本就必須保留，Recovery不動。
+
+10-19具體工具／現場證據已封存在既有[票30審閱](reviews/workflow-governance/30-trusted-independent-ticket-continuation-code-review.md#local-blocker-investigation--2026-10-19)：
+原始cleanup call `call_559be669d1134a79b54b135b6772388e` 的請求完整保存，回件為
+`CreateProcess ... blocked by policy`，儲存的錯誤本身已截去2706字元，缺段不猜。
+未找到候選綁定的隔離qualification call/receipt，記MISSING，不宣稱測試失敗。
+目前spawn schema沒有每席sandbox／工具限制參數；danger-full-access由父席繼承，
+不能靠prompt變成no-code/no-delegation。現場core binary為codex-cli0.163.0-alpha.10.2，
+不等於Desktop資格。獨立文件審閱APPROVED_DOC_EVIDENCE_ONLY；無刪除重試或權限變更。
+31B／44的功能驗收不受清理阻塞否定，但不得假結票；30B／43維持未整合。
 
 恢復上述受影響工作的條件是取得適用Host/source的資格與必要外部effect授權，或
 Owner按正式Change Control另核安全政策差異；本紀錄不自動要求／執行任一路線。

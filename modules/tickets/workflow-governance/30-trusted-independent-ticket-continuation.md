@@ -2,7 +2,7 @@
 
 | 欄位 | 內容 |
 | --- | --- |
-| State | `30B_ENGINEERING_PARTIAL / R2_CLOSED / R1_UNVERIFIED / REVIEW_BLOCKED`；候選fd98f395未整合。30A／30M既有本地完成及清理證據保留；完整Ticket30與01／02未完成 |
+| State | `30B_CONTAINMENT_ENGINEERING_PASS / R2_CLOSED / R1_SOURCE_UNVERIFIED / REVIEW_BLOCKED`；候選0f6d467a未整合。30A／30M既有本地完成及清理證據保留；完整Ticket30與01／02未完成 |
 | Requirement lineage | 沿用 `PRD-20260805-009`／`CHG-20260805-009` 與原 Ticket 30；不建立新 PRD、平行 Ticket 或第二套 authority |
 | Effective authority | `SPEC-AI-WORKFLOW-WORKFLOW-GOVERNANCE-20260805-01KZ6T8V2R4Y6B8D0F2H4J6M8P` 的既有有效 AC 1–8 |
 | Design evidence only | Owner-authorized、獨審通過的 SPEC design baseline `76d1f942e24975da28889c8b6ecee904c8ef3da0`，SPEC blob `6fd8c3098f48be40c2cf05a03f8284c186163c08`；它允許受控拆票規劃，不是 Ticket 30A implementation Grant 或 runtime activation |
@@ -75,6 +75,22 @@ under the existing authority architecture and its original acceptance criteria.
 Document review is ordinary control-plane review, not the unavailable qualified
 adversarial Host audit. Passing this correction closes the demonstrated public
 candidate leak only; it cannot close full R1, Ticket30 or checklist01/02.
+
+### Containment result (not production qualification)
+
+Allocation `f8887d200111336d409538d7f739315a2224b87c` passed independent
+document review, activating only the limited local correction Grant above.
+Author candidate `0f6d467a2f4c1e39102c8fee334ac8bbdb70d4ac` adds the public
+fail-closed result and preserves the original forged input as a regression.
+43 focused tests, strict mypy, import and diff checks passed. Original independent
+reviewer confirmed three public rejection cells; its injected-port bypass
+mutation made both forged/plausible-ID cells fail, byte-exact restoration passed.
+PASS_CONTAINMENT_ONLY; full source/Grant qualification remains NOT VERIFIED and
+the mandatory isolated audit remains unavailable, so no integration or closure.
+Budget conservatively charged at most599.2/600s including final Root reserve;
+remaining budget is not authorization for another attempt. All raw evidence,
+failed setup attempts, Host/tool inventory and exact rejected cleanup call are
+in the existing Ticket30 review. No cleanup retry, push or Host change occurred.
 
 ## 30M 文件遷移授權紀錄 — 2026-10-18
 
@@ -216,7 +232,7 @@ baseline 沒有 source/test 變更，以及實際 integration diff 正好兩個�
 
 ### 本批委任下的精確子票綁定
 
-本階段結果：原Grant已完成兩階段建置及一次有界修正；最終候選
+原建置及首輪複驗的歷史結果（最新限縮修正見上節）：原Grant已完成兩階段建置及一次有界修正；當時候選
 `fd98f3958fa2d9ceca6d8a925efa27302c061df2`，原獨審者確認R2完整SHA缺陷閉合、
 140聚焦tests通過。R1真實control／Grant來源讀回仍UNVERIFIED，必要合格隔離
 audit為UNAVAILABLE，故REVIEW_BLOCKED、禁止整合。515/600s為保守累計command

@@ -738,3 +738,161 @@ except the two explicit journals):
 Cleanup blockage is distinct from31B/44 functional acceptance. 30B/43 unfinished
 review assets and all Recovery holds remain protected independently. No normal
 Ticket closure is claimed and no cleanup command is authorized by this record.
+
+### Independent forensic-document confirmation
+
+`/root/batch_authority_review` independently compared
+`f8887d20..03907becc2e619bbfd1f285a9fb73c4c0faad35f` with the original stored
+request/error and its residue inventory: APPROVED_DOC_EVIDENCE_ONLY. The precise
+truncation limit, reused44-land identity and missing qualification receipt were
+confirmed. Embedded-core version/hash and Appx failure remain Root-observed
+inventory, explicitly not separately replayed by that reviewer or Desktop
+qualification. This result authorizes no cleanup or candidate integration.
+
+### R1 containment implementation return
+
+Replacement author `/root/ticket30b_r1_impl` returned additive candidate
+`0f6d467a2f4c1e39102c8fee334ac8bbdb70d4ac` on the original author branch.
+Root read the exact `fd98f395..0f6d467a` diff: two allowed files, +85/-19;
+no source/parser/other-path change. Public readback rejects absent binding with
+GRANT_MISSING and every present binding with GRANT_SOURCE_UNAVAILABLE before
+factory/clock/network effects. The private algorithm requires explicit injected
+factory/clock and has no automatic live transport fallback. Private symbols are
+not a security sandbox; this is containment, not qualified positive admission.
+
+Author preserved forged-ID input as a baseline failing assertion: the old public
+entry produced a candidate after10 fake calls. An initial Measure-Command wrapper
+suppressed pytest stdout and returned0; it is NOT valid red evidence. A following
+attempt failed during fixture setup (strict nested dataclass validation); it too
+is NOT the claimed product red. The corrected direct command, with pytest exit
+propagated, failed specifically at `assert result.candidate is None`. These
+attempts remain charged, not hidden or used to reset the budget. The final cell
+is parameterized for forged and plausible prior Grant IDs.
+
+Author commands/results:
+
+- `python -m pytest tests/test_mainline_readback.py -q -p no:cacheprovider`:
+  43 passed; final pytest-reported1.01s, wrapper4.14s. Earlier focused green
+  43passed is retained but not an additional acceptance claim.
+- `python -m mypy --strict library/local_orchestration/mainline_readback.py`:
+  Success, no issues; wrapper3.20s.
+- `python -c "import library.local_orchestration.mainline_readback"` and
+  `git diff --check`: exit0; wrapper2.69s. Import bytecode disabled during tests.
+- Same existing workspace, additive commit, clean Git status; no full140-suite
+  rerun, no network, credentials, cleanup or formal effect.
+
+Author reported approximately37s aggregate wrapper wall. Root instead sums its
+reported individual command walls (including concurrent commands):42.08s, charged
+43s. The40s author suballocation and later30s target were exceeded; this is a
+recorded budget deviation, not a successful compliance claim. Root reallocates
+3s of unused independent-review reserve within the unchanged600s batch ceiling;
+no further author attempt is allowed. Prior515s + allocation-review4.2s + author43s
++ Root20s reserve + actual reviewer15s + final Root2s reserve =599.2s upper bound.
+Forensic inventory is the separately requested read-only blocker
+investigation, not an implementation/test retry or an extension of30B's budget.
+The final independent result below determines containment acceptance only.
+
+### Independent R1 containment review and unreduced mutation evidence
+
+Original independent reviewer `/root/ticket30b_readback_review` evaluated
+`0f6d467a2f4c1e39102c8fee334ac8bbdb70d4ac` against `fd98f395` in its existing
+registered review workspace. Verdict **PASS_CONTAINMENT_ONLY**, no finding for
+the allocated correction. It ran three public rejection cases:3passed/1.35s
+(command wall4.92s). It did not rerun the author's43-case suite or strict check.
+
+The reviewer independently introduced this bypass in the public entry after the
+None-binding check, rather than changing Expected or a test fixture:
+
+```python
+if transport_factory is not None and clock is not None:
+    return _read_mainline_candidate_unadmitted(
+        request, control_binding, transport_factory=transport_factory, clock=clock
+    )
+```
+
+Command:
+`python -m pytest tests/test_mainline_readback.py::test_public_entry_rejects_unqualified_grant_before_any_readback_effect -q`
+
+The following is the complete returned pytest output, with only trailing line
+whitespace removed for Markdown hygiene; ellipses inside object repr are pytest's
+own display, not omitted failure cases:
+
+```text
+FF                                                                       [100%]
+================================== FAILURES ===================================
+_ test_public_entry_rejects_unqualified_grant_before_any_readback_effect[grant-forged] _
+
+grant_id = 'grant-forged'
+
+    @pytest.mark.parametrize("grant_id", ("grant-forged", "grant-ticket30b-readback-20261018"))
+    def test_public_entry_rejects_unqualified_grant_before_any_readback_effect(
+        grant_id: str,
+    ) -> None:
+        clock = _FakeClock()
+        transport, factory = _configured_fake(clock=clock)
+        binding = _approved_binding(grant_id)
+
+        result = read_mainline_candidate(
+            MainlineReadbackRequest(feature="workflow-governance"),
+            binding,
+            transport_factory=factory,
+            clock=clock,
+        )
+
+>       assert result.candidate is None
+E       AssertionError: assert MainlineReadbackCandidate(source_sha='0123456789abcdef0123456789abcdef01234567', source_evidence_digest='sha256_968237...ain-a', 'ticket-main-b'), waiting=(), incomplete_required=('ticket-main-a', 'ticket-main-b'), closure_candidate=False)) is None
+E        +  where MainlineReadbackCandidate(source_sha='0123456789abcdef0123456789abcdef01234567', source_evidence_digest='sha256_968237...ain-a', 'ticket-main-b'), waiting=(), incomplete_required=('ticket-main-a', 'ticket-main-b'), closure_candidate=False)) = MainlineReadbackResult(scope=<MainlineReadbackScope.READBACK_CANDIDATE_ONLY: 'READBACK_CANDIDATE_ONLY'>, candidate=Mai...-main-b'), waiting=(), incomplete_required=('ticket-main-a', 'ticket-main-b'), closure_candidate=False)), failure=None).candidate
+
+tests\test_mainline_readback.py:567: AssertionError
+_ test_public_entry_rejects_unqualified_grant_before_any_readback_effect[grant-ticket30b-readback-20261018] _
+
+grant_id = 'grant-ticket30b-readback-20261018'
+
+    @pytest.mark.parametrize("grant_id", ("grant-forged", "grant-ticket30b-readback-20261018"))
+    def test_public_entry_rejects_unqualified_grant_before_any_readback_effect(
+        grant_id: str,
+    ) -> None:
+        clock = _FakeClock()
+        transport, factory = _configured_fake(clock=clock)
+        binding = _approved_binding(grant_id)
+
+        result = read_mainline_candidate(
+            MainlineReadbackRequest(feature="workflow-governance"),
+            binding,
+            transport_factory=factory,
+            clock=clock,
+        )
+
+>       assert result.candidate is None
+E       AssertionError: assert MainlineReadbackCandidate(source_sha='0123456789abcdef0123456789abcdef01234567', source_evidence_digest='sha256_968237...ain-a', 'ticket-main-b'), waiting=(), incomplete_required=('ticket-main-a', 'ticket-main-b'), closure_candidate=False)) is None
+E        +  where MainlineReadbackCandidate(source_sha='0123456789abcdef0123456789abcdef01234567', source_evidence_digest='sha256_968237...ain-a', 'ticket-main-b'), waiting=(), incomplete_required=('ticket-main-a', 'ticket-main-b'), closure_candidate=False)) = MainlineReadbackResult(scope=<MainlineReadbackScope.READBACK_CANDIDATE_ONLY: 'READBACK_CANDIDATE_ONLY'>, candidate=Mai...-main-b'), waiting=(), incomplete_required=('ticket-main-a', 'ticket-main-b'), closure_candidate=False)), failure=None).candidate
+
+tests\test_mainline_readback.py:567: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_mainline_readback.py::test_public_entry_rejects_unqualified_grant_before_any_readback_effect[grant-forged]
+FAILED tests/test_mainline_readback.py::test_public_entry_rejects_unqualified_grant_before_any_readback_effect[grant-ticket30b-readback-20261018]
+2 failed in 1.51s
+```
+
+After removing the injected branch byte-exactly, the reviewer ran:
+`python -m pytest tests/test_mainline_readback.py::test_public_entry_rejects_unqualified_grant_before_any_readback_effect -q; git status --porcelain; git hash-object library/local_orchestration/mainline_readback.py; git rev-parse HEAD:library/local_orchestration/mainline_readback.py`
+
+Complete returned output:
+
+```text
+..                                                                       [100%]
+2 passed in 1.09s
+c9f47840188ad4ae3e060ebb5a2ca2c5a095621c
+c9f47840188ad4ae3e060ebb5a2ca2c5a095621c
+```
+
+The two failures used4.73 command seconds; restored pass4.33s. All new reviewer
+commands approximately15s, within the18s cap. Conservative entire allocation
+upper bound599.2/600s includes Root reserves and the corrected author charge; no reset or new
+attempt allowance. Review tree is clean. This ordinary engineering mutation is
+NOT the still-missing qualified no-code adversarial Host audit.
+
+Root decision: accept the public-entry containment evidence only. Real issuer/
+readback admission remains NOT VERIFIED, so30B and43 are unintegrated and full
+Ticket30/checklist01/02 remain open. Candidate history, worktrees, journals and
+Recovery holds stay intact. No push, release, deployment or formal activation.
