@@ -1,4 +1,20 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H2 next source boundary preparation — 2026-10-20
+
+Distinct /root/batch_authority_review DOC_PASS for C6f0be9b70/checklist50
+07b7b145 and CVQ7d157e2348f5cb04e963a976868bc0e01866308a: all D8 edges,
+only04 checked and historical UNKNOWN/qualification/Recovery holds preserved.
+No source reexecution or new Host authority. Root next source selection reuses
+existing plan/request/peer/ledger types, factors existing SID validator rather
+than copying it, and separates pure client identity joins from native IO/SCM.
+Readonly architecture peer found2necessary internal value records/3finite enums;
+Root adds precise existing read-disposition check and no implicit writer claim.
+Client configuration digest is distinct from service configuration; equality
+is NOT presumed. H2-A constructors precede B behavior through existing typed
+preflight, not a new workflow or another Human decision. Exact three-path scope
+and preregistered resources are in original Ticket30 closure14; conditional
+Grant is NOT_ACTIVE pending independent DOC review and clean admission.
+
 ## C6 final E01 independent engineering seal — 2026-10-20
 
 Final candidate1fe5c8342ff7127ac7d19721a423fa42a6832711 vs initial

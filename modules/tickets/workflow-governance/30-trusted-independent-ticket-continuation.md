@@ -57,6 +57,119 @@ to that reviewed revision. Current N1 immutable source/evidence hold is unchange
 或新實作 admission。29→30 是本票實際重用純投影的能力依賴，不是清單順序。
 本輪文件工作有下節獨立授權；不因此將完整票30改成 admitted/completed。
 
+## 30N4-H2 — protected peer binding values / closure14 proposal
+
+Same original30/PRD009/CHG009/runbook02, uncapped local batch; necessary next
+shared service source responsibility, independent of active H1 native IO. Not
+another authority engine, Host framework or operational permission. H1 source
+and tests are READ_ONLY and not assumed implemented/qualified here.
+
+Baseline5449c0634866b3334e3963c87b8603eb973e39bd. CREATE2:
+library/local_orchestration/grant_authority/windows_peer.py,
+tests/test_grant_authority_windows_peer.py. MODIFY1:
+library/local_orchestration/grant_authority/contracts.py, ONLY factoring its
+existing canonical SID validator into one package-internal reusable constrained
+SID value/helper and having AuthorityPeer use it with the SAME accepted/rejected
+values. No new package export, new module/helper framework, path IO, nativeAPI,
+SCM, service, token/job/process handle, grant issuance/claim/settle/reader/spawn,
+client/ledger/codec/mainline/Router/Host/dependency or existingtest modification.
+Otherpaths DELETE0. Source peer must examine actual old consumer uses before SID
+factor; preserve AuthorityPeer JSON shape, primitive strictness and finite bounds.
+Existing registration-specific path model is NOT a generic safe path validator;
+do not adopt it by name or duplicate unrelated registration/provisioning behavior.
+
+H2-A internal typed construction only: two frozen extra-forbid strict value models
+(protected enrollment and complete observation), three finite internal enums for
+token type, impersonation level and job membership. They are source-only values,
+not trusted observations or authority. Reuse actual GrantReadRequest/GrantPlan/
+AuthorityPeer/OpaqueMetadataId/EvidenceDigest; no copied plan/peer DTO and no stored
+duplicate plan digest. No model_construct/copy/cast/Any/dynamic lookup/coercion
+for success. A model round trip must retain exact SID/path/codepoints and no
+normalization; integers reject bool, negative and overflow. Internal bounded
+canonical Windows drive-path validation is effect-free: reject relative, UNC,
+device, ADS, dot/trailing-ambiguity/control forms; never open/resolve filesystem
+or claim path existence/protection. Native C5 remains the independent filesystem
+and payload identity/protection mechanism.
+
+Enrollment fields: schema1; existing request_binding, expected_plan, authority_peer;
+session_ref/client_sid/windows_session_id/authentication_id_luid/process_id/
+process_creation_time_100ns/job_ref/process_image_path/process_image_digest/
+configuration_path/configuration_digest. SID != serviceSID. Client configuration
+identity is distinct from authority_peer's service configuration identity; do not
+equate those digests or substitute one for the other. Process/session uint32 (PID positive),
+LUID uint64, creation positiveuint64. No password/tokenbytes/OS handles/ACL/approved
+boolean. Image is client identity, not service executable identity; later actual
+protected loader must establish each correct payload binding.
+
+Observation fields: endpoint PID/session; last-message SID/session/LUID/token-type/
+impersonation-level; retained PID/session/creation/jobref/job-membership; observed
+image path+digest and config path+digest. All required, no success defaults or
+unknown partial record; finite NOT_MEMBER/UNAVAILABLE cannot match. No actual-writer
+field. Future native observer MUST derive these from retained noninheritable
+process/job handles, exact last-message token and protected paths, never request
+JSON or caller declarations. Missing observation gives no match, not invented data.
+
+H2-B only after A immutable source/strict/ordinary construction review: pure exact
+peer match and pure record binding, private/module-local interfaces, no new public
+result/port. Match revalidates enrollment+observation and requires impersonation
+token with level IDENTIFICATION or stronger, exact SID/session/LUID/endpointPID/
+retainedPID+session+creation/jobref+MEMBER/imagepath+digest/configpath+digest.
+Return validated bound enrollment or None, not a caller trusted flag. Endpoint
+and retained process join must both match original enrollment. This proves value
+consistency only: connected PID != proven writer; matching last-message context
+does NOT show that process executed write. CONNECTED_PID_IS_ACTUAL_WRITER remains
+UNPROVEN; operational admission still fail-closed pending qualified transfer
+controls. Pure functions never establish OS provenance by accepting equal objects.
+
+Record binding revalidates existing request and LedgerResult, accepts ONLY
+LedgerDisposition.EXISTING (actual SQLiteGrantLedger.read success), matching
+grant_ref/operation_ref, exact record.plan == enrollment.expected_plan and matching
+record grant. ISSUED/CLAIMED_NEW/SETTLED/REFUSED must not masquerade as read result.
+All four valid GrantLifecycle values may be returned as READ METADATA with their
+existing exact fields, not converted to active authority; no claim/effect/expiry
+permission is inferred. Later protected service composition owns order: H1 one
+message -> real observer/mandatory revert -> successful match -> decoder ->
+ledger.read -> record binding -> codec. Directly calling the pure binder alone
+does NOT establish prior peer match/authorization; tests/documentation state it.
+
+H2-TEST reuse existing protocol fixture builders and normal constructors, not a
+new runner/mockserver/JSON codec. Normal exact observation and request/record
+succeed; SID maximum bounds and lawful Windows paths retain exact values.
+Parameterized negative cells cover primary/anonymous token, SID/session/LUID,
+endpoint-vs-enrollment and endpoint-vs-retained PID, retained creation/session,
+job ref/nonmember/unavailable, image/config path and digest, request/plan/ref/
+ledger-disposition mismatch, null/bool/overflow/extra-field/noncanonical paths.
+Actual source mutations removing token guard, LUID exact join, retained creation,
+job membership, image/config join, request binding and plan equality must each
+make corresponding named cell RED then exactrestore GREEN; zero-red is a finding.
+Different Root door targets record disposition or configuration binding.
+No new ordinal line cap; forecast product230/test320 plus small SID factor.
+Overforecast/500effective lines triggers responsibility review, not artificial
+compression/splitting. Existing protocol/SID tests must remain green.
+
+Conditional grant-ticket30n4-protected-peer-20261020 revision01, parent sameuncapped
+batch. H2-A only (constructors/SID factor/constructor tests), H2-B NOT_ACTIVE until
+Root ordinary new-model constructor roundtrip/strict and independent source
+preflight at immutable A. Then Root derives revision02 for SAME three paths and
+remaining join tests; no Owner renewal or scope reset. Strong-type sequencing
+inside existing implementation stage, not a new workflow/Gate or self-blocking
+requirement for actual Host qualification before source construction.
+Named standard offered Luna/xhigh implementation owner /root/ticket30n4_peer_impl,
+Root sole reviewer/orchestrator, distinct /root/ticket30_native_tools_review
+source peer after current C6/CVQ view closes. New ctx-ticket30n4-protected-peer-
+20261020; same-lifetime direct lane, receipt/Runner NOT_REQUIRED.
+Preregister own repository-contained .worktrees/skill-improvement-30g-windows-peer
+and matching -review, branches codex/same names; owned Temp/johnny30n4-peer-owner-
+20261020 and -review-20261020. TTL through review/seal, exact teardown, holds take
+precedence; no cleanup or auto expiry, no denied-operation retry.
+Root after DOC_PASS reads exact baseline/clean Git/nonreparse roots and existing
+public DTO preflight before source allocation. All new-model A constructors tested
+and reviewed before B behavior. Offline only, per-command60/child55 default,
+record resource usage/diagnose changed bounds, no cumulative/attempt reset.
+ACTION_REQUIRED source implementation only AFTER exact activation record;
+currently DOCUMENT_REVIEW_PENDING, not an operational trusted Grant.
+
+
 ## 30N4-H1 — bounded Windows pipe IO / closure13
 
 C6 final1fe5c8342ff7127ac7d19721a423fa42a6832711 independently SOURCE_STAGED_PASS:
