@@ -1,4 +1,21 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H2-A precise source construction activation — 2026-10-20
+
+Distinct /root/batch_authority_review DOC_PASS aa9b5c266eaee7dbd3be3ab909575edf00c29f8b,
+closure14 LF254456efca4e45f830296fea401c4169b6f5e10a03c89bc987cb785c2cf123ab
+matches D8; no Host/operational authority added. Actual existing normal public
+DTO constructor/JSON preflight0bd297 PASS at source5449; new H2 internal values
+must still be constructed/strict/reviewed before B. Registered resources created
+64f164 after registration; fresh Root Git/containment readback below binds both
+clean5449, exact branches/linked Git/nonreparse contained roots.
+grant-ticket30n4-protected-peer-20261020 revision01 ACTIVE H2-A ONLY:2CREATE and
+one existing contracts SID-factor MODIFY, no B joins/Host calls. Parent uncapped
+batch; named /root/ticket30n4_peer_impl standard offered Luna/xhigh, Root reviewer
+and different source peer, context ctx-ticket30n4-protected-peer-20261020.
+Same-lifetime direct lane, receipt/Runner NOT_REQUIRED. B remains conditional
+until immutable A/ordinary new constructors/independent preflight pass; no owner
+renewal or cumulative reset. ACTION_COMPLETED -> AUTO_CONTINUE IMPLEMENT H2-A.
+
 ## H2 next source boundary preparation — 2026-10-20
 
 Distinct /root/batch_authority_review DOC_PASS for C6f0be9b70/checklist50
