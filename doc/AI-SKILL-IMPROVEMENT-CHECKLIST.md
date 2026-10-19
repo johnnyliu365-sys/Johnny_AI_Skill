@@ -3,7 +3,7 @@
 | 欄位 | 值 |
 | --- | --- |
 | 文件身分 | `AI-SKILL-IMPROVEMENT-CHECKLIST`；本專案工作追蹤，非新 PRD／SPEC／Gate |
-| Revision／來源 | `45`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
+| Revision／來源 | `46`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
 | 工作基準 | `a1cb6c13adbeb52a4117991727dcc3d4af6d2a33`；分支 `codex/skill-improvement-checklist` |
 | 主線 | 先對照、優先 02→04→05→06→07，再處理餘項與整合回放 |
 | 負責 | Root 理解需求、衝突與派工；票級實作者依有效能力 Profile；獨立審閱另席 |
@@ -30,7 +30,28 @@ Router、Reviewer、文件索引與結案規則仍各有唯一正文。`[x]` 只
 | [ ] 11 去重與衝突 | `WPR_TEMPLATE_AND_HISTORY_LOCAL_INTEGRATED / ACTIVATION_OPEN` | 原37／38／40／42保留；Luna44在既有RequirementLineageGate增加純revision-history驗證、重用原test；[獨審](reviews/workflow-governance/44-requirement-revision-compatibility-code-review.md) | 原42之46tests／不同位置WPR突變證據保留；44獨審14tests／30subtests、鏈結與terminal不同門突變紅→綠、Root gate1aa5ed22與兩blob一致；獨立seal確認 | `APPROVED_44 / LOCAL_INTEGRATED / CLEANUP_BLOCKED` | 舊一對一validate維持生效；可信creation issuer／效應前grant讀回／原子consume及真Host尚缺，不用純history方法冒充正式身分遷移；清理政策阻擋 |
 | [ ] 12 回放與獨審 | `EXISTING_CASES_MAPPED / END_TO_END_NOT_VERIFIED` | Root沿既有案例／review；46增加受版控本地命令來源，未新增回放框架；30B／43仍未整合 | 46合法command-plan與拒絕／版本釘選／不同門突變均有獨審；整合後36tests／22subtests。04不重做，既有局部PASS沿用，候選不冒充整合版 | `PARTIAL_ONLY` | 完整01–10正式來源/effect回放仍缺；Owner已採納首次入口順序例外，但未授權Host測試；不是資格或總驗收 |
 
-## 當前工程接續與精確證據（revision45）
+## 當前工程接續與精確證據（revision46）
+
+本次精確Owner決策已啟用CVQ SPEC10§15／wire06§10，提案92e28d33與獨審
+54a6b35f不重問；簽章版11／07在CVQcontrol00528cb9，沒有改既有隔離不變量。
+新constructor初稿5f7ae38b雖有45tests綠，Root仍查出必填欄位被錯設預設值，
+同票6f392ec4修正；獨立來源席複驗、Root45tests／2605subtests、strict18files、
+compile/import與不同property-origin及required-default實際謂詞紅→精確還原綠。
+完整port方法新實跑1test／11subtests，舊55s逾時及作者原始輸出缺失未冒充通過。
+證據在CVQ原schema review14／seal09ab5ec5；只SOURCE_SCHEMA_PREFLIGHT_PASS，
+原票behavior closure06已準備ac87669b，尚不代表完整CaseResult驗證或真實Host通過。
+
+C3初稿2f6b3fd5被Root查出兩個ZERO_RED，原作者同票7b2184df只修三檔；Root實際
+native後頁錯誤、volume、size三門各自具名紅→精確還原／非增量重建綠，131物件
+合法positive與literalhash／size、實際DLL載入來源均通過，獨立席窄複驗PASS。
+原30review／seal5c19eee0，E01/E02只在來源工程層關閉，未整合／未qualified。
+接續同票C4 closure09只CREATE2／MODIFY2，重用C3與B1完成全樹有界組合；
+DOC PASS及新鮮7b／角色／Git綁定後bd505245准入派原作者，不等待Owner重批。
+fixture先登記owner／TTL／teardown後才建立，7物件／44bytes，既有hold不清除。
+30B／43、真實保護來源、隔離資格及effect驗收仍開放，01–12勾選狀態不變；
+只有04已完成。沒有Host測試、安裝、ACL／帳號／服務變更、push或發布。
+
+## 前次工程接續與精確證據（revision45歷史）
 
 同票F1最終7fa12f0c已把共用候選build與實體fixture拆開，預設零symlink探測，
 非真實reparse/denied/fault仍標INJECTED。獨審發現DLL綁定oracle退化後，原作者
