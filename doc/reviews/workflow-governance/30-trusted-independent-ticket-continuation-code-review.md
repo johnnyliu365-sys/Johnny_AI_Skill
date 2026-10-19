@@ -1,5 +1,46 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N2 B4 pure correction accepted / bounded source-fixture continuation — 2026-10-19
+
+Additive candidate0534e3b1febc0a58236214fcbd7df20fe6ad9269 changes only
+Guard/SelfTests/Program againstb49dd2f0. Root read exact diff; distinct same peer
+confirmed no new finding. Actual branch now always retains original partial
+creation status/identity/native result/accounting/Recovery job evidence, including
+after confirmed teardown. Existing pure fake port covers process-only success,
+native-failed partial, indeterminate and normal Created, not just constructor shape.
+Author's diagnostic red named the exact lost-partial-state assertion; intermediate
+CS8602 is retained; final strict offline build has zero warnings/errors, focused
+pytest1passed in7.85s, whole10.733024s, restore1.739924/build5.394409s.
+
+Root read actual registered binaries EXEff485922e90f636356cf81c2d3f23199cbce91c53264291d5e45ab3047fed596 /
+DLLaa3ba7dc2f0c3fcbd339fdc4e6ac5261c1cfe6ef214e6dedea1039079fb1a9a8;
+exact apphost `job-contract-self-test` returned passed/bounded_native_job, exit0,
+0.156s. Peer independently matched hashes and ran same pure mode224ms, exit0,
+empty stderr. NativeJ3 historical cause stillUNKNOWN, not erased by pure success.
+
+Root SOURCE_CONSTRUCTOR_PREFLIGHT_PASS closes B4 for source construction only.
+Under original8-path Grant, Root registers before creation:
+.worktrees/skill-improvement-30n2-review, branch codex/skill-improvement-30n2-review,
+source0534e3b1; output C:/Users/GameBoy/AppData/Local/Temp/johnny30n2-review-20261019.
+Owner /root; purpose offline strict build, bounded pure reverse mutations and one
+fixed source-only native job-fixture validation. TTL through exact N2 review and
+evidence seal; Review/Recovery holds override expiry. Teardown only through existing
+admission after exact restore and evidence seal; no cleanup now or denied retry.
+Author WT and prior N1/N2 outputs are not overwritten. Each temporary mutation is
+limited to original8paths and exactly restored; no test weakening/new source paths.
+
+Source-only native fixture is the existing exact apphost's closed job-self-test
+recipe: current-image only, unnamed jobs, one active process, configured memory/
+CPU,3s per-Guard cooperative deadline, cancellation/exact owned termination and
+finite readback, outer20s, no stress/general executable/provider/network. This is
+the already permitted bounded trusted primitive fixture, not Host attack or CVQ
+qualification. Run only after actual current constructor preflight and bounded
+pure mutations; if it fails retain full typed stages/error/accounting, diagnose
+before any repetition. New typed instrumentation/accounting/partial-state fixes
+are concrete new evidence, not the forbidden identical J3 retry-until-green.
+No service/account/ACL/AppContainer/firewall/install/persistent privilege operation.
+OriginalJ3UNKNOWN remains even if this corrected candidate passes.30B/43/TAL held.
+
 ## N2 correction constructor preflight / partial-creation finding — 2026-10-19
 
 Candidate b49dd2f0f64675393ce416dd44c5abc6bffdf944, additive to5b6ef722,
