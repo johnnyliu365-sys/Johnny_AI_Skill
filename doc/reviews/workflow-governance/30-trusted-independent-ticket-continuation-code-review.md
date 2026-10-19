@@ -1,4 +1,39 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H8 job-lease source construction admission — 2026-10-20
+
+Distinct architecture source helper DOC_PASS051d893d41c0a9f5418f91832e1850dc55506f19,
+original30closure24 blob0c23ce2d551d8f7040b7dcedf1a7c9ae99404207 /
+LF5fcbb28a79fdc291180663cba2840f34af77774388698e8e755273652a236c16 D8matched.
+Root confirms exact876223b3 and reused strict metadata/uint/path constructors.
+Fresh absent roots allocated contained/nonreparse, correct codex branches/linked
+Git pointers/common-dir and clean baseline; source paths absent. Normal new
+limits construction is the allowed A bootstrap, not circular Host qualification.
+
+Root derives grant-ticket30g-subject-lease-20261020 revision01 A_ONLY ACTIVE,
+parent batch-checklist-local-20261019-uncapped/original30closure24, baseline exact
+876223b3d04d5a0baedda9d5cdbcd9c1092431a2. Named implementation owner
+/root/grant_transport_impl, N6 allocation released to immutable evidence hold;
+Root sole reviewer/orchestrator and distinct /root/batch_authority_review helper.
+Author WT .worktrees/skill-improvement-30g-subject-lease, Root matching-review,
+codex/same, ctx-ticket30g-subject-lease-20261020 replacing old N6working view.
+OwnedTemp/johnny30g-lease-owner-20261020 and -review-20261020 owner+TTLthrough
+review/seal/holds, no cleanup authority. CREATE ONLY originalclosure24 two exact
+paths; MODIFY0/DELETE0. A exactly one private frozen strict required limits model,
+normal constructors/bounds/cross-field matrices/strict2/memorycompile/import,
+actual source required/default/strict field namedRED/exactrestoreGREEN; no IO/
+clock/UUID/job/placeholder resource classes yet. B_NOT_ACTIVE until reviewed A.
+Existing source/history/remaining holds stay unchanged. Child55/outer60, existing
+uncapped evidence-progress policy with raw full commands/results/hash/timing.
+No native/job/process/token/Host/helper/SCM/config/security/install/model/network/
+cleanup/push/release/deploy/formal integration/qualification/30B43 clearance.
+ACTION_COMPLETED -> AUTO_CONTINUE named A author; no Owner technical renewal.
+
+Root reference readback (documentation only, no native probe):
+Microsoft CreateJobObjectW lpJobAttributes=NULL gives a noninheritable new handle;
+KILL_ON_JOB_CLOSE is effective on last handle close, not proof no process remains.
+CPU time fields use100ns ticks. Existing C# layouts/flags remain unchanged.
+https://learn.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-createjobobjectw
+https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_basic_limit_information
 ## N6 finite HTTP source seal / immutable evidence hold — 2026-10-20
 
 Candidate47216919a6c226f48d543b155e8a3e1b79723fc7 parent969aa0ee05c83720cdd1e25b71ac0594f91c8e2a,
