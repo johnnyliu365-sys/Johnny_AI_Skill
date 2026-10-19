@@ -2,7 +2,7 @@
 
 | 欄位 | 內容 |
 | --- | --- |
-| State | `ORIGINAL_SLICE_LOCAL_INTEGRATED` at `2f1c29cb`；current closure03 NORMALIZATION + approved-policy pin consistency；清單11未結案 |
+| State | `ORIGINAL_SLICE_LOCAL_INTEGRATED` at `2f1c29cb`；closure03 normalization候選80cc4484 `APPROVED_SOURCE / CLEANUP_BLOCKED / NOT_INTEGRATED`，精確審閱與拒絕證據1eff888f；清單11未結案 |
 | Authority | Owner 2026-10-18 清單 11；既有 `Workflow.md` 治理文件歸屬及本票，不新增 PRD／SPEC／Gate |
 | Baseline | 本票 docs-only commit；派工時精確 pin |
 | Roles | 低成本實作席位；另一席獨立審閱；Root 整合 |
