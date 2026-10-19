@@ -11,6 +11,34 @@
 | Profile | Current30G=`HIGH_ASSURANCE`, exact scope below；historical30A=`STANDARD` fixture only；均不授予真實Host/source/effect資格 |
 | Implementation language | Python3.11 strict；current30G checker／constructor順序依下節；原30A命令為歷史證據不重跑 |
 
+## Effective local batch resource / convergence amendment — 2026-10-19
+
+Authority `batch-checklist-local-20261019-uncapped`: Owner explicitly removes all
+per-ticket/per-role cumulative command-second ceilings and fixed initial-plus-one
+correction attempt ceilings for the original12 local items, including30B/30G/B3F01.
+Historical usage, failures, findings, reservations and UNRECONCILED timing remain;
+none are reset or presented as measurement. Older numeric ceilings/attempt locks
+below are SUPERSEDED_FOR_THIS_LOCAL_BATCH, not reasons for another renewal request.
+The proposed500 package is SUPERSEDED_NOT_ADOPTED. Scope/qualification/external-effect
+boundaries do not change. Implementation-authority's explicit resource amendment
+rule is canonical; this is the project-specific authority/child-Grant binding.
+
+Root may derive precise local child Grants, including N2 after its reviewed exact
+baseline/paths/constructors, under this parent without a fresh resource approval.
+Existing field allowlists and type/source/review admission must still pass; this
+section does not automatically authorize a new path or operational trusted Grant.
+Actual issuer/Host positive acceptance remains OPEN,30B/43 remain REVIEW_BLOCKED,
+and ordinary engineering preparation remains distinct from qualified source review.
+
+Retain command60s / compiler-test child55s as initial defaults and resource tracking;
+adjust an individual bound only after diagnosis with workload/reason recorded. A
+repeat of the same failure without new evidence stops unchanged retries, not other
+independent work. No unbounded wait/load, tool-policy bypass, paid expansion, installation,
+permission change, live Host campaign, push/release/deploy or formal activation.
+This amendment becomes effective after independent consistency review of its exact
+committed rules/ticket/index/runbook versions; subsequent exact child bindings refer
+to that reviewed revision. Current N1 immutable source/evidence hold is unchanged.
+
 ## Mainline ticket contract
 
 ```json
@@ -229,7 +257,7 @@ post-restore rebuild/green/final identity is newly allowed; mutated build output
 is not a candidate artifact. No source repair/new mutation/Host effect allowed. No helper
 delegation, push/release/deploy/old cleanup retry or unrecorded extra attempt.
 
-## 30N2 — Bounded native job primitive / proposed continuation, NOT_GRANTED
+## 30N2 — Bounded native job primitive / exact local scope, GRANT_PREPARATION
 
 Same original Ticket30/PRD/CHG/SPEC and first-entry source-staging exception.
 This is the Windows primitive portion of the existing controlled-executor/observer
@@ -244,6 +272,12 @@ Reviewer220-84-94.523=41.477 fits32. Do not underfund/retry this native slice ju
 to continue, release historical reservations silently, or pretend the overall
 1500 ceiling was hit. This is a role-envelope allocation constraint; Root continues
 other lawful evidence/source preparation. No additional Parent cost is authorized.
+
+The paragraph above is historical admission arithmetic, superseded by the effective
+local batch amendment. N2 is no longer blocked by cumulative resources or correction
+count; only its exact ordinary engineering preflight/child-Grant binding remains.
+Later proposals to add500 or renew B3 attempts likewise remain historical, not pending
+Owner questions. They must not be used to reinstate a removed ceiling.
 
 Subsequent bounded CVQ preparation at75d165b5e3b9e4e26b8b36af240d218b06447f4f:
 strict21 passes, but ordinary independent review/root actual-package reproduction

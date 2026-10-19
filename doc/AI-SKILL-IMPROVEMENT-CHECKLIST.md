@@ -3,7 +3,7 @@
 | 欄位 | 值 |
 | --- | --- |
 | 文件身分 | `AI-SKILL-IMPROVEMENT-CHECKLIST`；本專案工作追蹤，非新 PRD／SPEC／Gate |
-| Revision／來源 | `37`；沿用既有12項與acf0ffa1／ded322b3批准；Owner批次本地授權與首次CVQ順序例外；SAME900重新分配350/220/330，原帳與1500總上限保留。非 OS變更／Host測試／push／正式啟用授權 |
+| Revision／來源 | `38`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
 | 工作基準 | `a1cb6c13adbeb52a4117991727dcc3d4af6d2a33`；分支 `codex/skill-improvement-checklist` |
 | 主線 | 先對照、優先 02→04→05→06→07，再處理餘項與整合回放 |
 | 負責 | Root 理解需求、衝突與派工；票級實作者依有效能力 Profile；獨立審閱另席 |
@@ -30,7 +30,18 @@ Router、Reviewer、文件索引與結案規則仍各有唯一正文。`[x]` 只
 | [ ] 11 去重與衝突 | `WPR_TEMPLATE_AND_HISTORY_LOCAL_INTEGRATED / ACTIVATION_OPEN` | 原37／38／40／42保留；Luna44在既有RequirementLineageGate增加純revision-history驗證、重用原test；[獨審](reviews/workflow-governance/44-requirement-revision-compatibility-code-review.md) | 原42之46tests／不同位置WPR突變證據保留；44獨審14tests／30subtests、鏈結與terminal不同門突變紅→綠、Root gate1aa5ed22與兩blob一致；獨立seal確認 | `APPROVED_44 / LOCAL_INTEGRATED / CLEANUP_BLOCKED` | 舊一對一validate維持生效；可信creation issuer／效應前grant讀回／原子consume及真Host尚缺，不用純history方法冒充正式身分遷移；清理政策阻擋 |
 | [ ] 12 回放與獨審 | `EXISTING_CASES_MAPPED / END_TO_END_NOT_VERIFIED` | Root沿既有案例／review；46增加受版控本地命令來源，未新增回放框架；30B／43仍未整合 | 46合法command-plan與拒絕／版本釘選／不同門突變均有獨審；整合後36tests／22subtests。04不重做，既有局部PASS沿用，候選不冒充整合版 | `PARTIAL_ONLY` | 完整01–10正式來源/effect回放仍缺；Owner已採納首次入口順序例外，但未授權Host測試；不是資格或總驗收 |
 
-## 本輪原生工具與CVQ實際驗證（revision37）
+## 有效本地授權修訂（revision38）
+
+Owner明確取代原本按票／角色累計命令秒數與固定初次加一次修正限制，涵蓋30B／30G／
+B3原F01；不採前次500秒提案、不再用舊上限要求續准。舊帳、失敗、偏差、UNKNOWN／
+UNRECONCILED及未解Finding全部保留，持續計時而非歸零。相關既有治理reference、
+原票30／registry及CVQ原B3票／registry同步綁定此次決策並獨立核對。
+單次逾時、程序／資產監控仍有效；同失敗無新證據不原樣重試，改RCA或有依據的修法。
+沒有取消來源／Grant／Review／Host qualification、平台限制或安全閘門，沒有付費擴容。
+已重現Field缺陷優先實作；其他已准入本地原生工具／觀察能力接續，不以進度回報停工。
+本節不新增完成勾選；01～12仍依各自實作、驗證、獨審及必要資格證據判定。
+
+## 本輪原生工具與CVQ實際驗證（revision37歷史）
 
 N1九檔工程證據如下保留，未重做04，也未將任何其他主項假勾。
 CVQ舊指向已改讀可信control55b9a91c、既有修復候選2e889401；沒有重派已回件F01。

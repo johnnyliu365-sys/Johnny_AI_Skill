@@ -1,9 +1,44 @@
-# Core capability implementation decision — revision02
+# Core capability implementation decision — revision03
 
 Status: OWNER_APPROVED_ORDER_EXCEPTION_AND_30G_SOURCE / NATIVE_OS_EFFECTS_NOT_AUTHORIZED.
 Parent: Owner's existing12-item local batch; original Ticket30 and workflow/adaptive
 SPEC lineages. This plan selects implementation responsibilities, not a new PRD,
 Router, policy engine, qualification verdict or production activation.
+
+## Effective Owner amendment — batch-checklist-local-20261019-uncapped
+
+The Owner's latest explicit decision replaces cumulative command-second and fixed
+initial/correction-count limits for completing the original12 local improvement items,
+including30B/30G and retained B3F01. The historical599.2,900/1500,350/220/330,
+reservations, failed attempts and UNRECONCILED intervals remain historical evidence,
+not active admission ceilings, fresh zeroed balances or reasons for human renewal.
+The later proposed added500/2000 package is SUPERSEDED_NOT_ADOPTED; do not request it.
+
+This is an execution-policy amendment, not a new PRD or grant issuer. Root derives
+exact child scope/role/baseline/worktree/acceptance bindings under the existing batch;
+the implementation owner never approves its own work. Existing spec, source trust,
+Grant authentication, isolation qualification, protected effects, Review and CI remain.
+The first-entry CVQ exception retains its exact original scope and provisional nature.
+Do not remove limits from runtime contracts or separately authorized operational
+attempts, platform quotas, tool policies or provider spending. No paid expansion.
+
+Default local command deadline60s, compiler/test child deadline55s, one foreground
+command per seat. A known workload may receive a different finite bound after root
+diagnosis and a recorded reason, not a blanket timeout increase. Continue timing
+start-to-terminal executions and monitoring owned process/resources. A repeated
+identical failure without new evidence stops unchanged retries; root-cause analysis
+or an evidence-backed different repair replaces them. No unlimited wait or blind loop.
+
+Current source sequence: bind/review this amendment; repair retained B3 schema-call
+identity with baseline-red and legal positives; finish its ordinary engineering
+review and immutable staging (not qualification); N2 native job lifecycle; protected
+enrollment/transport/configuration tools; minimal readonly adapter and independently
+owned observer preparation. Freeze each exact path/contract before its source effect.
+Actual installation, accounts/SIDs/ACL/service/network changes, ongoing privileges,
+real Host campaigns/model costs and other unauthorized external effects still need
+one concrete manifest/decision at their boundary. No push/release/deploy/activation,
+denied-cleanup retry or changes to R0/DAP/TAL/Recovery. No checklist checkmark is added
+by this policy change. Original later sections are provenance where they conflict.
 Baseline10b06f82c0825d6339d12712f0b2f752114c8790; assessment2026-10-19.
 Independent ordinary architecture/docs review: /root/batch_authority_review,
 APPROVED_AS_PROPOSAL for b77fc961f99e51b6cb0dad74a8e2b5646a1e4559 / leafblob
