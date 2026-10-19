@@ -39,6 +39,92 @@ This amendment becomes effective after independent consistency review of its exa
 committed rules/ticket/index/runbook versions; subsequent exact child bindings refer
 to that reviewed revision. Current N1 immutable source/evidence hold is unchanged.
 
+## 30N4-H8 — service-owned native job lease / closure24 proposal
+
+Original30/runbook03 section2, same uncapped batch/first-entry source-order scope.
+Root and distinct architecture helper read exact876223b3 native job guard/port:
+C# NativeJobGuard.Run waits and disposes handles in finally, and accepts only
+three fixed fixture modes. Its JSON is not a live PyHANDLE ownership bridge.
+The Python service therefore needs an in-process subject lifecycle owner. Build
+that responsibility once, not a second Runner/Broker or another pure comparison
+wrapper. This slice produces the job owner only; suspended subject/token launch
+extends the SAME module later after its exact scope/preflight. No response path
+or qualification is claimed while those producers remain absent.
+
+Sourcebaseline876223b3d04d5a0baedda9d5cdbcd9c1092431a2 (reviewed source engineering
+stage, not formal integration). CREATE ONLY
+library/local_orchestration/grant_authority/windows_subject_lease.py and
+tests/test_grant_authority_windows_subject_lease.py; MODIFY0/DELETE0.
+H1/H2/H3/H4/H5/H6/C8, ledger/client, native C# and H7 paths READ_ONLY.
+One product responsibility = owning subject job lifetime; one shared fake native
+job fixture/matrix. No per-case scripts. Reuse existing _StrictModel, exact native
+PyHANDLE checker and handle information helper from H3, canonical metadata aliases,
+and H6 same-thread/alias ownership conventions. C# N2 bounds/order/ABI are reference
+proofs, not an executable ownership transfer. Do not import production from tests.
+
+A only one private frozen strict required _SubjectJobLimits:
+active_process_limit literal integer1 (bool rejected);
+process_memory_limit_bytes/job_memory_limit_bytes integer1..536870912;
+process_user_time_100ns/job_user_time_100ns integer1..12000000000;
+parent_wall_timeout_ms integer1..1200000.
+process memory<=job memory and process CPU<=job CPU, no coercion/default/null/extra.
+Memory ceiling reuses CVQ ResourceBounds/N2, wall ceiling CVQ ReadOnlyHostBounds
+at reviewed24c79d22. CPU ceiling is finite100ns conversion of that wall maximum,
+not a policy budget or permission. Operational grants must still supply/enforce
+their narrower bounds; no change to C# fixture limits or existing CVQ contracts.
+No IO/clock/UUID/native job calls/placeholder lease methods in A.
+
+B after ordinary A constructors/strict/source review: implement private
+_create_subject_job(limits, owner_ref) -> _SubjectJobLease. No caller supplied
+job_ref: generate a fresh service-internal opaque identity once and bind it to the
+actual retained unnamed noninheritable PyHANDLE returned by CreateJobObject.
+Set exact extended limits active1/process+job memory/process+job CPU/KILL_ON_JOB_CLOSE,
+no breakaway flags. Read native limits back and compare all fields/required flags;
+verify handle inheritance and original owner/alias. No partial or expected-filled
+readback. One owner retains exact job handle on the issuing thread and records
+owner_ref, internal job_ref and monotonic expiry derived from limits.
+No process/token creation, arbitrary command, PID reopen, handle duplication,
+SCM/listener/helper/Grant/ledger operation or policy activation in this slice.
+
+Lease exposes only metadata/liveness needed by the future same-module subject
+owner; do not export a numeric handle as authority or hand ownership to caller.
+Close invokes the same original PyHANDLE.Close exactly once; confirmed close is
+idempotent. Wrong thread/alias drift/expired access refuses before further native
+work. Cleanup uncertainty retains exact owner plus recovery state, poisons future
+operations, does not retry close/alternate raw CloseHandle/GC/destructor disposal.
+Creation/readback failure closes only confirmed newly owned job; uncertain close
+must retain it in the raised private error. Native creation with no identifiable
+owner is indeterminate failure, not a fabricated success. Finite resource lifetime
+uses explicit owning caller teardown, not a background watchdog or cleanup promise.
+No new resource authority, owner-signed DTO, protected provenance or capability
+is established by these internal metadata values.
+
+H8T1 A normal direct/JSON exact/bounds/frozen/required/type/cross-field cases,
+strict2/memorycompile/import; actual required/default/strict-field weakeners
+namedRED/exactrestoreGREEN, no ceremonial first-red.
+H8T2 B fake below actual native job wrappers pins creation/flags/noninheritance,
+every observed field mismatch, no return before all readbacks, exact handle owner,
+original numeric alias/thread, internal jobref uniqueness, owner/TTL metadata.
+H8T3 close once/idempotence/readback failure/unknown creation/close uncertainty
+retention/poison/expiry, and legal lifecycle still succeeds.
+H8T4 block unpatched real native/process/socket/filesystem/environment/Host effects;
+actual source flags/readback/cleanup/identity weakener cells must namedRED and
+exactrestoreGREEN. Root different door, full unfiltered raw stdout/timing/hash.
+One ownedTemp mypycache, child55/outer60 initial bounds, evidence-progress/history.
+Forecast A source+60/test+150; B source+240/test+350 effective. >500 triggers
+structure review, not minification or automatic fragmentation/new framework.
+
+Root sole reviewer/orchestrator; released /root/grant_transport_impl named author,
+distinct /root/batch_authority_review source helper. Preregister contained
+.worktrees/skill-improvement-30g-subject-lease and matching-review, codex/same,
+ctx-ticket30g-subject-lease-20261020; ownedTemp/johnny30g-lease-owner-20261020 and
+-review-20261020, owner+TTLthroughreview/seal/hold, no cleanup authority.
+Conditional grant-ticket30g-subject-lease-20261020 revision01 A_ONLY NOT_ACTIVE
+until exact committed document review/source/roles/contained nonreparse Git binding.
+B_NOT_ACTIVE until exact reviewed A. No new Owner technical approval is required.
+No actual job/native/process/token/Host/helper/SCM/model/permission/install/cleanup/
+network/push/release/deploy/formal integration/qualification/30B43 clearance.
+
 ## 30N4-H7 — bounded observed-file wire consumer / closure23 proposal
 
 Original30/runbook03 section2, same uncapped local batch/source-order exception.
