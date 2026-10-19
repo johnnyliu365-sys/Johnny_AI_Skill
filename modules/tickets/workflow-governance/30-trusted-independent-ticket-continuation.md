@@ -57,6 +57,80 @@ to that reviewed revision. Current N1 immutable source/evidence hold is unchange
 或新實作 admission。29→30 是本票實際重用純投影的能力依賴，不是清單順序。
 本輪文件工作有下節獨立授權；不因此將完整票30改成 admitted/completed。
 
+## 30N3 — F1 shared native-test fixture separation / closure05
+
+Same original Ticket30/PRD/CHG and reviewed uncapped local batch; this repairs the
+shared verification entry, not a new product policy, PRD, Runner or qualification.
+B2 bf5a4a3c engineering seal3c87ef77 and C1 seal283dd8c9 remain held/unintegrated.
+Reuse existing offline SDK builder, assertions and single tests/test_native_authority_tools.py.
+MODIFY1/CREATE0/DELETE0, baseline bf5a4a3c82131c308ffa85b2d899d4afd1cf32d9.
+No product source, expected masks, native job acceptance or SDK/config edits.
+
+F1-BUILD: extract restore/build/candidate logic to one shared builder and session
+native_candidate fixture; native_fixture depends on it and only creates the owned
+ordinary payload fixture. Preserve offline NuGet.Config, nonincremental compile,
+output-root isolation, per-child deadline, full stdout/stderr and exact candidate.
+Pure self/enrollment/job-contract/native-job assertion functions consume candidate
+only, not an unnecessary payload or symlink. Test selection doesn't invoke unrelated
+native job workload. Modes/plan/missing use shared noncreating target-path helper,
+unchanged actual CLI assertions/PROCESS_ENV, no physical protected-path creation.
+Keep existing test assertions, including actual identity and failure labels.
+
+F1-PROBE: default zero symlink attempts. Existing optional real reparse branch may
+run only with explicit JOHNNY_NATIVE_REPARSE_OPT_IN=1 in an independently authorized
+test invocation; this flag is a method selector, NOT permission or Host capability.
+Missing opt-in gives exact INJECTED/not-opted-in evidence. Opted-in creation failure
+stays injected/unavailable. Actual campaign here does NOT opt in or retry known1314.
+No machine setting, ACL, account, privileged operation or qualification is implied.
+
+F1-VERIFY: build-boundary test makes mkdir/payload-write/symlink fail-fast while
+asserting both exact bounded SDK commands, timeout and output identity. Add default
+native setup test with symlink fail-fast and explicit injected marker; mock branch
+selection only, not core product or native assertion. Pure enrollment selection
+must actually build/run with no native payload setup. Existing real owned native
+getter runs against candidate and explicit injected reparse; no real symlink probe.
+Strict mypy, compile/import, affected pytest, author actual guard mutation red/restore
+green and Root different-door mutation red/restore green. Output must identify actual
+candidate source+EXE+DLL/test hashes. Native N2/job tests not requalified by this cut.
+No new public DTO, existing Python fixture typed shapes; constructor preflight reuses
+the already reviewed candidate and observation contracts rather than fabricating it.
+
+Conditional same-lifetime child Grant after independent DOC PASS and Root fresh
+baseline/clean source/worktree/role readback (development authority, not trusted issuer):
+
+~~~yaml
+grant_id: grant-ticket30n3-fixture-separation-20261019
+parent_authority: batch-checklist-local-20261019-uncapped
+ticket: workflow-governance/30
+slice: 30N3-F1
+closure: 5
+baseline: bf5a4a3c82131c308ffa85b2d899d4afd1cf32d9
+implementation_owner: /root/ticket30_native_tools_impl
+reviewer_orchestrator: /root
+independent_evidence_peer: /root/ticket30_native_tools_review
+worktree: .worktrees/skill-improvement-30n3-enrollment
+branch: codex/skill-improvement-30n3-enrollment
+context_view: ctx-ticket30n3-fixture-separation-20261019
+profile: HIGH_ASSURANCE_SOURCE_ENGINEERING_STAGING_ONLY
+implementation_profile: implementation-standard
+review_profile: ticket-review
+create: []
+modify: [tests/test_native_authority_tools.py]
+delete: []
+~~~
+
+Prior completed B2 allocation released; original WT/ref/outputs stay held, no reset.
+Owner/output inherited: johnny30n3-enrollment-owner-20261019 ordinary registered root;
+Root review output johnny30n3-review-20261019. TTL through exact review/seal with
+Review/Recovery holds overriding expiration; no cleanup or denied operation retry.
+Commands<=60s/children<=55s, history/elapsed preserved, no cumulative/count ceiling.
+Forbidden other source/PRD/SPEC/remote/production data/secret/Host install/config/
+model/network/account/service/ACL/receipt/spawn effects, formal activation or
+push/release/deploy. Author returns exactcandidate/files/raw commands/results/
+elapsed/mutations/deviations; Root independently reviews, then continues existing
+native reader preparation. No checksum/assertion weakening or all-refuse shortcut.
+
+
 ## 30N3 — C1 native readback seam / closure04, independent of pure B2
 
 This is the minimum responsibility extraction before later native content/inventory
