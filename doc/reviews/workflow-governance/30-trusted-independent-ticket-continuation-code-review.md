@@ -1,5 +1,53 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N2 actual constructor preflight and behavior continuation — 2026-10-19
+
+Exact Grant at1eb739d3e6d093d49b0abf5218a20c73a5d886e9, Ticket30 leaf blob
+2335b3e42b3ffacd9e4d43f339a30433ed1b2254, LF
+44e2c584405c66d5d6f286aa08292726905ed906a62465c3ce82c37253242edf.
+Existing boundary parser read the committed leaf:3MODIFY/3CREATE/0DELETE; each
+declared path admits its own operation. AGENTS.md modification, Extra.cs creation
+and deletion of the csproj all refused. This is local source-boundary preflight,
+not native interception; command measured0.0470000s/tool2.124321s. A preceding lookup
+used the wrong ticket filename and failed (tool1.53385s), NOT acceptance evidence.
+
+Initial PhaseA39f23b85837c9763937708915d98db714f8cdb21 was examined by distinct
+reviewer /root/batch_authority_review. Pure self-test passed with exact EXE/DLL
+hashes, but F-N2-A1 blocked behavior: AssignProcess failure leaves a suspended
+process outside the Job; TerminateJob and CloseHandle cannot terminate it. Same
+author corrected within the same6paths at eeb2eaaa370fe9f42078cbf15228476b6d1f0ca8.
+Root independently read the additive correction: exact-handle TerminateProcess
+port/PInvoke, finite Created/NotCreated/RecoveryRequired partial-create result,
+retained optional safe handles, and constructor consistency tests. Partial native
+creation cannot silently become Failed/null with lost ownership. Native orchestration
+fault-order assertions remain PhaseB, not falsely claimed by pure constructors.
+
+Root read back clean author HEAD eeb2eaaa, candidate EXE SHA256
+6898c4aa1da1dbcab713481ac8a4664c46e911670c549e76f75f54771b5b3b0b,
+DLL19a21f42cabbaca68ce37f1507366b0852a694a38224688067a7577005ba9b32,
+then ran only `JohnnyAuthority.Tools.exe job-contract-self-test`:
+`{"status":"passed","contract":"bounded_native_job"}`, exit0,
+measured child0.1260516s/tool0.9275968s. Author's final targeted shared fixture
+1passed/6.55s (command9.40s), strict1filePASS/1.24s, directpure0.48s,
+diffcheck0.66s and commit0.86s retained. Restore/build inner timings UNKNOWN;
+the working-span7m52s is not billed as measured command time. Old N1 hashes,
+132.77/94.523 and30G161/84, Root unknown/reserves and failures remain historical.
+
+Responsibility review: 900insertions overall exceeds product300signal; Interop
+owns explicit Win32 ABI/safehandles, Guard immutable finite contracts/narrow port,
+SelfTests pure constructor assertions. No repeated Runner/Fixture or copied N1
+plan/readback, no500+file at this construction point. This signal does not compel
+compression or arbitrary new files. PhaseB must re-evaluate size/responsibilities
+before its final review, reusing the one Python build fixture. Root constructor
+preflight PASS is different-seat from author; it grants behavior only under the
+already-reviewed exact Grant, not SOURCE_APPROVED/QUALIFIED/Host acceptance.
+
+ACTION_COMPLETED / CONSTRUCTOR_PREFLIGHT_PASSED -> AUTO_CONTINUE to the existing
+30N2 PhaseB at reviewed source eeb2eaaa. Preserve J1–J4, exact pre-effect limit
+readback/assignment/membership/identity/resume ordering, partial-create ownership,
+bounded teardown/cancel/residue, injected-vs-measured evidence and all6paths. No
+service/account/SID/ACL/AppContainer/network/Host/model/cleanup/push/release effect.
+
 ## Current local execution-policy amendment — 2026-10-19
 
 Owner `batch-checklist-local-20261019-uncapped` supersedes cumulative per-ticket/
