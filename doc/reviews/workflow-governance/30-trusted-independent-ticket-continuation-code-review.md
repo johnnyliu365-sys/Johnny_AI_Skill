@@ -1,5 +1,22 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## C2 same-handle payload exact development admission — 2026-10-19
+
+Different-seat /root/batch_authority_review ordinary DOC_PASS on exact08b38aef993d32ae4f35a199ef548892352c3791,
+Ticket30 blob12f3db53450d79b970705a23ca95999daa0153fb, LF
+2aeb4f51f723d191bb875d5d6991a478f06e2f9fea4435861091b9b09e08119e / registry matches.
+No public DTO change: existing B1 result/finite status constructors actually verified
+at3b2; C1 real checked-native path independently staged at283dd8c9. New internal
+dependency seam compiles and constructs in pure preflight before any native fixture
+effect; it is not a new operational authority. Only CREATE2/MODIFY4 closure06 paths.
+Root fresh readback: clean cee7933187a9bfb3190b4ff2ec72c7768db59405, own named
+codex/skill-improvement-30n3-native-seam WT, registered contained Git metadata and
+nonreparse repo/worktrees/seat path. Prior C1 allocation released, historical command
+gap remains UNVERIFIED and all source/ref/evidence held. Activate exact development
+grant-ticket30n3-file-content-20261019, AUTO_CONTINUE IMPLEMENT named owner only.
+No extra read rights assumed in protected ACL; no Host/native qualification or
+formal integration. F1 separate owner/WT; body not changed/imported in this cut.
+
 ## F1 shared fixture exact admission — 2026-10-19
 
 Different-seat /root/batch_authority_review DOC_PASS on immutable68f67b236153d8c91ef8b0f5495b35167aa4a8c4,
