@@ -1,4 +1,18 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H7 composed-source readback seal — 2026-10-20
+
+Exact Root-owned source-stage d7ca3e9cdbf8acf59359718fb1a36f1aef24f6a5 parent876223b3:
+two CREATE exact reviewed H7 blobs, prior35/allparentblobs unchanged, total37
+changedpaths vs18bf1e9f. Root changed-context74guardedPASS2.969s, strict2PASS2.203s,
+memorycompile/import/sourcehash, clean exact Git; distinct native-tools helper
+SOURCE_MAPPING_PASS independently confirms mapping/absence of other changes.
+Original Root tool evidence ownedTemp/johnny30g-protected-source-review-20261020/
+source-composition-h7-root-evidence-20261020.json
+SHAae77aca4e5c82177f763329d88d20b651248e5655595622de8aa2a48a40cc8cc.
+Source engineering staging only, not protected issuer/source/Host qualification,
+formal integration/30B43 clearance/cleanup or new external effect. H8 source
+construction independently uses its frozen876223b3; no baseline drift inference.
+ACTION_COMPLETED -> AUTO_CONTINUE admitted H8 and remaining necessary local build.
 ## H8-A exact import-direction rebind active — 2026-10-20
 
 Distinct batch-authority helper DOC_PASS0c10315f6ae3b1a53ab555ed431eea5948e585da,
