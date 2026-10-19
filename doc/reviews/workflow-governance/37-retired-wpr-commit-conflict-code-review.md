@@ -1,5 +1,34 @@
 # Ticket 37 independent review — 2026-10-18
 
+## Candidate source passes / reviewer extra-duty ZERO_RED — 2026-10-20
+
+54e0f90cfc2827c6827cf095cb4cc20bcb9b1bc4 exact3MOD; distinct /root/batch_authority_review
+SOURCE_DELTA_PASS, correct normalization and all3actual LF/revision pins, no route
+or other-policy/legacy-fixture edits. Root own review WT exact candidate/clean.
+Independent different-door source mutation appends '- transition receipts: Work
+Progress Report must be updated before implementation return.' without removing
+the approved positive clauses. Named new normalization cell stays GREEN exit0
+3.672s, exactrestoreGREEN. ZERO_RED is EVIDENCE_DEFECT37B-E01 under existing
+AC37B1/B3: assertions require good clauses but do not reject a second contradictory
+active ownership bullet. Full digest check would catch an unrepinned document,
+but is not the named semantic-structure rejection; do not substitute that overlap.
+
+Root derives grant-wg37-normalization-20261020 revision04 ACTIVE_EVIDENCE_CORRECTION,
+same parent/roles/WT/branch/context/ownedTemp, baseline54e0f90c, MODIFY ONLY existing
+tests/test_workflow_router.py, CREATE0/DELETE0. Source reference/profile READ_ONLY;
+no new policy. Strengthen the existing method to pin a closed unique canonical
+ownership bullet set/shape, rejecting extra/duplicated/missing WPR authority duties
+while the exact approved legitimate ownership remains green. No generic natural-
+language policy engine/helper module or claim to detect every semantic paraphrase.
+New named defect baselineRED for this extra-duty case, restore correct source then
+GREEN; actual different extra-duty mutation RED/restoredGREEN. Preserve existing
+pin and completion tests, full suite/affected strict/import/diff and source peers'
+valid narrow judgment. Full output/no-cache/process-local flags and per-command
+bounds remain. Existing85MB cache remains HELD, no cleanup until independent source
+evidence/review sealed and one precise local ownership-qualified cleanup Grant.
+Owner's global batch and frozen AC suffice; no new approval/Host/source activation.
+ACTION_COMPLETED -> AUTO_CONTINUE same-author tests-only correction; no normal closure.
+
 ## Closure03 exact metadata repair activation — 2026-10-20
 
 Distinct /root/batch_authority_review DOC_PASS e135bd1457c1025c141bafd277de3f3875f9da90:
