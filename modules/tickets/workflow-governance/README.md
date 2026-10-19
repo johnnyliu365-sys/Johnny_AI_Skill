@@ -48,6 +48,11 @@ reviewed blob parity and immutable seal confirmed. Host policy rejected teardown
 before execution; registered resources remain. Pure history compatibility only;
 legacy validation/activation unchanged. No normal closure or whole-checklist PASS.
 
+[45-ticket-content-completeness](45-ticket-content-completeness.md) — checklist03/12,
+AC10 pure instance-content diagnostics; PREPARED under the existing local batch.
+No committed-source, grant, receipt or Host admission claim; exact scope and
+independent review precede its derived local implementation Grant.
+
 ## Shared baseline
 
 - Specification: `SPEC-AI-WORKFLOW-WORKFLOW-GOVERNANCE-20260805-01KZ6T8V2R4Y6B8D0F2H4J6M8P` (`APPROVED` on `2026-08-05`)
