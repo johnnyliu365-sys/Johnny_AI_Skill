@@ -24,3 +24,48 @@ TTL through independent review, integration and evidence seal. Existing cleanup
 denial is respected: preserve assets rather than retry removal under a new name.
 No prior worktree or journal may be deleted. Exact candidate and final blobs
 must be read back before any controlled local integration.
+
+## Initial candidate / same-ticket correction
+
+Author `096e111e6e2ea1766494923692265f24f18f982d`, exactly two allowed files,
+148 focused tests, strict mypy, public smoke/import/diff passed. Constructor
+preflight7passed before behavior. Author removed comment filtering: named
+test_expected_hidden_in_comment_is_not_active failed (EXPECTED/MISSING absent),
+1failed in1.76s; restore1passed in1.05s. Removed create-path coverage:
+test_created_file_must_be_named failed (NEW_FILES/MISSING_FILE_DECLARATION absent),
+1failed in1.26s; restore1passed in0.96s. Failed setup/mutator runs were not claimed
+as product red and are charged. Author reported112.5/150s including failures.
+
+Different reviewer `/root/ticket45_content_review` independently confirmed
+148tests/strict/import/diff, then CHANGES_REQUESTED on three existing45-C2 cells:
+
+1. F1: `_has_scaffold` rstrips the prefix before recognizing a generic, so
+   `Use <placeholder>` is incorrectly accepted as a generic type expression.
+2. F2: a value containing only two backticks is counted as nonempty.
+3. F3: `_section_lines` recognizes only ## boundaries; an Expected bullet moved
+   under new `# Outside` remains attributed to the old ## section.
+
+Reproduction: load fictional `_TICKET` and `_EXPECTED_LINE` from
+tests/test_ticket_content.py with runpy; replace Expected by
+`- 核准 Expected（使用者可觀察結果）：Use <placeholder>` / same prefix plus
+`chr(96)*2`; for F3 remove its original line and insert `# Outside` plus that
+line before the Implementation heading. Public inspector returned
+`{'scaffold': [], 'empty_ticks': [], 'h1_escape': []}`. Expected finite rejection.
+No source authority or external operation is exercised by these probes.
+
+Reviewer different-door mutation: actual `elif len(found) > 1` changed to `>100`;
+direct unfiltered `python -m pytest tests/test_ticket_content.py -q` produced
+`8 failed, 75 passed in 1.83s`. Duplicate EXPECTED/ACCEPTANCE/STOP/IMPLEMENTER/
+REVIEWER/CONTRACT/DEPENDENCIES/NEW_FILES cells at test line117 all expected
+`TicketContentIssue(... DUPLICATE)` but found `in ()`.
+After apply_patch restoration: `83 passed in0.85s`, git diff --exit-code against
+096e111e for the two files exit0, status clean. Reviewer reports39/100 command
+seconds consumed; retain61s, no reset.
+
+Root authorizes the original author for the single existing correction, F1–F3
+only; no contract expansion. Preserve valid generic syntax and legal ##/###
+behavior. Add regression cells proving baseline failures then same-name restored
+green, focused suite/strict/diff. Only37.5s author command balance remains; stop
+if exhausted, do not silently borrow or extend. Same reviewer verifies delta
+using remaining allocation; previous duplicate mutation evidence remains valid
+unless impacted. Root orchestrates; no qualified Host audit claim.
