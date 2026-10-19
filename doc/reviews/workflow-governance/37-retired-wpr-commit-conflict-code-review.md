@@ -1,5 +1,20 @@
 # Ticket 37 independent review — 2026-10-18
 
+## Closure03 exact metadata repair activation — 2026-10-20
+
+Distinct /root/batch_authority_review DOC_PASS e135bd1457c1025c141bafd277de3f3875f9da90:
+both approved reference Git blobs identical to85028a76 and actual LF hashes agree
+with declared pins; same3files, no new policy/route/runtime budget/authority source.
+Root read back owner exact0d14087d/branch with only the3authorized own modifications.
+Root derives grant-wg37-normalization-20261020 revision03 ACTIVE under same batch,
+closure03 leafLF5bad5c9906650ec1fb38961fbe81a982b52a354e3b54654f69b84413453ac68d;
+same author/rootreviewer/sourcepeer/WT/sourcebaseline/context/ownedTemp/history.
+Update only the two declared stale profile/test pins plus normalization reference
+pin already authorized. Existing whole digest test must stay enabled; preserve
+prior failed suite, then affected old-pin RED/restoredGREEN and full legal Router
+suite/strict/import. No new path, reference text edit, Host effect or Owner renewal.
+ACTION_COMPLETED -> AUTO_CONTINUE original author under revised exact local Grant.
+
 ## Inherited approved-policy metadata drift / closure03 proposal — 2026-10-20
 
 Author normal repair makes both new normalization and old completion cells GREEN.

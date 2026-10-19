@@ -1,4 +1,17 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H5 controlled baseline and caller census — 2026-10-20
+
+Root exact preparation Grant379db42abb9c190ff2e5c45c400f3bca1f449952 produced clean
+36593ad21377c5f532d4d1fcdeeafe3922e4dd30 in its registered ownership-baseline WT,
+parents8b0402/cc4744, no conflict or hand edit. Indexed diff exactly2H1 additions;
+four blobs exactly reviewed H1b573ab2805a30258023974a92de47348f7e9bb3d /
+bd893345077c77d26d32b6f5782e1490cf169878 and H3666b4a9375f384976fac2f2ad50554661907d83a /
+2e3c138fb88ed7e145a3e6cd34ca04bc562e5e67. Tracked constructor census lists only
+eight call sites in existing tests/test_grant_authority_windows_transport.py;
+no non-test consumer in this exact tree. Not a cross-branch/global consumer claim.
+No formal main/source qualification/cleanup/Host/native effect; H5 author still
+NOT_ACTIVE until H4 return and fresh ordinary constructor/resource preflight.
+
 ## H5 exact engineering-baseline preparation admission — 2026-10-20
 
 Distinct /root/batch_authority_review DOC_PASS for closure18 at0867e883c45914b2338ffc4b2db36ee367f23e2d,
