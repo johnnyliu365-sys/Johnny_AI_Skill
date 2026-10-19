@@ -29,7 +29,186 @@
 或新實作 admission。29→30 是本票實際重用純投影的能力依賴，不是清單順序。
 本輪文件工作有下節獨立授權；不因此將完整票30改成 admitted/completed。
 
-## 30G-SOURCE — Closure G1–G5 revision01 / current bounded construction
+## 30N1 — Native protection planning/readback tool / closure revision01
+
+State: DOCUMENT_PREFLIGHT_PENDING, not yet an implementation Grant. Owner approved
+the existing batch's continued local construction and explicitly approved redistribution
+of the SAME900 command seconds: author350/reviewer220/control330, total ceiling1500.
+Original599.2 remains. Historical30G author161/reviewer84 remain charged. Root's
+previous control timing is UNRECONCILED (including the interrupted large-log read);
+reserve200 for that history rather than pretend it is zero or recovered. Commands
+from this approval onward are additional, recorded per command. No more bulk-log scan.
+No role cap, failed attempt or correction resets when this slice starts.
+
+Same PRD/CHG/SPEC/CONTEXT bindings as30G below. Baseline45758b18a35431927f6e5f16ad7c362214c40a06;
+final document-reviewed baseline/leaf is read back before dispatch. Root Architecture
+Owner fixes this tool contract under the Owner's local batch, not a new PRD/SPEC.
+One observable outcome: a compiled Windows tool produces exact WHOLE protection
+descriptors and candidate-bound readonly object observations from validated data,
+without applying policy or declaring isolation/authority qualification.
+
+| Binding | Exact limitation |
+| --- | --- |
+| Proposed child Grant | grant-ticket30n1-native-tools-20261019, activated only after independent document review; development/same-lifetime, not runtime issuer authority |
+| Named owner/reviewer | /root/ticket30_native_tools_impl current gpt-6-luna/xhigh; different /root/ticket30_native_tools_review gpt-6-sol/high, same currently available semantic capability mapping as30G; Root only control/docs |
+| Worktrees | .worktrees/skill-improvement-30n1-native / codex/skill-improvement-30n1-native and .worktrees/skill-improvement-30n1-review / codex/skill-improvement-30n1-review; clean contained nonreparse identities allocated/read by Root |
+| Profile | POC/HIGH_ASSURANCE source-only Windows protection tooling; ordinary independent engineering staging under approved first-entry exception, NOT qualified audit/final source integration |
+| Resource subset | Author<=120 including constructor-first construction and one correction<=20; reviewer<=80 including type preflight, behavioral review and its one correction; control<=40 including document helper<=8. These are subsets of new350/220/330 caps, not fresh budgets; remaining allocations stay reserved. Every command<=60s, compiler/test subprocess timeout<=55s, serial, no automatic retries/load |
+| Language | Python3.11 remains the backend/Grant/Router language. C# nullable+warnings-as-errors is a Windows-native provisioning/observation tool shim, not another backend or authorization engine. Installed SDK10.0.302/CLR10.0.10 enable offline build; Python freezer packages were measured NOT_INSTALLED. This platform-tool boundary avoids a new downloaded Python packager or copying backend Grant logic. No generic language-policy change |
+| No effects | No service/user/ACL/AppContainer/firewall change, native Host/Codex session, model/provider/remote call, actual pipe/listener or grant issue/consume. Native readonly getters only on test-owned fixtures in B; plan/self-test have no native effect. No existing candidate import or baseline-source MODIFY/DELETE |
+| Asset lifecycle | owner=30N1/named seat; registered fixture/build roots owned by one test fixture, TTL=verification/review seal, normal exact teardown only. Worktree/ref and existing Recovery/cleanup holds retained; never retry a policy-denied cleanup, never reset/clean/delete historical assets |
+
+### Exact source boundary / reuse / responsibility
+
+CREATE only the nine paths in the active boundary below. Program is composition/CLI;
+NativeManifest owns strict values and bounded JSON; ProtectionPlan owns whole DACL
+construction; WindowsReadback owns native READ_CONTROL/attributes handles; SelfTests
+owns shared parameterized constructor/negative cases. Python test wrapper builds
+ONCE per fixture, invokes actual candidate binary and retains unfiltered failures.
+No duplicated per-case compiler/browser/PNG/server framework, no new dependencies.
+
+Reuse existing Windows BCL/Win32 descriptor and safe-handle primitives. READY
+workflow-router-poc catalog remains policy metadata only; do not translate/copy
+its backend/Grant engine into C#. Inspected staging/process_runner has fixed10s
+timeout, DEVNULL output and six-key overlay; these cannot satisfy compiler timeout,
+SDK environment or unreduced output. Use a thin explicit shell=False subprocess.run
+in the one test fixture (no second generic runner). Existing environment_core has
+cleanup retries/checkout-global lease state; do not adopt it as OS protection proof
+or run its cleanup on retained assets. Temporary build files are not Temp Git repos.
+
+### Frozen public contract / ordinary constructor order
+
+Namespace Johnny.NativeTools. Use immutable named value types SidValue,
+AbsoluteWindowsPath, Sha256Value, ServiceNameValue and VersionValue, with ordinary
+public validating constructors (no implicit string conversion). Values reject null,
+blank/trim differences, controls and malformed data, never repair it. SID must roundtrip
+to canonical Windows SID text; SHA256 exactly64 lowercase hex; service name ASCII
+letter then letters/digits/_/- length1..64; version 3 or4 decimal components bounded
+by System.Version. Path is absolute local drive, nonroot, no UNC/device/ADS/relative/
+dot-segment/trailing separator/control input; component-bound descendant comparisons.
+
+NativeSetupManifest(schemaRevision:int, serviceName:ServiceNameValue,
+serviceSid:SidValue, controllerSid:SidValue, subjectSid:SidValue,
+codeRoot:AbsoluteWindowsPath, dataRoot:AbsoluteWindowsPath,
+executablePath:AbsoluteWindowsPath, executableVersion:VersionValue,
+executableSha256:Sha256Value). Revision exactly1, service SID S-1-5-80-...;
+the three SIDs distinct, subject/controller cannot be SYSTEM/Administrators/Everyone.
+Code/data roots strictly below actual Windows ProgramFiles/CommonApplicationData,
+not those broad roots; executable strict descendant of codeRoot and .exe suffix.
+ParseBounded(string)->NativeSetupManifest and ToCanonicalJson(): flat snake_case keys
+schema_revision/service_name/service_sid/controller_sid/subject_sid/code_root/data_root/
+executable_path/executable_version/executable_sha256, exactly those11 fields.
+UTF8 body1..32768bytes; reject duplicates, unknown/missing/null/type/coerced/bool,
+malformed JSON/depth>8; no credentials, approval bool, arbitrary commands or env refs.
+
+NativeToolScope has only SOURCE_ONLY_UNQUALIFIED. ProtectionPlan.Build(manifest)
+returns immutable NativeProtectionPlan with manifest SHA256 and exact owner SYSTEM,
+code-root/data-root/SCM/read-pipe SDDL. Whole protected filesystem DACL: SYSTEM/Admins
+full; service RX code and Modify data, inheritable to children, no ordinary subject/
+controller/Users ACE. SCM SYSTEM/Admins control; controller onlyCC/LC/RC. Read-pipe
+SYSTEM/Admins/service full and exact subject/controller data read+write+SYNCHRONIZE
+mask0x00100003, no FILE_CREATE_PIPE_INSTANCE or WRITE_DAC/owner; never GENERIC_WRITE.
+Use BCL security descriptor objects/binary roundtrip, not unvalidated SDDL templates.
+Plan is NOT applied/enrolled/approved, no command executor or apply/start route.
+
+INativeObjectObserver.Read(AbsoluteWindowsPath)->NativeObjectObservation. Finite
+ReadbackStatus OBSERVED/MISSING/READ_DENIED/REPARSE_OR_IDENTITY_MISMATCH/UNAVAILABLE;
+only OBSERVED has owner:SidValue, descriptor:SDDL, descriptorSha256:Sha256Value,
+volumeSerial:uint and fileId:ulong (all required); failures have none. ReadbackReport
+contains exactly code-root/data-root/executable observations and source-only scope.
+WindowsReadback uses explicit read-only safe handles, no reparse final/ancestor;
+GetSecurityInfo/GetFileInformationByHandle/GetFinalPathNameByHandle compare actual
+handle/path identity. Missing/denied/native failure returns finite non-success,
+no raw exception/path leakage beyond the explicitly declared tool manifest/observation.
+Never claim observation alone proves policy isolation, enrolled source or qualification.
+
+Program entry supports exactly plan, inspect, self-test. plan/inspect consume one
+bounded JSON manifest on stdin. Plan parses first and never constructs observer;
+inspect validates before observer construction and reads ONLY those3 declared targets.
+Unknown args/invalid manifest exit64 with stable reason, zero observer construction;
+plan emits source-only JSON exit0, inspect exit0 only allOBSERVED else2 with explicit
+statuses. self-test runs finite pure constructor/JSON/descriptor tests, no OS mutation.
+No service/Host execution mode. B-native getter fixture tests may invoke the observer
+directly against fixture-owned file/directory; this is not a Host qualification.
+
+Strong-type construction first in SAME slice: add project/config/values/plan/CLI/
+SelfTests plus observer interface/UNAVAILABLE initial implementation; compile and
+construct/roundtrip every public success/failure/enum before native getters. An
+immutable constructor cut gets different-seat type preflight; only then implement
+getters and Python executable fixture. No constructor-cut integration/new budget.
+Final tests must prove real getter success, not leave an all-UNAVAILABLE stub green.
+
+### Closure N1–N5 / acceptance and build truth
+
+N1 all public ordinary constructors/finite enum/JSON roundtrips plus each rejection
+class; distinct valid SID/path/digest/version fixtures, no bypass/cast/dynamic/Any.
+N2 parse generated descriptor binary and assert exact owner, protected flag, every
+principal/mask/inheritance ACE, no extra grants; generic-write/create-instance mutation
+must turn the named pipe-rights cell red then exact restore green.
+N3 real getter observes owned Windows file/directory identity and descriptor; missing,
+reparse, denied/native fault cases refuse (injected native port for failures when
+actual fixture privileges cannot create them). Mark injected vs real precisely.
+N4 actual candidate executable plan/inspect/self-test/unknown-arg paths, constructor
+factory counter proves invalid/plan cause zero native read; one shared build fixture.
+Independent reviewer mutates a DIFFERENT door (extra ACE/owner/path component or
+missing identity check) and reads unreduced red output, restores exact blobs/green.
+N5 exact nine-CREATE boundary; build nullable/warnings-as-errors, no NuGet packages/
+feeds/telemetry/workload downloads or persistent build servers; Python wrapper strict
+mypy and in-memory compile. Source/binary/config/SDK/runtime hashes recorded, source
+fixture success is not an install-ready service or qualified observer/Host.
+
+Build SDK10.0.302 pinned by global.json (rollForward=disable); net10.0-windows,
+OutputTypeExe, Nullable enable, TreatWarningsAsErrors, deterministic fixed PathMap,
+explicit compile items only. NuGet.Config clears sources; no PackageReference.
+Compile with explicit temporary CLI HOME/cache/obj/bin and DOTNET_CLI_TELEMETRY_OPTOUT=1,
+DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1, DOTNET_CLI_WORKLOAD_UPDATE_NOTIFY_DISABLE=true,
+UseSharedCompilation=false, nodeReuse=false, maxcpucount1, --disable-build-servers.
+Explicit offline restore then build --no-restore, no implicit dotnet run/new/publish.
+Existing process runner cannot hide output or select ambient credentials/providers.
+Final command: py -3.11 -m pytest tests/test_native_authority_tools.py -q -p no:cacheprovider;
+strict: py -3.11 -m mypy --strict tests/test_native_authority_tools.py; plus project
+build/self-test through fixture, in-memory compile, diff/scope/blob readback. Each
+subprocess <=55s and each outer command<=60s; no automatic rerun on timeout.
+Growth signals each C# production file<=300 effective lines, SelfTests<=350, Python
+wrapper<=180; crossing prompts responsibility review, not compression/new files.
+TEST->A->B N/A new native tool, no prior behavior moved/retired. XSS/UI/DB/deploy N/A.
+
+### Active N1 boundary (historical30G fence below is plain text)
+
+```johnny-boundary
+modify = AGENTS.md
+create = library/local_orchestration/native_windows/JohnnyAuthority.Tools.csproj
+create = library/local_orchestration/native_windows/global.json
+create = library/local_orchestration/native_windows/NuGet.Config
+create = library/local_orchestration/native_windows/NativeManifest.cs
+create = library/local_orchestration/native_windows/ProtectionPlan.cs
+create = library/local_orchestration/native_windows/WindowsReadback.cs
+create = library/local_orchestration/native_windows/Program.cs
+create = library/local_orchestration/native_windows/SelfTests.cs
+create = tests/test_native_authority_tools.py
+forbid = AGENTS.md
+forbid = CONTEXT.md
+forbid = Workflow.md
+forbid = CodeReview.md
+forbid = skills/
+forbid = template/
+forbid = modules/
+forbid = doc/
+forbid = library/workflow_router/
+forbid = library/local_orchestration/grant_authority/
+forbid = library/local_orchestration/mainline_readback.py
+```
+
+Effective MODIFY/DELETE none via reviewed denied sentinel, as30A/30G. Cumulative
+diff always compares to final docs baseline, not constructor cut. Native setup/observer/
+first Host entry remain subsequent bounded source work; stage immutable engineering
+candidates under the approved minimal-first-entry exception, not final qualification.
+Only actual externally approved OS setup/observation and final CVQ may unblock30G/
+30B/43. Return ImplementationReturn + candidate/files/checks/mutations/time/deviations;
+no prompt/Owner narrative/ticket body inside source. Initial plus one correction,
+no helper delegation, no push/release/deploy/old cleanup retry.
+
+## 30G-SOURCE — Closure G1–G5 revision01 / historical construction, audit held
 
 Owner2026-10-19 approved runbook revision02 first-entry CVQ order exception and
 this exact source slice. Original PRD-20260805-009/CHG-20260805-009, SPEC workflow
@@ -175,7 +354,7 @@ is the same reviewed30A encoding, not permission. Gate must prove all existing
 MODIFY/DELETE refuse and only these six CREATE paths pass. Author may additively
 edit these newly created files across A/B/correction; no existing baseline file.
 
-```johnny-boundary
+```text
 modify = AGENTS.md
 create = library/local_orchestration/grant_authority/__init__.py
 create = library/local_orchestration/grant_authority/contracts.py

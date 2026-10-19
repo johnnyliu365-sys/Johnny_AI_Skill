@@ -3,7 +3,7 @@
 | 欄位 | 值 |
 | --- | --- |
 | 文件身分 | `AI-SKILL-IMPROVEMENT-CHECKLIST`；本專案工作追蹤，非新 PRD／SPEC／Gate |
-| Revision／來源 | `34`；沿用既有12項與acf0ffa1／ded322b3批准；Owner批次本地授權及10-19核准首次CVQ順序例外／30G-SOURCE新增900命令秒。非 OS變更／Host測試／push／正式啟用授權 |
+| Revision／來源 | `35`；沿用既有12項與acf0ffa1／ded322b3批准；Owner批次本地授權與首次CVQ順序例外；SAME900重新分配350/220/330，原帳與1500總上限保留。非 OS變更／Host測試／push／正式啟用授權 |
 | 工作基準 | `a1cb6c13adbeb52a4117991727dcc3d4af6d2a33`；分支 `codex/skill-improvement-checklist` |
 | 主線 | 先對照、優先 02→04→05→06→07，再處理餘項與整合回放 |
 | 負責 | Root 理解需求、衝突與派工；票級實作者依有效能力 Profile；獨立審閱另席 |
@@ -78,7 +78,16 @@ Owner按正式Change Control另核安全政策差異；本紀錄不自動要求�
 本地文件動作回傳ACTION_COMPLETED；未完成票保持各自REVIEW_BLOCKED／
 CLEANUP_BLOCKED／NOT_VERIFIED，不能用本文件批准解除來源或Host限制。
 
-## 2026-10-19 30G源碼工程閉包與安裝準備（revision34）
+## 2026-10-19 原生工具續行（revision35）
+
+Owner核准同900角色轉配350/220/330，非歸零或新費用。原30G author161/reviewer84、
+Root全部原帳及中止紀錄保留；舊控制端精確總額UNRECONCILED，保守預留200而非假稱已恢復。
+原Ticket30N1已限縮九CREATE、零既有source修改；先type constructor/nullable編譯，再原生
+唯讀getter與候選執行檔測試。先獨審票面，精確子Grant生效才派工，不偷擴30G六檔切片。
+目標是設定描述元產生與唯讀觀察工具，非已安裝服務／受保護觀察者／CVQ合格；原生guard、
+服務與首次Host操作按實際依賴續行，另守原例外／授權。當前未新增完成勾選，30G/30B/43持續hold。
+
+## 2026-10-19 30G源碼工程閉包與安裝準備（revision34，歷史）
 
 作者 /root/ticket30g_source_impl、不同席 /root/ticket30g_source_review；候選
 20bd6e3036608d61feb687ea6e0ff6b7953d3e11 對6f6c938cd3d6eeff9e07cdffddfcbfdcbdc08cd0

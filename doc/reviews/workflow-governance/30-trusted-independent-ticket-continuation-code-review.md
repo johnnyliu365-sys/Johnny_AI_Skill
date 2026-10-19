@@ -1164,3 +1164,27 @@ ACTION_COMPLETED for local source construction and documentation. Required final
 source-audit continuation is HALT / QUALIFIED_AUDIT_UNAVAILABLE; no alternate
 ordinary subagent qualifies it and no external Host test is authorized. This local
 hold does not revoke unrelated existing batch authority or authorize new effects.
+
+### Owner-approved redistribution /30N1 document admission
+
+Owner approved350 implementation/220 independent review/330 control, SAME900 and
+1500 overall with599.2 original retained. Prior author161/reviewer84 remain. Root
+large-log Get-Content-tail reconstruction was interrupted, session21527 terminal
+exit1; no process left, no evidence re-run or cleanup. Its full timing remains
+UNRECONCILED, not a reset or verified PASS. Native-result scan recovered113.048688s
+plus helper30 at that snapshot but omitted async gaps; do not use that as exact
+control total. Reserve200 of330 for old Root history, including forensic overhead;
+new startup/doc calls append. This reservation is not fabricated measurement or
+retroactive claim of compliance with the old150 cap. No more bulk transcript reads.
+
+Exact control docs allowlist this original review/Ticket30/feature README/checklist/
+doc index/runbook; baseline45758b18a35431927f6e5f16ad7c362214c40a06 clean. Root
+closes N1–N5 for nine exact native tool CREATE paths before author dispatch. Native
+tool is not backend translation/parallel policy engine or service installation.
+C# nullable/warnings-as-errors Windows shim uses installed SDK10.0.302/CLR10.0.10;
+measured Python PyInstaller/cx-Freeze/Nuitka NOT_INSTALLED; no dependency download.
+Same-lifetime owner/reviewer identities and source exception scope are in the leaf.
+Different-seat document review and mechanical boundary preflight precede child Grant
+activation. No source changes made by Root; no code beyond original six paths until
+new scoped Grant is active. Native actual getter tests remain own fixtures only,
+not Host attack/session/qualification. Only04 remains checked.

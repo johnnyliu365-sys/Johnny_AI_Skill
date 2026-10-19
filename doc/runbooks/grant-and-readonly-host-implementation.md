@@ -40,6 +40,30 @@ design; this section alone records which proposed authorities are now effective.
 
 ## 1. Determination from current evidence
 
+### Subsequent Owner-approved local continuation / budget redistribution
+
+Owner approved continued local source/compilation/tests of the native tooling and
+approved the SAME900 redistribution author350/reviewer220/control330. Original
+599.2 and1500 total persist, no zeroing. Existing30G161/84 and all Root history,
+including interrupted forensic read and unreconciled timing, remain; Root reserves
+200 for old control history, not a false measured total. Native tools first slice
+is original Ticket30N1 with exact nine CREATE scope after document preflight.
+This updates the earlier six-file-only construction limit through new exact child
+Grant, not direct expansion of30G or a blank installation permission. Windows tools
+are platform shims, Python backend stays unchanged; no new package/runtime install.
+Actual services/users/DACL/firewall/Host sessions still await the completed reviewed
+operation manifest and separate exact consent. Source planning/readback outputs
+cannot approve authority or qualification; original CVQ exception limitations remain.
+
+Forecast (planning, not measured): N1 build/verification within author120/reviewer80/
+control40 subsets; preserve20 author correction inside120 and old30G correction30.
+Later native Host guard/protected observer source is estimated additional author60–100,
+reviewer40–70/control20–40 depending N1 actual usage; reassess before admission against
+the SAME remaining350/220/330, never create a fresh allowance. Operational qualification
+and bounded live semantic audit remain unallocated/unexecuted, not hidden in source
+budget. If remaining local caps cannot fit the next closed slice, prepare the exact
+residual plus actual usage once; do not exhaust caps via large-log recovery scans.
+
 | Subject | Actually present / verified | What remains to be built or proved |
 | --- | --- | --- |
 | Grant | dispatch_authority.py documents owner-intent marker; no protected issuer implementation in scoped local_orchestration/workflow_router | Protected Owner approval, authoritative plan store, authenticated direct readback, one-shot consume and owned read transport |
