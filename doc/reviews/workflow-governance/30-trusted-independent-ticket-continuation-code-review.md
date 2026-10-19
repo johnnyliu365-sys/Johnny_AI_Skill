@@ -1,4 +1,18 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## Protected-source exact composition admission — 2026-10-20
+
+Distinct batch-authority peer DOC_PASS d1b9fc342561736ee7287997216e7b3ba3b1ebef:
+all33 exact rows match immutable source objects/modes and baseline CREATE/MODIFY;
+29native rows exhaust C8 directory; no extra source/authority boundary change.
+Root fresh allocation proves declared stage WT/Temp absent, every existing
+ancestor nonreparse, creates only registered roots, then reads clean exact18bf1e9f,
+codex/skill-improvement-30g-protected-source and linked Git/common-dir identity.
+Root derives grant-ticket30g-protected-source-composition-20261020 rev01 ACTIVE
+under batch-checklist-local-20261019-uncapped, exact proposal33paths/blobs only.
+Root owns controlled source-only composition, batch-authority peer mapping review;
+no author code editing or full-branch merge, no H6/Host/formal integration.
+ACTION_COMPLETED -> AUTO_CONTINUE exact Git-object transfer/checks, no Owner renewal.
+
 ## Protected-source composition proposal — 2026-10-20
 
 Original30/runbook03 same batch source engineering only; H6 correction independent.
