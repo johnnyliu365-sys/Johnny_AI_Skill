@@ -1,5 +1,33 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## C1 original evidence gap / new independent comparison registration — 2026-10-19
+
+Author C1 candidatecee7933187a9bfb3190b4ff2ec72c7768db59405 exact3paths. Author
+reports before-move getter execution/metadata and baseline DLL91d8a1bc8f7a58d6986064783b19581fca70e6c68abb82ed71051771feee7f95,
+but original exact assertion command/its isolated elapsed transcript are missing.
+Keep that historical command evidence UNVERIFIED; no reconstructed command or
+new replay may be labelled the original before-move run. Old syntax/env failures
+and injected reparse/denial/native fault labels remain. Actor-reported metadata
+alone does not establish Root source/Host review approval.
+
+Root will perform a NEW independent matched baseline/candidate readback under the
+existing SC1/SC3 source-engineering review scope, not reset history/budget/AC or
+invent prior chronology. Before Root source transfer, run actual immutable3b2
+baseline against a fixed owned ordinary fixture with exact current binary/DLL/
+test source hashes and raw command/output, then transfer only exact C1 candidate
+and rerun SAME input/expected assertion. Class body equality plus independently
+observed matched behavior and a different moved native predicate mutation are
+required; no historical or Host qualification conclusion follows from this replay.
+
+Registered Root review WT .worktrees/skill-improvement-30n3-native-seam-review /
+codex/skill-improvement-30n3-native-seam-review, clean actual3b2 baseline, no reparse
+ancestor/contained Git metadata. Output
+C:/Users/GameBoy/AppData/Local/Temp/johnny30n3-native-seam-review-20261019 and its
+C1-readback ordinary fixture owner=30N3-C1/Root, TTL through exact review/seal,
+Review/Recovery hold overrides expiry; no cleanup/old policy-denial retry. Only
+test-owned text payload creation/native readonly getter, no symlink/ACL/Host effect.
+Not integrated, qualified or approved pending the new actual evidence and review.
+
 ## N3B2 pure verification final source-engineering seal — 2026-10-19
 
 Root concludes PURE_COMPARISON_SOURCE_ENGINEERING_PASS at
