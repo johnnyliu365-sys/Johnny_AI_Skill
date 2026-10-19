@@ -23,6 +23,18 @@ constructor-first preflight and source engineering review remain necessary. Only
 is complete in the original checklist. All following old budget/attempt proposals
 and pending-renewal statements are historical where superseded by this decision.
 
+N2 ordinary document preflight at1eb739d3 by /root/batch_authority_review PASS;
+Ticket30 LF44e2c584405c66d5d6f286aa08292726905ed906a62465c3ce82c37253242edf,
+leafblob2335b3e42b3ffacd9e4d43f339a30433ed1b2254. Root activated its exact local
+construction Grant and dispatched a separate Luna seat for pure Phase A. Asset
+registration: `C:\Users\GameBoy\AppData\Local\Temp\johnny30n2-native-owner-20261019`,
+ownerTicket30N2 / /root/ticket30n2_native_impl, purpose isolated compiler/owned-fixture
+output, TTL through qualified review/evidence seal with Recovery hold precedence.
+Root verified absent destination/non-reparse Temp ancestor then created this exact
+directory; runtime registry enforcement is NOT claimed. Reuse the same Python
+fixture CODE with this new owned root, never overwrite N1's retained binary roots.
+No symlink privilege, old cleanup or machine-global environment change is authorized.
+
 Latest cross-stream engineering evidence2026-10-19: original CVQ B3doc12/review16 at
 75d165b5e3b9e4e26b8b36af240d218b06447f4f independently document-reviewed PASS,
 /root/batch_authority_review0.725s. Root strict21 succeeds; its full async duration
