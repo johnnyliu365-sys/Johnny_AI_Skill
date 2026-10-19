@@ -1021,3 +1021,20 @@ No actionable contradiction: facts, proposed principals/rights, NOT_BUILT payloa
 whole-DACL and peer-observation requirements, network limits and evidence-preserving
 rollback are separated. This validates preparation only, not installation readiness,
 CVQ qualification, independent native isolation or approval/integration of30G/30B/43.
+
+### 30G-A immutable constructor candidate / different-seat preflight
+
+Author candidate16a6e5b76b318946efb5409485d8e6098b0ae3ef, direct parent
+6f6c938cd3d6eeff9e07cdffddfcbfdcbdc08cd0, contains exactly the three authorized
+Phase-A CREATE paths; Root read back committed paths and clean identity. After the
+schema_revision exact-int fix:28 constructor tests passed, strict mypy passed,
+in-memory compile/import passed. A staged EOF whitespace failure was fixed and
+diff/boundary rechecked. Continuation6.4391182s shell plus0.068s patches; previous
+conservative35 charge retained, round cumulative author A to42/120 (SAME450).
+
+Root allocated clean nonreparse .worktrees/skill-improvement-30g-review at that exact
+SHA, branch codex/skill-improvement-30g-review. Different-seat
+/root/ticket30g_source_review receives constructor/type preflight only, A80 within
+SAME reviewer300 (B220 retained), serial <=60s commands; no behavior/effect/delegation
+or source mutation. This ordinary engineering check cannot satisfy the final required
+qualified isolated audit. No A integration or Phase-B admission until its result.
