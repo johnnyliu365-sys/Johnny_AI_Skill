@@ -57,6 +57,113 @@ to that reviewed revision. Current N1 immutable source/evidence hold is unchange
 或新實作 admission。29→30 是本票實際重用純投影的能力依賴，不是清單順序。
 本輪文件工作有下節獨立授權；不因此將完整票30改成 admitted/completed。
 
+## 30N3 — C6 enrollment command composition / closure12
+
+Original PRD009/CHG009, batch-checklist-local-20261019-uncapped and existing
+runbook02 native enrollment-tool responsibility only. No new PRD/authority/Host
+surface. C5 final181d0daebc9ba64c8968231561708522bb590673 engineering sealfe51585a
+closes E01; B2 exactbf5a4a3c82131c308ffa85b2d899d4afd1cf32d9 seal3c87ef77.
+Root controlled engineering staging2831948c admitted only their conflict-free
+composition in own review WT; actual merge51dc502f61b8dab31926e01b9c888e8b75d92ca3.
+Root8805a5 offline forced strict build/default/enrollment selectors PASS;
+710f3c proves all3B2 blobs and C5 reader/test/project/Program exact to their
+reviewed sources. This merge is only source-engineering candidate construction
+under first-CVQ order exception, not qualified integration, main or authority.
+
+TEST-before-A: current public Program.Run covers plan/inspect but has no enrollment
+command; approved B1 parser, C5 reader and B2 verifier have independent source
+proofs. C6 joins those already accepted seams, no responsibility transfer/retirement.
+No new DTO/port: internal command consumes Stream/Stream/TextWriter and injected
+Func<NativeEnrollment,NativeEnrollmentReadback>; existing typed result retains
+SOURCE_ONLY_UNQUALIFIED. A internal transport owns bounded parse/serialization;
+Program remains composition root, existing reader/verifier remain behavior owners.
+Later protected-service/B caller may use this candidate only after its own source/
+Host admissions; no automatic activation follows.
+
+C6-COMMAND: add exactly one CLI selector verify-enrollment, routing Program.Run to
+cohesive internal EnrollmentCommand. Ordinary production composition lazily invokes
+new WindowsEnrollmentReadback().Read only AFTER a valid NativeEnrollment has been
+parsed. Preserve existing Program.Run five-argument callers with ordinary overload
+or optional typed readback callback; no static reader effect, dynamic command,
+shell, stdin-supplied observer, generic executor or test-only environment selector.
+Do not move ledger/IPC/installer policy into this command.
+
+C6-INPUT: reuse Program's bounded UTF8 stream reader, exposing its existing helper
+internally with an explicit positive maximum parameter; original plan/inspect
+retain32768-byte bound, enrollment uses existing131072-byte parser bound. One
+maximum+1 bounded allocation/read, strict UTF8 and existing ordinary ParseBounded,
+no truncation/coercion; no reader callback for invalid arguments, empty/overbound/
+malformed/invalid UTF8/duplicate/unknown/stale enrollment. IO failure produces a
+fixed finite error, never raw exception/input/path disclosure. No root/rights/
+payload/namespace/parser relaxation; null input/streams/callback fail finite.
+
+C6-RESULT: call injected actual readback once with parsed enrollment; B2 Verify
+compares its result, never reconstruct observation from Expected or infer match
+from OBSERVED alone. MATCH/NONE =>exit0; all ordinary REFUSED reasons or readback
+exception/null =>exit2; invalid input/args =>exit64. Serialize only exact JSON
+scope/status/reason enum names plus newline, no raw source/path/exception or fake
+Host evidence. Invalid input writes no positive JSON, fixed stderr token. Existing
+plan/inspect/default/enrollment behavior and selector exit contracts unchanged.
+This command is a source tool, NOT a trusted issuer, protected approval or permission.
+
+C6-TEST: reuse original valid enrollment fixture by passing it from existing
+RunContracts; reuse B2 matching-readback/nested fixture via a narrow internal
+test helper wrapper, not duplicated builders/security policies. Cohesive new
+command selftest tests through actual Program.Run: valid independently expected
+MATCH/0/three-key JSON; payload hash/size mismatch and unavailable readback =>2;
+exception/null =>2; malformed/duplicate/unknown/invalid UTF8/max+1/exact permitted
+UTF8 length input and wrong args =>64 with zero callback, never silent truncation.
+Whitespace-boundary input may use ordinary valid JSON padding, not invented
+payload schema. Assert exact callback count/binding and absence of raw sentinel
+error text. No physical fixture, network, service or actual protected read.
+
+C6-TRUTH: actual product weaken bypass B2 Verify =>named mismatch RED, restore
+GREEN; call readback before parse =>invalid-input no-callback RED, restore GREEN;
+weaken input bound =>named boundary RED/restoredGREEN. Reviewer uses a different
+real product door (e.g. result/exit serialization or readback binding), reads
+unreduced output and exact source/binary restoration. Missing negative power is
+a finding, no all-refuse success. Existing B2/C5 named proofs carry forward by
+unchanged blob, not broad unrelated04/native-job tests. Strict offline forced
+compile/default/enrollment selectors; no old Python build fixture/symlink/nativejob.
+
+Exact CREATE2 under library/local_orchestration/native_windows:
+EnrollmentCommand.cs (bounded enrollment transport only),
+NativeEnrollmentCommandSelfTests.cs (command boundary only).
+Exact MODIFY4 same directory: Program.cs (selector/lazy composition/shared bounded
+reader), JohnnyAuthority.Tools.csproj (explicit2includes),
+NativeEnrollmentSelfTests.cs (one RunContracts call with existing enrollment),
+NativeEnrollmentVerificationSelfTests.cs (only reuse wrapper/visibility for existing
+matching fixture, no predicate/assertion weakening). DELETE0; other product/
+parser/verifier/protection/native/Win32/Python/Host/config/test paths read-only.
+Forecast product~130/test~210/helper~15lines;0screenshots/deps. Threshold signals
+structure review, not minification/forced split or permission to create extra files.
+
+Conditional grant-ticket30n3-enrollment-command-20261019, closure12,
+parent uncapped batch, exact sourcebaseline51dc502f61b8dab31926e01b9c888e8b75d92ca3.
+Root sole reviewer/orchestrator; /root/ticket30n2_native_impl standard offered
+Luna/xhigh implementation owner, different /root/ticket30_native_tools_review
+source-evidence peer. Previous C5 allocation CLOSED_INTO_HOLD, no cross-ticket
+memory/role/authority claim. New ctx-ticket30n3-enrollment-command-20261019,
+repo-contained .worktrees/skill-improvement-30n3-enrollment-command /
+codex/skill-improvement-30n3-enrollment-command, matching -review Root WT.
+Both WTs plus owned Temp/johnny30n3-enrollment-command-owner-20261019 and -review-
+20261019 are pre-registered HERE before creation; owner respectively author/Root,
+TTL until Review+evidence seal, Review/Recovery holds prevent automatic removal,
+teardown only under precise authorized cleanup after holds release; no denied
+cleanup retry. This is same-lifetime direct lane, receipt/Runner NOT_REQUIRED.
+
+After independent DOC consistency, Root validates clean composite/contained Git/
+branch/role, existing normal enrollment/readback/result constructors via exact
+baseline selectors, then activates this exact six-path source Grant. No requirement
+that new internal static command already exist; public typed inputs/outputs exist.
+Existing offline .NET10.0.302/cleared NuGet sources/strict warnings-as-errors; use
+registered obj/bin/cli/cache, no install/download/compiler server. Default60s/
+child55s, finite resource/lifecycle monitoring, no cumulative/count cap/reset.
+No SCM/ACL/account/pipe/network/native fixture/Host/model/spawn/receipt/remote/
+cleanup/install/push/release/deploy/formal gate effect or qualification. Report
+exact candidate/path/check/mutation/raw evidence/deviations, then Root review,
+same-ticket correction and controlled engineering staging if all actual cells pass.
+
 ## 30N3 — C5 E01 actual-observation preservation / same closure11, Grant revision03
 
 Root review exact38417fe9edfb6b39527fe58e614e8d5087bab517: all current tests green,
