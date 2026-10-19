@@ -1,5 +1,234 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N2 J5 exact closure evidence / test-only correction — 2026-10-19
+
+Author actual KillOnJobClose removal at e84333eb changed Contracts blob1fb1ff24...
+to0b6e6660287d7d36f4232a9d58feabfe989e64f9. Offline restore2.031s/build6.941s
+zero warnings/errors; pure named red `job_contract_self_test_failed:kill-on-close is mandatory`
+exit1/2.659s. Exact inverse restored1fb1ff24ffb4ea17a4783a7155ea47dad55dbeea,
+forced build6.676s/pure0.943s exit0. No native run; no commit for temporary edits.
+Registered author output remains johnny30n2-native-owner-20261019. These are author
+commands, not Root measurements; prior raw outputs/SDK flags retained in transcript.
+
+Root actual different-door removal of only !readbackResponse.Value.Matches(Bounds)
+at e843 compiled5.812s and pure0.532s unexpectedly PASS: F-N2-J5-RB test gap.
+Exact inverse rebuilt6.047s/pure0.531s green, no native run on weakened protection.
+Author reused existing ContractJobPort scenario/counters, only SelfTests changed
+in1e6847c94dbef84dc17dacaafcc008c6d8ce5379. An initial downstream ArgumentException
+red was retained as diagnostic, then test made it a named failure; not counted as
+original successful targeted proof. Distinct peer readonly scope/oracle review
+PASS0.993s; >500line signal reviewed: same self-test/fake-port responsibility,
+no duplicate runner/framework or forced cosmetic splitting.
+
+Root independently fast-forwarded clean review to1e6847c9 and repeated exact guard
+mutation then inverse. Commands are the earlier registered offline35s build plus
+15s pure CLI, --no-restore --no-incremental, registered Root outputs, no effects:
+
+### Root J5 red
+
+```text
+COMMAND ['dotnet', 'build', 'JohnnyAuthority.Tools.csproj', '--no-restore', '--no-incremental', '--disable-build-servers', '--verbosity', 'minimal', '-m:1', '-nodeReuse:false', '-p:UseSharedCompilation=false', '-p:RestoreConfigFile=NuGet.Config', '-p:BaseIntermediateOutputPath=C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n2-review-20261019\\obj\\', '-p:BaseOutputPath=C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n2-review-20261019\\bin\\']
+  JohnnyAuthority.Tools -> C:\Users\GameBoy\AppData\Local\Temp\johnny30n2-review-20261019\bin\Debug\net10.0-windows\JohnnyAuthority.Tools.dll
+
+建置成功。
+    0 個警告
+    0 個錯誤
+
+經過時間 00:00:05.37
+BUILD_ELAPSED 5.8439999999827705 EXIT 0
+job_contract_self_test_failed:observed limit readback that differs from configured bounds is rejected
+PURE_ELAPSED 0.5310000000172295 EXIT 1
+```
+
+### Root J5 exact restored green
+
+```text
+COMMAND ['dotnet', 'build', 'JohnnyAuthority.Tools.csproj', '--no-restore', '--no-incremental', '--disable-build-servers', '--verbosity', 'minimal', '-m:1', '-nodeReuse:false', '-p:UseSharedCompilation=false', '-p:RestoreConfigFile=NuGet.Config', '-p:BaseIntermediateOutputPath=C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n2-review-20261019\\obj\\', '-p:BaseOutputPath=C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n2-review-20261019\\bin\\']
+  JohnnyAuthority.Tools -> C:\Users\GameBoy\AppData\Local\Temp\johnny30n2-review-20261019\bin\Debug\net10.0-windows\JohnnyAuthority.Tools.dll
+
+建置成功。
+    0 個警告
+    0 個錯誤
+
+經過時間 00:00:05.44
+BUILD_ELAPSED 5.938000000023749 EXIT 0
+{"status":"passed","contract":"bounded_native_job"}
+PURE_ELAPSED 0.5310000000172295 EXIT 0
+```
+
+Root final clean candidate1e6847c94dbef84dc17dacaafcc008c6d8ce5379,
+EXE9f831751323973c2f1204e36a06a3f18b9f4bbf06346b167e688c9cd17ec1e28 /
+DLLd045bd16609491d9c3f1c95b452d5b223fde5a2ddbe376a8369f3d354958c446.
+ONE next closed native fixture pins these final hashes because its loaded assembly
+changed for the test delta; do not claim e843's binary pass is a new binary pass.
+No wider Host campaign/ACL/service/model/install or formal integration is admitted.
+
+## N3 Phase A aggregate and real zero-red findings — 2026-10-19
+
+Root original c39 actual pure constructor probe (public types, Add-Type Root-owned
+built DLL, no fixture filesystem creation) accepted128 entries whose canonical
+UTF8 form was152023bytes; its own ParseBounded rejected size. Tool7191ca1.0784s.
+Original focused pytest1passed8.85s (restore2.111319/build5.862612); restore emitted
+workload-verification warning with exit0. No workload update/install was attempted.
+Author bfcb67bbb04e8938008784a568fdfcb73c8c4ae7 reuses the same canonical writer in
+bounded counting stream, source350/test320lines, only2 MODIFY. Separate peer1.025s
+narrow correction PASS; Root actual nonincrementalbuild5.797s/pure0.609s green.
+This fixes aggregate constructor consistency, not all E1 test sensitivity.
+
+Root five actual weakened-predicate probes below unexpectedly green, each followed
+by exact inverse/nonincremental rebuild/green; all original source restored to
+Enrollment blob6cac5030c2e7a8e0885cfed18f3d590b92f329a3. No native/OS observer.
+Failures retained and same author tasked one bounded existing-test correction,
+not a new requirement, new test framework or permission to call A complete:
+
+### N3_ID_START: ZERO_RED finding / then exact restoration
+
+```text
+COMMAND ['dotnet', 'build', 'JohnnyAuthority.Tools.csproj', '--no-restore', '--no-incremental', '--disable-build-servers', '--verbosity', 'minimal', '-m:1', '-nodeReuse:false', '-p:UseSharedCompilation=false', '-p:RestoreConfigFile=NuGet.Config', '-p:BaseIntermediateOutputPath=C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n3-review-20261019\\obj\\', '-p:BaseOutputPath=C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n3-review-20261019\\bin\\']
+  JohnnyAuthority.Tools -> C:\Users\GameBoy\AppData\Local\Temp\johnny30n3-review-20261019\bin\Debug\net10.0-windows\JohnnyAuthority.Tools.dll
+
+建置成功。
+    0 個警告
+    0 個錯誤
+
+經過時間 00:00:05.18
+BUILD_ELAPSED 5.562000000034459 EXIT 0
+{"status":"passed","contract":"native_enrollment"}
+PURE_ELAPSED 0.6099999999860302 EXIT 0
+RESTORE:
+COMMAND ['dotnet', 'build', 'JohnnyAuthority.Tools.csproj', '--no-restore', '--no-incremental', '--disable-build-servers', '--verbosity', 'minimal', '-m:1', '-nodeReuse:false', '-p:UseSharedCompilation=false', '-p:RestoreConfigFile=NuGet.Config', '-p:BaseIntermediateOutputPath=C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n3-review-20261019\\obj\\', '-p:BaseOutputPath=C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n3-review-20261019\\bin\\']
+  JohnnyAuthority.Tools -> C:\Users\GameBoy\AppData\Local\Temp\johnny30n3-review-20261019\bin\Debug\net10.0-windows\JohnnyAuthority.Tools.dll
+
+建置成功。
+    0 個警告
+    0 個錯誤
+
+經過時間 00:00:05.26
+BUILD_ELAPSED 5.7189999999827705 EXIT 0
+{"status":"passed","contract":"native_enrollment"}
+PURE_ELAPSED 0.6089999999967404 EXIT 0
+```
+
+### N3_ID_CHAR_CLASS: ZERO_RED finding / then exact restoration
+
+```text
+COMMAND ['dotnet', 'build', 'JohnnyAuthority.Tools.csproj', '--no-restore', '--no-incremental', '--disable-build-servers', '--verbosity', 'minimal', '-m:1', '-nodeReuse:false', '-p:UseSharedCompilation=false', '-p:RestoreConfigFile=NuGet.Config', '-p:BaseIntermediateOutputPath=C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n3-review-20261019\\obj\\', '-p:BaseOutputPath=C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n3-review-20261019\\bin\\']
+  JohnnyAuthority.Tools -> C:\Users\GameBoy\AppData\Local\Temp\johnny30n3-review-20261019\bin\Debug\net10.0-windows\JohnnyAuthority.Tools.dll
+
+建置成功。
+    0 個警告
+    0 個錯誤
+
+經過時間 00:00:05.34
+BUILD_ELAPSED 5.844000000040978 EXIT 0
+{"status":"passed","contract":"native_enrollment"}
+PURE_ELAPSED 0.5939999999827705 EXIT 0
+RESTORE:
+COMMAND ['dotnet', 'build', 'JohnnyAuthority.Tools.csproj', '--no-restore', '--no-incremental', '--disable-build-servers', '--verbosity', 'minimal', '-m:1', '-nodeReuse:false', '-p:UseSharedCompilation=false', '-p:RestoreConfigFile=NuGet.Config', '-p:BaseIntermediateOutputPath=C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n3-review-20261019\\obj\\', '-p:BaseOutputPath=C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n3-review-20261019\\bin\\']
+  JohnnyAuthority.Tools -> C:\Users\GameBoy\AppData\Local\Temp\johnny30n3-review-20261019\bin\Debug\net10.0-windows\JohnnyAuthority.Tools.dll
+
+建置成功。
+    0 個警告
+    0 個錯誤
+
+經過時間 00:00:05.28
+BUILD_ELAPSED 5.75 EXIT 0
+{"status":"passed","contract":"native_enrollment"}
+PURE_ELAPSED 0.6089999999967404 EXIT 0
+```
+
+### N3_FILE_SIZE_LITERAL: ZERO_RED finding / then exact restoration
+
+```text
+COMMAND ['dotnet', 'build', 'JohnnyAuthority.Tools.csproj', '--no-restore', '--no-incremental', '--disable-build-servers', '--verbosity', 'minimal', '-m:1', '-nodeReuse:false', '-p:UseSharedCompilation=false', '-p:RestoreConfigFile=NuGet.Config', '-p:BaseIntermediateOutputPath=C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n3-review-20261019\\obj\\', '-p:BaseOutputPath=C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n3-review-20261019\\bin\\']
+  JohnnyAuthority.Tools -> C:\Users\GameBoy\AppData\Local\Temp\johnny30n3-review-20261019\bin\Debug\net10.0-windows\JohnnyAuthority.Tools.dll
+
+建置成功。
+    0 個警告
+    0 個錯誤
+
+經過時間 00:00:05.32
+BUILD_ELAPSED 5.797000000020489 EXIT 0
+{"status":"passed","contract":"native_enrollment"}
+PURE_ELAPSED 0.5939999999827705 EXIT 0
+RESTORE:
+COMMAND ['dotnet', 'build', 'JohnnyAuthority.Tools.csproj', '--no-restore', '--no-incremental', '--disable-build-servers', '--verbosity', 'minimal', '-m:1', '-nodeReuse:false', '-p:UseSharedCompilation=false', '-p:RestoreConfigFile=NuGet.Config', '-p:BaseIntermediateOutputPath=C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n3-review-20261019\\obj\\', '-p:BaseOutputPath=C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n3-review-20261019\\bin\\']
+  JohnnyAuthority.Tools -> C:\Users\GameBoy\AppData\Local\Temp\johnny30n3-review-20261019\bin\Debug\net10.0-windows\JohnnyAuthority.Tools.dll
+
+建置成功。
+    0 個警告
+    0 個錯誤
+
+經過時間 00:00:05.31
+BUILD_ELAPSED 5.780999999959022 EXIT 0
+{"status":"passed","contract":"native_enrollment"}
+PURE_ELAPSED 0.5940000000409782 EXIT 0
+```
+
+### N3_PARSER_VALID_OVERSIZE: ZERO_RED finding / then exact restoration
+
+```text
+COMMAND ['dotnet', 'build', 'JohnnyAuthority.Tools.csproj', '--no-restore', '--no-incremental', '--disable-build-servers', '--verbosity', 'minimal', '-m:1', '-nodeReuse:false', '-p:UseSharedCompilation=false', '-p:RestoreConfigFile=NuGet.Config', '-p:BaseIntermediateOutputPath=C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n3-review-20261019\\obj\\', '-p:BaseOutputPath=C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n3-review-20261019\\bin\\']
+  JohnnyAuthority.Tools -> C:\Users\GameBoy\AppData\Local\Temp\johnny30n3-review-20261019\bin\Debug\net10.0-windows\JohnnyAuthority.Tools.dll
+
+建置成功。
+    0 個警告
+    0 個錯誤
+
+經過時間 00:00:05.32
+BUILD_ELAPSED 5.813000000023749 EXIT 0
+{"status":"passed","contract":"native_enrollment"}
+PURE_ELAPSED 0.5779999999795109 EXIT 0
+RESTORE:
+COMMAND ['dotnet', 'build', 'JohnnyAuthority.Tools.csproj', '--no-restore', '--no-incremental', '--disable-build-servers', '--verbosity', 'minimal', '-m:1', '-nodeReuse:false', '-p:UseSharedCompilation=false', '-p:RestoreConfigFile=NuGet.Config', '-p:BaseIntermediateOutputPath=C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n3-review-20261019\\obj\\', '-p:BaseOutputPath=C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n3-review-20261019\\bin\\']
+  JohnnyAuthority.Tools -> C:\Users\GameBoy\AppData\Local\Temp\johnny30n3-review-20261019\bin\Debug\net10.0-windows\JohnnyAuthority.Tools.dll
+
+建置成功。
+    0 個警告
+    0 個錯誤
+
+經過時間 00:00:05.29
+BUILD_ELAPSED 5.76600000000326 EXIT 0
+{"status":"passed","contract":"native_enrollment"}
+PURE_ELAPSED 0.5940000000409782 EXIT 0
+```
+
+### N3_PATH_ALIAS_CASE: ZERO_RED finding / then exact restoration
+
+```text
+COMMAND ['dotnet', 'build', 'JohnnyAuthority.Tools.csproj', '--no-restore', '--no-incremental', '--disable-build-servers', '--verbosity', 'minimal', '-m:1', '-nodeReuse:false', '-p:UseSharedCompilation=false', '-p:RestoreConfigFile=NuGet.Config', '-p:BaseIntermediateOutputPath=C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n3-review-20261019\\obj\\', '-p:BaseOutputPath=C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n3-review-20261019\\bin\\']
+  JohnnyAuthority.Tools -> C:\Users\GameBoy\AppData\Local\Temp\johnny30n3-review-20261019\bin\Debug\net10.0-windows\JohnnyAuthority.Tools.dll
+
+建置成功。
+    0 個警告
+    0 個錯誤
+
+經過時間 00:00:05.49
+BUILD_ELAPSED 6.0 EXIT 0
+{"status":"passed","contract":"native_enrollment"}
+PURE_ELAPSED 0.6089999999967404 EXIT 0
+RESTORE:
+COMMAND ['dotnet', 'build', 'JohnnyAuthority.Tools.csproj', '--no-restore', '--no-incremental', '--disable-build-servers', '--verbosity', 'minimal', '-m:1', '-nodeReuse:false', '-p:UseSharedCompilation=false', '-p:RestoreConfigFile=NuGet.Config', '-p:BaseIntermediateOutputPath=C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n3-review-20261019\\obj\\', '-p:BaseOutputPath=C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n3-review-20261019\\bin\\']
+  JohnnyAuthority.Tools -> C:\Users\GameBoy\AppData\Local\Temp\johnny30n3-review-20261019\bin\Debug\net10.0-windows\JohnnyAuthority.Tools.dll
+
+建置成功。
+    0 個警告
+    0 個錯誤
+
+經過時間 00:00:05.56
+BUILD_ELAPSED 6.061999999976251 EXIT 0
+{"status":"passed","contract":"native_enrollment"}
+PURE_ELAPSED 0.625 EXIT 0
+```
+
+Findings: leading digit and illegal internal identifier characters absent; 64MiB
+Expected read product constant so mutation raised both sides; parser oversize
+negative used invalid whitespace-only JSON, so parsing error masked absent size
+check; uppercase duplicate executable also violated executable-count invariant,
+masking case-insensitive dependency uniqueness. Preserve legitimate identifier,
+128short entries,64MiB/exact131072 positives. Root has not granted N3 B behavior.
+
+
 ## N3 Phase A return / independent review allocation — 2026-10-19
 
 Author returned c39f2b917a84da0835afed9ed2a39c6ddc245de3, clean baseline88b707c8,
