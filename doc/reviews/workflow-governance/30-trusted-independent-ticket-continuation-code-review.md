@@ -1,4 +1,35 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## N6 finite offline HTTP source admission — 2026-10-20
+
+Original30closure22 DOC_PASS by distinct batch-authority helper at5d84feacfc0b2abcea0f49ebbeb3859bcf707b9d,
+ticketb0c8b82d4c9545663a439da485e351513b25ee8e,
+LF8bbc767bfb9ec146b088db2c6cfbc9e06ac46457560bb3bb470cf645fbf996bf/D8matched.
+Root fresh allocation validates absent/nonreparse/contained roots, exact clean
+969aa0ee05c83720cdd1e25b71ac0594f91c8e2a, codex branches and linked Git/common-dir.
+Prior FunctionCallStimulus ordinary construction, legal bounded SSE/invalid label
+refusal pass in Root WT; no new DTO/constructor bootstrap required. A future HTTP
+handler need not already exist to build itself under this source-only admission.
+
+Root derives grant-ticket30n5-finite-http-20261020 revision01 ACTIVE under
+batch-checklist-local-20261019-uncapped/first-CVQ source-order exception. Baseline
+969aa0ee exact, original30closure22 above. Named author /root/grant_transport_impl,
+C8 allocation released into immutable evidence hold; Root sole reviewer/orchestrator,
+distinct /root/batch_authority_review source helper. Author WT
+.worktrees/skill-improvement-30n5-finite-http, Root matching-review, codex/same;
+context ctx-ticket30n5-finite-http-20261020. OwnedTemp/johnny30n5-http-owner-20261020
+and -review-20261020, owner+TTLthroughreview/seal with holds, no cleanup authority.
+MODIFY ONLY tests/staging/readonly_host_protocol.py and tests/test_readonly_review_host.py;
+CREATE0/DELETE0. Exact frozen N6F1-F4 handler/stimulus-only behavior, no live socket/
+CLI/config/native/provider/model/effect. Shared in-memory connection fake below
+actual stdlib handler, prior independent literal oracle, real effect guards0.
+Full affected tests/strict2/compile/import/sourcehash, actualsource RED/restoredGREEN
+and Root different door. One ownedTemp mypycache/seat, child55/outer60, full raw/time;
+historical failures/accounting retained, no artificial cumulative/count renewal.
+No socket bind/connect/listen, subprocess/native calls, Host campaign/install/
+security/network changes/cleanup/qualification/30B43 release/formal integration/
+push/release/deploy. Return committed exact candidate/evidence, never authorapproval.
+ACTION_COMPLETED -> AUTO_CONTINUE admitted original author, not an Owner decision.
+
 ## Protected-source exact composition admission — 2026-10-20
 
 Distinct batch-authority peer DOC_PASS d1b9fc342561736ee7287997216e7b3ba3b1ebef:
