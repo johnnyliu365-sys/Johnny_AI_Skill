@@ -1,5 +1,18 @@
 # Ticket 37 independent review — 2026-10-18
 
+## Current-scope clarification before source mutation — 2026-10-20
+
+Author preserved a green old completion-cell run, but selected historical closure01
+scope instead of active closure02 Dispatch normalization. No source/test/pin change.
+Raw wg37-baseline-red.json in registered ownerTemp is actual exit0, not new-defect
+first-red. Root clarifies one active johnny-boundary (same3authorized paths), exact
+new normalization selector and source baseline0d14087d; marks completed Work section
+historical. No new AC/policy/path or repeated old repair. LeafLF
+6054290c9cf5d1a5a8c9a2c26abe3b0ee5ccdf37e645ebbe836403b178279895.
+Pending distinct small-delta review; source lane held, no Owner renewal or cache
+mutation. Failed patch context checks made no writes, as actual Git readback
+confirmed; those failed control operations remain history, not product defects.
+
 ## Closure02 local activation — 2026-10-20
 
 Distinct /root/ticket30_native_tools_review DOC_PASS for exact0d14087ddf09759ee805dd4ec378f4a5a038b16d,

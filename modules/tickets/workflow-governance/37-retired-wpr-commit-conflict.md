@@ -2,7 +2,7 @@
 
 | 欄位 | 內容 |
 | --- | --- |
-| State | `SLICE_LOCAL_INTEGRATED` at `2f1c29cb`；清單 11 的其他一致性檢查仍開放 |
+| State | `ORIGINAL_SLICE_LOCAL_INTEGRATED` at `2f1c29cb`；current correction is closure02 NORMALIZATION only；清單11未結案 |
 | Authority | Owner 2026-10-18 清單 11；既有 `Workflow.md` 治理文件歸屬及本票，不新增 PRD／SPEC／Gate |
 | Baseline | 本票 docs-only commit；派工時精確 pin |
 | Roles | 低成本實作席位；另一席獨立審閱；Root 整合 |
@@ -23,7 +23,8 @@ Do not remove progress documents, change routing behavior, add stage/state/gate,
 require future review evidence in an implementer return, or rework37's passed scope.
 
 Parent batch-checklist-local-20261019-uncapped; existing approved requirement/SPEC/
-Workflow references above remain authority. Baseline6b86185ec97885fe101fae231b99b201a4a00632.
+Workflow references above remain authority. Planning6b86185e; exact source baseline
+0d14087ddf09759ee805dd4ec378f4a5a038b16d (same relevant product/reference bytes).
 COMPACT, Python strict, no Browser/Host/provider/effect, no new DTO or constructor.
 Exact MODIFY ONLY skills/johnny-project-takeover/references/specification-ticketing.md,
 library/workflow_router/profile.py, tests/test_workflow_router.py; CREATE0/DELETE0.
@@ -32,13 +33,18 @@ Update only this reference's digest/revision pins after final reference byte.
 
 AC37B1 replace obsolete WPR authoritative-record ownership with ticket/review exact
 source/typed-return ownership, preserving WPR's nonauthoritative index role. AC37B2
-existing test method expanded (or one method in same file) rejects old positive
+test_dispatch_normalization_keeps_wpr_as_index_only in the existing Router test file rejects old positive
 ownership duty while lawful normalization and existing completion timing pass.
 AC37B3 old text restored => named baseline RED; candidate lawful suite GREEN;
 actual old-duty mutation => named RED then exact restore GREEN. Reviewer uses a
 different WPR-duty variation; string/pin consistency is governance-document evidence,
 not proof of native interception or source authority. Existing Router behavior and
 all unrelated source/policy pins unchanged. No new test helper/framework/script.
+The old test_completion_evidence_does_not_require_a_separate_wpr_commit remains
+GREEN by design; it covers closed closure01, NOT this Dispatch normalization
+defect. Add the named normalization assertion first and record its baseline RED
+against the active ownership sentence. Never manufacture red in the old completion
+section or modify implementation-tdd/installed plugin cache.
 
 Source owner /root/grant_transport_impl, Root reviewer/orchestrator; distinct
 /root/ticket30_native_tools_review source/doc reviewer. New context
@@ -54,13 +60,10 @@ LF/pin consistency, memory compile/import and full-output named mutations only;
 process-local pytest autoload disabled/no-cache if pytest used, outer60/child55.
 Return candidate/files/checks/findings/deviations; no merge/push/Host qualification.
 
-`Workflow.md` 治理文件歸屬明確禁止 `WorkProgressReport.md` 作為 implementation／review
-寫入或 return target，也禁止獨立 WPR commit；`implementation-tdd.md` Ticket completion
-卻仍要求 WPR 在分開的 docs-only commit 記錄結果。只消除後者的相反義務，沿用
-既有 typed `ImplementationReturn` 與後續 ticket／review evidence，不建立第二份台帳。
+### Active closure02 exact boundary
 
 ```johnny-boundary
-modify = skills/johnny-project-takeover/references/implementation-tdd.md
+modify = skills/johnny-project-takeover/references/specification-ticketing.md
 modify = library/workflow_router/profile.py
 modify = tests/test_workflow_router.py
 forbid = Workflow.md
@@ -69,7 +72,16 @@ forbid = modules/spec/
 forbid = doc/requirements/
 ```
 
-## Work／驗收
+## Historical closure01 — completed, not current dispatch authority
+
+The following original completion repair is retained as provenance only. Its old
+reference path implementation-tdd.md is NOT authorized for closure02 mutation.
+
+`Workflow.md` 治理文件歸屬明確禁止 `WorkProgressReport.md` 作為 implementation／review
+寫入或 return target，也禁止獨立 WPR commit；原 implementation-tdd completion
+衝突已由下列完成的舊修正移除，不是本次 Dispatch normalization 缺陷。
+
+### Historical Work／驗收
 
 1. 實作者回件時的 typed return 須識別 exact ticket、實作 commit 與可重現驗證
    evidence；獨立 review evidence 只在後續 REVIEW 形成。這取代獨立 WPR commit
