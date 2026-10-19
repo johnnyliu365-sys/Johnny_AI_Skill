@@ -57,6 +57,120 @@ to that reviewed revision. Current N1 immutable source/evidence hold is unchange
 或新實作 admission。29→30 是本票實際重用純投影的能力依賴，不是清單順序。
 本輪文件工作有下節獨立授權；不因此將完整票30改成 admitted/completed。
 
+## 30N3 — C2 bounded same-handle file content readback / closure06
+
+Architecture Owner selects the minimum next observable native capability after C1,
+not full directory enrollment or a new authority system. Source-engineering staging
+under the same original Ticket30/PRD/CHG, uncapped batch and first-CVQ order exception.
+C1 exact cee7933187a9bfb3190b4ff2ec72c7768db59405 is source baseline; Root independent
+native matched replay seal283dd8c9. This held engineering source is NOT qualified
+authority. B2/F1 candidates are not silently imported or integrated as formal sources.
+
+Public service WindowsPayloadReadback has ordinary default constructor and
+ReadFile(AbsoluteWindowsPath path) -> existing NativeEnrollmentObjectObservation.
+Reuse B1 FILE/metadata/contentSha256/size DTO and existing finite ReadbackStatus,
+all already constructed and negatively tested at reviewed3b2. No new public DTO,
+success tag, authority, enum, policy or Runner. Internal injected-port constructor/
+same typed result for pure fault tests; no dynamic/cast/reflection/bypass success.
+Null input rejects before native call. A wrong-path/kind or malformed port result
+fails closed; failed observations contain neither file content hash nor size.
+
+C2-HANDLE: sole Win32ReadbackPort owns all opens and native interop. Reuse checked
+prefix/final-path/reparse/descriptor helpers, no copied PInvoke or second path open
+for content. Final FILE handle stays alive throughout before metadata, bounded
+content SHA256 and after metadata. Share read only on payload final handle, no
+write/delete sharing; metadata-only original N1 Read flags and behavior unchanged.
+Ancestors stay metadata-only with explicit existing access. Use only read rights,
+OPEN_EXISTING/noninheritable/reparse-open; never request write/owner/DACL/delete,
+enable privilege or alter token/ACL. Size from that same handle must be1..64MiB,
+reject directory/empty/oversize before hashing, fixed bounded streaming buffer.
+No File.ReadAllBytes/FileStream(path) or Read-metadata-then-reopen shortcut.
+
+C2-CONTENT: same-handle observed bytes == initial size, EOF confirmed; re-read identity,
+attributes, creation/last-write, size, finalpath and exact owner/descriptor after hash,
+reject differences/error/timeout with existing finite failure/no partial digest.
+Read-induced access timestamp is not a false drift signal. Sharing conflicts and
+unavailable platform/read failures remain explicit failures, not empty-file success.
+Use finite 3-second cooperative content deadline plus bounded outer process test;
+do not claim an uninterruptible native call is cancelled by a mere elapsed check.
+Prefer documented overlapped ReadAsync on the existing handle with cancellation,
+without extra SYNCHRONIZE permission being assumed in frozen protection plan.
+No extra service ACL right is granted here; protected positive remains unverified.
+Handle cleanup uses using/finally on all exits; no retained/escaped SafeFileHandle,
+fire-and-forget task or duplicate close. No whole-filesystem atomic snapshot claim:
+this raw, unqualified observation is not issuer proof or a guarantee of future
+execution identity against an independently mutable/mapped writer.
+
+C2-TEST: focused pure wrapper/port fault/result checks in a separate responsibility
+test class; same-handle bounds/drift comparison helper checks use actual comparison,
+not mocks of the assertion. Existing N1 self-test/enrollment constructor tests and
+actual owned metadata getter must stay green on candidate after helper refactor.
+Add focused actual payload assertion in existing Python native-tool test module:
+registered owned ordinary fixture only, known independent bytes/hash/size positive,
+missing/directory/empty/oversize refusal without payload data, unchanged metadata
+identity and successful exclusive reopen after read (no leaked reader).
+No real reparse/ACL/denial probe; those remain explicitly injected/not qualified.
+Run exact assertion with manually supplied registered fixture tuple if the old
+shared setup would attempt an unsupported symlink; no hidden builder invocation.
+No native job tests or unrelated N2 requalification in this slice.
+Author actual production predicate removal must name red cell and exact restored
+green; Root uses a different real content/bounds/drift/native predicate, zero red
+is finding. Strict nullable warnings-as-errors, Python strict/compile, actual binary/
+DLL/source/test hashes and full raw commands/output/time. No all-refuse completion.
+
+Exact CREATE2: library/local_orchestration/native_windows/WindowsPayloadReadback.cs,
+library/local_orchestration/native_windows/NativePayloadReadbackSelfTests.cs.
+Exact MODIFY4: library/local_orchestration/native_windows/Win32ReadbackPort.cs,
+library/local_orchestration/native_windows/JohnnyAuthority.Tools.csproj,
+library/local_orchestration/native_windows/SelfTests.cs, tests/test_native_authority_tools.py.
+csproj only compile entries, SelfTests only call into new cohesive pure tests.
+WindowsReadback.cs/Program/ProtectionPlan/NativeEnrollment*/N2/Git/issuer/observer
+source forbidden. Existing shared fixture body is not changed by C2; F1 is separate.
+No additional dependencies or files. Review growth/reuse instead of compressing code
+or hiding implementation in tests. Pure façade vs native handle lifetime vs focused
+assertions remain distinct responsibilities; no owner prompts/ticket narrative in source.
+
+Conditional development child binding after different-seat DOC PASS and fresh Root
+same-lifetime source/contained clean WT/role readback:
+
+~~~yaml
+grant_id: grant-ticket30n3-file-content-20261019
+parent_authority: batch-checklist-local-20261019-uncapped
+ticket: workflow-governance/30
+slice: 30N3-C2
+closure: 6
+baseline: cee7933187a9bfb3190b4ff2ec72c7768db59405
+implementation_owner: /root/ticket30n2_native_impl
+reviewer_orchestrator: /root
+independent_evidence_peer: /root/ticket30_native_tools_review
+worktree: .worktrees/skill-improvement-30n3-native-seam
+branch: codex/skill-improvement-30n3-native-seam
+context_view: ctx-ticket30n3-file-content-20261019
+profile: HIGH_ASSURANCE_SOURCE_ENGINEERING_STAGING_ONLY
+implementation_profile: implementation-standard
+review_profile: ticket-review
+create: [library/local_orchestration/native_windows/WindowsPayloadReadback.cs, library/local_orchestration/native_windows/NativePayloadReadbackSelfTests.cs]
+modify: [library/local_orchestration/native_windows/Win32ReadbackPort.cs, library/local_orchestration/native_windows/JohnnyAuthority.Tools.csproj, library/local_orchestration/native_windows/SelfTests.cs, tests/test_native_authority_tools.py]
+delete: []
+~~~
+
+Prior completed C1 allocation released, WT/ref/evidence retained. Owner output
+johnny30n3-native-seam-owner-20261019 and Root output
+johnny30n3-native-seam-review-20261019 retain owner/TTL through review/seal and
+Review/Recovery hold; exact new ordinary fixture subdirectories registered before
+creation. No cleanup/retry of denied action. Percommand60s/child55s, old usage retained.
+No Host/install/SCM/service/account/ACL/network/model/remote/spawn/receipt effects,
+protected-root writes, real qualification, formal integration/activation or
+push/release/deploy. Return exactcandidate/files/checks/raw native+mutation outputs/
+elapsed/deviations, Root review then original next inventory/installation prerequisites.
+
+Primary references read for this seam: Microsoft CreateFileW (read/share/overlapped/
+noninheritable flags), RandomAccess.ReadAsync (same SafeFileHandle, offset, cancellation),
+GetFileInformationByHandle; no API reference is itself qualification evidence.
+https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createfilew
+https://learn.microsoft.com/en-us/dotnet/api/system.io.randomaccess.readasync?view=net-10.0
+
+
 ## 30N3 — F1 shared native-test fixture separation / closure05
 
 Same original Ticket30/PRD/CHG and reviewed uncapped local batch; this repairs the
