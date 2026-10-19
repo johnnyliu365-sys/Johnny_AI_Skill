@@ -57,6 +57,131 @@ to that reviewed revision. Current N1 immutable source/evidence hold is unchange
 或新實作 admission。29→30 是本票實際重用純投影的能力依賴，不是清單順序。
 本輪文件工作有下節獨立授權；不因此將完整票30改成 admitted/completed。
 
+## 30N3 — C3 bounded directory readback / closure08
+
+Architecture Owner selects the existing next native dependency, not another
+Wayfinder, PRD, gate or broad framework. C2 exactb42ae444f6b6e873fb0a40ae0b3667be51bdf468
+and Root sealc5d98249 prove source file readback only; F1/B2 branches remain held,
+not silently imported. The original Ticket30/PRD/CHG/uncapped batch/first-CVQ order
+exception applies. Completed C2 allocation released; same owner/WT may take this
+next isolated view only after exact source admission. No qualified integration.
+
+Smallest independently observable result: one explicit directory and its immediate
+entries, not a recursive CodeRoot inventory or full NativeEnrollment verifier.
+Public WindowsDirectoryReadback.ReadDirectory(AbsoluteWindowsPath) returns existing
+NativeEnrollmentInventoryObservation; root-only OBSERVED is a valid empty directory.
+Use ordinary existing B1 object/inventory/metadata/hash/path constructors. Internal
+typed immutable port results/entries permit injected negative tests, not bypass
+success construction. Null input rejects before IO. Every failed result has EMPTY
+Objects, never a partial positive. Existing finite ReadbackStatus values only.
+
+C3-NATIVE: sole Win32ReadbackPort and nested NativeMethods become partial; cohesive
+Win32DirectoryReadback.cs owns same-handle directory listing and strict decoding,
+reuse existing prefix/finalpath/reparse/descriptor/snapshot checks and PInvokes.
+Only new native entry GetFileInformationByHandleEx; no duplicated CreateFileW or
+second interop/Runner. Root/listing handle read-control+list, OPEN_EXISTING,
+noninherit/reparse-open/backup, ShareRead; ancestors metadata-only existing rights.
+Reject non-directory/reparse root or child, wrong paths/kinds/IDs and native faults.
+Use same handle across bounded pages; NextEntryOffset0 ends ONE page, not complete
+enumeration. Only documented NO_MORE_FILES ends enumeration; errors discard all.
+Record offsets aligned8, bounds/overflow/UTF16 byte-length strict, single filename
+component only, reject malformed/duplicate/case-alias names; skip only dot/dotdot.
+4096-byte native buffer, bounded page count4096, existing4096 object cap includes root.
+Capture root metadata before/after listing; drift refuses, handles close on all exits.
+
+C3-COMPOSE: façade owns validation/composition, native partial owns handle lifetime/
+records; tests own fixtures/assertions. Files call existing WindowsPayloadReadback
+for actual content; each child's volume/fileID must equal its enumerated identity.
+Directory metadata must come from an actual handle checked as a DIRECTORY, not
+assumed from a caller's kind or untyped metadata. Factor existing validated native-
+metadata conversion from WindowsReadback as a small internal reusable operation;
+preserve public Read method/flags/failures and actual getter tests. No copy of
+descriptor hashing or public DTO bypass. Every child failure/malformed result or
+scope/count mismatch discards the entire inventory. No filesystem/source discovery.
+
+Bound cumulative file bytes to64MiB per directory and cooperative total10s, checked
+before/after each native/child operation; one C2 payload call already has3s deadline.
+These explicit local observer bounds do not grant ACL rights or claim preemptive
+cancellation of an uninterruptible syscall/atomic whole-tree/128-bit ReFS identity.
+Later recursive enrollment must reuse this primitive under its own exact source
+binding, not treat immediate-child success as full CodeRoot qualification.
+
+C3-TEST pure cells: root-only and mixed legitimate objects, exact bytes/hash/size;
+strict malformed page/unaligned/short/overflow/oddUTF16/name/path/reparse/duplicate/
+continuation cases;4096 inclusive/4097 rejection; aggregate byte boundary; root drift;
+wrong child volume/ID/kind; later child or enumeration failure yields empty inventory;
+port exception finite, null no portcall. Pin production continuation/identity/no-
+partial/drift predicates, not only copied parser helper assertions. Author actual
+identity predicate red/restored green; Root different continuation/no-partial/native
+door red/restored green, zero-red is finding. Preserve N1/C2 actual getter/content.
+
+Optional ACTUAL C# native case in the cohesive new self-test file uses ONE selector
+JOHNNY_DIRECTORY_READBACK_TEST_ROOT read once; default null skips IO, invalid empty/
+relative/over32766 fails existing finite self_test_failed path before IO, Program
+unchanged. It is test data, NOT authority/enrollment/observer evidence. Root registers
+new owned source-only ordinary directory fixture BEFORE creation: directory-readback-
+fixture below each existing johnny30n3-native-seam-{owner,review}-20261019 Temp root.
+Known literal alpha.bin (UTF8 "directory payload\n"), empty nested directory, and
+page-000.bin..page-127.bin (UTF8 "page payload\n") exercise actual multiple pages.
+Expected exact names/count/hash/size independent of Actual. Missing root/file-root
+and held existing invalid-content fixture must refuse without partial objects.
+No symlink/ACL/denial/protected-path probe, cleanup or unrelated job/native campaign.
+Default self-test stays pure; explicit actual command only adds that registered
+selector. Do not modify/erase any earlier fixture; owner/TTL through review+seal,
+Review/Recovery holds dominate expiry and exact teardown remains separately gated.
+
+Exact CREATE3: library/local_orchestration/native_windows/WindowsDirectoryReadback.cs,
+library/local_orchestration/native_windows/Win32DirectoryReadback.cs,
+library/local_orchestration/native_windows/NativeDirectoryReadbackSelfTests.cs.
+MODIFY4: library/local_orchestration/native_windows/Win32ReadbackPort.cs (partial
+and only necessary shared directory-kind seam; C2 behavior untouched),
+library/local_orchestration/native_windows/WindowsReadback.cs (internal converter
+extraction only), library/local_orchestration/native_windows/SelfTests.cs (onecall),
+library/local_orchestration/native_windows/JohnnyAuthority.Tools.csproj (compileentries).
+No Python edits/new builder, Program/ProtectionPlan/NativeEnrollment*/N2/issuer/Git/
+source_gate or publicDTO/state changes. New files own separate façade/native/tests
+responsibilities, no prompts/ticket narratives. Forecast façade~150/native~250/test~250
+lines, review cohesion and >500effective growth signals, never minify/forcedsplit.
+
+Conditional development child Grant after different-seat DOC PASS + Root exact
+ticket/index/b42/clean contained nonreparse WT/branch/roles/constructors readback:
+
+~~~yaml
+grant_id: grant-ticket30n3-directory-readback-20261019
+parent_authority: batch-checklist-local-20261019-uncapped
+ticket: workflow-governance/30
+slice: 30N3-C3
+closure: 8
+baseline: b42ae444f6b6e873fb0a40ae0b3667be51bdf468
+implementation_owner: /root/ticket30n2_native_impl
+reviewer_orchestrator: /root
+independent_evidence_peer: /root/ticket30_native_tools_review
+worktree: .worktrees/skill-improvement-30n3-native-seam
+branch: codex/skill-improvement-30n3-native-seam
+context_view: ctx-ticket30n3-directory-readback-20261019
+profile: HIGH_ASSURANCE_SOURCE_ENGINEERING_STAGING_ONLY
+implementation_profile: implementation-standard
+create: [library/local_orchestration/native_windows/WindowsDirectoryReadback.cs, library/local_orchestration/native_windows/Win32DirectoryReadback.cs, library/local_orchestration/native_windows/NativeDirectoryReadbackSelfTests.cs]
+modify: [library/local_orchestration/native_windows/Win32ReadbackPort.cs, library/local_orchestration/native_windows/WindowsReadback.cs, library/local_orchestration/native_windows/SelfTests.cs, library/local_orchestration/native_windows/JohnnyAuthority.Tools.csproj]
+delete: []
+~~~
+
+TEST→A→B: WindowsReadback public Read remains the actual getter entry; metadata
+conversion moves once into its internal shared operation, inherited by new façade.
+Run actual old getter on candidate and mutate new conversion/consumer-owned predicate
+before claiming transfer. No tests retired, no separate B refactor starts on faith.
+Nullable warnings-as-errors/offline55s nonincremental SDK build, default pure and
+explicit registered native tests, memory compile/import of unchanged Python test,
+exact source/EXE/DLL/loaded-module identities and raw command/output/elapsed.
+Return exactcandidate/files/checks/mutation/findings/deviations; Root review then
+existing enrollment/transport/observer source prerequisites, not stop at this commit.
+No services/accounts/ACL/network/model/remote/receipt/spawn/Host qualification,
+formal integration/activation, push/release/deploy or policy-denied cleanup retry.
+Primary API refs refreshed: Microsoft GetFileInformationByHandleEx and
+FILE_ID_BOTH_DIR_INFO (same-handle continuation, recordalignment, nonpermanent IDs).
+https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-getfileinformationbyhandleex
+https://learn.microsoft.com/en-us/windows/win32/api/winbase/ns-winbase-file_id_both_dir_info
+
 ## 30N3 — C2 evidence correction binding / closure07
 
 This is the existing closure06 C2 correction for Root review811d1220, not a new
