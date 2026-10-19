@@ -1053,3 +1053,16 @@ stored plan-digest tamper case in B. Original28 passing tests did not prove that
 distinction; preserve the finding and candidate, not a false preflight READY.
 Same author A120/reviewer A80, no reset, no additional final correction allocation.
 Ticket leaf/registry use D8 final-byte digest sequence before revised binding readback.
+
+Different-seat ticket30g_source_review accepted the bounded clarification at
+418d3a9a20e12c7d396fd85bdebb48fa375ca17c, leafblob
+4e9db7311a51c3bd357eaa2a2814e48ca2fb2fac, LF
+72ba3f74e6f9459641b7c24f0c130548b2ea7133b73c966316e61a8759475680.
+Initial candidate16a6e5b remains NOT_READY: digest conflation plus missing positive
+ordinary constructor/JSON coverage for all finite enum/lifecycle/result variants.
+Exact three-CREATE boundary,28tests, strict and compile/import passed but do not
+close those findings. One reviewer diagnostic had quoting SyntaxError before code;
+retained, not retried. Conservative reviewer A40/80 charged, B220 unchanged.
+Root continues the SAME author's A allocation (42 charged/78 remaining) for these
+two narrow findings, then same-seat type recheck within remaining40. No Phase B,
+new paths/API/Grant authority, integration or new final-correction round.
