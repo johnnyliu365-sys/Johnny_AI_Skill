@@ -2,14 +2,14 @@
 
 | 欄位 | 內容 |
 | --- | --- |
-| State | `30B_CONTAINMENT_ENGINEERING_PASS / R2_CLOSED / R1_SOURCE_UNVERIFIED / REVIEW_BLOCKED`；候選0f6d467a未整合。30A／30M既有本地完成及清理證據保留；完整Ticket30與01／02未完成 |
+| State | `30G_SOURCE_DOCUMENT_REVIEW_PENDING / 30B_REVIEW_BLOCKED / R2_CLOSED / R1_SOURCE_UNVERIFIED`；候選0f6d467a未整合；30A／30M證據保留，完整Ticket30與01／02未完成 |
 | Requirement lineage | 沿用 `PRD-20260805-009`／`CHG-20260805-009` 與原 Ticket 30；不建立新 PRD、平行 Ticket 或第二套 authority |
 | Effective authority | `SPEC-AI-WORKFLOW-WORKFLOW-GOVERNANCE-20260805-01KZ6T8V2R4Y6B8D0F2H4J6M8P` 的既有有效 AC 1–8 |
 | Design evidence only | Owner-authorized、獨審通過的 SPEC design baseline `76d1f942e24975da28889c8b6ecee904c8ef3da0`，SPEC blob `6fd8c3098f48be40c2cf05a03f8284c186163c08`；它允許受控拆票規劃，不是 Ticket 30A implementation Grant 或 runtime activation |
 | Prior candidate | `76f6f32771e80add10c499db2c7479377b079c0c` 的初審為 `BLOCKED`：錯把一般 owner 指示寫成 ticket-scoped Grant，並自創未獲核准的 API、source grammar 與硬預算 |
 | Roles / worktree | Root＝Architecture Owner（本次文件修訂）及唯一 reviewer orchestrator；實作者 `/root/ticket30a_fixture_impl`，獨審 `/root/ticket30a_fixture_review`；repo-contained `.worktrees/skill-improvement-30a-fixture`／`codex/skill-improvement-30a-fixture`；文件獨審 `/root/ticket30_docs_review` 已在 `35b25d60` PASS，分配時再讀回 Git identity |
-| Profile | `STANDARD` proposal；30A 僅准在精確 Grant 後用隔離、已提交的本地 fixture Git 與本機測試命令；不得讀真實 target／remote、呼叫 provider／credential，或產生 Host／dispatch／closure effect |
-| Implementation language | Python 3.11；`python -m mypy --strict library/local_orchestration/mainline_source.py`；僅 type-only cut 通過後續 parser cut |
+| Profile | Current30G=`HIGH_ASSURANCE`, exact scope below；historical30A=`STANDARD` fixture only；均不授予真實Host/source/effect資格 |
+| Implementation language | Python3.11 strict；current30G checker／constructor順序依下節；原30A命令為歷史證據不重跑 |
 
 ## Mainline ticket contract
 
@@ -28,6 +28,179 @@
 此節點是完整 Ticket30 的開放狀態；30A 的已消耗 fixture Grant 不可成為真來源
 或新實作 admission。29→30 是本票實際重用純投影的能力依賴，不是清單順序。
 本輪文件工作有下節獨立授權；不因此將完整票30改成 admitted/completed。
+
+## 30G-SOURCE — Closure G1–G5 revision01 / current bounded construction
+
+Owner2026-10-19 approved runbook revision02 first-entry CVQ order exception and
+this exact source slice. Original PRD-20260805-009/CHG-20260805-009, SPEC workflow
+governance03 blob a700cad60de40096770582b04915bf490fd66a19 and sealed CONTEXT04
+blob06baa4dea5db1c3370086552c35a1d8f721ad47e remain. Also bind the reviewed adaptive
+SPEC design blobffb5304ed0a53df5dbd0b7697e7e18cdfeb39c7c and original HostExternalEffectGateway
+responsibility; this source code does NOT activate that gateway or requirement creation.
+Runbook Owner-decision section is the exact new authority, not its historical proposed reply.
+
+| Binding | Exact limitation |
+| --- | --- |
+| Source/control baseline | 5b3c50f0f39c03f2db15f8c14f26beb03507e945; final reviewed docs baseline and leaf blob read back in original review before dispatch; only authorized docs may change between them |
+| Derived child Grant | grant-ticket30g-source-20261019, conditional on independent document review/preflight; same-lifetime development authority only, never a trusted runtime Grant record |
+| Owner / independent reviewer | /root/ticket30g_source_impl, current implementation-standard gpt-6-luna/xhigh; /root/ticket30g_source_review, gpt-6-sol/high based on existing Owner mapping and successful current46 capability; Root orchestrates/integrates only, author has no helper/control tools |
+| Worktrees / branches | .worktrees/skill-improvement-30g-source / codex/skill-improvement-30g-source; independent .worktrees/skill-improvement-30g-review / codex/skill-improvement-30g-review; Root binds clean Git/contained nonreparse identities before allocation |
+| Profile | POC / HIGH_ASSURANCE because authorization lifecycle, despite source-only tests. Ordinary engineering preflight/review may stage exact immutable candidates; mandatory qualified isolated audit is still required before final approval/integration and is NOT supplied by an ordinary helper |
+| Resource | Original599.2/600 retained; added900: author450 (A120, B300, correction30), reviewer300 (type preflight80, behavior/review/correction220), control150 including install-inventory helper<=35. <=60s EVERY command, serial bounded commands, zero automatic retries/load, initial+one correction for the whole closure. All failures/inspection/Git count. Report full command timing, not only stdout; async attempts require full start-to-terminal elapsed, not sum of poll waits |
+| Control docs only | This leaf, feature README, original30 review, existing checklist/doc index/runbook; install detail is a section of the same runbook, not a new framework/installer script. Root does not edit the six source/test files |
+| No effects | Test-owned disposable SQLite/file fixtures only; no actual service/ACL/account/pipe/socket/remote/credential/provider/Host/model session, native spawn by product/test, real source readback, admit_dispatch/receipt, Git writes by product, held candidate import/integration or old cleanup retry |
+| Lifecycle | owner=30G/named seat; TTL=type/engineering review+sealed evidence; test tmp fixtures use context-managed teardown; worktree/ref/cache/artifacts retained under existing cleanup/Recovery holds, no alternate deletion. No screenshot/report output. Existing user/other-ticket assets untouched |
+
+### Single observable result / source and trust separation
+
+Durable local ledger and bounded readback client model the exact grant record,
+single-winner claim, stable retry and strict peer/plan/frame comparison through
+their actual public source seams. A valid local record succeeds at this SOURCE
+seam; wrong/missing/replayed/ambiguous inputs refuse. Every success is explicitly
+SOURCE_ONLY_UNQUALIFIED, not authenticated issuer/Host/30B-R1 evidence. Neither a
+SQLite file nor a caller-created peer DTO/expected-plan supplies authorization.
+The future independently protected service owns issuance, OS peer observation,
+trusted clock, effect transport and protected evidence; none is built/launched here.
+
+Reuse workflow-router-poc (READY card) metadata: ProjectId, RequirementId,
+RevisionDigest, EvidenceDigest, OpaqueMetadataId, ProcessStage, ModelRole from
+existing contracts and ProjectAuthorityContract from project_authority. No SQLite
+Grant ledger was found in the scoped existing runtime; telemetry/install/wake
+journals have different trust/lifecycles and are not promoted. Python sqlite3,
+Pydantic2, hashlib/struct/json and existing unittest/TemporaryDirectory/parameterized
+patterns suffice; no dependency/install/config edit. __init__ is explicit exports
+only; contracts owns values/validation, ledger owns transactions, client owns wire
+composition. Tests separate ledger versus protocol, share per-file fixture helpers.
+
+### Exact public source contracts (ordinary constructors, no coercion)
+
+Use frozen, extra-forbid, strict, revalidate-instances models; no Any/cast/bypass
+success objects. New IDs reuse existing opaque type, not a second ID grammar.
+Architecture fixes these signatures/meaning; private helper names remain engineering detail:
+
+- GrantOperation: READ_MAINLINE | READ_REVIEW_SNAPSHOT only. GrantLifecycle:
+  UNCONSUMED | CLAIMED | COMPLETE | RECOVERY_REQUIRED; not Router stages.
+- GrantPlan: schema_revision Literal[1]; project_id; requirement_id and
+  requirement_revision; ticket_ref and ticket_revision; stage; actor_role; operation;
+  baseline_sha exact lowercase40 hex; authority ProjectAuthorityContract;
+  not_before/expires_at strict nonnegative integer UTC seconds, expires_at>not_before.
+  authority.project_id must equal project_id. Full declared authority/revision and
+  all fields participate in digest; no transform/coercion of IDs/expected values.
+- grant_plan_digest(plan)->EvidenceDigest: SHA256 of that validated plan's stable
+  model_dump_json UTF8 bytes with sha256_ prefix; schema version pins serialization.
+- GrantRecord: grant_ref, plan, lifecycle, correlation_ref optional, evidence_digest
+  optional. UNCONSUMED: neither; CLAIMED: correlation only; COMPLETE/RECOVERY_REQUIRED:
+  both required. Digest is derived from plan, not trusted from caller-supplied hash.
+- LedgerResult: scope fixed SOURCE_ONLY_UNQUALIFIED; disposition ISSUED | CLAIMED_NEW |
+  EXISTING | SETTLED | REFUSED; record only for first four, failure only REFUSED.
+  Finite failures MISSING | BINDING_MISMATCH | NOT_YET_VALID | EXPIRED | REPLAY |
+  CONFLICT | STORE_UNAVAILABLE | INVALID_RECORD. No path/SQL/exception text in results.
+- SQLiteGrantLedger(database_path: Path): explicit test/controller-owned path, no
+  default runtime/environment discovery. issue(grant_ref, plan), read(grant_ref),
+  claim(grant_ref, expected_plan, correlation_ref, observed_at: int),
+  settle(grant_ref, expected_plan, correlation_ref, terminal: GrantLifecycle,
+  evidence_digest) each -> LedgerResult. issue records a SOURCE model only, not
+  Owner approval. Identical issue returns EXISTING without resetting state;
+  changed ID binding refuses. settle accepts only COMPLETE/RECOVERY_REQUIRED.
+- AuthorityPeer: service_sid (bounded canonical S-1-... SID text), binary_digest,
+  configuration_digest (existing EvidenceDigest), enrollment_ref opaque. This
+  descriptive DTO is NOT OS proof. GrantReadRequest(grant_ref, operation_ref)
+  contains only opaque IDs; operation_ref is the attempt/request correlation.
+- PeerFrame(peer: AuthorityPeer, payload: bytes); AuthorityChannel Protocol
+  exchange(request_frame: bytes)->PeerFrame. No concrete pipe/network implementation.
+  GrantAuthorityClient(channel, expected_peer, expected_plan).read(request)->
+  GrantReadResult, scope fixed SOURCE_ONLY_UNQUALIFIED, disposition VALIDATED_SOURCE_RECORD
+  with record or REFUSED with finite CHANNEL_UNAVAILABLE | PEER_MISMATCH |
+  FRAME_INVALID | BINDING_MISMATCH. No trust upgrade/integration authority.
+- Request frame: 4-byte unsigned big-endian byte length + UTF8 JSON, schema_revision=1,
+  grant_ref, operation_ref only. Response body same three keys plus record only.
+  Body1..16384bytes, exact prefix/body match, no trailing/partial frames; duplicate/
+  unknown/missing key, invalidUTF8/deep JSON, bool/coercion/unknown enum rejects.
+  Compare exact peer, response IDs and whole expected plan before source success;
+  no response/record raw body in log/error. TimeoutError/OSError become finite
+  CHANNEL_UNAVAILABLE, no retry. Explicit encode_read_request and encode_read_response
+  are value-only helpers, not issuers or self-authentication.
+
+### Atomicity / failure / verification closure
+
+G1 constructors: every public success/failure/enum/Protocol fake and JSON roundtrip,
+wrong primitive/null/extra/enum/ID/time/state combination refused. New types do not
+exist yet: reuse original Ticket30's type-first construction order, not a new Gate.
+Phase A creates only __init__, contracts and constructor portion of protocol test;
+no ledger/client behavior or fixture DB. Different-seat engineering type preflight
+must pin actual candidate before Phase B. No early integration; cumulative six-CREATE
+boundary always measured against the original source baseline, not the A commit.
+
+G2 durable lifecycle: SQLite explicit transactions, parameterized SQL, finite timeout
+(timeout=0/no automatic busy retry), durable commit before CLAIMED_NEW. One transaction
+matches plan and validity then conditional UNCONSUMED->CLAIMED and correlation;
+exactly one independent connection wins. Same correlation+plan returns stored in-progress/
+terminal record without another claim/effect, even after reopening/crash simulation;
+different correlation or any mismatched binding refuses. An expired retry may read an
+existing same-correlation record, never CLAIMED_NEW. No auto-remint/unconsume/delete.
+Settlement exact claim only; repeated identical terminal result EXISTING, conflicting
+terminal/evidence/correlation refuses. Malformed/corrupt records or stored digest
+inconsistency fail closed. A coordinated valid rewrite by a local same-user actor
+is NOT detectable authority forgery here; only later protected storage can prevent it.
+Source tests prove transaction/idempotency only, not filesystem protection, atomic
+distributed effects, trusted time or a real service. No external effect callback API.
+
+G3 protocol: exact permitted read succeeds through actual client and injected channel;
+wrong peer fields, request/response ID, any plan binding, tampered record/digest state,
+oversized/truncated/trailing/deep/duplicate-key frame and channel error refuse. No
+caller-approved bool/path/ID unlocks real authority; test fake explicitly unqualified.
+G4 truth: author reverse-mutes claim CAS/single-use and client peer/plan binding,
+named tests red then exact restored green. Independent reviewer uses a different
+door (reopen/retry/correlation or response/length/record binding), unreduced output;
+zero red is finding. Existing599.2s and forgedGrant/140-case algorithm evidence
+are reused, not rerun from/modify the held30B candidate.
+G5 verification: python -m pytest tests/test_grant_authority_ledger.py tests/test_grant_authority_protocol.py -q -p no:cacheprovider;
+python -m mypy --strict library/local_orchestration/grant_authority;
+in-memory compile/import; public ledger/client fixture smoke and git diff --check.
+One shared temp fixture per test lifecycle, two connections/threads max, no stress/
+sleep/process launch; inherited environment must not select paid services.
+Growth signals contracts<=220, ledger<=260, client<=180, tests<=350 each effective
+lines; crossing requires responsibility review, never forced compression/file split.
+Source has technical comments only, no Owner prompt/ticket narration. TEST→A→B=N/A
+(new capability, not responsibility transfer); XSS/UI/SQL migration/deploy=N/A.
+
+### Current cumulative machine boundary
+
+Old30B fence below is historical text, no longer this active phase. Effective
+MODIFY=none: existing parser requires a nonempty modify, so denied AGENTS sentinel
+is the same reviewed30A encoding, not permission. Gate must prove all existing
+MODIFY/DELETE refuse and only these six CREATE paths pass. Author may additively
+edit these newly created files across A/B/correction; no existing baseline file.
+
+```johnny-boundary
+modify = AGENTS.md
+create = library/local_orchestration/grant_authority/__init__.py
+create = library/local_orchestration/grant_authority/contracts.py
+create = library/local_orchestration/grant_authority/ledger.py
+create = library/local_orchestration/grant_authority/client.py
+create = tests/test_grant_authority_ledger.py
+create = tests/test_grant_authority_protocol.py
+forbid = AGENTS.md
+forbid = CONTEXT.md
+forbid = Workflow.md
+forbid = CodeReview.md
+forbid = doc/
+forbid = modules/
+forbid = skills/
+forbid = template/
+forbid = library/workflow_router/
+forbid = library/local_orchestration/dispatch_authority.py
+forbid = library/local_orchestration/mainline_readback.py
+```
+
+Return ImplementationReturn COMPLETED/BLOCKED/CHANGE_DETECTED, source phase,
+candidate/baseline/files, checks/mutations, findings/deviations, cumulative exact
+command time and unverified scope. Completed source/engineering preflight is not
+final HIGH_ASSURANCE approval; stage immutable candidate until mandatory qualified
+audit. This CVQ ordering exception does not exempt30G itself from its final audit,
+does not integrate30B/43, and author cannot enable effects. Initial+one correction
+limits and historical holds persist. ACTION_COMPLETED routes to the unique next
+source action only when its preflight/budget is valid; no repeat Owner question.
 
 ## 30B-R1 fail-closed correction allocation — 2026-10-19
 
@@ -295,9 +468,9 @@ leaf fb189f91及全部驗證在原review保留；下列為已消耗建置授權�
 - Asset owner=本票具名作者／獨審；TTL=本批本票審閱與證據封存後；只清精確登記
   的乾淨且已整合worktree/ref，失敗或Recovery hold保留，不改其他資產。
 
-本批唯一活躍機械邊界（上方30A fence已退役為歷史text）：
+原30B歷史機械邊界（現行30G只使用上節唯一active fence）：
 
-```johnny-boundary
+```text
 modify = library/local_orchestration/mainline_source.py
 modify = tests/test_mainline_source.py
 create = library/local_orchestration/mainline_readback.py

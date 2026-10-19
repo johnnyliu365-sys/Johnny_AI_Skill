@@ -3,7 +3,7 @@
 | 欄位 | 值 |
 | --- | --- |
 | 文件身分 | `AI-SKILL-IMPROVEMENT-CHECKLIST`；本專案工作追蹤，非新 PRD／SPEC／Gate |
-| Revision／來源 | `32`；沿用既有12項與acf0ffa1／ded322b3批准；Owner 2026-10-18 批次本地授權及10-19實現方案判定、可准入工作續行指示。非 push／正式啟用授權 |
+| Revision／來源 | `33`；沿用既有12項與acf0ffa1／ded322b3批准；Owner批次本地授權及10-19核准首次CVQ順序例外／30G-SOURCE新增900命令秒。非 OS變更／Host測試／push／正式啟用授權 |
 | 工作基準 | `a1cb6c13adbeb52a4117991727dcc3d4af6d2a33`；分支 `codex/skill-improvement-checklist` |
 | 主線 | 先對照、優先 02→04→05→06→07，再處理餘項與整合回放 |
 | 負責 | Root 理解需求、衝突與派工；票級實作者依有效能力 Profile；獨立審閱另席 |
@@ -78,7 +78,18 @@ Owner按正式Change Control另核安全政策差異；本紀錄不自動要求�
 本地文件動作回傳ACTION_COMPLETED；未完成票保持各自REVIEW_BLOCKED／
 CLEANUP_BLOCKED／NOT_VERIFIED，不能用本文件批准解除來源或Host限制。
 
-## 2026-10-19 核心實現方案與獨立本地續行（revision32）
+## 2026-10-19 30G-SOURCE續行（revision33）
+
+Owner已核准runbookrevision02首次CVQ順序例外（非Host測試）及原Ticket30六CREATE／
+零MODIFY/DELETE源碼建置；原599.2/600保留，追加900分450/300/150，總上限1500。
+Root依原變更流程修票／獨審後派生開發子Grant，不再逐票問同一核准。當前30G為
+文件准入；先新契約constructor實測，再帳本／client；有正常成功及錯配／重放拒絕，
+但每項成功明標SOURCE_ONLY_UNQUALIFIED。HIGH_ASSURANCE最終audit未被本次例外取消，
+候選封存不冒充正式資格／整合；30B/43與01/02仍未完成，04不重做。
+同一runbook將準備帳戶/SID、服務、保護路徑/DACL、binary/config版本、IPC/網路、
+命令/驗證/還原明細，未建立/未建置值不編造；實際安全操作仍須一次精確確認。
+
+## 2026-10-19 核心實現方案與獨立本地續行（revision32歷史）
 
 本輪完成[Grant／原生唯讀Host實現方案](runbooks/grant-and-readonly-host-implementation.md)
 revision02。普通獨立架構／文件審閱APPROVED_AS_PROPOSAL，受審b77fc961／blob

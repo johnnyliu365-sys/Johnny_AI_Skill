@@ -1,6 +1,6 @@
 # Core capability implementation decision — revision02
 
-Status: INDEPENDENTLY_REVIEWED_PROPOSAL / BOOTSTRAP_EXCEPTION_AND_EXTERNAL_ENROLLMENT_NOT_AUTHORIZED.
+Status: OWNER_APPROVED_ORDER_EXCEPTION_AND_30G_SOURCE / NATIVE_OS_EFFECTS_NOT_AUTHORIZED.
 Parent: Owner's existing12-item local batch; original Ticket30 and workflow/adaptive
 SPEC lineages. This plan selects implementation responsibilities, not a new PRD,
 Router, policy engine, qualification verdict or production activation.
@@ -10,6 +10,33 @@ APPROVED_AS_PROPOSAL for b77fc961f99e51b6cb0dad74a8e2b5646a1e4559 / leafblob
 a9786cb7e8b1e8aa2eda1c74742c3e0596a8ac7e. Revision01's circular bootstrap finding
 was corrected in that revision02; no operational qualification, source-code audit
 substitution, implementation Grant or Owner approval is conferred by this review.
+
+## Owner decision and Change Control activation — 2026-10-19
+
+Owner approved revision02's ONE-TIME first-entry ordering exception only for B3 F01,
+CVQ-01 and the fixed candidate's minimal readonly entry. This is recorded under
+the existing CVQ Change Control and original requirement lineages, not a new PRD.
+All five readonly restrictions, independent OS protection/observation, independent
+audit and final original CVQ admission remain. Provisional results cannot satisfy
+30B/43 qualification. This approval does NOT execute or authorize a Host test.
+
+Owner separately authorized30G-SOURCE after original Ticket30 revision/independent
+review: exact six CREATE paths in section5, zero effective MODIFY/DELETE, added900
+command seconds author450/reviewer300/control150, <=60s each, initial plus one
+correction. Original599.2/600 is retained; combined ceiling1500. Root derives the
+exact child Grant under the existing batch; no repeated per-ticket Owner approval.
+Root control allocation includes bounded install-inventory helper work; its time
+is not a free extra allocation. Native service, OS/user/ACL changes, real pipe/
+network/Host/session effects and code outside the six paths remain unauthorized.
+
+The section5 proposed reply is historical and broader than this actual approval:
+no permission-setting or installation authority is inferred from it. Prepare an
+exact account/SID, service, protected files/DACL, binary/config, pipe/network,
+commands, verification and rollback manifest first; ask once at the actual external
+change boundary. Missing actual identities/digests stay NOT_CREATED/NOT_BUILT,
+never invented. No push/release/deployment, policy-denied cleanup retry or early
+qualification/30B/43 completion. Subsequent sections retain the reviewed technical
+design; this section alone records which proposed authorities are now effective.
 
 ## 1. Determination from current evidence
 
@@ -144,7 +171,7 @@ CVQ13.5 also requires qualified independent source Review, while integrated cont
 has no CVQ implementation and B3 F01 remains open. Requiring that final verdict before
 building its first review entry is a real bootstrap cycle, not missing Owner data.
 
-### One-time bootstrap method-order amendment — PROPOSED, not batch-authorized
+### One-time bootstrap method-order amendment — ORDER_APPROVED / HOST_TEST_NOT_AUTHORIZED
 
 The new policy difference is limited to first-entry source/qualification ordering,
 scoped to the retained B3 F01 and CVQ-01 candidates plus the exact minimal readonly
@@ -179,8 +206,8 @@ must be frozen in the existing CVQ Manifest before use; no blanket future exempt
    Provisional reports cannot satisfy downstream CapabilityKey/evidence lookups.
    Only a successful final qualification can admit the later30B/43 readonly audit.
 
-This method-order exception requires explicit Owner Change Control approval; neither
-the existing local batch, ordinary source review nor the new service grants it.
+The Owner Change Control decision above now approves this method-order exception;
+neither ordinary source review nor a new service can expand it or grant Host tests.
 It creates no new Stage/Agent/Gate/Report system. Reuse CVQ cases and evidence refs,
 keeping provisional evidence non-authoritative until the final ordinary evaluation.
 The same recipe can serve another Host only after its own exact binding/proof; CLI
@@ -243,7 +270,11 @@ The scoped conclusion is **test CI definition not established in these checked
 sources**, not globally absent and not access-denied. An unknown external CI remains
 UNKNOWN; it does not block establishing the independent local command source.
 
-## 5. Cost, order and one external decision
+## 5. Cost, source slice and original proposed decision package
+
+The original proposal below is preserved as design/cost provenance. Current approved
+ordering/source scope and excluded OS/Host effects are exactly the Owner-decision
+section above. Do not re-ask its approved order/budget or execute its broader reply.
 
 Estimates below are engineering planning ranges, NOT measured duration/token cost:
 local grant contracts/ledger/client 1–2 engineer-days; protected Windows enrollment/

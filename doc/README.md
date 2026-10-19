@@ -6,4 +6,4 @@
 
 | Artifact ID | Revision / status | Technical decision leaf |
 | --- | --- | --- |
-| CORE-CAPABILITY-IMPLEMENTATION | 02 / INDEPENDENTLY_REVIEWED_PROPOSAL | [Grant與唯讀Host實現方案](runbooks/grant-and-readonly-host-implementation.md) |
+| CORE-CAPABILITY-IMPLEMENTATION | 02 / OWNER_APPROVED_ORDER_AND_SOURCE_ONLY | [Grant與唯讀Host實現方案](runbooks/grant-and-readonly-host-implementation.md) |

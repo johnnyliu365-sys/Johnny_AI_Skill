@@ -927,3 +927,42 @@ Independent local continuation is Ticket46's versioned local command-source adap
 under its own300s newly derived scope. It neither borrows30B time nor changes CI,
 Host/source qualification, publication or cleanup holds. Existing30B/43 remain
 REVIEW_BLOCKED and unintegrated. No rejected cleanup retry or other external effect.
+
+## 30G-SOURCE admission / Owner authority activation — 2026-10-19
+
+Owner approved runbookrevision02's first-CVQ-entry ORDER exception only, not an
+operational test or OS/security enrollment. Original Change Control lineage kept;
+runbook Owner-decision section records exact limits and takes precedence over its
+historical broader proposed reply. No new PRD, model fee or source/Host qualification.
+
+Owner also approved exact six-CREATE30G-SOURCE after same Ticket30 revision and
+independent review. Additional900commandseconds author450/reviewer300/control150,
+<=60each, initial plus one correction, original599.2/600 retained, total1500. Only
+this new900 envelope can be spent; the old0.8s is not silently borrowed. Root's150
+includes the finite install-inventory helper (reserved35, not a free extra lane).
+Code is HIGH_ASSURANCE source-only; engineering review may stage an immutable
+candidate, not bypass mandatory qualified final audit or integrate30B/43. Since
+the Owner exception is not a grant-ledger audit exception, no final qualification
+or integration is promised before that evidence exists.
+
+Control baseline5b3c50f0f39c03f2db15f8c14f26beb03507e945 was clean. Exact docs
+allowlist: Ticket30, featureREADME, this review, checklist, existing doc index and
+runbook. No production source/test changes in this document admission. Root fixed
+G1–G5, ordinary constructor/type-first A then B in the same cumulative six paths,
+SQLite durable single-winner and retry/settlement, source-only peer/frame comparison,
+failure/negative/mutation matrix; final reviewed baseline/leaf/digest and contained
+worktree must be read back before Root activates grant-ticket30g-source-20261019.
+The new Grant is scoped DEVELOPMENT authority under the Owner batch, not an issued
+record from the future protected service. Author cannot self-approve or delegate.
+
+Same semantic capability mapping as independently completed46: gpt-6-luna/xhigh
+implementation and separate gpt-6-sol/high engineering review. No hardcoded model
+inside source/skill. No missing arbitrary profile file will invent new admission;
+current canonical model-role-routing and exact ticket mapping are used.
+
+Existing-type preflight and effective zero-MODIFY/DELETE sentinel boundary must
+be executed before type-first dispatch; new DTOs tested/strict checked before any
+ledger/client behavior. The first constructor cut consumes the SAME450/300 budgets
+and grants no standalone integration/extra correction round. Real service/IPC/
+filesystem isolation remain future exact manifest operations. The install helper's
+read-only results are facts/proposals only, never permission/protection proof.
