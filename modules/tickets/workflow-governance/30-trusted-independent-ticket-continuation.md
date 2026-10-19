@@ -57,6 +57,77 @@ to that reviewed revision. Current N1 immutable source/evidence hold is unchange
 或新實作 admission。29→30 是本票實際重用純投影的能力依賴，不是清單順序。
 本輪文件工作有下節獨立授權；不因此將完整票30改成 admitted/completed。
 
+## 30N3 — C1 native readback seam / closure04, independent of pure B2
+
+This is the minimum responsibility extraction before later native content/inventory
+work, not a new product capability/Ticket/PRD or Router stage. Same uncapped batch
+and first-entry source-staging exception; does not extend qualified review/effects.
+Independent from B2 MODIFY3: it changes only the existing native adapter boundary
+and compile entry, not ProtectionPlan/verifier/tests or their expected behavior.
+
+CREATE library/local_orchestration/native_windows/Win32ReadbackPort.cs owns the
+EXACT existing internal Win32ReadbackPort class plus its necessary using directives.
+MODIFY WindowsReadback.cs removes ONLY that class and now-unused using directives;
+its public contracts/observer wrapper and internal INativeReadbackPort/result types
+stay byte-equivalent apart from spacing/usings. MODIFY JohnnyAuthority.Tools.csproj
+adds its sole compile entry. CREATE1/MODIFY2/DELETE0. No signatures, native API,
+access/share flags, metadata mapping, failure behavior or another PInvoke set changes.
+This separates public observation contracts from native handle/interop implementation
+before extending either; no forced compression, duplicate helper or new framework.
+
+SC1 before: existing pure self-test, enrollment-contract-self-test, strict compile,
+and unchanged real owned-file getter assertion are available. Author must run the
+old real getter before move, pin actual input/EXE/DLL and expected OBSERVED metadata;
+then run that same assertion after the move. Reuse existing registered SDK fixture/
+test assertions but do not repeat unsupported symlink privilege probes. Native read
+only on registered seat-owned ordinary Temp file/directory; no protected-path writes,
+ACL/reparse creation or Host qualification. Explicit failed-port cases stay INJECTED.
+SC2 exact extracted class body hash equals baseline body; namespace/type signatures/
+public APIs and other source blobs unchanged, strict nullable/warnings-as-errors,
+affected pure tests green, no new dependencies. No behavior fallback/all-refuse.
+SC3 an actual moved native getter success check mutation must make the unchanged
+real getter test fail, exact restore/nonincremental build then green; Root uses a
+different actual moved check. Source grep/wiring-only PASS is insufficient. No
+later content/hash/directory enumeration implementation is granted in this cut.
+
+Conditional development child binding after different-seat DOC PASS and fresh Root
+contained clean source/role/WT readback; this is not protected runtime authority:
+
+```yaml
+grant_id: grant-ticket30n3-native-seam-20261019
+parent_authority: batch-checklist-local-20261019-uncapped
+ticket: workflow-governance/30
+slice: 30N3-C1
+closure: 4
+stage: EXISTING_BEHAVIOR_EXTRACTION_ONLY
+baseline: 3b2da4b00076bcfc500cce5560cb2a045550c802
+implementation_owner: /root/ticket30n2_native_impl
+reviewer_orchestrator: /root
+independent_evidence_peer: /root/ticket30_native_tools_review
+worktree: .worktrees/skill-improvement-30n3-native-seam
+branch: codex/skill-improvement-30n3-native-seam
+context_view: ctx-ticket30n3-native-seam-20261019
+profile: HIGH_ASSURANCE_SOURCE_ENGINEERING_STAGING_ONLY
+implementation_profile: implementation-standard
+review_profile: ticket-review
+create: [library/local_orchestration/native_windows/Win32ReadbackPort.cs]
+modify: [library/local_orchestration/native_windows/WindowsReadback.cs, library/local_orchestration/native_windows/JohnnyAuthority.Tools.csproj]
+delete: []
+```
+
+Separate completed N2 allocation released for this lane; its old WT/ref/source
+stays under review hold, not reset or imported as authority. New WT/ref/output
+owner=30N3-C1/named seat, output
+C:/Users/GameBoy/AppData/Local/Temp/johnny30n3-native-seam-owner-20261019,
+TTL through exact review/evidence seal, Review/Recovery holds override expiry;
+normal exact teardown only, no denied cleanup retry. Root registers before dispatch.
+Commands<=60s/child<=55s; old elapsed/failures retained, no cumulative/count cap or
+unchanged blind retry. No B2 path overlap, source privileges/installer/SCM/account/
+ACL/network/pipe/Host/model/remote/Agent-spawn/receipt effects or formal activation,
+push/release/deployment. N2 native job is not called. Qualified audit/30B/43/TAL
+holds remain; return candidate/exact files/raw commands+getter results/mutations/
+timing/deviations, Root independent review then separate content-reader preparation.
+
 ## 30N3 — B2 pure verification / closure03
 
 Same original lineage, uncapped batch and first-entry SOURCE_ENGINEERING staging.
