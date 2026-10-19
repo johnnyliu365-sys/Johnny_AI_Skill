@@ -1,4 +1,35 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## N5-A pure stimulus construction admission — 2026-10-20
+
+Distinct /root/batch_authority_review DOC_PASS ca002b73b14202480b2cbc2c561f6b0a2077289f,
+closure19 leafLF25f7659622c8cc409c2828eba28b2dc4f5b3fa46855edea1d9e3cab065d3e542
+matches registry. Original runbook3 explicitly plans finite offline Responses
+stimulus; no new SPEC semantics/Host/qualification. Official stream documentation
+only supports the family, not installed CLI compatibility. Root fresh allocation
+proves both new WTs absent first, ancestors nonreparse, exact24c79d2278b36afcc816a9eab1e6c2c18caabbd7
+clean linked Git pointers/branches; existing pure timeout/argument constructor
+positive and invalid timeout rejection PASS. New carrier is built before codec,
+not blocked by the absent operational Host that it helps test later.
+
+Root derives grant-ticket30n5-readonly-stimulus-20261020 rev01 A_ONLY ACTIVE under
+batch-checklist-local-20261019-uncapped. Author /root/grant_transport_impl released
+from37 source lane into independent immutable CLEANUP_BLOCKED hold; no old asset
+cleanup retry or state erasure. Root sole reviewer/orchestrator, distinct source
+peer /root/ticket30_native_tools_review. Author .worktrees/skill-improvement-30n5-readonly-stimulus,
+codex/same; Root matching-review WT/branch. Context ctx-ticket30n5-readonly-stimulus-20261020.
+Owned Temp/johnny30n5-stimulus-owner-20261020 and -review-20261020 predeclared before
+creation; owner+TTL through review/seal, holds override, teardown not yet admitted.
+CREATE ONLY tests/staging/readonly_host_protocol.py and tests/test_readonly_review_host.py;
+MODIFY0/DELETE0. A only immutable validating FunctionCallStimulus and constructor
+tests, exact field/byte bounds perclosure19; no encoder placeholder/HTTP server/
+socket/process/provider/Host/config access. B NOT_ACTIVE until exact immutable A
+preflight/strict/import. No unknown source evidence filled from fixture output.
+Same-lifetime direct receipt/Runner NOT_REQUIRED; ordinary source-engineering
+staging is not protected review or approval of30B43. Full raw logs captured
+mechanically, no manual timestamp/hash transcription; process-local -B/no-cache/
+no-autoplugins/explicit ownedTemp mypy cache, child55/outer60, timing/history retained.
+ACTION_COMPLETED -> AUTO_CONTINUE N5-A, no Owner renewal or operational Grant.
+
 ## H5-A final preflight / H5-B source admission — 2026-10-20
 
 474e67c1e16d08a6c1533a99b1b7e125698f0c4f, productc6aa9ff5d108d24776236bd1e9fd973dd7d19300 /
