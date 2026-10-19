@@ -57,6 +57,101 @@ to that reviewed revision. Current N1 immutable source/evidence hold is unchange
 或新實作 admission。29→30 是本票實際重用純投影的能力依賴，不是清單順序。
 本輪文件工作有下節獨立授權；不因此將完整票30改成 admitted/completed。
 
+## 30N4-H4 — last-message token observation / closure17 proposal
+
+Same original30/PRD009/CHG009/runbook03 and parent uncapped batch; protected
+service's necessary native identity edge, not an independent observer Framework.
+Baseline c13d10171f3819c1b6770218303806dc20f14eb3. CREATE ONLY
+library/local_orchestration/grant_authority/windows_message_identity.py and
+tests/test_grant_authority_windows_message_identity.py; MODIFY0/DELETE0.
+All H1/H2/H3/native tools/client/ledger/codec/source/Router remain READ_ONLY.
+Reuse H2-A _StrictModel/_CanonicalSid/uint aliases/token+level enums and current
+protocol fixtures. No duplicate SID, PID-from-enrollment or process-time reader.
+N2 raw FILETIME/job observations remain a separate retained-handle responsibility,
+never filled from expected enrollment values or rounded Python datetime.
+
+H4-A constructor-first: one private frozen strict _LastMessageIdentity value with
+endpoint_pid (positiveuint32), endpoint_session_id (uint32), last_message_sid
+(canonicalSID), last_message_session_id(uint32), authentication_id_luid(uint64),
+token_type(existing _TokenType), impersonation_level(existing _ImpersonationLevel).
+No defaults, caller trusted/approved flag, handles, expected identity or raw token
+bytes. Finite private observation-failure enum and typed exception can carry a
+retained owning token solely on cleanup/revert uncertainty, never success. A only
+definitions/normal constructor validation/roundtrips and negatives; no native calls
+or observation behavior until immutable A ordinary constructor/strict/source review.
+
+H4-B private thread-bound observer takes one positive borrowed pipe integer and
+the issuing Python thread identity; no connect/read/write/decoder/ledger/spawn.
+Caller must already have quarantined one complete message via H1, later protected
+composition owns this ordering. Native observer cannot manufacture proof of prior
+read. It records actual last-message security context, NOT actual writer identity.
+Wrong input/thread/poisoned observer refuses before native calls. Before own
+impersonation attempt, OpenThreadToken(GetCurrentThread(),TOKEN_QUERY,True) must
+return ERROR_NO_TOKEN; any other error refuses. A pre-existing owning token is
+closed and THREAD_NOT_CLEAN returned without impersonation or RevertToSelf: never
+drop an unrelated thread's security context. Cleanup failure retains owner/fatal
+hold. Current-thread pseudohandle is borrowed and must never be closed.
+
+After clean-thread proof, query actual pipe client PID/session and attempt
+ImpersonateNamedPipeClient on this issuing thread. Open only TOKEN_QUERY on its
+thread token; query TokenUser,TokenSessionId,TokenStatistics,TokenType and
+TokenImpersonationLevel. ConvertSidToStringSid must yield exact canonical spelling;
+TokenUser has exact (PySID,int flags) shape, no caller fallback. TokenStatistics
+AuthenticationId is a signed64 integer in installed pywin32311: validate exact int
+-(2**63)..(2**63-1), reinterpret the SAME64 bits as uint64 for the existing domain
+(not clamp/coerce/drop high bits). Reject bool/unknown shape/missing/overflow. Enum
+mapping must explicitly match documented native finite values, unknown refuses.
+Native token must be IMPERSONATION; no synthesized level for a primary token.
+Observation may report ANONYMOUS but H2's later matching rejects it. All endpoints/
+session primitives exact uint32 and endpoint PID positive. Never query ambient
+process token or re-open a process by declared enrollment PID as a substitute.
+
+Once impersonation was attempted, ALWAYS RevertToSelf in finally on the SAME
+thread, including impersonation/OpenThreadToken/query/parse failure. No result
+escapes until successful revert and owned-token Close. Revert failure is fatal,
+poisons observer, retains any owning token/recovery evidence and raises a dedicated
+BaseException-derived fatal failure; subsequent use performs zero native calls.
+Successful revert but token-close failure likewise returns no identity and holds
+owner. No retry or token replacement, raw CloseHandle, hidden global cleanup,
+SeDebug enable, service control or actual process termination here. Later protected
+service must terminate on fatal revert uncertainty; source exception/latch alone
+is NOT qualified OS enforcement. No user/SQL/file/codec callback runs impersonated.
+
+H4-TEST existing fixtures plus patched native boundaries only, no real token/pipe/
+impersonation/privilege/Host probe. Constructor normal+all finite enum roundtrips,
+null/bool/extra/missing/bounds. Positive exact native fake yields identity, native
+signed -1 maps to uint64max and -(2**63) maps to highbit exactly. Negative unknown
+native enums/session/SID/stats/PID/owner, each call failure, pre-existing token and
+wrong thread. Assert exact call order/revert on every attempted path, no revert
+before own attempt, no early success/extra read/ambient-token fallback, owning
+token exactly-once Close and borrowed handles untouched. Cleanup/revert failures
+retain evidence and poisoned next call is effect-free. Actual source mutations
+remove clean-thread guard, LUID range/bit preservation, unconditional revert,
+deferred success and retained-owner poison separately => namedRED then restoreGREEN;
+Root uses a different cleanup-order/borrowed-handle door. Full raw output in owned
+registered Temp only. Focused pytest, strict product/test, memorycompile/guarded
+import. No new runner/server/policy DTO. Forecast product260/test380 effective;
+500 signal requires responsibility review, not forced splitting or compression.
+
+Conditional grant-ticket30n4-message-identity-20261020 revision01, parent samebatch;
+H4-A only after DOC_PASS and fresh exact baseline/Git/nonreparse/normal prior-type
+preflight. B NOT_ACTIVE until A immutable source preflight; Root then derives same
+two-path revision02 without Owner renewal. Source author /root/ticket30n4_peer_impl
+only AFTER current H2-B lane returns/released to hold; Root reviewer/orchestrator,
+distinct /root/ticket30_native_tools_review. New context
+ctx-ticket30n4-message-identity-20261020. Preregister own .worktrees/skill-improvement-
+30g-message-identity and matching -review, codex/same branches, Temp/johnny30n4-
+identity-owner-20261020 and -review-20261020. TTL through review/seal; holds override
+expiry/no cleanup or denied-operation retry. Direct same-lifetime receipt/Runner
+NOT_REQUIRED. Default60/child55, old history retained/evidence-progress repairs.
+No native effect/Host qualification/install/security/30B43 integration authority.
+Current ACTION_REQUIRED DOC_REVIEW, no source implementation Grant yet active.
+
+Primary method facts: Microsoft RevertToSelf docs require process shutdown on
+failure (future service boundary, not executed here); pywin32 b311 win32security.i
+TokenUser/TokenStatistics and PyLARGE_INTEGER.cpp prove exact tuple/dict/signed64
+return shapes. Installed stubs are incomplete, not justification for Any or casts.
+
 ## 30N4-H3 — explicit bounded read-pipe factory / closure16 proposal
 
 Same original30/PRD009/CHG009/runbook03 and uncapped batch. Necessary protected
