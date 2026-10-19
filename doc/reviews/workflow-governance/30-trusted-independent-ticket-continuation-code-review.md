@@ -1,4 +1,16 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H8-A exact import-direction rebind active — 2026-10-20
+
+Distinct batch-authority helper DOC_PASS0c10315f6ae3b1a53ab555ed431eea5948e585da,
+ticketd5494867e6201c595a3a754b2ab5e878b7e92e2a /
+LFd4a4747b9e35d85fdbc0902963a2edfbd3d77899b25ec6cc01abca85d45227df,
+D8matched. Only reversed import sentence corrected; other closure24 scope,
+baseline876223b3, roles/worktrees/Context/ownedTemp/limits unchanged. Author
+confirms no source mutation before correction. Root activates child Grant
+revision02 A_ONLY same2CREATE, superseding only revision01 exactleaf binding.
+Production never imports tests; tests exercise actual product. B_NOT_ACTIVE.
+No new authority, budget or external effect. ACTION_COMPLETED -> AUTO_CONTINUE
+same named H8-A author, not a new allocation/Owner approval.
 ## H7 exact source-stage admission activation — 2026-10-20
 
 Distinct native-tools peer DATA_INTEGRITY_PASS/MAPPING_DOC_PASS at306b2f9d:
