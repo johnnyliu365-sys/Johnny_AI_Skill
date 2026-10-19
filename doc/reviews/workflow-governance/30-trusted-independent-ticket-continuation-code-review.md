@@ -1,5 +1,19 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## C4 E01 correction activation / Grant revision02 — 2026-10-19
+
+Distinct /root/batch_authority_review ordinary DOC_PASS at exact
+bdf90a1da0acdb1f743877a6b994a17ffb35af49; Ticket30 LF
+1f5773057b656599c3373ca8327777bc94e4193c892730c0bad9f271fdaa2335
+matches D8. Frozen closure09 volume bindings only, one selftest MODIFY, no source
+behavior/fixture/selector/public contract expansion. Source candidate remains
+03573829d2824fdf6f48cf0cb9bd33846627f746. Root freshly reads clean source/branch,
+linked Git pointer and non-reparse ancestors; same named author/WT/context,
+Root sole reviewer/orchestrator and existing distinct evidence peer.
+grant-ticket30n3-code-inventory-20261019 revision02 ACTIVE under original uncapped
+parent with old usage/holds; ACTION_COMPLETED -> AUTO_CONTINUE IMPLEMENT E01.
+Ordinary engineering only, no qualified review/Host/effect/integration authority.
+
 ## C4 initial source review / E01 volume evidence correction — 2026-10-19
 
 Root CHANGES_REQUESTED / EVIDENCE_DEFECT C4-E01 at immutable
