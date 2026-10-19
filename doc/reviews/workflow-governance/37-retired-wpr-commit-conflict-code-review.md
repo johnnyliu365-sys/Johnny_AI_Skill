@@ -20,8 +20,10 @@ no new policy. Strengthen the existing method to pin a closed unique canonical
 ownership bullet set/shape, rejecting extra/duplicated/missing WPR authority duties
 while the exact approved legitimate ownership remains green. No generic natural-
 language policy engine/helper module or claim to detect every semantic paraphrase.
-New named defect baselineRED for this extra-duty case, restore correct source then
-GREEN; actual different extra-duty mutation RED/restoredGREEN. Preserve existing
+Original ZERO_RED is the baseline test-defect reproduction; do not force the lawful
+54e0reference to fail. After assertion correction, the same extra-duty input must
+be namedRED, exact restored source GREEN; actual different extra-duty mutation
+RED/restoredGREEN. Preserve existing
 pin and completion tests, full suite/affected strict/import/diff and source peers'
 valid narrow judgment. Full output/no-cache/process-local flags and per-command
 bounds remain. Existing85MB cache remains HELD, no cleanup until independent source
