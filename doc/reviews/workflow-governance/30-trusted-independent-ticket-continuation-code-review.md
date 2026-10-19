@@ -1188,3 +1188,28 @@ Different-seat document review and mechanical boundary preflight precede child G
 activation. No source changes made by Root; no code beyond original six paths until
 new scoped Grant is active. Native actual getter tests remain own fixtures only,
 not Host attack/session/qualification. Only04 remains checked.
+
+### 30N1 exact development Grant activation
+
+Independent batch_authority_review preflight found one count typo (10 listed JSON
+keys described as11). Same-ticket correction715e694d574d65336b067ad37de98916f9db99de
+changes only11->10 and registry digest. Different-seat correction PASS, raw readonly
+command0.682s after initial0.810s; same helper budget8 retained, not Host qualification.
+Ticket LF digest cfd49470015d977a7cbce3cf77ac12dfc33c8c12496ad7383286b8604f8f5dfe.
+Existing document_mutation_gate read_boundary/evaluate_change preflight1.732s:
+one active fence, nine CREATE admitted, every tracked MODIFY/DELETE denied,
+undeclared CREATE denied. Denied AGENTS sentinel is not modification authority.
+
+Root now activates grant-ticket30n1-native-tools-20261019 under the existing Owner
+batch and approved redistribution, solely for the exact30N1 closure in this reviewed
+leaf. Final source baseline is the commit containing this activation; read back its
+full SHA, unchanged ticket blob and clean contained Git allocation before delegation.
+Named author /root/ticket30_native_tools_impl, independent reviewer
+/root/ticket30_native_tools_review; paths/branches exactly as leaf. Author120,
+reviewer80, control40 are cumulative subsets of350/220/330, not reset allocations.
+Original599.2, author161/reviewer84 and old Root reserve200 remain. Current post-
+redistribution control commands conservatively charge20 through this activation;
+this is rounded upper accounting, not reconstructed exact old usage. No OS install,
+service/account/ACL/network changes, Host/model calls, runtime Grant issue, final
+qualified audit, integration, push or release authority. Constructor cut must pass
+different-seat type preflight before native getters; final source audit hold remains.
