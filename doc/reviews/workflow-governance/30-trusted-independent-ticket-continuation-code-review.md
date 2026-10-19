@@ -16,6 +16,22 @@ not a new PRD or security-setting approval. Reviewer cumulative183.407/220;
 Root330 conservatively reserved including UNRECONCILED history, not measured usage.
 Original599.2/1500 and all failures remain; no reset, release or cleanup retry.
 
+Control document verification deviation: pre-commit call d7cd4e used
+`ConvertFrom-Json` on the YAML `johnny-boundary` fence and emitted the nonterminating
+error `Conversion from JSON failed with error: Unexpected character encountered
+while parsing value: m. Path '', line 0, position 0.` The commit still completed;
+this probe is INVALID_PROBE / NOT_SCHEMA_VALIDATION, never schema PASS. Its raw
+error is retained, not hidden by exit0. Root's separate read-only exact-fence
+comparison againstcd73bea5 returned `BOUNDARY_EXACT_UNCHANGED=True`; no source,
+Grant contents or schema changed. Candidate review/source trees and primary main
+remain clean; primary HEADa1cb6c13 is unchanged. This is conditional reuse of the
+unchanged boundary, not another parser or a repaired historical test result.
+
+The final six-document preflight atf33b32db by /root/batch_authority_review found
+only that missing deviation record (0.661s); this additive same-scope correction
+records it. Proposed added500 and B3 renewed attempt remain NOT_GRANTED pending
+the genuinely new resource/attempt decision, not ordinary engineering approval.
+
 | Field | Evidence |
 | --- | --- |
 | Prior control baseline | `789302c4345aedb5439770ebb7aad1c9ac0f3cd8` |
