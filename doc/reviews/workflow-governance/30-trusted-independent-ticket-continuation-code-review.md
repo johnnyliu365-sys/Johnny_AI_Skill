@@ -1,5 +1,25 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## F1 evidence correction / Root output-encoding deviation — 2026-10-19
+
+At da91be3fc87afd819f10e88d1cf378a62eb04368 different-seat ordinary source review
+finds F1-E01/EVIDENCE_DEFECT against frozen F1-VERIFY output binding: replacement
+assertion derives .dll from two already-equal candidate paths, a tautology. Old
+JOHNNY_NATIVE_DLL actual fixture environment assertion is no longer independently
+tested. Production assignment is currently correct; add a narrow pure fixture
+environment cell under mocked filesystem/default no-symlink, not a new framework
+or altered product acceptance. Same author/WT/grant/scope, additive correction.
+
+Root started NEW8-node focused pytest with a50s bounded parent, toola27d6c/session45153.
+After child returned, wrapper failed printing captured output through cp950:
+UnicodeEncodeError: 'cp950' codec can't encode character '\ufffd' in position90.
+Tool1a2b8f outer exit1; child outcome is UNVERIFIED, not a test failure or PASS;
+no raw child output recovered. Preserve elapsed/unreconciled history. This is Root
+evidence-wrapper deviation (encoding class was known), not author product defect.
+No unchanged retry: future wrapper stdout/stderr reconfigure UTF8/backslashreplace,
+child PYTHONIOENCODING=UTF8. Rerun only required missing evidence after that fix,
+never manufacture prior output. No source/test mutation while child was active.
+
 ## C2 exact ordinary payload fixture registration — 2026-10-19
 
 Within activated closure06/Grant6291ed3c, owner /root/ticket30n2_native_impl uses
