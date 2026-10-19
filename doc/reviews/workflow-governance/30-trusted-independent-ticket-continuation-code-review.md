@@ -1,4 +1,42 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H1 initial review / necessary E01/E02 — 2026-10-20
+
+Exactdee1977a17ec0e325d2f7ccc1b3325d47da23286 vs5449c063, RootownWTcdf96c
+FFexact, clean3afb71,2CREATE product524/test453 physical lines. Product
+blob3610b6044935842a692c228476766c54b4a48fba/test846ad20c25f3cc81c88bb1b9d582a9397899850d.
+Distinct /root/ticket30_native_tools_review identifies E01 native owning-handle
+mismatch and E02 malformed primary completion releases resources. Structure
+growth explicit per-API adapters+bounded lifetime/cancel/drain, one responsibility;
+not accepted blindly because green and no forced extra-module split.
+Root actually reads installed primary headers/tests6805aa/718dec and local
+HANDLEType export inventoryc024c1/c7f2c7; no native resource operation/probe.
+
+Root unmodified candidate fake counter77f2d8:
+```text
+LAWFUL_NATIVE_OWNER_SHAPE_REFUSED EVENT_CREATE_FAILED REAL_NATIVE_API_CALLS 0 FAKE_OWNER_CLOSED False
+AssertionError: H1_E01_LAWFUL_CREATE_EVENT_OWNER_MUST_BE_RETAINED
+```
+Primary completion counter245812:
+```text
+MALFORMED_COMPLETION NATIVE_RESULT_INVALID STATE FAILED OVERLAPPED_RETAINED False BUFFER_RETAINED False REAL_PIPE_EVENT_CALLS 0
+AssertionError: H1_E02_UNCONFIRMED_COMPLETION_MUST_RETAIN_RESOURCES
+```
+Full commands/terminal tool records77f2d8/245812, not a real Host event/negative
+qualification. Constructor supplied raw pipe/stop handles remain explicit private
+numeric interface; E01 addresses internally created completion wrapper, not a new
+polymorphic handle API. Later factory must transfer/retain each resource correctly.
+
+Author raw logs read eec15b:34PASS, strict4PASS, actual bound/thread/incomplete-
+drain namedRED/restoredGREEN. These old tests model CreateEvent as int and cannot
+discharge real wrapper compatibility. Author confirmed no candidate rewrite;
+original order/count assertions are already in dee1977 (the brief suggestion of
+test amendment was corrected before any rewrite). No integration/qualification.
+Current CHANGES_REQUESTED for necessary same-ticket two-path correctionrev02.
+External-output ZIP residue reported separately in ticket, no move/delete or
+cleanup claim. Exact in-root raw logs preserved; no broad rerun or resource reset.
+ACTION_COMPLETED -> AUTO_CONTINUE DOC consistency then same-author correction.
+
+
 ## H2-A precise source construction activation — 2026-10-20
 
 Distinct /root/batch_authority_review DOC_PASS aa9b5c266eaee7dbd3be3ab909575edf00c29f8b,

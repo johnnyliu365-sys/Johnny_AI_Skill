@@ -170,6 +170,62 @@ ACTION_REQUIRED source implementation only AFTER exact activation record;
 currently DOCUMENT_REVIEW_PENDING, not an operational trusted Grant.
 
 
+## 30N4-H1 — E01/E02 bounded correction / same closure13
+
+Initial immutable dee1977a17ec0e325d2f7ccc1b3325d47da23286 stays preserved;
+same H1 two paths only MODIFY, CREATE/DELETE0, baseline additive dee1977.
+Original grant-ticket30n4-bounded-pipe-io-20261020 revision02 conditional on
+independent DOC consistency and fresh owner Git/containment; same owner/context/
+WT/parent uncapped batch. Initial32transport+2codec green/strict/import/three
+actual mutants are retained, not adequate for final pass. No requirement change,
+new API/framework/file or Host action. Root /different source peer agree:
+
+E01 actual CreateEvent result is an owning PyHANDLE, while installed stub says
+int and fake returns int. Root77f2d8 lawful wrapper-shaped constructor counter
+refuses EVENT_CREATE_FAILED, no real native call. Use installed runtime exported
+pywintypes.HANDLEType (confirmed import/type inventory only c024c1 and stub
+pywintypes.pyi23), retain correct owner and separately validate its numeric
+handle for int-typed APIs. Close via owning wrapper exactly once, no int-only
+conversion that drops owner/double-closes; alternatively only an explicitly
+proven Detach transfer, no cast/Any/stub edit/ctypes/new protocol framework.
+Tests patch HANDLEType/CreateEvent with a typed owning fake BEFORE construction,
+track owner lifetime/Close order, invalid numeric handle and exception paths;
+lawful wrapper positive must pass, invalid result rejects finitely. No real
+handle/resource creation even to discover its type.
+Existing PRIVATE pipe_handle/cancellation_event interface remains numeric as
+selected in H1: later protected factory must explicitly transfer pipe ownership
+and retain borrowed stop-event owner through IO/hold. A PyHANDLE passed directly
+instead of an admitted raw integer is not newly supported by this correction.
+Do not silently change constructor input contract to suppress source finding.
+
+E02 Root245812 malformed primary GetOverlappedResult True returns INVALID with
+FAILED state and clears live OVERLAPPED/buffer. Independent source confirms this
+does not establish terminal completion. Primary malformed/non-int/negative
+completion must enter existing RECOVERY_HELD with all original live references,
+no more IO/no close/no immediate retry; same behavior already covers malformed
+drain. Add exact read and write/cancel relevant fake completion cells, assert
+nonempty active resources and absence of owner/pipe close, plus lawful completion
+still succeeds. Recovery hold is in-process owned resource state only, not
+fabricated durable evidence or release of existing project Recovery.
+Actual guard relaxation for both E01 ownership and E02 retention must yield
+named RED and exactrestore GREEN; Root different completion/count door retained.
+
+Run same focused34+new regression cells, strict affected4files, memory compile/
+import with every OS-facing call patched before constructor, no real pipe/event/
+token/service/ACL/Host test. Forecast overage triggers independent structural
+review (one IO lifetime owner/one cohesive fake matrix), not artificial split.
+Do not amend/reset already returned candidate; each correction ADDITIVE commit.
+
+Author reported sibling Temp/johnny30n4-pipe-owner-20261020-evidence.zip,
+SHA12d445bf4c4540e179ad8cfD6a77873379738a0e5e905116621dc7a1b5a219b3
+(case-insensitive hex), outside preregistered owned output root. Preserve that
+exact residue; original in-root raw logs remain primary evidence. No deletion/
+move/rewrite, no automatic cleanup authority inferred from author report, no
+retry of old policy-denied cleanup. Subsequent outputs ONLY inside registered
+owner Temp root. Track ownership/teardown uncertainty independently of functional
+review; no false resource lifecycle closure.
+
+
 ## 30N4-H1 — bounded Windows pipe IO / closure13
 
 C6 final1fe5c8342ff7127ac7d19721a423fa42a6832711 independently SOURCE_STAGED_PASS:
