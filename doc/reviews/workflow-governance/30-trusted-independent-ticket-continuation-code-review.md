@@ -1,4 +1,46 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H3 E01/E02 native-value correction — 2026-10-20
+
+Candidate cdc842c9843b6a29604b6bf6bbe0437078a07e1c exact2CREATE vs c13d1017,
+Rootownreview FF e997ca reads complete387/485physical source/test. Distinct
+/root/ticket30_native_tools_review CHANGES_REQUESTED under frozen closure16:
+E01 H3-F2 positive NON-SENTINEL handle check only <=0; Root actual fully patched
+counter4b26e2 all-ones64bit handle18446744073709551615 escapes as success despite
+no real native calls. E02 H3-F2/F4 native state tuple is unpacked in wrong order;
+CurInstances None passes. Roota63590 confirms lawful(2,1,None,None,'') succeeds
+AND malformed(2,None,None,None,'') also succeeds. Existing positive fake
+(2,0,0,1,None) does not represent the actual default native result.
+
+Primary b311 win32pipe.i5abb38 and official pywin32 GetNamedPipeHandleState docs
+prove (State,CurInstances,MaxCollectionCount,CollectDataTimeout,Name). Default last
+three are None,None,'' (no collection/username request). Correct positions and
+exact bounded integer CurInstances=1 for this single-created-instance profile;
+collection fields remain optional bounded uint32, Name exact documented str shape.
+Keep lawful rounded buffers and complete positive owner/descriptor success.
+Pointer-width HANDLE validation must reject zero, negative, bool, all-ones
+INVALID_HANDLE_VALUE and overflow, preserve in-range legal handles. Unverified
+wrapper stays held, never close an invalid sentinel or fabricate cleanup success.
+No other product behavior/rights/endpoint/ownership expansion.
+
+Wrapper compatibility uncertainty is resolved at SOURCE level: official pywin32
+CreateNamedPipe docs and b311 declaration return PyHANDLE, installed primary tests
+call .Close(). Incomplete stub int is not reason to discard owning wrapper or
+require a real unauthorized pipe probe. Still not native qualification.
+
+Root derives same-scope grant-ticket30n4-read-pipe-factory-20261020 revision02,
+baseline exactcdc842c9843b6a29604b6bf6bbe0437078a07e1c. Same author/rootreviewer/
+sourcepeer/WT/branch/context/ownedTemp; MODIFY only the existing2created paths,
+CREATE0/DELETE0. First add corresponding regression cells and record defective-
+baseline namedRED, then minimal guard/unpack/fake correction; strict/focused/
+guarded-import, actual mutations/restores, independent narrow recheck. No new
+type/constructor/Host Gate. Test growth signal is responsibility review, not
+forced split. Frozen invariants unchanged; original history/costs retained.
+Defaultcommand60/child55, future process-local pytest autoplugin disable and
+no:cacheprovider. Capture complete outputs+argv/elapsed/exit in owned Temp; prior
+aggregate argv absence stays UNKNOWN, new runs do not retroactively recover it.
+ACTION_COMPLETED -> AUTO_CONTINUE same-author correction, no Owner renewal,
+actual native probe/security/Host/install/integration or qualification authority.
+
 ## H2-B final engineering evidence and H4-A admission — 2026-10-20
 
 Exact a4a3d23c216682ff9160e34d1826df3254276f80, product
