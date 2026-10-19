@@ -2,7 +2,7 @@
 
 | 欄位 | 值 |
 | --- | --- |
-| State / Closure | PREPARED / 45-C1–C4 revision01；文件獨審後本地 Grant 生效 |
+| State / Closure | CONVERGENCE_REVIEW_REQUIRED / 45-C1–C4 revision02；revision01審閱紀錄保留，下節控制面收斂需獨審後才重入 |
 | Authority | Owner batch-checklist-local-20261018 及2026-10-19續行；原 PRD-20260805-009／CHG-20260805-009、workflow-governance AC10；不新增PRD、不重開28/38/40 |
 | Source baseline | 0cb5b6085d3dd0f1588569cbbcff5f820ff0d2a2；SPEC blob a700cad60de40096770582b04915bf490fd66a19、模板blob b88a909c935ce655c423838ee55f882ec0937fee；最終文件commit/leaf於派工前讀回 |
 | Grant | Root delegated grant-wg45-content-local-20261019，僅本票兩檔、具名actor、下述有限命令；不簽發production Grant |
@@ -117,3 +117,40 @@ scope/budget/security expansion, not normal design choices. Resource owner is th
 named seat/Ticket45, TTL through review + evidence seal; known cleanup denial
 prevents automatic teardown retries, so preserve registered assets with hold and
 mark CLEANUP_BLOCKED separately. Do not touch prior worktrees/journals/Recovery.
+
+## Bounded control-plane convergence — revision02
+
+Revision01 initial096e111e plus correction9482ac08 exhausted its two-review
+cycle. Root stops automatic correction under CodeReview§5. Remaining F3 is an
+IMPLEMENTATION_DEFECT, not a fabricated TICKET_DEFECT or changed product requirement.
+Existing C1/C3/C4 evidence and F1/F2 closures are retained, not re-reviewed wholesale.
+
+Architecture finding: the section scanner erased heading level when extracting
+title, then reused that title for two different operations (terminate active
+section vs enter a required section). The first fix widened the terminator regex
+without preserving level, so the error survived in its inverse direction.
+No new parser/framework/type is necessary. Resolve within the same scanner:
+retain heading level from the regex; H1 or H2 closes prior section, only exact H2
+with required title starts required section; H3+ remains inside. Empty/missing
+required H2 yields existing field MISSING diagnostics. This is the original C2
+rule with an explicit transition table, not a weaker AC or new policy.
+
+| Encounter | End current required section | Start required section |
+| --- | --- | --- |
+| H1, any title (including same title) | yes | never |
+| H2 matching required title | yes | yes |
+| H2 other title | yes | no |
+| H3+ | no | no |
+
+Root's existing batch delegation covers this control-plane decomposition and
+limited re-entry; it is not automatic third correction under revision01. After
+independent document review, activate revised child allocation on the same
+Grant/lineage, author/worktree and exact two-path boundary, source9482ac08.
+No new budget: author130.7/150 consumed,19.3s left; reviewer49/100 consumed,51s left;
+Root50 reserve and300 cumulative unchanged. One bounded implementation of this
+transition only, one delta review; if it fails or resources expire, retain BLOCKED
+and do not repeat. No restart of original initial/correction allowances.
+Regression: same-title H1 replacing required H2 fails on baseline; restored exact
+H2 passes, H1 escape still refuses, H3 nested remains valid. Focused suite/strict
+and existing duplicate mutation evidence remain required. Source review, not
+Host qualification; no integration before APPROVED.

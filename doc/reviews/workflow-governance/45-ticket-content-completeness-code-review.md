@@ -77,8 +77,9 @@ Original reviewer confirmed F1/F2 and the H1-escape case, but F3 is incomplete:
 changing the required `## 使用者拍板與可觀察結果` to the same-title H1 returns
 empty issues. `_HEADING` now matches H1/H2, while active-section selection only
 compares the title. Exact required H2 is absent but its fields are accepted.
-This is the original F3 section-boundary correction, not a new requirement or
-extra correction allocation. Within19.3s remaining, author must distinguish
-ending a section (H1/H2) from opening the required section (exact H2), add this
-baseline-red regression and restore green; no other source change. Stop if the
-existing balance cannot cover it. Review remains CHANGES_REQUESTED.
+This is the original F3 section-boundary correction, not a new requirement.
+The initial control note at3711ebbd proposed direct re-entry, but no author
+dispatch occurred. Reviewer correctly required CONVERGENCE_REVIEW_REQUIRED under
+CodeReview§5. That proposal is superseded by Ticket45 revision02's explicit
+control-plane analysis, transition table, unchanged resource ceiling and
+independent document review before re-entry. No automatic third correction.
