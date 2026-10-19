@@ -52,7 +52,7 @@ def read_command_plan(data: bytes) -> tuple[DeclaredTestCommand, ...]:
     try:
         text = data.decode("utf-8", errors="strict")
         value: object = json.loads(text, object_pairs_hook=_unique_object)
-    except (UnicodeDecodeError, json.JSONDecodeError) as error:
+    except (UnicodeDecodeError, json.JSONDecodeError, RecursionError) as error:
         raise ValueError("command plan is not valid UTF-8 JSON") from error
 
     document = _string_keyed_object(value)

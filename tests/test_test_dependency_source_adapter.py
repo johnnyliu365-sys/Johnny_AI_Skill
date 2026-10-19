@@ -85,6 +85,7 @@ class GitTestDependencySourceAdapterTests(unittest.TestCase):
               ("tests/a;rm.py", "$TARGET.py", "tests/../a.py", "tests//a.py", "tests/*.py")),
             self._command_plan_records(("local:fixture", "tests/a.py", "--collect-only")),
             b"\xff",
+            b"[" * 1200 + b"0" + b"]" * 1200,
         )
         for payload in invalid:
             with self.subTest(payload=payload[:32]), self.assertRaises(ValueError):
