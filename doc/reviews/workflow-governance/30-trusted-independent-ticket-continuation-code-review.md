@@ -1,4 +1,43 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H4-B E01 source closed / E02 native-wrapper evidence gap — 2026-10-20
+
+Exact correctionf7bf8e7a72dc88f99b65907d18ebad872cb99aaf, productb85241967b0f9822c039c0f3ebc5d2fe6b91ca32 /
+testad4bdde8993f212f78c9516176ee23e70aba0fca. Distinct source peer SOURCE_PASS
+for E01; Root reads complete source/test and narrow correction, cleanup owner now
+retained before query-shape check. New seven cells use shared harness, no product
+expansion; source455/test1023effective line signal reviewed as typed constructors,
+one native fake, parameterized input/order/recovery coverage, not automatic split.
+
+Root different-door actual source mutation changes native SESSION_ID selector from
+TokenSessionId to TokenUser. Named test_thread_bound_observer_uses_exact_native_order_and_defers_identity
+still GREEN exit0 (2.484s), exact restoreGREEN (2.468s), actual blob restored/clean.
+ZERO_RED => EVIDENCE_DEFECT E02 under frozen H4 native binding/test truthfulness;
+not success. Existing harness patches all _native_* wrappers above their actual
+Win32 bindings; current tests cannot detect wrong native selector. Current product
+mapping itself is correct; do not change it. This gap is distinct from actual OS
+qualification and is locally testable without native calls.
+
+Root derives same-lineage grant-ticket30n4-message-identity-20261020 revision04
+ACTIVE_EVIDENCE_CORRECTION, exact baselinef7bf8e7a72dc88f99b65907d18ebad872cb99aaf;
+MODIFY ONLY existing tests/test_grant_authority_windows_message_identity.py,
+CREATE0/DELETE0; product and all other sources READ_ONLY. Same author/Root/peer/
+WT/branch/context/ownedTemp/history. Reuse existing native fake and small finite
+fake Win32 module/API surface BELOW real wrappers. Exercise actual observe->native
+wrapper->fake API, actual native-error-code translation/clean-token proof, exact
+thread/OpenAsSelf/query token owner and all5named TokenInformation selectors,
+SID conversion, Revert and owning Close, with lawful observation positive. Do not
+call real Win32 APIs or claim this establishes OS provenance. No new harness
+module/framework/classification/production type or broad extra failure matrix.
+Wrong SessionId selector on real product=>new namedRED then exact restoreGREEN;
+other selector rewiring and borrowed-handle/Close ordering are bounded existing
+acceptance, not new behavior. Root will use a different wrapper door. Existing
+upper-seam tests retained, not replaced or weakened. Capture full/default traceback,
+source/argv/env/stdout/stderr/time/exit, process-local autoplugin disable/no-cache/-B,
+child55/outer60. Old zeroRED/original logs stay; no unchanged blind replay or Owner
+renewal. Independent narrow recheck/final legal tests/strict before source seal.
+ACTION_COMPLETED -> AUTO_CONTINUE same-author tests-only correction, no native/
+Host/install/security/qualification/formal-integration authority.
+
 ## H5 controlled baseline and caller census — 2026-10-20
 
 Root exact preparation Grant379db42abb9c190ff2e5c45c400f3bca1f449952 produced clean
