@@ -1,4 +1,35 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H3 final evidence readback / H4-A locator correction — 2026-10-20
+
+H3 candidate8b0402e4dbb03f61b44146c41c7e1166c504879c, sourcepeer narrow
+SOURCE_PREFLIGHT_PASS; actual tree locators product666b4a9375f384976fac2f2ad50554661907d83a,
+test2e3c138fb88ed7e145a3e6cd34ca04bc562e5e67. Root2468c9 guarded patched-native
+three-suite289PASS with zero unpatched native calls; terminal8e5d8a strict2PASS
+25.578s. Author320 adds ledger31, not a contradictory same-command count. Root
+ede356 proves reviewer physical CRLF hashes dbbe48c4d808af9c12e5e619dc8a0c3d1e879046712830ba865f34f51a478140 /
+c14b7fd2c9175191f71d07ccb00e734387ae5323c477fa4f2da460e014f4b146 normalize exactly
+to author physical LF and immutable Git source326dc1a0ce72f3760188e6a289d43ddc56e0dc60c75a8f4230220c92f0b07dfb /
+b2b5167f214872cf17db691c40e720da26039f30930e440417f400689de11b8d. No source mismatch.
+
+Root own different door removes OWNER_DEFAULTED rejection only: named cell
+test_invalid_native_readback_closes_owner_once[defaulted_owner] produces intended
+DID_NOT_RAISE with full traceback, then exact restore GREEN. Child2.547/2.532s;
+original full tool records retained, no native probe. Source exact restored/clean.
+Author revision02 baseline red2/6 cells and five correction-door red/green pairs
+read, but --tb=short is explicitly reduced traceback. Initial five mutation reds
+likewise reduced; preserve as supplementary history, not unfiltered review proof.
+Root requested only ten bounded one-cell/default-traceback red/restore pairs,
+not another broad regression or code change. Misnamed e01-baseline-red-final
+ran after fix, exit0 despite expected1; retained as deviation, NOT first-red.
+Final evidence seal pending those full records; engineering checks do not grant
+Host/source qualification, main integration, normal closure or cleanup authority.
+
+H4-A author metadata correction explains the old57ff420/986b920 values: ordinary
+SHA1(raw git-show bytes), missing Git's blob-length header, not actual Git object
+IDs. Earlier UNKNOWN remains historical; trusted Root4e9ac3 tree locators below
+are authoritative. No source/test rerun or edit needed to fix this locator error.
+H4-B continues under exact conditional revision02; no native effects authorized.
+
 ## H4-A source preflight / conditional H4-B activation — 2026-10-20
 
 Exact a5521accf42b99202660453a37717fd83fc32e4a in registered owner/review WTs,
