@@ -394,6 +394,14 @@ delegation, push/release/deploy/old cleanup retry or unrecorded extra attempt.
 
 ## 30N2 — Bounded native job primitive / exact local source Grant
 
+Current engineering evidence at e84333ebaf20c89945f2927d9072b03788e52a8e:
+SOURCE_ENGINEERING_OBSERVED_FIXTURE_PASS / QUALIFIED_AUDIT_BLOCKED / NOT_INTEGRATED.
+Root actual same-candidate build/predicate mutations/native closed fixture and
+different-seat evidence-sufficiency review are sealed in the existing Ticket30
+review. Historical J3 intermittent cause remains UNKNOWN; current counter-oracle
+correction is not retroactive RCA. No real Host/issuer/install qualification.
+The following original Grant/history remains intact, not renewed or reset.
+
 Same original Ticket30/PRD/CHG/SPEC and first-entry source-staging exception.
 This is the Windows primitive portion of the existing controlled-executor/observer
 responsibility, not another Runner, authorization engine or Host qualification.

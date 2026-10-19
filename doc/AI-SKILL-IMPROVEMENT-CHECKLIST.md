@@ -3,7 +3,7 @@
 | 欄位 | 值 |
 | --- | --- |
 | 文件身分 | `AI-SKILL-IMPROVEMENT-CHECKLIST`；本專案工作追蹤，非新 PRD／SPEC／Gate |
-| Revision／來源 | `39`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
+| Revision／來源 | `40`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
 | 工作基準 | `a1cb6c13adbeb52a4117991727dcc3d4af6d2a33`；分支 `codex/skill-improvement-checklist` |
 | 主線 | 先對照、優先 02→04→05→06→07，再處理餘項與整合回放 |
 | 負責 | Root 理解需求、衝突與派工；票級實作者依有效能力 Profile；獨立審閱另席 |
@@ -30,7 +30,28 @@ Router、Reviewer、文件索引與結案規則仍各有唯一正文。`[x]` 只
 | [ ] 11 去重與衝突 | `WPR_TEMPLATE_AND_HISTORY_LOCAL_INTEGRATED / ACTIVATION_OPEN` | 原37／38／40／42保留；Luna44在既有RequirementLineageGate增加純revision-history驗證、重用原test；[獨審](reviews/workflow-governance/44-requirement-revision-compatibility-code-review.md) | 原42之46tests／不同位置WPR突變證據保留；44獨審14tests／30subtests、鏈結與terminal不同門突變紅→綠、Root gate1aa5ed22與兩blob一致；獨立seal確認 | `APPROVED_44 / LOCAL_INTEGRATED / CLEANUP_BLOCKED` | 舊一對一validate維持生效；可信creation issuer／效應前grant讀回／原子consume及真Host尚缺，不用純history方法冒充正式身分遷移；清理政策阻擋 |
 | [ ] 12 回放與獨審 | `EXISTING_CASES_MAPPED / END_TO_END_NOT_VERIFIED` | Root沿既有案例／review；46增加受版控本地命令來源，未新增回放框架；30B／43仍未整合 | 46合法command-plan與拒絕／版本釘選／不同門突變均有獨審；整合後36tests／22subtests。04不重做，既有局部PASS沿用，候選不冒充整合版 | `PARTIAL_ONLY` | 完整01–10正式來源/effect回放仍缺；Owner已採納首次入口順序例外，但未授權Host測試；不是資格或總驗收 |
 
-## 當前工程接續與精確證據（revision39）
+## 當前工程接續與精確證據（revision40）
+
+CVQ唯讀schema候選7da40704已完成來源建構preflight；Root33個實際謂詞突變中
+兩個zero-red測試缺口已由原作者同票補回，Root／另一席窄複驗通過。review06
+與D8索引在CVQcontrol67b965a7，僅SOURCE_SCHEMA_PREFLIGHT_PASS，behavior尚未
+准入。現有Found approval／三ports沒有能綁定入口拒絕的可信evidence subject，
+原契約修訂評估中；不拿request_ref、caller欄位或fixture假造拒絕證據來源。
+
+N2候選e84333eb同票修正B1～B6；Root實際謂詞紅→精確還原／非增量重建綠，
+獨立席位窄複驗無finding。Root一次固定原生fixture通過正常／child1816拒絕／
+timeout／cancel／故障注入，5.312秒，完整輸出及精確EXE／DLL見原30review。
+原生失敗紀錄、J3歷史UNKNOWN、RecoveryRequired與未合格audit全部保留。
+此為SOURCE_ENGINEERING_OBSERVED_FIXTURE_PASS，不是Host qualified或已整合。
+修掉原始碼還原仍載入增量舊DLL的B5，既有builder強制--no-incremental且有
+命令／輸出binding測試；這不是05完整Host loaded-source驗收，故不勾選。
+
+N3 constructor最小切片原30內準備且不同席DOC複驗PASS a64fb8da，已派原作者
+到獨立contained worktree，只CREATE2/MODIFY3且無OS/effect；配置檔DataRoot、
+程式及dependency CodeRoot，修掉與runbook衝突。B verifier/readback尚未派工。
+全部主項狀態仍依上表，只有04打勾；不把工程fixture或一般獨審當正式資格。
+
+## 前次工程接續與精確證據（revision39歷史）
 
 B3同名Field缺陷已在b55b47e7修復，只有既有gate/driver兩檔修改；作者Luna、
 不同Sol evidence peer與Root分工。合法Pydantic別名仍綠，直接／巢狀shadow與
