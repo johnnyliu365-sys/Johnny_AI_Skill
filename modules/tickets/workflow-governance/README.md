@@ -49,9 +49,10 @@ before execution; registered resources remain. Pure history compatibility only;
 legacy validation/activation unchanged. No normal closure or whole-checklist PASS.
 
 [45-ticket-content-completeness](45-ticket-content-completeness.md) — checklist03/12,
-AC10 pure instance-content diagnostics; PREPARED under the existing local batch.
-No committed-source, grant, receipt or Host admission claim; exact scope and
-independent review precede its derived local implementation Grant.
+AC10 pure instance-content diagnostics; LOCAL_INTEGRATED / CLEANUP_BLOCKED,
+guarded local commit a29c0e53a3fb868248d53eb9442dd6719daf1e09, independent
+revision02 approval and152tests. No committed-source, grant, receipt or Host
+admission claim; exact two reviewed blobs read back, old holds unchanged.
 
 ## Shared baseline
 

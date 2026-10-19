@@ -123,3 +123,22 @@ branch and fast-forward only the reviewed two-path source diff. Journal root
 `%TEMP%/Johnny-checklist45-20261019`, owner Root/Ticket45, TTL through independent
 seal readback, then CLEANUP_BLOCKED hold under existing no-retry instruction.
 No cleanup attempt, push, formal admission activation or main-branch merge.
+
+## Integration seal
+
+Existing gate returned INTEGRATED at
+`a29c0e53a3fb868248d53eb9442dd6719daf1e09`; replay commits7b796168/b8bc1d36/a29c0e53
+contain only the reviewed two paths, both final blobs exactly equal the above
+candidate. Integration branch `codex/skill-improvement-checklist` is clean;
+main remains untouched. Integrated focused command with `-p no:cacheprovider`
+passed152tests in1.32s; gate+tests+readback wall5.501s.
+
+Journal `C:/Users/GameBoy/AppData/Local/Temp/Johnny-checklist45-20261019/queue/document-mutation-journal.jsonl`:
+382bytes, SHA2561259229e9e08ecd960879bc4a1725cb9c3e5cf4be9e346070b3301fb2d214836;
+one INTEGRATED record at2026-10-19T04:29:37.474820+00:00, principalGameBoy,
+ticket45 path, candidate/detail a29c0e53, integration branch as above.
+Author/reviewer45 worktrees and Root reused landing now at a29c0e53 are registered
+retained assets; new45 landing ref and journal retained. Prior44/31B refs and
+journals remain untouched; the reused landing must never be treated as
+44-only disposable. Cleanup was not attempted; CLEANUP_BLOCKED hold.
+No claim this library addition enables a live dispatch/source/Host capability.

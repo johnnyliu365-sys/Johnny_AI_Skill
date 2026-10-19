@@ -3,7 +3,7 @@
 | 欄位 | 值 |
 | --- | --- |
 | 文件身分 | `AI-SKILL-IMPROVEMENT-CHECKLIST`；本專案工作追蹤，非新 PRD／SPEC／Gate |
-| Revision／來源 | `30`；沿用既有12項與acf0ffa1／ded322b3批准；Owner 2026-10-18 批次本地授權及10-19逐項依賴核對、可准入工作續行指示。非 push／正式啟用授權 |
+| Revision／來源 | `31`；沿用既有12項與acf0ffa1／ded322b3批准；Owner 2026-10-18 批次本地授權及10-19逐項依賴核對、可准入工作續行指示。非 push／正式啟用授權 |
 | 工作基準 | `a1cb6c13adbeb52a4117991727dcc3d4af6d2a33`；分支 `codex/skill-improvement-checklist` |
 | 主線 | 先對照、優先 02→04→05→06→07，再處理餘項與整合回放 |
 | 負責 | Root 理解需求、衝突與派工；票級實作者依有效能力 Profile；獨立審閱另席 |
@@ -19,7 +19,7 @@ Router、Reviewer、文件索引與結案規則仍各有唯一正文。`[x]` 只
 | --- | --- | --- | --- | --- | --- |
 | [ ] 01 主線與單票 | `PROJECTION_FIXTURE_DOCS_INTEGRATED / 30B_REVIEW_BLOCKED` | 原29／30A／30M不重做；30B作者Luna、不同Sol獨審，候選0f6d467a尚未整合；[證據](reviews/workflow-governance/30-trusted-independent-ticket-continuation-code-review.md) | 原91tests沿用；原30B140tests、R2修正保留；最新43聚焦tests及public繞過突變2紅→還原2綠只證明containment | `FIXTURE_APPROVED / CONTAINMENT_ONLY` | 合法可信Grant讀回成功另列R1 OPEN；必要合格隔離audit UNAVAILABLE；正式fresh來源／完整主線及結案未證明 |
 | [ ] 02 已核准工作接續 | `OWNER_WAIT_FIXTURE_INTEGRATED / LOCAL_BATCH_EXECUTED / EFFECT_OPEN` | 原24／30A與Context04／SPEC03保留；本批Root限縮Grant、分開派30B／31B／43／44及獨審，未逐票詢問Owner | 30A91tests／精確cleanup證據保留；等待30B／43審查時31B與44繼續並本地整合；30B140tests只支持readback候選，不代表可派工 | `30A_APPROVED / 30B_REVIEW_BLOCKED` | 真來源、`admit_dispatch`發憑證前接線、原生spawn硬攔截及正式結案仍未驗證；批次自主工作的真實紀錄不是新Host gate資格 |
-| [ ] 03 派工完整最小 | `TEMPLATE_AND_SCAFFOLD_LOCAL_INTEGRATED / HOST_ADMISSION_OPEN` | Luna 候選 `e9bdc978`、`3557bc20` 與 Ticket 40 `91ee17c3` 改本庫 ticket template、出貨 scaffold 與同一驗證檔；獨審見 `doc/reviews/workflow-governance/28-minimal-complete-dispatch-ticket-code-review.md`、`38-reuse-and-responsibility-dispatch-contract-code-review.md`、`40-scaffold-ticket-template-parity-code-review.md` | Ticket 40：44 tests 綠；八個 scaffold 反向突變與 reviewer 另兩個遮蔽突變紅→綠；受控 gate `INTEGRATED` `5776139a`，兩檔 Git blob 等於受審候選 | `APPROVED_TEMPLATE_SLICES` | Host dispatch preflight 尚未驗證填票完整性；文字模板不能阻止實作者猜 Expected，也不能自動識別檔內耦合 |
+| [ ] 03 派工完整最小 | `TEMPLATE_AND_CONTENT_LOCAL_INTEGRATED / HOST_ADMISSION_OPEN` | 原28/38/40模板證據沿用；Luna票45新增ticket_content.py及聚焦test，獨審見[45 review](reviews/workflow-governance/45-ticket-content-completeness-code-review.md) | 45獨審與整合後152tests、strict、F1–F3基準紅→綠、reviewer duplicate不同門8紅→還原綠；gate a29c0e53及兩blob一致 | `APPROVED_CONTENT_SLICE / CLEANUP_BLOCKED` | 真committed/approved來源與Host effect前接線仍缺；純內容診斷不證明Expected語意/授權/依賴ready，也不自動識別耦合 |
 | [x] 04 TEST → A → B | `COMPLETE_LOCAL / NO_PUSH` | Luna：Ticket 25 規則 `970b99cc`、Ticket 33 產品 A `ac369235`、Ticket 34 測試 B `b4a7dbe6`；獨審見 `doc/reviews/workflow-governance/33-shared-context-service-seam-code-review.md` 與 `34-shared-context-test-seam-transfer-code-review.md` | A 先在候選公開入口通過；Reviewer 改壞新 service 的 sealed read／writer role，公開 Router 格轉紅→綠。B 五格 contract-only 測試搬到聚焦檔、六格公開入口保留；Reviewer 改壞 service 與 contract guard，各自轉紅→綠；整合分支 61 tests／217 subtests、strict mypy 綠，五檔 Git blob 與各受審候選相同 | `APPROVED_A + APPROVED_B` | 此為本機 Johnny Router 能力回放；未推送／發布，不代表任何 target 產品已拆分 |
 | [ ] 05 候選來源與 Expected | `CONTRACT_LOCAL_INTEGRATED / HOST_GAP` | Luna 改既有 `TestBinding`／`ReviewAdmissionGate`；`beff0050`，審閱見 `doc/reviews/controlled-verification/cve-d10-candidate-source-observation-code-review.md` | 19 tests／50 subtests 綠、`mypy --strict` 綠、Expected 反向突變紅→綠；型別契約拒絕舊基準載入與 Expected 漂移 | `APPROVED_CONTRACT_ONLY` | 尚無合格 Host adapter 觀察實際載入來源及核准 Expected 的來源；不得把 port 自報當實測 |
 | [ ] 06 共用樹覆蓋 | `WORKER_CLAIM_LOCAL_INTEGRATED / PREWRITE_GAP` | Luna 改既有 worker ledger／測試；`9cedb55f`，審閱見 `doc/reviews/workflow-governance/26-active-writer-worktree-branch-uniqueness-code-review.md` | 48 tests／77 subtests 綠；active worktree／branch 衝突轉紅再回綠；任意同步寫入的 HEAD／index／工作副本驗證仍 `NOT_VERIFIED` | `APPROVED_SLICE` | 缺受控 prewrite/commit 效應入口；不可把派工互斥說成整個工作樹防回退已完成 |
@@ -85,13 +85,14 @@ CLEANUP_BLOCKED／NOT_VERIFIED，不能用本文件批准解除來源或Host限�
 這是剩餘驗收對照，不以票號排序發明主線依賴，也不是另一套Gate。
 **不是所有剩餘工作都被Host阻塞**：03的實際票面內容診斷可先建置，已沿
 AC10派出[票45](../modules/tickets/workflow-governance/45-ticket-content-completeness.md)，
-文件獨審APPROVED、Grant生效；不改30B/43的HIGH_ASSURANCE要求。
+文件獨審APPROVED、Grant生效；現已獨審通過並gate整合a29c0e53，152tests再次通過。
+不改30B/43的HIGH_ASSURANCE要求；原未完成主項不因此勾選。
 
 | 項目 | 尚缺的必要驗收 | 實際依賴與查證位置 | 本地處置／最小外部輸入 |
 | --- | --- | --- | --- |
 | 01 | 真實可信完整主線讀回、必要項未完不假結案 | 29投影/30A解析已整合；30B public候選0f6d467a只有拒絕；SPEC AC9、mainline_readback.py | 維持正向Grant驗收OPEN；需要受保護issuer的實際讀取入口及新鮮正式來源。清單本身不證明完整主線已核准 |
 | 02 | 合法獨立B在真來源及效應前准入後繼續；缺授權B/C拒絕 | 24 owner-wait、29/30 fixture與批次31B/44實際續行；dispatch_authority.py::admit_dispatch目前owner-intent marker | 不凍結45；最終需要qualified來源/攔截，正式啟用仍未授權 |
-| 03 | 已提交且核准的完整票，在真正spawn/receipt之前檢查 | 28/38/40只驗模板；tests/test_ticket_template_contract.py開頭明示非instance/Host；SPEC AC10及dispatch_session.py::admit_dispatch呼叫 | 45先實作純content診斷及正反例，不假冒committed/approved。真來源綁定及effect wiring後續HIGH_ASSURANCE，不以普通review替代 |
+| 03 | 已提交且核准的完整票，在真正spawn/receipt之前檢查 | 28/38/40只驗模板；45已補實際內容診斷，仍不驗provenance；SPEC AC10及dispatch_session.py::admit_dispatch呼叫 | 45純content正反例已整合；真來源綁定及effect wiring後續HIGH_ASSURANCE，不以普通review替代 |
 | 04 | 無本批本地缺口 | 25/33/34，61tests/217subtests及service行為突變 | COMPLETE_LOCAL，沿用證據不重跑 |
 | 05 | 實際載入候選SHA及獨立核准Expected來源可觀測，不接受自報 | D10票明禁executor/adapter；TestBinding/TestEvidenceResolver、review_admission.py、router.py注入點已有19tests/50subtests | 需實際執行Host提供外於受測程式的版本觀察、核准Expected讀回及防竄改證據；新port/fake不能補足 |
 | 06 | 寫入/提交前核對HEAD/index/workcopy，避免舊副本回退 | 26 scope排除任意寫入；worker_assignment.py claim在dispatch_session.py消費，不攔截filesystem/commit | 需真實寫入工具的可攔截effect入口及原子/隔離保護。再造未消費pure checker不能證明阻止覆蓋 |
@@ -100,7 +101,7 @@ AC10派出[票45](../modules/tickets/workflow-governance/45-ticket-content-compl
 | 09 | 窄修窄審之PASS在正式證據路徑有條件沿用，不能逃避真正finding | 31B原作者/原reviewer同票修正已證明；35 projection與43 closure consumer | 原局部PASS保留；正式43 evidence path仍受其隔離審查/來源阻塞，無新無關重審 |
 | 10 | 本機測試不能無聲呼叫付費API或正式credential | 31模型映射與31B七欄回報已整合；報告格式不等於網路隔離 | 需測試Host的credential遮蔽與egress阻擋可觀察能力；不得透過真付費呼叫測試。清理另列，不抹消功能PASS |
 | 11 | PRD revision新模式可信creation grant/單次consume/遷移驗證後才替換舊規則 | 37/38/40/42衝突已修；44 history方法不發權；AC17、現有owner-intent marker非protected issuer | 缺可信簽發及效應邊界；舊一對一validate保持有效。無消費者證明不得刪除舊能力 |
-| 12 | 01–10之必要正反情境在其實際來源/effect完成回放及獨審 | 下節既存案例表區分fixture、候選、整合、Host；45新增instance內容例而非新框架 | 繼續可測45；其餘只隨各自上列證據取得後補驗，不重跑04或把全fixture綠當全批完成 |
+| 12 | 01–10之必要正反情境在其實際來源/effect完成回放及獨審 | 下節既存案例表區分fixture、候選、整合、Host；45新增instance內容例已獨審整合而非新框架 | 可測45已完成；其餘只隨各自上列證據取得後補驗，不重跑04或把全fixture綠當全批完成 |
 
 ### 30B正向驗收不是安全封堵
 
@@ -166,7 +167,7 @@ Run Dependabot、Post Run Dependabot、Complete job，均success。
 | 項目 | 已有入口／固定情境 | 證據與限制 |
 | --- | --- | --- |
 | 01／02 | `tests/test_mainline_projection.py` 的 `test_waiting_ticket_does_not_block_independent_candidate_or_borrow_dependency`、`test_completing_independent_ticket_does_not_close_mainline_with_required_work_open`、`test_pending_optional_ticket_does_not_block_closure_candidate` | 29／30A原review；等待不凍結無相依票、必要主線不假完成、選配不無限阻擋。來源qualification／派工effect未證明 |
-| 03 | `tests/test_ticket_template_contract.py` 的active-section／Expected／停止條件、filled虛構ticket | 28／38／40及31B review；缺欄、遮蔽與跨節內容拒絕，模板不是Host攔截 |
+| 03 | 原template suite，加`tests/test_ticket_content.py`的實際filled內容、缺欄/placeholder/重複/新檔對照及H1/H2/H3回歸 | 45及原28／38／40／31B review；152聚焦tests，合法內容繼續、違反形狀拒絕；不等於Host攔截 |
 | 04 | 33／34既有review之service行為及承接突變 | 已完成，沿用61tests／217subtests，未重做 |
 | 05 | `tests/test_review_admission.py` 的 `test_loaded_product_source_must_be_candidate_and_not_baseline`、`test_expected_must_match_resolver_approved_reference_and_digest` | D10既有19tests／50subtests；可信resolver的真Host觀察缺口保留 |
 | 06 | `tests/test_worker_assignment.py` 的active-worktree／active-branch conflict、`test_different_receipts_racing_for_one_worktree_have_one_winner` | 26既有48tests／77subtests；拒絕並發claim但不冒充任意檔案寫入攔截 |
