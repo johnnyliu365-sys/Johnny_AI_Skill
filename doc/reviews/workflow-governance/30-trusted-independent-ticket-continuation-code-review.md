@@ -1,4 +1,35 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## Conditional C5 composition and checklist47 DOC consistency — 2026-10-19
+
+Distinct /root/batch_authority_review immutable ordinary DOC_PASS for checklist47/
+docREADME52ea5afd72869b6ffb54e6151895bdde75638fb1: only original04 checked,
+C4 staging/N4 active/CVQ building vs qualified holds correctly separated.
+
+Same independent seat reads605c18b9475ee497e4d753ab0607c38c7350d00c C5closure11
+and confirms existing B1 DTO/C2payload/C4code/directory metadata allow source
+composition without merging B2 first. D8 LF
+1e479b5e808248be2edfc0e5554629863c3e3333e6e235cf1f0145beacb3ad4e matches.
+CodeRoot only recursive; DataRoot exact declared config parents/file, no mutable
+ledger/evidence scan; no Verify/MATCH/Host claim or new DTO/port/Win32/Program.
+Conditional author follows completed N4 allocation, not active yet. No source
+implementation effect inferred from DOC_PASS; fresh roles/WT/constructor/source
+readback still precedes that activation. Readback helper's suggested B2-before-build
+baseline merge not needed for current return-only constructor boundary; actual
+B2 composition/qualification remains separately uncompleted.
+
+Dependency-only local inventory c52f44: installed pywin32 311 and types-pywin32
+312.0.0.20260817 include serviceutil/SCM/pipe/security source/stubs. Metadata read
+only, no Windows API/native call/service/IPC test. Existing Python backend should
+reuse this before inventing a .NET-to-Python relay or second channel. Same-user
+runtime remains unprotected, not a usable operational issuer.
+
+Source20bd import lower-bound f832c6: ordinary existing request constructor/encoder
+loads290file paths totaling12180209bytes,13native binary files. NOT deployment
+closure/size acceptance: stdlib/runtime archive and SCM/pipe backend not built or
+measured, eager package initializers add transitive modules. Native enrollment's
+128payload/64MiB limits unchanged; a later explicit package manifest must resolve
+the full actual closure, not quietly omit runtime/dependencies or relax limits.
+No artifact installed, process service started, rights changed or new cost incurred.
 
 ## N4-A1 decoder Grant activation — 2026-10-19
 
