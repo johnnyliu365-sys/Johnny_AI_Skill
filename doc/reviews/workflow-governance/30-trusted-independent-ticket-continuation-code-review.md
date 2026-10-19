@@ -1,4 +1,50 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H6-B batch review findings / bounded correction admission — 2026-10-20
+
+Candidate8c2427681c006c90c5a47bf90bbd460ec26ffb17 vs reviewedA cff4ee574cfcea4735c9b3626997d67e32ff78c9,
+exact2MOD, product8a85c45badbd85eb1c79edb919a296a05dd6b8c7 / test663ef834ff6df493f868d33e293f37ed21c6ef71.
+Root reads complete566/894lines and repeats111PASS2.703s, strict2PASS1.828s.
+First guard bootstrap failed before collection because Colorama imported WinDLL;
+preloading test infrastructure before installing target guard produces111PASS and
+UNPATCHED_NATIVE_CALLS[]. Capture error retained, not product/native qualification.
+Distinct native-tools peer reads whole source/test and seven original unfiltered
+actual-source RED/restoreGREEN pairs; all intended failures/restores verified.
+Structure review: one native-observation responsibility/shared fake; >500 lines
+requires review, not arbitrary splitting/minification or a new framework.
+
+Frozen closure20 batch findings, not new requirements:
+H6B-I1 IMPLEMENTATION_DEFECT: structural Close+integer-handle lookalikes pass the
+borrowed-owner boundary; H6-B requires exact native owning PyHANDLE wrappers.
+H6B-I2 IMPLEMENTATION_DEFECT: OpenProcessToken looked up on kernel32 rather than
+documented Advapi32.dll; shared fake supplies the wrong export, masking ABI error.
+Primary readback: https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-openprocesstoken
+Requirements Library Advapi32.lib / DLL Advapi32.dll, fetched2026-10-20; no native probe.
+H6B-E1 EVIDENCE_DEFECT: Root disables only alias!=expected_alias on actual source;
+all4 named rechecks_original_borrowed_handle tests stayGREEN2.688s. They only set
+alias0 so pointer validation masks original-handle identity comparison. Add valid
+nonzero changed aliases, not broader requirements. Root restored exact product
+blob8a85c45... and clean review WT. ZERO_RED retained as failure evidence, not PASS.
+
+Root conclusion CHANGES_REQUESTED; H6-B not source approved. Root derives
+grant-ticket30n4-retained-process-20261020 revision03 H6_B_CORRECTION_ACTIVE,
+parent batch-checklist-local-20261019-uncapped, frozen closure20/Grant652e0e05,
+new baseline exact8c242768 above. Same author /root/ticket30n4_peer_impl, Root sole
+reviewer/orchestrator, distinct /root/ticket30_native_tools_review source helper;
+same contained WT/branch/context/ownedTemp/history. MODIFY ONLY existing
+library/local_orchestration/grant_authority/windows_retained_process.py and
+tests/test_grant_authority_windows_retained_process.py; CREATE0/DELETE0.
+Correct exact native-owner type check (reuse existing native HANDLEType metadata/
+type seam; no actual handle creation), proper DLL ABI, shared fakes separated by
+DLL with forbidden-export rejection, and valid nonzero alias regression matrix.
+Baseline-red at8c242768 for each defect, legal native-type fake path stays valid;
+actual source mutants namedRED/exactrestoreGREEN, guarded111+ affected regression,
+strict2/memorycompile/import and independent Root different door. No arbitrary
+owner coercion, unrelated H4/H3 edits, lease/authority redesign or framework.
+Child55/outer60 with evidence-progress corrections; old failures/timing preserved.
+No real DLL/API operation, Host/SCM/process/security/install/network/cleanup,
+qualification/integration/push/release/deploy. ACTION_COMPLETED -> AUTO_CONTINUE
+same original author correction; no new Owner renewal or budget request.
+
 ## N5 source evidence data seal — 2026-10-20
 
 Archive only existing original UTF8 JSON bytes: A final construction/type/import,
