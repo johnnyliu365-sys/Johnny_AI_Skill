@@ -91,8 +91,10 @@ SD, inherited/extra/deny/object ACE, broad user group or caller-supplied approva
 H3-F2 CreateNamedPipe exact duplex|overlapped|first-instance, message type+message
 readmode+blocking wait+remote-reject, maxinstances1, requested buffers exactly16388
 each (existing4+16384 maximum frame), finite default timeout. Native buffer sizes
-are advisory and may round/grow: initial observed sizes must be positive exact
-integers <=1048576 each, including normal rounded-up sizes. This is bounded
+are advisory and may round/grow: this bounded factory profile requires initial
+observed sizes to be exact integers16388..1048576 each, including normal rounded-up
+sizes; smaller native reservations refuse this profile, not a claimed universal
+Win32 guarantee. This is bounded
 initial readback, NOT a lifetime kernel-memory quota; H1 enforces message bounds.
 Explicit
 SECURITY_ATTRIBUTES bInheritHandle=False. Retain actual owning native wrapper;
