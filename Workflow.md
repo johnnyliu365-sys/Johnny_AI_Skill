@@ -108,7 +108,8 @@ Router 每次輸出必須包含：
 - `WAIT_FOR_HUMAN`：只用於 Profile 宣告的核准、owner 決策或不可逆外部 effect。
 - `HALT`：來源、權限、能力、驗證、安全邊界或 transition 不合法時停止。
 
-自動接續有步數／時間 ceiling。`ACTION_COMPLETED` 必須先附
+每個動作保留逾時及資源監控；累計／修正次數依有效 authority 與
+[`implementation-authority`](skills/johnny-project-takeover/references/implementation-authority.md#explicit-resource-policy-amendment)。`ACTION_COMPLETED` 必須先附
 `CompletionEvidence`；commit 不能自行選下一關。
 
 ### 0.2 最小 Context

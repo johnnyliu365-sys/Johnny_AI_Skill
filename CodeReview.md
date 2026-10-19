@@ -89,9 +89,11 @@ defect。分類固定為：
 - `CHANGES_REQUESTED` 預設保留 ticket、owner、worktree、branch、allocation 與有效
   receipt；以新的 additive correction commit 修正，不得 reset/amend/force。
 - 修正後重跑受影響驗證、smoke 與適用 review references。
-- 同一 Closure revision 最多一次 initial review 加一次 correction review。第二次
-  仍有 implementation/evidence defect，結論附 `CONVERGENCE_REVIEW_REQUIRED` 並回
-  控制面做架構／ticket 分解；不得自動第三次 correction。
+- 預設同一 Closure revision 最多一次 initial review 加一次 correction review；
+  用盡後回控制面 `CONVERGENCE_REVIEW_REQUIRED`，不得自行追加。若具名批次已有
+  精確 Owner 決策改採 evidence-progress correction，依
+  [`implementation-authority.md`](skills/johnny-project-takeover/references/implementation-authority.md#explicit-resource-policy-amendment)
+  記錄、獨立核對並續行；保留歷史，禁止無新證據的相同失敗原樣重試。
 - 只有全部 blocking findings 關閉、證據完整且結論 `APPROVED`，Router 才可進入
   guarded integration／handoff。Review approval 不自動授權 push、release、部署、
   付費、正式權限或其他外部 effect。

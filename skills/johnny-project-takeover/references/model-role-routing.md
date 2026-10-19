@@ -85,9 +85,11 @@ Any needed shared fact that is absent or changed is an architecture-owner wake c
 reason to append Context from the ticket lane.
 
 The supervisor routes implementation/test/evidence defects through same-ticket correction.
-Model capability failure is not inferred from one defect. Only after the allowed initial review
-and one bounded correction review both fail against the same complete Closure revision may the
-supervisor return `MODEL_CAPABILITY_INSUFFICIENT`; this marks the architecture owner
+Model capability failure is not inferred from one defect. Apply the current authority-bound
+convergence policy in [implementation-authority](implementation-authority.md#explicit-resource-policy-amendment):
+under the default policy the initial and correction review must both fail; under an approved
+evidence-progress policy, a documented root-cause/capability finding is required, not a counter.
+Only then may the supervisor return `MODEL_CAPABILITY_INSUFFICIENT`; this marks the architecture owner
 `WAKE_REQUIRED` (delivered by an armed runner, else relayed by the owner) or requests
 an owner-approved Profile change and does not grant the supervisor implementation authority.
 

@@ -79,6 +79,32 @@ pull request is not a defect there, and high-collaboration ceremony must not be 
 
 ## Allocation and correction
 
+### Explicit resource-policy amendment
+
+An exact, versioned human-owner decision may amend the cumulative command-time or
+review/correction-count policy for a named batch. Record its scope and superseded
+policy in the existing authority/ticket lineage, independently review consistency,
+then bind every affected child Grant before resuming. The caller cannot disable a
+limit by omitting a field, using zero, creating a new ticket or asserting approval.
+Unrelated projects and operational Grants retain their own limits.
+
+Removing a local cumulative or fixed-count limit does not reset historical usage,
+failures, findings or unresolved accounting. Continue recording start-to-terminal
+elapsed time and resource outcomes. Retain per-command deadlines, process/asset
+lifecycle, platform quotas, tool policy, provider/cost restrictions and all source,
+scope, independent-review, qualification and external-effect admission requirements.
+Do not modify a runtime budget contract or claim runtime enforcement merely because
+the control-plane execution policy changed.
+
+Under an explicitly authorized evidence-progress correction policy, continue scoped
+engineering corrections without ceremonial count renewals. A repeated failure with
+no new discriminating evidence must stop unchanged retries and return to root-cause
+analysis or an evidence-backed different repair. Diagnose timeouts before adjusting
+an individual deadline; record the workload, reason and new bound. Neither unlimited
+waiting nor the same failing command restarted under a new ticket is permitted.
+Architecture/requirement, permission, cost and external-effect expansion still use
+their existing approval route. Other admitted independent work continues.
+
 One implementation owner holds at most one active lane. Release a completed/integrated
 allocation before assigning the next ticket.
 

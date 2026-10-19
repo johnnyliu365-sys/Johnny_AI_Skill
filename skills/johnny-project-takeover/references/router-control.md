@@ -82,10 +82,14 @@ Every decision declares exactly one continuation:
    authority, source and dependency gates pass.
 3. `HALT` applies to missing or invalid sources, denied or absent authority, unavailable
    capability, failed validation, replay or mismatch, unsafe external boundary, exceeded
-   budget, undeclared transition or `NO-GO`. Do not guess, use a local fallback, or wait
+   applicable active budget, undeclared transition or `NO-GO`. Do not guess, use a local fallback, or wait
    indefinitely.
 
-Automatic continuation has a bounded step/time ceiling. Reaching it is `HALT`.
+Each execution action retains a deadline and resource/lifecycle monitoring. Applicable
+batch cumulative/count policy comes from the versioned authority; an explicitly removed
+local ceiling is not a new human-wait reason. Amendments and stagnation handling follow
+[implementation-authority](implementation-authority.md#explicit-resource-policy-amendment).
+Platform/tool/security and separately granted operational bounds are never removed by it.
 
 ## Dispatch admission
 
