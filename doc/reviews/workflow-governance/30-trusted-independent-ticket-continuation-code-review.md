@@ -1,5 +1,20 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## C2 exact ordinary payload fixture registration — 2026-10-19
+
+Within activated closure06/Grant6291ed3c, owner /root/ticket30n2_native_impl uses
+C:/Users/GameBoy/AppData/Local/Temp/johnny30n3-native-seam-owner-20261019/c2-payload-fixture
+only for its finite known-byte/empty/oversize ordinary local-file tests. Root counterpart
+C:/Users/GameBoy/AppData/Local/Temp/johnny30n3-native-seam-review-20261019/c2-payload-fixture.
+Owner=30N3-C2/named seat or Root respectively; TTL until exact review/seal,
+Review/Recovery holds override expiration, teardown only existing precise admitted
+lifecycle after holds clear. No cleanup is currently authorized or attempted.
+Verify exact containment/nonreparse ancestors and nonexistence before creation;
+any preexisting unknown content must be retained, not overwritten or deleted.
+No protected-path, symlink, ACL or service changes; file bounds<=64MiB+1 sparse
+oversize fixture, parent command deadlines retained. This is batch-covered fixture
+registration, not Human approval, Host qualification or a new resource grant.
+
 ## C2 same-handle payload exact development admission — 2026-10-19
 
 Different-seat /root/batch_authority_review ordinary DOC_PASS on exact08b38aef993d32ae4f35a199ef548892352c3791,
