@@ -1086,3 +1086,67 @@ correction30 retained, no transfers/reset. Implement G2–G5 ledger/client/tests
 focused mutations, export-only init additions; no existing-baseline source edit,
 new authority or native effects. Mandatory qualified audit remains after ordinary
 engineering review; no local source integration is authorized by this type result.
+
+### 30G G2–G5 immutable handoff / engineering PASS, qualified audit BLOCKED
+
+Author20bd6e3036608d61feb687ea6e0ff6b7953d3e11, parent5ddc263a8306d9d68bf36286d7769451d055d414;
+original6f6c938cd3d6eeff9e07cdffddfcbfdcbdc08cd0. Root read back exactly six CREATE,
+zero MODIFY/DELETE; author and review worktrees clean. Source blobs:
+
+| Path under library/local_orchestration/grant_authority unless prefixed tests/ | Git blob |
+| --- | --- |
+| __init__.py | 87c97111734191f9181bd383b7e4e2d2a79d8aab |
+| contracts.py | cb8d2f010be1b8b76a1f6f96fc85a55063a19032 |
+| ledger.py | dfceb7493c1ff733cb43e05108244a6de6f5d4a3 |
+| client.py | cb502820ec46e397130f35236e553d7c72619868 |
+| tests/test_grant_authority_ledger.py | 05973cf1691de83e1de76b429c437b41d5aeb70b |
+| tests/test_grant_authority_protocol.py | 162225d7a0f65fe602867fa0115c0b4a9dc2342e |
+
+Frozen commands (both seats, exact candidate, no provider/real source):
+`python -m pytest tests/test_grant_authority_ledger.py tests/test_grant_authority_protocol.py -q -p no:cacheprovider`
+author92 passed in1.94s / command5.213s; reviewer92 passed in2.12s / wall6.251s.
+`python -m mypy --strict library/local_orchestration/grant_authority`:
+both Success: no issues found in4 source files (author1.659s, reviewer2.947s).
+In-memory compile/import passed, author public temporary SQLite issue/claim/settle
+plus injected-client smoke PASS (1.843s), reviewer compile/import2.761s. No actual
+pipe/service/remote/Host session. Effective lines contracts176, ledger259, client156,
+tests282/328, within declared review signals; responsibilities remain separate.
+
+Author reverse mutations: removed lifecycle CAS predicate, named
+test_claim_checks_bindings_validity_and_single_use failed because attempt-other
+incorrectly CLAIMED_NEW (1 failed/4.290s); exact restore1passed/3.975s. Removed
+client peer/full-plan comparisons: peer and12 plan-binding cases13failed/4.452s;
+exact restore13passed/4.180s. Full raw outputs remain in original author rollout
+2026/10/19/rollout-2026-10-19T13-42-07-01a152ae-7674-79d1-b3f5-69a5966c581a.jsonl,
+not a manufactured summary-only test run. A stale-context apply_patch failed before
+writing; coverage move subsequently applied against current content. Prior concurrent
+initial checks and EOF failure remain recorded above, not erased.
+
+Independent ticket30g_source_review used a DIFFERENT door: temporarily removed
+_read_stored stored-digest==derived-plan guard, ran
+`python -m pytest tests/test_grant_authority_ledger.py::test_stored_plan_digest_mismatch_fails_closed -vv -p no:cacheprovider`.
+Unfiltered original tool output: exit1, expected REFUSED/INVALID_RECORD but got
+EXISTING at test331, command6.086s. Exact apply_patch restore; same command exit0,
+1passed in1.43s, wall5.469s. git diff --exit-code HEAD -- ledger.py returned0/empty;
+final status clean. Reviewer returned ENGINEERING_PASS, no G2–G5 finding, explicitly
+FINAL_REVIEW_BLOCKED, never final APPROVED. B31.97/220 plus A51.77/80; conservatively
+charge B32/A52 within SAME300. No further author correction used;30 remains reserved.
+
+Accounting continuity: author compacted summary missed earlier B timers, so Root
+recovered original tool-output records, not reruns. Through call_b2933fd4aa3548fd8148e224a5b2bf5b:
+55 outer results, rounded outer wall102.1s, no async/session marker; charge B110/300
+(includes the earlier45 anchor, NOT45+110). Earlier author in-shell36.042s after
+anchor is not substituted for full tool overhead. A51/120 retained: author total
+conservative161/450, not zeroed. Attempted snapshot Get-FileHash returned sharing
+violation and was not retried; no snapshot hash claimed. Control150 (including
+helper18, document review10+1 and all Root commands) remains its own allocation,
+not borrowed from author/reviewer. Original599.2/600 and overall1500 ceiling remain.
+
+Final limitation: ordinary source engineering review proves public fixture behavior
+and negatives only. Mandatory qualified isolated audit remains UNAVAILABLE /
+NOT_EXECUTED; candidate NOT_INTEGRATED. No local source gate, real grant issuer,
+30B-R1 positive authority qualification, Host qualification,30B/43 closure or checklist
+01/02 completion is claimed. All review/recovery/denied-cleanup holds persist.
+Installation section6 is independently reviewed preparation only; protected native
+payload/config/observer remain NOT_BUILT and require a completed exact operation
+manifest before ONE external-change decision. No unsafe bootstrap effect permitted.

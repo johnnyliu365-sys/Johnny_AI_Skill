@@ -3,7 +3,7 @@
 | 欄位 | 值 |
 | --- | --- |
 | 文件身分 | `AI-SKILL-IMPROVEMENT-CHECKLIST`；本專案工作追蹤，非新 PRD／SPEC／Gate |
-| Revision／來源 | `33`；沿用既有12項與acf0ffa1／ded322b3批准；Owner批次本地授權及10-19核准首次CVQ順序例外／30G-SOURCE新增900命令秒。非 OS變更／Host測試／push／正式啟用授權 |
+| Revision／來源 | `34`；沿用既有12項與acf0ffa1／ded322b3批准；Owner批次本地授權及10-19核准首次CVQ順序例外／30G-SOURCE新增900命令秒。非 OS變更／Host測試／push／正式啟用授權 |
 | 工作基準 | `a1cb6c13adbeb52a4117991727dcc3d4af6d2a33`；分支 `codex/skill-improvement-checklist` |
 | 主線 | 先對照、優先 02→04→05→06→07，再處理餘項與整合回放 |
 | 負責 | Root 理解需求、衝突與派工；票級實作者依有效能力 Profile；獨立審閱另席 |
@@ -78,7 +78,24 @@ Owner按正式Change Control另核安全政策差異；本紀錄不自動要求�
 本地文件動作回傳ACTION_COMPLETED；未完成票保持各自REVIEW_BLOCKED／
 CLEANUP_BLOCKED／NOT_VERIFIED，不能用本文件批准解除來源或Host限制。
 
-## 2026-10-19 30G-SOURCE續行（revision33）
+## 2026-10-19 30G源碼工程閉包與安裝準備（revision34）
+
+作者 /root/ticket30g_source_impl、不同席 /root/ticket30g_source_review；候選
+20bd6e3036608d61feb687ea6e0ff6b7953d3e11 對6f6c938cd3d6eeff9e07cdffddfcbfdcbdc08cd0
+恰六個CREATE、零MODIFY/DELETE。grant_authority/contracts、ledger、client與兩組
+聚焦測試分責任；有效行數176/259/156、tests282/328，無額外框架或持久探針。
+G1兩finding同票窄修複驗；雙席92tests、strict、compile/import，作者公開fixture smoke綠。
+作者CAS1紅、peer/plan13紅；獨審stored-plan-digest不同門1紅；精確還原後均綠。
+完整版本／命令／未驗證限制見原[30 review](reviews/workflow-governance/30-trusted-independent-ticket-continuation-code-review.md)。
+
+結果僅ENGINEERING_PASS / SOURCE_ONLY_UNQUALIFIED；合法源碼記錄成功不等於真實可信
+Grant，最終合格隔離audit仍缺，候選未整合。30B／43保持REVIEW_BLOCKED，本表不新增勾選。
+原599.2保留；追加900不重置。runbook§6已準備帳戶/SID、權限、版本、通訊/網路、
+命令、驗證、還原明細並獨立文件複驗；尚未建好的原生payload/config/observer明示
+NOT_BUILT。沒有OS設定、Host測試、push/release/deployment、正式閘門或遭拒清理重試。
+接續限縮原生實作／精確操作manifest及另行外部確認，不能拿本切片解除原有審查要求。
+
+## 2026-10-19 30G-SOURCE續行（revision33，歷史）
 
 Owner已核准runbookrevision02首次CVQ順序例外（非Host測試）及原Ticket30六CREATE／
 零MODIFY/DELETE源碼建置；原599.2/600保留，追加900分450/300/150，總上限1500。

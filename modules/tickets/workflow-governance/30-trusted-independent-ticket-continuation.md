@@ -2,7 +2,7 @@
 
 | 欄位 | 內容 |
 | --- | --- |
-| State | `30G_SOURCE_DOCUMENT_REVIEW_PENDING / 30B_REVIEW_BLOCKED / R2_CLOSED / R1_SOURCE_UNVERIFIED`；候選0f6d467a未整合；30A／30M證據保留，完整Ticket30與01／02未完成 |
+| State | `30G_ENGINEERING_PASS / QUALIFIED_AUDIT_BLOCKED / 30B_REVIEW_BLOCKED / R2_CLOSED / R1_SOURCE_UNVERIFIED`；30G候選20bd6e30與30B候選0f6d467a均未整合；30A／30M證據保留，完整Ticket30與01／02未完成 |
 | Requirement lineage | 沿用 `PRD-20260805-009`／`CHG-20260805-009` 與原 Ticket 30；不建立新 PRD、平行 Ticket 或第二套 authority |
 | Effective authority | `SPEC-AI-WORKFLOW-WORKFLOW-GOVERNANCE-20260805-01KZ6T8V2R4Y6B8D0F2H4J6M8P` 的既有有效 AC 1–8 |
 | Design evidence only | Owner-authorized、獨審通過的 SPEC design baseline `76d1f942e24975da28889c8b6ecee904c8ef3da0`，SPEC blob `6fd8c3098f48be40c2cf05a03f8284c186163c08`；它允許受控拆票規劃，不是 Ticket 30A implementation Grant 或 runtime activation |
@@ -204,6 +204,25 @@ audit. This CVQ ordering exception does not exempt30G itself from its final audi
 does not integrate30B/43, and author cannot enable effects. Initial+one correction
 limits and historical holds persist. ACTION_COMPLETED routes to the unique next
 source action only when its preflight/budget is valid; no repeat Owner question.
+
+### 30G immutable engineering handoff — 2026-10-19
+
+Candidate20bd6e3036608d61feb687ea6e0ff6b7953d3e11, original source baseline
+6f6c938cd3d6eeff9e07cdffddfcbfdcbdc08cd0; cumulative exactly six CREATE paths,
+zero baseline MODIFY/DELETE. G1 accepted at5ddc263a after two narrow type findings;
+G2–G5 different-seat engineering PASS by /root/ticket30g_source_review. Both seats
+ran92 focused tests, strict mypy, compile/import; author public ledger/client smoke
+passed. Author CAS mutation1red/restored1green, peer/plan13red/restored13green;
+reviewer different-door stored-plan-digest mutation1red/restored1green. Original
+review records exact commands, outputs, versions, limits and all earlier deviations.
+
+Source-only legal records succeed, invalid bindings refuse; no caller DTO or local
+SQLite file authenticates a protected issuer. No service/OS transport, real grant
+enrollment, source read effect or Host qualification is established. Final mandatory
+qualified isolated audit UNAVAILABLE/NOT_EXECUTED, so no final approval/integration.
+Original599.2/600 and added900 allocation persist; author conservatively A51/B110,
+reviewer A52/B32, correction30 unused. Source residue/worktrees retain existing
+Review/Recovery holds; no denied cleanup retry, no normal whole-ticket closure.
 
 ## 30B-R1 fail-closed correction allocation — 2026-10-19
 
