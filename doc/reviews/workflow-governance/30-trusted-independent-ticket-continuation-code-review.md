@@ -1,5 +1,35 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## C3 precise source construction admission — 2026-10-19
+
+ACTION_COMPLETED c5d98249 C2 ordinary engineering seal -> existing Router selects
+AUTO_CONTINUE / IMPLEMENT next C3 primitive, not integration or Host qualification.
+Original Ticket30 closure08 ea532f861d7b99e2e9569856376d15e20dd3a079,
+leafblobe36ad2f6a8d6f5a7c89903cbbe3d30ce2de15d97, LF
+f48e88ee4d7a8dfa00a4a3d6c4f2e1c04e888310c26d8445f062a5f2f0c8a505.
+Different /root/batch_authority_review independently DOC_PASS: exactCREATE3/MODIFY4,
+existing B1 constructors, sole Win32 interop, kind/identity/page/all-or-none checks,
+cooperative bounds, actual fixture and TEST→A legacy converter transfer, no source/
+Host/protected authority promoted. Root fresh b42/clean branch/Git pointer/common-dir
+and contained nonreparse owner WT readback matches. Completed C2 allocation released,
+assets/evidence/Recovery held; new ctx-ticket30n3-directory-readback-20261019 only.
+Root activates grant-ticket30n3-directory-readback-20261019 under existing uncapped
+batch, original source-only first-entry exception. No formal trusted issuer Grant.
+Original constructor seal/dto normal paths reused; no missing future type/Host
+qualification required to construct this local primitive. Root remains sole reviewer;
+distinct ordinary peer evidence and actual Root tests/mutations required afterward.
+No install/account/ACL/service/network/model/remote/spawn/receipt/Host campaign,
+formal integration/activation or push/release/deploy. All previous budgets/failures/
+UNKNOWN and denied cleanup preserved. Percommand60s/compiler child55s initially.
+Registered Root/author fixture subdirectories and output roots retain precise
+owner/TTL through review+seal, Review/Recovery holds; no cleanup action authorized.
+
+Parallel independent original CVQ-01 input/result amendment now Owner-approved:
+exact92e28d33 approved bytes read back, signature-only docs00528cb9 independently
+DOC_PASS, constructor grant activated794716fb. This affects only CVQ constructor
+worktree; no C3 product/test/Grant import, no30B/43/TAL unblocking. Root retains
+separate source identities, role allocations and review claims.
+
 ## C2 same-handle file content final ordinary engineering seal — 2026-10-19
 
 Root final conclusion: SOURCE_FILE_READBACK_ENGINEERING_STAGED_PASS /
