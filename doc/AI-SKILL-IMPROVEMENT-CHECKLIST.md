@@ -3,7 +3,7 @@
 | 欄位 | 值 |
 | --- | --- |
 | 文件身分 | `AI-SKILL-IMPROVEMENT-CHECKLIST`；本專案工作追蹤，非新 PRD／SPEC／Gate |
-| Revision／來源 | `57`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
+| Revision／來源 | `58`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
 | 工作基準 | `a1cb6c13adbeb52a4117991727dcc3d4af6d2a33`；分支 `codex/skill-improvement-checklist` |
 | 主線 | 先對照、優先 02→04→05→06→07，再處理餘項與整合回放 |
 | 負責 | Root 理解需求、衝突與派工；票級實作者依有效能力 Profile；獨立審閱另席 |
@@ -30,7 +30,7 @@ Router、Reviewer、文件索引與結案規則仍各有唯一正文。`[x]` 只
 | [ ] 11 去重與衝突 | `WPR_TEMPLATE_AND_HISTORY_LOCAL_INTEGRATED / ACTIVATION_OPEN` | 原37／38／40／42保留；Luna44在既有RequirementLineageGate增加純revision-history驗證、重用原test；[獨審](reviews/workflow-governance/44-requirement-revision-compatibility-code-review.md) | 原42之46tests／不同位置WPR突變證據保留；44獨審14tests／30subtests、鏈結與terminal不同門突變紅→綠、Root gate1aa5ed22與兩blob一致；獨立seal確認 | `APPROVED_44 / LOCAL_INTEGRATED / CLEANUP_BLOCKED` | 舊一對一validate維持生效；可信creation issuer／效應前grant讀回／原子consume及真Host尚缺，不用純history方法冒充正式身分遷移；清理政策阻擋 |
 | [ ] 12 回放與獨審 | `EXISTING_CASES_MAPPED / END_TO_END_NOT_VERIFIED` | Root沿既有案例／review；46增加受版控本地命令來源，未新增回放框架；30B／43仍未整合 | 46合法command-plan與拒絕／版本釘選／不同門突變均有獨審；整合後36tests／22subtests。04不重做，既有局部PASS沿用，候選不冒充整合版 | `PARTIAL_ONLY` | 完整01–10正式來源/effect回放仍缺；Owner已採納首次入口順序例外，但未授權Host測試；不是資格或總驗收 |
 
-## 當前工程接續與精確證據（revision57）
+## 當前工程接續與精確證據（revision58）
 
 C6／H1／H2-A／C7已封存工程證據沿用，不重跑。H2-B a4a3d23c完成純peer／
 record比對，Root274tests／strict3、不同門disposition突變紅→綠，來源獨審與
@@ -76,10 +76,14 @@ trace複驗PASS；efa2badc封存12原始JSON，另席byte/hash讀回PASS。舊ve
 組合3f1a9f08通過Root328tests／strict4與另一席mapping PASS；H6修正後才於
 876223b3精確加兩blob，組合環境118tests／strict2通過，35blob／其餘基準檔
 完全相同、另一席mapping PASS。這是source engineering staging，不是正式整合。
-原票closure22／Grant113841b3派N6有限HTTP handler，僅既有fixture／test兩MOD，
-在記憶體connection fake驗證，不啟動socket；closure23／Grant298e5897接H7-A
-於原規劃windows_service.py建立最小觀察wire型別，不另加Resolver／Gate／Runner。
-未啟動CLI／模型或實際Host，有限fixture不代表已與原生派送接通。
+原票closure22／Grant113841b3的N6最終47216919，僅既有fixture／test兩MOD；
+Root133guarded tests／strict2與不同Transfer-Encoding門紅→精確還原綠，來源獨審
+PASS、089413d4封存19原始檔，另一席逐檔byte／hash核對PASS。舊突變test SHA
+UNKNOWN不偽造還原；記憶體connection fake不啟動socket，真CLI相容仍未證明。
+closure23／Grant298e5897的H7-A最終82107c1c，原規劃windows_service.py兩型別
+49tests／strict2通過，Root不同scope門兩紅→精確還原綠，另一席來源PASS。
+fe936007接續同作者B，僅同兩檔有界decoder／共用JSON helper，不新增Resolver／
+Gate／Runner。未啟動CLI／模型或實際Host，這些來源成果不代表已接通原生派送。
 
 CVQ最終24c79d22在原lineage完成E01–E04同票修正。Root實際34行為tests、
 202來源正反例、24檔strict、source graph及compile/import通過；公開outcome
@@ -90,7 +94,7 @@ join被刪除時具名紅→還原綠，合法pure與HostDiscovery注入案例�
 
 01–12勾選不變、04不重做；正式source／issuer／Host效應與30B／43尚未驗收。
 沒有push／release／deploy／安裝／主機安全設定或正式閘門啟用。
-本段原revision56由Git保留，不為相同進度重複堆疊另一份正文。
+本段原revision57由Git保留，不為相同進度重複堆疊另一份正文。
 
 ## 前次工程接續與精確證據（revision49歷史）
 
