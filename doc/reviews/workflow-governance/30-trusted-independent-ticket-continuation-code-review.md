@@ -1,5 +1,72 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N2 final J1–J5 source-engineering seal / not qualified — 2026-10-19
+
+Root final immutable candidate1e6847c94dbef84dc17dacaafcc008c6d8ce5379; exact
+source/test-only delta, actual constructor preflight, author kill-on-close red,
+Root distinct readback-equality red and restored greens are below. No test expected
+was weakened. Complete original8-path scope retained; all failed history remains.
+
+ONE final changed-binary observation (not an unchanged blind repeat): the new
+SelfTests compiled into a new DLL, so e843's binary observation was not renamed
+as this candidate's PASS. Command pins actual apphost AND loaded assembly digest,
+uses existing finite20s native test assertion entry, real subprocess unmodified.
+Registered Root output only, no real Host/service/security setup. Full command:
+
+```powershell
+@'
+import hashlib,time
+from pathlib import Path
+from tests import test_native_authority_tools as t
+root=Path(r'C:\Users\GameBoy\AppData\Local\Temp\johnny30n2-review-20261019')
+exe=root/'bin/Debug/net10.0-windows/JohnnyAuthority.Tools.exe'
+assert hashlib.sha256(exe.read_bytes()).hexdigest()=='9f831751323973c2f1204e36a06a3f18b9f4bbf06346b167e688c9cd17ec1e28'
+assert hashlib.sha256(exe.with_suffix('.dll').read_bytes()).hexdigest()=='d045bd16609491d9c3f1c95b452d5b223fde5a2ddbe376a8369f3d354958c446'
+original=t.subprocess.run
+calls=0
+def observed(*a,**kw):
+ global calls
+ calls+=1
+ assert a[0]==[str(exe),'job-self-test']
+ r=original(*a,**kw)
+ print('ACTUAL_STDOUT_BEGIN\n'+r.stdout+'ACTUAL_STDOUT_END',flush=True)
+ print('ACTUAL_STDERR_BEGIN\n'+r.stderr+'ACTUAL_STDERR_END',flush=True)
+ print('ACTUAL_EXIT',r.returncode,flush=True)
+ return r
+t.subprocess.run=observed
+start=time.monotonic()
+try:
+ t.test_actual_candidate_native_job_self_test((exe,root,root,exe,dict(t.PROCESS_ENV)))
+ print('EXISTING_NATIVE_ASSERTIONS_PASS',flush=True)
+finally:
+ print('NATIVE_CLI_INVOCATIONS',calls,'ELAPSED',time.monotonic()-start,flush=True)
+'@ | & 'C:\Users\GameBoy\AppData\Local\Programs\Python\Python311\python.exe' -B -
+```
+
+Unreduced actual command output:
+
+```text
+ACTUAL_STDOUT_BEGIN
+{"status":"passed","contract":"bounded_native_job","scope":"SOURCE_ONLY_UNQUALIFIED","image":{"application_path":"C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n2-review-20261019\\bin\\Debug\\net10.0-windows\\JohnnyAuthority.Tools.exe","application_sha256":"9f831751323973c2f1204e36a06a3f18b9f4bbf06346b167e688c9cd17ec1e28","assembly_path":"C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30n2-review-20261019\\bin\\Debug\\net10.0-windows\\JohnnyAuthority.Tools.dll","assembly_sha256":"d045bd16609491d9c3f1c95b452d5b223fde5a2ddbe376a8369f3d354958c446"},"fixtures":{"complete":{"fixture":"Complete","outcome":"Completed","process_creation":"Created","process_creation_reason":"NativeCallSucceeded","native_quota_denial_evidence_confirmed":false,"native_create_process_succeeded":true,"residual":"NoActiveProcessesConfirmed","failure_point":"None","active_process_limit":1,"process_memory_limit_bytes":268435456,"job_memory_limit_bytes":536870912,"process_cpu_limit_ticks":40000000,"job_cpu_limit_ticks":50000000,"parent_wall_deadline_ticks":30000000,"readback_status":"Observed","readback_flags":8974,"readback_active_process_limit":1,"readback_process_memory_limit_bytes":268435456,"readback_job_memory_limit_bytes":536870912,"readback_process_cpu_limit_ticks":40000000,"readback_job_cpu_limit_ticks":50000000,"process_id":26324,"process_creation_time_filetime":134368820398877763,"job_membership_confirmed":true,"exit_code":0,"accounting_evidence":{"more_than_one_process_counted":true,"before_creation":{"total_processes":0,"active_processes":0,"total_terminated_processes":0},"after_teardown":{"total_processes":2,"active_processes":0,"total_terminated_processes":0}}},"child_denied":{"fixture":"ChildLaunchDenial","outcome":"Completed","process_creation":"Created","process_creation_reason":"NativeCallSucceeded","native_quota_denial_evidence_confirmed":true,"native_create_process_succeeded":true,"residual":"NoActiveProcessesConfirmed","failure_point":"None","active_process_limit":1,"process_memory_limit_bytes":268435456,"job_memory_limit_bytes":536870912,"process_cpu_limit_ticks":40000000,"job_cpu_limit_ticks":50000000,"parent_wall_deadline_ticks":30000000,"readback_status":"Observed","readback_flags":8974,"readback_active_process_limit":1,"readback_process_memory_limit_bytes":268435456,"readback_job_memory_limit_bytes":536870912,"readback_process_cpu_limit_ticks":40000000,"readback_job_cpu_limit_ticks":50000000,"process_id":19612,"process_creation_time_filetime":134368820400435467,"job_membership_confirmed":true,"exit_code":1816,"accounting_evidence":{"more_than_one_process_counted":true,"before_creation":{"total_processes":0,"active_processes":0,"total_terminated_processes":0},"after_teardown":{"total_processes":2,"active_processes":0,"total_terminated_processes":0}}},"timeout":{"fixture":"Sleep","outcome":"TimedOut","process_creation":"Created","process_creation_reason":"NativeCallSucceeded","native_quota_denial_evidence_confirmed":false,"native_create_process_succeeded":true,"residual":"NoActiveProcessesConfirmed","failure_point":"None","active_process_limit":1,"process_memory_limit_bytes":268435456,"job_memory_limit_bytes":536870912,"process_cpu_limit_ticks":40000000,"job_cpu_limit_ticks":50000000,"parent_wall_deadline_ticks":30000000,"readback_status":"Observed","readback_flags":8974,"readback_active_process_limit":1,"readback_process_memory_limit_bytes":268435456,"readback_job_memory_limit_bytes":536870912,"readback_process_cpu_limit_ticks":40000000,"readback_job_cpu_limit_ticks":50000000,"process_id":15960,"process_creation_time_filetime":134368820402480807,"job_membership_confirmed":true,"accounting_evidence":{"more_than_one_process_counted":true,"before_creation":{"total_processes":0,"active_processes":0,"total_terminated_processes":0},"after_teardown":{"total_processes":2,"active_processes":0,"total_terminated_processes":0}}},"cancelled":{"fixture":"Sleep","outcome":"Cancelled","process_creation":"Created","process_creation_reason":"NativeCallSucceeded","native_quota_denial_evidence_confirmed":false,"native_create_process_succeeded":true,"residual":"NoActiveProcessesConfirmed","failure_point":"None","active_process_limit":1,"process_memory_limit_bytes":268435456,"job_memory_limit_bytes":536870912,"process_cpu_limit_ticks":40000000,"job_cpu_limit_ticks":50000000,"parent_wall_deadline_ticks":30000000,"readback_status":"Observed","readback_flags":8974,"readback_active_process_limit":1,"readback_process_memory_limit_bytes":268435456,"readback_job_memory_limit_bytes":536870912,"readback_process_cpu_limit_ticks":40000000,"readback_job_cpu_limit_ticks":50000000,"process_id":24352,"process_creation_time_filetime":134368820425231489,"job_membership_confirmed":true,"accounting_evidence":{"more_than_one_process_counted":true,"before_creation":{"total_processes":0,"active_processes":0,"total_terminated_processes":0},"after_teardown":{"total_processes":2,"active_processes":0,"total_terminated_processes":0}}}},"injected_faults":{"readback":{"fixture":"Complete","outcome":"NativeFailure","process_creation":"NotCreated","process_creation_reason":"Unspecified","native_quota_denial_evidence_confirmed":false,"residual":"NoActiveProcessesConfirmed","failure_point":"Readback","active_process_limit":1,"process_memory_limit_bytes":268435456,"job_memory_limit_bytes":536870912,"process_cpu_limit_ticks":40000000,"job_cpu_limit_ticks":50000000,"parent_wall_deadline_ticks":30000000,"readback_status":"Unavailable"},"create_process":{"fixture":"Complete","outcome":"NativeFailure","process_creation":"NotCreated","process_creation_reason":"InjectedFailure","native_quota_denial_evidence_confirmed":false,"residual":"NoActiveProcessesConfirmed","failure_point":"CreateProcess","active_process_limit":1,"process_memory_limit_bytes":268435456,"job_memory_limit_bytes":536870912,"process_cpu_limit_ticks":40000000,"job_cpu_limit_ticks":50000000,"parent_wall_deadline_ticks":30000000,"readback_status":"Observed","readback_flags":8974,"readback_active_process_limit":1,"readback_process_memory_limit_bytes":268435456,"readback_job_memory_limit_bytes":536870912,"readback_process_cpu_limit_ticks":40000000,"readback_job_cpu_limit_ticks":50000000,"accounting_evidence":{"more_than_one_process_counted":false,"before_creation":{"total_processes":0,"active_processes":0,"total_terminated_processes":0},"after_teardown":{"total_processes":0,"active_processes":0,"total_terminated_processes":0}}},"assignment":{"fixture":"Complete","outcome":"NativeFailure","process_creation":"Created","process_creation_reason":"NativeCallSucceeded","native_quota_denial_evidence_confirmed":false,"native_create_process_succeeded":true,"residual":"NoActiveProcessesConfirmed","failure_point":"AssignProcess","active_process_limit":1,"process_memory_limit_bytes":268435456,"job_memory_limit_bytes":536870912,"process_cpu_limit_ticks":40000000,"job_cpu_limit_ticks":50000000,"parent_wall_deadline_ticks":30000000,"readback_status":"Observed","readback_flags":8974,"readback_active_process_limit":1,"readback_process_memory_limit_bytes":268435456,"readback_job_memory_limit_bytes":536870912,"readback_process_cpu_limit_ticks":40000000,"readback_job_cpu_limit_ticks":50000000,"accounting_evidence":{"more_than_one_process_counted":false,"before_creation":{"total_processes":0,"active_processes":0,"total_terminated_processes":0},"after_teardown":{"total_processes":0,"active_processes":0,"total_terminated_processes":0}}},"termination":{"fixture":"Sleep","outcome":"RecoveryRequired","process_creation":"Created","process_creation_reason":"NativeCallSucceeded","native_quota_denial_evidence_confirmed":false,"native_create_process_succeeded":true,"residual":"NoActiveProcessesConfirmed","failure_point":"TerminateJob","active_process_limit":1,"process_memory_limit_bytes":268435456,"job_memory_limit_bytes":536870912,"process_cpu_limit_ticks":40000000,"job_cpu_limit_ticks":50000000,"parent_wall_deadline_ticks":30000000,"readback_status":"Observed","readback_flags":8974,"readback_active_process_limit":1,"readback_process_memory_limit_bytes":268435456,"readback_job_memory_limit_bytes":536870912,"readback_process_cpu_limit_ticks":40000000,"readback_job_cpu_limit_ticks":50000000,"process_id":27488,"process_creation_time_filetime":134368820427368228,"job_membership_confirmed":true,"accounting_evidence":{"more_than_one_process_counted":true,"before_creation":{"total_processes":0,"active_processes":0,"total_terminated_processes":0},"after_teardown":{"total_processes":2,"active_processes":0,"total_terminated_processes":0}},"recovery_evidence":{"termination_attempted":true,"termination_succeeded":false,"exit_confirmed":true,"job_handle_retained":true,"process_handle_retained":false,"thread_handle_retained":false}}}}
+ACTUAL_STDOUT_END
+ACTUAL_STDERR_BEGIN
+ACTUAL_STDERR_END
+ACTUAL_EXIT 0
+EXISTING_NATIVE_ASSERTIONS_PASS
+NATIVE_CLI_INVOCATIONS 1 ELAPSED 5.342999999993481
+```
+
+Final verdict: SOURCE_ENGINEERING_OBSERVED_FIXTURE_PASS / J1_J5_EVIDENCE_SEALED /
+QUALIFIED_AUDIT_BLOCKED / NOT_INTEGRATED. Native fixed fixture now passed at the
+EXACT final compiled candidate. Actual versus injected faults remain labelled.
+Raw Terminated0 is not corrected to1; counts aren't child-specific/exclusive.
+Historical J3 intermittent cause stillUNKNOWN. RecoveryRequired evidence remains,
+not cleared by the current valid fixture or by intentional test-handle teardown.
+This finite tool proof does not enforce Host writes/egress/in-process dispatch,
+prove protected issuer/observer, or release30B/43/TAL. Existing first-entry staged
+engineering exception is not a qualification or integration authorization.
+
+
 ## N2 J5 exact closure evidence / test-only correction — 2026-10-19
 
 Author actual KillOnJobClose removal at e84333eb changed Contracts blob1fb1ff24...
