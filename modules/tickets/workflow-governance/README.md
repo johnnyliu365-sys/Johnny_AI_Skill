@@ -55,7 +55,9 @@ revision02 approval and152tests. No committed-source, grant, receipt or Host
 admission claim; exact two reviewed blobs read back, old holds unchanged.
 
 [46-versioned-local-test-commands](46-versioned-local-test-commands.md) — checklist08/12,
-PREPARED local command-source follow-up to36/39; one versioned local-only plan,
+LOCAL_INTEGRATED / CLEANUP_BLOCKED at a0bfc286, independently reviewed2ba55781;
+36tests/22subtests, strict and compile/import passed; local command-source follow-up
+to36/39, one versioned local-only plan,
 same-commit Git readback and existing inventory, no test CI or retirement authority.
 
 ## Shared baseline

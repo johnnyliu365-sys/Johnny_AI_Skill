@@ -119,3 +119,23 @@ and blob parity required. Registered journal root
 C:/Users/GameBoy/AppData/Local/Temp/Johnny-checklist46-20261019, ownerRoot/Ticket46,
 TTL through independent seal then existing CLEANUP_BLOCKED retention. No cleanup
 attempt, test retirement, actual authority/Host qualification or formal activation.
+
+## Local integration seal
+
+Existing gate returned INTEGRATED ata0bfc286e2102b9ccfc2575f58bbb2e08b8f44b0,
+replays999be61d+a0bfc286 on Rootcontrol192daef8. Only four authorized source/data
+paths differ; final blobs equal reviewed candidate, including plan fullblob
+a0e956376f00bf27cb9919e981f5de0724903bb9. Root integrated suite36passed/22subtests
+in17.02s pytest, strict two modules and COMPILE_IMPORT_PASS; gate+tests/type/import/
+Git readback command waits10.0088648+5.0033017+2.1437518=17.1559183s, not three
+test attempts. Root's complete50s reserve retained in total274.77/300 bound.
+
+Journal C:/Users/GameBoy/AppData/Local/Temp/Johnny-checklist46-20261019/queue/document-mutation-journal.jsonl,
+384bytes, SHA256d76009e4b3a855733926f961d139f9e8b39f72638ad9f8e7e31ef17f0e53093b;
+oneINTEGRATED record2026-10-19T05:14:45.432146+00:00, exactcandidate above,
+integration branchcodex/skill-improvement-checklist, principalGameBoy, Ticket46.
+Control was clean; main remainsa1cb6c13adbeb52a4117991727dcc3d4af6d2a33, clean.
+Retain registered46 author/reviewer worktrees and shared Root landing/ref/journal
+under CLEANUP_BLOCKED; cache inventory UNKNOWN, not 'nothing remains'. No cleanup
+was attempted; old44/31B/45/30B/43 and Recovery holds preserved. Source capability
+complete only; final08/12, test retirement, CI and Host/source qualifications open.

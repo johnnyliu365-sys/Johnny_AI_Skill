@@ -2,7 +2,7 @@
 
 | Field | Binding |
 | --- | --- |
-| State / Closure | PREPARED / 46-L1–L4 revision01 |
+| State / Closure | SOURCE_LOCAL_INTEGRATED / CLEANUP_BLOCKED / 46-L1–L4 revision01; not full checklist08/12 or CI qualification |
 | Authority | Owner batch-checklist-local-20261018, latest implementation-plan instruction; checklist08/12, original PRD-20260805-009 / CHG-20260805-009 / workflow-governance SPEC. Original36/39 complete evidence retained; this is their command-source follow-up, no new PRD |
 | Baseline | 10b06f82c0825d6339d12712f0b2f752114c8790; SPEC blob a700cad60de40096770582b04915bf490fd66a19; sealed CONTEXT blob06baa4dea5db1c3370086552c35a1d8f721ad47e; final reviewed document commit/leaf pinned before dispatch |
 | Grant / roles | Root delegated grant-wg46-local-command-source-20261019, conditional on independent document review; Root control; /root/ticket46_command_impl gpt-6-luna/xhigh; /root/ticket46_command_review gpt-6-sol/high separate ordinary reviewer |
@@ -108,3 +108,17 @@ with exact blob parity. Checklist08/12 remain open for actual CI coverage/retire
 and other source/effect requirements. No push/release/Host activation or .github
 configuration. A CI wrapper can consume this source later after its own scope,
 complete required-suite selection and authorization; it must not duplicate argv.
+
+## Actual source result
+
+Reviewed dispatch leaf remainsf4dbba5d/a4dd9aab; metadata here records its outcome,
+not a retroactive grant. Candidate352a0829 received one46-L2 malformed JSON finding;
+same-author correction2ba5578130301229253765ccdb50683a93f70828 was independently
+APPROVED. Existing gate locally integrated exact four-file blobs ata0bfc286;
+36tests/22subtests, strict and compile/import passed after integration. Author
+digest/reviewer target-membership reverse mutations red/restored, no zero-red PASS.
+Budget recovered from original Host records, conservative146.77/150 author,
+78/100 reviewer, full50 Root reserve, total ceiling274.77/300; no reset.
+See [review/seal](../../../doc/reviews/workflow-governance/46-versioned-local-test-commands-code-review.md).
+Registered assets remain under existing no-retry CLEANUP_BLOCKED retention, no
+normal closure or unused-asset claim. No CI completeness/retirement/Host activation.
